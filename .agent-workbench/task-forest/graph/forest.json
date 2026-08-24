@@ -4245,7 +4245,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-08-24T06:25:59.349752Z",
+  "generated_at": "2026-08-24T08:26:55.116887Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -11464,7 +11464,7 @@
       "context_tags": [],
       "created_at": "2026-08-23T11:46:04.913782Z",
       "deprecated_at": null,
-      "derived_progress": 90.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [
         "Agent/UI 可通过 typed hostApi.git.applyPatch 应用/预检/回滚统一 diff 并获得结构化结果",
         "Review Center与会话面板可用 git.diffToBase 自动定位最近远程公共祖先",
@@ -11484,7 +11484,7 @@
       ],
       "primary_parent": "TF-0010",
       "priority": 2,
-      "progress": 90.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "把 Codex 对照审计确认的三个结构性差距变成结构化、可验收的 Host API 能力，让 Agent 与 UI 共享同一套受审批约束的 Git 原语",
       "remaining_minutes_max": 600,
@@ -11496,11 +11496,11 @@
         "每个子节点产出当前 HEAD 新鲜证据：focused unit tests + contract:check + 相关 E2E"
       ],
       "source_sessions": [],
-      "status": "review_needed",
+      "status": "done",
       "success_metrics": [],
       "summary": "",
       "title": "Git 能力补全：补丁引擎、祖先推导与安全分类器",
-      "updated_at": "2026-08-24T06:25:45.689872Z"
+      "updated_at": "2026-08-24T08:26:51.272863Z"
     },
     "TF-0095": {
       "acceptance_criteria": [
@@ -11658,7 +11658,7 @@
       "acceptance_criteria": [
         ".git 写入走 protected-path 审批流",
         "revert/push 审批对话框可见分级原因文本",
-        "fsmonitor=true 仅在内置 daemon 可用时出现"
+        "git 执行环境显式设置 core.fsmonitor=false，不依赖仓库配置；单测断言该 env 存在"
       ],
       "alignment": {
         "fit": "unknown",
@@ -11675,31 +11675,38 @@
       "context_tags": [],
       "created_at": "2026-08-23T11:46:04.913782Z",
       "deprecated_at": null,
-      "derived_progress": 67.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "medium",
       "estimate": 150,
       "estimated_total_minutes": null,
-      "evidence": [],
+      "evidence": [
+        "git 2.51 实测：单次 `git -c core.fsmonitor=true status` 即派生一个常驻 fsmonitor--daemon 进程（约 9MB），命令结束后不退出",
+        "实测：daemon 按仓库计数，两个仓库产生两个 daemon；ClawX 为多工作区应用，启用会按工作区线性累积常驻进程",
+        "实测：删除仓库目录后 daemon 仍存活，需显式 `git fsmonitor--daemon stop` 才回收，故无自动清理路径",
+        "结论：原验收项『fsmonitor=true 仅在内置 daemon 可用时出现』方向与实现相反；无条件关闭是正确取舍，实现见 git-api.ts execBinary 的 GIT_CONFIG_KEY_1=core.fsmonitor / VALUE_1=false"
+      ],
       "execution_hints": [],
       "id": "TF-0098",
       "kind": "task",
-      "non_goals": [],
+      "non_goals": [
+        "不启用 fsmonitor：经实测裁定为反向决策（见 evidence）"
+      ],
       "primary_parent": "TF-0094",
       "priority": 3,
-      "progress": 67.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "review_needed",
+      "status": "done",
       "success_metrics": [],
       "summary": "三小项合并以控制节点数：(1) 可写根内 .git 目录与指针文件目标 gitdir 进默认只读集；(2) dangerous 审批 reason 附带分级依据（目标分支是否保护、refspec 范围）；(3) fsmonitor 内置 daemon 探测保留",
       "title": "A4: Git 工程卫生合并项（.git 保护/分级理由/fsmonitor）",
-      "updated_at": "2026-08-24T06:25:42.542676Z"
+      "updated_at": "2026-08-24T08:24:00.480936Z"
     },
     "TF-0099": {
       "acceptance_criteria": [
@@ -11880,10 +11887,8 @@
   },
   "status_queues": {
     "actionable_todos": [
-      "TF-0098",
       "TF-0009",
       "TF-0047",
-      "TF-0094",
       "TF-0007",
       "TF-0010",
       "TF-0021",
@@ -11993,9 +11998,11 @@
         "TF-0091",
         "TF-0092",
         "TF-0093",
+        "TF-0094",
         "TF-0095",
         "TF-0096",
         "TF-0097",
+        "TF-0098",
         "TF-0099"
       ],
       "in_progress": [
@@ -12033,9 +12040,7 @@
       ],
       "review_needed": [
         "TF-0009",
-        "TF-0047",
-        "TF-0094",
-        "TF-0098"
+        "TF-0047"
       ]
     },
     "evergreen_open_goals": [
@@ -12074,8 +12079,6 @@
       "TF-0067",
       "TF-0068",
       "TF-0069",
-      "TF-0094",
-      "TF-0098",
       "TF-0100",
       "TF-0101"
     ],
@@ -12084,18 +12087,16 @@
     ],
     "review_needed": [
       "TF-0009",
-      "TF-0047",
-      "TF-0094",
-      "TF-0098"
+      "TF-0047"
     ]
   },
   "summary": {
     "blocked_count": 4,
-    "done_count": 62,
+    "done_count": 64,
     "edge_count": 182,
     "node_count": 100,
-    "open_count": 35,
-    "review_needed_count": 4
+    "open_count": 33,
+    "review_needed_count": 2
   },
   "tree_edges": [
     "TFE-0001",

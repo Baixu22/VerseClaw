@@ -6853,7 +6853,7 @@
       "不改 UI 视觉风格"
     ],
     "priority": 2,
-    "progress": 90.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "把 Codex 对照审计确认的三个结构性差距变成结构化、可验收的 Host API 能力，让 Agent 与 UI 共享同一套受审批约束的 Git 原语",
     "remaining_minutes_max": 600,
@@ -6865,11 +6865,11 @@
       "每个子节点产出当前 HEAD 新鲜证据：focused unit tests + contract:check + 相关 E2E"
     ],
     "source_sessions": [],
-    "status": "review_needed",
+    "status": "done",
     "success_metrics": [],
     "summary": "",
     "title": "Git 能力补全：补丁引擎、祖先推导与安全分类器",
-    "updated_at": "2026-08-24T06:25:45.689872Z"
+    "updated_at": "2026-08-24T08:26:51.272863Z"
   },
   "TF-0095": {
     "acceptance_criteria": [
@@ -7018,7 +7018,7 @@
     "acceptance_criteria": [
       ".git 写入走 protected-path 审批流",
       "revert/push 审批对话框可见分级原因文本",
-      "fsmonitor=true 仅在内置 daemon 可用时出现"
+      "git 执行环境显式设置 core.fsmonitor=false，不依赖仓库配置；单测断言该 env 存在"
     ],
     "alignment": {
       "fit": "unknown",
@@ -7039,24 +7039,31 @@
     "difficulty": "medium",
     "estimate": 150,
     "estimated_total_minutes": null,
-    "evidence": [],
+    "evidence": [
+      "git 2.51 实测：单次 `git -c core.fsmonitor=true status` 即派生一个常驻 fsmonitor--daemon 进程（约 9MB），命令结束后不退出",
+      "实测：daemon 按仓库计数，两个仓库产生两个 daemon；ClawX 为多工作区应用，启用会按工作区线性累积常驻进程",
+      "实测：删除仓库目录后 daemon 仍存活，需显式 `git fsmonitor--daemon stop` 才回收，故无自动清理路径",
+      "结论：原验收项『fsmonitor=true 仅在内置 daemon 可用时出现』方向与实现相反；无条件关闭是正确取舍，实现见 git-api.ts execBinary 的 GIT_CONFIG_KEY_1=core.fsmonitor / VALUE_1=false"
+    ],
     "execution_hints": [],
     "id": "TF-0098",
     "kind": "task",
-    "non_goals": [],
+    "non_goals": [
+      "不启用 fsmonitor：经实测裁定为反向决策（见 evidence）"
+    ],
     "priority": 3,
-    "progress": 67.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "review_needed",
+    "status": "done",
     "success_metrics": [],
     "summary": "三小项合并以控制节点数：(1) 可写根内 .git 目录与指针文件目标 gitdir 进默认只读集；(2) dangerous 审批 reason 附带分级依据（目标分支是否保护、refspec 范围）；(3) fsmonitor 内置 daemon 探测保留",
     "title": "A4: Git 工程卫生合并项（.git 保护/分级理由/fsmonitor）",
-    "updated_at": "2026-08-24T06:25:42.542676Z"
+    "updated_at": "2026-08-24T08:24:00.480936Z"
   },
   "TF-0099": {
     "acceptance_criteria": [
