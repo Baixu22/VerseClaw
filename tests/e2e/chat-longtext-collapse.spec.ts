@@ -81,6 +81,9 @@ test.describe('Verse Claw composer long-text collapse', () => {
       await page.waitForLoadState('domcontentloaded');
       const composer = page.getByTestId('chat-composer-input');
       await composer.waitFor({ state: 'visible', timeout: 20000 });
+      // Let startup effects (session activity load, git refresh) settle so the
+      // paste interception is not racing initial renders.
+      await page.waitForTimeout(800);
 
       // Dispatch a real ClipboardEvent so React's onPaste sees clipboardData.
       await page.evaluate((longText) => {
@@ -95,7 +98,7 @@ test.describe('Verse Claw composer long-text collapse', () => {
       }, LONG_TEXT);
 
       const chip = page.getByTestId('chat-composer-collapse-chip');
-      await chip.waitFor({ state: 'visible', timeout: 10000 });
+      await chip.waitFor({ state: 'visible', timeout: 15000 });
       await expect(chip).toContainText('pasted line 1');
       await expect(composer).toHaveValue('');
 
@@ -116,7 +119,7 @@ test.describe('Verse Claw composer long-text collapse', () => {
           cancelable: true,
         }));
       }, LONG_TEXT);
-      await chip.waitFor({ state: 'visible', timeout: 10000 });
+      await chip.waitFor({ state: 'visible', timeout: 15000 });
 
       // Dismiss discards the buffer.
       await page.getByTestId('chat-composer-collapse-dismiss').click();

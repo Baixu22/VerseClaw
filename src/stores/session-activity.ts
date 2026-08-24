@@ -333,6 +333,8 @@ function scheduleMock(sessionKey: string, scenario: SessionActivityMockScenario,
 
 export type SessionActivityState = {
   snapshots: Record<string, SessionActivitySnapshot>;
+  /** Last renderer-side git.status failure message; null when healthy. */
+  gitStatusError: string | null;
   initialized: boolean;
   init: () => void;
   load: (input: { workspaceId?: string | null; sessionKey: string }) => Promise<SessionActivitySnapshot>;
@@ -354,6 +356,7 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
 
   return {
     snapshots: {},
+    gitStatusError: null,
     initialized: false,
     init: () => {
       if (initialized) return;
@@ -421,13 +424,18 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
       if (!sessionKey) return;
       try {
         const result = await hostApi.git.status();
-        if (!result.success) return;
+        if (!result.success) {
+          set({ gitStatusError: (result as { reason?: string }).reason || 'git status failed' });
+          return;
+        }
         const current = get().snapshots[sessionKey] ?? createEmptySessionActivitySnapshot(sessionKey);
         const next = { ...current, git: result.status, availability: { ...current.availability, git: true }, capturedAt: Date.now() };
         sessionSnapshots.set(sessionKey, next);
-        set((state) => ({ snapshots: { ...state.snapshots, [sessionKey]: next } }));
-      } catch {
-        // Git is an optional source; the rest of the panel remains available.
+        set({ gitStatusError: null, snapshots: { ...get().snapshots, [sessionKey]: next } });
+      } catch (error) {
+        // Git is an optional source; the rest of the panel remains available,
+        // but the honest failure must be surfaced with a retry affordance.
+        set({ gitStatusError: error instanceof Error ? error.message : String(error) });
       }
     },
   };

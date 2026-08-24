@@ -65,7 +65,22 @@
       "detached": "デタッチ HEAD",
       "changes": "{{count}} 件の変更",
       "conflicts": "競合",
-      "clean": "クリーン"
+      "clean": "クリーン",
+      "stash": "スタッシュ",
+      "commit": "コミット",
+      "push": "プッシュ",
+      "commitMessagePlaceholder": "コミットメッセージ",
+      "committing": "コミット中...",
+      "cancel": "キャンセル",
+      "unavailable": "Git ステータスは一時的に利用できません。",
+      "retry": "再試行",
+      "stashSuccess": "変更をスタッシュしました",
+      "stashFailed": "スタッシュに失敗しました",
+      "commitSuccess": "変更をコミットしました",
+      "commitFailed": "コミットに失敗しました",
+      "pushSuccess": "変更をプッシュしました",
+      "pushFailed": "プッシュに失敗しました",
+      "approvalRequired": "承認が必要です - レビューパネルを確認してください"
     },
     "taskKinds": {
       "mission": "ミッション",
@@ -163,7 +178,9 @@
     "runningCount": "実行中 {{count}} 件",
     "processes": {
       "openOutput": "{{command}} の出力を開く"
-    }
+    },
+    "openAgents": "エージェントパネルを開く",
+    "openTerminal": "ターミナルパネルを開く"
   },
   "noLogs": "（ログはまだありません）",
   "scrollToLatest": "最下部に戻る",

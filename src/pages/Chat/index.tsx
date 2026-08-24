@@ -924,6 +924,8 @@ export function Chat() {
   const [knowledgeErrorAdvisoryBusy, setKnowledgeErrorAdvisoryBusy] = useState(false);
   const [dismissedKnowledgeAdvisoryKeys, setDismissedKnowledgeAdvisoryKeys] = useState<Set<string>>(() => new Set());
   const sessionActivitySnapshot = useSessionActivityStore((state) => state.snapshots[currentSessionKey]);
+  const sessionActivityGitError = useSessionActivityStore((state) => state.gitStatusError);
+  const refreshSessionActivityGit = useSessionActivityStore((state) => state.refreshGit);
   const loadSessionActivity = useSessionActivityStore((state) => state.load);
   const sessionActivityPanelEnabled = useSettingsStore((state) => state.sessionActivityPanelEnabled);
   const sessionActivityAutoExpand = useSettingsStore((state) => state.sessionActivityAutoExpand);
@@ -935,7 +937,8 @@ export function Chat() {
   useEffect(() => {
     if (!currentSessionKey) return;
     void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey });
-  }, [activeWorkspaceId, currentSessionKey, loadSessionActivity]);
+    void refreshSessionActivityGit(activeWorkspaceId, currentSessionKey);
+  }, [activeWorkspaceId, currentSessionKey, loadSessionActivity, refreshSessionActivityGit]);
 
   const [rollbackPlanDismissed, setRollbackPlanDismissed] = useState(false);
   /* The rail's own collapse preference, restored per session. Narrow viewports
@@ -2092,6 +2095,62 @@ export function Chat() {
     }
   }, [currentAgentId, currentModelRef, currentSessionKey, liveUsage?.totalTokens, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
 
+  const handleGitStash = useCallback(async () => {
+    if (!activeWorkspaceId) return;
+    try {
+      const result = await hostApi.git.stashPush();
+      if (result.success) {
+        toast.success(t('chat:sessionActivity.git.stashSuccess', 'Changes stashed'));
+      } else {
+        toast.error(result.reason || t('chat:sessionActivity.git.stashFailed', 'Failed to stash changes'));
+      }
+    } catch {
+      toast.error(t('chat:sessionActivity.git.stashFailed', 'Failed to stash changes'));
+    }
+  }, [activeWorkspaceId, t]);
+
+  const handleGitCommit = useCallback(async (message: string) => {
+    if (!activeWorkspaceId || !message.trim()) return;
+    try {
+      const result = await hostApi.git.commit({ message: message.trim() });
+      if (result.success) {
+        toast.success(t('chat:sessionActivity.git.commitSuccess', 'Changes committed'));
+      } else if (result.blocked || result.approvalRequired) {
+        openWorkspacePanel({ panel: 'review', view: 'changes' });
+        toast.info(t('chat:sessionActivity.git.approvalRequired', 'Approval required - check review panel'));
+      } else {
+        toast.error(result.reason || t('chat:sessionActivity.git.commitFailed', 'Failed to commit'));
+      }
+    } catch {
+      toast.error(t('chat:sessionActivity.git.commitFailed', 'Failed to commit'));
+    }
+  }, [activeWorkspaceId, openWorkspacePanel, t]);
+
+  const handleGitPush = useCallback(async () => {
+    if (!activeWorkspaceId) return;
+    try {
+      const result = await hostApi.git.push();
+      if (result.success) {
+        toast.success(t('chat:sessionActivity.git.pushSuccess', 'Changes pushed'));
+      } else if (result.blocked || result.approvalRequired) {
+        openWorkspacePanel({ panel: 'review', view: 'changes' });
+        toast.info(t('chat:sessionActivity.git.approvalRequired', 'Approval required - check review panel'));
+      } else {
+        toast.error(result.reason || t('chat:sessionActivity.git.pushFailed', 'Failed to push'));
+      }
+    } catch {
+      toast.error(t('chat:sessionActivity.git.pushFailed', 'Failed to push'));
+    }
+  }, [activeWorkspaceId, openWorkspacePanel, t]);
+
+  const handleOpenTerminalPanel = useCallback(() => {
+    openWorkspacePanel({ panel: 'terminal' });
+  }, [openWorkspacePanel]);
+
+  const handleOpenAgentsPanel = useCallback((childSessionKey?: string) => {
+    openWorkspacePanel({ panel: 'agents', sessionKey: childSessionKey });
+  }, [openWorkspacePanel]);
+
   const handleViewCompactionArtifact = useCallback(async () => {
     setCompactionArtifactOpen(true);
     setCompactionArtifactBusy(true);
@@ -2634,7 +2693,7 @@ export function Chat() {
     && sessionActivityPanelEnabled
     && Boolean(visibleSessionActivitySnapshot)
     && !isEmpty
-    && sessionActivityLevel !== 'none';
+    && (sessionActivityLevel !== 'none' || Boolean(sessionActivityGitError));
   const shouldAutoExpandSessionActivity = sessionActivityAutoExpand === 'active'
     ? sessionActivityLevel === 'active' || sessionActivityLevel === 'attention'
     : sessionActivityAutoExpand === 'attention' && sessionActivityLevel === 'attention';
@@ -3353,6 +3412,14 @@ export function Chat() {
                   compact
                   showGit={sessionActivityShowGit}
                   showCommands={sessionActivityShowCommands}
+                  gitError={sessionActivityGitError}
+                  onGitRetry={() => void refreshSessionActivityGit(activeWorkspaceId, currentSessionKey)}
+                  onGitStash={handleGitStash}
+                  onGitCommit={handleGitCommit}
+                  onGitPush={handleGitPush}
+                  onOpenGit={handleOpenGitPanel}
+                  onOpenTerminal={handleOpenTerminalPanel}
+                  onOpenAgents={handleOpenAgentsPanel}
                   onViewCompactionArtifact={
                     uiDepthMode === 'advanced' && Boolean(compactionStatus?.lastCompaction?.quality)
                       ? handleViewCompactionArtifact

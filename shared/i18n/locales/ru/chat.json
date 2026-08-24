@@ -65,7 +65,22 @@
       "detached": "Отсоединённый HEAD",
       "changes": "Изменений: {{count}}",
       "conflicts": "Конфликты",
-      "clean": "Чисто"
+      "clean": "Чисто",
+      "stash": "Спрятать",
+      "commit": "Коммит",
+      "push": "Пуш",
+      "commitMessagePlaceholder": "Сообщение коммита",
+      "committing": "Коммит...",
+      "cancel": "Отмена",
+      "unavailable": "Статус Git временно недоступен.",
+      "retry": "Повторить",
+      "stashSuccess": "Изменения спрятаны",
+      "stashFailed": "Не удалось спрятать изменения",
+      "commitSuccess": "Изменения закоммичены",
+      "commitFailed": "Не удалось закоммитить",
+      "pushSuccess": "Изменения отправлены",
+      "pushFailed": "Не удалось отправить",
+      "approvalRequired": "Требуется одобрение - проверьте панель ревью"
     },
     "taskKinds": {
       "mission": "Миссия",
@@ -163,7 +178,9 @@
     "runningCount": "Выполняется: {{count}}",
     "processes": {
       "openOutput": "Открыть вывод {{command}}"
-    }
+    },
+    "openAgents": "Открыть панель агентов",
+    "openTerminal": "Открыть панель терминала"
   },
   "noLogs": "(Журналы ещё недоступны)",
   "scrollToLatest": "Вернуться вниз",

@@ -65,7 +65,22 @@
       "detached": "Detached HEAD",
       "changes": "{{count}} changes",
       "conflicts": "Conflicts",
-      "clean": "Clean"
+      "clean": "Clean",
+      "stash": "Stash",
+      "commit": "Commit",
+      "push": "Push",
+      "commitMessagePlaceholder": "Commit message",
+      "committing": "Committing...",
+      "cancel": "Cancel",
+      "unavailable": "Git status is temporarily unavailable.",
+      "retry": "Retry",
+      "stashSuccess": "Changes stashed",
+      "stashFailed": "Failed to stash changes",
+      "commitSuccess": "Changes committed",
+      "commitFailed": "Failed to commit",
+      "pushSuccess": "Changes pushed",
+      "pushFailed": "Failed to push",
+      "approvalRequired": "Approval required - check review panel"
     },
     "taskKinds": {
       "mission": "Mission",
@@ -163,7 +178,9 @@
     "runningCount": "{{count}} running",
     "processes": {
       "openOutput": "Open the output of {{command}}"
-    }
+    },
+    "openAgents": "Open agents panel",
+    "openTerminal": "Open terminal panel"
   },
   "noLogs": "(No logs available yet)",
   "scrollToLatest": "Back to bottom",

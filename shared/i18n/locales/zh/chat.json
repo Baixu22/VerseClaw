@@ -65,7 +65,22 @@
       "detached": "游离 HEAD",
       "changes": "{{count}} 项变更",
       "conflicts": "冲突",
-      "clean": "干净"
+      "clean": "干净",
+      "stash": "暂存",
+      "commit": "提交",
+      "push": "推送",
+      "commitMessagePlaceholder": "提交信息",
+      "committing": "提交中...",
+      "cancel": "取消",
+      "unavailable": "Git 状态暂时不可用。",
+      "retry": "重试",
+      "stashSuccess": "已暂存更改",
+      "stashFailed": "暂存失败",
+      "commitSuccess": "已提交更改",
+      "commitFailed": "提交失败",
+      "pushSuccess": "已推送更改",
+      "pushFailed": "推送失败",
+      "approvalRequired": "需要审批 - 请查看 review 面板"
     },
     "taskKinds": {
       "mission": "任务目标",
@@ -163,7 +178,9 @@
     "runningCount": "{{count}} 个运行中",
     "processes": {
       "openOutput": "查看 {{command}} 的输出"
-    }
+    },
+    "openAgents": "打开 agents 面板",
+    "openTerminal": "打开终端面板"
   },
   "noLogs": "（暂无日志）",
   "scrollToLatest": "回到底部",

@@ -1,5 +1,8 @@
 import { Activity, Archive, Bot, CheckCircle2, CircleAlert, Clock3, Cpu, FilePlus2, GitBranch, GitCommitHorizontal, Goal, ListChecks, Loader2, Monitor, Network, RotateCcw, TerminalSquare } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -14,6 +17,14 @@ type SessionActivityPanelProps = {
   showGit?: boolean;
   showCommands?: boolean;
   onViewCompactionArtifact?: () => void;
+  gitError?: string | null;
+  onGitRetry?: () => void;
+  onGitStash?: () => void | Promise<void>;
+  onGitCommit?: (message: string) => void | Promise<void>;
+  onGitPush?: () => void | Promise<void>;
+  onOpenGit?: () => void;
+  onOpenTerminal?: () => void;
+  onOpenAgents?: (childSessionKey?: string) => void;
 };
 
 function formatDuration(startedAt: number | null | undefined, endedAt: number | null | undefined, now: number): string {
@@ -73,7 +84,35 @@ export function SessionActivityPanel({
   showGit = true,
   showCommands = true,
   onViewCompactionArtifact,
+  gitError = null,
+  onGitRetry,
+  onGitStash,
+  onGitCommit,
+  onGitPush,
+  onOpenGit,
+  onOpenTerminal,
+  onOpenAgents,
 }: SessionActivityPanelProps) {
+  const [commitDialogOpen, setCommitDialogOpen] = useState(false);
+  const [commitMessage, setCommitMessage] = useState('');
+  const [committing, setCommitting] = useState(false);
+
+  const handleCommitClick = useCallback(() => {
+    setCommitDialogOpen(true);
+    setCommitMessage('');
+  }, []);
+
+  const handleCommitSubmit = useCallback(async () => {
+    if (!commitMessage.trim() || !onGitCommit) return;
+    setCommitting(true);
+    try {
+      await onGitCommit(commitMessage.trim());
+      setCommitDialogOpen(false);
+      setCommitMessage('');
+    } finally {
+      setCommitting(false);
+    }
+  }, [commitMessage, onGitCommit]);
   const { t } = useTranslation('chat');
   const [now, setNow] = useState(() => Date.now());
   const runActive = snapshot.session.status === 'running' || snapshot.session.status === 'waiting_approval';
@@ -94,7 +133,7 @@ export function SessionActivityPanel({
     || Boolean(snapshot.continuity.checkpoint)
     || Boolean(snapshot.continuity.blockedReason);
   const hasSession = snapshot.session.status !== 'idle' || Boolean(snapshot.session.phase);
-  if (!hasSession && !hasGit && !hasTasks && !hasSubagents && !hasGoals && !hasProcesses && !hasLineage && !hasTerminals && !hasContinuity) return null;
+  if (!hasSession && !hasGit && !hasTasks && !hasSubagents && !hasGoals && !hasProcesses && !hasLineage && !hasTerminals && !hasContinuity && !(showGit && Boolean(gitError))) return null;
 
   const changes = snapshot.git?.changes.length ?? 0;
   const additions = snapshot.git?.changes.reduce((sum, change) => sum + (change.additions ?? 0), 0) ?? 0;
@@ -179,20 +218,83 @@ export function SessionActivityPanel({
           </section>
         ) : null}
 
-        {hasGit ? (
+        {(hasGit || (showGit && Boolean(gitError))) ? (
           <section className="px-3 py-3" data-testid="session-activity-git">
             <div className="mb-2 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
               <GitBranch className="h-3.5 w-3.5" />{t('sessionActivity.sections.git')}
             </div>
-            <div className="flex items-center justify-between gap-2 text-xs">
-              <span className="truncate font-mono text-foreground">{snapshot.git?.branch ?? t('sessionActivity.git.detached')}</span>
-              <span className="shrink-0 text-muted-foreground">{t('sessionActivity.git.changes', { count: changes })}</span>
-            </div>
-            <div className="mt-1 flex items-center gap-3 text-[11px] text-muted-foreground">
-              <span className="inline-flex items-center gap-1"><GitCommitHorizontal className="h-3 w-3" />+{additions}</span>
-              <span>-{deletions}</span>
-              {snapshot.git?.hasConflicts ? <span className="text-red-700 dark:text-red-400">{t('sessionActivity.git.conflicts')}</span> : null}
-            </div>
+            {gitError && !snapshot.git?.isRepository ? (
+              <div data-testid="session-activity-git-error">
+                <p className="text-xs text-red-700 dark:text-red-400">{t('sessionActivity.git.unavailable')}</p>
+                {onGitRetry ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="mt-1 h-7 text-xs"
+                    onClick={onGitRetry}
+                    data-testid="session-activity-git-retry"
+                  >
+                    {t('sessionActivity.git.retry')}
+                  </Button>
+                ) : null}
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between gap-2 text-xs">
+                  <span className="truncate font-mono text-foreground">{snapshot.git?.branch ?? t('sessionActivity.git.detached')}</span>
+                  <button
+                    type="button"
+                    className="shrink-0 text-muted-foreground underline-offset-2 hover:underline"
+                    onClick={onOpenGit}
+                    title={t('sessionActivity.git.changes', { count: changes })}
+                  >
+                    {t('sessionActivity.git.changes', { count: changes })}
+                  </button>
+                </div>
+                <div className="mt-1 flex items-center gap-3 text-[11px] text-muted-foreground">
+                  <span className="inline-flex items-center gap-1"><GitCommitHorizontal className="h-3 w-3" />+{additions}</span>
+                  <span>-{deletions}</span>
+                  {snapshot.git?.hasConflicts ? <span className="text-red-700 dark:text-red-400">{t('sessionActivity.git.conflicts')}</span> : null}
+                </div>
+                {snapshot.git && !snapshot.git.clean ? (
+                  <div className="mt-2 flex gap-2">
+                    {snapshot.git.unstagedCount > 0 && onGitStash ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 flex-1 text-xs"
+                        onClick={() => void onGitStash()}
+                        data-testid="session-activity-git-stash"
+                      >
+                        {t('sessionActivity.git.stash')}
+                      </Button>
+                    ) : null}
+                    {snapshot.git.stagedCount > 0 && onGitCommit ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 flex-1 text-xs"
+                        onClick={handleCommitClick}
+                        data-testid="session-activity-git-commit"
+                      >
+                        {t('sessionActivity.git.commit')}
+                      </Button>
+                    ) : null}
+                    {snapshot.git.ahead > 0 && onGitPush ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 flex-1 text-xs"
+                        onClick={() => void onGitPush()}
+                        data-testid="session-activity-git-push"
+                      >
+                        {t('sessionActivity.git.push')}
+                      </Button>
+                    ) : null}
+                  </div>
+                ) : null}
+              </>
+            )}
           </section>
         ) : null}
 
@@ -282,6 +384,17 @@ export function SessionActivityPanel({
           <section className="px-3 py-3" data-testid="session-activity-subagents">
             <div className="mb-2 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
               <Bot className="h-3.5 w-3.5" />{t('sessionActivity.sections.subagents')}
+              {onOpenAgents ? (
+                <button
+                  type="button"
+                  className="ml-auto rounded-md p-1 text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+                  aria-label={t('sessionActivity.openAgents')}
+                  onClick={() => onOpenAgents()}
+                  data-testid="session-activity-open-agents"
+                >
+                  <Network className="h-3 w-3" />
+                </button>
+              ) : null}
             </div>
             <div className="space-y-1.5">
               {snapshot.subagents.slice(-4).map((agent) => (
@@ -299,6 +412,17 @@ export function SessionActivityPanel({
           <section className="px-3 py-3" data-testid="session-activity-terminals">
             <div className="mb-2 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
               <TerminalSquare className="h-3.5 w-3.5" />{t('sessionActivity.sections.terminals')}
+              {onOpenTerminal ? (
+                <button
+                  type="button"
+                  className="ml-auto rounded-md p-1 text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+                  aria-label={t('sessionActivity.openTerminal')}
+                  onClick={onOpenTerminal}
+                  data-testid="session-activity-open-terminal"
+                >
+                  <Monitor className="h-3 w-3" />
+                </button>
+              ) : null}
             </div>
             <div className="space-y-1.5">
               {snapshot.terminals.slice(-4).map((terminal) => (
@@ -326,6 +450,37 @@ export function SessionActivityPanel({
           </section>
         ) : null}
       </div>
+      <Dialog open={commitDialogOpen} onOpenChange={setCommitDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <DialogTitle>{t('sessionActivity.git.commit')}</DialogTitle>
+              <DialogDescription>{t('sessionActivity.git.commitMessagePlaceholder')}</DialogDescription>
+            </div>
+            <Input
+              value={commitMessage}
+              onChange={(e) => setCommitMessage(e.target.value)}
+              placeholder={t('sessionActivity.git.commitMessagePlaceholder')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey && commitMessage.trim()) {
+                  e.preventDefault();
+                  void handleCommitSubmit();
+                }
+              }}
+              autoFocus
+              data-testid="session-activity-commit-input"
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setCommitDialogOpen(false)} disabled={committing}>
+                {t('sessionActivity.git.cancel')}
+              </Button>
+              <Button onClick={handleCommitSubmit} disabled={!commitMessage.trim() || committing} data-testid="session-activity-commit-submit">
+                {committing ? t('sessionActivity.git.committing') : t('sessionActivity.git.commit')}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </aside>
   );
 }
