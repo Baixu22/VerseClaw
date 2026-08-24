@@ -98,6 +98,30 @@ node scripts/check-production-reachable.mjs <symbol> [<symbol>...]
 
 **这三个出口是本节的核心。** 接不上线是合法结果 —— 有时上游还没就绪，有时旗标属于另一条车道，有时该能力本轮本就不该通电。**隐瞒才是失败，降级不是。** 一个诚实标 `landed-unwired` 的 task 优于一个标 `done` 而实际零生产调用的 task，因为后者会让 §D1 的全部下游判据失去意义。
 
+### D1.4 (a) 不适用的三类改动（编译期 / 守卫 / 契约面）
+
+D1.1(a) 问的是「新代码是否被生产路径执行」。有三类改动**没有运行时调用点可言**，对它们套用 (a) 会把合规的工作误判为 `landed-unwired`：
+
+| 类别 | 例子 | 为什么 (a) 不适用 | 判法 |
+|---|---|---|---|
+| **编译期契约** | TS 类型声明、`DeepRequired` 穷举夹具 | 类型在运行时被擦除，天然无调用点。其效力由 `pnpm typecheck:node` 与 `pnpm lint:dcs` 的 type-aware 运行强制 | (a) 判 **N/A**；改判「该约束是否真的在门内生效」 |
+| **守卫 / 判据** | parity 测试夹具、lint 规则数据 | (a) 明确把测试排除在生产调用点之外，故守卫**永远**无法满足 (a) | (a) 判 **N/A**；改判「守卫是否由红转绿且不可绕过」 |
+| **默认关旗标的配置面补齐** | 声明一个 default-off 叶子的类型/目录/夹具 | 旗标默认关是 §R5 技术-4 **强制要求**；为通过 (a) 而打开它才是越界 | (a) 判 **N/A**；改判「执行器是否存在 + 旗标是否如实默认关」 |
+
+**判别标准**：问「本 task 是否引入了一个新的、意图在生产运行的能力？」
+
+- **是** → (a) 全额适用。不满足即 `landed-unwired`。
+- **否**（只补类型、夹具、目录、守卫） → (a) 判 N/A，并**必须**替代性证明两件事：① 该约束/守卫在 L0 或 L1 门内真实生效（贴出门命令与输出）；② 若涉及旗标，其**执行器已存在**且可递归上溯到生产入口（用 §D1.2 脚本取证）。
+
+**这不是 (a) 的豁免口。** 替代证明的举证责任不低于 (a)：一个「补了类型但守卫仍不生效」的 task 依然 FAIL。真正的区别在于，把「默认关的旗标」打开去满足 (a) 会同时违反 §R5 技术-4 并破坏 TF-0146 的成功指标（本轮默认值改动次数恰为 1），所以对这三类改动，(a) 的字面判据与本轮边界**互相矛盾** —— D1.4 消除该矛盾。
+
+> 来源：TF-0109（车道 2 的配置一致性守卫修复）的审核。该 task 只改 6 行 TS 类型声明 + 1 行夹具值，按 D1.1(a) 字面判定会因「新代码在默认配置下不被执行」而被迫标 `landed-unwired`，但它实际上没有引入任何未通电的模块 —— 它修复的守卫每次 L1 都在跑。缺口由实现者在自检时主动提出、由审核者裁定并回写本节。
+
+### D1.5 已知的 (a) 假阳性：编译期夹具
+
+`src/config/runtime-feature-leaves.ts` 的 `RUNTIME_FEATURE_EXHAUSTIVE` 会被 §D1.2 脚本与「生产零调用模块」清单判为不可达 —— 它在 `src/` 下、唯一消费者是 `tests/unit/config-schema-parity.test.ts`。但它**不是死代码**：它是 `DeepRequired<RuntimeFeatureConfig>` 的编译期锚，给 `RuntimeFeatureConfig` 加叶子而不同步此处会**停止编译**（实测 `TS2741`）。
+
+**处置：判为 `guard-only`，保留，不迁出。** 清点「生产零调用模块数」时，此类编译期锚须单列，不计入需清偿的死代码 —— 否则会把守卫本体当成技术债清掉，正好拆掉防线。
 
 ## §R1 代码审核协议
 
@@ -203,7 +227,7 @@ node scripts/check-production-reachable.mjs <symbol> [<symbol>...]
 
 | # | 命令 | 观测于 `f005991b7` | 预期由谁改变 |
 |---|---|---|---|
-| P1 | `grep -rn 'factViews' openclaw_runtime/src --include=*.ts \| wc -l` | `11`，其中 `config/runtime-feature-leaves.ts:70`、`config/types.openclaw.ts:193`、`config/zod-schema.ts:342` 三处**仍存在** —— 而 `coding-runtime-flags.ts:9-10` 的注释声称该叶子「has been removed」。这是 A3 与 A4 同时命中的判例 | 车道 2 的 TF-0109 / TF-0117（§R1 A3） |
+| P1 | `grep -rn 'factViews' openclaw_runtime/src --include=*.ts \| wc -l` | `11`，其中 `config/runtime-feature-leaves.ts:70`、`config/types.openclaw.ts:193`、`config/zod-schema.ts:342` 三处**仍存在** —— 而 `coding-runtime-flags.ts:9-10` 的注释声称该叶子「has been removed」。这是 A3 与 A4 同时命中的判例 | 车道 2 的 **TF-0112**（T-P0-4，其标题即「factViews 从 schema/type 下架」）。**归属已更正**：初稿写作 TF-0109，但 TF-0109 的 `non_goals` 明确「不顺手改其他旗标（其余旗标问题在 T-P0-4）」，`factViews` 正属「其他旗标」；由 TF-0109 的审核（lane-1，2026-08-24）提出并采纳 |
 | P2 | `sed -n '66,74p' openclaw_runtime/src/context-engine/assembler.ts` | 注释声称 `working_memory after a tool_result` 的通道「are still queried」 —— 而 `extensions.ts` 的 `injectedChannels` 是 add-only，同一 attempt 内首次注入后永久跳过 | 车道 1 的 TF-0126（T-B6） |
 | P3 | `grep -n 'createInjectionBudget(' openclaw_runtime/src/context-engine/injection-budget.test.ts` | 覆盖 默认 / `100` / `10` / `5` / `0`，**无 `NaN`、无负数** —— A6 判例的测试缺口本体 | 车道 1 的 TF-0128 或后续边界值补测 |
 | P4 | `injection-budget.ts:41` 的 `NaN` 逻辑追踪（无需运行）：`Math.max(0, Math.floor(NaN)) === NaN` → `remainingBudget` 返回 `NaN` → `rem <= 0` 为 false → `text.length <= rem` 为 false → `rem < 2` 为 false → 第 120 行 `text.slice(0, NaN - 1)` 得 `""`，拼接后为 `"…"`，返回 `applied: true` | 单字符省略号 + `applied: true`，第 8 行的 fail-closed 契约被击穿 | 修复者须同时补 A6 四个断言 |
@@ -311,10 +335,13 @@ docs/dev/context-moat/
 | D11 | `src/context-engine/turn-injection-budget.ts` | TF-0117 / 0128 | 1 |
 | D12 | `docs/dev/context-moat/DEV-PROTOCOL.md` | TF-0103 全部子节点 | 双（按节分工） |
 | **D13** | `src/runtime-core/memory-hybrid-retrieval.ts` | TF-0114（车道 2）/ TF-0122（车道 1） | **跨车道** |
+| D14 | `src/config/runtime-feature-leaves.ts` | TF-0109 / TF-0107 / TF-0112 | 2 |
 
 **D13 是本轮唯一一组跨车道的真写冲突域。** TF-0114 修 `tokenizeWords` / `extractEntities` 的 CJK 空返回；TF-0122 裁决整条 hybrid 检索链去留，而「迁出」选项会移动整个文件。故 `TF-0122 depends_on TF-0114` 已由 non-blocking **升为 blocking**：必须先修完再裁决去留，反序会让 TF-0114 的修复被 TF-0122 的迁出连带作废。排班上两者相距 1050min，正常不会真撞上，但边必须是 blocking 以防 pick-next 抢跑。
 
 **三处已排除的 mention-only 假阳性，勿再重复认定**：`attempt.ts` 与 `init.ts` 仅被 TF-0104 作为「生产入口 / 注册入口」判例引用（零写入）；`context-compression-eval-runner.mjs` 仅被 TF-0106 作为 §R2 门命令清单引用（只读）。若车道 1 的 TF-0143 / TF-0138 需要真改这个 runner，属触碰面扩大，按 R4.2 记偏差。
+
+**D14 的登记缘由**：`runtime-feature-leaves.ts` 由 TF-0109 的 `requirements` 第 1 条直接指定改动，但初版 D01-D13 表未收录它。实现者（车道 2）在自检时主动指出该缺口并建议延后登记；审核者（车道 1）按本节「新发现的域必须追加」即时补登为 D14，理由是本表的作用是**登记完整性**而非仅风险控制 —— 延后会留下一个「pick-next 看不见该域」的窗口。三个触碰者同在车道 2，属车道内串行，无跨车道风险。偏差记录：`TFD-d14-runtime-feature-leaves-2026-08-24`。
 
 ### R4.6 task-forest 多 session 写入纪律
 
