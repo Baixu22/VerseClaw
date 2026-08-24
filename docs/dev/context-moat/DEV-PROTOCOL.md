@@ -243,7 +243,161 @@ D1.1(a) 问的是「新代码是否被生产路径执行」。有三类改动**�
 
 ## §R2 分层测试验收门
 
-<!-- owner=lane-2 node=TF-0106 -->
+来源节点：**TF-0106**。本节把「验收」定义为**一组固定的 exit-code 判定**，而非执行者自述。四层门 L0/L1/L2/L3，逐层加重、触发时机递增。
+
+**命令真实性**：本节所有命令均已核实存在于 `package.json` / `scripts/`（TF-0106 requirement-1）。逐条对照见 §R2.6。**禁止向本节写入未验证命令。**
+
+**与 §D4 的关系（单一真相源）**：门的**命令清单以本节为准**；§D4 定义这些门在当前红树上的**可达判据**（哪些失败入白名单）。命令清单出现于两节时，§D4 引用本节，不得各写一份。TF-0142（§D4）依赖本 task（§R2），方向即为此。
+
+---
+
+### §R2.0 判据总则
+
+1. **门 = exit code，不 = 自述。** 每道门是一组命令；命令全部 exit 0（L2/L3 为「失败集 ⊆ §D4 白名单」）才算过。
+2. **失败输出原样保留。** 验收记录必须贴命令与 exit code，失败输出逐字保留，不得转述、不得截断为「大致通过」。
+3. **绿的定义不是「所有测试全绿」，是「本轮必修项全绿 + §D4 白名单外无新增失败」**（TF-0106 requirement-5）。当前树上除 `config-schema-parity`（已由 TF-0109 修绿）外，`pnpm test` 与 `maturity:validate` 亦为红，且其失败**零本轮引起**（§D4 已机械证明）。把它们当「全绿门」会造出永不可达的理想门。
+4. **留存义务**（success_metric）：每个 `done` task 留存 L0+L1 输出；每个 `done` milestone 留存 L2 输出；M5 留存 L3 输出。落 `reviews/<task-id>.md`。
+
+---
+
+### §R2.1 L0 快门 —— 每次编辑后，秒级，必须 exit 0
+
+编辑代码后立即自查，最廉价的一层。**只跑与本次改动直接相关的部分**，不跑全量。
+
+```bash
+pnpm lint:bom
+pnpm lint:dcs
+npx vitest run <本次改动直接相关的 .test.ts>
+```
+
+- 触发时机：**每次编辑后 / 每次提交前**。
+- 判据：三者 exit 0。第三条的文件由改动面决定（例：改 `config/` → `config-schema-parity.test.ts`）。
+- 目的：把「一眼可见的破坏」挡在提交前，成本 < 10s。
+
+> `lint:dcs` 是 type-aware oxlint，文件清单固定（见 `package.json`），已含全部 DCS/config 相关 src。若本次改动落在清单外的 src，L0 第二条仍跑，但真正的类型验证在 L1 的 `typecheck:node`。
+
+---
+
+### §R2.2 L1 子系统门 —— 每 task 收口，分钟级，必须 exit 0
+
+**这是每个 task 能否标 `done` 的硬门。** 六条全部 exit 0 才算过：
+
+```bash
+pnpm lint:bom
+pnpm contract:check
+pnpm typecheck:node
+pnpm lint:dcs
+pnpm test:dcs
+npx vitest run tests/unit/config-schema-parity.test.ts tests/unit/default-config-matrix.test.ts
+```
+
+- 触发时机：**每个 task 收口时**（改 `--status done` 前）。
+- 实测墙钟：约 **75s**（`ef66a1c28`），确为分钟级。
+- **不含 `pnpm test`、不含 `maturity:validate`** —— 依据 §D4.4：二者失败零本轮引起、且与 `test:dcs` 文件集零重叠，放进 L1 等于让每个 task 收口卡在别的 global_task 的未完成交付物上。二者移入 L2。
+- `config-schema-parity` 与 `default-config-matrix` **单独列出**：实测均不在 `test:dcs` 的文件清单内（否则会漏跑）。前者是 FP-P0-06 配置面防线（TF-0109 的使能前置），后者是 18 项默认配置矩阵。
+
+**L1 基线**（AC-2，观测于 TF-0109 修绿后的 `ef66a1c28`）：
+
+```
+L1 BASELINE @ ef66a1c28  2026-08-24T16:51:53Z
+  pnpm lint:bom          → check-no-bom: ok                    exit=0
+  pnpm contract:check    → Contract check passed.              exit=0
+  pnpm typecheck:node    → tsc --noEmit (no diagnostics)       exit=0
+  pnpm lint:dcs          → oxlint --deny-warnings (clean)      exit=0
+  pnpm test:dcs          → 20/253 + 5/10 + 10/88 passed        exit=0
+  parity + default-config-matrix → 2 files / 134 passed        exit=0
+```
+
+---
+
+### §R2.3 L2 里程碑门 —— 每 milestone 收口，重，失败集 ⊆ §D4 白名单
+
+里程碑收口才跑的全量门。**不要求 exit 0**（当前树上 `pnpm test`/`maturity` 为红），要求**失败集 ⊆ §D4 §6 白名单**：
+
+```bash
+pnpm lint:check
+pnpm typecheck
+pnpm contract:check
+pnpm test
+pnpm maturity:validate
+```
+
+- 触发时机：**每个 milestone（M1..M5）收口时**。
+- 判据（逐条，据 §D4.5）：
+  - `lint:check` / `typecheck` / `contract:check`：**exit 0**（无豁免）。
+  - `pnpm test`：失败集 ⊆ §D4 白名单 `gates.pnpm_test.exemptions`，且 `config-schema-parity` 不在失败集内。**白名单外任一失败 = 回归，阻塞。**
+  - `maturity:validate`：A2 失配集 ⊆ §D4 §4.3 的 25 项基线；**并须单独补跑** `pnpm maturity:residual` 与 `pnpm maturity:traceability` 以消除 §D4 记录的 `&&` 链短路盲区（`TFD-maturity-chain-blindspot-2026-08-24`）。
+- 回归定义（承重条款，同 §D4.6）：**白名单之外的任何失败 = 回归，一律阻塞。** 白名单条目**只减不增**；新增须走 §R4 偏差触发 (c)。
+
+---
+
+### §R2.4 L3 证据门 —— 仅 M5，真人 soak
+
+差异化能力的**真人**证据门，只在 M5 收口时触发。**这是打破 `humanRuns=0` 证据自循环的唯一出口**（TF-0102 success_metric）。
+
+```bash
+node scripts/context-compression-eval-runner.mjs --paired-summary <真实会话 JSONL 路径>
+```
+
+外加**非命令**判据：**1 名真人 × 1 个增强表面 × 14 天 × 可回滚记录**（落 `approvals/<task-id>.md`，见 TF-0140）。
+
+- 触发时机：**仅 M5**。
+- 命令判据：runner exit 0，且其 `--paired-summary` 叠加输出显示样本被真实 overlay（`[paired-summary] overlaid N/M samples`，N>0）。
+- soak 判据：14 天真人记录 + 期内 B3 冻结未被破坏（`git log <soak-start>..HEAD -- assembler.ts extensions.ts prod-flags-catalog.ts` 为空）。
+- 本轮 L3 只对 **TF-0140** 一个表面成立；其余表面本轮不进 L3。
+
+---
+
+### §R2.5 通用回滚条款（TF-0106 requirement-4，接 §R4.3）
+
+**每个改变模型可见内容的 task**，必须在 node 中声明回滚方式，三选一：
+
+1. **旗标关闭**（`runtime.*=false`）；
+2. **配置回退**；
+3. **revert commit**。
+
+**无声明者不得进入 L1 门。** 声明「旗标关闭」为回滚方式时，验收记录的 **A4 必须同时验证该旗标存在执行器**（§R5 过程-9；防 `worktree.backend` 那类「写了没执行器」的旗标 —— 关了也没用）。
+
+验收记录必须写明**实际验证过**的回滚路径（贴执行命令与观察结果），不是「理论上可回滚」。
+
+#### §R2.5.1 回滚验证必须 worktree-only（本轮实测硬教训）
+
+回滚验证**禁止使用 `git revert` / `git reset` / `git stash` / 裸 `git add`** —— 两条车道共用**一个工作树与一个 index**，这些命令都是**跨车道写**。本轮已实证其危害：`TFD-lane2-rollback-drill-index-mutation-2026-08-24` —— 一次 `git revert --no-commit` 把删除暂存进共用 index，被另一车道的 pathspec-less 提交裹走。
+
+**唯一允许的回滚验证手法**（零 index 写入）：
+
+```bash
+git show <commit> -- <本 task 文件> | git apply -R   # 反向打补丁到工作树
+<跑本 task 的 L0 门>                                   # 确认回到基线
+git show <commit> -- <本 task 文件> | git apply       # 恢复
+git diff HEAD -- <本 task 文件>                        # 空 = 已复原
+```
+
+**判定回滚是否复原，以 `git diff HEAD`（内容）为准，不以 `git status --porcelain`（含行尾态）为准** —— 本仓库 CRLF/LF 归一化会让 `git apply` 往返后 `status` 显示 `M` 而内容实际一致（TF-0142 实测）。
+
+#### §R2.5.2 提交隔离（同一硬教训的另一面）
+
+每次提交一律用 **`git commit -- <显式路径>`**，不得用裸 `git commit`（后者提交整个 index，会裹走另一车道在途 stage 的文件 —— `TFD-lane1-index-bleed-2026-08-24`）。收口三条半径命令按 §R3 执行，且 pathspec 限定到本车道文件域（仓库有 200+ 既有未提交改动，裸 `git diff --stat HEAD` 无法度量单 task 半径）。
+
+---
+
+### §R2.6 命令真实性对照（TF-0106 requirement-1）
+
+下表每条命令均在本 task 收口时实跑验证存在（`fe469cbff`/`ef66a1c28`）：
+
+| 门 | 命令 | 位置 | 实测 |
+|---|---|---|---|
+| L0/L1 | `pnpm lint:bom` | `package.json` `scripts.lint:bom` = `node scripts/check-no-bom.mjs` | exit 0 |
+| L0/L1 | `pnpm lint:dcs` | `scripts.lint:dcs`（type-aware oxlint 固定清单） | exit 0 |
+| L1 | `pnpm contract:check` | `scripts.contract:check` = `node scripts/contract-check.mjs` | exit 0 |
+| L1 | `pnpm typecheck:node` | `scripts.typecheck:node` = `tsc --noEmit -p tsconfig.node.json` | exit 0 |
+| L1 | `pnpm test:dcs` | `scripts.test:dcs`（DCS vitest 三组） | exit 0 |
+| L1 | `tests/unit/config-schema-parity.test.ts` | 文件存在 | 116 passed |
+| L1 | `tests/unit/default-config-matrix.test.ts` | 文件存在 | 18 passed |
+| L2 | `pnpm lint:check` / `typecheck` / `test` / `maturity:validate` | `package.json` 均存在 | 见 §D4（红，按白名单） |
+| L3 | `scripts/context-compression-eval-runner.mjs` | 文件存在，接受 `--paired-summary`（实测 4 处引用） | — |
+
+**未落入本表的命令不得写进 §R2。** 新增门命令须先验证存在并补入本表。
 
 ## §R3 每任务改动半径收口门
 
@@ -530,17 +684,19 @@ git diff --name-only 590588791..HEAD   # 本轮全部改动
 
 ### §D4.4 收紧后的 L1（每 task 收口）—— 必修全绿，不含 `pnpm test` / `maturity`
 
-```bash
-pnpm lint:bom && pnpm contract:check && pnpm typecheck:node \
-  && pnpm lint:dcs && pnpm test:dcs \
-  && npx vitest run tests/unit/config-schema-parity.test.ts
-```
+> **命令清单以 §R2.2 为准**（单一真相源）。本节只给出「为什么这样收紧」的裁定依据，不复制命令清单 —— 两处各写一份必然漂移。
 
-`pnpm test` **不入 L1**：其 22 项失败零本轮引起、且与 `test:dcs` 文件集零重叠（实测）。放进 L1 等于让每个 task 收口卡在别的 global_task 的未完成交付物上，正是「永不可能变绿的理想门」。这就是 §R2 L1 定义的**权威依据** —— TF-0106 的 L1 命令组以本节为准。
+L1 的判据是**必修项全绿**，而非「所有测试全绿」。
+
+`pnpm test` **不入 L1** 的裁定依据：其 22 项失败**零本轮引起**（§D4.2 交集为空），且与 `test:dcs` 的文件集**零重叠**（实测）。放进 L1 等于让每个 task 收口卡在别的 global_task 的未完成交付物上，正是「永不可能变绿的理想门」。`maturity:validate` 同理（25 项全为 committed 漂移）。二者移入 L2 按白名单差分。
+
+L1 基线（AC-3）观测于 TF-0109 修绿后，全部 exit 0；完整输出见 §R2.2 与 `GATE-BASELINE.md §5.1`。
 
 ### §D4.5 收紧后的 L2（里程碑收口）—— 白名单差分
 
-`lint:check` / `contract:check` 要求 exit 0；`pnpm test` 与 `maturity:validate` 要求**失败集 ⊆ GATE-BASELINE.md §6 白名单**，且 `config-schema-parity` 不在失败集内。
+> **命令清单以 §R2.3 为准。** 本节只定分类语义。
+
+`lint:check` / `typecheck` / `contract:check` 要求 **exit 0**（无豁免）；`pnpm test` 与 `maturity:validate` 要求**失败集 ⊆ GATE-BASELINE.md §6 白名单**，且 `config-schema-parity` 不在失败集内。`maturity` 另须按 §R2.3 单独补跑 `maturity:residual` / `maturity:traceability` 以消除 §D4.3 的 `&&` 链盲区。
 
 ### §D4.6 回归定义（承重条款）
 
