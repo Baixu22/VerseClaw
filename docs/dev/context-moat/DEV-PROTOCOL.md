@@ -670,12 +670,15 @@ docs/dev/context-moat/
 | D12 | `docs/dev/context-moat/DEV-PROTOCOL.md` | TF-0103 全部子节点 | 双（按节分工） |
 | **D13** | `src/runtime-core/memory-hybrid-retrieval.ts` | TF-0114（车道 2）/ TF-0122（车道 1） | **跨车道** |
 | D14 | `src/config/runtime-feature-leaves.ts` | TF-0109 / TF-0107 / TF-0112 | 2 |
+| D15 | `src/config/zod-schema.ts` | TF-0112（唯一写者）；TF-0105 / TF-0107 / TF-0109 仅只读引用 | 2 |
 
 **D13 是本轮唯一一组跨车道的真写冲突域。** TF-0114 修 `tokenizeWords` / `extractEntities` 的 CJK 空返回；TF-0122 裁决整条 hybrid 检索链去留，而「迁出」选项会移动整个文件。故 `TF-0122 depends_on TF-0114` 已由 non-blocking **升为 blocking**：必须先修完再裁决去留，反序会让 TF-0114 的修复被 TF-0122 的迁出连带作废。排班上两者相距 1050min，正常不会真撞上，但边必须是 blocking 以防 pick-next 抢跑。
 
 **三处已排除的 mention-only 假阳性，勿再重复认定**：`attempt.ts` 与 `init.ts` 仅被 TF-0104 作为「生产入口 / 注册入口」判例引用（零写入）；`context-compression-eval-runner.mjs` 仅被 TF-0106 作为 §R2 门命令清单引用（只读）。若车道 1 的 TF-0143 / TF-0138 需要真改这个 runner，属触碰面扩大，按 R4.2 记偏差。
 
 **D14 的登记缘由**：`runtime-feature-leaves.ts` 由 TF-0109 的 `requirements` 第 1 条直接指定改动，但初版 D01-D13 表未收录它。实现者（车道 2）在自检时主动指出该缺口并建议延后登记；审核者（车道 1）按本节「新发现的域必须追加」即时补登为 D14，理由是本表的作用是**登记完整性**而非仅风险控制 —— 延后会留下一个「pick-next 看不见该域」的窗口。三个触碰者同在车道 2，属车道内串行，无跨车道风险。偏差记录：`TFD-d14-runtime-feature-leaves-2026-08-24`。
+
+**D15 的登记缘由**：`zod-schema.ts` 被 §R3.1 的命令 2 列为受守卫路径，但 D01-D14 无任何域覆盖它，而 TF-0112 的标题（「factViews 从 schema/type 下架」）明确要求改它。缺口由车道 2 在 §R3.3 指出，并因 §R4 属车道 1 owner 节而**正确地未跨节编辑**、改为提请车道 1 补登；审核者（车道 1）已核实该文件在 D01-D14 表中命中数为 0，且图上唯一写者为 TF-0112（TF-0105 / TF-0107 / TF-0109 均为只读引用），故补登为 D15，车道 2 独占。偏差记录：`TFD-d15-zod-schema-2026-08-24`。
 
 ### R4.6 task-forest 多 session 写入纪律
 
@@ -753,6 +756,10 @@ M0 只产出 DEV-PROTOCOL.md 与目录树，不受 M1+ 的文件域分工约束�
 - **提交必须用 pathspec 限定**：`git commit -- <显式路径>`，不要裸 `git commit`。
 
 > **为什么这条是硬性的**：`git add <路径>` 只控制本次新增暂存，而裸 `git commit` 提交的是**整个 index**。当另一车道在你 `add` 与 `commit` 之间 stage 了自己的文件时，它们会被静默裹入你的提交。本轮已真实发生一次（`TFD-lane1-index-bleed-2026-08-24`：车道 1 的 TF-0105 首次提交裹入了车道 2 的两个 D07 配置文件，已 `reset --soft` + `restore --staged` 剥离，车道 2 内容经 `git hash-object` 校验字节不变）。注意新增文件仍需先 `git add`，`git commit -- <path>` 对 untracked 文件会报 `did not match any file(s) known to git`。
+
+> **回滚验证禁用写 index 的手段**：验证回滚路径（§R5 过程-9 要求每个 task 都做）必须只动工作树 —— `git apply -R` 反向打补丁 → 跑该 task 的 L0 门 → `git apply` 恢复。**禁用 `git revert --no-commit` / `git reset` / `git stash`**：它们把改动写进两条车道共用的 index，另一车道下一次提交就会把它裹走。本轮两条车道各自独立撞到过这个坑的一侧（`TFD-lane2-rollback-drill-index-mutation-2026-08-24` 与 `TFD-lane1-index-bleed-2026-08-24` 是同一事件的两侧记录）。
+
+**提交归属 trailer（§R3.8 的机械形式，自 M1 起强制）**：每个提交必须且只能带一个 `Task: TF-XXXX` trailer。这正是本节「不允许两个 task 的改动混在一次提交里」的可机械判定形式 —— 无归属的提交无法归入任何 task 的半径，因而既不可验收也不可回滚归因。M0 已落地的提交沿用 `Node:` / `Refs`，审核者对 M0 task 用 §R3.8 的三选一 grep 匹配；`fe469cbff`（车道 1 对 TF-0109 的审核）缺归属为已知既有实例，按 §R5 技术-7 不追溯改写。
 
 ### R4.10 每个 task 的开工—收口循环
 
