@@ -337,6 +337,12 @@ export type RuntimeFeatureConfig = {
     /** Default-off gate for local sanitized persistence; TaskLoop writes also require shadow. */
     persist?: boolean;
     /**
+     * KE-P1-1 task-terminal candidate generation gate (default-off). When enabled,
+     * the TaskLoop terminal hook derives fact/error-card candidates for the Review
+     * Queue; candidates stay queue-visible and are never auto-persisted.
+     */
+    candidateGeneration?: boolean;
+    /**
      * Area 4 §3.4: chat-turn memory injection pilot gate (default-off).
      * When enabled, the agent gateway queries registered memory context
      * providers and appends a `## Memory Context` block to extraSystemPrompt

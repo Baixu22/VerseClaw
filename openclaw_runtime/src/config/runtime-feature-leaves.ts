@@ -114,6 +114,7 @@ export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
     provider: true,
     proposeFacts: true,
     persist: true,
+    candidateGeneration: true,
     injectPilot: {
       enabled: true,
       providers: ["role-memory"],
