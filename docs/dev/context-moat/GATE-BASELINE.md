@@ -203,24 +203,16 @@ pnpm maturity:validate 2>&1 | grep -E "FAIL  A2 .* evidence hash mismatch" | sed
 
 ### 5.1 L1（每个 task 收口，分钟级）—— 必修全绿，**不含** `pnpm test` / `maturity:validate`
 
-L1 的判据是**必修项全绿**，而非「所有测试全绿」。六条全部 exit 0 才算过：
+> **命令清单以 DEV-PROTOCOL.md §R2.2 为准**（TF-0106 落地后 §R2 是门命令的单一真相源）。本文件只保留裁定依据与基线输出，不再复制命令清单。§R2.2 的 L1 为**六条**：`lint:bom` / `contract:check` / `typecheck:node` / `lint:dcs` / `test:dcs` / `config-schema-parity + default-config-matrix`（后者本文件初稿遗漏，已并入 §R2.2）。
 
-```bash
-pnpm lint:bom
-pnpm contract:check
-pnpm typecheck:node
-pnpm lint:dcs
-pnpm test:dcs
-npx vitest run tests/unit/config-schema-parity.test.ts
-```
+L1 的判据是**必修项全绿**，而非「所有测试全绿」。
 
-**为什么 `pnpm test` 不在 L1**：其 22 项失败零本轮引起、且与 `test:dcs` 零重叠（§3.1）。把它放进 L1 等于让每个 task 的收口都卡在别的 global_task 的未完成交付物上 —— 这正是「永远不可能变绿的理想门」。
-`pnpm test` 移入 L2，并按白名单判定。
+**为什么 `pnpm test` 不在 L1**：其 22 项失败零本轮引起、且与 `test:dcs` 零重叠（§3.1）。把它放进 L1 等于让每个 task 的收口都卡在别的 global_task 的未完成交付物上 —— 这正是「永远不可能变绿的理想门」。`pnpm test` 移入 L2，按白名单判定。
 
-**L1 基线输出**（AC-3，观测于 TF-0109 收口后的 `fe469cbff`）：
+**L1 基线输出**（AC-3，观测于 TF-0109 收口后）。注：本文件初稿基线记于 `fe469cbff`（5 条）；§R2.2 落地后的权威六条基线记于 `ef66a1c28`，见 DEV-PROTOCOL.md §R2.2。两者一致（均全 exit 0），差别仅第 6 条 `default-config-matrix` 的并入：
 
 ```
-L1 BASELINE (tightened definition) @ fe469cbff 2026-08-24T15:53:26Z
+L1 BASELINE @ fe469cbff 2026-08-24T15:53:26Z  （5 条，本文件初稿）
   pnpm run lint:bom = exit 0
   pnpm run contract:check = exit 0
   pnpm run typecheck:node = exit 0
@@ -233,11 +225,14 @@ L1 BASELINE (tightened definition) @ fe469cbff 2026-08-24T15:53:26Z
 
 ### 5.2 L2（里程碑收口，重）—— 白名单差分判定
 
+> **命令清单以 DEV-PROTOCOL.md §R2.3 为准。** 本表保留判据语义。
+
 L2 不要求 exit 0，要求**失败集 ⊆ 白名单**：
 
 | 门 | 判据 |
 |---|---|
 | `pnpm lint:check` | exit 0（无豁免） |
+| `pnpm typecheck` | exit 0（无豁免） |
 | `pnpm contract:check` | exit 0（无豁免） |
 | `pnpm test` | 失败集 ⊆ §6 白名单 `pnpm_test`，且 `config-schema-parity` 不在失败集内 |
 | `pnpm maturity:validate` | A2 失配集 ⊆ §4.3 的 25 项；**且**须单独跑 `maturity:residual` 与 `maturity:traceability` 以消除 §4.1 盲区 |
@@ -279,8 +274,9 @@ sed -n '/^<!-- GATE-BASELINE-WHITELIST:BEGIN -->$/,/^<!-- GATE-BASELINE-WHITELIS
     "pnpm typecheck:node",
     "pnpm lint:dcs",
     "pnpm test:dcs",
-    "npx vitest run tests/unit/config-schema-parity.test.ts"
+    "npx vitest run tests/unit/config-schema-parity.test.ts tests/unit/default-config-matrix.test.ts"
   ],
+  "l1CommandsAuthority": "DEV-PROTOCOL.md §R2.2 (TF-0106) is the single source of truth for gate command lists; this array must mirror it.",
   "gates": {
     "config_schema_parity": {
       "classification": "must-fix",
