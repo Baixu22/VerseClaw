@@ -499,4 +499,55 @@ M0 只产出 DEV-PROTOCOL.md 与目录树，不受 M1+ 的文件域分工约束�
 
 ## §D4 既有红门归属与 L1/L2 收紧定义
 
-<!-- owner=lane-2 node=TF-0142 -->
+来源节点：**TF-0142**。完整失败清单、25 项哈希基线、机器可读白名单落 **`docs/dev/context-moat/GATE-BASELINE.md`**；本节只固化**规则**，数据以 GATE-BASELINE.md 为准。基线观测于 `fe469cbff`（2026-08-24T15:53:26Z）。
+
+### §D4.1 问题
+
+§R2 若把 L1/L2 定义为「固定 exit-code 组全绿」，在当前工作树上**永不可达**：三个门为红 —— `config-schema-parity`（1 failed，根因 = `runtime.memory.candidateGeneration`）、`pnpm test`（22 failed / 6991 passed + 4 套件加载失败）、`maturity:validate`（25 项 A2 证据哈希失配）。不先裁定归属，G-MOAT 验收判据「L1 门整体 exit 0」被既有红门污染。
+
+### §D4.2 三分类与唯一硬判据
+
+沿用 §R5 范围-2 三分法：**must-fix**（根因在范围-1 内且本轮认领 → 必须 exit 0）/ **exempt-noise**（环境或既有未提交改动 → 入白名单、不阻塞）/ **backlog-debt**（其他 global_task 的未完成交付物 → 入白名单、不阻塞、记 owner）。
+
+「是否本轮引起」的**唯一机械判据**（不靠判断力）：
+
+```bash
+git diff --name-only 590588791..HEAD   # 本轮全部改动
+# 与「失败项主体文件集」取交集，为空 ⟹ 非本轮引起
+```
+
+实测（`fe469cbff`）：本轮 15 个改动文件 ∩ `pnpm test` 的 17 个失败文件 = ∅；∩ `maturity` 的 25 个失配文件 = ∅。**本轮至今零门失败引入。**
+
+### §D4.3 三门裁定
+
+| 门 | 分类 | 归属 | L1/L2 效力 |
+|---|---|---|---|
+| `config-schema-parity` | **must-fix** | TF-0109（`done`，已过 §R1 审核） | 必须 exit 0；**豁免 0 条** |
+| `pnpm test` | must-fix 0 / exempt-noise 12 文件 / backlog-debt 5 文件 | TF-0028 / 0029 / 0010 / 0021 / 0007 / 0018 / 平台 | **移出 L1**，入 L2 按白名单差分 |
+| `maturity:validate` | backlog-debt（全 25 项 committed 漂移） | system-maturity backlog | **不入 L1**；L2 要求失配集 ⊆ 25 项基线 |
+
+`maturity:validate` 有**已知盲区**：6 脚本 `&&` 链在第 4 个（`validate-system-maturity-evidence`）中断，第 5/6 脚本从未执行、状态未知（非已知绿）。L2 判定须单独补跑 `maturity:residual` 与 `maturity:traceability` 消除盲区。
+
+### §D4.4 收紧后的 L1（每 task 收口）—— 必修全绿，不含 `pnpm test` / `maturity`
+
+```bash
+pnpm lint:bom && pnpm contract:check && pnpm typecheck:node \
+  && pnpm lint:dcs && pnpm test:dcs \
+  && npx vitest run tests/unit/config-schema-parity.test.ts
+```
+
+`pnpm test` **不入 L1**：其 22 项失败零本轮引起、且与 `test:dcs` 文件集零重叠（实测）。放进 L1 等于让每个 task 收口卡在别的 global_task 的未完成交付物上，正是「永不可能变绿的理想门」。这就是 §R2 L1 定义的**权威依据** —— TF-0106 的 L1 命令组以本节为准。
+
+### §D4.5 收紧后的 L2（里程碑收口）—— 白名单差分
+
+`lint:check` / `contract:check` 要求 exit 0；`pnpm test` 与 `maturity:validate` 要求**失败集 ⊆ GATE-BASELINE.md §6 白名单**，且 `config-schema-parity` 不在失败集内。
+
+### §D4.6 回归定义（承重条款）
+
+> **白名单之外的任何失败 = 回归，一律阻塞。** 白名单是显式清单（文件名 + 测试名），非「已知失败」这类模糊表述。条目数**只减不增**；新增须走 §R4 偏差触发 (c)（「问题被判为本轮不修」）的 `record_deviation`。
+
+即：本节把「22 项失败 / 25 项失配」从模糊坏状态钉成**确定数字**。任何人让它变大，必须留偏差记录。
+
+### §D4.7 本决策的 `non_goals`（守住）
+
+不修 `pnpm test` 任何失败、不重算任何 maturity 哈希、不放宽 `config-schema-parity`、不改任何测试 / 旗标默认值 / src 代码。半径 = GATE-BASELINE.md + 本节，零 src 改动。
