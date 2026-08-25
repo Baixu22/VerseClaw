@@ -169,7 +169,79 @@
       "enable": "runtime.coding.sekb.experienceShadow=true OR confirm options.experienceShadow.enabled=true.",
       "rollback": "experienceShadow=false / omit options.",
       "riskNote": "Shadow journal only; experienceHitRate still fixture-level. No default knowledge injection."
+    },
+    {
+      "id": "sekb-retrieval-shadow",
+      "wave": "KE-P1",
+      "kind": "config",
+      "key": "runtime.coding.sekb.retrievalShadow",
+      "defaultDisplay": "false",
+      "defaultValue": false,
+      "risk": "shadow-only",
+      "enable": "runtime.coding.sekb.retrievalShadow=true.",
+      "rollback": "runtime.coding.sekb.retrievalShadow=false (default).",
+      "riskNote": "KE-P1-2: would_retrieve shadow -> shadow_context receipt. Zero prompt injection; no default retrieval."
+    },
+    {
+      "id": "runtime-memory-persist",
+      "wave": "R3",
+      "kind": "config",
+      "key": "runtime.memory.persist",
+      "defaultDisplay": "false",
+      "defaultValue": false,
+      "risk": "opt-in",
+      "enable": "runtime.memory.persist=true.",
+      "rollback": "runtime.memory.persist=false (default).",
+      "riskNote": "R3-1 E-1: persist=true 只有在 runtime-memory 被选为 plugins.slots.memory owner 时才合法；Settings 默认关闭。"
+    },
+    {
+      "id": "runtime-memory-inject-pilot",
+      "wave": "R3",
+      "kind": "config",
+      "key": "runtime.memory.injectPilot.enabled",
+      "defaultDisplay": "false",
+      "defaultValue": false,
+      "risk": "opt-in",
+      "enable": "runtime.memory.injectPilot.enabled=true.",
+      "rollback": "runtime.memory.injectPilot.enabled=false (default).",
+      "riskNote": "R3-1: injectPilot 通过 Context Orchestrator 接入 role-memory/runtime-memory provider；runtime-memory 仅在 E-1 合法面（plugins.slots.memory=runtime-memory + persist=true + provider=true）下读真实持久库，默认关闭。"
+    },
+    {
+      "id": "runtime-memory-candidate-generation",
+      "wave": "KE-P1",
+      "kind": "config",
+      "key": "runtime.memory.candidateGeneration",
+      "defaultDisplay": "false",
+      "defaultValue": false,
+      "risk": "opt-in",
+      "enable": "runtime.memory.candidateGeneration=true.",
+      "rollback": "runtime.memory.candidateGeneration=false (default).",
+      "riskNote": "KE-P1-1: task-terminal candidate generation (failure-guard -> Review Queue). Queue-visible only; never auto-persisted."
+    },
+    {
+      "id": "compass-context-block",
+      "wave": "R3",
+      "kind": "config",
+      "key": "runtime.contextBlock.compass.enabled",
+      "defaultDisplay": "false",
+      "defaultValue": false,
+      "risk": "read-only",
+      "enable": "runtime.contextBlock.compass.enabled=true.",
+      "rollback": "runtime.contextBlock.compass.enabled=false (default).",
+      "riskNote": "R3-1: Assembler compass handler 接收生产检索输入；默认关闭。"
+    },
+    {
+      "id": "role-memory",
+      "wave": "R3",
+      "kind": "config",
+      "key": "runtime.contextBlock.role-memory.enabled",
+      "defaultDisplay": "false",
+      "defaultValue": false,
+      "risk": "read-only",
+      "enable": "runtime.contextBlock.role-memory.enabled=true.",
+      "rollback": "runtime.contextBlock.role-memory.enabled=false (default).",
+      "riskNote": "R3-1: role-memory projection 接收真实 role/task 输入且不移除其他 provider；默认关闭。"
     }
   ],
-  "enhancementDefaultOffCount": 13
+  "enhancementDefaultOffCount": 17
 }
