@@ -1,0 +1,28 @@
+{
+  "applied_at": "2026-08-21T10:34:38.021062Z",
+  "base_graph_hash": "48768236d86bc8e0cfb424bfffb71f96c2f0f06c0e4b05614272d9d5b2e8d1a2",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 76,
+    "workspace_path": "D:\\verse_claw_worktree_compact"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "progress": 75,
+        "source_sessions": [
+          "session-2026-08-21-compact-p6-01"
+        ],
+        "status": "in_progress",
+        "summary": "正在修复 completed/final-report 被误判为 pending 的共享检测逻辑；以 R16/R29 旧落盘结果作为定位线索，仅进行离线复现和 focused 验证，不调用 provider。"
+      },
+      "id": "TF-0070"
+    }
+  ],
+  "created_at": "2026-08-21T10:33:40.077375Z",
+  "proposal_id": "TFP-compact-p6-01-start-20260821",
+  "rationale": "用户确认按 01-07 顺序继续开发，当前只启动 01。",
+  "session_id": "session-2026-08-21-compact-p6-01",
+  "status": "applied"
+}

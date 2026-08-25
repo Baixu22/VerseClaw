@@ -2709,13 +2709,45 @@ export type SessionCompactionHistoryPayload = SessionCompactionPayload & {
   limit?: number;
 };
 export type CompressionEvidenceRef = {
-  type: 'session' | 'trace' | 'file' | 'tool' | 'task_ledger' | 'clawgraph' | 'manual' | 'other';
+  type: 'session' | 'trace' | 'file' | 'tool' | 'task_ledger' | 'clawgraph' | 'manual' | 'archive' | 'cvk' | 'other';
   ref: string;
   label?: string;
 };
 export type CompressionFact = {
   text: string;
   evidenceRefs: CompressionEvidenceRef[];
+};
+export type CompressionSemanticAtomStatus = 'verified' | 'unverified' | 'stale' | 'superseded';
+export type CompressionSemanticAtomPolarity = 'positive' | 'negative' | 'neutral';
+export type CompressionSemanticAtomSeverity = 'critical' | 'important' | 'nice_to_have';
+export type CompressionSemanticAtomType =
+  | 'goal'
+  | 'latest_user_ask'
+  | 'decision'
+  | 'constraint'
+  | 'failed_attempt'
+  | 'entity'
+  | 'next_action'
+  | 'outcome'
+  | 'safety_boundary';
+export type CompressionSemanticAtom = {
+  id: string;
+  type: CompressionSemanticAtomType;
+  canonicalIdentity: string;
+  severity: CompressionSemanticAtomSeverity;
+  confidence: number;
+  scope: string;
+  polarity: CompressionSemanticAtomPolarity;
+  status: CompressionSemanticAtomStatus;
+  text: string;
+  evidenceRefs: CompressionEvidenceRef[];
+  supersedes?: string[];
+  conflicts?: string[];
+  updatedAt?: number;
+  source?: {
+    kind: 'summary' | 'message' | 'ledger' | 'cvk' | 'archive';
+    ref: string;
+  };
 };
 export type CompressionArtifactQuality = {
   score: number;
@@ -2753,6 +2785,7 @@ export type CompressionArtifact = {
   staleExcludedCount?: number;
   causalAnchorCount?: number;
   warnings?: string[];
+  semanticAtoms?: CompressionSemanticAtom[];
 };
 export type SessionCompressionArtifactPayload = SessionCompactionPayload & {
   checkpointId?: string;

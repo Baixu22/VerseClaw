@@ -1,0 +1,45 @@
+{
+  "applied_at": "2026-08-21T13:23:20.156179Z",
+  "base_graph_hash": "7947da0232bcfe094fa7b22cbf440295b600c3ad26409ea613f99270ae47c31e",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 76,
+    "workspace_path": "D:\\verse_claw_worktree_compact"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.94,
+        "evidence": [
+          "D:/verse_claw_worktree_compact/scripts/context-compression-would-retry-canary.ts",
+          "D:/verse_claw_worktree_compact/reports/context-compression/P6-TF0072-HANDOFF-STRUCTURE-EVIDENCE-2026-08-21.md",
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-local-tf0072-r5/canary-metrics.json",
+          "would-retry --self-test PASS；scoped ESLint PASS",
+          "root compact focused 63/63；runtime focused 39/39；P6/promotion/planner/orchestrator/counters 40/40",
+          "Node/Web typecheck exit 0；Harness --no-diff PASS；comms replay/compare PASS；scoped git diff --check PASS"
+        ],
+        "progress": 100,
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "status": "done",
+        "summary": "retry 后 handoff 结构已闭合：只在 would-retry 消耗一次 retry 后确定性补齐缺失区块；规范区块各一次，provider 常见别名映射并保留事实，shadow arm 保持原样。九条本地 fixture replay 的 finalGatePassed、handoffSectionsComplete、completedOutcomePreserved、exact identifier 与 redaction 均为 9/9。"
+      },
+      "id": "TF-0072"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "progress": 0,
+        "status": "ready",
+        "summary": "依赖 TF-0072 已完成。下一步只做当前源码绑定 manifest 的九条统一 would-retry 扫描：先校验 manifest/source/tree/hash，再运行统一 metrics aggregate；不得调用外部 provider或把旧 auto 产物当作当前验收。"
+      },
+      "id": "TF-0073"
+    }
+  ],
+  "created_at": "2026-08-21T13:22:15.572644Z",
+  "proposal_id": "TFP-compact-p6-03-close-04-ready-20260821",
+  "rationale": "TF-0072 handoff 结构收敛已在当前 canary 入口和九条本地 fixture replay 上闭合；按 01-07 串行顺序关闭 03 并解锁 04。",
+  "session_id": "session-2026-08-21-compact-p6-03",
+  "status": "applied"
+}

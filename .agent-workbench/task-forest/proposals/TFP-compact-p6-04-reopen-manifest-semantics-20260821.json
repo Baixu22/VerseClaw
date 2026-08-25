@@ -1,0 +1,55 @@
+{
+  "applied_at": "2026-08-21T13:52:17.675258Z",
+  "base_graph_hash": "6782876033c19c8f64c3bb12889d72e9cf8c5e3189eba04bd84e8fe2d3036c04",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 76,
+    "workspace_path": "D:\\verse_claw_worktree_compact"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.9,
+        "progress": 85,
+        "remaining_minutes_max": 120,
+        "remaining_minutes_min": 30,
+        "status": "in_progress",
+        "summary": "重新打开：r1 manifest 误把 transcript.fileHash 解释为内容 hash，并沿用旧 sample key，未与 eval runner 的 pathHash/sampleManifestKeyV2 语义一致。r1 作废，正在按 runner 语义修正并生成 r2。"
+      },
+      "id": "TF-0073"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "progress": 0,
+        "status": "proposed",
+        "summary": "等待 TF-0073 manifest pathHash/key V2 语义修正和 r2 当前源码批次完成后再解锁；旧质量证据只读盘点不算本节点启动。"
+      },
+      "id": "TF-0074"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-21T13:52:17.499455Z",
+        "evidence": "scripts/context-compression-eval-runner.mjs:fileIdentity/sampleManifestKeyV2；artifacts/p6-would-retry-local-tf0073-r1/manifest-9.json",
+        "expected_requirement": "九条 derived manifest 必须与 context-compression eval runner 的 transcript identity 和 sampleManifestKeyV2 语义一致。",
+        "id": "TFD-166ddf594c",
+        "observed_action_or_result": "r1 将 transcript.fileHash 当作文件内容 sha256，并保留旧 key；虽然自定义校验通过，但不是 runner 可解析的合法 manifest 绑定。",
+        "recommendation": "按 pathHash+basename+size+floor(mtimeMs) 和 V2 key 重建 manifest，canary 复用同语义 fail-closed 校验，r1 明确作废后重跑 r2。",
+        "related_task_ids": [
+          "TF-0073",
+          "TF-0074"
+        ],
+        "severity": "high",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-21T13:52:17.493448Z",
+  "proposal_id": "TFP-compact-p6-04-reopen-manifest-semantics-20260821",
+  "rationale": "发现 derived manifest 把 eval runner 的 transcript pathHash 误当内容 hash，并沿用旧 key；TF-0073 r1 不能作为合法当前 manifest 证据，必须退回修正。",
+  "session_id": "session-2026-08-21-compact-p6-04-correction",
+  "status": "applied"
+}

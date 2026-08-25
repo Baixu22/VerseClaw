@@ -4,12 +4,17 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import { isAcpRuntimeSpawnAvailable } from "../../acp/runtime/availability.js";
-import { finalizeCompressionTelemetry } from "../../../packages/agent-core/src/harness/compaction/compression-planner.js";
+import {
+  finalizeCompressionTelemetry,
+  type CompactionBudgetShadow,
+} from "../../../packages/agent-core/src/harness/compaction/compression-planner.js";
+import { bindCompactionDetailsArchiveEvidence } from "../agent-hooks/compaction-addressability.js";
 import type { ThinkLevel } from "../../auto-reply/thinking.js";
 import { resolveAgentModelFallbackValues } from "../../config/model-input.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { endContextOrchestratorTurn } from "../../context-engine/context-orchestrator.js";
 import { endTurnInjectionBudget } from "../../context-engine/turn-injection-budget.js";
+import { deprecationCounters } from "../../observability/deprecation-counters.js";
 import {
   createContextItemId,
   createTransformationLifecycleEvents,
@@ -199,6 +204,46 @@ function hasRealConversationContent(
   index: number,
 ): boolean {
   return isRealConversationMessage(msg, messages, index);
+}
+
+function isCompactionBudgetShadow(value: unknown): value is CompactionBudgetShadow {
+  if (!value || typeof value !== "object") return false;
+  const record = value as Record<string, unknown>;
+  return (
+    (record.plannedTier === "tier0" ||
+      record.plannedTier === "tier1" ||
+      record.plannedTier === "tier2" ||
+      record.plannedTier === "tier3" ||
+      record.plannedTier === "tier4") &&
+    (record.actualTier === "tier0" ||
+      record.actualTier === "tier1" ||
+      record.actualTier === "tier2" ||
+      record.actualTier === "tier3" ||
+      record.actualTier === "tier4") &&
+    typeof record.ignored === "boolean" &&
+    typeof record.budgetExceeded === "boolean" &&
+    typeof record.generatedAt === "string"
+  );
+}
+
+/**
+ * Real A5 call point for agent-core/default compaction. The shadow is built
+ * deterministically by `compact()`; this process-level singleton records it
+ * without changing the persisted details or the returned summary.
+ */
+export function recordEmbeddedCompactionBudgetCounters(
+  value: unknown,
+): CompactionBudgetShadow | undefined {
+  if (!isCompactionBudgetShadow(value)) return undefined;
+  if (value.ignored) {
+    deprecationCounters.incrementA5PlanIgnored(1);
+  } else {
+    deprecationCounters.incrementA5PlanAdopted(1);
+  }
+  if (value.budgetExceeded) {
+    deprecationCounters.incrementA5BudgetExceeded(1);
+  }
+  return value;
 }
 
 function createCompactionDiagId(): string {
@@ -1525,7 +1570,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
             fullSessionTokensBefore,
             estimateTokensFn: estimateTokens,
           });
-          const compactionDetails =
+          let compactionDetails =
             result.details && typeof result.details === "object" && !Array.isArray(result.details)
               ? {
                   ...(result.details as Record<string, unknown>),
@@ -1543,6 +1588,16 @@ async function compactEmbeddedAgentSessionDirectOnce(
                   ),
                 }
               : result.details;
+          recordEmbeddedCompactionBudgetCounters(
+            compactionDetails && typeof compactionDetails === "object"
+              ? (compactionDetails as { budgetShadow?: unknown }).budgetShadow
+              : undefined,
+          );
+          compactionDetails = bindCompactionDetailsArchiveEvidence({
+            details: compactionDetails,
+            archiveHandle: checkpointSnapshot?.archiveHandle,
+            archiveLabel: "pre-compaction checkpoint",
+          }) ?? compactionDetails;
           const messageCountAfter = session.messages.length;
           const compactedCount = Math.max(0, messageCountCompactionInput - messageCountAfter);
           let transcriptRotation: CompactionTranscriptRotation = { rotated: false };

@@ -52,6 +52,24 @@ import {
   getCompactionSafeguardRuntime,
   setCompactionSafeguardCancelReason,
 } from "./compaction-safeguard-runtime.js";
+import type { CompressionArtifact } from "../../../packages/agent-core/src/harness/compaction/compression-artifact.js";
+import type { CompactionSettings } from "../../../packages/agent-core/src/harness/compaction/compaction.js";
+import {
+  buildCompactionBudgetShadow,
+  type CompactionBudgetShadow,
+  type TierSchedule,
+} from "../../../packages/agent-core/src/harness/compaction/compression-planner.js";
+import {
+  normalizeCompactionPromotionStage,
+  resolveCompactionPromotionEnforcement,
+  type CompactionPromotionStage,
+} from "./compaction-promotion.js";
+import { deprecationCounters } from "../../observability/deprecation-counters.js";
+import {
+  buildValidatedCompactionOutput,
+  type CompactionValidatedDecision,
+} from "./compaction-validated-pipeline.js";
+import { buildPreviousCompactionLedgerMessage } from "./compaction-addressability.js";
 
 const log = createSubsystemLogger("compaction-safeguard");
 
@@ -71,35 +89,23 @@ const DEFAULT_QUALITY_GUARD_MAX_RETRIES = 1;
 const MAX_RECENT_TURNS_PRESERVE = 12;
 const MAX_QUALITY_GUARD_MAX_RETRIES = 3;
 const MAX_RECENT_TURN_TEXT_CHARS = 600;
-const PREVIOUS_SUMMARY_REDISTILL_PREFIX =
-  "Previous compaction summary to re-distill with the current conversation. " +
-  "Prune stale, duplicate, or superseded details instead of preserving it verbatim.";
 const compactionSafeguardDeps = {
   summarizeInStages,
 };
 
-function buildPreviousSummaryMessage(previousSummary: string): AgentMessage {
-  return {
-    role: "user",
-    content: [
-      {
-        type: "text",
-        text: `<previous-compaction-summary>\n${PREVIOUS_SUMMARY_REDISTILL_PREFIX}\n\n${previousSummary.trim()}\n</previous-compaction-summary>`,
-      },
-    ],
-    timestamp: 0,
-  } as AgentMessage;
-}
-
 function prependPreviousSummaryForRedistill(params: {
   messages: AgentMessage[];
   previousSummary?: string;
+  previousArtifact?: CompressionArtifact;
 }): AgentMessage[] {
-  const previousSummary = params.previousSummary?.trim();
-  if (!previousSummary) {
+  const previousCompactionMessage = buildPreviousCompactionLedgerMessage({
+    previousArtifact: params.previousArtifact,
+    previousSummary: params.previousSummary,
+  });
+  if (!previousCompactionMessage) {
     return params.messages;
   }
-  return [buildPreviousSummaryMessage(previousSummary), ...params.messages];
+  return [previousCompactionMessage, ...params.messages];
 }
 
 type SessionBranchEntry = {
@@ -234,10 +240,12 @@ async function summarizeViaLLM(params: {
   customInstructions?: string;
   summarizationInstructions?: Parameters<typeof summarizeInStages>[0]["summarizationInstructions"];
   previousSummary?: string;
+  previousArtifact?: CompressionArtifact;
 }): Promise<string> {
   const messages = prependPreviousSummaryForRedistill({
     messages: params.messages,
     previousSummary: params.previousSummary,
+    previousArtifact: params.previousArtifact,
   });
   return compactionSafeguardDeps.summarizeInStages({
     messages,
@@ -277,6 +285,73 @@ function assembleSuffix(parts: {
     suffix = `\n\n${suffix}`;
   }
   return suffix;
+}
+
+export type FinalizedSafeguardCompaction = {
+  artifact: CompressionArtifact;
+  validatedPipeline: CompactionValidatedDecision;
+};
+
+/**
+ * Single finalize path for provider, built-in LLM, and no-real-conversation
+ * boundary summaries. Pure audit + artifact construction: it never changes the
+ * summary body and never issues a model call.
+ */
+export function finalizeSafeguardCompaction(params: {
+  source: "provider" | "llm" | "boundary";
+  summary: string;
+  messages: AgentMessage[];
+  previousSummary?: string;
+  previousArtifact?: CompressionArtifact;
+  readFiles: string[];
+  modifiedFiles: string[];
+  identifiers: string[];
+  latestAsk: string | null;
+  identifierPolicy: "strict" | "off" | "custom";
+  promotionStage?: CompactionPromotionStage;
+}): FinalizedSafeguardCompaction {
+  const output = buildValidatedCompactionOutput({
+    source: params.source,
+    summary: params.summary,
+    messages: params.messages,
+    previousSummary: params.previousSummary,
+    previousArtifact: params.previousArtifact,
+    readFiles: params.readFiles,
+    modifiedFiles: params.modifiedFiles,
+    identifiers: params.identifiers,
+    latestAsk: params.latestAsk,
+    identifierPolicy: params.identifierPolicy,
+    promotionStage: params.promotionStage,
+  });
+  return {
+    artifact: output.artifact,
+    validatedPipeline: output.decision,
+  };
+}
+
+/**
+ * Real A5 call point for safeguard-owned compaction exits. Safeguard always
+ * owns the final summary path, so when a schedule exists the agent-core tier
+ * plan is shadow-ignored rather than silently claimed as adopted. The returned
+ * shadow is diagnostics-only and is attached to CompactionDetails by callers.
+ */
+export function recordSafeguardBudgetShadow(params: {
+  schedule: TierSchedule | undefined;
+  settings: CompactionSettings;
+  tokensBefore: number;
+}): CompactionBudgetShadow | undefined {
+  const shadow = buildCompactionBudgetShadow({
+    schedule: params.schedule,
+    settings: params.settings,
+    tokensBefore: params.tokensBefore,
+    ignored: true,
+  });
+  if (!shadow) return undefined;
+  deprecationCounters.incrementA5PlanIgnored(1);
+  if (shadow.budgetExceeded) {
+    deprecationCounters.incrementA5BudgetExceeded(1);
+  }
+  return shadow;
 }
 
 type ToolFailure = {
@@ -901,6 +976,12 @@ export default function compactionSafeguardExtension(api: ExtensionAPI): void {
         hasRealTurnPrefix = false;
       }
     }
+    // Model resolution: ctx.model is undefined in compact.ts workflow
+    // (extensionRunner.initialize() is never called). Resolve runtime-owned
+    // knobs once so boundary/provider/LLM exits share one P6 stage.
+    const runtime = getCompactionSafeguardRuntime(ctx.sessionManager);
+    const promotionStage = normalizeCompactionPromotionStage(runtime?.promotionStage);
+    const promotionMaxRetries = resolveQualityGuardMaxRetries(runtime?.qualityGuardMaxRetries);
     setCompactionSafeguardCancelReason(ctx.sessionManager, undefined);
     if (!hasRealSummarizable && !hasRealTurnPrefix) {
       // When there are no summarizable messages AND no real turn-prefix content,
@@ -919,11 +1000,46 @@ export default function compactionSafeguardExtension(api: ExtensionAPI): void {
         "Compaction safeguard: no real conversation messages to summarize; writing compaction boundary to suppress re-trigger loop.",
       );
       const fallbackSummary = buildStructuredFallbackSummary(preparation.previousSummary);
+      const boundaryMessages = [...baseMessagesToSummarize, ...baseTurnPrefixMessages];
+      const boundaryFileLists = computeFileLists(preparation.fileOps);
+      const boundaryLatestAsk = extractLatestUserAsk(boundaryMessages);
+      const boundaryIdentifiers = extractOpaqueIdentifiers(
+        boundaryMessages
+          .slice(-10)
+          .map((message) => extractMessageText(message))
+          .filter(Boolean)
+          .join("\n"),
+      );
+      const boundaryFinalized = finalizeSafeguardCompaction({
+        source: "boundary",
+        summary: fallbackSummary,
+        messages: boundaryMessages,
+        previousSummary: preparation.previousSummary,
+        previousArtifact: preparation.previousArtifact,
+        readFiles: boundaryFileLists.readFiles,
+        modifiedFiles: boundaryFileLists.modifiedFiles,
+        identifiers: boundaryIdentifiers,
+        latestAsk: boundaryLatestAsk,
+        identifierPolicy: runtime?.identifierPolicy ?? "strict",
+        promotionStage,
+      });
+      const budgetShadow = recordSafeguardBudgetShadow({
+        schedule: preparation.settings.tierSchedule,
+        settings: preparation.settings,
+        tokensBefore: preparation.tokensBefore,
+      });
       return {
         compaction: {
           summary: fallbackSummary,
           firstKeptEntryId: preparation.firstKeptEntryId,
           tokensBefore: preparation.tokensBefore,
+          details: {
+            readFiles: boundaryFileLists.readFiles,
+            modifiedFiles: boundaryFileLists.modifiedFiles,
+            artifact: boundaryFinalized.artifact,
+            validatedPipeline: boundaryFinalized.validatedPipeline,
+            ...(budgetShadow ? { budgetShadow } : {}),
+          },
         },
       };
     }
@@ -935,9 +1051,6 @@ export default function compactionSafeguardExtension(api: ExtensionAPI): void {
     ]);
     const toolFailureSection = formatToolFailuresSection(toolFailures);
 
-    // Model resolution: ctx.model is undefined in compact.ts workflow (extensionRunner.initialize() is never called).
-    // Fall back to runtime.model which is explicitly passed when building extension paths.
-    const runtime = getCompactionSafeguardRuntime(ctx.sessionManager);
     const customInstructions = resolveCompactionInstructions(
       eventInstructions,
       runtime?.customInstructions,
@@ -984,7 +1097,90 @@ export default function compactionSafeguardExtension(api: ExtensionAPI): void {
 
           if (providerResult !== undefined) {
             // Provider succeeded — assemble suffix metadata and return.
-            // No quality guard: the provider is trusted.
+            // The provider output is still untrusted: run it through the same
+            // finalize pipeline as LLM/boundary outputs. P6 stages above shadow
+            // may add a bounded provider retry or a fail-closed cancel.
+            const providerLatestAsk = extractLatestUserAsk(allMessages);
+            const providerIdentifiers = extractOpaqueIdentifiers(
+              allMessages
+                .slice(-10)
+                .map((message) => extractMessageText(message))
+                .filter(Boolean)
+                .join("\n"),
+            );
+            let providerRepairAttempts = 0;
+            let providerSummary = providerResult;
+            let providerFinalized = finalizeSafeguardCompaction({
+              source: "provider",
+              summary: providerSummary,
+              messages: allMessages,
+              previousSummary: preparation.previousSummary,
+              previousArtifact: preparation.previousArtifact,
+              readFiles,
+              modifiedFiles,
+              identifiers: providerIdentifiers,
+              latestAsk: providerLatestAsk,
+              identifierPolicy,
+              promotionStage,
+            });
+            while (true) {
+              const enforcement = resolveCompactionPromotionEnforcement({
+                stage: promotionStage,
+                decision: providerFinalized.validatedPipeline,
+                repairAttempts: providerRepairAttempts,
+                maxRetries: promotionMaxRetries,
+                isBoundary: false,
+              });
+              if (enforcement.action === "retry") {
+                const feedback = [
+                  `P6 ${promotionStage} feedback:`,
+                  ...providerFinalized.validatedPipeline.reasons.slice(0, 8),
+                ].join("\n");
+                const retried = await tryProviderSummarize(compactionProvider, {
+                  messages: allMessages,
+                  signal,
+                  customInstructions: `${structuredInstructions}
+
+${feedback}`,
+                  summarizationInstructions,
+                  previousSummary: preparation.previousSummary,
+                });
+                providerRepairAttempts += 1;
+                if (typeof retried === "string" && retried.length > 0) {
+                  providerSummary = retried;
+                }
+                providerFinalized = finalizeSafeguardCompaction({
+                  source: "provider",
+                  summary: providerSummary,
+                  messages: allMessages,
+                  previousSummary: preparation.previousSummary,
+                  previousArtifact: preparation.previousArtifact,
+                  readFiles,
+                  modifiedFiles,
+                  identifiers: providerIdentifiers,
+                  latestAsk: providerLatestAsk,
+                  identifierPolicy,
+                  promotionStage,
+                });
+                continue;
+              }
+              if (enforcement.action === "cancel") {
+                log.warn(
+                  `Compaction cancelled by P6 ${promotionStage} enforcement: ${enforcement.reason}`,
+                );
+                setCompactionSafeguardCancelReason(
+                  ctx.sessionManager,
+                  `Compaction cancelled by P6 ${promotionStage} enforcement: ${enforcement.reason}`,
+                );
+                return { cancel: true };
+              }
+              break;
+            }
+            const budgetShadow = recordSafeguardBudgetShadow({
+              schedule: preparation.settings.tierSchedule,
+              settings: preparation.settings,
+              tokensBefore: preparation.tokensBefore,
+            });
             const workspaceContext = await readWorkspaceContextForSummary(
               runtime?.postCompactionSections,
               runtime?.workspaceDir,
@@ -996,13 +1192,19 @@ export default function compactionSafeguardExtension(api: ExtensionAPI): void {
               fileOpsSummary,
               workspaceContext,
             });
-            const summary = capCompactionSummaryPreservingSuffix(providerResult, suffix);
+            const summary = capCompactionSummaryPreservingSuffix(providerSummary, suffix);
             return {
               compaction: {
                 summary,
                 firstKeptEntryId: preparation.firstKeptEntryId,
                 tokensBefore: preparation.tokensBefore,
-                details: { readFiles, modifiedFiles },
+                details: {
+                  readFiles,
+                  modifiedFiles,
+                  artifact: providerFinalized.artifact,
+                  validatedPipeline: providerFinalized.validatedPipeline,
+                  ...(budgetShadow ? { budgetShadow } : {}),
+                },
               },
             };
           }
@@ -1125,6 +1327,7 @@ export default function compactionSafeguardExtension(api: ExtensionAPI): void {
                   customInstructions: structuredInstructions,
                   summarizationInstructions,
                   previousSummary: preparation.previousSummary,
+                  previousArtifact: undefined,
                 });
               } catch (droppedError) {
                 log.warn(
@@ -1201,6 +1404,7 @@ export default function compactionSafeguardExtension(api: ExtensionAPI): void {
                   customInstructions: currentInstructions,
                   summarizationInstructions,
                   previousSummary: effectivePreviousSummary,
+                  previousArtifact: preparation.previousArtifact,
                 })
               : buildStructuredFallbackSummary(effectivePreviousSummary, summarizationInstructions);
 
@@ -1221,6 +1425,7 @@ export default function compactionSafeguardExtension(api: ExtensionAPI): void {
               ),
               summarizationInstructions,
               previousSummary: undefined,
+              previousArtifact: undefined,
             });
             splitTurnSectionLocal = `**Turn Context (split turn):**\n\n${prefixSummary}`;
             summaryWithoutPreservedTurns = historySummary.trim()
@@ -1293,12 +1498,56 @@ export default function compactionSafeguardExtension(api: ExtensionAPI): void {
       const bodyToCap = lastHistorySummary || summary;
       summary = capCompactionSummaryPreservingSuffix(bodyToCap, suffix);
 
+      // Build the shared validated artifact/audit from the summary body only
+      // (pre-suffix), matching provider and boundary exits.
+      const llmFinalized = finalizeSafeguardCompaction({
+        source: "llm",
+        summary: bodyToCap,
+        messages: [...messagesToSummarize, ...turnPrefixMessages],
+        previousSummary: preparation.previousSummary,
+        previousArtifact: preparation.previousArtifact,
+        readFiles,
+        modifiedFiles,
+        identifiers,
+        latestAsk: latestUserAsk,
+        identifierPolicy,
+        promotionStage,
+      });
+      const llmEnforcement = resolveCompactionPromotionEnforcement({
+        stage: promotionStage,
+        decision: llmFinalized.validatedPipeline,
+        repairAttempts: promotionMaxRetries,
+        maxRetries: promotionMaxRetries,
+        isBoundary: false,
+      });
+      if (llmEnforcement.action === "cancel") {
+        log.warn(
+          `Compaction cancelled by P6 ${promotionStage} enforcement: ${llmEnforcement.reason}`,
+        );
+        setCompactionSafeguardCancelReason(
+          ctx.sessionManager,
+          `Compaction cancelled by P6 ${promotionStage} enforcement: ${llmEnforcement.reason}`,
+        );
+        return { cancel: true };
+      }
+      const budgetShadow = recordSafeguardBudgetShadow({
+        schedule: preparation.settings.tierSchedule,
+        settings: preparation.settings,
+        tokensBefore: preparation.tokensBefore,
+      });
+
       return {
         compaction: {
           summary,
           firstKeptEntryId: preparation.firstKeptEntryId,
           tokensBefore: preparation.tokensBefore,
-          details: { readFiles, modifiedFiles },
+          details: {
+            readFiles,
+            modifiedFiles,
+            artifact: llmFinalized.artifact,
+            validatedPipeline: llmFinalized.validatedPipeline,
+            ...(budgetShadow ? { budgetShadow } : {}),
+          },
         },
       };
     } catch (error) {
@@ -1319,6 +1568,7 @@ export const testing = {
   setSummarizeInStagesForTest(next?: typeof summarizeInStages) {
     compactionSafeguardDeps.summarizeInStages = next ?? summarizeInStages;
   },
+  finalizeSafeguardCompaction,
   collectToolFailures,
   formatToolFailuresSection,
   splitPreservedRecentTurns,

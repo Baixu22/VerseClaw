@@ -4,8 +4,9 @@ import {
   normalizeCompressionArtifact,
   renderCompressionArtifactSummary,
   renderRecoveryContextProjection,
+  type CompressionSemanticAtom,
 } from '../../openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact';
-import { compact } from '../../openclaw_runtime/packages/agent-core/src/harness/compaction/compaction';
+import { compact, prepareCompaction } from '../../openclaw_runtime/packages/agent-core/src/harness/compaction/compaction';
 import {
   defaultTokenPruningAdapter,
   microCompactText,
@@ -329,4 +330,318 @@ describe('compression artifact', () => {
     expect(serialized).toContain('Next action: run DeepSeek continuation validation');
     expect(serialized).toContain('recent hot 4');
   });
+
+  it('keeps legacy v1 artifacts readable when semanticAtoms is absent', () => {
+    const artifact = buildDeterministicCompressionArtifact({
+      messages: [{ role: 'user', content: 'Legacy v1 artifact with no atom ledger.' }] as never,
+    });
+    const legacyPayload = JSON.parse(JSON.stringify(artifact)) as Record<string, unknown>;
+    delete legacyPayload.semanticAtoms;
+
+    const normalized = normalizeCompressionArtifact(legacyPayload);
+
+    expect(normalized).toBeDefined();
+    expect(normalized?.schemaVersion).toBe(1);
+    expect(normalized?.semanticAtoms).toBeUndefined();
+    expect(normalized?.objective).toBe(artifact.objective);
+  });
+
+  it('normalizes semantic atoms, derives legacy fields from the ledger, and keeps atom text bounded', () => {
+    const largeCodeTail = 'const durableBody = "' + 'z'.repeat(700) + '";';
+    const largeCode = '```ts\n' + largeCodeTail + '\n```';
+    const fakeSecret = 'sk-abcdefgh12345678';
+    const atoms = [
+      {
+        id: 'atom-goal-a',
+        type: 'goal',
+        canonicalIdentity: 'goal:ship-semantic-atoms',
+        severity: 'critical',
+        confidence: 0.97,
+        scope: 'session',
+        polarity: 'positive',
+        status: 'verified',
+        text: `Ship the P1 semantic atom ledger without carrying OPENAI_API_KEY=${fakeSecret}.`,
+        evidenceRefs: [{ type: 'session', ref: 'message:1', label: 'user message' }],
+      },
+      {
+        id: 'atom-decision-a',
+        type: 'decision',
+        canonicalIdentity: 'decision:ledger-is-carrier',
+        severity: 'important',
+        confidence: 0.9,
+        scope: 'task',
+        polarity: 'neutral',
+        status: 'verified',
+        text: 'Use the atom ledger as the artifact carrier and keep Markdown as projection only.',
+        evidenceRefs: [{ type: 'trace', ref: 'trace:1' }],
+      },
+      {
+        id: 'atom-failed-a',
+        type: 'failed_attempt',
+        canonicalIdentity: 'failed:summary-only-extraction',
+        severity: 'important',
+        confidence: 0.95,
+        scope: 'task',
+        polarity: 'negative',
+        status: 'verified',
+        text: 'Summary-only extraction dropped evidence refs.',
+        evidenceRefs: [{ type: 'session', ref: 'message:2' }],
+      },
+      {
+        id: 'atom-next-a',
+        type: 'next_action',
+        canonicalIdentity: 'next:run-regressions',
+        severity: 'important',
+        confidence: 0.9,
+        scope: 'task',
+        polarity: 'positive',
+        status: 'verified',
+        text: 'Run the CRK recovery regression tests.',
+        evidenceRefs: [{ type: 'session', ref: 'message:3' }],
+      },
+      {
+        id: 'atom-body-a',
+        type: 'entity',
+        canonicalIdentity: 'entity:durable-body',
+        severity: 'nice_to_have',
+        confidence: 0.8,
+        scope: 'workspace',
+        polarity: 'neutral',
+        status: 'verified',
+        text: largeCode,
+        evidenceRefs: [{ type: 'file', ref: 'src/durable.ts' }],
+      },
+      {
+        id: 'atom-goal-unverified',
+        type: 'goal',
+        canonicalIdentity: 'goal:unverified-claim',
+        severity: 'critical',
+        confidence: 0.88,
+        scope: 'session',
+        polarity: 'positive',
+        status: 'verified',
+        text: 'A critical atom that has no evidence ref.',
+        evidenceRefs: [],
+      },
+    ];
+
+    const artifact = buildDeterministicCompressionArtifact({
+      messages: [{ role: 'user', content: 'Implement atom-ledger compaction.' }] as never,
+      semanticAtoms: atoms as CompressionSemanticAtom[],
+    });
+
+    const ledger = artifact.semanticAtoms ?? [];
+    const criticalNoEvidence = ledger.find((atom) => atom.id === 'atom-goal-unverified');
+    const boundedBody = ledger.find((atom) => atom.id === 'atom-body-a');
+
+    expect(criticalNoEvidence?.status).toBe('unverified');
+    expect(artifact.quality.warnings).toContain('critical_atom_missing_evidence');
+    expect(artifact.objective).toContain('Ship the P1 semantic atom ledger');
+    expect(artifact.objective).not.toContain(fakeSecret);
+    expect(artifact.objective).toContain('OPENAI_API_KEY=[REDACTED]');
+    expect(artifact.decisions.map((item) => item.text)).toContain(
+      'Use the atom ledger as the artifact carrier and keep Markdown as projection only.',
+    );
+    expect(artifact.failedAttempts.map((item) => item.text)).toContain(
+      'Summary-only extraction dropped evidence refs.',
+    );
+    expect(artifact.nextAction).toBe('Run the CRK recovery regression tests.');
+    expect(boundedBody?.text).not.toContain(largeCodeTail);
+    expect(boundedBody?.text.length).toBeLessThanOrEqual(260);
+
+    const projection = renderRecoveryContextProjection(artifact);
+    expect(projection).toContain('semanticAtoms:');
+    expect(projection).toContain('verified=');
+    expect(projection).toContain('unverified=');
+    expect(projection).not.toContain(largeCodeTail);
+    expect(renderCompressionArtifactSummary(artifact)).toContain('## Goal');
+  });
+
+  it('carries lineage across consecutive compactions without deleting superseded atoms', () => {
+    const atomA: CompressionSemanticAtom = {
+      id: 'atom-a',
+      type: 'decision',
+      canonicalIdentity: 'decision:original-plan',
+      severity: 'important',
+      confidence: 0.9,
+      scope: 'task',
+      polarity: 'positive',
+      status: 'verified',
+      text: 'Use the original plan.',
+      evidenceRefs: [{ type: 'session', ref: 'message:1' }],
+    };
+    const first = buildDeterministicCompressionArtifact({
+      messages: [{ role: 'user', content: 'Start planning.' }] as never,
+      semanticAtoms: [atomA],
+    });
+    const second = buildDeterministicCompressionArtifact({
+      messages: [{ role: 'user', content: 'Revise the plan.' }] as never,
+      previousArtifact: first,
+      semanticAtoms: [
+        {
+          id: 'atom-b',
+          type: 'decision',
+          canonicalIdentity: 'decision:revised-plan',
+          severity: 'critical',
+          confidence: 0.95,
+          scope: 'task',
+          polarity: 'neutral',
+          status: 'verified',
+          text: 'Use the revised plan.',
+          evidenceRefs: [{ type: 'session', ref: 'message:2' }],
+          supersedes: ['atom-a'],
+        },
+        {
+          id: 'atom-c',
+          type: 'constraint',
+          canonicalIdentity: 'constraint:conflict-visible',
+          severity: 'important',
+          confidence: 0.85,
+          scope: 'task',
+          polarity: 'negative',
+          status: 'verified',
+          text: 'The revised plan conflicts with the original plan.',
+          evidenceRefs: [{ type: 'session', ref: 'message:3' }],
+          conflicts: ['atom-a'],
+        },
+      ],
+    });
+
+    const ledger = second.semanticAtoms ?? [];
+    const carriedA = ledger.find((atom) => atom.id === 'atom-a');
+    const carriedB = ledger.find((atom) => atom.id === 'atom-b');
+
+    expect(first.semanticAtoms?.find((atom) => atom.id === 'atom-a')?.status).toBe('verified');
+    expect(carriedA?.status).toBe('superseded');
+    expect(carriedB?.status).toBe('verified');
+    expect(ledger.map((atom) => atom.id)).toEqual(expect.arrayContaining(['atom-a', 'atom-b', 'atom-c']));
+
+    const projection = renderRecoveryContextProjection(second);
+    expect(projection).toContain('superseded=1');
+    expect(projection).toContain('conflicts=1');
+    expect(projection).toContain('Use the revised plan.');
+    expect(projection).toContain('Use the original plan.');
+  });
+
+  it('carries the previous normalized artifact into compaction preparation', () => {
+    const previousArtifact = buildDeterministicCompressionArtifact({
+      messages: [{ role: 'user', content: 'Prepare a lineage-carrying compaction.' }] as never,
+      semanticAtoms: [
+        {
+          id: 'atom-prep-a',
+          type: 'goal',
+          canonicalIdentity: 'goal:lineage',
+          severity: 'critical',
+          confidence: 1,
+          scope: 'session',
+          polarity: 'positive',
+          status: 'verified',
+          text: 'Preserve lineage across compaction.',
+          evidenceRefs: [{ type: 'session', ref: 'message:1' }],
+        },
+      ],
+    });
+    const entries = [
+      {
+        type: 'compaction',
+        id: 'compaction-1',
+        parentId: null,
+        timestamp: '2026-08-17T00:00:00.000Z',
+        summary: 'Previous compaction summary.',
+        firstKeptEntryId: 'message-1',
+        tokensBefore: 200,
+        details: { artifact: previousArtifact },
+      },
+      {
+        type: 'message',
+        id: 'message-1',
+        parentId: 'compaction-1',
+        timestamp: '2026-08-17T00:01:00.000Z',
+        message: { id: 'message-1', role: 'user', content: 'Continue with lineage.' },
+      },
+    ] as never;
+
+    const preparation = prepareCompaction(entries, {
+      enabled: true,
+      reserveTokens: 100,
+      keepRecentTokens: 100_000,
+      contextWindow: 100_000,
+    });
+
+    expect(preparation.ok).toBe(true);
+    if (!preparation.ok) return;
+    expect(preparation.value?.previousSummary).toBe('Previous compaction summary.');
+    expect(preparation.value?.previousArtifact?.semanticAtoms?.map((atom) => atom.id)).toContain('atom-prep-a');
+    expect(preparation.value?.previousArtifact?.schemaVersion).toBe(1);
+  });
+
+  it('leaves previousArtifact undefined when no prior compaction exists', () => {
+    const preparation = prepareCompaction(
+      [
+        {
+          type: 'message',
+          id: 'message-1',
+          parentId: null,
+          timestamp: '2026-08-17T00:00:00.000Z',
+          message: { id: 'message-1', role: 'user', content: 'First message.' },
+        },
+      ] as never,
+      { enabled: true, reserveTokens: 100, keepRecentTokens: 100_000, contextWindow: 100_000 },
+    );
+
+    expect(preparation.ok).toBe(true);
+    if (!preparation.ok) return;
+    expect(preparation.value?.previousArtifact).toBeUndefined();
+  });
+
+  it('normalizes semanticAtoms at the Electron host boundary instead of trusting unknown spread', async () => {
+    const { mapCompressionArtifact } = await import('@electron/services/sessions-api');
+    const legacyQuality = {
+      score: 1,
+      level: 'high',
+      fieldCoverage: 1,
+      evidenceCoverage: 1,
+      artifactTokens: 10,
+      projectionTokens: 10,
+      warnings: [],
+    };
+    const mapped = mapCompressionArtifact({
+      schemaVersion: 1,
+      objective: 'Mapped fixture',
+      constraints: [],
+      currentState: 'Mapped fixture',
+      done: [],
+      inProgress: [],
+      blocked: [],
+      decisions: [],
+      filesTouched: [],
+      testsRun: [],
+      failedAttempts: [],
+      deviations: [],
+      nextAction: 'Continue',
+      reviewNeeded: [],
+      evidenceRefs: [],
+      unverifiedClaims: [],
+      quality: legacyQuality,
+      semanticAtoms: [
+        {
+          id: 'electron-atom-a',
+          type: 'goal',
+          canonicalIdentity: 'goal:mapped',
+          severity: 'critical',
+          confidence: 0.9,
+          scope: 'session',
+          polarity: 'positive',
+          status: 'verified',
+          text: 'A critical atom with no evidence at the Electron boundary.',
+          evidenceRefs: [],
+        },
+      ],
+    });
+
+    expect(mapped?.semanticAtoms?.[0]?.status).toBe('unverified');
+    expect(mapped?.quality.warnings).toContain('critical_atom_missing_evidence');
+  });
+
+
 });

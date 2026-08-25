@@ -1,3 +1,308 @@
+### 追加：最终验收通过——v8 接地管线全面优于 v7 基线，进入合并收尾（2026-08-26）
+
+最终配置（qwen-plus 接地抽取 + guideline v5 + directive 措辞修复 + scoring v1.4）× 锁定 GT × 回归 30 压缩 + 12 样本双变体评估：**shipped = 0.333/0.25/0/0.938，历史最佳**；对比 v1.1 基线 success +16.6pp、contradiction -25pp（清零）、repeat -8.3pp、state +4.2pp。稳定化承诺全兑现（R8 2/2、R30 重复消除、R26 恢复）。语义审计：确定性批次 30/30；接地产物 29/30（R1 唯一分歧为设计预期的具体动作提升，已定性）。门禁全绿（59/59、45/45、canary、self-test）。判定：**验收通过**（限本基准与语料族；promotion 保持 shadow）。成本：抽取 ¥0.35 + 评估，护栏 ¥6 未触发。报告：`reports/context-compression/HANDOFF-BENCHMARK-V1-FINAL-ACCEPTANCE-2026-08-26.md`。**TF-0074 compact 优化工作收尾，进入合并流程。**
+
+### 追加：抽取稳定化完成——最终配置确立，推荐进入整轮验收（2026-08-26）
+
+方案 A 执行完毕：k-shot 多数抽取机制 + flash-k3/plus-k1 对照实验 + directive 措辞修复 + 计分器 v1.4（引文接地脱敏、动作同义改写等价）。预注册标准全达：R8 success 2/2（此前 0/6+）、R17 重复消除 8/8 次运行。最终配置（**qwen-plus 抽取 + guideline v5 + 措辞修复 + scoring v1.4**）5 样本微集合：success 0.6→0.8、repeat 0.2→0、state 持平。门禁全绿（59/59 单测、语义审计 30/30 batch v14、canary、self-test）。残余：R26/R8 型「报告复述 vs 重做」rubric 边界（10 运行 2 次，GT v2 可解）；R17 success 属接手保守性设计边界。成本 ≈¥1.4，v8 累计 ≈¥5.5。详见基础设施报告第 11 节。**建议下一步：最终配置整轮验收（≈¥1）**。
+
+### 追加：修复冲刺收敛——机制修复全落地，瓶颈转移到抽取方差（2026-08-26）
+
+三轮微验证（v3 FAIL → v4 缺陷清零 → v5 恢复 R9/R26/R30）。永久修复 4 项（回归感知归因、准则作用域、next_action 管线、directive 活跃段选择），57/57 单测 + 30/30 语义审计绿。v5 微集合 Pareto 优于 v0（success 持平 0.6、repeat 0.4→0.2、contradiction 0、state +0.1）。稳定性复测证实 R8 失败与 R17 重复是稳定的抽取方差问题，非偶然——瓶颈已从准则/管线转移到抽取质量。**未启动整轮验收**（预注册微验证标准未全达）。成本 ≈¥0.75。下一步推荐：抽取稳定化（k-shot 或 qwen-plus 抽取，≈¥2-3）后再谈验收。详见基础设施报告第 10 节。
+
+### 追加：Round 2 候选 v2 被拒——过拟合被制度拦截（2026-08-26）
+
+v2（完成标记逐字抽取+VERIFIED 呈现+待办逐字抽取）在优化集 success **+24pp**（0.24→0.48），但回归 30 **-8.3pp**（0.25→0.167）且 repeat 微升 → **REJECTED**（fail-closed 硬阈值）。机制：R8 修好的同时 R9/R26 翻转、R17 新增重复+矛盾。正式准则仍为 v0；连续拒绝 2/3。结论：分布内过拟合被量化证实并被门禁拦截。下一步：归因升级为回归感知（吃回归集失败）+ 补丁条件化，再跑 round 3。成本 ¥0.48。详见基础设施报告第 9 节。
+
+### 追加：scoring-v1.3（k=3 多数投票）正式基线确立
+
+单发 judge 方差被实证污染指标后，模糊带裁决改 k=3 多数投票（选票留痕、temperature 0.3）。**正式基线采纳 v1.3**：core = 0.250/0.583/0/0.938，shipped = 0.250/0.250/0.167/0.896。归因结论不变：压缩损失 0（12/12 信息在场），失败全部为表达/显著性损失。成本 ¥0.40。详见验收报告第 6-7 节。
+
+## 当前接力：验收归因完成——压缩损失 0、表达损失为主；bench 升级 scoring-v1.2（2026-08-25 深夜）
+
+正式验收（锁定 GT、qwen-plus）后新增 **信息可用性归因** 与 **短引用修复**（scoring-v1.2，self-test 16/16 复绿）：
+
+| 集合 | success | repeat | contradiction | state-acc | 归因 |
+| --- | --- | --- | --- | --- | --- |
+| v1.2 core | 0.333 | 0.667 | 0 | 0.979 | 压缩损失 0 / 表达损失 8 |
+| v1.2 shipped | 0.167 | 0.167 | 0 | 0.938 | 压缩损失 0 / 表达损失 10 |
+
+核心结论：12/12 样本的 GT 下一动作信息在 v7 摘要中全部在场——压缩器没丢信息，问题全在表达/显著性（入口点未提升为动作、调查步骤无勿重复标记、directive 对强模型误导）。同时实证 judge 模糊带方差：同输出两次跑翻转 2-3 个标志 → 下一步 k=3 多数投票。证据：`artifacts/handoff-benchmark-v1/acceptance-v1.2-{core,shipped}/`。GT v2（acceptableAlternatives，R5 语义问题）待用户审锁。
+## 当前接力：TF-0074 Handoff Benchmark v1 正式验收完成——锁定 GT、qwen-plus 接手、v7 真度量基线确立（2026-08-25）
+
+按用户聊天指令执行正式验收：`reports/context-compression/handoff-benchmark-v1/ground-truth.json` 已锁定（lockedBy=用户指令，gtSha256 `698de58e...`），handoff 模型升级为 **qwen-plus**（judge 保持 qwen-plus-latest，脚本断言模型独立性），v12 批次 core/shipped 双变体全量重跑（合计 ¥0.36）。
+
+**正式基线（v7 压缩器）**：
+
+| 指标 | core | shipped |
+| --- | --- | --- |
+| handoff-success-rate | 0.250 | 0.167 |
+| repeat-work-rate | 0.417 | 0.333 |
+| contradiction-rate | 0.083 | 0.250 |
+| state-accuracy | 0.896 | 0.896 |
+
+核心结论（详见 `reports/context-compression/HANDOFF-BENCHMARK-V1-ACCEPTANCE-2026-08-25.md`）：
+1. 这是新增第四轴真度量的**基线**，不是门禁翻案——v7 三阶段验收结论不变，两者证据类型不同不得互相顶替。
+2. 待办目标家族样本（R10–R17）success 0/6、state-accuracy 1.0——摘要携带调查结论但驱动不出正确动作，为 P1/P2 首要目标（正式证据）。
+3. 模型不变性：qwen-plus 接手 success 低于 qwen-flash 临时跑——瓶颈在摘要内容，不在接手模型能力。
+4. 裁决规则继承 v8 计划：优化集 +5pp / repeat 与 contradiction 不升 / 回归降幅 ≤2pp；holdout 终评一次性、聚合输出。优化集 GT 仍为草案（仅循环内部适应度）。
+## 当前接力：TF-0074 v8 优化 P0/P1/P2 落地——Handoff Benchmark 上线、接地抽取器上线、ACON 闭环就绪（2026-08-25）
+
+按已批准的 `docs/dev/COMPACT-OPTIMIZATION-STRATEGY-V8-2026-08-24.md` 实施前三阶段；全部改动仅针对 shadow 管线，`promotionStage` 保持 `shadow`，未解锁任何产品级状态。本轮所有 GT 均为**草案（未用户锁定）**，所有指标均为 PROVISIONAL，不作为验收证据。
+
+### Phase 0 — Handoff Benchmark（真度量，已上线）
+
+- 新脚本 `scripts/context-compression-handoff-benchmark.mjs`：双盲（run 模式结构性不加载 transcript）、严格 JSON 契约（状态评估+下一动作+4 探针）、确定性判分优先（CJK 双字+Latin token 重叠、极性保护）、模糊带裁决 judge 必须给出逐字引用否则 fail-closed、GT 锁哈希拒跑、预算护栏、模型独立性断言。self-test 16/16（含篡改拒跑、引用不接地 fail-closed、四类指标判分）。
+- 确定性样本选择（`--select-only`）：12 样本 R5 R8 R9 R10 R11 R13 R14 R16 R17 R25 R26 R30（规则：pending-objective 或未解决失败链；与策略预期名单不同，按计划以规则为准）。
+- GT 草案：`reports/context-compression/handoff-benchmark-v1/ground-truth.json`（12 样本，逐条证据引用）→ **待用户审核并 `--lock`**。
+- 计分器 v1.0→v1.1 校准（首轮临时跑后逐标志核查）：①directive 鹦鹉学舌混杂 → 新增 `--strip-directive`（core 变体）；②探针简答惩罚 → 探针取消确定性判错、全部走裁决、rubric 允许简答；③共享词汇假矛盾 → 重复/矛盾改用结构化计划字段、矛盾确定性带 0.5→0.7。
+- v7 基线（batch v12，PROVISIONAL，合计 ¥0.16）：core success 0.333 / repeat 0.333 / contradiction 0.333 / state 0.917；shipped success 0.250 / repeat 0.333 / contradiction 0.083 / state 0.938。核心发现：待办目标样本（家族）两变体 success 全 false——摘要携带调查结论但驱动不出具体动作；重复工作风险集中在家族样本。报告：`reports/context-compression/HANDOFF-BENCHMARK-V1-BASELINE-2026-08-25.md`。
+
+### Phase 1 — 接地式 LLM 抽取器（已上线）
+
+- 新模块 `scripts/context-compression-grounded-extractor.mjs`：候选事实强制溯源（entryId+逐字 quote）→ 确定性验证器（非逐字子串/条目不可解析/行号越界一律拒绝，格式字符容忍仅限 `` ` `` 与 `*`）→ 与正则抽取器三方合并（both/llm-only/regex-only），**极性冲突先于一致性检查**、保守值（pending 压 completed）；llm-only 严重度封顶 important。共享 LLM 工具抽到 `scripts/context-compression-llm-shared.mjs`（provider/重试/预算/缓存/分词/极性）。
+- 新增单测 7 个（篡改 quote 拒、无 quote 拒、条目越界拒、行号越界拒、极性冲突保守、双一致增强去重、块预算），`tests/unit/context-compression-eval.test.ts` **49/49**。
+- 真实烟雾（R5/R9/R30，¥0.015）：74 候选 → 20 被验证器拒绝；R5 召回增益含文件变更证据与中文根因句；R9 命中缺失 chunk 与哈希不匹配。
+
+### Phase 2 — ACON 式闭环（基础设施就绪，round 0 执行中）
+
+- 语料三分（**偏差记录**：计划 40/20@≥50KB/≥200 entries，实测全库仅 43 个合规会话 → 28 优化 + 15 冻结 holdout，已排除 `.trajectory.jsonl`）：`reports/context-compression/corpus-trisection-v1.json` + optimization/holdout manifest+meta。
+- 准则库：`reports/context-compression/guidelines/guideline-v0.json`（accepted 基线）。
+- 循环 `scripts/context-compression-optimization-loop.mjs`：round 0 基线 → 失败归因（qwen-plus-latest，≤3 补丁）→ 确定性合并（去重/上限/形状校验）→ 候选准则 → 优化集复评 + 回归 30 门禁 → 硬阈值接受（success +5pp、repeat/contradiction 不升、回归降幅 ≤2pp）；holdout 防回看（脚本不接受 holdout 输入，终评需 `--terminal-holdout --i-confirm-terminal-holdout` 且仅出聚合）。
+- 优化集 GT 草案 25/28（O14/O18/O23 无清晰故事被跳过）、holdout GT 草案 15/15：`reports/context-compression/handoff-benchmark-{optimization,holdout}/ground-truth.json`（确定性起草器 `scripts/context-compression-handoff-gt-draft.mjs`，全部由证据事实拼装）→ **待审锁**。
+- 已知限制：优化集/回归集存在同族会话重复（同一审计会话不同快照分散在两个集合）；holdout 结论仅限同族泛化。
+
+### 门禁（本轮全部真实执行，绿）
+
+- 单测 49/49；handoff self-test 16/16；语义审计 30/30（batch v12）；canary self-test PASS；离线 30 样本重放 Layer1 gate PASS（recall=1.0、criticalDropped=0）；batch v12 已生成 `artifacts/p6-tf0074-deterministic-recovery-30-v12/`。
+
+### 下一步
+
+1. 用户审核并锁定三份 GT（`--lock`）→ 锁定后复跑即正式基线（缓存命中，近零增量成本）。
+2. round 0 结果落盘后，按需启动 round 1+（失败归因→补丁→候选→验收）与最终 `--terminal-holdout`。
+3. 继续遵守：key 仅环境变量；预算护栏；任何指标改进不升级 promotion。
+
+### 追加：Round 0 回归基线 + Round 1 首轮 REJECTED（2026-08-25 晚）
+
+- 修复：round 0 现同时建立回归 30 基线（初版漏跑导致 round 1 回归检查无基线，fail-closed 记 "not run"）。
+- Round 0 完整基线：优化 25 = 0.24/0.16/0/0.70；回归 30（接地管线）= 0.167/0.50/0.333/0.917。诚实信号：接地管线 v0 回归 success 低于 v12 纯确定性 core（0.333）——闭环的迭代目标就是超过它。
+- Round 1：20 失败归因 → 3 补丁（1 个被形状校验拒）→ 候选 v1 → 优化 +4pp（<5pp）且 repeat 上升 → **REJECTED**，fail-closed 接受规则首次真实生效。家族样本出现真实极性冲突，合并器保守保留 pending（零虚构不变式生产验证）。
+- 本轮累计真实成本 ≈ ¥1.2。详见 `reports/context-compression/P6-TF0074-V8-OPTIMIZATION-INFRA-2026-08-25.md` 第 8 节。
+
+## 当前接力：TF-0074 v7 三阶段合并验收全部 PASS，保持 shadow（2026-08-24）
+
+按「先修复、再 deterministic + semantic audit、最后只重跑完整 real judge」执行。v6 判出的三类缺陷已全部定位根因并修复，修复同构落在 `scripts/context-compression-eval-runner.mjs` + `scripts/context-compression-recovery-ledger.mjs`（两者共享函数体逐一对齐），语义审计独立副本同步更新。
+
+### 根因（全部经离线复现确认，不是推测）
+
+- **R19（P0，fabrication）**：`extractCommandFacts` 用 `\bcargo\b` 等工具名正则扫描所有含 "success" 的条目；`verify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.` 这条**跳过报告**里的 "Cargo.toml" 被截成裸 "Cargo" 并以 `test_result` fact 进入 `## Tests and Results`。R12 同样命中。与 prompt/模型无关，是确定性 extractor 的虚构。
+- **R17（P1，终态虚构）**：手动压缩目标（@159，纯中文、无 Latin token）从未执行，但 `outcome` 回退到窗口尾部的无关成功（@235 chain-audit 表格行），摘要写成 "Task completed and verified"。调查发现（/compact、compaction-planning、CLI 不可用、109329/1000000）只落在 ballast，被终态掩盖。R10/R11/R13/R14/R16 是同一目标的其它窗口，同类错误。
+- **R12（P1，追踪丢失 + 状态冲突）**：目标为连续任务 #5；`objectiveRelevantOutcome` 的 token 匹配被目录名污染——后到的无关报告仅凭 "JForum-master" 路径提到 "jforum" 就胜出（@235/@195），真正的任务 #5 完成报告（@65）与 `jforum-analyzed-files.md` 追踪内容（#1–#5）被丢弃。
+
+### 修复内容（v7）
+
+1. **证据接地守护（反虚构）**：`extractCommandFacts` 跳过含显式测试跳过标记的条目；命令 fact 必须含参数/子命令（裸工具名不算执行证据）；manifest 文件名提及（`Cargo.toml` 等，后随 `.`+扩展名）不再当作命令。新增 `extractTestSkipFacts`：跳过报告原文逐字保留为 `test_result` fact（负证据也是证据）。`buildRealSummary`/`buildLeanRecoverySummary` 再加裸工具名子弹过滤（双保险）。
+2. **目标任务段（task segment）**：以下一个"新任务"用户条目为界；完成证据只接受目标段内的条目。带任务编号的目标（连续任务 #N / task #N）额外要求完成证据提到同一编号——目录名 token 不再足以让无关任务胜出。无边界（单任务窗口）保持原行为。
+3. **未执行目标显式化**：目标段结束且段内无已验证完成时，生成 `pending-objective` fact（含段内最终报告的逐句子摘录），Current State/Next Actions 明确 "Objective not verified complete in its own task segment"，不再误报 Done。
+4. **目标段最终报告 fact**：`extractObjectiveReportFacts` 逐句复制段内最终报告（按任务编号/目标相关性选择候选），把调查发现与追踪清单带入结构化段落（R17 的 /compact、compaction-planning、CLI 不可用、109329/1000000；R12 的 #1–#5 累计分析清单）。
+5. **去重保护**：`uniqueByText` 键改为 文本+severity——同一句以不同严重度承担两个角色时（如 critical decision 同时是 latest-outcome 证据）不再静默丢弃后者（此前会破坏终态判定）。
+6. **配套收紧**：`isSuccessfulOutcome` 的 `\bfixed\b` 加 `(?!-string)`（scan 调整措辞不算完成）；`lineFact` decision 模式补齐 结论/原因/已/完成/修复/加入，避免整段落 fallback 与报告 fact 撞车被去重。
+
+### 本地证据（全部真实执行）
+
+- 单元：`tests/unit/context-compression-eval.test.ts` **42/42**（39 旧 + 3 新回归：裸 Cargo 反虚构、未执行目标不得标完成、编号任务完成与追踪内容范围正确；R15 回归仍绿）。
+- 离线 30 样本（固定 manifest、--no-cache）：R19 Cargo 子弹消失、跳过报告逐字在位；R17 及 R10/R11/R13/R14/R16 从 Done 改为 In Progress 并携带完整调查报告；R12 终态改为 "已完成第 5 个连续任务（避开了已分析的文件 #1–#4）" 且保留 #1–#5 追踪清单。Layer1 gate 全绿（recall/precision=1.0，criticalDropped=0，stale/forbidden=0）。30 样本无任何裸工具名子弹。
+- 确定性恢复批次 v4：`artifacts/p6-tf0074-deterministic-recovery-30-v4/`（30 样本，model=none）。
+- 独立语义审计：**30/30 PASS**（终态审计已同步为 v7 目标段语义）：`artifacts/p6-tf0074-deterministic-recovery-30-v4/semantic-audit.json`。
+- would-retry canary self-test：**PASS**（runtime 行为层已吃到修复）。
+- runtime compaction focused：6 文件 **54/54**；root compression artifact：**19/19**。
+
+### 审计基础设施 bug 已修复（本轮发现）
+
+1. judge prompt 证据裁剪盲区（R15 误判根因）：现在为每个标注事实附加证据行 ± 上下文（前 10 / 后 6 行，上限 160 行），并声明"被证据行支持的声明不算虚构"；prompt 升级 judge-prompt-v8。真实 R15 验证：undo_write ok:true/restored 证据已进入证据区。
+2. 429 退避现在解析 X-RateLimit-Reset/Retry-After，在 COMPACTION_MAX_RESET_WAIT_MS（默认 45 分钟）内等待配额重置后重试，不再几分钟内烧完重试阶梯。
+3. judge 循环每样本输出 stderr 进度，杜绝静默死亡无诊断。
+
+修复后复验：42/42 单测绿、离线 30 样本 layer1 gate 绿、摘要内容不变。
+
+### v7 real judge 复测：PASS（2026-08-24，qwen-plus-latest via DashScope）
+
+MiniMax-M3 未激活、agentrouter 敏感词过滤均不可用；改用百炼 qwen-plus-latest 完成 30/30 完整 judge：**noFabricationRate 1.0（>= 0.98 PASS，v6 为 0.9667 FAIL）**、accuracy 1.0、均分 9.87、覆盖/脱敏全通过。唯一 6 分样本 R19 扣的是 completeness（四步链条压缩成单句），judge 确认无虚构——Cargo 虚构确认消除。成本约 ¥0.5。整改指令的 judge 门禁通过；TF-0074 保持 shadow，整体晋升需 schema-free + continuation 在 v7 摘要上复测齐门（待用户授权）。
+
+
+### v7 定论：三阶段合并验收全部 PASS（2026-08-24 深夜）
+
+深度验收三轮迭代后的最终结果（批次 v11 摘要 + qwen-plus-latest + paired 方法学，三阶段各 30/30）：
+
+- **Real judge**：noFabrication/accuracy/completeness/causalChain/actionability 全 **1.0**，30×10 满分（v6 为 noFab 0.9667 FAIL）。
+- **Schema-free**：majorOrCriticalOmissionRate **0.0**（v6 为 0.0667；上一轮的 R4 分类矛盾与 R20 问题经"原始工具错误继承解释定性"修复后清零）。
+- **Real continuation**：first/critical/repeat/contradictory/consistency 全 **1.0**，completionDelta 0。
+
+深度验收额外发现并修复（全部 transcript 级 ground truth 验证）：paired 方法学校正（v6 的摘要经 --paired-summary 叠加 deterministic 批次，含 Continuation Directive；此前漏叠加导致 R11/R16 失配）、待完成目标成为 continuation primary、R21 toolResult 纳入失败链+重复请求回合并+JSON error 提取+去重折叠、R18 修复确认全文识别（含 CJK 词边界修复）、R4/R20 原始工具错误继承 expected_behavior 定性。
+
+本地门禁全绿：42/42 单测、layer1 gate、批次 v11 + 语义审计 30/30、canary self-test。报告：`reports/context-compression/P6-TF0074-V7-COMBINED-ACCEPTANCE-2026-08-24.md`。
+
+百炼成本合计约 ¥6。可选交叉验证：明早 08:00 后 OpenRouter 配额重置，用 nemotron 对 v11 摘要再跑一轮（非阻塞）。`promotionStage` 保持 `shadow`，产品级晋升需用户显式授权。
+
+
+### Live judge 部分复测结果（2026-08-24，三账号并行，零真实虚构）
+
+三个账号各跑一个独立 judge stage，全部被免费日配额（50/天，今日已被凌晨 v6 三阶段 run + 本轮消耗耗尽）打断：
+
+- k1r2：R1–R13（13 样本）全满分，noFabrication 13/13。
+- k2：R1–R19（19 样本）全满分，noFabrication 19/19。
+- k3：R1–R15（15 样本）noFabrication 14/15；唯一异议 R15 经 ground truth 核查为 judge 误读（窗口内含 @104 undo_write ok:true restored ValidationException.java 证据，但 judge prompt head4K+tail16K 裁剪把中段证据切掉，k3 只看到 tail 里的 chain_audit undo）——不是摘要虚构（k2 对同一摘要判满分）。
+- 合并去重覆盖 R1–R19、47 次判定：零真实虚构；v6 的 P0 样本 R19 被三账号各判一次全部通过。
+
+### 剩余问题收尾（R23 修复 + prompt v11 + R25/R18 定性，2026-08-24 深夜第二轮）
+
+R23 不存在文件探测链重分类为 expected_behavior（validation 确认不存在 → "No repair needed"）；judge prompt v11 新增"标注 objective 定义活跃任务"锚定（缓解 R15 类跨账号分歧）；R25 核查确认内容已在 Key Decisions（仅 defaults:{} 截断，可接受损耗）；R18 为 transcript 内容分歧，非压缩缺陷。复验：42/42 单测、离线 30 样本 layer1 绿、批次 v6 + 语义审计 30/30、canary PASS。本轮所有可修复问题闭环；正式判定仍待明晨 nemotron run。
+
+
+### gpt-5-6-luna 完整 judge run（30/30）+ 失败链加固（2026-08-24 深夜）
+
+SeekAI gpt-5-6-luna 两账号并行：k2 完整 30/30（noFabricationRate 0.7333、均分 6.63、双峰分布），k1 15/30 部分。对 8 个 no_fabrication=false 样本逐一 transcript 核查：**R4（失败归因到错误命令）与 R27（修复确认被当成失败）为真实缺陷，已修复**（isFailureEvidence 排除已解决确认消息；失败链 attempt 取最后匹配动作句）；R15/R29 为 luna 误判（同样本跨账号 1.5 vs 10，transcript 证据支持摘要）；R20/R23 为 expected_behavior 方法论分歧；R25 为完整性抱怨；R18 存疑不定位。luna run 不作为正式门禁（judge 方差过大），正式判定仍以明晨 nemotron run 为准。修复后复验：42/42 单测、离线 30 样本 layer1 绿、批次 v5 + 语义审计 30/30、canary PASS。
+
+
+### SeekAI deepseek-v4-pro-0813 尝试：上游不可用（2026-08-24 晚）
+
+非流式 125s 后 HTTP 524（Cloudflare 源站超时）；流式 79s 后返回 "Service temporarily unavailable"。上游容量问题，当前不能承担 judge 负载，run 已清理。主路径仍是明晨 nemotron。
+
+### SeekAI claude-opus-4-8 judge 尝试：模型策略拒绝（2026-08-24 晚）
+
+两个 SeekAI key 并行尝试在 R10 均收到非 JSON 会话评论；judge-prompt-v9/v10 数据框架化加固后单样本探测得到明确策略拒绝（"I'm not going to produce that evaluation... a detailed record of an AI agent operating on a real user's machine"）。属模型安全策略拒绝，不是限流，不应绕过——SeekAI/claude-opus-4-8 不能用作本语料 judge，相关 run 已清理。judge 复测维持 nemotron 路径（配额重置后）。顺手保留的设施加固：请求 8 分钟超时、429 响应体日志、逐样本进度、证据区限容+末尾锚定（judge-prompt-v10）。
+
+配额重置：`X-RateLimit-Reset: 1787616000` = **2026-08-25 00:00 UTC（北京时间 08:00）**，三账号同日重置（各 50）。
+
+### 待办：配额重置后完整 real judge 复测（唯一定论步骤）
+
+2026-08-25 08:00（北京时间）后，三账号重新并行各跑完整 30 样本 judge（30 < 50 配额）。命令见中间报告第 6 节（`reports/context-compression/P6-TF0074-V7-FIXES-AND-PARTIAL-JUDGE-2026-08-24.md`），启动器 `output/run-judge.ps1` 已就绪，产物目录用 `-judge2-k1/k2/k3` 避免覆盖今日部分证据。判定：任一 run 30/30 且 noFabricationRate >= 0.98 即修复验证成立；R15 类异议再现时先按中间报告第 5 节证据链做 ground truth 核查再定性。通过前保持 `promotionStage: "shadow"`，不解锁 TF-0075、liveReady、productApproved、default-on 或 critical-only promotion。P2（首次空 actions 5/30，一次有界 retry 恢复，最终 L3 通过）维持现状不耗配额。
+---
+
+## 当前接力：TF-0074 Nemotron v6 三阶段合并验收 FAIL，保持 shadow（2026-08-24）
+
+三个独立 OpenRouter 账号已按阶段完成同一固定 30-sample manifest 的真实验收，使用 `nvidia/nemotron-3-ultra-550b-a55b:free`，均为 `--no-cache`、`30/30` manifest resolution、`30/30` stage coverage、secret scan PASS、model independence PASS。综合结果不是把三个 runner 的形式性 `acceptance.status=FAIL` 直接相加：每个 runner 只请求一个 stage，其余未请求 stage 会让顶层 acceptance fail；本节使用各 stage 自身 aggregate、coverage 和 gate。
+
+- Real judge：`30/30`，`judgeScoreMean=9.9`，completeness `1.0`、causal chain `1.0`、actionability `1.0`，但 `noFabricationRate=29/30=0.9667`，低于正式门槛 `>=0.98`，**FAIL**。
+- Judge 失败样本为 R19：摘要加入 transcript 和目录证据中不存在的 `Cargo` 测试结果，属于真实 unsupported fact insertion，不是 provider 覆盖不足。
+- Schema-free：`30/30`，`majorOrCriticalOmissionRate=2/30=0.0667`，低于门槛 `<=0.10`，**PASS**。R12 仍遗漏 analyzed-files/task-status 追踪信息；R17 仍遗漏手动 compact 未执行、`/compact`/planning 路径、CLI 不可用和实际 context usage，这两个 major omission 作为后续回归目标保留。
+- Real continuation 修正版 `a3-r2`：`30/30`，`evidenceMode=real`，first/critical action match、no repeated work、no contradictory action、decision consistency 均 `1.0`，completion delta `0`，**L3 PASS**。R8/R9/R11/R13/R24 使用有界 empty-actions protocol retry 后均得到有效非空动作。公共 sample 行中的 deterministic proxy 字段只作 paired baseline，未计入 real continuation evidence。
+- 早先 continuation 使用错误模型 ID（缺少 `-a55b`）的结果作废，不纳入综合结论。
+
+因此 TF-0074 v6 combined live acceptance **FAIL**，阻断原因是 real judge no-fabrication `0.9667 < 0.98`；schema-free 与 continuation 的通过不能覆盖该失败。不要启动新的 90-request live run；先修复 unsupported test-result insertion，再跑 deterministic + semantic audit，之后才考虑在固定 manifest 上重新执行完整 real judge。保持 `promotionStage: "shadow"`，不解锁 TF-0075、`liveReady`、`productApproved`、default-on 或 critical-only promotion。聊天中出现过的 provider keys 必须轮换，替换 key 只允许环境变量注入，禁止写入代码、报告、summary、cache 或 artifact。
+
+证据：`artifacts/p6-tf0074-live-acceptance-v6-nemotron-combined-summary.json`、`reports/context-compression/P6-TF0074-LIVE-ACCEPTANCE-V6-NEMOTRON-COMBINED-2026-08-24.md`，以及三个 stage artifact 目录。
+
+---
+
+## 当前接力：TF-0074 OpenRouter ox-alpha v6 不能提供完整 live evidence（2026-08-24）
+
+按用户授权，使用 OpenRouter endpoint 和 `stealth/ox-alpha` 完成最小可用性探测及两轮固定 30 sample v6 尝试。一次探测返回 HTTP 200，说明账号、endpoint 和模型路由在瞬时层面可用；但模型路由没有提供持续 30-sample acceptance 所需的稳定吞吐或协议一致性。
+
+两轮结果均为证据不足，不能解释成 Compact 产品质量 FAIL 或 PASS：
+
+- `artifacts/p6-tf0074-live-acceptance-v6-ox-alpha/`：judge `5/30` 后 R6 HTTP 429；schema-free `2/30` 后 R3 HTTP 429；continuation `3/30` 后 R4 HTTP 429。
+- `artifacts/p6-tf0074-live-acceptance-v6-ox-alpha-r2/`：在 70 秒冷却后，以 5 秒请求间隔运行；judge `3/30` 后 `fetch failed`，schema-free `1/30` 后模型输出不能解析为 JSON，continuation R1 仍 HTTP 429。该轮 `acceptance.status=FAIL` 与 `evidenceInsufficient=true` 是 fail-closed 结果。
+- runner 的 fixed manifest、30/30 deterministic paired overlay、`--no-cache`、secret scan 和 model independence 均通过；阻断点是外部 provider 覆盖与结构化输出稳定性。
+
+不要把 partial judge/schema-free/continuation 分数作为综合质量结论，也不要把 deterministic proxy 标记为 real continuation。继续 acceptance 需要能持续完成至少 90 个 OpenAI-compatible 请求的 provider，且保证 JSON-mode 输出；若修复 provider policy，应先增加低输出 token ceiling、429 `Retry-After`/更长 bounded backoff 与 stage-resume 后再消耗新的完整验收额度。保持 `promotionStage: "shadow"`，不解锁 TF-0075、`liveReady`、`productApproved`、default-on 或 critical-only promotion。聊天中提供的 provider keys 需要轮换，且不得落盘。
+
+---
+
+## 当前接力：TF-0074 SeekAI v6 live preflight 被 provider RPM 限流阻断（2026-08-24）
+
+按用户授权，使用 SeekAI OpenAI-compatible endpoint 与模型 `DeepSeek-V4-Flash-0731` 做了连通性与 v6 验收尝试。最小 chat completion 探测曾返回 HTTP 200、合法 `choices` 与目标模型字段；正式 runner 随后收到 provider HTTP 429，SeekAI 返回的错误语义为每用户每分钟最多 20 条对话。
+
+两次 live run 均必须视为无效/证据不足，不是产品质量结论：
+
+- `artifacts/p6-tf0074-live-acceptance-v6/`：judge/schema-free/continuation 均 `liveCount=0`，R1 即 429。
+- `artifacts/p6-tf0074-live-acceptance-v6-r2/`：使用 3.5 秒请求间隔；judge/schema-free 仍 R1 即 429，continuation 仅完成 1 条后 R2 429；三阶段都没有 30/30 完整覆盖。
+- 两次 summary 均 `acceptance.status=FAIL` 且 `evidenceInsufficient=true`，不可作为 PASS/FAIL 产品质量证据，也不可把 deterministic proxy 代替 live continuation。
+
+本次 run 使用固定 30 sample manifest、当前源码绑定的 deterministic recovery summaries、`--no-cache`，model independence 为 PASS；阻断点只在 SeekAI 的 rolling RPM/共享账户限流。下一次尝试须先等待至少一个完整限流窗口，再使用不低于 5 秒间隔；若仍 R1 429，应停止重试并更换可用账号/endpoint。保持 `promotionStage: "shadow"`，不解锁 TF-0075、`liveReady`、`productApproved`、default-on 或 critical-only promotion。用户在聊天中粘贴过 provider key，应轮换，且 key 不得落盘。
+
+---
+
+## 当前接力：TF-0074 Compact/P6 语义修复复验完成，保持 shadow（2026-08-24）
+
+本轮按「先修复真实验收暴露的问题，暂不重跑 live acceptance」完成收尾复验。此前 v6 live runner 没有生成 summary/artifacts，且已确认无残留进程，因此保留为无效证据，不计入任何门禁结论。
+
+本轮修复与回归覆盖：
+
+- `tests/unit/context-compression-eval.test.ts` 增加 R15 objective-relevant completion regression，并修复 continuation fixture 的双运行结构。
+- 第一次本地 OpenAI-compatible fixture：第一次返回空 `actions`，有界协议重试后返回截断 JSON；共享 `scripts/context-compression-json-repair.mjs` 成功修复，真实 continuation gate 通过。
+- 第二次 fixture：两次都返回空 `actions`；runner 使用一次有界协议重试后仍保持空结果，acceptance 正确 fail-closed，未伪造 continuation 成功。
+- focused root evaluator：39/39；runtime safeguard/validated pipeline/budget shadow：26/26。
+- 当前源码重新生成 deterministic recovery batch：30 samples；独立 semantic audit：30/30 passed，failed samples=0，覆盖 expected-vs-failure、terminal state、continuation directive/evaluator agreement。
+
+本轮未使用第三方 provider、未消耗 provider key、未执行新的 live acceptance。`promotionStage` 继续为 `shadow`；不得解锁 TF-0075、`liveReady`、`productApproved`、default-on 或 critical-only promotion。此前出现在聊天中的 provider keys 仍应轮换，且不得写入文件、报告、缓存或 artifact。
+
+证据：`artifacts/p6-tf0074-deterministic-recovery-30-v3/`、`reports/context-compression/P6-TF0074-SEMANTIC-RECOVERY-FIXES-2026-08-23.md`、`scripts/context-compression-semantic-audit.mjs`。
+
+---
+
+## 当前接力：Compact/P6 05/07 审计短板全部修复收尾（2026-08-23 第五轮）
+
+v3 后审计短板修复完成：①R12/R15 schema-free 标记定性为 **evaluator 缺陷**（prompt head-only 12K 截断让 judge 把摘要正确保留的 tail 状态误读为会话错配）——excerpt 改为 head 10K + tail 16K（schema-free v4）；②R3/R6 空-actions 协议加固——continuation prompt（v5）硬性要求已完成任务返回 preserve-outcome decision、空 actions 判协议违规；③runtime 同步审计：叙事语义单一来源在 `context-compression-recovery-ledger.mjs`，canary（生产行为验证层）直接 import，修复已流入（self-test PASS），runtime 结构段用 `isError` 标志无误分类面、无需改动；④spec P6 节沉淀四条新规则（expected 定性、终局真实性、推导同构守护、prompt 摘录/最少一动作）。复验全绿：单测 37/37、root 66/66、runtime focused 29/29、canary self-test、语义审计 30/30、harness validate。证据：`reports/context-compression/P6-TF0074-SEMANTIC-RECOVERY-FIXES-2026-08-23.md`（第四轮收尾节）。
+
+下一步：北京时间 08:00 两账户配额重置后跑 continuation 单相完整 live run（30 请求 fits 50 配额；judge/schema-free 已有 v2/v3 互补完整证据）——三门齐后按 acceptance 判定收口 TF-0074。保持 shadow，不解锁 06。
+
+---
+
+## 历史接力：Compact/P6 05/07 L2 real judge 门全量转绿（2026-08-23 第四轮，v3）
+
+用第二账户 key + `nvidia/nemotron-3.5-lightning:free` 完成 v3 live run（节流 4s/请求 + 8 次指数退避；用户指定的 `z-ai/glm-5.2:free` 因上游 Decart 共享池限流暂不可用，改用 lightning）：**L2 real judge 门 30/30 全量通过**——noFabrication 1.0（修复前 0.9333）、accuracy 1.0、均分 9.87/min 6、六项子阈值全绿；唯一低分 R8（6 分）为 judge 误读噪声（摘要实际含其声称缺失的内容，retention 1.0）。schema-free 19/30 处再次耗尽该账户 50/天免费配额（30+19=49），已完成 19 条零遗漏；continuation 相未启动。三轮累计：L2 judge 单 run 完整 GREEN、schema-free 跨 run 互补 GREEN（v2 0.0667 + v3 19/19 零遗漏）、continuation 仍缺单 run 完整证据（v2 7/9，两失配为模型空 actions 协议问题）。两把 OpenRouter key 已轮换建议；产物 secret 扫描 0 泄漏。证据：`reports/context-compression/P6-TF0074-SEMANTIC-RECOVERY-FIXES-2026-08-23.md`、`artifacts/p6-tf0074-live-acceptance-v3/`。
+
+下一步：北京时间 08:00 两账户配额重置后，可用单账户全预算跑 `--llm-continuation` 单相 run（30 请求， fits 50 配额）补齐 continuation 完整证据；或充值后跑完整单 run（90 请求）。GLM-5.2 上游恢复后可作更强的独立 judge 交叉验证。保持 shadow，不解锁 06。
+
+---
+
+## 历史接力：Compact/P6 05/07 三类语义缺口已修复，schema-free 门转绿（2026-08-23 第三轮）
+
+按用户「先修复再说」指令完成失败模式修复并复测：根因三类——expected 状态报告被误分类为待修故障（R1/R4/R21/R23）、verified completion 叙述不被识别导致终局误判 In Progress（R15/R27/R28）、eval 与 continuation directive 的主动作推导分歧（`>=` vs `>`、无守卫 next-action）造成 14/30 continuation 假失配。修复同构落在 `scripts/context-compression-recovery-ledger.mjs` + `scripts/context-compression-eval-runner.mjs`（expected_behavior 分类、resolved 标记 + 严格 isVerifiedCompletionEntry、Outcome Status 段、buildRealSample 与 directive 对齐）；新增深度审计脚本 `scripts/context-compression-semantic-audit.mjs`（三类维度独立复算，30/30 PASS）。
+
+本地全绿：单测 37/37、root focused 66/66、runtime focused 116/116、would-retry self-test PASS、离线 deterministic eval 全绿（retention 1.0、criticalDropped=0）、v2 摘要五个原失败样本全部 Done/Validated。live 复测（OpenRouter `nvidia/nemotron-3-ultra-550b-a55b:free`，诊断口径）：**schema-free omission 0.40→0.0667（2/30）门转绿（30/30 完整）**；judge 已完成 13/13 全满分零虚构；continuation 7/9（仅剩失配为模型空 actions 的协议问题）。judge/continuation 被免费层每日 50 请求硬上限打断（13+30+9=52 恰好耗尽；补跑 v2r2 首请求即 429 `free-models-per-day` remaining=0，UTC 午夜重置）。runner 已加 `COMPACTION_REQUEST_DELAY_MS`/`COMPACTION_MAX_ATTEMPTS` 节流与指数退避（默认关闭）。
+
+证据：`reports/context-compression/P6-TF0074-SEMANTIC-RECOVERY-FIXES-2026-08-23.md`、`artifacts/p6-tf0074-deterministic-recovery-30-v2/`、`artifacts/p6-tf0074-semantic-audit-report.json`、`artifacts/p6-tf0074-live-acceptance-v2/2026-08-23T07-06-21-506Z/`。
+
+下一步：配额重置后重跑完整 live（命令与节流参数已就绪）；R3/R6 空-actions 协议问题可考虑 continuation prompt 加「必须返回至少 directive 指定动作」；runtime 生产路径同步三类语义为后续工作。正式 P6-A acceptance 仍需 reasoner 级 judge。保持 shadow，不解锁 06。
+
+---
+
+## 历史接力：Compact/P6 05/07 live run 已真实执行，3 门未达标保持 shadow（2026-08-23）
+
+TF-0074 live 验收已用 DeepSeek 官方 API（`deepseek-v4-flash`，用户授权的额度有限 key）真实执行：30/30 样本 × judge/schema-free/continuation 全 live、0 cache，`evidenceInsufficient=false`。**判定 FAIL：`l2.schemaFree.majorOmissionRate`=0.40（12/30，要求<=0.10）、`l3.realContinuation.criticalActionMatchRate`=0.5333（16/30，要求>=0.95）、`l2.realJudge.noFabricationRate`=0.9333（28/30，要求>=0.98）；其余 28 门全过**（deterministic 全绿、modelIndependence PASS、secret 0 泄漏）。失败模式：Recovery Ledger 摘要丢失「预期 vs 故障」定性（R1/R4/R21/R23）、「已完成+已验证」终局状态（R15/R27/R28，其中 R27 被判虚构 in-progress 状态）、调查结论（R10/R11/R17）；continuation 失败均为模型发出「保留已验证结局」泛化 decision 而非期望 critical action。证据见 `reports/context-compression/P6-TF0074-LIVE-RUN-EVIDENCE-2026-08-23.md`、`artifacts/p6-tf0074-live-acceptance/2026-08-23T05-31-46-743Z/`。
+
+已授权偏差（诚实记录）：spec 要求 judge=`deepseek-reasoner`，本轮按用户指定用 `deepseek-v4-flash`——即使全绿也不构成正式 P6-A acceptance；FAIL 结论保守有效。账户余额起 1.78 CNY（中途充值）终 0.18 CNY；key 仅环境变量注入，事后扫描 0 泄漏，建议轮换。
+
+下一步：按 failure-guideline 循环迭代摘要生成策略——Recovery Ledger 投影补充 expected-vs-failure 定性、completed+verified 终局、面向下一动作的 continuation 指令三类恢复语义；本地 deterministic 复验后重跑 live。正式 P6-A acceptance 仍需 deepseek-reasoner 级 judge 与足额凭据。不解锁 06，不提升 stage、`liveReady`、`productApproved` 或 default-on。
+
+---
+
+## 历史接力：Compact/P6 05/07 live preflight 完成，等待凭据执行 live（2026-08-23）
+
+TF-0074 接续会话已完成 live 执行前预检（无凭据、零 provider 请求）：当前源码 + 当前源码 Recovery Ledger 摘要（`artifacts/p6-tf0074-deterministic-recovery-30/would-retry-summaries.jsonl`）下 acceptance 22/31 check 通过，9 项失败全部是 live 证据门且均以「凭据缺失」fail-closed；deterministic 层全绿（retention 189/189、criticalDropped=0、L1=1.0、layer2Gate PASS）。本地门禁当日复验：root focused 66/66、runtime focused 全过、would-retry self-test PASS。证据见 `reports/context-compression/P6-TF0074-LIVE-PREFLIGHT-EVIDENCE-2026-08-23.md`、`artifacts/p6-tf0074-live-preflight-current/2026-08-23T04-49-40-717Z/`。
+
+重要发现：2026-08-18 冻结的 `production-summaries-30-generated.jsonl`（旧 compact 代码生成）在当前源码信息丢失标准下不合格（L1=0.2361、critical dropped=105/189、30/30 样本有 critical drop，见 `artifacts/p6-tf0074-live-preflight/2026-08-23T04-47-27-831Z/`）。正式 live run 必须用当前源码绑定的 Recovery Ledger 摘要作 paired 输入；完整命令与凭据注入方式见 preflight 证据文档的 runbook 节。
+
+下一步：用户提供可轮换凭据（`DEEPSEEK_API_KEY`，或 `COMPACTION_API_KEY`+`COMPACTION_BASE_URL` 指向任意 OpenAI-compatible 端点，仅环境变量注入、禁止落盘）并确认成本授权后，按 runbook 执行 live run（参考上次全量约 33 分钟）。在此之前不解锁 06，不提升 stage、`liveReady`、`productApproved` 或 default-on。
+
+---
+
+## 历史接力：Compact/P6 串行修复 05/07 deterministic 已完成，live 待执行（2026-08-21）
+
+真实进度：`TF-0070 [01/07]`、`TF-0071 [02/07]`、`TF-0072 [03/07]`、`TF-0073 [04/07]` 已完成；`TF-0074 [05/07]` 当前完成 deterministic 部分并保持 `in_progress`，独立 live judge/schema-free/real continuation 尚未执行。生产继续 `promotionStage: "shadow"`。
+
+04/07 结果：合法 derived manifest `9/9`，eval runner pathHash/key V2/source identity 校验通过；R5/R6/R7/R8/R14/R16/R23/R27/R29 均恰好一次 retry，`finalGatePassed=9/9`、`handoffSectionsComplete=9/9`、`exactIdentifiersPreserved=9/9`、`completedOutcomePreserved=9/9`、裸用户名路径 `0`、每条 `verification.passed=true`。同 manifest 的 eval-runner cross-check 为 L0/L1/L2 PASS、information loss=0、paired regression=0；L3 仍 `NOT EXECUTED`。证据见 `reports/context-compression/P6-TF0073-NINE-SAMPLE-UNIFIED-EVIDENCE-2026-08-21.md`、`artifacts/p6-would-retry-local-tf0073-r3/` 和 `artifacts/p6-would-retry-local-tf0073-r4/`。
+
+新增 fail-closed manifest 校验会拒绝 selection hash、样本唯一性、source、sample key、meta/transcript identity 或当前源码绑定不一致；负例已验证在 provider 请求前退出。TF-0073 r1/r2 因误读 transcript.fileHash 语义作废，r3/r4 才是有效证据。9 条通过仍不等于固定 30 条正式 P6 acceptance。
+
+门禁：would-retry self-test、scoped ESLint、root compact 66/66、runtime focused 79/79、Node/Web typecheck、Harness `--no-diff`、comms replay/compare、scoped diff check 均通过；diff-aware Harness 仍被 Task Forest 与 compact ownership 外既有 dirty 路径阻断。
+
+05/07 deterministic 结果：固定 30 条 model-free Recovery Ledger batch 的 verified retention、critical recall、L0/L1/L2、paired regression 均通过（189/189 claims，critical drop=0，L2=10/10）；但 `layer3Gate=NOT EXECUTED`，full acceptance 仍 fail-closed。证据见 `reports/context-compression/P6-TF0074-DETERMINISTIC-QUALITY-EVIDENCE-2026-08-21.md` 和 `artifacts/p6-tf0074-deterministic-recovery-30/`。
+
+下一步：需要明确授权和可轮换凭据后，才能执行当前源码绑定的 independent live judge/schema-free/real continuation；在此之前只继续本地测试与 gate wiring，不解锁 06，不提升 stage、`liveReady`、`productApproved` 或 default-on。
+
 ## 当前交接：Workflow Viz B2-02A 已完成，下一步 B2-02（2026-08-15）
 
 **WV-B2-02A / TF-0062 已完成并单提交 `b58350a2f`（feat(trajectory): bridge raw v2 renderer supply）。** 提案 `TFP-workflow-viz-b2-02-bridge-and-store-20260815` 与收卡提案 `TFP-workflow-viz-b2-02a-close-20260815` 均已经用户确认后应用；task-forest validate/export PASS；TF-0062=done(100%)，TF-0063（WV-B2-02 现有 store 并轨）保持 `proposed`。
