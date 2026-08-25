@@ -1,41 +1,57 @@
-/* Session status rail — a floating status card on the chat page.
+/* Session status rail — the chat page's status panel.
  *
- * Not a sidebar. The rail is an absolutely-positioned card inside
- * `chat-page`, inset from the top-right corner, and the conversation column
- * pays for it with padding (`.codex-conversation-inset`) rather than losing a
- * flex sibling's worth of width. That keeps the transcript centred on its own
- * reading measure instead of being squeezed against a hard column edge.
+ * Not a sidebar. It is an absolutely-positioned panel inside `chat-page`,
+ * hanging off the top-right toolbar, in one of TWO layers:
  *
- * Surface, radius, and shadow are the composer dropdown's recipe
- * (codex-composer-menu.css) so the card reads as the same family of floating
- * panel: elevated-primary fill, hairline + xl shadow, xl radius, sm blur.
- * Nothing here invents a new colour.
+ *   [data-layer='inline']  — it appeared on its own. It belongs to the page: a
+ *     flat one-step-raised surface, no shadow, at the conversation's own
+ *     stacking level, and the transcript pays for its width in padding.
+ *   [data-layer='overlay'] — the user opened it from the toggle. It becomes a
+ *     dropdown off that control: two steps raised, opaque, with the shadow and
+ *     the dropdown z-index, drawn OVER the transcript, which keeps its width.
+ *     A panel the user asked for must not reflow what they were reading.
+ *
+ * Both surfaces come from the existing elevation ramp
+ * (--color-background-elevated-*-opaque, gray-800 / gray-750 over the gray-900
+ * page) so the two layers are one visible step apart and neither invents a
+ * colour. The previous single treatment sat 96%-opaque at gray-800 — barely
+ * 3% off the page — which is why it read as neither.
  */
 
 .codex-session-rail {
   position: absolute;
-  /* Aligned with the toolbar's own action buttons (8px from the page top), so
-   * the collapsed toggle reads as one more control in that row rather than a
-   * stray button floating below it. */
-  top: 8px;
+  /* Hangs below the toolbar strip (32px controls + 8px padding each side = 48px).
+   * Its trigger is a real ChatToolbar child; the panel itself remains anchored
+   * to the chat page so its width cannot disturb the toolbar's flex layout. */
+  top: 52px;
   right: 16px;
-  z-index: var(--z-dropdown);
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   width: 300px;
   /* Height follows content — a card with one Git section should not stretch to
    * the bottom of the window. The body scrolls once sections outgrow this. */
-  max-height: calc(100% - 24px);
+  max-height: calc(100% - 68px);
   padding: 4px;
-  border: none;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
-  background: var(--color-background-elevated-primary);
-  box-shadow: var(--shadow-xl-spread);
-  -webkit-backdrop-filter: blur(var(--blur-sm));
-  backdrop-filter: blur(var(--blur-sm));
   overflow: hidden;
   animation: codex-session-rail-in 160ms var(--ease-enter);
+}
+
+/* Passive: same layer as the conversation. Flat, no shadow — it is part of the
+ * page, and the transcript has already made room for it. */
+.codex-session-rail[data-layer='inline'] {
+  z-index: 1;
+  background: var(--color-background-elevated-secondary-opaque);
+  box-shadow: none;
+}
+
+/* Active: a dropdown over the transcript. */
+.codex-session-rail[data-layer='overlay'] {
+  z-index: var(--z-dropdown);
+  background: var(--color-background-elevated-primary-opaque);
+  box-shadow: var(--shadow-xl-spread);
 }
 
 @keyframes codex-session-rail-in {
@@ -45,19 +61,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .codex-session-rail { animation: none; }
-}
-
-/* Collapsed is a single round button, not a strip: there is nothing to read
- * while shut, so the card gets out of the way entirely. */
-.codex-session-rail.codex-session-rail--collapsed {
-  width: 32px;
-  height: 32px;
-  max-height: 32px;
-  padding: 0;
-  border-radius: var(--radius-md);
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
 }
 
 /* Conversation offset. Applied to the scroll column so the transcript slides
@@ -70,12 +73,15 @@
   .codex-conversation-inset { transition: none; }
 }
 
+/* Passive panel: the transcript gives up its width. */
 .codex-conversation-inset[data-rail='expanded'] {
   padding-right: 316px;
 }
 
-.codex-conversation-inset[data-rail='collapsed'] {
-  padding-right: 56px;
+/* User-opened panel floats over the transcript. Its trigger already owns a
+ * normal slot in ChatToolbar, so the conversation needs no artificial inset. */
+.codex-conversation-inset[data-rail='overlay'] {
+  padding-right: 0;
 }
 
 /* ── Head ────────────────────────────────────────────────────────────────── */
@@ -99,47 +105,6 @@
   font-size: 12px;
   line-height: 16px;
   font-weight: 500;
-}
-
-.codex-session-rail .codex-session-rail__toggle {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 24px;
-  height: 24px;
-  border: 0;
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--color-icon-secondary);
-  cursor: pointer;
-  transition: background-color 100ms ease, color 100ms ease;
-}
-
-.codex-session-rail.codex-session-rail--collapsed .codex-session-rail__toggle {
-  width: 32px;
-  height: 32px;
-}
-
-.codex-session-rail .codex-session-rail__toggle:hover,
-.codex-session-rail .codex-session-rail__toggle:focus-visible {
-  background: var(--color-background-row-hover);
-  color: var(--color-text-foreground);
-  outline: none;
-}
-
-.codex-session-rail .codex-session-rail__collapsed-badge {
-  position: absolute;
-  top: -3px;
-  right: -3px;
-  min-width: 15px;
-  padding: 0 4px;
-  border-radius: 999px;
-  background: var(--color-icon-warning);
-  color: var(--gray-0);
-  font-size: 9px;
-  line-height: 15px;
-  font-weight: 600;
-  text-align: center;
 }
 
 /* ── Body ────────────────────────────────────────────────────────────────── */

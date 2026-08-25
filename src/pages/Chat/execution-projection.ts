@@ -571,7 +571,14 @@ export function deriveUserRunProjection({
 
     // A run whose only output was promoted to a rich card (e.g. a single
     // `command.output`) has no graph rows left — it must still render.
-    const hasSurfaceContent = surfaces.terminals.length > 0 || surfaces.plan != null;
+    //
+    // Reasoning counts the same way. A turn that only thought — no tools, no
+    // files, the ordinary shape on a reasoning model — used to produce no card
+    // at all, which left its thinking with nowhere to live but the assistant
+    // message, at the same level as the answer. That is precisely the turn whose
+    // thinking is longest, so it is the one that most needs the disclosure.
+    const segmentHasReasoning = postTriggerMessages.some((segmentMessage) => !!extractThinking(segmentMessage));
+    const hasSurfaceContent = surfaces.terminals.length > 0 || surfaces.plan != null || segmentHasReasoning;
 
     if (steps.length === 0 && !hasSurfaceContent) {
       if (isLatestOpenRun && streamingReplyText != null) {

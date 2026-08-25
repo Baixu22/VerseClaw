@@ -19,7 +19,7 @@ import {
   type ChatModelAdapter,
   type SuggestionConfig,
 } from '@assistant-ui/react';
-import type { CompressionArtifact, KnowledgeErrorGuardAdvisory, KnowledgeErrorGuardSignal, SessionHandoffResult, SessionCompactionStatus } from '@shared/host-api/contract';
+import type { KnowledgeErrorGuardAdvisory, KnowledgeErrorGuardSignal, SessionHandoffResult, SessionCompactionStatus } from '@shared/host-api/contract';
 import type { LongTaskControlStatus } from '@shared/types/long-task-control';
 import { classifySessionActivity, retainRecentSessionActivity } from '@shared/types/session-activity';
 import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
@@ -31,6 +31,7 @@ import { useAgentsStore } from '@/stores/agents';
 import { useProviderStore } from '@/stores/providers';
 import { useSettingsStore } from '@/stores/settings';
 import { useWorkspacesStore } from '@/stores/workspaces';
+import { isSessionIntentFresh, useSessionIntentStore } from '@/stores/session-intent';
 import {
   ARTIFACT_PANEL_MAX_WIDTH,
   ARTIFACT_PANEL_MIN_WIDTH,
@@ -45,24 +46,18 @@ import { ShimmerBlock } from '@/components/ai-elements/shimmer';
 import { Badge } from '@/components/ui/badge';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
-import { CompactionArtifactViewer } from './CompactionArtifactViewer';
 import { ExecutionGraphCard } from './ExecutionGraphCard';
 import { TeamOrchestrationCard } from './TeamOrchestrationCard';
 import { ChatToolbar } from './ChatToolbar';
 import { SessionActivityPanel } from './SessionActivityPanel';
 import { useSessionActivityStore } from '@/stores/session-activity';
-import { RollbackPlanPanel } from './RollbackPlanPanel';
-import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 import {
   classifySessionContinuityError,
   resolveSessionContinuityPreflight,
   type SessionContinuityErrorKind,
   type SessionContinuityRecommendation,
 } from './session-continuity';
-import { buildRollbackPlan, hasRollbackPlanSidebarTrigger } from './rollback-plan';
 import { startTaskLoopUpgradeRun } from './task-loop-upgrade';
-import { SessionStatusRail } from '@/components/chat/SessionStatusRail';
-import type { TeamOrchestrationView } from './team-orchestration-visualization';
 import { extractText, normalizeMessageRole, splitThinkingIntoSegments } from './message-utils';
 import { projectMessageRender } from './message-render-projection';
 import { parseSubagentCompletionInfo } from './task-visualization';
@@ -97,11 +92,13 @@ import { extractGeneratedFiles, generatedFileHasDiffPayload, isHtmlPreviewExt, t
 import { AssistantErrorCard, SelectionQuoteToolbar } from '@/components/assistant-render/AssistantRender';
 import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
 import { TurnSummaryCard } from '@/components/assistant-render/TurnSummaryCard';
+import { extractAssistantReasoning, type AssistantReasoning } from '@/components/assistant-render/model';
 import { PendingRunApprovals } from '@/components/tool-ui/PendingRunApprovals';
 import { RunMutationDiffs } from '@/components/tool-ui/RunMutationDiffs';
 import { RunTerminalSurfaces } from '@/components/tool-ui/RunTerminalSurfaces';
-import { ToolUiPlanView, type ToolUiPlanTodo } from '@/components/tool-ui/plan-view';
-import { projectGeneratedFileDiff, type RunCodeDiffSurface } from '@/components/tool-ui/run-surfaces';
+import { ToolUiPlanView } from '@/components/tool-ui/plan-view';
+import { mergeProcessSurfaces, processFromTerminalSurface, projectGeneratedFileDiff, projectRunProcesses, type RunCodeDiffSurface } from '@/components/tool-ui/run-surfaces';
+import { promoteRunSurfaces } from './run-surface-promotion';
 import { useRunApprovals } from './use-run-approvals';
 import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
 import { WelcomeBranchPicker } from '@/components/chat/WelcomeBranchPicker';
@@ -147,6 +144,7 @@ type ChatMessageRenderRow = {
   hidden: boolean;
   suppressAssistantText: boolean;
   suppressToolCards: boolean;
+  suppressReasoning: boolean;
   textOverride?: string;
   runCards: UserRunCard[];
 };
@@ -191,33 +189,12 @@ function formatTokenCountForToast(value: number): string {
   return `${compact >= 10 ? compact.toFixed(0) : compact.toFixed(1)}m`;
 }
 
-type QuestionDirectoryItem = {
-  index: number;
-  ordinal: number;
-  title: string;
-};
-
 type SessionLineageOverride = {
   relation: 'forked_from';
   sourceSessionKey: string;
 };
 
-const QUESTION_DIRECTORY_RENDER_LIMIT = 300;
-
-/* Below this the conversation column would be squeezed under its own
- * 820px reading measure once the rail takes its 320px, so the rail folds
- * into its 44px strip instead. */
-const SESSION_RAIL_MIN_VIEWPORT = 1280;
-
-/** Stable identity so an absent run never re-renders the rail. */
-const EMPTY_ORCHESTRATIONS: TeamOrchestrationView[] = [];
-const EMPTY_PLAN_TODOS: ToolUiPlanTodo[] = [];
-
-function buildQuestionDirectoryTitle(message: RawMessage, fallback: string): string {
-  const normalized = extractText(message).replace(/\s+/g, ' ').trim();
-  if (!normalized) return fallback;
-  return normalized.length > 64 ? `${normalized.slice(0, 64)}…` : normalized;
-}
+const EMPTY_REASONING_ITEMS: AssistantReasoning[] = [];
 
 function hasUserFacingImageAttachments(msg: RawMessage): boolean {
   return (msg._attachedFiles ?? []).some((file) => file.mimeType.startsWith('image/'));
@@ -527,9 +504,9 @@ function ProjectSessionHeader({
   };
 
   return (
-    <div ref={rootRef} className="flex min-w-0 items-center gap-1 text-sm" data-testid="chat-project-session-header">
+    <div ref={rootRef} className="chat-project-session-header flex min-w-0 items-center gap-1 text-sm" data-testid="chat-project-session-header">
       <Laptop className="order-1 h-4 w-4 shrink-0 text-muted-foreground" />
-      <div className="relative order-4 hidden min-w-0 md:block" data-testid="chat-header-environment-project">
+      <div className="chat-header-environment-project relative order-4 hidden min-w-0 md:block" data-testid="chat-header-environment-project">
         {/* Project is the ancestor, not the subject — the session is what this
           * pane is showing, so it takes the weight and the project steps back
           * to breadcrumb strength. */}
@@ -583,7 +560,7 @@ function ProjectSessionHeader({
         <Tooltip>
           <TooltipTrigger asChild>
         <span
-          className="order-5 hidden min-w-0 shrink items-center gap-1 rounded-md px-1.5 py-1 text-xs text-muted-foreground lg:inline-flex"
+          className="chat-header-branch order-5 hidden min-w-0 shrink items-center gap-1 rounded-md px-1.5 py-1 text-xs text-muted-foreground lg:inline-flex"
           data-testid="chat-header-branch"
         >
           <GitBranch className="h-3.5 w-3.5 shrink-0" />
@@ -593,7 +570,7 @@ function ProjectSessionHeader({
           <TooltipContent side="bottom" collisionPadding={8} className="max-w-xs break-all text-xs">{branch}</TooltipContent>
         </Tooltip>
       )}
-      <span className="order-3 hidden text-foreground/25 md:inline" aria-hidden="true">/</span>
+      <span className="chat-header-separator order-3 hidden text-foreground/25 md:inline" aria-hidden="true">/</span>
       <div className="relative order-2 min-w-0">
         {editingSession ? (
           <div className="inline-flex max-w-[380px] items-center gap-1 rounded-md bg-black/5 px-1 py-0.5 dark:bg-white/10">
@@ -635,8 +612,8 @@ function ProjectSessionHeader({
                 data-testid="chat-current-session-status"
               />
             )}
-            <span className="truncate">{sessionName}</span>
-            <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+            <span className="chat-header-session-label truncate">{sessionName}</span>
+            <ChevronDown className="chat-header-session-chevron h-3.5 w-3.5 shrink-0 text-muted-foreground" />
           </button>
             </TooltipTrigger>
             <TooltipContent side="bottom" collisionPadding={8}>{t('session.renameHint')}</TooltipContent>
@@ -841,7 +818,6 @@ export function Chat() {
   const uiVersion = useUiVersion();
   const navigate = useNavigate();
   const location = useLocation();
-  const uiDepthMode = useSettingsStore((s) => s.uiDepthMode);
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
 
@@ -893,6 +869,9 @@ export function Chat() {
   const createWorkspace = useWorkspacesStore((s) => s.createWorkspace);
   const saveWorkspaceState = useWorkspacesStore((s) => s.saveWorkspaceState);
   const setPermissionMode = useWorkspacesStore((s) => s.setPermissionMode);
+  /** Cross-surface intents (today: handoff started from the sidebar menu). */
+  const sessionIntent = useSessionIntentStore((s) => s.intent);
+  const clearSessionIntent = useSessionIntentStore((s) => s.clear);
 
   const [knowledgeScope, setKnowledgeScope] = useState<WorkspaceKnowledgeScope>('none');
   const [knowledgeMode, setKnowledgeMode] = useState<KnowledgeInvocationMode>('suggest');
@@ -916,25 +895,6 @@ export function Chat() {
     if (!currentSessionKey) return;
     void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey });
   }, [activeWorkspaceId, currentSessionKey, loadSessionActivity]);
-
-  const [rollbackPlanDismissed, setRollbackPlanDismissed] = useState(false);
-  /* The rail's own collapse preference, restored per session. Narrow viewports
-   * force it shut without touching the preference, so widening the window
-   * brings back whatever the user last chose. */
-  const [sessionRailCollapsed, setSessionRailCollapsed] = useState(false);
-  const [viewportTooNarrowForRail, setViewportTooNarrowForRail] = useState(
-    () => typeof window !== 'undefined' && window.innerWidth < SESSION_RAIL_MIN_VIEWPORT,
-  );
-
-  useEffect(() => {
-    setRollbackPlanDismissed(false);
-  }, [activeWorkspaceId, currentSessionKey]);
-
-  useEffect(() => {
-    const sync = () => setViewportTooNarrowForRail(window.innerWidth < SESSION_RAIL_MIN_VIEWPORT);
-    window.addEventListener('resize', sync);
-    return () => window.removeEventListener('resize', sync);
-  }, []);
 
   // Refresh Task Ledger snapshot when workspace changes
   const refreshTaskLedger = useChatStore((s) => s.refreshTaskLedger);
@@ -967,9 +927,13 @@ export function Chat() {
   const artifactActiveTabId = useArtifactPanel((s) => s.activeTabId);
   const terminalPlacement = useArtifactPanel((s) => s.terminalPlacement);
   const setTerminalPlacement = useArtifactPanel((s) => s.setTerminalPlacement);
+  const setArtifactPanelExpanded = useArtifactPanel((s) => s.setExpanded);
   const restoreArtifactPanelState = useArtifactPanel((s) => s.restoreSessionState);
   const splitContainerRef = useRef<HTMLDivElement | null>(null);
+  const compactPanelLayoutRef = useRef(false);
+  const [compactToolbarLayout, setCompactToolbarLayout] = useState(false);
   const [terminalBottomHeight, setTerminalBottomHeight] = useState(280);
+  const chatToolbarRef = useRef<HTMLDivElement | null>(null);
   const lastObservedSessionKeyRef = useRef(currentSessionKey);
   const lastRestoredWorkspaceIdRef = useRef<string | null>(null);
   const workspaceSessionRestoreTargetRef = useRef<{ workspaceId: string; sessionKey: string } | null>(null);
@@ -982,20 +946,51 @@ export function Chat() {
   const lastKnowledgeAdvisorySignalKeyRef = useRef<string | null>(null);
   const knowledgeAdvisorySourceRef = useRef<KnowledgeAdvisorySource | null>(null);
   const [childTranscripts, setChildTranscripts] = useState<Record<string, RawMessage[]>>({});
-  const [questionDirectoryOpenSessionKey, setQuestionDirectoryOpenSessionKey] = useState<string | null>(null);
   const [sessionActivityOpenOverrides, setSessionActivityOpenOverrides] = useState<Record<string, boolean>>({});
-  const [sessionActivitySheetOpen, setSessionActivitySheetOpen] = useState(false);
   const [sessionActivityRetentionClock, setSessionActivityRetentionClock] = useState(() => Date.now());
   const [contextRange, setContextRange] = useState<WorkspaceContextRange | null>(null);
   const [liveUsage, setLiveUsage] = useState<LiveTokenUsage | null>(null);
   const [promptCacheStatus, setPromptCacheStatus] = useState<PromptCacheRiskAssessment | null>(null);
+
+  useEffect(() => {
+    const container = splitContainerRef.current;
+    if (!container) return;
+
+    const updatePanelDensity = () => {
+      const width = container.clientWidth;
+      const toolbarWidth = chatToolbarRef.current?.clientWidth ?? width;
+      const compact = width > 0 && width < 900;
+      const toolbarCompact = toolbarWidth > 0 && toolbarWidth < 720;
+      setCompactToolbarLayout(toolbarCompact);
+      if (toolbarCompact) {
+        setSessionActivityOpenOverrides((current) => (
+          current[currentSessionKey]
+            ? { ...current, [currentSessionKey]: false }
+            : current
+        ));
+      }
+      const state = useArtifactPanel.getState();
+      const activeTab = state.tabs.find((tab) => tab.id === state.activeTabId);
+
+      if (compact) {
+        compactPanelLayoutRef.current = true;
+        if (state.expanded) setArtifactPanelExpanded(false);
+        if (activeTab?.kind === 'terminal' && state.terminalPlacement !== 'bottom') {
+          setTerminalPlacement('bottom');
+        }
+      } else if (!compact) {
+        compactPanelLayoutRef.current = false;
+      }
+    };
+
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(updatePanelDensity) : null;
+    observer?.observe(container);
+    if (chatToolbarRef.current) observer?.observe(chatToolbarRef.current);
+    updatePanelDensity();
+    return () => observer?.disconnect();
+  }, [currentSessionKey, panelOpen, setArtifactPanelExpanded, setTerminalPlacement]);
   const [compactionStatus, setCompactionStatus] = useState<SessionCompactionStatus | null>(null);
   const [compactionBusy, setCompactionBusy] = useState(false);
-  const [compactionArtifactOpen, setCompactionArtifactOpen] = useState(false);
-  const [compactionArtifactBusy, setCompactionArtifactBusy] = useState(false);
-  const [compactionArtifact, setCompactionArtifact] = useState<CompressionArtifact | null>(null);
-  const [compactionArtifactCheckpointId, setCompactionArtifactCheckpointId] = useState<string | null>(null);
-  const [compactionArtifactWarnings, setCompactionArtifactWarnings] = useState<string[]>([]);
   const [longTaskControlStatus, setLongTaskControlStatus] = useState<LongTaskControlStatus | null>(null);
   const [queueDrainBusy, setQueueDrainBusy] = useState(false);
   const [taskLoopUpgradeBusy, setTaskLoopUpgradeBusy] = useState(false);
@@ -1008,14 +1003,10 @@ export function Chat() {
   const [sessionLineage, setSessionLineage] = useState<Record<string, SessionLineageOverride>>({});
   const [streamStatusNow, setStreamStatusNow] = useState(() => Date.now());
   const [composerDraft, setComposerDraft] = useState('');
-  const [composerSlashRequest, setComposerSlashRequest] = useState(0);
   const [composerPaused, setComposerPaused] = useState(false);
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
   const [runActivityExpandedOverrides, setRunActivityExpandedOverrides] = useState<Record<string, boolean>>({});
   const [runActivityStepDetailsExpanded, setRunActivityStepDetailsExpanded] = useState<Record<string, Record<string, boolean>>>({});
-  useEffect(() => {
-    setSessionActivitySheetOpen(false);
-  }, [currentSessionKey, panelOpen]);
   useEffect(() => {
     if (sessionActivityRetentionMinutes === 0) return;
     const timer = window.setInterval(() => setSessionActivityRetentionClock(Date.now()), 15_000);
@@ -1249,6 +1240,25 @@ export function Chat() {
   }, [currentSessionKey, persistCurrentWorkspaceSessionState]);
   const graphStepCache: Record<string, GraphStepCacheEntry> = graphStepCacheStore.get(currentSessionKey) ?? {};
   const { contentRef, scrollRef, scrollToBottom, isAtBottom } = useStickToBottomInstant(currentSessionKey, sending);
+  /**
+   * The transcript scroller as a plain ref.
+   *
+   * `useStickToBottomInstant` hands back `scrollRef` for attaching, not for
+   * reading — the underlying library's version also carries `.current`, but the
+   * wrapper's `useCallback` drops it. Anything that needs to MEASURE or LISTEN to
+   * the scroller (the nav rail does both) has to capture the element itself.
+   *
+   * Forwarding accepts both React ref forms because that is what `ref=` accepts:
+   * a callback in production, a ref object from the Chat page's test doubles.
+   * The composed callback is memoized — an inline one would detach and re-attach
+   * every render, thrashing the library's own scroll listeners.
+   */
+  const scrollElementRef = useRef<HTMLElement | null>(null);
+  const attachScrollElement = useCallback((element: HTMLDivElement | null) => {
+    scrollElementRef.current = element;
+    if (typeof scrollRef === 'function') scrollRef(element);
+    else (scrollRef as unknown as { current: HTMLElement | null }).current = element;
+  }, [scrollRef]);
 
   const startupPending = messages.length === 0 && startupPhase !== 'ready' && startupPhase !== 'error';
   const messageAreaLoading = startupPending || (loading && messages.length === 0);
@@ -1337,10 +1347,6 @@ export function Chat() {
     setRunActivityStepDetailsExpanded(sessionState.turnSummaryStepDetailsExpanded ?? {});
     setKnowledgeScope(sessionState.knowledgeScope ?? 'none');
     setKnowledgeMode(sessionState.knowledgeMode ?? 'suggest');
-    // `workContextVisible` predates the rail and stored the same idea (does the
-    // session want its work context beside the transcript), so it is reused
-    // rather than adding a second flag that would disagree with it.
-    setSessionRailCollapsed(sessionState.chatFooter?.workContextVisible === false);
     void clearActiveTopicMarker(activeWorkspace.rootPath);
     /* Panel state is per session, not per workspace: `getWorkspaceSessionState`
      * falls back to the workspace-level blob for legacy profiles, which made one
@@ -1567,135 +1573,59 @@ export function Chat() {
     });
   }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
 
-  const handleOpenGitPanel = useCallback(() => {
+  /**
+   * Opens one sub-agent's own page in the workspace panel.
+   *
+   * A tab per worker, not the shared roster: clicking a specific worker in the
+   * status card should land on that worker, and two workers should be readable
+   * side by side. The tab carries the child session as its subject, which is
+   * what `subagentIdentity` derives the chip's face and name from.
+   *
+   * Closing the dropdown is deliberate — the panel takes the toolbar's assistive
+   * slot with it, and leaving an orphaned dropdown over a panel that just opened
+   * underneath it reads as a rendering fault.
+   */
+  const handleOpenSubagentTranscript = useCallback((childSessionKey: string) => {
+    setSessionActivityOpenOverrides((current) => ({ ...current, [currentSessionKey]: false }));
+    openWorkspacePanel({ panel: 'subagent', sessionKey: childSessionKey });
+    if (!activeWorkspaceId) return;
+    void saveWorkspaceState({
+      id: activeWorkspaceId,
+      sessionKey: currentSessionKey,
+      // Subject-bearing tabs are per-run and are not restored, so the saved
+      // state only records that the panel was open.
+      state: { artifactPanel: { open: true } },
+    });
+  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
+
+  /** Opens one shell process's own page: its command, exit code and output. */
+  const handleOpenProcess = useCallback((processId: string, command?: string) => {
+    setSessionActivityOpenOverrides((current) => ({ ...current, [currentSessionKey]: false }));
+    openWorkspacePanel({ panel: 'process', processId, command });
+    if (!activeWorkspaceId) return;
+    void saveWorkspaceState({
+      id: activeWorkspaceId,
+      sessionKey: currentSessionKey,
+      state: { artifactPanel: { open: true } },
+    });
+  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
+
+  /** The status card's 环境 section links out to the Git review tab. */
+  const handleOpenEnvironment = useCallback(() => {
+    setSessionActivityOpenOverrides((current) => ({ ...current, [currentSessionKey]: false }));
     openWorkspacePanel({ panel: 'review', view: 'changes' });
     if (!activeWorkspaceId) return;
     void saveWorkspaceState({
       id: activeWorkspaceId,
       sessionKey: currentSessionKey,
-      state: {
-        artifactPanel: { open: true, activeTabKind: 'review' },
-      },
+      state: { artifactPanel: { open: true, activeTabKind: 'review' } },
     });
   }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
-
-  const handleOpenTerminalPanel = useCallback(() => {
-    openWorkspacePanel({ panel: 'terminal' });
-    if (!activeWorkspaceId) return;
-    void saveWorkspaceState({
-      id: activeWorkspaceId,
-      sessionKey: currentSessionKey,
-      state: {
-        artifactPanel: { open: true, activeTabKind: 'terminal' },
-      },
-    });
-  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
-
-  const handleOpenAgentsPanel = useCallback((childSessionKey?: string) => {
-    openWorkspacePanel({ panel: 'agents', sessionKey: childSessionKey });
-    if (!activeWorkspaceId) return;
-    void saveWorkspaceState({
-      id: activeWorkspaceId,
-      sessionKey: currentSessionKey,
-      state: {
-        artifactPanel: { open: true, activeTabKind: 'agents' },
-      },
-    });
-  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
-
-  const handleGitStash = useCallback(async () => {
-    if (!activeWorkspaceId) return;
-    try {
-      const result = await hostApi.git.stashPush();
-      if (result.success) {
-        toast.success(t('chat:sessionRail.git.stashSuccess', 'Changes stashed'));
-      } else {
-        toast.error(result.reason || t('chat:sessionRail.git.stashFailed', 'Failed to stash changes'));
-      }
-    } catch {
-      toast.error(t('chat:sessionRail.git.stashFailed', 'Failed to stash changes'));
-    }
-  }, [activeWorkspaceId, t]);
-
-  const handleGitCommit = useCallback(async (message: string) => {
-    if (!activeWorkspaceId || !message.trim()) return;
-    try {
-      const result = await hostApi.git.commit({ message: message.trim() });
-      if (result.success) {
-        toast.success(t('chat:sessionRail.git.commitSuccess', 'Changes committed'));
-      } else if (result.blocked || result.approvalRequired) {
-        // If approval is required, open the review panel where user can handle it
-        openWorkspacePanel({ panel: 'review', view: 'changes' });
-        toast.info(t('chat:sessionRail.git.approvalRequired', 'Approval required - check review panel'));
-      } else {
-        toast.error(result.reason || t('chat:sessionRail.git.commitFailed', 'Failed to commit'));
-      }
-    } catch {
-      toast.error(t('chat:sessionRail.git.commitFailed', 'Failed to commit'));
-    }
-  }, [activeWorkspaceId, openWorkspacePanel, t]);
-
-  const handleGitPush = useCallback(async () => {
-    if (!activeWorkspaceId) return;
-    try {
-      const result = await hostApi.git.push();
-      if (result.success) {
-        toast.success(t('chat:sessionRail.git.pushSuccess', 'Changes pushed'));
-      } else if (result.blocked || result.approvalRequired) {
-        openWorkspacePanel({ panel: 'review', view: 'changes' });
-        toast.info(t('chat:sessionRail.git.approvalRequired', 'Approval required - check review panel'));
-      } else {
-        toast.error(result.reason || t('chat:sessionRail.git.pushFailed', 'Failed to push'));
-      }
-    } catch {
-      toast.error(t('chat:sessionRail.git.pushFailed', 'Failed to push'));
-    }
-  }, [activeWorkspaceId, openWorkspacePanel, t]);
-
-  const handleSessionRailCollapsedChange = useCallback((collapsed: boolean) => {
-    setSessionRailCollapsed(collapsed);
-    if (!activeWorkspaceId) return;
-    void saveWorkspaceState({
-      id: activeWorkspaceId,
-      sessionKey: currentSessionKey,
-      state: {
-        chatFooter: { workContextVisible: !collapsed },
-      },
-    });
-  }, [activeWorkspaceId, currentSessionKey, saveWorkspaceState]);
-
-  const handleInterruptTerminal = useCallback(async () => {
-    openWorkspacePanel({ panel: 'terminal' });
-    if (!activeWorkspaceId) return;
-    void saveWorkspaceState({
-      id: activeWorkspaceId,
-      sessionKey: currentSessionKey,
-      state: {
-        artifactPanel: { open: true, activeTabKind: 'terminal' },
-      },
-    });
-    try {
-      const status = await hostApi.terminal.status({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey });
-      if (status.sessionId && status.status === 'running') {
-        const result = await hostApi.terminal.interrupt({ sessionId: status.sessionId });
-        if (!result.success) {
-          toast.error(result.error || t('composer.rollbackPlan.terminal.interruptFailed'));
-          return;
-        }
-        toast.success(t('composer.rollbackPlan.terminal.interrupted'));
-        return;
-      }
-      toast.message(t('composer.rollbackPlan.terminal.opened'));
-    } catch (error) {
-      toastUserError(error);
-    }
-  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState, t]);
 
   const handleOpenTaskLedger = useCallback(() => {
     const nodeId = longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId;
     navigate(nodeId ? `/task-ledger?nodeId=${encodeURIComponent(nodeId)}` : '/task-ledger');
   }, [longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId, navigate]);
-
   const handleOpenClawGraph = useCallback(() => {
     const runId = longTaskControlStatus?.latestCheckpoint?.clawGraphRunId;
     navigate(runId ? `/clawgraph?runId=${encodeURIComponent(runId)}` : '/clawgraph');
@@ -1707,10 +1637,6 @@ export function Chat() {
       : text;
     handleComposerDraftChange(nextDraft);
   }, [composerDraft, handleComposerDraftChange]);
-
-  const handleOpenSlashCommands = useCallback(() => {
-    setComposerSlashRequest((value) => value + 1);
-  }, []);
 
   const handleQuoteSelection = useCallback((text: string) => {
     const clipped = text.replace(/\s+/g, ' ').trim().slice(0, 1200);
@@ -2107,33 +2033,6 @@ export function Chat() {
     }
   }, [currentAgentId, currentModelRef, currentSessionKey, liveUsage?.totalTokens, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
 
-  const handleViewCompactionArtifact = useCallback(async () => {
-    setCompactionArtifactOpen(true);
-    setCompactionArtifactBusy(true);
-    setCompactionArtifact(null);
-    setCompactionArtifactCheckpointId(null);
-    setCompactionArtifactWarnings([]);
-    try {
-      const result = await hostApi.sessions.compressionArtifact({
-        sessionKey: currentSessionKey,
-        agentId: currentAgentId,
-      });
-      setCompactionArtifact(result.artifact ?? null);
-      setCompactionArtifactCheckpointId(result.checkpointId ?? null);
-      setCompactionArtifactWarnings(result.warnings ?? []);
-      if (!result.success) {
-        toast.message(result.error || t('composer.compaction.artifactViewer.loadFailed'));
-      }
-    } catch (error) {
-      setCompactionArtifactWarnings([
-        error instanceof Error ? error.message : t('composer.compaction.artifactViewer.loadFailed'),
-      ]);
-      toast.message(error instanceof Error ? error.message : t('composer.compaction.artifactViewer.loadFailed'));
-    } finally {
-      setCompactionArtifactBusy(false);
-    }
-  }, [currentAgentId, currentSessionKey, t]);
-
   const continuityRunActive = sending || pendingFinal || Boolean(streamingMessage) || Boolean(activeRunId);
   const gatewayAvailable = isGatewayRunning && gatewayStatus.gatewayReady !== false;
   const continuityPreflight = useMemo(() => resolveSessionContinuityPreflight({
@@ -2147,25 +2046,6 @@ export function Chat() {
   const continuityRecommendation = continuityPreflight.recommendation;
   const handoffDisabled = continuityPreflight.handoff.disabled;
   const forkDisabled = continuityPreflight.fork.disabled;
-  const rollbackPlan = useMemo(() => buildRollbackPlan({
-    activeRun: continuityRunActive,
-    gatewayAvailable,
-    queueDrainBusy,
-    compactionBusy,
-    handoffDisabled,
-    contextRange,
-    compactionStatus,
-    longTaskControlStatus,
-  }), [
-    compactionBusy,
-    compactionStatus,
-    contextRange,
-    continuityRunActive,
-    gatewayAvailable,
-    handoffDisabled,
-    longTaskControlStatus,
-    queueDrainBusy,
-  ]);
   const handleForkSessionRef = useRef<(() => Promise<void>) | null>(null);
   const handlePrepareHandoffRef = useRef<(() => Promise<void>) | null>(null);
 
@@ -2319,6 +2199,26 @@ export function Chat() {
   handleForkSessionRef.current = handleForkSession;
   handlePrepareHandoffRef.current = handlePrepareHandoff;
 
+  /*
+   * Handoff requested from the sidebar's conversation context menu.
+   *
+   * The sidebar switches to the target session and parks an intent; this is
+   * where it lands, once `currentSessionKey` has actually caught up — a handoff
+   * prepared against the wrong session would silently draft the wrong
+   * transcript. Stale intents (the switch never happened) are dropped rather
+   * than fired late.
+   */
+  useEffect(() => {
+    if (!sessionIntent || sessionIntent.kind !== 'handoff') return;
+    if (!isSessionIntentFresh(sessionIntent)) {
+      clearSessionIntent();
+      return;
+    }
+    if (sessionIntent.sessionKey !== currentSessionKey) return;
+    clearSessionIntent();
+    void handlePrepareHandoffRef.current?.();
+  }, [clearSessionIntent, currentSessionKey, sessionIntent]);
+
   const handleCreateHandoffSession = useCallback(async () => {
     const draft = handoffDraft.trim();
     if (!draft || handoffCreating) return;
@@ -2466,30 +2366,10 @@ export function Chat() {
     [messages, subagentCompletionInfos],
   );
 
-  const questionDirectoryItems = useMemo<QuestionDirectoryItem[]>(() => {
-    const items: QuestionDirectoryItem[] = [];
-    let questionOrdinal = 0;
-    messages.forEach((message, index) => {
-      if (!isRealUserMessage(message) || subagentCompletionInfos[index]) return;
-      questionOrdinal += 1;
-      items.push({
-        index,
-        ordinal: questionOrdinal,
-        title: buildQuestionDirectoryTitle(message, t('questionDirectory.fallback', { number: questionOrdinal })),
-      });
-    });
-    return items;
-  }, [messages, subagentCompletionInfos, t]);
-
-  const questionDirectoryRequested = questionDirectoryOpenSessionKey === currentSessionKey && questionDirectoryItems.length > 1;
-  const chatAssistiveRailVisible = !panelOpen;
   // Keep the startup skeleton in a single centered column. `isEmpty` is
   // intentionally false until history is confirmed, so it cannot decide
   // whether a side rail should participate in the flex layout.
   const canShowChatSideRail = !messageAreaLoading && startupPhase === 'ready';
-  const questionDirectoryVisible = canShowChatSideRail
-    && chatAssistiveRailVisible
-    && questionDirectoryRequested;
   const boundedPanelWidthPct = Math.min(
     ARTIFACT_PANEL_MAX_WIDTH,
     Math.max(ARTIFACT_PANEL_MIN_WIDTH, panelWidthPct),
@@ -2592,12 +2472,6 @@ export function Chat() {
       });
     }
   }, [activeWorkspace?.id, composerPaused, currentSessionKey, saveWorkspaceState]);
-  /* The rail reports the turn in flight, so it reads the newest card rather
-   * than folding every card in the transcript — an older run's finished plan is
-   * history, not status. */
-  const latestRunCard = userRunCards.length > 0 ? userRunCards[userRunCards.length - 1] : null;
-  const sessionRailPlan = latestRunCard?.surfaces.plan ?? null;
-  const sessionRailOrchestrations = latestRunCard?.orchestrations ?? EMPTY_ORCHESTRATIONS;
   // Host permission approvals for the run in flight. Rendered inside the turn
   // summary so a blocked run is actionable from the transcript instead of only
   // from the workspace side panels.
@@ -2639,6 +2513,47 @@ export function Chat() {
       toast.error(t('messageActions.resendFailed'));
     });
   }, [currentSessionKey, inputRunActive, isGatewayRunning, resendUserMessage, t]);
+  /**
+   * The plan and the processes the status card shows.
+   *
+   * TWO SOURCES, ON PURPOSE. `projectRunProcesses` reads the live runtime run
+   * state, which is the only place a command that has started but printed
+   * nothing yet exists — that is what makes "正在运转的进程" possible. But the
+   * store drops `runtimeRuns` once a finished run's history is reloaded, so on
+   * its own it would empty the section the moment the run ended. The transcript's
+   * own promoted surfaces (`UserRunCard.surfaces`) are rebuilt from history and
+   * outlive the run, so they carry the section afterwards. Merged, live wins.
+   *
+   * The plan works the same way and for the same reason, and because both sides
+   * come from `promoteRunSurfaces` the card and the conversation cannot disagree
+   * about what the plan says.
+   *
+   * Declared here rather than with the other activity state because it reads
+   * `userRunCards`, which is computed above.
+   */
+  const sessionActivityRuns = useMemo(
+    () => Object.values(runtimeRuns)
+      .filter((run) => !run.sessionKey || run.sessionKey === currentSessionKey)
+      .sort((left, right) => (right.startedAt ?? 0) - (left.startedAt ?? 0)),
+    [currentSessionKey, runtimeRuns],
+  );
+  const sessionActivityPlan = useMemo(() => {
+    for (const run of sessionActivityRuns) {
+      const { plan } = promoteRunSurfaces({ runState: run });
+      if (plan && plan.todos.length > 0) return plan;
+    }
+    // Newest turn first: the plan the user is looking at is the latest one.
+    for (let index = userRunCards.length - 1; index >= 0; index -= 1) {
+      const plan = userRunCards[index].surfaces.plan;
+      if (plan && plan.todos.length > 0) return plan;
+    }
+    return null;
+  }, [sessionActivityRuns, userRunCards]);
+  const sessionActivityProcesses = useMemo(() => mergeProcessSurfaces(
+    sessionActivityRuns.flatMap((run) => projectRunProcesses(run)),
+    userRunCards.flatMap((card) => card.surfaces.terminals.map(processFromTerminalSurface)),
+  ), [sessionActivityRuns, userRunCards]);
+
   const visibleSessionActivitySnapshot = useMemo(
     () => sessionActivitySnapshot
       ? retainRecentSessionActivity(sessionActivitySnapshot, sessionActivityRetentionMinutes, sessionActivityRetentionClock)
@@ -2651,46 +2566,73 @@ export function Chat() {
       showCommands: sessionActivityShowCommands,
     })
     : 'none';
+  /**
+   * Does the card have anything to render?
+   *
+   * `classifySessionActivity` only sees the snapshot, but two of the card's four
+   * sections are fed from the runtime run state instead, and it also shows a
+   * clean repository (which the classifier scores as nothing to report). Gating
+   * on the classifier alone therefore both hid the toggle over a card that had a
+   * plan to show, and offered a toggle onto a card that rendered nothing.
+   */
+  const sessionActivityHasContent = sessionActivityLevel !== 'none'
+    || Boolean(sessionActivityShowGit && visibleSessionActivitySnapshot?.git?.isRepository)
+    || (sessionActivityPlan?.todos.length ?? 0) > 0
+    || (sessionActivityShowCommands && sessionActivityProcesses.length > 0);
   const hasSessionActivityEntry = canShowChatSideRail
     && sessionActivityPanelEnabled
     && Boolean(visibleSessionActivitySnapshot)
     && !isEmpty
-    && sessionActivityLevel !== 'none';
-  const shouldAutoExpandSessionActivity = sessionActivityAutoExpand === 'active'
-    ? sessionActivityLevel === 'active' || sessionActivityLevel === 'attention'
-    : sessionActivityAutoExpand === 'attention' && sessionActivityLevel === 'attention';
-  const sessionActivityRailOpen = sessionActivityOpenOverrides[currentSessionKey]
-    ?? shouldAutoExpandSessionActivity;
+    && sessionActivityHasContent;
+
+  /**
+   * The status rail's two layers.
+   *
+   * PASSIVE (`inline`) — the rail put itself there because the run has a plan.
+   * Task planning is the whole trigger: a run that is merely alive has nothing
+   * for a column to hold, so a session without a plan shows no rail at all and
+   * the toolbar toggle is the only way in. Because it appeared on its own, the
+   * transcript gives up the width for it (see `codex-conversation-inset`)
+   * instead of being covered by it.
+   *
+   * ACTIVE (`overlay`) — the user opened it from the toolbar. It becomes a
+   * dropdown off that control and is drawn OVER the transcript, which keeps its
+   * width: a panel the reader asked for must not reflow what they were reading.
+   *
+   * `sessionActivityAutoExpand` has existed in Settings ("auto expand: when
+   * active / when it needs attention / never") with nothing consuming it. It is
+   * the policy knob for the passive layer only — `never` does not disable the
+   * toggle, it just stops the rail from opening by itself.
+   */
+  const sessionActivityHasPlan = (sessionActivityPlan?.todos.length ?? 0) > 0;
+  const sessionActivityPassive = hasSessionActivityEntry
+    && !compactToolbarLayout
+    /* The workspace panel already claims the right-hand column; insetting the
+       transcript for a second one leaves the conversation a sliver. */
+    && !panelOpen
+    && sessionActivityHasPlan
+    && (sessionActivityAutoExpand === 'active'
+      || (sessionActivityAutoExpand === 'attention' && sessionActivityLevel === 'attention'));
+  const sessionActivityOverride = sessionActivityOpenOverrides[currentSessionKey];
+  const sessionActivityRailOpen = (sessionActivityOverride ?? sessionActivityPassive)
+    && Boolean(visibleSessionActivitySnapshot)
+    && sessionActivityPanelEnabled
+    && !compactToolbarLayout
+    && !isEmpty;
+  const sessionActivityRailLayer = sessionActivityOverride === true ? 'overlay' : 'inline';
+  /**
+   * Toggle against the EFFECTIVE state, not against the override.
+   *
+   * With a plan on screen the rail is already open with no override recorded;
+   * flipping `override ?? false` would have taken it from passive-inline to
+   * user-overlay instead of closing it — one click, two surfaces, nothing shut.
+   */
   const handleToggleSessionActivity = useCallback(() => {
-    setQuestionDirectoryOpenSessionKey(null);
     setSessionActivityOpenOverrides((current) => ({
       ...current,
-      [currentSessionKey]: !(current[currentSessionKey] ?? shouldAutoExpandSessionActivity),
+      [currentSessionKey]: !(current[currentSessionKey] ?? sessionActivityPassive),
     }));
-  }, [currentSessionKey, shouldAutoExpandSessionActivity]);
-  const handleOpenSessionActivitySheet = useCallback(() => {
-    setQuestionDirectoryOpenSessionKey(null);
-    setSessionActivitySheetOpen(true);
-  }, []);
-  const showSessionActivityRail = hasSessionActivityEntry
-    && sessionActivityRailOpen
-    && chatAssistiveRailVisible
-    && !questionDirectoryVisible;
-  /* The task ledger moved into the session status rail, which is always on
-   * screen; the assistive rail now carries only the rollback plan, an
-   * event-driven alert rather than standing state. */
-  const showRollbackPlanPanel = canShowChatSideRail
-    && hasRollbackPlanSidebarTrigger(rollbackPlan)
-    && (!isEmpty || !!longTaskControlStatus || !!compactionStatus)
-    && !rollbackPlanDismissed;
-  const showChatAssistiveRail = canShowChatSideRail
-    && chatAssistiveRailVisible
-    && !isEmpty
-    && !questionDirectoryVisible
-    && (showSessionActivityRail || showRollbackPlanPanel);
-  const showChatSideRail = questionDirectoryVisible || showChatAssistiveRail;
-  const sessionRailVisible = startupPhase === 'ready' && !!activeWorkspaceId;
-  const sessionRailFolded = sessionRailCollapsed || viewportTooNarrowForRail;
+  }, [currentSessionKey, sessionActivityPassive]);
 
   useEffect(() => {
     if (!shouldClearStoreLifecycleFromHistory) return;
@@ -2717,10 +2659,51 @@ export function Chat() {
     [userRunCards],
   );
 
+  /**
+   * Reasoning adoption — which turn's process disclosure owns which thinking.
+   *
+   * Thinking used to render inside the assistant message, above the reply text,
+   * which put it at the same level as the answer: on a reasoning model the
+   * thinking is the taller of the two, so scrolling back to the prompt meant
+   * scrolling past all of it. The turn's `TurnSummaryCard` is the natural owner —
+   * it already holds every other trace of the run — so the card adopts the
+   * thinking and the message keeps only the answer.
+   *
+   * Adoption spans the whole run SEGMENT (`triggerIndex + 1 .. segmentEnd`), not
+   * just the final reply: a tool-using turn emits thinking on each intermediate
+   * narration message, and those are as much "how the agent got here" as the last
+   * one. Ids are re-keyed per message because `extractAssistantReasoning` numbers
+   * from 1 within each message and `ThinkingReasoning` keys on the id.
+   *
+   * `adoptedIndices` feeds each row's `suppressReasoning`. It is safe to decide
+   * here, before `filesByRun` / `approvalsByRunKey` exist, because reasoning is
+   * itself one of the `hasActivity` terms below — a card with reasoning always
+   * renders, so adoption can never strand thinking in a card that never mounts.
+   */
+  const runCardReasoning = useMemo(() => {
+    const byRunKey = new Map<string, AssistantReasoning[]>();
+    const adoptedIndices = new Set<number>();
+    for (const card of userRunCards) {
+      const segment: AssistantReasoning[] = [];
+      const lastIndex = Math.min(card.segmentEnd, messages.length - 1);
+      for (let index = card.triggerIndex + 1; index <= lastIndex; index += 1) {
+        const message = messages[index];
+        if (!message || message.role === 'user') continue;
+        const reasoning = extractAssistantReasoning(message);
+        if (reasoning.length === 0) continue;
+        for (const item of reasoning) segment.push({ ...item, id: `${index}:${item.id}` });
+        adoptedIndices.add(index);
+      }
+      if (segment.length > 0) byRunKey.set(card.runKey, segment);
+    }
+    return { byRunKey, adoptedIndices };
+  }, [messages, userRunCards]);
+
   const messageRenderRows = useMemo<ChatMessageRenderRow[]>(() => messages.map((msg, idx) => {
     const hasUserFacingImages = hasUserFacingImageAttachments(msg);
     const suppressAssistantText = foldedNarrationIndices.has(idx);
     const suppressToolCards = runSegmentMessageIndices.has(idx);
+    const suppressReasoning = runCardReasoning.adoptedIndices.has(idx);
     const textOverride = replyTextOverrides.get(idx);
     /*
      * Row visibility has exactly ONE authority, shared with `<ChatMessage>`.
@@ -2740,6 +2723,7 @@ export function Chat() {
       isUser: msg.role === 'user',
       suppressAssistantText,
       suppressToolCards,
+      suppressReasoning,
       textOverride,
     });
     const hidden = isInternalMessage(msg) && !hasUserFacingImages
@@ -2753,6 +2737,7 @@ export function Chat() {
       hidden,
       suppressAssistantText,
       suppressToolCards,
+      suppressReasoning,
       textOverride,
       runCards: userRunCardsByTriggerIndex.get(idx) ?? [],
     };
@@ -2760,6 +2745,7 @@ export function Chat() {
     foldedNarrationIndices,
     messages,
     replyTextOverrides,
+    runCardReasoning,
     runSegmentMessageIndices,
     userRunCardsByTriggerIndex,
   ]);
@@ -2803,6 +2789,16 @@ export function Chat() {
     }
     : null;
   const showStandaloneStreamStatus = inputRunActive && streamingReplyText == null && !pendingImageGeneration;
+  /**
+   * While a run is live its thinking belongs to the active card, not to the
+   * streaming bubble. An active card always clears `hasActivity` (`card.active`
+   * is one of its terms), so its presence is enough to know the stream's
+   * reasoning has a home and must not be rendered twice.
+   */
+  const streamReasoningAdopted = useMemo(
+    () => userRunCards.some((card) => card.active),
+    [userRunCards],
+  );
 
   useEffect(() => {
     if (!assistantStreamStatus?.active) return;
@@ -2937,28 +2933,64 @@ export function Chat() {
         // Stack above MainLayout's mac-main-drag-region (z-10) so the right-hand
         // artifact/preview pane stays clickable; window drag is handled by the
         // sidebar + chat-toolbar drag strips instead.
-        isMac && !isUiV2 && 'z-20 rounded-tl-2xl shadow-[inset_1px_1px_0_hsl(var(--border)/0.55)]',
-        isUiV2 && 'bg-material-canvas',
+        isMac && !isUiV2
+          ? 'z-20 rounded-tl-2xl shadow-[inset_1px_1px_0_hsl(var(--border)/0.55)]'
+          : 'rounded-tl-xl',
+        isUiV2 && 'bg-material-canvas shadow-[inset_1px_0_0_hsl(var(--border)/0.65)]',
       )}
       style={{ height: isUiV2 ? 'calc(100% + 2.5rem)' : isMac ? 'calc(100vh - 1px)' : 'calc(100vh - 2.5rem)' }}
     >
-      {/* Left column: chat */}
+      {/* verse-style background: grid, glows, noise.
+        *
+        * It belongs to the SESSION, not to the empty state, and it is the page's
+        * canvas rather than the conversation's — both of which are corrections.
+        *
+        * It used to be mounted inside the message pane, `position: fixed`, and
+        * revealed only while `isEmpty`. Nothing in the ancestor chain establishes
+        * a containing block, so `fixed` resolved against the viewport: the
+        * hairlines ran across the sidebar too, for as long as the hero was up.
+        * Then the first message landed and the whole layer faded out, leaving the
+        * transcript on a flat canvas.
+        *
+        * Now it is an `absolute` layer on the page box, so it stops exactly where
+        * the page does (the sidebar keeps its own surface), it never leaves, and
+        * it spans BOTH columns — the workspace panel is co-planar with the
+        * conversation, so the grid has to cross the divider rather than stop at
+        * it. That is also why the panel's own surfaces are transparent in the
+        * side placement; see codex-workspace-panel.css.
+        *
+        * `data-phase` is what the hero-only flourishes hang off, and `z-index: 0`
+        * keeps it under every positioned sibling that follows — which is why the
+        * two columns, the transcript wrapper, the composer and the hero rows are
+        * all `relative`. */}
+      <div
+        className="codex-welcome-bg"
+        data-phase={isEmpty ? 'hero' : 'conversation'}
+        aria-hidden="true"
+        data-testid="chat-welcome-bg"
+      >
+        <div className="codex-welcome-bg__grid" />
+        <div className="codex-welcome-bg__glow codex-welcome-bg__glow--a" />
+        <div className="codex-welcome-bg__glow codex-welcome-bg__glow--b" />
+        <div className="codex-welcome-bg__noise" />
+      </div>
+      {/* Left column: chat. `relative` is the status rail's anchor — it hangs
+          off this column's own top-right corner, not the page's, so it can never
+          drift over the artifact panel. */}
       <div
         data-testid="chat-conversation-column"
-        className={cn(
-          'flex min-w-0 flex-1 flex-col',
-          // The status rail floats over this column rather than sitting beside
-          // it, so the offset is padding here instead of a flex sibling.
-          sessionRailVisible && 'codex-conversation-inset',
-        )}
-        data-rail={sessionRailVisible ? (sessionRailFolded ? 'collapsed' : 'expanded') : undefined}
+        className="relative flex min-w-0 flex-1 flex-col"
         style={terminalBottomOpen ? { paddingBottom: terminalBottomHeight } : undefined}
       >
       {/* Toolbar */}
-      <div className={cn(
-        'relative flex shrink-0 items-center justify-between gap-3 px-4 py-2',
-        isUiV2 && 'min-h-11 border-b border-border bg-material-panel',
-      )}>
+      <div
+        ref={chatToolbarRef}
+        data-testid="chat-toolbar-shell"
+        className={cn(
+        'chat-toolbar-shell relative flex shrink-0 items-center justify-between gap-3 px-4 py-2',
+        isUiV2 && 'min-h-11 bg-material-panel',
+      )}
+      >
         <div data-testid="chat-toolbar-drag-region" className="drag-region absolute inset-0 z-0" aria-hidden="true" />
         <div className="no-drag relative z-10 min-w-0">
           {!isEmpty && (
@@ -3006,42 +3038,57 @@ export function Chat() {
               <span>{t('startup.syncing')}</span>
             </div>
           )}
+          {/* The toggle is deliberately NOT gated on the workspace panel being
+            * shut. The status card is what you open panel tabs FROM: hiding it on
+            * the first click meant a second sub-agent could never be opened,
+            * because the card listing the workers vanished as soon as one of them
+            * was on screen. Only the PASSIVE layer yields to the panel, because
+            * only that layer takes width from the transcript. */}
           <ChatToolbar
-            questionDirectoryOpen={questionDirectoryVisible}
-            questionDirectoryCount={questionDirectoryItems.length}
             promptCacheStatus={promptCacheStatus}
-            onToggleQuestionDirectory={() =>
-              setQuestionDirectoryOpenSessionKey((openSessionKey) =>
-                openSessionKey === currentSessionKey ? null : currentSessionKey,
-              )
-            }
-            sessionActivityAvailable={hasSessionActivityEntry && chatAssistiveRailVisible}
-            sessionActivityOpen={showChatAssistiveRail || sessionActivitySheetOpen}
+            sessionActivityAvailable={hasSessionActivityEntry && !compactToolbarLayout}
+            sessionActivityOpen={sessionActivityRailOpen}
             sessionActivityNeedsAttention={sessionActivityLevel === 'attention'}
             onToggleSessionActivity={handleToggleSessionActivity}
-            onOpenSessionActivity={handleOpenSessionActivitySheet}
-            onOpenSlashCommands={handleOpenSlashCommands}
           />
         </div>
       </div>
 
+      {/*
+        * Session status rail — the surface the recovery panel used to occupy.
+        *
+        * Absolutely positioned against the conversation column so its width
+        * never participates in the transcript's flex layout; which layer it is
+        * drawn in, and whether the transcript makes room for it, is decided by
+        * `data-layer` plus the scroll column's `data-rail` (see
+        * styles/codex-session-activity.css).
+        */}
+      {sessionActivityRailOpen && visibleSessionActivitySnapshot && (
+        <aside
+          className="codex-session-activity-rail"
+          data-layer={sessionActivityRailLayer}
+          data-testid="chat-session-status-rail"
+          aria-label={t('sessionActivity.title')}
+        >
+          <SessionActivityPanel
+            snapshot={visibleSessionActivitySnapshot}
+            plan={sessionActivityPlan}
+            processes={sessionActivityProcesses}
+            compact
+            className="!w-full"
+            showGit={sessionActivityShowGit}
+            showCommands={sessionActivityShowCommands}
+            onOpenRecovery={() => navigate(`/settings/recovery?sessionKey=${encodeURIComponent(currentSessionKey)}`)}
+            onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
+            onOpenEnvironment={handleOpenEnvironment}
+            onOpenSubagent={handleOpenSubagentTranscript}
+            onOpenProcess={handleOpenProcess}
+          />
+        </aside>
+      )}
+
       {/* Messages Area */}
       <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-4 py-3">
-        {/* verse-style background: grid, glows, noise — empty state only */}
-        <div
-          className={cn(
-            'codex-welcome-bg',
-            isEmpty && !sendingAnimation && 'codex-welcome-bg--visible',
-            sendingAnimation && 'codex-welcome-bg--sending',
-          )}
-          aria-hidden="true"
-          data-testid="chat-welcome-bg"
-        >
-          <div className="codex-welcome-bg__grid" />
-          <div className="codex-welcome-bg__glow codex-welcome-bg__glow--a" />
-          <div className="codex-welcome-bg__glow codex-welcome-bg__glow--b" />
-          <div className="codex-welcome-bg__noise" />
-        </div>
         {isEmpty && (
           <div
             className={cn(
@@ -3056,20 +3103,29 @@ export function Chat() {
           </div>
         )}
         <SelectionQuoteToolbar containerRef={messageAreaRef} onQuote={handleQuoteSelection} />
+        {/* One measure, always. The layout used to widen to `max-w-7xl` and turn
+            into a row when the recovery rail appeared, so the transcript was
+            re-centred AND re-wrapped in the same frame. The status rail is
+            absolutely positioned instead: the passive layer takes its width from
+            the scroll column's padding (`codex-conversation-inset`) and the
+            overlay layer takes none at all. */}
         <div
-          className={cn(
-            'mx-auto flex h-full min-h-0 w-full flex-col gap-4 xl:items-stretch',
-            showChatSideRail ? 'max-w-7xl xl:flex-row' : 'max-w-5xl',
-          )}
+          className="relative mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col gap-4 xl:items-stretch"
           data-testid="chat-message-layout"
         >
-          <div ref={scrollRef} className="min-h-0 min-w-0 flex-1 overflow-y-auto" data-testid="chat-scroll-container">
+          <div
+            ref={attachScrollElement}
+            className="codex-conversation-inset min-h-0 min-w-0 flex-1 overflow-y-auto"
+            /* Passive only: an overlay the user opened must not move the text. */
+            data-rail={sessionActivityRailOpen && sessionActivityRailLayer === 'inline' ? 'expanded' : 'collapsed'}
+            data-testid="chat-scroll-container"
+          >
             <div
               ref={contentRef}
               className={cn(
                 "mx-auto space-y-4",
                 // Empty state fills the pane so the scroll area does not collapse
-                // around the recovery panel and let the watermark reflow.
+                // around the status rail and let the watermark reflow.
                 isEmpty ? "h-full w-full max-w-[820px]" : "max-w-[820px]",
               )}
             >
@@ -3133,6 +3189,7 @@ export function Chat() {
                         suppressAssistantText={row.suppressAssistantText}
                         suppressToolCards={row.suppressToolCards}
                         suppressProcessAttachments={row.suppressToolCards}
+                        suppressReasoning={row.suppressReasoning}
                         onOpenFile={handleOpenAttachedFile}
                         canSubmitInteractionResponse={isGatewayRunning && !inputRunActive}
                         onSubmitInteractionResponse={handleSubmitInteractionResponse}
@@ -3153,6 +3210,12 @@ export function Chat() {
                         const chipFiles = chipFilesByRun.get(card.triggerIndex) ?? [];
                         const diffSurfaces = diffsByRun.get(card.triggerIndex) ?? [];
                         const cardApprovals = approvalsByRunKey.get(runKey) ?? [];
+                        /* A live run streams its thinking on the runtime run, not
+                         * on a message — so the active card reads the stream and
+                         * every settled card reads its own segment. */
+                        const cardReasoning = card.active
+                          ? (runCardReasoning.byRunKey.get(runKey) ?? streamingReasoning)
+                          : (runCardReasoning.byRunKey.get(runKey) ?? EMPTY_REASONING_ITEMS);
                         const defaultExpanded = card.status === 'error'
                           || card.status === 'aborted'
                           || (card.status === 'completed' && runActivityKeepExpandedOnComplete)
@@ -3164,8 +3227,13 @@ export function Chat() {
                         // hidden behind a disclosure the user forgot they shut.
                         const expanded = cardApprovals.length > 0
                           || (runActivityExpandedOverrides[runKey] ?? defaultExpanded);
+                        /* Reasoning counts as activity: a pure-thinking turn (no
+                         * tools, no files — the common DeepSeek shape) otherwise
+                         * had no card at all, and its thinking would have had
+                         * nowhere to go once the message stopped rendering it. */
                         const hasActivity = card.active
                           || card.steps.length > 0
+                          || cardReasoning.length > 0
                           || generatedFiles.length > 0
                           || card.orchestrations.length > 0
                           || card.surfaces.terminals.length > 0
@@ -3182,7 +3250,10 @@ export function Chat() {
                               endedAt={card.endedAt}
                               now={streamStatusNow}
                               expanded={expanded}
+                              reasoning={cardReasoning}
+                              reasoningStreaming={card.active && assistantStreamStatus?.state === 'thinking'}
                               summary={{
+                                thoughts: cardReasoning.length,
                                 plan: card.surfaces.plan?.todos.length ?? 0,
                                 files: generatedFiles.length,
                                 diffs: diffSurfaces.length,
@@ -3300,6 +3371,7 @@ export function Chat() {
                       isStreaming
                       streamStatus={assistantStreamStatus}
                       reasoningOverride={streamingReasoning}
+                      suppressReasoning={streamReasoningAdopted}
                       liveUsage={liveUsage}
                       onOpenFile={handleOpenAttachedFile}
                     />
@@ -3322,6 +3394,7 @@ export function Chat() {
                       isStreaming
                       streamStatus={assistantStreamStatus}
                       reasoningOverride={streamingReasoning}
+                      suppressReasoning={streamReasoningAdopted}
                       streamingTools={streamingToolsForMessage}
                       liveUsage={liveUsage}
                       onOpenFile={handleOpenAttachedFile}
@@ -3357,42 +3430,6 @@ export function Chat() {
               </TooltipTrigger>
               <TooltipContent side="left" collisionPadding={8}>{t('scrollToLatest')}</TooltipContent>
             </Tooltip>
-          )}
-
-          {chatAssistiveRailVisible && !isEmpty && questionDirectoryVisible && (
-            <QuestionDirectory items={questionDirectoryItems} />
-          )}
-          {showChatAssistiveRail && (
-            <aside
-            data-testid="chat-assistive-rail"
-            className="flex w-full shrink-0 flex-col gap-3 xl:w-72"
-          >
-              {visibleSessionActivitySnapshot && (
-                <SessionActivityPanel
-                  snapshot={visibleSessionActivitySnapshot}
-                  compact
-                  showGit={sessionActivityShowGit}
-                  showCommands={sessionActivityShowCommands}
-                  onOpenRecovery={() => navigate(`/settings/recovery?sessionKey=${encodeURIComponent(currentSessionKey)}`)}
-                  onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
-                />
-              )}
-              {showRollbackPlanPanel && (
-                <RollbackPlanPanel
-                  plan={rollbackPlan}
-                  compact
-                  className="w-full lg:w-full xl:w-full"
-                  onPrepareHandoff={handlePrepareHandoff}
-                  onDrainQueue={handleDrainQueuedFollowup}
-                  onCompact={handleManualCompact}
-                  onOpenGit={handleOpenGitPanel}
-                  onOpenTaskLedger={handleOpenTaskLedger}
-                  onInterruptTerminal={handleInterruptTerminal}
-                  onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
-                  onDismiss={() => setRollbackPlanDismissed(true)}
-                />
-              )}
-            </aside>
           )}
 
         </div>
@@ -3436,18 +3473,14 @@ export function Chat() {
         workspace={activeWorkspace}
         contextRange={contextRange}
         liveUsage={liveUsage}
-        messageCount={messages.length}
         hero={isEmpty}
         draftValue={composerDraft}
-        slashRequest={composerSlashRequest}
         onDraftChange={handleComposerDraftChange}
         onPermissionModeChange={handlePermissionModeChange}
         onPickWorkspaceFolder={handlePickWorkspaceFolder}
         onSwitchAgent={handleSwitchAgent}
         onNewSession={handleCreateNewSession}
         onForkSession={handleForkSession}
-        continuityRecommendation={continuityRecommendation}
-        continuityPreflight={continuityPreflight}
         forkDisabled={forkDisabled}
         forkBusy={forkBusy}
         onHandoffSession={handlePrepareHandoff}
@@ -3465,20 +3498,23 @@ export function Chat() {
         onDrainQueuedFollowup={handleDrainQueuedFollowup}
         taskLoopUpgradeBusy={taskLoopUpgradeBusy}
         onConfirmTaskLoopUpgrade={handleConfirmTaskLoopUpgrade}
-        className={cn(sendingAnimation && 'codex-composer-host--sending')}
+        /* `relative` puts the composer in the same paint layer as the background
+         * sheet behind it, and later in tree order, so the grid stays under the
+         * card instead of over it. Same reason on the two hero rows below. */
+        className={cn('relative', sendingAnimation && 'codex-composer-host--sending')}
       />
       {/* Reference stacking under the stage is composer → context → chips, then
         * a spacer that grows like the message area above it; the two spacers
         * together centre the group without the composer leaving its slot. */}
       {isEmpty && (
         <>
-          <div className={cn(sendingAnimation && 'codex-welcome-context--sending')}>
+          <div className={cn('relative', sendingAnimation && 'codex-welcome-context--sending')}>
             <WelcomeScreen
               onPickFolder={handlePickWorkspaceFolder}
               disabled={!isGatewayRunning}
             />
           </div>
-          <div className={cn(sendingAnimation && 'codex-welcome-chips--sending')}>
+          <div className={cn('codex-welcome-chips-host relative', sendingAnimation && 'codex-welcome-chips--sending')}>
             <WelcomeChips
               onSend={handleSendMessage}
               disabled={!isGatewayRunning}
@@ -3488,18 +3524,6 @@ export function Chat() {
           <div className="codex-welcome-tail-spacer" aria-hidden="true" />
         </>
       )}
-      <CompactionArtifactViewer
-        open={compactionArtifactOpen}
-        onOpenChange={setCompactionArtifactOpen}
-        sessionKey={currentSessionKey}
-        checkpointId={compactionArtifactCheckpointId}
-        artifact={compactionArtifact}
-        warnings={compactionArtifactWarnings}
-        onPrepareRecovery={handlePrepareHandoff}
-        onForkSession={handleForkSession}
-        prepareRecoveryBusy={handoffBusy || compactionArtifactBusy}
-        forkBusy={forkBusy}
-      />
       <Dialog open={handoffDialogOpen} onOpenChange={setHandoffDialogOpen}>
         <DialogContent
           className="max-w-3xl rounded-lg border border-black/10 bg-surface-modal p-5 shadow-xl dark:border-white/10"
@@ -3582,39 +3606,10 @@ export function Chat() {
       </Dialog>
       </div>
 
-      {/* Third column: session status rail */}
-      {sessionRailVisible && (
-        <SessionStatusRail
-          workspaceId={activeWorkspaceId}
-          sessionKey={currentSessionKey}
-          refreshSignal={refreshSignal}
-          collapsed={sessionRailFolded}
-          onCollapsedChange={handleSessionRailCollapsedChange}
-          planTitle={sessionRailPlan?.title ?? undefined}
-          planTodos={sessionRailPlan?.todos ?? EMPTY_PLAN_TODOS}
-          orchestrations={sessionRailOrchestrations}
-          longTaskControlStatus={longTaskControlStatus}
-          queueDrainBusy={queueDrainBusy}
-          runActive={inputRunActive}
-          showCompactionArtifact={
-            uiDepthMode === 'advanced' &&
-            Boolean(compactionStatus?.lastCompaction?.quality)
-          }
-          onOpenGit={handleOpenGitPanel}
-          onOpenTerminal={handleOpenTerminalPanel}
-          onOpenAgents={handleOpenAgentsPanel}
-          onGitStash={handleGitStash}
-          onGitCommit={handleGitCommit}
-          onGitPush={handleGitPush}
-          onDrainQueuedFollowup={handleDrainQueuedFollowup}
-          onViewCompactionArtifact={handleViewCompactionArtifact}
-        />
-      )}
-
       {/* Right column: artifact / file preview panel (WorkBuddy-style) */}
       {panelOpen && (
         <>
-          {!terminalBottomOpen && (
+          {!terminalBottomOpen && panelExpanded && (
             <Suspense fallback={null}>
               <PanelResizeDividerLazy containerRef={splitContainerRef} />
             </Suspense>
@@ -3624,16 +3619,40 @@ export function Chat() {
             data-expanded={panelExpanded ? 'true' : 'false'}
             data-placement={terminalBottomOpen ? 'bottom' : 'side'}
             className={cn(
-              'flex shrink-0 flex-col bg-surface-modal',
+              'flex shrink-0 flex-col',
               terminalBottomOpen
-                ? 'absolute z-30 inset-x-0 bottom-0 border-t border-black/5 dark:border-white/10 shadow-2xl'
+                /* Docked at the bottom it really is an overlay — it covers the
+                 * transcript instead of taking width from it — so it keeps a
+                 * raised surface and a shadow to say so. */
+                ? 'absolute z-30 inset-x-0 bottom-0 bg-surface-modal border-t border-black/5 dark:border-white/10 shadow-2xl'
+                /* The side panel is a flex SIBLING of the conversation, never an
+                 * overlay. It used to float (`absolute z-30 shadow-2xl`), which
+                 * put it on a layer above the page and covered the toolbar it
+                 * slides out of; it now occupies real layout width at the
+                 * conversation's own level and squeezes the chat instead, so
+                 * `expanded` changes how MUCH width it takes, not which layer it
+                 * lives on.
+                 *
+                 * And it no longer carries a surface of its own. `bg-surface-modal`
+                 * put it one material step above the conversation — visible in
+                 * dark, where the panel resolved to 13% lightness against the
+                 * canvas's 9.4% — so a panel that IS co-planar still read as a
+                 * raised slab parked next to the chat. Transparent instead: the
+                 * page canvas and its grid carry straight through, and the hairline
+                 * on the left is the only thing marking the seam. */
                 : 'relative border-l border-black/5 dark:border-white/10',
-              !terminalBottomOpen && 'motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-4 motion-safe:duration-150 motion-reduce:transition-none',
+              !terminalBottomOpen && 'codex-workspace-sweep',
               'no-drag',
             )}
             style={terminalBottomOpen
               ? { width: '100%', height: terminalBottomHeight }
-              : { width: `min(100%, clamp(22rem, ${boundedPanelWidthPct}%, 44rem))` }}
+              : {
+                width: panelExpanded
+                  // Expanded trades conversation width for panel width; the
+                  // clamp keeps the chat readable at either size.
+                  ? `min(100%, clamp(28rem, ${Math.min(64, boundedPanelWidthPct + 16)}%, 60rem))`
+                  : `min(100%, clamp(22rem, ${boundedPanelWidthPct}%, 44rem))`,
+              }}
           >
             {terminalBottomOpen && (
               <div
@@ -3740,42 +3759,10 @@ export function Chat() {
         </DialogContent>
       </Dialog>
 
-      <Sheet
-        open={sessionActivitySheetOpen && hasSessionActivityEntry && chatAssistiveRailVisible}
-        onOpenChange={setSessionActivitySheetOpen}
-      >
-        <SheetContent
-          side="right"
-          className="w-[min(22rem,calc(100vw-1rem))] overflow-y-auto p-0 sm:max-w-sm xl:hidden [&_header]:pr-12"
-          data-testid="chat-session-activity-sheet"
-        >
-          <SheetTitle className="sr-only">{t('sessionActivity.title')}</SheetTitle>
-          <SheetDescription className="sr-only">{t('sessionActivity.description')}</SheetDescription>
-          {visibleSessionActivitySnapshot && (
-            <SessionActivityPanel
-              snapshot={visibleSessionActivitySnapshot}
-              className="min-h-full border-0 shadow-none"
-              showGit={sessionActivityShowGit}
-              showCommands={sessionActivityShowCommands}
-              onOpenRecovery={() => {
-                setSessionActivitySheetOpen(false);
-                navigate(`/settings/recovery?sessionKey=${encodeURIComponent(currentSessionKey)}`);
-              }}
-              onCreateMemoryDraft={() => {
-                setSessionActivitySheetOpen(false);
-                handleOpenRecoveryMemoryDraft();
-              }}
-            />
-          )}
-        </SheetContent>
-      </Sheet>
-
     </div>
     </TooltipProvider>
   );
 }
-
-// ── Question Directory ─────────────────────────────────────────
 
 function ChatLoadingSkeleton({
   phase,
@@ -3867,72 +3854,6 @@ function ChatStartupError({ message, onRetry }: { message: string | null; onRetr
         </div>
       </div>
     </div>
-  );
-}
-
-function QuestionDirectory({ items }: { items: QuestionDirectoryItem[] }) {
-  const { t } = useTranslation('chat');
-  const scrollRef = useRef<HTMLElement | null>(null);
-  const visibleItems = items.slice(0, QUESTION_DIRECTORY_RENDER_LIMIT);
-  const hiddenCount = Math.max(0, items.length - visibleItems.length);
-
-  useEffect(() => {
-    const scrollEl = scrollRef.current;
-    if (!scrollEl) return;
-    scrollEl.scrollTop = scrollEl.scrollHeight;
-  }, [visibleItems.length]);
-
-  const handleJumpToMessage = (index: number) => {
-    document.getElementById(`chat-message-${index}`)?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    });
-  };
-
-  return (
-    <aside
-      data-testid="chat-question-directory"
-      className="w-full shrink-0 lg:w-64 xl:w-72"
-      aria-label={t('questionDirectory.title')}
-    >
-      <div className="sticky top-2 max-h-full overflow-hidden rounded-2xl border border-black/5 bg-black/[0.02] p-3 shadow-sm dark:border-white/10 dark:bg-white/[0.03]">
-        <div className="mb-2 flex items-center justify-between gap-2 px-1">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {t('questionDirectory.title')}
-          </h2>
-          <span className="rounded-full bg-black/5 px-2 py-0.5 text-2xs font-medium text-muted-foreground dark:bg-white/10">
-            {items.length}
-          </span>
-        </div>
-        <nav ref={scrollRef} className="max-h-[calc(100vh-13rem)] space-y-1 overflow-y-auto pr-1">
-          {visibleItems.map((item) => (
-            <Tooltip key={item.index}>
-              <TooltipTrigger asChild>
-            <button
-              type="button"
-              data-testid={`chat-question-directory-item-${item.index}`}
-              onClick={() => handleJumpToMessage(item.index)}
-              className={cn(
-                'group flex w-full items-start gap-2 rounded-xl px-2 py-2 text-left transition-colors',
-                'text-foreground/70 hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
-              )}
-            >
-              <span className="line-clamp-2 min-w-0 text-xs leading-5">
-                {item.title}
-              </span>
-            </button>
-              </TooltipTrigger>
-              <TooltipContent side="left" className="max-w-xs text-xs">{item.title}</TooltipContent>
-            </Tooltip>
-          ))}
-          {hiddenCount > 0 && (
-            <div className="px-2 py-2 text-xs leading-5 text-muted-foreground">
-              {t('questionDirectory.moreHint', { count: hiddenCount })}
-            </div>
-          )}
-        </nav>
-      </div>
-    </aside>
   );
 }
 

@@ -93,6 +93,8 @@ export interface ChatSession {
   displayName?: string;
   derivedTitle?: string;
   lastMessagePreview?: string;
+  /** Number of user turns in the transcript, used by sidebar activity sorting. */
+  messageCount?: number;
   thinkingLevel?: string;
   model?: string;
   updatedAt?: number;

@@ -20,6 +20,7 @@ import { sanitizeUiErrorText } from '../../shared/privacy/ui-error-sanitize';
 import { openOpenClawStateDatabase } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { BlockStore } from '../../openclaw_runtime/src/context-engine/block-store';
 import { createContextBlockSink } from '../../openclaw_runtime/src/agents/harness/hook-context';
+import { isRuntimeLineage } from '../../openclaw_runtime/src/runtime-core/lineage';
 import type { ContextBlockSink } from '../../openclaw_runtime/src/context-engine/block';
 import type {
   HostSuccess,
@@ -277,8 +278,13 @@ type SekbRuntimeModule = {
     }>;
     reject_suggestion: (suggestion: unknown, reason?: string) => void;
   };
-TrajectoryCapture: new (options: { store: unknown }) => {
-    start_trajectory: (taskIntent: string, taskType: string, contextTags: string[]) => string;
+  TrajectoryCapture: new (options: { store: unknown }) => {
+    start_trajectory: (
+      taskIntent: string,
+      taskType: string,
+      contextTags: string[],
+      metadata?: Record<string, unknown>,
+    ) => string;
     log_step: (trajectoryId: string, action: string, input: unknown, output: unknown) => void;
     finish_trajectory: (
       trajectoryId: string,
@@ -4299,9 +4305,11 @@ export function createKnowledgeApi({
         };
       } catch (error) {
         const message = sanitizeUiErrorText(error);
+        const errorCode =
+          error && typeof error === 'object' ? (error as { code?: string }).code : undefined;
         const missingSession =
-          /sessionId/i.test(message) ||
-          (error && typeof error === 'object' && (error as { code?: string }).code === 'missing_session');
+          errorCode === 'missing_session' ||
+          /sessionId is required|session(?:Id)? is required/i.test(message);
         return {
           success: false,
           available: missingSession ? true : false,
@@ -4378,13 +4386,32 @@ export function createKnowledgeApi({
             error: 'rawError is required when outcome is failure',
           };
         }
+        const runtimeLineage =
+          body.runtimeLineage === undefined
+            ? undefined
+            : isRuntimeLineage(body.runtimeLineage)
+              ? body.runtimeLineage
+              : null;
+        if (runtimeLineage === null) {
+          return {
+            success: false,
+            available: true,
+            reason: 'invalidInput',
+            error: 'runtimeLineage must be a valid runtime-lineage.v1 object',
+          };
+        }
         const contextTags = Array.isArray(body.contextTags)
           ? body.contextTags.filter((tag): tag is string => typeof tag === 'string')
           : [];
         const steps = Array.isArray(body.steps) ? body.steps : [];
         const store = createHostSekbStore(sekb);
         const capture = new sekb.TrajectoryCapture({ store });
-        const trajectoryId = capture.start_trajectory(taskIntent, taskType, contextTags);
+        const trajectoryId = capture.start_trajectory(
+          taskIntent,
+          taskType,
+          contextTags,
+          runtimeLineage ? { runtimeLineage } : undefined,
+        );
         for (const step of steps) {
           if (!isRecord(step) || typeof step.action !== 'string') continue;
           capture.log_step(trajectoryId, step.action, step.input ?? null, step.output ?? null);

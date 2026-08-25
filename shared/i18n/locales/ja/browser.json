@@ -82,6 +82,8 @@
     "session": "ブラウザーセッション",
     "newSession": "新しいセッション",
     "url": "URL",
+    "mode": "セッションモード",
+    "profile": "Profile",
     "urlPlaceholder": "URL を入力",
     "back": "戻る",
     "forward": "進む",
@@ -91,6 +93,7 @@
     "more": "その他のブラウザー操作",
     "snapshot": "スナップショットを取得",
     "snapshotNodes": "スナップショットノード",
+    "advancedControls": "高度なページ操作",
     "inspectNetwork": "ネットワークを検査",
     "inspectConsole": "コンソールを検査",
     "empty": "URL を入力して監督付きブラウザーセッションを開きます。",
@@ -101,7 +104,8 @@
     "click": "クリック",
     "fill": "入力",
     "pressKey": "キーを送信",
-    "errors": { "actionFailed": "ブラウザー操作に失敗しました" }
+    "errors": { "actionFailed": "ブラウザー操作に失敗しました" },
+    "automation": { "open": "このページを自動化", "title": "承認が必要な自動化を作成", "close": "自動化フォームを閉じる", "name": "タスク名", "objective": "ブラウザに何をさせますか？", "success": "成功確認テキスト", "submit": "承認を申請", "created": "自動化は承認待ちです" }
   },
   "boundaryChoice": {
     "dialogLabel": "AI 境界確認",

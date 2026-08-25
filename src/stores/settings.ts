@@ -44,6 +44,17 @@ interface SettingsState {
   sidebarCollapsed: boolean;
   sidebarWidth: number;
   devModeUnlocked: boolean;
+  /**
+   * Keep a finished turn's process disclosure open.
+   *
+   * Defaults to OFF. It used to default to on, which made `defaultExpanded`
+   * permanently true for every completed turn — the whole process block
+   * (thinking, execution graph, tool detail, terminals, diffs) stayed unfolded
+   * forever and pushed the prompt that started the turn far off screen. Folding
+   * by default is what makes a turn read as prompt → one line → answer; anyone
+   * who preferred the old always-open behaviour can switch it back in
+   * Settings → Session & Recovery.
+   */
   runActivityKeepExpandedOnComplete: boolean;
   uiDepthMode: UiDepthMode;
   workProviders: WorkProviderConfig;
@@ -116,7 +127,7 @@ const defaultSettings = {
   sidebarCollapsed: false,
   sidebarWidth: 275,
   devModeUnlocked: false,
-  runActivityKeepExpandedOnComplete: true,
+  runActivityKeepExpandedOnComplete: false,
   uiDepthMode: 'basic' as UiDepthMode,
   workProviders: {} as WorkProviderConfig,
   sessionActivityPanelEnabled: true,

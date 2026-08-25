@@ -12,6 +12,7 @@ import {
   GitPullRequest,
   GitPullRequestCreate,
   GitCompareArrows,
+  GitMerge,
   HardDrive,
   Loader2,
   PanelRightOpen,
@@ -74,7 +75,7 @@ type LastGitOperation = {
 };
 
 type WorktreeMode = 'new' | 'existing';
-type ToolPanel = 'worktrees' | 'commit' | 'branch' | 'stash' | 'github';
+type ToolPanel = 'worktrees' | 'commit' | 'branch' | 'integrate' | 'stash' | 'github';
 const CHANGE_GROUPS: GitChangeBucket[] = ['conflicted', 'staged', 'unstaged', 'untracked'];
 
 function changeBadge(change: GitFileChange): { label: string; variant: 'destructive' | 'outline' | 'warning' | 'secondary' } {
@@ -138,6 +139,8 @@ export function WorkspaceGitPanel({
   const [commitMessage, setCommitMessage] = useState('');
   const [branchName, setBranchName] = useState('');
   const [checkoutBranchName, setCheckoutBranchName] = useState('');
+  const [integrationRef, setIntegrationRef] = useState('');
+  const [resetMode, setResetMode] = useState<'soft' | 'mixed' | 'hard'>('mixed');
   const [worktreeMode, setWorktreeMode] = useState<WorktreeMode>('new');
   const [worktreeBranch, setWorktreeBranch] = useState('');
   const [worktreeStartPoint, setWorktreeStartPoint] = useState('');
@@ -502,6 +505,38 @@ export function WorkspaceGitPanel({
     );
   };
 
+  const mergeBranch = () => {
+    const ref = integrationRef.trim();
+    if (!ref) return;
+    void finishOperation(
+      'merge',
+      t('workspace.git.actions.merge'),
+      () => hostApi.git.merge({ ref }),
+      (approvalId) => hostApi.git.merge({ ref, approvalId }),
+    );
+  };
+
+  const rebaseBranch = () => {
+    const ref = integrationRef.trim();
+    if (!ref) return;
+    void finishOperation(
+      'rebase',
+      t('workspace.git.actions.rebase'),
+      () => hostApi.git.rebase({ ref }),
+      (approvalId) => hostApi.git.rebase({ ref, approvalId }),
+    );
+  };
+
+  const resetBranch = () => {
+    const ref = integrationRef.trim() || 'HEAD';
+    void finishOperation(
+      'reset',
+      t('workspace.git.actions.reset'),
+      () => hostApi.git.reset({ ref, mode: resetMode }),
+      (approvalId) => hostApi.git.reset({ ref, mode: resetMode, approvalId }),
+    );
+  };
+
   const addWorktree = () => {
     const branch = worktreeBranch.trim();
     if (!branch) return;
@@ -711,6 +746,7 @@ export function WorkspaceGitPanel({
     { id: 'worktrees', label: t('workspace.git.toolTabs.worktrees') },
     { id: 'commit', label: t('workspace.git.toolTabs.commit') },
     { id: 'branch', label: t('workspace.git.toolTabs.branch') },
+    { id: 'integrate', label: t('workspace.git.toolTabs.integrate') },
     { id: 'stash', label: t('workspace.git.toolTabs.stash') },
     { id: 'github', label: t('workspace.git.toolTabs.github') },
   ];
@@ -787,8 +823,8 @@ export function WorkspaceGitPanel({
         </div>
       ) : null}
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 overflow-hidden p-2 min-[980px]:grid-cols-[minmax(220px,0.38fr)_minmax(360px,0.62fr)]">
-        <section className="flex min-h-0 flex-col overflow-hidden rounded-md border border-black/[0.07] bg-surface-modal dark:border-white/[0.09]">
+      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-2">
+        <section className="flex min-h-[300px] shrink-0 flex-col overflow-hidden rounded-md border border-black/[0.07] bg-surface-modal dark:border-white/[0.09]">
           {/* Status — working tree changes */}
           <div className="flex min-h-0 flex-[1.15] flex-col">
             <div className="flex shrink-0 items-center justify-between border-b border-black/[0.07] px-3 py-1.5 dark:border-white/[0.09]">
@@ -897,7 +933,7 @@ export function WorkspaceGitPanel({
           </div>
 
           {/* Commits — history of the selected branch */}
-          <div className="flex min-h-0 flex-1 flex-col border-t border-black/[0.07] dark:border-white/[0.09]" data-testid="workspace-git-commits">
+          <div className="flex h-[180px] min-h-[96px] shrink-0 flex-col border-t border-black/[0.07] dark:border-white/[0.09]" data-testid="workspace-git-commits">
             <div className="flex shrink-0 items-center justify-between gap-2 px-3 py-1.5">
               <span className="min-w-0 truncate text-2xs font-medium uppercase tracking-wide text-muted-foreground">
                 {t('workspace.git.commits.title', 'Commits')}
@@ -941,7 +977,7 @@ export function WorkspaceGitPanel({
           </div>
         </section>
 
-        <section className="flex min-h-[360px] min-w-0 flex-col overflow-hidden rounded-md border border-black/10 bg-[#0d1117] text-slate-100 dark:border-white/10">
+        <section className="flex min-h-[360px] min-w-0 shrink-0 flex-col overflow-hidden rounded-md border border-black/10 bg-[#0d1117] text-slate-100 dark:border-white/10">
           <div className="flex shrink-0 items-center justify-between gap-2 border-b border-white/10 px-3 py-2">
             <div className="min-w-0">
               <p className="truncate font-mono text-xs text-slate-100">{effectiveSelectedPath || t('workspace.git.diff.empty')}</p>
@@ -1265,6 +1301,52 @@ export function WorkspaceGitPanel({
               <Button type="button" variant="outline" size="sm" className="mt-2 h-7 w-full bg-surface-input text-xs" onClick={createBranch} disabled={!branchName.trim() || operationLoading === 'branch'}>
                 {t('workspace.git.actions.createBranch')}
               </Button>
+              </div>
+            </section>
+          ) : null}
+
+          {activeToolPanel === 'integrate' ? (
+            <section className="min-w-0 rounded-md border border-black/10 bg-background p-2 dark:border-white/10" data-testid="workspace-git-integrate-panel">
+              <PanelTitle icon={<GitMerge className="h-3.5 w-3.5" />} title={t('workspace.git.integrate.title')} />
+              <p className="mt-1 text-2xs text-muted-foreground">{t('workspace.git.integrate.help')}</p>
+              <Select value={integrationRef} onValueChange={setIntegrationRef}>
+                <SelectTrigger size="sm" aria-label={t('workspace.git.integrate.refLabel')} className="mt-2 bg-surface-input text-xs">
+                  <SelectValue placeholder={t('workspace.git.integrate.refPlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {branches.filter((branch) => !branch.current).map((branch) => (
+                    <SelectItem key={branch.name} value={branch.name}>{branch.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <div className="mt-2 grid grid-cols-2 gap-1.5">
+                <Button type="button" variant="outline" size="sm" className="h-7 bg-surface-input text-xs" onClick={mergeBranch} disabled={!integrationRef || operationLoading === 'merge'}>
+                  {operationLoading === 'merge' ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <GitMerge className="mr-1 h-3 w-3" />}
+                  {t('workspace.git.actions.merge')}
+                </Button>
+                <Button type="button" variant="outline" size="sm" className="h-7 bg-surface-input text-xs" onClick={rebaseBranch} disabled={!integrationRef || operationLoading === 'rebase'}>
+                  {operationLoading === 'rebase' ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <GitCompareArrows className="mr-1 h-3 w-3" />}
+                  {t('workspace.git.actions.rebase')}
+                </Button>
+              </div>
+              <div className="mt-2 border-t border-black/5 pt-2 dark:border-white/10">
+                <div className="flex items-center gap-1.5">
+                  <Select value={resetMode} onValueChange={(value) => setResetMode(value as typeof resetMode)}>
+                    <SelectTrigger size="sm" aria-label={t('workspace.git.integrate.resetMode')} className="bg-surface-input text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="soft">soft</SelectItem>
+                      <SelectItem value="mixed">mixed</SelectItem>
+                      <SelectItem value="hard">hard</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button type="button" variant="destructive" size="sm" className="h-7 flex-1 text-xs" onClick={resetBranch} disabled={operationLoading === 'reset'}>
+                    {operationLoading === 'reset' ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : null}
+                    {t('workspace.git.actions.reset')}
+                  </Button>
+                </div>
+                <p className="mt-1 text-2xs text-muted-foreground">{t('workspace.git.integrate.resetHelp')}</p>
               </div>
             </section>
           ) : null}

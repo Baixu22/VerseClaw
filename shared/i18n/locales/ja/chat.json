@@ -169,6 +169,10 @@
     "timelineDescription": "コミット、チェックアウト、リセット、リベースなどの参照移動",
     "timelineEmpty": "Git ライフサイクルの記録はまだありません",
     "timelineUnavailable": "Git ライフサイクルを利用できません",
+    "reflogUnavailable": "Git ライフサイクルを利用できません",
+    "approvalsUnavailable": "承認記録を利用できません",
+    "truncated": "表示上限に達したため、古い項目は非表示です",
+    "partialFailure": "一部の監査データを利用できません",
     "filterAll": "すべて",
     "filterApprovals": "承認",
     "filterGit": "Git",
@@ -493,12 +497,8 @@
     "dispatchPlaceholder": "{{role}} にタスクを送信…",
     "dispatchStarted": "{{role}} に割り当てました",
     "dispatchFailed": "タスクの割り当てに失敗しました",
-    "role": {
-      "user": "あなた",
-      "assistant": "エージェント",
-      "system": "システム",
-      "toolresult": "ツール"
-    }
+    "role": { "user": "あなた", "assistant": "エージェント", "system": "システム", "toolresult": "ツール" },
+    "openOwnTab": "ダブルクリックで独立したタブを開く"
   },
   "filePreview": {
     "tabs": {
@@ -1884,6 +1884,16 @@
   },
   "sidebar": {
     "sectionConversations": "会話",
+    "sectionProjects": "プロジェクト",
+    "sessionActions": "会話の操作",
+    "forkSession": "会話をフォーク",
+    "handoffSession": "会話を引き継ぐ",
+    "copyWorkPath": "作業パスをコピー",
+    "copySessionId": "会話 ID をコピー",
+    "copied": "クリップボードにコピーしました",
+    "copyFailed": "コピーに失敗しました",
+    "noWorkPath": "この会話にはプロジェクトパスがありません",
+    "menuBack": "戻る",
     "organizeSessions": "会話を整理",
     "pinSession": "会話をピン留め",
     "unpinSession": "ピン留めを解除",

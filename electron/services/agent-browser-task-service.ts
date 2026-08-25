@@ -93,6 +93,9 @@ export type AgentBrowserTaskCreatePayload = Pick<
   allowedDomains?: string[];
   steps?: AgentBrowserTaskStepInput[];
   successCriteria?: AgentBrowserTaskSuccessCriteria;
+  workspaceId?: string;
+  sessionKey?: string;
+  agentId?: string;
 };
 
 export type AgentBrowserTaskExecutionResult = {
@@ -160,6 +163,12 @@ function normalizeTaskUrl(value: string): string {
   }
   parsed.hash = '';
   return parsed.toString();
+}
+
+function normalizeContextValue(value: unknown): string | undefined {
+  if (value == null) return undefined;
+  const normalized = String(value).trim();
+  return normalized ? normalized.slice(0, 200) : undefined;
 }
 
 function normalizeDomain(value: string): string {
@@ -339,6 +348,9 @@ export class AgentBrowserTaskService {
     const allowedDomains = normalizeAllowedDomains(url, payload.allowedDomains);
     const successCriteria = normalizeSuccessCriteria(payload.successCriteria, payload.successCondition);
     const steps = normalizeSteps(url, payload.steps);
+    const workspaceId = normalizeContextValue(payload.workspaceId);
+    const sessionKey = normalizeContextValue(payload.sessionKey);
+    const agentId = normalizeContextValue(payload.agentId);
     const task: AgentBrowserTask = {
       ...payload,
       name,
@@ -357,6 +369,9 @@ export class AgentBrowserTaskService {
       retryCount: 0,
       createdAt: timestamp,
       updatedAt: timestamp,
+      ...(workspaceId ? { workspaceId } : {}),
+      ...(sessionKey ? { sessionKey } : {}),
+      ...(agentId ? { agentId } : {}),
     };
     this.tasks.set(task.id, task);
     this.persist();

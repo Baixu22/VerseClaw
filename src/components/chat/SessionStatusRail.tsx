@@ -19,14 +19,20 @@
  * Detail views live in the workspace panel, not here: clicking an agent opens
  * the Agents tab focused on that transcript, and the terminal row opens the
  * Terminal tab. The rail links out; it does not host.
+
+ * @deprecated 2026-08-23 - No longer mounted by Chat. Live surface is
+ *             `src/pages/Chat/SessionActivityPanel.tsx`. Kept for reference;
+ *             do NOT add features here. Its git action buttons (stash/commit/
+ *             push) are inert in production. Legacy E2E
+ *             `tests/e2e/r2-error-semantics.spec.ts` targets these testids and
+ *             must not be treated as evidence about the current UI.
  */
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ChevronDown,
   GitCommitHorizontal,
   Loader2,
-  PanelRightClose,
   SquareTerminal,
 } from 'lucide-react';
 import { WelcomeBranchPicker } from '@/components/chat/WelcomeBranchPicker';
@@ -57,7 +63,20 @@ export type SessionStatusRailProps = {
   sessionKey: string;
   refreshSignal?: number;
   collapsed: boolean;
-  onCollapsedChange: (collapsed: boolean) => void;
+  onRunningSubagentCountChange?: (count: number) => void;
+  /**
+   * Which stacking layer the expanded panel belongs to.
+   *
+   * `inline` — the panel appeared on its own. It shares the conversation's
+   * layer: flat surface, no shadow, and the transcript pays for its width in
+   * padding. Nothing was hidden from the user, so nothing needs to float.
+   *
+   * `overlay` — the user opened it deliberately. It becomes a dropdown hanging
+   * off the toolbar control they just clicked: elevated surface, shadow, drawn
+   * over the transcript, and the transcript keeps its full width. A panel the
+   * user asked for should not reflow the thing they were reading.
+   */
+  layer?: 'inline' | 'overlay';
   planTitle?: string;
   planTodos: ToolUiPlanTodo[];
   orchestrations: TeamOrchestrationView[];
@@ -340,7 +359,10 @@ const GitSection = memo(function GitSection({
 
       {/* Commit dialog */}
       <Dialog open={commitDialogOpen} onOpenChange={setCommitDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent
+          className="w-[calc(100%-2rem)] max-w-md rounded-lg border border-border/70 bg-surface-modal p-5 text-foreground shadow-xl"
+          data-testid="session-status-rail-commit-dialog"
+        >
           <div className="space-y-4">
             <div className="space-y-2">
               <DialogTitle>{t('sessionRail.git.commit')}</DialogTitle>
@@ -359,6 +381,7 @@ const GitSection = memo(function GitSection({
                 }
               }}
               autoFocus
+              className="bg-surface-input"
               data-testid="session-status-rail-commit-input"
             />
             <div className="flex justify-end gap-2">
@@ -647,7 +670,8 @@ export function SessionStatusRail({
   sessionKey,
   refreshSignal,
   collapsed,
-  onCollapsedChange,
+  onRunningSubagentCountChange,
+  layer = 'inline',
   planTitle,
   planTodos,
   orchestrations,
@@ -677,54 +701,22 @@ export function SessionStatusRail({
     setOpenSections((current) => ({ ...current, [id]: open }));
   }, []);
 
-  if (collapsed) {
-    return (
-      <aside
-        className="codex-session-rail codex-session-rail--collapsed"
-        data-testid="session-status-rail"
-        data-collapsed="true"
-        aria-label={t('sessionRail.title')}
-      >
-        <button
-          type="button"
-          className="codex-session-rail__toggle"
-          data-testid="session-status-rail-toggle"
-          aria-expanded={false}
-          aria-label={t('sessionRail.expand')}
-          title={t('sessionRail.expand')}
-          onClick={() => onCollapsedChange(false)}
-        >
-          <PanelRightClose className="h-4 w-4 rotate-180" aria-hidden="true" />
-        </button>
-        {status.runningSubagentCount > 0 && (
-          <span className="codex-session-rail__collapsed-badge" data-testid="session-status-rail-collapsed-badge">
-            {status.runningSubagentCount}
-          </span>
-        )}
-      </aside>
-    );
-  }
+  useEffect(() => {
+    onRunningSubagentCountChange?.(status.runningSubagentCount);
+  }, [onRunningSubagentCountChange, status.runningSubagentCount]);
+
+  if (collapsed) return null;
 
   return (
     <aside
       className="codex-session-rail"
       data-testid="session-status-rail"
       data-collapsed="false"
+      data-layer={layer}
       aria-label={t('sessionRail.title')}
     >
       <div className="codex-session-rail__head">
         <h2 className="codex-session-rail__title">{t('sessionRail.title')}</h2>
-        <button
-          type="button"
-          className="codex-session-rail__toggle"
-          data-testid="session-status-rail-toggle"
-          aria-expanded
-          aria-label={t('sessionRail.collapse')}
-          title={t('sessionRail.collapse')}
-          onClick={() => onCollapsedChange(true)}
-        >
-          <PanelRightClose className="h-4 w-4" aria-hidden="true" />
-        </button>
       </div>
 
       <div className="codex-session-rail__body">
