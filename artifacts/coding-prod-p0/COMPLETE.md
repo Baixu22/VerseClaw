@@ -1,7 +1,7 @@
 # DCS Prod P0 COMPLETE (opt-in packaging)
 
-**Date**: 2026-07-31
-**SHA**: `5d416810f`
+**Date**: 2026-08-19
+**SHA**: `e07b874b3`
 **productionMode**: `opt-in`
 **completionClass**: `done (loop)`
 **defaultsUnchanged**: true
