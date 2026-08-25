@@ -450,8 +450,11 @@ git diff HEAD -- <本 task 文件>                        # 空 = 已复原
 
 ```bash
 TASK=TF-XXXX
-COMMITS=$(git log --format=%H --grep="Task: $TASK" 590588791..HEAD)
+COMMITS=$(git log -E --format=%H \
+  --grep="^(Task:|Refs|Node:) $TASK([^0-9]|\$)" 590588791..HEAD)
 ```
+
+> 该匹配式的三个要件（行首锚定 / 键名必需 / id 边界且不得用 `$` 收尾）**每一个都由实测事故驱动**，见 §R3.8.2。照抄不带锚定的形式会把 S0 骨架的 8 个文件灌进 TF-0145，使其半径读作 **8/5 = 硬 FAIL**（真实值 2/5）。审核者写入 §R1 判定的提交带 `Reviews:` 而非 `Task:`，**因此天然不进本式**，不消耗被审 task 的半径（§R3.8.1）。
 
 **命令 1 —— 改动半径 ≤ `max_brb`**
 
@@ -541,8 +544,21 @@ git show $COMMITS -- ':!docs' ':!*.md' \
 单任务门拦不住累积大改动：把一个大 task 拆成三个小 task，每个都过 S 门，总量却是 3×S。故里程碑收口时另跑：
 
 ```bash
-git show --pretty="" --name-only $(git log --format=%H --grep="Task: TF-" <milestone-start>..HEAD) | sort -u | wc -l
+git diff --name-only <milestone-start>..HEAD | sort -u | wc -l
 ```
+
+> **累积门刻意不用 §R3.8.2 的 trailer 匹配式，用区间 diff。** 两者职能不同：per-task 半径必须精确归属（故必须锚定），而累积量要的是**总改动面**，任何提交的文件都真实存在、都该计入。实测三种测法在 M0 上分别给出 **18（区间 diff，基准真值）/ 13（锚定 trailer 匹配）/ 18（不锚定匹配）**：锚定式漏掉 S0 骨架提交的 5 个文件（它无行首 trailer），而不锚定式凑对 18 纯属巧合 —— 它靠一处**行中散文**误配把骨架捞了回来。**用区间 diff 则对 trailer 质量完全免疫。**
+
+配套断言（§R3.8.1 规则 4，无归属提交本身即违反）：
+
+```bash
+for c in $(git log --format=%H <milestone-start>..HEAD); do
+  git log -1 --format=%B "$c" | grep -qE '^(Task:|Reviews:|Refs|Node:) TF-[0-9]' \
+    || echo "UNATTRIBUTED: $(git log -1 --format='%h %s' "$c")"
+done
+```
+
+M0 实测输出**恰好两行**（`f005991b7` / `fe469cbff`），均为 §R3.8.4 已登记的既有实例。`Refs` / `Node:` 只为回溯 M0 而接受；M1 起这两键不再合法（§R3.8.2），届时该断言须为空。
 
 与下表预算比较。预算 = 该里程碑**活跃子节点 `max_brb` 之和**，**冻结于 B1**（M0 收口时刻）—— 冻结是关键：否则后续拆分会同步抬高预算，累积门自我失效。
 
@@ -604,17 +620,113 @@ HIT: +| ① 旗标默认值是否为关 | ... `defaultValue:false` ... | **命�
 | 车道 2（`eb532b5c7` / `f0a82ce04` / `0f3f95430` / `ef66a1c28` / `f04a5352a` / `be6cdbdd8`） | `Refs TF-XXXX` |
 | `fe469cbff`（车道 1 对 TF-0109 的审核） | **无任何归属** |
 
-且两条车道的 `git` author 相同（`OpenClaw UFTK Pilot`），**author 无法区分车道**。故本节确立：
+且两条车道的 `git` author **完全相同** —— 实测 19/19 个 round 提交的 `%an` / `%ae` / `%cn` 均为同一值（`OpenClaw UFTK Pilot <uftk-pilot@openclaw.invalid>`），**author 无法区分车道**。故本节确立三个正交 trailer 键。
 
-1. **自本节起，每个提交必须且只能带一个归属 trailer**：`Task: TF-XXXX`。「一提交一 task」本是 §R4 防脏树条款（不允许两个 task 的改动混在一次提交里）的机械形式。
-2. **无归属提交 = §R3 违反**，其改动无法归入任何 task 的半径，因而既不可验收也不可回滚归因。
-3. **向后兼容**：M0 已落地的提交沿用 `Node:` / `Refs`，审核者对 M0 task 用下式匹配：
+#### §R3.8.1 三个正交 trailer 键
 
-   ```bash
-   git log --format=%H --grep="\(Task:\|Refs\|Node:\) $TASK" 590588791..HEAD
-   ```
+| 键 | 取值 | 用途 | 是否计入半径 |
+|---|---|---|---|
+| `Task:` | **恰好一个** `TF-XXXX` | 半径归属（命令 1/2/3 的输入） | **计入** |
+| `Reviews:` | 一个或多个 `TF-XXXX` | 非实现者写入 §R1 审核判定 | **不计入被审 task 的半径** |
+| `Lane:` | `lane-1` \| `lane-2` | 节 owner 审计（TF-0145 AC-6） | 不适用 |
 
-   M1 起只认 `Task:`。`fe469cbff` 的缺归属为**已知既有实例**，不追溯改写历史（§R5 技术-7）。
+四条硬规则：
+
+1. **`Lane:` 在每个提交上必填。** 它是唯一能把提交归到车道的机械手段（author 不能，见上）。**无 `Lane:` 的提交 = §R3 违反。**
+2. **`Task:` 与 `Reviews:` 互斥。** 一个提交要么是某个 task 的交付物，要么是对若干 task 的审核记录。
+3. **`Reviews:` 提交的触碰面只允许 `docs/dev/context-moat/reviews/*.md`。** 这是防绕过条款：否则「标成 `Reviews:`」就成了让代码改动逃出半径门的通道。其他路径必须另起 `Task:` 提交。
+4. **无归属提交 = §R3 违反**，其改动无法归入任何 task 的半径，因而既不可验收也不可回滚归因。
+
+> **`Reviews:` 只能按角色判定，不能按文件路径判定。** 实测本轮 8 个「只碰 `reviews/`」的提交里，**4 个是实现者自检证据包**（`f0a82ce04` / `ef66a1c28` / `be6cdbdd8` / `cd3e6134d`）、3 个是审核者判定、1 个是修复提交。实现者把自检材料写进 `reviews/<own-task>.md` 属其交付物，**计入自己的半径**；审核者追加判定属 `Reviews:`，**不计入被审 task 的半径** —— 审核者的笔不该消耗实现者的改动预算。
+
+#### §R3.8.2 归属匹配式（§R3.1 与 §R3.6 共用）
+
+```bash
+TASK=TF-XXXX   # 必须先赋值：$TASK 为空时本式退化为匹配任意 trailer 行，静默返回全部 18 个提交
+git log -E --format=%H --grep="^(Task:|Refs|Node:) $TASK([^0-9]|\$)" 590588791..HEAD
+```
+
+三个要件都由实测事故驱动，缺一即错：
+
+| 要件 | 缺了会怎样（实测） |
+|---|---|
+| **`^` 行首锚定** | `f005991b7` 正文含「Zero src changes. Node: TF-0145 (S0 sub-step).」为**行中散文**。不锚定则 S0 骨架的 8 个文件全灌入 TF-0145，半径读作 **8/5 = 硬 FAIL**，真实值 **2/5** |
+| **键名必需** | `0f3f95430` 的 trailer 为 `Refs TF-0142 (D4). Depended on by TF-0106 (R2).` —— 只匹配 id 会把 TF-0142 的提交算进 TF-0106 的半径；`f04a5352a` 反向同理 |
+| **`([^0-9]\|$)` id 边界，且不得用 `$` 收尾** | 边界防 `TF-0107` 误配 `TF-01070`；而**全锚定 `$` 会漏掉** M0 的带后缀形式（`Refs TF-0142 (D4)`），实测使 TF-0142 半径从 5 假降到 4 |
+
+即：**不锚定 → 假阳性（合规 task 被判硬 FAIL）；全锚定 → 假阴性（合规提交漏计）。两者都已实测发生。** M1 起 `Refs` / `Node:` 不再合法，但匹配式保留三键以便回溯 M0（`fe469cbff` 的缺归属为已知既有实例，不追溯改写，§R5 技术-7）。
+
+#### §R3.8.3 AC-6 的两级判据
+
+TF-0145 AC-6 要求「每节只被其 owner 车道的提交改过」。节 owner：**车道 1 = §D1 / §R1 / §R4 / §R5；车道 2 = §R2 / §R3 / §D4**。
+
+**判据 A（必要条件；无需 trailer，可回溯 M0）** —— 单个提交改到的节必须同属一个 owner：
+
+```bash
+F=docs/dev/context-moat/DEV-PROTOCOL.md
+sect() { awk -v s="$1" 'index($0,"## "s)==1 {f=1;next} /^## §/{f=0} f'; }
+owner() { case "$1" in §D1|§R1|§R4|§R5) echo lane-1;; §R2|§R3|§D4) echo lane-2;; esac; }
+for c in $(git log --format=%H 590588791..HEAD -- "$F"); do
+  own=""
+  for s in §D1 §R1 §R2 §R3 §R4 §R5 §D4; do
+    [ "$(git show "$c^:$F" 2>/dev/null | sect "$s" | md5sum)" \
+   != "$(git show "$c:$F" | sect "$s" | md5sum)" ] && own="$own$(owner "$s")\n"
+  done
+  [ "$(printf "$own" | sort -u | grep -c .)" -gt 1 ] \
+    && echo "CROSS-LANE: $(git log -1 --format=%h "$c")"
+done
+```
+
+实测输出**恰好一行** `f005991b7` —— S0 骨架提交，按 §R4.7 被**明确指派**给车道 1 创建全部七节占位，是协议内的唯一例外。其余 10 个提交全部 owner-同质。**该判据真阳性（会对跨 owner 提交开火）与零假阳性均已实测。**
+
+**判据 B（充分条件；需 `Lane:`，M1 起生效）** —— 提交声明的车道必须等于其所改节的 owner。在判据 A 的循环内，把 `own` 的唯一值与提交的 `Lane:` 比对：
+
+```bash
+F=docs/dev/context-moat/DEV-PROTOCOL.md
+sect() { awk -v s="$1" 'index($0,"## "s)==1 {f=1;next} /^## §/{f=0} f'; }
+owner() { case "$1" in §D1|§R1|§R4|§R5) echo lane-1;; §R2|§R3|§D4) echo lane-2;; esac; }
+for c in $(git log --format=%H <milestone-start>..HEAD -- "$F"); do
+  own=""
+  for s in §D1 §R1 §R2 §R3 §R4 §R5 §D4; do
+    [ "$(git show "$c^:$F" 2>/dev/null | sect "$s" | md5sum)" \
+   != "$(git show "$c:$F" | sect "$s" | md5sum)" ] && own="$own$(owner "$s")\n"
+  done
+  sects=$(printf "$own" | sort -u | tr '\n' ',')
+  lane=$(git log -1 --format=%B "$c" | sed -n 's/^Lane: \(lane-[12]\)$/\1/p' | head -1)
+  [ -z "$lane" ] && { echo "NO-LANE: $(git log -1 --format=%h "$c") sections=$sects"; continue; }
+  [ "$lane," = "$sects" ] || echo "OWNER-VIOLATION: $(git log -1 --format=%h "$c") Lane=$lane sections=$sects"
+done
+```
+
+M0 实测**全部 11 行输出为 `NO-LANE:`** —— 即判据 B 对 M0 完全失效，这正是缺陷 1 的形态。M1 起该断言须无 `NO-LANE` 且无 `OWNER-VIOLATION`。
+
+**为什么两级都要**：判据 A 挡不住「车道 1 单独改 §R2」（同质但越权），故需 B；判据 B 对 M0 全部失效（无 `Lane:`），故需 A 回溯。**M0 区间的 AC-6 只能达到判据 A 的强度 —— 如实记录，不声称已完全机械验证。**
+
+#### §R3.8.4 M0 既有实例（不追溯改写，§R5 技术-7）
+
+| 提交 | 与本节规则的偏离 | 处置 |
+|---|---|---|
+| `f005991b7` | 无 trailer；跨 owner 改全部七节 | S0 骨架，§R4.7 明确指派，**协议内例外** |
+| `fe469cbff` | 无 trailer | 已知既有实例 |
+| `1d4644fcc` | 三个 `Task:`，且混入一处 §R4 编辑 | 按本节应拆为 `Reviews: TF-0142 TF-0106 TF-0107` ＋ `Task: TF-0145` 两个提交 |
+| `6d82ff372` | 两个 `Task:`（TF-0104 / TF-0146） | 同一文件的两节服务两个 task，pathspec 不可拆 —— 见下 |
+
+**同一文件的两节确实服务两个 task 时**（如 `6d82ff372` 同修 §D1 与 §R1），允许多个 `Task:`，但该文件**计入每个被列 task 的半径**（保守方向，只高估不漏计）。除此之外多 `Task:` 一律违反规则 1。
+
+#### §R3.8.5 §R3 自身的四处缺陷修正（来自 TF-0145 审核）
+
+§R3 由我（车道 2）在 TF-0107 落地。下列四处缺陷由我在审核 TF-0145 时发现或在修正过程中连带发现，**均为我自己的缺陷**，此处修正并留证：
+
+| # | 位置 | 缺陷 | 后果（实测） |
+|---:|---|---|---|
+| 1 | §R3.8 | 只有 `Task:` 一个键，无车道键 | 初版把两车道从 `Node:` / `Refs` **统一到 `Task:`**，而这两种写法原本恰好是车道的事实判别器。统一后 author 又相同 ⟹ **TF-0145 AC-6 后半变为不可机械验证**。我为让半径可归属，摧毁了车道可归属 |
+| 2 | §R3.8 | 「一提交只能带一个 trailer」对审核提交过严 | 审核提交天然覆盖多 task。实测 `1d4644fcc` 带三个 `Task:`，使 TF-0106 / TF-0107 / TF-0142 各被灌入 2 个他人文件；TF-0106 与 TF-0142 半径因此读作 **5/5**，再有一次审核提交即误判硬 FAIL |
+| 3 | §R3.1 / §R3.8 | 匹配式未锚定 | **TF-0145 半径读作 8/5 = 硬 FAIL，真实值 2/5** —— 我的门把一个完全合规的 task 判死。这是四处中最重的：它静默错测每个 task 的半径，而半径正是本节的唯一职能 |
+| 4 | §R3.6 | 累积门误用 trailer 匹配式 | 原式 `--grep="Task: TF-"` 只匹配 19 个提交中的 8 个，累积量读作 7（真值 18）；而改用锚定式仍漏 5 个文件。**里程碑门本可漏掉过半改动量。** 修法是改用区间 diff（对 trailer 质量免疫），见 §R3.6 |
+
+第 3、4 处形态互为镜像，一并说明：**per-task 半径要精确归属，故必须锚定；累积量要总改动面，故必须不依赖归属。** 用同一把尺量两件事正是缺陷来源。
+
+四处的共同形态与 §R3.7 修正 1 相同 —— **归属边界不精确时，门伤害的是合规者而非违规者**。故与 §R3.7 采用同一处置：给出实测反例、修正命令、并保留真阳性验证。
 
 ## §R4 交付物目录 / 偏差 / 回滚 / pick-next / 并发编排
 
