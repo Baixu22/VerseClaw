@@ -1,0 +1,651 @@
+{
+  "applied_at": "2026-08-21T10:29:32.123381Z",
+  "base_graph_hash": "3e88e0e1d111f91e62596acb70c9f3bac542b9c1538b522943276792358e899d",
+  "base_summary": {
+    "edge_count": 126,
+    "node_count": 69,
+    "workspace_path": "D:\\verse_claw_worktree_compact"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "context_tags": [
+          "compact",
+          "context-compression",
+          "p6",
+          "would-retry",
+          "shadow",
+          "fail-closed"
+        ],
+        "evidence": [
+          "D:/verse_claw_worktree_compact/scripts/context-compression-would-retry-canary.ts",
+          "D:/verse_claw_worktree_compact/scripts/context-compression-eval-runner.mjs",
+          "D:/verse_claw_worktree_compact/reports/context-compression/P6-WOULD-RETRY-CANARY-AUTO-2026-08-20.md",
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v5-auto-R16-would-retry-r1/canary-metrics.json",
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v5-auto-R29-would-retry-r1/canary-metrics.json",
+          "本轮 root compact focused 63/63；Node/Web typecheck exit 0；comms:replay exit 0；comms:compare PASS",
+          "diff-aware Harness 仍被 5 个 compact ownership 外的 dirty 路径阻断"
+        ],
+        "execution_hints": [
+          "严格按 01 -> 07 串行推进；一次只推进一个 ready 节点",
+          "离线链稳定前不调用 provider；live 运行必须显式授权并使用可轮换凭据",
+          "不得把旧 v3/v5 canary 叙述升级为当前 acceptance",
+          "promotionStage 保持 shadow，直到 01-07 全部满足且获得正式放行决定",
+          "不得为 Harness 变绿而扩大 compact touchedAreas 到无关 dirty 路径"
+        ],
+        "progress": 44,
+        "progress_source": "manual",
+        "status": "blocked",
+        "summary": "P0-P6 离线实现与本地工程门禁已基本落地；当前仍有 3 类摘要行为缺口和 4 类正式验收缺口。最近 v5 单样本证据为 4/8 通过、4/8 失败、R23 缺失，但这些产物早于当前最终脚本/runner，必须在当前代码上重新生成。生产继续 promotionStage=shadow，不进入 Phase 4/default-on。",
+        "title": "Compact/P6 证据升级与 would-retry 闭环（保持 shadow）"
+      },
+      "id": "TF-0006"
+    },
+    {
+      "action": "add_node",
+      "alias": "compact-01",
+      "node": {
+        "acceptance_criteria": [
+          "当前固定 9 样本 completedOutcomePreserved=9/9",
+          "已完成任务不会出现在 Open TODOs、Pending user asks 或 Next Actions",
+          "新增确定性单测覆盖完成态、否定式 pending 与中英文表达"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.98,
+          "user_goal": "compact 后综合信息但不丢失完成状态",
+          "validation_plan": [
+            "focused unit test",
+            "固定 9 样本统一扫描"
+          ],
+          "why_not_enough": "只修复完成态，仍不能解决 identifier、结构、质量和成本门禁",
+          "why_this_task": "直接修复用户点名的已完成结果被重新说成待办问题"
+        },
+        "assumptions": [
+          "现有 v5 结果早于最终脚本，只作为定位线索"
+        ],
+        "confidence": 0.75,
+        "context_tags": [
+          "compact",
+          "completion-state",
+          "false-pending"
+        ],
+        "difficulty": "medium",
+        "evidence": [
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v5-auto-R16-would-retry-r1/canary-metrics.json",
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v5-auto-R29-would-retry-r1/canary-metrics.json",
+          "D:/verse_claw_worktree_compact/scripts/context-compression-would-retry-canary.ts:210"
+        ],
+        "execution_hints": [
+          "先补最小 deterministic counterexample，再改共享完成态检测",
+          "修复后只跑 focused/self-test，不先扩大 live 样本"
+        ],
+        "kind": "subtask",
+        "non_goals": [
+          "不改变真实未完成任务的 pending 状态",
+          "不调用外部 provider 作为代码修复前置"
+        ],
+        "priority": 1,
+        "progress": 75,
+        "progress_source": "manual",
+        "purpose": "保证 compact 后已完成工作仍保持完成，不制造虚假待办或重复交付。",
+        "remaining_minutes_max": 240,
+        "remaining_minutes_min": 60,
+        "requirements": [
+          "以最新已验证 outcome 为 authority",
+          "否定式 no pending 文本不得被误判",
+          "不得依赖特定 R16/R29 文案硬编码"
+        ],
+        "status": "ready",
+        "success_metrics": [
+          "false pending count=0",
+          "completedOutcomePreserved=100%"
+        ],
+        "summary": "最近 v5 可读证据中 completedOutcomePreserved 为 6/8；R16、R29 失败。需要修复 completed/final-report 与 pending/TODO 的状态对账，并在当前脚本上重新验证。",
+        "title": "[01/07] 修复已完成结果被重新标成 pending"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "第 01 项是 Compact/P6 闭环的首个行为修复"
+      },
+      "from": "compact-01",
+      "to": "TF-0006",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "compact-02",
+      "node": {
+        "acceptance_criteria": [
+          "固定样本 final gate 不再出现 missing_exact_identifier",
+          "用户路径仍保持 [REDACTED_USER]",
+          "custom/off 策略回归测试继续通过"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.97,
+          "user_goal": "compact 能综合信息且保留可继续执行的精确信息",
+          "validation_plan": [
+            "identifier policy unit tests",
+            "R14/R16/R27 deterministic replay"
+          ],
+          "why_not_enough": "仍需完成态、结构和正式质量证据",
+          "why_this_task": "精确标识丢失会直接让恢复后的 agent 无法继续正确路径"
+        },
+        "assumptions": [
+          "R14/R16/R27 是同类 identifier retention 的代表样本"
+        ],
+        "confidence": 0.65,
+        "context_tags": [
+          "compact",
+          "exact-identifiers",
+          "redaction"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v5-auto-R14-would-retry-r2/canary-metrics.json",
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v5-auto-R16-would-retry-r1/canary-metrics.json",
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v5-auto-R27-would-retry-r1/canary-metrics.json"
+        ],
+        "execution_hints": [
+          "复用现有 recovery ledger/identifier policy，不新增第二套 identifier 提取器"
+        ],
+        "kind": "subtask",
+        "non_goals": [
+          "不要求保留无关噪声 token",
+          "不降低 redaction 强度"
+        ],
+        "priority": 1,
+        "progress": 40,
+        "progress_source": "manual",
+        "purpose": "保证 compact/retry 保留任务继续执行所需的精确路径、工具、模型、URL、日期和命令标识。",
+        "remaining_minutes_max": 480,
+        "remaining_minutes_min": 120,
+        "requirements": [
+          "identifier policy 必须保持 strict/custom/off 的既有语义",
+          "只校验 evidence-backed identifiers",
+          "不得把完整敏感路径当作必须裸保留的 identifier"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "missing exact identifiers=0",
+          "unredacted user paths=0"
+        ],
+        "summary": "R14/R16 的 final gate 仍报 missing_exact_identifier:tool/model；R27 还丢失日期、路径前缀和 URL。根因已定位到 retry narrative 对 authoritative identifier 集的保留不足。",
+        "title": "[02/07] 修复 retry 后 exact identifier 丢失"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "第 02 项闭合 compact 的精确标识保留"
+      },
+      "from": "compact-02",
+      "to": "TF-0006",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.85,
+        "reason": "按用户要求串行编号推进，先稳定完成态再修 identifier"
+      },
+      "from": "compact-02",
+      "to": "compact-01",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "compact-03",
+      "node": {
+        "acceptance_criteria": [
+          "固定 9 样本每个 HANDOFF_SECTIONS 恰好一次",
+          "duplicateHandoffSections 全为空",
+          "retry 后 final gate 不再出现 missing_section/structure_damage"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.96,
+          "user_goal": "compact 结果可作为稳定接力摘要",
+          "validation_plan": [
+            "R27 regression",
+            "all-section uniqueness scan"
+          ],
+          "why_not_enough": "结构完整不代表语义质量或成本可接受",
+          "why_this_task": "缺失区块会让后续 agent 无法区分决策、待办、约束和标识"
+        },
+        "assumptions": [
+          "R27 是当前结构缺失的最小真实反例"
+        ],
+        "confidence": 0.7,
+        "context_tags": [
+          "compact",
+          "handoff-structure",
+          "fail-closed"
+        ],
+        "difficulty": "medium",
+        "evidence": [
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v5-auto-R27-would-retry-r1/canary-metrics.json",
+          "D:/verse_claw_worktree_compact/scripts/context-compression-would-retry-canary.ts:113"
+        ],
+        "execution_hints": [
+          "优先修共享 retry/finalize 入口，避免为 R27 写样本特例"
+        ],
+        "kind": "subtask",
+        "non_goals": [
+          "不要求所有区块包含长文本",
+          "无未完成事项时允许明确写 None"
+        ],
+        "priority": 1,
+        "progress": 50,
+        "progress_source": "manual",
+        "purpose": "保证 compact handoff 结构完整且每个规定区块恰好一次。",
+        "remaining_minutes_max": 360,
+        "remaining_minutes_min": 90,
+        "requirements": [
+          "复用 HANDOFF_SECTIONS 单一清单",
+          "缺区块必须 fail-closed",
+          "不得通过在 narrative 后重复追加整套 handoff 来补齐"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "missing section count=0",
+          "duplicate section count=0"
+        ],
+        "summary": "R27 retry 后仍缺 Decisions、Open TODOs、Constraints/Rules、Pending user asks、Exact identifiers。共享 prompt 已规定区块顺序，但 retry 输出仍可不完整。",
+        "title": "[03/07] 修复 retry 后 handoff 必需区块缺失"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "第 03 项闭合 handoff 结构完整性"
+      },
+      "from": "compact-03",
+      "to": "TF-0006",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.8,
+        "reason": "按编号串行推进，identifier 修复后再统一结构 gate"
+      },
+      "from": "compact-03",
+      "to": "compact-02",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "compact-04",
+      "node": {
+        "acceptance_criteria": [
+          "固定 9 样本 metrics=9/9 且 manifest valid",
+          "retryWithinLimit=9/9、userPathRedacted=9/9、completedOutcomePreserved=9/9、no duplicate sections=9/9",
+          "overall passed=9/9 后才允许扩大到 30 条"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.99,
+          "user_goal": "量化验收 compact 的综合能力而非只修两个样本",
+          "validation_plan": [
+            "manifest validator",
+            "9-row metrics scan",
+            "deterministic aggregate"
+          ],
+          "why_not_enough": "9 样本仍不足以替代固定 30 样本正式 gate",
+          "why_this_task": "统一 9 样本是从局部反例走向可量化证据的最小下一步"
+        },
+        "assumptions": [
+          "provider/live 复跑需另行确认；离线 aggregate 可先完成"
+        ],
+        "confidence": 0.6,
+        "context_tags": [
+          "compact",
+          "nine-sample",
+          "canary",
+          "manifest"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v5-auto-8-valid/manifest-8.json",
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v5-auto-8-valid/",
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v5-auto-R23-would-retry-r2/"
+        ],
+        "execution_hints": [
+          "先生成合法 9 条 manifest 并离线统一扫描",
+          "只有 01-03 focused gate 通过后才进行 provider 批次"
+        ],
+        "kind": "subtask",
+        "non_goals": [
+          "9 条通过不等于正式 P6 放行",
+          "不因单次 502 改造整个传输层"
+        ],
+        "priority": 1,
+        "progress": 44,
+        "progress_source": "manual",
+        "purpose": "生成一个当前源码、合法 manifest、统一输出目录绑定的 9 样本证据集。",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 180,
+        "requirements": [
+          "manifest version/count/hash/唯一性/source 全部有效",
+          "每条最多一次 retry",
+          "统一扫描路径泄漏、完成态、重复区块、final gate 和过期 next action",
+          "R23 必须有明确成功或失败结果，不能缺行"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "missing sample results=0",
+          "invalid manifest=0",
+          "overall pass rate=100%"
+        ],
+        "summary": "最近可读的 v5 单样本结果为 4/8 整体通过、4/8 失败，R23 无 metrics；8-valid manifest 声明 30 条却只有 8 条。所有产物均早于当前最终 runner/canary，不能作为当前 acceptance。",
+        "title": "[04/07] 完成当前代码上的 9 条统一 would-retry 验收"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "第 04 项形成当前源码上的最小统一量化证据"
+      },
+      "from": "compact-04",
+      "to": "TF-0006",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "9 样本统一验收必须等待三个行为缺口闭合"
+      },
+      "from": "compact-04",
+      "to": "compact-03",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "compact-05",
+      "node": {
+        "acceptance_criteria": [
+          "deterministic L2 全阈值 PASS",
+          "live no-fabrication >= 0.98",
+          "schema-free major/critical omission <= 0.10",
+          "critical dropped samples=0、stale leakage=0、real continuation gate PASS"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.99,
+          "user_goal": "真实量化 compact 的信息综合能力",
+          "validation_plan": [
+            "fixed 30 deterministic",
+            "independent live judge/schema-free/continuation"
+          ],
+          "why_not_enough": "质量通过后仍需模型独立性和成本/候选验收",
+          "why_this_task": "质量门禁决定摘要是否真的可用于恢复，而非仅格式正确"
+        },
+        "assumptions": [
+          "旧 auto 指标是诊断基线，不是当前代码正式 verdict"
+        ],
+        "confidence": 0.55,
+        "context_tags": [
+          "compact",
+          "quality-gate",
+          "fabrication",
+          "schema-free"
+        ],
+        "difficulty": "very_high",
+        "evidence": [
+          "D:/verse_claw_worktree_compact/reports/context-compression/P6-WOULD-RETRY-CANARY-AUTO-2026-08-20.md",
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v3-auto-full/"
+        ],
+        "execution_hints": [
+          "先用 failure guideline 和最小反例定位语义缺口，再扩大到 30 条",
+          "不得为了分数删除 uncertainty 或失败链"
+        ],
+        "kind": "subtask",
+        "non_goals": [
+          "不以压缩率单独判定成功",
+          "不以 deterministic proxy 代替真实 continuation"
+        ],
+        "priority": 1,
+        "progress": 50,
+        "progress_source": "manual",
+        "purpose": "证明 compact 的信息综合不仅结构完整，还具备可接受的忠实度、因果链与无虚构质量。",
+        "remaining_minutes_max": 1440,
+        "remaining_minutes_min": 360,
+        "requirements": [
+          "deterministic proxy 只能作为诊断，不得冒充 L3 real PASS",
+          "真实 continuation 必须完整执行",
+          "关键事实丢失、stale leakage、fabrication 均 fail-closed"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "noFabricationRate>=0.98",
+          "schemaFreeOmissionRate<=0.10",
+          "criticalDroppedSamples=0"
+        ],
+        "summary": "旧 30 样本 auto 证据显示 critical recovery 和 continuation 有收益，但 deterministic L2 未全过，judge no-fabrication=0.7667，schema-free major/critical omission=0.1667，均未达正式阈值。",
+        "title": "[05/07] 闭合 deterministic 与 live 质量门禁"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "第 05 项闭合正式质量阈值"
+      },
+      "from": "compact-05",
+      "to": "TF-0006",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.9,
+        "reason": "先稳定 9 样本，再进入完整质量 gate"
+      },
+      "from": "compact-05",
+      "to": "compact-04",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "compact-06",
+      "node": {
+        "acceptance_criteria": [
+          "modelIndependence.ok=true",
+          "固定 30 样本使用明确且独立的 evaluator provider/model",
+          "不得把 auto 同源评估写成正式 acceptance"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.97,
+          "user_goal": "得到可信、可量化的 compact 验收结论",
+          "validation_plan": [
+            "model id audit",
+            "fixed 30 independent live run"
+          ],
+          "why_not_enough": "独立评估仍需成本预算和干净候选",
+          "why_this_task": "同模型自评无法支撑正式放行"
+        },
+        "assumptions": [
+          "独立 evaluator 的授权和凭据需要单独确认"
+        ],
+        "confidence": 0.5,
+        "context_tags": [
+          "compact",
+          "model-independence",
+          "live-eval"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "D:/verse_claw_worktree_compact/reports/context-compression/P6-WOULD-RETRY-CANARY-AUTO-2026-08-20.md:76",
+          "D:/verse_claw_worktree_compact/scripts/context-compression-eval-runner.mjs"
+        ],
+        "execution_hints": [
+          "优先复用现有 provider 配置面，不新增依赖或第二套 runner"
+        ],
+        "kind": "subtask",
+        "non_goals": [
+          "不要求引入新的运行时传输抽象",
+          "不因 provider 短暂 5xx 修改整个传输层"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "progress_source": "manual",
+        "purpose": "排除同模型自评偏差，使正式质量分数具备独立性。",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 180,
+        "requirements": [
+          "compressor 必须不同于 judge/schema-free/continuation/critic",
+          "所有实际模型 ID、provider、prompt version 写入 summary",
+          "缺少明确模型时 fail-closed"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "modelIndependence.ok=true",
+          "implicit model ids=0"
+        ],
+        "summary": "当前 auto canary 的 compressor 与 evaluator 都是 auto，modelIndependence=false，只能作为非独立诊断证据。",
+        "title": "[06/07] 建立 compressor/evaluator 模型独立性证据"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "第 06 项提供正式验收所需的评估独立性"
+      },
+      "from": "compact-06",
+      "to": "TF-0006",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.8,
+        "reason": "按序号推进，在质量行为稳定后生成独立 live 证据"
+      },
+      "from": "compact-06",
+      "to": "compact-05",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "compact-07",
+      "node": {
+        "acceptance_criteria": [
+          "would-retry token/latency 落入书面预算或明确判定不可放行",
+          "干净 scoped candidate 上 focused、typecheck、comms、Harness 全部 exit 0",
+          "最终报告区分工程通过、正式 acceptance 和产品放行"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.98,
+          "user_goal": "让 compact 达到可实际采用而非只在样本上有效",
+          "validation_plan": [
+            "cost comparison",
+            "clean candidate full gates",
+            "final acceptance report"
+          ],
+          "why_not_enough": "该节点完成后仍需用户/产品决定是否提升 stage",
+          "why_this_task": "质量收益若伴随不可接受成本或脏树证据，不能形成可用交付"
+        },
+        "assumptions": [
+          "需要隔离 compact candidate 或处理外部 dirty ownership 后才能运行 diff-aware Harness"
+        ],
+        "confidence": 0.6,
+        "context_tags": [
+          "compact",
+          "performance-budget",
+          "clean-candidate",
+          "formal-acceptance"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "D:/verse_claw_worktree_compact/reports/context-compression/P6-WOULD-RETRY-CANARY-AUTO-2026-08-20.md:36",
+          "D:/verse_claw_worktree_compact/artifacts/comms/compare-report.md",
+          "diff-aware Harness 当前阻断路径：docs/dev/handoffs/LATEST.md、electron/main/index.ts、electron/main/process-error-handlers.ts、tests/e2e/app-smoke.spec.ts、tests/unit/main-unhandled-rejection.test.ts"
+        ],
+        "execution_hints": [
+          "优先压缩 recovery ledger 的重复 token，不改传输层",
+          "最终在隔离候选上重跑所有 requiredTests"
+        ],
+        "kind": "subtask",
+        "non_goals": [
+          "不自动提升 promotionStage",
+          "不把工程 gate 绿升级成 liveReady/productApproved/default-on"
+        ],
+        "priority": 1,
+        "progress": 50,
+        "progress_source": "manual",
+        "purpose": "在不牺牲质量的前提下证明 would-retry 成本可控，并把最终证据绑定干净候选。",
+        "remaining_minutes_max": 960,
+        "remaining_minutes_min": 240,
+        "requirements": [
+          "先定义 token/latency budget 再判定 PASS",
+          "正式证据绑定单一 HEAD/tree/manifest",
+          "无关 dirty 路径不得加入 compact ownership",
+          "promotionStage 在正式决定前保持 shadow"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "unbounded retry=0",
+          "dirty candidate acceptance=0",
+          "all required gates exit 0"
+        ],
+        "summary": "本地 focused/typecheck/comms 已绿；旧 auto canary 的 would-retry 相比 shadow 为 2.521x total tokens、3.107x latency，尚无可接受预算。diff-aware Harness 仍被 5 个无关 dirty 路径阻断，未形成干净 scoped candidate。",
+        "title": "[07/07] 建立成本预算并完成干净候选验收"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "第 07 项完成成本和正式候选收口"
+      },
+      "from": "compact-07",
+      "to": "TF-0006",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "最终候选验收等待质量和独立 evaluator 证据完成"
+      },
+      "from": "compact-07",
+      "to": "compact-06",
+      "type": "depends_on"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-21T10:23:52.814541Z",
+        "evidence": "D:/verse_claw_worktree_compact/.agent-workbench/task-forest/config.json",
+        "expected_requirement": "当前 worktree 的 repo-local Task Forest 元数据应绑定 D:/verse_claw_worktree_compact。",
+        "id": "TFD-340517fabb",
+        "observed_action_or_result": ".agent-workbench/task-forest/config.json 的 workspace_path 仍指向旧的 C:/Users/27933/Desktop/clawx/ClawX；init 不会迁移已有 config。",
+        "recommendation": "不要手改 canonical JSON；后续通过 Task Forest 支持的迁移/重建流程修正 workspace identity。当前节点证据全部使用 D 盘绝对路径。",
+        "related_task_ids": [
+          "TF-0006"
+        ],
+        "severity": "medium",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-21T10:23:52.807525Z",
+  "proposal_id": "TFP-compact-p6-residuals-numbered-20260821",
+  "rationale": "用户要求把 compact/P6 当前七类遗留项按序号固化到本地 Task Forest，防止后续压缩丢失，并保留已验证进度、旧证据失效边界与 promotionStage=shadow。",
+  "session_id": "session-2026-08-21-compact-p6-residuals",
+  "status": "applied"
+}

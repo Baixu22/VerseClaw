@@ -1,0 +1,501 @@
+{
+  "schema": "handoff-benchmark-selection/v1",
+  "generatedAt": "2026-08-24T16:56:12.785Z",
+  "rule": "pending-objective OR unresolved-failure(followUp), cap 12 manifest order; fill to >=10 with next-action facts",
+  "selected": [
+    {
+      "sampleId": "R5",
+      "transcript": "137258c7-f51d-42b3-b8f7-d17a3a4d1345.jsonl",
+      "window": {
+        "allEntries": 12,
+        "usable": 12,
+        "size": 12,
+        "start": 0
+      },
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 1,
+        "nextAction": 0
+      },
+      "primary": true
+    },
+    {
+      "sampleId": "R8",
+      "transcript": "18ace6c2-3749-4ddf-9266-fd5b6feda464.jsonl",
+      "window": {
+        "allEntries": 9,
+        "usable": 9,
+        "size": 9,
+        "start": 0
+      },
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 1,
+        "nextAction": 0
+      },
+      "primary": true
+    },
+    {
+      "sampleId": "R9",
+      "transcript": "1ada08f4-860a-4502-a6cf-34f692cbef5f.jsonl",
+      "window": {
+        "allEntries": 20,
+        "usable": 20,
+        "size": 20,
+        "start": 0
+      },
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 6,
+        "nextAction": 0
+      },
+      "primary": true
+    },
+    {
+      "sampleId": "R10",
+      "transcript": "2026-08-12T12-58-18-419Z_10d2c531-c35a-44ae-9064-eeafe4107848.jsonl",
+      "window": {
+        "allEntries": 226,
+        "usable": 225,
+        "size": 200,
+        "start": 23
+      },
+      "reasons": {
+        "pendingObjective": 1,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": true
+    },
+    {
+      "sampleId": "R11",
+      "transcript": "2026-08-12T12-59-20-521Z_d18e461b-1f9e-481f-869b-ec9c87c1d6a0.jsonl",
+      "window": {
+        "allEntries": 226,
+        "usable": 225,
+        "size": 225,
+        "start": 0
+      },
+      "reasons": {
+        "pendingObjective": 1,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": true
+    },
+    {
+      "sampleId": "R13",
+      "transcript": "2026-08-12T15-07-29-396Z_554203ce-750a-485d-9096-8502ef7e57eb.jsonl",
+      "window": {
+        "allEntries": 226,
+        "usable": 225,
+        "size": 200,
+        "start": 22
+      },
+      "reasons": {
+        "pendingObjective": 1,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": true
+    },
+    {
+      "sampleId": "R14",
+      "transcript": "2026-08-12T15-47-34-555Z_86cb2530-4335-4155-8a89-6e59a68ee0e3.jsonl",
+      "window": {
+        "allEntries": 226,
+        "usable": 225,
+        "size": 225,
+        "start": 0
+      },
+      "reasons": {
+        "pendingObjective": 1,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": true
+    },
+    {
+      "sampleId": "R16",
+      "transcript": "2026-08-12T16-33-20-107Z_bd009fb4-d9a3-46ff-9918-b59aee4e1d7c.jsonl",
+      "window": {
+        "allEntries": 226,
+        "usable": 225,
+        "size": 200,
+        "start": 21
+      },
+      "reasons": {
+        "pendingObjective": 1,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": true
+    },
+    {
+      "sampleId": "R17",
+      "transcript": "2026-08-12T16-34-18-574Z_815d5026-f1ae-4011-846d-7e0728c26ccc.jsonl",
+      "window": {
+        "allEntries": 226,
+        "usable": 225,
+        "size": 225,
+        "start": 0
+      },
+      "reasons": {
+        "pendingObjective": 1,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": true
+    },
+    {
+      "sampleId": "R25",
+      "transcript": "311ac4ac-fb35-492a-be3a-87818978baa6.jsonl",
+      "window": {
+        "allEntries": 36,
+        "usable": 36,
+        "size": 36,
+        "start": 0
+      },
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 6,
+        "nextAction": 0
+      },
+      "primary": true
+    },
+    {
+      "sampleId": "R26",
+      "transcript": "316d578c-da49-4572-815e-8a0806386865.jsonl",
+      "window": {
+        "allEntries": 13,
+        "usable": 13,
+        "size": 13,
+        "start": 0
+      },
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 6,
+        "nextAction": 0
+      },
+      "primary": true
+    },
+    {
+      "sampleId": "R30",
+      "transcript": "378c1727-87f4-4682-9897-83bd1f9dbac2.jsonl",
+      "window": {
+        "allEntries": 8,
+        "usable": 8,
+        "size": 8,
+        "start": 0
+      },
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 4,
+        "nextAction": 0
+      },
+      "primary": true
+    }
+  ],
+  "evaluated": [
+    {
+      "sampleId": "R1",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R2",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R3",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R4",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R5",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 1,
+        "nextAction": 0
+      },
+      "primary": true,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R6",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R7",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R8",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 1,
+        "nextAction": 0
+      },
+      "primary": true,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R9",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 6,
+        "nextAction": 0
+      },
+      "primary": true,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R10",
+      "reasons": {
+        "pendingObjective": 1,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": true,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R11",
+      "reasons": {
+        "pendingObjective": 1,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": true,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R12",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R13",
+      "reasons": {
+        "pendingObjective": 1,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": true,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R14",
+      "reasons": {
+        "pendingObjective": 1,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": true,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R15",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R16",
+      "reasons": {
+        "pendingObjective": 1,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": true,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R17",
+      "reasons": {
+        "pendingObjective": 1,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": true,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R18",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R19",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R20",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R21",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 1
+      },
+      "primary": false,
+      "fillCandidate": true
+    },
+    {
+      "sampleId": "R22",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R23",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R24",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R25",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 6,
+        "nextAction": 0
+      },
+      "primary": true,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R26",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 6,
+        "nextAction": 0
+      },
+      "primary": true,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R27",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R28",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R29",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 0,
+        "nextAction": 0
+      },
+      "primary": false,
+      "fillCandidate": false
+    },
+    {
+      "sampleId": "R30",
+      "reasons": {
+        "pendingObjective": 0,
+        "unresolvedFailure": 4,
+        "nextAction": 0
+      },
+      "primary": true,
+      "fillCandidate": false
+    }
+  ]
+}

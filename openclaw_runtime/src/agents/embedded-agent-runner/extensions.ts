@@ -767,6 +767,7 @@ export function buildEmbeddedExtensionFactories(params: {
       workspaceDir: params.workspaceDir,
       postCompactionSections: compactionCfg?.postCompactionSections,
       provider: compactionCfg?.provider,
+      promotionStage: compactionCfg?.promotionStage,
     });
     factories.push(compactionSafeguardExtension);
   }

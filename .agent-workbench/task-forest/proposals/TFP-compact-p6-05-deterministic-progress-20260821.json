@@ -1,0 +1,45 @@
+{
+  "applied_at": "2026-08-21T14:51:45.210213Z",
+  "base_graph_hash": "956808144871e7f03b7b9bc39232a47bba6364dd4ced1222198acf95a50c6a46",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 76,
+    "workspace_path": "D:\\verse_claw_worktree_compact"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.82,
+        "evidence": [
+          "D:/verse_claw_worktree_compact/scripts/context-compression-deterministic-recovery-batch.mjs",
+          "D:/verse_claw_worktree_compact/scripts/context-compression-eval-runner.mjs",
+          "D:/verse_claw_worktree_compact/reports/context-compression/P6-TF0074-DETERMINISTIC-QUALITY-EVIDENCE-2026-08-21.md",
+          "D:/verse_claw_worktree_compact/artifacts/p6-tf0074-deterministic-recovery-30/batch-metadata.json",
+          "D:/verse_claw_worktree_compact/artifacts/p6-tf0074-deterministic-recovery-30/eval/2026-08-21T14-30-55-402Z/summary.json",
+          "root compact 66/66；runtime focused 79/79；Node/Web typecheck exit 0",
+          "would-retry self-test/ESLint PASS；Harness --no-diff PASS；comms replay/compare PASS"
+        ],
+        "progress": 55,
+        "remaining_minutes_max": 900,
+        "remaining_minutes_min": 240,
+        "status": "in_progress",
+        "summary": "deterministic 质量部分已闭合：固定 30 条 model-free Recovery Ledger batch 的 verified retention、critical recall、L0/L1/L2 和 paired regression 全通过，critical drop=0。真实 independent judge/schema-free/continuation 尚未执行，layer3=NOT_EXECUTED，full acceptance 继续 FAIL/evidenceInsufficient。"
+      },
+      "id": "TF-0074"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "status": "proposed",
+        "summary": "仍依赖 TF-0074 的当前源码 independent live judge/schema-free/real continuation 完整执行与质量阈值通过；不得提前启动模型独立性验收。"
+      },
+      "id": "TF-0075"
+    }
+  ],
+  "created_at": "2026-08-21T14:51:45.009999Z",
+  "proposal_id": "TFP-compact-p6-05-deterministic-progress-20260821",
+  "rationale": "TF-0074 的 deterministic 30 条质量部分已完成，但 independent live judge/schema-free/real continuation 未执行；更新为真实 in_progress，不关闭也不解锁 06。",
+  "session_id": "session-2026-08-21-compact-p6-05",
+  "status": "applied"
+}

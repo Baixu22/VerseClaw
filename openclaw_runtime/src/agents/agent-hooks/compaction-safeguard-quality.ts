@@ -156,7 +156,7 @@ function normalizeOpaqueIdentifier(value: string): string {
   return isPureHexIdentifier(value) ? value.toUpperCase() : value;
 }
 
-function summaryIncludesIdentifier(summary: string, identifier: string): boolean {
+export function summaryIncludesIdentifier(summary: string, identifier: string): boolean {
   if (isPureHexIdentifier(identifier)) {
     return summary.toUpperCase().includes(identifier.toUpperCase());
   }
@@ -167,7 +167,7 @@ function summaryIncludesIdentifier(summary: string, identifier: string): boolean
 export function extractOpaqueIdentifiers(text: string): string[] {
   const matches =
     text.match(
-      /([A-Fa-f0-9]{8,}|https?:\/\/\S+|\/[\w.-]{2,}(?:\/[\w.-]+)+|[A-Za-z]:\\[\w\\.-]+|[A-Za-z0-9._-]+\.[A-Za-z0-9._/-]+:\d{1,5}|\b\d{6,}\b)/g,
+      /([A-Fa-f0-9]{8,}|https?:\/\/\S+|\/(?:[\w.-]+\/)+[\w.-]+|[A-Za-z0-9._-]+(?:\/[\w.-]+){1,}|[A-Za-z]:\\[\w\\.-]+|[A-Za-z0-9._-]+\.[A-Za-z0-9._/-]+:\d{1,5}|\b\d{6,}\b)/g,
     ) ?? [];
   return Array.from(
     new Set(
@@ -194,7 +194,7 @@ function tokenizeAskOverlapText(text: string): string[] {
     .filter((token) => token.length > 0);
 }
 
-function hasAskOverlap(summary: string, latestAsk: string | null): boolean {
+export function hasAskOverlap(summary: string, latestAsk: string | null): boolean {
   if (!latestAsk) {
     return true;
   }

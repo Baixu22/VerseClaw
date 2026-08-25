@@ -1,0 +1,28 @@
+{
+  "applied_at": "2026-08-21T11:54:54.267670Z",
+  "base_graph_hash": "1b7268066cb63df25a37ec31c04e44914b94ac93efd41ea128a74c70a1831d98",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 76,
+    "workspace_path": "D:\\verse_claw_worktree_compact"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "progress": 40,
+        "source_sessions": [
+          "session-2026-08-21-compact-p6-02"
+        ],
+        "status": "in_progress",
+        "summary": "正在核对 R14/R16/R27 的 exact identifier 丢失是否已由当前代码真实修复，重点防止用 identifierPolicy=off 关闭检查来制造假绿；只做离线 counterexample、自检和 focused gate，不调用 provider。"
+      },
+      "id": "TF-0071"
+    }
+  ],
+  "created_at": "2026-08-21T11:54:54.082340Z",
+  "proposal_id": "TFP-compact-p6-02-start-20260821",
+  "rationale": "用户确认继续按序开发，当前仅启动 TF-0071。",
+  "session_id": "session-2026-08-21-compact-p6-02",
+  "status": "applied"
+}

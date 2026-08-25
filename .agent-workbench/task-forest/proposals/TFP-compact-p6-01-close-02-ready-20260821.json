@@ -1,0 +1,52 @@
+{
+  "applied_at": "2026-08-21T11:51:28.333793Z",
+  "base_graph_hash": "e19e97f22972450086ec981e6f35ab84c9fafdc9bb7c1a05d372de3ef8241dc1",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 76,
+    "workspace_path": "D:\\verse_claw_worktree_compact"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.95,
+        "evidence": [
+          "D:/verse_claw_worktree_compact/scripts/context-compression-would-retry-canary.ts",
+          "D:/verse_claw_worktree_compact/reports/context-compression/P6-TF0070-COMPLETION-STATE-EVIDENCE-2026-08-21.md",
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-local-tf0070-r3/canary-metrics.json",
+          "would-retry --self-test PASS；scoped ESLint PASS",
+          "root compact 63/63；runtime focused 38/38；P6 promotion/safeguard 14/14",
+          "Node/Web typecheck exit 0；comms replay/compare PASS；Harness --no-diff PASS"
+        ],
+        "progress": 100,
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "status": "done",
+        "summary": "完成态保护已闭合：当 deterministic directive 证明 latest outcome 已完成时，actionable pending 会触发最多一次 retry；retry 后仍矛盾则确定性清除被完成态否定的 pending，真实 unfinished directive 不受影响。固定 9 样本完成态语义覆盖 9/9；R16/R29 本地 stub replay 均恰好一次 retry 且 passed=true。"
+      },
+      "id": "TF-0070"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "status": "ready",
+        "summary": "依赖 TF-0070 已完成。下一步修复 R14/R16/R27 retry 后 exact identifier 丢失；先做离线 counterexample 和 identifier policy 回归，不调用 provider。"
+      },
+      "id": "TF-0071"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "progress": 48,
+        "summary": "01/07 完成态保护已完成并验证；当前开始点为 02/07 exact identifier 保留。P6 继续保持 shadow，剩余结构、9 条统一验收、质量、模型独立性、成本和干净候选未闭合。"
+      },
+      "id": "TF-0006"
+    }
+  ],
+  "created_at": "2026-08-21T11:24:39.945668Z",
+  "proposal_id": "TFP-compact-p6-01-close-02-ready-20260821",
+  "rationale": "TF-0070 已完成共享完成态冲突检测、一次 bounded retry、deterministic reconcile、R16/R29 本地真实形态 replay 和全部 scoped 门禁；按 01-07 串行顺序关闭 01 并解锁 02。",
+  "session_id": "session-2026-08-21-compact-p6-01",
+  "status": "applied"
+}

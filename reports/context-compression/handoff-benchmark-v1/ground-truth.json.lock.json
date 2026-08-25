@@ -1,0 +1,21 @@
+{
+  "schema": "handoff-benchmark-lock/v1",
+  "gtFile": "ground-truth.json",
+  "gtSha256": "698de58e7ffd4615c128e23d348621c970d9ffd5e48f6ca3cd926329649ed030",
+  "sampleIds": [
+    "R10",
+    "R11",
+    "R13",
+    "R14",
+    "R16",
+    "R17",
+    "R25",
+    "R26",
+    "R30",
+    "R5",
+    "R8",
+    "R9"
+  ],
+  "lockedAt": "2026-08-24T23:30:49.022Z",
+  "lockedBy": "user-instruction-2026-08-25 (chat authorization for formal acceptance)"
+}

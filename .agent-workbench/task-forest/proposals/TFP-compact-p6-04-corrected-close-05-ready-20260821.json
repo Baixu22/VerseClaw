@@ -1,0 +1,48 @@
+{
+  "applied_at": "2026-08-21T14:28:01.653982Z",
+  "base_graph_hash": "561890606c46b3c5f467eaaedc496fc531699d61a22a76caa5a9de99dcb24b38",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 76,
+    "workspace_path": "D:\\verse_claw_worktree_compact"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.96,
+        "evidence": [
+          "D:/verse_claw_worktree_compact/scripts/context-compression-would-retry-local-manifest.mjs",
+          "D:/verse_claw_worktree_compact/scripts/context-compression-would-retry-canary.ts",
+          "D:/verse_claw_worktree_compact/scripts/context-compression-eval-runner.mjs",
+          "D:/verse_claw_worktree_compact/reports/context-compression/P6-TF0073-NINE-SAMPLE-UNIFIED-EVIDENCE-2026-08-21.md",
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-local-tf0073-r3/manifest-9.json",
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-local-tf0073-r4/canary-metrics.json",
+          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-local-tf0073-r4/eval-parse/2026-08-21T14-17-53-886Z/summary.json",
+          "identity/key negative control rejected before provider request",
+          "root compact 63/63；runtime focused 79/79；Node/Web typecheck exit 0"
+        ],
+        "progress": 100,
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "status": "done",
+        "summary": "当前源码九条统一 replay 已按 eval runner 语义闭合：manifest pathHash/basename/size/mtime 与 V2 key 均合法，resolved=9/9；canary 每条恰好一次 retry 且 passed=9/9；独立 deterministic cross-check 的 L0/L1/L2 全部通过、information loss=0、paired regression=0。r1/r2 已作废。"
+      },
+      "id": "TF-0073"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "progress": 20,
+        "status": "ready",
+        "summary": "依赖 TF-0073 已完成。当前 9 条 deterministic L0/L1/L2 已 PASS，但 L3 仍 NOT EXECUTED；下一步需要当前源码绑定的 independent live judge/schema-free/continuation，不能复用旧 v14 或 auto 同源证据作为当前 verdict。"
+      },
+      "id": "TF-0074"
+    }
+  ],
+  "created_at": "2026-08-21T14:28:01.472116Z",
+  "proposal_id": "TFP-compact-p6-04-corrected-close-05-ready-20260821",
+  "rationale": "TF-0073 已按 eval runner pathHash/sampleManifestKeyV2 语义修正，并完成 r3/r4 canary + independent deterministic cross-check；关闭 04 并解锁 05。",
+  "session_id": "session-2026-08-21-compact-p6-04-correction",
+  "status": "applied"
+}

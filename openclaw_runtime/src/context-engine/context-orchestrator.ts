@@ -50,6 +50,19 @@ import {
 
 export type ContextOrchestratorStage = "memory" | "vtoken";
 
+/** P5 additive native-model capability declarations. */
+export type NativeContextCapabilities = {
+  nativeMemory?: boolean;
+  nativeContextGating?: boolean;
+};
+
+export type NativeContextNegotiation = {
+  nativeMemory: boolean;
+  nativeContextGating: boolean;
+  memoryPilotDisabled: boolean;
+  vtokenDisabled: boolean;
+};
+
 export type ContextOrchestratorSource = {
   id: string;
   stage: ContextOrchestratorStage;
@@ -79,6 +92,8 @@ export type ContextOrchestratorLineage = {
   totalCharsAdded: number;
   durationMs: number;
   error?: string;
+  /** Present only when a native capability declaration was received. */
+  nativeContext?: NativeContextNegotiation;
 };
 
 export type ContextOrchestratorInput = {
@@ -103,6 +118,11 @@ export type ContextOrchestratorInput = {
   memoryProviderIds?: readonly string[];
   /** Optional VT RPC client (tests / shared worker). */
   vtokenClient?: VtokenRpcClient;
+  /**
+   * P5 additive model capability declaration. Absent declarations leave the
+   * existing memory/vtoken flag decisions byte-for-byte unchanged.
+   */
+  nativeContextCapabilities?: NativeContextCapabilities;
   /**
    * FP-P0-05: turn identifier. When supplied, memory-pilot and VToken charge the
    * turn-wide shared injection budget (the same ledger the DCS Assembler and the
@@ -137,10 +157,43 @@ const DEFAULT_STAGES: ContextOrchestratorStage[] = ["memory", "vtoken"];
 
 let lastLineage: ContextOrchestratorLineage | null = null;
 const lineageByTurn = new Map<string, ContextOrchestratorLineage>();
+const nativeNegotiationByTurn = new Map<string, NativeContextNegotiation>();
 
 function rememberLineage(lineage: ContextOrchestratorLineage): void {
   lastLineage = lineage;
   if (lineage.turnId) lineageByTurn.set(lineage.turnId, lineage);
+}
+
+function rememberNativeNegotiation(turnId: string | undefined, negotiation: NativeContextNegotiation): void {
+  if (turnId) nativeNegotiationByTurn.set(turnId, negotiation);
+}
+
+function gateBlockStoreInjectionForNativeContext(turnId: string): void {
+  const negotiation = nativeNegotiationByTurn.get(turnId);
+  if (!negotiation?.nativeContextGating) return;
+  const collection = getContextCandidateCollection(turnId);
+  if (!collection || collection.diagnostics.finalized) return;
+  const blockedChannels = new Set<TurnInjectionChannel>(["knowledge", "working_memory", "tool_registry"]);
+  const keptCandidates: typeof collection.candidates = [];
+  const keptLineageIndexes: typeof collection.candidateLineageIndexes = [];
+  for (let index = 0; index < collection.candidates.length; index += 1) {
+    const candidate = collection.candidates[index];
+    if (candidate && blockedChannels.has(candidate.channel)) {
+      const lineage = collection.lineage[collection.candidateLineageIndexes[index] ?? -1];
+      if (lineage) {
+        lineage.disposition = "skip";
+        lineage.charsRequested = 0;
+        lineage.charsApplied = 0;
+        lineage.reason = "flag-off";
+        lineage.novelty = undefined;
+      }
+      continue;
+    }
+    keptCandidates.push(candidate);
+    keptLineageIndexes.push(collection.candidateLineageIndexes[index] ?? -1);
+  }
+  collection.candidates = keptCandidates;
+  collection.candidateLineageIndexes = keptLineageIndexes;
 }
 
 export function getLastContextOrchestratorLineage(): ContextOrchestratorLineage | null {
@@ -150,6 +203,7 @@ export function getLastContextOrchestratorLineage(): ContextOrchestratorLineage 
 export function resetContextOrchestratorLineageForTests(): void {
   lastLineage = null;
   lineageByTurn.clear();
+  nativeNegotiationByTurn.clear();
 }
 
 export type ContextOrchestratorCandidateInput = Omit<
@@ -217,6 +271,7 @@ export function finalizeContextOrchestratorTurn(params: {
   projection: ContextCandidateProjection;
 } {
   const wasFinalized = getContextCandidateCollection(params.turnId)?.diagnostics.finalized === true;
+  gateBlockStoreInjectionForNativeContext(params.turnId);
   const ledger = beginTurnInjectionBudget({ turnId: params.turnId });
   const projected = projectContextCandidates({
     turnId: params.turnId,
@@ -275,6 +330,7 @@ export function finalizeContextOrchestratorTurn(params: {
 
 export function endContextOrchestratorTurn(turnId: string): ContextCandidateCollection | undefined {
   lineageByTurn.delete(turnId);
+  nativeNegotiationByTurn.delete(turnId);
   return endContextCandidateCollection(turnId);
 }
 
@@ -313,6 +369,59 @@ function resolveVtokenBudget(cfg: unknown): number | undefined {
   } catch {
     return undefined;
   }
+}
+
+function capabilityFromConfig(cfg: unknown): NativeContextCapabilities | undefined {
+  try {
+    if (!isRecord(cfg)) return undefined;
+    const runtime = isRecord(cfg.runtime) ? cfg.runtime : undefined;
+    const candidates = [
+      cfg.capabilities,
+      runtime?.capabilities,
+      isRecord(runtime?.model) ? runtime.model.capabilities : undefined,
+      cfg.model && isRecord(cfg.model) ? cfg.model.capabilities : undefined,
+      cfg.models && isRecord(cfg.models) ? cfg.models.capabilities : undefined,
+    ];
+    for (const candidate of candidates) {
+      if (!isRecord(candidate)) continue;
+      if (
+        typeof candidate.nativeMemory !== "boolean" &&
+        typeof candidate.nativeContextGating !== "boolean"
+      ) {
+        continue;
+      }
+      return {
+        ...(typeof candidate.nativeMemory === "boolean"
+          ? { nativeMemory: candidate.nativeMemory }
+          : {}),
+        ...(typeof candidate.nativeContextGating === "boolean"
+          ? { nativeContextGating: candidate.nativeContextGating }
+          : {}),
+      };
+    }
+  } catch {
+    // fail-closed: no declaration means current behavior.
+  }
+  return undefined;
+}
+
+/**
+ * P5 hd-double-compression-contract negotiation. Input declarations win over
+ * config-shaped capability declarations; absence returns all-off negotiation.
+ */
+export function resolveNativeContextNegotiation(
+  cfg: unknown,
+  input?: NativeContextCapabilities,
+): NativeContextNegotiation {
+  const declared = input ?? capabilityFromConfig(cfg);
+  const nativeMemory = declared?.nativeMemory === true;
+  const nativeContextGating = declared?.nativeContextGating === true;
+  return {
+    nativeMemory,
+    nativeContextGating,
+    memoryPilotDisabled: nativeMemory || nativeContextGating,
+    vtokenDisabled: nativeMemory || nativeContextGating,
+  };
 }
 
 function isMemoryPilotEnabled(cfg: unknown): boolean {
@@ -379,6 +488,10 @@ export async function computeContextExtraSystemPrompt(
   const started = Date.now();
   const stagesRequested = resolveStages(options.stages);
   const log = options.log;
+  const nativeContext = resolveNativeContextNegotiation(cfg, input.nativeContextCapabilities);
+  const hasNativeDeclaration =
+    nativeContext.nativeMemory || nativeContext.nativeContextGating;
+  rememberNativeNegotiation(input.turnId, nativeContext);
   const lineage: ContextOrchestratorLineage = {
     turnId: input.turnId,
     sessionId: input.sessionId,
@@ -395,6 +508,7 @@ export async function computeContextExtraSystemPrompt(
     },
     totalCharsAdded: 0,
     durationMs: 0,
+    ...(hasNativeDeclaration ? { nativeContext } : {}),
   };
 
   const deferProjection = input.deferProjection === true && input.turnId !== undefined;
@@ -459,7 +573,7 @@ export async function computeContextExtraSystemPrompt(
     }
 
     if (stagesRequested.includes("memory")) {
-      const enabled = isMemoryPilotEnabled(cfg);
+      const enabled = !nativeContext.memoryPilotDisabled && isMemoryPilotEnabled(cfg);
       const before = result?.length ?? 0;
       if (!enabled) {
         if (deferProjection) {
@@ -556,7 +670,7 @@ export async function computeContextExtraSystemPrompt(
 
     if (stagesRequested.includes("vtoken")) {
       const vtokenConfig = resolveVtokenAssemblyConfig(cfg);
-      const enabled = vtokenConfig.enabled;
+      const enabled = !nativeContext.vtokenDisabled && vtokenConfig.enabled;
       lineage.budget.vtokenBudgetTokens = vtokenConfig.budgetTokens;
       const before = result?.length ?? 0;
       if (!enabled) {

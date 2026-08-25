@@ -384,6 +384,45 @@
   {
     "alignment": {
       "fit": "aligned",
+      "fit_confidence": 0.99,
+      "user_goal": "真实量化 compact 的信息综合能力",
+      "validation_plan": [
+        "fixed 30 deterministic",
+        "independent live judge/schema-free/continuation"
+      ],
+      "why_not_enough": "质量通过后仍需模型独立性和成本/候选验收",
+      "why_this_task": "质量门禁决定摘要是否真的可用于恢复，而非仅格式正确"
+    },
+    "blocked_by": [],
+    "confidence": 0.82,
+    "context_tags": [
+      "compact",
+      "quality-gate",
+      "fabrication",
+      "schema-free"
+    ],
+    "desired_outcomes": [],
+    "difficulty": "very_high",
+    "id": "TF-0074",
+    "kind": "subtask",
+    "next_action": "先用 failure guideline 和最小反例定位语义缺口，再扩大到 30 条",
+    "priority": 1,
+    "progress": 55.0,
+    "purpose": "证明 compact 的信息综合不仅结构完整，还具备可接受的忠实度、因果链与无虚构质量。",
+    "ready": true,
+    "remaining_minutes_max": 900,
+    "remaining_minutes_min": 240,
+    "status": "in_progress",
+    "success_metrics": [
+      "noFabricationRate>=0.98",
+      "schemaFreeOmissionRate<=0.10",
+      "criticalDroppedSamples=0"
+    ],
+    "title": "[05/07] 闭合 deterministic 与 live 质量门禁"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
       "fit_confidence": 0.92,
       "user_goal": "构建成熟统一 Agent 产品系统",
       "validation_plan": [
@@ -396,21 +435,28 @@
     },
     "blocked_by": [],
     "confidence": 0.9,
-    "context_tags": [],
+    "context_tags": [
+      "compact",
+      "context-compression",
+      "p6",
+      "would-retry",
+      "shadow",
+      "fail-closed"
+    ],
     "desired_outcomes": [],
     "difficulty": "unknown",
     "id": "TF-0006",
     "kind": "subtask",
     "next_action": "澄清阻塞原因并决定解除或废止",
     "priority": 3,
-    "progress": 10.0,
+    "progress": 48.0,
     "purpose": "用真实 corpus 与 live A/B 支撑 default-on 讨论，不靠再写 honesty pack",
     "ready": false,
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "status": "blocked",
     "success_metrics": [],
-    "title": "M2/M3 证据升级（延后）"
+    "title": "Compact/P6 证据升级与 would-retry 闭环（保持 shadow）"
   },
   {
     "alignment": {
@@ -1111,5 +1157,86 @@
       "rollback drill 成功率 100%"
     ],
     "title": "VS-P5-01 Provider-backed 真实 Canary、Rollback 与扩大裁决"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.97,
+      "user_goal": "得到可信、可量化的 compact 验收结论",
+      "validation_plan": [
+        "model id audit",
+        "fixed 30 independent live run"
+      ],
+      "why_not_enough": "独立评估仍需成本预算和干净候选",
+      "why_this_task": "同模型自评无法支撑正式放行"
+    },
+    "blocked_by": [
+      "TF-0074"
+    ],
+    "confidence": 0.5,
+    "context_tags": [
+      "compact",
+      "model-independence",
+      "live-eval"
+    ],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0075",
+    "kind": "subtask",
+    "next_action": "先完成依赖：TF-0074",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "排除同模型自评偏差，使正式质量分数具备独立性。",
+    "ready": false,
+    "remaining_minutes_max": 720,
+    "remaining_minutes_min": 180,
+    "status": "proposed",
+    "success_metrics": [
+      "modelIndependence.ok=true",
+      "implicit model ids=0"
+    ],
+    "title": "[06/07] 建立 compressor/evaluator 模型独立性证据"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "让 compact 达到可实际采用而非只在样本上有效",
+      "validation_plan": [
+        "cost comparison",
+        "clean candidate full gates",
+        "final acceptance report"
+      ],
+      "why_not_enough": "该节点完成后仍需用户/产品决定是否提升 stage",
+      "why_this_task": "质量收益若伴随不可接受成本或脏树证据，不能形成可用交付"
+    },
+    "blocked_by": [
+      "TF-0075"
+    ],
+    "confidence": 0.6,
+    "context_tags": [
+      "compact",
+      "performance-budget",
+      "clean-candidate",
+      "formal-acceptance"
+    ],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0076",
+    "kind": "subtask",
+    "next_action": "先完成依赖：TF-0075",
+    "priority": 1,
+    "progress": 50.0,
+    "purpose": "在不牺牲质量的前提下证明 would-retry 成本可控，并把最终证据绑定干净候选。",
+    "ready": false,
+    "remaining_minutes_max": 960,
+    "remaining_minutes_min": 240,
+    "status": "proposed",
+    "success_metrics": [
+      "unbounded retry=0",
+      "dirty candidate acceptance=0",
+      "all required gates exit 0"
+    ],
+    "title": "[07/07] 建立成本预算并完成干净候选验收"
   }
 ]

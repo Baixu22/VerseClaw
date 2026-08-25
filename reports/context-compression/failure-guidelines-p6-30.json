@@ -1,0 +1,295 @@
+{
+  "version": 1,
+  "generatedAt": "2026-08-17T17:11:37.338Z",
+  "atomLimit": 24,
+  "guidelines": [
+    {
+      "id": "guideline-outcome-48",
+      "canonicalIdentity": "30 files import net.jforum.entities.Post (exact match)",
+      "type": "outcome",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R13"
+      ],
+      "repairGuideline": "The grep result showing 30 files is the key finding. The compressed context omits this, so the assistant cannot report the analysis."
+    },
+    {
+      "id": "guideline-next_action-76",
+      "canonicalIdentity": "assistant needs to deliver final report summarizing each step with tool names and results",
+      "type": "next_action",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R19"
+      ],
+      "repairGuideline": "The compressed context omits the final reporting step, which is the user's explicit request. Without this, the assistant may not know to provide the summary, leading to an incomplete response."
+    },
+    {
+      "id": "guideline-constraint-9",
+      "canonicalIdentity": "buildDownloadPath returns actual storage path based on getPhysicalFilename()",
+      "type": "constraint",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R6"
+      ],
+      "repairGuideline": "This explains why downloadPath is the correct path and getRealFilename is not. Missing this makes the bug rationale unclear."
+    },
+    {
+      "id": "guideline-failed_attempt-54",
+      "canonicalIdentity": "dir_list and file_fetch failed because no paired nodes are available",
+      "type": "failed_attempt",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R15"
+      ],
+      "repairGuideline": "The failure of the requested tools is a key event that explains the assistant's subsequent actions. Without this, the compressed context may not know why the assistant used local tools, leading to confusion."
+    },
+    {
+      "id": "guideline-outcome-61",
+      "canonicalIdentity": "Directory listing of C:/Users/27933/Desktop/shit/JForum-master (files and folders)",
+      "type": "outcome",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R16"
+      ],
+      "repairGuideline": "The compressed context omits the actual directory listing results, which are essential for fulfilling the original request and for understanding the project structure."
+    },
+    {
+      "id": "guideline-outcome-36",
+      "canonicalIdentity": "Directory listing output showing files and directories in JForum-master",
+      "type": "outcome",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "The successful directory listing output is the primary result the user asked for. It is completely missing from the compressed context, making it impossible to answer the original request."
+    },
+    {
+      "id": "guideline-failed_attempt-8",
+      "canonicalIdentity": "downloadAttachment method returns new File(attachment.getRealFilename()) instead of new File(downloadPath)",
+      "type": "failed_attempt",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R6"
+      ],
+      "repairGuideline": "The compressed context omits the specific buggy line that was the root cause. Without this, the failure cannot be understood or fixed."
+    },
+    {
+      "id": "guideline-failed_attempt-34",
+      "canonicalIdentity": "exec was initially denied by gateway security policy",
+      "type": "failed_attempt",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "The first attempt to run terminal commands was denied by the gateway security policy. This is a key constraint that shaped subsequent actions. Omitting this loses the reason why the assistant had to retry and adapt."
+    },
+    {
+      "id": "guideline-next_action-7",
+      "canonicalIdentity": "final report to user",
+      "type": "next_action",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R5"
+      ],
+      "repairGuideline": "The original task required reporting root cause and modification. The compressed context notes the final message was cut off, so the agent must still deliver the summary."
+    },
+    {
+      "id": "guideline-next_action-11",
+      "canonicalIdentity": "Fix: change return to new File(downloadPath)",
+      "type": "next_action",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R6"
+      ],
+      "repairGuideline": "The compressed context mentions the fix was applied but does not specify the exact change. Without this, the repair cannot be replicated."
+    },
+    {
+      "id": "guideline-safety_boundary-27",
+      "canonicalIdentity": "gateway restart is a destructive operation requiring user confirmation",
+      "type": "safety_boundary",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R9"
+      ],
+      "repairGuideline": "The assistant noted that restarting the gateway is a destructive operation and asked for user confirmation. This safety boundary is important to preserve to avoid unauthorized actions."
+    },
+    {
+      "id": "guideline-failed_attempt-23",
+      "canonicalIdentity": "gateway tool is broken due to stale chunk references after rebuild",
+      "type": "failed_attempt",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R9"
+      ],
+      "repairGuideline": "The compressed context omits the specific error messages and the root cause diagnosis (stale hashed chunk references). This is the central blocker that explains why the gateway tool failed and why the fallback was necessary."
+    },
+    {
+      "id": "guideline-entity-10",
+      "canonicalIdentity": "getRealFilename() is the original user-supplied filename, not the stored path",
+      "type": "entity",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R6"
+      ],
+      "repairGuideline": "This distinction is essential to understand why returning getRealFilename() is wrong."
+    },
+    {
+      "id": "guideline-outcome-37",
+      "canonicalIdentity": "git status output showing repository state",
+      "type": "outcome",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "The user explicitly asked to run git status and report the result. The compressed context omits any git status output, so the second half of the request is unanswered."
+    },
+    {
+      "id": "guideline-next_action-6",
+      "canonicalIdentity": "grep verification command",
+      "type": "next_action",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R5"
+      ],
+      "repairGuideline": "The transcript shows the assistant used Select-String to verify the fix. The compressed context mentions grep verification but not the specific command, which could lead to using an incompatible command."
+    },
+    {
+      "id": "guideline-constraint-85",
+      "canonicalIdentity": "Java operator precedence: && binds tighter than ||",
+      "type": "constraint",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R26"
+      ],
+      "repairGuideline": "The root cause explanation relies on this language rule. Without it, the assistant cannot explain why the original expression was buggy."
+    },
+    {
+      "id": "guideline-entity-24",
+      "canonicalIdentity": "knowledge subsystem exists but unreachable",
+      "type": "entity",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R9"
+      ],
+      "repairGuideline": "The observation that a knowledge/ directory and memory-core-host-status module exist in the dist listing is crucial for understanding that the knowledge base is present but inaccessible due to the gateway failure."
+    },
+    {
+      "id": "guideline-outcome-75",
+      "canonicalIdentity": "ls output did not include chain_audit_test.md, confirming file removal",
+      "type": "outcome",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R19"
+      ],
+      "repairGuideline": "The compressed context mentions the ls output but does not explicitly state that the file is absent, which is the key evidence that the undo worked. This is important for the final verification step."
+    },
+    {
+      "id": "guideline-goal-60",
+      "canonicalIdentity": "Original user request: list directory contents and read first 20 lines of README.md",
+      "type": "goal",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R16"
+      ],
+      "repairGuideline": "The compressed context states the original request was never fulfilled, but the actual transcript shows it was completed earlier. The compressed context incorrectly claims it is unfulfilled, causing the agent to repeat work or misdirect."
+    },
+    {
+      "id": "guideline-outcome-50",
+      "canonicalIdentity": "Post is a core entity with dependencies across controllers, repositories, services, events, security, and plugins",
+      "type": "outcome",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R13"
+      ],
+      "repairGuideline": "This conclusion is derived from the grep results and is important for the final report."
+    },
+    {
+      "id": "guideline-entity-47",
+      "canonicalIdentity": "Post.java imports include javax.persistence, org.hibernate, org.hibernate.search, br.com.caelum.vraptor.ioc, and java.util/io",
+      "type": "entity",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R13"
+      ],
+      "repairGuideline": "The import list is the core data needed to answer the user's request. Without it, the assistant cannot report the dependencies."
+    },
+    {
+      "id": "guideline-constraint-35",
+      "canonicalIdentity": "PowerShell does not support '&&' as a statement separator",
+      "type": "constraint",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "The second attempt failed because PowerShell does not support '&&'. This is a critical technical constraint that forced the assistant to use PowerShell-compatible syntax. Without this, the reason for the retry and the eventual success is lost."
+    },
+    {
+      "id": "guideline-constraint-5",
+      "canonicalIdentity": "PowerShell shell environment",
+      "type": "constraint",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R5"
+      ],
+      "repairGuideline": "The original transcript shows the initial command failed because the shell was PowerShell, not bash. The compressed context omits this, so the agent might not know to use PowerShell syntax for grep verification."
+    },
+    {
+      "id": "guideline-outcome-73",
+      "canonicalIdentity": "read tool returned content: 'line one: chain audit test' and 'line two: undo write verification'",
+      "type": "outcome",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R19"
+      ],
+      "repairGuideline": "The compressed context omits the exact content read back, which is essential to confirm the file was written correctly and to report the read step accurately."
+    }
+  ]
+}
