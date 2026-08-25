@@ -27,7 +27,7 @@
 7. **禁用 `git revert --no-commit` / `git reset` / `git stash`** —— 两条车道共用一个 index。回滚验证只用 `git apply -R`（仅工作树）。
 8. **车道 1 不得改任何旗标默认值。** 本轮唯一例外是车道 2 的 TF-0140，且需要 `docs/dev/context-moat/approvals/<task-id>.md` 的人工批准文件。
 9. **同步点 B1 / B2 / B3 不得自行放行**，报给用户。
-10. **仓库里那一大批 round 前的未提交改动（345 项：195 改 / 7 删 / 143 未跟踪，横跨 `src/components` `src/pages` `src/styles` `shared/i18n`）不属任何车道**：不碰、不提交、不 stash。§R5 范围-3 规定本轮零 renderer 改动。
+10. **将来若再出现不属任何车道的未提交改动：不碰、不提交、不 stash。** §R5 范围-3 规定本轮零 renderer 改动。（round 开始时存在的那 345 项孤儿改动已由第三方进程于 2026-08-25 全部提交，工作树现已干净 —— 见 §7a。原则不变，只是这批具体的东西已不在了。）
 11. **跨包仓库里所有 `git status` / `git diff` 路径断言必须用绝对路径。** 本仓有 `openclaw_runtime/package.json` 与仓库根 `package.json` 同名；相对路径在 shell cwd 漂移时会命中错误的那个、返回空 diff，**伪造出「文件干净」或「第三方改动已丢失」的结论**。我在审核 TF-0118 时踩过这个坑。
 12. **同一方法连续失败两次就停下**，说清根因、换路子。
 
@@ -101,7 +101,7 @@ PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python ~/.claude/skills/task-forest/scripts/
 | TF-0136 | **done** | – | D3 决策：T-C5/TF-0013 与 T-C4/TF-0031 的关系裁定 | |
 | TF-0128 | **review_needed** (90%) | M | T-C1 损伤检测去契约耦合 + 上线 + 健康分四维通电 | **等车道 2 审核**，见 §6 |
 | **TF-0117** | **proposed** ← **下一个** | S | T-D2 契约措辞与实现对齐（三处注释说谎） | 已完成开工前自检，见 §5 |
-| TF-0126 | proposed | M | T-B6 修 `working_memory` 通道在同一 attempt 内被永久跳过 | **被 §1.10 的孤儿改动挡住**，见 §7 |
+| TF-0126 | proposed | M | T-B6 修 `working_memory` 通道在同一 attempt 内被永久跳过 | 原被孤儿改动挡住，**2026-08-25 已解除**，见 §7a |
 | TF-0116 | proposed | M | T-D1 实验件迁出 `src/` | **纯搬迁，不许顺手重构** |
 | TF-0111 | proposed | S | T-P0-2 剪枝摘要与上一轮摘要合并 | |
 | TF-0124 | proposed | M | T-B4 统一两套摘要章节契约 | 图上 `depends_on` TF-0128（blocking） |
@@ -200,13 +200,32 @@ A1 生产调用点（递归上溯到五个 root 之一）· A2 反向证伪（**
 
 ## 7. 仍然开着的问题
 
-### (a) 345 项 round 前孤儿改动 —— 会挡住 TF-0126
+### (a) ~~345 项 round 前孤儿改动~~ —— **已解除，TF-0126 不再被挡**
 
-`extensions.ts` 带一处**真实功能改动**（task-state handler 从全局改为按 run 作用域，`runId`/`sessionId` 键控，并串入 `RuntimeLineage`）。已机械证明**不是车道 2 干的**：车道 2 本轮只碰过 11 个文件，且本轮**零提交**触碰 `extensions.ts`。它属 round 前的 provenance/lineage 在途工作。
+> **2026-08-25 更新（本文件写成后数分钟内发生，务必按更新后的事实行动）**：另一个进程（非本轮任何车道）把那 345 项孤儿改动**全部提交**了，并把 `codex/model-error-gap-fill` 线合并进了当前分支：
+>
+> ```
+> e5ab0546c Merge branch 'codex/model-error-gap-fill' into feat/runtime-lifecycle-governance
+> e963ae528 chore(task-forest): sync graph, events, proposals and snapshots (in-flight checkpoint)
+> 58fe04f90 chore: test:dcs path fix, anysearch MCP config, acceptance artifacts refresh
+> 2b03f5435 docs: DCS production evidence, TF handoffs, SEKB/workstream updates
+> a5ac378ef test: provenance/unit updates and refreshed E2E snapshots
+> 63c899c1d feat(app): provenance UI wiring, i18n updates, session UI refinements
+> ```
+>
+> **实测后果，逐条**：
+> - **工作树现已完全干净**（`git status --porcelain | wc -l` = **0**）。
+> - `extensions.ts` **与**它 import 的 `runtime-core/lineage.ts` **一并被提交**（`git ls-files` 两者都在），故不存在「提交了但 clean checkout 编译不过」的问题 —— 这正是我当初不敢只提交子集的顾虑，现在被别人一次性解决了。
+> - **车道 1 全部 8 个本轮提交在合并后仍可从 HEAD 到达**（逐个 `git merge-base --is-ancestor` 实测）。无丢失。
+> - **⇒ TF-0126（T-B6）的阻塞解除。** 排班上它仍在 TF-0117 之后，不要提前。
+>
+> **当前分支是 `feat/runtime-lifecycle-governance`**，不是 round 开始时的 `codex/model-error-gap-fill`。开工前先 `git rev-parse --abbrev-ref HEAD` 确认自己在哪。
 
-**我按 §1.10 / §R4.9 没有处置它。** 整体提交会把一批 UI/i18n 改动记在本轮账上（违反 §R5 范围-3）；只提交 4 文件子集也不行——`extensions.ts` import 的 `runtime-core/lineage.ts` 仍是未跟踪文件，单独提交会产出一个 clean checkout 下编译不过的提交。
+### (a2) 那次提交带来的两处新债，**都不是你能自己改的**
 
-**TF-0126（T-B6）需要改 `extensions.ts`，所以它被挡住。** 三条出路，**决定权在用户**：① 由改动所有者自己提交/丢弃；② 授权算出 `extensions.ts` 的最小 import 闭包并验证其能独立编译后单独提交；③ 把 TF-0126 降级挂账。排班上 TF-0126 在 TF-0117 之后，所以你**做 TF-0117 时不会立刻撞上**，但收 TF-0117 之前就该把这件事推给用户。
+1. **§D4 有 7 条白名单条目的依据被抽掉了。** `GATE-BASELINE.md` 里 7 条 `pnpm_test` 豁免的 `basis` 是 `"subject-files-dirty"`，`reason` 写着「uncommitted `src/pages/Chat` churn」「uncommitted `src/styles` churn」「uncommitted knowledge/sekb churn」之类。**那些文件现在全部已提交**（实测 `git status --porcelain -- src/pages/Chat src/styles openclaw_runtime/src/knowledge/sekb` = 0 行）。所以这 7 条的**陈述依据不再成立**，必须重测：要么它们现在真的绿了（白名单缩小，§D4 允许「只减不增」），要么仍红但原因变了、`basis` 须改写。**§D4 是车道 2 的节，路由给他们，不要跨节编辑。**
+
+2. **本交接文件自身的 §R3 归属丢了。** 我写完 `HANDOFF-lane-1.md` 后还没提交，它就被上面的 `2b03f5435`（第三方 checkpoint 提交）一起卷走了 —— 那个提交没有 `Task:` / `Lane:` trailer，所以本文件不落在任何 task 的半径内。内容完好，只是归属缺失。已记偏差；本节这次更新带正确 trailer 提交，算是给它补上归属。**这也是 §R4.9「共享工作树里未提交的东西随时可能被别人卷走」最直白的一个实例：写完就提交，不要留在工作树里过夜。**
 
 ### (b) 结转义务
 
