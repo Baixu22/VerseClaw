@@ -48,6 +48,17 @@ import {
   extractOpaqueIdentifiers,
   wrapUntrustedInstructionBlock,
 } from "./compaction-safeguard-quality.js";
+// T-C1: shadow content audit of the committed compaction summary (default off).
+import {
+  auditCompactionDamage,
+  isCompactionDamageAuditEnabled,
+  scoreContextHealthFromCompactionAudit,
+} from "./compaction-damage-rules.js";
+import {
+  contextHealthScoreToScorecard,
+  recordContextHealth,
+} from "../../context-engine/context-health-monitor.js";
+import { storeRuntimeScorecard } from "../../observability/trace-buffer.js";
 import {
   getCompactionSafeguardRuntime,
   setCompactionSafeguardCancelReason,
@@ -1292,6 +1303,36 @@ export default function compactionSafeguardExtension(api: ExtensionAPI): void {
       });
       const bodyToCap = lastHistorySummary || summary;
       summary = capCompactionSummaryPreservingSuffix(bodyToCap, suffix);
+
+      // T-C1: shadow-only content audit of the summary we are about to commit.
+      //
+      // Sited here, after `capCompactionSummaryPreservingSuffix` and before the
+      // return, because this is the only point every successful compaction passes
+      // through unconditionally. The obvious alternative — next to the
+      // `auditSummaryQuality` call above — sits behind `qualityGuardEnabled`, so
+      // wiring there would have made the audit invisible whenever the quality
+      // guard is off. That is the upstream-guard failure mode §D1(b) reverse
+      // falsification asks about, so it is called out rather than discovered later.
+      //
+      // Shadow contract: audit, score, record. Never mutate `summary`, never
+      // throw into the turn, never change control flow on the verdict.
+      if (isCompactionDamageAuditEnabled(undefined, process.env)) {
+        try {
+          const audit = auditCompactionDamage(summary, { mode: "shadow" });
+          const health = scoreContextHealthFromCompactionAudit(audit);
+          recordContextHealth(health);
+          storeRuntimeScorecard(contextHealthScoreToScorecard(health));
+          if (audit.verdict === "suspect") {
+            log.warn(
+              `[compaction-damage] shadow audit flagged ${audit.damages
+                .map((damage) => `${damage.type}/${damage.severity}`)
+                .join(", ")} (health ${health.overall}/100)`,
+            );
+          }
+        } catch {
+          // Content auditing must never break a compaction.
+        }
+      }
 
       return {
         compaction: {

@@ -21,6 +21,7 @@ import {
   contextHealthScoreToScorecard,
   recordContextHealth,
   scoreContextHealth,
+  scoreInformationNovelty,
   scoreInjectionPressure,
 } from "./context-health-monitor.js";
 import { storeRuntimeScorecard } from "../observability/trace-buffer.js";
@@ -186,6 +187,18 @@ export type TurnInjectionLedger = {
   reservations: TurnInjectionReservation[];
   /** True once the kill switch zeroed this turn; every entry is then `skip`/0. */
   killed: boolean;
+  /**
+   * T-C1: mean novelty (0..1) of the unique candidates collected for this turn,
+   * set by `collectContextCandidates`. Absent when nothing was collected.
+   *
+   * Carried on the ledger rather than recomputed here because
+   * `context-candidate.ts` already computes it per candidate and averages it
+   * (`diagnostics.avgNovelty`); requirement-4 is explicit that novelty must be
+   * reused, not computed twice. Before this, that average had zero consumers —
+   * it was written and never read, which is why `informationNovelty` was one of
+   * the three health dimensions with no production input.
+   */
+  avgNovelty?: number;
 };
 
 export type TurnInjectionReservation = {
@@ -470,6 +483,7 @@ export function endTurnInjectionBudget(turnId: string): TurnInjectionAccounting 
   const ledger = ledgers.get(turnId);
   if (!ledger) return undefined;
   const accounting = summarizeTurnInjection(ledger);
+  const avgNovelty = ledger.avgNovelty;
   ledgers.delete(turnId);
   try {
     // FP-P1-11: byChannel/degradationOrder ride along so the runtime ack can
@@ -478,9 +492,20 @@ export function endTurnInjectionBudget(turnId: string): TurnInjectionAccounting 
     // B-4: score the turn's injection pressure into the context-health registry
     // and project it onto the Observability scorecard pipeline (synthetic
     // `ctx-health-<turnId>` trace id, bounded by its own cap).
+    //
+    // T-C1: informationNovelty now rides along when the candidate collector
+    // recorded one. Left `undefined` when it did not, so the score reports it in
+    // `noDataDimensions` instead of defaulting to a misleading 100.
     const healthScore = scoreContextHealth({
       turnId,
       injectionPressure: scoreInjectionPressure(accounting),
+      ...(avgNovelty === undefined
+        ? {}
+        : {
+            informationNovelty: scoreInformationNovelty([
+              { channel: "aggregate", novelty: avgNovelty },
+            ]),
+          }),
     });
     recordContextHealth(healthScore);
     storeRuntimeScorecard(contextHealthScoreToScorecard(healthScore));

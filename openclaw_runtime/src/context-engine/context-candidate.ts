@@ -334,6 +334,11 @@ export function finalizeContextCandidates(params: {
 
   if (noveltyCount > 0) {
     collection.diagnostics.avgNovelty = noveltySum / noveltyCount;
+    // T-C1: hand the same average to the turn ledger so `endTurnInjectionBudget`
+    // can score the `informationNovelty` health dimension from it. Reused rather
+    // than recomputed (requirement-4) — and until now this average had no
+    // consumer at all, which is why that dimension had no production input.
+    params.ledger.avgNovelty = collection.diagnostics.avgNovelty;
   }
 
   const orderedLineage = collection.lineage.toSorted((left, right) => {

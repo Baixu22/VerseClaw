@@ -4,6 +4,10 @@ import { uniqueStrings } from "@openclaw/normalization-core/string-normalization
 import { extractKeywords, isQueryStopWordToken } from "../../memory-host-sdk/query.js";
 import type { CompactionSummarizationInstructions } from "../compaction.js";
 import { wrapUntrustedPromptDataBlock } from "../sanitize-for-prompt.js";
+// T-C1: the required section list is shared with the damage rules rather than
+// hardcoded here. Two copies that must agree is the §R1 A3 defect class — the
+// copies drift and each side's tests only see its own.
+import { REQUIRED_COMPACTION_SECTIONS } from "./compaction-sections.js";
 
 // Compaction summary quality helpers. They define the structured summary contract
 // and audit whether summaries preserve pending asks plus exact identifiers.
@@ -11,13 +15,7 @@ const MAX_EXTRACTED_IDENTIFIERS = 12;
 const MAX_UNTRUSTED_INSTRUCTION_CHARS = 4000;
 const MAX_ASK_OVERLAP_TOKENS = 12;
 const MIN_ASK_OVERLAP_TOKENS_FOR_DOUBLE_MATCH = 3;
-const REQUIRED_SUMMARY_SECTIONS = [
-  "## Decisions",
-  "## Open TODOs",
-  "## Constraints/Rules",
-  "## Pending user asks",
-  "## Exact identifiers",
-] as const;
+const REQUIRED_SUMMARY_SECTIONS = REQUIRED_COMPACTION_SECTIONS;
 const STRICT_EXACT_IDENTIFIERS_INSTRUCTION =
   "For ## Exact identifiers, preserve literal values exactly as seen (IDs, URLs, file paths, ports, hashes, dates, times).";
 const POLICY_OFF_EXACT_IDENTIFIERS_INSTRUCTION =
