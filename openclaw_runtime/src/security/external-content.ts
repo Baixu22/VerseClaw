@@ -10,6 +10,12 @@ import {
   mapHookExternalContentSource,
   resolveHookExternalContentSource,
 } from "./external-content-source.js";
+import {
+  createExternalProvenance,
+  stableSourceId,
+  type ContentProvenance,
+  type ExternalProvenanceSourceKind,
+} from "../../../shared/security/content-provenance.js";
 
 /**
  * Security utilities for handling untrusted external content.
@@ -101,6 +107,16 @@ export type ExternalContentSource =
   | "web_search"
   | "web_fetch"
   | "unknown";
+
+function mapExternalContentSourceKind(source: ExternalContentSource): ExternalProvenanceSourceKind {
+  if (source === "channel_metadata" || source === "email" || source === "webhook") {
+    return "channel";
+  }
+  if (source === "unknown") {
+    return "unknown";
+  }
+  return "web";
+}
 
 const EXTERNAL_SOURCE_LABELS: Record<ExternalContentSource, string> = {
   email: "Email",
@@ -321,6 +337,41 @@ export type WrapExternalContentOptions = {
   includeWarning?: boolean;
 };
 
+export type ExternalContentProvenanceOptions = WrapExternalContentOptions & {
+  sourceId?: string;
+  receivedAt?: string | number | Date;
+  parentSourceIds?: readonly string[];
+  workspaceId?: string;
+  sessionId?: string;
+  agentId?: string;
+};
+
+/** Build structured metadata beside the existing prompt wrapper. */
+export function buildExternalContentProvenance(
+  options: ExternalContentProvenanceOptions,
+): ContentProvenance {
+  return createExternalProvenance({
+    sourceKind: mapExternalContentSourceKind(options.source),
+    sourceId: options.sourceId ?? stableSourceId("external", options.source),
+    receivedAt: options.receivedAt,
+    parentSourceIds: options.parentSourceIds,
+    workspaceId: options.workspaceId,
+    sessionId: options.sessionId,
+    agentId: options.agentId,
+  });
+}
+
+/** Adapter for callers that need text and auditable metadata without changing text. */
+export function wrapExternalContentWithProvenance(
+  content: string,
+  options: ExternalContentProvenanceOptions,
+): { text: string; provenance: ContentProvenance } {
+  return {
+    text: wrapExternalContent(content, options),
+    provenance: buildExternalContentProvenance(options),
+  };
+}
+
 /**
  * Wraps external untrusted content with security boundaries and warnings.
  *
@@ -424,4 +475,16 @@ export function wrapWebContent(
   const includeWarning = source === "web_fetch";
   // Marker sanitization happens in wrapExternalContent
   return wrapExternalContent(content, { source, includeWarning });
+}
+
+export function wrapWebContentWithProvenance(
+  content: string,
+  source: "web_search" | "web_fetch" = "web_search",
+  options: Omit<ExternalContentProvenanceOptions, "source"> = {},
+): { text: string; provenance: ContentProvenance } {
+  return wrapExternalContentWithProvenance(content, {
+    ...options,
+    source,
+    includeWarning: options.includeWarning ?? source === "web_fetch",
+  });
 }

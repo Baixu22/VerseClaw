@@ -1,4 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+const { callGateway } = vi.hoisted(() => ({ callGateway: vi.fn() }));
+vi.mock("../call.js", () => ({ callGateway }));
+
 import { resolveCommandSecretRefsViaGateway } from "./command-secret-gateway.js";
 
 describe("resolveCommandSecretRefsViaGateway", () => {
@@ -30,5 +34,37 @@ describe("resolveCommandSecretRefsViaGateway", () => {
 
     expect(result.diagnostics).toEqual([]);
     expect(result.hadUnresolvedTargets).toBe(false);
+  });
+
+  it("runs the sink authorization callback before Gateway resolution", async () => {
+    const authorizeSecretRead = vi.fn(() => {
+      throw new Error("blocked-before-resolution");
+    });
+    await expect(
+      resolveCommandSecretRefsViaGateway({
+        config: {
+          tools: {
+            web: {
+              search: {
+                apiKey: { source: "env", provider: "default", id: "SEARCH_KEY" },
+              },
+            },
+          },
+        },
+        commandName: "tools.message",
+        targetIds: new Set(["tools.web.search.apiKey"]),
+        authorizeSecretRead,
+      }),
+    ).rejects.toThrow("blocked-before-resolution");
+    expect(authorizeSecretRead).toHaveBeenCalledWith({
+      commandName: "tools.message",
+      selectedTargets: [
+        {
+          path: "tools.web.search.apiKey",
+          pathSegments: ["tools", "web", "search", "apiKey"],
+        },
+      ],
+    });
+    expect(callGateway).not.toHaveBeenCalled();
   });
 });

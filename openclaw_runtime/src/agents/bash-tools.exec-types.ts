@@ -21,6 +21,8 @@ import type { ExecReviewerConfig } from "./exec-auto-reviewer.js";
 
 /** Runtime defaults passed into exec/process tool factories. */
 export type ExecToolDefaults = {
+  /** Structured content sidecar used only for sink-local provenance policy. */
+  contentProvenance?: unknown;
   hasCronTool?: boolean;
   host?: ExecTarget;
   mode?: ExecMode;

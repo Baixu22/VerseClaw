@@ -20,6 +20,7 @@ export * from "./evidence-verifier-collectors.js";
 export * from "./evidence-verifier-code-task-gate-shadow.js";
 export * from "./trace-context.js";
 export * from "./trace-context-store.js";
+export * from "./lineage.js";
 export * from "./memory-context.js";
 export * from "./memory-embedding-provider.js";
 export * from "./memory-self-edit-tools.js";

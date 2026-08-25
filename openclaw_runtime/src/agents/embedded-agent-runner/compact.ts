@@ -1246,6 +1246,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
         model,
         sessionId: params.sessionId,
         sessionKey: params.sessionKey,
+        ...(params.lineage ? { lineage: params.lineage } : {}),
         injectionTurnId,
         workingMemoryStore: dcsExtensionDeps?.workingMemoryStore,
         contextBlockSink: dcsExtensionDeps?.contextBlockSink,
@@ -1256,9 +1257,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
         // B-3 v2: workspace root enriches the child handoff entity snapshot.
         workspaceDir: params.workspaceDir,
         // B-3 v3: write-set coordinate for the child handoff (compact-path parity).
-        ...(dcsExtensionDeps?.writeSet?.length
-          ? { writeSet: [...dcsExtensionDeps.writeSet] }
-          : {}),
+        ...(dcsExtensionDeps?.writeSet?.length ? { writeSet: [...dcsExtensionDeps.writeSet] } : {}),
         toolEntries,
       });
       const resourceLoader = createEmbeddedAgentResourceLoader({
@@ -1529,18 +1528,19 @@ async function compactEmbeddedAgentSessionDirectOnce(
             result.details && typeof result.details === "object" && !Array.isArray(result.details)
               ? {
                   ...(result.details as Record<string, unknown>),
-                  ...(
-                    (result.details as { compression?: unknown }).compression &&
-                    typeof (result.details as { compression?: unknown }).compression === "object"
-                      ? {
-                          compression: finalizeCompressionTelemetry(
-                            (result.details as { compression: Parameters<typeof finalizeCompressionTelemetry>[0] })
-                              .compression,
-                            tokensAfter,
-                          ),
-                        }
-                      : {}
-                  ),
+                  ...((result.details as { compression?: unknown }).compression &&
+                  typeof (result.details as { compression?: unknown }).compression === "object"
+                    ? {
+                        compression: finalizeCompressionTelemetry(
+                          (
+                            result.details as {
+                              compression: Parameters<typeof finalizeCompressionTelemetry>[0];
+                            }
+                          ).compression,
+                          tokensAfter,
+                        ),
+                      }
+                    : {}),
                 }
               : result.details;
           const messageCountAfter = session.messages.length;
@@ -1618,17 +1618,19 @@ async function compactEmbeddedAgentSessionDirectOnce(
                 `delta.estTokens=${typeof preMetrics.estTokens === "number" && typeof postMetrics.estTokens === "number" ? postMetrics.estTokens - preMetrics.estTokens : "unknown"}`,
             );
           }
-          recordContextFamilyLifecycleEvents(buildCompactionLifecycleEvents({
-            sessionId: activeSessionId,
-            checkpointId: activePostLeafId ?? params.sessionKey ?? 'compaction',
-            sourceItemCount: messageCountCompactionInput,
-            tokensBefore: observedTokenCount ?? result.tokensBefore,
-            tokensAfter,
-            summaryChars: typeof result.summary === "string" ? result.summary.length : undefined,
-            reason: resolveSessionCompactionCheckpointReason({
-              trigger: params.trigger,
+          recordContextFamilyLifecycleEvents(
+            buildCompactionLifecycleEvents({
+              sessionId: activeSessionId,
+              checkpointId: activePostLeafId ?? params.sessionKey ?? "compaction",
+              sourceItemCount: messageCountCompactionInput,
+              tokensBefore: observedTokenCount ?? result.tokensBefore,
+              tokensAfter,
+              summaryChars: typeof result.summary === "string" ? result.summary.length : undefined,
+              reason: resolveSessionCompactionCheckpointReason({
+                trigger: params.trigger,
+              }),
             }),
-          }));
+          );
           await runAfterCompactionHooks({
             hookRunner,
             sessionId: activeSessionId,

@@ -23,6 +23,9 @@ const effects = new Set<string>();
 
 try {
   const { closeOpenClawStateDatabase } = await import("../src/state/openclaw-state-db.js");
+  const { createTrustedProvenance } = await import(
+    "../../shared/security/content-provenance.js"
+  );
   const { goalWakeController } = await import("../src/agents/goal-wake-controller.js");
   const {
     getMissionRun,
@@ -68,10 +71,17 @@ try {
 
   // Flag-off parity: exec(background=true) without wait keeps the Phase 2
   // behavior byte-for-byte (status running, no wait/task/flow fields).
+  // The harness command is system-generated; declaring that provenance keeps
+  // the command-exec sink policy unconstrained without weakening it.
   const defaultExecTool = createExecTool({
     host: "gateway",
     sessionKey: "agent:e2e:default-main",
     sessionId: "e2e-default-session",
+    contentProvenance: createTrustedProvenance({
+      sourceKind: "system-generated",
+      sourceId: "goal-wake-e2e-trace",
+      agentId: "e2e",
+    }),
   });
   const defaultExecResult = await defaultExecTool.execute(
     "e2e-default-exec",

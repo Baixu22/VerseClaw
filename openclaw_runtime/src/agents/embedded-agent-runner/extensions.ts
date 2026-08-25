@@ -20,11 +20,20 @@ import { dcsObservability } from "../../context-engine/dcs-observability.js";
 import type { BlockStoreApi, ContextBlock, ContextBlockSink } from "../../context-engine/block.js";
 import { BlockStore } from "../../context-engine/block-store.js";
 import { handleWorkingMemoryAction } from "../../context-engine/handlers/working-memory-handler.js";
-import { handleBeforeAgentStartToolRegistry, type ToolRegistryEntry } from "../../context-engine/handlers/tool-registry-handler.js";
-import { restoreChildState, buildChildHandoffFromParent, writeChildHandoffPack, CHILD_CONTEXT_READ_INSTRUCTION } from "../../context-engine/handlers/task-loop-handler.js";
+import {
+  handleBeforeAgentStartToolRegistry,
+  type ToolRegistryEntry,
+} from "../../context-engine/handlers/tool-registry-handler.js";
+import {
+  restoreChildState,
+  buildChildHandoffFromParent,
+  writeChildHandoffPack,
+  CHILD_CONTEXT_READ_INSTRUCTION,
+} from "../../context-engine/handlers/task-loop-handler.js";
 import { createWorkspaceFactStoreBridge } from "../../context-engine/views/factstore-bridge.js";
 import { resolveCompassConfig } from "../../runtime-core/memory-pre-reply-injection.js";
 import type { RuntimeMemoryQueryableFact } from "../../runtime-core/memory-context.js";
+import type { RuntimeLineage } from "../../runtime-core/lineage.js";
 import { createRuntimeMemoryRuntimeIntegration } from "../../runtime-core/memory-runtime-integration.js";
 import type { TrajectoryCapture } from "../../knowledge/sekb/trajectory-capture.js";
 import type { EmbeddedSekbRuntime, SekbInstallableAgent } from "./sekb-runtime.js";
@@ -33,6 +42,8 @@ import { isSubagentSessionKey } from "../../sessions/session-key-utils.js";
 import { openOpenClawStateDatabase } from "../../state/openclaw-state-db.js";
 import type { ProviderRuntimeModel } from "../../plugins/provider-runtime-model.types.js";
 import {
+  clearTaskStateHandlerConfig,
+  getTaskStateHandlerConfig,
   setTaskStateHandlerConfig,
 } from "../harness/lifecycle-hook-helpers.js";
 import { setCompactionSafeguardRuntime } from "../agent-hooks/compaction-safeguard-runtime.js";
@@ -148,9 +159,9 @@ export function isContextBlockProjectionEnabled(cfg: OpenClawConfig | undefined)
   return hasContextBlockProjection(resolveContextBlockProjectionFlags(cfg));
 }
 
-function readWorkingMemoryEnvelope(details: unknown):
-  | { result_summary: string; significance: "high" | "medium" | "low" }
-  | undefined {
+function readWorkingMemoryEnvelope(
+  details: unknown,
+): { result_summary: string; significance: "high" | "medium" | "low" } | undefined {
   const detailsRecord = recordFromUnknown(details);
   const workingMemory = recordFromUnknown(detailsRecord.working_memory);
   const resultSummary = workingMemory.result_summary;
@@ -228,7 +239,9 @@ function buildContextBlockFactory(params: {
                 // The memory store intentionally returns deep-frozen snapshots.
                 // buildPreReplyInjection only reads them, so clone into mutable
                 // plain objects for the legacy assembler input contract.
-                return frozenFacts.map((fact) => structuredClone(fact)) as RuntimeMemoryQueryableFact[];
+                return frozenFacts.map((fact) =>
+                  structuredClone(fact),
+                ) as RuntimeMemoryQueryableFact[];
               } catch {
                 return undefined;
               }
@@ -292,9 +305,7 @@ function buildContextBlockFactory(params: {
         store || params.contextBlockSink
           ? {
               ...(store ? { workingMemoryStore: store } : {}),
-              ...(params.contextBlockSink
-                ? { contextBlockSink: params.contextBlockSink }
-                : {}),
+              ...(params.contextBlockSink ? { contextBlockSink: params.contextBlockSink } : {}),
             }
           : {},
       );
@@ -361,15 +372,17 @@ function buildContextBlockFactory(params: {
         const significance: "high" | "medium" = envelope.significance;
         return enqueue(async () => {
           const store = getBlockStore();
-          const sink = params.contextBlockSink ?? (store
-            ? async (writes: Parameters<ContextBlockSink>[0]) => {
-                const results = [];
-                for (const write of writes) {
-                  results.push(await store.upsert(write.block, write.admission));
+          const sink =
+            params.contextBlockSink ??
+            (store
+              ? async (writes: Parameters<ContextBlockSink>[0]) => {
+                  const results = [];
+                  for (const write of writes) {
+                    results.push(await store.upsert(write.block, write.admission));
+                  }
+                  return results;
                 }
-                return results;
-              }
-            : undefined);
+              : undefined);
           if (!sink) {
             return undefined;
           }
@@ -454,9 +467,7 @@ function buildContextBlockFactory(params: {
         store || params.contextBlockSink
           ? {
               ...(store ? { workingMemoryStore: store } : {}),
-              ...(params.contextBlockSink
-                ? { contextBlockSink: params.contextBlockSink }
-                : {}),
+              ...(params.contextBlockSink ? { contextBlockSink: params.contextBlockSink } : {}),
             }
           : {},
       );
@@ -583,7 +594,7 @@ function buildToolRegistryFactory(params: {
  * DCS Stage 2: Build the task-state extension factory.
  *
  * Registers a `before_agent_start` handler that restores the child HandoffPack
- * from BlockStore for subagent sessions. Also sets the global task-state handler
+ * from BlockStore for subagent sessions. Also registers a run-scoped task-state handler
  * config so that `runAgentHarnessTaskPhaseChangeHook` can produce system-managed
  * task_state Block writes and trigger terminal-phase SEKB trajectory capture.
  *
@@ -591,6 +602,8 @@ function buildToolRegistryFactory(params: {
  * sink and no store), so it does not register an empty extension.
  */
 function buildTaskStateFactory(params: {
+  runId?: string;
+  lineage?: RuntimeLineage;
   sessionKey?: string;
   sessionId?: string;
   contextBlockSink?: ContextBlockSink;
@@ -608,18 +621,25 @@ function buildTaskStateFactory(params: {
   const hasSink = Boolean(params.contextBlockSink);
   const hasStore = Boolean(params.workingMemoryStore);
   if (!hasSink && !hasStore) {
+    // A failed/disabled DCS initialization must invalidate only this run's
+    // prior registration; another embedded run may still be active.
+    clearTaskStateHandlerConfig({ runId: params.runId, sessionId: sessionKey });
     return undefined;
   }
 
-  // Set the global task-state handler config so that
+  // Register the run-scoped task-state handler config so that
   // runAgentHarnessTaskPhaseChangeHook can produce task_state Block writes
   // and trigger terminal-phase SEKB trajectory capture.
   setTaskStateHandlerConfig({
+    ...(params.runId ? { runId: params.runId } : {}),
+    ...(params.runId ? { ownerRunId: params.runId } : {}),
+    ...(sessionKey ? { sessionId: sessionKey } : {}),
     ...(params.contextBlockSink ? { contextBlockSink: params.contextBlockSink } : {}),
     ...(params.workingMemoryStore ? { workingMemoryStore: params.workingMemoryStore } : {}),
     ...(params.trajectoryCapture ? { trajectoryCapture: params.trajectoryCapture } : {}),
     ...(params.objective ? { objective: params.objective } : {}),
     ...(params.parentSessionId ? { parentSessionId: params.parentSessionId } : {}),
+    ...(params.lineage ? { lineage: params.lineage } : {}),
   });
 
   // DCS Stage 2: Parent writes child HandoffPack before spawn.
@@ -707,6 +727,10 @@ function buildTaskStateFactory(params: {
 function buildSekbFactory(params: {
   sekbRuntime?: EmbeddedSekbRuntime;
   cfg?: OpenClawConfig | undefined;
+  lineage?: RuntimeLineage;
+  runId?: string;
+  sessionId?: string;
+  sessionKey?: string;
 }): ExtensionFactory | undefined {
   // sekbRuntime is only supplied when resolveEmbeddedSekbRuntime saw enablement
   // (config and/or OPENCLAW_SEKB_ENABLED). Gate on the runtime object so env-only
@@ -716,7 +740,14 @@ function buildSekbFactory(params: {
   }
   const runtime = params.sekbRuntime;
   return (agent) => {
-    installEmbeddedSekbHarnessHooks(agent as unknown as SekbInstallableAgent, runtime);
+    const lineage = params.lineage
+      ? params.lineage
+      : () =>
+          getTaskStateHandlerConfig({
+            runId: params.runId,
+            sessionId: params.sessionKey ?? params.sessionId,
+          })?.lineage;
+    installEmbeddedSekbHarnessHooks(agent as unknown as SekbInstallableAgent, runtime, lineage);
   };
 }
 
@@ -730,6 +761,7 @@ export function buildEmbeddedExtensionFactories(params: {
   sessionId?: string;
   sessionKey?: string;
   runId?: string;
+  lineage?: RuntimeLineage;
   injectionTurnId?: string;
   attemptIndex?: number;
   contextBlockSink?: ContextBlockSink;

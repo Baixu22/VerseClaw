@@ -4,6 +4,7 @@ import {
   assertConfirmSession,
   buildConfirmProvenance,
   canEnterHighTrustContext,
+  ConfirmProvenanceError,
   normalizeConfirmSourceSystem,
   resolveConfirmIntegrity,
   type ConfirmIntegrityLevel,
@@ -16,6 +17,7 @@ import {
   originalSuggestionContent,
 } from "./batch-distillation-assistant.js";
 import type { KnowledgeStore } from "./knowledge-store.js";
+import { normalizeRuntimeLineage, type RuntimeLineage } from "../../runtime-core/lineage.js";
 import {
   buildPrincipleFullContent,
   normalizeTags,
@@ -75,24 +77,35 @@ export class DistillationTool {
     trajectory_ids: string[] | null = null,
     min_cluster_size = 2,
   ): DistillationSuggestion[] {
-    const trajectories = trajectory_ids
-      ? trajectory_ids
-          .map((id) => this.#store.find_trajectory(id))
-          .filter((trajectory): trajectory is NonNullable<typeof trajectory> => trajectory !== null)
-      : this.#store.query_trajectories({ distilled: false });
+    const trajectories = (
+      trajectory_ids
+        ? [...new Set(trajectory_ids)]
+            .map((id) => this.#store.find_trajectory(id))
+            .filter(
+              (trajectory): trajectory is NonNullable<typeof trajectory> => trajectory !== null,
+            )
+        : this.#store.query_trajectories({ distilled: false })
+    ).filter(isEligibleDistillationTrajectory);
     const byTaskType = new Map<string, typeof trajectories>();
     for (const trajectory of trajectories) {
-      byTaskType.set(trajectory.task_type, [...(byTaskType.get(trajectory.task_type) ?? []), trajectory]);
+      byTaskType.set(trajectory.task_type, [
+        ...(byTaskType.get(trajectory.task_type) ?? []),
+        trajectory,
+      ]);
     }
     const suggestions: DistillationSuggestion[] = [];
-    for (const [taskType, group] of byTaskType) {
+    for (const [taskType, group] of [...byTaskType].toSorted(([left], [right]) =>
+      left.localeCompare(right),
+    )) {
       if (group.length < min_cluster_size) {
         continue;
       }
-      const contextTags = normalizeTags(group.flatMap((trajectory) => trajectory.context_fingerprint));
+      const contextTags = normalizeTags(
+        group.flatMap((trajectory) => trajectory.context_fingerprint),
+      );
       suggestions.push({
         cluster_summary: `Similar ${taskType} trajectories (${group.length})`,
-        source_trajectory_ids: group.map((trajectory) => trajectory.trajectory_id),
+        source_trajectory_ids: group.map((trajectory) => trajectory.trajectory_id).toSorted(),
         suggested_principle: {
           title: "Review repeated path",
           condition: `When handling ${taskType} tasks`,
@@ -115,9 +128,19 @@ export class DistillationTool {
   ): string {
     const now = this.#now();
     const sourceIds = [...new Set(suggestion.source_trajectory_ids)].toSorted();
+    const sourceLineages = sourceIds.map((id) =>
+      normalizeRuntimeLineage(this.#store.get_trajectory(id).metadata.runtimeLineage),
+    );
+    const sourceLineage = commonSourceLineage(sourceLineages);
     const sessionId = assertConfirmSession(options.sessionId, {
       requireSession: options.requireSession === true,
     });
+    if (sessionId && sourceLineages.some((lineage) => lineage && lineage.sessionId !== sessionId)) {
+      throw new ConfirmProvenanceError(
+        "source_lineage_mismatch",
+        "SEKB confirm sessionId does not match the selected source trajectory lineage.",
+      );
+    }
     const sourceSystem = normalizeConfirmSourceSystem(options.sourceSystem ?? "sekb");
     const integrityResolution = resolveConfirmIntegrity({
       claimed: options.integrityClaim ?? "confirmed",
@@ -127,7 +150,8 @@ export class DistillationTool {
       summaryOnly: options.summaryOnly === true,
     });
     const suggested = { ...suggestion.suggested_principle, ...edits };
-    const condition = nonEmpty(suggested.condition) ?? "When a matching historical trajectory exists";
+    const condition =
+      nonEmpty(suggested.condition) ?? "When a matching historical trajectory exists";
     const action = nonEmpty(suggested.action) ?? "Review the captured trajectory before continuing";
     const reason = nonEmpty(suggested.reason) ?? "Prior outcomes can reveal reusable constraints";
     const principle: Principle = {
@@ -138,7 +162,9 @@ export class DistillationTool {
       condition,
       action,
       reason,
-      full_content: nonEmpty(suggested.full_content) ?? buildPrincipleFullContent({ condition, action, reason }),
+      full_content:
+        nonEmpty(suggested.full_content) ??
+        buildPrincipleFullContent({ condition, action, reason }),
       task_types: normalizeTags(suggested.task_types),
       context_tags: normalizeTags(suggested.context_tags),
       embedding: Array.isArray(suggested.embedding) ? suggested.embedding : null,
@@ -154,6 +180,7 @@ export class DistillationTool {
         ...suggested.metadata,
         distillation_confidence: suggestion.confidence,
         cluster_summary: suggestion.cluster_summary,
+        ...(sourceLineage ? { runtimeLineage: sourceLineage } : {}),
       },
     };
     // Attach provenance before first save when session lineage is present.
@@ -202,7 +229,10 @@ export class DistillationTool {
     // only confirm_and_save (here) writes experience Blocks.
     // Production BlockStore write when sink+session present (unchanged).
     // C7-2 experience shadow is opt-in only via options.experienceShadow.enabled.
-    if ((options.contextBlockSink && sessionId) || (options.experienceShadow?.enabled && sessionId)) {
+    if (
+      (options.contextBlockSink && sessionId) ||
+      (options.experienceShadow?.enabled && sessionId)
+    ) {
       const provenance = principle.metadata.confirmProvenance as ConfirmProvenance | undefined;
       void handleConfirmAndSave({
         principle,
@@ -248,7 +278,8 @@ export class DistillationTool {
           sessionId,
           contextBlockSink: options.contextBlockSink,
           integrity:
-            (principle.metadata.confirmIntegrity as ConfirmIntegrityLevel | undefined) ?? "confirmed",
+            (principle.metadata.confirmIntegrity as ConfirmIntegrityLevel | undefined) ??
+            "confirmed",
           provenance,
           highTrustEligible: canEnterHighTrustContext(
             provenance ?? {
@@ -293,10 +324,41 @@ export class DistillationTool {
   }
 }
 
+function isEligibleDistillationTrajectory(trajectory: {
+  steps: Array<{ action: string }>;
+  outcome: string;
+  metadata: Record<string, unknown>;
+}): boolean {
+  const hasRealToolEvidence = trajectory.steps.some(
+    (step) => step.action === "tool.call" || step.action === "tool.result",
+  );
+  if (!hasRealToolEvidence) {
+    return false;
+  }
+  if (
+    trajectory.outcome !== "success" &&
+    trajectory.outcome !== "failure" &&
+    trajectory.outcome !== "partial"
+  ) {
+    return false;
+  }
+  const lineage = normalizeRuntimeLineage(trajectory.metadata.runtimeLineage);
+  return Boolean(lineage?.sessionId && lineage.loopRunId && lineage.traceId);
+}
+
 function nonEmpty(value: unknown): string | undefined {
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }
 
 function normalizeCriticality(value: unknown): PrincipleCriticality {
   return value === "low" || value === "high" || value === "critical" ? value : "medium";
+}
+
+function commonSourceLineage(
+  values: Array<RuntimeLineage | undefined>,
+): RuntimeLineage | undefined {
+  const lineages = values.filter((value): value is RuntimeLineage => Boolean(value));
+  if (lineages.length === 0 || lineages.length !== values.length) return undefined;
+  const first = JSON.stringify(lineages[0]);
+  return lineages.every((lineage) => JSON.stringify(lineage) === first) ? lineages[0] : undefined;
 }

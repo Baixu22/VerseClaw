@@ -14,6 +14,7 @@ import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { callGateway } from "../../gateway/call.js";
 import { resolveSnakeCaseParamKey } from "../../param-key.js";
 import { createLazyImportLoader } from "../../shared/lazy-promise.js";
+import { buildSessionDeleteOperationId } from "../../sessions/session-delete-operation-id.js";
 import { normalizeDeliveryContext } from "../../utils/delivery-context.shared.js";
 import type { GatewayMessageChannel } from "../../utils/message-channel.js";
 import {
@@ -105,7 +106,7 @@ function resolveTrackedSpawnMode(params: {
   return params.threadRequested ? "session" : "run";
 }
 
-async function cleanupUntrackedAcpSession(sessionKey: string): Promise<void> {
+async function cleanupUntrackedAcpSession(sessionKey: string, runId: string): Promise<void> {
   const key = sessionKey.trim();
   if (!key) {
     return;
@@ -115,6 +116,7 @@ async function cleanupUntrackedAcpSession(sessionKey: string): Promise<void> {
       method: "sessions.delete",
       params: {
         key,
+        operationId: buildSessionDeleteOperationId("acp-untracked-cleanup", runId),
         deleteTranscript: true,
         emitLifecycleHooks: false,
       },
@@ -456,7 +458,7 @@ export function createSessionsSpawnTool(
           } catch (err) {
             // Best-effort only: the ACP turn was already started above, so deleting the
             // child session record here does not guarantee the in-flight run was aborted.
-            await cleanupUntrackedAcpSession(childSessionKey);
+            await cleanupUntrackedAcpSession(childSessionKey, childRunId);
             return jsonResult({
               status: "error",
               error: `Failed to register ACP run: ${summarizeError(err)}. Cleanup was attempted, but the already-started ACP run may still finish in the background.`,

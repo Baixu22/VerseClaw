@@ -1,4 +1,5 @@
 import type { RuntimeTaskStatus } from "../runtime-core/types.js";
+import type { RuntimeLineage } from "../runtime-core/lineage.js";
 
 export type BlockType =
   | "persona"
@@ -86,6 +87,8 @@ export interface HandoffPack {
    * pre-fetch), not injected verbatim into the child prompt.
    */
   entity_snapshot?: EntitySnapshot;
+  /** Optional Mission/Task Loop correlation metadata; absent on legacy packs. */
+  lineage?: RuntimeLineage;
 }
 
 /**
@@ -161,10 +164,7 @@ export interface BlockStoreStats {
 }
 
 export interface BlockStoreApi {
-  upsert(
-    block: ContextBlock,
-    admission?: BlockAdmissionContext,
-  ): Promise<BlockWriteResult>;
+  upsert(block: ContextBlock, admission?: BlockAdmissionContext): Promise<BlockWriteResult>;
   query(params: BlockQuery): Promise<ContextBlock[]>;
   queryByEntity(params: BlockEntityQuery): Promise<ContextBlock[]>;
   invalidate(block_id: string): Promise<void>;

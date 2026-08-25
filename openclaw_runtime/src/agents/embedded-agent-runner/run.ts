@@ -1714,6 +1714,7 @@ export async function runEmbeddedAgent(
             extraSystemPrompt: params.extraSystemPrompt,
             sourceReplyDeliveryMode: params.sourceReplyDeliveryMode,
             inputProvenance: params.inputProvenance,
+            contentProvenance: params.contentProvenance,
             streamParams: params.streamParams,
             modelRun: params.modelRun,
             promptMode: params.promptMode,
