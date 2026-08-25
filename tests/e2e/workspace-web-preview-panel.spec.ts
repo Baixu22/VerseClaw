@@ -17,6 +17,7 @@ const workspace = {
   id: WORKSPACE_ID,
   name: 'Demo Workspace',
   rootPath: '/workspace/demo',
+  agentId: 'main',
   permissionMode: 'acceptEdits',
   activeSessionKey: SESSION_KEY,
   state: {
@@ -140,6 +141,26 @@ test.describe('Workspace Web preview panel', () => {
               updatedAt: '2026-07-04T00:00:01.000Z',
             }],
           },
+          [stableStringify(['agentBrowser', 'profiles', null])]: {
+            success: true,
+            profiles: [{ profile: 'workspace-workspace-1-agent-main-main', label: 'Demo workspace', source: 'metadata' }],
+          },
+          [stableStringify(['agentBrowser', 'createTask', {
+            name: 'Check current page',
+            url: 'http://localhost:8082/',
+            objective: 'Read the current page and verify it is available',
+            profile: 'workspace-workspace-1-agent-main-main',
+            mode: 'headless',
+            allowedDomains: ['localhost'],
+            steps: [{ action: 'wait-for-selector', selector: 'body' }],
+            successCriteria: { kind: 'text-includes', value: 'Save changes' },
+            workspaceId: WORKSPACE_ID,
+            sessionKey: SESSION_KEY,
+            agentId: 'main',
+          }])]: {
+            success: true,
+            task: { id: 'browser-task-1', status: 'waiting-approval' },
+          },
         },
       });
 
@@ -200,6 +221,15 @@ test.describe('Workspace Web preview panel', () => {
       await expect(page).toHaveScreenshot('workspace-web-preview-browser-menu.png', {
         animations: 'disabled',
         caret: 'hide',
+        /*
+         * The brand logo is picked at random from three images on every app
+         * launch (src/components/brand/BrandLogo.tsx) — deliberate product
+         * delight, and fatal to a whole-page baseline: a third of runs draw a
+         * different mascot and the shot fails by ~500px on the logo alone.
+         * This is the only full-page screenshot in the suite, so masking it
+         * here is enough; everything else captures a scoped locator.
+         */
+        mask: [page.getByAltText('Verse')],
       });
       await page.keyboard.press('Escape');
 
@@ -223,6 +253,9 @@ test.describe('Workspace Web preview panel', () => {
         mode: 'visible',
         profile: 'workspace-workspace-1-agent-main-main',
         authPersistence: 'profile',
+        workspaceId: WORKSPACE_ID,
+        sessionKey: SESSION_KEY,
+        agentId: 'main',
       });
       const agentBrowserFocus = hostCalls.find((call) => call.module === 'agentBrowser' && call.action === 'focus');
       expect(agentBrowserFocus?.payload).toMatchObject({
@@ -269,6 +302,25 @@ test.describe('Workspace Web preview panel', () => {
       await expect(composer).toContainText('Please adjust the component selected in the Web preview.');
       await expect(composer).toContainText('CSS selector: #save');
       await expect(composer).toContainText('Save changes');
+
+      await sidePanel.getByTestId('workspace-browser-view-live').click();
+      const liveBrowser = sidePanel.getByTestId('workspace-browser-live');
+      await expect(liveBrowser).toBeVisible();
+      await liveBrowser.getByLabel('More browser actions').click();
+      await expect(liveBrowser.getByRole('button', { name: 'Focus browser' })).toBeVisible();
+      await expect(liveBrowser.getByRole('button', { name: 'Take screenshot' })).toBeVisible();
+      await page.getByText('Automate this page', { exact: true }).click();
+      await expect(liveBrowser.getByTestId('workspace-browser-automation')).toBeVisible();
+      await liveBrowser.getByLabel('Success text to verify').fill('Save changes');
+      await liveBrowser.getByRole('button', { name: 'Submit for approval' }).click();
+      await expect.poll(async () => {
+        const calls = await app.evaluate(() => (
+          (globalThis as unknown as {
+            __verseClawE2eHostCalls?: Array<{ module?: string; action?: string }>;
+          }).__verseClawE2eHostCalls ?? []
+        ));
+        return calls.filter((call) => call.module === 'agentBrowser' && call.action === 'createTask').length;
+      }).toBe(1);
     } finally {
       await closeElectronApp(app);
     }

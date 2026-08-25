@@ -17,7 +17,7 @@ function stableStringify(value: unknown): string {
 }
 
 test.describe('Verse Claw chat session date grouping', () => {
-  test('shows four collapsible history buckets with only recent buckets expanded', async ({ launchElectronApp }) => {
+  test('lists every conversation newest-first, with no collapsible date buckets', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
     const nowMs = Date.now();
     const sessions = [
@@ -26,6 +26,24 @@ test.describe('Verse Claw chat session date grouping', () => {
       { key: `agent:main:session-${nowMs - 10 * DAY_MS}`, displayName: 'Month conversation', updatedAt: nowMs - 10 * DAY_MS },
       { key: `agent:main:session-${nowMs - 40 * DAY_MS}`, displayName: 'Older conversation', updatedAt: nowMs - 40 * DAY_MS },
     ];
+    /*
+     * The sidebar lists conversations a PROJECT claims (plus the current one) —
+     * an unclaimed transcript is history the workspace knows nothing about. So
+     * the fixture needs a project that owns all four, or three of them are
+     * filtered out before any ordering question is even asked.
+     */
+    const workspace = {
+      id: 'workspace-history',
+      name: 'History Workspace',
+      rootPath: 'C:/history',
+      agentId: 'main',
+      activeSessionKey: MAIN_SESSION_KEY,
+      permissionMode: 'acceptEdits',
+      state: {},
+      sessionStates: Object.fromEntries(sessions.map((session) => [session.key, {}])),
+      sessionFolders: [],
+      sessionFolderAssignments: {},
+    };
 
     try {
       await installIpcMocks(app, {
@@ -45,6 +63,17 @@ test.describe('Verse Claw chat session date grouping', () => {
           },
         },
         hostApi: {
+          [stableStringify(['workspaces', 'list', null])]: {
+            success: true,
+            profiles: [workspace],
+            activeWorkspaceId: workspace.id,
+            activeWorkspace: workspace,
+          },
+          [stableStringify(['workspaces', 'getActive', null])]: {
+            success: true,
+            activeWorkspaceId: workspace.id,
+            activeWorkspace: workspace,
+          },
           [stableStringify(['/api/gateway/status', 'GET'])]: {
             ok: true,
             data: {
@@ -73,20 +102,28 @@ test.describe('Verse Claw chat session date grouping', () => {
         }
       }
 
-      await expect(page.getByTestId('session-bucket-toggle-today')).toHaveAttribute('aria-expanded', 'true');
-      await expect(page.getByTestId('session-bucket-toggle-withinWeek')).toHaveAttribute('aria-expanded', 'true');
-      await expect(page.getByTestId('session-bucket-toggle-withinMonth')).toHaveAttribute('aria-expanded', 'false');
-      await expect(page.getByTestId('session-bucket-toggle-older')).toHaveAttribute('aria-expanded', 'false');
-      await expect(page.getByTestId('session-bucket-today').getByText('Today conversation')).toBeVisible();
-      await expect(page.getByTestId('session-bucket-withinWeek').getByText('Week conversation')).toBeVisible();
-      await expect(page.getByText('Month conversation')).toHaveCount(0);
-      await expect(page.getByText('Older conversation')).toHaveCount(0);
+      /*
+       * Date buckets are gone (docs/dev/session-workstreams-design.md, the
+       * 2026-08-18 revision): the sidebar answers "which project / which
+       * workstream", and time is expressed as ORDER, not as four collapsible
+       * containers that hid two thirds of the history behind a click. The
+       * fixture still spans today → 40 days ago, so this now locks the
+       * replacement contract: everything is present, newest first.
+       */
+      await expect(page.locator('[data-testid^="session-bucket-"]')).toHaveCount(0);
+      for (const name of ['Today conversation', 'Week conversation', 'Month conversation', 'Older conversation']) {
+        await expect(page.getByText(name)).toBeVisible();
+      }
 
-      await page.getByTestId('session-bucket-toggle-withinMonth').click();
-      await page.getByTestId('session-bucket-toggle-older').click();
-
-      await expect(page.getByTestId('session-bucket-withinMonth').getByText('Month conversation')).toBeVisible();
-      await expect(page.getByTestId('session-bucket-older').getByText('Older conversation')).toBeVisible();
+      const orderedLabels = await page
+        .locator('[data-testid^="sidebar-session-agent:main:"]')
+        .evaluateAll((elements) => elements.map((element) => element.textContent?.trim() ?? ''));
+      expect(orderedLabels).toEqual([
+        'Today conversation',
+        'Week conversation',
+        'Month conversation',
+        'Older conversation',
+      ]);
     } finally {
       await closeElectronApp(app);
     }

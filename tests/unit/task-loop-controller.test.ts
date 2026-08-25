@@ -7,6 +7,10 @@ import {
   getTaskLoopRun,
   runTaskLoop,
 } from '../../openclaw_runtime/src/agents/task-loop-controller';
+import {
+  clearTaskStateHandlerConfig,
+  setTaskStateHandlerConfig,
+} from '../../openclaw_runtime/src/agents/harness/lifecycle-hook-helpers';
 import { resetAllGuardianCircuitBreakersForTests } from '../../openclaw_runtime/src/agents/guardian-circuit-breaker';
 import {
   buildTaskLoopContextPack,
@@ -303,6 +307,7 @@ function createTaskLoopRuntimeMemoryDbPath(): string {
 
 afterEach(() => {
   clearTaskLoopRunsForTests();
+  clearTaskStateHandlerConfig();
   resetAllGuardianCircuitBreakersForTests();
   closeOpenClawStateDatabaseForTest();
   for (const dir of taskLoopRuntimeMemoryTempDirs.splice(0)) {
@@ -507,6 +512,60 @@ describe('task-loop context and self-check', () => {
 });
 
 describe('runTaskLoop', () => {
+  it('waits for terminal DCS side effects before returning and records their outcome', async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let sinkStarted = false;
+    const sink = vi.fn(async () => {
+      sinkStarted = true;
+      await gate;
+      return [{ accepted: true }];
+    });
+    setTaskStateHandlerConfig(
+      { contextBlockSink: sink, objective: 'durability task' },
+      { sessionId: 'agent:main:durability' },
+    );
+
+    let settled = false;
+    const runPromise = runTaskLoop(
+      { task: 'durability task', sessionKey: 'agent:main:durability' },
+      {},
+      {
+        idFactory: (prefix) => `${prefix}_durability`,
+        ensureTaskLedgerRoot: vi.fn(() => 'tlroot_durability'),
+        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        selfCheck: (async () => ({
+          decision: 'complete',
+          confidence: 0.9,
+          missingEvidence: [],
+          verificationGaps: [],
+          risks: [],
+          validationState: { status: 'passed', checks: ['unit tests'], evidenceRefs: [] },
+          contextSummary: 'done',
+        })) as never,
+        getSubagentRun: getEvidenceRun as never,
+        recordCheckpoint: vi.fn() as never,
+        storeTrace: vi.fn() as never,
+      },
+    );
+    void runPromise.then(() => {
+      settled = true;
+    });
+
+    for (let i = 0; i < 100 && !sinkStarted; i += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 5));
+    }
+    expect(sinkStarted).toBe(true);
+    expect(settled).toBe(false);
+
+    release();
+    const result = await runPromise;
+    expect(settled).toBe(true);
+    expect(result.phaseSideEffects?.some((entry) => entry.toStatus === 'completed' && entry.taskState.status === 'accepted')).toBe(true);
+  });
+
   it('creates a Task Ledger root at startup and associates checkpoints with it', async () => {
     const ensureTaskLedgerRoot = vi.fn(() => 'tlroot_loop');
     const recordCheckpoint = vi.fn();

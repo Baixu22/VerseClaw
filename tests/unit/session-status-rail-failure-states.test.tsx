@@ -59,7 +59,6 @@ function renderRail() {
       workspaceId="ws-1"
       sessionKey="agent:main:main"
       collapsed={false}
-      onCollapsedChange={vi.fn()}
       planTitle=""
       planTodos={[]}
       orchestrations={[]}

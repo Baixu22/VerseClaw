@@ -120,7 +120,7 @@ test.describe('R2 renderer error semantics (SessionStatusRail)', () => {
     }
   });
 
-  test('keeps the ordinary git section when the git status host route succeeds', async ({ launchElectronApp }) => {
+  test('keeps status and refresh aligned, and gives the commit dialog an opaque surface', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -140,7 +140,18 @@ test.describe('R2 renderer error semantics (SessionStatusRail)', () => {
           ...baseMocks(),
           [stableStringify(['git', 'status', null])]: {
             success: true,
-            status: { isRepository: true, branch: 'main', clean: true, stagedCount: 0, unstagedCount: 0, untrackedCount: 0, conflictedCount: 0, ahead: 0, behind: 0, changes: [] },
+            status: {
+              isRepository: true,
+              branch: 'main',
+              clean: false,
+              stagedCount: 1,
+              unstagedCount: 0,
+              untrackedCount: 0,
+              conflictedCount: 0,
+              ahead: 0,
+              behind: 0,
+              changes: [{ path: 'src/example.ts', additions: 2, deletions: 0, bucket: 'staged' }],
+            },
           },
         },
       });
@@ -151,6 +162,73 @@ test.describe('R2 renderer error semantics (SessionStatusRail)', () => {
       await expect(page.getByTestId('session-status-rail-git')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('session-status-rail-git-error')).toHaveCount(0);
       await expect(page.getByTestId('session-status-rail-changes')).toBeVisible();
+
+      const statusToggle = page.getByTestId('chat-session-status-toggle');
+      const refreshButton = page.getByTestId('chat-toolbar-refresh');
+      await expect(statusToggle).toBeVisible();
+      await expect(refreshButton).toBeVisible();
+      await expect(page.getByTestId('chat-toolbar-more')).toHaveCount(0);
+      await expect(statusToggle.locator('svg.lucide-chart-no-axes-column-increasing')).toBeVisible();
+      const chatPageEdge = await page.getByTestId('chat-page').evaluate((element) => {
+        const styles = getComputedStyle(element);
+        return {
+          radius: styles.borderTopLeftRadius,
+          shadow: styles.boxShadow,
+        };
+      });
+      expect(Number.parseFloat(chatPageEdge.radius)).toBeGreaterThan(0);
+      // The divider is an inset shadow on the rounded chat surface. A shell
+      // border would continue above the curve as a detached vertical line.
+      expect(chatPageEdge.shadow).toContain('inset');
+      const shellBorders = await page.evaluate(() => {
+        const border = (testId: string) => {
+          const styles = getComputedStyle(document.querySelector<HTMLElement>(`[data-testid="${testId}"]`)!);
+          return {
+            left: styles.borderLeftWidth,
+            right: styles.borderRightWidth,
+            bottom: styles.borderBottomWidth,
+          };
+        };
+        return {
+          titlebar: border('windows-titlebar'),
+          sidebar: border('sidebar'),
+          main: border('main-content'),
+          toolbar: border('chat-toolbar-shell'),
+        };
+      });
+      expect(shellBorders.titlebar.bottom).toBe('0px');
+      expect(shellBorders.sidebar.right).toBe('0px');
+      expect(shellBorders.main.left).toBe('0px');
+      expect(shellBorders.toolbar.bottom).toBe('0px');
+      const toolbarGeometry = await Promise.all([
+        statusToggle.boundingBox(),
+        refreshButton.boundingBox(),
+      ]);
+      expect(toolbarGeometry[0]).not.toBeNull();
+      expect(toolbarGeometry[1]).not.toBeNull();
+      expect(Math.abs(toolbarGeometry[0]!.y - toolbarGeometry[1]!.y)).toBeLessThanOrEqual(1);
+      expect(toolbarGeometry[0]!.x + toolbarGeometry[0]!.width).toBeLessThanOrEqual(toolbarGeometry[1]!.x);
+
+      await page.getByTestId('session-status-rail-git-commit').click();
+      const commitDialog = page.getByTestId('session-status-rail-commit-dialog');
+      await expect(commitDialog).toBeVisible();
+      await expect(commitDialog).toHaveCSS('opacity', '1');
+      const dialogSurface = await commitDialog.evaluate((element) => {
+        const styles = getComputedStyle(element);
+        return { backgroundColor: styles.backgroundColor, opacity: styles.opacity };
+      });
+      expect(dialogSurface.backgroundColor).not.toBe('transparent');
+      expect(dialogSurface.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+      expect(dialogSurface.opacity).toBe('1');
+
+      await page.keyboard.press('Escape');
+      await expect(commitDialog).toHaveCount(0);
+      await statusToggle.click();
+      await expect(statusToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(page.getByTestId('session-status-rail')).toHaveCount(0);
+      await statusToggle.click();
+      await expect(statusToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(page.getByTestId('session-status-rail')).toBeVisible();
     } finally {
       await closeElectronApp(app);
     }

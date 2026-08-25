@@ -325,10 +325,10 @@ test.describe('Knowledge Hub UX', () => {
   test('workbench tabs render with icons for each tab', async ({ page }) => {
     const tabsContainer = page.getByTestId('knowledge-workbench-tabs');
     const tabs = tabsContainer.getByRole('button');
-    await expect(tabs).toHaveCount(4);
+    await expect(tabs).toHaveCount(5);
 
     // Every tab should have an SVG icon
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 5; i++) {
       await expect(tabs.nth(i).locator('svg')).toBeVisible();
     }
     await page.getByTestId('knowledge-more-actions').click();
@@ -386,7 +386,7 @@ test.describe('Knowledge Hub UX', () => {
     await inspector.locator('summary').click();
     await expect(page.getByTestId('knowledge-librarian-unknowns-section')).toBeVisible();
     await expect(inspector).toContainText('What is this note about?');
-    await expect(page.getByTestId('knowledge-librarian-citation')).toContainText('notes/local-operating-notes.md');
+    await expect(page.getByTestId('knowledge-librarian-source')).toContainText('notes/local-operating-notes.md');
     await page.getByTestId('knowledge-librarian-create-error-experience').click();
     await expect.poll(async () => {
       const calls = await getAgentDevHostCalls(page);

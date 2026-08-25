@@ -115,6 +115,32 @@ describe('workspaces api compatibility migration', () => {
     });
   });
 
+  it('normalizes legacy nested session folders and new parent input to one level', async () => {
+    storeState.profiles[0] = {
+      ...(storeState.profiles[0] as Record<string, unknown>),
+      sessionFolders: [
+        { id: 'root', name: 'Root', parentId: null, order: 0, createdAt: 1, updatedAt: 1 },
+        { id: 'child', name: 'Child', parentId: 'root', order: 1, createdAt: 2, updatedAt: 2 },
+      ],
+      sessionFolderAssignments: { 'agent:research:main': 'child' },
+    };
+    const { createWorkspacesApi } = await import('@electron/services/workspaces-api');
+    const api = createWorkspacesApi();
+
+    const listed = await api.list();
+    expect(listed.profiles?.[0]?.sessionFolders).toEqual([
+      expect.objectContaining({ id: 'root', parentId: null }),
+      expect.objectContaining({ id: 'child', parentId: null }),
+    ]);
+
+    const created = await api.createFolder({
+      workspaceId: 'legacy',
+      name: 'Always root',
+      parentId: 'child',
+    });
+    expect(created.folder).toEqual(expect.objectContaining({ name: 'Always root', parentId: null }));
+  });
+
   it('creates the default workspace from list when no workspace exists', async () => {
     storeState.activeWorkspaceId = null;
     storeState.profiles = [];

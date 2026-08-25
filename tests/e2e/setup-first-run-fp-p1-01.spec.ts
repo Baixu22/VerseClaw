@@ -128,6 +128,22 @@ test.describe('FP-P1-01 Setup provider/model verification (real Electron + real 
     const app = await launchElectronApp({ skipSetup: false });
     try {
       const page = await getStableWindow(app);
+      /*
+       * Run the wizard without its arc.
+       *
+       * Step cards ride a framer-motion 3D ring (`.setup-arc-orbit`,
+       * translateZ/rotateY — see THE ARC in src/pages/Setup/index.tsx), so an
+       * ANCESTOR transform is in flight for ~700ms after every step change.
+       * Playwright refuses to click an element whose box is still moving, and
+       * on a loaded machine that animation plus the step swap outlived the
+       * retry budget: `setup-model-option-*` failed as "element is not stable"
+       * and then "detached from the DOM". Nothing here tests the arc, and the
+       * page already drops it entirely under reduced motion (the variants emit
+       * no transform at all), so this removes the flake without weakening what
+       * the test actually verifies: real provider/model verification over real
+       * HTTP.
+       */
+      await page.emulateMedia({ reducedMotion: 'reduce' });
       await expect(page.getByTestId('setup-page')).toBeVisible({ timeout: 60_000 });
 
       // ---- Welcome → Runtime ----
@@ -213,6 +229,9 @@ test.describe('FP-P1-01 Setup provider/model verification (real Electron + real 
     const app = await launchElectronApp({ skipSetup: false });
     try {
       const page = await getStableWindow(app);
+      // Same reason as the verified path above: no arc, no moving ancestors
+      // under the wizard's controls.
+      await page.emulateMedia({ reducedMotion: 'reduce' });
       await expect(page.getByTestId('setup-page')).toBeVisible({ timeout: 60_000 });
 
       // Skip from the Welcome step — the escape hatch stays available but is
@@ -241,6 +260,18 @@ test.describe('FP-P1-01 Setup provider/model verification (real Electron + real 
         timeout: 30_000,
       });
       await expect(page.getByTestId('chat-provider-gate-configure')).toBeVisible();
+      /*
+       * And the composer stops pretending. Clicking send raises an optimistic
+       * "starting" state so the click has an immediate consequence; a REJECTED
+       * send has to drop it at once, or a Stop icon sits over the composer
+       * while this dialog explains that nothing was sent. The tight timeout is
+       * the point: it is shorter than the optimistic window
+       * (RUN_START_AFFORDANCE_MS, 620ms), so waiting that window out instead of
+       * rolling back on rejection fails here.
+       */
+      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'ready', {
+        timeout: 400,
+      });
     } finally {
       await closeElectronApp(app);
     }

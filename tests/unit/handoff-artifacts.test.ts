@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createExternalProvenance } from "../../shared/security/content-provenance";
 import {
   buildWorkerOutputHandoffArtifact,
   captureRuntimeWorkerOutputUsing,
@@ -159,6 +160,38 @@ describe("handoff artifacts", () => {
     if (artifact.state !== "ready") throw new Error("expected ready artifact");
     expect(artifact.outputText).toContain("verified implementation path");
     expect(artifact.outputSha256).toMatch(/^[a-f0-9]{64}$/);
+    expect(artifact.provenance).toMatchObject({
+      sourceKind: "agent-handoff",
+      trustLevel: "derived-untrusted",
+      containsExternalUntrustedContent: true,
+    });
+  });
+
+  it("keeps parent source IDs across the agent handoff boundary", () => {
+    const artifact = buildWorkerOutputHandoffArtifact({
+      identity: identity(),
+      capture: {
+        status: "captured",
+        output: "derived worker result",
+        capturedAt: 20,
+        source: "injected_test_capture",
+        provenance: {
+          ...createExternalProvenance({
+            sourceKind: "web",
+            sourceId: "web:source-1",
+            receivedAt: "2026-08-20T00:00:00.000Z",
+          }),
+          parentSourceIds: ["channel:source-0"],
+        },
+      },
+    });
+    expect(artifact.state).toBe("ready");
+    if (artifact.state !== "ready") throw new Error("expected ready artifact");
+    expect(artifact.provenance.parentSourceIds).toEqual([
+      "web:source-1",
+      "channel:source-0",
+    ]);
+    expect(artifact.provenance.trustLevel).toBe("derived-untrusted");
   });
 
   it("redacts secrets before hashing or delivery", () => {

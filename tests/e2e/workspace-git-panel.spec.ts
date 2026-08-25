@@ -244,6 +244,24 @@ test.describe('Workspace Git panel', () => {
             ok: true,
             status: gitStatus,
           },
+          [stableStringify(['git', 'reflog', { limit: 300 }])]: {
+            success: true,
+            entries: [{
+              hash: 'abc123def456',
+              shortHash: 'abc123d',
+              selector: 'HEAD@{0}',
+              subject: 'checkout: moving from main to feature/git-panel',
+              date: 1710000000000,
+            }],
+          },
+          [stableStringify(['permissions', 'approvals', {
+            includeExpired: true,
+            limit: 200,
+            workspaceId: WORKSPACE_ID,
+          }])]: {
+            success: true,
+            approvals: [pushApproval],
+          },
           [stableStringify(['git', 'capabilities', null])]: {
             ok: true,
             git: { available: true, version: 'git version 2.45.0' },
@@ -529,6 +547,15 @@ test.describe('Workspace Git panel', () => {
         const calls = (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> }).__verseClawE2eHostCalls ?? [];
         return calls.some((call) => call.module === 'workspaces' && call.action === 'create');
       })).toBe(true);
+
+      await sidePanel.getByTestId('artifact-panel-new-tab').click();
+      await page.getByTestId('artifact-panel-new-tab-audit').click();
+      const auditPanel = sidePanel.getByTestId('workspace-audit-panel');
+      await expect(auditPanel).toBeVisible();
+      await expect(auditPanel.getByTestId('workspace-audit-git-row')).toContainText('checkout: moving from main to feature/git-panel');
+      await expect(auditPanel.getByTestId('workspace-audit-approval-row')).toContainText('Push');
+      await auditPanel.getByTestId('workspace-audit-filter-git').click();
+      await expect(auditPanel.getByTestId('workspace-audit-approval-row')).toHaveCount(0);
     } finally {
       await closeElectronApp(app);
     }
