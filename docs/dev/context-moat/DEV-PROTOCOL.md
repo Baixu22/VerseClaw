@@ -104,6 +104,8 @@ node openclaw_runtime/scripts/check-production-reachable.mjs <symbol> [<symbol>.
 - `package.json` 的 `exports` 面（plugin-sdk 等）**不在** root 集合内，故纯 SDK 对外 API 会显示为不可达。`buildToolPlan` 属此类，按 TF-0102 的 SDK 边界结论单独处置，不按本节判为死代码。
 - 配置的 root 若不存在，脚本**以 exit 3 显式失败**而不是静默缩小可达集 —— 失效的 root 会产出假的「不可达」判定，那正是本节要防的失败模式。
 - `--all-modules` 的计数偏大：§D1 的 root 只覆盖本轮的上下文/agent 入口，不覆盖 channels / ACP / media / release 等轮外入口。该模式是粗扫，**逐符号模式才是权威判据**。
+- **扫描域仅 `openclaw_runtime/src`**：仓库根的 `tests/`、`electron/`、`src/`（渲染层）内的调用方在脚本视野之外。故「脚本 exit 1 + `openclaw_runtime/src` 内 grep 无命中」**不足以判死**。**判死前必须另跑一次全仓 grep**（`grep -rn <symbol> tests apps electron shared scripts packages`）。这不是理论风险：TF-0118 的四个候选里，此盲区实测命中 **3/4** —— `commitMemoryProposal`（节点 evidence 称「全仓零调用方」，实为 `tests/unit/role-runtime-mvp.test.ts:164` 有调用）、`trace-context-provider.ts`（自述「连测试都没有」，实为三个仓库根套件、15 个通过用例）、`reserveTurnInjectionCapacity`（`tests/unit/context-orchestrator-entry-scan.test.ts:68` 有一处反向守卫）。与「`exports` 面不在 root 集合内」同形，是本节第二类已登记盲区。
+- **本节无「枚举某目录下所有零调用导出」的模式。** 脚本只能逐符号判定或做模块级粗扫。任何以「零调用导出数 = N」形式书写的 AC / `success_metrics`（如 TF-0118 AC-1）**不可由本脚本测量**，须先补该能力或改写指标，不得以样本外推冒充全量扫描。
 
 ### D1.3 三种降级出口（合法，不算失败）
 
@@ -847,6 +849,7 @@ docs/dev/context-moat/
 | D17 | `src/context-engine/context-health-monitor.ts` | TF-0128 / TF-0129 | 1 |
 | D18 | `src/agents/agent-hooks/compaction-sections.ts`（TF-0128 新建，章节常量单一真相源） | TF-0128 / TF-0124 | 1 |
 | D19 | `src/agents/agent-hooks/compaction-safeguard-quality.ts` | TF-0128 / TF-0124 | 1 |
+| D20 | **仓库根 `package.json`**（`test:dcs` / `typecheck:node` / `lint:dcs` 等两条车道 L1 门的载体） | 任何需要注册新测试文件的 task（本轮已实测：TF-0118） | **跨车道** |
 
 **D13 是本轮唯一一组跨车道的真写冲突域。** TF-0114 修 `tokenizeWords` / `extractEntities` 的 CJK 空返回；TF-0122 裁决整条 hybrid 检索链去留，而「迁出」选项会移动整个文件。故 `TF-0122 depends_on TF-0114` 已由 non-blocking **升为 blocking**：必须先修完再裁决去留，反序会让 TF-0114 的修复被 TF-0122 的迁出连带作废。排班上两者相距 1050min，正常不会真撞上，但边必须是 blocking 以防 pick-next 抢跑。
 
@@ -857,6 +860,12 @@ docs/dev/context-moat/
 **serialization 要求**：两者都要改同一文件，须串行。建议 **TF-0117 先**（只改一处注释措辞，brb-S，且 `turn-injection-budget.ts:420` 的契约措辞正是 TF-0117 的三处判例之一），**TF-0118 后**（删除该导出）。反序会让 TF-0117 的行号依据失效。此顺序未写进图，故裁决权交回用户（§13）。偏差记录：`TFD-d11-cross-lane-tf0118-2026-08-25`。
 
 **三处已排除的 mention-only 假阳性，勿再重复认定**：`attempt.ts` 与 `init.ts` 仅被 TF-0104 作为「生产入口 / 注册入口」判例引用（零写入）；`context-compression-eval-runner.mjs` 仅被 TF-0106 作为 §R2 门命令清单引用（只读）。若车道 1 的 TF-0143 / TF-0138 需要真改这个 runner，属触碰面扩大，按 R4.2 记偏差。
+
+**D20 的登记缘由（2026-08-25，审核 TF-0118 时补登）**：仓库根 `package.json` 此前无任何域覆盖，但它同时满足两个高危条件：① 它是**两条车道 L1 门的共同载体**（`test:dcs` / `typecheck:node` / `lint:dcs` 的命令定义都在其中），任一车道注册新测试文件都要改它；② 本轮已实测它**携带第三方未提交改动，且与实现者的改动落在同一行**（TF-0118 的 `test:dcs` 行）。这正是本轮两次 index 事故（`TFD-lane1-index-bleed` / `TFD-lane2-rollback-drill-index-mutation`）的同一形态。
+
+**D20 的操作约束**：改动前必须先跑 `git diff -- <绝对路径>/package.json` 确认第三方 hunk 的存在与位置；**禁止裸 `git commit -- package.json`**。若第三方 hunk 与自己的改动共行，「先撤对方 → 提交 → 再 `git apply` 还原」的手法**第 4 步会失败**（TF-0118 实测 `patch does not apply`），必须改为**按语义重放**对方的意图值。此条由 TF-0118 实现者提出并已实跑验证，本节采纳。
+
+> **附带的路径纪律**：本节所有 `git status` / `git diff` 路径断言一律用**绝对路径**。本仓有嵌套包（`openclaw_runtime/package.json` 与仓库根 `package.json` 同名），相对路径在 shell cwd 漂移时会命中错误的那个并返回空 diff，从而**伪造出「文件干净」或「第三方改动已丢失」的结论**。审核 TF-0118 时车道 1 实测踩中此坑并已否证。
 
 **D14 的登记缘由**：`runtime-feature-leaves.ts` 由 TF-0109 的 `requirements` 第 1 条直接指定改动，但初版 D01-D13 表未收录它。实现者（车道 2）在自检时主动指出该缺口并建议延后登记；审核者（车道 1）按本节「新发现的域必须追加」即时补登为 D14，理由是本表的作用是**登记完整性**而非仅风险控制 —— 延后会留下一个「pick-next 看不见该域」的窗口。三个触碰者同在车道 2，属车道内串行，无跨车道风险。偏差记录：`TFD-d14-runtime-feature-leaves-2026-08-24`。
 
