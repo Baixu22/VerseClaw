@@ -15,12 +15,15 @@ touchedAreas:
   - shared/host-api/contract.ts
   - src/lib/host-api.ts
   - src/pages/Browser/index.tsx
+  - src/components/file-preview/WorkspaceLiveBrowserPanel.tsx
+  - src/components/file-preview/WorkspaceWebPreviewPanel.tsx
   - shared/i18n/locales/**/browser.json
   - tests/unit/agent-browser-task-service.test.ts
   - tests/unit/agent-browser-service.test.ts
   - tests/unit/agent-browser-supervised-task-executor.test.ts
   - tests/unit/agent-browser-browser-control.test.ts
   - tests/unit/browser-workbench.test.tsx
+  - tests/unit/workspace-live-browser-panel.test.tsx
   - tests/e2e/agent-browser-workbench.spec.ts
   - tests/e2e/browser-security-recovery.spec.ts
   - README.md
@@ -32,6 +35,8 @@ touchedAreas:
   - docs/dev/first-product-controlled-preview/tasks/FP-P4-02.md
   - docs/dev/handoffs/LATEST.md
 expectedUserBehavior:
+  - The workspace Browser control can open an isolated visible or headless session using the selected profile and records the workspace/session/agent context as non-authorizing metadata.
+  - A user can create an approval-bound automation from the current workspace page without exposing raw browser-debug controls by default.
   - Creating a browser task records it in a waiting-approval state and does not start a browser session.
   - The approval surface shows the objective, target site, allowed domains, browser mode, and action scope before the user can approve.
   - Approval starts an ordered browser workflow that performs more than initial navigation and reports per-step progress.
@@ -53,6 +58,7 @@ requiredRules:
   - agent-browser-supervised-task-boundary
 acceptance:
   - Renderer uses only the typed host API and adds no direct IPC or Gateway transport.
+  - Workspace session and task provenance remains metadata only and cannot grant tools, bypass approval, widen domains, or alter browser runtime policy.
   - Every new task requires explicit user approval before Main executes any browser action.
   - Approval metadata is derived from the persisted task and cannot broaden its target or action scope.
   - The executor supports ordered navigation, bounded page-read waits, and interaction steps with cancellation checks.
