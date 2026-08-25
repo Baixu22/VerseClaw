@@ -13,6 +13,11 @@
  * - This is intentionally lossy; it trades edge-case path fidelity for prompt integrity.
  * - If you need lossless representation, escape instead of stripping.
  */
+import {
+  deriveProvenance,
+  stableSourceId,
+  type ContentProvenance,
+} from "../../../shared/security/content-provenance.js";
 export function sanitizeForPromptLiteral(value: string): string {
   return value.replace(/[\p{Cc}\p{Cf}\u2028\u2029]/gu, "");
 }
@@ -47,4 +52,27 @@ export function wrapPromptDataBlock(params: PromptDataBlockParams): string {
 
 export function wrapUntrustedPromptDataBlock(params: PromptDataBlockParams): string {
   return wrapPromptDataBlockWithTag({ ...params, tagName: "untrusted-text" });
+}
+
+/**
+ * Structured companion for prompt data. The legacy string wrapper is reused
+ * byte-for-byte; provenance travels beside it rather than in the prompt text.
+ */
+export function wrapUntrustedPromptDataBlockWithProvenance(params: PromptDataBlockParams & {
+  provenance?: unknown;
+  sourceId?: string;
+  sessionId?: string;
+  agentId?: string;
+}): { text: string; provenance: ContentProvenance } {
+  return {
+    text: wrapUntrustedPromptDataBlock(params),
+    provenance: deriveProvenance({
+      sourceKind: "system-generated",
+      sourceId: params.sourceId ?? stableSourceId("prompt-data", params.label),
+      parents: params.provenance === undefined ? [undefined] : [params.provenance],
+      containsExternalUntrustedContent: true,
+      sessionId: params.sessionId,
+      agentId: params.agentId,
+    }),
+  };
 }

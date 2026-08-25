@@ -3,13 +3,39 @@ import { extractErrorSignatureSync, type ErrorSignatureExtractor } from "./error
 import type { KnowledgeStore } from "./knowledge-store.js";
 import { attachSekbShadowMetadata, evaluateTrajectoryShadowV1 } from "./shadow-evaluator.js";
 import { sanitizeTrajectoryForPersistence } from "./trajectory-redaction.js";
-import { normalizeTags, type Trajectory, type TrajectoryOutcome, type TrajectoryStep } from "./types.js";
+import { normalizeRuntimeLineage, type RuntimeLineage } from "../../runtime-core/lineage.js";
+import {
+  normalizeTags,
+  type JsonObject,
+  type Trajectory,
+  type TrajectoryOutcome,
+  type TrajectoryStep,
+} from "./types.js";
 
 export type TrajectoryCaptureOptions = {
   store: KnowledgeStore;
   now?: () => Date;
   errorSignatureExtractor?: ErrorSignatureExtractor;
   shadowEvaluation?: boolean;
+};
+
+export const SEKB_CAPTURE_ORIGIN_METADATA_KEY = "sekbCaptureOrigin" as const;
+export const SEKB_CAPTURE_KEY_METADATA_KEY = "sekbCaptureKey" as const;
+export type SekbCaptureOrigin = "agent_end" | "task_phase_terminal" | "manual";
+
+export type TerminalTrajectoryCaptureParams = {
+  task_intent: string;
+  task_type: string;
+  context_fingerprint: string[];
+  outcome: TrajectoryOutcome;
+  raw_error?: string | null;
+  runtime_lineage?: RuntimeLineage;
+  capture_key?: string;
+};
+
+export type TerminalTrajectoryCaptureResult = {
+  trajectory: Trajectory;
+  duplicate: boolean;
 };
 
 type ActiveTrajectory = {
@@ -19,6 +45,7 @@ type ActiveTrajectory = {
   task_type: string;
   context_fingerprint: string[];
   steps: TrajectoryStep[];
+  metadata: JsonObject;
 };
 
 /** Captures one runtime task as a structured L3 trajectory. */
@@ -28,6 +55,7 @@ export class TrajectoryCapture {
   readonly #errorSignatureExtractor?: ErrorSignatureExtractor;
   readonly #shadowEvaluation: boolean;
   readonly #active = new Map<string, ActiveTrajectory>();
+  readonly #captureKeys = new Map<string, string>();
 
   constructor(options: TrajectoryCaptureOptions) {
     this.#store = options.store;
@@ -36,7 +64,12 @@ export class TrajectoryCapture {
     this.#shadowEvaluation = options.shadowEvaluation === true;
   }
 
-  start_trajectory(task_intent: string, task_type: string, context_fingerprint: string[]): string {
+  start_trajectory(
+    task_intent: string,
+    task_type: string,
+    context_fingerprint: string[],
+    metadata: JsonObject = {},
+  ): string {
     const id = randomUUID();
     this.#active.set(id, {
       trajectory_id: id,
@@ -45,6 +78,7 @@ export class TrajectoryCapture {
       task_type: task_type.trim().toLowerCase(),
       context_fingerprint: normalizeTags(context_fingerprint),
       steps: [],
+      metadata: structuredClone(metadata),
     });
     return id;
   }
@@ -62,6 +96,15 @@ export class TrajectoryCapture {
     });
   }
 
+  /** Attach bounded runtime metadata before the active trajectory is finalized. */
+  update_active_metadata(trajectory_id: string, metadata: JsonObject): void {
+    const active = this.#active.get(trajectory_id);
+    if (!active) {
+      throw new Error(`SEKB active trajectory not found: ${trajectory_id}`);
+    }
+    active.metadata = { ...active.metadata, ...structuredClone(metadata) };
+  }
+
   finish_trajectory(
     trajectory_id: string,
     outcome: TrajectoryOutcome,
@@ -75,9 +118,7 @@ export class TrajectoryCapture {
       throw new Error("raw_error is required when finishing a failed SEKB trajectory.");
     }
     const endedAt = this.#now();
-    const error_signature = raw_error?.trim()
-      ? this.extract_error_signature(raw_error)
-      : null;
+    const error_signature = raw_error?.trim() ? this.extract_error_signature(raw_error) : null;
     const trajectory: Trajectory = {
       trajectory_id,
       created_at: active.created_at.toISOString(),
@@ -95,7 +136,7 @@ export class TrajectoryCapture {
       distilled: false,
       distilled_into: [],
       expires_at: null,
-      metadata: {},
+      metadata: active.metadata,
     };
     if (this.#shadowEvaluation) {
       const priorMatchingErrorSignatureCount = error_signature
@@ -110,6 +151,57 @@ export class TrajectoryCapture {
     this.#store.save_trajectory(sanitized);
     this.#active.delete(trajectory_id);
     return sanitized;
+  }
+
+  /** Capture a terminal marker once for a stable run/trace identity. */
+  capture_terminal_trajectory(
+    params: TerminalTrajectoryCaptureParams,
+  ): TerminalTrajectoryCaptureResult {
+    const captureKey = params.capture_key?.trim() || undefined;
+    if (captureKey) {
+      const localId = this.#captureKeys.get(captureKey);
+      if (localId) {
+        const local = this.#store.find_trajectory(localId);
+        if (local) {
+          return { trajectory: local, duplicate: true };
+        }
+        this.#captureKeys.delete(captureKey);
+      }
+      const persisted = this.#store
+        .query_trajectories({})
+        .find((trajectory) => trajectory.metadata[SEKB_CAPTURE_KEY_METADATA_KEY] === captureKey);
+      if (persisted) {
+        this.#captureKeys.set(captureKey, persisted.trajectory_id);
+        return { trajectory: persisted, duplicate: true };
+      }
+    }
+
+    const lineage = normalizeRuntimeLineage(params.runtime_lineage);
+    const metadata = {
+      [SEKB_CAPTURE_ORIGIN_METADATA_KEY]: "task_phase_terminal" as const,
+      ...(captureKey ? { [SEKB_CAPTURE_KEY_METADATA_KEY]: captureKey } : {}),
+      ...(lineage ? { runtimeLineage: lineage } : {}),
+    };
+    const trajectoryId = this.start_trajectory(
+      params.task_intent,
+      params.task_type,
+      params.context_fingerprint,
+      metadata,
+    );
+    if (captureKey) {
+      this.#captureKeys.set(captureKey, trajectoryId);
+    }
+    try {
+      return {
+        trajectory: this.finish_trajectory(trajectoryId, params.outcome, params.raw_error),
+        duplicate: false,
+      };
+    } catch (error) {
+      if (captureKey) {
+        this.#captureKeys.delete(captureKey);
+      }
+      throw error;
+    }
   }
 
   extract_error_signature(raw_error: string): string {
@@ -149,7 +241,11 @@ export function capture_trajectory<TArgs extends unknown[], TResult>(
       capture.finish_trajectory(trajectoryId, "success");
       return result;
     } catch (error) {
-      capture.finish_trajectory(trajectoryId, "failure", error instanceof Error ? error.message : String(error));
+      capture.finish_trajectory(
+        trajectoryId,
+        "failure",
+        error instanceof Error ? error.message : String(error),
+      );
       throw error;
     }
   };

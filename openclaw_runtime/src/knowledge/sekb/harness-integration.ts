@@ -1,6 +1,7 @@
 import type { AgentMessage } from "../../agents/runtime/index.js";
 import type { ContextInjector } from "./retrieval-engine.js";
 import type { TrajectoryCapture } from "./trajectory-capture.js";
+import type { RuntimeLineage } from "../../runtime-core/lineage.js";
 
 export type SekbTaskClassification = {
   task_intent: string;
@@ -15,10 +16,7 @@ export type SekbTaskClassifier = (event: {
 }) => SekbTaskClassification;
 
 export type SekbHarnessHookTarget = {
-  on(
-    type: string,
-    handler: (event: unknown, context?: unknown) => unknown,
-  ): () => void;
+  on(type: string, handler: (event: unknown, context?: unknown) => unknown): () => void;
   subscribe?: (listener: (event: unknown) => unknown) => () => void;
 };
 
@@ -27,6 +25,7 @@ export type InstallSekbHarnessHooksOptions = {
   capture: TrajectoryCapture;
   injector: ContextInjector;
   classifyTask?: SekbTaskClassifier;
+  lineage?: RuntimeLineage | (() => RuntimeLineage | undefined);
   onError?: (error: unknown) => void;
 };
 
@@ -88,11 +87,17 @@ export function installSekbHarnessHooks(
         }
         const classification = classify(payload);
         const runKey = readRunKey(event, context) ?? DEFAULT_RUN_KEY;
+        const lineage = resolveConfiguredLineage(options.lineage);
+        const metadata = {
+          sekbCaptureOrigin: "agent_end" as const,
+          ...(lineage ? { runtimeLineage: lineage } : {}),
+        };
         activeRuns.set(runKey, {
           trajectoryId: options.capture.start_trajectory(
             classification.task_intent,
             classification.task_type,
             classification.context_tags,
+            metadata,
           ),
           tags: classification.context_tags,
           rawError: null,
@@ -117,27 +122,41 @@ export function installSekbHarnessHooks(
           )
           .trim();
         return appendContext ? { appendContext } : undefined;
-      })
+      }),
     ),
     target.on("before_tool_call", (event, context) =>
       safe(options, () =>
-        handleToolCallEvent(event, context, options, activeRuns, toolCallRunKeys, lastActiveRunKey)
-      )
+        handleToolCallEvent(event, context, options, activeRuns, toolCallRunKeys, lastActiveRunKey),
+      ),
     ),
     target.on("tool_call", (event, context) =>
       safe(options, () =>
-        handleToolCallEvent(event, context, options, activeRuns, toolCallRunKeys, lastActiveRunKey)
-      )
+        handleToolCallEvent(event, context, options, activeRuns, toolCallRunKeys, lastActiveRunKey),
+      ),
     ),
     target.on("tool_result_persist", (event, context) =>
       safe(options, () =>
-        handleToolResultEvent(event, context, options, activeRuns, toolCallRunKeys, lastActiveRunKey)
-      )
+        handleToolResultEvent(
+          event,
+          context,
+          options,
+          activeRuns,
+          toolCallRunKeys,
+          lastActiveRunKey,
+        ),
+      ),
     ),
     target.on("tool_result", (event, context) =>
       safe(options, () =>
-        handleToolResultEvent(event, context, options, activeRuns, toolCallRunKeys, lastActiveRunKey)
-      )
+        handleToolResultEvent(
+          event,
+          context,
+          options,
+          activeRuns,
+          toolCallRunKeys,
+          lastActiveRunKey,
+        ),
+      ),
     ),
     target.on("agent_end", (event, context) =>
       safe(options, () => {
@@ -146,14 +165,19 @@ export function installSekbHarnessHooks(
         if (!active) {
           return undefined;
         }
-        finishActiveRun(options.capture, active, readAgentEndEvent(event));
+        finishActiveRun(
+          options.capture,
+          active,
+          readAgentEndEvent(event),
+          resolveConfiguredLineage(options.lineage),
+        );
         activeRuns.delete(runKey);
         clearToolCallsForRun(toolCallRunKeys, runKey);
         if (lastActiveRunKey === runKey) {
           lastActiveRunKey = null;
         }
         return undefined;
-      })
+      }),
     ),
   ];
   if (target.subscribe) {
@@ -167,7 +191,12 @@ export function installSekbHarnessHooks(
             return undefined;
           }
           if (type === "agent_end") {
-            finishActiveRun(options.capture, active, readAgentEndEvent(event));
+            finishActiveRun(
+              options.capture,
+              active,
+              readAgentEndEvent(event),
+              resolveConfiguredLineage(options.lineage),
+            );
             activeRuns.delete(runKey);
             clearToolCallsForRun(toolCallRunKeys, runKey);
             if (lastActiveRunKey === runKey) {
@@ -175,7 +204,13 @@ export function installSekbHarnessHooks(
             }
           }
           if (type === "abort") {
-            options.capture.finish_trajectory(active.trajectoryId, "partial", active.rawError);
+            finishActiveRun(
+              options.capture,
+              active,
+              { success: false, error: null },
+              resolveConfiguredLineage(options.lineage),
+              "partial",
+            );
             activeRuns.delete(runKey);
             clearToolCallsForRun(toolCallRunKeys, runKey);
             if (lastActiveRunKey === runKey) {
@@ -183,7 +218,7 @@ export function installSekbHarnessHooks(
             }
           }
           return undefined;
-        })
+        }),
       ),
     );
   }
@@ -260,17 +295,29 @@ function finishActiveRun(
   capture: TrajectoryCapture,
   active: ActiveSekbRun,
   payload: AgentEndPayload | null,
+  lineage?: RuntimeLineage,
+  forcedOutcome?: "partial",
 ): void {
+  if (lineage && typeof capture.update_active_metadata === "function") {
+    capture.update_active_metadata(active.trajectoryId, { runtimeLineage: lineage });
+  }
   const rawError = active.rawError ?? payload?.error ?? null;
   const outcome =
-    payload?.success === true
+    forcedOutcome ??
+    (payload?.success === true
       ? "success"
       : rawError
         ? "failure"
         : payload?.success === false
           ? "partial"
-          : "success";
+          : "success");
   capture.finish_trajectory(active.trajectoryId, outcome, rawError);
+}
+
+function resolveConfiguredLineage(
+  lineage: InstallSekbHarnessHooksOptions["lineage"],
+): RuntimeLineage | undefined {
+  return typeof lineage === "function" ? lineage() : lineage;
 }
 
 function clearToolCallsForRun(toolCallRunKeys: Map<string, string>, runKey: string): void {
@@ -330,15 +377,10 @@ function readToolCallEvent(value: unknown, context?: unknown): ToolCallPayload |
   if (!isRecord(value)) {
     return null;
   }
-  if (
-    value.type !== undefined &&
-    value.type !== "tool_call" &&
-    value.type !== "before_tool_call"
-  ) {
+  if (value.type !== undefined && value.type !== "tool_call" && value.type !== "before_tool_call") {
     return null;
   }
-  const toolCallId =
-    readStringField(value, "toolCallId") ?? readStringField(context, "toolCallId");
+  const toolCallId = readStringField(value, "toolCallId") ?? readStringField(context, "toolCallId");
   const toolName = readStringField(value, "toolName") ?? readStringField(context, "toolName");
   if (!toolCallId || !toolName) {
     return null;
@@ -352,9 +394,9 @@ function readToolCallEvent(value: unknown, context?: unknown): ToolCallPayload |
 
 function readContent(value: unknown): ContentBlock[] {
   return Array.isArray(value)
-    ? value.filter((entry): entry is ContentBlock =>
-      isRecord(entry) && typeof entry.type === "string"
-    )
+    ? value.filter(
+        (entry): entry is ContentBlock => isRecord(entry) && typeof entry.type === "string",
+      )
     : [];
 }
 
@@ -427,7 +469,7 @@ function appendAdvice(content: ContentBlock[], advice: string): ContentBlock[] {
   return content.map((entry, index) =>
     index === firstTextIndex && isTextBlock(entry)
       ? { ...entry, text: `${entry.text}\n\n${advice}` }
-      : entry
+      : entry,
   );
 }
 
@@ -464,29 +506,70 @@ ${systemPrompt}`.toLowerCase();
   const tags: string[] = [];
   let task_type = "agent/task";
 
-  if (matchesAny(haystack, [
-    "browser", "playwright", "puppeteer", "selenium", "navigate to", "click the",
-    "webpage", "web page", "http://", "https://",
-  ])) {
+  if (
+    matchesAny(haystack, [
+      "browser",
+      "playwright",
+      "puppeteer",
+      "selenium",
+      "navigate to",
+      "click the",
+      "webpage",
+      "web page",
+      "http://",
+      "https://",
+    ])
+  ) {
     task_type = "browser/task";
     tags.push("browser");
-  } else if (matchesAny(haystack, [
-    "debug", "troubleshoot", "stack trace", "stacktrace", "failing test",
-    "runtime error", "exception", "crash", "fix the bug",
-  ])) {
+  } else if (
+    matchesAny(haystack, [
+      "debug",
+      "troubleshoot",
+      "stack trace",
+      "stacktrace",
+      "failing test",
+      "runtime error",
+      "exception",
+      "crash",
+      "fix the bug",
+    ])
+  ) {
     task_type = "debug/task";
     tags.push("debug");
-  } else if (matchesAny(haystack, [
-    "deploy", "docker", "kubernetes", "k8s", "ci/cd", "pipeline", "infrastructure",
-    "ops/", "server config", "systemd",
-  ])) {
+  } else if (
+    matchesAny(haystack, [
+      "deploy",
+      "docker",
+      "kubernetes",
+      "k8s",
+      "ci/cd",
+      "pipeline",
+      "infrastructure",
+      "ops/",
+      "server config",
+      "systemd",
+    ])
+  ) {
     task_type = "ops/task";
     tags.push("ops");
-  } else if (matchesAny(haystack, [
-    "typescript", "javascript", "python", "refactor", "compile", "eslint",
-    "unit test", "source code", "function ", "class ", "git commit", "pull request",
-    "code review",
-  ])) {
+  } else if (
+    matchesAny(haystack, [
+      "typescript",
+      "javascript",
+      "python",
+      "refactor",
+      "compile",
+      "eslint",
+      "unit test",
+      "source code",
+      "function ",
+      "class ",
+      "git commit",
+      "pull request",
+      "code review",
+    ])
+  ) {
     task_type = "code/task";
     tags.push("code");
   }
@@ -498,9 +581,10 @@ ${systemPrompt}`.toLowerCase();
     }
   }
 
-  const task_intent = prompt.length > SEKB_DEFAULT_TASK_INTENT_MAX_CHARS
-    ? prompt.slice(0, SEKB_DEFAULT_TASK_INTENT_MAX_CHARS)
-    : prompt;
+  const task_intent =
+    prompt.length > SEKB_DEFAULT_TASK_INTENT_MAX_CHARS
+      ? prompt.slice(0, SEKB_DEFAULT_TASK_INTENT_MAX_CHARS)
+      : prompt;
 
   return {
     task_intent,
@@ -527,10 +611,10 @@ function extractResourceTags(resources: unknown): string[] {
     const kind = typeof record.kind === "string" ? record.kind.trim().toLowerCase() : "";
     const candidate = type || kind;
     if (
-      candidate
-      && candidate.length <= 40
-      && /^[a-z0-9][a-z0-9._/-]*$/.test(candidate)
-      && !/(?:secret|password|token|api[_-]?key|authorization)/.test(candidate)
+      candidate &&
+      candidate.length <= 40 &&
+      /^[a-z0-9][a-z0-9._/-]*$/.test(candidate) &&
+      !/(?:secret|password|token|api[_-]?key|authorization)/.test(candidate)
     ) {
       tags.push(candidate);
     }

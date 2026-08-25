@@ -7,6 +7,7 @@ import {
 } from "../infra/kysely-sync.js";
 import { runSqliteImmediateTransactionSync } from "../infra/sqlite-transaction.js";
 import { extractEntities as extractRuntimeEntities } from "../runtime-core/memory-hybrid-retrieval.js";
+import { isRuntimeLineage } from "../runtime-core/lineage.js";
 import { isRuntimeTaskStatus } from "../runtime-core/types.js";
 import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
 import type {
@@ -59,10 +60,7 @@ export class BlockStore implements BlockStoreApi {
     this.#extractEntities = options.extractEntities ?? extractRuntimeEntities;
   }
 
-  async upsert(
-    block: ContextBlock,
-    admission?: BlockAdmissionContext,
-  ): Promise<BlockWriteResult> {
+  async upsert(block: ContextBlock, admission?: BlockAdmissionContext): Promise<BlockWriteResult> {
     const decision = evaluateAdmission(block, admission);
     if (!decision.accepted) {
       this.#recordAdmissionRejection(block.source_system);
@@ -182,10 +180,7 @@ export class BlockStore implements BlockStoreApi {
       .where((eb) => eb.or([eb("invalid_at", "is", null), eb("invalid_at", ">", now)]));
     let statusQuery = this.#kysely
       .selectFrom("context_blocks")
-      .select([
-        "entity_extraction_status",
-        ({ fn }) => fn.countAll<number>().as("count"),
-      ])
+      .select(["entity_extraction_status", ({ fn }) => fn.countAll<number>().as("count")])
       .groupBy("entity_extraction_status");
     if (source_system) {
       totalQuery = totalQuery.where("source_system", "=", source_system);
@@ -306,9 +301,7 @@ export class BlockStore implements BlockStoreApi {
       .selectFrom("context_blocks as cb")
       .selectAll("cb")
       .where("cb.valid_at", "<=", validAtMs)
-      .where((eb) =>
-        eb.or([eb("cb.invalid_at", "is", null), eb("cb.invalid_at", ">", validAtMs)]),
-      );
+      .where((eb) => eb.or([eb("cb.invalid_at", "is", null), eb("cb.invalid_at", ">", validAtMs)]));
     select = params.include_global
       ? select.where((eb) =>
           eb.or([eb("cb.session_id", "=", targetSessionId), eb("cb.session_id", "is", null)]),
@@ -365,9 +358,7 @@ export class BlockStore implements BlockStoreApi {
         .where("session_id", "=", requesterSessionId)
         .where("block_type", "=", "task_state")
         .where("valid_at", "<=", validAtMs)
-        .where((eb) =>
-          eb.or([eb("invalid_at", "is", null), eb("invalid_at", ">", validAtMs)]),
-        )
+        .where((eb) => eb.or([eb("invalid_at", "is", null), eb("invalid_at", ">", validAtMs)]))
         .orderBy("valid_at", "desc")
         .orderBy("block_id", "asc"),
     ).rows;
@@ -542,10 +533,8 @@ function parseObject(value: string): Record<string, unknown> {
 function parseBlockPresence(value: string): ContextBlock["presence"] {
   const parsed = parseObject(value);
   const onDemand =
-    parsed.on_demand &&
-    typeof parsed.on_demand === "object" &&
-    !Array.isArray(parsed.on_demand)
-      ? parsed.on_demand as Record<string, unknown>
+    parsed.on_demand && typeof parsed.on_demand === "object" && !Array.isArray(parsed.on_demand)
+      ? (parsed.on_demand as Record<string, unknown>)
       : undefined;
   return {
     always_on: parsed.always_on === true,
@@ -612,6 +601,7 @@ export function parseHandoffPack(value: string | null): HandoffPack | undefined 
       "worktreeRoot",
       "isolation",
       "entity_snapshot",
+      "lineage",
     ]);
     const allowedKeys = new Set<string>([...requiredKeys, ...optionalKeys]);
     const keys = Object.keys(parsed);
@@ -646,22 +636,36 @@ export function parseHandoffPack(value: string | null): HandoffPack | undefined 
     if (parsed.writeSet !== undefined) {
       if (
         !Array.isArray(parsed.writeSet) ||
-        !parsed.writeSet.every((p) => typeof p === "string" && p.trim().length > 0 && p.length <= 512)
+        !parsed.writeSet.every(
+          (p) => typeof p === "string" && p.trim().length > 0 && p.length <= 512,
+        )
       ) {
         return undefined;
       }
     }
     if (parsed.worktreeId !== undefined) {
-      if (typeof parsed.worktreeId !== "string" || !parsed.worktreeId.trim() || parsed.worktreeId.length > 200) {
+      if (
+        typeof parsed.worktreeId !== "string" ||
+        !parsed.worktreeId.trim() ||
+        parsed.worktreeId.length > 200
+      ) {
         return undefined;
       }
     }
     if (parsed.worktreeRoot !== undefined) {
-      if (typeof parsed.worktreeRoot !== "string" || !parsed.worktreeRoot.trim() || parsed.worktreeRoot.length > 1024) {
+      if (
+        typeof parsed.worktreeRoot !== "string" ||
+        !parsed.worktreeRoot.trim() ||
+        parsed.worktreeRoot.length > 1024
+      ) {
         return undefined;
       }
     }
-    if (parsed.isolation !== undefined && parsed.isolation !== "shared" && parsed.isolation !== "worktree") {
+    if (
+      parsed.isolation !== undefined &&
+      parsed.isolation !== "shared" &&
+      parsed.isolation !== "worktree"
+    ) {
       return undefined;
     }
     // B-3: entity snapshot is optional; when present it must be well-formed and
@@ -671,7 +675,9 @@ export function parseHandoffPack(value: string | null): HandoffPack | undefined 
       const isValidStringList = (list: unknown): list is string[] =>
         Array.isArray(list) &&
         list.length <= 20 &&
-        list.every((item) => typeof item === "string" && item.trim().length > 0 && item.length <= 512);
+        list.every(
+          (item) => typeof item === "string" && item.trim().length > 0 && item.length <= 512,
+        );
       if (
         !isValidStringList(snapshot.files) ||
         !isValidStringList(snapshot.symbols) ||
@@ -687,6 +693,11 @@ export function parseHandoffPack(value: string | null): HandoffPack | undefined 
             decision.action.length <= 500,
         )
       ) {
+        return undefined;
+      }
+    }
+    if (parsed.lineage !== undefined) {
+      if (!isRuntimeLineage(parsed.lineage)) {
         return undefined;
       }
     }

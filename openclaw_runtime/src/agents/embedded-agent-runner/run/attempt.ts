@@ -66,7 +66,10 @@ import {
 } from "../../../plugins/provider-runtime.js";
 import { getPluginToolMeta } from "../../../plugins/tools.js";
 import { isSubagentSessionKey } from "../../../routing/session-key.js";
-import { annotateInterSessionPromptText } from "../../../sessions/input-provenance.js";
+import {
+  annotateInterSessionPromptText,
+  toContentProvenance,
+} from "../../../sessions/input-provenance.js";
 import { resolveSkillsPromptForRun } from "../../../skills/loading/workspace.js";
 import { resolveEmbeddedRunSkillEntries } from "../../../skills/runtime/embedded-run-entries.js";
 import {
@@ -1328,6 +1331,8 @@ export async function runEmbeddedAttempt(
       : (() => {
           const allTools = createOpenClawCodingTools({
             agentId: sessionAgentId,
+            contentProvenance:
+              params.contentProvenance ?? toContentProvenance(params.inputProvenance),
             ...buildEmbeddedAttemptToolRunContext({ ...params, trace: runTrace }),
             exec: {
               ...params.execOverrides,
@@ -2076,10 +2081,7 @@ export async function runEmbeddedAttempt(
           // R3-1.1: wire the Runtime Memory provider when the pilot requests it
           // (runtime.memory.injectPilot.enabled + providers includes
           // 'runtime-memory'). The provider self-gates on runtime.memory.provider.
-          if (
-            memoryPilotConfig.enabled &&
-            memoryPilotConfig.providers.includes("runtime-memory")
-          ) {
+          if (memoryPilotConfig.enabled && memoryPilotConfig.providers.includes("runtime-memory")) {
             providers.push(
               createRuntimeMemoryContextProvider({
                 config: params.config,
@@ -2095,9 +2097,7 @@ export async function runEmbeddedAttempt(
           }
           return providers;
         },
-        ...(memoryPilotConfig.enabled
-          ? { memoryProviderIds: memoryPilotConfig.providers }
-          : {}),
+        ...(memoryPilotConfig.enabled ? { memoryProviderIds: memoryPilotConfig.providers } : {}),
         deferProjection: true,
       },
       {
@@ -2235,12 +2235,9 @@ export async function runEmbeddedAttempt(
         skillsTotal: runtimeIntensitySkillsTotal,
         toolResultMaxChars: runtimeIntensityToolResultMaxChars,
         estimatedSavedChars: estimatedSkillsPromptSavedChars,
-        requestedReasoning:
-          params.requestedReasoningEffort ?? params.thinkLevel ?? undefined,
+        requestedReasoning: params.requestedReasoningEffort ?? params.thinkLevel ?? undefined,
         effectiveReasoning: params.thinkLevel,
-        requestedIntensity:
-          params.requestedRuntimeIntensity ??
-          runtimeIntensityPolicy.level,
+        requestedIntensity: params.requestedRuntimeIntensity ?? runtimeIntensityPolicy.level,
         effectiveIntensity: runtimeIntensityPolicy.level,
         intensitySource: params.runtimeIntensitySource,
         couplingMode: "linked-v1",
@@ -2251,11 +2248,9 @@ export async function runEmbeddedAttempt(
       systemPrompt: appendPrompt,
       promptMode: effectivePromptMode,
       policy: runtimeIntensityPolicy,
-      requestedReasoning:
-        params.requestedReasoningEffort ?? params.thinkLevel ?? undefined,
+      requestedReasoning: params.requestedReasoningEffort ?? params.thinkLevel ?? undefined,
       effectiveReasoning: params.thinkLevel,
-      requestedIntensity:
-        params.requestedRuntimeIntensity ?? runtimeIntensityPolicy.level,
+      requestedIntensity: params.requestedRuntimeIntensity ?? runtimeIntensityPolicy.level,
       effectiveIntensity: runtimeIntensityPolicy.level,
       intensitySource: params.runtimeIntensitySource,
       policyAdherence: "full",
@@ -2425,6 +2420,7 @@ export async function runEmbeddedAttempt(
         sessionId: params.sessionId,
         sessionKey: params.sessionKey,
         runId: params.runId,
+        ...(params.lineage ? { lineage: params.lineage } : {}),
         injectionTurnId,
         attemptIndex: params.attemptIndex,
         workingMemoryStore: dcsExtensionDeps?.workingMemoryStore,
@@ -3239,8 +3235,7 @@ export async function runEmbeddedAttempt(
           contentCapture: resolveDiagnosticModelContentCapturePolicy(params.config),
           nextCallId: () => `${params.runId}:model:${(diagnosticModelCallSeq += 1)}`,
           onStarted: ({ callId }) => {
-            const trajectoryStepId =
-              `${params.runId}:attempt:${params.attemptIndex ?? 0}:step:${callId}`;
+            const trajectoryStepId = `${params.runId}:attempt:${params.attemptIndex ?? 0}:step:${callId}`;
             trajectoryProducer?.startStep(
               trajectoryStepId,
               {
@@ -3259,8 +3254,7 @@ export async function runEmbeddedAttempt(
             });
           },
           onFinished: ({ callId, outcome, durationMs, errorCategory }) => {
-            const trajectoryStepId =
-              `${params.runId}:attempt:${params.attemptIndex ?? 0}:step:${callId}`;
+            const trajectoryStepId = `${params.runId}:attempt:${params.attemptIndex ?? 0}:step:${callId}`;
             const state = {
               status: outcome,
               callId,

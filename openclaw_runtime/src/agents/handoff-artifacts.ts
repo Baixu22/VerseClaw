@@ -1,4 +1,8 @@
 import crypto from "node:crypto";
+import {
+  deriveProvenance,
+  type ContentProvenance,
+} from "../../../shared/security/content-provenance.js";
 import { redactSensitiveText } from "../logging/redact.js";
 import type { OrchestrationTaskNode } from "./orchestration-protocol.js";
 import type { OrchestratorPlan } from "./orchestrator.js";
@@ -39,6 +43,7 @@ export type HandoffOutputCapture =
       output: unknown;
       capturedAt: number;
       source: HandoffArtifactSource;
+      provenance?: unknown;
     }
   | {
       status: "unavailable";
@@ -68,6 +73,7 @@ export type WorkerOutputHandoffArtifact =
       truncated: boolean;
       capturedAt: number;
       source: HandoffArtifactSource;
+      provenance: ContentProvenance;
     })
   | (HandoffArtifactBase & {
       state: "rejected";
@@ -181,9 +187,10 @@ export function buildWorkerOutputHandoffArtifact(input: {
   }
   const maxChars = Math.max(1, Math.floor(input.maxChars ?? HANDOFF_OUTPUT_MAX_CHARS));
   const outputText = redactedText.slice(0, maxChars);
+  const id = artifactId(input.identity);
   return {
     schemaVersion: 1,
-    artifactId: artifactId(input.identity),
+    artifactId: id,
     state: "ready",
     ...input.identity,
     outputText,
@@ -194,6 +201,13 @@ export function buildWorkerOutputHandoffArtifact(input: {
     truncated: redactedText.length > outputText.length,
     capturedAt: input.capture.capturedAt,
     source: input.capture.source,
+    provenance: deriveProvenance({
+      sourceKind: "agent-handoff",
+      sourceId: id,
+      receivedAt: input.capture.capturedAt,
+      parents: input.capture.provenance === undefined ? [undefined] : [input.capture.provenance],
+      sessionId: input.identity.childSessionKey,
+    }),
   };
 }
 

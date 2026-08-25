@@ -92,6 +92,7 @@ import { createUpdatePlanTool } from "./tools/update-plan-tool.js";
 import { createVideoGenerateTool } from "./tools/video-generate-tool.js";
 import { createWebFetchTool, createWebSearchTool } from "./tools/web-tools.js";
 import { resolveWorkspaceRoot } from "./workspace-dir.js";
+import type { ContentProvenanceContext } from "../../../shared/security/content-provenance.js";
 
 type OpenClawToolsDeps = {
   callGateway: typeof callGateway;
@@ -121,6 +122,8 @@ function createDefaultAgentBrowserInvoker(params: {
 
 export function createOpenClawTools(
   options?: {
+    /** Present only when a caller opts source-dependent sinks into provenance policy. */
+    contentProvenanceContext?: ContentProvenanceContext;
     sandboxBrowserBridgeUrl?: string;
     allowHostBrowserControl?: boolean;
     agentSessionKey?: string;
@@ -310,6 +313,7 @@ export function createOpenClawTools(
   const imageGenerateTool = optionalMediaTools.imageGenerate
     ? createImageGenerateTool({
         config: options?.config,
+        contentProvenanceContext: options?.contentProvenanceContext,
         agentDir: options?.agentDir,
         authProfileStore: options?.authProfileStore,
         agentSessionKey: mediaGenerationAgentSessionKey,
@@ -380,6 +384,7 @@ export function createOpenClawTools(
   const agentBrowserInvoker =
     options?.agentBrowserInvoker ?? createDefaultAgentBrowserInvoker({ config: resolvedConfig });
   const agentBrowserTool = createAgentBrowserTool({
+    contentProvenanceContext: options?.contentProvenanceContext,
     invoke: agentBrowserInvoker,
   });
   options?.recordToolPrepStage?.("openclaw-tools:agent-browser-tool");
@@ -399,6 +404,7 @@ export function createOpenClawTools(
   const messageTool = options?.disableMessageTool
     ? null
     : createMessageTool({
+        contentProvenanceContext: options?.contentProvenanceContext,
         agentAccountId: options?.agentAccountId,
         agentSessionKey: options?.agentSessionKey,
         runId: options?.runId,

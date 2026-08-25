@@ -45,19 +45,23 @@ describe("SekbBatchDistillationAssistant", () => {
     const store = createStore();
     const secret = "sk-batch-projection-must-not-leak";
     const trajectoryId = `raw-${randomUUID()}`;
-    store.save_trajectory(trajectory({
-      trajectory_id: trajectoryId,
-      task_intent: `intent ${secret}`,
-      task_type: "config/db",
-      context_fingerprint: ["postgresql", secret],
-      error_signature: `RawError ${secret}`,
-      steps: [{
-        action: "tool.call",
-        input: { prompt: secret, secret },
-        output: { raw_error: secret },
-        timestamp: "2026-07-14T00:00:00.000Z",
-      }],
-    }));
+    store.save_trajectory(
+      trajectory({
+        trajectory_id: trajectoryId,
+        task_intent: `intent ${secret}`,
+        task_type: "config/db",
+        context_fingerprint: ["postgresql", secret],
+        error_signature: `RawError ${secret}`,
+        steps: [
+          {
+            action: "tool.call",
+            input: { prompt: secret, secret },
+            output: { raw_error: secret },
+            timestamp: "2026-07-14T00:00:00.000Z",
+          },
+        ],
+      }),
+    );
     const principle = existingPrinciple({
       title: `existing ${secret}`,
       full_content: `full principle ${secret}`,
@@ -83,7 +87,12 @@ describe("SekbBatchDistillationAssistant", () => {
     expect(serializedInput).not.toContain("full principle");
     expect(input).toMatchObject({
       schema: "sekb-batch-distillation-input.v1",
-      trajectories: [expect.objectContaining({ trajectory_ref: "t1", error_signature: expect.stringMatching(/^sig-/) })],
+      trajectories: [
+        expect.objectContaining({
+          trajectory_ref: "t1",
+          error_signature: expect.stringMatching(/^sig-/),
+        }),
+      ],
       existing_principles: [expect.objectContaining({ principle_ref: "p1" })],
     });
     expect(result.userVisibleStatus).toBe("ready");
@@ -99,7 +108,9 @@ describe("SekbBatchDistillationAssistant", () => {
     const existing = existingPrinciple();
     store.save_principle(existing);
     const beforeIndex = store.get_index();
-    const beforeUndistilled = store.query_trajectories({ distilled: false }).map((trajectory) => trajectory.trajectory_id);
+    const beforeUndistilled = store
+      .query_trajectories({ distilled: false })
+      .map((trajectory) => trajectory.trajectory_id);
     const attempts: number[] = [];
     const assistant = createAssistant(store, {
       onAttempt: (event) => attempts.push(event.attempt),
@@ -116,11 +127,15 @@ describe("SekbBatchDistillationAssistant", () => {
     expect(suggestion).toMatchObject({
       source_trajectory_ids: ids,
       related_principle_ids: [existing.principle_id],
-      conflicts: [{ principle_id: existing.principle_id, reason: "Overlaps existing scoped principle" }],
+      conflicts: [
+        { principle_id: existing.principle_id, reason: "Overlaps existing scoped principle" },
+      ],
       skipped_reason: null,
     });
     expect(store.query_principles({})).toHaveLength(1);
-    expect(store.query_trajectories({ distilled: false }).map((trajectory) => trajectory.trajectory_id)).toEqual(beforeUndistilled);
+    expect(
+      store.query_trajectories({ distilled: false }).map((trajectory) => trajectory.trajectory_id),
+    ).toEqual(beforeUndistilled);
     expect(store.get_index()).toBe(beforeIndex);
     expect(store.list_batch_distillation_events()[0]).toMatchObject({
       status: "assisted",
@@ -172,11 +187,16 @@ describe("SekbBatchDistillationAssistant", () => {
       const ids = seedTrajectories(store, 2);
       const distiller = new DistillationTool({ store });
       const attempts: number[] = [];
-      const assistant = createAssistant(store, { provider: scenario.provider, onAttempt: (event) => attempts.push(event.attempt) });
+      const assistant = createAssistant(store, {
+        provider: scenario.provider,
+        onAttempt: (event) => attempts.push(event.attempt),
+      });
       const result = await assistant.suggest({ trajectoryIds: ids });
 
       expect(result.userVisibleStatus, scenario.name).toBe(scenario.expectedStatus);
-      expect(result.suggestions, scenario.name).toEqual(distiller.suggest_principles_from_trajectories(ids));
+      expect(result.suggestions, scenario.name).toEqual(
+        distiller.suggest_principles_from_trajectories(ids),
+      );
       expect(result.operatorEvidence.attempts, scenario.name).toBe(scenario.expectedAttempts);
       expect(attempts, scenario.name).toHaveLength(scenario.expectedAttempts);
       expect(store.list_batch_distillation_events()[0]?.status, scenario.name).toBe("fallback");
@@ -189,9 +209,12 @@ describe("SekbBatchDistillationAssistant", () => {
     const ids = seedTrajectories(store, 2);
     const distiller = new DistillationTool({ store });
     const provider = {
-      suggest: vi.fn((_input, options) => new Promise((_resolve, reject) => {
-        options.signal.addEventListener("abort", () => reject(new Error("aborted")));
-      })) as unknown as SekbBatchDistillationProvider["suggest"],
+      suggest: vi.fn(
+        (_input, options) =>
+          new Promise((_resolve, reject) => {
+            options.signal.addEventListener("abort", () => reject(new Error("aborted")));
+          }),
+      ) as unknown as SekbBatchDistillationProvider["suggest"],
     } as SekbBatchDistillationProvider;
     const assistant = createAssistant(store, { provider });
     const pending = assistant.suggest({ trajectoryIds: ids });
@@ -201,7 +224,11 @@ describe("SekbBatchDistillationAssistant", () => {
 
     expect(provider.suggest).toHaveBeenCalledTimes(2);
     expect(result.userVisibleStatus).toBe("timeout");
-    expect(result.operatorEvidence).toMatchObject({ attempts: 2, retryAttempted: true, fallbackReason: "timeout" });
+    expect(result.operatorEvidence).toMatchObject({
+      attempts: 2,
+      retryAttempted: true,
+      fallbackReason: "timeout",
+    });
     expect(result.suggestions).toEqual(distiller.suggest_principles_from_trajectories(ids));
   });
 
@@ -224,7 +251,9 @@ describe("SekbBatchDistillationAssistant", () => {
     const outputLimitedProvider: SekbBatchDistillationProvider = {
       suggest: vi.fn(async () => outputLimitResponse()),
     };
-    const outputLimitedAssistant = createAssistant(outputLimitedStore, { provider: outputLimitedProvider });
+    const outputLimitedAssistant = createAssistant(outputLimitedStore, {
+      provider: outputLimitedProvider,
+    });
     const outputLimited = await outputLimitedAssistant.suggest({ trajectoryIds: outputLimitedIds });
 
     expect(outputLimitedProvider.suggest).toHaveBeenCalledTimes(2);
@@ -282,7 +311,10 @@ describe("SekbBatchDistillationAssistant", () => {
 
     const principleId = distiller.confirm_and_save(suggestion);
     store.record_adoption(principleId, true);
-    distiller.reject_suggestion(suggestion, "operator free-form text must not be persisted with LLM output");
+    distiller.reject_suggestion(
+      suggestion,
+      "operator free-form text must not be persisted with LLM output",
+    );
     const report = buildSekbOperatorReport(store, { batchDistillationAssistantEnabled: true });
 
     expect(store.list_distillation_rejections()).toEqual([]);
@@ -306,7 +338,9 @@ describe("SekbBatchDistillationAssistant", () => {
 
 function createAssistant(
   store: KnowledgeStore,
-  overrides: Partial<Omit<ConstructorParameters<typeof SekbBatchDistillationAssistant>[0], "store" | "fallback">> = {},
+  overrides: Partial<
+    Omit<ConstructorParameters<typeof SekbBatchDistillationAssistant>[0], "store" | "fallback">
+  > = {},
 ): SekbBatchDistillationAssistant {
   const distiller = new DistillationTool({ store });
   return new SekbBatchDistillationAssistant({
@@ -333,20 +367,36 @@ function seedTrajectories(store: KnowledgeStore, count: number): string[] {
 }
 
 function trajectory(overrides: Partial<Trajectory> = {}): Trajectory {
+  const trajectoryId = overrides.trajectory_id ?? randomUUID();
   return {
-    trajectory_id: overrides.trajectory_id ?? randomUUID(),
+    trajectory_id: trajectoryId,
     created_at: overrides.created_at ?? "2026-07-14T00:00:00.000Z",
     task_intent: overrides.task_intent ?? "connect PostgreSQL for the deployment",
     task_type: overrides.task_type ?? "config/db",
     context_fingerprint: overrides.context_fingerprint ?? ["postgresql"],
-    steps: overrides.steps ?? [{ action: "tool.call", input: { command: "psql" }, output: {}, timestamp: "2026-07-14T00:00:00.000Z" }],
+    steps: overrides.steps ?? [
+      {
+        action: "tool.call",
+        input: { command: "psql" },
+        output: {},
+        timestamp: "2026-07-14T00:00:00.000Z",
+      },
+    ],
     outcome: overrides.outcome ?? "failure",
-    error_signature: overrides.error_signature ?? "ConnectionError::db_connection_refused::postgresql",
+    error_signature:
+      overrides.error_signature ?? "ConnectionError::db_connection_refused::postgresql",
     cost: overrides.cost ?? { tokens: 10, duration_seconds: 1, retries: 0 },
     distilled: overrides.distilled ?? false,
     distilled_into: overrides.distilled_into ?? [],
     expires_at: overrides.expires_at ?? null,
-    metadata: overrides.metadata ?? {},
+    metadata: overrides.metadata ?? {
+      runtimeLineage: {
+        schema: "runtime-lineage.v1",
+        sessionId: "session-batch-test",
+        loopRunId: trajectoryId,
+        traceId: `trace-${trajectoryId}`,
+      },
+    },
   };
 }
 
@@ -375,27 +425,40 @@ function existingPrinciple(overrides: Partial<Principle> = {}): Principle {
   };
 }
 
-function response(input: {
-  title?: string;
-  sourceRefs?: string[];
-  principleRefs?: string[];
-} = {}): { content: string; traceId: string; usage: { inputTokens: number; outputTokens: number; totalCostUsd: number } } {
+function response(
+  input: {
+    title?: string;
+    sourceRefs?: string[];
+    principleRefs?: string[];
+  } = {},
+): {
+  content: string;
+  traceId: string;
+  usage: { inputTokens: number; outputTokens: number; totalCostUsd: number };
+} {
   return {
     content: JSON.stringify({
       schema: "sekb-batch-distillation-output.v1",
-      suggestions: [{
-        title: input.title ?? "Check PostgreSQL access",
-        condition: "When PostgreSQL connection attempts fail",
-        action: "Verify the service, network access, and authentication rules",
-        reason: "Repeated bounded trajectory evidence indicates configuration failure",
-        source_trajectory_refs: input.sourceRefs ?? ["t1"],
-        related_principle_refs: input.principleRefs ?? [],
-        conflicts: input.principleRefs?.length
-          ? [{ principle_ref: input.principleRefs[0], reason: "Overlaps existing scoped principle" }]
-          : [],
-        confidence: 0.8,
-        skipped_reason: null,
-      }],
+      suggestions: [
+        {
+          title: input.title ?? "Check PostgreSQL access",
+          condition: "When PostgreSQL connection attempts fail",
+          action: "Verify the service, network access, and authentication rules",
+          reason: "Repeated bounded trajectory evidence indicates configuration failure",
+          source_trajectory_refs: input.sourceRefs ?? ["t1"],
+          related_principle_refs: input.principleRefs ?? [],
+          conflicts: input.principleRefs?.length
+            ? [
+                {
+                  principle_ref: input.principleRefs[0],
+                  reason: "Overlaps existing scoped principle",
+                },
+              ]
+            : [],
+          confidence: 0.8,
+          skipped_reason: null,
+        },
+      ],
     }),
     traceId: "provider-trace-1",
     usage: { inputTokens: 21, outputTokens: 13, totalCostUsd: 0.03 },
