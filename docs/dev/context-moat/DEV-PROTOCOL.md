@@ -357,9 +357,11 @@ pnpm maturity:validate
 
 - 触发时机：**每个 milestone（M1..M5）收口时**。
 - 判据（逐条，据 §D4.5）：
-  - `lint:check` / `typecheck` / `contract:check`：**exit 0**（无豁免）。
+  - `typecheck` / `contract:check`：**exit 0**（无豁免）。**两者已实测为 exit 0**，非未验证的断言。
+  - `lint:check`：**不要求 exit 0** —— 实测 exit 1（4 errors / 131 warnings）。判据为 **error 集 ⊆ §D4 白名单 `gates.lint_check.exemptions`**（`(file, rule)` 对），且 `baselineErrorCount ≤ 4`。四项均已给出**逐字节因果证明**为本轮起点即存在，详见 `GATE-BASELINE.md §9`。`eslint .` 未加 `--max-warnings`，warning 不入门。**该门为 §D4 初版漏判的第四道红门**（`TFD-lane2-lintcheck-fourth-gate-2026-08-25`）。
   - `pnpm test`：失败集 ⊆ §D4 白名单 `gates.pnpm_test.exemptions`，且 `config-schema-parity` 不在失败集内。**白名单外任一失败 = 回归，阻塞。**
   - `maturity:validate`：A2 失配集 ⊆ §D4 §4.3 的 25 项基线；**并须单独补跑** `pnpm maturity:residual` 与 `pnpm maturity:traceability` 以消除 §D4 记录的 `&&` 链短路盲区（`TFD-maturity-chain-blindspot-2026-08-24`）。
+- **`&&` 链门须逐段跑**（本轮两道门栽在此形状）：`lint:check` 与 `maturity:validate` 均为 `&&` 链，退出码只报告链上**第一个**失败，其后各段状态是**未知量而非已知绿**。`lint:check` 的盲区已实测消解（`lint:dcs` 单独跑 exit 0）；`maturity` 的两段见 §D4.3。
 - 回归定义（承重条款，同 §D4.6）：**白名单之外的任何失败 = 回归，一律阻塞。** 白名单条目**只减不增**；新增须走 §R4 偏差触发 (c)。
 
 ---
@@ -1005,7 +1007,7 @@ M0 只产出 DEV-PROTOCOL.md 与目录树，不受 M1+ 的文件域分工约束�
 
 ### §D4.1 问题
 
-§R2 若把 L1/L2 定义为「固定 exit-code 组全绿」，在当前工作树上**永不可达**：三个门为红 —— `config-schema-parity`（1 failed，根因 = `runtime.memory.candidateGeneration`）、`pnpm test`（22 failed / 6991 passed + 4 套件加载失败）、`maturity:validate`（25 项 A2 证据哈希失配）。不先裁定归属，G-MOAT 验收判据「L1 门整体 exit 0」被既有红门污染。
+§R2 若把 L1/L2 定义为「固定 exit-code 组全绿」，在当前工作树上**永不可达**：**四个**门为红 —— `config-schema-parity`（1 failed，根因 = `runtime.memory.candidateGeneration`）、`pnpm test`（22 failed / 6991 passed + 4 套件加载失败）、`maturity:validate`（25 项 A2 证据哈希失配）、`lint:check`（4 eslint errors，**本节初版漏判，补裁于 GATE-BASELINE.md §9**）。不先裁定归属，G-MOAT 验收判据「L1 门整体 exit 0」被既有红门污染。
 
 ### §D4.2 三分类与唯一硬判据
 
@@ -1027,6 +1029,7 @@ git diff --name-only 590588791..HEAD   # 本轮全部改动
 | `config-schema-parity` | **must-fix** | TF-0109（`done`，已过 §R1 审核） | 必须 exit 0；**豁免 0 条** |
 | `pnpm test` | must-fix 0 / exempt-noise 12 文件 / backlog-debt 5 文件 | TF-0028 / 0029 / 0010 / 0021 / 0007 / 0018 / 平台 | **移出 L1**，入 L2 按白名单差分 |
 | `maturity:validate` | backlog-debt（全 25 项 committed 漂移） | system-maturity backlog | **不入 L1**；L2 要求失配集 ⊆ 25 项基线 |
+| `lint:check`（**补裁，第四门**） | backlog-debt 3 / exempt-noise 1（4 errors） | 无归属节点（3 项 committed 既有债，早于本轮）/ 未跟踪既有产物 1 项 | **不入 L1**；L2 要求 error 集 ⊆ 白名单且 ≤ 4 |
 
 `maturity:validate` 有**已知盲区**：6 脚本 `&&` 链在第 4 个（`validate-system-maturity-evidence`）中断，第 5/6 脚本从未执行、状态未知（非已知绿）。L2 判定须单独补跑 `maturity:residual` 与 `maturity:traceability` 消除盲区。
 
@@ -1044,7 +1047,9 @@ L1 基线（AC-3）观测于 TF-0109 修绿后，全部 exit 0；完整输出见
 
 > **命令清单以 §R2.3 为准。** 本节只定分类语义。
 
-`lint:check` / `typecheck` / `contract:check` 要求 **exit 0**（无豁免）；`pnpm test` 与 `maturity:validate` 要求**失败集 ⊆ GATE-BASELINE.md §6 白名单**，且 `config-schema-parity` 不在失败集内。`maturity` 另须按 §R2.3 单独补跑 `maturity:residual` / `maturity:traceability` 以消除 §D4.3 的 `&&` 链盲区。
+`typecheck` / `contract:check` 要求 **exit 0**（无豁免，两者已实测为 0）；`lint:check` / `pnpm test` / `maturity:validate` 要求**失败集 ⊆ GATE-BASELINE.md §6 白名单**，且 `config-schema-parity` 不在失败集内。`maturity` 另须按 §R2.3 单独补跑 `maturity:residual` / `maturity:traceability` 以消除 §D4.3 的 `&&` 链盲区。
+
+> **`lint:check` 是 §D4 初版漏判的第四道门。** 初版此处曾把它与 `typecheck` / `contract:check` 并列断言「exit 0（无豁免）」，而**三条断言从未被实测**：实测 `typecheck` 与 `contract:check` 为 0，`lint:check` 为 **1**（4 errors）。四个 error 已逐字节证明为本轮起点即存在，按 §D4.2 三分类入白名单（backlog-debt 3 + exempt-noise 1），裁定与因果证明见 `GATE-BASELINE.md §9`，偏差记 `TFD-lane2-lintcheck-fourth-gate-2026-08-25`。这是**白名单的一次增加**，其合法性依据是「该门自始为红且从未被分析」而非「为容纳回归而放宽」—— 区别见 §D4.6。
 
 ### §D4.6 回归定义（承重条款）
 

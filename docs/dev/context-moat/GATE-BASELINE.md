@@ -335,6 +335,62 @@ sed -n '/^<!-- GATE-BASELINE-WHITELIST:BEGIN -->$/,/^<!-- GATE-BASELINE-WHITELIS
         "P8-003|package.json",
         "P8-004|package.json"
       ]
+    },
+    "lint_check": {
+      "command": "pnpm lint:check",
+      "chain": ["node scripts/check-no-bom.mjs", "eslint .", "pnpm run lint:dcs"],
+      "requiredExitCode": null,
+      "failsAtChainSegment": "2 of 3 (eslint .)",
+      "unrunSegments": ["pnpm run lint:dcs"],
+      "blindSpot": "&& short-circuit means lint:dcs never runs inside lint:check; RESOLVED by measuring it standalone (exit 0), unlike the maturity_validate blind spot which remains UNKNOWN",
+      "segmentExitCodesMeasuredStandalone": {"check-no-bom": 0, "eslint .": 1, "lint:dcs": 0},
+      "gatesOnWarnings": false,
+      "baselineErrorCount": 4,
+      "baselineWarningCount": 131,
+      "addedInSection": "GATE-BASELINE.md section 9",
+      "deviation": "TFD-lane2-lintcheck-fourth-gate-2026-08-25",
+      "exemptions": [
+        {
+          "file": "electron/utils/verseshell-runtime-bundle.ts",
+          "line": 291,
+          "rule": "preserve-caught-error",
+          "class": "backlog-debt",
+          "basis": "byte-identical-to-round-start",
+          "reason": "no `cause` attached to the symptom error being thrown",
+          "owner": "unassigned - predates round; no owning node identified",
+          "lastTouched": "24ce5abf2 (2026-08-16)"
+        },
+        {
+          "file": "openclaw_runtime/src/plugin-sdk/provider-stream-shared.test.ts",
+          "line": 7,
+          "rule": "@typescript-eslint/no-unused-vars",
+          "class": "backlog-debt",
+          "basis": "byte-identical-to-round-start",
+          "reason": "'PayloadPatchFn' is defined but never used",
+          "owner": "unassigned - predates round; no owning node identified",
+          "lastTouched": "1eab23c99 (2026-08-16)"
+        },
+        {
+          "file": "openclaw_runtime/test/helpers/agents/happy-path-prompt-snapshots.ts",
+          "line": 135,
+          "rule": "preserve-caught-error",
+          "class": "backlog-debt",
+          "basis": "byte-identical-to-round-start",
+          "reason": "no `cause` attached to the symptom error being thrown",
+          "owner": "unassigned - predates round; no owning node identified",
+          "lastTouched": "1eab23c99 (2026-08-16)"
+        },
+        {
+          "file": "openclaw_runtime/src/knowledge/sekb/terminal-trajectory-gating.test.ts",
+          "line": 170,
+          "rule": "prefer-const",
+          "class": "exempt-noise",
+          "basis": "untracked-preexisting",
+          "reason": "'runtimeLineage' is never reassigned; file is untracked pre-existing work (R4.9 declares it un-owned)",
+          "owner": "pre-existing uncommitted work - not owned by either lane",
+          "lastTouched": "not in git"
+        }
+      ]
     }
   },
   "regressionRule": "Any failure not present in the matching exemptions list is a regression and blocks. Entry count may only decrease; additions require record_deviation per R4 trigger (c).",
@@ -368,3 +424,74 @@ sed -n '/^<!-- GATE-BASELINE-WHITELIST:BEGIN -->$/,/^<!-- GATE-BASELINE-WHITELIS
 - ✅ 未放宽 `config-schema-parity`（该门豁免条目数 = 0，且零测试文件改动）
 - ✅ 未改任何测试、任何旗标默认值、任何 src 代码
 - 本文件改动半径：**1 文件（本文件）+ DEV-PROTOCOL.md §D4 一节**，零 src 改动
+
+---
+
+## 9. 门 4：`lint:check` —— §D4 初版漏判的第四道红门（补写）
+
+**本节是补写，编号接在末尾以免打乱既有交叉引用。** §D4 初版只裁定三道门，因为 TF-0142 的 `acceptance_criteria` 点名的就是三道；但 §R2.3 与 §D4.5 同时断言 `lint:check` / `typecheck` / `contract:check` **exit 0（无豁免）**——而那三条断言**从未被实测**。车道 1 在 M0 的 L2 收口尝试中撞到它，并**拒绝自行豁免**（正确：§R2.0.1 规定门 = 退出码而非自评），路由给我（§R2.3 属 TF-0106、§D4.5 属 TF-0142，两节均车道 2 owner）。
+
+| 项 | 值 |
+|---|---|
+| 命令 | `pnpm lint:check` = `check-no-bom.mjs && eslint . && pnpm run lint:dcs` |
+| 当前 | **exit 1** |
+| 失败位置 | `&&` 链第 2 段（`eslint .`）：**4 errors / 131 warnings** |
+| 本轮引起 | **0 项**（§1.1 交集为空；另见 §9.2 的更强因果证明） |
+| 分类 | **backlog-debt 3 + exempt-noise 1** |
+
+### 9.1 三条断言的实测结果：一条为假
+
+| 断言（§R2.3 / §D4.5 初版） | 实测 | 判定 |
+|---|---|---|
+| `typecheck` exit 0 | **exit 0**（`typecheck:node` + `typecheck:web` 均 0） | 成立 |
+| `contract:check` exit 0 | **exit 0**（`Contract check passed.`） | 成立 |
+| `lint:check` exit 0 | **exit 1**，4 errors | **为假** |
+
+三条「无豁免必须全绿」里只有两条恰好为真。**这是 A3 类缺陷——文档断言未经测量**，与我在 TF-0104 审核中对车道 1 §D1 判 FAIL 的形态相同（声称的判据与实际不一致），同一判准此处适用于我自己。
+
+### 9.2 四个 error 的清单与因果证明
+
+| # | 文件 | 行 | 规则 | 分类 | basis |
+|---:|---|---:|---|---|---|
+| 1 | `electron/utils/verseshell-runtime-bundle.ts` | 291 | `preserve-caught-error` | backlog-debt | byte-identical-to-round-start |
+| 2 | `openclaw_runtime/src/plugin-sdk/provider-stream-shared.test.ts` | 7 | `@typescript-eslint/no-unused-vars` | backlog-debt | byte-identical-to-round-start |
+| 3 | `openclaw_runtime/test/helpers/agents/happy-path-prompt-snapshots.ts` | 135 | `preserve-caught-error` | backlog-debt | byte-identical-to-round-start |
+| 4 | `openclaw_runtime/src/knowledge/sekb/terminal-trajectory-gating.test.ts` | 170 | `prefer-const` | exempt-noise | untracked-preexisting |
+
+**因果证明（强于 §1.1 的交集测试）**：交集为空只证明「本轮没碰这些文件」，属相关性；§1.2 已诚实记录本文件多数条目止步于相关性。此处四项**都能给出因果**：
+
+- 第 1–3 项：`git diff 590588791..HEAD -- <file>` 与 `git diff 590588791 -- <file>`（含工作树）**均为空** ⟹ 文件内容与本轮起点**逐字节相同**，故 error 在本轮起点即已存在。最后修改于 `24ce5abf2` / `1eab23c99`（**2026-08-16**，早于本轮）。
+- 第 4 项：**未被 git 跟踪**（`git ls-files` 空；range 内 0 个提交涉及它）⟹ 本轮提交不可能创建它。属 §R4.9 声明为「不属任何车道」的既有未提交产物。
+
+**warning 不入门**：`eslint .` 未加 `--max-warnings`，131 项 warning 不影响退出码，故判据只针对 **error**。
+
+### 9.3 第二处 `&&` 链盲区（与 §4.1 同形，但已实测消解）
+
+`lint:check` 也是 `&&` 链，`eslint .` exit 1 ⟹ **`lint:dcs` 从未执行**。这是 §4.1 所记结构缺陷的**第二个实例**。
+
+与 §4.1 不同，此处盲区已**实测消解**而非留作未知：单独跑 `pnpm lint:dcs` → **exit 0**，`pnpm lint:bom` → **exit 0**。故该链上唯一红项确为 `eslint .`。`lint:dcs` 另已在 §5.1 的 L1 六条中独立在测，双重覆盖。
+
+> 与 §4.1 同一教训：**`&&` 链门的退出码只报告链上第一个失败，其后脚本的状态是未知量。** 凡以 `&&` 链作门者，判据必须逐段跑，否则「只有 N 个问题」的表述不完整。本轮两道门（`maturity:validate`、`lint:check`）都栽在这个形状上。
+
+### 9.4 为什么入白名单而不是修掉这 4 个 error
+
+四个文件**全部落在车道 2 文件域之外**（非 `docs/dev/context-moat/`，非 D01–D15 任一域），三个是 committed 既有债、一个是未跟踪既有产物。§R4.9 明定既有未提交改动不属任何车道、不得处置；§R5 范围-1 限定本轮触碰面。**修它们属越界，不是勤勉。**
+
+故按 §1 三分类入白名单，同时保留回归检测力：白名单以 **`(file, rule)` 对**加 **`baselineErrorCount: 4` 上限**双重钉死。第 5 个 error，或同一 `(file, rule)` 新增一处使总数 > 4，一律判回归、阻塞。**这不是把门关掉，是把判据从「exit 0」换成「失败集 ⊆ 显式清单」**，与门 2 同一形态。
+
+**真阳性已验证（三例，双判据各自承重）** —— 一个只验证「当前不报警」的守卫与永不开火的空守卫不可区分（§R3.7 同一要求）：
+
+| 合成场景 | 判定 | 由哪一半判据捕获 |
+|---|---|---|
+| 当前工作树（4 errors 全在白名单） | **PASS** | 真阴性 |
+| 新文件出现第 5 个 error | **FAIL** | `(file, rule)` 未列 **且** 超上限 |
+| **已列白名单的同一 `(file, rule)` 再新增一处** | **FAIL** | **仅靠上限捕获**（pair 检查看不出来） |
+| **总数不变，但白名单文件里换成新规则** | **FAIL** | **仅靠 pair 检查捕获**（上限未触发） |
+
+后两行证明两半判据**各自不可省**：单用 pair 检查漏掉「同类错误增殖」，单用计数上限漏掉「错误类型置换」。
+
+### 9.5 这是白名单的一次**增加**，故必须记偏差
+
+§5.3 承重条款写「条目只减不增」。新增 `lint_check` 一整门 4 条豁免**确是增加**，不掩饰。合法性依据：**该门自始为红，§D4 初版从未分析它**（节点只点名三门）——即白名单不是为容纳一次回归而放宽，而是补上一处**遗漏覆盖**。两者的区别正是承重条款要守的东西，故按 §R4.2 触发 (c) 记 `record_deviation`（`TFD-lane2-lintcheck-fourth-gate-2026-08-25`）。
+
+**本节不放行 B1。** §R4.8 规定同步点的跨越不属任何单一车道；本节只完成 §D4 职责内的门归属裁定，B1 是否放行由人工决定。
