@@ -1,0 +1,146 @@
+{
+  "schema": "handoff-corpus-meta/v1",
+  "generatedAt": "2026-08-24T17:24:02.978Z",
+  "entries": [
+    {
+      "sampleId": "O1",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\d1974f40-ee16-44c9-956f-246fe2cc1a46.jsonl",
+      "basename": "d1974f40-ee16-44c9-956f-246fe2cc1a46.jsonl"
+    },
+    {
+      "sampleId": "O2",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\59ddbac2-0b6c-42c3-9afe-c14ab8c741d6.jsonl",
+      "basename": "59ddbac2-0b6c-42c3-9afe-c14ab8c741d6.jsonl"
+    },
+    {
+      "sampleId": "O3",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\e620863e-fc1b-4b9c-9baf-d310a7180327.jsonl",
+      "basename": "e620863e-fc1b-4b9c-9baf-d310a7180327.jsonl"
+    },
+    {
+      "sampleId": "O4",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\95c28a03-cf07-4a24-b73d-6fec1c297987.jsonl",
+      "basename": "95c28a03-cf07-4a24-b73d-6fec1c297987.jsonl"
+    },
+    {
+      "sampleId": "O5",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\dc621e93-20b0-44da-92ba-c9dfe1437261.jsonl",
+      "basename": "dc621e93-20b0-44da-92ba-c9dfe1437261.jsonl"
+    },
+    {
+      "sampleId": "O6",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\ea7c7c63-5c1f-4aba-b5c4-76b64078c68b.jsonl",
+      "basename": "ea7c7c63-5c1f-4aba-b5c4-76b64078c68b.jsonl"
+    },
+    {
+      "sampleId": "O7",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\6cfff613-d81a-4618-8ec5-98b6e81481af.jsonl",
+      "basename": "6cfff613-d81a-4618-8ec5-98b6e81481af.jsonl"
+    },
+    {
+      "sampleId": "O8",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\d7761bd3-cb94-460d-80b3-b98fb7c5ff11.jsonl",
+      "basename": "d7761bd3-cb94-460d-80b3-b98fb7c5ff11.jsonl"
+    },
+    {
+      "sampleId": "O9",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\ca3ef6e3-963f-4ff6-ab37-24f4d764bd83.jsonl",
+      "basename": "ca3ef6e3-963f-4ff6-ab37-24f4d764bd83.jsonl"
+    },
+    {
+      "sampleId": "O10",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\ae2b6b94-12f6-4504-a507-e082b416a367.jsonl",
+      "basename": "ae2b6b94-12f6-4504-a507-e082b416a367.jsonl"
+    },
+    {
+      "sampleId": "O11",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\b9a03646-b336-41cb-9ce8-b357a9ceaa82.jsonl",
+      "basename": "b9a03646-b336-41cb-9ce8-b357a9ceaa82.jsonl"
+    },
+    {
+      "sampleId": "O12",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\1198279f-461d-4da5-8435-39a98db6560f.jsonl",
+      "basename": "1198279f-461d-4da5-8435-39a98db6560f.jsonl"
+    },
+    {
+      "sampleId": "O13",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\71ef7983-0fc6-4ccb-a51f-6722540ce6e8.jsonl",
+      "basename": "71ef7983-0fc6-4ccb-a51f-6722540ce6e8.jsonl"
+    },
+    {
+      "sampleId": "O14",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\83556e54-127b-43bd-ae55-931007496df0.jsonl",
+      "basename": "83556e54-127b-43bd-ae55-931007496df0.jsonl"
+    },
+    {
+      "sampleId": "O15",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\57c00668-baf0-44d4-8cb3-531fda2a6667.jsonl",
+      "basename": "57c00668-baf0-44d4-8cb3-531fda2a6667.jsonl"
+    },
+    {
+      "sampleId": "O16",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\c52b52ba-d71a-4b7f-93aa-acd4fb823c0e.jsonl",
+      "basename": "c52b52ba-d71a-4b7f-93aa-acd4fb823c0e.jsonl"
+    },
+    {
+      "sampleId": "O17",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\a71c8807-3050-490c-9a46-0dfe78140829.jsonl",
+      "basename": "a71c8807-3050-490c-9a46-0dfe78140829.jsonl"
+    },
+    {
+      "sampleId": "O18",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\3a243349-94eb-41a6-9b85-e5460f8d07dc.jsonl",
+      "basename": "3a243349-94eb-41a6-9b85-e5460f8d07dc.jsonl"
+    },
+    {
+      "sampleId": "O19",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\8db52789-2c98-41e0-afe9-288d9be9eae9.jsonl",
+      "basename": "8db52789-2c98-41e0-afe9-288d9be9eae9.jsonl"
+    },
+    {
+      "sampleId": "O20",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\e274ee3f-6ae2-4a29-84a9-c27e7b9a8e81.jsonl",
+      "basename": "e274ee3f-6ae2-4a29-84a9-c27e7b9a8e81.jsonl"
+    },
+    {
+      "sampleId": "O21",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\85b13b4b-7a46-4c44-a909-fa9a6363a3c5.jsonl",
+      "basename": "85b13b4b-7a46-4c44-a909-fa9a6363a3c5.jsonl"
+    },
+    {
+      "sampleId": "O22",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\d8292aa3-7c02-4a5b-a458-2aac6b2898c7.jsonl",
+      "basename": "d8292aa3-7c02-4a5b-a458-2aac6b2898c7.jsonl"
+    },
+    {
+      "sampleId": "O23",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\c861649a-1b19-4b27-8400-5489e14530f1.jsonl",
+      "basename": "c861649a-1b19-4b27-8400-5489e14530f1.jsonl"
+    },
+    {
+      "sampleId": "O24",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\da34f3c8-48ce-46b5-8ea0-92e6e622f69e.jsonl",
+      "basename": "da34f3c8-48ce-46b5-8ea0-92e6e622f69e.jsonl"
+    },
+    {
+      "sampleId": "O25",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\b11cc062-3101-4706-bb90-dda6cb1222a3.jsonl",
+      "basename": "b11cc062-3101-4706-bb90-dda6cb1222a3.jsonl"
+    },
+    {
+      "sampleId": "O26",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\83481e52-7397-4f07-8ac3-b9059b3a1687.jsonl",
+      "basename": "83481e52-7397-4f07-8ac3-b9059b3a1687.jsonl"
+    },
+    {
+      "sampleId": "O27",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\5ce454df-b1b7-4c7e-8f96-062bb63b571e.jsonl",
+      "basename": "5ce454df-b1b7-4c7e-8f96-062bb63b571e.jsonl"
+    },
+    {
+      "sampleId": "O28",
+      "file": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\8dc3502e-0d58-4e77-908d-80b13184fe51.jsonl",
+      "basename": "8dc3502e-0d58-4e77-908d-80b13184fe51.jsonl"
+    }
+  ]
+}

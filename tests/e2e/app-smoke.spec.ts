@@ -39,4 +39,15 @@ test.describe('Verse Claw Electron smoke flows', () => {
       await closeElectronApp(relaunchedApp);
     }
   });
+
+  test('does not show a fatal dialog when an E2E output pipe closes', async ({ electronApp }) => {
+    const completed = await electronApp.evaluate(() => {
+      const error = Object.assign(new Error('broken pipe, write'), { code: 'EPIPE' });
+      process.stdout.emit('error', error);
+      process.stderr.emit('error', error);
+      return true;
+    });
+
+    expect(completed).toBe(true);
+  });
 });

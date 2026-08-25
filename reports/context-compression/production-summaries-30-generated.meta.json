@@ -1,0 +1,286 @@
+{
+  "schema": "p6-production-summaries-generated/v1",
+  "generatedAt": "2026-08-18T00:00:00Z",
+  "count": 30,
+  "source": "agent-core compact() run against fixed production-manifest-30 transcripts using deepseek-chat (runtime compaction path; keepRecentTokens=120, contextWindow=32000)",
+  "manifest": "reports/context-compression/production-manifest-30.json",
+  "entries": [
+    {
+      "sampleId": "R1",
+      "tokensBefore": 30204,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 4626,
+      "summarySha256": "f73025e09eedb606560801b99aecdb2768fe20fa62e59a895e65b0a63b3a2503",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\00f53b5d-7e30-4050-9f5e-a10e734e4e37.jsonl"
+    },
+    {
+      "sampleId": "R2",
+      "tokensBefore": 31103,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 1404,
+      "summarySha256": "1e81f02bff2b10908a94266f60b26230ce4eeeb75fb8314857c27063244b2ce5",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\0a0e0685-070e-4e3b-97ad-be69295380cc.jsonl"
+    },
+    {
+      "sampleId": "R3",
+      "tokensBefore": 45866,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 2955,
+      "summarySha256": "151c09c770d82f639a53090cb1a9a1e4ceeb944e3f69b1e9b10930a5f2d25618",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\0bfe543a-386e-4d82-bd15-4c31ce1d1314.jsonl"
+    },
+    {
+      "sampleId": "R4",
+      "tokensBefore": 28758,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 1536,
+      "summarySha256": "0b2dfd804faad43c8be167f5f7fe589d5c8eefae9b575a4adf97dcf87e98de4f",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\124907f8-e555-4d5c-aa98-0b0b014ee745.jsonl"
+    },
+    {
+      "sampleId": "R5",
+      "tokensBefore": 29611,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 2070,
+      "summarySha256": "279a878b41a56e0830c7477e1b62100442805cc5d0d6271d2798965272422112",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\137258c7-f51d-42b3-b8f7-d17a3a4d1345.jsonl"
+    },
+    {
+      "sampleId": "R6",
+      "tokensBefore": 30397,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 2361,
+      "summarySha256": "2bfa072147f0febf38daa3928fbf6b0ce7f9b6066cb11d8a33a47b13b3831649",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\14060518-df05-4875-a97e-deb76a769246.jsonl"
+    },
+    {
+      "sampleId": "R7",
+      "tokensBefore": 28381,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 1215,
+      "summarySha256": "e41db7b5ad74ca0ef0c824450bd73b14ec17d17c5424b205543c314445dea71a",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\164fa506-c9be-4f4c-8fd1-647758b1ffdf.jsonl"
+    },
+    {
+      "sampleId": "R8",
+      "tokensBefore": 29072,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 1884,
+      "summarySha256": "ef32eee9d67faead696fc5ddb01177fae5580b31615a2448acf69673e5e5f92c",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\18ace6c2-3749-4ddf-9266-fd5b6feda464.jsonl"
+    },
+    {
+      "sampleId": "R9",
+      "tokensBefore": 75561,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 2422,
+      "summarySha256": "a792205a126a3d9b0e5f11660c81d42a67f9854b255790ba135b070f111cc3f3",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\1ada08f4-860a-4502-a6cf-34f692cbef5f.jsonl"
+    },
+    {
+      "sampleId": "R10",
+      "tokensBefore": 129959,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 5235,
+      "summarySha256": "a47989bbeea26b3c0f9d3ff51c11e474af7305b321ae93def3bd14acf0b8db9d",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\2026-08-12T12-58-18-419Z_10d2c531-c35a-44ae-9064-eeafe4107848.jsonl"
+    },
+    {
+      "sampleId": "R11",
+      "tokensBefore": 129959,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 5463,
+      "summarySha256": "c403618098491fa0fe5bf427e37ddd852d5ae7750784d288a7b06112b028b58e",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\2026-08-12T12-59-20-521Z_d18e461b-1f9e-481f-869b-ec9c87c1d6a0.jsonl"
+    },
+    {
+      "sampleId": "R12",
+      "tokensBefore": 129959,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 5559,
+      "summarySha256": "87d7a09c502a0515fab8ca284d72a897ddc673040f5096cf59da302a3fe46504",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\2026-08-12T14-37-50-139Z_b8e370c7-f291-4340-9a56-d9287b550899.jsonl"
+    },
+    {
+      "sampleId": "R13",
+      "tokensBefore": 129959,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 5922,
+      "summarySha256": "a39e8d19355847772de807912d25ee1fd08ea83468493836806545d88fec7e9d",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\2026-08-12T15-07-29-396Z_554203ce-750a-485d-9096-8502ef7e57eb.jsonl"
+    },
+    {
+      "sampleId": "R14",
+      "tokensBefore": 129959,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 5368,
+      "summarySha256": "cbec98686fccd24ee5c82d9b096089d09f505340efe1cc7fe2178513a85ad510",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\2026-08-12T15-47-34-555Z_86cb2530-4335-4155-8a89-6e59a68ee0e3.jsonl"
+    },
+    {
+      "sampleId": "R15",
+      "tokensBefore": 129959,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 5686,
+      "summarySha256": "a98830f44d1ceb73503ea902067b9d08b7315fef5e7d5730ae03634653025fd5",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\2026-08-12T15-59-47-730Z_14eec152-b3bc-4d78-8f09-a62330b2227f.jsonl"
+    },
+    {
+      "sampleId": "R16",
+      "tokensBefore": 129959,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 5601,
+      "summarySha256": "e5652ba64c271edbef3035aa4f771d4eb35e99aa9029159d50cc3439141cb654",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\2026-08-12T16-33-20-107Z_bd009fb4-d9a3-46ff-9918-b59aee4e1d7c.jsonl"
+    },
+    {
+      "sampleId": "R17",
+      "tokensBefore": 129959,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 5877,
+      "summarySha256": "dd5a95293051905b12216f0d8301c25bfe8fd1186644d86d14754635393a1085",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\2026-08-12T16-34-18-574Z_815d5026-f1ae-4011-846d-7e0728c26ccc.jsonl"
+    },
+    {
+      "sampleId": "R18",
+      "tokensBefore": 46607,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 1755,
+      "summarySha256": "c25cb0b66b3c1d9c6fb6d04df18685387891bc80906ec8bc34720bf50c0b9113",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\21e3bce7-cb56-4281-a0f3-c6a4480bcd1b.jsonl"
+    },
+    {
+      "sampleId": "R19",
+      "tokensBefore": 28516,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 1308,
+      "summarySha256": "18746572b4117e146f0927e2b72eac6a55884861ddc01b5613105830efc9aa7a",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\21e93fae-8b41-4cb4-bbcd-578e7e93e0b3.jsonl"
+    },
+    {
+      "sampleId": "R20",
+      "tokensBefore": 27523,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 978,
+      "summarySha256": "bbcb59fe3d7db7050a9999f6b068a3bc76b823594e77a7bf1b34ccd554d820d4",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\232534b2-7279-43fb-941b-3953aa5f7511.jsonl"
+    },
+    {
+      "sampleId": "R21",
+      "tokensBefore": 28106,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 3804,
+      "summarySha256": "156111e1aadc8a88e3d8d2061bac754fcc4a5a574c3f47890f440736ca064dd7",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\253337eb-da69-4001-b145-c61ff3b4d05b.jsonl"
+    },
+    {
+      "sampleId": "R22",
+      "tokensBefore": 29189,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 1858,
+      "summarySha256": "ddaaccb5dd071ca22926951191255d2c04b183269f3a7376e3fcc11bcd8d3e61",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\257e44b3-a255-4a79-a3b6-cd1eb3c7a1e5.jsonl"
+    },
+    {
+      "sampleId": "R23",
+      "tokensBefore": 28833,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 1739,
+      "summarySha256": "2ae3d12f49d909f9fe517ec875b80c09489a5680a1a557358928a64b010a0f27",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\2ce275a9-d577-4d8d-989b-9d70a586bed9.jsonl"
+    },
+    {
+      "sampleId": "R24",
+      "tokensBefore": 30288,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 5524,
+      "summarySha256": "1cc91b33cc62bd8f9dcbfc04fbee2ab15c9b646f29fe5ba3357d5eb6297e6bcf",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\307d3416-3281-4343-8715-041b651eccc6.jsonl"
+    },
+    {
+      "sampleId": "R25",
+      "tokensBefore": 40262,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 2008,
+      "summarySha256": "3171299edfa93df3a9198b64c59b90cd76e662c5d88d9108474ce655067166f9",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\311ac4ac-fb35-492a-be3a-87818978baa6.jsonl"
+    },
+    {
+      "sampleId": "R26",
+      "tokensBefore": 33194,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 2256,
+      "summarySha256": "029e223fbe90074dd162fee7e4e58d0357e9a230416e9aa7749a19c2d6419c48",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\316d578c-da49-4572-815e-8a0806386865.jsonl"
+    },
+    {
+      "sampleId": "R27",
+      "tokensBefore": 30724,
+      "compressionTier": "tier4",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 1342,
+      "summarySha256": "939401eae72fd3c8e41619f04ceaf78e13037ce65f51b5c680daf302be211bd9",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\31bbe3cb-4a06-4eea-9c37-d1ab1a658d8b.jsonl"
+    },
+    {
+      "sampleId": "R28",
+      "tokensBefore": 29468,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 1437,
+      "summarySha256": "bc77db8fd2f6bb7664e241383e46f86cf0bbbb15e7615c56660bd1b584dab4af",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\34473f18-ce12-4a17-8bcf-94553d528ab4.jsonl"
+    },
+    {
+      "sampleId": "R29",
+      "tokensBefore": 28484,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 4335,
+      "summarySha256": "37d34d6e972144521ca66f74552ac33bb026f8e21fb5903aba759aa81963d809",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\354002f9-304f-49d5-9f5c-055d2c307593.jsonl"
+    },
+    {
+      "sampleId": "R30",
+      "tokensBefore": 28585,
+      "compressionTier": "tier3",
+      "artifactSchemaVersion": 1,
+      "summaryChars": 1714,
+      "summarySha256": "26b6b3cae8d43d02319c9b0d828fc4580e2ff48115b4a451ee0a2965ad675fca",
+      "file": "C:\\Users\\27933/.openclaw/agents\\main\\sessions\\378c1727-87f4-4682-9897-83bd1f9dbac2.jsonl"
+    }
+  ],
+  "fixedAcceptanceInput": {
+    "manifest": "reports\\context-compression\\production-manifest-30.json",
+    "manifestSha256": "6677b500a08c1ec3e4c1c474096d005f940726d7ec088158c6df8456d21fc82c",
+    "pairedSummaries": "reports\\context-compression\\production-summaries-30-generated.jsonl",
+    "pairedSummariesSha256": "9a7021be463d41d13dde93fbb5a65f7a3d6794cb696fcc877d18ec9ce6d09957",
+    "recordedAt": "2026-08-18"
+  }
+}

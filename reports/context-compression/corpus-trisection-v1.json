@@ -1,0 +1,332 @@
+{
+  "schema": "corpus-trisection/v1",
+  "generatedAt": "2026-08-24T17:24:02.978Z",
+  "sessionRoot": "C:\\Users\\27933\\.openclaw\\agents\\main\\sessions",
+  "filters": {
+    "minBytes": 20480,
+    "minEntries": 12,
+    "excludedRegression": 30
+  },
+  "ordering": "sha256(basename) ascending; deterministic and frozen",
+  "candidateCount": 43,
+  "sets": {
+    "regression": {
+      "count": 30,
+      "manifest": "reports/context-compression/production-manifest-30.json",
+      "policy": "regression-only; never optimized against"
+    },
+    "optimization": {
+      "count": 28,
+      "policy": "iterable by the optimization loop",
+      "samples": [
+        {
+          "id": "O1",
+          "basename": "d1974f40-ee16-44c9-956f-246fe2cc1a46.jsonl",
+          "sha256": "106b448e84cab5179e9d7a0cdd86ab365de25eebb684fd152e1f57a5ef47af66",
+          "size": 271772,
+          "entryCount": 31
+        },
+        {
+          "id": "O2",
+          "basename": "59ddbac2-0b6c-42c3-9afe-c14ab8c741d6.jsonl",
+          "sha256": "143eec6454b8498b0b873be3a1cccd38280e7ea67e5a3f6004d469950bbbcc78",
+          "size": 50526,
+          "entryCount": 19
+        },
+        {
+          "id": "O3",
+          "basename": "e620863e-fc1b-4b9c-9baf-d310a7180327.jsonl",
+          "sha256": "1ef167a48ae7c76a90b3c887bcf23b9b73f2941c29ff2c6afcf173c94e6a8ba7",
+          "size": 114045,
+          "entryCount": 17
+        },
+        {
+          "id": "O4",
+          "basename": "95c28a03-cf07-4a24-b73d-6fec1c297987.jsonl",
+          "sha256": "23745a18bdc73f6da08d1d17c05db1630c25a3eb0ea4863018c80aff81144067",
+          "size": 29294,
+          "entryCount": 14
+        },
+        {
+          "id": "O5",
+          "basename": "dc621e93-20b0-44da-92ba-c9dfe1437261.jsonl",
+          "sha256": "26b72f742c96ff36be62117ce040b77f46f6af0a9e88185d6608fe97d4f60878",
+          "size": 33337,
+          "entryCount": 24
+        },
+        {
+          "id": "O6",
+          "basename": "ea7c7c63-5c1f-4aba-b5c4-76b64078c68b.jsonl",
+          "sha256": "28f135b48dd0666f560b917fcbc5128cc0bf9e435cd80025a5f7efa19517d627",
+          "size": 82940,
+          "entryCount": 29
+        },
+        {
+          "id": "O7",
+          "basename": "6cfff613-d81a-4618-8ec5-98b6e81481af.jsonl",
+          "sha256": "348632ace94ce08b5e4f3aabebbfc19adc9a85c4f6b2d7896ffbb407cccbbde3",
+          "size": 87266,
+          "entryCount": 30
+        },
+        {
+          "id": "O8",
+          "basename": "d7761bd3-cb94-460d-80b3-b98fb7c5ff11.jsonl",
+          "sha256": "3aa3db67284f888a49d376620703fd1b7e30bcc04fa60abf1ef58890363ecac8",
+          "size": 87111,
+          "entryCount": 81
+        },
+        {
+          "id": "O9",
+          "basename": "ca3ef6e3-963f-4ff6-ab37-24f4d764bd83.jsonl",
+          "sha256": "3ab3a605654acbd19b043727c132caff41f8c9d4c9f2c42e6b6f1425b4aee26c",
+          "size": 50592,
+          "entryCount": 21
+        },
+        {
+          "id": "O10",
+          "basename": "ae2b6b94-12f6-4504-a507-e082b416a367.jsonl",
+          "sha256": "3bee15a94d6123a3fa86598d2a0e1ccef7c511d8cf1e8c9e3f4d0d770d177cd4",
+          "size": 72168,
+          "entryCount": 29
+        },
+        {
+          "id": "O11",
+          "basename": "b9a03646-b336-41cb-9ce8-b357a9ceaa82.jsonl",
+          "sha256": "3d178b27faecfea0ea1b6b428e48b0e14ae090abc02004c5a5bb98c8a8b393b0",
+          "size": 161888,
+          "entryCount": 32
+        },
+        {
+          "id": "O12",
+          "basename": "1198279f-461d-4da5-8435-39a98db6560f.jsonl",
+          "sha256": "40880b513e250e4f189c17b2a33f3cbdf8e098a9f9b8d21cdc219c1dc744c6d3",
+          "size": 28240,
+          "entryCount": 26
+        },
+        {
+          "id": "O13",
+          "basename": "71ef7983-0fc6-4ccb-a51f-6722540ce6e8.jsonl",
+          "sha256": "42f47a210723658e773d2fba94044d93e84e2e95f81f18d3bd92c5a4c598fc5c",
+          "size": 177170,
+          "entryCount": 54
+        },
+        {
+          "id": "O14",
+          "basename": "83556e54-127b-43bd-ae55-931007496df0.jsonl",
+          "sha256": "487911a96feae494b45aca0d1eb318649766d62d6ee97862a5e233547f8cfc46",
+          "size": 192046,
+          "entryCount": 20
+        },
+        {
+          "id": "O15",
+          "basename": "57c00668-baf0-44d4-8cb3-531fda2a6667.jsonl",
+          "sha256": "4a2b3d452911a3ac6db0855376a329a22f0039da674062fc39f292c27658b6cd",
+          "size": 592048,
+          "entryCount": 242
+        },
+        {
+          "id": "O16",
+          "basename": "c52b52ba-d71a-4b7f-93aa-acd4fb823c0e.jsonl",
+          "sha256": "5c98866edb3e7dc0d4780a9021ffdcaeca0808fbcd18e3950287269a1765f963",
+          "size": 110870,
+          "entryCount": 79
+        },
+        {
+          "id": "O17",
+          "basename": "a71c8807-3050-490c-9a46-0dfe78140829.jsonl",
+          "sha256": "738a54f02473efe7838a0d3e39bf3407c5fae51a101c6e23099d6fed87b03959",
+          "size": 25782,
+          "entryCount": 18
+        },
+        {
+          "id": "O18",
+          "basename": "3a243349-94eb-41a6-9b85-e5460f8d07dc.jsonl",
+          "sha256": "74fb660d2b72bf570074fd609419b49bd766459a73fc87d38b75a7da5b73f7d7",
+          "size": 49023,
+          "entryCount": 28
+        },
+        {
+          "id": "O19",
+          "basename": "8db52789-2c98-41e0-afe9-288d9be9eae9.jsonl",
+          "sha256": "759d53f327a1e3a006874423570070359511f09236d2382900606e5dcdfa7f4a",
+          "size": 35621,
+          "entryCount": 28
+        },
+        {
+          "id": "O20",
+          "basename": "e274ee3f-6ae2-4a29-84a9-c27e7b9a8e81.jsonl",
+          "sha256": "7b5cbb8c5aeb554a56ecfd9469d1dfe786d86c9899befd7355085cc2eb84d948",
+          "size": 30410,
+          "entryCount": 18
+        },
+        {
+          "id": "O21",
+          "basename": "85b13b4b-7a46-4c44-a909-fa9a6363a3c5.jsonl",
+          "sha256": "80a56f0993f3301c0dbdf21b1456b02dcb5fcb97c9f23d651cb39a22347bc9a2",
+          "size": 60398,
+          "entryCount": 14
+        },
+        {
+          "id": "O22",
+          "basename": "d8292aa3-7c02-4a5b-a458-2aac6b2898c7.jsonl",
+          "sha256": "8181c262dba73cac12d0ac5baaf2fe0a6b9d8f23886572ca12016edbb6b9433b",
+          "size": 29154,
+          "entryCount": 32
+        },
+        {
+          "id": "O23",
+          "basename": "c861649a-1b19-4b27-8400-5489e14530f1.jsonl",
+          "sha256": "94b9674034d068d11474db418635c1e25ab5b89183f530f8b596b07be67f9fa6",
+          "size": 21665,
+          "entryCount": 36
+        },
+        {
+          "id": "O24",
+          "basename": "da34f3c8-48ce-46b5-8ea0-92e6e622f69e.jsonl",
+          "sha256": "9530d71e519795f360a51c7574a73daede337f9c1fb36713597531d77698debf",
+          "size": 56591,
+          "entryCount": 22
+        },
+        {
+          "id": "O25",
+          "basename": "b11cc062-3101-4706-bb90-dda6cb1222a3.jsonl",
+          "sha256": "9b44b741500f24965e9f9ff38fbd104d47e3d39eed581b19900a7e428ea1a034",
+          "size": 189378,
+          "entryCount": 39
+        },
+        {
+          "id": "O26",
+          "basename": "83481e52-7397-4f07-8ac3-b9059b3a1687.jsonl",
+          "sha256": "a77e9d35575c82161a061c4feaa4d6d04cf7abadfff3d6f8b6ec07193815a028",
+          "size": 37200,
+          "entryCount": 19
+        },
+        {
+          "id": "O27",
+          "basename": "5ce454df-b1b7-4c7e-8f96-062bb63b571e.jsonl",
+          "sha256": "a838710fb58c5402024d19d1f8d3f805ac38cfaf49d256548c008fe3662f9519",
+          "size": 53955,
+          "entryCount": 27
+        },
+        {
+          "id": "O28",
+          "basename": "8dc3502e-0d58-4e77-908d-80b13184fe51.jsonl",
+          "sha256": "ab2adea946a855616e219e579eb9692368f3a1926e8f5e906c029aa5d5b5b302",
+          "size": 197601,
+          "entryCount": 72
+        }
+      ]
+    },
+    "holdout": {
+      "count": 15,
+      "policy": "FROZEN: terminal evaluation only; per-sample inspection forbidden before the final round",
+      "samples": [
+        {
+          "id": "H1",
+          "basename": "5e7cb546-37a0-4e21-b14a-51aa9d593c80.jsonl",
+          "sha256": "ab8883caec6d39ce7b40e0586229d9a3b3e67a627df173046f2c4d5a69d7f64f",
+          "size": 28767,
+          "entryCount": 20
+        },
+        {
+          "id": "H2",
+          "basename": "b337ba0c-56ab-44e5-b129-841c29f5b2f6.jsonl",
+          "sha256": "b2f1bb5784cab31f5e27a033987b527fcf9a0c82a1d94847af9159be98fd55ea",
+          "size": 33276,
+          "entryCount": 18
+        },
+        {
+          "id": "H3",
+          "basename": "59def8f2-ecbc-4145-bb07-b22ce4d85af1.jsonl",
+          "sha256": "b52253aeead654d971752d54e059b9651687f17a28c305702063386e6984d425",
+          "size": 66482,
+          "entryCount": 23
+        },
+        {
+          "id": "H4",
+          "basename": "6ebc524c-fe37-4e9b-9cdf-0f7ca62e491c.jsonl",
+          "sha256": "ce9cd29786d997cbb2f48ed003f1ef632fbb79ba25dc07a9da35ab0c690d8e58",
+          "size": 24997,
+          "entryCount": 14
+        },
+        {
+          "id": "H5",
+          "basename": "68a4d0a2-527b-4b2a-9ff7-92baadd75847.jsonl",
+          "sha256": "d6a26279e83152a20c0fcc6224846ee1a54e065be142eb764bebb66e0ceeb9ea",
+          "size": 60514,
+          "entryCount": 26
+        },
+        {
+          "id": "H6",
+          "basename": "654701f0-0999-4826-96b5-8e328d810c76.jsonl",
+          "sha256": "dec4695ef4448f2388cb5d887df38d1710102bd8285d38f54a9ff93764567394",
+          "size": 47396,
+          "entryCount": 56
+        },
+        {
+          "id": "H7",
+          "basename": "a0500413-18d3-4300-96d5-2d87c4007534.jsonl",
+          "sha256": "e83f73ca2b3830ad5459ef21e0d454ee0343c9a66a6efb50cce23b8d98d82cbb",
+          "size": 29044,
+          "entryCount": 30
+        },
+        {
+          "id": "H8",
+          "basename": "c8a855de-d7cd-40a8-8151-e6b264af3650.jsonl",
+          "sha256": "eb60abd246a1d41ffff6e993e7a392449bc2ff7f7bd13468ab356a5ebecdaa85",
+          "size": 158296,
+          "entryCount": 48
+        },
+        {
+          "id": "H9",
+          "basename": "ceed6bc4-79bb-4620-8fc8-f2dcd7c76d44.jsonl",
+          "sha256": "f007797f6d15a6c6257bd38671fa86455fb95a1b9b5909e0d79eb0a0abb3282a",
+          "size": 61694,
+          "entryCount": 24
+        },
+        {
+          "id": "H10",
+          "basename": "2026-08-12T17-05-10-927Z_a160d602-e1fd-4404-9a97-080448a8d39b.jsonl",
+          "sha256": "f1cf6395d4979af5965d8411bb22e2943bdd610ce43608054841afeb94a1d5e8",
+          "size": 585566,
+          "entryCount": 234
+        },
+        {
+          "id": "H11",
+          "basename": "726d9fec-b44a-42cb-a1e5-c8ef6c6c4d5f.jsonl",
+          "sha256": "f7e3187a4784fdb31f28d2e407137840e1b24e1b3893c1a93de6080b00822bab",
+          "size": 33332,
+          "entryCount": 31
+        },
+        {
+          "id": "H12",
+          "basename": "d0c7356c-5a8c-426f-ab5a-6fa81c31cbfe.jsonl",
+          "sha256": "fa95acb768e4c0e9a371754f05d2d233aa8cf48382f750db2282ac05abcf9528",
+          "size": 39495,
+          "entryCount": 22
+        },
+        {
+          "id": "H13",
+          "basename": "fff58a07-24c5-4f95-800c-e7123bb6eb2c.jsonl",
+          "sha256": "fcc3d96679ea47b4e76c45ceefe3b5bc8c804459eb6ccb65c28fbc0824619604",
+          "size": 63166,
+          "entryCount": 41
+        },
+        {
+          "id": "H14",
+          "basename": "c7ca96bd-b796-410b-bbc2-2067dd81e769.jsonl",
+          "sha256": "fe4433630ff5f9eb5c983b9bae95070bfa60409e617cdac70f9569f2c5a7f5cd",
+          "size": 95619,
+          "entryCount": 21
+        },
+        {
+          "id": "H15",
+          "basename": "5a063c53-cec0-4f97-a8a7-b6671d5f39c0.jsonl",
+          "sha256": "fe53d0c487fd1a7d334fdf71e45d305cbb3de3c4928f8655517b619c5033540f",
+          "size": 77571,
+          "entryCount": 14
+        }
+      ]
+    }
+  }
+}

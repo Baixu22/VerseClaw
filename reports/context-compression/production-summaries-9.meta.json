@@ -1,0 +1,72 @@
+{
+  "schema": "p6-production-summaries/v1",
+  "generatedAt": "2026-08-18T00:00:00Z",
+  "count": 9,
+  "source": "compaction entries extracted from OpenClaw session transcripts",
+  "entries": [
+    {
+      "sampleId": "R1",
+      "basename": "2026-08-12T12-59-20-521Z_d18e461b-1f9e-481f-869b-ec9c87c1d6a0.jsonl",
+      "compactionLine": 239,
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "sampleId": "R2",
+      "basename": "2026-08-12T14-37-50-139Z_b8e370c7-f291-4340-9a56-d9287b550899.jsonl",
+      "compactionLine": 239,
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "sampleId": "R3",
+      "basename": "2026-08-12T15-47-34-555Z_86cb2530-4335-4155-8a89-6e59a68ee0e3.jsonl",
+      "compactionLine": 239,
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "sampleId": "R4",
+      "basename": "2026-08-12T15-59-47-730Z_14eec152-b3bc-4d78-8f09-a62330b2227f.jsonl",
+      "compactionLine": 239,
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "sampleId": "R5",
+      "basename": "2026-08-12T16-33-20-107Z_bd009fb4-d9a3-46ff-9918-b59aee4e1d7c.jsonl",
+      "compactionLine": 239,
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "sampleId": "R6",
+      "basename": "2026-08-12T16-34-18-574Z_815d5026-f1ae-4011-846d-7e0728c26ccc.jsonl",
+      "compactionLine": 239,
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "sampleId": "R7",
+      "basename": "2026-08-12T17-05-10-927Z_a160d602-e1fd-4404-9a97-080448a8d39b.jsonl",
+      "compactionLine": 239,
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "sampleId": "R8",
+      "basename": "d1974f40-ee16-44c9-956f-246fe2cc1a46.jsonl",
+      "compactionLine": 36,
+      "summarySha256": "c6dce21d7dfbc77dc18836e9ec2672e13ffbd1a1639a137992e2a2152981fd18",
+      "summaryChars": 5233
+    },
+    {
+      "sampleId": "R9",
+      "basename": "2026-08-12T12-58-18-419Z_10d2c531-c35a-44ae-9064-eeafe4107848.jsonl",
+      "compactionLine": 239,
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    }
+  ],
+  "manifest": "reports/context-compression/production-compaction-manifest-9.json"
+}
