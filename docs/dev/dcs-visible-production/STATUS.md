@@ -10,10 +10,10 @@
 | **sourceGapDoc** | `team/claude/DCS-VISIBLE-FEATURES-PRODUCTION-GAP.md` |
 | **codeBaseline** | `ClawX-maturity-p0` @ `main` / `60931957b`（启动时复核 HEAD） |
 | **createdAt** | 2026-07-22 |
-| **updatedAt** | 2026-07-22 |
-| **phase** | `M1/P2 engineering closeout` (all auto tasks done; P2-01 human-blocked) |
+| **updatedAt** | 2026-08-21 |
+| **phase** | `M1/P2 engineering closeout`; TF-0074 `done`; P2-01 human-blocked |
 | **activeTaskId** | — |
-| **nextTaskId** | `TASK-P2-01` (blocked: humans) |
+| **nextTaskId** | `TASK-P2-01` (blocked: humans); any successor TF requires a separate decision |
 | **owner** | Claude |
 | **hardLocks** | `defaultOn=false` 直至 TF-0006 + productApproved；禁止 SEKB auto writeback；禁止用翻默认“证明可用”；packaging 不 auto-flip |
 
@@ -29,7 +29,7 @@
 
 ### status 枚举
 
-`backlog` | `ready` | `in_progress` | `blocked` | `done` | `cancelled` | `deferred`
+`backlog` | `ready` | `in_progress` | `review_needed` | `blocked` | `done` | `cancelled` | `deferred`
 
 ### milestone 枚举
 
