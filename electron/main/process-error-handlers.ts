@@ -14,8 +14,29 @@ export type ProcessErrorReporter = {
   showErrorBox: (title: string, content: string) => void;
 };
 
+export type UncaughtExceptionDisposition = 'ignored' | 'fatal';
+
+const guardedOutputStreams = new WeakSet<object>();
+
 function errorMessage(reason: unknown): string {
   return reason instanceof Error ? reason.message : String(reason);
+}
+
+export function isBrokenPipeError(error: unknown): boolean {
+  return (error as NodeJS.ErrnoException | null)?.code === 'EPIPE';
+}
+
+/** Prevent a closed parent terminal from escalating console writes to fatal dialogs. */
+export function installOutputStreamErrorHandlers(
+  streams: Array<Pick<NodeJS.WriteStream, 'on'>> = [process.stdout, process.stderr],
+): void {
+  for (const stream of streams) {
+    if (guardedOutputStreams.has(stream)) continue;
+    guardedOutputStreams.add(stream);
+    stream.on('error', (error) => {
+      if (!isBrokenPipeError(error)) throw error;
+    });
+  }
 }
 
 /**
@@ -24,13 +45,18 @@ function errorMessage(reason: unknown): string {
  * exit, so the user is not left with a silent quit. This function does not
  * exit — the caller decides the exit path.
  */
-export function handleUncaughtException(reporter: ProcessErrorReporter, error: unknown): void {
+export function handleUncaughtException(
+  reporter: ProcessErrorReporter,
+  error: unknown,
+): UncaughtExceptionDisposition {
+  if (isBrokenPipeError(error)) return 'ignored';
   const message = errorMessage(error);
   reporter.logger.error('Uncaught exception in main process:', error);
   reporter.showErrorBox(
     'Verse Claw encountered a fatal error',
     `${message}\n\nLog file: ${reporter.logger.getLogFilePath() ?? '(log file unavailable)'}`,
   );
+  return 'fatal';
 }
 
 /**

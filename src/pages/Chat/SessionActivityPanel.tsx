@@ -1,311 +1,521 @@
-import { Activity, Bot, CheckCircle2, CircleAlert, Clock3, Cpu, FilePlus2, GitBranch, GitCommitHorizontal, Goal, ListChecks, Loader2, Monitor, Network, RotateCcw, TerminalSquare } from 'lucide-react';
-import { useEffect, useState } from 'react';
+/**
+ * Session status card — the chat toolbar's 会话状态 dropdown.
+ *
+ * ## What it shows, and why only this
+ *
+ * Four sections, in this order, because that is the order you ask the questions
+ * in: what state is the workspace in, what is the plan, who is working, what is
+ * running.
+ *
+ *   环境      — the workspace's Git state: branch, changed lines, conflicts.
+ *   开发任务  — the run's own plan.
+ *   子 Agent  — the workers this run spawned, each openable.
+ *   进程      — the shell processes this run launched, each openable.
+ *
+ * Everything is live host state. There is no fixture path and no section that
+ * renders a placeholder: a section with nothing to report is absent, because an
+ * empty section spends vertical space to say nothing.
+ *
+ * ## Sourcing
+ *
+ * Git comes from the session-activity snapshot (`git.status()`). The plan and the
+ * processes come from the chat runtime run state — the same event stream the
+ * transcript reads — via `promoteRunSurfaces` and `projectRunProcesses`, so the
+ * plan here and the plan in the conversation cannot drift, and a process row and
+ * its output page are the same object. Sub-agents come from
+ * `agent:subagent-lifecycle` through the snapshot.
+ *
+ * Processes deliberately do NOT come from `SessionActivitySnapshot.processes`:
+ * that projection is redacted by contract ("Never carries raw argv, command,
+ * cwd, or env text"), so it can list a process but never show one.
+ *
+ * ## Styling
+ *
+ * All of it is in styles/codex-session-activity.css, which resolves its colour
+ * through the semantic roles in codex-tokens.css like every other panel in the
+ * app. Inline Tailwind colour/spacing utilities are what made this card read as
+ * foreign next to the composer menus; there are none here. Read that file's
+ * header for the layout contract before adding a row.
+ */
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/lib/utils';
+import { ChevronRight, FilePlus2, GitBranch, GitCommitHorizontal, Loader2, RotateCcw, Target, TerminalSquare } from 'lucide-react';
+import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import type { SessionActivityGoal, SessionActivityLineage, SessionActivityProcess, SessionActivitySnapshot, SessionActivityTask, SessionActivityTerminal } from '@shared/types/session-activity';
+import { ToolUiPlanView } from '@/components/tool-ui/plan-view';
+import type { RunProcessSurface } from '@/components/tool-ui/run-surfaces';
+import type { RunPlanSurface } from '@/pages/Chat/run-surface-promotion';
+import { cn } from '@/lib/utils';
+import { subagentIdentity } from '@shared/subagent-identity';
+import type {
+  SessionActivitySnapshot,
+  SessionActivitySubagent,
+} from '@shared/types/session-activity';
 
 type SessionActivityPanelProps = {
   snapshot: SessionActivitySnapshot;
+  /** The run's plan, projected from the same events the transcript renders. */
+  plan?: RunPlanSurface | null;
+  /** Shell processes this run launched, running ones included. */
+  processes?: RunProcessSurface[];
   compact?: boolean;
   className?: string;
   onOpenRecovery?: () => void;
   onCreateMemoryDraft?: () => void;
+  /** Opens the Git review tab. */
+  onOpenEnvironment?: () => void;
+  /** Opens one worker's own page, keyed by its child session. */
+  onOpenSubagent?: (childSessionKey: string) => void;
+  /** Opens one process's own page, keyed by its launching tool call. */
+  onOpenProcess?: (processId: string, command?: string) => void;
   showGit?: boolean;
   showCommands?: boolean;
 };
 
-function formatDuration(startedAt: number | null | undefined, endedAt: number | null | undefined, now: number): string {
-  if (!startedAt) return '';
-  const elapsed = Math.max(0, (endedAt ?? now) - startedAt);
-  const seconds = Math.floor(elapsed / 1000);
-  if (seconds < 60) return `${seconds}s`;
-  const minutes = Math.floor(seconds / 60);
-  return `${minutes}m ${seconds % 60}s`;
+/**
+ * Five visual states, one attribute. The stylesheet owns the colours, so a new
+ * runtime status cannot arrive with a hand-picked hue attached.
+ */
+type RowState = 'idle' | 'running' | 'ok' | 'warn' | 'error';
+
+function rowState(status: string): RowState {
+  if (status === 'running' || status === 'started' || status === 'starting') return 'running';
+  if (status === 'completed' || status === 'verified' || status === 'exited') return 'ok';
+  if (status === 'review' || status === 'waiting_approval' || status === 'waiting' || status === 'paused') return 'warn';
+  if (status === 'failed' || status === 'error' || status === 'blocked' || status === 'aborted' || status === 'killed' || status === 'lost') return 'error';
+  return 'idle';
 }
 
-function statusIcon(status: SessionActivitySnapshot['session']['status']) {
-  if (status === 'running' || status === 'waiting_approval') return <Loader2 className="h-3.5 w-3.5 animate-spin" />;
-  if (status === 'failed' || status === 'aborted') return <CircleAlert className="h-3.5 w-3.5" />;
-  if (status === 'completed') return <CheckCircle2 className="h-3.5 w-3.5" />;
-  return <Activity className="h-3.5 w-3.5" />;
+function formatCount(value: number): string {
+  return value.toLocaleString();
 }
 
-function statusClass(status: string): string {
-  if (status === 'running' || status === 'started' || status === 'sleeping' || status === 'exiting') return 'text-sky-700 dark:text-sky-400';
-  if (status === 'failed' || status === 'error' || status === 'blocked' || status === 'killed' || status === 'lost') return 'text-red-700 dark:text-red-400';
-  if (status === 'completed' || status === 'verified' || status === 'exited') return 'text-emerald-700 dark:text-emerald-400';
-  if (status === 'review' || status === 'waiting_approval' || status === 'waiting' || status === 'paused') return 'text-amber-700 dark:text-amber-400';
-  return 'text-muted-foreground';
+/**
+ * One titled group. The title sits in the gutter; actions hug the right edge.
+ *
+ * `title` is optional: the plan section's content is a card that already carries
+ * its own header (progress ring, `n/total`, collapse chevron), and stacking the
+ * panel's head on top of it produced the count twice.
+ */
+function Section({
+  title,
+  summary,
+  actions,
+  testId,
+  children,
+}: {
+  title?: string;
+  summary?: React.ReactNode;
+  actions?: React.ReactNode;
+  testId: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="codex-session-activity__section" data-testid={testId}>
+      {title != null && (
+        <div className="codex-session-activity__section-head">
+          <span className="codex-session-activity__section-title">{title}</span>
+          {actions
+            ? <span className="codex-session-activity__section-actions">{actions}</span>
+            : summary != null
+              ? <span className="codex-session-activity__section-summary">{summary}</span>
+              : null}
+        </div>
+      )}
+      <div className="codex-session-activity__section-body">{children}</div>
+    </section>
+  );
 }
 
-function taskLabel(task: SessionActivityTask, t: (key: string, options?: Record<string, unknown>) => string): string {
-  return task.title || t(`sessionActivity.taskKinds.${task.kind}`);
+/**
+ * One row. `onOpen` makes it a button; the trailing chevron column exists either
+ * way so values keep a single right edge across sections.
+ */
+function Row({
+  icon,
+  label,
+  sublabel,
+  value,
+  state,
+  tall,
+  title,
+  onOpen,
+  testId,
+}: {
+  icon?: React.ReactNode;
+  label: React.ReactNode;
+  sublabel?: React.ReactNode;
+  value?: React.ReactNode;
+  state?: RowState;
+  tall?: boolean;
+  title?: string;
+  onOpen?: () => void;
+  testId?: string;
+}) {
+  const body = (
+    <>
+      <span className="codex-session-activity__row-icon">{icon}</span>
+      {sublabel != null ? (
+        <span className="codex-session-activity__row-stack">
+          <span className="codex-session-activity__row-label">{label}</span>
+          <span className="codex-session-activity__row-sublabel">{sublabel}</span>
+        </span>
+      ) : (
+        <span className="codex-session-activity__row-label">{label}</span>
+      )}
+      <span className="codex-session-activity__row-value" data-state={state}>{value}</span>
+      <span className="codex-session-activity__row-trail">
+        {onOpen ? <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" /> : null}
+      </span>
+    </>
+  );
+  const className = cn(
+    'codex-session-activity__row',
+    tall && 'is-tall',
+    onOpen && 'is-interactive',
+  );
+  if (!onOpen) {
+    return <div className={className} data-testid={testId} title={title}>{body}</div>;
+  }
+  return (
+    <button type="button" className={className} onClick={onOpen} data-testid={testId} title={title}>
+      {body}
+    </button>
+  );
 }
 
-function terminalLabel(terminal: SessionActivityTerminal, t: (key: string) => string): string {
-  if (terminal.kind === 'agentCommand') return t('sessionActivity.terminals.agentCommand');
-  if (terminal.kind === 'webPreviewDevServer') return t('sessionActivity.terminals.webPreview');
-  return t('sessionActivity.terminals.interactive');
+function HeaderAction({
+  label,
+  icon,
+  onClick,
+  testId,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  testId: string;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          className="codex-session-activity__action"
+          aria-label={label}
+          onClick={onClick}
+          data-testid={testId}
+        >
+          {icon}
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="left" collisionPadding={8}>{label}</TooltipContent>
+    </Tooltip>
+  );
 }
 
-function goalLabel(goal: SessionActivityGoal, t: (key: string, options?: Record<string, unknown>) => string): string {
-  return goal.label || t('sessionActivity.goalKinds.mission');
+function subagentTestId(agent: SessionActivitySubagent): string {
+  return `session-activity-subagent-${agent.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
 }
 
-function processLabel(process: SessionActivityProcess, t: (key: string) => string): string {
-  if (process.kind === 'supervisor') return process.label || t('sessionActivity.processKinds.supervisor');
-  if (process.kind === 'goalOwned') return process.label || t('sessionActivity.processKinds.goalOwned');
-  return process.label || t('sessionActivity.processKinds.bash');
-}
-
-function lineageLabel(entry: SessionActivityLineage, t: (key: string) => string): string {
-  return entry.role || t(`sessionActivity.lineage.${entry.kind}`);
+/** The command's leading word or two — a chip label, not the whole invocation. */
+function commandDigest(command: string): string {
+  const compact = command.replace(/\s+/g, ' ').trim();
+  return compact.length <= 42 ? compact : `${compact.slice(0, 41)}…`;
 }
 
 export function SessionActivityPanel({
   snapshot,
+  plan,
+  processes = [],
   compact = false,
   className,
   onOpenRecovery,
   onCreateMemoryDraft,
+  onOpenEnvironment,
+  onOpenSubagent,
+  onOpenProcess,
   showGit = true,
   showCommands = true,
 }: SessionActivityPanelProps) {
   const { t } = useTranslation('chat');
-  const [now, setNow] = useState(() => Date.now());
-  const runActive = snapshot.session.status === 'running' || snapshot.session.status === 'waiting_approval';
-  useEffect(() => {
-    if (!runActive) return;
-    const timer = window.setInterval(() => setNow(Date.now()), 1_000);
-    return () => window.clearInterval(timer);
-  }, [runActive, snapshot.session.startedAt]);
-  const hasGit = showGit && Boolean(snapshot.git && snapshot.git.isRepository && !snapshot.git.clean);
-  const hasTasks = snapshot.tasks.length > 0;
+
+  const git = showGit ? snapshot.git : null;
+  const hasGit = Boolean(git && git.isRepository);
+  const hasPlan = (plan?.todos.length ?? 0) > 0;
   const hasSubagents = snapshot.subagents.length > 0;
-  const hasGoals = snapshot.goals.length > 0;
-  const hasProcesses = snapshot.processes.length > 0;
-  const hasLineage = snapshot.lineage.length > 0;
-  const hasTerminals = showCommands && snapshot.terminals.length > 0;
+  const visibleProcesses = useMemo(
+    () => (showCommands ? processes : []),
+    [processes, showCommands],
+  );
+  /**
+   * Host-projected processes with no runtime counterpart.
+   *
+   * When both sources describe the same process the runtime row wins: it carries
+   * the real command and can open its output, where the snapshot row is redacted
+   * by contract. Keyed by id, which both sides derive from the launching call.
+   */
+  const snapshotOnlyProcesses = useMemo(() => {
+    if (!showCommands) return [];
+    const runtimeIds = new Set(visibleProcesses.map((entry) => entry.id));
+    return snapshot.processes.filter((entry) => !runtimeIds.has(entry.id));
+  }, [showCommands, snapshot.processes, visibleProcesses]);
+  const hasProcesses = visibleProcesses.length > 0 || snapshotOnlyProcesses.length > 0;
+
+  /* The recovery affordance is not a section — it is an action on the card. It
+   * appears only when there is something to recover, which is the same signal
+   * that used to gate a Continuity section nobody asked for. */
   const hasContinuity = snapshot.continuity.queueCount > 0
     || Boolean(snapshot.continuity.contextPressure && snapshot.continuity.contextPressure !== 'low')
     || Boolean(snapshot.continuity.checkpoint)
     || Boolean(snapshot.continuity.blockedReason);
-  const hasSession = snapshot.session.status !== 'idle' || Boolean(snapshot.session.phase);
-  if (!hasSession && !hasGit && !hasTasks && !hasSubagents && !hasGoals && !hasProcesses && !hasLineage && !hasTerminals && !hasContinuity) return null;
+  const alert = snapshot.session.error || snapshot.continuity.blockedReason || null;
 
-  const changes = snapshot.git?.changes.length ?? 0;
-  const additions = snapshot.git?.changes.reduce((sum, change) => sum + (change.additions ?? 0), 0) ?? 0;
-  const deletions = snapshot.git?.changes.reduce((sum, change) => sum + (change.deletions ?? 0), 0) ?? 0;
-  const statusLabel = t(`sessionActivity.status.${snapshot.session.status}`);
+  const gitStats = useMemo(() => {
+    if (!git) return null;
+    return {
+      changes: git.changes.length,
+      additions: git.changes.reduce((sum, change) => sum + (change.additions ?? 0), 0),
+      deletions: git.changes.reduce((sum, change) => sum + (change.deletions ?? 0), 0),
+    };
+  }, [git]);
+
+  const runningSubagents = snapshot.subagents.filter((agent) => agent.status === 'started').length;
+  const runningProcesses = visibleProcesses.filter((entry) => entry.status === 'running').length;
+
+  if (!hasGit && !hasPlan && !hasSubagents && !hasProcesses
+    && snapshot.goals.length === 0 && snapshot.lineage.length === 0 && !alert) return null;
 
   return (
     <aside
-      className={cn('flex w-full shrink-0 flex-col overflow-hidden border border-border/70 bg-surface-modal text-sm shadow-sm xl:w-72', className)}
+      className={cn('codex-session-activity', className)}
       data-testid="session-activity-panel"
       aria-label={t('sessionActivity.title')}
     >
-      <header className="flex items-center gap-2 border-b border-border/70 px-3 py-3">
-        <span className={cn('flex h-7 w-7 items-center justify-center rounded-full bg-black/5 dark:bg-white/10', statusClass(snapshot.session.status))}>
-          {statusIcon(snapshot.session.status)}
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-xs font-medium text-foreground">{t('sessionActivity.title')}</div>
-          <div className={cn('truncate text-[11px]', statusClass(snapshot.session.status))}>{statusLabel}{snapshot.session.phase ? ` 路 ${snapshot.session.phase}` : ''}</div>
-        </div>
-        {onCreateMemoryDraft ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-                aria-label={t('sessionActivity.createMemoryDraft')}
-                onClick={onCreateMemoryDraft}
-                data-testid="session-activity-create-memory-draft"
-              >
-                <FilePlus2 className="h-3.5 w-3.5" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="left" collisionPadding={8}>{t('sessionActivity.createMemoryDraft')}</TooltipContent>
-          </Tooltip>
-        ) : null}
-        {onOpenRecovery && hasContinuity ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-                aria-label={t('sessionActivity.openRecovery')}
-                onClick={onOpenRecovery}
-                data-testid="session-activity-open-recovery"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="left" collisionPadding={8}>{t('sessionActivity.openRecovery')}</TooltipContent>
-          </Tooltip>
-        ) : null}
-      </header>
-
-      <div className={cn('divide-y divide-border/60', compact ? 'max-h-[min(62vh,520px)] overflow-y-auto' : '')}>
-        {hasSession ? (
-          <section className="px-3 py-3" data-testid="session-activity-session">
-            <div className="mb-2 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-              <Clock3 className="h-3.5 w-3.5" />{t('sessionActivity.sections.session')}
-            </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">{t('sessionActivity.duration')}</span>
-              <span className="font-mono text-foreground">{formatDuration(snapshot.session.startedAt, snapshot.session.endedAt, now) || t('sessionActivity.notAvailable')}</span>
-            </div>
-            {snapshot.session.error ? <p className="mt-2 line-clamp-2 text-xs text-red-700 dark:text-red-400">{snapshot.session.error}</p> : null}
-          </section>
-        ) : null}
-
-        {hasGit ? (
-          <section className="px-3 py-3" data-testid="session-activity-git">
-            <div className="mb-2 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-              <GitBranch className="h-3.5 w-3.5" />{t('sessionActivity.sections.git')}
-            </div>
-            <div className="flex items-center justify-between gap-2 text-xs">
-              <span className="truncate font-mono text-foreground">{snapshot.git?.branch ?? t('sessionActivity.git.detached')}</span>
-              <span className="shrink-0 text-muted-foreground">{t('sessionActivity.git.changes', { count: changes })}</span>
-            </div>
-            <div className="mt-1 flex items-center gap-3 text-[11px] text-muted-foreground">
-              <span className="inline-flex items-center gap-1"><GitCommitHorizontal className="h-3 w-3" />+{additions}</span>
-              <span>-{deletions}</span>
-              {snapshot.git?.hasConflicts ? <span className="text-red-700 dark:text-red-400">{t('sessionActivity.git.conflicts')}</span> : null}
-            </div>
-          </section>
+      <div className={cn('codex-session-activity__body', compact && 'is-scrollable')}>
+        {/* ── 环境 ─────────────────────────────────────────────────────── */}
+        {hasGit && gitStats ? (
+          <Section
+            title={t('sessionActivity.sections.environment')}
+            testId="session-activity-environment"
+            actions={(
+              <>
+                {onCreateMemoryDraft ? (
+                  <HeaderAction
+                    label={t('sessionActivity.createMemoryDraft')}
+                    icon={<FilePlus2 className="h-3.5 w-3.5" />}
+                    onClick={onCreateMemoryDraft}
+                    testId="session-activity-create-memory-draft"
+                  />
+                ) : null}
+                {onOpenRecovery && hasContinuity ? (
+                  <HeaderAction
+                    label={t('sessionActivity.openRecovery')}
+                    icon={<RotateCcw className="h-3.5 w-3.5" />}
+                    onClick={onOpenRecovery}
+                    testId="session-activity-open-recovery"
+                  />
+                ) : null}
+              </>
+            )}
+          >
+            <Row
+              icon={<GitBranch className="h-3.5 w-3.5" aria-hidden="true" />}
+              label={(
+                <span className="codex-session-activity__mono">
+                  {git?.branch ?? t('sessionActivity.git.detached')}
+                </span>
+              )}
+              title={git?.branch ?? t('sessionActivity.git.detached')}
+              value={git?.clean
+                ? t('sessionActivity.git.clean')
+                : t('sessionActivity.git.changes', { count: gitStats.changes })}
+              state={git?.hasConflicts ? 'error' : 'idle'}
+              onOpen={onOpenEnvironment}
+              testId="session-activity-git-branch"
+            />
+            {!git?.clean ? (
+              <Row
+                icon={<GitCommitHorizontal className="h-3.5 w-3.5" aria-hidden="true" />}
+                label={(
+                  <span className="codex-session-activity__delta">
+                    <span className="codex-session-activity__delta-add">+{formatCount(gitStats.additions)}</span>
+                    <span className="codex-session-activity__delta-remove">−{formatCount(gitStats.deletions)}</span>
+                  </span>
+                )}
+                value={git?.hasConflicts ? t('sessionActivity.git.conflicts') : undefined}
+                state={git?.hasConflicts ? 'error' : undefined}
+                onOpen={onOpenEnvironment}
+                testId="session-activity-git-delta"
+              />
+            ) : null}
+          </Section>
         ) : null}
 
-        {hasTasks ? (
-          <section className="px-3 py-3" data-testid="session-activity-tasks">
-            <div className="mb-2 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-              <ListChecks className="h-3.5 w-3.5" />{t('sessionActivity.sections.tasks')}
+        {/* ── 开发任务 ─────────────────────────────────────────────────── */}
+        {hasPlan && plan ? (
+          <Section testId="session-activity-plan">
+            <div className="codex-session-activity__plan">
+              {/* The shared task list, not a second copy of it: the transcript
+               * renders the same component from the same projection. It brings
+               * its own header — progress ring, `n/total`, collapse chevron —
+               * which is why this section supplies no head of its own. */}
+              <ToolUiPlanView
+                title={t('sessionActivity.sections.plan')}
+                todos={plan.todos}
+                maxVisibleTodos={6}
+                compact
+                showTitle
+                testId="session-activity-plan-view"
+              />
             </div>
-            <div className="space-y-2">
-              {snapshot.tasks.slice(-4).map((task) => (
-                <div key={`${task.kind}:${task.id}`} className="min-w-0">
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className={cn('shrink-0', statusClass(task.status))}><Activity className="h-3 w-3" /></span>
-                    <span className="min-w-0 flex-1 truncate">{taskLabel(task, t)}</span>
-                    <span className={cn('shrink-0 text-[10px]', statusClass(task.status))}>{t(`sessionActivity.taskStatus.${task.status}`)}</span>
-                  </div>
-                  {typeof task.progress === 'number' ? (
-                    <div className="mt-1 h-1 overflow-hidden rounded-full bg-black/8 dark:bg-white/10">
-                      <div className="h-full rounded-full bg-sky-500 transition-[width] duration-300" style={{ width: `${Math.max(0, Math.min(100, task.progress * 100))}%` }} />
-                    </div>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-          </section>
+          </Section>
         ) : null}
 
-        {hasGoals ? (
-          <section className="px-3 py-3" data-testid="session-activity-goals">
-            <div className="mb-2 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-              <Goal className="h-3.5 w-3.5" />{t('sessionActivity.sections.goals')}
-            </div>
-            <div className="space-y-2">
-              {snapshot.goals.slice(-4).map((goal) => (
-                <div key={`${goal.kind}:${goal.id}`} className="min-w-0">
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className={cn('shrink-0', statusClass(goal.status))}><Goal className="h-3 w-3" /></span>
-                    <span className="min-w-0 flex-1 truncate">{goalLabel(goal, t)}</span>
-                    <span className={cn('shrink-0 text-[10px]', statusClass(goal.status))}>{t(`sessionActivity.goalStatus.${goal.status}`)}</span>
-                  </div>
-                  {typeof goal.progress === 'number' ? (
-                    <div className="mt-1 h-1 overflow-hidden rounded-full bg-black/8 dark:bg-white/10">
-                      <div className="h-full rounded-full bg-sky-500 transition-[width] duration-300" style={{ width: `${Math.max(0, Math.min(100, goal.progress * 100))}%` }} />
-                    </div>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-          </section>
-        ) : null}
-
-        {hasProcesses ? (
-          <section className="px-3 py-3" data-testid="session-activity-processes">
-            <div className="mb-2 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-              <Cpu className="h-3.5 w-3.5" />{t('sessionActivity.sections.processes')}
-            </div>
-            <div className="space-y-1.5">
-              {snapshot.processes.slice(-4).map((process) => (
-                <div key={`${process.kind}:${process.id}`} className="flex min-w-0 items-center gap-2 text-xs">
-                  <span className={cn('shrink-0', statusClass(process.status))}><Cpu className="h-3 w-3" /></span>
-                  <span className="min-w-0 flex-1 truncate">{processLabel(process, t)}</span>
-                  <span className={cn('shrink-0 text-[10px]', statusClass(process.status))}>{t(`sessionActivity.processStatus.${process.status}`)}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        ) : null}
-
-        {hasLineage ? (
-          <section className="px-3 py-3" data-testid="session-activity-lineage">
-            <div className="mb-2 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-              <Network className="h-3.5 w-3.5" />{t('sessionActivity.sections.lineage')}
-            </div>
-            <div className="space-y-1.5">
-              {snapshot.lineage.slice(-4).map((entry) => (
-                <div key={`${entry.kind}:${entry.id}`} className="flex min-w-0 items-center gap-2 text-xs">
-                  <span className={cn('shrink-0', statusClass(entry.status))}><Network className="h-3 w-3" /></span>
-                  <span className="min-w-0 flex-1 truncate">{lineageLabel(entry, t)}</span>
-                  <span className={cn('shrink-0 text-[10px]', statusClass(entry.status))}>{t(`sessionActivity.lineageStatus.${entry.status}`)}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        ) : null}
-
+        {/* ── 子 Agent ─────────────────────────────────────────────────── */}
         {hasSubagents ? (
-          <section className="px-3 py-3" data-testid="session-activity-subagents">
-            <div className="mb-2 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-              <Bot className="h-3.5 w-3.5" />{t('sessionActivity.sections.subagents')}
-            </div>
-            <div className="space-y-1.5">
-              {snapshot.subagents.slice(-4).map((agent) => (
-                <div key={agent.id} className="flex min-w-0 items-center gap-2 text-xs">
-                  <span className={cn('shrink-0', statusClass(agent.status))}><Bot className="h-3 w-3" /></span>
-                  <span className="min-w-0 flex-1 truncate">{agent.role ?? t('sessionActivity.subagents.unknown')}</span>
-                  <span className={cn('shrink-0 text-[10px]', statusClass(agent.status))}>{t(`sessionActivity.subagentStatus.${agent.status}`)}</span>
-                </div>
-              ))}
-            </div>
-          </section>
+          <Section
+            title={t('sessionActivity.sections.subagents')}
+            summary={runningSubagents > 0
+              ? t('sessionActivity.runningCount', { count: runningSubagents })
+              : formatCount(snapshot.subagents.length)}
+            testId="session-activity-subagents"
+          >
+            {snapshot.subagents.slice(-6).map((agent) => {
+              const childSessionKey = agent.childSessionKey;
+              const identity = subagentIdentity(childSessionKey ?? agent.agentId ?? agent.id);
+              const state = rowState(agent.status);
+              return (
+                <Row
+                  key={agent.id}
+                  tall
+                  testId={subagentTestId(agent)}
+                  icon={(
+                    <AgentAvatar
+                      agentId={identity.avatarId}
+                      name={identity.name}
+                      avatar={identity.avatar}
+                      size={24}
+                    />
+                  )}
+                  label={identity.name}
+                  sublabel={agent.role ?? t('sessionActivity.subagents.unknown')}
+                  value={agent.status === 'started'
+                    ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+                    : t(`sessionActivity.subagentStatus.${agent.status}`, { defaultValue: agent.status })}
+                  state={state}
+                  title={childSessionKey
+                    ? t('sessionActivity.subagents.openTranscript', { role: identity.name })
+                    : agent.task || identity.name}
+                  onOpen={childSessionKey && onOpenSubagent
+                    ? () => onOpenSubagent(childSessionKey)
+                    : undefined}
+                />
+              );
+            })}
+          </Section>
         ) : null}
 
-        {hasTerminals ? (
-          <section className="px-3 py-3" data-testid="session-activity-terminals">
-            <div className="mb-2 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-              <TerminalSquare className="h-3.5 w-3.5" />{t('sessionActivity.sections.terminals')}
-            </div>
-            <div className="space-y-1.5">
-              {snapshot.terminals.slice(-4).map((terminal) => (
-                <div key={terminal.id} className="flex min-w-0 items-center gap-2 text-xs">
-                  {terminal.kind === 'interactive' ? <Monitor className="h-3 w-3 shrink-0 text-muted-foreground" /> : <TerminalSquare className="h-3 w-3 shrink-0 text-muted-foreground" />}
-                  <span className="min-w-0 flex-1 truncate font-mono">{terminal.cwd || terminalLabel(terminal, t)}</span>
-                  <span className={cn('shrink-0 text-[10px]', statusClass(terminal.status))}>{t(`sessionActivity.terminalStatus.${terminal.status}`)}</span>
-                </div>
-              ))}
-            </div>
-          </section>
+        {/* ── 进程 ─────────────────────────────────────────────────────── */}
+        {hasProcesses ? (
+          <Section
+            title={t('sessionActivity.sections.processes')}
+            summary={runningProcesses > 0
+              ? t('sessionActivity.runningCount', { count: runningProcesses })
+              : formatCount(visibleProcesses.length + snapshotOnlyProcesses.length)}
+            testId="session-activity-processes"
+          >
+            {visibleProcesses.slice(-6).map((entry) => (
+              <Row
+                key={entry.id}
+                testId={`session-activity-process-${entry.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
+                icon={<TerminalSquare className="h-3.5 w-3.5" aria-hidden="true" />}
+                label={<span className="codex-session-activity__mono">{commandDigest(entry.command)}</span>}
+                value={entry.status === 'running'
+                  ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+                  : entry.exitCode != null
+                    ? t('processPanel.exitCode', { code: entry.exitCode })
+                    : t(`processPanel.status.${entry.status}`)}
+                state={rowState(entry.status)}
+                title={onOpenProcess
+                  ? t('sessionActivity.processes.openOutput', { command: entry.command })
+                  : entry.command}
+                onOpen={onOpenProcess ? () => onOpenProcess(entry.id, entry.command) : undefined}
+              />
+            ))}
+            {/* Host-projected processes. Deliberately INERT: this projection is
+             * redacted by contract, so the row can report that a process exists
+             * but there is no output behind it to open. Offering a chevron here
+             * would promise a pane that cannot be filled. */}
+            {snapshotOnlyProcesses.slice(-6).map((entry) => (
+              <Row
+                key={entry.id}
+                testId={`session-activity-snapshot-process-${entry.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
+                icon={<TerminalSquare className="h-3.5 w-3.5" aria-hidden="true" />}
+                label={`${t(`sessionActivity.processKinds.${entry.kind}`, { defaultValue: entry.kind })} ${entry.label}`}
+                sublabel={entry.digest}
+                value={t(`sessionActivity.processStatus.${entry.status}`, { defaultValue: entry.status })}
+                state={rowState(entry.status)}
+                title={entry.pid != null ? `PID ${entry.pid}` : entry.label}
+              />
+            ))}
+          </Section>
         ) : null}
 
-        {hasContinuity ? (
-          <section className="px-3 py-3" data-testid="session-activity-continuity">
-            <div className="mb-2 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-              <CircleAlert className={cn('h-3.5 w-3.5', statusClass('blocked'))} />{t('sessionActivity.sections.continuity')}
-            </div>
-            <div className="space-y-1 text-xs text-muted-foreground">
-              {snapshot.continuity.queueCount > 0 ? <div>{t('sessionActivity.continuity.queue', { count: snapshot.continuity.queueCount })}</div> : null}
-              {snapshot.continuity.contextPressure && snapshot.continuity.contextPressure !== 'low' ? <div>{t('sessionActivity.continuity.context', { pressure: t(`sessionActivity.continuity.pressure.${snapshot.continuity.contextPressure}`) })}</div> : null}
-              {snapshot.continuity.checkpoint ? <div>{t('sessionActivity.continuity.checkpoint')}</div> : null}
-              {snapshot.continuity.blockedReason ? <div className="text-red-700 dark:text-red-400">{snapshot.continuity.blockedReason}</div> : null}
-            </div>
-          </section>
+        {/* ── Host-projected read models ────────────────────────────────────
+         *
+         * Goals and lineage come from the host's own session projection and have
+         * no runtime counterpart to open, so both are read-only like the
+         * snapshot processes above. They appear only when the host supplies
+         * them, which is why they are below the four sections the card is
+         * organised around rather than interleaved with them. */}
+        {snapshot.goals.length > 0 ? (
+          <Section
+            title={t('sessionActivity.sections.goals')}
+            summary={formatCount(snapshot.goals.length)}
+            testId="session-activity-goals"
+          >
+            {snapshot.goals.slice(-6).map((goal) => (
+              <Row
+                key={goal.id}
+                testId={`session-activity-goal-${goal.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
+                icon={<Target className="h-3.5 w-3.5" aria-hidden="true" />}
+                label={`${t(`sessionActivity.goalKinds.${goal.kind}`, { defaultValue: goal.kind })} ${goal.label}`}
+                sublabel={goal.digest}
+                value={t(`sessionActivity.goalStatus.${goal.status}`, { defaultValue: goal.status })}
+                state={rowState(goal.status)}
+              />
+            ))}
+          </Section>
+        ) : null}
+
+        {snapshot.lineage.length > 0 ? (
+          <Section
+            title={t('sessionActivity.sections.lineage')}
+            summary={formatCount(snapshot.lineage.length)}
+            testId="session-activity-lineage"
+          >
+            {snapshot.lineage.slice(-6).map((entry) => (
+              <Row
+                key={entry.id}
+                testId={`session-activity-lineage-${entry.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
+                icon={<GitBranch className="h-3.5 w-3.5" aria-hidden="true" />}
+                label={entry.role ?? t(`sessionActivity.lineage.${entry.kind}`, { defaultValue: entry.kind })}
+                sublabel={t(`sessionActivity.lineage.${entry.kind}`, { defaultValue: entry.kind })}
+                value={t(`sessionActivity.lineageStatus.${entry.status}`, { defaultValue: entry.status })}
+                state={rowState(entry.status)}
+                title={entry.sessionKey}
+              />
+            ))}
+          </Section>
+        ) : null}
+
+        {/* A failure must not be silently dropped just because it has no section
+         * of its own. It is the last thing in the card, not the first, so a
+         * healthy run is not led by an empty alert slot. */}
+        {alert ? (
+          <p className="codex-session-activity__empty" data-state="error" data-testid="session-activity-alert">
+            {alert}
+          </p>
         ) : null}
       </div>
     </aside>

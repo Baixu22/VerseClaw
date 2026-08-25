@@ -6,7 +6,7 @@
  * `+` new-tab menu. Both draw labels from the same i18n keys so a chip and
  * its launcher card never drift apart.
  */
-import { History, Layers, Users } from 'lucide-react';
+import { Bot, Cpu, History, Layers, Users } from 'lucide-react';
 import {
   OfficialBrowserIcon,
   OfficialFilesIcon,
@@ -81,6 +81,24 @@ export const PANEL_TAB_META: Record<PanelTabKind, PanelTabMeta> = {
     descriptionKey: 'artifactPanel.launcher.entries.agents',
     descriptionFallback: 'Read a sub-agent transcript and dispatch new work.',
     icon: Users,
+  },
+  /* Subject-bearing kinds. Their chips are normally labelled from the tab's own
+   * title (a worker's generated name, a command digest); these entries only
+   * supply the fallback and the icon, and they are absent from the launcher and
+   * the `+` menu below because neither can supply a subject. */
+  subagent: {
+    labelKey: 'artifactPanel.tabs.subagent',
+    labelFallback: 'Sub-agent',
+    descriptionKey: 'artifactPanel.launcher.entries.subagent',
+    descriptionFallback: "One sub-agent's own transcript.",
+    icon: Bot,
+  },
+  process: {
+    labelKey: 'artifactPanel.tabs.process',
+    labelFallback: 'Process',
+    descriptionKey: 'artifactPanel.launcher.entries.process',
+    descriptionFallback: "One shell process's command and output.",
+    icon: Cpu,
   },
 };
 

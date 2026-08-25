@@ -169,6 +169,10 @@
     "timelineDescription": "提交、切换、重置、变基及其他引用移动",
     "timelineEmpty": "暂无 Git 生命周期记录",
     "timelineUnavailable": "Git 生命周期暂不可用",
+    "reflogUnavailable": "Git 生命周期暂不可用",
+    "approvalsUnavailable": "审批记录暂不可用",
+    "truncated": "已达显示上限，较早的条目已隐藏",
+    "partialFailure": "部分审计数据暂不可用",
     "filterAll": "全部",
     "filterApprovals": "审批",
     "filterGit": "Git",
@@ -493,12 +497,8 @@
     "dispatchPlaceholder": "给 {{role}} 派发任务…",
     "dispatchStarted": "已派发给 {{role}}",
     "dispatchFailed": "派发任务失败",
-    "role": {
-      "user": "你",
-      "assistant": "智能体",
-      "system": "系统",
-      "toolresult": "工具"
-    }
+    "role": { "user": "你", "assistant": "智能体", "system": "系统", "toolresult": "工具" },
+    "openOwnTab": "双击在独立标签中打开"
   },
   "filePreview": {
     "tabs": {
@@ -1884,6 +1884,16 @@
   },
   "sidebar": {
     "sectionConversations": "会话",
+    "sectionProjects": "项目",
+    "sessionActions": "会话操作",
+    "forkSession": "分叉会话",
+    "handoffSession": "接力会话",
+    "copyWorkPath": "复制工作路径",
+    "copySessionId": "复制会话 ID",
+    "copied": "已复制到剪贴板",
+    "copyFailed": "复制失败",
+    "noWorkPath": "该会话没有项目路径",
+    "menuBack": "返回",
     "organizeSessions": "整理会话",
     "pinSession": "置顶会话",
     "unpinSession": "取消置顶",

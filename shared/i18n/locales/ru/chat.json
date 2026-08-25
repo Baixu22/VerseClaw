@@ -169,6 +169,10 @@
     "timelineDescription": "Коммиты, переключения, сбросы, rebase и другие перемещения ссылок",
     "timelineEmpty": "Записей жизненного цикла Git пока нет",
     "timelineUnavailable": "Жизненный цикл Git недоступен",
+    "reflogUnavailable": "Жизненный цикл Git недоступен",
+    "approvalsUnavailable": "Записи одобрений недоступны",
+    "truncated": "Достигнут лимит отображения, старые записи скрыты",
+    "partialFailure": "Часть данных аудита недоступна",
     "filterAll": "Все",
     "filterApprovals": "Разрешения",
     "filterGit": "Git",
@@ -493,12 +497,8 @@
     "dispatchPlaceholder": "Отправить задачу {{role}}…",
     "dispatchStarted": "Задача отправлена {{role}}",
     "dispatchFailed": "Не удалось отправить задачу",
-    "role": {
-      "user": "Вы",
-      "assistant": "Агент",
-      "system": "Система",
-      "toolresult": "Инструмент"
-    }
+    "role": { "user": "Вы", "assistant": "Агент", "system": "Система", "toolresult": "Инструмент" },
+    "openOwnTab": "Двойной щелчок — открыть в своей вкладке"
   },
   "filePreview": {
     "tabs": {
@@ -1884,6 +1884,16 @@
   },
   "sidebar": {
     "sectionConversations": "Диалоги",
+    "sectionProjects": "Проекты",
+    "sessionActions": "Действия с диалогом",
+    "forkSession": "Ответвить диалог",
+    "handoffSession": "Передать диалог",
+    "copyWorkPath": "Скопировать рабочий путь",
+    "copySessionId": "Скопировать ID диалога",
+    "copied": "Скопировано в буфер обмена",
+    "copyFailed": "Не удалось скопировать",
+    "noWorkPath": "У этого диалога нет пути проекта",
+    "menuBack": "Назад",
     "organizeSessions": "Упорядочить диалоги",
     "pinSession": "Закрепить диалог",
     "unpinSession": "Открепить диалог",

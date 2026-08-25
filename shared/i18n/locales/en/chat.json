@@ -169,6 +169,10 @@
     "timelineDescription": "Commits, checkouts, resets, rebases, and other ref movement",
     "timelineEmpty": "No Git lifecycle entries yet",
     "timelineUnavailable": "Git lifecycle is unavailable",
+    "reflogUnavailable": "Git history is unavailable",
+    "approvalsUnavailable": "Approvals are unavailable",
+    "truncated": "Older entries hidden (limit reached)",
+    "partialFailure": "Some audit sources are unavailable",
     "filterAll": "All",
     "filterApprovals": "Approvals",
     "filterGit": "Git",
@@ -493,12 +497,8 @@
     "dispatchPlaceholder": "Send a task to {{role}}…",
     "dispatchStarted": "Dispatched to {{role}}",
     "dispatchFailed": "Failed to dispatch the task",
-    "role": {
-      "user": "You",
-      "assistant": "Agent",
-      "system": "System",
-      "toolresult": "Tool"
-    }
+    "role": { "user": "You", "assistant": "Agent", "system": "System", "toolresult": "Tool" },
+    "openOwnTab": "Double-click to open in its own tab"
   },
   "filePreview": {
     "tabs": {
@@ -1884,6 +1884,16 @@
   },
   "sidebar": {
     "sectionConversations": "Conversations",
+    "sectionProjects": "Projects",
+    "sessionActions": "Conversation actions",
+    "forkSession": "Fork conversation",
+    "handoffSession": "Hand off conversation",
+    "copyWorkPath": "Copy work path",
+    "copySessionId": "Copy conversation ID",
+    "copied": "Copied to clipboard",
+    "copyFailed": "Copy failed",
+    "noWorkPath": "This conversation has no project path",
+    "menuBack": "Back",
     "organizeSessions": "Organize conversations",
     "pinSession": "Pin conversation",
     "unpinSession": "Unpin conversation",

@@ -34,7 +34,15 @@ export type WorkspacePanelIntent =
   | { panel: 'artifact'; artifactId?: string }
   | { panel: 'audit' }
   /** `sessionKey` focuses one sub-agent's transcript on open. */
-  | { panel: 'agents'; sessionKey?: string };
+  | { panel: 'agents'; sessionKey?: string }
+  /**
+   * One sub-agent's own page. Unlike `agents` (the roster), this opens a tab per
+   * worker, so two workers can be read side by side and each chip carries that
+   * worker's own face and name.
+   */
+  | { panel: 'subagent'; sessionKey: string; roleName?: string }
+  /** One shell process's own page: its command, exit code, and captured output. */
+  | { panel: 'process'; processId: string; command?: string };
 
 export type PermissionApprovalStatus = 'pending' | 'approved' | 'denied' | 'expired';
 export type PermissionApprovalDecision = 'approved' | 'denied';
@@ -139,6 +147,14 @@ export interface WorkspaceChatFooterState {
   workContextVisible?: boolean;
 }
 
+/** Per-conversation presentation state owned by the left session sidebar. */
+export interface WorkspaceSessionListState {
+  pinned?: boolean;
+  unread?: boolean;
+  /** Timestamp of the last explicit read action, for future activity comparisons. */
+  lastReadAt?: number;
+}
+
 export type WorkspaceKnowledgeScope = 'none' | 'memory' | 'wiki' | 'all';
 export type KnowledgeInvocationMode = 'manual' | 'suggest' | 'auto-read';
 
@@ -186,6 +202,7 @@ export interface WorkspaceUiState {
   terminal?: WorkspaceTerminalState;
   webPreview?: WorkspaceWebPreviewState;
   chatFooter?: WorkspaceChatFooterState;
+  sessionList?: WorkspaceSessionListState;
   graphExpanded?: Record<string, boolean>;
   turnSummaryExpanded?: Record<string, boolean>;
   turnSummaryStepDetailsExpanded?: Record<string, Record<string, boolean>>;

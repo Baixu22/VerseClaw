@@ -152,12 +152,21 @@
 .codex-sidebar .primary-nav a:hover kbd { opacity: 1; }
 
 /* styles.css:215 + 379 — scroll region clips horizontally so long session
- * titles can never introduce a horizontal scrollbar. */
+ * titles can never introduce a horizontal scrollbar.
+ *
+ * `scrollbar-gutter: stable` is a ClawX addition and it fixes a real jump: the
+ * app's scrollbars are 8px CLASSIC (they take layout width, see globals.css), so
+ * the moment a folded project re-expanded past the viewport the whole list lost
+ * 8px of width and every row re-wrapped/re-measured — including the marquee
+ * measurement, which had already been taken at the wider width. Reserving the
+ * gutter makes expand/collapse a pure height change. */
 .codex-sidebar .sidebar-scroll {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   overflow-x: clip;
+  scrollbar-gutter: stable;
+  overscroll-behavior-y: contain;
   padding-bottom: 20px;
 }
 
@@ -168,11 +177,22 @@
  * reads as a plain label.
  * ────────────────────────────────────────────────────────────────────────── */
 .codex-sidebar .sidebar-section { padding: 11px 8px 6px; }
+/* The section heading is the list's PINNED title: it names what the section is a
+ * list of ("Projects" / "Conversations") and stays put while the list scrolls
+ * under it. `--cdx-sticky-heading-h` is the offset project headers stack below;
+ * it is the heading's own min-height so the two never overlap. */
+.codex-sidebar { --cdx-sticky-heading-h: 30px; }
 .codex-sidebar .section-heading {
+  position: sticky;
+  top: 0;
+  /* Above `.sidebar-row__actions` (z-index 6): a row scrolled under the pinned
+     heading must not poke its hover buttons through it. */
+  z-index: 8;
   min-height: 30px;
   display: flex;
   align-items: center;
   padding: 0 5px 2px 8px;
+  background: hsl(var(--surface-sidebar));
 }
 .codex-sidebar .section-label-button {
   flex: 1;
@@ -335,6 +355,34 @@
   overflow: hidden;
   box-sizing: border-box;
 }
+
+/* ClawX addition — the project header is PINNED.
+ *
+ * The project name used to be repeated as a subtitle on every session row, which
+ * paid two lines of row height for a fact shared by every row in the group. It
+ * only actually needs answering when the group's own header has scrolled away —
+ * so the header sticks under the section heading instead.
+ *
+ * The background must be OPAQUE: rows scroll underneath it. `.sidebar-row:hover`
+ * uses the `background` shorthand with a translucent token, which would let the
+ * list show through, so hover is re-expressed as an image layer over an opaque
+ * colour. */
+.codex-sidebar .project-row-wrap {
+  position: sticky;
+  top: var(--cdx-sticky-heading-h);
+  /* Same reason as the heading: clears the rows' own action strips (z-index 6),
+     stays under the heading it stacks below. */
+  z-index: 7;
+}
+.codex-sidebar .project-row-wrap,
+.codex-sidebar .project-row-wrap:hover,
+.codex-sidebar .project-row-wrap.selected {
+  background-color: hsl(var(--surface-sidebar));
+}
+.codex-sidebar .project-row-wrap:hover,
+.codex-sidebar .project-row-wrap.selected {
+  background-image: linear-gradient(0deg, var(--cdx-bg-row-hover) 0%, var(--cdx-bg-row-hover) 100%);
+}
 .codex-sidebar .project-row svg {
   width: 17px;
   height: 17px;
@@ -364,8 +412,9 @@
    `.marquee-text` is the fixed clip frame; `.marquee-text__inner` is the
    panning layer for long-title scroll on hover (see block below). */
 .codex-sidebar .project-row > span,
-.codex-sidebar .task-select > .marquee-text,
-.codex-sidebar .task-select > span:not(.task-status-slot) {
+.codex-sidebar .task-title-block,
+.codex-sidebar .task-title-block > .marquee-text,
+.codex-sidebar .task-select > span:not(.task-status-slot):not(.task-unread-dot):not(.task-pinned-marker) {
   overflow: hidden;
   text-overflow: clip;
   white-space: nowrap;
@@ -385,16 +434,60 @@
    width`), so the panning text fades out exactly at the buttons' left edge and
    never slides under them. The 0%/12% → 88%/100% keyframe stalls hold both
    ends readable instead of constantly scrolling. */
-.codex-sidebar .task-select > .marquee-text > .marquee-text__inner {
+.codex-sidebar .task-title-block > .marquee-text > .marquee-text__inner {
   display: inline-block;
   white-space: nowrap;
   will-change: transform;
 }
-.codex-sidebar .task-row:hover .task-select > .marquee-text.is-marqueeing {
+.codex-sidebar .task-title-block {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  align-content: center;
+  gap: 1px;
+  overflow: hidden;
+}
+.codex-sidebar .task-title-block > .marquee-text {
+  flex: none;
+  width: 100%;
+}
+.codex-sidebar .task-title--unread { font-weight: 600; color: var(--cdx-text); }
+.codex-sidebar .task-pinned-marker {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  color: var(--cdx-text-3);
+  transform: rotate(-35deg);
+  transition: opacity 120ms ease;
+}
+/**
+ * Unread mark — LEFT gutter, not the trailing edge.
+ *
+ * It used to be a flex child at the end of the row, sharing that edge with the
+ * pinned mark, the runtime status orb AND the absolutely-positioned hover
+ * strip — four things competing for the same ~70px, so the dot was drawn under
+ * the hover buttons and read as a fifth state next to the orb. The row's own
+ * indentation is empty space that means nothing, so the dot lives there: aligned
+ * to the title's left edge, it collides with nothing and never moves the title
+ * (it is positioned, not laid out). The bold title carries the same fact for
+ * anyone who does not parse a 5px dot.
+ */
+.codex-sidebar .task-unread-dot {
+  position: absolute;
+  left: calc(var(--task-indent, 8px) - 13px);
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  margin-top: -2.5px;
+  flex: none;
+  border-radius: 999px;
+  background: var(--cdx-blue-300, #4fa8e0);
+}
+.codex-sidebar .task-row:hover .task-title-block > .marquee-text.is-marqueeing {
   -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - var(--marquee-actions-width, 72px) - 4px), transparent calc(100% - var(--marquee-actions-width, 72px)));
   mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - var(--marquee-actions-width, 72px) - 4px), transparent calc(100% - var(--marquee-actions-width, 72px)));
 }
-.codex-sidebar .task-row:hover .task-select > .marquee-text.is-marqueeing > .marquee-text__inner {
+.codex-sidebar .task-row:hover .task-title-block > .marquee-text.is-marqueeing > .marquee-text__inner {
   animation: codex-sidebar-marquee 7s ease-in-out infinite alternate;
 }
 @keyframes codex-sidebar-marquee {
@@ -402,7 +495,7 @@
   88%, 100% { transform: translateX(var(--marquee-distance, 0)); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .codex-sidebar .task-row:hover .task-select > .marquee-text.is-marqueeing > .marquee-text__inner {
+  .codex-sidebar .task-row:hover .task-title-block > .marquee-text.is-marqueeing > .marquee-text__inner {
     animation: none;
   }
 }
@@ -418,9 +511,12 @@
   transition: opacity 120ms ease, margin-right 120ms ease;
 }
 /* styles.css:331-333 — passive badges yield to the hover actions that overlay
- * the row's right edge. */
+ * the row's right edge. The pinned mark is one of them: it sits in the same
+ * strip, so leaving it visible drew a pin underneath the buttons. */
 .codex-sidebar .task-row:hover .task-status-slot,
-.codex-sidebar .task-row:focus-within .task-status-slot {
+.codex-sidebar .task-row:focus-within .task-status-slot,
+.codex-sidebar .task-row:hover .task-pinned-marker,
+.codex-sidebar .task-row:focus-within .task-pinned-marker {
   opacity: 0;
 }
 .codex-sidebar .task-select > .task-status-slot--dismissible {
@@ -430,11 +526,18 @@
 }
 /* ClawX addition: the completed marker is dismissed by clicking it, so unlike
  * the reference's passive badges it must stay visible and hittable on hover —
- * it slides clear of the action strip instead of fading under it. */
+ * it slides clear of the action strip instead of fading under it.
+ *
+ * The distance is the strip's own width, so it is declared where the button
+ * count is known: three buttons (pin / rename / delete) in the time view, four
+ * once the project view adds "migrate". Hard-coding one number is what let the
+ * marker sit under the pin icon when the count changed. */
+.codex-sidebar .task-row { --task-actions-clearance: 68px; }
+.codex-sidebar .project-tasks .task-row { --task-actions-clearance: 90px; }
 .codex-sidebar .task-row:hover .task-status-slot--dismissible,
 .codex-sidebar .task-row:focus-within .task-status-slot--dismissible {
   opacity: 1;
-  margin-right: 68px;
+  margin-right: var(--task-actions-clearance);
 }
 .codex-sidebar .task-select > .task-status-slot--dismissible:hover {
   background: color-mix(in srgb, var(--cdx-text) 8%, transparent);
@@ -455,16 +558,23 @@
   color: var(--cdx-text-2);
 }
 
-/* styles.css:317-324 — session rows nested under a project. */
+/* styles.css:317-324 — session rows nested under a project.
+ *
+ * `--task-indent` is the row's own left edge. It exists as a variable because
+ * the unread mark is positioned from it (see `.task-unread-dot`); every depth
+ * variant sets the variable instead of `padding-left`, so the two can never
+ * drift apart. */
 .codex-sidebar .project-tasks { padding: 4px 0 0; overflow-x: clip; }
 .codex-sidebar .task-select {
+  --task-indent: 8px;
+  position: relative;
   min-width: 0;
   height: 100%;
   flex: 1;
   display: flex;
   align-items: center;
   gap: 7px;
-  padding: 0 8px;
+  padding: 0 8px 0 var(--task-indent);
   text-align: left;
   color: var(--cdx-text-2);
   font-size: 14px;
@@ -472,7 +582,10 @@
   overflow: hidden;
   box-sizing: border-box;
 }
-.codex-sidebar .project-tasks .task-select { padding-left: 35px; }
+.codex-sidebar .project-tasks .task-select { --task-indent: 35px; }
+/* Time view: rows are direct children of the list with no project column to
+   step in from, so they carry just enough indent to host the unread mark. */
+.codex-sidebar .task-collection-list > .task-row .task-select { --task-indent: 22px; }
 .codex-sidebar .task-select svg { color: var(--cdx-text-3); }
 
 /* ClawX-only workgroup tree. The reference has no nested folders, so depth is
@@ -494,9 +607,12 @@
 }
 
 /* styles.css:318 — official row cadence is 30px + 1px, giving the ~31px stride
- * the virtualized list estimate assumes. Tailwind's `space-y-0.5` in the folder
- * tree would otherwise add a competing 2px gap at some depths only. */
-.codex-sidebar .task-row { margin-bottom: 1px; }
+ * the list's own rhythm assumes. The row was temporarily 44px to fit a second
+ * line (the project-name subtitle); that subtitle is now the pinned project
+ * header, so the row is back on the official single-line height. Tailwind's
+ * `space-y-0.5` in the folder tree would otherwise add a competing 2px gap at
+ * some depths only. */
+.codex-sidebar .task-row { height: 30px; margin-bottom: 1px; }
 .codex-sidebar .project-tasks > .space-y-0\.5 > :not([hidden]) ~ :not([hidden]),
 .codex-sidebar .project-tasks .space-y-0\.5 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
@@ -525,12 +641,20 @@
   color: var(--cdx-text-2);
   background: color-mix(in srgb, var(--cdx-text) 8%, transparent);
 }
+.codex-sidebar .task-hover-btn--active { color: var(--cdx-text-2); }
 .codex-sidebar .task-hover-btn svg { width: 16px; height: 16px; display: block; }
 
 /* ──────────────────────────────────────────────────────────────────────────
  * Expand/collapse — styles.css:1671-1676. grid-template-rows 0fr→1fr animates
  * height without measuring it. ClawX had the same technique written inline as
  * `grid-rows-[0fr]`/`grid-rows-[1fr]`; this version carries the official easing.
+ *
+ * The inner clipper uses `overflow: clip`, NOT `hidden`. Two reasons, both real:
+ * `hidden` makes the element a scroll container, which (a) traps `position:
+ * sticky` project headers inside a box that never scrolls, killing them, and
+ * (b) lets the browser scroll it internally when a hidden row takes focus, which
+ * showed up as the list "shifting" after a collapse. `clip` clips identically
+ * without either behaviour.
  * ────────────────────────────────────────────────────────────────────────── */
 .codex-sidebar .project-tasks-outer {
   display: grid;
@@ -538,14 +662,14 @@
   transition: grid-template-rows 190ms cubic-bezier(.2, .82, .25, 1);
 }
 .codex-sidebar .project-tasks-outer.open { grid-template-rows: 1fr; }
-.codex-sidebar .project-tasks-outer > .project-tasks { min-height: 0; overflow: hidden; }
+.codex-sidebar .project-tasks-outer > .project-tasks { min-height: 0; overflow: clip; }
 .codex-sidebar .section-list-outer {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 200ms cubic-bezier(.2, .82, .25, 1);
 }
 .codex-sidebar .section-list-outer.open { grid-template-rows: 1fr; }
-.codex-sidebar .section-list-outer > * { min-height: 0; overflow: hidden; }
+.codex-sidebar .section-list-outer > * { min-height: 0; overflow: clip; }
 
 /* ──────────────────────────────────────────────────────────────────────────
  * Dropdown / overflow menu — copied from FakeCoding codex-dropdown.css.
@@ -678,9 +802,56 @@
   font-weight: 445;
   color: var(--cdx-text);
 }
+/* Icon slot — was only defined under `.sidebar-account-menu`, so the project and
+ * conversation menus rendered their glyphs at whatever intrinsic size they had.
+ * One unscoped rule keeps every codex dropdown on the same 16px column. */
+.codex-dropdown__icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  opacity: .75;
+}
+.codex-dropdown__icon svg { width: 16px; height: 16px; }
+.codex-dropdown__item:hover .codex-dropdown__icon { opacity: 1; }
+/* Leads to a second page of the same menu (see SessionContextMenu). */
+.codex-dropdown__trailing-chevron {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  opacity: .55;
+}
+.codex-dropdown__item--back { color: var(--cdx-text-4); }
+.codex-dropdown__item--danger { color: var(--cdx-danger, #e0688c); }
+.codex-dropdown__item--danger:hover,
+.codex-dropdown__item--danger:focus-visible {
+  color: var(--cdx-danger, #e0688c);
+  background: color-mix(in srgb, var(--cdx-danger, #e0688c) 12%, transparent);
+}
+.codex-dropdown__item.checked { color: var(--cdx-text); }
 @keyframes codex-dropdown-in {
   from { opacity: 0; transform: translateY(-2px) scale(.985); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Conversation context menu (right-click on a session row). Portalled to
+ * <body>, so it is deliberately NOT scoped under `.codex-sidebar`. The title
+ * row is the target's own name: a menu opened from the pointer has no other
+ * anchor telling you which conversation it will act on. */
+.sidebar-session-context-menu {
+  max-height: calc(100vh - 16px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.sidebar-session-context-menu__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--cdx-text-3);
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 /* Geometry for this row lives with the other section rules above; only the
@@ -825,32 +996,83 @@
 
 /* ── Workstreams — flat session grouping (docs/dev/session-workstreams-design.md)
  *
- * One accent color per stream (set inline as --ws-accent). The 2px member
- * rail replaces the folder-tree's chevron+indent grammar: color binds the
- * members to their stream, so rows stay as quiet as ungrouped ones. */
-.codex-sidebar .ws-dot {
-  width: 6px;
-  height: 6px;
-  flex: none;
-  border-radius: 9999px;
-  background: var(--ws-accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ws-accent) 14%, transparent);
-}
-.codex-sidebar .ws-path-prefix {
+ * ## The left edge is the hierarchy
+ *
+ * This block used to express grouping three ways at once — a coloured accent
+ * dot, a 2px member rail with elbow connectors, and indentation — and the
+ * indentation contradicted the other two. Group headers carried a chevron and a
+ * dot INSIDE the same 35px column their session rows used, so a group's label
+ * landed 20px RIGHT of its own members: the parent read as a child. Counting
+ * text left-edges down the list gave eight different values (16/40/42/43/53/
+ * 55/65/75) with no grid behind any of them.
+ *
+ * There are now exactly two edges, on an 8px grid:
+ *
+ *     16px  labels     — the "Sessions" heading, group names, time slices
+ *     32px  sessions   — the only rows the user actually clicks
+ *     (40px lineage    — a fork descendant; a relationship, not a third level)
+ *
+ * ## One signal per idea
+ *
+ * - Grouping is carried by INDENT + whitespace rhythm. The rail and elbows are
+ *   gone: half-drawn connectors added speckle without ever completing the
+ *   figure, and spacing does the same job silently (`gestalt proximity`).
+ * - Group names are LABELS, not nodes: smaller, dimmer, no leading glyph, flush
+ *   with the section heading. Session titles are the only bright text, so
+ *   brightness finally ranks selected > session > label > meta instead of
+ *   putting the most saturated pixels on decoration.
+ * - The member count appears ONLY while a group is shut, where it answers "what
+ *   am I hiding?". Open, the members are right there and the number restates
+ *   them. The accent dot is gone from the list entirely; the accent survives as
+ *   the drag/drop highlight and the move-menu swatch, where "which group" is
+ *   the actual question being asked.
+ */
+
+/* Sessions and labels each get ONE edge. `data-flat` is set when the workspace
+ * row is hidden (a single workspace is context, not a node), which is what frees
+ * the 35px its folder-icon column used to reserve. */
+.codex-sidebar .project-tasks[data-flat='true'] .task-select { --task-indent: 24px; }
+
+/* Group label row. No leading glyph: the row itself is the toggle, exactly like
+ * the section heading above it, so nothing sits left of the text to push the
+ * group's own sessions further right than the group. */
+.codex-sidebar .ws-label-select {
+  min-width: 0;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  text-align: left;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-size: 11.5px;
+  font-weight: 550;
+  letter-spacing: .02em;
   color: var(--cdx-text-4);
-  font-size: 10.5px;
-  font-weight: 400;
+  transition: color .12s ease;
 }
-.codex-sidebar .ws-members {
-  position: relative;
-  /* Indent is deliberately SHALLOW. Session rows already carry 35px of
-   * internal padding-left, so hanging the rail under the header's glyph
-   * column would cost 35px more and banish members to the right edge. The
-   * accent rail — not the indent — is what binds a member to its stream, so
-   * 12px is enough to read as "one step in". */
-  margin-left: 6px;
-  padding-left: 6px;
+.codex-sidebar .ws-label-select:hover { color: var(--cdx-text-3); }
+.codex-sidebar .ws-label-select > .ws-name {
+  flex: 1;
+  min-width: 0;
 }
+
+/* Whitespace rhythm replaces the connector lines: a group sits CLOSER to its own
+ * sessions than to the next group, so the boundary is read from spacing rather
+ * than from a glyph. */
+.codex-sidebar .ws-stream { margin-bottom: 12px; }
+.codex-sidebar .ws-stream:last-of-type { margin-bottom: 6px; }
+.codex-sidebar .ws-stream .ws-members > * { margin-top: 1px; }
+
+.codex-sidebar .ws-rename-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px 0 8px;
+}
+
 /* Collapse container — same grid-rows technique and timing as the workspace
  * group's `.project-tasks-outer`, so streams and projects fold identically. */
 .codex-sidebar .ws-members-outer {
@@ -865,60 +1087,49 @@
 }
 .codex-sidebar .ws-members-outer > .ws-members {
   min-height: 0;
-  overflow: hidden;
+  overflow: clip;
 }
-/* One chevron that rotates, rather than swapping two glyphs — the rotation
- * is the same affordance the section headers use. */
-.codex-sidebar .ws-chevron {
-  transition: transform 190ms cubic-bezier(.2, .82, .25, 1);
+
+/* Drag-and-drop auto-grouping. The dragged row dims and the prospective drop
+ * target gets a full-width guide line beneath it — the "drop after this
+ * conversation" affordance. This is where the accent colour still earns its
+ * keep: the question being answered is literally "which group". */
+.codex-sidebar .ws-drag-source {
+  opacity: .42;
 }
-.codex-sidebar .ws-chevron.is-collapsed { transform: rotate(-90deg); }
-.codex-sidebar .ws-members::before {
-  content: '';
+.codex-sidebar .ws-drop-target > .sidebar-row {
+  background: color-mix(in srgb, var(--ws-accent, var(--cdx-text-3)) 12%, transparent);
+}
+.codex-sidebar .ws-drop-guide {
   position: absolute;
   left: 0;
-  top: 3px;
-  bottom: 3px;
-  width: 2px;
-  border-radius: 2px;
-  background: color-mix(in srgb, var(--ws-accent) 30%, transparent);
-  transition: background-color .18s ease;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--ws-accent, var(--cdx-text-3));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ws-accent, var(--cdx-text-3)) 16%, transparent);
+  pointer-events: none;
+  z-index: 7;
 }
-.codex-sidebar .ws-members:hover::before {
-  background: color-mix(in srgb, var(--ws-accent) 52%, transparent);
-}
-/* Fork/handoff descendant — the └ connector reads "attached to the row above".
- * Its step is smaller than the stream step: it is a relationship inside a
- * list, not a second level of filing. */
+
+/* Fork/handoff descendant. One 8px step off its origin — a relationship inside
+ * the list, not a third filing level — and no elbow: the row already sits
+ * directly beneath the session it forked from, and its tooltip names it. */
 .codex-sidebar .ws-lineage-row {
   position: relative;
-  margin-left: 10px;
+  margin-left: 8px;
 }
-.codex-sidebar .ws-lineage-row::before {
-  content: '';
-  position: absolute;
-  left: -7px;
-  top: -6px;
-  width: 6px;
-  height: 20px;
-  border-left: 1px solid color-mix(in srgb, var(--cdx-label-mix) 22%, transparent);
-  border-bottom: 1px solid color-mix(in srgb, var(--cdx-label-mix) 22%, transparent);
-  border-bottom-left-radius: 6px;
-  pointer-events: none;
-}
-.codex-sidebar .ws-lineage-glyph {
-  flex: none;
-  font-size: 10px;
-  line-height: 1;
-  color: var(--cdx-text-4);
-}
-/* Time slices for unfiled sessions — a whisper, not a header. */
+
+/* Time slices for unfiled sessions — a whisper, not a header, and on the LABEL
+ * edge so it cannot read as a parent of the group above it. The top margin is
+ * the paragraph break the uniform 1px rhythm never gave them. */
 .codex-sidebar .ws-time-slice {
   display: flex;
   align-items: center;
   gap: 6px;
-  height: 20px;
-  margin-top: 2px;
+  height: 18px;
+  margin: 10px 0 2px;
   padding: 0 8px;
   font-size: 10px;
   font-weight: 500;
@@ -927,7 +1138,9 @@
   color: var(--cdx-text-4);
   user-select: none;
 }
-/* Move menu — stream entries carry their accent dot; the footer creates
+.codex-sidebar .ws-time-slice:first-child { margin-top: 2px; }
+
+/* Move menu — stream entries carry their accent swatch; the footer creates
  * a stream AND files the session in one step. (Portalled to <body>, so this
  * block is deliberately NOT scoped under .codex-sidebar.) */
 .sidebar-session-move-menu .ws-menu-dot {
@@ -938,32 +1151,74 @@
   background: var(--ws-accent);
 }
 
-/* Workstream header spans opt OUT of the `.task-select > span` flex-1 + fade
- * treatment above — that base rule gives EVERY non-status-slot span flex:1,
- * so a header with a name span, a status-dot span and a count span (three
- * matches) was splitting the row three ways and clipping the stream name to
- * a third of its own row. Only `.ws-name` gets flex:1; the dot, prefix,
- * status slot and count all opt out to a fixed width so the name is the
- * only thing that stretches or truncates. */
-.codex-sidebar .task-select > span.ws-dot {
+/**
+ * Trailing slot — the member count while shut.
+ *
+ * `.sidebar-row__actions` is absolutely positioned over the row's right edge, so
+ * anything parked there is UNDER the rename/delete buttons once they fade in —
+ * the count and the trash icon were drawn on top of each other. The count is a
+ * resting-state answer; the moment the row offers controls, it steps aside.
+ */
+.codex-sidebar .ws-trailing {
   flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   overflow: visible;
-  -webkit-mask-image: none;
-  mask-image: none;
+  transition: opacity 120ms ease;
 }
-.codex-sidebar .task-select > span.ws-status-slot,
-.codex-sidebar .task-select > span.ws-count {
+.codex-sidebar .sidebar-row:hover .ws-trailing,
+.codex-sidebar .sidebar-row:focus-within .ws-trailing,
+.codex-sidebar [data-testid^='sidebar-folder-']:hover > div > .sidebar-row:first-child .ws-trailing,
+.codex-sidebar .sidebar-row[data-force-actions='true'] .ws-trailing {
+  opacity: 0;
+}
+.codex-sidebar .ws-count {
   flex: 0 0 auto;
-  overflow: visible;
-  -webkit-mask-image: none;
-  mask-image: none;
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--cdx-text-4);
 }
-.codex-sidebar .task-select > span.ws-path-prefix {
-  flex: 0 1 auto;
-  max-width: 42%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  -webkit-mask-image: none;
-  mask-image: none;
+/* The aggregate state rides the count as a tint rather than a second glyph. A
+ * shut group is the only place that state is not already visible on the rows
+ * themselves. */
+.codex-sidebar .ws-count[data-status='running'] { color: var(--color-text-info, #4FA8E0); }
+.codex-sidebar .ws-count[data-status='waiting'] { color: #D9A03F; }
+.codex-sidebar .ws-count[data-status='attention'] { color: var(--cdx-danger, #E0688C); }
+
+/* Unfiled label — a sibling of the group labels, introducing the time-sliced
+ * remainder. Same edge and weight as a group label so the reader is not asked
+ * to work out whether time is a peer of grouping or a child of it; the slices
+ * beneath it are then dimmer still, which is the only cue that says "inside". */
+.codex-sidebar .ws-unfiled-label {
+  display: flex;
+  align-items: center;
+  height: 20px;
+  margin: 12px 0 0;
+  padding: 0 8px;
+  font-size: 11.5px;
+  font-weight: 550;
+  letter-spacing: .02em;
+  color: var(--cdx-text-4);
+  user-select: none;
 }
+/* Subordinate to `.ws-unfiled-label`. Set at class level, not by adjacency: an
+ * `+ div` selector reached only the FIRST slice, leaving "Earlier" brighter than
+ * the label that introduces it — the same parent/child inversion, in colour. */
+.codex-sidebar .ws-time-slice {
+  color: color-mix(in srgb, var(--cdx-text-4) 72%, transparent);
+}
+.codex-sidebar .ws-unfiled-label + div > .ws-time-slice:first-child { margin-top: 4px; }
+
+/* Non-flat: a workspace row IS present (two or more workspaces), so it owns the
+ * outermost edge and the tree steps in from ITS name rather than from the
+ * sidebar's. Without this the group labels kept the flat 16px edge and ended up
+ * left of their own workspace — the same parent/child inversion this block
+ * exists to remove, just one level up.
+ *
+ * The workspace row's folder icon is what distinguishes it from a group label at
+ * the same edge; below that, 16px steps as usual. */
+.codex-sidebar .project-tasks:not([data-flat='true']) .ws-label-select { padding-left: 34px; }
+.codex-sidebar .project-tasks:not([data-flat='true']) .ws-unfiled-label,
+.codex-sidebar .project-tasks:not([data-flat='true']) .ws-time-slice { padding-left: 34px; }
+.codex-sidebar .project-tasks:not([data-flat='true']) .task-select { --task-indent: 50px; }
