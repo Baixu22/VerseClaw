@@ -126,6 +126,24 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
               status: 'bestEffort',
             },
           },
+          /*
+           * A validated provider is a PRECONDITION for sending: the composer
+           * blocks the send and opens `chat-provider-gate-dialog` when no
+           * account can serve it (FP-P1-01). Without these four the first send
+           * in this test never reaches `chat.sendWithMedia`, and every
+           * assertion past it — the intervention strip, queueing, steering —
+           * is unreachable behind a modal.
+           */
+          [stableStringify(['providers', 'accounts', null])]: [{
+            id: 'acct-long-task-e2e',
+            vendorId: 'openai',
+            label: 'Long task E2E provider',
+            authMode: 'oauth_browser',
+            enabled: true,
+          }],
+          [stableStringify(['providers', 'accountKeyInfo', null])]: [],
+          [stableStringify(['providers', 'vendors', null])]: [],
+          [stableStringify(['providers', 'getDefaultAccount', null])]: { accountId: 'acct-long-task-e2e' },
           [stableStringify(['sessions', 'longTaskControlStatus', {
             sessionKey: MAIN_SESSION_KEY,
             agentId: 'main',
@@ -317,12 +335,22 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
 
       await page.getByTestId('chat-composer-input').fill('start a long validation run');
       await page.getByTestId('chat-composer-send').click();
+      /*
+       * The intervention strip is the composer's "a run is in flight AND there
+       * is a draft to intervene WITH" surface — every button in it (steer,
+       * queue, interrupt-and-replace) consumes the draft, which is why it is
+       * gated on `hasComposerDraft`. Sending clears the composer, so the strip
+       * appears with the NEXT draft rather than on send.
+       */
+      await expect(page.getByTestId('chat-intervention-controls')).toHaveCount(0);
+      await page.getByTestId('chat-composer-input').fill('queue this after the active validation run');
       await expect(page.getByTestId('chat-intervention-controls')).toBeVisible();
       await expect(page.getByTestId('chat-intervention-guide')).toBeVisible();
       await expect(page.getByTestId('chat-intervention-interrupt')).toBeVisible();
-      await expect(page.getByTestId('chat-intervention-queue')).toHaveCount(0);
-      await page.getByTestId('chat-composer-input').fill('queue this after the active validation run');
-      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('title', 'Queue');
+      await expect(page.getByTestId('chat-intervention-queue')).toBeVisible();
+      /* The button's label lives on `aria-label` (the visible hint is a
+         Tooltip, not a `title` attribute). */
+      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', 'Queue');
       await page.getByTestId('chat-composer-send').click();
       await expect.poll(async () => (
         (await app.evaluate(() => (

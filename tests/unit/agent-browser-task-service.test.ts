@@ -278,6 +278,28 @@ describe('agent browser task service', () => {
     await mkdir(join(root, 'nested'), { recursive: true }); // ensure path ops ok
   });
 
+  it('persists workspace context as metadata without changing its approval gate', () => {
+    const service = new AgentBrowserTaskService({ execute: async (task) => passedExecution(task) });
+    const task = service.create({
+      name: 'Workspace health check',
+      url: 'https://example.com/status',
+      objective: 'Confirm the status page is available',
+      profile: 'default',
+      mode: 'headless',
+      workspaceId: 'workspace-demo',
+      sessionKey: 'agent:main:main',
+      agentId: 'main',
+    });
+
+    expect(task).toMatchObject({
+      workspaceId: 'workspace-demo',
+      sessionKey: 'agent:main:main',
+      agentId: 'main',
+      status: 'waiting-approval',
+      approval: { status: 'pending' },
+    });
+  });
+
   it('rejects before execution and requires a fresh approval after retry', async () => {
     const execute = vi.fn(async (task: AgentBrowserTask) => passedExecution(task));
     const service = new AgentBrowserTaskService({ execute });

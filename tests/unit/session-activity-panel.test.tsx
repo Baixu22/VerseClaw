@@ -89,14 +89,14 @@ describe('SessionActivityPanel', () => {
     const lineage = screen.getByTestId('session-activity-lineage');
 
     expect(within(goals).getByText('Goals & waits')).toBeInTheDocument();
-    expect(within(goals).getByText('Mission mission-phase5-unit')).toBeInTheDocument();
+    expect(within(goals).getByText('sessionActivity.goalKinds.mission Mission mission-phase5-unit')).toBeInTheDocument();
     expect(within(goals).getAllByText('Running').length).toBeGreaterThan(0);
-    expect(within(goals).getByText('Goal wait flow-phase5-unit')).toBeInTheDocument();
+    expect(within(goals).getByText('sessionActivity.goalKinds.flow Goal wait flow-phase5-unit')).toBeInTheDocument();
     expect(within(goals).getByText('Waiting')).toBeInTheDocument();
 
     expect(within(processes).getByText('Processes')).toBeInTheDocument();
-    expect(within(processes).getByText('Process bash-phase5-unit')).toBeInTheDocument();
-    expect(within(processes).getByText('Goal process goal-owned-phase5-unit')).toBeInTheDocument();
+    expect(within(processes).getByText('sessionActivity.processKinds.bash Process bash-phase5-unit')).toBeInTheDocument();
+    expect(within(processes).getByText('sessionActivity.processKinds.goalOwned Goal process goal-owned-phase5-unit')).toBeInTheDocument();
     expect(within(processes).getByText('Done')).toBeInTheDocument();
 
     expect(within(lineage).getByText('Lineage')).toBeInTheDocument();

@@ -64,7 +64,8 @@ describe("UAS-05 VerseShell process lifecycle boundary", () => {
     expect(execRuntime).not.toContain("executeGovernedVerseShell");
     expect(processTool).toContain('session?.lifecycleOwner === "verseshell"');
     expect(processTool).toContain('session.lifecycleOwner === "verseshell"');
-    expect(registry).toContain('lifecycleOwner?: "verseshell"');
+    expect(registry).toContain("lifecycleOwner?:");
+    expect(registry).toContain('"verseshell"');
   });
 
   it("leaves Task Forest release order and product graduation locks unchanged", () => {

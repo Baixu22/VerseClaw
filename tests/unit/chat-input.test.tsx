@@ -1418,7 +1418,6 @@ describe('ChatInput slash commands', () => {
 
   it('opens the compaction dialog from /compact', () => {
     renderChatInput(vi.fn(), {
-      messageCount: 4,
       compactionStatus: {
         available: true,
         canCompact: true,
@@ -1879,9 +1878,8 @@ describe('ChatInput read-only context status', () => {
     artifactPanelMocks.openWorkspacePanel.mockReset();
   });
 
-  it('renders message, token, and hidden-context counts when provided', () => {
+  it('keeps passive message and token counts out of the composer footer', () => {
     renderChatInput(vi.fn(), {
-      messageCount: 4,
       liveUsage: {
         sessionKey: 'agent:main:main',
         inputTokens: 1800,
@@ -1901,13 +1899,13 @@ describe('ChatInput read-only context status', () => {
       },
     });
 
-    const status = screen.getByTestId('chat-composer-context-status');
-    expect(status).toHaveTextContent('4 messages');
-    expect(status).toHaveTextContent('2.4k / 128k tokens');
-    expect(status).toHaveTextContent('2 hidden');
+    expect(screen.queryByTestId('chat-composer-context-status')).not.toBeInTheDocument();
+    expect(screen.queryByText('4 messages')).not.toBeInTheDocument();
+    expect(screen.queryByText('2.4k / 128k tokens')).not.toBeInTheDocument();
+    expect(screen.queryByText('2 hidden')).not.toBeInTheDocument();
   });
 
-  it('keeps active-run interventions explicit while the primary control pauses the session', async () => {
+  it('queues a draft with one click while running, and pauses on a double click', async () => {
     const onSend = vi.fn();
     const onPauseSession = vi.fn();
     const view = renderChatInput(onSend, {
@@ -1917,12 +1915,16 @@ describe('ChatInput read-only context status', () => {
     });
 
     expect(screen.getByTestId('chat-intervention-controls')).toBeInTheDocument();
-    expect(screen.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'running');
-    expect(screen.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', 'Stop');
+    expect(screen.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'running-with-draft');
+    expect(screen.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', 'Queue');
     expect(screen.getByTestId('chat-intervention-guide')).toBeInTheDocument();
     expect(screen.getByTestId('chat-intervention-queue')).toBeInTheDocument();
     expect(screen.getByTestId('chat-intervention-interrupt')).toBeInTheDocument();
+
+    // 单击（在防抖窗口内触发第二次 click）：取消排队、落到暂停当前运行。
     fireEvent.click(screen.getByTestId('chat-composer-send'));
+    fireEvent.click(screen.getByTestId('chat-composer-send'));
+    fireEvent.doubleClick(screen.getByTestId('chat-composer-send'));
     expect(onPauseSession).toHaveBeenCalledTimes(1);
     expect(onSend).not.toHaveBeenCalled();
 
@@ -1974,6 +1976,36 @@ describe('ChatInput read-only context status', () => {
     });
   });
 
+  it('queues the draft when the running primary control is clicked once', async () => {
+    const onSend = vi.fn();
+    renderChatInput(onSend, {
+      sending: true,
+      draftValue: 'queue this follow-up after the run',
+      onPauseSession: vi.fn(),
+    });
+
+    expect(screen.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'running-with-draft');
+    fireEvent.click(screen.getByTestId('chat-composer-send'));
+
+    await waitFor(() => {
+      expect(onSend).toHaveBeenCalledWith(
+        'queue this follow-up after the run',
+        expect.objectContaining({ inputMode: 'queue' }),
+      );
+    });
+  });
+
+  it('pauses the run with one click when there is no composer draft', () => {
+    const onSend = vi.fn();
+    const onPauseSession = vi.fn();
+    renderChatInput(onSend, { sending: true, onPauseSession });
+
+    expect(screen.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'running');
+    fireEvent.click(screen.getByTestId('chat-composer-send'));
+    expect(onPauseSession).toHaveBeenCalledTimes(1);
+    expect(onSend).not.toHaveBeenCalled();
+  });
+
   it('renders a persisted pause as a resume action', () => {
     const onResumeSession = vi.fn();
     renderChatInput(vi.fn(), { paused: true, onResumeSession });
@@ -1994,7 +2026,6 @@ describe('ChatInput read-only context status', () => {
   it('opens the manual compaction dialog from /compact and confirms with extra instructions', async () => {
     const onManualCompact = vi.fn().mockResolvedValue(undefined);
     renderChatInput(vi.fn(), {
-      messageCount: 4,
       compactionStatus: {
         available: true,
         canCompact: true,
@@ -2030,7 +2061,6 @@ describe('ChatInput read-only context status', () => {
   it('no longer renders compaction diagnostics in the composer status line', () => {
     settingsState.uiDepthMode = 'advanced';
     renderChatInput(vi.fn(), {
-      messageCount: 4,
       compactionStatus: {
         available: true,
         canCompact: true,
@@ -2066,7 +2096,6 @@ describe('ChatInput read-only context status', () => {
     const onSend = vi.fn();
     settingsState.uiDepthMode = 'basic';
     renderChatInput(onSend, {
-      messageCount: 4,
       compactionStatus: {
         available: true,
         canCompact: true,
@@ -2329,6 +2358,15 @@ describe('ChatInput agent targeting', () => {
     fireEvent.click(screen.getByTestId('chat-composer-permission-option-readOnly'));
 
     expect(onPermissionModeChange).toHaveBeenCalledWith('readOnly');
+  });
+
+  it('falls back to read-only when a persisted workspace has an invalid permission mode', () => {
+    renderChatInput(vi.fn(), {
+      workspace: workspace({ permissionMode: 'workspace-write' as WorkspaceProfile['permissionMode'] }),
+      onPermissionModeChange: vi.fn(),
+    });
+
+    expect(screen.getByTestId('chat-composer-permission-mode')).toHaveTextContent('Read only');
   });
 
   it('routes workspace folder and new session actions through the permission menu', async () => {

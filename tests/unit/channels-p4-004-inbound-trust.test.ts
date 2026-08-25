@@ -185,6 +185,12 @@ describe('P4-004 channel inbound trust', () => {
     });
     expect(admitted.admitted).toBe(true);
     expect(admitted.fencedText).toContain('untrusted');
+    expect(admitted.provenance).toMatchObject({
+      sourceKind: 'channel',
+      trustLevel: 'untrusted',
+      sourceId: 'channel:feishu:m-1',
+      containsExternalUntrustedContent: true,
+    });
     expect(admitted.fencedText).toContain('(System)');
     expect(admitted.fencedText).not.toMatch(/\[System\]/);
 

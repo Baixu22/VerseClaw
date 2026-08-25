@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Chat } from '@/pages/Chat';
 
@@ -201,9 +201,7 @@ vi.mock('@/hooks/use-min-loading', () => ({
 }));
 
 vi.mock('@/pages/Chat/ChatInput', () => ({
-  ChatInput: ({ slashRequest }: { slashRequest?: number }) => (
-    <div data-testid="chat-input" data-slash-request={slashRequest ?? 0} />
-  ),
+  ChatInput: () => <div data-testid="chat-input" />,
 }));
 
 vi.mock('@/pages/Chat/ChatMessage', () => ({
@@ -230,13 +228,12 @@ describe('Chat toolbar slash entry', () => {
     window.electron.platform = 'win32';
   });
 
-  it('replaces the old save shortcut and requests the composer slash palette', async () => {
+  it('keeps the toolbar free of the obsolete more-actions menu', async () => {
     render(<MemoryRouter><Chat /></MemoryRouter>);
 
-    fireEvent.pointerDown(await screen.findByTestId('chat-toolbar-more'), { button: 0, ctrlKey: false });
-    fireEvent.click(await screen.findByTestId('chat-toolbar-slash'));
-    expect(screen.getByTestId('chat-input')).toHaveAttribute('data-slash-request', '1');
-    fireEvent.pointerDown(screen.getByTestId('chat-toolbar-more'), { button: 0, ctrlKey: false });
+    await screen.findByTestId('chat-toolbar-refresh');
+    expect(screen.queryByTestId('chat-toolbar-more')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-toolbar-slash')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-save-knowledge')).not.toBeInTheDocument();
   });
 });

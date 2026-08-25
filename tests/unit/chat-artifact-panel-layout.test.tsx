@@ -147,9 +147,41 @@ describe('Chat artifact panel layout', () => {
     const aside = panel.closest('aside');
 
     expect(aside).toHaveClass('relative');
-    expect(aside).toHaveClass('bg-surface-modal');
     expect(aside).toHaveClass('no-drag');
     expect(aside).not.toHaveClass('absolute');
+  });
+
+  it('gives the side panel no surface of its own, so it stays co-planar with the chat', async () => {
+    window.electron.platform = 'darwin';
+
+    render(<Chat />);
+
+    const aside = (await screen.findByTestId('artifact-panel')).closest('aside');
+
+    // `bg-surface-modal` put the panel one material step above the conversation
+    // — visible in dark, where it resolved to 13% lightness against the canvas's
+    // 9.4% — so a panel that takes real layout width beside the chat still read
+    // as a raised slab parked next to it. The page canvas and its grid now carry
+    // straight through; the left hairline is the only thing marking the seam.
+    expect(aside).not.toHaveClass('bg-surface-modal');
+    expect(aside).toHaveClass('border-l');
+  });
+
+  it('spans the background canvas across both columns', async () => {
+    window.electron.platform = 'win32';
+
+    render(<Chat />);
+
+    const page = await screen.findByTestId('chat-page');
+    const canvas = await screen.findByTestId('chat-welcome-bg');
+    const conversation = await screen.findByTestId('chat-conversation-column');
+
+    // The canvas is a child of the PAGE, not of the conversation column: the
+    // workspace panel is co-planar, so the grid has to cross the divider. It is
+    // also the first child, so every positioned sibling after it paints on top.
+    expect(canvas.parentElement).toBe(page);
+    expect(page.firstElementChild).toBe(canvas);
+    expect(conversation.contains(canvas)).toBe(false);
   });
 
   it('hides the chat assistive rail while the artifact panel is open', async () => {
