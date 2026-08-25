@@ -843,8 +843,14 @@ docs/dev/context-moat/
 | **D13** | `src/runtime-core/memory-hybrid-retrieval.ts` | TF-0114（车道 2）/ TF-0122（车道 1） | **跨车道** |
 | D14 | `src/config/runtime-feature-leaves.ts` | TF-0109 / TF-0107 / TF-0112 | 2 |
 | D15 | `src/config/zod-schema.ts` | TF-0112（唯一写者）；TF-0105 / TF-0107 / TF-0109 仅只读引用 | 2 |
+| D16 | `src/agents/agent-hooks/compaction-damage-rules.ts` | TF-0128 / TF-0124 | 1 |
+| D17 | `src/context-engine/context-health-monitor.ts` | TF-0128 / TF-0129 | 1 |
+| D18 | `src/agents/agent-hooks/compaction-sections.ts`（TF-0128 新建，章节常量单一真相源） | TF-0128 / TF-0124 | 1 |
+| D19 | `src/agents/agent-hooks/compaction-safeguard-quality.ts` | TF-0128 / TF-0124 | 1 |
 
 **D13 是本轮唯一一组跨车道的真写冲突域。** TF-0114 修 `tokenizeWords` / `extractEntities` 的 CJK 空返回；TF-0122 裁决整条 hybrid 检索链去留，而「迁出」选项会移动整个文件。故 `TF-0122 depends_on TF-0114` 已由 non-blocking **升为 blocking**：必须先修完再裁决去留，反序会让 TF-0114 的修复被 TF-0122 的迁出连带作废。排班上两者相距 1050min，正常不会真撞上，但边必须是 blocking 以防 pick-next 抢跑。
+
+**D09 的触碰面扩大（TF-0128）**：D09 原列 TF-0111 / TF-0124。TF-0128 的 requirement-5「先以 shadow 模式上线」要求把损伤审计接进生产路径，而唯一**无条件**经过的落点是 `compaction-safeguard.ts` 的 `capCompactionSummaryPreservingSuffix` 收尾处 —— 紧邻的 `auditSummaryQuality` 调用点被 `qualityGuardEnabled` 门控，接在那里会让审计在质量守卫关闭时静默失效（§D1(b) 反向证伪的 ③ 上游守卫情形）。故 TF-0128 追加为 D09 触碰者，并新登记 D16-D19 四个此前未登记的车道 1 文件。四者触碰者全部在车道 1，属车道内串行，无跨车道风险。偏差记录：`TFD-d16-d19-damage-detection-domains-2026-08-25`。
 
 **三处已排除的 mention-only 假阳性，勿再重复认定**：`attempt.ts` 与 `init.ts` 仅被 TF-0104 作为「生产入口 / 注册入口」判例引用（零写入）；`context-compression-eval-runner.mjs` 仅被 TF-0106 作为 §R2 门命令清单引用（只读）。若车道 1 的 TF-0143 / TF-0138 需要真改这个 runner，属触碰面扩大，按 R4.2 记偏差。
 
