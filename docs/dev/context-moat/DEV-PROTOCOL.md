@@ -34,12 +34,16 @@
 
 `done` 需要 (a) 与 (b) **同时**成立，缺一不可：
 
-**(a) 生产可达。** `grep` 出至少一个**非测试、非 `experiments/`、非 `scripts/`** 的生产调用点，且该调用点本身能**递归上溯**到以下四者之一：
+**(a) 生产可达。** `grep` 出至少一个**非测试、非 `experiments/`、非 `scripts/`** 的生产调用点，且该调用点本身能**递归上溯**到以下**五者**之一（前四者由 TF-0104 点名，第五者为包主入口，缺它会漏掉整条 library 面）：
 
 - `src/agents/embedded-agent-runner/run/attempt.ts`（agent attempt 主循环）
 - gateway 启动（`src/gateway/boot.ts`）
 - `init.ts` 注册（`src/context-engine/init.ts`）
 - RPC 暴露（`src/gateway/cli-runtime/gateway-rpc.ts`）
+- **包主入口 `src/index.ts`**（`package.json` 的 `main` → `dist/index.js`；它经 `await import("./library.js")` 触达整个 library）
+
+> 本清单与 §D1.2 脚本的 `PRODUCTION_ROOTS` 常量**必须逐条一致**（当前均为 5 项）。二者不一致时，「某符号是否生产可达」会因判定者用文本还是用脚本而不同 —— 那正是 §R1 A3 判例（`coding-runtime-flags.ts:9-10` 声称叶子已移除而它仍存在）的同类缺陷。**改任一处必须同步另一处。**
+> 修订来源：TF-0104 的审核（lane-2）指出正文写「四者」而脚本实为 5 项。已实测该差异不改变本轮结论（含/不含 barrel root，D1.0 点名的死模块均仍判 `NOT PRODUCTION REACHABLE`），故属判据一致性问题而非判定错误 —— 但 A3 的标准是「不允许留着」。
 
 「有测试调用它」**不是**生产可达。「旗标打开就能走到」**不是**生产可达 —— 旗标默认关 = 未通电。
 
@@ -60,11 +64,26 @@
 
 > 路径说明：节点 AC 写作 `scripts/check-production-reachable.mjs`；仓库内 40 余个 `check-*.mjs` 全部位于 `openclaw_runtime/scripts/`，且本脚本扫描 `openclaw_runtime/src`，故落在该目录以匹配既有约定。
 
+**从仓库根运行**（`D:\ClawX`，两条车道的默认 cwd）：
+
 ```bash
-node scripts/check-production-reachable.mjs <symbol> [<symbol>...]
+node openclaw_runtime/scripts/check-production-reachable.mjs <symbol> [<symbol>...]
 ```
 
-退出码：`0` 生产可达 ｜ `1` 不可达 ｜ `2` 仅 API 面（被引用未被调用）｜ `3` 用法错误 / 符号不存在 / 配置的 root 已失效。
+从 `openclaw_runtime/` 内运行时才可省略前缀（`node scripts/check-production-reachable.mjs …`）。**逐字照抄不带前缀的形式在仓库根会抛 `Cannot find module`** —— 本节初稿即为该形式，由 TF-0104 的审核（lane-2）指出并修正。审核者复跑本节命令时请按自己的 cwd 选择对应形式。
+
+退出码：`0` 生产可达 ｜ `1` 不可达 ｜ `2` 仅 API 面（在可达模块中被引用但从未被调用）｜ `3` 用法错误 / 符号不存在 / 配置的 root 已失效。
+
+**四档均已有实证样本**（审核者可逐条复跑；每档至少一个已知答案，避免任一分支「定义了但从未被走过」）：
+
+| 退出码 | 实证符号 | 观测 |
+|---:|---|---|
+| `0` | `createInjectionBudget` | PRODUCTION REACHABLE，2 个真实调用点（`assembler.ts:307` / `turn-injection-budget.ts:280`），6 处测试命中正确排除 |
+| `1` | `applyContextLadder` | NOT PRODUCTION REACHABLE，零调用点（其 grep 命中全在注释字符串内） |
+| `2` | **`CODEX_CLI_PROFILE_ID`** | API-SURFACE-ONLY —— 经 `agents/auth-profiles.ts:6` 与 `plugin-sdk/provider-auth.ts:38` 两个**可达** barrel 再导出，但**从未被调用** |
+| `3` | 任一不存在的标识符 | `symbol not found in src/` |
+
+> `2` 档的样本由 TF-0104 的审核（lane-2）指出缺失后补入：其审核发现该档在 6 个抽样符号上均未触发，属「定义了但未被实证」的分支。后续对 1065 个具名再导出符号批量扫描找到 `CODEX_CLI_PROFILE_ID`。该档在本仓库稀有是有原因的 —— 「在可达模块中被具名导入却从未调用」通常会先被 lint 的未使用导入规则拦掉，**只有再导出（re-export）形态能合法长期存在**，因为再导出本身就是「不调用」的正当用途。
 
 其余模式：`--all-modules`（全量粗扫）、`--blind-spots`（列出无法解析的动态 import）、`--roots`（打印 root 与可达模块数）。
 
@@ -143,7 +162,21 @@ D1.1(a) 问的是「新代码是否被生产路径执行」。有三类改动**�
 | **A1** | **生产调用点存在性（递归上溯）** | 对新增/改动的每个导出符号跑 `grep -rn '<symbol>' src/ --include=*.ts`，排除 `*.test.ts` 后须有 ≥1 个调用方；再对该调用方递归上溯，直到抵达一个生产入口。链条上任一环只被测试消费，则整条链视为未通电 | 本轮起点即 8 个生产零调用模块。「有测试调用它」不是生产可达 —— 见 §D1 |
 | **A2** | **反向证伪** | 主动查四类反证并逐条记录「查了什么 / 结果如何」：① 旗标默认值是否为关；② 是否存在 kill switch 使该路径不可达；③ 上游守卫是否先行 return；④ `deferProjection` 一类分支是否把该路径旁路。**四类全部记录为空才算 PASS**；未记录 = FAIL（不是 PASS） | 见 §D1 反向证伪条款。本项须同时引用 §R5 的边界编号，使越界成为可指认的具体条款违反 |
 | **A3** | **注释与契约一致性** | 本次改动涉及的每条 doc-comment 断言，须在实现中找到对应代码；找不到则改注释或改实现，二者择一，不允许留着 | 三处实测说谎：`turn-injection-budget.ts:420`、`coding-runtime-flags.ts:9-10`、`assembler.ts:66-74`（详见 R1.3） |
-| **A4** | **配置四面一致** | 新增/改动配置叶子须五处齐全：`config/zod-schema.ts` / `config/types.openclaw.ts` / `config/runtime-feature-leaves.ts` / 运维目录（`shared/dcs/prod-flags-catalog.ts`）/ **执行器**。缺执行器 = 写了没人执行 | `coding-runtime-flags.ts:152-164` 的 `worktree.backend` 有叶子无执行器。**声明「旗标关闭」为回滚方式时必须跑本项**（§R5 过程-9） |
+| **A4** | **配置四面一致** | 新增/改动配置叶子须五处齐全：`config/zod-schema.ts` / `config/types.openclaw.ts` / `config/runtime-feature-leaves.ts` / 运维目录（`shared/dcs/prod-flags-catalog.ts`）/ **执行器**。缺执行器 = 写了没人执行。**第五处不能用 §D1.2 脚本判定，见 A4 注**。声明「旗标关闭」为回滚方式时必须跑本项（§R5 过程-9） | `coding-runtime-flags.ts:152-164` 的 `worktree.backend` 有叶子无执行器 |
+
+> **A4 注 —— 「有执行器」与「生产可达」是两个不同谓词，不可用同一工具判定。**
+>
+> §D1.2 脚本回答的是「该符号是否能被生产入口触达」。A4 第五处要回答的是**更强的问题**：「把这个叶子改掉，运行时行为会不会变」。二者可以背离，本轮就有现成判例：
+>
+> `resolveWorktreeBackend` 经脚本判 **exit 0（生产可达）**，但其唯一生产调用点是 `runtime-flag-ack.ts:272` —— 一条**只上报、不消费**的路径；真正建 worktree 的 `worktree-service.ts:267` 读的是传入的 `options?.backend`，从不读该叶子。**故它可达却无执行器：设置该叶子不改变任何运行时行为。**
+>
+> 对照组：`runKeCandidateGenerationForTerminal` 同样 exit 0，但其调用点 `task-loop-controller.ts:2237` 确实**按值分支**（`if (!flags.candidateGeneration) return {enabled:false}`）。两者退出码相同、性质相反。
+>
+> **A4 第五处的正确判据（两步，脚本只完成第一步）**：
+> 1. 用 §D1.2 脚本确认解析器可达（必要不充分）；
+> 2. **人工追到至少一个「按该值分支或据该值改变输出」的站点**，并在审核记录中给出 `文件:行号` 与该分支语句本身。只找到上报 / 日志 / ack / 快照类消费 ⟹ **判无执行器，A4 FAIL**。
+>
+> 修订来源：TF-0146 的审核（lane-2）指出协议把两个谓词混为一谈、要求用脚本做 A4 执行器检查是无效的。该缺口路由至本节（§R1 A4 定义）与 TF-0137（D2：无执行器旗标的处置）。
 | **A5** | **CJK 回归** | 触碰文本处理（分词 / 抽取 / 截断 / 相似度）必须有**纯中文输入**断言。测试语料全英文 = 本项 FAIL | `tokenizeWords`（`memory-hybrid-retrieval.ts:1046`）与 `extractEntities`（`:1063`）对纯中文串产出 0 token / 0 entity；缺陷能长期存活正是因为语料全英文 |
 | **A6** | **边界值** | 触碰数值预算 / 阈值必须有 `0` / 负数 / `NaN` / 空数组断言。**只测 0 不够** —— `NaN` 会穿过所有 `<= 0` 与 `< 2` 守卫，因为 `NaN` 参与的比较恒为 false | `createInjectionBudget(NaN)`（`injection-budget.ts:41`）使全体注入退化为单字符省略号且报告 `applied: true`，击穿该文件第 8 行声明的 fail-closed 契约（详见 R1.3） |
 
