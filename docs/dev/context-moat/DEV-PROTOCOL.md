@@ -838,7 +838,7 @@ docs/dev/context-moat/
 | D08 | `src/memory/context-pack.ts` | TF-0110 / 0114 | 2 |
 | D09 | `src/agents/agent-hooks/compaction-safeguard.ts` | TF-0111 / 0124 | 1 |
 | D10 | `src/agents/worktree-service.ts` | TF-0112 / 0137 | 2 |
-| D11 | `src/context-engine/turn-injection-budget.ts` | TF-0117 / 0128 | 1 |
+| D11 | `src/context-engine/turn-injection-budget.ts` | TF-0117 / 0128（车道 1）/ **TF-0118（车道 2，仅删除 test-only 导出 `reserveTurnInjectionCapacity`）** | **跨车道** |
 | D12 | `docs/dev/context-moat/DEV-PROTOCOL.md` | TF-0103 全部子节点 | 双（按节分工） |
 | **D13** | `src/runtime-core/memory-hybrid-retrieval.ts` | TF-0114（车道 2）/ TF-0122（车道 1） | **跨车道** |
 | D14 | `src/config/runtime-feature-leaves.ts` | TF-0109 / TF-0107 / TF-0112 | 2 |
@@ -851,6 +851,10 @@ docs/dev/context-moat/
 **D13 是本轮唯一一组跨车道的真写冲突域。** TF-0114 修 `tokenizeWords` / `extractEntities` 的 CJK 空返回；TF-0122 裁决整条 hybrid 检索链去留，而「迁出」选项会移动整个文件。故 `TF-0122 depends_on TF-0114` 已由 non-blocking **升为 blocking**：必须先修完再裁决去留，反序会让 TF-0114 的修复被 TF-0122 的迁出连带作废。排班上两者相距 1050min，正常不会真撞上，但边必须是 blocking 以防 pick-next 抢跑。
 
 **D09 的触碰面扩大（TF-0128）**：D09 原列 TF-0111 / TF-0124。TF-0128 的 requirement-5「先以 shadow 模式上线」要求把损伤审计接进生产路径，而唯一**无条件**经过的落点是 `compaction-safeguard.ts` 的 `capCompactionSummaryPreservingSuffix` 收尾处 —— 紧邻的 `auditSummaryQuality` 调用点被 `qualityGuardEnabled` 门控，接在那里会让审计在质量守卫关闭时静默失效（§D1(b) 反向证伪的 ③ 上游守卫情形）。故 TF-0128 追加为 D09 触碰者，并新登记 D16-D19 四个此前未登记的车道 1 文件。四者触碰者全部在车道 1，属车道内串行，无跨车道风险。偏差记录：`TFD-d16-d19-damage-detection-domains-2026-08-25`。
+
+**D11 升为第二组跨车道域（2026-08-25 发现）**：D11 原登记为车道 1 独占（TF-0117 / TF-0128）。车道 2 的 **TF-0118**（T-D3 死导出清理）其 `summary` 点名要删 `reserveTurnInjectionCapacity`（`turn-injection-budget.ts:312`，实测 test-only），落在 D11 内，而 TF-0118 **不是**该域的登记触碰者。发现时机：车道 1 执行 §R4.10 第 1 步的开工前交集自检，检出 `TF-0117 ∩ TF-0118 = {turn-injection-budget.ts} ≠ ∅`，故**未开工 TF-0117**，改按 §R4.4 pick-next 取 TF-0116。**该文件当时尚未被修改，冲突在发生前被拦住** —— 这正是 R4.10 第 1 步存在的理由。
+
+**serialization 要求**：两者都要改同一文件，须串行。建议 **TF-0117 先**（只改一处注释措辞，brb-S，且 `turn-injection-budget.ts:420` 的契约措辞正是 TF-0117 的三处判例之一），**TF-0118 后**（删除该导出）。反序会让 TF-0117 的行号依据失效。此顺序未写进图，故裁决权交回用户（§13）。偏差记录：`TFD-d11-cross-lane-tf0118-2026-08-25`。
 
 **三处已排除的 mention-only 假阳性，勿再重复认定**：`attempt.ts` 与 `init.ts` 仅被 TF-0104 作为「生产入口 / 注册入口」判例引用（零写入）；`context-compression-eval-runner.mjs` 仅被 TF-0106 作为 §R2 门命令清单引用（只读）。若车道 1 的 TF-0143 / TF-0138 需要真改这个 runner，属触碰面扩大，按 R4.2 记偏差。
 
