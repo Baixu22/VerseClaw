@@ -1,0 +1,28 @@
+{
+  "applied_at": "2026-08-25T01:48:02.876987Z",
+  "base_graph_hash": "90edeefacde4b4d852229355d4b55d7f55f0e616d8bdfd81588b8c304a5dea85",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-25T02:00:00.000000Z",
+        "decided_by": "lane-2, on lane-1's routing from the M0 L2 closeout attempt (5268f0e06); every classification established by independent measurement rather than by accepting lane 1's numbers",
+        "id": "TFD-lane2-lintcheck-fourth-gate-2026-08-25",
+        "impact": "Gate not weakened, coverage completed. The legitimacy basis is that this gate was red from the start and was never analysed, so the whitelist is not being loosened to accommodate a regression -- it is being extended to cover an omission. That distinction is exactly what the only-decrease clause protects, so it is stated explicitly rather than glossed. All four errors have byte-level CAUSAL proof of pre-existing the round, which is stronger than §1.1's intersection test (correlational): for the three tracked files, `git diff 590588791..HEAD -- <file>` and `git diff 590588791 -- <file>` are both empty, so content is byte-identical to round start; they were last modified by 24ce5abf2 / 1eab23c99 on 2026-08-16, before the round. The fourth file is untracked with zero commits touching it in range, so the round's commits cannot have created it; it is part of the pre-existing uncommitted work §R4.9 declares un-owned. Classified backlog-debt 3 + exempt-noise 1. Not fixed because all four files fall outside lane 2's file domains (not docs/dev/context-moat, not any of D01-D15), and §R4.9 forbids handling pre-existing uncommitted changes while §R5 scope-1 bounds the round's touch surface -- fixing them would be an overreach, not diligence. Regression detection preserved by a two-part criterion: every (file, rule) pair must be whitelisted AND total errors must not exceed baselineErrorCount 4. Both halves verified load-bearing by three synthetic true-positive cases: a 5th error in a new file is caught by both; a duplicate of an already-whitelisted (file, rule) is caught ONLY by the cap; a new rule in a whitelisted file at unchanged count is caught ONLY by the pair check. SECOND FINDING: lint:check is `check-no-bom && eslint . && lint:dcs`, so eslint's exit 1 means lint:dcs NEVER RUNS -- a second instance of the same && short-circuit blind spot already recorded for maturity:validate in TFD-maturity-chain-blindspot-2026-08-24. Unlike the maturity one, this blind spot is RESOLVED rather than left unknown: lint:dcs measured standalone at exit 0 and check-no-bom at exit 0, so eslint is the chain's only red segment. §R2.3 now carries a general rule that && chain gates must be run segment by segment. This deviation does NOT release B1; barrier crossing remains a human decision per §R4.8.",
+        "kind": "scope_change",
+        "node_id": "TF-0142",
+        "related_task_ids": [],
+        "summary": "pnpm lint:check is a fourth red gate that §D4's first version never analysed, because TF-0142's acceptance_criteria named only three (config-schema-parity / pnpm test / maturity:validate). Meanwhile §R2.3 and §D4.5 both asserted that lint:check / typecheck / contract:check must be exit 0 with no exemption -- and none of those three assertions had ever been measured. Measured now: typecheck exit 0, contract:check exit 0, lint:check exit 1 with 4 eslint errors and 131 warnings. So one of the three assertions was false. Lane 1 hit this during the M0 L2 closeout attempt and correctly refused to self-exempt (§R2.0.1 defines a gate as its exit code, not self-assessment; §R4.8 puts barrier release outside any single lane), routing it to lane 2 who owns both §R2.3 (TF-0106) and §D4 (TF-0142). This deviation records adding a whole fourth gate with 4 exemptions to the whitelist -- an INCREASE, which §5.3's load-bearing clause ('entry count may only decrease') requires be recorded."
+      }
+    }
+  ],
+  "created_at": "2026-08-25T01:47:33.135644Z",
+  "proposal_id": "TFP-9889846c4e",
+  "session_id": "session-2026-08-24-lane-2",
+  "status": "applied"
+}

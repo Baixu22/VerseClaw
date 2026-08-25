@@ -1,0 +1,32 @@
+{
+  "applied_at": "2026-08-24T23:52:59.164966Z",
+  "base_graph_hash": "bf873823928cd24bc37fca627450c2cdc213e3529b9dee741061f7cfade630a8",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-24T23:52:48.388906Z",
+        "decided_by": "车道 2 在 §R3.3 指出缺口并因 §R4 属车道 1 owner 节而正确地未跨节编辑、改为提请；车道 1 作为 TF-0107 审核者核实 D01-D14 命中数为 0、图上唯一写者为 TF-0112 后补登（reviews/TF-0107.md 审核者裁定「采纳的两项对车道 1 的指认」第 1 条）",
+        "id": "TFD-d15-zod-schema-2026-08-24",
+        "impact": "冲突域 14→15 组。不改任何估时与墙钟，无跨车道风险（唯一写者在车道 2）。消除的是登记完整性缺口：受 §R3 守卫的路径却无冲突域登记，会使 §R3.3 的 schema 白名单失去 §R4.5 派生依据。",
+        "kind": "scope_change",
+        "node_id": "TF-0145",
+        "related_task_ids": [
+          "TF-0145",
+          "TF-0107",
+          "TF-0112"
+        ],
+        "summary": "补登记 D15（openclaw_runtime/src/config/zod-schema.ts）为第 15 组冲突域。唯一写者 TF-0112（车道 2）；TF-0105 / TF-0107 / TF-0109 仅只读引用。该文件被 §R3.1 命令 2 列为受守卫路径，但 D01-D14 无任何域覆盖它，而 TF-0112 标题（factViews 从 schema/type 下架）明确要求改它。"
+      }
+    }
+  ],
+  "created_at": "2026-08-24T23:52:48.368704Z",
+  "proposal_id": "TFP-2c75ded687",
+  "session_id": "lane-1",
+  "status": "applied"
+}

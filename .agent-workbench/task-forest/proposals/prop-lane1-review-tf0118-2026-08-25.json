@@ -1,0 +1,44 @@
+{
+  "applied_at": "2026-08-25T09:12:16.153011Z",
+  "base_graph_hash": "034fdae857fee6809ae5c260886ccfd7c267b6182083abd155e1759f60593ca6",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [],
+  "created_at": "2026-08-25T09:10:48.070626Z",
+  "operations": [
+    {
+      "decided_by": "lane-1 作为 §D1 owner；缺口由 lane-2 在 TF-0118 自检中就 commitMemoryProposal 单例发现并提请（其 backlog-P1 第 2 条），lane-1 审核时把它推广到全部候选并实测出另两个实例，据此从「建议」升为 §D1.2 强制条款。",
+      "id": "TFD-d1-2-scan-domain-blind-spot-2026-08-25",
+      "impact": "§D1.2「方法与已知边界」新增两条（第五个盲区 + 无导出级枚举模式）。判死流程新增强制步骤：全仓 grep。既有已收口 task 的判定不受影响（TF-0104 的 exit-code 见证表复跑 0/1/2/3 无漂移），但 TF-0118 的一项分类结论因此改变（trace-context-provider.ts 应判 guard-only 而非删除候选）。",
+      "kind": "scope_change",
+      "node_id": "TF-0104",
+      "op": "record_deviation",
+      "related_task_ids": [
+        "TF-0104",
+        "TF-0118",
+        "TF-0102"
+      ],
+      "summary": "§D1.2 的生产可达脚本扫描域仅 openclaw_runtime/src，仓库根 tests/ electron/ src/ 内的调用方不可见，故「脚本 exit 1 + src 内 grep 无命中」不足以判死。TF-0118 的四个候选实测命中该盲区 3/4：commitMemoryProposal（节点称全仓零调用，实为 tests/unit/role-runtime-mvp.test.ts:164 有调用）、trace-context-provider.ts（自述连测试都没有，实为三个仓库根套件 15 个通过用例）、reserveTurnInjectionCapacity（tests/unit/context-orchestrator-entry-scan.test.ts:68 有反向守卫）。同时登记：本脚本无「枚举某目录下所有零调用导出」模式，故 TF-0118 AC-1 那类导出级计数指标不可由本脚本测量。"
+    },
+    {
+      "decided_by": "lane-1 作为 §R4 owner，在审核 TF-0118 时补登。实现者已正确处置该文件（第三方 hunk 实测零丢失，git diff --numstat 为 1 1），但未登记该域；lane-1 按 §R4.5「新发现的域必须追加」即时补登，避免留下 pick-next 看不见该域的窗口。",
+      "id": "TFD-d20-root-package-json-cross-lane-2026-08-25",
+      "impact": "冲突域由 19 组增至 20 组，其中跨车道域由 2 组（D11 / D13）增至 3 组。新增操作约束：改动前必须用绝对路径跑 git diff 确认第三方 hunk；禁止裸 git commit -- package.json；共行时「先撤对方→提交→git apply 还原」的第 4 步会失败，须按语义重放。",
+      "kind": "conflict_domain_collision",
+      "node_id": "TF-0145",
+      "op": "record_deviation",
+      "related_task_ids": [
+        "TF-0145",
+        "TF-0118"
+      ],
+      "summary": "仓库根 package.json 此前不在 §R4.5 冲突域表内，但它是两条车道 L1 门的共同载体（test:dcs / typecheck:node / lint:dcs 的命令定义都在其中），任一车道注册新测试文件都要改它；且本轮实测它携带第三方未提交改动并与实现者改动共行（TF-0118 的 test:dcs 行）。补登为 D20，跨车道。"
+    }
+  ],
+  "proposal_id": "prop-lane1-review-tf0118-2026-08-25",
+  "rationale": "lane-1 非实现者审核 TF-0118：判 A3 FAIL（两处事实断言为假），并补登 §D1.2 第五个盲区与 §R4.5 D20 两处治理缺口。",
+  "session_id": null,
+  "status": "applied"
+}
