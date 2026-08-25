@@ -152,6 +152,12 @@ audit-baseline-check → validate-system-maturity-plan → validate-test-gates
 ⟹ **第 5、6 个脚本从未运行，其绿/红状态是未知量，不是已知绿。**
 任何声称「maturity 只有 25 项问题」的表述都是不完整的。本文件把它记为**已知盲区**，并在 §5.2 的 L2 判据中要求单独跑第 5、6 个脚本以消除盲区（属 backlog，不属本轮）。
 
+> **补记（本节初版漏声明，属我的缺陷）：这两条补跑命令有副作用。** 实测 `maturity:traceability` 会改写 `artifacts/system-maturity/P7-001/traceability-report.json`（+246/-108），而该文件**正是 §4.3 那 25 项基线中的一项**（见基线清单 `P7-001|artifacts/system-maturity/P7-001/traceability-report.json`）—— **这道门会改写它所校验的对象**。
+>
+> 两层后果：①不复原即为 §R5 技术-7「不追溯修改历史 artifacts」的违反；②两车道共用工作树，该改动不属任何车道（§R4.9）。故 §R2.3 已补一条强制收尾：逐段跑（不用 `&&`），跑完验 `git status --porcelain -- artifacts/system-maturity` 为空，非空则 `git checkout --` 复原。
+>
+> **自修改的门不得以「跑过了」为凭据**：不复原则下一轮比对的是被上一次运行改写过的基线，「只保证 25 项不增长」随即失去意义。本项由车道 1 在 M0 L2 收口尝试中实测发现并记为 backlog-P1，路由给我；此处按判据缺口处理而非 backlog，因为它使本门的承重条款失效。
+
 ### 4.2 漂移性质：不是脏树噪声，是 committed 漂移
 
 实测：25 项失配所涉文件中，**多数在工作树是 clean 的**（`shared/host-api/contract.ts`、`src/lib/host-api.ts`、`electron/main/ipc-handlers.ts`、`electron/services/workspace-permissions.ts`、`electron/utils/{store,channel-config}.ts`、`openclaw_runtime/src/agents/role-spawn.ts`、`scripts/collect-p7-003-evidence.mjs` 等均 `[clean]`）。

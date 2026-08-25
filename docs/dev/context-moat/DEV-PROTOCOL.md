@@ -362,6 +362,15 @@ pnpm maturity:validate
   - `pnpm test`：失败集 ⊆ §D4 白名单 `gates.pnpm_test.exemptions`，且 `config-schema-parity` 不在失败集内。**白名单外任一失败 = 回归，阻塞。**
   - `maturity:validate`：A2 失配集 ⊆ §D4 §4.3 的 25 项基线；**并须单独补跑** `pnpm maturity:residual` 与 `pnpm maturity:traceability` 以消除 §D4 记录的 `&&` 链短路盲区（`TFD-maturity-chain-blindspot-2026-08-24`）。
 - **`&&` 链门须逐段跑**（本轮两道门栽在此形状）：`lint:check` 与 `maturity:validate` 均为 `&&` 链，退出码只报告链上**第一个**失败，其后各段状态是**未知量而非已知绿**。`lint:check` 的盲区已实测消解（`lint:dcs` 单独跑 exit 0）；`maturity` 的两段见 §D4.3。
+- **`maturity` 两条补跑命令有副作用，跑完必须复原**（本节初版未声明，是我的缺陷）：实测 `maturity:traceability` 会改写 `artifacts/system-maturity/P7-001/traceability-report.json`（+246/-108），而该文件**本身就是 §D4.3 那 25 项基线中的一项** —— 即这道门会改写它所校验的对象。后果有两层：①留着不复原就是 §R5 技术-7「不追溯修改历史 artifacts」的违反；②两车道共用工作树，该改动不属任何车道（§R4.9）。故 L2 判据补一条**强制收尾**：
+
+  ```bash
+  pnpm maturity:residual; pnpm maturity:traceability     # 逐段跑，不用 &&
+  git status --porcelain -- artifacts/system-maturity     # 应为空
+  git checkout -- artifacts/system-maturity/P7-001/traceability-report.json   # 若非空则复原
+  ```
+
+  **自修改的门不得以「跑过了」为凭据**：若不复原，下一次同门比对的是被上一次运行改写过的基线，25 项的「只保证不增长」就失去意义。
 - 回归定义（承重条款，同 §D4.6）：**白名单之外的任何失败 = 回归，一律阻塞。** 白名单条目**只减不增**；新增须走 §R4 偏差触发 (c)。
 
 ---
