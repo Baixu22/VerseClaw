@@ -24,6 +24,7 @@ import { isNixMode, normalizeStateDirEnv, resolveStateDir } from "../config/path
 import { applyConfigOverrides } from "../config/runtime-overrides.js";
 import { resolveMainSessionKey } from "../config/sessions.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { resolveConfigDir } from "../utils.js";
 import {
   isDiagnosticsEnabled,
   setDiagnosticsEnabledForProcess,
@@ -969,6 +970,7 @@ export async function startGatewayServer(
 
   let closePreludeStarted = false;
   let postReadyMaintenanceTimer: ReturnType<typeof setTimeout> | null = null;
+  let stopDurableHelperRecovery = (): void => {};
   const clearPostReadyMaintenanceTimer = () => {
     if (!postReadyMaintenanceTimer) {
       return;
@@ -979,6 +981,7 @@ export async function startGatewayServer(
   const markClosePreludeStarted = () => {
     closePreludeStarted = true;
     clearPostReadyMaintenanceTimer();
+    stopDurableHelperRecovery();
   };
   const runClosePrelude = async () => {
     markClosePreludeStarted();
@@ -1729,6 +1732,36 @@ export async function startGatewayServer(
         log.warn(`gateway: failed to promote config last-known-good backup: ${String(err)}`);
       });
       if (!minimalTestGateway) {
+        // Phase 4 durable helper recovery is default-off and watches only the
+        // bounded background-processes file protocol.
+        const { startDurableHelperRecoveryService } = await import(
+          "../agents/goal-wake-recovery.js"
+        );
+        const recovery = startDurableHelperRecoveryService({
+          cfg: getRuntimeConfig(),
+        });
+        stopDurableHelperRecovery = recovery.stop;
+        // TF-0081: reconcile supervisor runs orphaned by a previous gateway
+        // boot (persisted manifest + fail-closed OS containment). Never
+        // expands kill scope and never touches runs with a live owner.
+        try {
+          const { attachSupervisorRunManifestAndReconcile } = await import(
+            "../process/supervisor/index.js"
+          );
+          const reconciliation = await attachSupervisorRunManifestAndReconcile(
+            path.join(resolveConfigDir(), "process-supervisor"),
+          );
+          log.info(
+            `gateway: supervisor restart reconciliation ${reconciliation.status}` +
+              ` reconciled=${reconciliation.reconciled} lost=${reconciliation.lost}` +
+              ` ours=${reconciliation.ours} foreignOwner=${reconciliation.foreignOwner}` +
+              ` containmentUnknown=${reconciliation.containmentUnknown}` +
+              ` residual=${reconciliation.residual}` +
+              (reconciliation.detail ? ` detail=${reconciliation.detail}` : ""),
+          );
+        } catch (err) {
+          log.warn(`gateway: supervisor restart reconciliation failed: ${String(err)}`);
+        }
         const gatewayRuntimeServices = await loadScheduledServicesModule();
         if (closePreludeStarted) {
           return;

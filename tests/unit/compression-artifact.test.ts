@@ -4,6 +4,7 @@ import {
   normalizeCompressionArtifact,
   renderCompressionArtifactSummary,
   renderRecoveryContextProjection,
+  type CompressionArtifact,
   type CompressionSemanticAtom,
 } from '../../openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact';
 import { compact, prepareCompaction } from '../../openclaw_runtime/packages/agent-core/src/harness/compaction/compaction';
@@ -79,14 +80,16 @@ describe('compression artifact', () => {
 
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    expect(result.value.details?.artifact).toMatchObject({
+    const artifact = (result.value.details as { artifact?: CompressionArtifact } | undefined)?.artifact;
+    if (!artifact) throw new Error('Expected compression artifact');
+    expect(artifact).toMatchObject({
       schemaVersion: 1,
       objective: expect.stringContaining('Preserve recovery facts'),
       telemetry: expect.objectContaining({ staleExcludedCount: 2 }),
     });
-    expect(result.value.details?.artifact?.evidenceRefs.length).toBeGreaterThan(0);
-    expect(result.value.details?.artifact?.filesTouched.map((item) => item.text)).toContain('shared/host-api/contract.ts');
-    expect(result.value.details?.artifact?.testsRun.some((item) => item.text.includes('pnpm run typecheck'))).toBe(true);
+    expect(artifact.evidenceRefs.length).toBeGreaterThan(0);
+    expect(artifact.filesTouched.map((item) => item.text)).toContain('shared/host-api/contract.ts');
+    expect(artifact.testsRun.some((item) => item.text.includes('pnpm run typecheck'))).toBe(true);
   });
 
   it('builds a dense recovery artifact with evidence and legacy summary rendering', () => {

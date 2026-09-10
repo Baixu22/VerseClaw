@@ -30,21 +30,29 @@
   },
   "sessionActivity": {
     "title": "Session status",
-    "description": "Live runtime, task, Git, agent, and terminal activity for this conversation.",
+    "description": "Live runtime, task, Git, goal, process, lineage, agent, and terminal activity for this conversation.",
     "openRecovery": "Open session recovery",
     "createMemoryDraft": "Save session to Knowledge",
     "duration": "Duration",
     "notAvailable": "Not available",
-    "sections": { "session": "Session", "git": "Workspace Git", "tasks": "Live tasks", "subagents": "Sub-agents", "terminals": "Terminals", "continuity": "Continuity" },
+    "sections": { "session": "Session", "git": "Workspace Git", "tasks": "Live tasks", "subagents": "Sub-agents", "goals": "Goals & waits", "processes": "Processes", "lineage": "Lineage", "terminals": "Terminals", "continuity": "Continuity", "environment": "Environment", "plan": "Development tasks" },
     "status": { "idle": "Idle", "running": "Running", "waiting_approval": "Waiting for approval", "completed": "Completed", "failed": "Failed", "aborted": "Aborted" },
-    "git": { "detached": "Detached HEAD", "changes": "{{count}} changes", "conflicts": "Conflicts" },
+    "git": { "detached": "Detached HEAD", "changes": "{{count}} changes", "conflicts": "Conflicts", "clean": "Clean" },
     "taskKinds": { "mission": "Mission", "taskLoop": "Task Loop", "clawGraph": "ClawGraph", "taskLedger": "Task Ledger" },
     "taskStatus": { "queued": "Queued", "running": "Running", "review": "Review", "blocked": "Blocked", "completed": "Done", "failed": "Failed", "aborted": "Aborted" },
-    "subagents": { "unknown": "Agent" },
+    "subagents": { "unknown": "Agent", "openTranscript": "Open {{role}}'s transcript in the workspace" },
     "subagentStatus": { "started": "Running", "completed": "Done", "error": "Error", "aborted": "Aborted", "verified": "Verified" },
     "terminals": { "interactive": "Interactive terminal", "agentCommand": "Agent command", "webPreview": "Web preview server" },
     "terminalStatus": { "idle": "Idle", "starting": "Starting", "running": "Running", "exited": "Exited", "blocked": "Blocked", "completed": "Done", "error": "Error" },
-    "continuity": { "queue": "{{count}} queued follow-ups", "context": "Context pressure: {{pressure}}", "checkpoint": "Recovery checkpoint available", "pressure": { "low": "low", "medium": "medium", "high": "high" } }
+    "continuity": { "queue": "{{count}} queued follow-ups", "context": "Context pressure: {{pressure}}", "checkpoint": "Recovery checkpoint available", "pressure": { "low": "low", "medium": "medium", "high": "high" } },
+    "goalKinds": { "mission": "Mission", "flow": "Goal wait" },
+    "goalStatus": { "queued": "Queued", "waiting": "Waiting", "running": "Running", "sleeping": "Sleeping", "paused": "Paused", "blocked": "Blocked", "completed": "Done", "failed": "Failed", "aborted": "Aborted", "lost": "Lost" },
+    "processKinds": { "bash": "Process", "supervisor": "Supervised process", "goalOwned": "Goal process" },
+    "processStatus": { "queued": "Queued", "starting": "Starting", "running": "Running", "exiting": "Exiting", "exited": "Exited", "completed": "Done", "failed": "Failed", "killed": "Killed", "aborted": "Aborted", "lost": "Lost" },
+    "lineage": { "parent": "Parent session", "child": "Child session" },
+    "lineageStatus": { "started": "Running", "completed": "Done", "aborted": "Aborted", "error": "Error" },
+    "runningCount": "{{count}} running",
+    "processes": { "openOutput": "Open the output of {{command}}" }
   },
   "noLogs": "(No logs available yet)",
   "scrollToLatest": "Back to bottom",
@@ -146,12 +154,40 @@
       "external-write": "External write",
       "destructive": "Destructive"
     },
+    "riskLabel": "Risk",
+    "externalWriteSummary": "External process write (details withheld)",
+    "externalWriteNoRollback": "Outside the ClawX write journal; no automatic rollback.",
+    "sourceLabel": "Source",
+    "modeLabel": "Mode",
     "status": {
       "pending": "Pending",
       "approved": "Approved",
       "denied": "Denied",
       "expired": "Consumed"
-    }
+    },
+    "workspaceSummary": "{{branch}} · {{state}}",
+    "repository": "Repository",
+    "notRepository": "This workspace is not a Git repository",
+    "timeline": "Git lifecycle",
+    "timelineDescription": "Commits, checkouts, resets, rebases, and other ref movement",
+    "timelineEmpty": "No Git lifecycle entries yet",
+    "timelineUnavailable": "Git lifecycle is unavailable",
+    "reflogUnavailable": "Git history is unavailable",
+    "approvalsUnavailable": "Approvals are unavailable",
+    "truncated": "Older entries hidden (limit reached)",
+    "partialFailure": "Some audit sources are unavailable",
+    "filterAll": "All",
+    "filterApprovals": "Approvals",
+    "filterGit": "Git",
+    "approvalCount": "{{count}} approvals",
+    "gitCount": "{{count}} Git events",
+    "operationCount": "{{count}} events",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details",
+    "branch": "Branch",
+    "clean": "Clean",
+    "dirty": "{{count}} changes",
+    "conflicts": "{{count}} conflicts"
   },
   "gitPanel": {
     "title": "Git",
@@ -199,7 +235,15 @@
         "title": "Permission required",
         "approve": "Approve",
         "deny": "Deny",
-        "retryRequired": "Decision recorded — ask the agent to retry the action."
+        "retryRequired": "Decision recorded — ask the agent to retry the action.",
+        "externalWriteTitle": "External write requires approval",
+        "externalWriteWarning": "This external process may change files or other state outside the ClawX write journal.",
+        "externalWriteNoRollback": "Outside the ClawX write journal; no automatic rollback.",
+        "externalWriteEffectLabel": "Effect",
+        "externalWriteEffect": "External process write",
+        "externalWriteRollbackLabel": "Rollback",
+        "externalWriteSnapshotLabel": "Snapshot",
+        "externalWriteSnapshot": "Bound to this request; approval only permits a later retry."
       }
     },
     "actions": {
@@ -397,7 +441,9 @@
       "terminal": "Terminal",
       "files": "Files",
       "audit": "Audit",
-      "agents": "Sub-agents"
+      "agents": "Sub-agents",
+      "subagent": "Sub-agent",
+      "process": "Process"
     },
     "workspaceTabs": {
       "files": "Files",
@@ -462,12 +508,8 @@
     "dispatchPlaceholder": "Send a task to {{role}}…",
     "dispatchStarted": "Dispatched to {{role}}",
     "dispatchFailed": "Failed to dispatch the task",
-    "role": {
-      "user": "You",
-      "assistant": "Agent",
-      "system": "System",
-      "toolresult": "Tool"
-    }
+    "role": { "user": "You", "assistant": "Agent", "system": "System", "toolresult": "Tool" },
+    "openOwnTab": "Double-click to open in its own tab"
   },
   "filePreview": {
     "tabs": {
@@ -768,6 +810,9 @@
         "fetch": "Fetch",
         "pull": "Pull",
         "push": "Push",
+        "merge": "Merge",
+        "rebase": "Rebase",
+        "reset": "Reset",
         "addWorktree": "Add worktree",
         "openWorktree": "Open",
         "switchWorktree": "Switch",
@@ -840,6 +885,7 @@
         "worktrees": "Worktree",
         "commit": "Commit",
         "branch": "Branch",
+        "integrate": "Integrate",
         "stash": "Stash",
         "github": "PR",
         "compactHint": "Compact tools"
@@ -859,6 +905,14 @@
         "title": "Branch & worktree",
         "branchPlaceholder": "New branch",
         "worktreePlaceholder": "Branch for worktree"
+      },
+      "integrate": {
+        "title": "Integrate",
+        "help": "Merge or rebase the current branch, or reset it to a ref.",
+        "refLabel": "Integration ref",
+        "refPlaceholder": "Select a branch",
+        "resetMode": "Reset mode",
+        "resetHelp": "Reset is destructive and always requires approval."
       },
       "worktrees": {
         "title": "Worktrees",
@@ -1390,6 +1444,9 @@
     "resume": "Resume",
     "pauseTooltip": "Pause this run and save a resumable session state.",
     "resumeTooltip": "Resume this paused session.",
+    "resumeDisabled": "This session can no longer be resumed here.",
+    "startingTooltip": "Starting… Click to cancel the pending send or pause the current run.",
+    "queueTooltip": "Queue this draft for after the current run. Double-click to pause instead.",
     "gatewayConnected": "connected",
     "gatewayStatus": "gateway {{state}} | port: {{port}} {{pid}}",
     "contextStatusTitle": "Context and token status",
@@ -1833,15 +1890,35 @@
     "work": "Work"
   },
   "sessionView": {
-    "project": "Workgroups",
+    "project": "Projects",
     "time": "Time"
   },
   "sidebar": {
     "sectionConversations": "Conversations",
+    "sectionProjects": "Projects",
+    "sessionActions": "Conversation actions",
+    "forkSession": "Fork conversation",
+    "handoffSession": "Hand off conversation",
+    "copyWorkPath": "Copy work path",
+    "copySessionId": "Copy conversation ID",
+    "copied": "Copied to clipboard",
+    "copyFailed": "Copy failed",
+    "noWorkPath": "This conversation has no project path",
+    "menuBack": "Back",
     "organizeSessions": "Organize conversations",
+    "pinSession": "Pin conversation",
+    "unpinSession": "Unpin conversation",
+    "markRead": "Mark as read",
+    "markUnread": "Mark as unread",
+    "pinnedSession": "Pinned conversation",
+    "unreadSession": "Unread conversation",
     "searchSessions": "Search conversations",
     "addProject": "Add project",
+    "viewBy": "View by",
     "sortBy": "Sort by",
+    "sortNewest": "Newest",
+    "sortActive": "Most active",
+    "sortPriority": "Priority",
     "newSessionInProject": "New task in {{name}}",
     "projectOptions": "Project options for {{name}}",
     "createFolder": "New folder",
@@ -1875,7 +1952,7 @@
     "create": "New workstream",
     "namePlaceholder": "Workstream name",
     "rename": "Rename workstream",
-    "delete": "Delete workstream",
+    "delete": "Remove group",
     "moveTo": "Move to workstream",
     "noWorkgroup": "No workstream",
     "ungrouped": "Unfiled",
@@ -1894,7 +1971,9 @@
       "today": "Today",
       "week": "This week",
       "earlier": "Earlier"
-    }
+    },
+    "autoGroupName": "{{name}} group",
+    "dropHint": "Drag onto another conversation to group them together"
   },
   "archive": {
     "searchPlaceholder": "Search archived conversations",
@@ -1922,6 +2001,10 @@
     "title": "Question directory",
     "fallback": "Question {{number}}",
     "moreHint": "{{count}} more questions not shown"
+  },
+  "messageNav": {
+    "label": "Prompt navigation",
+    "jumpTo": "Jump to prompt {{ordinal}}"
   },
   "sessionRail": {
     "title": "Session status",
@@ -2109,6 +2192,7 @@
       "minutesSeconds": "{{minutes}}m {{seconds}}s"
     },
     "badge": {
+      "thoughts": "{{count}} thoughts",
       "approvals": "{{count}} approvals",
       "plan": "{{count}} steps",
       "agents": "{{count}} agents",
@@ -2172,5 +2256,13 @@
       "validationError": "Validation Error",
       "error": "Error"
     }
+  },
+  "processPanel": {
+    "gone": "This process is no longer in the current run.",
+    "exitCode": "exit {{code}}",
+    "truncated": "Earlier output was trimmed.",
+    "waiting": "Waiting for output…",
+    "noOutput": "This process produced no output.",
+    "status": { "running": "Running", "completed": "Done", "failed": "Failed" }
   }
 }

@@ -27,7 +27,7 @@ describe('TokenUsageBadge', () => {
                 estimatedCostUsd: 0.0123,
               },
             },
-          }}
+          } as never}
         />
       </TooltipProvider>,
     );

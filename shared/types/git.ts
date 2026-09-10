@@ -78,6 +78,16 @@ export type GitCommitInfo = {
   date?: number;
 };
 
+/** A reflog entry describes repository movement, not only committed changes. */
+export type GitReflogEntry = {
+  hash: string;
+  shortHash: string;
+  selector: string;
+  subject: string;
+  /** Reflog timestamp in epoch milliseconds. */
+  date?: number;
+};
+
 export type GitWorktree = {
   path: string;
   branch?: string;
@@ -111,6 +121,90 @@ export type GitOperationResult = {
 export type GitCommitResult = GitOperationResult & {
   commit?: string;
 };
+
+export type GitApplyPatchMode = 'preflight' | 'apply' | 'revert';
+
+export type GitApplyPatchPayload = {
+  /** Unified diff text (git format). */
+  patch: string;
+  mode?: GitApplyPatchMode;
+  approvalId?: string;
+};
+
+export type GitApplyPatchResult = GitOperationResult & {
+  /** Paths successfully written/reverted by `git apply`. */
+  appliedPaths: string[];
+  /** Paths git skipped (already applied, missing, etc.). */
+  skippedPaths: string[];
+  /** Paths with conflicts that were NOT written. */
+  conflictedPaths: string[];
+  /** True when run in preflight mode: no filesystem mutation occurred. */
+  preflight: boolean;
+};
+
+/** How the comparison base was determined, so callers never guess. */
+export type GitBaseResolution =
+  /** Caller passed an explicit base ref and it resolved. */
+  | 'explicit'
+  /** Upstream tracking branch of the current HEAD. */
+  | 'upstream'
+  /** The remote declared this its default branch, via refs/remotes/<r>/HEAD. */
+  | 'remote-default'
+  /** Nearest remote-tracking ref that is an ancestor of HEAD. Weaker than
+   * 'remote-default': no remote declared this branch, it was inferred as the
+   * closest available ancestor. Kept distinct so callers can say which. */
+  | 'remote-ancestor'
+  /** No remote ancestor could be derived: comparison is unavailable. */
+  | 'unavailable';
+
+export type GitDiffToBasePayload = {
+  /** Explicit base ref; when omitted the nearest remote ancestor is derived. */
+  base?: string;
+  /** Restrict the diff to these repo-relative paths. */
+  paths?: string[];
+  /** Include each file's patch text. Off by default: patches cost one `git
+   * diff` per file, and callers that only render counts do not need them. */
+  includePatches?: boolean;
+};
+
+/** One file's diff between the merge base and HEAD. Distinct from
+ * GitDiffResult because both sides are commits, so the staged/unstaged
+ * distinction does not apply. Side-by-side content is intentionally omitted:
+ * callers that need it request that one file through git.fileDiff. */
+export type GitBaseDiffFile = {
+  path: string;
+  /** Raw git status letter: A, M, D, R, C, T. */
+  changeKind: string;
+  /** Empty unless the request set includePatches. */
+  patch: string;
+  /** Line counts from `git diff --numstat`; null for binary files, which git
+   * reports as `-` because line counts do not apply. */
+  additions?: number | null;
+  deletions?: number | null;
+  /** True when the patch was clipped at the size limit. */
+  tooLarge?: boolean;
+  binary?: boolean;
+};
+
+export type GitDiffToBaseResult = {
+  success: boolean;
+  /** How `base` was chosen; 'unavailable' means no comparison was produced. */
+  resolution: GitBaseResolution;
+  /** The ref actually diffed against, absent when unavailable. */
+  base?: string;
+  /** Merge-base commit between base and HEAD, absent when unavailable. */
+  mergeBase?: string;
+  files: GitBaseDiffFile[];
+  /** Aggregate over the reported files, so a header does not re-sum them.
+   * Binary files contribute to `files` but not to the line counts. */
+  totals?: { files: number; additions: number; deletions: number };
+  /** True when the file list was capped. */
+  truncated?: boolean;
+  /** Why the comparison is unavailable; set only for 'unavailable'. */
+  reason?: string;
+  error?: string;
+};
+
 
 export type GithubAuthStatus = {
   available: boolean;

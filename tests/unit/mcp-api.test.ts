@@ -30,6 +30,10 @@ const { createGitApiMock, gitApiMock } = vi.hoisted(() => {
     fetch: vi.fn(),
     pull: vi.fn(),
     push: vi.fn(),
+    reflog: vi.fn(),
+    merge: vi.fn(),
+    rebase: vi.fn(),
+    reset: vi.fn(),
     githubAuthStatus: vi.fn(),
     githubRepo: vi.fn(),
     prList: vi.fn(),
@@ -587,6 +591,10 @@ describe('mcp api registry', () => {
         expect.objectContaining({ name: 'git_worktree_add' }),
         expect.objectContaining({ name: 'git_worktree_remove' }),
         expect.objectContaining({ name: 'git_push' }),
+        expect.objectContaining({ name: 'git_reflog' }),
+        expect.objectContaining({ name: 'git_merge' }),
+        expect.objectContaining({ name: 'git_rebase' }),
+        expect.objectContaining({ name: 'git_reset' }),
         expect.objectContaining({ name: 'github_auth_status' }),
         expect.objectContaining({ name: 'github_pr_view' }),
         expect.objectContaining({ name: 'github_pr_create' }),
@@ -596,6 +604,25 @@ describe('mcp api registry', () => {
         expect.objectContaining({ name: 'remote_forge_pull_request_merge' }),
       ]),
     });
+  });
+
+  it('routes Git lifecycle tools through the typed Git service', async () => {
+    gitApiMock.reflog.mockResolvedValue({ success: true, entries: [] });
+    gitApiMock.merge.mockResolvedValue({ success: false, blocked: true, approvalRequired: true });
+    gitApiMock.rebase.mockResolvedValue({ success: true });
+    gitApiMock.reset.mockResolvedValue({ success: true });
+    const { createMcpApi } = await import('@electron/services/mcp-api');
+    const api = createMcpApi();
+
+    await api.callTool({ serverId: 'clawx-git', toolName: 'git_reflog', args: { limit: 42 } });
+    await api.callTool({ serverId: 'clawx-git', toolName: 'git_merge', args: { ref: 'main', noFastForward: true } });
+    await api.callTool({ serverId: 'clawx-git', toolName: 'git_rebase', args: { ref: 'main' } });
+    await api.callTool({ serverId: 'clawx-git', toolName: 'git_reset', args: { ref: 'HEAD', mode: 'hard' } });
+
+    expect(gitApiMock.reflog).toHaveBeenCalledWith({ limit: 42 });
+    expect(gitApiMock.merge).toHaveBeenCalledWith({ ref: 'main', noFastForward: true, approvalId: undefined });
+    expect(gitApiMock.rebase).toHaveBeenCalledWith({ ref: 'main', approvalId: undefined });
+    expect(gitApiMock.reset).toHaveBeenCalledWith({ ref: 'HEAD', mode: 'hard', approvalId: undefined });
   });
 
   it('routes built-in Remote Forge MCP reads through the shared Main service instance', async () => {

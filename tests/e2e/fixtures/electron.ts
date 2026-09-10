@@ -31,6 +31,20 @@ type ElectronFixtures = {
   launchElectronApp: (options?: LaunchElectronOptions) => Promise<ElectronApplication>;
 };
 
+type AgentDevTestWindow = Window & {
+  __CLAWX_TEST__?: {
+    getSnapshot?: () => unknown;
+    setHostApiReplay?: (config: unknown) => void;
+    hostApiCalls?: unknown[];
+  };
+};
+
+function envWithoutUndefined(env: Record<string, string | undefined>): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(env).filter((entry): entry is [string, string] => entry[1] !== undefined),
+  );
+}
+
 const repoRoot = resolve(process.cwd());
 const electronEntry = join(repoRoot, 'dist-electron/main/index.js');
 const rendererEntryUrl = pathToFileURL(join(repoRoot, 'dist', 'index.html')).toString();
@@ -216,7 +230,7 @@ async function launchVerseClawElectron(
     }
     : {};
   return await electron.launch({
-    executablePath: electronBinaryPath,
+    executablePath: String(electronBinaryPath),
     args: [
       '--lang=en-US',
       '--disable-gpu',
@@ -226,7 +240,7 @@ async function launchVerseClawElectron(
       '--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization',
       electronEntry,
     ],
-    env: {
+    env: envWithoutUndefined({
       ...process.env,
       ...electronEnv,
       ...options.env,
@@ -253,7 +267,7 @@ async function launchVerseClawElectron(
       ...(options.skipSetup ? { VERSE_CLAW_E2E_SKIP_SETUP: '1' } : {}),
       VERSE_CLAW_PORT_CLAWX_HOST_API: String(hostApiPort),
       VERSE_CLAW_REMOTE_DEBUGGING_PORT: String(cdpPort),
-    },
+    }),
     timeout: 90_000,
   });
 }
@@ -345,7 +359,7 @@ export async function openAgentDevScenario(
 }
 
 export async function getAgentDevSnapshot(page: Page): Promise<unknown> {
-  return page.evaluate(() => window.__CLAWX_TEST__?.getSnapshot?.() ?? null);
+  return page.evaluate(() => (window as AgentDevTestWindow).__CLAWX_TEST__?.getSnapshot?.() ?? null);
 }
 
 export async function configureAgentDevHostReplay(
@@ -356,12 +370,12 @@ export async function configureAgentDevHostReplay(
   },
 ): Promise<void> {
   await page.evaluate((replayConfig) => {
-    window.__CLAWX_TEST__?.setHostApiReplay(replayConfig);
+    (window as AgentDevTestWindow).__CLAWX_TEST__?.setHostApiReplay?.(replayConfig);
   }, config);
 }
 
 export async function getAgentDevHostCalls(page: Page): Promise<unknown[]> {
-  return page.evaluate(() => window.__CLAWX_TEST__?.hostApiCalls ?? []);
+  return page.evaluate(() => (window as AgentDevTestWindow).__CLAWX_TEST__?.hostApiCalls ?? []);
 }
 
 export async function installIpcMocks(

@@ -49,7 +49,7 @@ describe('P4-001 gateway method auth / origin / rate-limit matrix', () => {
   it('denies agentBrowser.invoke without write scope', () => {
     const auth = authorizeOperatorScopesForMethod('agentBrowser.invoke', ['operator.read']);
     expect(auth.allowed).toBe(false);
-    expect(auth.missingScope).toBeTruthy();
+    expect(!auth.allowed && auth.missingScope).toBeTruthy();
   });
 
   it('allows agentBrowser.invoke with write or admin scope', () => {
@@ -151,7 +151,7 @@ describe('P4-001 agent browser first-response binding', () => {
             },
             client: makeBridgeClient('bridge-1'),
             respond: vi.fn(),
-            context,
+            context: context as never,
             req: {} as never,
             isWebchatConnect: () => false,
           });
@@ -163,7 +163,7 @@ describe('P4-001 agent browser first-response binding', () => {
     await agentBrowserHandlers['agentBrowser.invoke']({
       params: { action: 'status', payload: { sessionId: 'sess-a' } },
       respond,
-      context,
+      context: context as never,
       client: makeWebClient('origin-1'),
       req: {} as never,
       isWebchatConnect: () => false,
@@ -258,7 +258,7 @@ describe('P4-001 agent browser first-response binding', () => {
     const invokePromise = agentBrowserHandlers['agentBrowser.invoke']({
       params: { action: 'status', payload: { sessionId: 's1' } },
       respond: respondInvoke,
-      context,
+      context: context as never,
       client: makeWebClient('origin'),
       req: {} as never,
       isWebchatConnect: () => false,
@@ -270,7 +270,7 @@ describe('P4-001 agent browser first-response binding', () => {
       params: { requestId, ok: true, payload: { winner: 'evil' } },
       respond: evilRespond,
       client: makeWebClient('evil'),
-      context,
+      context: context as never,
       req: {} as never,
       isWebchatConnect: () => false,
     });
@@ -286,7 +286,7 @@ describe('P4-001 agent browser first-response binding', () => {
       params: { requestId, ok: true, payload: { winner: 'a' }, sessionKey: 's1' },
       respond: aRespond,
       client: makeBridgeClient('bridge-a'),
-      context,
+      context: context as never,
       req: {} as never,
       isWebchatConnect: () => false,
     });
@@ -298,7 +298,7 @@ describe('P4-001 agent browser first-response binding', () => {
       params: { requestId, ok: true, payload: { winner: 'b' }, sessionKey: 's1' },
       respond: bRespond,
       client: makeBridgeClient('bridge-b'),
-      context,
+      context: context as never,
       req: {} as never,
       isWebchatConnect: () => false,
     });

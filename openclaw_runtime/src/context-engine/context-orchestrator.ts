@@ -100,6 +100,8 @@ export type ContextOrchestratorInput = {
   sessionKey?: string;
   sessionId?: string;
   runId?: string;
+  /** Stable logical task scope for memory retrieval; never infer it from runId. */
+  taskId?: string;
   requestId?: string;
   workspaceDir?: string;
   /** Task / user prompt hint for VToken assemble. */
@@ -227,7 +229,7 @@ export function recordContextOrchestratorSourceDecision(
     sourceId: string;
     channel: TurnInjectionChannel;
     target: ContextCandidateTarget;
-    reason: "empty" | "flag-off" | "kill-switch";
+    reason: "empty" | "flag-off" | "kill-switch" | "skip-channel";
   },
 ): ContextCandidateLineage {
   return recordContextCandidateSkip(turnId, input);
@@ -266,6 +268,13 @@ export function finalizeContextOrchestratorTurn(params: {
     enabled?: boolean;
     database?: { env?: NodeJS.ProcessEnv; path?: string };
   };
+  /**
+   * T-B6 (TF-0126): dedupKeys injected by earlier model calls of this
+   * attempt, forwarded to candidate finalization so re-collected
+   * working_memory content that did not change deduplicates instead of
+   * re-injecting. Undefined keeps legacy behavior.
+   */
+  priorDedupKeys?: ReadonlySet<string>;
 }): {
   messages: AgentMessage[];
   projection: ContextCandidateProjection;
@@ -277,6 +286,7 @@ export function finalizeContextOrchestratorTurn(params: {
     turnId: params.turnId,
     ledger,
     messages: params.messages,
+    priorDedupKeys: params.priorDedupKeys,
   });
   // RC-03 production wiring: at the pre-seal semantic producer convergence
   // point, run the seal hook when the RC-03 flag is on (explicit override or
@@ -616,7 +626,7 @@ export async function computeContextExtraSystemPrompt(
           input.sessionKey,
           input.memoryProviderFactory,
           log,
-          { workspace: input.workspaceDir, taskId: input.runId },
+          { workspace: input.workspaceDir, taskId: input.taskId },
         );
         if (deferProjection) {
           const text = computed?.trim();

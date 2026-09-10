@@ -13,6 +13,7 @@ import { getAgentRunContext, onAgentEvent } from "../infra/agent-events.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { formatBlockedLivenessError, isBlockedLivenessState } from "../shared/agent-liveness.js";
 import { createLazyImportLoader, createLazyPromiseLoader } from "../shared/lazy-promise.js";
+import { buildSessionDeleteOperationId } from "../sessions/session-delete-operation-id.js";
 import { importRuntimeModule } from "../shared/runtime-import.js";
 import { normalizeDeliveryContext } from "../utils/delivery-context.shared.js";
 import type { DeliveryContext } from "../utils/delivery-context.types.js";
@@ -1196,6 +1197,7 @@ async function sweepSubagentRuns() {
           method: "sessions.delete",
           params: {
             key: entry.childSessionKey,
+            operationId: buildSessionDeleteOperationId("subagent-cleanup", runId),
             deleteTranscript: true,
             emitLifecycleHooks: false,
           },

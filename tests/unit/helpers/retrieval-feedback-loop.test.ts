@@ -39,7 +39,7 @@ function makeFact(factId: string, subject: string, summary: string): RuntimeMemo
     proposedAt: 0,
     valid_at: 0,
     reference_time: 0,
-  } as RuntimeMemoryQueryableFact;
+  } as unknown as RuntimeMemoryQueryableFact;
 }
 
 function makeHit(

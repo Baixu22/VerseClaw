@@ -27,12 +27,12 @@
 // This makes multi-hop safe: weak transitive edges get low scores and are
 // naturally pruned, while strong entity-connected facts rise to the top.
 
-import type { HybridSearchHit } from "../../openclaw_runtime/src/runtime-core/memory-hybrid-retrieval";
+import type { HybridSearchHit } from "../../../openclaw_runtime/src/runtime-core/memory-hybrid-retrieval";
 import type {
   RuntimeMemoryQueryableFact,
   RuntimeMemoryFactRelation,
-} from "../../openclaw_runtime/src/runtime-core/memory-context";
-import type { EntityStoreLike } from "../../openclaw_runtime/src/runtime-core/memory-entity-extraction";
+} from "../../../openclaw_runtime/src/runtime-core/memory-context";
+import type { EntityStoreLike } from "../../../openclaw_runtime/src/runtime-core/memory-entity-extraction";
 
 // P1-1: causal edge weight map. Mirrors Hindsight's memory_graph.py scoring.
 const CAUSAL_EDGE_WEIGHT: Record<string, number> = {

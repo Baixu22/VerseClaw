@@ -572,6 +572,7 @@ export function createFollowupRunner(params: {
         resetTriggered: false,
         routeThreadId: queued.originatingThreadId,
         upstreamAbortSignal: queued.abortSignal,
+        agentId: run.agentId,
       });
       if (admission.status === "skipped") {
         if (admission.reason === "active-run") {

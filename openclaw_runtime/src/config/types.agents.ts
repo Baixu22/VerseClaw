@@ -178,6 +178,24 @@ export type AgentRoleContractConfig = {
   rolePrompt?: string;
   prompt?: string;
   tools?: string[];
+  /**
+   * Capabilities and tool requirements are read by `normalizeRoleContract`
+   * (agents/role-contract.ts) and consumed by the capability publication and
+   * resource-scheduler surfaces. They must stay declared here: an undeclared
+   * key fails `satisfies OpenClawConfig`, and the last time that happened the
+   * field was deleted from a test fixture instead, silently removing the only
+   * coverage of the `roleToolRequirementMissing` diagnostic.
+   */
+  capabilities?: string[];
+  tool_requirements?: string[];
+  toolRequirements?: string[];
+  risk_profile?: "low" | "medium" | "high" | "critical";
+  riskProfile?: "low" | "medium" | "high" | "critical";
+  can_modify_scope?: boolean;
+  canModifyScope?: boolean;
+  routing_keywords?: string[];
+  routingKeywords?: string[];
+  profile?: Record<string, unknown>;
   permissions?: {
     filesystem?: "none" | "read" | "write" | "admin";
     network?: "none" | "limited" | "full";

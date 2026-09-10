@@ -38,6 +38,35 @@ export function archiveBlock(block: LifecycleBlock, now = new Date()): Lifecycle
   };
 }
 
+/** Explicit page-in: restore an archived block and record one heat touch. */
+export function unarchiveBlock(block: LifecycleBlock): LifecycleBlock {
+  if (!isArchived(block)) {
+    return block;
+  }
+  const presenceHeat = block.presence.heat;
+  const currentHeat =
+    typeof block.heat === "number" && Number.isFinite(block.heat)
+      ? block.heat
+      : typeof presenceHeat === "number" && Number.isFinite(presenceHeat)
+        ? presenceHeat
+        : 0;
+  const heat = Math.max(0, currentHeat) + 1;
+  const presence = {
+    ...block.presence,
+    lifecycle_state: "active" as const,
+    heat,
+  };
+  delete presence.archived_at;
+  const recalled: LifecycleBlock = {
+    ...block,
+    lifecycle_state: "active",
+    heat,
+    presence,
+  };
+  delete recalled.archived_at;
+  return recalled;
+}
+
 export function isArchived(block: LifecycleBlock): boolean {
   return block.lifecycle_state === "archived" || presenceLifecycle(block) === "archived";
 }

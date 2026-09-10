@@ -599,6 +599,12 @@ async function maybeSteerSubagentAnnounce(params: {
   deliveryTimeoutMs?: number;
   requesterSessionKey: string;
   steerMessage: string;
+  /**
+   * TF-0082 generation pin: the requester sessionId snapshotted at spawn.
+   * When it differs from the current session generation, the completion is
+   * late from an older generation and must not steer the new one.
+   */
+  expectedRequesterSessionId?: string;
   signal?: AbortSignal;
 }): Promise<
   { status: "steered"; deliveredAt?: number; enqueuedAt?: number } | { status: "none" | "dropped" }
@@ -610,6 +616,13 @@ async function maybeSteerSubagentAnnounce(params: {
   const canonicalKey = resolveRequesterStoreKey(cfg, params.requesterSessionKey);
   const { sessionId, isActive } = resolveRequesterSessionActivity(canonicalKey);
   if (subagentAnnounceDeliveryDeps.isRequesterSessionAbandoned(canonicalKey, sessionId)) {
+    return { status: "none" };
+  }
+  if (
+    params.expectedRequesterSessionId &&
+    sessionId &&
+    params.expectedRequesterSessionId !== sessionId
+  ) {
     return { status: "none" };
   }
   if (!sessionId || !isActive) {
@@ -1222,6 +1235,8 @@ async function sendSubagentAnnounceDirectly(params: {
   sourceChannel?: string;
   sourceTool?: string;
   requesterIsSubagent: boolean;
+  /** TF-0082 generation pin: requester sessionId at spawn; stale generations never wake. */
+  expectedRequesterSessionId?: string;
   signal?: AbortSignal;
 }): Promise<SubagentAnnounceDeliveryResult> {
   if (params.signal?.aborted) {
@@ -1362,7 +1377,13 @@ async function sendSubagentAnnounceDirectly(params: {
     if (
       params.expectsCompletionMessage &&
       requesterActivity.sessionId &&
-      requesterActivity.isActive
+      requesterActivity.isActive &&
+      // TF-0082 generation pin: an old-generation completion must not wake the
+      // post-reset/forked requester run either; fall through to the
+      // requester-agent handoff instead.
+      (!params.expectedRequesterSessionId ||
+        !requesterActivity.sessionId ||
+        params.expectedRequesterSessionId === requesterActivity.sessionId)
     ) {
       const wakeOptions: EmbeddedAgentQueueMessageOptions = {
         deliveryTimeoutMs: announceTimeoutMs,
@@ -1708,6 +1729,8 @@ export async function deliverSubagentAnnouncement(params: {
   expectsCompletionMessage: boolean;
   bestEffortDeliver?: boolean;
   directIdempotencyKey: string;
+  /** TF-0082 generation pin: requester sessionId at spawn; stale generations never steer. */
+  expectedRequesterSessionId?: string;
   signal?: AbortSignal;
 }): Promise<SubagentAnnounceDeliveryResult> {
   return await runSubagentAnnounceDispatch({
@@ -1720,6 +1743,7 @@ export async function deliverSubagentAnnouncement(params: {
         ),
         requesterSessionKey: params.requesterSessionKey,
         steerMessage: params.steerMessage,
+        expectedRequesterSessionId: params.expectedRequesterSessionId,
         signal: params.signal,
       }),
     direct: async () =>
@@ -1739,6 +1763,7 @@ export async function deliverSubagentAnnouncement(params: {
         expectsCompletionMessage: params.expectsCompletionMessage,
         signal: params.signal,
         bestEffortDeliver: params.bestEffortDeliver,
+        expectedRequesterSessionId: params.expectedRequesterSessionId,
       }),
   });
 }

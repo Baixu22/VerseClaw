@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { resolve } from 'node:path';
 import {
@@ -86,7 +87,7 @@ describe('Agency draft role importer', () => {
 
     expect(validPromotion).toEqual({ ok: true, issues: [] });
     expect(reviewed.status).toBe('draft');
-    expect(canSpawnAgencyDraft(reviewed)).toBe(false);
+    expect(canSpawnAgencyDraft(reviewed as never)).toBe(false);
   });
 
   it('imports top-level Agency arrays and keeps imported tool requirements as hints only', () => {
@@ -152,7 +153,7 @@ describe('Agency draft role importer', () => {
       },
     };
 
-    const review = reviewAgencyDraftPromotion(reviewed, {
+    const review = reviewAgencyDraftPromotion(reviewed as never, {
       reviewer: 'operator',
       reviewedAt: '2026-07-08T00:00:00.000Z',
     });
@@ -162,7 +163,7 @@ describe('Agency draft role importer', () => {
       approvedForRuntime: false,
       validation: { ok: true },
     });
-    expect(canSpawnAgencyDraft(reviewed)).toBe(false);
+    expect(canSpawnAgencyDraft(reviewed as never)).toBe(false);
   });
 
   it('parses real Agency markdown frontmatter into draft-only metadata', () => {
@@ -197,57 +198,62 @@ You are **Code Reviewer**, an expert who provides thorough, constructive code re
     expect(canSpawnAgencyDraft(entries[0]!)).toBe(false);
   });
 
-  it('imports the real local agency-agents-main repository as draft catalog entries without runtime authorization', () => {
-    const agencyRepo = resolve('C:/Users/27933/Desktop/verseshell/agency-agents-main');
+  const agencyRepo = process.env.AGENCY_AGENTS_REPO
+    ? resolve(process.env.AGENCY_AGENTS_REPO)
+    : resolve('C:/Users/27933/Desktop/verseshell/agency-agents-main');
 
-    const catalog = importAgencyDraftRolesFromRepository(agencyRepo);
+  it.skipIf(!existsSync(resolve(agencyRepo, 'divisions.json')))(
+    'imports the real local agency-agents-main repository as draft catalog entries without runtime authorization',
+    () => {
+      const catalog = importAgencyDraftRolesFromRepository(agencyRepo);
 
-    expect(catalog.entries).toHaveLength(235);
-    expect(catalog.divisions).toMatchObject({
-      engineering: expect.objectContaining({ label: 'Engineering' }),
-      testing: expect.objectContaining({ label: 'Testing' }),
-    });
-    expect(catalog.tools).toMatchObject({
-      openclaw: expect.objectContaining({ label: 'OpenClaw', format: 'openclaw-workspace' }),
-    });
-    expect(catalog.runbooks.map((runbook) => runbook.slug)).toEqual(
-      expect.arrayContaining(['startup-mvp', 'enterprise-feature', 'incident-response']),
-    );
+      expect(catalog.entries).toHaveLength(235);
+      expect(catalog.divisions).toMatchObject({
+        engineering: expect.objectContaining({ label: 'Engineering' }),
+        testing: expect.objectContaining({ label: 'Testing' }),
+      });
+      expect(catalog.tools).toMatchObject({
+        openclaw: expect.objectContaining({ label: 'OpenClaw', format: 'openclaw-workspace' }),
+      });
+      expect(catalog.runbooks.map((runbook) => runbook.slug)).toEqual(
+        expect.arrayContaining(['startup-mvp', 'enterprise-feature', 'incident-response']),
+      );
 
-    const codeReviewer = catalog.entries.find((entry) => entry.id === 'agency:engineering:engineering-code-reviewer');
-    expect(codeReviewer).toMatchObject({
-      status: 'draft',
-      sourceDivision: 'engineering',
-      sourceAgentName: 'Code Reviewer',
-      roleName: 'engineering-code-reviewer',
-      sourceRef: {
-        relativePath: 'engineering/engineering-code-reviewer.md',
-        sha256: expect.stringMatching(/^[a-f0-9]{64}$/),
-      },
-    });
-    expect(codeReviewer?.roleCandidate?.tools).toEqual([]);
-    expect(codeReviewer?.roleCandidate?.toolRequirements).toEqual([]);
-    expect(codeReviewer && canSpawnAgencyDraft(codeReviewer)).toBe(false);
+      const codeReviewer = catalog.entries.find((entry) => entry.id === 'agency:engineering:engineering-code-reviewer');
+      expect(codeReviewer).toMatchObject({
+        status: 'draft',
+        sourceDivision: 'engineering',
+        sourceAgentName: 'Code Reviewer',
+        roleName: 'engineering-code-reviewer',
+        sourceRef: {
+          relativePath: 'engineering/engineering-code-reviewer.md',
+          sha256: expect.stringMatching(/^[a-f0-9]{64}$/),
+        },
+      });
+      expect(codeReviewer?.roleCandidate?.tools).toEqual([]);
+      expect(codeReviewer?.roleCandidate?.toolRequirements).toEqual([]);
+      expect(codeReviewer && canSpawnAgencyDraft(codeReviewer)).toBe(false);
 
-    const realityChecker = catalog.entries.find((entry) => entry.id === 'agency:testing:testing-reality-checker');
-    expect(realityChecker).toMatchObject({
-      status: 'draft',
-      sourceDivision: 'testing',
-      sourceAgentName: 'Reality Checker',
-      roleName: 'testing-reality-checker',
-    });
-    expect(realityChecker?.roleCandidate?.tools).toEqual([]);
+      const realityChecker = catalog.entries.find((entry) => entry.id === 'agency:testing:testing-reality-checker');
+      expect(realityChecker).toMatchObject({
+        status: 'draft',
+        sourceDivision: 'testing',
+        sourceAgentName: 'Reality Checker',
+        roleName: 'testing-reality-checker',
+      });
+      expect(realityChecker?.roleCandidate?.tools).toEqual([]);
 
-    const nestedUnrealAgent = catalog.entries.find((entry) => entry.id === 'agency:game-development:unreal-world-builder');
-    expect(nestedUnrealAgent).toMatchObject({
-      status: 'draft',
-      sourceDivision: 'game-development',
-      roleName: 'unreal-world-builder',
-      sourceRef: {
-        relativePath: 'game-development/unreal-engine/unreal-world-builder.md',
-        sha256: expect.stringMatching(/^[a-f0-9]{64}$/),
-      },
-    });
-    expect(nestedUnrealAgent?.roleCandidate?.tools).toEqual([]);
-  });
+      const nestedUnrealAgent = catalog.entries.find((entry) => entry.id === 'agency:game-development:unreal-world-builder');
+      expect(nestedUnrealAgent).toMatchObject({
+        status: 'draft',
+        sourceDivision: 'game-development',
+        roleName: 'unreal-world-builder',
+        sourceRef: {
+          relativePath: 'game-development/unreal-engine/unreal-world-builder.md',
+          sha256: expect.stringMatching(/^[a-f0-9]{64}$/),
+        },
+      });
+      expect(nestedUnrealAgent?.roleCandidate?.tools).toEqual([]);
+    },
+  );
 });

@@ -6,8 +6,8 @@
   "defaultsUnchanged": true,
   "readyForDefaultFlagGraduation": false,
   "tipIncludesC4WriteFileFix": true,
-  "sha": "5d416810f",
-  "ts": "2026-07-31T04:17:57.895Z",
+  "sha": "e07b874b3",
+  "ts": "2026-08-19T12:33:27.305Z",
   "redLines": {
     "viewToolsDefaultOff": true,
     "staleWriteGuardDefaultFalse": true,

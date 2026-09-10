@@ -31,7 +31,7 @@ vi.mock('rastermill', () => ({
   RastermillUnavailableError: class RastermillUnavailableError extends Error {},
   readImageProbeFromHeader: vi.fn(),
   readImageMetadataFromHeader: vi.fn(),
-}), { virtual: true });
+}));
 
 import { roleOrchestrationHandlers } from '../../openclaw_runtime/src/gateway/server-methods/role-orchestration-methods';
 import {

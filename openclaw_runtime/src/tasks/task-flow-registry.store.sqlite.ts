@@ -137,12 +137,16 @@ function pruneFlowsNotInSnapshot(params: { db: DatabaseSync; ids: readonly strin
   for (const id of params.ids) {
     insert.run(id);
   }
+  // SQL CAS is the only writer for controller_id="goal-wake" wait rows. The
+  // in-memory Map is a read cache only and must never prune rows it has not
+  // mirrored yet.
   params.db.exec(`
     DELETE FROM flow_runs
-    WHERE NOT EXISTS (
-      SELECT 1 FROM ${tempTableName}
-      WHERE ${tempTableName}.id = flow_runs.flow_id
-    )
+    WHERE controller_id <> 'goal-wake'
+      AND NOT EXISTS (
+        SELECT 1 FROM ${tempTableName}
+        WHERE ${tempTableName}.id = flow_runs.flow_id
+      )
   `);
   params.db.exec(`DELETE FROM ${tempTableName}`);
 }

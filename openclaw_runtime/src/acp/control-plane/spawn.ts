@@ -3,6 +3,7 @@ import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { callGateway } from "../../gateway/call.js";
 import { logVerbose } from "../../globals.js";
 import { getSessionBindingService } from "../../infra/outbound/session-binding-service.js";
+import { buildSessionDeleteOperationId } from "../../sessions/session-delete-operation-id.js";
 import { getAcpSessionManager } from "./manager.js";
 
 /** Minimal runtime handle needed to close a just-created session during failed spawn cleanup. */
@@ -70,6 +71,7 @@ export async function cleanupFailedAcpSpawn(params: {
     method: "sessions.delete",
     params: {
       key: params.sessionKey,
+      operationId: buildSessionDeleteOperationId("acp-spawn-cleanup", params.sessionKey),
       deleteTranscript: params.deleteTranscript,
       emitLifecycleHooks: false,
     },

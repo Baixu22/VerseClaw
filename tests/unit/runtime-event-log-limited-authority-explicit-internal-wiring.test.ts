@@ -137,7 +137,7 @@ describe("runtime event-log limited authority explicit internal wiring readiness
           ...input.internalOptimizationScorecard?.metrics,
           hardVetoCount: 1,
         },
-      },
+      } as never,
     });
 
     expect(assessment.decision).toBe("blocked_before_explicit_internal_wiring");

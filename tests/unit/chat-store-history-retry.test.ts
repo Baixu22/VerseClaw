@@ -153,7 +153,7 @@ describe('useChatStore startup history retry', () => {
       thinkingLevel: null,
     });
 
-    let resolveGatewayHistory: ((value: { messages: Array<{ role: string; content: string; timestamp: number }> }) => void) | null = null;
+    let resolveGatewayHistory: any = null;
     gatewayRpcMock.mockImplementation(async (method: string) => {
       if (method === 'config.get') return {};
       if (method !== 'chat.history') {
@@ -223,7 +223,7 @@ describe('useChatStore startup history retry', () => {
       thinkingLevel: null,
     });
 
-    let rejectFirstGatewayHistory: ((reason?: unknown) => void) | null = null;
+    let rejectFirstGatewayHistory: any = null;
     let chatHistoryCalls = 0;
     gatewayRpcMock.mockImplementation(async (method: string) => {
       if (method === 'config.get') return {};
@@ -289,7 +289,7 @@ describe('useChatStore startup history retry', () => {
       thinkingLevel: null,
     });
 
-    let resolveGatewayHistory: ((value: { messages: Array<unknown> }) => void) | null = null;
+    let resolveGatewayHistory: any = null;
     gatewayRpcMock.mockImplementation(async (method: string) => {
       if (method === 'config.get') return {};
       if (method !== 'chat.history') {
@@ -468,7 +468,7 @@ describe('useChatStore startup history retry', () => {
     useChatStore.setState({ currentSessionKey: 'agent:main:other' });
     await useChatStore.getState().loadHistory(false);
 
-    gatewayRpcMock.mockImplementationOnce(() => new Promise((resolve) => {
+    gatewayRpcMock.mockImplementationOnce(() => new Promise<unknown>((resolve) => {
       setTimeout(() => {
         resolve({ messages: [{ role: 'assistant', content: 'refreshed cached history', timestamp: 1002 }] });
       }, 10);
@@ -747,7 +747,7 @@ describe('useChatStore startup history retry', () => {
       thinkingLevel: null,
     });
 
-    let resolveFirstAttempt: ((value: { messages: Array<{ role: string; content: string; timestamp: number }> }) => void) | null = null;
+    let resolveFirstAttempt: any = null;
     let historyAttempt = 0;
     gatewayRpcMock.mockImplementation(async (method: string) => {
       if (method === 'config.get') return {};
@@ -862,11 +862,11 @@ describe('useChatStore startup history retry', () => {
   it('keeps the optimistic user message when completion refresh wins the transcript write race', async () => {
     const { useChatStore } = await import('@/stores/chat');
     let historyMessages: Array<Record<string, unknown>> = [];
-    let resolveSend: ((value: { runId: string }) => void) | null = null;
+    let resolveSend: any = null;
 
     gatewayRpcMock.mockImplementation((method: string) => {
       if (method === 'chat.send') {
-        return new Promise((resolve) => {
+        return new Promise<unknown>((resolve) => {
           resolveSend = resolve as (value: { runId: string }) => void;
         });
       }
@@ -933,11 +933,11 @@ describe('useChatStore startup history retry', () => {
 
   it('does not restore a pending optimistic message after deleting the session', async () => {
     const { useChatStore } = await import('@/stores/chat');
-    let resolveSend: ((value: { runId: string }) => void) | null = null;
+    let resolveSend: any = null;
 
     gatewayRpcMock.mockImplementation((method: string) => {
       if (method === 'chat.send') {
-        return new Promise((resolve) => {
+        return new Promise<unknown>((resolve) => {
           resolveSend = resolve as (value: { runId: string }) => void;
         });
       }
@@ -1406,10 +1406,10 @@ describe('useChatStore startup history retry', () => {
   });
 
   it('does not emit a false no-response error when history poll shows tool progress', async () => {
-    let resolveSend: ((value: { runId: string }) => void) | undefined;
+    let resolveSend: any = undefined;
     gatewayRpcMock.mockImplementation((method: string) => {
       if (method === 'chat.send') {
-        return new Promise((resolve) => {
+        return new Promise<unknown>((resolve) => {
           resolveSend = resolve;
         });
       }
@@ -1469,10 +1469,10 @@ describe('useChatStore startup history retry', () => {
   });
 
   it('surfaces an idle-timeout hint when a role-only stream placeholder stalls the run', async () => {
-    let resolveSend: ((value: { runId: string }) => void) | undefined;
+    let resolveSend: any = undefined;
     gatewayRpcMock.mockImplementation((method: string) => {
       if (method === 'chat.send') {
-        return new Promise((resolve) => {
+        return new Promise<unknown>((resolve) => {
           resolveSend = resolve;
         });
       }
@@ -1530,10 +1530,10 @@ describe('useChatStore startup history retry', () => {
   });
 
   it('does not treat prior-turn assistant history as progress for a new send', async () => {
-    let resolveSend: ((value: { runId: string }) => void) | undefined;
+    let resolveSend: any = undefined;
     gatewayRpcMock.mockImplementation((method: string) => {
       if (method === 'chat.send') {
-        return new Promise((resolve) => {
+        return new Promise<unknown>((resolve) => {
           resolveSend = resolve;
         });
       }

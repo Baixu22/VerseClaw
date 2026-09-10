@@ -156,7 +156,7 @@ export type MdMatrixRow = {
    */
   mdDefaultCell: string;
   /** The product default the md declares, normalized. */
-  declaredDefault: 'false' | 'off' | 'deny';
+  declaredDefault: 'false' | 'off' | 'deny' | 'auto';
   /** Which assertion group in the test owns this row. */
   assertedBy: string;
 };

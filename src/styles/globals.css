@@ -19,8 +19,9 @@
 @import './plus-menu-morph.css';
 @import './codex-welcome-hero.css';
 @import './codex-workspace-panel.css';
-@import './codex-session-rail.css';
+@import './codex-session-activity.css';
 @import './codex-setup-motion.css';
+@import './codex-responsive.css';
 
 @tailwind base;
 @tailwind components;
@@ -353,8 +354,20 @@
     isolation: isolate;
   }
 
+  /* The v2 chat surface owns its rounded corner. Shell dividers underneath it
+   * would continue as straight lines through that curve, so the adjacent
+   * titlebar/sidebar/main boundaries stay borderless. */
+  [data-ui-version='v2'] > [data-testid='windows-titlebar'] {
+    border-bottom-width: 0;
+  }
+
+  [data-ui-version='v2'] [data-testid='sidebar'] {
+    border-right-width: 0;
+  }
+
   [data-ui-version='v2'] [data-testid='main-content'] {
     background: hsl(var(--material-canvas));
+    border-left-width: 0;
   }
 
   [data-ui-version='v2'] [data-testid='main-content'] h1.font-serif:not(.chat-brand-heading),

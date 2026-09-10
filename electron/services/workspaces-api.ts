@@ -219,7 +219,8 @@ function normalizeSessionFolders(folders: unknown): SessionFolder[] {
     .map((folder) => ({
       id: folder.id,
       name: folder.name,
-      parentId: typeof folder.parentId === 'string' ? folder.parentId : null,
+      // Legacy nested folders become independent project-level workgroups.
+      parentId: null,
       order: typeof folder.order === 'number' && Number.isFinite(folder.order) ? folder.order : 0,
       kind: folder.kind === 'folder' || folder.kind === 'workgroup' ? folder.kind : undefined,
       createdAt: typeof folder.createdAt === 'number' ? folder.createdAt : Date.now(),
@@ -781,20 +782,13 @@ export function createWorkspacesApi(ctx: WorkspacesApiContext = {}): CompleteHos
       const body = isRecord(payload) ? payload as WorkspaceFolderCreateBody : {};
       const workspaceId = requireId(body.workspaceId);
       const name = requireNonEmptyString(body.name, 'name');
-      const parentId = typeof body.parentId === 'string' && body.parentId.trim()
-        ? body.parentId.trim()
-        : null;
+      // Session workgroups are project-local and intentionally one level deep.
+      // Ignore legacy parentId input so new data cannot recreate nested groups.
+      const parentId = null;
       const kind = body.kind === 'folder' || body.kind === 'workgroup'
         ? body.kind
         : 'workgroup';
       const document = await readDocument();
-      if (parentId != null) {
-        const parentProfile = document.profiles.find((profile) => profile.id === workspaceId);
-        if (!parentProfile) throw new Error(`Workspace "${workspaceId}" not found`);
-        if (!(parentProfile.sessionFolders ?? []).some((folder) => folder.id === parentId)) {
-          throw new Error(`Parent folder "${parentId}" not found`);
-        }
-      }
       let createdFolder: SessionFolder | undefined;
       const nextDocument = updateWorkspaceProfile(document, workspaceId, (profile) => {
         const folders = profile.sessionFolders ?? [];

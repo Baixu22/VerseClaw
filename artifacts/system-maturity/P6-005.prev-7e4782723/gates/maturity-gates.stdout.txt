@@ -1,0 +1,8 @@
+INFO  A2 daily/pr loops cannot substitute release
+INFO  A2 forbidden release evidence ids not present in release.commands
+INFO  vitest.config.ts passWithNoTests:false
+INFO  vitest.agent-dev.node.config.ts passWithNoTests:false
+INFO  vitest.runtime-effectiveness.config.ts passWithNoTests:false
+INFO  A1 empty test shard failed as required (exit=1)
+
+validate-test-gates: OK

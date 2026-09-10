@@ -183,10 +183,19 @@ import type {
   GitFetchPayload,
   GitFileDiffResult,
   GitFileDiffPayload,
+  GitMergePayload,
+  GitRebasePayload,
+  GitResetPayload,
   GitLogPayload,
   GitLogResult,
+  GitReflogPayload,
+  GitReflogResult,
   GitMergeBasePayload,
   GitMergeBaseResult,
+  GitApplyPatchPayload,
+  GitApplyPatchResult,
+  GitDiffToBasePayload,
+  GitDiffToBaseResult,
   GitOperationResult,
   GitPathPayload,
   GitPathsPayload,
@@ -382,7 +391,10 @@ import type {
   SessionExpandSelectorResult,
   SessionEmptyArchivePayload,
   SessionForkPayload,
+  SessionQueueDrainPayload,
   SessionForkResult,
+  SessionStopPayload,
+  SessionStopResult,
   SessionHandoffPayload,
   SessionHandoffResult,
   SessionListArchivedPayload,
@@ -687,6 +699,8 @@ export type {
   GitBranchListResult,
   GitLogPayload,
   GitLogResult,
+  GitReflogPayload,
+  GitReflogResult,
   GitStashListResult,
   GitWorktreeListResult,
   GitOperationResult,
@@ -823,12 +837,15 @@ export const hostApi = {
     status: (): Promise<GitStatusResult> => invokeHost('git', 'status'),
     diff: (input?: { mode?: 'unstaged' | 'staged' }): Promise<GitDiffListResult> => invokeHost('git', 'diff', input),
     fileDiff: (input: GitFileDiffPayload): Promise<GitFileDiffResult> => invokeHost('git', 'fileDiff', input),
+    applyPatch: (input: GitApplyPatchPayload): Promise<GitApplyPatchResult> => invokeHost('git', 'applyPatch', input),
+    diffToBase: (input?: GitDiffToBasePayload): Promise<GitDiffToBaseResult> => invokeHost('git', 'diffToBase', input),
     stage: (input: GitPathsPayload): Promise<GitOperationResult> => invokeHost('git', 'stage', input),
     unstage: (input: GitPathsPayload): Promise<GitOperationResult> => invokeHost('git', 'unstage', input),
     revertFile: (input: GitPathPayload): Promise<GitOperationResult> => invokeHost('git', 'revertFile', input),
     commit: (input: GitCommitPayload): Promise<GitCommitResult> => invokeHost('git', 'commit', input),
     branches: (): Promise<GitBranchListResult> => invokeHost('git', 'branches'),
     log: (input?: GitLogPayload): Promise<GitLogResult> => invokeHost('git', 'log', input),
+    reflog: (input?: GitReflogPayload): Promise<GitReflogResult> => invokeHost('git', 'reflog', input),
     mergeBase: (input: GitMergeBasePayload): Promise<GitMergeBaseResult> => invokeHost('git', 'mergeBase', input),
     checkoutBranch: (input: GitBranchCheckoutPayload): Promise<GitOperationResult> => invokeHost('git', 'checkoutBranch', input),
     createBranch: (input: GitBranchCreatePayload): Promise<GitOperationResult> => invokeHost('git', 'createBranch', input),
@@ -843,6 +860,9 @@ export const hostApi = {
     fetch: (input?: GitFetchPayload): Promise<GitOperationResult> => invokeHost('git', 'fetch', input),
     pull: (input?: GitPullPayload): Promise<GitOperationResult> => invokeHost('git', 'pull', input),
     push: (input?: GitPushPayload): Promise<GitOperationResult> => invokeHost('git', 'push', input),
+    merge: (input: GitMergePayload): Promise<GitOperationResult> => invokeHost('git', 'merge', input),
+    rebase: (input: GitRebasePayload): Promise<GitOperationResult> => invokeHost('git', 'rebase', input),
+    reset: (input?: GitResetPayload): Promise<GitOperationResult> => invokeHost('git', 'reset', input),
     githubAuthStatus: (): Promise<GithubAuthStatusResult> => invokeHost('git', 'githubAuthStatus'),
     githubRepo: (): Promise<GithubRepoResult> => invokeHost('git', 'githubRepo'),
     prList: (input?: GithubPrListPayload): Promise<GithubPrListResult> => invokeHost('git', 'prList', input),
@@ -1415,8 +1435,11 @@ export const hostApi = {
     ): Promise<SessionCheckpointDiffResult> => (
       invokeHost('sessions', 'checkpointDiff', input)
     ),
-    queueDrain: (input: SessionLongTaskControlPayload): Promise<SessionQueueDrainResult> => (
+    queueDrain: (input: SessionQueueDrainPayload): Promise<SessionQueueDrainResult> => (
       invokeHost('sessions', 'queueDrain', input)
+    ),
+    stop: (input: SessionStopPayload): Promise<SessionStopResult> => (
+      invokeHost('sessions', 'stop', input)
     ),
     compact: (input: SessionManualCompactPayload): Promise<SessionCompactionResult> => (
       invokeHost('sessions', 'compact', input)

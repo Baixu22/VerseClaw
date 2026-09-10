@@ -6,11 +6,18 @@ import type { ReplyBackendHandle } from "../../auto-reply/reply/reply-run-regist
 import type { CliBackendConfig } from "../../config/types.js";
 import {
   emitTrustedDiagnosticEvent,
+  resolveDiagnosticCodingOperation,
   type DiagnosticToolParamsSummary,
   type DiagnosticToolSource,
   type DiagnosticToolExecutionErrorEvent,
   type DiagnosticToolExecutionCompletedEvent,
 } from "../../infra/diagnostic-events.js";
+import {
+  createChildDiagnosticTraceContext,
+  createDiagnosticTraceContextFromActiveScope,
+  freezeDiagnosticTraceContext,
+  type DiagnosticTraceContext,
+} from "../../infra/diagnostic-trace-context.js";
 import {
   loadExecApprovals,
   maxAsk,
@@ -42,6 +49,7 @@ type ManagedRun = Awaited<ReturnType<ProcessSupervisor["spawn"]>>;
 type ClaudeLiveTurn = {
   backend: CliBackendConfig;
   diagnosticRefs: ClaudeLiveDiagnosticRefs;
+  trace: DiagnosticTraceContext;
   outputLimits: ClaudeLiveOutputLimits;
   startedAtMs: number;
   rawLines: string[];
@@ -94,6 +102,9 @@ type ClaudeLiveDiagnosticRefs = {
 type ClaudeLiveActiveTool = {
   toolName: string;
   toolCallId: string;
+  requestId: string;
+  trace: DiagnosticTraceContext;
+  codingOperation?: ReturnType<typeof resolveDiagnosticCodingOperation>;
   startedAt: number;
 };
 type ClaudeLiveToolUse = {
@@ -604,18 +615,26 @@ function stopClaudeLiveActiveToolHeartbeatIfIdle(turn: ClaudeLiveTurn): void {
 
 function markClaudeLiveToolStarted(turn: ClaudeLiveTurn, tool: ClaudeLiveToolUse): void {
   const now = Date.now();
-  turn.activeTools.set(tool.toolCallId, {
+  const codingOperation = resolveDiagnosticCodingOperation(tool.toolName);
+  const activeTool: ClaudeLiveActiveTool = {
     toolName: tool.toolName,
     toolCallId: tool.toolCallId,
+    requestId: `cli-tool-${crypto.randomUUID()}`,
+    trace: freezeDiagnosticTraceContext(createChildDiagnosticTraceContext(turn.trace)),
+    ...(codingOperation ? { codingOperation } : {}),
     startedAt: now,
-  });
+  };
+  turn.activeTools.set(tool.toolCallId, activeTool);
   emitTrustedDiagnosticEvent({
     type: "tool.execution.started",
     ...claudeLiveDiagnosticBase(turn),
-    toolName: tool.toolName,
+    requestId: activeTool.requestId,
+    trace: activeTool.trace,
+    ...(activeTool.codingOperation ? { codingOperation: activeTool.codingOperation } : {}),
+    toolName: activeTool.toolName,
     toolSource: diagnosticToolSourceForClaudeLiveTool(tool.toolName),
     toolOwner: "claude-cli",
-    toolCallId: tool.toolCallId,
+    toolCallId: activeTool.toolCallId,
     ...(tool.paramsSummary ? { paramsSummary: tool.paramsSummary } : {}),
   });
   emitClaudeLiveProgress(turn, "cli_live:tool_started");
@@ -631,6 +650,9 @@ function markClaudeLiveToolCompleted(turn: ClaudeLiveTurn, toolCallId: string): 
   turn.activeTools.delete(toolCallId);
   const event: Omit<DiagnosticToolExecutionCompletedEvent, "seq" | "ts" | "type"> = {
     ...claudeLiveDiagnosticBase(turn),
+    requestId: activeTool.requestId,
+    trace: activeTool.trace,
+    ...(activeTool.codingOperation ? { codingOperation: activeTool.codingOperation } : {}),
     toolName: activeTool.toolName,
     toolSource: diagnosticToolSourceForClaudeLiveTool(activeTool.toolName),
     toolOwner: "claude-cli",
@@ -657,6 +679,9 @@ function failActiveClaudeLiveTools(turn: ClaudeLiveTurn, error: unknown): void {
   for (const activeTool of turn.activeTools.values()) {
     const event: Omit<DiagnosticToolExecutionErrorEvent, "seq" | "ts" | "type"> = {
       ...claudeLiveDiagnosticBase(turn),
+      requestId: activeTool.requestId,
+      trace: activeTool.trace,
+      ...(activeTool.codingOperation ? { codingOperation: activeTool.codingOperation } : {}),
       toolName: activeTool.toolName,
       toolSource: diagnosticToolSourceForClaudeLiveTool(activeTool.toolName),
       toolOwner: "claude-cli",
@@ -1136,6 +1161,7 @@ function createTurn(params: {
       sessionId: params.context.params.sessionId,
       ...(params.context.params.sessionKey ? { sessionKey: params.context.params.sessionKey } : {}),
     },
+    trace: freezeDiagnosticTraceContext(createDiagnosticTraceContextFromActiveScope()),
     outputLimits: resolveClaudeLiveOutputLimits(params.context.preparedBackend.backend),
     startedAtMs: Date.now(),
     rawLines: [],

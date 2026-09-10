@@ -6,6 +6,14 @@
 # to CRLF on fresh worktrees and break the recorded SHA-256.
 resources/verseshell/patches/uas-05-process-lifecycle.patch -text
 
+# RC-00 acceptance reconstructs VerseShell in a detached worktree on Windows where
+# core.autocrlf=true would smudge these ordered patch files from LF to CRLF,
+# breaking the byte-size / SHA-256 check in scripts/verseshell-bundle.mjs
+# (root cause of the provision-verseshell-resources gate fail recorded in
+# artifacts/unblock-pack/tf0020-h01-nogo.md). Pin all ordered patches to LF bytes
+# on every checkout.
+resources/verseshell/patches/*.patch -text
+
 # RC-01 acceptance uses this generated inventory as a candidate-bound input.
 # Keep the JSON byte-stable across Windows and POSIX checkouts so rerunning its
 # deterministic generator cannot create an EOL-only worktree mutation.

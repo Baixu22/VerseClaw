@@ -67,7 +67,7 @@ describe('useProviderStore - validateAccountApiKey()', () => {
 
 describe('useProviderStore - secret broker boundary (P1-001)', () => {
   it('does not expose getAccountApiKey or getApiKey on the renderer store', () => {
-    const state = useProviderStore.getState() as Record<string, unknown>;
+    const state = useProviderStore.getState() as unknown as Record<string, unknown>;
     expect(state.getAccountApiKey).toBeUndefined();
     expect(state.getApiKey).toBeUndefined();
   });

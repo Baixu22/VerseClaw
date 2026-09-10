@@ -42,7 +42,9 @@
       ],
       "@openclaw/normalization-core/*": ["openclaw_runtime/packages/normalization-core/src/*"],
       "@openclaw/acp-core": ["openclaw_runtime/packages/acp-core/src/index.ts"],
-      "@openclaw/acp-core/*": ["openclaw_runtime/packages/acp-core/src/*"]
+      "@openclaw/acp-core/*": ["openclaw_runtime/packages/acp-core/src/*"],
+      "@openclaw/runtime-redaction": ["openclaw_runtime/src/logging/redact.ts"],
+      "@openclaw/provider-request-auth": ["openclaw_runtime/src/agents/provider-request-auth.ts"]
     }
   },
   "include": ["src", "shared"],

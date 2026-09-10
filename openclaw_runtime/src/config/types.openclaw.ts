@@ -98,6 +98,7 @@ export type RuntimeFeatureConfig = {
     deferredOps?: boolean;
     governedExec?: boolean;
     artifactResults?: boolean;
+    patchPreview?: boolean;
     mcpCompatibility?: boolean;
     legacyEval?: boolean;
     compatibilityNativeFallback?: boolean;
@@ -182,15 +183,9 @@ export type RuntimeFeatureConfig = {
   };
   /**
    * Coding FactStore / write-kit / residual isolation flags (CODING-OPTIMIZATION-EDD).
-   * Advanced backends stay opt-in with safe defaults.
+  * Advanced backends stay opt-in with safe defaults.
    */
   coding?: {
-    /**
-     * @deprecated TASK-P0-02: ignored. Fact view tools are gated by
-     * OPENCLAW_DCS_CONTEXT_VIEW_TOOLS / Settings dcsContextViewToolsEnabled
-     * via isDcsContextViewToolsEnabled — not this leaf.
-     */
-    factViews?: { enabled?: boolean };
     parseOnTouch?: { enabled?: boolean };
     staleWriteGuard?: { enabled?: boolean };
     writeJournal?: { enabled?: boolean };
@@ -206,9 +201,42 @@ export type RuntimeFeatureConfig = {
     worktree?: { backend?: "inprocess" | "git" };
     symbolLease?: { enabled?: boolean; mode?: "memory" | "wal" };
     patchFlow?: { default?: boolean; enabled?: boolean };
-    sekb?: { enabled?: boolean; experienceShadow?: boolean };
+    sekb?: { enabled?: boolean; experienceShadow?: boolean; retrievalShadow?: boolean };
     routingMemo?: { shadow?: boolean; enabled?: boolean };
     verifier?: { noSelfRepair?: boolean };
+    uftk?: {
+      enabled?: boolean;
+      baseVersionGuard?: { enabled?: boolean };
+      auditLog?: { enabled?: boolean };
+      gitCheckpoint?: {
+        enabled?: boolean;
+        pathScoped?: { enabled?: boolean };
+        safetySnapshot?: { enabled?: boolean };
+        lifecycle?: { enabled?: boolean };
+      };
+      concurrencyV2?: { enabled?: boolean };
+      execUndo?: { enabled?: boolean };
+      autoCheckpoint?: {
+        enabled?: boolean;
+        allowWorkspaceRoots?: string[];
+        allowAgentIds?: string[];
+        minIntervalMs?: number;
+        retention?: {
+          maxCount?: number;
+          maxAgeMs?: number;
+        };
+      };
+      execSideEffects?: { enabled?: boolean };
+      commandApproval?: {
+        enabled?: boolean;
+        defaultDecision?: 'allow' | 'prompt' | 'forbidden';
+        rules?: Array<{
+          prefix?: string;
+          decision?: 'allow' | 'prompt' | 'forbidden';
+          reason?: string;
+        }>;
+      };
+    };
   };
   /** Context Runtime Kit backend rollout flags. Defaults on for context/prompt/recovery when no explicit context engine slot is configured. */
   contextRuntimeKit?: {
@@ -263,6 +291,33 @@ export type RuntimeFeatureConfig = {
       /** Allow Mission Control to invoke replay-rollback when repair evidence repeats without progress. */
       enabled?: boolean;
     };
+    /** Phase 3 same-gateway goal wake loop. Every leaf defaults off. */
+    goalWake?: {
+      /**
+       * Master opt-in for the goal-wake path. Requires mission fencing
+       * (`RUNTIME_LIFECYCLE_MISSION_FENCING_ENABLED`) at runtime.
+       */
+      enabled?: boolean;
+      /** Active waiting/running goal-wake flows allowed per agent (0 = unlimited). */
+      maxActiveGoalWaits?: number;
+      /** Total goal-wake flow rows allowed per agent (0 = unlimited). */
+      maxFlows?: number;
+      /** Retry delay after a mission-tick wake failure (0 = no automatic retry). */
+      tickFailureBackoffMs?: number;
+      /** Phase 4 durable helper file protocol + restart recovery. Default off. */
+      durableHelper?: {
+        /** Master opt-in. Requires the Phase 3 goal-wake gate. */
+        enabled?: boolean;
+        /** Concurrent durable helper runs allowed per session (0 = unlimited). */
+        maxRunsPerSession?: number;
+        /** Bound for stdout.log + tail.txt per runDir. */
+        maxOutputBytesPerRun?: number;
+        /** Global runDir retention before recovery marks needs_cleanup. */
+        runTtlMs?: number;
+        /** Low-frequency reconciliation sweep interval. */
+        sweepIntervalMs?: number;
+      };
+    };
   };
   /** Runtime registry diagnostic collector flags. Defaults off. */
   registryDiagnostics?: {
@@ -309,6 +364,12 @@ export type RuntimeFeatureConfig = {
     proposeFacts?: boolean;
     /** Default-off gate for local sanitized persistence; TaskLoop writes also require shadow. */
     persist?: boolean;
+    /**
+     * KE-P1-1 task-terminal candidate generation gate (default-off). When enabled,
+     * the TaskLoop terminal hook derives fact/error-card candidates for the Review
+     * Queue; candidates stay queue-visible and are never auto-persisted.
+     */
+    candidateGeneration?: boolean;
     /**
      * Area 4 §3.4: chat-turn memory injection pilot gate (default-off).
      * When enabled, the agent gateway queries registered memory context

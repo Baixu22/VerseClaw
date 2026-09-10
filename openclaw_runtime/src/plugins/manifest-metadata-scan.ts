@@ -21,7 +21,20 @@ type CandidateDir = {
   origin?: string;
 };
 
-const OPENCLAW_PACKAGE_ROOT = fileURLToPath(new URL("../..", import.meta.url));
+// Lazy + guarded: under some vitest environments import.meta.url is not a
+// file: URL (jsdom/web runner), and fileURLToPath would throw at module load,
+// killing every test file that transitively imports this module. Real runtime
+// always sees a file: URL, so behaviour there is unchanged.
+let openclawPackageRootCache: string | undefined;
+function openclawPackageRoot(): string {
+  if (openclawPackageRootCache === undefined) {
+    const moduleUrl = import.meta.url;
+    openclawPackageRootCache = moduleUrl.startsWith("file:")
+      ? fileURLToPath(new URL("../..", moduleUrl))
+      : process.cwd();
+  }
+  return openclawPackageRootCache;
+}
 const PLUGIN_MANIFEST_FILENAME = "openclaw.plugin.json";
 let manifestMetadataCache:
   | {
@@ -66,9 +79,10 @@ function resolveBundledPluginRoot(env: NodeJS.ProcessEnv): string | undefined {
     return resolveUserPath(override, env);
   }
 
-  const sourceRoot = path.join(OPENCLAW_PACKAGE_ROOT, "extensions");
-  const runtimeRoot = path.join(OPENCLAW_PACKAGE_ROOT, "dist-runtime", "extensions");
-  const distRoot = path.join(OPENCLAW_PACKAGE_ROOT, "dist", "extensions");
+  const packageRoot = openclawPackageRoot();
+  const sourceRoot = path.join(packageRoot, "extensions");
+  const runtimeRoot = path.join(packageRoot, "dist-runtime", "extensions");
+  const distRoot = path.join(packageRoot, "dist", "extensions");
   return [sourceRoot, runtimeRoot, distRoot].find(hasManifestDir);
 }
 

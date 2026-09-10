@@ -487,7 +487,7 @@ describe("AgentMap prompt candidate TaskLoop explicit invocation pilot", () => {
     ] as const;
 
     for (const replay of replayPacks) {
-      const contextPack = buildTaskLoopContextPack(replay.input);
+      const contextPack = buildTaskLoopContextPack(replay.input as never);
       const legacy = formatTaskLoopContextPackForReviewer(contextPack);
       const defaultOff = assembleAgentMapPromptCandidateTaskLoopExplicitInvocationPilot({
         legacyReviewerPrompt: legacy,
@@ -550,7 +550,7 @@ describe("AgentMap prompt candidate TaskLoop explicit invocation pilot", () => {
         explicitInvocation: item.explicitInvocation,
         result,
         config: item.config,
-        tokenBudget: item.tokenBudget ?? 700,
+        tokenBudget: (item as any).tokenBudget ?? 700,
       });
 
       expect(pilot.status).toBe("legacy");

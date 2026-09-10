@@ -8,6 +8,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   ACCEPTANCE_SCHEMA,
   TF0009_ADAPTER_ID,
+  type AcceptanceGate,
   createAcceptancePlan,
   digestManifest,
   digestPlan,
@@ -32,7 +33,14 @@ const temporaryPaths: string[] = [];
 
 afterEach(() => {
   vi.unstubAllEnvs();
-  for (const path of temporaryPaths.splice(0)) rmSync(path, { recursive: true, force: true });
+  for (const path of temporaryPaths.splice(0)) {
+    try {
+      rmSync(path, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException)?.code;
+      if (code !== 'EPERM' && code !== 'EBUSY' && code !== 'ENOTEMPTY') throw error;
+    }
+  }
 });
 
 function git(root: string, args: string[]) {
@@ -61,7 +69,7 @@ function createFixtureRepository() {
   return root;
 }
 
-function createManifest(root: string, options: { gate?: Record<string, unknown>; humanEvidence?: 'required' | 'not-required' } = {}) {
+function createManifest(root: string, options: { gate?: AcceptanceGate; humanEvidence?: 'required' | 'not-required' } = {}) {
   const identity = repositoryIdentity(root);
   const sourceFiles = ['package.json', 'pnpm-lock.yaml', '.npmrc', 'harness/specs/tasks/fixture.md'].map((path) => ({
     path,
@@ -69,7 +77,7 @@ function createManifest(root: string, options: { gate?: Record<string, unknown>;
     sha256: sha256File(join(root, path)),
     gitBlob: gitText(root, ['rev-parse', '--verify', `HEAD:${path}`]),
   }));
-  const manifest: { [key: string]: unknown; gates: Array<Record<string, unknown>> } = {
+  const manifest = {
     schema: ACCEPTANCE_SCHEMA,
     manifestVersion: 1,
     runId: 'fixture-run',
@@ -80,6 +88,7 @@ function createManifest(root: string, options: { gate?: Record<string, unknown>;
       specPath: 'harness/specs/tasks/fixture.md',
       humanEvidence: options.humanEvidence ?? 'not-required',
       requiredRules: [],
+      requiredTests: [],
     },
     executionMode: 'full',
     candidate: { commit: identity.commit, tree: identity.tree, ref: identity.ref, cleanAtPlan: true },
@@ -117,6 +126,8 @@ function createManifest(root: string, options: { gate?: Record<string, unknown>;
     },
     eligibility: { cleanWorktreeRequired: true, fullModeRequired: true, sourceComplete: true, cleanAtPlan: true },
     residuals: [],
+    planDigest: '',
+    manifestDigest: '',
   };
   manifest.planDigest = digestPlan(manifest);
   manifest.manifestDigest = digestManifest(manifest);
@@ -555,7 +566,7 @@ describe('Agent Engineering Acceptance', () => {
       expect.objectContaining({ kind: 'comms-replay-metrics', path: 'evidence/comms-replay/current-metrics.json' }),
     ]));
     const missingArtifactRecord = structuredClone(passing);
-    missingArtifactRecord.controlledArtifacts = missingArtifactRecord.controlledArtifacts.filter(
+    missingArtifactRecord.controlledArtifacts = (missingArtifactRecord.controlledArtifacts ?? []).filter(
       (artifact) => artifact.kind !== 'comms-replay-metrics',
     );
     missingArtifactRecord.reportDigest = digestReport(missingArtifactRecord);
@@ -782,6 +793,7 @@ describe('Agent Engineering Acceptance', () => {
     });
     const harnessGate = plan.gates.find((gate) => gate.id === 'harness-validate');
     expect(harnessGate).toBeDefined();
+    if (!harnessGate) throw new Error('Expected harness gate');
     expect(harnessGate.args).toContain('--since');
     expect(harnessGate.args[harnessGate.args.indexOf('--since') + 1]).toBe('HEAD');
     for (const gate of plan.gates) {
@@ -800,8 +812,8 @@ describe('Agent Engineering Acceptance', () => {
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
     temporaryPaths.push(outputDir);
     const manifest = createManifest(root);
-    const withDigest = (report) => {
-      const copy = { ...report, reportDigest: undefined };
+    const withDigest = (report: Record<string, unknown>) => {
+      const copy: Record<string, unknown> = { ...report, reportDigest: undefined };
       copy.reportDigest = digestReport(copy);
       return copy;
     };
@@ -888,8 +900,8 @@ describe('Agent Engineering Acceptance', () => {
       controlledArtifacts: [],
       gates: [{ id: 'fixture-gate', result: 'pass' }],
     };
-    const withDigest = (report) => {
-      const copy = { ...report, reportDigest: undefined };
+    const withDigest = (report: Record<string, unknown>) => {
+      const copy: Record<string, unknown> = { ...report, reportDigest: undefined };
       copy.reportDigest = digestReport(copy);
       return copy;
     };

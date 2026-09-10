@@ -7,8 +7,9 @@ import {
 } from '@/lib/chat-capability-actions';
 import { auditMcpServerForAction } from '@/lib/capability-audit';
 import { loadCapabilityRegistry } from '@/lib/capability-registry';
+import type { CapabilityActionHostApi } from '@/lib/capability-orchestrator';
 
-function createApi(overrides: Record<string, unknown> = {}) {
+function createApi(overrides: Record<string, unknown> = {}): CapabilityActionHostApi {
   const api = {
     capabilities: {
       publications: vi.fn(async () => ({
@@ -118,7 +119,7 @@ function createApi(overrides: Record<string, unknown> = {}) {
     },
     ...overrides,
   };
-  return api;
+  return api as unknown as CapabilityActionHostApi;
 }
 
 describe('chat capability actions', () => {
@@ -179,7 +180,7 @@ describe('chat capability actions', () => {
     expect(api.mcp.reloadRuntime).toHaveBeenCalledWith({ workspaceId: 'w1', agentId: 'main' });
     expect(api.mcp.heartbeat).toHaveBeenCalledWith({ serverId: 'filesystem' });
     expect(api.mcp.listTools).toHaveBeenCalledWith({ serverId: 'filesystem' });
-    expect(api.observability.reportTrace).toHaveBeenCalledWith(expect.objectContaining({
+    expect(api.observability!.reportTrace).toHaveBeenCalledWith(expect.objectContaining({
       name: 'Capability management',
       mode: 'capability-management',
       tags: expect.arrayContaining(['capability-management', 'skill-mcp']),
@@ -251,7 +252,7 @@ describe('chat capability actions', () => {
 
   it('stops MCP registration orchestration when structure check fails', async () => {
     const api = createApi();
-    api.mcp.testServer.mockResolvedValueOnce({ success: false, error: 'bad config' });
+    (api.mcp.testServer as any).mockResolvedValueOnce({ success: false, error: 'bad config' });
     const result = await resolveChatCapabilityActions(`register MCP {
       "mcpServers": {
         "filesystem": {
@@ -333,12 +334,12 @@ describe('chat capability actions', () => {
     }));
 
     const results = await executeChatCapabilityActions(result.actions, {
-      confirmation: { required: true, confirmed: false, source: 'chat-preflight' },
+      ...({ confirmation: { required: true, confirmed: false, source: 'chat-preflight' } } as any),
     }, api);
 
     expect(api.mcp.createServer).not.toHaveBeenCalled();
     expect(api.mcp.reloadRuntime).not.toHaveBeenCalled();
-    expect(api.observability.reportTrace).toHaveBeenCalledWith(expect.objectContaining({
+    expect(api.observability!.reportTrace).toHaveBeenCalledWith(expect.objectContaining({
       events: expect.arrayContaining([
         expect.objectContaining({
           type: 'localControlPlane.capability.report.projected',
@@ -448,7 +449,7 @@ describe('chat capability actions', () => {
     const results = await executeChatCapabilityActions(plan.actions, {}, api);
     const message = buildCapabilityActionMessage('now use it', results);
 
-    expect(api.observability.reportTrace).toHaveBeenCalled();
+    expect(api.observability!.reportTrace).toHaveBeenCalled();
     expect(message).toContain('"traceId": "trace_capability_');
     expect(message).toContain('"stage": "audit"');
   });

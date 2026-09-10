@@ -231,7 +231,7 @@ describe("Phase 6: Relation chain", () => {
       });
 
       const result = integration.appendFact(candidate);
-      expect(result.status).toBe("skipped");
+      expect((result as any).status).toBe("skipped");
 
       const loaded = integration.loadStore();
       expect(loaded.status).toBe("loaded");
@@ -269,7 +269,7 @@ describe("Phase 6: Relation chain", () => {
       });
 
       const result = integration.appendFact(candidate);
-      expect(result.status).toBe("persisted");
+      expect((result as any).status).toBe("persisted");
 
       const loaded = integration.loadStore();
       expect(loaded.status).toBe("loaded");
@@ -284,7 +284,7 @@ describe("Phase 6: Relation chain", () => {
   // === memory_find_related tool ===
 
   describe("memory_find_related tool", () => {
-    it("1-hop: returns related facts via relation chain", () => {
+    it("1-hop: returns related facts via relation chain", async () => {
       const store = new RuntimeMemoryStore();
       store.appendFact(makeFact("f1", "User", "likes Python"));
       store.appendFact(makeFact("f2", "User", "likes Rust"));
@@ -302,7 +302,7 @@ describe("Phase 6: Relation chain", () => {
         confidence: 0.6,
       });
 
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_find_related",
         { factId: "f1", hops: 1 },
         { store },
@@ -315,7 +315,7 @@ describe("Phase 6: Relation chain", () => {
       expect(data.facts.map((f) => f.factId).sort()).toEqual(["f2", "f3"]);
     });
 
-    it("2-hop: traverses two hops and stays acyclic", () => {
+    it("2-hop: traverses two hops and stays acyclic", async () => {
       const store = new RuntimeMemoryStore();
       store.appendFact(makeFact("a", "X", "A"));
       store.appendFact(makeFact("b", "X", "B"));
@@ -341,7 +341,7 @@ describe("Phase 6: Relation chain", () => {
         confidence: 0.7,
       });
 
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_find_related",
         { factId: "a", hops: 2 },
         { store },
@@ -356,9 +356,9 @@ describe("Phase 6: Relation chain", () => {
       expect(factIds).not.toContain("a");
     });
 
-    it("fails when factId is missing", () => {
+    it("fails when factId is missing", async () => {
       const store = new RuntimeMemoryStore();
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_find_related",
         {},
         { store },
@@ -367,9 +367,9 @@ describe("Phase 6: Relation chain", () => {
       expect(result.message).toContain("factId");
     });
 
-    it("fails when fact is not found", () => {
+    it("fails when fact is not found", async () => {
       const store = new RuntimeMemoryStore();
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_find_related",
         { factId: "nonexistent" },
         { store },
@@ -415,7 +415,7 @@ describe("Phase 6: Relation chain", () => {
       }, {});
 
       // The context items should include f2 (expanded) in addition to matched facts
-      const factIds = result.contextItems.map((item) => item.metadata?.factId).filter(Boolean);
+      const factIds = (result as any).contextItems.map((item: { metadata?: { factId?: string } }) => item.metadata?.factId).filter(Boolean);
       expect(factIds).toContain("f1");
       expect(factIds).toContain("f2");
     });
@@ -454,9 +454,9 @@ describe("Phase 6: Relation chain", () => {
       }, {});
 
       // Only 2 expanded facts should be included (MAX_RELATION_EXPANSIONS = 2)
-      const expandedFactIds = result.contextItems
-        .map((item) => item.metadata?.factId)
-        .filter((id) => typeof id === "string" && id.startsWith("rel_"));
+      const expandedFactIds = (result as any).contextItems
+        .map((item: { metadata?: { factId?: string } }) => item.metadata?.factId)
+        .filter((id: any) => typeof id === "string" && id.startsWith("rel_"));
       expect(expandedFactIds.length).toBeLessThanOrEqual(2);
     });
 
@@ -475,8 +475,8 @@ describe("Phase 6: Relation chain", () => {
         },
       }, {});
 
-      expect(result.status).toBe("success");
-      expect(result.contextItems.length).toBeGreaterThan(0);
+      expect((result as any).status).toBe("success");
+      expect((result as any).contextItems.length).toBeGreaterThan(0);
     });
   });
 });

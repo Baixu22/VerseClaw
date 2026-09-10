@@ -1,0 +1,9 @@
+CLI bootstrap import guard passed.
+[cli-startup-metadata] skipped: CLI startup sources are unavailable in this pruned runtime.
+[cli-compat] skipped: legacy daemon CLI sources are unavailable in this pruned runtime.
+Building openclaw_runtime with esbuild...
+  Source: [workspace]\openclaw_runtime\src
+  Output: [workspace]\openclaw_runtime\dist
+  Found 1158 npm packages (will keep external)
+  Done in 0.2s
+[runtime-build-smoke] gateway ready on port 52028

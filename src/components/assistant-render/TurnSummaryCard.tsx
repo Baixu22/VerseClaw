@@ -3,8 +3,10 @@ import { useId, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import type { UserRunStatus } from '@/pages/Chat/execution-projection';
-import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
+import { OrbStatus } from '@/components/assistant-ui/orb-status';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { ThinkingReasoning } from './ThinkingReasoning';
+import type { AssistantReasoning } from './model';
 
 function formatDuration(
   startedAt: number | undefined,
@@ -26,14 +28,8 @@ function formatDuration(
 }
 
 /** Run lifecycle → orb state (thinking-orbs shape) + semantic dot. */
-const RUN_TO_ORB: Record<UserRunStatus, OrbStatusState> = {
-  running: 'working',
-  completed: 'success',
-  error: 'error',
-  aborted: 'stopped',
-};
-
 export type TurnSummaryCounts = {
+  thoughts?: number;
   plan?: number;
   files?: number;
   diffs?: number;
@@ -43,7 +39,7 @@ export type TurnSummaryCounts = {
 };
 
 /** Order is deliberate: the most consequential artifact leads. */
-const BADGE_ORDER = ['approvals', 'plan', 'agents', 'diffs', 'files', 'terminals'] as const;
+const BADGE_ORDER = ['approvals', 'plan', 'agents', 'diffs', 'files', 'terminals', 'thoughts'] as const;
 
 /**
  * Collapsed turns used to say only "Worked for 12s", so a plan, three
@@ -78,6 +74,20 @@ function TurnSummaryBadges({ counts }: { counts: TurnSummaryCounts }) {
   );
 }
 
+/**
+ * The turn's process disclosure — the single owner of everything the agent did
+ * on the way to its answer.
+ *
+ * It used to own only the tool-side work (execution graph, terminals, diffs,
+ * plan, approvals) while the reasoning stream rendered separately, at the top of
+ * the assistant message. That put thinking, tool work and the final answer at
+ * one flat level: on a reasoning model the first two dwarf the third, and
+ * scrolling back to the prompt meant scrolling past all of it. `reasoning` moved
+ * in here so a turn reads as prompt → one folded line → answer.
+ *
+ * The final answer deliberately stays OUTSIDE: this component never wraps the
+ * reply text, so collapsing can never hide the thing the user asked for.
+ */
 export function TurnSummaryCard({
   status,
   startedAt,
@@ -85,6 +95,8 @@ export function TurnSummaryCard({
   now,
   expanded,
   summary,
+  reasoning,
+  reasoningStreaming = false,
   onExpandedChange,
   children,
 }: {
@@ -94,6 +106,10 @@ export function TurnSummaryCard({
   now: number;
   expanded: boolean;
   summary?: TurnSummaryCounts;
+  /** Reasoning adopted from the turn's reply message (or the live run). */
+  reasoning?: AssistantReasoning[];
+  /** True while thinking is still arriving — keeps the stream open + shimmering. */
+  reasoningStreaming?: boolean;
   onExpandedChange: (expanded: boolean) => void;
   children: ReactNode;
 }) {
@@ -113,8 +129,6 @@ export function TurnSummaryCard({
         : duration
           ? t('turnSummary.workedFor', { duration })
           : t('turnSummary.workDetails');
-  const orbState = RUN_TO_ORB[status];
-
   return (
     <section
       className="group/run-activity min-w-0 text-sm text-muted-foreground"
@@ -122,22 +136,22 @@ export function TurnSummaryCard({
       data-status={status}
     >
       <div className="flex min-w-0 items-start gap-2">
-        {/* Leading orb — the run's visible status, full thinking-orbs shape.
-            Hovering reveals the state label + duration. */}
-        <Tooltip delayDuration={0}>
-          <TooltipTrigger asChild>
-            <span
-              className="shrink-0"
-              data-testid="chat-turn-summary-orb"
-              data-status={status}
-            >
-              <OrbStatus state={orbState} size="md" dotSize="lg" label={label} />
-            </span>
-          </TooltipTrigger>
-          <TooltipContent side="right" align="start">
-            {label}
-          </TooltipContent>
-        </Tooltip>
+        {status === 'running' && (
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <span
+                className="shrink-0"
+                data-testid="chat-turn-summary-orb"
+                data-status={status}
+              >
+                <OrbStatus state="working" size="md" dotSize="lg" label={label} />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="right" align="start">
+              {label}
+            </TooltipContent>
+          </Tooltip>
+        )}
 
         <div className="min-w-0 flex-1">
           <button
@@ -174,6 +188,15 @@ export function TurnSummaryCard({
               className="flex min-w-0 flex-col gap-2 pb-1 pt-1"
               data-testid="chat-turn-summary-details"
             >
+              {/* Reasoning leads: it is what the agent did BEFORE reaching for a
+                  tool, so the disclosure reads in the order the work happened. */}
+              {reasoning && reasoning.length > 0 && (
+                <ThinkingReasoning
+                  items={reasoning}
+                  streaming={reasoningStreaming}
+                  defaultOpen
+                />
+              )}
               {children}
             </div>
           )}

@@ -87,8 +87,8 @@ describe('P7-004 quarterly maturity audit', () => {
     const root = fixtureRoot({ p7Done: false });
     const phases = collectPhaseStatuses(root);
     expect(phases).toHaveLength(9);
-    expect(phases.every((phase) => Boolean(phase.statusPath))).toBe(true);
-    expect(phases.find((phase) => phase.id === 'phase7-continuous-governance')?.consistent).toBe(true);
+    expect(phases.every((phase: any) => Boolean(phase.statusPath))).toBe(true);
+    expect(phases.find((phase: any) => phase.id === 'phase7-continuous-governance')?.consistent).toBe(true);
 
     writeJson(root, 'plans/system-maturity/phase0-foundation/STATUS.json', {
       phase: 'phase0-foundation',
@@ -96,7 +96,7 @@ describe('P7-004 quarterly maturity audit', () => {
       tasks: { 'P0-001': 'todo' },
       allTasksDone: true,
     });
-    const bad = collectPhaseStatuses(root).find((phase) => phase.id === 'phase0-foundation');
+    const bad = collectPhaseStatuses(root).find((phase: any) => phase.id === 'phase0-foundation');
     expect(bad?.consistent).toBe(false);
   });
 
@@ -125,7 +125,7 @@ describe('P7-004 quarterly maturity audit', () => {
     });
     expect(expired.ok).toBe(false);
     expect(expired.errors.join('\n')).toContain('expired');
-    expect(expired.rows.find((row) => row.findingId === 'F-UX-001')?.status).toBe('active');
+    expect(expired.rows.find((row: any) => row.findingId === 'F-UX-001')?.status).toBe('active');
   });
 
   it('A3: incomplete P0/P1 automatically blocks release', () => {

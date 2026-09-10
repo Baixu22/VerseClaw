@@ -21,6 +21,19 @@ function stableStringify(value: unknown): string {
 
 function baseHostApiMocks(messageCount: number) {
   return {
+    [stableStringify(['/api/settings', 'GET'])]: {
+      ok: true,
+      data: {
+        status: 200,
+        ok: true,
+        json: { language: 'en', setupComplete: true, runActivityKeepExpandedOnComplete: false },
+      },
+    },
+    [stableStringify(['settings', 'getAll', null])]: {
+      language: 'en',
+      setupComplete: true,
+      runActivityKeepExpandedOnComplete: false,
+    },
     [stableStringify(['gateway', 'status', null])]: {
       state: 'running',
       port: 18789,
@@ -162,6 +175,7 @@ test.describe('Verse Claw chat turn summary collapse', () => {
 
     try {
       await expect(page.getByTestId('chat-turn-summary-card')).toBeVisible();
+      await expect(page.getByTestId('chat-turn-summary-orb')).toHaveCount(0);
       await expect(page.getByTestId('chat-message-4').getByText('Repo inspection is complete.')).toBeVisible();
       await expect(page.getByTestId('chat-execution-graph')).toHaveCount(0);
 

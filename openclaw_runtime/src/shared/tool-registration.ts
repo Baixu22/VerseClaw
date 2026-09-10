@@ -6,8 +6,8 @@
  * enforced at tool registration time. The snapshotter trusts
  * `declaredWritePaths ∩ actual_fs_diff` instead of runtime path tracking.
  *
- * See: net use/designs/area-1-layered-execution-isolation.md §9.2
- *      net use/designs/development-manual.md §1.1, Stage 2
+ * See: docs/runtime-design/area-1-layered-execution-isolation.md §9.2
+ *      docs/runtime-design/development-manual.md §1.1, Stage 2
  */
 
 export type WriteRiskProfile =
@@ -66,6 +66,10 @@ export function validateWriteRiskProfile(profile: unknown): string | null {
 /**
  * Tool risk level. Used by `assertWriteRiskProfileForTool` to decide whether
  * a `writeRiskProfile` is required at registration time.
+ *
+ * This is a filesystem-risk classification. `readonly` does not prove that a
+ * tool performs no durable state transition in an existing owner store; those
+ * transitions require an owning API contract and focused behavioral tests.
  *
  * - `readonly`: tool does not write to the filesystem; profile optional.
  * - `write`: tool writes to the filesystem; `writeRiskProfile` is REQUIRED.

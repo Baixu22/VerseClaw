@@ -156,8 +156,8 @@ describe("assembleErrorResult", () => {
 describe("computeLocomoMetrics", () => {
   it("正确计算 overall 和 byCategory metrics", () => {
     const byCategory: Record<string, CategoryAccumulator> = {
-      temporal: { correct: 30, total: 50, recallSum: 25, contextRecallSum: 10, count: 50 },
-      multi_hop: { correct: 20, total: 40, recallSum: 15, contextRecallSum: 5, count: 40 },
+      temporal: { correct: 30, total: 50, recallSum: 25, contextRecallSum: 10, count: 50 } as never,
+      multi_hop: { correct: 20, total: 40, recallSum: 15, contextRecallSum: 5, count: 40 } as never,
     };
     const metrics = computeLocomoMetrics({
       totalCorrect: 50,
@@ -200,7 +200,7 @@ describe("computeLocomoMetrics", () => {
       totalRecall: 5,
       totalContextRecall: 2,
       byCategory: {
-        temporal: { correct: 10, total: 20, recallSum: 5, contextRecallSum: 2, count: 20 },
+        temporal: { correct: 10, total: 20, recallSum: 5, contextRecallSum: 2, count: 20 } as never,
       },
       totalQuestions: 20,
     });

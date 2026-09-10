@@ -136,6 +136,7 @@ async function loadCodexPromptSnapshotApi(): Promise<CodexPromptSnapshotApi> {
         `Codex prompt snapshot test API is missing at ${CODEX_TEST_API_MODULE_ID}. ` +
           "This source distribution does not vendor the Codex test-api artifact. " +
           "Install/build the bundled Codex plugin first, or run prompt snapshots in an upstream-complete checkout.",
+        { cause: error },
       );
     }
     throw error;

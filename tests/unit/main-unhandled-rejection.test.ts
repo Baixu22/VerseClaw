@@ -83,7 +83,7 @@ describe('process error handlers (R0-1)', () => {
 
   it('guards output streams against asynchronous EPIPE errors', () => {
     const stream = new EventEmitter();
-    installOutputStreamErrorHandlers([stream]);
+    installOutputStreamErrorHandlers([stream as never]);
 
     expect(() => stream.emit('error', Object.assign(new Error('write EPIPE'), { code: 'EPIPE' }))).not.toThrow();
     expect(() => stream.emit('error', Object.assign(new Error('disk failed'), { code: 'EIO_OTHER' }))).toThrow('disk failed');

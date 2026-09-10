@@ -39,7 +39,7 @@ export function SettingsSidebar() {
   })), query), [query, t]);
 
   return (
-    <aside data-testid="settings-sidebar" className="codex-settings-sidebar flex min-h-0 w-[275px] shrink-0 flex-col bg-surface-sidebar p-2">
+    <aside data-testid="settings-sidebar" className="codex-settings-sidebar flex min-h-0 w-[clamp(220px,24vw,275px)] shrink-0 flex-col bg-surface-sidebar p-2">
       <button type="button" data-testid="settings-back-button" onClick={() => requestCloseSettings()} className="codex-settings-back">
         <SettingsNavIcon name="back" />
         <span>{t('settings:navigation.back')}</span>

@@ -1,9 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
+import { REQUIRED_COMPACTION_SECTIONS } from "./compaction-damage-rules.js";
 import {
   buildDeterministicCompressionArtifact,
   type CompressionArtifact,
   type CompressionSemanticAtom,
 } from "../../../packages/agent-core/src/harness/compaction/compression-artifact.js";
+import { renderCompactionSummaryShape } from "../../../packages/agent-core/src/harness/compaction/summary-contract.js";
 import type { AgentMessage } from "../runtime/index.js";
 import { __testing as compactionSafeguardTesting } from "./compaction-safeguard.js";
 import {
@@ -13,27 +15,34 @@ import {
 } from "./compaction-validated-pipeline.js";
 
 function message(id: string, role: AgentMessage["role"], content: string): AgentMessage {
-  return { id, role, content } as AgentMessage;
+  return { id, role, content } as unknown as AgentMessage;
 }
 
 function structuredSummary(overrides: Partial<Record<string, string>> = {}): string {
-  const lines = [
-    "## Goal and Progress",
-    overrides.goal ?? "Implement the validated compaction pipeline.",
-    "## Decisions",
-    overrides.decisions ?? "- Use one shared finalize helper for provider and LLM.",
-    "## Open TODOs",
-    overrides.todos ?? "- Run the regression test suite.",
-    "## Constraints/Rules",
-    overrides.constraints ?? "- Keep P2 shadow-only and never enforce retries.",
-    "## Pending user asks",
-    overrides.asks ?? "Implement the validated compaction pipeline with shadow decisions.",
-  ];
-  if (overrides.failedAttempts !== undefined) {
-    lines.push("## Failed Attempts", overrides.failedAttempts);
-  }
-  lines.push("## Exact identifiers", overrides.identifiers ?? "src/auth/middleware.ts");
-  return lines.join("\n");
+  return renderCompactionSummaryShape({
+    "## Goal and Progress": [
+      overrides.goal ?? "Implement the validated compaction pipeline.",
+      `Latest user ask: ${overrides.asks ?? "Implement the validated compaction pipeline with shadow decisions."}`,
+    ].join("\n"),
+    "## Attempts and Failures": overrides.failedAttempts ?? "(none)",
+    "## Key Decisions and Constraints":
+      overrides.constraints ?? "- Keep P2 shadow-only and never enforce retries.",
+    "## Current State": [
+      "### Done",
+      "- The shared validation path is implemented.",
+      "",
+      "### In Progress",
+      "- Run the final regression suite.",
+      "",
+      "### Blocked",
+      "- (none)",
+    ].join("\n"),
+    "## Key Decisions":
+      overrides.decisions ?? "- Use one shared finalize helper for provider and LLM.",
+    "## Files Touched": overrides.identifiers ?? "- src/auth/middleware.ts",
+    "## Tests": "- pnpm test",
+    "## Next Actions": overrides.todos ?? "1. Run the regression test suite.",
+  });
 }
 
 function atom(
@@ -295,9 +304,12 @@ describe("buildValidatedCompactionOutput", () => {
   });
 
   it("integrates damage audit and falls back when goal anchors are missing", () => {
+    // T-C1 semantics: the hollowed canonical summary (structure intact,
+    // goal language gone) is the canonical goal_token_decay trigger.
+    const hollowed = REQUIRED_COMPACTION_SECTIONS.map((section) => `${section}\nNone.`).join("\n\n");
     const output = buildValidatedCompactionOutput({
       source: "llm",
-      summary: "## Open TODOs\n- review this summary\n",
+      summary: hollowed,
       messages: STANDARD_MESSAGES,
       identifiers: [],
       latestAsk: null,

@@ -33,6 +33,10 @@ import type {
  * Every kind of tab the panel can host.  The first four came from the old
  * nested "workspace" sub-router; the last four were the old fixed top-level
  * tabs.  They are peers now.
+ *
+ * `subagent` and `process` are the two SUBJECT-BEARING kinds: they identify a
+ * single worker or a single shell process, so unlike the others they are
+ * multi-instance (see `PanelTabInstance.subject`).
  */
 export type PanelTabKind =
   | 'review'
@@ -41,13 +45,25 @@ export type PanelTabKind =
   | 'files'
   | 'artifact'
   | 'audit'
-  | 'agents';
+  | 'agents'
+  | 'subagent'
+  | 'process';
 
 export interface PanelTabInstance {
   id: string;
   kind: PanelTabKind;
   /** Overrides the default label in the chip (e.g. a browser tab's hostname). */
   title?: string;
+  /**
+   * What this tab is *about*, for kinds that can have more than one instance:
+   * a sub-agent's `childSessionKey`, a process's tool-call id.
+   *
+   * Tab identity is `kind + subject`. Leaving it undefined keeps the original
+   * single-instance behaviour, which is what every other kind wants — ClawX
+   * runs one xterm and one dev-server preview per workspace, so a second
+   * terminal tab would be a second view onto the same session.
+   */
+  subject?: string;
 }
 
 const PANEL_TAB_KINDS: readonly PanelTabKind[] = [
@@ -58,7 +74,21 @@ const PANEL_TAB_KINDS: readonly PanelTabKind[] = [
   'artifact',
   'audit',
   'agents',
+  'subagent',
+  'process',
 ];
+
+/**
+ * Kinds that only mean something with a subject. They are never restored from a
+ * saved session and never offered by the launcher or the `+` menu: a sub-agent
+ * tab with no sub-agent is a blank pane, and the workers it pointed at belong to
+ * a run that is no longer in flight.
+ */
+export const SUBJECT_TAB_KINDS: readonly PanelTabKind[] = ['subagent', 'process'];
+
+export function isSubjectTabKind(kind: PanelTabKind): boolean {
+  return SUBJECT_TAB_KINDS.includes(kind);
+}
 
 export function isPanelTabKind(value: unknown): value is PanelTabKind {
   return typeof value === 'string' && (PANEL_TAB_KINDS as readonly string[]).includes(value);
@@ -184,7 +214,10 @@ function restoreTabs(state: RestorableArtifactPanelState): PanelTabInstance[] {
     const restored: PanelTabInstance[] = [];
     for (const entry of state.tabs) {
       const kind = normalizeTabKind(entry?.kind);
-      if (!kind || seen.has(kind)) continue;
+      // Subject-bearing kinds are per-run: the worker or process a restored tab
+      // named finished with the run that spawned it, so reopening the chip would
+      // restore a pane with nothing behind it.
+      if (!kind || seen.has(kind) || isSubjectTabKind(kind)) continue;
       seen.add(kind);
       restored.push({ id: nextTabId(kind), kind, title: entry.title });
     }
@@ -198,8 +231,16 @@ function restoreTabs(state: RestorableArtifactPanelState): PanelTabInstance[] {
 export const useArtifactPanel = create<ArtifactPanelState>()(
   persist(
     (set) => {
-      const openCanonicalTab = (kind: PanelTabKind, title?: string) => set((state) => {
-        const existing = state.tabs.find((tab) => tab.kind === kind);
+      /**
+       * Open, or re-activate, the tab for `kind` + `subject`.
+       *
+       * Matching on the pair is the whole of the multi-instance behaviour:
+       * clicking the same worker twice focuses its existing tab, clicking a
+       * different worker opens a second one, and every subject-less kind keeps
+       * the single-instance semantics it had before.
+       */
+      const openCanonicalTab = (kind: PanelTabKind, title?: string, subject?: string) => set((state) => {
+        const existing = state.tabs.find((tab) => tab.kind === kind && tab.subject === subject);
         if (existing) {
           return {
             open: true,
@@ -209,7 +250,7 @@ export const useArtifactPanel = create<ArtifactPanelState>()(
               : state.tabs,
           };
         }
-        const tab: PanelTabInstance = { id: nextTabId(kind), kind, title };
+        const tab: PanelTabInstance = { id: nextTabId(kind), kind, title, subject };
         return { open: true, tabs: [...state.tabs, tab], activeTabId: tab.id };
       });
 
@@ -285,6 +326,14 @@ export const useArtifactPanel = create<ArtifactPanelState>()(
         if (intent.panel === 'agents') {
           set({ agentsSessionKey: intent.sessionKey ?? null });
           openCanonicalTab('agents');
+          return;
+        }
+        if (intent.panel === 'subagent') {
+          openCanonicalTab('subagent', intent.roleName, intent.sessionKey);
+          return;
+        }
+        if (intent.panel === 'process') {
+          openCanonicalTab('process', intent.command, intent.processId);
           return;
         }
         openCanonicalTab(intent.panel);

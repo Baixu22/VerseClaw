@@ -82,6 +82,8 @@
     "session": "Browser session",
     "newSession": "New session",
     "url": "URL",
+    "mode": "Session mode",
+    "profile": "Profile",
     "urlPlaceholder": "Enter a URL",
     "back": "Back",
     "forward": "Forward",
@@ -91,6 +93,7 @@
     "more": "More browser actions",
     "snapshot": "Take snapshot",
     "snapshotNodes": "Snapshot nodes",
+    "advancedControls": "Advanced page controls",
     "inspectNetwork": "Inspect network",
     "inspectConsole": "Inspect console",
     "empty": "Enter a URL to open a supervised browser session.",
@@ -101,7 +104,8 @@
     "click": "Click",
     "fill": "Fill",
     "pressKey": "Press key",
-    "errors": { "actionFailed": "Browser action failed" }
+    "errors": { "actionFailed": "Browser action failed" },
+    "automation": { "open": "Automate this page", "title": "Create an approved automation", "close": "Close automation form", "name": "Task name", "objective": "What should the browser do?", "success": "Success text to verify", "submit": "Submit for approval", "created": "Automation is waiting for approval" }
   },
   "boundaryChoice": {
     "dialogLabel": "AI boundary confirmation",

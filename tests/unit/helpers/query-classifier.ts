@@ -170,8 +170,8 @@ export function buildQueryPlan(
     armWeights,
     rewriteHint,
   };
-  if (timeWindow) plan.timeWindow = timeWindow;
-  if (subQuestions && subQuestions.length > 0) plan.subQuestions = [...subQuestions];
+  if (timeWindow) (plan as any).timeWindow = timeWindow;
+  if (subQuestions && subQuestions.length > 0) (plan as any).subQuestions = [...subQuestions];
   return plan;
 }
 

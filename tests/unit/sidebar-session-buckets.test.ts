@@ -3,10 +3,12 @@ import {
   buildLatestRuntimeRunBySession,
   buildSidebarTimeSessions,
   buildSidebarWorkspaceSessionGroups,
+  compareSidebarSessionEntries,
   getSessionActivityMs,
   isSessionVisibleInWorkspace,
 } from '@/components/layout/session-buckets';
 import type { ChatRuntimeRunState } from '@/stores/chat';
+import type { SidebarSessionEntry } from '@/components/layout/session-buckets';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 
 function workspace(overrides: Partial<WorkspaceProfile>): WorkspaceProfile {
@@ -231,6 +233,57 @@ describe('sidebar session activity resolution', () => {
       'agent:main:b-newest',
       'agent:main:a-new',
       'agent:main:b-old',
+    ]);
+  });
+
+  it('renders a duplicated legacy session in only one project', () => {
+    const duplicated = 'agent:main:duplicated';
+    const groups = buildSidebarWorkspaceSessionGroups({
+      currentSessionKey: duplicated,
+      sessionLastActivity: { [duplicated]: 10 },
+      sessions: [{ key: duplicated, displayName: 'Duplicated' }],
+      workspaces: [
+        workspace({
+          id: 'workspace-a',
+          activeSessionKey: duplicated,
+          sessionStates: { [duplicated]: {} },
+        }),
+        workspace({
+          id: 'workspace-b',
+          activeSessionKey: duplicated,
+          sessionStates: { [duplicated]: {} },
+        }),
+      ],
+    });
+
+    expect(groups.map((group) => group.workspace.id)).toEqual(['workspace-a']);
+    expect(groups[0]?.sessions.map((entry) => entry.session.key)).toEqual([duplicated]);
+  });
+
+  it('keeps pinned sessions first and supports active and priority sorting', () => {
+    const entry = (key: string, messageCount: number, activityMs: number, extras: Partial<SidebarSessionEntry> = {}) => ({
+      session: { key, messageCount },
+      activityMs,
+      ...extras,
+    });
+    const active = [
+      entry('agent:main:quiet', 2, 900),
+      entry('agent:main:busy', 8, 100),
+      entry('agent:main:pinned', 1, 1, { isPinned: true }),
+    ].sort((left, right) => compareSidebarSessionEntries(left, right, 'active'));
+    expect(active.map((item) => item.session.key)).toEqual([
+      'agent:main:pinned',
+      'agent:main:busy',
+      'agent:main:quiet',
+    ]);
+
+    const priority = [
+      entry('agent:main:old', 20, 900),
+      entry('agent:main:waiting', 1, 100, { isPriority: true }),
+    ].sort((left, right) => compareSidebarSessionEntries(left, right, 'priority'));
+    expect(priority.map((item) => item.session.key)).toEqual([
+      'agent:main:waiting',
+      'agent:main:old',
     ]);
   });
 });

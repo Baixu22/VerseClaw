@@ -72,8 +72,8 @@ const archivedEntry = {
 };
 
 const SESSIONS_LIST = [
-  { key: SESSION_KEY_A, displayName: 'Chat A' },
-  { key: SESSION_KEY_B, displayName: 'Chat B', status: 'running', hasActiveRun: true },
+  { key: SESSION_KEY_A, displayName: 'Chat A', messageCount: 2 },
+  { key: SESSION_KEY_B, displayName: 'Chat B', status: 'waiting_approval', hasActiveRun: true, messageCount: 5 },
 ];
 
 async function expectActionBefore(left: Locator, right: Locator) {
@@ -95,7 +95,7 @@ async function setupStatefulHostHandler(
   options: {
     workspace: TestWorkspace;
     archivedEntries: typeof archivedEntry[];
-    sessionsList?: Array<{ key: string; displayName: string; status?: string; hasActiveRun?: boolean }>;
+    sessionsList?: Array<{ key: string; displayName: string; status?: string; hasActiveRun?: boolean; messageCount?: number }>;
   },
 ): Promise<void> {
   await electronApp.evaluate((_ctx, params) => {
@@ -151,7 +151,9 @@ async function setupStatefulHostHandler(
           return respond(request.id, { sessions: sessionsList });
         }
         if (method === 'chat.history') {
-          return respond(request.id, { messages: [] });
+          return respond(request.id, {
+            messages: [{ role: 'user', content: 'Existing conversation', timestamp: 1_700_000_000_000 }],
+          });
         }
         return respond(request.id, {});
       }
@@ -168,6 +170,17 @@ async function setupStatefulHostHandler(
         });
       }
       if (mod === 'workspaces' && action === 'saveState') {
+        const sessionKey = typeof payload.sessionKey === 'string' ? payload.sessionKey : null;
+        const statePatch = payload.state && typeof payload.state === 'object' ? payload.state : {};
+        if (sessionKey) {
+          workspace = {
+            ...workspace,
+            sessionStates: {
+              ...workspace.sessionStates,
+              [sessionKey]: { ...(workspace.sessionStates[sessionKey] ?? {}), ...statePatch },
+            },
+          };
+        }
         return respond(request.id, { success: true });
       }
       if (mod === 'workspaces' && action === 'createFolder') {
@@ -317,6 +330,93 @@ async function setupStatefulHostHandler(
 }
 
 test.describe('Sidebar session workgroups and archive', () => {
+  test('pins the project header instead of repeating it per row, and supports pinned, unread, priority, and active sorting', async ({ electronApp, page }) => {
+    await setupStatefulHostHandler(electronApp, {
+      workspace: makeBaseWorkspace(),
+      archivedEntries: [],
+    });
+
+    await page.getByTestId('setup-skip-button').click().catch(() => {});
+    await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 15000 });
+    await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_A}`)).toBeVisible({ timeout: 15000 });
+
+    /*
+     * The project name is answered ONCE, by the section title plus the sticky
+     * project header — not by a subtitle on every conversation row. The row
+     * assertion is a negative one on purpose: the subtitle is what doubled the
+     * row height, so its absence is the thing worth locking.
+     */
+    await expect(page.getByTestId('sidebar-session-section-toggle')).toContainText('Projects');
+    await expect(page.getByTestId('sidebar-session-project-toggle-workspace-folders'))
+      .toContainText('Folder Test Workspace');
+    await expect(page.locator('[data-testid^="sidebar-session-project-subtitle-"]')).toHaveCount(0);
+    const stickyPosition = await page
+      .getByTestId('sidebar-session-project-toggle-workspace-folders')
+      .evaluate((element) => getComputedStyle(element.closest('.sidebar-row') as Element).position);
+    expect(stickyPosition).toBe('sticky');
+
+    await page.locator('.section-heading').first().hover();
+    await page.getByTestId('sidebar-session-organize').click();
+    await page.getByRole('menuitemradio', { name: 'Priority' }).click();
+
+    const priorityOrder = await page.locator('[data-testid^="sidebar-session-agent:main:session-"]').evaluateAll((elements) =>
+      elements.map((element) => element.getAttribute('data-testid')),
+    );
+    expect(priorityOrder.slice(0, 2)).toEqual([
+      `sidebar-session-${SESSION_KEY_B}`,
+      `sidebar-session-${SESSION_KEY_A}`,
+    ]);
+
+    // Unread is no longer a permanent hover button; it lives in the row's
+    // right-click action menu.
+    await page.getByTestId(`sidebar-session-${SESSION_KEY_B}`).click({ button: 'right' });
+    await expect(page.getByTestId(`sidebar-session-context-menu-${SESSION_KEY_B}`)).toBeVisible();
+    await page.getByTestId('sidebar-session-context-unread').click();
+    await page.getByTestId(`sidebar-session-${SESSION_KEY_B}`).click();
+    await expect(page.getByTestId(`sidebar-session-unread-${SESSION_KEY_B}`)).toHaveCount(0);
+
+    await page.locator('.section-heading').first().hover();
+    await page.getByTestId('sidebar-session-organize').click();
+    await page.getByRole('menuitemradio', { name: 'Most active' }).click();
+    const activeOrder = await page.locator('[data-testid^="sidebar-session-agent:main:session-"]').evaluateAll((elements) =>
+      elements.map((element) => element.getAttribute('data-testid')),
+    );
+    expect(activeOrder.slice(0, 2)).toEqual([
+      `sidebar-session-${SESSION_KEY_B}`,
+      `sidebar-session-${SESSION_KEY_A}`,
+    ]);
+
+    await page.getByTestId(`sidebar-session-${SESSION_KEY_A}`).hover();
+    await page.getByTestId(`sidebar-session-pin-${SESSION_KEY_A}`).click();
+    await expect(page.getByTestId(`sidebar-session-pinned-${SESSION_KEY_A}`)).toBeVisible();
+  });
+
+  test('keeps workgroups inside the project and renders time sorting as a direct list', async ({ electronApp, page }) => {
+    await setupStatefulHostHandler(electronApp, {
+      workspace: makeBaseWorkspace(),
+      archivedEntries: [],
+    });
+
+    await page.getByTestId('setup-skip-button').click().catch(() => {});
+    await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 15000 });
+    await expect(page.getByTestId('sidebar-session-project-toggle-workspace-folders')).toBeVisible({ timeout: 10000 });
+
+    await page.locator('.section-heading').first().hover();
+    await page.getByTestId('sidebar-session-organize').click();
+    await page.getByRole('menuitemradio', { name: 'Time' }).click();
+
+    await expect(page.getByTestId('sidebar-session-project-workspace-folders')).toHaveCount(0);
+    await expect(page.locator('[data-testid^="sidebar-folder-"]')).toHaveCount(0);
+    await expect(page.locator('[data-testid^="sidebar-time-slice-"]')).toHaveCount(0);
+    const orderedSessionIds = await page
+      .locator('[data-testid^="sidebar-session-agent:main:session-"]')
+      .evaluateAll((elements) => elements.map((element) => element.getAttribute('data-testid')));
+    expect(orderedSessionIds).toEqual([
+      `sidebar-session-${SESSION_KEY_B}`,
+      `sidebar-session-${SESSION_KEY_A}`,
+    ]);
+  });
+
   test('creates a workgroup, moves a running session into it, searches it, then deletes the workgroup', async ({ electronApp, page }, testInfo) => {
     await setupStatefulHostHandler(electronApp, {
       workspace: makeBaseWorkspace(),
@@ -330,6 +430,7 @@ test.describe('Sidebar session workgroups and archive', () => {
     // loadSessions resolves. Waiting on the project container ensures the group
     // is rendered, and the session rows should follow.
     await expect(page.getByTestId('sidebar-session-project-workspace-folders')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('sidebar-session-project-toggle-workspace-folders')).toBeVisible();
     await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_A}`)).toBeVisible({ timeout: 15000 });
     await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_B}`)).toBeVisible({ timeout: 15000 });
 
@@ -337,8 +438,8 @@ test.describe('Sidebar session workgroups and archive', () => {
     // chrome, so the workspace group must be hovered first.
     await page.locator('.project-tasks').first().hover();
     await page.getByTestId('sidebar-folder-create-workspace-folders').click();
-    await page.getByPlaceholder('Workgroup name').fill('Research');
-    await page.getByPlaceholder('Workgroup name').press('Enter');
+    await page.getByPlaceholder('Workstream name').fill('Research');
+    await page.getByPlaceholder('Workstream name').press('Enter');
 
     // The workgroup should appear in the sidebar.
     await expect(page.getByText('Research')).toBeVisible({ timeout: 5000 });
@@ -361,12 +462,27 @@ test.describe('Sidebar session workgroups and archive', () => {
     // workgroup should surface its aggregate running state and session count.
     await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_B}`)).toBeVisible();
     const folderContainer = page.locator('[data-testid^="sidebar-folder-folder-"]').filter({ hasText: 'Research' });
-    // Aggregate state is a bare dot in the row; its wording rides the label so
-    // it can never crowd out the workgroup name.
-    await expect(folderContainer.locator('[data-testid^="sidebar-workgroup-status-"]'))
-      .toHaveAttribute('aria-label', 'Running');
-    await expect(folderContainer.locator('[data-testid^="sidebar-workgroup-count-"]')).toHaveText('1');
-    await expect(page.getByTestId('sidebar-workgroup-ungrouped-workspace-folders')).toContainText('Ungrouped');
+    /*
+     * Count and aggregate state are ONE mark now, and it only appears while the
+     * group is shut.
+     *
+     * Open, the members are right there — a number restating them just pulled the
+     * eye to the right edge, where it also collided with the hover controls. And
+     * the state used to be a second dot beside it; a shut group is the only place
+     * that state is not already visible on the rows themselves, so it rides the
+     * count as a tint plus the accessible label.
+     */
+    await expect(folderContainer.locator('[data-testid^="sidebar-workgroup-count-"]')).toHaveCount(0);
+    await folderContainer.locator('[data-testid^="sidebar-folder-toggle-"]').first().click();
+    const workgroupCount = folderContainer.locator('[data-testid^="sidebar-workgroup-count-"]');
+    await expect(workgroupCount).toHaveText('1');
+    /* Chat B is seeded as `waiting_approval`, and waiting outranks running in
+       the aggregate (a group holding a conversation that needs the user is a
+       group that needs the user). Asserting /Running/ here predates that
+       fixture state. */
+    await expect(workgroupCount).toHaveAttribute('aria-label', /Waiting/);
+    await folderContainer.locator('[data-testid^="sidebar-folder-toggle-"]').first().click();
+    await expect(page.getByTestId('sidebar-workgroup-ungrouped-workspace-folders')).toContainText('Unfiled');
     await page.screenshot({ path: testInfo.outputPath('workgroup-sidebar.png'), fullPage: true });
 
     // Workgroup names participate in the spotlight search.
@@ -425,6 +541,82 @@ test.describe('Sidebar session workgroups and archive', () => {
     // Restore it.
     await page.getByTestId(`settings-archived-restore-${ARCHIVED_SESSION_KEY}`).click();
     await expect(page.getByTestId(`settings-archived-item-${ARCHIVED_SESSION_KEY}`)).toBeHidden({ timeout: 5000 });
+  });
+
+  test('drags a conversation after another to auto-group, rename, and remove the group', async ({ electronApp, page }) => {
+    await setupStatefulHostHandler(electronApp, {
+      workspace: makeBaseWorkspace(),
+      archivedEntries: [],
+    });
+
+    await page.getByTestId('setup-skip-button').click().catch(() => {});
+    await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 15000 });
+    await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_A}`)).toBeVisible({ timeout: 15000 });
+    await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_B}`)).toBeVisible({ timeout: 15000 });
+
+    // HTML5 drag-and-drop: drag Chat A and drop it AFTER Chat B. Playwright's
+    // locator.dragTo() is mouse-based; dispatching the drag event sequence
+    // keeps the E2E deterministic and exercises the same React handlers.
+    await page.evaluate(async ({ sourceKey, targetKey }) => {
+      const source = document.querySelector<HTMLElement>(`[data-testid="sidebar-session-drag-${sourceKey}"]`);
+      const target = document.querySelector<HTMLElement>(`[data-testid="sidebar-session-drag-${targetKey}"]`);
+      if (!source || !target) throw new Error('Missing drag source or drop target');
+
+      const dataTransfer = new DataTransfer();
+      source.dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true, dataTransfer }));
+      // Let React commit the drag-source state before the drop target decides
+      // whether it should accept the drag.
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      target.dispatchEvent(new DragEvent('dragover', { bubbles: true, cancelable: true, dataTransfer }));
+      target.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer }));
+      source.dispatchEvent(new DragEvent('dragend', { bubbles: true, cancelable: true, dataTransfer }));
+    }, { sourceKey: SESSION_KEY_A, targetKey: SESSION_KEY_B });
+
+    /* Match the group CONTAINER only. `[data-testid^="sidebar-folder-"]` also
+       matches its own toggle button (`sidebar-folder-toggle-<id>`), and both
+       carry the group name — which is a strict-mode violation, not a choice
+       between two candidates. Folder ids are themselves `folder-*`, so the
+       container's testid starts with `sidebar-folder-folder-`. */
+    const groupByName = (name: string) => page
+      .locator('div[data-testid^="sidebar-folder-folder-"]')
+      .filter({ hasText: name });
+
+    // Both conversations land in the auto-created workgroup named after the
+    // drop target.
+    const autoGroup = groupByName('Chat B group');
+    await expect(autoGroup).toBeVisible({ timeout: 5000 });
+    await expect(autoGroup.locator(`[data-testid="sidebar-session-${SESSION_KEY_A}"]`)).toBeVisible();
+    await expect(autoGroup.locator(`[data-testid="sidebar-session-${SESSION_KEY_B}"]`)).toBeVisible();
+    /* The count is a shut-group affordance (see the comment in the workgroup
+       test above), and a freshly auto-created group is OPEN — so read it by
+       folding the group, after its members have been asserted while visible. */
+    const autoGroupToggle = autoGroup.locator('[data-testid^="sidebar-folder-toggle-"]').first();
+    await autoGroupToggle.click();
+    await expect(autoGroup.locator('[data-testid^="sidebar-workgroup-count-"]')).toHaveText('2');
+    await autoGroupToggle.click();
+
+    // Rename the auto-created group.
+    /* Pin the group by ID first. Renaming swaps the header row for an <input>,
+       and `filter({ hasText })` reads text content — not input values — so a
+       name-based locator stops matching the moment the editor opens. */
+    const autoGroupTestId = await autoGroup.getAttribute('data-testid');
+    expect(autoGroupTestId).toBeTruthy();
+    const autoGroupById = page.getByTestId(autoGroupTestId!);
+    await autoGroupById.hover();
+    await autoGroupById.locator('button[aria-label="Rename workstream"]').click();
+    await autoGroupById.locator('input').fill('Prompt pairing');
+    await autoGroupById.locator('input').press('Enter');
+
+    const renamedGroup = groupByName('Prompt pairing');
+    await expect(renamedGroup).toBeVisible({ timeout: 5000 });
+
+    // Removing the group keeps the conversations and returns them to the
+    // ungrouped area.
+    await renamedGroup.hover();
+    await renamedGroup.locator('[data-testid^="sidebar-folder-delete-"]').click();
+    await expect(groupByName('Prompt pairing')).toBeHidden({ timeout: 5000 });
+    await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_A}`)).toBeVisible();
+    await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_B}`)).toBeVisible();
   });
 
   test('permanent delete from the archived settings page removes the entry', async ({ electronApp, page }) => {

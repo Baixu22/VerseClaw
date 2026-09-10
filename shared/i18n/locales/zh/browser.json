@@ -82,6 +82,8 @@
     "session": "浏览器会话",
     "newSession": "新会话",
     "url": "网址",
+    "mode": "会话模式",
+    "profile": "Profile",
     "urlPlaceholder": "输入网址",
     "back": "后退",
     "forward": "前进",
@@ -91,6 +93,7 @@
     "more": "更多浏览器操作",
     "snapshot": "获取快照",
     "snapshotNodes": "快照节点",
+    "advancedControls": "高级页面控制",
     "inspectNetwork": "检查网络",
     "inspectConsole": "检查控制台",
     "empty": "输入网址以打开受监督的浏览器会话。",
@@ -101,7 +104,8 @@
     "click": "点击",
     "fill": "填写",
     "pressKey": "发送按键",
-    "errors": { "actionFailed": "浏览器操作失败" }
+    "errors": { "actionFailed": "浏览器操作失败" },
+    "automation": { "open": "自动化当前页面", "title": "创建需审批的自动化任务", "close": "关闭自动化表单", "name": "任务名称", "objective": "浏览器需要做什么？", "success": "用于验证成功的文本", "submit": "提交审批", "created": "自动化任务已等待审批" }
   },
   "boundaryChoice": {
     "dialogLabel": "AI 边界确认",

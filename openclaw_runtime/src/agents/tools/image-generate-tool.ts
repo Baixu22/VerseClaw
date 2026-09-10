@@ -4,6 +4,7 @@
  * Loads references, resolves providers/options, saves generated images, and supports detached background runs.
  */
 import { Type } from "typebox";
+import type { ContentProvenanceContext } from "../../../../shared/security/content-provenance.js";
 import { getRuntimeConfig } from "../../config/config.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { parseImageGenerationModelRef } from "../../image-generation/model-ref.js";
@@ -51,6 +52,7 @@ import {
 } from "../media-generation-task-status-shared.js";
 import { optionalStringEnum } from "../schema/string-enum.js";
 import {
+  ToolAuthorizationError,
   ToolInputError,
   readNonNegativeIntegerParam,
   readPositiveIntegerParam,
@@ -98,6 +100,7 @@ import {
   hasToolModelConfig,
   type ToolModelConfig,
 } from "./model-config.helpers.js";
+import { resolveProviderCredentialUsePolicy } from "./provider-credential-use-policy.js";
 import {
   createSandboxBridgeReadFile,
   resolveSandboxedBridgeMediaPath,
@@ -252,6 +255,32 @@ export function resolveImageGenerationModelConfigForTool(params: {
 
 function hasExplicitImageGenerationModelConfig(cfg?: OpenClawConfig): boolean {
   return hasToolModelConfig(coerceToolModelConfig(cfg?.agents?.defaults?.imageGenerationModel));
+}
+
+function resolveBoundImageGenerationProviderIds(params: {
+  config?: OpenClawConfig;
+  providers: ImageGenerationProvider[];
+  resolvedModelConfig: ToolModelConfig;
+  explicitModelConfig: boolean;
+}): string[] {
+  const configuredModel = coerceToolModelConfig(
+    params.config?.agents?.defaults?.imageGenerationModel,
+  );
+  const refs = params.explicitModelConfig
+    ? [configuredModel.primary, ...(configuredModel.fallbacks ?? [])]
+    : [params.resolvedModelConfig.primary];
+  const providerIds = refs.flatMap((ref) => {
+    const selected = resolveSelectedCapabilityProvider({
+      providers: params.providers,
+      modelConfig: { primary: ref },
+      modelOverride: ref,
+      parseModelRef: parseImageGenerationModelRef,
+    });
+    return [selected?.id ?? parseImageGenerationModelRef(ref)?.provider].filter(
+      (entry): entry is string => Boolean(entry),
+    );
+  });
+  return [...new Set(providerIds)];
 }
 
 function resolveAction(args: Record<string, unknown>): "generate" | "list" | "status" {
@@ -846,6 +875,7 @@ async function executeImageGenerationJob(params: {
 
 export function createImageGenerateTool(options?: {
   config?: OpenClawConfig;
+  contentProvenanceContext?: ContentProvenanceContext;
   agentDir?: string;
   authProfileStore?: AuthProfileStore;
   agentSessionKey?: string;
@@ -911,6 +941,34 @@ export function createImageGenerateTool(options?: {
         throw new ToolInputError("No image-generation model configured.");
       }
       const explicitModelConfig = hasExplicitImageGenerationModelConfig(cfg);
+      const model = readStringParam(params, "model");
+      if (model !== undefined) {
+        const providers = listRuntimeImageGenerationProviders({ config: cfg });
+        const explicitModelRef = parseImageGenerationModelRef(model);
+        const requestedProvider =
+          resolveSelectedCapabilityProvider({
+            providers,
+            modelConfig: imageGenerationModelConfig,
+            modelOverride: model,
+            parseModelRef: parseImageGenerationModelRef,
+          })?.id ?? explicitModelRef?.provider;
+        const credentialUsePolicy = resolveProviderCredentialUsePolicy({
+          provenanceContext: options?.contentProvenanceContext,
+          hasExplicitModelOverride: true,
+          requestedProvider,
+          boundProviderIds: resolveBoundImageGenerationProviderIds({
+            config: cfg,
+            providers,
+            resolvedModelConfig: imageGenerationModelConfig,
+            explicitModelConfig,
+          }),
+        });
+        if (!credentialUsePolicy.allowed) {
+          throw new ToolAuthorizationError(
+            credentialUsePolicy.reason ?? "Image generation provider override denied.",
+          );
+        }
+      }
       const effectiveCfg =
         applyImageGenerationModelConfigDefaults(cfg, imageGenerationModelConfig) ?? cfg;
       const remoteMediaSsrfPolicy = resolveRemoteMediaSsrfPolicy(effectiveCfg);
@@ -925,7 +983,6 @@ export function createImageGenerateTool(options?: {
       }
 
       const imageInputs = normalizeReferenceImages(params);
-      const model = readStringParam(params, "model");
       const filename = readStringParam(params, "filename");
       const size = readStringParam(params, "size");
       const aspectRatio = normalizeAspectRatio(readStringParam(params, "aspectRatio"));

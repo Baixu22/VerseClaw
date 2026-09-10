@@ -4,7 +4,7 @@
 // Requires SILICONFLOW_API_KEY environment variable.
 // API key is read at call time — never hardcoded.
 
-import type { RuntimeEmbeddingProvider } from "../../openclaw_runtime/src/runtime-core/memory-embedding-provider.js";
+import type { RuntimeEmbeddingProvider } from "../../../openclaw_runtime/src/runtime-core/memory-embedding-provider.ts";
 
 const SILICONFLOW_BASE = "https://api.siliconflow.cn/v1";
 const SILICONFLOW_MODEL = "Qwen/Qwen3-Embedding-8B";

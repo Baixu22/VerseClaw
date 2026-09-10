@@ -6,6 +6,12 @@
  * - Inbound body is fenced as untrusted before agent prompt assembly.
  */
 
+import {
+  createExternalProvenance,
+  stableSourceId,
+  type ContentProvenance,
+} from '../security/content-provenance';
+
 export type ChannelDmPolicy = 'open' | 'pairing' | 'allowlist' | 'disabled';
 export type ChannelGroupPolicy = 'open' | 'allowlist' | 'disabled';
 
@@ -252,6 +258,30 @@ export type InboundFenceInput = {
   messageId?: string;
 };
 
+/** Structured companion metadata for the existing prompt fence. */
+export function createInboundMessageProvenance(input: {
+  channel: string;
+  senderId?: string;
+  messageId?: string;
+  receivedAt?: string | number | Date;
+  workspaceId?: string;
+  sessionId?: string;
+  agentId?: string;
+}): ContentProvenance {
+  return createExternalProvenance({
+    sourceKind: 'channel',
+    sourceId: stableSourceId(
+      'channel',
+      input.channel,
+      input.messageId ?? input.senderId ?? 'unknown',
+    ),
+    receivedAt: input.receivedAt,
+    workspaceId: input.workspaceId,
+    sessionId: input.sessionId,
+    agentId: input.agentId,
+  });
+}
+
 export function fenceInboundUntrustedContent(input: InboundFenceInput): string {
   const sanitized = sanitizeInboundSystemTags(String(input.text ?? ''));
   const meta = {
@@ -294,6 +324,7 @@ export function admitInboundWebhookMessage(input: {
   admitted: boolean;
   reason?: string;
   fencedText?: string;
+  provenance?: ContentProvenance;
 } {
   const sender = authorizeInboundSender({
     dmPolicy: input.dmPolicy,
@@ -330,6 +361,12 @@ export function admitInboundWebhookMessage(input: {
       senderId: input.senderId,
       text: input.text,
       messageId: input.messageId,
+    }),
+    provenance: createInboundMessageProvenance({
+      channel: input.channel,
+      senderId: input.senderId,
+      messageId: input.messageId ?? eventKey,
+      receivedAt: input.timestamp ?? undefined,
     }),
   };
 }

@@ -219,7 +219,7 @@ function buildConsumerEvalSet(): ConsumerEvalItem[] {
     expectedVerdict: "reject",
     fact: makeProjection({
       factId: "fact_r10",
-      objectSummary: "The secret api key is sk-9b4abb43c812453eadede49a42c8de6d and process.env has it",
+      objectSummary: "The secret api key is sk-TEST-PLACEHOLDER-DO-NOT-USE and process.env has it",
     }),
     query: { taskId: queryTaskId, subject: querySubject, predicate: queryPredicate, referenceTime: queryTime },
     judgeNote: "Note: The fact content contains a raw secret/API key (sk-...) and environment variable reference. Such leaked content should be rejected.",

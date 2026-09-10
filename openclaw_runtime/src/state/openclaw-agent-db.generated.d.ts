@@ -41,9 +41,20 @@ export interface SchemaMeta {
   updated_at: number;
 }
 
+export interface SessionDeleteOperationJournal {
+  created_at: number;
+  manifest_digest: string;
+  manifest_json: string;
+  operation_id: string;
+  receipt_json: string | null;
+  state: string;
+  updated_at: number;
+}
+
 export interface DB {
   auth_profile_state: AuthProfileState;
   auth_profile_store: AuthProfileStore;
   cache_entries: CacheEntries;
   schema_meta: SchemaMeta;
+  session_delete_operation_journal: SessionDeleteOperationJournal;
 }

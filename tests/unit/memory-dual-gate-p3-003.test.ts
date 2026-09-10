@@ -1,13 +1,24 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 import {
+  applyMemoryUseGateOverlay,
   assertMemoryDefaultOffConsistent,
   DEFAULT_MEMORY_DUAL_GATE_CONFIG,
   evaluateMemoryUseGate,
   evaluateMemoryWriteGate,
   filterCardsForModelInjection,
+  resolveMemoryDualGateConfig,
   revokePoisonedMemory,
 } from '../../openclaw_runtime/src/memory/memory-dual-gate';
+import { buildContextPack } from '../../openclaw_runtime/src/memory/context-pack';
+import {
+  clearMemoryCards,
+  proposeMemoryCard,
+  setMemoryStorePath,
+} from '../../openclaw_runtime/src/memory/memory-store';
 import { DEFAULT_MEMORY_RUNTIME_CONFIG } from '../../openclaw_runtime/src/runtime-core/memory-runtime-config';
 import type { MemoryCard, MemoryProposal } from '../../openclaw_runtime/src/memory/types';
 import enAgents from '../../shared/i18n/locales/en/agents.json';
@@ -143,5 +154,65 @@ describe('P3-003 Memory/COMPASS dual gate + poison revoke', () => {
       },
     });
     expect(check).toEqual({ ok: true });
+  });
+});
+describe('TF-0110 (T-P0-1): dual-gate production wiring', () => {
+  it('AC-2: OPENCLAW_ROLE_MEMORY_ENABLED=0 cannot be flipped open by overrides', () => {
+    process.env.OPENCLAW_ROLE_MEMORY_ENABLED = '0';
+    try {
+      const cfg = resolveMemoryDualGateConfig({ useEnabled: true, writeEnabled: true });
+      expect(cfg.useEnabled).toBe(false);
+      expect(cfg.writeEnabled).toBe(false);
+    } finally {
+      delete process.env.OPENCLAW_ROLE_MEMORY_ENABLED;
+    }
+  });
+
+  it('AC-1 (on): use gate enabled removes secret_adjacent/secret cards before any ContextPack bucket', () => {
+    const cards = [
+      card('c-normal', 'ordinary fact'),
+      card('c-adjacent', 'adjacent fact', { sensitivity: 'secret_adjacent' }),
+      card('c-secret', 'secret fact', { sensitivity: 'secret' }),
+    ];
+    const gated = applyMemoryUseGateOverlay(cards, { writeEnabled: false, useEnabled: true });
+    expect(gated.map((c) => c.id)).toEqual(['c-normal']);
+    const pack = buildContextPack({ memories: gated, roleName: 'coder' });
+    const allBucketText = Object.values(pack.buckets).flat().join('\n');
+    expect(allBucketText).not.toContain('adjacent fact');
+    expect(allBucketText).not.toContain('secret fact');
+    expect(pack.candidateExplanations?.some((entry) => entry.cardId === 'c-adjacent') ?? false).toBe(false);
+  });
+
+  it('AC-1 (off): use gate disabled leaves the legacy card set unchanged', () => {
+    const cards = [
+      card('c-normal', 'ordinary fact'),
+      card('c-adjacent', 'adjacent fact', { sensitivity: 'secret_adjacent' }),
+    ];
+    const out = applyMemoryUseGateOverlay(cards, { writeEnabled: false, useEnabled: false });
+    expect(out.map((c) => c.id)).toEqual(['c-normal', 'c-adjacent']);
+  });
+
+  describe('AC-3: write gate rejects proposeMemoryCard with an explicit reason', () => {
+    let tempDir: string;
+
+    beforeEach(() => {
+      tempDir = mkdtempSync(join(tmpdir(), 'tf0110-write-gate-'));
+      setMemoryStorePath(join(tempDir, 'role-memory.sqlite'));
+      clearMemoryCards();
+    });
+
+    afterEach(() => {
+      clearMemoryCards();
+      rmSync(tempDir, { recursive: true, force: true });
+    });
+
+    it('writeEnabled=false rejects the proposal and names the closed write gate', () => {
+      const decision = proposeMemoryCard(proposal('Remember the build uses pnpm'), {
+        dualGate: { writeEnabled: false },
+      });
+      expect(decision.accepted).toBe(false);
+      expect(decision.action).toBe('reject');
+      expect(decision.reason ?? '').toMatch(/write gate is closed/i);
+    });
   });
 });

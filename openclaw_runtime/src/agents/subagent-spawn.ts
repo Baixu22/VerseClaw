@@ -62,6 +62,8 @@ import {
   type SubagentAttachmentReceiptFile,
 } from "./subagent-attachments.js";
 import { resolveSubagentCapabilities } from "./subagent-capabilities.js";
+import { acquireSessionAdmissionPermit } from "../sessions/session-admission-registry.js";
+import { buildSessionDeleteOperationId } from "../sessions/session-delete-operation-id.js";
 import { getSubagentDepthFromSessionStore } from "./subagent-depth.js";
 import { buildSubagentInitialUserMessage } from "./subagent-initial-user-message.js";
 import { countActiveRunsForSession, registerSubagentRun } from "./subagent-registry.js";
@@ -694,6 +696,7 @@ async function cleanupProvisionalSession(
       method: "sessions.delete",
       params: {
         key: childSessionKey,
+        operationId: buildSessionDeleteOperationId("subagent-provisional", childSessionKey),
         emitLifecycleHooks: options?.emitLifecycleHooks === true,
         deleteTranscript: options?.deleteTranscript === true,
       },
@@ -1397,7 +1400,11 @@ export async function spawnSubagentDirect(
       try {
         await callSubagentGateway({
           method: "sessions.delete",
-          params: { key: childSessionKey, emitLifecycleHooks: false },
+          params: {
+            key: childSessionKey,
+            operationId: buildSessionDeleteOperationId("subagent-provisional", childSessionKey),
+            emitLifecycleHooks: false,
+          },
           timeoutMs: SUBAGENT_CONTROL_GATEWAY_TIMEOUT_MS,
         });
       } catch {
@@ -1430,7 +1437,12 @@ export async function spawnSubagentDirect(
       try {
         await callSubagentGateway({
           method: "sessions.delete",
-          params: { key: childSessionKey, deleteTranscript: true, emitLifecycleHooks: false },
+          params: {
+            key: childSessionKey,
+            operationId: buildSessionDeleteOperationId("subagent-provisional", childSessionKey),
+            deleteTranscript: true,
+            emitLifecycleHooks: false,
+          },
           timeoutMs: SUBAGENT_CONTROL_GATEWAY_TIMEOUT_MS,
         });
       } catch {
@@ -1578,6 +1590,20 @@ export async function spawnSubagentDirect(
   const shouldAnnounceCompletion = deliverInitialChildRunDirectly
     ? false
     : expectsCompletionMessage;
+  const parentAdmissionTarget = resolveGatewaySessionStoreTarget({
+    cfg,
+    key: requesterInternalKey,
+  });
+  const parentAdmissionStore = loadSessionStore(parentAdmissionTarget.storePath, { clone: false });
+  const parentAdmissionEntry = resolveStoreEntryByKeys(parentAdmissionStore, parentAdmissionTarget.storeKeys);
+  const releaseSubagentPermit = acquireSessionAdmissionPermit(
+    {
+      agentId: requesterAgentId,
+      canonicalSessionKey: parentAdmissionTarget.canonicalKey ?? requesterInternalKey,
+      expectedSessionId: parentAdmissionEntry?.sessionId ?? requesterInternalKey,
+    },
+    "subagent-spawn",
+  );
   try {
     const {
       spawnedBy: _spawnedBy,
@@ -1628,6 +1654,7 @@ export async function spawnSubagentDirect(
         // Best-effort cleanup only.
       }
     }
+    releaseSubagentPermit();
     let emitLifecycleHooks = false;
     if (threadBindingReady) {
       const hasEndedHook = hookRunner?.hasHooks("subagent_ended") === true;
@@ -1665,6 +1692,7 @@ export async function spawnSubagentDirect(
         method: "sessions.delete",
         params: {
           key: childSessionKey,
+          operationId: buildSessionDeleteOperationId("subagent-provisional", childSessionKey),
           deleteTranscript: true,
           emitLifecycleHooks,
         },
@@ -1683,11 +1711,25 @@ export async function spawnSubagentDirect(
   }
 
   try {
+    // TF-0082 generation pin: snapshot the completion requester's sessionId at
+    // spawn so a late completion can never steer a post-reset/forked parent.
+    const completionRequesterTarget = resolveGatewaySessionStoreTarget({
+      cfg,
+      key: ownership.completionRequesterSessionKey,
+    });
+    const completionRequesterStore = loadSessionStore(completionRequesterTarget.storePath, {
+      clone: false,
+    });
+    const completionRequesterSessionId = resolveStoreEntryByKeys(
+      completionRequesterStore,
+      completionRequesterTarget.storeKeys,
+    )?.sessionId;
     registerSubagentRun({
       runId: childRunId,
       childSessionKey,
       controllerSessionKey: ownership.controllerSessionKey,
       requesterSessionKey: ownership.completionRequesterSessionKey,
+      requesterSessionId: completionRequesterSessionId,
       requesterOrigin,
       requesterDisplayKey: ownership.completionRequesterDisplayKey,
       task,
@@ -1705,7 +1747,9 @@ export async function spawnSubagentDirect(
       retainAttachmentsOnKeep: retainOnSessionKeep,
       orchestration: params.orchestration,
     });
+    releaseSubagentPermit();
   } catch (err) {
+    releaseSubagentPermit();
     await rollbackPreparedContextEngine(contextEnginePreparation);
     if (attachmentAbsDir) {
       try {
@@ -1719,6 +1763,7 @@ export async function spawnSubagentDirect(
         method: "sessions.delete",
         params: {
           key: childSessionKey,
+          operationId: buildSessionDeleteOperationId("subagent-provisional", childSessionKey),
           deleteTranscript: true,
           emitLifecycleHooks: threadBindingReady,
         },

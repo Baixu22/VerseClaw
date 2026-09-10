@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-08-15T17:56:49.354Z
+Generated at: 2026-08-30T03:40:41.000Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -20,7 +20,7 @@ This file is generated — edit the source of truth instead.
 - enable: Set env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1 (or OPENCLAW_DCS_CONTEXT_TOOLS=1) and restart gateway/runtime.
 - rollback: Unset env or set to 0/false and restart. View tools leave the default catalog.
 
-> Single source of truth: env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS (or Settings switch). runtime.coding.factViews is deprecated/ignored (TASK-P0-02). Keep default-off until C1 graduation + product approval.
+> Single source of truth: env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS (or Settings switch). The removed runtime.coding.factViews leaf is rejected by the strict config schema; remove it before upgrading. Keep default-off until C1 graduation + product approval.
 
 ## context-tools-alias
 
@@ -90,15 +90,15 @@ This file is generated — edit the source of truth instead.
 ## worktree-backend
 
 - wave: C4
-- kind: config
-- key: `runtime.coding.worktree.backend`
+- kind: api
+- key: `createWorktreeService(baseRoot, { backend })`
 - default: "inprocess"
-- defaultDisplay: inprocess
-- risk: opt-in
-- enable: Set runtime.coding.worktree.backend=git OR createWorktreeService({ backend: "git" }). Requires isolation=worktree on the request/plan.
-- rollback: Set backend=inprocess. Isolation request default remains shared.
+- defaultDisplay: api-only (config leaf observability-only)
+- risk: api-only
+- enable: Call createWorktreeService(baseRoot, { backend: "git" }) with isolation=worktree on the request/plan.
+- rollback: Stop calling the API with backend=git. Isolation request default remains shared.
 
-> C4-H git lifecycle hardened (lock/path/cleanup); backend default remains inprocess. Do not change isolation default. C4-P hardlink install residual.
+> C4-H git lifecycle hardened (lock/path/cleanup). The runtime.coding.worktree.backend config leaf is observability-only and does not drive this API.
 
 ## isolation-request
 
@@ -181,15 +181,15 @@ This file is generated — edit the source of truth instead.
 ## sekb-experience-shadow
 
 - wave: C7
-- kind: config
-- key: `runtime.coding.sekb.experienceShadow`
+- kind: api
+- key: `DistillationTool.confirm_and_save(suggestion, edits, options)`
 - default: false
-- defaultDisplay: false
-- risk: shadow-only
-- enable: runtime.coding.sekb.experienceShadow=true OR confirm options.experienceShadow.enabled=true.
-- rollback: experienceShadow=false / omit options.
+- defaultDisplay: api-only (config leaf observability-only)
+- risk: api-only
+- enable: Call DistillationTool.confirm_and_save(suggestion, edits, { sessionId, experienceShadow: { enabled: true, workspaceRoot } }).
+- rollback: Omit options.experienceShadow or set experienceShadow.enabled=false.
 
-> Shadow journal only; experienceHitRate still fixture-level. No default knowledge injection.
+> Shadow journal only. The runtime.coding.sekb.experienceShadow config leaf is observability-only and does not drive this API.
 
 ## sekb-retrieval-shadow
 

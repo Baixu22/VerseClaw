@@ -1,0 +1,3 @@
+$ node scripts/run-system-maturity-security-suite.mjs --mode full
+FAIL  report is not successful
+FAIL  command electron-gateway-e2e exit=1

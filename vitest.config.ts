@@ -2,7 +2,7 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { resolve, join } from 'path';
 import { cpus } from 'os';
-import { readFileSync, existsSync, statSync } from 'fs';
+import { readFileSync, existsSync, statSync, realpathSync } from 'fs';
 import type { Plugin } from 'vite';
 
 const RUNTIME_ROOT = resolve(__dirname, 'openclaw_runtime');
@@ -126,6 +126,17 @@ const maxWorkers = process.env.VITEST_MAX_WORKERS
 
 export default defineConfig({
   plugins: [react(), runtimePathAliasPlugin(), stripShebangPlugin()],
+  server: {
+    fs: {
+      // The workspace can be reached through two paths: the junction
+      // (C:\Users\27933\Desktop\clawx\ClawX) and the real directory
+      // (D:\ClawX). Vite realpath-resolves setup files, so when tests start
+      // from the junction the /@fs/ requests carry the D: path and get
+      // rejected by the default allow list ("Cannot find module
+      // '/@fs/D:/ClawX/tests/setup.ts'"). Allow both spellings.
+      allow: [__dirname, realpathSync(__dirname)],
+    },
+  },
   test: {
     passWithNoTests: false,
     globals: true,

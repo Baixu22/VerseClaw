@@ -1,0 +1,90 @@
+$ node scripts/audit-baseline-check.mjs && node scripts/validate-system-maturity-plan.mjs && node scripts/validate-system-maturity-findings-registry.mjs && node scripts/validate-test-gates.mjs && node scripts/validate-system-maturity-evidence.mjs && node scripts/run-system-maturity-residual-audit.mjs && node scripts/validate-system-maturity-traceability.mjs
+WARN  manifest hash mismatch (non-strict): electron/main/ipc/host-invoke.ts
+WARN  manifest hash mismatch (non-strict): electron/main/ipc/host-contract.ts
+WARN  manifest hash mismatch (non-strict): electron/preload/index.ts
+WARN  manifest hash mismatch (non-strict): electron/services/shell-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/secrets/secret-store.ts
+WARN  manifest hash mismatch (non-strict): electron/services/providers/store-instance.ts
+WARN  manifest hash mismatch (non-strict): electron/services/agent-browser-vault.ts
+WARN  manifest hash mismatch (non-strict): electron/utils/secure-storage.ts
+WARN  manifest hash mismatch (non-strict): electron/services/workspace-permissions.ts
+WARN  manifest hash mismatch (non-strict): src/lib/host-api-client.ts
+WARN  manifest hash mismatch (non-strict): shared/sensitive-content-boundary.ts
+WARN  manifest hash mismatch (non-strict): shared/agent-browser/tool-authorization.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/agents/role-permissions-policy.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/context-engine/coding-runtime-flags.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/context-engine/cvk/tool-call-gate.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/runtime-spine/gate-engine.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/gateway/server-methods/agent-browser.ts
+WARN  manifest hash mismatch (non-strict): electron/main/index.ts
+WARN  manifest hash mismatch (non-strict): electron/main/ipc-handlers.ts
+WARN  manifest hash mismatch (non-strict): electron/utils/channel-config.ts
+WARN  manifest hash mismatch (non-strict): electron/services/cron-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/knowledge-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/providers-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/files-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/workspaces-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/sessions-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/terminal-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/permissions-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/git-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/office-tools-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/terminal-session-manager.ts
+WARN  manifest hash mismatch (non-strict): electron/services/agent-browser-service.ts
+WARN  manifest hash mismatch (non-strict): electron/services/updates-api.ts
+WARN  manifest hash mismatch (non-strict): electron/utils/store.ts
+WARN  manifest hash mismatch (non-strict): electron/gateway/manager.ts
+WARN  manifest hash mismatch (non-strict): src/App.tsx
+WARN  manifest hash mismatch (non-strict): src/pages/Chat/index.tsx
+WARN  manifest hash mismatch (non-strict): src/stores/chat.ts
+WARN  manifest hash mismatch (non-strict): shared/host-api/contract.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/knowledge/sekb/harness-integration.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/knowledge/sekb/knowledge-store.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/knowledge/sekb/distillation-tool.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/agents/role-contract.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/agents/role-spawn.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/agents/subagent-registry.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/agents/agent-steering-queue.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/context-engine/assembler.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/memory/gatekeeper.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/cron/store.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/agents/mcp-http-fetch.ts
+WARN  manifest hash mismatch (non-strict): electron-builder.yml
+WARN  manifest hash mismatch (non-strict): shared/agent-browser/browser-control.ts
+WARN  manifest hash mismatch (non-strict): electron/services/agent-browser/browser-control/tab-manager.ts
+WARN  manifest hash mismatch (non-strict): electron/utils/logger.ts
+WARN  manifest hash mismatch (non-strict): .github/workflows/release.yml
+WARN  manifest hash mismatch (non-strict): scripts/download-bundled-uv.mjs
+WARN  manifest hash mismatch (non-strict): scripts/download-bundled-agent-browser.mjs
+FAIL  A2 P0-003 evidence hash mismatch for vitest.config.ts: expected 5769c39dca93afd4e0fad651978bb730feab2a4ce3712c56467f31290dd829f3 got 604cde23e6b0cfd2373c0a2406006186b22e3a9d062847bd0ce4880a1957e296
+FAIL  A2 P0-003 evidence hash mismatch for src/lib/host-api.ts: expected e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722 got 69f08ab02c7d0fdd5a2a5140b07949c7d60fb55ece97c4fd4b8dc6c8d96db164
+FAIL  A2 P0-003 evidence hash mismatch for tests/unit/host-api-facade.test.ts: expected 05cbe23d8592c59f7f9b1577397074d8a05cb4e29fdbc2c69a924aa1de933b2b got cee4e952761fdf0dddf719d5b61d7c52424785589ce70023691ad467a00fd11c
+FAIL  A2 P0-003 evidence hash mismatch for package.json: expected f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846 got bcf201db5281a27724c42ff5f3ce00255f43fe4d5033ebd4177d009467cc2085
+FAIL  A2 P0-004 evidence hash mismatch for package.json: expected f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846 got bcf201db5281a27724c42ff5f3ce00255f43fe4d5033ebd4177d009467cc2085
+FAIL  A2 P1-001 evidence hash mismatch for shared/host-api/contract.ts: expected 5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d got 6f5408327bb378b6b996a26aa5d840f59b345e66012bb81d0195c54212bf700e
+FAIL  A2 P1-001 evidence hash mismatch for src/lib/host-api.ts: expected e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722 got 69f08ab02c7d0fdd5a2a5140b07949c7d60fb55ece97c4fd4b8dc6c8d96db164
+FAIL  A2 P1-002 evidence hash mismatch for electron/main/ipc/host-invoke.ts: expected 1b431bf5f2bb8888370c92630d38f08c3a812064a8f6b5644ba7ced606d442c0 got 55d106a708432b33b95b079a8f63599f40498030cb003c64e71df610dbb24ee1
+FAIL  A2 P1-002 evidence hash mismatch for electron/main/ipc-handlers.ts: expected c76f0db63d653a5755b8f0b4c6bda53914f81e35f3917bceedaeaf3eb4eb7f27 got 214da0bd64d3a77c50d902dfb5d5ab3fa51eba082686efda2ee9629b6563eb4c
+FAIL  A2 P1-003 evidence hash mismatch for electron/services/workspace-permissions.ts: expected fe62bd3150c4476f6e6f0edee680e87862c800af3f748f802f4545ff4084de43 got 953f2dff07c880b897ecaeea46c0d86fda3bcfc626a3bbc541509208410cd1c0
+FAIL  A2 P2-001 evidence hash mismatch for shared/types/workspace.ts: expected 32536334d593bc0b50ce8ab461247a24b4f6e2dc95d3cce8651e6d01e8b2154c got f813c022e8b7e713345a613584867bf08753dc920f3e3c24b2f40e9c1330b6a3
+FAIL  A2 P2-001 evidence hash mismatch for electron/services/workspaces-api.ts: expected 46c44a861293b3f97500639a71837c805e24feef40996a3294c6013d046eba2a got 201455e89750a51b2462058edcaae6b80a58df725d415e24151f66ba3f5d25c3
+FAIL  A2 P2-001 evidence hash mismatch for electron/services/workspace-permissions.ts: expected fe62bd3150c4476f6e6f0edee680e87862c800af3f748f802f4545ff4084de43 got 953f2dff07c880b897ecaeea46c0d86fda3bcfc626a3bbc541509208410cd1c0
+FAIL  A2 P2-003 evidence hash mismatch for openclaw_runtime/src/agents/role-spawn.ts: expected 736bc67630a38432d3d2c95b97f698354d275e54f43d57cd8ab64b86813a86d2 got 5405c1d39e49cded362ae5535225c4d05d020bc0e0bd4ae2e249d693d26181b6
+FAIL  A2 P7-001 evidence hash mismatch for artifacts/system-maturity/P7-001/traceability-report.json: expected 01e36522014d961fe1fa0f0e4bdcd2cf55a9ce284e7eb086f195eb279858b29d got e6784ca5bcc1b6f0ff48ab2ee3c2a2ff424358738c1cab449427636a604b7ba8
+FAIL  A2 P7-001 evidence hash mismatch for tests/unit/system-maturity-traceability-p7-001.test.ts: expected d7c5c951749aeef2538c201982e6dcc7fd1dd26d1c2a6b2dc9ea64f93d9a31c5 got 016d24771f83d977785e6df1f297298b87e68bb366dc51e7e767844b097eeabd
+FAIL  A2 P7-003 evidence hash mismatch for scripts/collect-p7-003-evidence.mjs: expected 710a293fa078d0210869d6be2c9a73289c95a12135a81d95d16461c17275acb9 got 08aa12d0341e162d90f125944b7bae6fc8229c4ae4283d7da0ad4dff9ade0f35
+FAIL  A2 P7-003 evidence hash mismatch for shared/host-api/contract.ts: expected 5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d got 6f5408327bb378b6b996a26aa5d840f59b345e66012bb81d0195c54212bf700e
+FAIL  A2 P7-003 evidence hash mismatch for electron/utils/store.ts: expected 1c3e05efcc0e722394c38960ec60f8f2bdecd925980d30487e92d7521047c4af got d486b4e2d0dabdf248410d61786594c79a61431a77cb19b08054d3d96561a180
+FAIL  A2 P7-003 evidence hash mismatch for package.json: expected f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846 got bcf201db5281a27724c42ff5f3ce00255f43fe4d5033ebd4177d009467cc2085
+FAIL  A2 P7-004 evidence hash mismatch for tests/unit/system-maturity-quarterly-audit-p7-004.test.ts: expected 32fb987793694b77e9c8f1ff850b0870b4cc98da42d3c1c818d945cab2346c27 got c27ddbdb13363202b6348692ab6b592ec629ddc356e30b327b369458cfa3e759
+FAIL  A2 P7-004 evidence hash mismatch for package.json: expected f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846 got bcf201db5281a27724c42ff5f3ce00255f43fe4d5033ebd4177d009467cc2085
+FAIL  A2 P8-001 evidence hash mismatch for tests/unit/system-maturity-residual-p8-001.test.ts: expected 308c3f5500fedabc1e00927c7a05e5186e25490d8eab597e2fad60b9285f76b8 got 3e1d53521733cadf7e8d6cc68ab3efb2836a6bd74ce7044111352d562a900047
+FAIL  A2 P8-001 evidence hash mismatch for tests/unit/system-maturity-quarterly-audit-p7-004.test.ts: expected 32fb987793694b77e9c8f1ff850b0870b4cc98da42d3c1c818d945cab2346c27 got c27ddbdb13363202b6348692ab6b592ec629ddc356e30b327b369458cfa3e759
+FAIL  A2 P8-001 evidence hash mismatch for electron/utils/channel-config.ts: expected 45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d got c6858cb024ec73891f202c71f9ad0c75292c7db2319e109d31a047846dd3ef25
+FAIL  A2 P8-001 evidence hash mismatch for package.json: expected f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846 got bcf201db5281a27724c42ff5f3ce00255f43fe4d5033ebd4177d009467cc2085
+FAIL  A2 P8-002 evidence hash mismatch for electron/utils/channel-config.ts: expected 45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d got c6858cb024ec73891f202c71f9ad0c75292c7db2319e109d31a047846dd3ef25
+FAIL  A2 P8-003 evidence hash mismatch for package.json: expected f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846 got bcf201db5281a27724c42ff5f3ce00255f43fe4d5033ebd4177d009467cc2085
+FAIL  A2 P8-004 evidence hash mismatch for package.json: expected f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846 got bcf201db5281a27724c42ff5f3ce00255f43fe4d5033ebd4177d009467cc2085
+
+validate-system-maturity-evidence: FAILED (29)

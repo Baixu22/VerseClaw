@@ -6,8 +6,11 @@
  *
  * TASK-P0-02: Fact view tool gating is NOT here. Single source of truth is
  * `isDcsContextViewToolsEnabled` (env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS / Settings
- * control plane). The former `runtime.coding.factViews.enabled` default-true
- * leaf was a dead config with zero production callers and has been removed.
+ * control plane). The former `runtime.coding.factViews.enabled` gate was
+ * removed from this flag table (TASK-P0-02) and `isCodingFactViewsEnabled`
+ * is fail-closed (always returns false). The obsolete config leaf is rejected
+ * by the strict schema; keep this no-op so accidental imports still fail
+ * closed instead of reintroducing a true default.
  */
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 
@@ -78,8 +81,9 @@ function readCodingLeaf(
 
 /**
  * @deprecated TASK-P0-02: always `false`. Fact view tools are gated only by
- * `isDcsContextViewToolsEnabled` (env/Settings). Kept as a named no-op so
- * accidental imports fail closed instead of reintroducing a true default.
+ * `isDcsContextViewToolsEnabled` (env/Settings). The obsolete config leaf is
+ * rejected by the strict schema. Kept as a named no-op so accidental imports
+ * fail closed instead of reintroducing a true default.
  */
 export function isCodingFactViewsEnabled(
   _cfg?: OpenClawConfig,
