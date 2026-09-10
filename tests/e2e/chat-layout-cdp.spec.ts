@@ -472,6 +472,33 @@ test.describe('Chat page layout CDP checks', () => {
         expect(metrics.titlebar?.height).toBe(34);
         expect(metrics.titlebar?.top).toBe(0);
       }
+
+      await page.keyboard.press('Escape');
+      await page.setViewportSize({ width: 700, height: 800 });
+      await expect(permissionTrigger).toBeVisible();
+      await expect(knowledgeTrigger).toBeVisible();
+      const compactControlMetrics = await page.evaluate(() => {
+        const permission = document.querySelector<HTMLElement>('[data-testid="chat-composer-permission-mode"]');
+        const knowledge = document.querySelector<HTMLElement>('[data-testid="chat-knowledge-scope-button"]');
+        const permissionLabel = permission?.querySelector<HTMLElement>('.codex-permission-trigger__label');
+        const knowledgeLabel = knowledge?.querySelector<HTMLElement>('span');
+        const knowledgeChevron = knowledge?.querySelector<HTMLElement>('svg:last-child');
+        if (!permission || !knowledge || !permissionLabel || !knowledgeLabel || !knowledgeChevron) {
+          throw new Error('Missing compact composer controls');
+        }
+        return {
+          permissionWidth: permission.getBoundingClientRect().width,
+          knowledgeWidth: knowledge.getBoundingClientRect().width,
+          permissionLabelDisplay: getComputedStyle(permissionLabel).display,
+          knowledgeLabelDisplay: getComputedStyle(knowledgeLabel).display,
+          knowledgeChevronDisplay: getComputedStyle(knowledgeChevron).display,
+        };
+      });
+      expect(compactControlMetrics.permissionWidth).toBeLessThanOrEqual(32);
+      expect(compactControlMetrics.knowledgeWidth).toBeLessThanOrEqual(32);
+      expect(compactControlMetrics.permissionLabelDisplay).toBe('none');
+      expect(compactControlMetrics.knowledgeLabelDisplay).toBe('none');
+      expect(compactControlMetrics.knowledgeChevronDisplay).toBe('none');
     } finally {
       await closeElectronApp(app);
     }

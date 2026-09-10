@@ -1,0 +1,23 @@
+{
+  "applied_at": "2026-08-20T16:20:37.363514Z",
+  "base_graph_hash": "135de2018199e6b38cc7a8e0ca2115d13d19995a8d70dd0be61867a5b3be31e6",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "已完成；后续仅在用户授权并完成依赖评估后启动 TF-0074。"
+      },
+      "id": "TF-0073"
+    }
+  ],
+  "created_at": "2026-08-20T16:20:37.078481Z",
+  "proposal_id": "TFP-finalize-TF-0073-next-action-20260821",
+  "rationale": "TF-0073 已正式完成；清除关闭提案遗留的等待确认文案，保留后续依赖评估与用户授权边界。",
+  "session_id": "session-20260821-tf0073-closeout",
+  "status": "applied"
+}

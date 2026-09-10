@@ -1,0 +1,47 @@
+{
+  "applied_at": "2026-08-28T14:44:14.869340Z",
+  "base_graph_hash": "fb52a8539f84e486a6cbb9d6eb490858be51d8c33038cdd680b3ba31a7e778f3",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "plans/system-maturity/findings-registry.json：计数守卫测试可复现，但 F-AUTH-003.status 仍为 Fixed；当前 Partial 集合为 F-SEC-001、F-SEC-002、F-DATA-004、F-REL-004。",
+          "plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.md 与 P2-005.delivery.md：仍保留 CVK report-only -> enforce、CVK enforce deny、F-AUTH-003 Fixed、BLOCKERS: none 的当前表述。",
+          "plans/system-maturity/risk-acceptance.json：F-AUTH-003 仍写 Fixed baseline re-reviewed quarterly。",
+          "artifacts/runtime-memory-eval/report.json 与 scripts/runtime-long-stability.mjs：截至 lane-1 复核时脚本已支持 synthetic incomplete，但报告标注必须由 lane-2 实际落盘并复核。",
+          "lane-1 独立复核（2026-08-28，XL-014）：TF-0119 暂不接受，维持 review_needed；不得把新 review 叙述当作已同步的事实源。"
+        ],
+        "next_action": "lane-2 需先将 F-AUTH-003 的 Partial 处置同步到 finding registry、P2-005 当前计划/交付与 risk-acceptance，并补齐 runtime-memory synthetic 字段；完成后由 lane-1 复核，不得提前置 done/100。"
+      },
+      "id": "TF-0119"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-28T14:43:15.705226Z",
+        "evidence": "lane-1 逐文件复核：findings-registry.json F-AUTH-003.status=Fixed；P2-005.md 标题仍是 report-only -> enforce；P2-005.delivery.md 写 F-AUTH-003 Fixed/CVK enforce deny/BLOCKERS none；risk-acceptance.json 写 Fixed baseline re-reviewed quarterly。",
+        "expected_requirement": "TF-0119 requirement-2 的撤下 enforce 硬阻断承诺必须同步当前 finding registry、P2-005 当前文档和 risk-acceptance，并保留历史测试证据。",
+        "id": "TFD-lane1-tf0119-enforce-governance-drift-20260828",
+        "kind": "process_gap",
+        "node_id": "TF-0119",
+        "observed_action_or_result": "审核记录已声称 F-AUTH-003 Partial，但当前事实源仍存在 Fixed/enforce/BLOCKERS:none 旧表述，后续审核可能读到相互矛盾的治理结论。",
+        "recommendation": "lane-2 同步四处当前事实源后重新提交 lane-1 复核；在此之前 TF-0119 保持 review_needed/90。",
+        "related_task_ids": [],
+        "severity": "medium",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-28T14:43:15.693756Z",
+  "proposal_id": "TFP-lane1-tf0119-review-drift-20260828",
+  "rationale": "lane-2 的 TF-0119 代码出口中，计数守卫与 synthetic 摘除链可复现，但 CVK enforce 处置尚未同步到当前 finding registry、P2-005 当前文档和 risk-acceptance。按审核协议保留 review_needed，并登记可复核的治理事实源漂移。",
+  "session_id": "lane-1-context-moat-20260828",
+  "status": "applied"
+}

@@ -1,0 +1,77 @@
+{
+  "applied_at": "2026-09-05T17:20:44.211463Z",
+  "base_graph_hash": "42181012f3dd9d8527d880503ca7214c467a21330aef0f52ca37dfbbc5136d0f",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-09-05T09:27:55.274440Z",
+        "decided_by": "已由非实施者独立审核确认（2026-09-06，Claude Opus 5 / Claude Code 会话；非 TF-0149 两个实施会话，亦非 TF-0124 实施者 —— a2975eadc 实测为 Lane: lane-1）。事实取证者为 Codex 会话 01a070cb-f3cd-74a3-8406-eb2bcd6edfbd。",
+        "evidence": "docs/dev/context-moat/reviews/TF-0149.md；DEV-PROTOCOL.md §R3.6；GATE-BASELINE.md §12",
+        "expected_requirement": "DEV-PROTOCOL §R5 范围-1 明定 openclaw_runtime/src 的相关部分；范围外路径须按 §R4.2(a) 留存 deviation。",
+        "id": "TFD-tf0124-agent-core-scope-record-20260905",
+        "impact": "追加事实记录，不追溯改写提交、历史 artifacts 或已通过的实现验收，不授予未来包代码修改权限。",
+        "kind": "process_gap",
+        "node_id": "TF-0124",
+        "observed_action_or_result": "a2975eadc 的 15 个文件中有五个 packages/agent-core 路径，含 compaction/summary contract 及包 index 导出；本次开始时 88 条 deviation 对 agent-core 或 packages/ 零命中。TF-0124 实施半径 16（其中包内五个）原已完整计入，M3 40/50；不是 M1 的五文件漏计。",
+        "recommendation": "由独立审核确认本裁定；后续触碰包代码的任务须显式声明范围、导出/声明文件及跨包依赖影响，不得把 RS 发现面视为实施许可。",
+        "related_task_ids": [
+          "TF-0124",
+          "TF-0149",
+          "TF-0102"
+        ],
+        "severity": "medium",
+        "status": "open",
+        "summary": "补记 TF-0124 对 packages/agent-core 的跨目录实现未留存范围 deviation 的历史缺口。"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.98,
+        "created_at": "2026-09-05T09:27:55.274440Z",
+        "decided_by": "已裁定：非实施者审核（2026-09-06，Claude Opus 5 / Claude Code 会话）批准 brb-S → brb-M(=15)，授权路径集恰为下列六条不得扩张。依据 §R3.9.2 已落地的六次同类裁决与其第 1033 行明文「超限仍不得自行调档，裁决仍必须走非实现者」—— 调档合法，非法的是实施者自调。不上调 brb-L：实测超限恰 1 个文件。逐条论证见 docs/dev/context-moat/reviews/TF-0149.md 的「半径裁定」节。",
+        "evidence": "docs/dev/context-moat/reviews/TF-0149.md 的开工与文件边界；L1 六门 exit 0，42 files / 596 passed / 1 skipped。",
+        "expected_requirement": "§R3.2 未标档时按 S=5；§R3.1.1 authored 的协议、基线、审核、提案、偏差与交接均照计；不得由实施者自行放宽半径。",
+        "id": "TFD-tf0149-governance-radius-review-20260905",
+        "impact": "候选为仅此次六文件改动重估 brb-M=15；B1 里程碑及全轮 230 预算不变；不豁免 authored 文件、不引入运行时代码或默认值改动。",
+        "kind": "scope_change",
+        "node_id": "TF-0149",
+        "observed_action_or_result": "完整触碰集为 DEV-PROTOCOL.md、GATE-BASELINE.md、reviews/TF-0149.md、docs/dev/handoffs/LATEST.md、本提案 JSON、deviations/deviations.jsonl。前四者分别服务判据/基线同步、独立复核与 COMPASS 接力，后二者用于 §R4.2 必须的结构性落账。",
+        "recommendation": "只有非实施者明确认可该六路径清单和重估后才可应用；否则维持 review_needed/90。本提案应用后仍保持 review_needed，独立复核与提交归属门通过后另行收口。",
+        "related_task_ids": [
+          "TF-0149",
+          "TF-0102"
+        ],
+        "severity": "medium",
+        "status": "open",
+        "summary": "请求非实施者裁定 TF-0149 完整治理落账的六文件半径；当前 brb-S=5 不能覆盖全部强制交付物。"
+      }
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "context_tags": [
+          "context-moat",
+          "governance",
+          "boundary",
+          "brb-M"
+        ],
+        "progress": 98,
+        "status": "review_needed"
+      },
+      "id": "TF-0149"
+    }
+  ],
+  "created_at": "2026-09-05T09:27:55.263455Z",
+  "proposal_id": "TFP-tf0149-scope-and-radius-20260905",
+  "rationale": "TF-0149 已完成四问候选、原始命令复算和 L1 六门验证。此提案仅供独立审核/用户确认后应用：追加 TF-0124 历史范围记录缺口，并裁定本项完整落账六个 authored 文件的半径。不得以保存提案代替批准；此提案本身不把 TF-0149 标 done，也不解锁 TF-0150。",
+  "session_id": "01a070cb-f3cd-74a3-8406-eb2bcd6edfbd",
+  "status": "applied"
+}

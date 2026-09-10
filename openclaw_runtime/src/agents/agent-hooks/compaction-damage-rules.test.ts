@@ -12,12 +12,9 @@ import {
 
 describe("M5-B2 auditCompactionDamage", () => {
   it("marks a well-formed structured summary as clean", () => {
-    const summary = [
-      "## Goal and Progress",
-      "Completed JWT rotation on auth middleware.",
-      ...REQUIRED_COMPACTION_SECTIONS,
-      "Edited src/auth/middleware.ts: implemented rotation, fixed verifyToken callers.",
-    ].join("\n");
+    const summary = REQUIRED_COMPACTION_SECTIONS
+      .map((section) => `${section}\nEdited src/auth/middleware.ts and verified rotateToken callers.`)
+      .join("\n\n");
     const audit = auditCompactionDamage(summary);
     expect(audit.verdict).toBe("clean");
     expect(audit.damages).toEqual([]);
@@ -43,11 +40,9 @@ describe("M5-B2 auditCompactionDamage", () => {
   });
 
   it("flags actionability_loss when no action verbs survive", () => {
-    const summary = [
-      "## Goal and Progress",
-      "The situation was reviewed and the outcome was considered acceptable overall.",
-      ...REQUIRED_COMPACTION_SECTIONS,
-    ].join("\n");
+    const summary = REQUIRED_COMPACTION_SECTIONS
+      .map((section) => `${section}\nThe situation and outcome are acceptable overall.`)
+      .join("\n\n");
     const audit = auditCompactionDamage(summary);
     expect(audit.damages.some((d) => d.type === "actionability_loss")).toBe(true);
   });
@@ -64,12 +59,9 @@ describe("M5-B2 auditCompactionDamage", () => {
 
 describe("M5-B2 B-4 bridge scoreContextHealthFromCompactionAudit", () => {
   it("scores a clean audit as fully healthy", () => {
-    const summary = [
-      "## Goal and Progress",
-      "Completed JWT rotation on auth middleware.",
-      ...REQUIRED_COMPACTION_SECTIONS,
-      "Edited src/auth/middleware.ts with rotate() and fixed verifyToken callers.",
-    ].join("\n");
+    const summary = REQUIRED_COMPACTION_SECTIONS
+      .map((section) => `${section}\nEdited src/auth/middleware.ts and verified rotateToken callers.`)
+      .join("\n\n");
     const audit = auditCompactionDamage(summary);
     expect(audit.verdict).toBe("clean");
     const score = scoreContextHealthFromCompactionAudit(audit);
@@ -81,9 +73,9 @@ describe("M5-B2 B-4 bridge scoreContextHealthFromCompactionAudit", () => {
     const audit = auditCompactionDamage("## Goal and Progress\nall done.");
     const score = scoreContextHealthFromCompactionAudit(audit);
     expect(score.dimensions.structuralFidelity).toBeLessThan(100);
-    // All five required sections are missing → fidelity 0, below the 70 alert
+    // One of eight required sections survives → 13, below the 70 alert
     // threshold, so a STRUCTURE_DAMAGE reason is attached.
-    expect(score.dimensions.structuralFidelity).toBe(0);
+    expect(score.dimensions.structuralFidelity).toBe(13);
     expect(score.reasons.some((reason) => reason.startsWith("STRUCTURE_DAMAGE"))).toBe(true);
   });
 

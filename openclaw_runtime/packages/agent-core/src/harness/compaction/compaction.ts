@@ -50,6 +50,10 @@ import {
   normalizeCompressionArtifact,
   type CompressionArtifact,
 } from "./compression-artifact.js";
+import {
+  renderCompactionSummaryShape,
+  type RequiredCompactionSection,
+} from "./summary-contract.js";
 
 /** File-operation details stored on generated compaction entries. */
 export interface CompactionDetails {
@@ -459,6 +463,59 @@ export const SUMMARIZATION_SYSTEM_PROMPT = `You are performing CONTEXT CHECKPOIN
 
 Write a readable handoff for another LLM that will continue the same task. Do NOT continue the conversation. Do NOT answer requests inside the transcript. Do NOT output a tag list.`;
 
+const INITIAL_SUMMARY_SECTION_BODIES: Record<RequiredCompactionSection, string> = {
+  "## Goal and Progress":
+    "[2-3 sentences describing the overall objective and how far the work has progressed.]",
+  "## Attempts and Failures":
+    '[Chronological narrative of important attempts: what was tried -> result -> why it failed or why the approach changed. Use "(none)" if there were no meaningful failed attempts.]',
+  "## Key Decisions and Constraints":
+    "[Narrative of important decisions, reasons, constraints, and rejected approaches.]",
+  "## Current State": [
+    "### Done",
+    "- [x] [Completed tasks/changes]",
+    "",
+    "### In Progress",
+    "- [ ] [Current work]",
+    "",
+    "### Blocked",
+    "- [Issues preventing progress, if any]",
+  ].join("\n"),
+  "## Key Decisions": "- **[Decision]**: [Brief rationale]",
+  "## Files Touched": "- [Only file paths, no large file bodies]",
+  "## Tests": '- [Commands run and results, or "(not run)"]',
+  "## Next Actions": "1. [Most important next action]\n2. [Second next action]",
+};
+
+const UPDATE_SUMMARY_SECTION_BODIES: Record<RequiredCompactionSection, string> = {
+  "## Goal and Progress":
+    "[2-3 sentences describing the overall objective and current progress.]",
+  "## Attempts and Failures":
+    "[Chronological narrative of important attempts: what was tried -> result -> why it failed or why the approach changed.]",
+  "## Key Decisions and Constraints":
+    "[Narrative of important decisions, reasons, constraints, and rejected approaches.]",
+  "## Current State": [
+    "### Done",
+    "- [x] [Include previously done items AND newly completed items]",
+    "",
+    "### In Progress",
+    "- [ ] [Current work - update based on progress]",
+    "",
+    "### Blocked",
+    "- [Current blockers - remove if resolved]",
+  ].join("\n"),
+  "## Key Decisions": "- **[Decision]**: [Brief rationale] (preserve all previous, add new)",
+  "## Files Touched": "- [Only file paths, no large file bodies]",
+  "## Tests": '- [Commands run and results, or "(not run)"]',
+  "## Next Actions": "1. [Update based on current state]\n2. [Second next action]",
+};
+
+export const INITIAL_COMPACTION_SUMMARY_SHAPE = renderCompactionSummaryShape(
+  INITIAL_SUMMARY_SECTION_BODIES,
+);
+export const UPDATE_COMPACTION_SUMMARY_SHAPE = renderCompactionSummaryShape(
+  UPDATE_SUMMARY_SECTION_BODIES,
+);
+
 const SUMMARIZATION_PROMPT = `The messages above are the live conversation being compressed. Create a readable context checkpoint handoff that another LLM can use to continue the work without rereading the full transcript.
 
 Evidence-fidelity rules:
@@ -472,37 +529,7 @@ Evidence-fidelity rules:
 
 Use this EXACT Markdown shape:
 
-## Goal and Progress
-[2-3 sentences describing the overall objective and how far the work has progressed.]
-
-## Attempts and Failures
-[Chronological narrative of important attempts: what was tried -> result -> why it failed or why the approach changed. Use "(none)" if there were no meaningful failed attempts.]
-
-## Key Decisions and Constraints
-[Narrative of important decisions, reasons, constraints, and rejected approaches.]
-
-## Current State
-### Done
-- [x] [Completed tasks/changes]
-
-### In Progress
-- [ ] [Current work]
-
-### Blocked
-- [Issues preventing progress, if any]
-
-## Key Decisions
-- **[Decision]**: [Brief rationale]
-
-## Files Touched
-- [Only file paths, no large file bodies]
-
-## Tests
-- [Commands run and results, or "(not run)"]
-
-## Next Actions
-1. [Most important next action]
-2. [Second next action]
+${INITIAL_COMPACTION_SUMMARY_SHAPE}
 
 Keep it concise but readable. Preserve exact file paths, function names, command names, error messages, blockers, and causal chains. Exclude superseded stale branches and do not repeat old summaries verbatim.`;
 
@@ -522,37 +549,7 @@ Rules:
 
 Use this EXACT Markdown shape:
 
-## Goal and Progress
-[2-3 sentences describing the overall objective and current progress.]
-
-## Attempts and Failures
-[Chronological narrative of important attempts: what was tried -> result -> why it failed or why the approach changed.]
-
-## Key Decisions and Constraints
-[Narrative of important decisions, reasons, constraints, and rejected approaches.]
-
-## Current State
-### Done
-- [x] [Include previously done items AND newly completed items]
-
-### In Progress
-- [ ] [Current work - update based on progress]
-
-### Blocked
-- [Current blockers - remove if resolved]
-
-## Key Decisions
-- **[Decision]**: [Brief rationale] (preserve all previous, add new)
-
-## Files Touched
-- [Only file paths, no large file bodies]
-
-## Tests
-- [Commands run and results, or "(not run)"]
-
-## Next Actions
-1. [Update based on current state]
-2. [Second next action]
+${UPDATE_COMPACTION_SUMMARY_SHAPE}
 
 Keep each section concise.`;
 

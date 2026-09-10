@@ -1,0 +1,62 @@
+{
+  "applied_at": "2026-08-29T01:06:07.100959Z",
+  "base_graph_hash": "54f487a2be5f6331a75687c97d9e7becc4199d9ba1259daf269f73d04ef64c9b",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "2026-08-29 lane-1 专注审计报告：docs/dev/context-moat/reviews/LANE1-FOCUSED-AUDIT-20260829.md；当前工作树事实源、canonical 状态和审计边界已重新核对。",
+          "plans/system-maturity/findings-registry.json：F-AUTH-003=Partial/L3；当前派生计数 Fixed=31、Partial=4、Open=0、Unverified=0，数组与快照一致。",
+          "scripts/validate-system-maturity-findings-registry.mjs 与 tests/unit/system-maturity-findings-registry.test.ts：计数快照、findingIds 集合和 stale mutation 守卫通过。",
+          "plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.md、P2-005.delivery.md、plans/system-maturity/risk-acceptance.json：当前生产 CVK execution-boundary 缺口与 default-off brb-M follow-up 口径一致，历史测试只作为 API/单元证据。",
+          "artifacts/runtime-memory-eval/report.json：evidenceClass=synthetic、accepted=false、acceptanceNote 明确不满足 L3；scripts/runtime-long-stability.mjs 将该证据视为 incomplete。",
+          "tests/unit/runtime-memory-eval-aggregate-report-real.test.ts：15/15 通过，证明 aggregate 生成链不会覆盖 evidenceClass、accepted 和 acceptanceNote。",
+          "2026-08-29 当前工作树定向验证：TF-0119 focused、registry、config parity、runtime ack/flag、KE shadow、default matrix 及相关 DCS 门均按审计报告记录复跑；未将默认关闭或 synthetic 证据升级为生产证据。",
+          "2026-08-29 serial verification: pnpm run test:dcs passed (23 files/327 passed/1 skipped; 5 files/10 passed; 11 files/95 passed); findings registry guard 7/7 including counts.tasks; maturity:findings:check OK; lint:dcs and typecheck:node OK。",
+          "2026-08-29 lane-1 独立复核：提交 185d055162d1400e7de38eee94bb106a4dbf9c64 带 Task: TF-0119 / Lane: lane-2；git log 机械归属查询命中该提交。",
+          "2026-08-29 lane-1 独立路径核对：git diff-tree --no-commit-id --name-only -r 185d055162d1400e7de38eee94bb106a4dbf9c64 得到 13 个路径，全部落在 TF-0119 事实源、守卫、测试和审核记录声明范围内；无 TF-0112 配置目标文件。",
+          "2026-08-29 TF-0119 独立 focused tests：3 files / 30 passed（system-maturity-findings-registry、runtime-memory-eval aggregate real/unit），exit=0。",
+          "2026-08-29 maturity:findings:check exit=0：findings registry OK（35 findings；Fixed=31；Partial=4）；node --check scripts/runtime-long-stability.mjs exit=0；findings/risk/report JSON 全部可解析。",
+          "2026-08-29 TF-0119 复核结论：requirement-1/2/3 均通过；F-AUTH-003 仍 Partial/L3，CVK denied 未升级为生产执行边界，runtime-memory 仍 synthetic/accepted=false；按用户指令不自动触发 done/100。"
+        ],
+        "next_action": "保持 review_needed / 90。TF-0119 的 R3 归属和三项事实处置已完成独立工程复核；等待明确的 closeout 状态变更 proposal 后再决定是否置 done/100，期间不得把历史 Fixed/enforce artifact、synthetic report 或 CVK API denied 升级为生产验收。",
+        "progress": 90,
+        "progress_source": "manual",
+        "status": "review_needed",
+        "summary": "lane-1 已独立复核 TF-0119：185d0551 的 Task/Lane 归属与 13 路径范围通过，registry、CVK governance 降级、synthetic evidence 和完整 DCS 工程证据通过；按用户指令不自动收口，canonical 继续 review_needed / 90。"
+      },
+      "id": "TF-0119"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-29T01:01:55.288437Z",
+        "evidence": "185d055162d1400e7de38eee94bb106a4dbf9c64；docs/dev/context-moat/reviews/TF-0119.md「lane-1 独立复核补充（2026-08-29，归属回交后）」；maturity:findings:check exit=0。",
+        "expected_requirement": "TF-0119 requirement-2 的撤下 enforce 硬阻断承诺必须同步 current finding registry、P2-005 当前计划/交付和 risk-acceptance，并保留历史测试证据。",
+        "id": "TFD-lane1-tf0119-enforce-governance-drift-20260828",
+        "impact": "原治理漂移已经解除；历史 FAIL 和冻结 Fixed/enforce 文本仍保留为不可升级的审计历史。",
+        "kind": "process_gap",
+        "node_id": "TF-0119",
+        "observed_action_or_result": "185d0551 已同步 F-AUTH-003=Partial/L3、P2-005 当前边界、risk acceptance 和历史 artifact 分类；lane-1 当前复核确认不再存在此前记录的 current-source drift。",
+        "recommendation": "将本 deviation 追加为 resolved；继续把生产 CVK execution-boundary 作为独立 default-off follow-up，不因本节点复核通过而宣称生产硬阻断。",
+        "related_task_ids": [
+          "TF-0119"
+        ],
+        "severity": "medium",
+        "status": "resolved"
+      }
+    }
+  ],
+  "created_at": "2026-08-29T01:01:55.277401Z",
+  "proposal_id": "TFP-lane1-tf0119-reverify-20260829",
+  "rationale": "lane-2 已补交带 Task: TF-0119 / Lane: lane-2 的 185d0551 提交。lane-1 独立复核确认该提交的 13 个路径均在声明范围内，registry 派生计数、CVK governance 降级和 synthetic runtime-memory 证据均通过当前工程门。按用户指令，本 proposal 只追加复核证据并收束已修复的 governance drift deviation，不自动把 TF-0119 置为 done/100。",
+  "session_id": "lane-1-context-moat-20260829",
+  "status": "applied"
+}

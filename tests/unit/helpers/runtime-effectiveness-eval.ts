@@ -7,6 +7,10 @@ import manifest from "../../../openclaw_runtime/extensions/codegraph/openclaw.pl
 import type { TaskLoopRunResult } from "../../../openclaw_runtime/src/agents/task-loop-controller";
 import type { MissionReviewerResult } from "../../../openclaw_runtime/src/agents/mission-control/types";
 
+function toolResult(value: unknown): { details?: Record<string, any> } {
+  return value as { details?: Record<string, any> };
+}
+
 export type RuntimeEffectivenessMode = "deterministic" | "live" | "hybrid";
 
 export type RuntimeEffectivenessDecision =
@@ -223,11 +227,11 @@ async function evaluateCodeGraph(): Promise<RuntimeEffectivenessComponent> {
     const checks = {
       registrationComplete,
       manifestToolCount: manifestNames.length === 15,
-      sourceReadBoundary: decision.details?.mustReadSource === true &&
-        decision.details?.sourceReadPolicy === "read_named_files_before_edit_or_claim",
-      planHitTarget: JSON.stringify(plan.details?.filesToRead ?? []).includes("user-service.ts"),
-      freshnessObserved: stale.details?.freshness?.status === "stale" &&
-        /fresh|refreshed/u.test(String(refreshed.details?.freshness?.status ?? "")),
+      sourceReadBoundary: toolResult(decision).details?.mustReadSource === true &&
+        toolResult(decision).details?.sourceReadPolicy === "read_named_files_before_edit_or_claim",
+      planHitTarget: JSON.stringify(toolResult(plan).details?.filesToRead ?? []).includes("user-service.ts"),
+      freshnessObserved: toolResult(stale).details?.freshness?.status === "stale" &&
+        /fresh|refreshed/u.test(String(toolResult(refreshed).details?.freshness?.status ?? "")),
     };
     const passed = Object.values(checks).filter(Boolean).length;
     return component({
@@ -238,7 +242,7 @@ async function evaluateCodeGraph(): Promise<RuntimeEffectivenessComponent> {
       metrics: {
         registeredToolCount: registeredNames.length,
         manifestToolCount: manifestNames.length,
-        indexedFileCount: init.details?.stats?.fileCount ?? null,
+        indexedFileCount: toolResult(init).details?.stats?.fileCount ?? null,
         checks,
       },
       evidence: [
@@ -336,7 +340,6 @@ async function evaluateTaskAndMissionLoopRepair(): Promise<RuntimeEffectivenessC
         idFactory: (prefix) => `${prefix}_runtime_effectiveness_repair`,
         runObserved: (async () => fakeOrchestrationResult()) as never,
         getSubagentRun: evidenceRun as never,
-        recordCheckpoint: (async () => undefined) as never,
         storeTrace: (async () => "trace_repair") as never,
         selfCheck: (async () => {
           repairCalls += 1;
@@ -373,7 +376,6 @@ async function evaluateTaskAndMissionLoopRepair(): Promise<RuntimeEffectivenessC
         idFactory: (prefix) => `${prefix}_runtime_effectiveness_repeat`,
         runObserved: (async () => fakeOrchestrationResult()) as never,
         getSubagentRun: evidenceRun as never,
-        recordCheckpoint: (async () => undefined) as never,
         storeTrace: (async () => "trace_repeat") as never,
         selfCheck: (async () => ({
           decision: "repair",
@@ -395,7 +397,7 @@ async function evaluateTaskAndMissionLoopRepair(): Promise<RuntimeEffectivenessC
         idFactory: (prefix) => `${prefix}_runtime_effectiveness_budget`,
         runObserved: (async () => fakeOrchestrationResult()) as never,
         getSubagentRun: evidenceRun as never,
-        recordCheckpoint: (async () => undefined) as never,
+        
         storeTrace: (async () => "trace_budget") as never,
         selfCheck: (async () => ({
           decision: "repair",
@@ -444,11 +446,11 @@ async function evaluateTaskAndMissionLoopRepair(): Promise<RuntimeEffectivenessC
           risks: [],
         } satisfies TaskLoopRunResult)) as never,
         reviewer: (async () => missionReviewer) as never,
-        recordCheckpoint: (async () => undefined) as never,
+        
         storeTrace: (async () => "trace_mission") as never,
       },
     );
-    cancelMission(mission.missionId, "cleanup");
+    cancelMission(mission.missionId);
 
     const checks = {
       repairPhaseEntered: recovered.iterations.some((entry) => entry.phase === "repair" || entry.selfCheck?.decision === "repair"),
@@ -634,7 +636,7 @@ async function evaluateAgentMapShadow(): Promise<RuntimeEffectivenessComponent> 
       return resultFixture;
     },
   });
-  const defaultResult = await defaultProvider.getContext({ taskId: "agentmap-default-off" });
+  const defaultResult = await defaultProvider.getContext({ taskId: "agentmap-default-off" }) as import("../../../openclaw_runtime/src/runtime-core").RuntimeContextProviderResult;
   const enabledProvider = createAgentMapContextProvider({
     config: { runtime: { agentMap: { provider: true } } },
     getResult: () => {
@@ -642,7 +644,7 @@ async function evaluateAgentMapShadow(): Promise<RuntimeEffectivenessComponent> 
       return resultFixture;
     },
   });
-  const enabledResult = await enabledProvider.getContext({ taskId: "agentmap-enabled" });
+  const enabledResult = await enabledProvider.getContext({ taskId: "agentmap-enabled" }) as import("../../../openclaw_runtime/src/runtime-core").RuntimeContextProviderResult;
   const metadata = enabledResult.metadata ?? {};
   const firstItemMetadata = enabledResult.contextItems[0]?.metadata ?? {};
 

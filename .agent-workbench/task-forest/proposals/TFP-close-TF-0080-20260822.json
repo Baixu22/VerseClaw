@@ -1,0 +1,58 @@
+{
+  "applied_at": "2026-08-22T01:25:15.307887Z",
+  "base_graph_hash": "4524e1f9d9544820a71dbf9f8435e0b16e4cdd7b9694ce76e511cd3919fc8288",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "共享主工作树包含大量其他任务改动；全程未 reset、stash、clean、checkout，未扩大 harness touchedAreas。",
+          "harness diff-aware validate 被无关 shared-worktree ownership 变更阻断；以 --no-diff structural validate 通过作为本节点证据。",
+          "4 个 pre-existing lint error 位于非 TF-0080 文件（verseshell-runtime-bundle.ts:291、terminal-trajectory-gating.test.ts:170、provider-stream-shared.test.ts:7、happy-path-prompt-snapshots.ts:135），未代改。",
+          "本地 node_modules 曾有 5 个空洞 .pnpm store 条目；以 pnpm install --no-optimistic-repeat-install 重建（未改 tracked 文件）。",
+          "Electron 二进制按 CI Windows 配方本地补齐（allowBuilds 保持 electron: false）。",
+          "goal-wake-e2e-trace.ts 为 harness exec 声明 trusted system-generated provenance；command-exec sink 策略与 Goal-wake 实现均未改动。"
+        ],
+        "evidence": [
+          "harness/specs/tasks/session-ecosystem-safety-gate-consistency.md（requiredTests 修正后 validate --no-diff exit 0）",
+          "runtime unit-fast shard: session-admission-registry 12/12",
+          "runtime unit shard: session-delete-operation-id 1/1",
+          "runtime gateway shard: session-delete-operation-journal 26/26 + session-ecosystem-production-reachability 2/2",
+          "runtime root config: subagent-spawn 3/3（permit const 化后复验）",
+          "Electron focused: session-delete-gate + r0-2-sessions-delete-fail + runtime-lifecycle-governance + terminal-api 18/18",
+          "Electron touched extras: host-services + terminal-session-manager 31/31",
+          "pnpm run contract:check exit 0",
+          "pnpm run comms:replay + comms:compare 全 PASS（0 丢失/重复/乱序）",
+          "pnpm run typecheck exit 0（node 0 / web 0；testTypes 仅观察模式）",
+          "pnpm run build:vite + pnpm run build:runtime exit 0",
+          "pnpm run test:e2e:run tests/e2e/runtime-lifecycle-governance.spec.ts 3/3（最终树两次通过）",
+          "git diff --check 0（仅 autocrlf 提示）",
+          "artifacts/session-ecosystem-safety-gate-consistency/report.json（2026-08-22 收口刷新）",
+          "pnpm run lint：TF-0080 范围文件 0 error（4 个非本节点 error 列表见 deviations）"
+        ],
+        "next_action": "TF-0080 已关闭。保持 liveReady=false、productApproved=false、defaultOn=false 边界；不自动启动 TF-0081，任何 successor 需单独评估与授权。共享工作树残留的非本节点 lint error 与 harness diff-aware 阻断由各自 owner 处理。",
+        "progress": 100,
+        "progress_source": "manual",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "session-20260821-start-tf0080",
+          "session-20260822-tf0080-closeout"
+        ],
+        "status": "done",
+        "summary": "会话安全闸门与删除重试一致性闭环：admission registry 接入全部 production lifecycle caller（含 acp-spawn/subagent-spawn permit）、sessions.delete 稳定 operationId + SQLite journal intent/store_committed 同事务、递归 manifest digest 区分 archivePlan/generation/transcript/operation、runtime_committed/partial_committed 重试状态机、Electron mirror gate 原子锁 + fail-closed + 同 session 合并、hook payload 透传 operationId。收口会话补齐依赖恢复（5 个空洞 .pnpm store 条目）、Electron 二进制本地供给、spec requiredTests shard 修正、goal-wake trace provenance 声明与 lint 收敛，最终树上全部门禁绿色。"
+      },
+      "id": "TF-0080"
+    }
+  ],
+  "created_at": "2026-08-22T01:25:09.611026Z",
+  "proposal_id": "TFP-close-TF-0080-20260822",
+  "rationale": "TF-0080 唯一 owner path（delete journal + admission + Electron mirror gate）已在共享工作树上完成并全部通过收口门禁；用户 /goal 已明确要求把本节点所有工作标记为 done。本次 closeout 不启动 TF-0081+，不改 Goal-wake 实现、durable-helper、universal resource ledger 或产品批准状态。",
+  "session_id": "session-20260822-tf0080-closeout",
+  "status": "applied"
+}

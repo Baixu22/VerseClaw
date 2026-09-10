@@ -92,7 +92,7 @@ function loadAllFacts(dbPath: string): RuntimeMemoryTemporalFact[] {
   });
   const loaded = persistence.loadStore();
   if (loaded.status !== "loaded") throw new Error("loadAllFacts: load failed");
-  return loaded.store.queryFacts({ includeInvalidated: true });
+  return [...loaded.store.queryFacts({ includeInvalidated: true })] as any;
 }
 
 function loadFactIds(dbPath: string): Set<string> {
@@ -121,7 +121,7 @@ function toProjection(fact: RuntimeMemoryTemporalFact) {
   return {
     factId: fact.factId,
     recordKind: "fact" as const,
-    taskId: fact.taskId,
+    taskId: fact.taskId ?? "task",
     subject: fact.subject,
     predicate: fact.predicate,
     objectSummary: fact.objectSummary,
@@ -179,7 +179,7 @@ describe("Layer 7: interleaved read-write — local (no LLM)", () => {
     // Query for the useful fact written at turn 0
     const usefulFact = corpus.facts[0]; // useful fact
     const result = queryConsumer(dbPath, {
-      taskId: usefulFact.taskId,
+      taskId: usefulFact.taskId ?? "task",
       subject: usefulFact.subject,
       predicate: usefulFact.predicate,
       referenceTime: 100_000,
@@ -202,7 +202,7 @@ describe("Layer 7: interleaved read-write — local (no LLM)", () => {
     // Query before invalidation — should be accepted
     const fact = corpus.facts[0];
     const beforeResult = queryConsumer(dbPath, {
-      taskId: fact.taskId,
+      taskId: fact.taskId ?? "task",
       subject: fact.subject,
       predicate: fact.predicate,
       referenceTime: 100_000,
@@ -214,7 +214,7 @@ describe("Layer 7: interleaved read-write — local (no LLM)", () => {
 
     // Query after invalidation — should NOT be accepted
     const afterResult = queryConsumer(dbPath, {
-      taskId: fact.taskId,
+      taskId: fact.taskId ?? "task",
       subject: fact.subject,
       predicate: fact.predicate,
       referenceTime: 100_000, // referenceTime > invalid_at
@@ -332,7 +332,7 @@ describe("Layer 7: interleaved read-write — local (no LLM)", () => {
     // Query for a fact written at turn 40
     const targetFact = corpus.facts[40 * 2]; // useful fact at turn 40
     const result = queryConsumer(dbPath, {
-      taskId: targetFact.taskId,
+      taskId: targetFact.taskId ?? "task",
       subject: targetFact.subject,
       predicate: targetFact.predicate,
       referenceTime: 100_000,
@@ -347,7 +347,7 @@ describe("Layer 7: interleaved read-write — local (no LLM)", () => {
 
     // Query again — fact should still be present (100 turns = 200 facts < 512)
     const result2 = queryConsumer(dbPath, {
-      taskId: targetFact.taskId,
+      taskId: targetFact.taskId ?? "task",
       subject: targetFact.subject,
       predicate: targetFact.predicate,
       referenceTime: 100_000,
@@ -642,10 +642,10 @@ describe.skipIf(!hasDeepSeekKey())("Layer 7: interleaved read-write — LLM rece
         system,
         "What is the user's preference code? Answer with the code only.",
         3,
-        { temperature: 0.3, maxTokens: 64 },
+        { temperature: 0.3, maxTokens: 64 } as never,
       );
 
-      const agreementCount = votes.filter((v) => v.content.includes(token)).length;
+      const agreementCount = votes.responses.filter((v: { content?: string }) => v.content?.includes(token)).length;
       expect(agreementCount).toBeGreaterThanOrEqual(2); // >=2/3 agreement
     },
     120_000,

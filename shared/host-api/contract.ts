@@ -54,8 +54,13 @@ import type {
   GitCapabilities,
   GitCommitInfo,
   GitCommitResult,
+  GitReflogEntry,
   GitDiffMode,
   GitDiffResult,
+  GitApplyPatchPayload,
+  GitApplyPatchResult,
+  GitDiffToBasePayload,
+  GitDiffToBaseResult,
   GitOperationResult,
   GitRepositoryStatus,
   GitStashEntry,
@@ -77,7 +82,7 @@ import type {
   RemoteForgePullRequestReadV1,
   RemoteForgeReadiness,
 } from '../types/remote-forge';
-export type { GitCommitResult, GitOperationResult, GithubPrCreateInput } from '../types/git';
+export type { GitApplyPatchMode, GitApplyPatchPayload, GitApplyPatchResult, GitBaseResolution, GitCommitResult, GitDiffToBasePayload, GitDiffToBaseResult, GitOperationResult, GithubPrCreateInput } from '../types/git';
 import type {
   McpCallToolResult,
   McpExposureConfig,
@@ -1022,6 +1027,12 @@ export type AgentBrowserConnectionSnapshot = {
   externalProfile?: string;
   executablePath?: string;
 };
+/** Origin context for a browser session created from a ClawX workspace. */
+export type AgentBrowserWorkspaceContext = {
+  workspaceId?: string;
+  sessionKey?: string;
+  agentId?: string;
+};
 export type AgentBrowserSession = {
   id: string;
   profile: string;
@@ -1034,7 +1045,7 @@ export type AgentBrowserSession = {
   createdAt: string;
   updatedAt: string;
   runtimeMode?: AgentBrowserRuntimeMode;
-};
+} & AgentBrowserWorkspaceContext;
 export type AgentBrowserSecurityPayload = {
   authPersistence?: AgentBrowserAuthPersistenceMode;
   authStateName?: string;
@@ -1051,7 +1062,7 @@ export type AgentBrowserOpenPayload = {
   width?: number;
   height?: number;
   runtimeMode?: AgentBrowserRuntimeMode;
-} & AgentBrowserSecurityPayload;
+} & AgentBrowserSecurityPayload & AgentBrowserWorkspaceContext;
 export type AgentBrowserSessionPayload = {
   sessionId: string;
 };
@@ -1586,7 +1597,7 @@ export type AgentBrowserTask = {
   errorCode?: string;
   error?: string;
   recovery?: AgentBrowserTaskRecovery;
-};
+} & AgentBrowserWorkspaceContext;
 export type AgentBrowserTaskCreatePayload = Pick<
   AgentBrowserTask,
   'name' | 'url' | 'objective' | 'successCondition' | 'profile' | 'mode'
@@ -1594,7 +1605,7 @@ export type AgentBrowserTaskCreatePayload = Pick<
   allowedDomains?: string[];
   steps?: AgentBrowserTaskStepInput[];
   successCriteria?: AgentBrowserTaskSuccessCriteria;
-};
+} & AgentBrowserWorkspaceContext;
 export type AgentBrowserTaskPayload = { taskId: string };
 export type AgentBrowserTasksResult = HostSuccess & { tasks: AgentBrowserTask[] };
 export type AgentBrowserTaskResult = HostSuccess & { task: AgentBrowserTask };
@@ -2668,6 +2679,8 @@ export type SessionLabelSummary = {
   sessionKey: string;
   firstUserText: string | null;
   lastTimestamp: number | null;
+  /** Number of user turns in the transcript, used by sidebar active sorting. */
+  messageCount?: number;
 };
 export type SessionSummariesResult = HostSuccess & {
   summaries?: SessionLabelSummary[];
@@ -2704,6 +2717,10 @@ export type SessionPatchRuntimeModelPayload = {
 export type SessionCompactionPayload = {
   sessionKey: string;
   agentId?: string;
+};
+export type SessionQueueDrainPayload = SessionCompactionPayload & {
+  /** TF-0082 generation guard: refuse draining a post-reset/forked generation. */
+  expectedSessionId?: string;
 };
 export type SessionCompactionHistoryPayload = SessionCompactionPayload & {
   limit?: number;
@@ -2958,6 +2975,14 @@ export type SessionHandoffResult = HostSuccess & {
   draft?: string;
   sources?: SessionHandoffSource[];
   warnings?: string[];
+};
+export type SessionStopPayload = {
+  sessionKey: string;
+  agentId?: string;
+};
+export type SessionStopResult = HostSuccess & {
+  key?: string;
+  stopped?: boolean;
 };
 export type SessionForkPayload = {
   sessionKey: string;
@@ -3265,6 +3290,8 @@ export type KnowledgeRuntimeLessonsReportResult = HostSuccess & {
     undistilledTrajectories: number;
     activePrinciples: number;
   };
+  /** Bounded runtime correlation metadata; absent for legacy trajectories. */
+  lineageSchema?: 'runtime-lineage.v1';
   undistilled: Array<{
     trajectory_id: string;
     created_at: string;
@@ -3273,6 +3300,7 @@ export type KnowledgeRuntimeLessonsReportResult = HostSuccess & {
     context_fingerprint: string[];
     outcome: 'success' | 'failure' | 'partial';
     error_signature: string | null;
+    lineage?: KnowledgeRuntimeLineage;
   }>;
   activePrinciples: Array<{
     principle_id: string;
@@ -3282,6 +3310,8 @@ export type KnowledgeRuntimeLessonsReportResult = HostSuccess & {
     criticality: 'low' | 'medium' | 'high' | 'critical';
     retrieval_count: number;
     adoption_count: number;
+    source_trajectories?: string[];
+    lineage?: KnowledgeRuntimeLineage;
   }>;
   indexPreview: string;
   evidence: {
@@ -3340,6 +3370,16 @@ export type KnowledgeRuntimeLessonsReportResult = HostSuccess & {
       reason: 'not_persisted' | 'not_evaluated';
     }>;
   };
+};
+
+export type KnowledgeRuntimeLineage = {
+  schema: 'runtime-lineage.v1';
+  sessionId: string;
+  missionId?: string;
+  missionTick?: number;
+  loopRunId?: string;
+  traceId?: string;
+  taskLedgerRootId?: string;
 };
 
 export type KnowledgeRuntimeLessonsMetric =
@@ -3487,6 +3527,8 @@ export type KnowledgeSekbCaptureTrajectoryPayload = {
   steps?: Array<{ action: string; input?: unknown; output?: unknown }>;
   outcome: 'success' | 'failure' | 'partial';
   rawError?: string | null;
+  /** Explicit runtime correlation only; never infer lineage from sessionKey. */
+  runtimeLineage?: KnowledgeRuntimeLineage;
 };
 
 export type KnowledgeSekbCaptureTrajectoryResult = HostSuccess & {
@@ -4299,6 +4341,9 @@ export type GitWorktreeAddPayload = { branch: string; path?: string; startPoint?
 export type GitFetchPayload = { remote?: string; approvalId?: string };
 export type GitPullPayload = { remote?: string; branch?: string; rebase?: boolean; approvalId?: string };
 export type GitPushPayload = { remote?: string; branch?: string; setUpstream?: boolean; approvalId?: string };
+export type GitMergePayload = { ref: string; noFastForward?: boolean; approvalId?: string };
+export type GitRebasePayload = { ref: string; approvalId?: string };
+export type GitResetPayload = { ref?: string; mode?: 'soft' | 'mixed' | 'hard'; approvalId?: string };
 export type GithubPrListPayload = { state?: 'open' | 'closed' | 'merged' | 'all'; limit?: number };
 export type GithubPrViewPayload = { number: number };
 export type GithubPrOpenPayload = { number: number };
@@ -4323,6 +4368,8 @@ export type GitLogResult = HostSuccess & {
   ahead?: number;
   behind?: number;
 };
+export type GitReflogPayload = { limit?: number };
+export type GitReflogResult = HostSuccess & { entries: GitReflogEntry[]; truncated?: boolean };
 export type GitStashListResult = HostSuccess & { stashes: GitStashEntry[] };
 export type GitWorktreeListResult = HostSuccess & { worktrees: GitWorktree[] };
 export type GithubAuthStatusResult = HostSuccess & GithubAuthStatus;
@@ -4918,12 +4965,15 @@ export type HostApiContract = {
     status: () => GitStatusResult;
     diff: (payload?: { mode?: GitDiffMode }) => GitDiffListResult;
     fileDiff: (payload: GitFileDiffPayload) => GitFileDiffResult;
+    applyPatch: (payload: GitApplyPatchPayload) => GitApplyPatchResult;
+    diffToBase: (payload?: GitDiffToBasePayload) => GitDiffToBaseResult;
     stage: (payload: GitPathsPayload) => GitOperationResult;
     unstage: (payload: GitPathsPayload) => GitOperationResult;
     revertFile: (payload: GitPathPayload) => GitOperationResult;
     commit: (payload: GitCommitPayload) => GitCommitResult;
     branches: () => GitBranchListResult;
     log: (payload?: GitLogPayload) => GitLogResult;
+    reflog: (payload?: GitReflogPayload) => GitReflogResult;
     mergeBase: (payload: GitMergeBasePayload) => GitMergeBaseResult;
     checkoutBranch: (payload: GitBranchCheckoutPayload) => GitOperationResult;
     createBranch: (payload: GitBranchCreatePayload) => GitOperationResult;
@@ -4938,6 +4988,9 @@ export type HostApiContract = {
     fetch: (payload?: GitFetchPayload) => GitOperationResult;
     pull: (payload?: GitPullPayload) => GitOperationResult;
     push: (payload?: GitPushPayload) => GitOperationResult;
+    merge: (payload: GitMergePayload) => GitOperationResult;
+    rebase: (payload: GitRebasePayload) => GitOperationResult;
+    reset: (payload?: GitResetPayload) => GitOperationResult;
     githubAuthStatus: () => GithubAuthStatusResult;
     githubRepo: () => GithubRepoResult;
     prList: (payload?: GithubPrListPayload) => GithubPrListResult;
@@ -5215,7 +5268,8 @@ export type HostApiContract = {
     resumeCheckpoints: (payload: SessionLongTaskControlHistoryPayload) => SessionResumeCheckpointsResult;
     restoreCheckpoint: (payload: SessionRestoreCheckpointPayload) => SessionRestoreCheckpointResult;
     checkpointDiff: (payload: SessionRestoreCheckpointPayload) => SessionCheckpointDiffResult;
-    queueDrain: (payload: SessionLongTaskControlPayload) => SessionQueueDrainResult;
+    queueDrain: (payload: SessionQueueDrainPayload) => SessionQueueDrainResult;
+    stop: (payload: SessionStopPayload) => SessionStopResult;
     compact: (payload: SessionManualCompactPayload) => SessionCompactionResult;
     prepareHandoff: (payload: SessionHandoffPayload) => SessionHandoffResult;
     fork: (payload: SessionForkPayload) => SessionForkResult;

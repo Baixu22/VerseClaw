@@ -1,0 +1,51 @@
+{
+  "applied_at": "2026-08-28T15:28:23.791483Z",
+  "base_graph_hash": "0a5073521d8c4e6ded826a099fe22be2bae19e6907a705c41b6ae15126f7f613",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/context-moat/reviews/TF-0134.md：lane-1 逐符号生产可达性审计；T-C1 生产调用链成立，T-C0 为离线 spike，T-C2/T-C3 属 M6，applyContextLadder 为 experiment/test-only。",
+          "node openclaw_runtime/scripts/check-production-reachable.mjs --roots：5 个 production roots，3457/5055 模块可达。",
+          "node openclaw_runtime/scripts/check-production-reachable.mjs --blind-spots：17 个 dynamic import blind spots，保留人工复核限制。",
+          "node openclaw_runtime/scripts/check-production-reachable.mjs archiveLowHeatBlocks applyContextLadder：两者均 zero production call sites；当前 archive writer 数为 0。"
+        ],
+        "next_action": "保持 ready；M4 收口时对最终 task 集合逐符号补 D1 输出，必要时再扩展全量导出级枚举能力。",
+        "summary": "独立审计已证明当前 M4 候选没有新增 landed-unwired runtime 模块，但 D1 尚不能枚举 src 全量导出，故 TF-0134 保持 ready，等待 M4 最终收口复核。"
+      },
+      "id": "TF-0134"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/context-moat/reviews/TF-0135.md：lane-1 审计结论 OPEN，确定性机制可复制性高，当前无 12-18 个月护城河证据。",
+          "docs/dev/context-moat/reviews/TF-0143.md：一次真实会话可脱敏复跑，但 persisted receipt rows=0，不能证明长期数据资产。",
+          "docs/dev/context-moat/DEV-PROTOCOL.md：L3 要求 1 名真人、1 个增强表面、14 天、可回滚记录。",
+          "artifacts/runtime-memory-eval/report.json：synthetic/accepted=false，不能作为产品价值或数据壁垒证据。"
+        ],
+        "next_action": "建立一个明确授权且可回滚的真实 receipt baseline；随后按 L3 做 14 天真人记录，并补充可追溯的竞品功能发布时间与复制工时证据。",
+        "progress_source": "manual",
+        "summary": "风险审计完成但未关闭：工程机制主要是可复制的确定性算法和配置门控，真实 receipt 数据资产、真人结果和竞品复制时间均未形成证据。进入 review_needed，等待后续验证。"
+      },
+      "id": "TF-0135"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0135",
+      "progress": 20,
+      "status": "review_needed"
+    }
+  ],
+  "created_at": "2026-08-28T15:25:00Z",
+  "proposal_id": "TFP-lane1-review-tf0134-tf0135-20260828",
+  "rationale": "TF-0134 与 TF-0135 的独立审核输出已经落盘。TF-0134 仍等待 M4 最终收口，补证据但保持 ready；TF-0135 的可复制性审计已完成但风险开放，进入 review_needed 并列出真实 receipt、L3 真人和竞品基线的后续动作。",
+  "session_id": "lane-1-context-moat-20260828",
+  "status": "applied"
+}

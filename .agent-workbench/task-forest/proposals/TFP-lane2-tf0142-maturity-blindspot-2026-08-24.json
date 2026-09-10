@@ -1,0 +1,32 @@
+{
+  "applied_at": "2026-08-24T16:23:09.079907Z",
+  "base_graph_hash": "0e779d6e7fee5bfb3c88e2ebb4349887ce6caaacd672adaaa9ad15ff2f93e5c6",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-24T16:20:00.000000Z",
+        "decided_by": "lane-2 during TF-0142 D4 gate adjudication; classified under §R5 scope-2 as backlog-P1, not escalated to P0",
+        "id": "TFD-maturity-chain-blindspot-2026-08-24",
+        "impact": "Judged backlog-P1, NOT fixed this round. Rationale: all 25 known mismatches are provably non-round-caused (round-diff 590588791..HEAD intersected with the 25 subject files is empty), and TF-0142's non_goals explicitly forbid recomputing maturity hashes; running scripts 5-6 to closure is system-maturity backlog work outside scope-1. Mitigation landed instead of a fix: the blind spot is written into GATE-BASELINE.md §4.1 and DEV-PROTOCOL §D4.3 as a named known-unknown, and the tightened L2 criterion requires running `maturity:residual` and `maturity:traceability` SEPARATELY (not via the chain) so the blind spot cannot silently persist into milestone acceptance. maturity:validate does not enter L1 at all, so this does not gate any per-task closeout. Whoever later owns the maturity backlog must clear scripts 5-6 before the 25-item baseline can be called complete.",
+        "kind": "scope_change",
+        "node_id": "TF-0142",
+        "related_task_ids": [
+          "TF-0142",
+          "TF-0106"
+        ],
+        "summary": "pnpm maturity:validate is a 6-script && chain: audit-baseline-check -> validate-system-maturity-plan -> validate-test-gates -> validate-system-maturity-evidence -> run-system-maturity-residual-audit -> validate-system-maturity-traceability. It exits 1 at script 4 (validate-system-maturity-evidence, FAILED (25)), so scripts 5 and 6 NEVER RUN. Their state is UNKNOWN, not green. Any statement of the form 'maturity has 25 problems' is therefore incomplete: the true count is 25 plus whatever scripts 5-6 would report. This blind spot was not previously recorded anywhere; TF-0142's evidence and the round's planning docs both cite only the 25 mismatches."
+      }
+    }
+  ],
+  "created_at": "2026-08-24T16:23:08.855323Z",
+  "proposal_id": "TFP-lane2-tf0142-maturity-blindspot-2026-08-24",
+  "rationale": "TF-0142 classified all 25 maturity:validate A2 hash mismatches as backlog-debt (mechanically proven non-round-caused). While doing so it surfaced a distinct, previously unrecorded problem that is NOT one of the 25: the maturity:validate && chain short-circuits at script 4 of 6, so scripts 5 and 6 never execute and their pass/fail state is UNKNOWN rather than green. Per §R5 scope-2 this is a newly discovered problem being judged 'not fixed this round', which is exactly §R4 deviation trigger (c) and therefore must be recorded rather than only footnoted in a doc.",
+  "session_id": "session-2026-08-24-lane-2",
+  "status": "applied"
+}

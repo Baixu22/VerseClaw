@@ -1,0 +1,38 @@
+{
+  "applied_at": "2026-08-22T05:31:53.864099Z",
+  "base_graph_hash": "3a421a230fa7bfe9b7f3c55612c73e8732233f990ec42ec32036d7e506e68400",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/session-ecosystem-cross-session-control.md（validate --no-diff exit 0）",
+          "SubagentRunRecord.requesterSessionId spawn 快照（subagent-spawn + run-manager + types）",
+          "announce 双路径代际钉扎（maybeSteerSubagentAnnounce + sendSubagentAnnounceDirectly completion wake）",
+          "src/agents/subagent-announce-generation-pin.test.ts 4/4（stale 不 steer/wake、匹配 steer、legacy 容错、无代际不 steer）",
+          "回归：visible-reply 4/4、subagent-spawn 3/3",
+          "门禁：typecheck 0；contract 0；comms PASS；build:runtime + E2E 3/3；lint 0；diff-check 0",
+          "artifacts/session-ecosystem-cross-session-control/report.json（owner 盘点 + 切片 1 + 剩余 paths）"
+        ],
+        "next_action": "第二个 owner path：typed Host API stop/continue surface（复用现有 gateway RPC handler，验收标准 4）；随后 queueDrain expectedSessionId、send permit 生命周期、lineage runId join。",
+        "progress": 25,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260822-start-tf0082"
+        ]
+      },
+      "id": "TF-0082"
+    }
+  ],
+  "created_at": "2026-08-22T05:31:53.654670Z",
+  "proposal_id": "TFP-progress-TF-0082-slice1-20260822",
+  "rationale": "TF-0082 首个 owner path 完成：generation-pin announce wake，封堵旧代 child completion 经 steer 与 direct completion wake 两条路径覆盖重置/fork 后新 generation 的洞。所有 focused 与收口门禁在最终树上通过。产品边界未动。",
+  "session_id": "session-20260822-start-tf0082",
+  "status": "applied"
+}

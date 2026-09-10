@@ -150,6 +150,8 @@ function coercePayload(payload: UnknownRecord) {
     next.kind = "systemEvent";
   } else if (kindRaw === "command") {
     next.kind = "command";
+  } else if (kindRaw === "missioncontinuation") {
+    next.kind = "missionContinuation";
   } else if (kindRaw) {
     next.kind = kindRaw;
   }
@@ -297,6 +299,24 @@ function coercePayload(payload: UnknownRecord) {
     delete next.lightContext;
     delete next.allowUnsafeExternalContent;
     delete next.toolsAllow;
+  } else if (next.kind === "missionContinuation") {
+    // A timer continuation carries only its ledger identity; anything else
+    // would be an instruction, and this payload must never instruct.
+    delete next.text;
+    delete next.message;
+    delete next.model;
+    delete next.fallbacks;
+    delete next.thinking;
+    delete next.timeoutSeconds;
+    delete next.lightContext;
+    delete next.allowUnsafeExternalContent;
+    delete next.toolsAllow;
+    delete next.argv;
+    delete next.cwd;
+    delete next.env;
+    delete next.input;
+    delete next.noOutputTimeoutSeconds;
+    delete next.outputMaxBytes;
   }
   return next;
 }

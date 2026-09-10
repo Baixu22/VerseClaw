@@ -53,6 +53,15 @@ describe("handleTaskPhaseChange", () => {
         taskId: "task-1",
         fromStatus: "running",
         toStatus: "completed",
+        lineage: {
+          schema: "runtime-lineage.v1",
+          sessionId: "agent:test-agent:main",
+          missionId: "mission-1",
+          missionTick: 1,
+          loopRunId: "loop-1",
+          traceId: "trace-1",
+          taskLedgerRootId: "ledger-1",
+        },
       },
       objective: "Test objective",
       parentSessionId: "agent:test-agent:main",
@@ -79,6 +88,15 @@ describe("handleTaskPhaseChange", () => {
     expect(pack.objective).toBe("Test objective");
     expect(pack.current_phase).toBe("completed");
     expect(pack.parent_session_id).toBe("agent:test-agent:main");
+    expect(pack.lineage).toEqual({
+      schema: "runtime-lineage.v1",
+      sessionId: "agent:test-agent:main",
+      missionId: "mission-1",
+      missionTick: 1,
+      loopRunId: "loop-1",
+      traceId: "trace-1",
+      taskLedgerRootId: "ledger-1",
+    });
     expect(Array.isArray(pack.recent_actions)).toBe(true);
   });
 
@@ -140,9 +158,7 @@ describe("buildChildHandoffPack", () => {
     const pack = buildChildHandoffPack({
       objective: "Child task objective",
       currentPhase: "running",
-      recentActions: [
-        { tool: "edit", result_summary: "Edited f.ts", significance: "high" },
-      ],
+      recentActions: [{ tool: "edit", result_summary: "Edited f.ts", significance: "high" }],
       parentSessionId: "agent:parent:main",
     });
     expect(pack.objective).toBe("Child task objective");
@@ -213,9 +229,7 @@ describe("restoreChildState", () => {
     const pack = buildChildHandoffPack({
       objective: "Restore test",
       currentPhase: "running",
-      recentActions: [
-        { tool: "write", result_summary: "Wrote f.ts", significance: "high" },
-      ],
+      recentActions: [{ tool: "write", result_summary: "Wrote f.ts", significance: "high" }],
       parentSessionId: "agent:parent:main",
     });
     await writeChildHandoffPack({
@@ -250,8 +264,16 @@ describe("B-3 entity snapshot", () => {
     const snapshot = gatherEntitySnapshot({
       writeSet: ["src/auth/middleware.ts", "src/auth/rotator.ts"],
       recentActions: [
-        { tool: "edit", result_summary: "Edited src/auth/middleware.ts: added JWT rotation", significance: "high" },
-        { tool: "grep", result_summary: "Found verifyToken callers in legacyAuth", significance: "medium" },
+        {
+          tool: "edit",
+          result_summary: "Edited src/auth/middleware.ts: added JWT rotation",
+          significance: "high",
+        },
+        {
+          tool: "grep",
+          result_summary: "Found verifyToken callers in legacyAuth",
+          significance: "medium",
+        },
       ],
     });
     expect(snapshot?.files).toContain("src/auth/middleware.ts");
@@ -264,7 +286,10 @@ describe("B-3 entity snapshot", () => {
   it("returns undefined when there is nothing to snapshot", () => {
     expect(gatherEntitySnapshot({})).toBeUndefined();
     expect(
-      gatherEntitySnapshot({ writeSet: [], recentActions: [{ tool: "grep", result_summary: "no matches", significance: "medium" }] }),
+      gatherEntitySnapshot({
+        writeSet: [],
+        recentActions: [{ tool: "grep", result_summary: "no matches", significance: "medium" }],
+      }),
     ).toBeUndefined();
   });
 
@@ -286,7 +311,11 @@ describe("B-3 entity snapshot", () => {
       objective: "Refactor auth",
       currentPhase: "running",
       recentActions: [
-        { tool: "edit", result_summary: "Edited src/auth/middleware.ts: added JWT rotation", significance: "high" },
+        {
+          tool: "edit",
+          result_summary: "Edited src/auth/middleware.ts: added JWT rotation",
+          significance: "high",
+        },
       ],
       parentSessionId: "agent:parent:main",
       writeSet: ["src/auth/middleware.ts"],
@@ -325,7 +354,11 @@ describe("B-3 entity snapshot", () => {
       current_phase: "running",
       recent_actions: [],
       parent_session_id: "agent:parent:main",
-      entity_snapshot: { files: ["ok.ts"], symbols: [], decisions: [{ condition: "x".repeat(201), action: "y" }] },
+      entity_snapshot: {
+        files: ["ok.ts"],
+        symbols: [],
+        decisions: [{ condition: "x".repeat(201), action: "y" }],
+      },
     };
     const childKey = "agent:child:subagent:bad-snapshot";
     await writeChildHandoffPack({
@@ -522,26 +555,32 @@ describe("direct-parent authorization", () => {
     const childKey = "agent:child:subagent:c1";
 
     // Grandparent has a task_state Block
-    await store.upsert({
-      block_id: `task-state:${grandparentKey}`,
-      block_type: "task_state",
-      source_system: "task-loop",
-      session_id: grandparentKey,
-      presence: { always_on: false, on_demand: { expand_tool: "context_read", auto_register: false } },
-      entities: [],
-      valid_at: new Date(),
-      created_at: new Date(),
-      mutability: "system_managed",
-      summary: "Grandparent state",
-      full_content: JSON.stringify({
-        objective: "Grandparent objective",
-        current_phase: "running",
-        recent_actions: [],
-        parent_session_id: "agent:root:main",
-      }),
-      compression_depth: 0,
-      entity_extraction_status: "empty",
-    }, { significance: "high", write_origin: "handler" });
+    await store.upsert(
+      {
+        block_id: `task-state:${grandparentKey}`,
+        block_type: "task_state",
+        source_system: "task-loop",
+        session_id: grandparentKey,
+        presence: {
+          always_on: false,
+          on_demand: { expand_tool: "context_read", auto_register: false },
+        },
+        entities: [],
+        valid_at: new Date(),
+        created_at: new Date(),
+        mutability: "system_managed",
+        summary: "Grandparent state",
+        full_content: JSON.stringify({
+          objective: "Grandparent objective",
+          current_phase: "running",
+          recent_actions: [],
+          parent_session_id: "agent:root:main",
+        }),
+        compression_depth: 0,
+        entity_extraction_status: "empty",
+      },
+      { significance: "high", write_origin: "handler" },
+    );
 
     // Parent's HandoffPack names grandparent as its parent
     const parentPack = buildChildHandoffPack({
@@ -584,27 +623,33 @@ describe("direct-parent authorization", () => {
     const childKey = "agent:child:subagent:malformed-1";
 
     // Write a malformed task_state Block (extra keys + invalid current_phase)
-    await store.upsert({
-      block_id: `task-state:${childKey}`,
-      block_type: "task_state",
-      source_system: "task-loop",
-      session_id: childKey,
-      presence: { always_on: false, on_demand: { expand_tool: "context_read", auto_register: false } },
-      entities: [],
-      valid_at: new Date(),
-      created_at: new Date(),
-      mutability: "system_managed",
-      summary: "Malformed state",
-      full_content: JSON.stringify({
-        objective: "Test",
-        current_phase: "not_a_real_status",
-        recent_actions: [],
-        parent_session_id: parentKey,
-        extra_key: "should_be_rejected",
-      }),
-      compression_depth: 0,
-      entity_extraction_status: "empty",
-    }, { significance: "high", write_origin: "handler" });
+    await store.upsert(
+      {
+        block_id: `task-state:${childKey}`,
+        block_type: "task_state",
+        source_system: "task-loop",
+        session_id: childKey,
+        presence: {
+          always_on: false,
+          on_demand: { expand_tool: "context_read", auto_register: false },
+        },
+        entities: [],
+        valid_at: new Date(),
+        created_at: new Date(),
+        mutability: "system_managed",
+        summary: "Malformed state",
+        full_content: JSON.stringify({
+          objective: "Test",
+          current_phase: "not_a_real_status",
+          recent_actions: [],
+          parent_session_id: parentKey,
+          extra_key: "should_be_rejected",
+        }),
+        compression_depth: 0,
+        entity_extraction_status: "empty",
+      },
+      { significance: "high", write_origin: "handler" },
+    );
 
     // Child tries to read parent (should be rejected — malformed HandoffPack grants no access)
     const parentBlocks = await store.query({

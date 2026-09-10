@@ -337,7 +337,7 @@ function toUnsupportedMatchOnlyPlan(plan: EditPlan): EditPlan {
       range: operation.range,
       reason: "unfixable_rule",
       evidenceRefs: operation.evidenceRefs,
-    }],
+    } as never],
   };
 }
 

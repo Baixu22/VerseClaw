@@ -1,0 +1,32 @@
+{
+  "applied_at": "2026-08-25T12:57:03.117048Z",
+  "base_graph_hash": "8b63d6802c767cf7343c478bf274a06a48d73390ea8ec877c8b9ff472246cdf9",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [],
+  "created_at": "2026-08-25T12:57:02.854797Z",
+  "operations": [
+    {
+      "decided_by": "lane-1（session-2026-08-25-lane-1-successor）：按交接文档 §5 的指示采用 §R4.5 操作性规则读法并记录，最终裁决权在用户。",
+      "id": "TFD-d03-lane-column-vs-registered-touchers-2026-08-25",
+      "impact": "车道 1 采用 §R4.5 的操作性规则读法：「每个域同时只允许 1 个 in_progress」为并发判据，「车道」列是粗标签而非独占锁，登记触碰者是授权凭证；故 TF-0117 有权触碰 D03 文件的注释措辞（纯注释、零行为改动，non_goals 明写）。该读法不改变任何域的并发上限，车道 2 的 TF-0112 / TF-0137 授权不受影响。若用户改判「车道」列为独占锁，则 TF-0117 第 2 处（coding-runtime-flags.ts:8-11 文件头注释）须路由车道 2 另起 task，本 task 收口后需按裁决复核。此为交接文档 §5 明示的两次真实事故同形态（登记与实际不符），故不推测跨过，记录读法并报用户。",
+      "kind": "conflict_domain_collision",
+      "node_id": "TF-0145",
+      "op": "record_deviation",
+      "related_task_ids": [
+        "TF-0117",
+        "TF-0112",
+        "TF-0137",
+        "TF-0146"
+      ],
+      "summary": "D03（src/context-engine/coding-runtime-flags.ts）的「车道」列为 2，而登记触碰者为 TF-0112 / TF-0117 / TF-0137 / TF-0146，其中 TF-0117 与 TF-0146 属车道 1；最初交接词又称 D03 为「车道 2 独占」。两处说法冲突。车道 1 开工 TF-0117 前实测：TF-0112 / TF-0137 均为 proposed（非 in_progress），list --status in_progress 中无车道 2 的实现类 task，三个目标文件 git status 全 CLEAN。"
+    }
+  ],
+  "proposal_id": "prop-lane1-d03-reading-2026-08-25",
+  "rationale": "TF-0117 开工前发现 D03 登记冲突（交接文档 §5）：§R4.5 域表 D03 的「车道」列写 2，但登记触碰者含 TF-0117 / TF-0146（均车道 1），且最初交接词把 D03 列为「车道 2 独占，不得触碰」。按交接要求记偏差说明采用的读法，并报用户裁决。",
+  "session_id": null,
+  "status": "applied"
+}

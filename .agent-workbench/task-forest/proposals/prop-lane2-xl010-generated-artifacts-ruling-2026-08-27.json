@@ -1,0 +1,39 @@
+{
+  "applied_at": "2026-08-27T18:18:07.078664Z",
+  "base_graph_hash": "9241c50d0b743cf4bcdaf2dad7dfceca2c2067deefe9add469980b7d868bacc1",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-08-27T18:00:00Z",
+        "decided_by": "用户于 2026-08-27 裁决看板 XL-010 采纳出路 (a)（lane-2 的推荐项）；lane-2 作为 §R3 owner 落地判据。本记录按 deviations.jsonl 的 append-only 语义追加同 id 的终态，状态以本条为准。",
+        "evidence": "docs/dev/context-moat/DEV-PROTOCOL.md §R3.1.1（划分表与真阳性对照表）、§R3.6（判定/记录双读数）、§R3.9.1（127/230 构成）、§R3.9.2（新旧口径逐 task 对照）、§R3.9.3（三条护栏）；AUDIT-BOARD.html XL-010。",
+        "expected_requirement": "§R3.6：M0..M5 累积半径预算 230，冻结于 B1。§R3.2：brb-S = 5、brb-M = 15。§R4.6：结构性变更与状态变更必须走 Task Forest，无第二通道。",
+        "id": "TFD-lane2-generated-artifacts-in-radius-2026-08-27",
+        "impact": "判据已改：新增 §R3.1.1 的生成物/authored 划分表，命令 1 与 §R3.6 共用同一份排除集（snapshots/exports/graph/todos/sessions/config.json 不计入；proposals/deviations/alignments/docs 及其他一切路径照计）。实测结果：累积门 233 -> 127（预算 230，余量 103，且不再随治理写入消耗）；逐 task TF-0138 16->3、TF-0143 13->3、TF-0121 31->15（恰好不超 M）、TF-0107 17->7、TF-0116 21->21、TF-0124 16->16。即簿记造成的超限消失、真实改动面造成的超限一个不少，判据保留真阳性。对 TF-0113 的直接后果：其开工前预判「brb-S 下不可能收口，最小合规改动集下界 12」在新口径下失效，代码侧 4 个 authored 路径（实现 + 测试 + 门线注册 + 审核记录）已在 brb-S=5 之内，已回填更正到 reviews/TF-0113.md。",
+        "kind": "process_gap",
+        "node_id": "TF-0107",
+        "observed_action_or_result": "修好累积门后首次可信读数为 229/230，而落地该修订的提交自己就把读数推到 233/230（+4 全是本次修订的簿记：3 份 snapshot + 1 份 proposal）—— 修好度量的动作本身把被度量对象推出预算。构成实测：229 里 103 个是生成物（95 份 snapshot + 8 个恒定重写文件），代码面只有 47。逐 task 侧同源：六次半径裁决零例外，而其中三次的超限 100% 由簿记造成。",
+        "recommendation": "三条护栏与裁决同时生效，写入 §R3.9.3：(1) 默认方向是「计入」—— §R3.1.1 是显式清单而非 .agent-workbench 整树豁免，Task Forest 新增目录默认计入，要排除必须先修表；(2) 判定用排除后读数、同时如实记录全量读数，两者差额是本节体检指标；(3) 不追溯撤销已落地的六次裁决（§R5 技术-7），新口径只对尚未收口的 task 生效。残留未解：graph/nodes.json 等共享可变状态的归属（§R3.8.1 规则 4 层面）仍无答案，出路 (a) 只使其不再污染半径读数，已如实登记不声称解决。",
+        "related_task_ids": [
+          "TF-0107",
+          "TF-0102",
+          "TF-0113"
+        ],
+        "severity": "high",
+        "status": "resolved"
+      }
+    }
+  ],
+  "created_at": "2026-08-27T18:18:06.739154Z",
+  "proposal_id": "prop-lane2-xl010-generated-artifacts-ruling-2026-08-27",
+  "rationale": "用户于 2026-08-27 裁决看板 XL-010 采纳出路 (a)：Task Forest 生成物移出半径计量对象，authored 治理物照计。lane-2 作为 §R3 owner 落地判据（新增 §R3.1.1 划分表，命令 1 与 §R3.6 共用同一份排除集）并附三条护栏：默认方向为「计入」（显式清单而非整树豁免）、两个读数都要写进验收记录、不追溯撤销已落地的六次裁决。有效性已实测验证：簿记造成的三次超限（TF-0138 16->3、TF-0143 13->3、TF-0121 31->15）在新口径下消失，而真实改动面造成的两次（TF-0116 21、TF-0124 16）一个不少 —— 若新计量式把所有超限都抹平，它与取消半径门无法区分。累积门由 233/230（越界）变为 127/230，余量 103 且不再随治理写入消耗。",
+  "session_id": "session-lane-2",
+  "status": "applied"
+}

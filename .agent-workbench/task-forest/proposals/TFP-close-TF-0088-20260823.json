@@ -1,0 +1,47 @@
+{
+  "applied_at": "2026-08-23T13:26:26.498725Z",
+  "base_graph_hash": "12166f0addef36d2944c864f8d94cb9c5872d612bf3ce02bc15b900d2da3b671",
+  "base_summary": {
+    "edge_count": 181,
+    "node_count": 99,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "artifacts/tf0088-ownership-declarations/report.json",
+          "新 spec：session-ecosystem-goal-wake-continuation.md（TF-0083，24 文件）与 session-ecosystem-audit-remediation.md（TF-0086，9 文件）；均 validate --no-diff 0、context 0",
+          "修订：cross-session-control +3 文件；safety-gate +4 文件并移除 runtime-send-actions.ts 误声明；均 validate 0",
+          "tf0084-candidate-inherited.json 38→11（26 链内入声明、1 陈旧移除、11 真他流保留）",
+          "candidate 重建：base 60d74ebb（owned 115 + inherited 11 = 126）、candidate c4588ab8、diff 恰为 TF-0084 六文件、worktreeClean=true",
+          "diff-aware harness validate（candidate 内，--since base，ledger-acceptance spec）exit 0",
+          "新鲜重跑：goal-wake 8 文件 68 绿、cron 3 文件 13 绿"
+        ],
+        "next_action": "线性下一步：TF-0089 census 扩容 + 启动期守卫（有 spec 无 handler 改硬错误）",
+        "progress": 100,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260823-tf0088-ownership-declarations"
+        ],
+        "status": "done"
+      },
+      "id": "TF-0088"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "第 2 步 TF-0088 done（2026-08-23）：归属声明补齐，见 artifacts/tf0088-ownership-declarations/report.json"
+        ]
+      },
+      "id": "TF-0086"
+    }
+  ],
+  "created_at": "2026-08-23T13:26:26.300695Z",
+  "proposal_id": "TFP-close-TF-0088-20260823",
+  "rationale": "TF-0088（审计整改第 2 步）完成：新建两份 spec（TF-0083 追溯声明 + TF-0086 里程碑声明）、修订两份既有 spec（补 7 文件声明、移除 1 误声明）、inherited 清单重定性 38→11、按新声明集重建 candidate 并通过 diff-aware harness validate（exit 0）；31 个链追踪文件声明覆盖 missing=NONE。按线性流程解锁 TF-0089。",
+  "session_id": "session-20260823-tf0088-ownership-declarations",
+  "status": "applied"
+}

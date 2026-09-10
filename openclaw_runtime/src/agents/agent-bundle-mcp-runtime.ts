@@ -586,6 +586,61 @@ export function createSessionMcpRuntime(params: {
     }
   };
 
+  /**
+   * Drop the memoized catalog so the next getCatalog() rebuilds it.
+   *
+   * The memo is process-wide, so any invalidation clears all of it. That is not
+   * the same as dropping the other servers' tools: the rebuild re-emits them
+   * from their still-open sessions, which is why per-server invalidation removes
+   * only the affected entry from `sessions` and leaves the rest reusable (no
+   * reconnect, so one dead server cannot amplify into a full re-handshake).
+   */
+  const invalidateCatalogMemo = () => {
+    catalogInvalidationGeneration += 1;
+    catalog = null;
+    catalogInFlight = undefined;
+  };
+
+  /**
+   * Transport-level loss invalidation.
+   *
+   * Before this, the memo had exactly two invalidation paths — `tools/list_changed`
+   * and `dispose()`. A server whose process died or whose socket dropped without
+   * sending a notification therefore kept having its tools declared to the model,
+   * and `callTool` reached the dead client because `getCatalog()` returned the
+   * stale memo and the session object still existed.
+   *
+   * `close` is definitive, so the session is dropped and torn down. `error` is
+   * not: transports emit it for recoverable protocol faults as well as fatal
+   * ones, so tearing the session down on `error` would kill healthy servers.
+   * Instead `error` only invalidates the memo, which forces the next rebuild to
+   * re-issue `tools/list` on that session — if the server really is gone the
+   * list throws and the existing per-server catch drops its tools into
+   * diagnostics, which is the same model-visible outcome without the collateral.
+   */
+  const handleTransportLost = (serverName: string, reason: "close" | "error") => {
+    if (disposed) {
+      return;
+    }
+    if (reason === "error") {
+      if (!sessions.has(serverName)) {
+        return;
+      }
+      invalidateCatalogMemo();
+      return;
+    }
+    const session = sessions.get(serverName);
+    if (!session) {
+      // Already removed by a prior close/error, by a failed rebuild, or by
+      // dispose(). Invalidating again would bump the generation for nothing.
+      return;
+    }
+    sessions.delete(serverName);
+    invalidateCatalogMemo();
+    logWarn(`bundle-mcp: server "${serverName}" transport closed; dropped its cached tools.`);
+    void disposeSession(session).catch(() => {});
+  };
+
   const getCatalog = async (): Promise<McpToolCatalog> => {
     failIfDisposed();
     if (catalog) {
@@ -645,9 +700,7 @@ export function createSessionMcpRuntime(params: {
                           `bundle-mcp: failed to refresh changed tool list for server "${serverName}": ${redactErrorUrls(error)}`,
                         );
                       }
-                      catalogInvalidationGeneration += 1;
-                      catalog = null;
-                      catalogInFlight = undefined;
+                      invalidateCatalogMemo();
                     },
                   },
                 },
@@ -674,6 +727,21 @@ export function createSessionMcpRuntime(params: {
                 resolved.connectionTimeoutMs,
               );
               connected = true;
+              // Protocol.connect() installs its own transport handlers and
+              // chains any handlers already present. Read the SDK handlers after
+              // connect and chain ours so replacing the property does not skip
+              // SDK cleanup. Only reached on a fresh connect, so a reused
+              // session keeps the handlers installed the first time.
+              const sdkOnClose = session.transport.onclose;
+              const sdkOnError = session.transport.onerror;
+              session.transport.onclose = () => {
+                sdkOnClose?.();
+                handleTransportLost(serverName, "close");
+              };
+              session.transport.onerror = (error: Error) => {
+                sdkOnError?.(error);
+                handleTransportLost(serverName, "error");
+              };
             }
             failIfDisposed();
             const capabilities = summarizeServerCapabilities(

@@ -1,0 +1,48 @@
+{
+  "applied_at": "2026-09-06T04:39:29.479605Z",
+  "base_graph_hash": "d607d78d31850dbf86289b1ccb4ac1a2ff342a6a61f2ff90cbf0018ec179ae30",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.96,
+        "created_at": "2026-09-06T04:39:21.774262Z",
+        "evidence": "docs/dev/context-moat/reviews/TF-0150.md；reports/CONTEXT-CONTROL-COMPRESSION-AUDIT-2026-09-05.md",
+        "expected_requirement": "压缩控制面不应保留无写入点的 tierSchedule 死配置，也不应在 safeguard 默认路径不可达时继续宣传五档能力。",
+        "id": "TFD-tf0150-tier-ladder-dead-config-accepted-20260906",
+        "impact": "诊断与能力宣传失真；默认压缩行为仍由 safeguard 控制。本任务未改默认值、运行时代码或产品锁。",
+        "kind": "quality_gap",
+        "node_id": "TF-0150",
+        "observed_action_or_result": "tierSchedule 排除 dist/.artifacts/测试后仅 compaction-safeguard.ts:1096/1249/1612 三处读，src/config 与 shared/ 零命中；safeguard 默认路径经 agent-session.ts:2014 跳过 compact()；default 路径缺 contextWindow，≥50.9k 窗口落 tier4，≤38.2k 窗口落 tier0。",
+        "recommendation": "第二轮先删除 F-4 死配置，再在同一任务内处置 F-1/F-1B：若保留 ladder，补真实 contextWindow 并同时测大窗口 tier4 与小窗口 tier0；若删除 ladder，F-1/F-1B 随之关闭。禁止先给将删代码加护栏。",
+        "related_task_ids": [
+          "TF-0150"
+        ],
+        "severity": "medium",
+        "status": "accepted",
+        "summary": "F-1/F-1B/F-4 联判：tierSchedule 死配置与默认路径 tier ladder 不可达，本轮显式接受，第二轮先删除 F-4 再处置 F-1/F-1B。"
+      }
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.94,
+        "next_action": "非实施者复核 docs/dev/context-moat/reviews/TF-0150.md 的 9 项事实更正、F-1..F-9 唯一归属与 TFD-tf0150-tier-ladder-dead-config-accepted-20260906；通过后转 done/100。",
+        "progress": 100,
+        "status": "review_needed",
+        "summary": "F-1/F-1B/F-4 已按“F-4 → F-1/F-1B”联判并显式接受，记录 TFD-tf0150-tier-ladder-dead-config-accepted-20260906；F-2/F-5/F-7/F-8/F-9 归 backlog-P1；F-3 由 TF-0128+TF-0151+TF-0076 覆盖，F-6 由 TF-0074+TF-0076 覆盖。事实更正 1..9 与逐项实现坐标已写入 docs/dev/context-moat/reviews/TF-0150.md。本任务 must-fix=0，未改默认值、运行时代码、产品锁或历史 artifacts；审计源 reports/CONTEXT-CONTROL-COMPRESSION-AUDIT-2026-09-05.md 判定为入库。"
+      },
+      "id": "TF-0150"
+    }
+  ],
+  "created_at": "2026-09-06T04:39:21.772246Z",
+  "proposal_id": "TFP-tf0150-audit-classification-20260906",
+  "rationale": "TF-0150 已完成 F-1..F-9 的唯一归属判定与事实更正 1..9。F-1/F-1B/F-4 按“F-4 → F-1/F-1B”联判并显式接受，须记录 deviation；F-3/F-6 已由既有节点覆盖；其余真实缺陷归 backlog-P1。本任务未实施修复、未改默认值、未改运行时代码。",
+  "session_id": "codex-tf0150-audit-classification-20260906",
+  "status": "applied"
+}

@@ -83,6 +83,42 @@ describe('run surface promotion', () => {
     expect(surfaces.promotedStepIds.has('approval-1')).toBe(true);
   });
 
+  it('keeps an approval row that carries the only rendering of the runtime warning', () => {
+    // `approval.updated` comes from the runtime exec approval path, while
+    // PendingRunApprovals renders the ClawX host permission store — disjoint
+    // planes. So no card stands behind this event, and its `message` (the exec
+    // `warningText`, which carries VerseShell's static no-rollback notice) is
+    // shown nowhere else. Dropping the row dropped the text.
+    const warning = 'External process write: this command may write outside the ClawX write journal;'
+      + ' those changes have no automatic rollback.';
+    const state = runState([
+      {
+        type: 'approval.updated',
+        itemId: 'approval-warned',
+        toolCallId: 'call-exec',
+        title: 'Command approval requested',
+        status: 'pending',
+        message: warning,
+      },
+    ]);
+    const surfaces = promoteRunSurfaces({ runState: state });
+    expect(surfaces.promotedStepIds.has('approval-warned')).toBe(false);
+
+    const steps = sanitizeGraphSteps(deriveRuntimeTaskSteps(state), surfaces.promotedStepIds);
+    expect(steps.map((step) => step.id)).toContain('approval-warned');
+    expect(steps.find((step) => step.id === 'approval-warned')?.detail).toContain('no automatic rollback');
+  });
+
+  it('still drops a message-less approval row', () => {
+    const surfaces = promoteRunSurfaces({
+      runState: runState([
+        { type: 'approval.updated', itemId: 'approval-bare', toolCallId: 'call-2', title: 'Approval', status: 'pending', message: '   ' },
+      ]),
+    });
+
+    expect(surfaces.promotedStepIds.has('approval-bare')).toBe(true);
+  });
+
   it('leaves no promoted event visible in the execution graph', () => {
     const state = runState([
       { type: 'tool.started', toolCallId: 'call-plan', name: 'update_plan', args: PLAN_ARGS },

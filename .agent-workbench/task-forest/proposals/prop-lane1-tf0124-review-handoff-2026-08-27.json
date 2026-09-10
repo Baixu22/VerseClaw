@@ -1,0 +1,57 @@
+{
+  "applied_at": "2026-08-27T03:34:50.634565Z",
+  "base_graph_hash": "a8913b79da5e320b64a76204e09cf4626244a744ec8f2983b8b853e900d81f3c",
+  "base_summary": {
+    "edge_count": 260,
+    "node_count": 146,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts:450-536,584-587",
+          "openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-quality.ts:14-20,60-82,232-260",
+          "openclaw_runtime/src/agents/compaction.ts:50-63,128-145",
+          "openclaw_runtime/src/agents/agent-hooks/compaction-safeguard.ts:987,1249-1265",
+          "docs/dev/context-moat/reviews/TF-0124.md; commits a2975eadc, d3be4e856, 06612e7e7; L1 all exit 0; agents 2 files/24 passed; unit-fast 62 files/451 passed; artifact 1 file/2 passed; R3 full attributed radius 16/15, schema/default guards empty"
+        ],
+        "next_action": "车道 2仅按 requirements 与 acceptance_criteria 独立复跑 A1-A6、provider 缺段反证、T-C1 掏空摘要、L1、R3 三命令、阴性对照与 worktree-only 回滚；同时裁决 16/15 半径。",
+        "progress": 90,
+        "status": "review_needed",
+        "summary": "已选择 agent-core 八段模板为唯一摘要契约，并让主提示、merge 指令、auditSummaryQuality、damage audit、validated pipeline 与 CompressionArtifact 共用/兼容该契约；provider 与 LLM 均进入共同质量审计。实现提交 a2975eadc，记录补交 d3be4e856/06612e7e7；L1 六门全 exit 0，定向 agents 2 files/24 passed，unit-fast 62/451，artifact 2/2。实现窗口半径 15/15，但开工看板提交 20e481a69 同样带 Task: TF-0124，现行全归属集合为 16/15；状态保持 review_needed，等待车道 2 独立审核和半径裁决，未获通过不得 done。"
+      },
+      "id": "TF-0124"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-27T03:33:02.669223Z",
+        "decided_by": "lane-1 实现者自检发现并如实上报；用户已明确只有车道 2 审核通过才能 done，半径裁决随审核移交车道 2。",
+        "evidence": "git log -E --grep='^(Task:|Refs|Node:) TF-0124([^0-9]|$)' 590588791..HEAD 命中 20e481a69/a2975eadc/d3be4e856/06612e7e7/462f74833；git show --name-only 并集为 16，唯一额外路径为 docs/dev/context-moat/AUDIT-BOARD.html。",
+        "expected_requirement": "TF-0124 的 brb-M 改动半径必须小于等于 15。",
+        "id": "TFD-tf0124-radius-overrun-2026-08-27",
+        "impact": "实现与测试证据仍可审核，但 R3 未通过，任务只能停在 review_needed。额外路径为协调看板而非生产越界；现行协议无豁免，最终裁决权按用户要求交给车道 2。",
+        "kind": "scope_change",
+        "node_id": "TF-0124",
+        "observed_action_or_result": "实现窗口 a2975eadc^..HEAD 的生产代码、测试和强制记录并集恰为 15；但开工状态看板提交 20e481a69 也带 Task: TF-0124，按 R3.1 从 590588791..HEAD 匹配全部归属提交后并集为 16。schema 路径守卫和默认值守卫均为空。",
+        "recommendation": "由用户指定的非实现者车道 2 在独立审核时给出合法半径处置并留痕；裁决和审核完成前保持 review_needed，不得 done。禁止追溯改写历史或把额外路径静默排除。",
+        "related_task_ids": [
+          "TF-0124",
+          "TF-0107",
+          "TF-0145"
+        ],
+        "severity": "medium",
+        "status": "open",
+        "summary": "TF-0124 实现本体恰为 brb-M 上限 15，但开工看板提交已用 Task: TF-0124 归属，导致现行机械半径 16/15。"
+      }
+    }
+  ],
+  "created_at": "2026-08-27T03:33:02.658428Z",
+  "proposal_id": "prop-lane1-tf0124-review-handoff-2026-08-27",
+  "rationale": "用户明确要求两条车道互审，只有非实现者审核通过才算 done。TF-0124 实现与验证已完成，但现行 R3 机械归属把开工看板提交一并计入，得到 16/15；因此转 review_needed 并把半径裁决交给车道 2。",
+  "session_id": "session-lane-1",
+  "status": "applied"
+}

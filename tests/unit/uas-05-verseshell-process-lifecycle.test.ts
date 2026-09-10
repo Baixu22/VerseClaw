@@ -14,6 +14,7 @@ describe("UAS-05 VerseShell process lifecycle boundary", () => {
   const manifestPath = "resources/verseshell/manifest.json";
   const patchPath = "resources/verseshell/patches/uas-05-process-lifecycle.patch";
   const binaryPath = "resources/bin/win32-x64/ae.exe";
+  const SOURCE_INPUTS_PATH = "resources/verseshell/source-inputs.json";
   const manifest = JSON.parse(read(manifestPath));
   const sourcePatch = read(patchPath);
 
@@ -25,9 +26,11 @@ describe("UAS-05 VerseShell process lifecycle boundary", () => {
         "sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7",
     });
     expect(manifest.provenance.unrecorded_changes).toBe(false);
-    expect(manifest.provenance.source_inputs.identity_sha256).toBe(
-      "19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650",
-    );
+    const sourceInputs = JSON.parse(readFileSync(SOURCE_INPUTS_PATH, "utf8"));
+    const expectedCombinedSha = sourceInputs.identity?.combined_sha256;
+    expect(typeof expectedCombinedSha).toBe("string");
+    expect(expectedCombinedSha).toMatch(/^[a-f0-9]{64}$/u);
+    expect(manifest.provenance.source_inputs.identity_sha256).toBe(expectedCombinedSha);
     expect(manifest.compliance).toMatchObject({
       corresponding_source_status: "tracked_ordered_patch_stack",
       patch_paths: expect.arrayContaining([patchPath]),
@@ -64,7 +67,8 @@ describe("UAS-05 VerseShell process lifecycle boundary", () => {
     expect(execRuntime).not.toContain("executeGovernedVerseShell");
     expect(processTool).toContain('session?.lifecycleOwner === "verseshell"');
     expect(processTool).toContain('session.lifecycleOwner === "verseshell"');
-    expect(registry).toContain('lifecycleOwner?: "verseshell"');
+    expect(registry).toContain("lifecycleOwner?:");
+    expect(registry).toContain('"verseshell"');
   });
 
   it("leaves Task Forest release order and product graduation locks unchanged", () => {

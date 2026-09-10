@@ -1,0 +1,32 @@
+{
+  "applied_at": "2026-08-25T02:21:32.910978Z",
+  "base_graph_hash": "ef217591e2cb45d37cc93dee22552d8044e5e59609e2e755d893c94a7a9357df",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-25T02:21:19.929450Z",
+        "decided_by": "lane-1 实施 TF-0128 时按 §R4.5「新发现的域必须追加」即时登记；D09 扩大按 §R4.5 触碰面扩大条款记录，未静默扩面",
+        "id": "TFD-d16-d19-damage-detection-domains-2026-08-25",
+        "impact": "冲突域 15→19 组。D09 扩大的技术理由：requirement-5 要求 shadow 上线，而唯一无条件经过的落点是 compaction-safeguard.ts 的 capCompactionSummaryPreservingSuffix 收尾处；紧邻的 auditSummaryQuality 调用点被 qualityGuardEnabled 门控，接在那里会让审计在质量守卫关闭时静默失效（§D1(b) 反向证伪 ③ 上游守卫情形）。四个新域与 D09 的全部触碰者均在车道 1，属车道内串行，零跨车道风险，不改任何估时。TF-0124（T-B4）后续统一章节契约时会触碰 D16/D18/D19，届时 TF-0128 已收口，无并发。",
+        "kind": "scope_change",
+        "node_id": "TF-0145",
+        "related_task_ids": [
+          "TF-0145",
+          "TF-0128",
+          "TF-0124"
+        ],
+        "summary": "TF-0128 实施时登记四个此前未登记的车道 1 冲突域并追加一处触碰面扩大：D16 compaction-damage-rules.ts（TF-0128/0124）、D17 context-health-monitor.ts（TF-0128/0129）、D18 compaction-sections.ts（TF-0128 新建，章节常量单一真相源；TF-0128/0124）、D19 compaction-safeguard-quality.ts（TF-0128/0124）；并把 TF-0128 追加为 D09 compaction-safeguard.ts 的触碰者（原列 TF-0111/0124）。"
+      }
+    }
+  ],
+  "created_at": "2026-08-25T02:21:19.919119Z",
+  "proposal_id": "TFP-e97b37eb64",
+  "session_id": "lane-1",
+  "status": "applied"
+}

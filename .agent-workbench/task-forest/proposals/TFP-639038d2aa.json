@@ -1,0 +1,32 @@
+{
+  "applied_at": "2026-08-25T01:16:28.179241Z",
+  "base_graph_hash": "a4a2a70cfa0ca863c341518ac799881dbe376e8b5277ba7d22c90600a44ec8c7",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-25T01:16:10.123952Z",
+        "decided_by": "lane-1 执行 M0 里程碑 L2 收口门时实测发现；按 §R4.8「任一车道都不得自行放行 barrier」与 §R5 过程-10 如实记录并把裁决权交回，未自行放行",
+        "id": "TFD-l2-lintcheck-fourth-red-gate-2026-08-25",
+        "impact": "M0（TF-0103）不予收口，状态置 blocked。M0 交付物本体完整（七节齐全 929 行、8 个子节点全部经非实现者审核 done、B1 两条判据达成、累积半径 18/40 PASS），阻塞纯粹来自门分类缺口。放行权不在单条车道（§R4.8），且以「非本轮引起」自行豁免会覆盖 §R2.0.1「门 = exit code 不 = 自述」并绕过 §D4 建立的显式白名单机制。需 lane-2 在 §D4 对 lint:check 做三分类并登记显式白名单，或判为 must-fix 修掉这 4 项一行改，并相应收紧 §R2.3 该门的「无豁免」措辞。另记两项 backlog-P1：(1) L2 的 maturity 门非无副作用，会写 artifacts/（本次重写 P7-001/traceability-report.json，+246/-108），与 §R4.9 及 §R5 技术-7 存在张力；(2) 建议 §D4 把 pnpm test 基线由 17/22 更新为 16/21 并记录该向下漂移。",
+        "kind": "gate_classification_gap",
+        "node_id": "TF-0103",
+        "related_task_ids": [
+          "TF-0103",
+          "TF-0106",
+          "TF-0142"
+        ],
+        "summary": "M0 里程碑收口跑 §R2.3 L2 门时发现 pnpm lint:check 是第四个红门（exit 1，4 errors + 131 warnings），而 §D4/GATE-BASELINE 只分析了三个红门（config-schema-parity / pnpm test / maturity:validate）。§R2.3 对该门明写「exit 0（无豁免）」，在当前工作树上不可达。四个 error 经 §1.1 机械判据检验全部非本轮引起（本轮 18 个改动文件 ∩ 四个主体文件 = ∅），其中一个主体文件还是未跟踪的既有未提交新增。另：§4.1 盲区已消除 —— maturity:residual exit 0 绿，maturity:traceability exit 1 红（FAILED 69，其已提交基线本就是 ok:false/11 failures/2026-07-31，漂移非本轮引起）。"
+      }
+    }
+  ],
+  "created_at": "2026-08-25T01:16:10.111464Z",
+  "proposal_id": "TFP-639038d2aa",
+  "session_id": "lane-1",
+  "status": "applied"
+}

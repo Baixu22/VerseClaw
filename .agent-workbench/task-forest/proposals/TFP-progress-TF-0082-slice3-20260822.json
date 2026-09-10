@@ -1,0 +1,37 @@
+{
+  "applied_at": "2026-08-22T06:02:07.413237Z",
+  "base_graph_hash": "10c5dba67609c3baa1637df73207fa4d2a2a8b33d56e639fec868b007cd5e408",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "SessionsQueueDrainParamsSchema.expectedSessionId + handler 代际守卫（reason generation-mismatch，drain 执行器不触达）",
+          "drainQueuedUserMessagesForSession dequeue 前内部守卫（防绕过）",
+          "shared/host-api SessionQueueDrainPayload + Electron 透传",
+          "sessions.queue-drain-generation.test.ts 3/3 + run-control 回归 9/9 + Electron facade/rollback-plan 50/50",
+          "门禁：spec validate；typecheck 0；contract 0；comms PASS；build:runtime + E2E 3/3；lint 0；diff-check 0",
+          "artifacts/session-ecosystem-cross-session-control/report.json 切片 3 更新"
+        ],
+        "next_action": "第四个 owner path：send/steer admission permit 生命周期覆盖 chat.send 实际执行（当前 permit 在 chat.send 执行前释放，reset 竞态不被 fence）；随后 lineage runId join。",
+        "progress": 65,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260822-start-tf0082"
+        ]
+      },
+      "id": "TF-0082"
+    }
+  ],
+  "created_at": "2026-08-22T06:02:07.221517Z",
+  "proposal_id": "TFP-progress-TF-0082-slice3-20260822",
+  "rationale": "TF-0082 第三个 owner path 完成：sessions.queueDrain 与 drainQueuedUserMessagesForSession 的 expectedSessionId 代际守卫（双层 fail-closed，不匹配时队列消息原样保留）。Host 契约 SessionQueueDrainPayload + Electron 透传。所有门禁在最终树上通过。",
+  "session_id": "session-20260822-start-tf0082",
+  "status": "applied"
+}

@@ -1,0 +1,26 @@
+{
+  "applied_at": "2026-08-28T12:09:13.236567Z",
+  "base_graph_hash": "b8485843b048c0808ffbd1646095d791e50b07b24a319e9e664f38b347b29361",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "XL-012（2026-08-28）：lane-1 向 lane-2 提交 TF-0143 独立复核请求。复核入口：docs/dev/context-moat/corpus/tf-0143-57c00668.md、~/.openclaw/corpus/tf-0143-57c00668.jsonl、runtime-coding-uftk.test.ts、zod-schema.ts、types.openclaw.ts、runtime-feature-leaves.ts。"
+        ],
+        "next_action": "XL-012：lane-2 独立复核 TF-0143。请核对真实语料 42 user turns / 2 compactions、脱敏副本 SHA-256，以及用户授权的 runtime.coding.uftk schema 兼容修复是否只补兼容面、未改默认行为；通过则置 done/100，不通过则退回 in_progress 并指出具体阻塞项。"
+      },
+      "id": "TF-0143"
+    }
+  ],
+  "created_at": "2026-08-28T12:09:12.848893Z",
+  "proposal_id": "prop-lane1-tf0143-review-request-20260828",
+  "rationale": "向 lane2 提交 TF-0143 独立复核请求（看板 XL-012）。",
+  "session_id": "session-lane1-tf0143-review-request",
+  "status": "applied"
+}

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Chat } from '@/pages/Chat';
 
@@ -42,7 +42,7 @@ const chatState = vi.hoisted(() => ({
   refresh: vi.fn(),
   refreshTaskLedger: vi.fn(),
   cleanupEmptySession: vi.fn(),
-  hydrateStartup: vi.fn(),
+
   lastUserMessageAt: null,
   sessionLastActivity: {},
 }));
@@ -91,21 +91,31 @@ vi.mock('@/stores/workspaces', () => ({
   }),
 }));
 
+// Chat reads this store both as a hook and imperatively via `.getState()`
+// (index.tsx:972, 1529, 1550). A selector-only mock made the component throw
+// "useArtifactPanel.getState is not a function"; the `Object.assign` shape is
+// what the sibling chat tests use.
+const artifactPanelState = vi.hoisted(() => ({
+  open: false,
+  widthPct: 45,
+  tab: 'changes',
+  tabs: [],
+  activeTabId: null,
+  terminalPlacement: 'side',
+  openChanges: vi.fn(),
+  openPreview: vi.fn(),
+  openBrowser: vi.fn(),
+  restoreSessionState: vi.fn(),
+  close: vi.fn(),
+}));
+
 vi.mock('@/stores/artifact-panel', () => ({
   ARTIFACT_PANEL_MIN_WIDTH: 28,
   ARTIFACT_PANEL_MAX_WIDTH: 50,
-  useArtifactPanel: (selector: (state: Record<string, unknown>) => unknown) => selector({
-    open: false,
-    widthPct: 45,
-    tab: 'changes',
-    tabs: [],
-    activeTabId: null,
-    openChanges: vi.fn(),
-    openPreview: vi.fn(),
-    openBrowser: vi.fn(),
-    restoreSessionState: vi.fn(),
-    close: vi.fn(),
-  }),
+  useArtifactPanel: Object.assign(
+    (selector: (state: typeof artifactPanelState) => unknown) => selector(artifactPanelState),
+    { getState: () => artifactPanelState },
+  ),
 }));
 
 vi.mock('@/lib/host-api', () => ({
@@ -201,9 +211,7 @@ vi.mock('@/hooks/use-min-loading', () => ({
 }));
 
 vi.mock('@/pages/Chat/ChatInput', () => ({
-  ChatInput: ({ slashRequest }: { slashRequest?: number }) => (
-    <div data-testid="chat-input" data-slash-request={slashRequest ?? 0} />
-  ),
+  ChatInput: () => <div data-testid="chat-input" />,
 }));
 
 vi.mock('@/pages/Chat/ChatMessage', () => ({
@@ -230,13 +238,12 @@ describe('Chat toolbar slash entry', () => {
     window.electron.platform = 'win32';
   });
 
-  it('replaces the old save shortcut and requests the composer slash palette', async () => {
+  it('keeps the toolbar free of the obsolete more-actions menu', async () => {
     render(<MemoryRouter><Chat /></MemoryRouter>);
 
-    fireEvent.pointerDown(await screen.findByTestId('chat-toolbar-more'), { button: 0, ctrlKey: false });
-    fireEvent.click(await screen.findByTestId('chat-toolbar-slash'));
-    expect(screen.getByTestId('chat-input')).toHaveAttribute('data-slash-request', '1');
-    fireEvent.pointerDown(screen.getByTestId('chat-toolbar-more'), { button: 0, ctrlKey: false });
+    await screen.findByTestId('chat-toolbar-refresh');
+    expect(screen.queryByTestId('chat-toolbar-more')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-toolbar-slash')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-save-knowledge')).not.toBeInTheDocument();
   });
 });

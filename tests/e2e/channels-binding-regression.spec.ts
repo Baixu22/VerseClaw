@@ -60,7 +60,7 @@ test.describe('Channels binding regression', () => {
         if (request?.module === 'channels' && request.action === 'saveConfig') {
           current.saveCount += 1;
           const body = request.payload ?? {};
-          const accountId = body.accountId || current.nextAccountId;
+          const accountId = String((body as any).accountId || current.nextAccountId);
           const feishu = current.channels[0];
           if (!feishu.accounts.some((account) => account.accountId === accountId)) {
             feishu.accounts.push({
@@ -69,7 +69,7 @@ test.describe('Channels binding regression', () => {
               configured: true,
               status: 'connected',
               isDefault: false,
-            });
+            } as never);
           }
           return respond(request.id, { success: true });
         }
@@ -80,7 +80,7 @@ test.describe('Channels binding regression', () => {
             const feishu = current.channels[0];
             const account = feishu.accounts.find((entry) => entry.accountId === body.accountId);
             if (account) {
-              account.agentId = body.agentId;
+              account.agentId = body.agentId as never;
             }
           }
           return respond(request.id, { success: true });

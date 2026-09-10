@@ -1,0 +1,25 @@
+{
+  "base_graph_hash": "6373d81ac4d286213ede30fff286faff5c30257f07388ae1bc3bc33485a398b3",
+  "base_summary": {
+    "edge_count": 260,
+    "node_count": 146,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "context_tags": [
+          "tech-debt",
+          "brb-L"
+        ]
+      },
+      "id": "TF-0116"
+    }
+  ],
+  "created_at": "2026-08-25T15:37:11.251946Z",
+  "proposal_id": "prop-lane1-tf0116-brb-raise-2026-08-25",
+  "rationale": "TF-0116 最小改动集 20-21 路径 > brb-M=15，§R3.5 拆分在 sum 规则下不可行（见 TFD-tf0116-radius-overrun-2026-08-25）。提请用户裁决：将 TF-0116 的 max_brb 由 M 调至 L（context_tags brb-M → brb-L）。未获用户确认前不得应用。",
+  "session_id": null,
+  "status": "proposed"
+}

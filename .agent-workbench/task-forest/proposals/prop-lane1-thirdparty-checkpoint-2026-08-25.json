@@ -1,0 +1,43 @@
+{
+  "applied_at": "2026-08-25T11:30:16.679328Z",
+  "base_graph_hash": "a5caa20121cbc7accbc30d785d6426b2ae13c3534fb3f1dc4a1f4795a0d2aff7",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [],
+  "created_at": "2026-08-25T11:30:16.474230Z",
+  "operations": [
+    {
+      "decided_by": "lane-1 事后登记。该提交不由任何车道发起，车道 1 无从预防；按 §R5 过程-10 如实记录而非隐去。归属补救方式：本次对交接文件的更新带正确 trailer 提交，使该文件此后有 §R3 归属。",
+      "id": "TFD-thirdparty-checkpoint-swept-handoff-2026-08-25",
+      "impact": "正面后果：工作树由 345 项脏改动变为完全干净（git status --porcelain = 0 行）；extensions.ts 与其 import 的 runtime-core/lineage.ts 一并被提交，故不存在 clean checkout 编译不过的问题；pnpm typecheck:node 实测 exit 0；车道 1 本轮 8 个提交在合并后全部仍可从 HEAD 到达（逐个 git merge-base --is-ancestor 实测）。**TF-0126（T-B6）的阻塞因此解除**，排班位置不变（仍在 TF-0117 之后）。负面后果：交接文件的半径归属丢失，且分支由 codex/model-error-gap-fill 变为 feat/runtime-lifecycle-governance。教训：共享工作树里未提交的东西随时可能被第三方卷走，写完即提交，不要留在工作树过夜 —— 这是 §R4.9 最直白的一个实例。",
+      "kind": "process_violation",
+      "node_id": "TF-0102",
+      "op": "record_deviation",
+      "related_task_ids": [
+        "TF-0102",
+        "TF-0126"
+      ],
+      "summary": "第三方进程（非本轮任何车道）把 round 前的 345 项孤儿改动提交为五个 in-flight checkpoint 提交（63c899c1d / a5ac378ef / 2b03f5435 / 58fe04f90 / e963ae528）并把 codex/model-error-gap-fill 合并进 feat/runtime-lifecycle-governance（e5ab0546c）。docs/dev/context-moat/HANDOFF-lane-1.md 写成后尚未提交，被 2b03f5435 一并卷走；该提交无 Task: / Lane: trailer，故本文件不落在任何 task 的 §R3 半径内。内容完好，仅归属缺失。"
+    },
+    {
+      "decided_by": "lane-1 在写车道 1 交接文档时实测发现。§D4 与 GATE-BASELINE.md 是车道 2 的 owner 节，故**仅登记与路由，不跨节编辑**（§R4 禁止跨节编辑）。",
+      "id": "TFD-d4-subject-files-dirty-basis-invalidated-2026-08-25",
+      "impact": "这 7 条必须重测：要么现已转绿（白名单缩小，§D4 允许「只减不增」，属安全方向），要么仍红但根因已变、basis 须改写。在重测前，以 subject-files-dirty 为由的豁免不可再被引用作为「非本轮引起」的证明。另：pnpm_test 基线数字 baselineFailedFiles=17 / baselineFailedTests=22 也已过期，车道 1 在 TF-0128 收口时实测 16 个失败文件。两者宜在同一次 L2 里程碑门重测中一并更新。",
+      "kind": "gate_baseline_drift",
+      "node_id": "TF-0142",
+      "op": "record_deviation",
+      "related_task_ids": [
+        "TF-0142",
+        "TF-0102"
+      ],
+      "summary": "GATE-BASELINE.md 的 pnpm_test 白名单中有 7 条豁免的 basis 为 subject-files-dirty，reason 写作「uncommitted src/pages/Chat churn」「uncommitted src/styles churn」「uncommitted knowledge/sekb churn」等。第三方 checkpoint 提交后这些文件已全部提交（实测 git status --porcelain -- src/pages/Chat src/styles openclaw_runtime/src/knowledge/sekb = 0 行），故这 7 条的陈述依据不再成立。"
+    }
+  ],
+  "proposal_id": "prop-lane1-thirdparty-checkpoint-2026-08-25",
+  "rationale": "第三方进程于 2026-08-25 提交了 round 前的 345 项孤儿改动并合并分支，产生两处需登记的后果：车道 1 交接文件的 §R3 归属被卷走，以及 §D4 有 7 条白名单条目的陈述依据被抽掉。",
+  "session_id": null,
+  "status": "applied"
+}

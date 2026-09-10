@@ -1,0 +1,38 @@
+$ node scripts/agent-dev-deep-test.mjs
+$ node scripts/typecheck-agent-dev.mjs
+$ tsc --noEmit -p tsconfig.node.json --composite false
+$ tsc --noEmit -p tsconfig.web.json --composite false
+$ node scripts/contract-check.mjs
+$ node scripts/i18n-lint.mjs
+$ node scripts/agent-dev-workbench.mjs
+$ pnpm --filter @verse-claw/harness start -- "validate" "--spec" "harness/specs/tasks/agent-dev-ecosystem-regularization.md"
+$ node src/cli.mjs "--" "validate" "--spec" "harness/specs/tasks/agent-dev-ecosystem-regularization.md"
+$ pnpm agent-dev:unit:node && pnpm exec vitest run --maxWorkers=1 tests/unit/host-api-facade.test.ts
+$ pnpm exec vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts
+$ node scripts/comms/replay.mjs
+$ node scripts/comms/compare.mjs
+$ node scripts/generate-ext-bridge.mjs
+$ node --max-old-space-size=6144 ./node_modules/vite/bin/vite.js build
+Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+[1m[33mwarn[39m[22m - The class `duration-[280ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;280ms&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `ease-[cubic-bezier(0.22,1,0.36,1)]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `ease-&lsqb;cubic-bezier(0.22,1,0.36,1)&rsqb;` to silence this warning.
+[33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[33m"default" is imported from external module "@shikijs/engine-oniguruma/wasm-inlined" but never used in "../../../../../../../../D:/ClawX/node_modules/.pnpm/shiki@4.3.1/node_modules/shiki/dist/wasm.mjs".[39m
+[33m[plugin vite:reporter]
+(!) [workspace]/electron/utils/store.ts is dynamically imported by [workspace]/electron/gateway/manager.ts but also statically imported by [workspace]/electron/gateway/config-sync.ts, [workspace]/electron/gateway/manager.ts, [workspace]/electron/main/index.ts, [workspace]/electron/main/ipc-handlers.ts, [workspace]/electron/main/launch-at-startup.ts, [workspace]/electron/main/menu.ts, [workspace]/electron/main/proxy.ts, [workspace]/electron/services/agent-dev-api.ts, [workspace]/electron/services/dcs-prod-flags-api.ts, [workspace]/electron/services/gateway-api.ts, [workspace]/electron/services/remote-control-api.ts, [workspace]/electron/services/remote-tasks-api.ts, [workspace]/electron/services/sensitive-capture-gate.ts, [workspace]/electron/services/settings-api.ts, [workspace]/electron/services/support-bundle.ts, [workspace]/electron/services/usage-api.ts, [workspace]/electron/services/work-providers-api.ts, [workspace]/electron/utils/app-version-rollback.ts, [workspace]/electron/utils/control-ui-device-pairing.ts, [workspace]/electron/utils/openclaw-auth.ts, [workspace]/electron/utils/telemetry.ts, dynamic import will not move module into another chunk.
+[39m
+[33m[plugin vite:reporter]
+(!) [workspace]/electron/utils/channel-config.ts is dynamically imported by [workspace]/electron/services/cron-api.ts but also statically imported by [workspace]/electron/gateway/config-sync.ts, [workspace]/electron/gateway/supervisor.ts, [workspace]/electron/services/agents-api.ts, [workspace]/electron/services/channels-api.ts, [workspace]/electron/services/dcs-prod-flags-api.ts, [workspace]/electron/services/mcp-api.ts, [workspace]/electron/services/roles-api.ts, [workspace]/electron/services/workspace-runtime-sync.ts, [workspace]/electron/utils/agent-config.ts, [workspace]/electron/utils/app-version-rollback.ts, [workspace]/electron/utils/openclaw-image-generation.ts, [workspace]/electron/utils/openclaw-proxy.ts, dynamic import will not move module into another chunk.
+[39m
+$ playwright test tests/e2e/agent-dev-quality.spec.ts --workers=2
+$ node scripts/agent-dev-workbench.mjs

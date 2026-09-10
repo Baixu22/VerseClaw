@@ -1,0 +1,26 @@
+{
+  "applied_at": "2026-08-25T16:29:13.271329Z",
+  "base_graph_hash": "f4cf4f42d0911b32232e5610a786d17000de4407c1d026eb04556196e6880c26",
+  "base_summary": {
+    "edge_count": 260,
+    "node_count": 146,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "context_tags": [
+          "tech-debt",
+          "brb-L"
+        ]
+      },
+      "id": "TF-0116"
+    }
+  ],
+  "created_at": "2026-08-25T16:29:13.047438Z",
+  "proposal_id": "prop-lane2-tf0116-brb-raise-ruling-2026-08-26",
+  "rationale": "车道 2 裁决（用户经 4df5f0e05 委派裁决权）：认可 brb-M → brb-L。独立实测：TF-0116 归属提交 6501b37d7 + 6ef4b4740，半径 21 文件（experiments 迁出模块 14 + 迁移的机械后果 6：tsconfig.json、vitest.unit.config.ts、vitest.unit-paths.mjs、block-lifecycle.test.ts、dcs-canary-c1.ts、dcs-corpus-synthetic.ts + tests/unit/runtime-memory-embedding-integration.test.ts + reviews/TF-0116.md 记录），与实现者自报 20-21 一致；触碰面全部为被迁模块自身或迁移的机械后果，无越界文件。超限属与 TF-0110 同类的结构性档位估计缺陷（M 档未计迁移类任务的结构性扩散 + 强制记录文件），非实现越界；§R3.5 拆分在 sum ≤ 15 约束下不可行，landed-unwired 与迁移类交付不符。档位重估为唯一合法且对称的处置（与车道 1 对 TF-0110 的裁决口径一致，prop-lane1-tf0110-brb-raise-2026-08-26）。21 ≤ L=40 PASS。附 cmd3 说明：默认值守卫命中 DEFAULT_RECORDED_REL → DEFAULT_FIXTURE_REL 为迁移模块内文件路径常量改名，非旗标默认值变更，判正则假阳性并如实记录。schema 守卫（命令 2）为 0。",
+  "session_id": "session-lane-2",
+  "status": "applied"
+}

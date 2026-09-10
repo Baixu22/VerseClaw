@@ -1,0 +1,28 @@
+{
+  "applied_at": "2026-08-25T05:13:52.422160Z",
+  "base_graph_hash": "e412af42f4ab30f6439c361b8e783591a56ca76400eb0fbb6b46abf5372b6818",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-25T04:00:00.000000Z",
+        "decided_by": "lane-2, on measurement rather than on the node's summary; every reachability verdict re-derived independently, including a 318-entry published-exports transitive closure validated against buildToolPlan as a known answer",
+        "id": "TFD-lane2-tf0118-dead-export-premise-inverted-2026-08-25",
+        "impact": "AC-1 ('zero-caller exports = 0' over a full scan of src/context-engine and src/agents) is NOT met and cannot be met by this lane as stated, because reaching 0 would require either deleting a guard or writing into another lane's exclusive domain. The metric itself conflicts with D1.5, which already mandates that guard-only modules be counted separately and NOT counted as dead code to be paid down, on the grounds that doing otherwise 'treats the guard itself as technical debt and dismantles the defence'. Recommend AC-1 and success-metric-1 be restated as 'zero-caller exports excluding guard-only = 0'. AC-2 is fully met: memory-policy.ts (47 cases) and root-memory-files.ts (14 passed + 1 skipped) went from zero coverage to covered and are registered in test:dcs, whose first invocation went 20 -> 22 files at exit 0. Both suites are mutation-tested rather than merely green - 9 injected defects, 9 caught - because a suite that cannot fail is indistinguishable from an empty one. One case reports as skipped rather than silently no-opping: unprivileged Windows cannot create symlinks, and the first draft's try/catch-then-return would have displayed an assertion-free test as passed. AC-3 is met with explicit conclusions: buildToolPlan is retained as a published SDK API (package.json exports './plugin-sdk/agent-runtime' -> agent-runtime.ts:28 export * from '../tools/index.js' -> tools/index.ts:11), and each of the four providers is retained as guard-only with its own evidence line. SEPARATE FINDING, fifth D1.2 blind spot: the node's evidence claims commitMemoryProposal has zero callers repo-wide, which is false - tests/unit/role-runtime-mvp.test.ts:164 calls it. The script only walks openclaw_runtime/src, so callers in the repo-root tests/ tree are invisible to it, the same shape as the already-documented published-exports blind spot. Routed to lane 1 for D1.2's known-boundaries list, along with the D11 toucher-registration gap for R4.5. Radius 6 files against brb-M=15; schema and default-value guards both empty; L1 six commands all exit 0.",
+        "kind": "scope_change",
+        "node_id": "TF-0118",
+        "related_task_ids": [],
+        "summary": "TF-0118 requirement-1 mandates verifying each cleanup target with the D1.2 script and ruling out the dynamic-import / string-concat / init.ts / RPC reachability classes before removing anything. Doing that inverted the task's premise: of the four named dead exports, only ONE is actually dead. (1) commitMemoryProposal is genuinely dead and was removed - an 11-line wrapper over the live reviewMemoryProposal, not in the published-barrel closure, no string-keyed registration. (2) register-rebuild-providers plus the four providers (agent-map / symbol / impact / context-pack) are NOT dead: the registrar's only importer is views/capability-routing.test.ts, which is not a test OF the registrar but a 245-line, 11-case, all-passing gate suite for gates H-1 (six intent verbs), H-2 (grep degradation) and H-3 (a 200ms cold-store budget), whose real subjects buildContextPack / createMaterializer / ripgrepSearch / FactStore are all PRODUCTION REACHABLE, and whose first two cases directly assert the four providers' registration and grading semantics. Deleting the registrar would have deleted 11 passing tests over production-reachable code, so all five are classified guard-only per D1.5, retained, not migrated. (3) trace-context-provider.ts has zero importers at all and is the cleanest deletion candidate, but RUNTIME_TRACE_CONTEXT_FLAG_PATHS is PRODUCTION REACHABLE and declares runtime.traceContext.provider, whose executor is precisely this orphan - deleting it now would leave a live flag with no implementation anywhere, which is TF-0137's subject (flag-without-executor adjudication), so it is routed there rather than pre-empted by a tech-debt task. (4) reserveTurnInjectionCapacity lives in src/context-engine/turn-injection-budget.ts = D11, registered in R4.5 as lane-1 exclusive with touchers TF-0117 / TF-0128; TF-0118 is NOT a registered D11 toucher and TF-0117 is lane 1's very next task editing that same file, so editing it here would be exactly the same-domain cross-lane concurrent write that caused both of this round's real incidents. Routed to lane 1."
+      }
+    }
+  ],
+  "created_at": "2026-08-25T05:13:40.996014Z",
+  "proposal_id": "TFP-9f351b39b2",
+  "session_id": "session-2026-08-24-lane-2",
+  "status": "applied"
+}

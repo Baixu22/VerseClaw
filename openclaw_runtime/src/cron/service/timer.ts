@@ -1445,7 +1445,10 @@ export async function executeJobCore(
   if (abortSignal?.aborted) {
     return resolveAbortError();
   }
-  if (job.sessionTarget === "main") {
+  // A timer continuation has no session semantics — it only records that a
+  // deadline passed — so it always takes the detached path regardless of
+  // sessionTarget, rather than being routed into a main-session enqueue.
+  if (job.sessionTarget === "main" && job.payload.kind !== "missionContinuation") {
     return await executeMainSessionCronJob(state, job, abortSignal, waitWithAbort);
   }
 
@@ -1632,8 +1635,35 @@ async function executeDetachedCronJob(
     };
   }
 
+  if (job.payload.kind === "missionContinuation") {
+    if (!state.deps.runMissionContinuationJob) {
+      const error = "cron mission continuation runner is not configured";
+      return {
+        status: "skipped",
+        error,
+        diagnostics: createCronRunDiagnosticsFromError("cron-preflight", error, {
+          severity: "warn",
+          nowMs: state.deps.nowMs,
+        }),
+      };
+    }
+    const res = await state.deps.runMissionContinuationJob({
+      job,
+      taskId: job.payload.taskId,
+      missionId: job.payload.missionId,
+      abortSignal,
+    });
+    return {
+      status: res.status,
+      error: res.error,
+      summary: res.summary,
+      diagnostics: res.diagnostics,
+    };
+  }
+
   if (job.payload.kind !== "agentTurn") {
-    const error = 'isolated job requires payload.kind="agentTurn" or "command"';
+    const error =
+      'isolated job requires payload.kind="agentTurn", "command" or "missionContinuation"';
     return {
       status: "skipped",
       error,

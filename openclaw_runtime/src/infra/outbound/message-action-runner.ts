@@ -91,6 +91,7 @@ import { ensureOutboundSessionEntry, resolveOutboundSessionRoute } from "./outbo
 import { normalizeTargetForProvider } from "./target-normalization.js";
 import { resolveChannelTarget, type ResolvedMessagingTarget } from "./target-resolver.js";
 import { extractToolPayload } from "./tool-payload.js";
+import type { ContentProvenanceContext } from "../../../../shared/security/content-provenance.js";
 
 export type MessageActionRunnerGateway = {
   url?: string;
@@ -116,6 +117,7 @@ export type RunMessageActionParams = {
   cfg: OpenClawConfig;
   action: ChannelMessageActionName;
   params: Record<string, unknown>;
+  provenanceContext?: ContentProvenanceContext;
   defaultAccountId?: string;
   requesterAccountId?: string | null;
   requesterSenderId?: string | null;
@@ -1565,6 +1567,8 @@ export async function runMessageAction(
     toolContext: input.toolContext,
     cfg,
     agentId: resolvedAgentId,
+    provenanceContext: input.provenanceContext,
+    dryRun,
   });
 
   if (action === "send") {

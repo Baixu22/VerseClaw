@@ -112,6 +112,11 @@
     "after": "After"
   },
   "permissionRetryNote": "Approving this request allows the original operation to be retried. It does not replay that operation from the Inbox.",
+  "externalWrite": {
+    "title": "External write requires approval",
+    "summary": "Details withheld; review the risk and choose whether to approve.",
+    "warning": "This effect is outside the ClawX write journal and cannot be automatically rolled back. Approval records the decision only; Inbox does not replay the operation."
+  },
   "actions": {
     "refresh": "Refresh Inbox",
     "back": "Back to list",

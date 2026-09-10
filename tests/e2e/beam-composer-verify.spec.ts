@@ -12,6 +12,7 @@
  */
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
+type BeamReport = Record<string, any>;
 const SESSION_KEY = 'agent:main:main';
 
 function stableStringify(value: unknown): string {
@@ -147,7 +148,7 @@ test('sunset beam wraps composer, lights on sending, menus unclipped', async ({ 
     await expect(page.getByTestId('chat-page')).toBeVisible();
     await expect(page.getByTestId('chat-composer-shell')).toBeVisible();
 
-    const report: Record<string, unknown> = {};
+    const report: BeamReport = {};
 
     // 1. Beam idle — no active attr, but element exists INSIDE the shell
     report.idle = await page.evaluate(() => {
@@ -205,7 +206,7 @@ test('sunset beam wraps composer, lights on sending, menus unclipped', async ({ 
         fading: beam.hasAttribute('data-fading'),
         // beam pseudo-element layers exist with sunset palette
         afterBackground: getComputedStyle(beam, '::after').backgroundImage.slice(0, 120),
-        strengthVar: beam.style.getPropertyValue('--beam-strength'),
+        strengthVar: (beam as HTMLElement).style.getPropertyValue('--beam-strength'),
       };
     });
 

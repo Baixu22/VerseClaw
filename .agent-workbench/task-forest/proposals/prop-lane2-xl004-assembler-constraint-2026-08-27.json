@@ -1,0 +1,57 @@
+{
+  "applied_at": "2026-08-27T14:19:21.968397Z",
+  "base_graph_hash": "0f63cf8636dd6c71be32dd61795cf5a89db1789929b3a2430547a4e044cc66c1",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "assumptions": [
+          "本 task 开工时 TF-0121 的实现已落地且未被回滚；若 TF-0121 被回滚，本 task 的出路 B 自动失去对象，须重估",
+          "本 task 开工时生产侧 archive writer 数仍为 0（TF-0121 收口时实测：archiveLowHeatBlocks / applyContextLadder 均 NOT PRODUCTION REACHABLE，全仓非测试代码对 archiveBlock 零调用，lifecycle_state 的唯一生产写入方是 block-store.ts:182 的 unarchiveBlock recall 路径）。该假设是 requirement-5 assembler lifecycle filter 约束「本轮不必执行」的唯一依据，开工时必须重新实测而不是沿用本条。"
+        ],
+        "requirements": [
+          "裁决 harness/specs/rules/context-family-boundary.md 的 read-only recall 条款与 DCS BlockStore lifecycle page-in 的权属边界：出路 A = 在规范中显式把 DCS BlockStore 认定为 context-family-boundary 已声明不替换的 existing owner store，并写明「哪些 store 的写入不算 read-only recall 违规」的机械判据；出路 B = 把 lifecycle page-in 拆成独立工具面（例如 context_recall_archived），让 context_read 严格只读",
+          "无论选 A 还是 B，都必须处理风险模型缺口：ToolRiskLevel（tool-registration.ts:75）目前只有 readonly/write/destructive 三档且语义绑定 filesystem 写入。要么补一个能表达非 filesystem durable state mutation 的维度，要么书面裁决不补并写明替代的可审计手段。不得继续把 risk=readonly 当作「无 durable mutation」的证明",
+          "若选出路 B，必须同时给出 TF-0121 req-1（ContextReadSchema 的 include_archived）的废止路径与向后兼容处理，并按 §R4.2(a) 记 record_deviation",
+          "收口时必须回填 TF-0121 的 evidence，写明该边界最终落在 A 还是 B，使 TF-0121 的审核链闭合",
+          "承接自 TF-0121 的强制约束（迁挂自看板 XL-004，原约束写在已收口的 TF-0121 evidence 里）：assembler 的生产注入路径目前不做 lifecycle 过滤 —— assembler.ts 三处 store.query()（:471/:552/:651）对 lifecycle 与 archived 零处理，filterBlocksByLifecycle 的唯一生产消费者是 context-read-tool.ts:130。当前安全的唯一理由是生产侧 archive writer 数为 0（archiveLowHeatBlocks 与 applyContextLadder 均 NOT PRODUCTION REACHABLE）。**一旦出现生产 archive writer，必须在 assembler 注入路径补 lifecycle filter**，否则归档块会经上述三处 store.query() 静默回流进注入面，使 TF-0121 建立的 archived 语义在注入侧失效。",
+          "转写义务（防本约束再次失联）：本 task 收口时必须先跑 node openclaw_runtime/scripts/check-production-reachable.mjs archiveLowHeatBlocks applyContextLadder 与全仓 archiveBlock grep 重新确认生产侧 archive writer 数。若仍为 0，**不得**把上一条约束随本 task 一起归档，必须把它转写到当时最可能引入 archive writer 的活节点（当前候选 TF-0130 T-C3 定向再注入，因其从 BlockStore 取回单元）并在本 task 的 evidence 记录转写目标；若已非 0，则本 task 必须把 assembler lifecycle filter 列为阻塞项或另立 task。"
+        ]
+      },
+      "id": "TF-0147"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.9,
+        "created_at": "2026-08-27T14:00:00Z",
+        "decided_by": "lane-1 在 TF-0121 复核时按 §R5 范围-2 三分类为 backlog-P1 并指派 lane-2 迁挂（看板 XL-004）；lane-2 落地并补记本 deviation。",
+        "evidence": "AUDIT-BOARD.html XL-004；docs/dev/context-moat/reviews/TF-0121.md §「车道 1 复核判定」三分类 backlog-P1；TF-0121 evidence 第 12 条（AC-4 决策与强制后续约束原文）。",
+        "expected_requirement": "§R4.2(c)：审核或验收发现的问题被判为「本轮不修」（backlog-P1）必须记 record_deviation。§D1 的可归因原则：约束必须挂在会被读到的活节点上。",
+        "id": "TFD-lane2-assembler-lifecycle-constraint-migration-2026-08-27",
+        "impact": "约束已迁挂到 TF-0147（proposed，四个候选中唯一非 blocked）的 requirement-5，并附 requirement-6 的转写义务：TF-0147 收口时若生产侧仍无 archive writer，必须把约束转写到当时最可能引入 archive writer 的活节点（当前候选 TF-0130），不得随 TF-0147 一起归档。assumption-2 同时把「archive writer 数为 0」显式登记为可失效前提并要求开工时重新实测。",
+        "kind": "process_gap",
+        "node_id": "TF-0147",
+        "observed_action_or_result": "TF-0121 的 AC-4 决策附带的强制后续约束（出现生产 archive writer 时必须在 assembler 注入路径补 lifecycle filter）只存在于 TF-0121 的 evidence，而 TF-0121 已 done/100 —— 约束在它生效的时刻不可见。lane-1 的 backlog-P1 只落在 reviews/TF-0121.md 的三分类与 XL-004，未落 record_deviation，本条补记。",
+        "recommendation": "机械核对（XL-004 的收口判据）：task_forest.py show TF-0147 --json 后 grep 同时含 assembler 与 lifecycle 且引用 TF-0121 的条目 —— 命中 requirement-5、requirement-6 与 assumption-2。本条不改任何实现、不改任何旗标默认值、零 openclaw_runtime 改动。",
+        "related_task_ids": [
+          "TF-0147",
+          "TF-0121",
+          "TF-0130"
+        ],
+        "severity": "low",
+        "status": "resolved"
+      }
+    }
+  ],
+  "created_at": "2026-08-27T14:19:21.734930Z",
+  "proposal_id": "prop-lane2-xl004-assembler-constraint-2026-08-27",
+  "rationale": "答复看板 XL-004：TF-0121 的 AC-4 决策附带一条强制后续约束（出现生产 archive writer 时必须在 assembler 注入路径补 lifecycle filter），而 TF-0121 已 done —— 约束被归档在不会再被读的节点里，恰好在它生效的时刻不可见。lane-1 判为 backlog-P1 并指派 lane-2 迁挂（TF-0147 与三个 M6 候选节点均非 lane-1 的写入面）。落点选 TF-0147：它是四个候选中唯一非 blocked 的节点，且其裁决对象正是 DCS BlockStore 的 lifecycle 权属边界，与本约束同源。关键设计：requirement 不只是把约束搬一个位置，而是附带转写义务 —— TF-0147 收口时若生产侧仍无 archive writer，必须把该约束转写到当时真正引入 archive writer 的 task。否则 TF-0147 一 done，约束会以完全相同的方式再次失联，即本 issue 的复发。同时补记 §R4.2(c) 要求的 deviation：lane-1 的 backlog-P1 只落在 reviews/TF-0121.md 的三分类里，未落 record_deviation。",
+  "session_id": "session-lane-2",
+  "status": "applied"
+}

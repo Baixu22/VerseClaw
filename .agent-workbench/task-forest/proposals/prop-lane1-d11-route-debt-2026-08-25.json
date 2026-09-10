@@ -1,0 +1,31 @@
+{
+  "applied_at": "2026-08-25T14:06:43.707340Z",
+  "base_graph_hash": "33e2f93f47164c9f1a0823301b1e514d044b9632813ca6bf9afc3ed47deb9cf0",
+  "base_summary": {
+    "edge_count": 260,
+    "node_count": 146,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [],
+  "created_at": "2026-08-25T14:06:43.517668Z",
+  "operations": [
+    {
+      "decided_by": "lane-1（session-2026-08-25-lane-1-successor），依车道 2 审核 671b8ea1b 的 backlog-P1 要求与 §R4.2(c)。",
+      "id": "TFD-d11-reserve-capacity-route-debt-2026-08-25",
+      "impact": "处置决定（车道 1，2026-08-25）：在下一个真实触碰 D11（turn-injection-budget.ts）的车道 1 task 中顺带执行该删除（含对 tests/unit/context-orchestrator-entry-scan.test.ts:68 反向守卫的确认——删后「不引用」仍成立，守卫无需改）；若排班走完仍无 D11 触碰点，则以 proposal 新增一个 brb-S 专件执行。执行时在本偏差追记闭环。该删除本身极小（一个导出 + 其内部引用），不改变任何生产行为（实测 test-only，§D1.2 判不可达），不构成对 B3 冻结面的触碰。",
+      "kind": "scope_change",
+      "node_id": "TF-0117",
+      "op": "record_deviation",
+      "related_task_ids": [
+        "TF-0117",
+        "TF-0118",
+        "TF-0126"
+      ],
+      "summary": "reviews/TF-0118.md F3 中车道 1 接单「删除 turn-injection-budget.ts 的 test-only 导出 reserveTurnInjectionCapacity」（D11，原由车道 2 的 TF-0118 路由），交接文档债表 #1 记为「已接单」。TF-0117 未执行：其 non_goals 明写「不改任何行为，纯注释/文档」，删除导出属行为面改动，正确未纳入；但该延后此前未在图上留痕。车道 2 审核 TF-0117 时按判例（接收了不执行 = 不可审计）记为 backlog-P1 并要求显式处置。"
+    }
+  ],
+  "proposal_id": "prop-lane1-d11-route-debt-2026-08-25",
+  "rationale": "车道 2 审核 TF-0117 时追加的 backlog-P1（671b8ea1b）：交接文档债表 #1 的 reserveTurnInjectionCapacity 删除路由已被车道 1 接单（reviews/TF-0118.md F3），但 TF-0117 未执行（其 non_goals 禁止行为改动，正确），图上无痕。按 §R4.2(c)（审核发现问题判为本轮不修/延后 = 必须记偏差）登记，并明确执行窗口。",
+  "session_id": null,
+  "status": "applied"
+}

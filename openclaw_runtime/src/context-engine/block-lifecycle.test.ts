@@ -1,21 +1,23 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
+  archiveBlock,
   archiveLowHeatBlocks,
   filterBlocksByLifecycle,
   hydrateLifecycleBlock,
+  unarchiveBlock,
   type LifecycleBlock,
 } from "./block-lifecycle.js";
 import type { ContextBlock } from "./block.js";
-import { selectBlocksUnderTokenPressure } from "./token-pressure.js";
+import { selectBlocksUnderTokenPressure } from "../../experiments/token-pressure.js";
 import {
   buildToolOutputArchivePayload,
   compressToolOutputText,
 } from "../agents/tool-output-compress.js";
 import { codingObservability } from "./coding-observability.js";
 import { dcsObservability } from "./dcs-observability.js";
-import { applyContextLadder } from "./context-ladder.js";
+import { applyContextLadder } from "../../experiments/context-ladder.js";
 import { evaluateTaskStateRewrite, taskStateBlockId } from "./task-state-rewrite.js";
-import { evaluateL4SemanticReadiness } from "./l4-semantic-eval.js";
+import { evaluateL4SemanticReadiness } from "../../experiments/l4-semantic-eval.js";
 
 function blk(
   type: LifecycleBlock["block_type"],
@@ -69,6 +71,26 @@ describe("context ladder (C6)", () => {
       archived_at: undefined,
     } as ContextBlock);
     expect(hydrated.lifecycle_state).toBe("archived");
+  });
+
+  it("explicit recall restores active state and increments heat", () => {
+    const archived = archiveBlock(blk("notes", 2));
+    const recalled = unarchiveBlock(archived);
+    expect(recalled.lifecycle_state).toBe("active");
+    expect(recalled.archived_at).toBeUndefined();
+    expect(recalled.heat).toBe(3);
+    expect(recalled.presence).toMatchObject({ lifecycle_state: "active", heat: 3 });
+    expect(recalled.presence.archived_at).toBeUndefined();
+  });
+
+  it("unarchive is a no-op for an already active block", () => {
+    const active = blk("notes", 4);
+    expect(unarchiveBlock(active)).toBe(active);
+  });
+
+  it("recall starts invalid or negative heat at one", () => {
+    expect(unarchiveBlock(archiveBlock(blk("notes", Number.NaN))).heat).toBe(1);
+    expect(unarchiveBlock(archiveBlock(blk("notes", -2))).heat).toBe(1);
   });
 
   it("compresses oversized tool output and keeps archive payload", () => {

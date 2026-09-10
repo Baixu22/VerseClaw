@@ -15,6 +15,9 @@ import {
   validateSessionsResumeCheckpointsParams,
   validateSessionsRestoreCheckpointParams,
   validateSessionsSendParams,
+  validateSessionsStopParams,
+  validateSessionsLifecycleLedgerParams,
+  validateSessionsYieldStateParams,
 } from "../../../packages/gateway-protocol/src/index.js";
 import { renderRecoveryContextProjection } from "../../../packages/agent-core/src/harness/compaction/compression-artifact.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
@@ -33,12 +36,19 @@ import { resolveSessionKeyForRun } from "../server-session-key.js";
 import { resolveSessionStoreAgentId } from "../session-store-key.js";
 import { listSessionCompactionCheckpoints } from "../session-compaction-checkpoints.js";
 import { reactivateCompletedSubagentSession } from "../session-subagent-reactivation.js";
+import { readArmedGoalWaitForSession } from "../../agents/goal-wake-read.js";
+import { collectSessionLifecycleLedger } from "./session-lifecycle-ledger.js";
+import {
+  getLatestSubagentRunByChildSessionKey,
+  listSubagentRunsForRequester,
+} from "../../agents/subagent-registry.js";
 import {
   loadSessionEntry,
   readSessionMessageCountAsync,
   resolveDeletedAgentIdFromSessionKey,
 } from "../session-utils.js";
 import { setGatewayDedupeEntry } from "./agent-wait-dedupe.js";
+import { acquireSessionAdmissionPermit } from "../../sessions/session-admission-registry.js";
 import {
   drainQueuedUserMessagesForSession,
   installQueueDrainCallback,
@@ -70,9 +80,11 @@ import {
   sessionKeyBelongsToAgent,
   resolveScopedAbortKey,
   resolveRequestedGlobalAgentId,
+  resolveGatewaySessionTargetFromKey,
   interruptSessionRunIfActive,
   compressionArtifactFromCheckpoint,
   estimateProjectionTokens,
+  loadSessionsRuntimeModule,
 } from "./sessions.shared.js";
 import { sessionsLifecycleHandlers } from "./sessions.lifecycle.js";
 
@@ -221,98 +233,125 @@ async function handleSessionSend(params: {
     return;
   }
 
-  let interruptedActiveRun = false;
-  if (params.interruptIfActive) {
-    const interruptResult = await interruptSessionRunIfActive({
-      req: params.req,
-      context: params.context,
-      client: params.client,
-      isWebchatConnect: params.isWebchatConnect,
-      requestedKey: key,
-      canonicalKey,
+  const releaseSessionsSendPermit = acquireSessionAdmissionPermit(
+    {
       agentId: requestedAgentId,
-      sessionId: entry.sessionId,
-    });
-    if (interruptResult.error) {
-      params.respond(false, undefined, interruptResult.error);
-      return;
+      canonicalSessionKey: canonicalKey,
+      expectedSessionId: entry.sessionId,
+    },
+    params.interruptIfActive ? "sessions-steer" : "sessions-send",
+  );
+  let interruptedActiveRun = false;
+  // TF-0082: the permit must fence the whole run-start window (steer interrupt,
+  // transcript seq read, chat.send preamble) so a reset/delete racing mid-send
+  // cannot seed a run on a stale generation. It is released as soon as the run
+  // is armed (first respond callback carries the ack/runId) — after that,
+  // reset fences normally and aborts the run through the canonical stop path.
+  let sendStartPermitReleased = false;
+  const releaseSendStartPermitOnce = () => {
+    if (!sendStartPermitReleased) {
+      sendStartPermitReleased = true;
+      releaseSessionsSendPermit();
     }
-    interruptedActiveRun = interruptResult.interrupted;
-  }
-
-  const messageSeq =
-    (await readSessionMessageCountAsync(entry.sessionId, storePath, entry.sessionFile)) + 1;
+  };
   let sendAcked = false;
   let sendPayload: unknown;
   let sendCached = false;
   let startedRunId: string | undefined;
-  const rawIdempotencyKey = (p as { idempotencyKey?: string }).idempotencyKey;
-  const idempotencyKey =
-    typeof rawIdempotencyKey === "string" && rawIdempotencyKey.trim()
-      ? rawIdempotencyKey.trim()
-      : randomUUID();
-  await chatHandlers["chat.send"]({
-    req: params.req,
-    params: {
-      sessionKey: canonicalKey,
-      ...(canonicalKey === "global" && requestedAgentId ? { agentId: requestedAgentId } : {}),
-      message: (p as { message: string }).message,
-      thinking: (p as { thinking?: string }).thinking,
-      attachments: (p as { attachments?: unknown[] }).attachments,
-      timeoutMs: (p as { timeoutMs?: number }).timeoutMs,
-      idempotencyKey,
-    },
-    respond: (ok, payload, error, meta) => {
-      sendAcked = ok;
-      sendPayload = payload;
-      sendCached = meta?.cached === true;
-      startedRunId =
-        payload &&
-        typeof payload === "object" &&
-        typeof (payload as { runId?: unknown }).runId === "string"
-          ? (payload as { runId: string }).runId
-          : undefined;
-      if (ok && shouldAttachPendingMessageSeq({ payload, cached: meta?.cached === true })) {
-        params.respond(
-          true,
-          {
-            ...(payload && typeof payload === "object" ? payload : {}),
-            messageSeq,
-            ...(interruptedActiveRun ? { interruptedActiveRun: true } : {}),
-          },
-          undefined,
-          meta,
-        );
+  try {
+    if (params.interruptIfActive) {
+      const interruptResult = await interruptSessionRunIfActive({
+        req: params.req,
+        context: params.context,
+        client: params.client,
+        isWebchatConnect: params.isWebchatConnect,
+        requestedKey: key,
+        canonicalKey,
+        agentId: requestedAgentId,
+        sessionId: entry.sessionId,
+      });
+      if (interruptResult.error) {
+        params.respond(false, undefined, interruptResult.error);
         return;
       }
-      params.respond(
-        ok,
-        ok && payload && typeof payload === "object"
-          ? {
-              ...payload,
-              ...(interruptedActiveRun ? { interruptedActiveRun: true } : {}),
-            }
-          : payload,
-        error,
-        meta,
-      );
-    },
-    context: params.context,
-    client: params.client,
-    isWebchatConnect: params.isWebchatConnect,
-  });
-  if (sendAcked) {
-    if (shouldAttachPendingMessageSeq({ payload: sendPayload, cached: sendCached })) {
-      await reactivateCompletedSubagentSession({
+      interruptedActiveRun = interruptResult.interrupted;
+    }
+
+    const messageSeq =
+      (await readSessionMessageCountAsync(entry.sessionId, storePath, entry.sessionFile)) + 1;
+    const rawIdempotencyKey = (p as { idempotencyKey?: string }).idempotencyKey;
+    const idempotencyKey =
+      typeof rawIdempotencyKey === "string" && rawIdempotencyKey.trim()
+        ? rawIdempotencyKey.trim()
+        : randomUUID();
+    await chatHandlers["chat.send"]({
+      req: params.req,
+      params: {
         sessionKey: canonicalKey,
-        runId: startedRunId,
+        ...(canonicalKey === "global" && requestedAgentId ? { agentId: requestedAgentId } : {}),
+        message: (p as { message: string }).message,
+        thinking: (p as { thinking?: string }).thinking,
+        attachments: (p as { attachments?: unknown[] }).attachments,
+        timeoutMs: (p as { timeoutMs?: number }).timeoutMs,
+        idempotencyKey,
+      },
+      respond: (ok, payload, error, meta) => {
+        // The first respond (ack/runId or failure) means the run-start window
+        // is over: release the start permit so reset can fence normally.
+        releaseSendStartPermitOnce();
+        sendAcked = ok;
+        sendPayload = payload;
+        sendCached = meta?.cached === true;
+        startedRunId =
+          payload &&
+          typeof payload === "object" &&
+          typeof (payload as { runId?: unknown }).runId === "string"
+            ? (payload as { runId: string }).runId
+            : undefined;
+        if (ok && shouldAttachPendingMessageSeq({ payload, cached: meta?.cached === true })) {
+          params.respond(
+            true,
+            {
+              ...(payload && typeof payload === "object" ? payload : {}),
+              messageSeq,
+              ...(interruptedActiveRun ? { interruptedActiveRun: true } : {}),
+            },
+            undefined,
+            meta,
+          );
+          return;
+        }
+        params.respond(
+          ok,
+          ok && payload && typeof payload === "object"
+            ? {
+                ...payload,
+                ...(interruptedActiveRun ? { interruptedActiveRun: true } : {}),
+              }
+            : payload,
+          error,
+          meta,
+        );
+      },
+      context: params.context,
+      client: params.client,
+      isWebchatConnect: params.isWebchatConnect,
+    });
+    if (sendAcked) {
+      if (shouldAttachPendingMessageSeq({ payload: sendPayload, cached: sendCached })) {
+        await reactivateCompletedSubagentSession({
+          sessionKey: canonicalKey,
+          runId: startedRunId,
+        });
+      }
+      emitSessionsChanged(params.context, {
+        sessionKey: canonicalKey,
+        ...(canonicalKey === "global" && requestedAgentId ? { agentId: requestedAgentId } : {}),
+        reason: interruptedActiveRun ? "steer" : "send",
       });
     }
-    emitSessionsChanged(params.context, {
-      sessionKey: canonicalKey,
-      ...(canonicalKey === "global" && requestedAgentId ? { agentId: requestedAgentId } : {}),
-      reason: interruptedActiveRun ? "steer" : "send",
-    });
+  } finally {
+    releaseSendStartPermitOnce();
   }
 }
 
@@ -650,9 +689,25 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       respond(false, undefined, requestedAgent.error);
       return;
     }
-    const { canonicalKey } = loadSessionEntry(key, {
+    const { entry, canonicalKey } = loadSessionEntry(key, {
       agentId: requestedAgent.agentId,
     });
+    // TF-0082 generation guard: a drain pinned to a previous generation must
+    // never seed a post-reset/forked run. Messages stay queued (fail-closed).
+    if (p.expectedSessionId && entry && entry.sessionId !== p.expectedSessionId) {
+      respond(
+        true,
+        {
+          ok: true,
+          key: canonicalKey,
+          drained: false,
+          queueCount: countLongTaskQueuedMessages(canonicalKey),
+          reason: "generation-mismatch",
+        },
+        undefined,
+      );
+      return;
+    }
     const defaultAgentId = resolveDefaultAgentId(cfg);
     if (
       hasTrackedActiveSessionRun({
@@ -677,7 +732,9 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       return;
     }
     installQueueDrainCallback(context);
-    const result = await drainQueuedUserMessagesForSession(context, canonicalKey);
+    const result = await drainQueuedUserMessagesForSession(context, canonicalKey, {
+      expectedSessionId: p.expectedSessionId,
+    });
     respond(
       true,
       {
@@ -687,6 +744,180 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
         queueCount: result.queueCount,
         messageCount: result.messageCount,
         ...(result.reason ? { reason: result.reason } : {}),
+      },
+      undefined,
+    );
+  },
+  /**
+   * TF-0082 owner path 6: read-only yield / goal-wait surface.
+   *
+   * Arming stays tool-only — `sessions_yield` ends the caller's own turn and
+   * `goal_wait` binds mission/tick identity from the live run context, so an
+   * out-of-turn RPC could only either duplicate `chat.abort` or arm a wait on
+   * somebody else's mission. This method reports the resulting state instead,
+   * so a caller can tell "parent yielded, waiting for N children" from "mission
+   * asleep on a goal wait" without polling a subagent roster.
+   */
+  "sessions.yieldState": ({ params, respond, context }) => {
+    if (
+      !assertValidParams(params, validateSessionsYieldStateParams, "sessions.yieldState", respond)
+    ) {
+      return;
+    }
+    const p = params as {
+      key: string;
+      agentId?: string;
+      expectedSessionId?: string;
+    };
+    const key = requireSessionKey(p.key, respond);
+    if (!key) {
+      return;
+    }
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
+      return;
+    }
+    const { entry, canonicalKey } = loadSessionEntry(key, { agentId: requestedAgent.agentId });
+    const sessionId = entry?.sessionId?.trim() ? entry.sessionId : null;
+    const emptyYield = { paused: false, wakeOnDescendantSettle: false, pendingChildren: 0 };
+    // Fail closed the same way queueDrain does: never describe a generation the
+    // caller did not ask about.
+    if (p.expectedSessionId && entry && entry.sessionId !== p.expectedSessionId) {
+      respond(
+        true,
+        {
+          ok: true,
+          key: canonicalKey,
+          sessionId,
+          reason: "generation-mismatch",
+          yield: emptyYield,
+          goalWait: { armed: false },
+        },
+        undefined,
+      );
+      return;
+    }
+
+    let parentRun: ReturnType<typeof getLatestSubagentRunByChildSessionKey> | undefined;
+    let pendingChildren: number;
+    try {
+      parentRun = getLatestSubagentRunByChildSessionKey(canonicalKey) ?? undefined;
+      // A child run counts as pending while it has not ended, and also while it
+      // is parked by its own sessions_yield — a paused child still owes the
+      // parent exactly one continuation.
+      pendingChildren = listSubagentRunsForRequester(canonicalKey).filter(
+        (run) => !run.endedAt || run.pauseReason === "sessions_yield",
+      ).length;
+    } catch {
+      // Fail closed: a partially-read registry must not be reported as state.
+      parentRun = undefined;
+      pendingChildren = 0;
+    }
+    const paused = parentRun?.pauseReason === "sessions_yield";
+
+    let armed: ReturnType<typeof readArmedGoalWaitForSession>;
+    try {
+      armed = readArmedGoalWaitForSession(canonicalKey);
+    } catch {
+      armed = undefined;
+    }
+
+    respond(
+      true,
+      {
+        ok: true,
+        key: canonicalKey,
+        sessionId,
+        yield: {
+          paused,
+          ...(paused && parentRun?.runId ? { runId: parentRun.runId } : {}),
+          ...(paused && parentRun?.requesterSessionKey
+            ? { parentSessionKey: parentRun.requesterSessionKey }
+            : {}),
+          ...(paused && parentRun?.requesterSessionId
+            ? { parentSessionId: parentRun.requesterSessionId }
+            : {}),
+          wakeOnDescendantSettle: paused && parentRun?.wakeOnDescendantSettle === true,
+          pendingChildren,
+          ...(paused && typeof parentRun?.endedAt === "number"
+            ? { updatedAt: Math.max(0, Math.trunc(parentRun.endedAt)) }
+            : {}),
+        },
+        goalWait: armed
+          ? {
+              armed: true,
+              flowId: armed.flowId,
+              status: armed.status,
+              updatedAt: Math.max(0, Math.trunc(armed.updatedAt)),
+              ...(armed.taskId ? { taskId: armed.taskId } : {}),
+              ...(armed.missionId ? { missionId: armed.missionId } : {}),
+              ...(armed.turnBarrier ? { turnBarrier: armed.turnBarrier } : {}),
+              ...(armed.runId ? { runId: armed.runId } : {}),
+              ...(armed.ownerEpoch ? { ownerEpoch: armed.ownerEpoch } : {}),
+              ...(typeof armed.timeoutMs === "number"
+                ? { timeoutMs: Math.max(0, Math.trunc(armed.timeoutMs)) }
+                : {}),
+            }
+          : { armed: false },
+      },
+      undefined,
+    );
+  },
+  /**
+   * TF-0084 owner path 1: read-only lifecycle ledger.
+   *
+   * Reports the transitions the lifecycle owners already record, joined into one
+   * ordered list with the owner and the generation each one pinned. It adds no
+   * writer and no second identity source; an owner this projection cannot read
+   * is declared in `declaredGaps` instead of being dropped, so a caller can tell
+   * a covered lifecycle from a coverage gap.
+   */
+  "sessions.lifecycleLedger": ({ params, respond, context }) => {
+    if (
+      !assertValidParams(
+        params,
+        validateSessionsLifecycleLedgerParams,
+        "sessions.lifecycleLedger",
+        respond,
+      )
+    ) {
+      return;
+    }
+    const p = params as { key: string; agentId?: string; expectedSessionId?: string };
+    const key = requireSessionKey(p.key, respond);
+    if (!key) {
+      return;
+    }
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
+      return;
+    }
+    const { entry, canonicalKey } = loadSessionEntry(key, { agentId: requestedAgent.agentId });
+    const ledger = collectSessionLifecycleLedger(canonicalKey, {
+      session: {
+        sessionId: entry?.sessionId?.trim() ? entry.sessionId : null,
+        ...(typeof entry?.sessionStartedAt === "number"
+          ? { startedAt: entry.sessionStartedAt }
+          : {}),
+        ...(typeof entry?.updatedAt === "number" ? { updatedAt: entry.updatedAt } : {}),
+      },
+      ...(p.expectedSessionId ? { expectedSessionId: p.expectedSessionId } : {}),
+    });
+    respond(
+      true,
+      {
+        ok: true,
+        key: ledger.sessionKey || canonicalKey,
+        sessionId: ledger.sessionId,
+        ...(ledger.reason ? { reason: ledger.reason } : {}),
+        entries: ledger.entries,
+        census: ledger.census,
+        declaredGaps: ledger.declaredGaps,
+        capturedAt: ledger.capturedAt,
       },
       undefined,
     );
@@ -884,5 +1115,40 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
         reason: "abort",
       });
     }
+  },
+  "sessions.stop": async ({ params, respond, context }) => {
+    if (!assertValidParams(params, validateSessionsStopParams, "sessions.stop", respond)) {
+      return;
+    }
+    const key = requireSessionKey(params.key, respond);
+    if (!key) {
+      return;
+    }
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, params.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
+      return;
+    }
+    const { target } = resolveGatewaySessionTargetFromKey(key, cfg, {
+      agentId: requestedAgent.agentId,
+    });
+    const { entry, legacyKey, canonicalKey } = loadSessionEntry(key, {
+      agentId: requestedAgent.agentId,
+    });
+    const { stopSessionRuntime } = await loadSessionsRuntimeModule();
+    const result = await stopSessionRuntime({
+      cfg,
+      key,
+      target,
+      entry,
+      legacyKey,
+      canonicalKey,
+    });
+    if (!result.ok) {
+      respond(false, undefined, result.error);
+      return;
+    }
+    respond(true, { ok: true, key: result.key }, undefined);
   },
 };

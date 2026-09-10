@@ -1,0 +1,31 @@
+{
+  "applied_at": "2026-08-24T14:27:49.318966Z",
+  "base_graph_hash": "851714e2c7d5434e4fa2e1443fc7d8f1a19aff4a8e19de5aa324789b610840b0",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-24T14:27:22.106769Z",
+        "decided_by": "lane-1 自检（提交后 git show --stat 发现 D07 两文件在列，立即回滚修正）",
+        "id": "TFD-lane1-index-bleed-2026-08-24",
+        "impact": "无内容损失、无跨车道内容污染，两条提交历史仍可干净剥离。根因是 `git add <路径>` 只控制本次新增暂存，而 `git commit`（无 pathspec）提交的是整个 index —— 当另一车道在 add 与 commit 之间 stage 了自己的文件时即被裹入。纠正措施已固化：本车道此后所有 commit 一律用 `git commit -- <显式路径>` 形式，使提交与暂存区其余内容解耦。",
+        "kind": "process_incident",
+        "node_id": "TF-0105",
+        "related_task_ids": [
+          "TF-0105",
+          "TF-0145"
+        ],
+        "summary": "TF-0105 首次提交时，git commit 取整个暂存区，误将车道 2 在途的 D07 配置改动（config/runtime-feature-leaves.ts 删 candidateGeneration 叶子、config/types.openclaw.ts 删对应类型）一并写入本车道提交。已 git reset --soft HEAD~1 + git restore --staged 剥离，车道 2 工作树内容经 git hash-object 校验字节不变（4c0101811 / 679d9f402），随后以 pathspec 限定的 git commit -- <两个文档路径> 重新提交（4a4c91634）。车道 2 的改动仍完整留在工作树，未被提交、未被 stash、未丢失。"
+      }
+    }
+  ],
+  "created_at": "2026-08-24T14:27:22.096782Z",
+  "proposal_id": "TFP-1802803229",
+  "session_id": "lane-1",
+  "status": "applied"
+}

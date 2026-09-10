@@ -1012,7 +1012,7 @@ function fact(
             evidenceRefs: evidenceRefs(),
           },
         }),
-  });
+  } as never);
 }
 
 function candidate(

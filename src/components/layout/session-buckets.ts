@@ -73,7 +73,12 @@ export function isSessionVisibleInWorkspace(params: {
 export type SidebarSessionEntry = {
   session: ChatSession;
   activityMs: number;
+  isPinned?: boolean;
+  isUnread?: boolean;
+  isPriority?: boolean;
 };
+
+export type SidebarSessionSort = 'newest' | 'active' | 'priority';
 
 export type SidebarWorkspaceSessionGroup = {
   workspace: WorkspaceProfile;
@@ -85,6 +90,30 @@ function compareActivityDesc(left: { activityMs: number }, right: { activityMs: 
   return right.activityMs - left.activityMs;
 }
 
+/** Sort conversation rows while keeping pinned conversations above every mode. */
+export function compareSidebarSessionEntries(
+  left: SidebarSessionEntry,
+  right: SidebarSessionEntry,
+  sort: SidebarSessionSort = 'newest',
+): number {
+  if (left.isPinned !== right.isPinned) return left.isPinned ? -1 : 1;
+  if (sort === 'active') {
+    const countDelta = (right.session.messageCount ?? 0) - (left.session.messageCount ?? 0);
+    if (countDelta !== 0) return countDelta;
+  } else if (sort === 'priority') {
+    const priorityDelta = Number(Boolean(right.isPriority)) - Number(Boolean(left.isPriority));
+    if (priorityDelta !== 0) return priorityDelta;
+  }
+  return compareActivityDesc(left, right);
+}
+
+export function sortSidebarSessionEntries(
+  entries: SidebarSessionEntry[],
+  sort: SidebarSessionSort = 'newest',
+): SidebarSessionEntry[] {
+  return entries.slice().sort((left, right) => compareSidebarSessionEntries(left, right, sort));
+}
+
 function getWorkspaceActivityMs(workspace: WorkspaceProfile, sessions: SidebarSessionEntry[]): number {
   const sessionActivityMs = sessions[0]?.activityMs ?? 0;
   return Math.max(
@@ -93,6 +122,14 @@ function getWorkspaceActivityMs(workspace: WorkspaceProfile, sessions: SidebarSe
     workspace.updatedAt ?? 0,
     workspace.createdAt ?? 0,
   );
+}
+
+function getProfileSessionKeys(workspace: WorkspaceProfile): Set<string> {
+  return new Set<string>([
+    ...Object.keys(workspace.sessionStates ?? {}),
+    workspace.activeSessionKey,
+    ...Object.values(workspace.agentBindings ?? {}).map((binding) => binding.sessionKey),
+  ].filter((key): key is string => Boolean(key)));
 }
 
 export function getWorkspaceSessionKeys(workspaces: WorkspaceProfile[]): Set<string> | null {
@@ -139,14 +176,19 @@ export function buildSidebarWorkspaceSessionGroups(params: {
 }): SidebarWorkspaceSessionGroup[] {
   const currentAgentId = getAgentIdFromSessionKey(params.currentSessionKey);
   const sessionsByKey = new Map(params.sessions.map((session) => [session.key, session]));
+  /* A malformed/legacy profile can claim the same transcript in more than one
+     project. Pick one owner before rendering so project-local grouping cannot
+     leak a session (or its folder) into a sibling project. */
+  const ownerBySessionKey = new Map<string, string>();
+  for (const workspace of params.workspaces) {
+    for (const sessionKey of getProfileSessionKeys(workspace)) {
+      if (!ownerBySessionKey.has(sessionKey)) ownerBySessionKey.set(sessionKey, workspace.id);
+    }
+  }
 
   return params.workspaces
     .map((workspace) => {
-      const sessionKeys = new Set<string>([
-        ...Object.keys(workspace.sessionStates ?? {}),
-        workspace.activeSessionKey,
-        ...Object.values(workspace.agentBindings ?? {}).map((binding) => binding.sessionKey),
-      ].filter(Boolean));
+      const sessionKeys = getProfileSessionKeys(workspace);
       if (workspace.id === params.workspaces.find((candidate) => (
         candidate.sessionStates?.[params.currentSessionKey]
         || candidate.activeSessionKey === params.currentSessionKey
@@ -155,6 +197,7 @@ export function buildSidebarWorkspaceSessionGroups(params: {
         sessionKeys.add(params.currentSessionKey);
       }
       const sessions = Array.from(sessionKeys)
+        .filter((sessionKey) => ownerBySessionKey.get(sessionKey) === workspace.id)
         .map((sessionKey) => sessionsByKey.get(sessionKey) ?? (
           params.includeSyntheticCurrent !== false && sessionKey === params.currentSessionKey
           ? { key: sessionKey, displayName: sessionKey }
@@ -190,19 +233,20 @@ export type SidebarWorkspaceFolderGroups = {
 };
 
 /**
- * Build a folder-tree view of a workspace's sessions. Sessions whose key is
- * present in `sessionFolderAssignments` are placed under the assigned folder;
- * the rest fall through to `rootSessions`. Folders are nested according to
- * `parentId` and ordered by `folder.order` then `createdAt`. Empty folders
- * are preserved so the sidebar can render the folder shell even when it has
- * no sessions yet (lets the user drop sessions into it).
+ * Build the folder view for one workspace. A workgroup is intentionally a
+ * single root-level bucket: legacy `parentId` values are ignored at the
+ * boundary so old persisted data cannot recreate a second nesting level.
+ * Sessions without a valid assignment stay in the activity-sorted root list.
+ * Empty folders are preserved so the sidebar can render the folder shell even
+ * when it has no sessions yet.
  */
 export function buildSidebarWorkspaceFolderGroups(params: {
   sessions: SidebarSessionEntry[];
   folders: SessionFolder[];
   assignments: Record<string, string>;
+  sort?: SidebarSessionSort;
 }): SidebarWorkspaceFolderGroups {
-  const { sessions, folders, assignments } = params;
+  const { sessions, folders, assignments, sort = 'newest' } = params;
   const foldersById = new Map(folders.map((folder) => [folder.id, folder]));
   const sessionsByFolder = new Map<string, SidebarSessionEntry[]>();
   const rootSessions: SidebarSessionEntry[] = [];
@@ -223,29 +267,17 @@ export function buildSidebarWorkspaceFolderGroups(params: {
     return a.createdAt - b.createdAt;
   });
 
-  const childrenByParent = new Map<string | null, SessionFolder[]>();
-  for (const folder of sortedFolders) {
-    const parentKey = folder.parentId ?? null;
-    const list = childrenByParent.get(parentKey) ?? [];
-    list.push(folder);
-    childrenByParent.set(parentKey, list);
-  }
-
-  const buildNode = (folder: SessionFolder, depth: number): SidebarFolderNode => {
-    const childFolders = childrenByParent.get(folder.id) ?? [];
-    const ownSessions = (sessionsByFolder.get(folder.id) ?? []).slice().sort(compareActivityDesc);
-    return {
-      folder,
-      depth,
-      sessions: ownSessions,
-      children: childFolders.map((child) => buildNode(child, depth + 1)),
-    };
-  };
-
-  const rootFolders = childrenByParent.get(null) ?? [];
   return {
-    rootSessions: rootSessions.sort(compareActivityDesc),
-    folders: rootFolders.map((folder) => buildNode(folder, 0)),
+    rootSessions: sortSidebarSessionEntries(rootSessions, sort),
+    folders: sortedFolders.map((folder) => ({
+      // Normalize the persisted shape as well as the rendered shape. This
+      // keeps all callers on the same one-level contract, including mock data
+      // and older workspace snapshots that still carry a parentId.
+      folder: { ...folder, parentId: null },
+      depth: 0,
+      sessions: sortSidebarSessionEntries(sessionsByFolder.get(folder.id) ?? [], sort),
+      children: [],
+    })),
   };
 }
 

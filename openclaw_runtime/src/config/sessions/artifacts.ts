@@ -139,6 +139,10 @@ export function formatSessionArchiveTimestamp(nowMs = Date.now()): string {
   return timestampMsToIsoFileStamp(nowMs);
 }
 
+export function isSessionArchiveTimestamp(value: string): boolean {
+  return ARCHIVE_TIMESTAMP_RE.test(value);
+}
+
 function restoreSessionArchiveTimestamp(raw: string): string {
   const [datePart, timePart] = raw.split("T");
   if (!datePart || !timePart) {

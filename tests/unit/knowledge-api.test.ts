@@ -116,7 +116,7 @@ describe('knowledge host API', () => {
       },
     }));
     const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
-    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never, runtimeLessonsReporter });
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never, runtimeLessonsReporter: runtimeLessonsReporter as never });
 
     await expect(api.runtimeLessonsReport()).resolves.toMatchObject({
       success: true,

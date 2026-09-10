@@ -57,7 +57,7 @@ function completionBundle(overrides: Partial<OrchestrationResultBundle> = {}): O
     memoryProposals: [],
     traceIds: ['trace-runtime-p4'],
     ...overrides,
-  };
+  } as OrchestrationResultBundle;
 }
 
 const blackboardSummary: BlackboardSynthesisSummary = {

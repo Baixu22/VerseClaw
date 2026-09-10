@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import type { SpawnOptions } from "node:child_process";
+import { realpathSync } from "node:fs";
 import { EventEmitter } from "node:events";
 import path from "node:path";
 import { PassThrough, Writable } from "node:stream";
@@ -106,7 +107,16 @@ class FakeChild extends EventEmitter {
 
 function canonicalWorkspaceId(workspace: string): string {
   const resolved = path.resolve(workspace);
-  const canonical = process.platform === "win32" ? resolved.replace(/\\/g, "/").toLowerCase() : resolved;
+  // Mirror the manager's canonicalWorkspace contract: realpath first (junctions
+  // and symlinks must resolve to the same workspace id), then normalize.
+  let canonical = resolved;
+  try {
+    canonical = realpathSync(resolved);
+  } catch {
+    // Workspace may not exist on disk in some fixtures; path.resolve is the
+    // best available canonical form there.
+  }
+  if (process.platform === "win32") canonical = canonical.replace(/\\/g, "/").toLowerCase();
   return `ws_sha256_${createHash("sha256").update(canonical).digest("hex")}`;
 }
 
@@ -620,15 +630,25 @@ describe("VerseShellProcessManager", () => {
     const config = baseConfig();
     let handshakeChild: FakeChild | undefined;
     let handshakeRequest: Request | undefined;
+    // Deterministic hold: resolve exactly when the manager has written the
+    // handshake request to the fake child's stdin. That write happens strictly
+    // after `state = "handshaking"` (process-manager start()) and strictly
+    // before any response, so awaiting this signal observes the handshaking
+    // state without gambling on scheduler timing (issue #42).
+    let captureHandshake: () => void = () => {};
+    const handshakeCaptured = new Promise<void>((resolve) => {
+      captureHandshake = resolve;
+    });
     const h = harness((request, _child) => {
       if (request.op !== "runtime.handshake") return;
       handshakeRequest = request;
       handshakeChild = _child;
+      captureHandshake();
       // Keep readiness pending long enough to inspect the handshaking state.
     });
     managers.push(h.manager);
     const pendingClient = h.manager.getClient(config);
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await handshakeCaptured;
     expect(h.manager.list()[0]?.state).toBe("handshaking");
 
     handshakeChild!.respond(handshakeRequest!, { data: handshakeData(config) });

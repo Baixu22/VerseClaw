@@ -99,7 +99,7 @@ const VERSE_CLAW_GIT_MCP_SERVER: McpServerConfig = {
   ownerId: '*',
   networkPolicy: 'disabled',
   runtimeStatus: 'connected',
-  toolCount: 30,
+  toolCount: 36,
   createdAt: 1,
   updatedAt: 1,
 };
@@ -133,6 +133,35 @@ const VERSE_CLAW_GIT_MCP_TOOLS = [
         mode: { type: 'string', enum: ['unstaged', 'staged'] },
       },
       required: ['path'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_apply_patch',
+    description: 'Apply a unified diff to the active workspace with preflight/apply/revert modes. Apply and revert require host approval.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        patch: { type: 'string' },
+        mode: { type: 'string', enum: ['preflight', 'apply', 'revert'] },
+        approvalId: { type: 'string' },
+      },
+      required: ['patch'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_diff_to_base',
+    description: 'Diff HEAD against its nearest remote ancestor (explicit base, upstream, the remote default branch, or the nearest remote-tracking ancestor). Read-only. Reports how the base was resolved, or unavailable when no remote ancestor exists.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        base: { type: 'string' },
+        paths: { type: 'array', items: { type: 'string' } },
+        includePatches: { type: 'boolean' },
+      },
       additionalProperties: false,
     },
     serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
@@ -365,6 +394,48 @@ const VERSE_CLAW_GIT_MCP_TOOLS = [
         setUpstream: { type: 'boolean' },
         approvalId: { type: 'string' },
       },
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_reflog',
+    description: 'Read the complete local Git reference lifecycle for the active workspace repository.',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'number' } },
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_merge',
+    description: 'Merge a branch through the host approval flow.',
+    inputSchema: {
+      type: 'object',
+      properties: { ref: { type: 'string' }, noFastForward: { type: 'boolean' }, approvalId: { type: 'string' } },
+      required: ['ref'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_rebase',
+    description: 'Rebase the current branch through the host approval flow.',
+    inputSchema: {
+      type: 'object',
+      properties: { ref: { type: 'string' }, approvalId: { type: 'string' } },
+      required: ['ref'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'git_reset',
+    description: 'Reset repository state through the host approval flow.',
+    inputSchema: {
+      type: 'object',
+      properties: { ref: { type: 'string' }, mode: { type: 'string', enum: ['soft', 'mixed', 'hard'] }, approvalId: { type: 'string' } },
       additionalProperties: false,
     },
     serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
@@ -1171,6 +1242,20 @@ async function callClawxGitTool(
         path: typeof args.path === 'string' ? args.path : '',
         mode: args.mode === 'staged' ? 'staged' : 'unstaged',
       });
+    case 'git_apply_patch':
+      return await gitApi.applyPatch({
+        patch: typeof args.patch === 'string' ? args.patch : '',
+        mode: args.mode === 'apply' || args.mode === 'revert' ? args.mode : 'preflight',
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_diff_to_base':
+      return await gitApi.diffToBase({
+        base: normalizeString(args.base),
+        paths: Array.isArray(args.paths) ? args.paths.filter((entry): entry is string => typeof entry === 'string') : [],
+        // Agents read the diff itself, not just a count, so patches are on
+        // here even though the host default is off.
+        includePatches: args.includePatches !== false,
+      });
     case 'git_stage':
       return await gitApi.stage({
         paths: Array.isArray(args.paths) ? args.paths.filter((entry): entry is string => typeof entry === 'string') : [],
@@ -1259,6 +1344,27 @@ async function callClawxGitTool(
         remote: normalizeString(args.remote),
         branch: normalizeString(args.branch),
         setUpstream: args.setUpstream === true,
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_reflog':
+      return await gitApi.reflog({
+        limit: typeof args.limit === 'number' ? args.limit : undefined,
+      });
+    case 'git_merge':
+      return await gitApi.merge({
+        ref: typeof args.ref === 'string' ? args.ref : '',
+        noFastForward: args.noFastForward === true,
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_rebase':
+      return await gitApi.rebase({
+        ref: typeof args.ref === 'string' ? args.ref : '',
+        approvalId: normalizeString(args.approvalId),
+      });
+    case 'git_reset':
+      return await gitApi.reset({
+        ref: normalizeString(args.ref),
+        mode: args.mode === 'soft' || args.mode === 'hard' ? args.mode : 'mixed',
         approvalId: normalizeString(args.approvalId),
       });
     case 'github_auth_status':

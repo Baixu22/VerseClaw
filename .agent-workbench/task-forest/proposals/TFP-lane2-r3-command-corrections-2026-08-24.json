@@ -1,0 +1,34 @@
+{
+  "applied_at": "2026-08-24T17:44:26.557148Z",
+  "base_graph_hash": "4297364867e33fd6daed3aee23426d9ae8b19165cbe7e2cdaa18e818e4b84a69",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-24T18:05:00.000000Z",
+        "decided_by": "lane-2 during TF-0107 §R3 authoring; both corrections established by measurement on already-landed commits, not by argument",
+        "id": "TFD-lane2-r3-command-corrections-2026-08-24",
+        "impact": "No weakening of the gate; both corrections remove false verdicts. Correction 1 removes false FAILs caused by concurrency (and would equally have removed false PASSes had the range excluded the task's own later commits). Correction 2 removes a systematic false FAIL that would have fired on every compliant task, which in practice would have led reviewers to ignore command 3 entirely — a guard that always fires is equivalent to no guard. Prerequisite introduced: radius attribution needs machine-readable commit->task mapping, but the two lanes used different trailers (lane-1 `Node:`, lane-2 `Refs`), one commit (fe469cbff) had none, and both lanes share the same git author. §R3.8 therefore mandates a single `Task: TF-XXXX` trailer, one per commit, from M1 onward, with a back-compat matcher accepting Task:|Refs|Node: for M0's already-landed commits. fe469cbff's missing attribution is recorded as a known pre-existing instance and is NOT retroactively rewritten (§R5 technical-7 forbids rewriting history). SECOND ITEM, registry gap: command 2 guards '*zod-schema*', but §R4.5's D01-D14 table contains no domain covering openclaw_runtime/src/config/zod-schema.ts, while TF-0112's title ('factViews removed from schema/type') requires modifying it. The file is touched only by lane-2 tasks (none of lane-1's seven exclusive domains include it), so there is no cross-lane risk, but §R4.5's own rule is that newly found domains MUST be registered. lane-2 cannot add the row because §R4 is lane-1-owned and cross-section editing is forbidden; requesting lane-1 add D15 zod-schema.ts -> TF-0112 (lane 2).",
+        "kind": "scope_change",
+        "node_id": "TF-0107",
+        "related_task_ids": [
+          "TF-0107",
+          "TF-0109",
+          "TF-0112",
+          "TF-0145"
+        ],
+        "summary": "§R3 deviates from TF-0107 requirements-1 in two ways, each with measured evidence. (1) RADIUS SCOPE: the literal `git diff --name-only <task-start-ref>..HEAD | wc -l` misattributes the other lane's changes under interleaved two-lane commits. Measured on TF-0109: its own two commits (eb532b5c7, f0a82ce04) union to 3 files, while the literal range eb532b5c7^..f0a82ce04 yields 5, wrongly including lane-1's DEV-PROTOCOL.md and reviews/TF-0105.md from 4a4c91634. TF-0109's max_brb is S=5, so the literal form sits exactly at the cap — one further lane-1 commit would have hard-FAILed a fully compliant task on another lane's work. §R3.1 therefore measures `git show --pretty=\"\" --name-only <the task's own commits> | sort -u | wc -l`. (2) DEFAULT-VALUE GREP SCOPE: the literal grep over the whole diff fires on documentation prose. Measured on TF-0109 it hit a line inside reviews/TF-0109.md discussing `defaultValue:false`, although TF-0109 changed no default. This is systematic rather than incidental, because §R1's A2 table REQUIRES every review record to document 'is the flag default off' — so every correctly-documented task would trip a hard FAIL. §R3.1 adds `-- ':!docs' ':!*.md'`. Verified both directions after correction: true negative on TF-0109/TF-0142/TF-0106, and true positive on a synthetic diff covering both `z.boolean().default(false->true)` and `DEFAULT_FLAGS = {...false->true}`."
+      }
+    }
+  ],
+  "created_at": "2026-08-24T17:44:26.359136Z",
+  "proposal_id": "TFP-lane2-r3-command-corrections-2026-08-24",
+  "rationale": "TF-0107's requirements specify three closeout commands verbatim. Two of them produce wrong verdicts in this repository, proven by measurement, so §R3 landed corrected forms instead of transcribing them. Changing a node's specified judgement criteria is a material deviation from spec and must be recorded rather than silently improved — otherwise a reviewer comparing §R3 against the node text would find an unexplained mismatch and could not tell a correction from a drift. Also records a conflict-domain registry gap (zod-schema.ts) that lane-2 cannot fix itself because §R4 is lane-1-owned.",
+  "session_id": "session-2026-08-24-lane-2",
+  "status": "applied"
+}

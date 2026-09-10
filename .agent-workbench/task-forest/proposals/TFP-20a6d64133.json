@@ -1,0 +1,37 @@
+{
+  "applied_at": "2026-09-08T08:31:15.725490Z",
+  "base_graph_hash": "1a2f2b96ba380928b94d584d69a826766baaee17dc950d2c8da5e425302e90a2",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 1.0,
+        "created_at": "2026-09-08T16:10:00Z",
+        "evidence": "artifacts/system-maturity/P6-005/acceptance-matrix.json (A1 PASS/A2 FAIL/A3 PASS, identity.commit=7e4782723, no ref-mismatch validation error); run7.log 13/13 gates; release-source-manifest.json sha256 self-consistent; run in detached %TEMP% clawx-p6-005-rerun-20260908 fresh worktree via Start-Process detached.",
+        "expected_requirement": "Land a contemporary, identity-valid P6-005 evidence set that refreshes F-GOV-003 without rewriting history.",
+        "id": "TFD-tf0127-fgov003-landed-contemporary-evidence-20260908",
+        "kind": "gate_disposal",
+        "node_id": "TF-0127",
+        "observed_action_or_result": "Full 13-gate rerun launched via detached PowerShell Start-Process (fix for the win32 nohup/spawnSync pipe kill that orphaned the prior two attempts) on clean detached worktree at 7e4782723. Results: A1 PASS, A2 FAIL, A3 PASS; identity cleanly bound to refs/heads/feat/runtime-lifecycle-governance @ 7e4782723, manifest reproduces byte-for-byte. 8/13 gates green (preflight, maturity:baseline/plan/gates, contract:check, typecheck, agent-dev:deep-test, test:e2e:agent-dev-quality, release:validate). 5/13 red, ALL pre-existing and unrelated to TF-0127: maturity:validate (P8 fingerprint staleness), test (historical), lint:check (artifact-completion-class), harness:ci (harness/node_modules absent in main tree too), maturity:security:full (1 finding). Evidence landed to artifacts/system-maturity/P6-005/ with STATUS.md documenting honest 8-green/5-red; OLD 8-10 set preserved at P6-005.stale-20260810/.",
+        "owner": "fresh-session-no-lane",
+        "recommendation": "F-GOV-003 stale-evidence concern is resolved: the artifact set is contemporary (2026-09-08) and identity-valid, replacing the stale 8-10 set. Remaining A2 redness is pre-existing historical gate debt (P8 fingerprint sync, lint artifact-completion, harness env, security finding, historical test failures) — to be burned down by their own owners as separate backlog items, not by weakening P6-005 acceptance. Do NOT hide the failures; STATUS.md documents them.",
+        "related_task_ids": [
+          "TF-0127"
+        ],
+        "severity": "info",
+        "status": "closed",
+        "supersede_reason": "Previous closed record (TFD-tf0127-fgov003-rerun-complete-a2-mismatch-20260908) captured the mid-run branch-advance mismatch. This record supersedes it with the final, identity-valid rerun actually landed.",
+        "supersedes": "TFD-tf0127-fgov003-rerun-complete-a2-mismatch-20260908"
+      }
+    }
+  ],
+  "created_at": "2026-09-08T08:30:59.275360Z",
+  "proposal_id": "TFP-20a6d64133",
+  "session_id": "fresh-fgov003-final-20260908",
+  "status": "applied"
+}

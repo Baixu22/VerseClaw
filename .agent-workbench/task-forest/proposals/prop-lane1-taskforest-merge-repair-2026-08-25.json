@@ -1,0 +1,30 @@
+{
+  "applied_at": "2026-08-25T14:03:31.628447Z",
+  "base_graph_hash": "897e88c326dbc438830888396e2baa6880f635ed30c110e5fd279e7a768dd28a",
+  "base_summary": {
+    "edge_count": 260,
+    "node_count": 146,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [],
+  "created_at": "2026-08-25T14:03:31.439946Z",
+  "operations": [
+    {
+      "decided_by": "lane-1（session-2026-08-25-lane-1-successor）：用户于 2026-08-25 明确授权（合并系用户安排，当时仅车道 1 一个会话工作）；合并口径记录于此，parentage 归属如有异议走 proposal 改。",
+      "id": "TFD-taskforest-merge-conflict-repair-2026-08-25",
+      "impact": "用户授权后由车道 1 于 2026-08-25 完成语义合并修复。口径：节点取并集——TF-0006 / TF-0070~TF-0074 采用 main 侧较新版本（保留 ours 独有字段，如 TF-0074.next_action），TF-0075 保留 ours 较新版本，TF-0076 自 main 侧导入；边保留 ours 全部 257 条，补 3 条缺失关系 TFE-0261~0263（TF-0076->TF-0094 child_of 随 TF-0075、TF-0076->TF-0075 与 TF-0075->TF-0074 depends_on），未采纳 main 侧 7 条 child_of->TF-0006（ours 已把 TF-0070~0075 parent 到 TF-0037/TF-0094，双 parent 会破坏 forest 唯一主父模型）；snapshots 保留 ours 的 0097-0106，main 侧同号 10 个顺延为 0244-0253（内容逐字节不变）；deviations 追加 main 侧独有 2 条（TFD-166ddf594c / TFD-340517fabb）；config 计数器 next_node_number=147 / next_edge_number=264 / next_snapshot_number=254；forest/todos/exports 用 CLI 自身代码重建。修复后 validate 通过，TF-0117 收口状态已重放。残留口径：forest 视图中 TF-0070~0076 挂在 TF-0037/TF-0094 下而非 main 侧的 TF-0006 之下；若需改回 TF-0006 parentage，另走 proposal。",
+      "kind": "process_violation",
+      "node_id": "TF-0102",
+      "op": "record_deviation",
+      "related_task_ids": [
+        "TF-0102",
+        "TF-0117"
+      ],
+      "summary": "merge 1700779c0（origin/main -> feat/runtime-lifecycle-governance，为用户安排的 compact 任务合并，2026-08-25T21:00+08:00，无 Task:/Lane: trailer）把未解决的 <<<<<<< HEAD 冲突标记提交进 .agent-workbench/task-forest/ 下 19 个文件（config.json、graph/{nodes,edges,forest}.json、todos/todos.json、deviations/deviations.jsonl、exports 三件、snapshots/0097-0106）。实测五个 JSON 状态文件全部不可解析，task-forest CLI 对两条车道全面停摆；车道 1 的 TF-0117 收口状态更新因此被阻断一次（两次失败后按约束 #12 停下换路）。"
+    }
+  ],
+  "proposal_id": "prop-lane1-taskforest-merge-repair-2026-08-25",
+  "rationale": "用户安排的 origin/main 合并（1700779c0）把未解决冲突标记提交进 19 个 task-forest 状态文件，CLI 全面停摆。用户明确授权车道 1 处理环境冲突；语义合并完成后按 §R4.2 记录偏差与裁决口径。",
+  "session_id": null,
+  "status": "applied"
+}

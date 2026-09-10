@@ -1,0 +1,73 @@
+{
+  "proposal_id": "TFP-lane1-accept-tf0119-review-tf0135-20260828",
+  "session_id": "lane-1-context-moat-20260828",
+  "created_at": "2026-08-28T15:10:00Z",
+  "base_graph_hash": "e474ea8b41513426abe0bd622e687dc0709edbe45733bdfb192a4eb4aca5e485",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "rationale": "lane-1 重跑 XL-014 已确认 TF-0119 的三项遗留在当前事实源中一致表达，允许收口；TF-0135 的独立审计确认护城河风险仍开放，应进入 review_needed；TF-0134 只补审计证据并等待 M4 最终收口。",
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0119",
+      "fields": {
+        "evidence": [
+          "plans/system-maturity/findings-registry.json：findings.length=35，顶层计数与数组一致；F-AUTH-003=Partial/L3；byStatus=Fixed 31 / Partial 4 / Open 0 / Unverified 0。",
+          "tests/unit/system-maturity-findings-registry.test.ts：派生计数与 findingIds 集合守卫 2/2 通过。",
+          "plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.md：当前治理状态为 Partial，gate API denied 未在生产工具执行边界消费。",
+          "plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.delivery.md：STATUS partial，历史测试保留为 API/单元证据，BLOCKERS 明确为生产 CVK 执行边界缺口。",
+          "plans/system-maturity/risk-acceptance.json：F-AUTH-003 rationale 与 Partial 现状一致，要求另立 default-off brb-M-or-larger follow-up。",
+          "artifacts/runtime-memory-eval/report.json：evidenceClass=synthetic、accepted=false；scripts/runtime-long-stability.mjs 将 synthetic 标为 incomplete。",
+          "docs/dev/context-moat/reviews/TF-0119.md：lane-1 XL-014 重跑接受记录（2026-08-28）。"
+        ],
+        "next_action": "已收口；生产 CVK execution-boundary hard block 与真实 runtime-memory/receipt 证据另立后续任务，不回写本节点历史结论。",
+        "progress_source": "manual",
+        "summary": "三项遗留已由当前事实源一致表达：注册表计数守卫通过；F-AUTH-003 明确为 Partial 并撤下生产硬阻断承诺；synthetic runtime-memory 报告已从验收链摘除。lane-1 XL-014 重跑接受。"
+      }
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0119",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "id": "TF-0134",
+      "fields": {
+        "evidence": [
+          "docs/dev/context-moat/reviews/TF-0134.md：lane-1 逐符号生产可达性审计；T-C1 生产调用链成立，T-C0 为离线 spike，T-C2/T-C3 属 M6，applyContextLadder 为 experiment/test-only。",
+          "node openclaw_runtime/scripts/check-production-reachable.mjs --roots：5 个 production roots，3457/5055 模块可达。",
+          "node openclaw_runtime/scripts/check-production-reachable.mjs --blind-spots：17 个 dynamic import blind spots，保留人工复核限制。",
+          "node openclaw_runtime/scripts/check-production-reachable.mjs archiveLowHeatBlocks applyContextLadder：两者均 zero production call sites；当前 archive writer 数为 0。"
+        ],
+        "next_action": "保持 ready；M4 收口时对最终 task 集合逐符号补 D1 输出，必要时再扩展全量导出级枚举能力。",
+        "summary": "独立审计已证明当前 M4 候选没有新增 landed-unwired runtime 模块，但 D1 尚不能枚举 src 全量导出，故 TF-0134 保持 ready，等待 M4 最终收口复核。"
+      }
+    },
+    {
+      "action": "update_node",
+      "id": "TF-0135",
+      "fields": {
+        "evidence": [
+          "docs/dev/context-moat/reviews/TF-0135.md：lane-1 审计结论 OPEN，确定性机制可复制性高，当前无 12-18 个月护城河证据。",
+          "docs/dev/context-moat/reviews/TF-0143.md：一次真实会话可脱敏复跑，但 persisted receipt rows=0，不能证明长期数据资产。",
+          "docs/dev/context-moat/DEV-PROTOCOL.md：L3 要求 1 名真人、1 个增强表面、14 天、可回滚记录。",
+          "artifacts/runtime-memory-eval/report.json：synthetic/accepted=false，不能作为产品价值或数据壁垒证据。"
+        ],
+        "next_action": "建立一个明确授权且可回滚的真实 receipt baseline；随后按 L3 做 14 天真人记录，并补充可追溯的竞品功能发布时间与复制工时证据。",
+        "progress_source": "manual",
+        "summary": "风险审计完成但未关闭：工程机制主要是可复制的确定性算法和配置门控，真实 receipt 数据资产、真人结果和竞品复制时间均未形成证据。进入 review_needed，等待后续验证。"
+      }
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0135",
+      "progress": 20,
+      "status": "review_needed"
+    }
+  ]
+}

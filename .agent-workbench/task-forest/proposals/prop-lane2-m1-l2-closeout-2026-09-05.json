@@ -1,0 +1,104 @@
+{
+  "applied_at": "2026-09-05T06:46:40.135155Z",
+  "base_graph_hash": "143681d61171a12b11210e943ab13131852e27b303d0cf207f29b9c5c19d946d",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 148,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-09-05T07:20:00Z",
+        "decided_by": "用户 2026-09-05 放行按推荐策略落地；按 deviations.jsonl 的 append-only 语义追加同 id 终态，状态以本条为准。node_id 由 TF-0108 改记为 TF-0119：修复归属该 task，其父为 TF-0115（M2），不是 M1。",
+        "expected_requirement": "§D4.6：白名单之外的任何失败 = 回归，一律阻塞。§R4.5：新发现的冲突域必须追加登记。§R5 技术-7：不追溯修改历史 artifacts。",
+        "id": "TFD-lane2-tf0119-findings-registry-hash-break-2026-09-05",
+        "impact": "已由 17ed0a097 外科式修复：6 个 delivery 文件、各 1 行、共 7 个 EVIDENCE 哈希条目，主体恰为 findings-registry.json 与 risk-acceptance.json；重跑报 0 条目（幂等）。修后 worktree 逐段实测 0/0/0/0/1/0/1，第 5 段 FAILED(32) = 25 基线（一项未脱落）+ 4 项 A2 轮外 + 3 项非 A2 轮外，第 7 段由 110 降至 96。明确不用仓库自带的 maturity:seal：其 update-system-maturity-delivery-hashes.mjs 重刷全部 15 个 delivery / 315 个条目，实测把第 5 段由 FAILED(39) 打到 FAILED(3)，抹掉 36 项含全部 25 项钉住基线——一个会溶解自己所对照基线的修复是自修改门的危害而非修复。归属 TF-0119（父 TF-0115 / M2，预算 40），M1 累积半径仍 28/30 未被消耗。",
+        "kind": "conflict_domain_collision",
+        "node_id": "TF-0119",
+        "observed_action_or_result": "前一版判「本轮不能修、只能路由给 system-maturity workstream」，依据是期望哈希存放在 artifacts/system-maturity/** 下、写它违反 §R5 技术-7。该依据实测为错：validate-system-maturity-evidence.mjs 经 parseDelivery 取 expectedSha（其第 231-234 行），读的是 plans/system-maturity/**/<TASK>.delivery.md 的 EVIDENCE: 行，不在 artifacts/ 下。artifacts/system-maturity/*/evidence-manifest.json 里虽有同名哈希，但不是 A2 检查的来源——我先前只看到后者就下了结论，没读 validator 到底读哪一份。§R5 技术-7 自始不适用，修复权一直在本轮手里。",
+        "recommendation": "两件未修、明确路由出去：①架构脆性——findings-registry.json 是活的共享登记表却被六份冻结 delivery 按整文件哈希钉住，本轮修的是实例（那 7 个钉子）不是类（整文件哈希这个设计），改为按条目哈希属 system-maturity workstream 的设计决定；②plans/system-maturity/** 不在 §R4.5 的 D01-D19 冲突域表内而本轮 TF-0119 写了它，§R4.5 属车道 1 owner 节，须由车道 1 补登。",
+        "related_task_ids": [
+          "TF-0119",
+          "TF-0115",
+          "TF-0108",
+          "TF-0102"
+        ],
+        "severity": "high",
+        "status": "resolved"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-09-05T07:22:00Z",
+        "decided_by": "lane-2 在 17ed0a097 的 detached worktree 上取终值；append-only 追加同 id 终态，状态以本条为准。",
+        "expected_requirement": "§R2.3 / §D4.5：maturity:validate 须逐段跑并消除 && 链短路盲区。§D4.6：把模糊坏状态钉成确定数字。",
+        "id": "TFD-lane2-maturity-segment7-baseline-2026-09-05",
+        "impact": "第 7 段首个基线钉为 96，走 §R4.2 触发 (c)，合法性同 GATE-BASELINE §9.5 的「补上遗漏覆盖，不是为容纳回归而放宽」。§R2.3 的「跑完必须复原」条款作废，改为「整门在 git worktree add --detach <tmp> HEAD 里跑」：原条款只点名一个 artifact 而实际写六个，且复原窗口内邻居提交会把改动吞进去（§R4.9）；在一次性 worktree 里改写从未到达共用树，复原步骤连带不必要。本轮全程实测共用树 git status --porcelain -- artifacts/system-maturity 为空。",
+        "kind": "gate_classification_gap",
+        "node_id": "TF-0108",
+        "observed_action_or_result": "第 7 段读数演进：脏共用树 111（M1 首次收口）→ 洁净量具 69971a772 为 110 → 外科式修复后 17ed0a097 为 96。三个数都是各自树状态下的真实读数，不是错读；第 7 段与第 5 段同读那批 EVIDENCE 哈希，故随修复下降。第 6 段 run-system-maturity-residual-audit 实测为绿（ok=true active=2 missing=0 expired=0），§D4.3 标为 UNKNOWN 的两段中一段就此转绿。另实测本门有三个自改写段而非 §R2.3 初版点名的一个：第 7 段写 artifacts/system-maturity/P7-001/traceability-report.json，第 5 段写 artifacts/system-maturity/P0-004/{evidence-index.json,validate-system-maturity-evidence.json}。",
+        "recommendation": "任何自改写的门都必须在一次性 worktree 里测，并以「从未被写过」而非「写完复原了」为凭据。7 个脚本只依赖 node 内置模块与 scripts/lib/*，无需 install，建树实测 14 秒，成本不构成理由。",
+        "related_task_ids": [
+          "TF-0108",
+          "TF-0119",
+          "TF-0028",
+          "TF-0029"
+        ],
+        "severity": "high",
+        "status": "resolved"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-09-05T07:24:00Z",
+        "decided_by": "lane-2 作为 §R3 owner 落地；实测发现于 M1 二次收口的半径核对。",
+        "expected_requirement": "§R3.6：里程碑累积预算 = 该里程碑活跃子节点 max_brb 之和，冻结于 B1；M1 = S×6 = 30。",
+        "id": "TFD-lane2-r36-milestone-scope-fourth-failure-2026-09-05",
+        "impact": "§R3.6 收紧：里程碑级 ATTRIBUTED 只取该里程碑子节点的 TF 号，不含里程碑节点自身。同时加防洗白护栏——里程碑节点自身的提交仅在其改动全部落在 docs/dev/context-moat/** 与 .agent-workbench/task-forest/** 时才可排除；一旦触碰 openclaw_runtime/src、仓库根 src/、scripts/、plans/、electron/、tests/ 中任一路径，该提交整体计入，且须在审核记录写明为何实现类改动挂在里程碑节点上。TF-0108 的 4 个提交实测全部满足排除条件（authored 面为 DEV-PROTOCOL.md、GATE-BASELINE.md、deviations.jsonl、2 份 proposal、reviews/TF-0108.md，零实现路径），故 M1 读 28/30。",
+        "kind": "process_gap",
+        "node_id": "TF-0108",
+        "observed_action_or_result": "预算按子节点定义，本节的判定命令却取全部归属提交，里程碑节点自己的收口簿记提交（Task: TF-0108）因此被计入——而里程碑节点不是自己的子节点、没有 max_brb、在预算里没有分配额。实测 M1：仅六个子节点（TF-0110/0111/0112/0113/0114/0137）21 个提交读 28（预算 30 PASS）；加上 TF-0108 自己的 4 个簿记提交后 25 个提交读 33（预算 30 FAIL）。这是本节第四次在「定义与测量不一致」上出错，前三次是区间 diff、trailer 匹配漏计、trailer 存在不等于本轮。",
+        "recommendation": "四次错误的共同形状是：判据的两个半边分别写在两处，没人核对它们是否说同一件事。后续任何「预算/阈值在 A 处定义、取集在 B 处实现」的门，落地时必须给出一次两边同源的实测对照，否则不得作为收口判据。",
+        "related_task_ids": [
+          "TF-0108",
+          "TF-0102"
+        ],
+        "severity": "high",
+        "status": "resolved"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.9,
+        "created_at": "2026-09-05T07:26:00Z",
+        "decided_by": "用户 2026-09-05 放行按推荐策略落地。缩表本身按 §D4.6「只减不增」无需偏差，本条记录的是被保留那条的原因更正与整类迁移的裁定。",
+        "expected_requirement": "§R2.3：pnpm test 失败集 ⊆ gates.pnpm_test.exemptions，且 config-schema-parity 不在失败集内。§D4.6：条目只减不增。",
+        "id": "TFD-lane2-pnpm-test-whitelist-shrink-2026-09-05",
+        "impact": "白名单由 17 条缩到 1 条（删 16，属只减不增，合法且收紧门）。保留那条的 basis 由 env-platform 改为 env-threshold、reason 按实测改写并记下两次读数，原因字符串不悄悄留着腐烂。被删的 subject-files-dirty 那一整类今后落轮外台账而非 exemptions：判据见 §D4.2，证据门槛见 outOfRoundRule 的三件齐备。",
+        "kind": "gate_classification_gap",
+        "node_id": "TF-0108",
+        "observed_action_or_result": "两次独立读数：全量套件（824 文件 / 553s）为 1 failed / 820 passed / 3 skipped；仅跑那 17 个白名单文件的隔离重跑（48.75s）为 1 failed / 16 passed。两次唯一失败均为 tests/unit/runtime-lifecycle-governance.test.ts 的同一测试，heapDeltaMb 分别为 18.45 与 10.43，阈值 <=2——数值在变、都超阈值，是环境敏感阈值失败，而白名单记的原因是「Windows 11 无 wmic」，不是同一回事。另 12 条当初分类为 subject-files-dirty 的条目现在全绿，而那棵邻居树至今仍脏，说明当初记的成因对它们是错的。",
+        "recommendation": "接受的代价如实写下：更紧的门可能在未来某个里程碑上被邻居 churn 卡住。理由是台账路线每项只花几分钟且让真回归可见，而 17 条里 16 条过期条目等于让 16 个文件长期免于回归检测。若某条被删项再红，它须凭引入 SHA 进台账，而不是被默认豁免——这本就该是这道门一开始的行为。",
+        "related_task_ids": [
+          "TF-0108",
+          "TF-0102"
+        ],
+        "severity": "medium",
+        "status": "accepted"
+      }
+    }
+  ],
+  "created_at": "2026-09-05T07:20:00Z",
+  "proposal_id": "prop-lane2-m1-l2-closeout-2026-09-05",
+  "rationale": "M1 二次收口的四条终态记录。(1) TF-0119 那 7 项 A2 已由本轮外科式修复（17ed0a097）——前一版判「修不了、只能路由出去」的依据（期望哈希在 artifacts/ 下）实测为错，它在 plans/**/*.delivery.md 的 EVIDENCE: 行。(2) 第 7 段首个基线由 110 修正为 96。(3) §R3.6 第四种失效：预算按子节点定义、测量按全部归属提交取集，M1 实测 28（子节点）vs 33（含里程碑簿记），已收紧并加防洗白护栏。(4) pnpm_test 白名单由 17 缩到 1，并把 subject-files-dirty 这一整类迁到轮外台账机制。",
+  "session_id": "session-lane-2",
+  "status": "applied"
+}

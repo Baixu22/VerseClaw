@@ -1,0 +1,54 @@
+{
+  "applied_at": "2026-08-20T16:17:49.960598Z",
+  "base_graph_hash": "a768c980206fd5ce572a3a8336f9a51908ae76929eb11764ff9cf6b22ba78ad7",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "未运行 Electron E2E：本任务无 renderer/Electron 用户可见流程变化。",
+          "未更新 README 翻译：本任务为 runtime-side 内部候选门控与 lineage 语义，无用户导航或 UI 契约变化。",
+          "正常 diff-aware Harness 结果受既有共享脏树越界文件阻断，保留为正式证据边界。"
+        ],
+        "evidence": [
+          "harness/specs/tasks/sekb-terminal-trajectory-candidate-gating.md",
+          "pnpm harness context --spec harness/specs/tasks/sekb-terminal-trajectory-candidate-gating.md: exit 0",
+          "pnpm harness validate --spec harness/specs/tasks/sekb-terminal-trajectory-candidate-gating.md --no-diff: exit 0",
+          "terminal-trajectory-gating.test.ts: 1 file / 5 tests passed",
+          "SEKB regression: 6 files / 47 tests passed",
+          "Agent regression: 3 files / 29 tests passed",
+          "pnpm lint:dcs: exit 0",
+          "targeted oxlint type-aware/type-check: exit 0",
+          "pnpm --dir openclaw_runtime tsgo:core: exit 0",
+          "targeted oxfmt --check: exit 0",
+          "pnpm run comms:replay: exit 0",
+          "pnpm run comms:compare: exit 0, Result PASS",
+          "docs/enhancements/sekb-mvp.md and docs/enhancements/sekb-runtime-roadmap.md updated",
+          "normal diff-aware Harness validate and dry-run: exit 1 because the shared dirty worktree contains unrelated changed files outside this task's touchedAreas; no --no-diff acceptance claim is made"
+        ],
+        "next_action": "等待用户明确确认后应用本关闭提案；应用后再按依赖评估并启动 TF-0074。未确认前不改变 Task Forest 图状态。",
+        "progress": 100,
+        "progress_source": "manual",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "session-20260820-start-tf0073",
+          "session-20260820-tf0073-closeout"
+        ],
+        "status": "done",
+        "summary": "已完成 SEKB terminal trajectory 候选门控与去重：terminal-only 轨迹保留为审计记录但不进入建议；候选必须含真实 tool.call/tool.result、success/failure/partial 终态和完整 runtime-lineage.v1；重复 session/run/trace terminal capture 返回原轨迹；agent_end 与 custom abort 支持 Task Loop 晚绑定 lineage，abort 保持 partial 语义；重复 source id 与候选排序确定性保持；suggest 只读，confirm_and_save 仍是唯一 durable L2/experience 写入路径。SEKB default-off、liveReady=false、productApproved=false、defaultOn=false 未改变。"
+      },
+      "id": "TF-0073"
+    }
+  ],
+  "created_at": "2026-08-20T15:51:42.104253Z",
+  "proposal_id": "TFP-close-TF-0073-20260820",
+  "rationale": "本轮完成 TF-0073：把 terminal-only capture 留作审计证据但从 distillation 候选池排除，要求真实 tool.call/tool.result 与完整 runtime-lineage.v1，给 terminal capture 增加 session/run/trace 幂等键，并把晚绑定 lineage 传入真实 agent_end 与 custom abort 轨迹。SEKB 仍 default-off，人工确认仍是唯一 durable L2/experience 写入路径。正常 diff-aware Harness 校验因共享脏工作区存在大量非本任务文件而未通过；结构校验与本任务路径证据已通过。",
+  "session_id": "session-20260820-tf0073-closeout",
+  "status": "applied"
+}

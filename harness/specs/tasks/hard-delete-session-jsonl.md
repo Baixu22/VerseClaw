@@ -14,7 +14,7 @@ touchedAreas:
   - harness/specs/tasks/hard-delete-session-jsonl.md
   - AGENTS.md
 expectedUserBehavior:
-  - Confirming "Delete" in the sidebar conversation menu removes <id>.jsonl, <id>.deleted.jsonl and any <id>.jsonl.reset.* siblings from the agent's sessions folder.
+  - Confirming "Delete" in the sidebar conversation menu removes <id>.jsonl, <id>.deleted.jsonl, <id>.jsonl.deleted.* and any <id>.jsonl.reset.* siblings from the agent's sessions folder.
   - OpenClaw's trajectory artefacts for the same session id are removed too — both the local <id>.trajectory.jsonl flight recorder and the <id>.trajectory-path.json pointer sidecar.
   - When the pointer's runtimeFile points outside the sessions/ folder (the OPENCLAW_TRAJECTORY_DIR override), that off-disk runtime file is also unlinked so no orphan trajectory remains anywhere on disk.
   - The session entry is removed from sessions.json so OpenClaw sessions.list stops returning it.
@@ -34,7 +34,7 @@ acceptance:
   - Renderer delete-session paths clear any in-memory pending optimistic user messages for the deleted key before subsequent history loads run.
   - agentId from the sessionKey is validated against /^[A-Za-z0-9][A-Za-z0-9_-]*$/ in both surfaces and any sessionFile resolved to a path outside the agent sessions/ directory is refused (defence-in-depth against a corrupt sessions.json).
   - Absolute-path detection accepts POSIX paths, Windows backslash paths (C:\...) and Windows forward-slash paths (C:/...) so the sweep works on every supported OS.
-  - The sweep also unlinks <id>.trajectory.jsonl and <id>.trajectory-path.json sidecars produced by OpenClaw's runtime trajectory writer.
+  - The sweep also unlinks runtime-journal archives <id>.jsonl.deleted.*, plus <id>.trajectory.jsonl and <id>.trajectory-path.json sidecars produced by OpenClaw's runtime trajectory writer.
   - When <id>.trajectory-path.json carries the openclaw-trajectory-pointer schema and an absolute .jsonl runtimeFile that lives outside the sessions/ folder, the off-disk runtime trajectory is unlinked too (covers the OPENCLAW_TRAJECTORY_DIR override). Pointers with the wrong schema, a non-.jsonl runtimeFile, or a non-absolute runtimeFile are ignored and no extra files are touched.
 docs:
   required: true

@@ -1,0 +1,37 @@
+{
+  "applied_at": "2026-09-08T07:03:30.301093Z",
+  "base_graph_hash": "17982b88f8bdc19f9b8ca464d9ddac176e6632160620a75619a3df2d60f3f46e",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 1.0,
+        "created_at": "2026-09-08T15:30:00Z",
+        "evidence": "TEMP clawx-p6-005-rerun-20260908 output3/acceptance-matrix.json (A2 failed, validation.error identity mismatch); run4.log; candidate worktree HEAD detached at 8258e6aa3; git log shows 7cb355654 landed 14:31 vs run4 finished 14:50.",
+        "expected_requirement": "P6-005 path1 rerun must produce a contemporary, identity-clean evidence set that clears the stale F-GOV-003 finding.",
+        "id": "TFD-tf0127-fgov003-rerun-complete-a2-mismatch-20260908",
+        "kind": "gate_disposal",
+        "node_id": "TF-0127",
+        "observed_action_or_result": "lane-2 detached-worktree rerun (PID 24604) COMPLETED on 2026-09-08 14:50 (run4.log, 13 gates reported). 8 PASS: preflight, maturity:baseline, plan, gates, contract:check, typecheck, agent-dev:deep-test, test:e2e:agent-dev-quality, release:validate. 5 FAIL: maturity:validate, security:full, test, lint:check, harness:ci. acceptance-matrix.json A2 = failed; validation.error = release ref/commit mismatch expected=8258e6aa3 vs live=7cb355654 (branch advanced mid-run by the XL-018 Q1 BASELINE commit 7cb355654 at 14:31).",
+        "owner": "fresh-session-no-lane",
+        "recommendation": "Do NOT land output3 into artifacts/system-maturity/P6-005/ as-is: it self-certifies identity-mismatch and A2 stays red. The only clean path is to re-run the full 13-gate loop on a detached worktree fast-forwarded to current HEAD 7cb355654 with the branch frozen against advancement during the run, then land that binding-clean output. Fresh session is authorized to land but has no landing-clean artifact yet; re-run requires a branch-freeze window beyond a single session authority. Close criterion for F-GOV-003 stale evidence: an evidence set whose release-gate-evidence.commit == live branch HEAD and A1/A2/A3 all passed.",
+        "related_task_ids": [
+          "TF-0127"
+        ],
+        "severity": "info",
+        "status": "closed",
+        "supersede_reason": "Corrects the superseded entry expectation from rerun-will-produce-new-evidence to observed reality: rerun completed but produced identity-mismatched evidence because the XL-018 Q1 BASELINE commit advanced the branch mid-run. Original entry was open; now superseded by this closed record reflecting actuality.",
+        "supersedes": "TFD-tf0127-f-gov-003-path1-rerun-20260908"
+      }
+    }
+  ],
+  "created_at": "2026-09-08T07:03:01.378634Z",
+  "proposal_id": "TFP-3c1463abab",
+  "session_id": "fresh-fgov003-close-20260908",
+  "status": "applied"
+}

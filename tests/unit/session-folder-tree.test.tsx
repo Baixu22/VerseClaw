@@ -17,7 +17,13 @@ import type { SidebarSessionEntry } from '@/components/layout/session-buckets';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string, params?: Record<string, unknown> | string) => (typeof params === 'string' ? params : key),
+    t: (key: string, params?: Record<string, unknown> | string) => {
+      if (typeof params === 'string') return params;
+      if (params && typeof params === 'object' && typeof params.name === 'string') {
+        return `${key}:${params.name}`;
+      }
+      return key;
+    },
   }),
 }));
 
@@ -49,26 +55,34 @@ const SESSIONS: SidebarSessionEntry[] = [
 ] as SidebarSessionEntry[];
 
 async function renderTree(overrides?: {
-  onRenameFolder?: ReturnType<typeof vi.fn>;
-  onDeleteFolder?: ReturnType<typeof vi.fn>;
-  onMoveSession?: ReturnType<typeof vi.fn>;
+  onRenameFolder?: (workspaceId: string, folderId: string, name: string) => Promise<void>;
+  onDeleteFolder?: (workspaceId: string, folderId: string) => Promise<void>;
+  onMoveSession?: (workspaceId: string, sessionKey: string, folderId: string | null) => Promise<void>;
+  onDropSession?: (workspaceId: string, sourceSessionKey: string, targetSessionKey: string, autoGroupName: string) => Promise<void>;
 }) {
   const { SessionFolderTree } = await import('@/components/layout/SessionFolderTree');
-  const onRenameFolder = overrides?.onRenameFolder ?? vi.fn().mockResolvedValue(undefined);
-  const onDeleteFolder = overrides?.onDeleteFolder ?? vi.fn().mockResolvedValue(undefined);
-  const onMoveSession = overrides?.onMoveSession ?? vi.fn().mockResolvedValue(undefined);
+  const onRenameFolder = overrides?.onRenameFolder
+    ?? vi.fn<(workspaceId: string, folderId: string, name: string) => Promise<void>>().mockResolvedValue(undefined);
+  const onDeleteFolder = overrides?.onDeleteFolder
+    ?? vi.fn<(workspaceId: string, folderId: string) => Promise<void>>().mockResolvedValue(undefined);
+  const onMoveSession = overrides?.onMoveSession
+    ?? vi.fn<(workspaceId: string, sessionKey: string, folderId: string | null) => Promise<void>>().mockResolvedValue(undefined);
+  const onDropSession = overrides?.onDropSession
+    ?? vi.fn<(workspaceId: string, sourceSessionKey: string, targetSessionKey: string, autoGroupName: string) => Promise<void>>().mockResolvedValue(undefined);
 
-  render(
+  const view = render(
     <SessionFolderTree
       workspace={WORKSPACE}
       sessions={SESSIONS}
       collapsedFolders={{}}
+      sessionSort="newest"
       sessionStatusKinds={{}}
       onToggleFolder={vi.fn()}
       onCreateFolder={vi.fn().mockResolvedValue(undefined)}
       onRenameFolder={onRenameFolder}
       onDeleteFolder={onDeleteFolder}
       onMoveSession={onMoveSession}
+      onDropSession={onDropSession}
       renderSessionRow={(entry, options) => (
         <div key={entry.session.key} data-testid={`session-row-${entry.session.key}`}>
           {entry.session.displayName}
@@ -81,7 +95,7 @@ async function renderTree(overrides?: {
     />,
   );
 
-  return { onRenameFolder, onDeleteFolder, onMoveSession };
+  return { ...view, onRenameFolder, onDeleteFolder, onMoveSession, onDropSession };
 }
 
 describe('SessionFolderTree folder mutation dispatch', () => {
@@ -181,5 +195,89 @@ describe('SessionFolderTree session move affordance', () => {
     // deeply nested session's menu reachable.
     expect(menu.parentElement).toBe(document.body);
     expect(menu).toHaveClass('fixed');
+  });
+});
+
+/**
+ * Drag-and-drop auto-grouping: the wrapper is both the drag handle and the
+ * drop target, and dropping one session after another dispatches a single
+ * semantic group request with the generated group name.
+ */
+describe('SessionFolderTree drag-and-drop auto grouping', () => {
+  function makeDataTransfer() {
+    const store = new Map<string, string>();
+    return {
+      effectAllowed: 'none',
+      dropEffect: 'none',
+      setData: (type: string, value: string) => store.set(type, value),
+      getData: (type: string) => store.get(type) ?? '',
+    };
+  }
+
+  it('shows the after-target guide line and dispatches the group request on drop', async () => {
+    const { onDropSession } = await renderTree();
+    const source = screen.getByTestId('sidebar-session-drag-agent:main:loose');
+    const target = screen.getByTestId('sidebar-session-drag-agent:main:nested');
+    const dataTransfer = makeDataTransfer();
+
+    fireEvent.dragStart(source, { dataTransfer });
+    fireEvent.dragOver(target, { dataTransfer });
+
+    expect(screen.getByTestId('sidebar-session-drop-guide-agent:main:nested')).toBeInTheDocument();
+
+    fireEvent.drop(target, { dataTransfer });
+
+    await waitFor(() => expect(onDropSession).toHaveBeenCalledTimes(1));
+    expect(onDropSession).toHaveBeenCalledWith(
+      'ws-1',
+      'agent:main:loose',
+      'agent:main:nested',
+      'chat:workgroups.autoGroupName:nested session',
+    );
+  });
+
+  it('ignores dropping a session onto itself', async () => {
+    const { onDropSession } = await renderTree();
+    const row = screen.getByTestId('sidebar-session-drag-agent:main:loose');
+    const dataTransfer = makeDataTransfer();
+
+    fireEvent.dragStart(row, { dataTransfer });
+    fireEvent.dragOver(row, { dataTransfer });
+    fireEvent.drop(row, { dataTransfer });
+
+    await waitFor(() => expect(onDropSession).not.toHaveBeenCalled());
+  });
+
+  /**
+   * Membership is carried by CONTAINMENT (and, in CSS, by the indent and
+   * whitespace rhythm that follow from it) — not by a drawn connector.
+   *
+   * The rail and elbow connectors this used to assert were half-drawn: they
+   * appeared beside some members and not others, which added speckle without
+   * ever completing the figure. They are gone deliberately; the second half of
+   * this test guards against a well-meaning reintroduction.
+   */
+  it('nests grouped members in the stream container and leaves ungrouped rows outside it', async () => {
+    const { container } = await renderTree();
+    const members = container.querySelector('.ws-members');
+
+    expect(members).not.toBeNull();
+    expect(members).toContainElement(screen.getByTestId('sidebar-session-drag-agent:main:nested'));
+    expect(members).not.toContainElement(screen.getByTestId('sidebar-session-drag-agent:main:loose'));
+  });
+
+  it('draws no tree connectors', async () => {
+    const { container } = await renderTree();
+    expect(container.querySelector('.ws-member-slot')).toBeNull();
+  });
+
+  /** Group names are labels, not nodes: no leading glyph to push members right. */
+  it('renders the group header as a label with no leading glyph', async () => {
+    const { container } = await renderTree();
+    const label = container.querySelector('.ws-label-select');
+
+    expect(label).not.toBeNull();
+    expect(label?.querySelector('svg')).toBeNull();
+    expect(container.querySelector('.ws-dot')).toBeNull();
   });
 });

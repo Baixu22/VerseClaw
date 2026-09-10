@@ -60,6 +60,23 @@ describe("FP-P0-04 runtime flag ack", () => {
     expect(flags["runtime.contextBlock.compass.enabled"]).toBe(false);
     expect(flags["runtime.vtoken.assembly.enabled"]).toBe(false);
     expect(flags["dcs.contextViewTools.enabled"]).toBe(false);
+    expect(flags["runtime.coding.sekb.retrievalShadow"]).toBe(false);
+  });
+
+  it("reports retrieval shadow provenance without treating it as turn injection", () => {
+    const ack = buildRuntimeFlagAck({
+      env: BASE_ENV,
+      cfg: { runtime: { coding: { sekb: { retrievalShadow: true } } } } as never,
+    });
+    expect(ack.effectiveFlags["runtime.coding.sekb.retrievalShadow"]).toBe(true);
+    expect(ack.flagAttribution["runtime.coding.sekb.retrievalShadow"]).toMatchObject({
+      value: true,
+      origin: "config",
+      key: "runtime.coding.sekb.retrievalShadow",
+    });
+    expect(ack.turnEffectProbe.activeSurfaces).not.toContain(
+      "runtime.coding.sekb.retrievalShadow",
+    );
   });
 
   it("turnEffectProbe says no turn change when nothing is enabled", () => {

@@ -1,0 +1,41 @@
+{
+  "applied_at": "2026-09-07T14:13:58.444293Z",
+  "base_graph_hash": "dceac31ae2a173c56c035174aae4fc447082f56860907b84bc8427f49d489ca6",
+  "base_summary": {
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.98,
+        "created_at": "2026-09-07T14:12:37.999873Z",
+        "decided_by": "lane-2 review session (not implementer); user adjudication pending via XL-017",
+        "expected_requirement": "§R3.6 B1-frozen budget for M2 {TF-0116/0117/0118/0119} = 40 authored; §R3.5 grants exactly two exits for over-radius: split, or downgrade to landed-unwired. No third path.",
+        "id": "TFD-tf0115-milestone-radius-overrun-adjudication-pending-20260907",
+        "impact": "TF-0115 stays review_needed; any closeout-to-done proposal conflicts with reviews/TF-0115.md until this deviation is resolved. No radius readings elsewhere change; round-wide 230 untouched.",
+        "kind": "radius_overrun",
+        "mitigation": "XL-017 on AUDIT-BOARD.html asks the user to choose: (a) approve milestone-level landed-unwired downgrade under §D1.3 precedent (preferred), (b) name executable split boundaries or authorize a one-off §R3.6.2 raising the frozen budget to 50, plus (c) decide whether the AC-4 deviation closes as accepted.",
+        "node_id": "TF-0115",
+        "observed_state": "GATE-BASELINE §11.2 measured 44/40 (before TFD-tf0119-findings-registry-hash-break reseal fix), §12.2 recomputed 50/40 (including the 6-file reseal). All exceeded files are already-committed implementation submissions; four child nodes are independently done; DEV-PROTOCOL §R3.6 states later splits or per-task re-bracketing do not alter the frozen budget. Split is therefore not executable after the fact (same defect class the TF-0149 review recorded for brb-S). lane-2 review of TF-0115 returned FAIL with §R3.6 as the hard blocker; AC-4 dual-segment difference (TFD-tf0115-ac4-difference-note-deferred-2026-09-07) is subordinate and recorded separately.",
+        "related_task_ids": [],
+        "status": "open",
+        "target_node": "TF-0115"
+      }
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "next_action": "等待 XL-017 用户裁决。已按 §R3.5/§R3.6 明确两条出路：拆分不可用（超径文件为已联账落仓的实现提交、四子节点均已 done、§R3.6 冻结预算不再被后续拆分/调档改变、TF-0149 已记拆分对 brb-S 结构不可用），故唯一可操作出口为 §D1.3 里程碑级 landed-unwired 降级（优选，已挂 XL-017 请示）；备选是用户授权的 §R3.6.2 一次裁定把冻结预算上调至 50。AC-4 双段差异 deviation TFD-tf0115-ac4-difference-note-deferred-2026-09-07 随 XL-017 一并结案。本裁决前任何 done/100 的 proposal 与 reviews/TF-0115.md lane-2 FAIL 结论互斥，应被拒绝。",
+        "status": "review_needed"
+      },
+      "id": "TF-0115"
+    }
+  ],
+  "created_at": "2026-09-07T14:12:37.999873Z",
+  "id": "TFP-tf0115-xl017-booking-20260907",
+  "proposal_id": "TFP-de2f11228b",
+  "session_id": "476a8a0c-0bf4-4102-a823-3ace7fc020b1",
+  "status": "applied"
+}

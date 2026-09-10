@@ -1,3 +1,7 @@
 $ node scripts/typecheck-agent-dev.mjs
-$ tsc --noEmit -p tsconfig.web.json --composite false
 $ tsc --noEmit -p tsconfig.node.json --composite false
+'tsc' �����ڲ����ⲿ���Ҳ���ǿ����еĳ���
+���������ļ���
+$ tsc --noEmit -p tsconfig.web.json --composite false
+'tsc' �����ڲ����ⲿ���Ҳ���ǿ����еĳ���
+���������ļ���

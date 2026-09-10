@@ -34,7 +34,7 @@ const seededHistory = [
           type: 'approval-card',
           id: 'approval-release',
           title: 'Publish the release?',
-          description: 'This model decision returns through the chat interaction callback only.',
+          description: 'External process write: this command may write outside the ClawX write journal; those changes have no automatic rollback.',
           icon: 'shield-alert',
           variant: 'destructive',
           confirmLabel: 'Approve',
@@ -125,6 +125,7 @@ test.describe('Tool UI execution surfaces', () => {
       const codeDiff = page.getByTestId('chat-tool-ui-code-diff');
       const progress = page.getByTestId('chat-tool-ui-progress-tracker');
       await expect(approval).toBeVisible({ timeout: 30_000 });
+      await expect(approval).toContainText('no automatic rollback');
       await expect(terminal).toContainText('22 tests passed');
       await expect(terminal.locator('input')).toHaveCount(0);
       await expect(codeDiff).toContainText('agent.ts');

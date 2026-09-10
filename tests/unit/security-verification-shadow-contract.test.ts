@@ -26,7 +26,7 @@ async function callHandler(
   const handler = securityVerificationShadowHandlers[method];
   if (!handler) throw new Error(`missing handler: ${method}`);
   await handler({
-    req: { id: 1, method, params },
+    req: { id: 1, method, params } as never,
     params,
     client: null,
     isWebchatConnect: () => false,

@@ -20,7 +20,7 @@ function jobWithPrompt(message: string): CronJob {
     sessionTarget: 'isolated',
     createdAt: 1,
     updatedAt: 1,
-  } as CronJob;
+  } as unknown as CronJob;
 }
 
 describe('runtime cron browser automation result', () => {

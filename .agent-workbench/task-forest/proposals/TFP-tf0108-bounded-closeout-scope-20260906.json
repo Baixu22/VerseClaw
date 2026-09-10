@@ -1,0 +1,92 @@
+{
+  "applied_at": "2026-09-06T12:39:41.964234Z",
+  "base_graph_hash": "65f1858da48d200f8e28ad380868909db1b6042ea024e290e9206a91fad12723",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "approved_additional_paths": [
+          "docs/dev/context-moat/DEV-PROTOCOL.md",
+          "docs/dev/context-moat/GATE-BASELINE.md",
+          "harness/specs/tasks/context-moat-m1-governance-evidence-repair.md",
+          "plans/system-maturity/INDEX.md",
+          "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+          "plans/system-maturity/phase2-authorization-isolation/tasks/P2-001.delivery.md",
+          "plans/system-maturity/phase2-authorization-isolation/tasks/P2-002.delivery.md",
+          "plans/system-maturity/phase2-authorization-isolation/tasks/P2-003.delivery.md",
+          "plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.delivery.md",
+          "plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.md",
+          "plans/system-maturity/phase7-continuous-governance/tasks/P7-004.delivery.md",
+          "plans/system-maturity/phase8-residual-closure/tasks/P8-001.delivery.md",
+          "plans/system-maturity/phase8-residual-closure/tasks/P8-004.delivery.md",
+          "tests/unit/system-maturity-findings-registry.test.ts",
+          "docs/dev/handoffs/LATEST.md"
+        ],
+        "approved_milestone_budget": 43,
+        "confidence": 0.99,
+        "created_at": "2026-09-06T12:39:41.608360+00:00",
+        "decided_by": "Codex会话01a07640-6a3d-75d0-bb4b-5f7ac4708419（非三项修复实施会话），依用户“请你帮我做好裁定”及随后“继续”的明确委托落实。",
+        "evidence": "docs/dev/context-moat/reviews/TF-0108.md §11/§12；docs/dev/context-moat/DEV-PROTOCOL.md §R3.6.1；docs/dev/context-moat/GATE-BASELINE.md §13",
+        "expected_requirement": "B1冻结M1预算30、全轮230；范围外治理路径必须显式登记，独立审核与实现须按角色归属。",
+        "id": "TFD-tf0108-bounded-closeout-scope-20260906",
+        "impact": "一次性接受§R3.6.1列出的15条新增路径和限定修复语义，M1局部上限43；全轮去重上限230、其他里程碑和逐task档位、maturity白名单均不变。当前局部上限之和243不是新的全轮预算。旧FAIL及TF-0119历史引入归因保留。",
+        "kind": "scope_change",
+        "node_id": "TF-0108",
+        "observed_action_or_result": "独立复核确认六子节点28路径及必要修复新增14路径，旧口径42/30为FAIL；COMPASS必需的LATEST再增加1路径。按合法提交角色切分后本次范围为43，混入审核记录将为44并失败。",
+        "original_milestone_budget": 30,
+        "recommendation": "裁定已生效；按角色分别提交交付与独立审核，固定最终候选后重算M1与全轮，补完整L2及正式独立会签。新增路径或功能不继承本例外。",
+        "related_task_ids": [
+          "TF-0108",
+          "TF-0102"
+        ],
+        "round_budget": 230,
+        "severity": "medium",
+        "status": "accepted",
+        "summary": "依用户委托裁定本次M1收口的封闭范围与局部上限：30→43，全轮230保持；不转移原修复归属。"
+      }
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "acceptance_criteria": [
+          "六子项按§D1合法终态验收：TF-0110/0111/0112/0113/0114为done；TF-0137保留review_needed/100及landed-unwired，并具备既有独立审核证据。",
+          "L1按§R2.2通过；最终提交的L2五门按§R2.3完整执行并满足既有失败白名单与轮外归属判据，不能用范围裁定或历史绿门代替。",
+          "最终提交的M1半径、封闭路径、提交角色和全轮总量均满足DEV-PROTOCOL.md §R3.6.1；正式独立会签完成后才可标done。"
+        ],
+        "confidence": 0.99,
+        "evidence": [
+          "docs/dev/context-moat/reviews/TF-0108.md：第一次 L2 收口尝试的完整实测记录（含三个阻塞项的根因定位与归因）。",
+          "前置事故：分支 ref 曾被回退 153 个提交（d414d5778 是 51f43a8ba 的严格祖先，152 个提交无任何 ref 指向仅存 reflog），根因是 .git/refs/heads/feat/runtime-lifecycle-governance 被删除后 git 回落到 .git/packed-refs 的陈旧值；已按用户放行 update-ref 到 86d70186d + pack-refs --all 固化，并建 rescue/verseshell-20260904 防 gc。回退期间 M1 六子节点的归属集为空，§R3.6 三条命令会全部假性通过（空集退化为 git show HEAD）。",
+          "§R3.6（限定 M1 六个子节点）：归属提交 21，判定读数 28 ≤ 预算 30，如实记录读数 42，判定集内越界文件 0，M1 的 LANE_UNATTRIBUTED 为空集。轮级参考读数 178/230。",
+          "§R3.1 命令 2：3 项（types.openclaw.ts / zod-schema.ts / prod-flags-catalog.ts）全部落在 §R3.3 对 TF-0112 与 TF-0137 的白名单内。命令 3：判定用命中 1 行，定位 tests/unit/config-schema-parity.test.ts:170 的 entry.defaultValue 读取，非默认值改动；如实记录读数 55。",
+          "§R2.3 逐段实测：contract:check exit 0；typecheck exit 1（typecheck:node exit 2，34 个错误全部源自 TS2307 @modelcontextprotocol/sdk 缺失及其 implicit-any 级联，typecheck:web exit 0）；lint:check 四段 0/1/1/0（eslint 8 errors 372 warnings；lint:dcs 报 oxlint not found）；test 未执行；maturity:validate 七段 0/0/0/0/1/0/1。",
+          "§R2.3 自身缺陷：maturity 七段的副作用实测为 6 个 artifacts/system-maturity 文件，而 §R2.3 的强制复原清单只点名 1 个（P7-001/traceability-report.json）。本次已按目录整体复原并验证到内容级（git diff HEAD 为 0 文件）。",
+          "§R3.8.1 规则 4 断言非空 16 项：2 项为 §R3.8.4 已登记既有实例，3 项为车道 2 交接时已记的待补实例，3 项（18c8fe294 / 009b0ccb3 / e2a3db8d9）为新发现的本轮无归属提交且均不属 M1 子节点，8 项为轮外 workstream 提交不入断言。",
+          "docs/dev/context-moat/GATE-BASELINE.md §10（门 4 四个轮外 error 的逐条因果 + §10.6 maturity 洁净量具逐段实测 + §10.7 五门 L2 读数表）；DEV-PROTOCOL.md §R3.6（第三种失效：trailer 存在 != 本轮，实测虚增 34 文件）、§D4.2（判据改用归属完整集）、§D4.3（maturity 逐段裁定与 7 项 must-fix 归属）；偏差 TFD-lane2-r36-third-failure-trailer-not-round-2026-09-05 / TFD-lane2-out-of-round-lint-2026-09-05 / TFD-lane2-maturity-segment7-baseline-2026-09-05 / TFD-lane2-tf0119-findings-registry-hash-break-2026-09-05；提交 69971a772。",
+          "GATE-BASELINE.md §11（五门终态表 / 三处自我更正 / M2 半径超预算）、§10（轮外台账逐条因果）；DEV-PROTOCOL.md §R2.3（判据改为「⊆ 白名单 ∪ 轮外台账」+ 自改写门改在一次性 worktree 跑）、§R3.6（第三、第四种失效）、§D4.2（判据改用归属完整集）、§D4.3（maturity 逐段裁定与外科式修复）；偏差 TFD-lane2-tf0119-findings-registry-hash-break-2026-09-05(resolved) / TFD-lane2-maturity-segment7-baseline-2026-09-05(resolved) / TFD-lane2-r36-milestone-scope-fourth-failure-2026-09-05(resolved) / TFD-lane2-pnpm-test-whitelist-shrink-2026-09-05(accepted) / TFD-lane2-out-of-round-lint-2026-09-05(accepted) / TFD-lane2-r36-third-failure-trailer-not-round-2026-09-05(resolved)；提交 69971a772 / 416a70073 / 17ed0a097。",
+          "docs/dev/context-moat/reviews/TF-0108.md §10：2026-09-06 三项失配修复、六条派生哈希、阴性对照、L1与洁净量具实测；候选551759e32，M1半径42/30待裁定。",
+          "docs/dev/context-moat/reviews/TF-0108.md §11：2026-09-06 非实施会话独立技术复核，三项修复与六条哈希通过，19/19相关测试及两项阴性对照有效；maturity 32→29/96→79、25基线保留。半径42/30（全量56）仍FAIL，非盲审、不构成最终会签；原始复测位于 C:/Users/27933/AppData/Local/Temp/clawx-tf0108-independent-1ac8dffe/。",
+          "docs/dev/context-moat/reviews/TF-0108.md §12 与 DEV-PROTOCOL.md §R3.6.1：用户委托并要求继续后，已裁定本次 M1 上限43、全轮仍230；保留14个修复路径的TF-0108归属，并纳入1个必需交接路径。六项范围边界检查、白名单不变检查和隔离树Harness validate/dry-run通过；最终提交归属、完整L2及正式会签仍待完成。"
+        ],
+        "execution_hints": [
+          "2026-09-06最新：必要修复的范围/预算裁定已生效，下一步固定最终提交并补完整L2与正式独立会签；不要重复修三项已验证问题，也不要再次等待同一范围裁定。"
+        ],
+        "next_action": "按DEV-PROTOCOL §R3.6.1固定最终候选，保留原三修复提交的TF-0108归属；交付与独立审核按角色分别提交，实测M1≤43且全部新增路径在批准集内、全轮去重≤230。随后执行完整L2五门并完成正式独立会签。范围/预算已裁定，无需重复等待同一决定；TF-0137继续landed-unwired。",
+        "progress": 98,
+        "status": "review_needed",
+        "summary": "范围/预算裁定已落实：已复核的三项修复和六条派生哈希保留TF-0108归属，本次M1上限43（六子节点28＋修复新增14＋必需交接1），只限§R3.6.1的封闭15路径；全轮230及其他里程碑预算不变。原42/30 FAIL保留，审核记录必须与交付按角色分别提交，混入将为44而失败。六项边界检查与隔离Harness通过；技术复测19/19及maturity 32→29/96→79沿用独立证据，非最终L2。现仅待固定最终提交、重算全轮/局部、完整L2与正式独立会签；TF-0137保留landed-unwired。"
+      },
+      "id": "TF-0108"
+    }
+  ],
+  "created_at": "2026-09-06T12:39:41.727390Z",
+  "proposal_id": "TFP-tf0108-bounded-closeout-scope-20260906",
+  "rationale": "用户已要求本会话完成TF-0108范围/预算裁定，并在本席说明43路径与全轮230限制后要求继续。此提案落实该委托：记录一次性范围/预算例外、修正六子项合法终态措辞、把下一步转为最终L2准备；不宣布里程碑完成，不增加全轮预算。",
+  "session_id": "01a07640-6a3d-75d0-bb4b-5f7ac4708419",
+  "status": "applied"
+}

@@ -1,0 +1,31 @@
+{
+  "applied_at": "2026-08-24T15:41:32.127978Z",
+  "base_graph_hash": "554b95c8b0c939d475fdc9b485c3856f862fe42570c6410850acb05dd8230044",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-24T15:41:10.822920Z",
+        "decided_by": "车道 2 实现者提出缺口（reviews/TF-0109.md 触碰面说明）；车道 1 审核者裁定即时补登（reviews/TF-0109.md 审核者裁定 Q2）",
+        "id": "TFD-d14-runtime-feature-leaves-2026-08-24",
+        "impact": "冲突域 13→14 组。不改任何估时与墙钟。消除的是登记完整性缺口：未登记的域在 pick-next 时不可见，未来若有跨车道触碰者加入将无互斥依据。由车道 2 的实现者在 TF-0109 自检中主动指出并建议延后至 TF-0107 登记；车道 1 作为审核者裁定即时补登，依据是 TF-0145 requirement 第 6 条「新发现的域必须追加」的字面要求，且本表作用是登记完整性而非仅风险控制。",
+        "kind": "scope_change",
+        "node_id": "TF-0145",
+        "related_task_ids": [
+          "TF-0145",
+          "TF-0109"
+        ],
+        "summary": "补登记 D14（openclaw_runtime/src/config/runtime-feature-leaves.ts）为第 14 组冲突域，触碰者 TF-0109 / TF-0107 / TF-0112，三者同在车道 2（车道内串行，无跨车道风险）。该文件由 TF-0109 的 requirements 第 1 条直接指定改动，但初版 D01-D13 表未收录。"
+      }
+    }
+  ],
+  "created_at": "2026-08-24T15:41:10.812002Z",
+  "proposal_id": "TFP-a7281e4bf6",
+  "session_id": "lane-1",
+  "status": "applied"
+}

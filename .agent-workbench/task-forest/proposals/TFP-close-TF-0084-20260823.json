@@ -1,0 +1,46 @@
+{
+  "applied_at": "2026-08-23T04:57:01.498073Z",
+  "base_graph_hash": "7897b3363337b79e98e2e3f30b8dc8fbbb7fb79cc839abcd94d4dd38ab90ee03",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "发现并修复真实生产缺陷：sessions.yieldState（TF-0082 owner path 6）有 handler 与 core descriptor 但缺 lazy handler 白名单条目，createCoreGatewayMethodDescriptors 因此跳过该 spec，生产 Gateway 返回 unknown method；回归探针已证实（移除白名单后 census 4 例中 2 例失败）。属 TF-0079 本应根除的 direct-handler / production-dispatch 分叉，本轮把单方法探针推广为整面 census 以防复发。",
+          "量化归属缺口：只按六个 TF-0078 spec 的 touchedAreas 并集构建的 clean candidate 既不 typecheck 也跑不起来，需额外 38 个其他 workstream 未提交的文件（含 TF-0083 自己的 goal-wake/cron 模块与测试、mission-control/types.ts、goal-wake-types.ts、acp-spawn.ts、subagent-spawn.ts、config/sessions/artifacts.ts、runtime-core/lineage.ts、shared/chat/types.ts、shared/types/git.ts）；shared/host-api/contract.ts 还同时携带 git-api workstream 的 reflog/merge/rebase/reset。清单见 scripts/tf0084-candidate-inherited.json，归各自 owner，本轮未代改。",
+          "更正上一轮结论：上一轮提案称「共享工作树无法按节点切成独立 candidate」，那是在 4 轮收敛后过早下的判断——剩余错误报在消费者文件上，而其定义文件（SEKB trajectory-capture、context-engine block、shared/chat/types）同样未提交。补齐后闭包收敛在 38 个文件，candidate 完全绿。本链可分离，只是不能仅凭自己声明的 touchedAreas 分离。",
+          "如实记录的环境限制：两个真实进程 GA 脚本（goal-wake canary、packaged Electron durable helper）会 spawn pnpm，pnpm 拒绝在 junction 的 node_modules 上运行（ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY），在根与 openclaw_runtime 两处设 verify-deps-before-run=false 都到不了被 spawn 的子进程。这两项改在权威树上跑，覆盖内容与 candidate 一致；记为限制而非豁免。",
+          "未覆盖项如实记录：FD/handle 泄漏未测（drain 夹具断言记录、定时器、owned PID，不含文件描述符计数）；RSS 级内存增长未测（只断言 finished 记录有界）。"
+        ],
+        "evidence": [
+          "artifacts/session-ecosystem-lifecycle-ledger-acceptance/report.json（AC 逐条 met、verificationMatrix、scopedCandidate、notCovered、foundDefects 含更正说明）",
+          "candidate（base 9f45e45cd → candidate e0a7cb112，scripts/tf0084-build-candidate.mjs + tf0084-candidate-inherited.json 可重建）：diff-aware validate exit 0，diff 恰为 6 个新文件；typecheck:node 0；typecheck:web 0；contract 0；comms 45 PASS/0 FAIL；build:runtime 0（smoke gateway ready）；183 测试（gateway-methods 50、gateway 33、goal-wake 68、cron 13、process 7、admission 12）",
+          "权威树门禁：gateway-methods 7 文件 50；gateway 4 文件 33；process 7；agents-core 68；cron 13；admission 12；root Electron 5 文件 23；typecheck 0；contract 0；comms 45 PASS；build:runtime 0（首跑 0xC0000409 已记录，重跑 0）；E2E 3/3；eslint 0；check-no-bom ok；git diff --check 0",
+          "真实进程证据：goal-wake canary 10 周期 processPollToolCalls=0 duplicateWakeTickCount=1；packaged Electron helper normal-exit + cancel PASS，rawSecretPersistenceFindings=0；50 周期 drain cycles=50 activeRecordResidual=0 ownedPidResidual=0 finishedResidual=0 sweeperActive=false"
+        ],
+        "next_action": "TF-0078 里程碑的六个节点全部 done；该里程碑本身是否收口，以及那 38 个继承依赖文件的归属补齐，均为独立决策，未代替用户裁定。",
+        "progress": 100,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260823-start-tf0084",
+          "session-20260823-tf0084-acceptance",
+          "session-20260823-tf0084-closeout"
+        ],
+        "status": "done",
+        "summary": "四个 owner path 全部交付，四条 acceptance criteria 全部 met。(1) 只读生命周期账本：把活动投影的 owner 读取抽成共享层（session-lifecycle-owner-views.ts，投影 11/11 零行为变化），在其上实现 session-lifecycle-ledger.ts 与 sessions.lifecycleLedger（operator.read，无 arm/无 mutation，代际不匹配在读任何 owner 之前 fail closed）；每条 transition 记 owner、owner 自己的状态 token、TF-0082 correlation ref，要么带 owner 钉扎的 generation，要么声明结构性原因；census 的 unexplainedTransitions 统计「声明与数据不符」因此可以失败；读不到的 owner（Electron 终端、durable helper runDir）以 declaredGaps 显式返回；会话 entry 用 session store 自己的 sessionStartedAt 而非观测时刻。(2) 生命周期方法面可达性 census（8 方法，经生产 registry dispatch）+ 用同一份 owner 快照构建两个读模型做集合交叉核对。(3) fresh 全量验收矩阵：50 周期真实进程树 drain 全零残留、supervisor 重启 7、goal-wake 8 文件 68、cron 13、delete journal 26、admission 12、Electron 5 文件 23、真实进程 canary 10 周期（processPollToolCalls=0、duplicateWakeTickCount=1）、真实 packaged Electron durable helper 双周期 PASS 且 rawSecretPersistenceFindings=0、E2E 3/3。(4) 证据分级与谱系一致性：报告分栏工程/human/live/product，handoff 新增节点谱系与后继边界段并把三处过时的「当前节点」段落标为历史，README 三语补 TF-0084。AC1 由一次性 detached candidate 达成：diff-aware validate exit 0（本条线首次），candidate 上双 typecheck、contract、comms、build:runtime 与 183 个 scoped 测试全绿。"
+      },
+      "id": "TF-0084"
+    }
+  ],
+  "created_at": "2026-08-23T04:57:01.298262Z",
+  "proposal_id": "TFP-close-TF-0084-20260823",
+  "rationale": "用户指示按推荐方案继续。推荐方案是：在一次性 detached candidate 里补齐 AC1，不在共享分支上产生任何提交。执行结果：把继承依赖集合从 4 轮收敛时误判的「无法分离」推进到真实闭包——38 个其他 workstream 未提交的文件（此前 4 轮停在消费者文件上，漏了 SEKB trajectory-capture、context-engine block、shared/chat/types 这几个定义文件）。补齐后 candidate 上 typecheck:node 0、typecheck:web 0、contract 0、comms 45 PASS/0 FAIL、build:runtime 0（smoke gateway ready）、183 个 scoped 测试跨六 shard 全绿，且 TF-0084 spec 的 diff-aware harness validate exit 0（diff 恰为 6 个新文件，本条线首次通过带 --since 的归属校验）。因此 AC1 由 partially-met 转为 met，四条 acceptance criteria 全部 met，TF-0084 收口为 done。唯一如实记录的限制：两个真实进程 GA 脚本会 spawn pnpm，pnpm 拒绝在 junction 的 node_modules 上运行，这两项改在权威树上跑（内容一致），记为环境限制而非豁免。同时更正上一轮提案里「共享工作树无法按节点切成独立 candidate」的结论——本链可分离，只是不能仅凭自己声明的 touchedAreas 分离；那 38 个文件即是量化的归属缺口，归各自 owner。产品锁与 default-off 全部不变，工作树未提交，candidate worktree 与 junction 已清理。",
+  "session_id": "session-20260823-tf0084-closeout",
+  "status": "applied"
+}

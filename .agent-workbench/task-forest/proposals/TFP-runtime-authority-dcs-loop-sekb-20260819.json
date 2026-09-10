@@ -1,0 +1,518 @@
+{
+  "applied_at": "2026-08-19T15:15:54.044449Z",
+  "base_graph_hash": "20d22d8243955c6f723b06efcce39bc71355ca068a3b50f4dc353c0170cbcd72",
+  "base_summary": {
+    "edge_count": 126,
+    "node_count": 70,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "task-state-run-scope",
+      "node": {
+        "acceptance_criteria": [
+          "两个并发 session 交错产生 phase transition 时，sink、session_id、objective 和 trajectory capture 始终一一对应",
+          "上一 run 的配置不会影响后续 DCS 初始化失败的 run",
+          "新增并发、清理和 stale-config 单测通过，现有 DCS agents shard 全部通过"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.96,
+          "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
+          "validation_plan": [
+            "并发 phase producer 单测",
+            "DCS agents shard",
+            "task_state 数据库归属断言"
+          ],
+          "why_not_enough": "只解决运行上下文隔离，不会自动补齐 Mission 到 SEKB 的完整业务 lineage。",
+          "why_this_task": "并发串写会直接破坏任务状态和经验数据的可信度，是投入使用前必须消除的根因风险。"
+        },
+        "assumptions": [
+          "task_phase_change 事件可继续携带 sessionId、taskId 和 runId",
+          "同一进程内需要支持多个 embedded run 并发"
+        ],
+        "confidence": 0.92,
+        "context_tags": [
+          "dcs",
+          "task-loop",
+          "concurrency",
+          "lineage"
+        ],
+        "desired_outcomes": [
+          "每个 embedded run 的 DCS 与 SEKB 依赖具有明确的 run/session 绑定",
+          "新 run 不会覆盖已有 run 的 handler 配置",
+          "run 结束、取消或依赖初始化失败后不会残留旧配置"
+        ],
+        "difficulty": "high",
+        "estimated_total_minutes": 480,
+        "execution_hints": [
+          "先阅读 active Harness task spec，再实现最小运行上下文注册表",
+          "优先用交错 Promise/事件顺序构造并发回归测试",
+          "保留旧 API 的兼容适配，但禁止继续依赖无 key 的全局值"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "不重写 TaskFlow 或 Mission 的生命周期模型",
+          "不改变产品锁和默认开关",
+          "不引入第二套 DCS 存储"
+        ],
+        "priority": 1,
+        "purpose": "保证并发 Mission/Task Loop 不会把 task_state 或 terminal trajectory 写入其他 session、objective 或 sink。",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 240,
+        "requirements": [
+          "task_phase_change 必须使用事件 lineage 定位对应运行实例",
+          "兼容现有 task_state、child handoff、working-memory 和 SEKB hook 行为",
+          "默认开关保持不变，不能借机启用 DCS 或 SEKB"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "跨 session task_state 串写为 0",
+          "跨 run objective/trajectory 串写为 0",
+          "运行结束后的 handler 配置残留为 0"
+        ],
+        "summary": "移除 TaskStateHandlerConfig 对模块级全局 singleton 的运行时依赖，按 session/run/task phase 绑定 DCS sink、working-memory store、objective、parent session 和 SEKB capture。",
+        "title": "DCS Task State 按运行实例隔离"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "phase-write-durability",
+      "node": {
+        "acceptance_criteria": [
+          "phase hook 返回前可确定 DCS write 已 accepted、rejected 或明确失败",
+          "terminal trajectory capture 的结果可在 task_loop 返回前被测试观察",
+          "写入失败时有结构化日志/evidence，且不会产生未处理 Promise rejection",
+          "新增 durability 单测和现有 task-loop/DCS 测试通过"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.95,
+          "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
+          "validation_plan": [
+            "延迟 sink 时序测试",
+            "terminal capture 可观察性测试",
+            "取消/失败清理回归"
+          ],
+          "why_not_enough": "不会单独解决跨 mission/tick 的身份关联。",
+          "why_this_task": "状态已经完成但持久化尚未完成会形成用户不可见的数据孤岛，直接影响恢复和验收。"
+        },
+        "assumptions": [
+          "task_phase_change handler 可以改为返回受控 Promise 结果",
+          "现有 BlockStore 和 TrajectoryCapture API 足以表达写入结果"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "dcs",
+          "task-loop",
+          "persistence",
+          "recovery"
+        ],
+        "desired_outcomes": [
+          "phase transition 的异步副作用具有明确等待边界",
+          "写入失败可记录为 degradation/evidence，不改变 Loop 的控制结果",
+          "session 清理不会抢先于必要的 DCS/SEKB 写入"
+        ],
+        "difficulty": "high",
+        "estimated_total_minutes": 360,
+        "execution_hints": [
+          "先定义等待/失败语义和测试时序，再改生产调用点",
+          "检查取消、异常退出和 session dispose 的 finally 顺序"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "不把 DCS 或 SEKB 写入失败升级为模型任务失败",
+          "不打开自动经验写回",
+          "不引入同步阻塞整个 agent runtime 的全局锁"
+        ],
+        "priority": 1,
+        "purpose": "避免 task_loop 已报告 completed/failed，但 task_state 或经验轨迹尚未写入甚至丢失。",
+        "remaining_minutes_max": 600,
+        "remaining_minutes_min": 180,
+        "requirements": [
+          "保持 Task Loop 主控制流的失败隔离策略",
+          "不得把最佳努力写入误报为已持久化",
+          "terminal phase 必须覆盖 completed、failed、cancelled 的策略边界"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "task_loop 完成后 DCS/SEKB side effect 未完成的窗口为 0",
+          "未处理 phase hook rejection 为 0",
+          "写入结果与 task lifecycle evidence 可关联"
+        ],
+        "summary": "修复 Task Loop 对 task_phase_change handler 的 fire-and-forget 调用，让 terminal/关键 phase 的 DCS Block 写入和 SEKB capture 在生命周期状态返回前具备可观测的完成或失败结果。",
+        "title": "Task Loop phase side effect 持久化完成语义"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "unified-runtime-lineage",
+      "node": {
+        "acceptance_criteria": [
+          "至少一条真实 Mission -> Task Loop -> DCS phase -> SEKB trajectory 链可以通过 ID 完整回溯",
+          "同一 session 的两个 mission/tick 不会只靠 sessionKey 混淆",
+          "Host Knowledge review 能显示来源 trajectory/lineage，confirm provenance 与来源一致",
+          "新增 lineage schema/contract 测试和相关 E2E 通过"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.97,
+          "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
+          "validation_plan": [
+            "lineage contract 单测",
+            "Mission/Task/DCS/SEKB 纵向集成测试",
+            "Knowledge 来源回溯 E2E"
+          ],
+          "why_not_enough": "需要依赖运行上下文隔离和 phase 持久化语义先稳定。",
+          "why_this_task": "没有统一 lineage，功能即使分别可用也无法形成可审计、可恢复、可总结经验的闭环。"
+        },
+        "assumptions": [
+          "TF-0037 的 lifecycle 迁移仍是上层执行边界",
+          "任务事件和共享 state DB 可以承载有限的 lineage metadata"
+        ],
+        "confidence": 0.85,
+        "context_tags": [
+          "mission",
+          "task-loop",
+          "dcs",
+          "sekb",
+          "lineage"
+        ],
+        "desired_outcomes": [
+          "Mission tick 调用 Task Loop 时传递稳定的 parent lineage",
+          "DCS Block 和 SEKB trajectory 可定位到 mission/tick/loop/trace/task ledger",
+          "知识候选和确认后的 principle 能回指真实来源轨迹"
+        ],
+        "difficulty": "very_high",
+        "estimated_total_minutes": 720,
+        "execution_hints": [
+          "先输出 lineage 字段映射和缺失字段兼容策略",
+          "以一个完整黄金路径作为纵向切片，不要并行重构所有存储"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "不把 SEKB 自动蒸馏或自动写回打开",
+          "不替换 TaskFlow/TaskRegistry 的既定 authority 计划",
+          "不修改用户界面之外的产品锁状态"
+        ],
+        "priority": 1,
+        "purpose": "让操作者能够从一个 Goal/Mission 回溯到具体 Task Loop、DCS 状态、工具证据和经验候选，而不是只有同 session 的弱关联。",
+        "remaining_minutes_max": 1200,
+        "remaining_minutes_min": 360,
+        "requirements": [
+          "优先复用已有 session、trace、task ledger 和 DCS 字段",
+          "不得新建平行 workflow 或 memory authority",
+          "兼容现有查询和历史数据，旧记录缺字段时安全降级"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "关键 runtime artifact 的 lineage 完整率 100%",
+          "无法归属 mission/tick 的新 DCS/SEKB 记录为 0",
+          "来源 trajectory 与确认 principle 的关联错误为 0"
+        ],
+        "summary": "为 missionId、tick、loopRunId、traceId、taskLedgerRootId 和 trajectory/principle 关联建立统一的运行 lineage，并让 DCS task_state 与 SEKB 轨迹携带可回溯元数据。",
+        "title": "Mission、Task Loop、DCS、SEKB 统一 lineage"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "sekb-terminal-capture-hygiene",
+      "node": {
+        "acceptance_criteria": [
+          "terminal-only 空 trajectory 不会单独形成 distillation suggestion",
+          "带真实 tool steps 的 trajectory 可以被正常检索、建议、确认和召回",
+          "重复 capture 可通过 lineage/idempotency 识别并去重",
+          "SEKB golden path、distillation 和 terminal lifecycle 回归通过"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.94,
+          "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
+          "validation_plan": [
+            "候选池过滤单测",
+            "重复 capture 集成测试",
+            "SEKB 黄金路径和 Knowledge E2E"
+          ],
+          "why_not_enough": "它不能替代 Mission/Loop 的 lineage 传递，只能消费并保护该 lineage。",
+          "why_this_task": "经验总结质量取决于候选是否是真实、可回溯、可复用的执行轨迹。"
+        },
+        "assumptions": [
+          "统一 lineage 任务能够提供 run/trace 关联字段",
+          "distiller 可以增加候选质量过滤而不改变确认协议"
+        ],
+        "confidence": 0.88,
+        "context_tags": [
+          "sekb",
+          "distillation",
+          "trajectory",
+          "quality"
+        ],
+        "desired_outcomes": [
+          "一个真实 agent run 不会因为 agent_end 和 terminal phase 产生两个无关联候选",
+          "必要的 terminal 状态仍可记录，但与真实 trajectory 合并或标记为不可蒸馏",
+          "distillation suggestion 只消费满足质量和 lineage 条件的 trajectory"
+        ],
+        "difficulty": "high",
+        "estimated_total_minutes": 480,
+        "execution_hints": [
+          "先构造 terminal-only 与真实 agent_end 双轨迹样本",
+          "过滤必须发生在候选生成边界，不能破坏原始审计记录"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "不删除已有历史 trajectory",
+          "不启用 batch distillation 或自动确认",
+          "不把状态摘要冒充工具轨迹"
+        ],
+        "priority": 1,
+        "purpose": "保证经验总结建立在真实工具步骤和可回溯来源上，避免 Task Loop 状态通知制造噪声候选。",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 240,
+        "requirements": [
+          "保持人工确认前不写入 experience Block 的规则",
+          "失败和取消状态仍有可审计记录",
+          "旧数据和默认关闭路径保持兼容"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "无步骤 trajectory 进入候选池为 0",
+          "同一 run 的重复经验候选为 0",
+          "真实 trajectory 的建议/确认/召回成功率保持 100%"
+        ],
+        "summary": "处理 task_phase_change terminal capture 与真实 agent_end trajectory 的重复关系，禁止无步骤、无 lineage 的空 trajectory 直接进入经验蒸馏候选。",
+        "title": "SEKB terminal trajectory 候选门控与去重"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "runtime-acceptance-closeout",
+      "node": {
+        "acceptance_criteria": [
+          "DCS agents/runtime-config/unit shards 通过",
+          "并发隔离、持久化时序、lineage 回溯和空 trajectory 门控全部有自动化证据",
+          "Knowledge golden path 与 Knowledge E2E 通过",
+          "STATUS.md、product locks 和 SEKB no-auto-writeback 约束保持正确"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.98,
+          "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
+          "validation_plan": [
+            "Harness validate",
+            "官方 DCS runner",
+            "Knowledge E2E",
+            "fresh acceptance evidence"
+          ],
+          "why_not_enough": "工程验收不能替代用户本人进行的真实 channel 和产品批准。",
+          "why_this_task": "用户要求先规划后逐项开始，最终需要一个明确的可投入使用验收结论。"
+        },
+        "assumptions": [
+          "前置任务按依赖顺序完成并各自产出测试证据",
+          "当前工作区的 Electron 锁定问题可以通过官方 runner 或环境恢复后重跑"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "acceptance",
+          "dcs",
+          "mission",
+          "task-loop",
+          "sekb"
+        ],
+        "desired_outcomes": [
+          "形成一份可复跑的 runtime acceptance evidence",
+          "明确孤岛已修复、残余风险和产品锁边界",
+          "不把工程 PASS 写成 live-ready、product-approved 或 default-on"
+        ],
+        "difficulty": "high",
+        "estimated_total_minutes": 360,
+        "execution_hints": [
+          "验收报告必须把代码证据与真人/live/product evidence 分开",
+          "若仍有阻断，保持 review_needed/blocked，不以文档声明替代测试"
+        ],
+        "kind": "milestone",
+        "non_goals": [
+          "不执行真实第三方 channel 人工验收",
+          "不解锁 live-ready/product-approved/default-on",
+          "不进行大范围 UI 或无关架构重构"
+        ],
+        "priority": 1,
+        "purpose": "把代码层修复转化为可证明的投入使用结论，并明确仍受 human/live/product lock 限制的部分。",
+        "remaining_minutes_max": 600,
+        "remaining_minutes_min": 180,
+        "requirements": [
+          "先完成四个前置实现任务",
+          "使用当前官方 DCS/Knowledge/E2E runner 和 Harness 规范",
+          "报告必须包含失败项、未验证项和实际环境限制"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "关键链路孤岛类缺陷为 0",
+          "工程验收报告可复跑且不依赖旧报告时间戳",
+          "live/product/default-on 结论与证据边界一致"
+        ],
+        "summary": "在上述根因任务完成后，以真实并发、故障恢复、Mission/Task/DCS/SEKB 纵向链路和人工确认黄金路径进行最终工程验收。",
+        "title": "DCS、Goal/Loop、SEKB 真实投入使用验收"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "Task Loop lifecycle 迁移的运行上下文隔离实现子任务"
+      },
+      "from": "task-state-run-scope",
+      "to": "TF-0037",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "Task Loop lifecycle 迁移的持久化完成语义实现子任务"
+      },
+      "from": "phase-write-durability",
+      "to": "TF-0037",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.94,
+        "reason": "Task Loop lifecycle 迁移的跨层 lineage 实现子任务"
+      },
+      "from": "unified-runtime-lineage",
+      "to": "TF-0037",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.93,
+        "reason": "Task Loop lifecycle 迁移的 SEKB 轨迹质量实现子任务"
+      },
+      "from": "sekb-terminal-capture-hygiene",
+      "to": "TF-0037",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.92,
+        "reason": "Task Loop lifecycle 迁移后的纵向真实验收里程碑"
+      },
+      "from": "runtime-acceptance-closeout",
+      "to": "TF-0037",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.9,
+        "reason": "lineage 字段必须建立在按 run 隔离的上下文绑定之上"
+      },
+      "from": "unified-runtime-lineage",
+      "to": "task-state-run-scope",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.84,
+        "reason": "只有持久化完成语义稳定后，lineage 才能成为可验证的事实"
+      },
+      "from": "unified-runtime-lineage",
+      "to": "phase-write-durability",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.9,
+        "reason": "轨迹去重和候选门控需要统一 run/trace lineage"
+      },
+      "from": "sekb-terminal-capture-hygiene",
+      "to": "unified-runtime-lineage",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "最终验收必须先证明并发上下文不串写"
+      },
+      "from": "runtime-acceptance-closeout",
+      "to": "task-state-run-scope",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "最终验收必须先证明 phase side effect 的持久化边界"
+      },
+      "from": "runtime-acceptance-closeout",
+      "to": "phase-write-durability",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "最终验收必须能够完整回溯 Mission/Loop/DCS/SEKB"
+      },
+      "from": "runtime-acceptance-closeout",
+      "to": "unified-runtime-lineage",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.94,
+        "reason": "最终验收必须证明经验候选没有空轨迹和重复轨迹污染"
+      },
+      "from": "runtime-acceptance-closeout",
+      "to": "sekb-terminal-capture-hygiene",
+      "type": "depends_on"
+    },
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "采用根因优先的五任务链：运行上下文隔离、phase 持久化语义、统一 lineage、SEKB 候选门控、最终纵向验收。",
+        "confidence": 0.95,
+        "created_at": "2026-08-19T15:15:37.470039Z",
+        "id": "TFA-runtime-authority-dcs-loop-sekb-20260819",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.96,
+          "user_goal": "让功能都能正常投入使用",
+          "validation_plan": [
+            "task-forest validate/export",
+            "前置单测和集成测试",
+            "DCS/Knowledge E2E",
+            "fresh acceptance report"
+          ],
+          "why_not_enough": "完成工程任务后仍需要用户进行真实 channel/product acceptance，不能自动解锁 GA。",
+          "why_this_task": "任务链直接覆盖当前发现的跨层串写、异步落库、lineage 缺失和经验噪声四类孤岛。"
+        },
+        "reason": "当前 review 已找到可复现的生产级孤岛，先修根因才能让后续验收结论有意义；现有 RC-06D 主线是最接近的权威父任务。",
+        "rejected_options": [
+          "只补文档或验收报告",
+          "直接解锁 default-on/GA",
+          "另建平行 runtime authority 任务树"
+        ],
+        "related_task_ids": [
+          "TF-0037",
+          "TF-0010"
+        ],
+        "selected_option": "根因优先、单主线、保留默认关闭和人工确认边界",
+        "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用"
+      }
+    }
+  ],
+  "created_at": "2026-08-19T15:15:37.461694Z",
+  "proposal_id": "TFP-runtime-authority-dcs-loop-sekb-20260819",
+  "rationale": "本轮真实验收发现 DCS、Task Loop、Mission Loop 与 SEKB 之间仍有生产级孤岛：TaskStateHandlerConfig 使用全局 singleton，phase side effect 未等待，Mission/Loop/DCS/SEKB 缺少统一 lineage，terminal phase 会生成可能进入候选池的空 trajectory。现有 DCS 工具注册和 SEKB 人工确认黄金路径保持为已验证能力，不重复创建并行任务。",
+  "session_id": "session-20260819-runtime-authority-review",
+  "status": "applied"
+}

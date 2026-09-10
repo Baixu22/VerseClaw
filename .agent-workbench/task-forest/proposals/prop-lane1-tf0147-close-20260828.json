@@ -1,0 +1,41 @@
+{
+  "applied_at": "2026-08-28T14:03:12.675386Z",
+  "base_graph_hash": "b6a043b410cc821da786fd103471977166c18e139610c799943c3c1afb1d385d",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "lane-1 implementation (2026-08-28): harness/specs/rules/context-family-boundary.md 与 harness/specs/tasks/context-readonly-recall-surface.md 明确 owner-store 例外及四项边界。",
+          "openclaw_runtime/src/shared/tool-registration.ts：ToolRiskLevel 注释明确 filesystem-only 语义；tests/unit/context-readonly-recall-contract.test.ts 2/2 通过。",
+          "docs/dev/context-moat/reviews/TF-0121.md：回填 TF-0147 最终边界，保留 assembler lifecycle filter 前向义务。",
+          "pnpm harness context --spec harness/specs/tasks/context-readonly-recall-surface.md：通过；diff-aware validate 受工作区既有未覆盖路径阻塞，未冒充全量通过。"
+        ],
+        "next_action": "已收口。",
+        "progress": 100,
+        "status": "done",
+        "summary": "出路 A 已收口：规范明确 DCS BlockStore 是既有 owner store，context_read(include_archived=true) 仅允许有界 lifecycle/presence page-in；ToolRiskLevel=readonly 仅为 filesystem-risk 分类，不证明无 durable mutation。contract guard 2/2 通过，TF-0121 已回填最终边界。"
+      },
+      "id": "TF-0147"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "TF-0147 final decision (2026-08-28): route A accepted; DCS BlockStore owner-store lifecycle exception is explicit, ToolRiskLevel=readonly is not a no-durable-mutation proof, and the assembler lifecycle-filter forward obligation remains active."
+        ]
+      },
+      "id": "TF-0121"
+    }
+  ],
+  "created_at": "2026-08-28T14:02:33.729763Z",
+  "proposal_id": "prop-lane1-tf0147-close-20260828",
+  "rationale": "lane-1 已完成 TF-0147 出路 A：把 DCS BlockStore owner-store lifecycle page-in 写入规范，明确 ToolRiskLevel readonly 的 filesystem-only 语义，并以 contract guard 与 TF-0121 回填闭合审核链。",
+  "session_id": "session-lane1-tf0147-close-20260828",
+  "status": "applied"
+}

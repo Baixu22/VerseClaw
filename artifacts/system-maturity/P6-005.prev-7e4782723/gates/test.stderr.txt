@@ -1,0 +1,435 @@
+$ vitest run --maxWorkers=2 --exclude tests/unit/gateway-permissions-api.test.ts --exclude tests/unit/files-permissions-api.test.ts --exclude tests/unit/runtime-memory-operator-inspection.test.ts && vitest run tests/unit/gateway-permissions-api.test.ts tests/unit/files-permissions-api.test.ts tests/unit/runtime-memory-operator-inspection.test.ts --maxWorkers=1 && pnpm run test:dcs
+Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+warning: in the working copy of 'a.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'z.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'a.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'z.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'a.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'z.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.github/workflows/release.yml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/gates.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'a.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'z.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.github/workflows/release.yml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/gates.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'a.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'z.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'a.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'z.txt', LF will be replaced by CRLF the next time Git touches it
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+(node:37092) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+warning: in the working copy of 'harness/specs/tasks/residual-glob-fixture.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'owned.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'harness/specs/tasks/residual-fixture.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'owned.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'harness/specs/tasks/scenario-less.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'owned.txt', LF will be replaced by CRLF the next time Git touches it
+(node:13796) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+(node:36964) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+fatal: path 'artifacts/ignored/report.json' exists on disk, but not in 'HEAD'
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+(node:36028) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+(node:9840) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/uas-00-evidence-freeze.test.ts[2m [ tests/unit/uas-00-evidence-freeze.test.ts ][22m
+[31m[1mError[22m: ENOENT: no such file or directory, open '[workspace]\artifacts\unified-agent-system\TF-0011\audit-manifest.json'[39m
+[36m [2m❯[22m readManifest tests/unit/uas-00-evidence-freeze.test.ts:[2m21:21[22m[39m
+    [90m 19|[39m
+    [90m 20|[39m [35mfunction[39m [34mreadManifest[39m()[33m:[39m [33mManifest[39m {
+    [90m 21|[39m   [35mreturn[39m [33mJSON[39m[33m.[39m[34mparse[39m([34mreadFileSync[39m(manifestPath[33m,[39m [32m'utf8'[39m)) [35mas[39m [33mManifest[39m[33m;[39m
+    [90m   |[39m                     [31m^[39m
+    [90m 22|[39m }
+    [90m 23|[39m
+[90m [2m❯[22m tests/unit/uas-00-evidence-freeze.test.ts:[2m25:20[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/16]⎯[22m[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 15 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/uas-05-verseshell-process-lifecycle.test.ts[2m > [22mUAS-05 VerseShell process lifecycle boundary[2m > [22mpins the lifecycle binary, source patch, and 31-operation catalog
+[31m[1mAssertionError[22m: expected 'ec2c9a83c3d6c7ec0b7b39105b1da0416eb3b…' to be '158d0ca4d2ec51080b2aa0bdeb6274755c700…' // Object.is equality[39m
+
+Expected: [32m"158d0ca4d2ec51080b2aa0bdeb6274755c7009af9a904f86eacf624993dcd489"[39m
+Received: [31m"ec2c9a83c3d6c7ec0b7b39105b1da0416eb3bb59d1a5a608b57a86a7ebf61ea5"[39m
+
+[36m [2m❯[22m tests/unit/uas-05-verseshell-process-lifecycle.test.ts:[2m35:63[22m[39m
+    [90m 33|[39m       patch_paths[33m:[39m expect[33m.[39m[34marrayContaining[39m([patchPath])[33m,[39m
+    [90m 34|[39m     })[33m;[39m
+    [90m 35|[39m     expect(sha256("resources/verseshell/source-inputs.json")).toBe(man…
+    [90m   |[39m                                                               [31m^[39m
+    [90m 36|[39m     expect(sha256(binaryPath)).toBe(manifest.artifacts["win32-x64"].sh…
+    [90m 37|[39m     expect(statSync(binaryPath).size).toBe(manifest.artifacts["win32-x…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/uas-06-single-local-exec-canary.test.ts[2m > [22mUAS-06 single local execution plane boundary[2m > [22mkeeps reviewed live records in a separate, non-executing evidence channel
+[31m[1mError[22m: ENOENT: no such file or directory, open '[workspace]\artifacts\uas-06-single-local-exec-canary\live-observations.json'[39m
+[36m [2m❯[22m read tests/unit/uas-06-single-local-exec-canary.test.ts:[2m15:32[22m[39m
+    [90m 13|[39m
+    [90m 14|[39m [35mconst[39m root [33m=[39m [34mresolve[39m([35mimport[39m[33m.[39mmeta[33m.[39mdirname[33m,[39m [32m"../.."[39m)[33m;[39m
+    [90m 15|[39m const read = (path: string) => readFileSync(resolve(root, path), "utf8…
+    [90m   |[39m                                [31m^[39m
+    [90m 16|[39m
+    [90m 17|[39m [35mfunction[39m [34mengineeringObservation[39m(
+[90m [2m❯[22m tests/unit/uas-06-single-local-exec-canary.test.ts:[2m100:7[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/verseshell-manifest.test.ts[2m > [22mVerseShell v2 manifest validation[2m > [22maccepts the qualified ordered patch-stack bundle in development and packaging modes
+[31m[1mAssertionError[22m: expected { ok: false, mode: 'dev', …(2) } to deeply equal { ok: true, mode: 'dev', …(2) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "issues": [],[39m
+[31m+   "issues": [[39m
+[31m+     "Patch resources/verseshell/patches/p0-runtime-startup.patch byte size mismatch.",[39m
+[31m+   ],[39m
+[2m    "mode": "dev",[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m    "platform": "win32-x64",[22m
+[2m  }[22m
+
+[36m [2m❯[22m tests/unit/verseshell-manifest.test.ts:[2m45:67[22m[39m
+    [90m 43|[39m     expect(manifestText).toContain('pinned-commit-plus-ordered-patches…
+    [90m 44|[39m     expect(manifestText).toContain('19008cf2844aac688cfc74276db3babf64…
+    [90m 45|[39m     await expect(validateVerseShellManifest({ root, mode: 'dev' })).re…
+    [90m   |[39m                                                                   [31m^[39m
+    [90m 46|[39m       ok[33m:[39m [35mtrue[39m[33m,[39m
+    [90m 47|[39m       mode[33m:[39m [32m'dev'[39m[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/verseshell-manifest.test.ts[2m > [22mVerseShell v2 manifest validation[2m > [22mrejects a tampered corresponding-source patch
+[31m[1mError[22m: ENOENT: no such file or directory, lstat '[workspace]\resources\bin\win32-x64\ae.exe'[39m
+[36m [2m❯[22m fixtureRoot tests/unit/verseshell-manifest.test.ts:[2m29:5[22m[39m
+    [90m 27|[39m     [35mconst[39m destination [33m=[39m [34mjoin[39m(directory[33m,[39m relative)[33m;[39m
+    [90m 28|[39m     [35mawait[39m [34mmkdir[39m([34mdirname[39m(destination)[33m,[39m { recursive[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m 29|[39m     [35mawait[39m [34mcp[39m([34mjoin[39m(root[33m,[39m relative)[33m,[39m destination)[33m;[39m
+    [90m   |[39m     [31m^[39m
+    [90m 30|[39m   }
+    [90m 31|[39m   [35mreturn[39m directory[33m;[39m
+[90m [2m❯[22m tests/unit/verseshell-manifest.test.ts:[2m60:21[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/verseshell-manifest.test.ts[2m > [22mVerseShell v2 manifest validation[2m > [22mrejects source-input manifest digest drift
+[31m[1mError[22m: ENOENT: no such file or directory, lstat '[workspace]\resources\bin\win32-x64\ae.exe'[39m
+[36m [2m❯[22m fixtureRoot tests/unit/verseshell-manifest.test.ts:[2m29:5[22m[39m
+    [90m 27|[39m     [35mconst[39m destination [33m=[39m [34mjoin[39m(directory[33m,[39m relative)[33m;[39m
+    [90m 28|[39m     [35mawait[39m [34mmkdir[39m([34mdirname[39m(destination)[33m,[39m { recursive[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m 29|[39m     [35mawait[39m [34mcp[39m([34mjoin[39m(root[33m,[39m relative)[33m,[39m destination)[33m;[39m
+    [90m   |[39m     [31m^[39m
+    [90m 30|[39m   }
+    [90m 31|[39m   [35mreturn[39m directory[33m;[39m
+[90m [2m❯[22m tests/unit/verseshell-manifest.test.ts:[2m68:21[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/verseshell-manifest.test.ts[2m > [22mVerseShell v2 manifest validation[2m > [22mrejects a modified recovered-source inventory before build acceptance
+[31m[1mError[22m: ENOENT: no such file or directory, lstat '[workspace]\resources\bin\win32-x64\ae.exe'[39m
+[36m [2m❯[22m fixtureRoot tests/unit/verseshell-manifest.test.ts:[2m29:5[22m[39m
+    [90m 27|[39m     [35mconst[39m destination [33m=[39m [34mjoin[39m(directory[33m,[39m relative)[33m;[39m
+    [90m 28|[39m     [35mawait[39m [34mmkdir[39m([34mdirname[39m(destination)[33m,[39m { recursive[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m 29|[39m     [35mawait[39m [34mcp[39m([34mjoin[39m(root[33m,[39m relative)[33m,[39m destination)[33m;[39m
+    [90m   |[39m     [31m^[39m
+    [90m 30|[39m   }
+    [90m 31|[39m   [35mreturn[39m directory[33m;[39m
+[90m [2m❯[22m tests/unit/verseshell-manifest.test.ts:[2m78:21[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/verseshell-manifest.test.ts[2m > [22mVerseShell v2 manifest validation[2m > [22mverifies the existing artifact size and SHA-256 values
+[31m[1mError[22m: ENOENT: no such file or directory, lstat '[workspace]\resources\bin\win32-x64\ae.exe'[39m
+[36m [2m❯[22m fixtureRoot tests/unit/verseshell-manifest.test.ts:[2m29:5[22m[39m
+    [90m 27|[39m     [35mconst[39m destination [33m=[39m [34mjoin[39m(directory[33m,[39m relative)[33m;[39m
+    [90m 28|[39m     [35mawait[39m [34mmkdir[39m([34mdirname[39m(destination)[33m,[39m { recursive[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m 29|[39m     [35mawait[39m [34mcp[39m([34mjoin[39m(root[33m,[39m relative)[33m,[39m destination)[33m;[39m
+    [90m   |[39m     [31m^[39m
+    [90m 30|[39m   }
+    [90m 31|[39m   [35mreturn[39m directory[33m;[39m
+[90m [2m❯[22m tests/unit/verseshell-manifest.test.ts:[2m88:21[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/verseshell-manifest.test.ts[2m > [22mVerseShell v2 manifest validation[2m > [22mrejects missing source-input provenance payload
+[31m[1mError[22m: ENOENT: no such file or directory, lstat '[workspace]\resources\bin\win32-x64\ae.exe'[39m
+[36m [2m❯[22m fixtureRoot tests/unit/verseshell-manifest.test.ts:[2m29:5[22m[39m
+    [90m 27|[39m     [35mconst[39m destination [33m=[39m [34mjoin[39m(directory[33m,[39m relative)[33m;[39m
+    [90m 28|[39m     [35mawait[39m [34mmkdir[39m([34mdirname[39m(destination)[33m,[39m { recursive[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m 29|[39m     [35mawait[39m [34mcp[39m([34mjoin[39m(root[33m,[39m relative)[33m,[39m destination)[33m;[39m
+    [90m   |[39m     [31m^[39m
+    [90m 30|[39m   }
+    [90m 31|[39m   [35mreturn[39m directory[33m;[39m
+[90m [2m❯[22m tests/unit/verseshell-manifest.test.ts:[2m95:21[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/verseshell-manifest.test.ts[2m > [22mVerseShell v2 manifest validation[2m > [22mrejects facade operation order drift
+[31m[1mError[22m: ENOENT: no such file or directory, lstat '[workspace]\resources\bin\win32-x64\ae.exe'[39m
+[36m [2m❯[22m fixtureRoot tests/unit/verseshell-manifest.test.ts:[2m29:5[22m[39m
+    [90m 27|[39m     [35mconst[39m destination [33m=[39m [34mjoin[39m(directory[33m,[39m relative)[33m;[39m
+    [90m 28|[39m     [35mawait[39m [34mmkdir[39m([34mdirname[39m(destination)[33m,[39m { recursive[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m 29|[39m     [35mawait[39m [34mcp[39m([34mjoin[39m(root[33m,[39m relative)[33m,[39m destination)[33m;[39m
+    [90m   |[39m     [31m^[39m
+    [90m 30|[39m   }
+    [90m 31|[39m   [35mreturn[39m directory[33m;[39m
+[90m [2m❯[22m tests/unit/verseshell-manifest.test.ts:[2m102:21[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/verseshell-runtime-bundle.test.ts[2m > [22mresolveVerseShellRuntimeBundle[2m > [22mverifies a packaged bundle under spaces and non-ASCII paths
+[31m[1mError[22m: VerseShell source-input manifest checksum mismatch: expected 158d0ca4d2ec51080b2aa0bdeb6274755c7009af9a904f86eacf624993dcd489, found ec2c9a83c3d6c7ec0b7b39105b1da0416eb3bb59d1a5a608b57a86a7ebf61ea5.[39m
+[36m [2m❯[22m validateSourceInputs electron/utils/verseshell-runtime-bundle.ts:[2m343:11[22m[39m
+    [90m341|[39m   [35mconst[39m sourceDigest [33m=[39m [34mcreateHash[39m([32m'sha256'[39m)[33m.[39m[34mupdate[39m(raw)[33m.[39m[34mdigest[39m([32m'hex'[39m)[33m;[39m
+    [90m342|[39m   [35mif[39m (sourceDigest [33m!==[39m [33mEXPECTED_SOURCE_INPUTS_SHA256[39m) {
+    [90m343|[39m     throw new Error(`VerseShell source-input manifest checksum mismatc…
+    [90m   |[39m           [31m^[39m
+    [90m344|[39m   }
+    [90m345|[39m   for (const [index, [relativePath, bytes, sha256]] of EXPECTED_PATCHE…
+[90m [2m❯[22m verifyBundle electron/utils/verseshell-runtime-bundle.ts:[2m475:30[22m[39m
+[90m [2m❯[22m tests/unit/verseshell-runtime-bundle.test.ts:[2m199:20[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/verseshell-runtime-bundle.test.ts[2m > [22mresolveVerseShellRuntimeBundle[2m > [22mrequests and fully contracts the verified bundle for a config-only governed canary
+[31m[1mError[22m: VerseShell source-input manifest checksum mismatch: expected 158d0ca4d2ec51080b2aa0bdeb6274755c7009af9a904f86eacf624993dcd489, found ec2c9a83c3d6c7ec0b7b39105b1da0416eb3bb59d1a5a608b57a86a7ebf61ea5.[39m
+[36m [2m❯[22m validateSourceInputs electron/utils/verseshell-runtime-bundle.ts:[2m343:11[22m[39m
+    [90m341|[39m   [35mconst[39m sourceDigest [33m=[39m [34mcreateHash[39m([32m'sha256'[39m)[33m.[39m[34mupdate[39m(raw)[33m.[39m[34mdigest[39m([32m'hex'[39m)[33m;[39m
+    [90m342|[39m   [35mif[39m (sourceDigest [33m!==[39m [33mEXPECTED_SOURCE_INPUTS_SHA256[39m) {
+    [90m343|[39m     throw new Error(`VerseShell source-input manifest checksum mismatc…
+    [90m   |[39m           [31m^[39m
+    [90m344|[39m   }
+    [90m345|[39m   for (const [index, [relativePath, bytes, sha256]] of EXPECTED_PATCHE…
+[90m [2m❯[22m verifyBundle electron/utils/verseshell-runtime-bundle.ts:[2m475:30[22m[39m
+[90m [2m❯[22m tests/unit/verseshell-runtime-bundle.test.ts:[2m242:21[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/verseshell-runtime-bundle.test.ts[2m > [22mresolveVerseShellRuntimeBundle[2m > [22mfails when license or source compliance payload is missing
+[31m[1mAssertionError[22m: expected [Function] to throw error matching /compliance license_file file is missi…/ but got 'VerseShell source-input manifest chec…'[39m
+
+[32m- Expected:[39m
+/compliance license_file file is missing/
+
+[31m+ Received:[39m
+"VerseShell source-input manifest checksum mismatch: expected 158d0ca4d2ec51080b2aa0bdeb6274755c7009af9a904f86eacf624993dcd489, found ec2c9a83c3d6c7ec0b7b39105b1da0416eb3bb59d1a5a608b57a86a7ebf61ea5."
+
+[36m [2m❯[22m tests/unit/verseshell-runtime-bundle.test.ts:[2m316:7[22m[39m
+    [90m314|[39m       arch[33m:[39m [32m'x64'[39m[33m,[39m
+    [90m315|[39m       env[33m:[39m {}[33m,[39m
+    [90m316|[39m     }))[33m.[39mrejects[33m.[39m[34mtoThrow[39m([36m/compliance license_file file is missing/[39m)[33m;[39m
+    [90m   |[39m       [31m^[39m
+    [90m317|[39m
+    [90m318|[39m     const missingSource = await makePackagedBundle('verseshell-source'…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/verseshell-runtime-bundle.test.ts[2m > [22mresolveVerseShellRuntimeBundle[2m > [22mrejects wrong target or manifest architecture
+[31m[1mAssertionError[22m: expected [Function] to throw error matching /no artifact for win32-x64/ but got 'VerseShell source-input manifest chec…'[39m
+
+[32m- Expected:[39m
+/no artifact for win32-x64/
+
+[31m+ Received:[39m
+"VerseShell source-input manifest checksum mismatch: expected 158d0ca4d2ec51080b2aa0bdeb6274755c7009af9a904f86eacf624993dcd489, found ec2c9a83c3d6c7ec0b7b39105b1da0416eb3bb59d1a5a608b57a86a7ebf61ea5."
+
+[36m [2m❯[22m tests/unit/verseshell-runtime-bundle.test.ts:[2m364:7[22m[39m
+    [90m362|[39m       arch[33m:[39m [32m'x64'[39m[33m,[39m
+    [90m363|[39m       env[33m:[39m {}[33m,[39m
+    [90m364|[39m     }))[33m.[39mrejects[33m.[39m[34mtoThrow[39m([36m/no artifact for win32-x64/[39m)[33m;[39m
+    [90m   |[39m       [31m^[39m
+    [90m365|[39m   })[33m;[39m
+    [90m366|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/verseshell-runtime-bundle.test.ts[2m > [22mresolveVerseShellRuntimeBundle[2m > [22mdoes not fall back to PATH when the packaged binary is missing
+[31m[1mAssertionError[22m: expected [Function] to throw error including 'VerseShell runtime is missing: C:\Use…' but got 'VerseShell source-input manifest chec…'[39m
+
+Expected: [32m"VerseShell [7mruntime is missing: [user-home]\AppData\Local\Temp\verseshell-no-path-路径 with spaces-WgpyNN\bin\ae.exe[27m"[39m
+Received: [31m"VerseShell [7msource-input manifest checksum mismatch: expected 158d0ca4d2ec51080b2aa0bdeb6274755c7009af9a904f86eacf624993dcd489, found ec2c9a83c3d6c7ec0b7b39105b1da0416eb3bb59d1a5a608b57a86a7ebf61ea5.[27m"[39m
+
+[36m [2m❯[22m tests/unit/verseshell-runtime-bundle.test.ts:[2m375:7[22m[39m
+    [90m373|[39m       arch[33m:[39m [32m'x64'[39m[33m,[39m
+    [90m374|[39m       env[33m:[39m { [33mPATH[39m[33m:[39m [32m'C:\\fake\\ae.exe'[39m }[33m,[39m
+    [90m375|[39m     })).rejects.toThrow(`VerseShell runtime is missing: ${bundle.execu…
+    [90m   |[39m       [31m^[39m
+    [90m376|[39m   })[33m;[39m
+    [90m377|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/16]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/verseshell-runtime-bundle.test.ts[2m > [22mresolveVerseShellRuntimeBundle[2m > [22mrejects a provenance lock drift even when the binary itself is intact
+[31m[1mAssertionError[22m: expected [Function] to throw error matching /source provenance|corresponding-source/ but got 'VerseShell source-input manifest chec…'[39m
+
+[32m- Expected:[39m
+/source provenance|corresponding-source/
+
+[31m+ Received:[39m
+"VerseShell source-input manifest checksum mismatch: expected 158d0ca4d2ec51080b2aa0bdeb6274755c7009af9a904f86eacf624993dcd489, found ec2c9a83c3d6c7ec0b7b39105b1da0416eb3bb59d1a5a608b57a86a7ebf61ea5."
+
+[36m [2m❯[22m tests/unit/verseshell-runtime-bundle.test.ts:[2m421:7[22m[39m
+    [90m419|[39m       arch[33m:[39m [32m'x64'[39m[33m,[39m
+    [90m420|[39m       env[33m:[39m {}[33m,[39m
+    [90m421|[39m     }))[33m.[39mrejects[33m.[39m[34mtoThrow[39m([36m/source provenance|corresponding-source/[39m)[33m;[39m
+    [90m   |[39m       [31m^[39m
+    [90m422|[39m   })[33m;[39m
+    [90m423|[39m })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/16]⎯[22m[39m

@@ -33,7 +33,7 @@ const EMPTY_USAGE = {
   cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
 };
 
-const EventStreamConstructor: typeof SourceEventStream = LlmEventStream;
+const EventStreamConstructor = LlmEventStream as unknown as typeof SourceEventStream;
 
 /**
  * Start an agent loop with a new prompt message.

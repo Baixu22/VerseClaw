@@ -1,0 +1,73 @@
+{
+  "applied_at": "2026-08-21T15:28:26.314515Z",
+  "base_graph_hash": "fa419ae744c06f61a49588a4fe5190b8c208c5b33d8315f3f742db8c6561267f",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "本阶段完成单一 runtime coding external-write sink；不把局部覆盖宣称为完整 external-write 或产品就绪。",
+        "confidence": 0.96,
+        "created_at": "2026-08-21T15:20:00.000000Z",
+        "id": "TFA-close-workspace-external-write-provenance-boundary-20260821",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.96,
+          "validation_plan": [
+            "runtime focused 9 files / 89 tests",
+            "cross-sink provenance 13 files / 108 tests",
+            "root provenance fixture 8 tests",
+            "runtime oxlint, oxfmt, tsgo:core, Main typecheck, comms replay/compare",
+            "Harness --no-diff and Task Forest validate/export"
+          ],
+          "why_not_enough": "完整 external-write 分类仍只局部执行；其他 host/plugin/VerseShell 写入口未覆盖。",
+          "why_this_task": "它完成了一个可审计的 source-to-sink 文件写入边界，并保持普通 workspace coding 可用。"
+        },
+        "reason": "当前切片已有真实 runtime mutation boundary、统一 provenance parser、path canonicalization 和 write journal 可复用；继续扩展会跨越用户限定范围和 TF-0067 依赖。",
+        "rejected_options": [
+          "继续扩展到 Electron files API、MCP、Skill、Git push 或完整 VerseShell UI",
+          "启动全局动态 taint engine",
+          "修改模型系统提示词或增加统一人工审批"
+        ],
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010",
+          "TF-0015",
+          "TF-0067",
+          "TF-0068"
+        ],
+        "selected_option": "关闭本阶段工程切片并保留 residual：未来需在 TF-0067 完成后单独评估完整 TF-0068 UI，以及其他写入调用方的来源接入。",
+        "user_goal": "沿 Task Forest 继续把外部来源依赖接入真实敏感 sink，同时保持普通编码、既有 workspace guard、journal 和显式 operator 行为。"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-21T15:20:00.000000Z",
+        "evidence": "harness/specs/tasks/workspace-external-write-provenance-boundary.md；openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts；9-file/89-test focused gate；13-file/108-test cross-sink gate；TF-0067/TF-0068 remains proposed.",
+        "expected_requirement": "external-write sink 最终覆盖所有敏感写入路径。",
+        "id": "TFD-close-workspace-external-write-partial-coverage-20260821",
+        "observed_action_or_result": "仅 runtime coding write/edit/apply_patch 的目标路径已接入；完整 TF-0068 UI 仍依赖 proposed TF-0067，Electron files API、MCP/Skill、Git/remote 写入未接入。",
+        "recommendation": "停止本阶段；下一轮最小任务应在 TF-0067 明确完成后选择一个 additional write caller，或单独授权完整 external-write UI。",
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010",
+          "TF-0067",
+          "TF-0068"
+        ],
+        "severity": "low",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-21T15:15:28.438838Z",
+  "proposal_id": "TFP-close-workspace-external-write-provenance-boundary-20260821",
+  "rationale": "本阶段已完成 runtime coding workspace external-write 的单一来源依赖切片：write/edit/apply_patch 在有效目标解析后、filesystem mutation 前读取统一 ContentProvenance；external、derived-untrusted、missing、invalid 目标 fail-closed，workspace 内写入与 trusted/operator 路径保持可用。完整 TF-0068 UI、MCP/Skill/Electron 其他写入口和动态 taint 仍不在范围。",
+  "session_id": "session-2026-08-21-workspace-external-write-provenance-closeout",
+  "status": "applied"
+}

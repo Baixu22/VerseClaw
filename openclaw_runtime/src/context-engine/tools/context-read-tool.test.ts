@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { OPENCLAW_STATE_SCHEMA_SQL } from "../../state/openclaw-state-schema.generated.js";
 import type { ContextBlock } from "../block.js";
 import { BlockStore } from "../block-store.js";
+import { hydrateLifecycleBlock } from "../block-lifecycle.js";
 import {
   filterToolRegistryContentByCategory,
   readContext,
@@ -216,6 +217,7 @@ describe("DCS Stage 5 context-read-tool", () => {
           background: true,
           lifecycle_state: "archived",
           archived_at: BASE_TIME.toISOString(),
+          heat: 2,
         },
       }),
       { write_origin: "handler", significance: "high" },
@@ -239,6 +241,135 @@ describe("DCS Stage 5 context-read-tool", () => {
     });
     expect(withArchived.ok).toBe(true);
     expect(withArchived.contents.sort()).toEqual(["active-note", "archived-note"].sort());
+
+    const afterRecall = await readContext({
+      block_type: "working_memory",
+      sessionId: "session-a",
+      blockStore: store,
+      limit: 10,
+    });
+    expect(afterRecall.contents.sort()).toEqual(["active-note", "archived-note"].sort());
+    const persisted = (await store.query({
+      requester_session_id: "session-a",
+      session_id: "session-a",
+      block_types: ["working_memory"],
+      limit: 10,
+    })).find((block) => block.block_id === "wm:archived");
+    const recalled = hydrateLifecycleBlock(persisted!);
+    expect(recalled.lifecycle_state).toBe("active");
+    expect(recalled.archived_at).toBeUndefined();
+    expect(recalled.heat).toBe(3);
+  });
+
+  it("fails closed when archived recall persistence is unavailable", async () => {
+    const result = await readContext({
+      block_type: "working_memory",
+      sessionId: "session-a",
+      blockStore: {
+        query: async () => [
+          makeBlock("wm:archived", "working_memory", {
+            presence: {
+              always_on: false,
+              lifecycle_state: "archived",
+              archived_at: BASE_TIME.toISOString(),
+            },
+          }),
+        ],
+      },
+      includeArchived: true,
+    });
+    expect(result).toMatchObject({
+      ok: false,
+      count: 0,
+      reason: "archived recall unsupported by block store",
+    });
+  });
+
+  it("fails closed when archived recall throws", async () => {
+    const result = await readContext({
+      block_type: "working_memory",
+      sessionId: "session-a",
+      blockStore: {
+        query: async () => [
+          makeBlock("wm:archived", "working_memory", {
+            presence: {
+              always_on: false,
+              lifecycle_state: "archived",
+              archived_at: BASE_TIME.toISOString(),
+            },
+          }),
+        ],
+        recallArchivedBlocks: async () => {
+          throw new Error("storage unavailable");
+        },
+      },
+      includeArchived: true,
+    });
+    expect(result).toMatchObject({
+      ok: false,
+      count: 0,
+      reason: "archived recall failed",
+    });
+  });
+
+  it("fails closed when archived recall omits a requested block", async () => {
+    const result = await readContext({
+      block_type: "working_memory",
+      sessionId: "session-a",
+      blockStore: {
+        query: async () => [
+          makeBlock("wm:archived", "working_memory", {
+            presence: {
+              always_on: false,
+              lifecycle_state: "archived",
+              archived_at: BASE_TIME.toISOString(),
+            },
+          }),
+        ],
+        recallArchivedBlocks: async () => [],
+      },
+      includeArchived: true,
+    });
+    expect(result).toMatchObject({
+      ok: false,
+      count: 0,
+      reason: "archived recall incomplete",
+    });
+  });
+
+  it("does not recall an unauthorized archived parent block", async () => {
+    const { store } = createStore();
+    await store.upsert(
+      makeBlock("wm:parent-archived", "working_memory", {
+        session_id: "parent",
+        source_system: "working-memory",
+        presence: {
+          always_on: false,
+          lifecycle_state: "archived",
+          archived_at: BASE_TIME.toISOString(),
+          heat: 2,
+        },
+      }),
+      { write_origin: "handler", significance: "high" },
+    );
+
+    const result = await readContext({
+      block_type: "working_memory",
+      sessionId: "unrelated-child",
+      targetSessionId: "parent",
+      blockStore: store,
+      includeArchived: true,
+    });
+    expect(result.ok).toBe(true);
+    expect(result.count).toBe(0);
+    expect((await store.stats()).authorization_rejections).toBeGreaterThan(0);
+    const persisted = (await store.query({
+      requester_session_id: "parent",
+      session_id: "parent",
+      block_types: ["working_memory"],
+    }))[0];
+    expect(hydrateLifecycleBlock(persisted!).lifecycle_state).toBe("archived");
+    expect(hydrateLifecycleBlock(persisted!).heat).toBe(2);
   });
 
   it("returns empty contents when no blocks match", async () => {

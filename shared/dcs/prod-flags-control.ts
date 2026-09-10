@@ -201,14 +201,6 @@ export const DCS_WRITABLE_FLAG_SPECS: readonly DcsWritableFlagSpec[] = [
     defaultEnabled: false,
   },
   {
-    id: 'sekb-experience-shadow',
-    catalog: mustFlag('sekb-experience-shadow'),
-    controlKind: 'config',
-    storeKey: 'dcsSekbExperienceShadowEnabled',
-    targetKey: 'runtime.coding.sekb.experienceShadow',
-    defaultEnabled: false,
-  },
-  {
     id: 'sekb-retrieval-shadow',
     catalog: mustFlag('sekb-retrieval-shadow'),
     controlKind: 'config',

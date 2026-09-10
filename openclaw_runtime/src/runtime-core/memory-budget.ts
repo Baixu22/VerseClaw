@@ -33,6 +33,11 @@ export type BudgetConfig = {
   limits: Record<LLMCallType, number>;
 };
 
+export type BudgetConfigInput = {
+  windowSize?: number;
+  limits?: Partial<Record<LLMCallType, number>>;
+};
+
 export const DEFAULT_BUDGET_CONFIG: BudgetConfig = {
   windowSize: 100,
   limits: {
@@ -117,7 +122,7 @@ export class LLMCallBudget {
   private totalAttempts = 0;
   private totalDegraded = 0;
 
-  constructor(config: Partial<BudgetConfig> = {}) {
+  constructor(config: BudgetConfigInput = {}) {
     this.config = {
       windowSize: config.windowSize ?? DEFAULT_BUDGET_CONFIG.windowSize,
       limits: { ...DEFAULT_BUDGET_CONFIG.limits, ...config.limits },

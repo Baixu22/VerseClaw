@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createReleaseBaselineManifest, resolveReleaseIdentity } from './release-baseline-manifest.mjs';
@@ -170,7 +171,7 @@ function readArg(name) {
   return index >= 0 ? process.argv[index + 1] : undefined;
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMainEntrypoint(import.meta.url)) {
   try {
     const result = validateReleaseBaseline({
       root: readArg('--root') || repositoryRoot,

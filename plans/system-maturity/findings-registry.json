@@ -32,13 +32,13 @@
       "Low": 1
     },
     "byStatus": {
-      "Open": 1,
-      "Fixed": 30,
+      "Open": 0,
+      "Fixed": 31,
       "Partial": 4,
       "Unverified": 0
     },
-    "open": 1,
-    "fixed": 30,
+    "open": 0,
+    "fixed": 31,
     "tasks": 38,
     "findings": 35
   },
@@ -273,8 +273,8 @@
       "category": "AUTH",
       "severity": "High",
       "decision": "Track",
-      "status": "Fixed",
-      "evidenceLevel": "L4",
+      "status": "Partial",
+      "evidenceLevel": "L3",
       "related": [
         "F-AUTH-004",
         "F-AUTH-005"
@@ -285,11 +285,29 @@
       "tasks": [
         "P2-005"
       ],
-      "fixedBy": "P2-005",
-      "fixedAt": "2026-07-17",
-      "updatedBy": "P2-005",
-      "updatedAt": "2026-07-17T06:49:54.259Z",
-      "notes": "P2-005: CvkToolCallGateMode adds enforce; missing selectors severity=block, denied=true; engine option toolCallGateMode + OPENCLAW_CVK_TOOL_GATE_MODE."
+      "updatedBy": "TF-0119",
+      "updatedAt": "2026-08-28",
+      "notes": "Current status is Partial. P2-005 proves the enforce-mode gate API can compute a denied decision in isolated tests, but the production CVK engine only renders diagnostics into systemPromptAddition and does not consume denied at a tool execution boundary. A separate default-off follow-up is required before claiming production hard blocking.",
+      "historicalEvidence": {
+        "source": "P2-005",
+        "statusAtDelivery": "Fixed",
+        "evidenceLevelAtDelivery": "L4",
+        "artifacts": [
+          "artifacts/system-maturity/P2-005/vitest.stdout.txt",
+          "artifacts/system-maturity/P2-005/P2-005.delivery.md",
+          "artifacts/system-maturity/P2-005/acceptance-matrix.json",
+          "artifacts/system-maturity/P2-005/evidence-index.json",
+          "artifacts/system-maturity/P2-ACCEPTANCE/report.json"
+        ],
+        "classification": "historical-frozen",
+        "currentTruthSources": [
+          "plans/system-maturity/findings-registry.json",
+          "plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.md",
+          "plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.delivery.md",
+          "plans/system-maturity/risk-acceptance.json"
+        ],
+        "note": "Historical API and unit-test evidence is retained verbatim; frozen delivery and acceptance files are not current status sources and must not be reclassified as production execution-boundary evidence."
+      }
     },
     {
       "id": "F-AUTH-004",

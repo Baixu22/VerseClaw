@@ -1,0 +1,31 @@
+{
+  "applied_at": "2026-08-25T15:02:19.459226Z",
+  "base_graph_hash": "0481997162e7550da0363cb6faff9c453eb303c2c81978f1580988ddeb69af36",
+  "base_summary": {
+    "edge_count": 260,
+    "node_count": 146,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [],
+  "created_at": "2026-08-25T15:02:19.203901Z",
+  "operations": [
+    {
+      "decided_by": "lane-2（session-2026-08-25-lane-2）实测并升级；裁决权在用户（§R3.5 无合法出口，§R5 范围-2 三分类归「阻塞本任务」类）",
+      "id": "TFD-lane2-tf0110-radius-overrun-2026-08-25",
+      "impact": "task 无法按 §R3.5 收口为 done，状态止于 review_needed。升级用户裁决：一次性半径豁免（6/5，超限恰为强制记录文件）/ 档位重估 / 其他。交付物本体不受影响：4 requirement + 5 AC 全部达成，L1 六条全 exit 0，变异测试 3/3 捕获，回滚演练逐字节复原，A1 三个接线点全部生产可达（双门控生产调用点 0→3 达成）。",
+      "kind": "scope_change",
+      "node_id": "TF-0110",
+      "op": "record_deviation",
+      "related_task_ids": [
+        "TF-0110",
+        "TF-0107",
+        "TF-0108"
+      ],
+      "summary": "TF-0110（brb-S，max_brb=5）实测半径 6 = 需求点名的 4 个 src 文件（req-1 点名 role-memory-context-provider.ts 与 role-spawn.ts、req-2 点名 memory-store.ts、req-3 点名 memory-dual-gate.ts）+ AC 必需的测试（已复用既有 tests/unit/memory-dual-gate-p3-003.test.ts，未新建）+ §R4.10 第 7 步强制的 reviews/TF-0110.md。无任何合法压缩手段：测试无法并入 src；审核记录不得以 Reviews: 提交逃逸半径（§R3.8.1 TF-0118 判例）；拆分受「拆分件 max_brb 之和 ≤ 原值 5」约束不可行。属排班档位估计缺陷（S 未计入强制记录文件），非实现越界（零未点名文件、零默认值改动、守卫全空）。"
+    }
+  ],
+  "proposal_id": "prop-lane2-tf0110-radius-overrun-2026-08-25",
+  "rationale": "TF-0110 实触 6 文件（需求点名 4 个 src + AC 必需测试复用既有套件 + §R4.10 强制审核记录），超出 brb-S 上限 5。§R3.5 两出口均不可用，按 §R4.2(a) 记偏差并升级用户裁决；交付物本体完整且全部验证通过，状态止于 review_needed。",
+  "session_id": "session-lane-2",
+  "status": "applied"
+}

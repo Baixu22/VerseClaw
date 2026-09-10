@@ -1,0 +1,67 @@
+{
+  "applied_at": "2026-09-07T14:42:10.800304Z",
+  "base_graph_hash": "22ab2759121ec56109a87bb321e248342bba944b8b1cec91b9c766a604023a3c",
+  "base_summary": {
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "context_tags": [
+          "tech-debt",
+          "cleanup",
+          "landed-unwired"
+        ],
+        "next_action": "已按 XL-017（用户 2026-09-07 批准 Q1+Q2+Q3）处置为里程碑级 landed-unwired：状态保持 review_needed/100，不标 done；在此状态再不需要执行类动作。如未来让 8 个模块中任一真正通电生产路径，另立实现 task 并按 §R4.10 走全新 radius 与 A1。",
+        "status": "review_needed",
+        "summary": "landed-unwired（里程碑级降级，经 XL-017 用户 2026-09-07 批准）——M2 技术债清偿收官：四类债按三个子任务收口并补 AC-1 对账与 API-only 标注，4 个 AC 全部对账；§R3.6 判定读数如实 50/40 超限（B1 冻结预算 40，拆分不可用），按 §R3.5.1 里程碑级降级落地，不改冻结预算、不改全轮 230。AC-4 双段差异 deviation 随降级一并结案。"
+      },
+      "id": "TF-0115"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.98,
+        "created_at": "2026-09-07T14:41:48.957241Z",
+        "decided_by": "用户 2026-09-07 在本会话（Claude Code 会话 476a8a0c，lane-2 复核席）批准 XL-017 Q1；append-only 追加同 id 终态，状态以本条为准。",
+        "evidence": "AUDIT-BOARD.html XL-017；DEV-PROTOCOL.md §R3.5.1；GATE-BASELINE.md §11.4/§12.2/§13 追加处置记录；Task Forest TFP-tf0115-landed-unwired-x1-20260907。",
+        "expected_requirement": "§R3.6 B1 冻结预算 M2 {TF-0116..0119} = 40 authored；§R3.5 对超半径仅「拆分 / 降级」两路。",
+        "id": "TFD-tf0115-milestone-radius-overrun-adjudication-pending-20260907",
+        "impact": "TF-0115 status=review_needed/100，context_tags 追加 landed-unwired，summary 前缀标注；不标 done。B1 冻结预算 40 不动，全轮去重 230 不动，他节点不动。GATE-BASELINE §11.4/§12.2/§13 三处挂账行保留原值，仅追加处置记录。",
+        "kind": "radius_overrun",
+        "mitigation": "XL-017 落地；§R3.5.1 新节固化该里程碑级降级的适用条件与入口。后续任何让 8 个模块通电的工作，按 §R4.10 另立实现 task。",
+        "node_id": "TF-0115",
+        "observed_state": "50/40 超限成立且拆分事后不可用（超径文件全在已联账落仓的实现提交、四子节点均已 done；§R3.6 冻结预算不受后续拆分/调档影响；TF-0149 已把拆分出口对 brb-S 不可用登记为同构缺陷）。",
+        "related_task_ids": [],
+        "status": "resolved",
+        "target_node": "TF-0115"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.98,
+        "created_at": "2026-09-07T14:41:48.957241Z",
+        "decided_by": "用户 2026-09-07 在本会话批准 XL-017 Q3；append-only 追加同 id 终态，状态以本条为准。",
+        "evidence": "reviews/TF-0115.md 移交包段落；gates XL-017 Q3 段落。",
+        "expected_requirement": "TF-0115 AC-4 原文要求「在契约文件内注明 Key Decisions 双段差异」。",
+        "id": "TFD-tf0115-ac4-difference-note-deferred-2026-09-07",
+        "impact": "AC-4 语义等价的存放位置差被接受；在本里程碑已降为 landed-unwired 的范围内视为结案。不再重动 summary-contract.ts。",
+        "kind": "scope_change",
+        "mitigation": "如未来某个 task 实际动 compaction summary-contract 面，由该 task 同步补入「双段差异在契约文件内注明」的实现化要求。",
+        "node_id": "TF-0115",
+        "observed_state": "差异被记录在 TF-0124 审核记录（reviews/TF-0124.md）并同时在 TF-0115 的自检里镜像；未动 summary-contract.ts（避免又一次代码变更施入已经完成的 TF-0124）。",
+        "related_task_ids": [],
+        "status": "resolved",
+        "target_node": "TF-0115"
+      }
+    }
+  ],
+  "created_at": "2026-09-07T14:41:48.957241Z",
+  "id": "TFP-tf0115-landed-unwired-x1-20260907",
+  "proposal_id": "TFP-e29cb97fcf",
+  "session_id": "476a8a0c-0bf4-4102-a823-3ace7fc020b1",
+  "status": "applied"
+}

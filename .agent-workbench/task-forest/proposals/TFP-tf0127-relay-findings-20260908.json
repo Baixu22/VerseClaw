@@ -1,0 +1,73 @@
+{
+  "applied_at": "2026-09-08T02:11:43.130363Z",
+  "base_graph_hash": "5707001712fe627aa49cf4205b2ce246a7353fd5bc23a54cfd065ff2bbe6eee0",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-09-08T02:11:18.594466Z",
+        "decided_by": "lane-1 接力验收（仅记录阻塞，不作豁免裁决）",
+        "evidence": "docs/dev/context-moat/reviews/TF-0127.md；原始 maturity-7.log、candidate/artifacts/system-maturity/P7-001/traceability-report.json。",
+        "expected_requirement": "DEV-PROTOCOL §R2.3 要求第7段失败集合属于冻结96项基线。",
+        "id": "TFD-tf0127-maturity-freshness-20260908",
+        "impact": "F-GOV-003 linked source is newer than evidence；新源为轮外3b966ec8d的release validator，现有第7段规则没有自动台账出口。",
+        "kind": "acceptance_gap",
+        "node_id": "TF-0127",
+        "observed_action_or_result": "隔离候选上实测81项，与原始96项日志逐行比较新增1、移除16。",
+        "recommendation": "由证据owner处置新鲜度与规则归属后重跑；不刷新历史artifacts、不扩白名单。",
+        "related_task_ids": [],
+        "severity": "high",
+        "status": "open",
+        "summary": "maturity 第7段81项中有1项不在96项冻结基线，M4不能收口。"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-09-08T02:11:18.594466Z",
+        "decided_by": "lane-1 接力验收（保留实际归属，未改预算）",
+        "evidence": "docs/dev/context-moat/reviews/TF-0127.md；TF-0143已应用实施/复核proposal；对应git show/blame。",
+        "expected_requirement": "§R3.6/§R3.8要求按真实任务和实施/审核角色完整归属。",
+        "id": "TFD-tf0127-mixed-commit-attribution-20260908",
+        "impact": "18路径机械集并入7条明确交付后为25；本次LATEST/Harness成本后前瞻下界至少27/25，角色未定的混合文件尚未处置。",
+        "kind": "attribution_gap",
+        "node_id": "TF-0127",
+        "observed_action_or_result": "009b0ccb3携带语料和两份实施提案；81154a9f1携带UFTK配置；4013414cf携带测试。均缺可供M4机械归属的trailer。",
+        "recommendation": "补齐混合提交归属后处理实际超限；不重写历史、不抹成本、不将XL-017自动视作M4批准。",
+        "related_task_ids": [],
+        "severity": "high",
+        "status": "open",
+        "summary": "M4仅按trailer取集漏掉已被TF-0143接受的交付，半径尚不能裁为通过。"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-09-08T02:11:18.594466Z",
+        "decided_by": "lane-1 接力验收（backlog-P1）",
+        "evidence": "docs/dev/context-moat/reviews/TF-0127.md；reachability.log为空，reachability-canonical.log和四份control日志为真实执行输出。",
+        "expected_requirement": "§D1/§R1.4要求真实执行的生产可达性检查和阴性对照。",
+        "id": "TFD-tf0127-junction-gate-noop-20260908",
+        "impact": "原可达性/contract/artifact-lint空跑结果作废，不能据exit0误报通过；当前有可复跑替代入口。",
+        "kind": "tooling_defect",
+        "node_id": "TF-0127",
+        "observed_action_or_result": "C:入口与import.meta.url解析的D:路径字符串不同，main未运行。realpath入口重跑后正向非空，四类对照为0/1/2/3。",
+        "recommendation": "后续工具修复复用scripts/lib/entrypoint.mjs；本次只采用真实路径调用，不扩大到工具实现。",
+        "related_task_ids": [],
+        "severity": "medium",
+        "status": "open",
+        "summary": "目录别名使三个验证CLI入口空跑exit0，已使用真实路径完成验证。"
+      }
+    }
+  ],
+  "created_at": "2026-09-08T02:11:18.584503Z",
+  "proposal_id": "TFP-tf0127-relay-findings-20260908",
+  "rationale": "按用户接力并继续推进的要求，登记 TF-0127 本轮实际复现的验收阻塞与工具偏差。仅记录事实和开放项，不改变范围、预算、既有裁决或其他节点状态。",
+  "session_id": "session-tf0127-relay-20260908",
+  "status": "applied"
+}

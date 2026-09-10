@@ -4,7 +4,7 @@ import { GatewayRpcBackpressure } from '../../electron/gateway/rpc-backpressure'
 describe('GatewayRpcBackpressure', () => {
   it('coalesces duplicate in-flight chat.history requests', async () => {
     const backpressure = new GatewayRpcBackpressure({ maxConcurrentHistory: 2 });
-    let resolveRunner: ((value: unknown) => void) | null = null;
+    let resolveRunner: any = null;
     const runner = vi.fn(() => new Promise((resolve) => {
       resolveRunner = resolve;
     }));

@@ -40,7 +40,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
       'Set env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1 (or OPENCLAW_DCS_CONTEXT_TOOLS=1) and restart gateway/runtime.',
     rollback: 'Unset env or set to 0/false and restart. View tools leave the default catalog.',
     riskNote:
-      'Single source of truth: env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS (or Settings switch). runtime.coding.factViews is deprecated/ignored (TASK-P0-02). Keep default-off until C1 graduation + product approval.',
+      'Single source of truth: env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS (or Settings switch). The removed runtime.coding.factViews leaf is rejected by the strict config schema; remove it before upgrading. Keep default-off until C1 graduation + product approval.',
   },
   {
     id: 'context-tools-alias',
@@ -111,16 +111,16 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
   {
     id: 'worktree-backend',
     wave: 'C4',
-    kind: 'config',
-    key: 'runtime.coding.worktree.backend',
-    defaultDisplay: 'inprocess',
+    kind: 'api',
+    key: 'createWorktreeService(baseRoot, { backend })',
+    defaultDisplay: 'api-only (config leaf observability-only)',
     defaultValue: 'inprocess',
-    risk: 'opt-in',
+    risk: 'api-only',
     enable:
-      'Set runtime.coding.worktree.backend=git OR createWorktreeService({ backend: "git" }). Requires isolation=worktree on the request/plan.',
-    rollback: 'Set backend=inprocess. Isolation request default remains shared.',
+      'Call createWorktreeService(baseRoot, { backend: "git" }) with isolation=worktree on the request/plan.',
+    rollback: 'Stop calling the API with backend=git. Isolation request default remains shared.',
     riskNote:
-      'C4-H git lifecycle hardened (lock/path/cleanup); backend default remains inprocess. Do not change isolation default. C4-P hardlink install residual.',
+      'C4-H git lifecycle hardened (lock/path/cleanup). The runtime.coding.worktree.backend config leaf is observability-only and does not drive this API.',
   },
   {
     id: 'isolation-request',
@@ -203,15 +203,15 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
   {
     id: 'sekb-experience-shadow',
     wave: 'C7',
-    kind: 'config',
-    key: 'runtime.coding.sekb.experienceShadow',
-    defaultDisplay: 'false',
+    kind: 'api',
+    key: 'DistillationTool.confirm_and_save(suggestion, edits, options)',
+    defaultDisplay: 'api-only (config leaf observability-only)',
     defaultValue: false,
-    risk: 'shadow-only',
+    risk: 'api-only',
     enable:
-      'runtime.coding.sekb.experienceShadow=true OR confirm options.experienceShadow.enabled=true.',
-    rollback: 'experienceShadow=false / omit options.',
-    riskNote: 'Shadow journal only; experienceHitRate still fixture-level. No default knowledge injection.',
+      'Call DistillationTool.confirm_and_save(suggestion, edits, { sessionId, experienceShadow: { enabled: true, workspaceRoot } }).',
+    rollback: 'Omit options.experienceShadow or set experienceShadow.enabled=false.',
+    riskNote: 'Shadow journal only. The runtime.coding.sekb.experienceShadow config leaf is observability-only and does not drive this API.',
   },
   {
     id: 'sekb-retrieval-shadow',
@@ -285,6 +285,21 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     rollback: 'runtime.contextBlock.role-memory.enabled=false (default).',
     riskNote: 'R3-1: role-memory projection 接收真实 role/task 输入且不移除其他 provider；默认关闭。',
   },
+  {
+    id: 'verseshell-patch-preview',
+    wave: 'VS-P3',
+    kind: 'config',
+    key: 'runtime.verseShellFoundation.patchPreview',
+    defaultDisplay: 'false',
+    defaultValue: false,
+    risk: 'read-only',
+    enable:
+      'preview_patch 只在六个旗标同时为真且 kill switch 未生效时物化，缺一即不出现：runtime.verseShellFoundation 下的 verifiedRuntime / typedAci / facade / governedExec / artifactResults / patchPreview 全部 =true，且 killSwitch 未置（env VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH 亦未置）。每个旗标也可用 env VERSE_VERSESHELL_FOUNDATION_<NAME> 覆盖。',
+    rollback:
+      'runtime.verseShellFoundation.patchPreview=false（默认）或移除该叶；preview_patch 从工具面消失，apply_patch 与其 write journal 完全不变。任一前置旗标关闭或 kill switch 生效有同样效果。',
+    riskNote:
+      'VS-P3-01：只读桥。clawx-patch-preview-v1 profile 只列 file.diff / file.hash / file.read_range，14 个写入与 tx.* operation 在请求发出前被机械拒绝；commit / undo / stale-write guard / recovery 仍只属 runtime.coding.writeJournal（见本表 write-journal 条）。已知登记缺口：同族另外 10 个 verseShellFoundation 旗标（VS-P0/P1/P2 交付物）尚未单独入本目录，故本条的 enable 串是目前唯一记录整条前置链的落盘处。',
+  },
 ] as const;
 
 export const DCS_PROD_METRIC_EXPORT = {
@@ -346,6 +361,7 @@ export function assertCatalogDefaultHonesty(): { ok: true } {
     'runtime-memory-candidate-generation',
     'compass-context-block',
     'role-memory',
+    'verseshell-patch-preview',
   ];
   for (const id of mustStayOff) {
     const entry = DCS_PROD_FLAGS.find((f) => f.id === id);

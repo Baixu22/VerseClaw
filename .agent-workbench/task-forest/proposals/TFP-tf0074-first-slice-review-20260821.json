@@ -1,0 +1,55 @@
+{
+  "applied_at": "2026-08-20T17:18:05.704284Z",
+  "base_graph_hash": "85de7f82d56c7af87fbdb19c516a322fc24866360b1b29a408f10cbf41f762e2",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.92,
+        "deviations": [
+          "Normal diff-aware Harness validate and dry-run exit 1 because unrelated shared-worktree paths are outside touchedAreas; dry-run also lacks harness/node_modules. No scope expansion or cleanup was performed.",
+          "Electron lineage is explicit test-fixture engineering evidence only; no real channel, human cohort, live-ready, product-approved, or default-on claim is made.",
+          "DCS preflight remains keep-off and reports missing week-one decision.md, missing L3 profiles, zero of ten human surrogate runs, and blocked TF-0006 prerequisites."
+        ],
+        "evidence": [
+          "harness/specs/tasks/tf0074-real-use-acceptance.md",
+          "docs/dev/dcs-visible-production/TF-0074-REAL-USE-ACCEPTANCE-EVIDENCE-2026-08-21.md",
+          "docs/dev/sekb-golden-path.md",
+          "shared/host-api/contract.ts",
+          "electron/services/knowledge-api.ts",
+          "tests/unit/host-api-facade.test.ts: 43/43 passed",
+          "tests/e2e/knowledge-hub.spec.ts + tests/e2e/sekb-golden-path.spec.ts: fresh-build 5/5 passed",
+          "pnpm run test:dcs: 351/351 passed",
+          "focused Task State/phase/Mission/SEKB agents: 33/33 passed",
+          "focused runtime lineage/terminal gating/golden path: 11/11 passed",
+          "pnpm run typecheck: node/web exit 0; test project observation-only legacy errors remain",
+          "pnpm run comms:compare: PASS",
+          "pnpm run dcs:ops:preflight: PASS, keep-off",
+          "pnpm run dcs:c1:gate: ok=true, keep-off"
+        ],
+        "next_action": "先复核 TF-0074 证据；在 clean scoped candidate 与 harness/node_modules 可用后重跑 normal diff-aware Harness validate/dry-run，再决定 engineering closeout。保持本节点串行，不启动后继 TF，也不得改变 liveReady、productApproved 或 defaultOn。",
+        "progress": 75,
+        "progress_source": "manual",
+        "remaining_minutes_max": 180,
+        "remaining_minutes_min": 60,
+        "source_sessions": [
+          "session-20260821-start-tf0074",
+          "session-20260821-tf0074-first-slice"
+        ],
+        "status": "review_needed",
+        "summary": "已完成 TF-0074 首个当前源码工程验收切片。Host API 现在严格验证并转发显式 runtime-lineage.v1；Knowledge 手工轨迹明确为仅审计、非蒸馏候选；DCS 351、focused agents 33、focused runtime 11、Host API 43 和 fresh-build Electron E2E 5/5 均通过。该证据不等同于真实渠道、真人、产品批准或默认开启。"
+      },
+      "id": "TF-0074"
+    }
+  ],
+  "created_at": "2026-08-20T17:17:56.939874Z",
+  "proposal_id": "TFP-tf0074-first-slice-review-20260821",
+  "rationale": "TF-0074 的首个当前源码工程验收切片已完成：修复了 Host API 轨迹捕获无法携带显式 runtime lineage 的生产断点，当前 DCS、SEKB、Knowledge 和 Electron focused gates 通过。共享脏工作树仍阻断 diff-aware Harness，且没有真实渠道、真人或产品批准证据，因此进入 review_needed 而不是 done。",
+  "session_id": "session-20260821-tf0074-first-slice",
+  "status": "applied"
+}

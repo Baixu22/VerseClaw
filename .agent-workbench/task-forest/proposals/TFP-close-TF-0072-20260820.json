@@ -1,0 +1,71 @@
+{
+  "applied_at": "2026-08-20T14:01:45.775446Z",
+  "base_graph_hash": "1d969e922cabeea57c313b3a773830235e224c7b72edaf8771bbdc4efdd1286f",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/runtime-lineage-convergence.md",
+          "harness/specs/rules/runtime-lineage-boundary.md",
+          "openclaw_runtime/src/runtime-core/lineage.ts",
+          "openclaw_runtime/src/runtime-core/lineage.test.ts",
+          "openclaw_runtime/src/agents/mission-control/fenced-tick-wiring.test.ts",
+          "openclaw_runtime/src/agents/task-loop-controller.ts",
+          "openclaw_runtime/src/agents/task-loop-controller/producer-envelope.test.ts",
+          "openclaw_runtime/src/agents/dcs/lifecycle-hook-helpers.ts",
+          "openclaw_runtime/src/agents/dcs/context-blocks.ts",
+          "openclaw_runtime/src/knowledge/sekb/confirm-provenance.ts",
+          "openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts",
+          "src/pages/Knowledge/index.tsx",
+          "tests/e2e/knowledge-hub.spec.ts",
+          "docs/dev/dcs-visible-production/TF-0072-MISSION-TASK-LOOP-DCS-SEKB-LINEAGE-EVIDENCE-2026-08-20.md",
+          "pnpm harness validate --spec harness/specs/tasks/runtime-lineage-convergence.md --no-diff: exit 0",
+          "focused lineage/runtime tests: 4 files / 49 tests plus 2 files / 7 tests passed",
+          "pnpm test:dcs: 351 tests passed",
+          "pnpm --dir openclaw_runtime tsgo:core: exit 0",
+          "pnpm run typecheck: exit 0; node/web exit 0; test project 1048 legacy errors remains observation-only by repository design",
+          "pnpm verseshell:test: bundle 13/13, runtime bundle 11/11, OpenClaw 15 files / 141 tests, MCP 11/11 passed",
+          "pnpm lint:dcs, pnpm contract:check, pnpm i18n:lint: exit 0",
+          "pnpm run comms:replay and pnpm run comms:compare: exit 0, result PASS",
+          "pnpm run build:vite: current-source frontend, Electron main and preload exit 0",
+          "pnpm build:runtime: exit 0; runtime smoke gateway ready",
+          "pnpm run test:e2e:run -- tests/e2e/knowledge-hub.spec.ts: 4/4 passed after current runtime rebuild",
+          "normal diff-aware Harness validation is not claimed because the shared dirty worktree includes unrelated paths; this is not a TF-0072 dependency or scoped acceptance failure",
+          "engineering closeout only: DCS/SEKB remain default-off; liveReady=false, productApproved=false, defaultOn=false"
+        ],
+        "next_action": "TF-0072 已关闭；TF-0073 是唯一新解锁节点。启动 TF-0073 前先运行对应 Harness context；TF-0073 关闭前不得启动 TF-0074。",
+        "progress": 100,
+        "progress_source": "manual",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "session-20260820-start-tf0072",
+          "session-20260820-tf0072-closeout"
+        ],
+        "status": "done",
+        "summary": "已用有界 runtime-lineage.v1 打通 Mission tick、Task Loop、DCS task-state/HandoffPack、SEKB trajectory 与 confirmed-principle provenance；Knowledge Runtime Lessons 可显示来源 lineage，SEKB confirm 对来源 session 冲突 fail-closed。未新增工作流、持久化或 memory authority，legacy 缺失字段不推断。当前源码工程门禁和 Knowledge Electron E2E 均通过。"
+      },
+      "id": "TF-0072"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "先运行 pnpm harness context --spec <TF-0073 scoped task spec>；若 spec 尚未创建，先按本节点边界创建并引用 SEKB/trajectory 规则。严格串行，完成前不得启动 TF-0074。",
+        "status": "ready",
+        "summary": "TF-0072 lineage 收口后，本节点已成为唯一新解锁工作包：把 terminal capture 与真实 agent_end trajectory 关联，拒绝无真实 tool steps 或无 lineage 的候选，并通过 lineage/idempotency 去重；继续保持人工确认和 no-auto-writeback。"
+      },
+      "id": "TF-0073"
+    }
+  ],
+  "created_at": "2026-08-20T14:01:01.788271Z",
+  "proposal_id": "TFP-close-TF-0072-20260820",
+  "rationale": "用户明确要求处理阻塞项并保证 TF-0072 顺利收尾。复核确认 TF-0070、TF-0071 已完成，TF-0072 没有未满足依赖；实际阻塞根因是 VerseShell 共享入口缺少 NodeNext .js 扩展名，已用三处最小导入修复并通过当前源码全链验证。应用本提案只关闭 TF-0072、解锁唯一直接下游 TF-0073；TF-0074 继续等待 TF-0073，不改变 default-off、liveReady、productApproved 或 defaultOn。",
+  "session_id": "session-20260820-tf0072-closeout",
+  "status": "applied"
+}

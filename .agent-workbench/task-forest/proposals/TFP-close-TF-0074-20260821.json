@@ -1,0 +1,60 @@
+{
+  "applied_at": "2026-08-21T00:12:34.919098Z",
+  "base_graph_hash": "f673fd5ea82971e02bfb72ffbab807c177378a82389d41fd5396c70e189d614d",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "共享主工作树仍包含大量其他任务改动；未 reset、stash、clean、checkout 或扩大 TF-0074 touchedAreas。",
+          "candidate fresh tsgo:core 通过 junctioned dependencies 触发 openclaw_runtime/ui/vitest.config.ts TS2321/TS2769；权威工作树官方 gate exit 0，candidate 任务特定测试均通过，该差异保留为环境 residual。",
+          "Electron 证据使用显式 fixture lineage，属于当前源码工程证据，不是真实第三方 channel 或真人 cohort。",
+          "DCS preflight 仍缺 week-one decision、L3 profiles、10 次真人替代运行且 TF-0006 blocked；产品建议保持 keep-off。"
+        ],
+        "evidence": [
+          "harness/specs/tasks/tf0074-real-use-acceptance.md",
+          "docs/dev/dcs-visible-production/TF-0074-REAL-USE-ACCEPTANCE-EVIDENCE-2026-08-21.md",
+          "detached candidate D:\\ClawX-tf0074-closeout-20260821 at e07b874b30c31701b437b1e972c8a40b5ca5f8c4: 58 staged scoped paths",
+          "candidate Harness context: exit 0",
+          "candidate diff-aware Harness validate --since HEAD: exit 0",
+          "candidate Harness run --dry-run --since HEAD: exit 0, result pass",
+          "pnpm run test:dcs: exit 0, 351 tests passed",
+          "candidate focused agents: 4 files / 33 tests passed",
+          "candidate focused runtime lineage / terminal gating / golden path: 3 files / 11 tests passed",
+          "candidate Host API facade: 1 file / 43 tests passed",
+          "candidate contract check and i18n lint: exit 0",
+          "pnpm --dir openclaw_runtime tsgo:core on authoritative worktree: exit 0",
+          "pnpm run typecheck: node/web exit 0; test project retains 1048 observation-only legacy errors",
+          "pnpm run lint:dcs: exit 0",
+          "forced pnpm run build:runtime and pnpm run build:vite: exit 0",
+          "Electron Knowledge + SEKB E2E after forced runtime rebuild: 5/5 passed",
+          "pnpm run comms:replay and pnpm run comms:compare: exit 0, comparison PASS",
+          "pnpm run dcs:ops:preflight and pnpm run dcs:c1:gate: exit 0, recommendation keep-off"
+        ],
+        "next_action": "TF-0074 工程节点已关闭。保持 liveReady=false、productApproved=false、defaultOn=false 和 SEKB 人工确认边界；TASK-P2-01 继续受真人/live 证据阻塞。任何 successor 必须单独评估和授权，本次不启动新节点。",
+        "progress": 100,
+        "progress_source": "manual",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "session-20260821-start-tf0074",
+          "session-20260821-tf0074-first-slice",
+          "session-20260821-tf0074-closeout"
+        ],
+        "status": "done",
+        "summary": "TF-0074 工程验收已闭环：DCS run-scope 隔离、Task Loop phase side-effect durability、runtime-lineage.v1、terminal trajectory 候选门控、Knowledge Host API 显式 lineage、人工确认后持久化及 Electron golden path 均有当前源码证据。独立候选补齐正常 diff-aware Harness validate/dry-run。该 done 仅关闭工程包；liveReady=false、productApproved=false、defaultOn=false，SEKB 无自动 writeback。"
+      },
+      "id": "TF-0074"
+    }
+  ],
+  "created_at": "2026-08-21T00:12:25.814760Z",
+  "proposal_id": "TFP-close-TF-0074-20260821",
+  "rationale": "TF-0074 的当前源码工程验收已完成。共享工作树继续保持原状；缺失的正常差分 Harness 证据已在 detached scoped candidate 上补齐，关键 runtime/Host API 测试、contract/i18n、官方 tsgo:core、DCS lint、构建、Electron E2E 和 comms 证据均已记录。关闭只代表工程验收包完成，不改变真人、真实 channel、产品批准或默认开启状态。",
+  "session_id": "session-20260821-tf0074-closeout",
+  "status": "applied"
+}

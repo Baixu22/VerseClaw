@@ -10,6 +10,11 @@ import type {
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { MessageToolsConfig } from "../../config/types.tools.js";
 import type { MessagePresentation } from "../../interactive/payload.js";
+import {
+  isExternalOrUnknownProvenance,
+  provenanceStatus,
+  type ContentProvenanceContext,
+} from "../../../../shared/security/content-provenance.js";
 import { normalizeTargetForProvider } from "./target-normalization.js";
 import { formatTargetDisplay, lookupDirectoryDisplay } from "./target-resolver.js";
 
@@ -197,6 +202,8 @@ export function enforceCrossContextPolicy(params: {
   toolContext?: ChannelThreadingToolContext;
   cfg: OpenClawConfig;
   agentId?: string | null;
+  provenanceContext?: ContentProvenanceContext;
+  dryRun?: boolean;
 }): void {
   const currentTarget = params.toolContext?.currentChannelId?.trim();
   if (!currentTarget) {
@@ -215,7 +222,7 @@ export function enforceCrossContextPolicy(params: {
   }
 
   const currentProvider = params.toolContext?.currentChannelProvider;
-  const allowWithinProvider = messageConfig?.crossContext?.allowWithinProvider !== false;
+  const configuredWithinProvider = messageConfig?.crossContext?.allowWithinProvider;
   const allowAcrossProviders = messageConfig?.crossContext?.allowAcrossProviders === true;
 
   // Provider mismatch is stronger than target mismatch; normalize targets only within one provider.
@@ -228,21 +235,32 @@ export function enforceCrossContextPolicy(params: {
     return;
   }
 
-  if (allowWithinProvider) {
-    return;
-  }
-
   const target = resolveContextGuardTarget(params.action, params.args);
   if (!target) {
     return;
   }
-
   if (!isCrossContextTarget({ channel: params.channel, target, toolContext: params.toolContext })) {
     return;
   }
 
+  if (configuredWithinProvider === false) {
+    throw new Error(
+      `Cross-context messaging denied: action=${params.action} target="${target}" while bound to "${currentTarget}" (channel=${params.channel}).`,
+    );
+  }
+
+  // Only the agent message-tool caller supplies this wrapper. Other delivery
+  // callers retain their existing implicit same-provider policy.
+  const provenanceRestricted =
+    !params.dryRun &&
+    params.provenanceContext !== undefined &&
+    isExternalOrUnknownProvenance(provenanceStatus(params.provenanceContext.provenance));
+  if (!provenanceRestricted || configuredWithinProvider === true) {
+    return;
+  }
+
   throw new Error(
-    `Cross-context messaging denied: action=${params.action} target="${target}" while bound to "${currentTarget}" (channel=${params.channel}).`,
+    `Cross-context messaging denied: external or unknown provenance requires explicit tools.message.crossContext.allowWithinProvider=true for target="${target}" while bound to "${currentTarget}" (channel=${params.channel}).`,
   );
 }
 

@@ -14,7 +14,7 @@
  * paths at startup. A runtime kill switch (`setShadowBoundaryEnabled`) allows
  * live toggling without restart for emergency production triage.
  *
- * See: net use/designs/development-manual.md §1.1, Stage 0
+ * See: docs/runtime-design/development-manual.md §1.1, Stage 0
  */
 
 /** Which area a shadow path belongs to. A3/A4 excluded (no shadow). */

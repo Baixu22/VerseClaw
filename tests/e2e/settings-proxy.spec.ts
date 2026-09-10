@@ -12,7 +12,7 @@ async function ensureSwitchState(toggle: Locator, checked: boolean): Promise<voi
 async function readProxyEnabled(page: Page): Promise<boolean> {
   return await page.evaluate(async () => {
     const settings = await window.electron.ipcRenderer.invoke('settings:getAll');
-    return Boolean(settings?.proxyEnabled);
+    return Boolean((settings as any)?.proxyEnabled);
   });
 }
 

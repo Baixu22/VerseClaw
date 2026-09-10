@@ -1,0 +1,33 @@
+{
+  "applied_at": "2026-08-28T15:50:32.385233Z",
+  "base_graph_hash": "3d27926acc5b65a13d4d668b805fc24079fc6b4c6c200713af48c4c881f6de86",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/context-moat/reviews/TF-0135.md：lane-1 审计结论 OPEN，确定性机制可复制性高，当前无 12-18 个月护城河证据。",
+          "docs/dev/context-moat/reviews/TF-0143.md：一次真实会话可脱敏复跑，但 persisted receipt rows=0，不能证明长期数据资产。",
+          "docs/dev/context-moat/reviews/TF-0135-receipt-baseline.md：真实 receipt 基线审计结论 BLOCKED/NOT EXECUTED；隔离 state、provider/model/message、真实运行和可回滚条件未同时成立，runtime_receipts=0。",
+          "docs/dev/context-moat/DEV-PROTOCOL.md：L3 要求 1 名真人、1 个增强表面、14 天、可回滚记录。",
+          "artifacts/runtime-memory-eval/report.json：synthetic/accepted=false，不能作为产品价值或数据壁垒证据。",
+          "TF-0135 receipt baseline targeted checks：rc03 28/28、ReceiptStore 15/15、rc03 config 6/6；这些只证明 engineering contract，不升级为真实 receipt 证据。"
+        ],
+        "next_action": "先建立明确授权、隔离 state/config、指定 provider/model、非敏感 probe message 和可回滚清理的真实 receipt 入口；入口通过后再执行一次真实 baseline，随后才考虑 L3 14 天真人记录和竞品复制工时基线。",
+        "progress_source": "manual",
+        "summary": "护城河风险仍开放且已落到可执行阻塞：真实脱敏输入能被分析，但当前 runtime_receipts=0，缺少安全的真实端到端 receipt probe；未把 synthetic、单测或一次真实语料复跑冒充数据壁垒。"
+      },
+      "id": "TF-0135"
+    }
+  ],
+  "created_at": "2026-08-28T15:34:00Z",
+  "proposal_id": "TFP-lane1-tf0135-receipt-blocked-20260828",
+  "rationale": "TF-0135 receipt baseline 旁线完成真实本机只读审计：runtime_receipts=0，真实脱敏语料可复跑，但没有满足隔离 state/provider/model/message/可回滚的真实执行入口。将报告并入 evidence，保持风险开放并把阻塞条件显式化。",
+  "session_id": "lane-1-context-moat-20260828",
+  "status": "applied"
+}

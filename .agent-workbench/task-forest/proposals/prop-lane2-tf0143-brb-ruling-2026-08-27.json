@@ -1,0 +1,82 @@
+{
+  "applied_at": "2026-08-27T14:13:27.087718Z",
+  "base_graph_hash": "6c154b59522d3d75463210e840894a877970bdcf69472207965c02e721d7ec1b",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "context_tags": [
+          "differentiation",
+          "corpus",
+          "brb-L"
+        ],
+        "evidence": [
+          "预检（2026-08-27）：扫描 ~/.openclaw/agents/*/sessions/*.jsonl，排除 trajectory 文件，共 174 个 OpenClaw 会话文件；没有同时达到 user_turns>=40 与 compaction_entries>=2 的候选。",
+          "最近 OpenClaw 候选元数据：C:\\Users\\27933\\.openclaw\\agents\\main\\sessions\\57c00668-baf0-44d4-8cb3-531fda2a6667.jsonl；39 user turns / 1 compaction；仅保存路径、计数和哈希，不保存原文。",
+          "其他 agent 目录存在 >=40 turns / >=2 compactions 的 JSONL，但不满足「本应用 OpenClaw 会话」口径，未纳入候选。",
+          "语料搜索面已穷尽（lane-1，2026-08-27）：对 C:\\Users\\27933\\.openclaw\\agents\\main\\sessions 下全部 174 个非 trajectory 会话 JSONL 逐个计数（判据 type=compaction 计压缩条目，type=message 且 message.role=user 计用户轮次），结果：满足 user_turns>=40 且 compaction_entries>=2 的会话数 = 0。关键事实是全语料的压缩次数上限恒为 1 —— 没有任何一个 OpenClaw 会话压缩过两次，故 >=2 compactions 这半个判据在既有数据上不可满足，必须靠真实续跑产生第二次压缩。",
+          "半径裁决（lane-2，非实现者兼 §R3 owner，2026-08-27，答复看板 XL-005）：brb-S -> brb-L，13/40 PASS。独立复测 §R3.1 三条命令：归属提交 3 个（f35cb4a13、283045a7f、26b7f436e），命令 1 = 13（lane-1 上报时为 10，差额 3 来自其上报后自己又落的两个治理提交），命令 2 空，命令 3 剔除 .agent-workbench 后 0。13 个路径全为 Task Forest 生成物（config/deviations/exports x3/graph x2/todos/proposal/snapshots x3）与 AUDIT-BOARD.html，零 openclaw_runtime。不选 brb-M：M=15 仅剩 2 个文件余量，而 corpus/<corpus-id>.md、reviews/TF-0143.md 与收口序列尚未产出，每次 Task Forest 写入至少 +1 snapshot；TF-0121 的归属集在实现完成后仍从 19 增至 31，故 M 必然触发第二次往返。判例：TF-0110 brb-M、TF-0116 brb-L、TF-0124 brb-L、TF-0121 brb-L，四次均为非实现者裁决、均不豁免也不排除生成物，本次为第五次同口径。机械护栏：本裁决只覆盖治理生成物与语料元数据路径；一旦任何 openclaw_runtime/** 路径进入 TF-0143 的归属集，本档位自动失效并须重新裁决（TF-0143 自述零代码改动）。",
+          "裁决附带发现（lane-2，backlog-P1，不阻塞 TF-0143）：本轮有 13 个带 Lane: lane-1 且触碰 .agent-workbench/task-forest 的提交无任何 Task:/Reviews:/Refs/Node: 归属（18c8fe294、e6e9a66d8、06dda2f4b、8903431b2、ba88ba29f、79a3d8a11、4df5f0e05、90de39bdd、ea210e58f、342b43596、e155c5305、6b605f848、c1914ef1a）。违反 §R3.8.1 规则 4，且使 §R3.6 声明为「恰好两项且封闭」的 KNOWN_UNATTRIBUTED 失效，里程碑累积门漏计这些提交的文件。副作用直接影响本 issue 的前提：实测 TF-0104/0105/0106/0107/0109/0110/0111/0114/0116/0117/0118/0124/0126/0128/0142/0145/0146 的归属集内 .agent-workbench 路径数全部为 0，而 TF-0121 为 20/31、TF-0143 为 12/13。即早期 task 的治理写入不在自己的半径里，故 TF-0121 与 TF-0143 是本轮唯二如实归属治理生成物的 task，也是唯二超限的 task —— 超限形态至少部分是如实归属的产物，而非改动面过大。见 TFD-lane2-unattributed-taskforest-commits-2026-08-27。"
+        ]
+      },
+      "id": "TF-0143"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-08-27T13:00:00Z",
+        "decided_by": "lane-2（非实现者，同时是 §R3 的 owner 节）按 lane-1 在看板 XL-005 的移交裁决；沿用 TF-0110/TF-0116/TF-0124/TF-0121 四次非实现者半径裁决的同一口径。",
+        "evidence": "docs/dev/context-moat/reviews/TF-0143.md（lane-2 半径裁决记录）；AUDIT-BOARD.html XL-005；判例 TFD-tf0116-radius-overrun-2026-08-25 / TFD-tf0124-radius-overrun-2026-08-27 / TFD-tf0121-radius-overrun-2026-08-27。",
+        "expected_requirement": "§R3.2：TF-0143 的 context_tags 含 brb-S，改动半径上限 5。§R3.5：超半径的 task 不得收口。",
+        "id": "TFD-tf0143-radius-overrun-2026-08-27",
+        "impact": "裁决 brb-S -> brb-L，13/40 PASS，TF-0143 的半径门解除阻塞，可继续推进至收口。不选 brb-M 的理由是 M=15 只剩 2 个文件余量而收口序列尚未开始，选 M 将必然触发第二次往返。本裁决不豁免任何路径、不排除任何生成物、不追溯改写归属。",
+        "kind": "scope_change",
+        "node_id": "TF-0143",
+        "observed_action_or_result": "lane-2 独立复测命令 1 = 13（非 lane-1 上报时的 10；差额 3 来自 283045a7f 与 26b7f436e 两个后落的治理提交）。命令 2 空；命令 3 剔除 .agent-workbench 后 0。13 个路径全为 Task Forest 生成物与 AUDIT-BOARD.html，零 openclaw_runtime。",
+        "recommendation": "机械护栏：本档位只覆盖治理生成物与语料元数据；一旦任何 openclaw_runtime/** 路径进入 TF-0143 的归属集，档位自动失效并须重新裁决。收口时按 §R3.1 重跑三条命令并把输出贴进 reviews/TF-0143.md。本记录按 deviations.jsonl 的 append-only 语义与同 id 的前一条 open 记录并存，状态以本条为准；TF-0143 节点的 deviations 列表会因此出现同一 id 两次，属存储层追加语义的产物，不是两条独立偏差。",
+        "related_task_ids": [
+          "TF-0143",
+          "TF-0107",
+          "TF-0102"
+        ],
+        "severity": "medium",
+        "status": "resolved"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-08-27T13:00:00Z",
+        "decided_by": "lane-2 在裁决 TF-0143 半径时复测发现；按 §R5 范围-2 由审核者三分类为 backlog-P1（不阻塞 TF-0143，也不阻塞任何在跑 task）。修 §R3 正文属轮内改协议正文，须用户放行，故只报不改。",
+        "evidence": "for c in $(git log --format=%H 590588791..HEAD -- .agent-workbench/task-forest); do git log -1 --format=%B $c | grep -qE '^(Task:|Reviews:|Refs|Node:)' || echo UNATTRIBUTED $c; done —— 逐提交 trailer 审计输出；docs/dev/context-moat/reviews/TF-0143.md §「裁决附带发现」。",
+        "expected_requirement": "§R3.8.1 规则 4：无归属提交 = §R3 违反。§R3.6：KNOWN_UNATTRIBUTED 声明为「恰好两项且封闭」，仅 f005991b7 与 fe469cbff。",
+        "id": "TFD-lane2-unattributed-taskforest-commits-2026-08-27",
+        "impact": "两层后果。(1) §R3.6 的里程碑累积门用 $ATTRIBUTED 加 KNOWN_UNATTRIBUTED 计数，故这 13 个提交的文件被漏计，累积半径读数偏小 —— 与 §R3.6 自己记录的「只用 trailer 匹配会偏小」是同一失效形态，但清单被声明为封闭而实际未封闭。(2) 逐 task 半径不可比：实测 TF-0104/0105/0106/0107/0109/0110/0111/0114/0116/0117/0118/0124/0126/0128/0142/0145/0146 的归属集内 .agent-workbench 路径数全部为 0，而 TF-0121 为 20/31、TF-0143 为 12/13。即早期 task 的强制治理写入落在无归属提交里，未计入自己的半径；TF-0121 与 TF-0143 是唯二如实归属的，也是唯二超限的。故本轮的「半径超限」模式至少部分是如实归属的产物。",
+        "kind": "process_gap",
+        "node_id": "TF-0107",
+        "observed_action_or_result": "本轮 13 个带 Lane: lane-1 且触碰 .agent-workbench/task-forest 的提交无任何 Task:/Reviews:/Refs/Node: 归属：18c8fe294 e6e9a66d8 06dda2f4b 8903431b2 ba88ba29f 79a3d8a11 4df5f0e05 90de39bdd ea210e58f 342b43596 e155c5305 6b605f848 c1914ef1a。另有 4 个无 Lane: 的提交（1700779c0 merge、e33abd5fe、56cc85502、e043cad95）属轮外 workstream，不在本条范围内。",
+        "recommendation": "三件事，均不在本次裁决内执行。(a) 不得追溯改写这 13 个提交的 trailer（§R5 技术-7 禁止追溯修改，且共用分支上改写历史是破坏性操作）。(b) §R3.6 的 KNOWN_UNATTRIBUTED 需从「恰好两项且封闭」改为可增长的登记清单并补入这 13 项，否则累积门继续漏计 —— 属轮内改 §R3 正文，与看板 XL-003 是同一次用户放行。(c) §R3.8.1 规则 3（Reviews: 提交只允许触碰 reviews/*.md）与同节「审核者的笔不该消耗实现者的改动预算」相互冲突：审核者记录裁决必须写 Task Forest，而 Reviews: 不允许该路径、Task: 又会把裁决成本计进被审 task 的半径。本轮已由 a7abcfb8e（lane-2 对 TF-0124 的裁决）事实上选择了前者。三条一并提请用户裁决。",
+        "related_task_ids": [
+          "TF-0107",
+          "TF-0145",
+          "TF-0102",
+          "TF-0143"
+        ],
+        "severity": "medium",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-27T14:13:26.866347Z",
+  "proposal_id": "prop-lane2-tf0143-brb-ruling-2026-08-27",
+  "rationale": "答复看板 XL-005：lane-1 作为 TF-0143 的实现者按 §R3.5 上报半径超限并把裁决权交给非实现者车道（lane-2，同时是 §R3 的 owner 节）。lane-2 独立复测得 13 而非 lane-1 报告的 10 —— 差额来自 lane-1 上报后自己又落的两个治理提交（283045a7f、26b7f436e），即读数在上报与裁决之间仍在增长。据此裁决 brb-S -> brb-L 而非 -> brb-M：M=15 只剩 2 个文件余量，而 corpus/<id>.md、reviews/TF-0143.md 与整个收口序列尚未产出，每次 Task Forest 写入至少 +1 个 snapshot；TF-0121 的归属集在实现完成之后仍从 19 长到 31（+12）。选 M 将必然触发第二次往返，而第二次往返本身就是本 issue 已经付过一次的成本。复测同时发现一个更重的事实并记为 backlog-P1：本轮有 13 个带 Lane: lane-1 且触碰 .agent-workbench/task-forest 的提交完全没有 Task:/Reviews: 归属，这既违反 §R3.8.1 规则 4，又使 §R3.6 声明为「恰好两项且封闭」的 KNOWN_UNATTRIBUTED 清单失效；其副作用是早期 task 的半径读数里治理生成物计数为 0，故 TF-0121 与 TF-0143 是本轮唯二如实归属治理生成物的 task，也就是唯二超限的 task。修 §R3 正文属轮内改协议，需用户放行，故只报不改。",
+  "session_id": "session-lane-2",
+  "status": "applied"
+}

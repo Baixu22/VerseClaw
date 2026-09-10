@@ -25,11 +25,9 @@ import {
   type SekbHarnessHookTarget,
 } from "../../knowledge/sekb/harness-integration.js";
 import { KnowledgeStore } from "../../knowledge/sekb/knowledge-store.js";
-import {
-  RetrievalEngine,
-  type ContextInjector,
-} from "../../knowledge/sekb/retrieval-engine.js";
+import { RetrievalEngine, type ContextInjector } from "../../knowledge/sekb/retrieval-engine.js";
 import { TrajectoryCapture } from "../../knowledge/sekb/trajectory-capture.js";
+import type { RuntimeLineage } from "../../runtime-core/lineage.js";
 import { log } from "./logger.js";
 
 export type EmbeddedSekbRuntime = {
@@ -44,10 +42,7 @@ export type EmbeddedSekbRuntime = {
  * Explicit SEKB enablement: env wins when set, otherwise config flag.
  * Default is off (undefined env + omitted/false config).
  */
-export function isSekbEnabled(
-  cfg?: OpenClawConfig,
-  env: NodeJS.ProcessEnv = process.env,
-): boolean {
+export function isSekbEnabled(cfg?: OpenClawConfig, env: NodeJS.ProcessEnv = process.env): boolean {
   return resolveSekbEnabled(cfg, env);
 }
 
@@ -77,7 +72,6 @@ export function isSekbPhaseCWouldTriggerEnabled(
 ): boolean {
   return resolveSekbPhaseCWouldTriggerEnabled(cfg, env);
 }
-
 
 /**
  * Best-effort SEKB runtime for production embedded runs.
@@ -141,6 +135,7 @@ export function asSekbHarnessHookTarget(agent: SekbInstallableAgent): SekbHarnes
 export function installEmbeddedSekbHarnessHooks(
   target: SekbInstallableAgent,
   runtime: EmbeddedSekbRuntime | undefined,
+  lineage?: RuntimeLineage | (() => RuntimeLineage | undefined),
 ): () => void {
   if (!runtime) {
     return () => {};
@@ -149,6 +144,7 @@ export function installEmbeddedSekbHarnessHooks(
     enabled: true,
     capture: runtime.capture,
     injector: runtime.injector,
+    ...(lineage ? { lineage } : {}),
     onError: (error) => {
       log.warn(`sekb harness hook failed: ${String(error)}`);
     },

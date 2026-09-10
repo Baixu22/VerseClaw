@@ -1,0 +1,36 @@
+{
+  "applied_at": "2026-09-06T04:22:49.491262Z",
+  "base_graph_hash": "90ca12c5c8b5fa76a1c2090bddffe3b1267dc5270e1fbba21433da305e15b4b8",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.99,
+        "evidence": [
+          "docs/dev/context-moat/reviews/TF-0149.md",
+          "docs/dev/context-moat/DEV-PROTOCOL.md §R3.6",
+          "docs/dev/context-moat/GATE-BASELINE.md §12",
+          "commit 925de832e",
+          "commit 830d9ebb1",
+          "commit 3c51a8808",
+          "commit cc5be5367"
+        ],
+        "next_action": "已收口；下一节点为 TF-0150，先按其节点摘要更正四项事实再进行 F-1..F-9 三分类。",
+        "progress": 100,
+        "status": "done",
+        "summary": "TF-0149 已收口：agent-core 不属现行 §R5 范围-1；扩展 RS 仅补归属发现面，不授予包代码修改许可；TF-0149/0150 计入本轮并排除 TF-0148/0151。四问裁定经非实施者独立复算成立；A3 五处操作性判据滞后已修复，并由另一独立会话确认，确认审核还拦下并修正了复现判据的裸 grep 假阳性。六道 L1 在修复树上 exit 0（42 files / 596 passed / 1 skipped）；落账后 §R3.1 读数 4/5、§R3.6 读数 166/230；Task Forest validate 与 git diff --check 均 exit 0。零 runtime 代码、默认值、产品锁和历史 artifacts 改动；M2 50/40 超限继续公开挂账。"
+      },
+      "id": "TF-0149"
+    }
+  ],
+  "created_at": "2026-09-06T04:19:53.819710Z",
+  "proposal_id": "TFP-tf0149-closeout-20260906",
+  "rationale": "TF-0149 的四问裁定已由非实施者独立复算确认；A3 修复已由另一独立会话确认并拦下一处缺陷，修后复测通过；落账后读数与预测一致，Task Forest validate 与 git diff --check 均 exit 0。技术疑点已清空，剩余事项仅为按本仓惯例由用户裁定是否收口。此提案在用户确认前不修改图。",
+  "session_id": "codex-tf0149-closeout-20260906",
+  "status": "applied"
+}

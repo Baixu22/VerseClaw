@@ -1,0 +1,47 @@
+{
+  "applied_at": "2026-08-23T16:25:35.880290Z",
+  "base_graph_hash": "6a82b113a2aa3e919c7703e78d9d56f1c3647168a8d246214d4f9dd728827e49",
+  "base_summary": {
+    "edge_count": 181,
+    "node_count": 99,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "artifacts/tf0093-commit-readiness/report.json",
+          "用户裁定记录：暂不提交（工作树需整理）；TF-0078 保持 in_progress；未发生任何提交",
+          "拆分预案：artifacts/tf0093-commit-readiness/split-plan.md + chain-dirty-files.txt（123 文件，100% 已声明）",
+          "最终矩阵：227 测试全绿（50/38/7/68/13/12/16/23）；typecheck 0 错误；contract 0；comms replay+compare 0；9 份链 spec validate 全 0；git diff --check 0"
+        ],
+        "next_action": "无（里程碑收口）；用户整理工作树后按 split-plan.md 决定提交，届时再裁定 TF-0078 收口",
+        "progress": 100,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260823-tf0093-commit-readiness"
+        ],
+        "status": "done"
+      },
+      "id": "TF-0093"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "七个子节点（TF-0087..TF-0093）全部 done；4 个 major + 7 个 minor finding 全部闭环；全链门禁收口时刻重跑全绿；未翻动任何产品锁"
+        ],
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done"
+      },
+      "id": "TF-0086"
+    }
+  ],
+  "created_at": "2026-08-23T16:25:35.649989Z",
+  "proposal_id": "TFP-close-TF-0093-and-TF-0086-20260824",
+  "rationale": "TF-0093（整改收尾节点）完成：用户裁定已记录（暂不提交、TF-0078 保持 in_progress）；开发层面全部完成——提交拆分预案落盘（123 链文件 100% 已声明 + 8 组耦合文件 hunk 指引 + 11 跨流依赖 + 建议顺序），全链最终门禁矩阵新鲜重跑全绿（227 测试 + typecheck/contract/comms/9 spec validate/diff-check 全 0）。七个子节点全部 done，TF-0086 里程碑随之收口；TF-0078 收口与否留待用户提交后裁定。",
+  "session_id": "session-20260823-tf0093-commit-readiness",
+  "status": "applied"
+}

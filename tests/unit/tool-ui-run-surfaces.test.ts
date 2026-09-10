@@ -40,7 +40,7 @@ function approval(overrides: Partial<PermissionApprovalEvent> = {}): PermissionA
     workspaceId: 'workspace-1',
     sessionKey: 'agent:main:main',
     runId: 'run-1',
-    mode: 'accept-edits',
+    mode: 'acceptEdits',
     source: 'terminal',
     requestedAt: 1,
     status: 'pending',

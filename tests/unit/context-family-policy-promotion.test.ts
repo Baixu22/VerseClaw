@@ -13,7 +13,7 @@ function toolResultMessage(text: string, id: string): AgentMessage {
     id,
     content: [{ type: 'text', text }],
     toolCallId: id,
-  } as AgentMessage;
+  } as unknown as AgentMessage;
 }
 
 describe('Context Family policy promotion', () => {

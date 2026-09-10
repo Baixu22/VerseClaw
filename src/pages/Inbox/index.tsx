@@ -52,10 +52,12 @@ function statusKey(item: InboxItem): string {
 }
 
 function riskTone(risk: InboxItem['risk']): string {
-  if (risk === 'dangerous' || risk === 'destructive') {
+  // `external-write` sits with the red group, not with `write`: it is the class
+  // outside the ClawX write journal, so it has no undo at all.
+  if (risk === 'dangerous' || risk === 'destructive' || risk === 'external-write') {
     return 'border-red-500/25 bg-red-500/10 text-red-700 dark:text-red-400';
   }
-  if (risk === 'write' || risk === 'network' || risk === 'external-write') {
+  if (risk === 'write' || risk === 'network') {
     return 'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400';
   }
   return 'border-border bg-black/5 text-muted-foreground dark:bg-white/10';
@@ -78,6 +80,18 @@ function formatTime(value: number, locale: string): string {
     hour: '2-digit',
     minute: '2-digit',
   }).format(new Date(value));
+}
+
+function permissionTitle(item: InboxItem, t: ReturnType<typeof useTranslation>['t']): string {
+  return item.source === 'permission' && item.risk === 'external-write'
+    ? t('externalWrite.title')
+    : item.title;
+}
+
+function permissionSummary(item: InboxItem, t: ReturnType<typeof useTranslation>['t']): string | undefined {
+  return item.source === 'permission' && item.risk === 'external-write'
+    ? t('externalWrite.summary')
+    : item.summary;
 }
 
 export function Inbox() {
@@ -288,11 +302,11 @@ export function Inbox() {
                     <span className="mt-0.5 text-muted-foreground">{sourceIcon(item.source)}</span>
                     <span className="min-w-0 flex-1">
                       <span className="flex items-start justify-between gap-2">
-                        <span className="truncate text-[13px] font-medium text-foreground">{item.title}</span>
+                        <span className="truncate text-[13px] font-medium text-foreground">{permissionTitle(item, t)}</span>
                         <span className="shrink-0 text-[11px] text-muted-foreground">{formatTime(item.timestamp, i18n.language)}</span>
                       </span>
                       <span className="mt-1 line-clamp-2 text-xs leading-4 text-muted-foreground">
-                        {item.summary || t(`source.${item.source}`)}
+                        {permissionSummary(item, t) || t(`source.${item.source}`)}
                       </span>
                       <span className="mt-1.5 flex items-center gap-2 text-[11px] text-muted-foreground">
                         <span>{t(`source.${item.source}`)}</span>
@@ -405,8 +419,8 @@ function InboxDetail({
               <span aria-hidden="true">/</span>
               <span>{sourceDetail}</span>
             </div>
-            <h2 className="mt-2 break-words text-lg font-medium leading-6 text-foreground">{item.title}</h2>
-            {item.summary ? <p className="mt-1 text-[13px] leading-5 text-muted-foreground">{item.summary}</p> : null}
+            <h2 className="mt-2 break-words text-lg font-medium leading-6 text-foreground">{permissionTitle(item, t)}</h2>
+            {permissionSummary(item, t) ? <p className="mt-1 text-[13px] leading-5 text-muted-foreground">{permissionSummary(item, t)}</p> : null}
           </div>
           <div className="flex shrink-0 flex-wrap items-center gap-1.5">
             <Badge variant="outline" className={cn('font-normal', riskTone(item.risk))}>{t(`risk.${item.risk}`)}</Badge>
@@ -432,6 +446,12 @@ function InboxDetail({
             <p className="mt-2 text-sm text-muted-foreground">{t('evidence.empty')}</p>
           )}
         </section>
+
+        {item.source === 'permission' && item.risk === 'external-write' ? (
+          <section className="mt-5 border-l-2 border-amber-500/40 pl-3 text-xs leading-5 text-muted-foreground">
+            {t('externalWrite.warning')}
+          </section>
+        ) : null}
 
         {item.source === 'remote-task' && (previewLoading || remotePreview?.changes.length) ? (
           <section className="mt-5">

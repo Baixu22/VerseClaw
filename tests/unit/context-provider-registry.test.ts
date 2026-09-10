@@ -95,13 +95,13 @@ describe("context provider registry pilot", () => {
       projectRules: ["Project rule"],
       initialConstraints: ["Initial constraint"],
     };
-    const baselinePack = buildLoopContextPack(loopContextInput);
+    const baselinePack = buildLoopContextPack(loopContextInput as never);
     const baselinePrompt = formatLoopContextPackForPrompt(baselinePack);
 
     const result = await runTestContextProviderRegistry({
       config: {},
       legacyMessages: messages,
-      loopContextInput,
+      loopContextInput: loopContextInput as never,
       sessionId: "session-flag-off",
     });
 
@@ -119,7 +119,7 @@ describe("context provider registry pilot", () => {
     expect(result.diagnostics.every(isRuntimeRegistryDiagnostic)).toBe(true);
     expect(messages[0]).toMatchObject({ content: "Keep legacy message identity." });
     expect(messages[1]).toMatchObject({ content: "I will not reorder messages." });
-    expect(formatLoopContextPackForPrompt(buildLoopContextPack(loopContextInput))).toBe(
+    expect(formatLoopContextPackForPrompt(buildLoopContextPack(loopContextInput as never))).toBe(
       baselinePrompt,
     );
   });
@@ -270,12 +270,12 @@ describe("context provider registry pilot", () => {
         sectionTokens: { relevantKnowledge: 5 },
       },
     };
-    const baselinePrompt = formatLoopContextPackForPrompt(buildLoopContextPack(loopContextInput));
+    const baselinePrompt = formatLoopContextPackForPrompt(buildLoopContextPack(loopContextInput as never));
 
     const result = await runTestContextProviderRegistry({
       config: enabledConfig,
       legacyMessages: messages,
-      loopContextInput,
+      loopContextInput: loopContextInput as never,
       sessionId: "session-shadow",
     });
 
@@ -313,11 +313,11 @@ describe("context provider registry pilot", () => {
       }),
     ]));
     expect(result.diagnostics.every(isRuntimeRegistryDiagnostic)).toBe(true);
-    expect(messages.map((message) => message.content)).toEqual([
+    expect((messages as any[]).map((message: any) => message.content)).toEqual([
       "Implement registry shadow only.",
       "Legacy messages stay authoritative.",
     ]);
-    expect(formatLoopContextPackForPrompt(buildLoopContextPack(loopContextInput))).toBe(
+    expect(formatLoopContextPackForPrompt(buildLoopContextPack(loopContextInput as never))).toBe(
       baselinePrompt,
     );
   });

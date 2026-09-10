@@ -1,0 +1,80 @@
+{
+  "applied_at": "2026-09-03T13:30:05.462301Z",
+  "base_graph_hash": "66ab636d031e14f181239c08a68727e9573e5deccced6835dfd7a8564abc005c",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 148,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md#73-p1-统一写入和恢复语义",
+          "docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md「Adversarial review repair (2026-09-03)」：2 blocker + 4 major 的复现命令、修复与实测口径，全部对真实 git 2.51.0.windows.1 与 ripgrep 15.1.0 测量，不靠文档推断。",
+          "同文档「Renderer-side repair (2026-09-03)」：先枚举证实 approval.updated 只有 2 个 emitter（均在 runtime exec approval 路径）、ClawX permission store 只有 7 个 writer（全为 Electron service API 且不发 runtime 事件）、approval.updated 载荷无 risk 字段，据此修复 4 项 renderer 缺陷。",
+          "同文档「Unit-suite isolation repair (2026-09-03)」：9 项环境依赖失败已修（本机累计 8,990,004 tokens 超 1,000,000 默认预算导致 chat-api 两文件在 metadata 构造前即被 TOKEN_BUDGET_EXCEEDED 拒绝；两文件 vi.mock hoisting 收集期失败；artifact-panel store 缺 getState）。",
+          "反向探针逐项钉死：config 闸门 8 红、脚本顺序 3 红、信任锚点 6 红、--hostname-bin 2 红、全局旗标作用域 1 红、ref listing 15 红、requestHash 1 红、Git 面板裸 reason 1 红、terminal 面板 1 红、roles 面板 1 红、严重度反转 1 红、无条件丢行 1 红、谓词收窄 1 红；每次还原后全绿。",
+          "新增守卫：external-write-policy.identity.test.ts（92 用例）与 tests/unit/approval-redaction-contract.test.ts（17 用例，读六份 renderer 源码在调用点守约，因 helper 单测抓不到绕过 helper 的面）。",
+          "门禁：full VerseShell 22 files/313、unit-fast 67 files/502、focused renderer 5 files/43、tsgo:core、typecheck:node、typecheck:web、i18n:lint、changed-file ESLint、targeted type-aware oxlint、build:vite、comms replay+compare（delta 0.00%）、harness context 与 validate --since HEAD、git diff --check 全部 exit 0。",
+          "口径修正：ai-commit-card 视觉漂移实测 214 像素 / ratio 0.01（此前记的 617 有误，比例一致）；「full VerseShell 全绿」并非稳定可复现，process-manager.test.ts 的 handshaking 用例在 setTimeout(…,0) 后即断言状态而 handshake 超时为 100 ms，属既有竞态。",
+          "tests/unit 全量在隔离修复后为 800 files/7121 通过、17 个文件仍失败；17 个已逐一核对本分支一行未碰，其中三个理论上可能由 promotion 表改动引起的（chat-render-reachability、chat-question-directory、first-product-claims）撤销该改动后失败完全一致——实测非假定。"
+        ],
+        "next_action": "把 runtime 的 externalWritePolicy 接到 ClawX 审批面，使分类器与 renderer 脱敏覆盖同一命令集合；这是「未声明 external write = 0」按全量口径成立的前提，也是剩余完整 external-write 覆盖工作的实质。",
+        "progress": 88.0,
+        "progress_source": "manual",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 240,
+        "status": "in_progress",
+        "summary": "两轮独立对抗式复核判定不通过，8 项缺陷全部修复。分类器侧 2 个 blocker：git config 只读旗标可与写动作共存（真实 git 接受 --show-scope --add，而闸门只看 rest[0]，两条命令即链到 diff.external 任意执行）；任何 basename 为 git 的可执行文件在 Git 分支提前返回而跳过脚本检查（C:\\evil\\git.cmd 判 none，同一 plan 却带 interpreterProfile=windows-cmd）。另 6 项：只读判定锚在 basename 而非操作者命令名、rg --hostname-bin 可执行命令却判 none、12 个真正只读 Git 形式被误标为写、stripSensitiveApprovalDetails 漏删 requestHash、三个面板裸读 approval.reason（该 reason 逐字带 workspace.rootPath）、external-write 严重度低于有 journal 覆盖的 dangerous、以及 approval.updated 行被无条件丢弃而删掉了 warningText 在应用内唯一的渲染位置。修复后 full VerseShell 22 files/313、unit-fast 67 files/502、focused renderer 5 files/43、tests/unit 800 files/7121 通过。仍 in_progress：声明的切片边界未变，runtime 分类尚未接到 ClawX 审批面。"
+      },
+      "id": "TF-0068"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.97,
+        "created_at": "2026-09-03T12:00:00Z",
+        "decided_by": "TF-0068 独立对抗式复核（分类器 + renderer 两轮）",
+        "evidence": "docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md 的 Adversarial review repair 与 Renderer-side repair 两节；external-write-policy.identity.test.ts 92 用例；approval-redaction-contract.test.ts 17 用例。",
+        "expected_requirement": "TF-0068 success_metrics 要求「未声明 external write 0」与「错误 rollback 承诺 0」。",
+        "id": "TFD-tf0068-classifier-unsound-at-green-gates-20260903",
+        "kind": "quality_gap",
+        "node_id": "TF-0068",
+        "observed_action_or_result": "第一片的工程门禁全绿，但分类器本身不成立：两类命令在判定 effectLevel=none 的同时可执行任意代码（git config 只读旗标与写动作共存；basename 为 git 的批处理跳过脚本检查）。另有 6 项确认缺陷，含 requestHash 漏删与三处裸 approval.reason 渲染。门禁绿而指标不成立，说明该片的验收证据覆盖不到自身分类逻辑。",
+        "recommendation": "8 项已全部修复，每项由反向探针钉死，预期值对真实 git/ripgrep 实测。新增两个守卫文件：identity 测试覆盖分类矩阵，redaction-contract 测试在渲染器调用点守约（helper 单测无法覆盖绕过 helper 的面）。后续同类分类器工作应先建立「反向探针 + 真实工具实测」的验收形态，再报门禁。",
+        "related_task_ids": [
+          "TF-0068"
+        ],
+        "severity": "high",
+        "status": "resolved"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-09-03T12:05:00Z",
+        "decided_by": "TF-0068 修复轮（用户要求完整修复节点）",
+        "evidence": "docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md「Unit-suite isolation repair (2026-09-03)」；修复后 tests/unit 为 800 files / 7121 tests 通过。",
+        "expected_requirement": "TF-0068 touchedAreas 原本只覆盖 external-write 分类与审批脱敏相关文件。",
+        "id": "TFD-tf0068-unit-suite-env-dependent-baseline-20260903",
+        "kind": "scope_change",
+        "node_id": "TF-0068",
+        "observed_action_or_result": "为本包跑全量 tests/unit 时发现 9 项失败并非既有基线，而是依赖本机状态：chat-knowledge-scope(7) 与 chat-api-workspace-fingerprint(4) 经预算闸门读真实 ~/.openclaw transcript，本机 8,990,004 tokens 超 1,000,000 上限；file-preview-body 与 use-session-status-failure-states 因 vi.mock hoisting 在收集期失败；chat-save-to-knowledge 的 artifact-panel mock 缺 getState。这 5 个文件与 external-write 无关，但它们使本包无法陈述可复现基线。",
+        "recommendation": "5 个测试文件的隔离修复随本包收口，touchedAreas 已相应补齐；修复只改测试隔离，未触及任何生产代码或预算/存储行为（预算行为仍由 chat-resource-limits-p5-004.test.ts 覆盖）。若后续要调整默认 token 预算或 usage reader 契约，必须另立 task。",
+        "related_task_ids": [
+          "TF-0068"
+        ],
+        "severity": "medium",
+        "status": "resolved"
+      }
+    }
+  ],
+  "created_at": "2026-09-03T13:28:43.668929Z",
+  "proposal_id": "TFP-TF-0068-adversarial-repair-20260903",
+  "rationale": "TF-0068 独立对抗式复核判定不通过（2 blocker + 6 major），全部已修复并逐条反向探针钉死；另修复 9 项使本包无法陈述可复现基线的测试隔离缺陷。分类器与 renderer 两侧的缺口已闭合，但声明的切片边界未变（runtime 分类尚未接到 ClawX 审批面），因此保持 in_progress，不请求 done。",
+  "session_id": "session-tf0068-adversarial-repair-20260903",
+  "status": "applied"
+}

@@ -1,0 +1,36 @@
+{
+  "applied_at": "2026-08-28T12:27:31.014424Z",
+  "base_graph_hash": "1e1a94142e91fa749c907a0469fee61d1356a930f09716a4279fa8989662bfa0",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.98,
+        "created_at": "2026-08-28T12:20:00Z",
+        "decided_by": "lane-2 独立复核（XL-012）",
+        "evidence": "docs/dev/context-moat/reviews/TF-0143.md §「lane-2 独立复核（2026-08-28，XL-012）」；runtime-coding-uftk.test.ts 2/2；OpenClawSchema.safeParse 用户线上配置 success=true；L1 六门与 153 项配置矩阵全绿。",
+        "expected_requirement": "TF-0143 non_goals 原文要求本 task 不做任何代码改动。",
+        "id": "TFD-65bbc44c61",
+        "kind": "scope_change",
+        "node_id": "TF-0143",
+        "observed_action_or_result": "为驱动真实语料续跑，用户明确授权补齐 runtime.coding.uftk schema/type/exhaustive-anchor/test 兼容面。lane-2 复核确认无默认值或运行时行为变化，用户线上配置可解析，聚焦测试与 L1 六门通过。",
+        "recommendation": "接受该用户授权前置修复随 TF-0143 一并收口；后续若要为 UFTK 增加执行器或默认值，必须另立 task。",
+        "related_task_ids": [
+          "TF-0143"
+        ],
+        "severity": "medium",
+        "status": "resolved"
+      }
+    }
+  ],
+  "created_at": "2026-08-28T12:25:00.762658Z",
+  "proposal_id": "prop-lane2-tf0143-review-close-20260828",
+  "rationale": "lane-2 独立复核 TF-0143 通过；用户授权的 runtime.coding.uftk schema 修复作为已记录 scope change 收束为 resolved。",
+  "session_id": "session-lane-2-tf0143-review",
+  "status": "applied"
+}

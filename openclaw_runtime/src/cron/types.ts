@@ -257,13 +257,35 @@ export type CronFailureAlert = {
   accountId?: string;
 };
 
+/**
+ * Timer continuation for a goal-wake `timer` wait.
+ *
+ * Carries no command and no message: firing it only records that a deadline
+ * passed, so the goal-wake level check can produce the continuation. This is
+ * how mission timers reuse the single Cron scheduler instead of standing up a
+ * second timer loop.
+ */
+export type CronMissionContinuationPayload = {
+  kind: "missionContinuation";
+  /** The goal-wake `task_runs` row this deadline is bound to. */
+  taskId: string;
+  missionId: string;
+};
+
 /** Payload variants cron can execute in main-session or detached modes. */
 export type CronPayload =
   | { kind: "systemEvent"; text: string }
   | CronAgentTurnPayload
-  | CronCommandPayload;
+  | CronCommandPayload
+  | CronMissionContinuationPayload;
 
-/** Partial payload update shape used by cron patch/edit flows. */
+/**
+ * Partial payload update shape used by cron patch/edit flows.
+ *
+ * `missionContinuation` is deliberately absent: timer continuation jobs are
+ * created by the runtime and settled by firing, never hand-edited, so exposing
+ * them to the patch surface would only add an unreachable narrowing branch.
+ */
 export type CronPayloadPatch =
   | { kind: "systemEvent"; text?: string }
   | CronAgentTurnPayloadPatch

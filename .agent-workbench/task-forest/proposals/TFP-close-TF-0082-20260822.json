@@ -1,0 +1,63 @@
+{
+  "applied_at": "2026-08-22T10:01:18.659410Z",
+  "base_graph_hash": "af8a586246ddd3f9f12879dec5db1511fb9f0bb3300da2b563421af842fa6ecd",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "工作区是共享脏树（数百个与本任务无关的改动/未跟踪文件），全程未 reset/stash/clean/checkout；harness diff-aware validate 因 ownership 覆盖失败，--no-diff 结构校验 exit 0 为本期证据。",
+          "tests/unit/session-activity-panel.test.tsx 1 failed / 2 passed，非本期所致：已提交的测试断言 goal 标签文本，而工作区里一份未提交的 SessionActivityPanel.tsx 重写（698 行，他人 in-flight）给标签加了翻译后的 kind 前缀；已与 HEAD 版本对照确认无关，未改动。",
+          "send/steer permit 只覆盖 run-start 窗口，不覆盖整轮 run：run armed 后按设计释放，之后 reset 正常 fence 并走 canonical stop path 中止该 run。",
+          "steer 打断 embedded run 时最长 15s 的等待现在发生在 permit 之内，并发 reset 会排队等待——有意的 fail-safe 定序，但拉长该场景 reset 的最坏延迟。",
+          "lineage 完整度受 owner 实际记录内容限制：bash 会话有 sessionId 无 runId；goal-owned process 只有在被某条 goal-wake flow 声明为依赖任务时才拿得到 missionId/ownerEpoch。不做任何推导填补，故 completeness=100% 的口径是「owner 记录了身份的条目全部带非空 ref」。",
+          "stale generation overwrite=0 仅覆盖本期加固的三条路径（announce wake / queue drain / send-steer run-start 窗口），其余路径本期未重审。",
+          "sessions.yieldState 刻意只读：arm（sessions_yield/goal_wait）保持 tool-only，因为两者的 mission/tick/turn 身份都绑定自活动 run 上下文；取消已 arm 的等待属于 TF-0083 的 mission cancel 级联。",
+          "未为 sessions.yieldState 增加 typed Host API facade；验收标准只点名 stop/continue/fork 的 typed surface。",
+          "本任务不新增 UI 渲染：lineage ref 与 yielded 状态都只到数据层，面板渲染不变。",
+          "liveReady=false、productApproved=false、formalAcceptance=false 未随收口改变；真实验收归 TF-0084。"
+        ],
+        "evidence": [
+          "收口门禁全部在最终树上重跑：harness context 0；validate --no-diff 0",
+          "agents-core announce 8/8；root shard（subagent-spawn + session-admission-registry + supervisor restart-reconciliation）22/22",
+          "gateway-methods 40/40（stop / queue-drain-generation / send-permit-lifetime / session-activity-projection / sessions.yield-state / session-activity / run-control.checkpoint-diff）",
+          "gateway session-ecosystem-production-reachability 2/2",
+          "renderer+Electron 63/63（host-api-facade 44 + session-activity + panel-sections）",
+          "typecheck 0；contract:check 0；comms replay 0 + compare 8 项全 PASS（0 丢失/重复/乱序）",
+          "build:runtime 0；build:vite 0；runtime-lifecycle E2E 3/3",
+          "touched 文件 lint 0；check-no-bom ok；git diff --check 0",
+          "六条 spec acceptance 逐条 met，证据见 artifacts/session-ecosystem-cross-session-control/report.json 的 closeout.acceptance",
+          "切片 4 回归探针：把 permit 释放点改回修复前位置，6 例中 3 例失败，探针已移除后重跑 6/6",
+          "切片 5 完整度断言：lineageUnjoinedEntries=0（每个投影条目都带非空 lineage ref）",
+          "README 三语 + docs/dev/handoffs/LATEST.md 已同步收口结论"
+        ],
+        "next_action": "TF-0082 已关闭。边界：liveReady=false、productApproved=false、formalAcceptance=false，真实验收归 TF-0084；不自动启动 TF-0083，任何 successor 需单独确认。遗留决策交给 owner：lineage ref 与 yielded 状态是否要在会话状态面板渲染（数据层已就绪，但 SessionActivityPanel.tsx 当前有他人未提交的大改动）。另需 owner 处理：harness diff-aware validate 的 shared-worktree ownership 冲突，以及 session-activity-panel 单测所依赖的未提交面板改动。",
+        "progress": 100,
+        "progress_source": "manual",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260822-start-tf0082",
+          "session-20260822-tf0082-slice4",
+          "session-20260822-tf0082-slice5",
+          "session-20260822-tf0082-slice6",
+          "session-20260822-tf0082-closeout"
+        ],
+        "status": "done",
+        "summary": "跨会话控制与 lineage 统一闭环。六个 owner path：(1) announce wake 代际钉扎——spawn 时快照 requesterSessionId，maybeSteerSubagentAnnounce 与 direct completion wake 双洞封堵，迟到 completion 不能 steer/wake 已 reset/fork 的父代际；(2) typed Host API session stop surface，委托既有 sessions.stop RPC，stop/continue/fork 三操作至此都有 typed Host API + 真实 Gateway RPC 路径；(3) queueDrain expectedSessionId 代际守卫，handler 与 drain 执行器双层 fail-closed，队列消息原样保留；(4) send/steer admission permit 覆盖整个 run-start 窗口（steer 打断→transcript seq→chat.send 前导→run armed），release-once 助手首次 respond 释放 + finally 兜底，既不泄漏也不重复释放，并发 reset/delete 只能排队而无法把 run 播种在旧代际；(5) lineage runId join——共享 SessionActivityLineageRef（sessionId/runId/parentSessionKey/ownerEpoch/missionId）挂到每个 goal/process/lineage 条目，字段只从已记录它的 owner 复制，goal-wake flow 的 dependency taskId 把 goal-owned process 连回 mission 与 durable ownerEpoch，id 256 上界，无第二 identity 源；(6) sessions.yieldState（operator.read）只读暴露 yield/goal-wait 状态，代际不匹配 fail-closed 且零 owner 读取，arm 侧刻意保持 tool-only，并修掉「正常 parent yield 被判为 error 并推到 attention 级」的真实缺陷（新增 yielded 状态，归入 active）。"
+      },
+      "id": "TF-0082"
+    }
+  ],
+  "created_at": "2026-08-22T10:00:18.335447Z",
+  "proposal_id": "TFP-close-TF-0082-20260822",
+  "rationale": "用户指示「现在收口」。TF-0082 六个 owner path 全部完成，全部门禁在最终树上重跑通过（非沿用切片结论），六条 spec acceptance 逐条 met 并在 report 的 closeout.acceptance 留证。成功指标按诚实口径记录：stale generation overwrite=0 仅覆盖本期加固的三条路径，lineage completeness=100% 指「owner 记录了身份的条目全部带非空 ref」，未做推导填补。liveReady/productApproved/formalAcceptance 保持 false，真实验收仍归 TF-0084。一个已知非本期失败（session-activity-panel 单测，因他人未提交的面板重写）已与 HEAD 对照确认无关并记录在案。",
+  "session_id": "session-20260822-tf0082-closeout",
+  "status": "applied"
+}

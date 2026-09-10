@@ -206,7 +206,7 @@ describe('rollback plan', () => {
         status: 'bestEffort',
       },
       compactionStatus: {
-        success: true,
+        
         available: true,
         canCompact: true,
         inProgress: false,
@@ -250,7 +250,7 @@ describe('rollback plan', () => {
         status: 'bestEffort',
       },
       compactionStatus: {
-        success: true,
+        
         available: true,
         canCompact: false,
         inProgress: false,

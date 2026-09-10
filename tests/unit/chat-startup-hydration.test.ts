@@ -29,14 +29,14 @@ vi.mock('@/stores/agents', () => ({
 }));
 
 vi.mock('@/lib/host-api', () => ({
-  hostApiFetch: (...args: unknown[]) => summariesMock(...args),
+  hostApiFetch: summariesMock as any,
   hostApi: {
     media: {
       thumbnails: vi.fn(async () => ({})),
     },
     sessions: {
-      history: (...args: unknown[]) => transcriptHistoryMock(...args),
-      summaries: (...args: unknown[]) => summariesMock(...args),
+      history: transcriptHistoryMock as any,
+      summaries: summariesMock as any,
     },
   },
 }));

@@ -14,6 +14,17 @@ vi.mock('@electron/services/workspaces-api', () => ({
 }));
 
 /**
+ * The pre-Gateway budget gate reads persisted usage from `~/.openclaw`
+ * transcripts, so an unmocked reader makes this file's result depend on how much
+ * the machine has used: past the 1,000,000-token default the send is rejected as
+ * `TOKEN_BUDGET_EXCEEDED` and never reaches `rpcParams`. Budget behaviour is
+ * covered by `chat-resource-limits-p5-004.test.ts`.
+ */
+vi.mock('@electron/utils/token-usage', () => ({
+  getSessionTokenUsageSummary: vi.fn(async () => ({ totalTokens: 0, estimatedCostUsd: 0 })),
+}));
+
+/**
  * D3 closeout: Chat workspaceId → Main normalizeRootPath → Gateway field chain.
  *
  * RED phase: chat-api.ts must forward `workspaceId` (currently dropped at
@@ -43,7 +54,7 @@ describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)',
       idempotencyKey: 'idem-ws-id',
     });
 
-    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as Record<string, unknown>;
+    const payload = (gatewayManager.rpc.mock.calls as any)[0]?.[1] as Record<string, unknown>;
     expect(payload.workspaceId).toBe('ws-app');
   });
 
@@ -64,7 +75,7 @@ describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)',
       idempotencyKey: 'idem-ws-fp',
     });
 
-    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as Record<string, unknown>;
+    const payload = (gatewayManager.rpc.mock.calls as any)[0]?.[1] as Record<string, unknown>;
     expect(payload.workspaceId).toBe('ws-app');
     // Expected fingerprint: sha256 of lowercased absolute POSIX-style path, first 16 hex chars.
     const absolute = resolve(rootPath);
@@ -89,7 +100,7 @@ describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)',
       idempotencyKey: 'idem-no-ws',
     });
 
-    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as Record<string, unknown>;
+    const payload = (gatewayManager.rpc.mock.calls as any)[0]?.[1] as Record<string, unknown>;
     expect(payload).not.toHaveProperty('workspaceId');
     expect(payload).not.toHaveProperty('workspaceFingerprint');
   });
@@ -110,7 +121,7 @@ describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)',
       idempotencyKey: 'idem-ws-no-root',
     });
 
-    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as Record<string, unknown>;
+    const payload = (gatewayManager.rpc.mock.calls as any)[0]?.[1] as Record<string, unknown>;
     // workspaceId still forwarded so Gateway Task Ledger continuity is preserved.
     expect(payload.workspaceId).toBe('ws-orphan');
     // No fingerprint when rootPath cannot be resolved.

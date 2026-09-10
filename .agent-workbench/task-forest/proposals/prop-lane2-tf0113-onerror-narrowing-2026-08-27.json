@@ -1,0 +1,37 @@
+{
+  "applied_at": "2026-08-27T19:04:33.972466Z",
+  "base_graph_hash": "271d5b61be6e29eb2daf92dea688de0bcb859d4dab0619cb91f9608012f38954",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.85,
+        "created_at": "2026-08-27T19:00:00Z",
+        "decided_by": "lane-2（实现者）在实现 requirement-1 时提出并如实上报；按 §R5 范围-2「实施者无权自行判定某问题不是问题」，accept/reject 权在非实现者车道 lane-1，本记录保持 open 至复核。",
+        "evidence": "openclaw_runtime/src/agents/agent-bundle-mcp-runtime.ts 的 handleTransportLost（error 分支只 invalidate）与其上方 doc-comment；:743-762 的 per-server catch；openclaw_runtime/src/agents/agent-bundle-mcp-runtime.test.ts 四条用例；docs/dev/context-moat/reviews/TF-0113.md §「实现与偏差」。",
+        "expected_requirement": "TF-0113 requirement-1：在 session 建立时挂 transport.onclose / onerror，触发 catalogInvalidationGeneration += 1 与 catalog = null，并从 sessions 摘除该 server。字面读法是两个信号做同一件事，含「摘除 session」。",
+        "id": "TFD-lane2-tf0113-onerror-narrowing-2026-08-27",
+        "impact": "模型可见面的结果与字面实现相同，这是本项不判为功能缺失的依据：onerror 后 memo 被清，下一次 getCatalog 在被保留的 session 上重发 tools/list；若服务器确实已死，listAllToolsBestEffort 会抛错并被既有的 per-server catch（agent-bundle-mcp-runtime.ts:743-762）降级进 diagnostics，该 server 的工具同样从声明面消失。差别只在「已死服务器的 session 对象会多存活一个重建周期」——而那是本改动之前就存在的行为（reusedSession 路径从不删除 session），不是本改动引入的退步。AC-1 与 AC-2 都是围绕 transport 关闭（onclose）设计的，两条测试均通过，故 AC 覆盖面不受本项影响。",
+        "kind": "scope_change",
+        "node_id": "TF-0113",
+        "observed_action_or_result": "实现对两个信号做了不同处置。onclose：摘除 session + invalidate memo + logWarn + fire-and-forget disposeSession（完全按字面）。onerror：只 invalidate memo，不摘除 session、不 dispose。理由：transport 对可恢复错误同样 fire onerror（SSE/streamable-http 的瞬时网络错误、stdio 的畸形消息、非致命协议错误），而摘除 session 会连带 disposeSession —— 对 stdio 传输那意味着杀掉一个仍在运行的子进程。按字面实现会在瞬时错误上摧毁健康服务器，即用一个更严重的故障替换本 task 要修的故障。",
+        "recommendation": "请 lane-1 在复核时裁决三选一：(a) 接受本收窄，把 requirement-1 的 onerror 分支改写为「只 invalidate、不摘除」以消除节点与实现的措辞差；(b) 判为不接受，要求 onerror 也摘除 session —— 若如此，须同时接受「瞬时错误会 dispose 健康服务器（stdio 下杀子进程）」这一后果，或另加一条「仅在 onerror 后的重建确认失败时才摘除」的两段式逻辑；(c) 判为需补测试，即为 onerror 单独加一条断言其不摘除 session 的用例。lane-2 推荐 (a)，但不自行改写节点 requirement。",
+        "related_task_ids": [
+          "TF-0113"
+        ],
+        "severity": "low",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-27T19:04:33.743704Z",
+  "proposal_id": "prop-lane2-tf0113-onerror-narrowing-2026-08-27",
+  "rationale": "TF-0113 requirement-1 的字面要求是「在 session 建立时挂 transport.onclose / onerror，触发 catalogInvalidationGeneration += 1 与 catalog = null，并从 sessions 摘除该 server」——即两个信号做同一件事。实现时判定 onerror 不应摘除 session：transport 对可恢复的协议错误也 fire onerror（SSE/HTTP 的瞬时网络错误、stdio 的畸形消息），按字面实现会在一次瞬时错误上摘除并 dispose 一个仍然健康的服务器，等于用一个更严重的故障替换掉本 task 要修的故障。故 onerror 只 invalidate memo、保留 session；下一次 getCatalog 会在该 session 上重发 tools/list，若服务器确实已死则 listAllToolsBestEffort 抛错并由既有的 per-server catch（:743-762）把它降级进 diagnostics —— 模型可见面的结果与摘除相同（该 server 的工具从声明面消失），但不伤健康服务器。按 §R5 范围-2，实施者无权自行判定这算不算降级，故记 deviation 并把 accept/reject 交给非实现者车道 lane-1；status 保持 open 至复核。",
+  "session_id": "session-lane-2",
+  "status": "applied"
+}

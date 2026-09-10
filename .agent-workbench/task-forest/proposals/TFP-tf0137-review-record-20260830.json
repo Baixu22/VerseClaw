@@ -1,0 +1,34 @@
+{
+  "applied_at": "2026-08-30T14:41:05.584476Z",
+  "base_graph_hash": "102d4ef047c522ffa874309e00de9cb148e52b02d5c9adf95cb539b1c9e58cda",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "openclaw_runtime/src/context-engine/coding-runtime-flags.ts:152-164,215-232",
+          "openclaw_runtime/src/agents/worktree-service.ts:262-268",
+          "openclaw_runtime/src/knowledge/sekb/distillation-tool.ts:231-234",
+          "shared/dcs/prod-flags-catalog.ts:111-124,204-215",
+          "2026-08-30 lane-2 start: TF-0139 is already done; TF-0140 is paused awaiting human sign-off and explicitly does not block other lane-2 work. D02 source (shared/dcs/prod-flags-catalog.ts) and both runbooks are clean before start; D03 contains an unrelated TF-0112 comment-only dirty hunk and will not be edited unless required.",
+          "2026-08-30 lane-2 implementation: worktree-backend and sekb-experience-shadow are now kind=api/risk=api-only; sekb-experience-shadow removed from DCS_WRITABLE_FLAG_SPECS; EN/ZH runbooks and generated prod-flags catalog synchronized. Focused tests: 4 files/25 passed. config-schema-parity + default-config-matrix: 2 files/156 passed. test:dcs: 40 files/439 tests passed (1 skipped). typecheck:node, lint:dcs, contract:check, catalogs:check all exit 0. Full lint:check still fails on 4 pre-existing unrelated errors; targeted eslint on all touched files exits 0.",
+          "2026-08-30 independent review thread 01a050ad-bb07-7401-91d0-5aaebe07bf8c: P1 nonexistent distillKnowledge API corrected to DistillationTool.confirm_and_save; P2 rollback E2E synchronized; no new blocker; P3 dormant store/support-bundle field remains optional cleanup. Reviewer conclusion approve. Verification after fix: catalogs:check exit 0; focused unit tests 2 files/4 passed; targeted ESLint on touched TS/E2E files exit 0; scoped git diff --check exit 0.",
+          "docs/dev/context-moat/reviews/TF-0137.md（独立 review task 01a05277-a62a-7762-90ef-d562dfb9ea14：implementation approve；按 §R3.5 以 landed-unwired 合法降级）",
+          "2026-08-30 final verification：focused unit 2 files/4 passed；test:dcs 40 files/439 passed/1 skipped；typecheck:node、lint:dcs、contract:check、catalogs:check、targeted ESLint、git diff --check 均 exit 0。"
+        ],
+        "next_action": "保持两个配置叶仅用于 runtime-flag-ack 观测；若未来需要生产启用 worktree backend 或 SEKB experience shadow，另立实现 task，补齐 A1/A4 与新的半径预算。审核记录见 docs/dev/context-moat/reviews/TF-0137.md。"
+      },
+      "id": "TF-0137"
+    }
+  ],
+  "created_at": "2026-08-30T14:40:59.624931Z",
+  "proposal_id": "TFP-tf0137-review-record-20260830",
+  "rationale": "补齐协议要求的仓库内独立审核记录，并将最终验证证据挂回 TF-0137。实现 review 已 approve；landed-unwired 与 review_needed 状态保持不变。",
+  "session_id": "session-tf0137-review-record-20260830",
+  "status": "applied"
+}

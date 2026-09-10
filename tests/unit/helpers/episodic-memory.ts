@@ -15,7 +15,7 @@
 // state. It never touches the semantic track's HybridSearchIndex, fact store,
 // or entity graph. The two tracks only meet in the final prompt assembly.
 
-import type { RuntimeEmbeddingProvider } from "../../openclaw_runtime/src/runtime-core/memory-embedding-provider.js";
+import type { RuntimeEmbeddingProvider } from "../../../openclaw_runtime/src/runtime-core/memory-embedding-provider.ts";
 
 // === Types ===
 

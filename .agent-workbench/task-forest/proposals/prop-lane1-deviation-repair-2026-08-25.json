@@ -1,0 +1,115 @@
+{
+  "applied_at": "2026-08-25T15:37:01.152098Z",
+  "base_graph_hash": "fa4f50f7a1d882c9a9fbc1e94b0d866e83deb11ca5558384b75cc31dc6c3fbf7",
+  "base_summary": {
+    "edge_count": 260,
+    "node_count": 146,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-25T13:00:00Z",
+        "decided_by": "lane-1（session-2026-08-25-lane-1-successor）：按交接文档 §5 的指示采用 §R4.5 操作性规则读法并记录，最终裁决权在用户。",
+        "id": "TFD-d03-lane-column-vs-registered-touchers-2026-08-25",
+        "impact": "车道 1 采用 §R4.5 的操作性规则读法：「每个域同时只允许 1 个 in_progress」为并发判据，「车道」列是粗标签而非独占锁，登记触碰者是授权凭证；故 TF-0117 有权触碰 D03 文件的注释措辞（纯注释、零行为改动，non_goals 明写）。该读法不改变任何域的并发上限，车道 2 的 TF-0112 / TF-0137 授权不受影响。若用户改判「车道」列为独占锁，则 TF-0117 第 2 处（coding-runtime-flags.ts:8-11 文件头注释）须路由车道 2 另起 task，本 task 收口后需按裁决复核。此为交接文档 §5 明示的两次真实事故同形态（登记与实际不符），故不推测跨过，记录读法并报用户。",
+        "kind": "conflict_domain_collision",
+        "node_id": "TF-0145",
+        "related_task_ids": [
+          "TF-0117",
+          "TF-0112",
+          "TF-0137",
+          "TF-0146"
+        ],
+        "summary": "D03（src/context-engine/coding-runtime-flags.ts）的「车道」列为 2，而登记触碰者为 TF-0112 / TF-0117 / TF-0137 / TF-0146，其中 TF-0117 与 TF-0146 属车道 1；最初交接词又称 D03 为「车道 2 独占」。两处说法冲突。车道 1 开工 TF-0117 前实测：TF-0112 / TF-0137 均为 proposed（非 in_progress），list --status in_progress 中无车道 2 的实现类 task，三个目标文件 git status 全 CLEAN。"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-25T13:00:00Z",
+        "decided_by": "lane-1（session-2026-08-25-lane-1-successor）：用户于 2026-08-25 明确授权（合并系用户安排，当时仅车道 1 一个会话工作）；合并口径记录于此，parentage 归属如有异议走 proposal 改。",
+        "id": "TFD-taskforest-merge-conflict-repair-2026-08-25",
+        "impact": "用户授权后由车道 1 于 2026-08-25 完成语义合并修复。口径：节点取并集——TF-0006 / TF-0070~TF-0074 采用 main 侧较新版本（保留 ours 独有字段，如 TF-0074.next_action），TF-0075 保留 ours 较新版本，TF-0076 自 main 侧导入；边保留 ours 全部 257 条，补 3 条缺失关系 TFE-0261~0263（TF-0076->TF-0094 child_of 随 TF-0075、TF-0076->TF-0075 与 TF-0075->TF-0074 depends_on），未采纳 main 侧 7 条 child_of->TF-0006（ours 已把 TF-0070~0075 parent 到 TF-0037/TF-0094，双 parent 会破坏 forest 唯一主父模型）；snapshots 保留 ours 的 0097-0106，main 侧同号 10 个顺延为 0244-0253（内容逐字节不变）；deviations 追加 main 侧独有 2 条（TFD-166ddf594c / TFD-340517fabb）；config 计数器 next_node_number=147 / next_edge_number=264 / next_snapshot_number=254；forest/todos/exports 用 CLI 自身代码重建。修复后 validate 通过，TF-0117 收口状态已重放。残留口径：forest 视图中 TF-0070~0076 挂在 TF-0037/TF-0094 下而非 main 侧的 TF-0006 之下；若需改回 TF-0006 parentage，另走 proposal。",
+        "kind": "process_violation",
+        "node_id": "TF-0102",
+        "related_task_ids": [
+          "TF-0102",
+          "TF-0117"
+        ],
+        "summary": "merge 1700779c0（origin/main -> feat/runtime-lifecycle-governance，为用户安排的 compact 任务合并，2026-08-25T21:00+08:00，无 Task:/Lane: trailer）把未解决的 <<<<<<< HEAD 冲突标记提交进 .agent-workbench/task-forest/ 下 19 个文件（config.json、graph/{nodes,edges,forest}.json、todos/todos.json、deviations/deviations.jsonl、exports 三件、snapshots/0097-0106）。实测五个 JSON 状态文件全部不可解析，task-forest CLI 对两条车道全面停摆；车道 1 的 TF-0117 收口状态更新因此被阻断一次（两次失败后按约束 #12 停下换路）。"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-25T13:00:00Z",
+        "decided_by": "lane-2（审核 47cb57a81 认定）；车道 1 代放。",
+        "id": "TFD-lane2-tf0128-lane-trailer-missing-2026-08-25",
+        "impact": "该提交已被后续历史（含一次 merge）引用，按 §R5 技术-7 不得追溯改写，记 backlog-P1。半径归属不受影响（Task: 齐全，§R3.1 复跑 12/15 PASS）；车道归属可由 reviews/TF-0128.md 的实现者节（lane-1 session-2026-08-24-lane-1）人工回溯。后续车道 1 提交已全部带齐双 trailer（395683c6f / f1bbcf53a / ffa825438 实测）。由车道 1 于 2026-08-25 按车道 2 审核挂账命令代放（事故修复后，当时仅车道 1 会话在线）。",
+        "kind": "process_violation",
+        "node_id": "TF-0128",
+        "related_task_ids": [
+          "TF-0128",
+          "TF-0145"
+        ],
+        "summary": "TF-0128 收口提交 1074b6b28 仅带 Task: TF-0128 + Co-Authored-By，缺 Lane: trailer。TF-0128 是 M1 task，§R3.8.1 规则 1 要求 Lane: 在每个提交上必填，判据 B 自 M1 生效。"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-25T13:00:00Z",
+        "decided_by": "lane-1（session-2026-08-25-lane-1-successor），依车道 2 审核 671b8ea1b 的 backlog-P1 要求与 §R4.2(c)。",
+        "id": "TFD-d11-reserve-capacity-route-debt-2026-08-25",
+        "impact": "处置决定（车道 1，2026-08-25）：在下一个真实触碰 D11（turn-injection-budget.ts）的车道 1 task 中顺带执行该删除（含对 tests/unit/context-orchestrator-entry-scan.test.ts:68 反向守卫的确认——删后「不引用」仍成立，守卫无需改）；若排班走完仍无 D11 触碰点，则以 proposal 新增一个 brb-S 专件执行。执行时在本偏差追记闭环。该删除本身极小（一个导出 + 其内部引用），不改变任何生产行为（实测 test-only，§D1.2 判不可达），不构成对 B3 冻结面的触碰。",
+        "kind": "scope_change",
+        "node_id": "TF-0117",
+        "related_task_ids": [
+          "TF-0117",
+          "TF-0118",
+          "TF-0126"
+        ],
+        "summary": "reviews/TF-0118.md F3 中车道 1 接单「删除 turn-injection-budget.ts 的 test-only 导出 reserveTurnInjectionCapacity」（D11，原由车道 2 的 TF-0118 路由），交接文档债表 #1 记为「已接单」。TF-0117 未执行：其 non_goals 明写「不改任何行为，纯注释/文档」，删除导出属行为面改动，正确未纳入；但该延后此前未在图上留痕。车道 2 审核 TF-0117 时按判例（接收了不执行 = 不可审计）记为 backlog-P1 并要求显式处置。"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-25T15:30:00Z",
+        "decided_by": "lane-1（session-2026-08-25-lane-1-successor）：按 §R3.5 上报，等待用户对调档提案裁决。",
+        "id": "TFD-tf0116-radius-overrun-2026-08-25",
+        "impact": "§R3.5 拆分不可行：任何拆分路径总量不变（21），而拆分件 max_brb 之和不得超过原值 15（S+S=10、S+S+S=15 均 < 21，含 M 组合则超）；降级 landed-unwired 不适用（纯迁移，无 (a)/(b) 失败）。这是任务定义（迁移 13 文件的任务被定为 brb-M）与半径计量规则的结构性矛盾，非实现越界。处置：保存未应用提案 prop-lane1-tf0116-brb-raise-2026-08-25（TF-0116 brb-M → brb-L），裁决权在用户；未获准前任务维持 in_progress，不进入收口。",
+        "kind": "scope_change",
+        "node_id": "TF-0116",
+        "related_task_ids": [
+          "TF-0116",
+          "TF-0102",
+          "TF-0145"
+        ],
+        "summary": "TF-0116（T-D1 实验件迁出 src/）实测最小改动集为 20 路径（13 迁移文件[重命名按 §R3.1 命令 1 实测各计 1 路径] + 4 消费者改写 + 3 门线接线 + 1 审核记录；不含审核记录为 20，含为 21），超出 brb-M 上限 15。命令 2 空；命令 3 唯一命中为 DEFAULT_RECORDED_REL→DEFAULT_FIXTURE_REL fixture 路径常量改名（§R3.7 修正 2 同类可归因假阳性，diff 直检零默认值变化）。"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-25T15:30:00Z",
+        "decided_by": "lane-1（session-2026-08-25-lane-1-successor），依要求-3 的放弃路径（记 deviation）。",
+        "id": "TFD-tf0116-emergency-tier-archived-2026-08-25",
+        "impact": "代码本体随模块归档于 openclaw_runtime/experiments/token-pressure.ts（non_goals 禁止删除）；生产行为零变化（该逻辑本就未被生产消费）。若将来复活该保护，按节点 summary 应并入 preemptive-compaction 的 route 决策，而非留在孤立阶梯。",
+        "kind": "scope_change",
+        "node_id": "TF-0116",
+        "related_task_ids": [
+          "TF-0116"
+        ],
+        "summary": "TF-0116 要求-3 裁决：token-pressure 的 emergency 档保护逻辑（persona/task_state 豁免 + 最近轮保留）放弃作为生产保护机制。实测 selectBlocksUnderTokenPressure 的全部调用者 = block-lifecycle.test.ts、coding-long-chat-curve.ts、context-ladder.ts、token-pressure.test.ts —— 全在迁出集或其测试内，零生产调用者；preemptive-compaction 有自己的 route 决策，不消费该阶梯。"
+      }
+    }
+  ],
+  "created_at": "2026-08-25T15:37:00.931822Z",
+  "proposal_id": "prop-lane1-deviation-repair-2026-08-25",
+  "rationale": "今日 4 个偏差提案因使用了错误的 proposal 形状（operations 键 + 扁平 op 字段，正确应为 changes 键 + {action, deviation} 嵌套）被 proposal-apply 静默应用为空操作：deviations.jsonl 零新增、节点 deviations 数组零链接。本提案用正确形状重录全部 4 条，并新增 TF-0116 的 2 条（半径超限、emergency 档归档）。原 4 个 proposal 文件保留为历史（内容一致，仅形状错误）。",
+  "session_id": null,
+  "status": "applied"
+}

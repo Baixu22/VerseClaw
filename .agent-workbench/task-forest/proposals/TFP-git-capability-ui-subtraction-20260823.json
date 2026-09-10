@@ -1,0 +1,357 @@
+{
+  "applied_at": "2026-08-23T11:46:04.918439Z",
+  "base_graph_hash": "6e5f25c15cdac276ee133b9ddbbd6071102a552303ccc8d910d07c809d28f49e",
+  "base_summary": {
+    "edge_count": 169,
+    "node_count": 91,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "git-milestone",
+      "node": {
+        "acceptance_criteria": [
+          "applyPatch 返回 applied/skipped/conflicted 路径列表且 malformed patch fail-closed",
+          "diffToBase 在无远程/无共同祖先时显式返回 unavailable 而非猜测",
+          "git -c core.pager=x status、--exec-path、--git-dir 注入向量被分类器正确拒绝或降级",
+          "README 三语同步更新能力边界"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.9,
+          "user_goal": "对标 Codex 补齐项目内 Git 能力差距",
+          "validation_plan": [
+            "每节点跑 focused vitest + typecheck + contract:check",
+            "E2E 用 workspace-git-mcp-runtime.spec 扩展真实仓库断言"
+          ],
+          "why_not_enough": "不覆盖 Remote Forge 远端合并与真人 canary 边界",
+          "why_this_task": "对照审计确认 apply-patch 引擎、祖先推导、子命令分类器是纯增益且与现有审批架构零冲突"
+        },
+        "confidence": 0.75,
+        "desired_outcomes": [
+          "Agent/UI 可通过 typed hostApi.git.applyPatch 应用/预检/回滚统一 diff 并获得结构化结果",
+          "Review Center与会话面板可用 git.diffToBase 自动定位最近远程公共祖先",
+          "workspace-permissions 的 git 只读判定升级为子命令感知解析，封堵全局选项注入"
+        ],
+        "difficulty": "high",
+        "estimated_total_minutes": 480,
+        "id": "TF-0094",
+        "kind": "milestone",
+        "non_goals": [
+          "不实现 merge readiness / Remote Forge 合并策略（归 FP-P2 系列）",
+          "不新增 MCP 工具数量上限外的暴露面",
+          "不改 UI 视觉风格"
+        ],
+        "priority": 2,
+        "purpose": "把 Codex 对照审计确认的三个结构性差距变成结构化、可验收的 Host API 能力，让 Agent 与 UI 共享同一套受审批约束的 Git 原语",
+        "remaining_minutes_max": 600,
+        "remaining_minutes_min": 300,
+        "requirements": [
+          "全部新 API 经 electron/services/git-api.ts 单一 Main owner，不引入第二 Git 服务",
+          "applyPatch 默认 preflight，写模式走既有 dangerous/write 风险模型与 requestHash 审批绑定",
+          "diffToBase 为只读操作，复用 GIT_OPTIONAL_LOCKS=0 等加固 env",
+          "每个子节点产出当前 HEAD 新鲜证据：focused unit tests + contract:check + 相关 E2E"
+        ],
+        "status": "proposed",
+        "title": "Git 能力补全：补丁引擎、祖先推导与安全分类器"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "Git 能力属 Runtime Authority 与 Operator 产品收敛域"
+      },
+      "from": "git-milestone",
+      "to": "TF-0010",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "git-applypatch",
+      "node": {
+        "acceptance_criteria": [
+          "unit: 正常应用、冲突路径、malformed 三态断言",
+          "MCP clawx-git 暴露 git_apply_patch 工具经同一服务",
+          "typecheck+contract+focused tests 全绿"
+        ],
+        "confidence": 0.8,
+        "difficulty": "high",
+        "estimate": 180,
+        "id": "TF-0095",
+        "kind": "task",
+        "non_goals": [
+          "不做 hunk 级交互编辑",
+          "不做三方合并"
+        ],
+        "priority": 1,
+        "requirements": [
+          "shared/host-api/contract.ts + shared/types/git.ts 类型契约先行",
+          "默认 preflight 不落盘；apply/revert 走 dangerous 审批并绑定 requestHash",
+          "malformed/truncated patch fail-closed 并返回结构化错误而非部分应用"
+        ],
+        "status": "proposed",
+        "summary": "hostApi.git.applyPatch({patch, mode:'preflight'|'apply'|'revert'}) 返回 applied/skipped/conflicted 路径；借鉴 Codex parse_git_apply_output 解析语义",
+        "title": "A1: git.applyPatch 结构化补丁引擎"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "里程碑核心交付"
+      },
+      "from": "git-applypatch",
+      "to": "git-milestone",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "为 VS-P3-01 File Patch Preview 提供引擎层依赖"
+      },
+      "from": "git-applypatch",
+      "to": "TF-0067",
+      "type": "contributes_to"
+    },
+    {
+      "action": "add_node",
+      "alias": "git-difftobase",
+      "node": {
+        "acceptance_criteria": [
+          "origin 优先、多 remote 有序探测有单测覆盖",
+          "无远程/无祖先返回 {available:false} 不猜测",
+          "WorkspaceAuditPanel 头部与会话面板环境区可直接消费"
+        ],
+        "confidence": 0.85,
+        "difficulty": "medium",
+        "estimate": 120,
+        "id": "TF-0096",
+        "kind": "task",
+        "non_goals": [
+          "不改 Review Center 现有 baseBranch 手动流程"
+        ],
+        "priority": 2,
+        "status": "proposed",
+        "summary": "只读 hostApi.git.diffToBase()：分支祖先链 + for-each-ref --contains=HEAD 扫描 remote，取最近公共 SHA 并返回 diff；无远程时 unavailable",
+        "title": "A2: git.diffToBase 最近远程祖先推导"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "里程碑只读智能项"
+      },
+      "from": "git-difftobase",
+      "to": "git-milestone",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "git-shell-classifier",
+      "node": {
+        "acceptance_criteria": [
+          "git -c x status 判 read-only；git --git-dir=.evil diff 拒绝",
+          "现有 classifyWorkspaceCommand 行为回归测试通过",
+          "不放宽任何现有 destructive/network 判定"
+        ],
+        "confidence": 0.8,
+        "difficulty": "medium",
+        "estimate": 120,
+        "id": "TF-0097",
+        "kind": "task",
+        "non_goals": [
+          "不动 execpolicy Starlark 层"
+        ],
+        "priority": 2,
+        "status": "proposed",
+        "summary": "替换 READ_ONLY_COMMANDS 字符串前缀匹配为 find_git_subcommand 式解析：跳过合法全局选项定位子命令，显式拒绝 -c/--exec-path/--git-dir/--work-tree 注入向量",
+        "title": "A3: shell 安全分类器子命令感知改造"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "里程碑安全项"
+      },
+      "from": "git-shell-classifier",
+      "to": "git-milestone",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "git-hygiene",
+      "node": {
+        "acceptance_criteria": [
+          ".git 写入走 protected-path 审批流",
+          "revert/push 审批对话框可见分级原因文本",
+          "fsmonitor=true 仅在内置 daemon 可用时出现"
+        ],
+        "confidence": 0.75,
+        "difficulty": "medium",
+        "estimate": 150,
+        "id": "TF-0098",
+        "kind": "task",
+        "priority": 3,
+        "status": "proposed",
+        "summary": "三小项合并以控制节点数：(1) 可写根内 .git 目录与指针文件目标 gitdir 进默认只读集；(2) dangerous 审批 reason 附带分级依据（目标分支是否保护、refspec 范围）；(3) fsmonitor 内置 daemon 探测保留",
+        "title": "A4: Git 工程卫生合并项（.git 保护/分级理由/fsmonitor）"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "里程碑卫生项"
+      },
+      "from": "git-hygiene",
+      "to": "git-milestone",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "ui-decision",
+      "node": {
+        "acceptance_criteria": [
+          "该决策被 B 线两个任务引用且无违反"
+        ],
+        "confidence": 1.0,
+        "id": "TF-0099",
+        "kind": "decision",
+        "requirements": [
+          "B 线任务 non_goals 必须包含『不做视觉风格调整』",
+          "已有减法修复（部分失败提示、截断标记、deprecated 标注）保持最小 diff",
+          "审美 agent 交接时以 B2 的 E2E 锚点为基线"
+        ],
+        "status": "done",
+        "summary": "用户裁定：前端能力受限，本期 UI 改动仅限删除死代码与诚实性修复验证；视觉风格、布局打磨交给后续专门 agent。所有相关任务不得引入新 CSS/组件面。",
+        "title": "决策：会话面板与工作区/Audit 本期只做减法收口，审美优化后置"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "约束 TF-0025 下 UI 工作边界"
+      },
+      "from": "ui-decision",
+      "to": "TF-0025",
+      "type": "related_to"
+    },
+    {
+      "action": "add_node",
+      "alias": "ui-retire-rail",
+      "node": {
+        "acceptance_criteria": [
+          "rg 无 SessionStatusRail 残留引用",
+          "等价错误态断言在 SessionActivityPanel 测试中通过",
+          "typecheck web/node 绿、focused tests 绿"
+        ],
+        "confidence": 0.9,
+        "difficulty": "low",
+        "estimate": 90,
+        "id": "TF-0100",
+        "kind": "task",
+        "non_goals": [
+          "不做视觉风格调整",
+          "不重设计会话面板布局"
+        ],
+        "priority": 1,
+        "requirements": [
+          "先确认生产代码零 import 后再删（当前已核实）",
+          "r2 spec 中 git/terminal 失败态+retry 断言语义在现役组件上保留等价覆盖",
+          "纯删除：不新增替代组件、不加样式"
+        ],
+        "status": "proposed",
+        "summary": "删除 src/components/chat/SessionStatusRail.tsx（已 deprecated 且生产零挂载）及其专属测试；处置 r2-error-semantics.spec：迁移仍有效的错误态断言到 SessionActivityPanel 或标记 skip 说明",
+        "title": "B1: 孤儿 SessionStatusRail 死代码退役"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "会话工作区深层入口任务的死代码清理切片"
+      },
+      "from": "ui-retire-rail",
+      "to": "TF-0025",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "受减法决策约束"
+      },
+      "from": "ui-retire-rail",
+      "to": "ui-decision",
+      "type": "related_to"
+    },
+    {
+      "action": "add_node",
+      "alias": "ui-anchor-evidence",
+      "node": {
+        "acceptance_criteria": [
+          "pnpm run test:e2e:run tests/e2e/workspace-git-panel.spec.ts exit 0 含新增断言",
+          "evidence.json 可独立复核且绑定当前树"
+        ],
+        "confidence": 0.8,
+        "difficulty": "medium",
+        "estimate": 150,
+        "id": "TF-0101",
+        "kind": "task",
+        "non_goals": [
+          "不做视觉风格调整",
+          "不改面板信息架构"
+        ],
+        "priority": 2,
+        "requirements": [
+          "扩展 workspace-git-panel.spec audit 段：reflog 失败→partialFailure 提示可见、truncated 标记可见",
+          "扩展或新增盘根 worktreeAdd approvalRequired 的 E2E 断言",
+          "证据含命令、exit code、测试数、HEAD，存 artifacts/git-capability-ui/evidence.json"
+        ],
+        "status": "proposed",
+        "summary": "为本轮已落地修复（Audit 面板分区错误态+截断标记、gh auth JSON 优先、worktree 盘根审批）补充/扩展 Electron E2E 断言并留档运行证据，作为审美优化 agent 接手前的行为基线",
+        "title": "B2: Audit/会话面板诚实性修复 E2E 锚点固化"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "会话工作区诚实性行为锚点"
+      },
+      "from": "ui-anchor-evidence",
+      "to": "TF-0025",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "先退役死代码再固化基线，避免对废弃组件取证"
+      },
+      "from": "ui-anchor-evidence",
+      "to": "ui-retire-rail",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "受减法决策约束"
+      },
+      "from": "ui-anchor-evidence",
+      "to": "ui-decision",
+      "type": "related_to"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-23T10:51:48.956332Z",
+        "id": "TFD-cd4385371b",
+        "related_task_ids": [
+          "TF-0084"
+        ],
+        "summary": "本轮 git-api workstream（reflog/merge/rebase/reset + 盘根策略洞修复 + Audit 诚实性修复）在共享树上完成但未建 owner 节点即交付；LATEST.md 已记录 38 文件归属缺口。补救：本提案建立 git capability milestone 正式承接后续工作。"
+      }
+    }
+  ],
+  "created_at": "2026-08-23T10:51:48.946822Z",
+  "proposal_id": "TFP-git-capability-ui-subtraction-20260823",
+  "rationale": "用户要求基于本地 task forest 规划两条线：(1) 对标 Codex 的 Git 能力补全（applyPatch 引擎、diffToBase 推导、shell 子命令安全分类器、工程卫生）；(2) 会话状态面板与工作空间/Audit 的 UI 收口——本期只做减法与诚实性修复，不做视觉审美调整（后置给其他 agent）。git-api workstream 当前是 LATEST.md 记录的无 owner 悬空债，需要正式节点承接。全部新节点 proposed，不打断 TF-0086 串行链；UI 节点挂 TF-0025/TF-0021 下。",
+  "session_id": "session-20260823-git-audit-fixes",
+  "status": "applied"
+}

@@ -17,7 +17,7 @@
  * a competing `EvidenceRef` type. Existing types are grandfathered but any new
  * evidence ref type must be added here.
  *
- * See: net use/designs/development-manual.md §1.1 (Shared Foundation Modules)
+ * See: docs/runtime-design/development-manual.md §1.1 (Shared Foundation Modules)
  */
 
 /** Union of all evidence source types across the codebase. */

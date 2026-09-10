@@ -50,20 +50,20 @@ function candidate(partial: Partial<{
 
 describe('P2-2 promotion candidate filtering', () => {
   it('keeps qualifying candidates', () => {
-    const result = filterLowValuePromotionCandidates([candidate({ key: 'a' })]);
+    const result = filterLowValuePromotionCandidates([candidate({ key: 'a' })] as never);
     expect(result).toHaveLength(1);
   });
 
   it('drops snippets shorter than 24 characters', () => {
     const short = candidate({ key: 'short', snippet: 'too short' });
-    const result = filterLowValuePromotionCandidates([short, candidate({ key: 'ok' })]);
+    const result = filterLowValuePromotionCandidates([short, candidate({ key: 'ok' })] as never);
     expect(result.map((c) => c.key)).toEqual(['ok']);
   });
 
   it('drops near-duplicate candidates sharing a claim hash', () => {
     const a = candidate({ key: 'a', claimHash: 'hash-1' });
     const b = candidate({ key: 'b', claimHash: 'hash-1' });
-    const result = filterLowValuePromotionCandidates([a, b]);
+    const result = filterLowValuePromotionCandidates([a, b] as never);
     expect(result).toHaveLength(1);
     expect(result[0].key).toBe('a');
   });
@@ -71,11 +71,11 @@ describe('P2-2 promotion candidate filtering', () => {
   it('keeps candidates without a claim hash even when duplicates exist', () => {
     const noHashA = candidate({ key: 'a' });
     const noHashB = candidate({ key: 'b' });
-    const result = filterLowValuePromotionCandidates([noHashA, noHashB]);
+    const result = filterLowValuePromotionCandidates([noHashA, noHashB] as never);
     expect(result).toHaveLength(2);
   });
 
   it('returns an empty list for empty input', () => {
-    expect(filterLowValuePromotionCandidates([])).toEqual([]);
+    expect(filterLowValuePromotionCandidates([])).toEqual([] as never);
   });
 });

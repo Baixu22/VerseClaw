@@ -1,0 +1,44 @@
+{
+  "applied_at": "2026-08-30T11:21:33.965828Z",
+  "base_graph_hash": "3d9323cf33533bd30e15e18df011990fcd0f64092c233c6d2934763e2bd5e2bb",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.9,
+        "evidence": [
+          "openclaw_runtime/src/infra/diagnostic-events.ts：DiagnosticToolExecution 事件要求 runtime/host 生成 requestId 与 resolved trace，并新增固定低基数 codingOperation（read/search/modify/test/result_query）。",
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts、agent-tools.ts：工具 start/completed/error/blocked 使用同一 requestId 和 trace；缺少显式 lineage 时从 active scope 或安全 root 生成；不记录原始参数、command、prompt 或 output。",
+          "openclaw_runtime/src/agents/verseshell/governed-exec.ts、readonly-facade.ts、result-tool.ts、cli-runner/claude-live-session.ts、tool-schema-quarantine.ts：exec、read/search、result query、Claude live 和 quarantine 路径保留统一 lineage，失败和阻断路径覆盖完整。",
+          "openclaw_runtime/src/observability/host-trace-diagnostics.ts 与 host-trace-diagnostics.test.ts：host-only HMAC-SHA256 envelope、固定 failure taxonomy、suggestedAction、expiry/tamper fail-closed 和 raw-field omission fixtures 通过，15/15。",
+          "electron/services/host-trace-diagnostics.ts、observability-service.ts、ipc-handlers.ts、shared/types/observability.ts：Main 审批绑定后签发 envelope，失败 terminal execution 才进入最多 200 条独立 redacted projection；不转为 full trace，不进入 graph/index、trajectory、receipt、support 或 OTLP。",
+          "tests/unit/host-trace-diagnostics.test.ts、observability-service.test.ts、terminal-api.test.ts、support-bundle-redaction.test.ts：4 files / 35 tests 通过，覆盖 callback reachability、审批绑定、失败分类、建议动作、redaction、bounded retention、defensive copy、clear 和成功/未批准执行不记录。",
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.diagnostics.test.ts 及 VerseShell focused tests：runtime focused 5 test files / 39 tests 通过，验证工具 requestId、trace、operation 分类和 VerseShell lineage。",
+          "pnpm run typecheck:node、目标 ESLint、runtime oxlint --type-aware --type-check、pnpm contract:check：均通过。",
+          "pnpm harness validate --spec harness/specs/tasks/verseshell-p2-trace-diagnostics.md、...-main-adapter.md、...-observability-consumer.md：均通过对应契约校验；consumer spec 的 --no-diff 验证通过。",
+          "pnpm run comms:replay 与 pnpm run comms:compare：均通过；message loss、order violation、duplicate、timeout、fanout、history inflight 与性能阈值均 PASS。",
+          "TF-0066 独立 Codex fork review task 01a05247-98ab-7830-8caa-5600f01531f9：只读 review 已完成，状态 idle，工作树无 reviewer 修改。",
+          "TF-0066 相关文件 git diff --check：通过；全仓库 diff 仅有其他 lane 的 handoff 尾随空白，未修改该文件。"
+        ],
+        "next_action": "保持现有 default-off、Main-only、bounded、redacted 边界；后续若需要用户可见诊断，另立任务并重新定义 consumer、权限和 E2E 验收。",
+        "progress": 100,
+        "progress_source": "manual",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "status": "done",
+        "summary": "TF-0066 已完成：runtime 工具执行、VerseShell read/search/modify/test/result_query、Claude live session 与 schema quarantine 均具备 host/runtime 生成的 requestId 和 resolved trace；Main terminal approved-failure adapter 使用 host-only HMAC lineage、固定 failure taxonomy 和 bounded redacted projection 接入独立 Observability consumer。support bundle/redaction、跨层路由、bounded retention、失败建议动作及通信回放验证均通过；未新增 UI、receipt、OTLP、feature flag、default-on 或执行行为。"
+      },
+      "id": "TF-0066"
+    }
+  ],
+  "created_at": "2026-08-30T11:02:58.900374Z",
+  "proposal_id": "TFP-tf0066-closeout-20260830",
+  "rationale": "本轮完成 TF-0066 的 runtime coding-operation lineage、低基数 operation 分类、host/Main diagnostics consumer 与 redaction 验证，并通过独立 Codex fork review task 做只读复核。所有实现仍保持 Main/runtime authority 边界、bounded 内存、raw 字段省略和既有默认行为不变。",
+  "session_id": "session-tf0066-runtime-lineage-closeout-20260830",
+  "status": "applied"
+}

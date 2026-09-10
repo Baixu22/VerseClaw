@@ -1,0 +1,49 @@
+{
+  "applied_at": "2026-08-22T04:50:32.493917Z",
+  "base_graph_hash": "8e0ddbaa2cffb8da012ca81885f698ec7ce9800ea5a9ba1142c0f9a61a877aa6",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "共享主工作树含其他任务改动；全程未 reset/stash/clean/checkout，未扩大 touchedAreas 绕过脏树失败。",
+          "harness diff-aware validate 仍被无关 shared-worktree ownership 变更阻断；以 --no-diff 通过为本节点证据。",
+          "4 个 pre-existing lint error 位于非本节点文件，未代改（与 TF-0080 closeout 记录一致）。",
+          "Electron/renderer 无 sessions.reset 调用面（new-session 刻意跳过），reset 关终端不是生产缺口；50-cycle 夹具以 fence+drain 覆盖 stop/reset/delete 共享资源半区。",
+          "idle 分类纯观测零自动回收：输出新鲜度优先保证 false kill=0，自动回收策略留待独立决策。"
+        ],
+        "evidence": [
+          "harness/specs/tasks/session-ecosystem-resource-reclamation.md（validate --no-diff exit 0）",
+          "src/gateway/session-ecosystem-reclamation-cycle.test.ts：cycles=50 全零审计（最终树复跑）",
+          "src/process/supervisor/restart-reconciliation.test.ts 7/7（孤儿树收割/foreign owner 不触碰/corrupt fail-closed/幂等）",
+          "tests/unit/terminal-session-manager.test.ts 4/4 + src/agents/bash-process-registry.idle-classification.test.ts 6/6",
+          "src/gateway/server-methods/session-activity-projection.test.ts 5/5（含 owner-registry 精确集合护栏）",
+          "最终门禁：focused 44 测试全绿；typecheck exit 0；contract 0；comms replay/compare 全 PASS；build:runtime + runtime-lifecycle E2E 3/3；touched 文件 lint 0；git diff --check 0",
+          "artifacts/session-ecosystem-resource-reclamation/report.json（四切片 + 最终 verdict）；README 三语；docs/dev/handoffs/LATEST.md 收口交接"
+        ],
+        "next_action": "TF-0081 已关闭。保持 liveReady=false、productApproved=false；TF-0082 依赖已解除但是否启动是独立决策，本次不启动。已知非本节点残留：harness diff-aware validate 需 scoped clean candidate；4 个非本节点 lint error 归各自 owner。",
+        "progress": 100,
+        "progress_source": "manual",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260822-start-tf0081"
+        ],
+        "status": "done",
+        "summary": "终端、后台进程与子智能体资源回收闭环：50-cycle create/spawn/stop-reset-delete 夹具证明 runtime 资源半区零泄漏（active records/timers/owned PIDs/child links 全零，可复跑）；supervisor 重启 reconciliation 从 no-op 变为持久化 manifest + fail-closed 收割（owner PID 守卫、OS containment 证据必需、无 PID fallback）；terminal/bash idle 四分类纯观测落地（输出新鲜度优先，false kill=0，阈值环境变量可配）；session activity projection 与 owner registry 精确一致且绝不显示已回收资源。无 universal resource ledger，keep-mode/VerseShell 边界保持。"
+      },
+      "id": "TF-0081"
+    }
+  ],
+  "created_at": "2026-08-22T04:50:32.327173Z",
+  "proposal_id": "TFP-close-TF-0081-20260822",
+  "rationale": "TF-0081 四个 owner path 全部完成，全部验收标准在最终树上有可复跑证据，最终 closeout 门禁全绿。用户在前一轮被告知收尾计划（owner path 4 + 最终 closeout）后指示继续，视为 closeout 确认。未启动 TF-0082；无 universal resource ledger；keep-mode 与 VerseShell 边界未动；产品批准状态不变。",
+  "session_id": "session-20260822-start-tf0081",
+  "status": "applied"
+}
