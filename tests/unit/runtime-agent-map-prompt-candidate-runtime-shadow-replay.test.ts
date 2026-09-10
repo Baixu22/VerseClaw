@@ -182,8 +182,8 @@ async function runTaskLoopReplay(params: {
     idFactory: (prefix) => `${prefix}_${params.label}`,
     now: () => 1_700_000_000_000,
     ensureTaskLedgerRoot: vi.fn(() => `tlroot_${params.label}`),
-    runObserved: (async (request) => fakeResult(request.templateId)) as never,
-    selfCheck: (async ({ contextPack }) => {
+    runObserved: (async (request: any) => fakeResult(request.templateId)) as never,
+    selfCheck: (async ({ contextPack }: { contextPack: any }) => {
       params.capturedReviewerContexts.push(formatTaskLoopContextPackForReviewer(contextPack));
       return {
         decision: "complete",

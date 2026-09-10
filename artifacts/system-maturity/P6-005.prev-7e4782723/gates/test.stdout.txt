@@ -1,0 +1,30 @@
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90m[workspace][39m
+
+ [31m❯[39m tests/unit/verseshell-runtime-bundle.test.ts [2m([22m[2m11 tests[22m[2m | [22m[31m6 failed[39m[2m)[22m[32m 178[2mms[22m[39m
+[31m     [31m×[31m verifies a packaged bundle under spaces and non-ASCII paths[39m[32m 29[2mms[22m[39m
+[31m     [31m×[31m requests and fully contracts the verified bundle for a config-only governed canary[39m[32m 20[2mms[22m[39m
+[31m     [31m×[31m fails when license or source compliance payload is missing[39m[32m 18[2mms[22m[39m
+[31m     [31m×[31m rejects wrong target or manifest architecture[39m[32m 18[2mms[22m[39m
+[31m     [31m×[31m does not fall back to PATH when the packaged binary is missing[39m[32m 24[2mms[22m[39m
+[31m     [31m×[31m rejects a provenance lock drift even when the binary itself is intact[39m[32m 17[2mms[22m[39m
+ [31m❯[39m tests/unit/verseshell-manifest.test.ts [2m([22m[2m7 tests[22m[2m | [22m[31m7 failed[39m[2m)[22m[32m 150[2mms[22m[39m
+[31m     [31m×[31m accepts the qualified ordered patch-stack bundle in development and packaging modes[39m[32m 13[2mms[22m[39m
+[31m     [31m×[31m rejects a tampered corresponding-source patch[39m[32m 26[2mms[22m[39m
+[31m     [31m×[31m rejects source-input manifest digest drift[39m[32m 22[2mms[22m[39m
+[31m     [31m×[31m rejects a modified recovered-source inventory before build acceptance[39m[32m 22[2mms[22m[39m
+[31m     [31m×[31m verifies the existing artifact size and SHA-256 values[39m[32m 23[2mms[22m[39m
+[31m     [31m×[31m rejects missing source-input provenance payload[39m[32m 23[2mms[22m[39m
+[31m     [31m×[31m rejects facade operation order drift[39m[32m 20[2mms[22m[39m
+ [31m❯[39m tests/unit/uas-05-verseshell-process-lifecycle.test.ts [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 15[2mms[22m[39m
+[31m     [31m×[31m pins the lifecycle binary, source patch, and 31-operation catalog[39m[32m 7[2mms[22m[39m
+ [31m❯[39m tests/unit/uas-06-single-local-exec-canary.test.ts [2m([22m[2m5 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 10[2mms[22m[39m
+[31m     [31m×[31m keeps reviewed live records in a separate, non-executing evidence channel[39m[32m 3[2mms[22m[39m
+ [31m❯[39m tests/unit/uas-00-evidence-freeze.test.ts [2m([22m[2m0 test[22m[2m)[22m
+
+[2m Test Files [22m [1m[31m5 failed[39m[22m[2m | [22m[1m[32m816 passed[39m[22m[2m | [22m[33m3 skipped[39m[90m (824)[39m
+[2m      Tests [22m [1m[31m15 failed[39m[22m[2m | [22m[1m[32m7222 passed[39m[22m[2m | [22m[33m53 skipped[39m[90m (7290)[39m
+[2m   Start at [22m 16:05:44
+[2m   Duration [22m 576.02s[2m (transform 44.10s, setup 66.20s, import 192.82s, tests 362.34s, environment 383.23s)[22m
+
+[ELIFECYCLE] Test failed. See above for more details.

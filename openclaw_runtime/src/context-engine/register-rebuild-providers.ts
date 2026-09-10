@@ -7,10 +7,17 @@
 // per-provider authority:"shadow" kill switch. The two pre-existing shadow providers
 // (agent-map/symbol) keep their own legacy grading: their authority transition belongs
 // to the runtime-convergence track and its 93-test interface contract.
-// NOTE (acceptance review 2026-07-14): this composition point has no production
-// caller yet — wiring the composed registry into the default runtime belongs to the
-// runtime-convergence track (W0-W5). Until that wiring lands, the flip is effective
-// only where this function is invoked (tests, future runtime bootstrap).
+// NOTE (acceptance review 2026-07-14, reaffirmed 2026-09-07 M2 closeout): this
+// composition point has no production caller yet — wiring the composed registry
+// into the default runtime belongs to the runtime-convergence track (W0-W5).
+// Until that wiring lands, the flip is effective only where this function is
+// invoked (tests, future runtime bootstrap).
+// API-only module (per TF-0115 / M2 closeout): intentionally not wired under the
+// §D1 production roots in the current tree; §D1.2 per-symbol scan reports exit 1
+// (no production call sites) for `registerRebuildContextProviders` and
+// `registerRebuildShadowProviders`. This file is kept under src/ as the SDK door
+// for the runtime-convergence wire-up. Do not move it to experiments/ — the
+// runtime-convergence track is the documented owner for the eventual binding.
 import {
   RuntimeContextProviderRegistry,
   type ContextItem,

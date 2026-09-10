@@ -430,7 +430,7 @@ describe.skipIf(!hasDeepSeekKey())("Layer 3: real LLM uses injected memory (Deep
       "What is the user's preference code? Answer with the code only.",
     );
     const vote = await callDeepSeekMajorityVote(prompt.system, prompt.user, 3, {
-      temperature: 0.3,
+      
       maxTokens: 64,
     });
     const tokenAppearances = vote.responses.filter((r) =>

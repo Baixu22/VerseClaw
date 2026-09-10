@@ -61,9 +61,11 @@ import {
 } from "../../routing/session-key.js";
 import { stripFormattedReasoningMessage } from "../../shared/text/formatted-reasoning-message.js";
 import { normalizeMessageChannel } from "../../utils/message-channel.js";
+import type { ContentProvenanceContext } from "../../../../shared/security/content-provenance.js";
 import { resolveSessionAgentId } from "../agent-scope.js";
 import { listAllChannelSupportedActions, listChannelSupportedActions } from "../channel-tools.js";
 import { stripInternalRuntimeContext } from "../internal-runtime-context.js";
+import { assertMessageSecretReadAllowed } from "./message-secret-read-policy.js";
 import {
   channelTargetSchema,
   channelTargetsSchema,
@@ -816,6 +818,7 @@ const MessageToolSchema = buildMessageToolSchemaFromActions(AllMessageActions, {
 });
 
 type MessageToolOptions = {
+  contentProvenanceContext?: ContentProvenanceContext;
   agentAccountId?: string;
   agentSessionKey?: string;
   runId?: string;
@@ -1331,6 +1334,17 @@ export function createMessageTool(options?: MessageToolOptions): AnyAgentTool {
           targetIds: scopedTargets.targetIds,
           ...(scopedTargets.allowedPaths ? { allowedPaths: scopedTargets.allowedPaths } : {}),
           mode: "enforce_resolved",
+          authorizeSecretRead: ({ selectedTargets }) =>
+            assertMessageSecretReadAllowed({
+              provenanceContext: options?.contentProvenanceContext,
+              currentChannel: effectiveCurrentChannel.currentChannelProvider,
+              currentAccountId: agentAccountId,
+              requestedChannel: scope.channel,
+              requestedAccountId: scope.accountId,
+              selectedTargets,
+              cfg: rawConfig,
+              agentId: resolvedAgentId,
+            }),
         })
       ).resolvedConfig;
 
@@ -1403,6 +1417,7 @@ export function createMessageTool(options?: MessageToolOptions): AnyAgentTool {
           cfg,
           action,
           params: actionParams,
+          provenanceContext: options?.contentProvenanceContext,
           defaultAccountId: accountId ?? undefined,
           requesterSenderId: options?.requesterSenderId,
           senderIsOwner: options?.senderIsOwner,

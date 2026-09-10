@@ -49,7 +49,7 @@ function baseSettings(over: Partial<AppSettings> = {}): AppSettings {
     promptCacheRiskLedger: [],
     sensitiveCapturePolicy: DEFAULT_SENSITIVE_CAPTURE_POLICY,
     ...over,
-  };
+  } as AppSettings;
 }
 
 describe('dcs prod flags control plane', () => {

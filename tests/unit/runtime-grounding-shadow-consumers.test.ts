@@ -294,10 +294,10 @@ describe("grounding shadow consumer summaries", () => {
     const agentMapResult = await agentMapGroundingResult();
     const memoryResult = await memoryGroundingResult();
     const providerMetadatas = [
-      traceResult.metadata?.groundingDiagnostics,
-      symbolResult.metadata?.groundingDiagnostics,
-      agentMapResult.metadata?.groundingDiagnostics,
-      memoryResult.metadata?.groundingDiagnostics,
+      traceResult.metadata?.groundingDiagnostics as never,
+      symbolResult.metadata?.groundingDiagnostics as never,
+      agentMapResult.metadata?.groundingDiagnostics as never,
+      memoryResult.metadata?.groundingDiagnostics as never,
     ] as RuntimeCoreJsonObject[];
     const allMetadatas = [registryMetadata, ...providerMetadatas];
 
@@ -382,7 +382,7 @@ describe("grounding shadow consumer summaries", () => {
         },
       },
       sessionId: "line-c-drift-guard-registry",
-      groundingShadow: hostileGroundingDiagnosticsOptions("registry_drift_guard"),
+      groundingShadow: hostileGroundingDiagnosticsOptions("registry_drift_guard") as never,
     });
     const registryMetadata = metadataOrThrow(
       registryResult.diagnostics.find((item) =>
@@ -412,7 +412,7 @@ describe("grounding shadow consumer summaries", () => {
       await createRuntimeTraceContextProvider({
         store: traceStore,
         config: { runtime: { traceContext: { provider: true } } },
-        groundingDiagnostics: hostileGroundingDiagnosticsOptions("trace_drift_guard"),
+        groundingDiagnostics: hostileGroundingDiagnosticsOptions("trace_drift_guard") as never,
       }).getContext(traceInput),
       "trace drift guard diagnostics",
     );
@@ -436,7 +436,7 @@ describe("grounding shadow consumer summaries", () => {
     const symbolResult = providerResultOrThrow(
       await createSymbolContextProvider({
         overviews: [symbolOverview],
-        groundingDiagnostics: hostileGroundingDiagnosticsOptions("symbol_drift_guard"),
+        groundingDiagnostics: hostileGroundingDiagnosticsOptions("symbol_drift_guard") as never,
       }).getContext(symbolInput),
       "symbol drift guard diagnostics",
     );
@@ -454,7 +454,7 @@ describe("grounding shadow consumer summaries", () => {
     const agentMapResult = providerResultOrThrow(
       await createAgentMapContextProvider({
         ...agentMapProviderOptions,
-        groundingDiagnostics: hostileGroundingDiagnosticsOptions("agent_map_drift_guard"),
+        groundingDiagnostics: hostileGroundingDiagnosticsOptions("agent_map_drift_guard") as never,
       }).getContext(agentMapInput),
       "AgentMap drift guard diagnostics",
     );
@@ -477,7 +477,7 @@ describe("grounding shadow consumer summaries", () => {
     const memoryResult = providerResultOrThrow(
       await createRuntimeMemoryContextProvider({
         ...memoryProviderOptions,
-        groundingDiagnostics: hostileGroundingDiagnosticsOptions("memory_drift_guard"),
+        groundingDiagnostics: hostileGroundingDiagnosticsOptions("memory_drift_guard") as never,
       }).getContext(memoryInput),
       "Runtime Memory drift guard diagnostics",
     );
@@ -504,19 +504,19 @@ describe("grounding shadow consumer summaries", () => {
     const metadatas = [
       registryMetadata,
       metadataOrThrow(
-        traceResult.metadata?.groundingDiagnostics,
+        traceResult.metadata?.groundingDiagnostics as never,
         "trace drift guard metadata",
       ),
       metadataOrThrow(
-        symbolResult.metadata?.groundingDiagnostics,
+        symbolResult.metadata?.groundingDiagnostics as never,
         "symbol drift guard metadata",
       ),
       metadataOrThrow(
-        agentMapResult.metadata?.groundingDiagnostics,
+        agentMapResult.metadata?.groundingDiagnostics as never,
         "AgentMap drift guard metadata",
       ),
       metadataOrThrow(
-        memoryResult.metadata?.groundingDiagnostics,
+        memoryResult.metadata?.groundingDiagnostics as never,
         "Runtime Memory drift guard metadata",
       ),
     ];

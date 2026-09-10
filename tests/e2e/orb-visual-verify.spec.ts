@@ -12,6 +12,8 @@ import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from
 
 const SESSION_KEY = 'agent:main:main';
 
+type OrbReport = Record<string, any>;
+
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
   if (Array.isArray(value)) return `[${value.map((item) => stableStringify(item)).join(',')}]`;
@@ -173,7 +175,7 @@ test('orbs render on turn-summary head with tooltip, both themes', async ({ laun
     await expect(page.getByTestId('chat-page')).toBeVisible();
     await expect(page.getByTestId('chat-turn-summary-orb').first()).toBeVisible();
 
-    const report: Record<string, unknown> = {};
+    const report: OrbReport = {};
 
     report.canvases = await page.evaluate(() => ({
       total: document.querySelectorAll('canvas[role="img"]').length,
@@ -202,8 +204,10 @@ test('orbs render on turn-summary head with tooltip, both themes', async ({ laun
     const sampleInk = () => page.evaluate(() => {
       const c = document.querySelector('[data-testid="chat-turn-summary-orb"] canvas');
       if (!c) return null;
-      const ctx = c.getContext('2d');
-      const d = ctx.getImageData(0, 0, c.width, c.height).data;
+      const canvasEl = c as HTMLCanvasElement;
+      const ctx = canvasEl.getContext('2d');
+      if (!ctx) return { drawnPixels: 0, gray: [] as number[] };
+      const d = ctx.getImageData(0, 0, canvasEl.width, canvasEl.height).data;
       const gray = new Set();
       let drawn = 0;
       for (let i = 0; i < d.length; i += 4) {
@@ -236,8 +240,10 @@ test('orbs render on turn-summary head with tooltip, both themes', async ({ laun
       });
       if (!c) return { count: 0 };
       const r = c.getBoundingClientRect();
-      const ctx = c.getContext('2d');
-      const d = ctx.getImageData(0, 0, c.width, c.height).data;
+      const canvasEl = c as HTMLCanvasElement;
+      const ctx = canvasEl.getContext('2d');
+      if (!ctx) return { drawnPixels: 0, gray: [] as number[] };
+      const d = ctx.getImageData(0, 0, canvasEl.width, canvasEl.height).data;
       let drawn = 0;
       const gray = new Set();
       for (let i = 0; i < d.length; i += 4) {

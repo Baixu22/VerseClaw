@@ -38,6 +38,14 @@ touchedAreas:
   - harness/src/**
   - docs/dev/unified-agent-system/runtime-convergence/**
   - .agent-workbench/task-forest/**
+  - openclaw_runtime/src/agents/tool-display-config.ts
+  - openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json
+  - electron/utils/verseshell-runtime-bundle.ts
+  - artifacts/agent-dev-deep-test/**
+  - artifacts/agent-dev-quality/**
+  - artifacts/agent-dev-workbench/**
+  - docs/agent-dev-control-plane.md
+  - AGENTS.md
 expectedUserBehavior:
   - No runtime, renderer, Main, Gateway, provider, channel, approval, effect, memory, context, tool, telemetry, default, or readiness behavior changes.
   - An invalid or missing --since ref fails the acceptance plan immediately instead of falling back to the HEAD file list.

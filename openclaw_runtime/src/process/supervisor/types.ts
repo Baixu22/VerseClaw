@@ -10,11 +10,21 @@ export type TerminationReason =
   | "exit"
   | "agent_abort";
 
+/** Lifecycle identity carried by a supervised run; `scopeKey` is never identity. */
+export type ProcessLifecycleIdentity = {
+  agentId: string;
+  canonicalSessionKey: string;
+  expectedSessionId: string;
+};
+
 export type RunRecord = {
   runId: string;
   sessionId: string;
   backendId: string;
   scopeKey?: string;
+  lifecycleAgentId?: string;
+  lifecycleCanonicalSessionKey?: string;
+  lifecycleExpectedSessionId?: string;
   pid?: number;
   processGroupId?: number;
   startedAtMs: number;
@@ -74,6 +84,9 @@ type SpawnBaseInput = {
   sessionId: string;
   backendId: string;
   scopeKey?: string;
+  lifecycleAgentId?: string;
+  lifecycleCanonicalSessionKey?: string;
+  lifecycleExpectedSessionId?: string;
   replaceExistingScope?: boolean;
   cwd?: string;
   env?: NodeJS.ProcessEnv;
@@ -107,10 +120,49 @@ type SpawnPtyInput = SpawnBaseInput & {
 
 export type SpawnInput = SpawnChildInput | SpawnPtyInput;
 
+export type LifecycleRunSnapshot = {
+  runId: string;
+  pid?: number;
+  lifecycle: ProcessLifecycleIdentity;
+  cancel: () => void;
+  wait: () => Promise<RunExit>;
+};
+
+/** Read-only metadata snapshot for supervised runs of one session. */
+export type SupervisorSessionRunSnapshot = {
+  runId: string;
+  pid?: number;
+  state: RunState;
+  lifecycleCanonicalSessionKey: string;
+  /** Session generation the run is bound to (TF-0082 lineage join). */
+  lifecycleExpectedSessionId?: string;
+  startedAtMs: number;
+  updatedAtMs: number;
+};
+
+export type DrainLifecycleResult = {
+  drained: boolean;
+  timedOut: boolean;
+  runIds: string[];
+  pids: number[];
+};
+
 export interface ProcessSupervisor {
   spawn(input: SpawnInput): Promise<ManagedRun>;
   cancel(runId: string, reason?: TerminationReason): void;
   cancelScope(scopeKey: string, reason?: TerminationReason): void;
-  reconcileOrphans(): Promise<void>;
+  /** Attaches (or replaces) the persisted run manifest used for restart reconciliation. */
+  attachRunManifest(store: import("./run-manifest.js").SupervisorRunManifestStore): void;
+  /** Reconciles manifest entries orphaned by previous owner processes, fail-closed. */
+  reconcileOrphans(
+    dependencies?: import("./reconcile.js").ReconcileDependencies,
+  ): Promise<import("./reconcile.js").SupervisorReconcileResult>;
   getRecord(runId: string): RunRecord | undefined;
+  snapshotRunsForLifecycle(identity: ProcessLifecycleIdentity): LifecycleRunSnapshot[];
+  snapshotRunsForSession(canonicalSessionKey: string): SupervisorSessionRunSnapshot[];
+  countActiveRunsForLifecycle(identity: ProcessLifecycleIdentity): number;
+  drainRunsForLifecycle(
+    identity: ProcessLifecycleIdentity,
+    timeoutMs: number,
+  ): Promise<DrainLifecycleResult>;
 }

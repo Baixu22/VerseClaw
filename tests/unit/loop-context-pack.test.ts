@@ -52,7 +52,7 @@ describe('LoopContextPack', () => {
           relevantKnowledge: 5,
           roleMemory: 5,
           transcriptSummary: 5,
-        },
+        } as never,
       },
     });
 
@@ -95,7 +95,7 @@ describe('LoopContextPack', () => {
         sectionTokens: {
           relevantKnowledge: 5,
           roleMemory: 5,
-        },
+        } as never,
       },
     });
     const rendered = formatLoopContextPackForPrompt(pack);

@@ -270,7 +270,13 @@ describe('agent browser service', () => {
       now: () => new Date('2026-01-01T00:00:00.000Z'),
     });
 
-    const opened = await service.open({ url: 'example.com', profile: 'Work' });
+    const opened = await service.open({
+      url: 'example.com',
+      profile: 'Work',
+      workspaceId: 'workspace-demo',
+      sessionKey: 'agent:main:main',
+      agentId: 'main',
+    });
 
     expect(createWindow).not.toHaveBeenCalled();
     expect(runner.open).toHaveBeenCalledWith({
@@ -280,6 +286,9 @@ describe('agent browser service', () => {
         authPersistence: 'session-name',
         authStateName: 'work',
         connection: { mode: 'managed' },
+        workspaceId: 'workspace-demo',
+        sessionKey: 'agent:main:main',
+        agentId: 'main',
       }),
       url: 'https://example.com/',
       width: 1280,
@@ -294,6 +303,9 @@ describe('agent browser service', () => {
         connection: { mode: 'managed' },
         url: 'https://example.com/',
         title: 'CLI page',
+        workspaceId: 'workspace-demo',
+        sessionKey: 'agent:main:main',
+        agentId: 'main',
       },
       textSample: 'cli text',
     });
@@ -380,6 +392,27 @@ describe('agent browser service', () => {
 
     service.close(opened.session.id);
     expect(runner.close).toHaveBeenCalledWith(expect.objectContaining({ id: opened.session.id }));
+  });
+
+  it('preserves the creation-time external connection when CLI metadata claims managed', async () => {
+    const runner = {
+      isAvailable: vi.fn(() => true),
+      open: vi.fn(async () => ({ connection: { mode: 'managed' as const } })),
+      textSample: vi.fn(async () => undefined),
+    };
+    const service = new AgentBrowserService({
+      cliRunner: runner as never,
+      createWindow: vi.fn(() => { throw new Error('should not create window'); }) as never,
+      now: () => new Date('2026-01-01T00:00:00.000Z'),
+    });
+
+    const opened = await service.open({
+      connectionMode: 'auto-connect',
+      allowExternalBrowser: true,
+    });
+
+    expect(opened.session.connection).toEqual({ mode: 'auto-connect' });
+    expect(service.list()[0]?.connection).toEqual({ mode: 'auto-connect' });
   });
 
   it('drives a hidden BrowserWindow session', async () => {

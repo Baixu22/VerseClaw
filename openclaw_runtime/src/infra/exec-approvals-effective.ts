@@ -3,7 +3,9 @@ import { sortUniqueStrings } from "@openclaw/normalization-core/string-normaliza
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { DEFAULT_AGENT_ID } from "../routing/session-key.js";
 import {
+  DEFAULT_EXEC_ASK,
   DEFAULT_EXEC_APPROVAL_ASK_FALLBACK,
+  DEFAULT_EXEC_SECURITY,
   resolveExecApprovalAllowedDecisions,
   type ExecApprovalDecision,
   maxAsk,
@@ -18,8 +20,8 @@ import {
   type ExecTarget,
 } from "./exec-approvals.js";
 
-const DEFAULT_REQUESTED_SECURITY: ExecSecurity = "full";
-const DEFAULT_REQUESTED_ASK: ExecAsk = "off";
+const DEFAULT_REQUESTED_SECURITY = DEFAULT_EXEC_SECURITY;
+const DEFAULT_REQUESTED_ASK = DEFAULT_EXEC_ASK;
 const DEFAULT_HOST_PATH = "~/.openclaw/exec-approvals.json";
 const REQUESTED_DEFAULT_LABEL = {
   security: DEFAULT_REQUESTED_SECURITY,

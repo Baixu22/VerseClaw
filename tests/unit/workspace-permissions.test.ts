@@ -8,6 +8,7 @@ import {
   DEFAULT_WORKSPACE_PERMISSION_MODE,
   isDevOnlyGatewayRpc,
   isDevOnlyGatewayRpcEnabled,
+  isGitMetadataPath,
   isPathInsideWorkspace,
 } from '@electron/services/workspace-permissions';
 import { normalizeWorkspacePermissionMode } from '@shared/types/workspace';
@@ -46,6 +47,71 @@ describe('workspace permission policy', () => {
     });
   });
 
+  it('treats git config-injection and boundary-escape flags as destructive whatever the subcommand', () => {
+    // -c can set core.pager / core.editor / alias.* to an arbitrary command, so
+    // it is never safe even in front of a read-only subcommand.
+    expect(classifyWorkspaceCommand('git -c core.pager=x status')).toBe('destructive');
+    expect(classifyWorkspaceCommand('git -c alias.s=!sh s')).toBe('destructive');
+    expect(classifyWorkspaceCommand('git --config-env=core.pager=EVIL status')).toBe('destructive');
+    // --exec-path redirects where git resolves its own helper binaries.
+    expect(classifyWorkspaceCommand('git --exec-path=/tmp/evil status')).toBe('destructive');
+    // These move the operation outside the active workspace.
+    expect(classifyWorkspaceCommand('git --git-dir=/other/repo status')).toBe('destructive');
+    expect(classifyWorkspaceCommand('git --work-tree=/other status')).toBe('destructive');
+    expect(classifyWorkspaceCommand('git -C /other/repo status')).toBe('destructive');
+  });
+
+  it('does not let a leading git global flag downgrade a destructive or network subcommand', () => {
+    // Before subcommand-aware parsing these fell through to plain 'write',
+    // because the \bgit\s+reset\b / \bgit\s+push\b patterns never matched.
+    expect(classifyWorkspaceCommand('git -c x=y reset --hard')).toBe('destructive');
+    expect(classifyWorkspaceCommand('git -c x=y clean -fd')).toBe('destructive');
+    expect(classifyWorkspaceCommand('git -c x=y push')).toBe('destructive');
+  });
+
+  it('keeps benign git invocations readable when global flags are absent or harmless', () => {
+    expect(classifyWorkspaceCommand('git status')).toBe('read');
+    expect(classifyWorkspaceCommand('git --no-pager status')).toBe('read');
+    expect(classifyWorkspaceCommand('git --no-optional-locks status')).toBe('read');
+    expect(classifyWorkspaceCommand('git diff')).toBe('read');
+    // Real subcommand risk still applies once the flags are stripped.
+    expect(classifyWorkspaceCommand('git push')).toBe('network');
+    expect(classifyWorkspaceCommand('git reset --hard')).toBe('destructive');
+  });
+
+  it('stops treating a read subcommand as read-only once --output redirects to a file', () => {
+    // Verified against git 2.51: these four forms each create AND truncate the
+    // target, with no constraint on where it points, so a read subcommand can
+    // overwrite a file outside the workspace.
+    expect(classifyWorkspaceCommand('git diff --output=/tmp/escaped.txt')).toBe('write');
+    expect(classifyWorkspaceCommand('git diff --output /tmp/escaped.txt')).toBe('write');
+    expect(classifyWorkspaceCommand('git show --output=/tmp/escaped.txt HEAD')).toBe('write');
+    expect(classifyWorkspaceCommand('git log --output=/tmp/escaped.txt')).toBe('write');
+  });
+
+  it('blocks a git --output write in read-only mode', () => {
+    // readOnly mode allows 'read' with no further checks, so the classification
+    // above is what actually stops the write.
+    expect(decideWorkspaceCommand('git diff --output=/tmp/escaped.txt', 'readOnly')).toMatchObject({
+      allowed: false,
+      risk: 'write',
+    });
+    // Inspection must still work: the fix must not turn readOnly into a mode
+    // that blocks reading.
+    expect(decideWorkspaceCommand('git status', 'readOnly')).toMatchObject({
+      allowed: true,
+      risk: 'read',
+    });
+  });
+
+  it('does not mistake look-alike git flags for an output redirect', () => {
+    // Verified against git 2.51: --output-indicator-* only picks a display
+    // character, and -o is not an alias for --output. Neither writes a file.
+    expect(classifyWorkspaceCommand('git diff --output-indicator-new=X')).toBe('read');
+    expect(classifyWorkspaceCommand('git diff --output-indicator-old=Y')).toBe('read');
+    expect(classifyWorkspaceCommand('git diff -o /tmp/not-written.txt')).toBe('read');
+  });
+
   it('requires approval for risky commands in accept-edits mode', () => {
     expect(decideWorkspaceCommand('git clean -fd', 'acceptEdits')).toMatchObject({
       allowed: false,
@@ -57,6 +123,47 @@ describe('workspace permission policy', () => {
       requiresApproval: true,
       risk: 'network',
     });
+  });
+
+  it('gates writes to Git repository metadata even inside the workspace', () => {
+    // `.git/hooks/*` runs on the next commit and `.git/config` can point
+    // core.pager / core.hooksPath / alias.* at an arbitrary command, so these
+    // are not ordinary in-workspace edits.
+    for (const target of [
+      'C:/project/.git/config',
+      'C:/project/.git/hooks/pre-commit',
+      'C:/project/.git/HEAD',
+      'C:/project/.git/refs/heads/main',
+      // The bare `.git` pointer file a worktree/submodule uses: rewriting it
+      // would redirect the real gitdir somewhere else.
+      'C:/project/.git',
+      // Nested repositories and submodules are covered too.
+      'C:/project/vendor/dep/.git/config',
+    ]) {
+      expect(decideWorkspaceFileWrite(target, workspace())).toMatchObject({
+        allowed: false,
+        requiresApproval: true,
+        risk: 'destructive',
+      });
+    }
+  });
+
+  it('does not treat git-adjacent project files as repository metadata', () => {
+    expect(isGitMetadataPath('C:/project/.gitignore')).toBe(false);
+    expect(isGitMetadataPath('C:/project/.gitattributes')).toBe(false);
+    expect(isGitMetadataPath('C:/project/.github/workflows/ci.yml')).toBe(false);
+    expect(isGitMetadataPath('C:/project/src/git/client.ts')).toBe(false);
+    expect(isGitMetadataPath('C:/project/docs/gitops.md')).toBe(false);
+    // These remain ordinary auto-accepted edits.
+    expect(decideWorkspaceFileWrite('C:/project/.gitignore', workspace())).toMatchObject({
+      allowed: true,
+      risk: 'write',
+    });
+  });
+
+  it('detects git metadata through backslash paths and case differences', () => {
+    expect(isGitMetadataPath('C:\\project\\.git\\config')).toBe(true);
+    expect(isGitMetadataPath('C:/project/.GIT/config')).toBe(true);
   });
 
   it('maps workspace modes to OpenClaw exec approval config', () => {

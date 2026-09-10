@@ -17,7 +17,7 @@ describe('P1-5 contextInjection default', () => {
         list: [{ id: 'main', contextInjection: 'always' }],
       },
     };
-    expect(resolveContextInjectionMode(cfg, 'main')).toBe('always');
+    expect(resolveContextInjectionMode(cfg as never, 'main')).toBe('always');
   });
 
   it('honors explicit defaults-level contextInjection', () => {
@@ -26,7 +26,7 @@ describe('P1-5 contextInjection default', () => {
         defaults: { contextInjection: 'never' },
       },
     };
-    expect(resolveContextInjectionMode(cfg)).toBe('never');
+    expect(resolveContextInjectionMode(cfg as never)).toBe('never');
   });
 
   it('agent-level setting beats defaults-level', () => {
@@ -36,6 +36,6 @@ describe('P1-5 contextInjection default', () => {
         list: [{ id: 'main', contextInjection: 'always' }],
       },
     };
-    expect(resolveContextInjectionMode(cfg, 'main')).toBe('always');
+    expect(resolveContextInjectionMode(cfg as never, 'main')).toBe('always');
   });
 });

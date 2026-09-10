@@ -11,6 +11,7 @@ import {
   normalizeOptionalString,
 } from "@openclaw/normalization-core/string-coerce";
 import { getAcpSessionManager } from "../acp/control-plane/manager.js";
+import { acquireSessionAdmissionPermit } from "../sessions/session-admission-registry.js";
 import type { AcpTurnAttachment } from "../acp/control-plane/manager.types.js";
 import {
   cleanupFailedAcpSpawn,
@@ -1468,6 +1469,19 @@ export async function spawnAcpDirect(
   let binding: SessionBindingRecord | null = null;
   let sessionCreated = false;
   let initializedRuntime: AcpSpawnRuntimeCloseHandle | undefined;
+  const requesterAdmissionAgentId = resolveAgentIdFromSessionKey(requesterInternalKey);
+  const requesterAdmissionStorePath = resolveStorePath(cfg.session?.store, {
+    agentId: requesterAdmissionAgentId,
+  });
+  const requesterAdmissionEntry = loadSessionStore(requesterAdmissionStorePath)[requesterInternalKey];
+  const releaseAcpSpawnPermit = acquireSessionAdmissionPermit(
+    {
+      agentId: requesterAdmissionAgentId,
+      canonicalSessionKey: requesterInternalKey,
+      expectedSessionId: requesterAdmissionEntry?.sessionId ?? requesterInternalKey,
+    },
+    "acp-spawn",
+  );
   try {
     await callGateway({
       method: "sessions.patch",
@@ -1503,7 +1517,9 @@ export async function spawnAcpDirect(
         initializedRuntime: initializedSession,
       }));
     }
+    releaseAcpSpawnPermit();
   } catch (err) {
+    releaseAcpSpawnPermit();
     await cleanupFailedAcpSpawn({
       cfg,
       sessionKey,

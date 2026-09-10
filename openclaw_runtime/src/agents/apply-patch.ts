@@ -92,6 +92,15 @@ const applyPatchSchema = Type.Object({
   input: Type.String({
     description: "Patch content using the *** Begin Patch/End Patch format.",
   }),
+  preview_id: Type.Optional(
+    Type.String({
+      maxLength: 128,
+      description:
+        "Optional previewId from a prior preview_patch. When given, the write journal " +
+        "re-verifies that preview against the workspace and refuses the commit if anything " +
+        "changed since. Omit it to apply the patch without preview verification.",
+    }),
+  ),
 });
 
 /** Create the agent tool wrapper for applying patch-envelope input. */
@@ -113,8 +122,12 @@ export function createApplyPatchTool(
     writeRiskProfile: { kind: "dynamic_writes", requiresApproval: true },
     parameters: applyPatchSchema,
     execute: async (toolCallId, args, signal) => {
-      const params = args as { input?: string };
+      const params = args as { input?: string; preview_id?: string };
       const input = typeof params.input === "string" ? params.input : "";
+      const previewId =
+        typeof params.preview_id === "string" && params.preview_id.trim()
+          ? params.preview_id.trim()
+          : undefined;
       if (!input.trim()) {
         throw new Error("Provide a patch input.");
       }
@@ -129,6 +142,7 @@ export function createApplyPatchTool(
         sandbox,
         workspaceOnly,
         signal,
+        ...(previewId ? { previewId } : {}),
         ...(options.journal
           ? {
               journal: {

@@ -175,6 +175,9 @@ const READ_ONLY_IDEMPOTENT_OPS = new Set([
   "file.view",
   "file.read_range",
   "file.hash",
+  // Pure read: the catalog declares it under the file.read capability with an
+  // fs.read effect, and it is what the patch preview bridge renders diffs with.
+  "file.diff",
   "repo.search",
   "repo.summary",
   "result.query",

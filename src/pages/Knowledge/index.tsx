@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { AlertTriangle, ArrowRight, BookOpen, Bot, Check, Columns3, Copy, Database, Edit3, Ellipsis, Eye, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, Link2, ListTodo, Loader2, Plus, Puzzle, RefreshCw, RotateCcw, Ruler, Save, Search, SendHorizontal, ShieldCheck, Sparkles, Tags, Upload, Wrench, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -40,6 +40,7 @@ import {
   type KnowledgeStewardTriage,
   type KnowledgeStewardTriageAction,
 } from '@/lib/host-api';
+import type { KnowledgeRuntimeLineage } from '@shared/host-api/contract';
 import { errorMessageFrom } from '@/lib/user-error';
 import {
   buildGroundedLibrarianAnswer,
@@ -829,6 +830,23 @@ function runtimePrincipleField(suggestion: KnowledgeSekbDistillationSuggestion, 
   if (typeof value === 'string') return value;
   if (Array.isArray(value)) return value.filter((entry): entry is string => typeof entry === 'string').join(', ');
   return '';
+}
+
+function runtimeLineageBadges(lineage: KnowledgeRuntimeLineage | undefined, t: (key: string) => string): ReactElement[] {
+  if (!lineage) return [];
+  const fields: Array<[string, string]> = [
+    [t('runtime.lineageSession'), lineage.sessionId],
+    ...(lineage.missionId ? [[t('runtime.lineageMission'), lineage.missionId] as [string, string]] : []),
+    ...(lineage.missionTick !== undefined ? [[t('runtime.lineageTick'), String(lineage.missionTick)] as [string, string]] : []),
+    ...(lineage.loopRunId ? [[t('runtime.lineageLoop'), lineage.loopRunId] as [string, string]] : []),
+    ...(lineage.traceId ? [[t('runtime.lineageTrace'), lineage.traceId] as [string, string]] : []),
+    ...(lineage.taskLedgerRootId ? [[t('runtime.lineageLedger'), lineage.taskLedgerRootId] as [string, string]] : []),
+  ];
+  return fields.map(([label, value]) => (
+    <Badge key={`${label}:${value}`} variant="outline" className="max-w-full border-black/10 bg-transparent text-[10px] dark:border-white/10">
+      <span className="mr-1 text-muted-foreground">{label}:</span><span className="max-w-[18rem] truncate font-mono">{value}</span>
+    </Badge>
+  ));
 }
 
 export function Knowledge() {
@@ -2873,6 +2891,11 @@ export function Knowledge() {
                                 <Badge variant="outline" className="border-black/10 bg-transparent text-[10px] dark:border-white/10">{t('runtime.taskType')}: {entry.task_type}</Badge>
                                 {entry.context_fingerprint.map((tag) => <Badge key={tag} variant="outline" className="border-black/10 bg-transparent text-[10px] dark:border-white/10">{tag}</Badge>)}
                               </div>
+                              {entry.lineage ? (
+                                <div className="mt-2 flex flex-wrap gap-1" data-testid={`knowledge-runtime-lineage-${entry.trajectory_id}`}>
+                                  {runtimeLineageBadges(entry.lineage, t)}
+                                </div>
+                              ) : null}
                               {entry.error_signature ? <p className="mt-2 break-words text-xs text-red-700 dark:text-red-400">{t('runtime.errorSignature')}: {entry.error_signature}</p> : null}
                             </div>
                           ))}
@@ -2894,6 +2917,16 @@ export function Knowledge() {
                                 {principle.task_types.map((type) => <Badge key={`type:${type}`} variant="outline" className="border-black/10 bg-transparent text-[10px] dark:border-white/10">{type}</Badge>)}
                                 {principle.context_tags.map((tag) => <Badge key={`tag:${tag}`} variant="outline" className="border-black/10 bg-transparent text-[10px] dark:border-white/10">{tag}</Badge>)}
                               </div>
+                              {principle.lineage ? (
+                                <div className="mt-2 flex flex-wrap gap-1" data-testid={`knowledge-runtime-principle-lineage-${principle.principle_id}`}>
+                                  {runtimeLineageBadges(principle.lineage, t)}
+                                </div>
+                              ) : null}
+                              {(principle.source_trajectories?.length ?? 0) > 0 ? (
+                                <p className="mt-2 break-words text-[10px] text-muted-foreground">
+                                  {t('runtime.sourceTrajectories')}: {principle.source_trajectories?.join(', ')}
+                                </p>
+                              ) : null}
                               <p className="mt-2 text-xs text-muted-foreground">{t('runtime.retrievals')}: {principle.retrieval_count} · {t('runtime.adoptions')}: {principle.adoption_count}</p>
                             </div>
                           ))}
@@ -2943,8 +2976,16 @@ export function Knowledge() {
                                   <Badge variant="outline" className="border-primary/30 bg-primary/5 text-primary">{Math.round(selectedRuntimeSuggestion.confidence * 100)}%</Badge>
                                 </div>
                                 <p className="text-xs leading-5 text-muted-foreground">{selectedRuntimeSuggestion.cluster_summary}</p>
-                                <div className="flex flex-wrap gap-1">
-                                  {selectedRuntimeSuggestion.source_trajectory_ids.map((id) => <Badge key={id} variant="outline" className="border-black/10 bg-transparent font-mono text-[10px] dark:border-white/10">{id}</Badge>)}
+                                <div className="space-y-2">
+                                  {selectedRuntimeSuggestion.source_trajectory_ids.map((id) => {
+                                    const source = runtimeLessons.undistilled.find((entry) => entry.trajectory_id === id);
+                                    return (
+                                      <div key={id} className="flex flex-wrap gap-1" data-testid={`knowledge-runtime-review-lineage-${id}`}>
+                                        <Badge variant="outline" className="border-black/10 bg-transparent font-mono text-[10px] dark:border-white/10">{id}</Badge>
+                                        {runtimeLineageBadges(source?.lineage, t)}
+                                      </div>
+                                    );
+                                  })}
                                 </div>
                               </div>
                               {(['condition', 'action', 'reason', 'task_types', 'context_tags', 'criticality'] as const).map((field) => {
@@ -2986,7 +3027,15 @@ export function Knowledge() {
 
                       {runtimeConfirmResult?.principleId ? (
                         <div className="rounded-lg border border-green-500/20 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400" data-testid="knowledge-runtime-confirm-result">
-                          {t('runtime.confirmResult')}: <span className="font-mono">{runtimeConfirmResult.principleId}</span>
+                          <div>{t('runtime.confirmResult')}: <span className="font-mono">{runtimeConfirmResult.principleId}</span></div>
+                          {runtimeConfirmResult.provenance ? (
+                            <div className="mt-1 text-xs" data-testid="knowledge-runtime-confirm-provenance">
+                              {t('runtime.confirmProvenance', {
+                                sessionId: runtimeConfirmResult.provenance.sessionId,
+                                trajectories: runtimeConfirmResult.provenance.sourceTrajectoryIds.join(', '),
+                              })}
+                            </div>
+                          ) : null}
                         </div>
                       ) : null}
                     </section>

@@ -70,7 +70,7 @@ describe('providers-api secret broker boundary (P1-001)', () => {
     expect(typeof api.hasAccountApiKey).toBe('function');
     expect(typeof api.accountKeyInfo).toBe('function');
 
-    await expect(api.accountKeyInfo()).resolves.toEqual([
+    await expect((api as any).accountKeyInfo()).resolves.toEqual([
       { accountId: 'acct-1', hasKey: true, keyMasked: 'sk-***' },
     ]);
     expect(providerServiceMock._getProviderApiKeyInternal).not.toHaveBeenCalled();

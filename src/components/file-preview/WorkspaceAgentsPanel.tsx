@@ -3,9 +3,18 @@
  *
  * Two halves: the roster of sub-agents this session has spawned, and the
  * selected one's transcript. Everything is live host state — the roster comes
- * from `agent:subagent-lifecycle` events, transcripts from
- * `sessions.history`, and dispatch from the `orchestrator.run` RPC. There is no
- * fixture path; a session that has spawned nothing shows the empty arm.
+ * from the shared session-activity store, transcripts from `sessions.history`,
+ * and dispatch from the `orchestrator.run` RPC. There is no fixture path; a
+ * session that has spawned nothing shows the empty arm.
+ *
+ * The roster is READ from `useSessionActivityStore`, not folded here from
+ * `agent:subagent-lifecycle` directly. That store already subscribes to the
+ * same channel AND merges the host's `session.activitySnapshot` hydration, so
+ * owning a second private copy of the roster meant this tab could sit on its
+ * empty arm while the toolbar's status card listed three workers — the two
+ * surfaces disagreed about the same fact. One store, one roster. The Chat page
+ * owns the store's subscription lifecycle (`load` → `init`), and this tab only
+ * ever renders inside it, so there is nothing to subscribe to here.
  *
  * Transcripts are fetched per selected agent rather than prefetched for the
  * whole roster: a fan-out run can spawn a dozen workers, and eagerly loading
@@ -20,7 +29,6 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { AgentRoleIdentity } from '@/components/agents/AgentAvatar';
 import { hostApi } from '@/lib/host-api';
-import { hostEvents } from '@/lib/host-events';
 import { cn } from '@/lib/utils';
 import { describeUserError, toastUserError } from '@/lib/user-error';
 import type { SurfaceErrorState } from '@/lib/async-surface-state';
@@ -28,15 +36,15 @@ import { extractText, normalizeMessageRole } from '@/pages/Chat/message-utils';
 import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
 import { useArtifactPanel } from '@/stores/artifact-panel';
-import { subagentLifecycleIdentityKey } from '@shared/subagent-lifecycle';
+import { useSessionActivityStore } from '@/stores/session-activity';
 import type { RawMessage } from '@shared/chat/types';
-import type { SubagentRuntimeLifecycleEvent } from '@shared/host-events/contract';
+import type { SessionActivitySubagent, SessionActivitySubagentStatus } from '@shared/types/session-activity';
 
 type RosterEntry = {
   key: string;
   roleName: string;
   task: string;
-  status: SubagentRuntimeLifecycleEvent['status'];
+  status: SessionActivitySubagentStatus;
   error?: string;
   summary?: string;
   /** Present once the runtime reports the child's own session. */
@@ -45,27 +53,18 @@ type RosterEntry = {
   ts: number;
 };
 
-function foldEvent(
-  roster: ReadonlyMap<string, RosterEntry>,
-  event: SubagentRuntimeLifecycleEvent,
-): Map<string, RosterEntry> {
-  const key = subagentLifecycleIdentityKey(event);
-  const ts = event.ts ?? Date.now();
-  const previous = roster.get(key);
-  if (previous && previous.ts > ts) return roster as Map<string, RosterEntry>;
-  const next = new Map(roster);
-  next.set(key, {
-    key,
-    roleName: event.roleName || previous?.roleName || 'agent',
-    task: event.task || previous?.task || '',
-    status: event.status,
-    error: event.error ?? previous?.error,
-    summary: event.summary ?? previous?.summary,
-    childSessionKey: event.childSessionKey ?? previous?.childSessionKey,
-    agentId: event.agentId ?? previous?.agentId,
-    ts,
-  });
-  return next;
+function rosterEntry(agent: SessionActivitySubagent): RosterEntry {
+  return {
+    key: agent.id,
+    roleName: agent.role || 'agent',
+    task: agent.task ?? '',
+    status: agent.status,
+    error: agent.error,
+    summary: agent.summary,
+    childSessionKey: agent.childSessionKey,
+    agentId: agent.agentId,
+    ts: agent.updatedAt,
+  };
 }
 
 /** `agent:<id>:<session>` — the child's own agent id, for its avatar. */
@@ -88,8 +87,9 @@ export function WorkspaceAgentsPanel() {
   const agents = useAgentsStore((s) => s.agents);
   const focusedSessionKey = useArtifactPanel((s) => s.agentsSessionKey);
   const setAgentsSessionKey = useArtifactPanel((s) => s.setAgentsSessionKey);
+  const openWorkspacePanel = useArtifactPanel((s) => s.openWorkspacePanel);
+  const subagents = useSessionActivityStore((s) => s.snapshots[sessionKey]?.subagents);
 
-  const [roster, setRoster] = useState<ReadonlyMap<string, RosterEntry>>(() => new Map());
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<{ key: string; messages: RawMessage[] } | null>(null);
   const [transcriptError, setTranscriptError] = useState<SurfaceErrorState | null>(null);
@@ -99,39 +99,35 @@ export function WorkspaceAgentsPanel() {
   const transcriptScrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setRoster(new Map());
     setSelectedKey(null);
     setTranscript(null);
     setTranscriptError(null);
   }, [sessionKey]);
 
-  useEffect(() => {
-    const unsubscribe = hostEvents.onSubagentLifecycle?.((event) => {
-      if (event.sessionKey && event.sessionKey !== sessionKey) return;
-      setRoster((current) => foldEvent(current, event));
-    });
-    return () => {
-      if (typeof unsubscribe === 'function') unsubscribe();
-    };
-  }, [sessionKey]);
-
   const entries = useMemo(
-    () => Array.from(roster.values()).sort((left, right) => {
+    () => (subagents ?? []).map(rosterEntry).sort((left, right) => {
       const leftRunning = left.status === 'started' ? 0 : 1;
       const rightRunning = right.status === 'started' ? 0 : 1;
       if (leftRunning !== rightRunning) return leftRunning - rightRunning;
       return right.ts - left.ts;
     }),
-    [roster],
+    [subagents],
   );
 
-  /* The rail hands over a child session key; resolve it to a roster row so
-   * clicking a rail row lands on that agent rather than the newest one. */
+  /* The status card hands over a child session key; resolve it to a roster row
+   * so clicking a row there lands on that agent rather than the newest one. */
   useEffect(() => {
     if (!focusedSessionKey) return;
     const match = entries.find((entry) => entry.childSessionKey === focusedSessionKey);
-    if (match) setSelectedKey(match.key);
-    setAgentsSessionKey(null);
+    if (match) {
+      setSelectedKey(match.key);
+      setAgentsSessionKey(null);
+      return;
+    }
+    /* The roster can arrive a tick after the intent (fresh mount, restored
+     * layout). Hold the intent until there is something to resolve it against,
+     * or the tab quietly lands on the newest agent instead of the one clicked. */
+    if (entries.length > 0) setAgentsSessionKey(null);
   }, [entries, focusedSessionKey, setAgentsSessionKey]);
 
   const selected = useMemo(
@@ -139,28 +135,36 @@ export function WorkspaceAgentsPanel() {
     [entries, selectedKey],
   );
 
-  const loadTranscript = useCallback(async (entry: RosterEntry | null) => {
-    if (!entry?.childSessionKey) {
+  /* Takes the two identifiers rather than the roster entry: the roster is
+   * rebuilt from the store on every activity event, so an object-identity
+   * dependency below would refetch the same transcript each time an unrelated
+   * task or terminal event landed. */
+  const loadTranscript = useCallback(async (
+    rosterKey: string | null,
+    childSessionKey: string | undefined,
+    childAgentIdHint: string | undefined,
+  ) => {
+    if (!rosterKey || !childSessionKey) {
       setTranscript(null);
       setTranscriptError(null);
       return;
     }
-    const childAgentId = entry.agentId ?? agentIdFromSessionKey(entry.childSessionKey) ?? anchorAgentId;
+    const childAgentId = childAgentIdHint ?? agentIdFromSessionKey(childSessionKey) ?? anchorAgentId;
     setTranscriptLoading(true);
     try {
       const result = await hostApi.sessions.history({
-        sessionKey: entry.childSessionKey,
+        sessionKey: childSessionKey,
         agentId: childAgentId,
       });
-      setTranscript({ key: entry.key, messages: result.messages ?? [] });
+      setTranscript({ key: rosterKey, messages: result.messages ?? [] });
       setTranscriptError(null);
     } catch (error) {
       // R2: a failed history query is NOT an empty transcript — surface it.
-      setTranscript({ key: entry.key, messages: [] });
+      setTranscript({ key: rosterKey, messages: [] });
       setTranscriptError({
         messageKey: 'agentsPanel.transcriptFailed',
         errorId: describeUserError(error).errorId,
-        retry: () => void loadTranscript(entry),
+        retry: () => void loadTranscript(rosterKey, childSessionKey, childAgentIdHint),
       });
     } finally {
       setTranscriptLoading(false);
@@ -168,8 +172,8 @@ export function WorkspaceAgentsPanel() {
   }, [anchorAgentId]);
 
   useEffect(() => {
-    void loadTranscript(selected);
-  }, [loadTranscript, selected]);
+    void loadTranscript(selected?.key ?? null, selected?.childSessionKey, selected?.agentId);
+  }, [loadTranscript, selected?.key, selected?.childSessionKey, selected?.agentId]);
 
   useEffect(() => {
     const node = transcriptScrollRef.current;
@@ -221,7 +225,7 @@ export function WorkspaceAgentsPanel() {
           size="sm"
           className="h-8 shrink-0"
           disabled={!selected?.childSessionKey || transcriptLoading}
-          onClick={() => void loadTranscript(selected)}
+          onClick={() => void loadTranscript(selected?.key ?? null, selected?.childSessionKey, selected?.agentId)}
           data-testid="workspace-agents-refresh"
         >
           <RefreshCw className={cn('mr-1.5 h-3.5 w-3.5', transcriptLoading && 'animate-spin')} />
@@ -257,6 +261,19 @@ export function WorkspaceAgentsPanel() {
                       active ? 'bg-foreground/[0.06]' : 'hover:bg-foreground/[0.04]',
                     )}
                     onClick={() => setSelectedKey(entry.key)}
+                    /* Double-click promotes the worker to its own tab. The roster
+                     * is a directory; a worker you intend to read for a while
+                     * belongs in a chip of its own, next to the others. */
+                    onDoubleClick={() => {
+                      if (entry.childSessionKey) {
+                        openWorkspacePanel({
+                          panel: 'subagent',
+                          sessionKey: entry.childSessionKey,
+                          roleName: entry.roleName,
+                        });
+                      }
+                    }}
+                    title={entry.childSessionKey ? t('agentsPanel.openOwnTab') : entry.task}
                     data-testid={`workspace-agents-row-${entry.key.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
                     aria-current={active}
                   >

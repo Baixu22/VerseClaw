@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { WorkspaceProfile } from '@shared/types/workspace';
+import type { SessionFolder, WorkspaceProfile } from '@shared/types/workspace';
 
 const hostApiMocks = vi.hoisted(() => ({
   saveState: vi.fn(),
   switchWorkspace: vi.fn(),
+  createFolder: vi.fn(),
+  moveSessionToFolder: vi.fn(),
 }));
 
 vi.mock('@/lib/host-api', () => ({
@@ -16,6 +18,8 @@ vi.mock('@/lib/host-api', () => ({
       delete: vi.fn(),
       switch: hostApiMocks.switchWorkspace,
       saveState: hostApiMocks.saveState,
+      createFolder: hostApiMocks.createFolder,
+      moveSessionToFolder: hostApiMocks.moveSessionToFolder,
     },
   },
 }));
@@ -53,6 +57,8 @@ describe('workspaces store session state', () => {
     hostApiMocks.saveState.mockReset();
     hostApiMocks.saveState.mockResolvedValue({ success: true });
     hostApiMocks.switchWorkspace.mockReset();
+    hostApiMocks.createFolder.mockReset();
+    hostApiMocks.moveSessionToFolder.mockReset();
   });
 
   it('does not leak the previous session state when only activeSessionKey changes', async () => {
@@ -307,5 +313,166 @@ describe('workspaces store session state', () => {
       'workspace-a',
       'workspace-b',
     ]);
+  });
+});
+describe('workspaces store drag-and-drop grouping', () => {
+  const SOURCE = 'agent:main:source';
+  const TARGET = 'agent:main:target';
+
+  function groupFolder(overrides: Partial<SessionFolder> = {}): SessionFolder {
+    return {
+      id: 'group-1',
+      name: 'Target group',
+      parentId: null,
+      order: 0,
+      kind: 'workgroup',
+      createdAt: 2,
+      updatedAt: 2,
+      ...overrides,
+    };
+  }
+
+  function snapshotWith(workspace: WorkspaceProfile, folder?: SessionFolder) {
+    return {
+      success: true,
+      profiles: [workspace],
+      activeWorkspaceId: workspace.id,
+      activeWorkspace: workspace,
+      folder,
+    };
+  }
+
+  it('moves the source into an existing target workgroup without creating a folder', async () => {
+    const folder = groupFolder();
+    const workspace = profile({
+      sessionFolders: [folder],
+      sessionFolderAssignments: { [TARGET]: folder.id },
+    });
+    hostApiMocks.moveSessionToFolder.mockResolvedValue(snapshotWith(workspace, folder));
+
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    useWorkspacesStore.setState({
+      profiles: [workspace],
+      activeWorkspaceId: workspace.id,
+      activeWorkspace: workspace,
+      loading: false,
+      error: null,
+    });
+
+    await useWorkspacesStore.getState().groupSessions(workspace.id, SOURCE, TARGET, 'Ignored');
+
+    expect(hostApiMocks.createFolder).not.toHaveBeenCalled();
+    expect(hostApiMocks.moveSessionToFolder).toHaveBeenCalledTimes(1);
+    expect(hostApiMocks.moveSessionToFolder).toHaveBeenCalledWith({
+      workspaceId: workspace.id,
+      sessionKey: SOURCE,
+      folderId: folder.id,
+    });
+  });
+
+  it('creates one root workgroup and files both sessions into it when the target is unfiled', async () => {
+    const workspace = profile({ sessionFolders: [], sessionFolderAssignments: {} });
+    const folder = groupFolder({ name: 'Target group' });
+    hostApiMocks.createFolder.mockResolvedValue(snapshotWith(workspace, folder));
+    hostApiMocks.moveSessionToFolder.mockResolvedValue(snapshotWith(workspace, folder));
+
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    useWorkspacesStore.setState({
+      profiles: [workspace],
+      activeWorkspaceId: workspace.id,
+      activeWorkspace: workspace,
+      loading: false,
+      error: null,
+    });
+
+    await useWorkspacesStore.getState().groupSessions(workspace.id, SOURCE, TARGET, 'Target group');
+
+    expect(hostApiMocks.createFolder).toHaveBeenCalledWith({
+      workspaceId: workspace.id,
+      name: 'Target group',
+      parentId: null,
+      kind: 'workgroup',
+    });
+    expect(hostApiMocks.moveSessionToFolder).toHaveBeenNthCalledWith(1, {
+      workspaceId: workspace.id,
+      sessionKey: TARGET,
+      folderId: folder.id,
+    });
+    expect(hostApiMocks.moveSessionToFolder).toHaveBeenNthCalledWith(2, {
+      workspaceId: workspace.id,
+      sessionKey: SOURCE,
+      folderId: folder.id,
+    });
+  });
+
+  it('does nothing when the source and target are the same session', async () => {
+    const workspace = profile({ sessionFolders: [], sessionFolderAssignments: {} });
+
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    useWorkspacesStore.setState({
+      profiles: [workspace],
+      activeWorkspaceId: workspace.id,
+      activeWorkspace: workspace,
+      loading: false,
+      error: null,
+    });
+
+    await useWorkspacesStore.getState().groupSessions(workspace.id, TARGET, TARGET, 'Ignored');
+
+    expect(hostApiMocks.createFolder).not.toHaveBeenCalled();
+    expect(hostApiMocks.moveSessionToFolder).not.toHaveBeenCalled();
+  });
+
+  it('is a no-op when the source is already in the target workgroup', async () => {
+    const folder = groupFolder();
+    const workspace = profile({
+      sessionFolders: [folder],
+      sessionFolderAssignments: { [SOURCE]: folder.id, [TARGET]: folder.id },
+    });
+
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    useWorkspacesStore.setState({
+      profiles: [workspace],
+      activeWorkspaceId: workspace.id,
+      activeWorkspace: workspace,
+      loading: false,
+      error: null,
+    });
+
+    await useWorkspacesStore.getState().groupSessions(workspace.id, SOURCE, TARGET, 'Ignored');
+
+    expect(hostApiMocks.createFolder).not.toHaveBeenCalled();
+    expect(hostApiMocks.moveSessionToFolder).not.toHaveBeenCalled();
+  });
+
+  it('rejects grouping sessions claimed by different projects', async () => {
+    const workspaceA = profile({
+      id: 'workspace-a',
+      activeSessionKey: SOURCE,
+      sessionStates: { [SOURCE]: {} },
+    });
+    const workspaceB = profile({
+      id: 'workspace-b',
+      activeSessionKey: TARGET,
+      sessionStates: { [TARGET]: {} },
+    });
+
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    useWorkspacesStore.setState({
+      profiles: [workspaceA, workspaceB],
+      activeWorkspaceId: workspaceA.id,
+      activeWorkspace: workspaceA,
+      loading: false,
+      error: null,
+    });
+
+    await expect(useWorkspacesStore.getState().groupSessions(
+      workspaceA.id,
+      SOURCE,
+      TARGET,
+      'Cross-project group',
+    )).rejects.toThrow('Sessions can only be grouped inside the same project');
+    expect(hostApiMocks.createFolder).not.toHaveBeenCalled();
+    expect(hostApiMocks.moveSessionToFolder).not.toHaveBeenCalled();
   });
 });

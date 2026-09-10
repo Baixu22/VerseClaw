@@ -8,6 +8,7 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RuntimeTaskStatus } from "../runtime-core/types.js";
+import type { RuntimeLineage } from "../runtime-core/lineage.js";
 
 type PhaseHookParams = {
   event: {
@@ -15,21 +16,22 @@ type PhaseHookParams = {
     taskId: string;
     fromStatus: RuntimeTaskStatus;
     toStatus: RuntimeTaskStatus;
+    lineage?: RuntimeLineage;
   };
   ctx: { sessionId: string; runId: string };
 };
 
-const phaseHookMock = vi.fn(async (_params: PhaseHookParams) => undefined);
+const phaseHookMock = vi.fn<(params: PhaseHookParams) => Promise<unknown>>(
+  async (_params: PhaseHookParams) => undefined,
+);
 
 vi.mock("./harness/lifecycle-hook-helpers.js", () => ({
   runAgentHarnessTaskPhaseChangeHook: (params: PhaseHookParams) => phaseHookMock(params),
 }));
 
 // Import after mock so the controller binds the mocked hook.
-const {
-  __testOnly_emitTaskLoopTaskPhaseChange,
-  __testOnly_clearTaskLoopPhaseStatus,
-} = await import("./task-loop-controller.js");
+const { __testOnly_emitTaskLoopTaskPhaseChange, __testOnly_clearTaskLoopPhaseStatus } =
+  await import("./task-loop-controller.js");
 
 beforeEach(() => {
   phaseHookMock.mockClear();
@@ -42,12 +44,23 @@ afterEach(() => {
   __testOnly_clearTaskLoopPhaseStatus();
 });
 
-function makeRecord(overrides?: Partial<{ loopRunId: string; sessionKey: string; phase: string; status: string }>) {
+function makeRecord(
+  overrides?: Partial<{ loopRunId: string; sessionKey: string; phase: string; status: string }>,
+) {
   return {
     loopRunId: overrides?.loopRunId ?? "loop_1",
     sessionKey: overrides?.sessionKey ?? "agent:alpha:main",
     phase: overrides?.phase ?? "intake",
     status: overrides?.status ?? "running",
+    lineage: {
+      schema: "runtime-lineage.v1" as const,
+      sessionId: overrides?.sessionKey ?? "agent:alpha:main",
+      missionId: "mission-1",
+      missionTick: 3,
+      loopRunId: overrides?.loopRunId ?? "loop_1",
+      traceId: "trace-1",
+      taskLedgerRootId: "ledger-1",
+    },
   };
 }
 
@@ -67,16 +80,33 @@ describe("DCS W1 TaskLoop task_phase_change producer", () => {
   it("calls runAgentHarnessTaskPhaseChangeHook once per true runtime status transition", async () => {
     const record = makeRecord();
 
-    __testOnly_emitTaskLoopTaskPhaseChange(record as never, makeEvent(record, "intake", "running") as never);
-    __testOnly_emitTaskLoopTaskPhaseChange(record as never, makeEvent(record, "plan", "running") as never);
-    __testOnly_emitTaskLoopTaskPhaseChange(record as never, makeEvent(record, "execute", "running") as never);
+    const pending = [
+      __testOnly_emitTaskLoopTaskPhaseChange(
+        record as never,
+        makeEvent(record, "intake", "running") as never,
+      ),
+      __testOnly_emitTaskLoopTaskPhaseChange(
+        record as never,
+        makeEvent(record, "plan", "running") as never,
+      ),
+      __testOnly_emitTaskLoopTaskPhaseChange(
+        record as never,
+        makeEvent(record, "execute", "running") as never,
+      ),
+    ];
     // Duplicate same runtime status (execute/running => running) must not re-fire.
-    __testOnly_emitTaskLoopTaskPhaseChange(record as never, makeEvent(record, "execute", "running") as never);
-    __testOnly_emitTaskLoopTaskPhaseChange(record as never, makeEvent(record, "complete", "complete") as never);
+    pending.push(
+      __testOnly_emitTaskLoopTaskPhaseChange(
+        record as never,
+        makeEvent(record, "execute", "running") as never,
+      ),
+      __testOnly_emitTaskLoopTaskPhaseChange(
+        record as never,
+        makeEvent(record, "complete", "complete") as never,
+      ),
+    );
 
-    // Allow microtasks for void promise dispatch.
-    await Promise.resolve();
-    await Promise.resolve();
+    await Promise.all(pending.filter((promise): promise is Promise<void> => Boolean(promise)));
 
     expect(phaseHookMock).toHaveBeenCalled();
     const transitions = phaseHookMock.mock.calls.map((call) => call[0] as PhaseHookParams);
@@ -87,23 +117,20 @@ describe("DCS W1 TaskLoop task_phase_change producer", () => {
       expect(params.ctx.sessionId).toBe("agent:alpha:main");
       expect(params.ctx.runId).toBe("loop_1");
       expect(params.event.fromStatus).not.toBe(params.event.toStatus);
+      expect(params.event.lineage).toEqual(record.lineage);
     }
 
     // intake/running => created seeds without synthetic fire when created.
     // plan => planning, execute => running, complete => completed.
     const pairs = transitions.map((t) => `${t.event.fromStatus}->${t.event.toStatus}`);
-    expect(pairs).toEqual([
-      "created->planning",
-      "planning->running",
-      "running->completed",
-    ]);
+    expect(pairs).toEqual(["created->planning", "planning->running", "running->completed"]);
   });
 
   it("does not throw when the phase hook rejects", async () => {
     phaseHookMock.mockRejectedValueOnce(new Error("hook boom"));
     const record = makeRecord();
     expect(() => {
-      __testOnly_emitTaskLoopTaskPhaseChange(
+      void __testOnly_emitTaskLoopTaskPhaseChange(
         record as never,
         makeEvent(record, "plan", "running") as never,
       );
@@ -111,5 +138,33 @@ describe("DCS W1 TaskLoop task_phase_change producer", () => {
     await Promise.resolve();
     await Promise.resolve();
     expect(phaseHookMock).toHaveBeenCalled();
+  });
+
+  it("returns a promise that resolves only after the phase hook completes", async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    phaseHookMock.mockImplementationOnce(async () => gate);
+    const record = makeRecord();
+
+    const pending = __testOnly_emitTaskLoopTaskPhaseChange(
+      record as never,
+      makeEvent(record, "plan", "running") as never,
+    );
+    let settled = false;
+    if (pending) {
+      void pending
+        .then(() => {
+          settled = true;
+        })
+        .catch(() => undefined);
+    }
+    await Promise.resolve();
+    expect(settled).toBe(false);
+
+    release();
+    await pending;
+    expect(settled).toBe(true);
   });
 });

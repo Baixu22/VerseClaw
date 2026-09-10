@@ -39,6 +39,18 @@ execute → compress → candidate → filter → confirm → persist → recall
 3. 不提供自动写回 worker；不 default-on SEKB 生产全量注入
 4. lineage 需含 sessionId、sourceTrajectoryIds、principleId、provenance schema
 
+`sekbCaptureTrajectory` accepts an explicit `runtimeLineage` object when the
+caller has real execution correlation. The Main process validates the strict
+`runtime-lineage.v1` shape and passes it through to the persisted trajectory;
+it never derives lineage from a session key or other renderer state. A manual
+capture without lineage remains readable for audit and deletion, but cannot
+enter the distillation candidate pool under the terminal-trajectory gate.
+
+The Electron golden-path test supplies complete `sessionId`, `loopRunId`, and
+`traceId` values so the Host API path exercises the same candidate boundary as
+the runtime producer path. This fixture is engineering evidence only, not
+real-channel or product-approval evidence.
+
 ## 验证
 
 ```powershell

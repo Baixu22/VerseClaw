@@ -744,6 +744,7 @@ export interface MissionEvents {
 
 export interface MissionRuns {
   acceptance_json: string;
+  active_tick_id: string | null;
   agent_id: string | null;
   blocked_reason: string | null;
   completed_at: number | null;
@@ -752,6 +753,7 @@ export interface MissionRuns {
   last_decision: string | null;
   last_reason: string | null;
   last_reviewer_summary: string | null;
+  last_wake_id: string | null;
   max_repair_ticks: number;
   max_ticks: number;
   metadata_json: Generated<string>;
@@ -763,6 +765,7 @@ export interface MissionRuns {
   progress: Generated<number>;
   remaining_json: Generated<string>;
   repair_tick_count: Generated<number>;
+  revision: Generated<number>;
   risks_json: Generated<string>;
   schedule_json: Generated<string>;
   session_key: string;

@@ -64,6 +64,16 @@ export type MessageRenderFlags = {
   suppressAssistantText: boolean;
   /** Message belongs to a run segment — hide the flat tool list. */
   suppressToolCards: boolean;
+  /**
+   * The turn's process disclosure adopted this message's reasoning, so the
+   * message must not render it a second time.
+   *
+   * This is a PROJECTION flag rather than a render-time skip on purpose: a reply
+   * that carried nothing but `thinking` blocks contributes nothing once its
+   * reasoning moves into the card, and `hasRenderableContent` has to see that or
+   * the row survives as an empty gap between the folded process and the answer.
+   */
+  suppressReasoning?: boolean;
   textOverride?: string;
 };
 
@@ -196,18 +206,19 @@ function flagKey(flags: MessageRenderFlags): string {
     flags.isUser ? 'u' : 'a',
     flags.suppressAssistantText ? 'T' : 't',
     flags.suppressToolCards ? 'C' : 'c',
+    flags.suppressReasoning ? 'R' : 'r',
     flags.textOverride ?? '',
   ].join('\u0000');
 }
 
 function computeProjection(message: RawMessage, flags: MessageRenderFlags): MessageRenderProjection {
-  const { isUser, suppressAssistantText, suppressToolCards } = flags;
+  const { isUser, suppressAssistantText, suppressToolCards, suppressReasoning } = flags;
   const rawText = flags.textOverride ?? extractText(message);
   const parsed = isUser
     ? { displayText: rawText, interactions: [] as ToolUiInteraction[] }
     : parseToolUiContent(rawText);
 
-  const reasoning = isUser ? [] : extractAssistantReasoning(message);
+  const reasoning = isUser || suppressReasoning ? [] : extractAssistantReasoning(message);
 
   const displayText = parsed.displayText;
   // A folded narration turn keeps its text in the execution graph, so the

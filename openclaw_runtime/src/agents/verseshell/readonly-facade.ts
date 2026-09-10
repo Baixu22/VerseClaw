@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import path from "node:path";
 import { Type } from "typebox";
+import type { DiagnosticTraceContext } from "../../infra/diagnostic-trace-context.js";
 import {
   jsonResult,
   ToolInputError,
@@ -48,6 +49,8 @@ type ReadonlyFacadeArgs = {
   client?: VerseShellAciClient;
   cache?: ReadonlyFacadeCache;
   expectedOwner?: Partial<ArtifactOwnerLineage>;
+  /** Host-owned parent trace; operation args never provide lineage. */
+  trace?: DiagnosticTraceContext;
 };
 
 type ReadFileArgs = {
@@ -256,6 +259,10 @@ export class VerseShellReadonlyFacadeAdapter {
     this.cache = options.cache ?? new ReadonlyFacadeCache();
   }
 
+  private traceId(): string | undefined {
+    return this.options.trace?.traceId;
+  }
+
   private client(): Promise<VerseShellAciClient> {
     if (this.options.client) return Promise.resolve(this.options.client);
     this.clientPromise ??= (async () => {
@@ -295,6 +302,7 @@ export class VerseShellReadonlyFacadeAdapter {
         signal,
         retryable: true,
         effectful: false,
+        traceId: this.traceId(),
       }),
       "file.view",
     );
@@ -325,6 +333,7 @@ export class VerseShellReadonlyFacadeAdapter {
         signal,
         retryable: true,
         effectful: false,
+        traceId: this.traceId(),
       }),
       "repo.search",
     );
@@ -339,6 +348,7 @@ export class VerseShellReadonlyFacadeAdapter {
         signal,
         retryable: true,
         effectful: false,
+        traceId: this.traceId(),
       }),
       "result.query",
     );
@@ -390,6 +400,7 @@ export function createVerseShellReadonlyFacadeTools(options: {
   client?: VerseShellAciClient;
   cache?: ReadonlyFacadeCache;
   expectedOwner?: Partial<ArtifactOwnerLineage>;
+  trace?: DiagnosticTraceContext;
 }): AnyAgentTool[] | null {
   const rollout = resolveVerseShellFoundationRollout({ config: options.config });
   const required = ["verifiedRuntime", "typedAci", "facade", "governedExec", "artifactResults"] as const;

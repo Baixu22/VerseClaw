@@ -179,19 +179,19 @@ describe('deriveTaskSteps', () => {
           ],
         },
         {
-          role: 'toolResult',
+          role: 'toolresult',
           toolCallId: 'read-call',
           toolName: 'read',
           content: [{ type: 'text', text: 'Read src/math.js' }],
         },
         {
-          role: 'toolResult',
+          role: 'toolresult',
           toolCallId: 'edit-call',
           toolName: 'edit',
           content: [{ type: 'text', text: 'Updated subtract implementation' }],
         },
         {
-          role: 'toolResult',
+          role: 'toolresult',
           toolCallId: 'exec-call',
           toolName: 'exec',
           content: [{ type: 'text', text: 'math tests passed' }],
@@ -202,6 +202,7 @@ describe('deriveTaskSteps', () => {
           content: [{ type: 'text', text: 'Fixed subtract and tests now pass.' }],
         },
       ],
+      streamingMessage: "",
       streamingTools: [],
     });
 

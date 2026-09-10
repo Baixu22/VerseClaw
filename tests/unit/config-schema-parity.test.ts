@@ -25,6 +25,7 @@ import {
 } from '../../openclaw_runtime/src/config/runtime-feature-leaves';
 import { FIELD_LABELS } from '../../openclaw_runtime/src/config/schema.labels';
 import { FIELD_HELP } from '../../openclaw_runtime/src/config/schema.help';
+import { DCS_PROD_FLAGS } from '../../shared/dcs/prod-flags-catalog';
 
 const intentionalGaps = new Set(SCHEMA_PARITY_INTENTIONAL_GAPS.map((gap) => gap.path));
 const fixtureLeaves = listLeafPaths(RUNTIME_FEATURE_EXHAUSTIVE).map((path) => `runtime.${path}`);
@@ -160,5 +161,33 @@ describe('FP-P0-06 config type / zod schema parity', () => {
     for (const gap of SCHEMA_PARITY_INTENTIONAL_GAPS) {
       expect(gap.reason.trim().length).toBeGreaterThan(0);
     }
+  });
+
+  it('every DCS config catalog entry is accepted by the strict runtime schema', () => {
+    const configEntries = DCS_PROD_FLAGS.filter((entry) => entry.kind === 'config');
+    expect(configEntries.length).toBeGreaterThan(0);
+    for (const entry of configEntries) {
+      const parsed = OpenClawSchema.safeParse(buildNested(entry.key.split('.'), entry.defaultValue));
+      expect(
+        parsed.success,
+        `${entry.id} (${entry.key}) is documented as a config flag but rejected by OpenClawSchema: ${
+          parsed.success ? '' : JSON.stringify(parsed.error.issues)
+        }`,
+      ).toBe(true);
+    }
+  });
+
+  it('rejects the removed runtime.coding.factViews compatibility leaf', () => {
+    const parsed = OpenClawSchema.safeParse({
+      runtime: { coding: { factViews: { enabled: true } } },
+    });
+    expect(parsed.success).toBe(false);
+  });
+
+  it('documents the factViews migration path in the production catalog', () => {
+    const entry = DCS_PROD_FLAGS.find((candidate) => candidate.id === 'context-view-tools');
+    expect(entry?.riskNote).toContain('removed runtime.coding.factViews leaf');
+    expect(entry?.riskNote).toContain('remove it before upgrading');
+    expect(entry?.riskNote).not.toMatch(/deprecated\/ignored/i);
   });
 });

@@ -1,9 +1,11 @@
 import { extractArtifactDescriptors, extractArtifactHandles, extractStreamCapture } from "../../../../shared/verseshell/extraction.js";
+import type { DiagnosticTraceContext } from "../../infra/diagnostic-trace-context.js";
 import { decodeResultQueryRequest } from "../../../../shared/verseshell/validation.js";
 import type { ArtifactDescriptor, ArtifactOwnerLineage, Diagnostic, JsonObject, Observation, StreamCapture } from "../../../../shared/verseshell/types.js";
 import { VerseShellProcessManager, type VerseShellProcessConfig } from "./process-manager.js";
 import {
   VERSESHELL_GOVERNED_EXEC_PROFILE_ID,
+  VERSESHELL_PATCH_PREVIEW_PROFILE_ID,
   VERSESHELL_READONLY_FACADE_PROFILE_ID,
 } from "./policy-profile.js";
 import {
@@ -63,6 +65,8 @@ export type GovernedVerseShellResultQueryOptions = {
   env?: NodeJS.ProcessEnv;
   manager?: VerseShellProcessManager;
   expectedOwner?: Partial<ArtifactOwnerLineage>;
+  /** Host/runtime parent trace; result handles never supply lineage. */
+  trace?: DiagnosticTraceContext;
 };
 
 export class GovernedVerseShellError extends Error {
@@ -152,6 +156,20 @@ export function createReadonlyVerseShellProcessConfig(options: {
   return {
     ...createGovernedVerseShellProcessConfig(options),
     policyProfile: VERSESHELL_READONLY_FACADE_PROFILE_ID,
+  };
+}
+
+/** Process config for the P3 patch-preview bridge. It requests only read
+ * operations; commit/undo/recovery stay with the ClawX write journal. */
+export function createPatchPreviewVerseShellProcessConfig(options: {
+  cwd: string;
+  timeoutMs?: number;
+  agentId?: string;
+  env?: NodeJS.ProcessEnv;
+}): VerseShellProcessConfig {
+  return {
+    ...createGovernedVerseShellProcessConfig(options),
+    policyProfile: VERSESHELL_PATCH_PREVIEW_PROFILE_ID,
   };
 }
 
@@ -383,7 +401,11 @@ export async function queryGovernedVerseShellResult(
       ? { max_matches: boundedInteger(options.maxMatches, 50, MAX_RESULT_MATCHES) }
       : {}),
   };
-  const observation = await client.queryResult(options.handle, args);
+  const observation = await client.queryResult(options.handle, args, {
+    retryable: true,
+    effectful: false,
+    traceId: options.trace?.traceId,
+  });
   if (observation.op !== "result.query") {
     throw new GovernedVerseShellError(
       "E_VERSESHELL_RESULT_QUERY",

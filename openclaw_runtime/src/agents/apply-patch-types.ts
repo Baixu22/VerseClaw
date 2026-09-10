@@ -44,6 +44,13 @@ export type ApplyPatchJournalOptions = {
 export type ApplyPatchBatchOptions = {
   signal?: AbortSignal;
   journal?: ApplyPatchJournalOptions;
+  /**
+   * Opaque id from a prior read-only `preview_patch`. When present, the write
+   * journal recomputes the preview's change-summary digest immediately before the
+   * first mutation and refuses the commit on any drift. Absent means "no preview
+   * was taken" and the patch applies exactly as it always has.
+   */
+  previewId?: string;
 };
 
 export type PatchFileOps = {

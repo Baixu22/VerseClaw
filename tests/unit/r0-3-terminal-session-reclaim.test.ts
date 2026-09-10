@@ -88,7 +88,7 @@ describe('R0-3 terminal session reclamation', () => {
       onExit: { mock: { calls: Array<[{ exitCode: number }]> } };
     } | undefined;
     const registeredOnExit = firstSpawn?.onExit?.mock?.calls?.[0]?.[0];
-    registeredOnExit?.({ exitCode: 0 });
+    (registeredOnExit as any)?.({ exitCode: 0 });
 
     expect(manager.list().length).toBe(1);
     expect(manager.list()[0]?.sessionId).toBe(second.sessionId);
@@ -107,7 +107,7 @@ describe('R0-3 terminal session reclamation', () => {
     const spawnValue = ptyMocks.spawn.mock.results[0]?.value as {
       onExit: { mock: { calls: Array<[{ exitCode: number }]> } };
     } | undefined;
-    spawnValue?.onExit?.mock?.calls?.[0]?.[0]?.({ exitCode: 0 });
+    (spawnValue?.onExit?.mock?.calls?.[0]?.[0] as any)?.({ exitCode: 0 });
 
     const closed = manager.close(snapshot.sessionId as string, 'user-close');
     expect(closed.status).toBe('idle');

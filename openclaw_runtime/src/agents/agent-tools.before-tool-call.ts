@@ -5,6 +5,7 @@
  */
 import os from "node:os";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 import { addTimerTimeoutGraceMs } from "@openclaw/normalization-core/number-coercion";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { ToolLoopDetectionConfig } from "../config/types.tools.js";
@@ -14,12 +15,15 @@ import {
 } from "../infra/diagnostic-error-metadata.js";
 import {
   emitTrustedDiagnosticEvent,
+  resolveDiagnosticCodingOperation,
   type DiagnosticToolParamsSummary,
   type DiagnosticToolSource,
 } from "../infra/diagnostic-events.js";
 import {
   createChildDiagnosticTraceContext,
+  createDiagnosticTraceContextFromActiveScope,
   freezeDiagnosticTraceContext,
+  getActiveDiagnosticTraceContext,
   type DiagnosticTraceContext,
 } from "../infra/diagnostic-trace-context.js";
 import {
@@ -309,6 +313,19 @@ function resolveToolDiagnosticIdentity(tool: AnyAgentTool): ToolDiagnosticIdenti
     return { toolSource: "channel", toolOwner: channelMeta.channelId };
   }
   return { toolSource: "core" };
+}
+
+function resolveToolDiagnosticTrace(ctx?: HookContext): DiagnosticTraceContext {
+  const parent = ctx?.trace ?? getActiveDiagnosticTraceContext();
+  return freezeDiagnosticTraceContext(
+    parent
+      ? createChildDiagnosticTraceContext(parent)
+      : createDiagnosticTraceContextFromActiveScope(),
+  );
+}
+
+function createToolDiagnosticRequestId(): string {
+  return `tool-${randomUUID()}`;
 }
 
 type SkillUsageMatch = {
@@ -1178,15 +1195,17 @@ export function wrapToolWithBeforeToolCallHook(
           throw new Error(outcome.reason);
         }
         const normalizedToolName = normalizeToolName(toolName || "tool");
-        const trace = ctx?.trace
-          ? freezeDiagnosticTraceContext(createChildDiagnosticTraceContext(ctx.trace))
-          : undefined;
+        const trace = resolveToolDiagnosticTrace(ctx);
+        const requestId = createToolDiagnosticRequestId();
+        const codingOperation = resolveDiagnosticCodingOperation(normalizedToolName);
         const eventBase = {
+          requestId,
           ...(ctx?.runId && { runId: ctx.runId }),
           ...(ctx?.sessionKey && { sessionKey: ctx.sessionKey }),
           ...(ctx?.sessionId && { sessionId: ctx.sessionId }),
           ...(trace && { trace }),
           toolName: normalizedToolName,
+          ...(codingOperation ? { codingOperation } : {}),
           ...diagnosticIdentity,
           ...(toolCallId && { toolCallId }),
           paramsSummary: summarizeToolParams(outcome.params ?? hookParams),
@@ -1225,15 +1244,17 @@ export function wrapToolWithBeforeToolCallHook(
         ) ?? executeParams;
       recordAdjustedParamsForToolCall(toolCallId, executeParams, ctx?.runId);
       const normalizedToolName = normalizeToolName(toolName || "tool");
-      const trace = ctx?.trace
-        ? freezeDiagnosticTraceContext(createChildDiagnosticTraceContext(ctx.trace))
-        : undefined;
+      const trace = resolveToolDiagnosticTrace(ctx);
+      const requestId = createToolDiagnosticRequestId();
+      const codingOperation = resolveDiagnosticCodingOperation(normalizedToolName);
       const eventBase = {
+        requestId,
         ...(ctx?.runId && { runId: ctx.runId }),
         ...(ctx?.sessionKey && { sessionKey: ctx.sessionKey }),
         ...(ctx?.sessionId && { sessionId: ctx.sessionId }),
         ...(trace && { trace }),
         toolName: normalizedToolName,
+        ...(codingOperation ? { codingOperation } : {}),
         ...diagnosticIdentity,
         ...(toolCallId && { toolCallId }),
         paramsSummary: summarizeToolParams(executeParams),

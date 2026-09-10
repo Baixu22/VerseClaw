@@ -46,7 +46,10 @@ import {
   type RuntimeTaskEventLogAppendResult,
   type RuntimeTaskEvent,
   type RuntimeTaskStatus,
+  type RuntimeLineage,
   type ToolCallResult,
+  mergeRuntimeLineage,
+  normalizeRuntimeLineage,
 } from "../runtime-core/index.js";
 import {
   createRuntimeMemoryRuntimeIntegration,
@@ -60,7 +63,11 @@ import {
   type KeCandidateGenerationDiagnostics,
 } from "../runtime-core/ke-candidate-generation.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
-import { runAgentHarnessTaskPhaseChangeHook } from "./harness/lifecycle-hook-helpers.js";
+import {
+  bindTaskStateHandlerConfigForRun,
+  runAgentHarnessTaskPhaseChangeHook,
+  type TaskPhaseSideEffectResult,
+} from "./harness/lifecycle-hook-helpers.js";
 
 import type {
   ObservedOrchestrationRunRequest,
@@ -155,9 +162,9 @@ export type TaskLoopRuntimeMemoryEpisodeWriter = Pick<
 export type TaskLoopAgentMapPromptCandidateRuntimeShadowResultProvider =
   | AgentMapResult
   | ((input: {
-    record: TaskLoopRunRecord;
-    contextPack: TaskLoopContextPack;
-  }) => AgentMapResult | undefined);
+      record: TaskLoopRunRecord;
+      contextPack: TaskLoopContextPack;
+    }) => AgentMapResult | undefined);
 export type TaskLoopCodeTaskEvidenceGateRuntimeShadowCollectionSink = (
   result: CodeTaskEvidenceGateRuntimeShadowCollectionResult,
 ) => void;
@@ -180,6 +187,8 @@ export type TaskLoopRunRequest = {
   maxWorkers?: number;
   includeVerifier?: boolean;
   acceptance?: string[];
+  /** Optional parent Mission lineage; missing legacy fields remain absent. */
+  lineage?: RuntimeLineage;
 };
 
 export type TaskLoopSubagentEvidence = {
@@ -288,6 +297,7 @@ export type TaskLoopLifecycleEvent = {
   testsRun?: string[];
   blockedReason?: string;
   error?: string;
+  lineage?: RuntimeLineage;
   ts: number;
 };
 
@@ -316,6 +326,7 @@ export type TaskLoopRunRecord = {
   workspaceId?: string | null;
   task: string;
   taskLedgerRootId?: string;
+  lineage?: RuntimeLineage;
   status: TaskLoopStatus;
   phase: TaskLoopPhase;
   iteration: number;
@@ -344,9 +355,19 @@ export type TaskLoopRunRecord = {
   runtimeMemoryReadHydrationShadowOnlyDiagnostics?: TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics;
   /** KE-P1-1: candidate generation diagnostics at task-loop terminal (flag-gated, advisory only). */
   keCandidateGenerationDiagnostics?: KeCandidateGenerationDiagnostics;
+  /** DCS phase side effects observed before the controller returns. */
+  phaseSideEffects?: TaskLoopPhaseSideEffectEvidence[];
+  /** Terminal SEKB trajectory captured from the authoritative phase hook. */
+  sekbTrajectoryId?: string;
 };
 
 export type TaskLoopRunResult = TaskLoopRunRecord;
+
+export type TaskLoopPhaseSideEffectEvidence = TaskPhaseSideEffectResult & {
+  fromStatus: RuntimeTaskStatus;
+  toStatus: RuntimeTaskStatus;
+  capturedAt: number;
+};
 
 export type TaskLoopControllerDeps = {
   idFactory?: (prefix: string) => string;
@@ -422,6 +443,11 @@ export type RunObservedFn = (
 
 const taskLoopRuns = new Map<string, TaskLoopRunRecord>();
 const taskLoopRuntimeStatusByRun = new WeakMap<TaskLoopRunRecord, RuntimeTaskStatus>();
+const taskLoopPhaseSideEffectQueues = new WeakMap<TaskLoopRunRecord, Promise<void>>();
+const taskLoopPhaseSideEffectResults = new WeakMap<
+  TaskLoopRunRecord,
+  TaskLoopPhaseSideEffectEvidence[]
+>();
 const taskLoopPhaseLog = createSubsystemLogger("agents/task-loop");
 
 /** RC-06D projection gate (default-off). Reads env so operators can enable the
@@ -454,12 +480,20 @@ function defaultId(prefix: string): string {
   return `${prefix}_${crypto.randomUUID()}`;
 }
 
-function positiveInt(value: unknown, fallback: number, min = 1, max = Number.MAX_SAFE_INTEGER): number {
+function positiveInt(
+  value: unknown,
+  fallback: number,
+  min = 1,
+  max = Number.MAX_SAFE_INTEGER,
+): number {
   if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
   return Math.max(min, Math.min(max, Math.floor(value)));
 }
 
-function resolveAgentTaskLoopConfig(cfg: OpenClawConfig | undefined, agentId?: string): TaskLoopConfig {
+function resolveAgentTaskLoopConfig(
+  cfg: OpenClawConfig | undefined,
+  agentId?: string,
+): TaskLoopConfig {
   const defaults = cfg?.agents?.defaults?.taskLoop ?? {};
   const agent = cfg?.agents?.list?.find((entry: AgentConfig) => entry.id === agentId);
   return { ...defaults, ...(agent?.taskLoop ? agent.taskLoop : {}) };
@@ -480,7 +514,9 @@ function inferTemplateId(request: TaskLoopRunRequest, config: TaskLoopConfig): s
 }
 
 function resolveMaxWorkers(request: TaskLoopRunRequest, cfg: OpenClawConfig | undefined): number {
-  const configured = cfg?.agents?.defaults?.subagents?.maxChildrenPerAgent ?? DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT;
+  const configured =
+    cfg?.agents?.defaults?.subagents?.maxChildrenPerAgent ??
+    DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT;
   const requested = positiveInt(request.maxWorkers, 4, 1, 20);
   return Math.max(1, Math.min(configured, requested));
 }
@@ -521,40 +557,52 @@ function nonEmptyText(value: string | undefined | null): string | undefined {
 
 function asRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
+    ? (value as Record<string, unknown>)
     : null;
 }
 
 function stringList(value: unknown, limit = 12): string[] {
   if (!Array.isArray(value)) return [];
-  return uniqueStrings(value.flatMap((entry) => typeof entry === "string" ? [entry] : []), limit);
+  return uniqueStrings(
+    value.flatMap((entry) => (typeof entry === "string" ? [entry] : [])),
+    limit,
+  );
 }
 
-function normalizeEvidenceRefs(value: unknown, fallback: TaskLoopEvidenceRef[]): TaskLoopEvidenceRef[] {
+function normalizeEvidenceRefs(
+  value: unknown,
+  fallback: TaskLoopEvidenceRef[],
+): TaskLoopEvidenceRef[] {
   if (!Array.isArray(value)) return fallback;
   const refs = value.flatMap((entry) => {
     const record = asRecord(entry);
     const ref = typeof record?.ref === "string" ? record.ref.trim() : "";
     if (!ref) return [];
-    const type = typeof record?.type === "string"
-      && ["trace", "subagent", "tool", "manual", "other"].includes(record.type)
-      ? record.type as TaskLoopEvidenceRef["type"]
-      : "other";
-    return [{
-      type,
-      ref,
-      ...(typeof record?.label === "string" && record.label.trim() ? { label: record.label.trim() } : {}),
-      ...(typeof record?.summary === "string" && record.summary.trim()
-        ? { summary: truncateText(record.summary, 2_000) }
-        : {}),
-    }];
+    const type =
+      typeof record?.type === "string" &&
+      ["trace", "subagent", "tool", "manual", "other"].includes(record.type)
+        ? (record.type as TaskLoopEvidenceRef["type"])
+        : "other";
+    return [
+      {
+        type,
+        ref,
+        ...(typeof record?.label === "string" && record.label.trim()
+          ? { label: record.label.trim() }
+          : {}),
+        ...(typeof record?.summary === "string" && record.summary.trim()
+          ? { summary: truncateText(record.summary, 2_000) }
+          : {}),
+      },
+    ];
   });
   return refs.length ? refs.slice(0, 20) : fallback;
 }
 
 function extractJsonCandidates(text: string): unknown[] {
   const candidates: string[] = [];
-  const taskLoopFence = /```(?:task_loop_evidence|clawgraph_handoff|json\s+task_loop_evidence|json\s+clawgraph_handoff)\s*([\s\S]*?)```/giu;
+  const taskLoopFence =
+    /```(?:task_loop_evidence|clawgraph_handoff|json\s+task_loop_evidence|json\s+clawgraph_handoff)\s*([\s\S]*?)```/giu;
   for (const match of text.matchAll(taskLoopFence)) {
     candidates.push(match[1] ?? "");
   }
@@ -577,7 +625,9 @@ function extractJsonCandidates(text: string): unknown[] {
 
 function sectionLines(text: string, title: string, limit = 8): string[] {
   const lines = text.split(/\r?\n/);
-  const start = lines.findIndex((line) => new RegExp(`^#{0,4}\\s*${title}\\b`, "iu").test(line.trim()));
+  const start = lines.findIndex((line) =>
+    new RegExp(`^#{0,4}\\s*${title}\\b`, "iu").test(line.trim()),
+  );
   if (start < 0) return [];
   const body: string[] = [];
   for (const line of lines.slice(start + 1)) {
@@ -591,30 +641,38 @@ function sectionLines(text: string, title: string, limit = 8): string[] {
 }
 
 function extractPathLikeItems(text: string): string[] {
-  const matches = text.match(/(?:[A-Za-z]:\\[^\s,;:]+|(?:[\w.-]+\/)+[\w.-]+|[\w.-]+\.(?:ts|tsx|js|jsx|mjs|cjs|json|md|css|scss|html|py|rs|go|java|yml|yaml))/giu);
+  const matches = text.match(
+    /(?:[A-Za-z]:\\[^\s,;:]+|(?:[\w.-]+\/)+[\w.-]+|[\w.-]+\.(?:ts|tsx|js|jsx|mjs|cjs|json|md|css|scss|html|py|rs|go|java|yml|yaml))/giu,
+  );
   return uniqueStrings(matches ?? [], 12);
 }
 
 function extractTestLines(text: string): string[] {
-  const lines = text.split(/\r?\n/)
+  const lines = text
+    .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((line) => /\b(test|spec|vitest|playwright|typecheck|lint|passed|failed|coverage)\b/iu.test(line));
+    .filter((line) =>
+      /\b(test|spec|vitest|playwright|typecheck|lint|passed|failed|coverage)\b/iu.test(line),
+    );
   return uniqueStrings(lines, 8);
 }
 
 function readResultText(entry: SubagentRunRecord | null | undefined): string {
-  const legacyFrozen = entry as (SubagentRunRecord & {
-    frozenResultText?: string | null;
-    fallbackFrozenResultText?: string | null;
-  }) | null | undefined;
+  const legacyFrozen = entry as
+    | (SubagentRunRecord & {
+        frozenResultText?: string | null;
+        fallbackFrozenResultText?: string | null;
+      })
+    | null
+    | undefined;
   return (
-    entry?.completion?.resultText?.trim()
-    || entry?.delivery?.payload?.frozenResultText?.trim()
-    || legacyFrozen?.frozenResultText?.trim()
-    || entry?.delivery?.payload?.fallbackFrozenResultText?.trim()
-    || legacyFrozen?.fallbackFrozenResultText?.trim()
-    || entry?.completion?.fallbackResultText?.trim()
-    || ""
+    entry?.completion?.resultText?.trim() ||
+    entry?.delivery?.payload?.frozenResultText?.trim() ||
+    legacyFrozen?.frozenResultText?.trim() ||
+    entry?.delivery?.payload?.fallbackFrozenResultText?.trim() ||
+    legacyFrozen?.fallbackFrozenResultText?.trim() ||
+    entry?.completion?.fallbackResultText?.trim() ||
+    ""
   );
 }
 
@@ -623,7 +681,10 @@ function parseEvidenceText(params: {
   roleName: string;
   childRunId: string;
   fallbackRef: TaskLoopEvidenceRef;
-}): Pick<TaskLoopSubagentEvidence, "summary" | "filesTouched" | "testsRun" | "evidenceRefs" | "decisions" | "risks" | "followupTasks"> {
+}): Pick<
+  TaskLoopSubagentEvidence,
+  "summary" | "filesTouched" | "testsRun" | "evidenceRefs" | "decisions" | "risks" | "followupTasks"
+> {
   const text = truncateText(params.text, 6_000);
   let structured: Record<string, unknown> | null = null;
   for (const candidate of extractJsonCandidates(text)) {
@@ -633,38 +694,54 @@ function parseEvidenceText(params: {
       break;
     }
   }
-  const summary = typeof structured?.summary === "string" && structured.summary.trim()
-    ? structured.summary.trim()
-    : sectionLines(text, "Summary", 4).join("; ") || text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean).slice(0, 4).join("\n");
-  const filesTouched = uniqueStrings([
-    ...stringList(structured?.filesTouched),
-    ...sectionLines(text, "Files Touched"),
-    ...sectionLines(text, "Files"),
-    ...extractPathLikeItems(text),
-  ], 20);
-  const testsRun = uniqueStrings([
-    ...stringList(structured?.testsRun),
-    ...sectionLines(text, "Tests Run"),
-    ...sectionLines(text, "Tests"),
-    ...extractTestLines(text),
-  ], 20);
-  const decisions = uniqueStrings([
-    ...stringList(structured?.decisions),
-    ...sectionLines(text, "Decisions"),
-  ], 12);
-  const risks = uniqueStrings([
-    ...stringList(structured?.risks),
-    ...sectionLines(text, "Risks"),
-  ], 12);
-  const followupTasks = uniqueStrings([
-    ...stringList(structured?.followupTasks),
-    ...sectionLines(text, "Follow-up Candidates"),
-    ...extractFollowupCandidates({
-      text,
-      roleName: params.roleName,
-      childRunId: params.childRunId,
-    }).map((candidate) => candidate.task),
-  ], 12);
+  const summary =
+    typeof structured?.summary === "string" && structured.summary.trim()
+      ? structured.summary.trim()
+      : sectionLines(text, "Summary", 4).join("; ") ||
+        text
+          .split(/\r?\n/)
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .slice(0, 4)
+          .join("\n");
+  const filesTouched = uniqueStrings(
+    [
+      ...stringList(structured?.filesTouched),
+      ...sectionLines(text, "Files Touched"),
+      ...sectionLines(text, "Files"),
+      ...extractPathLikeItems(text),
+    ],
+    20,
+  );
+  const testsRun = uniqueStrings(
+    [
+      ...stringList(structured?.testsRun),
+      ...sectionLines(text, "Tests Run"),
+      ...sectionLines(text, "Tests"),
+      ...extractTestLines(text),
+    ],
+    20,
+  );
+  const decisions = uniqueStrings(
+    [...stringList(structured?.decisions), ...sectionLines(text, "Decisions")],
+    12,
+  );
+  const risks = uniqueStrings(
+    [...stringList(structured?.risks), ...sectionLines(text, "Risks")],
+    12,
+  );
+  const followupTasks = uniqueStrings(
+    [
+      ...stringList(structured?.followupTasks),
+      ...sectionLines(text, "Follow-up Candidates"),
+      ...extractFollowupCandidates({
+        text,
+        roleName: params.roleName,
+        childRunId: params.childRunId,
+      }).map((candidate) => candidate.task),
+    ],
+    12,
+  );
   return {
     summary: truncateText(summary, 2_000),
     filesTouched,
@@ -676,7 +753,9 @@ function parseEvidenceText(params: {
   };
 }
 
-function spawnStatusForEvidence(outcome: OrchestrationWorkerOutcome): TaskLoopSubagentEvidence["spawnStatus"] {
+function spawnStatusForEvidence(
+  outcome: OrchestrationWorkerOutcome,
+): TaskLoopSubagentEvidence["spawnStatus"] {
   return outcome.spawn.status === "forbidden"
     ? "forbidden"
     : outcome.spawn.status === "accepted"
@@ -690,7 +769,9 @@ function failureStatusForEvidence(status: string): TaskLoopSubagentEvidence["spa
   return "error";
 }
 
-function completionStatusForFailure(status: TaskLoopSubagentEvidence["spawnStatus"]): TaskLoopSubagentEvidence["completionStatus"] {
+function completionStatusForFailure(
+  status: TaskLoopSubagentEvidence["spawnStatus"],
+): TaskLoopSubagentEvidence["completionStatus"] {
   if (status === "forbidden") return "permission_blocked";
   if (status === "timeout") return "timeout";
   return "failed";
@@ -751,7 +832,9 @@ async function collectSubagentEvidence(
         roleName: outcome.roleName,
         phase,
         ...(taskNodeIdForOutcome(outcome) ? { taskNodeId: taskNodeIdForOutcome(outcome) } : {}),
-        ...(typeof outcome.ledger?.executionWave === "number" ? { executionWave: outcome.ledger.executionWave } : {}),
+        ...(typeof outcome.ledger?.executionWave === "number"
+          ? { executionWave: outcome.ledger.executionWave }
+          : {}),
         ...(childRunId ? { childRunId } : {}),
         ...(childSessionKey ? { childSessionKey } : {}),
         spawnStatus,
@@ -773,7 +856,8 @@ async function collectSubagentEvidence(
     const resultText = readResultText(registryEntry);
     const completionOutcome = registryEntry?.outcome ?? registryEntry?.execution?.outcome;
     const outcomeStatus = completionOutcome?.status === "ok" ? "ok" : completionOutcome?.status;
-    const childId = childRunId ?? registryEntry?.runId ?? `${orchestrationRunId}:${outcome.roleName}`;
+    const childId =
+      childRunId ?? registryEntry?.runId ?? `${orchestrationRunId}:${outcome.roleName}`;
     const quality = scoreWorkerQuality({
       roleName: outcome.roleName,
       childRunId: childId,
@@ -787,7 +871,9 @@ async function collectSubagentEvidence(
         roleName: outcome.roleName,
         phase,
         ...(taskNodeIdForOutcome(outcome) ? { taskNodeId: taskNodeIdForOutcome(outcome) } : {}),
-        ...(typeof outcome.ledger?.executionWave === "number" ? { executionWave: outcome.ledger.executionWave } : {}),
+        ...(typeof outcome.ledger?.executionWave === "number"
+          ? { executionWave: outcome.ledger.executionWave }
+          : {}),
         ...(childRunId ? { childRunId } : {}),
         ...(childSessionKey ? { childSessionKey } : {}),
         spawnStatus,
@@ -814,29 +900,37 @@ async function collectSubagentEvidence(
         summary: truncateText(resultText, 2_000),
       },
     });
-    const failedCompletion = completionOutcome?.status === "error" || completionOutcome?.status === "timeout";
+    const failedCompletion =
+      completionOutcome?.status === "error" || completionOutcome?.status === "timeout";
     evidence.push({
       roleName: outcome.roleName,
       phase,
       ...(taskNodeIdForOutcome(outcome) ? { taskNodeId: taskNodeIdForOutcome(outcome) } : {}),
-      ...(typeof outcome.ledger?.executionWave === "number" ? { executionWave: outcome.ledger.executionWave } : {}),
+      ...(typeof outcome.ledger?.executionWave === "number"
+        ? { executionWave: outcome.ledger.executionWave }
+        : {}),
       ...(childRunId ? { childRunId } : {}),
       ...(childSessionKey ? { childSessionKey } : {}),
       spawnStatus,
       completionStatus: failedCompletion ? "failed" : "completed",
       ...parsed,
       quality,
-      ...(failedCompletion && completionOutcome?.error ? { failureReason: completionOutcome.error } : {}),
+      ...(failedCompletion && completionOutcome?.error
+        ? { failureReason: completionOutcome.error }
+        : {}),
       capturedAt: registryEntry?.completion?.capturedAt ?? registryEntry?.endedAt ?? now(),
     });
   }
   for (const failure of result.failures) {
     const spawnStatus = failureStatusForEvidence(failure.status);
-    const hasOutcomeEvidence = result.outcomes.some((outcome) => outcome.roleName === failure.roleName);
-    const alreadyCaptured = evidence.some((entry) =>
-      entry.roleName === failure.roleName
-      && entry.spawnStatus === spawnStatus
-      && entry.failureReason === failure.error,
+    const hasOutcomeEvidence = result.outcomes.some(
+      (outcome) => outcome.roleName === failure.roleName,
+    );
+    const alreadyCaptured = evidence.some(
+      (entry) =>
+        entry.roleName === failure.roleName &&
+        entry.spawnStatus === spawnStatus &&
+        entry.failureReason === failure.error,
     );
     if (alreadyCaptured || (hasOutcomeEvidence && spawnStatus !== "timeout")) {
       continue;
@@ -856,12 +950,14 @@ async function collectSubagentEvidence(
       summary: failure.error ?? `${failure.roleName} reported ${spawnStatus}.`,
       filesTouched: [],
       testsRun: [],
-      evidenceRefs: [{
-        type: "subagent",
-        ref,
-        label: failure.roleName,
-        summary: `worker failure status: ${failure.status}`,
-      }],
+      evidenceRefs: [
+        {
+          type: "subagent",
+          ref,
+          label: failure.roleName,
+          summary: `worker failure status: ${failure.status}`,
+        },
+      ],
       decisions: [],
       risks: failure.error ? [failure.error] : [],
       followupTasks: [],
@@ -899,19 +995,24 @@ function evidenceFromResult(
         evidence.childSessionKey ? `childSessionKey=${evidence.childSessionKey}` : "",
         evidence.failureReason ?? "",
         evidence.summary,
-      ].filter(Boolean).join("; "),
+      ]
+        .filter(Boolean)
+        .join("; "),
     });
   }
   return refs;
 }
 
 function failuresFromResult(result: OrchestrationRunResult): string[] {
-  return result.failures.map((failure) =>
-    `${failure.roleName}: ${failure.status}${failure.error ? ` - ${failure.error}` : ""}`,
+  return result.failures.map(
+    (failure) =>
+      `${failure.roleName}: ${failure.status}${failure.error ? ` - ${failure.error}` : ""}`,
   );
 }
 
-function summarizeRoleQuality(evidence: readonly TaskLoopSubagentEvidence[]): TaskLoopRoleQualitySummary {
+function summarizeRoleQuality(
+  evidence: readonly TaskLoopSubagentEvidence[],
+): TaskLoopRoleQualitySummary {
   const roles = evidence.map((entry) => ({
     roleName: entry.roleName,
     overall: entry.quality.overall,
@@ -935,16 +1036,20 @@ function lifecycleGateSummary(
     status: gate.status,
     reasons: gate.reasons.slice(0, 8),
     workerCount: evidence.filter((entry) => entry.phase === "worker").length,
-    failedWorkerCount: evidence.filter((entry) =>
-      entry.completionStatus === "failed"
-      || entry.completionStatus === "permission_blocked"
-      || entry.completionStatus === "timeout",
+    failedWorkerCount: evidence.filter(
+      (entry) =>
+        entry.completionStatus === "failed" ||
+        entry.completionStatus === "permission_blocked" ||
+        entry.completionStatus === "timeout",
     ).length,
-    unverifiableWorkerCount: evidence.filter((entry) => entry.completionStatus === "unverifiable").length,
+    unverifiableWorkerCount: evidence.filter((entry) => entry.completionStatus === "unverifiable")
+      .length,
   };
 }
 
-function roleQualityLifecycleSummary(summary: TaskLoopRoleQualitySummary): Pick<TaskLoopRoleQualitySummary, "good" | "needsAttention" | "poorAttempt"> {
+function roleQualityLifecycleSummary(
+  summary: TaskLoopRoleQualitySummary,
+): Pick<TaskLoopRoleQualitySummary, "good" | "needsAttention" | "poorAttempt"> {
   return {
     good: summary.good,
     needsAttention: summary.needsAttention,
@@ -953,11 +1058,17 @@ function roleQualityLifecycleSummary(summary: TaskLoopRoleQualitySummary): Pick<
 }
 
 function filesTouchedFromEvidence(evidence: readonly TaskLoopSubagentEvidence[]): string[] {
-  return uniqueStrings(evidence.flatMap((entry) => entry.filesTouched), 40);
+  return uniqueStrings(
+    evidence.flatMap((entry) => entry.filesTouched),
+    40,
+  );
 }
 
 function testsRunFromEvidence(evidence: readonly TaskLoopSubagentEvidence[]): string[] {
-  return uniqueStrings(evidence.flatMap((entry) => entry.testsRun), 40);
+  return uniqueStrings(
+    evidence.flatMap((entry) => entry.testsRun),
+    40,
+  );
 }
 
 function gateReasonsFromEvidence(evidence: readonly TaskLoopSubagentEvidence[]): string[] {
@@ -971,7 +1082,11 @@ function gateReasonsFromEvidence(evidence: readonly TaskLoopSubagentEvidence[]):
       reasons.push(`worker_failed:${entry.roleName}`);
     } else if (entry.completionStatus === "unverifiable") {
       reasons.push(`unverifiable_result:${entry.roleName}`);
-    } else if (entry.phase === "worker" && !entry.summary.trim() && entry.evidenceRefs.length === 0) {
+    } else if (
+      entry.phase === "worker" &&
+      !entry.summary.trim() &&
+      entry.evidenceRefs.length === 0
+    ) {
       reasons.push(`evidence_gap:${entry.roleName}`);
     }
   }
@@ -987,16 +1102,14 @@ function evaluateEvidenceGate(
   maxRepairIterations: number,
 ): TaskLoopEvidenceGateResult {
   const reasons = gateReasonsFromEvidence(evidence);
-  const blockingEvidence = evidence.filter((entry) =>
-    entry.completionStatus !== "completed"
-    || entry.spawnStatus !== "accepted"
-    || (entry.phase === "worker" && !entry.summary.trim() && entry.evidenceRefs.length === 0),
+  const blockingEvidence = evidence.filter(
+    (entry) =>
+      entry.completionStatus !== "completed" ||
+      entry.spawnStatus !== "accepted" ||
+      (entry.phase === "worker" && !entry.summary.trim() && entry.evidenceRefs.length === 0),
   );
-  const status: TaskLoopEvidenceGateResult["status"] = reasons.length === 0
-    ? "pass"
-    : repairIterations < maxRepairIterations
-      ? "repair"
-      : "blocked";
+  const status: TaskLoopEvidenceGateResult["status"] =
+    reasons.length === 0 ? "pass" : repairIterations < maxRepairIterations ? "repair" : "blocked";
   return {
     status,
     reasons,
@@ -1025,7 +1138,8 @@ function controlSignalsFromEvidenceGate(
       return {
         kind: "blocked_dependency",
         severity: repairable ? "warning" : "blocking",
-        message: `Task-loop worker ${roleName ?? ""} ${code === "worker_timeout" ? "timed out" : "failed"}.`.trim(),
+        message:
+          `Task-loop worker ${roleName ?? ""} ${code === "worker_timeout" ? "timed out" : "failed"}.`.trim(),
         suggestedAction: repairable ? "repair" : "block",
         source: "task_loop.evidence_gate",
       };
@@ -1048,15 +1162,14 @@ function applyEvidenceGateToSelfCheck(
     return selfCheck;
   }
   const evidenceSignals = controlSignalsFromEvidenceGate(gate);
-  const missingEvidence = uniqueStrings([
-    ...selfCheck.missingEvidence,
-    ...gate.reasons,
-  ], 30);
-  const validationState = selfCheck.validationState ?? deriveValidationState({
-    status: "missing",
-    gaps: ["Task-loop subagent evidence gate did not pass."],
-    evidenceRefs: gate.blockingEvidence.flatMap((entry) => entry.evidenceRefs),
-  });
+  const missingEvidence = uniqueStrings([...selfCheck.missingEvidence, ...gate.reasons], 30);
+  const validationState =
+    selfCheck.validationState ??
+    deriveValidationState({
+      status: "missing",
+      gaps: ["Task-loop subagent evidence gate did not pass."],
+      evidenceRefs: gate.blockingEvidence.flatMap((entry) => entry.evidenceRefs),
+    });
   const decision: TaskLoopSelfCheckResult["decision"] =
     selfCheck.decision === "blocked" || gate.status === "blocked" ? "blocked" : "repair";
   return {
@@ -1073,15 +1186,20 @@ function applyEvidenceGateToSelfCheck(
       signals: [...(selfCheck.controlSignals ?? []), ...evidenceSignals],
       validationState,
     }),
-    repairBrief: decision === "repair"
-      ? selfCheck.repairBrief ?? `Resolve task-loop evidence gate gaps: ${gate.reasons.join("; ")}`
-      : selfCheck.repairBrief,
-    contextSummary: selfCheck.contextSummary
-      || `Task-loop evidence gate ${gate.status}: ${gate.reasons.join("; ")}`,
+    repairBrief:
+      decision === "repair"
+        ? (selfCheck.repairBrief ??
+          `Resolve task-loop evidence gate gaps: ${gate.reasons.join("; ")}`)
+        : selfCheck.repairBrief,
+    contextSummary:
+      selfCheck.contextSummary ||
+      `Task-loop evidence gate ${gate.status}: ${gate.reasons.join("; ")}`,
   };
 }
 
-function evidenceForContext(evidence: readonly TaskLoopSubagentEvidence[]): TaskLoopSubagentEvidenceForContext[] {
+function evidenceForContext(
+  evidence: readonly TaskLoopSubagentEvidence[],
+): TaskLoopSubagentEvidenceForContext[] {
   return evidence.map((entry) => ({
     roleName: entry.roleName,
     phase: entry.phase,
@@ -1098,7 +1216,9 @@ function evidenceForContext(evidence: readonly TaskLoopSubagentEvidence[]): Task
   }));
 }
 
-function checkpointEvidenceRefs(refs: readonly TaskLoopEvidenceRef[]): RuntimeResumeCheckpoint["evidenceRefs"] {
+function checkpointEvidenceRefs(
+  refs: readonly TaskLoopEvidenceRef[],
+): RuntimeResumeCheckpoint["evidenceRefs"] {
   return refs.map((ref) => ({
     type: ref.type,
     ref: ref.ref,
@@ -1110,21 +1230,26 @@ function checkpointReviewNeededItems(
   record: TaskLoopRunRecord,
   selfCheck?: TaskLoopSelfCheckResult,
 ): string[] {
-  return uniqueStrings([
-    ...record.remaining,
-    ...(record.evidenceGate?.reasons.map((reason) => `evidence_gate:${reason}`) ?? []),
-    ...(selfCheck?.missingEvidence.map((item) => `missing_evidence:${item}`) ?? []),
-    ...(selfCheck?.verificationGaps.map((item) => `verification_gap:${item}`) ?? []),
-  ], 40);
+  return uniqueStrings(
+    [
+      ...record.remaining,
+      ...(record.evidenceGate?.reasons.map((reason) => `evidence_gate:${reason}`) ?? []),
+      ...(selfCheck?.missingEvidence.map((item) => `missing_evidence:${item}`) ?? []),
+      ...(selfCheck?.verificationGaps.map((item) => `verification_gap:${item}`) ?? []),
+    ],
+    40,
+  );
 }
 
 function runtimeCoreJsonValue(value: unknown): RuntimeCoreJsonValue | undefined {
-  if (value === undefined || typeof value === "function" || typeof value === "symbol") return undefined;
+  if (value === undefined || typeof value === "function" || typeof value === "symbol")
+    return undefined;
   if (value === null || typeof value === "string" || typeof value === "boolean") return value;
   if (typeof value === "number") return Number.isFinite(value) ? value : null;
   if (typeof value === "bigint") return value.toString();
   if (Array.isArray(value)) return value.map((entry) => runtimeCoreJsonValue(entry) ?? null);
-  if (value && typeof value === "object") return runtimeCoreJsonObject(value as Record<string, unknown>);
+  if (value && typeof value === "object")
+    return runtimeCoreJsonObject(value as Record<string, unknown>);
   return undefined;
 }
 
@@ -1181,9 +1306,11 @@ function runtimeRegistryDiagnosticShadowEnabled(
   if (!flags) return false;
   if (!flags.registryDiagnosticsCollector) return false;
   if (diagnostic.surface === "context") {
-    return flags.registryPilotEnabled
-      && flags.providerRegistryShadow
-      && flags.contextProviderRegistryPilot;
+    return (
+      flags.registryPilotEnabled &&
+      flags.providerRegistryShadow &&
+      flags.contextProviderRegistryPilot
+    );
   }
   if (diagnostic.surface === "tool") {
     return flags.toolRegistryShadow;
@@ -1191,12 +1318,14 @@ function runtimeRegistryDiagnosticShadowEnabled(
   return false;
 }
 
-function runtimeRegistryDiagnosticsForShadow(record: TaskLoopRunRecord): RuntimeRegistryDiagnostic[] {
+function runtimeRegistryDiagnosticsForShadow(
+  record: TaskLoopRunRecord,
+): RuntimeRegistryDiagnostic[] {
   const shadow = runtimeEventShadowFlags.get(record);
   const diagnostics = shadow?.runtimeRegistryDiagnostics?.() ?? [];
   return diagnostics
     .filter((diagnostic) =>
-      runtimeRegistryDiagnosticShadowEnabled(shadow?.runtimeRegistryFlags, diagnostic)
+      runtimeRegistryDiagnosticShadowEnabled(shadow?.runtimeRegistryFlags, diagnostic),
     )
     .map(sanitizeRuntimeRegistryDiagnostic);
 }
@@ -1253,12 +1382,14 @@ function registryDiagnosticEvidenceRefWithMetadata(
 function runtimeRegistryEvidenceRefsForShadow(
   diagnostics: readonly RuntimeRegistryDiagnostic[],
 ): EvidenceRef[] {
-  return dedupeEvidenceRefs(diagnostics.flatMap((diagnostic, diagnosticIndex) => [
-    ...diagnostic.evidenceRefs.map((ref, evidenceIndex) =>
-      registryDiagnosticEvidenceRefWithMetadata(ref, diagnostic, diagnosticIndex, evidenceIndex)
-    ),
-    registryDiagnosticShadowEvidenceRef(diagnostic, diagnosticIndex),
-  ]));
+  return dedupeEvidenceRefs(
+    diagnostics.flatMap((diagnostic, diagnosticIndex) => [
+      ...diagnostic.evidenceRefs.map((ref, evidenceIndex) =>
+        registryDiagnosticEvidenceRefWithMetadata(ref, diagnostic, diagnosticIndex, evidenceIndex),
+      ),
+      registryDiagnosticShadowEvidenceRef(diagnostic, diagnosticIndex),
+    ]),
+  );
 }
 
 function runtimeRegistryShadowMetadata(
@@ -1332,8 +1463,12 @@ function evidenceRefForSubagent(entry: TaskLoopSubagentEvidence, index: number):
   };
 }
 
-function verifierToolEvidenceRefForSubagent(entry: TaskLoopSubagentEvidence, index: number): EvidenceRef {
-  const ref = entry.childRunId ?? entry.childSessionKey ?? `${entry.phase}:${entry.roleName}:${index}`;
+function verifierToolEvidenceRefForSubagent(
+  entry: TaskLoopSubagentEvidence,
+  index: number,
+): EvidenceRef {
+  const ref =
+    entry.childRunId ?? entry.childSessionKey ?? `${entry.phase}:${entry.roleName}:${index}`;
   return {
     type: "tool",
     ref: `task_loop.subagent:${ref}`,
@@ -1350,7 +1485,10 @@ function verifierToolEvidenceRefForSubagent(entry: TaskLoopSubagentEvidence, ind
   };
 }
 
-function verifierToolResultForSubagent(entry: TaskLoopSubagentEvidence, index: number): ToolCallResult {
+function verifierToolResultForSubagent(
+  entry: TaskLoopSubagentEvidence,
+  index: number,
+): ToolCallResult {
   const evidence = [verifierToolEvidenceRefForSubagent(entry, index)];
   const status: ToolCallResult["status"] =
     entry.spawnStatus === "forbidden" || entry.completionStatus === "permission_blocked"
@@ -1376,8 +1514,11 @@ function verifierToolResultForSubagent(entry: TaskLoopSubagentEvidence, index: n
       : {
           error: {
             type: status === "denied" ? "permission" : "tool",
-            message: entry.failureReason ?? `TaskLoop subagent ${entry.roleName} did not complete successfully.`,
-            retryable: entry.completionStatus === "timeout" || entry.completionStatus === "unverifiable",
+            message:
+              entry.failureReason ??
+              `TaskLoop subagent ${entry.roleName} did not complete successfully.`,
+            retryable:
+              entry.completionStatus === "timeout" || entry.completionStatus === "unverifiable",
             evidenceRefs: evidence,
           },
         }),
@@ -1388,10 +1529,7 @@ function standaloneVerifierOpenObligations(
   selfCheck: TaskLoopSelfCheckResult | undefined,
 ): string[] {
   if (!selfCheck) return [];
-  return uniqueStrings([
-    ...selfCheck.missingEvidence,
-    ...selfCheck.verificationGaps,
-  ], 30);
+  return uniqueStrings([...selfCheck.missingEvidence, ...selfCheck.verificationGaps], 30);
 }
 
 function standaloneVerifierReportForTaskLoop(params: {
@@ -1425,13 +1563,14 @@ function standaloneVerifierReportForTaskLoop(params: {
       toolResults,
       eventReplay: {
         status: "consistent",
-        state: params.record.status === "complete"
-          ? "completed"
-          : params.record.status === "error"
-            ? "failed"
-            : params.record.status === "blocked"
-              ? "blocked"
-              : "running",
+        state:
+          params.record.status === "complete"
+            ? "completed"
+            : params.record.status === "error"
+              ? "failed"
+              : params.record.status === "blocked"
+                ? "blocked"
+                : "running",
         diagnosticCodes: [],
         pendingToolCallIds: [],
         evidenceRefCount,
@@ -1557,9 +1696,7 @@ function codeTaskEvidenceGateRuntimeShadowCollectionMode(
 function codeTaskEvidenceGateTaskKindForTaskLoop(
   record: TaskLoopRunRecord,
 ): "code_edit" | "unknown" {
-  return (record.evidenceGate?.filesTouched.length ?? 0) > 0
-    ? "code_edit"
-    : "unknown";
+  return (record.evidenceGate?.filesTouched.length ?? 0) > 0 ? "code_edit" : "unknown";
 }
 
 function codeTaskEvidenceGateLegacyStatusForTaskLoop(
@@ -1581,10 +1718,10 @@ function emitCodeTaskEvidenceGateRuntimeShadowCollection(params: {
 
   try {
     const record = params.record;
-    const collectionSampleId =
-      `task-loop:${record.loopRunId}:iteration:${record.iteration}:${record.phase}`;
-    const builder = params.deps.codeTaskEvidenceGateRuntimeShadowCollectionBuilder
-      ?? buildCodeTaskEvidenceGateRuntimeShadowCollectionResult;
+    const collectionSampleId = `task-loop:${record.loopRunId}:iteration:${record.iteration}:${record.phase}`;
+    const builder =
+      params.deps.codeTaskEvidenceGateRuntimeShadowCollectionBuilder ??
+      buildCodeTaskEvidenceGateRuntimeShadowCollectionResult;
     const result = builder({
       collectorId: "task_loop.code_task_evidence_gate.runtime_shadow_collection",
       mode,
@@ -1604,9 +1741,7 @@ function emitCodeTaskEvidenceGateRuntimeShadowCollection(params: {
               taskId: record.loopRunId,
               objective: record.task,
               taskKind: codeTaskEvidenceGateTaskKindForTaskLoop(record),
-              legacyTerminalStatus: codeTaskEvidenceGateLegacyStatusForTaskLoop(
-                record.status,
-              ),
+              legacyTerminalStatus: codeTaskEvidenceGateLegacyStatusForTaskLoop(record.status),
               ...(record.evidenceVerifierReport?.verifierReport
                 ? { verifierReport: record.evidenceVerifierReport.verifierReport }
                 : {}),
@@ -1686,13 +1821,17 @@ function resolveTaskLoopAgentMapPromptCandidateRuntimeShadowResult(params: {
   contextPack: TaskLoopContextPack;
 }): AgentMapResult | undefined {
   const provider = params.deps.agentMapPromptCandidateRuntimeShadowResult;
-  const result = typeof provider === "function"
-    ? provider({ record: params.record, contextPack: params.contextPack })
-    : provider;
+  const result =
+    typeof provider === "function"
+      ? provider({ record: params.record, contextPack: params.contextPack })
+      : provider;
   return isAgentMapResult(result) ? result : undefined;
 }
 
-function budgetPressureLevel(estimatedTokens: number, totalTokens: number): "low" | "medium" | "high" {
+function budgetPressureLevel(
+  estimatedTokens: number,
+  totalTokens: number,
+): "low" | "medium" | "high" {
   const ratio = totalTokens > 0 ? estimatedTokens / totalTokens : 0;
   if (ratio >= 1 || estimatedTokens > totalTokens) return "high";
   if (ratio >= 0.85) return "medium";
@@ -1708,8 +1847,13 @@ function recordTaskLoopContextEngineeringReport(params: {
   if (!localControlPlaneReportEnabled(params.cfg, "context")) return;
   try {
     const pack = params.contextPack.loopContextPack;
-    const omittedItemCount = pack.sections.reduce((sum, section) => sum + section.omittedItems.length, 0);
-    const truncatedSections = pack.sections.filter((section) => section.truncated).map((section) => section.id);
+    const omittedItemCount = pack.sections.reduce(
+      (sum, section) => sum + section.omittedItems.length,
+      0,
+    );
+    const truncatedSections = pack.sections
+      .filter((section) => section.truncated)
+      .map((section) => section.id);
     const stablePrefixCandidates = pack.sections
       .filter((section) => section.items.some((item) => item.priority === "P0" || item.protected))
       .map((section) => section.id);
@@ -1738,27 +1882,30 @@ function recordTaskLoopContextEngineeringReport(params: {
         },
       },
       ...(pack.truncated || omittedItemCount > 0
-        ? [{
-            code: "context.truncated_or_omitted",
-            severity: "warning" as const,
-            message: "LoopContextPack truncated or omitted non-protected items.",
-            metadata: {
-              truncated: pack.truncated,
-              omittedItemCount,
-              truncatedSections,
+        ? [
+            {
+              code: "context.truncated_or_omitted",
+              severity: "warning" as const,
+              message: "LoopContextPack truncated or omitted non-protected items.",
+              metadata: {
+                truncated: pack.truncated,
+                omittedItemCount,
+                truncatedSections,
+              },
             },
-          }]
+          ]
         : []),
       {
         code: "context.cache_risk",
-        severity: pressure === "high" || pack.truncated || omittedItemCount > 0 ? "warning" : "info",
-        message: pressure === "high" || pack.truncated || omittedItemCount > 0
-          ? "Context pack may reduce prompt cache stability."
-          : "Context pack has low prompt cache risk.",
+        severity:
+          pressure === "high" || pack.truncated || omittedItemCount > 0 ? "warning" : "info",
+        message:
+          pressure === "high" || pack.truncated || omittedItemCount > 0
+            ? "Context pack may reduce prompt cache stability."
+            : "Context pack has low prompt cache risk.",
         metadata: {
-          cacheRisk: pressure === "high" || pack.truncated || omittedItemCount > 0
-            ? "elevated"
-            : "low",
+          cacheRisk:
+            pressure === "high" || pack.truncated || omittedItemCount > 0 ? "elevated" : "low",
           stablePrefixCandidates,
           dynamicSuffixCandidates,
         },
@@ -1787,7 +1934,8 @@ function recordTaskLoopContextEngineeringReport(params: {
         p0: {
           preserved: pack.p0Preserved,
           protectedItemCount: pack.sections.reduce(
-            (sum, section) => sum + section.items.filter((item) => item.priority === "P0" || item.protected).length,
+            (sum, section) =>
+              sum + section.items.filter((item) => item.priority === "P0" || item.protected).length,
             0,
           ),
         },
@@ -1802,7 +1950,9 @@ function recordTaskLoopContextEngineeringReport(params: {
           omittedItemCount: section.omittedItems.length,
           estimatedTokens: section.estimatedTokens,
           truncated: section.truncated,
-          protectedItemCount: section.items.filter((item) => item.priority === "P0" || item.protected).length,
+          protectedItemCount: section.items.filter(
+            (item) => item.priority === "P0" || item.protected,
+          ).length,
         })),
       },
     });
@@ -1829,58 +1979,68 @@ function recordTaskLoopEvidenceReport(params: {
   if (!localControlPlaneReportEnabled(params.cfg, "evidence")) return;
   try {
     const gate = params.record.evidenceGate;
-    const report = params.record.evidenceVerifierReport
-      ?? buildTaskLoopEvidenceVerifierShadowReport({
+    const report =
+      params.record.evidenceVerifierReport ??
+      buildTaskLoopEvidenceVerifierShadowReport({
         record: params.record,
         generatedAt: params.generatedAt,
         selfCheck: params.selfCheck,
       });
     const missingKinds = uniqueStrings(
-      (report?.verifierReport.findings ?? [])
-        .flatMap((finding) => {
-          const kind = evidenceMissingKind(finding.code);
-          return kind ? [kind] : [];
-        }),
+      (report?.verifierReport.findings ?? []).flatMap((finding) => {
+        const kind = evidenceMissingKind(finding.code);
+        return kind ? [kind] : [];
+      }),
       10,
     );
     const missingFindingCodes = uniqueStrings(
-      (report?.verifierReport.findings ?? [])
-        .flatMap((finding) => evidenceMissingKind(finding.code) ? [finding.code] : []),
+      (report?.verifierReport.findings ?? []).flatMap((finding) =>
+        evidenceMissingKind(finding.code) ? [finding.code] : [],
+      ),
       20,
     );
     const diagnostics: LocalControlPlaneDiagnostic[] = [
       ...(gate
-        ? [{
-            code: `evidence.gate.${gate.status}`,
-            severity: gate.status === "pass" ? "info" as const : "warning" as const,
-            message: `Legacy evidence gate status is ${gate.status}.`,
-            metadata: {
-              reasons: gate.reasons,
-              filesTouched: gate.filesTouched.length,
-              testsRun: gate.testsRun.length,
-              blockingEvidenceCount: gate.blockingEvidence.length,
+        ? [
+            {
+              code: `evidence.gate.${gate.status}`,
+              severity: gate.status === "pass" ? ("info" as const) : ("warning" as const),
+              message: `Legacy evidence gate status is ${gate.status}.`,
+              metadata: {
+                reasons: gate.reasons,
+                filesTouched: gate.filesTouched.length,
+                testsRun: gate.testsRun.length,
+                blockingEvidenceCount: gate.blockingEvidence.length,
+              },
             },
-          }]
+          ]
         : []),
       ...(missingKinds.length
-        ? [{
-            code: "evidence.missing_required_kinds",
-            severity: "warning" as const,
-            message: `Missing required evidence kinds: ${missingKinds.join(", ")}`,
-            metadata: { missingKinds },
-          }]
+        ? [
+            {
+              code: "evidence.missing_required_kinds",
+              severity: "warning" as const,
+              message: `Missing required evidence kinds: ${missingKinds.join(", ")}`,
+              metadata: { missingKinds },
+            },
+          ]
         : []),
       ...(report
-        ? [{
-            code: `evidence.verifier.${report.verifierReport.decision}`,
-            severity: report.verifierReport.decision === "completed" ? "info" as const : "warning" as const,
-            message: `Evidence verifier decision is ${report.verifierReport.decision}.`,
-            metadata: {
-              findingCount: report.verifierReport.findings.length,
-              requiredEvidenceKinds: report.verifierReport.requiredEvidenceKinds,
-              legacyDecisionUnaffected: report.legacyDecisionUnaffected,
+        ? [
+            {
+              code: `evidence.verifier.${report.verifierReport.decision}`,
+              severity:
+                report.verifierReport.decision === "completed"
+                  ? ("info" as const)
+                  : ("warning" as const),
+              message: `Evidence verifier decision is ${report.verifierReport.decision}.`,
+              metadata: {
+                findingCount: report.verifierReport.findings.length,
+                requiredEvidenceKinds: report.verifierReport.requiredEvidenceKinds,
+                legacyDecisionUnaffected: report.legacyDecisionUnaffected,
+              },
             },
-          }]
+          ]
         : []),
     ];
     recordLocalControlPlaneReport(params.cfg, {
@@ -1893,7 +2053,8 @@ function recordTaskLoopEvidenceReport(params: {
         ? `Evidence gate ${gate.status}; missingKinds=${missingKinds.length ? missingKinds.join(",") : "none"}`
         : "Evidence report unavailable before evidence gate.",
       diagnostics,
-      evidenceRefs: report?.evidenceRefs ?? params.record.evidenceRefs.map(taskLoopEvidenceRefToRuntime),
+      evidenceRefs:
+        report?.evidenceRefs ?? params.record.evidenceRefs.map(taskLoopEvidenceRefToRuntime),
       payload: {
         source: "task_loop.evidence_gate",
         legacyDecisionUnaffected: true,
@@ -1908,8 +2069,11 @@ function recordTaskLoopEvidenceReport(params: {
             }
           : undefined,
         coverage: {
-          workerCount: params.record.subagentEvidence.filter((entry) => entry.phase === "worker").length,
-          verifierCount: params.record.subagentEvidence.filter((entry) => entry.phase === "verifier").length,
+          workerCount: params.record.subagentEvidence.filter((entry) => entry.phase === "worker")
+            .length,
+          verifierCount: params.record.subagentEvidence.filter(
+            (entry) => entry.phase === "verifier",
+          ).length,
           evidenceRefCount: report?.evidenceRefs.length ?? params.record.evidenceRefs.length,
           filesTouched: gate?.filesTouched.length ?? 0,
           testsRun: gate?.testsRun.length ?? 0,
@@ -1943,7 +2107,12 @@ function recordTaskLoopMissionLifecycleReport(
     const diagnostics: LocalControlPlaneDiagnostic[] = [
       {
         code: `mission.task_loop.phase.${lifecycleEvent.phase}`,
-        severity: lifecycleEvent.status === "error" ? "error" : lifecycleEvent.status === "blocked" ? "warning" : "info",
+        severity:
+          lifecycleEvent.status === "error"
+            ? "error"
+            : lifecycleEvent.status === "blocked"
+              ? "warning"
+              : "info",
         message: `TaskLoop phase ${lifecycleEvent.phase} status ${lifecycleEvent.status}.`,
         metadata: {
           phase: lifecycleEvent.phase,
@@ -1953,19 +2122,26 @@ function recordTaskLoopMissionLifecycleReport(
         },
       },
       ...(lifecycleEvent.evidenceGate
-        ? [{
-            code: `mission.task_loop.evidence_gate.${lifecycleEvent.evidenceGate.status}`,
-            severity: lifecycleEvent.evidenceGate.status === "pass" ? "info" as const : "warning" as const,
-            message: `TaskLoop evidence gate ${lifecycleEvent.evidenceGate.status}.`,
-            metadata: lifecycleEvent.evidenceGate,
-          }]
+        ? [
+            {
+              code: `mission.task_loop.evidence_gate.${lifecycleEvent.evidenceGate.status}`,
+              severity:
+                lifecycleEvent.evidenceGate.status === "pass"
+                  ? ("info" as const)
+                  : ("warning" as const),
+              message: `TaskLoop evidence gate ${lifecycleEvent.evidenceGate.status}.`,
+              metadata: lifecycleEvent.evidenceGate,
+            },
+          ]
         : []),
       ...(lifecycleEvent.blockedReason
-        ? [{
-            code: "mission.task_loop.blocked_reason",
-            severity: "warning" as const,
-            message: lifecycleEvent.blockedReason,
-          }]
+        ? [
+            {
+              code: "mission.task_loop.blocked_reason",
+              severity: "warning" as const,
+              message: lifecycleEvent.blockedReason,
+            },
+          ]
         : []),
     ];
     recordLocalControlPlaneReport(cfg, {
@@ -1998,7 +2174,10 @@ function recordTaskLoopMissionLifecycleReport(
   }
 }
 
-function runtimeTaskStatusForTaskLoop(phase: TaskLoopPhase, status: TaskLoopStatus): RuntimeTaskStatus {
+function runtimeTaskStatusForTaskLoop(
+  phase: TaskLoopPhase,
+  status: TaskLoopStatus,
+): RuntimeTaskStatus {
   if (status === "complete") return "completed";
   if (status === "blocked") return "blocked";
   if (status === "error") return "failed";
@@ -2038,7 +2217,8 @@ function recordTaskLoopRuntimeMemoryEpisode(
   if (!runtimeMemoryShadowPersistenceEnabled(cfg)) return;
 
   try {
-    const writer = deps.runtimeMemoryEpisodeWriter ??
+    const writer =
+      deps.runtimeMemoryEpisodeWriter ??
       createRuntimeMemoryRuntimeIntegration({
         ...deps.runtimeMemoryIntegrationOptions,
         config: cfg,
@@ -2075,9 +2255,7 @@ function recordTaskLoopKeCandidates(
   }
 }
 
-function buildTaskLoopRuntimeMemoryEpisode(
-  record: TaskLoopRunRecord,
-): RuntimeMemoryEpisodeRecord {
+function buildTaskLoopRuntimeMemoryEpisode(record: TaskLoopRunRecord): RuntimeMemoryEpisodeRecord {
   const runtimeStatus = runtimeTaskStatusForTaskLoop(record.phase, record.status);
   const terminalEventId = `task-loop:${record.loopRunId}:${record.phase}:${record.status}`;
   const sourceRefs: RuntimeMemoryEpisodeRecord["sourceRefs"] = [
@@ -2093,19 +2271,23 @@ function buildTaskLoopRuntimeMemoryEpisode(
       }),
     },
     ...(record.traceId
-      ? [{
-          type: "trace" as const,
-          ref: record.traceId,
-          label: "TaskLoop trace",
-          traceId: record.traceId,
-        }]
+      ? [
+          {
+            type: "trace" as const,
+            ref: record.traceId,
+            label: "TaskLoop trace",
+            traceId: record.traceId,
+          },
+        ]
       : []),
     ...(record.taskLedgerRootId
-      ? [{
-          type: "checkpoint" as const,
-          ref: `task-ledger:${record.taskLedgerRootId}`,
-          label: "Task Ledger root",
-        }]
+      ? [
+          {
+            type: "checkpoint" as const,
+            ref: `task-ledger:${record.taskLedgerRootId}`,
+            label: "Task Ledger root",
+          },
+        ]
       : []),
   ];
   const evidenceRefs = dedupeEvidenceRefs([
@@ -2116,18 +2298,22 @@ function buildTaskLoopRuntimeMemoryEpisode(
       summary: `TaskLoop terminal status ${record.status}.`,
     },
     ...(record.traceId
-      ? [{
-          type: "trace" as const,
-          ref: record.traceId,
-          label: "TaskLoop trace",
-        }]
+      ? [
+          {
+            type: "trace" as const,
+            ref: record.traceId,
+            label: "TaskLoop trace",
+          },
+        ]
       : []),
     ...(record.taskLedgerRootId
-      ? [{
-          type: "task_ledger" as const,
-          ref: `task-ledger:${record.taskLedgerRootId}`,
-          label: "Task Ledger root",
-        }]
+      ? [
+          {
+            type: "task_ledger" as const,
+            ref: `task-ledger:${record.taskLedgerRootId}`,
+            label: "Task Ledger root",
+          },
+        ]
       : []),
   ]).slice(0, 20);
   const filesTouchedCount = record.evidenceGate?.filesTouched.length ?? 0;
@@ -2167,9 +2353,8 @@ function buildTaskLoopRuntimeMemoryEpisode(
       runtimeStatus,
       iteration: record.iteration,
       maxIterations: record.maxIterations,
-      repairIterationCount: record.iterations.filter((snapshot) =>
-        snapshot.phase === "repair"
-      ).length,
+      repairIterationCount: record.iterations.filter((snapshot) => snapshot.phase === "repair")
+        .length,
       evidenceGateStatus: record.evidenceGate?.status,
       evidenceRefCount: record.evidenceRefs.length,
       subagentEvidenceCount: record.subagentEvidence.length,
@@ -2195,9 +2380,11 @@ function runtimeEventShadowEnabled(record: TaskLoopRunRecord): boolean {
 
 function runtimeEventLogDualWriteEnabled(record: TaskLoopRunRecord): boolean {
   const flags = runtimeEventShadowFlags.get(record);
-  return runtimeEventShadowEnabled(record)
-    && (flags?.runtimeEventLogFlags.eventLogShadow === true
-      || flags?.runtimeEventLogFlags.eventLogPersist === true);
+  return (
+    runtimeEventShadowEnabled(record) &&
+    (flags?.runtimeEventLogFlags.eventLogShadow === true ||
+      flags?.runtimeEventLogFlags.eventLogPersist === true)
+  );
 }
 
 function runtimeTraceSpanShadowEnabled(record: TaskLoopRunRecord): boolean {
@@ -2279,15 +2466,20 @@ function emitRuntimeTaskEventLogShadow(
 ): void {
   const flags = runtimeEventShadowFlags.get(record);
   if (!runtimeEventLogDualWriteEnabled(record)) return;
-  const writer = deps.runtimeTaskEventLogWriter
-    ?? defaultRuntimeTaskEventLogWriter(record, flags);
+  const writer = deps.runtimeTaskEventLogWriter ?? defaultRuntimeTaskEventLogWriter(record, flags);
   if (!writer) return;
   try {
     const result = writer(cloneRuntimeTaskEvent(event), {
       metadata: runtimeTaskEventLogMetadata(record),
-      shadow: flags?.runtimeEventLogFlags.eventLogShadow === true
-        ? { enabled: true, runId: record.loopRunId, source: "verification.run", trigger: "event-log-append" }
-        : false,
+      shadow:
+        flags?.runtimeEventLogFlags.eventLogShadow === true
+          ? {
+              enabled: true,
+              runId: record.loopRunId,
+              source: "verification.run",
+              trigger: "event-log-append",
+            }
+          : false,
     });
     if (result && typeof (result as Promise<unknown>).then === "function") {
       void (result as Promise<unknown>).catch(() => {
@@ -2333,7 +2525,10 @@ function cloneRuntimeTaskEvent(event: RuntimeTaskEvent): RuntimeTaskEvent {
   return JSON.parse(JSON.stringify(event)) as RuntimeTaskEvent;
 }
 
-function taskLoopTraceContext(record: TaskLoopRunRecord, extra?: RuntimeCoreJsonObject): RuntimeTaskEvent["traceContext"] {
+function taskLoopTraceContext(
+  record: TaskLoopRunRecord,
+  extra?: RuntimeCoreJsonObject,
+): RuntimeTaskEvent["traceContext"] {
   return {
     ...(record.traceId ? { traceId: record.traceId } : {}),
     attributes: {
@@ -2409,7 +2604,9 @@ function emitTaskLoopLifecycleShadow(
       startedAt: lifecycleEvent.ts,
       endedAt: lifecycleEvent.ts,
       status: lifecycleEvent.status === "error" ? "error" : status === "completed" ? "ok" : "unset",
-      ...(lifecycleEvent.status === "error" ? { statusMessage: "TaskLoop entered error status." } : {}),
+      ...(lifecycleEvent.status === "error"
+        ? { statusMessage: "TaskLoop entered error status." }
+        : {}),
       links: [],
       attributes: runtimeCoreJsonObject({
         source: "task_loop.trace_shadow",
@@ -2426,7 +2623,8 @@ function emitTaskLoopLifecycleShadow(
         activeRoleCount: lifecycleEvent.activeRoles?.length ?? 0,
         evidenceRefCount: record.evidenceRefs.length,
         subagentEvidenceCount: record.subagentEvidence.length,
-        filesTouchedCount: lifecycleEvent.filesTouched?.length ?? record.evidenceGate?.filesTouched.length ?? 0,
+        filesTouchedCount:
+          lifecycleEvent.filesTouched?.length ?? record.evidenceGate?.filesTouched.length ?? 0,
         testsRunCount: lifecycleEvent.testsRun?.length ?? record.evidenceGate?.testsRun.length ?? 0,
         evidenceVerifierShadow: lifecycleEvent.evidenceVerifierReport ? "present" : "absent",
       }),
@@ -2449,7 +2647,8 @@ function emitTaskLoopCheckpointShadow(
   reviewNeededItems: string[],
   fileHashes: Record<string, string>,
 ): void {
-  const checkpointId = checkpoint.id ?? `task-loop:${record.loopRunId}:iteration:${record.iteration}:${record.phase}`;
+  const checkpointId =
+    checkpoint.id ?? `task-loop:${record.loopRunId}:iteration:${record.iteration}:${record.phase}`;
   emitRuntimeTaskEventShadow(record, deps, () => {
     const state = runtimeTaskStatusForTaskLoop(record.phase, record.status);
     const registryDiagnostics = runtimeRegistryDiagnosticsForShadow(record);
@@ -2494,7 +2693,9 @@ function emitTaskLoopCheckpointShadow(
     startedAt: record.updatedAt,
     endedAt: record.updatedAt,
     status: record.status === "error" ? "error" : "ok",
-    ...(record.status === "error" ? { statusMessage: "TaskLoop checkpoint captured error status." } : {}),
+    ...(record.status === "error"
+      ? { statusMessage: "TaskLoop checkpoint captured error status." }
+      : {}),
     links: [],
     attributes: runtimeCoreJsonObject({
       source: "task_loop.trace_shadow",
@@ -2518,7 +2719,9 @@ function emitTaskLoopCheckpointShadow(
         symbol: "emitTaskLoopCheckpointShadow",
       },
     ],
-    evidenceRefs: dedupeEvidenceRefs(runtimeEvidenceRefsFromResumeCheckpoint(checkpoint, checkpointId)),
+    evidenceRefs: dedupeEvidenceRefs(
+      runtimeEvidenceRefsFromResumeCheckpoint(checkpoint, checkpointId),
+    ),
   }));
 }
 
@@ -2526,14 +2729,18 @@ async function computeTaskLoopCheckpointFileHashes(
   filesTouched: readonly string[],
 ): Promise<Record<string, string>> {
   try {
-    const candidates = (await Promise.all(uniqueStrings(filesTouched).map(async (file) => {
-      try {
-        const stats = await stat(file);
-        return stats.isFile() ? file : undefined;
-      } catch {
-        return undefined;
-      }
-    }))).filter((file): file is string => Boolean(file));
+    const candidates = (
+      await Promise.all(
+        uniqueStrings(filesTouched).map(async (file) => {
+          try {
+            const stats = await stat(file);
+            return stats.isFile() ? file : undefined;
+          } catch {
+            return undefined;
+          }
+        }),
+      )
+    ).filter((file): file is string => Boolean(file));
     if (candidates.length === 0) return {};
     return await computeCheckpointFileHashes(candidates);
   } catch {
@@ -2562,7 +2769,9 @@ async function recordTaskLoopCheckpoint(
       status: record.status,
       evidenceGate: record.evidenceGate,
       ...(Object.keys(checkpointFileHashes).length > 0 ? { fileHashes: checkpointFileHashes } : {}),
-      ...(record.evidenceVerifierReport ? { evidenceVerifierReport: record.evidenceVerifierReport } : {}),
+      ...(record.evidenceVerifierReport
+        ? { evidenceVerifierReport: record.evidenceVerifierReport }
+        : {}),
       roleQualitySummary: record.roleQualitySummary,
       selfCheckDecision: selfCheck?.decision,
     };
@@ -2593,8 +2802,9 @@ async function recordTaskLoopCheckpoint(
       createdAt: new Date(record.updatedAt).toISOString(),
       metadata: checkpointMetadata,
     };
-    const writer = deps.recordCheckpoint
-      ?? (await import("./long-task-control/store.js")).recordLongTaskCheckpoint;
+    const writer =
+      deps.recordCheckpoint ??
+      (await import("./long-task-control/store.js")).recordLongTaskCheckpoint;
     await writer({
       id: checkpoint.id,
       idempotencyKey: `task-loop:${record.loopRunId}:iteration:${record.iteration}:${record.phase}`,
@@ -2643,9 +2853,11 @@ function localControlPlaneEventMatchesTaskLoop(
 ): boolean {
   const attrs = event.attributes;
   if (attrs.sessionKey && attrs.sessionKey !== record.sessionKey) return false;
-  return attrs.taskId === record.loopRunId
-    || attrs.runId === record.loopRunId
-    || (attrs.runId ? record.orchestrationRunIds.includes(attrs.runId) : false);
+  return (
+    attrs.taskId === record.loopRunId ||
+    attrs.runId === record.loopRunId ||
+    (attrs.runId ? record.orchestrationRunIds.includes(attrs.runId) : false)
+  );
 }
 
 function subscribeTaskLoopLocalControlPlaneTraceEvents(
@@ -2688,8 +2900,10 @@ function emit(
   patch: Partial<TaskLoopLifecycleEvent>,
 ): void {
   record.updatedAt = deps.now?.() ?? Date.now();
-  const evidenceGate = patch.evidenceGate ?? lifecycleGateSummary(record.evidenceGate, record.subagentEvidence);
-  const roleQualitySummary = patch.roleQualitySummary ?? roleQualityLifecycleSummary(record.roleQualitySummary);
+  const evidenceGate =
+    patch.evidenceGate ?? lifecycleGateSummary(record.evidenceGate, record.subagentEvidence);
+  const roleQualitySummary =
+    patch.roleQualitySummary ?? roleQualityLifecycleSummary(record.roleQualitySummary);
   const event: TaskLoopLifecycleEvent = {
     loopRunId: record.loopRunId,
     sessionKey: record.sessionKey,
@@ -2699,8 +2913,11 @@ function emit(
     progress: progressForPhase(record.phase, Math.max(1, record.iteration), record.maxIterations),
     controlSignals: record.controlSignals,
     validationState: record.validationState,
+    ...(record.lineage ? { lineage: record.lineage } : {}),
     ...(evidenceGate ? { evidenceGate } : {}),
-    ...(record.evidenceVerifierReport ? { evidenceVerifierReport: record.evidenceVerifierReport } : {}),
+    ...(record.evidenceVerifierReport
+      ? { evidenceVerifierReport: record.evidenceVerifierReport }
+      : {}),
     ...(record.agentMapPromptCandidateRuntimeShadowReport
       ? {
           agentMapPromptCandidateRuntimeShadowReport:
@@ -2710,7 +2927,8 @@ function emit(
     roleQualitySummary,
     filesTouched: record.evidenceGate?.filesTouched ?? [],
     testsRun: record.evidenceGate?.testsRun ?? [],
-    blockedReason: record.status === "blocked" ? record.finalSummary ?? record.remaining[0] : undefined,
+    blockedReason:
+      record.status === "blocked" ? (record.finalSummary ?? record.remaining[0]) : undefined,
     ts: record.updatedAt,
     ...patch,
   };
@@ -2718,7 +2936,7 @@ function emit(
   emitTaskLoopLifecycleShadow(record, deps, event);
   recordTaskLoopMissionLifecycleReport(record, event);
   // DCS Stage 2: primary task_phase_change producer (exactly once per true runtime status change).
-  emitTaskLoopTaskPhaseChange(record, event);
+  void emitTaskLoopTaskPhaseChange(record, event);
   // RC-06D read-only projection into TaskFlow (flow_runs) behind a default-off
   // flag. Observational only: the legacy Task Loop Map remains authoritative;
   // long_task_checkpoints retain checkpoint material only; a projection failure
@@ -2751,44 +2969,100 @@ function emit(
 function emitTaskLoopTaskPhaseChange(
   record: TaskLoopRunRecord,
   lifecycleEvent: TaskLoopLifecycleEvent,
-): void {
+): Promise<void> | undefined {
   const toStatus = runtimeTaskStatusForTaskLoop(lifecycleEvent.phase, lifecycleEvent.status);
   const fromStatus = taskLoopRuntimeStatusByRun.get(record);
   if (fromStatus === toStatus) {
-    return;
+    return undefined;
   }
   // First observation seeds the map without inventing a synthetic prior status.
   if (fromStatus === undefined) {
     taskLoopRuntimeStatusByRun.set(record, toStatus);
     // Still emit the first transition from created unless already created.
     if (toStatus === "created") {
-      return;
+      return undefined;
     }
   }
   const effectiveFrom: RuntimeTaskStatus = fromStatus ?? "created";
   taskLoopRuntimeStatusByRun.set(record, toStatus);
-  void runAgentHarnessTaskPhaseChangeHook({
-    event: {
-      sessionId: record.sessionKey,
-      taskId: record.loopRunId,
-      fromStatus: effectiveFrom,
-      toStatus,
-    },
-    ctx: {
-      sessionId: record.sessionKey,
-      runId: record.loopRunId,
-    },
-  }).catch((error: unknown) => {
-    taskLoopPhaseLog.warn(`task_phase_change producer failed: ${String(error)}`);
-  });
+  const previous = taskLoopPhaseSideEffectQueues.get(record) ?? Promise.resolve();
+  const current = previous
+    .catch(() => undefined)
+    .then(async () => {
+      try {
+        const result = await runAgentHarnessTaskPhaseChangeHook({
+          event: {
+            sessionId: record.sessionKey,
+            taskId: record.loopRunId,
+            fromStatus: effectiveFrom,
+            toStatus,
+            ...(record.lineage ? { lineage: record.lineage } : {}),
+          },
+          ctx: {
+            sessionId: record.sessionKey,
+            runId: record.loopRunId,
+          },
+        });
+        const results = taskLoopPhaseSideEffectResults.get(record) ?? [];
+        const normalizedResult: TaskPhaseSideEffectResult = result ?? {
+          taskState: { status: "skipped", reason: "hook_returned_no_result" },
+          trajectory: { status: "skipped", reason: "hook_returned_no_result" },
+        };
+        results.push({
+          ...normalizedResult,
+          fromStatus: effectiveFrom,
+          toStatus,
+          capturedAt: lifecycleEvent.ts,
+        });
+        taskLoopPhaseSideEffectResults.set(record, results);
+      } catch (error: unknown) {
+        const results = taskLoopPhaseSideEffectResults.get(record) ?? [];
+        results.push({
+          taskState: { status: "failed", reason: String(error) },
+          trajectory: { status: "skipped", reason: "phase_hook_failed" },
+          fromStatus: effectiveFrom,
+          toStatus,
+          capturedAt: lifecycleEvent.ts,
+        });
+        taskLoopPhaseSideEffectResults.set(record, results);
+        taskLoopPhaseLog.warn("task_phase_change producer failed", {
+          runId: record.loopRunId,
+          sessionId: record.sessionKey,
+          fromStatus: effectiveFrom,
+          toStatus,
+          error: String(error),
+        });
+      }
+    });
+  taskLoopPhaseSideEffectQueues.set(record, current);
+  return current;
 }
 
 /** @internal test-only: invoke the production phase producer without running full TaskLoop. */
 export function __testOnly_emitTaskLoopTaskPhaseChange(
   record: TaskLoopRunRecord,
   lifecycleEvent: TaskLoopLifecycleEvent,
-): void {
-  emitTaskLoopTaskPhaseChange(record, lifecycleEvent);
+): Promise<void> | undefined {
+  return emitTaskLoopTaskPhaseChange(record, lifecycleEvent);
+}
+
+async function awaitTaskLoopPhaseSideEffects(record: TaskLoopRunRecord): Promise<void> {
+  await taskLoopPhaseSideEffectQueues.get(record);
+}
+
+function captureTaskLoopPhaseSideEffects(record: TaskLoopRunRecord): void {
+  const results = taskLoopPhaseSideEffectResults.get(record);
+  if (!results?.length) return;
+  const observable = results.filter(
+    (result) => result.taskState.status !== "skipped" || result.trajectory.status !== "skipped",
+  );
+  if (observable.length > 0) {
+    record.phaseSideEffects = observable.map((result) => ({ ...result }));
+  }
+  const trajectoryId = observable
+    .map((result) => result.trajectory.trajectoryId)
+    .find((value): value is string => Boolean(value));
+  if (trajectoryId) record.sekbTrajectoryId = trajectoryId;
 }
 
 /** @internal test-only: drop WeakMap status tracking between tests. */
@@ -2840,7 +3114,9 @@ function snapshot(record: TaskLoopRunRecord, selfCheck?: TaskLoopSelfCheckResult
             })),
             verifierReport: {
               ...record.evidenceVerifierReport.verifierReport,
-              requiredEvidenceKinds: [...record.evidenceVerifierReport.verifierReport.requiredEvidenceKinds],
+              requiredEvidenceKinds: [
+                ...record.evidenceVerifierReport.verifierReport.requiredEvidenceKinds,
+              ],
               evidenceRefs: [...record.evidenceVerifierReport.verifierReport.evidenceRefs],
               findings: record.evidenceVerifierReport.verifierReport.findings.map((finding) => ({
                 ...finding,
@@ -2858,7 +3134,10 @@ function snapshot(record: TaskLoopRunRecord, selfCheck?: TaskLoopSelfCheckResult
       : {}),
     roleQualitySummary: {
       ...record.roleQualitySummary,
-      roles: record.roleQualitySummary.roles.map((role) => ({ ...role, reasons: [...role.reasons] })),
+      roles: record.roleQualitySummary.roles.map((role) => ({
+        ...role,
+        reasons: [...role.reasons],
+      })),
     },
     risks: [...record.risks],
     remaining: [...record.remaining],
@@ -2874,22 +3153,30 @@ function buildRepairTask(originalTask: string, selfCheck: TaskLoopSelfCheckResul
     "Repair the previous task-loop iteration.",
     `Original task: ${originalTask}`,
     selfCheck.repairBrief ? `Repair brief: ${selfCheck.repairBrief}` : "",
-    selfCheck.missingEvidence.length ? `Missing evidence: ${selfCheck.missingEvidence.join("; ")}` : "",
-    selfCheck.verificationGaps.length ? `Verification gaps: ${selfCheck.verificationGaps.join("; ")}` : "",
-  ].filter(Boolean).join("\n");
+    selfCheck.missingEvidence.length
+      ? `Missing evidence: ${selfCheck.missingEvidence.join("; ")}`
+      : "",
+    selfCheck.verificationGaps.length
+      ? `Verification gaps: ${selfCheck.verificationGaps.join("; ")}`
+      : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 function selfCheckHasOpenControlSignals(selfCheck: TaskLoopSelfCheckResult): boolean {
-  return selfCheck.missingEvidence.length > 0
-    || selfCheck.verificationGaps.length > 0
-    || hasBlockingControlSignal(selfCheck.controlSignals)
-    || selfCheck.validationState?.status === "failed"
-    || selfCheck.validationState?.status === "missing"
-    || selfCheck.validationState?.status === "partial"
-    || selfCheck.validationState?.status === "not_run"
-    || selfCheck.acceptanceStatus?.status === "missing"
-    || selfCheck.acceptanceStatus?.status === "partial"
-    || selfCheck.acceptanceStatus?.status === "changed";
+  return (
+    selfCheck.missingEvidence.length > 0 ||
+    selfCheck.verificationGaps.length > 0 ||
+    hasBlockingControlSignal(selfCheck.controlSignals) ||
+    selfCheck.validationState?.status === "failed" ||
+    selfCheck.validationState?.status === "missing" ||
+    selfCheck.validationState?.status === "partial" ||
+    selfCheck.validationState?.status === "not_run" ||
+    selfCheck.acceptanceStatus?.status === "missing" ||
+    selfCheck.acceptanceStatus?.status === "partial" ||
+    selfCheck.acceptanceStatus?.status === "changed"
+  );
 }
 
 function gateTaskLoopSelfCheckCompletion(
@@ -2917,10 +3204,12 @@ function gateTaskLoopSelfCheckCompletion(
       repairable: canRepair,
     }),
   ]);
-  const validationState = selfCheck.validationState ?? deriveValidationState({
-    status: "missing",
-    gaps: verificationGaps,
-  });
+  const validationState =
+    selfCheck.validationState ??
+    deriveValidationState({
+      status: "missing",
+      gaps: verificationGaps,
+    });
   return {
     ...selfCheck,
     decision: canRepair ? "repair" : "blocked",
@@ -2928,12 +3217,15 @@ function gateTaskLoopSelfCheckCompletion(
     missingEvidence,
     verificationGaps,
     repairBrief: canRepair
-      ? selfCheck.repairBrief ?? `Resolve task-loop completion gaps: ${[...missingEvidence, ...verificationGaps].join("; ")}`
+      ? (selfCheck.repairBrief ??
+        `Resolve task-loop completion gaps: ${[...missingEvidence, ...verificationGaps].join("; ")}`)
       : undefined,
     controlSignals,
     validationState,
     quality: defaultQualityAssessments({ signals: controlSignals, validationState }),
-    contextSummary: selfCheck.contextSummary || "Task-loop completion was downgraded because control signals remained open.",
+    contextSummary:
+      selfCheck.contextSummary ||
+      "Task-loop completion was downgraded because control signals remained open.",
   };
 }
 
@@ -2953,13 +3245,20 @@ export function listTaskLoopRunsForSession(sessionKey: string): TaskLoopRunRecor
  * TaskFlow projection records the terminal cancelled state exactly like every
  * other lifecycle transition. Idempotent on terminal runs.
  */
-export function cancelTaskLoopRun(loopRunId: string, deps: TaskLoopControllerDeps = {}): TaskLoopRunRecord {
+export function cancelTaskLoopRun(
+  loopRunId: string,
+  deps: TaskLoopControllerDeps = {},
+): TaskLoopRunRecord {
   const record = getTaskLoopRun(loopRunId);
   if (!record) {
     throw new Error(`unknown task loop run "${loopRunId}"`);
   }
   if (record.status === "complete" || record.status === "error" || record.status === "cancelled") {
-    return { ...record, iterations: [...record.iterations], evidenceRefs: [...record.evidenceRefs] };
+    return {
+      ...record,
+      iterations: [...record.iterations],
+      evidenceRefs: [...record.evidenceRefs],
+    };
   }
   record.status = "cancelled";
   record.phase = "complete";
@@ -2999,19 +3298,21 @@ export async function runTaskLoop(
   const loopRunId = idFactory("loop");
   let taskLedgerRootId = nonEmptyText(request.taskLedgerRootId);
   try {
-    taskLedgerRootId = nonEmptyText(await (deps.ensureTaskLedgerRoot ?? ensureLongTaskLedgerRoot)({
-      workspaceId: request.workspaceId,
-      ...(taskLedgerRootId ? { taskLedgerRootId } : {}),
-      sessionKey: request.sessionKey,
-      ...(request.agentId ? { agentId: request.agentId } : {}),
-      runId: loopRunId,
-      title: request.task,
-      source: "task_loop",
-      metadata: {
-        templateId: request.templateId ?? request.teamTemplateId,
-        acceptance: request.acceptance ?? [],
-      },
-    }));
+    taskLedgerRootId = nonEmptyText(
+      await (deps.ensureTaskLedgerRoot ?? ensureLongTaskLedgerRoot)({
+        workspaceId: request.workspaceId,
+        ...(taskLedgerRootId ? { taskLedgerRootId } : {}),
+        sessionKey: request.sessionKey,
+        ...(request.agentId ? { agentId: request.agentId } : {}),
+        runId: loopRunId,
+        title: request.task,
+        source: "task_loop",
+        metadata: {
+          templateId: request.templateId ?? request.teamTemplateId,
+          acceptance: request.acceptance ?? [],
+        },
+      }),
+    );
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     throw new Error(
@@ -3024,12 +3325,23 @@ export async function runTaskLoop(
       `Cannot start /loop without a Task Ledger root (loopRunId=${loopRunId}, sessionKey=${request.sessionKey}, workspaceId=${request.workspaceId ?? "default"}): root creator returned an empty id`,
     );
   }
+  const requestedLineage = normalizeRuntimeLineage(request.lineage);
+  // A parent lineage is accepted only when it names this exact session. A
+  // mismatched legacy payload is dropped rather than guessed or re-associated.
+  const parentLineage =
+    requestedLineage?.sessionId === request.sessionKey.trim() ? requestedLineage : undefined;
+  const initialLineage = mergeRuntimeLineage(parentLineage, {
+    sessionId: request.sessionKey,
+    loopRunId,
+    taskLedgerRootId,
+  });
   const record: TaskLoopRunRecord = {
     loopRunId,
     sessionKey: request.sessionKey,
     ...(request.workspaceId !== undefined ? { workspaceId: request.workspaceId } : {}),
     task: request.task,
     ...(taskLedgerRootId ? { taskLedgerRootId } : {}),
+    ...(initialLineage ? { lineage: initialLineage } : {}),
     status: "running",
     phase: "intake",
     iteration: 0,
@@ -3072,7 +3384,21 @@ export async function runTaskLoop(
     sessionKey: request.sessionKey,
     mode: "task-loop",
   });
-  const unsubscribeLocalControlPlaneTraceEvents = subscribeTaskLoopLocalControlPlaneTraceEvents(recorder, record);
+  const taskLoopTraceId = recorder.snapshot().id;
+  record.lineage = mergeRuntimeLineage(record.lineage, { traceId: taskLoopTraceId });
+  // The phase producer uses loopRunId while the DCS dependencies are created
+  // by the outer embedded attempt. Bind the loop to the unique session-scoped
+  // DCS config before the first lifecycle event; ambiguity fails closed.
+  bindTaskStateHandlerConfigForRun({
+    runId: loopRunId,
+    sessionId: request.sessionKey,
+    objective: request.task,
+    ...(record.lineage ? { lineage: record.lineage } : {}),
+  });
+  const unsubscribeLocalControlPlaneTraceEvents = subscribeTaskLoopLocalControlPlaneTraceEvents(
+    recorder,
+    record,
+  );
   recorder.recordEvent("task_loop.phase", "intake", { attributes: { loopRunId } });
   emit(record, deps, {});
 
@@ -3089,7 +3415,9 @@ export async function runTaskLoop(
 
       const orchestrationRunId = idFactory("orch");
       const loopTask = repairBrief || request.task;
-      const templateId = repairBrief ? request.templateId?.trim() || "quick-development" : inferTemplateId(request, config);
+      const templateId = repairBrief
+        ? request.templateId?.trim() || "quick-development"
+        : inferTemplateId(request, config);
       const span = recorder.startSpan({
         name: `task-loop:${iteration}`,
         kind: "orchestrator",
@@ -3118,13 +3446,17 @@ export async function runTaskLoop(
         agentSessionKey: request.sessionKey,
         ...(request.agentId ? { requesterAgentIdOverride: request.agentId } : {}),
       };
-      const runObserved = deps.runObserved
-        ?? (await import("./orchestrator-run-observed.js")).runOrchestrationObserved;
-      const spawn = deps.spawn
-        ?? (deps.runObserved
-          ? (async () => {
-              throw new Error("task-loop injected runObserved attempted to call missing spawn dependency");
-            }) as SpawnFn
+      const runObserved =
+        deps.runObserved ??
+        (await import("./orchestrator-run-observed.js")).runOrchestrationObserved;
+      const spawn =
+        deps.spawn ??
+        (deps.runObserved
+          ? ((async () => {
+              throw new Error(
+                "task-loop injected runObserved attempted to call missing spawn dependency",
+              );
+            }) as SpawnFn)
           : (await import("./subagent-spawn.js")).spawnSubagentDirect);
       const result = await runObserved(
         runRequest,
@@ -3139,6 +3471,15 @@ export async function runTaskLoop(
           });
         },
       );
+      if (taskLoopWasCancelled(record)) {
+        recorder.endSpan(span.id, {
+          status: "error",
+          output: "Task loop cancelled while orchestration was running.",
+          attributes: { orchestrationRunId, cancelled: true },
+          error: "cancelled_by_operator",
+        });
+        break;
+      }
       recorder.endSpan(span.id, {
         status: result.failures.length > 0 ? "error" : "completed",
         output: summarizePlan(result),
@@ -3151,13 +3492,26 @@ export async function runTaskLoop(
       });
 
       record.phase = "collect_evidence";
-      record.subagentEvidence = await collectSubagentEvidence(result, orchestrationRunId, deps, now);
+      record.subagentEvidence = await collectSubagentEvidence(
+        result,
+        orchestrationRunId,
+        deps,
+        now,
+      );
+      if (taskLoopWasCancelled(record)) {
+        break;
+      }
       record.roleQualitySummary = summarizeRoleQuality(record.subagentEvidence);
-      record.evidenceGate = evaluateEvidenceGate(record.subagentEvidence, repairIterations, maxRepairIterations);
+      record.evidenceGate = evaluateEvidenceGate(
+        record.subagentEvidence,
+        repairIterations,
+        maxRepairIterations,
+      );
       record.evidenceRefs = evidenceFromResult(result, orchestrationRunId, record.subagentEvidence);
       const evidenceVerifierEnabled = evidenceVerifierShadowEnabled(record);
       const evidenceReportEnabled = localControlPlaneReportEnabled(cfg, "evidence");
-      const evidenceCollectedAt = evidenceVerifierEnabled || evidenceReportEnabled ? now() : record.updatedAt;
+      const evidenceCollectedAt =
+        evidenceVerifierEnabled || evidenceReportEnabled ? now() : record.updatedAt;
       record.evidenceVerifierReport = evidenceVerifierEnabled
         ? buildTaskLoopEvidenceVerifierShadowReport({ record, generatedAt: evidenceCollectedAt })
         : undefined;
@@ -3190,16 +3544,29 @@ export async function runTaskLoop(
       for (const entry of record.subagentEvidence) {
         if (entry.completionStatus === "permission_blocked") {
           recorder.recordEvent("task_loop.worker_permission_blocked", entry.roleName, {
-            attributes: { loopRunId, iteration, childRunId: entry.childRunId, reason: entry.failureReason },
+            attributes: {
+              loopRunId,
+              iteration,
+              childRunId: entry.childRunId,
+              reason: entry.failureReason,
+            },
           });
         }
         if (entry.completionStatus === "timeout") {
           recorder.recordEvent("task_loop.worker_timeout", entry.roleName, {
-            attributes: { loopRunId, iteration, childRunId: entry.childRunId, reason: entry.failureReason },
+            attributes: {
+              loopRunId,
+              iteration,
+              childRunId: entry.childRunId,
+              reason: entry.failureReason,
+            },
           });
         }
       }
-      emit(record, deps, { orchestrationRunId, activeRoles: result.plan.workers.map((worker) => worker.roleName) });
+      emit(record, deps, {
+        orchestrationRunId,
+        activeRoles: result.plan.workers.map((worker) => worker.roleName),
+      });
 
       record.phase = "self_check";
       emit(record, deps, { orchestrationRunId });
@@ -3229,15 +3596,21 @@ export async function runTaskLoop(
         contextPack,
         orchestrationRunId,
       });
-      const rawSelfCheck = await (deps.selfCheck ?? runTaskLoopSelfCheck)({
-        cfg,
-        agentId: request.agentId,
-        reviewer: config.reviewer,
-        contextPack,
-        failures,
-        repairIterationsUsed: repairIterations,
-        maxRepairIterations,
-      }, deps.selfCheckDeps);
+      const rawSelfCheck = await (deps.selfCheck ?? runTaskLoopSelfCheck)(
+        {
+          cfg,
+          agentId: request.agentId,
+          reviewer: config.reviewer,
+          contextPack,
+          failures,
+          repairIterationsUsed: repairIterations,
+          maxRepairIterations,
+        },
+        deps.selfCheckDeps,
+      );
+      if (taskLoopWasCancelled(record)) {
+        break;
+      }
       let selfCheck = applyEvidenceGateToSelfCheck(
         gateTaskLoopSelfCheckCompletion(rawSelfCheck, repairIterations, maxRepairIterations),
         record.evidenceGate,
@@ -3265,11 +3638,16 @@ export async function runTaskLoop(
       }
       const selfCheckEvidenceVerifierEnabled = evidenceVerifierShadowEnabled(record);
       const selfCheckEvidenceReportEnabled = localControlPlaneReportEnabled(cfg, "evidence");
-      const selfCheckEvidenceReportAt = selfCheckEvidenceVerifierEnabled || selfCheckEvidenceReportEnabled
-        ? now()
-        : record.updatedAt;
+      const selfCheckEvidenceReportAt =
+        selfCheckEvidenceVerifierEnabled || selfCheckEvidenceReportEnabled
+          ? now()
+          : record.updatedAt;
       record.evidenceVerifierReport = selfCheckEvidenceVerifierEnabled
-        ? buildTaskLoopEvidenceVerifierShadowReport({ record, generatedAt: selfCheckEvidenceReportAt, selfCheck })
+        ? buildTaskLoopEvidenceVerifierShadowReport({
+            record,
+            generatedAt: selfCheckEvidenceReportAt,
+            selfCheck,
+          })
         : undefined;
       if (selfCheckEvidenceReportEnabled) {
         recordTaskLoopEvidenceReport({
@@ -3309,16 +3687,20 @@ export async function runTaskLoop(
         break;
       }
 
-      const canRepair = selfCheck.decision === "repair"
-        && repairIterations < maxRepairIterations
-        && iteration < maxIterations;
+      const canRepair =
+        selfCheck.decision === "repair" &&
+        repairIterations < maxRepairIterations &&
+        iteration < maxIterations;
       if (canRepair) {
         const nextRepairBrief = buildRepairTask(request.task, selfCheck);
-        const repairHash = hashTaskLoopRepairInput(`${nextRepairBrief}\n${contextPack.evidenceText}`);
+        const repairHash = hashTaskLoopRepairInput(
+          `${nextRepairBrief}\n${contextPack.evidenceText}`,
+        );
         if (repairHash === previousRepairHash) {
           record.phase = "blocked";
           record.status = "blocked";
-          record.finalSummary = "Task loop blocked because repair evidence repeated without progress.";
+          record.finalSummary =
+            "Task loop blocked because repair evidence repeated without progress.";
           record.nextActions = ["ask_user_or_manual_review"];
           snapshot(record, selfCheck);
           await recordTaskLoopCheckpoint(record, deps, selfCheck);
@@ -3362,10 +3744,15 @@ export async function runTaskLoop(
     unsubscribeLocalControlPlaneTraceEvents();
     const { trace, scorecard } = completeObservedRun(
       recorder as ObservabilityTraceRecorder,
-      record.status === "error" ? "error" : record.status === "blocked" ? "aborted" : "completed",
+      record.status === "error"
+        ? "error"
+        : record.status === "blocked" || record.status === "cancelled"
+          ? "aborted"
+          : "completed",
       record.error,
     );
     record.traceId = trace.id;
+    record.lineage = mergeRuntimeLineage(record.lineage, { traceId: trace.id });
     (deps.storeTrace ?? storeRuntimeTrace)(trace, scorecard);
     recordTaskLoopRuntimeMemoryEpisode(record, cfg, deps);
     recordTaskLoopKeCandidates(record, cfg);
@@ -3379,7 +3766,13 @@ export async function runTaskLoop(
           iteration: record.iteration,
         });
     }
-    return { ...record, iterations: [...record.iterations], evidenceRefs: [...record.evidenceRefs] };
+    await awaitTaskLoopPhaseSideEffects(record);
+    captureTaskLoopPhaseSideEffects(record);
+    return {
+      ...record,
+      iterations: [...record.iterations],
+      evidenceRefs: [...record.evidenceRefs],
+    };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     record.phase = "error";
@@ -3393,6 +3786,7 @@ export async function runTaskLoop(
     emit(record, deps, { error: message });
     const { trace, scorecard } = completeObservedRun(recorder, "error", message);
     record.traceId = trace.id;
+    record.lineage = mergeRuntimeLineage(record.lineage, { traceId: trace.id });
     (deps.storeTrace ?? storeRuntimeTrace)(trace, scorecard);
     recordTaskLoopRuntimeMemoryEpisode(record, cfg, deps);
     recordTaskLoopKeCandidates(record, cfg);
@@ -3406,6 +3800,16 @@ export async function runTaskLoop(
           iteration: record.iteration,
         });
     }
-    return { ...record, iterations: [...record.iterations], evidenceRefs: [...record.evidenceRefs] };
+    await awaitTaskLoopPhaseSideEffects(record);
+    captureTaskLoopPhaseSideEffects(record);
+    return {
+      ...record,
+      iterations: [...record.iterations],
+      evidenceRefs: [...record.evidenceRefs],
+    };
   }
+}
+
+function taskLoopWasCancelled(record: TaskLoopRunRecord): boolean {
+  return record.status === "cancelled";
 }

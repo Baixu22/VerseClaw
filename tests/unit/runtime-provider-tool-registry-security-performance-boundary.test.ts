@@ -187,7 +187,7 @@ describe("registry diagnostic security and performance boundary", () => {
         idFactory: (prefix) => `${prefix}_security_boundary`,
         now: () => 1_700_000_000_000,
         ensureTaskLedgerRoot: vi.fn(() => "tlroot_security_boundary"),
-        runObserved: (async (request) => fakeTaskLoopResult(request.templateId)) as never,
+        runObserved: (async (request: any) => fakeTaskLoopResult(request.templateId)) as never,
         selfCheck: selfCheck as never,
         getSubagentRun: getEvidenceRun as never,
         lifecycle: (event) => lifecycle.push(event),
@@ -361,9 +361,9 @@ function diagnostic(
       ref: `registry-security:${providerId}`,
       label: "Registry security boundary fixture",
       summary: options.evidenceSummary,
-      metadata: options.metadata,
+      metadata: options.metadata as never,
     }],
-    metadata: options.metadata,
+    metadata: options.metadata as never,
   };
 }
 

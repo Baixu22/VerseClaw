@@ -37,7 +37,7 @@
     "source_instructions_path": "resources/verseshell/SOURCE.md",
     "build_instructions_path": "resources/verseshell/BUILD.md",
     "source_inputs_path": "resources/verseshell/source-inputs.json",
-    "corresponding_source_locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/source-inputs.json#sha256:19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650",
+    "corresponding_source_locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/source-inputs.json#sha256:daa0b1720efaa89356f9ceed608a9f5bd200970a96f6ab2abec8a67cd101c8f8",
     "corresponding_source_status": "tracked_ordered_patch_stack",
     "patch_paths": [
       "resources/verseshell/patches/uas-05-process-lifecycle.patch",
@@ -61,8 +61,8 @@
     },
     "cargo_toml_sha256": "d49679a726c368babae6302b3dbe97bcc99eefc4fdf533aeb5a6f67a22521b6d",
     "cargo_lock_sha256": "2970a2ad51f0f63ed66c51cf6935dbfd57ec0a1b19c78a4312d1eafe8b3a95e2",
-    "source_inputs_sha256": "158d0ca4d2ec51080b2aa0bdeb6274755c7009af9a904f86eacf624993dcd489",
-    "source_identity_sha256": "19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650",
+    "source_inputs_sha256": "a2b3fd6c05cae9a664304ab7e0f5ff851ac357071a8415b5bee7c5aee5e876bd",
+    "source_identity_sha256": "daa0b1720efaa89356f9ceed608a9f5bd200970a96f6ab2abec8a67cd101c8f8",
     "controls": {
       "cargo_incremental": "0",
       "source_date_epoch": 1785123525,
@@ -192,13 +192,13 @@
     "unrecorded_changes": false,
     "source_inputs": {
       "path": "resources/verseshell/source-inputs.json",
-      "sha256": "158d0ca4d2ec51080b2aa0bdeb6274755c7009af9a904f86eacf624993dcd489",
-      "identity_sha256": "19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650",
+      "sha256": "a2b3fd6c05cae9a664304ab7e0f5ff851ac357071a8415b5bee7c5aee5e876bd",
+      "identity_sha256": "daa0b1720efaa89356f9ceed608a9f5bd200970a96f6ab2abec8a67cd101c8f8",
       "patch_count": 4,
       "recovered_input_count": 8
     },
     "corresponding_source": {
-      "locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/source-inputs.json#sha256:19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650",
+      "locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/source-inputs.json#sha256:daa0b1720efaa89356f9ceed608a9f5bd200970a96f6ab2abec8a67cd101c8f8",
       "patch_paths": [
         "resources/verseshell/patches/uas-05-process-lifecycle.patch",
         "resources/verseshell/patches/p0-runtime-startup.patch",

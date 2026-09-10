@@ -16,18 +16,44 @@
 
 /* ────────────────────────────────────────────────────────────────────────
  * Background system: grid, glows, noise
+ *
+ * This layer is PERMANENT and PAGE-SCOPED, and both halves of that are
+ * corrections.
+ *
+ * It was `position: fixed`, which — because nothing in the chat page's ancestor
+ * chain establishes a containing block — resolved against the viewport instead
+ * of the pane it was mounted in. The hairlines therefore ran across the sidebar
+ * as well, since the chat page paints after it. It is now `absolute` against
+ * the chat page, so the grid ends exactly where the page does and the sidebar
+ * keeps its own surface. It deliberately spans BOTH columns: the workspace panel
+ * is co-planar with the conversation, so the canvas has to carry across the
+ * divider rather than stop at it.
+ *
+ * And it was revealed only while `isEmpty`, so the grid — the one thing giving
+ * the canvas any depth — vanished the moment the first message landed. The
+ * background belongs to the session, not to its empty state; only the watermark
+ * further down is empty-state display type. `data-phase` carries the hero/
+ * conversation distinction for the flourishes that really are hero-only.
+ *
+ * `z-index: 0` puts it in the positioned paint layer, above the page's own
+ * background and below every positioned sibling that follows it — which is why
+ * both columns, the transcript wrapper, the composer and the two hero rows are
+ * all `relative` at the call site.
+ *
+ * There is no entry fade any more. The old one existed to soften the hero's
+ * arrival, and it worked by holding the layer at `opacity: 0` until a class
+ * flipped it — which is fine for something that appears mid-session and wrong
+ * for something that mounts with the page. The layer now mounts underneath the
+ * startup skeleton, so nobody is watching the moment it appears, and pinning its
+ * visibility on an animation reaching its end state meant any environment that
+ * does not advance animations rendered no background at all.
  * ──────────────────────────────────────────────────────────────────────── */
 .codex-welcome-bg {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.codex-welcome-bg--visible {
-  opacity: 1;
+  overflow: hidden;
 }
 
 /* Same light/dark split as the watermark: the reference's white hairlines are
@@ -53,6 +79,7 @@
   position: absolute;
   border-radius: 50%;
   filter: blur(90px);
+  transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .codex-welcome-bg__glow--a {
@@ -79,6 +106,16 @@
 
 :root.dark .codex-welcome-bg__glow--b {
   background: radial-gradient(circle, rgba(61,220,132,.05), transparent 62%);
+}
+
+/* Now that the layer never leaves, the breathing orbs would pulse behind a
+ * transcript for the whole session — a background asking to be looked at while
+ * someone is reading. The bloom stays (it is what keeps the canvas from reading
+ * flat); only the motion stops, at the mid-point of the cycle it was in so the
+ * handover is a settle rather than a step. */
+.codex-welcome-bg[data-phase='conversation'] .codex-welcome-bg__glow {
+  animation: none;
+  opacity: .6;
 }
 
 .codex-welcome-bg__noise {
@@ -188,12 +225,11 @@
   --cws-gutter: 16px;
 }
 
-/* Send-triggered animation states */
-.codex-welcome-bg--sending {
-  opacity: 0;
-  transition: opacity 400ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
+/* Send-triggered animation states.
+ *
+ * The background is deliberately absent here. It used to fade out with the rest
+ * of the hero, which is what made the grid disappear on send; it now survives
+ * the transition and only the hero's own type and rows leave. */
 .codex-welcome-watermark--sending {
   opacity: 0;
   transition: opacity 400ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -417,6 +453,24 @@
   padding: 0 var(--cws-gutter);
   opacity: 0;
   animation: codex-welcome-chips-in 600ms cubic-bezier(0.16, 1, 0.3, 1) 600ms forwards;
+}
+
+.codex-welcome-chips-host {
+  container: welcome-chips / inline-size;
+  min-width: 0;
+  width: 100%;
+}
+
+@container welcome-chips (max-width: 620px) {
+  .codex-welcome-chips > *:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+@container welcome-chips (max-width: 440px) {
+  .codex-welcome-chips > *:nth-child(n + 2) {
+    display: none;
+  }
 }
 
 @keyframes codex-welcome-chips-in {

@@ -200,7 +200,7 @@ async function readTrajectoryRuntimeFile(pointerPath: string): Promise<string | 
  * first. Other errors are accumulated so the caller can log/surface them.
  *
  * In addition to the local sidecars (`.jsonl`, `.deleted.jsonl`,
- * `.jsonl.reset.*`, `.trajectory.jsonl`, `.trajectory-path.json`), the
+ * `.jsonl.deleted.*`, `.jsonl.reset.*`, `.trajectory.jsonl`, `.trajectory-path.json`), the
  * sweep follows the `.trajectory-path.json` pointer when it exists and
  * unlinks the off-disk runtime file at `runtimeFile`. This keeps Verse Claw in
  * sync with OpenClaw's `OPENCLAW_TRAJECTORY_DIR` override (where the
@@ -229,6 +229,7 @@ export async function sweepSessionArtefacts(
     || name === `${baseId}.archived.jsonl`
     || name === `${baseId}.trajectory.jsonl`
     || name === pointerName
+    || name.startsWith(`${baseId}.jsonl.deleted.`)
     || name.startsWith(`${baseId}.jsonl.reset.`),
   );
 

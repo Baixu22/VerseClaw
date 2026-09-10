@@ -25,6 +25,11 @@ import { homedir } from "node:os";
 import { startGateway, waitForReady, tailGatewayLog } from "./lib/gateway.js";
 import { RpcClient } from "./lib/rpc-client.js";
 import { grade, GRADES } from "./lib/grade.js";
+import {
+  evaluateRpcCheck,
+  isAdminGatedMethod,
+  validateRpcChecksConfig,
+} from "./lib/rpc-check.js";
 import { writeReport } from "./lib/report.js";
 import { analyzeTranscript, latestTranscript, analyzeGatewayLog } from "./lib/monitor.js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -304,6 +309,11 @@ async function waitForSessionComplete(sessionKey, timeoutMs, message, snapshot, 
 /** RPC 直接检查：逐方法调用，按组汇总分级。 */
 async function runRpcChecks({ port, token }) {
   const rpcConfig = JSON.parse(readFileSync(join(AUDIT_ROOT, "config/rpc-checks.json"), "utf8"));
+  // 配置写错要在这里炸掉，而不是跑完 31 组后让人对着一堆红灯猜原因。
+  const configProblems = validateRpcChecksConfig(rpcConfig);
+  if (configProblems.length > 0) {
+    throw new Error(`rpc-checks.json 配置非法:\n  - ${configProblems.join("\n  - ")}`);
+  }
   const client = new RpcClient({ port, token });
   const results = [];
   try {
@@ -312,22 +322,16 @@ async function runRpcChecks({ port, token }) {
       const checkResults = [];
       for (const c of [...(group.checks ?? []), ...(group.adminOnly ?? [])]) {
         const res = await client.call(c.method, c.params, 10_000);
-        const isAdminGated = group.adminOnly?.some((a) => a.method === c.method);
-        // expectError：该调用预期失败（验证错误处理路径）。error 匹配期望子串即视为通过，
-        // 使“验证错误处理”的探测组不再因正常报错而恒判失败。
-        const expectErr = typeof c.expectError === "string" && c.expectError.length > 0;
-        const errorText = res.error?.message ?? "";
-        const ok = res.ok
-          || (isAdminGated && /missing scope/.test(errorText))
-          || (expectErr && new RegExp(c.expectError.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i").test(errorText));
+        // 判定规则集中在 lib/rpc-check.js：预期错误 / admin gate / 成功 三条通过路径。
+        const verdict = evaluateRpcCheck({
+          result: res,
+          check: c,
+          adminGated: isAdminGatedMethod(group, c.method),
+        });
         checkResults.push({
           method: c.method,
-          ok,
-          passed: ok,
-          adminGated: isAdminGated && !res.ok,
-          expectErrorMatched: expectErr && !res.ok && ok,
           elapsedMs: res.elapsedMs,
-          error: res.ok ? undefined : (res.error?.message ?? "").slice(0, 100),
+          ...verdict,
         });
       }
       const passed = checkResults.filter((r) => r.passed).length;

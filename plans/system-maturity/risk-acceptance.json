@@ -25,7 +25,7 @@
       "decision": "Track",
       "owner": "security-lead",
       "reviewBy": "2026-10-18",
-      "rationale": "CVK enforce-mode roadmap tracked; Fixed baseline re-reviewed quarterly.",
+      "rationale": "CVK gate API deny is covered by historical unit evidence, but the production CVK engine does not consume denied at the tool execution boundary. Track as Partial; a separate default-off brb-M-or-larger follow-up with an execution-boundary test is required before any production hard-blocking claim. Frozen P2-005 delivery/acceptance artifacts remain historical evidence and are not the current status source.",
       "acceptedBy": "program-governance",
       "acceptedAt": "2026-07-18"
     },

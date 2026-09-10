@@ -9,10 +9,12 @@ import type { CommandQueueEnqueueFn } from "../../process/command-queue.types.js
 import type { SkillSnapshot } from "../../skills/types.js";
 import type { ExecElevatedDefaults, ExecToolDefaults } from "../bash-tools.exec-types.js";
 import type { AgentRuntimePlan } from "../runtime-plan/types.js";
+import type { RuntimeLineage } from "../../runtime-core/lineage.js";
 
 export type CompactEmbeddedAgentSessionParams = {
   sessionId: string;
   runId?: string;
+  lineage?: RuntimeLineage;
   sessionKey?: string;
   /** Caller-resolved owner agent for global session aliases. */
   agentId?: string;

@@ -45,6 +45,18 @@ type WorkspaceState = {
   renameFolder: (workspaceId: string, folderId: string, name: string) => Promise<void>;
   deleteFolder: (workspaceId: string, folderId: string) => Promise<void>;
   moveSessionToFolder: (workspaceId: string, sessionKey: string, folderId: string | null) => Promise<void>;
+  /**
+   * Drag-and-drop auto-grouping: drop `sourceSessionKey` after
+   * `targetSessionKey`. If the target is already filed in a workgroup the
+   * source joins that group; otherwise a new root-level workgroup is created
+   * and both sessions are filed into it. Groups never nest past level one.
+   */
+  groupSessions: (
+    workspaceId: string,
+    sourceSessionKey: string,
+    targetSessionKey: string,
+    autoGroupName: string,
+  ) => Promise<void>;
   clearError: () => void;
 };
 
@@ -73,6 +85,12 @@ function stripLegacySessionStates(
   );
 }
 
+function workspaceClaimsSession(profile: WorkspaceProfile, sessionKey: string): boolean {
+  return profile.activeSessionKey === sessionKey
+    || Boolean(profile.sessionStates?.[sessionKey])
+    || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey);
+}
+
 function mergeWorkspaceUiState(current: WorkspaceUiState | undefined, patch: WorkspaceUiState | undefined): WorkspaceUiState {
   const safeCurrent = stripLegacyWorkspaceUiState(current);
   if (!patch) return safeCurrent;
@@ -97,7 +115,7 @@ function mergeWorkspaceUiState(current: WorkspaceUiState | undefined, patch: Wor
   };
 }
 
-export const useWorkspacesStore = create<WorkspaceState>((set) => ({
+export const useWorkspacesStore = create<WorkspaceState>((set, get) => ({
   profiles: [],
   activeWorkspaceId: null,
   activeWorkspace: null,
@@ -237,10 +255,13 @@ export const useWorkspacesStore = create<WorkspaceState>((set) => ({
     }
   },
 
-  createFolder: async (workspaceId, name, parentId = null, kind = 'workgroup') => {
+  createFolder: async (workspaceId, name, _parentId = null, kind = 'workgroup') => {
     set({ error: null });
     try {
-      const snapshot = await hostApi.workspaces.createFolder({ workspaceId, name, parentId, kind });
+      // Workgroups are scoped to a project and never nest. Keep accepting the
+      // old argument at the store boundary so callers remain source-compatible,
+      // but persist every new folder at the project root.
+      const snapshot = await hostApi.workspaces.createFolder({ workspaceId, name, parentId: null, kind });
       set(applySnapshot(snapshot));
       const profile = (snapshot.profiles ?? []).find((p) => p.id === workspaceId);
       const folder = snapshot.folder
@@ -285,6 +306,67 @@ export const useWorkspacesStore = create<WorkspaceState>((set) => ({
       set({ error: String(error) });
       throw error;
     }
+  },
+
+  groupSessions: async (workspaceId, sourceSessionKey, targetSessionKey, autoGroupName) => {
+    const sourceKey = sourceSessionKey.trim();
+    const targetKey = targetSessionKey.trim();
+    const groupName = autoGroupName.trim();
+    if (!sourceKey || !targetKey || sourceKey === targetKey) return;
+    if (!groupName) {
+      const error = new Error('Workgroup name is required for auto-grouping');
+      set({ error: String(error) });
+      throw error;
+    }
+
+    set({ error: null });
+    const profile = get().profiles.find((candidate) => candidate.id === workspaceId);
+    if (!profile) {
+      const error = new Error(`Workspace "${workspaceId}" not found`);
+      set({ error: String(error) });
+      throw error;
+    }
+
+    const foreignOwner = get().profiles.find((candidate) => (
+      candidate.id !== workspaceId
+      && (workspaceClaimsSession(candidate, sourceKey) || workspaceClaimsSession(candidate, targetKey))
+    ));
+    if (foreignOwner) {
+      const error = new Error('Sessions can only be grouped inside the same project');
+      set({ error: String(error) });
+      throw error;
+    }
+
+    const folders = profile.sessionFolders ?? [];
+    const assignments = profile.sessionFolderAssignments ?? {};
+    const targetFolderId = typeof assignments[targetKey] === 'string'
+      ? assignments[targetKey]
+      : undefined;
+    const targetFolderExists = targetFolderId != null
+      && folders.some((folder) => folder.id === targetFolderId);
+
+    // If the drop target is already filed, the dragged session simply joins
+    // that group. Dropping onto a member of its own group is a no-op.
+    if (targetFolderExists && targetFolderId != null) {
+      if (assignments[sourceKey] === targetFolderId) return;
+      await get().moveSessionToFolder(workspaceId, sourceKey, targetFolderId);
+      return;
+    }
+
+    // Otherwise create ONE root-level workgroup and file both sessions into
+    // it. The UI renders workgroups flat even for legacy nested data, so new
+    // auto-created groups never introduce another nesting level.
+    const folder = await get().createFolder(
+      workspaceId,
+      groupName,
+      null,
+      'workgroup',
+    );
+    if (!folder) {
+      throw new Error('Failed to create workgroup for dropped session');
+    }
+    await get().moveSessionToFolder(workspaceId, targetKey, folder.id);
+    await get().moveSessionToFolder(workspaceId, sourceKey, folder.id);
   },
 
   clearError: () => set({ error: null }),

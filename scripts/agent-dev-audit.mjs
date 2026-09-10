@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { existsSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -144,19 +145,87 @@ async function collectFiles(root, entry) {
   return files;
 }
 
-async function newestAgentDevSource() {
-  let newest = null;
-  for (const entry of AGENT_DEV_SOURCE_PATHS) {
-    const files = await collectFiles(ROOT, entry);
-    for (const file of files) {
-      const info = await stat(file);
-      if (!newest || info.mtimeMs > newest.mtimeMs) {
-        newest = {
-          path: file.replaceAll('\\', '/').replace(ROOT.replaceAll('\\', '/'), '').replace(/^\//, ''),
-          mtime: info.mtime.toISOString(),
-          mtimeMs: info.mtimeMs,
-        };
+// Evidence freshness asks: was this evidence regenerated after the sources
+// last *changed*? Working-tree mtime cannot answer that in a clean git
+// checkout, where every tracked file shares the checkout-time mtime and the
+// comparison hard-fails even for evidence committed in the same change set.
+// Resolve clean tracked files to their last commit time; dirty or untracked
+// files keep their working-tree mtime so the daily loop still hard-fails on
+// unrefreshed evidence. When git is unavailable, fall back to mtime.
+function runGitText(root, args) {
+  try {
+    return execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
+  } catch {
+    return null;
+  }
+}
+
+function collectGitSourceState(root, relativePaths) {
+  if (relativePaths.length === 0) return { dirty: new Set(), times: new Map() };
+  const statusOut = runGitText(root, ['status', '--porcelain=v1', '-z', '--', ...relativePaths]);
+  if (statusOut == null) return null;
+  const dirty = new Set();
+  for (const entry of statusOut.split('\u0000')) {
+    if (entry.length < 4) continue;
+    dirty.add(entry.slice(3));
+  }
+  const times = new Map();
+  const logOut = runGitText(root, ['log', '--no-renames', '--format=commit %cI', '--name-only', '-n', '2000', '--', ...relativePaths]);
+  if (logOut != null) {
+    // --name-only prints "commit <ISO>\n\n<file>\n" groups; track the last
+    // seen commit line instead of relying on blank-line block structure.
+    let currentMs = null;
+    for (const raw of logOut.split('\n')) {
+      const line = raw.trim();
+      if (!line) continue;
+      if (line.startsWith('commit ')) {
+        const commitMs = new Date(line.slice(7)).getTime();
+        currentMs = Number.isSafeInteger(commitMs) ? commitMs : null;
+        continue;
       }
+      if (currentMs != null && !times.has(line)) times.set(line, currentMs);
+    }
+  }
+  return { dirty, times };
+}
+
+// Decide which timestamp represents "last source change" for one file.
+// Clean tracked files use commit time; anything else keeps worktree mtime.
+function resolveSourceChangeTimeMs({ path, mtimeMs }, gitState) {
+  const key = String(path).replaceAll('\\', '/');
+  if (gitState && !gitState.dirty.has(key)) {
+    const commitMs = gitState.times.get(key);
+    if (Number.isSafeInteger(commitMs)) {
+      return { timeMs: commitMs, timeSource: 'git-commit' };
+    }
+  }
+  return { timeMs: mtimeMs, timeSource: 'worktree-mtime' };
+}
+
+function relativePathFor(root, file) {
+  const rootNorm = root.replaceAll('\\', '/').replace(/\/+$/, '');
+  const fileNorm = file.replaceAll('\\', '/');
+  return fileNorm.startsWith(`${rootNorm}/`) ? fileNorm.slice(rootNorm.length + 1) : fileNorm;
+}
+
+async function newestAgentDevSource() {
+  const files = [];
+  for (const entry of AGENT_DEV_SOURCE_PATHS) {
+    files.push(...await collectFiles(ROOT, entry));
+  }
+  const relPaths = files.map((file) => relativePathFor(ROOT, file));
+  const gitState = collectGitSourceState(ROOT, relPaths);
+  let newest = null;
+  for (let index = 0; index < files.length; index += 1) {
+    const info = await stat(files[index]);
+    const resolved = resolveSourceChangeTimeMs({ path: relPaths[index], mtimeMs: info.mtimeMs }, gitState);
+    if (!newest || resolved.timeMs > newest.mtimeMs) {
+      newest = {
+        path: relPaths[index],
+        mtime: new Date(resolved.timeMs).toISOString(),
+        mtimeMs: resolved.timeMs,
+        timeSource: resolved.timeSource,
+      };
     }
   }
   return newest;
@@ -838,6 +907,9 @@ export {
   REQUIRED_FAST_PATHS,
   REQUIRED_FULL_GATES,
   buildAuditReport,
+  collectGitSourceState,
+  resolveSourceChangeTimeMs,
+
   collectEvidenceInventory,
   evaluateCoverageBreadth,
   evaluateDocsRunbook,

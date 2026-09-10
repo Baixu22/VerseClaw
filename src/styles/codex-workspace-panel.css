@@ -14,7 +14,32 @@
  * outranks single-class Tailwind utilities without needing `!important`.
  */
 
+/* ── Surface tier ────────────────────────────────────────────────────────────
+ *
+ * The panel is CO-PLANAR with the conversation, so it draws no surface of its
+ * own. It used to paint `--material-panel` over every region — shell, content,
+ * launcher — which in dark resolved to 13% lightness against the conversation
+ * canvas's 9.4%: one full material step up. A panel that takes real layout width
+ * beside the chat, rather than floating over it, still read as a raised slab
+ * parked next to it, and the page's grid stopped dead at the divider.
+ *
+ * Transparent instead. The chat page's canvas and its grid layer carry straight
+ * through (see .codex-welcome-bg in codex-welcome-hero.css), and the hairline on
+ * the aside's left edge is the only thing marking the seam.
+ *
+ * Two things keep their own tier on purpose:
+ *   - the tab strip and the browser chrome row, which continue the chat
+ *     toolbar's band across the divider and so belong to it, not to the canvas;
+ *   - the whole panel in the `bottom` placement, which is a genuine overlay
+ *     (absolute, shadowed) covering the transcript rather than sitting beside it.
+ */
 .rs-panel-shell {
+  background: transparent;
+}
+
+[data-placement='bottom'] .rs-panel-shell,
+[data-placement='bottom'] .rs-panel-shell .rs-content,
+[data-placement='bottom'] .rs-panel-shell .rs-launcher-body {
   background: hsl(var(--material-panel));
 }
 
@@ -259,7 +284,7 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
-  background: hsl(var(--material-panel));
+  background: transparent;
 }
 
 /* ── Launcher ────────────────────────────────────────────────────────────── */
@@ -274,7 +299,7 @@
   min-height: 0;
   padding: 8px 28px;
   overflow: auto;
-  background: hsl(var(--material-panel));
+  background: transparent;
 }
 
 .rs-panel-shell .rs-launcher-heading {
@@ -707,4 +732,69 @@
   flex: none;
   width: 16px;
   color: hsl(var(--foreground));
+}
+
+/* ── Workspace sweep ────────────────────────────────────────────────────────
+ *
+ * The panel enters by wiping in from the right edge, like a squeegee crossing
+ * the toolbar it was opened from. Two rules make that read as one motion rather
+ * than two unrelated animations:
+ *
+ *   1. The panel itself translates in from its own full width, so its leading
+ *      edge travels across the toolbar controls instead of fading in on top of
+ *      them. It takes real layout width the whole time (see the `aside` in
+ *      Chat/index.tsx) — this is a transform, not a float.
+ *   2. The controls the edge passes over wipe out in place. They are NOT
+ *      unmounted and re-laid-out, because that would slide the surviving button
+ *      sideways as its neighbours vanished; they collapse their own width to
+ *      zero from the right, so the leftmost control never moves.
+ *
+ * The result: 刷新 goes first, 会话状态 next, and the workspace toggle — the
+ * leftmost of the three — is left standing exactly where it was, now reading as
+ * the panel's own open/close switch.
+ */
+.codex-workspace-sweep {
+  animation: codex-workspace-sweep-in 260ms var(--ease-enter);
+  will-change: transform;
+}
+
+@keyframes codex-workspace-sweep-in {
+  from { transform: translateX(100%); }
+  to { transform: none; }
+}
+
+/* Wipe target. Width and opacity collapse together so the row closes up from
+ * the right rather than leaving a hole where the button was. */
+.codex-toolbar-wipe {
+  display: inline-flex;
+  overflow: hidden;
+  flex: none;
+  max-width: 2rem;
+  opacity: 1;
+  transition:
+    max-width 200ms var(--ease-enter),
+    opacity 140ms ease,
+    margin 200ms var(--ease-enter);
+}
+
+.codex-toolbar-wipe[data-wiped='true'] {
+  max-width: 0;
+  margin-left: -0.125rem;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Stagger: the edge reaches the rightmost control first. Refresh is the last
+ * child, so it leads and 会话状态 follows a beat later. */
+.codex-toolbar-wipe[data-wiped='true'][data-wipe-order='1'] { transition-delay: 0ms; }
+.codex-toolbar-wipe[data-wiped='true'][data-wipe-order='2'] { transition-delay: 60ms; }
+
+/* Reappearing on close runs in the opposite order, so the row unpacks
+ * left-to-right as the panel retreats. */
+.codex-toolbar-wipe[data-wiped='false'][data-wipe-order='1'] { transition-delay: 60ms; }
+.codex-toolbar-wipe[data-wiped='false'][data-wipe-order='2'] { transition-delay: 0ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .codex-workspace-sweep { animation: none; }
+  .codex-toolbar-wipe { transition: none; }
 }

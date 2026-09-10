@@ -2,11 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const clearErrorRecoveryTimer = vi.fn();
 const clearHistoryPoll = vi.fn();
-const collectToolUpdates = vi.fn(() => []);
+const collectToolUpdates = vi.fn((): unknown[] => []);
 const extractImagesAsAttachedFiles = vi.fn(() => []);
-const extractMediaRefs = vi.fn(() => []);
+const extractMediaRefs = vi.fn((): unknown[] => []);
 const extractRawFilePaths = vi.fn(() => []);
-const getMessageText = vi.fn(() => '');
+const getMessageText = vi.fn((content: unknown): string => {
+  void content;
+  return '';
+});
 const getMessageErrorMessage = vi.fn((message: { errorMessage?: string; error_message?: string } | undefined) =>
   message?.errorMessage ?? message?.error_message ?? null);
 const getToolCallFilePath = vi.fn(() => undefined);
@@ -32,32 +35,32 @@ const normalizeStreamingMessage = vi.fn((message: unknown) => message);
 const scheduleRecoverableRuntimeError = vi.fn((commit: () => void) => commit());
 const isRecoverableRuntimeError = vi.fn((message: string) => /\bterminated\b/i.test(message));
 const snapshotStreamingAssistantMessage = vi.fn((currentStream: unknown) => currentStream ? [currentStream] : []);
-const upsertToolStatuses = vi.fn((_current, updates) => updates);
+const upsertToolStatuses = vi.fn((_current: unknown, updates: unknown): unknown => updates);
 const appendEventsMock = vi.fn();
 
 vi.mock('@/stores/chat/helpers', () => ({
-  clearErrorRecoveryTimer: (...args: unknown[]) => clearErrorRecoveryTimer(...args),
-  clearHistoryPoll: (...args: unknown[]) => clearHistoryPoll(...args),
-  collectToolUpdates: (...args: unknown[]) => collectToolUpdates(...args),
-  extractImagesAsAttachedFiles: (...args: unknown[]) => extractImagesAsAttachedFiles(...args),
-  extractMediaRefs: (...args: unknown[]) => extractMediaRefs(...args),
-  getMessageErrorMessage: (...args: unknown[]) => getMessageErrorMessage(...args),
-  extractRawFilePaths: (...args: unknown[]) => extractRawFilePaths(...args),
-  getMessageText: (...args: unknown[]) => getMessageText(...args),
-  getToolCallFilePath: (...args: unknown[]) => getToolCallFilePath(...args),
-  hasErrorRecoveryTimer: (...args: unknown[]) => hasErrorRecoveryTimer(...args),
-  hasNonToolAssistantContent: (...args: unknown[]) => hasNonToolAssistantContent(...args),
-  hasPendingToolUse: (...args: unknown[]) => hasPendingToolUse(...args),
-  isInternalMessage: (...args: unknown[]) => isInternalMessage(...args),
-  isTerminalAssistantErrorMessage: (...args: unknown[]) => isTerminalAssistantErrorMessage(...args),
-  isToolOnlyMessage: (...args: unknown[]) => isToolOnlyMessage(...args),
-  isToolResultRole: (...args: unknown[]) => isToolResultRole(...args),
-  makeAttachedFile: (...args: unknown[]) => makeAttachedFile(...args),
-  isRecoverableRuntimeError: (...args: unknown[]) => isRecoverableRuntimeError(...args),
-  normalizeStreamingMessage: (...args: unknown[]) => normalizeStreamingMessage(...args),
-  scheduleRecoverableRuntimeError: (...args: unknown[]) => scheduleRecoverableRuntimeError(...args),
-  snapshotStreamingAssistantMessage: (...args: unknown[]) => snapshotStreamingAssistantMessage(...args),
-  upsertToolStatuses: (...args: unknown[]) => upsertToolStatuses(...args),
+  clearErrorRecoveryTimer,
+  clearHistoryPoll,
+  collectToolUpdates,
+  extractImagesAsAttachedFiles,
+  extractMediaRefs,
+  getMessageErrorMessage,
+  extractRawFilePaths,
+  getMessageText,
+  getToolCallFilePath,
+  hasErrorRecoveryTimer,
+  hasNonToolAssistantContent,
+  hasPendingToolUse,
+  isInternalMessage,
+  isTerminalAssistantErrorMessage,
+  isToolOnlyMessage,
+  isToolResultRole,
+  makeAttachedFile,
+  isRecoverableRuntimeError,
+  normalizeStreamingMessage,
+  scheduleRecoverableRuntimeError,
+  snapshotStreamingAssistantMessage,
+  upsertToolStatuses,
 }));
 
 vi.mock('@/lib/host-api', () => ({

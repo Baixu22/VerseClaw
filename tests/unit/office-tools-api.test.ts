@@ -73,7 +73,7 @@ describe('office tools api', () => {
             channelTypes: [],
           },
         ],
-      }),
+      } as never),
       readAgentBootstrapTools: async (agentId: string) => (
         agentTools[agentId] ?? { defaultSkillIds: [], defaultMcpServerIds: [] }
       ),

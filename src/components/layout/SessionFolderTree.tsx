@@ -1,25 +1,19 @@
 /**
  * Session workstreams — the sidebar's session grouping surface.
  *
- * Design: docs/dev/session-workstreams-design.md. Three orthogonal layers:
- *   1. Workstreams — folders rendered as ONE flat level, each with a stable
- *      accent color; a 2px member rail replaces the folder-tree grammar.
- *      Legacy nested folders flatten with a muted path prefix; the data model
- *      (sessionFolders / assignments) is untouched.
- *   2. Lineage — fork/handoff descendants attach beneath their origin session
- *      automatically (parentSessionKey is already on sessions.list): the
- *      "where did this exploration come from" answer costs zero filing.
- *   3. Time slices — unfiled sessions fall into today / this week / earlier.
+ * Design: docs/dev/session-workstreams-design.md. Workgroups are scoped to the
+ * current project and rendered as one flat level. Unfiled sessions remain a
+ * simple activity-sorted list; parentSessionKey never creates a second visual
+ * tree inside a workgroup.
  *
  * The move menu files a session in one step, including "create a NEW stream
  * and file it there" from the same panel. It portals to <body> because the
  * sidebar scroller clips absolutely-positioned popovers.
  */
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  ChevronDown,
   FolderPlus,
   FolderInput,
   Pencil,
@@ -34,13 +28,10 @@ import { SidebarRow } from './SidebarRow';
 import type { SessionFolder, WorkspaceProfile } from '@shared/types/workspace';
 import {
   buildSidebarWorkspaceFolderGroups,
-  flattenFolderNodes,
-  sliceSessionsByTime,
-  threadSessionsByLineage,
   workstreamColorIndex,
   type FlatWorkstream,
-  type LineageRow,
   type SidebarSessionEntry,
+  type SidebarSessionSort,
 } from './session-buckets';
 
 type SidebarSessionStatusKind = 'running' | 'waiting' | 'completed' | 'error' | 'aborted';
@@ -87,20 +78,13 @@ function getWorkgroupStatus(
   return 'idle';
 }
 
-function workgroupStatusDot(status: WorkgroupStatusKind): string {
-  if (status === 'attention') return 'bg-red-500';
-  if (status === 'waiting') return 'bg-amber-500';
-  if (status === 'running') return 'bg-blue-500';
-  if (status === 'done') return 'bg-emerald-500';
-  return 'bg-muted-foreground/50';
-}
 
-/** LineageRow enriched with the rendered session row (kept out of session-buckets — pure data there). */
-type RenderedLineageRow = LineageRow & { rendered: React.ReactNode };
+/** Session entry enriched with its row so group status and rendering share one list. */
+type RenderedSessionRow = { entry: SidebarSessionEntry; rendered: React.ReactNode };
 
 interface WorkstreamSectionProps {
   stream: FlatWorkstream;
-  rows: RenderedLineageRow[];
+  rows: RenderedSessionRow[];
   collapsed: boolean;
   sessionStatusKinds: Record<string, SidebarSessionStatusKind | undefined>;
   onToggleFolder: (folderId: string) => void;
@@ -111,8 +95,6 @@ interface WorkstreamSectionProps {
    */
   onRenameFolder: (folderId: string, name: string) => Promise<void>;
   onDeleteFolder: (folderId: string) => Promise<void>;
-  /** Origin display names for lineage tooltips, keyed by session key. */
-  sessionNameByKey: Map<string, string>;
 }
 
 function WorkstreamSection({
@@ -123,7 +105,6 @@ function WorkstreamSection({
   onToggleFolder,
   onRenameFolder,
   onDeleteFolder,
-  sessionNameByKey,
 }: WorkstreamSectionProps) {
   const { t } = useTranslation(['chat', 'common']);
   const [isEditing, setIsEditing] = useState(false);
@@ -154,13 +135,12 @@ function WorkstreamSection({
 
   return (
     <div
-      className="space-y-0.5"
+      className="ws-stream"
       data-testid={`sidebar-folder-${folder.id}`}
       style={{ '--ws-accent': accent } as React.CSSProperties}
     >
       {isEditing ? (
-        <div className="flex items-center gap-1 px-1.5 py-1" style={{ paddingLeft: 8 }}>
-          <span className="ws-dot" aria-hidden />
+        <div className="ws-rename-row">
           <Input
             autoFocus
             value={draftName}
@@ -228,49 +208,33 @@ function WorkstreamSection({
             data-testid={`sidebar-folder-toggle-${folder.id}`}
             aria-expanded={!collapsed}
             onClick={() => onToggleFolder(folder.id)}
-            className="task-select"
+            className="ws-label-select"
           >
-            {rows.length > 0
-              ? (
-                /* One rotating chevron rather than two swapped glyphs — the
-                   rotation animates, a glyph swap cannot. */
-                <ChevronDown
-                  className={cn('ws-chevron size-3 shrink-0', collapsed && 'is-collapsed')}
-                  aria-hidden
-                />
-              )
-              : <span className="size-3 shrink-0" />}
-            <span className="ws-dot" data-testid={`sidebar-stream-dot-${folder.id}`} aria-hidden />
-            {/* Legacy nested folders keep their ancestry visible: the NEAREST
-                ancestor inline (the informative one), the full chain in the
-                tooltip. The tree is gone, the provenance is not. */}
-            {stream.pathPrefix.length > 0 && (
-              <span
-                className="ws-path-prefix min-w-0 truncate"
-                data-testid={`sidebar-stream-path-${folder.id}`}
-                title={[...stream.pathPrefix, folder.name].join(' ⧸ ')}
-              >
-                {stream.pathPrefix.length > 1 ? '… ⧸ ' : ''}{stream.pathPrefix[stream.pathPrefix.length - 1]}&thinsp;⧸
-              </span>
-            )}
+            {/* A LABEL, not a node: no leading glyph, flush with the section
+                heading above it. The row itself is the toggle, the same way the
+                "Sessions" heading works, so nothing has to sit left of the text
+                and push every session further right than its own group. */}
             <span className="ws-name min-w-0 truncate">{folder.name}</span>
-            <span
-              data-testid={`sidebar-workgroup-status-${folder.id}`}
-              title={workgroupStatusLabel}
-              aria-label={workgroupStatusLabel}
-              className="ws-status-slot flex shrink-0 items-center"
-            >
-              <span className={cn('size-1.5 shrink-0 rounded-full', workgroupStatusDot(workgroupStatus))} />
+            {/* Trailing slot shares the right edge with the absolutely
+                positioned hover controls, so it yields to them. The count only
+                answers "what am I hiding?" — with the group open its members are
+                right there, so it would be restating the obvious. */}
+            <span className="ws-trailing">
+              {collapsed && memberKeys.length > 0 && (
+                <span
+                  data-testid={`sidebar-workgroup-count-${folder.id}`}
+                  /* One mark, two facts. The aggregate state used to be a second
+                     dot beside the count; a shut group is the only place that
+                     state is not already visible on the sessions themselves, so
+                     it rides the count as a tint rather than adding a glyph. */
+                  data-status={workgroupStatus}
+                  aria-label={`${t('chat:workgroups.sessionCount', { count: memberKeys.length })} · ${workgroupStatusLabel}`}
+                  className="ws-count"
+                >
+                  {memberKeys.length}
+                </span>
+              )}
             </span>
-            {memberKeys.length > 0 && (
-              <span
-                data-testid={`sidebar-workgroup-count-${folder.id}`}
-                aria-label={t('chat:workgroups.sessionCount', { count: memberKeys.length })}
-                className="ws-count shrink-0 text-xs text-[color:var(--cdx-text-4)]"
-              >
-                {memberKeys.length}
-              </span>
-            )}
           </button>
           </SidebarRow>
         </div>
@@ -280,21 +244,8 @@ function WorkstreamSection({
            animate; `aria-hidden` keeps a collapsed stream out of the
            accessibility tree the way the workspace group does. */
         <div className={cn('ws-members-outer', !collapsed && 'open')} aria-hidden={collapsed}>
-          <div className="ws-members space-y-0.5">
-            {rows.map((row) => {
-              if (row.lineageDepth === 0) return row.rendered;
-              const originName = row.originKey ? sessionNameByKey.get(row.originKey) : undefined;
-              return (
-                <div
-                  key={`lineage-${row.entry.session.key}`}
-                  className="ws-lineage-row"
-                  data-testid={`sidebar-lineage-${row.entry.session.key}`}
-                  title={originName ? t('chat:workgroups.origin', { name: originName }) : undefined}
-                >
-                  {row.rendered}
-                </div>
-              );
-            })}
+          <div className="ws-members">
+            {rows.map((row) => row.rendered)}
           </div>
         </div>
       )}
@@ -307,6 +258,7 @@ interface SessionFolderTreeMemoProps {
   sessions: SidebarSessionEntry[];
   collapsedFolders: Record<string, boolean>;
   sessionStatusKinds: Record<string, SidebarSessionStatusKind | undefined>;
+  sessionSort: SidebarSessionSort;
   onToggleFolder: (folderId: string) => void;
   /** Returns the created folder when the host provides it — the move menu's
    *  one-step "create stream and file here" flow needs the new id. */
@@ -314,6 +266,8 @@ interface SessionFolderTreeMemoProps {
   onRenameFolder: (workspaceId: string, folderId: string, name: string) => Promise<void>;
   onDeleteFolder: (workspaceId: string, folderId: string) => Promise<void>;
   onMoveSession: (workspaceId: string, sessionKey: string, folderId: string | null) => Promise<void>;
+  /** Drop a dragged session after another session to auto-group them. */
+  onDropSession: (workspaceId: string, sourceSessionKey: string, targetSessionKey: string, autoGroupName: string) => Promise<void>;
   renderSessionRow: (entry: SidebarSessionEntry, options?: RenderSessionRowOptions) => React.ReactNode;
 }
 
@@ -322,11 +276,13 @@ function SessionFolderTreeInner({
   sessions,
   collapsedFolders,
   sessionStatusKinds,
+  sessionSort,
   onToggleFolder,
   onCreateFolder,
   onRenameFolder,
   onDeleteFolder,
   onMoveSession,
+  onDropSession,
   renderSessionRow,
 }: SessionFolderTreeMemoProps) {
   const { t } = useTranslation(['chat', 'common']);
@@ -334,6 +290,14 @@ function SessionFolderTreeInner({
   const [newFolderName, setNewFolderName] = useState('');
   const [moveMenu, setMoveMenu] = useState<{ sessionKey: string; top: number; left: number } | null>(null);
   const [menuStreamDraft, setMenuStreamDraft] = useState<string | null>(null);
+  const [draggedSessionKey, setDraggedSessionKey] = useState<string | null>(null);
+  const [dropTargetKey, setDropTargetKey] = useState<string | null>(null);
+  /**
+   * `dragOver` can fire in the same native gesture before React has committed
+   * the drag-start state update. The ref keeps the active drag key available
+   * synchronously, while the state copy only drives the visual classes.
+   */
+  const draggedSessionKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!moveMenu) return;
@@ -360,10 +324,14 @@ function SessionFolderTreeInner({
     sessions,
     folders: workspace.sessionFolders ?? [],
     assignments: workspace.sessionFolderAssignments ?? {},
-  }), [sessions, workspace.sessionFolders, workspace.sessionFolderAssignments]);
+    sort: sessionSort,
+  }), [sessions, sessionSort, workspace.sessionFolders, workspace.sessionFolderAssignments]);
 
-  /** Legacy nested folders flatten to one level, parents adjacent to children. */
-  const streams = useMemo(() => flattenFolderNodes(groups.folders), [groups.folders]);
+  /** The bucket helper normalizes every folder to the project root. */
+  const streams = useMemo<FlatWorkstream[]>(() => groups.folders.map((node) => ({
+    node,
+    pathPrefix: [],
+  })), [groups.folders]);
 
   const sessionNameByKey = useMemo(() => new Map(
     sessions.map((entry) => [
@@ -371,6 +339,20 @@ function SessionFolderTreeInner({
       entry.session.displayName || entry.session.derivedTitle || entry.session.label || entry.session.key,
     ]),
   ), [sessions]);
+
+  const getAutoGroupName = useCallback((targetSessionKey: string) => {
+    const targetName = sessionNameByKey.get(targetSessionKey) ?? targetSessionKey;
+    return t('chat:workgroups.autoGroupName', { name: targetName });
+  }, [sessionNameByKey, t]);
+
+  const handleDropSession = useCallback(async (sourceSessionKey: string, targetSessionKey: string) => {
+    if (!sourceSessionKey || !targetSessionKey || sourceSessionKey === targetSessionKey) return;
+    try {
+      await onDropSession(workspace.id, sourceSessionKey, targetSessionKey, getAutoGroupName(targetSessionKey));
+    } catch (error) {
+      console.error('Failed to group session by drag and drop:', error);
+    }
+  }, [getAutoGroupName, onDropSession, workspace.id]);
 
   const submitCreateFolder = async () => {
     const trimmed = newFolderName.trim();
@@ -417,15 +399,20 @@ function SessionFolderTreeInner({
   /**
    * Session rows render the move affordance at EVERY depth, not just at the
    * workspace root — a session filed into a workstream must keep its way out.
-   * The menu portals to `document.body`: `.project-tasks` carries
-   * `overflow: hidden` for the collapse animation, which would clip it.
+   * The same wrapper is the HTML5 drag handle: drop a session onto another
+   * session row and both are filed into the same workgroup. The menu portals
+   * to `document.body`: `.project-tasks` carries `overflow: hidden` for the
+   * collapse animation, which would clip it.
    */
   const renderSessionWithMoveMenu = useCallback((entry: SidebarSessionEntry) => {
-    const isMenuOpen = moveMenu?.sessionKey === entry.session.key;
+    const sessionKey = entry.session.key;
+    const isMenuOpen = moveMenu?.sessionKey === sessionKey;
+    const isDragging = draggedSessionKey === sessionKey;
+    const isDropTarget = dropTargetKey === sessionKey;
     const moveAction = (
       <button
         type="button"
-        data-testid={`sidebar-session-move-${entry.session.key}`}
+        data-testid={`sidebar-session-move-${sessionKey}`}
         aria-label={t('chat:workgroups.moveTo')}
         aria-haspopup="menu"
         aria-expanded={isMenuOpen}
@@ -448,7 +435,7 @@ function SessionFolderTreeInner({
           );
           const fitsBelow = rect.bottom + 4 + estimatedHeight <= window.innerHeight - 8;
           setMoveMenu({
-            sessionKey: entry.session.key,
+            sessionKey,
             top: fitsBelow
               ? rect.bottom + 4
               : Math.max(8, rect.top - 4 - estimatedHeight),
@@ -459,45 +446,109 @@ function SessionFolderTreeInner({
         <FolderInput className="h-3.5 w-3.5" />
       </button>
     );
+
+    const readDraggedSessionKey = (event: React.DragEvent<HTMLDivElement>): string | null => {
+      if (draggedSessionKeyRef.current) return draggedSessionKeyRef.current;
+      if (draggedSessionKey) return draggedSessionKey;
+      const raw = event.dataTransfer.getData('application/x-verse-sidebar-session');
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw) as { workspaceId?: string; sessionKey?: string };
+          if (parsed.workspaceId === workspace.id && parsed.sessionKey) return parsed.sessionKey;
+        } catch {
+          // fall through to the plain-text payload
+        }
+      }
+      const plain = event.dataTransfer.getData('text/plain');
+      return plain || null;
+    };
+
     return (
-      <div key={entry.session.key} className="relative">
+      <div
+        key={sessionKey}
+        data-testid={`sidebar-session-drag-${sessionKey}`}
+        data-session-key={sessionKey}
+        className={cn(
+          'relative',
+          isDragging && 'ws-drag-source',
+          isDropTarget && 'ws-drop-target',
+        )}
+        title={isDropTarget ? t('chat:workgroups.dropHint') : undefined}
+        draggable
+        onDragStart={(event) => {
+          // Close the move menu before the browser captures the ghost image.
+          setMoveMenu(null);
+          setMenuStreamDraft(null);
+          draggedSessionKeyRef.current = sessionKey;
+          setDraggedSessionKey(sessionKey);
+          event.dataTransfer.effectAllowed = 'move';
+          event.dataTransfer.setData(
+            'application/x-verse-sidebar-session',
+            JSON.stringify({ workspaceId: workspace.id, sessionKey }),
+          );
+          event.dataTransfer.setData('text/plain', sessionKey);
+        }}
+        onDragEnd={() => {
+          draggedSessionKeyRef.current = null;
+          setDraggedSessionKey(null);
+          setDropTargetKey(null);
+        }}
+        onDragOver={(event) => {
+          // Only local, same-workspace drops are meaningful: grouping is a
+          // workspace-internal filing operation.
+          if (!draggedSessionKeyRef.current || draggedSessionKeyRef.current === sessionKey) return;
+          event.preventDefault();
+          event.stopPropagation();
+          event.dataTransfer.dropEffect = 'move';
+          setDropTargetKey((current) => (current === sessionKey ? current : sessionKey));
+        }}
+        onDragLeave={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+            setDropTargetKey((current) => (current === sessionKey ? null : current));
+          }
+        }}
+        onDrop={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          const sourceSessionKey = readDraggedSessionKey(event);
+          draggedSessionKeyRef.current = null;
+          setDraggedSessionKey(null);
+          setDropTargetKey(null);
+          if (sourceSessionKey && sourceSessionKey !== sessionKey) {
+            void handleDropSession(sourceSessionKey, sessionKey);
+          }
+        }}
+      >
+        {isDropTarget && (
+          <span
+            className="ws-drop-guide"
+            data-testid={`sidebar-session-drop-guide-${sessionKey}`}
+            aria-hidden="true"
+          />
+        )}
         {renderSessionRow(entry, {
           leadingActions: moveAction,
           forceActionsVisible: isMenuOpen,
         })}
       </div>
     );
-  }, [moveMenu, renderSessionRow, t, workspace.sessionFolders]);
+  }, [
+    draggedSessionKey,
+    dropTargetKey,
+    handleDropSession,
+    moveMenu,
+    renderSessionRow,
+    t,
+    workspace.id,
+    workspace.sessionFolders,
+  ]);
 
-  const toRenderedRows = useCallback((entries: SidebarSessionEntry[]): RenderedLineageRow[] => (
-    threadSessionsByLineage(entries).map((row) => ({
-      ...row,
-      rendered: renderSessionWithMoveMenu(row.entry),
+  const toRenderedRows = useCallback((entries: SidebarSessionEntry[]): RenderedSessionRow[] => (
+    entries.map((entry) => ({
+      entry,
+      rendered: renderSessionWithMoveMenu(entry),
     }))
   ), [renderSessionWithMoveMenu]);
-
-  /* Unfiled sessions: lineage threads first (children ride with their origin),
-   * then the top-level rows slice into today / this week / earlier. The clock
-   * is sampled once per mount — slices don't need to tick, and render purity
-   * forbids Date.now() inside the memo. */
-  const [sliceNowMs] = useState(() => Date.now());
-  const unfiledView = useMemo(() => {
-    const threaded = threadSessionsByLineage(groups.rootSessions);
-    const childrenByOrigin = new Map<string, LineageRow[]>();
-    for (const row of threaded) {
-      if (row.lineageDepth === 1 && row.originKey) {
-        const list = childrenByOrigin.get(row.originKey) ?? [];
-        list.push(row);
-        childrenByOrigin.set(row.originKey, list);
-      }
-    }
-    const topLevel = threaded.filter((row) => row.lineageDepth === 0).map((row) => row.entry);
-    const slices = sliceSessionsByTime(topLevel, sliceNowMs);
-    return { slices, childrenByOrigin };
-  }, [groups.rootSessions, sliceNowMs]);
-
-  const showSliceLabels = unfiledView.slices.length > 1
-    || (unfiledView.slices.length === 1 && unfiledView.slices[0].key !== 'today');
 
   const currentAssignment = moveMenu ? workspace.sessionFolderAssignments?.[moveMenu.sessionKey] : undefined;
   const menuFolders = useMemo(() => (
@@ -505,7 +556,11 @@ function SessionFolderTreeInner({
   ), [workspace.sessionFolders]);
 
   return (
-    <div className="space-y-0.5">
+    /* Not `space-y-0.5`: the base sidebar rule neutralizes that utility by
+       forcing `margin-bottom: 0` on every sibling after the first, which silently
+       ate the whitespace rhythm that now carries grouping. Spacing is owned by
+       `.ws-stream` / `.ws-time-slice` in codex-sidebar.css instead. */
+    <div className="ws-tree">
       {streams.map((stream) => (
         <WorkstreamSection
           key={stream.node.folder.id}
@@ -516,47 +571,24 @@ function SessionFolderTreeInner({
           onToggleFolder={onToggleFolder}
           onRenameFolder={handleRenameFolder}
           onDeleteFolder={handleDeleteFolder}
-          sessionNameByKey={sessionNameByKey}
         />
       ))}
       {groups.rootSessions.length > 0 && streams.length > 0 && (
         <div
           data-testid={`sidebar-workgroup-ungrouped-${workspace.id}`}
-          /* Quiet divider label, matching the restrained `.empty-sidebar-row`
-             treatment rather than an uppercase section header. */
-          className="empty-sidebar-row justify-between"
+          /* A PEER of the group labels, not their container: same left edge, same
+             size, same dimness. It used to sit 24px right of the time slices it
+             introduces — the indent claimed it was their child while the count
+             claimed it was their parent. Now the edge says "sibling of the
+             groups" and the time slices below it are visibly quieter. */
+          className="ws-unfiled-label"
         >
           <span>{t('chat:workgroups.ungrouped')}</span>
-          <span>{groups.rootSessions.length}</span>
         </div>
       )}
-      {unfiledView.slices.map((slice) => (
-        <div key={slice.key} className="space-y-0.5">
-          {showSliceLabels && (
-            <div className="ws-time-slice" data-testid={`sidebar-time-slice-${slice.key}`}>
-              {t(`chat:workgroups.timeSlice.${slice.key}`)}
-            </div>
-          )}
-          {slice.entries.map((entry) => {
-            const children = unfiledView.childrenByOrigin.get(entry.session.key) ?? [];
-            return (
-              <div key={entry.session.key} className="space-y-0.5">
-                {renderSessionWithMoveMenu(entry)}
-                {children.map((row) => (
-                  <div
-                    key={`lineage-${row.entry.session.key}`}
-                    className="ws-lineage-row"
-                    data-testid={`sidebar-lineage-${row.entry.session.key}`}
-                    title={t('chat:workgroups.origin', { name: sessionNameByKey.get(entry.session.key) ?? entry.session.key })}
-                  >
-                    {renderSessionWithMoveMenu(row.entry)}
-                  </div>
-                ))}
-              </div>
-            );
-          })}
-        </div>
-      ))}
+      {/* Root sessions already arrive activity-sorted from the bucket helper.
+          Keep them as direct rows: no date headings and no second-level lineage. */}
+      {groups.rootSessions.map((entry) => renderSessionWithMoveMenu(entry))}
       {moveMenu && createPortal(
         <div
           role="menu"

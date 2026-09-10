@@ -103,7 +103,7 @@ describe('WorkspaceBrowserBody', () => {
 
     render(
       <WorkspaceBrowserBody
-        agent={{ id: 'main', name: 'Main Agent', workspace: '/workspace' }}
+        agent={{ id: 'main', name: 'Main Agent', workspace: '/workspace' } as never}
       />,
     );
 
@@ -127,7 +127,7 @@ describe('WorkspaceBrowserBody', () => {
   it('renders Office documents through OfficeCLI watch preview', async () => {
     render(
       <WorkspaceBrowserBody
-        agent={{ id: 'main', name: 'Main Agent', workspace: '/workspace' }}
+        agent={{ id: 'main', name: 'Main Agent', workspace: '/workspace' } as never}
       />,
     );
 
@@ -149,7 +149,7 @@ describe('WorkspaceBrowserBody', () => {
 
     render(
       <WorkspaceBrowserBody
-        agent={{ id: 'main', name: 'Main Agent', workspace: '/workspace' }}
+        agent={{ id: 'main', name: 'Main Agent', workspace: '/workspace' } as never}
       />,
     );
 

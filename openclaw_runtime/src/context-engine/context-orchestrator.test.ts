@@ -178,6 +178,61 @@ describe("computeContextExtraSystemPrompt", () => {
     endTurnInjectionBudget(turnId);
   });
 
+  it("does not scope memory to an ephemeral runId, but preserves an explicit stable taskId", async () => {
+    const receivedTaskIds: Array<string | undefined> = [];
+    const provider = {
+      ...createMemoryProvider("cross-run fact", "runtime-memory"),
+      async getContext(query: { taskId?: string }) {
+        receivedTaskIds.push(query.taskId);
+        return {
+          status: "success" as const,
+          contextItems: [
+            {
+              id: "cross-run-memory",
+              kind: "memory" as const,
+              text: "cross-run fact",
+              source: "runtime-memory:stable-task",
+              evidenceRefs: [],
+              metadata: { providerId: "runtime-memory" },
+            },
+          ],
+          diagnostics: [],
+        };
+      },
+    } as unknown as RuntimeContextProvider;
+
+    const config = {
+      runtime: {
+        memory: {
+          injectPilot: { enabled: true, providers: ["runtime-memory"] },
+        },
+      },
+    };
+    await computeContextExtraSystemPrompt(
+      "base",
+      config,
+      {
+        sessionKey: "agent:main:main",
+        runId: "run-1",
+        memoryProviderFactory: () => [provider],
+      },
+      { stages: ["memory"] },
+    );
+    await computeContextExtraSystemPrompt(
+      "base",
+      config,
+      {
+        sessionKey: "agent:main:main",
+        runId: "run-2",
+        taskId: "task-ledger-1",
+        memoryProviderFactory: () => [provider],
+      },
+      { stages: ["memory"] },
+    );
+
+    expect(receivedTaskIds).toEqual([undefined, "task-ledger-1"]);
+  });
+
   it("vtoken-only canary injects Working Context", async () => {
     const client = createMockVtokenClient("packed working context");
     const { extraSystemPrompt, lineage } = await computeContextExtraSystemPrompt(

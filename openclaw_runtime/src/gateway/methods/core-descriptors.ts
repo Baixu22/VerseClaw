@@ -1,5 +1,6 @@
 // Core gateway method descriptors keep handler names, auth scopes, startup availability, and write policy in one table.
 import type { OperatorScope } from "../operator-scopes.js";
+import { GATEWAY_AUX_METHODS } from "../server-aux-methods.js";
 import {
   DYNAMIC_GATEWAY_METHOD_SCOPE,
   NODE_GATEWAY_METHOD_SCOPE,
@@ -203,6 +204,8 @@ export const CORE_GATEWAY_METHOD_SPECS: readonly CoreGatewayMethodSpec[] = [
   { name: "sessions.checkpointDiff", scope: "operator.read" },
   { name: "sessions.restoreCheckpoint", scope: "operator.write" },
   { name: "sessions.queueDrain", scope: "operator.write" },
+  { name: "sessions.yieldState", scope: "operator.read" },
+  { name: "sessions.lifecycleLedger", scope: "operator.read" },
   { name: "sessions.compaction.list", scope: "operator.read" },
   { name: "sessions.compaction.get", scope: "operator.read" },
   { name: "sessions.compaction.branch", scope: "operator.write" },
@@ -211,6 +214,7 @@ export const CORE_GATEWAY_METHOD_SPECS: readonly CoreGatewayMethodSpec[] = [
   { name: "sessions.fork", scope: "operator.write", startup: true },
   { name: "sessions.send", scope: "operator.write", startup: true },
   { name: "sessions.abort", scope: "operator.write", startup: true },
+  { name: "sessions.stop", scope: "operator.admin" },
   { name: "sessions.patch", scope: "operator.admin" },
   { name: "sessions.pluginPatch", scope: "operator.admin" },
   { name: "sessions.cleanup", scope: "operator.admin" },
@@ -335,17 +339,65 @@ export function isCoreGatewayMethodClassified(method: string): boolean {
   return CORE_GATEWAY_METHOD_SPEC_BY_NAME.has(method);
 }
 
+/**
+ * TF-0089: descriptor specs that are deliberately not backed by the lazy core
+ * handler map. Each entry is a reviewed, documented exception - anything else
+ * missing a handler fails registry construction instead of silently skipping
+ * (the failure mode that shipped `sessions.yieldState` as "unknown method").
+ *
+ * - Aux methods are served through the auxiliary handler surface
+ *   (`server-aux-handlers.ts`) and get their descriptors there.
+ * - `sessions.compressionArtifact` / `sessions.recoveryContext` are pre-existing
+ *   unreachable methods (descriptor + handler exist, lazy whitelist entry is
+ *   missing at HEAD). Registering them changes checkpoint/recovery behavior, so
+ *   the fix belongs to that workstream; until then they stay listed here
+ *   instead of hiding in a silent skip.
+ */
+const KNOWN_UNREGISTERED_CORE_METHOD_SPEC_REASONS: ReadonlyMap<string, string> = new Map([
+  [
+    "sessions.compressionArtifact",
+    "pre-existing: lazy whitelist entry missing at HEAD; registration owned by the checkpoint/recovery workstream",
+  ],
+  [
+    "sessions.recoveryContext",
+    "pre-existing: lazy whitelist entry missing at HEAD; registration owned by the checkpoint/recovery workstream",
+  ],
+]);
+
+/** Test-only view of the documented exceptions (asserted by the guard tests). */
+export function listKnownUnregisteredCoreMethodSpecs(): ReadonlyArray<{
+  name: string;
+  reason: string;
+}> {
+  return [...KNOWN_UNREGISTERED_CORE_METHOD_SPEC_REASONS.entries()].map(([name, reason]) => ({
+    name,
+    reason,
+  }));
+}
+
 /** Creates dispatch descriptors for core handlers and fails if any handler lacks policy. */
 export function createCoreGatewayMethodDescriptors(
   handlers: Record<string, GatewayMethodHandler>,
 ): GatewayMethodDescriptorInput[] {
   const descriptors: GatewayMethodDescriptorInput[] = [];
   const specNames = new Set<string>();
+  const auxMethods = new Set<string>(GATEWAY_AUX_METHODS);
   for (const spec of CORE_GATEWAY_METHOD_SPECS) {
     specNames.add(spec.name);
     const handler = handlers[spec.name];
     if (!handler) {
-      continue;
+      if (auxMethods.has(spec.name)) {
+        // Served through the auxiliary handler surface, not the core lazy map.
+        continue;
+      }
+      const knownReason = KNOWN_UNREGISTERED_CORE_METHOD_SPEC_REASONS.get(spec.name);
+      if (knownReason) {
+        continue;
+      }
+      throw new Error(
+        "gateway method descriptor has no core handler: " +
+          `${spec.name} (add it to the lazy core handler map or document the exception)`,
+      );
     }
     descriptors.push({
       name: spec.name,

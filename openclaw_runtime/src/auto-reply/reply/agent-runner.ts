@@ -1393,6 +1393,7 @@ export async function runReplyAgent(params: {
       resetTriggered: effectiveResetTriggered,
       routeThreadId: replyRouteThreadId,
       upstreamAbortSignal: opts?.abortSignal,
+      agentId: followupRun.run.agentId,
     });
     if (admission.status === "skipped") {
       typing.cleanup();

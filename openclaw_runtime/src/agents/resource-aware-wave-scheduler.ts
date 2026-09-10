@@ -6,8 +6,8 @@
 // wave (via `appliesToWave`) is ignored. This prevents A5 budget changes from
 // disrupting in-flight execution waves.
 //
-// See: net use/designs/development-manual.md §1.1, Stage 3
-// See: net use/designs/area-composition-spec.md (A5 wave immutability)
+// See: docs/runtime-design/development-manual.md §1.1, Stage 3
+// See: docs/runtime-design/area-composition-spec.md (A5 wave immutability)
 // ---------------------------------------------------------------------------
 
 import {

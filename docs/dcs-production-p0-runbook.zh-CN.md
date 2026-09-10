@@ -12,13 +12,17 @@
 | `OPENCLAW_DCS_CONTEXT_VIEW_TOOLS` / `OPENCLAW_DCS_CONTEXT_TOOLS` | off | C1 影子；A/B < 5x |
 | `runtime.coding.staleWriteGuard.enabled` | false | C2 显式开启 |
 | `runtime.coding.writeJournal.enabled` | true | 基线 undo 日记 |
-| `runtime.coding.worktree.backend` | `inprocess` | git 为 opt-in（非 C4-H） |
 | request/plan `isolation` | `shared` | worktree 仅请求级 |
 | `runtime.coding.symbolLease.enabled` | false | mode 默认 `memory` |
 | `runtime.coding.patchFlow.default` | false | 仅调用 API |
 | C6 `applyContextLadder` | 不自动 | assembler 路径不变 |
 | `runtime.coding.routingMemo.shadow` | false | 开启后仅双写 |
-| `runtime.coding.sekb.experienceShadow` | false | 无默认知识注入 |
+
+API-only 面（不是生产旗标）：
+
+- `createWorktreeService(baseRoot, { backend })` 是 worktree backend 的真实启用路径。
+- `DistillationTool.confirm_and_save(suggestion, edits, { sessionId, experienceShadow })` 是 SEKB experience shadow 的真实启用路径。
+- 对应 `runtime.coding.*` 配置叶仅用于观测，不会改变运行时行为。
 
 ## 显式启用方式
 
@@ -42,7 +46,6 @@ child 的 runtime 确认；kill switch 生效时显示为 **killed**，绝不显
 | stale-write-guard | AppSettings + `runtime.coding.staleWriteGuard.enabled`（openclaw.json） |
 | symbol-lease | AppSettings + `runtime.coding.symbolLease.enabled` |
 | routing-memo-shadow | AppSettings + `runtime.coding.routingMemo.shadow` |
-| sekb-experience-shadow | AppSettings + `runtime.coding.sekb.experienceShadow` |
 
 开关保存后，产品路径会在 Gateway 运行时尝试重启以应用；状态徽章：`applied` / `pending-restart` / `error` / `read-only`。
 
@@ -52,11 +55,11 @@ api-only / request-only / baseline 行仍为说明，无开关。
 
 1. **View tools（C1）**：`OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1`（或 Settings 开关），重启 gateway/runtime。显式 env=`0/false/off` 仍覆盖 Settings 开启（kill）。
 2. **Stale write guard（C2）**：`runtime.coding.staleWriteGuard.enabled=true` 或 Settings。
-3. **Git worktree backend（C4）**：`runtime.coding.worktree.backend=git` **且** 请求 `isolation: "worktree"`（仍无 Settings 默认翻）。
+3. **Git worktree backend（C4）**：调用 `createWorktreeService(baseRoot, { backend: "git" })` **且** 请求 `isolation: "worktree"`（仍无 Settings 默认翻）。
 4. **Symbol lease（C5）**：`runtime.coding.symbolLease.enabled=true` 或 Settings（mode 默认 `memory`）。
 5. **Patch-flow（C5）**：调用 `applyPatchProposalsSerial()` / `recommendIsolationMode()`；**不要**把 `patchFlow.default` 设为 true。
 6. **Context ladder（C6）**：代码中显式调用 `applyContextLadder({ blocks, tokenBudget })`；不翻 assembler 默认。
-7. **Shadows（C7）**：Settings 或 `routingMemo.shadow` / `sekb.experienceShadow=true` 仅双写采样。
+7. **Shadows（C7）**：Settings 或 `routingMemo.shadow` 仅双写采样；API-only experience shadow 需调用 `DistillationTool.confirm_and_save(suggestion, edits, { sessionId, experienceShadow: { enabled: true, workspaceRoot } })`。
 
 配置面导出：`artifacts/coding-prod-p0/config-surface.json`
 
@@ -70,8 +73,8 @@ api-only / request-only / baseline 行仍为说明，无开关。
 2. `staleWriteGuard.enabled=false`（Settings 或配置）
 3. `symbolLease.enabled=false`（或 `mode=memory`）
 4. 停止 patch-flow / ladder 调用方；确保 `patchFlow.default=false`
-5. `worktree.backend=inprocess`；隔离改为 `shared` 或省略
-6. `routingMemo.shadow=false` 与 `sekb.experienceShadow=false`
+5. 停止向 `createWorktreeService` 传入 `backend: "git"`，改用 `backend: "inprocess"`；隔离参数省略或设为 `shared`
+6. `routingMemo.shadow=false`；调用 `confirm_and_save` 时省略 `experienceShadow` 或设置 `experienceShadow.enabled=false`
 7. 仅当日记 I/O 故障时临时 `writeJournal.enabled=false`（会丢失 undo）
 8. 环境/配置变更后重启 gateway/runtime（Settings 开关在产品路径会尝试自动重启）
 

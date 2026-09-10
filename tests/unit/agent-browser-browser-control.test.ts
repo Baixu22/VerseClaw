@@ -11,6 +11,7 @@
  */
 
 import { EventEmitter } from 'node:events';
+import type { WebContents } from 'electron';
 import { describe, expect, it, vi } from 'vitest';
 import { BrowserDebuggerConnection, normalizeDetachReason } from '@electron/services/agent-browser/browser-control/browser-debugger-connection';
 import { BrowserControlSnapshotManager } from '@electron/services/agent-browser/browser-control/snapshot-manager';
@@ -83,11 +84,15 @@ function createFakeWebContents(): FakeWebContents {
   return new FakeWebContents();
 }
 
+function attachToConnection(conn: BrowserDebuggerConnection, wc: FakeWebContents) {
+  return conn.attach(wc as unknown as WebContents);
+}
+
 describe('BrowserDebuggerConnection', () => {
   it('attaches to webContents and enables required CDP domains', async () => {
     const wc = createFakeWebContents();
     const conn = new BrowserDebuggerConnection();
-    const result = await conn.attach(wc);
+    const result = await attachToConnection(conn, wc);
 
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -110,7 +115,7 @@ describe('BrowserDebuggerConnection', () => {
     const wc = createFakeWebContents();
     wc.debugger.attach.mockRejectedValueOnce(new Error('Another debugger is already attached'));
     const conn = new BrowserDebuggerConnection();
-    const result = await conn.attach(wc);
+    const result = await attachToConnection(conn, wc);
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
@@ -122,7 +127,7 @@ describe('BrowserDebuggerConnection', () => {
   it('detaches and clears state', async () => {
     const wc = createFakeWebContents();
     const conn = new BrowserDebuggerConnection();
-    await conn.attach(wc);
+    await attachToConnection(conn, wc);
     await conn.detach();
 
     expect(wc.debugger.detach).toHaveBeenCalled();
@@ -133,7 +138,7 @@ describe('BrowserDebuggerConnection', () => {
   it('rejects sendCommand for non-allowlisted CDP methods', async () => {
     const wc = createFakeWebContents();
     const conn = new BrowserDebuggerConnection();
-    await conn.attach(wc);
+    await attachToConnection(conn, wc);
 
     // 直接调用内部方法不可行（private），通过公开方法间接测：
     // getFullAccessibilityTree 走 Accessibility.getFullAXTree（白名单内）
@@ -145,7 +150,7 @@ describe('BrowserDebuggerConnection', () => {
   it('installs detach listener and normalizes reason', async () => {
     const wc = createFakeWebContents();
     const conn = new BrowserDebuggerConnection();
-    await conn.attach(wc);
+    await attachToConnection(conn, wc);
 
     const onDetach = vi.fn();
     conn.installDetachListener(onDetach);
@@ -159,7 +164,7 @@ describe('BrowserDebuggerConnection', () => {
   it('handles Page.javascriptDialogOpening/Closed events', async () => {
     const wc = createFakeWebContents();
     const conn = new BrowserDebuggerConnection();
-    await conn.attach(wc);
+    await attachToConnection(conn, wc);
 
     const listener = vi.fn();
     conn.addEventListener(listener);
@@ -205,7 +210,7 @@ describe('BrowserControlSnapshotManager', () => {
   }
 
   async function attachConn(conn: BrowserDebuggerConnection, wc: FakeWebContents) {
-    await conn.attach(wc);
+    await attachToConnection(conn, wc);
   }
 
   it('takeSnapshot returns text with uid= markers and role/name', async () => {
@@ -309,7 +314,7 @@ describe('BrowserControlActionExecutor', () => {
   async function createExecutorWithFake() {
     const wc = createFakeWebContents();
     const conn = new BrowserDebuggerConnection();
-    await conn.attach(wc);
+    await attachToConnection(conn, wc);
     const snapshotManager = new BrowserControlSnapshotManager(conn, async () => ({
       title: wc.getTitle(),
       url: wc.getURL(),

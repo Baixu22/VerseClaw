@@ -262,6 +262,13 @@ function normalizeProfile(value: unknown): string {
   }
 }
 
+function normalizeWorkspaceContext(value: unknown): string | undefined {
+  if (value == null) return undefined;
+  const normalized = String(value).trim();
+  if (!normalized) return undefined;
+  return normalized.slice(0, 200);
+}
+
 function normalizeAuthStateName(value: unknown, profile: string): string | undefined {
   const source = typeof value === 'string' && value.trim() ? value.trim() : profile;
   const normalized = source.toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '');
@@ -687,6 +694,9 @@ export class AgentBrowserService {
       : undefined;
     const connection = normalizeConnection(payload);
     const runtimeMode = normalizeRuntimeMode(payload.runtimeMode);
+    const workspaceId = normalizeWorkspaceContext(payload.workspaceId);
+    const sessionKey = normalizeWorkspaceContext(payload.sessionKey);
+    const agentId = normalizeWorkspaceContext(payload.agentId);
     const createdAt = this.now().toISOString();
     const width = normalizeDimension(payload.width, DEFAULT_WIDTH);
     const height = normalizeDimension(payload.height, DEFAULT_HEIGHT);
@@ -700,6 +710,9 @@ export class AgentBrowserService {
       createdAt,
       updatedAt: createdAt,
       runtimeMode,
+      ...(workspaceId ? { workspaceId } : {}),
+      ...(sessionKey ? { sessionKey } : {}),
+      ...(agentId ? { agentId } : {}),
     };
     const url = normalizeHttpUrl(payload.url);
 
@@ -1599,6 +1612,8 @@ export class AgentBrowserService {
       id: record.session.id,
       profile: record.session.profile,
       mode: record.session.mode,
+      // Runner metadata is observational; creation-time connection owns external-browser authority.
+      connection: record.session.connection,
       createdAt: record.session.createdAt,
       updatedAt: this.now().toISOString(),
     };

@@ -16,8 +16,8 @@
 // - Flag-gated seam (default-off) matching A4 pilot convention.
 // - Does NOT modify production state — read-only audit + counter side effects.
 //
-// See: net use/designs/development-manual.md §1.4 (A4), Stage 4
-//      net use/designs/area-4-decision-quality.md
+// See: docs/runtime-design/development-manual.md §1.4 (A4), Stage 4
+//      docs/runtime-design/area-4-decision-quality.md
 // ---------------------------------------------------------------------------
 
 import { deprecationCounters } from "./deprecation-counters.js";

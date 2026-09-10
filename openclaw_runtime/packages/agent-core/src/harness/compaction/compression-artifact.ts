@@ -466,14 +466,18 @@ function extractListFromSummary(summary: string | undefined, heading: RegExp, ma
 }
 
 function extractObjective(messages: AgentMessage[], summary?: string): string {
-  const summaryGoal = extractListFromSummary(summary, /\n?##\s*Goal\s*\n/i, 2).join("; ");
+  const summaryGoal = extractListFromSummary(
+    summary,
+    /\n?##\s*Goal(?:\s+and\s+Progress)?\s*\n/i,
+    2,
+  ).join("; ");
   if (summaryGoal) return normalizeText(summaryGoal, 700);
   const firstUser = messages.find((message) => message.role === "user");
   return normalizeText(firstUser ? messageText(firstUser) : "Continue the current task from compressed context.", 700);
 }
 
 function extractNextAction(summary: string | undefined, messages: AgentMessage[]): string {
-  const fromSummary = extractListFromSummary(summary, /\n?##\s*Next Steps\s*\n/i, 1)[0];
+  const fromSummary = extractListFromSummary(summary, /\n?##\s*Next (?:Steps|Actions)\s*\n/i, 1)[0];
   if (fromSummary) return normalizeText(fromSummary, 500);
   for (let i = messages.length - 1; i >= 0; i--) {
     const text = messageText(messages[i]);
@@ -773,18 +777,22 @@ export function buildDeterministicCompressionArtifact(input: CompressionArtifact
   const atomLedger = buildSemanticAtomLedger(input);
   const atoms = atomLedger.atoms ?? [];
   const legacyConstraints = trimFacts(
-    extractListFromSummary(summary, /\n?##\s*Constraints & Preferences\s*\n/i, 8)
+    extractListFromSummary(
+      summary,
+      /\n?##\s*(?:Key Decisions and Constraints|Constraints & Preferences)\s*\n/i,
+      8,
+    )
       .map((item) => fact(item, evidence))
       .filter((item): item is CompressionFact => Boolean(item)),
     8,
   );
-  const constraints = atoms.length > 0 && atoms.some((atom) => atom.type === "constraint" || atom.type === "safety_boundary")
+  const constraints = atoms.some((atom) => atom.type === "constraint" || atom.type === "safety_boundary")
     ? trimFacts(atomsToFacts(atoms, ["constraint", "safety_boundary"], 8), 8)
     : legacyConstraints;
-  const ledgerDecisions = atoms.length > 0 && atoms.some((atom) => atom.type === "decision")
+  const ledgerDecisions = atoms.some((atom) => atom.type === "decision")
     ? trimFacts(atomsToFacts(atoms, ["decision"], 8), 8)
     : trimFacts(decisions, 8);
-  const ledgerFailedAttempts = atoms.length > 0 && atoms.some((atom) => atom.type === "failed_attempt")
+  const ledgerFailedAttempts = atoms.some((atom) => atom.type === "failed_attempt")
     ? trimFacts(atomsToFacts(atoms, ["failed_attempt"], 6), 6)
     : trimFacts(failedAttempts, 6);
   let objective = extractObjective(messages, summary);

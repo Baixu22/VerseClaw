@@ -7,11 +7,10 @@ INFO  known post-audit content drift allowed: src/lib/host-api.ts
 INFO  known post-audit content drift allowed: shared/dcs/prod-flags-catalog.ts
 INFO  known post-audit content drift allowed: package.json
 INFO  manifest missing (allowlisted generated): artifacts/agent-dev-audit/report.json
-INFO  manifest missing (allowlisted generated): artifacts/agent-dev-deep-test/report.json
 INFO  known post-audit content drift allowed: electron/services/mcp-api.ts
-INFO  manifest files: matched=26 lfNorm=4 drift=49 missing=2
+INFO  manifest files: matched=15 lfNorm=1 drift=64 missing=1
 INFO  A2 unique Finding IDs: 35
 INFO  A2 related links OK
-INFO  A2 task Finding refs resolve (34 tasks scanned)
+INFO  A2 task Finding refs resolve (38 tasks scanned)
 
 audit-baseline-check: OK

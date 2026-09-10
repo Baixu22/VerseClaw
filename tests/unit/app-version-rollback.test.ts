@@ -37,7 +37,8 @@ describe('app version rollback protection', () => {
     expect(getConfigPathValue(next, 'runtime.coding.staleWriteGuard.enabled')).toBe(false);
     expect(getConfigPathValue(next, 'runtime.coding.symbolLease.enabled')).toBe(false);
     expect(getConfigPathValue(next, 'runtime.coding.routingMemo.shadow')).toBe(false);
-    expect(getConfigPathValue(next, 'runtime.coding.sekb.experienceShadow')).toBe(false);
+    // TF-0137: this leaf is API-only and is not a rollback surface.
+    expect(getConfigPathValue(next, 'runtime.coding.sekb.experienceShadow')).toBe(true);
     expect(next.models).toEqual(original.models);
     expect(getConfigPathValue(original, 'runtime.contextBlock.working-memory.enabled')).toBe(true);
   });

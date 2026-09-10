@@ -35,7 +35,9 @@ describe("SEKB-MVP", () => {
       task_intent: "connect to PostgreSQL database",
       task_type: "config/db",
       context_fingerprint: ["postgresql", "node"],
-      steps: [{ action: "inspect config", input: {}, output: {}, timestamp: "2026-07-06T08:00:01.000Z" }],
+      steps: [
+        { action: "inspect config", input: {}, output: {}, timestamp: "2026-07-06T08:00:01.000Z" },
+      ],
       outcome: "failure",
       error_signature: "ConnectionError::db_connection_refused::postgresql",
       cost: { tokens: 42, duration_seconds: 3, retries: 0 },
@@ -47,10 +49,18 @@ describe("SEKB-MVP", () => {
 
     const storedTrajectory = store.get_trajectory(trajectoryId);
     expect(storedTrajectory.task_intent).toBe("connect to PostgreSQL database");
-    expect(store.query_trajectories({ task_type: "config/db", context_tags: ["postgresql"], outcome: "failure", distilled: false }))
-      .toHaveLength(1);
+    expect(
+      store.query_trajectories({
+        task_type: "config/db",
+        context_tags: ["postgresql"],
+        outcome: "failure",
+        distilled: false,
+      }),
+    ).toHaveLength(1);
 
-    const principleId = store.save_principle(postgresPrinciple({ source_trajectories: [trajectoryId] }));
+    const principleId = store.save_principle(
+      postgresPrinciple({ source_trajectories: [trajectoryId] }),
+    );
     const principle = store.get_principle(principleId);
     expect(principle.title).toBe("Check PG access");
     expect(principle.embedding).toBeNull();
@@ -79,28 +89,49 @@ describe("SEKB-MVP", () => {
       capture.log_step(id, "tool.call", { step }, { ok: step < 54 });
     }
 
-    const trajectory = capture.finish_trajectory(id, "failure", "could not connect to server: Connection refused (port 5432)");
+    const trajectory = capture.finish_trajectory(
+      id,
+      "failure",
+      "could not connect to server: Connection refused (port 5432)",
+    );
     expect(trajectory.error_signature).toBe("ConnectionError::db_connection_refused::postgresql");
     expect(trajectory.steps).toHaveLength(11);
     expect(trajectory.steps[5]).toMatchObject({ action: "steps.compressed" });
     expect(store.get_trajectory(id).error_signature).toBe(trajectory.error_signature);
 
-    const repeated = capture.extract_error_signature("could not connect to server: Connection refused (port 5432)");
+    const repeated = capture.extract_error_signature(
+      "could not connect to server: Connection refused (port 5432)",
+    );
     expect(repeated).toBe(trajectory.error_signature);
-    expect(() => capture.finish_trajectory(capture.start_trajectory("bad", "config/db", []), "failure"))
-      .toThrow(/raw_error/i);
+    expect(() =>
+      capture.finish_trajectory(capture.start_trajectory("bad", "config/db", []), "failure"),
+    ).toThrow(/raw_error/i);
   });
 
   it("keeps capture and candidate behavior unchanged when the shadow evaluator is off", () => {
     const store = createStore();
     const rawSecret = "sk-shadow-must-not-persist";
     const off = new TrajectoryCapture({ store, now: fixedClock() });
-    const offId = off.start_trajectory(`task ${rawSecret}`, "config/db", []);
+    const offId = off.start_trajectory(`task ${rawSecret}`, "config/db", [], {
+      runtimeLineage: {
+        schema: "runtime-lineage.v1",
+        sessionId: "session-shadow",
+        loopRunId: "loop-shadow-off",
+        traceId: "trace-shadow-off",
+      },
+    });
     off.log_step(offId, "tool.call", { token: rawSecret }, { ignored: rawSecret });
     const offTrajectory = off.finish_trajectory(offId, "success");
 
     const on = new TrajectoryCapture({ store, now: fixedClock(), shadowEvaluation: true });
-    const onId = on.start_trajectory(`task ${rawSecret}`, "config/db", []);
+    const onId = on.start_trajectory(`task ${rawSecret}`, "config/db", [], {
+      runtimeLineage: {
+        schema: "runtime-lineage.v1",
+        sessionId: "session-shadow",
+        loopRunId: "loop-shadow-on",
+        traceId: "trace-shadow-on",
+      },
+    });
     on.log_step(onId, "tool.call", { token: rawSecret }, { ignored: rawSecret });
     on.log_step(onId, "tool.result", { token: rawSecret }, { isError: false, content: rawSecret });
     const onTrajectory = on.finish_trajectory(onId, "success");
@@ -126,10 +157,17 @@ describe("SEKB-MVP", () => {
       },
     });
     expect(JSON.stringify(onTrajectory.metadata)).not.toContain(rawSecret);
-    expect(store.query_trajectories({ distilled: false }).map((trajectory) => trajectory.trajectory_id).toSorted())
-      .toEqual([offId, onId].toSorted());
-    expect(new DistillationTool({ store }).suggest_principles_from_trajectories(null, 2)[0]?.source_trajectory_ids.toSorted())
-      .toEqual([offId, onId].toSorted());
+    expect(
+      store
+        .query_trajectories({ distilled: false })
+        .map((trajectory) => trajectory.trajectory_id)
+        .toSorted(),
+    ).toEqual([offId, onId].toSorted());
+    expect(
+      new DistillationTool({ store })
+        .suggest_principles_from_trajectories(null, 2)[0]
+        ?.source_trajectory_ids.toSorted(),
+    ).toEqual([offId, onId].toSorted());
     expect(store.query_principles({})).toHaveLength(0);
   });
 
@@ -137,16 +175,29 @@ describe("SEKB-MVP", () => {
     const store = createStore();
     const principleId = store.save_principle(postgresPrinciple());
     store.save_principle({
-      ...postgresPrinciple({ title: "Archive old notes", task_types: ["docs/write"], context_tags: ["markdown"] }),
+      ...postgresPrinciple({
+        title: "Archive old notes",
+        task_types: ["docs/write"],
+        context_tags: ["markdown"],
+      }),
       status: "archived",
     });
 
     const engine = new RetrievalEngine({ store });
-    const taskMatches = engine.retrieve_for_task("configure database connection", "config/db", ["postgresql"], 5);
+    const taskMatches = engine.retrieve_for_task(
+      "configure database connection",
+      "config/db",
+      ["postgresql"],
+      5,
+    );
     expect(taskMatches.map((principle) => principle.principle_id)).toEqual([principleId]);
     expect(store.get_principle(principleId).retrieval_count).toBe(1);
 
-    const errorMatches = engine.retrieve_for_error("ConnectionError::db_connection_refused::postgresql", ["postgresql"], 3);
+    const errorMatches = engine.retrieve_for_error(
+      "ConnectionError::db_connection_refused::postgresql",
+      ["postgresql"],
+      3,
+    );
     expect(errorMatches.map((principle) => principle.principle_id)).toEqual([principleId]);
     const formatted = engine.format_for_injection(errorMatches);
     expect(formatted).toContain("[Relevant SEKB principle 1] Check PG access");
@@ -156,10 +207,12 @@ describe("SEKB-MVP", () => {
     expect(formatted).not.toMatch(/[【】：]/u);
 
     const injector = engine.create_context_injector();
-    expect(injector.for_task("system", "configure database connection", "config/db", ["postgresql"]))
-      .toContain("Check PG access");
-    expect(injector.for_error("ConnectionError::db_connection_refused::postgresql", ["postgresql"]))
-      .toContain("[SEKB historical error advice]");
+    expect(
+      injector.for_task("system", "configure database connection", "config/db", ["postgresql"]),
+    ).toContain("Check PG access");
+    expect(
+      injector.for_error("ConnectionError::db_connection_refused::postgresql", ["postgresql"]),
+    ).toContain("[SEKB historical error advice]");
   });
 
   it("installs explicit SEKB harness hooks without blocking tool execution", async () => {
@@ -200,7 +253,9 @@ describe("SEKB-MVP", () => {
       toolCallId: "call-1",
       toolName: "shell",
       input: { command: "psql" },
-      content: [{ type: "text", text: "could not connect to server: Connection refused (port 5432)" }],
+      content: [
+        { type: "text", text: "could not connect to server: Connection refused (port 5432)" },
+      ],
       details: {},
       isError: true,
     });
@@ -210,8 +265,9 @@ describe("SEKB-MVP", () => {
     });
 
     await target.emitEvent({ type: "agent_end", messages: [] });
-    expect(store.query_trajectories({ task_type: "config/db", context_tags: ["postgresql"] }))
-      .toHaveLength(1);
+    expect(
+      store.query_trajectories({ task_type: "config/db", context_tags: ["postgresql"] }),
+    ).toHaveLength(1);
     uninstall();
   });
 
@@ -392,11 +448,20 @@ describe("SEKB-MVP", () => {
   it("keeps distillation manual and marks trajectories only after confirmation", () => {
     const store = createStore();
     const capture = new TrajectoryCapture({ store, now: fixedClock() });
-    const trajectoryId = capture.start_trajectory("connect PostgreSQL", "config/db", ["postgresql"]);
+    const trajectoryId = capture.start_trajectory("connect PostgreSQL", "config/db", [
+      "postgresql",
+    ]);
     capture.log_step(trajectoryId, "tool.call", "psql", "connection refused");
-    capture.finish_trajectory(trajectoryId, "failure", "could not connect to server: Connection refused (port 5432)");
+    capture.finish_trajectory(
+      trajectoryId,
+      "failure",
+      "could not connect to server: Connection refused (port 5432)",
+    );
 
-    const distiller = new DistillationTool({ store, now: fixedClock(new Date("2026-07-06T08:00:00.000Z")) });
+    const distiller = new DistillationTool({
+      store,
+      now: fixedClock(new Date("2026-07-06T08:00:00.000Z")),
+    });
     expect(distiller.suggest_principles_from_trajectories(null, 2)).toEqual([]);
 
     const principleId = distiller.confirm_and_save({
@@ -406,7 +471,8 @@ describe("SEKB-MVP", () => {
         title: "Check PG access",
         condition: "When PostgreSQL reports Connection refused",
         action: "Check pg_hba.conf and firewall rules, then verify the service is running",
-        reason: "Most connection refusals are environment or configuration issues before code issues",
+        reason:
+          "Most connection refusals are environment or configuration issues before code issues",
         task_types: ["config/db"],
         context_tags: ["postgresql"],
         criticality: "high",
@@ -420,13 +486,73 @@ describe("SEKB-MVP", () => {
     expect(trajectory.distilled_into).toEqual([principleId]);
     expect(trajectory.expires_at).toBe("2026-10-04T08:00:00.000Z");
 
-    distiller.reject_suggestion({
-      cluster_summary: "too generic",
-      source_trajectory_ids: [trajectoryId],
-      suggested_principle: {},
-      confidence: 0.1,
-    }, "not actionable");
+    distiller.reject_suggestion(
+      {
+        cluster_summary: "too generic",
+        source_trajectory_ids: [trajectoryId],
+        suggested_principle: {},
+        confidence: 0.1,
+      },
+      "not actionable",
+    );
     expect(store.list_distillation_rejections()).toHaveLength(1);
+  });
+
+  it("carries common runtime lineage into confirmed principles and rejects mismatched sessions", async () => {
+    const store = createStore();
+    const capture = new TrajectoryCapture({ store, now: fixedClock() });
+    const lineage = {
+      schema: "runtime-lineage.v1" as const,
+      sessionId: "session-lineage-1",
+      missionId: "mission-1",
+      missionTick: 1,
+      loopRunId: "loop-1",
+      traceId: "trace-1",
+      taskLedgerRootId: "ledger-1",
+    };
+    const trajectoryId = capture.start_trajectory("lineage task", "agent/task", [], {
+      runtimeLineage: lineage,
+    });
+    capture.finish_trajectory(trajectoryId, "success");
+    const suggestion = {
+      cluster_summary: "Lineage candidate",
+      source_trajectory_ids: [trajectoryId],
+      suggested_principle: { title: "Keep lineage" },
+      confidence: 0.9,
+    };
+    const distiller = new DistillationTool({ store, now: fixedClock() });
+    const confirmed = await distiller.confirm_and_save_with_lineage(suggestion, null, {
+      sessionId: "session-lineage-1",
+      sourceSystem: "ui-confirm",
+    });
+    expect(confirmed.provenance?.sourceTrajectoryIds).toEqual([trajectoryId]);
+    expect(store.get_principle(confirmed.principleId).metadata.runtimeLineage).toEqual(lineage);
+    const report = buildSekbOperatorReport(store);
+    expect(report.lineageSchema).toBe("runtime-lineage.v1");
+    expect(report.activePrinciples).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          principle_id: confirmed.principleId,
+          source_trajectories: [trajectoryId],
+          lineage,
+        }),
+      ]),
+    );
+
+    const other = capture.start_trajectory("mismatch task", "agent/task", [], {
+      runtimeLineage: { ...lineage, sessionId: "session-other" },
+    });
+    capture.finish_trajectory(other, "success");
+    await expect(
+      distiller.confirm_and_save_with_lineage(
+        {
+          ...suggestion,
+          source_trajectory_ids: [other],
+        },
+        null,
+        { sessionId: "session-lineage-1", sourceSystem: "ui-confirm" },
+      ),
+    ).rejects.toThrow(/does not match/i);
   });
 
   it("builds a read-only SEKB operator report for manual distillation", () => {
@@ -480,7 +606,9 @@ describe("SEKB-MVP", () => {
         captureRecommendations: { retain: 0, review_low_signal: 0 },
       },
     });
-    expect(report.evidence.metricsUnavailable.map((entry) => entry.metric)).toContain("historical_suggestion_count");
+    expect(report.evidence.metricsUnavailable.map((entry) => entry.metric)).toContain(
+      "historical_suggestion_count",
+    );
     expect(report.evidence.batchDistillationAssistant).toMatchObject({
       state: "unknown",
       suggestionCount: { status: "unavailable", reason: "no_batch_evidence" },
@@ -490,56 +618,73 @@ describe("SEKB-MVP", () => {
   });
 });
 
-  it("counts rejectionBreakdown totals general and batch rejections", () => {
-    const store = createStore();
-    const distiller = new DistillationTool({ store });
-    const t1 = randomUUID();
-    const t2 = randomUUID();
-    for (const [id, taskType] of [[t1, "config/db"], [t2, "config/db"]] as const) {
-      store.save_trajectory({
-        trajectory_id: id,
-        created_at: "2026-07-06T08:00:00.000Z",
-        task_intent: "intent",
-        task_type: taskType,
-        context_fingerprint: ["db"],
-        steps: [],
-        outcome: "success",
-        error_signature: null,
-        cost: { tokens: 1, duration_seconds: 1, retries: 0 },
-        distilled: false,
-        distilled_into: [],
-        expires_at: null,
-        metadata: {},
-      });
-    }
-    const suggestion = distiller.suggest_principles_from_trajectories(null, 2)[0];
-    distiller.reject_suggestion(suggestion, "not useful");
-    store.save_batch_distillation_event({
-      batch_id: randomUUID(),
-      created_at: "2026-07-06T09:00:00.000Z",
-      status: "fallback",
-      fallback_reason: "provider_unavailable",
-      attempts: 0,
-      suggestion_count: 1,
-      duplicate_suggestion_count: 0,
-      attributed_suggestion_count: 0,
-      attribution_total: 0,
-      input_tokens: null,
-      output_tokens: null,
-      total_cost_usd: null,
-      trace_id: "trace-test",
-      confirmation_count: 0,
-      rejection_count: 2,
-      edit_distance_sum: 0,
-      edit_distance_count: 0,
+it("counts rejectionBreakdown totals general and batch rejections", () => {
+  const store = createStore();
+  const distiller = new DistillationTool({ store });
+  const t1 = randomUUID();
+  const t2 = randomUUID();
+  for (const [id, taskType] of [
+    [t1, "config/db"],
+    [t2, "config/db"],
+  ] as const) {
+    store.save_trajectory({
+      trajectory_id: id,
+      created_at: "2026-07-06T08:00:00.000Z",
+      task_intent: "intent",
+      task_type: taskType,
+      context_fingerprint: ["db"],
+      steps: [
+        {
+          action: "tool.call",
+          input: { taskType },
+          output: { ok: true },
+          timestamp: "2026-07-06T08:00:00.000Z",
+        },
+      ],
+      outcome: "success",
+      error_signature: null,
+      cost: { tokens: 1, duration_seconds: 1, retries: 0 },
+      distilled: false,
+      distilled_into: [],
+      expires_at: null,
+      metadata: {
+        runtimeLineage: {
+          schema: "runtime-lineage.v1",
+          sessionId: "session-rejection-breakdown",
+          loopRunId: id,
+          traceId: `trace-${id}`,
+        },
+      },
     });
-    const report = buildSekbOperatorReport(store, {
-      shadowEvaluationEnabled: false,
-      batchDistillationAssistantEnabled: true,
-    });
-    expect(report.evidence.feedback.rejectionBreakdown).toEqual({ general: 1, batchAssisted: 2 });
-    expect(report.evidence.feedback.rejectedSuggestions).toBe(3);
+  }
+  const suggestion = distiller.suggest_principles_from_trajectories(null, 2)[0];
+  distiller.reject_suggestion(suggestion, "not useful");
+  store.save_batch_distillation_event({
+    batch_id: randomUUID(),
+    created_at: "2026-07-06T09:00:00.000Z",
+    status: "fallback",
+    fallback_reason: "provider_unavailable",
+    attempts: 0,
+    suggestion_count: 1,
+    duplicate_suggestion_count: 0,
+    attributed_suggestion_count: 0,
+    attribution_total: 0,
+    input_tokens: null,
+    output_tokens: null,
+    total_cost_usd: null,
+    trace_id: "trace-test",
+    confirmation_count: 0,
+    rejection_count: 2,
+    edit_distance_sum: 0,
+    edit_distance_count: 0,
   });
+  const report = buildSekbOperatorReport(store, {
+    shadowEvaluationEnabled: false,
+    batchDistillationAssistantEnabled: true,
+  });
+  expect(report.evidence.feedback.rejectionBreakdown).toEqual({ general: 1, batchAssisted: 2 });
+  expect(report.evidence.feedback.rejectedSuggestions).toBe(3);
+});
 
 function createStore(): KnowledgeStore {
   const root = mkdtempSync(path.join(os.tmpdir(), "openclaw-sekb-test-"));
@@ -557,7 +702,11 @@ function createHookTarget() {
   return {
     on(type: string, handler: (event: unknown) => unknown) {
       hooks.set(type, [...(hooks.get(type) ?? []), handler]);
-      return () => hooks.set(type, (hooks.get(type) ?? []).filter((entry) => entry !== handler));
+      return () =>
+        hooks.set(
+          type,
+          (hooks.get(type) ?? []).filter((entry) => entry !== handler),
+        );
     },
     subscribe(listener: (event: unknown) => unknown) {
       subscribers.push(listener);
@@ -573,7 +722,9 @@ function createHookTarget() {
       for (const handler of hooks.get(type) ?? []) {
         latest = await handler(event);
       }
-      return latest as { systemPrompt?: string; content?: Array<{ type: "text"; text: string }> } | undefined;
+      return latest as
+        | { systemPrompt?: string; content?: Array<{ type: "text"; text: string }> }
+        | undefined;
     },
     async emitEvent(event: unknown) {
       for (const listener of subscribers) {
@@ -668,9 +819,14 @@ function postgresPrinciple(overrides: Partial<Principle> = {}): Principle {
     updated_at: overrides.updated_at ?? now,
     title: overrides.title ?? "Check PG access",
     condition: overrides.condition ?? "When PostgreSQL reports Connection refused",
-    action: overrides.action ?? "Check pg_hba.conf and firewall rules, then verify the service is running",
-    reason: overrides.reason ?? "Most connection refusals are environment or configuration issues before code issues",
-    full_content: overrides.full_content ??
+    action:
+      overrides.action ??
+      "Check pg_hba.conf and firewall rules, then verify the service is running",
+    reason:
+      overrides.reason ??
+      "Most connection refusals are environment or configuration issues before code issues",
+    full_content:
+      overrides.full_content ??
       "When PostgreSQL reports Connection refused, check pg_hba.conf and firewall rules, then verify the service is running because most connection refusals are environment or configuration issues before code issues.",
     task_types: overrides.task_types ?? ["config/db"],
     context_tags: overrides.context_tags ?? ["postgresql"],

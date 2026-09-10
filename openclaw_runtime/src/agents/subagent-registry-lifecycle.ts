@@ -992,6 +992,7 @@ export function createSubagentRegistryLifecycleController(params: {
           await deleteSubagentSessionForCleanup({
             callGateway: params.callGateway,
             childSessionKey: entry.childSessionKey,
+            runId,
             spawnMode: entry.spawnMode,
             onError: (error) =>
               params.warn("sessions.delete failed during subagent cleanup", {

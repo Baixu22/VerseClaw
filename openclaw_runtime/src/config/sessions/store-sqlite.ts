@@ -26,9 +26,28 @@ import type { SessionEntry } from "./types.js";
 
 const SESSION_STORE_SCOPE = "session_entries";
 
-type SessionStoreDatabase = Pick<OpenClawAgentKyselyDatabase, "cache_entries">;
+export type SessionDeleteOperationJournalRow = {
+  operation_id: string;
+  manifest_json: string;
+  manifest_digest: string;
+  state: string;
+  receipt_json: string | null;
+  created_at: number;
+  updated_at: number;
+};
 
-function resolveSessionStoreDatabaseOptions(storePath: string): OpenClawAgentDatabaseOptions {
+type SessionStoreDatabase = Pick<
+  OpenClawAgentKyselyDatabase,
+  "cache_entries" | "session_delete_operation_journal"
+>;
+type SessionDeleteOperationJournalDatabase = Pick<
+  OpenClawAgentKyselyDatabase,
+  "session_delete_operation_journal"
+>;
+
+export function resolveSessionStoreDatabaseOptions(
+  storePath: string,
+): OpenClawAgentDatabaseOptions {
   const structuralStateDir = resolveStateDirFromSessionStorePath(storePath);
   const agentId = resolveAgentIdFromSessionStorePath(storePath) ?? DEFAULT_AGENT_ID;
   if (structuralStateDir) {
@@ -142,7 +161,7 @@ export function readSqliteSessionEntry(
 export function replaceSqliteSessionStore(
   storePath: string,
   store: Record<string, SessionEntry>,
-  opts?: { compact?: boolean },
+  opts?: { compact?: boolean; journalRows?: SessionDeleteOperationJournalRow[] },
 ): void {
   const databaseOptions = resolveSessionStoreDatabaseOptions(storePath);
   runOpenClawAgentWriteTransaction((database) => {
@@ -168,12 +187,91 @@ export function replaceSqliteSessionStore(
         }),
       );
     }
+    for (const journalRow of opts?.journalRows ?? []) {
+      executeSqliteQuerySync(
+        database.db,
+        db
+          .insertInto("session_delete_operation_journal")
+          .values(journalRow)
+          .onConflict((conflict) =>
+            conflict.column("operation_id").doUpdateSet({
+              state: journalRow.state,
+              receipt_json: journalRow.receipt_json,
+              updated_at: journalRow.updated_at,
+            }),
+          ),
+      );
+    }
   }, databaseOptions);
   const database = openOpenClawAgentDatabase(databaseOptions);
   if (opts?.compact) {
     database.db.exec("VACUUM;");
   }
   database.walMaintenance.checkpoint();
+}
+
+export function readSessionDeleteOperationJournalRow(
+  storePath: string,
+  operationId: string,
+): SessionDeleteOperationJournalRow | null {
+  const databaseOptions = resolveSessionStoreDatabaseOptions(storePath);
+  const database = openOpenClawAgentDatabase(databaseOptions);
+  const db = getNodeSqliteKysely<SessionDeleteOperationJournalDatabase>(database.db);
+  return (
+    executeSqliteQueryTakeFirstSync(
+      database.db,
+      db
+        .selectFrom("session_delete_operation_journal")
+        .selectAll()
+        .where("operation_id", "=", operationId),
+    ) ?? null
+  );
+}
+
+export function writeSessionDeleteOperationJournalRow(
+  storePath: string,
+  row: SessionDeleteOperationJournalRow,
+): void {
+  const databaseOptions = resolveSessionStoreDatabaseOptions(storePath);
+  runOpenClawAgentWriteTransaction((database) => {
+    const db = getNodeSqliteKysely<SessionDeleteOperationJournalDatabase>(database.db);
+    executeSqliteQuerySync(
+      database.db,
+      db
+        .insertInto("session_delete_operation_journal")
+        .values(row)
+        .onConflict((conflict) =>
+          conflict.column("operation_id").doUpdateSet({
+            state: row.state,
+            receipt_json: row.receipt_json,
+            updated_at: row.updated_at,
+          }),
+        ),
+    );
+  }, databaseOptions);
+}
+
+export function updateSessionDeleteOperationJournalState(
+  storePath: string,
+  operationId: string,
+  state: string,
+  receiptJson: string | null,
+): void {
+  const databaseOptions = resolveSessionStoreDatabaseOptions(storePath);
+  runOpenClawAgentWriteTransaction((database) => {
+    const db = getNodeSqliteKysely<SessionDeleteOperationJournalDatabase>(database.db);
+    executeSqliteQuerySync(
+      database.db,
+      db
+        .updateTable("session_delete_operation_journal")
+        .set({
+          state,
+          receipt_json: receiptJson,
+          updated_at: Date.now(),
+        })
+        .where("operation_id", "=", operationId),
+    );
+  }, databaseOptions);
 }
 
 export function clearExistingSqliteSessionStore(

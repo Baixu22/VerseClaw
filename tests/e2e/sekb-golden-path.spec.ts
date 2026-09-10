@@ -115,6 +115,12 @@ test.describe('SEKB golden path (TF-0004)', () => {
         taskIntent: 'connect PostgreSQL for golden-path e2e',
         taskType: 'config/db',
         contextTags: ['postgresql', 'golden-path'],
+        runtimeLineage: {
+          schema: 'runtime-lineage.v1',
+          sessionId: SESSION_ID,
+          loopRunId: 'loop:tf-0004:e2e:connect',
+          traceId: 'trace:tf-0004:e2e:connect',
+        },
         steps: [
           { action: 'tool.call', input: { tool: 'psql' }, output: { error: 'connection refused' } },
           { action: 'retry', input: { attempt: 2 }, output: { error: 'connection refused' } },
@@ -126,6 +132,12 @@ test.describe('SEKB golden path (TF-0004)', () => {
         taskIntent: 'configure database connection for golden-path e2e',
         taskType: 'config/db',
         contextTags: ['postgresql', 'golden-path'],
+        runtimeLineage: {
+          schema: 'runtime-lineage.v1',
+          sessionId: SESSION_ID,
+          loopRunId: 'loop:tf-0004:e2e:configure',
+          traceId: 'trace:tf-0004:e2e:configure',
+        },
         steps: [
           { action: 'tool.call', input: { tool: 'pg_isready' }, output: { ok: false } },
           { action: 'inspect', input: { file: 'pg_hba.conf' }, output: { note: 'local trust missing' } },
