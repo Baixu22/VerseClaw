@@ -1783,7 +1783,7 @@ describe('syncOpenAiCompatibleImageRelay', () => {
     expect((entries['clawx-openai-image'] as Record<string, unknown>).enabled).toBe(true);
 
     const auth = await readAuthProfiles('main');
-    expect((auth.profiles['clawx-openai-image:default'] as Record<string, unknown>).key).toBe('sk-relay-test');
+    expect(((auth.profiles as Record<string, any>)['clawx-openai-image:default'] as Record<string, unknown>).key).toBe('sk-relay-test');
   });
 
   it('removes only the Verse Claw image provider when relay is disabled', async () => {

@@ -59,6 +59,12 @@ interface ChatMessageProps {
    * stream.
    */
   suppressAssistantText?: boolean;
+  /**
+   * The turn's process disclosure (`TurnSummaryCard`) adopted this turn's
+   * reasoning, so this message must not render it again. Wins over
+   * `reasoningOverride` — one owner per turn, and the card is it.
+   */
+  suppressReasoning?: boolean;
   isStreaming?: boolean;
   /**
    * Reasoning to show instead of whatever the message itself carries. Used for
@@ -198,6 +204,9 @@ function normalizeLatexDelimiters(input: string): string {
   return parts.join('');
 }
 
+/** Stable identity so `suppressReasoning` never churns downstream memos. */
+const EMPTY_REASONING: AssistantReasoning[] = [];
+
 export const ChatMessage = memo(function ChatMessage({
   message,
   agent,
@@ -205,6 +214,7 @@ export const ChatMessage = memo(function ChatMessage({
   suppressToolCards = false,
   suppressProcessAttachments = false,
   suppressAssistantText = false,
+  suppressReasoning = false,
   isStreaming = false,
   reasoningOverride,
   streamingTools = [],
@@ -228,12 +238,13 @@ export const ChatMessage = memo(function ChatMessage({
       isUser,
       suppressAssistantText,
       suppressToolCards,
+      suppressReasoning,
       textOverride,
     }),
-    [isUser, message, suppressAssistantText, suppressToolCards, textOverride],
+    [isUser, message, suppressAssistantText, suppressReasoning, suppressToolCards, textOverride],
   );
   const text = projection.displayText;
-  const reasoning = reasoningOverride ?? projection.reasoning;
+  const reasoning = suppressReasoning ? EMPTY_REASONING : reasoningOverride ?? projection.reasoning;
   const hasText = projection.hasText;
   const resolvableContentImages = projection.contentImages;
   const visibleTools = projection.visibleTools;
@@ -387,6 +398,29 @@ export const ChatMessage = memo(function ChatMessage({
   // the streaming turn, which the projection cannot know about.
   const hasProjectedContent = projection.hasRenderableContent || reasoning.length > 0;
   if (!hasProjectedContent && !hasStreamingToolStatus && !showStreamStatus) return null;
+
+  /**
+   * Second gate, over what will ACTUALLY paint.
+   *
+   * `hasProjectedContent` is deliberately an over-approximation: it counts
+   * `candidateAttachments`, the pre-validation list, because path existence is
+   * async and cannot live in a pure projection. When every candidate then fails
+   * validation, the row survives with an empty content column — and for an
+   * assistant turn that is a bare avatar floating in the transcript.
+   *
+   * That used to be invisible: a folded narration turn still had its reasoning
+   * panel to fill the row. Now that the turn's reasoning belongs to the process
+   * disclosure, the empty row has nothing left to hide behind, so it has to be
+   * dropped here rather than shipped as a stray avatar.
+   */
+  const hasPaintableBody = hasText
+    || reasoning.length > 0
+    || resolvableContentImages.length > 0
+    || attachedFiles.length > 0
+    || visibleTools.length > 0
+    || toolUiInteractions.length > 0
+    || knowledgeRefs.length > 0;
+  if (!hasPaintableBody && !hasStreamingToolStatus && !showStreamStatus) return null;
 
   return (
     <div

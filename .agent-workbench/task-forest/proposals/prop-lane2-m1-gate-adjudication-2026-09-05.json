@@ -1,0 +1,82 @@
+{
+  "applied_at": "2026-09-05T05:10:09.609139Z",
+  "base_graph_hash": "4590d5b3db771431b9eb5ad16692ca131a117f398495f86be8d7e6bb12ec37e3",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 148,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-09-05T04:40:00Z",
+        "decided_by": "用户 2026-09-05 指派本席主导修复并保住进度；lane-2 作为 §R3 / §D4 owner 落地判据。",
+        "expected_requirement": "§R3.6：里程碑累积半径须用「归属完整集」，trailer 保证「只含本轮」、§R3.8.4 清单保证「完整」，M0..M5 预算 230 冻结于 B1。§D4.2：「是否本轮引起」有唯一机械判据。",
+        "id": "TFD-lane2-r36-third-failure-trailer-not-round-2026-09-05",
+        "impact": "判据已改，两处同时生效：§R3.6 命令加入 in_round()，判据从「有 TF trailer」收紧为「TF 号落在 TF-0102..TF-0147」；§D4.2 从区间 diff 改用 §R3.6 的归属完整集（含 in_round()）。§R3.6 正文那句 Lane: 断言已按实测改写为「能捞回本轮无 Task: 的提交，但不是本轮的充分判据」。残留孔洞如实登记而非假装闭合：Lane:-only 提交无 TF 号、in_round() 无从判定，且轮外 workstream 也写 Lane:，故 TRIAGE-NO-LANE 的人工分类义务扩及 Lane:-only 提交，不得因带了 Lane: 就默认计入本轮。本条不追溯重算已收口 task 的半径（§R5 技术-7）。",
+        "kind": "process_gap",
+        "node_id": "TF-0108",
+        "observed_action_or_result": "§R3.6 的匹配式 ^(Task:|Reviews:|Refs|Node:) TF-[0-9] 对轮外 global_task 同样命中。实测 590588791..HEAD：匹配式原样 133 提交 / 判定读数 175；按本轮 node 区间 TF-0102..TF-0147 过滤后 116 提交 / 141。差额为 17 个轮外提交（15 个 TF-0067 VerseShell + 2 个 TF-0100 chat），虚增 34 个文件，占总预算 230 的 15%。§R3.6 正文原断言「Lane: 由 §R3.8.1 规则 1 强制且轮外提交没有它，故它是唯一能区分本轮/轮外的字段」——实测该前提已不成立。§D4.2 的区间 diff 判据同源失效：该区间现为 201 提交，其中 65 个不带任何 Task:/Lane:/Reviews:，另含 22 个 test(typecheck): 扫尾提交、15 个 VerseShell 提交与若干 origin/main merge，已不再是「本轮」的代理。",
+        "recommendation": "本节第三次在同一处出错，三次教训合成一句写进 §R3.6：「完整」由 §R3.8.4 清单保证，「只含本轮」由 node 区间保证，trailer 存在性两者都不保证。后续任何以 trailer 为归属判据的门（§R3.1 命令 1、§R3.6、§D4.2）新增时，须先答「轮外 global_task 是否也写这个 trailer」。",
+        "related_task_ids": [
+          "TF-0108",
+          "TF-0102",
+          "TF-0067"
+        ],
+        "severity": "high",
+        "status": "resolved"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-09-05T04:41:00Z",
+        "decided_by": "用户 2026-09-05 指派本席主导修复；按 §R4.2 触发 (c)「审核或验收发现的问题被判为本轮不修」记录。",
+        "expected_requirement": "§R2.3 L2：lint:check 不要求 exit 0，判据为 error 集 ⊆ §D4 白名单且 baselineErrorCount <= 4。§D4.6 / §5.3 承重条款：白名单之外任一失败 = 回归，条目只减不增。",
+        "id": "TFD-lane2-out-of-round-lint-2026-09-05",
+        "impact": "判为本轮不修，落入 GATE-BASELINE.md §6 的独立台账 gates.lint_check.outOfRoundErrors（4 条）与 outOfRoundErrorCount: 4；exemptions 仍为 4 条、baselineErrorCount 仍为 4，一字未动，故 §D4.6 / §5.3 的「只减不增」字面完好。§R2.3 判据改为 error 集 ⊆（白名单 ∪ 轮外台账），§D4.3 的 lint:check 行同步补记。入台账门槛为三件齐备（引入提交 SHA / trailer 原文 / TF 号在本轮区间外的证明），缺一即回落为回归、阻塞。证据与逐条因果写在 GATE-BASELINE.md §10。",
+        "kind": "gate_classification_gap",
+        "node_id": "TF-0108",
+        "observed_action_or_result": "2026-09-05 实测 eslint . --quiet = 8 errors。§9 的 4 条白名单一条未烂，file:line 全部对得上（verseshell-runtime-bundle.ts:291 / provider-stream-shared.test.ts:7 / happy-path-prompt-snapshots.ts:135 / terminal-trajectory-gating.test.ts:170），故 8 = 4 + 4。工具链未变（roundStartRef 与当前 package.json 的 eslint ^10.0.0 与 @typescript-eslint ^8.56.0 完全一致），排除规则集漂移，四条新 error 是真的内容引起。四条引入提交：patch-preview-artifacts.test.ts:52 由 4747bc025（Task: TF-0067 / Lane: lane-2，VerseShell）；morph-plus-verify.spec.ts:187、runtime-memory-locomo-full-500.test.ts:2544、synthesis-contract.test.ts:8 分别由 842d70059 / adfb9105f / 50541567d，三者无任何 trailer，属 e5605d37e 记录的「§R3.8.1 规则 4 应为空而不空」那批提交。后三项的冒犯行本身分别来自 79b8cf085d / 4ba392a576 / bdcbf85b1f，全部早于 roundStartRef。按 §D4.2 的 in_round()，四项全部判为轮外。",
+        "recommendation": "不修那四个文件，理由是实测代价更高而非省事：第 5 项所在文件由 4747bc025（09-01）与 4ac4746e8（09-02）连续改动，是 VerseShell 在飞文件，改它撞 §R4.5「每域同时只允许 1 个 in_progress」；第 6/7/8 项会把本轮触碰面扩到三个轮外文件，直接抬高 §R3.6 累积半径，而 M1 预算 30、首次收口已读 28/30，余量仅 2。owner：VerseShell TF-0067 一项；无归属提交 backlog 三项，随 §R3.8.1 规则 4 的整治一并清理。",
+        "related_task_ids": [
+          "TF-0108",
+          "TF-0067",
+          "TF-0102"
+        ],
+        "severity": "medium",
+        "status": "accepted"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.9,
+        "created_at": "2026-09-05T04:42:00Z",
+        "decided_by": "用户 2026-09-05 指派本席主导修复；111 项按 §R4.2 触发 (c) 定为首个基线，11+3 项按量具不洁不予裁定。",
+        "expected_requirement": "§R2.3 / §D4.5：maturity:validate 要求 A2 失配集 ⊆ §D4.3 的 25 项基线，另须单独补跑 maturity:residual 与 maturity:traceability 消除 && 链短路盲区。§D4.6：把模糊坏状态钉成确定数字。",
+        "id": "TFD-lane2-maturity-segment7-baseline-2026-09-05",
+        "impact": "三段分开裁定，写入 §D4.3 与 GATE-BASELINE.md §10.6。111 项：可定为首个基线，依据是该段从未被测量、无前值可回归，合法性同 GATE-BASELINE §9.5 已批准的「补上遗漏覆盖，不是为容纳回归而放宽」；附加条件是该段会改写它自己审计的 artifact，故 111 须取复原过的树上首次运行的读数，并按 §R2.3 复原全部六个被写文件（该节只点名一个，是已确认缺陷）。11+3 项：不可定、本轮不裁——对着改过的量具量出的数，邻居一提交即失效，钉它等于废掉 §D4.6 自己。L2 记录写 measurement blocked — instrument dirty 并附机械前置命令 git status --porcelain -- scripts/validate-system-maturity-*.mjs scripts/rc01-authority-inventory.mjs scripts/generate-rc09-ownership-matrix.mjs，为空方可写入基线。",
+        "kind": "gate_classification_gap",
+        "node_id": "TF-0108",
+        "observed_action_or_result": "M1 首次收口（e5605d37e）按段跑出三个数：第 1–6 段 11 项 A2 失配（超出钉住的 25 项）加 3 项非 A2 失败；第 7 段 validate-system-maturity-traceability 首次测量为红、111 项。链已由 6 段增至 7 段。第 7 段是 §D4.3 明确标为「从未执行、状态未知（非已知绿）」的那一段。2026-09-05 复查量具洁净度：第 3 段脚本 scripts/validate-system-maturity-findings-registry.mjs 处于未提交修改态；同时脏的有 scripts/generate-rc09-ownership-matrix.mjs 与 scripts/rc01-authority-inventory.mjs（即 §D4.3 归给 TF-0028 / TF-0029 的生成器），而其交付物 artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json 已 staged 为 added，即两个 owner 节点的交付物正在飞。",
+        "recommendation": "M1 的 L2 在 maturity 这道门上按「阻塞条件已机械化」收，而不是填一个不可采信的数字。11+3 的裁定权随量具洁净后重新开启，归属仍为 TF-0028 / TF-0029（§D4 §7 路由不变）。建议作为 XL-* 项挂到看板，close 判据即上述 porcelain 命令为空且 11+3 被重新测量。",
+        "related_task_ids": [
+          "TF-0108",
+          "TF-0028",
+          "TF-0029"
+        ],
+        "severity": "high",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-09-05T04:40:00Z",
+  "proposal_id": "prop-lane2-m1-gate-adjudication-2026-09-05",
+  "rationale": "M1 二次收口的三项门裁定，全部落在 lane-2 的 owner 节（§R2 / §R3 / §D4）内，零源码改动。(1) §R3.6 第三次在同一处出错：trailer 存在 != 本轮，轮外 global_task TF-0067 / TF-0100 用同一套 trailer 纪律，实测虚增 34 个文件；已加 in_round() 收紧为 TF 号区间判据。(2) §D4.2 的区间 diff 判据同源失效（区间已含 201 提交 / 65 无 trailer），改用 §R3.6 的归属完整集。(3) lint:check 的 4 个轮外 error 判为本轮不修，落入独立台账 outOfRoundErrors 而不动 exemptions 与 baselineErrorCount，「只减不增」字面完好；maturity 的 111 定为首个基线、11+3 因量具脏不予裁定。",
+  "session_id": "session-lane-2",
+  "status": "applied"
+}

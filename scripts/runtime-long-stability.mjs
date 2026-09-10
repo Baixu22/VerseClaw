@@ -264,11 +264,15 @@ async function runRuntimeMemoryEval() {
   const memoryReport = await readJsonIfExists(RUNTIME_MEMORY_JSON);
   const latency = memoryReport?.enhancedReport?.dimensions?.latencyBenchmark;
   const summary = memoryReport?.enhancedReport?.summary;
+  const evidenceClass = memoryReport?.evidenceClass ?? null;
+  const accepted = memoryReport?.accepted === true;
   return {
     command: summarizeCommand(command),
     reportPath: RUNTIME_MEMORY_JSON,
     available: Boolean(memoryReport),
-    incomplete: command.timedOut || !memoryReport,
+    evidenceClass,
+    accepted,
+    incomplete: command.timedOut || !memoryReport || evidenceClass === 'synthetic' || !accepted,
     testSuite: memoryReport?.testSuite ?? null,
     tokenOverheadP95: latency?.tokenOverheadP95 ?? null,
     tokenOverheadP50: latency?.tokenOverheadP50 ?? null,
@@ -533,6 +537,8 @@ function renderMarkdown(data) {
   lines.push('');
   if (data.runtimeMemory) {
     lines.push(`- Incomplete: ${yesNo(data.runtimeMemory.incomplete)}`);
+    lines.push(`- Evidence class: ${data.runtimeMemory.evidenceClass ?? 'missing'}`);
+    lines.push(`- Accepted: ${yesNo(data.runtimeMemory.accepted)}`);
     lines.push(`- tokenOverheadP95: ${data.runtimeMemory.tokenOverheadP95 ?? 'n/a'}`);
     lines.push(`- overallScore: ${formatNumber(data.runtimeMemory.overallScore)}`);
     lines.push(`- latencyMsP95: ${formatNumber(data.runtimeMemory.latencyMsP95)}`);

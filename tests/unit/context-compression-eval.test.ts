@@ -1083,8 +1083,8 @@ describe('context compression eval foundation', () => {
     const testsSection = summary.split('## Tests and Results')[1]?.split('\n## ')[0] ?? '';
     const bareToolBullet = testsSection
       .split('\n')
-      .filter((line) => line.startsWith('- '))
-      .some((line) => /^(?:pnpm|npm|yarn|node|pytest|vitest|playwright|uv|cargo|go|rg|git|powershell|pwsh|mvn|gradle|make|java)\s*$/iu.test(line.slice(2).trim()));
+      .filter((line: string) => line.startsWith('- '))
+      .some((line: string) => /^(?:pnpm|npm|yarn|node|pytest|vitest|playwright|uv|cargo|go|rg|git|powershell|pwsh|mvn|gradle|make|java)\s*$/iu.test(line.slice(2).trim()));
     expect(bareToolBullet).toBe(false);
   }, REAL_CONTEXT_EVAL_TIMEOUT_MS);
 

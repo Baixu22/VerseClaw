@@ -1,0 +1,78 @@
+{
+  "applied_at": "2026-08-21T12:24:30.468296Z",
+  "base_graph_hash": "2cde4eaa4a5da22f38ebd582de1871946281ac7e5280b34501520ae224a6ca5c",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "browser-effect 的下一条最小切片：复用现有 Main session preflight，只限制 agent_browser type 对 existing external session 的使用。",
+        "confidence": 0.98,
+        "created_at": "2026-08-21T12:15:43.3621940Z",
+        "id": "TFA-browser-effect-session-type-provenance-boundary-20260821",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.98,
+          "user_goal": "降低外部内容驱动浏览器副作用风险，同时保持普通 managed 浏览能力。",
+          "validation_plan": [
+            "策略与 type preflight 单测覆盖 managed/external/missing/malformed/failed status",
+            "click 回归与 type wiring 测试",
+            "现有 Agent Browser tool/service/Gateway 回归",
+            "provenance、credential-use、command-exec 默认策略回归",
+            "comms replay/compare、runtime core typecheck、Harness validate"
+          ],
+          "why_not_enough": "evaluate、replay、full-access、UID actions、supervised task 和其他 browser callers 仍未完成来源依赖检查，browser-effect 全局分类仍保持 classification-only。",
+          "why_this_task": "它直接继承已验证的 click 边界，只增加 type 这一相邻高风险动作，并明确阻止 typed text 进入授权策略。"
+        },
+        "reason": "上一阶段已证明 Main status/connection.mode 是稳定 host-owned 事实；复用同一 helper 可覆盖 type 的 existing-session residual，改动小且不新增协议、持久化或审批框架。",
+        "rejected_options": [
+          "为 type 新建第二套 provenance policy",
+          "把 typed text 传入策略或审计记录",
+          "将 preflight 扩到 evaluate/replay/full-access/UID actions",
+          "对每次 type 统一增加人工审批",
+          "启动全局 browser 动态 taint engine"
+        ],
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "selected_option": "把 click 专用 session preflight/helper 泛化为 session-effect preflight，但只在 action=click 或 type 时调用；外部、派生外部、缺失或非法 provenance 必须得到精确 managed session status，external/missing/malformed/failed 均拒绝；typed text、selector 和 clear 不进入策略。trusted/operator 保持现有直通路径。",
+        "user_goal": "继续以最小、可审计的来源依赖授权边界降低外部内容驱动浏览器副作用风险，同时保持 managed 浏览器和 operator 行为可用。",
+        "validation_plan": [
+          "策略与 type preflight 单测覆盖 managed/external/missing/malformed/failed status",
+          "click 回归与 type wiring 测试",
+          "现有 Agent Browser tool/service/Gateway 回归",
+          "provenance、credential-use、command-exec 默认策略回归",
+          "comms replay/compare、runtime core typecheck、Harness validate"
+        ]
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-21T12:15:43.3621940Z",
+        "evidence": "harness/specs/tasks/browser-effect-session-type-provenance-boundary.md；openclaw_runtime/src/agents/tools/agent-browser-tool.ts；openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.ts",
+        "expected_requirement": "来源标签最终应影响敏感 browser-effect 边界的授权判断。",
+        "id": "TFD-browser-effect-click-type-partial-coverage-20260821",
+        "observed_action_or_result": "本轮仅扩展 existing-session preflight 到 agent_browser type；evaluate、replay、full-access、UID actions、supervised tasks 与其他调用方仍属 residual，全局 browser-effect 分类继续保持 classification-only。",
+        "recommendation": "完成本切片后停止；下一轮只选择一个相邻且已有 host-owned 授权边界的动作，不把 click+type 局部覆盖表述为 browser-effect 全面执行。",
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "severity": "low",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-21T12:15:43.3621940Z",
+  "proposal_id": "TFP-browser-effect-session-type-provenance-boundary-20260821",
+  "rationale": "用户要求继续 browser-effect 最小来源依赖接入；本轮只将已有 verified-session preflight 从 agent_browser click 扩到 type，复用同一 Main status/connection.mode 事实，不让 typed text 进入策略，不改变其他 browser actions。",
+  "session_id": "session-2026-08-21-browser-effect-session-type-continue",
+  "status": "applied"
+}

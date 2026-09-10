@@ -64,6 +64,7 @@ const RuntimeFeatureSchema = z
         deferredOps: z.boolean().optional(),
         governedExec: z.boolean().optional(),
         artifactResults: z.boolean().optional(),
+        patchPreview: z.boolean().optional(),
         mcpCompatibility: z.boolean().optional(),
         legacyEval: z.boolean().optional(),
         compatibilityNativeFallback: z.boolean().optional(),
@@ -245,6 +246,25 @@ const RuntimeFeatureSchema = z
           })
           .strict()
           .optional(),
+        goalWake: z
+          .object({
+            enabled: z.boolean().optional(),
+            maxActiveGoalWaits: z.number().int().min(0).max(10000).optional(),
+            maxFlows: z.number().int().min(0).max(100000).optional(),
+            tickFailureBackoffMs: z.number().int().min(0).max(86_400_000).optional(),
+            durableHelper: z
+              .object({
+                enabled: z.boolean().optional(),
+                maxRunsPerSession: z.number().int().min(0).max(1000).optional(),
+                maxOutputBytesPerRun: z.number().int().min(1024).max(1024 * 1024 * 1024).optional(),
+                runTtlMs: z.number().int().min(0).max(30 * 24 * 60 * 60 * 1000).optional(),
+                sweepIntervalMs: z.number().int().min(1000).max(24 * 60 * 60 * 1000).optional(),
+              })
+              .strict()
+              .optional(),
+          })
+          .strict()
+          .optional(),
       })
       .strict()
       .optional(),
@@ -320,7 +340,6 @@ const RuntimeFeatureSchema = z
     // any documented opt-in under these keys previously killed the gateway on start.
     coding: z
       .object({
-        factViews: z.object({ enabled: z.boolean().optional() }).strict().optional(),
         parseOnTouch: z.object({ enabled: z.boolean().optional() }).strict().optional(),
         staleWriteGuard: z.object({ enabled: z.boolean().optional() }).strict().optional(),
         writeJournal: z.object({ enabled: z.boolean().optional() }).strict().optional(),
@@ -356,6 +375,7 @@ const RuntimeFeatureSchema = z
           .object({
             enabled: z.boolean().optional(),
             experienceShadow: z.boolean().optional(),
+            retrievalShadow: z.boolean().optional(),
           })
           .strict()
           .optional(),
@@ -367,6 +387,60 @@ const RuntimeFeatureSchema = z
           .strict()
           .optional(),
         verifier: z.object({ noSelfRepair: z.boolean().optional() }).strict().optional(),
+        uftk: z
+          .object({
+            enabled: z.boolean().optional(),
+            baseVersionGuard: z.object({ enabled: z.boolean().optional() }).strict().optional(),
+            auditLog: z.object({ enabled: z.boolean().optional() }).strict().optional(),
+            gitCheckpoint: z
+              .object({
+                enabled: z.boolean().optional(),
+                pathScoped: z.object({ enabled: z.boolean().optional() }).strict().optional(),
+                safetySnapshot: z.object({ enabled: z.boolean().optional() }).strict().optional(),
+                lifecycle: z.object({ enabled: z.boolean().optional() }).strict().optional(),
+              })
+              .strict()
+              .optional(),
+            concurrencyV2: z.object({ enabled: z.boolean().optional() }).strict().optional(),
+            execUndo: z.object({ enabled: z.boolean().optional() }).strict().optional(),
+            autoCheckpoint: z
+              .object({
+                enabled: z.boolean().optional(),
+                allowWorkspaceRoots: z.array(z.string()).optional(),
+                allowAgentIds: z.array(z.string()).optional(),
+                minIntervalMs: z.number().int().nonnegative().optional(),
+                retention: z
+                  .object({
+                    maxCount: z.number().int().nonnegative().optional(),
+                    maxAgeMs: z.number().int().nonnegative().optional(),
+                  })
+                  .strict()
+                  .optional(),
+              })
+              .strict()
+              .optional(),
+            execSideEffects: z.object({ enabled: z.boolean().optional() }).strict().optional(),
+            commandApproval: z
+              .object({
+                enabled: z.boolean().optional(),
+                defaultDecision: z.enum(['allow', 'prompt', 'forbidden']).optional(),
+                rules: z
+                  .array(
+                    z
+                      .object({
+                        prefix: z.string().optional(),
+                        decision: z.enum(['allow', 'prompt', 'forbidden']).optional(),
+                        reason: z.string().optional(),
+                      })
+                      .strict(),
+                  )
+                  .optional(),
+              })
+              .strict()
+              .optional(),
+          })
+          .strict()
+          .optional(),
       })
       .strict()
       .optional(),

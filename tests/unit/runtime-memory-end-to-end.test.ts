@@ -499,21 +499,20 @@ describe("端到端: multi_hop 查询完整流程", () => {
     builder.setTemporalPolicy("strict_current");
     builder.setBridgeDiscovery({
       entityPair: [entityPair!.e1, entityPair!.e2],
-      bridgeCandidateCount: candidates.length,
+      bridgeCandidateCount: diagnostics.bridgeCandidateCount,
+      selectedBridgeFactId: diagnostics.selectedBridgeFactId,
       timeFilteredOutCount: diagnostics.timeFilteredOutCount,
-      selectedBridgeFactId: bridgeFactIds[0],
       pathLength: diagnostics.pathLength,
       bridgeLiftAtK: updatedDiag.bridgeLiftAtK,
       pathExistence: updatedDiag.pathExistence,
     });
     builder.addExpansionFacts(expansionFactIds);
     for (const step of sm.getSteps()) {
+      // AgentStepTrace contract: { step: string, stateDelta? }. The state
+      // machine records carry stepType — map it onto the trace shape.
       builder.addAgentStep({
-        stepIndex: step.stepIndex,
-        stepType: step.stepType,
+        step: step.stepType,
         stateDelta: step.stateDelta,
-        durationMs: step.durationMs,
-        output: step.output,
       });
     }
     builder.addLLMCall(500); // 假设 500 tokens
@@ -528,13 +527,13 @@ describe("端到端: multi_hop 查询完整流程", () => {
     expect(trace.temporalPolicy).toBe("strict_current");
     expect(trace.expansionFacts).toContain("f_answer");
     expect(trace.bridgeDiscovery?.bridgeLiftAtK).toBe(1);
-    expect(trace.bridgeDiscovery?.selectedBridgeFactId).toBe("f1");
+    expect((trace.bridgeDiscovery as any)?.selectedBridgeFactId).toBe("f1");
     expect(trace.agentSteps).toHaveLength(5);
     expect(trace.llmCalls).toBe(1);
     expect(trace.tokensUsed).toBe(500);
 
     // 验证 step 序列正确
-    const stepTypes = trace.agentSteps.map((s) => s.stepType);
+    const stepTypes = trace.agentSteps.map((s) => s.step);
     expect(stepTypes).toEqual([
       "recall",
       "bridge_probe",
@@ -771,8 +770,8 @@ describe("端到端 (Week 7-8): multi-hop + usedFactIds", () => {
     expect(bridgeDiag.pathExistence).toBe(true);
 
     // === Step 3: Weighted expansion (causal-aware) ===
-    const factsById = new Map<string, RuntimeMemoryQueryableFact>(
-      facts.map((f) => [f.factId, f as unknown as RuntimeMemoryQueryableFact]),
+    const factsById = new Map<string, RuntimeMemoryTemporalFact>(
+      facts.map((f) => [f.factId, f as unknown as RuntimeMemoryTemporalFact]),
     );
     const relationMap = new Map<string, string[]>();
     for (const rel of relations) {

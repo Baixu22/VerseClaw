@@ -10,9 +10,8 @@ describe('chat session continuity helpers', () => {
     expect(resolveSessionContinuityRecommendation({
       gatewayAvailable: true,
       activeRun: false,
-      contextRange: { sessionKey: 'agent:main:main', usedTokens: 1000, maxTokens: 100000, truncatedMessageCount: 0 },
+      contextRange: { sessionKey: 'agent:main:main', usedTokens: 1000, maxTokens: 100000, truncatedMessageCount: 0, status: 'exact' },
       compactionStatus: {
-        success: true,
         available: true,
         canCompact: true,
         inProgress: false,
@@ -49,7 +48,7 @@ describe('chat session continuity helpers', () => {
     expect(resolveSessionContinuityPreflight({
       gatewayAvailable: true,
       activeRun: false,
-      contextRange: { sessionKey: 'agent:main:main', usedTokens: 90, maxTokens: 100, truncatedMessageCount: 1 },
+      contextRange: { sessionKey: 'agent:main:main', usedTokens: 90, maxTokens: 100, truncatedMessageCount: 1, status: 'exact' },
     }).health).toMatchObject({
       status: 'risky',
       reasons: expect.arrayContaining(['high_pressure', 'truncated_context']),
@@ -65,20 +64,19 @@ describe('chat session continuity helpers', () => {
     expect(resolveSessionContinuityRecommendation({
       gatewayAvailable: true,
       activeRun: false,
-      contextRange: { sessionKey: 'agent:main:main', usedTokens: 90, maxTokens: 100, truncatedMessageCount: 0 },
+      contextRange: { sessionKey: 'agent:main:main', usedTokens: 90, maxTokens: 100, truncatedMessageCount: 0, status: 'exact' },
     })).toMatchObject({ action: 'handoff', reason: 'high_pressure' });
 
     expect(resolveSessionContinuityRecommendation({
       gatewayAvailable: true,
       activeRun: false,
-      contextRange: { sessionKey: 'agent:main:main', usedTokens: 10, maxTokens: 100, truncatedMessageCount: 1 },
+      contextRange: { sessionKey: 'agent:main:main', usedTokens: 10, maxTokens: 100, truncatedMessageCount: 1, status: 'exact' },
     })).toMatchObject({ action: 'handoff', reason: 'truncated_context' });
 
     expect(resolveSessionContinuityRecommendation({
       gatewayAvailable: true,
       activeRun: false,
       compactionStatus: {
-        success: true,
         available: true,
         canCompact: true,
         inProgress: false,

@@ -22,6 +22,7 @@ import { parseWorkingMemoryActions } from "./handlers/working-memory-handler.js"
 import { dcsObservability } from "./dcs-observability.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
 import { resolveKillSwitchConfig } from "./kill-switch-config-source.js";
+import { isWorkingMemoryRegatherEnabled } from "./working-memory-regather.js";
 import {
   collectContextCandidate,
   createContextCandidate,
@@ -67,10 +68,19 @@ export interface AssembleRequest {
   /**
    * F-01: channels already projected into this attempt's transcript by an
    * earlier model call. A deferred projection for the *next* model call must
-   * not collect them again (exactly-once per attempt), while channels that
-   * produced new Blocks since the last call (working_memory after a
-   * tool_result) are still queried. Skipped channels are neither queried nor
-   * recorded — they did not participate in this model call.
+   * not collect them again (exactly-once per attempt).
+   *
+   * T-B6 (TF-0126): working_memory produces new Blocks as the tool loop runs,
+   * so it is treated differently from the exactly-once channels: when the
+   * working-memory regather gate (OPENCLAW_WORKING_MEMORY_REGATHER) is on,
+   * the caller (embedded-agent-runner/extensions.ts) keeps it OUT of this
+   * list on later model calls, and unchanged content is deduplicated by
+   * candidate dedupKey (contentDigest) rather than by a channel-level skip —
+   * channels that produced new Blocks since the last call are queried again.
+   * Channels that remain on this list are neither queried nor injected; with
+   * the regather gate on the skip decision itself is recorded into lineage
+   * (disposition "skip", reason "skip-channel") so audits can see it. Gate
+   * off: legacy behavior, byte-identical (no regather, no skip lineage).
    */
   skipChannels?: TurnInjectionChannel[];
 }
@@ -187,7 +197,7 @@ function recordContextBlockDecision(params: {
   turnId: string;
   sourceId: string;
   channel: TurnInjectionChannel;
-  reason: "empty" | "flag-off" | "kill-switch";
+  reason: "empty" | "flag-off" | "kill-switch" | "skip-channel";
 }): void {
   recordContextCandidateSkip(params.turnId, {
     sourceId: params.sourceId,
@@ -395,6 +405,29 @@ export class Assembler {
     return result;
   }
 
+  /**
+   * T-B6 (TF-0126): channel-level skips used to be invisible in lineage — the
+   * transformer returned without recording anything, so audits could not see
+   * why a channel stayed silent on a model call. With the working-memory
+   * regather gate on, record the skip decision. Gate off: record nothing —
+   * pre-T-B6 behavior stays byte-identical (requirement-5 / AC-5).
+   */
+  #recordChannelSkip(
+    request: AssembleRequest,
+    channel: TurnInjectionChannel,
+    sourceId: string,
+    killCfg: unknown,
+  ): void {
+    if (!request.deferProjection || !request.turnId) return;
+    if (!isWorkingMemoryRegatherEnabled(killCfg, process.env)) return;
+    recordContextBlockDecision({
+      turnId: request.turnId,
+      sourceId,
+      channel,
+      reason: "skip-channel",
+    });
+  }
+
   async #appendWorkingMemory<TExistingOutput>(
     request: AssembleRequest,
     output: TExistingOutput,
@@ -403,6 +436,12 @@ export class Assembler {
     killCfg: unknown,
   ): Promise<TExistingOutput> {
     if (request.skipChannels?.includes("working_memory")) {
+      this.#recordChannelSkip(
+        request,
+        "working_memory",
+        "context-block:working-memory:working_memory",
+        killCfg,
+      );
       return output;
     }
     const store = this.#dependencies.workingMemoryStore;
@@ -485,6 +524,7 @@ export class Assembler {
     killCfg: unknown,
   ): Promise<TExistingOutput> {
     if (request.skipChannels?.includes("tool_registry")) {
+      this.#recordChannelSkip(request, "tool_registry", "context-block:cvk:tool_registry", killCfg);
       return output;
     }
     const store = this.#dependencies.workingMemoryStore;
@@ -572,6 +612,7 @@ export class Assembler {
     killCfg: unknown,
   ): Promise<TExistingOutput> {
     if (request.skipChannels?.includes("knowledge")) {
+      this.#recordChannelSkip(request, "knowledge", "context-block:knowledge", killCfg);
       return output;
     }
     const store = this.#dependencies.workingMemoryStore;

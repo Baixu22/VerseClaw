@@ -138,6 +138,8 @@ OfficeCLI 也可在 设置 -> 技能 -> 功能插件 中管理：Verse Claw 会�
 在输入框输入 `/` 会打开 Context Palette，可发现 Wiki 搜索、只读知识范围切换、审查、修复 CI、补测试、解释 diff、Task Ledger、Mission Control、压缩和会话 fork；这些动作都会复用现有 Chat 和 Session 流程。会话生命周期命令（`/new`、`/resume <关键词>`、`/rename <名称>`、`/archive`、`/delete`、`/clear`、`/copy`）与侧边栏使用相同的 store/host 路径：`/new` 开启新对话，`/resume` 按关键词切换会话，`/rename` 重命名当前会话，`/archive` 与 `/delete` 归档或永久删除当前会话，`/clear` 重置本地消息视图，`/copy` 将会话记录复制为 markdown。
 当你使用 `@agent` 选择其他智能体时，Verse Claw 会直接切换到该智能体自己的对话上下文，而不是经过默认智能体转发。各 Agent 工作区默认彼此分离，但更强的运行时隔离仍取决于 OpenClaw 的 sandbox 配置。
 Verse Claw 默认使用轻量 `policy-light` 沙盒层，由主进程权限门禁、工作区根目录检查、Gateway RPC 审批和 OpenClaw exec approval 共同生效；Docker 与 SSH 保留为需要显式选择的 `strong` provider，不再是启动必需项。
+命令风险分类基于子命令而非前缀匹配，因此前置的全局参数无法掩盖命令的真实行为。对 `git` 而言，能执行任意代码（`-c` 设置 `core.pager`/`core.editor`/`alias.*`、`--config-env`）、重定向其辅助程序路径（`--exec-path`）或把操作转移到其他仓库（`-C`、`--git-dir`、`--work-tree`、`--namespace`）的参数，无论后面跟哪个子命令都按高风险处理；全局参数也不再能把破坏性或联网子命令降级成普通写操作。
+即使在工作区内（普通编辑会自动放行），写入 Git 仓库元数据仍需审批——因为写进去的 hook 或 config 会在下一次 Git 调用时执行；该保护覆盖嵌套仓库、submodule 以及 linked worktree 使用的 `.git` 指针文件，而 `.gitignore`、`.gitattributes`、`.github/` 仍按普通文件处理。破坏性 Git 操作的审批提示会给出分级依据而不是笼统警告：push 的目标远端与分支、该分支是否为共享分支、未指定分支时适用的 refspec 范围，以及 reset 是丢弃工作区改动还是仅移动分支指针。
 当 Docker 沙盒运行在 Windows 主机、而 daemon 位于 WSL2（或通过 `DOCKER_HOST` 连接的其它 Linux daemon）时，bind source 会自动转换到 WSL2 挂载命名空间（`C:\...\workspace` → `/mnt/c/.../workspace`，`\wsl$\<distro>\...` → POSIX），卷挂载不再因 `invalid volume specification` 失败；本地 Windows named-pipe daemon 以及 macOS/Linux 主机不受影响。
 Settings、Doctor 和 diagnostics 现在展示同一份 effective sandbox policy，包括请求/生效 provider、runtime level、exec 与 network policy、Docker 可用性和降级原因。
 Settings → System & Runtime 还提供 Project Rules Center，可检查当前 workspace 的 `AGENTS.md`，列出 `.clawx/rules/*.md`，展示确定性校验 warning，并在缺失时创建保守的 `AGENTS.md` 模板，而不会引入新的规则真相源。
@@ -210,7 +212,7 @@ Shadow V1 评分与阈值 50 冻结；标注工具包就绪不等于可晋级。
 
 ### Workspace Git 控制
 Workspace 侧栏现在会先打开精简入口面板；只有当前 workspace 是 Git 仓库时才显示“审查”入口，非 Git 项目不会暴露 Git 控件。
-Workspace 侧栏提供 Git 工作台，可查看仓库状态、side-by-side 文件 diff、暂存、复制 patch、带审批的文件还原、提交、分支、stash、worktree 和 GitHub Pull Request。顶部 readiness 条会量化本机 Git、内置 Agent Git 工具、worktree 数量和 `gh` 登录状态，让面板直接显示当前哪些能力可用。Worktree 添加支持新分支和已有分支两种流程，新 worktree 默认放在仓库同级目录。同一套 Main 进程 Git service 也驱动内置 `clawx-git` MCP server，让 Agent 通过 Verse Claw 权限体系调用受控 Git 与 PR 工具，而不是直接拼 shell 命令；revert、pull、push、worktree remove/prune、创建 PR 等会改写或发布状态的操作仍需要审批。
+Workspace 侧栏提供 Git 工作台，可查看仓库状态、side-by-side 文件 diff、暂存、复制 patch、带审批的文件还原、提交、分支、stash、worktree、合并、变基、重置和 GitHub Pull Request。紧凑的 Audit 标签会把权限决策与最近的 `git reflog --all` 条目合并显示（有界视图，超出上限的较早条目会显式标记），包括提交、切换、重置、变基及其他引用移动。顶部 readiness 条会量化本机 Git、内置 Agent Git 工具、worktree 数量和 `gh` 登录状态，让面板直接显示当前哪些能力可用。Worktree 添加支持新分支和已有分支两种流程，新 worktree 默认放在仓库同级目录。统一 diff 可以通过结构化补丁引擎应用、回滚，或只做预检而不落盘，并分别报告已应用、已跳过与冲突的路径；格式损坏或被截断的补丁会在触碰任何文件之前被拒绝，而不是部分应用。只读的基线对比会把 HEAD 与最近的远程祖先做 diff——显式 ref、分支 upstream，或 `origin/HEAD`——并报告实际用的是哪一个；当不存在远程祖先，或两侧没有共同提交时，会把对比标记为不可用，而不是猜一个基线。同一套 Main 进程 Git service 也驱动内置 `clawx-git` MCP server，让 Agent 通过 Verse Claw 权限体系调用受控 Git 与 PR 工具，而不是直接拼 shell 命令；revert、pull、push、merge、rebase、reset、补丁应用/回滚、worktree remove/prune、创建 PR 等会改写或发布状态的操作仍需要审批。
 
 ### 📡 多频道管理
 同时配置和监控多个 AI 频道。每个频道独立运行，允许你为不同任务运行专门的智能体。
@@ -415,6 +417,8 @@ P2-01 只读 facade 现在只把稳定的 `read_file`、`search_content`、`resu
 
 P2-02 argv-only command profile 现在把 OpenClaw 审批前的 command analysis 收敛为不可变 host-owned execution plan。普通 test/build/lint/git 命令以 direct argv 执行；pipeline、chain、redirect、heredoc、inline evaluation 和显式解释器保持独立的 terminal-shell 边界。profile（含 `pnpm`/`npm`/`corepack` `exec`/`dlx` runner 透传）由 host 推导，模型不能选择 profile、interpreter、PATH/PATHEXT、policy 或 approval token。Windows `.exe`/`.com` 保持 direct argv，`.cmd`/`.bat` 在经审计的 `cmd.exe` interpreter 下保留 resolved script identity，审批后不再重解析 display command。cwd/env/argv/timeout/output 越界一律 fail-closed，且没有 native/MCP/legacy fallback。这只是 engineering evidence，不开启 diagnostics、写入、canary、default-on、GA 或 product approval。详见 [P2-02 证据](docs/dev/verseshell-foundation/P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md)。
 
+P3 external-write 策略现在会在不可变 command plan 上，把 compiler、script、Git hook、terminal shell 以及其他可能产生副作用的进程命令标记为 external write。既有 OpenClaw exec approval 仍是唯一授权面；静态警告不复制命令文本或凭据。此类进程写入位于 ClawX write journal 之外，`rollbackClaim=false`，也不会被自动回滚。本工程切片不开启写入、canary 流量、default-on、GA 或产品审批。详见 [P3 证据](docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md)。
+
 推荐使用以下保守的 `openclaw.json` 配置：
 
 ```json
@@ -459,6 +463,10 @@ P2-02 argv-only command profile 现在把 OpenClaw 审批前的 command analysis
 ---
 
 ## 开发指南
+
+### Runtime Lifecycle Governance（Phase 2，默认关闭）
+
+Runtime Lifecycle Governance 按阶段交付。Phase 0 落地共享基础（`SessionAdmissionRegistry`、`flow_runs` goal-wake SQL CAS、mission fencing、operation-journal primitive）。Phase 1 交付唯一 canonical cleanup finalizer 与 drain 管线。Phase 2 交付 delete operation journal（`cache_entries` 行删除与 `store_committed` 在同一个 per-agent SQLite immediate transaction）、由调用方持久化 `operationId` 驱动的 Electron mirror gate，以及终端 keep-on-leave 与全局 `terminal.list({})`。Phase 3 交付默认关闭的同 Gateway goal wake loop：单个 SQLite immediate arm 事务、run 完全 idle 后持久化 `turnBarrier` ack、仅 mission owner/lead 顶层 turn 可用的 `goal_wait`、`exec(background=true, wait="goal")`，以及进程退出 level-check 唤醒与重复 wake 去重。Phase 4 交付默认关闭的 durable helper 文件协议（`intent.json -> started.json -> exit.json`，位于 `<trusted-root>/background-processes/<runId>/`）、`ProcessRunReconciler` 启动/低频 sweep 恢复、session reset/delete 的 ownerEpoch 失效、runDir 配额/TTL/redaction，以及 Windows detached helper 路径；恢复绝不重放命令，`intent` 无 `started` 且无存活 helper 判为 `lost`。Phase 5 扩展 `SessionActivity` 只读模型，新增 goal、process、lineage 投影，数据只来自现有只读 probe（`mission_runs`、goal-wake `flow_runs`/`task_runs`、bash process registry、supervisor snapshot、subagent lineage）。Electron 服务仅转发并做类型化聚合，Chat 会话状态面板经 `react-i18next` 与现有 design token 渲染新状态，不新增任何生命周期按钮或删除/恢复入口；只读投影测试报告 `activitySnapshotWriteFindings=0`。审计保持 `armTxCount=1`、`processPollToolCalls=0`，Phase 4 增加 `secretPersistenceFindings=0`；普通 Chat 与默认 `background=true` 行为不变。Phase 6 完成 evidence-only 生产收尾：`audit-0.json` 至 `audit-6.json` 全部通过 `pnpm run runtime-lifecycle-audit --phase all`；已删除 superseded 阶段临时提示词，closeout 记录于 `docs/dev/handoffs/LATEST.md` 与 task-forest `TF-0077`，后续想法保留在 `future-work.json`。2026-08-19 的 GA hardening 补齐 packaged Electron durable-helper 验证与 10 周期真实进程 goal-wake canary；RLG-only 验收现为无条件 PASS，goal-wake/durable-helper 默认关闭与全部产品锁保持不变。详见 `docs/dev/runtime-lifecycle-governance/README.zh-CN.md`、`artifacts/runtime-lifecycle-governance/audit-6.json` 与 `artifacts/runtime-lifecycle-governance/ga-acceptance.json`。
 
 ### 前置要求
 

@@ -39,16 +39,37 @@ describe("DCS Stage 2 terminal-phase SEKB trajectory capture", () => {
       taskId: "task-1",
       fromStatus: "verifying",
       toStatus: "completed",
+      lineage: {
+        schema: "runtime-lineage.v1",
+        sessionId: "agent:test:main",
+        missionId: "mission-1",
+        missionTick: 2,
+        loopRunId: "task-1",
+        traceId: "trace-1",
+        taskLedgerRootId: "ledger-1",
+      },
     };
-    await runAgentHarnessTaskPhaseChangeHook({
+    const result = await runAgentHarnessTaskPhaseChangeHook({
       event,
       ctx: { runId: "run-1", sessionId: "agent:test:main" },
     });
 
     expect(startTrajectory).toHaveBeenCalledOnce();
-    expect(startTrajectory).toHaveBeenCalledWith("Test task", "agent/task", ["completed"]);
+    expect(startTrajectory).toHaveBeenCalledWith("Test task", "agent/task", ["completed"], {
+      runtimeLineage: event.lineage,
+      sekbCaptureOrigin: "task_phase_terminal",
+      sekbCaptureKey: "task-phase-terminal:agent:test:main:task-1:trace-1",
+    });
     expect(finishTrajectory).toHaveBeenCalledOnce();
     expect(finishTrajectory).toHaveBeenCalledWith("traj-completed", "success", null);
+    expect(result.trajectory).toEqual({ status: "captured", trajectoryId: "traj-completed" });
+    const sinkMock = sink as unknown as {
+      mock: { calls: [readonly ContextBlockWrite[]][] };
+    };
+    const pack = JSON.parse(sinkMock.mock.calls[0]?.[0]?.[0]?.block.full_content ?? "{}") as {
+      lineage?: unknown;
+    };
+    expect(pack.lineage).toEqual(event.lineage);
   });
 
   it("triggers one trajectory capture on failed phase with error reason", async () => {
@@ -136,7 +157,10 @@ describe("DCS Stage 2 terminal-phase SEKB trajectory capture", () => {
         event,
         ctx: { runId: "run-3", sessionId: "agent:test:main" },
       }),
-    ).resolves.toBeUndefined();
+    ).resolves.toMatchObject({
+      taskState: { status: "accepted" },
+      trajectory: { status: "skipped", reason: "no_trajectory_capture" },
+    });
   });
 
   it("produces task_state Block write through the handler on phase transition", async () => {
@@ -167,6 +191,63 @@ describe("DCS Stage 2 terminal-phase SEKB trajectory capture", () => {
     expect(writes[0]?.block.block_type).toBe("task_state");
     expect(writes[0]?.block.source_system).toBe("task-loop");
     expect(writes[0]?.block.mutability).toBe("system_managed");
+  });
+
+  it("waits for a delayed task_state write and exposes rejection evidence", async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const sink: ContextBlockSink = vi.fn(async () => {
+      await gate;
+      return [{ accepted: false, reason: "store unavailable" }];
+    });
+    setTaskStateHandlerConfig({
+      contextBlockSink: sink,
+      objective: "Durability test",
+    });
+
+    const pending = runAgentHarnessTaskPhaseChangeHook({
+      event: {
+        sessionId: "agent:test:durability",
+        taskId: "task-durability",
+        fromStatus: "running",
+        toStatus: "completed",
+      },
+      ctx: { runId: "run-durability", sessionId: "agent:test:durability" },
+    });
+    let settled = false;
+    void pending.then(() => {
+      settled = true;
+    });
+    await Promise.resolve();
+    expect(settled).toBe(false);
+
+    release();
+    await expect(pending).resolves.toMatchObject({
+      taskState: { status: "rejected", reason: "store unavailable" },
+      trajectory: { status: "skipped" },
+    });
+  });
+
+  it("keeps legacy phase captures compatible when lineage is absent", async () => {
+    const startTrajectory = vi.fn(() => "traj-legacy");
+    const finishTrajectory = vi.fn();
+    setTaskStateHandlerConfig({
+      trajectoryCapture: makeMockCapture({ startTrajectory, finishTrajectory }),
+      objective: "Legacy task",
+    });
+    const result = await runAgentHarnessTaskPhaseChangeHook({
+      event: {
+        sessionId: "agent:test:legacy",
+        taskId: "task-legacy",
+        fromStatus: "running",
+        toStatus: "completed",
+      },
+      ctx: { runId: "run-legacy", sessionId: "agent:test:legacy" },
+    });
+    expect(startTrajectory).toHaveBeenCalledWith("Legacy task", "agent/task", ["completed"]);
+    expect(result.trajectory.trajectoryId).toBe("traj-legacy");
   });
 });
 

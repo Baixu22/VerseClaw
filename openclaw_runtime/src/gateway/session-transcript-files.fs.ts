@@ -6,6 +6,7 @@ import path from "node:path";
 import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
 import {
   formatSessionArchiveTimestamp,
+  isSessionArchiveTimestamp,
   parseSessionArchiveTimestamp,
   type SessionArchiveReason,
 } from "../config/sessions/artifacts.js";
@@ -178,18 +179,21 @@ export function archiveSessionTranscriptsDetailed(opts: {
    * caller decides whether to log, warn-deliver, or escalate.
    */
   onArchiveError?: (err: unknown, sourcePath: string) => void;
+  archiveTimestamp?: string;
+  candidatePaths?: string[];
 }): ArchivedSessionTranscript[] {
   const archived: ArchivedSessionTranscript[] = [];
   const storeDir =
     opts.restrictToStoreDir && opts.storePath
       ? canonicalizePathForComparison(path.dirname(opts.storePath))
       : null;
-  for (const candidate of resolveSessionTranscriptCandidates(
+  const candidates = opts.candidatePaths ?? resolveSessionTranscriptCandidates(
     opts.sessionId,
     opts.storePath,
     opts.sessionFile,
     opts.agentId,
-  )) {
+  );
+  for (const candidate of candidates) {
     const candidatePath = canonicalizePathForComparison(candidate);
     if (storeDir) {
       const relative = path.relative(storeDir, candidatePath);
@@ -197,19 +201,55 @@ export function archiveSessionTranscriptsDetailed(opts: {
         continue;
       }
     }
+    const plannedArchivePath = resolveArchivePath(candidatePath, opts.reason, opts.archiveTimestamp);
     if (!fs.existsSync(candidatePath)) {
+      if (plannedArchivePath && fs.existsSync(plannedArchivePath)) {
+        archived.push({ sourcePath: candidatePath, archivedPath: plannedArchivePath });
+      }
       continue;
     }
     try {
       archived.push({
         sourcePath: candidatePath,
-        archivedPath: archiveFileOnDisk(candidatePath, opts.reason),
+        archivedPath: archiveFileOnDiskWithTimestamp(
+          candidatePath,
+          opts.reason,
+          opts.archiveTimestamp,
+        ),
       });
     } catch (err) {
       opts.onArchiveError?.(err, candidatePath);
     }
   }
   return archived;
+}
+
+function archiveFileOnDiskWithTimestamp(
+  filePath: string,
+  reason: ArchiveFileReason,
+  archiveTimestamp?: string,
+): string {
+  const archived = resolveArchivePath(filePath, reason, archiveTimestamp)
+    ?? `${filePath}.${reason}.${formatSessionArchiveTimestamp()}`;
+  if (fs.existsSync(archived)) {
+    throw new Error(`session archive target already exists: ${archived}`);
+  }
+  fs.renameSync(filePath, archived);
+  emitSessionTranscriptUpdate({ sessionFile: archived });
+  return archived;
+}
+
+function resolveArchivePath(
+  filePath: string,
+  reason: ArchiveFileReason,
+  archiveTimestamp?: string,
+): string | undefined {
+  const requested = archiveTimestamp?.trim();
+  if (!requested) return undefined;
+  if (!isSessionArchiveTimestamp(requested)) {
+    throw new Error(`invalid session archive timestamp: ${requested}`);
+  }
+  return `${filePath}.${reason}.${requested}`;
 }
 
 export function resolveStableSessionEndTranscript(params: {

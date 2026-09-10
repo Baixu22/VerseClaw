@@ -384,9 +384,9 @@ describe("跨组件一致性: bridge → expansion → trace", () => {
     builder.setCategory("multi_hop");
     builder.setBridgeDiscovery({
       entityPair: [entityPair!.e1, entityPair!.e2],
-      bridgeCandidateCount: candidates.length,
+      bridgeCandidateCount: diagnostics.bridgeCandidateCount,
+      selectedBridgeFactId: diagnostics.selectedBridgeFactId,
       timeFilteredOutCount: diagnostics.timeFilteredOutCount,
-      selectedBridgeFactId: bridgeFactIds[0] ?? null,
       pathLength: diagnostics.pathLength,
       bridgeLiftAtK: updatedDiag.bridgeLiftAtK,
       pathExistence: updatedDiag.pathExistence,
@@ -396,7 +396,7 @@ describe("跨组件一致性: bridge → expansion → trace", () => {
 
     expect(trace.expansionFacts).toEqual(expansionFactIds);
     expect(trace.bridgeDiscovery?.bridgeLiftAtK).toBe(1);
-    expect(trace.bridgeDiscovery?.selectedBridgeFactId).toBe(bridgeFactIds[0]);
+    expect((trace.bridgeDiscovery as any)?.selectedBridgeFactId).toBe(bridgeFactIds[0]);
     expect(trace.category).toBe("multi_hop");
   });
 

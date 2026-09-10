@@ -1,0 +1,79 @@
+{
+  "applied_at": "2026-08-24T13:30:33.060035Z",
+  "base_graph_hash": "a2f262b0f47652feab81cfa3e87c513d6c79a9c1cf20a093c3562ecdeabaeb4b",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "本轮各 node 已引用但无统一约定的路径：DEV-PROTOCOL.md（M0 AC）、GATE-BASELINE.md（TF-0142 AC）、reviews/<task-id>.md（R1）、approvals/<task-id>.md（R3/TF-0140）、designs/<task-id>.md（R3）、corpus/<corpus-id>.md（TF-0143）、loss-trace-spike.md（TF-0138）",
+          "既有偏差样例：TFD-context-moat-cut-2026-08-24（本提案前一轮的范围缩减记录）",
+          "冲突域表由脚本对 28 个活跃叶子的 evidence/requirements/acceptance_criteria 抽取代码路径后两两取交集所得；12 组中 9 组此前无 depends_on 边覆盖",
+          "调度模拟（文件冲突互斥 + blocking 依赖下推到叶子）：1 车道 4710min / 2 车道 2580min / 3 车道 1920min / 4 车道 1680min / 6 车道 1470min；净工时 4710min",
+          "并发安全性来源：R3 已采纳无累积状态的每任务半径收口门，治理层无共享可变状态，故多车道无需争锁（原 BRB 累积档位方案会引入全局 ledger 争用）",
+          "M0 实际依赖链（graph/edges.json 实测）：TF-0106 --depends_on(blocking)--> TF-0142 --depends_on(blocking)--> TF-0109，链长 60+90+120=270min；M0 总量 840min，两车道下界 420min，本排班恰好打平下界",
+          "原排班的缺陷（本次修正原因）：TF-0106 在车道 1 而其 blocking 前置 TF-0142 在车道 2，两者完成时刻同为 360min，是零余量的跨车道交接；且车道 2 在 360min 完成 M0 份额后于 B1（480min）未达成时即进入 TF-0118 实现类 task，构成 B1 违反",
+          "task-forest 并发模型（skill references/concurrency.md:29,91-95,108）：proposal 可并行生成、应用被锁串行化且有 base_graph_hash stale 检查；update-node 走锁但无 stale 检查，故为高频状态变更的正确通道",
+          "排班由 .tmp/tf/verify-lanes.cjs 对 graph/edges.json + graph/nodes.json 机械验证：9 条 blocking 边、32 组冲突域配对、28 个应排节点全部通过；该脚本首轮即抓出一处真实违反 —— TF-0117(T-D2) 原在车道 1 尾部 [2260,2350) 与车道 2 的 TF-0140 [2140,2440) 在 D04 assembler.ts / D05 extensions.ts 上重叠，且落在 B3 soak 冻结期内，故 TF-0117 上移至紧跟 TF-0128",
+          "跨车道文件碰撞全量重扫（.tmp/tf/scan-cross.cjs，从 28 个节点的 title/summary/requirements/acceptance_criteria/evidence 抽 .ts/.mts/.mjs 路径后按车道取交集）：命中 12 个文件，其中 8 个已在 D01-D12；4 个未登记者经逐一判读为 1 真（memory-hybrid-retrieval.ts）+ 3 假阳性（attempt.ts / init.ts / context-compression-eval-runner.mjs，均为只读引用）"
+        ],
+        "requirements": [
+          "统一交付物目录（本轮全部产出物只允许落在此树下）：docs/dev/context-moat/DEV-PROTOCOL.md（M0 七节合一的开发文档）、GATE-BASELINE.md（TF-0142 产出）、reviews/<task-id>.md（R1 审核记录）、approvals/<task-id>.md（R3 默认值人工 approve）、designs/<task-id>.md（R3 拆分件共享设计）、corpus/<corpus-id>.md（TF-0143 语料元数据）、loss-trace-spike.md（TF-0138 产出）。路径以外的产出物视为未交付。",
+          "偏差记录（record_deviation）的强制触发条件，四类之一即必须记：(a) 范围增减（砍/加/移轮）；(b) task 收口为 landed-unwired；(c) 审核或验收发现的问题被判为「本轮不修」；(d) 已声明的回滚被真实执行。字段固定：id / node_id / kind / summary / impact / decided_by。",
+          "回滚流程：声明回滚方式（R2 通用条款）与真实执行回滚是两件事。真实回滚时必须 —— 关闭旗标或 revert，跑一次该 task 的 L0 门确认回到基线，记 record_deviation（kind=rollback_executed），并把 task 状态改回 proposed 而非标 done。回滚本身不算 task 失败；隐瞒回滚才算。",
+          "pick-next 规则（消除挑软柿子的空间）：在所有 blocking 前置已满足、且与另一车道在跑任务无文件冲突的 task 中，按 (1) 关键路径上的优先 → (2) priority 数值小的优先 → (3) max_brb 大的优先（先做难的，避免把 brb-M/L 堆到末期）→ (4) TF 编号小的优先。开工前必须把该 task 状态改为 in_progress 并记入 task-forest。",
+          "并发上限：本轮固定 2 车道，禁止扩到 3 条以上。依据：调度模拟显示 1/2/3/4/6 车道墙钟为 13.1/7.2/5.3/4.7/4.1 工作日，2 车道已拿到 83% 收益，第 4 条起边际近零；瓶颈是 12 组同文件冲突域而非人手，多开车道只会在高冲突文件上排队并线性放大脏树风险（assembler.ts / extensions.ts / coding-runtime-flags.ts / prod-flags-catalog.ts 各有 3-4 个任务触碰）。",
+          "冲突域表（每个域同时只允许 1 个 in_progress；表内为按各 task 声明触碰面实测所得，新发现的域必须追加）：D01 tests/unit/config-schema-parity.test.ts → TF-0106/0109/0112/0142；D02 shared/dcs/prod-flags-catalog.ts → TF-0107/0112/0137/0140；D03 src/context-engine/coding-runtime-flags.ts → TF-0112/0117/0137/0146；D04 src/context-engine/assembler.ts → TF-0117/0126/0140；D05 src/agents/embedded-agent-runner/extensions.ts → TF-0117/0126/0140；D06 src/context-engine/context-candidate.ts → TF-0126/0128/0138；D07 src/config/types.openclaw.ts → TF-0107/0109；D08 src/memory/context-pack.ts → TF-0110/0114；D09 src/agents/agent-hooks/compaction-safeguard.ts → TF-0111/0124；D10 src/agents/worktree-service.ts → TF-0112/0137；D11 src/context-engine/turn-injection-budget.ts → TF-0117/0128；D12 docs/dev/context-moat/DEV-PROTOCOL.md → TF-0103 的全部子节点（文档域，按节分工写入，禁止两人同时编辑同一节）。；D13 openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts → TF-0114（车道 2，修 tokenizeWords/extractEntities 的 CJK 空返回）/ TF-0122（车道 1，裁决整条 hybrid 检索链去留，「迁出」选项会移动整个文件）—— 这是本轮**唯一一组跨车道的真写冲突域**，故 TF-0122 depends_on TF-0114 已由 non-blocking 升为 blocking：必须先修完再裁决去留，反序会让 TF-0114 的修复被 TF-0122 的迁出连带作废。排班上两者相距 1050min，正常不会真的撞上，但边必须是 blocking 以防 pick-next 时被抢跑。（重扫时排除的三处 mention-only 假阳性，勿再重复认定：attempt.ts 与 init.ts 仅被 TF-0104 作为「生产入口 / 注册入口」判例引用，零写入；context-compression-eval-runner.mjs 仅被 TF-0106 作为 §R2 门命令清单引用，只读 —— 若车道 1 的 TF-0143/TF-0138 需要真改这个 runner，属触碰面扩大，按 record_deviation 处理。）",
+          "M0 文档相（0-420min，两车道等长，全程零 src 改动）—— M0 只产出 DEV-PROTOCOL.md 与目录树，不受 M1+ 的文件域分工约束，改按「协议节 vs 门节」分工，且刻意让 D01/D07 两个冲突域完整落在同一条车道内：S0 骨架（车道 1，≤10min，M0 第一个提交）= 建 docs/dev/context-moat/ 七个子路径（.gitkeep）+ 建 DEV-PROTOCOL.md 骨架（七个 `## §X` 标题 + 每节一行 `<!-- owner=lane-N -->` 占位），先提交再开工；此后两车道只填自己 owner 的节，禁止跨节编辑。车道 1 = 协议与流程节（420min）：S0 → TF-0105 R1(120) → TF-0104 D1(90) → TF-0145 R4(150) → TF-0146 R5(60)，owner 的节为 §D1 §R1 §R4 §R5。车道 2 = 门与半径节（420min）：TF-0109 T-P0-3(60) → TF-0142 D4(90) → TF-0106 R2(120) → TF-0107 R3(150)，owner 的节为 §R2 §R3 §D4。本相内零跨车道 blocking 边、零跨车道冲突域：TF-0106→TF-0142→TF-0109 这条唯一的 M0 blocking 链整条在车道 2 内串行；D01(config-schema-parity.test.ts, 由 TF-0109/0142/0106 触碰) 与 D07(types.openclaw.ts, 由 TF-0107/0109 触碰) 均只在车道 2 内。",
+          "M1+ 实现相（430min 起，按文件域分工，两车道占用 1920min / 2010min）—— 车道 1（上下文·压缩·注入线，1920min）固定顺序：TF-0136 D3(0) → TF-0128 T-C1(360) → TF-0117 T-D2(90) → TF-0126 T-B6(300) → TF-0116 T-D1(240) → TF-0111 T-P0-2(180) → TF-0124 T-B4(300) → TF-0143 T-CORPUS(180) → TF-0138 T-C0(180) → TF-0122 T-B2(90)；独占 D04 assembler.ts / D05 extensions.ts / D06 context-candidate.ts / D09 compaction-safeguard.ts / D11 turn-injection-budget.ts 五个域。TF-0117 必须紧跟 TF-0128 而不能留在车道尾部：它触碰 D04/D05，留在尾部会与车道 2 的 TF-0140 及其 soak 期重叠，违反 B3。车道 2（治理·旗标·记忆线，2010min）固定顺序：TF-0118 T-D3(300) → TF-0110 T-P0-1(240) → TF-0114 T-P0-6(240) → TF-0121 T-B1(240) → TF-0113 T-P0-5(180) → TF-0119 T-D4(180) → TF-0112 T-P0-4(120) → TF-0137 D2(90) → TF-0139 T-E1(120) → TF-0140 T-E2(300)；独占 D02 prod-flags-catalog.ts / D03 coding-runtime-flags.ts / D07 types.openclaw.ts / D08 memory/context-pack.ts / D10 worktree-service.ts 五个域。跨车道 blocking 边只有一条：TF-0140(车道 2, 起于 2140min) depends_on TF-0128(车道 1, 完成于 790min)，余量 1350min —— 即同步点 B2，正常排班下不会成为等待点。车道 1 收于 2350min、车道 2 收于 2440min，总墙钟 2440min ≈ 6.8 个 6 小时工作日。",
+          "同步点（barrier）三个，未达成不得跨越：B1 = M0（TF-0103）七节全部收口后才允许进入实现类 task —— 协议不齐则完成标准与验收判据不存在；B2 = TF-0128（T-C1）完成后车道 2 才可开 TF-0140（T-E2）—— 翻正需要健康分四维基线；B3 = TF-0140 的 14 天真人 soak 期间，两条车道均不得改动 assembler.ts / extensions.ts / prod-flags-catalog.ts —— 否则回滚归因不清，soak 证据作废。",
+          "每车道独立提交，不共享未提交改动：车道切换任务前必须让工作树对本车道文件域干净（提交或 stash）。这是防脏树的关键一条 —— 仓库当前本就有未提交改动，两车道若共享脏树则无法干净剥离任一 task 的回滚。",
+          "本 requirement 只产出文档与约定，不改任何代码（max_brb=S，预期 0 个 src 文件改动）。",
+          "task-forest 多 session 写入纪律（两车道各持一个会话，同写一张图）：(a) 自己节点的 status / progress / evidence 变更一律走 `update-node`（无 base_graph_hash，锁自动串行化），禁止为一次状态变更去走 proposal；(b) 只有结构性变更（加节点、加边、record_deviation）才用 proposal-save + proposal-apply，且必须「即生成即应用」，不允许先存着过一段时间再 apply —— 另一条车道任何一次 update-node 都会让旧 proposal 变 stale；(c) 遇 stale 一律重新生成提案，禁止 `--allow-stale`；(d) 每条命令带 `--actor lane-1` / `--actor lane-2`，使 events.jsonl 可按车道回溯；(e) Windows 控制台须设 PYTHONUTF8=1 PYTHONIOENCODING=utf-8，否则 CLI 中文输出乱码会让判读失真。",
+          "冲突域越界的自检命令（每次开工前跑，留痕到 reviews/<task-id>.md）：先 `git status --porcelain` 确认本车道文件域干净；再对本 task 声明的触碰文件集与另一车道 in_progress task 的触碰文件集取交集，交集非空则不得开工，改按 pick-next 取下一个。"
+        ]
+      },
+      "id": "TF-0145"
+    },
+    {
+      "action": "remove_edge",
+      "from": "TF-0122",
+      "to": "TF-0114",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.95,
+        "reason": "D13 跨车道真写冲突：TF-0114 修 memory-hybrid-retrieval.ts 的 CJK 空返回，TF-0122 裁决整条链去留（含迁出整个文件）。反序会让 TF-0114 的修复被连带作废，故为硬序。"
+      },
+      "from": "TF-0122",
+      "to": "TF-0114",
+      "type": "depends_on"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-24T13:30:17.804896Z",
+        "decided_by": "为两条车道产出交接提示词时对全部 28 个节点做跨车道文件碰撞重扫，发现 D01-D12 漏掉此域",
+        "id": "TFD-d13-cross-lane-domain-2026-08-24",
+        "impact": "冲突域 12→13 组。不改任何估时与墙钟（两者本就相距 1050min）。消除的是 pick-next 抢跑风险：原 non-blocking 边允许 TF-0122 先跑，而它的「迁出」选项会移动 TF-0114 待修的文件。",
+        "kind": "scope_change",
+        "node_id": "TF-0145",
+        "related_task_ids": [],
+        "summary": "补登记 D13（memory-hybrid-retrieval.ts）为第 13 组冲突域，且是本轮唯一一组跨车道真写冲突；TF-0122 depends_on TF-0114 由 non-blocking 升为 blocking。"
+      }
+    }
+  ],
+  "created_at": "2026-08-24T13:30:17.783014Z",
+  "proposal_id": "TFP-context-moat-d13-cross-lane-2026-08-24",
+  "rationale": "D01-D12 冲突域表是按各 task 声明触碰面两两取交集得出的，但当时未按「车道归属」复核。为两条车道产出交接提示词时做了一次全量跨车道重扫，发现漏掉一组真写冲突：memory-hybrid-retrieval.ts 同时被车道 2 的 TF-0114（修 CJK 空返回）与车道 1 的 TF-0122（裁决整条 hybrid 链去留，含迁出整个文件）触碰。图上原有的 TF-0122 depends_on TF-0114 是 non-blocking，允许 pick-next 时反序取任务，那样 TF-0114 的修复会被 TF-0122 的迁出连带作废。故补登记为 D13 并把该边升为 blocking。同时把重扫排除的三处 mention-only 假阳性写进条款，避免后续重复认定。",
+  "session_id": "session-2026-08-24-context-audit",
+  "status": "applied"
+}

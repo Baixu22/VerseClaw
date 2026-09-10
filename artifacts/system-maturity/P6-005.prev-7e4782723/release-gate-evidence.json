@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "taskId": "P6-005",
+  "version": "0.4.9-alpha.0",
+  "ref": "refs/heads/feat/runtime-lifecycle-governance",
+  "commit": "7e4782723fdc79055dfd5de01f7983fd254c05ab",
+  "tree": "04ad7753cfa80e3275c508d4271d93efc6f09d7c",
+  "manifestSha256": "4e1f235a1cd98dfe734ee5895a1ba0a6a3b4acccdfa436f121154347e3eeec20",
+  "gatesConfigSha256": "8f9231e617d12679ccdd92d7b03a84bfa66267fe68b4f9111a59be5843976b9a",
+  "preflight": {
+    "id": "runtime-build-preflight",
+    "command": "pnpm build:runtime",
+    "exitCode": 0,
+    "stdoutPath": "gates/runtime-build-preflight.stdout.txt",
+    "stdoutSha256": "1c70e7c0cfdd71f83b76312018000cca0809241a779daa9560b5a8b9396a3f7f",
+    "stderrPath": "gates/runtime-build-preflight.stderr.txt",
+    "stderrSha256": "f5e7abb8db1984df34409342f2328463d683f54540449ca6f72a193c45370d4c"
+  },
+  "gates": [
+    {
+      "id": "maturity:baseline",
+      "command": "node scripts/audit-baseline-check.mjs",
+      "exitCode": 0,
+      "stdoutPath": "gates/maturity-baseline.stdout.txt",
+      "stdoutSha256": "71db16fca6cabd68899921a437d1cbace6f23bcaae45e4b8e58a699983e25db1",
+      "stderrPath": "gates/maturity-baseline.stderr.txt",
+      "stderrSha256": "153edc9400a1c89e4a9b99457310fa3353fefb0ea36f53bbc8ef8748848ce4c0"
+    },
+    {
+      "id": "maturity:plan",
+      "command": "node scripts/validate-system-maturity-plan.mjs",
+      "exitCode": 0,
+      "stdoutPath": "gates/maturity-plan.stdout.txt",
+      "stdoutSha256": "197914e236cb5839188cc5660f9cb16f1b9d84ede34a3c9c150545f1f001b429",
+      "stderrPath": "gates/maturity-plan.stderr.txt",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "maturity:gates",
+      "command": "node scripts/validate-test-gates.mjs",
+      "exitCode": 0,
+      "stdoutPath": "gates/maturity-gates.stdout.txt",
+      "stdoutSha256": "97c7410bace7ce087bacaec057d0e7daf7be4d8f351331fee44367da500625a0",
+      "stderrPath": "gates/maturity-gates.stderr.txt",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "maturity:validate",
+      "command": "pnpm run maturity:validate",
+      "exitCode": 1,
+      "stdoutPath": "gates/maturity-validate.stdout.txt",
+      "stdoutSha256": "c0b0486c1223f6afd0393b6dc7a4ff012609192b732dbeff3f536da42f0aad00",
+      "stderrPath": "gates/maturity-validate.stderr.txt",
+      "stderrSha256": "b7d17b44e42e6891a4151180fb56acb25db926969658b5b3d8f137979b44168d"
+    },
+    {
+      "id": "maturity:security:full",
+      "command": "pnpm maturity:security:full",
+      "exitCode": 1,
+      "stdoutPath": "gates/maturity-security-full.stdout.txt",
+      "stdoutSha256": "5189e3c0ae7e5ed5d779e869d2c8fe4a3a45ec58c54a1e4ec1ec9ea3ae598b29",
+      "stderrPath": "gates/maturity-security-full.stderr.txt",
+      "stderrSha256": "6ac0677bd8a8b0df225761f29b507d8dab5a97c1c7fbcc729104439d3773dbf9"
+    },
+    {
+      "id": "contract:check",
+      "command": "pnpm contract:check",
+      "exitCode": 0,
+      "stdoutPath": "gates/contract-check.stdout.txt",
+      "stdoutSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "stderrPath": "gates/contract-check.stderr.txt",
+      "stderrSha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+    },
+    {
+      "id": "test",
+      "command": "pnpm test",
+      "exitCode": 1,
+      "stdoutPath": "gates/test.stdout.txt",
+      "stdoutSha256": "199779c14baf086f4761500fbbc5e0a8a2521c6b7ce33b0946751be21c4d2bc3",
+      "stderrPath": "gates/test.stderr.txt",
+      "stderrSha256": "185208577eae47cb41caaab2b6a2b70d6cd7ba317270505c773a27e6729ddf82"
+    },
+    {
+      "id": "lint:check",
+      "command": "pnpm run lint:check",
+      "exitCode": 1,
+      "stdoutPath": "gates/lint-check.stdout.txt",
+      "stdoutSha256": "e085096d4323e1bf0d86de9745ec508fbdfa933b227a41c196182f69c68e26df",
+      "stderrPath": "gates/lint-check.stderr.txt",
+      "stderrSha256": "69242bccd254f52f4bcf91beae3d1e0dbea633299e4d62ad80810e5c5c5f4d05"
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "stdoutPath": "gates/typecheck.stdout.txt",
+      "stdoutSha256": "650c8657ba92acf0fdb7eb97f79afb491c8cd573c3d7ff9fd86ed309b0c53a59",
+      "stderrPath": "gates/typecheck.stderr.txt",
+      "stderrSha256": "be1ebc65a0901acc4e2114967871344ba66472895f45500cc473b7b3bfcfc1e0"
+    },
+    {
+      "id": "harness:ci",
+      "command": "pnpm run harness:ci",
+      "exitCode": 1,
+      "stdoutPath": "gates/harness-ci.stdout.txt",
+      "stdoutSha256": "0e0e66582f32b566735c11d2db5f50a5db03cabce33310bffd7b2b83a5ece7f2",
+      "stderrPath": "gates/harness-ci.stderr.txt",
+      "stderrSha256": "256b2da2c4ef48a6e531c7989c3703d3cab6a560a8facaeb45381992358198e3"
+    },
+    {
+      "id": "agent-dev:deep-test",
+      "command": "pnpm agent-dev:deep-test",
+      "exitCode": 0,
+      "stdoutPath": "gates/agent-dev-deep-test.stdout.txt",
+      "stdoutSha256": "3a32af83d2e89013bc445dc28fb024279b4a5b0c6a24dccf345affab44239e2a",
+      "stderrPath": "gates/agent-dev-deep-test.stderr.txt",
+      "stderrSha256": "8b61350585413cb003a53bf953a748040156bda6560db48bbdf22e868005ba6f"
+    },
+    {
+      "id": "test:e2e:agent-dev-quality",
+      "command": "pnpm run test:e2e:agent-dev-quality",
+      "exitCode": 0,
+      "stdoutPath": "gates/test-e2e-agent-dev-quality.stdout.txt",
+      "stdoutSha256": "1798c9e84c93d020e5e74bd016ffa50d9c3ad677c23a812992cf73f9bd934648",
+      "stderrPath": "gates/test-e2e-agent-dev-quality.stderr.txt",
+      "stderrSha256": "be933d72c2c681c201780400797fbe996bc19fae94ea663da2f104ea17db1a2e"
+    },
+    {
+      "id": "release:validate",
+      "command": "pnpm run release:validate",
+      "exitCode": 0,
+      "stdoutPath": "gates/release-validate.stdout.txt",
+      "stdoutSha256": "0ada888a4b5588fc3cc98198e215c9c2afe4eb426f28d59005ac82059f6e4d88",
+      "stderrPath": "gates/release-validate.stderr.txt",
+      "stderrSha256": "43e6b2f2502cfdc1f7c971b1b6a37b77abbf600a5340255c8661b20cacee975b"
+    }
+  ]
+}

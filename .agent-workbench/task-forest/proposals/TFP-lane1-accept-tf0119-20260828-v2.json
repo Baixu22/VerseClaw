@@ -1,0 +1,40 @@
+{
+  "applied_at": "2026-08-28T15:25:26.365684Z",
+  "base_graph_hash": "4150c52c23b27af73af13368e69f6c813254f4fec95c15559169692cf89ea039",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "plans/system-maturity/findings-registry.json：findings[] 派生计数为 Fixed=31、Partial=4、Open=0、Unverified=0；F-AUTH-003 当前为 Partial/L3，F-SEC-001 保持原有 Partial/L3 事实，未被本轮改写。",
+          "tests/unit/system-maturity-findings-registry.test.ts：顶层计数和 findingIds 集合守卫通过（2 tests PASS）。",
+          "plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.md：当前治理状态为 Partial；gate API 可计算 denied，但生产 CVK engine 尚未在工具执行边界消费 denied；历史目标和测试不再作为生产硬阻断证明。",
+          "plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.delivery.md：保留 2026-07-17 的 29 项历史 API/单测交付和 hash artifact；当前 BLOCKERS 明确为生产执行边界缺口，要求另立默认关闭、至少 brb-M 的 follow-up。",
+          "plans/system-maturity/risk-acceptance.json：F-AUTH-003 按 Partial residual 追踪，记录生产执行边界缺口和 brb-M follow-up，不再使用 Fixed baseline 表述。",
+          "artifacts/runtime-memory-eval/report.json：evidenceClass=synthetic、accepted=false，并明确零 source fixture 不满足 L3；scripts/runtime-long-stability.mjs 将该报告视为 incomplete。",
+          "docs/dev/context-moat/reviews/TF-0119.md：已追加 lane-2 修正回交与 lane-1 XL-014 重跑接受记录（2026-08-28）。"
+        ],
+        "next_action": "已收口；生产 CVK execution-boundary hard block 与真实 runtime-memory/receipt 证据另立后续任务，不回写本节点历史结论。",
+        "progress_source": "manual",
+        "summary": "三项遗留已由当前事实源一致表达：注册表计数守卫通过；F-AUTH-003 明确为 Partial 并撤下生产硬阻断承诺；synthetic runtime-memory 报告已从验收链摘除。lane-1 XL-014 重跑接受。"
+      },
+      "id": "TF-0119"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0119",
+      "progress": 100,
+      "status": "done"
+    }
+  ],
+  "created_at": "2026-08-28T15:23:00Z",
+  "proposal_id": "TFP-lane1-accept-tf0119-20260828-v2",
+  "rationale": "lane-1 已重新读取 lane-2 最新事实源回执并重跑 XL-014：TF-0119 三项遗留均已一致表达，允许收口。",
+  "session_id": "lane-1-context-moat-20260828",
+  "status": "applied"
+}

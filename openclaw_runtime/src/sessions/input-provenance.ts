@@ -1,5 +1,12 @@
 // Input provenance helpers normalize source metadata for session messages.
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import {
+  createExternalProvenance,
+  createTrustedProvenance,
+  deriveProvenance,
+  stableSourceId,
+  type ContentProvenance,
+} from "../../../shared/security/content-provenance.js";
 import type { AgentMessage } from "../agents/runtime/index.js";
 
 // Input provenance marks whether a user-role message actually came from an
@@ -51,6 +58,60 @@ export function normalizeInputProvenance(value: unknown): InputProvenance | unde
     sourceChannel: normalizeOptionalString(record.sourceChannel),
     sourceTool: normalizeOptionalString(record.sourceTool),
   };
+}
+
+/**
+ * Adapt the legacy run-routing provenance into the authoritative content
+ * sidecar. The legacy field remains the routing source of truth; this adapter
+ * only supplies the sink policy with a monotonic trust classification.
+ */
+export function toContentProvenance(
+  value: InputProvenance | undefined,
+  receivedAt: string | number | Date = new Date(),
+): ContentProvenance | undefined {
+  const provenance = normalizeInputProvenance(value);
+  if (!provenance) {
+    return undefined;
+  }
+  const sourceId = stableSourceId(
+    provenance.kind === "inter_session"
+      ? "agent-handoff"
+      : provenance.kind === "internal_system"
+        ? "system"
+        : "channel",
+    provenance.sourceChannel,
+    provenance.sourceSessionKey,
+    provenance.originSessionId,
+    provenance.sourceTool,
+  );
+  if (provenance.kind === "internal_system") {
+    return createTrustedProvenance({
+      sourceKind: "system-generated",
+      sourceId,
+      receivedAt,
+      sessionId: provenance.originSessionId,
+    });
+  }
+  if (provenance.kind === "inter_session") {
+    return deriveProvenance({
+      sourceKind: "agent-handoff",
+      sourceId,
+      receivedAt,
+      parentSourceIds: provenance.sourceSessionKey
+        ? [stableSourceId("session", provenance.sourceSessionKey)]
+        : undefined,
+      // Legacy routing metadata is not an authorization assertion. Until an
+      // authoritative sidecar is present, keep the sink state derived-untrusted.
+      parents: [undefined],
+      sessionId: provenance.originSessionId,
+    });
+  }
+  return createExternalProvenance({
+    sourceKind: "channel",
+    sourceId,
+    receivedAt,
+    sessionId: provenance.originSessionId,
+  });
 }
 
 // Only attach provenance to user messages that do not already carry it. Existing

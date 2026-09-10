@@ -27,7 +27,7 @@ function memoryFile() {
 describe('P1-4 MEMORY.md bootstrap retrieval', () => {
   it('injects keyword-matched Top-K snippets instead of the full file', () => {
     const files = [memoryFile()];
-    const context = buildBootstrapContextFiles(files, {
+    const context = buildBootstrapContextFiles(files as never, {
       memoryKeywords: ['release pipeline pnpm'],
     });
     expect(context).toHaveLength(1);
@@ -41,7 +41,7 @@ describe('P1-4 MEMORY.md bootstrap retrieval', () => {
 
   it('falls back to the bounded full-file trim when retrieval yields no hits', () => {
     const files = [memoryFile()];
-    const context = buildBootstrapContextFiles(files, {
+    const context = buildBootstrapContextFiles(files as never, {
       memoryKeywords: ['completely-unrelated-topic-xyz'],
     });
     expect(context).toHaveLength(1);
@@ -51,7 +51,7 @@ describe('P1-4 MEMORY.md bootstrap retrieval', () => {
 
   it('injects full content when no keywords are supplied (backward compatible)', () => {
     const files = [memoryFile()];
-    const context = buildBootstrapContextFiles(files, {});
+    const context = buildBootstrapContextFiles(files as never, {});
     expect(context).toHaveLength(1);
     expect(context[0].content).toContain('release pipeline uses pnpm workspaces');
     expect(context[0].content).toContain('staging server requires VPN');
@@ -64,7 +64,7 @@ describe('P1-4 MEMORY.md bootstrap retrieval', () => {
       content: '记住：发布流程使用 pnpm。\n\n下次发布前检查 VPN。\n\n其他无关内容。',
       missing: false,
     }];
-    const context = buildBootstrapContextFiles(files, {
+    const context = buildBootstrapContextFiles(files as never, {
       memoryKeywords: ['发布流程 pnpm'],
     });
     expect(context).toHaveLength(1);
@@ -80,7 +80,7 @@ describe('P1-4 MEMORY.md bootstrap retrieval', () => {
       content: `# Memory\n\n${longBlock}\n\nOther block.`,
       missing: false,
     }];
-    const context = buildBootstrapContextFiles(files, {
+    const context = buildBootstrapContextFiles(files as never, {
       memoryKeywords: ['remember'],
     });
     expect(context).toHaveLength(1);

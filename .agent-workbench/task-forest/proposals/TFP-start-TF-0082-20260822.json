@@ -1,0 +1,31 @@
+{
+  "applied_at": "2026-08-22T05:11:22.315198Z",
+  "base_graph_hash": "4daf896933317c262b3499f201e7011afee306307624ea057091a5755b623705",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "先建立 TF-0082 Harness task spec 和跨会话控制/lineage 失败矩阵，再只修复一个 owner path。",
+        "progress": 5,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260822-start-tf0082"
+        ],
+        "status": "in_progress",
+        "summary": "已启动 TF-0082：统一跨会话控制 API（canonical sessionKey + expected sessionId/generation）与 lineage 投影，让 Host API/Gateway RPC 能真实完成 stop/continue/fork；迟到 generation 事件零覆盖，parent yield 后 child completion 恰好一次 continuation。"
+      },
+      "id": "TF-0082"
+    }
+  ],
+  "created_at": "2026-08-22T05:11:22.157599Z",
+  "proposal_id": "TFP-start-TF-0082-20260822",
+  "rationale": "用户明确指示继续处理 TF-0082。TF-0081 已 done（100%），TF-0082 的唯一 depends_on 依赖已满足；按串行规则只启动这一个节点。沿用收敛纪律：先建 Harness task spec 与跨会话控制/lineage 失败矩阵，再只修复一个 owner path；不引入新 workflow engine，不开放无授权跨 agent 控制。",
+  "session_id": "session-20260822-start-tf0082",
+  "status": "applied"
+}

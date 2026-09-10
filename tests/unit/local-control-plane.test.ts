@@ -46,6 +46,7 @@ import {
   resolveCoreOperatorGatewayMethodScope,
 } from '../../openclaw_runtime/src/gateway/methods/core-descriptors';
 import { localControlPlaneHandlers } from '../../openclaw_runtime/src/gateway/server-methods/local-control-plane';
+import { coreGatewayHandlers } from '../../openclaw_runtime/src/gateway/server-methods';
 import {
   clearTaskLoopRunsForTests,
   runTaskLoop,
@@ -83,7 +84,7 @@ async function callHandler(
   const handler = localControlPlaneHandlers[method];
   if (!handler) throw new Error(`missing handler: ${method}`);
   await handler({
-    req: { id: 1, method, params },
+    req: { id: String(1), method, params } as never,
     params,
     client: null,
     isWebchatConnect: () => false,
@@ -216,7 +217,7 @@ function missionTaskLoop(status: TaskLoopRunResult['status'] = 'complete'): Task
     createdAt: 1,
     updatedAt: 2,
     iterations: [],
-  };
+  } as never;
 }
 
 function missionReview(decision: MissionDecision = 'complete'): MissionReviewerResult {
@@ -592,11 +593,27 @@ describe('local runtime control plane reports', () => {
       'localControlPlane.reports',
       'localControlPlane.correlations',
     ] as const;
-    const descriptors = createCoreGatewayMethodDescriptors(localControlPlaneHandlers);
+    // TF-0089's construction guard rejects classified specs missing from the
+    // handlers record, so build descriptors over the full production core
+    // handler surface and assert containment of the control-plane methods.
+    const descriptors = createCoreGatewayMethodDescriptors({
+      ...coreGatewayHandlers,
+      ...localControlPlaneHandlers,
+    });
 
-    expect(descriptors.map((descriptor) => descriptor.name).sort()).toEqual([...methods].sort());
+    // Restricted back to the control-plane surface, the descriptor set must
+    // match exactly: no method silently dropped, no extra method admitted.
+    const controlPlaneDescriptors = descriptors
+      .filter((descriptor) => (methods as readonly string[]).includes(descriptor.name))
+      .map((descriptor) => descriptor.name)
+      .sort();
+    expect(controlPlaneDescriptors).toEqual([...methods].sort());
     for (const method of methods) {
       expect(resolveCoreOperatorGatewayMethodScope(method)).toBe('operator.read');
+      // The control-plane handler must win over any same-named core stub.
+      expect(descriptors.find((descriptor) => descriptor.name === method)?.handler).toBe(
+        localControlPlaneHandlers[method],
+      );
       expect(descriptors.find((descriptor) => descriptor.name === method)).toMatchObject({
         name: method,
         scope: 'operator.read',

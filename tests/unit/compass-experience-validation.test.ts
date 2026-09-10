@@ -60,7 +60,7 @@ function makeFact(opts: {
     sourceEpisodeRefs: [{ episodeId: "ep-test" }],
     evidenceRefs: [{ type: "manual" as const, ref: "test-evidence" }],
     proposedAt: ts,
-    validAt: ts,
+    valid_at: ts,
     reference_time: ts,
     acceptedAt: ts,
     promotion: {
@@ -206,7 +206,7 @@ describe("COMPASS 2.0 体验收益验收", () => {
         entityScore: 0.2,
         semanticScore: 0,
         expansionRank: undefined,
-      }));
+      } as unknown as HybridSearchHit));
       const compassTop5 = serializeTop5Facts(mockHits);
       const compassSSP = serializeSSPForPrompt(
         createInitialSSP("test", extractIntent("What does Alice do?"), 1000)

@@ -52,7 +52,7 @@ function makeGraph(
     const id = `task-${i + 1}`;
     return makeNode(id, depsFn ? depsFn(i, id) : []);
   });
-  return { graphRunId: 'run-1', mode: 'router', status: 'planned', nodes, edges: [] };
+  return { graphRunId: 'run-1', mode: 'router' as never, status: 'planned', nodes, edges: [] };
 }
 
 describe('A2 deep — orchestration-protocol / resource-aware-wave-scheduler', () => {
@@ -72,7 +72,7 @@ describe('A2 deep — orchestration-protocol / resource-aware-wave-scheduler', (
     it('buildExecutionWaves: graph with a verifier node places the verifier last', () => {
       const graph = buildTaskGraph({
         graphRunId: 'run-v',
-        mode: 'router',
+        mode: 'router' as never,
         workers: [
           { roleName: 'implementer', task: 'do work' },
           { roleName: 'implementer', task: 'do more' },
@@ -99,7 +99,7 @@ describe('A2 deep — orchestration-protocol / resource-aware-wave-scheduler', (
     it('wave.roles are unique within a wave when nodes have distinct roles', () => {
       const graph: OrchestrationTaskGraph = {
         graphRunId: 'run-r',
-        mode: 'router',
+        mode: 'router' as never,
         status: 'planned',
         nodes: [
           makeNode('t1', [], 'implementer'),
@@ -117,7 +117,7 @@ describe('A2 deep — orchestration-protocol / resource-aware-wave-scheduler', (
     it('buildExecutionWaves on an empty graph returns an empty array', () => {
       const empty: OrchestrationTaskGraph = {
         graphRunId: 'run-e',
-        mode: 'router',
+        mode: 'router' as never,
         status: 'planned',
         nodes: [],
         edges: [],
@@ -177,7 +177,7 @@ describe('A2 deep — orchestration-protocol / resource-aware-wave-scheduler', (
     it('an orphan node (no deps, not depended on) is ready in the first wave', () => {
       const graph: OrchestrationTaskGraph = {
         graphRunId: 'run-o',
-        mode: 'router',
+        mode: 'router' as never,
         status: 'planned',
         nodes: [
           makeNode('a', [], 'worker'),
@@ -196,7 +196,7 @@ describe('A2 deep — orchestration-protocol / resource-aware-wave-scheduler', (
     it('ResourceAwareWaveScheduler with empty nodes produces an empty wave plan', () => {
       const empty: OrchestrationTaskGraph = {
         graphRunId: 'run-e',
-        mode: 'router',
+        mode: 'router' as never,
         status: 'planned',
         nodes: [],
         edges: [],
@@ -214,7 +214,7 @@ describe('A2 deep — orchestration-protocol / resource-aware-wave-scheduler', (
     it('a cyclic graph causes buildExecutionWaves to terminate (no ready nodes -> empty result)', () => {
       const cyclic: OrchestrationTaskGraph = {
         graphRunId: 'run-c',
-        mode: 'router',
+        mode: 'router' as never,
         status: 'planned',
         nodes: [makeNode('a', ['b']), makeNode('b', ['a'])],
         edges: [],

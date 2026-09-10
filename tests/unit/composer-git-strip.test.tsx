@@ -77,7 +77,7 @@ function workspace(): WorkspaceProfile {
     permissionMode: 'acceptEdits',
     createdAt: Date.now(),
     lastOpenedAt: Date.now(),
-  };
+  } as WorkspaceProfile;
 }
 
 function mockGitContext() {

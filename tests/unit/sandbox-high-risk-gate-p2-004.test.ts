@@ -87,8 +87,8 @@ describe('sandbox high-risk gate (P2-004 / F-ISO-001)', () => {
     const allow = { allowed: true as const, risk: 'write' };
     const composed = composeWithSandboxHighRiskGate(allow, sandbox);
     expect(composed.allowed).toBe(false);
-    expect(composed.requiresApproval).toBe(true);
-    expect(composed.reason).toContain('Sandbox degraded');
+    expect((composed as any).requiresApproval).toBe(true);
+    expect((composed as any).reason).toContain('Sandbox degraded');
   });
 
   it('force-visible degraded summary always reports status', () => {

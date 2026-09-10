@@ -57,7 +57,19 @@ Hard rules:
   projection-only, must preserve tool-call structure, and must not run without
   archive handles for the masked payloads.
 - Read-only recall must not mutate transcript, Task Ledger, ClawGraph, Memory,
-  Knowledge, prompt state, workspace files, approvals, or tool state.
+  Knowledge, prompt state, workspace files, approvals, or tool state. The one
+  explicitly permitted owner-store exception is
+  `context_read(include_archived=true)` performing a conditional lifecycle
+  page-in through the existing DCS BlockStore authority. This exception is
+  compliant only when the owner store changes its own archived/active
+  lifecycle, heat, or presence metadata; it does not create a parallel record,
+  rewrite payload content, or write any authority listed above. The default
+  `context_read` path remains read-only.
+- `ToolRiskLevel=readonly` is a filesystem-risk classification, not proof that
+  a tool performs no durable state transition. Any owner-store lifecycle
+  exception must be justified by the owning API contract, the explicit
+  selector/flag path, and a focused test; do not use the risk label as that
+  justification.
 - `CompressionArtifact v1` is a recovery carrier and ledger ContextItem. It is
   not proof of task completion and must not replace Task Ledger, ClawGraph, or
   Observability evidence.

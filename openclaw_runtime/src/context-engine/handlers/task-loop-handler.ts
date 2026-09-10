@@ -10,12 +10,8 @@
  * parent_session_id }.
  */
 import type { RuntimeTaskStatus } from "../../runtime-core/types.js";
-import type {
-  ContextBlock,
-  ContextBlockSink,
-  EntitySnapshot,
-  HandoffPack,
-} from "../block.js";
+import type { RuntimeLineage } from "../../runtime-core/lineage.js";
+import type { ContextBlock, ContextBlockSink, EntitySnapshot, HandoffPack } from "../block.js";
 import { ENTITY_SNAPSHOT_CAP } from "../block.js";
 import type { BlockStoreApi } from "../block.js";
 import { parseHandoffPack } from "../block-store.js";
@@ -27,6 +23,7 @@ export interface TaskPhaseChangeEvent {
   taskId: string;
   fromStatus: RuntimeTaskStatus;
   toStatus: RuntimeTaskStatus;
+  lineage?: RuntimeLineage;
 }
 
 export interface HandleTaskPhaseChangeParams {
@@ -88,7 +85,11 @@ export function gatherEntitySnapshot(params: {
   const decisionKeys = new Set<string>();
   const decisions: EntitySnapshot["decisions"] = [];
   for (const decision of [...derivedDecisions, ...(params.decisions ?? [])]) {
-    if (!decision || typeof decision.condition !== "string" || typeof decision.action !== "string") {
+    if (
+      !decision ||
+      typeof decision.condition !== "string" ||
+      typeof decision.action !== "string"
+    ) {
       continue;
     }
     const key = `${decision.condition.slice(0, 100)}::${decision.action.slice(0, 100)}`;
@@ -136,7 +137,7 @@ function identifierTokens(summary: string): string[] {
  */
 export async function handleTaskPhaseChange(
   params: HandleTaskPhaseChangeParams,
-): Promise<{ accepted: boolean } | undefined> {
+): Promise<{ accepted: boolean; reason?: string } | undefined> {
   const sink = params.contextBlockSink;
   if (!sink) {
     return undefined;
@@ -146,10 +147,7 @@ export async function handleTaskPhaseChange(
   const sessionId = params.event.sessionId;
 
   // Gather recent actions from persisted working-memory Blocks
-  const recentActions = await gatherRecentActions(
-    sessionId,
-    params.workingMemoryStore,
-  );
+  const recentActions = await gatherRecentActions(sessionId, params.workingMemoryStore);
 
   const entitySnapshot = gatherEntitySnapshot({ recentActions });
   const handoffPack: HandoffPack = {
@@ -158,6 +156,7 @@ export async function handleTaskPhaseChange(
     recent_actions: recentActions.slice(0, 5),
     parent_session_id: params.parentSessionId ?? sessionId,
     ...(entitySnapshot ? { entity_snapshot: entitySnapshot } : {}),
+    ...(params.event.lineage ? { lineage: params.event.lineage } : {}),
   };
 
   const block: ContextBlock = {
@@ -165,7 +164,10 @@ export async function handleTaskPhaseChange(
     block_type: "task_state",
     source_system: "task-loop",
     session_id: sessionId,
-    presence: { always_on: false, on_demand: { expand_tool: "context_read", auto_register: false } },
+    presence: {
+      always_on: false,
+      on_demand: { expand_tool: "context_read", auto_register: false },
+    },
     entities: [],
     valid_at: now,
     created_at: now,
@@ -183,7 +185,9 @@ export async function handleTaskPhaseChange(
     },
   ]);
   const result = results[0];
-  return result ? { accepted: result.accepted } : undefined;
+  return result
+    ? { accepted: result.accepted, ...(result.reason ? { reason: result.reason } : {}) }
+    : undefined;
 }
 
 /**
@@ -233,7 +237,9 @@ export const CHILD_CONTEXT_READ_INSTRUCTION =
 export function gatherWorkspaceSymbols(params: {
   workspaceDir?: string;
   files: readonly string[];
-  bridgeFactory?: (workspaceRoot: string) => { symbolOverviews(query: { activeFiles?: string[] }): Array<{ symbols: Array<{ name: string }> }> };
+  bridgeFactory?: (workspaceRoot: string) => {
+    symbolOverviews(query: { activeFiles?: string[] }): Array<{ symbols: Array<{ name: string }> }>;
+  };
 }): string[] {
   if (!params.workspaceDir || params.files.length === 0 || !params.bridgeFactory) {
     return [];
@@ -262,7 +268,11 @@ export function gatherWorkspaceSymbols(params: {
  * an empty list when no store is available. Callers must wrap in try/catch.
  */
 export function gatherSekbDecisions(params: {
-  store?: { query_principles(filters: { status: "active" }): Array<{ condition: string; action: string; adoption_count: number }> };
+  store?: {
+    query_principles(filters: {
+      status: "active";
+    }): Array<{ condition: string; action: string; adoption_count: number }>;
+  };
 }): EntitySnapshot["decisions"] {
   if (!params.store) {
     return [];
@@ -272,7 +282,10 @@ export function gatherSekbDecisions(params: {
     return principles
       .sort((a, b) => (b.adoption_count ?? 0) - (a.adoption_count ?? 0))
       .slice(0, ENTITY_SNAPSHOT_CAP)
-      .filter((principle) => typeof principle?.condition === "string" && typeof principle?.action === "string")
+      .filter(
+        (principle) =>
+          typeof principle?.condition === "string" && typeof principle?.action === "string",
+      )
       .map((principle) => ({
         condition: principle.condition.slice(0, 200),
         action: principle.action.slice(0, 500),
@@ -302,9 +315,15 @@ export async function buildChildHandoffFromParent(params: {
   /** B-3 v2: workspace root used to resolve FactStore symbols (optional). */
   workspaceDir?: string;
   /** B-3 v2: FactStore bridge factory for symbol extraction (optional). */
-  bridgeFactory?: (workspaceRoot: string) => { symbolOverviews(query: { activeFiles?: string[] }): Array<{ symbols: Array<{ name: string }> }> };
+  bridgeFactory?: (workspaceRoot: string) => {
+    symbolOverviews(query: { activeFiles?: string[] }): Array<{ symbols: Array<{ name: string }> }>;
+  };
   /** B-3 v2: SEKB knowledge store for distilled decisions (optional). */
-  sekbStore?: { query_principles(filters: { status: "active" }): Array<{ condition: string; action: string; adoption_count: number }> };
+  sekbStore?: {
+    query_principles(filters: {
+      status: "active";
+    }): Array<{ condition: string; action: string; adoption_count: number }>;
+  };
 }): Promise<HandoffPack> {
   const recentActions = await gatherRecentActions(
     params.parentSessionKey,
@@ -391,7 +410,10 @@ export async function writeChildHandoffPack(params: {
     block_type: "task_state",
     source_system: "task-loop",
     session_id: params.childSessionKey,
-    presence: { always_on: false, on_demand: { expand_tool: "context_read", auto_register: false } },
+    presence: {
+      always_on: false,
+      on_demand: { expand_tool: "context_read", auto_register: false },
+    },
     entities: [],
     valid_at: now,
     created_at: now,

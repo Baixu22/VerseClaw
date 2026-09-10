@@ -126,7 +126,7 @@ async function installScheduledMocks(electronApp: Parameters<typeof installIpcMo
           counters: { totalSteps: 1, passedSteps: 1, failedSteps: 0 },
           verification: { kind: 'selector-visible', value: 'h1', status: 'passed', reasonCode: 'SUCCESS_CRITERIA_MET', message: 'Heading found', checkedAt: '2026-07-31T10:10:00.000Z' },
           updatedAt: '2026-07-31T10:10:00.000Z',
-        };
+        } as never;
         return respond(request.id, { success: true, task: current.tasks[taskIndex] });
       }
       if (taskIndex >= 0 && request.action === 'retryTask') {
@@ -134,16 +134,16 @@ async function installScheduledMocks(electronApp: Parameters<typeof installIpcMo
         return respond(request.id, { success: true, task: current.tasks[taskIndex] });
       }
       if (taskIndex >= 0 && request.action === 'rejectTask') {
-        current.tasks[taskIndex] = { ...current.tasks[taskIndex], status: 'cancelled', approval: { ...current.tasks[taskIndex].approval, status: 'rejected', decidedAt: '2026-07-31T10:12:00.000Z' } };
+        current.tasks[taskIndex] = { ...current.tasks[taskIndex], status: 'cancelled', approval: { ...current.tasks[taskIndex].approval, status: 'rejected', decidedAt: '2026-07-31T10:12:00.000Z' } } as never;
         return respond(request.id, { success: true, task: current.tasks[taskIndex] });
       }
       if (taskIndex >= 0 && request.action === 'cancelTask') {
-        current.tasks[taskIndex] = { ...current.tasks[taskIndex], status: 'cancelled', steps: current.tasks[taskIndex].steps.map((step) => ({ ...step, status: 'cancelled' })) };
+        current.tasks[taskIndex] = { ...current.tasks[taskIndex], status: 'cancelled' as never, steps: current.tasks[taskIndex].steps.map((step) => ({ ...step, status: 'cancelled' })) };
         return respond(request.id, { success: true, task: current.tasks[taskIndex] });
       }
       if (request.action === 'saveProfile') {
         const profile = { ...request.payload, activeSessions: 0, source: 'metadata' };
-        const index = current.profiles.findIndex((entry) => entry.profile === profile.profile);
+        const index = current.profiles.findIndex((entry: any) => entry.profile === (profile as any).profile);
         if (index >= 0) current.profiles[index] = { ...current.profiles[index], ...profile };
         else current.profiles.push(profile as typeof current.profiles[number]);
         return respond(request.id, { success: true, profile });

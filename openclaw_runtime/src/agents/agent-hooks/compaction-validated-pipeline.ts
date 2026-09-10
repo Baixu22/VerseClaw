@@ -159,13 +159,13 @@ const CANDIDATE_HEADING_PATTERNS: Record<SemanticAtomType, RegExp[]> = {
     /^\s{0,3}#{1,6}\s+\*{0,2}(?:Key\s+)?Decisions?\*{0,2}\s*:?\s*$/i,
   ],
   constraint: [
-    /^\s{0,3}#{1,6}\s+\*{0,2}(?:Constraints?(?:\/Rules| & Preferences)?|Rules)\*{0,2}\s*:?\s*$/i,
+    /^\s{0,3}#{1,6}\s+\*{0,2}(?:Key\s+Decisions\s+and\s+Constraints|Constraints?(?:\/Rules| & Preferences)?|Rules)\*{0,2}\s*:?\s*$/i,
   ],
   failed_attempt: [
-    /^\s{0,3}#{1,6}\s+\*{0,2}(?:Failed\s+Attempts?|Failures?|Failed\s+Attempts?\s+&\s+Failures?)\*{0,2}\s*:?\s*$/i,
+    /^\s{0,3}#{1,6}\s+\*{0,2}(?:Attempts\s+and\s+Failures|Failed\s+Attempts?|Failures?|Failed\s+Attempts?\s+&\s+Failures?)\*{0,2}\s*:?\s*$/i,
   ],
   entity: [
-    /^\s{0,3}#{1,6}\s+\*{0,2}(?:Exact\s+identifiers?|Entities|Files)\*{0,2}\s*:?\s*$/i,
+    /^\s{0,3}#{1,6}\s+\*{0,2}(?:Exact\s+identifiers?|Entities|Files(?:\s+Touched)?)\*{0,2}\s*:?\s*$/i,
   ],
   next_action: [
     /^\s{0,3}#{1,6}\s+\*{0,2}(?:Next\s+Steps?|Next\s+Actions?|Open\s+TODOs?)\*{0,2}\s*:?\s*$/i,
@@ -186,6 +186,15 @@ const CRITICAL_ATOM_TYPES: ReadonlySet<SemanticAtomType> = new Set<SemanticAtomT
   "failed_attempt",
   "next_action",
 ]);
+
+const CRITICAL_MARKER_PATTERNS: Array<{ type: SemanticAtomType; pattern: RegExp }> = [
+  { type: "goal", pattern: /^\s*(?:objective|goal)\s*:\s*(.+)$/i },
+  { type: "latest_user_ask", pattern: /^\s*(?:latest user ask|user ask|request|ask)\s*:\s*(.+)$/i },
+  { type: "decision", pattern: /^\s*(?:decision|decided|choice)\s*:\s*(.+)$/i },
+  { type: "constraint", pattern: /^\s*(?:constraint|rule|red line)\s*:\s*(.+)$/i },
+  { type: "failed_attempt", pattern: /^\s*(?:failed attempt|failure|blocker|blocked|error)\s*:\s*(.+)$/i },
+  { type: "next_action", pattern: /^\s*(?:next action|next step|todo|to-do|follow[- ]?up|remaining)\s*:\s*(.+)$/i },
+];
 
 function fnv1a(value: string): string {
   let hash = 0x811c9dc5;
@@ -407,6 +416,28 @@ export function extractCandidateSemanticAtoms(params: {
       counts.set(section.type, index + 1);
     }
   }
+  for (const line of params.summary.split(/\r?\n/u)) {
+    for (const marker of CRITICAL_MARKER_PATTERNS) {
+      const match = marker.pattern.exec(line);
+      if (!match?.[1]?.trim() || candidates.length >= MAX_CANDIDATE_ATOMS) continue;
+      const index = counts.get(marker.type) ?? 0;
+      const candidate = toCandidateAtom({
+        type: marker.type,
+        text: match[1].trim(),
+        index,
+        messages: params.messages,
+        previousArtifact: params.previousArtifact,
+      });
+      if (!candidates.some((existing) => (
+        existing.type === candidate.type
+        && atomIdentity(existing.type, existing.text) === atomIdentity(candidate.type, candidate.text)
+      ))) {
+        candidates.push(candidate);
+      }
+      counts.set(marker.type, index + 1);
+      break;
+    }
+  }
   return candidates;
 }
 
@@ -420,14 +451,6 @@ function extractAuthoritativeCriticalAtoms(params: {
   previousArtifact?: CompressionArtifact;
 }): CompressionSemanticAtom[] {
   const entries: Array<{ type: SemanticAtomType; text: string }> = [];
-  const markerPatterns: Array<{ type: SemanticAtomType; pattern: RegExp }> = [
-    { type: "goal", pattern: /^\s*(?:objective|goal)\s*:\s*(.+)$/i },
-    { type: "latest_user_ask", pattern: /^\s*(?:latest user ask|user ask|request|ask)\s*:\s*(.+)$/i },
-    { type: "decision", pattern: /^\s*(?:decision|decided|choice)\s*:\s*(.+)$/i },
-    { type: "constraint", pattern: /^\s*(?:constraint|rule|red line)\s*:\s*(.+)$/i },
-    { type: "failed_attempt", pattern: /^\s*(?:failed attempt|failure|blocker|blocked|error)\s*:\s*(.+)$/i },
-    { type: "next_action", pattern: /^\s*(?:next action|next step|todo|to-do|follow[- ]?up|remaining)\s*:\s*(.+)$/i },
-  ];
   for (const message of params.messages) {
     const text = messageText(message);
     for (const section of collectSummarySections(text)) {
@@ -437,7 +460,7 @@ function extractAuthoritativeCriticalAtoms(params: {
       }
     }
     for (const line of text.split(/\r?\n/u)) {
-      for (const marker of markerPatterns) {
+      for (const marker of CRITICAL_MARKER_PATTERNS) {
         const match = marker.pattern.exec(line);
         if (match?.[1]?.trim()) {
           entries.push({ type: marker.type, text: match[1].trim() });

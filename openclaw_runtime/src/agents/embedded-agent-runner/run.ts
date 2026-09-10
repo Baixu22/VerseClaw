@@ -25,6 +25,7 @@ import { enqueueCommandInLane } from "../../process/command-queue.js";
 import type { CommandQueueEnqueueOptions } from "../../process/command-queue.types.js";
 import { createAgentHarnessTaskRuntimeScope } from "../../tasks/agent-harness-task-runtime-scope.js";
 import { resolveUserPath } from "../../utils.js";
+import { acquireSessionAdmissionPermit } from "../../sessions/session-admission-registry.js";
 import { isMarkdownCapableMessageChannel } from "../../utils/message-channel.js";
 import {
   retireSessionMcpRuntime,
@@ -568,9 +569,19 @@ export async function runEmbeddedAgent(
 
   throwIfAborted();
 
-  return enqueueSession(() => {
-    throwIfAborted();
-    return enqueueGlobal(async () => {
+  const releaseEmbeddedPermit = acquireSessionAdmissionPermit(
+    {
+      agentId: params.agentId,
+      canonicalSessionKey: effectiveSessionKey || params.sessionId,
+      expectedSessionId: params.sessionId,
+    },
+    "embedded-agent",
+  );
+  let queuedRun: Promise<EmbeddedAgentRunResult>;
+  try {
+    queuedRun = enqueueSession(() => {
+      throwIfAborted();
+      return enqueueGlobal(async () => {
       throwIfAborted();
       const started = Date.now();
       const startupStages = createEmbeddedRunStageTracker();
@@ -1703,6 +1714,7 @@ export async function runEmbeddedAgent(
             extraSystemPrompt: params.extraSystemPrompt,
             sourceReplyDeliveryMode: params.sourceReplyDeliveryMode,
             inputProvenance: params.inputProvenance,
+            contentProvenance: params.contentProvenance,
             streamParams: params.streamParams,
             modelRun: params.modelRun,
             promptMode: params.promptMode,
@@ -3866,6 +3878,10 @@ export async function runEmbeddedAgent(
       }
     });
   });
+  } finally {
+    releaseEmbeddedPermit();
+  }
+  return queuedRun;
 }
 
 function resolveAuthProfileStateProvider(

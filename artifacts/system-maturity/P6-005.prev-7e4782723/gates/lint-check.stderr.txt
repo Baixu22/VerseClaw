@@ -1,0 +1,1 @@
+$ node scripts/check-no-bom.mjs && eslint . && pnpm run lint:dcs && pnpm run lint:artifact-completion-class

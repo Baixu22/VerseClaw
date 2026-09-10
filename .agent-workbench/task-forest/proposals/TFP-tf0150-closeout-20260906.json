@@ -1,0 +1,27 @@
+{
+  "applied_at": "2026-09-06T04:45:13.385121Z",
+  "base_graph_hash": "43df3d855e782ad752d7d4b8104fc180b937c2d5deab262746d742c52fc39398",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.96,
+        "next_action": "已收口；后续按 backlog-P1 与既有节点覆盖关系推进第二轮任务，不在本节点内实施修复。",
+        "progress": 100,
+        "status": "done",
+        "summary": "TF-0150 已收口：F-1/F-1B/F-4 按“F-4 → F-1/F-1B”联判并显式接受，记录 TFD-tf0150-tier-ladder-dead-config-accepted-20260906；F-2/F-5/F-7/F-8/F-9 归 backlog-P1；F-3 由 TF-0128+TF-0151+TF-0076 覆盖，F-6 由 TF-0074+TF-0076 覆盖。事实更正 1..9、逐项实现坐标与唯一归属见 docs/dev/context-moat/reviews/TF-0150.md；机械复核 9 行事实更正、10 行分类、must-fix=0、25 个引用路径全部存在。审计源 reports/CONTEXT-CONTROL-COMPRESSION-AUDIT-2026-09-05.md 判定为入库。未实施修复，未改默认值、运行时代码、产品锁或历史 artifacts。"
+      },
+      "id": "TF-0150"
+    }
+  ],
+  "created_at": "2026-09-06T04:45:06.143713Z",
+  "proposal_id": "TFP-tf0150-closeout-20260906",
+  "rationale": "TF-0150 的 9 项事实更正、F-1..F-9 唯一归属、F-1/F-1B/F-4 联判与 deviation 落账均已完成。机械复核确认：事实更正 9 行、分类行 10 行、本轮 must-fix 0、引用路径 25 个全部存在。相关门禁 exit 0。按用户 2026-09-06 授权，经复核后收口为 done。",
+  "session_id": "codex-tf0150-closeout-20260906",
+  "status": "applied"
+}

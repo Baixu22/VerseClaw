@@ -1,0 +1,433 @@
+/*
+ * codex-session-activity.css — the chat's 会话状态 (session status) rail.
+ *
+ * It was a toolbar dropdown; it is now a two-layer rail hanging off the
+ * conversation column's top-right corner (see "The rail, and its two layers"
+ * below for why the layer depends on who opened it).
+ *
+ * WHY THIS FILE EXISTS. The panel was styled entirely with inline Tailwind
+ * utilities (`text-emerald-700 dark:text-emerald-400`, `bg-foreground/[0.05]`,
+ * arbitrary `text-[13px]`), which is why it read as foreign next to the
+ * composer menus, the sidebar and the workspace panel: those all resolve their
+ * colour through the semantic roles in codex-tokens.css, and this one resolved
+ * through Tailwind's palette. Every colour below aliases a role. There are no
+ * literals and no theme block — codex-tokens.css already carries both themes.
+ *
+ * PROVENANCE OF THE GEOMETRY. Lifted from styles/codex-session-rail.css, which
+ * is the same panel shape ported from the Codex capture and is no longer
+ * @imported anywhere. The numbers are
+ * the ones that file already established: a 10px gutter, 32px section heads and
+ * rows, 38px rows once a 24px avatar has to sit in them, tabular delta figures,
+ * and — now that the card is a rail again — its 300px width, 52px/16px offsets
+ * and 316px conversation inset.
+ *
+ * LAYOUT CONTRACT. Two left edges, one right edge:
+ *
+ *   ├─ 10px ─┤ section title .................................. actions ─┤
+ *   ├─ 10px ─┤ 18px icon ├─ 8px ─┤ row label ......... value ├─ 8px ─┤ ▸ ─┤
+ *
+ * Section titles sit in the gutter next to the row icons; row labels indent one
+ * icon column past them. The trailing disclosure column is reserved on every
+ * row (`__row-trail`) whether or not it holds a chevron, so one section growing
+ * an affordance cannot push its own values off the edge the other sections use.
+ */
+
+.codex-session-activity {
+  /* Surface roles. The dropdown wrapper owns the outer border/shadow, so the
+   * card itself only needs its own text and row washes. */
+  --csa-text-strong: var(--color-text-foreground);
+  --csa-text-secondary: var(--color-text-foreground-secondary);
+  --csa-text-tertiary: var(--color-text-foreground-tertiary);
+  --csa-icon: var(--color-icon-tertiary);
+  --csa-row-hover: var(--color-background-row-hover);
+  --csa-border: var(--color-border);
+  --csa-success: var(--color-text-success);
+  --csa-error: var(--color-text-error);
+  --csa-warning: var(--color-text-warning);
+  --csa-accent: var(--color-text-accent);
+  /* One gutter for the whole card. Changing it moves both left edges together. */
+  --csa-gutter: 10px;
+  --csa-icon-size: 18px;
+  --csa-icon-gap: 8px;
+  --csa-trail-size: 14px;
+
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  box-sizing: border-box;
+  color: var(--csa-text-strong);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+/* ── The rail, and its two layers ───────────────────────────────────────────
+ *
+ * The card is not a dropdown any more. It hangs off the conversation column's
+ * top-right corner — the slot the recovery-assist panel used to occupy — in one
+ * of two layers, and which layer it is in is decided by WHO OPENED IT:
+ *
+ *   [data-layer='inline']  — it appeared on its own, because the run has a plan.
+ *     It belongs to the page: one step raised, no shadow, at the conversation's
+ *     own stacking level, and the transcript gives up the width for it
+ *     (`.codex-conversation-inset[data-rail='expanded']`) instead of being
+ *     covered by it.
+ *   [data-layer='overlay'] — the user opened it from the toolbar toggle. It
+ *     becomes a dropdown off that control: two steps raised, opaque, shadowed,
+ *     at dropdown z-index, drawn OVER the transcript, which keeps its width. A
+ *     panel the reader asked for must not reflow what they were reading.
+ *
+ * Geometry (300px wide, 52px below the top, 16px in) and the 316px inset are the
+ * numbers styles/codex-session-rail.css established for this same shape; both
+ * surfaces come from the elevation ramp, so the layers are one visible step
+ * apart and neither invents a colour.
+ */
+.codex-session-activity-rail {
+  position: absolute;
+  /* Clears the toolbar strip: 32px controls + 8px padding top and bottom. */
+  top: 52px;
+  right: 16px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 300px;
+  /* Height follows content — one Git section must not stretch to the window
+   * floor. The card scrolls once its sections outgrow the space. */
+  max-height: calc(100% - 68px);
+  overflow: hidden auto;
+  padding: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  animation: codex-session-activity-rail-in 160ms var(--ease-enter);
+}
+
+.codex-session-activity-rail[data-layer='inline'] {
+  z-index: 1;
+  background: var(--color-background-elevated-secondary-opaque);
+  box-shadow: none;
+}
+
+.codex-session-activity-rail[data-layer='overlay'] {
+  z-index: var(--z-dropdown);
+  background: var(--color-background-elevated-primary-opaque);
+  box-shadow: var(--shadow-xl-spread);
+}
+
+@keyframes codex-session-activity-rail-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.99); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Conversation offset, on the scroll column.
+ *
+ * The passive layer means the transcript GIVES UP the width — at the layout's
+ * 1024px cap, 316px of inset leaves 708px, so the 820px measure does narrow.
+ * That is the trade the reference makes for a panel that appeared on its own,
+ * and it is why the OVERLAY layer does not get this rule: a panel the reader
+ * asked for is drawn on top and the measure they were reading is left alone. */
+.codex-conversation-inset {
+  transition: padding-right 200ms var(--ease-enter);
+}
+
+.codex-conversation-inset[data-rail='expanded'] {
+  /* 300px card + 16px gutter. */
+  padding-right: 316px;
+}
+
+/* Too narrow to give up 316px: the rail keeps its slot but stops pushing, and
+ * the transcript is allowed to run under it rather than be squeezed to a
+ * column of wrapped fragments. */
+@media (max-width: 1180px) {
+  .codex-conversation-inset[data-rail='expanded'] { padding-right: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .codex-session-activity-rail { animation: none; }
+  .codex-conversation-inset { transition: none; }
+}
+
+
+/* ── Sections ───────────────────────────────────────────────────────────────
+ *
+ * Separated by space, not rules. Six rules in a 350px card read as a ledger;
+ * the reference panel this follows uses whitespace and so does the composer
+ * menu's group spacing.
+ */
+
+.codex-session-activity .codex-session-activity__section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 6px 0;
+}
+.codex-session-activity .codex-session-activity__section + .codex-session-activity__section {
+  padding-top: 2px;
+}
+
+/* Section head. Title in the gutter, actions hugging the right edge. */
+.codex-session-activity .codex-session-activity__section-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 26px;
+  padding: 0 var(--csa-gutter);
+}
+
+.codex-session-activity .codex-session-activity__section-title {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--csa-text-tertiary);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+/* Right-aligned summary on the head — a count, a progress figure, a state. */
+.codex-session-activity .codex-session-activity__section-summary {
+  margin-left: auto;
+  flex: none;
+  color: var(--csa-text-tertiary);
+  font-size: 12px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.codex-session-activity .codex-session-activity__section-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+}
+
+.codex-session-activity .codex-session-activity__action {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--csa-icon);
+  cursor: pointer;
+  transition: background-color 100ms ease, color 100ms ease;
+}
+
+.codex-session-activity .codex-session-activity__action:hover,
+.codex-session-activity .codex-session-activity__action:focus-visible {
+  background: var(--csa-row-hover);
+  color: var(--csa-text-strong);
+  outline: none;
+}
+
+.codex-session-activity .codex-session-activity__section-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-top: 2px;
+}
+
+/* ── Rows ───────────────────────────────────────────────────────────────────
+ *
+ * One grid, every row. The three-column template is what keeps the label edge
+ * and the value edge identical across sections regardless of which glyphs a
+ * given row happens to carry.
+ */
+
+.codex-session-activity .codex-session-activity__row {
+  display: grid;
+  grid-template-columns: var(--csa-icon-size) minmax(0, 1fr) auto var(--csa-trail-size);
+  align-items: center;
+  column-gap: var(--csa-icon-gap);
+  row-gap: 4px;
+  width: 100%;
+  min-width: 0;
+  min-height: 30px;
+  padding: 2px var(--csa-gutter);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--csa-text-strong);
+  font: inherit;
+  text-align: left;
+}
+
+.codex-session-activity .codex-session-activity__row.is-interactive {
+  cursor: pointer;
+  transition: background-color 100ms ease;
+}
+
+.codex-session-activity .codex-session-activity__row.is-interactive:hover,
+.codex-session-activity .codex-session-activity__row.is-interactive:focus-visible {
+  background: var(--csa-row-hover);
+  outline: none;
+}
+
+/* Taller variant: a 24px avatar cannot breathe in a 30px row. */
+.codex-session-activity .codex-session-activity__row.is-tall {
+  min-height: 38px;
+  --csa-icon-size: 24px;
+}
+
+.codex-session-activity .codex-session-activity__row-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--csa-icon-size);
+  height: var(--csa-icon-size);
+  color: var(--csa-icon);
+}
+
+.codex-session-activity .codex-session-activity__row-label {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--csa-text-strong);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+/* Stacked label: a name over its role/task. Used by the sub-agent rows. */
+.codex-session-activity .codex-session-activity__row-stack {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 1px;
+}
+
+.codex-session-activity .codex-session-activity__row-sublabel {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--csa-text-tertiary);
+  font-size: 11px;
+  line-height: 15px;
+}
+
+.codex-session-activity .codex-session-activity__row-value {
+  flex: none;
+  color: var(--csa-text-tertiary);
+  font-size: 12px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Reserved disclosure column. Present on every row so values keep one edge. */
+.codex-session-activity .codex-session-activity__row-trail {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--csa-trail-size);
+  height: var(--csa-trail-size);
+  color: var(--csa-icon);
+  transition: color 100ms ease, transform 140ms var(--ease-enter);
+}
+
+.codex-session-activity .codex-session-activity__row.is-interactive:hover .codex-session-activity__row-trail {
+  color: var(--csa-text-strong);
+  transform: translateX(1px);
+}
+
+/* A row's second line (a progress bar, a mono digest) shares the label column
+ * rather than bleeding back to the gutter. */
+.codex-session-activity .codex-session-activity__row-second {
+  grid-column: 2 / -1;
+  min-width: 0;
+}
+
+.codex-session-activity .codex-session-activity__mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── State colour ───────────────────────────────────────────────────────────
+ *
+ * One data attribute drives every status label in the card, so a new status
+ * cannot arrive with its own hand-picked hue.
+ */
+
+.codex-session-activity [data-state='running'] { color: var(--csa-accent); }
+.codex-session-activity [data-state='ok'] { color: var(--csa-success); }
+.codex-session-activity [data-state='warn'] { color: var(--csa-warning); }
+.codex-session-activity [data-state='error'] { color: var(--csa-error); }
+.codex-session-activity [data-state='idle'] { color: var(--csa-text-tertiary); }
+
+/* ── Git delta ──────────────────────────────────────────────────────────────
+ *
+ * Monospaced and tabular so the two figures keep their columns as the diff
+ * grows. Green/red come from the success/error text roles, not literal hues.
+ */
+
+.codex-session-activity .codex-session-activity__delta {
+  display: inline-flex;
+  gap: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.codex-session-activity .codex-session-activity__delta-add { color: var(--csa-success); }
+.codex-session-activity .codex-session-activity__delta-remove { color: var(--csa-error); }
+
+/* ── Plan ───────────────────────────────────────────────────────────────────
+ *
+ * The task list is the shared ToolUiPlanView, so the panel supplies only the
+ * gutter. Restyling the component here would fork it from the transcript's copy.
+ */
+
+.codex-session-activity .codex-session-activity__plan {
+  padding: 0 var(--csa-gutter);
+}
+
+/* ── Empty / footer ─────────────────────────────────────────────────────── */
+
+.codex-session-activity .codex-session-activity__empty {
+  padding: 2px var(--csa-gutter) 4px;
+  color: var(--csa-text-tertiary);
+  font-size: 12px;
+  line-height: 17px;
+}
+
+.codex-session-activity .codex-session-activity__retry {
+  align-self: flex-start;
+  margin: 2px var(--csa-gutter) 4px;
+  height: 22px;
+  padding: 0 8px;
+  border: 0.5px solid var(--csa-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--csa-text-secondary);
+  font-size: 12px;
+  line-height: 21px;
+  cursor: pointer;
+  transition: background-color 100ms ease, color 100ms ease;
+}
+
+.codex-session-activity .codex-session-activity__retry:hover {
+  background: var(--csa-row-hover);
+  color: var(--csa-text-strong);
+}
+
+/* ── Scroll body ────────────────────────────────────────────────────────── */
+
+.codex-session-activity .codex-session-activity__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 2px 0 4px;
+}
+
+.codex-session-activity .codex-session-activity__body.is-scrollable {
+  max-height: min(62vh, 520px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}

@@ -126,6 +126,11 @@ function main() {
 
   if (existsSync(jsonPath)) {
     const realReport = JSON.parse(readFileSync(jsonPath, "utf-8"));
+    // Keep the report fail-closed if a producer omits evidence metadata.
+    realReport.evidenceClass ??= "synthetic";
+    realReport.accepted ??= false;
+    realReport.acceptanceNote ??=
+      "Synthetic or incomplete evaluation; not valid runtime or live-session acceptance evidence.";
     realReport.testSuite = {
       totalFiles: TEST_FILES.length,
       passedFiles,
@@ -139,6 +144,10 @@ function main() {
     // Fallback: if real aggregate test failed, write a minimal report
     const report = {
       generatedAt: Date.now(),
+      evidenceClass: "synthetic",
+      accepted: false,
+      acceptanceNote:
+        "Aggregate evaluation failed before metrics were generated; not valid runtime or live-session acceptance evidence.",
       testSuite: {
         totalFiles: TEST_FILES.length,
         passedFiles,
@@ -167,6 +176,11 @@ function formatMarkdown(report) {
   lines.push("# Runtime Memory Aggregate Evaluation Report");
   lines.push("");
   lines.push(`- Generated at: ${new Date(report.generatedAt).toISOString()}`);
+  lines.push(`- Evidence class: ${report.evidenceClass ?? "synthetic"}`);
+  lines.push(`- Accepted: ${report.accepted === true ? "yes" : "no"}`);
+  lines.push(
+    `- Acceptance note: ${report.acceptanceNote ?? "Synthetic or incomplete evaluation; not valid runtime or live-session acceptance evidence."}`,
+  );
   lines.push("");
 
   if (report.enhancedReport) {

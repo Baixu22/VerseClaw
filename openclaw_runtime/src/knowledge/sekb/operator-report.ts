@@ -6,6 +6,11 @@ import type {
   SekbBatchDistillationEvent,
   TrajectoryOutcome,
 } from "./types.js";
+import {
+  RUNTIME_LINEAGE_SCHEMA,
+  normalizeRuntimeLineage,
+  type RuntimeLineage,
+} from "../../runtime-core/lineage.js";
 
 export type SekbOperatorReportOptions = {
   undistilledLimit?: number;
@@ -32,6 +37,7 @@ type OperatorMetric =
   | { status: "unavailable"; reason: string };
 
 export type SekbOperatorReport = {
+  lineageSchema: "runtime-lineage.v1";
   counts: {
     trajectories: number;
     undistilledTrajectories: number;
@@ -45,6 +51,7 @@ export type SekbOperatorReport = {
     context_fingerprint: string[];
     outcome: TrajectoryOutcome;
     error_signature: string | null;
+    lineage?: RuntimeLineage;
   }>;
   activePrinciples: Array<{
     principle_id: string;
@@ -54,6 +61,8 @@ export type SekbOperatorReport = {
     criticality: PrincipleCriticality;
     retrieval_count: number;
     adoption_count: number;
+    source_trajectories: string[];
+    lineage?: RuntimeLineage;
   }>;
   indexPreview: string;
   evidence: {
@@ -112,7 +121,11 @@ export type SekbOperatorReport = {
       subsequentAdoption: OperatorMetric;
     };
     metricsUnavailable: Array<{
-      metric: "historical_suggestion_count" | "suggestion_edit_distance" | "historical_acceptance_rate" | "duplicate_principle_rate";
+      metric:
+        | "historical_suggestion_count"
+        | "suggestion_edit_distance"
+        | "historical_acceptance_rate"
+        | "duplicate_principle_rate";
       reason: "not_persisted" | "not_evaluated";
     }>;
   };
@@ -137,6 +150,7 @@ export function buildSekbOperatorReport(
     batchDistillationAssistantEnabled: options.batchDistillationAssistantEnabled,
   });
   return {
+    lineageSchema: RUNTIME_LINEAGE_SCHEMA,
     counts: {
       trajectories: trajectories.length,
       undistilledTrajectories: undistilled.length,
@@ -150,6 +164,9 @@ export function buildSekbOperatorReport(
       context_fingerprint: trajectory.context_fingerprint,
       outcome: trajectory.outcome,
       error_signature: trajectory.error_signature,
+      ...(normalizeRuntimeLineage(trajectory.metadata.runtimeLineage)
+        ? { lineage: normalizeRuntimeLineage(trajectory.metadata.runtimeLineage) }
+        : {}),
     })),
     activePrinciples: activePrinciples.map((principle) => ({
       principle_id: principle.principle_id,
@@ -159,6 +176,10 @@ export function buildSekbOperatorReport(
       criticality: principle.criticality,
       retrieval_count: principle.retrieval_count,
       adoption_count: principle.adoption_count,
+      source_trajectories: principle.source_trajectories,
+      ...(normalizeRuntimeLineage(principle.metadata.runtimeLineage)
+        ? { lineage: normalizeRuntimeLineage(principle.metadata.runtimeLineage) }
+        : {}),
     })),
     indexPreview: store.get_index(),
     evidence,
@@ -213,30 +234,50 @@ function buildEvidence(input: {
     .filter((count) => count > 1)
     .reduce((sum, count) => sum + count, 0);
   return {
-    state: evidenceState(input.shadowEvaluationEnabled, input.trajectories.length, shadow.evaluatedTrajectories),
+    state: evidenceState(
+      input.shadowEvaluationEnabled,
+      input.trajectories.length,
+      shadow.evaluatedTrajectories,
+    ),
     ageDistribution,
     trajectoriesByOutcome,
     steps: numericSummary(stepCounts),
     durationSeconds: numericSummary(durations),
     errorSignatures: {
-      withoutSignature: input.trajectories.length - [...errorSignatureCounts.values()].reduce((sum, count) => sum + count, 0),
+      withoutSignature:
+        input.trajectories.length -
+        [...errorSignatureCounts.values()].reduce((sum, count) => sum + count, 0),
       distinct: errorSignatureCounts.size,
       recurringTrajectories,
     },
     shadow,
     feedback: (() => {
       const general = input.generalRejectionCount;
-      const batchAssisted = input.batchEvents.reduce((sum, event) => sum + event.rejection_count, 0);
+      const batchAssisted = input.batchEvents.reduce(
+        (sum, event) => sum + event.rejection_count,
+        0,
+      );
       return {
-        confirmedPrinciples: input.activePrinciples.filter((principle) => principle.created_by === "human").length,
+        confirmedPrinciples: input.activePrinciples.filter(
+          (principle) => principle.created_by === "human",
+        ).length,
         rejectedSuggestions: general + batchAssisted,
         rejectionBreakdown: {
           general,
           batchAssisted,
         },
-        retrievals: input.activePrinciples.reduce((sum, principle) => sum + principle.retrieval_count, 0),
-        adoptions: input.activePrinciples.reduce((sum, principle) => sum + principle.adoption_count, 0),
-        postAdoptionSuccesses: input.activePrinciples.reduce((sum, principle) => sum + principle.post_adoption_success, 0),
+        retrievals: input.activePrinciples.reduce(
+          (sum, principle) => sum + principle.retrieval_count,
+          0,
+        ),
+        adoptions: input.activePrinciples.reduce(
+          (sum, principle) => sum + principle.adoption_count,
+          0,
+        ),
+        postAdoptionSuccesses: input.activePrinciples.reduce(
+          (sum, principle) => sum + principle.post_adoption_success,
+          0,
+        ),
       };
     })(),
     batchDistillationAssistant: buildBatchDistillationEvidence({
@@ -266,8 +307,14 @@ function buildBatchDistillationEvidence(input: {
   const rejectedCount = input.events.reduce((sum, event) => sum + event.rejection_count, 0);
   const editDistanceCount = input.events.reduce((sum, event) => sum + event.edit_distance_count, 0);
   const editDistanceSum = input.events.reduce((sum, event) => sum + event.edit_distance_sum, 0);
-  const duplicateCount = input.events.reduce((sum, event) => sum + event.duplicate_suggestion_count, 0);
-  const attributedCount = input.events.reduce((sum, event) => sum + event.attributed_suggestion_count, 0);
+  const duplicateCount = input.events.reduce(
+    (sum, event) => sum + event.duplicate_suggestion_count,
+    0,
+  );
+  const attributedCount = input.events.reduce(
+    (sum, event) => sum + event.attributed_suggestion_count,
+    0,
+  );
   const attributionTotal = input.events.reduce((sum, event) => sum + event.attribution_total, 0);
   const knownBatchIds = new Set(input.events.map((event) => event.batch_id));
   const subsequentAdoption = input.principles
@@ -279,15 +326,18 @@ function buildBatchDistillationEvidence(input: {
     suggestionCount: available(suggestionCount),
     acceptedCount: available(acceptedCount),
     rejectedCount: available(rejectedCount),
-    normalizedEditDistance: editDistanceCount > 0
-      ? available(Number((editDistanceSum / editDistanceCount).toFixed(4)))
-      : unavailable("original_suggestion_or_confirmed_version_unavailable"),
-    duplicateSuggestionRate: suggestionCount > 0
-      ? available(Number((duplicateCount / suggestionCount).toFixed(4)))
-      : unavailable("no_suggestions"),
-    sourceAttributionCompleteness: attributionTotal > 0
-      ? available(Number((attributedCount / attributionTotal).toFixed(4)))
-      : unavailable("no_suggestions"),
+    normalizedEditDistance:
+      editDistanceCount > 0
+        ? available(Number((editDistanceSum / editDistanceCount).toFixed(4)))
+        : unavailable("original_suggestion_or_confirmed_version_unavailable"),
+    duplicateSuggestionRate:
+      suggestionCount > 0
+        ? available(Number((duplicateCount / suggestionCount).toFixed(4)))
+        : unavailable("no_suggestions"),
+    sourceAttributionCompleteness:
+      attributionTotal > 0
+        ? available(Number((attributedCount / attributionTotal).toFixed(4)))
+        : unavailable("no_suggestions"),
     inputTokens: sumReportedMetric(input.events, "input_tokens"),
     outputTokens: sumReportedMetric(input.events, "output_tokens"),
     totalCostUsd: sumReportedMetric(input.events, "total_cost_usd"),
@@ -316,7 +366,10 @@ function unavailableBatchDistillationEvidence(
   };
 }
 
-function batchEvidenceState(enabled: boolean | undefined, eventCount: number): SekbOperatorEvidenceState {
+function batchEvidenceState(
+  enabled: boolean | undefined,
+  eventCount: number,
+): SekbOperatorEvidenceState {
   if (enabled === false) return "disabled";
   if (enabled === undefined) return "unknown";
   return eventCount > 0 ? "ready" : "insufficient_data";
@@ -329,16 +382,20 @@ function sumReportedMetric(
   const values = events
     .map((event) => event[field])
     .filter((value): value is number => typeof value === "number");
-  return values.length > 0 ? available(values.reduce((sum, value) => sum + value, 0)) : unavailable("not_reported_by_provider");
+  return values.length > 0
+    ? available(values.reduce((sum, value) => sum + value, 0))
+    : unavailable("not_reported_by_provider");
 }
 
 function isConfirmedBatchPrinciple(principle: Principle, knownBatchIds: Set<string>): boolean {
   const provenance = principle.metadata.sekbBatchDistillationAssistant;
-  return typeof provenance === "object"
-    && provenance !== null
-    && !Array.isArray(provenance)
-    && typeof (provenance as Record<string, unknown>).batch_id === "string"
-    && knownBatchIds.has((provenance as Record<string, unknown>).batch_id as string);
+  return (
+    typeof provenance === "object" &&
+    provenance !== null &&
+    !Array.isArray(provenance) &&
+    typeof (provenance as Record<string, unknown>).batch_id === "string" &&
+    knownBatchIds.has((provenance as Record<string, unknown>).batch_id as string)
+  );
 }
 
 function available(value: number): OperatorMetric {

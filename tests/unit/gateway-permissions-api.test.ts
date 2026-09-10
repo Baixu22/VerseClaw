@@ -146,7 +146,7 @@ describe('gateway permission approval flow', () => {
 
     const approvalId = first.approval?.id;
     expect(approvalId).toBeTruthy();
-    await permissions.decideApproval({ id: approvalId, decision: 'approved' });
+    await permissions.decideApproval({ id: approvalId, decision: 'approved' } as never);
 
     await expect(api.rpc({
       method: 'tools.exec',
@@ -192,7 +192,7 @@ describe('gateway permission approval flow', () => {
       params: { command: 'git clean -fd' },
     }) as { approval?: { id: string } };
     const approvalId = first.approval?.id;
-    await permissions.decideApproval({ id: approvalId, decision: 'approved' });
+    await permissions.decideApproval({ id: approvalId, decision: 'approved' } as never);
 
     await expect(api.rpc({
       method: 'tools.exec',

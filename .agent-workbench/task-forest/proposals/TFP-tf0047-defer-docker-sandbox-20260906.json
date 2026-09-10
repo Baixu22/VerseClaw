@@ -1,0 +1,35 @@
+{
+  "applied_at": "2026-09-06T05:03:39.393467Z",
+  "base_graph_hash": "1cc33c3b917782903c386549aa88759c5bfb78a1ba65cadfe64340ae4a1e85dc",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.99,
+        "context_tags": [
+          "runtime",
+          "sandbox",
+          "docker",
+          "github-issue",
+          "deferred",
+          "independent-product"
+        ],
+        "next_action": "有意延后：当前不继续 Docker sandbox 构建或上游对照；仅在产品方向明确需要重型沙箱时再恢复。",
+        "progress": 90,
+        "status": "blocked",
+        "summary": "TF-0047 已按独立产品边界有意延后：静态契约测试、shell 语法检查与 Dockerfile 结构复核均通过，但真实 Docker build 不再作为当前验收阻塞项。OpenClaw 上游对照不再属于本产品验收口径；Docker 沙箱因当前过重，暂不继续投入。"
+      },
+      "id": "TF-0047"
+    }
+  ],
+  "created_at": "2026-09-06T05:03:32.938930Z",
+  "proposal_id": "TFP-tf0047-defer-docker-sandbox-20260906",
+  "rationale": "用户已明确当前产品脱离 OpenClaw 上游，作为独立程序推进；同时 Docker 沙箱当前过重，暂时跳过。因此 TF-0047 不再继续等待 Docker build 复核，改为有意延后，不作为当前产品路线的阻塞项。",
+  "session_id": "codex-tf0047-defer-docker-sandbox-20260906",
+  "status": "applied"
+}

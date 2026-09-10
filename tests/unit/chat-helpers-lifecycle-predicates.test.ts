@@ -81,7 +81,7 @@ const GATEWAY_MIXED_PENDING_TOOL: RawMessage = {
   stopReason: 'toolUse',
 };
 
-const OPENAI_CC_INTERMEDIATE_TOOL_CALL: RawMessage = {
+const OPENAI_CC_INTERMEDIATE_TOOL_CALL = {
   id: 'openai-cc-1',
   role: 'assistant',
   // OpenAI Chat Completions: `content` is a string (often empty when tools
@@ -96,7 +96,7 @@ const OPENAI_CC_INTERMEDIATE_TOOL_CALL: RawMessage = {
       function: { name: 'web_search', arguments: '{"query":"foo"}' },
     },
   ],
-};
+} as unknown as RawMessage;
 
 const OPENAI_CC_FINAL_TEXT: RawMessage = {
   id: 'openai-cc-2',
@@ -104,7 +104,7 @@ const OPENAI_CC_FINAL_TEXT: RawMessage = {
   content: 'Here is the final answer.',
 };
 
-const OPENAI_CC_TOOLCALLS_CAMELCASE: RawMessage = {
+const OPENAI_CC_TOOLCALLS_CAMELCASE = {
   id: 'openai-cc-3',
   role: 'assistant',
   content: '',
@@ -116,7 +116,7 @@ const OPENAI_CC_TOOLCALLS_CAMELCASE: RawMessage = {
       function: { name: 'web_search', arguments: '{}' },
     },
   ],
-};
+} as unknown as RawMessage;
 
 const PLAIN_USER: RawMessage = {
   id: 'user-1',

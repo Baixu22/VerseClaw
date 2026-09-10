@@ -1,0 +1,37 @@
+{
+  "applied_at": "2026-08-22T05:49:45.088063Z",
+  "base_graph_hash": "50c39813937f3cabf56aa4df0273b7c89bdea69045832f6e383e8cd0213d6cea",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "shared/host-api/contract.ts SessionStopPayload/Result + sessions 契约",
+          "src/lib/host-api.ts hostApi.sessions.stop facade",
+          "electron/services/sessions-api.ts stop handler → sessions.stop RPC（canonical stop front + drain）",
+          "tests/unit/host-api-facade.test.ts 44/44（新增 typed stop 路由用例）",
+          "门禁：contract:check 三层对齐；typecheck 0；comms PASS；E2E 3/3；lint 0；diff-check 0",
+          "artifacts/session-ecosystem-cross-session-control/report.json 切片 2 更新"
+        ],
+        "next_action": "第三个 owner path：sessions.queueDrain 与 drainQueuedUserMessagesForSession 增加 expectedSessionId 代际校验（镜像 delete journal 模式）；随后 send permit 生命周期、lineage runId join。",
+        "progress": 45,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260822-start-tf0082"
+        ]
+      },
+      "id": "TF-0082"
+    }
+  ],
+  "created_at": "2026-08-22T05:49:44.912044Z",
+  "proposal_id": "TFP-progress-TF-0082-slice2-20260822",
+  "rationale": "TF-0082 第二个 owner path 完成：typed Host API 会话级 stop surface（contract + facade + electron handler 委托既有 sessions.stop Gateway RPC）。stop/continue/fork 三操作至此均有 typed Host API 与真实 Gateway RPC 路径。所有门禁在最终树上通过。",
+  "session_id": "session-20260822-start-tf0082",
+  "status": "applied"
+}

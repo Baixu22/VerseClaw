@@ -54,6 +54,7 @@ export function buildSessionStartHookPayload(params: {
 export function buildSessionEndHookPayload(params: {
   sessionId: string;
   sessionKey: string;
+  operationId?: string;
   cfg: OpenClawConfig;
   messageCount?: number;
   durationMs?: number;
@@ -70,6 +71,7 @@ export function buildSessionEndHookPayload(params: {
     event: {
       sessionId: params.sessionId,
       sessionKey: params.sessionKey,
+      ...(params.operationId ? { operationId: params.operationId } : {}),
       messageCount: params.messageCount ?? 0,
       durationMs: params.durationMs,
       reason: params.reason,

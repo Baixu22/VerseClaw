@@ -8,6 +8,12 @@ import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
 } from "@openclaw/normalization-core/string-coerce";
+import {
+  createExternalProvenance,
+  deriveToolResultProvenance,
+  stableSourceId,
+  type ContentProvenance,
+} from "../../../../shared/security/content-provenance.js";
 import { Type } from "typebox";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { SsrFBlockedError, type LookupFn, type SsrFPolicy } from "../../infra/net/ssrf.js";
@@ -270,6 +276,23 @@ function wrapWebFetchField(value: string | undefined): string | undefined {
   return wrapExternalContent(value, { source: "web_fetch", includeWarning: false });
 }
 
+export function buildWebFetchResultProvenance(params: {
+  url: string;
+  fetchedAt: string;
+  provider?: string;
+}): ContentProvenance {
+  return deriveToolResultProvenance({
+    toolName: "web_fetch",
+    sourceId: stableSourceId("tool-result", "web_fetch", params.provider, params.url),
+    receivedAt: params.fetchedAt,
+    parents: [createExternalProvenance({
+      sourceKind: "web",
+      sourceId: stableSourceId("web", params.url),
+      receivedAt: params.fetchedAt,
+    })],
+  });
+}
+
 function normalizeContentType(value: string | null | undefined): string | undefined {
   if (!value) {
     return undefined;
@@ -358,6 +381,15 @@ function normalizeProviderWebFetchPayload(params: {
     typeof payload.extractor === "string" && payload.extractor.trim()
       ? payload.extractor
       : params.providerId;
+  const fetchedAt =
+    typeof payload.fetchedAt === "string" && payload.fetchedAt
+      ? payload.fetchedAt
+      : new Date().toISOString();
+  const provenance = buildWebFetchResultProvenance({
+    url,
+    fetchedAt,
+    provider: params.providerId,
+  });
 
   return {
     url,
@@ -373,14 +405,12 @@ function normalizeProviderWebFetchPayload(params: {
       wrapped: true,
       provider: params.providerId,
     },
+    provenance,
     truncated: wrapped.truncated,
     length: wrapped.wrappedLength,
     rawLength: wrapped.rawLength,
     wrappedLength: wrapped.wrappedLength,
-    fetchedAt:
-      typeof payload.fetchedAt === "string" && payload.fetchedAt
-        ? payload.fetchedAt
-        : new Date().toISOString(),
+    fetchedAt,
     tookMs:
       typeof payload.tookMs === "number" && Number.isFinite(payload.tookMs)
         ? Math.max(0, Math.floor(payload.tookMs))
@@ -434,7 +464,19 @@ async function runWebFetch(params: WebFetchRuntimeParams): Promise<Record<string
   );
   const cached = readCache(FETCH_CACHE, cacheKey);
   if (cached) {
-    return { ...cached.value, cached: true };
+    const cachedFetchedAt =
+      typeof cached.value.fetchedAt === "string" && cached.value.fetchedAt
+        ? cached.value.fetchedAt
+        : new Date().toISOString();
+    return {
+      ...cached.value,
+      provenance: buildWebFetchResultProvenance({
+        url: params.url,
+        fetchedAt: cachedFetchedAt,
+        provider: params.providerCacheKey,
+      }),
+      cached: true,
+    };
   }
 
   let parsedUrl: URL;
@@ -613,6 +655,7 @@ async function runWebFetch(params: WebFetchRuntimeParams): Promise<Record<string
     const wrapped = wrapWebFetchContent(text, params.maxChars);
     const wrappedTitle = title ? wrapWebFetchField(title) : undefined;
     const wrappedWarning = wrapWebFetchField(responseTruncatedWarning);
+    const fetchedAt = new Date().toISOString();
     const payload = {
       url: params.url, // Keep raw for tool chaining
       finalUrl, // Keep raw
@@ -626,11 +669,15 @@ async function runWebFetch(params: WebFetchRuntimeParams): Promise<Record<string
         source: "web_fetch",
         wrapped: true,
       },
+      provenance: buildWebFetchResultProvenance({
+        url: params.url,
+        fetchedAt,
+      }),
       truncated: wrapped.truncated,
       length: wrapped.wrappedLength,
       rawLength: wrapped.rawLength, // Actual content length, not wrapped
       wrappedLength: wrapped.wrappedLength,
-      fetchedAt: new Date().toISOString(),
+      fetchedAt,
       tookMs: Date.now() - start,
       text: wrapped.text,
       warning: wrappedWarning,

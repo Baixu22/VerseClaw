@@ -1,0 +1,63 @@
+{
+  "applied_at": "2026-08-29T01:02:07.837921Z",
+  "base_graph_hash": "c2700bca95867a3fbe3ecab9cb4f657558ae6ce1ee8297a5751a04ae48ae667d",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "本轮 vitest 实测 OpenClawSchema.safeParse：runtime.coding.sekb.retrievalShadow=true → REJECT；runtime.coding.factViews.enabled=true → ACCEPT；injectionBudget.channelDecay.vtoken=null → REJECT",
+          "shared/dcs/prod-flags-catalog.ts:216-227",
+          "openclaw_runtime/src/runtime-core/ke-retrieval-shadow.ts:149-154",
+          "openclaw_runtime/src/context-engine/coding-runtime-flags.ts:9-10,152-164,215-232",
+          "openclaw_runtime/src/agents/worktree-service.ts:262-268",
+          "2026-08-29 Aristotle 只读预审：当前 checkout HOLD/NO-GO；明确 UFTK D14/D15 冲突与最小五文件修复面，未修改文件。",
+          "2026-08-29 实现与验证：config-schema-parity 137/137；runtime-flag-ack/attribution/catalog 30/30；KE shadow 17/17；typecheck:node 与 lint:dcs 通过；新增 DCS_PROD_FLAGS config guard 与 factViews negative assertion。",
+          "2026-08-29 implementation handoff：config-schema-parity 137/137；runtime-flag-ack/attribution/catalog 30/30；KE shadow 17/17；test:dcs 23/327+1 skipped、5/10、11/95；default matrix 18/18；typecheck:node/lint:dcs/BOM/contract 通过。",
+          "2026-08-29 lane-1 独立复核：config parity + default matrix 2 files/155 passed；runtime flag ack/attribution/catalog 3 files/30 passed；KE shadow 4 files/22 passed；typecheck:node、lint:dcs 和相关文件 git diff --check 均 exit 0。",
+          "2026-08-29 完整 test:dcs 工程证据：串行链 exit 0；23 files/327 passed/1 skipped、5 files/10 passed、11 files/95 passed；findings registry 7/7。",
+          "2026-08-29 独立反向核对：retrievalShadow ack 默认 false；启用后不进入 TURN_EFFECT_FLAGS；isCodingFactViewsEnabled 恒返 false；fixture 中 UFTK=true 仅为 DeepRequired schema sample，不是 runtime default。",
+          "2026-08-29 R3 机械归属查询：git log -E --format='%H' --grep='^(Task:|Refs|Node:) TF-0112([^0-9]|$)' 590588791..HEAD → 空集 / 0 commits。",
+          "2026-08-29 迁移风险核对：factViews 已被严格 schema 拒绝，但 artifacts/coding-prod-p0/config-surface.json:15 与 docs/generated/catalogs/prod-flags.md:23 仍写 deprecated/ignored，未给出升级前删除或 fail-safe migration 出口；详见 docs/dev/context-moat/reviews/TF-0112.md。"
+        ],
+        "next_action": "维持 review_needed / 90。先补齐或裁决 TF-0112 的 Task: TF-0112 + Lane: lane-2 提交归属，并更新/重新生成 factViews 旧配置迁移事实源；复核时保持 retrievalShadow 默认关闭、不进入 TURN_EFFECT_FLAGS，且不把 UFTK hunk 或审核者提交算入 TF-0112 半径。",
+        "progress": 90,
+        "progress_source": "manual",
+        "status": "review_needed",
+        "summary": "lane-1 独立复核确认 TF-0112 的实现行为和定向/完整工程门通过，但收口被 R3 归属空集阻断；同时发现 config-surface 与 generated catalog 仍将被 schema 拒绝的 factViews 描述为 deprecated/ignored，旧配置迁移事实源尚未闭合。"
+      },
+      "id": "TF-0112"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-29T00:56:33.843847Z",
+        "evidence": "docs/dev/context-moat/reviews/TF-0112.md；git log -E --grep='^(Task:|Refs|Node:) TF-0112([^0-9]|$)' 590588791..HEAD → 空集；artifacts/coding-prod-p0/config-surface.json:15；docs/generated/catalogs/prod-flags.md:23。",
+        "expected_requirement": "TF-0112 必须满足 §R3 的提交级归属，且 factViews 下架后操作面必须能解释旧配置的迁移/拒绝路径。",
+        "id": "TFD-lane1-tf0112-r3-and-migration-blocked-20260829",
+        "impact": "功能测试绿灯不能证明实现可追责或升级安全；若直接置 done，R3 半径与旧配置迁移风险会被审核记录掩盖。",
+        "kind": "process_gap",
+        "node_id": "TF-0112",
+        "observed_action_or_result": "当前共享工作树存在 TF-0112 的 dirty implementation hunks，并与 UFTK 兼容 hunk 共用配置文件，但 590588791..HEAD 中没有带 Task: TF-0112 的可认证提交；同时 config-surface.json 与 generated catalog 仍称 factViews deprecated/ignored，而严格 schema 已拒绝该叶子。",
+        "recommendation": "保留 TF-0112 review_needed / 90；补带正确 Task/Lane trailer 的实现提交或走协议裁决，并更新/重新生成操作事实源、补迁移守卫后再复核。",
+        "related_task_ids": [
+          "TF-0112",
+          "TF-0143"
+        ],
+        "severity": "medium",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-29T00:56:33.832685Z",
+  "proposal_id": "TFP-lane1-review-tf0112-20260829",
+  "rationale": "lane-1 已完成 TF-0112 独立复核。retrievalShadow 配置四面、schema parity、runtime ack/attribution、KE shadow、默认关闭和 TURN_EFFECT_FLAGS 边界均通过；但当前没有可认证的 TF-0112 提交归属，且 operator-facing config surface 仍把已被严格 schema 拒绝的 factViews 写成 deprecated/ignored。因此只追加 review evidence，维持 review_needed/90，并登记收口阻塞，不应用 done/100。",
+  "session_id": "lane-1-context-moat-20260829",
+  "status": "applied"
+}

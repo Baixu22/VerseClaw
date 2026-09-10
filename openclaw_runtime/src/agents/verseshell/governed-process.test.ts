@@ -7,6 +7,7 @@ import {
 } from "./governed-process.js";
 import type { VerseShellProcessConfig, VerseShellProcessManager } from "./process-manager.js";
 import { getVerseShellCommandProfileDefinition } from "./command-profiles.js";
+import { resolveVerseShellExternalWritePolicy } from "./external-write-policy.js";
 
 const CONTRACT_ENV = {
   VERSESHELL_RUNTIME_VERSION: "1.0.0",
@@ -107,16 +108,17 @@ function fakeManager(
   const configs: VerseShellProcessConfig[] = [];
   const shutdownProcess = vi.fn(async () => true);
   let index = 0;
+  const getClient = vi.fn(async (config: VerseShellProcessConfig) => {
+    configs.push(config);
+    const client = clients[index++];
+    if (!client) throw new Error("unexpected getClient call");
+    return client;
+  });
   const manager = {
-    getClient: vi.fn(async (config: VerseShellProcessConfig) => {
-      configs.push(config);
-      const client = clients[index++];
-      if (!client) throw new Error("unexpected getClient call");
-      return client;
-    }),
+    getClient,
     shutdownProcess,
   } as unknown as VerseShellProcessManager;
-  return { manager, configs, shutdownProcess };
+  return { manager, configs, getClient, shutdownProcess };
 }
 
 describe("VerseShell governed process lifecycle", () => {
@@ -139,6 +141,10 @@ describe("VerseShell governed process lifecycle", () => {
         displayCommand: "pnpm test && this text is never reparsed",
         executable: "pnpm",
         profileDefinition: getVerseShellCommandProfileDefinition("test"),
+        externalWritePolicy: resolveVerseShellExternalWritePolicy({
+          profile: "test",
+          argv: ["pnpm", "test", "argument with spaces && literals"],
+        }),
       },
     }));
 
@@ -211,7 +217,9 @@ describe("VerseShell governed process lifecycle", () => {
     };
     const fake = fakeManager([client]);
     const stdout: string[] = [];
+    const traceId = "5".repeat(32);
     const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager, {
+      traceId,
       onStdout: (chunk) => stdout.push(chunk),
     }));
 
@@ -258,6 +266,9 @@ describe("VerseShell governed process lifecycle", () => {
       reason: "agent_abort",
       wait_ms: 0,
     });
+    expect(calls
+      .filter((call) => call.op === "process.start" || call.op === "process.poll" || call.op === "process.kill")
+      .map((call) => call.options?.traceId)).toEqual([traceId, traceId, traceId]);
     expect(stdout).toEqual(["done"]);
     expect(handle.stdin).toMatchObject({ destroyed: true, writable: false, writableEnded: true });
     expect(fake.shutdownProcess).toHaveBeenCalledWith("lifecycle");
@@ -309,7 +320,7 @@ describe("VerseShell governed process lifecycle", () => {
     expect(calls.filter((call) => call.op === "process.start")).toHaveLength(1);
     expect(calls.filter((call) => call.op === "process.poll")).toHaveLength(2);
     expect(calls.filter((call) => call.op === "process.poll").every((call) => call.options?.effectful !== true)).toBe(true);
-    expect(fake.manager.getClient).toHaveBeenCalledOnce();
+    expect(fake.getClient.mock.calls).toHaveLength(1);
   });
 
   it("returns an explicit EOF error instead of acknowledging a failed close", async () => {
@@ -368,13 +379,17 @@ describe("VerseShell governed process lifecycle", () => {
         interpreter: "C:\\Windows\\System32\\cmd.exe",
         interpreterProfile: "windows-cmd",
         profileDefinition: getVerseShellCommandProfileDefinition("build"),
+        externalWritePolicy: resolveVerseShellExternalWritePolicy({
+          profile: "build",
+          argv: [script, "--watch"],
+        }),
       },
     }));
 
     await expect(handle.wait()).resolves.toMatchObject({ state: "exited", exitCode: 0 });
     const start = calls.find((call) => call.op === "process.start");
-    expect(start?.args.argv).toEqual([script, "--watch"]);
-    expect(start?.args.argv[0]).not.toMatch(/cmd(?:\\|\.exe)/iu);
+    const startArgv = start?.args.argv;
+    expect(startArgv).toEqual([script, "--watch"]);
     expect(start?.args).not.toHaveProperty("interpreter");
   });
 
@@ -392,9 +407,13 @@ describe("VerseShell governed process lifecycle", () => {
         interpreter: "C:\\Windows\\System32\\cmd.exe",
         interpreterProfile: "windows-cmd",
         profileDefinition: getVerseShellCommandProfileDefinition("build"),
+        externalWritePolicy: resolveVerseShellExternalWritePolicy({
+          profile: "build",
+          argv: ["C:\\other\\path.cmd"],
+        }),
       },
     }))).rejects.toMatchObject({ code: "E_VERSESHELL_SCRIPT_IDENTITY" });
-    expect(fake.manager.getClient).not.toHaveBeenCalled();
+    expect(fake.getClient.mock.calls).toHaveLength(0);
   });
 
   it("clamps timeout and output above the profile bounds", async () => {
@@ -417,6 +436,10 @@ describe("VerseShell governed process lifecycle", () => {
         displayCommand: "pnpm run build",
         executable: "pnpm",
         profileDefinition: getVerseShellCommandProfileDefinition("build"),
+        externalWritePolicy: resolveVerseShellExternalWritePolicy({
+          profile: "build",
+          argv: ["pnpm", "run", "build"],
+        }),
       },
     }));
 
@@ -443,6 +466,10 @@ describe("VerseShell governed process lifecycle", () => {
       displayCommand: "node --version",
       executable: "node",
       profileDefinition: getVerseShellCommandProfileDefinition("generic"),
+      externalWritePolicy: resolveVerseShellExternalWritePolicy({
+        profile: "generic",
+        argv: ["node", "--version"],
+      }),
     };
     const floored = await startGovernedVerseShellProcess(baseOptions(fake.manager, { timeoutMs: 0, executionPlan: plan }));
     const defaulted = await startGovernedVerseShellProcess(baseOptions(fake.manager, { timeoutMs: undefined, executionPlan: plan }));

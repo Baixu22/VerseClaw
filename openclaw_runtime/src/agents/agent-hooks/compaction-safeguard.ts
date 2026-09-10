@@ -48,6 +48,24 @@ import {
   extractOpaqueIdentifiers,
   wrapUntrustedInstructionBlock,
 } from "./compaction-safeguard-quality.js";
+// T-C1: shadow content audit of the committed compaction summary (default off).
+import {
+  auditCompactionDamage,
+  isCompactionDamageAuditEnabled,
+  scoreContextHealthFromCompactionAudit,
+} from "./compaction-damage-rules.js";
+// A2-fix (TF-0128 review 47cb57a81): resolve the config the enhancement kill
+// switch evaluates, per call, through the mtime-keyed source — the same
+// FP-P0-02 pattern as assembler.ts resolveAssembleKillSwitchConfig. A
+// hardcoded `undefined` here made the config-form kill switch
+// (runtime.contextEnhancement.killSwitch) unreachable at this call site:
+// the env form worked, the config form did not.
+import { resolveKillSwitchConfig } from "../../context-engine/kill-switch-config-source.js";
+import {
+  contextHealthScoreToScorecard,
+  recordContextHealth,
+} from "../../context-engine/context-health-monitor.js";
+import { storeRuntimeScorecard } from "../../observability/trace-buffer.js";
 import {
   getCompactionSafeguardRuntime,
   setCompactionSafeguardCancelReason,
@@ -91,6 +109,7 @@ const MAX_QUALITY_GUARD_MAX_RETRIES = 3;
 const MAX_RECENT_TURN_TEXT_CHARS = 600;
 const compactionSafeguardDeps = {
   summarizeInStages,
+  buildHistoryPrunePlan: buildHistoryPrunePlanWithWorker,
 };
 
 function prependPreviousSummaryForRedistill(params: {
@@ -649,6 +668,56 @@ function capCompactionSummaryPreservingSuffix(
   const bodyBudget = Math.max(0, maxChars - suffix.length);
   const cappedBody = capCompactionSummary(summaryBody, bodyBudget);
   return `${cappedBody}${suffix}`;
+}
+
+/**
+ * TF-0111 (T-P0-2): labels for the explicit two-segment merge of the
+ * previous round's summary and the dropped-messages summary.
+ */
+export const PREVIOUS_SUMMARY_MERGE_LABEL = "[Earlier conversation summary]";
+export const DROPPED_SUMMARY_MERGE_LABEL = "[Summary of pruned older messages]";
+
+/**
+ * TF-0111 (T-P0-2): merge the previous round's summary with the
+ * dropped-messages summary instead of letting one replace the other.
+ *
+ * When pruning and iterative compaction happen together, the main
+ * summarization must explicitly see BOTH sources: the old
+ * `droppedSummary ?? preparation.previousSummary` replaced the previous
+ * summary, leaving it only folded one level down inside droppedSummary (the
+ * information path to the main summary was severed). The merge is explicit —
+ * two labeled segments handed to summarizeInStages, no model inference
+ * required — and the segments are budgeted so the merged length never
+ * exceeds `maxChars` (default MAX_COMPACTION_SUMMARY_CHARS); no secondary
+ * overflow.
+ *
+ * Single-source cases return that source unchanged (legacy behavior):
+ * dropped empty -> previousSummary as-is; previous empty -> droppedSummary
+ * as-is; both empty -> undefined. `maxChars` is assumed to comfortably
+ * exceed the label overhead (the 16k default does).
+ */
+export function mergeCompactionPreviousSummaries(params: {
+  previousSummary?: string;
+  droppedSummary?: string;
+  maxChars?: number;
+}): string | undefined {
+  const maxChars = params.maxChars ?? MAX_COMPACTION_SUMMARY_CHARS;
+  const previous = params.previousSummary?.trim();
+  const dropped = params.droppedSummary?.trim();
+  if (!previous && !dropped) return undefined;
+  if (!dropped) return previous;
+  if (!previous) return dropped;
+  const overhead =
+    PREVIOUS_SUMMARY_MERGE_LABEL.length + DROPPED_SUMMARY_MERGE_LABEL.length + 6;
+  const budget = Math.max(0, maxChars - overhead);
+  const previousBudget = Math.floor(budget / 2);
+  const droppedBudget = budget - previousBudget;
+  return [
+    PREVIOUS_SUMMARY_MERGE_LABEL,
+    capCompactionSummary(previous, previousBudget),
+    DROPPED_SUMMARY_MERGE_LABEL,
+    capCompactionSummary(dropped, droppedBudget),
+  ].join("\n\n");
 }
 
 function resolveSummaryReserveTokens(
@@ -1277,7 +1346,7 @@ ${feedback}`,
       let droppedSummary: string | undefined;
 
       if (tokensBefore !== undefined) {
-        const prunePlan = await buildHistoryPrunePlanWithWorker({
+        const prunePlan = await compactionSafeguardDeps.buildHistoryPrunePlan({
           messagesToSummarize,
           turnPrefixMessages,
           tokensBefore,
@@ -1373,9 +1442,18 @@ ${feedback}`,
       );
       const reserveTokens = resolveSummaryReserveTokens(preparation.settings.reserveTokens, model);
 
-      // Feed dropped-messages summary as previousSummary so the main summarization
-      // incorporates context from pruned messages instead of losing it entirely.
-      const effectivePreviousSummary = droppedSummary ?? preparation.previousSummary;
+      // TF-0111 (T-P0-2): merge, don't replace. When pruning and iterative
+      // compaction happen together, the main summarization must explicitly see
+      // BOTH the previous round's summary and the dropped-messages summary —
+      // the old `droppedSummary ?? preparation.previousSummary` replaced the
+      // previous summary, leaving it only folded one level down inside
+      // droppedSummary (information path to the main summary severed). The
+      // merge is explicit (two labeled segments) and capped at
+      // MAX_COMPACTION_SUMMARY_CHARS so it cannot cause a secondary overflow.
+      const effectivePreviousSummary = mergeCompactionPreviousSummaries({
+        previousSummary: preparation.previousSummary,
+        droppedSummary,
+      });
 
       let summary = "";
       let lastHistorySummary = "";
@@ -1535,6 +1613,35 @@ ${feedback}`,
         settings: preparation.settings,
         tokensBefore: preparation.tokensBefore,
       });
+      // T-C1: shadow-only content audit of the summary we are about to commit.
+      //
+      // Sited here, after `capCompactionSummaryPreservingSuffix` and before the
+      // return, because this is the only point every successful compaction passes
+      // through unconditionally. The obvious alternative — next to the
+      // `auditSummaryQuality` call above — sits behind `qualityGuardEnabled`, so
+      // wiring there would have made the audit invisible whenever the quality
+      // guard is off. That is the upstream-guard failure mode §D1(b) reverse
+      // falsification asks about, so it is called out rather than discovered later.
+      //
+      // Shadow contract: audit, score, record. Never mutate `summary`, never
+      // throw into the turn, never change control flow on the verdict.
+      if (isCompactionDamageAuditEnabled(resolveKillSwitchConfig(process.env), process.env)) {
+        try {
+          const audit = auditCompactionDamage(summary, { mode: "shadow" });
+          const health = scoreContextHealthFromCompactionAudit(audit);
+          recordContextHealth(health);
+          storeRuntimeScorecard(contextHealthScoreToScorecard(health));
+          if (audit.verdict === "suspect") {
+            log.warn(
+              `[compaction-damage] shadow audit flagged ${audit.damages
+                .map((damage) => `${damage.type}/${damage.severity}`)
+                .join(", ")} (health ${health.overall}/100)`,
+            );
+          }
+        } catch {
+          // Content auditing must never break a compaction.
+        }
+      }
 
       return {
         compaction: {
@@ -1568,6 +1675,12 @@ export const testing = {
   setSummarizeInStagesForTest(next?: typeof summarizeInStages) {
     compactionSafeguardDeps.summarizeInStages = next ?? summarizeInStages;
   },
+  setHistoryPrunePlanForTest(next?: typeof buildHistoryPrunePlanWithWorker) {
+    compactionSafeguardDeps.buildHistoryPrunePlan = next ?? buildHistoryPrunePlanWithWorker;
+  },
+  mergeCompactionPreviousSummaries,
+  PREVIOUS_SUMMARY_MERGE_LABEL,
+  DROPPED_SUMMARY_MERGE_LABEL,
   finalizeSafeguardCompaction,
   collectToolFailures,
   formatToolFailuresSection,

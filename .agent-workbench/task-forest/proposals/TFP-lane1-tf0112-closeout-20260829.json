@@ -1,0 +1,56 @@
+{
+  "applied_at": "2026-08-29T02:31:39.603942Z",
+  "base_graph_hash": "3ad5903576da53120c287b034b51a9daebad592693411cec7d931a1940e7eff8",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "2026-08-29 lane-1 独立复核：config parity + default matrix 2 files/156 passed；runtime flag ack/attribution/catalog 3 files/30 passed；KE shadow 4 files/22 passed；typecheck:node、lint:dcs 和相关文件 git diff --check 均 exit 0。",
+          "2026-08-29 完整 test:dcs 工程证据：串行链 exit 0；23 files/327 passed/1 skipped、5 files/10 passed、11 files/95 passed；findings registry 7/7。",
+          "2026-08-29 R3 机械归属查询：git log -E --format=\"%H\" --grep=\"^(Task:|Refs|Node:) TF-0112([^0-9]|$)\" 590588791..HEAD → 命中 ee115ba59ba681d66945f4982a87c4f716b144ea。",
+          "2026-08-29 提交范围核对：git diff-tree --no-commit-id --name-only -r ee115ba59ba681d66945f4982a87c4f716b144ea 得到 8 个路径，全部落在 TF-0112 事实源、守卫、测试和审计记录声明范围内；无 UFTK 文件或 UFTK hunk。",
+          "2026-08-29 迁移事实源核对：config-surface.json、docs/generated/catalogs/prod-flags.md 与 shared/dcs/prod-flags-catalog.ts 已说明 runtime.coding.factViews 会被严格 schema 拒绝并需在升级前移除；config-schema-parity.test.ts 新增对应迁移断言。",
+          "2026-08-29 行为边界核对：retrievalShadow 默认关闭，启用后不进入 TURN_EFFECT_FLAGS；factViews 哨兵仍 fail-closed；UFTK dirty hunk 未混入本提交。",
+          "2026-08-29 共享工作树残留：catalogs:check 整体 exit 1，唯一失败来自既有 docs/generated/catalogs/tools.md 空行漂移；本任务 prod-flags.md 单独渲染比对为 fresh，不阻塞 TF-0112。"
+        ],
+        "next_action": "已收口；无需进一步动作。",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "lane-1 已完成 ee115ba5 独立复核：Task/Lane 归属、8 路径范围、UFTK 隔离、factViews 迁移事实源、retrievalShadow 默认关闭和不进入 TURN_EFFECT_FLAGS 均通过；config parity 156/156、runtime ack 30/30、KE shadow 22/22、test:dcs/typecheck:node/lint:dcs 全绿。具备 done/100 收口条件。"
+      },
+      "id": "TF-0112"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-29T02:22:23.934038Z",
+        "evidence": "docs/dev/context-moat/reviews/TF-0112.md；git log -E --grep=\"^(Task:|Refs|Node:) TF-0112([^0-9]|$)\" 590588791..HEAD；git diff-tree --no-commit-id --name-only -r ee115ba59ba681d66945f4982a87c4f716b144ea；tests/unit/config-schema-parity.test.ts。",
+        "expected_requirement": "TF-0112 必须满足 §R3 的提交级归属，且 factViews 下架后操作面必须能解释旧配置的迁移/拒绝路径。",
+        "id": "TFD-lane1-tf0112-r3-and-migration-blocked-20260829",
+        "impact": "两个历史 blocker 均已闭合，功能测试绿灯现在具备可追责提交与迁移事实源支撑。",
+        "kind": "process_gap",
+        "node_id": "TF-0112",
+        "observed_action_or_result": "ee115ba59ba681d66945f4982a87c4f716b144ea 已补齐 Task: TF-0112 / Lane: lane-2 归属，8 路径范围干净且无 UFTK hunk；config surface、generated catalog 与 shared catalog 已更新 factViews 严格拒绝与升级前移除说明，并新增迁移断言。",
+        "recommendation": "将本 deviation 追加为 resolved；TF-0112 可在用户确认 closeout proposal 后置 done/100。",
+        "related_task_ids": [
+          "TF-0112"
+        ],
+        "severity": "medium",
+        "status": "resolved"
+      }
+    }
+  ],
+  "created_at": "2026-08-29T02:22:24.096411Z",
+  "proposal_id": "TFP-lane1-tf0112-closeout-20260829",
+  "rationale": "lane-1 已基于 ee115ba59ba681d66945f4982a87c4f716b144ea 完成独立复核：Task/Lane 归属、8 路径范围、UFTK 隔离、factViews 迁移事实源、retrievalShadow 默认关闭和不进入 TURN_EFFECT_FLAGS 均通过；定向测试、完整 test:dcs、typecheck:node 与 lint:dcs 全绿。两个历史 blocker 均已闭合，建议 done/100。",
+  "session_id": "lane-1-context-moat-20260829",
+  "status": "applied"
+}

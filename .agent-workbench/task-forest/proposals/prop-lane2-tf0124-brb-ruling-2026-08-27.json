@@ -1,0 +1,39 @@
+{
+  "applied_at": "2026-08-27T05:07:54.909326Z",
+  "base_graph_hash": "ebb32ad8d3027196cb62ff58740a0c30491cdae4ba552a6fe1529cbbffbd9634",
+  "base_summary": {
+    "edge_count": 260,
+    "node_count": 146,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "context_tags": [
+          "compaction",
+          "contract",
+          "brb-L"
+        ],
+        "evidence": [
+          "openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts:450-536,584-587",
+          "openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-quality.ts:14-20,60-82,232-260",
+          "openclaw_runtime/src/agents/compaction.ts:50-63,128-145",
+          "openclaw_runtime/src/agents/agent-hooks/compaction-safeguard.ts:987,1249-1265",
+          "docs/dev/context-moat/reviews/TF-0124.md; commits a2975eadc, d3be4e856, 06612e7e7; L1 all exit 0; agents 2 files/24 passed; unit-fast 62/451; artifact 1 file/2 passed; R3 full attributed radius 16/15, schema/default guards empty",
+          "lane-2 independent review 4dd41e984: requirements 4/4 and AC 5/5 PASS; provider bypass mutation 1/7 red then 7/7 restored; T-C1 hollow summary 17 passed; L1 all exit 0; negative control 0/1/2/3 and factViews=12; rollback restored 0 diff; radius ruling brb-M to brb-L, 16/40 PASS"
+        ],
+        "next_action": "车道 1复核审核提交 4dd41e984 后收口 TF-0124 为 done/100；车道 2不代行实现者终态。",
+        "progress": 90,
+        "status": "review_needed",
+        "summary": "车道 1 已以 agent-core 八段模板统一主 prompt、merge、quality、damage、validated pipeline 与 CompressionArtifact。车道 2 在 4dd41e984 按 §R1 独立审核 PASS：provider 缺段出现 missing_section 且旁路变异恰 1/7 红；T-C1 八段 None. 仍触发 goal_token_decay；L1 六门、changed-file lint、agents 24、unit-fast 451、artifact 2、阴性对照和 worktree-only 回滚均通过。全归属半径 16，schema/default 守卫为空；裁决将 brb-M 重估为 brb-L，不排除 AUDIT-BOARD，16/40 PASS。保持 review_needed，等待实现者车道 1 收口 done/100。"
+      },
+      "id": "TF-0124"
+    }
+  ],
+  "created_at": "2026-08-27T05:07:31.620813Z",
+  "proposal_id": "prop-lane2-tf0124-brb-ruling-2026-08-27",
+  "rationale": "用户明确委派车道 2 对 TF-0124 做非实现者审核并裁决 16/15 半径。独立复核确认全归属集合为 16：14 个实现/测试路径 + 强制实现者记录 + 用户指定三方看板；schema/default 守卫为空，没有生产越界。§R3.5 拆分受总上限 15 约束无法容纳 16，landed-unwired 与 A1 已通电事实不符。按 TF-0110/TF-0116 已建立的对称口径，将 max_brb 从 M 重估为最小可覆盖的 L，不豁免也不排除看板文件；16 <= 40。独立审核提交 4dd41e984 PASS，终态仍由实现者车道 1 收口。",
+  "session_id": "session-lane-2",
+  "status": "applied"
+}

@@ -1,0 +1,36 @@
+[2026-09-09T04:01:11.898Z] e2e-monitor start specs=3 interval=30s maxRounds=1 timeoutMs=60000 deep=false
+[2026-09-09T04:01:11.903Z] fatal Error: spawn EINVAL
+    at ChildProcess.spawn (node:internal/child_process:441:11)
+    at spawn (node:child_process:796:9)
+    at file:///D:/ClawX/scripts/e2e-monitor.mjs:58:19
+    at new Promise (<anonymous>)
+    at runCmd (file:///D:/ClawX/scripts/e2e-monitor.mjs:57:10)
+    at runSpec (file:///D:/ClawX/scripts/e2e-monitor.mjs:97:21)
+    at heartbeatRound (file:///D:/ClawX/scripts/e2e-monitor.mjs:116:21)
+    at main (file:///D:/ClawX/scripts/e2e-monitor.mjs:152:25)
+    at file:///D:/ClawX/scripts/e2e-monitor.mjs:166:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+[2026-09-09T04:02:53.355Z] e2e-monitor start specs=3 interval=20s maxRounds=1 timeoutMs=90000 deep=false runner=C:\Program Files\nodejs\node.exe
+[2026-09-09T04:03:22.574Z] round=1 spec=tests/e2e/app-smoke.spec.ts pass=4 fail=0 exit=0
+[2026-09-09T04:03:46.083Z] round=1 spec=tests/e2e/agent-dev-quality.spec.ts pass=4 fail=0 exit=0
+[2026-09-09T04:03:52.905Z] round=1 spec=tests/e2e/browser-security-recovery.spec.ts pass=1 fail=0 exit=0
+[2026-09-09T04:03:52.906Z] round=1 totals pass=9 fail=0 skip=0 flaky=0 dur=59547ms
+[2026-09-09T04:03:52.906Z] e2e-monitor exit
+[2026-09-09T04:04:03.540Z] e2e-monitor start specs=3 interval=90s maxRounds=4 timeoutMs=120000 deep=false runner=C:\Program Files\nodejs\node.exe
+[2026-09-09T04:04:31.030Z] round=1 spec=tests/e2e/app-smoke.spec.ts pass=4 fail=0 exit=0
+[2026-09-09T04:04:53.992Z] round=1 spec=tests/e2e/agent-dev-quality.spec.ts pass=4 fail=0 exit=0
+[2026-09-09T04:05:01.459Z] round=1 spec=tests/e2e/browser-security-recovery.spec.ts pass=1 fail=0 exit=0
+[2026-09-09T04:05:01.460Z] round=1 totals pass=9 fail=0 skip=0 flaky=0 dur=57916ms
+[2026-09-09T04:06:57.926Z] round=2 spec=tests/e2e/app-smoke.spec.ts pass=4 fail=0 exit=0
+[2026-09-09T04:07:21.472Z] round=2 spec=tests/e2e/agent-dev-quality.spec.ts pass=4 fail=0 exit=0
+[2026-09-09T04:07:28.303Z] round=2 spec=tests/e2e/browser-security-recovery.spec.ts pass=1 fail=0 exit=0
+[2026-09-09T04:07:28.305Z] round=2 totals pass=9 fail=0 skip=0 flaky=0 dur=56837ms
+[2026-09-09T04:09:25.282Z] round=3 spec=tests/e2e/app-smoke.spec.ts pass=4 fail=0 exit=0
+[2026-09-09T04:09:48.918Z] round=3 spec=tests/e2e/agent-dev-quality.spec.ts pass=4 fail=0 exit=0
+[2026-09-09T04:09:55.792Z] round=3 spec=tests/e2e/browser-security-recovery.spec.ts pass=1 fail=0 exit=0
+[2026-09-09T04:09:55.793Z] round=3 totals pass=9 fail=0 skip=0 flaky=0 dur=57484ms
+[2026-09-09T04:11:52.992Z] round=4 spec=tests/e2e/app-smoke.spec.ts pass=4 fail=0 exit=0
+[2026-09-09T04:12:16.869Z] round=4 spec=tests/e2e/agent-dev-quality.spec.ts pass=4 fail=0 exit=0
+[2026-09-09T04:12:23.682Z] round=4 spec=tests/e2e/browser-security-recovery.spec.ts pass=1 fail=0 exit=0
+[2026-09-09T04:12:23.684Z] round=4 totals pass=9 fail=0 skip=0 flaky=0 dur=57876ms
+[2026-09-09T04:12:23.684Z] e2e-monitor exit

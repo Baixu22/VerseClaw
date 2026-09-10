@@ -48,6 +48,32 @@ test.describe('Verse Claw chat scroll pin-to-bottom during runs', () => {
           },
         },
         hostApi: {
+          /*
+           * The renderer sends through `chat.sendWithMedia` (Host API), not the
+           * legacy `chat.send` gateway RPC mocked above — without this the send
+           * falls through to the real handler, fails, and `sending` never
+           * becomes true, so there is no run to pin the scroll to.
+           */
+          [stableStringify(['chat', 'sendWithMedia', null])]: {
+            success: true,
+            result: { runId: RUN_ID },
+          },
+          /*
+           * Sending is gated on a validated provider (FP-P1-01): without an
+           * account the click opens `chat-provider-gate-dialog` instead of
+           * starting a run, and nothing below — which all depends on
+           * `sending === true` — can happen.
+           */
+          [stableStringify(['providers', 'accounts', null])]: [{
+            id: 'acct-scroll-pin-e2e',
+            vendorId: 'openai',
+            label: 'Scroll pin E2E provider',
+            authMode: 'oauth_browser',
+            enabled: true,
+          }],
+          [stableStringify(['providers', 'accountKeyInfo', null])]: [],
+          [stableStringify(['providers', 'vendors', null])]: [],
+          [stableStringify(['providers', 'getDefaultAccount', null])]: { accountId: 'acct-scroll-pin-e2e' },
           [stableStringify(['/api/gateway/status', 'GET'])]: {
             ok: true,
             data: {
@@ -114,7 +140,9 @@ test.describe('Verse Claw chat scroll pin-to-bottom during runs', () => {
       await expect(page.getByTestId('chat-composer-input')).toBeEnabled({ timeout: 30_000 });
       await page.getByTestId('chat-composer-input').fill('do a multi-tool task');
       await page.getByTestId('chat-composer-send').click();
-      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('title', 'Stop');
+      // The run is active once the button flips to Stop. Its label lives on
+      // `aria-label`; the visible hint is a Tooltip, not a `title` attribute.
+      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', 'Stop');
 
       // Growing text stream -> height keeps increasing; bar must stay at bottom.
       await emitDelta({ role: 'assistant', content: [{ type: 'text', text: streamingText(3) }] });

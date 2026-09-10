@@ -4,6 +4,7 @@
  * tool result details consumed across exec hosts and process controls.
  */
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { DiagnosticTraceContext } from "../infra/diagnostic-trace-context.js";
 import type { EventSessionRoutingPolicy } from "../infra/event-session-routing.js";
 import type { ExecApprovalDecision } from "../infra/exec-approvals.js";
 import type {
@@ -21,6 +22,8 @@ import type { ExecReviewerConfig } from "./exec-auto-reviewer.js";
 
 /** Runtime defaults passed into exec/process tool factories. */
 export type ExecToolDefaults = {
+  /** Structured content sidecar used only for sink-local provenance policy. */
+  contentProvenance?: unknown;
   hasCronTool?: boolean;
   host?: ExecTarget;
   mode?: ExecMode;
@@ -38,6 +41,8 @@ export type ExecToolDefaults = {
   config?: OpenClawConfig;
   autoReviewer?: ExecAutoReviewer;
   agentId?: string;
+  /** Host/runtime parent trace for exec lifecycle correlation. */
+  trace?: DiagnosticTraceContext;
   backgroundMs?: number;
   timeoutSec?: number;
   approvalWarningText?: string;
@@ -74,6 +79,9 @@ export type ExecToolDefaults = {
   accountId?: string;
   notifyOnExit?: boolean;
   notifyOnExitEmptySuccess?: boolean;
+  /** Invoked when wait="goal" arms a process; the runtime aborts the current
+   *  turn and acks the persisted turn barrier only after the run is idle. */
+  onYield?: (message: string) => Promise<void> | void;
   cwd?: string;
 };
 
@@ -116,6 +124,10 @@ export type ExecToolDetails =
       startedAt: number;
       cwd?: string;
       tail?: string;
+      wait?: "none" | "session" | "goal";
+      taskId?: string;
+      flowId?: string;
+      turnBarrier?: "pending" | "acked";
     }
   | {
       status: "completed" | "failed";

@@ -1,0 +1,73 @@
+{
+  "applied_at": "2026-09-03T14:03:12.570646Z",
+  "base_graph_hash": "0243dd86d490f2d6a819ed664c688a2d7c712953631d504d6703729df338a794",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 148,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "无（本节点已收口）。跨写入口的完整 external-write 覆盖与把 runtime externalWritePolicy 接到 ClawX 审批面属 TF-0056 剩余范围，由既有 TFD-workspace-external-write-slice-only 与 TFD-close-workspace-external-write-partial-coverage 承载。",
+        "progress": 100.0,
+        "progress_source": "manual",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "status": "done",
+        "summary": "VS-P3-02 已按 scoped spec 收口。external-write 分类挂在 host-owned immutable command plan 的两条构造路径上，rollbackClaim 在类型层固定为 false（不可能出现 false-positive）；静态警告去重后接入既有 exec approval，不新增审批通道、journal、undo 栈、feature flag 或配置叶。两轮独立对抗式复核判定的 2 blocker（git config 只读旗标与写动作共存可链到任意执行；basename 为 git 的批处理跳过脚本检查）与 6 major（只读判定锚点、rg --hostname-bin、12 个 Git 只读误报、requestHash 漏删、三处裸 approval.reason、严重度反转、warningText 唯一渲染位置被丢弃）全部修复，每项由反向探针钉死，预期值对真实 git 2.51.0.windows.1 与 ripgrep 15.1.0 实测。门禁：full VerseShell 22 files/313、unit-fast 67 files/502、focused 范围 10 files/60、tests/unit 800 files/7121、tsgo:core、typecheck:node/web、contract:check、i18n:lint、oxlint、ESLint、build:vite、build:runtime、Chat/Inbox E2E 3/3、comms replay+compare（delta 0.00%）、harness context 与 validate --since HEAD、git diff --check 全部 exit 0。残余两项均为既有且已证明与本节点无因果关系：ai-commit-card 视觉快照漂移 214 像素（ratio 0.01，diff 未触及持有该断言的 test 1，基线 PNG 未改动）与 tests/unit 17 个既有失败文件（本分支一行未碰，撤销本节点改动后失败完全一致）。默认关闭与全部 rollout 锁未变。"
+      },
+      "id": "TF-0068"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-09-03T14:00:00Z",
+        "decided_by": "用户明确要求收口 TF-0068（2026-09-03）",
+        "evidence": "docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md 的 Adversarial review repair / Renderer-side repair / Unit-suite isolation repair 三节；tests/e2e/workspace-git-panel.spec.ts 实测输出 214 pixels ratio 0.01。",
+        "expected_requirement": "TF-0068 收口时 requiredTests 全绿、success_metrics 成立。",
+        "id": "TFD-tf0068-closeout-residuals-20260903",
+        "kind": "quality_gap",
+        "node_id": "TF-0068",
+        "observed_action_or_result": "两项残余随 done 一并记录而非抹掉：① tests/e2e/workspace-git-panel.spec.ts 为 2/3，唯一失败是 ai-commit-card 视觉快照漂移 214 像素 / ratio 0.01；已用 diff 检视证明因果独立——该断言在 test 1 内而本分支 diff 未触及 test 1，基线 PNG 未改动。② tests/unit 有 17 个文件失败，逐一核对本分支一行未碰；其中三个理论上可能由 promotion 表改动引起的（chat-render-reachability、chat-question-directory、first-product-claims）在撤销该改动后失败完全一致，为实测非假定。另记：ClawX permission store（electron-store）作为记录源仍保留原始 command/cwd/paths/reason，脱敏发生在渲染投影层；spec 的 forbiddenPatterns 约束的是「警告或审计投影」，此为既有 FP-P1-02 存储行为，非本节点引入。",
+        "recommendation": "两项残余不阻塞本节点收口，但不得据此声称 e2e 或 tests/unit 全绿。若后续要把记录源本身也脱敏，须另立 task 并评估审批决策所需字段。",
+        "related_task_ids": [
+          "TF-0068",
+          "TF-0056"
+        ],
+        "severity": "low",
+        "status": "accepted"
+      }
+    },
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "created_at": "2026-09-03T14:05:00Z",
+        "fit": "aligned",
+        "fit_confidence": 0.93,
+        "id": "TFA-close-tf0068-external-write-policy-20260903",
+        "node_id": "TF-0068",
+        "related_task_ids": [],
+        "user_goal": "让 TF-0068 收口为 done。",
+        "validation_plan": [
+          "full VerseShell 22 files / 313 tests",
+          "unit-fast 67 files / 502 tests",
+          "focused 范围 10 files / 60 tests（含 92 用例 identity 与 17 用例 redaction-contract 守卫）",
+          "tests/unit 800 files / 7121 tests",
+          "tsgo:core、typecheck:node、typecheck:web、contract:check、i18n:lint、targeted oxlint、changed-file ESLint",
+          "build:vite、build:runtime、Chat/Inbox Electron E2E 3/3",
+          "comms replay+compare、harness context 与 validate --since HEAD、git diff --check"
+        ],
+        "why_not_enough": "本片只覆盖 VerseShell governed exec 路径；其他 host/plugin 写入口与 runtime→ClawX 审批面接线未覆盖，因此「未声明 external write 0」按全仓全量口径尚不成立。",
+        "why_this_task": "它在 VerseShell governed exec 命令集合上建立了可审计、经对抗式复核的 external-write 可见性与诚实恢复语义：分类挂在 host-owned plan 上、模型无法选择或抑制、rollbackClaim 类型层固定为 false、警告静态有界、渲染投影在调用点守约。普通 workspace coding 命令仍可用（12 个 Git 只读误报已修）。"
+      }
+    }
+  ],
+  "created_at": "2026-09-03T14:03:03.524183Z",
+  "proposal_id": "TFP-TF-0068-closeout-20260903",
+  "rationale": "TF-0068 / VS-P3-02 按 scoped spec 收口。两轮独立对抗式复核的 2 blocker + 6 major 全部修复并逐条反向探针钉死；节点自身 3 条 acceptance_criteria、spec 6 条 acceptance 与 3 项 success_metrics 在本片声明的 VerseShell governed exec 命令集合上均成立；spec requiredTests 全部通过。跨写入口的完整 external-write 覆盖与 runtime→ClawX 审批面接线是既有已记录 deviation 所声明的后续工作，属 TF-0056 的剩余范围，不是本节点缺口。",
+  "session_id": "session-tf0068-closeout-20260903",
+  "status": "applied"
+}

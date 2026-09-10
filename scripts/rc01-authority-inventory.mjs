@@ -13,8 +13,20 @@ const repoRoot = resolve(dirname(new URL(import.meta.url).pathname.replace(/^\/(
 const SCHEMA = 'runtime-authority-convergence-baseline/v1';
 
 function git(root, args) {
-  const result = spawnSync('git', args, { cwd: root, encoding: 'utf8', shell: false });
-  if (result.status !== 0) throw new Error(`git ${args.join(' ')} failed: ${String(result.stderr ?? '')}`);
+  // `git ls-files` on this repo returns ~18k lines, far past spawnSync's 1 MiB
+  // default buffer. Without an explicit maxBuffer the call dies with ENOBUFS,
+  // `status` is null and `stderr` is empty — which used to surface as the
+  // useless message "git ls-files failed: ".
+  const result = spawnSync('git', args, {
+    cwd: root,
+    encoding: 'utf8',
+    shell: false,
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  if (result.status !== 0) {
+    const detail = String(result.stderr ?? '').trim() || result.error?.message || `exit ${result.status}`;
+    throw new Error(`git ${args.join(' ')} failed: ${detail}`);
+  }
   return String(result.stdout ?? '').trim();
 }
 

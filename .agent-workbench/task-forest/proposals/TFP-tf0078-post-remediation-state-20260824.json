@@ -1,0 +1,31 @@
+{
+  "applied_at": "2026-08-23T16:50:54.228793Z",
+  "base_graph_hash": "3a8c72bfab21ea451a8095bf40bdb27b38c506c401253c4e841bd32fd09b469e",
+  "base_summary": {
+    "edge_count": 181,
+    "node_count": 99,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/handoffs/LATEST.md",
+          "harness/specs/tasks/runtime-lifecycle-governance.md",
+          "artifacts/runtime-lifecycle-governance/audit-0.json .. audit-6.json",
+          "本轮 sessions.stop registry probe、goal-wake canary exit=1、packaged Electron helper output",
+          "docs/runtime-design/plan.md scheduled ticks planned but not shipped",
+          "2026-08-23/24 独立审计与整改收口：审计三线均 pass-with-findings（artifacts/tf0078-chain-health-audit/）；TF-0086 里程碑七步全部 done，4 major+7 minor 闭环，收口时刻全链 227 测试+根级门禁全绿（artifacts/tf0086-milestone-closeout/report.json）；用户裁定暂不提交，提交时按 artifacts/tf0093-commit-readiness/split-plan.md 执行，收口与否由用户提交后裁定"
+        ],
+        "next_action": "用户整理工作树后：按 artifacts/tf0093-commit-readiness/split-plan.md 协调 11 个跨流依赖并按节点序提交链改动（耦合文件按 hunk 拆分）→ 提交后重跑 diff-aware harness validate → 由用户裁定本里程碑是否收口为 done。整改侧条件已具备（见 artifacts/tf0086-milestone-closeout/report.json）。"
+      },
+      "id": "TF-0078"
+    }
+  ],
+  "created_at": "2026-08-23T16:50:53.937452Z",
+  "proposal_id": "TFP-tf0078-post-remediation-state-20260824",
+  "rationale": "TF-0085/TF-0086（审计+整改）收口后，把 TF-0078 的当前状态指针与下一步写明：整改完成、待用户整理工作树并按拆分预案提交，收口与否由用户裁定。不改变 TF-0078 的 in_progress 状态（用户已裁定暂不收口）。",
+  "session_id": "session-20260823-tf0078-chain-health-audit",
+  "status": "applied"
+}

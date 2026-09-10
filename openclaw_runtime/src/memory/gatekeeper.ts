@@ -421,15 +421,3 @@ export function reviewMemoryProposal(
   };
   return withPolicy({ action: "accept", accepted: true, card }, policy);
 }
-
-export function commitMemoryProposal(
-  proposal: MemoryProposal,
-  existing: readonly MemoryCard[] = [],
-  options: MemoryGatekeeperOptions = {},
-): { cards: MemoryCard[]; decision: MemoryGatekeeperDecision } {
-  const decision = reviewMemoryProposal(proposal, existing, options);
-  return {
-    cards: decision.card ? [...existing, decision.card] : [...existing],
-    decision,
-  };
-}

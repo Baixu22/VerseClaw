@@ -1,0 +1,217 @@
+{
+  "applied_at": "2026-09-05T08:03:20.266344Z",
+  "base_graph_hash": "589deaf473608bef6203eb841c3fae604c3ded15d637cbe3917188c2b0d125c6",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 148,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "d5-agent-core-scope",
+      "node": {
+        "acceptance_criteria": [
+          "三问各有明确结论，且每条结论引用具体边界条款编号",
+          "若判定需补 RS，则 §R3.6 与 GATE-BASELINE.md 同步更新并留存新基线输出",
+          "结论落 docs/dev/context-moat/reviews/<task-id>.md，可 grep"
+        ],
+        "confidence": 0.8,
+        "context_tags": [
+          "context-moat",
+          "governance",
+          "boundary"
+        ],
+        "difficulty": "low",
+        "estimated_total_minutes": 60,
+        "evidence": [
+          "git show --stat a2975eadc：15 files，含 packages/agent-core/src/harness/compaction/* 与 packages/agent-core/src/index.ts(+5)",
+          ".agent-workbench/task-forest/deviations/deviations.jsonl：88 行，grep agent-core/packages 零命中",
+          "docs/dev/context-moat/DEV-PROTOCOL.md:660（§R3.6 RS 定义）",
+          "docs/dev/context-moat/DEV-PROTOCOL.md:1247（§R5 范围-1）"
+        ],
+        "kind": "decision",
+        "non_goals": [
+          "不在本节点内修改任何 agent-core 代码",
+          "不重新论证 §R5 边界本身的合理性"
+        ],
+        "priority": 2,
+        "requirements": [
+          "按 §R1.0.1，不得由 TF-0124 的实施者裁定",
+          "按 §R4.8，若判定影响两车道已收口的半径读数，需两车道会签",
+          "按 §R5 技术-7，不追溯改写历史 artifacts；如需标注只允许追加式"
+        ],
+        "status": "proposed",
+        "summary": "事实（本轮实测）：TF-0124 的落地提交 a2975eadc 改动了 openclaw_runtime/packages/agent-core/src/harness/compaction/{compaction.ts, compression-artifact.ts} 并新增 summary-contract.ts，同时往 packages/agent-core/src/index.ts 追加 5 行导出；而 deviations/deviations.jsonl（88 行）中无任何一条提及 agent-core 或 packages/。§R3.6 的里程碑累积半径命令 RS 为 \"docs/dev/context-moat openclaw_runtime/src .agent-workbench/task-forest\"（DEV-PROTOCOL.md:660），不含 packages/，因此 M1 子节点半径 28/30 的读数在该目录上是盲的。裁定三问：(a) packages/agent-core 是否属 §R5 范围-1 所称『openclaw_runtime/src 下 ... 上下文·压缩 ... 相关部分』；(b) 若属，§R3.6 的 RS 是否补该路径、M1 与后续里程碑半径是否重取；(c) 若不属，TF-0124 是否需追补 record_deviation。本节点不预设结论。该裁定是任何触碰 agent-core 压缩代码的 task 的前置。",
+        "title": "D5 决策：`packages/agent-core` 的 §R5 范围-1 归属与 §R3.6 量测面补正"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "audit-intake-20260905",
+      "node": {
+        "acceptance_criteria": [
+          "F-1..F-9 各得且仅得一个归属：本轮 must-fix / backlog-P1 / 已由既有节点覆盖（写明节点号）/ 显式接受并记 deviation；每项附实现坐标",
+          "上述四处事实更正逐条写入 docs/dev/context-moat/reviews/<task-id>.md",
+          "判为 must-fix 的项各有一行『是否改默认值：是/否』判定，且为否"
+        ],
+        "assumptions": [
+          "审计原文将被纳入版本控制或明确判定为不入库；当前为未跟踪状态"
+        ],
+        "confidence": 0.8,
+        "context_tags": [
+          "context-moat",
+          "audit-intake",
+          "compaction"
+        ],
+        "difficulty": "medium",
+        "estimated_total_minutes": 120,
+        "evidence": [
+          "openclaw_runtime/src/config/defaults.ts:529-552；materialize.ts:76-78；agent-settings.ts:132-138",
+          "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts:806,832",
+          "openclaw_runtime/src/agents/sessions/agent-session.ts:2008-2014",
+          "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.ts:182-188（兜底预算）、:36-41,190-194（档界）",
+          "openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts:273-334（chars/4）、:285-290（user-role 图片 0 token）、:709（tokensBefore 走 estimateContextTokens，safeguard 路径同样经过）",
+          "openclaw_runtime/src/agents/sessions/settings-manager.ts:728-734（返回值无 contextWindow）",
+          "TF-0076 实测：would-retry 相对 shadow 为 2.521x total tokens、3.107x latency，结论『尚无可接受预算』"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "不在本节点内实施任何修复",
+          "不裁定 packages/agent-core 的范围归属（属 D5）",
+          "不重复开项 promotionStage 翻正与 would-retry 成本预算（已属 TF-0006/TF-0076）"
+        ],
+        "priority": 2,
+        "remaining_minutes_max": 180,
+        "remaining_minutes_min": 90,
+        "requirements": [
+          "按 §R5 范围-2，三分类判定权属审核者；实施者无权自行把该升级的问题降级进 backlog",
+          "任何判为『本轮 must-fix』的项，必须先证明其不触发 §R5 技术-4 与 §R3.4 默认值白名单",
+          "按 §R5 技术-7，不改写审计原文；四处事实更正以追加式标注或写入审核记录"
+        ],
+        "status": "proposed",
+        "summary": "来源：reports/CONTEXT-CONTROL-COMPRESSION-AUDIT-2026-09-05.md（当前未跟踪，350 行，F-1..F-9），以及一份基于它的外部收敛方案。三分类之前需先更正四处事实，否则归属判定建立在错误前提上：(1) safeguard 是默认生效模式 —— config/defaults.ts:529-552 在 load/missing profile 下写入 mode:\"safeguard\"（materialize.ts:76-78；snapshot profile 不套用），agent-settings.ts:132-138 据此返回，extensions.ts:806/832 只在该模式下注册 compactionSafeguardExtension；而 agent-session.ts:2008-2014 一旦扩展返回 compaction 结果即以 `compactionResult ??=` 跳过 compact()，故 planCompression 与 tier0-4 在默认路径上不可达，safeguard 自身注释（compaction-safeguard.ts:351-356）称其为 shadow-ignored、recordSafeguardBudgetShadow 传 ignored:true。F-1/F-1B 的修复对默认路径无可观测效果。(2) F-1 的『恒定 tier4』只在 ≥51k 窗口成立：兜底预算为 reserveTokens+keepRecentTokens=36,384，≤38k 窗口反而落 tier0，即压缩流程执行但完全不压缩，失效方向相反。(3) F-3 所述三重关闭是 §R5 技术-4 的合规状态而非疏漏，其中 ContextHealthMonitor 四维已由 TF-0128 通电、GOAL_ANCHOR_PATTERN 契约耦合已修、触发器选型已明确交第二轮 T-C3(TF-0130)。(4) F-5 实为六套以上估算器（另有约 20 处文件内私有副本），图片口径为 1200/2000/0 —— user-role 图片记零 token（compaction.ts:285-290），非审计所述 1.7× 偏差。另：审计第九节的结论（分档/阈值/预算函数必须有一个生产形状 case）在本仓库有更强证据——compression-planner.test.ts:13-18 的 SETTINGS 硬设 contextWindow:1_000，compaction-budget-shadow.test.ts:17、compression-artifact.test.ts:224,239、performance-budgets.test.ts:11-16 同形，整条阶梯只被生产从不构造的形状测过。",
+        "title": "认领 2026-09-05 压缩控制面审计九项发现（F-1..F-9）并按 §R5 范围-2 三分类"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "round2-default-flips",
+      "node": {
+        "acceptance_criteria": [
+          "本节点在本轮不验收；上述前置作为第二轮开工清单",
+          "四项各有 approve 记录与已验证回滚路径后，方可拆为各自在半径内的可执行 task"
+        ],
+        "confidence": 0.7,
+        "context_tags": [
+          "context-moat",
+          "round2",
+          "default-flip"
+        ],
+        "difficulty": "medium",
+        "estimated_total_minutes": 240,
+        "evidence": [
+          "docs/dev/context-moat/DEV-PROTOCOL.md:631,1261,1295；§R3.4 默认值白名单表（:623-633）",
+          "TF-0131（T-C4）被砍理由第一条：与硬边界『不改默认值，唯一例外 T-E2』直接冲突",
+          "TF-0140 仍为 in_progress/0，本轮唯一默认值预算尚未落地（等待人工签核与 14 天真人记录）"
+        ],
+        "kind": "follow_up",
+        "non_goals": [
+          "本轮不翻转任何默认值",
+          "不在此节点内讨论 promotionStage 翻正（属 TF-0006）"
+        ],
+        "priority": 4,
+        "requirements": [
+          "每项独立 approve，不得打包一次批准四项",
+          "声明『旗标关闭』为回滚方式时，须证明该旗标存在真实执行器（worktree.backend 判例）",
+          "masking 默认开前须给出搜索型任务旧证据丢失的兜底证明（archive handle 召回路径可达）"
+        ],
+        "status": "blocked",
+        "summary": "【本轮不投入工时 · blocked】外部收敛方案（2026-09-05）提出把 observationMasking.enabled、compaction.damageAudit.enabled（新增 config leaf，与 env OPENCLAW_COMPACTION_DAMAGE_AUDIT 或关系）、postCompactionSections 的 constraints 段默认注入、以及周期性全量重摘要（默认每 4 次）四项翻为默认开。本轮一律不得执行：§R5 技术-4『不改任何旗标默认值』，§R3.4 默认值白名单恰好一项（TF-0140 的 runtime.contextBlock.tool-registry.enabled），TF-0146 的成功指标为『本轮默认值改动次数 = 1』，白名单外任一默认值改动一律硬 FAIL（DEV-PROTOCOL.md:631）。同形提案 T-C4（TF-0131）已因构成第二个例外被砍，理由逐字在该节点。开工前置：四项各需 docs/dev/context-moat/approvals/<task-id>.md 人工 approve（先批准后改动，顺序不可倒置）、各自声明回滚方式并按 §R5 过程-9 验证该旗标存在执行器、以及按 T-C0 式字段清单重新估价。不得以『方案已经写好了』为由绕过前置。",
+        "title": "第二轮候选：压缩层默认值翻转四项（masking / damageAudit / postCompactionSections / 周期性 I 帧）"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "confidence": 0.85,
+        "reason": "边界裁定属本 global_task 的治理面，与 D3(TF-0136) 同位置"
+      },
+      "from": "d5-agent-core-scope",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "confidence": 0.85,
+        "reason": "审计认领是本 global_task 的技术债入口，与 TF-0119 认领 2026-08-02 审计遗留同形"
+      },
+      "from": "audit-intake-20260905",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.85,
+        "reason": "F-1/F-1B/F-2/F-5/F-8 的实现坐标全部落在 packages/agent-core，边界未裁定则『本轮 must-fix』这一档无判定依据"
+      },
+      "from": "audit-intake-20260905",
+      "to": "d5-agent-core-scope",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "confidence": 0.8,
+        "reason": "F-3 中健康分四维与 GOAL_ANCHOR_PATTERN 去耦部分已由 TF-0128 落地，三分类须以其落地状态为事实源而非审计描述"
+      },
+      "from": "audit-intake-20260905",
+      "to": "TF-0128",
+      "type": "related_to"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "confidence": 0.8,
+        "reason": "F-3 与外部方案的 promotionStage 翻正归 TF-0076 的成本预算 AC（已实测 2.521x tokens / 3.107x latency），本节点不重复开项"
+      },
+      "from": "audit-intake-20260905",
+      "to": "TF-0076",
+      "type": "related_to"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "confidence": 0.8,
+        "reason": "M6 是第二轮队列的载体；默认值翻转按 §R5 技术-4 只能进第二轮，且不占本轮预算"
+      },
+      "from": "round2-default-flips",
+      "to": "TF-0144",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "confidence": 0.8,
+        "reason": "四项默认值翻转来自同一份审计与外部方案；在三分类之前即可按 §R5 技术-4 判定出本轮范围"
+      },
+      "from": "round2-default-flips",
+      "to": "audit-intake-20260905",
+      "type": "derived_from"
+    }
+  ],
+  "created_at": "2026-09-05T08:03:09.717964Z",
+  "proposal_id": "TFP-audit-compression-20260905",
+  "rationale": "2026-09-05 产出压缩控制面审计（reports/CONTEXT-CONTROL-COMPRESSION-AUDIT-2026-09-05.md，未跟踪，9 项发现）与一份基于它的外部收敛方案。核查后确认：方案的 Phase 1 与 Phase 3 部分改动整体违反 §R5 技术-4 与 §R3.4 默认值白名单；Phase 2 想删的阶梯有一半已由 TF-0116 迁出；Phase 0 修复的 planCompression 路径在默认 safeguard 模式下不可达。故不按方案开轨道，只落三个节点：一个未决边界的决策节点、一个审计发现认领节点（三分类判定权按 §R5 范围-2 属审核者）、一个明确不占本轮预算的第二轮候选项。不新增实施节点，避免实施者自行预判三分类。",
+  "session_id": "session-2026-09-05-compression-audit-intake",
+  "status": "applied"
+}

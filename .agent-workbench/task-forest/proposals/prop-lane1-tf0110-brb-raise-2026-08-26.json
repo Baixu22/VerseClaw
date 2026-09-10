@@ -1,0 +1,28 @@
+{
+  "applied_at": "2026-08-25T16:17:36.375721Z",
+  "base_graph_hash": "f3a6131a4544cded4b19a42a32fac5047552cd084f9a34beca3409c5d2242f7b",
+  "base_summary": {
+    "edge_count": 260,
+    "node_count": 146,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "context_tags": [
+          "p0",
+          "memory",
+          "security",
+          "brb-M"
+        ]
+      },
+      "id": "TF-0110"
+    }
+  ],
+  "created_at": "2026-08-25T16:17:36.157267Z",
+  "proposal_id": "prop-lane1-tf0110-brb-raise-2026-08-26",
+  "rationale": "车道 1 审核 TF-0110（reviews/TF-0110.md 非实现者审核节）对半径超限的裁决（用户于 2026-08-26 委派车道 1 行使）：最小改动集 6 = 需求点名 4 src + AC 必需测试（复用既有套件）+ §R4.10 强制记录，与实现者记录一致；属 S 档估计未计入强制记录/测试文件的结构性缺陷，非实现越界；拆分在 sum 规则下不可行、降级与事实不符。裁决：档位重估 brb-S → brb-M（6 ≤ 15）。与 TF-0116（同类矛盾、裁决权在车道 2）保持对称口径。长期修法路由 §R3 owner（车道 2）评估。",
+  "session_id": null,
+  "status": "applied"
+}

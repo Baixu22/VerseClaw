@@ -1,0 +1,27 @@
+{
+  "applied_at": "2026-09-06T05:12:10.171215Z",
+  "base_graph_hash": "6447d6120a07b54cfebec3e01690ccca324b8b42bbefd246f85af17f1634bb55",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.95,
+        "next_action": "修复 3 项本轮内 P2-005 非 A2 maturity 失配（A1 evidence path missing ×2、A3 STATUS mismatch ×1），将其从 outOfRoundMismatches 移回 must-fix；随后在洁净量具重跑 maturity segment 5，并取得车道 1 对 M1 的最终会签。",
+        "progress": 95,
+        "status": "review_needed",
+        "summary": "M1 二次收口的五门表面读数曾满足判据，但车道 1 独立追加验收判定 FAIL：maturity 第 5 段 32 项中有 3 项 P2-005 非 A2 失配由本轮提交 185d05516 引入，主体文件 plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.delivery.md 与 P2-005.md 均在本轮归属集内，却被误记为 outOfRoundMismatches。按 outOfRoundRule，本轮内失败不得入轮外台账，只能 must-fix。TF-0137 仍按 landed-unwired 合法终态计入。M1 不能收口，待修复 3 项失配并重跑 maturity 后再由两车道共同会签。"
+      },
+      "id": "TF-0108"
+    }
+  ],
+  "created_at": "2026-09-06T05:12:02.763213Z",
+  "proposal_id": "TFP-tf0108-review-fail-20260906",
+  "rationale": "车道 1 已在 docs/dev/context-moat/reviews/TF-0108.md 追加独立验收，结论为 FAIL：maturity 第 5 段的 3 项 P2-005 非 A2 失配由本轮提交 185d05516 引入，却被记入 outOfRoundMismatches。该分类违反 outOfRoundRule，必须回到 must-fix。因此 TF-0108 不能收口，节点说明需同步真实复核结论。",
+  "session_id": "codex-tf0108-review-fail-20260906",
+  "status": "applied"
+}

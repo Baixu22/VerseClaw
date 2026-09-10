@@ -1,0 +1,34 @@
+{
+  "applied_at": "2026-08-24T14:33:53.999365Z",
+  "base_graph_hash": "5d5fdae2869b3ebbed68aec8b54a8a0b2025d401bde5080e86fb84f18d03cb70",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-24T14:35:00.000000Z",
+        "decided_by": "lane-2 self-check during the TF-0109 rollback drill; reconciled against lane-1's TFD-lane1-index-bleed-2026-08-24",
+        "id": "TFD-lane2-rollback-drill-index-mutation-2026-08-24",
+        "impact": "Root cause is a protocol gap, not a one-off slip: R5-process-9 requires EVERY task that declares a rollback to write down a VERIFIED rollback path, and section 8-7 requires three radius commands at every closeout. Both lanes run this for every task. Any index- or HEAD-mutating verification (`git revert`, `git reset`, `git stash`, bare `git add`) is a cross-lane write when the two lanes share one working tree and one index, so the compliance step itself is the hazard. Corrective action for lane-2, effective immediately and to be written into the sections lane-2 owns: (1) rollback verification must be WORKTREE-ONLY -- reverse-apply with `git apply -R`, run the task's L0 gate, then restore with `git apply`; never `git revert`/`git reset`/`git stash`. (2) every commit uses `git commit -- <explicit paths>` (converges with lane-1's corrective action). (3) radius commands must be pathspec-scoped to the lane's declared file set, since a bare `git diff --stat HEAD` reports 204 pre-existing modified files and cannot measure one task's radius. These three become normative text in DEV-PROTOCOL section R2 (TF-0106, L0/L1 gate definition) and section R3 (TF-0107, per-task radius closeout), both owned by lane-2.",
+        "kind": "process_incident",
+        "node_id": "TF-0109",
+        "related_task_ids": [
+          "TF-0105",
+          "TF-0106",
+          "TF-0107",
+          "TF-0145"
+        ],
+        "summary": "TF-0109's R5-process-9 rollback verification was executed as `git revert --no-commit HEAD`, which staged the revert of eb532b5c7 (the candidateGeneration leaf declaration) into the git index shared by both lanes. lane-1's next pathspec-less `git commit` swept that staged src deletion into its docs-only commit 233295ece, whose message claimed 'Zero src changes'. lane-1 self-detected and repaired via reset --soft + restore --staged, re-committing as docs-only 4a4c91634; lane-2 re-applied its patch to the working tree with `git apply` (index-free). End state verified correct: eb532b5c7 is a clean ancestor carrying the leaf, 4a4c91634 touches zero src files, HEAD contains the leaf in both files, worktree == HEAD, and the L1 gate is 4/4 green at 4a4c91634 (typecheck:node exit=0, lint:dcs exit=0, test:dcs exit=0, config-schema-parity 116 passed / 0 failed). No content lost; both lanes' histories remain cleanly separable."
+      }
+    }
+  ],
+  "created_at": "2026-08-24T14:33:11.041523Z",
+  "proposal_id": "TFP-lane2-rollback-drill-index-mutation-2026-08-24",
+  "rationale": "lane-2 records its own root cause for the 2026-08-24 shared-index incident. lane-1 already recorded the downstream half (TFD-lane1-index-bleed-2026-08-24: pathspec-less git commit takes the whole index). The upstream half is lane-2's: the R5-mandated rollback verification was performed with `git revert --no-commit`, which mutates the SHARED index. That is what placed a staged deletion there for lane-1's commit to pick up. Two distinct root causes, two distinct corrective actions; recording only lane-1's half would leave every future task's mandated rollback drill still able to re-trigger this.",
+  "session_id": "session-2026-08-24-lane-2",
+  "status": "applied"
+}

@@ -58,7 +58,7 @@ describe('channel runtime status helpers', () => {
   it('uses summary-level errors when no account is connected', () => {
     expect(
       pickChannelRuntimeStatus(
-        [{ accountId: 'default', connected: false, running: false }],
+        [{ accountId: 'default', connected: false, running: false } as never],
         { error: 'channel bootstrap failed' },
       ),
     ).toBe('error');

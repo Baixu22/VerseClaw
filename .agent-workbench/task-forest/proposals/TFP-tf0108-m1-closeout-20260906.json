@@ -1,0 +1,73 @@
+{
+  "applied_at": "2026-09-06T17:43:10.794609Z",
+  "base_graph_hash": "75f7135cd145e84a6105519ebc794bffeca254f9504fa1f8f41db8922c4635c6",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-09-06T17:42:25.886427+00:00",
+        "decided_by": "Claude Code 会签会话 99457cb4-6a27-4738-9772-4a3c73fb3247（自查登记）",
+        "evidence": "docs/dev/context-moat/reviews/TF-0108.md §13.5",
+        "expected_requirement": "§R4.7 禁止跨节编辑；§R3.8.3 判据 A 要求单个提交所改各节同属一个 owner，期望输出集恰为 {f005991b7}；判据 B 要求 Lane: 等于所改节 owner。",
+        "id": "TFD-tf0108-cross-lane-landing-7cfbb1e6c-20260906",
+        "impact": "不改变 M1 43/43 与全轮 175/230（路径集合相同）；§R5 那两行为收窄语句，不新增任何授权。§R3.8.3 判据 A 的「恰为 {f005991b7}」自该提交起为假；判据 B 对该提交无法同时成立。不可追溯拆分（§R5 技术-7，已 pack-refs）。",
+        "kind": "process_violation",
+        "node_id": "TF-0108",
+        "observed_action_or_result": "裁定会话把 §R3.6.1 正文（§R3）与一条两行的 §R5 交叉引用写在同一工作树；会签会话落地时应把 §R5 hunk 单独提交为 Lane: lane-1，却合并为一个 Lane: lane-2 提交。实测 sect()/md5sum：7cfbb1e6c sections-owner=[lane-2 lane-1] declared=lane-2 CROSS-LANE。",
+        "recommendation": "(a) §R5 owner（车道 1）确认或改写 DEV-PROTOCOL.md:1312 两行；(b) §R3.8.3 判据 A 期望集由 §R3 owner 更新为 {f005991b7, 7cfbb1e6c} 并注明成因；(c) 今后落地跨 owner 节的裁定文本时按节拆提交。分类 backlog-P1，不阻塞 M1。",
+        "related_task_ids": [
+          "TF-0108",
+          "TF-0145",
+          "TF-0102"
+        ],
+        "severity": "low",
+        "status": "open",
+        "summary": "7cfbb1e6c 在一个 Lane: lane-2 提交里同时改了 DEV-PROTOCOL §R3（车道 2）与 §R5 两行引用（车道 1），§R3.8.3 判据 A 输出 CROSS-LANE。"
+      }
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.99,
+        "evidence": [
+          "docs/dev/context-moat/reviews/TF-0108.md：第一次 L2 收口尝试的完整实测记录（含三个阻塞项的根因定位与归因）。",
+          "前置事故：分支 ref 曾被回退 153 个提交（d414d5778 是 51f43a8ba 的严格祖先，152 个提交无任何 ref 指向仅存 reflog），根因是 .git/refs/heads/feat/runtime-lifecycle-governance 被删除后 git 回落到 .git/packed-refs 的陈旧值；已按用户放行 update-ref 到 86d70186d + pack-refs --all 固化，并建 rescue/verseshell-20260904 防 gc。回退期间 M1 六子节点的归属集为空，§R3.6 三条命令会全部假性通过（空集退化为 git show HEAD）。",
+          "§R3.6（限定 M1 六个子节点）：归属提交 21，判定读数 28 ≤ 预算 30，如实记录读数 42，判定集内越界文件 0，M1 的 LANE_UNATTRIBUTED 为空集。轮级参考读数 178/230。",
+          "§R3.1 命令 2：3 项（types.openclaw.ts / zod-schema.ts / prod-flags-catalog.ts）全部落在 §R3.3 对 TF-0112 与 TF-0137 的白名单内。命令 3：判定用命中 1 行，定位 tests/unit/config-schema-parity.test.ts:170 的 entry.defaultValue 读取，非默认值改动；如实记录读数 55。",
+          "§R2.3 逐段实测：contract:check exit 0；typecheck exit 1（typecheck:node exit 2，34 个错误全部源自 TS2307 @modelcontextprotocol/sdk 缺失及其 implicit-any 级联，typecheck:web exit 0）；lint:check 四段 0/1/1/0（eslint 8 errors 372 warnings；lint:dcs 报 oxlint not found）；test 未执行；maturity:validate 七段 0/0/0/0/1/0/1。",
+          "§R2.3 自身缺陷：maturity 七段的副作用实测为 6 个 artifacts/system-maturity 文件，而 §R2.3 的强制复原清单只点名 1 个（P7-001/traceability-report.json）。本次已按目录整体复原并验证到内容级（git diff HEAD 为 0 文件）。",
+          "§R3.8.1 规则 4 断言非空 16 项：2 项为 §R3.8.4 已登记既有实例，3 项为车道 2 交接时已记的待补实例，3 项（18c8fe294 / 009b0ccb3 / e2a3db8d9）为新发现的本轮无归属提交且均不属 M1 子节点，8 项为轮外 workstream 提交不入断言。",
+          "docs/dev/context-moat/GATE-BASELINE.md §10（门 4 四个轮外 error 的逐条因果 + §10.6 maturity 洁净量具逐段实测 + §10.7 五门 L2 读数表）；DEV-PROTOCOL.md §R3.6（第三种失效：trailer 存在 != 本轮，实测虚增 34 文件）、§D4.2（判据改用归属完整集）、§D4.3（maturity 逐段裁定与 7 项 must-fix 归属）；偏差 TFD-lane2-r36-third-failure-trailer-not-round-2026-09-05 / TFD-lane2-out-of-round-lint-2026-09-05 / TFD-lane2-maturity-segment7-baseline-2026-09-05 / TFD-lane2-tf0119-findings-registry-hash-break-2026-09-05；提交 69971a772。",
+          "GATE-BASELINE.md §11（五门终态表 / 三处自我更正 / M2 半径超预算）、§10（轮外台账逐条因果）；DEV-PROTOCOL.md §R2.3（判据改为「⊆ 白名单 ∪ 轮外台账」+ 自改写门改在一次性 worktree 跑）、§R3.6（第三、第四种失效）、§D4.2（判据改用归属完整集）、§D4.3（maturity 逐段裁定与外科式修复）；偏差 TFD-lane2-tf0119-findings-registry-hash-break-2026-09-05(resolved) / TFD-lane2-maturity-segment7-baseline-2026-09-05(resolved) / TFD-lane2-r36-milestone-scope-fourth-failure-2026-09-05(resolved) / TFD-lane2-pnpm-test-whitelist-shrink-2026-09-05(accepted) / TFD-lane2-out-of-round-lint-2026-09-05(accepted) / TFD-lane2-r36-third-failure-trailer-not-round-2026-09-05(resolved)；提交 69971a772 / 416a70073 / 17ed0a097。",
+          "docs/dev/context-moat/reviews/TF-0108.md §10：2026-09-06 三项失配修复、六条派生哈希、阴性对照、L1与洁净量具实测；候选551759e32，M1半径42/30待裁定。",
+          "docs/dev/context-moat/reviews/TF-0108.md §11：2026-09-06 非实施会话独立技术复核，三项修复与六条哈希通过，19/19相关测试及两项阴性对照有效；maturity 32→29/96→79、25基线保留。半径42/30（全量56）仍FAIL，非盲审、不构成最终会签；原始复测位于 C:/Users/27933/AppData/Local/Temp/clawx-tf0108-independent-1ac8dffe/。",
+          "docs/dev/context-moat/reviews/TF-0108.md §12 与 DEV-PROTOCOL.md §R3.6.1：用户委托并要求继续后，已裁定本次 M1 上限43、全轮仍230；保留14个修复路径的TF-0108归属，并纳入1个必需交接路径。六项范围边界检查、白名单不变检查和隔离树Harness validate/dry-run通过；最终提交归属、完整L2及正式会签仍待完成。",
+          "docs/dev/context-moat/reviews/TF-0108.md §13：2026-09-06 正式独立会签（Claude Code 会话，非实施/复核/裁定会话）。最终提交集 cc5be5367..707383032：三修复以原对象 eb87f6660/2f123f28c/551759e32 快进上分支，裁定增量 7cfbb1e6c（Task/lane-2），审核记录与落账 707383032（Reviews/lane-1）；packed-refs 已同步 HEAD，邻居 staged 指纹四次读数不变。",
+          "§R3.6 在 707383032 上实测：M1 判定读数 43/43（如实 57），最终 authored 集与「28 基线 ∪ §R3.6.1 15 路径」两向差集均空；全轮 175/230（如实 326）；TRIAGE-NO-LANE 19 = 16 轮外 + 3 车道 1 既有补登义务；§R3.1 命令 2 空、命令 3 判定 0（如实 81）；§R3.8.1 规则 3 对 707383032 零输出。",
+          "§R2.3 L2 五门在 707383032 上逐段实测：contract:check 0；typecheck 0（test 69.9s / node 42.7s / web 25.3s）；lint:check 0/1/0/0，eslint 8 errors = 4 exemptions + 4 outOfRoundErrors、UNACCOUNTED 0、无腐化条目；pnpm test 1/0/0，段 1 1 failed | 820 passed | 3 skipped（唯一失败为白名单 heap 用例，heapDeltaMb 10.414；parity passed），段 2 25/25，段 3 test:dcs 全绿；maturity 七段 0/0/0/0/1/0/1 于一次性 worktree，第 5 段 29 = 25 基线 + 4 轮外 A2、P2-005 三项 0 复现，第 7 段 79 ⊆ 基线 96、新增 0，共用树 artifacts/system-maturity 从未被写。原始输出：C:/Users/27933/AppData/Local/Temp/tf0108-l2/。",
+          "§R3.6.1 文本独立核对：JSON 可解析，15 路径 = 三修复提交路径并集 14 ∪ {LATEST}，43 = 28 + 15，230 与预算表一致，repairBase/repairCandidate 与实际 SHA 相等，6 条生效条件与 §R3.5/§R3.8.1 一致，偏差 accepted，GATE-BASELINE §6 白名单 JSON 哈希候选与 HEAD 相同。",
+          "会签时发现并登记：7cfbb1e6c 同时改 §R3（lane-2）与 §R5 两行（lane-1），§R3.8.3 判据 A 为 CROSS-LANE；源于会签会话落地时未拆 §R5 hunk。不改任何读数、不新增授权；backlog-P1，偏差 TFD-tf0108-cross-lane-landing-7cfbb1e6c-20260906。"
+        ],
+        "execution_hints": [
+          "2026-09-06 已由独立会签收口为 done；不要重开。任何后续引用 §R3.6.1 上限 43 的请求一律拒绝——该许可只覆盖本次收口。"
+        ],
+        "next_action": "已收口。M2 里程碑 TF-0115 现为 proposed，其 50/40 半径挂账须在 M2 收口前明确处置；§R3.6.1 许可已随本次收口失效。开放事项归 owner：TFD-tf0108-cross-lane-landing-7cfbb1e6c-20260906、XL-016、车道 1 三条 trailer 补登（18c8fe294/009b0ccb3/e2a3db8d9）。TF-0137 继续 landed-unwired。",
+        "progress": 100,
+        "status": "done",
+        "summary": "M1 已正式收口（2026-09-06，独立会签 PASS）。最终提交集 cc5be5367..707383032：三修复原对象快进 + 裁定增量 7cfbb1e6c + 审核落账 707383032。M1 半径 43/43（新增路径恰为 §R3.6.1 的 15 条）、全轮 175/230；L2 五门在 707383032 上逐段实测全部满足判据（eslint 8 = 4 白名单 + 4 台账；pnpm test 唯一失败为白名单 heap 用例；maturity 第 5 段 29 = 25 + 4、第 7 段 79 ⊆ 96）。六子项：五项 done，TF-0137 保持 review_needed/100 + landed-unwired。一处 backlog-P1 已登记（7cfbb1e6c 跨 owner 节落地）。M2 50/40 超限继续挂账。零 runtime 代码、默认值、产品锁与历史 artifacts 改动。"
+      },
+      "id": "TF-0108"
+    }
+  ],
+  "created_at": "2026-09-06T17:42:26.014255Z",
+  "proposal_id": "TFP-tf0108-m1-closeout-20260906",
+  "rationale": "最终提交集已固定并可逐 SHA 追溯；在 707383032 上 M1 43/43、全轮 175/230、§R3.1 命令 2/3 与 §R2.3 五门全部满足判据；六子项按 §D1 合法终态；§R3.6.1 文本经非裁定作者独立核对。用户已授权全绿即标 done。会签中发现的一处提交拆分缺陷（7cfbb1e6c 跨 owner 节）不改任何读数，作为 backlog-P1 偏差登记而非隐藏。TF-0137 保持 landed-unwired，M2 50/40 继续挂账。",
+  "session_id": "claude-tf0108-signoff-20260906",
+  "status": "applied"
+}

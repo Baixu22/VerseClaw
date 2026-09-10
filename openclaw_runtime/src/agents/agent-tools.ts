@@ -14,7 +14,10 @@ import type { InboundEventKind } from "../channels/inbound-event/kind.js";
 import { resolveExecCommandHighlighting } from "../config/exec-command-highlighting.js";
 import type { ModelCompatConfig } from "../config/types.models.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
-import type { DiagnosticTraceContext } from "../infra/diagnostic-trace-context.js";
+import {
+  createDiagnosticTraceContextFromActiveScope,
+  type DiagnosticTraceContext,
+} from "../infra/diagnostic-trace-context.js";
 import { resolveEventSessionRoutingPolicy } from "../infra/event-session-routing.js";
 import {
   type ExecAsk,
@@ -28,6 +31,7 @@ import { getPluginToolMeta } from "../plugins/tools.js";
 import { createLazyImportLoader } from "../shared/lazy-promise.js";
 import type { SkillSnapshot } from "../skills/types.js";
 import { resolveGatewayMessageChannel } from "../utils/message-channel.js";
+import type { ContentProvenanceContext } from "../../../shared/security/content-provenance.js";
 import { resolveAgentConfig } from "./agent-scope.js";
 import { wrapToolWithAbortSignal } from "./agent-tools.abort.js";
 import {
@@ -57,10 +61,12 @@ import {
   wrapToolWorkspaceRootGuard,
   wrapToolWorkspaceRootGuardWithOptions,
   wrapToolParamValidation,
+  resolveToolPathAgainstWorkspaceRoot,
 } from "./agent-tools.read.js";
 import { cleanToolSchemaForGemini, normalizeToolParameters } from "./agent-tools.schema.js";
 import type { AnyAgentTool } from "./agent-tools.types.js";
-import { createApplyPatchTool } from "./apply-patch.js";
+import { extractApplyPatchTargetPaths } from "./apply-patch-paths.js";
+import { createApplyPatchTool, parsePatchText } from "./apply-patch.js";
 import { createMemoryQueryTool } from "../runtime-core/memory-query-tool.js";
 import { createMemorySelfEditTools } from "../runtime-core/memory-self-edit-adapter.js";
 import type { BlockStoreApi, ContextBlockSink } from "../context-engine/block.js";
@@ -80,6 +86,10 @@ import { wrapToolWithStaleWriteGuard } from "./stale-write-guard.js";
 import { type TestRunnerExecutor, wrapToolWithWriteSideEffects } from "./write-side-effects.js";
 import { wrapToolWithSoftWriteGates } from "./write-soft-gates.js";
 import { wrapToolWithDestructiveTier } from "./write-destructive-tier.js";
+import {
+  resolveCanonicalWorkspaceWriteScope,
+  wrapToolWithWorkspaceExternalWriteProvenance,
+} from "./workspace-external-write-provenance-policy.js";
 import { createUndoWriteTool, wrapToolWithWriteJournal } from "./tools/write-journal.js";
 import type { AuthProfileStore } from "./auth-profiles/types.js";
 import { describeExecTool, describeProcessTool } from "./bash-tools.descriptions.js";
@@ -142,6 +152,7 @@ import {
 import { resolveWorkspaceRoot } from "./workspace-dir.js";
 import { createVerseShellResultTool } from "./verseshell/result-tool.js";
 import { createVerseShellReadonlyFacadeTools } from "./verseshell/readonly-facade.js";
+import { createVerseShellPatchPreviewTool } from "./verseshell/patch-preview.js";
 
 const MEMORY_FLUSH_ALLOWED_TOOL_NAMES = new Set(["read", "write"]);
 
@@ -437,6 +448,8 @@ export type OpenClawCodingToolConstructionPlan = {
 /** Build the runtime tool list for one agent run. */
 export function createOpenClawCodingTools(options?: {
   agentId?: string;
+  /** Structured content sidecar consumed by sensitive sink adapters. */
+  contentProvenance?: unknown;
   exec?: ExecToolDefaults & ProcessToolDefaults;
   messageProvider?: string;
   agentAccountId?: string;
@@ -597,6 +610,7 @@ export function createOpenClawCodingTools(options?: {
   /** Runtime-only resolved skill paths that the read tool may load under workspaceOnly. */
   skillsSnapshot?: SkillSnapshot;
 }): AnyAgentTool[] {
+  const effectiveTrace = options?.trace ?? createDiagnosticTraceContextFromActiveScope();
   const sandbox = options?.sandbox?.enabled ? options.sandbox : undefined;
   const isMemoryFlushRun = options?.trigger === "memory";
   if (isMemoryFlushRun && !options?.memoryFlushWritePath) {
@@ -762,6 +776,7 @@ export function createOpenClawCodingTools(options?: {
   const workspaceRoot = resolveWorkspaceRoot(options?.workspaceDir);
   const runtimeRoot = resolveWorkspaceRoot(options?.cwd ?? options?.workspaceDir);
   const codingRoot = sandboxRoot ?? runtimeRoot;
+  const externalWriteRoot = sandboxRoot ?? (options?.workspaceDir ? workspaceRoot : runtimeRoot);
   const parseOnTouchEnabled = isCodingParseOnTouchEnabled(options?.config, {
     parseOnTouchEnabled: options?.parseOnTouchEnabled,
   });
@@ -776,6 +791,9 @@ export function createOpenClawCodingTools(options?: {
   });
   const symbolLeaseMode = resolveSymbolLeaseMode(options?.config);
   const autoVerifyConfig = resolveCodingAutoVerifyConfig(options?.config);
+  const contentProvenanceContext: ContentProvenanceContext = {
+    provenance: options?.contentProvenance,
+  };
   // Filled only after the complete policy/hook pipeline. The write wrapper's
   // closure therefore cannot bypass an exec tool removed from the final surface.
   const autoVerifyExecToolRef: { current?: AnyAgentTool } = {};
@@ -806,6 +824,17 @@ export function createOpenClawCodingTools(options?: {
     staleWriteGuard: staleWriteGuardEnabled,
     writeJournal: writeJournalEnabled,
     symbolLease: symbolLeaseEnabled,
+  };
+  const resolveExternalWriteScope = async (targetPaths: readonly string[]) => {
+    try {
+      const scope = await resolveCanonicalWorkspaceWriteScope({
+        workspaceRoot: externalWriteRoot,
+        targetPaths,
+      });
+      return { check: true, scopeKnown: true, ...scope };
+    } catch {
+      return { check: true, scopeKnown: false, targetPaths: [] };
+    }
   };
   const applyWriteKit = (
     tool: AnyAgentTool,
@@ -860,6 +889,51 @@ export function createOpenClawCodingTools(options?: {
     });
     // C2-10 destructive tier classification + approval metrics
     next = wrapToolWithDestructiveTier(next, { journalEnabled: writeJournalEnabled });
+    next = wrapToolWithWorkspaceExternalWriteProvenance(next, {
+      action: kind,
+      provenanceContext: contentProvenanceContext,
+      workspaceRoot: externalWriteRoot,
+      resolveTargets: async (params) => {
+        const record = getToolParamsRecord(params);
+        if (kind !== "apply_patch") {
+          const rawPath = record?.path;
+          if (typeof rawPath !== "string" || !rawPath.trim()) {
+            return { check: false, scopeKnown: false, targetPaths: [] };
+          }
+          return resolveExternalWriteScope([
+            resolveToolPathAgainstWorkspaceRoot({
+              filePath: rawPath,
+              root: codingRoot,
+              containerWorkdir: sandbox?.containerWorkdir,
+            }),
+          ]);
+        }
+        const input = record?.input;
+        if (typeof input !== "string" || !input.trim()) {
+          return { check: false, scopeKnown: false, targetPaths: [] };
+        }
+        try {
+          if (parsePatchText(input).hunks.length === 0) {
+            return { check: false, scopeKnown: false, targetPaths: [] };
+          }
+        } catch {
+          // Preserve the strict parser's existing error for malformed input.
+          return { check: false, scopeKnown: false, targetPaths: [] };
+        }
+        const targetPaths = extractApplyPatchTargetPaths(record, {
+          cwd: codingRoot,
+          ...(sandboxRoot && sandboxFsBridge
+            ? { sandbox: { root: sandboxRoot, bridge: sandboxFsBridge } }
+            : {}),
+        });
+        // Let the strict patch parser retain its existing malformed-envelope
+        // errors. A parsed patch with no extractable target is unknown and must
+        // fail closed for external or unknown provenance.
+        return targetPaths.length > 0
+          ? resolveExternalWriteScope(targetPaths)
+          : { check: true, scopeKnown: false, targetPaths: [] };
+      },
+    });
     return next;
   };
   const memoryFlushWriteRoot = sandboxRoot ?? workspaceRoot;
@@ -1041,6 +1115,7 @@ export function createOpenClawCodingTools(options?: {
   const execTool = includeShellTools
     ? createLazyExecTool({
         ...execDefaults,
+        contentProvenance: options?.contentProvenance ?? execDefaults.contentProvenance,
         host: options?.exec?.host ?? execConfig.host,
         mode: effectiveExecPolicy.mode,
         security: effectiveExecPolicy.security,
@@ -1056,6 +1131,7 @@ export function createOpenClawCodingTools(options?: {
         safeBinTrustedDirs: options?.exec?.safeBinTrustedDirs ?? execConfig.safeBinTrustedDirs,
         safeBinProfiles: options?.exec?.safeBinProfiles ?? execConfig.safeBinProfiles,
         agentId,
+        trace: effectiveTrace,
         cwd: codingRoot,
         allowBackground,
         scopeKey,
@@ -1081,6 +1157,7 @@ export function createOpenClawCodingTools(options?: {
         notifyOnExit: options?.exec?.notifyOnExit ?? execConfig.notifyOnExit,
         notifyOnExitEmptySuccess:
           options?.exec?.notifyOnExitEmptySuccess ?? execConfig.notifyOnExitEmptySuccess,
+        onYield: options?.onYield,
         sandbox: sandbox
           ? {
               containerName: sandbox.containerName,
@@ -1104,6 +1181,7 @@ export function createOpenClawCodingTools(options?: {
         cwd: codingRoot,
         agentId,
         config: options?.config,
+        trace: effectiveTrace,
       })
     : null;
   const verseShellReadonlyFacadeTools = includeShellTools
@@ -1112,6 +1190,18 @@ export function createOpenClawCodingTools(options?: {
         agentId,
         revision: options?.workspaceRevision,
         config: options?.config,
+        trace: effectiveTrace,
+      })
+    : null;
+  // Preview only: it reports base hashes, preconditions and diffs. Committing,
+  // undo and recovery stay with the apply_patch write journal below.
+  const verseShellPatchPreviewTool = includeShellTools
+    ? createVerseShellPatchPreviewTool({
+        cwd: codingRoot,
+        agentId,
+        revision: options?.workspaceRevision,
+        config: options?.config,
+        trace: effectiveTrace,
       })
     : null;
   const applyPatchToolRaw =
@@ -1235,10 +1325,12 @@ export function createOpenClawCodingTools(options?: {
     ...(processTool ? [processTool as unknown as AnyAgentTool] : []),
     ...(verseShellResultTool ? [verseShellResultTool] : []),
     ...(verseShellReadonlyFacadeTools ?? []),
+    ...(verseShellPatchPreviewTool ? [verseShellPatchPreviewTool] : []),
     // Channel docking: include channel-defined agent tools (login, etc.).
     ...(includeChannelTools ? listChannelAgentTools({ cfg: options?.config }) : []),
     ...(includeOpenClawTools
       ? createOpenClawTools({
+          contentProvenanceContext,
           sandboxBrowserBridgeUrl: sandbox?.browser?.bridgeUrl,
           allowHostBrowserControl: sandbox ? sandbox.browserAllowHostControl : true,
           agentSessionKey: options?.sessionKey,
@@ -1412,7 +1504,7 @@ export function createOpenClawCodingTools(options?: {
         sessionId: options?.sessionId,
         runId: options?.runId,
         channelId: options?.hookChannelId ?? options?.currentChannelId,
-        ...(options?.trace ? { trace: options.trace } : {}),
+        trace: effectiveTrace,
         loopDetection: resolveToolLoopDetectionConfig({ cfg: options?.config, agentId }),
         onToolOutcome: options?.onToolOutcome,
       },

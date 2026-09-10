@@ -1,0 +1,85 @@
+{
+  "applied_at": "2026-08-27T17:56:22.709928Z",
+  "base_graph_hash": "f84b460fc6a40717468b09ea27e463c836cdc83ef1c0dc3104d3bfb419fe17ea",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-08-27T17:00:00Z",
+        "decided_by": "用户于 2026-08-27 放行本轮修订 §R3（看板 XL-006）；lane-2 作为 §R3 owner 落地。本记录按 deviations.jsonl 的 append-only 语义追加同 id 的终态，状态以本条为准。",
+        "evidence": "docs/dev/context-moat/DEV-PROTOCOL.md §R3.6（派生式累积门与实测差额表）、§R3.8.1 规则 3（三类合法路径与真阳性 6fde351e7）、§R3.9.1（229/230 构成表）；AUDIT-BOARD.html XL-003 / XL-006。",
+        "expected_requirement": "§R3.6：KNOWN_UNATTRIBUTED 声明为「恰好两项且封闭」，仅 f005991b7 与 fe469cbff。§R3.8.1 规则 4：无归属提交 = §R3 违反。",
+        "id": "TFD-lane2-unattributed-taskforest-commits-2026-08-27",
+        "impact": "累积半径读数由 155 更正为 229（漏计 74 个文件，占 M0..M5 预算 230 的 32%）。TRIAGE-NO-LANE 实测 7 项，全部核实为轮外 workstream 提交（e2a3db8d9 e33abd5fe 56cc85502 5973da7c8 e043cad95 2b03f5435 c89b1c4e5），故本轮无遗漏的在轮提交。残留孔洞（既忘 Task: 又忘 Lane:）由第二输出使其可见而非静默丢弃。不追溯改写那 13 个提交的 trailer（§R5 技术-7，且共用分支改写历史是破坏性操作）。",
+        "kind": "process_gap",
+        "node_id": "TF-0107",
+        "observed_action_or_result": "13 个带 Lane: lane-1、触碰 .agent-workbench/task-forest 而无 Task:/Reviews: 的本轮提交使该清单事实上不封闭。修订已落地：§R3.6 废止硬编码清单，改为按 Lane: 派生 LANE_UNATTRIBUTED，并新增必跑的第二输出 TRIAGE-NO-LANE（触碰本轮面但连 Lane: 都没有的提交，须人工分类）。§R3.8.1 规则 3 同时扩张为三类合法路径，消解「审核者必须写 Task Forest 但无合法 trailer」的无解冲突 —— 该冲突正是这 13 个提交退化为无归属的成因。",
+        "recommendation": "M1 起 TRIAGE-NO-LANE 须为空或每项有人工分类留痕。修订后的累积读数 229/230 只剩 1 个文件余量，该问题另见 TFD-lane2-generated-artifacts-in-radius-2026-08-27 与看板 XL-010。",
+        "related_task_ids": [
+          "TF-0107",
+          "TF-0102",
+          "TF-0143",
+          "TF-0138"
+        ],
+        "severity": "medium",
+        "status": "resolved"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-08-27T17:00:00Z",
+        "decided_by": "用户于 2026-08-27 明确指示先处置 XL-003 / XL-006，即放行本轮修订 §R3 正文；lane-2 作为 §R3 的 owner 车道落地，未跨节编辑其他章节（AC-6 判据 A 实测：本次仅 §R3 一节变更，owner 同质）。",
+        "evidence": "docs/dev/context-moat/DEV-PROTOCOL.md §R3.1 / §R3.6 / §R3.8.1 规则 3 / §R3.9；本次提交的三处 diff。",
+        "expected_requirement": "§R4 跨节纪律：每节只允许其 owner 车道写入。轮内改协议正文需用户放行。§R2.6 同源纪律：禁止向门节写入未验证命令。",
+        "id": "TFD-lane2-r3-amendment-xl003-xl006-2026-08-27",
+        "impact": "三项均通过真阳性验证而非只验证「当前不报警」：命令 3 的新形式对合成 diff 仍捕获 z.boolean().default(false->true) 与 DEFAULT_FLAGS = { toolRegistry: false->true } 共 4 行；§R3.6 的中间一版（直接并入 pathspec 选中的全部无归属提交）实测读作 552 而被否决，与本节前一版用区间 diff 读作 294 是同一失效形态，故正解只能是 Lane: 判别；规则 3 的新判据对全历史复跑检出真实违反 6fde351e7（lane-1 的 TF-0118 审核提交改了 DEV-PROTOCOL.md），证明其有拦截力。B1 占位断言仍为 0，AC-6 判据 A 显示本次变更 owner 同质。",
+        "kind": "process_gap",
+        "node_id": "TF-0107",
+        "observed_action_or_result": "三处修订落地。(1) §R3.1 命令 3 加第三处排除 ':!.agent-workbench' 作判定式，并保留未排除式作如实记录项；理由是生成物含其他 task 的 node 正文而 §R1 A2 表强制每个 task 记录「旗标默认值是否为关」，故命中必然出现且随写入次数线性增长（同一 task 三次实测 16 / 44 / 54，runtime 恒 0）。(2) §R3.6 硬编码 KNOWN_UNATTRIBUTED 改为按 Lane: 派生 + TRIAGE-NO-LANE 第二输出。(3) §R3.8.1 规则 3 合法路径扩为 reviews/*.md、.agent-workbench/task-forest/**、AUDIT-BOARD.html 三类，DEV-PROTOCOL.md 刻意排除。新增 §R3.9 记录修订后的体检读数。",
+        "recommendation": "§R3.9.3 已明写：在 XL-010 裁决落地前，生成物照计、超限照报、裁决照走非实现者，不得以 §R3.9 的数据为由自行豁免任何路径。",
+        "related_task_ids": [
+          "TF-0107",
+          "TF-0102"
+        ],
+        "severity": "low",
+        "status": "resolved"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.9,
+        "created_at": "2026-08-27T17:00:00Z",
+        "decided_by": "lane-2 作为 §R3 owner 在修订 XL-003 / XL-006 时实测发现，按 §R5 范围-2 三分类为需用户裁决项（不自行处置：改变半径计量对象会改动 §R3.2 阈值表含义并追溯影响六次已落地裁决）。已作为看板 XL-010 提请。",
+        "evidence": "docs/dev/context-moat/DEV-PROTOCOL.md §R3.9.1（229/230 构成表）与 §R3.9.2（六次裁决对照表）；reviews/TF-0113.md（开工前半径预判 12 > 5）；reviews/TF-0138.md §5；reviews/TF-0143.md §5。",
+        "expected_requirement": "§R3.6：M0..M5 累积半径预算 230，冻结于 B1。§R3.2：brb-S = 5、brb-M = 15。§R4.6：结构性变更与状态变更必须走 Task Forest，无第二通道。",
+        "id": "TFD-lane2-generated-artifacts-in-radius-2026-08-27",
+        "impact": "两层。(1) 里程碑门即将失败于簿记而非改动：每次 update-node / proposal-apply 至少 +1 份 snapshot，故再写 1 次读数到 230、再写 1 次即 231 > 230 硬 FAIL，而触发失败的动作是「记录一次治理决策」本身。(2) 在 §R4.6 强制走 Task Forest 的前提下，brb-S(5) 对任何需要记录决策的 task 结构上不可达（一次写入固定成本已 8-9 个文件），brb-M(15) 也只够两三次写入 —— 这解释了六次裁决零例外。TF-0113 已在开工前上报同一形态（brb-S 上限 5，最小合规改动集下界 12）。",
+        "kind": "process_gap",
+        "node_id": "TF-0107",
+        "observed_action_or_result": "修订后的累积门首次给出可信读数：229 / 230，余量 1 个文件。构成实测：Task Forest snapshots 95（每次 CLI 写入生成一份，内容是整张图的完整副本）＋ 恒定重写的 config/graph/exports/todos 8 ＋ proposals 19 ＋ deviations 1 ＋ openclaw_runtime/src 47（真正的代码面）＋ docs 32 ＋ 其他 27。即 103/229（45%）是生成物，代码面只有 47。逐 task 侧同源：本轮六个如实归属治理生成物的 task 全部超半径且无一例外（TF-0110/0116/0124/0121/0143/0138），而 14 个把治理写入落在无归属提交里的 task 生成物计数全部为 0。",
+        "recommendation": "提请用户裁决三选一（看板 XL-010）：(a) 把 Task Forest 生成物（snapshots/ 与 exports/ 与 graph/ 与 todos/ 与 config.json）移出命令 1 与 §R3.6 的计量对象，保留 authored 治理物（reviews/、proposals/、deviations.jsonl、corpus/、designs/、approvals/、AUDIT-BOARD.html）照计 —— 依据是生成物不携带独立信息、其数量只由 CLI 调用次数决定；(b) 维持现状并把 M0..M5 预算按实测重估（须处理 §R3.6「冻结于 B1」的自我失效问题）；(c) 维持现状且不重估，接受里程碑门在下一两次治理写入后硬 FAIL 并逐次裁决。lane-2 推荐 (a)，但不自行执行。在裁决落地前按 §R3.9.3 执行：生成物照计、超限照报、裁决照走非实现者。",
+        "related_task_ids": [
+          "TF-0107",
+          "TF-0102",
+          "TF-0113"
+        ],
+        "severity": "high",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-27T17:56:22.364528Z",
+  "proposal_id": "prop-lane2-r3-amendment-xl003-xl006-2026-08-27",
+  "rationale": "用户于 2026-08-27 放行本轮修订 §R3 正文（看板 XL-003 与 XL-006）。lane-2 作为 §R3 的 owner 节落地三处修订，每处都先实测再写入（§R2.6 的「禁止写入未验证命令」纪律对 §R3 同样适用）：(1) 命令 3 加第三处排除 ':!.agent-workbench'，并保留未排除形式作为如实记录项 —— 真阳性对合成 diff 复验仍捕获 4 行，两种真实形态都在；(2) §R3.6 的 KNOWN_UNATTRIBUTED 硬编码清单废止，改为按 Lane: 派生，并强制第二输出 TRIAGE-NO-LANE 让残留孔洞可见 —— 实测旧式 155、新式 229，漏计 74 个文件占预算 32%；中途一版直接并入 pathspec 选中的全部无归属提交读作 552，与本节前一版用区间 diff 读作 294 是同一个坑，故 Lane: 是唯一可用的本轮判别器；(3) 规则 3 的合法路径从只许 reviews/*.md 扩张为三类（reviews/*.md、.agent-workbench/task-forest/**、AUDIT-BOARD.html），DEV-PROTOCOL.md 刻意不入白名单，新判据对全历史复跑检出一处真实违反 6fde351e7，即该判据有真实拦截力而非空判据。修订同时产出一个本节不自行裁决的问题：累积半径 229/230 只剩 1 个文件余量，而 229 里 103 个是 Task Forest 生成物（95 份 snapshot + 8 个恒定重写文件）、代码面只有 47 —— 是否把生成物移出半径计量对象，属改变 §R3.2 阈值表含义并追溯影响六次已落地裁决的独立决定，已作为 XL-010 提请用户裁决，落地前执行方式不变。",
+  "session_id": "session-lane-2",
+  "status": "applied"
+}

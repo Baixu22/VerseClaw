@@ -15,8 +15,8 @@
  *   not in `declaredWritePaths`.
  * - 2.8: 0 `undeclared_write_event` when all tools declare correctly.
  *
- * See: net use/designs/development-manual.md §Stage 2, Stream 2C
- *      net use/designs/area-1-layered-execution-isolation.md §9.2
+ * See: docs/runtime-design/development-manual.md §Stage 2, Stream 2C
+ *      docs/runtime-design/area-1-layered-execution-isolation.md §9.2
  */
 
 import type { WriteRiskProfile } from "../../../shared/tool-registration.js";

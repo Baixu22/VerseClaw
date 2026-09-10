@@ -1,0 +1,58 @@
+{
+  "applied_at": "2026-08-22T19:52:10.443063Z",
+  "base_graph_hash": "756d8ad13470bc4772625623fd54758597294b8cfb1d171e0c3cbdf1a7b59d82",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "工作区是共享脏树（数百个与本任务无关的改动/未跟踪文件），全程未 reset/stash/clean/checkout，沿用 TF-0082 纪律。",
+          "tsgo:core:test 有 37 个既有错误（多为 test/*.mjs 缺声明）；其中 goal-wake-runtime.test.ts 的两处 alreadyAcked 收窄错误已用 git show HEAD 对照确认为既有（HEAD 中位于 231/237 行，本轮插入后位移到 288/294），本次未新增任何 test 类型错误。",
+          "check:loc 在本仓库本就全局红：脚本无 allowlist，src/cron/service/timer.ts 改前已 1792 行（改后 1822）、normalize.ts 667→687、server-cron.ts 亦超限；本轮新增文件均远低于 500 行（最大 goal-wake-dispatch.ts 460）。该脚本在 Windows 上还会因并发打开全部文件而 EMFILE。",
+          "agents-core 全 shard 有 3–4 个既有失败（bash-tools.exec.goal-wait.test.ts ×3、bash-tools.exec.durable-helper.test.ts ×1，另有偶发 rc02-shadow-census）：均为 ws://127.0.0.1:18789 gateway 未就绪导致的连接失败，报错点在 registerExecApprovalRequestForHost，早于任何 goal-wake 代码；这些测试文件 git status 为未修改。",
+          "三类 trigger 的 task_runs.runtime 一律保持 \"process\"，真实种类记在 task_kind（goal-owned-process/child/timer），以免改动 drain gating、活跃行计数、helper reaping 等既有查询语义。",
+          "missionContinuation 刻意不进 CronPayloadPatch：定时续跑 job 由 runtime 创建、由触发结算，不走人工编辑面；纳入会破坏 jobs.ts 现有收窄并增加不可达分支。",
+          "取消级联不主动删除仍在排期的 cron timer job：该 job 触发时 task 已终态，runner 返回 0 flow 的 ok，随 deleteAfterRun 自删，属自愈而非残留。",
+          "liveReady/productApproved/formalAcceptance 未改（仍 false），真实验收仍归 TF-0084。"
+        ],
+        "evidence": [
+          "typecheck：pnpm tsgo:core 0 error（最终树重跑）",
+          "lint：oxlint 覆盖 22 个改动文件，0",
+          "架构：pnpm check:import-cycles = 0 runtime value cycle(s)",
+          "goal-wake 套件（agents-core）7 文件 56 测试全过，其中本轮新增 20 条（budget 2 / cancel 9 / triggers 9）",
+          "cron shard 3 文件 13 测试全过，含新增 mission-continuation-payload 4 条（codec 往返 / 身份缺失拒绝 / persisted-shape 门禁 / normalize 去指令化）",
+          "mission-control（agents-support）4 文件 32 测试全过；tasks/task-flow-cas 15 测试全过",
+          "gateway-methods 10 文件 57 测试全过；gateway-server 2 文件 7 测试全过",
+          "build:runtime exit 0（runtime-build-smoke gateway ready）",
+          "real-process canary：node --import tsx scripts/goal-wake-e2e-trace.ts exit 0；processPollToolCalls=0、duplicateWakeDeliveries=2 而 duplicateWakeTickCount=1、flagOffGoalWaitBlocked=true、goalWakeToolTrace=goal-wake.arm,supervisor.spawn,goal-wake.finalize,mission.tick",
+          "E2E：tests/e2e/runtime-lifecycle-governance.spec.ts 3/3（须先 build:runtime；stale dist 会被明确报错拦截，即 AC4 的失败可读性）",
+          "AC1 回归探针：把计数还原为旧写法后「arm #2 must not be refused by historical rows」失败，移除探针后 12/12",
+          "AC2 两个缺陷由自然前置失败暴露：缺 mission-terminal guard 时 outcome 是 dispatch-failed 而非 mission-cancelled；revision 差一时 flow 停在 running 而非 succeeded",
+          "requirement 第 5 条五类测试已补齐：process exit、duplicate wake、cancel/exit race（双向）、restart matrix（重启后 reconcile 一次、再重启为 no-op、cancel 后重启不复活）、Cron-to-Mission continuation"
+        ],
+        "next_action": "本轮未做、需后续切片（这也是不收口的原因）：(a) 超时路径——requirement「取消和超时必须先写 durable terminal truth，再清理 OS/helper」只交付了 cancel 一半，wait timeoutMs 的到期强制执行未实现；(b) TTL 与 backoff 的 active-vs-historical 口径未复审，本轮只修了 maxFlows，maxActiveGoalWaits 本就正确；(c) desired outcome 里的 approval/event trigger kind 未并入 typed contract，当前只有 process|child|timer；(d) child trigger 只有契约、账本与测试，尚无生产调用方把子智能体完成接到 arm/finalize；(e) 定时续跑仍无生产调用方（armGoalWaitTimer 需注入 cron facade），整体保持 default-off/opt-in。",
+        "progress": 85,
+        "progress_source": "manual",
+        "remaining_minutes_max": 480,
+        "remaining_minutes_min": 180,
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260823-tf0083-slice1"
+        ],
+        "status": "in_progress",
+        "summary": "四条验收标准全部达成。(1) flow budget 只统计非终态行：maxFlows 原先 COUNT 全部 goal-wake flow_runs 且无状态过滤，16 条历史完成行即永久耗尽预算，改为按 ACTIVE_FLOW_STATUSES 统计。(2) mission.cancel 级联：新增 goal-wake-cancel.ts，先写 durable terminal truth（task_runs→cancelled、goal-wake flow→cancelled、wait_json 清空），再做 helper 容器化清理，容器化未证实时 RPC fail closed（UNAVAILABLE），并清空此前无人清理的 metadata_json.activeWaitFlowIds；顺带修掉三个真实缺陷：a) 终态 mission 会让 level-check 进入 dispatch-failed→scheduleRetry 的永久活锁（每 5s 一次、贯穿进程生命周期），现在直接把 flow 结算为 cancelled 且不挂重试；b) finishMissionTick 会用 tick 内存里的旧状态覆盖并发 cancel 写入的 cancelled，现在终态吸收；c) expectedRevision 三元表达式两支完全相同，导致已在 running 的 flow 被重新 dispatch 时 revision 差一而永远钉在 running。pause 只停 tick 不销毁 wait，resume 走 level-triggered reconciliation。(3) 统一 typed continuation contract：dependency.kind 由只有 process 扩为 process|child|timer，wakePayload 由 Record<string, unknown> 改为 MissionContinuation 判别联合；三类 trigger 各产生且仅产生一次 continuation，双层去重（flow 结算 + mission_runs.last_wake_id），旧行无 kind 时回落 process。(4) timer 复用既有 Cron 单一 setTimeout：新增 missionContinuation cron payload kind（复用既有 payload_message JSON 列，无需 schema 迁移），一次性 at job + deleteAfterRun；armGoalWaitTimer 先建 job 再 arm，arm 失败即删除 job，不留孤儿定时器。"
+      },
+      "id": "TF-0083"
+    }
+  ],
+  "created_at": "2026-08-22T19:51:25.376680Z",
+  "proposal_id": "TFP-progress-TF-0083-20260823",
+  "rationale": "用户指示「完成本地 tf 定义的 083 任务」。本轮四条 acceptance_criteria 全部达成并留证，另修掉三个此前未记录的真实缺陷（dead-mission 活锁、mid-tick cancel 被回滚、flow 永久钉在 running）。但 requirements 第 3、4 条与 desired_outcomes 第 1 条仅部分交付（超时路径未实现、TTL/backoff 口径未复审、approval/event trigger kind 未加），因此按诚实口径记为 in_progress / 85%，不做收口。",
+  "session_id": "session-20260823-tf0083-slice1",
+  "status": "applied"
+}

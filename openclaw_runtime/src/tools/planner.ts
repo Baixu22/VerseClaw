@@ -1,4 +1,11 @@
 // Plans usable tools from descriptors, availability, and request constraints.
+//
+// API-only module (per TF-0115 / M2 closeout, 2026-09-07): `buildToolPlan` is
+// exported as a *plugin SDK / library surface* (`packages/plugin-sdk`), not as a
+// runtime entry under the §D1 five production roots. §D1.2 per-symbol scan reports
+// exit 1 (no production call sites); TF-0102 SDK-boundary ruling keeps it out of
+// the runtime dead-code enumeration. Do not migrate to experiments/ — the SDK
+// surface consumers (plugins) are the documented callers, not the runtime boot.
 import { evaluateToolAvailability } from "./availability.js";
 import { ToolPlanContractError } from "./diagnostics.js";
 import type {

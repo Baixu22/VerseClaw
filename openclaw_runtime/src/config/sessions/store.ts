@@ -48,7 +48,10 @@ import {
   type ResolvedSessionMaintenanceConfig,
   type SessionMaintenanceWarning,
 } from "./store-maintenance.js";
-import { replaceSqliteSessionStore } from "./store-sqlite.js";
+import {
+  replaceSqliteSessionStore,
+  type SessionDeleteOperationJournalRow,
+} from "./store-sqlite.js";
 import { runExclusiveSessionStoreWrite } from "./store-writer.js";
 import {
   mergeSessionEntry,
@@ -144,6 +147,8 @@ export type { ResolvedSessionMaintenanceConfig, SessionMaintenanceWarning };
 type SaveSessionStoreOptions = {
   /** Skip pruning, capping, and rotation (e.g. during one-time migrations). */
   skipMaintenance?: boolean;
+  /** Rows to write in the same SQLite immediate transaction as the store rewrite. */
+  sqliteJournalRows?: SessionDeleteOperationJournalRow[];
   /** Caller already proved the store serialization is unchanged unless maintenance mutates it. */
   skipSerializeForUnchangedStore?: boolean;
   /** Internal hot paths can hand writer-owned stores to the cache after persistence. */
@@ -460,7 +465,10 @@ async function saveSessionStoreUnlocked(
     return;
   }
 
-  replaceSqliteSessionStore(storePath, store, { compact: maintenanceChangedStore });
+  replaceSqliteSessionStore(storePath, store, {
+    compact: maintenanceChangedStore,
+    journalRows: opts?.sqliteJournalRows,
+  });
   updateSessionStoreWriteCache({
     storePath,
     store,

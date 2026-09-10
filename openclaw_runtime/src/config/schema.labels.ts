@@ -783,6 +783,7 @@ export const FIELD_LABELS: Record<string, string> = {
   "runtime.verseShellFoundation.deferredOps": "VerseShell Deferred Operations",
   "runtime.verseShellFoundation.governedExec": "VerseShell Governed Exec",
   "runtime.verseShellFoundation.artifactResults": "VerseShell Artifact Results",
+  "runtime.verseShellFoundation.patchPreview": "VerseShell Patch Preview",
   "runtime.verseShellFoundation.mcpCompatibility": "VerseShell MCP Compatibility",
   "runtime.verseShellFoundation.legacyEval": "VerseShell Legacy Eval",
   "runtime.verseShellFoundation.compatibilityNativeFallback":

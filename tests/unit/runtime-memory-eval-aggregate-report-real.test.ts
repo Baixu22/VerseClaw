@@ -287,6 +287,10 @@ beforeAll(() => {
     enhancedReport,
     firedReasons: realFiredReasons,
     testSuite: { totalFiles: 0, passedFiles: 0, failedFiles: [] },
+    evidenceClass: "synthetic",
+    accepted: false,
+    acceptanceNote:
+      "Synthetic fixture evaluation with no live runtime source; not valid L3 acceptance evidence.",
     now: NOW,
   });
 
@@ -326,6 +330,12 @@ describe("real aggregate report — artifact generation with real metrics", () =
   it("enhanced report has at least 6 dimensions with real data", () => {
     const dimCount = Object.keys(enhancedReport.summary.dimensionScores).length;
     expect(dimCount).toBeGreaterThanOrEqual(6);
+  });
+
+  it("keeps the synthetic evidence classification on every generated artifact", () => {
+    expect(aggregateReport.evidenceClass).toBe("synthetic");
+    expect(aggregateReport.accepted).toBe(false);
+    expect(aggregateReport.acceptanceNote).toContain("not valid L3");
   });
 });
 

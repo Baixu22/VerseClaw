@@ -5,10 +5,22 @@
  * so BrowserWindow lifecycle and local profile state never move into Gateway.
  */
 import { Type } from "typebox";
+import type { ContentProvenanceContext } from "../../../../shared/security/content-provenance.js";
 import { stringEnum } from "../schema/string-enum.js";
 import type { AnyAgentTool } from "./common.js";
-import { asToolParamsRecord, jsonResult, readStringParam } from "./common.js";
+import {
+  asToolParamsRecord,
+  jsonResult,
+  readStringParam,
+  ToolAuthorizationError,
+} from "./common.js";
 import { buildAgentBrowserAutomationEvent } from "./agent-browser-automation-event.js";
+import {
+  resolveAgentBrowserExternalAccessPolicy,
+  resolveAgentBrowserSessionEffectPolicy,
+  shouldPreflightAgentBrowserSessionEffect,
+  type AgentBrowserSessionEffect,
+} from "./agent-browser-external-access-policy.js";
 
 const AGENT_BROWSER_ACTIONS = [
   "open",
@@ -198,6 +210,45 @@ function resultPayload(result: unknown): Record<string, unknown> {
     : { value: result };
 }
 
+function readSessionConnectionMode(result: unknown, sessionId: string): unknown {
+  const record = asRecord(result);
+  if (record.success !== true || isFailureResult(result)) return undefined;
+  const sessions = record.sessions;
+  if (!Array.isArray(sessions)) return undefined;
+  for (const value of sessions) {
+    const session = asRecord(value);
+    if (session.id === sessionId) {
+      return asRecord(session.connection).mode;
+    }
+  }
+  return undefined;
+}
+
+async function assertSessionEffectAllowed(params: {
+  invoke: AgentBrowserInvoker;
+  sessionId: string;
+  action: AgentBrowserSessionEffect;
+  provenanceContext?: ContentProvenanceContext;
+}): Promise<void> {
+  if (!shouldPreflightAgentBrowserSessionEffect(params.provenanceContext)) return;
+  let statusResult: unknown;
+  try {
+    statusResult = await params.invoke("status", {});
+  } catch {
+    throw new ToolAuthorizationError(
+      `Agent browser ${params.action} denied: unable to verify the target browser session.`,
+    );
+  }
+  const policy = resolveAgentBrowserSessionEffectPolicy({
+    provenanceContext: params.provenanceContext,
+    sessionConnectionMode: readSessionConnectionMode(statusResult, params.sessionId),
+    action: params.action,
+  });
+  if (!policy.allowed) {
+    throw new ToolAuthorizationError(policy.reason ?? `Agent browser ${params.action} denied.`);
+  }
+}
+
 function shouldCollectFailureDiagnostics(action: AgentBrowserAction, sessionId?: string): boolean {
   if (!sessionId) {
     return false;
@@ -253,6 +304,7 @@ async function collectFailureDiagnostics(params: {
 
 export function createAgentBrowserTool(options?: {
   invoke?: AgentBrowserInvoker;
+  contentProvenanceContext?: ContentProvenanceContext;
 }): AnyAgentTool | null {
   if (!options?.invoke) {
     return null;
@@ -272,6 +324,23 @@ export function createAgentBrowserTool(options?: {
         throw new Error(`Unsupported agent_browser action: ${action}`);
       }
       const payload = buildPayload(action, params);
+      const externalAccessPolicy = resolveAgentBrowserExternalAccessPolicy({
+        provenanceContext: options.contentProvenanceContext,
+        connectionMode: payload.connectionMode,
+      });
+      if (!externalAccessPolicy.allowed) {
+        throw new ToolAuthorizationError(
+          externalAccessPolicy.reason ?? "Agent browser external connection denied.",
+        );
+      }
+      if (action === "click" || action === "type") {
+        await assertSessionEffectAllowed({
+          invoke: options.invoke!,
+          sessionId: typeof payload.sessionId === "string" ? payload.sessionId : "",
+          action,
+          provenanceContext: options.contentProvenanceContext,
+        });
+      }
       let result: unknown;
       try {
         result = await options.invoke!(action, payload);

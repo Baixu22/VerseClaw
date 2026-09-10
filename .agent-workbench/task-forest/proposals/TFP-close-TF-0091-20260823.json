@@ -1,0 +1,46 @@
+{
+  "applied_at": "2026-08-23T14:51:40.459615Z",
+  "base_graph_hash": "818fe8527e5c96253e6a9329b71f299c7ed14dd745d7af1835576b71f24057ad",
+  "base_summary": {
+    "edge_count": 181,
+    "node_count": 99,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "artifacts/tf0091-dead-surface-decisions/report.json",
+          "FP-03：lifecycleLedger 明文 no-UI 决策（LATEST.md TF-0091 段 + audit-remediation spec 决策段）",
+          "FP-04：yielded/terminals/idleClassification 延期产品面；*_IDLE_MS 保留为配置面（如实记录测试通路）",
+          "FP-05：清理 archiveSessionTranscriptsForSession 死包装（零调用方实证 + tsgo:core 验证）；既有死代码确认非链责任；测试缝隙保留；child/timer 挂载显式延期",
+          "FP-06：task_kind 与条目级 lineage ref 保留声明；'verified' 为 HEAD 既有死值不动",
+          "门禁：spec validate 0；tsgo:core 0；contract:check 0；comms replay+compare 0；git diff --check 0"
+        ],
+        "next_action": "线性下一步：TF-0092 工程卫生（check:loc EMFILE、行数口径、FD 测试决策）",
+        "progress": 100,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260823-tf0091-dead-surfaces"
+        ],
+        "status": "done"
+      },
+      "id": "TF-0091"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "第 5 步 TF-0091 done（2026-08-23）：明文决策与死面治理，见 artifacts/tf0091-dead-surface-decisions/report.json"
+        ]
+      },
+      "id": "TF-0086"
+    }
+  ],
+  "created_at": "2026-08-23T14:51:40.229805Z",
+  "proposal_id": "TFP-close-TF-0091-20260823",
+  "rationale": "TF-0091（审计整改第 5 步）完成：FP-03..FP-06 逐项明文决策——lifecycleLedger 明文『只读诊断、暂不做 UI』；yielded/terminals/idleClassification 延期为产品面决策；清理一个链引入的零调用死包装（archiveSessionTranscriptsForSession）；goal-wake child/timer 挂载显式延期（沿用 TF-0083 声明）；既有死代码与死值确认非本链责任不动。门禁重跑全绿。按线性流程解锁 TF-0092。",
+  "session_id": "session-20260823-tf0091-dead-surfaces",
+  "status": "applied"
+}

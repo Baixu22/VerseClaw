@@ -143,6 +143,19 @@ export type CronServiceDeps = {
       delivery?: CronDeliveryTrace;
     } & CronRunOutcome
   >;
+  /**
+   * Fire a goal-wake `timer` wait whose deadline this job owns.
+   *
+   * The runtime injects this so the Cron service stays free of mission
+   * internals; it only reports that the deadline passed. Delivery is
+   * at-least-once, so the implementation must be idempotent.
+   */
+  runMissionContinuationJob?: (params: {
+    job: CronJob;
+    taskId: string;
+    missionId: string;
+    abortSignal?: AbortSignal;
+  }) => Promise<CronRunOutcome>;
   cleanupTimedOutAgentRun?: (params: {
     job: CronJob;
     timeoutMs: number;

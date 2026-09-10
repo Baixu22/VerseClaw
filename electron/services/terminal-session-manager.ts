@@ -10,7 +10,60 @@ import { isPathInsideWorkspace } from './workspace-permissions';
 
 export type TerminalSessionKind = 'interactive' | 'webPreviewDevServer';
 export type TerminalSessionStatus = 'idle' | 'starting' | 'running' | 'exited' | 'blocked';
-export type TerminalCloseReason = 'user-close' | 'workspace-switch' | 'workspace-delete' | 'permission-change' | 'process-exit' | 'replaced' | 'app-shutdown';
+export type TerminalCloseReason = 'user-close' | 'session-end' | 'session-reset' | 'session-delete' | 'workspace-switch' | 'workspace-delete' | 'permission-change' | 'process-exit' | 'replaced' | 'app-shutdown';
+
+/**
+ * TF-0081 idle classification. Reclamation is never automatic: `running-process`
+ * (recent child output) and `interactive` (recent user input) are keep states,
+ * `idle` is only a policy candidate, and exited records are `completed`.
+ */
+export type TerminalIdleClassification = 'running-process' | 'interactive' | 'idle' | 'completed';
+
+export type TerminalIdlePolicy = {
+  /** Fresh PTY output within this window marks a real running child process. */
+  outputIdleMs: number;
+  /** User input within this window marks an actively used interactive terminal. */
+  interactionIdleMs: number;
+};
+
+export type TerminalIdleReport = {
+  classification: TerminalIdleClassification;
+  sinceOutputMs: number | null;
+  sinceInteractionMs: number | null;
+};
+
+const DEFAULT_OUTPUT_IDLE_MS = 60_000;
+const DEFAULT_INTERACTION_IDLE_MS = 30 * 60_000;
+const MIN_IDLE_THRESHOLD_MS = 1_000;
+const MAX_IDLE_THRESHOLD_MS = 24 * 60 * 60_000;
+
+function resolveIdleThresholdMs(value: number | undefined, envKey: string, fallbackMs: number): number {
+  const raw = value ?? (process.env[envKey] ? Number(process.env[envKey]) : undefined);
+  if (typeof raw !== 'number' || !Number.isFinite(raw) || raw <= 0) return fallbackMs;
+  return Math.max(MIN_IDLE_THRESHOLD_MS, Math.min(Math.floor(raw), MAX_IDLE_THRESHOLD_MS));
+}
+
+/** Classifies one terminal's idle state; output freshness always wins over wall clock. */
+export function classifyTerminalIdle(input: {
+  status: TerminalSessionStatus;
+  lastOutputAtMs: number | null;
+  lastInteractionAtMs: number | null;
+  nowMs: number;
+  policy: TerminalIdlePolicy;
+}): TerminalIdleClassification {
+  if (input.status !== 'running') return 'completed';
+  // A child still producing output is never idle, regardless of user input.
+  if (input.lastOutputAtMs !== null && input.nowMs - input.lastOutputAtMs < input.policy.outputIdleMs) {
+    return 'running-process';
+  }
+  if (
+    input.lastInteractionAtMs !== null &&
+    input.nowMs - input.lastInteractionAtMs < input.policy.interactionIdleMs
+  ) {
+    return 'interactive';
+  }
+  return 'idle';
+}
 
 type PtyProcess = ReturnType<typeof pty.spawn>;
 
@@ -29,6 +82,8 @@ type TerminalSessionRecord = {
   seq: number;
   scrollback: string;
   closeReason: TerminalCloseReason | null;
+  lastOutputAtMs: number | null;
+  lastInteractionAtMs: number | null;
 };
 
 type TerminalSessionSnapshot = {
@@ -43,11 +98,14 @@ type TerminalSessionSnapshot = {
   status: TerminalSessionStatus;
   exitCode: number | null;
   scrollback?: string;
+  idle?: TerminalIdleReport;
 };
 
 type TerminalManagerContext = {
   mainWindow?: BrowserWindow | null;
   onData?: (event: { workspaceId: string; sessionKey: string; sessionId: string; kind: TerminalSessionKind; data: string; seq: number }) => void;
+  idlePolicy?: Partial<TerminalIdlePolicy>;
+  now?: () => number;
 };
 
 type OpenTerminalInput = {
@@ -105,10 +163,17 @@ export class TerminalSessionManager {
   private readonly sessions = new Map<string, TerminalSessionRecord>();
   private readonly activeByWorkspaceSession = new Map<string, string>();
   private readonly registeredWorkspaces = new Set<string>();
+  private readonly idlePolicy: TerminalIdlePolicy;
+  private readonly now: () => number;
 
   constructor(ctx: TerminalManagerContext = {}) {
     this.mainWindow = ctx.mainWindow ?? null;
     this.onData = ctx.onData;
+    this.idlePolicy = {
+      outputIdleMs: resolveIdleThresholdMs(ctx.idlePolicy?.outputIdleMs, 'CLAWX_TERMINAL_OUTPUT_IDLE_MS', DEFAULT_OUTPUT_IDLE_MS),
+      interactionIdleMs: resolveIdleThresholdMs(ctx.idlePolicy?.interactionIdleMs, 'CLAWX_TERMINAL_INTERACTION_IDLE_MS', DEFAULT_INTERACTION_IDLE_MS),
+    };
+    this.now = ctx.now ?? (() => Date.now());
   }
 
   registerWorkspace(workspace: WorkspaceProfile): void {
@@ -168,6 +233,8 @@ export class TerminalSessionManager {
       seq: 0,
       scrollback: '',
       closeReason: null,
+      lastOutputAtMs: null,
+      lastInteractionAtMs: this.now(),
     };
 
     this.sessions.set(id, session);
@@ -186,6 +253,7 @@ export class TerminalSessionManager {
 
   write(input: { sessionId: string; data: string }): void {
     const session = this.requireRunningSession(input.sessionId);
+    session.lastInteractionAtMs = this.now();
     session.ptyProcess?.write(input.data);
   }
 
@@ -202,6 +270,7 @@ export class TerminalSessionManager {
 
   interrupt(sessionId: string): void {
     const session = this.requireRunningSession(sessionId);
+    session.lastInteractionAtMs = this.now();
     session.ptyProcess?.write('\x03');
   }
 
@@ -250,6 +319,25 @@ export class TerminalSessionManager {
     this.unregisterWorkspace(workspaceId, reason);
   }
 
+  /** Close every live terminal for a conversation/session key. */
+  closeForSessionKey(sessionKey: string, reason: TerminalCloseReason = 'session-delete'): void {
+    for (const session of Array.from(this.sessions.values())) {
+      if (session.sessionKey === sessionKey) {
+        this.closeSession(session, reason);
+      }
+    }
+  }
+
+  /**
+   * TF-0081 idle classification for one terminal. Returns null when the record
+   * has already been reclaimed (exited terminals are removed, i.e. completed).
+   */
+  classifyTerminal(sessionId: string): TerminalIdleReport | null {
+    const session = this.sessions.get(sessionId);
+    if (!session) return null;
+    return this.toIdleReport(session);
+  }
+
   private closeSession(session: TerminalSessionRecord, reason: TerminalCloseReason): void {
     session.closeReason = reason;
     if (session.status !== 'exited') {
@@ -276,6 +364,7 @@ export class TerminalSessionManager {
     const session = this.sessions.get(sessionId);
     if (!session || session.status !== 'running') return;
     session.seq += 1;
+    session.lastOutputAtMs = this.now();
     session.scrollback = appendScrollback(session.scrollback, data);
     this.emit(HOST_EVENT_CHANNELS.terminal.data, {
       ...this.toEvent(session),
@@ -351,6 +440,21 @@ export class TerminalSessionManager {
     };
   }
 
+  private toIdleReport(session: TerminalSessionRecord): TerminalIdleReport {
+    const nowMs = this.now();
+    return {
+      classification: classifyTerminalIdle({
+        status: session.status,
+        lastOutputAtMs: session.lastOutputAtMs,
+        lastInteractionAtMs: session.lastInteractionAtMs,
+        nowMs,
+        policy: this.idlePolicy,
+      }),
+      sinceOutputMs: session.lastOutputAtMs === null ? null : nowMs - session.lastOutputAtMs,
+      sinceInteractionMs: session.lastInteractionAtMs === null ? null : nowMs - session.lastInteractionAtMs,
+    };
+  }
+
   private toSnapshot(session: TerminalSessionRecord, includeScrollback: boolean): TerminalSessionSnapshot {
     return {
       sessionId: session.id,
@@ -364,6 +468,7 @@ export class TerminalSessionManager {
       status: session.status,
       exitCode: session.exitCode,
       scrollback: includeScrollback ? session.scrollback : undefined,
+      idle: this.toIdleReport(session),
     };
   }
 

@@ -4,7 +4,10 @@
  * approval messaging constants, environment safety, and exit outcome shaping.
  */
 import path from "node:path";
+import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+import { resolveStorePath } from "../config/sessions/paths.js";
+import { loadSessionStore } from "../config/sessions/store-load.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { emitDiagnosticEvent } from "../infra/diagnostic-events.js";
 import {
@@ -23,8 +26,11 @@ import { requestHeartbeat } from "../infra/heartbeat-wake.js";
 import { isDangerousHostInheritedEnvVarName } from "../infra/host-env-security.js";
 import { findPathKey, mergePathPrepend, removePathPrepend } from "../infra/path-prepend.js";
 import { enqueueSystemEvent } from "../infra/system-events.js";
+import { resolveAgentIdFromSessionKey } from "../routing/session-key.js";
 import { isSubagentSessionKey } from "../sessions/session-key-utils.js";
+import { acquireSessionAdmissionPermit } from "../sessions/session-admission-registry.js";
 import type { ProcessSession } from "./bash-process-registry.js";
+import { isExecApprovalFollowupSessionRebound } from "./bash-tools.exec-approval-followup-state.js";
 import type { ExecToolDetails } from "./bash-tools.exec-types.js";
 import type { BashSandboxConfig } from "./bash-tools.shared.js";
 import type { AgentToolResult } from "./runtime/index.js";
@@ -37,6 +43,10 @@ export {
 } from "../infra/exec-approvals.js";
 import { logWarn } from "../logger.js";
 import type { ManagedRun } from "../process/supervisor/index.js";
+import {
+  spawnDurableHelperProcess,
+  type DurableHelperSpawnHandle,
+} from "./goal-wake-helper-host.js";
 import { getProcessSupervisor } from "../process/supervisor/index.js";
 import type { RunExit, TerminationReason } from "../process/supervisor/types.js";
 import {
@@ -220,7 +230,7 @@ function emitExecProcessCompleted(params: {
   target: "host" | "sandbox";
   selectedHost: ExecHost;
   executionHost: ExecHost;
-  lifecycleOwner: "native" | "sandbox" | "node" | "verseshell" | "legacy-verseshell";
+  lifecycleOwner: "native" | "sandbox" | "node" | "verseshell" | "legacy-verseshell" | "durable-helper";
   cohortRoute?: "verseshell-single-plane";
   nativeFallback: boolean;
   recoveryState: "none" | "start-failed" | "exited" | "killed" | "lost" | "runtime-error";
@@ -231,7 +241,12 @@ function emitExecProcessCompleted(params: {
     target: params.target,
     selectedHost: params.selectedHost,
     executionHost: params.executionHost,
-    lifecycleOwner: params.lifecycleOwner,
+    lifecycleOwner: params.lifecycleOwner as
+      | "native"
+      | "sandbox"
+      | "node"
+      | "verseshell"
+      | "legacy-verseshell",
     ...(params.cohortRoute ? { cohortRoute: params.cohortRoute } : {}),
     nativeFallback: params.nativeFallback,
     recoveryState: params.recoveryState,
@@ -368,6 +383,51 @@ export function applyShellPath(env: Record<string, string>, shellPath?: string |
   }
 }
 
+/**
+ * TF-0087 generation guard for background-exit notifications.
+ *
+ * A backgrounded exec is pinned at spawn time to the requester session
+ * generation (`lifecycleExpectedSessionId`). If the session key has since been
+ * reset/forked to a new generation, injecting the old generation's exit
+ * notification into the new generation's system-event queue (and waking it)
+ * leaks stale content across generations. This mirrors the exec-approval
+ * followup rebind check (#59349): resolve the key's current sessionId from
+ * the start-time session store template and drop on mismatch.
+ *
+ * Fail-open conventions (matching the chain-wide guard precedents in
+ * session-lifecycle-state.ts and subagent-announce-delivery.ts):
+ * - no real pin (absent, blank, or equal to the canonical-key fallback the
+ *   spawn site substitutes when no generation is known) passes through;
+ * - an unresolvable current generation passes through;
+ * - store resolution failures pass through so a real exit notification is
+ *   never silently swallowed by an unreadable store.
+ */
+function isStaleGenerationExitNotification(
+  session: ProcessSession,
+  sessionKey: string,
+): boolean {
+  const pinned = normalizeOptionalString(session.lifecycleExpectedSessionId);
+  const canonicalKey = normalizeOptionalString(session.lifecycleCanonicalSessionKey);
+  if (!pinned || pinned === canonicalKey) {
+    return false;
+  }
+  try {
+    const storePath = resolveStorePath(
+      normalizeOptionalString(session.lifecycleSessionStoreTemplate),
+      { agentId: resolveAgentIdFromSessionKey(sessionKey) },
+    );
+    const resolvedSessionId = normalizeOptionalString(
+      loadSessionStore(storePath, { clone: false })?.[sessionKey]?.sessionId,
+    );
+    return isExecApprovalFollowupSessionRebound({
+      expectedSessionId: pinned,
+      resolvedSessionId,
+    });
+  } catch {
+    return false;
+  }
+}
+
 function maybeNotifyOnExit(session: ProcessSession, status: "completed" | "failed") {
   if (!session.backgrounded || !session.notifyOnExit || session.exitNotified) {
     return;
@@ -387,6 +447,14 @@ function maybeNotifyOnExit(session: ProcessSession, status: "completed" | "faile
     return;
   }
   if (status === "completed" && !output && session.notifyOnExitEmptySuccess !== true) {
+    return;
+  }
+  if (isStaleGenerationExitNotification(session, sessionKey)) {
+    // exitNotified stays set above: the drop decision is final for this exit.
+    logWarn(
+      "exec exit notification dropped: session generation changed " +
+        `(sessionKey=${sessionKey}, pinnedGeneration=${session.lifecycleExpectedSessionId})`,
+    );
     return;
   }
   const summary = output
@@ -705,6 +773,15 @@ export async function runExecProcess(opts: {
   notifyOnExitEmptySuccess?: boolean;
   scopeKey?: string;
   sessionKey?: string;
+  /** Host/runtime parent trace for the complete exec lifecycle. */
+  traceId?: string;
+  /** Lifecycle identity additions. scopeKey is NOT identity. */
+  agentId?: string;
+  expectedSessionId?: string;
+  /** `session.store` template from the runtime config; snapshotted onto the
+   *  ProcessSession alongside `mainKey` so the exit-time generation guard can
+   *  resolve the key's current sessionId without an ambient config load. */
+  sessionStore?: string;
   /** `session.mainKey` from the runtime config; snapshotted onto the
    *  ProcessSession so background-exit notifications can remap cron-run
    *  keys without an ambient config load. Long-running background exits use
@@ -719,6 +796,14 @@ export async function runExecProcess(opts: {
   notifyDeliveryContext?: DeliveryContext;
   timeoutSec: number | null;
   onUpdate?: (partialResult: AgentToolResult<ExecToolDetails>) => void;
+  /** Phase 4 durable-helper gate. Only `wait="goal"` callers pass this. */
+  durableHelper?: {
+    runId: string;
+    nonce: string;
+    ownerEpoch: string;
+    rootDir: string;
+    commandDigest: string;
+  };
 }): Promise<ExecProcessHandle> {
   const startedAt = Date.now();
   const sessionId = createSessionSlug();
@@ -732,11 +817,18 @@ export async function runExecProcess(opts: {
     OPENCLAW_SHELL: "exec",
   };
 
+  const lifecycleCanonicalSessionKey = opts.sessionKey?.trim() || sessionId;
+  const lifecycleExpectedSessionId = opts.expectedSessionId ?? lifecycleCanonicalSessionKey;
   const session: ProcessSession = {
     id: sessionId,
     command: opts.command,
     scopeKey: opts.scopeKey,
     sessionKey: opts.sessionKey,
+    lifecycleOwner: opts.sandbox ? "sandbox" : "native",
+    lifecycleAgentId: opts.agentId,
+    lifecycleCanonicalSessionKey,
+    lifecycleExpectedSessionId,
+    lifecycleSessionStoreTemplate: opts.sessionStore,
     mainKey: opts.mainKey,
     sessionScope: opts.sessionScope,
     eventRouting: opts.eventRouting,
@@ -958,7 +1050,16 @@ export async function runExecProcess(opts: {
           ),
         );
       }
+      let releaseVerseShellPermit = (): void => {};
       try {
+        releaseVerseShellPermit = acquireSessionAdmissionPermit(
+          {
+            agentId: opts.agentId,
+            canonicalSessionKey: lifecycleCanonicalSessionKey,
+            expectedSessionId: lifecycleExpectedSessionId,
+          },
+          "verseshell-spawn",
+        );
         const lifecycle = await startGovernedVerseShellProcess({
           command: execCommand,
           executionPlan: resolvedExecutionPlan,
@@ -969,13 +1070,19 @@ export async function runExecProcess(opts: {
           usePty: opts.usePty,
           agentId: opts.scopeKey?.trim() || "openclaw",
           sessionId: opts.sessionKey?.trim() || sessionId,
+          traceId: opts.traceId,
           hostPolicyApproved: opts.hostPolicyApproved === true,
           onStdout: handleStdout,
           onStderr: handleStderr,
         });
+        releaseVerseShellPermit();
         session.stdin = lifecycle.stdin;
         session.pid = lifecycle.pid;
         session.lifecycleOwner = "verseshell";
+        session.lifecycleExitPromise = lifecycle.wait().then(
+          () => undefined,
+          () => undefined,
+        );
         const cancelLifecycle = (reason: TerminationReason) => {
           void lifecycle.kill(reason).catch((error) => {
             handleStderr(`VerseShell lifecycle cancel failed: ${String(error)}\n`);
@@ -1088,6 +1195,7 @@ export async function runExecProcess(opts: {
           },
         };
       } catch (error) {
+        releaseVerseShellPermit();
         return failClosedVerseShell(error);
       }
     }
@@ -1098,13 +1206,23 @@ export async function runExecProcess(opts: {
       );
       return failClosedVerseShell(error);
     }
+    const releaseLegacyVerseShellPermit = acquireSessionAdmissionPermit(
+      {
+        agentId: opts.agentId,
+        canonicalSessionKey: opts.sessionKey?.trim() || sessionId,
+        expectedSessionId: opts.expectedSessionId ?? (opts.sessionKey?.trim() || sessionId),
+      },
+      "verseshell-spawn",
+    );
     try {
       const vsResult = await verseshellExec(execCommand, {
         timeoutMs,
         cwd: opts.workdir,
       });
+      releaseLegacyVerseShellPermit();
       return completeVerseShell(vsResult);
     } catch (err) {
+      releaseLegacyVerseShellPermit();
       if (!rollout.enabled.compatibilityNativeFallback) {
         return failClosedVerseShell(err);
       }
@@ -1208,12 +1326,189 @@ export async function runExecProcess(opts: {
     handleStdout(chunk);
   };
 
+  if (opts.durableHelper) {
+    let durableHandle: DurableHelperSpawnHandle;
+    try {
+      durableHandle = await spawnDurableHelperProcess({
+        runId: opts.durableHelper.runId,
+        rootDir: opts.durableHelper.rootDir,
+        nonce: opts.durableHelper.nonce,
+        ownerEpoch: opts.durableHelper.ownerEpoch,
+        commandDigest: opts.durableHelper.commandDigest,
+        argv: spawnSpec.mode === "child" ? spawnSpec.argv : spawnSpec.childFallbackArgv,
+        env: spawnSpec.env,
+        cwd: opts.workdir,
+        timeoutMs,
+      });
+    } catch (error) {
+      markExited(session, null, null, "failed");
+      const runtimeOutcome = buildExecRuntimeErrorOutcome({
+        error,
+        aggregated: session.aggregated.trim(),
+        durationMs: Date.now() - startedAt,
+      });
+      return {
+        session,
+        startedAt,
+        promise: Promise.resolve(runtimeOutcome),
+        kill: () => {},
+        disableUpdates: () => {
+          updatesDisabled = true;
+        },
+      };
+    }
+    session.pid = durableHandle.helperPid || undefined;
+    session.lifecycleOwner = "durable-helper";
+    session.lifecycleCancel = (reason) => {
+      void durableHandle.cancel(reason ?? "manual-cancel").catch(() => undefined);
+    };
+    session.lifecycleExitPromise = durableHandle.exit.then(
+      () => undefined,
+      () => undefined,
+    );
+
+    let lastDurableTail = "";
+    const stopTail = durableHandle.onTail((nextTail) => {
+      if (nextTail === lastDurableTail) return;
+      const delta = nextTail.startsWith(lastDurableTail)
+        ? nextTail.slice(lastDurableTail.length)
+        : nextTail;
+      lastDurableTail = nextTail;
+      for (const chunk of chunkString(delta)) {
+        appendOutput(session, "stdout", chunk);
+        emitUpdate();
+      }
+    });
+    const stopStarted = durableHandle.onStarted((started) => {
+      if (started.childPid > 0) session.pid = started.childPid;
+    });
+
+    const promise = durableHandle.exit.then((exit) => {
+      updatesDisabled = true;
+      stopTail();
+      stopStarted();
+      durableHandle.dispose();
+      const durationMs = Date.now() - startedAt;
+      if (!exit) {
+        const lostOutcome = buildExecRuntimeErrorOutcome({
+          error: "durable helper exited without exit.json; command will not be replayed",
+          aggregated: session.aggregated.trim(),
+          durationMs,
+        });
+        markExited(session, null, null, "failed");
+        maybeNotifyOnExit(session, "failed");
+        emitExecProcessCompleted({
+          command: opts.command,
+          mode: "child",
+          outcome: lostOutcome,
+          sessionKey: opts.sessionKey,
+          target: "host",
+          selectedHost,
+          executionHost: "gateway",
+          lifecycleOwner: "durable-helper",
+          nativeFallback: false,
+          recoveryState: "lost",
+        });
+        return lostOutcome;
+      }
+      const completed = !exit.timedOut && exit.exitCode !== null && exit.signal === null;
+      const exitCode = exit.exitCode ?? 0;
+      const exitMsg = completed && exitCode !== 0
+        ? `\n\n(Command exited with code ${exitCode})`
+        : "";
+      const outcome: ExecProcessOutcome = completed
+        ? {
+            status: "completed",
+            exitCode,
+            exitSignal: exit.signal as NodeJS.Signals | null,
+            durationMs,
+            aggregated: `${session.aggregated}${exitMsg}`.trim(),
+            timedOut: false,
+          }
+        : {
+            status: "failed",
+            exitCode: exit.exitCode,
+            exitSignal: exit.signal as NodeJS.Signals | null,
+            durationMs,
+            aggregated: session.aggregated.trim(),
+            timedOut: exit.timedOut,
+            failureKind: exit.timedOut
+              ? "overall-timeout"
+              : exit.signal !== null
+                ? "signal"
+                : "runtime-error",
+            reason: exit.timedOut
+              ? formatExecFailureReason({
+                  failureKind: "overall-timeout",
+                  exitSignal: null,
+                  timeoutSec: opts.timeoutSec,
+                })
+              : exit.signal !== null
+                ? formatExecFailureReason({
+                    failureKind: "signal",
+                    exitSignal: exit.signal as NodeJS.Signals | null,
+                    timeoutSec: opts.timeoutSec,
+                  })
+                : "Durable helper exited without a recoverable exit code",
+          };
+      markExited(
+        session,
+        exit.exitCode,
+        exit.signal as NodeJS.Signals | null,
+        completed ? "completed" : exit.signal !== null ? "killed" : "failed",
+        exit.timedOut
+          ? "overall-timeout"
+          : exit.signal !== null
+            ? "signal"
+            : "exit",
+      );
+      maybeNotifyOnExit(session, completed ? "completed" : "failed");
+      emitExecProcessCompleted({
+        command: opts.command,
+        mode: "child",
+        outcome,
+        sessionKey: opts.sessionKey,
+        target: "host",
+        selectedHost,
+        executionHost: "gateway",
+        lifecycleOwner: "durable-helper",
+        nativeFallback: false,
+        recoveryState: "exited",
+      });
+      return outcome;
+    });
+
+    return {
+      session,
+      startedAt,
+      pid: session.pid,
+      promise,
+      kill: () => {
+        session.lifecycleCancel?.("manual-cancel");
+      },
+      disableUpdates: () => {
+        updatesDisabled = true;
+      },
+    };
+  }
+
+  const releaseNativeSpawnPermit = acquireSessionAdmissionPermit(
+    {
+      agentId: opts.agentId,
+      canonicalSessionKey: lifecycleCanonicalSessionKey,
+      expectedSessionId: lifecycleExpectedSessionId,
+    },
+    "exec-spawn",
+  );
   try {
     const spawnBase = {
       runId: sessionId,
       sessionId: opts.sessionKey?.trim() || sessionId,
       backendId: opts.sandbox ? "exec-sandbox" : "exec-host",
       scopeKey: opts.scopeKey,
+      lifecycleAgentId: opts.agentId,
+      lifecycleCanonicalSessionKey: lifecycleCanonicalSessionKey,
+      lifecycleExpectedSessionId: lifecycleExpectedSessionId,
       cwd: opts.workdir,
       env: spawnSpec.env,
       timeoutMs,
@@ -1234,7 +1529,9 @@ export async function runExecProcess(opts: {
             argv: spawnSpec.argv,
             stdinMode: spawnSpec.stdinMode,
           });
+    releaseNativeSpawnPermit();
   } catch (err) {
+    releaseNativeSpawnPermit();
     if (spawnSpec.mode === "pty") {
       const warning = `Warning: PTY spawn failed (${String(err)}); retrying without PTY for \`${opts.command}\`.`;
       logWarn(
@@ -1248,6 +1545,9 @@ export async function runExecProcess(opts: {
           sessionId: opts.sessionKey?.trim() || sessionId,
           backendId: "exec-host",
           scopeKey: opts.scopeKey,
+          lifecycleAgentId: opts.agentId,
+          lifecycleCanonicalSessionKey: lifecycleCanonicalSessionKey,
+          lifecycleExpectedSessionId: lifecycleExpectedSessionId,
           mode: "child",
           argv: spawnSpec.childFallbackArgv,
           cwd: opts.workdir,
@@ -1258,7 +1558,9 @@ export async function runExecProcess(opts: {
           onStdout: handleStdout,
           onStderr: handleStderr,
         });
+        releaseNativeSpawnPermit();
       } catch (retryErr) {
+        releaseNativeSpawnPermit();
         markExited(session, null, null, "failed");
         maybeNotifyOnExit(session, "failed");
         emitExecProcessCompleted({
@@ -1303,6 +1605,13 @@ export async function runExecProcess(opts: {
   }
   session.stdin = managedRun.stdin;
   session.pid = managedRun.pid;
+  session.lifecycleCancel = (reason: TerminationReason) => {
+    managedRun?.cancel(reason);
+  };
+  session.lifecycleExitPromise = managedRun.wait().then(
+    () => undefined,
+    () => undefined,
+  );
 
   const promise = managedRun
     .wait()
@@ -1384,3 +1693,10 @@ export async function runExecProcess(opts: {
     },
   };
 }
+
+/** Test-only seams for the exit-notification generation guard. */
+export const testing = {
+  maybeNotifyOnExit,
+  isStaleGenerationExitNotification,
+};
+export { testing as __testing };

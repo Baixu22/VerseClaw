@@ -51,10 +51,10 @@ Body`);
     const guides = await loadGuideSpecs();
     const layers = await loadLayerSpecs();
 
-    expect(guides.map((spec) => spec.data.id)).toEqual(
+    expect(guides.map((spec: { data: { id: string } }) => spec.data.id)).toEqual(
       expect.arrayContaining(['agent-harness-routing', 'spec-update']),
     );
-    expect(layers.map((spec) => spec.data.id)).toEqual(
+    expect(layers.map((spec: { data: { id: string } }) => spec.data.id)).toEqual(
       expect.arrayContaining(['electron-main', 'harness', 'openclaw-runtime', 'plugins', 'renderer']),
     );
   });
@@ -64,17 +64,17 @@ Body`);
 
     expect(context.missingRules).toEqual([]);
     expect(context.missingScenarios).toEqual([]);
-    expect(context.scenarios.map((spec) => spec.data.id)).toContain('gateway-backend-communication');
-    expect(context.rules.map((spec) => spec.data.id)).toEqual(
+    expect(context.scenarios.map((spec: { data: { id: string } }) => spec.data.id)).toContain('gateway-backend-communication');
+    expect(context.rules.map((spec: { data: { id: string } }) => spec.data.id)).toEqual(
       expect.arrayContaining(['renderer-main-boundary', 'backend-communication-boundary']),
     );
-    expect(context.guides.map((spec) => spec.data.id)).toEqual(
+    expect(context.guides.map((spec: { data: { id: string } }) => spec.data.id)).toEqual(
       expect.arrayContaining(['agent-harness-routing', 'spec-update']),
     );
-    expect(context.layers.map((spec) => spec.data.id)).toEqual(
+    expect(context.layers.map((spec: { data: { id: string } }) => spec.data.id)).toEqual(
       expect.arrayContaining(['electron-main', 'harness', 'openclaw-runtime']),
     );
-    expect(context.layers.map((spec) => spec.data.id)).not.toContain('renderer');
+    expect(context.layers.map((spec: { data: { id: string } }) => spec.data.id)).not.toContain('renderer');
     expect(context.readOrder[0].path.replaceAll('\\', '/')).toBe(
       'harness/specs/tasks/connect-clawx-to-openclaw-runtime.md',
     );

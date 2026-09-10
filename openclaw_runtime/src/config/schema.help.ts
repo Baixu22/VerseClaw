@@ -2088,6 +2088,8 @@ export const FIELD_HELP: Record<string, string> = {
     "Route host=verseshell exec through strict typed exec.run after OpenClaw approval (default: false; no native fallback).",
   "runtime.verseShellFoundation.artifactResults":
     "Expose the bounded verseshell_result artifact query tool after all typed governed gates are enabled (default: false).",
+  "runtime.verseShellFoundation.patchPreview":
+    "Expose the read-only preview_patch bridge that computes base hashes, preconditions and diff artifacts (default: false). It never commits; the ClawX write journal stays the only commit/undo/recovery authority.",
   "runtime.verseShellFoundation.mcpCompatibility":
     "Enable optional external MCP compatibility only (default: false). Internal callers continue to use typed ACI.",
   "runtime.verseShellFoundation.legacyEval":

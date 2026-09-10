@@ -1,0 +1,68 @@
+{
+  "applied_at": "2026-08-23T01:22:06.598982Z",
+  "base_graph_hash": "bb03ea41c25b37ec79e5c20ebd1e69baca4616a749d12fb983614c22707e0900",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "工作区是共享脏树（数百个与本任务无关的改动/未跟踪文件），全程未 reset/stash/clean/checkout，沿用 TF-0082 纪律。",
+          "child 与 timer 均无生产调用方：接入点（fireGoalWaitChild / fireGoalWaitTimer）、账本反查与 armGoalWaitTimer 都已实现并单测覆盖，但没有工具/RPC 面去 arm，子智能体完成路径上也未插入调用。这是刻意的——requirement 1 要求 real-process gate 通过前保持 opt-in，且该完成路径（announce delivery + 代际钉扎）是 TF-0082 刚加固的，选挂载点涉及代际语义判断，应由 owner 决定。",
+          "cron 侧的 goalWakeEnabled 门禁没有单测覆盖：runMissionContinuationJob 是 buildGatewayCronService 内的闭包，隔离测试需要搭起整个 gateway cron service；该门禁是 4 行 fail-closed 守卫，复用已被覆盖的 goalWakeEnabled 谓词，仅由 typecheck 与 gateway shard 回归保证。",
+          "opt-in 门禁刻意只加在 cron 侧，不加进 fireGoalWaitTimer/fireGoalWaitChild：运行时层的 finalizeGoalWaitTaskProcess 本来就不设门禁（丢终态比关闭期间写入更糟），沿用该既有不对称。",
+          "放宽 startDurableHelperRecoveryService 的启动条件后，goal-wake 开启但 durable helper 关闭时会新增一次 sweep 循环（复用同一个 unref 定时器，非第二个 scheduler）；默认配置两个 flag 都关，已用测试确认 started=false。",
+          "tsgo:core:test 有既有错误（多为 test/*.mjs 缺声明）；其中 goal-wake-runtime.test.ts 两处 alreadyAcked 收窄错误已用 git show HEAD 对照确认为既有，本任务未新增 test 类型错误。",
+          "check:loc 在本仓库本就全局红（脚本无 allowlist，src/cron/service/timer.ts 改前已 1792 行）；本任务文件均低于 500 行，但 goal-wake-dispatch.ts 已 489 行逼近上限。本轮刻意不拆分——降风险轮次不引入无功能价值的改动churn；下次加分支前应先拆。该脚本在 Windows 上还会因并发打开全部文件而 EMFILE。",
+          "agents-core 全 shard 有 3–4 个既有失败（bash-tools.exec.goal-wait.test.ts ×3、bash-tools.exec.durable-helper.test.ts ×1，另有偶发 rc02-shadow-census）：均为 ws://127.0.0.1:18789 gateway 未就绪的连接失败，报错点在 registerExecApprovalRequestForHost，早于任何 goal-wake 代码；这些文件 git status 未修改。",
+          "五类 trigger 的 task_runs.runtime 一律保持 \"process\"，真实种类记在 task_kind（goal-owned-<kind>），以免改动 drain gating、活跃行计数、helper reaping 等既有查询语义。",
+          "missionContinuation 刻意不进 CronPayloadPatch：该 job 由 runtime 创建、由触发结算，不走人工编辑面；纳入会破坏 jobs.ts 现有收窄。",
+          "取消级联不主动删除仍在排期的 cron timer job：触发时 task 已终态，runner 返回 0 flow 的 ok，随 deleteAfterRun 自删，属自愈。",
+          "超时判定以 flow_runs.created_at（arm 时刻）为基准，未使用依赖进程的实际启动时刻；在 arm-before-spawn 契约下相差极小，但严格说这是「等待时长」而非「进程时长」。",
+          "未新建任务级 spec 文件：TF-0083 的验收标准由 task-forest 节点承载，仓库里没有对应的 session-ecosystem-* 任务 spec，收尾按约定只同步 handoffs/LATEST.md，未凭空造文档。",
+          "liveReady/productApproved/formalAcceptance 未改（仍 false），真实验收仍归 TF-0084。"
+        ],
+        "evidence": [
+          "typecheck：pnpm tsgo:core 0 error（降风险后最终树重跑）",
+          "lint：oxlint 覆盖全部改动文件，0",
+          "架构：pnpm check:import-cycles = 0 runtime value cycle(s)",
+          "goal-wake 套件（agents-core）8 文件 68 测试全过，本任务累计新增 36 条（budget 2 / cancel 9 / triggers 13 / timeout 8 / cron payload 4）",
+          "cron shard 3 文件 13 全过；mission-control 4 文件 32 全过；tasks/task-flow-cas 15 全过",
+          "gateway-methods 10 文件 57 全过；gateway-server 2 文件 7 全过",
+          "build:runtime exit 0（runtime-build-smoke gateway ready）",
+          "real-process canary：scripts/goal-wake-e2e-trace.ts exit 0；processPollToolCalls=0、duplicateWakeDeliveries=2 而 duplicateWakeTickCount=1、flagOffGoalWaitBlocked=true、goalWakeToolTrace=goal-wake.arm,supervisor.spawn,goal-wake.finalize,mission.tick",
+          "E2E：tests/e2e/runtime-lifecycle-governance.spec.ts 3/3（须先 build:runtime；stale dist 被明确报错拦截，即 AC4 的失败可读性）",
+          "AC1 回归探针：还原旧计数写法后「arm #2 must not be refused by historical rows」失败，移除探针后恢复全绿",
+          "AC2 的两个缺陷由自然前置失败暴露：缺 mission-terminal guard 时 outcome 为 dispatch-failed 而非 mission-cancelled；revision 差一时 flow 停在 running 而非 succeeded",
+          "超时证据：到期恰好一次 timed_out continuation（task.error 含 bound 数值、flow→succeeded）；重复 sweep 不产生第二次；无 timeoutMs 的 wait 不被误判；依赖抢先终止时不改写其 truth；重启后仍终态且不再产生 continuation",
+          "requirement 3 复审结论：maxActiveGoalWaits（waiting|running）、durable maxRunsPerSession（queued|running）、TTL（runDir age + !isTerminalTaskStatus 守卫）本就只算 active；本任务修掉 backoff map 在成功派发后不回收的残留",
+          "requirement 5 五类测试齐备：process exit、duplicate wake、cancel/exit race（双向）、restart matrix（重启后 reconcile 一次、再重启 no-op、cancel/timeout 后重启不复活）、Cron-to-Mission continuation",
+          "降风险证据：默认配置下 startDurableHelperRecoveryService 仍 started=false（放宽门禁未在无 flag 环境引入定时器）；containDurableHelper 对 intent 缺失判 already-gone 而非 failed；task 已终态但 flow 存活时 sweep 重跑 level check 并报 reconciledOnly=true，且不改写依赖自身的 succeeded",
+          "文档收尾：docs/dev/handoffs/LATEST.md 当前交接段已换为 TF-0083，含五个 owner path、三个顺带修掉的缺陷、降风险三项、门禁数字、诚实口径与遗留待办；git diff --check 0"
+        ],
+        "next_action": "TF-0083 已关闭并完成降风险复查与文档收尾。交接给 TF-0084（已 depends_on 本节点）：(1) 决定 child wait 在 subagent 完成路径上的挂载点，需与 TF-0082 的代际钉扎（requesterSessionId 快照、maybeSteerSubagentAnnounce）对齐，确认迟到完成不能唤醒已 reset/fork 的父代际；(2) 为 child/timer/approval/event 提供 arm 的工具或 RPC 面，并把 armGoalWaitTimer 的 cron facade 接到真实 CronServiceContract；(3) 真实验收与 liveReady/productApproved/formalAcceptance 翻转。另需 owner 处理：goal-wake-dispatch.ts 已 489 行逼近 check:loc 上限，加分支前先拆；cron 侧 goalWakeEnabled 门禁若要单测，需要一个可注入的 gateway cron service 装配点；以及 agents-core 里依赖 gateway 就绪的既有失败测试的运行方式。",
+        "progress": 100,
+        "progress_source": "manual",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260823-tf0083-slice1",
+          "session-20260823-tf0083-slice2",
+          "session-20260823-tf0083-derisk"
+        ],
+        "status": "done"
+      },
+      "id": "TF-0083"
+    }
+  ],
+  "created_at": "2026-08-23T01:22:06.386330Z",
+  "proposal_id": "TFP-TF-0083-derisk-20260823",
+  "rationale": "用户指示「给存在风险的内容降降温，然后给 083 做好完整收尾」。本轮不加新功能，只复查上两轮引入的风险面并修掉三处真实隐患（cron 侧缺 opt-in 门禁、helper 容器化把「早已消失」误报为失败、超时 sweep 跳过孤儿 wake 导致终态后唤醒失败再无人回访），补 3 条测试，全门禁在最终树重跑，并按仓库约定同步 docs/dev/handoffs/LATEST.md 的当前交接段。节点保持 done/100%。",
+  "session_id": "session-20260823-tf0083-derisk",
+  "status": "applied"
+}

@@ -15,6 +15,7 @@ import { DistillationTool } from "./distillation-tool.js";
 import type { KnowledgeStore } from "./knowledge-store.js";
 import { RetrievalEngine } from "./retrieval-engine.js";
 import { TrajectoryCapture } from "./trajectory-capture.js";
+import { randomUUID } from "node:crypto";
 import type { DistillationSuggestion, Principle, Trajectory } from "./types.js";
 
 export const SEKB_GOLDEN_PATH_SCHEMA = "sekb-golden-path.v1" as const;
@@ -114,7 +115,11 @@ const DEFAULT_SCENARIOS: NonNullable<SekbGoldenPathOptions["scenarios"]> = [
     steps: [
       { action: "tool.call", input: { tool: "psql" }, output: { error: "connection refused" } },
       { action: "retry", input: { attempt: 2 }, output: { error: "connection refused" } },
-      { action: "diagnose", input: { host: "127.0.0.1" }, output: { port: 5432, reachable: false } },
+      {
+        action: "diagnose",
+        input: { host: "127.0.0.1" },
+        output: { port: 5432, reachable: false },
+      },
     ],
     outcome: "failure",
     rawError: "could not connect to server: Connection refused (port 5432)",
@@ -125,7 +130,11 @@ const DEFAULT_SCENARIOS: NonNullable<SekbGoldenPathOptions["scenarios"]> = [
     contextTags: ["postgresql", "golden-path"],
     steps: [
       { action: "tool.call", input: { tool: "pg_isready" }, output: { ok: false } },
-      { action: "inspect", input: { file: "pg_hba.conf" }, output: { note: "local trust missing" } },
+      {
+        action: "inspect",
+        input: { file: "pg_hba.conf" },
+        output: { note: "local trust missing" },
+      },
     ],
     outcome: "failure",
     rawError: "Connection refused while connecting to PostgreSQL",
@@ -136,7 +145,9 @@ const DEFAULT_SCENARIOS: NonNullable<SekbGoldenPathOptions["scenarios"]> = [
  * Run the semi-automatic SEKB golden path end-to-end against a KnowledgeStore.
  * Human confirm is simulated by an explicit confirm_and_save_with_lineage call (never auto).
  */
-export async function runSekbGoldenPath(options: SekbGoldenPathOptions): Promise<SekbGoldenPathResult> {
+export async function runSekbGoldenPath(
+  options: SekbGoldenPathOptions,
+): Promise<SekbGoldenPathResult> {
   const now = options.now ?? (() => new Date());
   const minClusterSize = options.minClusterSize ?? 2;
   const minConfidence = options.minConfidence ?? 0.3;
@@ -152,7 +163,20 @@ export async function runSekbGoldenPath(options: SekbGoldenPathOptions): Promise
   const capture = new TrajectoryCapture({ store: options.store, now });
   const trajectories: Trajectory[] = [];
   for (const scenario of scenarios) {
-    const id = capture.start_trajectory(scenario.taskIntent, scenario.taskType, scenario.contextTags);
+    const loopRunId = `golden-path-${randomUUID()}`;
+    const id = capture.start_trajectory(
+      scenario.taskIntent,
+      scenario.taskType,
+      scenario.contextTags,
+      {
+        runtimeLineage: {
+          schema: "runtime-lineage.v1",
+          sessionId: options.sessionId,
+          loopRunId,
+          traceId: `trace-${loopRunId}`,
+        },
+      },
+    );
     for (const step of scenario.steps) {
       capture.log_step(id, step.action, step.input, step.output);
     }
@@ -165,10 +189,14 @@ export async function runSekbGoldenPath(options: SekbGoldenPathOptions): Promise
     trajectoryCount: trajectories.length,
     trajectoryIds,
   });
-  stamp("compress", compressedStepCounts.every((n) => n > 0), {
-    compressedStepCounts,
-    note: "finish_trajectory compresses steps before persistence",
-  });
+  stamp(
+    "compress",
+    compressedStepCounts.every((n) => n > 0),
+    {
+      compressedStepCounts,
+      note: "finish_trajectory compresses steps before persistence",
+    },
+  );
 
   // Guard: no principle write before confirm
   const principlesAfterCapture = options.store.query_principles({ status: "active" }).length;
@@ -212,8 +240,10 @@ export async function runSekbGoldenPath(options: SekbGoldenPathOptions): Promise
     const humanEdits: Partial<Principle> = {
       title: "Check PostgreSQL access before retrying (golden-path)",
       condition: "When PostgreSQL reports Connection refused during config/db tasks",
-      action: "Verify service is running, pg_hba.conf allows the client, and firewall rules permit port 5432",
-      reason: "Repeated connection refusals across similar trajectories indicate environment/config before code bugs",
+      action:
+        "Verify service is running, pg_hba.conf allows the client, and firewall rules permit port 5432",
+      reason:
+        "Repeated connection refusals across similar trajectories indicate environment/config before code bugs",
       criticality: "high",
       pinned: true,
     };
@@ -246,8 +276,7 @@ export async function runSekbGoldenPath(options: SekbGoldenPathOptions): Promise
   const afterHits = engine.retrieve_for_task(recallTaskIntent, recallTaskType, recallTags, 5);
   const afterInjection = engine.format_for_injection(afterHits);
   const recallMatched =
-    Boolean(confirm?.principleId) &&
-    afterHits.some((p) => p.principle_id === confirm!.principleId);
+    Boolean(confirm?.principleId) && afterHits.some((p) => p.principle_id === confirm!.principleId);
   stamp("recall", recallMatched, {
     hitCount: afterHits.length,
     hitIds: afterHits.map((p) => p.principle_id),
@@ -268,11 +297,11 @@ export async function runSekbGoldenPath(options: SekbGoldenPathOptions): Promise
   const writeOccurredOnlyAfterConfirm = principlesBefore === principlesAfterCapture;
   const chainComplete = Boolean(
     trajectories.length >= minClusterSize &&
-      suggestion &&
-      confirm?.principleId &&
-      principle &&
-      recallMatched &&
-      changed,
+    suggestion &&
+    confirm?.principleId &&
+    principle &&
+    recallMatched &&
+    changed,
   );
   stamp("evaluate", chainComplete, {
     writeOccurredOnlyAfterConfirm,

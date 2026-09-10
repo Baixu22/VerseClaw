@@ -1,0 +1,48 @@
+{
+  "applied_at": "2026-08-28T12:07:46.554962Z",
+  "base_graph_hash": "8ed9df34a526595bff9b70f58769ed47c212720af767c3cf689b3939dde1abdb",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "lane-1 最终复核（2026-08-28）：只复核三条最小修复。注释与 @modelcontextprotocol/sdk@1.29.0 protocol.js:220-229 的链式行为一致；close 后 callTool 抛 not connected 的用例补上；onerror 只失效 memo、不摘 session、不 dispose 的用例补上。定向测试 1 file / 6 passed。"
+        ],
+        "next_action": "已收口。",
+        "progress": 100,
+        "status": "done",
+        "summary": "三条最小修复已由 lane-1 独立复核通过：注释与 SDK 链式机制一致，close 后 callTool 快速失败有守卫，onerror 只失效 memo 不摘 session 不 dispose 也有守卫。定向测试 6/6 通过，收口。"
+      },
+      "id": "TF-0113"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-08-28T12:07:46.281177Z",
+        "evidence": "docs/dev/context-moat/reviews/TF-0113.md §「lane-1 最终复核（2026-08-28）」；agent-bundle-mcp-runtime.test.ts 的 keeps the session reusable after a recoverable onerror 用例。",
+        "expected_requirement": "TF-0113 requirement-1 原文要求 onclose/onerror 做同一件事，包括从 sessions 摘除 server。",
+        "id": "TFD-db495cbc03",
+        "kind": "scope_change",
+        "node_id": "TF-0113",
+        "observed_action_or_result": "lane-1 已接受 lane-2 的收窄：onclose 视为确定断连并摘除 session；onerror 只失效 catalog memo，不摘除 session、不 dispose 传输，以避免可恢复错误杀死健康 stdio 子进程。该行为已有专门测试守卫。",
+        "recommendation": "保持已改写的 requirement-1 措辞；本偏差收束为 resolved。",
+        "related_task_ids": [
+          "TF-0113"
+        ],
+        "severity": "low",
+        "status": "resolved"
+      }
+    }
+  ],
+  "created_at": "2026-08-28T12:07:46.263461Z",
+  "proposal_id": "prop-lane1-tf0113-final-review-20260828",
+  "rationale": "lane-1 独立复核 lane-2 的三条最小修复，全部通过；按既有裁决收口 TF-0113。",
+  "session_id": "session-lane1-tf0113-final-review",
+  "status": "applied"
+}

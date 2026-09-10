@@ -174,7 +174,7 @@ const KIND_TO_FLAG = {
 // at MAX_LCP_KINDS (currently 10) to prevent observability surface explosion.
 // New kinds require project-lead approval and a decay policy entry here.
 //
-// See: net use/designs/development-manual.md §1.1, Stage 0
+// See: docs/runtime-design/development-manual.md §1.1, Stage 0
 // ---------------------------------------------------------------------------
 
 /** Hard cap on the number of LCP report kinds. Currently 5; ceiling is 10. */

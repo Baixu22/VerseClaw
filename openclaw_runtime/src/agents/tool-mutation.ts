@@ -107,6 +107,34 @@ const READ_ONLY_GH_ISSUE_SUBCOMMANDS = new Set(["list", "status", "view"]);
 const UNSAFE_RG_FLAGS = new Set(["--pre", "--pre-glob"]);
 const UNSAFE_GIT_FLAGS = new Set(["--ext-diff", "--output", "-o", "--open-files-in-pager"]);
 
+/** Git global flags that consume the next token as their value, so that value
+ * is not mistaken for the subcommand (`git -C /repo status`). */
+const GIT_GLOBAL_FLAGS_WITH_VALUE = new Set([
+  "-C",
+  "-c",
+  "--git-dir",
+  "--work-tree",
+  "--namespace",
+  "--config-env",
+  "--exec-path",
+]);
+
+/** Git global flags that make any subcommand unsafe: `-c`/`--config-env` can
+ * point core.pager, core.editor or alias.* at an arbitrary command,
+ * `--exec-path` redirects git's own helper binaries, and
+ * `-C`/`--git-dir`/`--work-tree`/`--namespace` move the operation off the
+ * intended repository. Read-only-looking subcommands behind these must not be
+ * treated as read-only. Case matters: `-c` sets config, `-C` changes directory. */
+const UNSAFE_GIT_GLOBAL_FLAGS = new Set([
+  "-c",
+  "-C",
+  "--git-dir",
+  "--work-tree",
+  "--namespace",
+  "--config-env",
+  "--exec-path",
+]);
+
 // Structured file-target identity for cross-tool same-target recovery.
 // Carried alongside `actionFingerprint` so comparison does not have to
 // re-parse the joined fingerprint string. Re-parsing was unsafe because
@@ -244,15 +272,51 @@ function hasUnsafeGitFlag(tokens: readonly string[]): boolean {
   });
 }
 
+/** Resolve the real git subcommand, skipping global flags and their values.
+ * Returns `unsafeFlag` when the invocation carries a flag that makes any
+ * subcommand unsafe, so the caller fails closed instead of reading tokens[1]
+ * and trusting a read-only-looking name. */
+function resolveGitSubcommand(
+  tokens: readonly string[],
+): { subcommand: string; index: number } | { unsafeFlag: true } | undefined {
+  for (let index = 1; index < tokens.length; index += 1) {
+    const token = tokens[index];
+    if (!token) {
+      continue;
+    }
+    // Everything after `--` is a pathspec, so no subcommand follows.
+    if (token === "--") {
+      return undefined;
+    }
+    if (token.startsWith("-")) {
+      const bare = token.includes("=") ? token.slice(0, token.indexOf("=")) : token;
+      if (UNSAFE_GIT_GLOBAL_FLAGS.has(bare)) {
+        return { unsafeFlag: true };
+      }
+      if (!token.includes("=") && GIT_GLOBAL_FLAGS_WITH_VALUE.has(token)) {
+        index += 1;
+      }
+      continue;
+    }
+    return { subcommand: normalizeLowercaseStringOrEmpty(token), index };
+  }
+  return undefined;
+}
+
 function isReadOnlyGitCommand(tokens: readonly string[]): boolean {
-  const subcommand = normalizeLowercaseStringOrEmpty(tokens[1]);
   if (hasUnsafeGitFlag(tokens)) {
     return false;
   }
+  const resolved = resolveGitSubcommand(tokens);
+  if (!resolved || "unsafeFlag" in resolved) {
+    return false;
+  }
+  const { subcommand, index } = resolved;
   if (READ_ONLY_GIT_SUBCOMMANDS.has(subcommand)) {
     return true;
   }
-  return subcommand === "remote" && tokens.length === 3 && tokens[2] === "-v";
+  const rest = tokens.slice(index + 1);
+  return subcommand === "remote" && rest.length === 1 && rest[0] === "-v";
 }
 
 function isReadOnlyGhCommand(tokens: readonly string[]): boolean {

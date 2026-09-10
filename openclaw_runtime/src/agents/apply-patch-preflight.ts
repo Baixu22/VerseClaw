@@ -1,17 +1,36 @@
 /** UAS-04: leased preflight, application-level rollback, and journal recovery. */
 import { randomUUID } from "node:crypto";
-import path from "node:path";
 import { formatErrorMessage } from "../infra/errors.js";
-import { PATH_ALIAS_POLICIES, type PathAliasPolicy } from "../infra/path-alias-guards.js";
 import {
   discardWriteJournalEntries,
-  journalEntryId,
   setWriteJournalBatchState,
   snapshotPreparedWrite,
   writeJournalRecoveryRef,
   type WriteJournalEntry,
 } from "./tools/write-journal.js";
 import { applyUpdateHunk } from "./apply-patch-update.js";
+import { recordApplyPatchEffectReceipt } from "./apply-patch-effect-receipt.js";
+import {
+  buildPreviewEntries,
+  verifyPatchPreviewBinding,
+  type ChangeSummaryEntry,
+  type PreviewEntrySource,
+  type VerifiedPatchPreview,
+} from "./apply-patch-preview-binding.js";
+import {
+  ensureParentDir,
+  formatCommittedSummary,
+  journalEvidence,
+  recordSummary,
+  resolveHunks,
+  rollbackTouchedPaths,
+  throwAbort,
+  type OriginalPathState,
+  type PreflightPathOps,
+  type ResolvedHunk,
+  type ResolvedTarget,
+} from "./apply-patch-preflight-support.js";
+export type { PreflightPathOps } from "./apply-patch-preflight-support.js";
 import {
   acquirePatchBatchLocks,
   normalizePatchLockPath as lockKey,
@@ -31,6 +50,8 @@ export type ApplyPatchJournalEvidence = {
   batchId: string;
   batchState: PatchBatchState;
   undoable: boolean;
+  /** Provenance for a commit that a read-only preview was verified against. */
+  preview?: VerifiedPatchPreview;
   snapshots: Array<{
     seq: number;
     journalEntryId: string;
@@ -48,21 +69,6 @@ export type ApplyPatchBatchResult = {
   journal?: ApplyPatchJournalEvidence;
 };
 
-type ResolvedTarget = {
-  displayPath: string;
-  resolvedPath: string;
-};
-
-type ResolvedHunk =
-  | { kind: "add"; hunk: Extract<Hunk, { kind: "add" }>; target: ResolvedTarget }
-  | { kind: "delete"; hunk: Extract<Hunk, { kind: "delete" }>; target: ResolvedTarget }
-  | {
-      kind: "update";
-      hunk: Extract<Hunk, { kind: "update" }>;
-      target: ResolvedTarget;
-      moveTarget?: ResolvedTarget;
-    };
-
 type PreparedHunk =
   | { kind: "add"; target: ResolvedTarget; contents: string }
   | { kind: "delete"; target: ResolvedTarget }
@@ -70,14 +76,10 @@ type PreparedHunk =
       kind: "update";
       target: ResolvedTarget;
       newContent: Buffer | string;
+      /** Pre-encoding post-image, so preview verification is encoding-independent. */
+      newText: string;
       moveTarget?: ResolvedTarget;
     };
-
-type OriginalPathState = ResolvedTarget & {
-  existed: boolean;
-  decoded?: DecodedTextFile;
-  encoded?: Buffer | string;
-};
 
 type VirtualPathState = {
   exists: boolean;
@@ -89,63 +91,10 @@ export type PreparedPatchBatch = {
   hunks: PreparedHunk[];
   originals: Map<string, OriginalPathState>;
   journalEntries: WriteJournalEntry[];
+  /** Pre/post identity of every target, recomputed from what preflight actually read. */
+  previewEntries: ChangeSummaryEntry[];
   release: () => void;
 };
-
-export type PreflightPathOps = {
-  resolvePath: (
-    filePath: string,
-    aliasPolicy?: PathAliasPolicy,
-  ) => Promise<{ resolved: string; display: string }>;
-  assertParentPath: (filePath: string) => Promise<void>;
-};
-
-async function resolveHunks(
-  hunks: Hunk[],
-  options: ApplyPatchBatchOptions,
-  pathOps: PreflightPathOps,
-): Promise<ResolvedHunk[]> {
-  const resolved: ResolvedHunk[] = [];
-  for (const hunk of hunks) {
-    if (options.signal?.aborted) {
-      throwAbort();
-    }
-    if (hunk.kind === "add") {
-      const target = await pathOps.resolvePath(hunk.path);
-      await pathOps.assertParentPath(hunk.path);
-      resolved.push({
-        kind: "add",
-        hunk,
-        target: { displayPath: target.display, resolvedPath: target.resolved },
-      });
-      continue;
-    }
-    if (hunk.kind === "delete") {
-      const target = await pathOps.resolvePath(hunk.path, PATH_ALIAS_POLICIES.unlinkTarget);
-      resolved.push({
-        kind: "delete",
-        hunk,
-        target: { displayPath: target.display, resolvedPath: target.resolved },
-      });
-      continue;
-    }
-
-    const target = await pathOps.resolvePath(hunk.path);
-    let moveTarget: ResolvedTarget | undefined;
-    if (hunk.movePath) {
-      const move = await pathOps.resolvePath(hunk.movePath);
-      await pathOps.assertParentPath(hunk.movePath);
-      moveTarget = { displayPath: move.display, resolvedPath: move.resolved };
-    }
-    resolved.push({
-      kind: "update",
-      hunk,
-      target: { displayPath: target.display, resolvedPath: target.resolved },
-      ...(moveTarget ? { moveTarget } : {}),
-    });
-  }
-  return resolved;
-}
 
 function collectTargets(hunks: ResolvedHunk[]): ResolvedTarget[] {
   const targets = new Map<string, ResolvedTarget>();
@@ -253,6 +202,7 @@ async function precomputeHunks(
       kind: "update",
       target: resolved.target,
       newContent,
+      newText: applied,
       ...(resolved.moveTarget ? { moveTarget: resolved.moveTarget } : {}),
     });
   }
@@ -292,6 +242,39 @@ function createJournalEntries(
   return entries;
 }
 
+/**
+ * Structural view of the prepared batch for the commit gate.
+ *
+ * Every field comes from what this path itself resolved, read and precomputed —
+ * never from the caller. `baseEncoded` is the target's pre-batch bytes (so the
+ * gate notices a file that changed on disk since the preview) and `postText` is
+ * the decoded post-image (so it stays comparable with a preview reader that only
+ * ever saw text). One entry per prepared hunk, matching the preview's own shape.
+ */
+function previewSources(
+  prepared: readonly PreparedHunk[],
+  originals: Map<string, OriginalPathState>,
+): PreviewEntrySource[] {
+  return prepared.map((hunk) => {
+    const original = originals.get(lockKey(hunk.target.resolvedPath));
+    const baseEncoded = original?.existed ? original.encoded : undefined;
+    const base = baseEncoded === undefined ? {} : { baseEncoded };
+    if (hunk.kind === "add") {
+      return { change: "add", path: hunk.target.displayPath, ...base, postText: hunk.contents };
+    }
+    if (hunk.kind === "delete") {
+      return { change: "delete", path: hunk.target.displayPath, ...base };
+    }
+    return {
+      change: "update",
+      path: hunk.target.displayPath,
+      ...(hunk.moveTarget ? { movePath: hunk.moveTarget.displayPath } : {}),
+      ...base,
+      postText: hunk.newText,
+    };
+  });
+}
+
 /** Resolve and precompute the complete patch while holding every target lease. */
 export async function preflightPatch(
   hunks: Hunk[],
@@ -307,76 +290,18 @@ export async function preflightPatch(
     const prepared = await precomputeHunks(resolved, originals, options);
     const batchId = options.journal?.requestId?.trim() || randomUUID();
     const journalEntries = createJournalEntries(batchId, originals, options);
-    return { batchId, hunks: prepared, originals, journalEntries, release };
+    return {
+      batchId,
+      hunks: prepared,
+      originals,
+      journalEntries,
+      previewEntries: buildPreviewEntries(previewSources(prepared, originals)),
+      release,
+    };
   } catch (error) {
     release();
     throw error;
   }
-}
-
-function recordSummary(
-  summary: ApplyPatchSummary,
-  seen: Record<keyof ApplyPatchSummary, Set<string>>,
-  bucket: keyof ApplyPatchSummary,
-  value: string,
-): void {
-  if (!seen[bucket].has(value)) {
-    seen[bucket].add(value);
-    summary[bucket].push(value);
-  }
-}
-
-function journalEvidence(
-  batch: PreparedPatchBatch,
-  batchState: PatchBatchState,
-): ApplyPatchJournalEvidence | undefined {
-  const first = batch.journalEntries[0];
-  if (!first) {
-    return undefined;
-  }
-  const sessionId = first.lineage?.sessionId ?? "default";
-  return {
-    batchId: batch.batchId,
-    batchState,
-    undoable: batchState === "committed" || batchState === "recovery_required",
-    snapshots: batch.journalEntries.map((entry) => ({
-      seq: entry.seq,
-      journalEntryId: journalEntryId(sessionId, entry.seq),
-      path: entry.relPath,
-      hadPrior: entry.hadPrior,
-    })),
-  };
-}
-
-async function rollbackTouchedPaths(
-  touchedKeys: string[],
-  originals: Map<string, OriginalPathState>,
-  fileOps: PatchFileOps,
-): Promise<string[]> {
-  const unrestored: string[] = [];
-  const restored = new Set<string>();
-  for (const key of touchedKeys.toReversed()) {
-    if (restored.has(key)) {
-      continue;
-    }
-    restored.add(key);
-    const original = originals.get(key);
-    if (!original) {
-      unrestored.push(key);
-      continue;
-    }
-    try {
-      if (original.existed) {
-        await ensureParentDir(original.resolvedPath, fileOps);
-        await fileOps.writeFile(original.resolvedPath, original.encoded!);
-      } else if (await fileOps.exists(original.resolvedPath)) {
-        await fileOps.remove(original.resolvedPath);
-      }
-    } catch {
-      unrestored.push(original.resolvedPath);
-    }
-  }
-  return unrestored;
 }
 
 /** Apply a prepared batch and always release its target leases. */
@@ -398,6 +323,23 @@ export async function applyPreparedBatch(
     touchedKeys.push(key);
     touchedDisplays.set(key, target.displayPath);
   };
+
+  // The commit gate. It runs while the batch still holds every target lease and
+  // before the first write, so a refusal leaves the workspace untouched — there
+  // is nothing to roll back. It must still release the leases and discard the
+  // prepared snapshots on the way out, because `finally` below is only reached
+  // once the mutation loop has been entered.
+  let preview: VerifiedPatchPreview | undefined;
+  try {
+    preview = options.previewId
+      ? verifyPatchPreviewBinding({ previewId: options.previewId, entries: batch.previewEntries })
+      : undefined;
+  } catch (gateError) {
+    setWriteJournalBatchState(batch.journalEntries, "rolled_back");
+    discardWriteJournalEntries(batch.journalEntries);
+    batch.release();
+    throw gateError;
+  }
 
   try {
     for (const hunk of batch.hunks) {
@@ -433,14 +375,14 @@ export async function applyPreparedBatch(
     }
 
     setWriteJournalBatchState(batch.journalEntries, "committed");
+    const committedEvidence = journalEvidence(batch, "committed", preview);
+    await recordApplyPatchEffectReceipt({ journal: committedEvidence, summary });
     return {
       summary,
       text: formatCommittedSummary(summary),
       batchState: "committed",
       modifiedFiles: [...summary.added, ...summary.modified, ...summary.deleted],
-      ...(journalEvidence(batch, "committed")
-        ? { journal: journalEvidence(batch, "committed") }
-        : {}),
+      ...(committedEvidence ? { journal: committedEvidence } : {}),
     };
   } catch (applyError) {
     const unrestored = await rollbackTouchedPaths(touchedKeys, batch.originals, fileOps);
@@ -459,38 +401,22 @@ export async function applyPreparedBatch(
       batchState === "rolled_back"
         ? `Patch failed and was rolled back: ${formatErrorMessage(applyError)}`
         : `Patch failed and rollback was incomplete; recovery_required. Recovery ref: ${recoveryRef}. Error: ${formatErrorMessage(applyError)}`;
+    const failedEvidence = journalEvidence(batch, batchState, preview);
+    const failedSummary: ApplyPatchSummary = { added: [], modified: [], deleted: [] };
+    await recordApplyPatchEffectReceipt({
+      journal: failedEvidence,
+      summary: failedSummary,
+      ...(recoveryRef ? { recoveryRef } : {}),
+    });
     return {
-      summary: { added: [], modified: [], deleted: [] },
+      summary: failedSummary,
       text,
       batchState,
       ...(recoveryRef ? { recoveryRef } : {}),
       modifiedFiles,
-      ...(journalEvidence(batch, batchState)
-        ? { journal: journalEvidence(batch, batchState) }
-        : {}),
+      ...(failedEvidence ? { journal: failedEvidence } : {}),
     };
   } finally {
     batch.release();
   }
-}
-
-function formatCommittedSummary(summary: ApplyPatchSummary): string {
-  const lines = ["Success. Updated the following files:"];
-  for (const file of summary.added) lines.push(`A ${file}`);
-  for (const file of summary.modified) lines.push(`M ${file}`);
-  for (const file of summary.deleted) lines.push(`D ${file}`);
-  return lines.join("\n");
-}
-
-async function ensureParentDir(filePath: string, fileOps: PatchFileOps): Promise<void> {
-  const parent = path.dirname(filePath);
-  if (parent && parent !== ".") {
-    await fileOps.mkdirp(parent);
-  }
-}
-
-function throwAbort(): never {
-  const error = new Error("Aborted");
-  error.name = "AbortError";
-  throw error;
 }

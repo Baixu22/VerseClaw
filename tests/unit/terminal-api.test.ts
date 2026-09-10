@@ -179,6 +179,7 @@ describe('terminal api OpenClaw exec integration', () => {
 
     const approvalId = first.approval?.id;
     expect(approvalId).toBeTruthy();
+    if (!approvalId) throw new Error('Expected approval id');
     await expect(permissions.decideApproval({
       id: approvalId,
       decision: 'approved',
@@ -190,6 +191,88 @@ describe('terminal api OpenClaw exec integration', () => {
     });
     expect(rpc).toHaveBeenCalledTimes(1);
     expect(childProcessMocks.spawn).not.toHaveBeenCalled();
+  });
+
+  it('records a bounded diagnostic for failed approved terminal commands', async () => {
+    const rpc = vi.fn().mockResolvedValue({ success: false, exitCode: 1, stdout: '', stderr: 'private failure' });
+    const { createHostTraceDiagnosticsService } = await import('@electron/services/host-trace-diagnostics');
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const { createTerminalApi } = await import('@electron/services/terminal-api');
+    const traceDiagnostics = createHostTraceDiagnosticsService({ secret: new Uint8Array(32).fill(9) });
+    const api = createTerminalApi({
+      gatewayManager: gatewayManager(rpc) as never,
+      traceDiagnostics,
+    });
+    const permissions = createPermissionsApi();
+
+    const first = await api.run({ command: 'git clean -fd' });
+    const approvalId = first.approval?.id;
+    expect(approvalId).toBeTruthy();
+    if (!approvalId) throw new Error('Expected approval id');
+    await permissions.decideApproval({ id: approvalId, decision: 'approved' });
+
+    await expect(api.run({ command: 'git clean -fd', approvalId })).resolves.toMatchObject({
+      success: false,
+      exitCode: 1,
+    });
+
+    const records = traceDiagnostics.records();
+    expect(records).toHaveLength(1);
+    expect(records[0]?.summary.failureKind).toBe('runtime');
+    expect(records[0]?.summary.exitCode).toBe(1);
+    const serialized = JSON.stringify(records[0]);
+    expect(serialized).not.toContain('git clean -fd');
+    expect(serialized).not.toContain('private failure');
+  });
+
+  it.each([
+    [{ success: false, code: 'ENOENT', exitCode: 1 }, 'tool_missing'],
+    [{ success: false, code: 'EACCES', exitCode: 1 }, 'permission'],
+    [{ success: false, timedOut: true, exitCode: null }, 'timeout'],
+    [{ success: false, cancelled: true, exitCode: null }, 'cancelled'],
+  ] as const)('maps safe Gateway failure metadata to %s', async (gatewayResult, failureKind) => {
+    const rpc = vi.fn().mockResolvedValue(gatewayResult);
+    const { createHostTraceDiagnosticsService } = await import('@electron/services/host-trace-diagnostics');
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const { createTerminalApi } = await import('@electron/services/terminal-api');
+    const traceDiagnostics = createHostTraceDiagnosticsService({ secret: new Uint8Array(32).fill(10) });
+    const api = createTerminalApi({
+      gatewayManager: gatewayManager(rpc) as never,
+      traceDiagnostics,
+    });
+    const permissions = createPermissionsApi();
+
+    const first = await api.run({ command: 'git clean -fd' });
+    const approvalId = first.approval?.id;
+    if (!approvalId) throw new Error('Expected approval id');
+    await permissions.decideApproval({ id: approvalId, decision: 'approved' });
+    await api.run({ command: 'git clean -fd', approvalId });
+
+    expect(traceDiagnostics.records()[0]?.summary.failureKind).toBe(failureKind);
+    expect(JSON.stringify(traceDiagnostics.records()[0])).not.toContain('ENOENT');
+  });
+
+  it('does not record successful approved terminal commands', async () => {
+    const rpc = vi.fn().mockResolvedValue({ success: true, exitCode: 0, stdout: 'ok' });
+    const { createHostTraceDiagnosticsService } = await import('@electron/services/host-trace-diagnostics');
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const { createTerminalApi } = await import('@electron/services/terminal-api');
+    const traceDiagnostics = createHostTraceDiagnosticsService({ secret: new Uint8Array(32).fill(8) });
+    const api = createTerminalApi({
+      gatewayManager: gatewayManager(rpc) as never,
+      traceDiagnostics,
+    });
+    const permissions = createPermissionsApi();
+
+    const first = await api.run({ command: 'git clean -fd' });
+    const approvalId = first.approval?.id;
+    if (!approvalId) throw new Error('Expected approval id');
+    await permissions.decideApproval({ id: approvalId, decision: 'approved' });
+    await expect(api.run({ command: 'git clean -fd', approvalId })).resolves.toMatchObject({
+      success: true,
+    });
+
+    expect(traceDiagnostics.records()).toHaveLength(0);
   });
 
   it('blocks mutating commands in read-only mode before reaching Gateway', async () => {

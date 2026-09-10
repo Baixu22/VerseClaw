@@ -1,0 +1,245 @@
+{
+  "base_graph_hash": "eedb9f6ea369a31330eb880b5dfe7c4ac07712f624a9481021a4e1f9f3567bba",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "exec-default-hardening",
+      "node": {
+        "acceptance_criteria": [
+          "新增默认策略单元测试通过",
+          "exec allowlist 回归测试通过",
+          "comms replay/compare 通过",
+          "文档同步说明安全默认与 fullAccess 例外"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.97,
+          "user_goal": "以简单、高收益的方式提高项目对提示词注入和破限行为的抵抗力，同时保持开源产品的可用性。",
+          "validation_plan": [
+            "聚焦 Vitest",
+            "comms replay/compare",
+            "安全审计与文档核对"
+          ],
+          "why_not_enough": "尚未对外部内容、记忆、MCP/Skill、跨 Agent 交接到敏感 sink 建立统一持久 provenance/taint 追踪。",
+          "why_this_task": "它直接把最危险的提示词影响结果限制在工具授权边界之外，并复用项目已有的工作区、审批和主进程控制。"
+        },
+        "assumptions": [
+          "TF-0007 继续作为受控内部投用的主目标",
+          "显式 fullAccess 由操作者承担 break-glass 风险"
+        ],
+        "desired_outcomes": [
+          "缺省执行不再自动获得 full host access",
+          "审批缺失或超时不扩大权限",
+          "运行时解析与诊断显示使用同一组默认常量"
+        ],
+        "evidence": [
+          "openclaw_runtime/src/infra/exec-approvals.ts",
+          "openclaw_runtime/src/infra/exec-approvals-effective.ts",
+          "openclaw_runtime/src/agents/exec-defaults.ts",
+          "openclaw_runtime/src/infra/exec-approvals-defaults.test.ts",
+          "openclaw_runtime/src/agents/exec-defaults.test.ts",
+          "harness/specs/tasks/harden-exec-defaults-against-prompt-injection.md",
+          "README.md",
+          "README.zh-CN.md",
+          "README.ja-JP.md",
+          "AnySearch 调研：StruQ、InjecAgent、FIDES、Adaptive Attacks"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "不实现全局 prompt-inject.md",
+          "不关闭审批",
+          "不宣称提示词注入已被完全解决"
+        ],
+        "purpose": "在不牺牲显式操作者能力的前提下，避免模型被外部内容影响后继承未配置的 full/off 主机执行权限。",
+        "requirements": [
+          "不通过全局强提示词覆盖来实现安全",
+          "显式 fullAccess/full policy 不被静默改写",
+          "工具授权边界独立于模型文本"
+        ],
+        "status": "done",
+        "success_metrics": [
+          "缺省 security=allowlist",
+          "缺省 ask=on-miss",
+          "缺省 askFallback=allowlist",
+          "未授权权限升级为 0"
+        ],
+        "summary": "完成缺省 tools.exec 的 fail-closed 收口：security=allowlist、ask=on-miss、askFallback=allowlist；显式 fullAccess 保持可用；外部内容包装、工具前审批和工作区边界作为现有防线纳入证据。",
+        "title": "提示词注入防护基线：Exec 默认策略收口"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "source-to-sink-tracking",
+      "node": {
+        "acceptance_criteria": [
+          "网页/文件/渠道/MCP/Skill/记忆至少各有一条 provenance fixture",
+          "敏感 sink 在无授权来源依赖时 fail-closed",
+          "AgentDojo/InjecAgent 风格回归样例纳入本地测试",
+          "误报与工具可用性指标有基线",
+          "审计报告能显示来源、sink、审批和结果"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.94,
+          "user_goal": "用相对简单但高回报的修改处理常见破限策略，避免矫枉过正。",
+          "validation_plan": [
+            "先完成来源标签与 fixture",
+            "再接敏感 sink policy",
+            "最后运行回归集、comms 与安全审计",
+            "通过后再提交 TF-0007 的内部 canary 复核"
+          ],
+          "why_not_enough": "仍需要真实内部 cohort、人工审批负担和长期误报数据，不能直接授予全系统 default-on。",
+          "why_this_task": "研究显示提示词层防御会被自适应攻击绕过；来源到 sink 的结构化授权是更稳健、收益更高且对普通工作流影响更小的下一步。"
+        },
+        "assumptions": [
+          "先以本地 fixture 和 shadow/audit 模式验证，再考虑内部 canary",
+          "TF-0068 的 external write policy 可作为写入 sink 的依赖参考"
+        ],
+        "confidence": 0.82,
+        "context_tags": [
+          "prompt-injection",
+          "provenance",
+          "taint",
+          "tool-policy",
+          "security"
+        ],
+        "desired_outcomes": [
+          "每份外部数据保留可验证来源与信任标签",
+          "敏感读取、网络发送、写入、执行前可检查来源依赖",
+          "注入回归集能覆盖自适应攻击而不依赖单一正则"
+        ],
+        "difficulty": "high",
+        "estimated_total_minutes": 960,
+        "execution_hints": [
+          "本 session 只推进一个 ready 节点：先冻结来源标签和 sink 分类",
+          "不要先做全局 prompt 重写",
+          "保持 kill switch、审计和回滚证据"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "不构建大规模 regex 防火墙",
+          "不默认关闭联网或所有 MCP/Skill",
+          "不把 benchmark 绿灯当作 live/product GA 证据"
+        ],
+        "priority": 1,
+        "purpose": "把当前分散的清洗、包装和审批控制连接成可审计的完整数据流，降低间接注入导致数据泄露、外部写入或命令执行的风险。",
+        "remaining_minutes_max": 1800,
+        "remaining_minutes_min": 480,
+        "requirements": [
+          "保持默认最小权限和显式升级",
+          "不把所有外部文本一律拒绝，保留普通搜索、阅读和编码工作流",
+          "优先结构化策略和工具边界，不新增第二套规则真相源"
+        ],
+        "status": "ready",
+        "success_metrics": [
+          "未授权外部数据到敏感 sink 的成功率为 0",
+          "来源标签丢失率为 0",
+          "普通只读任务可用性不低于现有基线",
+          "自适应回归样例全部可定位到阻断层"
+        ],
+        "summary": "下一阶段建立统一的外部内容来源标签、敏感工具 sink 授权和自适应注入回归集，覆盖网页、文件、记忆、MCP/Skill 与 Agent 交接。",
+        "title": "外部内容 Source-to-Sink 追踪与注入回归"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.96,
+        "reason": "已完成的 exec 安全默认收口属于受控内部投用安全边界。"
+      },
+      "from": "exec-default-hardening",
+      "to": "TF-0007",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.94,
+        "reason": "来源到 sink 的防护是 TF-0007 后续内部安全投用的直接子任务。"
+      },
+      "from": "source-to-sink-tracking",
+      "to": "TF-0007",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.9,
+        "reason": "统一 provenance/taint 与工具授权边界服务于 Runtime Authority 收口。"
+      },
+      "from": "source-to-sink-tracking",
+      "to": "TF-0010",
+      "type": "contributes_to"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.78,
+        "reason": "外部写入 sink 的 policy 与不可逆边界需要复用 TF-0068 的约束。"
+      },
+      "from": "source-to-sink-tracking",
+      "to": "TF-0068",
+      "type": "depends_on"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.9,
+        "created_at": "2026-08-20T05:51:01.978488Z",
+        "evidence": "本轮仓库审查与 AnySearch 调研；现有 external-content、sanitize-for-prompt、before-tool-call 和 workspace-permissions 分散实现。",
+        "expected_requirement": "安全控制应覆盖外部数据从来源到敏感工具 sink 的完整链路。",
+        "id": "TFD-f3abd635d1",
+        "observed_action_or_result": "当前实现已完成内容包装、字符清洗、工具前审批和 exec 默认收口，但尚无统一持久 provenance/taint 跟踪。",
+        "recommendation": "按 source-to-sink-tracking 节点先做 fixture、来源标签和敏感 sink policy，再进入内部 canary 评审。",
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "severity": "medium",
+        "status": "open"
+      }
+    },
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "候选方案包括全局强提示词/关闭审批、单一 regex 防火墙、以及工具边界加来源到 sink 追踪。",
+        "confidence": 0.93,
+        "created_at": "2026-08-20T05:51:01.978488Z",
+        "id": "TFA-14a06b76dd",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.95,
+          "validation_plan": [
+            "本地 fixture",
+            "聚焦单测",
+            "安全审计",
+            "内部 canary 复核"
+          ],
+          "why_not_enough": "需要后续真实 cohort 与人工负担证据。",
+          "why_this_task": "最大化安全收益并控制普通工作流误报。"
+        },
+        "reason": "前者会把注入转化为权限提升，后者对自适应攻击脆弱；结构化来源、最小权限和审批边界更符合现有架构。",
+        "rejected_options": [
+          "全局强提示词覆盖与默认 full access",
+          "仅依赖单一 regex/检测模型"
+        ],
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "selected_option": "工具边界加来源到 sink 追踪，并先收紧缺省 exec 默认值。",
+        "user_goal": "提高当前开源项目对提示词注入和破限行为的抵抗力，同时保持工具可用性。"
+      }
+    }
+  ],
+  "created_at": "2026-08-20T05:51:01.974318Z",
+  "proposal_id": "TFP-prompt-injection-controls-20260820",
+  "rationale": "本轮已完成 AnySearch 调研、仓库安全边界分析和 tools.exec 缺省策略收紧；需要把已完成证据与下一阶段来源到敏感工具的防护计划登记到现有 TF-0007，而不是创建平行安全真相源。",
+  "session_id": "session-2026-08-20-prompt-injection-controls",
+  "status": "proposed"
+}

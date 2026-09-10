@@ -31,7 +31,7 @@ describe('Context Runtime Kit shadow provider', () => {
       { role: 'user', content: 'Keep legacy prompt authoritative.' },
       { role: 'assistant', content: 'No CRK projection should be injected.' },
     ] as AgentMessage[];
-    const baselinePromptText = messages.map((message) => message.content).join('\n');
+    const baselinePromptText = messages.map((message: any) => message.content).join('\n');
 
     const result = await runContextRuntimeKitShadowPilot({
       config: {},
@@ -100,7 +100,7 @@ describe('Context Runtime Kit shadow provider', () => {
         legacyAuthoritative: true,
       });
     }
-    expect(messages.map((message) => message.content)).toEqual([
+    expect(messages.map((message: any) => message.content)).toEqual([
       'Produce CRK diagnostics only.',
       'Legacy messages stay in place.',
     ]);

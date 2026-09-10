@@ -1,0 +1,88 @@
+{
+  "applied_at": "2026-09-10T05:06:16.907308Z",
+  "base_graph_hash": "2ffbba0ae92d35a51f4e920b6d2aa26809c25b6e26d7b5f2dc5a799a9581fc49",
+  "base_summary": {
+    "edge_count": 276,
+    "node_count": 152,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "gate-entrypoints",
+      "node": {
+        "acceptance_criteria": [
+          "三个失败输入在真实路径和别名路径分别返回 1/1/3，错误信息非空。",
+          "成功输入/帮助输出在两种路径下一致且非空；导入脚本不执行 CLI。",
+          "聚焦回归、Agent Dev fast、Harness 和 Task Forest validate/export 通过。"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.99,
+          "user_goal": "接手最新任务图，优先复核，有问题直接修复。",
+          "validation_plan": [
+            "真实路径/联接路径 CLI 阴阳性对照",
+            "现有聚焦测试和 Agent Dev fast",
+            "Harness 与 Task Forest 校验"
+          ],
+          "why_not_enough": "不会补齐真人证据或解除已接受的里程碑降级。",
+          "why_this_task": "修复已确认且影响后续复核可信度的工程工具缺陷。"
+        },
+        "confidence": 0.99,
+        "context_tags": [
+          "engineering-gates",
+          "junction",
+          "review-followup"
+        ],
+        "difficulty": "medium",
+        "estimated_total_minutes": 90,
+        "evidence": [
+          "docs/dev/context-moat/reviews/TF-0127.md（目录别名陷阱）",
+          "harness/specs/tasks/engineering-gate-entrypoint-junctions.md"
+        ],
+        "kind": "subtask",
+        "next_action": "补充真实 CLI 回归并确认修复前失败，再将三个脚本接入既有 realpath 入口判断。",
+        "non_goals": [
+          "不改变 review_needed 节点的已接受降级或真人验收边界。",
+          "不标 RC-01R 整体完成，不修改 runtime 行为、基线、默认值或产品锁。"
+        ],
+        "priority": 1,
+        "progress": 10,
+        "purpose": "保证后续审核消费的工程门禁确实执行，不因仓库目录联接产生假绿。",
+        "remaining_minutes_max": 90,
+        "remaining_minutes_min": 30,
+        "requirements": [
+          "复用 scripts/lib/entrypoint.mjs；不改门禁判定规则。",
+          "通过真实子进程覆盖真实路径、临时联接路径和模块导入。"
+        ],
+        "status": "in_progress",
+        "summary": "已用真实 Node 进程复现：三个门禁从 C: 联接路径接收失败输入时均 exit 0 且无输出，真实路径分别为 1/1/3。复用现有入口判断并覆盖 CLI 导入隔离。",
+        "title": "修复工程门禁从目录联接启动时静默空跑"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "属于 RC-01R 工程门禁真实执行与可复现基线修复。"
+      },
+      "from": "gate-entrypoints",
+      "to": "TF-0029",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "reason": "承接 M4 复核已记录的目录别名空跑问题，不改变 M4 降级裁决。"
+      },
+      "from": "gate-entrypoints",
+      "to": "TF-0127",
+      "type": "derived_from"
+    }
+  ],
+  "created_at": "2026-09-10T05:06:02.905053Z",
+  "proposal_id": "TFP-gate-entrypoint-junctions-start-20260910",
+  "rationale": "用户要求接手最新 task forest，优先 review_needed，发现问题直接修复。四个复核节点的已接受降级/真人证据边界保持；将 TF-0127 已证实的工程门禁目录联接空跑作为 TF-0029 下唯一实施子任务。",
+  "session_id": "codex-20260910-review-needed",
+  "status": "applied"
+}

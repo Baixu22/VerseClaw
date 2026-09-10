@@ -1,0 +1,108 @@
+/* Responsive shell rules are container-based so the UI reacts to the space it
+ * actually has after sidebars and workspace panels claim their columns. */
+
+[data-testid='app-content-stage'],
+[data-testid='main-content'],
+[data-testid='chat-page'] {
+  min-width: 0;
+}
+
+.chat-toolbar-shell {
+  container: chat-toolbar / inline-size;
+}
+
+.chat-session-activity-control {
+  display: inline-flex;
+  min-width: 0;
+}
+
+.chat-project-session-header {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.chat-project-session-header > .relative,
+.chat-project-session-header > .chat-header-environment-project,
+.chat-project-session-header > .chat-header-branch,
+.chat-project-session-header > .relative.order-2 {
+  min-width: 0;
+}
+
+/* The project and branch are useful context, but the active session is the
+ * primary identity. Give the primary identity the first claim on narrow
+ * toolbars and keep the controls reachable through the session trigger. */
+@container chat-toolbar (max-width: 760px) {
+  .chat-header-environment-project,
+  .chat-header-branch,
+  .chat-header-separator {
+    display: none !important;
+  }
+
+  [data-testid='chat-project-session-header'] {
+    gap: 0;
+  }
+}
+
+@container chat-toolbar (max-width: 560px) {
+  .chat-header-session-label,
+  .chat-header-session-chevron {
+    display: none;
+  }
+
+  [data-testid='chat-header-session-name'] {
+    width: 28px;
+    min-width: 28px;
+    justify-content: center;
+    padding-inline: 0;
+  }
+}
+
+@container chat-toolbar (max-width: 720px) {
+  .chat-session-activity-control {
+    display: none;
+  }
+}
+
+.codex-composer-host {
+  container: composer-host / inline-size;
+}
+
+.codex-composer-actions-row {
+  container: composer-actions / inline-size;
+}
+
+@container composer-actions (max-width: 660px) {
+  .codex-permission-control,
+  .codex-knowledge-trigger {
+    width: 32px;
+    max-width: 32px;
+    justify-content: center;
+    padding-inline: 0;
+  }
+
+  .codex-permission-control .codex-permission-trigger__label,
+  .codex-knowledge-trigger > span,
+  .codex-knowledge-trigger > svg:last-child {
+    display: none;
+  }
+}
+
+@container composer-actions (max-width: 470px) {
+  .codex-knowledge-trigger {
+    width: 30px;
+    max-width: 30px;
+  }
+}
+
+@container chat-toolbar (max-width: 400px) {
+  [data-testid='chat-header-session-name'] {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .codex-sidebar,
+  [data-testid='artifact-panel-aside'] {
+    transition: none !important;
+  }
+}

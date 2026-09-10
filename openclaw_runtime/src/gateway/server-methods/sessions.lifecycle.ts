@@ -18,10 +18,7 @@ import {
 } from "../../../packages/gateway-protocol/src/index.js";
 import { readAcpSessionMeta } from "../../runtime/session-meta.ts";
 import { resolveModelAgentRuntimeMetadata } from "../../agents/agent-runtime-metadata.js";
-import {
-  resolveAgentWorkspaceDir,
-  resolveDefaultAgentId,
-} from "../../agents/agent-scope.js";
+import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
 import {
   forkSessionFromParent,
   resolveParentForkDecision,
@@ -48,9 +45,17 @@ import {
 import { ADMIN_SCOPE } from "../operator-scopes.js";
 import { triggerSessionPatchHook } from "../session-patch-hooks.js";
 import {
-  resolveSessionStoreAgentId,
-  resolveSessionStoreKey,
-} from "../session-store-key.js";
+  buildSessionDeleteOperationJournalRow,
+  buildSessionDeleteOperationManifest,
+  finalizeSessionDeleteOperationJournal,
+  markSessionDeleteOperationPartialCommitted,
+  parseSessionDeletePartialReceipt,
+  readSessionDeleteOperationJournal,
+  writeSessionDeleteOperationIntent,
+  type SessionDeleteOperationManifest,
+  type SessionDeletePartialReceipt,
+} from "../session-delete-operation-journal.js";
+import { resolveSessionStoreAgentId, resolveSessionStoreKey } from "../session-store-key.js";
 import {
   loadSessionEntry,
   migrateAndPruneGatewaySessionStoreKey,
@@ -454,7 +459,10 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.INVALID_REQUEST, "cannot fork while the source session has an active run"),
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          "cannot fork while the source session has an active run",
+        ),
       );
       return;
     }
@@ -803,8 +811,9 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
     const {
       archiveSessionTranscriptsForSessionDetailed,
       cleanupSessionBeforeMutation,
-      emitGatewaySessionEndPluginHook,
+      emitGatewaySessionEndPluginHookAndWait,
       emitSessionUnboundLifecycleEvent,
+      resolveSessionTranscriptCandidates,
     } = await loadSessionsRuntimeModule();
 
     const { entry, legacyKey, canonicalKey } = loadSessionEntry(key, {
@@ -813,65 +822,346 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
     if (rejectPluginRuntimeDeleteMismatch({ client, key: canonicalKey ?? key, entry, respond })) {
       return;
     }
-    const mutationCleanupError = await cleanupSessionBeforeMutation({
-      cfg,
-      key,
-      target,
-      entry,
-      legacyKey,
-      canonicalKey,
-      reason: "session-delete",
-    });
-    if (mutationCleanupError) {
-      respond(false, undefined, mutationCleanupError);
+
+    const operationId =
+      normalizeOptionalString((p as { operationId?: unknown }).operationId) ?? undefined;
+    if (!operationId) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "operationId required"));
       return;
     }
-    const sessionId = entry?.sessionId;
-    const deleted = await updateSessionStore(storePath, (store) => {
-      const { primaryKey } = migrateAndPruneGatewaySessionStoreKey({
-        cfg,
-        key,
-        store,
-        agentId: requestedAgentId,
-      });
-      const hadEntry = Boolean(store[primaryKey]);
-      if (hadEntry) {
-        delete store[primaryKey];
-      }
-      return hadEntry;
-    });
+    const emitLifecycleHooks = p.emitLifecycleHooks !== false;
 
-    const archivedTranscripts =
-      deleted && deleteTranscript
-        ? archiveSessionTranscriptsForSessionDetailed({
-            sessionId,
-            storePath,
-            sessionFile: entry?.sessionFile,
-            agentId: target.agentId,
-            reason: "deleted",
-          })
-        : [];
-    const archived = archivedTranscripts.map((entryLocal) => entryLocal.archivedPath);
-    if (deleted) {
-      emitGatewaySessionEndPluginHook({
-        cfg,
-        sessionKey: target.canonicalKey ?? key,
-        sessionId,
-        storePath,
-        sessionFile: entry?.sessionFile,
-        agentId: target.agentId,
-        reason: "deleted",
-        archivedTranscripts,
-      });
-      const emitLifecycleHooks = p.emitLifecycleHooks !== false;
-      await emitSessionUnboundLifecycleEvent({
-        targetSessionKey: target.canonicalKey ?? key,
-        reason: "session-delete",
-        emitHooks: emitLifecycleHooks,
-      });
+    // The caller-generated operationId is the production idempotency boundary.
+    let manifest: SessionDeleteOperationManifest | undefined;
+    let skipStoreMutation = false;
+    let partialReceipt: SessionDeletePartialReceipt | undefined;
+    {
+      const existingJournal = readSessionDeleteOperationJournal(storePath, operationId);
+      if (existingJournal) {
+        const requestedCanonicalKey = canonicalKey ?? target.canonicalKey ?? key;
+        const requestedAgentIdentity = target.agentId ?? requestedAgentId;
+        if (
+          existingJournal.manifest.canonicalKey !== requestedCanonicalKey ||
+          existingJournal.manifest.agentId !== requestedAgentIdentity ||
+          existingJournal.manifest.deleteTranscript !== deleteTranscript ||
+          existingJournal.manifest.emitLifecycleHooks !== emitLifecycleHooks
+        ) {
+          respond(
+            false,
+            undefined,
+            errorShape(
+              ErrorCodes.INVALID_REQUEST,
+              `Delete operation ${operationId} was already used with a different manifest digest.`,
+            ),
+          );
+          return;
+        }
+        if (entry && existingJournal.manifest.expectedSessionId !== entry.sessionId) {
+          respond(
+            false,
+            undefined,
+            errorShape(
+              ErrorCodes.INVALID_REQUEST,
+              `Delete operation ${operationId} belongs to a different session generation.`,
+            ),
+          );
+          return;
+        }
+        if (
+          entry &&
+          existingJournal.manifest.sessionFile &&
+          existingJournal.manifest.sessionFile !== entry.sessionFile
+        ) {
+          respond(
+            false,
+            undefined,
+            errorShape(
+              ErrorCodes.INVALID_REQUEST,
+              `Delete operation ${operationId} was already used with a different manifest digest.`,
+            ),
+          );
+          return;
+        }
+        if (existingJournal.event.state === "runtime_committed") {
+          const savedReceipt = existingJournal.event.receiptJson
+            ? (JSON.parse(existingJournal.event.receiptJson) as unknown)
+            : undefined;
+          respond(
+            true,
+            savedReceipt ?? {
+              ok: true,
+              key: target.canonicalKey,
+              deleted: true,
+              archived: [],
+              operationId,
+              journalState: "runtime_committed",
+            },
+            undefined,
+          );
+          return;
+        }
+        if (!entry && existingJournal.event.state === "intent") {
+          respond(
+            false,
+            undefined,
+            errorShape(
+              ErrorCodes.UNAVAILABLE,
+              `Delete operation ${operationId} has no current session generation to finalize.`,
+            ),
+          );
+          return;
+        }
+        manifest = existingJournal.manifest;
+        if (existingJournal.event.state === "partial_committed") {
+          partialReceipt = parseSessionDeletePartialReceipt(existingJournal.event.receiptJson);
+          if (!partialReceipt || partialReceipt.operationId !== operationId) {
+            respond(
+              false,
+              undefined,
+              errorShape(
+                ErrorCodes.UNAVAILABLE,
+                `Delete operation ${operationId} has invalid partial progress.`,
+              ),
+            );
+            return;
+          }
+        }
+        if (
+          existingJournal.event.state === "store_committed" ||
+          existingJournal.event.state === "partial_committed"
+        ) {
+          skipStoreMutation = true;
+        }
+      } else if (entry && canonicalKey) {
+        manifest = buildSessionDeleteOperationManifest({
+          operationId,
+          agentId: target.agentId ?? requestedAgentId,
+          canonicalKey,
+          expectedSessionId: entry.sessionId,
+          deleteTranscript,
+          emitLifecycleHooks,
+          sessionFile: entry.sessionFile,
+          archiveEntries: deleteTranscript
+            ? resolveSessionTranscriptCandidates(
+                entry.sessionId,
+                storePath,
+                entry.sessionFile,
+                target.agentId ?? requestedAgentId,
+              )
+            : [],
+        });
+        writeSessionDeleteOperationIntent(storePath, { operationId, manifest });
+      } else {
+        respond(
+          false,
+          undefined,
+          errorShape(
+            ErrorCodes.INVALID_REQUEST,
+            `Delete operation ${operationId} requires an existing session generation.`,
+          ),
+        );
+        return;
+      }
     }
 
-    respond(true, { ok: true, key: target.canonicalKey, deleted, archived }, undefined);
+    let deleted: boolean;
+    let deleteMutationSucceeded = false;
+    let sessionId = entry?.sessionId;
+    let sessionFile = entry?.sessionFile;
+    let archiveAgentId = target.agentId;
+    let archiveDeleteTranscript = deleteTranscript;
+
+    if (skipStoreMutation) {
+      // Committed-but-incomplete from a previous attempt: never delete the row
+      // again and never re-run cleanup; finalize only.
+      const existingJournal = readSessionDeleteOperationJournal(storePath, operationId!);
+      deleted = true;
+      sessionId = existingJournal?.manifest.expectedSessionId ?? entry?.sessionId;
+      sessionFile = existingJournal?.manifest.sessionFile ?? entry?.sessionFile;
+      archiveAgentId = existingJournal?.manifest.agentId ?? target.agentId;
+      archiveDeleteTranscript = existingJournal?.manifest.deleteTranscript ?? deleteTranscript;
+    } else {
+      const mutationCleanup = await cleanupSessionBeforeMutation({
+        cfg,
+        key,
+        target,
+        entry,
+        legacyKey,
+        canonicalKey,
+        reason: "session-delete",
+      });
+      if (mutationCleanup.error) {
+        mutationCleanup.settle(false);
+        respond(false, undefined, mutationCleanup.error);
+        return;
+      }
+
+      const journalRow =
+        manifest !== undefined && operationId
+          ? buildSessionDeleteOperationJournalRow({
+              operationId,
+              manifest,
+              state: "store_committed",
+            })
+          : undefined;
+      try {
+        deleted = await updateSessionStore(
+          storePath,
+          (store) => {
+            const { primaryKey } = migrateAndPruneGatewaySessionStoreKey({
+              cfg,
+              key,
+              store,
+              agentId: requestedAgentId,
+            });
+            const hadEntry = Boolean(store[primaryKey]);
+            if (hadEntry) {
+              delete store[primaryKey];
+            }
+            return hadEntry;
+          },
+          journalRow
+            ? {
+                sqliteJournalRows: [journalRow],
+                skipSaveWhenResult: (result) => result === false,
+              }
+            : undefined,
+        );
+        deleteMutationSucceeded = deleted;
+      } finally {
+        mutationCleanup.settle(deleteMutationSucceeded);
+      }
+    }
+
+    if (manifest && !deleted) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `Delete operation ${operationId} did not commit a session row mutation.`,
+        ),
+      );
+      return;
+    }
+
+    if (!manifest) {
+      respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, "delete manifest missing"));
+      return;
+    }
+    let archivedTranscripts = partialReceipt?.archivedTranscripts ?? [];
+    let archiveComplete =
+      partialReceipt?.finalization.archiveComplete === true || !archiveDeleteTranscript;
+    let sessionEndHookEmitted = partialReceipt?.finalization.sessionEndHookEmitted === true;
+    let sessionUnbound = partialReceipt?.finalization.sessionUnbound === true;
+    let inFlightFinalizationEffect: "session-end" | "session-unbound" | undefined;
+    const buildPartialReceipt = (): SessionDeletePartialReceipt => ({
+      ok: true,
+      key: target.canonicalKey,
+      deleted: true,
+      archived: archivedTranscripts.map((entryLocal) => entryLocal.archivedPath),
+      archivedTranscripts,
+      ...(sessionId ? { sessionId } : {}),
+      operationId,
+      journalState: "partial_committed",
+      finalization: { archiveComplete, sessionEndHookEmitted, sessionUnbound },
+    });
+    const persistProgress = (): void => {
+      markSessionDeleteOperationPartialCommitted(storePath, operationId, buildPartialReceipt());
+    };
+
+    try {
+      if (deleted && !archiveComplete) {
+        const archiveErrors: Array<{ error: unknown; sourcePath: string }> = [];
+        const recovered = archiveSessionTranscriptsForSessionDetailed({
+          sessionId,
+          storePath,
+          sessionFile,
+          agentId: archiveAgentId,
+          reason: "deleted",
+          archiveTimestamp: manifest.archivePlan.archiveTimestamp,
+          candidatePaths: manifest.archivePlan.entries,
+          onArchiveError: (error, sourcePath) => archiveErrors.push({ error, sourcePath }),
+        });
+        archivedTranscripts = [
+          ...new Map(
+            [...archivedTranscripts, ...recovered].map((entryLocal) => [
+              entryLocal.archivedPath,
+              entryLocal,
+            ]),
+          ).values(),
+        ];
+        if (archiveErrors.length > 0) {
+          throw new Error(
+            archiveErrors
+              .map(({ error, sourcePath }) => `${sourcePath}: ${String(error)}`)
+              .join("; "),
+          );
+        }
+        archiveComplete = true;
+        persistProgress();
+      }
+      if (deleted && !sessionEndHookEmitted) {
+        // Plugins receive at-least-once delivery: checkpoint only after all
+        // current handlers settle, so a crash cannot silently skip the hook.
+        inFlightFinalizationEffect = "session-end";
+        await emitGatewaySessionEndPluginHookAndWait({
+          cfg,
+          sessionKey: target.canonicalKey ?? key,
+          sessionId,
+          operationId,
+          storePath,
+          sessionFile,
+          agentId: archiveAgentId,
+          reason: "deleted",
+          archivedTranscripts,
+        });
+        inFlightFinalizationEffect = undefined;
+        sessionEndHookEmitted = true;
+        persistProgress();
+      }
+      if (deleted && !sessionUnbound) {
+        inFlightFinalizationEffect = "session-unbound";
+        await emitSessionUnboundLifecycleEvent({
+          targetSessionKey: target.canonicalKey ?? key,
+          reason: "session-delete",
+          emitHooks: emitLifecycleHooks,
+          operationId,
+        });
+        inFlightFinalizationEffect = undefined;
+        sessionUnbound = true;
+        persistProgress();
+      }
+      const receipt = {
+        ok: true,
+        key: target.canonicalKey,
+        deleted,
+        archived: archivedTranscripts.map((entryLocal) => entryLocal.archivedPath),
+        ...(sessionId ? { sessionId } : {}),
+        operationId,
+        journalState: "runtime_committed" as const,
+      };
+      finalizeSessionDeleteOperationJournal(storePath, operationId, receipt);
+      respond(true, receipt, undefined);
+    } catch (error) {
+      if (inFlightFinalizationEffect === undefined) {
+        try {
+          persistProgress();
+        } catch {
+          // The deterministic archive plan lets the next retry recover any
+          // rename even when this checkpoint write also failed.
+        }
+      }
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `Delete committed but session finalization failed: ${String(error)}`,
+        ),
+      );
+      return;
+    }
     if (deleted) {
       emitSessionsChanged(context, {
         sessionKey: target.canonicalKey,

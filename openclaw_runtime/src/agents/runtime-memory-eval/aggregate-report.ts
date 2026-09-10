@@ -37,8 +37,13 @@ export type TestSuiteSummary = {
   failedFiles: string[];
 };
 
+export type AggregateEvidenceClass = "synthetic" | "runtime-fixture" | "live-runtime";
+
 export type AggregateEvalReport = {
   generatedAt: number;
+  evidenceClass: AggregateEvidenceClass;
+  accepted: boolean;
+  acceptanceNote: string;
   enhancedReport: EnhancedEvalReport;
   rejectionCoverage: RejectionCoverage;
   testSuite: TestSuiteSummary;
@@ -50,6 +55,9 @@ export function generateAggregateReport(options: {
   enhancedReport: EnhancedEvalReport;
   firedReasons?: string[];
   testSuite?: TestSuiteSummary;
+  evidenceClass?: AggregateEvidenceClass;
+  accepted?: boolean;
+  acceptanceNote?: string;
   now?: () => number;
 }): AggregateEvalReport {
   const now = options.now ?? DEFAULT_NOW;
@@ -69,6 +77,11 @@ export function generateAggregateReport(options: {
 
   return {
     generatedAt: now(),
+    evidenceClass: options.evidenceClass ?? "synthetic",
+    accepted: options.accepted ?? false,
+    acceptanceNote:
+      options.acceptanceNote ??
+      "Synthetic fixture evaluation; it is not runtime or live-session acceptance evidence.",
     enhancedReport: options.enhancedReport,
     rejectionCoverage: {
       totalReasons: ALL_REJECTION_REASONS.length,
@@ -85,6 +98,9 @@ export function formatAggregateReportAsMarkdown(report: AggregateEvalReport): st
   lines.push("# Runtime Memory Aggregate Evaluation Report");
   lines.push("");
   lines.push(`- Generated at: ${new Date(report.generatedAt).toISOString()}`);
+  lines.push(`- Evidence class: ${report.evidenceClass}`);
+  lines.push(`- Accepted: ${report.accepted ? "yes" : "no"}`);
+  lines.push(`- Acceptance note: ${report.acceptanceNote}`);
   lines.push("");
 
   lines.push("## Rejection Coverage");

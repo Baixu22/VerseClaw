@@ -1,0 +1,26 @@
+{
+  "applied_at": "2026-08-19T15:21:34.349379Z",
+  "base_graph_hash": "0935105b4d57ade4f57cdd01e8cbddf87a8f5251f4f3ad033148112501654f30",
+  "base_summary": {
+    "edge_count": 138,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.9,
+        "reason": "phase handler 的等待和失败语义必须建立在按 run 隔离的 handler 上下文之上"
+      },
+      "from": "TF-0071",
+      "to": "TF-0070",
+      "type": "depends_on"
+    }
+  ],
+  "created_at": "2026-08-19T15:21:34.192182Z",
+  "proposal_id": "TFP-runtime-authority-ready-order-20260819",
+  "rationale": "遵循 sustained development 的单 ready 节点规则，将 phase 持久化任务排在运行上下文隔离之后。",
+  "session_id": "session-20260819-runtime-authority-review",
+  "status": "applied"
+}

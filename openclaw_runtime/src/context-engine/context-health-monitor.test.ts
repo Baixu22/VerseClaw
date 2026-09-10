@@ -93,8 +93,22 @@ describe("B-4 dimension scorers", () => {
     const missing = "The weather is nice and the build pipeline is green.";
     expect(scoreGoalAlignment(objective, covered)).toBeGreaterThan(50);
     expect(scoreGoalAlignment(objective, missing)).toBeLessThan(30);
-    expect(scoreGoalAlignment(undefined, missing)).toBe(100);
-    expect(scoreGoalAlignment(objective, undefined)).toBe(100);
+  });
+
+  it("T-C1: scoreGoalAlignment reports no-data as undefined, never as a perfect score", () => {
+    const objective = "refactor the auth middleware to use JWT rotation";
+    const missing = "The weather is nice and the build pipeline is green.";
+    // Previously all three returned 100, making "nothing to compare" and
+    // "perfectly aligned" indistinguishable — a monitor that scores missing data
+    // as a perfect result cannot detect what it exists to detect.
+    expect(scoreGoalAlignment(undefined, missing)).toBeUndefined();
+    expect(scoreGoalAlignment("", missing)).toBeUndefined();
+    expect(scoreGoalAlignment("   ", missing)).toBeUndefined();
+    expect(scoreGoalAlignment(objective, undefined)).toBeUndefined();
+    expect(scoreGoalAlignment(objective, "")).toBeUndefined();
+    // And a real perfect score is still reachable, so undefined is genuinely a
+    // distinct third state rather than a blanket replacement for 100.
+    expect(scoreGoalAlignment(objective, objective)).toBe(100);
   });
 
   it("scoreInformationNovelty averages samples", () => {

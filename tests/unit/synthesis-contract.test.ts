@@ -5,10 +5,9 @@ import {
   type SynthesisContract,
 } from "../../openclaw_runtime/src/agents/synthesis-contract";
 import type { OrchestratorPlan } from "../../openclaw_runtime/src/agents/orchestrator";
-import type { RouteDiagnostics } from "../../openclaw_runtime/src/agents/orchestration-protocol";
 
 function makePlan(overrides: Partial<OrchestratorPlan> = {}): OrchestratorPlan {
-  const routeDiagnostics: RouteDiagnostics = {
+  const routeDiagnostics = {
     difficulty: "moderate",
     confidence: 0.7,
     reasons: [],
@@ -25,20 +24,20 @@ function makePlan(overrides: Partial<OrchestratorPlan> = {}): OrchestratorPlan {
       { roleName: "reviewer", task: "review the implementation" },
     ],
     reasons: [],
-    routeDiagnostics,
+    routeDiagnostics: routeDiagnostics as never,
     taskGraph: {
       runId: "test",
       nodes: [],
       edges: [],
-      status: "pending",
+      status: "pending" as never,
       mode: " dag",
-    } as OrchestratorPlan["taskGraph"],
-    graphStatus: "pending",
+    } as unknown as OrchestratorPlan["taskGraph"],
+    graphStatus: "pending" as never,
     executionWaves: [],
     capabilityGaps: [],
-    estimatedRepairPolicy: { maxAttempts: 1, backoff: "linear" },
+    estimatedRepairPolicy: { maxAttempts: 1, backoff: "linear" } as never,
     ...overrides,
-  };
+  } as OrchestratorPlan;
 }
 
 describe("buildSynthesisContract (Area 3 §3.2)", () => {

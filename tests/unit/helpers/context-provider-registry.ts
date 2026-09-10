@@ -129,7 +129,7 @@ function groundingShadowQueryMetadata(query: GroundingQuery): RuntimeCoreJsonObj
     ...(query.tokenBudget !== undefined ? { tokenBudget: query.tokenBudget } : {}),
     includeRaw: false,
     includeUntrusted: false,
-  };
+  } as never;
 }
 
 function groundingShadowDiagnostic(

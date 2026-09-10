@@ -24,7 +24,7 @@
  * | --------------------------------- | ------------------ | --------- |
  * | `command.output`                  | Terminal card      | dropped   |
  * | `tool.started` that produced one  | Terminal card      | dropped†  |
- * | `approval.updated`                | ApprovalCard*      | dropped   |
+ * | `approval.updated`                | ApprovalCard*      | dropped†† |
  * | `tool.*` name ∈ PLAN_TOOLS        | ToolUiPlanView     | dropped   |
  * | `patch.completed`                 | inline CodeDiff    | kept**    |
  * | every other `tool.*`              | —                  | kept      |
@@ -36,6 +36,16 @@
  *   ** `patch.completed` keeps its one-line summary (it names the file and the
  *      +/- counts, which the diff card does not repeat) while the actual diff is
  *      rendered from `GeneratedFile` projections alongside it.
+ *   †† Only when the event carries no `message`. The two approval planes are
+ *      disjoint: `approval.updated` is emitted solely by the runtime exec
+ *      approval path, while `PendingRunApprovals` renders the ClawX host
+ *      permission store, whose only writers are the Electron service APIs. So a
+ *      runtime approval's row has no card standing behind it, and its `message`
+ *      — which is where the exec `warningText` lands, including VerseShell's
+ *      static external-write no-rollback notice — is the only in-app rendering
+ *      of that text. Dropping a row that carries one removed information no
+ *      other surface shows. A message-less row is a bare "Approval" label with
+ *      nothing under it and is still dropped.
  *   †  Only when a `command.output` for the same `toolCallId` exists. The graph
  *      row's detail is the command string, which the Terminal card already shows
  *      as its header — keeping both printed the command twice in one card. A
@@ -238,7 +248,10 @@ export function promoteRunSurfaces({
       continue;
     }
     if (event.type === 'approval.updated') {
-      promotedStepIds.add(runtimeApprovalStepId(event));
+      // A runtime approval has no card behind it (see †† above), so its row is
+      // the only place its message is rendered. Keep the row when it carries
+      // one; drop the bare label when it does not.
+      if (!event.message?.trim()) promotedStepIds.add(runtimeApprovalStepId(event));
     }
   }
 

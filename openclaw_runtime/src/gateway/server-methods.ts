@@ -479,6 +479,13 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "sessions.checkpointDiff",
       "sessions.restoreCheckpoint",
       "sessions.queueDrain",
+      // TF-0084: both read surfaces must be listed here as well as in
+      // core-descriptors. `createCoreGatewayMethodDescriptors` skips any spec
+      // whose handler is absent from this map, so a descriptor-only method is
+      // answered as "unknown method" — which is how `sessions.yieldState`
+      // shipped in TF-0082 without being production-reachable.
+      "sessions.yieldState",
+      "sessions.lifecycleLedger",
       "sessions.compaction.list",
       "sessions.compaction.get",
       "sessions.create",
@@ -488,6 +495,7 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "sessions.send",
       "sessions.steer",
       "sessions.abort",
+      "sessions.stop",
       "sessions.patch",
       "sessions.pluginPatch",
       "sessions.reset",

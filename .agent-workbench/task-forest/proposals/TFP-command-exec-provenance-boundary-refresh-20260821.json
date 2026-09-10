@@ -1,0 +1,60 @@
+{
+  "applied_at": "2026-08-20T23:42:32.025087Z",
+  "base_graph_hash": "7fef69e94b0b59eb6f721f0a2ea3c3d2376fc5a0a906e7b0ab114a4514dfec55",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "command-exec 是已完成的唯一执行型 sink。",
+        "confidence": 0.97,
+        "created_at": "2026-08-20T23:42:24.503485Z",
+        "id": "TFA-command-exec-provenance-boundary-refresh-20260821",
+        "reason": "最小化接入并保持普通只读命令可用。",
+        "rejected_options": [
+          "全局动态 taint engine",
+          "统一人工审批",
+          "提示词重写"
+        ],
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "selected_option": "在现有 exec security/ask/bypass 边界读取 ContentProvenance；缺失或非法来源收紧隐式策略，显式 fullAccess 保持有效。",
+        "validation_plan": [
+          "provenance policy unit/integration tests",
+          "exec defaults/approval/env regression",
+          "comms replay and compare",
+          "Harness spec validation"
+        ]
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-20T23:42:24.503485Z",
+        "evidence": "openclaw_runtime/src/agents/exec-provenance-policy.ts；openclaw_runtime/src/agents/bash-tools.exec.ts；harness/specs/tasks/command-exec-provenance-boundary.md",
+        "expected_requirement": "来源标签最终应影响敏感 sink 的授权判断。",
+        "id": "TFD-command-exec-sink-only-refresh-20260821",
+        "observed_action_or_result": "command-exec 已接入来源依赖检查；secret-read、network-send、external-write、browser-effect、credential-use 目前仍为 classification-only。",
+        "recommendation": "下一轮只选择一个剩余 sink，复用同一权威 provenance 合约。",
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "severity": "low",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-20T23:42:24.499313Z",
+  "proposal_id": "TFP-command-exec-provenance-boundary-refresh-20260821",
+  "rationale": "用户继续上一轮并确认应用 command-exec 来源依赖边界；旧 proposal 因并发任务图更新过期，因此在当前图上保存等价且无节点状态变更的 refresh proposal。",
+  "session_id": "session-2026-08-21-command-exec-provenance-apply",
+  "status": "applied"
+}

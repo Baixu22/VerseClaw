@@ -1,6 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 import { isToolResultError } from '../../openclaw_runtime/src/agents/embedded-agent-subscribe.tools';
 import { createAgentBrowserTool } from '../../openclaw_runtime/src/agents/tools/agent-browser-tool';
+import { createTrustedProvenance } from '../../shared/security/content-provenance';
+
+const TRUSTED_PROVENANCE_CONTEXT = {
+  provenance: createTrustedProvenance({
+    sourceKind: 'user-direct',
+    sourceId: 'user-direct:agent-browser-test',
+    receivedAt: '2026-08-21T00:00:00.000Z',
+  }),
+};
 
 function readJsonResult(result: unknown): Record<string, unknown> | undefined {
   const record = result as { content?: Array<{ text?: string }> };
@@ -15,7 +24,10 @@ describe('agent_browser tool', () => {
 
   it('normalizes open and action payloads for the injected invoker', async () => {
     const invoke = vi.fn(async (action, payload) => ({ action, payload }));
-    const tool = createAgentBrowserTool({ invoke });
+    const tool = createAgentBrowserTool({
+      contentProvenanceContext: TRUSTED_PROVENANCE_CONTEXT,
+      invoke,
+    });
 
     const opened = await tool!.execute('tool-1', {
       action: 'open',
@@ -103,7 +115,10 @@ describe('agent_browser tool', () => {
       }
       return { success: true };
     });
-    const tool = createAgentBrowserTool({ invoke });
+    const tool = createAgentBrowserTool({
+      contentProvenanceContext: TRUSTED_PROVENANCE_CONTEXT,
+      invoke,
+    });
 
     const result = await tool!.execute('tool-1', {
       action: 'click',
@@ -177,7 +192,10 @@ describe('agent_browser tool', () => {
       }
       return { success: true };
     });
-    const tool = createAgentBrowserTool({ invoke });
+    const tool = createAgentBrowserTool({
+      contentProvenanceContext: TRUSTED_PROVENANCE_CONTEXT,
+      invoke,
+    });
 
     const result = await tool!.execute('tool-1', {
       action: 'click',
@@ -351,7 +369,10 @@ describe('agent_browser tool', () => {
       success: true,
       session: { id: (payload as { sessionId: string }).sessionId },
     }));
-    const tool = createAgentBrowserTool({ invoke });
+    const tool = createAgentBrowserTool({
+      contentProvenanceContext: TRUSTED_PROVENANCE_CONTEXT,
+      invoke,
+    });
 
     const result = await tool!.execute('tool-1', {
       action: 'type',

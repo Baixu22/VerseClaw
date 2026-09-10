@@ -880,7 +880,7 @@ describe('Chat execution graph lifecycle', () => {
       scrollRef: { current: null },
       scrollToBottom: vi.fn(),
       isAtBottom: false,
-    } as ReturnType<typeof useStickToBottomInstant>);
+    } as unknown as ReturnType<typeof useStickToBottomInstant>);
 
     const { Chat } = await import('@/pages/Chat/index');
 
@@ -1362,7 +1362,7 @@ describe('Chat execution graph lifecycle', () => {
               mediaUrls: ['/Users/me/.openclaw/media/tool-image-generation/tomato.png'],
             },
           },
-        } as RawMessage,
+        } as never,
       ],
       loading: false,
       error: null,

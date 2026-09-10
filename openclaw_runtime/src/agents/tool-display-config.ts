@@ -351,6 +351,11 @@ export const TOOL_DISPLAY_CONFIG: ToolDisplayConfig = {
       title: "Update Goal",
       detailKeys: ["status"],
     },
+    goal_wait: {
+      emoji: "🎯",
+      title: "Wait For Goal",
+      detailKeys: ["timeout_ms"],
+    },
     update_plan: {
       emoji: "🗺️",
       title: "Update Plan",
@@ -654,6 +659,8 @@ export const TOOL_DISPLAY_CONFIG: ToolDisplayConfig = {
     apply_patch: {
       emoji: "🩹",
       title: "Apply Patch",
+      // The change summary is derived from the patch envelope by
+      // resolveApplyPatchDetail, not read from a single argument key.
       detailKeys: [],
     },
     image: {

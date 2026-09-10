@@ -78,36 +78,57 @@ describe("isSekbShadowEvaluationEnabled", () => {
 
   it("defaults to false and requires the SEKB master gate", () => {
     expect(isSekbShadowEvaluationEnabled(undefined, {})).toBe(false);
-    expect(isSekbShadowEvaluationEnabled({
-      runtime: { contextBlock: { sekb: { shadowEvaluation: { enabled: true } } } },
-    } as OpenClawConfig, {})).toBe(false);
+    expect(
+      isSekbShadowEvaluationEnabled(
+        {
+          runtime: { contextBlock: { sekb: { shadowEvaluation: { enabled: true } } } },
+        } as OpenClawConfig,
+        {},
+      ),
+    ).toBe(false);
   });
 
   it("enables only from its nested config when SEKB is enabled", () => {
-    expect(isSekbShadowEvaluationEnabled({
-      runtime: { contextBlock: { sekb: { enabled: true, shadowEvaluation: { enabled: true } } } },
-    } as OpenClawConfig, {})).toBe(true);
+    expect(
+      isSekbShadowEvaluationEnabled(
+        {
+          runtime: {
+            contextBlock: { sekb: { enabled: true, shadowEvaluation: { enabled: true } } },
+          },
+        } as OpenClawConfig,
+        {},
+      ),
+    ).toBe(true);
   });
 
   it("uses the dedicated environment variable as the final override", () => {
     const cfg = {
       runtime: { contextBlock: { sekb: { enabled: true, shadowEvaluation: { enabled: false } } } },
     } as OpenClawConfig;
-    expect(isSekbShadowEvaluationEnabled(cfg, {
-      OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED: "true",
-    })).toBe(true);
-    expect(isSekbShadowEvaluationEnabled(sekbEnabled, {
-      OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED: "0",
-    })).toBe(false);
+    expect(
+      isSekbShadowEvaluationEnabled(cfg, {
+        OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED: "true",
+      }),
+    ).toBe(true);
+    expect(
+      isSekbShadowEvaluationEnabled(sekbEnabled, {
+        OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED: "0",
+      }),
+    ).toBe(false);
   });
 });
 
 describe("isSekbBatchDistillationAssistantEnabled", () => {
   it("defaults to false and cannot activate SEKB by itself", () => {
     expect(isSekbBatchDistillationAssistantEnabled(undefined, {})).toBe(false);
-    expect(isSekbBatchDistillationAssistantEnabled({
-      runtime: { contextBlock: { sekb: { batchDistillationAssistant: { enabled: true } } } },
-    } as OpenClawConfig, {})).toBe(false);
+    expect(
+      isSekbBatchDistillationAssistantEnabled(
+        {
+          runtime: { contextBlock: { sekb: { batchDistillationAssistant: { enabled: true } } } },
+        } as OpenClawConfig,
+        {},
+      ),
+    ).toBe(false);
   });
 
   it("uses its nested config and dedicated environment override after the master gate", () => {
@@ -119,14 +140,25 @@ describe("isSekbBatchDistillationAssistantEnabled", () => {
       },
     } as OpenClawConfig;
     expect(isSekbBatchDistillationAssistantEnabled(cfg, {})).toBe(false);
-    expect(isSekbBatchDistillationAssistantEnabled(cfg, {
-      OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED: "true",
-    })).toBe(true);
-    expect(isSekbBatchDistillationAssistantEnabled({
-      runtime: { contextBlock: { sekb: { enabled: true, batchDistillationAssistant: { enabled: true } } } },
-    } as OpenClawConfig, {
-      OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED: "0",
-    })).toBe(false);
+    expect(
+      isSekbBatchDistillationAssistantEnabled(cfg, {
+        OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED: "true",
+      }),
+    ).toBe(true);
+    expect(
+      isSekbBatchDistillationAssistantEnabled(
+        {
+          runtime: {
+            contextBlock: {
+              sekb: { enabled: true, batchDistillationAssistant: { enabled: true } },
+            },
+          },
+        } as OpenClawConfig,
+        {
+          OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED: "0",
+        },
+      ),
+    ).toBe(false);
   });
 });
 
@@ -282,14 +314,28 @@ describe("SEKB distillation write discipline", () => {
         task_intent: "connect to PostgreSQL",
         task_type: "config/db",
         context_fingerprint: ["postgresql"],
-        steps: [],
+        steps: [
+          {
+            action: "tool.call",
+            input: { tool: "psql" },
+            output: { ok: false },
+            timestamp: "2026-07-14T00:00:00.000Z",
+          },
+        ],
         outcome: "failure",
         error_signature: null,
         cost: { tokens: 10, duration_seconds: 1, retries: 0 },
         distilled: false,
         distilled_into: [],
         expires_at: null,
-        metadata: {},
+        metadata: {
+          runtimeLineage: {
+            schema: "runtime-lineage.v1",
+            sessionId: "session-anti-8",
+            loopRunId: id,
+            traceId: `trace-${id}`,
+          },
+        },
       });
     }
     const sink: ContextBlockSink = vi.fn(async () => [{ accepted: true }]);

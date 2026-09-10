@@ -1,0 +1,28 @@
+{
+  "applied_at": "2026-08-25T01:19:14.212683Z",
+  "base_graph_hash": "2a36c2fb64107a667ca60f4361d58f016aecdadd0c53b60795bde79a522fcccd",
+  "base_summary": {
+    "edge_count": 257,
+    "node_count": 145,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-25T00:00:00.000000Z",
+        "decided_by": "lane-2, self-review during TF-0145 review; every claim established by measurement on already-landed commits rather than by argument",
+        "id": "TFD-lane2-r3-attribution-defects-2026-08-25",
+        "impact": "No gate weakened; all four corrections remove false verdicts, and three of the four were producing false FAILs against compliant work. Defects 3 and 4 are mirror images: per-task radius requires precise attribution (hence anchoring), while cumulative volume must not depend on attribution at all (hence range diff). Using one ruler for both jobs was the common cause. Changes landed: §R3.8.1 adds two orthogonal trailer keys, `Reviews:` (review-record commits, excluded from the reviewed task's radius, scope-restricted to reviews/*.md as an anti-bypass guard) and mandatory `Lane: lane-N` (lane attribution for section-owner audit). `Reviews:` is defined by role, not by path, because 4 of the 8 reviews/-only commits this round are implementer evidence packages, so path cannot classify them. §R3.8.2 gives the corrected matcher with all three required parts. §R3.8.3 gives a two-tier AC-6 test whose necessary half (owner-homogeneity) needs no trailer and therefore works retroactively across M0; the sufficient half needs `Lane:` and takes effect from M1. M0's AC-6 is honestly recorded as reaching only the necessary-condition strength, not full mechanical verification. §R3.8.4 registers four M0 pre-existing instances (f005991b7 the protocol-assigned S0 scaffold, fe469cbff, 1d4644fcc, 6d82ff372) which are NOT retroactively rewritten (§R5 technical-7). §R3.8.5 is the self-defect ledger. Verification: all 9 bash blocks in §R3 were extracted from the document and run verbatim, each matching its stated claim — radius(TF-0145)=2, cumulative=18/40, UNATTRIBUTED=2, CROSS-LANE=1, NO-LANE=11. The fix commit itself passes all three new gates. Superseded prerequisite: TFD-lane2-r3-command-corrections-2026-08-24 mandated the single-`Task:`-trailer scheme, which is what defects 1 and 2 correct.",
+        "kind": "scope_change",
+        "node_id": "TF-0107",
+        "related_task_ids": [],
+        "summary": "Four defects in §R3 (TF-0107's deliverable), all introduced by lane-2, all found by lane-2 while reviewing TF-0145 or while fixing the first two. Fixed in cce818682. (1) §R3.8 mandated a single `Task:` trailer, which unified both lanes onto one key and destroyed the accidental lane discriminator (`Node:` vs `Refs`); with all 19 round commits sharing one git author, TF-0145 AC-6's second half became mechanically unverifiable. (2) The one-trailer-per-commit rule is too strict for review commits, which naturally span tasks; 1d4644fcc carries three `Task:` trailers and inflated TF-0106 and TF-0142 to 5/5 with 2 foreign files each. (3) The attribution matcher was unanchored, so TF-0145's radius read 8/5 (hard FAIL) against a true 2/5 — the gate killed a compliant task; naive `$` anchoring instead under-counts because M0's `Refs TF-0142 (D4)` carries a suffix. (4) §R3.6's cumulative gate reused the trailer matcher: `--grep=\"Task: TF-\"` matched 8 of 19 commits and read 7 files against a true 18."
+      }
+    }
+  ],
+  "created_at": "2026-08-25T01:18:45.082618Z",
+  "proposal_id": "TFP-9e78888318",
+  "session_id": "session-2026-08-24-lane-2",
+  "status": "applied"
+}

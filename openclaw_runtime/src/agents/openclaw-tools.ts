@@ -65,6 +65,8 @@ import {
   createUpdateGoalTool,
 } from "./tools/goal-tools.js";
 import { createHeartbeatResponseTool } from "./tools/heartbeat-response-tool.js";
+import { goalWakeController } from "./goal-wake-controller.js";
+import { createGoalWaitTool } from "./tools/goal-wait-tool.js";
 import { createImageGenerateTool } from "./tools/image-generate-tool.js";
 import { createImageTool } from "./tools/image-tool.js";
 import { createMessageTool } from "./tools/message-tool.js";
@@ -90,6 +92,7 @@ import { createUpdatePlanTool } from "./tools/update-plan-tool.js";
 import { createVideoGenerateTool } from "./tools/video-generate-tool.js";
 import { createWebFetchTool, createWebSearchTool } from "./tools/web-tools.js";
 import { resolveWorkspaceRoot } from "./workspace-dir.js";
+import type { ContentProvenanceContext } from "../../../shared/security/content-provenance.js";
 
 type OpenClawToolsDeps = {
   callGateway: typeof callGateway;
@@ -119,6 +122,8 @@ function createDefaultAgentBrowserInvoker(params: {
 
 export function createOpenClawTools(
   options?: {
+    /** Present only when a caller opts source-dependent sinks into provenance policy. */
+    contentProvenanceContext?: ContentProvenanceContext;
     sandboxBrowserBridgeUrl?: string;
     allowHostBrowserControl?: boolean;
     agentSessionKey?: string;
@@ -308,6 +313,7 @@ export function createOpenClawTools(
   const imageGenerateTool = optionalMediaTools.imageGenerate
     ? createImageGenerateTool({
         config: options?.config,
+        contentProvenanceContext: options?.contentProvenanceContext,
         agentDir: options?.agentDir,
         authProfileStore: options?.authProfileStore,
         agentSessionKey: mediaGenerationAgentSessionKey,
@@ -378,6 +384,7 @@ export function createOpenClawTools(
   const agentBrowserInvoker =
     options?.agentBrowserInvoker ?? createDefaultAgentBrowserInvoker({ config: resolvedConfig });
   const agentBrowserTool = createAgentBrowserTool({
+    contentProvenanceContext: options?.contentProvenanceContext,
     invoke: agentBrowserInvoker,
   });
   options?.recordToolPrepStage?.("openclaw-tools:agent-browser-tool");
@@ -397,6 +404,7 @@ export function createOpenClawTools(
   const messageTool = options?.disableMessageTool
     ? null
     : createMessageTool({
+        contentProvenanceContext: options?.contentProvenanceContext,
         agentAccountId: options?.agentAccountId,
         agentSessionKey: options?.agentSessionKey,
         runId: options?.runId,
@@ -642,6 +650,23 @@ export function createOpenClawTools(
           createSessionsCompactTool({
             sessionId: options.sessionId,
             onRequest: options.onManualCompactionRequest,
+          }),
+        ]
+      : []),
+    ...(options?.sessionId &&
+    !options?.sandboxed &&
+    goalWakeController.goalWakeEnabled(resolvedConfig) &&
+    goalWakeController.getLatestMissionForSession(
+      options?.runSessionKey ?? options?.agentSessionKey ?? "",
+    )?.status === "running"
+      ? [
+          createGoalWaitTool({
+            agentSessionKey: options?.agentSessionKey,
+            runSessionKey: options?.runSessionKey,
+            agentId: options?.requesterAgentIdOverride ?? sessionAgentId,
+            sessionId: options?.sessionId,
+            config: resolvedConfig,
+            onYield: options?.onYield,
           }),
         ]
       : []),

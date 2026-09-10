@@ -39,7 +39,16 @@ const workspace = {
   sessionStates: {},
 };
 
-test.describe('Verse Claw chat question directory', () => {
+/*
+ * Chat side-panel contract.
+ *
+ * This file is named after the question directory, a toolbar-toggled panel that
+ * lived inside the chat side rail. The rail is gone (its space belongs to the
+ * session status rail now), so what these tests defend has shifted from "the
+ * panel works" to "the removed panels stay removed and the transcript stays
+ * usable and correctly sized without them".
+ */
+test.describe('Verse Claw chat side panels', () => {
   test('keeps assistive panels hidden on a fresh empty chat', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -106,7 +115,7 @@ test.describe('Verse Claw chat question directory', () => {
     }
   });
 
-  test('shows a toolbar button that opens a clickable in-conversation question directory', async ({ launchElectronApp }) => {
+  test('keeps the transcript usable and the removed question directory absent on a long conversation', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -163,18 +172,21 @@ test.describe('Verse Claw chat question directory', () => {
 
       await expect(page.getByTestId('main-layout')).toBeVisible();
 
-      const toggle = page.getByTestId('chat-question-directory-toggle');
-      await expect(toggle).toBeVisible();
-      await toggle.click();
+      /*
+       * The toolbar-toggled question directory is GONE — it was a panel inside
+       * the chat side rail, and that whole rail was removed (the space now
+       * belongs to the session status rail). This test keeps the scenario that
+       * used to justify the panel — a four-question, scrollable transcript —
+       * and asserts the surface stays removed, so it cannot come back by
+       * accident while the transcript itself remains navigable.
+       */
+      await expect(page.getByTestId('chat-question-directory-toggle')).toHaveCount(0);
+      await expect(page.getByTestId('chat-question-directory')).toHaveCount(0);
+      await expect(page.getByTestId('chat-assistive-rail')).toHaveCount(0);
 
-      const directory = page.getByTestId('chat-question-directory');
-      await expect(directory).toBeVisible({ timeout: 30_000 });
-      await expect(directory).toContainText('Question directory');
-      await expect(directory).toContainText('First question: summarize the market opening.');
-      await expect(directory).toContainText('Fourth question: prepare the final action plan.');
-      await expect(directory.locator('button')).toHaveCount(4);
-
-      await page.getByTestId('chat-question-directory-item-6').click();
+      // Every seeded prompt is still reachable in the transcript itself.
+      await expect(page.getByTestId('chat-message-0')).toBeVisible();
+      await page.getByTestId('chat-message-6').scrollIntoViewIfNeeded();
       await expect(page.getByTestId('chat-message-6')).toBeInViewport();
     } finally {
       await closeElectronApp(app);
@@ -266,9 +278,6 @@ test.describe('Verse Claw chat question directory', () => {
 
       await expect(page.getByTestId('main-layout')).toBeVisible();
       await expect(page.getByTestId('work-mode-summary-panel')).toHaveCount(0);
-
-      await page.getByTestId('chat-question-directory-toggle').click();
-      await expect(page.getByTestId('chat-question-directory')).toBeVisible();
 
       await page.getByTestId('chat-workspace-toggle').click();
 

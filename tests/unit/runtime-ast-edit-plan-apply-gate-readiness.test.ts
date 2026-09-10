@@ -198,7 +198,7 @@ describe("AST EditPlan explicit apply gate readiness", () => {
       authority: {
         ...plan.authority,
         noPatchApply: false,
-      } as EditPlan["authority"],
+      } as unknown as EditPlan["authority"],
     };
     const readinessReport = buildAstEditPlanEvidenceVerifierReadiness(plan);
     const report = buildAstEditPlanApplyGateReadiness({

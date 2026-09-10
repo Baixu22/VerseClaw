@@ -425,7 +425,7 @@ describe("runtime memory runtime integration adapter", () => {
 
     const memoryProvider = createRuntimeMemoryContextProvider({
       config: { runtime: { memory: { provider: true } } },
-      queryFacts: (query) => loaded.store.queryFacts(query),
+      queryFacts: (query) => loaded.store.queryFacts(query) as never,
     });
     const registry = createTestContextProviderRegistry([memoryProvider]);
 

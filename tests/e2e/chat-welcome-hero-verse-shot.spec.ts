@@ -226,6 +226,12 @@ test('chips retract while the composer holds a draft and return when it is clear
     await expect(chips).not.toHaveAttribute('data-retracted', 'true');
     await expect(firstChip).toBeVisible();
     expect(Math.abs((await composerTop()) - restingTop)).toBeLessThanOrEqual(1);
+
+    await page.setViewportSize({ width: 600, height: 820 });
+    await expect(chips.locator('button:visible')).toHaveCount(2);
+
+    await page.setViewportSize({ width: 400, height: 820 });
+    await expect(chips.locator('button:visible')).toHaveCount(1);
   } finally {
     await closeElectronApp(app);
   }

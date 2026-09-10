@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-08-21T14:28:01.668284Z",
+  "created_at": "2026-08-20T14:11:03.188935Z",
   "graph": {
     "cross_edges": [
       "TFE-0008",
@@ -64,11 +64,13 @@
       "TFE-0125",
       "TFE-0126",
       "TFE-0127",
-      "TFE-0130",
-      "TFE-0132",
+      "TFE-0133",
       "TFE-0134",
+      "TFE-0135",
       "TFE-0136",
+      "TFE-0137",
       "TFE-0138",
+      "TFE-0139",
       "TFE-0140"
     ],
     "edge_index": {
@@ -158,28 +160,13 @@
         ],
         "incoming": [
           "TFE-0030",
-          "TFE-0127",
-          "TFE-0128",
-          "TFE-0129",
-          "TFE-0131",
-          "TFE-0133",
-          "TFE-0135",
-          "TFE-0137",
-          "TFE-0139"
+          "TFE-0127"
         ],
         "outgoing": [
           "TFE-0005",
           "TFE-0010"
         ],
-        "tree_child_edges": [
-          "TFE-0128",
-          "TFE-0129",
-          "TFE-0131",
-          "TFE-0133",
-          "TFE-0135",
-          "TFE-0137",
-          "TFE-0139"
-        ],
+        "tree_child_edges": [],
         "tree_parent_edge": "TFE-0005"
       },
       "TF-0007": {
@@ -859,13 +846,24 @@
         ],
         "incoming": [
           "TFE-0074",
-          "TFE-0079"
+          "TFE-0079",
+          "TFE-0128",
+          "TFE-0129",
+          "TFE-0130",
+          "TFE-0131",
+          "TFE-0132"
         ],
         "outgoing": [
           "TFE-0055",
           "TFE-0072"
         ],
-        "tree_child_edges": [],
+        "tree_child_edges": [
+          "TFE-0128",
+          "TFE-0129",
+          "TFE-0130",
+          "TFE-0131",
+          "TFE-0132"
+        ],
         "tree_parent_edge": "TFE-0055"
       },
       "TF-0038": {
@@ -1434,10 +1432,14 @@
           "TFE-0128"
         ],
         "cross_edges": [
-          "TFE-0130"
+          "TFE-0133",
+          "TFE-0136",
+          "TFE-0140"
         ],
         "incoming": [
-          "TFE-0130"
+          "TFE-0133",
+          "TFE-0136",
+          "TFE-0140"
         ],
         "outgoing": [
           "TFE-0128"
@@ -1448,120 +1450,106 @@
       "TF-0071": {
         "blocking_edges": [
           "TFE-0129",
-          "TFE-0130"
+          "TFE-0140"
         ],
         "cross_edges": [
-          "TFE-0130",
-          "TFE-0132"
+          "TFE-0134",
+          "TFE-0137",
+          "TFE-0140"
         ],
         "incoming": [
-          "TFE-0132"
+          "TFE-0134",
+          "TFE-0137"
         ],
         "outgoing": [
           "TFE-0129",
-          "TFE-0130"
+          "TFE-0140"
         ],
         "tree_child_edges": [],
         "tree_parent_edge": "TFE-0129"
       },
       "TF-0072": {
         "blocking_edges": [
-          "TFE-0131",
-          "TFE-0132"
+          "TFE-0130",
+          "TFE-0133",
+          "TFE-0134"
         ],
         "cross_edges": [
-          "TFE-0132",
-          "TFE-0134"
+          "TFE-0133",
+          "TFE-0134",
+          "TFE-0135",
+          "TFE-0138"
         ],
         "incoming": [
+          "TFE-0135",
+          "TFE-0138"
+        ],
+        "outgoing": [
+          "TFE-0130",
+          "TFE-0133",
           "TFE-0134"
+        ],
+        "tree_child_edges": [],
+        "tree_parent_edge": "TFE-0130"
+      },
+      "TF-0073": {
+        "blocking_edges": [
+          "TFE-0131",
+          "TFE-0135"
+        ],
+        "cross_edges": [
+          "TFE-0135",
+          "TFE-0139"
+        ],
+        "incoming": [
+          "TFE-0139"
         ],
         "outgoing": [
           "TFE-0131",
-          "TFE-0132"
+          "TFE-0135"
         ],
         "tree_child_edges": [],
         "tree_parent_edge": "TFE-0131"
       },
-      "TF-0073": {
-        "blocking_edges": [
-          "TFE-0133",
-          "TFE-0134"
-        ],
-        "cross_edges": [
-          "TFE-0134",
-          "TFE-0136"
-        ],
-        "incoming": [
-          "TFE-0136"
-        ],
-        "outgoing": [
-          "TFE-0133",
-          "TFE-0134"
-        ],
-        "tree_child_edges": [],
-        "tree_parent_edge": "TFE-0133"
-      },
       "TF-0074": {
         "blocking_edges": [
-          "TFE-0135",
-          "TFE-0136"
+          "TFE-0132",
+          "TFE-0136",
+          "TFE-0137",
+          "TFE-0138",
+          "TFE-0139"
         ],
         "cross_edges": [
           "TFE-0136",
-          "TFE-0138"
-        ],
-        "incoming": [
-          "TFE-0138"
-        ],
-        "outgoing": [
-          "TFE-0135",
-          "TFE-0136"
-        ],
-        "tree_child_edges": [],
-        "tree_parent_edge": "TFE-0135"
-      },
-      "TF-0075": {
-        "blocking_edges": [
           "TFE-0137",
-          "TFE-0138"
-        ],
-        "cross_edges": [
           "TFE-0138",
-          "TFE-0140"
-        ],
-        "incoming": [
-          "TFE-0140"
-        ],
-        "outgoing": [
-          "TFE-0137",
-          "TFE-0138"
-        ],
-        "tree_child_edges": [],
-        "tree_parent_edge": "TFE-0137"
-      },
-      "TF-0076": {
-        "blocking_edges": [
-          "TFE-0139",
-          "TFE-0140"
-        ],
-        "cross_edges": [
-          "TFE-0140"
+          "TFE-0139"
         ],
         "incoming": [],
         "outgoing": [
-          "TFE-0139",
-          "TFE-0140"
+          "TFE-0132",
+          "TFE-0136",
+          "TFE-0137",
+          "TFE-0138",
+          "TFE-0139"
         ],
         "tree_child_edges": [],
-        "tree_parent_edge": "TFE-0139"
+        "tree_parent_edge": "TFE-0132"
+      },
+      "TF-0077": {
+        "blocking_edges": [],
+        "cross_edges": [],
+        "incoming": [],
+        "outgoing": [],
+        "tree_child_edges": [],
+        "tree_parent_edge": null
       }
     },
     "edge_type_counts": {
-      "child_of": 71,
+      "child_of": 69,
       "clarifies": 0,
       "contributes_to": 6,
-      "depends_on": 53,
+      "depends_on": 55,
       "derived_from": 3,
       "duplicates": 0,
       "related_to": 3,
@@ -3092,163 +3080,163 @@
       },
       "TFE-0128": {
         "blocking": true,
-        "confidence": 0.99,
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "confidence": 0.95,
+        "created_at": "2026-08-19T15:15:54.029493Z",
         "created_from_session": null,
         "from": "TF-0070",
         "id": "TFE-0128",
-        "reason": "第 01 项是 Compact/P6 闭环的首个行为修复",
-        "to": "TF-0006",
+        "reason": "Task Loop lifecycle 迁移的运行上下文隔离实现子任务",
+        "to": "TF-0037",
         "type": "child_of",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "updated_at": "2026-08-19T15:15:54.029493Z"
       },
       "TFE-0129": {
         "blocking": true,
-        "confidence": 0.99,
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "confidence": 0.95,
+        "created_at": "2026-08-19T15:15:54.029493Z",
         "created_from_session": null,
         "from": "TF-0071",
         "id": "TFE-0129",
-        "reason": "第 02 项闭合 compact 的精确标识保留",
-        "to": "TF-0006",
+        "reason": "Task Loop lifecycle 迁移的持久化完成语义实现子任务",
+        "to": "TF-0037",
         "type": "child_of",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "updated_at": "2026-08-19T15:15:54.029493Z"
       },
       "TFE-0130": {
         "blocking": true,
-        "confidence": 0.85,
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "confidence": 0.94,
+        "created_at": "2026-08-19T15:15:54.029493Z",
         "created_from_session": null,
-        "from": "TF-0071",
+        "from": "TF-0072",
         "id": "TFE-0130",
-        "reason": "按用户要求串行编号推进，先稳定完成态再修 identifier",
-        "to": "TF-0070",
-        "type": "depends_on",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "reason": "Task Loop lifecycle 迁移的跨层 lineage 实现子任务",
+        "to": "TF-0037",
+        "type": "child_of",
+        "updated_at": "2026-08-19T15:15:54.029493Z"
       },
       "TFE-0131": {
         "blocking": true,
-        "confidence": 0.99,
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "confidence": 0.93,
+        "created_at": "2026-08-19T15:15:54.033484Z",
         "created_from_session": null,
-        "from": "TF-0072",
+        "from": "TF-0073",
         "id": "TFE-0131",
-        "reason": "第 03 项闭合 handoff 结构完整性",
-        "to": "TF-0006",
+        "reason": "Task Loop lifecycle 迁移的 SEKB 轨迹质量实现子任务",
+        "to": "TF-0037",
         "type": "child_of",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "updated_at": "2026-08-19T15:15:54.033484Z"
       },
       "TFE-0132": {
         "blocking": true,
-        "confidence": 0.8,
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "confidence": 0.92,
+        "created_at": "2026-08-19T15:15:54.033484Z",
         "created_from_session": null,
-        "from": "TF-0072",
+        "from": "TF-0074",
         "id": "TFE-0132",
-        "reason": "按编号串行推进，identifier 修复后再统一结构 gate",
-        "to": "TF-0071",
-        "type": "depends_on",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "reason": "Task Loop lifecycle 迁移后的纵向真实验收里程碑",
+        "to": "TF-0037",
+        "type": "child_of",
+        "updated_at": "2026-08-19T15:15:54.033484Z"
       },
       "TFE-0133": {
         "blocking": true,
-        "confidence": 0.99,
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "confidence": 0.9,
+        "created_at": "2026-08-19T15:15:54.033484Z",
         "created_from_session": null,
-        "from": "TF-0073",
+        "from": "TF-0072",
         "id": "TFE-0133",
-        "reason": "第 04 项形成当前源码上的最小统一量化证据",
-        "to": "TF-0006",
-        "type": "child_of",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "reason": "lineage 字段必须建立在按 run 隔离的上下文绑定之上",
+        "to": "TF-0070",
+        "type": "depends_on",
+        "updated_at": "2026-08-19T15:15:54.033484Z"
       },
       "TFE-0134": {
         "blocking": true,
-        "confidence": 0.95,
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "confidence": 0.84,
+        "created_at": "2026-08-19T15:15:54.033484Z",
         "created_from_session": null,
-        "from": "TF-0073",
+        "from": "TF-0072",
         "id": "TFE-0134",
-        "reason": "9 样本统一验收必须等待三个行为缺口闭合",
-        "to": "TF-0072",
+        "reason": "只有持久化完成语义稳定后，lineage 才能成为可验证的事实",
+        "to": "TF-0071",
         "type": "depends_on",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "updated_at": "2026-08-19T15:15:54.033484Z"
       },
       "TFE-0135": {
         "blocking": true,
-        "confidence": 0.99,
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "confidence": 0.9,
+        "created_at": "2026-08-19T15:15:54.033484Z",
         "created_from_session": null,
-        "from": "TF-0074",
+        "from": "TF-0073",
         "id": "TFE-0135",
-        "reason": "第 05 项闭合正式质量阈值",
-        "to": "TF-0006",
-        "type": "child_of",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "reason": "轨迹去重和候选门控需要统一 run/trace lineage",
+        "to": "TF-0072",
+        "type": "depends_on",
+        "updated_at": "2026-08-19T15:15:54.033484Z"
       },
       "TFE-0136": {
         "blocking": true,
-        "confidence": 0.9,
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "confidence": 0.95,
+        "created_at": "2026-08-19T15:15:54.033484Z",
         "created_from_session": null,
         "from": "TF-0074",
         "id": "TFE-0136",
-        "reason": "先稳定 9 样本，再进入完整质量 gate",
-        "to": "TF-0073",
+        "reason": "最终验收必须先证明并发上下文不串写",
+        "to": "TF-0070",
         "type": "depends_on",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "updated_at": "2026-08-19T15:15:54.033484Z"
       },
       "TFE-0137": {
         "blocking": true,
-        "confidence": 0.99,
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "confidence": 0.95,
+        "created_at": "2026-08-19T15:15:54.033484Z",
         "created_from_session": null,
-        "from": "TF-0075",
+        "from": "TF-0074",
         "id": "TFE-0137",
-        "reason": "第 06 项提供正式验收所需的评估独立性",
-        "to": "TF-0006",
-        "type": "child_of",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "reason": "最终验收必须先证明 phase side effect 的持久化边界",
+        "to": "TF-0071",
+        "type": "depends_on",
+        "updated_at": "2026-08-19T15:15:54.033484Z"
       },
       "TFE-0138": {
         "blocking": true,
-        "confidence": 0.8,
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "confidence": 0.95,
+        "created_at": "2026-08-19T15:15:54.033484Z",
         "created_from_session": null,
-        "from": "TF-0075",
+        "from": "TF-0074",
         "id": "TFE-0138",
-        "reason": "按序号推进，在质量行为稳定后生成独立 live 证据",
-        "to": "TF-0074",
+        "reason": "最终验收必须能够完整回溯 Mission/Loop/DCS/SEKB",
+        "to": "TF-0072",
         "type": "depends_on",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "updated_at": "2026-08-19T15:15:54.033484Z"
       },
       "TFE-0139": {
         "blocking": true,
-        "confidence": 0.99,
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "confidence": 0.94,
+        "created_at": "2026-08-19T15:15:54.033484Z",
         "created_from_session": null,
-        "from": "TF-0076",
+        "from": "TF-0074",
         "id": "TFE-0139",
-        "reason": "第 07 项完成成本和正式候选收口",
-        "to": "TF-0006",
-        "type": "child_of",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "reason": "最终验收必须证明经验候选没有空轨迹和重复轨迹污染",
+        "to": "TF-0073",
+        "type": "depends_on",
+        "updated_at": "2026-08-19T15:15:54.033484Z"
       },
       "TFE-0140": {
         "blocking": true,
-        "confidence": 0.95,
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "confidence": 0.9,
+        "created_at": "2026-08-19T15:21:34.339033Z",
         "created_from_session": null,
-        "from": "TF-0076",
+        "from": "TF-0071",
         "id": "TFE-0140",
-        "reason": "最终候选验收等待质量和独立 evaluator 证据完成",
-        "to": "TF-0075",
+        "reason": "phase handler 的等待和失败语义必须建立在按 run 隔离的 handler 上下文之上",
+        "to": "TF-0070",
         "type": "depends_on",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "updated_at": "2026-08-19T15:21:34.339033Z"
       }
     },
-    "event_id": "tfevt_dcc74073b3064ab0b7fd",
-    "generated_at": "2026-08-21T14:28:01.668284Z",
+    "event_id": "tfevt_05bcaf7afdf54b09b335",
+    "generated_at": "2026-08-20T14:11:03.187938Z",
     "nodes": {
       "TF-0001": {
         "acceptance_criteria": [
@@ -3305,7 +3293,7 @@
         "non_goals": [],
         "primary_parent": null,
         "priority": 3,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -3372,7 +3360,7 @@
         "non_goals": [],
         "primary_parent": "TF-0001",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "拆除最大组件孤岛：统一 memory/context 生产注入入口",
         "remaining_minutes_max": null,
@@ -3397,7 +3385,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -3437,7 +3425,7 @@
         "non_goals": [],
         "primary_parent": "TF-0001",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "消除 VToken 默认ON 与 DCS memory 默认OFF 的矛盾，修复 Browser 不安全默认",
         "remaining_minutes_max": null,
@@ -3463,7 +3451,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -3499,7 +3487,7 @@
         "non_goals": [],
         "primary_parent": "TF-0001",
         "priority": 2,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "证明经验闭环不是半程，而是可验收的一条黄金路径",
         "remaining_minutes_max": null,
@@ -3523,7 +3511,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -3565,7 +3553,7 @@
         "non_goals": [],
         "primary_parent": "TF-0001",
         "priority": 2,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "让 Browser 适合内部灰度，而不是扩展更多能力面",
         "remaining_minutes_max": null,
@@ -3605,55 +3593,34 @@
           "TFA-0026758811"
         ],
         "assumptions": [],
-        "children": [
-          "TF-0070",
-          "TF-0071",
-          "TF-0072",
-          "TF-0073",
-          "TF-0074",
-          "TF-0075",
-          "TF-0076"
-        ],
+        "children": [],
         "confidence": 0.9,
-        "context_tags": [
-          "compact",
-          "context-compression",
-          "p6",
-          "would-retry",
-          "shadow",
-          "fail-closed"
-        ],
+        "context_tags": [],
         "created_at": "2026-07-19T08:58:00.813415Z",
         "deprecated_at": null,
-        "derived_progress": 48.0,
+        "derived_progress": 10.0,
         "desired_outcomes": [],
-        "deviations": [
-          "TFD-340517fabb"
-        ],
+        "deviations": [],
         "difficulty": "unknown",
         "estimated_total_minutes": null,
         "evidence": [
-          "D:/verse_claw_worktree_compact/scripts/context-compression-would-retry-canary.ts",
-          "D:/verse_claw_worktree_compact/scripts/context-compression-eval-runner.mjs",
-          "D:/verse_claw_worktree_compact/reports/context-compression/P6-WOULD-RETRY-CANARY-AUTO-2026-08-20.md",
-          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v5-auto-R16-would-retry-r1/canary-metrics.json",
-          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v5-auto-R29-would-retry-r1/canary-metrics.json",
-          "本轮 root compact focused 63/63；Node/Web typecheck exit 0；comms:replay exit 0；comms:compare PASS",
-          "diff-aware Harness 仍被 5 个 compact ownership 外的 dirty 路径阻断"
+          "docs/dev/tf0006-evidence-upgrade-unblock.md",
+          "artifacts/tf0006-evidence-upgrade/status.json",
+          "tests/unit/tf0006-evidence-upgrade-blocked.test.ts",
+          "docs/dev/Sustained-Development-Playbook.md §8",
+          "docs/dev/tf0001-controlled-operable-closeout.md (liveReady=false)"
         ],
         "execution_hints": [
-          "严格按 01 -> 07 串行推进；一次只推进一个 ready 节点",
-          "离线链稳定前不调用 provider；live 运行必须显式授权并使用可轮换凭据",
-          "不得把旧 v3/v5 canary 叙述升级为当前 acceptance",
-          "promotionStage 保持 shadow，直到 01-07 全部满足且获得正式放行决定",
-          "不得为 Harness 变绿而扩大 compact touchedAreas 到无关 dirty 路径"
+          "解除前必须四份证据齐备：corpus-manifest / live-ab-report / soak-report / product-approval",
+          "若产品放弃 M2/M3 default-on：改为 deprecated 并保留 readyForDefaultFlagGraduation=false",
+          "禁止：因 Agent Dev/P0 E2E 绿灯将 liveReady 设为 true"
         ],
         "id": "TF-0006",
         "kind": "subtask",
         "non_goals": [],
         "primary_parent": "TF-0001",
         "priority": 3,
-        "progress": 48.0,
+        "progress": 10,
         "progress_source": "manual",
         "purpose": "用真实 corpus 与 live A/B 支撑 default-on 讨论，不靠再写 honesty pack",
         "remaining_minutes_max": null,
@@ -3665,9 +3632,9 @@
         "source_sessions": [],
         "status": "blocked",
         "success_metrics": [],
-        "summary": "01/07 完成态保护已完成并验证；当前开始点为 02/07 exact identifier 保留。P6 继续保持 shadow，剩余结构、9 条统一验收、质量、模型独立性、成本和干净候选未闭合。",
-        "title": "Compact/P6 证据升级与 would-retry 闭环（保持 shadow）",
-        "updated_at": "2026-08-21T11:51:28.324431Z"
+        "summary": "继续 blocked：缺真实 corpus、human live A/B、soak 与 product approval；P0/shadow/synthetic 绿灯均不构成解阻证据。",
+        "title": "M2/M3 证据升级（延后）",
+        "updated_at": "2026-07-27T13:16:29.660683Z"
       },
       "TF-0007": {
         "acceptance_criteria": [
@@ -3734,7 +3701,7 @@
         ],
         "primary_parent": null,
         "priority": 1,
-        "progress": 50.0,
+        "progress": 50,
         "progress_source": "manual",
         "purpose": "尽快将已有组件能力投入安全、可审计、可回滚的内部使用，而不是继续扩面或提前 default-on。",
         "remaining_minutes_max": 1440,
@@ -3810,7 +3777,7 @@
         ],
         "primary_parent": "TF-0007",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "把本机绿灯转化为可审查、可合并、可复现的受控投用基线。",
         "remaining_minutes_max": 0,
@@ -3899,7 +3866,7 @@
         ],
         "primary_parent": "TF-0007",
         "priority": 2,
-        "progress": 50.0,
+        "progress": 50,
         "progress_source": "agent-surrogate-plus-residual-audit",
         "purpose": "在没有真人测试成本时先完成三组件的 agent 工程流程、账本和回滚闭环，同时把不可替代的人证留作明确 residual。",
         "remaining_minutes_max": 720,
@@ -3935,19 +3902,21 @@
         ],
         "alignment": {
           "fit": "aligned",
-          "fit_confidence": 0.95,
-          "user_goal": "开发、测试和独立工程验收完成后，由用户执行最终真人验收。",
+          "fit_confidence": 0.96,
+          "user_goal": "让功能都能正常投入使用",
           "validation_plan": [
-            "逐包 Harness 与独立 Agent Engineering Acceptance",
-            "最终全量工程 gate 和 manifest",
-            "用户执行 H-01 至 H-06"
+            "task-forest validate/export",
+            "前置单测和集成测试",
+            "DCS/Knowledge E2E",
+            "fresh acceptance report"
           ],
-          "why_not_enough": "没有用户最终 accepted verdict 时只能到 human_acceptance_pending。",
-          "why_this_task": "工作包覆盖重复 authority 的主要来源和最终 Operator 闭环，并有严格证据与状态门禁。"
+          "why_not_enough": "完成工程任务后仍需要用户进行真实 channel/product acceptance，不能自动解锁 GA。",
+          "why_this_task": "任务链直接覆盖当前发现的跨层串写、异步落库、lineage 缺失和经验噪声四类孤岛。"
         },
         "alignment_records": [
           "TFA-32a1af6c38",
-          "TFA-50501c2045"
+          "TFA-50501c2045",
+          "TFA-runtime-authority-dcs-loop-sekb-20260819"
         ],
         "assumptions": [
           "source openclaw_runtime 继续作为收敛能力实现路径",
@@ -4050,7 +4019,7 @@
         ],
         "summary": "复用 OpenClaw 运行时、插件槽、MCP、OTel 和既有域执行器，按证据消除平行 Workflow/Context/Memory/Tool/Telemetry authority，并以跨入口 Context/Effect/Recovery lineage 形成 Operator Desktop 差异化。",
         "title": "OpenClaw Runtime Authority 与 Operator 产品收敛（非 GA）",
-        "updated_at": "2026-08-02T13:08:00.002884Z"
+        "updated_at": "2026-08-19T15:15:54.033484Z"
       },
       "TF-0011": {
         "acceptance_criteria": [
@@ -4118,7 +4087,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "避免在 344 条工作区状态和未跟踪审计文档上直接实施跨层改造。",
         "remaining_minutes_max": 0,
@@ -4202,7 +4171,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "让执行、上下文和 Memory 状态具备因果关系、幂等和重启恢复语义。",
         "remaining_minutes_max": 0,
@@ -4283,7 +4252,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 1,
-        "progress": 60.0,
+        "progress": 60,
         "progress_source": "post-audit-reassessment",
         "purpose": "消除动态 Assembler 私有预算、调用顺序冒充优先级和跨 provider 重复投影。",
         "remaining_minutes_max": null,
@@ -4378,7 +4347,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "移除只读 assembly 的无用 MemStore/WAL/lock 和全局无关串行。",
         "remaining_minutes_max": 0,
@@ -4469,7 +4438,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 2,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "消除多文件 patch 抛错后静默保留 partial mutation 的不确定性。",
         "remaining_minutes_max": 0,
@@ -4567,7 +4536,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 2,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "使 VerseShell 具备替代现有本地 exec/process 的完整语义，而不仅是 shell string 包装。",
         "remaining_minutes_max": 0,
@@ -4656,7 +4625,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 2,
-        "progress": 35.0,
+        "progress": 35,
         "progress_source": "manual",
         "purpose": "以真实任务验证单一路径的正确性、安全性、运营性和回滚能力。",
         "remaining_minutes_max": 2280,
@@ -4736,7 +4705,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 3,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "让 Runtime Memory 与 SEKB 提供长期价值，同时避免错误、越权和重复 authority。",
         "remaining_minutes_max": 4800,
@@ -4818,7 +4787,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 3,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "用真实产品证据判断统一 Agent 系统是否回本，并为 TF-0006 提供候选证据而非自动解阻。",
         "remaining_minutes_max": 1920,
@@ -4907,7 +4876,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "在无真人验收条件下，让每个工程任务都具有可复跑、可审计、fail-closed 的 Agent 验收结果。",
         "remaining_minutes_max": 1920,
@@ -4999,7 +4968,7 @@
         ],
         "primary_parent": null,
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "降低导航和页面认知负担，在不削弱真实能力的前提下形成一致、安静、可发现的跨平台桌面体验。",
         "remaining_minutes_max": 9600,
@@ -5032,7 +5001,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -5069,7 +5038,7 @@
         "non_goals": [],
         "primary_parent": "TF-0021",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "先提供后续所有页面迁移共同依赖的可验证视觉和布局基线。",
         "remaining_minutes_max": 0,
@@ -5094,7 +5063,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -5147,7 +5116,7 @@
         "non_goals": [],
         "primary_parent": "TF-0021",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "把分散的待决策事项收敛到一个真实收件箱，同时降低一级导航的认知负担。",
         "remaining_minutes_max": 0,
@@ -5234,7 +5203,7 @@
         "non_goals": [],
         "primary_parent": "TF-0021",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "将定时工作与受监督浏览器运行统一归入已安排，同时完整保留两类后端能力和安全决策。",
         "remaining_minutes_max": 0,
@@ -5308,7 +5277,7 @@
         ],
         "primary_parent": "TF-0021",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "将会话内 Browser、Terminal、Files 与 Review 收敛为克制、连续且功能真实的 FakeCoding 式工作区，减少重复一级页面并保留深层能力。",
         "remaining_minutes_max": 2100,
@@ -5342,7 +5311,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -5367,7 +5336,7 @@
         "non_goals": [],
         "primary_parent": "TF-0021",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -5393,7 +5362,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -5418,7 +5387,7 @@
         "non_goals": [],
         "primary_parent": "TF-0021",
         "priority": 2,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -5497,7 +5466,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "把 TF-0010 的收敛裁决变成可恢复、可验证、不会扩张跑偏的工程序列。",
         "remaining_minutes_max": null,
@@ -5527,7 +5496,7 @@
         ],
         "alignment": {
           "fit": "aligned",
-          "fit_confidence": 1.0,
+          "fit_confidence": 1,
           "user_goal": "先清除全局 lint/typecheck 债，再让 RC-00R 的 fail-closed 验收在干净候选上产生真实绿色 final-report.json。",
           "validation_plan": [
             "干净 worktree 复现并清除 lint/typecheck 债",
@@ -5569,7 +5538,7 @@
         ],
         "primary_parent": "TF-0028",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "使 Runtime Authority Convergence 的后续验收基于真实全局绿线，而非从脏 UI 工作树借用 lint 修复或将 nested runtime typecheck 债排除。",
         "remaining_minutes_max": null,
@@ -5591,7 +5560,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -5619,7 +5588,7 @@
         "non_goals": [],
         "primary_parent": "TF-0028",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -5641,7 +5610,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -5670,7 +5639,7 @@
         "non_goals": [],
         "primary_parent": "TF-0028",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -5692,7 +5661,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -5720,7 +5689,7 @@
         "non_goals": [],
         "primary_parent": "TF-0028",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -5742,7 +5711,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -5770,7 +5739,7 @@
         "non_goals": [],
         "primary_parent": "TF-0028",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -5792,7 +5761,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -5819,7 +5788,7 @@
         "non_goals": [],
         "primary_parent": "TF-0028",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -5840,7 +5809,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -5868,7 +5837,7 @@
         "non_goals": [],
         "primary_parent": "TF-0028",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -5889,7 +5858,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -5917,7 +5886,7 @@
         "non_goals": [],
         "primary_parent": "TF-0028",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -5938,16 +5907,29 @@
           "side-effect replay 0"
         ],
         "alignment": {
-          "fit": "unknown",
-          "fit_confidence": 0.0,
-          "user_goal": "",
-          "validation_plan": [],
-          "why_not_enough": "",
-          "why_this_task": ""
+          "fit": "aligned",
+          "fit_confidence": 0.96,
+          "user_goal": "让功能都能正常投入使用",
+          "validation_plan": [
+            "task-forest validate/export",
+            "前置单测和集成测试",
+            "DCS/Knowledge E2E",
+            "fresh acceptance report"
+          ],
+          "why_not_enough": "完成工程任务后仍需要用户进行真实 channel/product acceptance，不能自动解锁 GA。",
+          "why_this_task": "任务链直接覆盖当前发现的跨层串写、异步落库、lineage 缺失和经验噪声四类孤岛。"
         },
-        "alignment_records": [],
+        "alignment_records": [
+          "TFA-runtime-authority-dcs-loop-sekb-20260819"
+        ],
         "assumptions": [],
-        "children": [],
+        "children": [
+          "TF-0070",
+          "TF-0071",
+          "TF-0072",
+          "TF-0073",
+          "TF-0074"
+        ],
         "confidence": 0.75,
         "context_tags": [],
         "created_at": "2026-08-02T13:07:59.996410Z",
@@ -5977,7 +5959,7 @@
         "success_metrics": [],
         "summary": "最后迁移 Task Loop lifecycle；long_task_checkpoints 只保留 checkpoint material，replay 永不执行 effect。",
         "title": "RC-06D Task Loop Lifecycle 迁移",
-        "updated_at": "2026-08-03T08:02:21.717409Z"
+        "updated_at": "2026-08-19T15:15:54.033484Z"
       },
       "TF-0038": {
         "acceptance_criteria": [
@@ -5988,7 +5970,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -6016,7 +5998,7 @@
         "non_goals": [],
         "primary_parent": "TF-0028",
         "priority": 2,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -6038,7 +6020,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -6065,7 +6047,7 @@
         "non_goals": [],
         "primary_parent": "TF-0028",
         "priority": 2,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -6087,7 +6069,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -6115,7 +6097,7 @@
         "non_goals": [],
         "primary_parent": "TF-0028",
         "priority": 2,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -6137,7 +6119,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -6167,7 +6149,7 @@
         "non_goals": [],
         "primary_parent": "TF-0028",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -6188,7 +6170,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -6215,7 +6197,7 @@
         ],
         "primary_parent": "TF-0028",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "",
         "remaining_minutes_max": null,
@@ -6267,7 +6249,7 @@
         "non_goals": [],
         "primary_parent": "TF-0010",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "恢复编码 agent 的目录发现路径",
         "remaining_minutes_max": null,
@@ -6320,7 +6302,7 @@
         "non_goals": [],
         "primary_parent": "TF-0010",
         "priority": 2,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "让 agent 无需 shell 即可正确列目录",
         "remaining_minutes_max": null,
@@ -6374,7 +6356,7 @@
         "non_goals": [],
         "primary_parent": "TF-0010",
         "priority": 2,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "避免单机 agent 选择必然失败的 paired-node 文件工具",
         "remaining_minutes_max": null,
@@ -6433,7 +6415,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "让编码工具在相同工作区策略下行为一致且可预测",
         "remaining_minutes_max": 0,
@@ -6496,7 +6478,7 @@
         "non_goals": [],
         "primary_parent": "TF-0010",
         "priority": 2,
-        "progress": 90.0,
+        "progress": 90,
         "progress_source": "manual",
         "purpose": "恢复 openclaw-sandbox:bookworm-slim 从源码构建能力，解除 Docker sandbox 启用前置缺失。",
         "remaining_minutes_max": 30,
@@ -6561,7 +6543,7 @@
         "non_goals": [],
         "primary_parent": "TF-0010",
         "priority": 2,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "让 agent 能从 schema 根节点发现有效配置路径并从错误查询中自行恢复。",
         "remaining_minutes_max": 0,
@@ -6624,7 +6606,7 @@
         "non_goals": [],
         "primary_parent": "TF-0010",
         "priority": 2,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "让用户修改 tools.exec 权限后无需重启 Gateway 即可在后续 agent turn 生效。",
         "remaining_minutes_max": 0,
@@ -6690,7 +6672,7 @@
         "non_goals": [],
         "primary_parent": "TF-0010",
         "priority": 2,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "让 agent 使用已有 Gateway 能力，同时避免开放通用 operator RPC 或绕过既有配置与恢复安全边界。",
         "remaining_minutes_max": 0,
@@ -6752,7 +6734,7 @@
         "non_goals": [],
         "primary_parent": "TF-0010",
         "priority": 2,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "避免较小 contextTokens 配置让首条用户消息在空会话压缩重试中丢失。",
         "remaining_minutes_max": 0,
@@ -6827,7 +6809,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 2,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "让 agent 能主动控制自身长会话上下文，同时不获得跨会话或管理级 Gateway 权限。",
         "remaining_minutes_max": 0,
@@ -6856,7 +6838,7 @@
         ],
         "alignment": {
           "fit": "unknown",
-          "fit_confidence": 0.0,
+          "fit_confidence": 0,
           "user_goal": "",
           "validation_plan": [],
           "why_not_enough": "",
@@ -6901,7 +6883,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "消除每次 agent session 固定的 plugin-tools 冷启动延迟，改善 stream-ready 首轮响应。",
         "remaining_minutes_max": 0,
@@ -6973,7 +6955,7 @@
         "non_goals": [],
         "primary_parent": "TF-0010",
         "priority": 2,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "恢复 Gateway 重启时运行中任务的可续跑能力并保留真实失败语义。",
         "remaining_minutes_max": 0,
@@ -7046,7 +7028,7 @@
         ],
         "primary_parent": "TF-0010",
         "priority": 2,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "修复并发任务中 agent 使用相对路径时命中 ~/.openclaw/workspace、继而触发全盘搜索的问题。",
         "remaining_minutes_max": 0,
@@ -7155,7 +7137,7 @@
         ],
         "primary_parent": null,
         "priority": 1,
-        "progress": 12.0,
+        "progress": 12,
         "progress_source": "manual",
         "purpose": "为文件、仓库、进程、测试、构建、Git、诊断和结果查询提供统一、受治理的本地执行契约，同时保持模型工具面小且稳定。",
         "remaining_minutes_max": null,
@@ -7246,7 +7228,7 @@
         ],
         "primary_parent": "TF-0056",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "为所有后续 VerseShell foundation 代码改动建立唯一工作包边界、验收依据和 fail-closed 证据起点。",
         "remaining_minutes_max": 0,
@@ -7338,7 +7320,7 @@
         ],
         "primary_parent": "TF-0056",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "消除所有后续 typed ACI、facade 与 governed execution 之前的 runtime panic 阻断。",
         "remaining_minutes_max": 0,
@@ -7443,7 +7425,7 @@
         ],
         "primary_parent": "TF-0056",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "让 Electron 和 OpenClaw 仅接受可从 clean checkout 重建、身份可验证的 typed ACI runtime。",
         "remaining_minutes_max": 0,
@@ -7539,7 +7521,7 @@
         ],
         "primary_parent": "TF-0056",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "证明已验证的 typed ACI 能在 OpenClaw policy/approval 边界下产生语义正确的 observation，而不是在拒绝前崩溃。",
         "remaining_minutes_max": 0,
@@ -7642,7 +7624,7 @@
         ],
         "primary_parent": "TF-0056",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "让短命令、长命令、timeout、cancel、crash、restart 都返回可审计的稳定结果，且 effectful 请求不重放。",
         "remaining_minutes_max": 0,
@@ -7746,7 +7728,7 @@
         ],
         "primary_parent": "TF-0056",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "让模型、UI 和 support bundle 获得可审计的有限结果，而不是全量日志或静默丢失。",
         "remaining_minutes_max": 0,
@@ -7841,7 +7823,7 @@
         ],
         "primary_parent": "TF-0056",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "防止 MCP 宽权限、缺失依赖或版本漂移绕过 typed ACI 的 policy/workspace/governed owner。",
         "remaining_minutes_max": 0,
@@ -7932,7 +7914,7 @@
         ],
         "primary_parent": "TF-0056",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "先以低风险、可重复的 coding 读取工作流验证 VerseShell foundation 的共享契约。",
         "remaining_minutes_max": 0,
@@ -8030,7 +8012,7 @@
         ],
         "primary_parent": "TF-0056",
         "priority": 1,
-        "progress": 100.0,
+        "progress": 100,
         "progress_source": "manual",
         "purpose": "让常见 coding process 在统一 execution plane 上运行，而不把普通命令默认二次解释为 shell string。",
         "remaining_minutes_max": 0,
@@ -8108,7 +8090,7 @@
         ],
         "primary_parent": "TF-0056",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "让多步 coding 工作流具有可追踪因果链，且 UI/agent/support 不各自解析日志。",
         "remaining_minutes_max": 1200,
@@ -8187,7 +8169,7 @@
         ],
         "primary_parent": "TF-0056",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "为文件改动提供确定的冲突、提交和恢复语义，同时避免建立第二个 VerseShell transaction owner。",
         "remaining_minutes_max": 1800,
@@ -8264,7 +8246,7 @@
         ],
         "primary_parent": "TF-0056",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "防止用户和 agent 对外部进程写入的恢复能力产生错误预期。",
         "remaining_minutes_max": 960,
@@ -8346,7 +8328,7 @@
         ],
         "primary_parent": "TF-0056",
         "priority": 1,
-        "progress": 0.0,
+        "progress": 0,
         "progress_source": "manual",
         "purpose": "用真实运营和 provider 证据决定是否值得扩大 VerseShell 范围，而不把工程矩阵误当成产品资格。",
         "remaining_minutes_max": 5760,
@@ -8371,537 +8353,538 @@
       },
       "TF-0070": {
         "acceptance_criteria": [
-          "当前固定 9 样本 completedOutcomePreserved=9/9",
-          "已完成任务不会出现在 Open TODOs、Pending user asks 或 Next Actions",
-          "新增确定性单测覆盖完成态、否定式 pending 与中英文表达"
-        ],
-        "alignment": {
-          "fit": "aligned",
-          "fit_confidence": 0.98,
-          "user_goal": "compact 后综合信息但不丢失完成状态",
-          "validation_plan": [
-            "focused unit test",
-            "固定 9 样本统一扫描"
-          ],
-          "why_not_enough": "只修复完成态，仍不能解决 identifier、结构、质量和成本门禁",
-          "why_this_task": "直接修复用户点名的已完成结果被重新说成待办问题"
-        },
-        "alignment_records": [],
-        "assumptions": [
-          "现有 v5 结果早于最终脚本，只作为定位线索"
-        ],
-        "children": [],
-        "confidence": 0.95,
-        "context_tags": [
-          "compact",
-          "completion-state",
-          "false-pending"
-        ],
-        "created_at": "2026-08-21T10:29:32.111195Z",
-        "deprecated_at": null,
-        "derived_progress": 100.0,
-        "desired_outcomes": [],
-        "deviations": [],
-        "difficulty": "medium",
-        "estimated_total_minutes": null,
-        "evidence": [
-          "D:/verse_claw_worktree_compact/scripts/context-compression-would-retry-canary.ts",
-          "D:/verse_claw_worktree_compact/reports/context-compression/P6-TF0070-COMPLETION-STATE-EVIDENCE-2026-08-21.md",
-          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-local-tf0070-r3/canary-metrics.json",
-          "would-retry --self-test PASS；scoped ESLint PASS",
-          "root compact 63/63；runtime focused 38/38；P6 promotion/safeguard 14/14",
-          "Node/Web typecheck exit 0；comms replay/compare PASS；Harness --no-diff PASS"
-        ],
-        "execution_hints": [
-          "先补最小 deterministic counterexample，再改共享完成态检测",
-          "修复后只跑 focused/self-test，不先扩大 live 样本"
-        ],
-        "id": "TF-0070",
-        "kind": "subtask",
-        "non_goals": [
-          "不改变真实未完成任务的 pending 状态",
-          "不调用外部 provider 作为代码修复前置"
-        ],
-        "primary_parent": "TF-0006",
-        "priority": 1,
-        "progress": 100.0,
-        "progress_source": "manual",
-        "purpose": "保证 compact 后已完成工作仍保持完成，不制造虚假待办或重复交付。",
-        "remaining_minutes_max": 0,
-        "remaining_minutes_min": 0,
-        "requirements": [
-          "以最新已验证 outcome 为 authority",
-          "否定式 no pending 文本不得被误判",
-          "不得依赖特定 R16/R29 文案硬编码"
-        ],
-        "source_sessions": [
-          "session-2026-08-21-compact-p6-01"
-        ],
-        "status": "done",
-        "success_metrics": [
-          "false pending count=0",
-          "completedOutcomePreserved=100%"
-        ],
-        "summary": "完成态保护已闭合：当 deterministic directive 证明 latest outcome 已完成时，actionable pending 会触发最多一次 retry；retry 后仍矛盾则确定性清除被完成态否定的 pending，真实 unfinished directive 不受影响。固定 9 样本完成态语义覆盖 9/9；R16/R29 本地 stub replay 均恰好一次 retry 且 passed=true。",
-        "title": "[01/07] 修复已完成结果被重新标成 pending",
-        "updated_at": "2026-08-21T11:51:28.324431Z"
-      },
-      "TF-0071": {
-        "acceptance_criteria": [
-          "固定样本 final gate 不再出现 missing_exact_identifier",
-          "用户路径仍保持 [REDACTED_USER]",
-          "custom/off 策略回归测试继续通过"
-        ],
-        "alignment": {
-          "fit": "aligned",
-          "fit_confidence": 0.97,
-          "user_goal": "compact 能综合信息且保留可继续执行的精确信息",
-          "validation_plan": [
-            "identifier policy unit tests",
-            "R14/R16/R27 deterministic replay"
-          ],
-          "why_not_enough": "仍需完成态、结构和正式质量证据",
-          "why_this_task": "精确标识丢失会直接让恢复后的 agent 无法继续正确路径"
-        },
-        "alignment_records": [],
-        "assumptions": [
-          "R14/R16/R27 是同类 identifier retention 的代表样本"
-        ],
-        "children": [],
-        "confidence": 0.94,
-        "context_tags": [
-          "compact",
-          "exact-identifiers",
-          "redaction"
-        ],
-        "created_at": "2026-08-21T10:29:32.111195Z",
-        "deprecated_at": null,
-        "derived_progress": 100.0,
-        "desired_outcomes": [],
-        "deviations": [],
-        "difficulty": "high",
-        "estimated_total_minutes": null,
-        "evidence": [
-          "D:/verse_claw_worktree_compact/scripts/context-compression-would-retry-canary.ts",
-          "D:/verse_claw_worktree_compact/reports/context-compression/P6-TF0071-EXACT-IDENTIFIER-EVIDENCE-2026-08-21.md",
-          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-local-tf0071-r1/canary-metrics.json",
-          "would-retry --self-test PASS；scoped ESLint PASS",
-          "root compact focused 63/63；runtime focused 39/39；P6 promotion/safeguard 14/14",
-          "planner/orchestrator/deprecation counters 26/26；Node/Web typecheck exit 0",
-          "Harness --no-diff PASS；comms replay/compare PASS；scoped git diff --check PASS"
-        ],
-        "execution_hints": [
-          "复用现有 recovery ledger/identifier policy，不新增第二套 identifier 提取器"
-        ],
-        "id": "TF-0071",
-        "kind": "subtask",
-        "non_goals": [
-          "不要求保留无关噪声 token",
-          "不降低 redaction 强度"
-        ],
-        "primary_parent": "TF-0006",
-        "priority": 1,
-        "progress": 100.0,
-        "progress_source": "manual",
-        "purpose": "保证 compact/retry 保留任务继续执行所需的精确路径、工具、模型、URL、日期和命令标识。",
-        "remaining_minutes_max": 0,
-        "remaining_minutes_min": 0,
-        "requirements": [
-          "identifier policy 必须保持 strict/custom/off 的既有语义",
-          "只校验 evidence-backed identifiers",
-          "不得把完整敏感路径当作必须裸保留的 identifier"
-        ],
-        "source_sessions": [
-          "session-2026-08-21-compact-p6-02"
-        ],
-        "status": "done",
-        "success_metrics": [
-          "missing exact identifiers=0",
-          "unredacted user paths=0"
-        ],
-        "summary": "exact identifier 保留已闭合：custom gate 只使用 recovery ledger evidence-backed facts 与 continuation action id；R14/R16/R27 本地 fixture replay 均恰好一次 retry，missingExactIdentifiers=0、userPathRedacted=true，且未通过 identifierPolicy=off 制造假绿。",
-        "title": "[02/07] 修复 retry 后 exact identifier 丢失",
-        "updated_at": "2026-08-21T12:49:16.633043Z"
-      },
-      "TF-0072": {
-        "acceptance_criteria": [
-          "固定 9 样本每个 HANDOFF_SECTIONS 恰好一次",
-          "duplicateHandoffSections 全为空",
-          "retry 后 final gate 不再出现 missing_section/structure_damage"
+          "两个并发 session 交错产生 phase transition 时，sink、session_id、objective 和 trajectory capture 始终一一对应",
+          "上一 run 的配置不会影响后续 DCS 初始化失败的 run",
+          "新增并发、清理和 stale-config 单测通过，现有 DCS agents shard 全部通过"
         ],
         "alignment": {
           "fit": "aligned",
           "fit_confidence": 0.96,
-          "user_goal": "compact 结果可作为稳定接力摘要",
+          "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
           "validation_plan": [
-            "R27 regression",
-            "all-section uniqueness scan"
+            "并发 phase producer 单测",
+            "DCS agents shard",
+            "task_state 数据库归属断言"
           ],
-          "why_not_enough": "结构完整不代表语义质量或成本可接受",
-          "why_this_task": "缺失区块会让后续 agent 无法区分决策、待办、约束和标识"
+          "why_not_enough": "只解决运行上下文隔离，不会自动补齐 Mission 到 SEKB 的完整业务 lineage。",
+          "why_this_task": "并发串写会直接破坏任务状态和经验数据的可信度，是投入使用前必须消除的根因风险。"
         },
         "alignment_records": [],
         "assumptions": [
-          "R27 是当前结构缺失的最小真实反例"
+          "task_phase_change 事件可继续携带 sessionId、taskId 和 runId",
+          "同一进程内需要支持多个 embedded run 并发"
         ],
         "children": [],
-        "confidence": 0.94,
+        "confidence": 0.92,
         "context_tags": [
-          "compact",
-          "handoff-structure",
-          "fail-closed"
+          "dcs",
+          "task-loop",
+          "concurrency",
+          "lineage"
         ],
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "created_at": "2026-08-19T15:15:54.029493Z",
         "deprecated_at": null,
         "derived_progress": 100.0,
-        "desired_outcomes": [],
+        "desired_outcomes": [
+          "每个 embedded run 的 DCS 与 SEKB 依赖具有明确的 run/session 绑定",
+          "新 run 不会覆盖已有 run 的 handler 配置",
+          "run 结束、取消或依赖初始化失败后不会残留旧配置"
+        ],
         "deviations": [],
-        "difficulty": "medium",
-        "estimated_total_minutes": null,
+        "difficulty": "high",
+        "estimated_total_minutes": 480,
         "evidence": [
-          "D:/verse_claw_worktree_compact/scripts/context-compression-would-retry-canary.ts",
-          "D:/verse_claw_worktree_compact/reports/context-compression/P6-TF0072-HANDOFF-STRUCTURE-EVIDENCE-2026-08-21.md",
-          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-local-tf0072-r5/canary-metrics.json",
-          "would-retry --self-test PASS；scoped ESLint PASS",
-          "root compact focused 63/63；runtime focused 39/39；P6/promotion/planner/orchestrator/counters 40/40",
-          "Node/Web typecheck exit 0；Harness --no-diff PASS；comms replay/compare PASS；scoped git diff --check PASS"
+          "docs/dev/dcs-visible-production/TF-0070-TASK-STATE-RUN-SCOPE-EVIDENCE-2026-08-19.md",
+          "openclaw_runtime/src/agents/embedded-agent-runner/extensions.task-state.test.ts (interleaved scope, terminal cleanup, stale initialization)",
+          "pnpm run test:dcs PASS (250 + 10 + 84 tests)",
+          "pnpm run typecheck:node PASS",
+          "TaskLoop loopRunId bridge + ambiguous same-session fail-closed + agent_end owner cleanup tests (extensions.task-state.test.ts)",
+          "pnpm run comms:replay PASS; pnpm run comms:compare PASS"
         ],
         "execution_hints": [
-          "优先修共享 retry/finalize 入口，避免为 R27 写样本特例"
+          "先阅读 active Harness task spec，再实现最小运行上下文注册表",
+          "优先用交错 Promise/事件顺序构造并发回归测试",
+          "保留旧 API 的兼容适配，但禁止继续依赖无 key 的全局值"
         ],
-        "id": "TF-0072",
-        "kind": "subtask",
+        "id": "TF-0070",
+        "kind": "task",
         "non_goals": [
-          "不要求所有区块包含长文本",
-          "无未完成事项时允许明确写 None"
+          "不重写 TaskFlow 或 Mission 的生命周期模型",
+          "不改变产品锁和默认开关",
+          "不引入第二套 DCS 存储"
         ],
-        "primary_parent": "TF-0006",
+        "primary_parent": "TF-0037",
         "priority": 1,
         "progress": 100.0,
         "progress_source": "manual",
-        "purpose": "保证 compact handoff 结构完整且每个规定区块恰好一次。",
-        "remaining_minutes_max": 0,
-        "remaining_minutes_min": 0,
+        "purpose": "保证并发 Mission/Task Loop 不会把 task_state 或 terminal trajectory 写入其他 session、objective 或 sink。",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 240,
         "requirements": [
-          "复用 HANDOFF_SECTIONS 单一清单",
-          "缺区块必须 fail-closed",
-          "不得通过在 narrative 后重复追加整套 handoff 来补齐"
+          "task_phase_change 必须使用事件 lineage 定位对应运行实例",
+          "兼容现有 task_state、child handoff、working-memory 和 SEKB hook 行为",
+          "默认开关保持不变，不能借机启用 DCS 或 SEKB"
         ],
         "source_sessions": [],
         "status": "done",
         "success_metrics": [
-          "missing section count=0",
-          "duplicate section count=0"
+          "跨 session task_state 串写为 0",
+          "跨 run objective/trajectory 串写为 0",
+          "运行结束后的 handler 配置残留为 0"
         ],
-        "summary": "retry 后 handoff 结构已闭合：只在 would-retry 消耗一次 retry 后确定性补齐缺失区块；规范区块各一次，provider 常见别名映射并保留事实，shadow arm 保持原样。九条本地 fixture replay 的 finalGatePassed、handoffSectionsComplete、completedOutcomePreserved、exact identifier 与 redaction 均为 9/9。",
-        "title": "[03/07] 修复 retry 后 handoff 必需区块缺失",
-        "updated_at": "2026-08-21T13:23:20.146791Z"
+        "summary": "已完成按 run/session 隔离 TaskStateHandlerConfig，并显式把 TaskLoop loopRunId 绑定到唯一 session DCS config；phase hook 使用事件 lineage 固定 sink/store/objective/trajectory，terminal/cancelled 与 agent_end 按 owner 清理，DCS 初始化失败清理 stale scope；并发、歧义 fail-closed、生命周期清理和 DCS shards 已通过。",
+        "title": "DCS Task State 按运行实例隔离",
+        "updated_at": "2026-08-19T16:27:41.367570Z"
       },
-      "TF-0073": {
+      "TF-0071": {
         "acceptance_criteria": [
-          "固定 9 样本 metrics=9/9 且 manifest valid",
-          "retryWithinLimit=9/9、userPathRedacted=9/9、completedOutcomePreserved=9/9、no duplicate sections=9/9",
-          "overall passed=9/9 后才允许扩大到 30 条"
+          "phase hook 返回前可确定 DCS write 已 accepted、rejected 或明确失败",
+          "terminal trajectory capture 的结果可在 task_loop 返回前被测试观察",
+          "写入失败时有结构化日志/evidence，且不会产生未处理 Promise rejection",
+          "新增 durability 单测和现有 task-loop/DCS 测试通过"
         ],
         "alignment": {
           "fit": "aligned",
-          "fit_confidence": 0.99,
-          "user_goal": "量化验收 compact 的综合能力而非只修两个样本",
+          "fit_confidence": 0.95,
+          "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
           "validation_plan": [
-            "manifest validator",
-            "9-row metrics scan",
-            "deterministic aggregate"
+            "延迟 sink 时序测试",
+            "terminal capture 可观察性测试",
+            "取消/失败清理回归"
           ],
-          "why_not_enough": "9 样本仍不足以替代固定 30 样本正式 gate",
-          "why_this_task": "统一 9 样本是从局部反例走向可量化证据的最小下一步"
+          "why_not_enough": "不会单独解决跨 mission/tick 的身份关联。",
+          "why_this_task": "状态已经完成但持久化尚未完成会形成用户不可见的数据孤岛，直接影响恢复和验收。"
         },
         "alignment_records": [],
         "assumptions": [
-          "provider/live 复跑需另行确认；离线 aggregate 可先完成"
+          "task_phase_change handler 可以改为返回受控 Promise 结果",
+          "现有 BlockStore 和 TrajectoryCapture API 足以表达写入结果"
         ],
         "children": [],
-        "confidence": 0.96,
+        "confidence": 0.9,
         "context_tags": [
-          "compact",
-          "nine-sample",
-          "canary",
-          "manifest"
+          "dcs",
+          "task-loop",
+          "persistence",
+          "recovery"
         ],
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "created_at": "2026-08-19T15:15:54.029493Z",
         "deprecated_at": null,
         "derived_progress": 100.0,
-        "desired_outcomes": [],
-        "deviations": [
-          "TFD-166ddf594c"
+        "desired_outcomes": [
+          "phase transition 的异步副作用具有明确等待边界",
+          "写入失败可记录为 degradation/evidence，不改变 Loop 的控制结果",
+          "session 清理不会抢先于必要的 DCS/SEKB 写入"
         ],
+        "deviations": [],
         "difficulty": "high",
-        "estimated_total_minutes": null,
+        "estimated_total_minutes": 360,
         "evidence": [
-          "D:/verse_claw_worktree_compact/scripts/context-compression-would-retry-local-manifest.mjs",
-          "D:/verse_claw_worktree_compact/scripts/context-compression-would-retry-canary.ts",
-          "D:/verse_claw_worktree_compact/scripts/context-compression-eval-runner.mjs",
-          "D:/verse_claw_worktree_compact/reports/context-compression/P6-TF0073-NINE-SAMPLE-UNIFIED-EVIDENCE-2026-08-21.md",
-          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-local-tf0073-r3/manifest-9.json",
-          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-local-tf0073-r4/canary-metrics.json",
-          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-local-tf0073-r4/eval-parse/2026-08-21T14-17-53-886Z/summary.json",
-          "identity/key negative control rejected before provider request",
-          "root compact 63/63；runtime focused 79/79；Node/Web typecheck exit 0"
+          "docs/dev/dcs-visible-production/TF-0071-TASK-STATE-PHASE-SIDE-EFFECT-DURABILITY-EVIDENCE-2026-08-20.md",
+          "openclaw_runtime/src/agents/task-loop-controller.dcs-phase-producer.test.ts",
+          "tests/unit/task-loop-controller.test.ts",
+          "pnpm run test:dcs: PASS unit 251, runtime-config 10, agents 88",
+          "pnpm --dir openclaw_runtime db:kysely:check: PASS",
+          "pnpm --dir openclaw_runtime build: FAIL at existing missing goal_wait tool-display metadata"
         ],
         "execution_hints": [
-          "先生成合法 9 条 manifest 并离线统一扫描",
-          "只有 01-03 focused gate 通过后才进行 provider 批次"
+          "先定义等待/失败语义和测试时序，再改生产调用点",
+          "检查取消、异常退出和 session dispose 的 finally 顺序"
         ],
-        "id": "TF-0073",
-        "kind": "subtask",
+        "id": "TF-0071",
+        "kind": "task",
         "non_goals": [
-          "9 条通过不等于正式 P6 放行",
-          "不因单次 502 改造整个传输层"
+          "不把 DCS 或 SEKB 写入失败升级为模型任务失败",
+          "不打开自动经验写回",
+          "不引入同步阻塞整个 agent runtime 的全局锁"
         ],
-        "primary_parent": "TF-0006",
+        "primary_parent": "TF-0037",
         "priority": 1,
         "progress": 100.0,
         "progress_source": "manual",
-        "purpose": "生成一个当前源码、合法 manifest、统一输出目录绑定的 9 样本证据集。",
-        "remaining_minutes_max": 0,
-        "remaining_minutes_min": 0,
+        "purpose": "避免 task_loop 已报告 completed/failed，但 task_state 或经验轨迹尚未写入甚至丢失。",
+        "remaining_minutes_max": 600,
+        "remaining_minutes_min": 180,
         "requirements": [
-          "manifest version/count/hash/唯一性/source 全部有效",
-          "每条最多一次 retry",
-          "统一扫描路径泄漏、完成态、重复区块、final gate 和过期 next action",
-          "R23 必须有明确成功或失败结果，不能缺行"
+          "保持 Task Loop 主控制流的失败隔离策略",
+          "不得把最佳努力写入误报为已持久化",
+          "terminal phase 必须覆盖 completed、failed、cancelled 的策略边界"
         ],
         "source_sessions": [],
         "status": "done",
         "success_metrics": [
-          "missing sample results=0",
-          "invalid manifest=0",
-          "overall pass rate=100%"
+          "task_loop 完成后 DCS/SEKB side effect 未完成的窗口为 0",
+          "未处理 phase hook rejection 为 0",
+          "写入结果与 task lifecycle evidence 可关联"
         ],
-        "summary": "当前源码九条统一 replay 已按 eval runner 语义闭合：manifest pathHash/basename/size/mtime 与 V2 key 均合法，resolved=9/9；canary 每条恰好一次 retry 且 passed=9/9；独立 deterministic cross-check 的 L0/L1/L2 全部通过、information loss=0、paired regression=0。r1/r2 已作废。",
-        "title": "[04/07] 完成当前代码上的 9 条统一 would-retry 验收",
-        "updated_at": "2026-08-21T14:28:01.653982Z"
+        "summary": "已完成：TaskLoop phase side effect 采用每次运行串行等待队列；normal/error return 前排空 DCS task_state 与 terminal trajectory side effect；返回 accepted/rejected/failed/skipped 结构化结果并记录 rejection/capture failure；取消后的异步边界不会复活 run。test:dcs、focused shards、typecheck、lint、comms、Kysely check 和 Harness --no-diff 通过；runtime build 受既有 goal_wait tool-display 元数据缺失阻断，已记录证据。",
+        "title": "Task Loop phase side effect 持久化完成语义",
+        "updated_at": "2026-08-20T10:45:01.723793Z"
       },
-      "TF-0074": {
+      "TF-0072": {
         "acceptance_criteria": [
-          "deterministic L2 全阈值 PASS",
-          "live no-fabrication >= 0.98",
-          "schema-free major/critical omission <= 0.10",
-          "critical dropped samples=0、stale leakage=0、real continuation gate PASS"
-        ],
-        "alignment": {
-          "fit": "aligned",
-          "fit_confidence": 0.99,
-          "user_goal": "真实量化 compact 的信息综合能力",
-          "validation_plan": [
-            "fixed 30 deterministic",
-            "independent live judge/schema-free/continuation"
-          ],
-          "why_not_enough": "质量通过后仍需模型独立性和成本/候选验收",
-          "why_this_task": "质量门禁决定摘要是否真的可用于恢复，而非仅格式正确"
-        },
-        "alignment_records": [],
-        "assumptions": [
-          "旧 auto 指标是诊断基线，不是当前代码正式 verdict"
-        ],
-        "children": [],
-        "confidence": 0.55,
-        "context_tags": [
-          "compact",
-          "quality-gate",
-          "fabrication",
-          "schema-free"
-        ],
-        "created_at": "2026-08-21T10:29:32.111195Z",
-        "deprecated_at": null,
-        "derived_progress": 20.0,
-        "desired_outcomes": [],
-        "deviations": [
-          "TFD-166ddf594c"
-        ],
-        "difficulty": "very_high",
-        "estimated_total_minutes": null,
-        "evidence": [
-          "D:/verse_claw_worktree_compact/reports/context-compression/P6-WOULD-RETRY-CANARY-AUTO-2026-08-20.md",
-          "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v3-auto-full/"
-        ],
-        "execution_hints": [
-          "先用 failure guideline 和最小反例定位语义缺口，再扩大到 30 条",
-          "不得为了分数删除 uncertainty 或失败链"
-        ],
-        "id": "TF-0074",
-        "kind": "subtask",
-        "non_goals": [
-          "不以压缩率单独判定成功",
-          "不以 deterministic proxy 代替真实 continuation"
-        ],
-        "primary_parent": "TF-0006",
-        "priority": 1,
-        "progress": 20.0,
-        "progress_source": "manual",
-        "purpose": "证明 compact 的信息综合不仅结构完整，还具备可接受的忠实度、因果链与无虚构质量。",
-        "remaining_minutes_max": 1440,
-        "remaining_minutes_min": 360,
-        "requirements": [
-          "deterministic proxy 只能作为诊断，不得冒充 L3 real PASS",
-          "真实 continuation 必须完整执行",
-          "关键事实丢失、stale leakage、fabrication 均 fail-closed"
-        ],
-        "source_sessions": [],
-        "status": "ready",
-        "success_metrics": [
-          "noFabricationRate>=0.98",
-          "schemaFreeOmissionRate<=0.10",
-          "criticalDroppedSamples=0"
-        ],
-        "summary": "依赖 TF-0073 已完成。当前 9 条 deterministic L0/L1/L2 已 PASS，但 L3 仍 NOT EXECUTED；下一步需要当前源码绑定的 independent live judge/schema-free/continuation，不能复用旧 v14 或 auto 同源证据作为当前 verdict。",
-        "title": "[05/07] 闭合 deterministic 与 live 质量门禁",
-        "updated_at": "2026-08-21T14:28:01.653982Z"
-      },
-      "TF-0075": {
-        "acceptance_criteria": [
-          "modelIndependence.ok=true",
-          "固定 30 样本使用明确且独立的 evaluator provider/model",
-          "不得把 auto 同源评估写成正式 acceptance"
+          "至少一条真实 Mission -> Task Loop -> DCS phase -> SEKB trajectory 链可以通过 ID 完整回溯",
+          "同一 session 的两个 mission/tick 不会只靠 sessionKey 混淆",
+          "Host Knowledge review 能显示来源 trajectory/lineage，confirm provenance 与来源一致",
+          "新增 lineage schema/contract 测试和相关 E2E 通过"
         ],
         "alignment": {
           "fit": "aligned",
           "fit_confidence": 0.97,
-          "user_goal": "得到可信、可量化的 compact 验收结论",
+          "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
           "validation_plan": [
-            "model id audit",
-            "fixed 30 independent live run"
+            "lineage contract 单测",
+            "Mission/Task/DCS/SEKB 纵向集成测试",
+            "Knowledge 来源回溯 E2E"
           ],
-          "why_not_enough": "独立评估仍需成本预算和干净候选",
-          "why_this_task": "同模型自评无法支撑正式放行"
+          "why_not_enough": "需要依赖运行上下文隔离和 phase 持久化语义先稳定。",
+          "why_this_task": "没有统一 lineage，功能即使分别可用也无法形成可审计、可恢复、可总结经验的闭环。"
         },
         "alignment_records": [],
         "assumptions": [
-          "独立 evaluator 的授权和凭据需要单独确认"
+          "TF-0037 的 lifecycle 迁移仍是上层执行边界",
+          "任务事件和共享 state DB 可以承载有限的 lineage metadata"
         ],
         "children": [],
-        "confidence": 0.5,
+        "confidence": 0.85,
         "context_tags": [
-          "compact",
-          "model-independence",
-          "live-eval"
+          "mission",
+          "task-loop",
+          "dcs",
+          "sekb",
+          "lineage"
         ],
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "created_at": "2026-08-19T15:15:54.029493Z",
         "deprecated_at": null,
-        "derived_progress": 0.0,
-        "desired_outcomes": [],
+        "derived_progress": 100.0,
+        "desired_outcomes": [
+          "Mission tick 调用 Task Loop 时传递稳定的 parent lineage",
+          "DCS Block 和 SEKB trajectory 可定位到 mission/tick/loop/trace/task ledger",
+          "知识候选和确认后的 principle 能回指真实来源轨迹"
+        ],
         "deviations": [],
-        "difficulty": "high",
-        "estimated_total_minutes": null,
+        "difficulty": "very_high",
+        "estimated_total_minutes": 720,
         "evidence": [
-          "D:/verse_claw_worktree_compact/reports/context-compression/P6-WOULD-RETRY-CANARY-AUTO-2026-08-20.md:76",
-          "D:/verse_claw_worktree_compact/scripts/context-compression-eval-runner.mjs"
+          "harness/specs/tasks/runtime-lineage-convergence.md",
+          "harness/specs/rules/runtime-lineage-boundary.md",
+          "openclaw_runtime/src/runtime-core/lineage.ts",
+          "openclaw_runtime/src/runtime-core/lineage.test.ts",
+          "openclaw_runtime/src/agents/mission-control/fenced-tick-wiring.test.ts",
+          "openclaw_runtime/src/agents/task-loop-controller.ts",
+          "openclaw_runtime/src/agents/task-loop-controller/producer-envelope.test.ts",
+          "openclaw_runtime/src/agents/dcs/lifecycle-hook-helpers.ts",
+          "openclaw_runtime/src/agents/dcs/context-blocks.ts",
+          "openclaw_runtime/src/knowledge/sekb/confirm-provenance.ts",
+          "openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts",
+          "src/pages/Knowledge/index.tsx",
+          "tests/e2e/knowledge-hub.spec.ts",
+          "docs/dev/dcs-visible-production/TF-0072-MISSION-TASK-LOOP-DCS-SEKB-LINEAGE-EVIDENCE-2026-08-20.md",
+          "pnpm harness validate --spec harness/specs/tasks/runtime-lineage-convergence.md --no-diff: exit 0",
+          "focused lineage/runtime tests: 4 files / 49 tests plus 2 files / 7 tests passed",
+          "pnpm test:dcs: 351 tests passed",
+          "pnpm --dir openclaw_runtime tsgo:core: exit 0",
+          "pnpm run typecheck: exit 0; node/web exit 0; test project 1048 legacy errors remains observation-only by repository design",
+          "pnpm verseshell:test: bundle 13/13, runtime bundle 11/11, OpenClaw 15 files / 141 tests, MCP 11/11 passed",
+          "pnpm lint:dcs, pnpm contract:check, pnpm i18n:lint: exit 0",
+          "pnpm run comms:replay and pnpm run comms:compare: exit 0, result PASS",
+          "pnpm run build:vite: current-source frontend, Electron main and preload exit 0",
+          "pnpm build:runtime: exit 0; runtime smoke gateway ready",
+          "pnpm run test:e2e:run -- tests/e2e/knowledge-hub.spec.ts: 4/4 passed after current runtime rebuild",
+          "normal diff-aware Harness validation is not claimed because the shared dirty worktree includes unrelated paths; this is not a TF-0072 dependency or scoped acceptance failure",
+          "engineering closeout only: DCS/SEKB remain default-off; liveReady=false, productApproved=false, defaultOn=false"
         ],
         "execution_hints": [
-          "优先复用现有 provider 配置面，不新增依赖或第二套 runner"
+          "先输出 lineage 字段映射和缺失字段兼容策略",
+          "以一个完整黄金路径作为纵向切片，不要并行重构所有存储"
         ],
-        "id": "TF-0075",
-        "kind": "subtask",
+        "id": "TF-0072",
+        "kind": "task",
+        "next_action": "TF-0072 已关闭；TF-0073 是唯一新解锁节点。启动 TF-0073 前先运行对应 Harness context；TF-0073 关闭前不得启动 TF-0074。",
         "non_goals": [
-          "不要求引入新的运行时传输抽象",
-          "不因 provider 短暂 5xx 修改整个传输层"
+          "不把 SEKB 自动蒸馏或自动写回打开",
+          "不替换 TaskFlow/TaskRegistry 的既定 authority 计划",
+          "不修改用户界面之外的产品锁状态"
         ],
-        "primary_parent": "TF-0006",
+        "primary_parent": "TF-0037",
+        "priority": 1,
+        "progress": 100.0,
+        "progress_source": "manual",
+        "purpose": "让操作者能够从一个 Goal/Mission 回溯到具体 Task Loop、DCS 状态、工具证据和经验候选，而不是只有同 session 的弱关联。",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "requirements": [
+          "优先复用已有 session、trace、task ledger 和 DCS 字段",
+          "不得新建平行 workflow 或 memory authority",
+          "兼容现有查询和历史数据，旧记录缺字段时安全降级"
+        ],
+        "source_sessions": [
+          "session-20260820-start-tf0072",
+          "session-20260820-tf0072-closeout"
+        ],
+        "status": "done",
+        "success_metrics": [
+          "关键 runtime artifact 的 lineage 完整率 100%",
+          "无法归属 mission/tick 的新 DCS/SEKB 记录为 0",
+          "来源 trajectory 与确认 principle 的关联错误为 0"
+        ],
+        "summary": "已用有界 runtime-lineage.v1 打通 Mission tick、Task Loop、DCS task-state/HandoffPack、SEKB trajectory 与 confirmed-principle provenance；Knowledge Runtime Lessons 可显示来源 lineage，SEKB confirm 对来源 session 冲突 fail-closed。未新增工作流、持久化或 memory authority，legacy 缺失字段不推断。当前源码工程门禁和 Knowledge Electron E2E 均通过。",
+        "title": "Mission、Task Loop、DCS、SEKB 统一 lineage",
+        "updated_at": "2026-08-20T14:01:45.765375Z"
+      },
+      "TF-0073": {
+        "acceptance_criteria": [
+          "terminal-only 空 trajectory 不会单独形成 distillation suggestion",
+          "带真实 tool steps 的 trajectory 可以被正常检索、建议、确认和召回",
+          "重复 capture 可通过 lineage/idempotency 识别并去重",
+          "SEKB golden path、distillation 和 terminal lifecycle 回归通过"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.94,
+          "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
+          "validation_plan": [
+            "候选池过滤单测",
+            "重复 capture 集成测试",
+            "SEKB 黄金路径和 Knowledge E2E"
+          ],
+          "why_not_enough": "它不能替代 Mission/Loop 的 lineage 传递，只能消费并保护该 lineage。",
+          "why_this_task": "经验总结质量取决于候选是否是真实、可回溯、可复用的执行轨迹。"
+        },
+        "alignment_records": [],
+        "assumptions": [
+          "统一 lineage 任务能够提供 run/trace 关联字段",
+          "distiller 可以增加候选质量过滤而不改变确认协议"
+        ],
+        "children": [],
+        "confidence": 0.88,
+        "context_tags": [
+          "sekb",
+          "distillation",
+          "trajectory",
+          "quality"
+        ],
+        "created_at": "2026-08-19T15:15:54.029493Z",
+        "deprecated_at": null,
+        "derived_progress": 0.0,
+        "desired_outcomes": [
+          "一个真实 agent run 不会因为 agent_end 和 terminal phase 产生两个无关联候选",
+          "必要的 terminal 状态仍可记录，但与真实 trajectory 合并或标记为不可蒸馏",
+          "distillation suggestion 只消费满足质量和 lineage 条件的 trajectory"
+        ],
+        "deviations": [],
+        "difficulty": "high",
+        "estimated_total_minutes": 480,
+        "evidence": [],
+        "execution_hints": [
+          "先构造 terminal-only 与真实 agent_end 双轨迹样本",
+          "过滤必须发生在候选生成边界，不能破坏原始审计记录"
+        ],
+        "id": "TF-0073",
+        "kind": "task",
+        "next_action": "先运行 pnpm harness context --spec <TF-0073 scoped task spec>；若 spec 尚未创建，先按本节点边界创建并引用 SEKB/trajectory 规则。严格串行，完成前不得启动 TF-0074。",
+        "non_goals": [
+          "不删除已有历史 trajectory",
+          "不启用 batch distillation 或自动确认",
+          "不把状态摘要冒充工具轨迹"
+        ],
+        "primary_parent": "TF-0037",
         "priority": 1,
         "progress": 0.0,
         "progress_source": "manual",
-        "purpose": "排除同模型自评偏差，使正式质量分数具备独立性。",
+        "purpose": "保证经验总结建立在真实工具步骤和可回溯来源上，避免 Task Loop 状态通知制造噪声候选。",
         "remaining_minutes_max": 720,
-        "remaining_minutes_min": 180,
+        "remaining_minutes_min": 240,
         "requirements": [
-          "compressor 必须不同于 judge/schema-free/continuation/critic",
-          "所有实际模型 ID、provider、prompt version 写入 summary",
-          "缺少明确模型时 fail-closed"
+          "保持人工确认前不写入 experience Block 的规则",
+          "失败和取消状态仍有可审计记录",
+          "旧数据和默认关闭路径保持兼容"
         ],
         "source_sessions": [],
-        "status": "proposed",
+        "status": "in_progress",
         "success_metrics": [
-          "modelIndependence.ok=true",
-          "implicit model ids=0"
+          "无步骤 trajectory 进入候选池为 0",
+          "同一 run 的重复经验候选为 0",
+          "真实 trajectory 的建议/确认/召回成功率保持 100%"
         ],
-        "summary": "当前 auto canary 的 compressor 与 evaluator 都是 auto，modelIndependence=false，只能作为非独立诊断证据。",
-        "title": "[06/07] 建立 compressor/evaluator 模型独立性证据",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "summary": "TF-0072 lineage 收口后，本节点已成为唯一新解锁工作包：把 terminal capture 与真实 agent_end trajectory 关联，拒绝无真实 tool steps 或无 lineage 的候选，并通过 lineage/idempotency 去重；继续保持人工确认和 no-auto-writeback。",
+        "title": "SEKB terminal trajectory 候选门控与去重",
+        "updated_at": "2026-08-20T14:11:03.164361Z"
       },
-      "TF-0076": {
+      "TF-0074": {
         "acceptance_criteria": [
-          "would-retry token/latency 落入书面预算或明确判定不可放行",
-          "干净 scoped candidate 上 focused、typecheck、comms、Harness 全部 exit 0",
-          "最终报告区分工程通过、正式 acceptance 和产品放行"
+          "DCS agents/runtime-config/unit shards 通过",
+          "并发隔离、持久化时序、lineage 回溯和空 trajectory 门控全部有自动化证据",
+          "Knowledge golden path 与 Knowledge E2E 通过",
+          "STATUS.md、product locks 和 SEKB no-auto-writeback 约束保持正确"
         ],
         "alignment": {
           "fit": "aligned",
           "fit_confidence": 0.98,
-          "user_goal": "让 compact 达到可实际采用而非只在样本上有效",
+          "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
           "validation_plan": [
-            "cost comparison",
-            "clean candidate full gates",
-            "final acceptance report"
+            "Harness validate",
+            "官方 DCS runner",
+            "Knowledge E2E",
+            "fresh acceptance evidence"
           ],
-          "why_not_enough": "该节点完成后仍需用户/产品决定是否提升 stage",
-          "why_this_task": "质量收益若伴随不可接受成本或脏树证据，不能形成可用交付"
+          "why_not_enough": "工程验收不能替代用户本人进行的真实 channel 和产品批准。",
+          "why_this_task": "用户要求先规划后逐项开始，最终需要一个明确的可投入使用验收结论。"
         },
         "alignment_records": [],
         "assumptions": [
-          "需要隔离 compact candidate 或处理外部 dirty ownership 后才能运行 diff-aware Harness"
+          "前置任务按依赖顺序完成并各自产出测试证据",
+          "当前工作区的 Electron 锁定问题可以通过官方 runner 或环境恢复后重跑"
         ],
         "children": [],
-        "confidence": 0.6,
+        "confidence": 0.9,
         "context_tags": [
-          "compact",
-          "performance-budget",
-          "clean-candidate",
-          "formal-acceptance"
+          "acceptance",
+          "dcs",
+          "mission",
+          "task-loop",
+          "sekb"
         ],
-        "created_at": "2026-08-21T10:29:32.111195Z",
+        "created_at": "2026-08-19T15:15:54.029493Z",
         "deprecated_at": null,
-        "derived_progress": 50.0,
-        "desired_outcomes": [],
+        "derived_progress": 0.0,
+        "desired_outcomes": [
+          "形成一份可复跑的 runtime acceptance evidence",
+          "明确孤岛已修复、残余风险和产品锁边界",
+          "不把工程 PASS 写成 live-ready、product-approved 或 default-on"
+        ],
         "deviations": [],
         "difficulty": "high",
-        "estimated_total_minutes": null,
-        "evidence": [
-          "D:/verse_claw_worktree_compact/reports/context-compression/P6-WOULD-RETRY-CANARY-AUTO-2026-08-20.md:36",
-          "D:/verse_claw_worktree_compact/artifacts/comms/compare-report.md",
-          "diff-aware Harness 当前阻断路径：docs/dev/handoffs/LATEST.md、electron/main/index.ts、electron/main/process-error-handlers.ts、tests/e2e/app-smoke.spec.ts、tests/unit/main-unhandled-rejection.test.ts"
-        ],
+        "estimated_total_minutes": 360,
+        "evidence": [],
         "execution_hints": [
-          "优先压缩 recovery ledger 的重复 token，不改传输层",
-          "最终在隔离候选上重跑所有 requiredTests"
+          "验收报告必须把代码证据与真人/live/product evidence 分开",
+          "若仍有阻断，保持 review_needed/blocked，不以文档声明替代测试"
         ],
-        "id": "TF-0076",
-        "kind": "subtask",
+        "id": "TF-0074",
+        "kind": "milestone",
         "non_goals": [
-          "不自动提升 promotionStage",
-          "不把工程 gate 绿升级成 liveReady/productApproved/default-on"
+          "不执行真实第三方 channel 人工验收",
+          "不解锁 live-ready/product-approved/default-on",
+          "不进行大范围 UI 或无关架构重构"
         ],
-        "primary_parent": "TF-0006",
+        "primary_parent": "TF-0037",
         "priority": 1,
-        "progress": 50.0,
+        "progress": 0.0,
         "progress_source": "manual",
-        "purpose": "在不牺牲质量的前提下证明 would-retry 成本可控，并把最终证据绑定干净候选。",
-        "remaining_minutes_max": 960,
-        "remaining_minutes_min": 240,
+        "purpose": "把代码层修复转化为可证明的投入使用结论，并明确仍受 human/live/product lock 限制的部分。",
+        "remaining_minutes_max": 600,
+        "remaining_minutes_min": 180,
         "requirements": [
-          "先定义 token/latency budget 再判定 PASS",
-          "正式证据绑定单一 HEAD/tree/manifest",
-          "无关 dirty 路径不得加入 compact ownership",
-          "promotionStage 在正式决定前保持 shadow"
+          "先完成四个前置实现任务",
+          "使用当前官方 DCS/Knowledge/E2E runner 和 Harness 规范",
+          "报告必须包含失败项、未验证项和实际环境限制"
         ],
         "source_sessions": [],
         "status": "proposed",
         "success_metrics": [
-          "unbounded retry=0",
-          "dirty candidate acceptance=0",
-          "all required gates exit 0"
+          "关键链路孤岛类缺陷为 0",
+          "工程验收报告可复跑且不依赖旧报告时间戳",
+          "live/product/default-on 结论与证据边界一致"
         ],
-        "summary": "本地 focused/typecheck/comms 已绿；旧 auto canary 的 would-retry 相比 shadow 为 2.521x total tokens、3.107x latency，尚无可接受预算。diff-aware Harness 仍被 5 个无关 dirty 路径阻断，未形成干净 scoped candidate。",
-        "title": "[07/07] 建立成本预算并完成干净候选验收",
-        "updated_at": "2026-08-21T10:29:32.111195Z"
+        "summary": "在上述根因任务完成后，以真实并发、故障恢复、Mission/Task/DCS/SEKB 纵向链路和人工确认黄金路径进行最终工程验收。",
+        "title": "DCS、Goal/Loop、SEKB 真实投入使用验收",
+        "updated_at": "2026-08-19T15:15:54.029493Z"
+      },
+      "TF-0077": {
+        "acceptance_criteria": [
+          "audit-0.json 至 audit-6.json 均通过 pnpm run runtime-lifecycle-audit --phase all",
+          "deleteCommitTxCount=1、armTxCount=1、processPollToolCalls=0、secretPersistenceFindings=0、activitySnapshotWriteFindings=0、leak activeRecords=0",
+          "唯一 canonical spec/rule 保留；临时 phase prompt 已删除",
+          "future-work.json 存在且不含重开 Phase 0-5 的想法",
+          "Handoff LATEST 记录下一步与 residual"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.95,
+          "user_goal": "完成 Runtime Lifecycle Governance 全部阶段并留下可复算的量化验收证据",
+          "validation_plan": [
+            "pnpm run runtime-lifecycle-audit --phase all exit 0",
+            "spot-check audit-5 gate logs for arm/poll/write findings",
+            "git diff --check exit 0"
+          ],
+          "why_not_enough": "closeout 只证明工程证据；不授权任何新生命周期 action、生产接线或产品锁变更。",
+          "why_this_task": "Phase 6 是该程序规范定义的唯一 closeout 阶段；Phase 5 已全绿，用户明确授权进入。"
+        },
+        "alignment_records": [],
+        "assumptions": [
+          "用户 2026-08-19 明确进入阶段 6，即确认本 closeout/task-forest proposal"
+        ],
+        "children": [],
+        "confidence": 0.95,
+        "context_tags": [
+          "runtime-lifecycle-governance",
+          "session-lifecycle",
+          "goal-wake",
+          "durable-helper",
+          "read-model",
+          "closeout"
+        ],
+        "created_at": "2026-08-18T16:29:57.313121Z",
+        "deprecated_at": null,
+        "derived_progress": 100.0,
+        "desired_outcomes": [
+          "会话 reset/delete/stop 与 spawn/enqueue/arm 不竞态；删除事务单一 writer 且 fail-closed",
+          "goal-owned 进程跨重启恢复且绝不重放命令；同 Gateway wake 不轮询、重复 wake 不重复副作用",
+          "SessionActivity 只读投影 goal/process/lineage，snapshot 无任何写路径",
+          "产品锁与 default-off gates 不变"
+        ],
+        "deviations": [],
+        "difficulty": "medium",
+        "estimated_total_minutes": 0,
+        "evidence": [
+          "artifacts/runtime-lifecycle-governance/audit-0.json .. audit-6.json",
+          "artifacts/runtime-lifecycle-governance/future-work.json",
+          "artifacts/runtime-lifecycle-governance/dead-code-caller-map-phase1..6.json",
+          "artifacts/runtime-lifecycle-governance/phase0..6-loc-accounting.mjs",
+          "artifacts/runtime-lifecycle-governance/phase0..6-timing-baseline.json",
+          "tests/e2e/runtime-lifecycle-governance.spec.ts",
+          "tests/e2e/session-activity-panel.spec.ts",
+          "openclaw_runtime/src/gateway/server-methods/session-activity-projection.test.ts (activitySnapshotWriteFindings=0 named test)"
+        ],
+        "execution_hints": [
+          "先跑 pnpm run runtime-lifecycle-audit --phase all",
+          "删除 superseded phase prompt/scratch 时只删本程序产物",
+          "不得修改其他 workstream 节点"
+        ],
+        "id": "TF-0077",
+        "kind": "global_task",
+        "non_goals": [
+          "不引入 SessionDesiredState / SessionReconciler / universal resource ledger",
+          "不新增生命周期 UI action 或模型工具语义",
+          "不重开 Phase 0-5",
+          "不声称 VerseShell GA 或任何产品锁变更"
+        ],
+        "primary_parent": null,
+        "priority": 1,
+        "progress": 100,
+        "progress_source": "manual",
+        "purpose": "把一个跨会话/进程/终端的生命周期治理缺口收敛为可复算、可独立验收、边界冻结的单一程序，并以量化审计证明每个阶段。",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "requirements": [
+          "Phase 0-5 entry/exit 全部满足并以 audit JSON 为证据",
+          "Phase 6 仅做 closeout 证据、文档、handoff、task-forest，不写新 runtime/UI 行为",
+          "future-work.json 持续承载 deferral"
+        ],
+        "source_sessions": [
+          "runtime-lifecycle-governance-phase6-20260819"
+        ],
+        "status": "done",
+        "success_metrics": [
+          "audit-0..6 score 均 >= 85 且 failedGates 为空",
+          "coverage 92.05/86.58/100",
+          "Phase 5 LOC 增量 nonTest 657 / test 915 / max module 464",
+          "9 个 madge pre-existing components 不变，无新 import cycle/duplicate"
+        ],
+        "summary": "Runtime Lifecycle Governance 七阶段全部交付：Phase 0 shared foundation；Phase 1 canonical cleanup finalizer/drain；Phase 2 delete operation journal + Electron mirror/terminal gate；Phase 3 same-gateway goal wake loop；Phase 4 durable helper + restart recovery；Phase 5 只读 SessionActivity goal/process/lineage 投影与 UI；Phase 6 production audit closeout。audit-0..6 全部通过 runtime-lifecycle-audit。",
+        "title": "Runtime Lifecycle Governance Phase 0-6 Closeout",
+        "updated_at": "2026-08-18T16:29:57.313121Z"
       }
     },
     "reason": "proposal_applied",
@@ -8910,7 +8893,8 @@
       "TF-0007",
       "TF-0010",
       "TF-0021",
-      "TF-0056"
+      "TF-0056",
+      "TF-0077"
     ],
     "schema_version": 1,
     "status_legend": {
@@ -8933,7 +8917,7 @@
         "TF-0025",
         "TF-0028",
         "TF-0066",
-        "TF-0074",
+        "TF-0073",
         "TF-0006",
         "TF-0027",
         "TF-0038",
@@ -8956,8 +8940,7 @@
         "TF-0067",
         "TF-0068",
         "TF-0069",
-        "TF-0075",
-        "TF-0076"
+        "TF-0074"
       ],
       "blocked": [
         "TF-0006",
@@ -9017,7 +9000,7 @@
           "TF-0070",
           "TF-0071",
           "TF-0072",
-          "TF-0073"
+          "TF-0077"
         ],
         "in_progress": [
           "TF-0007",
@@ -9026,7 +9009,8 @@
           "TF-0025",
           "TF-0028",
           "TF-0029",
-          "TF-0056"
+          "TF-0056",
+          "TF-0073"
         ],
         "proposed": [
           "TF-0026",
@@ -9046,12 +9030,10 @@
           "TF-0067",
           "TF-0068",
           "TF-0069",
-          "TF-0075",
-          "TF-0076"
+          "TF-0074"
         ],
         "ready": [
-          "TF-0066",
-          "TF-0074"
+          "TF-0066"
         ],
         "review_needed": [
           "TF-0009",
@@ -9094,13 +9076,11 @@
         "TF-0067",
         "TF-0068",
         "TF-0069",
-        "TF-0074",
-        "TF-0075",
-        "TF-0076"
+        "TF-0073",
+        "TF-0074"
       ],
       "ready": [
-        "TF-0066",
-        "TF-0074"
+        "TF-0066"
       ],
       "review_needed": [
         "TF-0009",
@@ -9111,8 +9091,8 @@
       "blocked_count": 4,
       "done_count": 39,
       "edge_count": 139,
-      "node_count": 76,
-      "open_count": 34,
+      "node_count": 75,
+      "open_count": 33,
       "review_needed_count": 2
     },
     "tree_edges": [
@@ -9182,11 +9162,9 @@
       "TFE-0112",
       "TFE-0128",
       "TFE-0129",
+      "TFE-0130",
       "TFE-0131",
-      "TFE-0133",
-      "TFE-0135",
-      "TFE-0137",
-      "TFE-0139"
+      "TFE-0132"
     ],
     "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
   },
@@ -9312,15 +9290,16 @@
     {
       "alignment": {
         "fit": "aligned",
-        "fit_confidence": 0.95,
-        "user_goal": "开发、测试和独立工程验收完成后，由用户执行最终真人验收。",
+        "fit_confidence": 0.96,
+        "user_goal": "让功能都能正常投入使用",
         "validation_plan": [
-          "逐包 Harness 与独立 Agent Engineering Acceptance",
-          "最终全量工程 gate 和 manifest",
-          "用户执行 H-01 至 H-06"
+          "task-forest validate/export",
+          "前置单测和集成测试",
+          "DCS/Knowledge E2E",
+          "fresh acceptance report"
         ],
-        "why_not_enough": "没有用户最终 accepted verdict 时只能到 human_acceptance_pending。",
-        "why_this_task": "工作包覆盖重复 authority 的主要来源和最终 Operator 闭环，并有严格证据与状态门禁。"
+        "why_not_enough": "完成工程任务后仍需要用户进行真实 channel/product acceptance，不能自动解锁 GA。",
+        "why_this_task": "任务链直接覆盖当前发现的跨层串写、异步落库、lineage 缺失和经验噪声四类孤岛。"
       },
       "blocked_by": [],
       "confidence": 0.9,
@@ -9577,41 +9556,46 @@
     {
       "alignment": {
         "fit": "aligned",
-        "fit_confidence": 0.99,
-        "user_goal": "真实量化 compact 的信息综合能力",
+        "fit_confidence": 0.94,
+        "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
         "validation_plan": [
-          "fixed 30 deterministic",
-          "independent live judge/schema-free/continuation"
+          "候选池过滤单测",
+          "重复 capture 集成测试",
+          "SEKB 黄金路径和 Knowledge E2E"
         ],
-        "why_not_enough": "质量通过后仍需模型独立性和成本/候选验收",
-        "why_this_task": "质量门禁决定摘要是否真的可用于恢复，而非仅格式正确"
+        "why_not_enough": "它不能替代 Mission/Loop 的 lineage 传递，只能消费并保护该 lineage。",
+        "why_this_task": "经验总结质量取决于候选是否是真实、可回溯、可复用的执行轨迹。"
       },
       "blocked_by": [],
-      "confidence": 0.55,
+      "confidence": 0.88,
       "context_tags": [
-        "compact",
-        "quality-gate",
-        "fabrication",
-        "schema-free"
+        "sekb",
+        "distillation",
+        "trajectory",
+        "quality"
       ],
-      "desired_outcomes": [],
-      "difficulty": "very_high",
-      "id": "TF-0074",
-      "kind": "subtask",
-      "next_action": "先用 failure guideline 和最小反例定位语义缺口，再扩大到 30 条",
+      "desired_outcomes": [
+        "一个真实 agent run 不会因为 agent_end 和 terminal phase 产生两个无关联候选",
+        "必要的 terminal 状态仍可记录，但与真实 trajectory 合并或标记为不可蒸馏",
+        "distillation suggestion 只消费满足质量和 lineage 条件的 trajectory"
+      ],
+      "difficulty": "high",
+      "id": "TF-0073",
+      "kind": "task",
+      "next_action": "先构造 terminal-only 与真实 agent_end 双轨迹样本",
       "priority": 1,
-      "progress": 20.0,
-      "purpose": "证明 compact 的信息综合不仅结构完整，还具备可接受的忠实度、因果链与无虚构质量。",
+      "progress": 0.0,
+      "purpose": "保证经验总结建立在真实工具步骤和可回溯来源上，避免 Task Loop 状态通知制造噪声候选。",
       "ready": true,
-      "remaining_minutes_max": 1440,
-      "remaining_minutes_min": 360,
-      "status": "ready",
+      "remaining_minutes_max": 720,
+      "remaining_minutes_min": 240,
+      "status": "in_progress",
       "success_metrics": [
-        "noFabricationRate>=0.98",
-        "schemaFreeOmissionRate<=0.10",
-        "criticalDroppedSamples=0"
+        "无步骤 trajectory 进入候选池为 0",
+        "同一 run 的重复经验候选为 0",
+        "真实 trajectory 的建议/确认/召回成功率保持 100%"
       ],
-      "title": "[05/07] 闭合 deterministic 与 live 质量门禁"
+      "title": "SEKB terminal trajectory 候选门控与去重"
     },
     {
       "alignment": {
@@ -9628,33 +9612,26 @@
       },
       "blocked_by": [],
       "confidence": 0.9,
-      "context_tags": [
-        "compact",
-        "context-compression",
-        "p6",
-        "would-retry",
-        "shadow",
-        "fail-closed"
-      ],
+      "context_tags": [],
       "desired_outcomes": [],
       "difficulty": "unknown",
       "id": "TF-0006",
       "kind": "subtask",
       "next_action": "澄清阻塞原因并决定解除或废止",
       "priority": 3,
-      "progress": 48.0,
+      "progress": 10.0,
       "purpose": "用真实 corpus 与 live A/B 支撑 default-on 讨论，不靠再写 honesty pack",
       "ready": false,
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "status": "blocked",
       "success_metrics": [],
-      "title": "Compact/P6 证据升级与 would-retry 闭环（保持 shadow）"
+      "title": "M2/M3 证据升级（延后）"
     },
     {
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0.0,
+        "fit_confidence": 0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -9683,7 +9660,7 @@
     {
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0.0,
+        "fit_confidence": 0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -9713,7 +9690,7 @@
     {
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0.0,
+        "fit_confidence": 0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -9742,7 +9719,7 @@
     {
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0.0,
+        "fit_confidence": 0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -9856,7 +9833,7 @@
     {
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0.0,
+        "fit_confidence": 0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -9885,7 +9862,7 @@
     {
       "alignment": {
         "fit": "aligned",
-        "fit_confidence": 1.0,
+        "fit_confidence": 1,
         "user_goal": "先清除全局 lint/typecheck 债，再让 RC-00R 的 fail-closed 验收在干净候选上产生真实绿色 final-report.json。",
         "validation_plan": [
           "干净 worktree 复现并清除 lint/typecheck 债",
@@ -9918,7 +9895,7 @@
     {
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0.0,
+        "fit_confidence": 0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -9947,7 +9924,7 @@
     {
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0.0,
+        "fit_confidence": 0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -9976,7 +9953,7 @@
     {
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0.0,
+        "fit_confidence": 0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -10005,7 +9982,7 @@
     {
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0.0,
+        "fit_confidence": 0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -10035,7 +10012,7 @@
     {
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0.0,
+        "fit_confidence": 0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -10064,7 +10041,7 @@
     {
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0.0,
+        "fit_confidence": 0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -10093,7 +10070,7 @@
     {
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0.0,
+        "fit_confidence": 0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -10121,12 +10098,17 @@
     },
     {
       "alignment": {
-        "fit": "unknown",
-        "fit_confidence": 0.0,
-        "user_goal": "",
-        "validation_plan": [],
-        "why_not_enough": "",
-        "why_this_task": ""
+        "fit": "aligned",
+        "fit_confidence": 0.96,
+        "user_goal": "让功能都能正常投入使用",
+        "validation_plan": [
+          "task-forest validate/export",
+          "前置单测和集成测试",
+          "DCS/Knowledge E2E",
+          "fresh acceptance report"
+        ],
+        "why_not_enough": "完成工程任务后仍需要用户进行真实 channel/product acceptance，不能自动解锁 GA。",
+        "why_this_task": "任务链直接覆盖当前发现的跨层串写、异步落库、lineage 缺失和经验噪声四类孤岛。"
       },
       "blocked_by": [
         "TF-0036"
@@ -10151,7 +10133,7 @@
     {
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0.0,
+        "fit_confidence": 0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -10183,7 +10165,7 @@
     {
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0.0,
+        "fit_confidence": 0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -10354,83 +10336,50 @@
     {
       "alignment": {
         "fit": "aligned",
-        "fit_confidence": 0.97,
-        "user_goal": "得到可信、可量化的 compact 验收结论",
+        "fit_confidence": 0.98,
+        "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
         "validation_plan": [
-          "model id audit",
-          "fixed 30 independent live run"
+          "Harness validate",
+          "官方 DCS runner",
+          "Knowledge E2E",
+          "fresh acceptance evidence"
         ],
-        "why_not_enough": "独立评估仍需成本预算和干净候选",
-        "why_this_task": "同模型自评无法支撑正式放行"
+        "why_not_enough": "工程验收不能替代用户本人进行的真实 channel 和产品批准。",
+        "why_this_task": "用户要求先规划后逐项开始，最终需要一个明确的可投入使用验收结论。"
       },
       "blocked_by": [
-        "TF-0074"
+        "TF-0073"
       ],
-      "confidence": 0.5,
+      "confidence": 0.9,
       "context_tags": [
-        "compact",
-        "model-independence",
-        "live-eval"
+        "acceptance",
+        "dcs",
+        "mission",
+        "task-loop",
+        "sekb"
       ],
-      "desired_outcomes": [],
+      "desired_outcomes": [
+        "形成一份可复跑的 runtime acceptance evidence",
+        "明确孤岛已修复、残余风险和产品锁边界",
+        "不把工程 PASS 写成 live-ready、product-approved 或 default-on"
+      ],
       "difficulty": "high",
-      "id": "TF-0075",
-      "kind": "subtask",
-      "next_action": "先完成依赖：TF-0074",
+      "id": "TF-0074",
+      "kind": "milestone",
+      "next_action": "先完成依赖：TF-0073",
       "priority": 1,
       "progress": 0.0,
-      "purpose": "排除同模型自评偏差，使正式质量分数具备独立性。",
+      "purpose": "把代码层修复转化为可证明的投入使用结论，并明确仍受 human/live/product lock 限制的部分。",
       "ready": false,
-      "remaining_minutes_max": 720,
+      "remaining_minutes_max": 600,
       "remaining_minutes_min": 180,
       "status": "proposed",
       "success_metrics": [
-        "modelIndependence.ok=true",
-        "implicit model ids=0"
+        "关键链路孤岛类缺陷为 0",
+        "工程验收报告可复跑且不依赖旧报告时间戳",
+        "live/product/default-on 结论与证据边界一致"
       ],
-      "title": "[06/07] 建立 compressor/evaluator 模型独立性证据"
-    },
-    {
-      "alignment": {
-        "fit": "aligned",
-        "fit_confidence": 0.98,
-        "user_goal": "让 compact 达到可实际采用而非只在样本上有效",
-        "validation_plan": [
-          "cost comparison",
-          "clean candidate full gates",
-          "final acceptance report"
-        ],
-        "why_not_enough": "该节点完成后仍需用户/产品决定是否提升 stage",
-        "why_this_task": "质量收益若伴随不可接受成本或脏树证据，不能形成可用交付"
-      },
-      "blocked_by": [
-        "TF-0075"
-      ],
-      "confidence": 0.6,
-      "context_tags": [
-        "compact",
-        "performance-budget",
-        "clean-candidate",
-        "formal-acceptance"
-      ],
-      "desired_outcomes": [],
-      "difficulty": "high",
-      "id": "TF-0076",
-      "kind": "subtask",
-      "next_action": "先完成依赖：TF-0075",
-      "priority": 1,
-      "progress": 50.0,
-      "purpose": "在不牺牲质量的前提下证明 would-retry 成本可控，并把最终证据绑定干净候选。",
-      "ready": false,
-      "remaining_minutes_max": 960,
-      "remaining_minutes_min": 240,
-      "status": "proposed",
-      "success_metrics": [
-        "unbounded retry=0",
-        "dirty candidate acceptance=0",
-        "all required gates exit 0"
-      ],
-      "title": "[07/07] 建立成本预算并完成干净候选验收"
+      "title": "DCS、Goal/Loop、SEKB 真实投入使用验收"
     }
   ]
 }

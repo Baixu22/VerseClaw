@@ -31,7 +31,7 @@ function makeFact(
     promotion: { promotedBy: "verifier", evidenceRefs: [] },
     valid_at: validAt,
     reference_time: validAt,
-  } as RuntimeMemoryQueryableFact;
+  } as unknown as RuntimeMemoryQueryableFact;
 }
 
 describe("openDomainRetrieval", () => {

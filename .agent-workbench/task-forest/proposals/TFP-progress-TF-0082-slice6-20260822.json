@@ -1,0 +1,56 @@
+{
+  "applied_at": "2026-08-22T09:32:17.004868Z",
+  "base_graph_hash": "4f0c12291e3809acf780fa2d2d2c30a9287219b52093115ee8e052e946d2c494",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "工作区仍是共享脏树（数百个与本任务无关的改动/未跟踪文件），未 reset/stash/clean/checkout；harness diff-aware validate 因 ownership 覆盖失败，--no-diff 结构校验 exit 0 为本期证据。",
+          "permit 只覆盖 run-start 窗口，不覆盖整轮 run：run armed 后按设计释放，之后 reset 正常 fence 并走 canonical stop path 中止该 run。",
+          "steer 打断 embedded run 时最长 15s 的等待现在发生在 permit 之内，并发 reset 会排队等待——有意的 fail-safe 定序，但拉长该场景 reset 的最坏延迟。",
+          "tests/unit/session-activity-panel.test.tsx 在本树上失败，且非本期所致：已提交的测试断言 goal 标签文本，而工作区里一份未提交的 SessionActivityPanel.tsx 重写（698 行，他人 in-flight）给标签加了翻译后的 kind 前缀。未改动，归该改动的 owner。",
+          "lineage 完整度受 owner 实际记录内容限制：bash 会话有 sessionId 无 runId；goal-owned process 只有在被某条 goal-wake flow 声明为依赖任务时才拿得到 missionId/ownerEpoch。不做任何推导填补。",
+          "sessions.yieldState 刻意只读：arm（sessions_yield/goal_wait）保持 tool-only，因为两者的 mission/tick/turn 身份都绑定自活动 run 上下文；取消已 arm 的等待属于 TF-0083 的 mission cancel 级联。",
+          "未为 sessions.yieldState 增加 typed Host API facade：验收标准只点名 stop/continue/fork 的 typed surface，为新读方法加 facade 是独立决策。",
+          "本期不新增 UI 渲染：lineage ref 与 yielded 状态都只到数据层，面板渲染不变。"
+        ],
+        "evidence": [
+          "SessionsQueueDrainParamsSchema.expectedSessionId + handler 代际守卫（reason generation-mismatch，drain 执行器不触达）",
+          "drainQueuedUserMessagesForSession dequeue 前内部守卫（防绕过）",
+          "shared/host-api SessionQueueDrainPayload + Electron 透传",
+          "sessions.queue-drain-generation.test.ts 3/3 + run-control 回归 9/9 + Electron facade/rollback-plan 50/50",
+          "切片 4：handleSessionSend 的 permit 覆盖 run-start 窗口，release-once 助手首次 respond 释放 + finally 兜底；send-permit-lifetime 6/6；回归探针 3/6 失败后移除",
+          "切片 5：SessionActivityLineageRef 挂到每个 goal/process/lineage 条目；flow wait.dependency.taskId 把 goal-owned process 连回 mission/ownerEpoch；supervisor 快照新增可选 lifecycleExpectedSessionId；id 256 上界",
+          "session-activity-projection.test.ts 11/11（三方 missionId 对齐 / mission lineage 优先 / 代际钉扎与 legacy / lineageUnjoinedEntries=0 / 超长 id 丢弃 / yielded 状态）",
+          "切片 6：sessions.yieldState（operator.read）+ protocol schema/validator/descriptor；代际不匹配 fail-closed 且零 owner 读取；读模型抛错降级空状态",
+          "切片 6 缺陷修复：yield 后 endedAt 存在但 outcome/endedReason 被清空，原先落到 error 分支并把会话推到 attention；lineage 投影与 subagents 列表改为 yielded 且归入 active",
+          "sessions.yield-state.test.ts 7/7；gateway-methods 批次 40/40；production reachability 2/2；supervisor restart reconciliation 7/7；announce 代际 8/8；subagent-spawn + admission registry 15/15；host-api facade 44/44",
+          "门禁：harness validate --no-diff exit 0；typecheck 0；contract 0；comms replay/compare 全 PASS；build:runtime 0；runtime-lifecycle E2E 3/3；touched 文件 lint 0；check-no-bom ok；git diff --check 0",
+          "artifacts/session-ecosystem-cross-session-control/report.json 切片 4/5/6 更新；README 三语 + handoffs/LATEST.md 已同步"
+        ],
+        "next_action": "收口：全门禁在最终树上重跑一遍并出具 closeout proposal（用户确认后才可标记 done）。收口前还需一个决策：lineage ref 与 yielded 状态是否要在会话状态面板上渲染——数据层已就绪，渲染是独立决策，且 SessionActivityPanel.tsx 当前有他人未提交的大改动。",
+        "progress": 95,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260822-start-tf0082",
+          "session-20260822-tf0082-slice4",
+          "session-20260822-tf0082-slice5",
+          "session-20260822-tf0082-slice6"
+        ]
+      },
+      "id": "TF-0082"
+    }
+  ],
+  "created_at": "2026-08-22T09:31:29.838770Z",
+  "proposal_id": "TFP-progress-TF-0082-slice6-20260822",
+  "rationale": "TF-0082 第六个 owner path 完成：yield/goal-wait 只读 RPC surface。新增 sessions.yieldState（operator.read），报告本会话 run 是否被 sessions_yield 挂起（含 runId/parentSessionKey/切片 1 父代际钉扎）、还有几个子 run 欠一次 continuation、以及已 arm 的 goal-wake flow 全字段；代际不匹配 fail-closed 且零 owner 读取，读模型抛错降级为空状态。arm 侧刻意不开放 RPC（两个工具的 mission/tick/turn 身份都绑定自活动 run 上下文，turn 外 arm 会等价于 chat.abort 或允许在他人 mission 上 arm，违反 non-goal；取消归 TF-0083）。同时修掉真实缺陷：yield 会写 endedAt 并清空 outcome/endedReason，导致正常 parent yield 被判为 error 并把会话推到 attention 级——现在 lineage 投影与 subagents 列表都产出 yielded 并归入 active。7/7 新测试 + 投影 yielded 用例 + 全门禁通过。",
+  "session_id": "session-20260822-tf0082-slice6",
+  "status": "applied"
+}

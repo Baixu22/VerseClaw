@@ -1,0 +1,62 @@
+{
+  "applied_at": "2026-08-28T14:33:14.794530Z",
+  "base_graph_hash": "0bd6230b0952115da48b03536d60fb9e7b7620c1c844e9aaf1355c8d36e990d5",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "lane-1 独立复跑（2026-08-28）：check-production-reachable archiveLowHeatBlocks/applyContextLadder 均为 NOT PRODUCTION REACHABLE；全仓生产代码 archiveBlock 无调用，生产 archive writer 数仍为 0。",
+          "转写义务已执行：assembler lifecycle filter 前向约束从本 done 节点迁挂到活节点 TF-0130 requirements，避免约束随 TF-0147 归档后失联。"
+        ],
+        "next_action": "已收口；前向约束已转写至 TF-0130。"
+      },
+      "id": "TF-0147"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "assumptions": [
+          "当前生产 archive writer 数为 0；一旦本 task 或其依赖引入 writer，必须先完成 assembler lifecycle filter，再提交收口复核。"
+        ],
+        "next_action": "保持 blocked；开工前重新读取 TF-0147/TF-0121 的 lifecycle 约束，并在任何 archive writer 出现时先补 assembler filter。",
+        "requirements": [
+          "再注入必须走 chargeTurnInjection 与 dedupKey，不得旁路账本（否则重复本仓库已有的 off-books 问题）",
+          "必须有硬上限：单轮再注入字符数 ≤ 单轮预算的 10%，超限则只注入最高严重度的一条",
+          "必须可关：新增旗标默认关，且与 enhancement kill switch 联动",
+          "必须防循环：同一单元在同一会话内的再注入次数须有上限，避免与去重机制互相触发",
+          "先只处理 critical 严重度（goal_token_decay），medium/high 留给 v2",
+          "承接 TF-0147/TF-0121 的前向约束：若本 task 引入生产 archive writer，必须在 assembler 注入路径补 lifecycle filter，并覆盖 assembler 的所有 BlockStore query 路径；不得让 archived block 静默回流到注入面。该约束由 TF-0121 建立、TF-0147 转写。"
+        ]
+      },
+      "id": "TF-0130"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.98,
+        "created_at": "2026-08-28T14:32:12.730320Z",
+        "evidence": "2026-08-28 独立生产可达性检查：archiveLowHeatBlocks/applyContextLadder 均为 zero production call sites；archiveBlock 仅有定义与测试/BlockStore unarchive 路径。",
+        "expected_requirement": "TF-0147 收口时，若生产 archive writer 仍为 0，assembler/lifecycle 前向约束不得随 done 节点归档，必须转写到活节点。",
+        "id": "TFD-lane1-tf0147-archive-writer-transfer-20260828",
+        "kind": "process_gap",
+        "node_id": "TF-0147",
+        "observed_action_or_result": "TF-0147 已先于本轮转写复核进入 done，约束暂时只在 done 节点可见。",
+        "recommendation": "已将约束追加到 TF-0130 requirements/assumptions，并在 TF-0147 evidence 保留转写结果。",
+        "related_task_ids": [],
+        "severity": "low",
+        "status": "resolved"
+      }
+    }
+  ],
+  "created_at": "2026-08-28T14:32:12.720102Z",
+  "proposal_id": "TFP-lane1-tf0147-transfer-archive-lifecycle-20260828",
+  "rationale": "独立复跑确认 archiveLowHeatBlocks 与 applyContextLadder 没有生产调用点，archiveBlock 也没有生产 writer。TF-0147 已收口，因此不能把 assembler/lifecycle 前向约束留在 done 节点；将其转写到未来可能从 BlockStore 取回单元的活节点 TF-0130。",
+  "session_id": "lane-1-context-moat-20260828",
+  "status": "applied"
+}

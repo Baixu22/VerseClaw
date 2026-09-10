@@ -1,0 +1,39 @@
+{
+  "applied_at": "2026-08-23T17:17:03.594434Z",
+  "base_graph_hash": "e793bb266633b46295ff10055ff99c8eb7e33e6cbedf2da2d3d188ea88c28426",
+  "base_summary": {
+    "edge_count": 181,
+    "node_count": 99,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "TFD-runtime-lifecycle-closeout-production-gap-20260821",
+          "收口时工作树仍混有其他 workstream 未提交改动（按用户要求未清理）；链提交不含 11 个他流依赖文件，链的独立编译完整性待各 owner 提交后成立——用户知情并裁定收口"
+        ],
+        "evidence": [
+          "docs/dev/handoffs/LATEST.md",
+          "harness/specs/tasks/runtime-lifecycle-governance.md",
+          "artifacts/runtime-lifecycle-governance/audit-0.json .. audit-6.json",
+          "本轮 sessions.stop registry probe、goal-wake canary exit=1、packaged Electron helper output",
+          "docs/runtime-design/plan.md scheduled ticks planned but not shipped",
+          "2026-08-23/24 独立审计与整改收口：审计三线均 pass-with-findings（artifacts/tf0078-chain-health-audit/）；TF-0086 里程碑七步全部 done，4 major+7 minor 闭环，收口时刻全链 227 测试+根级门禁全绿（artifacts/tf0086-milestone-closeout/report.json）；用户裁定暂不提交，提交时按 artifacts/tf0093-commit-readiness/split-plan.md 执行，收口与否由用户提交后裁定",
+          "2026-08-24 用户裁定收口为 done：链改动已全部提交（80b3fd794 specs、25df76ab5 runtime、57bc803b1 electron/renderer、4800bd758 docs、3b92660d2+f60b0aed0 task-forest）；独立审计三线均 pass-with-findings 且 4 major + 7 minor 经 TF-0086 七步整改全部闭环；收口时刻全链 227 测试与根级门禁全绿。遗留协调项：11 个他流依赖文件归各 workstream 自行提交（不影响本里程碑收口）"
+        ],
+        "next_action": "无（已按用户裁定收口；后续如有协调事项另立节点）",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done"
+      },
+      "id": "TF-0078"
+    }
+  ],
+  "created_at": "2026-08-23T17:17:03.390641Z",
+  "proposal_id": "TFP-close-TF-0078-20260824",
+  "rationale": "用户裁定：TF-0078 收口为 done。链改动已按层拆分为 6 个提交落盘；审计整改里程碑（TF-0086）七个节点全部 done；收口证据齐备。",
+  "session_id": "session-20260824-tf0078-closeout",
+  "status": "applied"
+}

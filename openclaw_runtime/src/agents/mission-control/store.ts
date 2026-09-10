@@ -18,6 +18,7 @@ import type {
   MissionRunRecord,
   MissionStatus,
 } from "./types.js";
+import { normalizeRuntimeLineage } from "../../runtime-core/lineage.js";
 
 type MissionDatabase = Pick<OpenClawStateKyselyDatabase, "mission_runs" | "mission_events">;
 type MissionRunRow = Selectable<OpenClawStateKyselyDatabase["mission_runs"]>;
@@ -47,7 +48,7 @@ function jsonArray<T>(raw: string | null | undefined): T[] {
   if (!raw) return [];
   try {
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed as T[] : [];
+    return Array.isArray(parsed) ? (parsed as T[]) : [];
   } catch {
     return [];
   }
@@ -58,7 +59,7 @@ function jsonRecord(raw: string | null | undefined): Record<string, unknown> {
   try {
     const parsed = JSON.parse(raw);
     return parsed && typeof parsed === "object" && !Array.isArray(parsed)
-      ? parsed as Record<string, unknown>
+      ? (parsed as Record<string, unknown>)
       : {};
   } catch {
     return {};
@@ -67,7 +68,7 @@ function jsonRecord(raw: string | null | undefined): Record<string, unknown> {
 
 function recordFromUnknown(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
+    ? (value as Record<string, unknown>)
     : {};
 }
 
@@ -79,6 +80,7 @@ function nonEmpty(value: string | undefined | null): string | null {
 function rowToMission(row: MissionRunRow): MissionRunRecord {
   const metadata = jsonRecord(row.metadata_json);
   const control = recordFromUnknown(metadata.longConversationControl);
+  const lineage = normalizeRuntimeLineage(metadata.lineage);
   return {
     missionId: row.mission_id,
     sessionKey: row.session_key,
@@ -90,6 +92,9 @@ function rowToMission(row: MissionRunRow): MissionRunRecord {
     phase: row.phase as MissionPhase,
     tick: row.tick_count,
     repairTicks: row.repair_tick_count,
+    revision: row.revision,
+    activeTickId: row.active_tick_id,
+    lastWakeId: row.last_wake_id,
     maxTicks: row.max_ticks,
     maxRepairTicks: row.max_repair_ticks,
     progress: row.progress,
@@ -100,6 +105,7 @@ function rowToMission(row: MissionRunRow): MissionRunRecord {
     ...(row.blocked_reason ? { blockedReason: row.blocked_reason } : {}),
     ...(row.trace_id ? { traceId: row.trace_id } : {}),
     ...(row.task_loop_run_id ? { taskLoopRunId: row.task_loop_run_id } : {}),
+    ...(lineage ? { lineage } : {}),
     evidenceRefs: jsonArray<MissionEvidenceRef>(row.evidence_refs_json),
     risks: jsonArray<string>(row.risks_json),
     remaining: jsonArray<string>(row.remaining_json),
@@ -148,21 +154,25 @@ function updateFromValues(values: MissionRunInsert): MissionRunUpdate {
     no_progress_hash: values.no_progress_hash ?? null,
     schedule_json: values.schedule_json ?? "{}",
     metadata_json: values.metadata_json ?? "{}",
+    ...(values.revision !== undefined ? { revision: values.revision } : {}),
+    ...(values.active_tick_id !== undefined ? { active_tick_id: values.active_tick_id } : {}),
+    ...(values.last_wake_id !== undefined ? { last_wake_id: values.last_wake_id } : {}),
     updated_at: values.updated_at,
     completed_at: values.completed_at ?? null,
   };
 }
 
-export function saveMissionRun(record: MissionRunRecord): MissionRunRecord {
+export function buildMissionRunInsertValues(record: MissionRunRecord): MissionRunInsert {
   const metadata = {
     ...(record.metadata ?? {}),
+    ...(record.lineage ? { lineage: record.lineage } : {}),
     longConversationControl: {
       controlSignals: record.controlSignals ?? [],
       ...(record.validationState ? { validationState: record.validationState } : {}),
       ...(record.acceptanceStatus ? { acceptanceStatus: record.acceptanceStatus } : {}),
     },
   };
-  const values: MissionRunInsert = {
+  return {
     mission_id: record.missionId,
     session_key: record.sessionKey,
     agent_id: nonEmpty(record.agentId),
@@ -189,10 +199,22 @@ export function saveMissionRun(record: MissionRunRecord): MissionRunRecord {
     no_progress_hash: record.noProgressHash ?? null,
     schedule_json: "{}",
     metadata_json: JSON.stringify(metadata),
+    ...(typeof record.revision === "number" ? { revision: record.revision } : {}),
+    ...(record.activeTickId !== undefined ? { active_tick_id: record.activeTickId } : {}),
+    ...(record.lastWakeId !== undefined ? { last_wake_id: record.lastWakeId } : {}),
     created_at: record.createdAt,
     updated_at: record.updatedAt,
     completed_at: record.completedAt ?? null,
   };
+}
+
+/** Update set for a record, including fencing columns when present. */
+export function buildMissionRunUpdateSet(record: MissionRunRecord): MissionRunUpdate {
+  return updateFromValues(buildMissionRunInsertValues(record));
+}
+
+export function saveMissionRun(record: MissionRunRecord): MissionRunRecord {
+  const values = buildMissionRunInsertValues(record);
   runOpenClawStateWriteTransaction(({ db }) => {
     const query = getNodeSqliteKysely<MissionDatabase>(db);
     executeSqliteQuerySync(
@@ -200,7 +222,9 @@ export function saveMissionRun(record: MissionRunRecord): MissionRunRecord {
       query
         .insertInto("mission_runs")
         .values(values)
-        .onConflict((conflict) => conflict.column("mission_id").doUpdateSet(updateFromValues(values))),
+        .onConflict((conflict) =>
+          conflict.column("mission_id").doUpdateSet(updateFromValues(values)),
+        ),
     );
   });
   return getMissionRun(record.missionId) ?? record;

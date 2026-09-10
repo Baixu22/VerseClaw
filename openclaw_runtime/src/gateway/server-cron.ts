@@ -405,6 +405,46 @@ export function buildGatewayCronService(params: {
         });
       }
     },
+    runMissionContinuationJob: async ({ job, taskId, missionId }) => {
+      // The Cron scheduler owns *when*; goal-wake owns *what happens*. This
+      // only reports that the deadline passed and lets the normal level check
+      // produce the continuation. Redelivery is a no-op by design.
+      try {
+        const { goalWakeEnabled } = await import("../agents/goal-wake-config.js");
+        if (!goalWakeEnabled(params.cfg)) {
+          // Fail closed on the opt-in gate, and do it here rather than inside
+          // fireGoalWaitTimer: recording a dependency outcome is deliberately
+          // ungated in the runtime layer (losing terminal truth is worse than
+          // writing it while the flag is off), but whether Cron may *drive*
+          // goal-wake at all is exactly what this flag decides. A leftover job
+          // from an enabled period must not keep poking the ledger.
+          return {
+            status: "skipped",
+            error: "goal wake is disabled; mission continuation timer not fired",
+          };
+        }
+        const { fireGoalWaitTimer } = await import("../agents/goal-wake-runtime.js");
+        const fired = await fireGoalWaitTimer({
+          taskId,
+          reason: `cron timer ${job.id} fired for mission ${missionId}`,
+        });
+        if (!fired.task) {
+          return {
+            status: "skipped",
+            error: `goal-wake timer task ${taskId} no longer exists`,
+          };
+        }
+        return {
+          status: "ok",
+          summary: `timer fired for mission ${missionId} (task ${taskId}, ${fired.levelCheck.flows.length} flow(s))`,
+        };
+      } catch (err) {
+        return {
+          status: "error",
+          error: err instanceof Error ? err.message : String(err),
+        };
+      }
+    },
     runCommandJob: async ({ job, abortSignal }) => {
       const result = await runCronCommandJob({
         job,

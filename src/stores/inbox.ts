@@ -7,6 +7,7 @@ import type {
   PermissionApprovalEvent,
   PermissionRiskLevel,
 } from '@shared/types/workspace';
+import { approvalDisplayDetails, isExternalWriteApproval, stripSensitiveApprovalDetails } from '@/lib/permission-approval-display';
 
 export type InboxSource = 'permission' | 'remote-task' | 'browser-task' | 'operator';
 export type InboxRisk = 'read' | PermissionRiskLevel;
@@ -114,32 +115,30 @@ function compactEvidence(entries: Array<InboxEvidence | null | undefined>): Inbo
 }
 
 function permissionTitle(approval: PermissionApprovalEvent): string {
-  return approval.reason?.trim()
-    || approval.command?.trim()
-    || approval.paths?.[0]?.trim()
-    || approval.paramsPreview?.trim()
-    || approval.source;
+  return approvalDisplayDetails(approval).title?.trim() || approval.source;
 }
 
 export function projectPermissionApproval(approval: PermissionApprovalEvent): PermissionInboxItem {
+  const display = approvalDisplayDetails(approval);
+  const externalWrite = isExternalWriteApproval(approval);
   return {
     key: `permission:${approval.id}`,
     id: approval.id,
     source: 'permission',
     title: permissionTitle(approval),
-    summary: approval.command || approval.cwd || approval.paramsPreview,
+    summary: display.command || display.cwd || display.paramsPreview,
     risk: approval.risk,
     status: approval.status,
     timestamp: approval.resolvedAt ?? approval.requestedAt,
-    evidence: compactEvidence([
-      approval.command ? { kind: 'command', value: approval.command } : null,
-      approval.cwd ? { kind: 'location', value: approval.cwd } : null,
-      approval.paths?.length ? { kind: 'paths', value: approval.paths.join('\n') } : null,
-      approval.paramsPreview ? { kind: 'parameters', value: approval.paramsPreview } : null,
-      approval.reason ? { kind: 'reason', value: approval.reason } : null,
+    evidence: externalWrite ? [] : compactEvidence([
+      display.command ? { kind: 'command', value: display.command } : null,
+      display.cwd ? { kind: 'location', value: display.cwd } : null,
+      display.paths?.length ? { kind: 'paths', value: display.paths.join('\n') } : null,
+      display.paramsPreview ? { kind: 'parameters', value: display.paramsPreview } : null,
+      display.reason ? { kind: 'reason', value: display.reason } : null,
     ]),
     actions: approval.status === 'pending' ? ['approve', 'deny'] : [],
-    approval,
+    approval: stripSensitiveApprovalDetails(approval),
   };
 }
 

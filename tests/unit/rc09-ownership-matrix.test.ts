@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
@@ -26,6 +27,7 @@ function git(args: string[]): string {
 
 function readMatrix(): {
   schema: string;
+  generatedAt?: string;
   baseSha: string;
   headSha: string;
   totalPaths: number;
@@ -66,12 +68,26 @@ describe('RC-09 changed-path ownership matrix', () => {
   it('the generator reproduces the committed matrix byte-for-byte', () => {
     const base = readMatrix().baseSha;
     const head = readMatrix().headSha;
-    const output = execFileSync('node', [
-      join(REPO_ROOT, GENERATOR_RELATIVE),
-      '--base', base,
-      '--head', head,
-    ], { cwd: REPO_ROOT, encoding: 'utf8', maxBuffer: 1024 * 1024 * 64 });
-    expect(output).toMatch(/rc09 ownership matrix:/);
+    const regenerated = mkdtempSync(join(tmpdir(), 'rc09-matrix-'));
+    const outputPath = join(regenerated, 'changed-path-ownership.json');
+    try {
+      execFileSync('node', [
+        join(REPO_ROOT, GENERATOR_RELATIVE),
+        '--base', base,
+        '--head', head,
+        '--output', outputPath,
+      ], { cwd: REPO_ROOT, encoding: 'utf8', maxBuffer: 1024 * 1024 * 64 });
+
+      // `generatedAt` is by construction the moment of generation, so it is the
+      // only field allowed to differ. Everything else — path set, RC owners,
+      // owning commits, ordering — must reproduce exactly, otherwise the
+      // committed matrix is not evidence of anything.
+      const { generatedAt: _committedAt, ...committed } = readMatrix();
+      const { generatedAt: _regeneratedAt, ...fresh } = JSON.parse(readFileSync(outputPath, 'utf8'));
+      expect(fresh).toEqual(committed);
+    } finally {
+      rmSync(regenerated, { recursive: true, force: true });
+    }
   }, 120_000);
 
   it('every pre-chain entry is attributed to an RC via spec ownership', () => {

@@ -1,0 +1,30 @@
+{
+  "applied_at": "2026-08-25T14:09:39.106983Z",
+  "base_graph_hash": "d7e212a1c85988171b341559b0d0c936dded7d224f8f41d549ba91e2cc0f9c47",
+  "base_summary": {
+    "edge_count": 260,
+    "node_count": 146,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [],
+  "created_at": "2026-08-25T14:09:38.931004Z",
+  "operations": [
+    {
+      "decided_by": "lane-2（审核 47cb57a81 认定）；车道 1 代放。",
+      "id": "TFD-lane2-tf0128-lane-trailer-missing-2026-08-25",
+      "impact": "该提交已被后续历史（含一次 merge）引用，按 §R5 技术-7 不得追溯改写，记 backlog-P1。半径归属不受影响（Task: 齐全，§R3.1 复跑 12/15 PASS）；车道归属可由 reviews/TF-0128.md 的实现者节（lane-1 session-2026-08-24-lane-1）人工回溯。后续车道 1 提交已全部带齐双 trailer（395683c6f / f1bbcf53a / ffa825438 实测）。由车道 1 于 2026-08-25 按车道 2 审核挂账命令代放（事故修复后，当时仅车道 1 会话在线）。",
+      "kind": "process_violation",
+      "node_id": "TF-0128",
+      "op": "record_deviation",
+      "related_task_ids": [
+        "TF-0128",
+        "TF-0145"
+      ],
+      "summary": "TF-0128 收口提交 1074b6b28 仅带 Task: TF-0128 + Co-Authored-By，缺 Lane: trailer。TF-0128 是 M1 task，§R3.8.1 规则 1 要求 Lane: 在每个提交上必填，判据 B 自 M1 生效。"
+    }
+  ],
+  "proposal_id": "prop-lane2-tf0128-trailer-deviation-2026-08-25",
+  "rationale": "车道 2 审核 TF-0128（47cb57a81）挂账的 record_deviation：1074b6b28 缺 Lane: trailer。图事故已修复，按其挂账命令代放。",
+  "session_id": null,
+  "status": "applied"
+}

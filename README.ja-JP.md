@@ -137,6 +137,8 @@ OfficeCLI も 設定 -> スキル -> 機能プラグイン から管理できま
 コンポーザーで `/` を入力すると、Context Palette が開き、Wiki 検索、読み取り専用ナレッジ範囲の変更、レビュー、CI 修復、テスト作成、diff 説明、Task Ledger、Mission Control、圧縮、セッション fork のクイックアクションを使えます。いずれも既存の Chat / Session フローを使います。セッションライフサイクルコマンド（`/new`、`/resume <キーワード>`、`/rename <名前>`、`/archive`、`/delete`、`/clear`、`/copy`）はサイドバーと同じ store/host 経路を使用します：`/new` で新しいチャットを開始、`/resume` でキーワードに一致するセッションに切替、`/rename` で現在のセッション名を変更、`/archive` と `/delete` でアーカイブまたは完全削除、`/clear` でローカルメッセージ表示をリセット、`/copy` でセッション記録を markdown としてコピーします。
 `@agent` で別のエージェントを選ぶと、Verse Claw はデフォルトエージェントを経由せず、そのエージェント自身の会話コンテキストへ直接切り替えます。各エージェントのワークスペースは既定で分離されていますが、より強い実行時分離は OpenClaw の sandbox 設定に依存します。
 Verse Claw は既定で軽量な `policy-light` サンドボックス層を使い、Main プロセスの権限ゲート、ワークスペースルート検査、Gateway RPC 承認、OpenClaw exec approval を組み合わせて制御します。Docker と SSH は明示的に選択する `strong` provider として残り、起動要件ではありません。
+コマンドのリスク判定は前方一致ではなくサブコマンド単位で行うため、先頭のグローバルフラグでコマンドの実体を隠すことはできません。`git` では、任意コード実行につながるフラグ（`core.pager`/`core.editor`/`alias.*` を設定する `-c`、`--config-env`）、helper バイナリの探索先を差し替えるフラグ（`--exec-path`）、操作を別リポジトリへ移すフラグ（`-C`、`--git-dir`、`--work-tree`、`--namespace`）は、後続のサブコマンドが何であっても高リスクとして扱われます。グローバルフラグによって破壊的操作やネットワーク操作が通常の write に格下げされることもありません。
+通常の編集が自動承認されるワークスペース内であっても、Git リポジトリのメタデータへの書き込みは承認付きのままです。そこに書かれた hook や config は次の Git 実行時に動作するためで、ネストしたリポジトリ、submodule、linked worktree が使う `.git` ポインタファイルも対象になります（`.gitignore`、`.gitattributes`、`.github/` は通常のファイルのままです）。破壊的な Git 操作の承認プロンプトは一般的な警告ではなく判定根拠を示します。push の対象リモートと branch、その branch が共有 branch かどうか、branch 未指定時に適用される refspec の範囲、reset が作業ツリーの変更を破棄するのか branch ポインタを移動するだけなのか、を提示します。
 Docker サンドボックスが Windows ホスト上で動作し、デーモンが WSL2（または `DOCKER_HOST` 経由の他の Linux デーモン）にある場合、バインドソースは自動的に WSL2 マウント名前空間へ変換されます（`C:\...\workspace` → `/mnt/c/.../workspace`、`\wsl$\<distro>\...` → POSIX）。`invalid volume specification` でボリュームマウントが失敗しなくなり、ローカルの Windows named-pipe デーモンと macOS/Linux ホストには影響しません。
 Settings、Doctor、diagnostics は同じ effective sandbox policy を表示し、要求/有効 provider、runtime level、exec/network policy、Docker の利用可否、縮退理由を確認できます。
 Settings → System & Runtime には Project Rules Center もあり、現在の workspace の `AGENTS.md` を確認し、`.clawx/rules/*.md` を一覧表示し、決定的な検証 warning を示し、欠落時には新しいルール真実源を作らずに保守的な `AGENTS.md` テンプレートを作成できます。
@@ -209,7 +211,7 @@ Shadow V1 のスコアリングと閾値 50 は凍結。ラベリング kit の�
 
 ### Workspace Git コントロール
 Workspace サイドバーはまずコンパクトな入口ランチャーを開きます。現在の workspace が Git リポジトリの場合だけ Review 入口が表示され、Git ではないプロジェクトには Git コントロールを表示しません。
-Workspace サイドバーには Git ワークベンチがあり、リポジトリ状態、side-by-side ファイル diff、stage、patch コピー、承認付きのファイル revert、commit、branch、stash、worktree、GitHub Pull Request を扱えます。上部の readiness strip はローカル Git、組み込み Agent Git tools、worktree 数、`gh` 認証状態を数値化し、今使える能力をその場で確認できます。Worktree 追加は新規 branch と既存 branch の両方に対応し、新しい worktree は既定でリポジトリの隣に作られます。同じ Main プロセスの Git service が組み込み `clawx-git` MCP server も支えるため、Agent は shell コマンドを直接組み立てず、Verse Claw の権限管理を通じて制御された Git / PR ツールを呼び出します。revert、pull、push、worktree remove/prune、PR 作成など状態を書き換えたり公開したりする操作は承認付きです。
+Workspace サイドバーには Git ワークベンチがあり、リポジトリ状態、side-by-side ファイル diff、stage、patch コピー、承認付きのファイル revert、commit、branch、stash、worktree、merge、rebase、reset、GitHub Pull Request を扱えます。コンパクトな Audit タブは権限判断と最新の `git reflog --all` エントリーをまとめて表示し（有界ビュー、上限を超えた古い項目は明示）、commit、checkout、reset、rebase、その他の参照移動を示します。上部の readiness strip はローカル Git、組み込み Agent Git tools、worktree 数、`gh` 認証状態を数値化し、今使える能力をその場で確認できます。Worktree 追加は新規 branch と既存 branch の両方に対応し、新しい worktree は既定でリポジトリの隣に作られます。統一 diff は構造化された patch エンジンを通じて適用、revert、または書き込みなしの事前チェックができ、適用済み・skip・conflict のパスをそれぞれ個別に報告します。形式が壊れているか切り詰められた patch は、ファイルに触れる前に拒否され、部分適用されることはありません。読み取り専用の base 比較は HEAD を最も近いリモート祖先（明示的な ref、branch の upstream、または `origin/HEAD`）と diff し、そのどれを使ったかを報告します。リモート祖先が存在しない場合や、両者に共通 commit がない場合は、base を推測せずに比較を利用不可として報告します。同じ Main プロセスの Git service が組み込み `clawx-git` MCP server も支えるため、Agent は shell コマンドを直接組み立てず、Verse Claw の権限管理を通じて制御された Git / PR ツールを呼び出します。revert、pull、push、merge、rebase、reset、patch の適用/revert、worktree remove/prune、PR 作成など状態を書き換えたり公開したりする操作は承認付きです。
 
 ### 📡 マルチチャネル管理
 複数のAIチャネルを同時に設定・監視できます。各チャネルは独立して動作するため、異なるタスクに特化したエージェントを実行できます。
@@ -411,6 +413,8 @@ P2-01 read-only facade は、安定した `read_file`、`search_content`、`resu
 
 P2-02 argv-only command profile は、OpenClaw の承認前 command analysis を不変の host-owned execution plan へ収束します。通常の test/build/lint/git コマンドは direct argv で実行され、pipeline・chain・redirect・heredoc・inline evaluation・明示的 interpreter は独立した terminal-shell payload のままです。profile（`pnpm`/`npm`/`corepack` の `exec`/`dlx` runner パススルーを含む）は host が導出し、model が profile、interpreter、PATH/PATHEXT、policy、approval token を選ぶことはありません。Windows の `.exe`/`.com` は direct argv のまま、`.cmd`/`.bat` は監査済み `cmd.exe` interpreter の下で resolved script identity を保持し、承認後に display command を再解釈しません。cwd/env/argv/timeout/output の境界違反は fail-closed で、native/MCP/legacy fallback はありません。これは engineering evidence であり、diagnostics、write、canary、default-on、GA、product approval を有効化しません。[P2-02 evidence](docs/dev/verseshell-foundation/P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md) を参照してください。
 
+P3 external-write policy は、compiler、script、Git hook、terminal shell、その他の副作用を持ちうる process command を不変の command plan 上で external write として明示します。既存の OpenClaw exec approval が唯一の承認面であり、静的な警告は command text や credential を複製しません。これらの process write は ClawX write journal の外にあり、`rollbackClaim=false` で、自動 rollback も行いません。この engineering slice は write、canary traffic、default-on、GA、product approval を有効化しません。[P3 evidence](docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md) を参照してください。
+
 保守的な `openclaw.json` 設定は次のとおりです。
 
 ```json
@@ -455,6 +459,10 @@ AI を開発ワークフローに統合できます。エージェントを使�
 ---
 
 ## 開発
+
+### Runtime Lifecycle Governance（Phase 2、デフォルト無効）
+
+Runtime Lifecycle Governance は段階的に提供されます。Phase 0 では共有基盤を、Phase 1 では canonical cleanup finalizer と drain パイプラインを、Phase 2 では delete operation journal、`operationId` 駆動の Electron mirror gate、端末 keep-on-leave を追加しました。Phase 3 ではデフォルト無効の同一 Gateway goal wake loop（1 つの SQLite immediate arm トランザクション、完全 idle 後の `turnBarrier` ack、mission owner/lead 限定の `goal_wait`、`exec(background=true, wait="goal")`、プロセス終了 level-check と重複 wake 除去）を追加しました。Phase 4 ではデフォルト無効の durable helper ファイルプロトコル（`intent.json -> started.json -> exit.json`、`<trusted-root>/background-processes/<runId>/`）、`ProcessRunReconciler` の起動/低頻度 sweep 復旧、session reset/delete の ownerEpoch 失効、runDir クォータ/TTL/redaction、Windows detached helper パスを追加しました。復旧はコマンドを再実行せず、`intent` に `started` がなく live helper もない場合は `lost` と判定します。Phase 5 では `SessionActivity` 読み取りモデルを拡張し、既存の読み取り専用プローブ（`mission_runs`、goal-wake `flow_runs`/`task_runs`、bash process registry、supervisor snapshot、subagent lineage）だけを情報源とする goal / process / lineage 投影を追加しました。Electron サービスは転送と型付き集約のみを行い、Chat のセッション状態パネルは `react-i18next` と既存デザイントークンで新しい状態を表示し、ライフサイクルボタンや削除・復旧操作は追加しません。読み取りモデルテストは `activitySnapshotWriteFindings=0` を報告します。監査は `armTxCount=1`、`processPollToolCalls=0`、Phase 4 で `secretPersistenceFindings=0` を維持し、通常の Chat と既定の `background=true` 動作は変わりません。Phase 6 では evidence-only の本番クローズアウトを完了しました。`audit-0.json` から `audit-6.json` までが `pnpm run runtime-lifecycle-audit --phase all` ですべて検証され、旧フェーズの一時プロンプトは削除済みです。クローズアウトは `docs/dev/handoffs/LATEST.md` とタスクフォレスト `TF-0077` に記録し、将来のアイデアは `future-work.json` に保持しています。2026-08-19 の GA hardening で packaged Electron durable-helper 検証と 10 サイクルの実プロセス goal-wake canary を追加し、RLG-only 受け入れは無条件 PASS になりました。goal-wake / durable-helper のデフォルトとすべての製品ロックは変更していません。詳細は `docs/dev/runtime-lifecycle-governance/README.zh-CN.md`、`artifacts/runtime-lifecycle-governance/audit-6.json`、`artifacts/runtime-lifecycle-governance/ga-acceptance.json` を参照してください。
 
 ### 前提条件
 

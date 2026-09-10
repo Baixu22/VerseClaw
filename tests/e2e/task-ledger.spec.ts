@@ -118,7 +118,7 @@ const WORKSPACE = {
   agentId: 'main',
   selectedAgentId: 'main',
   activeSessionKey: 'agent:main:main',
-  permissionMode: 'workspace-write',
+  permissionMode: 'acceptEdits',
   createdAt: '2026-06-16T09:00:00.000Z',
   updatedAt: '2026-06-16T10:00:00.000Z',
   agentBindings: {},
@@ -159,6 +159,22 @@ function baseHostApiMocks() {
       defaultAgentId: 'main',
       defaultModelRef: null,
     },
+    [stableStringify(['providers', 'accounts', null])]: [{
+      id: 'task-ledger-e2e',
+      vendorId: 'anthropic',
+      label: 'Task Ledger E2E',
+      authMode: 'api_key',
+      model: 'claude-opus-4',
+      enabled: true,
+      isDefault: true,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+    }],
+    [stableStringify(['providers', 'accountKeyInfo', null])]: [
+      { accountId: 'task-ledger-e2e', hasKey: true, keyMasked: 'sk-***' },
+    ],
+    [stableStringify(['providers', 'vendors', null])]: [],
+    [stableStringify(['providers', 'getDefaultAccount', null])]: { accountId: 'task-ledger-e2e' },
     [stableStringify(['/api/agents', 'GET'])]: {
       ok: true,
       data: {
@@ -198,7 +214,7 @@ function baseHostApiMocks() {
 }
 
 test.describe('Task ledger', () => {
-  test('shows task ledger page tabs and chat work context summary', async ({ launchElectronApp }) => {
+  test('shows task ledger page tabs without restoring the legacy chat context bar', async ({ launchElectronApp }) => {
     const electronApp = await launchElectronApp({ skipSetup: true });
     try {
       await installIpcMocks(electronApp, {
@@ -263,9 +279,7 @@ test.describe('Task ledger', () => {
         window.location.hash = '/';
       });
       await expect(page.getByTestId('chat-page')).toBeVisible();
-      await expect(page.getByTestId('work-context-bar')).toContainText('Task Ledger');
-      await expect(page.getByTestId('work-context-bar')).toContainText('Ship long task ledger');
-      await expect(page.getByTestId('work-context-bar')).toContainText('2 active / 1 review / 1 blocked');
+      await expect(page.getByTestId('work-context-bar')).toHaveCount(0);
     } finally {
       await closeElectronApp(electronApp);
     }
@@ -333,9 +347,16 @@ test.describe('Task ledger', () => {
       });
 
       const page = await getStableWindow(electronApp);
-      await expect(page.getByTestId('chat-page')).toBeVisible();
+      await page.reload();
+      await page.evaluate(() => {
+        window.location.hash = '#/';
+      });
+      await expect.poll(() => new URL(page.url()).hash).toBe('#/');
+      await expect(page.getByTestId('chat-page')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('chat-composer-input')).toBeEnabled();
 
+      await page.getByTestId('chat-composer-actions').click();
+      await page.getByTestId('chat-composer-action-more').click();
       await expect(page.getByTestId('task-node-selector')).toBeVisible();
       await page.getByTestId('task-node-selector-trigger').hover();
       await page.getByTestId('task-node-selector-option-task-active').click();
@@ -355,7 +376,7 @@ test.describe('Task ledger', () => {
         message: 'Record this turn',
       });
 
-      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('title', /Stop|停止/);
+      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', /Stop|停止/);
 
       await electronApp.evaluate(({ BrowserWindow }) => {
         for (const win of BrowserWindow.getAllWindows()) {
@@ -451,7 +472,7 @@ test.describe('Task ledger', () => {
         ]),
       });
 
-      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('title', /Send|发送/);
+      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', /Send|发送/);
 
       await page.reload();
       await expect(page.getByTestId('chat-page')).toBeVisible();

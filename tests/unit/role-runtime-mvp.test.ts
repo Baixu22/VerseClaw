@@ -11,7 +11,7 @@ import { classifyInputIntent, resolveInputMode } from '../../openclaw_runtime/sr
 import { getTeamTemplateSnapshot } from '../../openclaw_runtime/src/agents/team-template';
 import { calculateMemoryScore } from '../../openclaw_runtime/src/memory/memory-card';
 import { buildContextPack } from '../../openclaw_runtime/src/memory/context-pack';
-import { commitMemoryProposal, reviewMemoryProposal } from '../../openclaw_runtime/src/memory/gatekeeper';
+import { reviewMemoryProposal } from '../../openclaw_runtime/src/memory/gatekeeper';
 import type { MemoryCard } from '../../shared/types/memory';
 
 describe('role-first runtime MVP contracts', () => {
@@ -161,7 +161,10 @@ describe('role-first runtime MVP memory and context pack', () => {
     });
     expect(rejected.accepted).toBe(false);
 
-    const accepted = commitMemoryProposal({
+    // TF-0118: commitMemoryProposal was a zero-production-caller wrapper over
+    // reviewMemoryProposal + append. Inlined here so the assertions below still
+    // cover the real review + commit semantics without the redundant export.
+    const decision = reviewMemoryProposal({
       type: 'project_fact',
       scope: 'project',
       content: 'Verse Claw stores role contracts as structured YAML.',
@@ -171,10 +174,11 @@ describe('role-first runtime MVP memory and context pack', () => {
       roleTags: ['architect'],
       source: 'user',
     }, [], { idFactory: () => 'mem_new', now: new Date('2026-06-12T00:00:00.000Z') });
+    const cards = decision.card ? [decision.card] : [];
 
-    expect(accepted.decision.accepted).toBe(true);
-    expect(accepted.cards[0]).toMatchObject({ id: 'mem_new', status: 'active' });
-    expect(reviewMemoryProposal(accepted.cards[0], accepted.cards).accepted).toBe(false);
+    expect(decision.accepted).toBe(true);
+    expect(cards[0]).toMatchObject({ id: 'mem_new', status: 'active' });
+    expect(reviewMemoryProposal(cards[0], cards).accepted).toBe(false);
   });
 
   it('builds context packs within hard token budgets and excludes inactive memory', () => {
@@ -188,7 +192,7 @@ describe('role-first runtime MVP memory and context pack', () => {
       memories: [...longCards, { ...baseCard, id: 'cold', status: 'cold', content: 'do not include' }],
       roleName: 'architect',
       taskState: 'Current task state must fit the task-state bucket.',
-      budget: { total: 120, coreFacts: 80, taskState: 40 },
+      budget: { total: 120, coreFacts: 80, taskState: 40 } as never,
     });
 
     expect(pack.estimatedTokens.total).toBeLessThanOrEqual(120);
