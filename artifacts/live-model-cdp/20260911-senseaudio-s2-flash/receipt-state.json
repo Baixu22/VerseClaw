@@ -1,0 +1,18 @@
+{
+  "inspectedAt": "2026-09-11T03:14:38.395Z",
+  "mode": "read-only",
+  "database": "<RUN_STATE>/user-data/openclaw-source-state/state/openclaw.sqlite",
+  "tables": [
+    {
+      "name": "runtime_receipts",
+      "present": true,
+      "rows": 0
+    },
+    {
+      "name": "context_blocks",
+      "present": true,
+      "rows": 0
+    }
+  ],
+  "receiptsByKind": []
+}

@@ -10,7 +10,18 @@ vi.mock('react-i18next', () => ({
       'toolUi.approval.host.approve': 'Approve',
       'toolUi.approval.host.deny': 'Deny',
       'toolUi.approval.host.retryRequired': 'Approval recorded. Retry is required.',
+      'toolUi.approval.host.externalWriteTitle': 'External write requires approval',
+      'toolUi.approval.host.externalWriteWarning': 'External process warning',
+      'toolUi.approval.host.externalWriteNoRollback': 'No automatic rollback',
+      'toolUi.approval.host.externalWriteEffectLabel': 'Effect',
+      'toolUi.approval.host.externalWriteEffect': 'External process write',
+      'toolUi.approval.host.externalWriteRollbackLabel': 'Rollback',
+      'toolUi.approval.host.externalWriteSnapshotLabel': 'Snapshot',
+      'toolUi.approval.host.externalWriteSnapshot': 'Bound request; retry only.',
       'approvals.source.terminal': 'Terminal',
+      'approvals.sourceLabel': 'Source',
+      'approvals.riskLabel': 'Risk',
+      'approvals.risk.external-write': 'External write',
       'approvals.risk.dangerous': 'High risk',
     })[key] ?? key,
   }),
@@ -21,7 +32,7 @@ const pendingApproval: PermissionApprovalEvent = {
   workspaceId: 'workspace-1',
   sessionKey: 'agent:main:main',
   runId: 'run-1',
-  mode: 'accept-edits',
+  mode: 'acceptEdits',
   source: 'terminal',
   requestedAt: 1,
   status: 'pending',
@@ -29,6 +40,20 @@ const pendingApproval: PermissionApprovalEvent = {
   command: 'git clean -fd',
   cwd: 'C:/repo',
   reason: 'Remove untracked files',
+};
+
+const externalWriteApproval: PermissionApprovalEvent = {
+  ...pendingApproval,
+  id: 'approval-external-write',
+  risk: 'external-write',
+  command: 'node build.js --token SECRET_VALUE',
+  cwd: 'C:/private/project',
+  paths: ['C:/private/project/output.txt'],
+  paramsPreview: '{"token":"SECRET_VALUE"}',
+  reason: 'Run a private command with SECRET_VALUE',
+  // Production derives this from cwd plus the command, so it carries the same
+  // secret the assertions below look for.
+  requestHash: 'C:/private/project:node build.js --token SECRET_VALUE',
 };
 
 describe('PendingRunApprovals', () => {
@@ -60,6 +85,36 @@ describe('PendingRunApprovals', () => {
 
     await waitFor(() => expect(onDecision).toHaveBeenCalledWith('approval-1', 'denied'));
   });
+
+  it('renders external-write semantics without raw command details', () => {
+    render(<PendingRunApprovals approvals={[externalWriteApproval]} onDecision={vi.fn()} />);
+
+    const surface = screen.getByTestId('chat-run-pending-approvals');
+    expect(surface).toHaveTextContent('External write requires approval');
+    expect(surface).toHaveTextContent('External process warning');
+    expect(surface).toHaveTextContent('No automatic rollback');
+    expect(surface).toHaveTextContent('Bound request; retry only.');
+    expect(surface).not.toHaveTextContent('node build.js');
+    expect(surface).not.toHaveTextContent('SECRET_VALUE');
+    expect(surface).not.toHaveTextContent('C:/private/project');
+  });
+
+  it('surfaces an external write at destructive severity, not below dangerous', () => {
+    // external-write is the one class outside the write journal, so it must not
+    // render milder than `dangerous`, which IS journal-covered.
+    const { unmount } = render(
+      <PendingRunApprovals approvals={[externalWriteApproval]} onDecision={vi.fn()} />,
+    );
+    const externalConfirm = screen.getByRole('button', { name: 'Approve' });
+    const externalClass = externalConfirm.className;
+    unmount();
+
+    render(<PendingRunApprovals approvals={[pendingApproval]} onDecision={vi.fn()} />);
+    const dangerousClass = screen.getByRole('button', { name: 'Approve' }).className;
+
+    expect(externalClass).toBe(dangerousClass);
+    expect(externalClass).toContain('destructive');
+  });
 });
 
 describe('PendingRunApprovals translations', () => {
@@ -72,6 +127,16 @@ describe('PendingRunApprovals translations', () => {
       'toolUi.approval.host.approve',
       'toolUi.approval.host.deny',
       'toolUi.approval.host.retryRequired',
+      'toolUi.approval.host.externalWriteTitle',
+      'toolUi.approval.host.externalWriteWarning',
+      'toolUi.approval.host.externalWriteNoRollback',
+      'toolUi.approval.host.externalWriteEffectLabel',
+      'toolUi.approval.host.externalWriteEffect',
+      'toolUi.approval.host.externalWriteRollbackLabel',
+      'toolUi.approval.host.externalWriteSnapshotLabel',
+      'toolUi.approval.host.externalWriteSnapshot',
+      'approvals.sourceLabel',
+      'approvals.riskLabel',
       'approvals.source.terminal',
       'approvals.source.gateway',
       'approvals.source.mcp',

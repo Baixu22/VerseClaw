@@ -281,7 +281,11 @@ function assertBudget(value: unknown, label: string): asserts value is ReceiptBu
   if (value.unit === "tokens") {
     for (const key of ["inputLimit", "outputLimit"] as const) {
       const amount = value[key];
-      if (!Number.isSafeInteger(amount) || Number(amount) < 0 || Number(amount) > MAX_BUDGET_TOKENS) {
+      if (
+        !Number.isSafeInteger(amount) ||
+        Number(amount) < 0 ||
+        Number(amount) > MAX_BUDGET_TOKENS
+      ) {
         throw new TypeError(`${label} ${key} must be a bounded non-negative integer`);
       }
     }
@@ -290,7 +294,11 @@ function assertBudget(value: unknown, label: string): asserts value is ReceiptBu
   if (value.unit === "chars") {
     for (const key of ["charsRequested", "charsApplied"] as const) {
       const amount = value[key];
-      if (!Number.isSafeInteger(amount) || Number(amount) < 0 || Number(amount) > MAX_BUDGET_TOKENS) {
+      if (
+        !Number.isSafeInteger(amount) ||
+        Number(amount) < 0 ||
+        Number(amount) > MAX_BUDGET_TOKENS
+      ) {
         throw new TypeError(`${label} ${key} must be a bounded non-negative integer`);
       }
     }
@@ -465,8 +473,8 @@ export class ReceiptStore {
     this.#database = options;
   }
 
-  /** Append a receipt. Never throws into the send path; shadow callers surface
-   *  the result and must fail RC-02 acceptance on ok=false without changing
+  /** Append a receipt. Validation/storage errors propagate to the caller;
+   *  shadow callers catch them and record failed evidence without changing
    *  send behavior. */
   put(input: PutReceiptInput): PutReceiptResult {
     validatePutReceiptInput(input);
@@ -484,7 +492,13 @@ export class ReceiptStore {
           .where("idempotency_key", "=", input.idempotencyKey),
       );
       if (existing) {
-        if (existing.content_digest === contentDigest) {
+        // Kind/version are stored outside the stable content digest. A key
+        // collision must not turn one receipt type into evidence for another.
+        if (
+          existing.kind === input.kind &&
+          existing.version === input.version &&
+          existing.content_digest === contentDigest
+        ) {
           outcome = {
             ok: true,
             duplicate: true,
@@ -607,7 +621,10 @@ export class ReceiptStore {
     builder = builder.orderBy("created_at", "desc");
     if (options.limit) builder = builder.limit(options.limit);
     const rows = executeSqliteQuerySync<RuntimeReceiptRow>(db, builder).rows;
-    const byCorrelation = new Map<string, { context?: RuntimeReceiptRow; wire?: RuntimeReceiptRow }>();
+    const byCorrelation = new Map<
+      string,
+      { context?: RuntimeReceiptRow; wire?: RuntimeReceiptRow }
+    >();
     for (const row of rows) {
       const digest = row.correlation_digest;
       if (!digest) continue;

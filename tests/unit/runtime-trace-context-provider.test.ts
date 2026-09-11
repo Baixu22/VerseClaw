@@ -261,7 +261,7 @@ describe("runtime trace context provider", () => {
     expect(result.diagnostics.every(isRuntimeRegistryDiagnostic)).toBe(true);
 
     const diagnostic = result.diagnostics.find((item) =>
-      item.message.includes("grounding diagnostics-only")
+      item?.message?.includes("grounding diagnostics-only")
     );
     expect(diagnostic).toEqual(expect.objectContaining({
       providerId: RUNTIME_TRACE_CONTEXT_PROVIDER_ID,

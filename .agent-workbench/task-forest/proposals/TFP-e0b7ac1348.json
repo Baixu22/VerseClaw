@@ -1,0 +1,30 @@
+{
+  "applied_at": "2026-09-10T13:45:43.286553Z",
+  "base_graph_hash": "24f8cc9044e20dcff2e2a0e1c38220a758133383aa03db529ba48ff55117b9ac",
+  "base_summary": {
+    "edge_count": 279,
+    "node_count": 154,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-09-10T13:45:39.048611Z",
+        "description": "TFD-7dd3fcb877 曾判定 blocked 违反 R7/R2。后续对账发现 R7 与 R2 已在同一会话内被修订为：待复核用 review_needed；复核确认剩余工作确实需要真人证据后必须 blocked，永不 done；冻结历史报告保留原状态。同步修订了 uas-00-evidence-freeze.mjs 的状态断言（接受 review_needed 或 blocked）。因此 blocked 不再是违规，而是复核确认后的正确终态。本偏差取代 TFD-7dd3fcb877；冻结产物 artifacts/first-product-preview/TF-0009/evidence-audit.json、artifacts/unified-agent-system/TF-0011/audit-manifest.json、agent-surrogate-charter.json、agent-surrogate-report.json 保持原 review_needed 不动。",
+        "id": "TFD-6bc9f26c33",
+        "related_task_ids": [
+          "TF-0009"
+        ],
+        "resolution": "status-set-to-blocked-after-rule-amendment",
+        "severity": "low",
+        "supersedes": "TFD-7dd3fcb877",
+        "title": "TF-0009 终态改为 blocked：R7/R2 已在 2026-09-10 修订，supersede TFD-7dd3fcb877"
+      }
+    }
+  ],
+  "created_at": "2026-09-10T13:45:39.037608Z",
+  "proposal_id": "TFP-e0b7ac1348",
+  "session_id": null,
+  "status": "applied"
+}

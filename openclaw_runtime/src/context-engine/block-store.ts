@@ -11,6 +11,7 @@ import { isRuntimeLineage } from "../runtime-core/lineage.js";
 import { isRuntimeTaskStatus } from "../runtime-core/types.js";
 import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
 import type {
+  ArchivedBlockRecallQuery,
   BlockAdmissionContext,
   BlockEntityQuery,
   BlockQuery,
@@ -23,6 +24,11 @@ import type {
   HandoffPack,
   SourceSystem,
 } from "./block.js";
+import {
+  hydrateLifecycleBlock,
+  isArchived,
+  unarchiveBlock,
+} from "./block-lifecycle.js";
 
 type ContextBlockTable = OpenClawStateKyselyDatabase["context_blocks"];
 type ContextBlockDatabase = Pick<
@@ -154,6 +160,38 @@ export class BlockStore implements BlockStoreApi {
       return [];
     }
     return this.#query(params, entities);
+  }
+
+  async recallArchivedBlocks(params: ArchivedBlockRecallQuery): Promise<ContextBlock[]> {
+    const requestedIds = new Set(
+      params.block_ids.map((blockId) => blockId.trim()).filter(Boolean),
+    );
+    if (requestedIds.size === 0) {
+      return [];
+    }
+    let recalled: ContextBlock[] = [];
+    runSqliteImmediateTransactionSync(this.#db, () => {
+      // Keep the authorized read and the heat increment in one write
+      // transaction so concurrent recalls cannot lose a touch.
+      const authorized = this.#query({
+        requester_session_id: params.requester_session_id,
+        ...(params.session_id ? { session_id: params.session_id } : {}),
+      }).filter((block) => requestedIds.has(block.block_id));
+      recalled = authorized.flatMap((block) => {
+        const lifecycle = hydrateLifecycleBlock(block);
+        return isArchived(lifecycle) ? [unarchiveBlock(lifecycle)] : [];
+      });
+      for (const block of recalled) {
+        executeSqliteQuerySync(
+          this.#db,
+          this.#kysely
+            .updateTable("context_blocks")
+            .set({ presence_json: JSON.stringify(block.presence) })
+            .where("block_id", "=", block.block_id),
+        );
+      }
+    });
+    return recalled;
   }
 
   async invalidate(block_id: string): Promise<void> {

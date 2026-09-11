@@ -1,8 +1,42 @@
 import type { AgentMessage } from "../../types.js";
 import type { CompressionTelemetry } from "./compression-planner.js";
 
+export type SemanticAtomStatus = "verified" | "unverified" | "stale" | "superseded";
+export type SemanticAtomPolarity = "positive" | "negative" | "neutral";
+export type SemanticAtomType =
+  | "goal"
+  | "latest_user_ask"
+  | "decision"
+  | "constraint"
+  | "failed_attempt"
+  | "entity"
+  | "next_action"
+  | "outcome"
+  | "safety_boundary";
+export type SemanticAtomSeverity = "critical" | "important" | "nice_to_have";
+
+export type CompressionSemanticAtom = {
+  id: string;
+  type: SemanticAtomType;
+  canonicalIdentity: string;
+  severity: SemanticAtomSeverity;
+  confidence: number;
+  scope: string;
+  polarity: SemanticAtomPolarity;
+  status: SemanticAtomStatus;
+  text: string;
+  evidenceRefs: CompressionEvidenceRef[];
+  supersedes?: string[];
+  conflicts?: string[];
+  updatedAt?: number;
+  source?: {
+    kind: "summary" | "message" | "ledger" | "cvk" | "archive";
+    ref: string;
+  };
+};
+
 export type CompressionEvidenceRef = {
-  type: "session" | "trace" | "file" | "tool" | "task_ledger" | "clawgraph" | "manual" | "other";
+  type: "session" | "trace" | "file" | "tool" | "task_ledger" | "clawgraph" | "manual" | "archive" | "cvk" | "other";
   ref: string;
   label?: string;
 };
@@ -81,6 +115,7 @@ export type CompressionArtifact = {
   retrievalTrace?: CompressionRetrievalTraceEntry[];
   rehydratedFileContext?: CompressionRehydratedFileContext[];
   telemetry?: Partial<CompressionTelemetry>;
+  semanticAtoms?: CompressionSemanticAtom[];
   quality: CompressionArtifactQuality;
 };
 
@@ -93,6 +128,8 @@ export type CompressionArtifactInput = {
   rehydratedFileContext?: CompressionRehydratedFileContext[];
   targetArtifactTokens?: number;
   telemetry?: Partial<CompressionTelemetry>;
+  semanticAtoms?: CompressionSemanticAtom[];
+  previousArtifact?: CompressionArtifact;
   contextRuntimeKit?: {
     retrievedContext?: CompressionCvkEvidenceRef[];
     requiredSelectors?: CompressionCvkEvidenceRef[];
@@ -114,6 +151,8 @@ const EVIDENCE_TYPES = new Set<CompressionEvidenceRef["type"]>([
   "task_ledger",
   "clawgraph",
   "manual",
+  "archive",
+  "cvk",
   "other",
 ]);
 
@@ -137,6 +176,48 @@ const RETRIEVAL_REASONS = new Set<CompressionRetrievalTraceEntry["reason"]>([
   "model_requested",
 ]);
 
+const SEMANTIC_ATOM_TYPES = new Set<SemanticAtomType>([
+  "goal",
+  "latest_user_ask",
+  "decision",
+  "constraint",
+  "failed_attempt",
+  "entity",
+  "next_action",
+  "outcome",
+  "safety_boundary",
+]);
+
+const SEMANTIC_ATOM_SEVERITIES = new Set<SemanticAtomSeverity>([
+  "critical",
+  "important",
+  "nice_to_have",
+]);
+
+const SEMANTIC_ATOM_STATUSES = new Set<SemanticAtomStatus>([
+  "verified",
+  "unverified",
+  "stale",
+  "superseded",
+]);
+
+const SEMANTIC_ATOM_POLARITIES = new Set<SemanticAtomPolarity>([
+  "positive",
+  "negative",
+  "neutral",
+]);
+
+const SEMANTIC_ATOM_SOURCE_KINDS = new Set<NonNullable<CompressionSemanticAtom["source"]>["kind"]>([
+  "summary",
+  "message",
+  "ledger",
+  "cvk",
+  "archive",
+]);
+
+const MAX_SEMANTIC_ATOMS = 48;
+const MAX_SEMANTIC_ATOM_TEXT = 240;
+
 function redactSecretLikeText(text: string): string {
   if (!text) return text;
   // Keep secret labels (e.g. OPENAI_API_KEY) while stripping values and raw token prefixes.
@@ -155,6 +236,171 @@ function normalizeText(value: unknown, maxChars = 600): string {
   const compact = redactSecretLikeText(value.replace(/\s+/g, " ").trim());
   if (compact.length <= maxChars) return compact;
   return `${compact.slice(0, Math.max(0, maxChars - 24)).trim()} [truncated]`;
+}
+
+function normalizeSemanticAtomText(value: unknown): string {
+  if (typeof value !== "string") return "";
+  // Fenced code bodies and large JSON/tool-schema-shaped blocks are projections, not
+  // durable fact storage. Replace them before the bounded text normalization so a long
+  // body can never leak into atom.text.
+  const withoutCodeBlocks = value.replace(/```[\w-]*\n[\s\S]*?```/g, "[code block omitted]");
+  const bounded = withoutCodeBlocks.length > MAX_SEMANTIC_ATOM_TEXT
+    ? `${withoutCodeBlocks.slice(0, Math.max(0, MAX_SEMANTIC_ATOM_TEXT - 24)).trim()} [truncated]`
+    : withoutCodeBlocks;
+  return normalizeText(bounded, MAX_SEMANTIC_ATOM_TEXT);
+}
+
+function normalizeStringSet(value: unknown, maxItems = 12): string[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const items = value
+    .map((item) => normalizeText(item, 160))
+    .filter(Boolean)
+    .slice(0, maxItems);
+  return items.length > 0 ? items : undefined;
+}
+
+function normalizeSemanticAtomEvidenceRefs(value: unknown): CompressionEvidenceRef[] {
+  if (!Array.isArray(value)) return [];
+  const normalized = value.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+    const entry = item as Partial<CompressionEvidenceRef>;
+    const ref = normalizeText(entry.ref, 300);
+    if (!ref) return [];
+    const type = typeof entry.type === "string" && EVIDENCE_TYPES.has(entry.type as CompressionEvidenceRef["type"])
+      ? entry.type as CompressionEvidenceRef["type"]
+      : "other";
+    return [{
+      type,
+      ref,
+      ...(entry.label ? { label: normalizeText(entry.label, 120) } : {}),
+    }];
+  });
+  const recoverable = normalized.filter((ref) => (
+    ref.type === "file" || ref.type === "archive" || ref.type === "cvk"
+  ));
+  const other = normalized.filter((ref) => (
+    ref.type !== "file" && ref.type !== "archive" && ref.type !== "cvk"
+  ));
+  return [...recoverable, ...other].slice(0, 8);
+}
+
+type SemanticAtomNormalizeResult = {
+  atom?: CompressionSemanticAtom;
+  warning?: string;
+};
+
+function normalizeSemanticAtom(value: unknown, index: number): SemanticAtomNormalizeResult {
+  if (!value || typeof value !== "object") return {};
+  const record = value as Partial<CompressionSemanticAtom>;
+  const id = normalizeText(record.id, 120) || `atom-${index + 1}`;
+  const type = typeof record.type === "string" && SEMANTIC_ATOM_TYPES.has(record.type as SemanticAtomType)
+    ? record.type as SemanticAtomType
+    : undefined;
+  if (!type) return {};
+  const severity = typeof record.severity === "string" && SEMANTIC_ATOM_SEVERITIES.has(record.severity as SemanticAtomSeverity)
+    ? record.severity as SemanticAtomSeverity
+    : "nice_to_have";
+  const status = typeof record.status === "string" && SEMANTIC_ATOM_STATUSES.has(record.status as SemanticAtomStatus)
+    ? record.status as SemanticAtomStatus
+    : "unverified";
+  const polarity = typeof record.polarity === "string" && SEMANTIC_ATOM_POLARITIES.has(record.polarity as SemanticAtomPolarity)
+    ? record.polarity as SemanticAtomPolarity
+    : "neutral";
+  const text = normalizeSemanticAtomText(record.text);
+  if (!text) return {};
+  const evidenceRefs = normalizeSemanticAtomEvidenceRefs(record.evidenceRefs);
+  let normalizedStatus = status;
+  let warning: string | undefined;
+  if (severity === "critical" && evidenceRefs.length === 0) {
+    if (normalizedStatus === "verified") normalizedStatus = "unverified";
+    warning = "critical_atom_missing_evidence";
+  }
+  const confidence = typeof record.confidence === "number" && Number.isFinite(record.confidence)
+    ? Math.max(0, Math.min(1, record.confidence))
+    : 0;
+  const updatedAt = typeof record.updatedAt === "number" && Number.isFinite(record.updatedAt) && record.updatedAt >= 0
+    ? Math.floor(record.updatedAt)
+    : undefined;
+  const sourceValue = record.source;
+  let source: CompressionSemanticAtom["source"] | undefined;
+  if (sourceValue) {
+    const sourceKind = SEMANTIC_ATOM_SOURCE_KINDS.has(sourceValue.kind)
+      ? sourceValue.kind
+      : "ledger";
+    source = { kind: sourceKind, ref: normalizeText(sourceValue.ref, 240) || "ledger" };
+  }
+  return {
+    atom: {
+      id,
+      type,
+      canonicalIdentity: normalizeText(record.canonicalIdentity, 200) || id,
+      severity,
+      confidence,
+      scope: normalizeText(record.scope, 120) || "session",
+      polarity,
+      status: normalizedStatus,
+      text,
+      evidenceRefs,
+      ...(normalizeStringSet(record.supersedes) ? { supersedes: normalizeStringSet(record.supersedes) } : {}),
+      ...(normalizeStringSet(record.conflicts) ? { conflicts: normalizeStringSet(record.conflicts) } : {}),
+      ...(updatedAt !== undefined ? { updatedAt } : {}),
+      ...(source ? { source } : {}),
+    },
+    ...(warning ? { warning } : {}),
+  };
+}
+
+function normalizeSemanticAtoms(value: unknown): { atoms: CompressionSemanticAtom[]; warnings: string[] } {
+  if (!Array.isArray(value)) return { atoms: [], warnings: [] };
+  const atoms: CompressionSemanticAtom[] = [];
+  const warnings: string[] = [];
+  for (let index = 0; index < value.length && atoms.length < MAX_SEMANTIC_ATOMS; index += 1) {
+    const result = normalizeSemanticAtom(value[index], index);
+    if (result.warning) warnings.push(result.warning);
+    if (result.atom) atoms.push(result.atom);
+  }
+  return { atoms, warnings };
+}
+
+function dedupeWarnings(items: string[]): string[] {
+  return [...new Set(items.map((item) => normalizeText(item, 240)).filter(Boolean))].slice(0, 16);
+}
+
+function isActiveAtom(atom: CompressionSemanticAtom): boolean {
+  return atom.status !== "stale" && atom.status !== "superseded";
+}
+
+function atomsToFacts(atoms: CompressionSemanticAtom[], types: SemanticAtomType[], maxItems: number): CompressionFact[] {
+  return atoms
+    .filter((atom) => isActiveAtom(atom) && types.includes(atom.type))
+    .slice(0, maxItems)
+    .map((atom) => ({ text: atom.text, evidenceRefs: atom.evidenceRefs }));
+}
+
+function atomTextByType(atoms: CompressionSemanticAtom[], types: SemanticAtomType[]): string | undefined {
+  return atoms.find((atom) => isActiveAtom(atom) && types.includes(atom.type))?.text;
+}
+
+function buildSemanticAtomLedger(input: CompressionArtifactInput): {
+  atoms: CompressionSemanticAtom[] | undefined;
+  warnings: string[];
+} {
+  const previous = normalizeSemanticAtoms(input.previousArtifact?.semanticAtoms);
+  const incoming = normalizeSemanticAtoms(input.semanticAtoms);
+  const atoms = [...previous.atoms];
+  const warnings = dedupeWarnings([...previous.warnings, ...incoming.warnings]);
+
+  for (const atom of incoming.atoms) {
+    if (atoms.some((existing) => existing.id === atom.id)) continue;
+    atoms.push(atom);
+    for (const target of atom.supersedes ?? []) {
+      const match = atoms.find((existing) => (
+        existing.id === target || existing.canonicalIdentity === target
+      ));
+      if (match) match.status = "superseded";
+    }
+  }
+  return { atoms: optionalArray(atoms), warnings };
 }
 
 function textFromContent(content: unknown): string {
@@ -220,14 +466,18 @@ function extractListFromSummary(summary: string | undefined, heading: RegExp, ma
 }
 
 function extractObjective(messages: AgentMessage[], summary?: string): string {
-  const summaryGoal = extractListFromSummary(summary, /\n?##\s*Goal\s*\n/i, 2).join("; ");
+  const summaryGoal = extractListFromSummary(
+    summary,
+    /\n?##\s*Goal(?:\s+and\s+Progress)?\s*\n/i,
+    2,
+  ).join("; ");
   if (summaryGoal) return normalizeText(summaryGoal, 700);
   const firstUser = messages.find((message) => message.role === "user");
   return normalizeText(firstUser ? messageText(firstUser) : "Continue the current task from compressed context.", 700);
 }
 
 function extractNextAction(summary: string | undefined, messages: AgentMessage[]): string {
-  const fromSummary = extractListFromSummary(summary, /\n?##\s*Next Steps\s*\n/i, 1)[0];
+  const fromSummary = extractListFromSummary(summary, /\n?##\s*Next (?:Steps|Actions)\s*\n/i, 1)[0];
   if (fromSummary) return normalizeText(fromSummary, 500);
   for (let i = messages.length - 1; i >= 0; i--) {
     const text = messageText(messages[i]);
@@ -414,7 +664,11 @@ function normalizeRehydratedFileContext(value: unknown, maxItems = 12): Compress
   }).slice(0, maxItems);
 }
 
-function buildQuality(artifact: Omit<CompressionArtifact, "quality">, targetTokens: number): CompressionArtifactQuality {
+function buildQuality(
+  artifact: Omit<CompressionArtifact, "quality">,
+  targetTokens: number,
+  atomWarnings: string[] = [],
+): CompressionArtifactQuality {
   const required: Array<keyof Omit<CompressionArtifact, "quality">> = [
     "objective",
     "currentState",
@@ -459,7 +713,7 @@ function buildQuality(artifact: Omit<CompressionArtifact, "quality">, targetToke
   if (evidenceCoverage < 0.7) warnings.push("low_evidence_coverage");
   if (artifactTokens > targetTokens) warnings.push("artifact_over_token_budget");
   if (artifact.unverifiedClaims.length > 0) warnings.push("contains_unverified_claims");
-  for (const warning of artifact.telemetry?.warnings ?? []) {
+  for (const warning of [...atomWarnings, ...(artifact.telemetry?.warnings ?? [])]) {
     const text = normalizeText(warning, 240);
     if (text && !warnings.includes(text)) warnings.push(text);
   }
@@ -518,38 +772,77 @@ export function buildDeterministicCompressionArtifact(input: CompressionArtifact
     pushUniqueFact(fileFacts, fact(file, [{ type: "file", ref: file }]));
   }
 
-  const objective = extractObjective(messages, summary);
-  const nextAction = extractNextAction(summary, messages);
+  // The atom ledger is the structured carrier. Legacy string fields are generated by
+  // this adapter from the ledger and must never become the source of truth themselves.
+  const atomLedger = buildSemanticAtomLedger(input);
+  const atoms = atomLedger.atoms ?? [];
+  const legacyConstraints = trimFacts(
+    extractListFromSummary(
+      summary,
+      /\n?##\s*(?:Key Decisions and Constraints|Constraints & Preferences)\s*\n/i,
+      8,
+    )
+      .map((item) => fact(item, evidence))
+      .filter((item): item is CompressionFact => Boolean(item)),
+    8,
+  );
+  const constraints = atoms.some((atom) => atom.type === "constraint" || atom.type === "safety_boundary")
+    ? trimFacts(atomsToFacts(atoms, ["constraint", "safety_boundary"], 8), 8)
+    : legacyConstraints;
+  const ledgerDecisions = atoms.some((atom) => atom.type === "decision")
+    ? trimFacts(atomsToFacts(atoms, ["decision"], 8), 8)
+    : trimFacts(decisions, 8);
+  const ledgerFailedAttempts = atoms.some((atom) => atom.type === "failed_attempt")
+    ? trimFacts(atomsToFacts(atoms, ["failed_attempt"], 6), 6)
+    : trimFacts(failedAttempts, 6);
+  let objective = extractObjective(messages, summary);
+  let nextAction = extractNextAction(summary, messages);
+  if (atoms.length > 0) {
+    const ledgerObjective = atomTextByType(atoms, ["goal", "latest_user_ask"]);
+    const ledgerNextAction = atomTextByType(atoms, ["next_action"]);
+    if (ledgerObjective) objective = ledgerObjective;
+    if (ledgerNextAction) nextAction = ledgerNextAction;
+  }
   if (inProgress.length === 0) {
     pushUniqueFact(inProgress, fact(nextAction, evidence));
   }
+  const outcome = atomTextByType(atoms, ["outcome"]);
+  const currentState = outcome ?? normalizeText(done[0]?.text || inProgress[0]?.text || summary || objective, 700);
+  const reviewNeeded = atoms.length > 0
+    ? trimFacts(atomsToFacts(
+        atoms.filter((atom) => atom.status === "unverified" && atom.severity === "critical"),
+        ["goal", "latest_user_ask", "decision", "constraint", "failed_attempt", "entity", "next_action", "outcome", "safety_boundary"],
+        6,
+      ), 6)
+    : [];
+  const atomEvidence = atoms.flatMap((atom) => atom.evidenceRefs);
 
   const artifactWithoutQuality: Omit<CompressionArtifact, "quality"> = {
     schemaVersion: 1,
     objective,
-    constraints: trimFacts(
-      extractListFromSummary(summary, /\n?##\s*Constraints & Preferences\s*\n/i, 8)
-        .map((item) => fact(item, evidence))
-        .filter((item): item is CompressionFact => Boolean(item)),
-      8,
-    ),
-    currentState: normalizeText(done[0]?.text || inProgress[0]?.text || summary || objective, 700),
+    constraints,
+    currentState,
     done: trimFacts(done, 8),
     inProgress: trimFacts(inProgress, 5),
     blocked: trimFacts(blocked, 5),
-    decisions: trimFacts(decisions, 8),
+    decisions: ledgerDecisions,
     filesTouched: trimFacts(fileFacts, 12),
     testsRun: trimFacts(testsRun, 8),
-    failedAttempts: trimFacts(failedAttempts, 6),
+    failedAttempts: ledgerFailedAttempts,
     deviations: [],
     nextAction,
-    reviewNeeded: [],
-    evidenceRefs: [...evidence, ...fileFacts.flatMap((item) => item.evidenceRefs)].slice(0, 24),
+    reviewNeeded,
+    evidenceRefs: [...evidence, ...fileFacts.flatMap((item) => item.evidenceRefs), ...atomEvidence].slice(0, 24),
     unverifiedClaims: [
       ...normalizeCvkEvidenceRefs(input.contextRuntimeKit?.staleReferences, 8)
         .map((ref) => `Stale reference must be revalidated: ${ref.resourceId} ${ref.selector}`),
       ...(input.contextRuntimeKit?.unverifiedClaims ?? []).map((item) => normalizeText(item, 300)).filter(Boolean),
+      ...atoms
+        .filter((atom) => atom.status === "unverified")
+        .map((atom) => `Unverified semantic atom: ${atom.text}`)
+        .slice(0, 4),
     ].slice(0, 8),
+    ...(atomLedger.atoms ? { semanticAtoms: atomLedger.atoms } : {}),
     ...(normalizeTelemetry(input.telemetry) ? { telemetry: normalizeTelemetry(input.telemetry) } : {}),
     ...(optionalArray(normalizeRehydratedFileContext(input.rehydratedFileContext)) ? {
       rehydratedFileContext: optionalArray(normalizeRehydratedFileContext(input.rehydratedFileContext)),
@@ -570,7 +863,7 @@ export function buildDeterministicCompressionArtifact(input: CompressionArtifact
       retrievalTrace: optionalArray(normalizeRetrievalTraceEntries(input.contextRuntimeKit?.retrievalTrace)),
     } : {}),
   };
-  const quality = buildQuality(artifactWithoutQuality, targetTokens);
+  const quality = buildQuality(artifactWithoutQuality, targetTokens, atomLedger.warnings);
   return { ...artifactWithoutQuality, quality };
 }
 
@@ -600,8 +893,32 @@ function formatCapabilityActivations(items: CompressionCapabilityActivation[] | 
   )).join("\n");
 }
 
-export function renderCompressionArtifactSummary(artifact: CompressionArtifact): string {
+function formatSemanticAtomCounts(atoms: CompressionSemanticAtom[] | undefined): string | undefined {
+  if (!atoms?.length) return undefined;
+  const count = (status: SemanticAtomStatus) => atoms.filter((atom) => atom.status === status).length;
+  const conflicts = atoms.filter((atom) => (atom.conflicts?.length ?? 0) > 0).length;
   return [
+    `semanticAtoms: verified=${count("verified")}`,
+    `unverified=${count("unverified")}`,
+    `stale=${count("stale")}`,
+    `superseded=${count("superseded")}`,
+    `conflicts=${conflicts}`,
+  ].join(" ");
+}
+
+function formatSemanticAtomLedger(atoms: CompressionSemanticAtom[] | undefined, maxItems = 10): string {
+  if (!atoms?.length) return "- none";
+  return atoms.slice(0, maxItems).map((atom) => {
+    const relations = [
+      ...(atom.supersedes?.length ? [`supersedes:${atom.supersedes.join(",")}`] : []),
+      ...(atom.conflicts?.length ? [`conflicts:${atom.conflicts.join(",")}`] : []),
+    ].join(" ");
+    return `- [${atom.type}:${atom.status}:${atom.severity}] ${atom.text}${relations ? ` (${relations})` : ""}`;
+  }).join("\n");
+}
+
+export function renderCompressionArtifactSummary(artifact: CompressionArtifact): string {
+  const legacySections = [
     "## Goal",
     artifact.objective || "Continue the current task.",
     "",
@@ -626,6 +943,15 @@ export function renderCompressionArtifactSummary(artifact: CompressionArtifact):
     "",
     "## Critical Context",
     formatFactList([...artifact.filesTouched, ...artifact.testsRun, ...artifact.failedAttempts].slice(0, 12)),
+  ];
+  if (!artifact.semanticAtoms?.length) {
+    return legacySections.join("\n");
+  }
+  return [
+    ...legacySections,
+    "",
+    "## Semantic Atoms",
+    formatSemanticAtomLedger(artifact.semanticAtoms),
   ].join("\n");
 }
 
@@ -667,6 +993,10 @@ export function renderRecoveryContextProjection(
       : "",
     artifact.unverifiedClaims.length
       ? `unverifiedClaims:\n${artifact.unverifiedClaims.slice(0, 4).map((item) => `- ${item}`).join("\n")}`
+      : "",
+    formatSemanticAtomCounts(artifact.semanticAtoms) ?? "",
+    artifact.semanticAtoms?.length
+      ? `semanticAtomLedger:\n${formatSemanticAtomLedger(artifact.semanticAtoms)}`
       : "",
     artifact.telemetry
       ? `compression: ${artifact.telemetry.tier ?? "unknown"} / ${artifact.telemetry.strategy ?? "unknown"}`
@@ -722,6 +1052,7 @@ export function normalizeCompressionArtifact(value: unknown): CompressionArtifac
         }).slice(0, maxItems)
       : []
   );
+  const normalizedAtoms = normalizeSemanticAtoms(record.semanticAtoms);
   const artifactWithoutQuality: Omit<CompressionArtifact, "quality"> = {
     schemaVersion: 1,
     objective: normalizeText(record.objective, 700) || "Continue the current task from compressed context.",
@@ -760,8 +1091,12 @@ export function normalizeCompressionArtifact(value: unknown): CompressionArtifac
     ...(optionalArray(normalizeRehydratedFileContext(record.rehydratedFileContext)) ? {
       rehydratedFileContext: optionalArray(normalizeRehydratedFileContext(record.rehydratedFileContext)),
     } : {}),
+    ...(optionalArray(normalizedAtoms.atoms) ? { semanticAtoms: optionalArray(normalizedAtoms.atoms) } : {}),
   };
-  return { ...artifactWithoutQuality, quality: buildQuality(artifactWithoutQuality, DEFAULT_TARGET_ARTIFACT_TOKENS) };
+  return {
+    ...artifactWithoutQuality,
+    quality: buildQuality(artifactWithoutQuality, DEFAULT_TARGET_ARTIFACT_TOKENS, normalizedAtoms.warnings),
+  };
 }
 
 function cvkRefKey(ref: CompressionCvkEvidenceRef): string {

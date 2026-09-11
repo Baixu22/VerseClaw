@@ -1,0 +1,79 @@
+{
+  "applied_at": "2026-08-27T15:33:25.392073Z",
+  "base_graph_hash": "71349ce0e2fdda345a5164a6cb72eb6edcd69b32e9fc771ae646f6e28d260c5f",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "summary": "【移入第二轮 · blocked】阻塞于：按 T-C0 字段清单重新估价。T-C0 绿结论已达成（TF-0138 done/100，结论「可行但需重定范围」，故 M6 预承诺的降级分支不触发）。语料前置已收窄（lane-2 裁决看板 XL-009，2026-08-27）：只有 loss-trace-spike.md §9 点名的三条验收项需要 >=2 次压缩的真实语料（跨轮摘要合并行为、多次压缩的 compactionBoundary 链、损失叠加），设计判定与实现部分不受其阻塞。开工前置见 M6 requirements。\n\n现有谱系（ContextCandidateLineage 含 disposition / reason / charsRequested / charsApplied / novelty）与账本（degradationOrder）都在生产，但 endContextCandidateCollection 在 attempt 结束即清除（context-candidate.ts:378-384、attempt.ts:5810），无法跨轮追溯。本 task 把每次 model call 的谱系与账本快照持久化，并提供查询：给定会话与轮次，输出被丢弃的单元、丢弃轮次、丢弃决策（budget-drop / compaction / limitHistoryTurns / archived / skipChannels）。"
+      },
+      "id": "TF-0129"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "summary": "【移入第二轮 · blocked】阻塞于：按 T-C0 字段清单重新估价。T-C0 绿结论已达成（TF-0138 done/100，结论「可行但需重定范围」，故 M6 预承诺的降级分支不触发）。语料前置已收窄（lane-2 裁决看板 XL-009，2026-08-27）：只有 loss-trace-spike.md §9 点名的三条验收项需要 >=2 次压缩的真实语料（跨轮摘要合并行为、多次压缩的 compactionBoundary 链、损失叠加），设计判定与实现部分不受其阻塞。开工前置见 M6 requirements。\n\n触发信号 = T-C1 的损伤检测（goal_token_decay / entity_loss_risk 为主）；动作 = 从 BlockStore / receipt 取回被判定丢失的具体单元，按 knowledge 通道优先级重新注入，复用现有 candidate/ledger 管道。与 ARC 的差别：ARC 用 LLM 反思判断是否重组整个工作上下文（多次 LLM 调用），本方案用确定性检测判断具体哪一条该回来（零 LLM）。"
+      },
+      "id": "TF-0130"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "summary": "【移入第二轮 · blocked】阻塞于：按 T-C0 字段清单重新估价。T-C0 绿结论已达成（TF-0138 done/100，结论「可行但需重定范围」，故 M6 预承诺的降级分支不触发）。语料前置已收窄（lane-2 裁决看板 XL-009，2026-08-27）：只有 loss-trace-spike.md §9 点名的三条验收项需要 >=2 次压缩的真实语料（跨轮摘要合并行为、多次压缩的 compactionBoundary 链、损失叠加），设计判定与实现部分不受其阻塞。开工前置见 M6 requirements。\n\n用 scripts/context-compression-eval-runner.mjs --paired-summary 在真实会话 JSONL 上做 A/B：对照组 = 现状压缩，实验组 = 开启 T-C3 定向再注入。报三项：goal_token_decay 与 entity_loss_risk 发生率对比、再注入 token 开销占比、以及可归因丢弃事件覆盖率。这是对外可展示的唯一量化产物。"
+      },
+      "id": "TF-0141"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "requirements": [
+          "开工前置（lane-2 按看板 XL-009 收窄，2026-08-27；原文为「开工前必须满足三条：T-C0 出绿结论、T-CORPUS 语料达标、按 T-C0 字段清单重新估价（原 900/900/360 作废）」）：(1) T-C0 出绿结论 —— 已达成，TF-0138 于 2026-08-27 收口 done/100，结论为「可行但需重定范围」，故本节点预承诺的降级分支不触发；(2) 按 T-C0 字段清单重新估价（原 900/900/360 作废）—— 仍是硬前置，且 TF-0138 已给出估价修正依据（六组字段里三组是搬运已有值、一组是复用已有 ref 形状，只有 discardClass / 轮次身份 / compactionBoundary 是真新增）；(3) T-CORPUS 语料达标 —— 不再是整包前置。收窄理由两条，均已实测：其一，该语料本轮不可达 —— 本机 174 个非 trajectory 会话的压缩次数直方图为 {0:163, 1:11}，全语料上限恒为 1，满足 >=40 轮 且 >=2 次压缩 者 0 个（lane-2 独立重算），且真实第二次压缩必须经模型调用产生而凭据层无可用 provider（models.providers 仅配 deepseek 一家，其 apiKey 是 16 字符全大写的环境变量名占位符，该变量与另七个常见键在 env 中全部 unset）；其二，该语料只支撑三条验收项（loss-trace-spike.md §9：跨轮摘要合并行为、多次压缩的 compactionBoundary 链、损失叠加），而全部设计判定（五类可观测性、六组字段清单、runtime_receipts 生产 0 行、archived 零实例、两源不可 join）在单次压缩语料上已充分成立。故：仅上述三条验收项等语料，设计与实现部分不受其阻塞。注意本条收窄不改变 non_goals「本轮不投入任何工时」—— 收窄的收益是让前置停止表达一个假条件。",
+          "T-C2 必须显式列出 src/state/* 触碰面，迁移限定 additive-only 并过 src/state/sqlite-schema-shape.test-support.ts 守卫",
+          "T-C3 的 v1 critical 触发器必须采用 T-C1 产出的选型结论，不得单用 goal_token_decay",
+          "T-C3 取回单元前必须检查 invalid_at（block-store.ts:74,91,165-180 确有失效机制）；已失效单元只进归因报告、不进注入 —— 否则把「缺失」换成「错误」",
+          "T-C2 持久化的 lineage.reason 只允许「枚举标签 + 数值元数据」，禁止自由文本（防内容片段经 reason 泄漏，与 receipt 的 digest-only 纪律一致）；须有文法断言测试",
+          "T-E3 必须把 T-E2 soak 期间的回滚史作为混杂变量记录：若 tool-registry 翻正因健康分下降而回滚，而 T-C3 的再注入同样作用于健康分相关指标，两者在 A/B 中混杂，不记录则报告不可信",
+          "T-E3 必须报告负面或无差异结果，并报告「再注入后 N 轮内目标语言材料覆盖率恢复」的触发精度；触发精度 < 50% 则该信号不够格做 v1 唯一 critical 触发器",
+          "本轮已裁定不拉回的两项，第二轮必须执行：(1) T-C3 取回单元前检查 invalid_at —— 本轮无再注入动作，为不存在的动作先建守卫即是「建成未通电」模式的重演；(2) T-C2 的 lineage.reason 文法约束 —— 本轮无持久化，其在 T-C0 产出侧的暴露面已由 T-C0 的脱敏 requirement 关闭。"
+        ]
+      },
+      "id": "TF-0144"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.9,
+        "created_at": "2026-08-27T16:00:00Z",
+        "decided_by": "lane-2 作为非实现者按看板 XL-009 裁决。lane-1 已把两条事实写入 TF-0129 evidence（TF-0138 的 AC-3 授权范围内），并明确未改 status、未解除前置、未碰 TF-0130/0141/0144（不在其授权内）；本裁决落地收窄并按 §R4.2(a) 记录。",
+        "evidence": "AUDIT-BOARD.html XL-009；docs/dev/context-moat/reviews/TF-0138.md §4(4) 与 §9；docs/dev/context-moat/loss-trace-spike.md §9；TF-0129 第 7-9 条 evidence（lane-1 落）；TF-0143 node 第 3-4 条 evidence。",
+        "expected_requirement": "§R4.2(a)：范围增减（含移轮/改前置）必须记 record_deviation。TF-0144 requirement-1 原文把「T-CORPUS 语料达标」列为整包开工前置。",
+        "id": "TFD-lane2-xl009-round2-gate-narrowing-2026-08-27",
+        "impact": "裁决：收窄。TF-0144 requirement-1 改写为三段式，明确 (1) T-C0 绿结论已达成、(2) 重新估价仍是硬前置、(3) 语料达标不再是整包前置，仅 loss-trace-spike.md §9 点名的三条验收项等语料。TF-0129/0130/0141 的 summary 前置句同步改写，四个节点的表述一致。收窄不解除 blocked、不改 status、不启动 round-2 —— TF-0144 的 non_goals「本轮不投入任何工时」保持有效且本裁决不触碰它。收益是让前置停止表达一个已被实测证伪的条件，并使下一轮接手者不必重新发现这件事。风险已被前置消化：TF-0129 的 AC-1 已在 TF-0138 审核中改写为「>=3 类各有单测归类证据 + >=1 类有真实会话证据」的解耦形式，三条受限结论也已作为 evidence 登记为未验证，故收窄不会让 round-2 在缺语料时误认为三条验收项已可交付。",
+        "kind": "scope_change",
+        "node_id": "TF-0144",
+        "observed_action_or_result": "lane-1 报 XL-009 两条事实，lane-2 逐条独立复测后确认成立。事实一（前置本轮不可达）：独立重算 174 个非 trajectory 会话，压缩次数直方图 {0:163, 1:11}，全语料上限恒为 1，满足 >=40 轮且 >=2 次压缩者 0 个；11 个有压缩的会话中只有一个达 41 轮，正是 TF-0138 用的那一个。凭据层独立核对：models.providers 仅 deepseek 一家，其 apiKey 为 16 字符全大写环境变量名占位符，该变量与另七个常见键在 env 中全部 unset，故真实第二次 compaction（须经模型调用产生）本轮不可能出现。事实二（前置过宽）：按 loss-trace-spike.md §9，需要 >=2 次压缩的只有三条验收项（跨轮摘要合并、多次压缩的 compactionBoundary 链、损失叠加），而五类可观测性、六组字段清单、runtime_receipts 生产 0 行、archived 零实例、两源不可 join 全部不依赖压缩次数 —— 该划分我在 TF-0138 审核 §4(4) 已逐条核对。另核 TF-0144 的 purpose 只记录了「把最高不确定性的实现工作推到有可行性结论之后」，即前置的落盘意图是 T-C0 可行性结论，语料条件本身没有独立记录的理由；lane-1 说找不到「整包等语料是有意保守设计」的落盘处，此点成立。",
+        "recommendation": "round-2 接手者的机械判据：TF-0144 requirement-1 第 (3) 段列出的三条验收项，其证据必须来自 >=2 次压缩的真实语料；其余判定不得以「等语料」为由挂起。若届时仍无该语料，这三条应显式标注为未验证并另立 task，不得降低真实性要求或改用合成语料（TF-0138 requirement-2 的硬约束对 round-2 同样适用）。本裁决不改任何旗标默认值、零 openclaw_runtime 改动。",
+        "related_task_ids": [
+          "TF-0144",
+          "TF-0129",
+          "TF-0130",
+          "TF-0141",
+          "TF-0143",
+          "TF-0138"
+        ],
+        "severity": "low",
+        "status": "resolved"
+      }
+    }
+  ],
+  "created_at": "2026-08-27T15:33:25.147363Z",
+  "proposal_id": "prop-lane2-xl009-round2-gate-narrowing-2026-08-27",
+  "rationale": "答复看板 XL-009。lane-1 报整个 round-2 队列（TF-0129/0130/0141/0144）共享的开工前置三元组里，「T-CORPUS 语料达标」这一条本轮不可达且对其中三个节点过宽。两条事实经 lane-2 逐条独立复测成立：174 个会话压缩次数上限恒为 1、满足判据者 0 个、凭据层无可用 provider；而需要 >=2 次压缩的只有 loss-trace-spike.md §9 点名的三条验收项，全部设计判定不依赖它。另核 TF-0144 的 purpose 只把前置的意图记录为「等 T-C0 可行性结论」，语料条件没有独立的落盘理由，故 lane-1「找不到整包等语料的设计意图」成立。裁决收窄：requirement-1 改为三段式并同步四个节点的前置表述，但不解除 blocked、不改 status、不动 non_goals「本轮不投入任何工时」。收窄的风险已被 TF-0138 审核前置消化 —— AC-1 已改写为解耦形式，三条受限结论已登记为未验证。",
+  "session_id": "session-lane-2",
+  "status": "applied"
+}

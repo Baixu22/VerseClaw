@@ -1,0 +1,173 @@
+check-no-bom: ok
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\electron\main\index.ts
+  1144:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\electron\services\knowledge-api.ts
+  4230:35   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4233:32   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4244:50   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4244:79   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4250:39   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4250:77   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4251:45   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4251:89   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4268:41   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4269:47   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4269:100  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4270:52   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4271:54   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4286:38   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4287:44   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4288:49   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4289:51   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4304:36   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4305:42   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4306:47   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4307:49   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4321:38   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4322:44   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4322:91   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4322:115  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4323:53   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4323:77   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4324:55   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  4324:79   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\electron\services\orchestration-presets-api.ts
+  42:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\openclaw_runtime\extensions\browser\src\browser\server-context.test-harness.ts
+  66:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\openclaw_runtime\extensions\codegraph\index.ts
+   156:7    warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   175:44   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   206:17   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   322:17   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   334:65   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   430:17   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   453:76   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   519:90   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   550:48   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   742:29   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   746:29   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   795:38   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   795:44   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   962:53   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  1141:38   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  1142:145  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  1179:145  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  1204:129  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\openclaw_runtime\extensions\codegraph\runtime.e2e.test.ts
+   11:61  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   41:8   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  194:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\openclaw_runtime\extensions\signal\src\monitor\event-handler.test-harness.ts
+  8:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\openclaw_runtime\extensions\whatsapp\src\auto-reply.test-harness.ts
+  26:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\openclaw_runtime\extensions\whatsapp\src\monitor-inbox.test-harness.ts
+  16:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\openclaw_runtime\src\channels\plugins\types.plugin.ts
+  66:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\openclaw_runtime\src\gateway\server-startup-post-attach.defer.test.ts
+  27:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  41:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  43:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  51:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  65:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\openclaw_runtime\src\test-utils\vitest-mock-fn.ts
+  6:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6:66  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6:76  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\components\ai-elements\stack-trace.tsx
+  50:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\components\assistant-render\GitHubCard.tsx
+  79:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  88:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\components\assistant-render\KnowledgeDirectiveChip.tsx
+  58:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  76:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\components\assistant-ui\attachment.tsx
+  27:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\components\assistant-ui\dot-matrix.tsx
+  366:21  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\components\layout\Sidebar.tsx
+  486:9  warning  The 'handleStartRename' function makes the dependencies of useCallback Hook (at line 704) change on every render. Move it inside the useCallback callback. Alternatively, wrap the definition of 'handleStartRename' in its own useCallback() Hook      react-hooks/exhaustive-deps
+  491:9  warning  The 'handleRenameSubmit' function makes the dependencies of useCallback Hook (at line 704) change on every render. To fix this, wrap the definition of 'handleRenameSubmit' in its own useCallback() Hook                                               react-hooks/exhaustive-deps
+  504:9  warning  The 'handleRenameCancel' function makes the dependencies of useCallback Hook (at line 704) change on every render. To fix this, wrap the definition of 'handleRenameCancel' in its own useCallback() Hook                                               react-hooks/exhaustive-deps
+  538:9  warning  The 'handleRenameKeyDown' function makes the dependencies of useCallback Hook (at line 704) change on every render. Move it inside the useCallback callback. Alternatively, wrap the definition of 'handleRenameKeyDown' in its own useCallback() Hook  react-hooks/exhaustive-deps
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\components\tool-ui\approval-card\_adapter.tsx
+  1:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\components\tool-ui\code-diff\_adapter.tsx
+  1:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\components\tool-ui\code-diff\code-diff.tsx
+  145:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  289:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  342:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  392:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  427:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\components\tool-ui\progress-tracker\progress-tracker.tsx
+   91:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  143:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  165:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  239:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  342:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\components\tool-ui\shared\_adapter.tsx
+  1:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\components\tool-ui\terminal\_adapter.tsx
+  1:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\components\tool-ui\terminal\terminal.tsx
+   61:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  123:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  185:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  194:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\pages\Agents\index.tsx
+  513:9  warning  The 'publications' logical expression could make the dependencies of useMemo Hook (at line 520) change on every render. To fix this, wrap the initialization of 'publications' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  535:7  warning  React Hook useMemo has a missing dependency: 'publications'. Either include it or remove the dependency array                                                                                             react-hooks/exhaustive-deps
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\pages\Chat\index.tsx
+   277:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                                                                        react-refresh/only-export-components
+   306:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                                                                        react-refresh/only-export-components
+  1066:6   warning  React Hook useCallback has an unnecessary dependency: 'activeWorkspace.permissionMode'. Either exclude it or remove the dependency array                                                                                                              react-hooks/exhaustive-deps
+  1138:9   warning  The 'graphStepCache' logical expression could make the dependencies of useMemo Hook (at line 2241) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'graphStepCache' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  2083:6   warning  React Hook useCallback has an unnecessary dependency: 'activeWorkspace.permissionMode'. Either exclude it or remove the dependency array                                                                                                              react-hooks/exhaustive-deps
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\pages\Knowledge\index.tsx
+   856:60  warning  Unexpected any. Specify a different type                                                                                                                                                                     @typescript-eslint/no-explicit-any
+   901:9   warning  The 'okfConcepts' logical expression could make the dependencies of useCallback Hook (at line 1156) change on every render. To fix this, wrap the initialization of 'okfConcepts' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  1025:35  warning  Unexpected any. Specify a different type                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  1026:38  warning  Unexpected any. Specify a different type                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  1032:45  warning  Unexpected any. Specify a different type                                                                                                                                                                     @typescript-eslint/no-explicit-any
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\src\pages\Observability\index.tsx
+  1129:6  warning  React Hook useMemo has a missing dependency: 'phaseOrder'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\tests\unit\workspaces-api.test.ts
+  511:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 110 problems (0 errors, 110 warnings)

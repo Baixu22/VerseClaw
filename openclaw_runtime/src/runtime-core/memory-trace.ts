@@ -131,6 +131,10 @@ export type BridgeDiscoveryTrace = {
   entityPair: [string, string] | null;
   bridgeFactId?: string;
   betweennessScore?: number;
+  /** WP2 diagnostics passthrough: candidate count retained after top-K cut. */
+  bridgeCandidateCount?: number;
+  /** WP2 diagnostics passthrough: the top-ranked bridge fact chosen for probing. */
+  selectedBridgeFactId?: string | null;
   pathLength?: number;
   timeFilteredOutCount?: number;
   bridgeLiftAtK?: number;

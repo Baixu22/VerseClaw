@@ -100,6 +100,7 @@ import {
   resolveVerseShellCommandPlan,
   type VerseShellCommandPlan,
 } from "./verseshell/command-profiles.js";
+import { appendVerseShellExternalWriteWarning } from "./verseshell/external-write-policy.js";
 
 export type { BashSandboxConfig } from "./bash-tools.shared.js";
 export type {
@@ -1336,6 +1337,20 @@ function resolveExecReviewerDefaults(params: { defaults?: ExecToolDefaults; agen
   return agentExec?.reviewer ?? cfg?.tools?.exec?.reviewer;
 }
 
+/**
+ * Liveness-update interval for foreground-only exec runs (background execution
+ * unavailable). Returns 0 when disabled. Kept short enough to beat an interactive
+ * tool-call budget but long enough not to spam the update channel.
+ */
+function resolveExecForegroundHeartbeatMs(): number {
+  return clampWithDefault(
+    readEnvInt("OPENCLAW_EXEC_FOREGROUND_HEARTBEAT_MS"),
+    15_000,
+    1_000,
+    120_000,
+  );
+}
+
 /** Creates an exec tool instance with runtime defaults and approval policy wiring. */
 export function createExecTool(
   defaults?: ExecToolDefaults,
@@ -1523,7 +1538,9 @@ export function createExecTool(
         warnings.push(approvalWarningText);
       }
       let execCommandOverride: string | undefined;
-      let executionPlan: import("./verseshell/command-profiles.js").VerseShellCommandPlan | undefined;
+      let executionPlan:
+        | import("./verseshell/command-profiles.js").VerseShellCommandPlan
+        | undefined;
       const backgroundRequested = params.background === true;
       const requestedWait =
         params.wait === "session" || params.wait === "goal" || params.wait === "none"
@@ -1534,8 +1551,15 @@ export function createExecTool(
         throw new Error('exec wait="goal" requires background=true');
       }
       const yieldRequested = typeof params.yieldMs === "number";
-      if (!allowBackground && (backgroundRequested || yieldRequested)) {
-        warnings.push("Warning: background execution is disabled; running synchronously.");
+      if (!allowBackground) {
+        // Foreground-only exec has no follow-up path, so the model must know the
+        // command cannot be backgrounded or polled: a long-running command will
+        // block the turn until it exits or hits the exec timeout.
+        warnings.push(
+          backgroundRequested || yieldRequested
+            ? "Warning: background execution is disabled; the requested background/yield mode is unavailable, so the command runs synchronously and returns only after the process exits."
+            : "Warning: background execution is disabled; running synchronously and returning only after the process exits.",
+        );
       }
       const yieldWindow = goalWaitRequested
         ? 0
@@ -1622,8 +1646,7 @@ export function createExecTool(
       // retry token; it does not replace host authorization.
       const explicitSecurity = defaults?.security;
       const configuredSecurity =
-        explicitSecurity ??
-        (host === "sandbox" ? "deny" : host === "verseshell" ? "full" : "full");
+        explicitSecurity ?? (host === "sandbox" ? "deny" : host === "verseshell" ? "full" : "full");
       const modePolicy = resolveExecModePolicy({
         mode: defaults?.mode,
         security: configuredSecurity,
@@ -1666,8 +1689,7 @@ export function createExecTool(
       const hostAsk = maxAsk(modePolicy.ask, approvalPolicy?.ask ?? modePolicy.ask);
       const trustedAsk = defaults?.messageProvider && hostAsk === "off" ? undefined : requestedAsk;
       let ask = maxAsk(hostAsk, trustedAsk ?? hostAsk);
-      const explicitFullAccess =
-        defaults?.mode === "full" || defaults?.security === "full";
+      const explicitFullAccess = defaults?.mode === "full" || defaults?.security === "full";
       const provenancePolicy = resolveCommandExecProvenancePolicy({
         provenance: defaults?.contentProvenance,
         security,
@@ -1853,6 +1875,7 @@ export function createExecTool(
               allowExplicitShell: true,
             })
           : undefined;
+      appendVerseShellExternalWriteWarning(warnings, preResolvedVerseShellPlan);
 
       if ((host === "gateway" || host === "verseshell") && !bypassApprovals) {
         const gatewayResult = await processGatewayAllowlist({
@@ -2055,6 +2078,7 @@ export function createExecTool(
           notifyOnExitEmptySuccess,
           scopeKey: defaults?.scopeKey,
           sessionKey: notifySessionKey,
+          traceId: defaults?.trace?.traceId,
           agentId,
           expectedSessionId: defaults?.sessionId,
           sessionStore: defaults?.sessionStore,
@@ -2135,6 +2159,7 @@ export function createExecTool(
 
       let yielded = false;
       let yieldTimer: NodeJS.Timeout | null = null;
+      let foregroundHeartbeat: NodeJS.Timeout | null = null;
       let registeredAbortSignal: AbortSignal | null = null;
 
       // Tool-call abort should not kill backgrounded sessions; timeouts still must.
@@ -2161,6 +2186,10 @@ export function createExecTool(
         if (yieldTimer) {
           clearTimeout(yieldTimer);
           yieldTimer = null;
+        }
+        if (foregroundHeartbeat) {
+          clearInterval(foregroundHeartbeat);
+          foregroundHeartbeat = null;
         }
       };
 
@@ -2227,6 +2256,43 @@ export function createExecTool(
               markBackgrounded(run.session);
               resolveRunning();
             }, yieldWindow);
+          }
+        } else {
+          // Foreground-only exec: background/process follow-up is unavailable, so
+          // the promise settles only when the process exits and the turn stays
+          // blind until then (observed in the 2026-09-11 live CDP corpus, session
+          // s03-t02: the exec produced no result before the UI timeout while the
+          // command was still running). Emit periodic liveness updates instead.
+          const heartbeatMs = resolveExecForegroundHeartbeatMs();
+          if (heartbeatMs > 0 && typeof onUpdate === "function") {
+            foregroundHeartbeat = setInterval(() => {
+              if (yielded || run.session.backgrounded) {
+                return;
+              }
+              const elapsedSeconds = Math.max(
+                1,
+                Math.round((Date.now() - run.startedAt) / 1000),
+              );
+              onUpdate({
+                content: [
+                  {
+                    type: "text",
+                    text: `${getWarningText()}Command still running (session ${run.session.id}, pid ${
+                      run.session.pid ?? "n/a"
+                    }, ${elapsedSeconds}s elapsed). Use process (list/poll/log/write/send-keys/submit/paste/kill/clear/remove) for follow-up.`,
+                  },
+                ],
+                details: {
+                  status: "running",
+                  sessionId: run.session.id,
+                  pid: run.session.pid ?? undefined,
+                  startedAt: run.startedAt,
+                  cwd: run.session.cwd,
+                  tail: run.session.tail,
+                },
+              });
+            }, heartbeatMs);
+            foregroundHeartbeat.unref?.();
           }
         }
 

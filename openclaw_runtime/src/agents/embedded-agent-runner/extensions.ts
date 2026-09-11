@@ -15,6 +15,8 @@ import {
   getContextOrchestratorCollection,
 } from "../../context-engine/context-orchestrator.js";
 import { reopenContextCandidateCollection } from "../../context-engine/context-candidate.js";
+import { resolveKillSwitchConfig } from "../../context-engine/kill-switch-config-source.js";
+import { isWorkingMemoryRegatherEnabled } from "../../context-engine/working-memory-regather.js";
 import type { TurnInjectionChannel } from "../../context-engine/turn-injection-budget.js";
 import { dcsObservability } from "../../context-engine/dcs-observability.js";
 import type { BlockStoreApi, ContextBlock, ContextBlockSink } from "../../context-engine/block.js";
@@ -272,8 +274,16 @@ function buildContextBlockFactory(params: {
   let modelCallIndex = 0;
   let sawFirstContextCall = false;
   // Channels whose content already entered this attempt's transcript through an
-  // earlier projection. Later model calls must not collect them again.
+  // earlier projection. Later model calls must not collect them again —
+  // except working_memory when the T-B6 regather gate is on: it produces new
+  // Blocks as the tool loop runs, so it is re-queried and deduplicated by
+  // dedupKey instead of channel-skipped (see the context callback below).
   const injectedChannels = new Set<TurnInjectionChannel>();
+  // T-B6: dedupKeys of everything injected so far in this attempt
+  // (contentDigest is part of the dedupKey). Later model calls receive this
+  // set so re-collected working_memory content that did not change is
+  // dispositioned "duplicate" instead of injected twice.
+  const injectedDedupKeys = new Set<string>();
   async function finalizeCandidates(
     messages: AgentMessage[],
     options: {
@@ -281,6 +291,8 @@ function buildContextBlockFactory(params: {
       advanceModelCall?: boolean;
       /** F-01: seal only real model-call projections (default true). */
       seal?: boolean;
+      /** T-B6: dedupKeys injected by earlier model calls (regather gate). */
+      priorDedupKeys?: ReadonlySet<string>;
     } = {},
   ) {
     const turnId = params.injectionTurnId;
@@ -331,6 +343,7 @@ function buildContextBlockFactory(params: {
       attemptIndex: params.attemptIndex,
       modelCallIndex,
       seal: options.seal !== false,
+      priorDedupKeys: options.priorDedupKeys,
     });
     // The projection that just sealed is the one that will enter the
     // transcript (or was already consumed for the system prompt); remember
@@ -338,6 +351,7 @@ function buildContextBlockFactory(params: {
     for (const entry of finalized.projection.lineage) {
       if (entry.charsApplied > 0) {
         injectedChannels.add(entry.channel);
+        injectedDedupKeys.add(entry.dedupKey);
       }
     }
     if (!projectionObservabilityRecorded) {
@@ -450,12 +464,26 @@ function buildContextBlockFactory(params: {
         // sealed at before_agent_start (modelCallIndex 0). Every later callback
         // is a new model call: skip channels already injected into the
         // transcript and collect only what the tool loop produced since the
-        // last call (working_memory), sealing modelCallIndex N.
+        // last call, sealing modelCallIndex N.
+        //
+        // T-B6 (TF-0126): working_memory produces new Blocks as the tool loop
+        // runs, so with the regather gate on it is NOT channel-skipped on
+        // later calls — it is re-queried, and unchanged content is
+        // deduplicated by dedupKey (contentDigest) via priorDedupKeys. Gate
+        // off: legacy permanent skip, byte-identical behavior.
         const isFirstContextCall = !sawFirstContextCall;
         sawFirstContextCall = true;
+        const regatherEnabled = isWorkingMemoryRegatherEnabled(
+          resolveKillSwitchConfig(process.env),
+          process.env,
+        );
+        const nextSkipChannels = [...injectedChannels].filter(
+          (channel) => !(regatherEnabled && channel === "working_memory"),
+        );
         const finalized = await finalizeCandidates(messages as AgentMessage[], {
           advanceModelCall: !isFirstContextCall,
-          ...(!isFirstContextCall ? { skipChannels: [...injectedChannels] } : {}),
+          ...(!isFirstContextCall ? { skipChannels: nextSkipChannels } : {}),
+          priorDedupKeys: regatherEnabled ? injectedDedupKeys : undefined,
         });
         return { messages: finalized?.messages ?? messages };
       }
@@ -799,6 +827,7 @@ export function buildEmbeddedExtensionFactories(params: {
       workspaceDir: params.workspaceDir,
       postCompactionSections: compactionCfg?.postCompactionSections,
       provider: compactionCfg?.provider,
+      promotionStage: compactionCfg?.promotionStage,
     });
     factories.push(compactionSafeguardExtension);
   }

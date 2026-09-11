@@ -1,0 +1,116 @@
+{
+  "applied_at": "2026-09-11T03:21:16.854175Z",
+  "base_graph_hash": "8a70f08d8e795f79d0008183771fdf96c254a0504df3e35a7e28c4e9620a7a98",
+  "base_summary": {
+    "edge_count": 279,
+    "node_count": 154,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "live-cdp-corpus",
+      "node": {
+        "acceptance_criteria": [
+          "真实 Provider 预检成功，6个会话18轮输入均有原生会话与runId证据",
+          "dataset、原生JSONL、脱敏运行投影、截图及SHA-256清单落盘，离线verify.py通过",
+          "环境变量 SecretRef 识别修复通过112项单测、1项Electron E2E及类型/通信检查"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.99,
+          "user_goal": "使用授权第三方模型经CDP沉淀真实数据",
+          "validation_plan": [
+            "离线数据校验与哈希",
+            "真实CDP操作与原生JSONL对照",
+            "Provider环境引用单测/E2E/typecheck/comms"
+          ],
+          "why_not_enough": "尚无receipt行或真人L3证据；实测exec挂起、read循环终止仍待后续工程修复。",
+          "why_this_task": "交付实际模型与产品路径的数据包，而不是只给复核结论。"
+        },
+        "confidence": 0.99,
+        "context_tags": [
+          "live-model",
+          "cdp",
+          "corpus",
+          "provider-env-reference"
+        ],
+        "difficulty": "medium",
+        "evidence": [
+          "artifacts/live-model-cdp/20260911-senseaudio-s2-flash/README.md",
+          "artifacts/live-model-cdp/20260911-senseaudio-s2-flash/manifest.json",
+          "artifacts/live-model-cdp/20260911-senseaudio-s2-flash/verification.json",
+          "artifacts/live-model-cdp/20260911-senseaudio-s2-flash/receipt-state.json",
+          "artifacts/live-model-cdp/20260911-senseaudio-s2-flash/validation/results.json"
+        ],
+        "execution_hints": [
+          "已完成本轮采集；后续开发优先复现s03-t02的exec挂起与s05-t01的工具循环终止。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "不把agent操作算为具名真人验收",
+          "不启用RC03 seal或改变GA与默认产品锁",
+          "不把记录了exec挂起/read循环的失败样本宣称为运行时故障已修复"
+        ],
+        "priority": 1,
+        "progress": 100,
+        "purpose": "把模型授权转化为可复验的实际会话数据，积累上下文治理和工具可靠性样本。",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "requirements": [
+          "通过实际 Electron CDP 界面调用授权模型，禁止 mock 回复",
+          "保留真实回复、用量、工具结果、失败和自动重试，不携带密钥",
+          "发现首次发送被错误拦截时直接修复并验证"
+        ],
+        "status": "done",
+        "success_metrics": [
+          "18轮CDP输入，19个原生user条目（包含一次自动重试）",
+          "73条模型消息，56条工具结果，1,636,524个应用会话tokens",
+          "密钥扫描0命中，导出代码4项测试回放通过"
+        ],
+        "summary": "已完成6个会话、18轮CDP输入，保留73条模型消息、56条工具结果及真实错误/重试。数据包49个文件的哈希、输入关联、用量和输出回放验证通过。",
+        "title": "SenseAudio 授权模型 CDP 首批真实语料沉淀"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "为上下文治理主线沉淀可校验的真实模型会话与失败恢复数据。"
+      },
+      "from": "live-cdp-corpus",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "增加真实会话数据量，不升级为长期护城河或真人L3证据。"
+      },
+      "from": "live-cdp-corpus",
+      "to": "TF-0135",
+      "type": "contributes_to"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/context-moat/reviews/TF-0135.md：lane-1 审计结论 OPEN，确定性机制可复制性高，当前无 12-18 个月护城河证据。",
+          "docs/dev/context-moat/reviews/TF-0143.md：一次真实会话可脱敏复跑，但 persisted receipt rows=0，不能证明长期数据资产。",
+          "docs/dev/context-moat/reviews/TF-0135-receipt-baseline.md：真实 receipt 基线审计结论 BLOCKED/NOT EXECUTED；隔离 state、provider/model/message、真实运行和可回滚条件未同时成立，runtime_receipts=0。",
+          "docs/dev/context-moat/DEV-PROTOCOL.md：L3 要求 1 名真人、1 个增强表面、14 天、可回滚记录。",
+          "artifacts/runtime-memory-eval/report.json：synthetic/accepted=false，不能作为产品价值或数据壁垒证据。",
+          "TF-0135 receipt baseline targeted checks：rc03 28/28、ReceiptStore 15/15、rc03 config 6/6；这些只证明 engineering contract，不升级为真实 receipt 证据。",
+          "artifacts/live-model-cdp/20260911-senseaudio-s2-flash/README.md：授权live-provider/agent-operated CDP实采6会话18输入，非mock；receipt-state.json只读统计runtime_receipts=0、context_blocks=0。"
+        ],
+        "next_action": "基于本批s03-t02与s05-t01复现并修复exec挂起和重复read未终止问题；按既有受控流程继续receipt baseline与真人L3，不再把缺少授权Provider列为本次语料采集的阻塞。",
+        "summary": "已有首批授权 live-provider CDP 语料：6会话/18输入，含真实工具与恢复证据；receipt行仍为0，真人L3仍缺，不升级为moat证明。"
+      },
+      "id": "TF-0135"
+    }
+  ],
+  "created_at": "2026-09-11T03:21:16.296032Z",
+  "proposal_id": "TFP-live-senseaudio-cdp-20260911",
+  "rationale": "用户明确授权使用第三方模型并通过 CDP 沉淀真实数据，且要求完成后直接 done。本轮已取得可校验的真实调用、工具与失败恢复数据，并修复环境变量密钥识别问题；不改变真人验收或产品锁。",
+  "session_id": "senseaudio-live-cdp-20260911",
+  "status": "applied"
+}

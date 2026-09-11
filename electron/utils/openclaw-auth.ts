@@ -463,9 +463,8 @@ function getApiKeyFromAuthProfilesStore(
 /**
  * Read the API key OpenClaw will use for a runtime provider key.
  *
- * This intentionally reads auth-profiles.json rather than ClawX's provider
- * cache, so UI status can reflect providers imported or preserved by the
- * OpenClaw runtime across overwrite installs.
+ * Read runtime auth profiles, then an explicitly configured environment
+ * SecretRef. Resolution stays in Main and never persists the environment key.
  */
 export async function getProviderApiKeyFromOpenClaw(
   provider: string,
@@ -482,7 +481,29 @@ export async function getProviderApiKeyFromOpenClaw(
     }
   }
 
-  return null;
+  const config = await readOpenClawJson();
+  const models = isPlainRecord(config.models) ? config.models : {};
+  const providers = isPlainRecord(models.providers) ? models.providers : {};
+  const entry = providers[provider];
+  const ref = isPlainRecord(entry) ? entry.apiKey : undefined;
+  if (!isPlainRecord(ref) || ref.source !== 'env'
+    || typeof ref.provider !== 'string' || !ref.provider.trim()
+    || typeof ref.id !== 'string' || !/^[A-Z][A-Z0-9_]{0,127}$/.test(ref.id)) return null;
+
+  const secrets = isPlainRecord(config.secrets) ? config.secrets : {};
+  const defaults = isPlainRecord(secrets.defaults) ? secrets.defaults : {};
+  const defaultEnvProvider = typeof defaults.env === 'string' ? defaults.env.trim() || 'default' : 'default';
+  const secretProviders = isPlainRecord(secrets.providers) ? secrets.providers : {};
+  const configured = secretProviders[ref.provider];
+  if (configured !== undefined) {
+    if (!isPlainRecord(configured) || configured.source !== 'env') return null;
+    if (configured.allowlist !== undefined
+      && (!Array.isArray(configured.allowlist) || !configured.allowlist.includes(ref.id))) return null;
+  } else if (ref.provider !== defaultEnvProvider) {
+    return null;
+  }
+  const value = process.env[ref.id];
+  return value?.trim() ? value : null;
 }
 
 // ── Agent Discovery ──────────────────────────────────────────────

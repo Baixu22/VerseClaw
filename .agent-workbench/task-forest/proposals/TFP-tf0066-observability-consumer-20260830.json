@@ -1,0 +1,37 @@
+{
+  "base_graph_hash": "3d9323cf33533bd30e15e18df011990fcd0f64092c233c6d2934763e2bd5e2bb",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/verseshell-p2-trace-diagnostics-observability-consumer.md：新增 Observability consumer 切片规范，明确 Main-only、bounded、redacted projection 与非目标。",
+          "electron/services/host-trace-diagnostics.ts：保留进程内 host-only HMAC secret、审批绑定 lineage、200 条 bounded sink，并在失败 terminal execution 后调用安全 summary consumer；consumer 异常不会影响 terminal execution。",
+          "electron/services/observability-service.ts：新增独立 host diagnostic collection；只接收严格投影后的 lineage、固定 failureKind、bounded numeric metadata 和 raw-fields-omitted，不转换为 full trace；异常/Proxy summary fail-closed。",
+          "electron/main/ipc-handlers.ts：仅在 Main 初始化时显式注入 Observability callback 到 terminal adapter；未新增 renderer、UI 或 Host API dashboard 字段。",
+          "tests/unit/host-trace-diagnostics.test.ts、tests/unit/observability-service.test.ts、tests/unit/terminal-api.test.ts、tests/unit/support-bundle-redaction.test.ts：4 files / 35 tests 通过，覆盖 callback reachability、审批绑定、失败 taxonomy、redaction、bounded retention、defensive copy、clear 和成功/未批准执行不记录。",
+          "openclaw_runtime/src/observability/host-trace-diagnostics.test.ts：15/15 通过；host-trace-diagnostics.ts strict tsc 使用 --ignoreConfig 通过。",
+          "pnpm harness context --spec harness/specs/tasks/verseshell-p2-trace-diagnostics-observability-consumer.md：通过；pnpm harness validate --spec ... --no-diff：通过；diff-aware validate 被共享工作树无关 changed paths 和 harness node_modules 缺失阻断。",
+          "pnpm run typecheck：node/web 项目均通过；tests 类型检查保持 observation mode，报告仓库既有 1064 个错误但不影响 gate exit 0。pnpm run typecheck:node、target ESLint、pnpm contract:check、git diff --check 均通过。",
+          "pnpm run comms:replay 与 pnpm run comms:compare：均 PASS；candidate identity 为 06f7c32709e0de811a7359267f7920a7b03f4592 / 8afd600ffafcca6440aee295bdeebd78bf34f894，未刷新 baseline。"
+        ],
+        "next_action": "继续为 read/search/modify/test/build/result_query 等 coding operation 定义真实 host-owned lineage 与失败关联边界；补充有建议动作的低基数诊断契约和独立 review，之后再评估是否接入既有 diagnostics/receipt consumer。",
+        "progress": 55,
+        "progress_source": "manual",
+        "status": "in_progress",
+        "summary": "已完成 TF-0066 的第二个工程切片：Main terminal adapter 在已消费 terminal approval 后为失败执行签发 host-only HMAC envelope，并通过显式 callback 将已验证、安全摘要送入 Observability 独立 bounded projection。projection 严格校验 lineage、failureKind、数字边界和 raw-fields-omitted 标记，最多保留 200 条，防御性返回并随现有 observability memory reset 清空；它不进入 ObservabilityTrace、dashboard/renderer、graph/index、trajectory、receipt、support 或 OTLP。全链路 coding operation coverage、suggested actions 和独立 review 仍未完成。"
+      },
+      "id": "TF-0066"
+    }
+  ],
+  "created_at": "2026-08-30T07:29:48.325204Z",
+  "proposal_id": "TFP-tf0066-observability-consumer-20260830",
+  "rationale": "本轮继续推进 TF-0066：在既有 host-issued diagnostics contract 和 Main terminal adapter 之上，完成显式注入的 Observability 安全 projection，并完成 focused、runtime、typecheck、contract、lint 与 comms 验证。实现仍只覆盖 terminal approved-failure 入口；不把 diagnostics 暴露到 dashboard/renderer，不接入 receipt、support bundle、OTLP 或 runtime 默认行为，因此 TF-0066 继续保持 in_progress，等待更完整的 coding operation lineage、建议动作与独立 review。",
+  "session_id": "session-tf0066-observability-consumer-20260830",
+  "status": "proposed"
+}

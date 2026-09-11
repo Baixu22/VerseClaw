@@ -36,7 +36,8 @@ export type ContextCandidateLineageReason =
   | "budget-truncate"
   | "budget-drop"
   | "flag-off"
-  | "kill-switch";
+  | "kill-switch"
+  | "skip-channel";
 
 export type ContextCandidateLineage = {
   candidateId: string;
@@ -133,7 +134,10 @@ export function recordContextCandidateSkip(
     sourceId: string;
     channel: TurnInjectionChannel;
     target: ContextCandidateTarget;
-    reason: Extract<ContextCandidateLineageReason, "empty" | "flag-off" | "kill-switch">;
+    reason: Extract<
+      ContextCandidateLineageReason,
+      "empty" | "flag-off" | "kill-switch" | "skip-channel"
+    >;
   },
 ): ContextCandidateLineage {
   const collection = beginContextCandidateCollection(turnId);
@@ -286,6 +290,15 @@ export function finalizeContextCandidates(params: {
    * same-turn overlap counts).
    */
   historyWindow?: readonly string[];
+  /**
+   * T-B6 (TF-0126): dedupKeys already injected by earlier model calls of this
+   * same attempt. A reopened collection starts with an empty `seen` set, so
+   * without this cross-call memory a re-collected working_memory candidate
+   * with unchanged content (same contentDigest, same dedupKey) would inject
+   * again. Candidates whose dedupKey is in this set are dispositioned
+   * "duplicate" before any budget is charged. Default: none (legacy).
+   */
+  priorDedupKeys?: ReadonlySet<string>;
 }): ContextCandidateProjection {
   const collection = beginContextCandidateCollection(params.turnId);
   if (collection.projection) return collection.projection;
@@ -300,6 +313,12 @@ export function finalizeContextCandidates(params: {
   for (const index of sortedCandidateIndexes(collection)) {
     const candidate = collection.candidates[index]!;
     const lineage = collection.lineage[collection.candidateLineageIndexes[index]!]!;
+    if (params.priorDedupKeys?.has(candidate.dedupKey)) {
+      lineage.disposition = "duplicate";
+      lineage.reason = "duplicate";
+      collection.diagnostics.duplicates += 1;
+      continue;
+    }
     if (seen.has(candidate.dedupKey)) {
       lineage.disposition = "duplicate";
       lineage.reason = "duplicate";
@@ -363,6 +382,8 @@ export function projectContextCandidates(params: {
   ledger: TurnInjectionLedger;
   systemPrompt?: string;
   messages: AgentMessage[];
+  /** T-B6 (TF-0126): forwarded to finalizeContextCandidates; see there. */
+  priorDedupKeys?: ReadonlySet<string>;
 }): { systemPrompt?: string; messages: AgentMessage[]; projection: ContextCandidateProjection } {
   const projection = finalizeContextCandidates(params);
   const systemPrompt = projection.systemPromptAddition

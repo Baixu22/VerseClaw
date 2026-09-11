@@ -155,6 +155,9 @@
       "destructive": "破坏性"
     },
     "riskLabel": "风险",
+    "externalWriteSummary": "外部进程写入（详情已隐藏）",
+    "externalWriteNoRollback": "不在 ClawX 写入日志覆盖范围内；无法自动回滚。",
+    "sourceLabel": "来源",
     "modeLabel": "模式",
     "status": {
       "pending": "待处理",
@@ -232,7 +235,15 @@
         "title": "需要授权",
         "approve": "批准",
         "deny": "拒绝",
-        "retryRequired": "已记录决定，请让智能体重试该操作。"
+        "retryRequired": "已记录决定，请让智能体重试该操作。",
+        "externalWriteTitle": "外部写入需要批准",
+        "externalWriteWarning": "此外部进程可能在 ClawX 写入日志之外更改文件或其他状态。",
+        "externalWriteNoRollback": "不在 ClawX 写入日志覆盖范围内；无法自动回滚。",
+        "externalWriteEffectLabel": "效果",
+        "externalWriteEffect": "外部进程写入",
+        "externalWriteRollbackLabel": "回滚",
+        "externalWriteSnapshotLabel": "快照",
+        "externalWriteSnapshot": "已绑定此请求；批准只允许之后重试。"
       }
     },
     "actions": {

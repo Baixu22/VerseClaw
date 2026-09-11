@@ -85,7 +85,12 @@ console.log(JSON.stringify({
   failures: verifier.failures,
 }));
 
-rmSync(fixtureRoot, { recursive: true, force: true });
+try {
+  rmSync(fixtureRoot, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+} catch (error) {
+  const code = error?.code;
+  if (code !== 'EPERM' && code !== 'EBUSY' && code !== 'ENOTEMPTY') throw error;
+}
 
 if (executor.result !== 'pass' || verifier.result !== 'pass' || verifier.engineeringAcceptedByAgent !== true) {
   console.error('RC-00 bootstrap proof FAILED');

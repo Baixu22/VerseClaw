@@ -33,7 +33,7 @@ describe('TF-0011 UAS-00 evidence freeze', () => {
     expect(manifest.repository.trackedDiffSha256).toMatch(/^[0-9a-f]{64}$/u);
     expect(manifest.repository.stagedDiffSha256).toMatch(/^[0-9a-f]{64}$/u);
     expect(manifest.repository.untrackedFileCount).toBeGreaterThan(0);
-    expect(manifest.environment.executables.map(({ id }) => id)).toEqual([
+    expect(manifest.environment.executables.map(({ id }: { id: string }) => id)).toEqual([
       'node',
       'git',
       'pnpm',
@@ -84,7 +84,7 @@ describe('TF-0011 UAS-00 evidence freeze', () => {
       runtimeMemory: 'diagnostics-only',
       sekbAutoWriteback: false,
     });
-    const surfaces = manifest.authorityMatrix.map(({ surface }) => surface);
+    const surfaces = manifest.authorityMatrix.map(({ surface }: { surface: string }) => surface);
     expect(new Set(surfaces).size).toBe(surfaces.length);
     expect(manifest.authorityMatrix).toContainEqual(
       expect.objectContaining({

@@ -6,6 +6,19 @@ vi.mock('@electron/services/task-ledger-service', () => ({
   loadTaskLedgerSnapshot: (...args: unknown[]) => loadTaskLedgerSnapshotMock(...args),
 }));
 
+/**
+ * `sendWithMedia` gates on the session's persisted token usage before it reaches
+ * the Gateway, and the real reader walks `~/.openclaw` transcripts. Left
+ * unmocked, this file passes on a fresh machine and fails on any machine whose
+ * cumulative usage has crossed the 1,000,000-token default budget — the send is
+ * rejected as `TOKEN_BUDGET_EXCEEDED` before any metadata is built. Budget
+ * behaviour has its own coverage in `chat-resource-limits-p5-004.test.ts`; here
+ * it is a dependency to hold still.
+ */
+vi.mock('@electron/utils/token-usage', () => ({
+  getSessionTokenUsageSummary: vi.fn(async () => ({ totalTokens: 0, estimatedCostUsd: 0 })),
+}));
+
 describe('chat knowledge scope metadata', () => {
   beforeEach(() => {
     loadTaskLedgerSnapshotMock.mockReset();
@@ -13,7 +26,7 @@ describe('chat knowledge scope metadata', () => {
 
   it('injects hidden knowledge metadata for wiki scope', async () => {
     const gatewayManager = {
-      rpc: vi.fn(async () => ({ runId: 'run-wiki' })),
+      rpc: vi.fn(async (_method: string, _payload?: { message?: string; promptMode?: string }) => ({ runId: 'run-wiki' })),
       getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
     };
     const { createChatApi } = await import('@electron/services/chat-api');
@@ -27,7 +40,7 @@ describe('chat knowledge scope metadata', () => {
       knowledgeMode: 'auto-read',
     })).resolves.toEqual({ success: true, result: { runId: 'run-wiki' } });
 
-    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as { message: string };
+    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as unknown as { message: string };
     expect(payload.message).toContain('Conversation info (untrusted metadata)');
     expect(payload.message).toContain('"clawxKnowledgeScope":"wiki"');
     expect(payload.message).toContain('"clawxKnowledgeMode":"auto-read"');
@@ -41,7 +54,7 @@ describe('chat knowledge scope metadata', () => {
 
   it('injects selected knowledge references as read-only metadata', async () => {
     const gatewayManager = {
-      rpc: vi.fn(async () => ({ runId: 'run-selected-knowledge' })),
+      rpc: vi.fn(async (_method: string, _payload?: { message?: string; promptMode?: string }) => ({ runId: 'run-selected-knowledge' })),
       getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
     };
     const { createChatApi } = await import('@electron/services/chat-api');
@@ -67,7 +80,7 @@ describe('chat knowledge scope metadata', () => {
       }],
     });
 
-    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as { message: string };
+    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as unknown as { message: string };
     expect(payload.message).toContain('"selectedKnowledgeReferences":[{"id":"decision-page"');
     expect(payload.message).toContain('"lookup":"notes/decision.md"');
     expect(payload.message).toContain('"attachKind":"auto"');
@@ -79,7 +92,7 @@ describe('chat knowledge scope metadata', () => {
 
   it('auto-reads selected knowledge references before sending the chat turn', async () => {
     const gatewayManager = {
-      rpc: vi.fn(async (method: string) => {
+      rpc: vi.fn(async (method: string, _payload?: { message?: string; promptMode?: string }) => {
         if (method === 'wiki.get') {
           return {
             found: true,
@@ -120,7 +133,7 @@ describe('chat knowledge scope metadata', () => {
       30000,
     ]);
     expect(gatewayManager.rpc.mock.calls[1]?.[0]).toBe('chat.send');
-    const payload = gatewayManager.rpc.mock.calls[1]?.[1] as { message: string };
+    const payload = gatewayManager.rpc.mock.calls[1]?.[1] as unknown as { message: string };
     expect(payload.message).toContain('Knowledge read citations (untrusted metadata)');
     expect(payload.message).toContain('"clawxKnowledgeReads"');
     expect(payload.message).toContain('"lookup":"notes/decision.md"');
@@ -131,7 +144,7 @@ describe('chat knowledge scope metadata', () => {
   it('bounds injected knowledge context fragments even for huge references', async () => {
     const hugeText = 'x'.repeat(50_000);
     const gatewayManager = {
-      rpc: vi.fn(async (method: string) => {
+      rpc: vi.fn(async (method: string, _payload?: { message?: string; promptMode?: string }) => {
         if (method === 'wiki.get') {
           return {
             found: true,
@@ -161,7 +174,7 @@ describe('chat knowledge scope metadata', () => {
       })),
     });
 
-    const payload = gatewayManager.rpc.mock.calls.at(-1)?.[1] as { message: string };
+    const payload = gatewayManager.rpc.mock.calls.at(-1)?.[1] as unknown as { message: string };
     expect(payload.message.length).toBeLessThan(20_000);
     expect(payload.message).not.toContain(hugeText);
     expect(payload.message).toContain('Use huge context');
@@ -169,7 +182,7 @@ describe('chat knowledge scope metadata', () => {
 
   it('ignores legacy workMode fields for ordinary chat sends', async () => {
     const gatewayManager = {
-      rpc: vi.fn(async () => ({ runId: 'run-plan' })),
+      rpc: vi.fn(async (_method: string, _payload?: { message?: string; promptMode?: string }) => ({ runId: 'run-plan' })),
       getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
     };
     const { createChatApi } = await import('@electron/services/chat-api');
@@ -183,7 +196,7 @@ describe('chat knowledge scope metadata', () => {
     } as unknown as Parameters<typeof api.sendWithMedia>[0];
     await api.sendWithMedia(legacyPayload);
 
-    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as { message: string; promptMode?: string };
+    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as unknown as { message: string; promptMode?: string };
     expect(payload.message).toBe('Sketch the rollout');
     expect(payload.message).not.toContain('Work mode info (untrusted metadata)');
     expect(payload.message).not.toContain('clawxWorkMode');
@@ -227,7 +240,7 @@ describe('chat knowledge scope metadata', () => {
       warnings: [],
     });
     const gatewayManager = {
-      rpc: vi.fn(async () => ({ runId: 'run-task-context' })),
+      rpc: vi.fn(async (_method: string, _payload?: { message?: string; promptMode?: string }) => ({ runId: 'run-task-context' })),
       getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
     };
     const { createChatApi } = await import('@electron/services/chat-api');
@@ -241,7 +254,7 @@ describe('chat knowledge scope metadata', () => {
       activeTaskNodeId: 'task-1',
     });
 
-    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as { message: string };
+    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as unknown as { message: string };
     expect(loadTaskLedgerSnapshotMock).toHaveBeenCalledWith('workspace-a');
     expect(payload.message).toContain('Task Ledger context (untrusted metadata)');
     expect(payload.message).toContain('"activeTaskNodeId":"task-1"');
@@ -252,7 +265,7 @@ describe('chat knowledge scope metadata', () => {
 
   it('does not inject metadata for none or unknown scope', async () => {
     const gatewayManager = {
-      rpc: vi.fn(async () => ({ runId: 'run-none' })),
+      rpc: vi.fn(async (_method: string, _payload?: { message?: string; promptMode?: string }) => ({ runId: 'run-none' })),
       getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
     };
     const { createChatApi } = await import('@electron/services/chat-api');
@@ -268,10 +281,10 @@ describe('chat knowledge scope metadata', () => {
       sessionKey: 'agent:main:main',
       message: 'Unknown scope message',
       idempotencyKey: 'idem-unknown',
-      knowledgeScope: 'obsidian',
+      knowledgeScope: 'obsidian' as never,
     });
 
-    expect((gatewayManager.rpc.mock.calls[0]?.[1] as { message: string }).message).toBe('Plain message');
-    expect((gatewayManager.rpc.mock.calls[1]?.[1] as { message: string }).message).toBe('Unknown scope message');
+    expect((gatewayManager.rpc.mock.calls[0]?.[1] as unknown as { message: string }).message).toBe('Plain message');
+    expect((gatewayManager.rpc.mock.calls[1]?.[1] as unknown as { message: string }).message).toBe('Unknown scope message');
   });
 });

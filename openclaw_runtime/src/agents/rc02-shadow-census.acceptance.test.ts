@@ -41,6 +41,7 @@ import { ReceiptStore } from "./receipt-store.js";
 import { runEmbeddedAgent } from "./embedded-agent-runner/run.js";
 import {
   emitShadowCensus,
+  getShadowCensusDiagnostics,
   resetShadowCensusDiagnosticsForTest,
   resolveShadowCensusCapability,
   wireBodyDigest,
@@ -643,12 +644,24 @@ describe("RC-02 full-payload shadow census acceptance", () => {
     const blocker = path.join(stateDir, "blocker.txt");
     fs.writeFileSync(blocker, "not a directory");
     const broken = { env: process.env, path: path.join(blocker, "openclaw-state.db") };
+    const body = { model: "x", messages: [] };
+    const before = JSON.stringify(body);
     const result = emitShadowCensus(
-      { model: "x", messages: [] },
-      { providerId: "anthropic" },
+      body,
+      { providerId: "anthropic", adapterId: "anthropic-messages" },
       { enabled: true, sourceRuntime: true, database: broken },
     );
     expect(result.failed).toBe(true);
+    expect(result.contextReceipt).toBeNull();
+    expect(result.wireReceipt).toBeNull();
+    expect(JSON.stringify(body)).toBe(before);
+    expect(getShadowCensusDiagnostics()).toMatchObject({
+      acceptanceReady: false,
+      failures: [
+        { phase: "context-write", code: "receipt-store-write-failed", count: 1 },
+        { phase: "wire-write", code: "receipt-store-write-failed", count: 1 },
+      ],
+    });
   });
 
   it("the census is disabled by default (flag off) so the legacy path is byte-identical", () => {

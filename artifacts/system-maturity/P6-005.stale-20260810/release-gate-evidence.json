@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "taskId": "P6-005",
+  "version": "0.4.9-alpha.0",
+  "ref": "refs/heads/codex/maturity-p4",
+  "commit": "df7c2f7a602c34d487caa10e1eead2529ce95be4",
+  "tree": "aaf4a2b9272f7664043426155266afa5fd2b22a5",
+  "manifestSha256": "453553124189783c7949c7c62f975cad62d520e8caced5aac52902bc1f861284",
+  "gatesConfigSha256": "1c6b440d42831d40d1fb0b4c3310df2dc544ec2b0b7ff138a5b2cdf7db19eaa4",
+  "gates": [
+    {
+      "id": "maturity:baseline",
+      "command": "node scripts/audit-baseline-check.mjs",
+      "exitCode": 0,
+      "stdoutPath": "gates/maturity-baseline.stdout.txt",
+      "stdoutSha256": "142d8ca865e99f6b0f146a23d77a716d4c547e961d3fdcf9b302b032e4023ebd",
+      "stderrPath": "gates/maturity-baseline.stderr.txt",
+      "stderrSha256": "66208b56f81e1692ff30c67ab40f65c0fb36654b864724f48d18190e0aba8586"
+    },
+    {
+      "id": "maturity:plan",
+      "command": "node scripts/validate-system-maturity-plan.mjs",
+      "exitCode": 0,
+      "stdoutPath": "gates/maturity-plan.stdout.txt",
+      "stdoutSha256": "e079f509b068351007a960d063c3a04295b8e1e8fb54c095188308370c5488e7",
+      "stderrPath": "gates/maturity-plan.stderr.txt",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "maturity:gates",
+      "command": "node scripts/validate-test-gates.mjs",
+      "exitCode": 0,
+      "stdoutPath": "gates/maturity-gates.stdout.txt",
+      "stdoutSha256": "97c7410bace7ce087bacaec057d0e7daf7be4d8f351331fee44367da500625a0",
+      "stderrPath": "gates/maturity-gates.stderr.txt",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "contract:check",
+      "command": "pnpm contract:check",
+      "exitCode": 0,
+      "stdoutPath": "gates/contract-check.stdout.txt",
+      "stdoutSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "stderrPath": "gates/contract-check.stderr.txt",
+      "stderrSha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+    },
+    {
+      "id": "test",
+      "command": "pnpm test",
+      "exitCode": 0,
+      "stdoutPath": "gates/test.stdout.txt",
+      "stdoutSha256": "4b56387c7da9750c9b83d6417aaf2d649cfc5f994341587915a3d253d29eff15",
+      "stderrPath": "gates/test.stderr.txt",
+      "stderrSha256": "f3010fc1230b50dc37be053a8a91eae03cd87215a9179a132ee28f646505a9fc"
+    },
+    {
+      "id": "lint:check",
+      "command": "pnpm run lint:check",
+      "exitCode": 0,
+      "stdoutPath": "gates/lint-check.stdout.txt",
+      "stdoutSha256": "20de2507035b0b47ca632a4c1f93fe22d2925f8938ef4380b5696552069fdf10",
+      "stderrPath": "gates/lint-check.stderr.txt",
+      "stderrSha256": "d93d152e20a5003c1cac09588ed745d085e38e2f41ebd11257a6ac80f3907d4c"
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "stdoutPath": "gates/typecheck.stdout.txt",
+      "stdoutSha256": "82ce041683605bb9545a648d8dfc186d42052d78d00e90241e1d50c101c00e3e",
+      "stderrPath": "gates/typecheck.stderr.txt",
+      "stderrSha256": "b9dc801248da3af9eef9021d08d90bc326bd4a354a8147813f5d5a2cbece6b58"
+    },
+    {
+      "id": "harness:ci",
+      "command": "pnpm run harness:ci",
+      "exitCode": 0,
+      "stdoutPath": "gates/harness-ci.stdout.txt",
+      "stdoutSha256": "ec63e92e78c3df44e766028632feab94b5cbdd832d3a698bc2e0b971a6ccf65f",
+      "stderrPath": "gates/harness-ci.stderr.txt",
+      "stderrSha256": "66836381b700446b14fe14633ce20eb1db5174909e7da87bacf94df62b16501f"
+    },
+    {
+      "id": "agent-dev:deep-test",
+      "command": "pnpm agent-dev:deep-test",
+      "exitCode": 0,
+      "stdoutPath": "gates/agent-dev-deep-test.stdout.txt",
+      "stdoutSha256": "26c03cde11f84a9b9d3c627925d9bc74f0581c09c74760825b4a63ab37d0d638",
+      "stderrPath": "gates/agent-dev-deep-test.stderr.txt",
+      "stderrSha256": "f08bb279c9976a35a8a35182c36708e2775a9aec50efda8d9466abc49d354265"
+    },
+    {
+      "id": "test:e2e:agent-dev-quality",
+      "command": "pnpm run test:e2e:agent-dev-quality",
+      "exitCode": 0,
+      "stdoutPath": "gates/test-e2e-agent-dev-quality.stdout.txt",
+      "stdoutSha256": "f9b972299ec24da57059eaa9a31adadffa4130d1f1e223b8ab1d85c2360e3850",
+      "stderrPath": "gates/test-e2e-agent-dev-quality.stderr.txt",
+      "stderrSha256": "05659bd086d398c7d36c6c8cbf29f140c20295c131bc0fcce28eb11fa872e480"
+    },
+    {
+      "id": "maturity:validate",
+      "command": "pnpm run maturity:validate",
+      "exitCode": 0,
+      "stdoutPath": "gates/maturity-validate.stdout.txt",
+      "stdoutSha256": "034690d21b71a173974b885d053f7adf37e0dc975825fe7d59d82dc61cb33011",
+      "stderrPath": "gates/maturity-validate.stderr.txt",
+      "stderrSha256": "c1c123cc0af66d9b59b7fce233b194b6f460c0fdea869a9846f3b605f0b7e7ba"
+    },
+    {
+      "id": "release:validate",
+      "command": "pnpm run release:validate",
+      "exitCode": 0,
+      "stdoutPath": "gates/release-validate.stdout.txt",
+      "stdoutSha256": "6be6c6d06ec94eb4bd8f5259c0432a4dbeb0fd6a868c13d1d58cf7c99eba9cb3",
+      "stderrPath": "gates/release-validate.stderr.txt",
+      "stderrSha256": "43e6b2f2502cfdc1f7c971b1b6a37b77abbf600a5340255c8661b20cacee975b"
+    }
+  ]
+}

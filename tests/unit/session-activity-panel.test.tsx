@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SessionActivityPanel } from '@/pages/Chat/SessionActivityPanel';
 import { createEmptySessionActivitySnapshot } from '@shared/types/session-activity';
@@ -13,6 +13,8 @@ const translations: Record<string, string> = {
   'sessionActivity.processStatus.running': 'Running',
   'sessionActivity.processStatus.completed': 'Done',
   'sessionActivity.lineageStatus.started': 'Running',
+  'sessionRail.git.unavailable': 'Git status is temporarily unavailable.',
+  'sessionRail.terminal.unavailable': 'Terminal status is temporarily unavailable.',
 };
 
 vi.mock('react-i18next', () => ({
@@ -113,9 +115,46 @@ describe('SessionActivityPanel', () => {
   });
 
   it('returns nothing for an empty snapshot', () => {
+    const snapshot = createEmptySessionActivitySnapshot('agent:main:empty');
+    snapshot.availability = { git: true, tasks: true, subagents: true, terminals: true, continuity: true };
     const { container } = render(
-      <SessionActivityPanel snapshot={createEmptySessionActivitySnapshot('agent:main:empty')} />,
+      <SessionActivityPanel snapshot={snapshot} />,
     );
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it('surfaces an unavailable Git query instead of treating it as no repository', () => {
+    const snapshot = createEmptySessionActivitySnapshot('agent:main:git-unavailable');
+    snapshot.git = null;
+    snapshot.availability.git = false;
+
+    render(<SessionActivityPanel snapshot={snapshot} />);
+
+    expect(screen.getByTestId('session-activity-alert')).toHaveTextContent(
+      'Git status is temporarily unavailable.',
+    );
+  });
+
+  it('surfaces an unavailable terminal query instead of treating it as no terminal', () => {
+    const snapshot = createEmptySessionActivitySnapshot('agent:main:terminal-unavailable');
+    snapshot.terminals = [];
+    snapshot.availability.terminals = false;
+
+    render(<SessionActivityPanel snapshot={snapshot} />);
+
+    expect(screen.getByTestId('session-activity-alert')).toHaveTextContent(
+      'Terminal status is temporarily unavailable.',
+    );
+  });
+
+  it('keeps retry semantics for unavailable status queries', () => {
+    const onRetryStatus = vi.fn();
+    const snapshot = createEmptySessionActivitySnapshot('agent:main:retry');
+    snapshot.availability.git = false;
+
+    render(<SessionActivityPanel snapshot={snapshot} onRetryStatus={onRetryStatus} />);
+
+    fireEvent.click(screen.getByTestId('session-activity-retry'));
+    expect(onRetryStatus).toHaveBeenCalledTimes(1);
   });
 });

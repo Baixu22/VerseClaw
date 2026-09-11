@@ -818,7 +818,7 @@ describe('git api', () => {
       callback(null, '', '');
     });
     const { createGitApi } = await import('@electron/services/git-api');
-    await createGitApi().status().catch(() => undefined);
+    await Promise.resolve(createGitApi().status()).catch(() => undefined);
 
     expect(seenOptions.length).toBeGreaterThan(0);
     for (const raw of seenOptions) {

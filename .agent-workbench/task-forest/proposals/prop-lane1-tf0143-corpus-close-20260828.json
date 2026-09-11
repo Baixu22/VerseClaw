@@ -1,0 +1,50 @@
+{
+  "applied_at": "2026-08-28T11:44:59.395236Z",
+  "base_graph_hash": "189f06c2844bca73200520e455d987c7be1615de44fe8616f04b89e0b468b496",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "真实语料达标（2026-08-28）：OpenClaw main agent session 57c00668-baf0-44d4-8cb3-531fda2a6667 经真实 gateway RPC 续跑后达到 42 user turns / 2 compactions，满足 TF-0143 的 >=40 轮且 >=2 次压缩判据。",
+          "脱敏语料已登记：sanitized corpus 位于 ~/.openclaw/corpus/tf-0143-57c00668.jsonl，SHA-256 为 CDF6843E2E0BDAF159FFC6DD792E81E57C1BED8E03BF586EFA8B5857FF81E4E2；元数据文件为 docs/dev/context-moat/corpus/tf-0143-57c00668.md。凭据模式与绝对路径模式检查均为 0。",
+          "驱动面修复（用户授权）：openclaw_runtime/src/config/zod-schema.ts 与 types.openclaw.ts 补齐 runtime.coding.uftk schema，新增 runtime-coding-uftk.test.ts；聚焦测试 2/2 通过。该修复用于让本 checkout 接受用户线上 openclaw.json 中的既有 UFTK 配置。"
+        ],
+        "next_action": "复核 docs/dev/context-moat/corpus/tf-0143-57c00668.md、脱敏副本 SHA-256，以及 runtime.coding.uftk schema 兼容修复；确认后可收口。",
+        "progress": 90,
+        "status": "review_needed",
+        "summary": "真实语料已达标：42 user turns / 2 compactions；已生成脱敏副本并登记元数据与 SHA-256；为解除驱动面阻塞，用户授权修复 runtime.coding.uftk schema 漂移。等待独立复核。"
+      },
+      "id": "TF-0143"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-08-28T11:44:49.296093Z",
+        "evidence": "用户在会话中明确授权“随意进行修改没问题”；openclaw_runtime/src/config/zod-schema.ts、types.openclaw.ts、runtime-coding-uftk.test.ts。",
+        "expected_requirement": "TF-0143 non_goals 明确本 task 不做任何代码改动。",
+        "id": "TFD-65bbc44c61",
+        "kind": "scope_change",
+        "node_id": "TF-0143",
+        "observed_action_or_result": "为解除本 checkout 无法加载用户线上配置的 runtime.coding.uftk schema 漂移，用户于 2026-08-28 明确授权修改；已补 zod-schema/types/test，聚焦测试 2/2 通过。",
+        "recommendation": "作为显式授权的 scope change 保留；复核时可决定将其拆成独立后续 task，或作为 TF-0143 的已授权前置修复一并收口。",
+        "related_task_ids": [
+          "TF-0143"
+        ],
+        "severity": "medium",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-28T11:44:49.270534Z",
+  "proposal_id": "prop-lane1-tf0143-corpus-close-20260828",
+  "rationale": "TF-0143 的真实语料已达标并完成脱敏登记；同时按用户明确授权修复 runtime.coding.uftk schema 漂移以解除驱动面阻塞。现提交为 review_needed，等待独立复核后再收口。",
+  "session_id": "session-lane1-tf0143-corpus",
+  "status": "applied"
+}

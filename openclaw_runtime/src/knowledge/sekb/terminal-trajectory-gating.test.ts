@@ -167,7 +167,7 @@ describe("TF-0073 terminal trajectory candidate gating", () => {
     const capture = new TrajectoryCapture({ store });
     const injector = new RetrievalEngine({ store }).create_context_injector();
     const target = createHookTarget();
-    let runtimeLineage: RuntimeLineage | undefined;
+    const runtimeLineage: RuntimeLineage | undefined = undefined;
     const uninstall = installSekbHarnessHooks(target, {
       enabled: true,
       capture,

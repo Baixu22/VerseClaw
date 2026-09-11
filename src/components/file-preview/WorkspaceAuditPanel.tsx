@@ -22,6 +22,7 @@ import { hostApi } from '@/lib/host-api';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import type { GitReflogEntry, GitRepositoryStatus } from '@shared/types/git';
 import type { PermissionApprovalEvent } from '@shared/types/workspace';
+import { isExternalWriteApproval } from '@/lib/permission-approval-display';
 
 type T = ReturnType<typeof useTranslation>['t'];
 type AuditFilter = 'all' | 'approvals' | 'git';
@@ -55,6 +56,9 @@ function sourceLabel(source: PermissionApprovalEvent['source'], t: T): string {
 function riskLabel(risk: PermissionApprovalEvent['risk'], t: T): string {
   switch (risk) {
     case 'write': return t('approvals.risk.write');
+    case 'network': return t('approvals.risk.network');
+    case 'external-write': return t('approvals.risk.external-write');
+    case 'destructive': return t('approvals.risk.destructive');
     case 'dangerous': return t('approvals.risk.dangerous');
     default: return risk;
   }
@@ -285,6 +289,7 @@ function AuditRow({ item, locale, t }: { item: AuditItem; locale: string; t: T }
   }
 
   const approval = item.approval;
+  const externalWrite = isExternalWriteApproval(approval);
   return (
     <details className="group px-3 py-2.5" data-testid="workspace-audit-approval-row">
       <summary className="flex cursor-pointer list-none items-start gap-2 outline-none">
@@ -297,7 +302,7 @@ function AuditRow({ item, locale, t }: { item: AuditItem; locale: string; t: T }
             </Badge>
           </span>
           <span className="mt-0.5 flex min-w-0 items-center gap-1.5 text-2xs text-muted-foreground">
-            <span className="truncate font-mono">{approval.command || approval.paths?.join(', ') || approval.reason || approval.id}</span>
+            <span className="truncate font-mono">{externalWrite ? t('approvals.externalWriteSummary') : approval.command || approval.paths?.join(', ') || approval.reason || approval.id}</span>
             <span className="shrink-0">{formatAuditTime(item.timestamp, locale)}</span>
           </span>
         </span>
@@ -306,9 +311,10 @@ function AuditRow({ item, locale, t }: { item: AuditItem; locale: string; t: T }
       <div className="ml-5 mt-2 grid gap-1 border-l border-black/10 pl-2.5 text-2xs text-muted-foreground dark:border-white/10">
         <p><span className="text-foreground">{t('approvals.riskLabel')}:</span> {riskLabel(approval.risk, t)}</p>
         <p><span className="text-foreground">{t('approvals.modeLabel')}:</span> {modeLabel(approval.mode, t)}</p>
-        {approval.cwd ? <p className="truncate font-mono">{approval.cwd}</p> : null}
-        {approval.paths?.length ? <p className="break-words font-mono">{approval.paths.join(', ')}</p> : null}
-        {approval.reason ? <p>{approval.reason}</p> : null}
+        {externalWrite ? <p>{t('approvals.externalWriteNoRollback')}</p> : null}
+        {!externalWrite && approval.cwd ? <p className="truncate font-mono">{approval.cwd}</p> : null}
+        {!externalWrite && approval.paths?.length ? <p className="break-words font-mono">{approval.paths.join(', ')}</p> : null}
+        {!externalWrite && approval.reason ? <p>{approval.reason}</p> : null}
       </div>
     </details>
   );

@@ -235,6 +235,22 @@ for (const tf of taskFiles) {
       } else {
         info(`A2 ${id} hash OK ${e.path}`);
       }
+      if (path.basename(abs) === 'acceptance-matrix.json') {
+        try {
+          const matrix = JSON.parse(fs.readFileSync(abs, 'utf8'));
+          if (Array.isArray(matrix?.acceptance)) {
+            if (matrix.taskId && matrix.taskId !== id) {
+              fail(`A3 ${id} acceptance matrix taskId=${matrix.taskId}`);
+            }
+            const notPassed = matrix.acceptance.filter((item) => !['pass', 'passed'].includes(item?.status));
+            if (!matrix.acceptance.length || notPassed.length) {
+              fail(`A3 ${id} done but acceptance matrix has unpassed criteria: ${notPassed.map((item) => item?.id || '(unnamed)').join(',') || '(empty)'}`);
+            }
+          }
+        } catch (error) {
+          fail(`A3 ${id} invalid acceptance matrix JSON: ${String(error)}`);
+        }
+      }
     }
   } else if (hasDelivery) {
     const d = parseDelivery(fs.readFileSync(deliveryPath, 'utf8'));

@@ -107,7 +107,7 @@ describe("runtime failure/evidence/replay schema spike validators", () => {
     const wrongAuthority = { ...validEvidenceEnvelope(), authority: "runtime" };
     const rawRetained = validEvidenceEnvelope({
       redaction: { state: "sanitized", rawRetained: true, secretScan: "pass" },
-    } as Partial<EvidenceEnvelope>);
+    } as unknown as Partial<EvidenceEnvelope>);
     const topLevelRawRetained = { ...validEvidenceEnvelope(), rawRetained: true };
     const missingRedaction = { ...validEvidenceEnvelope(), redaction: undefined };
     const missingProvenance = { ...validEvidenceEnvelope(), provenance: undefined };

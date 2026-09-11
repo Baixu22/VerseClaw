@@ -51,8 +51,11 @@ real run ledger and safety inputs are complete.
 
 ## R7: Degraded status and downstream authority fail closed
 
-After the agent campaign, the evidence label is `degraded-agent-complete` and the only allowed
-TF-0009 status is `review_needed`, never `done`. The agent charter/report cannot self-authorize
+After the agent campaign, the evidence label is `degraded-agent-complete`. Pending review may
+use `review_needed`; once review confirms that the remaining work requires human evidence,
+TF-0009 must be `blocked`, never `done` on agent evidence alone. This workflow distinction follows
+the user's explicit 2026-09-10 closeout instruction; frozen historical reports retain their
+original status. The agent charter/report cannot self-authorize
 TF-0011 release. A separate, explicitly confirmed governance proposal may allow TF-0011 to
 consume the engineering evidence through a non-blocking `derived_from` edge while TF-0009 keeps
 all human/live residuals. That engineering release is not TF-0009 completion.

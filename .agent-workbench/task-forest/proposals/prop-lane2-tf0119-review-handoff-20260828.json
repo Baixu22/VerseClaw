@@ -1,0 +1,66 @@
+{
+  "applied_at": "2026-08-28T13:01:46.712934Z",
+  "base_graph_hash": "0f70213dedfd90fdc3ece32ba2d8764bbce681672f77ea32dded7598f1b92563",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "lane-1 复核 docs/dev/context-moat/reviews/TF-0119.md：注册表计数守卫、CVK Partial 处置、synthetic evidence 摘除链。通过后置 done/100。",
+        "progress": 90,
+        "status": "review_needed",
+        "summary": "三项遗留均有出口：注册表计数修正并有守卫测试；CVK enforce 硬阻断承诺撤下并降为 Partial；runtime-memory report 标记 synthetic 并从长稳定性验收链摘除。等待 lane-1 复核。"
+      },
+      "id": "TF-0119"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-08-28T13:05:00Z",
+        "decided_by": "lane-2 按 TF-0119 requirement 2 的二选一处置",
+        "evidence": "plans/system-maturity/findings-registry.json F-AUTH-003；openclaw_runtime/src/context-engine/cvk/engine.ts:130,138；docs/dev/context-moat/reviews/TF-0119.md。",
+        "expected_requirement": "TF-0119 requirement 2 允许接入工具执行边界，或撤下 enforce 的硬阻断承诺并记 deviation。",
+        "id": "TFD-lane2-tf0119-cvk-enforce-boundary-20260828",
+        "kind": "scope_change",
+        "node_id": "TF-0119",
+        "observed_action_or_result": "选择撤下承诺：F-AUTH-003 降为 Partial，说明 denied 只是 gate API 决策结果，生产 engine 未在工具执行边界消费。",
+        "recommendation": "后续若要求生产硬阻断，另立任务接入工具执行边界，默认关并按 brb-M 以上评估。",
+        "related_task_ids": [
+          "TF-0119"
+        ],
+        "severity": "medium",
+        "status": "resolved"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.98,
+        "created_at": "2026-08-28T13:05:00Z",
+        "decided_by": "lane-2 按 TF-0119 requirement 3 的二选一处置",
+        "evidence": "artifacts/runtime-memory-eval/report.json；scripts/runtime-long-stability.mjs；docs/dev/context-moat/reviews/TF-0119.md。",
+        "expected_requirement": "TF-0119 requirement 3 要求真实会话重跑，或将 evidence 显式标为 synthetic 并从验收引用链摘除。",
+        "id": "TFD-lane2-tf0119-runtime-memory-synthetic-20260828",
+        "kind": "scope_change",
+        "node_id": "TF-0119",
+        "observed_action_or_result": "选择 synthetic 标注：report.json 增加 evidenceClass=synthetic、accepted=false、acceptanceNote；runtime-long-stability 将 synthetic 视为 incomplete。",
+        "recommendation": "真实 provider/runtime 证据需另立任务重跑，不得引用当前 synthetic 报告作为验收依据。",
+        "related_task_ids": [
+          "TF-0119"
+        ],
+        "severity": "low",
+        "status": "resolved"
+      }
+    }
+  ],
+  "created_at": "2026-08-28T13:01:37.769519Z",
+  "proposal_id": "prop-lane2-tf0119-review-handoff-20260828",
+  "rationale": "TF-0119 三项遗留均已按最小半径处置，转 review_needed 交 lane-1 复核。",
+  "session_id": "session-lane-2-tf0119",
+  "status": "applied"
+}

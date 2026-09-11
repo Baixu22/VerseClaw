@@ -87,7 +87,7 @@ describe('Agency draft role importer', () => {
 
     expect(validPromotion).toEqual({ ok: true, issues: [] });
     expect(reviewed.status).toBe('draft');
-    expect(canSpawnAgencyDraft(reviewed)).toBe(false);
+    expect(canSpawnAgencyDraft(reviewed as never)).toBe(false);
   });
 
   it('imports top-level Agency arrays and keeps imported tool requirements as hints only', () => {
@@ -153,7 +153,7 @@ describe('Agency draft role importer', () => {
       },
     };
 
-    const review = reviewAgencyDraftPromotion(reviewed, {
+    const review = reviewAgencyDraftPromotion(reviewed as never, {
       reviewer: 'operator',
       reviewedAt: '2026-07-08T00:00:00.000Z',
     });
@@ -163,7 +163,7 @@ describe('Agency draft role importer', () => {
       approvedForRuntime: false,
       validation: { ok: true },
     });
-    expect(canSpawnAgencyDraft(reviewed)).toBe(false);
+    expect(canSpawnAgencyDraft(reviewed as never)).toBe(false);
   });
 
   it('parses real Agency markdown frontmatter into draft-only metadata', () => {

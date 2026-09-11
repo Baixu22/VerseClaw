@@ -1,0 +1,7 @@
+{
+  "operator": "codex-independent-cli",
+  "viaCdp": false,
+  "command": "node --test coding/invoice.test.mjs",
+  "exitCode": 0,
+  "output": "✔ quantity is included (0.9439ms)\n✔ empty invoice is zero (0.2121ms)\n✔ discount cannot make total negative (0.0789ms)\n✔ no discount (0.0716ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 70.4462\n"
+}

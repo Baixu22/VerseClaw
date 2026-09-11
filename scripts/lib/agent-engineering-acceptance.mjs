@@ -30,7 +30,7 @@ const REPOSITORY_ROOT = resolve(dirname(THIS_FILE), '../..');
 const DEFAULT_OUTPUT_ROOT = join(REPOSITORY_ROOT, 'artifacts', 'agent-engineering-acceptance');
 const DEFAULT_TIMEOUT_MS = 30 * 60 * 1000;
 const MAX_OUTPUT_BYTES = 64 * 1024 * 1024;
-const ROOT_UNIT_EXPECTED_SKIPS = 52;
+const ROOT_UNIT_EXPECTED_SKIPS = 53;
 const RUNTIME_UNIT_EXPECTED_SKIPS = 0;
 const SAFE_NETWORK_POLICIES = new Set(['none', 'isolated']);
 const REQUIRED_LOCK_FILES = ['package.json', 'pnpm-lock.yaml', '.npmrc'];
@@ -832,7 +832,7 @@ export function createDetachedWorktree(root, options = {}) {
   try {
     runGit(root, ['worktree', 'add', '--detach', checkout, commit], { timeoutMs: options.timeoutMs ?? 120_000 });
   } catch (error) {
-    rmSync(holder, { recursive: true, force: true });
+    rmSync(holder, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
     throw error;
   }
   let cleaned = false;
@@ -845,7 +845,12 @@ export function createDetachedWorktree(root, options = {}) {
       try {
         runGit(root, ['worktree', 'remove', '--force', checkout], { allowFailure: true, timeoutMs: 120_000 });
       } finally {
-        rmSync(holder, { recursive: true, force: true });
+        try {
+          rmSync(holder, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+        } catch (error) {
+          const code = error?.code;
+          if (code !== 'EPERM' && code !== 'EBUSY' && code !== 'ENOTEMPTY') throw error;
+        }
       }
     },
   };
@@ -1132,7 +1137,7 @@ function runVerseShellBinaryProvision(gate, options = {}) {
         return fail('electron dist/path.txt missing in source repository (run electron postinstall or install without --ignore-scripts)');
       }
       const worktreeDist = join(worktreeElectron, 'dist');
-      rmSync(worktreeDist, { recursive: true, force: true });
+      rmSync(worktreeDist, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
       mkdirSync(worktreeDist, { recursive: true });
       copyRecursiveSync(sourceDist, worktreeDist);
       copyFileSync(sourcePathTxt, join(worktreeElectron, 'path.txt'));

@@ -25,12 +25,12 @@ function makeFact(
     subject,
     predicate: text.split(" ")[0] ?? text,
     objectSummary: text,
-    validAt: 1000,
-    verificationStatus: "accepted",
+    valid_at: 1000,
+    verificationStatus: "accepted" as never,
     sourceEpisodeRefs: [],
     evidenceRefs: [],
     proposedAt: 1000,
-  };
+  } as never;
 }
 
 describe("P3-2: candidateTopK — candidate width cap", () => {

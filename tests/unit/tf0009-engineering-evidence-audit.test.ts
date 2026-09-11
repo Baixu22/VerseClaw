@@ -69,14 +69,15 @@ function completeDay1Gates() {
 describe('TF-0009 engineering evidence audit', () => {
   const audit = readJson<Audit>('artifacts/first-product-preview/TF-0009/evidence-audit.json');
 
-  it('keeps the canonical node review-needed while separating explicit engineering release', () => {
+  it('keeps missing human evidence blocked while separating explicit engineering release', () => {
     const nodes = readJson<Record<string, { status: string; progress: number; acceptance_criteria: string[] }>>(
       '.agent-workbench/task-forest/graph/nodes.json',
     );
     const forest = readJson<{
       edges: Record<string, { from: string; to: string; type: string; blocking: boolean }>;
     }>('.agent-workbench/task-forest/graph/forest.json');
-    expect(nodes['TF-0009']).toMatchObject({ status: 'review_needed', progress: 50 });
+    // Live graph: review confirmed the remaining work needs human evidence, so R7 requires blocked.
+    expect(nodes['TF-0009']).toMatchObject({ status: 'blocked', progress: 50 });
     expect(nodes['TF-0011']).toMatchObject({ status: 'done', progress: 100 });
     expect(nodes['TF-0009'].acceptance_criteria).toHaveLength(4);
     expect(Object.values(forest.edges)).toContainEqual(
@@ -87,6 +88,7 @@ describe('TF-0009 engineering evidence audit', () => {
         blocking: false,
       }),
     );
+    // Frozen July audit keeps its original status; only the live graph tracks the current workflow.
     expect(audit.taskForestState).toEqual({
       status: 'review_needed',
       progress: 50,

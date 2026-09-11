@@ -1,0 +1,187 @@
+{
+  "applied_at": "2026-09-11T07:10:55.229667Z",
+  "base_graph_hash": "e275173c4173449e11d3f12ffbc87619788a258c6754af1753befcf899464c90",
+  "base_summary": {
+    "edge_count": 281,
+    "node_count": 155,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "loop-termination",
+      "node": {
+        "acceptance_criteria": [
+          "生产工具构造路径下第 21 次同参同结果调用触发终止通知",
+          "未接 observer 时行为与修复前一致（仍返回 blocked 结果）",
+          "Runtime 核心类型检查通过"
+        ],
+        "confidence": 0.88,
+        "difficulty": "medium",
+        "evidence": [
+          "真实复现：artifacts/live-model-cdp/20260911-senseaudio-s2-flash/dataset.jsonl 会话 agent:main:session-1789094500503-8e1zqj（s05-t01），43 次 read 后仍被继续请求模型，人工停止",
+          "根因：openclaw_runtime/src/agents/tool-loop-detection.ts 判定 critical，agent-tools.before-tool-call.ts 仅返回 blocked 结果，无终止通路",
+          "新增 openclaw_runtime/src/agents/tool-loop-termination.ts（ToolLoopTerminationObserver / ToolLoopTerminatedError）",
+          "接线：agent-tools.before-tool-call.ts、agent-tools.ts、embedded-agent-runner/run/types.ts、run/attempt.ts（3 处 hook 上下文）、run.ts（observeToolLoopTermination + attemptLoopAbortController）",
+          "测试：src/agents/agent-tools.before-tool-call.loop-termination.test.ts 3/3 PASS；src/agents/tool-loop-termination.flow.test.ts 2/2 PASS（走 createOpenClawCodingTools 生产路径）",
+          "类型检查：node scripts/run-tsgo.mjs -p tsconfig.core.json exit 0（无输出）",
+          "docs/dev/context-moat/reviews/blocked-triage-and-three-node-delivery-20260911.md"
+        ],
+        "kind": "task",
+        "next_action": "端到端 Electron/CDP 复现与具名真人验收仍未执行（本机无授权 provider 会话）；后续新增终止策略须单独评估授权。",
+        "non_goals": [
+          "不宣称 Electron/CDP 端到端复现已完成",
+          "不改变任何产品锁或默认开关"
+        ],
+        "priority": 1,
+        "progress": 100,
+        "purpose": "让模型陷入同参无进展循环时由运行时自动结束回合，而不是一直存活到人工停止。",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "requirements": [
+          "critical 级工具循环必须能终止 run，warning 级不得终止",
+          "不改变既有的 blocked 工具结果契约与 loopDetection 配置默认值",
+          "终止语义与既有 post-compaction 循环守卫保持一致"
+        ],
+        "status": "done",
+        "success_metrics": [
+          "agent-tools.before-tool-call.loop-termination.test.ts 3/3 PASS",
+          "tool-loop-termination.flow.test.ts 2/2 PASS",
+          "node scripts/run-tsgo.mjs -p tsconfig.core.json exit 0"
+        ],
+        "summary": "修复 critical 工具循环只阻断单次调用、run 仍继续的问题：新增 onToolLoopTermination 通路，把 critical veto 升级为 attempt 级终止（与 post-compaction 守卫同构）。生产工具构造路径 createOpenClawCodingTools 已接通；5 项新测试全部通过，Runtime 核心类型检查 exit 0。",
+        "title": "运行时工具循环终止：critical 阻断必须结束 run（复现 s05-t01）"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "长任务运行时可靠性：模型陷入无进展工具循环时必须自动终止。"
+      },
+      "from": "loop-termination",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "用本批真实语料的失败样本修复运行时循环终止问题。"
+      },
+      "from": "loop-termination",
+      "to": "TF-0135",
+      "type": "contributes_to"
+    },
+    {
+      "action": "add_node",
+      "alias": "exec-foreground-liveness",
+      "node": {
+        "acceptance_criteria": [
+          "前台模式真实 spawn 期间收到 running 心跳且最终 completed",
+          "后台可用时不出现心跳更新"
+        ],
+        "confidence": 0.85,
+        "difficulty": "medium",
+        "evidence": [
+          "真实复现：artifacts/live-model-cdp/20260911-senseaudio-s2-flash/dataset.jsonl 会话 agent:main:session-1789093636234-2bsupx（s03-t02），assessment=exec-produced-no-result-before-UI-timeout",
+          "根因：bash-tools.exec.ts yieldWindow = allowBackground ? clamp(...) : null；allowBackground=false 时只有进程退出才 resolve，最长沉默至 1800s 默认超时",
+          "修复：纯前台分支新增 resolveExecForegroundHeartbeatMs() 心跳，cleanupToolRunListeners 清理；allowBackground=false 时始终写警告",
+          "测试：src/agents/bash-tools.exec.foreground-heartbeat.test.ts 2/2 PASS（真实 spawn node -e，250ms 心跳）",
+          "类型检查：node scripts/run-tsgo.mjs -p tsconfig.core.json exit 0"
+        ],
+        "kind": "task",
+        "next_action": "端到端 Electron/CDP 复现与真人验收仍未执行；UI 侧工具调用预算与运行时前台超时的对齐属后续独立任务。",
+        "non_goals": [
+          "不修改默认 exec 超时或 yield 窗口语义",
+          "不宣称已消除 UI 侧超时竞态"
+        ],
+        "priority": 1,
+        "progress": 100,
+        "purpose": "让前台 exec 在长时间运行时可被观测，避免 UI 超时前没有任何工具结果。",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "requirements": [
+          "纯前台 exec 必须有周期性存活更新",
+          "后台可用时不得引入额外心跳",
+          "模型必须知道命令无法后台化或轮询"
+        ],
+        "status": "done",
+        "success_metrics": [
+          "bash-tools.exec.foreground-heartbeat.test.ts 2/2 PASS",
+          "node scripts/run-tsgo.mjs -p tsconfig.core.json exit 0"
+        ],
+        "summary": "修复 allowBackground=false 时 exec 在进程退出前完全不产生结果/进度的问题：纯前台路径按 OPENCLAW_EXEC_FOREGROUND_HEARTBEAT_MS（默认 15s，钳制 1–120s）发心跳更新，并始终向模型告知命令同步执行、无法后台化。不改结果契约与超时。",
+        "title": "exec 前台模式无结果可观测性：有界心跳与显式告知（复现 s03-t02）"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "长任务执行基座的可观测性：命令挂起时回合不能失明。"
+      },
+      "from": "exec-foreground-liveness",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "用本批真实语料的 exec 挂起样本修复前台无结果问题。"
+      },
+      "from": "exec-foreground-liveness",
+      "to": "TF-0135",
+      "type": "contributes_to"
+    },
+    {
+      "action": "add_node",
+      "alias": "blocked-triage",
+      "node": {
+        "acceptance_criteria": [
+          "10/10 blocked 节点有裁定与解除路径",
+          "文档与任务图状态一致"
+        ],
+        "confidence": 0.9,
+        "difficulty": "low",
+        "evidence": [
+          "节点状态分布（全量扫描 155 节点）：done 109 / proposed 17 / in_progress 12 / blocked 10 / deprecated 7，无 review_needed",
+          "docs/dev/context-moat/reviews/blocked-triage-and-three-node-delivery-20260911.md",
+          "本轮同时交付 TF-0156（工具循环终止）与 TF-0157（exec 前台可观测性）"
+        ],
+        "kind": "task",
+        "next_action": "8 项人依赖阻塞需用户或具名 owner 推进；TF-0006/TF-0013 属工程依赖链，随 TF-0029 全局验收与 RC-02 推进。",
+        "non_goals": [
+          "不应用历史遗留的 14 份未应用提案",
+          "不解除任何需要真人证据或人工批准的阻塞"
+        ],
+        "priority": 1,
+        "progress": 100,
+        "purpose": "按用户要求明确处置阻塞，避免任何节点静默滞留。",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "requirements": [
+          "review_needed 队列必须经全量扫描确认",
+          "每个 blocked 节点必须有明确责任方与解除路径",
+          "不越权把 blocked 改成 done"
+        ],
+        "status": "done",
+        "success_metrics": [
+          "docs/dev/context-moat/reviews/blocked-triage-and-three-node-delivery-20260911.md 覆盖 10 个 blocked 节点",
+          "task-forest validate 通过"
+        ],
+        "summary": "全量扫描 155 节点确认 review_needed 队列为空；对 10 个 blocked 节点逐条给出裁定与解除路径（8 项人依赖、2 项工程依赖链），并汇总本轮三节点交付与验证证据。",
+        "title": "blocked 队列显式裁定与三节点交付证据（2026-09-11）"
+      }
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "本批 s05-t01 / s03-t02 两个真实复现样本已分别由 TF-0156、TF-0157 完成修复与测试（非端到端）。后续按既有受控流程继续 receipt baseline 与真人 L3；不再把缺少授权 Provider 列为语料采集阻塞。"
+      },
+      "id": "TF-0135"
+    }
+  ],
+  "created_at": "2026-09-11T07:10:48.414182Z",
+  "proposal_id": "TFP-three-node-delivery-20260911",
+  "rationale": "按用户指令完成 3 个真实开发节点：TF-0156（s05-t01 工具循环终止）、TF-0157（s03-t02 exec 前台无结果可观测性）、TF-0158（blocked 队列显式裁定）。三节点均取自 2026-09-11 真实 CDP 语料暴露的缺陷，含真实代码修复、真实执行的单测/集成测试与类型检查。review_needed 队列经全量扫描为空；10 个 blocked 节点逐条给出解除路径，不越权改状态。",
+  "session_id": "workbuddy-three-node-20260911",
+  "status": "applied"
+}

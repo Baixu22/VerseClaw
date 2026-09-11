@@ -1,37 +1,15 @@
 /**
- * T-C1: single source of truth for the required compaction summary sections.
- *
- * These five headings are load-bearing in three separate places, and before this
- * module they were hardcoded twice:
- *   1. `compaction-safeguard-quality.ts` asks the model to produce them and
- *      audits whether it did.
- *   2. `compaction-damage-rules.ts` scores structural fidelity from how many
- *      survived a compaction.
- *   3. The damage rules' goal-decay check must deliberately *exclude* these
- *      headings, because a heading is not evidence that the goal survived —
- *      see `stripRequiredSectionHeadings`.
- *
- * Two copies that must agree is exactly the defect class §R1 A3 catalogues: the
- * copies drift, and the drift is silent because each side's tests only see its
- * own copy. Kept dependency-free so both consumers can import it without
- * pulling anything transitively.
+ * TF-0124: ClawX quality/damage helpers consume agent-core's canonical
+ * compaction section contract. The required-heading array is defined once in
+ * agent-core, where the model prompt is generated, and re-exported here to keep
+ * the existing runtime API stable.
  */
-
-/**
- * Required compaction summary sections, in prompt order.
- *
- * Changing this list changes both what the model is asked to emit and what the
- * damage rules consider structurally intact — update deliberately.
- */
-export const REQUIRED_COMPACTION_SECTIONS = [
-  "## Decisions",
-  "## Open TODOs",
-  "## Constraints/Rules",
-  "## Pending user asks",
-  "## Exact identifiers",
-] as const;
-
-export type RequiredCompactionSection = (typeof REQUIRED_COMPACTION_SECTIONS)[number];
+export {
+  REQUIRED_COMPACTION_SECTIONS,
+  renderCompactionSummaryShape,
+  type RequiredCompactionSection,
+} from "../../../packages/agent-core/src/harness/compaction/summary-contract.js";
+import { REQUIRED_COMPACTION_SECTIONS } from "../../../packages/agent-core/src/harness/compaction/summary-contract.js";
 
 /**
  * Removes the required section headings from `text`, leaving their content.
@@ -39,7 +17,7 @@ export type RequiredCompactionSection = (typeof REQUIRED_COMPACTION_SECTIONS)[nu
  * Why this exists: the goal-decay detector looks for goal anchors at line or
  * heading position, and two of its anchor words (`DECISIONS?`, `CONSTRAINTS?`)
  * are also required section headings. That made the detector unfireable — a
- * summary hollowed out to nothing but the five headings and the word "None."
+ * summary hollowed out to nothing but the required headings and the word "None."
  * still matched `## Decisions` and was scored as goal-intact. Stripping the
  * headings first makes goal survival depend on the summary's *content*.
  *
@@ -47,11 +25,11 @@ export type RequiredCompactionSection = (typeof REQUIRED_COMPACTION_SECTIONS)[nu
  * correct line boundaries in the remaining prose.
  */
 export function stripRequiredSectionHeadings(text: string): string {
-  let out = text;
-  for (const section of REQUIRED_COMPACTION_SECTIONS) {
-    out = out.split(section).join("\n");
-  }
-  return out;
+  const required = new Set<string>(REQUIRED_COMPACTION_SECTIONS);
+  return text
+    .split(/\r?\n/u)
+    .map((line) => (required.has(line.trim()) ? "" : line))
+    .join("\n");
 }
 
 /**
@@ -86,17 +64,20 @@ const PLACEHOLDER_BODIES = new Set([
  */
 export function extractRequiredSectionBodies(text: string): Map<string, string> {
   const bodies = new Map<string, string>();
-  const positions: Array<{ section: string; start: number }> = [];
-  for (const section of REQUIRED_COMPACTION_SECTIONS) {
-    const index = text.indexOf(section);
-    if (index >= 0) positions.push({ section, start: index });
+  const required = new Set<string>(REQUIRED_COMPACTION_SECTIONS);
+  let current: string | undefined;
+  let lines: string[] = [];
+  for (const line of text.split(/\r?\n/u)) {
+    const heading = line.trim();
+    if (required.has(heading)) {
+      if (current) bodies.set(current, lines.join("\n").trim());
+      current = heading;
+      lines = [];
+      continue;
+    }
+    if (current) lines.push(line);
   }
-  positions.sort((left, right) => left.start - right.start);
-  for (const [i, entry] of positions.entries()) {
-    const bodyStart = entry.start + entry.section.length;
-    const bodyEnd = i + 1 < positions.length ? positions[i + 1].start : text.length;
-    bodies.set(entry.section, text.slice(bodyStart, bodyEnd).trim());
-  }
+  if (current) bodies.set(current, lines.join("\n").trim());
   return bodies;
 }
 

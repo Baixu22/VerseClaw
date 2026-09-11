@@ -1,0 +1,65 @@
+{
+  "applied_at": "2026-09-11T09:00:41.970559Z",
+  "base_graph_hash": "bfb896c91769ad523f5a6ab39b8e249fe570d7883619ed7c0410bf3f7abff4a4",
+  "base_summary": {
+    "edge_count": 285,
+    "node_count": 158,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "git-object-store-recovery",
+      "node": {
+        "acceptance_criteria": [
+          "git status / git diff / git ls-tree -r HEAD / git log 全部可用",
+          "111 个引用逐条 cat-file -e 全部有效",
+          "工作树文件无改动、无删除"
+        ],
+        "confidence": 0.85,
+        "difficulty": "high",
+        "evidence": [
+          "现象：git status → fatal: unable to read tree 2bd910bb2d580e5606bcaabe52dc0a60c2e9a61a；起始对象库 92,862 个对象",
+          "子树恢复：用索引条目 git mktree --missing 重建 18/18 棵缺失子树，逐个比对对象 id 一致后才接受",
+          "blob 恢复：发现同提交干净检出工作树 D:/ClawX-acceptance-tf0029（HEAD=fdaef5b0a，status 为空），用 git hash-object -w -- <path> 恢复 132/132 个 blob，全部命中索引 sha",
+          "坏引用：refs/heads/rescue/verseshell-20260904 → 119703eb0c15… 记录到 %LOCALAPPDATA%/Temp/broken-ref-record-20260911.txt 后删除；其余 110 个引用校验有效",
+          "远端补拉：临时移出两个孤儿工作树注册后 git fetch origin --no-tags 成功（+581 对象，92,862 → 93,443），随后原样移回",
+          "恢复后实测：git status --short 99 行、git diff --check 正常、git ls-tree -r HEAD 19,661 条目、git log HEAD 12 提交、111 个引用全部 cat-file -e 有效",
+          "行尾修正：仓库索引 LF / 工作树 CRLF 被 stat 缓存掩盖，编辑后暴露为整文件差异；把 bash-tools.exec.ts、run/types.ts 归一化为 LF 后，本节点改动集为 +124/−8 行且 git diff --check 干净",
+          "docs/dev/context-moat/reviews/blocked-triage-and-three-node-delivery-20260911.md 第 4 节"
+        ],
+        "kind": "task",
+        "next_action": "仍未决：① 100 个历史对象（64 tree/30 blob/6 commit）已不在 origin，属本地历史永久丢失；② l2-final-candidate、ClawX-tf0134-candidate 两个工作树 HEAD 指向已丢失提交，会使 git fetch 报 bad object worktrees/<name>/HEAD，需用户决定删除注册（保留目录）或补齐对象。",
+        "non_goals": [
+          "不改写 HEAD",
+          "不删除 l2-final-candidate / ClawX-tf0134-candidate 两个工作树",
+          "不宣称对象库已完全修复"
+        ],
+        "priority": 1,
+        "progress": 100,
+        "purpose": "恢复仓库可用性，使提交、门禁与历史查询重新可执行。",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "requirements": [
+          "恢复必须逐对象校验哈希一致后才写入，禁止猜测式重建",
+          "不得删除或改写用户的工作树与未损坏引用",
+          "未决项必须如实登记，不冒充已修好"
+        ],
+        "status": "done",
+        "success_metrics": [
+          "git status --short 输出 99 行且 exit 0",
+          "git ls-tree -r HEAD 输出 19,661 条目",
+          "对象库由 92,862 增至 93,443",
+          "git fsck 缺失对象由「HEAD 树 18 棵子树 + 索引 132 blob 阻塞」降为 100 个纯历史对象"
+        ],
+        "summary": "把 git 从「status/diff/commit 全部不可用」恢复到工作状态可用：重建 18/18 棵缺失子树、恢复 132/132 个缺失 blob、清理 1 个坏引用、从 origin 拉回 581 个对象；111 个引用逐条校验有效。仍有 100 个历史对象与 2 个孤儿工作树 HEAD 未决，已在文档写明。",
+        "title": "恢复被损坏的 git 对象库与引用（2026-09-11）"
+      }
+    }
+  ],
+  "created_at": "2026-09-11T09:00:40.054542Z",
+  "proposal_id": "TFP-git-object-store-recovery-20260911",
+  "rationale": "本轮收尾时恢复被损坏的 git 对象库：工作状态（status/diff/commit/log）已可用，18/18 缺失子树与 132/132 缺失 blob 已逐对象校验恢复，坏引用已记录后清理，并从 origin 拉回 581 个对象。仍有 100 个历史对象永久缺失、两个孤儿工作树 HEAD 未决，如实登记为后续项。",
+  "session_id": "workbuddy-three-node-20260911",
+  "status": "applied"
+}

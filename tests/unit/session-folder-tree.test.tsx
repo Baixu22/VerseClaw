@@ -75,6 +75,7 @@ async function renderTree(overrides?: {
       workspace={WORKSPACE}
       sessions={SESSIONS}
       collapsedFolders={{}}
+      sessionSort="newest"
       sessionStatusKinds={{}}
       onToggleFolder={vi.fn()}
       onCreateFolder={vi.fn().mockResolvedValue(undefined)}

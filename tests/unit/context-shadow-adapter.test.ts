@@ -15,7 +15,7 @@ describe('context shadow adapters', () => {
       taskLedgerState: ['Task ledger state'],
     };
 
-    const baseline = buildLoopContextPack(input);
+    const baseline = buildLoopContextPack(input as never);
     const flagOff = buildLoopContextPack({
       ...input,
       runtime: { contextProviders: { loopPackShadow: false } },
@@ -34,11 +34,11 @@ describe('context shadow adapters', () => {
         sectionTokens: { relevantKnowledge: 5 },
       },
     };
-    const baseline = buildLoopContextPack(input);
+    const baseline = buildLoopContextPack(input as never);
     const shadow = buildLoopContextPack({
       ...input,
       runtime: { contextProviders: { loopPackShadow: true } },
-    });
+    } as never);
 
     expect(formatLoopContextPackForPrompt(shadow)).toBe(formatLoopContextPackForPrompt(baseline));
     expect(shadow.contextItems?.every(isContextItem)).toBe(true);

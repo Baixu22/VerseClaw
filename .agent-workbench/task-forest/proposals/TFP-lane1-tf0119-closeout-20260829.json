@@ -1,0 +1,41 @@
+{
+  "applied_at": "2026-08-28T18:00:03.423479Z",
+  "base_graph_hash": "d113b64e7234e7cd17439d86e0f4b8d646a0c0cec00e2e8f6c284528159092a3",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "2026-08-29 lane-1 专注审计报告：docs/dev/context-moat/reviews/LANE1-FOCUSED-AUDIT-20260829.md；当前工作树事实源、canonical 状态和审计边界已重新核对。",
+          "plans/system-maturity/findings-registry.json：F-AUTH-003=Partial/L3；当前派生计数 Fixed=31、Partial=4、Open=0、Unverified=0，数组与快照一致。",
+          "scripts/validate-system-maturity-findings-registry.mjs 与 tests/unit/system-maturity-findings-registry.test.ts：计数快照、findingIds 集合和 stale mutation 守卫通过。",
+          "plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.md、P2-005.delivery.md、plans/system-maturity/risk-acceptance.json：当前生产 CVK execution-boundary 缺口与 default-off brb-M follow-up 口径一致，历史测试只作为 API/单元证据。",
+          "artifacts/runtime-memory-eval/report.json：evidenceClass=synthetic、accepted=false、acceptanceNote 明确不满足 L3；scripts/runtime-long-stability.mjs 将该证据视为 incomplete。",
+          "tests/unit/runtime-memory-eval-aggregate-report-real.test.ts：15/15 通过，证明 aggregate 生成链不会覆盖 evidenceClass、accepted 和 acceptanceNote。",
+          "2026-08-29 当前工作树定向验证：TF-0119 focused、registry、config parity、runtime ack/flag、KE shadow、default matrix 及相关 DCS 门均按审计报告记录复跑；未将默认关闭或 synthetic 证据升级为生产证据。"
+        ],
+        "execution_hints": [
+          "TF-0119 的 done 只表示三项审计遗留已完成事实处置，不表示 F-AUTH-003 已达到 Fixed 或 runtime-memory 已达到真实/L3 证据。",
+          "不得把 runtime_receipts=0 的当前基线、synthetic report 或一次真实输入复跑升级为真实 receipt、真人价值或护城河证据。",
+          "后续状态变化必须通过新的 Task Forest proposal；不得重写已应用的历史 proposal 或历史事件。"
+        ],
+        "next_action": "已收口；保留历史 deviation。真实 receipt probe（TF-0135）、CVK execution-boundary（P2-005 follow-up）和稳定 taskId 跨 run 召回修复（TF-0122 第二轮）按各自节点继续推进。",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "lane-1 当前工作树独立复核接受三项遗留的事实处置：计数守卫有效、F-AUTH-003 保持 Partial 并撤下生产硬阻断承诺、runtime-memory 明确为 synthetic 且不进入验收链；真实 receipt、CVK execution-boundary 与跨 run task scope 另立后续任务。"
+      },
+      "id": "TF-0119"
+    }
+  ],
+  "created_at": "2026-08-28T17:59:56.136782Z",
+  "proposal_id": "TFP-lane1-tf0119-closeout-20260829",
+  "rationale": "lane-1 已在当前工作树重新复核 TF-0119：计数守卫、F-AUTH-003 Partial 事实源、runtime-memory synthetic 降级和验收引用边界均一致，允许 canonical node 正式收口。真实 receipt、CVK execution-boundary 和跨 run memory task scope 仍作为独立后续边界，不被本节点的 done 推断覆盖。",
+  "session_id": "lane-1-context-moat-20260829",
+  "status": "applied"
+}

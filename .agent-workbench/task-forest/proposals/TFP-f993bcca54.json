@@ -1,0 +1,37 @@
+{
+  "applied_at": "2026-09-08T10:25:11.692122Z",
+  "base_graph_hash": "738f82737d194b0abb9bcfb316685286acb3cfd5c20893f844df93d5dfb6e368",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 1.0,
+        "created_at": "2026-09-08T19:15:00Z",
+        "evidence": "artifacts/system-maturity/P6-005/acceptance-matrix.json (A1/A3 PASS, A2 FAIL, identity.commit=819338bcf, no identity-mismatch error); run8.log 13/13 gates; release-source-manifest.json sha256 verified consistent.",
+        "expected_requirement": "Final P6-005 evidence binding latest HEAD (819338bcf) after lint fixes and environment stabilization; replaces earlier binding that was partially invalid due to missing node_modules.",
+        "id": "TFD-tf0127-fgov003-final-binding-819338bcf-20260908",
+        "kind": "gate_disposal",
+        "node_id": "TF-0127",
+        "observed_action_or_result": "Detached-worktree full P6-005 rerun at HEAD 819338bcf with absolute --out path (avoiding worktree self-pollution by artifact writes). A1 PASS / A2 FAIL / A3 PASS; identity cleanly bound to refs/heads/feat/runtime-lifecycle-governance @ 819338bcf. Compared to previous run (7e4782723): typecheck regenerated from red→green after dev-dependency synchronization, confirming several prior reds were environment (missing node_modules), not code. Final 8 green / 5 red: maturity:validate (historical P0/P1/P8 fingerprint staleness), security:full (local node_modules/electron incomplete), test full-suite (env), harness:ci (diff-aware governing interception), agent-dev:deep-test (env). Landed to artifacts/system-maturity/P6-005/ with STATUS.md updated; prior 7e4782723 set preserved at P6-005.prev-7e4782723/.",
+        "owner": "fresh-session-no-lane",
+        "recommendation": "F-GOV-003 permanently closed with contemporary identity-clean evidence. The five remaining red gates are documented as environment/historical/structural — not fixable without violating contractual honesty (historical P0/P1/P8), beautifying environment (Electron), or erasing harness protective intent (.agent-workbench/brandnew diff-awareness).",
+        "related_task_ids": [
+          "TF-0127"
+        ],
+        "severity": "info",
+        "status": "closed",
+        "supersede_reason": "Prior closed record captured the earlier 7e4782723-era evidence whose reds were partly environment-induced; this final record captures the 819338bcf-bound set reflecting true post-lint, post-dependency state.",
+        "supersedes": "TFD-tf0127-fgov003-landed-contemporary-evidence-20260908"
+      }
+    }
+  ],
+  "created_at": "2026-09-08T10:24:56.108972Z",
+  "proposal_id": "TFP-f993bcca54",
+  "session_id": "fresh-fgov003-final-20260908",
+  "status": "applied"
+}

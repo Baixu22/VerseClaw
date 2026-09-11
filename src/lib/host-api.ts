@@ -542,6 +542,7 @@ export type {
   ClawHubSearchResult,
   CronSessionHistoryResult,
   CompressionArtifact,
+  CompressionSemanticAtom,
   CompressionEvidenceRef,
   CompressionFact,
   DeliveryChannelAccount,

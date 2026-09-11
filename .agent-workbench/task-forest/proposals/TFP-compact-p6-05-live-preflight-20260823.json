@@ -1,0 +1,32 @@
+{
+  "base_graph_hash": "870cd30160d1e9614449c8dabcb2004d4711a6c5ff94a0325ce86919d990ee95",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 76,
+    "workspace_path": "D:\\verse_claw_worktree_compact"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "D:/verse_claw_worktree_compact/reports/context-compression/P6-TF0074-SEMANTIC-RECOVERY-FIXES-2026-08-23.md",
+          "D:/verse_claw_worktree_compact/scripts/context-compression-semantic-audit.mjs",
+          "D:/verse_claw_worktree_compact/artifacts/p6-tf0074-semantic-audit-report.json",
+          "D:/verse_claw_worktree_compact/artifacts/p6-tf0074-live-acceptance-v3/",
+          "harness/specs/tasks/token-dense-recovery-compression-v1.md P6 新增四条语义规则",
+          "单测 37/37；root 66/66；runtime focused 29/29；canary self-test PASS；语义审计 30/30；harness validate PASS",
+          "v3：L2 real judge 30/30 全绿（noFabrication 1.0）；v2+v3：schema-free 互补 GREEN"
+        ],
+        "progress": 90,
+        "summary": "三类语义缺口修复 + 审计短板收尾完成：expected/resolved/directive 语义同构落在 eval 与 ledger 模块并经 canary import 流入生产验证层；R12/R15 schema-free 标记定性为 prompt head-only 截断的 evaluator 缺陷（v4 已修）；R3/R6 空-actions 由 continuation v5 协议加固；spec 沉淀规则并由语义审计脚本 fail-closed 守护。live 证据：L2 real judge 单 run 全量 GREEN（v3 30/30，noFabrication 1.0）、schema-free 跨 run 互补 GREEN（v2 0.0667、v3 19/19 零遗漏）、continuation 待配额重置后补单 run 完整证据后即可按 acceptance 收口。生产保持 shadow。"
+      },
+      "id": "TF-0074"
+    }
+  ],
+  "created_at": "2026-08-23T10:28:38.071838Z",
+  "proposal_id": "TFP-compact-p6-05-live-preflight-20260823",
+  "rationale": "TF-0074 审计短板全部修复：R12/R15 定性为 evaluator head-only 截断缺陷（schema-free v4 head+tail）；R3/R6 空-actions 协议加固（continuation v5）；runtime 经审计确认修复经 canary import 已流入且结构段无误分类面；spec 沉淀四条规则。仅剩 continuation 完整 live run（等配额重置）。",
+  "session_id": "session-2026-08-23-compact-p6-05-live-preflight",
+  "status": "proposed"
+}

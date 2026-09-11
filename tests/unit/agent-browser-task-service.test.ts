@@ -233,7 +233,7 @@ describe('agent browser task service', () => {
         retryCount: 0,
         createdAt: '2026-07-19T10:00:00.000Z',
         updatedAt: '2026-07-19T10:00:00.000Z',
-      },
+      } as never,
       {
         id: 't2',
         name: 'Run',
@@ -246,7 +246,7 @@ describe('agent browser task service', () => {
         createdAt: '2026-07-19T10:00:00.000Z',
         updatedAt: '2026-07-19T10:00:00.000Z',
         sessionId: 's1',
-      },
+      } as never,
     ];
     const recovered = recoverTasksAfterRestart(tasks, '2026-07-19T11:00:00.000Z');
     expect(recovered[0]).toMatchObject({

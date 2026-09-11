@@ -1,0 +1,53 @@
+{
+  "applied_at": "2026-09-10T08:27:28.275980Z",
+  "base_graph_hash": "28e766b2bd6c463e7d469282138c4c5b9d0c8c4a66cac1fbb1e4fd5eb21cc1a8",
+  "base_summary": {
+    "edge_count": 278,
+    "node_count": 153,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "RC-00 accepted by independent Verifier; RC-01 authority inventory begins",
+          "RC-01 independent Verifier VERDICT=PASS: baseline schema v1, acceptedBaseSha 6493d5cce..., 39/39 writers classified, 16/16 modules, runtime-family/runtime-spine frozen, receipt-owner decision review_needed with blocker",
+          "BLOCKER: receipt-owner-not-selected — no existing durable owner satisfies the RC-01 receipt persistence contract (schema/atomicity/retention/lookup/idempotency/failure/privacy/restart); per TARGET-ARCHITECTURE a new table or sidecar is forbidden by default. RC-02 cannot start until an explicit owner decision is made.",
+          "Receipt-owner decision user-confirmed and accepted (runtime_receipts via ReceiptStore in openclaw-state SQLite, 7 hard constraints); RC-01 independent Verifier VERDICT=pass (41/41 classified, 16/16 modules, decision accepted, source spot-checks consistent)",
+          "2026-09-10 接力：已逐一核对 TF-0009/0115/0127/0137，保留真人证据欠缺和 XL-017/XL-018 已批准的 landed-unwired；不修改其状态或预算。",
+          "2026-09-10 修复 RC-01R 输入契约：显式 --accepted-base 祖先 commit；无效参数不写入；fileURLToPath 支持空格/CJK/URL 保留字符路径；基线时间戳/source-npm 版本/已跟踪且存在的 owner/分类与空路径均校验。",
+          "tests/unit/rc01-baseline-cli.test.ts：真实临时 Git 仓库 18/18；首批 13 个反例在修复前全部失败，空路径/非法分类两项也独立复现。旧基线测试不再写共享基线。",
+          "2026-09-10 最终聚焦 Vitest 6 files / 88 tests PASS；新测试 TypeScript 检查通过；定向 ESLint 0 errors、7 既有 any warnings；scoped git diff --check 通过。",
+          "2026-09-10 通过 C: 目录联接执行真实生成与校验：41 writers / 16 modules，acceptedBaseSha=56cc85502583092f49f01494b4947f9bc969112a，baseline.json 字节未变。",
+          "2026-09-10 隔离 scoped Harness validate 与 dry-run 使用 --since 6c87dfb865529447c4e4d046c3d172a19fb45f1b 通过；直接运行同一 node harness/src/cli.mjs，避免 pnpm 在稀疏工作区重装共享依赖。报告 C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-baseline-integrity-20260910/harness-scoped.json。",
+          "2026-09-10 pnpm run harness:ci FAIL：历史全分支差异超出 gateway 场景覆盖范围，未放宽规则。日志 C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-baseline-integrity-20260910/harness-ci.log。",
+          "docs/dev/handoffs/LATEST.md：2026-09-10 TF-0029 基线输入校验修复；本轮为局部工程验证，不是 RC-01R 全局/独立验收。",
+          "2026-09-10 本轮复核四个 review_needed：TF-0115/0137/0127 与 XL-017/XL-018 等既有 landed-unwired 裁决一致；TF-0009 真人计数仍各 0/10，不改状态和预算。",
+          "2026-09-10 receipt-owner 契约反例：四种 authorities.receipt owner 字段矛盾、五条硬约束撤销、重复凑数和关键词后否定，共 11 个反例修复前失败（非法基线仍 exit 0）。",
+          "scripts/lib/rc01-receipt-contract.mjs：生成器与校验器复用已批准的四个 owner 字段及七条约束原文；两份声明逐字段核对，完整约束精确比对，现有基线生成字节不变。",
+          "2026-09-10 聚焦 4 files / 90 tests PASS，其中真实临时 Git 仓库 CLI 31/31；定向 ESLint、测试文件 TypeScript、当前基线 CLI 41 writers / 16 modules、scoped diff 检查通过。",
+          "2026-09-10 隔离 sparse worktree 的 diff-aware Harness validate / dry-run PASS（基于 6c87dfb865529447c4e4d046c3d172a19fb45f1b，7 个基线相关路径，uncovered/residual=0）；只作范围检查，没有把 dry-run 记为完整门禁。",
+          "2026-09-10 pnpm run harness:ci 仍在 Gateway 全分支 changed-path 覆盖门 FAIL；共享本 spec 另受此前四个他任务 dirty 路径影响。未放宽白名单、未新增正式工程验收。报告 C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-receipt-contract-20260910/。",
+          "docs/dev/handoffs/LATEST.md：2026-09-10 TF-0029 receipt-owner 契约校验修复。",
+          "2026-09-10 继续开发：独立 Node 进程运行真实 ReceiptStore，首次写入 context 后，同键 wire 请求误返回 ok=true/identical-content，数据库仍为 context。探针：C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-receipt-proof-20260910/probe-before.log。",
+          "2026-09-10 范围说明：依据用户直接修复的既有授权，仅允许修复已复现的 owner 幂等违约；不改 schema、存量 digest、owner 选择、默认开关或产品锁。"
+        ],
+        "execution_hints": [
+          "本轮活动 spec：harness/specs/tasks/rc01r-receipt-owner-proof.md；修复回执类型幂等冲突，并用真实失败、独立进程和并发 SQLite 写入补齐证明。"
+        ],
+        "next_action": "完成 receipt-owner 已复现的跨类型幂等缺陷修复和真实重启/并发/失败证明，再执行相关类型、通信及全局门禁；独立工程验收和父节点完成仍以干净候选及完整门禁为准。",
+        "non_goals": [
+          "新增生产能力（仅允许 receipt-owner 实证中已复现的现有 owner 缺陷修复）",
+          "authority cutover"
+        ]
+      },
+      "id": "TF-0029"
+    }
+  ],
+  "created_at": "2026-09-10T08:27:28.025142Z",
+  "proposal_id": "TFP-rc01r-receipt-proof-start-20260910",
+  "rationale": "用户已授权继续当前节点并直接修复发现的问题。真实 SQLite 探针证实同一键下 context 到 wire 的类型变更被误判 identical-content；本轮在 TF-0029 收据 owner 证明内允许这一最小现有运行时缺陷修复，不开启 RC-02 或新增 authority。",
+  "session_id": "codex-rc01r-receipt-proof-20260910",
+  "status": "applied"
+}

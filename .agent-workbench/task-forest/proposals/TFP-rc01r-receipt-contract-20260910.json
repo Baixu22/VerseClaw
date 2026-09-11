@@ -1,0 +1,45 @@
+{
+  "applied_at": "2026-09-10T08:04:20.055054Z",
+  "base_graph_hash": "95f022ce7eb45b1906fad9dc6649211c83a317973b8e099f4137940ba80afd67",
+  "base_summary": {
+    "edge_count": 278,
+    "node_count": 153,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "RC-00 accepted by independent Verifier; RC-01 authority inventory begins",
+          "RC-01 independent Verifier VERDICT=PASS: baseline schema v1, acceptedBaseSha 6493d5cce..., 39/39 writers classified, 16/16 modules, runtime-family/runtime-spine frozen, receipt-owner decision review_needed with blocker",
+          "BLOCKER: receipt-owner-not-selected — no existing durable owner satisfies the RC-01 receipt persistence contract (schema/atomicity/retention/lookup/idempotency/failure/privacy/restart); per TARGET-ARCHITECTURE a new table or sidecar is forbidden by default. RC-02 cannot start until an explicit owner decision is made.",
+          "Receipt-owner decision user-confirmed and accepted (runtime_receipts via ReceiptStore in openclaw-state SQLite, 7 hard constraints); RC-01 independent Verifier VERDICT=pass (41/41 classified, 16/16 modules, decision accepted, source spot-checks consistent)",
+          "2026-09-10 接力：已逐一核对 TF-0009/0115/0127/0137，保留真人证据欠缺和 XL-017/XL-018 已批准的 landed-unwired；不修改其状态或预算。",
+          "2026-09-10 修复 RC-01R 输入契约：显式 --accepted-base 祖先 commit；无效参数不写入；fileURLToPath 支持空格/CJK/URL 保留字符路径；基线时间戳/source-npm 版本/已跟踪且存在的 owner/分类与空路径均校验。",
+          "tests/unit/rc01-baseline-cli.test.ts：真实临时 Git 仓库 18/18；首批 13 个反例在修复前全部失败，空路径/非法分类两项也独立复现。旧基线测试不再写共享基线。",
+          "2026-09-10 最终聚焦 Vitest 6 files / 88 tests PASS；新测试 TypeScript 检查通过；定向 ESLint 0 errors、7 既有 any warnings；scoped git diff --check 通过。",
+          "2026-09-10 通过 C: 目录联接执行真实生成与校验：41 writers / 16 modules，acceptedBaseSha=56cc85502583092f49f01494b4947f9bc969112a，baseline.json 字节未变。",
+          "2026-09-10 隔离 scoped Harness validate 与 dry-run 使用 --since 6c87dfb865529447c4e4d046c3d172a19fb45f1b 通过；直接运行同一 node harness/src/cli.mjs，避免 pnpm 在稀疏工作区重装共享依赖。报告 C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-baseline-integrity-20260910/harness-scoped.json。",
+          "2026-09-10 pnpm run harness:ci FAIL：历史全分支差异超出 gateway 场景覆盖范围，未放宽规则。日志 C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-baseline-integrity-20260910/harness-ci.log。",
+          "docs/dev/handoffs/LATEST.md：2026-09-10 TF-0029 基线输入校验修复；本轮为局部工程验证，不是 RC-01R 全局/独立验收。",
+          "2026-09-10 本轮复核四个 review_needed：TF-0115/0137/0127 与 XL-017/XL-018 等既有 landed-unwired 裁决一致；TF-0009 真人计数仍各 0/10，不改状态和预算。",
+          "2026-09-10 receipt-owner 契约反例：四种 authorities.receipt owner 字段矛盾、五条硬约束撤销、重复凑数和关键词后否定，共 11 个反例修复前失败（非法基线仍 exit 0）。",
+          "scripts/lib/rc01-receipt-contract.mjs：生成器与校验器复用已批准的四个 owner 字段及七条约束原文；两份声明逐字段核对，完整约束精确比对，现有基线生成字节不变。",
+          "2026-09-10 聚焦 4 files / 90 tests PASS，其中真实临时 Git 仓库 CLI 31/31；定向 ESLint、测试文件 TypeScript、当前基线 CLI 41 writers / 16 modules、scoped diff 检查通过。",
+          "2026-09-10 隔离 sparse worktree 的 diff-aware Harness validate / dry-run PASS（基于 6c87dfb865529447c4e4d046c3d172a19fb45f1b，7 个基线相关路径，uncovered/residual=0）；只作范围检查，没有把 dry-run 记为完整门禁。",
+          "2026-09-10 pnpm run harness:ci 仍在 Gateway 全分支 changed-path 覆盖门 FAIL；共享本 spec 另受此前四个他任务 dirty 路径影响。未放宽白名单、未新增正式工程验收。报告 C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-receipt-contract-20260910/。",
+          "docs/dev/handoffs/LATEST.md：2026-09-10 TF-0029 receipt-owner 契约校验修复。"
+        ],
+        "next_action": "基线工具输入和 receipt-owner 契约校验已修复。形成干净候选后继续 RC-01R 完整全局门禁、receipt-owner 真实持久性等证明与独立 Verifier；全分支 harness:ci 的历史跨任务范围问题须按归属处理。旧控制包 STATUS/README 的 8 月 accepted/done 叙述不替代当前任务图，不能用局部 PASS 宣布父节点完成或解锁 RC-02。",
+        "summary": "RC-01R 基线工具已补齐显式 accepted-base、路径/版本/owner 检查，并修复 receipt-owner 两份声明矛盾及七条硬约束被撤销仍放行的问题。最新 90 项聚焦测试与隔离 scoped Harness 通过；全局绿线和独立 Verifier 尚未重签，保持 in_progress。"
+      },
+      "id": "TF-0029"
+    }
+  ],
+  "created_at": "2026-09-10T08:03:57.941298Z",
+  "proposal_id": "TFP-rc01r-receipt-contract-20260910",
+  "rationale": "用户已明确授权接收最新 Task Forest、优先复核 review_needed、发现问题直接修复无需询问。本提案仅记录 TF-0029 已完成的 receipt-owner 契约校验修复与验证结果；保持父节点 in_progress，不修改四个待复核节点的裁决、预算或产品锁。",
+  "session_id": "codex-rc01r-receipt-contract-20260910",
+  "status": "applied"
+}

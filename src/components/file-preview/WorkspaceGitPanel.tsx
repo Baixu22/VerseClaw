@@ -33,6 +33,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { CommitSummary, type CommitOperationState } from '@/components/ai-elements/commit';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
+import { approvalDisplayDetails } from '@/lib/permission-approval-display';
 import { createRemoteForgeErrorV1 } from '@shared/remote-forge/error-envelope';
 import { basenameFromPath, compactCommit, defaultWorktreeTargetPath, formatRelativeTime, pathEquals } from '@/lib/git-ui';
 import { useWorkspacesStore } from '@/stores/workspaces';
@@ -802,7 +803,9 @@ export function WorkspaceGitPanel({
                 {t('workspace.git.approval.title', { action: pendingApproval.action })}
               </p>
               <p className="mt-1 text-amber-900/80 dark:text-amber-200/80">
-                {pendingApproval.approval.reason || notice}
+                {/* An external-write reason names the workspace root verbatim,
+                    so it goes through the same redaction the approval cards use. */}
+                {approvalDisplayDetails(pendingApproval.approval).reason || notice}
               </p>
             </div>
             <Button

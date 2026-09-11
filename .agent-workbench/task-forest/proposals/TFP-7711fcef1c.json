@@ -1,0 +1,73 @@
+{
+  "applied_at": "2026-09-08T06:25:39.841148Z",
+  "base_graph_hash": "8fd74918f7839e7bd09d4c13369eb8478aafad39d432938ad184389a413fe180",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "context_tags": [
+          "differentiation",
+          "provenance",
+          "damage-attribution",
+          "landed-unwired"
+        ],
+        "next_action": "已按 XL-018 Q1 处置为里程碑级 landed-unwired（TF-0143 交付 + 三棒治理成本追加后 ≈29/~25 触顶超限、R3.5 拆分不可用、全部子节点 done、有 M1/M2 同形态先例）；预算 25 与全轮 230 不动。F-GOV-003 按 Q3 路径①，由 lane-2 干净 worktree 候选生成新 P6-005 证据，landing 后由独立第三会话最终 L2 + done。",
+        "progress": 100,
+        "summary": "[landed-unwired] 把已建成但未通电的护城河机制接上。核心技术命题：在长任务会话中用单元级谱系 + 确定性损伤检测作为触发信号做定向上下文再注入，成本远低于 LLM 反思循环（ARC 路线），并能给出人类可读的上下文损失归因。学术侧对照：arXiv:2606.29718 显示长任务搜索 SOTA 仅 34.74%、7 种上下文管理方法中最佳仅 +6.8%；arXiv:2601.12030（ARC）用 LLM 反思达 +11%；两者均只能在任务成功率上观测，无法做单元级归因。"
+      },
+      "id": "TF-0127"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 1.0,
+        "created_at": "2026-09-08T11:30:00Z",
+        "evidence": "AUDIT-BOARD.html XL-018 user ruling 2026-09-08; DEV-PROTOCOL.md §R3.5.1; GATE-BASELINE.md §14 (to be appended); reviews/TF-0127.md last sections.",
+        "expected_requirement": "§R3.5 forbid releasing over-radius tasks; §R3.5.1 governs milestone-level landed-unwired as third legitimate exit.",
+        "id": "TFD-tf0127-m4-landed-unwired-xl018-20260908",
+        "kind": "scope_disposal",
+        "node_id": "TF-0127",
+        "observed_action_or_result": "XL-018 Q1 approved by user on 2026-09-08: M4 (TF-0127) downgraded to milestone-level landed-unwired. Status preserved as review_needed/100; summary prefixed with [landed-unwired]; context_tags appended. Trigger: TF-0143 accepted seven paths + relay governance costs (~29/~25). Split unavailable; all four §R3.5.1 conditions met.",
+        "owner": "lane-2",
+        "recommendation": "This is honest accounting, not release. F-GOV-003 path1 proceeds via lane-2 clean candidate; independent third dual-lane signoff session runs final L2 only after P6-005 evidence lands.",
+        "related_task_ids": [
+          "TF-0127",
+          "TF-0143",
+          "TF-0128",
+          "TF-0138"
+        ],
+        "severity": "info",
+        "status": "closed"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-09-08T11:30:00Z",
+        "evidence": "Worktree /tmp/clawx-p6-005-rerun-20260908/candidate; run log run4.log; ref+CI solve.",
+        "expected_requirement": "Stale-evidence Publish-blocker High must be resolved without rewriting history or widening white-list.",
+        "id": "TFD-tf0127-f-gov-003-path1-rerun-20260908",
+        "kind": "gate_disposal",
+        "node_id": "TF-0127",
+        "observed_action_or_result": "XL-018 Q3 path1 approved by user on 2026-09-08: lane-2 regenerates P6-005 evidence in clean detached worktree (CI=true to satisfy pnpm TTY), ref=refs/heads/feat/runtime-lifecycle-governance, 13-gate full release loop + runtime preflight. Candidate artifacts land via SHA-fast-forward (update-ref) onto shared tree, --out external to candidate avoids worktree dirty-trip.",
+        "owner": "lane-2",
+        "recommendation": "Landing coordinates: artifacts/system-maturity/P6-005/* (under .agent-workbench radius surface would be a problem; artifacts/ is outside). After landing, evidence-freshness gate re-runs; stale F-GOV-003 clears. Independent third session still required for final dual-lane signoff.",
+        "related_task_ids": [
+          "TF-0127"
+        ],
+        "severity": "info",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-09-08T06:25:25.628050Z",
+  "proposal_id": "TFP-7711fcef1c",
+  "session_id": null,
+  "status": "applied"
+}

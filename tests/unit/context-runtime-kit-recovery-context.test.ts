@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildDeterministicCompressionArtifact,
   type CompressionCvkEvidenceRef,
+  type CompressionSemanticAtom,
 } from '../../openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact';
 import {
   compileCvkFixtureSources,
@@ -124,5 +125,120 @@ describe('Context Runtime Kit recovery context', () => {
       }),
     ]);
     expect(result.projection.unverifiedClaims).toContain('Document overview may have changed since compaction.');
+  });
+});
+
+function criticalAtom(
+  id: string,
+  type: CompressionSemanticAtom['type'],
+  text: string,
+): CompressionSemanticAtom {
+  return {
+    id,
+    type,
+    canonicalIdentity: `${type}:${id}`,
+    severity: 'critical',
+    confidence: 0.95,
+    scope: 'session',
+    polarity: 'neutral',
+    status: 'verified',
+    text,
+    evidenceRefs: [{ type: 'file', ref: `file:${id}` }],
+  };
+}
+
+describe('P3 stale, superseded, failed-action, and recursive-loss fixtures', () => {
+  it('keeps stale branch atoms in the ledger but never uses them as the active next action', () => {
+    const previous = buildDeterministicCompressionArtifact({
+      messages: [{ role: 'user', content: 'Preserve a stale branch atom.' }] as never,
+      semanticAtoms: [{
+        ...criticalAtom('atom-next-stale', 'next_action', 'Run the stale branch migration.'),
+        status: 'stale',
+      }],
+    });
+
+    const artifact = buildDeterministicCompressionArtifact({
+      messages: [{ role: 'user', content: 'Continue on the current branch.' }] as never,
+      previousArtifact: previous,
+      semanticAtoms: [
+        criticalAtom('atom-next-current', 'next_action', 'Run the current branch migration.'),
+      ],
+    });
+
+    expect(artifact.semanticAtoms?.some((atom) => atom.id === 'atom-next-stale' && atom.status === 'stale')).toBe(true);
+    expect(artifact.nextAction).toContain('current branch migration');
+    expect(artifact.nextAction).not.toContain('stale branch migration');
+  });
+
+  it('keeps superseded decision atoms in the ledger but not in active legacy decisions', () => {
+    const previous = buildDeterministicCompressionArtifact({
+      messages: [{ role: 'user', content: 'Preserve an old decision.' }] as never,
+      semanticAtoms: [
+        criticalAtom('atom-decision-old', 'decision', 'Use the old plan.'),
+      ],
+    });
+
+    const artifact = buildDeterministicCompressionArtifact({
+      messages: [{ role: 'user', content: 'Supersede the old decision.' }] as never,
+      previousArtifact: previous,
+      semanticAtoms: [{
+        ...criticalAtom('atom-decision-new', 'decision', 'Use the new plan.'),
+        supersedes: ['atom-decision-old'],
+      }],
+    });
+
+    expect(artifact.semanticAtoms?.some((atom) => atom.id === 'atom-decision-old' && atom.status === 'superseded')).toBe(true);
+    expect(artifact.semanticAtoms?.some((atom) => atom.id === 'atom-decision-new' && atom.status === 'verified')).toBe(true);
+    expect(artifact.decisions.some((item) => item.text.includes('old plan'))).toBe(false);
+    expect(artifact.decisions.some((item) => item.text.includes('new plan'))).toBe(true);
+  });
+
+  it('exposes failed attempts for recovery and never repeats the failed command as next action', () => {
+    const cvkArtifact = loadCvkArtifact();
+    const artifact = buildDeterministicCompressionArtifact({
+      messages: [{ role: 'user', content: 'Recover after a failed command.' }] as never,
+      semanticAtoms: [
+        criticalAtom('atom-failed-cmd', 'failed_attempt', 'Run `pnpm run broken-command` and verify.'),
+        criticalAtom('atom-next-fixed', 'next_action', 'Run `pnpm run fixed-command` instead.'),
+      ],
+    });
+
+    const recovery = buildCvkRecoveryContext({ compressionArtifact: artifact, cvkArtifact });
+
+    expect(recovery.ok).toBe(true);
+    expect(recovery.projection.failedAttemptsToAvoid.some((item) => item.includes('broken-command'))).toBe(true);
+    expect(recovery.projection.nextAction).toContain('fixed-command');
+    expect(recovery.projection.nextAction).not.toContain('broken-command');
+  });
+
+  it('preserves the first critical atom across three consecutive compactions', () => {
+    const first = buildDeterministicCompressionArtifact({
+      messages: [{ role: 'user', content: 'First compaction.' }] as never,
+      semanticAtoms: [
+        criticalAtom('atom-goal-first', 'goal', 'Ship the first critical goal.'),
+      ],
+    });
+    const second = buildDeterministicCompressionArtifact({
+      messages: [{ role: 'user', content: 'Second compaction.' }] as never,
+      previousArtifact: first,
+      semanticAtoms: [
+        criticalAtom('atom-goal-second', 'goal', 'Ship the second critical goal.'),
+      ],
+    });
+    const third = buildDeterministicCompressionArtifact({
+      messages: [{ role: 'user', content: 'Third compaction.' }] as never,
+      previousArtifact: second,
+      semanticAtoms: [
+        criticalAtom('atom-goal-third', 'goal', 'Ship the third critical goal.'),
+      ],
+    });
+
+    const ids = third.semanticAtoms?.map((atom) => atom.id) ?? [];
+    expect(ids).toEqual(expect.arrayContaining([
+      'atom-goal-first',
+      'atom-goal-second',
+      'atom-goal-third',
+    ]));
+    expect(third.semanticAtoms?.some((atom) => atom.id === 'atom-goal-first' && atom.status === 'verified')).toBe(true);
   });
 });

@@ -12,13 +12,17 @@
 | `OPENCLAW_DCS_CONTEXT_VIEW_TOOLS` / `OPENCLAW_DCS_CONTEXT_TOOLS` | off | C1 shadow; A/B below 5x |
 | `runtime.coding.staleWriteGuard.enabled` | false | C2 opt-in |
 | `runtime.coding.writeJournal.enabled` | true | baseline undo journal |
-| `runtime.coding.worktree.backend` | `inprocess` | git is opt-in (not C4-H) |
 | request/plan `isolation` | `shared` | worktree is request-only |
 | `runtime.coding.symbolLease.enabled` | false | mode default `memory` |
 | `runtime.coding.patchFlow.default` | false | call APIs only |
 | C6 `applyContextLadder` | not auto | assembler path unchanged |
 | `runtime.coding.routingMemo.shadow` | false | dual-write only when on |
-| `runtime.coding.sekb.experienceShadow` | false | no default knowledge inject |
+
+API-only surfaces (not production flags):
+
+- `createWorktreeService(baseRoot, { backend })` is the real worktree backend activation path.
+- `DistillationTool.confirm_and_save(suggestion, edits, { sessionId, experienceShadow })` is the real SEKB experience shadow activation path.
+- Their `runtime.coding.*` config leaves are observability-only and do not change runtime behavior.
 
 ## Enable (explicit only)
 
@@ -44,7 +48,6 @@ switch and are not flipped by it. Default off; upgrades never auto-enable it.
 | stale-write-guard | AppSettings + `runtime.coding.staleWriteGuard.enabled` in openclaw.json |
 | symbol-lease | AppSettings + `runtime.coding.symbolLease.enabled` |
 | routing-memo-shadow | AppSettings + `runtime.coding.routingMemo.shadow` |
-| sekb-experience-shadow | AppSettings + `runtime.coding.sekb.experienceShadow` |
 
 On save, product path restarts a running gateway when possible. Status badges: `applied` / `pending-restart` / `error` / `read-only`.
 
@@ -54,11 +57,11 @@ api-only / request-only / baseline rows stay documentation-only (no switch).
 
 1. **View tools (C1)** — env `OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1` (or Settings switch); restart gateway/runtime. Explicit env `0/false/off` still wins over Settings enable (kill).
 2. **Stale write guard (C2)** — `runtime.coding.staleWriteGuard.enabled=true` or Settings.
-3. **Git worktree backend (C4)** — `runtime.coding.worktree.backend=git` **and** request `isolation: "worktree"`.
+3. **Git worktree backend (C4)** — call `createWorktreeService(baseRoot, { backend: "git" })` **and** request `isolation: "worktree"`.
 4. **Symbol lease (C5)** — `runtime.coding.symbolLease.enabled=true` or Settings (`mode=memory` default).
 5. **Patch-flow (C5)** — call `applyPatchProposalsSerial()` / `recommendIsolationMode()`; do **not** set `patchFlow.default=true`.
 6. **Context ladder (C6)** — call `applyContextLadder({ blocks, tokenBudget })`; no assembler flip.
-7. **Shadows (C7)** — Settings or `routingMemo.shadow` / `sekb.experienceShadow` for dual-write only.
+7. **Shadows (C7)** — Settings or `routingMemo.shadow` for dual-write only; call `DistillationTool.confirm_and_save(suggestion, edits, { sessionId, experienceShadow: { enabled: true, workspaceRoot } })` for the API-only experience shadow.
 
 Config surface dump: `artifacts/coding-prod-p0/config-surface.json`
 
@@ -72,8 +75,8 @@ When production behaves badly, disable **enhancements first**, keep baseline:
 2. Set `runtime.coding.staleWriteGuard.enabled=false` (Settings or config)
 3. Set `runtime.coding.symbolLease.enabled=false` (or `mode=memory`)
 4. Stop patch-flow / ladder API callers; ensure `patchFlow.default=false`
-5. Set `runtime.coding.worktree.backend=inprocess`; omit isolation or set `shared`
-6. Set `runtime.coding.routingMemo.shadow=false` and `runtime.coding.sekb.experienceShadow=false`
+5. Stop passing `backend: "git"` to `createWorktreeService`; use `backend: "inprocess"`, and omit isolation or set it to `shared`
+6. Set `runtime.coding.routingMemo.shadow=false`; omit `experienceShadow` from `confirm_and_save` or set `experienceShadow.enabled=false`
 7. Only if journal I/O is the incident: temporarily set `writeJournal.enabled=false` (loses undo)
 8. Restart gateway/runtime after env/config changes (Settings toggles attempt restart on product path)
 

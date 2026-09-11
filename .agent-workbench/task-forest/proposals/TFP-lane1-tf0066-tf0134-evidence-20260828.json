@@ -1,0 +1,49 @@
+{
+  "applied_at": "2026-08-28T16:00:30.395405Z",
+  "base_graph_hash": "d9a7f5d5a53273d7564beeeca00794ff504ef00d684e38357f78493535c9da15",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md#75-p2-面向-coding-工作流的针对性优化",
+          "harness/specs/tasks/verseshell-p2-trace-diagnostics.md：冻结 host-issued lineage envelope、低基数 failure taxonomy 和 raw-field redaction 边界。",
+          "openclaw_runtime/src/observability/host-trace-diagnostics.ts：HMAC-SHA256 authority、lineage/clock/expiry/schema 校验与安全 summary。",
+          "openclaw_runtime/src/observability/host-trace-diagnostics.test.ts：focused 15/15 通过。",
+          "openclaw_runtime/src/observability/host-trace-diagnostics-adapter-audit.md：当前没有同时具备 host-only secret、host-issued lineage、审批绑定和安全事件 sink 的生产入口，因此未制造无调用 adapter。",
+          "pnpm harness context/validate --spec harness/specs/tasks/verseshell-p2-trace-diagnostics.md --no-diff：通过；strict TypeScript 在 TS6 配置冲突下用 --ignoreConfig 复核通过。"
+        ],
+        "next_action": "先在 ClawX Main/host 边界确定 secret owner、审批绑定后的 execution lineage 和 bounded event sink；完成跨层 adapter/host-api/support redaction 测试后，再接入现有诊断或 receipt consumer。",
+        "progress_source": "manual",
+        "summary": "诊断契约基础层已验证，但生产接线仍未成立：15/15 focused tests 与 Harness 通过；当前 runtime 没有可安全提供 host-only secret/lineage 的入口，故不新增 dead adapter，TF-0066 保持 in_progress。"
+      },
+      "id": "TF-0066"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/context-moat/reviews/TF-0134.md：lane-1 逐符号生产可达性审计；T-C1 生产调用链成立，T-C0 为离线 spike，T-C2/T-C3 属 M6，applyContextLadder 为 experiment/test-only。",
+          "node openclaw_runtime/scripts/check-production-reachable.mjs --roots：5 个 production roots，3457/5055 模块可达。",
+          "node openclaw_runtime/scripts/check-production-reachable.mjs --blind-spots：17 个 dynamic import blind spots，保留人工复核限制。",
+          "node openclaw_runtime/scripts/check-production-reachable.mjs archiveLowHeatBlocks applyContextLadder：两者均 zero production call sites；当前 archive writer 数为 0。",
+          "openclaw_runtime/scripts/check-production-reachable.mjs --exports：新增 AST runtime-export 枚举与机器记录，实测 21701 exports、6558 静态不可达 exports、412 export syntax blind spots、1714 module blind spots，退出码 1 代表存在待审计项。",
+          "openclaw_runtime/scripts/check-production-reachable.test.mjs：运行时导出、type-only 排除、再导出和 wildcard/default 盲区 focused test 通过；原有退出码 1/2/3/0 保持。"
+        ],
+        "next_action": "保持 ready；M4 收口时用 --exports 与逐符号 D1 输出核对最终 task 集合，并人工处理 wildcard/default/dynamic import、外部调用者和同名绑定盲区。",
+        "summary": "生产可达性取证已增强：除逐符号和 root 扫描外，新增全量 runtime-export 静态枚举；结果能暴露盲区但不能直接等同死代码，TF-0134 继续等待 M4 最终收口复核。"
+      },
+      "id": "TF-0134"
+    }
+  ],
+  "created_at": "2026-08-28T15:55:00Z",
+  "proposal_id": "TFP-lane1-tf0066-tf0134-evidence-20260828",
+  "rationale": "两条互斥旁线完成 TF-0066 和 TF-0134 的深度证据切片：TF-0066 证明契约基础层通过但没有安全生产 adapter；TF-0134 新增 --exports 机器取证模式并保留静态判据盲区。两者都不虚报为完整收口。",
+  "session_id": "lane-1-context-moat-20260828",
+  "status": "applied"
+}

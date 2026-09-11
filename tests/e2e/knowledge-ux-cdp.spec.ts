@@ -12,6 +12,11 @@
  */
 import { completeSetup, expect, getAgentDevHostCalls, installIpcMocks, test } from './fixtures/electron';
 
+type HostInvokeEnvelope<T extends Record<string, any> = Record<string, any>> = {
+  ok?: boolean;
+  data: T;
+};
+
 // ── Helpers ──────────────────────────────────────────────────────────
 
 function stableStringify(value: unknown): string {
@@ -761,7 +766,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
 
   test('CDP status and inspect returns active debugging state', async ({ page }) => {
     const status = await page.evaluate(async () => {
-      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({ id: 'test-status', module: 'remoteControl', action: 'status' });
+      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope<Record<string, any>>> } }).verseClaw.hostInvoke({ id: 'test-status', module: 'remoteControl', action: 'status' });
       return res;
     });
     console.log("CDP STATUS RESULT:", status);
@@ -771,7 +776,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
     expect(status.data.effectivePort).toBeGreaterThan(0);
 
     const inspect = await page.evaluate(async () => {
-      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({ id: 'test-inspect', module: 'remoteControl', action: 'inspect' });
+      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope<Record<string, any>>> } }).verseClaw.hostInvoke({ id: 'test-inspect', module: 'remoteControl', action: 'inspect' });
       return res;
     });
     console.log("CDP INSPECT RESULT:", inspect);
@@ -783,7 +788,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
   test('CDP click drives UI navigation on the knowledge page', async ({ page }) => {
     // Navigate to knowledge page via CDP click
     const navClick = await page.evaluate(async () => {
-      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({
+      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope<Record<string, any>>> } }).verseClaw.hostInvoke({
         id: 'test-navclick',
         module: 'remoteControl',
         action: 'click',
@@ -799,7 +804,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
     // Click tabs via CDP click
     for (const tab of ['inbox', 'drafts', 'review', 'library']) {
       const tabClick = await page.evaluate(async (tabName) => {
-        const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({
+        const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope<Record<string, any>>> } }).verseClaw.hostInvoke({
           id: `test-tabclick-${tabName}`,
           module: 'remoteControl',
           action: 'click',
@@ -818,7 +823,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
     await page.getByTestId('knowledge-more-actions').click();
     await expect(page.getByTestId('knowledge-tab-governance')).toBeVisible();
     const governanceClick = await page.evaluate(async () => {
-      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({
+      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope<Record<string, any>>> } }).verseClaw.hostInvoke({
         id: 'test-governance-menu-click',
         module: 'remoteControl',
         action: 'click',
@@ -833,7 +838,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
   test('CDP pageInfo and screenshot retrieves live DOM state', async ({ page }) => {
     // Navigate to knowledge page
     await page.evaluate(async () => {
-      await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({
+      await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope<Record<string, any>>> } }).verseClaw.hostInvoke({
         id: 'test-navclick-2',
         module: 'remoteControl',
         action: 'click',
@@ -844,7 +849,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
 
     // Retrieve page info via CDP pageInfo
     const pageInfo = await page.evaluate(async () => {
-      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({
+      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope<Record<string, any>>> } }).verseClaw.hostInvoke({
         id: 'test-pageinfo',
         module: 'remoteControl',
         action: 'pageInfo',
@@ -858,7 +863,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
 
     // Take screenshot via CDP screenshot
     const screenshot = await page.evaluate(async () => {
-      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({
+      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope<Record<string, any>>> } }).verseClaw.hostInvoke({
         id: 'test-screenshot',
         module: 'remoteControl',
         action: 'screenshot',

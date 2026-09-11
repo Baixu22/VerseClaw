@@ -1,0 +1,32 @@
+{
+  "applied_at": "2026-08-27T05:34:08.641144Z",
+  "base_graph_hash": "97cdc0be374b83ff11746f2edfd4d23a081c98d54cdf1a379cbabf6caac35641",
+  "base_summary": {
+    "edge_count": 260,
+    "node_count": 146,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "Packer et al., MemGPT: Towards LLMs as Operating Systems, arXiv:2310.08560（archival memory 必须配 recall/page-in）",
+          "openclaw_runtime/src/context-engine/block-lifecycle.ts:24-37,84-101",
+          "openclaw_runtime/src/context-engine/tools/context-read-tool.ts:29-39,128-131",
+          "openclaw_runtime/src/agents/tools/context-agent-tools.ts:120-130,285-304",
+          "openclaw_runtime/src/context-engine/block-store.ts:82,558-561",
+          "规范冲突（2026-08-27）：harness/specs/rules/context-family-boundary.md 与 harness/specs/tasks/context-readonly-recall-surface.md 明确 read-only recall 不得写 Memory、Knowledge、Task Ledger、transcript、prompt/tool state 或其他 durable state；TF-0121 requirements 却明确 include_archived=true 要 archived->active、heat+1 并持久化 presence_json。两者不能作为同一 workflow 同时成立，冲突当前未解决，不得据此标记 done。",
+          "边界解释：25285ab42/794157405 实现的是现有 DCS BlockStore authority 内的显式 lifecycle page-in，仅 include_archived=true 执行；默认 context_read 仍只读并排除 archived。它不是 Context Family ArchiveHandle read-only recall；若共用 context_read 名称和用户语义，仍有混淆及 durable mutation 风险，须由非实现者审核裁决或后续规范拆分。",
+          "risk 元数据核验：openclaw_runtime/src/shared/tool-registration.ts:67-74 将 readonly/write/destructive 用于 filesystem write enforcement，writeRiskProfile 只描述文件路径。context_read risk=readonly 对默认路径及无 filesystem 写入在当前枚举内成立，但不能表示 include_archived=true 不改 durable state；当前类型无法表达条件性 BlockStore 写入。保持现状等待 lane-1 审核，不把该 metadata 当作规范冲突已解决。"
+        ]
+      },
+      "id": "TF-0121"
+    }
+  ],
+  "created_at": "2026-08-27T05:34:08.423939Z",
+  "proposal_id": "prop-lane2-tf0121-boundary-evidence-2026-08-27",
+  "rationale": "用户要求 lane-2 在自己的实现节点证据中如实记录 Context Family read-only recall 与 TF-0121 DCS BlockStore page-in 的规范冲突、边界解释和 risk 元数据语义；不修改 lane-1 审核文件，不改变任务终态。",
+  "session_id": "session-lane-2",
+  "status": "applied"
+}

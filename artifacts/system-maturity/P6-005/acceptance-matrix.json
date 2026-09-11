@@ -3,9 +3,9 @@
   "taskId": "P6-005",
   "identity": {
     "version": "0.4.9-alpha.0",
-    "ref": "refs/heads/codex/maturity-p4",
-    "commit": "df7c2f7a602c34d487caa10e1eead2529ce95be4",
-    "tree": "aaf4a2b9272f7664043426155266afa5fd2b22a5"
+    "ref": "refs/heads/feat/runtime-lifecycle-governance",
+    "commit": "819338bcfb9574fcd6cddf738065de8715893a24",
+    "tree": "60f80a0afdc41953f3a01222ab94edc76da379e5"
   },
   "acceptance": [
     {
@@ -15,8 +15,8 @@
     },
     {
       "id": "A2",
-      "title": "all required full release gates have zero-exit hash-addressed evidence",
-      "status": "passed"
+      "title": "runtime preflight and all required full release gates have zero-exit hash-addressed evidence",
+      "status": "failed"
     },
     {
       "id": "A3",
@@ -25,16 +25,6 @@
     }
   ],
   "validation": {
-    "version": "0.4.9-alpha.0",
-    "ref": "refs/heads/codex/maturity-p4",
-    "commit": "df7c2f7a602c34d487caa10e1eead2529ce95be4",
-    "tree": "aaf4a2b9272f7664043426155266afa5fd2b22a5",
-    "manifestSha256": "453553124189783c7949c7c62f975cad62d520e8caced5aac52902bc1f861284",
-    "gateCount": 12,
-    "workflow": {
-      "baselineJob": true,
-      "packagingDependency": true,
-      "evidenceTransfer": true
-    }
+    "error": "release gate maturity:validate at index 3 failed with exit 1"
   }
 }

@@ -127,6 +127,10 @@ import {
   PostCompactionLoopPersistedError,
   type PostCompactionGuardObservation,
 } from "./post-compaction-loop-guard.js";
+import {
+  ToolLoopTerminatedError,
+  type ToolLoopTerminationObserver,
+} from "../tool-loop-termination.js";
 import { createEmbeddedRunReplayState, observeReplayMetadata } from "./replay-state.js";
 import { handleAssistantFailover } from "./run/assistant-failover.js";
 import {
@@ -1248,16 +1252,27 @@ export async function runEmbeddedAgent(
         resolvedLoopDetectionConfig?.postCompactionGuard,
         { enabled: resolvedLoopDetectionConfig?.enabled !== false },
       );
-      let postCompactionAbortController: AbortController | undefined;
+      // Attempt-scoped abort controller shared by the loop guards below. The
+      // post-compaction guard and the critical tool-loop veto both end the
+      // attempt through it so a stuck tool loop cannot keep the turn alive.
+      let attemptLoopAbortController: AbortController | undefined;
       let postCompactionAbortError: PostCompactionLoopPersistedError | undefined;
+      let toolLoopAbortError: ToolLoopTerminatedError | undefined;
       const observePostCompactionToolOutcome = (
         observation: PostCompactionGuardObservation,
       ): void => {
         const verdict = postCompactionGuard.observe(observation);
         if (verdict.shouldAbort) {
           postCompactionAbortError ??= PostCompactionLoopPersistedError.fromVerdict(verdict);
-          postCompactionAbortController?.abort(postCompactionAbortError);
+          attemptLoopAbortController?.abort(postCompactionAbortError);
         }
+      };
+      // Critical tool-loop veto (#s05-t01): the detector already blocked the
+      // individual call, but a model that keeps re-issuing the identical call
+      // would spin until an operator stops the run. Abort the attempt instead.
+      const observeToolLoopTermination: ToolLoopTerminationObserver = (info) => {
+        toolLoopAbortError ??= new ToolLoopTerminatedError(info);
+        attemptLoopAbortController?.abort(toolLoopAbortError);
       };
       let lastRetryFailoverReason: FailoverReason | null = null;
       let planningOnlyRetryInstruction: string | null = null;
@@ -1589,7 +1604,7 @@ export async function runEmbeddedAgent(
           }
 
           const attemptAbortController = new AbortController();
-          postCompactionAbortController = attemptAbortController;
+          attemptLoopAbortController = attemptAbortController;
           const parentAbortSignal = params.abortSignal;
           const relayParentAbort = (): void => {
             attemptAbortController.abort(parentAbortSignal?.reason);
@@ -1684,6 +1699,7 @@ export async function runEmbeddedAgent(
             beforeAgentStartResult,
             thinkLevel,
             onToolOutcome: observePostCompactionToolOutcome,
+            onToolLoopTermination: observeToolLoopTermination,
             onRunProgress: notifyRunProgress,
             fastMode: params.fastMode,
             verboseLevel: params.verboseLevel,
@@ -1744,16 +1760,19 @@ export async function runEmbeddedAgent(
             onAssistantErrorMessagePersisted: params.onAssistantErrorMessagePersisted,
           })
             .catch((err: unknown): never => {
-              throw postCompactionAbortError ?? err;
+              throw postCompactionAbortError ?? toolLoopAbortError ?? err;
             })
             .finally(() => {
               parentAbortSignal?.removeEventListener?.("abort", relayParentAbort);
-              if (postCompactionAbortController === attemptAbortController) {
-                postCompactionAbortController = undefined;
+              if (attemptLoopAbortController === attemptAbortController) {
+                attemptLoopAbortController = undefined;
               }
             });
           if (postCompactionAbortError) {
             throw postCompactionAbortError;
+          }
+          if (toolLoopAbortError) {
+            throw toolLoopAbortError;
           }
           const attempt = normalizeEmbeddedRunAttemptResult(rawAttempt);
 

@@ -25,7 +25,7 @@ function makeGraph(nodeCount: number): OrchestrationTaskGraph {
   }));
   return {
     graphRunId: "run-1",
-    mode: "router",
+    mode: "router" as never,
     status: "planned",
     nodes,
     edges: [],

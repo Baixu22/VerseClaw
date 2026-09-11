@@ -773,6 +773,8 @@ export async function runExecProcess(opts: {
   notifyOnExitEmptySuccess?: boolean;
   scopeKey?: string;
   sessionKey?: string;
+  /** Host/runtime parent trace for the complete exec lifecycle. */
+  traceId?: string;
   /** Lifecycle identity additions. scopeKey is NOT identity. */
   agentId?: string;
   expectedSessionId?: string;
@@ -1068,6 +1070,7 @@ export async function runExecProcess(opts: {
           usePty: opts.usePty,
           agentId: opts.scopeKey?.trim() || "openclaw",
           sessionId: opts.sessionKey?.trim() || sessionId,
+          traceId: opts.traceId,
           hostPolicyApproved: opts.hostPolicyApproved === true,
           onStdout: handleStdout,
           onStderr: handleStderr,

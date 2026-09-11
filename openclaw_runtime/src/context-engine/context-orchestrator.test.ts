@@ -10,7 +10,11 @@ import {
   getLastContextOrchestratorLineage,
   resetContextOrchestratorLineageForTests,
 } from "./context-orchestrator.js";
-import { resetContextCandidateCollectionsForTests } from "./context-candidate.js";
+import {
+  collectContextCandidate,
+  createContextCandidate,
+  resetContextCandidateCollectionsForTests,
+} from "./context-candidate.js";
 import {
   endTurnInjectionBudget,
   resetTurnInjectionBudgetsForTests,
@@ -172,6 +176,61 @@ describe("computeContextExtraSystemPrompt", () => {
     ]);
     endContextOrchestratorTurn(turnId);
     endTurnInjectionBudget(turnId);
+  });
+
+  it("does not scope memory to an ephemeral runId, but preserves an explicit stable taskId", async () => {
+    const receivedTaskIds: Array<string | undefined> = [];
+    const provider = {
+      ...createMemoryProvider("cross-run fact", "runtime-memory"),
+      async getContext(query: { taskId?: string }) {
+        receivedTaskIds.push(query.taskId);
+        return {
+          status: "success" as const,
+          contextItems: [
+            {
+              id: "cross-run-memory",
+              kind: "memory" as const,
+              text: "cross-run fact",
+              source: "runtime-memory:stable-task",
+              evidenceRefs: [],
+              metadata: { providerId: "runtime-memory" },
+            },
+          ],
+          diagnostics: [],
+        };
+      },
+    } as unknown as RuntimeContextProvider;
+
+    const config = {
+      runtime: {
+        memory: {
+          injectPilot: { enabled: true, providers: ["runtime-memory"] },
+        },
+      },
+    };
+    await computeContextExtraSystemPrompt(
+      "base",
+      config,
+      {
+        sessionKey: "agent:main:main",
+        runId: "run-1",
+        memoryProviderFactory: () => [provider],
+      },
+      { stages: ["memory"] },
+    );
+    await computeContextExtraSystemPrompt(
+      "base",
+      config,
+      {
+        sessionKey: "agent:main:main",
+        runId: "run-2",
+        taskId: "task-ledger-1",
+        memoryProviderFactory: () => [provider],
+      },
+      { stages: ["memory"] },
+    );
+
+    expect(receivedTaskIds).toEqual([undefined, "task-ledger-1"]);
   });
 
   it("vtoken-only canary injects Working Context", async () => {
@@ -340,6 +399,168 @@ describe("computeContextExtraSystemPrompt", () => {
         charsApplied: 0,
       }),
     ]);
+  });
+
+  it("nativeMemory=true negotiates memory and vtoken flag-off before provider queries", async () => {
+    const turnId = "orchestrator-native-memory";
+    const memoryProviderFactory = vi.fn(() => [createMemoryProvider("must-not-load")]);
+    const memoryEntriesFactory = vi.fn(async () => [{ id: "must-not-load" }]);
+    const client = createMockVtokenClient("must-not-pack");
+    const { extraSystemPrompt, lineage } = await computeContextExtraSystemPrompt(
+      "base",
+      {
+        runtime: {
+          memory: { injectPilot: { enabled: true } },
+          vtoken: { assembly: { enabled: true } },
+        },
+      },
+      {
+        turnId,
+        deferProjection: true,
+        nativeContextCapabilities: { nativeMemory: true },
+        memoryProviderFactory,
+        memoryEntriesFactory,
+        vtokenClient: client,
+      },
+    );
+    expect(extraSystemPrompt).toBe("base");
+    expect(lineage.sources.every((source) => !source.enabled && !source.applied)).toBe(true);
+    expect(lineage.sources.map((source) => source.reason)).toEqual(["flag-off", "flag-off"]);
+    expect(lineage.nativeContext).toEqual({
+      nativeMemory: true,
+      nativeContextGating: false,
+      memoryPilotDisabled: true,
+      vtokenDisabled: true,
+    });
+    expect(memoryProviderFactory).not.toHaveBeenCalled();
+    expect(memoryEntriesFactory).not.toHaveBeenCalled();
+    // oxlint-disable-next-line typescript/unbound-method
+    expect(client.pack).not.toHaveBeenCalled();
+    const collection = getContextOrchestratorCollection(turnId);
+    expect(collection?.lineage.map((entry) => entry.reason)).toEqual(["flag-off", "flag-off"]);
+    endContextOrchestratorTurn(turnId);
+    endTurnInjectionBudget(turnId);
+  });
+
+  it("nativeContextGating=true closes both channels and keeps the provenance receipt", async () => {
+    const turnId = "orchestrator-native-gating";
+    const { extraSystemPrompt, lineage } = await computeContextExtraSystemPrompt(
+      "base",
+      {
+        runtime: {
+          memory: { injectPilot: { enabled: true } },
+          vtoken: { assembly: { enabled: true } },
+        },
+      },
+      {
+        turnId,
+        deferProjection: true,
+        nativeContextCapabilities: { nativeContextGating: true },
+        memoryProviderFactory: () => [createMemoryProvider()],
+        memoryEntriesFactory: async () => [{ id: "must-not-load" }],
+        vtokenClient: createMockVtokenClient(),
+      },
+    );
+    expect(extraSystemPrompt).toBe("base");
+    expect(lineage.sources.map((source) => source.reason)).toEqual(["flag-off", "flag-off"]);
+    expect(lineage.nativeContext?.memoryPilotDisabled).toBe(true);
+    expect(lineage.nativeContext?.vtokenDisabled).toBe(true);
+    const collection = getContextOrchestratorCollection(turnId);
+    expect(collection?.lineage).toEqual([
+      expect.objectContaining({ sourceId: "memory-inject-pilot", reason: "flag-off", disposition: "skip" }),
+      expect.objectContaining({ sourceId: "vtoken-assembly", reason: "flag-off", disposition: "skip" }),
+    ]);
+    endContextOrchestratorTurn(turnId);
+    endTurnInjectionBudget(turnId);
+  });
+
+  it("reads native capability declarations from cfg.capabilities when input omits them", async () => {
+    const turnId = "orchestrator-native-cfg";
+    const { extraSystemPrompt, lineage } = await computeContextExtraSystemPrompt(
+      "base",
+      {
+        capabilities: { nativeMemory: true },
+        runtime: {
+          memory: { injectPilot: { enabled: true } },
+          vtoken: { assembly: { enabled: true } },
+        },
+      },
+      {
+        turnId,
+        deferProjection: true,
+        memoryProviderFactory: () => [createMemoryProvider()],
+        vtokenClient: createMockVtokenClient(),
+      },
+    );
+    expect(extraSystemPrompt).toBe("base");
+    expect(lineage.sources.every((source) => !source.enabled)).toBe(true);
+    expect(lineage.nativeContext?.nativeMemory).toBe(true);
+    endContextOrchestratorTurn(turnId);
+    endTurnInjectionBudget(turnId);
+  });
+
+  it("nativeContextGating=true gates BlockStore candidates at finalize and keeps the receipt", async () => {
+    const turnId = "orchestrator-native-gating-blockstore";
+    await computeContextExtraSystemPrompt(
+      "base",
+      {
+        runtime: {
+          memory: { injectPilot: { enabled: true } },
+          vtoken: { assembly: { enabled: true } },
+        },
+      },
+      {
+        turnId,
+        deferProjection: true,
+        nativeContextCapabilities: { nativeContextGating: true },
+      },
+    );
+    collectContextCandidate(
+      turnId,
+      createContextCandidate({
+        authorityObjectId: "working-memory:agent:main:main",
+        authorityVersion: "1",
+        sourceId: "context-block:working-memory:working_memory",
+        channel: "working_memory",
+        target: "message",
+        text: "must not be injected",
+      }),
+    );
+    const finalized = finalizeContextOrchestratorTurn({ turnId, messages: [] });
+    expect(finalized.messages).toEqual([]);
+    expect(finalized.projection.systemPromptAddition).toBeUndefined();
+    expect(finalized.projection.lineage).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          sourceId: "context-block:working-memory:working_memory",
+          channel: "working_memory",
+          disposition: "skip",
+          reason: "flag-off",
+        }),
+        expect.objectContaining({ sourceId: "memory-inject-pilot", reason: "flag-off" }),
+        expect.objectContaining({ sourceId: "vtoken-assembly", reason: "flag-off" }),
+      ]),
+    );
+    endContextOrchestratorTurn(turnId);
+    endTurnInjectionBudget(turnId);
+  });
+
+  it("absent native capability declarations keep the current enabled behavior", async () => {
+    const client = createMockVtokenClient("packed with no capabilities");
+    const { extraSystemPrompt, lineage } = await computeContextExtraSystemPrompt(
+      "base",
+      { runtime: { vtoken: { assembly: { enabled: true } } } },
+      {
+        sessionKey: "agent:main:main",
+        taskHint: "x",
+        markdownSources: [{ sourcePath: "AGENTS.md", text: "rules" }],
+        vtokenClient: client,
+      },
+      { stages: ["vtoken"] },
+    );
+    expect(extraSystemPrompt).toContain("## Working Context");
+    expect(lineage.sources[0]?.applied).toBe(true);
+    expect(lineage.nativeContext).toBeUndefined();
   });
 
   it("does not construct Memory providers or query VToken when the kill switch is on", async () => {

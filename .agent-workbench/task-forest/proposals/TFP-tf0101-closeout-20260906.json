@@ -1,0 +1,33 @@
+{
+  "applied_at": "2026-09-06T08:48:10.316495Z",
+  "base_graph_hash": "543235af4b6197e9bb7bcb8c92ee263e46bdb7b4118762215bf09695aeb5fd19",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "artifacts/git-capability-ui/evidence.json",
+          "tests/e2e/workspace-git-panel.spec.ts",
+          "tests/e2e/workspace-git-panel.spec.ts-snapshots/workspace-git-commit-card-win32.png",
+          "commit 85a9822965"
+        ],
+        "next_action": "已收口；后续若 UI 或审批面板行为变化，更新 workspace-git-panel.spec.ts 与 evidence.json。",
+        "progress": 100,
+        "status": "done",
+        "summary": "TF-0101 已完成：workspace-git-panel E2E 扩展并锚定 Audit partialFailure、truncated 与盘根 worktreeAdd approvalRequired/approval retry 行为。pnpm run test:e2e:run tests/e2e/workspace-git-panel.spec.ts 通过（3/3，exit 0），目标测试单跑亦通过；pnpm exec eslint tests/e2e/workspace-git-panel.spec.ts exit 0。证据见 artifacts/git-capability-ui/evidence.json，绑定 HEAD cc5be5367。同时刷新了 commit 85a982296 后未同步的 commit-card 视觉基线，并移除主 Git 面板测试末尾与新增 Audit 测试重复且不稳定的尾段断言。"
+      },
+      "id": "TF-0101"
+    }
+  ],
+  "created_at": "2026-09-06T08:48:01.124341Z",
+  "proposal_id": "TFP-tf0101-closeout-20260906",
+  "rationale": "TF-0101 的两条验收均已满足：pnpm run test:e2e:run tests/e2e/workspace-git-panel.spec.ts exit 0 且 3/3 通过；artifacts/git-capability-ui/evidence.json 已生成并绑定当前 HEAD、命令、exit code、测试数与断言。目标测试覆盖 Audit partialFailure/truncated 与盘根 worktreeAdd approvalRequired。",
+  "session_id": "codex-tf0101-closeout-20260906",
+  "status": "applied"
+}

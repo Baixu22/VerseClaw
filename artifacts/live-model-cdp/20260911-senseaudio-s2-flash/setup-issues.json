@@ -1,0 +1,10 @@
+[
+  {
+    "id": "provider-envref-readiness",
+    "observedAt": "2026-09-11T02:03:00.431Z",
+    "stage": "first-send",
+    "summary": "Gateway resolved the explicitly configured environment SecretRef, but the desktop provider readiness check only sees stored auth-profile keys and blocks CDP sending.",
+    "provider": "senseaudio/senseaudio-s2-flash",
+    "requestReachedProvider": false
+  }
+]

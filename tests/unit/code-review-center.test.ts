@@ -136,7 +136,7 @@ describe('code review center service', () => {
       hunks: [{ oldStart: 1, oldLines: 4, newStart: 1, newLines: 4, lines: [] }],
       completeness: 'complete',
     }];
-    const result = validateFindingsInDiff(findings, artifacts);
+    const result = validateFindingsInDiff(findings as never, artifacts as never);
     expect(result[0]).toEqual(findings[0]); // unchanged
   });
 
@@ -158,7 +158,7 @@ describe('code review center service', () => {
       hunks: [{ oldStart: 1, oldLines: 4, newStart: 1, newLines: 4, lines: [] }],
       completeness: 'complete',
     }];
-    const result = validateFindingsInDiff(findings, artifacts);
+    const result = validateFindingsInDiff(findings as never, artifacts as never);
     expect(result[0].severity).toBe('info');
     expect(result[0].reason).toContain('[not in diff]');
   });

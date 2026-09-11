@@ -1,0 +1,158 @@
+{"line": "[2026-09-11T02:00:23.234Z] [INFO] [metric] gateway.startup {\"configSyncMs\":150,\"spawnToReadyMs\":4110,\"readyToConnectMs\":30,\"totalMs\":4290}"}
+{"line": "[2026-09-11T02:02:45.927Z] [INFO] [metric] gateway.startup {\"configSyncMs\":114,\"spawnToReadyMs\":2819,\"readyToConnectMs\":22,\"totalMs\":2955}"}
+{"line": "[2026-09-11T02:09:39.710Z] [INFO] [metric] gateway.startup {\"configSyncMs\":169,\"spawnToReadyMs\":3864,\"readyToConnectMs\":28,\"totalMs\":4061}"}
+{"line": "[2026-09-11T02:12:57.335Z] [INFO] [metric] gateway.startup {\"configSyncMs\":135,\"spawnToReadyMs\":3157,\"readyToConnectMs\":45,\"totalMs\":3337}"}
+{"line": "[2026-09-11T02:13:22.916Z] [INFO] [chat:sendWithMedia] Sending: message=\"这是一次经用户授权的真实模型数据采集。以下都是新编的练习数据，不涉及任何真实客户。请只依据对话回答，不访问其他文件或网络。记录本练习项目：代号青松，负责人林舟，会议日期2026-09-18，开始时间1\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:13:22.917Z] [INFO] [gateway-rpc] chat.send serialized id=c391f6bd-4d4b-4504-bd65-4fc5ec2d6af2 timeoutMs=120000 bytes=706"}
+{"line": "[2026-09-11T02:13:22.917Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=c391f6bd-4d4b-4504-bd65-4fc5ec2d6af2"}
+{"line": "[2026-09-11T02:13:23.092Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered"}
+{"line": "[2026-09-11T02:13:23.114Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=df55fa75-90fc-47d1-a5bd-52ee73e1e090 sessionKey=agent:main:main loadSessionMs=14.599"}
+{"line": "[2026-09-11T02:13:23.118Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=df55fa75-90fc-47d1-a5bd-52ee73e1e090 sessionKey=agent:main:main attachments=0"}
+{"line": "[2026-09-11T02:13:23.119Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=df55fa75-90fc-47d1-a5bd-52ee73e1e090 sessionKey=agent:main:main"}
+{"line": "[2026-09-11T02:13:23.120Z] [INFO] [gateway-rpc] chat.send response id received durationMs=203"}
+{"line": "[2026-09-11T02:13:23.120Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"df55fa75-90fc-47d1-a5bd-52ee73e1e090\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:16:18.399Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S01-T02】把会议开始时间改为15:10，预算上限改为4200元，其他条件不变。请给出新的开始和结束时间，并指出你保留了哪些条件。\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:16:18.399Z] [INFO] [gateway-rpc] chat.send serialized id=50c3ab7e-ef94-47fa-8d30-da10c8413819 timeoutMs=120000 bytes=500"}
+{"line": "[2026-09-11T02:16:18.400Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=50c3ab7e-ef94-47fa-8d30-da10c8413819"}
+{"line": "[2026-09-11T02:16:18.409Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=1bc30a53-0a91-40ac-b0cf-8520b0b1559b sessionKey=agent:main:main loadSessionMs=4.651"}
+{"line": "[2026-09-11T02:16:18.411Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=1bc30a53-0a91-40ac-b0cf-8520b0b1559b sessionKey=agent:main:main attachments=0"}
+{"line": "[2026-09-11T02:16:18.411Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=1bc30a53-0a91-40ac-b0cf-8520b0b1559b sessionKey=agent:main:main"}
+{"line": "[2026-09-11T02:16:18.412Z] [INFO] [gateway-rpc] chat.send response id received durationMs=13"}
+{"line": "[2026-09-11T02:16:18.412Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"1bc30a53-0a91-40ac-b0cf-8520b0b1559b\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:17:29.908Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S01-T03】现在只输出一个JSON对象，不加代码块，字段为 project、owner、date、start、end、budget。使用本会话最后确认的值。\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:17:29.908Z] [INFO] [gateway-rpc] chat.send serialized id=1162a00b-63d1-4fa7-b6cb-cda157fab9f5 timeoutMs=120000 bytes=487"}
+{"line": "[2026-09-11T02:17:29.909Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=1162a00b-63d1-4fa7-b6cb-cda157fab9f5"}
+{"line": "[2026-09-11T02:17:29.918Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=bb3ed238-c5fb-4a85-a06a-a0fcddd5fdb5 sessionKey=agent:main:main loadSessionMs=4.358"}
+{"line": "[2026-09-11T02:17:29.919Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=bb3ed238-c5fb-4a85-a06a-a0fcddd5fdb5 sessionKey=agent:main:main attachments=0"}
+{"line": "[2026-09-11T02:17:29.920Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=bb3ed238-c5fb-4a85-a06a-a0fcddd5fdb5 sessionKey=agent:main:main"}
+{"line": "[2026-09-11T02:17:29.920Z] [INFO] [gateway-rpc] chat.send response id received durationMs=12"}
+{"line": "[2026-09-11T02:17:29.920Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"bb3ed238-c5fb-4a85-a06a-a0fcddd5fdb5\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:21:26.390Z] [INFO] [metric] gateway.startup {\"configSyncMs\":158,\"spawnToReadyMs\":3968,\"readyToConnectMs\":71,\"totalMs\":4197}"}
+{"line": "[2026-09-11T02:22:42.727Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S02-T01】这是新编的订单练习数据。请只在对话中计算，不访问文件或网络。A商品单价1299分、数量2；B商品单价550分、数量3；C商品单价3000分、数量1。整单优惠500分。只输出JSON，\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:22:42.728Z] [INFO] [gateway-rpc] chat.send serialized id=35609d6b-730c-4f68-b15c-042e8ac770b3 timeoutMs=120000 bytes=665"}
+{"line": "[2026-09-11T02:22:42.728Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=35609d6b-730c-4f68-b15c-042e8ac770b3"}
+{"line": "[2026-09-11T02:22:42.928Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered"}
+{"line": "[2026-09-11T02:22:42.954Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=fa95844c-3027-4e0d-9058-48eac203debf sessionKey=agent:main:session-1789093087767-63qnfw loadSessionMs=18.463"}
+{"line": "[2026-09-11T02:22:42.957Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=fa95844c-3027-4e0d-9058-48eac203debf sessionKey=agent:main:session-1789093087767-63qnfw attachments=0"}
+{"line": "[2026-09-11T02:22:42.958Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=fa95844c-3027-4e0d-9058-48eac203debf sessionKey=agent:main:session-1789093087767-63qnfw"}
+{"line": "[2026-09-11T02:22:42.958Z] [INFO] [gateway-rpc] chat.send response id received durationMs=231"}
+{"line": "[2026-09-11T02:22:42.958Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"fa95844c-3027-4e0d-9058-48eac203debf\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:26:34.355Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S02-T02】你上轮金额算错了。请分别计算1299乘2、550乘3、3000乘1，再相加得到subtotalCents，再减500得到totalCents。不要调用任何工具。只输出JSON，不加代\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:26:34.355Z] [INFO] [gateway-rpc] chat.send serialized id=fab72672-073e-4982-8bc4-d8623d02b944 timeoutMs=120000 bytes=634"}
+{"line": "[2026-09-11T02:26:34.355Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=fab72672-073e-4982-8bc4-d8623d02b944"}
+{"line": "[2026-09-11T02:26:34.364Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=2a84e9ea-65ef-4694-abcd-6983d93f3464 sessionKey=agent:main:session-1789093087767-63qnfw loadSessionMs=4.396"}
+{"line": "[2026-09-11T02:26:34.365Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=2a84e9ea-65ef-4694-abcd-6983d93f3464 sessionKey=agent:main:session-1789093087767-63qnfw attachments=0"}
+{"line": "[2026-09-11T02:26:34.366Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=2a84e9ea-65ef-4694-abcd-6983d93f3464 sessionKey=agent:main:session-1789093087767-63qnfw"}
+{"line": "[2026-09-11T02:26:34.366Z] [INFO] [gateway-rpc] chat.send response id received durationMs=11"}
+{"line": "[2026-09-11T02:26:34.366Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"2a84e9ea-65ef-4694-abcd-6983d93f3464\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:27:06.316Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S02-T03】沿用已纠正的数据，把B商品数量从3改为4，优惠仍为500分，预算上限8000分。不要调用工具。只输出JSON对象，字段subtotalCents、totalCents、withinB\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:27:06.316Z] [INFO] [gateway-rpc] chat.send serialized id=577e1285-0bdb-4fa4-a889-f2bf85e7e62a timeoutMs=120000 bytes=593"}
+{"line": "[2026-09-11T02:27:06.316Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=577e1285-0bdb-4fa4-a889-f2bf85e7e62a"}
+{"line": "[2026-09-11T02:27:06.321Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=227bfccd-6e9a-4481-a260-d1ada8d92b96 sessionKey=agent:main:session-1789093087767-63qnfw loadSessionMs=1.12"}
+{"line": "[2026-09-11T02:27:06.322Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=227bfccd-6e9a-4481-a260-d1ada8d92b96 sessionKey=agent:main:session-1789093087767-63qnfw attachments=0"}
+{"line": "[2026-09-11T02:27:06.323Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=227bfccd-6e9a-4481-a260-d1ada8d92b96 sessionKey=agent:main:session-1789093087767-63qnfw"}
+{"line": "[2026-09-11T02:27:06.324Z] [INFO] [gateway-rpc] chat.send response id received durationMs=8"}
+{"line": "[2026-09-11T02:27:06.324Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"227bfccd-6e9a-4481-a260-d1ada8d92b96\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:30:01.375Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S03-T01】这是独立采集目录中的练习项目。请使用文件读取工具查看 coding/invoice.mjs 和 coding/invoice.test.mjs，指出为什么数量大于1的测试会失败，先不\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:30:01.375Z] [INFO] [gateway-rpc] chat.send serialized id=74648006-d8ea-4b57-ad21-de2c418e1c98 timeoutMs=120000 bytes=740"}
+{"line": "[2026-09-11T02:30:01.375Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=74648006-d8ea-4b57-ad21-de2c418e1c98"}
+{"line": "[2026-09-11T02:30:01.386Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=0ccddab5-c558-4335-b0a2-f99ce482a281 sessionKey=agent:main:session-1789093636234-2bsupx loadSessionMs=5.207"}
+{"line": "[2026-09-11T02:30:01.387Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=0ccddab5-c558-4335-b0a2-f99ce482a281 sessionKey=agent:main:session-1789093636234-2bsupx attachments=0"}
+{"line": "[2026-09-11T02:30:01.388Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=0ccddab5-c558-4335-b0a2-f99ce482a281 sessionKey=agent:main:session-1789093636234-2bsupx"}
+{"line": "[2026-09-11T02:30:01.388Z] [INFO] [gateway-rpc] chat.send response id received durationMs=13"}
+{"line": "[2026-09-11T02:30:01.388Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"0ccddab5-c558-4335-b0a2-f99ce482a281\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:30:50.011Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S03-T02】请直接做最小修复，让 invoiceTotal 正确累计 priceCents 乘 qty；保留现有折扣不能使总额为负的行为。随后实际执行 node --test coding/in\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:30:50.012Z] [INFO] [gateway-rpc] chat.send serialized id=3e29dd62-d17c-4f0a-beba-382f9d9ff4a4 timeoutMs=120000 bytes=726"}
+{"line": "[2026-09-11T02:30:50.012Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=3e29dd62-d17c-4f0a-beba-382f9d9ff4a4"}
+{"line": "[2026-09-11T02:30:50.017Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=177522b4-85cb-46e6-b34b-b6713e708710 sessionKey=agent:main:session-1789093636234-2bsupx loadSessionMs=1.194"}
+{"line": "[2026-09-11T02:30:50.018Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=177522b4-85cb-46e6-b34b-b6713e708710 sessionKey=agent:main:session-1789093636234-2bsupx attachments=0"}
+{"line": "[2026-09-11T02:30:50.019Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=177522b4-85cb-46e6-b34b-b6713e708710 sessionKey=agent:main:session-1789093636234-2bsupx"}
+{"line": "[2026-09-11T02:30:50.019Z] [INFO] [gateway-rpc] chat.send response id received durationMs=8"}
+{"line": "[2026-09-11T02:30:50.019Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"177522b4-85cb-46e6-b34b-b6713e708710\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:33:00.577Z] [WARN] [Gateway stderr] [diagnostic] long-running session: sessionId=0091b488-c94c-40d3-bd3a-7688b522925d sessionKey=agent:main:session-1789093636234-2bsupx state=processing age=125s queueDepth=1 reason=queued_behind_active_work classification=long_running activeWorkKind=tool_call lastProgress=tool:exec:started lastProgressAge=118s activeTool=exec activeToolCallId=chatcmpl-tool-b7d3195c412f46b6 activeToolAge=118s recovery=none"}
+{"line": "[2026-09-11T02:38:17.698Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S03-T03】刚才 exec 工具超时，已停止该次运行；独立验证者随后在同一目录实际执行了 node --test coding/invoice.test.mjs，结果4项通过、0项失败。请使用r\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:38:17.698Z] [INFO] [gateway-rpc] chat.send serialized id=8c48e5db-fe80-42a9-8935-eca303b292ed timeoutMs=120000 bytes=812"}
+{"line": "[2026-09-11T02:38:17.699Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=8c48e5db-fe80-42a9-8935-eca303b292ed"}
+{"line": "[2026-09-11T02:38:17.708Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=57d01362-8a4b-4dcc-8110-f3db4a414314 sessionKey=agent:main:session-1789093636234-2bsupx loadSessionMs=4.953"}
+{"line": "[2026-09-11T02:38:17.709Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=57d01362-8a4b-4dcc-8110-f3db4a414314 sessionKey=agent:main:session-1789093636234-2bsupx attachments=0"}
+{"line": "[2026-09-11T02:38:17.710Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=57d01362-8a4b-4dcc-8110-f3db4a414314 sessionKey=agent:main:session-1789093636234-2bsupx"}
+{"line": "[2026-09-11T02:38:17.711Z] [INFO] [gateway-rpc] chat.send response id received durationMs=13"}
+{"line": "[2026-09-11T02:38:17.711Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"57d01362-8a4b-4dcc-8110-f3db4a414314\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:39:47.331Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S04-T01】请使用read工具读取 docs/harbor-guide.md，然后概括批次比例、暂停条件和回滚动作。请引用文件名，严格依据文件，不调用exec或访问网络。\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:39:47.331Z] [INFO] [gateway-rpc] chat.send serialized id=e92c3013-ae6c-4d4b-b59b-05e60be2f47d timeoutMs=120000 bytes=607"}
+{"line": "[2026-09-11T02:39:47.331Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=e92c3013-ae6c-4d4b-b59b-05e60be2f47d"}
+{"line": "[2026-09-11T02:39:47.832Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=16539f87-ffea-4ba1-a19c-ca8ead7d552e sessionKey=agent:main:session-1789094386961-wo4h77 loadSessionMs=1.006"}
+{"line": "[2026-09-11T02:39:47.833Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=16539f87-ffea-4ba1-a19c-ca8ead7d552e sessionKey=agent:main:session-1789094386961-wo4h77 attachments=0"}
+{"line": "[2026-09-11T02:39:47.834Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=16539f87-ffea-4ba1-a19c-ca8ead7d552e sessionKey=agent:main:session-1789094386961-wo4h77"}
+{"line": "[2026-09-11T02:39:47.834Z] [INFO] [gateway-rpc] chat.send response id received durationMs=503"}
+{"line": "[2026-09-11T02:39:47.835Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"16539f87-ffea-4ba1-a19c-ca8ead7d552e\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:40:16.282Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S04-T02】本演练负责人现已把错误率暂停阈值从2%调整为1.5%，其他规则不变。请用文件编辑工具更新 docs/harbor-guide.md，再写 docs/harbor-checklist.\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:40:16.283Z] [INFO] [gateway-rpc] chat.send serialized id=eb14f77d-2b46-471f-a4c6-c45e6a9eef9a timeoutMs=120000 bytes=768"}
+{"line": "[2026-09-11T02:40:16.283Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=eb14f77d-2b46-471f-a4c6-c45e6a9eef9a"}
+{"line": "[2026-09-11T02:40:16.288Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=347671d0-b67c-412b-a8c8-61deea64e499 sessionKey=agent:main:session-1789094386961-wo4h77 loadSessionMs=1.301"}
+{"line": "[2026-09-11T02:40:16.289Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=347671d0-b67c-412b-a8c8-61deea64e499 sessionKey=agent:main:session-1789094386961-wo4h77 attachments=0"}
+{"line": "[2026-09-11T02:40:16.291Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=347671d0-b67c-412b-a8c8-61deea64e499 sessionKey=agent:main:session-1789094386961-wo4h77"}
+{"line": "[2026-09-11T02:40:16.291Z] [INFO] [gateway-rpc] chat.send response id received durationMs=8"}
+{"line": "[2026-09-11T02:40:16.291Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"347671d0-b67c-412b-a8c8-61deea64e499\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:41:27.707Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S04-T03】请重新读取刚刚保存的说明与检查清单，确认当前规则，只输出JSON（不加代码块）：thresholdPercent、p95Ms、consecutiveMinutes、batches、c\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:41:27.708Z] [INFO] [gateway-rpc] chat.send serialized id=52ef201d-df29-4a0f-b292-f2926a10d492 timeoutMs=120000 bytes=646"}
+{"line": "[2026-09-11T02:41:27.708Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=52ef201d-df29-4a0f-b292-f2926a10d492"}
+{"line": "[2026-09-11T02:41:27.718Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=ed5373ca-759a-4c38-8632-59f578752286 sessionKey=agent:main:session-1789094386961-wo4h77 loadSessionMs=5.729"}
+{"line": "[2026-09-11T02:41:27.719Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=ed5373ca-759a-4c38-8632-59f578752286 sessionKey=agent:main:session-1789094386961-wo4h77 attachments=0"}
+{"line": "[2026-09-11T02:41:27.720Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=ed5373ca-759a-4c38-8632-59f578752286 sessionKey=agent:main:session-1789094386961-wo4h77"}
+{"line": "[2026-09-11T02:41:27.720Z] [INFO] [gateway-rpc] chat.send response id received durationMs=13"}
+{"line": "[2026-09-11T02:41:27.721Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"ed5373ca-759a-4c38-8632-59f578752286\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:42:31.266Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S05-T01】请使用read工具读取 data/work-log.csv。这是新编的工时练习数据。计算status为done的行数和minutes总和，以及pending行数；不要调用exec或网\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:42:31.267Z] [INFO] [gateway-rpc] chat.send serialized id=66de8442-85eb-450d-959e-1a3118fb5e11 timeoutMs=120000 bytes=667"}
+{"line": "[2026-09-11T02:42:31.267Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=66de8442-85eb-450d-959e-1a3118fb5e11"}
+{"line": "[2026-09-11T02:42:31.272Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=29a74bbb-3ebe-4a0a-ae3b-b3141902d780 sessionKey=agent:main:session-1789094500503-8e1zqj loadSessionMs=1.711"}
+{"line": "[2026-09-11T02:42:31.275Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=29a74bbb-3ebe-4a0a-ae3b-b3141902d780 sessionKey=agent:main:session-1789094500503-8e1zqj attachments=0"}
+{"line": "[2026-09-11T02:42:31.276Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=29a74bbb-3ebe-4a0a-ae3b-b3141902d780 sessionKey=agent:main:session-1789094500503-8e1zqj"}
+{"line": "[2026-09-11T02:42:31.276Z] [INFO] [gateway-rpc] chat.send response id received durationMs=9"}
+{"line": "[2026-09-11T02:42:31.276Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"29a74bbb-3ebe-4a0a-ae3b-b3141902d780\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:47:53.401Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S05-T02】停止重复读取；上轮读取的数据已经足够。现在仅调用一次edit工具，把 data/work-log.csv 中的 A02,pending,7 改成 A02,done,8。不要再调用re\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:47:53.402Z] [INFO] [gateway-rpc] chat.send serialized id=4a697380-0c31-41cf-8954-b7a3d13aabd1 timeoutMs=120000 bytes=670"}
+{"line": "[2026-09-11T02:47:53.402Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=4a697380-0c31-41cf-8954-b7a3d13aabd1"}
+{"line": "[2026-09-11T02:47:53.408Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=d83d67e3-30de-4b1d-8a55-8395f1bf5306 sessionKey=agent:main:session-1789094500503-8e1zqj loadSessionMs=1.285"}
+{"line": "[2026-09-11T02:47:53.410Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=d83d67e3-30de-4b1d-8a55-8395f1bf5306 sessionKey=agent:main:session-1789094500503-8e1zqj attachments=0"}
+{"line": "[2026-09-11T02:47:53.412Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=d83d67e3-30de-4b1d-8a55-8395f1bf5306 sessionKey=agent:main:session-1789094500503-8e1zqj"}
+{"line": "[2026-09-11T02:47:53.412Z] [INFO] [gateway-rpc] chat.send response id received durationMs=11"}
+{"line": "[2026-09-11T02:47:53.412Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"d83d67e3-30de-4b1d-8a55-8395f1bf5306\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:49:21.204Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S05-T03】以下是采集者刚从当前文件读取的实际内容："}
+{"line": "[2026-09-11T02:49:21.204Z] [INFO] [gateway-rpc] chat.send serialized id=f61f3b68-e054-48a5-b252-a011990223e3 timeoutMs=120000 bytes=841"}
+{"line": "[2026-09-11T02:49:21.204Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=f61f3b68-e054-48a5-b252-a011990223e3"}
+{"line": "[2026-09-11T02:49:21.213Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=9cb8390d-e1f7-4c16-9bfa-5bdc2ba3532a sessionKey=agent:main:session-1789094500503-8e1zqj loadSessionMs=5.194"}
+{"line": "[2026-09-11T02:49:21.214Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=9cb8390d-e1f7-4c16-9bfa-5bdc2ba3532a sessionKey=agent:main:session-1789094500503-8e1zqj attachments=0"}
+{"line": "[2026-09-11T02:49:21.215Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=9cb8390d-e1f7-4c16-9bfa-5bdc2ba3532a sessionKey=agent:main:session-1789094500503-8e1zqj"}
+{"line": "[2026-09-11T02:49:21.215Z] [INFO] [gateway-rpc] chat.send response id received durationMs=11"}
+{"line": "[2026-09-11T02:49:21.215Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"9cb8390d-e1f7-4c16-9bfa-5bdc2ba3532a\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:51:26.142Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S06-T01】这是页面恢复练习。只在本会话中记住：project=北辰，tracking=NC-731，deadline=2026-09-28，owner=周禾；email未提供。请复述已知信息，\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:51:26.142Z] [INFO] [gateway-rpc] chat.send serialized id=b8418b15-fac1-4e94-9320-a63def0f2712 timeoutMs=120000 bytes=640"}
+{"line": "[2026-09-11T02:51:26.143Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=b8418b15-fac1-4e94-9320-a63def0f2712"}
+{"line": "[2026-09-11T02:51:26.153Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=f0f2ea7b-7696-4588-b0a9-b31fbb464878 sessionKey=agent:main:session-1789095005148-g4rsy4 loadSessionMs=5.389"}
+{"line": "[2026-09-11T02:51:26.155Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=f0f2ea7b-7696-4588-b0a9-b31fbb464878 sessionKey=agent:main:session-1789095005148-g4rsy4 attachments=0"}
+{"line": "[2026-09-11T02:51:26.157Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=f0f2ea7b-7696-4588-b0a9-b31fbb464878 sessionKey=agent:main:session-1789095005148-g4rsy4"}
+{"line": "[2026-09-11T02:51:26.157Z] [INFO] [gateway-rpc] chat.send response id received durationMs=15"}
+{"line": "[2026-09-11T02:51:26.157Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"f0f2ea7b-7696-4588-b0a9-b31fbb464878\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:51:53.368Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S06-T02】更正：deadline改为2026-09-29，owner改为林舟，其余保持原样。请只回复“已更新”。不要调用任何工具。\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:51:53.368Z] [INFO] [gateway-rpc] chat.send serialized id=5e9bc00a-6952-4340-b8de-55960932b133 timeoutMs=120000 bytes=562"}
+{"line": "[2026-09-11T02:51:53.368Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=5e9bc00a-6952-4340-b8de-55960932b133"}
+{"line": "[2026-09-11T02:51:53.373Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=59b7a191-92f7-48f3-9f05-f036e84a5146 sessionKey=agent:main:session-1789095005148-g4rsy4 loadSessionMs=0.973"}
+{"line": "[2026-09-11T02:51:53.374Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=59b7a191-92f7-48f3-9f05-f036e84a5146 sessionKey=agent:main:session-1789095005148-g4rsy4 attachments=0"}
+{"line": "[2026-09-11T02:51:53.375Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=59b7a191-92f7-48f3-9f05-f036e84a5146 sessionKey=agent:main:session-1789095005148-g4rsy4"}
+{"line": "[2026-09-11T02:51:53.375Z] [INFO] [gateway-rpc] chat.send response id received durationMs=7"}
+{"line": "[2026-09-11T02:51:53.376Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"59b7a191-92f7-48f3-9f05-f036e84a5146\",\"status\":\"started\"}"}
+{"line": "[2026-09-11T02:52:00.660Z] [WARN] [Gateway stderr] [agent/embedded] embedded run agent end: runId=59b7a191-92f7-48f3-9f05-f036e84a5146 isError=true model=senseaudio-s2-flash provider=custom-senseaud error=LLM request failed. rawError=500 status code (no body)"}
+{"line": "[2026-09-11T02:52:02.956Z] [WARN] [Gateway stderr] [agent/embedded] embedded run failover decision: runId=59b7a191-92f7-48f3-9f05-f036e84a5146 stage=assistant decision=surface_error reason=timeout from=custom-senseaud/senseaudio-s2-flash profile=- rawError=500 status code (no body)"}
+{"line": "[2026-09-11T02:52:02.957Z] [WARN] [Gateway stderr] [diagnostic] lane task error: lane=main durationMs=8399 error=\"FailoverError: 500 status code (no body)\""}
+{"line": "[2026-09-11T02:52:02.958Z] [WARN] [Gateway stderr] [diagnostic] lane task error: lane=session:agent:main:session-1789095005148-g4rsy4 durationMs=8400 error=\"FailoverError: 500 status code (no body)\""}
+{"line": "[2026-09-11T02:52:02.961Z] [WARN] [Gateway stderr] [model-fallback/decision] model fallback decision: decision=candidate_failed requested=custom-senseaud/senseaudio-s2-flash candidate=custom-senseaud/senseaudio-s2-flash reason=timeout next=none detail=500 status code (no body)"}
+{"line": "[2026-09-11T02:52:02.961Z] [WARN] [Gateway stderr] Transient HTTP provider error before reply (500 status code (no body)). Retrying once in 2500ms."}
+{"line": "[2026-09-11T02:52:20.711Z] [INFO] [chat:sendWithMedia] Sending: message=\"【S06-T03】页面刚完成重载。请根据本会话最新更正，只输出JSON对象（不加代码块），字段project、tracking、deadline、owner、email；未提供的email使用null\", attachments=0, fileRefs=0"}
+{"line": "[2026-09-11T02:52:20.711Z] [INFO] [gateway-rpc] chat.send serialized id=0fb02da4-3cf3-4c6a-b302-c4b8b6f7e6df timeoutMs=120000 bytes=633"}
+{"line": "[2026-09-11T02:52:20.711Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=0fb02da4-3cf3-4c6a-b302-c4b8b6f7e6df"}
+{"line": "[2026-09-11T02:52:20.715Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=d4d670a0-b8d0-460b-b8e6-6105b9206c46 sessionKey=agent:main:session-1789095005148-g4rsy4 loadSessionMs=1.102"}
+{"line": "[2026-09-11T02:52:20.716Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=d4d670a0-b8d0-460b-b8e6-6105b9206c46 sessionKey=agent:main:session-1789095005148-g4rsy4 attachments=0"}
+{"line": "[2026-09-11T02:52:20.717Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=d4d670a0-b8d0-460b-b8e6-6105b9206c46 sessionKey=agent:main:session-1789095005148-g4rsy4"}
+{"line": "[2026-09-11T02:52:20.717Z] [INFO] [gateway-rpc] chat.send response id received durationMs=6"}
+{"line": "[2026-09-11T02:52:20.717Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"d4d670a0-b8d0-460b-b8e6-6105b9206c46\",\"status\":\"started\"}"}

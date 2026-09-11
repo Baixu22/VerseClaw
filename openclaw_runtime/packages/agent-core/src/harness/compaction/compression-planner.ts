@@ -1,5 +1,6 @@
 import type { AgentMessage } from "../../types.js";
 import type { CompactionSettings } from "./compaction.js";
+import type { CompressionSemanticAtom } from "./compression-artifact.js";
 
 export type CompressionTier = "tier0" | "tier1" | "tier2" | "tier3" | "tier4";
 
@@ -16,6 +17,36 @@ export type CompressionPlan = {
   pressure: number;
 };
 
+/** Optional per-task-class thresholds. P5 only allows earlier (lower) values. */
+export type TierThresholds = {
+  tier1?: number;
+  tier2?: number;
+  tier3?: number;
+  tier4?: number;
+};
+
+export type TierSchedule = {
+  taskClass?: string;
+  thresholds: TierThresholds;
+  budgetTokens?: number;
+  reason?: string;
+};
+
+/** The production reactive ladder; unchanged absent overrides. */
+export const DEFAULT_TIER_THRESHOLDS = {
+  tier1: 0.6,
+  tier2: 0.75,
+  tier3: 0.85,
+  tier4: 0.95,
+} as const;
+
+export type ResolvedTierThresholds = {
+  tier1: number;
+  tier2: number;
+  tier3: number;
+  tier4: number;
+};
+
 export type CompressionTelemetry = {
   tier: CompressionTier;
   strategy: CompressionStrategy;
@@ -27,6 +58,9 @@ export type CompressionTelemetry = {
   staleExcludedCount: number;
   causalAnchorCount: number;
   rehydratedFiles: string[];
+  /** Optional P5 shadow metadata; absent unless a tierSchedule was supplied. */
+  taskClass?: string;
+  budgetTokens?: number;
 };
 
 export type TokenPruningAdapter = (input: {
@@ -43,6 +77,8 @@ export type CompressionPlannerInput = {
   readFiles?: string[];
   modifiedFiles?: string[];
   tokenPruningAdapter?: TokenPruningAdapter;
+  /** P5 optional task-class schedule. It only changes plan.tier. */
+  tierSchedule?: TierSchedule;
 };
 
 export type CompressionPlannerResult = {
@@ -92,10 +128,56 @@ function round(value: number): number {
   return Math.round(value * 10000) / 10000;
 }
 
+function thresholdValue(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+/**
+ * Resolve P5 thresholds. Every user threshold is clamped into
+ * [0, DEFAULT_TIER_THRESHOLDS.x], so the production ladder can only be made
+ * earlier, never later. Non-monotonic schedules fall back to production
+ * defaults (the safe hard backstop).
+ */
+export function resolveTierThresholds(input?: TierThresholds): ResolvedTierThresholds {
+  const tier1 = Math.max(
+    0,
+    Math.min(
+      thresholdValue(input?.tier1, DEFAULT_TIER_THRESHOLDS.tier1),
+      DEFAULT_TIER_THRESHOLDS.tier1,
+    ),
+  );
+  const tier2 = Math.max(
+    0,
+    Math.min(
+      thresholdValue(input?.tier2, DEFAULT_TIER_THRESHOLDS.tier2),
+      DEFAULT_TIER_THRESHOLDS.tier2,
+    ),
+  );
+  const tier3 = Math.max(
+    0,
+    Math.min(
+      thresholdValue(input?.tier3, DEFAULT_TIER_THRESHOLDS.tier3),
+      DEFAULT_TIER_THRESHOLDS.tier3,
+    ),
+  );
+  const tier4 = Math.max(
+    0,
+    Math.min(
+      thresholdValue(input?.tier4, DEFAULT_TIER_THRESHOLDS.tier4),
+      DEFAULT_TIER_THRESHOLDS.tier4,
+    ),
+  );
+  if (!(tier1 < tier2 && tier2 < tier3 && tier3 < tier4)) {
+    return { ...DEFAULT_TIER_THRESHOLDS };
+  }
+  return { tier1, tier2, tier3, tier4 };
+}
+
 export function selectCompressionPlan(input: {
   tokensBefore: number;
   settings: CompactionSettings;
   contextWindow?: number;
+  thresholds?: TierThresholds;
 }): CompressionPlan {
   const budget = Math.max(
     1,
@@ -104,11 +186,101 @@ export function selectCompressionPlan(input: {
       input.settings.reserveTokens + input.settings.keepRecentTokens,
   );
   const pressure = Math.max(0, input.tokensBefore / budget);
-  if (pressure < 0.6) return { tier: "tier0", strategy: "hot-context", pressure: round(pressure) };
-  if (pressure < 0.75) return { tier: "tier1", strategy: "micro-compact", pressure: round(pressure) };
-  if (pressure < 0.85) return { tier: "tier2", strategy: "token-pruning", pressure: round(pressure) };
-  if (pressure < 0.95) return { tier: "tier3", strategy: "semantic-handoff", pressure: round(pressure) };
+  const thresholds = resolveTierThresholds(input.thresholds);
+  if (pressure < thresholds.tier1) return { tier: "tier0", strategy: "hot-context", pressure: round(pressure) };
+  if (pressure < thresholds.tier2) return { tier: "tier1", strategy: "micro-compact", pressure: round(pressure) };
+  if (pressure < thresholds.tier3) return { tier: "tier2", strategy: "token-pruning", pressure: round(pressure) };
+  if (pressure < thresholds.tier4) return { tier: "tier3", strategy: "semantic-handoff", pressure: round(pressure) };
   return { tier: "tier4", strategy: "emergency-collapse", pressure: round(pressure) };
+}
+
+export type CriticalFirstBudgetField =
+  | "criticalLedger"
+  | "latestUserAsk"
+  | "unfinishedActions"
+  | "failureChainValidation"
+  | "exactIdentifiers"
+  | "importantFacts"
+  | "niceToHaveProse";
+
+export type CriticalFirstBudgetInput = {
+  criticalLedger?: CompressionSemanticAtom[];
+  latestUserAsk?: string;
+  unfinishedActions?: string[];
+  failureChainValidation?: string[];
+  exactIdentifiers?: string[];
+  importantFacts?: string[];
+  niceToHaveProse?: string[];
+  budgetTokens: number;
+};
+
+export type CriticalFirstBudgetPlan = {
+  allowedTokens: Partial<Record<CriticalFirstBudgetField, number>>;
+  order: CriticalFirstBudgetField[];
+  truncated: CriticalFirstBudgetField[];
+};
+
+export const CRITICAL_FIRST_BUDGET_ORDER: CriticalFirstBudgetField[] = [
+  "criticalLedger",
+  "latestUserAsk",
+  "unfinishedActions",
+  "failureChainValidation",
+  "exactIdentifiers",
+  "importantFacts",
+  "niceToHaveProse",
+];
+
+function estimateTextTokens(text: string): number {
+  return Math.ceil(text.length / 4);
+}
+
+function estimateStringListTokens(items: string[] | undefined): number {
+  if (!items) return 0;
+  return items.reduce((total, item) => total + estimateTextTokens(item), 0);
+}
+
+function estimateCriticalLedgerTokens(atoms: CompressionSemanticAtom[] | undefined): number {
+  if (!atoms) return 0;
+  return atoms.reduce((total, item) => total + estimateTextTokens(item.text), 0);
+}
+
+/**
+ * P5 deterministic shadow budget. The order is fixed and the function only
+ * estimates tokens (chars/4, matching estimateTokens) and marks bounded
+ * truncation. It never calls a model and never changes summary/artifact paths.
+ */
+export function planCriticalFirstBudget(input: CriticalFirstBudgetInput): CriticalFirstBudgetPlan {
+  const remainingBudget =
+    typeof input.budgetTokens === "number" && Number.isFinite(input.budgetTokens)
+      ? Math.max(0, input.budgetTokens)
+      : 0;
+  const estimates: Record<CriticalFirstBudgetField, number> = {
+    criticalLedger: estimateCriticalLedgerTokens(input.criticalLedger),
+    latestUserAsk: estimateTextTokens(input.latestUserAsk ?? ""),
+    unfinishedActions: estimateStringListTokens(input.unfinishedActions),
+    failureChainValidation: estimateStringListTokens(input.failureChainValidation),
+    exactIdentifiers: estimateStringListTokens(input.exactIdentifiers),
+    importantFacts: estimateStringListTokens(input.importantFacts),
+    niceToHaveProse: estimateStringListTokens(input.niceToHaveProse),
+  };
+  const order = [...CRITICAL_FIRST_BUDGET_ORDER];
+  const allowedTokens: CriticalFirstBudgetPlan["allowedTokens"] = {};
+  const truncated: CriticalFirstBudgetField[] = [];
+  let remaining = remainingBudget;
+  for (const field of order) {
+    const estimated = estimates[field];
+    const supplied =
+      field === "criticalLedger"
+        ? input.criticalLedger !== undefined
+        : field === "latestUserAsk"
+          ? input.latestUserAsk !== undefined
+          : input[field] !== undefined;
+    const allowed = Math.min(remaining, estimated);
+    if (supplied) allowedTokens[field] = allowed;
+    remaining -= allowed;
+    if (supplied && allowed < estimated) truncated.push(field);
+  }
+  return { allowedTokens, order, truncated };
 }
 
 function textFromContent(content: unknown): string {
@@ -382,7 +554,11 @@ function emergencyCollapseMessages(messages: AgentMessage[]): AgentMessage[] {
 }
 
 export function planCompression(input: CompressionPlannerInput): CompressionPlannerResult {
-  const plan = selectCompressionPlan({ tokensBefore: input.tokensBefore, settings: input.settings });
+  const plan = selectCompressionPlan({
+    tokensBefore: input.tokensBefore,
+    settings: input.settings,
+    ...(input.tierSchedule ? { thresholds: input.tierSchedule.thresholds } : {}),
+  });
   const warnings: string[] = [];
   let causalAnchorCount = 0;
   let messages = input.messages;
@@ -423,6 +599,11 @@ export function planCompression(input: CompressionPlannerInput): CompressionPlan
     staleExcludedCount: input.staleExcludedCount ?? 0,
     causalAnchorCount,
     rehydratedFiles: uniqueFiles(input.readFiles ?? [], input.modifiedFiles ?? []),
+    ...(input.tierSchedule?.taskClass ? { taskClass: input.tierSchedule.taskClass } : {}),
+    ...(typeof input.tierSchedule?.budgetTokens === "number" &&
+    Number.isFinite(input.tierSchedule.budgetTokens)
+      ? { budgetTokens: input.tierSchedule.budgetTokens }
+      : {}),
   };
   return { plan, messages, telemetry };
 }
@@ -436,5 +617,51 @@ export function finalizeCompressionTelemetry(
     ...telemetry,
     tokensAfter,
     compressionRatio: telemetry.tokensBefore > 0 ? round(tokensAfter / telemetry.tokensBefore) : undefined,
+  };
+}
+
+/**
+ * JSON-serializable P5 diagnostics. This lives on CompactionDetails only and
+ * must never be written into CompressionArtifact.
+ */
+export type CompactionBudgetShadow = {
+  taskClass?: string;
+  plannedTier: CompressionTier;
+  actualTier: CompressionTier;
+  ignored: boolean;
+  budgetExceeded: boolean;
+  budgetTokens?: number;
+  tokensBefore: number;
+  generatedAt: string;
+};
+
+export function buildCompactionBudgetShadow(input: {
+  schedule: TierSchedule | undefined;
+  settings: CompactionSettings;
+  tokensBefore: number;
+  actualTier?: CompressionTier;
+  ignored?: boolean;
+  generatedAt?: string;
+}): CompactionBudgetShadow | undefined {
+  if (!input.schedule) return undefined;
+  const plannedTier = selectCompressionPlan({
+    tokensBefore: input.tokensBefore,
+    settings: input.settings,
+    thresholds: input.schedule.thresholds,
+  }).tier;
+  const actualTier = input.actualTier ?? plannedTier;
+  const budgetTokens =
+    typeof input.schedule.budgetTokens === "number" && Number.isFinite(input.schedule.budgetTokens)
+      ? input.schedule.budgetTokens
+      : undefined;
+  return {
+    ...(input.schedule.taskClass ? { taskClass: input.schedule.taskClass } : {}),
+    plannedTier,
+    actualTier,
+    ignored: input.ignored ?? actualTier !== plannedTier,
+    budgetExceeded: budgetTokens !== undefined && input.tokensBefore > budgetTokens,
+    ...(budgetTokens !== undefined ? { budgetTokens } : {}),
+    tokensBefore: input.tokensBefore,
+    generatedAt: input.generatedAt ?? new Date().toISOString(),
   };
 }

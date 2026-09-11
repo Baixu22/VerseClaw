@@ -155,6 +155,9 @@
       "destructive": "Разрушительная"
     },
     "riskLabel": "Риск",
+    "externalWriteSummary": "Внешняя запись процесса (подробности скрыты)",
+    "externalWriteNoRollback": "Не покрывается журналом записей ClawX; автоматический откат невозможен.",
+    "sourceLabel": "Источник",
     "modeLabel": "Режим",
     "status": {
       "pending": "Ожидает",
@@ -232,7 +235,15 @@
         "title": "Требуется разрешение",
         "approve": "Одобрить",
         "deny": "Отклонить",
-        "retryRequired": "Решение записано — попросите агента повторить действие."
+        "retryRequired": "Решение записано — попросите агента повторить действие.",
+        "externalWriteTitle": "Для внешней записи требуется одобрение",
+        "externalWriteWarning": "Этот внешний процесс может изменить файлы или другое состояние за пределами журнала записей ClawX.",
+        "externalWriteNoRollback": "Не покрывается журналом записей ClawX; автоматический откат невозможен.",
+        "externalWriteEffectLabel": "Эффект",
+        "externalWriteEffect": "Внешняя запись процесса",
+        "externalWriteRollbackLabel": "Откат",
+        "externalWriteSnapshotLabel": "Снимок",
+        "externalWriteSnapshot": "Привязан к этому запросу; одобрение лишь разрешает последующую повторную попытку."
       }
     },
     "actions": {

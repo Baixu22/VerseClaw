@@ -430,7 +430,16 @@ export function skipTurnInjection(
   });
 }
 
-/** Summarize the ledger; `charsApplied` must equal the turn's real prompt growth. */
+/**
+ * Summarize the ledger. `charsApplied` equals only the characters the DCS
+ * injection channels actually appended to this turn under the injection
+ * budget (per-entry results from `applyInjectionBudget` in
+ * injection-budget.ts). It is NOT the turn's total prompt growth: baseline
+ * prompt components that never charge the budget — the base system prompt
+ * and agent-level extra system prompt text — are not in this denominator.
+ * The two-tier boundary between injected growth and baseline growth belongs
+ * to T-C5 (M4), not to this ledger.
+ */
 export function summarizeTurnInjection(ledger: TurnInjectionLedger): TurnInjectionAccounting {
   let charsApplied = 0;
   let charsRequested = 0;

@@ -209,10 +209,10 @@ describe('skill packs api', () => {
     const runnerCalls: Array<{ child: unknown; taskId: string }> = [];
 
     const result = await runOfficeCliInstallForSkillPack({
-      spawnProcess: (command, args, options) => {
+      spawnProcess: ((command: any, args: any, options: any) => {
         spawnCalls.push({ command, args, options });
         return child;
-      },
+      }) as never,
       runInstallChildProcess: async (spawned, ctx) => {
         runnerCalls.push({ child: spawned, taskId: ctx.taskId });
         return { success: true };

@@ -13,7 +13,7 @@
 //
 // Fail-closed: any path with no owner, or a first-touch commit outside the
 // accepted chain, aborts with a non-zero exit code.
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, realpathSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -203,20 +203,55 @@ function parseArgs(argv) {
   return values;
 }
 
-function firstTouchingCommit(pathValue, chain) {
-  for (const entry of chain) {
-    // Only accepted RC chain commits own paths; rejected pre-chain commits
-    // (fac6327a2 control package, 90e796893 ChatInput fix) carry no RC id and
-    // are handled by the pre-chain spec classification fallback.
-    if (!rcFromSubject(entry.subject)) continue;
-    const touched = git(['diff-tree', '--no-commit-id', '--name-only', '-r', entry.sha, '--', pathValue])
-      .split('\n')
-      .filter(Boolean)
-      .map(normalizePath)
-      .filter(Boolean);
-    if (touched.includes(pathValue)) return entry;
+/**
+ * Builds a path -> first-owning-commit index in ONE `git log` pass.
+ *
+ * The previous implementation spawned `git diff-tree` once per
+ * (path x commit) pair — ~5.6k subprocesses for the RC-09 range, which took
+ * ~6 minutes on Windows and blew past the 120 s budget of the rc09
+ * ownership-matrix test.
+ *
+ * Semantics are preserved exactly: only commits whose subject carries an RC id
+ * can own a path (rejected pre-chain commits fall through to the spec
+ * classification fallback), and the owner is the OLDEST such commit that
+ * touched the path. The range is asserted merge-free by `assertLinearRange`,
+ * so per-commit file lists from `git log --name-only` match the old
+ * `git diff-tree` output.
+ */
+function buildFirstTouchIndex(baseSha, headSha) {
+  const records = git([
+    'log', '--reverse', '-z', '--format=@@@%H %s', '--name-only', `${baseSha}..${headSha}`,
+  ]).split('\0');
+  const index = new Map();
+  let owner = null;
+  for (const record of records) {
+    if (!record) continue;
+    if (record.startsWith('@@@')) {
+      const sha = record.slice(3, 43).toLowerCase();
+      const subject = record.slice(44);
+      owner = rcFromSubject(subject) ? { sha, subject } : null;
+      continue;
+    }
+    if (!owner) continue;
+    // `git log --format=... -z` emits the format string NUL-terminated but still
+    // separates the commit body from the file list with a newline, so the FIRST
+    // path of every commit arrives as "\npath". Trimming is required: without it
+    // the first path of each commit silently never matches and falls through to
+    // the pre-chain fallback (or fails closed as unowned).
+    const pathValue = normalizePath(record.trim());
+    if (pathValue && !index.has(pathValue)) index.set(pathValue, owner);
   }
-  return null;
+  return index;
+}
+
+function assertLinearRange(baseSha, headSha) {
+  const merges = git(['rev-list', '--merges', `${baseSha}..${headSha}`]).split('\n').filter(Boolean);
+  if (merges.length > 0) {
+    throw new Error(
+      `rc09 ownership range ${baseSha}..${headSha} contains ${merges.length} merge commit(s); ` +
+      'the batched first-touch pass assumes a linear range',
+    );
+  }
 }
 
 export function generateRc09OwnershipMatrix(options = {}) {
@@ -228,6 +263,8 @@ export function generateRc09OwnershipMatrix(options = {}) {
 
   const chain = resolveChain(baseSha, headSha);
   if (chain.length === 0) throw new Error('chain is empty: baseSha must be an ancestor of HEAD');
+  assertLinearRange(baseSha, headSha);
+  const firstTouchIndex = buildFirstTouchIndex(baseSha, headSha);
 
   const changedPaths = git(['diff', '--name-only', '-z', `${baseSha}..${headSha}`])
     .split('\0')
@@ -245,7 +282,10 @@ export function generateRc09OwnershipMatrix(options = {}) {
   const unowned = [];
   const nonChain = [];
   for (const pathValue of changedPaths) {
-    const firstTouch = firstTouchingCommit(pathValue, chain);
+    // Batched first-touch lookup: buildFirstTouchIndex() already walked the
+    // range once. Calling a per-path helper here re-ran `git log` per path,
+    // which is why the generator was slow — and the helper no longer exists.
+    const firstTouch = firstTouchIndex.get(pathValue) ?? null;
     if (!firstTouch) {
       const preChainRc = classifyPreChainPath(pathValue, specPatternsForFallback);
       if (preChainRc) {
@@ -317,6 +357,18 @@ export function main(argv = process.argv.slice(2)) {
   }
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))) {
+// Compare realpaths: node realpath-resolves import.meta.url, so when the repo
+// is reached through a directory junction (Desktop\clawx\ClawX -> D:\ClawX)
+// the C: argv path and the D: module URL disagree and a plain resolve()
+// comparison never matches, silently turning the CLI into a no-op.
+function sameRealPath(a, b) {
+  try {
+    return realpathSync(a) === realpathSync(b);
+  } catch {
+    return resolve(a) === resolve(b);
+  }
+}
+
+if (process.argv[1] && sameRealPath(process.argv[1], fileURLToPath(import.meta.url))) {
   process.exitCode = main();
 }

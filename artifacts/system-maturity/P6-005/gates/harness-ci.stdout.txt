@@ -5,12 +5,16 @@ Profiles:
 
 Scenario specs:
 - agent-dev-composable-scenarios: harness\specs\scenarios\agent-dev-composable-scenarios.md
+- capability-registry-v3: harness\specs\scenarios\capability-registry-v3.md
 - context-family: harness\specs\scenarios\context-family.md
 - context-runtime-kit: harness\specs\scenarios\context-runtime-kit.md
 - gateway-backend-communication: harness\specs\scenarios\gateway-backend-communication.md
 - gateway-startup-diagnostics: harness\specs\scenarios\gateway-startup-diagnostics.md
 - plugin-lifecycle-management: harness\specs\scenarios\plugin-lifecycle-management.md
+- sidebar-session-workgroup-drag-drop: harness\specs\scenarios\sidebar-session-workgroup-drag-drop.md
+- system-maturity-traceability: harness\specs\scenarios\system-maturity-traceability.md
 - windows-release-trust: harness\specs\scenarios\windows-release-trust.md
+- windows-ui-v2: harness\specs\scenarios\windows-ui-v2.md
 - workspace-harness-bootstrap: harness\specs\scenarios\workspace-harness-bootstrap.md
 
 Rule specs:
@@ -19,24 +23,31 @@ Rule specs:
 - agency-role-package-boundary: harness\specs\rules\agency-role-package-boundary.md
 - agency-role-promotion-boundary: harness\specs\rules\agency-role-promotion-boundary.md
 - agent-browser-multi-tab: harness\specs\rules\agent-browser-multi-tab.md
+- agent-browser-supervised-task-boundary: harness\specs\rules\agent-browser-supervised-task-boundary.md
 - agent-browser-tool-interception: harness\specs\rules\agent-browser-tool-interception.md
 - agent-dev-conformance-evidence: harness\specs\rules\agent-dev-conformance-evidence.md
+- agent-engineering-acceptance-boundary: harness\specs\rules\agent-engineering-acceptance-boundary.md
 - api-client-transport-policy: harness\specs\rules\api-client-transport-policy.md
 - backend-communication-boundary: harness\specs\rules\backend-communication-boundary.md
+- c1-gate-corpus-authority: harness\specs\rules\c1-gate-corpus-authority.md
 - capability-owner-resolution: harness\specs\rules\capability-owner-resolution.md
+- capability-registry-v3-boundary: harness\specs\rules\capability-registry-v3-boundary.md
 - channel-plugin-migration-guards: harness\specs\rules\channel-plugin-migration-guards.md
 - chat-loop-boundary: harness\specs\rules\chat-loop-boundary.md
 - clean-release-baseline-reproducibility: harness\specs\rules\clean-release-baseline-reproducibility.md
+- coding-mutation-consistency-boundary: harness\specs\rules\coding-mutation-consistency-boundary.md
 - coding-runtime-workspace-dcs-producer-boundary: harness\specs\rules\coding-runtime-workspace-dcs-producer-boundary.md
 - comms-regression: harness\specs\rules\comms-regression.md
 - context-family-boundary: harness\specs\rules\context-family-boundary.md
 - context-runtime-kit-boundary: harness\specs\rules\context-runtime-kit-boundary.md
 - contract-first-boundary: harness\specs\rules\contract-first-boundary.md
+- dcs-production-flags-locale-quality: harness\specs\rules\dcs-production-flags-localization.md
 - dcs-stage2-handoff-boundary: harness\specs\rules\dcs-stage2-handoff-boundary.md
 - dcs-stage3-tool-registry-boundary: harness\specs\rules\dcs-stage3-tool-registry-boundary.md
 - dcs-stage4-knowledge-unification-boundary: harness\specs\rules\dcs-stage4-knowledge-unification-boundary.md
 - dcs-stage5-sekb-closure-boundary: harness\specs\rules\dcs-stage5-sekb-closure-boundary.md
 - docs-sync: harness\specs\rules\docs-sync.md
+- exec-default-safety: harness\specs\rules\exec-default-safety.md
 - gateway-readiness-policy: harness\specs\rules\gateway-readiness-policy.md
 - host-api-fallback-policy: harness\specs\rules\host-api-fallback-policy.md
 - host-events-fallback-policy: harness\specs\rules\host-events-fallback-policy.md
@@ -46,15 +57,37 @@ Rule specs:
 - reach-readers-readonly-network-boundary: harness\specs\rules\reach-readers-readonly-network-boundary.md
 - reach-readers-upstream-integrity: harness\specs\rules\reach-readers-upstream-integrity.md
 - release-artifact-attestation-integrity: harness\specs\rules\release-artifact-attestation-integrity.md
+- remote-forge-expansion-boundary: harness\specs\rules\remote-forge-expansion-boundary.md
 - renderer-loading-experience: harness\specs\rules\renderer-loading-experience.md
 - renderer-main-boundary: harness\specs\rules\renderer-main-boundary.md
+- runtime-authority-convergence-boundary: harness\specs\rules\runtime-authority-convergence-boundary.md
+- runtime-lifecycle-governance-boundary: harness\specs\rules\runtime-lifecycle-governance-boundary.md
+- runtime-lineage-boundary: harness\specs\rules\runtime-lineage-boundary.md
 - runtime-local-ecosystem-boundary: harness\specs\rules\runtime-local-ecosystem-boundary.md
+- sekb-assisted-review-boundary: harness\specs\rules\sekb-assisted-review-boundary.md
 - sekb-hermes-default-off-boundary: harness\specs\rules\sekb-hermes-default-off-boundary.md
 - sekb-hermes-promotion-boundary: harness\specs\rules\sekb-hermes-promotion-boundary.md
 - sekb-hermes-tier-d-boundary: harness\specs\rules\sekb-hermes-tier-d-boundary.md
 - sekb-hermes-write-path-boundary: harness\specs\rules\sekb-hermes-write-path-boundary.md
 - sekb-runtime-development-loop: harness\specs\rules\sekb-runtime-development-loop.md
 - supply-chain-integrity-pinning: harness\specs\rules\supply-chain-integrity-pinning.md
+- system-maturity-privacy-controls: harness\specs\rules\system-maturity-privacy-controls.md
+- system-maturity-quarterly-audit: harness\specs\rules\system-maturity-quarterly-audit.md
+- system-maturity-security-regression: harness\specs\rules\system-maturity-security-regression.md
+- system-maturity-status-gate: harness\specs\rules\system-maturity-status-gate.md
+- system-maturity-traceability: harness\specs\rules\system-maturity-traceability.md
+- tf0009-real-canary-authority: harness\specs\rules\tf0009-real-canary-authority.md
+- uas-00-evidence-freeze-boundary: harness\specs\rules\uas-00-evidence-freeze-boundary.md
+- ui-motion-material-system: harness\specs\rules\ui-motion-material-system.md
+- verseshell-command-profile-boundary: harness\specs\rules\verseshell-command-profile-boundary.md
+- verseshell-external-write-policy-boundary: harness\specs\rules\verseshell-external-write-policy-boundary.md
+- verseshell-foundation-p0-boundary: harness\specs\rules\verseshell-foundation-p0-boundary.md
+- verseshell-mcp-compatibility-boundary: harness\specs\rules\verseshell-mcp-compatibility-boundary.md
+- verseshell-patch-preview-journal-bridge-boundary: harness\specs\rules\verseshell-patch-preview-journal-bridge-boundary.md
+- verseshell-process-lifecycle-boundary: harness\specs\rules\verseshell-process-lifecycle-boundary.md
+- verseshell-readonly-facade-boundary: harness\specs\rules\verseshell-readonly-facade-boundary.md
+- verseshell-single-local-exec-canary-boundary: harness\specs\rules\verseshell-single-local-exec-canary-boundary.md
+- vtoken-foundation-boundary: harness\specs\rules\vtoken-foundation-boundary.md
 - windows-release-signing-policy: harness\specs\rules\windows-release-signing-policy.md
 - windows-update-feed-integrity: harness\specs\rules\windows-update-feed-integrity.md
 - workspace-harness-single-source: harness\specs\rules\workspace-harness-single-source.md
@@ -64,6 +97,7 @@ Guide specs:
 - pretext-text-measurement-integration: harness\specs\guides\pretext-text-measurement-integration.md
 - sekb-long-task-stages: harness\specs\guides\sekb-long-task-stages.md
 - spec-update: harness\specs\guides\spec-update.md
+- sustained-development-continuity: harness\specs\guides\sustained-development-continuity.md
 
 Layer specs:
 - electron-main: harness\specs\layers\electron-main.md
@@ -73,12 +107,11 @@ Layer specs:
 - renderer: harness\specs\layers\renderer.md
 Spec is valid: harness\specs\scenarios\gateway-backend-communication.md
 Spec is valid: harness\specs\tasks\fix-chat-history-gateway-timeout.example.md
-Harness report: C:\Users\27933\Desktop\clawx\ClawX-maturity-p0-p6-005-clean-v6\artifacts\harness\latest.md
-
-[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6[39m
-
-
-[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
-[2m      Tests [22m [1m[32m14 passed[39m[22m[90m (14)[39m
-[2m   Start at [22m 09:43:38
-[2m   Duration [22m 1.49s[2m (transform 113ms, setup 212ms, import 79ms, tests 438ms, environment 1.10s)[22m
+Harness report: [workspace]\artifacts\harness\latest.md
+Harness result: fail
+[workspace]\harness:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @verse-claw/harness@0.0.0 start: `node src/cli.mjs "--" "run" "--spec" "harness/specs/scenarios/gateway-backend-communication.md" "--dry-run"`
+Exit status 1
+[WARN]  Local package.json exists, but node_modules missing, did you mean to install?
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

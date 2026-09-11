@@ -248,6 +248,7 @@ Skills ページでは OpenClaw の複数ソース（管理ディレクトリ、
 開発者モードでは、専用の Image Generation ページで、独立した OpenAI 互換の画像生成エンドポイント（Base URL、API キー、`gpt-image-2` などのモデル名）を設定でき、画像生成だけ専用の `/v1/images/generations` サービスを使い、チャットは通常の OpenAI Provider のまま継続できます。
 OpenAI-compatible ゲートウェイを **Custom プロバイダー** で使う場合、**設定 → AI Providers → Provider 編集** でカスタム `User-Agent` を設定でき、互換性が必要なエンドポイントで有効です。
 互換ゲートウェイで `/models` が認証以外の理由で使えない場合、Verse Claw は API キー検証時に軽量な `/chat/completions` または `/responses` プローブへ自動フォールバックします。
+`openclaw.json` の環境変数 SecretRef で設定したプロバイダーも、Verse Claw が変数を読み取れ、secret provider が許可していれば利用可能と認識されます。環境変数のキーは設定ファイルへコピーされません。
 
 ### 🌙 アダプティブテーマ
 ライトモード、ダークモード、またはシステム同期テーマ。Verse Clawはあなたの好みに自動的に適応します。
@@ -412,6 +413,8 @@ P1 の supervised ACI kernel は `starting`/`handshaking`/`ready`/`backoff`/`sto
 P2-01 read-only facade は、安定した `read_file`、`search_content`、`result_query` だけを host-owned typed ACI 経路へ接続します。五つの readiness flag が明示的に有効で kill switch が解除されている場合だけ materialize され、それ以外は model tool surface に現れません。workspace 外、絶対パス、NUL、無制限 query、壊れた result handle、期限切れ artifact、owner drift は fail-closed です。cache identity は workspace、revision、policy、operation、args を含みます。これは engineering evidence であり、command profile、write、canary、default-on、GA、product approval を有効化しません。[P2-01 evidence](docs/dev/verseshell-foundation/P2-READONLY-FACADE-EVIDENCE-2026-08-14.md) を参照してください。
 
 P2-02 argv-only command profile は、OpenClaw の承認前 command analysis を不変の host-owned execution plan へ収束します。通常の test/build/lint/git コマンドは direct argv で実行され、pipeline・chain・redirect・heredoc・inline evaluation・明示的 interpreter は独立した terminal-shell payload のままです。profile（`pnpm`/`npm`/`corepack` の `exec`/`dlx` runner パススルーを含む）は host が導出し、model が profile、interpreter、PATH/PATHEXT、policy、approval token を選ぶことはありません。Windows の `.exe`/`.com` は direct argv のまま、`.cmd`/`.bat` は監査済み `cmd.exe` interpreter の下で resolved script identity を保持し、承認後に display command を再解釈しません。cwd/env/argv/timeout/output の境界違反は fail-closed で、native/MCP/legacy fallback はありません。これは engineering evidence であり、diagnostics、write、canary、default-on、GA、product approval を有効化しません。[P2-02 evidence](docs/dev/verseshell-foundation/P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md) を参照してください。
+
+P3 external-write policy は、compiler、script、Git hook、terminal shell、その他の副作用を持ちうる process command を不変の command plan 上で external write として明示します。既存の OpenClaw exec approval が唯一の承認面であり、静的な警告は command text や credential を複製しません。これらの process write は ClawX write journal の外にあり、`rollbackClaim=false` で、自動 rollback も行いません。この engineering slice は write、canary traffic、default-on、GA、product approval を有効化しません。[P3 evidence](docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md) を参照してください。
 
 保守的な `openclaw.json` 設定は次のとおりです。
 

@@ -1,0 +1,36 @@
+{
+  "applied_at": "2026-09-10T01:31:11.696521Z",
+  "base_graph_hash": "b1d0bb404d3abdd85f8768a2696f43852ac516e0273c203d4ca7ad2aa4f7f520",
+  "base_summary": {
+    "edge_count": 276,
+    "node_count": 152,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0020",
+      "reason": "H-01 工程验收执行器/验证器/终报全绿（artifacts/agent-engineering-acceptance/H-01-re20/），解封前 NO-GO 收据（artifacts/unblock-pack/tf0020-h01-nogo.md）列出的解锁条件已全部满足：隔离 checkout 重建修复、同一 output-dir 形态 run→verify 跑通。",
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "artifacts/agent-engineering-acceptance/H-01-re20/executor-report.json（pass，20/20 门）",
+          "artifacts/agent-engineering-acceptance/H-01-re20/verifier/verifier-report.json（pass，独立重放 20/20 门）",
+          "artifacts/agent-engineering-acceptance/H-01-re20/final-report.json（result=pass，engineeringAcceptedByAgent=true）",
+          "artifacts/unblock-pack/tf0020-h01-go.md（绿色收据与环境经验）"
+        ],
+        "progress": 100,
+        "progress_source": "manual"
+      },
+      "id": "TF-0020"
+    }
+  ],
+  "created_at": "2026-09-09T17:56:35.150246Z",
+  "proposal_id": "TFP-rc00-h01-green-close-tf0020-20260910",
+  "rationale": "RC-00 H-01 工程验收已在干净隔离检出上获得真实绿色：artifacts/agent-engineering-acceptance/H-01-re20/ 绑定候选 511622f8f（feat/runtime-lifecycle-governance，base 7788b0c7d，manifestDigest 304534d8）。Executor 20/20 门全绿（含 provision-verseshell-resources 可复现 cargo 构建 sha256 与清单逐字节一致、fast-unit-tests 7242 passed/0 failed、agent-dev-audit 检出内 warn/B/82 无 hard-veto）；独立 Verifier 在自身检出重放 20/20 门全绿；final-report.json result=pass 且 engineeringAcceptedByAgent=true、allowedPromotion=false（engineering-only，未变更任何 product lock/运行时行为）。配套修复同轮落地并各自独立成 commit：68b496c5a（审计新鲜度改 git 提交时间判定，修复干净 checkout 零信号误红）、bef4efef5（vitest-agent-dev 硬上限 18000→21000ms 留痕修订，两次测量 18977/19054ms）、511622f8f（证据链重生成并跟踪 workbench evidence.json）。绿色收据：artifacts/unblock-pack/tf0020-h01-go.md；会话交接：docs/dev/handoffs/LATEST.md。",
+  "session_id": "session-rc00-h01-20260910",
+  "status": "applied"
+}

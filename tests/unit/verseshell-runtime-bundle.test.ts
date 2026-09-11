@@ -16,8 +16,8 @@ import { isVerseShellRuntimeRequestedByRollout } from '@electron/utils/verseshel
 const roots: string[] = [];
 const LICENSE = 'GNU AFFERO GENERAL PUBLIC LICENSE\nVersion 3, 19 November 2007\n';
 const PROJECT_ROOT = resolve(__dirname, '../..');
-const SOURCE_INPUTS_SHA256 = '158d0ca4d2ec51080b2aa0bdeb6274755c7009af9a904f86eacf624993dcd489';
-const SOURCE_IDENTITY_SHA256 = '19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650';
+const SOURCE_INPUTS_SHA256 = 'a2b3fd6c05cae9a664304ab7e0f5ff851ac357071a8415b5bee7c5aee5e876bd';
+const SOURCE_IDENTITY_SHA256 = 'daa0b1720efaa89356f9ceed608a9f5bd200970a96f6ab2abec8a67cd101c8f8';
 const SOURCE_REPOSITORY = 'https://github.com/Baixu22/VerseShell.git';
 const SOURCE_COMMIT = 'c3983694407a9ddb23505e05fad4a9eae653b283';
 const SOURCE_LOCATOR = `${SOURCE_REPOSITORY}@${SOURCE_COMMIT}+resources/verseshell/source-inputs.json#sha256:${SOURCE_IDENTITY_SHA256}`;
@@ -353,7 +353,7 @@ describe('resolveVerseShellRuntimeBundle', () => {
         bytes: bundle.binary.length,
         version: '1.0.0',
       },
-    };
+    } as never;
     await writeFile(join(bundle.root, 'resources', 'verseshell', 'manifest.json'), JSON.stringify(wrongManifest));
     await expect(resolveVerseShellRuntimeBundle({
       isPackaged: true,

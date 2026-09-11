@@ -70,6 +70,7 @@ describe('RoleContract type drift guard (Area 1)', () => {
     // populated (they were runtime-only before Area 1 reunified them into shared).
     const reviewer = getBuiltInRoleContract('reviewer');
     expect(reviewer).toBeDefined();
+    if (!reviewer) throw new Error('Expected reviewer role contract');
     expect(reviewer.capabilities).toContain('review');
     expect(reviewer.riskProfile).toBeDefined();
     expect(reviewer.canModifyScope).toBeDefined();

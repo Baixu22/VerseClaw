@@ -1,0 +1,48 @@
+{
+  "applied_at": "2026-08-30T14:23:18.008397Z",
+  "base_graph_hash": "dec02039b8cd497179ab3ad70dd9b4e0fef15c768b7af8a9799066da1d2992fa",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "context_tags": [
+          "p0",
+          "flags",
+          "brb-S",
+          "landed-unwired"
+        ],
+        "next_action": "保持两个配置叶仅用于 runtime-flag-ack 观测；如未来需要生产启用 worktree backend 或 SEKB experience shadow，另立实现 task，补齐 A1/A4 与新的半径预算。",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "review_needed",
+        "summary": "landed-unwired：API-only 撤下决策与工程验证已完成；未引入新的生产运行时能力。原配置旗标承诺已撤回，默认值保持不变，R3 的 8/5 超半径通过合法降级出口处置。"
+      },
+      "id": "TF-0137"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-08-30T14:23:11.820860Z",
+        "decided_by": "用户于 2026-08-30 要求修复 review 阻塞；lane-2 按 DEV-PROTOCOL §R3.5 选择 landed-unwired。",
+        "evidence": "独立 review task 01a05277-a62a-7762-90ef-d562dfb9ea14；DEV-PROTOCOL §R3.1/§R3.5；TF-0137 当前实现与验证记录。",
+        "expected_requirement": "brb-S 的 max_brb 为 5；收口前须有可归属提交，且排除 Task Forest 生成物后的 authored 文件并集不得超过 5。",
+        "id": "TFD-tf0137-r3-empty-attribution-and-radius-overrun-20260830",
+        "impact": "原实现 review 已通过；8/5 半径与空归属提交不再阻塞该任务，因为本任务按 §R3.5 合法降级为 landed-unwired。Task Forest 仍用 review_needed 表示该合法降级，禁止伪装成 done。",
+        "kind": "process_gap",
+        "related_task_ids": [],
+        "status": "resolved",
+        "summary": "按 §R3.5 选择 landed-unwired，关闭 TF-0137 的 R3 收口阻塞；不排除 authored 文件、不改半径规则。"
+      }
+    }
+  ],
+  "created_at": "2026-08-30T14:23:11.808779Z",
+  "proposal_id": "TFP-tf0137-landed-unwired-20260830",
+  "rationale": "用户要求修复 review 阻塞。TF-0137 的实现 review 已通过；本任务撤销无执行器配置旗标承诺，没有引入新的生产运行时能力，因此按 DEV-PROTOCOL §R3.5 选择 landed-unwired。保留 authored 文件计量，不修改 brb 标签，不伪造归属提交，不改变任何默认值。",
+  "session_id": "session-tf0137-r3-resolution-20260830",
+  "status": "applied"
+}

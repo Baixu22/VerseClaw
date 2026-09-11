@@ -11,6 +11,8 @@ import {
   redactSupportBundleText,
   verifyRedaction,
 } from '@electron/services/support-bundle';
+import { createHostTraceDiagnosticsService } from '@electron/services/host-trace-diagnostics';
+import type { PermissionApprovalEvent } from '@shared/types/workspace';
 
 const FAKE_SECRETS = [
   'sk-proj-abcdef1234567890abcdef1234567890',
@@ -97,5 +99,46 @@ describe('FP-P1-06 redactSupportBundleText', () => {
     const twice = redactSupportBundleText(once).sanitized;
     expect(twice).toBe(once);
     expect(verifyRedaction(once)).toEqual([]);
+  });
+
+  it('host trace diagnostics are safe before and after support bundle redaction', () => {
+    const service = createHostTraceDiagnosticsService({ secret: new Uint8Array(32).fill(7) });
+    const approval = {
+      id: 'approval-1',
+      workspaceId: 'workspace-1',
+      sessionKey: 'agent:main:main',
+      runId: 'run-1',
+      mode: 'acceptEdits',
+      source: 'terminal',
+      requestedAt: 1,
+      resolvedAt: 2,
+      status: 'approved',
+      risk: 'dangerous',
+      command: 'pnpm test --token sk-proj-abcdef1234567890abcdef1234567890',
+      cwd: '/workspace',
+      paths: undefined,
+      requestHash: 'request-hash-1',
+      paramsPreview: undefined,
+      reason: 'approved by test',
+    } as PermissionApprovalEvent;
+
+    const record = service.record({
+      approval,
+      evidence: {
+        code: 'RUNTIME_ERROR',
+        exitCode: 1,
+        durationMs: 123,
+      },
+    });
+    expect(record).toBeDefined();
+
+    const serialized = JSON.stringify(record);
+    expect(serialized).not.toContain('pnpm test');
+    expect(serialized).not.toContain('sk-proj-abcdef1234567890abcdef1234567890');
+
+    const { sanitized } = redactSupportBundleText(serialized);
+    expect(sanitized).not.toContain('pnpm test');
+    expect(sanitized).not.toContain('sk-proj-abcdef1234567890abcdef1234567890');
+    expect(verifyRedaction(sanitized)).toEqual([]);
   });
 });

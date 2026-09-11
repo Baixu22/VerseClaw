@@ -1,0 +1,51 @@
+{
+  "applied_at": "2026-08-27T06:48:03.519189Z",
+  "base_graph_hash": "2af9fe8c9b03d33124f43799e8f4dc6426e51df722c5080ca3f0926a154fecb5",
+  "base_summary": {
+    "edge_count": 260,
+    "node_count": 146,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "context_tags": [
+          "memgpt",
+          "lifecycle",
+          "brb-L"
+        ]
+      },
+      "id": "TF-0121"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-27T06:47:43.718163Z",
+        "decided_by": "lane-1 independent reviewer under the user-delegated radius ruling pattern",
+        "evidence": "Attributed commits 774abe01d, 25285ab42, 794157405, and aa6fd16b0 produce a 19-file union. Schema guard is empty. Literal default guard has 16 line hits, all from .agent-workbench/task-forest generated exports/snapshots/HTML and zero runtime default changes.",
+        "expected_requirement": "TF-0121 radius must be within its context_tags max_brb.",
+        "id": "TFD-tf0121-radius-overrun-2026-08-27",
+        "impact": "The implementation can still be reviewed, but the task cannot close under the original brb-M cap. lane-1 adjudicates the radius to brb-L so 19<=40; this does not resolve the separate AC-4 record gap or context_read boundary conflict.",
+        "kind": "scope_change",
+        "node_id": "TF-0121",
+        "observed_action_or_result": "Radius=19, max_brb=15 before ruling; after brb-L, 19<=40.",
+        "recommendation": "Keep governance files in the radius and use brb-L. Future planning should count mandatory Task Forest evidence and audit-board updates in the initial brb estimate.",
+        "related_task_ids": [
+          "TF-0121",
+          "TF-0107",
+          "TF-0145"
+        ],
+        "severity": "medium",
+        "status": "open",
+        "summary": "TF-0121 full attributed radius is 19 files against brb-M=15: 9 runtime implementation/test files plus 10 mandatory governance/Task Forest/audit-board paths."
+      }
+    }
+  ],
+  "created_at": "2026-08-27T06:47:43.706666Z",
+  "proposal_id": "prop-lane1-tf0121-brb-ruling-2026-08-27",
+  "rationale": "lane-1 independent review of TF-0121 confirms the full attributed file union is 19 against brb-M=15. The extra paths are mandatory Task Forest evidence and the user-requested audit board, not production scope creep. Applying the established TF-0110/TF-0116/TF-0124 ruling pattern, re-estimate the task to brb-L so 19<=40 without excluding governance files or granting a one-off exemption.",
+  "session_id": "session-lane-1",
+  "status": "applied"
+}

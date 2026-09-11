@@ -1,0 +1,39 @@
+{
+  "applied_at": "2026-09-10T12:29:15.490616Z",
+  "base_graph_hash": "86931eb763208017d2f26e48fea0f8985b96c9cd4104bf617f970623b9108ee2",
+  "base_summary": {
+    "edge_count": 279,
+    "node_count": 154,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "保持 review_needed —— tf0009-real-canary-authority R7 与 uas-00-evidence-freeze-boundary R2 规定这是 TF-0009 唯一允许的状态。解除须补齐三个 profile 各 10 次具名真人产品路径任务、真人 kill/rollback drill 与 owner continue/shrink/stop 裁决；不可由 agent 模拟代替。",
+        "progress": 50,
+        "status": "review_needed",
+        "summary": "工程 surrogate 已通过；真人验收仍未完成：DCS/SEKB/Browser 各 0/10，缺真人 kill/rollback drill 与具名 owner 裁决。复核已得出结论（不通过），但 TF-0009 的规范状态由已批准的 tf0009-real-canary-authority R7 与 uas-00-evidence-freeze-boundary R2 固定为 review_needed；2026-09-10 误改为 blocked 已回退以恢复门禁一致。"
+      },
+      "id": "TF-0009"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-09-10T12:29:11.940893Z",
+        "description": "2026-09-10 的 review-outcomes 提案把 TF-0009 由 review_needed 改为 blocked。该改动与 harness/specs/rules/tf0009-real-canary-authority.md R7（TF-0009 唯一允许状态为 review_needed、永不为 done）和 harness/specs/rules/uas-00-evidence-freeze-boundary.md R2（TF-0009 保持 review_needed）冲突，并使 tests/unit/tf0009-engineering-evidence-audit.test.ts 失败——这是冻结白名单之外的回归。通用规则 task-review-outcome-boundary 不覆盖针对 TF-0009 的既有专门裁决。已回退为 review_needed，保留进展与真人残余的诚实记录。",
+        "id": "TFD-7dd3fcb877",
+        "related_task_ids": [
+          "TF-0009"
+        ],
+        "resolution": "revert-status-to-review-needed",
+        "severity": "medium",
+        "title": "TF-0009 状态被误改为 blocked，违反既有 error 级规则"
+      }
+    }
+  ],
+  "created_at": "2026-09-10T12:29:11.929228Z",
+  "proposal_id": "TFP-c5ae0be7bd",
+  "session_id": null,
+  "status": "applied"
+}

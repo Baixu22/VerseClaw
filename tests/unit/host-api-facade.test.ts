@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { normalizeChecksum } from '@shared/types/context-runtime-kit';
 
 const hostInvoke = vi.fn();
 
@@ -39,6 +40,29 @@ describe('hostApi facade', () => {
     expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
       module: 'settings',
       action: 'getAll',
+    }));
+  });
+
+  it('routes diagnostics.exportSupportBundle through hostInvoke', async () => {
+    hostInvoke.mockResolvedValueOnce({
+      id: 'req-support-bundle',
+      ok: true,
+      data: {
+        success: true,
+        path: 'C:\\Users\\alice\\support-bundle.json',
+        redaction: { findings: [], totalHits: 0, verified: true },
+      },
+    });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await expect(hostApi.diagnostics.exportSupportBundle()).resolves.toEqual({
+      success: true,
+      path: 'C:\\Users\\alice\\support-bundle.json',
+      redaction: { findings: [], totalHits: 0, verified: true },
+    });
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
+      module: 'diagnostics',
+      action: 'exportSupportBundle',
     }));
   });
 
@@ -816,7 +840,7 @@ describe('hostApi facade', () => {
       sessionKey: 'agent:main:main',
       archiveHandle: {
         uri: 'context-archive://session-1/tool.context-archive.json',
-        checksum: `sha256:${'a'.repeat(64)}`,
+        checksum: normalizeChecksum(`sha256:${'a'.repeat(64)}`),
         byteLength: 15,
       },
     });
@@ -824,7 +848,7 @@ describe('hostApi facade', () => {
       sessionKey: 'agent:main:main',
       resourceId: 'resource:demo',
       selector: 'selector:demo',
-      checksum: `sha256:${'b'.repeat(64)}`,
+      checksum: normalizeChecksum(`sha256:${'b'.repeat(64)}`),
     });
 
     expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({

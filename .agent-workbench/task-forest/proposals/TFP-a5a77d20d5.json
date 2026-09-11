@@ -1,0 +1,59 @@
+{
+  "applied_at": "2026-09-08T06:05:40.759824Z",
+  "base_graph_hash": "96b9fc579b79e457dac1a91b4a2f86cd438b478774bb49e908f5371d7c63ca07",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.98,
+        "created_at": "2026-09-08T11:00:00Z",
+        "evidence": "git blame on zod-schema.ts / types.openclaw.ts / runtime-feature-leaves.ts within 81154a9f1; TF-0143 UFTK deviation TFD-65bbc44c61 (authorized driver fix); prop-lane1-tf0143-corpus-close-20260828.json evidence field.",
+        "expected_requirement": "§R3.8.3 forbids mixing two discrete workflows in one commit without a rule that merges them into a single budget line.",
+        "id": "TFD-tf0127-81154a9f1-cross-workflow-mix-20260908",
+        "kind": "commit_hygiene",
+        "node_id": "TF-0127",
+        "observed_action_or_result": "81154a9f1 commits 22 files. 19 are pure VerseShell patch-preview bridge; the same 3 config files (zod-schema.ts, types.openclaw.ts, runtime-feature-leaves.ts) contain BOTH VerseShell additions (patchPreview + verseShellFoundation labels/help) AND TF-0143-authorized UFTK additions (runtime.coding.uftk). The subject 'feat(verseshell): add patch preview journal bridge' implies single-scope; TF-0143's driver fix landed inside this same commit. Per §R5 process-8 history is not rewritten; per §R3.8.1 implementation UFTK portion counts toward TF-0143 (lane-1), VerseShell portion counts toward out-of-round lane-unknown.",
+        "owner": "lane-1",
+        "recommendation": "When done, ask the author of 81154a9f1 to confirm the UFTK portion was an intentional co-commit (not accidental write-scope bleed), and register the attribution split in GATE-BASELINE.md §13 for permanent ledger.",
+        "related_task_ids": [
+          "TF-0127",
+          "TF-0143"
+        ],
+        "severity": "medium",
+        "status": "open"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-09-08T11:00:00Z",
+        "evidence": "docs/dev/context-moat/reviews/TF-0127.md final sections (attribution table); 009b0ccb3 / 81154a9f1 / 4013414cf / e2a3db8d9 inspected raw.",
+        "expected_requirement": "Blocker 2 of M4 required closure: TF-0143 accepted deliveries in mixed commits must be path-attributed; whole commits must not be blindly assigned.",
+        "id": "TFD-tf0127-attribution-closure-20260908",
+        "kind": "attribution_resolved",
+        "node_id": "TF-0127",
+        "observed_action_or_result": "Closed. Mechanical 18 + 7 legitimized TF-0143 paths = 25/25 (at cap). Three mixed commits (009b0ccb3, 81154a9f1, 4013414cf) path-split into TF-0143 lane-1 vs out-of-round. e2a3db8d9 confirmed TF-0143 implementation. CROSS-WORKFLOW mix in 81154a9f1 registered separately. M4 governance cost adds ~4 more paths to next independent L2 verifier; final formal reading reserved for that session.",
+        "owner": "lane-2",
+        "recommendation": "Scope disposal proceeds via AUDIT-BOARD XL-* (§R3.5.1 milestone-level landed-unwired). M4 does not self-done; both lanes plus user adjudication required.",
+        "related_task_ids": [
+          "TF-0127",
+          "TF-0143",
+          "TF-0128",
+          "TF-0138"
+        ],
+        "severity": "info",
+        "status": "closed"
+      }
+    }
+  ],
+  "created_at": "2026-09-08T06:05:24.343312Z",
+  "proposal_id": "TFP-a5a77d20d5",
+  "session_id": null,
+  "status": "applied"
+}

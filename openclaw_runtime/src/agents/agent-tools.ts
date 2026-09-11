@@ -14,7 +14,10 @@ import type { InboundEventKind } from "../channels/inbound-event/kind.js";
 import { resolveExecCommandHighlighting } from "../config/exec-command-highlighting.js";
 import type { ModelCompatConfig } from "../config/types.models.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
-import type { DiagnosticTraceContext } from "../infra/diagnostic-trace-context.js";
+import {
+  createDiagnosticTraceContextFromActiveScope,
+  type DiagnosticTraceContext,
+} from "../infra/diagnostic-trace-context.js";
 import { resolveEventSessionRoutingPolicy } from "../infra/event-session-routing.js";
 import {
   type ExecAsk,
@@ -36,6 +39,7 @@ import {
   wrapToolWithBeforeToolCallHook,
 } from "./agent-tools.before-tool-call.js";
 import { applyDeferredFollowupToolDescriptions } from "./agent-tools.deferred-followup.js";
+import type { ToolLoopTerminationObserver } from "./tool-loop-termination.js";
 import { filterToolsByMessageProvider } from "./agent-tools.message-provider-policy.js";
 import {
   isToolAllowedByPolicies,
@@ -149,6 +153,7 @@ import {
 import { resolveWorkspaceRoot } from "./workspace-dir.js";
 import { createVerseShellResultTool } from "./verseshell/result-tool.js";
 import { createVerseShellReadonlyFacadeTools } from "./verseshell/readonly-facade.js";
+import { createVerseShellPatchPreviewTool } from "./verseshell/patch-preview.js";
 
 const MEMORY_FLUSH_ALLOWED_TOOL_NAMES = new Set(["read", "write"]);
 
@@ -580,6 +585,12 @@ export function createOpenClawCodingTools(options?: {
   /** Live observer called after wrapped tool outcomes are recorded. */
   onToolOutcome?: ToolOutcomeObserver;
   /**
+   * Live observer called when a critical tool-loop veto must end the turn.
+   * Forwarded into every wrapped coding tool so a runaway identical-call loop
+   * terminates the run instead of blocking one call at a time forever.
+   */
+  onToolLoopTermination?: ToolLoopTerminationObserver;
+  /**
    * DCS Stage 5: session-scoped BlockStore for context_read / context_search.
    * When provided with sessionId, registers real context_* agent tools.
    */
@@ -606,6 +617,7 @@ export function createOpenClawCodingTools(options?: {
   /** Runtime-only resolved skill paths that the read tool may load under workspaceOnly. */
   skillsSnapshot?: SkillSnapshot;
 }): AnyAgentTool[] {
+  const effectiveTrace = options?.trace ?? createDiagnosticTraceContextFromActiveScope();
   const sandbox = options?.sandbox?.enabled ? options.sandbox : undefined;
   const isMemoryFlushRun = options?.trigger === "memory";
   if (isMemoryFlushRun && !options?.memoryFlushWritePath) {
@@ -1126,6 +1138,7 @@ export function createOpenClawCodingTools(options?: {
         safeBinTrustedDirs: options?.exec?.safeBinTrustedDirs ?? execConfig.safeBinTrustedDirs,
         safeBinProfiles: options?.exec?.safeBinProfiles ?? execConfig.safeBinProfiles,
         agentId,
+        trace: effectiveTrace,
         cwd: codingRoot,
         allowBackground,
         scopeKey,
@@ -1175,6 +1188,7 @@ export function createOpenClawCodingTools(options?: {
         cwd: codingRoot,
         agentId,
         config: options?.config,
+        trace: effectiveTrace,
       })
     : null;
   const verseShellReadonlyFacadeTools = includeShellTools
@@ -1183,6 +1197,18 @@ export function createOpenClawCodingTools(options?: {
         agentId,
         revision: options?.workspaceRevision,
         config: options?.config,
+        trace: effectiveTrace,
+      })
+    : null;
+  // Preview only: it reports base hashes, preconditions and diffs. Committing,
+  // undo and recovery stay with the apply_patch write journal below.
+  const verseShellPatchPreviewTool = includeShellTools
+    ? createVerseShellPatchPreviewTool({
+        cwd: codingRoot,
+        agentId,
+        revision: options?.workspaceRevision,
+        config: options?.config,
+        trace: effectiveTrace,
       })
     : null;
   const applyPatchToolRaw =
@@ -1306,6 +1332,7 @@ export function createOpenClawCodingTools(options?: {
     ...(processTool ? [processTool as unknown as AnyAgentTool] : []),
     ...(verseShellResultTool ? [verseShellResultTool] : []),
     ...(verseShellReadonlyFacadeTools ?? []),
+    ...(verseShellPatchPreviewTool ? [verseShellPatchPreviewTool] : []),
     // Channel docking: include channel-defined agent tools (login, etc.).
     ...(includeChannelTools ? listChannelAgentTools({ cfg: options?.config }) : []),
     ...(includeOpenClawTools
@@ -1484,9 +1511,10 @@ export function createOpenClawCodingTools(options?: {
         sessionId: options?.sessionId,
         runId: options?.runId,
         channelId: options?.hookChannelId ?? options?.currentChannelId,
-        ...(options?.trace ? { trace: options.trace } : {}),
+        trace: effectiveTrace,
         loopDetection: resolveToolLoopDetectionConfig({ cfg: options?.config, agentId }),
         onToolOutcome: options?.onToolOutcome,
+        onToolLoopTermination: options?.onToolLoopTermination,
       },
       { emitDiagnostics: options?.emitBeforeToolCallDiagnostics },
     ),

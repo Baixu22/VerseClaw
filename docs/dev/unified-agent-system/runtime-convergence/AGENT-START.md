@@ -65,8 +65,8 @@
 - `C:\Users\27933\Desktop\result\final\dcs-first-architecture-synthesis-final-2026-08-02.md`
 - `pnpm harness context --spec <active-spec>`
 - `pnpm harness validate --spec <active-spec>`
-- `node scripts/rc01-authority-inventory.mjs --accepted-base <RC-01 accepted base SHA>`（从固定基线重新生成 baseline）
-- `node scripts/rc01-baseline-validate.mjs`（校验 baseline）
+- `node scripts/rc01-authority-inventory.mjs --accepted-base <RC-01 accepted base SHA>`（必填；显式选择候选 HEAD 的祖先 commit，不依赖 `origin/main`。重建现有基线时使用其 `acceptedBaseSha`，缺失/错误参数、非 commit 或非祖先均在写入前失败）
+- `node scripts/rc01-baseline-validate.mjs`（校验基线、提交时间、source/npm package 版本和已跟踪且存在的 owner 路径；两份 receipt-owner 声明与七条硬约束必须符合 `scripts/lib/rc01-receipt-contract.mjs` 中已批准的契约，不能用重复条目或关键词匹配放行；支持含空格、中文或 URL 保留字符的 checkout 路径）
 - `pnpm acceptance:agent:*`
 - `.agent-workbench/task-forest/exports/task-forest.html`
 

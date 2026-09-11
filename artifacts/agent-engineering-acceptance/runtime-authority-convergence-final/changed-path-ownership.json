@@ -1,0 +1,872 @@
+{
+  "schema": "runtime-authority-convergence-rc09-ownership/v1",
+  "baseSha": "fd857e5d68c2016de1f52009f027f9a07bba8b7b",
+  "headSha": "9b08e3f5bd5c54ee6e0db2f41a615b8c7008add3",
+  "generatedAt": "2026-09-04T05:46:51.634Z",
+  "totalPaths": 170,
+  "byRc": {
+    "RC-00": 8,
+    "RC-01R": 85,
+    "RC-03": 15,
+    "RC-05R": 23,
+    "RC-04R": 8,
+    "RC-07": 14,
+    "RC-02": 9,
+    "RC-06B": 1,
+    "RC-06C": 2,
+    "RC-08B": 3,
+    "RC-06A": 2
+  },
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "rc": "RC-00",
+      "commit": "e03b1e628f39b05958a3935d62111fa94912bfe3"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-01/baseline.json",
+      "rc": "RC-01R",
+      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+    },
+    {
+      "path": "docs/dev/handoffs/LATEST.md",
+      "rc": "RC-00",
+      "commit": "8cf3aa70515e1ac7e11afaf656dfe1f8fda78a0d"
+    },
+    {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/README.md",
+      "rc": "RC-00",
+      "commit": "8cf3aa70515e1ac7e11afaf656dfe1f8fda78a0d"
+    },
+    {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/STATUS.md",
+      "rc": "RC-01R",
+      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "rc": "RC-01R",
+      "commit": "2d6cf606adb1a7face69bb4b7152b886da9fe97e"
+    },
+    {
+      "path": "harness/specs/tasks/rc03-dcs-seal-dual-receipts.md",
+      "rc": "RC-03",
+      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+    },
+    {
+      "path": "harness/specs/tasks/runtime-authority-convergence-final-acceptance.md",
+      "rc": "RC-00",
+      "commit": "8cf3aa70515e1ac7e11afaf656dfe1f8fda78a0d"
+    },
+    {
+      "path": "openclaw_runtime/.oxlintrc.json",
+      "rc": "RC-01R",
+      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+    },
+    {
+      "path": "openclaw_runtime/apps/macos/Sources/OpenClaw/HostEnvSecurityPolicy.generated.swift",
+      "rc": "RC-01R",
+      "commit": "926f239c73e035288de105f9fb84f4beaa16ac93"
+    },
+    {
+      "path": "openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json",
+      "rc": "RC-01R",
+      "commit": "926f239c73e035288de105f9fb84f4beaa16ac93"
+    },
+    {
+      "path": "openclaw_runtime/config/tsconfig/oxlint.core.json",
+      "rc": "RC-01R",
+      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+    },
+    {
+      "path": "openclaw_runtime/config/tsconfig/oxlint.extensions.json",
+      "rc": "RC-01R",
+      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+    },
+    {
+      "path": "openclaw_runtime/config/tsconfig/oxlint.json",
+      "rc": "RC-01R",
+      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+    },
+    {
+      "path": "openclaw_runtime/config/tsconfig/oxlint.scripts.json",
+      "rc": "RC-01R",
+      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+    },
+    {
+      "path": "openclaw_runtime/extensions/browser/src/browser/server-context.remote-tab-ops.harness.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/browser/src/cli/browser-cli-actions-input/register.files-downloads.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/browser/src/node-host/invoke-browser.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/channels/rc05-operator-fixture/__tests__/conformance.test.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/extensions/chutes/index.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/codex/src/app-server/approval-bridge.ts",
+      "rc": "RC-04R",
+      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
+    },
+    {
+      "path": "openclaw_runtime/extensions/codex/src/app-server/elicitation-bridge.ts",
+      "rc": "RC-04R",
+      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
+    },
+    {
+      "path": "openclaw_runtime/extensions/codex/src/app-server/protocol.ts",
+      "rc": "RC-04R",
+      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
+    },
+    {
+      "path": "openclaw_runtime/extensions/codex/src/migration/apply.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/discord/src/outbound-adapter.test-harness.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/extensions/discord/src/test-support/provider.test-support.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/extensions/feishu/src/bitable.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/feishu/src/setup-surface.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/google/gemini-cli-provider.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/matrix/src/onboarding.test-harness.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/extensions/matrix/test-api.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-core/src/cli.runtime.ts",
+      "rc": "RC-07",
+      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/markdown.ts",
+      "rc": "RC-07",
+      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+    },
+    {
+      "path": "openclaw_runtime/extensions/minimax/provider-registration.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/msteams/src/setup-surface.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/ollama/src/setup.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/openai/openai-chatgpt-oauth.runtime.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/openai/openai-chatgpt-provider.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-channel/api.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/live-transports/discord/discord-live.runtime.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/live-transports/slack/slack-live.runtime.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/live-transports/telegram/telegram-live.runtime.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/live-transports/whatsapp/whatsapp-live.runtime.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/runtime-tool-fixture.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/extensions/qa-lab/src/scenario-flow-runner.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/extensions/reach-readers/src/core/probe.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/reach-readers/src/tools/youtube.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/slack/src/monitor/message-handler/prepare.test-helpers.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/extensions/slack/src/monitor/provider-support.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/extensions/synology-chat/src/client.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/tsconfig.package-boundary.paths.json",
+      "rc": "RC-01R",
+      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+    },
+    {
+      "path": "openclaw_runtime/extensions/voice-call/src/types.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/workboard/src/types.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/xai/xai-oauth.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/extensions/zalouser/npm-shrinkwrap.json",
+      "rc": "RC-01R",
+      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+    },
+    {
+      "path": "openclaw_runtime/package.json",
+      "rc": "RC-02",
+      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
+    },
+    {
+      "path": "openclaw_runtime/pnpm-lock.yaml",
+      "rc": "RC-02",
+      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
+    },
+    {
+      "path": "openclaw_runtime/pnpm-workspace.yaml",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/scripts/generate-npm-shrinkwrap.mjs",
+      "rc": "RC-01R",
+      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+    },
+    {
+      "path": "openclaw_runtime/scripts/prepare-extension-package-boundary-artifacts.mjs",
+      "rc": "RC-01R",
+      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.read.characterization.test.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/clawgraph/clawgraph-taskflow-projection.test.ts",
+      "rc": "RC-06B",
+      "commit": "c8b79dc5b559ecef8988522aa4a0d213e10247da"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+      "rc": "RC-03",
+      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory.test.ts",
+      "rc": "RC-03",
+      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "rc": "RC-03",
+      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/sekb-runtime.ts",
+      "rc": "RC-07",
+      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts",
+      "rc": "RC-03",
+      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/harness/native-hook-relay.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mission-control/mission-taskflow-projection.test.ts",
+      "rc": "RC-06C",
+      "commit": "def40614c724ad57b127187d5e11f2c7dc9576f3"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mission-control/rollback-wiring.test.ts",
+      "rc": "RC-06C",
+      "commit": "def40614c724ad57b127187d5e11f2c7dc9576f3"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/openai-transport-stream.ts",
+      "rc": "RC-02",
+      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/operator-slice.test.ts",
+      "rc": "RC-04R",
+      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/operator-slice.ts",
+      "rc": "RC-04R",
+      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/parity-audit/parity-audit.test.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/rc02-shadow-census.acceptance.test.ts",
+      "rc": "RC-02",
+      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/rc04-durable-approval.test.ts",
+      "rc": "RC-04R",
+      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/receipt-store.test.ts",
+      "rc": "RC-02",
+      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/receipt-store.ts",
+      "rc": "RC-02",
+      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/keybindings.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/edit.test.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/read.test.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/write.test.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/shadow-census.test.ts",
+      "rc": "RC-02",
+      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/cron-tool-canonicalize.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/governed-exec.test.ts",
+      "rc": "RC-04R",
+      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
+    },
+    {
+      "path": "openclaw_runtime/src/channels/plugins/channel-runtime-surface.types.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/src/channels/plugins/contracts/test-helpers.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/src/channels/plugins/types.plugin.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/src/cli/cli-utils.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/cli/progress.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/config/types.plugins.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/assembler.ts",
+      "rc": "RC-03",
+      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/block-lifecycle.test.ts",
+      "rc": "RC-07",
+      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+      "rc": "RC-03",
+      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+      "rc": "RC-03",
+      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/dcs-receipts.ts",
+      "rc": "RC-03",
+      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/factstore/factstore.test.ts",
+      "rc": "RC-03",
+      "commit": "821e6b918735426d33cf0e7884e5f9ce9f536cdb"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/memory-context-provider.test.ts",
+      "rc": "RC-07",
+      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/pruned-runtime-build-contract.test.ts",
+      "rc": "RC-01R",
+      "commit": "ee1dd99951066c46eba07d537bf6702f861406a0"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/rc03-producers.ts",
+      "rc": "RC-03",
+      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/rc03-seal-hook.ts",
+      "rc": "RC-03",
+      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/rc03-seal-wiring.test.ts",
+      "rc": "RC-03",
+      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/rc03-seal.test.ts",
+      "rc": "RC-03",
+      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/registry.ts",
+      "rc": "RC-07",
+      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/symbol-context-provider.test.ts",
+      "rc": "RC-07",
+      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/cli-runtime/nodes-media.test.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/health-runtime/status.summary.runtime.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/node-pending-work.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/role-policy.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/hooks/module-loader.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/infra/exec-approvals-effective.ts",
+      "rc": "RC-04R",
+      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
+    },
+    {
+      "path": "openclaw_runtime/src/infra/json-file.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/infra/net/ssrf.test.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/infra/net/ssrf.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/infra/outbound/send-deps.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/batch-distillation-assistant.test.ts",
+      "rc": "RC-07",
+      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/experience-block-bridge.ts",
+      "rc": "RC-07",
+      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/experience-shadow-product.test.ts",
+      "rc": "RC-07",
+      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/experience-shadow-product.ts",
+      "rc": "RC-07",
+      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/sekb.test.ts",
+      "rc": "RC-07",
+      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/shadow-evaluation-offline.test.ts",
+      "rc": "RC-07",
+      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+    },
+    {
+      "path": "openclaw_runtime/src/llm/env-api-keys.ts",
+      "rc": "RC-02",
+      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
+    },
+    {
+      "path": "openclaw_runtime/src/memory/memory-store.ts",
+      "rc": "RC-07",
+      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+    },
+    {
+      "path": "openclaw_runtime/src/node-host/invoke.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/observability/rc08b-otel.test.ts",
+      "rc": "RC-08B",
+      "commit": "e5ddec35be1e3ba2e55c7716da4a12299a7aee78"
+    },
+    {
+      "path": "openclaw_runtime/src/observability/trace-recorder.ts",
+      "rc": "RC-08B",
+      "commit": "e5ddec35be1e3ba2e55c7716da4a12299a7aee78"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/channel-config-helpers.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/channel-entry-contract.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/facade-loader.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/facade-runtime.ts",
+      "rc": "RC-02",
+      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/json-store.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/qa-runner-runtime.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/test-helpers/public-surface-loader.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/test-helpers/subagent-hooks.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/hooks.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/host-hook-state.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/host-hooks.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/lazy-service-module.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/public-surface-loader.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/runtime/runtime-plugin-boundary.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/runtime/types-channel.ts",
+      "rc": "RC-05R",
+      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/trusted-tool-policy.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/process/supervisor/types.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/event-log-persistence.ts",
+      "rc": "RC-01R",
+      "commit": "2d6cf606adb1a7face69bb4b7152b886da9fe97e"
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/event-log.ts",
+      "rc": "RC-01R",
+      "commit": "2d6cf606adb1a7face69bb4b7152b886da9fe97e"
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/evidence-verifier.test.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/tasks/task-flow-cas.test.ts",
+      "rc": "RC-06A",
+      "commit": "b879501aa6232b2e0f9d7c08d4a8016e410ffc38"
+    },
+    {
+      "path": "openclaw_runtime/src/tasks/task-registry.sqlite.shared.ts",
+      "rc": "RC-06A",
+      "commit": "b879501aa6232b2e0f9d7c08d4a8016e410ffc38"
+    },
+    {
+      "path": "openclaw_runtime/src/test-utils/bundled-plugin-public-surface.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/test-utils/vitest-mock-fn.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/utils.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/src/version.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/test/helpers/agents/happy-path-prompt-snapshots.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/test/helpers/auth-wizard.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/test/helpers/gateway-e2e-harness.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/test/helpers/openclaw-test-instance.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/test/helpers/wizard-prompter.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/test/non-isolated-runner.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/test/scripts/pruned-runtime-build-contract.test.ts",
+      "rc": "RC-01R",
+      "commit": "ee1dd99951066c46eba07d537bf6702f861406a0"
+    },
+    {
+      "path": "openclaw_runtime/test/setup-openclaw-runtime.ts",
+      "rc": "RC-01R",
+      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+    },
+    {
+      "path": "openclaw_runtime/test/tsconfig/tsconfig.core.test.json",
+      "rc": "RC-01R",
+      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+    },
+    {
+      "path": "openclaw_runtime/test/tsconfig/tsconfig.extensions.test.json",
+      "rc": "RC-01R",
+      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+    },
+    {
+      "path": "openclaw_runtime/tsdown.config.ts",
+      "rc": "RC-03",
+      "commit": "11038b3ec9c6df30162187c2309e492c0a956631"
+    },
+    {
+      "path": "package.json",
+      "rc": "RC-00",
+      "commit": "8cf3aa70515e1ac7e11afaf656dfe1f8fda78a0d"
+    },
+    {
+      "path": "scripts/lib/agent-engineering-acceptance.mjs",
+      "rc": "RC-00",
+      "commit": "8cf3aa70515e1ac7e11afaf656dfe1f8fda78a0d"
+    },
+    {
+      "path": "tests/unit/agent-engineering-acceptance.test.ts",
+      "rc": "RC-00",
+      "commit": "b2dd898a69a3e4466d853ecba966dfeac73901eb"
+    },
+    {
+      "path": "tests/unit/rc01-authority-inventory-baseline.test.ts",
+      "rc": "RC-01R",
+      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+    },
+    {
+      "path": "tests/unit/rc08b-otel-observability-convergence.test.ts",
+      "rc": "RC-08B",
+      "commit": "e5ddec35be1e3ba2e55c7716da4a12299a7aee78"
+    },
+    {
+      "path": "tests/unit/rc09-ownership-matrix.test.ts",
+      "rc": "RC-00",
+      "commit": "51f5d837580bf1611e4608e98415027924102a18"
+    }
+  ]
+}

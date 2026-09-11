@@ -7,7 +7,10 @@ import { wrapUntrustedPromptDataBlock } from "../sanitize-for-prompt.js";
 // T-C1: the required section list is shared with the damage rules rather than
 // hardcoded here. Two copies that must agree is the §R1 A3 defect class — the
 // copies drift and each side's tests only see its own.
-import { REQUIRED_COMPACTION_SECTIONS } from "./compaction-sections.js";
+import {
+  REQUIRED_COMPACTION_SECTIONS,
+  renderCompactionSummaryShape,
+} from "./compaction-sections.js";
 
 // Compaction summary quality helpers. They define the structured summary contract
 // and audit whether summaries preserve pending asks plus exact identifiers.
@@ -17,9 +20,9 @@ const MAX_ASK_OVERLAP_TOKENS = 12;
 const MIN_ASK_OVERLAP_TOKENS_FOR_DOUBLE_MATCH = 3;
 const REQUIRED_SUMMARY_SECTIONS = REQUIRED_COMPACTION_SECTIONS;
 const STRICT_EXACT_IDENTIFIERS_INSTRUCTION =
-  "For ## Exact identifiers, preserve literal values exactly as seen (IDs, URLs, file paths, ports, hashes, dates, times).";
+  "Preserve literal identifiers exactly as seen (IDs, URLs, file paths, ports, hashes, dates, times); list touched paths under ## Files Touched and keep other identifiers in the relevant section.";
 const POLICY_OFF_EXACT_IDENTIFIERS_INSTRUCTION =
-  "For ## Exact identifiers, include identifiers only when needed for continuity; do not enforce literal-preservation rules.";
+  "Include identifiers only when needed for continuity; do not enforce literal-preservation rules.";
 
 /** Wraps operator-provided compaction instruction text as untrusted prompt data. */
 export function wrapUntrustedInstructionBlock(label: string, text: string): string {
@@ -43,7 +46,7 @@ function resolveExactIdentifierSectionInstruction(
       // Operator text is runtime data, not prompt authority. Wrap it as
       // untrusted data before inserting it into compaction instructions.
       const customBlock = wrapUntrustedInstructionBlock(
-        "For ## Exact identifiers, apply this operator-defined policy text",
+        "Apply this operator-defined identifier policy text",
         custom,
       );
       if (customBlock) {
@@ -108,23 +111,25 @@ export function buildStructuredFallbackSummary(
   if (trimmedPreviousSummary && hasRequiredSummarySections(trimmedPreviousSummary)) {
     return trimmedPreviousSummary;
   }
-  const exactIdentifiersSummary = "None captured.";
-  return [
-    "## Decisions",
-    trimmedPreviousSummary || "No prior history.",
-    "",
-    "## Open TODOs",
-    "None.",
-    "",
-    "## Constraints/Rules",
-    "None.",
-    "",
-    "## Pending user asks",
-    "None.",
-    "",
-    "## Exact identifiers",
-    exactIdentifiersSummary,
-  ].join("\n");
+  return renderCompactionSummaryShape({
+    "## Goal and Progress": trimmedPreviousSummary || "No prior history.",
+    "## Attempts and Failures": "(none)",
+    "## Key Decisions and Constraints": "None.",
+    "## Current State": [
+      "### Done",
+      "- (none)",
+      "",
+      "### In Progress",
+      "- (none)",
+      "",
+      "### Blocked",
+      "- (none)",
+    ].join("\n"),
+    "## Key Decisions": "- (none)",
+    "## Files Touched": "- (none)",
+    "## Tests": "- (not run)",
+    "## Next Actions": "1. Continue from the retained context.",
+  });
 }
 
 /** Append an already-formatted summary section without disturbing empty summaries. */
@@ -154,7 +159,7 @@ function normalizeOpaqueIdentifier(value: string): string {
   return isPureHexIdentifier(value) ? value.toUpperCase() : value;
 }
 
-function summaryIncludesIdentifier(summary: string, identifier: string): boolean {
+export function summaryIncludesIdentifier(summary: string, identifier: string): boolean {
   if (isPureHexIdentifier(identifier)) {
     return summary.toUpperCase().includes(identifier.toUpperCase());
   }
@@ -165,7 +170,7 @@ function summaryIncludesIdentifier(summary: string, identifier: string): boolean
 export function extractOpaqueIdentifiers(text: string): string[] {
   const matches =
     text.match(
-      /([A-Fa-f0-9]{8,}|https?:\/\/\S+|\/[\w.-]{2,}(?:\/[\w.-]+)+|[A-Za-z]:\\[\w\\.-]+|[A-Za-z0-9._-]+\.[A-Za-z0-9._/-]+:\d{1,5}|\b\d{6,}\b)/g,
+      /([A-Fa-f0-9]{8,}|https?:\/\/\S+|\/(?:[\w.-]+\/)+[\w.-]+|[A-Za-z0-9._-]+(?:\/[\w.-]+){1,}|[A-Za-z]:\\[\w\\.-]+|[A-Za-z0-9._-]+\.[A-Za-z0-9._/-]+:\d{1,5}|\b\d{6,}\b)/g,
     ) ?? [];
   return Array.from(
     new Set(
@@ -192,7 +197,7 @@ function tokenizeAskOverlapText(text: string): string[] {
     .filter((token) => token.length > 0);
 }
 
-function hasAskOverlap(summary: string, latestAsk: string | null): boolean {
+export function hasAskOverlap(summary: string, latestAsk: string | null): boolean {
   if (!latestAsk) {
     return true;
   }

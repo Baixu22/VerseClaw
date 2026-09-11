@@ -25,7 +25,7 @@ function makeFact(opts: {
     sourceEpisodeRefs: [{ episodeId: "ep-test" }],
     evidenceRefs: [{ type: "manual" as const, ref: "test-evidence" }],
     proposedAt: ts,
-    validAt: ts,
+    valid_at: ts,
     reference_time: ts,
     acceptedAt: ts,
     promotion: {
@@ -42,6 +42,18 @@ const MOCK_FACTS: RuntimeMemoryQueryableFact[] = [
   makeFact({ factId: "f4", subject: "bob", predicate: "lives_in", objectSummary: "lives in Seattle, Washington", validAt: 2000 }),
   makeFact({ factId: "f5", subject: "bob", predicate: "works_at", objectSummary: "is a product manager at Microsoft", validAt: 2100 }),
 ];
+
+type ToolResultLike = {
+  content: Array<{ type: string; text?: string }>;
+};
+
+function parseJsonResultContent(result: ToolResultLike): unknown {
+  const block = result.content[0];
+  if (block?.type !== 'text' || typeof block.text !== 'string') {
+    throw new Error('Expected text tool result content');
+  }
+  return JSON.parse(block.text);
+}
 
 // === Mock loadCompassFacts (隔离, 不依赖真实 SQLite) ===
 let mockFacts: RuntimeMemoryQueryableFact[] = [];
@@ -102,7 +114,7 @@ describe("memory_query agent tool", () => {
     });
     const result = await tool!.execute("call-1", { query: "Alice" }, undefined, undefined);
 
-    const payload = JSON.parse(result.content[0]!.text) as { ok: boolean; message: string; count: number };
+    const payload = parseJsonResultContent(result) as { ok: boolean; message: string; count: number };
     expect(payload.ok).toBe(false);
     expect(payload.count).toBe(0);
   });
@@ -114,7 +126,7 @@ describe("memory_query agent tool", () => {
     });
     const result = await tool!.execute("call-2", { query: "Alice Boston" }, undefined, undefined);
 
-    const payload = JSON.parse(result.content[0]!.text) as {
+    const payload = parseJsonResultContent(result) as {
       ok: boolean;
       count: number;
       facts: Array<{ factId: string; subject: string }>;
@@ -138,7 +150,7 @@ describe("memory_query agent tool", () => {
       undefined,
     );
 
-    const payload = JSON.parse(result.content[0]!.text) as {
+    const payload = parseJsonResultContent(result) as {
       ok: boolean;
       facts: Array<{ subject: string }>;
     };
@@ -159,7 +171,7 @@ describe("memory_query agent tool", () => {
       undefined,
     );
 
-    const payload = JSON.parse(result.content[0]!.text) as { count: number };
+    const payload = parseJsonResultContent(result) as { count: number };
     expect(payload.count).toBeLessThanOrEqual(2);
   });
 
@@ -170,7 +182,7 @@ describe("memory_query agent tool", () => {
     });
     const result = await tool!.execute("call-5", { query: "" }, undefined, undefined);
 
-    const payload = JSON.parse(result.content[0]!.text) as { ok: boolean; count: number };
+    const payload = parseJsonResultContent(result) as { ok: boolean; count: number };
     expect(payload.ok).toBe(false);
     expect(payload.count).toBe(0);
   });

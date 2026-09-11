@@ -18,6 +18,7 @@ Runtime convergence must reduce authorities, not add an abstraction beside them.
 - OpenTelemetry/OTLP owns telemetry export. Receipts and domain journals are factual evidence, not a second telemetry platform.
 - New runtime services, workflow engines, event stores, checkpoint stores, memory stores, context stores, receipt stores, protocols, telemetry stores, or LLM routers are forbidden unless an active package records an explicit owner replacement after proving existing owners insufficient.
 - RC-01 must select a receipt persistence owner only after schema, atomic sequencing, retention, lookup, idempotency, failure propagation, privacy, and restart proof. RuntimeTaskEventLog is a candidate, not a preselected owner: it is default-off, prunable, and lacks receipt/effect event kinds.
+- Receipt idempotency requires the stored kind and version as well as identity, call indexes and content to match. Reusing a key for a different receipt type must conflict without replacing the original row. Restart proof must cross a real database/process boundary; failed-write proof must use an actually unusable store.
 - RuntimeTaskEventLog replay, reducer, resume cutover, and runtime-spine paths remain diagnostic-only.
 - Existing domain journals remain effect/idempotency truth. EffectReceipt may correlate them but must never authorize side-effect replay.
 - Approval pending/resolved truth and unknown-effect reconciliation must be durable before any cross-restart Operator claim.

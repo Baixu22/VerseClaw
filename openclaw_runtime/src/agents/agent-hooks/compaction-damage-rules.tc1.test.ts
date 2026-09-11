@@ -3,10 +3,10 @@
  *
  * Before this task the detector was unfireable on the failure mode it was built
  * for. `GOAL_ANCHOR_PATTERN` accepted `DECISIONS?` / `CONSTRAINTS?` as evidence
- * that the goal survived, and `## Decisions` / `## Constraints/Rules` are two of
- * the five *required* sections — so any structurally-complete summary was scored
+ * that the goal survived, and decision/constraint headings are part of the
+ * required contract — so any structurally-complete summary was scored
  * goal-intact no matter what it said. A summary hollowed out to nothing but the
- * five headings and the word "None." passed both `structure_damage` and
+ * required headings and the word "None." passed both `structure_damage` and
  * `goal_token_decay`, and the health bridge reported overall 100 with no reasons.
  *
  * These tests pin the fix and would each have failed before it.
@@ -26,7 +26,7 @@ function hollowedSummary(): string {
 }
 
 describe("T-C1 AC-1: a structurally-complete but hollowed summary is goal-decayed", () => {
-  it("flags goal_token_decay on the five-section None. summary (previously judged clean)", () => {
+  it("flags goal_token_decay on the required-section None. summary (previously judged clean)", () => {
     const audit = auditCompactionDamage(hollowedSummary());
     // The whole point: structure is intact, so structure_damage must NOT fire...
     expect(audit.missingSectionCount).toBe(0);
@@ -46,18 +46,9 @@ describe("T-C1 AC-1: a structurally-complete but hollowed summary is goal-decaye
   });
 
   it("does not regress the real case: a genuine summary with the same sections stays clean", () => {
-    const real = [
-      "## Decisions",
-      "Rotated the JWT signing key and kept the old kid for one release.",
-      "## Open TODOs",
-      "Verify token refresh under clock skew.",
-      "## Constraints/Rules",
-      "Never log raw tokens.",
-      "## Pending user asks",
-      "None.",
-      "## Exact identifiers",
-      "Edited src/auth/middleware.ts, fixed verifyToken and rotateKey callers.",
-    ].join("\n");
+    const real = REQUIRED_COMPACTION_SECTIONS
+      .map((section) => `${section}\nEdited src/auth/middleware.ts and verified rotateKey callers.`)
+      .join("\n\n");
     const audit = auditCompactionDamage(real);
     expect(audit.damages.some((damage) => damage.type === "goal_token_decay")).toBe(false);
     expect(audit.missingSectionCount).toBe(0);
@@ -71,8 +62,9 @@ describe("T-C1 AC-1: a structurally-complete but hollowed summary is goal-decaye
     ).toBe(true);
     // ...and stripping them is what makes that true.
     const stripped = stripRequiredSectionHeadings(headingsOnly);
-    expect(stripped).not.toContain("## Decisions");
-    expect(stripped).not.toContain("## Constraints/Rules");
+    for (const section of REQUIRED_COMPACTION_SECTIONS) {
+      expect(stripped).not.toContain(section);
+    }
     expect(stripped.trim()).toBe("");
   });
 });

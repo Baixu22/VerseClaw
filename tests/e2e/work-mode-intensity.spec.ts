@@ -1,11 +1,24 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from "./fixtures/electron";
+import type { ElectronApplication } from "@playwright/test";
 
 const SESSION_KEY = "agent:main:main";
 
-function stableStringify(v) {
-  if (v == null || typeof v !== "object") return JSON.stringify(v);
-  if (Array.isArray(v)) return "[" + v.map(stableStringify).join(",") + "]";
-  const e = Object.entries(v).sort(([a],[b]) => a.localeCompare(b)).map(([k,val]) => JSON.stringify(k) + ":" + stableStringify(val));
+type WorkMode = "plan" | "build" | "review" | "docsData";
+
+type RecordedPayload = {
+  workMode?: WorkMode;
+  promptMode?: "none" | "full" | "minimal";
+  [key: string]: unknown;
+};
+
+type RecorderGlobal = {
+  __cm?: { last?: RecordedPayload };
+};
+
+function stableStringify(value: unknown): string {
+  if (value == null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return "[" + value.map(stableStringify).join(",") + "]";
+  const e = Object.entries(value).sort(([a],[b]) => a.localeCompare(b)).map(([k,val]) => JSON.stringify(k) + ":" + stableStringify(val));
   return "{" + e.join(",") + "}";
 }
 
@@ -26,20 +39,33 @@ const PROVIDERS = {
   [stableStringify(["providers", "getDefaultAccount", null])]: { accountId:"anthropic-e2e" },
 };
 
-const WS = { id:"ws-1", name:"Demo", rootPath:"/tmp/d", agentId:"main", activeSessionKey:SESSION_KEY, permissionMode:"acceptEdits", createdAt:1, updatedAt:1, lastOpenedAt:1, state:{}, sessionStates:{} };
+const WS = {
+  id:"ws-1",
+  name:"Demo",
+  rootPath:"/tmp/d",
+  agentId:"main",
+  activeSessionKey:SESSION_KEY,
+  permissionMode:"acceptEdits" as const,
+  createdAt:1,
+  updatedAt:1,
+  lastOpenedAt:1,
+  state:{},
+  sessionStates:{} as Record<string, unknown>,
+};
 WS.sessionStates[SESSION_KEY] = {};
 const WSS = { profiles:[WS], activeWorkspaceId:WS.id, activeWorkspace:WS };
 
-async function openNewChat(app) {
+async function openNewChat(app: ElectronApplication) {
   await app.evaluate(() => {
     const p = process.mainModule;
+    if (!p) throw new Error("Expected Electron main module");
     const ipc = p.require("electron");
     const menu = ipc.Menu.getApplicationMenu();
-    function fi(items) {
+    function fi(items: Electron.MenuItem[]): Electron.MenuItem | undefined {
       for (let i = 0; i < items.length; i++) {
         if (items[i].id === "new-chat") return items[i];
         if (items[i].submenu) {
-          const f = fi(items[i].submenu.items);
+          const f = fi(items[i].submenu?.items ?? []);
           if (f) return f;
         }
       }
@@ -50,23 +76,31 @@ async function openNewChat(app) {
   });
 }
 
-async function installRecorder(app) {
+async function installRecorder(app: ElectronApplication) {
   await app.evaluate(async function() {
-    const ipc = process.mainModule.require("electron");
+    const mainModule = process.mainModule;
+    if (!mainModule) throw new Error("Expected Electron main module");
+    const ipc = mainModule.require("electron");
     const h = ipc.ipcMain._invokeHandlers;
     const prev = h.get("host:invoke");
     if (!prev) return;
-    globalThis.__cm = {};   
+    (globalThis as typeof globalThis & RecorderGlobal).__cm = {};
 
     ipc.ipcMain.removeHandler("host:invoke");
-    ipc.ipcMain.handle("host:invoke", async function(ev, req) {
+    ipc.ipcMain.handle("host:invoke", async function(ev: unknown, req: {
+      id?: string;
+      module?: string;
+      action?: string;
+      payload?: Record<string, unknown>;
+    }) {
       const m = req.module, a = req.action, p = req.payload;
+      const recorder = (globalThis as typeof globalThis & RecorderGlobal).__cm;
 
       if (m === "chat" && a === "sendWithMedia") {
-        const wm = p && p.workMode;
-        const pmMap = {plan:"none", build:"full", review:"minimal", docsData:"minimal"};
-        const pm = wm ? (pmMap[wm] || undefined) : undefined;
-        globalThis.__cm.last = Object.assign({}, p, {workMode: wm, promptMode: pm});
+        const wm = p?.workMode as WorkMode | undefined;
+        const pmMap: Record<WorkMode, "none" | "full" | "minimal"> = {plan:"none", build:"full", review:"minimal", docsData:"minimal"};
+        const pm = wm ? pmMap[wm] : undefined;
+        if (recorder) recorder.last = Object.assign({}, p, {workMode: wm, promptMode: pm});
         return {id:req.id, ok:true, data:{success:true, result:{runId:"r"}}};
       }
       return prev(ev, req);
@@ -75,9 +109,9 @@ async function installRecorder(app) {
 }
 
 function mkMocks() {
-  const k = (m, p) => stableStringify([m, p || null]);
-  const ok = (d) => ({ ok:true, data:d });
-  const js = (j) => ({ status:200, ok:true, json:j });
+  const k = (m: string, p?: unknown) => stableStringify([m, p ?? null]);
+  const ok = (d: unknown) => ({ ok:true, data:d });
+  const js = (j: unknown) => ({ status:200, ok:true, json:j });
   return {
     gatewayStatus: { state:"running", port:18789, pid:12345 },
     gatewayRpc: {
@@ -97,24 +131,31 @@ function mkMocks() {
 }
 
 test.describe("Work mode intensity E2E", () => {
-  for (const mode of ["plan","build","review","docsData"]) {
+  for (const mode of ["plan","build","review","docsData"] as const satisfies readonly WorkMode[]) {
     test("promptMode for " + mode, async ({ launchElectronApp }) => {
       const app = await launchElectronApp({ skipSetup:true });
       try {
+        // IPC mocks are serialized into the Main process, so set the workspace
+        // state before installing them; mutating WS after install is not visible.
+        WS.state = { workMode: mode };
         await installIpcMocks(app, mkMocks());
         await installRecorder(app);
         const page = await getStableWindow(app);
+        await page.reload();
         await expect(page.getByTestId("chat-composer-input")).toBeVisible({ timeout:30000 });
-        // Set mock workspace state directly (faster than Settings UI)
-        WS.state = { workMode: mode };
-        await app.evaluate(function(m) { globalThis.__testWorkMode = m; }, mode);
+        // Keep the documented Main-process work-mode override available to the
+        // app even though the workspace mock above is already mode-specific.
+        await app.evaluate(function(_electron: unknown, workMode: WorkMode) {
+          (globalThis as typeof globalThis & { __testWorkMode?: WorkMode }).__testWorkMode = workMode;
+        }, mode);
         await openNewChat(app);
         await expect(page.getByTestId("chat-composer-input")).toBeVisible();
         await page.getByTestId("chat-composer-input").click();
         await page.getByTestId("chat-composer-input").fill("Test msg");
         await page.getByTestId("chat-composer-send").click();
-        const payload = await app.evaluate(() => globalThis.__cm && globalThis.__cm.last);
+        const payload = await app.evaluate(() => (globalThis as typeof globalThis & RecorderGlobal).__cm?.last);
         expect(payload).toBeDefined();
+        if (!payload) throw new Error("Expected recorded chat payload");
         if (mode === "plan") expect(payload.promptMode).toBe("none");
         else if (mode === "build") expect(payload.promptMode).toBe("full");
         else expect(payload.promptMode).toBe("minimal");
@@ -125,14 +166,17 @@ test.describe("Work mode intensity E2E", () => {
   test("no promptMode w/o work mode", async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup:true });
     try {
+      WS.state = {};
       await installIpcMocks(app, mkMocks());
       await installRecorder(app);
       const page = await getStableWindow(app);
+      await page.reload();
       await expect(page.getByTestId("chat-composer-input")).toBeVisible({ timeout:30000 });
       await page.getByTestId("chat-composer-input").fill("Hello");
       await page.getByTestId("chat-composer-send").click();
-      const payload = await app.evaluate(() => globalThis.__cm && globalThis.__cm.last);
+      const payload = await app.evaluate(() => (globalThis as typeof globalThis & RecorderGlobal).__cm?.last);
       expect(payload).toBeDefined();
+      if (!payload) throw new Error("Expected recorded chat payload");
       expect(payload.promptMode).toBe("full");
     } finally { await closeElectronApp(app); }
   });

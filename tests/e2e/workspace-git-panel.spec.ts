@@ -1,3 +1,4 @@
+import type { ElectronApplication } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
@@ -161,6 +162,92 @@ const stashApplyApproval = {
   requestedAt: 5,
   reason: 'Applying stash requires approval.',
 };
+
+const driveRootWorkspace = {
+  ...workspace,
+  rootPath: 'C:/repo',
+};
+
+const driveRootGitStatus = {
+  ...gitStatus,
+  workspaceRoot: 'C:/repo',
+  repoRoot: 'C:/repo',
+  changes: [gitStatus.changes[0]],
+  stagedCount: 0,
+  unstagedCount: 1,
+  untrackedCount: 0,
+  conflictedCount: 0,
+  hasConflicts: false,
+};
+
+const driveRootWorktreeApproval = {
+  id: 'approval-drive-root-worktree',
+  workspaceId: WORKSPACE_ID,
+  source: 'git',
+  risk: 'dangerous',
+  status: 'pending',
+  mode: 'acceptEdits',
+  requestedAt: 6,
+  reason: 'Drive-root worktree target requires approval.',
+};
+
+const auditApproval = {
+  id: 'approval-audit',
+  workspaceId: WORKSPACE_ID,
+  source: 'git',
+  risk: 'external-write',
+  status: 'pending',
+  mode: 'acceptEdits',
+  requestedAt: 7,
+  command: 'git commit -m private-secret',
+  cwd: 'C:/private/repository',
+  paths: ['C:/private/repository/output.txt'],
+  paramsPreview: '{"token":"SECRET_VALUE"}',
+  reason: 'Publish private-secret with SECRET_VALUE.',
+};
+
+async function installAuditReflogModeSwitch(app: ElectronApplication): Promise<void> {
+  await app.evaluate(() => {
+    const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+    const handlers = (ipcMain as unknown as {
+      _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
+    })._invokeHandlers;
+    const original = handlers?.get('host:invoke');
+    if (!original) throw new Error('host:invoke handler is not registered');
+
+    const state = globalThis as typeof globalThis & { __workspaceGitAuditReflogMode?: 'fail' | 'success' };
+    state.__workspaceGitAuditReflogMode = 'fail';
+    ipcMain.removeHandler('host:invoke');
+    ipcMain.handle('host:invoke', async (event: unknown, request: {
+      id?: string;
+      module?: string;
+      action?: string;
+    }) => {
+      if (
+        request.module === 'git'
+        && request.action === 'reflog'
+        && state.__workspaceGitAuditReflogMode === 'fail'
+      ) {
+        return {
+          id: request.id,
+          ok: false,
+          error: { code: 'INTERNAL', message: 'E2E injected reflog failure' },
+        };
+      }
+      return original(event, request);
+    });
+  });
+}
+
+async function setAuditReflogMode(
+  app: ElectronApplication,
+  mode: 'fail' | 'success',
+): Promise<void> {
+  await app.evaluate((_electron, nextMode: 'fail' | 'success') => {
+    (globalThis as typeof globalThis & { __workspaceGitAuditReflogMode?: 'fail' | 'success' })
+      .__workspaceGitAuditReflogMode = nextMode;
+  }, mode);
+}
 
 test.describe('Workspace Git panel', () => {
   test('renders status, diff, auth guidance, and approval-blocked write actions', async ({ launchElectronApp }) => {
@@ -548,14 +635,6 @@ test.describe('Workspace Git panel', () => {
         return calls.some((call) => call.module === 'workspaces' && call.action === 'create');
       })).toBe(true);
 
-      await sidePanel.getByTestId('artifact-panel-new-tab').click();
-      await page.getByTestId('artifact-panel-new-tab-audit').click();
-      const auditPanel = sidePanel.getByTestId('workspace-audit-panel');
-      await expect(auditPanel).toBeVisible();
-      await expect(auditPanel.getByTestId('workspace-audit-git-row')).toContainText('checkout: moving from main to feature/git-panel');
-      await expect(auditPanel.getByTestId('workspace-audit-approval-row')).toContainText('Push');
-      await auditPanel.getByTestId('workspace-audit-filter-git').click();
-      await expect(auditPanel.getByTestId('workspace-audit-approval-row')).toHaveCount(0);
     } finally {
       await closeElectronApp(app);
     }
@@ -727,6 +806,10 @@ test.describe('Workspace Git panel', () => {
         }
       }
 
+      await page.addStyleTag({
+        content: '[data-sonner-toaster], [data-sonner-toast] { display: none !important; }',
+      });
+
       await expect(page.getByTestId('main-layout')).toBeVisible();
       const workspaceToggle = page.getByTestId('chat-workspace-toggle');
       await expect(workspaceToggle).toBeVisible({ timeout: 30_000 });
@@ -758,6 +841,220 @@ test.describe('Workspace Git panel', () => {
       await expect(gitPanel.getByText('Creating a pull request requires approval.', { exact: true })).toBeVisible();
       await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
       await expect(gitPanel.getByText('Create PR needs approval')).toHaveCount(0);
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
+  test('anchors audit partial failure, truncation, and drive-root worktree approval', async ({ launchElectronApp }) => {
+    const app = await launchElectronApp({ skipSetup: true });
+
+    try {
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', {}])]: {
+            success: true,
+            result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] },
+          },
+          [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: [] },
+          },
+          [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 1000, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: [] },
+          },
+        },
+        hostApi: {
+          [stableStringify(['agents', 'list', null])]: {
+            success: true,
+            agents: [{
+              id: 'main',
+              name: 'Main',
+              isDefault: true,
+              workspace: 'C:/repo',
+              mainSessionKey: SESSION_KEY,
+              channelTypes: [],
+            }],
+            defaultAgentId: 'main',
+            configuredChannelTypes: [],
+            channelOwners: {},
+            channelAccountOwners: {},
+          },
+          [stableStringify(['workspaces', 'list', null])]: {
+            profiles: [driveRootWorkspace],
+            activeWorkspaceId: WORKSPACE_ID,
+            activeWorkspace: driveRootWorkspace,
+          },
+          [stableStringify(['workspaces', 'getActive', null])]: {
+            activeWorkspaceId: WORKSPACE_ID,
+            activeWorkspace: driveRootWorkspace,
+          },
+          [stableStringify(['workspaces', 'saveState', {
+            id: WORKSPACE_ID,
+            sessionKey: SESSION_KEY,
+            state: { artifactPanel: { workspaceView: 'git' } },
+          }])]: { success: true },
+          [stableStringify(['workspaces', 'saveState', {
+            id: WORKSPACE_ID,
+            sessionKey: SESSION_KEY,
+            state: { artifactPanel: { gitSelectedPath: 'src/demo.ts' } },
+          }])]: { success: true },
+          [stableStringify(['workspaces', 'saveState', null])]: { success: true },
+          [stableStringify(['git', 'status', null])]: {
+            ok: true,
+            status: driveRootGitStatus,
+          },
+          [stableStringify(['git', 'branches', null])]: {
+            success: true,
+            branches: gitBranches,
+          },
+          [stableStringify(['git', 'worktrees', null])]: {
+            success: true,
+            worktrees: [
+              { path: 'C:/repo', branch: 'feature/git-panel', head: 'abc123' },
+            ],
+          },
+          [stableStringify(['git', 'stashList', null])]: {
+            success: true,
+            stashes: [],
+          },
+          [stableStringify(['git', 'capabilities', null])]: {
+            ok: true,
+            git: { available: true, version: 'git version 2.45.0' },
+            gh: { available: true, version: 'gh version 2.56.0' },
+          },
+          [stableStringify(['git', 'githubAuthStatus', null])]: {
+            ok: true,
+            available: true,
+            authenticated: false,
+            hosts: [],
+          },
+          [stableStringify(['git', 'log', { ref: 'feature/git-panel', limit: 20 }])]: {
+            success: true,
+            ref: 'feature/git-panel',
+            commits: [],
+          },
+          [stableStringify(['mcp', 'listTools', { serverId: 'clawx-git' }])]: {
+            success: true,
+            serverId: 'clawx-git',
+            status: 'connected',
+            tools: Array.from({ length: 27 }, (_, index) => ({
+              name: `git_tool_${index + 1}`,
+              description: 'Mock Git tool',
+            })),
+          },
+          [stableStringify(['git', 'fileDiff', { mode: 'unstaged', path: 'src/demo.ts' }])]: {
+            ok: true,
+            path: 'src/demo.ts',
+            mode: 'unstaged',
+            patch: 'diff --git a/src/demo.ts b/src/demo.ts\n-const value = 1;\n+const value = 2;\n',
+            original: 'const value = 1;\n',
+            modified: 'const value = 2;\n',
+          },
+          [stableStringify(['git', 'reflog', { limit: 300 }])]: {
+            success: true,
+            entries: [{
+              hash: 'abc123def456',
+              shortHash: 'abc123d',
+              selector: 'HEAD@{0}',
+              subject: 'checkout: moving from main to feature/git-panel',
+              date: 1710000000000,
+            }],
+            truncated: true,
+          },
+          [stableStringify(['permissions', 'approvals', {
+            includeExpired: true,
+            limit: 200,
+            workspaceId: WORKSPACE_ID,
+          }])]: {
+            success: true,
+            approvals: [auditApproval],
+          },
+          [stableStringify(['git', 'worktreeAdd', { branch: 'feature/root', checkoutNewBranch: true }])]: {
+            success: false,
+            blocked: true,
+            approvalRequired: true,
+            approval: driveRootWorktreeApproval,
+            reason: driveRootWorktreeApproval.reason,
+          },
+          [stableStringify(['permissions', 'decideApproval', {
+            id: 'approval-drive-root-worktree',
+            decision: 'approved',
+          }])]: {
+            success: true,
+          },
+          [stableStringify(['git', 'worktreeAdd', {
+            branch: 'feature/root',
+            checkoutNewBranch: true,
+            approvalId: 'approval-drive-root-worktree',
+          }])]: {
+            success: true,
+          },
+        },
+      });
+      await installAuditReflogModeSwitch(app);
+
+      const page = await getStableWindow(app);
+      try {
+        await page.reload();
+      } catch (error) {
+        if (!String(error).includes('ERR_FILE_NOT_FOUND')) {
+          throw error;
+        }
+      }
+
+      await page.addStyleTag({
+        content: '[data-sonner-toaster], [data-sonner-toast] { display: none !important; }',
+      });
+
+      await expect(page.getByTestId('main-layout')).toBeVisible();
+      const workspaceToggle = page.getByTestId('chat-workspace-toggle');
+      await expect(workspaceToggle).toBeVisible({ timeout: 30_000 });
+      await expect(workspaceToggle).toBeEnabled({ timeout: 30_000 });
+      await workspaceToggle.click();
+
+      const sidePanel = page.getByTestId('artifact-panel');
+      await expect(sidePanel.getByTestId('artifact-panel-tab-files')).toBeVisible();
+      await sidePanel.getByTestId('artifact-panel-new-tab').click();
+      await page.getByTestId('artifact-panel-new-tab-review').click();
+      const gitPanel = sidePanel.getByTestId('workspace-git-panel');
+      await expect(gitPanel).toBeVisible();
+      const toolDrawer = gitPanel.getByTestId('workspace-git-tool-drawer');
+      await toolDrawer.locator('summary').click();
+      const toolTabs = gitPanel.getByTestId('workspace-git-tool-tabs');
+      await toolTabs.getByRole('button', { name: 'Worktree' }).click();
+
+      await gitPanel.getByPlaceholder('Branch for worktree').fill('feature/root');
+      await expect(gitPanel.getByTestId('workspace-git-worktree-target')).toContainText('C:/repo-feature-root');
+      await gitPanel.getByRole('button', { name: 'Add worktree' }).click();
+      await expect(gitPanel.getByText('Add worktree needs approval')).toBeVisible();
+      await expect(gitPanel.getByText('Drive-root worktree target requires approval.', { exact: true })).toBeVisible();
+      await gitPanel.getByRole('button', { name: 'Approve & retry' }).click();
+      await expect(gitPanel.getByText('Add worktree needs approval')).toHaveCount(0);
+
+      await sidePanel.getByTestId('artifact-panel-new-tab').click();
+      await page.getByTestId('artifact-panel-new-tab-audit').click();
+      const auditPanel = sidePanel.getByTestId('workspace-audit-panel');
+      await expect(auditPanel).toBeVisible();
+      await expect(auditPanel.getByText('Git history is unavailable')).toBeVisible();
+      await expect(auditPanel.getByText('Some audit sources are unavailable')).toBeVisible();
+
+      await setAuditReflogMode(app, 'success');
+      await auditPanel.getByRole('button', { name: /refresh/i }).click();
+      await expect(auditPanel.getByText('Older entries hidden (limit reached)')).toBeVisible();
+      await expect(auditPanel.getByText('Some audit sources are unavailable')).toHaveCount(0);
+      await expect(auditPanel.getByTestId('workspace-audit-git-row')).toContainText(
+        'checkout: moving from main to feature/git-panel',
+      );
+      const auditApprovalRow = auditPanel.getByTestId('workspace-audit-approval-row');
+      await expect(auditApprovalRow).toContainText('External process write (details withheld)');
+      await auditApprovalRow.locator('summary').click();
+      await expect(auditApprovalRow).toContainText('Outside the ClawX write journal; no automatic rollback.');
+      await expect(auditApprovalRow).not.toContainText('git commit -m private-secret');
+      await expect(auditApprovalRow).not.toContainText('SECRET_VALUE');
+      await expect(auditApprovalRow).not.toContainText('C:/private/repository');
     } finally {
       await closeElectronApp(app);
     }

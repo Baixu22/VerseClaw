@@ -261,8 +261,7 @@ export function reduceSessionActivity(snapshot: SessionActivitySnapshot, event: 
 function mockScenario(): SessionActivityMockScenario {
   if (typeof window === 'undefined') return 'idle-clean';
   const params = new URLSearchParams(window.location.search);
-  // Preserve the existing preview URL after the legacy SessionStatusRail was
-  // removed: `script=rail` now showcases the replacement activity panel.
+  // Preserve the existing preview URL: `script=rail` showcases the activity panel.
   const value = params.get('mockScenario')
     ?? params.get('scenario')
     ?? (params.get('script') === 'rail' ? 'multi-subagent' : null);

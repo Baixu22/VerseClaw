@@ -1,0 +1,39 @@
+{
+  "applied_at": "2026-08-28T14:16:10.630894Z",
+  "base_graph_hash": "84f0cc9af7e708dfcee1cfe38103e26e04c811809917844dbe40467b98811b30",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "Sumers et al., CoALA, arXiv:2309.02427（retrieval 属 decision procedure）",
+          "Chroma Research, Context Rot, 2025-07-14（低相似度退化更快）",
+          "Letta, Benchmarking AI Agent Memory: Is a Filesystem All You Need?, 2025-08-12（Filesystem 74.0% on LoCoMo）",
+          "openclaw_runtime/src/context-engine/memory-context-provider.ts:104-117,197-202",
+          "openclaw_runtime/src/runtime-core/memory-context.ts:1289-1291",
+          "openclaw_runtime/src/context-engine/context-orchestrator.ts:505",
+          "2026-08-28 裁决：迁出。依据 memory-context-provider.ts 生产调用未传 embeddingProvider/embeddingEnabled；memory_query 与 pre-reply retrieval 默认关；当前无默认真实 embedding provider。迁移清单差异与第二轮必修项见 docs/dev/context-moat/reviews/TF-0122.md。",
+          "裁决记录已落 docs/dev/context-moat/reviews/TF-0122.md：迁出 hybrid 检索链，保留生产文本工具；跨 run 召回缺陷登记为第二轮必修项。",
+          "XL-013（2026-08-28）：lane-1 已把 TF-0122 迁出裁决正式提交 lane-2 独立复核。复核入口：docs/dev/context-moat/reviews/TF-0122.md 及 memory-context-provider、memory-query-tool、memory-pre-reply-injection、memory-context、context-orchestrator 相关坐标。",
+          "lane-2 独立复核（2026-08-28）：hybridSearchFactsWithEmbedding 在 memory-context-provider.ts:515、memory-pre-reply-injection.ts:304、memory-query-tool.ts:140 有 3 个生产文件调用点；生产 provider 未提供 embeddingEnabled=true 与可用 provider，pre-reply retrieval 默认 false，memory_query 要求 runtime.memory.persist=true。结论为默认生产路径未通电，显式 opt-in 仍可运行；迁出裁决在该范围内成立。",
+          "lane-2 定向验证（2026-08-28）：check-production-reachable 显示 hybrid 3 call sites、findRuntimeMemoryFacts 7 call sites；memory provider/query 8 tests、hybrid/CJK 21 tests、COMPASS/context provider 40 tests 全通过；L1 六门全通过。"
+        ],
+        "next_action": "已收口。",
+        "progress": 100,
+        "status": "done",
+        "summary": "lane-2 独立复核接受 hybrid 检索链迁出裁决：三处生产文件调用点存在但均为显式门控，默认路径未通电；迁移清单保留生产文本工具，跨 run 召回缺陷已登记为第二轮必修项。L1 六门与定向内存回归全绿。"
+      },
+      "id": "TF-0122"
+    }
+  ],
+  "created_at": "2026-08-28T14:14:31.579525Z",
+  "proposal_id": "prop-lane2-tf0122-review-close-20260828",
+  "rationale": "lane-2 已独立复核 TF-0122 的迁出裁决；四项判据均接受，L1 六门与内存回归通过，按 XL-013 收口为 done/100。",
+  "session_id": "session-lane-2-tf0122-review",
+  "status": "applied"
+}

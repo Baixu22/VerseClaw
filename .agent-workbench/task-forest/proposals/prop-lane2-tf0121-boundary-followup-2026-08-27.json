@@ -1,0 +1,142 @@
+{
+  "applied_at": "2026-08-27T11:02:46.510997Z",
+  "base_graph_hash": "388e911d2f6ef9d0d608c73710b7645bd1e7e54067e5c2356c452c471eb2c8ba",
+  "base_summary": {
+    "edge_count": 260,
+    "node_count": 146,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "tf0121-boundary-followup",
+      "node": {
+        "acceptance_criteria": [
+          "harness/specs 或 DCS 规范中存在一条显式条款，能机械回答「context_read(include_archived=true) 是否合规」，不依赖个案解释",
+          "风险模型「改」或「不改」的裁决有书面依据落盘；审核者复核时不再需要把 risk=readonly 解读为无 durable mutation",
+          "TF-0121 的 evidence 中存在一行指向本 task 的最终裁决结果"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.8,
+          "user_goal": "上下文治理可归因、可审计",
+          "validation_plan": [
+            "规范条款落盘后，重新对 context_read 跑一次 §R1 A3（注释与契约一致性）并确认无需个案解释"
+          ],
+          "why_not_enough": "只在 TF-0121 的 evidence 里写解释不构成规范；下一个实现者读不到，审核者也无法机械引用",
+          "why_this_task": "TF-0121 落地了一条条件性 durable mutation，但公开契约无法表达它；不收口则任何后续审核者都要重新做一次个案裁决"
+        },
+        "assumptions": [
+          "本 task 开工时 TF-0121 的实现已落地且未被回滚；若 TF-0121 被回滚，本 task 的出路 B 自动失去对象，须重估"
+        ],
+        "confidence": 0.6,
+        "context_tags": [
+          "round-2",
+          "backlog",
+          "contract",
+          "risk-model",
+          "context-family",
+          "brb-M"
+        ],
+        "difficulty": "medium",
+        "evidence": [
+          "docs/dev/context-moat/reviews/TF-0121.md（lane-1 独立审核，HEAD aa6fd16b0，审核提交 1314fde31）：阻塞点 2 = 公开契约边界未收口，要求拆分工具面或修订规范/风险模型，二者选一",
+          "openclaw_runtime/src/shared/tool-registration.ts:66-75（ToolRiskLevel 的 doc-comment 明确三档语义均绑定 filesystem 写入，assertWriteRiskProfileForTool 据此决定是否强制 writeRiskProfile）",
+          "harness/specs/rules/context-family-boundary.md:59-60（read-only recall 不得写 transcript/Task Ledger/ClawGraph/Memory/Knowledge/prompt state/workspace files/approvals/tool state）",
+          "harness/specs/tasks/context-readonly-recall-surface.md:15-40（recall 不写 durable state；mutation 必须走单独 reviewed workflow；touchedAreas 覆盖 openclaw_runtime/src/context-engine/**）",
+          "openclaw_runtime/src/agents/tools/context-agent-tools.ts:130-135（参数级描述已显式声明 restore/increment heat/persist）,287-293（工具级 description 与 risk 注释）"
+        ],
+        "execution_hints": [
+          "先判权属再判风险模型：如果 DCS BlockStore 被认定为 owner store，出路 A 的改动面只有 specs，远小于出路 B",
+          "出路 B 会新增一个模型可见工具，属生产工具面扩张，需要独立的 A1/A2/A6 证据与定向测试"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "本轮（TF-0102 当前轮）不投入工时，不占用 M0-M5 任何里程碑的累积半径预算",
+          "不改动 TF-0121 已落地的实现行为；本 task 是契约/规范面收口，不是实现回滚",
+          "不打开或改动任何旗标默认值（§R5 技术-4）"
+        ],
+        "priority": 2,
+        "progress": 0,
+        "progress_source": "manual",
+        "purpose": "把 TF-0121 遗留的公开契约歧义从口头解释变成可审计的规范条款，使「某工具是否允许在 readonly 标注下做 durable mutation」成为机械可判定的问题",
+        "remaining_minutes_max": 300,
+        "remaining_minutes_min": 120,
+        "requirements": [
+          "裁决 harness/specs/rules/context-family-boundary.md 的 read-only recall 条款与 DCS BlockStore lifecycle page-in 的权属边界：出路 A = 在规范中显式把 DCS BlockStore 认定为 context-family-boundary 已声明不替换的 existing owner store，并写明「哪些 store 的写入不算 read-only recall 违规」的机械判据；出路 B = 把 lifecycle page-in 拆成独立工具面（例如 context_recall_archived），让 context_read 严格只读",
+          "无论选 A 还是 B，都必须处理风险模型缺口：ToolRiskLevel（tool-registration.ts:75）目前只有 readonly/write/destructive 三档且语义绑定 filesystem 写入。要么补一个能表达非 filesystem durable state mutation 的维度，要么书面裁决不补并写明替代的可审计手段。不得继续把 risk=readonly 当作「无 durable mutation」的证明",
+          "若选出路 B，必须同时给出 TF-0121 req-1（ContextReadSchema 的 include_archived）的废止路径与向后兼容处理，并按 §R4.2(a) 记 record_deviation",
+          "收口时必须回填 TF-0121 的 evidence，写明该边界最终落在 A 还是 B，使 TF-0121 的审核链闭合"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "「context_read 是否条件性 durable mutation」从需要个案裁决变为规范可判定：1 -> 0 个未收口歧义"
+        ],
+        "summary": "TF-0121 让 context_read(include_archived=true) 在 DCS BlockStore authority 内做显式 lifecycle page-in（archived->active、heat+1、持久化 presence_json）。lane-1 审核裁定技术边界成立、但公开契约未收口：工具名 context_read 与 risk=readonly 都指向只读，而 tool-registration.ts:66-75 的 ToolRiskLevel 只是 filesystem write enforcement 分类，无法表达条件性非文件系统 durable mutation；harness/specs/rules/context-family-boundary.md:59-60 与 harness/specs/tasks/context-readonly-recall-surface.md:15-40 禁止 read-only recall 写 durable state，且后者 touchedAreas 覆盖 openclaw_runtime/src/context-engine/**，与 DCS BlockStore 作为既有 owner store 的权属重叠。本 task 负责在两条出路中二选一并落成条款。",
+        "title": "T-B1-FOLLOWUP context_read 条件性 durable mutation 的规范边界与风险模型收口"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.9,
+        "reason": "落在 M6/round-2：§R3.6 里程碑累积预算冻结于 B1，挂在 M3(TF-0120) 下会抬高本轮预算并使累积半径门自我失效；TF-0144 的 non_goals 明写本轮不投入工时"
+      },
+      "from": "tf0121-boundary-followup",
+      "to": "TF-0144",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.95,
+        "reason": "本 task 收口的对象是 TF-0121 落地的公开面；TF-0121 未落地则无边界可裁"
+      },
+      "from": "tf0121-boundary-followup",
+      "to": "TF-0121",
+      "type": "depends_on"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.9,
+        "created_at": "2026-08-27T00:00:00Z",
+        "evidence": "docs/dev/context-moat/reviews/TF-0121.md（lane-1，1314fde31）；DEV-PROTOCOL §R3.6 预算冻结条款；TF-0144 non_goals「本轮不投入任何工时」",
+        "expected_requirement": "§R4.2(a)：范围增减（加入任何 task）必须记 record_deviation。§R5 范围-2：新发现问题由审核者强制三分类，实施者无权自行降级。",
+        "id": "TFD-lane2-tf0121-boundary-followup-2026-08-27",
+        "observed_action_or_result": "lane-1 审核 TF-0121 时把「context_read 公开契约与 Context Family read-only recall 的规范/风险模型冲突」判为「阻塞本任务」。lane-2 按审核记录允许的第二个出路，新增一个 round-2 task（挂 TF-0144/M6）承接该边界，并在 TF-0121 evidence 中引用。本轮不投入工时，不占 M0-M5 累积半径预算。",
+        "recommendation": "TF-0121 重新提交 lane-1 复核时，须确认「以新增 round-2 task 承接」是否被接受为该阻塞点的合法收口；若 lane-1 认为必须本轮拆分工具面，则本 deviation 转为 rejected 并按出路 B 重做。",
+        "related_task_ids": [
+          "TF-0121",
+          "TF-0144"
+        ],
+        "severity": "medium",
+        "status": "open"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-08-27T00:00:00Z",
+        "evidence": "docs/dev/context-moat/reviews/TF-0121.md §「发现与三分类」backlog-P1:1；openclaw_runtime/src/shared/tool-registration.ts:66-75",
+        "expected_requirement": "§R4.2(c)：审核或验收发现的问题被判为「本轮不修」（三分类中的 backlog-P1）必须记 record_deviation。",
+        "id": "TFD-lane2-toolrisklevel-backlog-p1-2026-08-27",
+        "observed_action_or_result": "lane-1 审核 TF-0121 记 backlog-P1 一项：ToolRiskLevel（tool-registration.ts:75）缺少表达非 filesystem durable-state mutation 的维度。该缺口影响全部工具注册面而不止 context_read，本轮不修；已由新增的 round-2 边界 task 的 requirement-2 承接。",
+        "recommendation": "在 round-2 边界 task 中与规范权属裁决一并处理；在此之前，任何审核者不得把 risk=readonly 解读为「该工具无 durable mutation」。",
+        "related_task_ids": [
+          "TF-0121"
+        ],
+        "severity": "low",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-27T11:02:08.506679Z",
+  "proposal_id": "prop-lane2-tf0121-boundary-followup-2026-08-27",
+  "rationale": "lane-1 对 TF-0121 的审核（1314fde31）给出两个阻塞点。阻塞点 1（AC-4 assembler 决策未写入 node）已由 lane-2 直接补记 evidence 收口。阻塞点 2（context_read 公开契约与 Context Family read-only recall 的规范/风险模型冲突）按审核记录 §「给 lane-2 的最小修复路径」第 2 条的第二个选项处置：新增规范/risk 模型修订 task 并让 TF-0121 明确引用该后续边界。选择该选项而非当场拆分工具面的技术理由：拆出 context_recall_archived 只改工具名，新工具的 risk 仍只能取 readonly（ToolRiskLevel 无第四档），故拆分不消除歧义本体——歧义本体是风险模型无法表达非 filesystem durable mutation。落点选 TF-0144（M6/round-2，context_tags 含 round-2/backlog，non_goals 明写「本轮不投入任何工时」）而非 TF-0120：DEV-PROTOCOL §R3.6 规定里程碑累积预算冻结于 B1，在 M3 下加子节点会同步抬高 M3 预算并使累积半径门自我失效。",
+  "session_id": "session-lane-2",
+  "status": "applied"
+}

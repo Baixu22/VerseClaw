@@ -1,0 +1,41 @@
+{
+  "applied_at": "2026-08-27T12:54:25.818982Z",
+  "base_graph_hash": "053afd5f9fa89099221452fb17f9696bdc6ee4f97f831349b85d63b48a1107cf",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-27T00:00:00Z",
+        "decided_by": "lane-1 实现者自检发现并如实上报；半径裁决随审核移交 lane-2，不由实现者自决（§R5 范围-2）。",
+        "evidence": "TASK=TF-0143 的 §R3.1 归属匹配式在 590588791..HEAD 命中 2 个提交；命令 1 = 10；命令 2 = 空；命令 3 剔除 .agent-workbench 后 = 0。看板 XL-005 登记同一事实并指派 lane-2。既有同类判例：TFD-tf0116-radius-overrun-2026-08-25、TFD-tf0124-radius-overrun-2026-08-27、TFD-tf0121-radius-overrun-2026-08-27。",
+        "expected_requirement": "§R3.2：TF-0143 的 context_tags 含 brb-S，改动半径上限为 5 个文件。§R3.5：超半径的 task 不得收口。",
+        "id": "TFD-tf0143-radius-overrun-2026-08-27",
+        "impact": "TF-0143 在现行机械判据下已不可能收口：即使拿到第二次真实 compaction 并登记元数据，半径只会继续上升。这不是实现越界，而是 §R3 的计量口径与本 task 的性质（交付物是仓外语料，仓内产物几乎全是强制治理记录）之间的结构性矛盾。与 XL-003 报的默认值守卫假阳性同源：Task Forest 的每次写入既污染守卫读数，又消耗被记录 task 的半径预算。",
+        "kind": "scope_change",
+        "node_id": "TF-0143",
+        "observed_action_or_result": "归属提交 f35cb4a13（记录搜索面穷尽的实测结论 + 看板同步）与其后一个补提交（CLI 重新生成的 todos 导出）共 2 个，git show --name-only 并集 = 10。命令 2 为空；命令 3 剔除 .agent-workbench 后为 0。即：预算被『记录治理决策』这一动作本身耗尽，而 task 的实际交付物（真实长会话语料）尚未产出，后续任何写入都将进一步超限。",
+        "recommendation": "由非实现者车道（lane-2，同时是 §R3 的 owner 节）在审核 TF-0143 时给出合法半径处置，三个可选项：(1) 按 TF-0121 判例调档 brb-S → brb-M（10 ≤ 15，当前即可容纳，但不解决后续写入继续增长的问题）；(2) 在 §R3 补一条『纯治理写入不计入半径』的条款并按 §R4.2 记 deviation —— 这需要用户放行轮内改协议正文，与 XL-003 是同一放行；(3) 判 TF-0143 为 brb-none 之外的新档位。lane-1 不自行调档、不追溯改写归属、不把生成物静默排除。裁决落地前 TF-0143 维持 in_progress，不进入收口。",
+        "related_task_ids": [
+          "TF-0143",
+          "TF-0107",
+          "TF-0145",
+          "TF-0102"
+        ],
+        "severity": "medium",
+        "status": "open",
+        "summary": "TF-0143 在零代码改动下实测半径 10/5（brb-S）：全部 10 个路径均为 Task Forest 生成物（config/graph/exports/todos/snapshots 各若干）与 docs/dev/context-moat/AUDIT-BOARD.html，无任何 openclaw_runtime 改动。"
+      }
+    }
+  ],
+  "created_at": "2026-08-27T12:54:25.591523Z",
+  "proposal_id": "prop-lane1-tf0143-radius-overrun-2026-08-27",
+  "rationale": "lane-1 在 TF-0143 上只做了两件治理动作（记录语料搜索面已穷尽的实测结论、同步看板），零代码改动，实测半径即达 10 个文件，超出 brb-S 上限 5。§R3.5 的两条合法出口对本 task 均不适用：拆分不减少 Task Forest 写入量（反而每个拆分件各写一套 node/snapshot，总量上升），landed-unwired 对语料产出型 task 无意义。按 TF-0116 / TF-0124 / TF-0121 三个既有判例，半径超限由实现者自检上报并记 deviation，裁决权交给非实现者车道，本 task 因此不自行调档。",
+  "session_id": null,
+  "status": "applied"
+}

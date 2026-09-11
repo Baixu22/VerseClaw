@@ -154,6 +154,12 @@ export interface BlockEntityQuery extends BlockQuery {
   entities: string[];
 }
 
+export interface ArchivedBlockRecallQuery {
+  requester_session_id: string;
+  session_id?: string;
+  block_ids: string[];
+}
+
 export interface BlockStoreStats {
   source_system?: SourceSystem;
   total_blocks: number;
@@ -167,6 +173,8 @@ export interface BlockStoreApi {
   upsert(block: ContextBlock, admission?: BlockAdmissionContext): Promise<BlockWriteResult>;
   query(params: BlockQuery): Promise<ContextBlock[]>;
   queryByEntity(params: BlockEntityQuery): Promise<ContextBlock[]>;
+  /** Lifecycle-only upsert used by explicit context_read recall/page-in. */
+  recallArchivedBlocks?(params: ArchivedBlockRecallQuery): Promise<ContextBlock[]>;
   invalidate(block_id: string): Promise<void>;
   stats(source_system?: SourceSystem): Promise<BlockStoreStats>;
 }

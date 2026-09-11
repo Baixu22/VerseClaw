@@ -42,7 +42,7 @@ const chatState = vi.hoisted(() => ({
   refresh: vi.fn(),
   refreshTaskLedger: vi.fn(),
   cleanupEmptySession: vi.fn(),
-  hydrateStartup: vi.fn(),
+
   lastUserMessageAt: null,
   sessionLastActivity: {},
 }));
@@ -91,21 +91,31 @@ vi.mock('@/stores/workspaces', () => ({
   }),
 }));
 
+// Chat reads this store both as a hook and imperatively via `.getState()`
+// (index.tsx:972, 1529, 1550). A selector-only mock made the component throw
+// "useArtifactPanel.getState is not a function"; the `Object.assign` shape is
+// what the sibling chat tests use.
+const artifactPanelState = vi.hoisted(() => ({
+  open: false,
+  widthPct: 45,
+  tab: 'changes',
+  tabs: [],
+  activeTabId: null,
+  terminalPlacement: 'side',
+  openChanges: vi.fn(),
+  openPreview: vi.fn(),
+  openBrowser: vi.fn(),
+  restoreSessionState: vi.fn(),
+  close: vi.fn(),
+}));
+
 vi.mock('@/stores/artifact-panel', () => ({
   ARTIFACT_PANEL_MIN_WIDTH: 28,
   ARTIFACT_PANEL_MAX_WIDTH: 50,
-  useArtifactPanel: (selector: (state: Record<string, unknown>) => unknown) => selector({
-    open: false,
-    widthPct: 45,
-    tab: 'changes',
-    tabs: [],
-    activeTabId: null,
-    openChanges: vi.fn(),
-    openPreview: vi.fn(),
-    openBrowser: vi.fn(),
-    restoreSessionState: vi.fn(),
-    close: vi.fn(),
-  }),
+  useArtifactPanel: Object.assign(
+    (selector: (state: typeof artifactPanelState) => unknown) => selector(artifactPanelState),
+    { getState: () => artifactPanelState },
+  ),
 }));
 
 vi.mock('@/lib/host-api', () => ({

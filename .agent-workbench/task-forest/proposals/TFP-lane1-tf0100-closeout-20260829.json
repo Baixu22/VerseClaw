@@ -1,0 +1,37 @@
+{
+  "applied_at": "2026-08-29T14:01:40.612638Z",
+  "base_graph_hash": "6fcb88f9276f215e869923c1af6606d8ad854973323054611176768f7d87c4ba",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "context_tags": [
+          "brb-M"
+        ],
+        "evidence": [
+          "2026-08-29 lane-1 独立复核：rg SessionStatusRail 在 src/tests/electron/shared/openclaw_runtime 中为 0 命中；git grep 剩余命中仅为 Task Forest 治理历史与导出快照，不是活引用。",
+          "2026-08-29 lane-1 独立复核：SessionActivityPanel 将 Git/terminal unavailable 映射到 session-activity-alert；06f7c3270 补齐 retry 按钮并在 Chat/index.tsx 接入 loadSessionActivity；focused tests 2 files/14 passed，typecheck:web 与 typecheck:node 均 exit 0。",
+          "2026-08-29 lane-1 复核轨迹：e8cb39f2f 初审发现 retry 语义缺口，lane-2 补交 06f7c3270 后缺口解除；retry focused test 断言回调执行一次，terminal 与 Git 走同一个 availabilityErrors 门和回调。",
+          "2026-08-29 合并 R3：归属提交 e8cb39f2f8382d4e8495fd9eebcb398bf14cf805 与 06f7c32709e0de811a7359267f7920a7b03f4592，均带 Task: TF-0100 / Lane: lane-2；判定半径与全量半径均为 10。canonical node 原缺 brb 标签，lane-1 按 reviewer 判例补 brb-M，10 <= 15 PASS；schema 守卫为空，default-value 守卫 3 个命中均为删除旧组件中的 i18n defaultValue 减行，非 runtime 默认值改动。",
+          "边界声明：TF-0100 done 仅表示孤儿 SessionStatusRail 退役与 Git/terminal unavailable 错误态等价迁移完成；不宣称其它 Chat 工作流、会话面板布局、视觉迁移或 TF-0025 后续节点完成。"
+        ],
+        "next_action": "已收口；无需进一步动作。后续 Chat 工作流由 TF-0025 其它子节点独立推进，不由本 done 宣称完成。",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "lane-1 已完成独立复核并收口：SessionStatusRail 源代码/测试零残留，SessionActivityPanel 保留 Git/terminal unavailable 错误态与 retry 语义并接入 loadSessionActivity；focused tests 2 files/14 passed，typecheck:web/node 均 exit 0。合并 R3 半径 10，由 lane-1 补记 brb-M 后 10 <= 15 PASS。done 仅表示死代码退役与等价错误态迁移完成，不宣称其它 Chat 工作流完成。"
+      },
+      "id": "TF-0100"
+    }
+  ],
+  "created_at": "2026-08-29T14:01:40.413204Z",
+  "proposal_id": "TFP-lane1-tf0100-closeout-20260829",
+  "rationale": "lane-1 已完成 TF-0100 独立复核：e8cb39f2f 与 06f7c3270 均带 Task: TF-0100 / Lane: lane-2；源代码/测试树 SessionStatusRail 零残留；SessionActivityPanel 保留 Git/terminal unavailable 错误态与 retry 语义并接入 loadSessionActivity；focused tests 2 files/14 passed，typecheck:web/node 均 exit 0。合并半径 10，node 原缺 brb 标签，lane-1 按 reviewer 判例补 brb-M，10 <= 15 PASS。done 仅表示死代码退役与等价错误态迁移完成，不宣称其它 Chat 工作流完成。",
+  "session_id": "lane-1-context-moat-20260829",
+  "status": "applied"
+}

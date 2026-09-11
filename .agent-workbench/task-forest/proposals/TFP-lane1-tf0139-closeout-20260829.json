@@ -1,0 +1,35 @@
+{
+  "applied_at": "2026-08-29T12:38:57.046805Z",
+  "base_graph_hash": "3c770fa551bfc67ca1e77c334d2ab7ad27af46d15fd7c82c3d4a82dc437e0fac",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "2026-08-29 lane-1 独立复核：docs/dev/dcs-visible-production/STATUS.md 的 L3/hardLocks 定义与 defaultOn=false、TF-0006/productApproved、SEKB 禁写和 packaging 不 auto-flip 边界一致。",
+          "2026-08-29 lane-1 独立复核：TF-0006 canonical node 已记录 TF-0139 解锁路径；TF-0006 保持 blocked，TASK-P2-01 仍 human-blocked。",
+          "2026-08-29 lane-1 定向复核：ignored artifact 默认采集边界修复通过；focused tests 1 file/19 passed，默认 lint files=0/new=0/historicalIgnored=0，均 exit 0；历史 ignored artifact 对照未被追溯误报。",
+          "2026-08-29 R3 提交：591525070e309de9fc414826aaacc5cb6d726a66 带 Task: TF-0139 / Lane: lane-2，包含 lint、端到端测试与 review 回交；46b95ae42d78409a9a8b6384525ab36fc9c32970 带 Task: TF-0139 / Lane: lane-2，包含 STATUS.md、lint 门注册与 review 最终复核，且未混入 dcs:receipt:probe。",
+          "2026-08-29 合并提交集 §R3：命令 1 判定读数 5/5（brb-S）、全量记录读数 5；命令 2 schema 守卫为空；命令 3 runtime 默认值守卫为 0，均 PASS。",
+          "边界声明：TF-0139 done 不产生真人证据、GA 授权或 default-on；TF-0140 的真人记录与翻正授权仍需独立执行和签核。"
+        ],
+        "next_action": "已收口；无需进一步动作。TF-0140 的真人记录与 default-on 翻正仍需独立授权，不由本 done 自动解锁。",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "lane-1 已完成最终独立复核并收口：STATUS/L3 与 hardLocks 一致，TF-0006 已记录新解锁路径但保持 blocked，completionClass lint 覆盖 tracked/untracked/ignored artifact 且历史 artifacts 不追溯修改；focused tests 19/19 与默认 lint exit 0；591525070 + 46b95ae42 的 §R3 读数为 5/5、空、0。done 仅表示治理与工程门完成，不产生真人证据、GA 授权或 default-on。"
+      },
+      "id": "TF-0139"
+    }
+  ],
+  "created_at": "2026-08-29T12:37:59.953927Z",
+  "proposal_id": "TFP-lane1-tf0139-closeout-20260829",
+  "rationale": "lane-1 已完成 TF-0139 独立复核：591525070 与 46b95ae42 均带 Task: TF-0139 / Lane: lane-2；ignored artifact 默认采集边界修复通过，focused tests 19/19 与默认 lint exit 0；合并提交集的 §R3 三条命令为 5/5、空、0。STATUS/L3、TF-0006 协调记录、completionClass lint 与历史 artifact 不追溯修改均已满足。done 不产生真人证据、GA 授权或 default-on。",
+  "session_id": "lane-1-context-moat-20260829",
+  "status": "applied"
+}

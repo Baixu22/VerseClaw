@@ -1,0 +1,60 @@
+{
+  "applied_at": "2026-09-05T05:39:43.534421Z",
+  "base_graph_hash": "14760bc115a93bff9b9181aa44cff708a581b6246831c65070acc92e0cc5eb0b",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 148,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-09-05T06:10:00Z",
+        "decided_by": "lane-2 在 HEAD detached worktree 上以洁净量具重测；按 deviations.jsonl 的 append-only 语义追加同 id 终态，状态以本条为准。",
+        "expected_requirement": "§R2.3 / §D4.5：maturity:validate 要求 A2 失配集 ⊆ §D4.3 的 25 项基线，并须单独补跑 residual 与 traceability 消除 && 链短路盲区。§D4.6：把模糊坏状态钉成确定数字。",
+        "id": "TFD-lane2-maturity-segment7-baseline-2026-09-05",
+        "impact": "第 7 段的 110 项定为首个基线，走 §R4.2 触发 (c)，合法性同 GATE-BASELINE §9.5 已批准的「补上遗漏覆盖，不是为容纳回归而放宽」。第 6 段由 UNKNOWN 转已知绿。GATE-BASELINE §6 的 maturity_validate 块补 cleanInstrumentMethod / perSegmentExitCodesAtCleanHead / segment5AtCleanHead / segment7FirstBaseline，baselineMismatchCount 仍为 25 一字未动。§D4.3 与 GATE-BASELINE §10.6 同步改写。撤回本 id 前一版「第 1-6 段因量具脏不可定」的判断与那条等量具干净的 porcelain 前置：顾虑在原则上成立，实测不成立——worktree 复现出的正是首次收口记的 11 A2 + 3 非 A2，一项不差。结论是量具脏没有改变数字，而不是顾虑多余；不测就无从知道它没改变。",
+        "kind": "gate_classification_gap",
+        "node_id": "TF-0108",
+        "observed_action_or_result": "取法：git worktree add --detach <tmp> HEAD。七个脚本只依赖 node 内置模块与 scripts/lib/*，无需 node_modules，建树实测 14 秒；第 7 段改写它自己审计的 artifact，在一次性 worktree 里不落到共用树（实测共用树 git status --porcelain -- artifacts/system-maturity 全程为空，§R2.3 的强制复原因此不必要）。逐段 exit：0/0/0/0/1/0/1。第 6 段 run-system-maturity-residual-audit 实测为绿（ok=true active=2 missing=0 expired=0），§D4.3 标为 UNKNOWN 的两段中一段转绿。第 5 段 FAILED(39)：钉住的 25 项一项未脱落，超出 14 项。第 7 段 FAILED(110)，findings=35 tasks=38 tests=35 fresh=7 stale=28；首次收口在脏共用树上记的 111 以 110 为准。",
+        "recommendation": "通用做法取代原前置条款：任何在脏共用树上取不到可采信读数的门，都在 git worktree add --detach <tmp> HEAD 里测；有自改写副作用的门必须这样测。共用树不受影响，无需 §R2.3 的复原收尾。已写入 §D4.3。",
+        "related_task_ids": [
+          "TF-0108",
+          "TF-0028",
+          "TF-0029"
+        ],
+        "severity": "high",
+        "status": "accepted"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.95,
+        "created_at": "2026-09-05T06:12:00Z",
+        "decided_by": "lane-2 实测发现并按 §D4.2 修正后的判据归属；修复动作的裁决权交回用户（§13），因为两条出路分别撞 §R5 技术-7 与一处正确的诚实修正。",
+        "expected_requirement": "§D4.6 承重条款：白名单之外的任何失败 = 回归，一律阻塞。§R4.5：新发现的冲突域必须追加登记。§R5 技术-7：不追溯修改历史 artifacts。",
+        "id": "TFD-lane2-tf0119-findings-registry-hash-break-2026-09-05",
+        "impact": "M1 的 L2 在 maturity 门上仍不可收，且阻塞原因是本轮自己造成的，不是邻居脏树。这 7 项判为 must-fix、归属本轮，不进任何白名单或轮外台账。同时暴露一处未登记的跨 workstream 冲突域：plans/system-maturity/** 不在 §R4.5 的 D01-D19 表内，而本轮的 TF-0119 写了它。",
+        "kind": "conflict_domain_collision",
+        "node_id": "TF-0108",
+        "observed_action_or_result": "洁净量具下第 5 段 FAILED(39)，超出钉住的 25 项共 14 项。其中 7 项由本轮提交 185d05516（Task: TF-0119 / Lane: lane-2）引起：该提交改动 plans/system-maturity/findings-registry.json（+29/-11）与 risk-acceptance.json（+1/-1），而六个 task manifest（P0-001 / P7-003 / P7-004 / P8-001 / P8-002 / P8-003）按哈希钉住前者、P7-004 另钉后者。因果为实测非推断：在 detached worktree 里把两文件 git checkout 590588791 -- 回退后重跑第 5 段，读数 39 -> 32，差额恰为 7。另 7 项为轮外（4 项 A2 落在 tests/unit/system-maturity-*.test.ts，3 项非 A2 落在 P2-005），主体文件不在本轮 272 文件归属集内。M1 首次收口把这 14 项整体记成轮外，是误判。",
+        "recommendation": "不由本轮修，两条理由都是硬的：(1) 185d05516 的改动是对的——把 F-AUTH-009 由 Fixed/L4 下调为 Partial/L3，依据是 P2-005 只证明 enforce-mode 门 API 能在隔离测试里算出 denied，而生产 CVK 引擎只把诊断渲染进 systemPromptAddition、不在工具执行边界消费 denied；回退它等于把一处过度声称重新盖上。(2) 唯一的另一种修法是重采那六份 manifest，而期望哈希存放在 artifacts/system-maturity/**（实测 P0-004/evidence-index.json、P0-004/validate-system-maturity-evidence.json、P7-001/traceability-report.json），本轮写它即违反 §R5 技术-7。故路由给 system-maturity workstream 重采六份 manifest，并请车道 1 在 §R4.5 补登 plans/system-maturity/** 为冲突域。另附一处架构脆性供该 workstream 决定（非本轮修）：findings-registry.json 是活的共享登记表却被六份冻结 manifest 整文件哈希钉住，任何一次合法更新都会同时打破六份证据，本次只是第一个撞上的；是否改为按条目哈希属其设计决定。",
+        "related_task_ids": [
+          "TF-0108",
+          "TF-0119",
+          "TF-0102"
+        ],
+        "severity": "high",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-09-05T06:10:00Z",
+  "proposal_id": "prop-lane2-m1-maturity-clean-instrument-2026-09-05",
+  "rationale": "在 HEAD 的 detached worktree 里用洁净量具重测 maturity 七段后的两条记录。(1) 追加 TFD-lane2-maturity-segment7-baseline-2026-09-05 的终态：第 6 段实测为绿、第 7 段基线由 111 修正为 110，并撤回「第 1-6 段因量具脏不可定」这一判断——顾虑原则上成立但实测不成立，worktree 复现出的正是首次收口记的 11+3。(2) 新记 TFD-lane2-tf0119-findings-registry-hash-break-2026-09-05：39 项 A2 失配里有 7 项由本轮 185d05516（Task: TF-0119）引起，是真回归而非轮外债，首次收口把它记成轮外是误判；但修复动作不属本轮，路由给 system-maturity workstream。",
+  "session_id": "session-lane-2",
+  "status": "applied"
+}

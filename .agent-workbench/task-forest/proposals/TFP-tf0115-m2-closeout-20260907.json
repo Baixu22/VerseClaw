@@ -1,0 +1,38 @@
+{
+  "applied_at": "2026-09-07T05:36:59.945889Z",
+  "base_graph_hash": "7f975492644818ef8ba701c03a6e3453d513cb6c5994854425b0e1291e4ee5e3",
+  "base_summary": {
+    "edge_count": 269,
+    "node_count": 151,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "已转 review_needed。M2 收官状态：AC-1 八项最终对账完成（5 项由 TF-0116 迁出、1 项 TF-0128 通电、2 项本次补显式 API-only 标注，1 项 TF-0123 路由 deprecated），AC-2/3/4 由 TF-0117/TF-0119/TF-0124 收口。L1 六门全绿。等 lane-2 交叉审核复核后由实现者按审核结论转 done/100。",
+        "progress": 100,
+        "status": "review_needed",
+        "summary": "M2 技术债清偿收官：四类债按三个子任务收口，并由本会话补齐 AC-1 的对账 + API-only 标注。1) 8 处生产零调用模块中 5 项由 TF-0116 迁出 experiments/、1 项 TF-0128 通电（compaction-damage-rules 经由 compaction-safeguard.ts:1628 生产调用）、1 项 TF-0123 deprecated 决定（compressToolOutputText 保留 src/agents/tool-output-compress.ts）、1 项本会话补 register-rebuild-providers.ts 显式 API-only 注释（保留 2026-07-14 既有 acceptance note，runtime-convergence W0-W5 为明路由）；2) 三处契约措辞与实现不符由 TF-0117 逐项改正；3) buildToolPlan 由本会话补 planner.ts API-only 注释（SDK boundary per TF-0102）；4) AC-4 第 4 处 Key Decisions 双段由 TF-0124 选择「agent-core 八段为唯一契约」，差异记录已入其审核记录。陆续补 deviation TFD-tf0115-ac4-difference-note-deferred-2026-09-07：AC-4 原字在契约文件内注明差异，当前差异在 TF-0124 审核记录里；留 lane-2 裁定是否以此区别结案。审核记录 docs/dev/context-moat/reviews/TF-0115.md。radius 2 个文件 header + 1 个 review record，保守于 brb-S。L1 六门（lint:bom / contract:check / typecheck:node / lint:dcs / test:dcs / parity+default-config-matrix）全绿在 HEAD。未改 runtime 代码、默认值、产品锁、历史 artifacts。"
+      },
+      "id": "TF-0115"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-09-07T05:33:37.118603Z",
+        "id": "TFD-tf0115-ac4-difference-note-deferred-2026-09-07",
+        "kind": "accepted",
+        "related_task_ids": [
+          "TF-0115"
+        ],
+        "summary": "AC-4 原字要求双段差异「在契约文件内注明」，当前差异记录在 TF-0124 审核记录里。继续动 summary-contract.ts 属新的代码变更，本次不支持。请 lane-2 复核裁定是否等价结案。"
+      }
+    }
+  ],
+  "created_at": "2026-09-07T05:33:37.107015Z",
+  "proposal_id": "TFP-tf0115-m2-closeout-20260907",
+  "rationale": "TF-0115 的四个子项（TF-0116/TF-0117/TF-0118/TF-0119）全部 done/100，AC-1..AC-4 按违规记录 / API-only 标注 / 路由 deprecated 三种方式达成。本会话补齐表后三个不能靠子项代任的「文档标抹」补位文档，并新增关键重合 deviation；M2 收口为 review_needed，等 lane-2 按 §R1 机械复核。",
+  "session_id": "claude-code-lane1-tf0115-20260907",
+  "status": "applied"
+}

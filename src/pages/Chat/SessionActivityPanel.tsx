@@ -68,6 +68,8 @@ type SessionActivityPanelProps = {
   onOpenSubagent?: (childSessionKey: string) => void;
   /** Opens one process's own page, keyed by its launching tool call. */
   onOpenProcess?: (processId: string, command?: string) => void;
+  /** Retries the host queries that produced unavailable Git/terminal status. */
+  onRetryStatus?: () => void;
   showGit?: boolean;
   showCommands?: boolean;
 };
@@ -234,6 +236,7 @@ export function SessionActivityPanel({
   onOpenEnvironment,
   onOpenSubagent,
   onOpenProcess,
+  onRetryStatus,
   showGit = true,
   showCommands = true,
 }: SessionActivityPanelProps) {
@@ -268,7 +271,13 @@ export function SessionActivityPanel({
     || Boolean(snapshot.continuity.contextPressure && snapshot.continuity.contextPressure !== 'low')
     || Boolean(snapshot.continuity.checkpoint)
     || Boolean(snapshot.continuity.blockedReason);
-  const alert = snapshot.session.error || snapshot.continuity.blockedReason || null;
+  const availabilityErrors = [
+    showGit && !snapshot.availability.git ? t('sessionRail.git.unavailable') : null,
+    showCommands && !snapshot.availability.terminals ? t('sessionRail.terminal.unavailable') : null,
+  ].filter(Boolean);
+  const alert = [snapshot.session.error, snapshot.continuity.blockedReason, ...availabilityErrors]
+    .filter(Boolean)
+    .join(' · ') || null;
 
   const gitStats = useMemo(() => {
     if (!git) return null;
@@ -516,6 +525,16 @@ export function SessionActivityPanel({
           <p className="codex-session-activity__empty" data-state="error" data-testid="session-activity-alert">
             {alert}
           </p>
+        ) : null}
+        {availabilityErrors.length > 0 && onRetryStatus ? (
+          <button
+            type="button"
+            className="codex-session-activity__retry"
+            onClick={onRetryStatus}
+            data-testid="session-activity-retry"
+          >
+            {t('retry')}
+          </button>
         ) : null}
       </div>
     </aside>

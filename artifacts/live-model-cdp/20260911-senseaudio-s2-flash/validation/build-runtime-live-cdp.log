@@ -1,0 +1,39 @@
+$ node scripts/build-openclaw-runtime.mjs
+[build-all] tsdown
+[build-all] tsdown done in 10.2s
+[build-all] check-cli-bootstrap-imports
+CLI bootstrap import guard passed.
+[build-all] check-cli-bootstrap-imports done in 634ms
+[build-all] runtime-postbuild
+runtime-postbuild: plugin SDK root alias completed in 1ms
+[bundled-plugin-metadata] skipping missing skill path <REPO>\openclaw_runtime\extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 452ms
+runtime-postbuild: official channel catalog completed in 23ms
+runtime-postbuild: bundled plugin runtime overlay completed in 663ms
+runtime-postbuild: static extension assets completed in 0ms
+runtime-postbuild: stable root runtime imports completed in 554ms
+runtime-postbuild: stable root runtime aliases completed in 77ms
+runtime-postbuild: legacy root runtime compat aliases completed in 155ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 1ms
+[build-all] runtime-postbuild done in 2.19s
+[build-all] build-stamp
+[build-all] build-stamp done in 88ms
+[build-all] runtime-postbuild-stamp
+[build-all] runtime-postbuild-stamp done in 95ms
+[build-all] write-cli-startup-metadata
+[cli-startup-metadata] skipped: CLI startup sources are unavailable in this pruned runtime.
+[build-all] write-cli-startup-metadata done in 130ms
+[build-all] write-cli-compat
+[cli-compat] skipped: legacy daemon CLI sources are unavailable in this pruned runtime.
+[build-all] write-cli-compat done in 98ms
+[build-all] phase timings: total 13.4s; slowest tsdown 10.2s; runtime-postbuild 2.19s; check-cli-bootstrap-imports 634ms; write-cli-startup-metadata 130ms; write-cli-compat 98ms; runtime-postbuild-stamp 95ms; build-stamp 88ms
+Building openclaw_runtime with esbuild...
+  Source: <REPO>\openclaw_runtime\src
+  Output: <REPO>\openclaw_runtime\dist
+  Found 1158 npm packages (will keep external)
+
+  openclaw_runtime\dist\knowledge\sekb\index.js  355.8kb
+
+Done in 57ms
+  Done in 0.3s
+[runtime-build-smoke] gateway ready on port 55781

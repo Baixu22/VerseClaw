@@ -35,7 +35,7 @@ expectedUserBehavior:
   - The agent campaign can complete 10 engineering runs per profile without changing the human qualifying count.
   - Missing named roles and human governance leaves l3Ready false even when agentSurrogateReady is true.
   - Agent, fixture, synthetic, E2E, and Harness evidence remains visible but never increments a TF-0009 human/live run count.
-  - TF-0009 remains review_needed with the degraded-agent-complete label; its own evidence cannot self-authorize TF-0011 release.
+  - TF-0009 keeps the degraded-agent-complete label and becomes blocked after review confirms the missing human evidence; its own evidence cannot self-authorize TF-0011 release.
   - A separately confirmed governance proposal may release TF-0011 for engineering-only work without changing TF-0009 human/live status.
 requiredProfiles:
   - fast
@@ -58,7 +58,7 @@ acceptance:
   - Preflight reports agentSurrogateReady=true and l3Ready=false while human governance is missing.
   - A cold full runtime build publishes the stable SEKB host entry before the critical Electron matrix runs.
   - A complete synthetic governance object can pass the pure readiness validator without changing product defaults.
-  - The TF-0009 proposal recommends review_needed rather than done and does not self-authorize downstream release.
+  - The TF-0009 proposal uses review_needed only while awaiting review, then blocked for confirmed missing human evidence; it never self-authorizes done or downstream release.
   - Any later TF-0011 engineering release is represented by a separate confirmed proposal and a non-blocking evidence edge.
   - Product locks, TF-0006 blocked state, and C1 keep-off authority remain unchanged.
 docs:

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Chat } from '@/pages/Chat';
 
@@ -135,17 +135,27 @@ vi.mock('@/pages/Chat/ExecutionGraphCard', () => ({
 }));
 
 describe('Chat question directory', () => {
-  it('keeps real repeated questions as separate directory entries', async () => {
+  /**
+   * The toolbar-toggled question directory was removed together with the chat
+   * side rail (see tests/e2e/chat-question-directory.spec.ts, which asserts the
+   * surface STAYS removed). This unit test keeps the same guarantee cheap: even
+   * with a transcript that contains repeated questions — the scenario that used
+   * to justify the panel — the removed surface must not come back, and the
+   * repeated prompts must remain separate, individually rendered entries in
+   * the transcript itself (the `chat-message-nav-rail` is the only navigator).
+   */
+  it('stays removed and keeps real repeated questions as separate transcript entries', async () => {
     render(
       <TooltipProvider>
         <Chat />
       </TooltipProvider>,
     );
 
-    fireEvent.click(await screen.findByTestId('chat-question-directory-toggle'));
+    expect(screen.queryByTestId('chat-question-directory-toggle')).toBeNull();
+    expect(screen.queryByTestId('chat-question-directory')).toBeNull();
+    expect(screen.queryByTestId('chat-assistive-rail')).toBeNull();
 
-    const directory = await screen.findByTestId('chat-question-directory');
-    expect(directory).toBeInTheDocument();
-    expect(directory.querySelectorAll('button')).toHaveLength(2);
+    // Both "hello" prompts render independently — no dedup, no collapse.
+    expect(screen.getAllByText('hello')).toHaveLength(2);
   });
 });

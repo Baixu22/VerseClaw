@@ -1,0 +1,62 @@
+{
+  "applied_at": "2026-09-10T05:47:50.407576Z",
+  "base_graph_hash": "d1d265c3a68f75f292e8a08523a6584e1ea46d4ecf4d81232f817beef20bef54",
+  "base_summary": {
+    "edge_count": 278,
+    "node_count": 153,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.99,
+        "evidence": [
+          "harness/specs/tasks/engineering-gate-entrypoint-junctions.md",
+          "tests/unit/engineering-gate-entrypoints.test.ts：三个 CLI × 成功/失败/导入；临时联接含空格和中文。",
+          "pnpm exec vitest run tests/unit/engineering-gate-entrypoints.test.ts tests/unit/contract-check.test.ts tests/unit/artifact-completion-class-lint.test.ts tests/unit/harness-specs.test.ts --maxWorkers=1：70 passed。",
+          "node --test openclaw_runtime/scripts/check-production-reachable.test.mjs：2 passed。",
+          "pnpm agent-dev:fast：contract、i18n、Workbench 与 7 + 42 + 45 项测试通过。",
+          "根级定向 ESLint、Runtime run-oxlint 与 git diff --check 通过。",
+          "pnpm harness validate / run --dry-run --spec harness/specs/tasks/engineering-gate-entrypoint-junctions.md --since 8bfd98281f6a5b757b660c34ca5bbfb0b871cab1：通过。",
+          "docs/dev/handoffs/LATEST.md（2026-09-10 TF-0153 收尾）",
+          "pnpm run harness:ci 已执行，因 origin/main 至当前整条历史分支的跨任务路径不在 gateway 场景覆盖范围内而失败；这是全局范围门禁，未修改白名单。本节点 scoped Harness 已单独通过。",
+          "独立 autoreview：Codex task 01a089ce-702d-79e0-b22e-01eaba82aff7；exit 0，findings=[]，patch is correct，confidence 0.95。报告位于 C:/Users/27933/AppData/Local/ClawX-scratch/gate-entrypoints-20260910/autoreview.json。"
+        ],
+        "next_action": "本节点无剩余实现项。继续 TF-0029 的现有 RC-01R 验收清单；四个原有 review_needed 节点不因该工具修复自动收口。",
+        "progress": 100,
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "status": "done",
+        "summary": "已修复契约、产物完成等级和生产可达性三个 CLI 通过目录联接启动时静默空跑的问题。复用现有 realpath 入口判断；真实进程回归覆盖正常输出、失败退出码和模块导入。修复前 6 failed/3 passed，修复后聚焦 70/70、可达性 2/2、Agent Dev fast 与 diff-aware Harness 通过。属于局部工具修复，不代表 RC-01R、M4 或真人验收通过。 独立 autoreview 无可执行发现。"
+      },
+      "id": "TF-0153"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "TF-0153 已补齐三项 CLI 的目录联接执行与失败退出码回归。下一步按既有 RC-01R spec 对账 baseline/receipt owner 证据和现有全局绿线；TF-0020 已完成，不把局部工具修复当作整个 RC-01R 验收。"
+      },
+      "id": "TF-0029"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "保持 XL-018 Q1 已批准的 review_needed/100 + landed-unwired，预算 25 与全轮 230 不动。P6-005 当代证据已于 2026-09-08 落地（A1/A3 PASS、A2 FAIL），原先等待 landing 的交接已过期；本轮未重签 M4 全部 L2。已知目录联接空跑由 TF-0153 修复。任何进一步收口仍须独立完整 L2 和现有范围裁决，不以局部修复或证据刷新自动标 done。"
+      },
+      "id": "TF-0127"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "工程 surrogate 已完成，review_needed 仅保留尚缺的真人证据：DCS/SEKB/Browser 各 10 次具名真人任务、真人 kill/rollback drill 与 owner continue/shrink/stop 裁决。现有真人计数为各 0/10；不要重复工程模拟或把它替代真人证据。"
+      },
+      "id": "TF-0009"
+    }
+  ],
+  "created_at": "2026-09-10T05:47:37.664703Z",
+  "proposal_id": "TFP-gate-entrypoint-junctions-close-20260910",
+  "rationale": "用户已授权复核发现问题直接修复及继续开发。局部门禁修复已完成，按实际检查结果收口 TF-0153，并纠正交接中的下一步指针；保留四个原有待复核节点的已接受降级、真人证据和预算边界。",
+  "session_id": "codex-20260910-review-needed",
+  "status": "applied"
+}

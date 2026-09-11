@@ -1,0 +1,98 @@
+{
+  "applied_at": "2026-09-10T12:42:01.179732Z",
+  "base_graph_hash": "f6d742589b9061edd5ac8cfe95b0a5337e3be1e30d79d3ce4ff88605e508a285",
+  "base_summary": {
+    "edge_count": 279,
+    "node_count": 154,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "RC-00 accepted by independent Verifier; RC-01 authority inventory begins",
+          "RC-01 independent Verifier VERDICT=PASS: baseline schema v1, acceptedBaseSha 6493d5cce..., 39/39 writers classified, 16/16 modules, runtime-family/runtime-spine frozen, receipt-owner decision review_needed with blocker",
+          "BLOCKER: receipt-owner-not-selected — no existing durable owner satisfies the RC-01 receipt persistence contract (schema/atomicity/retention/lookup/idempotency/failure/privacy/restart); per TARGET-ARCHITECTURE a new table or sidecar is forbidden by default. RC-02 cannot start until an explicit owner decision is made.",
+          "Receipt-owner decision user-confirmed and accepted (runtime_receipts via ReceiptStore in openclaw-state SQLite, 7 hard constraints); RC-01 independent Verifier VERDICT=pass (41/41 classified, 16/16 modules, decision accepted, source spot-checks consistent)",
+          "2026-09-10 接力：已逐一核对 TF-0009/0115/0127/0137，保留真人证据欠缺和 XL-017/XL-018 已批准的 landed-unwired；不修改其状态或预算。",
+          "2026-09-10 修复 RC-01R 输入契约：显式 --accepted-base 祖先 commit；无效参数不写入；fileURLToPath 支持空格/CJK/URL 保留字符路径；基线时间戳/source-npm 版本/已跟踪且存在的 owner/分类与空路径均校验。",
+          "tests/unit/rc01-baseline-cli.test.ts：真实临时 Git 仓库 18/18；首批 13 个反例在修复前全部失败，空路径/非法分类两项也独立复现。旧基线测试不再写共享基线。",
+          "2026-09-10 最终聚焦 Vitest 6 files / 88 tests PASS；新测试 TypeScript 检查通过；定向 ESLint 0 errors、7 既有 any warnings；scoped git diff --check 通过。",
+          "2026-09-10 通过 C: 目录联接执行真实生成与校验：41 writers / 16 modules，acceptedBaseSha=56cc85502583092f49f01494b4947f9bc969112a，baseline.json 字节未变。",
+          "2026-09-10 隔离 scoped Harness validate 与 dry-run 使用 --since 6c87dfb865529447c4e4d046c3d172a19fb45f1b 通过；直接运行同一 node harness/src/cli.mjs，避免 pnpm 在稀疏工作区重装共享依赖。报告 C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-baseline-integrity-20260910/harness-scoped.json。",
+          "2026-09-10 pnpm run harness:ci FAIL：历史全分支差异超出 gateway 场景覆盖范围，未放宽规则。日志 C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-baseline-integrity-20260910/harness-ci.log。",
+          "docs/dev/handoffs/LATEST.md：2026-09-10 TF-0029 基线输入校验修复；本轮为局部工程验证，不是 RC-01R 全局/独立验收。",
+          "2026-09-10 本轮复核四个 review_needed：TF-0115/0137/0127 与 XL-017/XL-018 等既有 landed-unwired 裁决一致；TF-0009 真人计数仍各 0/10，不改状态和预算。",
+          "2026-09-10 receipt-owner 契约反例：四种 authorities.receipt owner 字段矛盾、五条硬约束撤销、重复凑数和关键词后否定，共 11 个反例修复前失败（非法基线仍 exit 0）。",
+          "scripts/lib/rc01-receipt-contract.mjs：生成器与校验器复用已批准的四个 owner 字段及七条约束原文；两份声明逐字段核对，完整约束精确比对，现有基线生成字节不变。",
+          "2026-09-10 聚焦 4 files / 90 tests PASS，其中真实临时 Git 仓库 CLI 31/31；定向 ESLint、测试文件 TypeScript、当前基线 CLI 41 writers / 16 modules、scoped diff 检查通过。",
+          "2026-09-10 隔离 sparse worktree 的 diff-aware Harness validate / dry-run PASS（基于 6c87dfb865529447c4e4d046c3d172a19fb45f1b，7 个基线相关路径，uncovered/residual=0）；只作范围检查，没有把 dry-run 记为完整门禁。",
+          "2026-09-10 pnpm run harness:ci 仍在 Gateway 全分支 changed-path 覆盖门 FAIL；共享本 spec 另受此前四个他任务 dirty 路径影响。未放宽白名单、未新增正式工程验收。报告 C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-receipt-contract-20260910/。",
+          "docs/dev/handoffs/LATEST.md：2026-09-10 TF-0029 receipt-owner 契约校验修复。",
+          "2026-09-10 继续开发：独立 Node 进程运行真实 ReceiptStore，首次写入 context 后，同键 wire 请求误返回 ok=true/identical-content，数据库仍为 context。探针：C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-receipt-proof-20260910/probe-before.log。",
+          "2026-09-10 范围说明：依据用户直接修复的既有授权，仅允许修复已复现的 owner 幂等违约；不改 schema、存量 digest、owner 选择、默认开关或产品锁。",
+          "2026-09-10 回执证明接力：四个 review_needed 的既有裁决与真人计数已复核，保留 TF-0115/0137/0127 landed-unwired 及 TF-0009 各 0/10 真人记录，不改其他节点状态或预算。",
+          "2026-09-10 HEAD 原版 ReceiptStore 的真实 SQLite 探针复现 context→wire 同键误报 identical-content；当前 kind/version/digest 事务内比较正确返回 content-conflict，原行不变。两个探针库的存量 digest 与创建时间直接比对一致，schema 文件与 HEAD 无差异。",
+          "2026-09-10 真实独立 Node 重启、三类并发写入、指定类型的保留策略和不可用数据库证明已补齐；acceptance 的失败样例改为合法 provider/adapter 身份，验证失败诊断与 payload 字节不变。",
+          "2026-09-10 现有 Runtime 构建及 Gateway ready 烟测 PASS；回执/ShadowCensus/完整 embedded runner 和 transport registry 3 files / 36 tests PASS、0 skipped。Harness specs/git 2 files / 41 tests PASS，合计 77 项。",
+          "2026-09-10 未缓存 Node/Web 类型检查、Runtime tsgo:core、oxfmt、定向 run-oxlint、comms replay/compare、scoped diff 检查通过。oxlint 保留 4 条既有 warning；根测试类型检查观察分支仍有两个旧文件的 8 个错误。",
+          "2026-09-10 独立 Codex autoreview exit 0、findings=[]、patch is correct（confidence 0.96）；审核者核对代码与 36/36 原始测试证据，未自行执行测试，不是正式工程 Verifier。",
+          "2026-09-10 本切片隔离 sparse checkout 的 diff-aware Harness validate/dry-run PASS，基于 6c87dfb865529447c4e4d046c3d172a19fb45f1b，未使用 --no-diff。共享 spec 仍有其他工作面 11 个未覆盖路径；harness:ci 全分支 Gateway 范围门 FAIL，未放宽白名单。",
+          "docs/dev/unified-agent-system/runtime-convergence/RC01-RECEIPT-OWNER-PROOF.md；本轮原始证据 C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-receipt-proof-review-20260910/；docs/dev/handoffs/LATEST.md 的回执 owner 证明收尾章节。",
+          "2026-09-10 用户明确要求通过即 done、不通过直接处理；本轮结论与实测证据：docs/dev/context-moat/reviews/review-outcomes-20260910.md",
+          "2026-09-10 L2 全局绿线实测（HEAD 6c87dfb86 + 本次工作树）：lint:check 四段 0/0/0/0、contract:check exit 0、typecheck exit 0、pnpm test exit 0（823 files passed / 3 skipped；7278 tests passed / 53 skipped）、maturity 逐段 0/0/0/0/29/0/81。第 5 段 29 恰为冻结的 25 基线 + 4 项 A2 轮外，第 7 段 81 ≤ 冻结首基线 96。",
+          "2026-09-10 发现并修复白名单外回归 R1：P6-005 交付记录的 EVIDENCE 哈希与 2026-09-08 重生成后的 artifact 失同步（10 项失配 + 1 项 full-electron-e2e-audit.json 被移出目录）。第 5 段由 40 回到 29；仅重签该交付文件的哈希并恢复该文件，未改任何 artifact 内容、未扩白名单。",
+          "2026-09-10 发现并修复白名单外回归 R2：TF-0009 由 review_needed 被改为 blocked，违反 tf0009-real-canary-authority R7 与 uas-00-evidence-freeze-boundary R2，并使 tests/unit/tf0009-engineering-evidence-audit.test.ts 失败。已回退 review_needed 并记偏差 TFD-7dd3fcb877，pnpm test 转绿。",
+          "2026-09-10 未做的部分如实保留：TF-0115 / TF-0127 的里程碑独立复核（须非实现者会话）与 TF-0127 的 §R3.6 累积半径裁定仍未完成；两者保持 in_progress，不冒充 done。",
+          "2026-09-10 原始日志：C:/Users/27933/AppData/Local/ClawX-scratch/m2m4-l2-20260910/（l1.log、l2-shared.log、l2-maturity.log、rerun-test.log、seg5-*、seg7-*、baseline-seg57.log、verify-seg57.log）。"
+        ],
+        "next_action": "全局 L2 绿线已在 HEAD+工作树达成（含 P6-005 与 TF-0009 两处回归修复）。下一步：在干净候选上执行独立 Executor/Verifier 验收；不把本次局部绿线当作父节点全部完成，不解锁 RC-02 或产品锁。"
+      },
+      "id": "TF-0029"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "openclaw_runtime/packages/agent-core/src/harness/compaction/summary-contract.ts:8-17（八段必填，含 Key Decisions 双段）",
+          "openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts:466-488（INITIAL_SUMMARY_SECTION_BODIES：:471 叙事体、:480 要点列表）",
+          "openclaw_runtime/src/agents/agent-hooks/compaction-sections.ts:40-56（PLACEHOLDER_BODIES）、:92-94（hasSubstantiveSectionContent）、:28-33（stripRequiredSectionHeadings 的旧缺陷注释）",
+          "消费方：compaction-damage-rules.ts:265-266（missing_section 判定）、:330（分母）；compaction-safeguard-quality.ts:21,237-250（质量门 missing_section）",
+          "2026-09-05 复核：compaction-damage-rules 已不再是生产零调用模块（compaction-safeguard.ts:1628-1630 为其生产调用点，由 env 门控），本里程碑 8 项清单中该项应按 TF-0128 落地状态复核后再计数",
+          "2026-09-07 lane-2 独立复核（docs/dev/context-moat/reviews/TF-0115.md §lane-2 独立复核，HEAD 2794ff826）：FAIL。§R3.6 累积半径 50/40 未按 §R3.5 拆分或降级处置；GATE-BASELINE §11.2/§12.2 明示「本节不处置 M2」。任何把 TF-0115 推进到 done 的 proposal 与该审核记录互斥。下一步仅 §R3.5 拆分或整体 downgrade landed-unwired。",
+          "2026-09-10 用户明确要求通过即 done、不通过直接处理；本轮结论与实测证据：docs/dev/context-moat/reviews/review-outcomes-20260910.md",
+          "2026-09-10 L2 复验：lint:check 四段全 0、typecheck exit 0、contract:check exit 0、pnpm test exit 0、隔离 maturity 逐段 0/0/0/0/29/0/81（第 5 段=25 基线+4 轮外，第 7 段 ≤ 96）。AC-4 的双段差异注释已在 summary-contract.ts 内落地。",
+          "2026-09-10 剩余：M2 尚未取得非实现者会话的里程碑独立复验收签字；AC 证据齐备但不自行签发。保持 in_progress。"
+        ],
+        "next_action": "L2 已全绿、四项 AC 证据齐备；剩余仅里程碑独立复核（须非实现者会话）。通过即按 task-review-outcome-boundary 记 done；本轮不自行签发。"
+      },
+      "id": "TF-0115"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "2026-09-08 接力复核：docs/dev/context-moat/reviews/TF-0127.md；基线 39bb8875fa86b54c70e6679fb9935f3869845890，三个实际子节点的技术证据已复现，当前为 review_needed/80。",
+          "真实脱敏语料哈希一致，42 user turns / 2 compactions，重放定位 480 单元，脱敏 findings=0；未访问生产状态库、未调用外部模型。tc1/健康分 39 项通过；四维分两条记录、默认关 shadow 的既有裁定继续保留。",
+          "完整 typecheck、真实执行的 contract、主测试 7241、隔离测试 25 与 DCS 门通过。ESLint 8 项均在既有白名单/轮外台账。隔离 maturity 七段 0/0/0/0/1/0/1：第5段29项无新增；第7段81项相对96项冻结基线新增 F-GOV-003 stale evidence，不能按数量放行。",
+          "M4 实施 trailer 机械读数 18 authored/34全量，但明确已接受的七条 TF-0143 交付被无归属混合提交漏计，并集25；本次 LATEST/Harness 成本后前瞻下界至少27/25，尚非闭合归属后的正式读数。预算不变，不自动套用M2降级。",
+          "可达性/contract/artifact-lint 在 C: 目录别名下空跑 exit0；已以真实 D: 脚本路径重跑，可达性对照0/1/2/3精确成立。工具源码本轮未改。原始日志：C:/Users/27933/AppData/Local/Temp/clawx-tf0127-20260908/。",
+          "2026-09-08 Claude Sonnet 5 接力闭合：混合提交归属已完成逐路径裁定（docs/dev/context-moat/reviews/TF-0127.md 末节）；机械 18 + 7 条漏计交付 = 25/25 触顶不超；本次治理成本追加后约 29/~25，范围处置建议=XL-* 挂案（§R3.5.1 里程碑级 landed-unwired）。81154a9f1 mixed-subject 已登记偏差。",
+          "e2a3db8d9 chronology: 2026-08-25 T-C1 semantic fixture alignment precedes 2026-08-28 TF-0143 corpus close; both TF-0143 implementation. dir-alias C:/D: entrypoint fix remains backlog-P1. Lane attribution: lane-1 7 paths, out-of-round 26+30+19 = 75 paths.",
+          "artifacts/unblock-pack/tf0127-tf0129-tcorpus.md",
+          "2026-09-10 用户明确要求通过即 done、不通过直接处理；本轮结论与实测证据：docs/dev/context-moat/reviews/review-outcomes-20260910.md",
+          "2026-09-10 L2 复验（隔离 worktree，非共享树）：maturity 逐段 0/0/0/0/29/0/81，第 5 段恰为冻结 25 基线 + 4 项 A2 轮外、第 7 段 81 ≤ 96；lint/typecheck/contract/pnpm test 全 exit 0。AC-3（L2 按 D4 收紧定义 exit 0）本轮首次达成。",
+          "2026-09-10 修复 P6-005 证据链失同步：2026-09-08 重生成 artifact 后交付记录未同步，且 full-electron-e2e-audit.json 被移出目录。已按 canonical 哈希重签该交付文件并恢复该文件（字节与冻结哈希 bca96b8a 一致），未改 artifact 内容。",
+          "2026-09-10 剩余：仍缺非实现者会话的里程碑独立复核与 §R3.6 累积半径归属/超限裁定（XL-018 范围裁决、预算 25 与全轮 230 不动）。保持 in_progress。"
+        ],
+        "next_action": "L2 已全绿（AC-3 首次达成），P6-005 证据链已重同步；剩余仅里程碑独立复核与 §R3.6 累积半径裁定。XL-018 范围裁决、预算 25/230 与产品锁保持不变。"
+      },
+      "id": "TF-0127"
+    }
+  ],
+  "created_at": "2026-09-10T12:41:57.327478Z",
+  "proposal_id": "TFP-a8f63fafee",
+  "session_id": null,
+  "status": "applied"
+}

@@ -33,7 +33,7 @@ describe('GatewayManager refreshReloadPolicy', () => {
 
   it('deduplicates concurrent refresh calls', async () => {
     const { GatewayManager } = await import('@electron/gateway/manager');
-    let resolveLoad: ((value: { mode: 'reload'; debounceMs: number }) => void) | null = null;
+    let resolveLoad: any = null;
     mockLoadGatewayReloadPolicy.mockImplementationOnce(
       () =>
         new Promise((resolve) => {

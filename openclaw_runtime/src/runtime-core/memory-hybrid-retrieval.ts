@@ -1043,11 +1043,39 @@ function cosineEmbedding(a: Float32Array, b: Float32Array): number {
   return dot / (Math.sqrt(aSq) * Math.sqrt(bSq));
 }
 
-function tokenizeWords(text: string): string[] {
-  return text
+/** Contiguous CJK runs (2+ chars) — the unit of the no-segmenter fallback. */
+const CJK_RUN_RE = /[\u4e00-\u9fff]{2,}/g;
+
+/**
+ * TF-0114 (T-P0-6): CJK bigrams over contiguous runs. CJK characters are
+ * \\W under ASCII word splitting and carry no word boundaries, so pure
+ * Chinese text produced zero word tokens before this fallback. No
+ * segmentation library this round (technical-5); bigrams are the recall floor.
+ */
+export function cjkBigrams(text: string): string[] {
+  const grams: string[] = [];
+  for (const run of text.match(CJK_RUN_RE) ?? []) {
+    for (let i = 0; i + 2 <= run.length; i += 1) {
+      grams.push(run.slice(i, i + 2));
+    }
+  }
+  return grams;
+}
+
+/**
+ * Word tokens for the token/BM25 channel. ASCII words as before; CJK covered
+ * by bigrams (TF-0114). Relationship to characterNgrams (req-2): the two are
+ * separate weighted channels of the hybrid score — bigrams feed this
+ * token/BM25 channel, character trigrams feed the n-gram cosine channel — so
+ * CJK appearing in both is intended multi-signal coverage, not
+ * double-counting within a single channel.
+ */
+export function tokenizeWords(text: string): string[] {
+  const asciiWords = text
     .toLowerCase()
     .split(/\W+/)
     .filter((w) => w.length > 1);
+  return [...asciiWords, ...cjkBigrams(text)];
 }
 
 /**
@@ -1067,11 +1095,15 @@ export function extractEntities(text: string): Set<string> {
   const snakeCase = text.match(/\b[a-z]+(?:_[a-z0-9]+)+\b/g) ?? [];
   const hyphenated = text.match(/\b[a-z]+(?:-[a-z0-9]+)+\b/g) ?? [];
   const numbers = text.match(/\b\d{2,}\b/g) ?? [];
+  // TF-0114 (T-P0-6): contiguous CJK runs (2+ chars) as entities — the five
+  // ASCII patterns above match nothing in pure Chinese text.
+  const cjkRuns = text.match(CJK_RUN_RE) ?? [];
   for (const e of properNouns) entities.add(e.toLowerCase());
   for (const e of identifiers) entities.add(e.toLowerCase());
   for (const e of snakeCase) entities.add(e.toLowerCase());
   for (const e of hyphenated) entities.add(e.toLowerCase());
   for (const e of numbers) entities.add(e);
+  for (const e of cjkRuns) entities.add(e);
   return entities;
 }
 
@@ -1085,6 +1117,12 @@ function jaccardSet(a: Set<string>, b: Set<string>): number {
   return union === 0 ? 0 : intersection / union;
 }
 
+/**
+ * Character trigrams for the n-gram cosine channel. Character-level, so it
+ * already works for CJK. TF-0114 req-2: kept as-is alongside the new CJK
+ * bigrams in tokenizeWords — the two feed different weighted channels of the
+ * hybrid score (see the no-double-counting note on tokenizeWords).
+ */
 function characterNgrams(text: string): string[] {
   const normalized = text
     .toLowerCase()

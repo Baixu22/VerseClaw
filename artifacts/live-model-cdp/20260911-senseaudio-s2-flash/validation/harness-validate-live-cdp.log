@@ -1,0 +1,5 @@
+$ pnpm --filter @verse-claw/harness start -- "validate" "--spec" "harness/specs/tasks/live-cdp-provider-env-reference.md" "--since" "HEAD"
+$ node src/cli.mjs "--" "validate" "--spec" "harness/specs/tasks/live-cdp-provider-env-reference.md" "--since" "HEAD"
+RESIDUAL: residualPaths=artifacts/unblock-pack/tf0127-tf0129-tcorpus.md, docs/dev/context-moat/reviews/m2m4-closeout-20260911.md, docs/dev/context-moat/reviews/revalidation-sec002-gov003-20260910.json, harness/specs/tasks/task-forest-review-outcomes.md, plans/system-maturity/phase0-foundation/tasks/P0-004.delivery.md, plans/system-maturity/phase1-direct-boundaries/tasks/P1-001.delivery.md
+PASS WITH RESIDUAL
+Spec is valid: harness\specs\tasks\live-cdp-provider-env-reference.md

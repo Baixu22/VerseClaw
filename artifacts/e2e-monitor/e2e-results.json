@@ -1,0 +1,48 @@
+{
+  "run_at": "2026-09-09T11:58:00+08:00",
+  "trigger": "manual round-3 (post electron install)",
+  "electron_binary": "node_modules/.pnpm/electron@40.8.4/node_modules/electron/dist/electron.exe (213 MB downloaded)",
+  "specs": [
+    {
+      "spec": "tests/e2e/app-smoke.spec.ts",
+      "tests": 4,
+      "passed": 4,
+      "failed": 0,
+      "duration_ms": 32500,
+      "notes": "setup wizard / models page / persistence / E2E output pipe fatal dialog"
+    },
+    {
+      "spec": "tests/e2e/agent-dev-quality.spec.ts (workbench smoke)",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "duration_ms": 7100,
+      "notes": "in-app Agent Dev Workbench via host-api"
+    },
+    {
+      "spec": "tests/e2e/browser-security-recovery.spec.ts",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "duration_ms": 6700,
+      "notes": "task approval/explain + vault health discrimination (host path)"
+    },
+    {
+      "spec": "tests/e2e/agent-browser-workbench.spec.ts",
+      "tests": 1,
+      "passed": 0,
+      "failed": 1,
+      "duration_ms": null,
+      "error": "page.getByTestId('browser-workbench') not found within 15000ms timeout",
+      "notes": "REAL FAIL — element 'browser-workbench' testid not visible; trace.zip at test-results/agent-browser-workbench-Ag-77579--profile-and-Vault-metadata/"
+    }
+  ],
+  "summary": {
+    "specs_run": 4,
+    "specs_pass": 3,
+    "specs_fail": 1,
+    "tests_passed": 6,
+    "tests_failed": 1
+  },
+  "honest_disclaimer": "agent-browser-workbench fail 是真实断点，不是测试毛病；不掩盖"""
+}

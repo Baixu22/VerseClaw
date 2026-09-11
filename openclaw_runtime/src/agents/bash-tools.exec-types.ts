@@ -4,6 +4,7 @@
  * tool result details consumed across exec hosts and process controls.
  */
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { DiagnosticTraceContext } from "../infra/diagnostic-trace-context.js";
 import type { EventSessionRoutingPolicy } from "../infra/event-session-routing.js";
 import type { ExecApprovalDecision } from "../infra/exec-approvals.js";
 import type {
@@ -40,6 +41,8 @@ export type ExecToolDefaults = {
   config?: OpenClawConfig;
   autoReviewer?: ExecAutoReviewer;
   agentId?: string;
+  /** Host/runtime parent trace for exec lifecycle correlation. */
+  trace?: DiagnosticTraceContext;
   backgroundMs?: number;
   timeoutSec?: number;
   approvalWarningText?: string;

@@ -1,0 +1,41 @@
+{
+  "startedAt": "2026-09-11T01:57:42.612Z",
+  "request": {
+    "model": "senseaudio-s2-flash",
+    "messages": [
+      {
+        "role": "user",
+        "content": "请只回复 LIVE_OK_20260911。"
+      }
+    ],
+    "max_tokens": 48,
+    "stream": false
+  },
+  "status": 200,
+  "response": {
+    "id": "chatcmpl-5805ac0b-2fbf-42ab-890e-376731962953",
+    "choices": [
+      {
+        "index": 0,
+        "finish_reason": "stop",
+        "message": {
+          "role": "assistant",
+          "content": "LIVE_OK_20260911"
+        }
+      }
+    ],
+    "created": 1789091863,
+    "model": "senseaudio-s2-flash",
+    "object": "chat.completion",
+    "system_fingerprint": "vllm-0.26.0-tp2-238f92b1",
+    "usage": {
+      "prompt_tokens": 229,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "completion_tokens": 13,
+      "total_tokens": 242
+    }
+  },
+  "elapsedMs": 575
+}

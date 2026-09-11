@@ -1,0 +1,1 @@
+{"date":"YYYY-MM-DD","user":"<真人标识，禁止 agent 代填>","metricSnapshot":{"flag":"runtime.contextBlock.tool-registry.enabled","enabled":null,"injectionSeen":null,"assemblerInjected":null},"rollback":false,"note":"day-0 模板。签字 TF-0140.md 并翻正默认值当天，由真人复制本行改 date/user/enabled 后追加到 day-log.jsonl。"}

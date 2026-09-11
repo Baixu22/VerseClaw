@@ -130,7 +130,7 @@ function registryRun(overrides: Partial<SubagentRunRecord> = {}): SubagentRunRec
       taskId: "planner-1",
       taskNodeId: "planner-1",
       attempt: 1,
-    },
+    } as never,
     ...overrides,
   };
 }

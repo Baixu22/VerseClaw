@@ -1,0 +1,44 @@
+{
+  "applied_at": "2026-09-10T13:30:17.181526Z",
+  "base_graph_hash": "616631320ca7298ebbee5ce1c9179facfc25a95b99fdf4f949782f77684ff10c",
+  "base_summary": {
+    "edge_count": 279,
+    "node_count": 154,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包",
+          "docs/dev/component-operational-readiness-checklist.md",
+          "docs/dev/tf0009-engineering-evidence-audit.md",
+          "artifacts/first-product-preview/TF-0009/evidence-audit.json",
+          "artifacts/first-product-preview/TF-0009/agent-surrogate-charter.json",
+          "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json",
+          "harness/specs/rules/tf0009-real-canary-authority.md",
+          "harness/specs/tasks/tf0009-engineering-evidence-audit.md",
+          "artifacts/dcs-deep-test-week1/day1-gates.json",
+          "docs/dev/handoffs/LATEST.md",
+          "artifacts/agent-surrogate-ledger/manifest.json",
+          "2026-09-10 用户明确要求通过即 done、不通过直接处理；本轮结论与实测证据：docs/dev/context-moat/reviews/review-outcomes-20260910.md",
+          "2026-09-10 已修复 R7/R2、UAS freeze 校验和 preflight 提示的状态冲突，明确 review_needed 为待复核、blocked 为已确认真人证据阻塞；不再按旧条款把本节点改回待复核。"
+        ],
+        "execution_hints": [
+          "tf0009-real-canary-authority R7 与 uas-00-evidence-freeze-boundary R2 已同步：复核结束后缺真人证据使用 blocked；冻结历史报告仍保留旧状态。",
+          "agent-surrogate、人机边界、真人计数、TF-0011 工程 derived_from 边和所有产品锁保持原义。"
+        ],
+        "next_action": "只有补齐三个 profile 各 10 次具名真人产品路径任务、真人 drill 与 owner 裁决才能解除阻塞。review_needed 只表示尚待复核，不能再用作本节点已确认外部阻塞的终态。",
+        "status": "blocked",
+        "summary": "工程 surrogate 已通过；已确认的剩余工作是三个 profile 各 0/10 的真人验收、真人 kill/rollback drill 和 owner 裁决。按用户 2026-09-10 明确收口指令及已同步的 R7/R2，当前状态为 blocked；历史冻结报告不重写。"
+      },
+      "id": "TF-0009"
+    }
+  ],
+  "created_at": "2026-09-10T13:30:16.615673Z",
+  "proposal_id": "TFP-tf0009-blocked-rule-alignment-20260910",
+  "rationale": "用户明确要求通过即 done、未通过直接处理。真人证据无法由 agent 补造，已确认外部阻塞；同步旧规则与其调用方后恢复 blocked，保留全部人机权限边界。",
+  "session_id": "codex-review-outcomes-20260910",
+  "status": "applied"
+}

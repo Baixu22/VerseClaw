@@ -225,12 +225,12 @@ export function toPersistenceRecord(
     "deterministic_rule",
   ]);
   if (fact.recordKind === "fact" && acceptedStatuses.has(fact.verificationStatus)) {
-    return buildRuntimeMemoryTemporalFactFixture(common);
+    return buildRuntimeMemoryTemporalFactFixture(common as never);
   }
   return buildRuntimeMemoryTemporalFactCandidateFixture({
     ...common,
     verificationStatus: fact.verificationStatus as RuntimeMemoryVerificationStatus,
-  });
+  } as never);
 }
 
 export function toProjection(

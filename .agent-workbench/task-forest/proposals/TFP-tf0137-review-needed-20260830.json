@@ -1,0 +1,73 @@
+{
+  "applied_at": "2026-08-30T14:17:44.879748Z",
+  "base_graph_hash": "eba5ffc45c1ba626b8b2891a82940a8b51e21f1412c952f6312a76649ac9a39f",
+  "base_summary": {
+    "edge_count": 262,
+    "node_count": 147,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "先由用户确认并应用本 proposal，使 canonical 与 review 事实一致；随后按 DEV-PROTOCOL §R3.5 在合法拆分（拆分后 max_brb 总和不得超过 5）或 landed-unwired 中选择出口。不得改标签、排除 authored 文件或把测试/双语 runbook 静默移出半径。",
+        "progress": 90,
+        "progress_source": "manual",
+        "status": "review_needed",
+        "summary": "API-only 分类、控制面撤下、双语 runbook、generated catalog 与 rollback 契约已实现并通过工程复验；独立 review 后补齐 sessionId 与 API 回滚配方。但 R3 归属提交为空，且明确归属本任务的 scoped 文件面为 8/5，当前不能合法维持 done。"
+      },
+      "id": "TF-0137"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-30T11:52:29.1114370Z",
+        "decided_by": "lane-2 按 TF-0137 二选一要求选择‘撤下并标 API-only’，并经独立 reviewer 复核真实执行点。",
+        "evidence": "shared/dcs/prod-flags-catalog.ts；shared/dcs/prod-flags-control.ts；docs/dcs-production-p0-runbook.md；docs/dcs-production-p0-runbook.zh-CN.md；openclaw_runtime/src/context-engine/runtime-flag-ack.ts:273,277；独立 review task 01a05277-a62a-7762-90ef-d562dfb9ea14。",
+        "expected_requirement": "选择‘撤下’时必须记录 deviation，明确原 config-flag 启用/回滚承诺作废。",
+        "id": "TFD-tf0137-api-only-promise-withdrawal-20260830",
+        "impact": "Settings/config 写入这两个叶子不再被表述为启用或回滚路径；默认值保持 inprocess/false，runtime-flag-ack 仍可报告配置值。",
+        "kind": "scope_change",
+        "node_id": "TF-0137",
+        "observed_action_or_result": "worktree-backend 与 sekb-experience-shadow 已改为 kind=api/risk=api-only；sekb-experience-shadow 已移出 DCS_WRITABLE_FLAG_SPECS；真实执行点分别为 createWorktreeService(baseRoot, { backend }) 与 DistillationTool.confirm_and_save(suggestion, edits, { sessionId, experienceShadow })。",
+        "recommendation": "后续文档和控制面只能引用真实 API 参数作为启用/回滚入口；不得重新把这两个叶子列为有执行器的生产旗标，除非另立任务并补 A1/A4 证据。",
+        "related_task_ids": [
+          "TF-0137"
+        ],
+        "severity": "medium",
+        "status": "resolved",
+        "summary": "撤销 runtime.coding.worktree.backend 与 runtime.coding.sekb.experienceShadow 作为可写生产旗标及旗标回滚面的原承诺，保留配置叶仅用于 runtime ack 观测。"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-30T11:52:29.1114370Z",
+        "decided_by": "独立 reviewer 01a05277-a62a-7762-90ef-d562dfb9ea14 提出，主线程按 DEV-PROTOCOL §R3.1/§R3.5 机械复算确认。",
+        "evidence": "docs/dev/context-moat/DEV-PROTOCOL.md:465-523,584-641；scoped git diff --name-only 共 8 个明确归属路径；独立 review task 01a05277-a62a-7762-90ef-d562dfb9ea14。",
+        "expected_requirement": "brb-S 的 max_brb 为 5；收口前必须存在带 TF-0137 trailer 的归属提交，且排除 Task Forest 生成物后的文件并集不得超过 5。",
+        "id": "TFD-tf0137-r3-empty-attribution-and-radius-overrun-20260830",
+        "impact": "实现行为和测试可以继续审查，但 R3 硬门失败；按 §R3.5 不得把节点维持 done，也不得通过改 brb 标签或排除 authored 文件放行。",
+        "kind": "process_gap",
+        "node_id": "TF-0137",
+        "observed_action_or_result": "git log -E --grep='^(Task:|Refs|Node:) TF-0137([^0-9]|$)' 590588791..HEAD 为空；当前明确归属 TF-0137 的 scoped diff 为 8 个文件。docs/generated/catalogs/tools.md 是本轮开始前即存在的另一 lane 独立脏改动，不计入 TF-0137。",
+        "recommendation": "应用本 proposal 后保持 review_needed；仅接受 §R3.5 的合法拆分或 landed-unwired 出口。若用户要求改变半径政策，必须单独修改协议并提供非本任务豁免依据，不能在 TF-0137 内临时放宽。",
+        "related_task_ids": [
+          "TF-0137",
+          "TF-0107",
+          "TF-0145"
+        ],
+        "severity": "high",
+        "status": "open",
+        "summary": "TF-0137 在无可归属提交且明确归属文件面 8/5 的情况下被提前标为 done。"
+      }
+    }
+  ],
+  "created_at": "2026-08-30T12:07:23.710406Z",
+  "proposal_id": "TFP-tf0137-review-needed-20260830",
+  "rationale": "TF-0137 的 API-only 实现与工程门禁已完成，但新一轮独立 review 发现 canonical done 与硬治理门不一致：SEKB 操作配方已修正，然而当前无可归属提交，且明确归属 TF-0137 的实际文件面为 8，超过 brb-S=5。按 DEV-PROTOCOL §R3.1/§R3.5 不得继续维持 done；同时补记任务 requirements 明确要求的原旗标承诺撤销 deviation。",
+  "session_id": "session-tf0137-closeout-20260830",
+  "status": "applied"
+}
