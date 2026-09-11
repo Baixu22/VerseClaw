@@ -307,7 +307,7 @@ function fact(
     confidence,
     valid_at: validAt,
     reference_time: validAt,
-    verificationStatus: overrides.verificationStatus ?? "verified",
+    verificationStatus: (overrides.verificationStatus ?? "verified") as never,
     ...(overrides.expired_at !== undefined ? { expired_at: overrides.expired_at } : {}),
     ...(overrides.invalid_at !== undefined ? { invalid_at: overrides.invalid_at } : {}),
   });

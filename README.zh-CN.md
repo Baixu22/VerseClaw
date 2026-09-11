@@ -249,6 +249,7 @@ Skills 页面可展示来自多个 OpenClaw 来源的技能（托管目录、wor
 在开发者模式下，独立的“图像生成”页面支持配置 OpenAI 兼容生图端点（Base URL、API Key 和模型名，例如 `gpt-image-2`），生图请求会走专用的 `/v1/images/generations` 服务，聊天仍继续使用正常的 OpenAI Provider。
 如果你通过 **自定义（Custom）Provider** 对接 OpenAI-compatible 网关，可以在 **设置 → AI Providers → 编辑 Provider** 中配置自定义 `User-Agent`，以提高兼容性。
 如果兼容网关的 `/models` 因非鉴权原因不可用，Verse Claw 会在校验 API Key 时自动降级为轻量的 `/chat/completions` 或 `/responses` 探测。
+在 `openclaw.json` 中使用环境变量 SecretRef 配置的 Provider，只要 Verse Claw 进程能够读取该变量且 secret provider 允许，就会被识别为可用；环境变量密钥不会被复制到配置文件。
 
 ### 🌙 自适应主题
 支持浅色模式、深色模式或跟随系统主题。Verse Claw 自动适应你的偏好设置。
@@ -416,6 +417,8 @@ P1 受监督 ACI 内核进一步记录明确的 `starting`/`handshaking`/`ready`
 P2-01 只读 facade 现在只把稳定的 `read_file`、`search_content`、`result_query` 接到 host-owned typed ACI 路径。它独立保持 default-off，只有五个 readiness flag 全部显式开启且 kill switch 未触发时才物化。workspace 越界、绝对路径、NUL、无界 query、malformed result handle、过期 artifact 和 owner 漂移都会 fail-closed；cache identity 绑定 workspace、revision、policy、operation 和 args。这只是 engineering evidence，不开启 command profile、写入、canary、default-on、GA 或 product approval。详见 [P2-01 证据](docs/dev/verseshell-foundation/P2-READONLY-FACADE-EVIDENCE-2026-08-14.md)。
 
 P2-02 argv-only command profile 现在把 OpenClaw 审批前的 command analysis 收敛为不可变 host-owned execution plan。普通 test/build/lint/git 命令以 direct argv 执行；pipeline、chain、redirect、heredoc、inline evaluation 和显式解释器保持独立的 terminal-shell 边界。profile（含 `pnpm`/`npm`/`corepack` `exec`/`dlx` runner 透传）由 host 推导，模型不能选择 profile、interpreter、PATH/PATHEXT、policy 或 approval token。Windows `.exe`/`.com` 保持 direct argv，`.cmd`/`.bat` 在经审计的 `cmd.exe` interpreter 下保留 resolved script identity，审批后不再重解析 display command。cwd/env/argv/timeout/output 越界一律 fail-closed，且没有 native/MCP/legacy fallback。这只是 engineering evidence，不开启 diagnostics、写入、canary、default-on、GA 或 product approval。详见 [P2-02 证据](docs/dev/verseshell-foundation/P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md)。
+
+P3 external-write 策略现在会在不可变 command plan 上，把 compiler、script、Git hook、terminal shell 以及其他可能产生副作用的进程命令标记为 external write。既有 OpenClaw exec approval 仍是唯一授权面；静态警告不复制命令文本或凭据。此类进程写入位于 ClawX write journal 之外，`rollbackClaim=false`，也不会被自动回滚。本工程切片不开启写入、canary 流量、default-on、GA 或产品审批。详见 [P3 证据](docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md)。
 
 推荐使用以下保守的 `openclaw.json` 配置：
 

@@ -4,6 +4,22 @@
  * Write and use gates are independent: enabling one never implies the other.
  * Defaults are closed (off), matching COMPASS advanced flags and the Role Memory
  * "disabled until enabled" UI copy.
+ *
+ * Production wiring (TF-0110 / T-P0-1, P0 governance fix):
+ * - Use gate: role-memory-context-provider.ts and role-spawn.ts call
+ *   applyMemoryUseGateOverlay on the real injection paths. Gate enabled ->
+ *   strict filter (secret / secret_adjacent / poison / tombstone cards are
+ *   removed before any ContextPack bucket); gate disabled (the default) ->
+ *   the legacy card set passes through unchanged, so default-off behavior is
+ *   identical to pre-wiring by construction (P3-003 staged rollout).
+ * - Write gate: memory-store.ts proposeMemoryCard consults
+ *   evaluateMemoryWriteGate when the gate is explicitly configured (caller
+ *   override or OPENCLAW_MEMORY_WRITE_GATE); unconfigured callers keep the
+ *   legacy proposal flow (default behavior unchanged).
+ * Sensitivity alignment (req-4, option b): secret_adjacent is banned by the
+ * gate AND by the real paths whenever the use gate is consulted, so both
+ * sides agree; with the gate disabled the legacy paths stay unchanged (AC-1).
+ * simulateMemoryInjection models the gate-enabled contract directly.
  */
 import {
   reviewMemoryProposal,
@@ -21,9 +37,22 @@ import {
 } from "../runtime-core/memory-runtime-config.js";
 
 export type MemoryDualGateConfig = {
-  /** When false, memory writes/proposes are rejected. Default false. */
+  /**
+   * Write gate. When consulted (explicit config or OPENCLAW_MEMORY_WRITE_GATE):
+   * false rejects memory writes/proposes with an explicit reason; the
+   * gatekeeper still runs when open. Default false. Unconfigured
+   * proposeMemoryCard callers keep the legacy flow (TF-0110 wiring; P3-003
+   * staged rollout), so the default behavior is unchanged.
+   */
   writeEnabled: boolean;
-  /** When false, memory is not injectable into model context. Default false. */
+  /**
+   * Use gate. When enabled, applyMemoryUseGateOverlay removes secret /
+   * secret_adjacent / poison / tombstone cards on the production injection
+   * paths before any ContextPack bucket; when disabled (the default) the
+   * legacy injection set passes through unchanged. simulateMemoryInjection
+   * models the enabled contract (off there = nothing injectable). Default
+   * false.
+   */
   useEnabled: boolean;
 };
 
@@ -76,10 +105,15 @@ export function resolveMemoryDualGateConfig(
   const roleMemoryMasterOff = process.env.OPENCLAW_ROLE_MEMORY_ENABLED === "0";
 
   if (roleMemoryMasterOff) {
+    // TF-0110 (T-P0-1, req-3): overrides must NOT be able to re-open either
+    // gate while the role-memory master switch is off. Spread overrides first,
+    // then pin both gates closed — the previous order let ...overrides win
+    // over the pin (OPENCLAW_ROLE_MEMORY_ENABLED=0 + { useEnabled: true }
+    // flipped the use gate open).
     return {
+      ...overrides,
       writeEnabled: false,
       useEnabled: false,
-      ...overrides,
     };
   }
 
@@ -212,6 +246,21 @@ export function filterCardsForModelInjection(
   config: MemoryDualGateConfig,
 ): MemoryCard[] {
   return cards.filter((card) => evaluateMemoryUseGate({ config, card }).allowed);
+}
+
+/**
+ * TF-0110 (T-P0-1): use-gate overlay for the production injection paths
+ * (role-memory-context-provider.ts, role-spawn.ts). Gate enabled -> strict
+ * filter via evaluateMemoryUseGate; gate disabled (the default) -> the input
+ * set is returned unchanged, so default-off behavior stays identical to the
+ * pre-wiring legacy path (AC-1 / req-5).
+ */
+export function applyMemoryUseGateOverlay(
+  cards: readonly MemoryCard[],
+  config: MemoryDualGateConfig = resolveMemoryDualGateConfig(),
+): MemoryCard[] {
+  if (!config.useEnabled) return [...cards];
+  return filterCardsForModelInjection(cards, config);
 }
 
 export function isPoisonRevokedCard(card: MemoryCard): boolean {

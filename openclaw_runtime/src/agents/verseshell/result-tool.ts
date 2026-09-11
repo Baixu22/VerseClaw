@@ -1,4 +1,5 @@
 import { Type } from "typebox";
+import type { DiagnosticTraceContext } from "../../infra/diagnostic-trace-context.js";
 import type { AnyAgentTool } from "../tools/common.js";
 import { jsonResult } from "../tools/common.js";
 import { resolveVerseShellFoundationRollout } from "../verseshell-foundation-flags.js";
@@ -21,6 +22,7 @@ export function createVerseShellResultTool(options: {
   cwd: string;
   agentId?: string;
   config?: unknown;
+  trace?: DiagnosticTraceContext;
 }): AnyAgentTool | null {
   const rollout = resolveVerseShellFoundationRollout({ config: options.config });
   const required = ["verifiedRuntime", "typedAci", "facade", "governedExec", "artifactResults"] as const;
@@ -48,6 +50,7 @@ export function createVerseShellResultTool(options: {
         mode: params.mode,
         cwd: options.cwd,
         agentId: options.agentId,
+        trace: options.trace,
         lines: params.lines,
         startLine: params.startLine,
         endLine: params.endLine,

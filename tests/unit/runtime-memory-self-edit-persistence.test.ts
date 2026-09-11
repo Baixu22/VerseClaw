@@ -95,12 +95,12 @@ function loadFreshStore(dbPath: string, now = 1000): RuntimeMemoryStore {
 }
 
 describe("P0-B: memory self-edit durable persistence", () => {
-  it("memory_update persists supersede + invalidation across calls", () => {
+  it("memory_update persists supersede + invalidation across calls", async () => {
     const dbPath = createTempDbPath();
     seedFact(dbPath, makeFact("old_fact"));
 
     const context = makePersistentContext(dbPath, 2000);
-    const result = executeMemorySelfEditTool(
+    const result = await executeMemorySelfEditTool(
       "memory_update",
       { factId: "old_fact", objectSummary: "New summary.", confidence: 0.9 },
       context,
@@ -125,11 +125,11 @@ describe("P0-B: memory self-edit durable persistence", () => {
     expect(invalidation?.replacementFactId).toBe(data.newFactId);
   });
 
-  it("memory_update writes rows into SQLite (fact, invalidation, relation)", () => {
+  it("memory_update writes rows into SQLite (fact, invalidation, relation)", async () => {
     const dbPath = createTempDbPath();
     seedFact(dbPath, makeFact("old_fact"));
 
-    const result = executeMemorySelfEditTool(
+    const result = await executeMemorySelfEditTool(
       "memory_update",
       { factId: "old_fact", objectSummary: "New summary." },
       makePersistentContext(dbPath, 2000),
@@ -165,11 +165,11 @@ describe("P0-B: memory self-edit durable persistence", () => {
     }
   });
 
-  it("memory_forget persists invalidation across calls", () => {
+  it("memory_forget persists invalidation across calls", async () => {
     const dbPath = createTempDbPath();
     seedFact(dbPath, makeFact("forget_me"));
 
-    const result = executeMemorySelfEditTool(
+    const result = await executeMemorySelfEditTool(
       "memory_forget",
       { factId: "forget_me", reason: "human_rejected" },
       makePersistentContext(dbPath, 2000),
@@ -184,7 +184,7 @@ describe("P0-B: memory self-edit durable persistence", () => {
     expect(invalidation?.reason).toBe("human_rejected");
   });
 
-  it("memory_update returns ok:false when persistence rejects the write", () => {
+  it("memory_update returns ok:false when persistence rejects the write", async () => {
     const store = new RuntimeMemoryStore({ now: () => 1000 });
     store.appendFact(makeFact("f1"));
 
@@ -215,7 +215,7 @@ describe("P0-B: memory self-edit durable persistence", () => {
         message: "unused",
         persisted: false,
       }),
-      loadStore: () => ({ status: "loaded", store }),
+      loadStore: () => ({ status: "skipped", reason: "flag_disabled", store }),
     };
 
     const context: MemorySelfEditToolContext = {
@@ -223,7 +223,7 @@ describe("P0-B: memory self-edit durable persistence", () => {
       persistence: failingPersistence,
       now: 2000,
     };
-    const result = executeMemorySelfEditTool(
+    const result = await executeMemorySelfEditTool(
       "memory_update",
       { factId: "f1", objectSummary: "x" },
       context,
@@ -233,7 +233,7 @@ describe("P0-B: memory self-edit durable persistence", () => {
     expect(result.message).toContain("boom");
   });
 
-  it("memory_forget returns ok:false when persistence rejects the write", () => {
+  it("memory_forget returns ok:false when persistence rejects the write", async () => {
     const store = new RuntimeMemoryStore({ now: () => 1000 });
     store.appendFact(makeFact("forget_me"));
 
@@ -264,7 +264,7 @@ describe("P0-B: memory self-edit durable persistence", () => {
         message: "unused",
         persisted: false,
       }),
-      loadStore: () => ({ status: "loaded", store }),
+      loadStore: () => ({ status: "skipped", reason: "flag_disabled", store }),
     };
 
     const context: MemorySelfEditToolContext = {
@@ -272,7 +272,7 @@ describe("P0-B: memory self-edit durable persistence", () => {
       persistence: failingPersistence,
       now: 2000,
     };
-    const result = executeMemorySelfEditTool(
+    const result = await executeMemorySelfEditTool(
       "memory_forget",
       { factId: "forget_me" },
       context,
@@ -282,11 +282,11 @@ describe("P0-B: memory self-edit durable persistence", () => {
     expect(result.message).toContain("forget failed");
   });
 
-  it("memory_strengthen persists usage across restart (SQLite row assertion)", () => {
+  it("memory_strengthen persists usage across restart (SQLite row assertion)", async () => {
     const dbPath = createTempDbPath();
     seedFact(dbPath, makeFact("hot_fact"));
 
-    const first = executeMemorySelfEditTool(
+    const first = await executeMemorySelfEditTool(
       "memory_strengthen",
       { factId: "hot_fact" },
       makePersistentContext(dbPath, 2000),
@@ -295,7 +295,7 @@ describe("P0-B: memory self-edit durable persistence", () => {
     expect((first.data as { usageCount: number }).usageCount).toBe(1);
 
     // A second call from a fresh context (new process) sees the prior access.
-    const second = executeMemorySelfEditTool(
+    const second = await executeMemorySelfEditTool(
       "memory_strengthen",
       { factId: "hot_fact" },
       makePersistentContext(dbPath, 3000),
@@ -325,7 +325,7 @@ describe("P0-B: memory self-edit durable persistence", () => {
     expect(stat?.lastAccessedAt).toBe(3000);
   });
 
-  it("memory_strengthen returns ok:false when persistence rejects the access", () => {
+  it("memory_strengthen returns ok:false when persistence rejects the access", async () => {
     const store = new RuntimeMemoryStore({ now: () => 1000 });
     store.appendFact(makeFact("f1"));
 
@@ -356,10 +356,10 @@ describe("P0-B: memory self-edit durable persistence", () => {
         message: "access boom",
         persisted: false,
       }),
-      loadStore: () => ({ status: "loaded", store }),
+      loadStore: () => ({ status: "skipped", reason: "flag_disabled", store }),
     };
 
-    const result = executeMemorySelfEditTool(
+    const result = await executeMemorySelfEditTool(
       "memory_strengthen",
       { factId: "f1" },
       { store, persistence: failingPersistence, now: 2000 },
@@ -369,7 +369,7 @@ describe("P0-B: memory self-edit durable persistence", () => {
     expect(result.message).toContain("access boom");
   });
 
-  it("memory_update returns ok:false when the supersedes relation fails to persist", () => {
+  it("memory_update returns ok:false when the supersedes relation fails to persist", async () => {
     const store = new RuntimeMemoryStore({ now: () => 1000 });
     store.appendFact(makeFact("f1"));
 
@@ -407,10 +407,10 @@ describe("P0-B: memory self-edit durable persistence", () => {
         message: "unused",
         persisted: false,
       }),
-      loadStore: () => ({ status: "loaded", store }),
+      loadStore: () => ({ status: "skipped", reason: "flag_disabled", store }),
     };
 
-    const result = executeMemorySelfEditTool(
+    const result = await executeMemorySelfEditTool(
       "memory_update",
       { factId: "f1", objectSummary: "x" },
       { store, persistence: relationFailingPersistence, now: 2000 },

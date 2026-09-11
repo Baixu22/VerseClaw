@@ -261,7 +261,7 @@ const summary = {
   nextStep: hardStop
     ? findings.find((f) => f.level === "fail")?.nextStep || "Fix hard-stop findings before any opt-in"
     : agentSurrogateReady && !l3Readiness.ready
-      ? "Agent-surrogate engineering flow is complete. Keep TF-0009 review_needed; any engineering-chain release requires a separate confirmed governance proposal."
+      ? "Agent-surrogate engineering flow is complete. TF-0009 still requires human evidence; any engineering-chain release requires a separate confirmed governance proposal."
     : !l3Readiness.ready
       ? "L2 automation may continue, but do not start L3. Resolve every l3Blocker first."
     : runGates

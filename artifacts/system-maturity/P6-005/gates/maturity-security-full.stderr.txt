@@ -1,0 +1,6 @@
+$ node scripts/run-system-maturity-security-suite.mjs --mode full
+FAIL  report is not successful
+FAIL  command root-security-unit exit=1
+FAIL  command electron-e2e-build exit=1
+FAIL  command electron-security-e2e exit=1
+FAIL  command electron-gateway-e2e exit=1

@@ -54,7 +54,7 @@ touchedAreas:
   - tests/unit/vtoken-default-off-documentation.test.ts
 expectedUserBehavior:
   - Maintainers can reproduce the exact dirty engineering baseline from HEAD, tracked diff, untracked file, environment, and executable hashes.
-  - TF-0009 remains degraded-agent-complete and review_needed while TF-0011 consumes only its engineering evidence.
+  - TF-0009 remains degraded-agent-complete and unfinished while TF-0011 consumes only its engineering evidence; confirmed missing human evidence uses blocked.
   - VToken remains default OFF and no production runtime behavior changes during UAS-00.
   - Authority ownership for events, context, VToken packing, coding mutation, local execution, and long-term memory remains explicit and non-overlapping.
 requiredProfiles:
@@ -76,7 +76,7 @@ acceptance:
   - The manifest has a check mode that fails when the frozen working-tree inputs drift.
   - The owner matrix identifies one authority per governed surface and reserves TF-0018 as the only long-term Memory lifecycle owner.
   - Active Harness, Task Forest, STATUS, development-log, and handoff text agree on the legal chain state: TF-0011 ready / TF-0012 proposed before confirmed closeout, then TF-0011 done / TF-0012 ready after it.
-  - TF-0009 stays review_needed with zero human/live evidence and does not become done.
+  - TF-0009 stays unfinished with zero human/live evidence: review_needed while awaiting review, blocked after a confirmed human-only blocker, never done on agent evidence.
   - VToken active authority remains default OFF and the FP-P4-06 drift regression remains green.
   - Product locks, TF-0006 blocked state, C1 4.5x keep-off authority, and Runtime Memory diagnostics-only remain unchanged.
 docs:
@@ -97,7 +97,7 @@ TF-0014, FP-P4-03, or FP-P4-04 and does not authorize live, product, or default-
 
 ## Frozen boundaries
 
-- `TF-0009=review_needed`, semantic label `degraded-agent-complete`
+- `TF-0009` remains unfinished (`review_needed` before review or `blocked` for confirmed missing human evidence), semantic label `degraded-agent-complete`
 - `liveReady=false`
 - `productApproved=false`
 - `defaultOn=false`

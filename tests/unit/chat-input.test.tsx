@@ -2120,7 +2120,7 @@ describe('ChatInput read-only context status', () => {
         warnings: [],
       },
       onManualCompact: vi.fn(),
-      onViewCompactionArtifact: vi.fn(),
+      
     });
 
     expect(screen.queryByTestId('chat-compaction-quality')).not.toBeInTheDocument();
@@ -2264,7 +2264,7 @@ describe('ChatInput agent targeting', () => {
   });
 
   it('disables the input while gateway is running but not yet ready', () => {
-    gatewayState.status = { state: 'running', port: 18789, gatewayReady: false };
+    gatewayState.status = { state: 'running', port: 18789, gatewayReady: false } as never;
     agentsState.agents = [
       {
         id: 'main',
@@ -2321,7 +2321,7 @@ describe('ChatInput agent targeting', () => {
   });
 
   it('shows gateway readiness as a read-only composer status while starting', () => {
-    gatewayState.status = { state: 'running', port: 18789, gatewayReady: false };
+    gatewayState.status = { state: 'running', port: 18789, gatewayReady: false } as never;
     agentsState.agents = [
       {
         id: 'main',

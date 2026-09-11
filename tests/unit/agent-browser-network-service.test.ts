@@ -406,7 +406,7 @@ describe('P1-2 networkWaitForRequests', () => {
   });
 
   it('无匹配超时返回空', async () => {
-    const { service, _windows } = createService();
+    const { service } = createService();
     const { sessionId } = await setupControlledSession(service);
 
     const result = await service.networkWaitForRequests({

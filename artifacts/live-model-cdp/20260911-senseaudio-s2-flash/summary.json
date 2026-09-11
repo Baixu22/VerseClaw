@@ -1,0 +1,27 @@
+{
+  "schema": "verse-claw-live-cdp-summary/v1",
+  "counts": {
+    "sessions": 6,
+    "cdpUserTurns": 18,
+    "nativeUserEntries": 19,
+    "modelMessageEntries": 73,
+    "usageBearingModelMessages": 72,
+    "toolResultEntries": 56,
+    "completed": 15,
+    "completedAfterRetry": 1,
+    "aborted": 2,
+    "directProviderPreflightRequests": 2
+  },
+  "usage": {
+    "input": 648655,
+    "output": 3165,
+    "cacheRead": 984704,
+    "cacheWrite": 0,
+    "totalTokens": 1636524
+  },
+  "costUsd": null,
+  "costNote": "运行时 cost=0 来自未配置单价，不代表免费；Provider 未返回实际金额。",
+  "evidenceClass": "live-provider-agent-operated-cdp",
+  "humanQualifyingRuns": 0,
+  "mocked": false
+}

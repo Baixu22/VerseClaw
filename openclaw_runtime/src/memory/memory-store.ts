@@ -13,9 +13,11 @@ import { resolveStateDir } from "../config/paths.js";
 import { redactSecrets } from "../logging/redact.js";
 import { normalizeMemoryProposal, reviewMemoryProposal } from "./gatekeeper.js";
 import {
+  evaluateMemoryWriteGate,
   filterCardsForModelInjection,
   resolveMemoryDualGateConfig,
   revokePoisonedMemory,
+  type MemoryDualGateConfig,
 } from "./memory-dual-gate.js";
 import { evaluateMemoryPolicy, evaluateRetentionCandidate, getMemoryPolicySnapshot, roleAppliesToCard } from "./memory-policy.js";
 import { buildContextPack } from "./context-pack.js";
@@ -876,15 +878,45 @@ export function previewMemoryProposal(
 
 export function proposeMemoryCard(
   proposal: MemoryProposal,
-  options?: { actor?: MemoryAuditActor; idFactory?: () => string },
+  options?: {
+    actor?: MemoryAuditActor;
+    idFactory?: () => string;
+    dualGate?: Partial<MemoryDualGateConfig>;
+  },
 ): MemoryGatekeeperDecision {
   const existing = getMemoryCards({ status: "active" });
-  const reviewedDecision = reviewMemoryProposal(proposal, existing, {
+  const gatekeeperOptions = {
     now: new Date(),
     idFactory: options?.idFactory ?? (() => `mem_${randomUUID()}`),
     actor: options?.actor,
     operation: proposal.operation ?? "create",
-  });
+  };
+  // TF-0110 (T-P0-1, req-2): consult the memory write gate when it is
+  // explicitly configured (caller override or OPENCLAW_MEMORY_WRITE_GATE).
+  // Unconfigured callers keep the pre-TF-0110 legacy proposal flow, so the
+  // default-off behavior is unchanged (P3-003 staged rollout; req-5).
+  const gateConfigured =
+    options?.dualGate !== undefined || process.env.OPENCLAW_MEMORY_WRITE_GATE !== undefined;
+  let reviewedDecision: MemoryGatekeeperDecision;
+  if (gateConfigured) {
+    const gateDecision = evaluateMemoryWriteGate({
+      config: resolveMemoryDualGateConfig(options?.dualGate ?? {}),
+      proposal,
+      existing,
+      options: gatekeeperOptions,
+    });
+    if (!gateDecision.allowed || !gateDecision.gatekeeper) {
+      return {
+        action: "reject",
+        accepted: false,
+        reason: gateDecision.reason,
+        reasonSummary: `write_gate:${gateDecision.reasonCode}`,
+      };
+    }
+    reviewedDecision = gateDecision.gatekeeper;
+  } else {
+    reviewedDecision = reviewMemoryProposal(proposal, existing, gatekeeperOptions);
+  }
   const decision = reviewGateAutomaticMemoryProposal(reviewedDecision, proposal);
   const proposalRecord = storeProposalRecord(makeProposalRecord({
     operation: proposal.operation ?? "create",

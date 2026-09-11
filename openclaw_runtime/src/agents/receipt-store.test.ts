@@ -1,11 +1,20 @@
+import { execFile } from "node:child_process";
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { promisify } from "node:util";
 
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { createHash } from "node:crypto";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ReceiptStore, receiptContentDigest, type PutReceiptInput, type ReceiptContent } from "./receipt-store.js";
+import {
+  ReceiptStore,
+  receiptContentDigest,
+  type PutReceiptInput,
+  type PutReceiptResult,
+  type ReceiptContent,
+  type RuntimeReceiptRow,
+} from "./receipt-store.js";
 import {
   closeOpenClawStateDatabase,
   openOpenClawStateDatabase,
@@ -66,21 +75,57 @@ function newStore() {
   return new ReceiptStore({ env: process.env, path: path.join(stateDir, "openclaw-state.db") });
 }
 
+// Separate Node processes cannot share the owner's in-process SQLite cache.
+async function putInProcess(input: PutReceiptInput): Promise<{
+  pid: number;
+  before?: RuntimeReceiptRow;
+  put: PutReceiptResult;
+  row: RuntimeReceiptRow;
+}> {
+  const script = `
+    const { ReceiptStore } = await import(${JSON.stringify(new URL("./receipt-store.ts", import.meta.url).href)});
+    const { closeOpenClawStateDatabase } = await import(${JSON.stringify(new URL("../state/openclaw-state-db.ts", import.meta.url).href)});
+    const { databasePath, input } = JSON.parse(process.argv[1]);
+    const store = new ReceiptStore({ path: databasePath });
+    try {
+      const before = store.getByIdempotencyKey(input.idempotencyKey);
+      const put = store.put(input);
+      const row = store.getByIdempotencyKey(input.idempotencyKey);
+      process.stdout.write(JSON.stringify({ pid: process.pid, before, put, row }));
+    } finally {
+      closeOpenClawStateDatabase();
+    }
+  `;
+  const { stdout } = await promisify(execFile)(
+    process.execPath,
+    [
+      "--import",
+      new URL("../../node_modules/tsx/dist/loader.mjs", import.meta.url).href,
+      "--input-type=module",
+      "--eval",
+      script,
+      JSON.stringify({ databasePath: path.join(stateDir, "openclaw-state.db"), input }),
+    ],
+    { windowsHide: true, timeout: 15_000 },
+  );
+  return JSON.parse(stdout);
+}
+
 beforeEach(() => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "rc02-receipt-store-"));
   tempRoots.push(root);
   stateDir = path.join(root, "state");
   fs.mkdirSync(stateDir, { recursive: true });
-  process.env.OPENCLAW_HOME = path.join(root, "home");
-  process.env.OPENCLAW_STATE_DIR = stateDir;
+  vi.stubEnv("OPENCLAW_HOME", path.join(root, "home"));
+  vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
+  vi.stubEnv("OPENCLAW_CONFIG_PATH", path.join(root, "openclaw.json"));
+  receiptCounter = 0;
   fs.mkdirSync(path.join(root, "home"), { recursive: true });
 });
 
 afterEach(() => {
   closeOpenClawStateDatabase();
-  delete process.env.OPENCLAW_HOME;
-  delete process.env.OPENCLAW_STATE_DIR;
-  delete process.env.OPENCLAW_CONFIG_PATH;
+  vi.unstubAllEnvs();
   for (const root of tempRoots.splice(0)) fs.rmSync(root, { recursive: true, force: true });
 });
 
@@ -149,6 +194,32 @@ describe("ReceiptStore (runtime_receipts via openclaw-state SQLite)", () => {
     expect(store.list({ kind: "shadow_wire" })).toHaveLength(1);
   });
 
+  it.each([
+    ["shadow_context", "0", "context", "1"],
+    ["context", "1", "wire", "1"],
+    ["wire", "1", "effect", "1"],
+  ] as const)(
+    "rejects a different receipt type under the same key: %s/%s to %s/%s",
+    (kind, version, nextKind, nextVersion) => {
+      const store = newStore();
+      const input = makeReceipt({
+        idempotencyKey: "typed-conflict",
+        kind,
+        version,
+        content: { logicalDigest: digest("logical"), wireDigest: digest("wire") },
+      });
+      const first = store.put(input);
+      const before = store.getByIdempotencyKey(input.idempotencyKey);
+      expect(store.put({ ...input, kind: nextKind, version: nextVersion })).toMatchObject({
+        ok: false,
+        reason: "content-conflict",
+        receiptId: first.receiptId,
+      });
+      expect(store.getByIdempotencyKey(input.idempotencyKey)).toEqual(before);
+      expect(store.list()).toHaveLength(1);
+    },
+  );
+
   it("uses explicit attempt/model-call/wire-attempt identity, not max(sequence)+1 (hard constraint 3)", () => {
     const store = newStore();
     const storeInputs: PutReceiptInput[] = [];
@@ -194,8 +265,10 @@ describe("ReceiptStore (runtime_receipts via openclaw-state SQLite)", () => {
     const store = newStore();
     const old = makeReceipt({ kind: "shadow_context", createdAt: Date.now() - 60_000 });
     const fresh = makeReceipt({ kind: "shadow_context", createdAt: Date.now() });
+    const otherKind = makeReceipt({ kind: "shadow_wire", createdAt: old.createdAt });
     expect(store.put(old).ok).toBe(true);
     expect(store.put(fresh).ok).toBe(true);
+    expect(store.put(otherKind).ok).toBe(true);
 
     expect(() => store.deleteByPolicy({ kinds: [], maxAgeMs: 1_000 })).toThrow(
       /at least one receipt kind/,
@@ -212,6 +285,9 @@ describe("ReceiptStore (runtime_receipts via openclaw-state SQLite)", () => {
     expect(result.deleted).toBe(1);
     // The fresh receipt survives; only the old one was pruned under policy.
     expect(store.list({ kind: "shadow_context" })).toHaveLength(1);
+    expect(store.getByIdempotencyKey(fresh.idempotencyKey)).toBeDefined();
+    expect(store.getByIdempotencyKey(otherKind.idempotencyKey)).toBeDefined();
+    expect(store.list()).toHaveLength(2);
   });
 
   it("records only digests/refs/indexes, never raw prompt or tool output (hard constraint 1)", () => {
@@ -246,39 +322,80 @@ describe("ReceiptStore (runtime_receipts via openclaw-state SQLite)", () => {
     expect(row.created_at).toBeTypeOf("number");
   });
 
-  it("survives restart by reading the same SQLite rows from a new store instance", () => {
-    const input = makeReceipt({ idempotencyKey: "restart-key", kind: "shadow_context" });
-    const first = newStore();
-    expect(first.put(input).ok).toBe(true);
-    // A brand-new ReceiptStore against the same state dir sees the row.
-    const second = newStore();
-    const row = second.getByIdempotencyKey("restart-key");
-    expect(row).toBeDefined();
-    expect(row!.content_digest).toBe(
-      receiptContentDigest(input.identity, input.callIndex, input.content),
-    );
-  });
+  it("retains committed receipts across exited Node processes without implicit pruning", async () => {
+    const input = makeReceipt({
+      idempotencyKey: "restart-key",
+      kind: "context",
+      version: "1",
+      content: { wireDigest: digest("restart-wire") },
+      createdAt: 1,
+    });
+    const first = await putInProcess(input);
+    const restarted = await putInProcess({ ...input, createdAt: Date.now() });
+    expect(first.before).toBeUndefined();
+    expect(restarted.pid).not.toBe(first.pid);
+    expect(restarted.before).toEqual(first.row);
+    expect(restarted.put).toMatchObject({
+      ok: true,
+      duplicate: true,
+      reason: "identical-content",
+      receiptId: first.put.receiptId,
+    });
+    expect(restarted.row).toEqual(first.row);
+    expect(restarted.row.created_at).toBe(1);
+    const conflicting = await putInProcess({ ...input, kind: "wire" });
+    expect(conflicting.before).toEqual(first.row);
+    expect(conflicting.put).toMatchObject({
+      ok: false,
+      reason: "content-conflict",
+      receiptId: first.put.receiptId,
+    });
+    expect(conflicting.row).toEqual(first.row);
+  }, 35_000);
 
-  it("does not throw into the send path on a store-level failure (hard constraint 5)", () => {
-    // A closed/missing state DB must not crash the caller; put surfaces a
-    // result object. Here we simulate an unusable database path.
+  it.each(["identical", "conflicting", "different-kind"] as const)(
+    "serializes concurrent Node writers with %s content",
+    async (mode) => {
+      // Initialize the existing schema first; this proof targets receipt writes.
+      newStore().list();
+      closeOpenClawStateDatabase();
+      const input = makeReceipt({ idempotencyKey: "concurrent-key" });
+      const other =
+        mode === "identical"
+          ? input
+          : mode === "different-kind"
+            ? { ...input, kind: "context" as const, version: "1" }
+            : {
+                ...input,
+                content: { ...input.content, logicalDigest: digest("different") },
+              };
+      const settled = await Promise.allSettled([putInProcess(input), putInProcess(other)]);
+      const outcomes = settled.map((result) => {
+        if (result.status === "rejected") throw result.reason;
+        return result.value;
+      });
+      expect(new Set(outcomes.map((result) => result.pid)).size).toBe(2);
+      const inserted = outcomes.filter((result) => result.put.inserted);
+      expect(inserted).toHaveLength(1);
+      const repeated = outcomes.find((result) => !result.put.inserted)!;
+      expect(repeated.put).toMatchObject({
+        ok: mode === "identical",
+        reason: mode === "identical" ? "identical-content" : "content-conflict",
+        receiptId: inserted[0].put.receiptId,
+      });
+      expect(newStore().list()).toEqual([inserted[0].row]);
+    },
+    20_000,
+  );
+
+  it("propagates an actual storage failure for the shadow caller to record (hard constraint 5)", () => {
+    const blocker = path.join(stateDir, "not-a-directory");
+    fs.writeFileSync(blocker, "block database creation");
     const broken = new ReceiptStore({
       env: process.env,
-      path: path.join(stateDir, "does-not-exist", "openclaw-state.db"),
+      path: path.join(blocker, "openclaw-state.db"),
     });
-    let result;
-    let threw = false;
-    try {
-      result = broken.put(makeReceipt({ idempotencyKey: "broken-db" }));
-    } catch {
-      threw = true;
-      result = undefined;
-    }
-    // The narrow store contract is that put resolves to a result and never
-    // throws synchronously into the shadow path; callers must fail RC-02
-    // acceptance on a non-ok result without changing send behavior.
-    expect(threw).toBe(false);
-    expect(result).toBeDefined();
+    expect(() => broken.put(makeReceipt({ idempotencyKey: "broken-db" }))).toThrow();
   });
 
   it("recomputes contentDigest and rejects a forged digest before writing", () => {

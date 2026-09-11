@@ -72,10 +72,29 @@ function writeHeuristicRegistry() {
   });
 }
 
+let knowledgeApi: Awaited<ReturnType<typeof importApi>>;
+
+async function importApi() {
+  return import('@electron/services/knowledge-api');
+}
+
 async function getApi() {
-  const mod = await import('@electron/services/knowledge-api');
+  const mod = await importApi();
   mod.__resetRoleRegistryCacheForTests();
+  knowledgeApi = mod;
   return mod.createKnowledgeApi({ gatewayManager: null as never });
+}
+
+/**
+ * Installs the semantic-pass invoker seam.
+ *
+ * This MUST run after `getApi()`: `createKnowledgeApi` rebinds the seam to the
+ * production invoker on every construction, so anything installed beforehand is
+ * silently replaced and the test observes the production invoker's "returned
+ * null" degradation instead of the intended behaviour.
+ */
+function useInvoker(invoker: Parameters<typeof knowledgeApi.setSemanticStewardInvoker>[0]) {
+  knowledgeApi.setSemanticStewardInvoker(invoker);
 }
 
 describe('Area 5 §3.2 — Semantic Steward pass', () => {
@@ -86,10 +105,10 @@ describe('Area 5 §3.2 — Semantic Steward pass', () => {
 
   afterEach(() => {
     rmSync(root, { recursive: true, force: true });
-    // Clean up the module-level invoker between tests so files don't cross-contaminate.
-    void import('@electron/services/knowledge-api').then((mod) => {
-      mod.setSemanticStewardInvoker(null);
-    });
+    // Clean up the module-level invoker between tests so files don't
+    // cross-contaminate. Awaited (not fire-and-forget) so the reset cannot
+    // land in the middle of the next test.
+    if (knowledgeApi) knowledgeApi.setSemanticStewardInvoker(null);
   });
 
   describe('mergeSemanticReview (pure merge logic)', () => {
@@ -151,33 +170,31 @@ describe('Area 5 §3.2 — Semantic Steward pass', () => {
       const api = await getApi();
       const result = await api.stewardReview({ title: 'Migration plan', body: 'We will migrate the database schema in Q3.', sourceIds: ['notes/migration.md'], tags: ['migration'] });
       expect(result.success).toBe(true);
-      expect(result.config.classification).toBe('heuristic');
+      expect((result.config as any).classification).toBe('heuristic');
       // No semantic pass info in notes
       expect(result.notes).not.toContain('Semantic steward pass');
     });
 
     it('appends "semantic pass unavailable" when classification is semantic but no invoker is set', async () => {
       writeSemanticRegistry();
-      const { setSemanticStewardInvoker } = await import('@electron/services/knowledge-api');
-      setSemanticStewardInvoker(null);
       const api = await getApi();
+      useInvoker(null);
       const result = await api.stewardReview({ title: 'Migration plan', body: 'We will migrate the database schema in Q3.', sourceIds: ['notes/migration.md'], tags: ['migration'] });
       expect(result.success).toBe(true);
-      expect(result.config.classification).toBe('semantic');
+      expect((result.config as any).classification).toBe('semantic');
       expect(result.notes).toContain('Semantic steward pass unavailable');
       expect(result.notes).toContain('no LLM invoker configured');
     });
 
     it('merges semantic result when invoker returns a valid review', async () => {
       writeSemanticRegistry();
-      const { setSemanticStewardInvoker } = await import('@electron/services/knowledge-api');
-      setSemanticStewardInvoker(async () => ({
+      const api = await getApi();
+      useInvoker(async () => ({
         type: 'decision',
         tags: ['migration', 'database'],
         warnings: [{ kind: 'conflict', message: 'Contradicts migration rollback plan.', relatedPageId: 'p_456' }],
         confidence: 0.88,
       }));
-      const api = await getApi();
       const result = await api.stewardReview({ title: 'Migration plan', body: 'We will migrate the database schema in Q3 with no rollback.', sourceIds: ['notes/migration.md'], tags: ['migration'] });
       expect(result.success).toBe(true);
       expect(result.type).toBe('decision'); // overridden by high-confidence semantic
@@ -188,14 +205,13 @@ describe('Area 5 §3.2 — Semantic Steward pass', () => {
 
     it('keeps heuristic type when semantic confidence is below threshold', async () => {
       writeSemanticRegistry();
-      const { setSemanticStewardInvoker } = await import('@electron/services/knowledge-api');
-      setSemanticStewardInvoker(async () => ({
+      const api = await getApi();
+      useInvoker(async () => ({
         type: 'decision',
         tags: [],
         warnings: [],
         confidence: 0.4,
       }));
-      const api = await getApi();
       const result = await api.stewardReview({ title: 'Glossary entry', body: 'A term definition for reference purposes, covering key concepts and their meanings in the project context.', sourceIds: ['notes/glossary.md'], tags: [] });
       expect(result.success).toBe(true);
       // Semantic says 'decision' but confidence 0.4 < 0.7 threshold → keep heuristic type.
@@ -206,9 +222,8 @@ describe('Area 5 §3.2 — Semantic Steward pass', () => {
 
     it('appends "semantic pass unavailable" when invoker returns null', async () => {
       writeSemanticRegistry();
-      const { setSemanticStewardInvoker } = await import('@electron/services/knowledge-api');
-      setSemanticStewardInvoker(async () => null);
       const api = await getApi();
+      useInvoker(async () => null);
       const result = await api.stewardReview({ title: 'Migration plan', body: 'We will migrate the database schema in Q3.', sourceIds: [], tags: [] });
       expect(result.success).toBe(true);
       expect(result.notes).toContain('Semantic steward pass unavailable');
@@ -217,9 +232,8 @@ describe('Area 5 §3.2 — Semantic Steward pass', () => {
 
     it('appends "semantic pass unavailable" with error message when invoker throws', async () => {
       writeSemanticRegistry();
-      const { setSemanticStewardInvoker } = await import('@electron/services/knowledge-api');
-      setSemanticStewardInvoker(async () => { throw new Error('LLM timeout'); });
       const api = await getApi();
+      useInvoker(async () => { throw new Error('LLM timeout'); });
       const result = await api.stewardReview({ title: 'Migration plan', body: 'We will migrate the database schema in Q3.', sourceIds: [], tags: [] });
       expect(result.success).toBe(true);
       expect(result.notes).toContain('Semantic steward pass unavailable');

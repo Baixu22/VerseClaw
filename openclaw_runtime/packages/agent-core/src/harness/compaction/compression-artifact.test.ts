@@ -4,6 +4,7 @@ import {
   buildDeterministicCompressionArtifact,
   type CompressionArtifactInput,
 } from "./compression-artifact.js";
+import { renderCompactionSummaryShape } from "./summary-contract.js";
 
 describe("compression artifact telemetry", () => {
   it("preserves compression telemetry and normalizes capability activation kinds", () => {
@@ -37,5 +38,36 @@ describe("compression artifact telemetry", () => {
       { kind: "skill", name: "systematic-debugging" },
       { kind: "other", name: "legacy-activation" },
     ]);
+  });
+
+  it("extracts recovery fields from the canonical compaction contract", () => {
+    const summary = renderCompactionSummaryShape({
+      "## Goal and Progress": "Unify the summary contract.",
+      "## Attempts and Failures": "(none)",
+      "## Key Decisions and Constraints": "- Keep the quality gate shadow-only.",
+      "## Current State": [
+        "### Done",
+        "- Shared the canonical section list.",
+        "### In Progress",
+        "- Verify the artifact adapter.",
+        "### Blocked",
+        "- (none)",
+      ].join("\n"),
+      "## Key Decisions": "- Use agent-core as the source of truth.",
+      "## Files Touched": "- src/agents/compaction.ts",
+      "## Tests": "- pnpm test:dcs",
+      "## Next Actions": "1. Review the generated evidence.",
+    });
+
+    const artifact = buildDeterministicCompressionArtifact({ messages: [], summary });
+
+    expect(artifact.objective).toContain("Unify the summary contract");
+    expect(artifact.constraints.map((item) => item.text)).toContain(
+      "Keep the quality gate shadow-only.",
+    );
+    expect(artifact.decisions.map((item) => item.text)).toContain(
+      "Use agent-core as the source of truth.",
+    );
+    expect(artifact.nextAction).toContain("Review the generated evidence");
   });
 });

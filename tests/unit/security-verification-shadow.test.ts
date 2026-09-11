@@ -21,6 +21,7 @@ import {
   buildRuntimeTaskEventFixture,
   RuntimeTaskEventLogStore,
   serializeRuntimeCheckpoint,
+  type RuntimeTaskStatusEventPayload,
   type ToolCallRequest,
   type ToolCallResult,
 } from '../../openclaw_runtime/src/runtime-core';
@@ -30,6 +31,7 @@ import {
   resolveCoreOperatorGatewayMethodScope,
 } from '../../openclaw_runtime/src/gateway/methods/core-descriptors';
 import { securityVerificationShadowHandlers } from '../../openclaw_runtime/src/gateway/server-methods/security-verification-shadow';
+import { coreGatewayHandlers } from '../../openclaw_runtime/src/gateway/server-methods';
 
 type CapturedResponse = {
   ok: boolean;
@@ -81,7 +83,7 @@ async function callHandler(
   const handler = securityVerificationShadowHandlers[method];
   if (!handler) throw new Error(`missing handler: ${method}`);
   await handler({
-    req: { id: 1, method, params },
+    req: { id: '1', type: 'req', method, params },
     params,
     client: null,
     isWebchatConnect: () => false,
@@ -130,6 +132,7 @@ describe('security/verification shadow evaluators', () => {
     );
 
     const record = recordSecurityVerificationShadow({ source: 'verification.run', request: req, result: result(), storeTrace: false });
+    if (!record.request) throw new Error('Expected sanitized request');
     expect(record.request.argKeys).toEqual(['apiToken', 'url']);
     expect(JSON.stringify(record)).not.toContain('secret-value');
   });
@@ -345,7 +348,8 @@ describe('security/verification shadow evaluators', () => {
       taskId: 'task_auto_sample',
       kind: 'completed',
       timestamp: 1,
-      payload: { status: 'completed', secret: 'secret-value' },
+      // The extra field is intentional: prove that raw values are omitted.
+      payload: { status: 'completed', secret: 'secret-value' } as RuntimeTaskStatusEventPayload,
     });
     expect(sampleRuntimeEventLogVerification({ cfg: {}, events: [event], storeTrace: false })).toBeUndefined();
     expect(getSecurityVerificationShadowRecords()).toHaveLength(0);
@@ -391,7 +395,7 @@ describe('security/verification shadow evaluators', () => {
       taskId: 'task_store_auto_sample',
       kind: 'running',
       timestamp: 1,
-      payload: { status: 'running', prompt: 'raw-prompt' },
+      payload: { status: 'running', prompt: 'raw-prompt' } as RuntimeTaskStatusEventPayload,
     });
 
     store.append(event);
@@ -433,12 +437,33 @@ describe('security/verification shadow evaluators', () => {
 
 describe('security/verification gateway methods', () => {
   it('registers every MVP method as advertised operator.read core descriptors', () => {
-    const descriptors = createCoreGatewayMethodDescriptors(securityVerificationShadowHandlers);
-    expect(descriptors.map((descriptor) => descriptor.name).sort()).toEqual([...MVP_METHODS].sort());
+    // TF-0089's construction guard rejects classified specs that are missing
+    // from the handlers record, so descriptor construction must run over the
+    // full production core handler surface (which registers `health` and
+    // friends), not the shadow subset alone. The shadow handlers are spread
+    // last so the assertions below still observe the real shadow handlers.
+    const coreHandlers = {
+      ...coreGatewayHandlers,
+      ...securityVerificationShadowHandlers,
+    };
+    const descriptors = createCoreGatewayMethodDescriptors(coreHandlers);
+
+    // Restricted back to the MVP surface, the descriptor set must match exactly:
+    // no MVP method silently dropped, and no extra method claiming MVP scope.
+    const mvpDescriptors = descriptors
+      .filter((descriptor) => (MVP_METHODS as readonly string[]).includes(descriptor.name))
+      .map((descriptor) => descriptor.name)
+      .sort();
+    expect(mvpDescriptors).toEqual([...MVP_METHODS].sort());
     expect(listCoreAdvertisedGatewayMethodNames()).toEqual(expect.arrayContaining([...MVP_METHODS]));
 
     for (const method of MVP_METHODS) {
       expect(resolveCoreOperatorGatewayMethodScope(method)).toBe('operator.read');
+      // The shadow handler must win over any same-named core stub — otherwise
+      // the descriptor would advertise a method the shadow surface never serves.
+      expect(descriptors.find((descriptor) => descriptor.name === method)?.handler).toBe(
+        securityVerificationShadowHandlers[method],
+      );
       expect(descriptors.find((descriptor) => descriptor.name === method)).toMatchObject({
         name: method,
         scope: 'operator.read',
@@ -719,6 +744,7 @@ describe('security/verification gateway methods', () => {
       value: { toolName: 'write', args: { path: 'file.txt', password: 'hidden' } },
     });
     const record = recordSecurityVerificationShadow({ source: 'verification.run', request: req, storeTrace: false });
+    if (!record.request) throw new Error('Expected sanitized request');
     expect(record.request.argKeys).toEqual(['password', 'path']);
     expect(JSON.stringify(record)).not.toContain('hidden');
   });

@@ -248,6 +248,7 @@ Connect to multiple AI providers (OpenAI, Anthropic, and more) with credentials 
 In developer mode, the dedicated Image Generation page supports an independent OpenAI-compatible image-generation endpoint (Base URL, API key, and model name such as `gpt-image-2`) so image generation can use a dedicated `/v1/images/generations` service while chat continues using the normal OpenAI provider.
 For **Custom** providers used with OpenAI-compatible gateways, you can set a custom `User-Agent` in **Settings 鈫?AI Providers 鈫?Edit Provider** for compatibility-sensitive endpoints.
 When a compatible gateway rejects `/models` for non-auth reasons, Verse Claw automatically falls back to a lightweight `/chat/completions` or `/responses` probe during API key validation.
+Providers configured with an environment SecretRef in `openclaw.json` are also recognized as ready when that variable is available to Verse Claw and allowed by the secret provider. The environment key is not copied into configuration files.
 
 ### 馃寵 Adaptive Theming
 Light mode, dark mode, or system-synchronized themes. Verse Claw adapts to your preferences automatically.
@@ -437,6 +438,14 @@ re-parses the display command. cwd/env/argv/timeout/output bounds fail closed an
 native/MCP/legacy fallback is reachable. This is engineering evidence only and does not enable
 diagnostics, writes, canary traffic, default-on, GA, or product approval. See the
 [P2-02 evidence](docs/dev/verseshell-foundation/P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md).
+
+The P3 external-write policy now marks compiler, script, Git-hook, terminal-shell, and other
+mutating process commands as external writes on the immutable command plan. The existing
+OpenClaw exec approval remains the only authorization surface, and the static warning never
+copies command text or credentials. These process writes are outside the ClawX write journal,
+carry `rollbackClaim=false`, and are never automatically rolled back. This engineering slice
+does not enable writes, canary traffic, default-on, GA, or product approval. See the
+[P3 evidence](docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md).
 
 Use this conservative `openclaw.json` configuration:
 

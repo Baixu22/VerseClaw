@@ -192,7 +192,7 @@ describe('role-first runtime MVP memory and context pack', () => {
       memories: [...longCards, { ...baseCard, id: 'cold', status: 'cold', content: 'do not include' }],
       roleName: 'architect',
       taskState: 'Current task state must fit the task-state bucket.',
-      budget: { total: 120, coreFacts: 80, taskState: 40 },
+      budget: { total: 120, coreFacts: 80, taskState: 40 } as never,
     });
 
     expect(pack.estimatedTokens.total).toBeLessThanOrEqual(120);

@@ -5,6 +5,7 @@ import type {
   AgencyRoleCandidatePayload,
   AgencyRolePromotionRecord,
   AgencyRoleReviewPayload,
+  RoleConfigEffort,
 } from '@shared/host-api/contract';
 
 const {
@@ -291,7 +292,8 @@ describe('roles host API', () => {
       displayName: 'Valid',
       rolePrompt: 'Prompt',
       tools: [],
-      effort: 'xhigh',
+      // Intentionally invalid: this test proves runtime validation rejects it.
+      effort: 'xhigh' as RoleConfigEffort,
       permissions: { filesystem: 'read', network: 'limited', commands: [] },
       tags: [],
     })).rejects.toThrow('effort must be one of');

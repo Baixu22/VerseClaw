@@ -58,7 +58,7 @@ function listRepositoryFiles() {
   const output = execFileSync(
     'git',
     ['ls-files', '-co', '--exclude-standard', '-z'],
-    { cwd: rootDir, encoding: 'buffer' },
+    { cwd: rootDir, encoding: 'buffer', maxBuffer: 64 * 1024 * 1024 },
   );
   return output
     .toString('utf8')
@@ -88,11 +88,39 @@ function categoryFor(filePath) {
   return 'internal-reference';
 }
 
+// Lines that explicitly negate enablement are boundary statements, not
+// graduation claims: they name the forbidden terms precisely to say those
+// states stay off (e.g. README evidence paragraphs in en/zh/ja). A line
+// matching one of these is skipped entirely; keep the patterns anchored to
+// the exact negation phrasing so a real claim on the same line is not masked
+// accidentally — new disclaimer wordings must be added here deliberately.
+const DISCLAIMER_LINE_PATTERNS = [
+  /\bdoes not enable\b/i, // en
+  /不开启|不启用|不会默认启用/, // zh-CN
+  /を有効化しません/, // ja
+  /не включает/i, // ru
+];
+
+// "GA hardening" is the recorded name of a historical engineering pass
+// (2026-08-19 evidence), not a claim that the product reached GA. Strip it
+// before term matching instead of editing history in the READMEs.
+const GA_HARDENING_TEST = /\bGA hardening\b/;
+const GA_HARDENING_PATTERN = /\bGA hardening\b/g;
+
 export function findForbiddenClaims(text) {
   const matches = [];
   const lines = text.split(/\r?\n/);
   for (let index = 0; index < lines.length; index += 1) {
-    const line = lines[index];
+    let line = lines[index];
+    // English README evidence paragraphs wrap across lines, so the negation
+    // verb ("does not enable …") may sit on the previous line while the named
+    // terms sit on the continuation line. Detect disclaimers over a two-line
+    // context window.
+    const disclaimerContext = index > 0 ? `${lines[index - 1]} ${line}` : line;
+    if (DISCLAIMER_LINE_PATTERNS.some((pattern) => pattern.test(disclaimerContext))) continue;
+    if (GA_HARDENING_TEST.test(line)) {
+      line = line.replace(GA_HARDENING_PATTERN, '');
+    }
     for (const claim of FORBIDDEN_CLAIMS) {
       claim.pattern.lastIndex = 0;
       const count = [...line.matchAll(claim.pattern)].length;

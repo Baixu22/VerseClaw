@@ -414,6 +414,24 @@ export type ObservabilitySourceHealth = {
   trajectory: ObservabilitySourceHealthEntry;
 };
 
+export type ObservabilityHostDiagnostic = {
+  schemaVersion: '1';
+  trace: {
+    requestId: string;
+    traceId: string;
+    spanId: string;
+    parentTraceId?: string;
+    runId?: string;
+    correlationDigest?: string;
+  };
+  failureKind: 'compile' | 'test' | 'tool_missing' | 'permission' | 'environment' | 'runtime' | 'timeout' | 'cancelled' | 'unknown';
+  suggestedAction: 'retry' | 'ask_user' | 'stop' | 'continue_with_caution';
+  durationMs?: number;
+  exitCode?: number;
+  signal?: 'sigint' | 'sigterm' | 'sigkill' | 'other';
+  redaction: 'raw-fields-omitted';
+};
+
 export type ObservabilityDashboardSnapshot = {
   generatedAt: number;
   cards: ObservabilityMetricCard[];

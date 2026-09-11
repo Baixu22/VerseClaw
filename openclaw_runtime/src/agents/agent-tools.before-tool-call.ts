@@ -5,6 +5,7 @@
  */
 import os from "node:os";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 import { addTimerTimeoutGraceMs } from "@openclaw/normalization-core/number-coercion";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { ToolLoopDetectionConfig } from "../config/types.tools.js";
@@ -14,12 +15,15 @@ import {
 } from "../infra/diagnostic-error-metadata.js";
 import {
   emitTrustedDiagnosticEvent,
+  resolveDiagnosticCodingOperation,
   type DiagnosticToolParamsSummary,
   type DiagnosticToolSource,
 } from "../infra/diagnostic-events.js";
 import {
   createChildDiagnosticTraceContext,
+  createDiagnosticTraceContextFromActiveScope,
   freezeDiagnosticTraceContext,
+  getActiveDiagnosticTraceContext,
   type DiagnosticTraceContext,
 } from "../infra/diagnostic-trace-context.js";
 import {
@@ -68,6 +72,7 @@ import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
 import { normalizeToolName } from "./tool-policy.js";
 import type { AnyAgentTool } from "./tools/common.js";
 import { callGatewayTool } from "./tools/gateway.js";
+import type { ToolLoopTerminationObserver } from "./tool-loop-termination.js";
 
 export type ToolOutcomeObservation = {
   toolName: string;
@@ -106,6 +111,12 @@ export type HookContext = {
   channelId?: string;
   loopDetection?: ToolLoopDetectionConfig;
   onToolOutcome?: ToolOutcomeObserver;
+  /**
+   * Host callback invoked when a critical tool-loop veto ends the turn.
+   * Without it the veto is only a blocked tool result and the model can keep
+   * re-issuing the same call until an operator stops the run (#s05-t01).
+   */
+  onToolLoopTermination?: ToolLoopTerminationObserver;
   skillsSnapshot?: SkillSnapshot;
   skillCommand?: {
     commandName: string;
@@ -309,6 +320,19 @@ function resolveToolDiagnosticIdentity(tool: AnyAgentTool): ToolDiagnosticIdenti
     return { toolSource: "channel", toolOwner: channelMeta.channelId };
   }
   return { toolSource: "core" };
+}
+
+function resolveToolDiagnosticTrace(ctx?: HookContext): DiagnosticTraceContext {
+  const parent = ctx?.trace ?? getActiveDiagnosticTraceContext();
+  return freezeDiagnosticTraceContext(
+    parent
+      ? createChildDiagnosticTraceContext(parent)
+      : createDiagnosticTraceContextFromActiveScope(),
+  );
+}
+
+function createToolDiagnosticRequestId(): string {
+  return `tool-${randomUUID()}`;
 }
 
 type SkillUsageMatch = {
@@ -844,6 +868,15 @@ export async function runBeforeToolCallHook(args: {
           message: loopResult.message,
           pairedToolName: loopResult.pairedToolName,
         });
+        // The veto alone only blocks this one call. Tell the host that owns the
+        // run lifecycle so it can end the turn; otherwise a model that keeps
+        // re-issuing the identical call spins until an operator stops the run.
+        args.ctx.onToolLoopTermination?.({
+          toolName,
+          detector: loopResult.detector,
+          count: loopResult.count,
+          message: loopResult.message,
+        });
         return {
           blocked: true,
           kind: "veto",
@@ -1178,15 +1211,17 @@ export function wrapToolWithBeforeToolCallHook(
           throw new Error(outcome.reason);
         }
         const normalizedToolName = normalizeToolName(toolName || "tool");
-        const trace = ctx?.trace
-          ? freezeDiagnosticTraceContext(createChildDiagnosticTraceContext(ctx.trace))
-          : undefined;
+        const trace = resolveToolDiagnosticTrace(ctx);
+        const requestId = createToolDiagnosticRequestId();
+        const codingOperation = resolveDiagnosticCodingOperation(normalizedToolName);
         const eventBase = {
+          requestId,
           ...(ctx?.runId && { runId: ctx.runId }),
           ...(ctx?.sessionKey && { sessionKey: ctx.sessionKey }),
           ...(ctx?.sessionId && { sessionId: ctx.sessionId }),
           ...(trace && { trace }),
           toolName: normalizedToolName,
+          ...(codingOperation ? { codingOperation } : {}),
           ...diagnosticIdentity,
           ...(toolCallId && { toolCallId }),
           paramsSummary: summarizeToolParams(outcome.params ?? hookParams),
@@ -1225,15 +1260,17 @@ export function wrapToolWithBeforeToolCallHook(
         ) ?? executeParams;
       recordAdjustedParamsForToolCall(toolCallId, executeParams, ctx?.runId);
       const normalizedToolName = normalizeToolName(toolName || "tool");
-      const trace = ctx?.trace
-        ? freezeDiagnosticTraceContext(createChildDiagnosticTraceContext(ctx.trace))
-        : undefined;
+      const trace = resolveToolDiagnosticTrace(ctx);
+      const requestId = createToolDiagnosticRequestId();
+      const codingOperation = resolveDiagnosticCodingOperation(normalizedToolName);
       const eventBase = {
+        requestId,
         ...(ctx?.runId && { runId: ctx.runId }),
         ...(ctx?.sessionKey && { sessionKey: ctx.sessionKey }),
         ...(ctx?.sessionId && { sessionId: ctx.sessionId }),
         ...(trace && { trace }),
         toolName: normalizedToolName,
+        ...(codingOperation ? { codingOperation } : {}),
         ...diagnosticIdentity,
         ...(toolCallId && { toolCallId }),
         paramsSummary: summarizeToolParams(executeParams),

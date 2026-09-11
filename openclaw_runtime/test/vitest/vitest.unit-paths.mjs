@@ -6,6 +6,8 @@ export const unitTestIncludePatterns = [
   "src/**/*.test.ts",
   "packages/**/*.test.ts",
   "test/**/*.test.ts",
+  // TF-0116: experiments moved out of src keep their colocated tests here.
+  "experiments/**/*.test.ts",
 ];
 
 export const boundaryTestFiles = [

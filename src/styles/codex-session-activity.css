@@ -14,8 +14,8 @@
  * literals and no theme block — codex-tokens.css already carries both themes.
  *
  * PROVENANCE OF THE GEOMETRY. Lifted from styles/codex-session-rail.css, which
- * is the same panel shape ported from the Codex capture and went orphaned when
- * SessionStatusRail was removed (it is not @imported anywhere). The numbers are
+ * is the same panel shape ported from the Codex capture and is no longer
+ * @imported anywhere. The numbers are
  * the ones that file already established: a 10px gutter, 32px section heads and
  * rows, 38px rows once a 24px avatar has to sit in them, tabular delta figures,
  * and — now that the card is a rail again — its 300px width, 52px/16px offsets

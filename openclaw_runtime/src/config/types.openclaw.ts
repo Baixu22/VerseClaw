@@ -98,6 +98,7 @@ export type RuntimeFeatureConfig = {
     deferredOps?: boolean;
     governedExec?: boolean;
     artifactResults?: boolean;
+    patchPreview?: boolean;
     mcpCompatibility?: boolean;
     legacyEval?: boolean;
     compatibilityNativeFallback?: boolean;
@@ -182,15 +183,9 @@ export type RuntimeFeatureConfig = {
   };
   /**
    * Coding FactStore / write-kit / residual isolation flags (CODING-OPTIMIZATION-EDD).
-   * Advanced backends stay opt-in with safe defaults.
+  * Advanced backends stay opt-in with safe defaults.
    */
   coding?: {
-    /**
-     * @deprecated TASK-P0-02: ignored. Fact view tools are gated by
-     * OPENCLAW_DCS_CONTEXT_VIEW_TOOLS / Settings dcsContextViewToolsEnabled
-     * via isDcsContextViewToolsEnabled — not this leaf.
-     */
-    factViews?: { enabled?: boolean };
     parseOnTouch?: { enabled?: boolean };
     staleWriteGuard?: { enabled?: boolean };
     writeJournal?: { enabled?: boolean };
@@ -206,9 +201,42 @@ export type RuntimeFeatureConfig = {
     worktree?: { backend?: "inprocess" | "git" };
     symbolLease?: { enabled?: boolean; mode?: "memory" | "wal" };
     patchFlow?: { default?: boolean; enabled?: boolean };
-    sekb?: { enabled?: boolean; experienceShadow?: boolean };
+    sekb?: { enabled?: boolean; experienceShadow?: boolean; retrievalShadow?: boolean };
     routingMemo?: { shadow?: boolean; enabled?: boolean };
     verifier?: { noSelfRepair?: boolean };
+    uftk?: {
+      enabled?: boolean;
+      baseVersionGuard?: { enabled?: boolean };
+      auditLog?: { enabled?: boolean };
+      gitCheckpoint?: {
+        enabled?: boolean;
+        pathScoped?: { enabled?: boolean };
+        safetySnapshot?: { enabled?: boolean };
+        lifecycle?: { enabled?: boolean };
+      };
+      concurrencyV2?: { enabled?: boolean };
+      execUndo?: { enabled?: boolean };
+      autoCheckpoint?: {
+        enabled?: boolean;
+        allowWorkspaceRoots?: string[];
+        allowAgentIds?: string[];
+        minIntervalMs?: number;
+        retention?: {
+          maxCount?: number;
+          maxAgeMs?: number;
+        };
+      };
+      execSideEffects?: { enabled?: boolean };
+      commandApproval?: {
+        enabled?: boolean;
+        defaultDecision?: 'allow' | 'prompt' | 'forbidden';
+        rules?: Array<{
+          prefix?: string;
+          decision?: 'allow' | 'prompt' | 'forbidden';
+          reason?: string;
+        }>;
+      };
+    };
   };
   /** Context Runtime Kit backend rollout flags. Defaults on for context/prompt/recovery when no explicit context engine slot is configured. */
   contextRuntimeKit?: {

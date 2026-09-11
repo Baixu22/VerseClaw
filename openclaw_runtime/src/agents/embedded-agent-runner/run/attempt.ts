@@ -1422,6 +1422,7 @@ export async function runEmbeddedAttempt(
             authProfileStore: params.authProfileStore,
             recordToolPrepStage: (name) => corePluginToolStages.mark(name),
             onToolOutcome: params.onToolOutcome,
+            onToolLoopTermination: params.onToolLoopTermination,
             skillsSnapshot: skillsSnapshotForRun,
             onYield: (message) => {
               yieldDetected = true;
@@ -1746,6 +1747,7 @@ export async function runEmbeddedAttempt(
         agentId: sessionAgentId,
       }),
       onToolOutcome: params.onToolOutcome,
+      onToolLoopTermination: params.onToolLoopTermination,
     };
     const codeModeTools = codeModeControlsEnabledForRun
       ? createCodeModeTools({
@@ -2040,6 +2042,7 @@ export async function runEmbeddedAttempt(
         sessionKey: params.sessionKey,
         sessionId: params.sessionId,
         runId: params.runId,
+        taskId: params.lineage?.taskLedgerRootId,
         workspaceDir: effectiveWorkspace,
         taskHint: params.prompt,
         markdownSources: hookAdjustedBootstrapFiles
@@ -2554,6 +2557,7 @@ export async function runEmbeddedAttempt(
               runId: params.runId,
               loopDetection: clientToolLoopDetection,
               onToolOutcome: params.onToolOutcome,
+              onToolLoopTermination: params.onToolLoopTermination,
             },
           )
         : [];

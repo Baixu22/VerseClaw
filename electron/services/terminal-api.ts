@@ -32,6 +32,11 @@ import {
   decideSandboxHighRiskAction,
   loadSandboxHighRiskPolicy,
 } from '@electron/utils/sandbox-high-risk-gate';
+import {
+  createHostTraceDiagnosticsService,
+  type HostTraceDiagnosticsEvidence,
+  type HostTraceDiagnosticsService,
+} from './host-trace-diagnostics';
 
 type RunPayload = {
   command?: unknown;
@@ -44,6 +49,11 @@ type TerminalSessionPayload = {
   data?: unknown;
   cols?: unknown;
   rows?: unknown;
+};
+
+type TerminalExecutionOutcome = {
+  result: WorkspaceTerminalRunResult;
+  traceEvidence: HostTraceDiagnosticsEvidence;
 };
 
 const MAX_OUTPUT_CHARS = 80_000;
@@ -94,13 +104,63 @@ function numberFromUnknown(value: unknown): number | null {
   return typeof value === 'number' && Number.isFinite(value) ? value : null;
 }
 
+function tracePhaseFromUnknown(value: unknown): TerminalExecutionOutcome['traceEvidence']['phase'] | undefined {
+  return value === 'compile' || value === 'test' || value === 'tool' || value === 'permission'
+    || value === 'environment' || value === 'runtime'
+    ? value
+    : undefined;
+}
+
+function traceEvidenceFromGatewayResult(
+  result: Record<string, unknown>,
+  normalized: WorkspaceTerminalRunResult,
+): TerminalExecutionOutcome['traceEvidence'] {
+  const status = result.status;
+  const timedOut = result.timedOut === true || status === 'timeout' || status === 'timed_out';
+  const cancelled = result.cancelled === true || status === 'cancelled' || status === 'aborted';
+  const code = typeof result.errorCode === 'string'
+    ? result.errorCode
+    : typeof result.code === 'string'
+      ? result.code
+      : undefined;
+  return {
+    phase: tracePhaseFromUnknown(result.phase),
+    code: code ?? (timedOut ? 'ETIMEDOUT' : cancelled ? 'ABORT_ERR' : 'RUNTIME_ERROR'),
+    exitCode: normalized.exitCode ?? undefined,
+    signal: typeof result.signal === 'string' ? result.signal : undefined,
+    durationMs: normalized.durationMs,
+    ...(timedOut ? { timedOut: true } : {}),
+    ...(cancelled ? { cancelled: true } : {}),
+  };
+}
+
+function traceEvidenceFromGatewayError(error: unknown, durationMs: number): TerminalExecutionOutcome['traceEvidence'] {
+  const message = error instanceof Error ? error.message : String(error);
+  if (/timeout|timed out|ETIMEDOUT/i.test(message)) {
+    return { code: 'ETIMEDOUT', timedOut: true, durationMs };
+  }
+  if (/abort|cancel/i.test(message)) {
+    return { code: 'ABORT_ERR', cancelled: true, durationMs };
+  }
+  if (/EACCES|EPERM|access denied|permission denied|not permitted/i.test(message)) {
+    return { code: 'EACCES', durationMs };
+  }
+  if (/ENOENT|command not found|tool not found|cannot find module/i.test(message)) {
+    return { code: 'ENOENT', durationMs };
+  }
+  if (/invalid (?:cwd|env)|workspace not found|config(?:uration)? not found/i.test(message)) {
+    return { code: 'INVALID_CWD', durationMs };
+  }
+  return { code: 'RUNTIME_ERROR', durationMs };
+}
+
 function normalizeGatewayExecResult(input: {
   result: unknown;
   command: string;
   cwd: string;
   risk: WorkspaceCommandRisk | 'none' | 'dangerous';
   startedAt: number;
-}): WorkspaceTerminalRunResult {
+}): TerminalExecutionOutcome {
   const result = isRecord(input.result) ? input.result : {};
   const exitCode = numberFromUnknown(result.exitCode)
     ?? numberFromUnknown(result.code)
@@ -120,7 +180,7 @@ function normalizeGatewayExecResult(input: {
       ? result.ok
       : exitCode === null || exitCode === 0;
 
-  return {
+  const normalized: WorkspaceTerminalRunResult = {
     success,
     blocked: false,
     cwd: typeof result.cwd === 'string' ? result.cwd : input.cwd,
@@ -129,7 +189,12 @@ function normalizeGatewayExecResult(input: {
     stdout,
     stderr,
     durationMs: numberFromUnknown(result.durationMs) ?? Date.now() - input.startedAt,
+    ...(result.timedOut === true ? { timedOut: true } : {}),
     risk: input.risk,
+  };
+  return {
+    result: normalized,
+    traceEvidence: traceEvidenceFromGatewayResult(result, normalized),
   };
 }
 
@@ -200,7 +265,7 @@ async function runViaOpenClawExec(input: {
   timeoutMs: number;
   cwd: string;
   risk: WorkspaceCommandRisk;
-}): Promise<WorkspaceTerminalRunResult> {
+}): Promise<TerminalExecutionOutcome> {
   const startedAt = Date.now();
   let lastUnsupportedError: unknown = null;
   const payload = buildOpenClawExecPayload(input.command, input.cwd);
@@ -217,42 +282,52 @@ async function runViaOpenClawExec(input: {
       });
     } catch (error) {
       if (!isUnsupportedOpenClawExecRpc(error)) {
+        const durationMs = Date.now() - startedAt;
         return {
-          success: false,
-          blocked: false,
-          cwd: input.cwd,
-          command: input.command,
-          exitCode: null,
-          stdout: '',
-          stderr: trimOutput(String(error)),
-          durationMs: Date.now() - startedAt,
-          risk: input.risk,
+          result: {
+            success: false,
+            blocked: false,
+            cwd: input.cwd,
+            command: input.command,
+            exitCode: null,
+            stdout: '',
+            stderr: trimOutput(String(error)),
+            durationMs,
+            risk: input.risk,
+          },
+          traceEvidence: traceEvidenceFromGatewayError(error, durationMs),
         };
       }
       lastUnsupportedError = error;
     }
   }
 
+  const durationMs = Date.now() - startedAt;
   return {
-    success: false,
-    blocked: false,
-    reason: '当前 OpenClaw 运行时未暴露直接终端执行 RPC；请通过对话中的 OpenClaw exec 工具执行，权限策略仍会通过 tools.exec.security/ask 生效。',
-    cwd: input.cwd,
-    command: input.command,
-    exitCode: null,
-    stdout: '',
-    stderr: trimOutput(lastUnsupportedError ? String(lastUnsupportedError) : 'OpenClaw direct terminal RPC unavailable'),
-    durationMs: Date.now() - startedAt,
-    risk: input.risk,
+    result: {
+      success: false,
+      blocked: false,
+      reason: '当前 OpenClaw 运行时未暴露直接终端执行 RPC；请通过对话中的 OpenClaw exec 工具执行，权限策略仍会通过 tools.exec.security/ask 生效。',
+      cwd: input.cwd,
+      command: input.command,
+      exitCode: null,
+      stdout: '',
+      stderr: trimOutput(lastUnsupportedError ? String(lastUnsupportedError) : 'OpenClaw direct terminal RPC unavailable'),
+      durationMs,
+      risk: input.risk,
+    },
+    traceEvidence: { code: 'RUNTIME_ERROR', durationMs },
   };
 }
 
 export function createTerminalApi({
   gatewayManager,
   terminalManager = new TerminalSessionManager(),
+  traceDiagnostics = createHostTraceDiagnosticsService(),
 }: {
   gatewayManager: GatewayManager;
   terminalManager?: TerminalSessionManager;
+  traceDiagnostics?: HostTraceDiagnosticsService;
 }): CompleteHostServiceRegistry['terminal'] {
   return {
     run: async (payload) => {
@@ -296,13 +371,20 @@ export function createTerminalApi({
               requestHash: buildTerminalRequestHash(command, workspace.rootPath),
             });
             if (approved) {
-              return await runViaOpenClawExec({
+              const outcome = await runViaOpenClawExec({
                 gatewayManager,
                 command,
                 timeoutMs,
                 cwd: workspace.rootPath,
                 risk: decision.risk,
               });
+              if (!outcome.result.success) {
+                traceDiagnostics.record({
+                  approval: approved,
+                  evidence: outcome.traceEvidence,
+                });
+              }
+              return outcome.result;
             }
           }
           const approval = await createPermissionApproval({
@@ -358,13 +440,14 @@ export function createTerminalApi({
         });
       }
 
-      return await runViaOpenClawExec({
+      const outcome = await runViaOpenClawExec({
         gatewayManager,
         command,
         timeoutMs,
         cwd: workspace.rootPath,
         risk: decision.risk,
       });
+      return outcome.result;
     },
     open: async (payload) => {
       const body = normalizeTerminalOpenPayload(payload);

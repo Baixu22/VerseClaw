@@ -15,7 +15,7 @@ import {
   temporalRelevanceScore,
   temporalRRFArm,
 } from "./temporal-rrf-arm";
-import type { RuntimeMemoryQueryableFact } from "../../openclaw_runtime/src/runtime-core/memory-context";
+import type { RuntimeMemoryQueryableFact } from "../../../openclaw_runtime/src/runtime-core/memory-context";
 
 // Helper: create a minimal fact for testing.
 function makeFact(factId: string, validAt: number): RuntimeMemoryQueryableFact {

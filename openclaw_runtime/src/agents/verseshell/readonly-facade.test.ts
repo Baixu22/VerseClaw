@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import type { AciTransport } from "./aci-client.js";
+import type { AciExecuteOptions, AciTransport } from "./aci-client.js";
 import { VerseShellAciClient } from "./aci-client.js";
 import {
   buildReadonlyFacadeCacheKey,
@@ -12,6 +12,7 @@ import {
 } from "./readonly-facade.js";
 import type { Observation } from "../../../../shared/verseshell/types.js";
 import { createOpenClawCodingTools } from "../agent-tools.js";
+import { createDiagnosticTraceContext } from "../../infra/diagnostic-trace-context.js";
 
 const ENABLED_FLAGS = {
   verifiedRuntime: true,
@@ -40,15 +41,15 @@ function observation(op: string, data: Record<string, unknown> = {}): Observatio
 }
 
 function fakeClient(cwd: string, responses: Record<string, Observation>) {
-  const calls: Array<{ op: string; args: Record<string, unknown> }> = [];
+  const calls: Array<{ op: string; args: Record<string, unknown>; options?: AciExecuteOptions }> = [];
   const transport: AciTransport = {
     key: "test-process",
     workspace: cwd,
     capabilities: ["file.read", "shell.exec"],
     protocolVersion: "verseshell.jsonl/v1",
     catalogDigest: "sha256:test",
-    request: async (op, args) => {
-      calls.push({ op, args });
+    request: async (op, args, options) => {
+      calls.push({ op, args, ...(options ? { options } : {}) });
       return responses[op] ?? observation(op);
     },
   };
@@ -95,6 +96,34 @@ describe("VerseShell read-only facade", () => {
       op: "repo.search",
       args: { query: "needle", glob: "src/**/*.ts", context_lines: 2, max_items: 7 },
     });
+  });
+
+  it("passes one host trace through read, search, and result queries", async () => {
+    const cwd = process.cwd();
+    const trace = createDiagnosticTraceContext({
+      traceId: "3".repeat(32),
+      spanId: "4".repeat(16),
+    });
+    const fake = fakeClient(cwd, {
+      "file.view": observation("file.view", { text: "hello" }),
+      "repo.search": observation("repo.search", { matches: [] }),
+      "result.query": observation("result.query", { matches: [] }),
+    });
+    const adapter = new VerseShellReadonlyFacadeAdapter({ cwd, client: fake.client, trace });
+
+    await adapter.readFile({ path: "src/index.ts" });
+    await adapter.searchContent({ query: "needle" });
+    await adapter.resultQuery({
+      handle: `result://sha256/${"a".repeat(64)}`,
+      mode: "meta",
+    });
+
+    expect(fake.calls.map((call) => call.op)).toEqual(["file.view", "repo.search", "result.query"]);
+    expect(fake.calls.map((call) => call.options?.traceId)).toEqual([
+      trace.traceId,
+      trace.traceId,
+      trace.traceId,
+    ]);
   });
 
   it("isolates cache entries by workspace, revision, policy, operation, and args", () => {

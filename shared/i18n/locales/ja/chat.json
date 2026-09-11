@@ -155,6 +155,9 @@
       "destructive": "破壊的"
     },
     "riskLabel": "リスク",
+    "externalWriteSummary": "外部プロセスの書き込み（詳細は非表示）",
+    "externalWriteNoRollback": "ClawX の書き込みジャーナル対象外です。自動ロールバックはありません。",
+    "sourceLabel": "ソース",
     "modeLabel": "モード",
     "status": {
       "pending": "保留中",
@@ -232,7 +235,15 @@
         "title": "許可が必要です",
         "approve": "承認",
         "deny": "拒否",
-        "retryRequired": "決定を記録しました。エージェントに操作の再試行を依頼してください。"
+        "retryRequired": "決定を記録しました。エージェントに操作の再試行を依頼してください。",
+        "externalWriteTitle": "外部書き込みには承認が必要です",
+        "externalWriteWarning": "この外部プロセスは ClawX の書き込みジャーナル外でファイルやその他の状態を変更する可能性があります。",
+        "externalWriteNoRollback": "ClawX の書き込みジャーナル対象外です。自動ロールバックはありません。",
+        "externalWriteEffectLabel": "効果",
+        "externalWriteEffect": "外部プロセスの書き込み",
+        "externalWriteRollbackLabel": "ロールバック",
+        "externalWriteSnapshotLabel": "スナップショット",
+        "externalWriteSnapshot": "このリクエストにバインドされています。承認は後続の再試行のみを許可します。"
       }
     },
     "actions": {

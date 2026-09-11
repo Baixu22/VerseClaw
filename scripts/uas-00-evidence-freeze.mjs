@@ -234,7 +234,10 @@ export function buildUas00AuditManifest(root, options = {}) {
     (tf0011Status === "ready" && tf0012Status === "proposed") ||
     (tf0011Status === "done" && tf0012Status === "ready");
 
-  requireCondition(nodes["TF-0009"]?.status === "review_needed", "TF-0009 must remain review_needed");
+  requireCondition(
+    ["review_needed", "blocked"].includes(nodes["TF-0009"]?.status),
+    "TF-0009 must await review or human evidence; agent evidence cannot complete it",
+  );
   requireCondition(nodes["TF-0009"]?.progress === 50, "TF-0009 progress must remain 50");
   requireCondition(
     validEngineeringChainState,
@@ -384,7 +387,7 @@ export function buildUas00AuditManifest(root, options = {}) {
       reason: "UAS-00 adds engineering governance evidence only; no product behavior or interface changed.",
     },
     residuals: [
-      "TF-0009 human/live canary remains 0/10 per profile and review_needed.",
+      "TF-0009 human/live canary remains incomplete at 0/10 per profile.",
       ...(!workspaceMetadataMatchesCanonical
         ? ["Task Forest export metadata still names a workspace other than the canonical audit root."]
         : []),

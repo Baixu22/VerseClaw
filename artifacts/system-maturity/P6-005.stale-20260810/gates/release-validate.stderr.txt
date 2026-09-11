@@ -1,0 +1,1 @@
+$ node scripts/assert-tag-matches-package.mjs

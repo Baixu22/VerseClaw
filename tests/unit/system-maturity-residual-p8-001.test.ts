@@ -19,8 +19,8 @@ describe('system maturity residual gate (P8-001)', () => {
       nowMs: Date.parse('2026-07-18T00:00:00.000Z'),
     });
     expect(result.ok).toBe(false);
-    expect(result.errors.some((e) => e.includes('F-SEC-001'))).toBe(true);
-    expect(result.errors.some((e) => e.includes('F-REL-004'))).toBe(true);
+    expect(result.errors.some((e: any) => e.includes('F-SEC-001'))).toBe(true);
+    expect(result.errors.some((e: any) => e.includes('F-REL-004'))).toBe(true);
   });
 
   it('passes with valid residual-register entries', () => {
@@ -63,7 +63,7 @@ describe('system maturity residual gate (P8-001)', () => {
       nowMs: Date.parse('2026-07-18T00:00:00.000Z'),
     });
     expect(result.ok).toBe(false);
-    expect(result.errors.some((e) => e.includes('expired'))).toBe(true);
+    expect(result.errors.some((e: any) => e.includes('expired'))).toBe(true);
   });
 
   it('repo residual audit is green for committed residual-register', () => {

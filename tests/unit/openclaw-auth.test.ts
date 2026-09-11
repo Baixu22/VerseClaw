@@ -1,6 +1,6 @@
 import { mkdir, readFile, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { testHome, testUserData, getSettingMock } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
@@ -67,6 +67,80 @@ async function writeAgentAuthProfiles(agentId: string, store: Record<string, unk
   await mkdir(agentDir, { recursive: true });
   await writeFile(join(agentDir, 'auth-profiles.json'), JSON.stringify(store, null, 2), 'utf8');
 }
+
+describe('getProviderApiKeyFromOpenClaw environment references', () => {
+  const envName = 'CLAWX_TEST_PROVIDER_ENV_KEY';
+  const ref = { source: 'env', provider: 'default', id: envName };
+
+  beforeEach(async () => {
+    vi.resetModules();
+    await rm(testHome, { recursive: true, force: true });
+    vi.stubEnv(envName, 'test-environment-token');
+  });
+  afterEach(() => vi.unstubAllEnvs());
+
+  it('resolves an explicit env reference without writing the key to disk', async () => {
+    await writeOpenClawJson({ models: { providers: { custom: { apiKey: ref } } } });
+    const { getProviderApiKeyFromOpenClaw } = await import('@electron/utils/openclaw-auth');
+    expect(await getProviderApiKeyFromOpenClaw('custom')).toBe('test-environment-token');
+    expect((await readOpenClawJson()).models).toEqual({ providers: { custom: { apiKey: ref } } });
+    await expect(readAuthProfiles('main')).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('keeps existing auth-profile credentials ahead of the config reference', async () => {
+    await writeOpenClawJson({ models: { providers: { custom: { apiKey: ref } } } });
+    await writeAgentAuthProfiles('main', {
+      version: 1, profiles: { 'custom:default': { type: 'api_key', provider: 'custom', key: 'profile-token' } },
+    });
+    const { getProviderApiKeyFromOpenClaw } = await import('@electron/utils/openclaw-auth');
+    expect(await getProviderApiKeyFromOpenClaw('custom')).toBe('profile-token');
+  });
+
+  it.each([undefined, '', '   '])('rejects a missing or empty environment value: %s', async (value) => {
+    vi.stubEnv(envName, value);
+    await writeOpenClawJson({ models: { providers: { custom: { apiKey: ref } } } });
+    const { getProviderApiKeyFromOpenClaw } = await import('@electron/utils/openclaw-auth');
+    expect(await getProviderApiKeyFromOpenClaw('custom')).toBeNull();
+  });
+
+  it.each([
+    { source: 'file', provider: 'default', id: envName },
+    { source: 'exec', provider: 'default', id: envName },
+    { ...ref, provider: 'undeclared' },
+    { ...ref, id: 'invalid-name' },
+  ])('rejects unsupported or invalid references: %j', async (apiKey) => {
+    await writeOpenClawJson({ models: { providers: { custom: { apiKey } } } });
+    const { getProviderApiKeyFromOpenClaw } = await import('@electron/utils/openclaw-auth');
+    expect(await getProviderApiKeyFromOpenClaw('custom')).toBeNull();
+  });
+
+  it.each([
+    [{ source: 'env', allowlist: [envName] }, 'test-environment-token'],
+    [{ source: 'env', allowlist: [] }, null],
+    [{ source: 'env', allowlist: 'invalid' }, null],
+    [{ source: 'file', path: '/unused' }, null],
+  ])('respects the configured secret provider: %j', async (secretProvider, expected) => {
+    await writeOpenClawJson({
+      models: { providers: { custom: { apiKey: { ...ref, provider: 'restricted' } } } },
+      secrets: { providers: { restricted: secretProvider } },
+    });
+    const { getProviderApiKeyFromOpenClaw } = await import('@electron/utils/openclaw-auth');
+    expect(await getProviderApiKeyFromOpenClaw('custom')).toBe(expected);
+  });
+
+  it('uses the configured implicit env provider alias', async () => {
+    await writeOpenClawJson({
+      models: { providers: {
+        custom: { apiKey: { ...ref, provider: 'inherited' } },
+        stale: { apiKey: ref },
+      } },
+      secrets: { defaults: { env: 'inherited' } },
+    });
+    const { getProviderApiKeyFromOpenClaw } = await import('@electron/utils/openclaw-auth');
+    expect(await getProviderApiKeyFromOpenClaw('custom')).toBe('test-environment-token');
+    expect(await getProviderApiKeyFromOpenClaw('stale')).toBeNull();
+  });
+});
 
 describe('saveProviderKeyToOpenClaw', () => {
   beforeEach(async () => {
@@ -1783,7 +1857,7 @@ describe('syncOpenAiCompatibleImageRelay', () => {
     expect((entries['clawx-openai-image'] as Record<string, unknown>).enabled).toBe(true);
 
     const auth = await readAuthProfiles('main');
-    expect((auth.profiles['clawx-openai-image:default'] as Record<string, unknown>).key).toBe('sk-relay-test');
+    expect(((auth.profiles as Record<string, any>)['clawx-openai-image:default'] as Record<string, unknown>).key).toBe('sk-relay-test');
   });
 
   it('removes only the Verse Claw image provider when relay is disabled', async () => {

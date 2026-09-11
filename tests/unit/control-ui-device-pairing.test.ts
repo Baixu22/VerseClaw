@@ -67,7 +67,7 @@ describe('control-ui-device-pairing', () => {
     const approved = await approvePendingControlUiPairingRequests({
       isConnected: () => true,
       getStatus: () => ({ port: 18789 }),
-      rpc,
+      rpc: rpc as never,
     });
 
     expect(approved).toEqual(['req-control-ui']);
@@ -92,7 +92,7 @@ describe('control-ui-device-pairing', () => {
 
     const approvedRequestIds = new Set<string>(['req-1']);
     const approved = await approvePendingControlUiPairingRequests(
-      { isConnected: () => true, getStatus: () => ({ port: 18789 }), rpc },
+      { isConnected: () => true, getStatus: () => ({ port: 18789 }), rpc: rpc as never },
       { approvedRequestIds },
     );
 

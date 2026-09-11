@@ -80,6 +80,7 @@ import { createUsageApi } from '../services/usage-api';
 import { createPermissionsApi } from '../services/permissions-api';
 import { createOrchestrationPresetsApi } from '../services/orchestration-presets-api';
 import { createTerminalApi } from '../services/terminal-api';
+import { createHostTraceDiagnosticsService } from '../services/host-trace-diagnostics';
 import { createSessionActivityApi } from '../services/session-activity-api';
 import { createGitApi } from '../services/git-api';
 import { createTerminalSessionManager, type TerminalSessionManager } from '../services/terminal-session-manager';
@@ -96,6 +97,7 @@ import { createTaskLedgerApi } from '../services/task-ledger-api';
 import { createRemoteTasksApi } from '../services/remote-tasks-api';
 import { createClawGraphApi } from '../services/clawgraph-api';
 import { createObservabilityApi } from '../services/observability-api';
+import { recordObservabilityHostDiagnostic } from '../services/observability-service';
 import { createSystemApi } from '../services/system-api';
 import { createResourceTrackerApi } from '../services/resource-tracker-api';
 import { HOST_EVENT_CHANNELS } from '@shared/host-events/contract';
@@ -192,6 +194,9 @@ function registerTypedHostHandlers(
   registerAgentBrowserGatewayBridge(gatewayManager);
   const knowledgeApi = createKnowledgeApi({ gatewayManager });
   const remoteForgeApi = createRemoteForgeApi();
+  const traceDiagnostics = createHostTraceDiagnosticsService({
+    onSummary: recordObservabilityHostDiagnostic,
+  });
 
   hostApiRegistry.registerCoreServices({
     app: createAppApi(),
@@ -205,7 +210,7 @@ function registerTypedHostHandlers(
     dcsProdFlags: createDcsProdFlagsApi(gatewayManager),
     workspaces: createWorkspacesApi({ gatewayManager, terminalManager, webPreviewManager }),
     projectRules: createProjectRulesApi(),
-    terminal: createTerminalApi({ gatewayManager, terminalManager }),
+    terminal: createTerminalApi({ gatewayManager, terminalManager, traceDiagnostics }),
     sessionActivity: createSessionActivityApi({ gatewayManager, terminalManager }),
     git: createGitApi(),
     permissions: createPermissionsApi(),

@@ -50,5 +50,10 @@ export {
   type CompactionSettings,
   type ContextUsageEstimate,
 } from "./harness/compaction/compaction.js";
+export {
+  REQUIRED_COMPACTION_SECTIONS,
+  renderCompactionSummaryShape,
+  type RequiredCompactionSection,
+} from "./harness/compaction/summary-contract.js";
 export * from "./harness/utils/shell-output.js";
 export * from "./harness/utils/truncate.js";

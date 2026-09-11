@@ -70,6 +70,7 @@ function makeBlockStore(
   overrides: {
     query?: (params: BlockQuery) => Promise<ContextBlock[]>;
     queryByEntity?: (params: BlockEntityQuery) => Promise<ContextBlock[]>;
+    recallArchivedBlocks?: BlockStoreApi["recallArchivedBlocks"];
   } = {},
 ): BlockStoreApi {
   const defaultStats: BlockStoreStats = {
@@ -83,6 +84,9 @@ function makeBlockStore(
     upsert: vi.fn(async () => ({ accepted: true })),
     query: overrides.query ?? vi.fn(async () => [makeBlock()]),
     queryByEntity: overrides.queryByEntity ?? vi.fn(async () => [makeBlock({ block_type: "experience" })]),
+    ...(overrides.recallArchivedBlocks
+      ? { recallArchivedBlocks: overrides.recallArchivedBlocks }
+      : {}),
     invalidate: vi.fn(async () => undefined),
     stats: vi.fn(async () => defaultStats),
   };
@@ -103,7 +107,8 @@ describe("DCS Stage 5 context agent tools", () => {
   describe("schema + happy path", () => {
     it("context_read returns full_content for task_state", async () => {
       const query = vi.fn(async () => [makeBlock()]);
-      const store = makeBlockStore({ query });
+      const recallArchivedBlocks = vi.fn(async () => []);
+      const store = makeBlockStore({ query, recallArchivedBlocks });
       const tool = createContextReadTool({
         sessionId: "session-a",
         blockStore: store,
@@ -127,6 +132,50 @@ describe("DCS Stage 5 context agent tools", () => {
           block_types: ["task_state"],
         }),
       );
+      expect(recallArchivedBlocks).not.toHaveBeenCalled();
+    });
+
+    it("context_read exposes include_archived and persists explicit recall", async () => {
+      const archived = makeBlock({
+        block_id: "wm:archived",
+        block_type: "working_memory",
+        source_system: "working-memory",
+        full_content: "archived-note",
+        presence: {
+          always_on: false,
+          lifecycle_state: "archived",
+          archived_at: "2026-07-12T00:00:00.000Z",
+          heat: 2,
+        },
+      });
+      const recallArchivedBlocks = vi.fn(async () => [
+        makeBlock({
+          ...archived,
+          presence: { always_on: false, lifecycle_state: "active", heat: 3 },
+        }),
+      ]);
+      const tool = createContextReadTool({
+        sessionId: "session-a",
+        blockStore: makeBlockStore({
+          query: vi.fn(async () => [archived]),
+          recallArchivedBlocks,
+        }),
+      });
+      const schema = tool!.parameters as { properties?: Record<string, unknown> };
+      expect(schema.properties).toHaveProperty("include_archived");
+
+      const result = await executeTool(tool!, {
+        block_type: "working_memory",
+        include_archived: true,
+      });
+      const details = result.details as { ok: boolean; count: number; contents: string[] };
+      expect(details).toMatchObject({ ok: true, count: 1 });
+      expect(details.contents).toEqual(["archived-note"]);
+      expect(recallArchivedBlocks).toHaveBeenCalledWith({
+        requester_session_id: "session-a",
+        session_id: "session-a",
+        block_ids: ["wm:archived"],
+      });
     });
 
     it("context_search wraps searchContext", async () => {

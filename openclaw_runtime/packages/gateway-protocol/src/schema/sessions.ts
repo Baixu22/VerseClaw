@@ -1,5 +1,5 @@
 // Gateway Protocol schema module defines protocol validation shapes.
-import { Type } from "typebox";
+import { Type, type TSchema } from "typebox";
 import { PluginJsonValueSchema } from "./plugins.js";
 import { NonEmptyString, SessionLabelString } from "./primitives.js";
 
@@ -79,7 +79,19 @@ export const CompressionArtifactQualitySchema = Type.Object(
 
 export const CompressionEvidenceRefSchema = Type.Object(
   {
-    type: Type.String(),
+    type: Type.Union([
+      Type.Literal("session"),
+      Type.Literal("trace"),
+      Type.Literal("file"),
+      Type.Literal("tool"),
+      Type.Literal("task_ledger"),
+      Type.Literal("clawgraph"),
+      Type.Literal("manual"),
+      Type.Literal("archive"),
+      Type.Literal("cvk"),
+      Type.Literal("other"),
+      Type.String(),
+    ]),
     ref: NonEmptyString,
     label: Type.Optional(Type.String()),
   },
@@ -93,6 +105,76 @@ export const CompressionFactSchema = Type.Object(
   },
   { additionalProperties: false },
 );
+
+function SemanticAtomVariantSchema(
+  severity: TSchema,
+  status: TSchema,
+  evidenceRefs: TSchema,
+) {
+  return Type.Object(
+    {
+      id: NonEmptyString,
+      type: Type.Union([
+        Type.Literal("goal"),
+        Type.Literal("latest_user_ask"),
+        Type.Literal("decision"),
+        Type.Literal("constraint"),
+        Type.Literal("failed_attempt"),
+        Type.Literal("entity"),
+        Type.Literal("next_action"),
+        Type.Literal("outcome"),
+        Type.Literal("safety_boundary"),
+      ]),
+      canonicalIdentity: NonEmptyString,
+      severity,
+      confidence: Type.Number({ minimum: 0, maximum: 1 }),
+      scope: NonEmptyString,
+      polarity: Type.Union([
+        Type.Literal("positive"),
+        Type.Literal("negative"),
+        Type.Literal("neutral"),
+      ]),
+      status,
+      text: Type.String(),
+      evidenceRefs,
+      supersedes: Type.Optional(Type.Array(NonEmptyString)),
+      conflicts: Type.Optional(Type.Array(NonEmptyString)),
+      updatedAt: Type.Optional(Type.Integer({ minimum: 0 })),
+      source: Type.Optional(Type.Object(
+        {
+          kind: Type.Union([
+            Type.Literal("summary"),
+            Type.Literal("message"),
+            Type.Literal("ledger"),
+            Type.Literal("cvk"),
+            Type.Literal("archive"),
+          ]),
+          ref: NonEmptyString,
+        },
+        { additionalProperties: false },
+      )),
+    },
+    { additionalProperties: false },
+  );
+}
+
+export const CompressionSemanticAtomSchema = Type.Union([
+  SemanticAtomVariantSchema(
+    Type.Literal("critical"),
+    Type.Literal("verified"),
+    Type.Array(CompressionEvidenceRefSchema, { minItems: 1 }),
+  ),
+  SemanticAtomVariantSchema(
+    Type.Union([Type.Literal("important"), Type.Literal("nice_to_have")]),
+    Type.Literal("verified"),
+    Type.Array(CompressionEvidenceRefSchema),
+  ),
+  SemanticAtomVariantSchema(
+    Type.Union([Type.Literal("critical"), Type.Literal("important"), Type.Literal("nice_to_have")]),
+    Type.Union([Type.Literal("unverified"), Type.Literal("stale"), Type.Literal("superseded")]),
+    Type.Array(CompressionEvidenceRefSchema),
+  ),
+]);
 
 export const CompressionArtifactSchema = Type.Object(
   {
@@ -122,6 +204,7 @@ export const CompressionArtifactSchema = Type.Object(
     staleExcludedCount: Type.Optional(Type.Integer({ minimum: 0 })),
     causalAnchorCount: Type.Optional(Type.Integer({ minimum: 0 })),
     warnings: Type.Optional(Type.Array(Type.String())),
+    semanticAtoms: Type.Optional(Type.Array(CompressionSemanticAtomSchema)),
   },
   { additionalProperties: false },
 );

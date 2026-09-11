@@ -376,11 +376,32 @@ export type DiagnosticToolParamsSummary =
 
 export type DiagnosticToolSource = "channel" | "core" | "mcp" | "plugin";
 
+/** Low-cardinality coding operation labels used for tool diagnostics. */
+export type DiagnosticCodingOperation = "read" | "search" | "modify" | "test" | "result_query";
+
+/** Classifies tool names without inspecting model-visible parameters or output. */
+export function resolveDiagnosticCodingOperation(
+  toolName: string,
+): DiagnosticCodingOperation | undefined {
+  const normalized = toolName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_");
+  if (["read", "read_file", "ls", "file_view"].includes(normalized)) return "read";
+  if (["search", "search_content", "grep", "repo_search"].includes(normalized)) return "search";
+  if (["write", "write_file", "edit", "apply_patch", "file_write"].includes(normalized)) return "modify";
+  if (["exec", "process", "run_command", "test", "run_tests"].includes(normalized)) return "test";
+  if (["result_query", "verseshell_result", "result_query_tool"].includes(normalized)) return "result_query";
+  return undefined;
+}
+
 type DiagnosticToolExecutionBaseEvent = DiagnosticBaseEvent & {
+  /** Host/runtime-generated request id; never sourced from model parameters. */
+  requestId: string;
+  /** Every tool execution event carries a resolved trace, including roots. */
+  trace: DiagnosticTraceContext;
   runId?: string;
   sessionKey?: string;
   sessionId?: string;
   toolName: string;
+  codingOperation?: DiagnosticCodingOperation;
   toolSource?: DiagnosticToolSource;
   toolOwner?: string;
   toolCallId?: string;

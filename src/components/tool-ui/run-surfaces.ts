@@ -7,19 +7,6 @@ import type { PermissionApprovalEvent } from '@shared/types/workspace';
 export const MAX_TERMINAL_OUTPUT_CHARS = 32 * 1024;
 export const MAX_CODE_DIFF_CHARS = 256 * 1024;
 
-export type RunApprovalSurface = {
-  type: 'approval';
-  id: string;
-  source: PermissionApprovalEvent['source'];
-  risk: PermissionApprovalEvent['risk'];
-  title: string;
-  description?: string;
-  command?: string;
-  cwd?: string;
-  paths?: string[];
-  status: PermissionApprovalEvent['status'];
-};
-
 export type RunTerminalSurface = {
   type: 'terminal';
   id: string;
@@ -81,7 +68,6 @@ export type RunProcessSurface = {
 };
 
 export type RunToolSurface =
-  | RunApprovalSurface
   | RunTerminalSurface
   | RunCodeDiffSurface
   | RunProgressSurface;
@@ -452,21 +438,6 @@ export function projectProgressSurface(
         summary: hasFailure ? 'Run completed with errors' : 'Run completed',
         at: new Date().toISOString(),
       },
-  };
-}
-
-export function projectApprovalSurface(approval: PermissionApprovalEvent): RunApprovalSurface {
-  return {
-    type: 'approval',
-    id: approval.id,
-    source: approval.source,
-    risk: approval.risk,
-    title: approval.reason || approval.command || approval.paths?.[0] || approval.source,
-    description: approval.paramsPreview,
-    command: approval.command,
-    cwd: approval.cwd,
-    paths: approval.paths,
-    status: approval.status,
   };
 }
 

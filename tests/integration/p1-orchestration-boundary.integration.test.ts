@@ -92,18 +92,18 @@ describe('P1 ordinary orchestration boundary', () => {
     const handler = roleOrchestrationHandlers['orchestrator.run'];
 
     await handler({
-      ...buildHandlerArgs({
+      ...(buildHandlerArgs as any)({
         task: 'Coordinate a failing ordinary orchestration',
         sessionKey: 'agent:main:main',
         includeVerifier: false,
         workers: [{ roleName: 'reviewer', task: 'Review the change' }],
       }, emptyConfig(), captured),
       context: {
-        ...buildHandlerArgs({}, emptyConfig(), []).context,
+        ...(buildHandlerArgs as any)({}, emptyConfig(), []).context,
         broadcast: vi.fn(),
       },
       respond: (ok, payload, error) => {
-        captured.push({ ok, payload, error });
+        captured.push({ ok, payload, error } as never);
       },
     });
 
@@ -156,7 +156,7 @@ describe('P1 ordinary orchestration boundary', () => {
 
       const planResponses: CapturedRespond[] = [];
       await roleOrchestrationHandlers['orchestrator.plan'](
-        buildHandlerArgs({
+        (buildHandlerArgs as any)({
           task: 'implement login flow',
           workspaceDir: workspace,
         }, cfg, planResponses),
@@ -169,7 +169,7 @@ describe('P1 ordinary orchestration boundary', () => {
 
       const summaryResponses: CapturedRespond[] = [];
       await roleOrchestrationHandlers['routing_memo.summary'](
-        buildHandlerArgs({ workspaceDir: workspace }, cfg, summaryResponses),
+        (buildHandlerArgs as any)({ workspaceDir: workspace }, cfg, summaryResponses),
       );
 
       const summary = summaryResponses[0]?.payload as {
@@ -183,7 +183,7 @@ describe('P1 ordinary orchestration boundary', () => {
       expect(summary.shadow?.divergenceCount).toBe(1);
       expect(summary.shadow?.outcomes?.memo_worse).toBe(1);
     } finally {
-      rmSync(workspace, { recursive: true, force: true });
+      rmSync(workspace, { recursive: true, force: true } as never);
     }
   });
 
@@ -205,7 +205,7 @@ describe('P1 ordinary orchestration boundary', () => {
       const plan = async (qualityParams: Record<string, unknown> = {}) => {
         const responses: CapturedRespond[] = [];
         await roleOrchestrationHandlers['orchestrator.plan'](
-          buildHandlerArgs({
+          (buildHandlerArgs as any)({
             task: 'review login flow',
             workspaceDir: workspace,
             ...qualityParams,
@@ -230,7 +230,7 @@ describe('P1 ordinary orchestration boundary', () => {
         affected: false,
         reason: 'authority-shadow',
         authority: { state: 'unavailable', source: 'none' },
-      });
+      } as never);
 
       const forgedQuality = await plan({
         qualityState: {
@@ -277,7 +277,7 @@ describe('P1 ordinary orchestration boundary', () => {
             ],
             contextSummary: 'Verified routing quality authority.',
           })) as never,
-          recordCheckpoint: vi.fn() as never,
+          recordCheckpoint: vi.fn(),
         },
       );
 

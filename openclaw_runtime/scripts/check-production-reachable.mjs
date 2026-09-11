@@ -27,15 +27,18 @@
 //   node scripts/check-production-reachable.mjs --all-modules
 //   node scripts/check-production-reachable.mjs --blind-spots
 //   node scripts/check-production-reachable.mjs --roots
+//   node scripts/check-production-reachable.mjs --exports
 //
 // Exit codes (per symbol run, worst wins):
 //   0  every queried symbol has >=1 real call site in a production-reachable module
 //   1  at least one symbol has no production-reachable call site
 //   2  at least one symbol is reachable only as a re-exported API surface (no call site)
 //   3  usage error, unknown symbol, or a configured root no longer exists
-import { readdirSync, readFileSync, statSync, existsSync } from "node:fs";
+import { readdirSync, readFileSync, statSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import ts from "typescript";
 import { fileURLToPath } from "node:url";
+import { isMainEntrypoint } from "../../scripts/lib/entrypoint.mjs";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PKG_ROOT = path.resolve(SCRIPT_DIR, "..");
@@ -217,11 +220,14 @@ export function resolveSpecifier(fromFile, specifier) {
 }
 
 function buildGraph(files) {
+  const sources = new Map();
   const stripped = new Map();
   const specifierText = new Map();
   const edges = new Map();
+  const unresolved = new Map();
   for (const file of files) {
     const source = readFileSync(file, "utf8");
+    sources.set(file, source);
     // Symbol search wants strings gone; specifier extraction and import-span
     // detection need them intact. Blanking is length-preserving, so offsets are
     // interchangeable between the two variants.
@@ -229,13 +235,98 @@ function buildGraph(files) {
     const forSpecifiers = stripCommentsOnly(source);
     specifierText.set(file, forSpecifiers);
     const targets = new Set();
+    const missing = [];
     for (const spec of extractSpecifiers(forSpecifiers)) {
       const resolved = resolveSpecifier(file, spec);
       if (resolved) targets.add(resolved);
+      else if (spec.startsWith(".")) missing.push(spec);
     }
     edges.set(file, targets);
+    if (missing.length > 0) unresolved.set(file, missing);
   }
-  return { stripped, specifierText, edges };
+  return { sources, stripped, specifierText, edges, unresolved };
+}
+
+function hasModifier(node, kind) {
+  return node.modifiers?.some((modifier) => modifier.kind === kind) ?? false;
+}
+
+function bindingIdentifiers(name, out = []) {
+  if (ts.isIdentifier(name)) out.push(name);
+  else if (ts.isObjectBindingPattern(name) || ts.isArrayBindingPattern(name)) {
+    for (const element of name.elements) {
+      if (ts.isBindingElement(element)) bindingIdentifiers(element.name, out);
+    }
+  }
+  return out;
+}
+
+function exportLocation(sourceFile, node) {
+  const { line } = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
+  return line + 1;
+}
+
+/** Enumerates direct runtime exports without treating type-only declarations as callables. */
+export function enumerateRuntimeExportsFromSource(source, file = "source.ts") {
+  const sourceFile = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+  const exports = [];
+  const blindSpots = [];
+  const add = (name, node, kind) => exports.push({ name, file, line: exportLocation(sourceFile, node), kind });
+
+  for (const statement of sourceFile.statements) {
+    if (ts.isExportDeclaration(statement)) {
+      if (!statement.exportClause) {
+        blindSpots.push({
+          file,
+          line: exportLocation(sourceFile, statement),
+          kind: "wildcard-export",
+          detail: statement.moduleSpecifier?.getText(sourceFile) ?? "<computed>",
+        });
+        continue;
+      }
+      if (ts.isNamespaceExport(statement.exportClause)) {
+        add(statement.exportClause.name.text, statement, "namespace-export");
+        continue;
+      }
+      for (const element of statement.exportClause.elements) {
+        if (statement.isTypeOnly || element.isTypeOnly) continue;
+        add(element.name.text, element, statement.moduleSpecifier ? "re-export" : "export");
+      }
+      continue;
+    }
+
+    if (!hasModifier(statement, ts.SyntaxKind.ExportKeyword)) continue;
+    if (ts.isInterfaceDeclaration(statement) || ts.isTypeAliasDeclaration(statement)) continue;
+    if (hasModifier(statement, ts.SyntaxKind.DefaultKeyword)) {
+      blindSpots.push({
+        file,
+        line: exportLocation(sourceFile, statement),
+        kind: "default-export",
+        detail: statement.name?.text ?? "anonymous",
+      });
+      continue;
+    }
+    if (ts.isVariableStatement(statement)) {
+      for (const declaration of statement.declarationList.declarations) {
+        for (const identifier of bindingIdentifiers(declaration.name)) add(identifier.text, identifier, "export");
+      }
+    } else if (ts.isFunctionDeclaration(statement) || ts.isClassDeclaration(statement) || ts.isEnumDeclaration(statement)) {
+      if (statement.name) add(statement.name.text, statement.name, "export");
+    }
+  }
+  return { exports, blindSpots };
+}
+
+/** Enumerates direct exports for every source file; callers can machine-check the blind-spot list. */
+export function enumerateRuntimeExports(files, sources = new Map()) {
+  const entries = [];
+  const blindSpots = [];
+  for (const file of files) {
+    const result = enumerateRuntimeExportsFromSource(sources.get(file) ?? readFileSync(file, "utf8"), file);
+    entries.push(...result.exports);
+    blindSpots.push(...result.blindSpots);
+  }
+  return { entries, blindSpots };
 }
 
 function reachableFrom(roots, edges) {
@@ -263,11 +354,19 @@ function reachableFrom(roots, edges) {
  */
 export function findImportExportSpans(strippedSource) {
   const spans = [];
-  const re = /(?:^|\n)[ \t]*(import|export)\b([\s\S]{0,2000}?)from[ \t]*["'][^"']+["']/gu;
-  let m;
-  re.lastIndex = 0;
-  while ((m = re.exec(strippedSource)) !== null) {
-    spans.push({ start: m.index, end: m.index + m[0].length, keyword: m[1] });
+  const sourceFile = ts.createSourceFile(
+    "references.ts",
+    strippedSource,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS,
+  );
+  for (const statement of sourceFile.statements) {
+    if (ts.isImportDeclaration(statement)) {
+      spans.push({ start: statement.getStart(sourceFile), end: statement.getEnd(), keyword: "import" });
+    } else if (ts.isExportDeclaration(statement) && statement.moduleSpecifier) {
+      spans.push({ start: statement.getStart(sourceFile), end: statement.getEnd(), keyword: "export" });
+    }
   }
   return spans;
 }
@@ -298,14 +397,12 @@ export function classifyReference(line, symbol) {
   return "use";
 }
 
-function findReferences(symbol, files, stripped, specifierText) {
-  const word = new RegExp(`\\b${symbol}\\b`, "gu");
-  const hits = [];
+function findReferencesForSymbols(symbols, files, stripped, specifierText) {
+  const wanted = new Set(symbols);
+  const hitsBySymbol = new Map(symbols.map((symbol) => [symbol, []]));
   for (const file of files) {
     const text = stripped.get(file);
     if (!text) continue;
-    word.lastIndex = 0;
-    if (!word.test(text)) continue;
     // Spans must come from the strings-intact variant: the fully stripped text has
     // its specifier quotes blanked, so a quote-anchored match can never fire there.
     const spans = findImportExportSpans(specifierText.get(file) ?? text);
@@ -332,18 +429,22 @@ function findReferences(symbol, files, stripped, specifierText) {
       return text.slice(start, end).trim();
     };
 
-    word.lastIndex = 0;
-    const seenLines = new Set();
+    const word = /\b[A-Za-z_$][A-Za-z0-9_$]*\b/gu;
+    const seenLines = new Map();
     let m;
     while ((m = word.exec(text)) !== null) {
+      if (!wanted.has(m[0])) continue;
+      const symbol = m[0];
       const lineNo = lineNumberAt(m.index);
-      if (seenLines.has(lineNo)) continue;
-      seenLines.add(lineNo);
+      const symbolLines = seenLines.get(symbol) ?? new Set();
+      if (symbolLines.has(lineNo)) continue;
+      symbolLines.add(lineNo);
+      seenLines.set(symbol, symbolLines);
       const lineText = lineTextAt(lineNo);
       // Resolve against multi-line statement spans first; a single line is not
       // enough context to tell an import member from a call.
       const inSpan = spanKindAt(spans, m.index);
-      hits.push({
+      hitsBySymbol.get(symbol)?.push({
         file,
         line: lineNo,
         kind: inSpan ?? classifyReference(lineText, symbol),
@@ -351,7 +452,11 @@ function findReferences(symbol, files, stripped, specifierText) {
       });
     }
   }
-  return hits;
+  return hitsBySymbol;
+}
+
+function findReferences(symbol, files, stripped, specifierText) {
+  return findReferencesForSymbols([symbol], files, stripped, specifierText).get(symbol) ?? [];
 }
 
 function rel(file) {
@@ -369,8 +474,136 @@ function resolveRoots() {
   return { resolved, missing };
 }
 
+function lineContaining(text, needle) {
+  const offset = text.indexOf(needle);
+  return offset < 0 ? 1 : text.slice(0, offset).split(/\r?\n/u).length;
+}
+
+export function buildExportInventoryReport(allFiles, graph, reachable) {
+  const inventory = enumerateRuntimeExports(allFiles, graph.sources);
+  const references = findReferencesForSymbols(
+    [...new Set(inventory.entries.map((entry) => entry.name))],
+    allFiles,
+    graph.stripped,
+    graph.specifierText,
+  );
+  const counts = { "production-reachable": 0, "api-surface-only": 0, "not-production-reachable": 0 };
+  const entries = [];
+  const moduleBlindSpots = inventory.blindSpots.map((blindSpot) => ({
+    kind: blindSpot.kind,
+    file: rel(blindSpot.file),
+    line: blindSpot.line,
+    detail: blindSpot.detail,
+  }));
+
+  for (const entry of inventory.entries.toSorted((a, b) => {
+    const fileOrder = rel(a.file).localeCompare(rel(b.file));
+    return fileOrder || a.line - b.line || a.name.localeCompare(b.name);
+  })) {
+    const hits = references.get(entry.name) ?? [];
+    const production = hits.filter(
+      (hit) => classifyFile(rel(hit.file)) === "production" && reachable.has(hit.file) && hit.kind !== "definition",
+    );
+    const status = production.some((hit) => hit.kind === "use")
+      ? "production-reachable"
+      : production.length > 0
+        ? "api-surface-only"
+        : "not-production-reachable";
+    counts[status] += 1;
+    entries.push({
+      status,
+      file: rel(entry.file),
+      line: entry.line,
+      name: entry.name,
+      kind: entry.kind,
+    });
+  }
+
+  for (const file of allFiles) {
+    if (classifyFile(rel(file)) === "production" && !reachable.has(file)) {
+      moduleBlindSpots.push({ kind: "unreachable-module", file: rel(file) });
+    }
+    for (const specifier of graph.unresolved.get(file) ?? []) {
+      const line = lineContaining(graph.specifierText.get(file) ?? "", specifier);
+      moduleBlindSpots.push({
+        kind: "unresolved-relative-import",
+        file: rel(file),
+        line,
+        detail: specifier,
+      });
+    }
+    const text = graph.stripped.get(file) ?? "";
+    COMPUTED_DYNAMIC_RE.lastIndex = 0;
+    let match;
+    while ((match = COMPUTED_DYNAMIC_RE.exec(text)) !== null) {
+      const line = text.slice(0, match.index).split(/\r?\n/u).length;
+      moduleBlindSpots.push({
+        kind: "computed-dynamic-import",
+        file: rel(file),
+        line,
+        detail: `import(${match[1].trim()}`,
+      });
+    }
+  }
+
+  return {
+    schema: "production-reachability.exports/v1",
+    scannedFiles: allFiles.length,
+    reachableModules: reachable.size,
+    exportStatusCounts: counts,
+    entries,
+    exportBlindSpots: inventory.blindSpots.map((blindSpot) => ({
+      kind: blindSpot.kind,
+      file: rel(blindSpot.file),
+      line: blindSpot.line,
+      detail: blindSpot.detail,
+    })),
+    moduleBlindSpots,
+    moduleBlindSpotCount: moduleBlindSpots.length,
+    note:
+      "Static src inventory only. Wildcard/default exports, computed imports, unresolved relative imports, out-of-root modules, published package exports, and callers outside openclaw_runtime/src remain separate blind spots.",
+  };
+}
+
+function printExportInventory(allFiles, graph, reachable, reportPath) {
+  const report = buildExportInventoryReport(allFiles, graph, reachable);
+  for (const entry of report.entries) {
+    console.log(`EXPORT\t${entry.status}\t${entry.file}:${entry.line}\t${entry.name}\t${entry.kind}`);
+  }
+  for (const blindSpot of report.moduleBlindSpots) {
+    const location = blindSpot.line === undefined ? blindSpot.file : `${blindSpot.file}:${blindSpot.line}`;
+    console.log(`MODULE_BLIND_SPOT\t${blindSpot.kind}\t${location}${blindSpot.detail ? `\t${blindSpot.detail}` : ""}`);
+  }
+  if (reportPath) {
+    const target = path.resolve(process.cwd(), reportPath);
+    mkdirSync(path.dirname(target), { recursive: true });
+    writeFileSync(target, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+  }
+  console.log(
+    `EXPORT_SUMMARY\ttotal=${report.entries.length}\tproduction-reachable=${report.exportStatusCounts["production-reachable"]}` +
+      `\tapi-surface-only=${report.exportStatusCounts["api-surface-only"]}\tnot-production-reachable=${report.exportStatusCounts["not-production-reachable"]}` +
+      `\texport-blind-spots=${report.exportBlindSpots.length}\tmodule-blind-spots=${report.moduleBlindSpotCount}`,
+  );
+  console.log(`EXPORT_NOTE\t${report.note}`);
+  return report.exportStatusCounts["not-production-reachable"] > 0
+    ? 1
+    : report.exportStatusCounts["api-surface-only"] > 0
+      ? 2
+      : 0;
+}
+
 function main(argv) {
   const args = argv.slice(2);
+  let exportReportPath;
+  const exportReportFlag = args.indexOf("--exports-report");
+  if (exportReportFlag >= 0) {
+    exportReportPath = args[exportReportFlag + 1];
+    if (!exportReportPath || exportReportPath.startsWith("--")) {
+      console.error("--exports-report requires a path");
+      return 3;
+    }
+    args.splice(exportReportFlag, 2);
+  }
   if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
     console.log(
       [
@@ -380,6 +613,8 @@ function main(argv) {
         "  node scripts/check-production-reachable.mjs --all-modules",
         "  node scripts/check-production-reachable.mjs --blind-spots",
         "  node scripts/check-production-reachable.mjs --roots",
+        "  node scripts/check-production-reachable.mjs --exports",
+        "  node scripts/check-production-reachable.mjs --exports --exports-report <path>",
         "",
         "exit 0 reachable | 1 unreachable | 2 api-surface-only | 3 usage/root error",
       ].join("\n"),
@@ -396,7 +631,8 @@ function main(argv) {
   }
 
   const allFiles = walk(SRC_ROOT);
-  const { stripped, specifierText, edges } = buildGraph(allFiles);
+  const graph = buildGraph(allFiles);
+  const { stripped, specifierText, edges } = graph;
   const reachable = reachableFrom(roots, edges);
 
   if (args.includes("--roots")) {
@@ -421,6 +657,15 @@ function main(argv) {
     }
     console.log(`\ntotal: ${count}`);
     return 0;
+  }
+
+  if (args.includes("--exports")) {
+    return printExportInventory(allFiles, graph, reachable, exportReportPath);
+  }
+
+  if (exportReportPath) {
+    console.error("--exports-report is only valid with --exports");
+    return 3;
   }
 
   if (args.includes("--all-modules")) {
@@ -504,6 +749,6 @@ function main(argv) {
   return worst;
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+if (isMainEntrypoint(import.meta.url)) {
   process.exit(main(process.argv));
 }

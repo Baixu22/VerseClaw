@@ -131,7 +131,7 @@ describe('P0 production acceptance gate (TF-0001..0005)', () => {
         createdAt: '2026-07-19T00:00:00.000Z',
         updatedAt: '2026-07-19T00:00:00.000Z',
         sessionId: 's1',
-      },
+      } as never,
     ];
     const recovered = recoverTasksAfterRestart(tasks, '2026-07-19T01:00:00.000Z');
     expect(recovered[0].status).toBe('interrupted');

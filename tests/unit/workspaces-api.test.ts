@@ -3,7 +3,7 @@ import { join, resolve } from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const storeState = vi.hoisted(() => ({
-  activeWorkspaceId: 'legacy',
+  activeWorkspaceId: 'legacy' as string | null,
   profiles: [] as unknown[],
   approvals: [] as unknown[],
   decisionEvents: [] as unknown[],
@@ -498,9 +498,11 @@ describe('workspaces api compatibility migration', () => {
       permissionMode: 'acceptEdits',
     });
     expect(created.activeWorkspace?.permissionMode).toBe('acceptEdits');
+    const workspaceId = created.activeWorkspaceId;
+    if (!workspaceId) throw new Error('Expected created workspace id');
 
     const updated = await api.update({
-      id: created.activeWorkspaceId,
+      id: workspaceId,
       permissionMode: 'readOnly',
     });
     expect(updated.activeWorkspace?.permissionMode).toBe('readOnly');

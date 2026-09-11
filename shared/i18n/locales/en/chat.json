@@ -155,6 +155,9 @@
       "destructive": "Destructive"
     },
     "riskLabel": "Risk",
+    "externalWriteSummary": "External process write (details withheld)",
+    "externalWriteNoRollback": "Outside the ClawX write journal; no automatic rollback.",
+    "sourceLabel": "Source",
     "modeLabel": "Mode",
     "status": {
       "pending": "Pending",
@@ -232,7 +235,15 @@
         "title": "Permission required",
         "approve": "Approve",
         "deny": "Deny",
-        "retryRequired": "Decision recorded — ask the agent to retry the action."
+        "retryRequired": "Decision recorded — ask the agent to retry the action.",
+        "externalWriteTitle": "External write requires approval",
+        "externalWriteWarning": "This external process may change files or other state outside the ClawX write journal.",
+        "externalWriteNoRollback": "Outside the ClawX write journal; no automatic rollback.",
+        "externalWriteEffectLabel": "Effect",
+        "externalWriteEffect": "External process write",
+        "externalWriteRollbackLabel": "Rollback",
+        "externalWriteSnapshotLabel": "Snapshot",
+        "externalWriteSnapshot": "Bound to this request; approval only permits a later retry."
       }
     },
     "actions": {

@@ -2573,6 +2573,10 @@ export function createKnowledgeApi({
   // registry role stays 'heuristic', so the semantic pass only runs when an
   // operator configures a role with classification 'semantic' — and the
   // heuristic result remains the explicit degradation on any invoker failure.
+  //
+  // This always rebinds to the current `gatewayManager` so a re-created API
+  // never keeps an invoker bound to a dead gateway. Overriding the seam
+  // (`setSemanticStewardInvoker`) therefore has to happen *after* construction.
   setSemanticStewardInvoker((context) => runSemanticStewardInvoker(gatewayManager, context));
 
   async function readSourceSetAnswerSource(ref: KnowledgeSourceRef): Promise<KnowledgeSourceSetAnswerSource | null> {

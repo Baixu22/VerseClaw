@@ -18,8 +18,10 @@ commands. A dirty tree must never be described as a clean release snapshot.
 ## R2: Agent evidence and human authority remain separate
 
 TF-0011 may consume TF-0009 agent-surrogate engineering evidence after the explicit governance
-split, but TF-0009 remains `review_needed` with `humanEquivalent=false`, `liveEvidence=false`,
-and zero qualifying human runs. Engineering dependency release is not TF-0009 completion.
+split, but TF-0009 remains unfinished with `humanEquivalent=false`, `liveEvidence=false`,
+and zero qualifying human runs. Pending review may use `review_needed`; a confirmed human-only
+block uses `blocked`. Historical frozen manifests keep their original status. Engineering
+dependency release is not TF-0009 completion.
 
 ## R3: Authority ownership remains singular
 
@@ -38,4 +40,3 @@ with `meetsGate=false` and `recommendation=keep-off`, `TF-0006=blocked`, and Run
 UAS-00 may add evidence generation, stale checks, Harness coverage, and documentation
 corrections. It must not start TF-0012/TF-0013/TF-0014, implement FP-P4-03/04, change runtime
 defaults, add Memory lifecycle behavior, or claim live/product/GA readiness.
-

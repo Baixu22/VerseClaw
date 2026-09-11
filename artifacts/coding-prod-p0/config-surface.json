@@ -12,7 +12,7 @@
       "risk": "opt-in",
       "enable": "Set env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1 (or OPENCLAW_DCS_CONTEXT_TOOLS=1) and restart gateway/runtime.",
       "rollback": "Unset env or set to 0/false and restart. View tools leave the default catalog.",
-      "riskNote": "Single source of truth: env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS (or Settings switch). runtime.coding.factViews is deprecated/ignored (TASK-P0-02). Keep default-off until C1 graduation + product approval."
+      "riskNote": "Single source of truth: env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS (or Settings switch). The removed runtime.coding.factViews leaf is rejected by the strict config schema; remove it before upgrading. Keep default-off until C1 graduation + product approval."
     },
     {
       "id": "context-tools-alias",

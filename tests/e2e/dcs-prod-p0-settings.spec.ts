@@ -37,7 +37,7 @@ async function ensureSwitchState(toggle: Locator, checked: boolean): Promise<voi
 async function readAppSettingFlag(page: Page, key: string): Promise<boolean> {
   return page.evaluate(async (settingKey) => {
     const settings = await window.electron.ipcRenderer.invoke('settings:getAll');
-    return Boolean(settings?.[settingKey]);
+    return Boolean((settings as any)?.[settingKey]);
   }, key);
 }
 

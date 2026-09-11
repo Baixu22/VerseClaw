@@ -6,7 +6,7 @@
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { evaluateAbGate, type AbReport } from "./coding-ab-fixtures.js";
+import { evaluateAbGate, type AbReport } from "../../experiments/coding-ab-fixtures.js";
 import {
   loadCorpus,
   validateCorpus,

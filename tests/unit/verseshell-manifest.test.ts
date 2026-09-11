@@ -38,10 +38,16 @@ afterEach(async () => {
 describe('VerseShell v2 manifest validation', () => {
   it('accepts the qualified ordered patch-stack bundle in development and packaging modes', async () => {
     const manifestText = await readFile(join(root, 'resources/verseshell/manifest.json'), 'utf8');
+    const sourceInputs = JSON.parse(
+      await readFile(join(root, 'resources/verseshell/source-inputs.json'), 'utf8'),
+    );
+    const expectedCombinedSha = sourceInputs.identity?.combined_sha256;
+    expect(typeof expectedCombinedSha).toBe('string');
+    expect(expectedCombinedSha).toMatch(/^[a-f0-9]{64}$/u);
     expect(manifestText).not.toMatch(/[A-Za-z]:\\Users\\/u);
     expect(manifestText).toContain('"schema_version": 2');
     expect(manifestText).toContain('pinned-commit-plus-ordered-patches');
-    expect(manifestText).toContain('19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650');
+    expect(manifestText).toContain(expectedCombinedSha);
     await expect(validateVerseShellManifest({ root, mode: 'dev' })).resolves.toEqual({
       ok: true,
       mode: 'dev',

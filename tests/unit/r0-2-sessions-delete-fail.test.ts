@@ -105,7 +105,7 @@ describe('R0-2 sessions.delete partial failures', () => {
 
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const api = createSessionsApi();
-    const result = await api.delete({ sessionKey: 'agent:main:abc123' });
+    const result = await api.delete({ sessionKey: 'agent:main:abc123' } as never);
 
     expect(result.success).toBe(false);
     expect(result.partial).toBe(true);
@@ -125,7 +125,7 @@ describe('R0-2 sessions.delete partial failures', () => {
 
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const api = createSessionsApi();
-    const result = await api.delete({ sessionKey: 'agent:main:abc123' });
+    const result = await api.delete({ sessionKey: 'agent:main:abc123' } as never);
 
     expect(result.success).toBe(false);
     expect(result.partial).toBe(true);
@@ -139,7 +139,7 @@ describe('R0-2 sessions.delete partial failures', () => {
 
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const api = createSessionsApi();
-    const result = await api.delete({ sessionKey: 'agent:main:abc123' });
+    const result = await api.delete({ sessionKey: 'agent:main:abc123' } as never);
 
     expect(result.success).toBe(true);
     const indexAfter = JSON.parse(await readFile(join(sessionsDir, 'sessions.json'), 'utf8')) as Record<string, unknown>;
@@ -154,7 +154,7 @@ describe('R0-2 sessions.delete partial failures', () => {
     await writeFile(deletedPath, '{}', 'utf8');
 
     const { createSessionsApi } = await import('@electron/services/sessions-api');
-    const result = await createSessionsApi().delete({ sessionKey: 'agent:main:abc123' });
+    const result = await createSessionsApi().delete({ sessionKey: 'agent:main:abc123' } as never);
 
     expect(result.success).toBe(true);
     await expect(access(deletedPath)).rejects.toMatchObject({ code: 'ENOENT' });

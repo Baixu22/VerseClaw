@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "taskId": "P6-005",
+  "identity": {
+    "version": "0.4.9-alpha.0",
+    "ref": "refs/heads/feat/runtime-lifecycle-governance",
+    "commit": "7e4782723fdc79055dfd5de01f7983fd254c05ab",
+    "tree": "04ad7753cfa80e3275c508d4271d93efc6f09d7c"
+  },
+  "acceptance": [
+    {
+      "id": "A1",
+      "title": "clean tree and ref/commit binding are enforced",
+      "status": "passed"
+    },
+    {
+      "id": "A2",
+      "title": "runtime preflight and all required full release gates have zero-exit hash-addressed evidence",
+      "status": "failed"
+    },
+    {
+      "id": "A3",
+      "title": "release source manifest regenerates byte-for-byte",
+      "status": "passed"
+    }
+  ],
+  "validation": {
+    "error": "release gate maturity:validate at index 3 failed with exit 1"
+  }
+}

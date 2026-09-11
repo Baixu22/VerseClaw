@@ -365,11 +365,18 @@
       "name": "会话分叉",
       "checks": [
         {
+          "method": "sessions.create",
+          "params": {
+            "key": "agent:main:chain-audit-fork-probe"
+          },
+          "note": "前置：创建独立探测会话（幂等，可重复运行）。不 fork 共享主会话——其大小随使用增长，fork 结果与 fork 功能健康与否无关（issue #35）"
+        },
+        {
           "method": "sessions.fork",
           "params": {
-            "key": "agent:main:main"
+            "key": "agent:main:chain-audit-fork-probe"
           },
-          "note": "fork 当前真实会话"
+          "note": "fork 上一步创建的小会话，探测不依赖共享会话大小"
         }
       ]
     },

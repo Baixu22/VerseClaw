@@ -28,8 +28,8 @@ function snapshotWith(patch: Partial<SessionActivitySnapshot>): SessionActivityS
 const PLAN: RunPlanSurface = {
   id: 'plan-1',
   todos: [
-    { id: 't1', content: 'first', status: 'completed' },
-    { id: 't2', content: 'second', status: 'in_progress' },
+    { id: 't1', content: 'first', status: 'completed' } as never,
+    { id: 't2', content: 'second', status: 'in_progress' } as never,
   ],
 };
 
@@ -166,7 +166,9 @@ describe('SessionActivityPanel', () => {
   });
 
   it('renders nothing when every source is empty', () => {
-    const { container } = render(<SessionActivityPanel snapshot={snapshotWith({})} />);
+    const snapshot = snapshotWith({});
+    snapshot.availability = { git: true, tasks: true, subagents: true, terminals: true, continuity: true };
+    const { container } = render(<SessionActivityPanel snapshot={snapshot} />);
     expect(container).toBeEmptyDOMElement();
   });
 

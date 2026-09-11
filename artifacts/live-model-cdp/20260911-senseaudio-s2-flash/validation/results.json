@@ -1,0 +1,36 @@
+{
+  "schema": "live-cdp-code-validation/v1",
+  "unit": {
+    "command": "pnpm exec vitest run tests/unit/openclaw-auth.test.ts tests/unit/provider-service-stale-cleanup.test.ts tests/unit/setup-provider-validation.test.ts",
+    "exitCode": 0,
+    "filesPassed": 3,
+    "testsPassed": 112,
+    "evidenceSource": "observed command result in the authoring session; 2026-09-11 10:11:31 Asia/Shanghai"
+  },
+  "electronE2e": {
+    "command": "pnpm exec playwright test tests/e2e/provider-lifecycle.spec.ts --grep 'environment SecretRef' --workers=1",
+    "exitCode": 0,
+    "testsPassed": 1,
+    "log": "validation/provider-envref-final-e2e.log"
+  },
+  "typecheck": {
+    "main": 0,
+    "web": 0,
+    "test": 0
+  },
+  "eslint": {
+    "exitCode": 0,
+    "errors": 0,
+    "preexistingWarnings": 1
+  },
+  "comms": {
+    "replay": 0,
+    "compare": 0
+  },
+  "harness": {
+    "taskValidate": 0,
+    "taskDryRun": 0,
+    "globalCi": 1,
+    "globalCiReason": "existing branch-wide path ownership gate; TF-0029 remains in_progress"
+  }
+}

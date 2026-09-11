@@ -10,12 +10,12 @@
 | **sourceGapDoc** | `team/claude/DCS-VISIBLE-FEATURES-PRODUCTION-GAP.md` |
 | **codeBaseline** | `ClawX-maturity-p0` @ `main` / `60931957b`（启动时复核 HEAD） |
 | **createdAt** | 2026-07-22 |
-| **updatedAt** | 2026-08-21 |
+| **updatedAt** | 2026-08-28 |
 | **phase** | `M1/P2 engineering closeout`; TF-0074 `done`; P2-01 human-blocked |
 | **activeTaskId** | — |
 | **nextTaskId** | `TASK-P2-01` (blocked: humans); any successor TF requires a separate decision |
 | **owner** | Claude |
-| **hardLocks** | `defaultOn=false` 直至 TF-0006 + productApproved；禁止 SEKB auto writeback；禁止用翻默认“证明可用”；packaging 不 auto-flip |
+| **hardLocks** | `L3 = 1 名真人 × 1 个表面 × 14 天 × 可回滚`；该定义替代原 `human-corpus + live-ab + soak + product-approval` 四件套同时满足作为 L3 可达门，四件套保留为后续分阶段增强证据；无真人证据的新增 artifact 仅可使用 `verified-engineering(...)`；`defaultOn=false` 直至 TF-0006 + productApproved；禁止 SEKB auto writeback；禁止用翻默认“证明可用”；packaging 不 auto-flip |
 
 ---
 

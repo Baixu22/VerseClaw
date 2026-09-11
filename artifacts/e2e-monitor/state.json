@@ -1,0 +1,457 @@
+{
+  "rounds": [
+    {
+      "round": 1,
+      "startedAt": "2026-09-09T04:02:53.358Z",
+      "finishedAt": "2026-09-09T04:03:52.905Z",
+      "durationMs": 59547,
+      "results": [
+        {
+          "spec": "tests/e2e/app-smoke.spec.ts",
+          "startedAt": "2026-09-09T04:02:53.358Z",
+          "finishedAt": "2026-09-09T04:03:22.574Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "\u001b[1A\u001b[2K[1/4] tests\\e2e\\app-smoke.spec.ts:4:7 › Verse Claw Electron smoke flows › shows the setup wizard on a fresh profile",
+            "\u001b[1A\u001b[2K[2/4] tests\\e2e\\app-smoke.spec.ts:10:7 › Verse Claw Electron smoke flows › can skip setup and navigate to the models page",
+            "\u001b[1A\u001b[2K[3/4] tests\\e2e\\app-smoke.spec.ts:23:7 › Verse Claw Electron smoke flows › persists skipped setup across relaunch for the same isolated profile",
+            "\u001b[1A\u001b[2K[4/4] tests\\e2e\\app-smoke.spec.ts:43:7 › Verse Claw Electron smoke flows › does not show a fatal dialog when an E2E output pipe closes",
+            "\u001b[1A\u001b[2K  4 passed (28.4s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        },
+        {
+          "spec": "tests/e2e/agent-dev-quality.spec.ts",
+          "startedAt": "2026-09-09T04:03:22.574Z",
+          "finishedAt": "2026-09-09T04:03:46.083Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "\u001b[1A\u001b[2K[1/4] tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+            "\u001b[1A\u001b[2K[2/4] tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+            "\u001b[1A\u001b[2K[3/4] tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+            "\u001b[1A\u001b[2K[4/4] tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+            "\u001b[1A\u001b[2K  4 passed (22.8s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        },
+        {
+          "spec": "tests/e2e/browser-security-recovery.spec.ts",
+          "startedAt": "2026-09-09T04:03:46.084Z",
+          "finishedAt": "2026-09-09T04:03:52.905Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 1,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "",
+            "Running 1 test using 1 worker",
+            "",
+            "\u001b[1A\u001b[2K[1/1] tests\\e2e\\browser-security-recovery.spec.ts:98:7 › Browser security + task recovery (TF-0005) › task approval/explain + vault health discrimination (host path)",
+            "\u001b[1A\u001b[2K  1 passed (6.2s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        }
+      ],
+      "totals": {
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "round": 1,
+      "startedAt": "2026-09-09T04:04:03.543Z",
+      "finishedAt": "2026-09-09T04:05:01.459Z",
+      "durationMs": 57916,
+      "results": [
+        {
+          "spec": "tests/e2e/app-smoke.spec.ts",
+          "startedAt": "2026-09-09T04:04:03.543Z",
+          "finishedAt": "2026-09-09T04:04:31.030Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "\u001b[1A\u001b[2K[1/4] tests\\e2e\\app-smoke.spec.ts:4:7 › Verse Claw Electron smoke flows › shows the setup wizard on a fresh profile",
+            "\u001b[1A\u001b[2K[2/4] tests\\e2e\\app-smoke.spec.ts:10:7 › Verse Claw Electron smoke flows › can skip setup and navigate to the models page",
+            "\u001b[1A\u001b[2K[3/4] tests\\e2e\\app-smoke.spec.ts:23:7 › Verse Claw Electron smoke flows › persists skipped setup across relaunch for the same isolated profile",
+            "\u001b[1A\u001b[2K[4/4] tests\\e2e\\app-smoke.spec.ts:43:7 › Verse Claw Electron smoke flows › does not show a fatal dialog when an E2E output pipe closes",
+            "\u001b[1A\u001b[2K  4 passed (26.8s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        },
+        {
+          "spec": "tests/e2e/agent-dev-quality.spec.ts",
+          "startedAt": "2026-09-09T04:04:31.031Z",
+          "finishedAt": "2026-09-09T04:04:53.992Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "\u001b[1A\u001b[2K[1/4] tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+            "\u001b[1A\u001b[2K[2/4] tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+            "\u001b[1A\u001b[2K[3/4] tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+            "\u001b[1A\u001b[2K[4/4] tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+            "\u001b[1A\u001b[2K  4 passed (22.3s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        },
+        {
+          "spec": "tests/e2e/browser-security-recovery.spec.ts",
+          "startedAt": "2026-09-09T04:04:53.992Z",
+          "finishedAt": "2026-09-09T04:05:01.459Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 1,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "",
+            "Running 1 test using 1 worker",
+            "",
+            "\u001b[1A\u001b[2K[1/1] tests\\e2e\\browser-security-recovery.spec.ts:98:7 › Browser security + task recovery (TF-0005) › task approval/explain + vault health discrimination (host path)",
+            "\u001b[1A\u001b[2K  1 passed (6.8s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        }
+      ],
+      "totals": {
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "round": 2,
+      "startedAt": "2026-09-09T04:06:31.467Z",
+      "finishedAt": "2026-09-09T04:07:28.304Z",
+      "durationMs": 56837,
+      "results": [
+        {
+          "spec": "tests/e2e/app-smoke.spec.ts",
+          "startedAt": "2026-09-09T04:06:31.467Z",
+          "finishedAt": "2026-09-09T04:06:57.926Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "\u001b[1A\u001b[2K[1/4] tests\\e2e\\app-smoke.spec.ts:4:7 › Verse Claw Electron smoke flows › shows the setup wizard on a fresh profile",
+            "\u001b[1A\u001b[2K[2/4] tests\\e2e\\app-smoke.spec.ts:10:7 › Verse Claw Electron smoke flows › can skip setup and navigate to the models page",
+            "\u001b[1A\u001b[2K[3/4] tests\\e2e\\app-smoke.spec.ts:23:7 › Verse Claw Electron smoke flows › persists skipped setup across relaunch for the same isolated profile",
+            "\u001b[1A\u001b[2K[4/4] tests\\e2e\\app-smoke.spec.ts:43:7 › Verse Claw Electron smoke flows › does not show a fatal dialog when an E2E output pipe closes",
+            "\u001b[1A\u001b[2K  4 passed (25.8s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        },
+        {
+          "spec": "tests/e2e/agent-dev-quality.spec.ts",
+          "startedAt": "2026-09-09T04:06:57.927Z",
+          "finishedAt": "2026-09-09T04:07:21.472Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "\u001b[1A\u001b[2K[1/4] tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+            "\u001b[1A\u001b[2K[2/4] tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+            "\u001b[1A\u001b[2K[3/4] tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+            "\u001b[1A\u001b[2K[4/4] tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+            "\u001b[1A\u001b[2K  4 passed (22.8s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        },
+        {
+          "spec": "tests/e2e/browser-security-recovery.spec.ts",
+          "startedAt": "2026-09-09T04:07:21.472Z",
+          "finishedAt": "2026-09-09T04:07:28.303Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 1,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "",
+            "Running 1 test using 1 worker",
+            "",
+            "\u001b[1A\u001b[2K[1/1] tests\\e2e\\browser-security-recovery.spec.ts:98:7 › Browser security + task recovery (TF-0005) › task approval/explain + vault health discrimination (host path)",
+            "\u001b[1A\u001b[2K  1 passed (6.2s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        }
+      ],
+      "totals": {
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "round": 3,
+      "startedAt": "2026-09-09T04:08:58.308Z",
+      "finishedAt": "2026-09-09T04:09:55.792Z",
+      "durationMs": 57484,
+      "results": [
+        {
+          "spec": "tests/e2e/app-smoke.spec.ts",
+          "startedAt": "2026-09-09T04:08:58.308Z",
+          "finishedAt": "2026-09-09T04:09:25.282Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "\u001b[1A\u001b[2K[1/4] tests\\e2e\\app-smoke.spec.ts:4:7 › Verse Claw Electron smoke flows › shows the setup wizard on a fresh profile",
+            "\u001b[1A\u001b[2K[2/4] tests\\e2e\\app-smoke.spec.ts:10:7 › Verse Claw Electron smoke flows › can skip setup and navigate to the models page",
+            "\u001b[1A\u001b[2K[3/4] tests\\e2e\\app-smoke.spec.ts:23:7 › Verse Claw Electron smoke flows › persists skipped setup across relaunch for the same isolated profile",
+            "\u001b[1A\u001b[2K[4/4] tests\\e2e\\app-smoke.spec.ts:43:7 › Verse Claw Electron smoke flows › does not show a fatal dialog when an E2E output pipe closes",
+            "\u001b[1A\u001b[2K  4 passed (26.3s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        },
+        {
+          "spec": "tests/e2e/agent-dev-quality.spec.ts",
+          "startedAt": "2026-09-09T04:09:25.283Z",
+          "finishedAt": "2026-09-09T04:09:48.918Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "\u001b[1A\u001b[2K[1/4] tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+            "\u001b[1A\u001b[2K[2/4] tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+            "\u001b[1A\u001b[2K[3/4] tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+            "\u001b[1A\u001b[2K[4/4] tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+            "\u001b[1A\u001b[2K  4 passed (23.0s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        },
+        {
+          "spec": "tests/e2e/browser-security-recovery.spec.ts",
+          "startedAt": "2026-09-09T04:09:48.918Z",
+          "finishedAt": "2026-09-09T04:09:55.792Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 1,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "",
+            "Running 1 test using 1 worker",
+            "",
+            "\u001b[1A\u001b[2K[1/1] tests\\e2e\\browser-security-recovery.spec.ts:98:7 › Browser security + task recovery (TF-0005) › task approval/explain + vault health discrimination (host path)",
+            "\u001b[1A\u001b[2K  1 passed (6.2s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        }
+      ],
+      "totals": {
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "round": 4,
+      "startedAt": "2026-09-09T04:11:25.807Z",
+      "finishedAt": "2026-09-09T04:12:23.683Z",
+      "durationMs": 57876,
+      "results": [
+        {
+          "spec": "tests/e2e/app-smoke.spec.ts",
+          "startedAt": "2026-09-09T04:11:25.807Z",
+          "finishedAt": "2026-09-09T04:11:52.992Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "\u001b[1A\u001b[2K[1/4] tests\\e2e\\app-smoke.spec.ts:4:7 › Verse Claw Electron smoke flows › shows the setup wizard on a fresh profile",
+            "\u001b[1A\u001b[2K[2/4] tests\\e2e\\app-smoke.spec.ts:10:7 › Verse Claw Electron smoke flows › can skip setup and navigate to the models page",
+            "\u001b[1A\u001b[2K[3/4] tests\\e2e\\app-smoke.spec.ts:23:7 › Verse Claw Electron smoke flows › persists skipped setup across relaunch for the same isolated profile",
+            "\u001b[1A\u001b[2K[4/4] tests\\e2e\\app-smoke.spec.ts:43:7 › Verse Claw Electron smoke flows › does not show a fatal dialog when an E2E output pipe closes",
+            "\u001b[1A\u001b[2K  4 passed (26.5s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        },
+        {
+          "spec": "tests/e2e/agent-dev-quality.spec.ts",
+          "startedAt": "2026-09-09T04:11:52.993Z",
+          "finishedAt": "2026-09-09T04:12:16.869Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "\u001b[1A\u001b[2K[1/4] tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+            "\u001b[1A\u001b[2K[2/4] tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+            "\u001b[1A\u001b[2K[3/4] tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+            "\u001b[1A\u001b[2K[4/4] tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+            "\u001b[1A\u001b[2K  4 passed (23.2s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        },
+        {
+          "spec": "tests/e2e/browser-security-recovery.spec.ts",
+          "startedAt": "2026-09-09T04:12:16.869Z",
+          "finishedAt": "2026-09-09T04:12:23.682Z",
+          "exitCode": 0,
+          "timedOut": false,
+          "summary": {
+            "passed": 1,
+            "failed": 0,
+            "skipped": 0,
+            "flaky": 0
+          },
+          "stdoutTail": [
+            "",
+            "Running 1 test using 1 worker",
+            "",
+            "\u001b[1A\u001b[2K[1/1] tests\\e2e\\browser-security-recovery.spec.ts:98:7 › Browser security + task recovery (TF-0005) › task approval/explain + vault health discrimination (host path)",
+            "\u001b[1A\u001b[2K  1 passed (6.2s)",
+            ""
+          ],
+          "stderrTail": [
+            ""
+          ]
+        }
+      ],
+      "totals": {
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "startedAt": "2026-09-09T04:04:03.543Z",
+  "specs": [
+    "tests/e2e/app-smoke.spec.ts",
+    "tests/e2e/agent-dev-quality.spec.ts",
+    "tests/e2e/browser-security-recovery.spec.ts"
+  ],
+  "intervalSec": 90,
+  "maxRounds": 4,
+  "deep": false,
+  "runner": {
+    "cmd": "C:\\Program Files\\nodejs\\node.exe",
+    "prefix": [
+      "D:\\ClawX\\node_modules\\@playwright\\test\\cli.js"
+    ]
+  },
+  "lastRoundAt": "2026-09-09T04:12:23.683Z",
+  "lastTotals": {
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "finishedAt": "2026-09-09T04:12:23.684Z"
+}

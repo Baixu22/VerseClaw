@@ -18,9 +18,11 @@ import {
   formatTaskLoopContextPackForReviewerPilot,
 } from '../../openclaw_runtime/src/agents/task-loop-context';
 import {
+  type TaskLoopSelfCheckInput,
   parseTaskLoopSelfCheckResponse,
   runTaskLoopSelfCheck,
 } from '../../openclaw_runtime/src/agents/task-loop-self-check';
+import type { ObservedOrchestrationRunRequest } from '../../openclaw_runtime/src/agents/orchestrator-run-observed';
 import { createTaskLoopTool } from '../../openclaw_runtime/src/agents/tools/task-loop-tool';
 import { buildRolePermissionDenyList } from '../../openclaw_runtime/src/agents/role-permissions-policy';
 import {
@@ -535,7 +537,7 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_durability`,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_durability'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -576,7 +578,7 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_ledger`,
         ensureTaskLedgerRoot,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -649,7 +651,7 @@ describe('runTaskLoop', () => {
       {},
       {
         idFactory: (prefix) => `${prefix}_1`,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -687,9 +689,9 @@ describe('runTaskLoop', () => {
           idFactory: (prefix) => `${prefix}_agentmap_shadow`,
           now: () => 1_700_000_000_000,
           ensureTaskLedgerRoot: vi.fn(() => 'tlroot_agentmap_shadow'),
-          runObserved: (async (request) => fakeResult(request.templateId)) as never,
-          selfCheck: (async ({ contextPack }) => {
-            capturedPacks.push(formatTaskLoopContextPackForReviewer(contextPack));
+          runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
+          selfCheck: (async (request: TaskLoopSelfCheckInput) => {
+            capturedPacks.push(formatTaskLoopContextPackForReviewer(request.contextPack));
             return {
               decision: 'complete',
               confidence: 0.9,
@@ -850,9 +852,9 @@ describe('runTaskLoop', () => {
         idFactory: (prefix) => `${prefix}_agentmap_sentinel`,
         now: () => 1_700_000_000_000,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_agentmap_sentinel'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
-        selfCheck: (async ({ contextPack }) => {
-          reviewerPrompts.push(formatTaskLoopContextPackForReviewer(contextPack));
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
+        selfCheck: (async (request: TaskLoopSelfCheckInput) => {
+          reviewerPrompts.push(formatTaskLoopContextPackForReviewer(request.contextPack));
           return {
             decision: 'complete',
             confidence: 0.9,
@@ -898,7 +900,7 @@ describe('runTaskLoop', () => {
         idFactory: (prefix) => `${prefix}_parity`,
         now: () => 1_700_000_000_000,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_parity'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -974,7 +976,7 @@ describe('runTaskLoop', () => {
         idFactory: (prefix) => `${prefix}_memory_disabled`,
         now: () => 1_700_000_000_000,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_memory_disabled'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -1050,7 +1052,7 @@ describe('runTaskLoop', () => {
         idFactory: (prefix) => `${prefix}_memory_enabled`,
         now: () => 1_700_000_000_000,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_memory_enabled'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -1135,7 +1137,7 @@ describe('runTaskLoop', () => {
         idFactory: (prefix) => `${prefix}_memory_replay`,
         now: () => 1_700_000_000_000,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_memory_replay'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -1236,7 +1238,7 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_memory_error`,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_memory_error'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -1283,7 +1285,7 @@ describe('runTaskLoop', () => {
         idFactory: (prefix) => `${prefix}_trace_shadow`,
         now: () => 1_700_000_000_000,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_trace_shadow'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -1382,7 +1384,7 @@ describe('runTaskLoop', () => {
         idFactory: (prefix) => `${prefix}_evidence_shadow_complete`,
         now: () => 1_700_000_000_000,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_evidence_shadow_complete'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -1451,7 +1453,7 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_evidence_shadow_missing_files`,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_evidence_shadow_missing_files'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -1487,7 +1489,7 @@ describe('runTaskLoop', () => {
       { runtime: { evidenceVerifier: { shadow: true } } },
       {
         idFactory: (prefix) => `${prefix}_evidence_shadow_refs`,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -1534,7 +1536,7 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_code_task_collection_disabled`,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_code_task_collection_disabled'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -1569,7 +1571,7 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_code_task_collection_shadow`,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_code_task_collection_shadow'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -1641,7 +1643,7 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_code_task_collection_invalid`,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_code_task_collection_invalid'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -1680,7 +1682,7 @@ describe('runTaskLoop', () => {
 
   it('accumulates multiple code-task shadow collections through an injected in-memory sink', async () => {
     const collections: CodeTaskEvidenceGateRuntimeShadowCollectionResult[] = [];
-    const runObserved = (async (request) => fakeResult(request.templateId)) as never;
+    const runObserved = (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never;
     const selfCheck = (async () => ({
       decision: 'complete',
       confidence: 0.9,
@@ -1824,7 +1826,7 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_code_task_collection_builder_failure`,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_code_task_collection_builder_failure'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -1853,7 +1855,7 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_code_task_collection_sink_failure`,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_code_task_collection_sink_failure'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -1887,7 +1889,7 @@ describe('runTaskLoop', () => {
         idFactory: (prefix) => `${prefix}_shadow_complete`,
         now: () => 1_700_000_000_000,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_shadow_complete'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -2070,7 +2072,7 @@ describe('runTaskLoop', () => {
         idFactory: (prefix) => `${prefix}_registry_shadow`,
         now: () => 1_700_000_000_000,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_registry_shadow'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: selfCheck as never,
         getSubagentRun: getEvidenceRun as never,
         lifecycle: (event) => lifecycle.push(event),
@@ -2188,7 +2190,7 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_registry_flag_off`,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_registry_flag_off'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -2231,7 +2233,7 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_registry_collector_off`,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_registry_collector_off'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -2265,7 +2267,7 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_shadow_blocked`,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_shadow_blocked'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'blocked',
           confidence: 0.4,
@@ -2344,7 +2346,7 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_shadow_throw`,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_shadow_throw'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -2374,7 +2376,7 @@ describe('runTaskLoop', () => {
       {},
       {
         idFactory: (prefix) => `${prefix}_${templates.length}`,
-        runObserved: (async (request) => {
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => {
           templates.push(request.templateId);
           return fakeResult(request.templateId);
         }) as never,
@@ -2403,7 +2405,7 @@ describe('runTaskLoop', () => {
       {},
       {
         idFactory: (prefix) => `${prefix}_${tasks.length}`,
-        runObserved: (async (request) => {
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => {
           tasks.push(request.task);
           return fakeResult(request.templateId);
         }) as never,
@@ -2445,7 +2447,7 @@ describe('runTaskLoop', () => {
       { agents: { defaults: { taskLoop: { maxIterations: 3, maxRepairIterations: 2 } } } },
       {
         idFactory: (prefix) => `${prefix}_same`,
-        runObserved: (async (request) => fakeResult(request.templateId, [{ roleName: 'tester', status: 'error', error: 'same failure' }])) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId, [{ roleName: 'tester', status: 'error', error: 'same failure' }])) as never,
         selfCheck: (async () => ({
           decision: 'repair',
           confidence: 0.7,
@@ -2469,7 +2471,7 @@ describe('runTaskLoop', () => {
       { agents: { defaults: { taskLoop: { maxIterations: 1, maxRepairIterations: 1 } } } },
       {
         idFactory: (prefix) => `${prefix}_max`,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'repair',
           confidence: 0.6,
@@ -2495,7 +2497,7 @@ describe('runTaskLoop', () => {
       { agents: { defaults: { taskLoop: { maxIterations: 2, maxRepairIterations: 0 } } } },
       {
         idFactory: (prefix) => `${prefix}_failure`,
-        runObserved: (async (request) => fakeResult(request.templateId, [{ roleName: 'reviewer', status: 'error', error: 'verifier refuted evidence' }])) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId, [{ roleName: 'reviewer', status: 'error', error: 'verifier refuted evidence' }])) as never,
         selfCheck: (async () => ({
           decision: 'blocked',
           confidence: 0.4,
@@ -2519,7 +2521,7 @@ describe('runTaskLoop', () => {
       {},
       {
         idFactory: (prefix) => `${prefix}_gate`,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.95,
@@ -2546,7 +2548,7 @@ describe('runTaskLoop', () => {
       { agents: { defaults: { taskLoop: { maxIterations: 1, maxRepairIterations: 0 } } } },
       {
         idFactory: (prefix) => `${prefix}_no_result`,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.95,
@@ -2587,7 +2589,7 @@ describe('runTaskLoop', () => {
       { agents: { defaults: { taskLoop: { maxIterations: 1, maxRepairIterations: 0 } } } },
       {
         idFactory: (prefix) => `${prefix}_${spawnStatus}`,
-        runObserved: (async (request) => fakeResult(request.templateId, [{ roleName: 'implementer', status: spawnStatus, error }])) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId, [{ roleName: 'implementer', status: spawnStatus, error }])) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.95,
@@ -2619,7 +2621,7 @@ describe('runTaskLoop', () => {
       { agents: { defaults: { taskLoop: { maxIterations: 1, maxRepairIterations: 0 } } } },
       {
         idFactory: (prefix) => `${prefix}_timeout`,
-        runObserved: (async (request) => {
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => {
           const base = fakeResult(request.templateId);
           return {
             ...base,
@@ -2654,7 +2656,7 @@ describe('runTaskLoop', () => {
   it.each([
     {
       name: 'permission',
-      runObserved: (async (request) =>
+      runObserved: (async (request: ObservedOrchestrationRunRequest) =>
         fakeResult(request.templateId, [{
           roleName: 'implementer',
           status: 'forbidden',
@@ -2667,7 +2669,7 @@ describe('runTaskLoop', () => {
     },
     {
       name: 'worker failure',
-      runObserved: (async (request) =>
+      runObserved: (async (request: ObservedOrchestrationRunRequest) =>
         fakeResult(request.templateId, [{
           roleName: 'implementer',
           status: 'error',
@@ -2680,7 +2682,7 @@ describe('runTaskLoop', () => {
     },
     {
       name: 'timeout',
-      runObserved: (async (request) => {
+      runObserved: (async (request: ObservedOrchestrationRunRequest) => {
         const base = fakeResult(request.templateId);
         return {
           ...base,
@@ -2695,7 +2697,7 @@ describe('runTaskLoop', () => {
     },
     {
       name: 'unverifiable',
-      runObserved: (async (request) => fakeResult(request.templateId)) as never,
+      runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
       getSubagentRun: (() => null) as never,
       code: 'unverifiable',
       legacyReason: 'unverifiable_result:implementer',
@@ -2767,7 +2769,7 @@ describe('runTaskLoop', () => {
       {
         idFactory: (prefix) => `${prefix}_shadow_repair`,
         ensureTaskLedgerRoot: vi.fn(() => 'tlroot_shadow_repair'),
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.95,
@@ -2827,7 +2829,7 @@ describe('runTaskLoop', () => {
       {},
       {
         idFactory: (prefix) => `${prefix}_structured`,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -2861,7 +2863,7 @@ describe('runTaskLoop', () => {
       {},
       {
         idFactory: (prefix) => `${prefix}_priority`,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -2890,7 +2892,7 @@ describe('runTaskLoop', () => {
       {},
       {
         idFactory: (prefix) => `${prefix}_legacy_frozen`,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -2918,7 +2920,7 @@ describe('runTaskLoop', () => {
       {},
       {
         idFactory: (prefix) => `${prefix}_lifecycle`,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -2954,7 +2956,7 @@ describe('runTaskLoop', () => {
       {},
       {
         idFactory: (prefix) => `${prefix}_checkpoint`,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -2993,7 +2995,7 @@ describe('runTaskLoop', () => {
       { agents: { defaults: { taskLoop: { maxIterations: 1, maxRepairIterations: 0 } } } },
       {
         idFactory: (prefix) => `${prefix}_checkpoint_gap`,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.95,
@@ -3046,7 +3048,7 @@ describe('task_loop tool', () => {
       config: {},
       deps: {
         idFactory: (prefix) => `${prefix}_tool`,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -3080,7 +3082,7 @@ describe('task_loop tool', () => {
       },
       deps: {
         idFactory: (prefix) => `${prefix}_memory_persist_off`,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,
@@ -3133,7 +3135,7 @@ describe('task_loop tool', () => {
       config: {},
       deps: {
         idFactory: (prefix) => `${prefix}_status`,
-        runObserved: (async (request) => fakeResult(request.templateId)) as never,
+        runObserved: (async (request: ObservedOrchestrationRunRequest) => fakeResult(request.templateId)) as never,
         selfCheck: (async () => ({
           decision: 'complete',
           confidence: 0.9,

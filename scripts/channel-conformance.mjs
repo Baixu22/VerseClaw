@@ -8,6 +8,7 @@
 // scenarios actually ran and passed.
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -80,14 +81,19 @@ function runFixtureSuite(fixtureRoot) {
   // dev-only tooling (security review LOW, accepted).
   const command =
     process.platform === 'win32'
-      ? `pnpm.cmd --dir openclaw_runtime exec vitest run ${testFileRelative} --reporter=json`
-      : `pnpm --dir openclaw_runtime exec vitest run "${testFileRelative}" --reporter=json`;
+      ? `pnpm.cmd --dir openclaw_runtime --config.verify-deps-before-run=false exec vitest run ${testFileRelative} --reporter=json`
+      : `pnpm --dir openclaw_runtime --config.verify-deps-before-run=false exec vitest run "${testFileRelative}" --reporter=json`;
   const result = spawnSync(command, {
     cwd: ROOT,
     encoding: 'utf8',
     timeout: 180_000,
     shell: true,
     windowsHide: true,
+    // The fixture spawn is a verification step: it must not trigger a
+    // dependency (re)install of the runtime workspace as a side effect
+    // (pnpm 11's verify-deps-before-run would otherwise relink 1100 packages
+    // mid-test, blowing the 180 s budget).
+    env: { ...process.env, npm_config_verify_deps_before_run: 'false' },
   });
   if (result.error) {
     throw new Error(`fixture suite failed to start: ${result.error.message}`);
@@ -206,7 +212,7 @@ ${failures}
 
 export { CHECKS, REQUIRED_SCENARIOS, runConformance };
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (isMainEntrypoint(import.meta.url)) {
   const [, , rawName] = process.argv;
   // RC-05: when no channel name is given, default to the operator fixture so the
   // bare `pnpm run channel:conformance` gate exits 0 against the RC-05

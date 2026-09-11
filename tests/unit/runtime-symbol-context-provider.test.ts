@@ -118,20 +118,16 @@ describe("Symbol context provider shadow boundary", () => {
       taskId: "line-c-symbol-grounding-default-off",
       tokenBudget: 128,
     };
-    const baseline = await createSymbolContextProvider({
+    const baseline = expectProviderResult(await createSymbolContextProvider({
       overviews: [overview],
-    }).getContext(input);
-    const disabled = await createSymbolContextProvider({
+    }).getContext(input));
+    const disabled = expectProviderResult(await createSymbolContextProvider({
       overviews: [overview],
       groundingDiagnostics: {
         enabled: false,
         refs: [buildGroundingRefFixture({ id: "symbol_grounding_disabled" })],
       },
-    }).getContext(input);
-
-    expectProviderResult(baseline);
-    expectProviderResult(disabled);
-    expect(disabled).toEqual(baseline);
+    }).getContext(input));    expect(disabled).toEqual(baseline);
     expect(JSON.stringify(disabled)).not.toContain("groundingDiagnostics");
   });
 
@@ -144,9 +140,9 @@ describe("Symbol context provider shadow boundary", () => {
       taskId: "line-c-symbol-grounding-diagnostics",
       tokenBudget: 128,
     };
-    const baseline = await createSymbolContextProvider({
+    const baseline = expectProviderResult(await createSymbolContextProvider({
       overviews: [overview],
-    }).getContext(input);
+    }).getContext(input));
     const trusted = buildGroundingRefFixture({
       id: "symbol_grounding_trusted",
       canonicalKey: "symbol:symbol_grounding_trusted",
@@ -170,7 +166,7 @@ describe("Symbol context provider shadow boundary", () => {
         rawTrace: RAW_GROUNDING_SENTINEL,
       } as never,
     });
-    const result = await createSymbolContextProvider({
+    const result = expectProviderResult(await createSymbolContextProvider({
       overviews: [overview],
       groundingDiagnostics: {
         enabled: true,
@@ -184,20 +180,16 @@ describe("Symbol context provider shadow boundary", () => {
           secrets: { apiKey: RAW_GROUNDING_SENTINEL },
         } as never,
       },
-    }).getContext(input);
-
-    expectProviderResult(baseline);
-    expectProviderResult(result);
-    expect(result.status).toBe("success");
+    }).getContext(input));    expect(result.status).toBe("success");
     expect(result.contextItems).toEqual(baseline.contextItems);
     expect(result.evidenceRefs).toEqual(baseline.evidenceRefs);
     expect(result.diagnostics).toHaveLength(baseline.diagnostics.length + 1);
     expect(result.diagnostics.every(isRuntimeRegistryDiagnostic)).toBe(true);
 
     const diagnostic = result.diagnostics.find((item) =>
-      item.message.includes("grounding diagnostics-only")
+      item.message?.includes("grounding diagnostics-only")
     );
-    expect(diagnostic).toEqual(expect.objectContaining({
+    expect(diagnostic as any).toEqual(expect.objectContaining({
       providerId: SYMBOL_CONTEXT_PROVIDER_ID,
       status: "ok",
       reason: "registered",

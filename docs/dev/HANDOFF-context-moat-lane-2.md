@@ -14,6 +14,28 @@
 
 ---
 
+## 0.5 交接前你必须知道的一件事：这条分支不干净
+
+**本轮起点 `590588791` 之后，分支陆续并入了与本轮无关的 workstream 提交** —— provenance UI 接线、gateway env 默认值、E2E 快照刷新、跨分支 merge 等。交接时实测：
+
+```
+round range 590588791..HEAD  = 43 个提交 / 294 个文件
+其中带本轮 trailer 的        = 30 个提交
+归属完整集（trailer + §R3.8.4 两个既有实例）= 36 个文件   ← 本轮真实触碰面
+```
+
+三个后果，都已实测：
+
+1. **§R3.6 累积门原本会误判整轮硬 FAIL** —— 区间 diff 读作 294，而 M0..M5 总预算是 230。**已修**（`a424325aa`）：改用「trailer 匹配 + §R3.8.4 既有实例清单」，读作 36，且集合内零个文件落在预期触碰面外。**共用分支上区间 diff 不可用。**
+2. **`git status` 里约 80 个 dirty 文件不是你的**，也不全是车道 1 的 —— 有第三方进程留下的孤儿改动（车道 1 已在其 handoff 里记录此事）。**一律不碰、不提交、不 stash。**
+3. **rule-4 断言必须用 pathspec 限定到本轮触碰面**，否则外来 workstream 的提交会全部报成 UNATTRIBUTED。
+
+当前 §R3.8.4 只登记了两个既有无 trailer 实例（`f005991b7` S0 骨架、`fe469cbff`）。实测另有**三个未登记**：`5973da7c8`（车道 1 的 handoff 提交，零 trailer）、`2b03f5435`、`c89b1c4e5`（两个 in-flight checkpoint）。**要么补登，要么让对应方补 trailer** —— 现状下 M1 起「该断言须为空」这条做不到。
+
+> **一处需要人来裁的不一致**：车道 1 把 `HANDOFF-lane-1.md` 提交进了 `docs/dev/context-moat/`，而 §R4.1 明写该树下**只允许七个路径**、「路径以外的产出物视为未交付」，且无任何偏差登记这第八个路径（`grep HANDOFF DEV-PROTOCOL.md` = 0）。我因此把本文件放在 **`docs/dev/HANDOFF-context-moat-lane-2.md`（树外）**，没有跟着扩树。两份 handoff 位置不一致，请用户决定是补登第八路径、还是把车道 1 那份也移出去。
+
+---
+
 ## 1. 强制先读（不可跳过）
 
 | 顺序 | 对象 | 为什么 |
@@ -225,6 +247,19 @@ git show $COMMITS -- ':!docs' ':!*.md' \
 
 **空集断言不是形式主义**：`$COMMITS` 为空时 `git show --name-only $COMMITS` **退化为 `git show HEAD`**，命令 1 返回 1 而非 0，三条命令全部假性通过，且报出的半径是**别人提交**的文件数。
 
+### §R3.6 里程碑累积门（里程碑收口时）
+
+**不要用区间 diff**（见第 0.5 节）。用归属完整集：
+
+```bash
+ATTRIBUTED=$(git log -E --format=%H \
+  --grep="^(Task:|Reviews:|Refs|Node:) TF-[0-9]" <milestone-start>..HEAD)
+KNOWN_UNATTRIBUTED="f005991b7 fe469cbff"     # §R3.8.4 已登记，仅此两个
+git show --pretty="" --name-only $ATTRIBUTED $KNOWN_UNATTRIBUTED | sort -u | wc -l
+```
+
+预算（冻结于 B1）：M0 40 / M1 30 / M2 40 / M3 50 / M4 25 / M5 45，合计 **230**。交接时实测归属完整集 = **36**。
+
 ---
 
 ## 8. 硬约束（不可协商）
@@ -269,15 +304,20 @@ TF=~/.claude/skills/task-forest/scripts/task_forest.py
 # Windows 每次调用都要设，否则中文输出乱码、你会误判状态
 export PYTHONUTF8=1 PYTHONIOENCODING=utf-8
 
-python "$TF" show TF-0110 --json
+# 只读
+python "$TF" show TF-XXXX --json
 python "$TF" list --status in_progress
-python "$TF" update-node TF-0110 --actor lane-2 --status in_progress --progress 5
 python "$TF" validate
+
+# 写（会改图状态；把 TF-XXXX 换成真实 id 再跑）
+python "$TF" update-node TF-XXXX --actor lane-2 --status in_progress --progress 5
 
 # 结构性变更（record_deviation / add-node / add-edge）必须走 proposal，且即存即应用
 python "$TF" proposal-save --proposal-file <f>.json --session-id session-lane-2
 python "$TF" proposal-apply <TFP-id> --yes --actor lane-2
 ```
+
+> **本块刻意全部用 `TF-XXXX` 占位。** 交接时我为验证 handoff 里的命令可跑，把这段整体执行了一遍，其中的 `update-node ... --status in_progress` **真的把 TF-0110 置成了 `in_progress`/5%** —— 那等于凭空宣告占用 D08 域，会误导另一车道和 pick-next。已即时改回 `proposed`/0 并在此登记。**别整块复制运行含写操作的示例。**
 
 - **`--progress` 是 0–100 不是 0–1**。传 `0.9` 会显示成 0.9%。
 - **长文本一律走 `--fields-file`，不要用 `--append-evidence` 传含反引号/特殊字符的字符串** —— 反引号会被 shell 当命令替换执行，文本静默丢失。本轮实测踩过。

@@ -91,7 +91,7 @@ export type DcsContextAgentToolOptions = {
   /** Prefer live run session when sandbox session key differs. */
   runSessionKey?: string;
   agentSessionKey?: string;
-  blockStore?: Pick<BlockStoreApi, "query" | "queryByEntity">;
+  blockStore?: Pick<BlockStoreApi, "query" | "queryByEntity" | "recallArchivedBlocks">;
   contextBlockSink?: ContextBlockSink;
   /**
    * Agency / orchestration role used for context_write whitelist (ANTI-7).
@@ -125,6 +125,12 @@ const ContextReadSchema = Type.Object({
   category: Type.Optional(
     Type.String({
       description: "Optional filter for tool_registry entries by category/kind/title.",
+    }),
+  ),
+  include_archived: Type.Optional(
+    Type.Boolean({
+      description:
+        "Explicitly recall archived blocks: restore them to active, increment heat, persist, and return them. Defaults to false.",
     }),
   ),
 });
@@ -279,18 +285,23 @@ export function createContextReadTool(options: DcsContextAgentToolOptions): AnyA
     name: CONTEXT_READ_TOOL_NAME,
     displaySummary: "Read full context blocks on demand",
     description:
-      "Read the full content of a context block (task_state, tool_registry, experience, notes, etc.). Use when you need details beyond the summary in your system prompt.",
+      "Read the full content of a context block (task_state, tool_registry, experience, notes, etc.). Set include_archived=true to explicitly recall archived blocks back to active memory.",
     parameters: ContextReadSchema,
+    // Tool risk metadata classifies filesystem writes. The explicit
+    // include_archived path performs an in-store lifecycle touch in the
+    // existing BlockStore authority; default context_read remains read-only.
     risk: "readonly",
     execute: async (_toolCallId, args) => {
       const params = asToolParamsRecord(args);
       const blockTypeRaw = readStringParam(params, "block_type", { required: true });
       const category = readStringParam(params, "category");
+      const includeArchived = params.include_archived === true;
       const result = await readContext({
         block_type: blockTypeRaw as BlockType,
         sessionId,
         blockStore,
         ...(category ? { category } : {}),
+        ...(includeArchived ? { includeArchived: true } : {}),
       });
       // FP-P1-04 read段: hit count must be observable. Previously only the 4
       // view tools were instrumented, so a Block read was invisible.

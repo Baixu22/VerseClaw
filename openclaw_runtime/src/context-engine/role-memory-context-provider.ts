@@ -25,6 +25,7 @@ import {
   recordMemoryInjection,
 } from "../memory/memory-store.js";
 import { isInjectableMemoryCard, isMemoryCardInContextScope } from "../memory/memory-card.js";
+import { applyMemoryUseGateOverlay } from "../memory/memory-dual-gate.js";
 import { buildContextPack } from "../memory/context-pack.js";
 import type {
   ContextPack,
@@ -82,9 +83,16 @@ export type RoleMemoryContextProviderOptions = {
   defaultTokenBudget?: number; // reuse ContextPackBudget.total, default 512
 };
 
+export type RoleMemoryContextProvider = Omit<RuntimeContextProvider, "getContext"> & {
+  getContext: (
+    query: RuntimeContextProviderQuery,
+    extras?: RuntimeContextProviderExtras,
+  ) => Promise<RuntimeContextProviderResult>;
+};
+
 export function createRoleMemoryContextProvider(
   opts: RoleMemoryContextProviderOptions,
-): RuntimeContextProvider {
+): RoleMemoryContextProvider {
   const manifest = {
     id: ROLE_MEMORY_CONTEXT_PROVIDER_ID,
     kind: "context" as const,
@@ -196,11 +204,17 @@ export function createRoleMemoryContextProvider(
       }
 
       // Filter injectable cards (mirror role-spawn.ts:124-127).
-      const injectable = cards.filter(
+      const legacyInjectable = cards.filter(
         (card) =>
           isInjectableMemoryCard(card) ||
           (card.status === "cold" && !card.supersededBy),
       );
+      // TF-0110 (T-P0-1, req-1): consult the memory use gate on the real
+      // injection path. Gate enabled -> secret/secret_adjacent/poison/
+      // tombstone cards are removed before any ContextPack bucket; gate
+      // disabled (default) -> the legacy set passes through unchanged
+      // (P3-003 staged rollout; AC-1).
+      const injectable = applyMemoryUseGateOverlay(legacyInjectable);
       if (injectable.length === 0) {
         return fallbackResult({
           reason: "no_result",

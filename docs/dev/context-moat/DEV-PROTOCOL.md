@@ -1,5 +1,12 @@
 # DEV-PROTOCOL —— 长任务上下文护城河本轮开发协议
 
+> **复核收口规则更新（2026-09-10，用户明确指令）**：“通过就 done，不通过就处理问题”。
+> `review_needed` 只用于尚未作出结论的复核；已通过实际验收的决策/修复进入 `done`，
+> 工程失败进入 `in_progress` 并修复，依赖真人等外部条件则明确 `blocked`。
+> 本条覆盖旧文中将已结束复核永久表达为 `review_needed` 的约定，不降低技术验收标准。
+> API-only 决策完成不表示被撤下的能力已通电；预算、历史超限、L2 白名单和产品锁保持原义。
+> 具体执行规则见 `harness/specs/rules/task-review-outcome-boundary.md`，当前状态以 Task Forest 为准。
+
 本文件是 TF-0102（长任务上下文护城河）本轮 M0 文档相的唯一合一产出，由 TF-0103 的七个子节点分节写入。
 
 **读法**：每个 task 收口时，其审核记录（`reviews/<task-id>.md`）必须至少引用本文件的一节。本文件未落地的条款不具约束力；本文件已落地的条款对两条车道同等生效。
@@ -105,7 +112,12 @@ node openclaw_runtime/scripts/check-production-reachable.mjs <symbol> [<symbol>.
 - 配置的 root 若不存在，脚本**以 exit 3 显式失败**而不是静默缩小可达集 —— 失效的 root 会产出假的「不可达」判定，那正是本节要防的失败模式。
 - `--all-modules` 的计数偏大：§D1 的 root 只覆盖本轮的上下文/agent 入口，不覆盖 channels / ACP / media / release 等轮外入口。该模式是粗扫，**逐符号模式才是权威判据**。
 - **扫描域仅 `openclaw_runtime/src`**：仓库根的 `tests/`、`electron/`、`src/`（渲染层）内的调用方在脚本视野之外。故「脚本 exit 1 + `openclaw_runtime/src` 内 grep 无命中」**不足以判死**。**判死前必须另跑一次全仓 grep**（`grep -rn <symbol> tests apps electron shared scripts packages`）。这不是理论风险：TF-0118 的四个候选里，此盲区实测命中 **3/4** —— `commitMemoryProposal`（节点 evidence 称「全仓零调用方」，实为 `tests/unit/role-runtime-mvp.test.ts:164` 有调用）、`trace-context-provider.ts`（自述「连测试都没有」，实为三个仓库根套件、15 个通过用例）、`reserveTurnInjectionCapacity`（`tests/unit/context-orchestrator-entry-scan.test.ts:68` 有一处反向守卫）。与「`exports` 面不在 root 集合内」同形，是本节第二类已登记盲区。
-- **本节无「枚举某目录下所有零调用导出」的模式。** 脚本只能逐符号判定或做模块级粗扫。任何以「零调用导出数 = N」形式书写的 AC / `success_metrics`（如 TF-0118 AC-1）**不可由本脚本测量**，须先补该能力或改写指标，不得以样本外推冒充全量扫描。
+- **`--exports` 是辅助静态 inventory，不是权威逐符号判据。** 该模式可枚举 `openclaw_runtime/src` 的 runtime export，并输出 `production-reachable / api-surface-only / not-production-reachable` 候选队列；但它的引用识别是名字 token 匹配，不做 TypeScript symbol/binder 解析，可能把同名属性、字段或局部变量误算为引用。因此：
+  - `production-reachable=14075` 只能理解为候选 inventory，不是 14075 个真实生产调用链；
+  - `not-production-reachable=6582` 不能判死代码；
+  - `export-blind-spots` 与 `module-blind-spots` 存在重叠，两个总数不可相加；
+  - M4 收口仍须逐符号复核、人工确认 import 绑定与真实调用表达式，并补默认旗标 / kill switch / 上游守卫 / 分支旁路的反向证伪。
+  - 任何以「零调用导出数 = N」形式书写的 AC / `success_metrics` 仍不可由该模式直接证明，须用逐符号判据或改写指标。
 
 ### D1.3 三种降级出口（合法，不算失败）
 
@@ -360,20 +372,32 @@ pnpm maturity:validate
 - 触发时机：**每个 milestone（M1..M5）收口时**。
 - 判据（逐条，据 §D4.5）：
   - `typecheck` / `contract:check`：**exit 0**（无豁免）。**两者已实测为 exit 0**，非未验证的断言。
-  - `lint:check`：**不要求 exit 0** —— 实测 exit 1（4 errors / 131 warnings）。判据为 **error 集 ⊆ §D4 白名单 `gates.lint_check.exemptions`**（`(file, rule)` 对），且 `baselineErrorCount ≤ 4`。四项均已给出**逐字节因果证明**为本轮起点即存在，详见 `GATE-BASELINE.md §9`。`eslint .` 未加 `--max-warnings`，warning 不入门。**该门为 §D4 初版漏判的第四道红门**（`TFD-lane2-lintcheck-fourth-gate-2026-08-25`）。
-  - `pnpm test`：失败集 ⊆ §D4 白名单 `gates.pnpm_test.exemptions`，且 `config-schema-parity` 不在失败集内。**白名单外任一失败 = 回归，阻塞。**
-  - `maturity:validate`：A2 失配集 ⊆ §D4 §4.3 的 25 项基线；**并须单独补跑** `pnpm maturity:residual` 与 `pnpm maturity:traceability` 以消除 §D4 记录的 `&&` 链短路盲区（`TFD-maturity-chain-blindspot-2026-08-24`）。
-- **`&&` 链门须逐段跑**（本轮两道门栽在此形状）：`lint:check` 与 `maturity:validate` 均为 `&&` 链，退出码只报告链上**第一个**失败，其后各段状态是**未知量而非已知绿**。`lint:check` 的盲区已实测消解（`lint:dcs` 单独跑 exit 0）；`maturity` 的两段见 §D4.3。
-- **`maturity` 两条补跑命令有副作用，跑完必须复原**（本节初版未声明，是我的缺陷）：实测 `maturity:traceability` 会改写 `artifacts/system-maturity/P7-001/traceability-report.json`（+246/-108），而该文件**本身就是 §D4.3 那 25 项基线中的一项** —— 即这道门会改写它所校验的对象。后果有两层：①留着不复原就是 §R5 技术-7「不追溯修改历史 artifacts」的违反；②两车道共用工作树，该改动不属任何车道（§R4.9）。故 L2 判据补一条**强制收尾**：
+  - `lint:check`：**不要求 exit 0** —— 实测 exit 1（4 errors / 131 warnings）。判据为 **error 集 ⊆（§D4 白名单 `gates.lint_check.exemptions` ∪ 轮外台账 `gates.lint_check.outOfRoundErrors`）**（均为 `(file, rule)` 对），且**白名单侧** `baselineErrorCount ≤ 4`。轮外台账每一条须按 §D4.2 给出引入提交 SHA 并证明其 TF 号**落在 §R3.6 `in_round()` 判定的本轮 node 区间之外**。**本行刻意不写区间字面值** —— 区间与排除项的唯一真相源是 §R3.6 的 `ROUND_LO`/`ROUND_HI` 与 `in_round()` 的 `case` 分支；本行原先复写了一份，D5 把上限改到 150 后它仍读作 147，见 §R3.6 第六种失效。证不出的一律回落为回归、阻塞。四项白名单均已给出**逐字节因果证明**为本轮起点即存在，详见 `GATE-BASELINE.md §9`。`eslint .` 未加 `--max-warnings`，warning 不入门。**该门为 §D4 初版漏判的第四道红门**（`TFD-lane2-lintcheck-fourth-gate-2026-08-25`）。
+  - `pnpm test`：失败集 ⊆ §D4 白名单 `gates.pnpm_test.exemptions`，且 `config-schema-parity` 不在失败集内。**白名单外任一失败 = 回归，阻塞。** 该白名单已于 2026-09-05 由 17 条**缩到 1 条**（两次独立读数均为 16/17 通过；「只减不增」允许缩，无需偏差）。缩表后被删的 12 条 `subject-files-dirty` 那一整类，今后落**轮外台账**而不是 `exemptions` —— 判据见 §D4.2，证据门槛见 `GATE-BASELINE.md` 的 `outOfRoundRule`。
+  - `maturity:validate`：**逐段跑**（7 段，不用 `&&`）。第 5 段全部失配集 ⊆（§D4 §4.3 的 25 项基线 ∪ `segment5.outOfRoundMismatches` 轮外台账 4 项 A2）；第 7 段 ⊆ 首个基线 **96**；其余五段 exit 0。P2-005 的 3 项非 A2 已由独立审核判为本轮 must-fix，不得列入轮外台账或因非 A2 而漏检。**在 `git worktree add --detach <tmp> HEAD` 里测**（见 §D4.3）—— 已实测本门有**三个**自改写段，共用树内跑会污染它所审计的对象。
+- **`&&` 链门须逐段跑**（本轮两道门栽在此形状）：`lint:check` 与 `maturity:validate` 均为 `&&` 链，退出码只报告链上**第一个**失败，其后各段状态是**未知量而非已知绿**。`lint:check` 的盲区已实测消解 —— **该链实为 4 段而非 3 段**（`check-no-bom` → `eslint .` → `lint:dcs` → `lint:artifact-completion-class`），四段单独跑实测 `0 / 1 / 0 / 0`；`maturity` 实为 7 段而非 6 段，见 §D4.3。
+- **记录下来的链长必须与真实链长核对**（2026-09-05 两处同时失配）：`GATE-BASELINE.md §6` 原记 `lint_check.chain` 为 3 段、`maturity_validate.chainPosition` 为「4 of 6」，实测分别为 4 段与「5 of 7」（`maturity` 在第 3 位插入了 `validate-system-maturity-findings-registry.mjs`）。**链长记错的后果不是笔误而是漏门**：一个未被记录的尾段会从「未知」被默默当成「已知绿」，正是本节要拦的东西。两处已按实测修正。
+- **`maturity` 是自改写的门，故整门改在一次性 worktree 里跑**（2026-09-05 修订，取代原「跑完必须复原」条款）。实测**三个**自改写段，不是本节初版点名的一个：
+
+  | 段 | 改写它自己审计的对象 |
+  |---|---|
+  | 第 7 段 `traceability` | `artifacts/system-maturity/P7-001/traceability-report.json`（+246/−108），该文件本身就是 §D4.3 那 25 项基线中的一项 |
+  | 第 5 段 `evidence` | `artifacts/system-maturity/P0-004/{evidence-index.json, validate-system-maturity-evidence.json}` |
+
+  原条款要求在共用树里跑完再 `git checkout --` 复原,有两处硬伤:①**只点名一个 artifact,实际写六个**(M1 首次收口实测并全部复原);②两车道共用工作树,复原窗口内邻居的提交会把改动吞进去(§R4.9)。**改为:**
 
   ```bash
-  pnpm maturity:residual; pnpm maturity:traceability     # 逐段跑，不用 &&
-  git status --porcelain -- artifacts/system-maturity     # 应为空
-  git checkout -- artifacts/system-maturity/P7-001/traceability-report.json   # 若非空则复原
+  git worktree add --detach /tmp/l2 HEAD      # 7 个脚本只依赖 node 内置 + scripts/lib/*，无需 install，实测 14 秒
+  cd /tmp/l2 && for s in audit-baseline-check validate-system-maturity-plan \
+    validate-system-maturity-findings-registry validate-test-gates \
+    validate-system-maturity-evidence run-system-maturity-residual-audit \
+    validate-system-maturity-traceability; do node scripts/$s.mjs; echo "$s => $?"; done
+  cd - && git worktree remove --force /tmp/l2
+  git status --porcelain -- artifacts/system-maturity    # 应为空，且是「从未被写过」而非「写完复原了」
   ```
 
-  **自修改的门不得以「跑过了」为凭据**：若不复原，下一次同门比对的是被上一次运行改写过的基线，25 项的「只保证不增长」就失去意义。
-- 回归定义（承重条款，同 §D4.6）：**白名单之外的任何失败 = 回归，一律阻塞。** 白名单条目**只减不增**；新增须走 §R4 偏差触发 (c)。
+  **自修改的门不得以「跑过了」为凭据**：在共用树里跑并复原,下一次比对的仍可能是被上一次运行改写过的基线;在一次性 worktree 里跑,改写**从未到达**共用树,复原步骤连带不必要。本轮全程实测共用树 `artifacts/system-maturity` 为空。
+- 回归定义（承重条款，同 §D4.6）：**白名单之外的任何失败 = 回归，一律阻塞。** 白名单条目**只减不增**；新增须走 §R4 偏差触发 (c)。**判为轮外的失败进独立台账而非白名单**，门槛与判据见 §D4.2 与 `GATE-BASELINE.md` 的 `outOfRoundRule`；**判为本轮引起的失败一律不得入任何台账**,只能修 —— `185d05516` 的 7 项 A2 是判例（`17ed0a097` 外科式修复）。
 
 ---
 
@@ -485,8 +509,52 @@ COMMITS=$(git log -E --format=%H \
 **命令 1 —— 改动半径 ≤ `max_brb`**
 
 ```bash
+# §R3.1.1 的生成物排除集，命令 1 与 §R3.6 共用
+GEN=(':!.agent-workbench/task-forest/snapshots' ':!.agent-workbench/task-forest/exports' \
+     ':!.agent-workbench/task-forest/graph'     ':!.agent-workbench/task-forest/todos' \
+     ':!.agent-workbench/task-forest/sessions'  ':!.agent-workbench/task-forest/config.json')
+
+# 判定用
+git show --pretty="" --name-only $COMMITS -- . "${GEN[@]}" | sort -u | wc -l
+
+# 如实记录用（不判定）：未排除的全量读数，同样写进审核记录
 git show --pretty="" --name-only $COMMITS | sort -u | wc -l
 ```
+
+#### §R3.1.1 生成物 / authored 的划分（命令 1 与 §R3.6 共用）
+
+用户于 2026-08-27 裁决看板 `XL-010` 采纳出路 (a)：**Task Forest 的生成物移出半径计量对象，authored 治理物照计。**
+
+| 路径 | 类别 | 计入半径 | 理由 |
+|---|---|:--:|---|
+| `.agent-workbench/task-forest/snapshots/**` | 生成物 | **否** | 每次 CLI 写入生成一份，内容是整张图的完整副本，不携带独立信息；数量只由「跑了几次 CLI」决定 |
+| `.agent-workbench/task-forest/exports/**` | 生成物 | **否** | 每次写入按图重新渲染 |
+| `.agent-workbench/task-forest/graph/**` | 生成物 | **否** | 图状态本体，由 CLI 维护，禁止手改（§R4.6） |
+| `.agent-workbench/task-forest/todos/**` | 生成物 | **否** | 由图派生 |
+| `.agent-workbench/task-forest/sessions/**` | 生成物 | **否** | CLI 会话状态 |
+| `.agent-workbench/task-forest/config.json` | 生成物 | **否** | 只含计数器与 graph hash |
+| `.agent-workbench/task-forest/proposals/**` | **authored** | **是** | 提案 JSON 是手写的决策输入 |
+| `.agent-workbench/task-forest/deviations/**` | **authored** | **是** | 偏差正文是手写的 |
+| `.agent-workbench/task-forest/alignments/**` | **authored** | **是** | 同上 |
+| `docs/dev/context-moat/**`（含 `reviews/`、`AUDIT-BOARD.html`、本文件） | **authored** | **是** | 协议、审核记录、看板都是真实交付物 |
+| 其他一切路径 | **authored** | **是** | — |
+
+**默认方向是「计入」。** 上表的排除是一份**显式清单**，不是「`.agent-workbench` 整体豁免」：Task Forest 将来新增的任何目录默认**计入**，要排除必须先修本表。这个方向是刻意的 —— 一个默认豁免的守卫会随存储实现变化而静默变宽。
+
+**这不是放宽，判据仍有牙。** 采纳前后逐 task 实测对照：
+
+| task | 原档 | 全量读数 | 排除生成物后 | 新规下是否仍超 |
+|---|---|---:|---:|---|
+| TF-0138 | `brb-S`=5 | 16 | **3** | **不超** —— 原超限 100% 由簿记造成 |
+| TF-0143 | `brb-S`=5 | 13 | **3** | **不超** —— 该 task 零代码改动 |
+| TF-0121 | `brb-M`=15 | 31 | **15** | **恰好不超** |
+| TF-0107 | `brb-S`=5 | 17 | 7 | **仍超** |
+| TF-0124 | `brb-M`=15 | 16 | **16** | **仍超**（其超出项是 `AUDIT-BOARD.html`，authored） |
+| TF-0116 | `brb-M`=15 | 21 | **21** | **仍超**（13 个实验件迁移，真实改动面） |
+
+即：**簿记造成的超限消失，真实改动面造成的超限一个不少。** TF-0116 与 TF-0124 在新规下依然超限，这就是本次修订的真阳性证据 —— 若新计量式把所有超限都抹平，它与取消半径门无法区分。
+
+**已落地的六次裁决不追溯撤销**（§R5 技术-7）。它们是当时计量口径下的正确裁决，且把一个已 `done` 的 task 的档位往回降没有任何操作意义。新口径只对**尚未收口**的 task 生效。
 
 **命令 2 —— schema 路径守卫（须为空，除非在 §R3.3 白名单内）**
 
@@ -499,10 +567,36 @@ git show --pretty="" --name-only $COMMITS -- \
 **命令 3 —— 默认值守卫（命中且不在 §R3.4 白名单 = 硬 FAIL）**
 
 ```bash
-git show $COMMITS -- ':!docs' ':!*.md' \
+# 判定用（runtime 面）—— 这一条的输出决定 PASS/FAIL
+git show $COMMITS -- ':!docs' ':!*.md' ':!.agent-workbench' \
   | grep -E "^[+-]" | grep -vE "^(\+\+\+|---)" \
   | grep -E "\.default\(|defaultValue|DEFAULT_[A-Z_]+\s*[:=]"
+
+# 如实记录用（不判定）—— 同一命令去掉 ':!.agent-workbench'，把命中数写进审核记录
+git show $COMMITS -- ':!docs' ':!*.md' \
+  | grep -E "^[+-]" | grep -vE "^(\+\+\+|---)" \
+  | grep -cE "\.default\(|defaultValue|DEFAULT_[A-Z_]+\s*[:=]"
 ```
+
+> **`':!.agent-workbench'` 是第三处排除，与 §R3.7 修正 2 的 `':!docs' ':!*.md'` 同源同理**（用户于 2026-08-27 放行本轮修订，看板 `XL-003`）。
+>
+> **为什么必须排除**：`.agent-workbench/task-forest/` 下的 `exports/*` 与 `snapshots/NNNN.json` 是**整张图的生成副本**，其中含**其他 task 的 node 正文**。只要任何一个 node 的 requirements/evidence 里出现 `defaultValue`、`.default(`、`DEFAULT_*` 字样（而 §R1 A2 表**要求**每个 task 记录「① 旗标默认值是否为关」，所以一定会出现），该字样就被复制进本 task 的每一份 snapshot。
+>
+> **失效是可量化且单调增长的**，同一个 task 上实测三次：
+>
+> | 观测点 | 未排除的命中数 | 剔除 `.agent-workbench` 后 |
+> |---|---:|---:|
+> | TF-0121 首次审核（lane-1） | 16 | 0 |
+> | TF-0121 lane-2 处置后 | 44 | 0 |
+> | TF-0121 收口时（lane-1 第三次测） | 54 | 0 |
+>
+> 即命中数随本 task 的 Task Forest 写入次数线性增长，而 runtime 真实命中恒为 0。一个读数只会涨、且涨幅与被测对象无关的守卫，无法区分「有真阳性」与「治理写得多」。
+>
+> **排除是安全的，不是放宽**：runtime 默认值只可能出现在 `openclaw_runtime/src` 与 `shared/dcs/` 下，`.agent-workbench/task-forest/` 是 Task Forest 的状态存储，**不存在也不可能存在**运行时默认值定义。排除它不会放过任何真实的默认值改动。
+>
+> **真阳性验证不可省**（§R3.7 已立此规，此处对新形式重跑）：对合成 diff 实测，加了第三处排除的判定命令**仍然捕获**两种真实形态 —— `z.boolean().default(false→true)` 命中 2 行、`DEFAULT_FLAGS = { toolRegistry: false→true }` 命中 2 行，共 4 行。**只验证「当前不报警」的守卫与永不报警的空守卫无法区分。**
+>
+> **两条都要跑**：判定用第一条，第二条的命中数**必须如实写进审核记录**。这是刻意的 —— 排除生成物是为了让判定可用，不是为了让噪声消失；噪声量本身是 §R3 的一项体检指标（见 §R3.9）。
 
 > **本节对 TF-0107 requirements 的字面命令做了两处修正，均有实测依据，见 §R3.7。** 直接照抄字面命令会产生假阳性与错误归因。
 
@@ -565,30 +659,147 @@ git show $COMMITS -- ':!docs' ':!*.md' \
 1. **拆分**为两个各自在半径内的 task。拆分件**必须共享一份设计说明**，固定路径 `docs/dev/context-moat/designs/<task-id>.md`（`<task-id>` 取拆分后**第一个** task 的 id，其余拆分件在自己的 `reviews/` 记录中引用同一路径）。设计说明须写明：为何原 task 超半径、拆分边界、拆分件之间的接口契约、以及**拆分后两件的 max_brb 之和不得超过原 task 的 max_brb**（否则拆分即成为绕过半径的手段）。
 2. **降级 `landed-unwired`**（§D1 / §R5 过程-10）。
 
+#### §R3.5.1 里程碑形态的合法出口（用户 2026-09-07 XL-017 裁定固化的第三条出口）
+
+本节原来只针对**单个 task**。当超径对象是一个**里程碑节点**（其预算为 B1 冻结值，且拆分不可用）时，追加第三条合法出口——该出口由用户裁决 `XL-017` 特意批准，适用于形态如 M2 的场景：
+
+- **里程碑级 `landed-unwired` 降级**：拆分出口不可用（超径文件为已联账落仓的实现提交、各子节点均已 `done`、§R3.6 冻结预算不被后续拆分/调档改变、TF-0149 已把「拆分对 `brb-S` 不可用」登记为同构缺陷）时，该里程碑连同其已独立收尾的受托技术证据一起，按 §D1.3 的表达方式降为 `review_needed/100 + landed-unwired`。
+- **这不是放行**——§D1.3 明示「接不上线时诚实降级优于虚假 done」；半径真实超限如实挂账，不标 `done`、不改冻结预算、不改全轮 230。
+- **适用条件**（全部必须成立；不满足则退回原 §R3.5 的两条路）：
+  1. 超径的至少一项是**已提交的实现提交**（非生成物、非治理簿记）；
+  2. 里程碑的全部子节点均已各自独立收口为 `done`（或自身为合法 `landed-unwired`）；
+  3. §R3.5 拆分出口经评估不可用（提交不可还原到「拆分前」的状态）；
+  4. 超出预算的增量在本轮另有裁决先例（M1 的 §R3.6.1 为同形态）。
+- **入口文件**：`docs/dev/context-moat/AUDIT-BOARD.html` 的 `XL-017`。GATE-BASELINE §11.4/§12.2 挂「M2 50/40」的挂账口径已同步更新。
+
 ### §R3.6 里程碑级累积半径（补住「拆分不减少总改动量」）
 
 单任务门拦不住累积大改动：把一个大 task 拆成三个小 task，每个都过 S 门，总量却是 3×S。故里程碑收口时另跑：
 
 ```bash
-git diff --name-only <milestone-start>..HEAD | sort -u | wc -l
+START=590588791          # 或 <milestone-start>
+RS="docs/dev/context-moat openclaw_runtime/src openclaw_runtime/packages/agent-core .agent-workbench/task-forest"   # 归属审计发现面，不是范围-1 的实施许可
+ROUND_LO=102; ROUND_HI=150   # D5 补入 TF-0149/0150；TF-0148 属轮外，须显式排除
+
+# 本轮成员判据 —— trailer 存在性不足以判定，必须看 TF 号是否落在本轮区间（见下方第三种失效）
+in_round() {
+  local ids i n
+  ids=$(git log -1 --format=%B "$1" \
+        | grep -oE '^(Task:|Reviews:|Refs|Node:) TF-[0-9]+' | grep -oE 'TF-[0-9]+' | sort -u)
+  [ -n "$ids" ] || return 1
+  for i in $ids; do
+    case "$i" in TF-0148) continue ;; esac  # 独立 RC-04/VerseShell follow-up，不属于 TF-0102
+    n=$((10#${i#TF-}))
+    [ "$n" -ge "$ROUND_LO" ] && [ "$n" -le "$ROUND_HI" ] && return 0
+  done
+  return 1
+}
+
+ATTRIBUTED=$(for c in $(git log -E --format=%H \
+  --grep="^(Task:|Reviews:|Refs|Node:) TF-[0-9]" $START..HEAD); do in_round "$c" && echo "$c"; done)
+
+# 派生（不再手工枚举）：触碰本轮面 + 带 Lane: + 无 Task:/Reviews: 的提交
+LANE_UNATTRIBUTED=$(for c in $(git log --no-merges --format=%H $START..HEAD -- $RS); do
+  m=$(git log -1 --format=%B "$c")
+  printf '%s' "$m" | grep -qE '^(Task:|Reviews:|Refs|Node:) TF-[0-9]' && continue
+  printf '%s' "$m" | grep -qE '^Lane: lane-[12]' && echo "$c"
+done)
+
+GRANDFATHERED="f005991b7 fe469cbff"     # §R3.8.4 的 M0 既有实例，只此两个且不再增长
+
+# 判定用 —— GEN 为 §R3.1.1 的生成物排除集，与命令 1 共用同一份定义
+git show --pretty="" --name-only $ATTRIBUTED $LANE_UNATTRIBUTED $GRANDFATHERED \
+  -- . "${GEN[@]}" | sort -u | wc -l
+
+# 如实记录用（不判定）：未排除的全量读数
+git show --pretty="" --name-only $ATTRIBUTED $LANE_UNATTRIBUTED $GRANDFATHERED \
+  | sort -u | wc -l
+
+# 必跑的第二输出 —— 触碰本轮面但连 Lane: 都没有的提交，审核者须逐条人工分类
+for c in $(git log --no-merges --format=%H $START..HEAD -- $RS); do
+  m=$(git log -1 --format=%B "$c")
+  printf '%s' "$m" | grep -qE '^(Task:|Reviews:|Refs|Node:) TF-[0-9]' && continue
+  printf '%s' "$m" | grep -qE '^Lane: lane-[12]' && continue
+  case " $GRANDFATHERED " in *" $(git log -1 --format=%h "$c") "*) continue ;; esac
+  echo "TRIAGE-NO-LANE $(git log -1 --format='%h %s' "$c")"
+done
 ```
 
-> **累积门刻意不用 §R3.8.2 的 trailer 匹配式，用区间 diff。** 两者职能不同：per-task 半径必须精确归属（故必须锚定），而累积量要的是**总改动面**，任何提交的文件都真实存在、都该计入。实测于 `cce818682`，三种测法在 M0 上分别给出 **18（区间 diff，基准真值）/ 13（锚定 trailer 匹配）/ 18（不锚定匹配）**：锚定式漏掉 S0 骨架提交的 5 个文件（它无行首 trailer），而不锚定式凑对纯属巧合 —— 它靠一处**行中散文**误配把骨架捞了回来。**用区间 diff 则对 trailer 质量完全免疫。**
+> **D5 量测面补正（TF-0149，2026-09-05）**：`RS` 只控制无归属提交的发现面；带本轮 trailer 的 `ATTRIBUTED` 不经过 `RS`，最终 `git show --name-only ... -- .` 也不以 `RS` 裁掉路径。TF-0124 的五个 `packages/agent-core` 文件原已计入其 16 个实施文件及 M3 的 40 个累积文件；它是 M3 子节点，不能据此给 M1 的 28/30 加五。补 `RS` 的目的，是让仅触碰该包而漏写 trailer 的提交进入人工归属审计，不是扩大 §R5 范围-1 的代码修改授权。
 >
-> M0 仍在累积提交，故上列绝对值随 HEAD 变化（例如 `5268f0e06` 处为 19 / 14 / 19）。**不变量才是判据：区间 diff 与锚定匹配之差恒为 5，即 S0 骨架那 5 个无 trailer 文件**（`approvals/` `corpus/` `designs/` `reviews/` 四个 `.gitkeep` + `loss-trace-spike.md`）。复核时请验这个差值，不要照抄绝对值。
+> **D5 新节点归属**：TF-0149、TF-0150 的主父节点为 TF-0102，计入本轮治理成本；TF-0148 无该父节点、属 RC-04/VerseShell，显式排除；TF-0151 属 M6/TF-0144，位于上限之外，继续排除。不能只把上限改成 151，否则会把两个轮外节点一起卷入。本次保留 TF-0102..TF-0147 的既有治理提交归属（包括已经发生的移轮记录），不追溯减掉历史治理成本，也不改变任何里程碑子节点集合或 B1 冻结预算。后续新增节点须再次明确归属，不能凭编号自动获准实施。
+>
+> **D5 当前复算**：`ac827cda3` 上新旧口径的全轮判定/全量读数均为 **163/284**；扩展发现面新增 `TRIAGE-NO-LANE` 两项 `a3fa5c2d9`、`e1ed74b40`，均为轮外 typecheck 修复，不自动计入本轮。M1/M2/M3 的判定读数仍为 **28/50/40**，冻结预算仍为 **30/40/50**。逐条证据与可复跑命令见 `reviews/TF-0149.md`、`GATE-BASELINE.md §12`。这些是当前提交集的读数，不替代 L1/L2 或里程碑收口裁定。
 
-配套断言（§R3.8.1 规则 4，无归属提交本身即违反）：
+> **`KNOWN_UNATTRIBUTED` 的硬编码清单已废止，改为派生**（用户于 2026-08-27 放行本轮修订，看板 `XL-006` 第 (a) 项）。原式写 `KNOWN_UNATTRIBUTED="f005991b7 fe469cbff"` 并在正文声明该清单「**恰好两项且封闭**」—— 实测**不封闭**：本轮另有 **13** 个带 `Lane: lane-1`、触碰 `.agent-workbench/task-forest` 而无任何 `Task:`/`Reviews:` 的提交（`18c8fe294 e6e9a66d8 06dda2f4b 8903431b2 ba88ba29f 79a3d8a11 4df5f0e05 90de39bdd ea210e58f 342b43596 e155c5305 6b605f848 c1914ef1a`）。**声明封闭而事实未封闭 = 累积门静默漏计。**
+>
+> **实测差额（`590588791..HEAD`，2026-08-27）：旧式 155，新式 229。漏计 74 个文件，占预算 230 的 32%。**
+>
+> **为什么用 `Lane:` 当「是否本轮」的判据，而不是 pathspec**：pathspec 只决定**选中哪些提交**，`git show --name-only` 仍会列出该提交的**全部**文件。实测把 pathspec 选中的全部无归属提交直接并入，读数是 **552**（≫ 230），因为其中混着 8 个轮外 workstream 提交（`56cc85502` 162 文件、`e043cad95` 99、`c89b1c4e5` 82⋯）。这正是本节前一版用区间 diff 时踩过的坑（读作 294），**换个写法又踩了一次**。`Lane:` 由 §R3.8.1 规则 1 强制，故它能把**本轮无 `Task:` 的提交**捞回来 —— 但 **它不是「本轮」的充分判据**：实测轮外 workstream 同样写 `Lane: lane-[12]`（见下方第三种失效）。author 也不能用（实测两条车道 `%an`/`%ae` 完全相同）。
+>
+> **残留孔洞如实登记**：一个既忘 `Task:` 又忘 `Lane:` 的本轮提交会被漏掉。因此第二条命令是**必跑项而非可选项** —— 它把这类提交打成 `TRIAGE-NO-LANE` 让审核者人工分类，而不是静默丢弃。2026-08-27 实测该列表为 7 项，全部核实为轮外 workstream 提交（`e2a3db8d9 e33abd5fe 56cc85502 5973da7c8 e043cad95 2b03f5435 c89b1c4e5`）。**孔洞可见地存在，好过不可见地不存在。**
+
+> **累积门必须用「归属完整集」，不能用区间 diff，也不能只用 trailer 匹配。** 两个极端都实测失效：
+>
+> | 测法 | M0..M1 实测 | 失效方式 |
+> |---|---:|---|
+> | 只用 trailer 匹配（无 §R3.8.4 补集） | 偏小 | 漏掉 S0 骨架那 5 个无 trailer 文件 |
+> | **区间 diff `<start>..HEAD`** | **294** | 本分支已并入**其他 workstream** 的提交（provenance UI、gateway env 默认值、E2E 快照、跨分支 merge 等 11 个无 trailer 提交）。**读作 294 而 M0..M5 总预算是 230 ⟹ 整轮被误判硬 FAIL** |
+> | **归属完整集（上式）** | **36** | 实测集合内**零个**文件落在本轮预期触碰面之外 |
+>
+> 即：**共用分支上区间 diff 不可用。** 本轮起点 `590588791` 之后，该分支陆续吸收了与本轮无关的 workstream 提交，区间 diff 无法把它们剔除，而 trailer 可以。§R3.8.4 的既有实例清单**恰好两项且封闭**，故「trailer 匹配 + 该清单」既完整又不含外来提交。
+>
+> 本条修正的是本节自身的前一版（那一版改用区间 diff 以避免 trailer 匹配漏计）。**两次都错在同一处：把「完整」与「只含本轮」当成可以二选一。** 正解是 trailer 保证「只含本轮」、§R3.8.4 清单保证「完整」。
+
+> **第三种失效（2026-09-05 实测，本节第三次在同一处出错）：trailer 存在 ≠ 本轮。** 上一版把「只含本轮」的担子全压在 trailer 上，前提是轮外提交没有 `Task:`/`Lane:`。**该前提已不成立**：同分支上的 VerseShell（`TF-0067`）与 chat（`TF-0100`）两个轮外 global_task 都按同一套 trailer 纪律提交，写 `Task: TF-00xx` + `Lane: lane-[12]`，而 §R3.6 的匹配式 `^(Task:|Reviews:|Refs|Node:) TF-[0-9]` 对 `TF-0067` 同样命中。
+>
+> 实测（`590588791..HEAD`，2026-09-05）：
+>
+> | 集合 | 提交数 | 判定读数（GEN 排除后） |
+> |---|---:|---:|
+> | 匹配式原样（本节前一版） | 133 | **175** |
+> | 按本轮 node 区间过滤后 | 116 | **141** |
+> | 差额 —— 17 个轮外提交（15 个 `TF-0067`＋2 个 `TF-0100`） | 17 | **虚增 34 个文件，占 M0..M5 总预算 230 的 15%** |
+>
+> 故本节命令加入 `in_round()`：**判据从「有 TF trailer」收紧为「TF 号落在本轮 node 区间内」**。**区间的唯一真相源是上方的 `ROUND_LO`/`ROUND_HI` 与 `in_round()` 的 `case` 分支** —— 判据类条文（`§R2.2` 的台账门槛、`GATE-BASELINE.md` 的 `outOfRoundRule` 与逐条理由）一律只引这个源、不写字面值；本段与下面三段是**取证叙述**，其中出现的具体数字是**带日期的历史快照，不具规范力**：写作本段时区间为 TF-0102..TF-0147，D5（2026-09-05）后为 TF-0102..TF-0150 且显式排除 TF-0148。三次教训合成一句：**「完整」由 §R3.8.4 清单保证，「只含本轮」由 node 区间保证，trailer 存在性两者都不保证。**
+>
+> **第六种失效（2026-09-06 独立审核实测，本节第六次「定义与测量分写两处」）：D5 把 `ROUND_HI` 改成 150，却留下五处仍写着 `TF-0102..TF-0147` 的判据文字** —— `§R2.2` L1 的 `lint:check` 轮外台账门槛（本文件 :368）、本段自身、以及 `GATE-BASELINE.md` 机器可读白名单里的 `outOfRoundRule`（`:514`）与两处逐条理由（`:467`、`:635`）。其中 `outOfRoundRule` 是**台账准入的操作性规则**：按其字面文字，TF-0148/0149/0150/0151 一律读作「轮外」，于是 TF-0149/TF-0150 **自己提交引入的门失败可以自我豁免进轮外台账**，而 `in_round()` 判它们是本轮、应为 must-fix。
+>
+> **实测当前为潜在而非已发生**：台账与白名单**条目**内被引用的 TF 号只有 `TF-0067`（唯一轮外 lint error）与 `TF-0106`/`TF-0109`/`TF-0119`/`TF-0142` 四个出处标注，无一落在 148..150，故区间放宽后**零条台账结论翻转**。可复跑判据（**必须只遍历条目对象**）：解析 `GATE-BASELINE.md` §6 的 JSON 块，递归遍历时**跳过 `outOfRoundRule` / `regressionRule` / `methodLimitation` / `outOfRoundBasis` / `whyRemovalIsSafeNowAndWasNotBefore` 这五个规则散文字段**，对其余叶子取 `TF-[0-9]{4}` 全集，与 148..150 求交为空。—— 对整块裸 grep 会**假性非空**：修订后的 `outOfRoundRule` 自身要提 148/149/150 才能说明这个洞，于是把被判定对象和判定说明混进同一个取集。该假阳性由 2026-09-06 的确认审核当场跑出，原文此处正写着裸 grep 版本。
+>
+> 但 **TF-0150 是紧接的下一个节点**，该洞在它触发任一门失败的那一刻由潜在转为已发生 —— 这是本条判 FAIL 而非仅记 note 的理由。
+>
+> **修法刻意不是「把 147 改成 150」**：那只会把同一份字面值复写到第六处，等下一次 `ROUND_HI` 变动时第七次重演。五处一律改为**指向 §R3.6 的 `ROUND_LO`/`ROUND_HI` 与 `case` 分支**这一唯一真相源。
+>
+> **修订后本节命令原样执行的实测输出（2026-09-05）**：判定读数 **154**（预算 230，余量 76）／全量读数 **270**／`TRIAGE-NO-LANE` **17 条**。三条输出与本节文本逐字一致地可跑，非纸面断言。`TRIAGE-NO-LANE` 由 2026-08-27 的 7 条增至 17 条，新增项全部可目视核实为轮外 workstream（verseshell、`TF-0074` compact、in-flight checkpoint、`test(typecheck):` 扫尾），**孔洞在变大且可见，这正是该输出为必跑项的理由**。
+>
+> **残留孔洞（如实登记，不假装闭合）**：`LANE_UNATTRIBUTED` 捞的是「有 `Lane:` 无 `Task:`」的提交，这类提交没有 TF 号，`in_round()` 无从判定，而轮外 workstream 也写 `Lane:`。因此 `TRIAGE-NO-LANE` 那条必跑输出的人工分类义务**扩及 `Lane:`-only 提交**：审核者须逐条确认其归属，不得因为「带了 `Lane:`」就默认计入本轮。
+
+> **第四种失效（2026-09-05 实测）：预算按子节点定义，测量却不按子节点取集。** 下表的预算是「该里程碑**活跃子节点** `max_brb` 之和」，而本节的判定命令取的是**全部**归属提交 —— 里程碑节点自己的收口簿记提交（`Task: TF-0108`）因此也被计入，而里程碑节点**不是自己的子节点、没有 `max_brb`、在预算里没有分配额**。实测 M1：
+>
+> | 取集 | 提交数 | 判定读数 | 预算 |
+> |---|---:|---:|---:|
+> | M1 六个子节点（TF-0110/0111/0112/0113/0114/0137） | 21 | **28** | 30 ✓ |
+> | 子节点 ＋ TF-0108 自己的收口簿记 | 25 | **33** | 30 ✗ |
+>
+> **收紧**：里程碑级累积半径的 `ATTRIBUTED` 只取该里程碑**子节点**的 TF 号，不含里程碑节点自身。
+>
+> **防洗白护栏（必须同时成立，否则里程碑节点变成绕过半径的通道）**：里程碑节点自身的提交仅在其改动**全部**落在 `docs/dev/context-moat/**` 与 `.agent-workbench/task-forest/**` 时才可排除；**只要包含这两个前缀之外的任何路径，该提交整体计入**，且必须在审核记录中写明为何实现类改动挂在里程碑节点上。判定使用前述封闭条件，不能只检查部分目录的黑名单。TF-0108 的历史 4 个簿记提交实测全部满足排除条件（authored 面为 `DEV-PROTOCOL.md`、`GATE-BASELINE.md`、`deviations.jsonl`、2 份 proposal、`reviews/TF-0108.md`，零实现路径）；后续三项修复提交不满足，见 §R3.6.1。
+>
+> 这是本节第四次在「定义与测量不一致」上出错（前三次：区间 diff、trailer 匹配漏计、trailer 存在≠本轮）。**四次的共同形状是:判据的两个半边分别写在两处,没人核对它们是否说同一件事。**
+
+配套断言（§R3.8.1 规则 4）—— 只对**本轮**提交生效，不适用于其他 workstream 的提交：
 
 ```bash
-for c in $(git log --format=%H <milestone-start>..HEAD); do
+for c in $(git log --format=%H <milestone-start>..HEAD -- docs/dev/context-moat openclaw_runtime/src); do
   git log -1 --format=%B "$c" | grep -qE '^(Task:|Reviews:|Refs|Node:) TF-[0-9]' \
     || echo "UNATTRIBUTED: $(git log -1 --format='%h %s' "$c")"
 done
 ```
 
-M0 实测输出**恰好两行**（`f005991b7` / `fe469cbff`），均为 §R3.8.4 已登记的既有实例。`Refs` / `Node:` 只为回溯 M0 而接受；M1 起这两键不再合法（§R3.8.2），届时该断言须为空。
+M0 实测输出应恰为 §R3.8.4 登记的两项；M1 起须为空。**注意用 pathspec 限定到本轮触碰面**，否则其他 workstream 的提交会全部报成 UNATTRIBUTED。
 
-与下表预算比较。预算 = 该里程碑**活跃子节点 `max_brb` 之和**，**冻结于 B1**（M0 收口时刻）—— 冻结是关键：否则后续拆分会同步抬高预算，累积门自我失效。
+下表保留 B1（M0 收口时刻）冻结预算，来源为当时该里程碑**活跃子节点 `max_brb` 之和**。后续拆分或逐 task 调档不自动改变它。**当前唯一的受限变更是 TF-0108 的 §R3.6.1 裁定；该节点满足其封闭范围条件时使用该节上限，其余节点仍按下表。全轮去重半径硬上限继续为 230，不按变更后的局部上限之和自动增加。**
 
 | 里程碑 | 活跃子节点 | max_brb 构成 | **累积预算（文件数）** |
 |---|---:|---|---:|
@@ -601,6 +812,54 @@ M0 实测输出**恰好两行**（`f005991b7` / `fe469cbff`），均为 §R3.8.4
 | **M0..M5 合计** | **27** | — | **230** |
 
 （已排除 4 个 deprecated 被砍 task；M6/TF-0144 不占本轮预算。）
+
+#### §R3.6.1 TF-0108 本次收口的范围与预算裁定（2026-09-06）
+
+授权来源：用户在完成独立技术复核后明确委托本会话「请你帮我做好裁定」。裁定人是该复核会话，非 `551759e32` 三项修复的实施会话。**本节是一次明确记录的局部预算变更，不是重新解释原先的 42/30 为通过。** 原 FAIL、原 B1 30 文件基线及原提交归属保留。
+
+本次 M1 上限为 **43**：原六子节点 28 个 authored 路径，加三项修复的 14 个新路径，再加 COMPASS 必需的 `docs/dev/handoffs/LATEST.md` 1 个路径。**许可是以下封闭路径集，不是“还能任意增加一个文件”。** 此 JSON 是本次例外的路径与上限真相源：
+
+<!-- TF-0108-CLOSEOUT-SCOPE:BEGIN -->
+```json
+{
+  "node": "TF-0108",
+  "repairBase": "cc5be536760794a61a8c3f991946baf850d2f163",
+  "repairCandidate": "551759e3286b603e119045d970fb78ba224f6dd9",
+  "baselineChildAuthored": 28,
+  "b1MilestoneBudget": 30,
+  "milestoneBudget": 43,
+  "roundBudget": 230,
+  "approvedAdditionalPaths": [
+    "docs/dev/context-moat/DEV-PROTOCOL.md",
+    "docs/dev/context-moat/GATE-BASELINE.md",
+    "harness/specs/tasks/context-moat-m1-governance-evidence-repair.md",
+    "plans/system-maturity/INDEX.md",
+    "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+    "plans/system-maturity/phase2-authorization-isolation/tasks/P2-001.delivery.md",
+    "plans/system-maturity/phase2-authorization-isolation/tasks/P2-002.delivery.md",
+    "plans/system-maturity/phase2-authorization-isolation/tasks/P2-003.delivery.md",
+    "plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.delivery.md",
+    "plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.md",
+    "plans/system-maturity/phase7-continuous-governance/tasks/P7-004.delivery.md",
+    "plans/system-maturity/phase8-residual-closure/tasks/P8-001.delivery.md",
+    "plans/system-maturity/phase8-residual-closure/tasks/P8-004.delivery.md",
+    "tests/unit/system-maturity-findings-registry.test.ts",
+    "docs/dev/handoffs/LATEST.md"
+  ]
+}
+```
+<!-- TF-0108-CLOSEOUT-SCOPE:END -->
+
+生效条件：
+
+1. 修复继续归属 **TF-0108**；历史引入者继续记 **TF-0119 / 185d05516**。不更换已有 trailer，不转移节点或历史成本。三条修复提交因包含两个簿记前缀之外的路径而**整体计入**。
+2. 许可只覆盖 P2-005 状态/证据路径纠正、六条派生哈希、对应回归与治理门、裁定记录及交接。路径内出现其他功能改动同样不在许可内；未授权路径即使总数小于 43 也失败。
+3. 最终 M1 计入集合必须是该候选六子节点路径集与上述 15 路径的子集，且 authored 读数不超过 `milestoneBudget`。CLI 生成物仍只按 §R3.1.1 排除；纯审核提交仍按 §R3.8.1 处理，不能把协议正文或 LATEST 塞入 `Reviews:`。`reviews/TF-0108.md` 的独立审核部分须与实际交付分别提交：混入含实现路径的 Task 提交会使本次读数由 43 变为 44，仍然失败。实施者自检不得冒充 Reviews，纯里程碑簿记按上文既有条件判断。裁定后的全部提交必须重新取集，不能沿用候选 42 的读数。
+4. **全轮仍受 `roundBudget=230` 约束**，所有 authored 决策、提案、偏差和交接按既有全轮归属规则计数。当前各局部上限算术和为 243，这不是可分配的全轮预算；全轮门独立使用 230。其他里程碑及逐 task 档位不变，M2 已记录的 50/40 不因本裁定消失。
+5. 本次许可不改 L1/L2 失败判据、25 项 maturity 基线或四项轮外台账，不替代最终 L2、独立审核和正式会签，不增加任何运行时能力或默认值许可。
+6. 对 TF-0108 的“六项全部 done”采用 §D1 已有合法终态：五项实现节点 `done`，TF-0137 保留 `review_needed/100 + landed-unwired`。不以更改 TF-0137 状态凑数。TF-0108 仍为 `review_needed`，待最终提交的门禁和会签完成。
+
+裁定与验证记录：`reviews/TF-0108.md §12`；Task Forest 偏差：`TFD-tf0108-bounded-closeout-scope-20260906`。本次收口结束后该许可不得用于后续功能或其他节点。
 
 ### §R3.7 对 requirements 字面命令的两处修正（实测依据）
 
@@ -662,7 +921,29 @@ HIT: +| ① 旗标默认值是否为关 | ... `defaultValue:false` ... | **命�
 
 1. **`Lane:` 在每个提交上必填。** 它是唯一能把提交归到车道的机械手段（author 不能，见上）。**无 `Lane:` 的提交 = §R3 违反。**
 2. **`Task:` 与 `Reviews:` 互斥。** 一个提交要么是某个 task 的交付物，要么是对若干 task 的审核记录。
-3. **`Reviews:` 提交的触碰面只允许 `docs/dev/context-moat/reviews/*.md`。** 这是防绕过条款：否则「标成 `Reviews:`」就成了让代码改动逃出半径门的通道。其他路径必须另起 `Task:` 提交。
+3. **`Reviews:` 提交的触碰面只允许三类路径**：`docs/dev/context-moat/reviews/*.md`、`.agent-workbench/task-forest/**`、`docs/dev/context-moat/AUDIT-BOARD.html`。这仍是防绕过条款 —— 它禁止的是**代码与协议正文**改动经「标成 `Reviews:`」逃出半径门，而不是禁止审核者记录裁决。其他任何路径（尤其 `openclaw_runtime/**`、`shared/**`、仓库根 `package.json`、**`DEV-PROTOCOL.md` 本身**）必须另起 `Task:` 提交。机械判据：
+
+   ```bash
+   for c in $(git log -E --format=%H --grep='^Reviews: TF-[0-9]' 590588791..HEAD); do
+     git show --pretty="" --name-only "$c" \
+       | grep -vE '^docs/dev/context-moat/reviews/[^/]+\.md$|^\.agent-workbench/task-forest/|^docs/dev/context-moat/AUDIT-BOARD\.html$' \
+       | sed "s|^|RULE3-VIOLATION $(git log -1 --format=%h "$c") |"
+   done
+   ```
+
+   > **后两类路径是 2026-08-27 补入的**（用户放行，看板 `XL-006` 第 (b) 项）。原条款只许 `reviews/*.md`，与同节「**审核者的笔不该消耗实现者的改动预算**」构成**无解冲突**：审核者做半径裁决**必须**写 Task Forest（改 `context_tags`、resolve deviation），答复 issue **必须**同步共享看板，而
+   >
+   > - 用 `Reviews:` → 违反原规则 3；
+   > - 用 `Task: <被审 task>` → 把裁决成本计进**被审 task** 的半径，违反同节原则；
+   > - 不提交 → 违反 §R4.9「切换 task 前工作树对本车道文件域必须干净」。
+   >
+   > **三条路全堵，无第四条。** 本轮实测两条车道各自选了不同的违规方式：`a7abcfb8e`/`b14fc6783`/`8e4e9cac5`/`849ec1973`（lane-2 的裁决）带 `Reviews:` 写了 Task Forest 与看板；`18c8fe294` 等 13 个提交（lane-1）干脆不带归属。**§R3.6 的 13 个漏计提交与本条冲突是同一个成因** —— 规则联立起来对共享治理状态无解，实践只能退化成某种违规。
+   >
+   > 本次修订选「按实际需要扩张 `Reviews:` 的合法路径」而非「允许无归属」：前者保留了防绕过的全部效力（代码路径与协议正文仍必须走 `Task:`），后者会让累积门重新漏计。
+   >
+   > **`DEV-PROTOCOL.md` 刻意不在白名单内**：改协议正文是有实质后果的**交付物**改动，必须计入半径并可归因。本节新判据对全历史复跑，**检出一处真实违反**：`6fde351e7`（lane-1 对 TF-0118 的审核提交改了 `DEV-PROTOCOL.md`）。按 §R5 技术-7 不追溯改写，如实登记；M1 起该判据须无输出。**一个只验证「当前无违反」的判据与空判据无法区分 —— 这一处真阳性就是本判据有效性的证据。**
+   >
+   > **仍未解决的一半**：`graph/nodes.json` 等生成物是**两条车道的共享可变状态**，一次提交里可能同时带着双方的写入（实测 `54d18c8b8` 的 `Task: TF-0138` 提交裹入了 lane-2 的 TF-0113 开工写入与 `snapshots/0321.json`）。本条只解决「审核者能否合法提交」，不解决「共享态如何归属」。后者见 §R3.9。
 4. **无归属提交 = §R3 违反**，其改动无法归入任何 task 的半径，因而既不可验收也不可回滚归因。
 
 > **`Reviews:` 只能按角色判定，不能按文件路径判定。** 实测本轮 8 个「只碰 `reviews/`」的提交里，**4 个是实现者自检证据包**（`f0a82ce04` / `ef66a1c28` / `be6cdbdd8` / `cd3e6134d`）、3 个是审核者判定、1 个是修复提交。实现者把自检材料写进 `reviews/<own-task>.md` 属其交付物，**计入自己的半径**；审核者追加判定属 `Reviews:`，**不计入被审 task 的半径** —— 审核者的笔不该消耗实现者的改动预算。
@@ -756,6 +1037,76 @@ M0 已落地的提交**全部输出 `NO-LANE:`** —— 即判据 B 对 M0 完�
 第 3、4 处形态互为镜像，一并说明：**per-task 半径要精确归属，故必须锚定；累积量要总改动面，故必须不依赖归属。** 用同一把尺量两件事正是缺陷来源。第 5 处与第 3 处同源 —— 锚定收紧了匹配，也就抬高了「打错 trailer ⟹ 空集」的可达性，故两者必须同时修。
 
 五处的共同形态与 §R3.7 修正 1 相同 —— **归属边界不精确时，门伤害的是合规者，或者干脆什么都不测**。故与 §R3.7 采用同一处置：给出实测反例、修正命令、并保留真阳性验证。
+
+### §R3.9 本节的体检读数与一个未收口的问题（2026-08-27 修订时实测）
+
+前面三处修订（命令 3 加第三处排除、累积门改派生、规则 3 扩张合法路径）都是**修工具**。修完之后第一次拿到可信读数，读数本身需要留在协议里，因为它比任何条款都更能说明本节的处境。
+
+#### R3.9.1 累积半径：`XL-010` 采纳出路 (a) 后为 127 / 230
+
+三条修订刚落地时的读数与紧接着的复测（保留为判例，说明问题为何存在）：
+
+```text
+修订写入时      累积文件数 = 229   预算 230   余量 1
+修订提交落地后  累积文件数 = 233   超预算 3   ← 越界，+4 全是本次修订自己的簿记
+                （3 份新 snapshot ＋ 1 份 proposal）
+```
+
+**修好度量的那一次动作本身把被度量对象推出了预算** —— 这是 `XL-010` 最短的证明，也是用户随后采纳出路 (a) 的直接依据。
+
+采纳 §R3.1.1 的生成物排除后，同一命令实测：
+
+```text
+判定读数（排除生成物）= 127 / 230      余量 103
+如实记录读数（全量）   = 233           两个数都必须写进里程碑验收记录
+```
+
+127 的构成 —— 全部是 authored 改动，无一项是 CLI 生成：
+
+| 类别 | 文件数 |
+|---|---:|
+| `openclaw_runtime/src` | **47** |
+| `docs/`（协议 / reviews / GATE-BASELINE / 看板） | 32 |
+| `openclaw_runtime/experiments/`（TF-0116 的迁移目标） | 13 |
+| `.agent-workbench/task-forest/proposals/` | 20 |
+| `tests/` | 3 |
+| 门线与配置（仓库根 `package.json`、`tsconfig`、vitest 配置、判据脚本等） | 11 |
+| `.agent-workbench/task-forest/deviations/` | 1 |
+
+对照被排除掉的 106 项：**95 份 snapshot ＋ 8 个每次写入都重写的图/导出/todos ＋ config.json ＋ sessions**。它们全都不是任何人「改」出来的，而是 CLI 调用次数的函数。
+
+**当前状态：里程碑门可通过**（127 ≤ 230），且余量 103 不再随治理写入消耗 —— 后续 `update-node` 只增加 snapshot，而 snapshot 已不计入判定读数。
+
+#### R3.9.2 逐 task 半径：旧口径下六次裁决零例外，新口径下三次消失
+
+同一现象在单任务门上的形态。在**旧口径**（生成物照计）下，本轮至今**每一个**如实把治理生成物归到自己名下的 task 都超了半径，无一例外；右两列是 `XL-010` 出路 (a) 落地后的复测：
+
+| task | 原档 → 裁决档 | 旧口径读数 | 其中生成物 | **新口径读数** | 新口径下 |
+|---|---|---:|---:|---:|---|
+| TF-0110 | S → M | — | — | 6 | 仍超 S |
+| TF-0116 | M → L | 21 | 0 | **21** | **仍超 M**（13 个实验件迁移，真实改动面） |
+| TF-0124 | M → L | 16 | 0 | **16** | **仍超 M**（超出项是 `AUDIT-BOARD.html`，authored） |
+| TF-0121 | M → L | 31 | 20 | **15** | **恰好不超 M** |
+| TF-0143 | S → L | 13 | 12（**零代码改动**） | **3** | **不超 S** |
+| TF-0138 | S → L | 16 | 13（真实交付物仅 2） | **3** | **不超 S** |
+
+**这张表是出路 (a) 的有效性证据**：簿记造成的三次超限（TF-0121/0143/0138）在新口径下消失，而真实改动面造成的两次（TF-0116 的 21、TF-0124 的 16）**一个不少**。若新计量式把所有超限都抹平，它与取消半径门无法区分。
+
+对照：TF-0104 / 0105 / 0106 / 0109 / 0111 / 0114 / 0117 / 0118 / 0126 / 0128 / 0142 / 0145 / 0146 的归属集内生成物数**全部为 0** —— 因为它们的治理写入落在 §R3.6 那 13 个无归属提交里。**「后期 task 越界更多」是错误读法：越界的是如实归属的那几个。**
+
+旧口径为什么必然如此：按 §R3.2，`brb-S` = 5、`brb-M` = 15，而一次 Task Forest 写入的固定成本已是 8-9 个文件（7 个恒定重写 + 每次 1 份 snapshot + 可能的 proposal/deviation）。**在 §R4.6 强制「必须走 Task Forest」的前提下，旧口径的 `brb-S` 对任何需要记录决策的 task 结构上不可达。**出路 (a) 修的正是这一点：`brb-S` 现在只约束 authored 改动，而 authored 改动是实施者真正能控制的东西。
+
+#### R3.9.3 `XL-010` 已裁决：采纳出路 (a)，并附三条护栏
+
+用户于 2026-08-27 裁决采纳出路 (a)：生成物移出计量对象，authored 治理物照计。判据落 §R3.1.1，两条命令（命令 1 与 §R3.6）共用同一份排除集。三条护栏与裁决同时生效：
+
+1. **默认方向是「计入」。** §R3.1.1 的排除是显式清单，不是 `.agent-workbench` 整体豁免。Task Forest 将来新增的任何目录默认计入，要排除必须先修那张表 —— 一个默认豁免的守卫会随存储实现变化静默变宽。
+2. **两个读数都要写进验收记录。** 判定用排除后的值，同时如实记录全量值。排除是为了让判据可用，不是为了让噪声消失；全量值与判定值的差额本身是本节的体检指标。
+3. **不追溯撤销已落地的六次裁决**（§R5 技术-7）。它们在当时的计量口径下正确，且把已 `done` 的 task 档位往回降没有操作意义。新口径只对尚未收口的 task 生效。
+
+**仍然未收口的一条**：`graph/nodes.json` 等生成物是**两条车道的共享可变状态**，一次提交可能同时带双方写入（实测 `54d18c8b8` 的 `Task: TF-0138` 提交裹入了 lane-2 的 TF-0113 开工写入与 `snapshots/0321.json`）。出路 (a) 使这件事**不再污染半径读数**（那些路径已不计入），但「共享态该归属谁」在归属审计（§R3.8.1 规则 4）层面仍无答案。本节如实登记该残留，不声称已解决。
+
+**本次修订不改变任何实施者的自由度**：超限仍不得自行调档（§R5 范围-2），裁决仍必须走非实现者，`brb-none` 的 task 产生任何代码改动仍是硬 FAIL。变的只是「什么算改动」。
 
 ## §R4 交付物目录 / 偏差 / 回滚 / pick-next / 并发编排
 
@@ -978,6 +1329,8 @@ M0 只产出 DEV-PROTOCOL.md 与目录树，不受 M1+ 的文件域分工约束�
 
 **范围-1** —— 只碰 `openclaw_runtime/src` 下 context-engine / memory / agents（上下文·压缩·工具声明相关部分）与配置面。**不碰** channels / browser / media / ACP / VerseShell / release·signing / UI 重构 / gateway 协议。
 
+TF-0108 本次收口的治理修复另有 §R3.6.1 逐路径许可，涵盖其列出的 plans、测试、Harness、协议和交接文件。该例外只用于已审核的 P2-005 失配修复及收口记录，不形成对这些目录的普遍实施授权。
+
 > 【已修订】原提案含 T-C4（会触碰 host-api + i18n 四语 + renderer），已砍，本轮不存在 UI 附属面。T-C1（TF-0128）的输出面限定为 artifact JSON，**不做 renderer**。
 
 **范围-2** —— 不追求零缺陷。本轮只修已列的 6 项 P0 + 已列技术债。
@@ -1044,11 +1397,18 @@ M0 只产出 DEV-PROTOCOL.md 与目录树，不受 M1+ 的文件域分工约束�
 「是否本轮引起」的**唯一机械判据**（不靠判断力）：
 
 ```bash
-git diff --name-only 590588791..HEAD   # 本轮全部改动
+# 用 §R3.6 的归属完整集（含其 in_round() 过滤），不用区间 diff
+git show --pretty="" --name-only $ATTRIBUTED $LANE_UNATTRIBUTED $GRANDFATHERED | sort -u
 # 与「失败项主体文件集」取交集，为空 ⟹ 非本轮引起
 ```
 
 实测（`fe469cbff`）：本轮 15 个改动文件 ∩ `pnpm test` 的 17 个失败文件 = ∅；∩ `maturity` 的 25 个失配文件 = ∅。**本轮至今零门失败引入。**
+
+> **本判据原为区间 diff `git diff --name-only 590588791..HEAD`，2026-09-05 改为归属完整集。** 校准于 `fe469cbff` 时该区间是 15 个文件、全属本轮；实测 2026-09-05 该区间已是 **201 个提交，其中 65 个不带任何 `Task:`/`Lane:`/`Reviews:`**，另含 22 个 `test(typecheck):` 扫尾提交、15 个 VerseShell 提交、若干 `origin/main` merge 与 in-flight checkpoint。**区间已不再是「本轮」的代理。**
+>
+> 这与 §R3.6 踩过的是同一个坑（那里实测区间 diff 读作 294 而总预算 230，整轮被误判硬 FAIL），§D4.2 只是没跟着改。本条不新造原则，只把 §R3.6 已生效的承重机制搬过来 —— 连同它的 `in_round()`：**轮外 global_task（`TF-0067` / `TF-0100`）用的是同一套 trailer 纪律，只看 trailer 在不在会把它们算成本轮。**
+>
+> **推论（接 §D4.6）**：判为轮外的失败项**不进 `exemptions`**。进 `exemptions` 会撞「只减不增」，而轮外失败本不该由本轮的白名单承载。它们记入 `GATE-BASELINE.md` 的**独立台账**（`outOfRoundErrors` / `outOfRoundFailures`），逐条带引入提交 SHA、trailer 状态与 owner，`baselineErrorCount` 与 `exemptions` 条目数**一字不动**。这样回归检测力与承重条款同时保住。
 
 ### §D4.3 三门裁定
 
@@ -1057,9 +1417,58 @@ git diff --name-only 590588791..HEAD   # 本轮全部改动
 | `config-schema-parity` | **must-fix** | TF-0109（`done`，已过 §R1 审核） | 必须 exit 0；**豁免 0 条** |
 | `pnpm test` | must-fix 0 / exempt-noise 12 文件 / backlog-debt 5 文件 | TF-0028 / 0029 / 0010 / 0021 / 0007 / 0018 / 平台 | **移出 L1**，入 L2 按白名单差分 |
 | `maturity:validate` | backlog-debt（全 25 项 committed 漂移） | system-maturity backlog | **不入 L1**；L2 要求失配集 ⊆ 25 项基线 |
-| `lint:check`（**补裁，第四门**） | backlog-debt 3 / exempt-noise 1（4 errors） | 无归属节点（3 项 committed 既有债，早于本轮）/ 未跟踪既有产物 1 项 | **不入 L1**；L2 要求 error 集 ⊆ 白名单且 ≤ 4 |
+| `lint:check`（**补裁，第四门**） | backlog-debt 3 / exempt-noise 1（4 errors）＋ **轮外 4（2026-09-05 补）** | 无归属节点（3 项 committed 既有债，早于本轮）/ 未跟踪既有产物 1 项 / 轮外：VerseShell `TF-0067` 1 项＋无 trailer 提交 3 项 | **不入 L1**；L2 要求 error 集 ⊆（白名单 ≤ 4 ∪ 轮外台账），见 §R2.3 |
 
 `maturity:validate` 有**已知盲区**：6 脚本 `&&` 链在第 4 个（`validate-system-maturity-evidence`）中断，第 5/6 脚本从未执行、状态未知（非已知绿）。L2 判定须单独补跑 `maturity:residual` 与 `maturity:traceability` 消除盲区。
+
+**盲区首次测量后的逐段裁定（2026-09-05，M1 二次收口）。** 链已增至 7 段。判据缺口不是「链断在哪」，而是**量具与被测对象同处一棵脏工作树**。解法不是等邻居提交，而是**在 HEAD 的 detached worktree 里测**（这 7 个脚本只依赖 node 内置模块与 `scripts/lib/*`，无需 `node_modules`，建树实测 14 秒）。副产物：第 7 段会改写它自己审计的 artifact，在一次性 worktree 里改写**不落到共用树**，§R2.3 的强制复原随之不必要 —— 实测共用树 `git status --porcelain -- artifacts/system-maturity` 全程为空。
+
+**HEAD 洁净量具下的逐段实测**：
+
+| 段 | 脚本 | exit | 读数 |
+|---|---|:--:|---|
+| 1 | `audit-baseline-check` | **0** | 若干非严格 manifest 警告，不入门 |
+| 2 | `validate-system-maturity-plan` | **0** | 八个 phase 全 OK |
+| 3 | `validate-system-maturity-findings-registry` | **0** | 35 findings；Fixed=31 / Partial=4 |
+| 4 | `validate-test-gates` | **0** | A1/A2 全 OK |
+| 5 | `validate-system-maturity-evidence` | **1** | **FAILED (39)** |
+| 6 | `run-system-maturity-residual-audit` | **0** | `ok=true active=2 missing=0 expired=0` —— **盲区之一实测为绿** |
+| 7 | `validate-system-maturity-traceability` | **1** | **FAILED (110)**；`findings=35 tasks=38 tests=35 fresh=7 stale=28` |
+
+**39 项的三分类（2026-09-06 按独立复核更正归属；历史总数不变）**：25 项基线**一项未脱落**，超出 14 项，其中 **10 项是本轮引起的真回归**：
+
+| 类 | 数 | 内容 | 归属 |
+|---|---:|---|---|
+| **must-fix** | **7** | 六个 task manifest（P0-001 / P7-003 / P7-004 / P8-001 / P8-002 / P8-003）钉了 `plans/system-maturity/findings-registry.json` 的哈希，P7-004 另钉 `risk-acceptance.json` | **本轮 `185d05516`（`Task: TF-0119` / `Lane: lane-2`）** |
+| **must-fix** | **3** | P2-005 的 A1 evidence path missing ×2、A3 STATUS 失配 ×1 | **同一轮内提交 `185d05516`；原轮外归类错误** |
+| backlog-debt | 25 | §4.3 已钉基线 | system-maturity backlog |
+| 轮外 | 4 | 4 项 A2 落在 `tests/unit/system-maturity-*.test.ts` | 仅这四项主体文件不在本轮归属集内 |
+
+**7 项 must-fix 的因果是实测的，不是推断**：在 detached worktree 里把这两个文件 `git checkout 590588791 --` 回退后重跑第 5 段，读数由 **39 降为 32**，差额恰为 7。
+
+**这 7 项已由本轮修掉，修法是外科式的（`17ed0a097`）。** 上一版判「本轮不能修、只能路由出去」，依据是期望哈希存放在 `artifacts/system-maturity/**`、写它违反 §R5 技术-7 —— **该依据实测为错**：A2 的期望哈希读自 **`plans/system-maturity/**/<TASK>.delivery.md` 的 `EVIDENCE:` 行**（`validate-system-maturity-evidence.mjs` 经 `parseDelivery` 取 `expectedSha`，见其第 231-234 行），不在 `artifacts/` 下。§R5 技术-7 自始不适用,修复权一直在本轮手里。
+
+**但不能用仓库自带的 `maturity:seal`。** 该链里的 `update-system-maturity-delivery-hashes.mjs` 会重刷**全部** 15 个 delivery 文件 / 315 个条目。一次性 worktree 实测：
+
+| 修法 | 第 5 段 | 后果 |
+|---|---|---|
+| 当时现状 | FAILED (**39**) | 25 基线 + 10 本轮 + 4 轮外（归属经后续复核更正） |
+| `maturity:seal` 的 hash-sync 段 | FAILED (**3**) | **抹掉 36 项，含全部 25 项钉住基线** —— §D4.6 当场失效 |
+| **外科式：只刷主体为那两个文件的条目** | FAILED (**32**) | 恰好只去掉本轮 7 项，25 基线完好 |
+
+**一个会溶解自己所对照基线的「修复」，是自修改门的危害而不是修复。** 外科式改动 6 个 delivery 文件、各 1 行、共 7 个哈希条目，重跑报 0 条目（幂等）。
+
+⟹ 修后逐段实测（worktree at `17ed0a097`）：`0/0/0/0/1/0/1`，第 5 段 **FAILED (32)** = 25 基线（一项未脱落）+ 4 项 A2 轮外 + 3 项 P2-005 本轮 must-fix；第 7 段 **FAILED (96)**（因其同读那批 EVIDENCE 哈希，随修复由 110 降至 96）。**2026-09-06 独立复核纠正原先「7 项轮外」的误判：只有 4 项 A2 保留在 `segment5.outOfRoundMismatches`，P2-005 三项必须修复。`baselineMismatchCount` 仍为 25 一字未动。** 修复与复测记录见 `GATE-BASELINE.md` 的 `segment5.p2005MustFix` 和 `reviews/TF-0108.md`。
+
+归属：修复挂 **TF-0119**，其父为 **TF-0115（M2，预算 40）**,不是 M1 —— **M1 累积半径仍为 28/30**，未被这次修复消耗。
+
+> **顺带暴露一处架构脆性（非本轮修）**：`plans/system-maturity/findings-registry.json` 是**活的**共享登记表，却被六份冻结 manifest 按哈希钉住。任何一次对该表的合法更新都会同时打破六份证据 —— 本次只是第一个撞上的。是否改为按条目而非整文件哈希，属 system-maturity workstream 的设计决定。
+
+**第 7 段：首个基线定为 96**，走 §R4.2 触发 (c)。该段从未被测量、无前值可回归；合法性依据同 `GATE-BASELINE.md §9.5` 已批准的那一条 —— **补上遗漏覆盖，不是为容纳回归而放宽**。读数演进如实记录：首次收口在脏共用树上记 **111** → 洁净量具（`69971a772`）**110** → 外科式修复后（`17ed0a097`）**96**。**以 96 为钉住值**，前两个数不是错读,是不同树状态下的真实读数。
+
+> **一处我方法上的自我修正**：本节初版判「第 1–6 段因量具脏而不可定」，并给了一条 porcelain 前置。该顾虑在原则上成立，但**实测不成立** —— detached worktree 复现出的正是首次收口记的 11 + 3，一项不差。**结论是量具脏没有改变数字，而不是「顾虑多余」**：不测就无从知道它没改变，而绕开脏树的正确手段是另建 worktree，不是等待。原前置条款作废，改为下述通用做法。
+
+**通用做法（取代原「等量具干净」条款）**：任何在脏共用树上取不到可采信读数的门，都在 `git worktree add --detach <tmp> HEAD` 里测；有自改写副作用的门**必须**这样测。共用树不受影响，无需 §R2.3 的复原收尾。
 
 ### §D4.4 收紧后的 L1（每 task 收口）—— 必修全绿，不含 `pnpm test` / `maturity`
 

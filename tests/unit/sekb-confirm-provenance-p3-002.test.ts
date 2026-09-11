@@ -177,7 +177,7 @@ describe('P3-002 DCS provenance / session lineage / confirm sink', () => {
     expect(result.provenance?.integrity).toBe('advisory');
     expect(result.highTrustEligible).toBe(false);
     expect(result.dcsWrite).toBe('written');
-    const write = (sink as ReturnType<typeof vi.fn>).mock.calls.at(-1)[0][0];
+    const write = (sink as ReturnType<typeof vi.fn>).mock.calls.at(-1)?.[0]?.[0];
     expect(write.admission.integrity).toBe('advisory');
     expect(write.block.presence.always_on).toBe(false);
   });

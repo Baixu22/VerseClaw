@@ -105,6 +105,47 @@ DEEPSEEK_API_KEY="sk-..." node scripts/chain-audit/run-chain-audit.mjs --keep-ga
 }
 ```
 
+## RPC 检查面扩展
+
+`config/rpc-checks.json` 中按 `groups[].checks[]` 结构添加。单次调用有**三条通过路径**，判定规则集中在 `lib/rpc-check.js`（纯函数，由 `tests/unit/chain-audit-rpc-check.test.ts` 覆盖）：
+
+| 路径 | 条件 | 用途 |
+|------|------|------|
+| 成功 | `res.ok === true` | 常规可用性检查 |
+| admin gate | 方法在 `group.adminOnly` 中，且错误匹配 `missing scope` | 验证权限边界确实拦住了越权调用 |
+| **预期错误** | 检查项声明 `expectError`，且错误文本匹配该字面量 | 验证错误处理路径生效（见下） |
+
+`expectError` 是 issue #35 引入的语义。此前「验证错误处理」的探测无法表达意图——评分器把任何 error 都判失败，导致 `taskloop` 组无论 runtime 好坏恒为 0/1：
+
+```json
+{
+  "method": "task_loop.status",
+  "params": { "loopRunId": "nonexistent-probe" },
+  "note": "验证错误处理而非真实循环",
+  "expectError": "unknown task loop"
+}
+```
+
+约定：
+
+- 值是**字面量**而非正则，特殊字符会被转义（写 `a.b` 只匹配 `a.b`，不匹配 `axb`），匹配时忽略大小写。
+- 错误不匹配期望文本时**仍然判失败**——这样探测才保留了发现真实退化的能力。
+- `expectError` 不会把「调用成功」也算通过；成功与命中预期错误在报告里通过 `expectErrorMatched` 区分。
+
+**探测会话不要用共享主会话。** `fork` 组曾直接 fork `agent:main:main`，而主会话随使用持续增长，超过 `contextWindow` 后 fork 必然失败——结果与 fork 功能是否健康无关（#27 修复后的正确行为被误判为故障）。现在的做法是先用 `sessions.create` 建一个专用探测会话（`sessions.create` 对同一 key 幂等），再 fork 它：
+
+```json
+{
+  "id": "fork",
+  "checks": [
+    { "method": "sessions.create", "params": { "key": "agent:main:chain-audit-fork-probe" } },
+    { "method": "sessions.fork",   "params": { "key": "agent:main:chain-audit-fork-probe" } }
+  ]
+}
+```
+
+配置在审计启动前会经 `validateRpcChecksConfig` 校验，非法配置直接抛错退出，不会跑完 31 组才暴露问题。
+
 ## 与现有验证设施的关系
 
 | 设施 | 定位 | 本系统补充 |

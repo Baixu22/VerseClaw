@@ -53,16 +53,15 @@ export type CompactionDamageAudit = {
   schema: typeof COMPACTION_DAMAGE_SCHEMA;
   summaryLength: number;
   damages: CompactionDamage[];
-  /** M5-B2: how many of the required compaction sections are missing (0-5). */
+  /** M5-B2: how many canonical compaction sections are missing. */
   missingSectionCount: number;
   verdict: "clean" | "suspect";
   mode: "shadow" | "enforce";
 };
 
 /**
- * Required compaction summary sections. Re-exported from the shared source
- * (`compaction-sections.ts`) so this module's public API is unchanged while the
- * list itself is no longer duplicated against `compaction-safeguard-quality.ts`.
+ * Required compaction summary sections. Re-exported from the agent-core-backed
+ * shared source so this module's public API remains stable.
  */
 export { REQUIRED_COMPACTION_SECTIONS } from "./compaction-sections.js";
 
@@ -143,7 +142,7 @@ const IDENTIFIER_LIKE_PATTERN = /[\w./-]+\.(?:ts|tsx|js|jsx|mjs|cjs|json|py|go|r
  *    the *required* headings first is what keeps this orthogonal: `## Decisions`
  *    is a template artifact, not goal evidence.
  * 3. **Substantive section content.** A compliant summary's only sections are the
- *    required five, so after stripping them path 2 has nothing left to match —
+ *    required headings, so after stripping them path 2 has nothing left to match —
  *    which would flag every compliant summary. The real signal is whether those
  *    sections have *bodies*: `## Decisions\nRotated the JWT key` retained the
  *    goal, `## Decisions\nNone.` did not.
@@ -243,7 +242,7 @@ export function auditCompactionDamage(
   const mode = options.mode ?? "shadow";
   const damages: CompactionDamage[] = [];
   const text = summary ?? "";
-  const lower = text.toLowerCase();
+  const contentLower = stripRequiredSectionHeadings(text).toLowerCase();
 
   // 1. goal_token_decay: the session goal did not survive the summary.
   //    Deliberately computed on heading-stripped text (or against the objective
@@ -263,8 +262,9 @@ export function auditCompactionDamage(
   }
 
   // 2. structure_damage: required sections missing.
+  const summaryLines = new Set(text.split(/\r?\n/u).map((line) => line.trim()));
   const missingSections = REQUIRED_COMPACTION_SECTIONS.filter(
-    (section) => !text.includes(section),
+    (section) => !summaryLines.has(section),
   );
   if (missingSections.length > 0) {
     damages.push({
@@ -285,7 +285,7 @@ export function auditCompactionDamage(
   }
 
   // 4. actionability_loss: no actionable verb survived.
-  if (!ACTION_VERBS.some((verb) => lower.includes(verb))) {
+  if (!ACTION_VERBS.some((verb) => contentLower.includes(verb))) {
     damages.push({
       type: "actionability_loss",
       severity: "medium",
@@ -325,7 +325,10 @@ export function scoreContextHealthFromCompactionAudit(
   const missingSectionCount = audit.missingSectionCount;
   const structuralFidelity =
     missingSectionCount > 0
-      ? scoreStructuralFidelity(Array(missingSectionCount).fill("missing"))
+      ? scoreStructuralFidelity(
+          Array(missingSectionCount).fill("missing"),
+          REQUIRED_COMPACTION_SECTIONS.length,
+        )
       : 100;
   const goalDecayed = audit.damages.some((damage) => damage.type === "goal_token_decay");
   const goalAlignment = goalDecayed ? 30 : 100;

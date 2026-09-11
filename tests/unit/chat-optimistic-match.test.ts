@@ -12,7 +12,7 @@ describe('matchesOptimisticUserMessage', () => {
     const optimistic = { role: 'user', content: 'run github1', timestamp: 1_700_000_000 } as const;
     const candidate = { role: 'user', content: 'run github1', timestamp: 1_700_000_000 } as const;
 
-    expect(matchesOptimisticUserMessage(candidate, optimistic, 1_700_000_000_000)).toBe(true);
+    expect(matchesOptimisticUserMessage(candidate as never, optimistic as never, 1_700_000_000_000)).toBe(true);
   });
 
   it('matches when Gateway prefixes a weekday/timestamp prefix on the echoed user message', () => {
@@ -23,7 +23,7 @@ describe('matchesOptimisticUserMessage', () => {
       timestamp: 1_700_000_000,
     } as const;
 
-    expect(matchesOptimisticUserMessage(candidate, optimistic, 1_700_000_000_000)).toBe(true);
+    expect(matchesOptimisticUserMessage(candidate as never, optimistic as never, 1_700_000_000_000)).toBe(true);
   });
 
   it('matches when the server appends [media attached: ...] to the echoed user message', () => {
@@ -47,7 +47,7 @@ describe('matchesOptimisticUserMessage', () => {
       timestamp: 1_700_000_000,
     } as const;
 
-    expect(matchesOptimisticUserMessage(candidate, optimistic, 1_700_000_000_000)).toBe(true);
+    expect(matchesOptimisticUserMessage(candidate as never, optimistic as never, 1_700_000_000_000)).toBe(true);
   });
 
   it('matches when the server strips a [message_id: ...] tag from the user message', () => {
@@ -58,7 +58,7 @@ describe('matchesOptimisticUserMessage', () => {
       timestamp: 1_700_000_000,
     } as const;
 
-    expect(matchesOptimisticUserMessage(candidate, optimistic, 1_700_000_000_000)).toBe(true);
+    expect(matchesOptimisticUserMessage(candidate as never, optimistic as never, 1_700_000_000_000)).toBe(true);
   });
 
   it('matches when Gateway echo timestamp skews within the optimistic window', () => {
@@ -69,7 +69,7 @@ describe('matchesOptimisticUserMessage', () => {
       timestamp: 1_700_000_030,
     } as const;
 
-    expect(matchesOptimisticUserMessage(candidate, optimistic, 1_700_000_000_000)).toBe(true);
+    expect(matchesOptimisticUserMessage(candidate as never, optimistic as never, 1_700_000_000_000)).toBe(true);
   });
 
   it('rejects unrelated user messages when timestamp skew is too large', () => {
@@ -80,7 +80,7 @@ describe('matchesOptimisticUserMessage', () => {
       timestamp: 1_700_030_000,
     } as const;
 
-    expect(matchesOptimisticUserMessage(candidate, optimistic, 1_700_000_000_000)).toBe(false);
+    expect(matchesOptimisticUserMessage(candidate as never, optimistic as never, 1_700_000_000_000)).toBe(false);
   });
 
   it('still rejects unrelated user messages', () => {
@@ -91,7 +91,7 @@ describe('matchesOptimisticUserMessage', () => {
       timestamp: 1_700_000_000,
     } as const;
 
-    expect(matchesOptimisticUserMessage(candidate, optimistic, 1_700_000_000_000)).toBe(false);
+    expect(matchesOptimisticUserMessage(candidate as never, optimistic as never, 1_700_000_000_000)).toBe(false);
   });
 
   // Regression for the duplicate-bubble bug reproduced in session
@@ -140,7 +140,7 @@ describe('matchesOptimisticUserMessage', () => {
       timestamp: 1_700_000_000,
     } as const;
 
-    expect(matchesOptimisticUserMessage(candidate, optimistic, 1_700_000_000_000)).toBe(true);
+    expect(matchesOptimisticUserMessage(candidate as never, optimistic as never, 1_700_000_000_000)).toBe(true);
   });
 });
 

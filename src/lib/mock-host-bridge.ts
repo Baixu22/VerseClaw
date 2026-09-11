@@ -267,7 +267,6 @@ const DEMO_AGENT = {
  */
 const DEMO_GIT_CHANGES = [
   { path: 'src/pages/Chat/index.tsx', additions: 285, deletions: 39, bucket: 'unstaged' as const },
-  { path: 'src/components/chat/SessionStatusRail.tsx', additions: 501, deletions: 0, bucket: 'untracked' as const },
   { path: 'src/styles/codex-session-rail.css', additions: 297, deletions: 0, bucket: 'untracked' as const },
   { path: 'shared/i18n/locales/zh/chat.json', additions: 127, deletions: 8, bucket: 'staged' as const },
   { path: 'reports/assets/rail.png', additions: null, deletions: null, bucket: 'unstaged' as const, binary: true },

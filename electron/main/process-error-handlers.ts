@@ -23,7 +23,8 @@ function errorMessage(reason: unknown): string {
 }
 
 export function isBrokenPipeError(error: unknown): boolean {
-  return (error as NodeJS.ErrnoException | null)?.code === 'EPIPE';
+  const code = (error as NodeJS.ErrnoException | null)?.code;
+  return code === 'EPIPE';
 }
 
 /** Prevent a closed parent terminal from escalating console writes to fatal dialogs. */

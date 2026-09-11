@@ -65,7 +65,7 @@ function taskLoop(status: TaskLoopRunResult['status'] = 'complete', remaining: s
     createdAt: 1,
     updatedAt: 2,
     iterations: [],
-  };
+  } as unknown as TaskLoopRunResult;
 }
 
 function review(decision: MissionDecision, patch: Partial<MissionReviewerResult> = {}): MissionReviewerResult {

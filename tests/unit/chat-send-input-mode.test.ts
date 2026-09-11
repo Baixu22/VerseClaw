@@ -256,7 +256,7 @@ describe('chat.send inputMode: guide', () => {
     vi.mocked(resolveActiveEmbeddedRunSessionId).mockReturnValue('session-1');
     vi.mocked(queueEmbeddedAgentMessageWithOutcomeAsync).mockResolvedValue({
       queued: true,
-    });
+    } as never);
 
     await callChatSend(context, respond, {
       sessionKey: SESSION_KEY,
@@ -298,7 +298,7 @@ describe('chat.send inputMode: guide', () => {
     vi.mocked(queueEmbeddedAgentMessageWithOutcomeAsync).mockResolvedValue({
       queued: false,
       reason: 'run_ended',
-    });
+    } as never);
 
     await callChatSend(context, respond, {
       sessionKey: SESSION_KEY,
@@ -370,7 +370,7 @@ describe('chat.send inputMode: queue', () => {
     vi.mocked(resolveActiveEmbeddedRunSessionId).mockReturnValue('session-new-run');
 
     const context = makeContext();
-    const result = await drainQueuedUserMessagesForSession(context, SESSION_KEY);
+    const result = await drainQueuedUserMessagesForSession(context as never, SESSION_KEY);
 
     expect(result.drained).toBe(false);
     expect(result.reason).toBe('active_run_started_before_queue_drain');

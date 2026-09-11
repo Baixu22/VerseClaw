@@ -2554,6 +2554,38 @@ export function Chat() {
     userRunCards.flatMap((card) => card.surfaces.terminals.map(processFromTerminalSurface)),
   ), [sessionActivityRuns, userRunCards]);
 
+  /**
+   * Is the owning turn summary currently showing its full plan?
+   *
+   * The transcript's TurnSummaryCard is the plan's single renderer; the session
+   * rail's plan section must YIELD while that copy is on screen, or every todo
+   * title renders twice (tests/unit/chat-render-reachability.test.tsx pins
+   * "exactly once"). Collapsed summary → the rail's section is the only full
+   * view and stays.
+   */
+  const isTurnSummaryExpanded = useCallback((card: UserRunCard) => {
+    const cardApprovals = approvalsByRunKey.get(card.runKey) ?? [];
+    const defaultExpanded = card.status === 'error'
+      || card.status === 'aborted'
+      || (card.status === 'completed' && runActivityKeepExpandedOnComplete)
+      || (card.active && card.streamingReplyText == null)
+      || !card.hasVisibleReply;
+    return cardApprovals.length > 0
+      || (runActivityExpandedOverrides[card.runKey] ?? defaultExpanded);
+  }, [approvalsByRunKey, runActivityExpandedOverrides, runActivityKeepExpandedOnComplete]);
+
+  const sessionActivityPlanVisibleInTranscript = useMemo(() => {
+    // Newest turn first — the same card sessionActivityPlan fell back to.
+    for (let index = userRunCards.length - 1; index >= 0; index -= 1) {
+      const card = userRunCards[index];
+      if (!card.surfaces.plan || card.surfaces.plan.todos.length === 0) continue;
+      return isTurnSummaryExpanded(card);
+    }
+    // Plan sourced from a live runtime run: its card is the active one.
+    const activeCard = userRunCards.find((card) => card.active);
+    return activeCard ? isTurnSummaryExpanded(activeCard) : false;
+  }, [isTurnSummaryExpanded, userRunCards]);
+
   const visibleSessionActivitySnapshot = useMemo(
     () => sessionActivitySnapshot
       ? retainRecentSessionActivity(sessionActivitySnapshot, sessionActivityRetentionMinutes, sessionActivityRetentionClock)
@@ -3072,7 +3104,7 @@ export function Chat() {
         >
           <SessionActivityPanel
             snapshot={visibleSessionActivitySnapshot}
-            plan={sessionActivityPlan}
+            plan={sessionActivityPlanVisibleInTranscript ? null : sessionActivityPlan}
             processes={sessionActivityProcesses}
             compact
             className="!w-full"
@@ -3083,6 +3115,7 @@ export function Chat() {
             onOpenEnvironment={handleOpenEnvironment}
             onOpenSubagent={handleOpenSubagentTranscript}
             onOpenProcess={handleOpenProcess}
+            onRetryStatus={() => void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey })}
           />
         </aside>
       )}
@@ -3216,17 +3249,14 @@ export function Chat() {
                         const cardReasoning = card.active
                           ? (runCardReasoning.byRunKey.get(runKey) ?? streamingReasoning)
                           : (runCardReasoning.byRunKey.get(runKey) ?? EMPTY_REASONING_ITEMS);
-                        const defaultExpanded = card.status === 'error'
-                          || card.status === 'aborted'
-                          || (card.status === 'completed' && runActivityKeepExpandedOnComplete)
-                          || (card.active && card.streamingReplyText == null)
-                          || !card.hasVisibleReply;
                         // A pending approval blocks the run and is the only way
                         // to unblock it. It overrides the user's own collapse —
                         // a decision the agent is waiting on must never be
                         // hidden behind a disclosure the user forgot they shut.
-                        const expanded = cardApprovals.length > 0
-                          || (runActivityExpandedOverrides[runKey] ?? defaultExpanded);
+                        // Shared with the session rail's yield rule (see
+                        // `isTurnSummaryExpanded`) so both surfaces agree on
+                        // when the plan's full view is on screen.
+                        const expanded = isTurnSummaryExpanded(card);
                         /* Reasoning counts as activity: a pure-thinking turn (no
                          * tools, no files — the common DeepSeek shape) otherwise
                          * had no card at all, and its thinking would have had
