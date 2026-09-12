@@ -45,6 +45,8 @@ Product capability statements must be checked against the canonical matrix in `s
 
 書き込み後の自動検証も明示的な opt-in で、既定では無効です。有効化すると、Verse Claw は有界なプロジェクトテストコマンドを 1 つ検出し、既存の effective `exec` の policy、approval、sandbox、timeout 経路で実行します。成功、失敗、skip 理由、有界な出力末尾は会話に表示され、検証失敗によって成功済みの書き込みが rollback されることはありません。
 
+フォアグラウンドコマンドの進捗には直近の出力を保持し、キャンセルまたは終了後は更新を止めます。引数やポリシーの準備中にキャンセルされたツールは起動せず、キャンセル後の遅延成功も返しません。重大なツールループの終了時はモデルのフォールバックも停止します。画像・音声・リソースの内容変化を進捗として認識し、process poll の待機時間は進捗に数えず、履歴ウィンドウは run ごとに設定された終了しきい値へ届く範囲まで拡張します。
+
 DCS を有効にした coding turn では、knowledge、recent actions、tool registry の実際の provider-visible prompt 増加量を、既存の共有 turn-injection ledger に個別記録します。固定予算は拡大せず、有効な DCS projection には既存の有界容量を確保し、truncate と drop は明示的な会計証拠として残します。
 
 Runtime Memory 注入、SEKB 自動 writeback、Browser の無監督または private-network 利用、C6/C7 自動切替、Coding WAL、本番 repository の自動 merge、複数 Forge/DAG 拡張は対象外です。現時点の証拠は engineering と実プロセステストであり、human canary と release approval は未完了です。コンポーネントごとの唯一の分類は [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview) を参照してください。

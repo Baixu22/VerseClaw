@@ -1,0 +1,414 @@
+{
+  "applied_at": "2026-09-12T10:04:38.101730Z",
+  "base_graph_hash": "f3bc6b2d42c832c8b03e153eb698b6d9f1956ca6ac1c27dbe7d2e369a4c2e697",
+  "base_summary": {
+    "edge_count": 305,
+    "node_count": 169,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0169",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "openclaw_runtime/src/agents/tool-loop-detection.ts resolveLoopDetectionConfig historySize floor",
+          "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts retains enough bounded history",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md"
+        ],
+        "next_action": "后续独立缺口见 TF-0170 起。",
+        "summary": "请求窗口小于终止阈值时，historySize 会提升到覆盖 warning/unknown/critical/global，默认阈值保持 10/10/20/30，历史仍有界。"
+      },
+      "id": "TF-0169"
+    },
+    {
+      "action": "add_node",
+      "alias": "per-run-history",
+      "node": {
+        "acceptance_criteria": [
+          "另一 run 填满窗口后，当前 run 仍能达到 critical，且每个 run 的历史保持有界。"
+        ],
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/tool-loop-detection.ts trimToolCallHistory",
+          "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts does not let another run evict",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "kind": "subtask",
+        "progress": 100,
+        "purpose": "避免并发 run 的工具记录互相冲掉终止证据。",
+        "requirements": [
+          "避免并发 run 的工具记录互相冲掉终止证据。"
+        ],
+        "status": "done",
+        "title": "循环历史按 run 独立裁剪"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "真实语料后续工具运行时可靠性缺口，挂在上下文护城河主线下。"
+      },
+      "from": "per-run-history",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "在循环窗口修复之后继续收口相邻生命周期缺口。"
+      },
+      "from": "per-run-history",
+      "to": "TF-0169",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "native-session-id",
+      "node": {
+        "acceptance_criteria": [
+          "仅提供 sessionId 时 nativePreToolUseMayRunLoopDetection 为 true；无会话身份时仍为 false。"
+        ],
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/harness/native-hook-relay.ts",
+          "openclaw_runtime/src/agents/native-hook-relay.loop-detection.test.ts",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "kind": "subtask",
+        "progress": 100,
+        "purpose": "避免 Codex 原生路径因缺少 sessionKey 而跳过循环守卫。",
+        "requirements": [
+          "避免 Codex 原生路径因缺少 sessionKey 而跳过循环守卫。"
+        ],
+        "status": "done",
+        "title": "原生 hook relay 在仅有 sessionId 时仍启用循环检测"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "真实语料后续工具运行时可靠性缺口，挂在上下文护城河主线下。"
+      },
+      "from": "native-session-id",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "在循环窗口修复之后继续收口相邻生命周期缺口。"
+      },
+      "from": "native-session-id",
+      "to": "TF-0169",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "cancel-not-loop",
+      "node": {
+        "acceptance_criteria": [
+          "execute 因 AbortError 失败后没有 resultHash，检测结果不为 stuck。"
+        ],
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts",
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.cancellation.test.ts does not record cancelled executions",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "kind": "subtask",
+        "progress": 100,
+        "purpose": "避免把操作者取消当成无进展循环证据。",
+        "requirements": [
+          "避免把操作者取消当成无进展循环证据。"
+        ],
+        "status": "done",
+        "title": "取消错误不计入循环历史"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "真实语料后续工具运行时可靠性缺口，挂在上下文护城河主线下。"
+      },
+      "from": "cancel-not-loop",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "在循环窗口修复之后继续收口相邻生命周期缺口。"
+      },
+      "from": "cancel-not-loop",
+      "to": "TF-0169",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "drop-updates",
+      "node": {
+        "acceptance_criteria": [
+          "取消前的 onUpdate 保留，取消后的 onUpdate 不再转发。"
+        ],
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts guardedOnUpdate",
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.cancellation.test.ts drops progress updates",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "kind": "subtask",
+        "progress": 100,
+        "purpose": "防止已结束的 Agent 消费者继续收到进度。",
+        "requirements": [
+          "防止已结束的 Agent 消费者继续收到进度。"
+        ],
+        "status": "done",
+        "title": "工具包装器在取消后丢弃进度更新"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "真实语料后续工具运行时可靠性缺口，挂在上下文护城河主线下。"
+      },
+      "from": "drop-updates",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "在循环窗口修复之后继续收口相邻生命周期缺口。"
+      },
+      "from": "drop-updates",
+      "to": "TF-0169",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "heartbeat-throw",
+      "node": {
+        "acceptance_criteria": [
+          "heartbeat onUpdate 抛错后 exec 仍以 completed 结束。"
+        ],
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.exec.ts foreground heartbeat try/catch",
+          "openclaw_runtime/src/agents/bash-tools.exec.lifecycle.test.ts keeps waiting when a heartbeat consumer throws",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "kind": "subtask",
+        "progress": 100,
+        "purpose": "进度通道出错时，仍在运行的前台进程必须能正常结束。",
+        "requirements": [
+          "进度通道出错时，仍在运行的前台进程必须能正常结束。"
+        ],
+        "status": "done",
+        "title": "前台心跳消费者异常不中断等待"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "真实语料后续工具运行时可靠性缺口，挂在上下文护城河主线下。"
+      },
+      "from": "heartbeat-throw",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "在循环窗口修复之后继续收口相邻生命周期缺口。"
+      },
+      "from": "heartbeat-throw",
+      "to": "TF-0169",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "node-host-resolve-abort",
+      "node": {
+        "acceptance_criteria": [
+          "resolveNodeExecutionTarget 期间取消后 invokeNodeSystemRunDirect 不被调用。"
+        ],
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.exec-host-node.ts",
+          "openclaw_runtime/src/agents/bash-tools.exec-host-node.abort.test.ts does not invoke after cancellation during target resolution",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "kind": "subtask",
+        "progress": 100,
+        "purpose": "取消发生在异步目标解析之后时，不得启动尚未启动的远程命令。",
+        "requirements": [
+          "取消发生在异步目标解析之后时，不得启动尚未启动的远程命令。"
+        ],
+        "status": "done",
+        "title": "node-host exec 在目标解析后取消不得远程 invoke"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "真实语料后续工具运行时可靠性缺口，挂在上下文护城河主线下。"
+      },
+      "from": "node-host-resolve-abort",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "在循环窗口修复之后继续收口相邻生命周期缺口。"
+      },
+      "from": "node-host-resolve-abort",
+      "to": "TF-0169",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "poll-idle",
+      "node": {
+        "acceptance_criteria": [
+          "poll 与 log 在 idle 文案变化时仍能达到 known_poll_no_progress critical。"
+        ],
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/tool-loop-detection.ts stabilizeKnownPollText",
+          "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts ignores changing process idle duration",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "kind": "subtask",
+        "progress": 100,
+        "purpose": "避免无新输出的等待输入提示因 duration 变化而永远达不到循环终止。",
+        "requirements": [
+          "避免无新输出的等待输入提示因 duration 变化而永远达不到循环终止。"
+        ],
+        "status": "done",
+        "title": "process poll/log 的 idle 时长不得当作进展"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "真实语料后续工具运行时可靠性缺口，挂在上下文护城河主线下。"
+      },
+      "from": "poll-idle",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "在循环窗口修复之后继续收口相邻生命周期缺口。"
+      },
+      "from": "poll-idle",
+      "to": "TF-0169",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "late-success",
+      "node": {
+        "acceptance_criteria": [
+          "execute 在内部 abort 后返回成功时，包装器仍拒绝并抛出取消原因。"
+        ],
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts throwIfAborted after execute",
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.cancellation.test.ts does not deliver a late success",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "kind": "subtask",
+        "progress": 100,
+        "purpose": "已取消的调用方不能收到晚到的成功结果。",
+        "requirements": [
+          "已取消的调用方不能收到晚到的成功结果。"
+        ],
+        "status": "done",
+        "title": "取消后到达的工具成功结果不得交付"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "真实语料后续工具运行时可靠性缺口，挂在上下文护城河主线下。"
+      },
+      "from": "late-success",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "在循环窗口修复之后继续收口相邻生命周期缺口。"
+      },
+      "from": "late-success",
+      "to": "TF-0169",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "node-host-prepare-abort",
+      "node": {
+        "acceptance_criteria": [
+          "prepareNodeSystemRun 期间取消后 analyze 与 invoke 都不发生。"
+        ],
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.exec-host-node.ts",
+          "openclaw_runtime/src/agents/bash-tools.exec-host-node.abort.test.ts does not invoke after cancellation during prepare",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "kind": "subtask",
+        "progress": 100,
+        "purpose": "skip-prepare 以外的路径同样遵守取消后不启动副作用。",
+        "requirements": [
+          "skip-prepare 以外的路径同样遵守取消后不启动副作用。"
+        ],
+        "status": "done",
+        "title": "node-host exec 在 prepare 后取消不得继续审批或 invoke"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "真实语料后续工具运行时可靠性缺口，挂在上下文护城河主线下。"
+      },
+      "from": "node-host-prepare-abort",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "在循环窗口修复之后继续收口相邻生命周期缺口。"
+      },
+      "from": "node-host-prepare-abort",
+      "to": "TF-0169",
+      "type": "depends_on"
+    }
+  ],
+  "created_at": "2026-09-12T10:04:26.909554Z",
+  "proposal_id": "TFP-tool-runtime-ten-nodes-20260912",
+  "rationale": "用户明确要求接力最新节点并至少完成十个节点；本批从可执行反例补齐循环窗口、run 隔离、取消交付和 node-host 副作用缺口，不重做 TF-0156/0157，不升级为产品放行。",
+  "session_id": "live-tool-runtime-reliability-20260912",
+  "status": "applied"
+}

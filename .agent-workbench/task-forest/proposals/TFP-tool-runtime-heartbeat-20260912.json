@@ -1,0 +1,57 @@
+{
+  "applied_at": "2026-09-11T17:03:52.887517Z",
+  "base_graph_hash": "5ca02380be607e065e13d563a170b17d97c72cfbf6d2048dfd82a49cfec6ecba",
+  "base_summary": {
+    "edge_count": 285,
+    "node_count": 159,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "heartbeat-lifecycle",
+      "node": {
+        "acceptance_criteria": [
+          "取消和退出的延迟清理反例在修复前失败、修复后通过",
+          "现有真实进程前台心跳用例通过"
+        ],
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.exec.ts 前台心跳绕过 run.disableUpdates",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "kind": "subtask",
+        "purpose": "防止已结束的 Agent 消费者收到迟到更新或产生未处理的拒绝。",
+        "requirements": [
+          "取消及进程退出后立即停止心跳",
+          "正常前台执行仍有心跳，最终结果不变"
+        ],
+        "status": "in_progress",
+        "title": "前台 exec 心跳遵守取消和退出生命周期"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "接力最近工具可靠性修复，保护长任务实际运行"
+      },
+      "from": "heartbeat-lifecycle",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "补齐既有前台心跳实现的生命周期"
+      },
+      "from": "heartbeat-lifecycle",
+      "to": "TF-0157",
+      "type": "depends_on"
+    }
+  ],
+  "created_at": "2026-09-11T17:03:52.551536Z",
+  "proposal_id": "TFP-tool-runtime-heartbeat-20260912",
+  "rationale": "用户明确要求接力最新 task forest 并至少完成10个节点；按已说明的真实缺口后续子节点口径，先修复已定位的前台心跳生命周期违约。",
+  "session_id": "tool-runtime-20260912",
+  "status": "applied"
+}

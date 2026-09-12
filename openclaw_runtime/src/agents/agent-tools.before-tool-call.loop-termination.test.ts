@@ -44,6 +44,32 @@ function isBlockedLoopResult(result: unknown): boolean {
 }
 
 describe("critical tool-loop termination", () => {
+  it("guards sessionId-only callers without contaminating another session", async () => {
+    const onToolLoopTermination = vi.fn();
+    const context: HookContext = {
+      sessionId: "session-id-only",
+      runId: "run-id-only",
+      loopDetection: {
+        warningThreshold: 2,
+        criticalThreshold: 3,
+        globalCircuitBreakerThreshold: 4,
+      },
+      onToolLoopTermination,
+    };
+    const tool = wrapToolWithBeforeToolCallHook(readTool(), context);
+    for (let index = 0; index < 3; index++) {
+      expect(isBlockedLoopResult(await tool.execute(`read-${index}`, readParams()))).toBe(false);
+    }
+    expect(isBlockedLoopResult(await tool.execute("read-critical", readParams()))).toBe(true);
+    expect(onToolLoopTermination).toHaveBeenCalledOnce();
+    const other = wrapToolWithBeforeToolCallHook(readTool(), {
+      ...context,
+      sessionId: "other-session",
+    });
+    expect(isBlockedLoopResult(await other.execute("read-other", readParams()))).toBe(false);
+    expect(onToolLoopTermination).toHaveBeenCalledOnce();
+  });
+
   it("notifies the host once when an identical call loop turns critical", async () => {
     const terminations: ToolLoopTerminationInfo[] = [];
     const ctx: HookContext = {

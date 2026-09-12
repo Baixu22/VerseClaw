@@ -834,10 +834,11 @@ export async function runBeforeToolCallHook(args: {
   signal?: AbortSignal;
   approvalMode?: "request" | "report" | "defer";
 }): Promise<HookOutcome> {
+  args.signal?.throwIfAborted();
   const toolName = normalizeToolName(args.toolName || "tool");
   const params = args.params;
 
-  if (args.ctx?.sessionKey) {
+  if (args.ctx?.sessionKey || args.ctx?.sessionId) {
     const { getDiagnosticSessionState, logToolLoopAction, detectToolCallLoop, recordToolCall } =
       await loadBeforeToolCallRuntime();
     const sessionState = getDiagnosticSessionState({
@@ -1187,6 +1188,7 @@ export function wrapToolWithBeforeToolCallHook(
   const wrappedTool: AnyAgentTool = {
     ...tool,
     execute: async (toolCallId, params, signal, onUpdate) => {
+      signal?.throwIfAborted();
       const prepare = (tool as BeforeToolCallPreparingTool).prepareBeforeToolCallParams;
       const preparedParams = prepare
         ? await prepare(params, {
@@ -1195,6 +1197,7 @@ export function wrapToolWithBeforeToolCallHook(
             ...(signal ? { signal } : {}),
           })
         : params;
+      signal?.throwIfAborted();
       const hookParams = normalizeCodeModeExecBeforeHookParams({ tool, params: preparedParams });
       const hookMetadata = getCodeModeExecBeforeHookMetadata({ tool, params: preparedParams });
       const outcome = await runBeforeToolCallHook({
@@ -1247,6 +1250,8 @@ export function wrapToolWithBeforeToolCallHook(
         });
         return blockedResult;
       }
+      // An allowed async hook must not revive a tool cancelled while it was waiting.
+      signal?.throwIfAborted();
       let executeParams = reconcileCodeModeExecBeforeHookParams({
         tool,
         originalParams: preparedParams,
@@ -1282,8 +1287,18 @@ export function wrapToolWithBeforeToolCallHook(
         });
       }
       const startedAt = Date.now();
+      const guardedOnUpdate =
+        typeof onUpdate === "function"
+          ? (((payload: unknown) => {
+              if (signal?.aborted) {
+                return;
+              }
+              onUpdate(payload as never);
+            }) as typeof onUpdate)
+          : onUpdate;
       try {
-        const result = await execute(toolCallId, executeParams, signal, onUpdate);
+        const result = await execute(toolCallId, executeParams, signal, guardedOnUpdate);
+        signal?.throwIfAborted();
         const durationMs = Date.now() - startedAt;
         await recordLoopOutcome({
           ctx,
@@ -1317,35 +1332,29 @@ export function wrapToolWithBeforeToolCallHook(
         // query so the routing memo JSONL can feed future tool-routing
         // analysis. Pure shadow — never affects prompt injection.
         if (ctx?.workspaceDir && ctx.config) {
-          try {
-            void (async () => {
-              const { isCodingRoutingMemoShadowEnabled } = await import(
-                "../context-engine/coding-runtime-flags.js"
-              );
-              if (!isCodingRoutingMemoShadowEnabled(ctx.config)) return;
-              const { appendRoutingMemo } = await import(
-                "../knowledge/routing-memo-shadow.js"
-              );
-              const queryText = summarizeToolParams(executeParams);
-              appendRoutingMemo(ctx.workspaceDir!, {
-                atMs: Date.now(),
-                sessionId: ctx.sessionId ?? "unknown",
-                query: queryText.kind === "string"
-                  ? `(${queryText.length} chars)`
-                  : queryText.kind,
-                chosenTool: normalizedToolName,
-                success: true,
-              });
-            })();
-          } catch {
+          void (async () => {
+            const { isCodingRoutingMemoShadowEnabled } =
+              await import("../context-engine/coding-runtime-flags.js");
+            if (!isCodingRoutingMemoShadowEnabled(ctx.config)) return;
+            const { appendRoutingMemo } = await import("../knowledge/routing-memo-shadow.js");
+            const queryText = summarizeToolParams(executeParams);
+            appendRoutingMemo(ctx.workspaceDir!, {
+              atMs: Date.now(),
+              sessionId: ctx.sessionId ?? "unknown",
+              query: queryText.kind === "string" ? `(${queryText.length} chars)` : queryText.kind,
+              chosenTool: normalizedToolName,
+              success: true,
+            });
+          })().catch(() => {
             // Routing memo shadow is best-effort; never perturb tool execution.
-          }
+          });
         }
         return result;
       } catch (err) {
+        const cancelled = isAbortSignalCancellation(err, signal) || Boolean(signal?.aborted);
         const cause = unwrapErrorCause(err);
         const errorCode = diagnosticHttpStatusCode(cause);
-        if (hookOptions.emitDiagnostics) {
+        if (hookOptions.emitDiagnostics && !cancelled) {
           emitTrustedDiagnosticEvent({
             type: "tool.execution.error",
             ...eventBase,
@@ -1354,14 +1363,16 @@ export function wrapToolWithBeforeToolCallHook(
             ...(errorCode ? { errorCode } : {}),
           });
         }
-        await recordLoopOutcome({
-          ctx,
-          toolName: normalizedToolName,
-          toolParams: executeParams,
-          toolCallId,
-          error: err,
-        });
-        throw err;
+        if (!cancelled) {
+          await recordLoopOutcome({
+            ctx,
+            toolName: normalizedToolName,
+            toolParams: executeParams,
+            toolCallId,
+            error: err,
+          });
+        }
+        throw signal?.aborted ? (signal.reason ?? err) : err;
       }
     },
   };

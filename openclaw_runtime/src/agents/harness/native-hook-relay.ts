@@ -583,7 +583,7 @@ export function buildNativeHookRelayCommand(params: {
 }
 
 function nativePreToolUseMayRunLoopDetection(registration: NativeHookRelayRegistration): boolean {
-  if (!registration.sessionKey) {
+  if (!registration.sessionKey && !registration.sessionId) {
     return false;
   }
   const loopDetection = resolveToolLoopDetectionConfig({
@@ -2320,6 +2320,17 @@ function isJsonObject(value: unknown): value is Record<string, unknown> {
 }
 
 export const testing = {
+  nativePreToolUseMayRunLoopDetectionForTests(
+    registration: NativeHookRelayRegistration,
+  ): boolean {
+    return nativePreToolUseMayRunLoopDetection(registration);
+  },
+  nativeHookRelayEventHasLocalWorkForTests(
+    registration: NativeHookRelayRegistration,
+    event: NativeHookRelayEvent,
+  ): boolean {
+    return nativeHookRelayEventHasLocalWork(registration, event);
+  },
   clearNativeHookRelaysForTests(): void {
     for (const relayId of relayBridges.keys()) {
       unregisterNativeHookRelayBridge(relayId);

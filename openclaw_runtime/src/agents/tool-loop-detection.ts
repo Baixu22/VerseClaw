@@ -110,15 +110,23 @@ function resolveLoopDetectionConfig(config?: ToolLoopDetectionConfig): ResolvedL
   if (globalCircuitBreakerThreshold <= criticalThreshold) {
     globalCircuitBreakerThreshold = criticalThreshold + 1;
   }
+  const unknownToolThreshold = asPositiveInt(
+    config?.unknownToolThreshold,
+    DEFAULT_LOOP_DETECTION_CONFIG.unknownToolThreshold,
+  );
 
   return {
     enabled: config?.enabled ?? DEFAULT_LOOP_DETECTION_CONFIG.enabled,
-    historySize: asPositiveInt(config?.historySize, DEFAULT_LOOP_DETECTION_CONFIG.historySize),
-    warningThreshold,
-    unknownToolThreshold: asPositiveInt(
-      config?.unknownToolThreshold,
-      DEFAULT_LOOP_DETECTION_CONFIG.unknownToolThreshold,
+    // A smaller window silently makes termination thresholds unreachable.
+    historySize: Math.max(
+      asPositiveInt(config?.historySize, DEFAULT_LOOP_DETECTION_CONFIG.historySize),
+      warningThreshold,
+      unknownToolThreshold,
+      criticalThreshold,
+      globalCircuitBreakerThreshold,
     ),
+    warningThreshold,
+    unknownToolThreshold,
     criticalThreshold,
     globalCircuitBreakerThreshold,
     detectors: {
@@ -143,6 +151,16 @@ export function hashToolCall(toolName: string, params: unknown): string {
 function digestStable(value: unknown): string {
   const serialized = stableStringify(value);
   return createHash("sha256").update(serialized).digest("hex");
+}
+
+const PROCESS_IDLE_HINT_RE =
+  /\n\nNo new output for [^;\n]+; this session may be waiting for input\. Use process write, send-keys, submit, or paste to provide input\./g;
+
+function stabilizeKnownPollText(text: string): string {
+  return text.replace(
+    PROCESS_IDLE_HINT_RE,
+    "\n\nNo new output; this session may be waiting for input.",
+  );
 }
 
 function isKnownPollToolCall(toolName: string, params: unknown): boolean {
@@ -363,7 +381,7 @@ function hashToolOutcome(
           exitCode: details.exitCode ?? null,
           exitSignal: details.exitSignal ?? null,
           aggregated: details.aggregated ?? null,
-          text,
+          text: stabilizeKnownPollText(text),
         }),
       };
     }
@@ -377,7 +395,7 @@ function hashToolOutcome(
           truncated: details.truncated ?? null,
           exitCode: details.exitCode ?? null,
           exitSignal: details.exitSignal ?? null,
-          text,
+          text: stabilizeKnownPollText(text),
         }),
       };
     }
@@ -387,10 +405,16 @@ function hashToolOutcome(
     return { resultHash: digestStable(stripVolatileSendIds(details)) };
   }
 
+  // Screenshots, audio and embedded resources can change without any text changing.
+  // Keep only their digest in diagnostic history, never the media payload itself.
+  const nonTextContent = Array.isArray(result.content)
+    ? result.content.filter((entry) => isPlainObject(entry) && entry.type !== "text")
+    : [];
   return {
     resultHash: digestStable({
       details,
       text,
+      ...(nonTextContent.length ? { nonTextContent } : {}),
     }),
   };
 }
@@ -716,6 +740,34 @@ export function detectToolCallLoop(
   return { stuck: false };
 }
 
+function trimToolCallHistory(state: SessionState, historySize: number): void {
+  const history = state.toolCallHistory;
+  if (!history || history.length === 0) {
+    return;
+  }
+  const retainedByScope = new Map<string, ToolCallRecord[]>();
+  for (const record of history) {
+    const scopeKey = normalizeRunId(record.runId) ?? "";
+    const scoped = retainedByScope.get(scopeKey);
+    if (scoped) {
+      scoped.push(record);
+    } else {
+      retainedByScope.set(scopeKey, [record]);
+    }
+  }
+  const retained = new Set<ToolCallRecord>();
+  for (const scoped of retainedByScope.values()) {
+    const keep = scoped.length > historySize ? scoped.slice(-historySize) : scoped;
+    for (const record of keep) {
+      retained.add(record);
+    }
+  }
+  if (retained.size === history.length) {
+    return;
+  }
+  state.toolCallHistory = history.filter((record) => retained.has(record));
+}
+
 /**
  * Record a tool call in the session's history for loop detection.
  * Maintains sliding window of last N calls.
@@ -742,9 +794,7 @@ export function recordToolCall(
     timestamp: Date.now(),
   });
 
-  if (state.toolCallHistory.length > resolvedConfig.historySize) {
-    state.toolCallHistory.splice(0, state.toolCallHistory.length - resolvedConfig.historySize);
-  }
+  trimToolCallHistory(state, resolvedConfig.historySize);
 }
 
 /**
@@ -815,9 +865,7 @@ export function recordToolCallOutcome(
     recordedOutcome = record;
   }
 
-  if (state.toolCallHistory.length > resolvedConfig.historySize) {
-    state.toolCallHistory.splice(0, state.toolCallHistory.length - resolvedConfig.historySize);
-  }
+  trimToolCallHistory(state, resolvedConfig.historySize);
   return recordedOutcome;
 }
 

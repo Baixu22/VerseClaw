@@ -107,6 +107,7 @@ function nodePolicyBlocksAutoReview(params: {
 export async function executeNodeHostCommand(
   params: ExecuteNodeHostCommandParams,
 ): Promise<AgentToolResult<ExecToolDetails>> {
+  params.signal?.throwIfAborted();
   const { hostSecurity, hostAsk, askFallback } = resolveExecHostApprovalContext({
     agentId: params.agentId,
     security: params.security,
@@ -114,6 +115,7 @@ export async function executeNodeHostCommand(
     host: "node",
   });
   const target = await resolveNodeExecutionTarget(params);
+  params.signal?.throwIfAborted();
   if (
     shouldSkipNodeApprovalPrepare({
       hostSecurity,
@@ -121,10 +123,12 @@ export async function executeNodeHostCommand(
       strictInlineEval: params.strictInlineEval,
     })
   ) {
+    params.signal?.throwIfAborted();
     return await invokeNodeSystemRunDirect({ request: params, target });
   }
 
   const prepared = await prepareNodeSystemRun({ request: params, target });
+  params.signal?.throwIfAborted();
   const approvalAnalysis = await analyzeNodeApprovalRequirement({
     request: params,
     target,
@@ -132,6 +136,7 @@ export async function executeNodeHostCommand(
     hostSecurity,
     hostAsk,
   });
+  params.signal?.throwIfAborted();
   const {
     analysisOk,
     allowlistSatisfied,
@@ -471,6 +476,7 @@ export async function executeNodeHostCommand(
     notifyOnExit: params.notifyOnExit,
     systemRunPlan: prepared.plan,
   });
+  params.signal?.throwIfAborted();
   const raw =
     inlineApprovedByAsk && inlineApprovalId
       ? await callGatewayTool("node.invoke", { timeoutMs: target.invokeTimeoutMs }, invoke, {
