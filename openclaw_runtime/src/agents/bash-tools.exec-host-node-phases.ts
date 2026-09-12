@@ -232,20 +232,22 @@ export function formatNodeRunToolResult(params: {
   const stdout = typeof payloadObj.stdout === "string" ? payloadObj.stdout : "";
   const stderr = typeof payloadObj.stderr === "string" ? payloadObj.stderr : "";
   const errorText = typeof payloadObj.error === "string" ? payloadObj.error : "";
+  const aggregated = [stdout, stderr, errorText].filter(Boolean).join("\n");
   const success = typeof payloadObj.success === "boolean" ? payloadObj.success : false;
   const exitCode = typeof payloadObj.exitCode === "number" ? payloadObj.exitCode : null;
   return {
     content: [
       {
         type: "text",
-        text: renderExecOutputText(stdout || stderr || errorText),
+        text: renderExecOutputText(aggregated),
       },
     ],
     details: {
       status: success ? "completed" : "failed",
       exitCode,
       durationMs: Date.now() - params.startedAt,
-      aggregated: [stdout, stderr, errorText].filter(Boolean).join("\n"),
+      aggregated,
+      timedOut: payloadObj.timedOut === true,
       cwd: params.cwd,
     } satisfies ExecToolDetails,
   };
@@ -370,6 +372,10 @@ export async function invokeNodeSystemRunDirect(params: {
       cwd: params.request.workdir,
       agentId: params.request.agentId,
       sessionKey: params.request.sessionKey,
+      turnSourceChannel: params.request.turnSourceChannel,
+      turnSourceTo: params.request.turnSourceTo,
+      turnSourceAccountId: params.request.turnSourceAccountId,
+      turnSourceThreadId: params.request.turnSourceThreadId,
       notifyOnExit: params.request.notifyOnExit,
     }),
   );

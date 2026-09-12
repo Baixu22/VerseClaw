@@ -1,5 +1,15 @@
 # 会话交接（LATEST）
 
+## 当前接力：工具运行时可靠性第二批十节点完成（2026-09-12，TF-0179..TF-0188）
+
+- 本轮按用户“接力最新节点并至少完成十个节点”的授权，从当前源码的可执行反例接续 TF-0169..TF-0178。工作区为 `D:/ClawX`；旧桌面路径是同一工作树的入口。
+- 完成：TF-0179 自动审批取消边界；TF-0180 远程完整输出与超时事实；TF-0181 远程消息路由保留；TF-0182 process 取消无后续副作用；TF-0183 首次 poll 保留真实退出信号与退出码；TF-0184 工具终态后关闭进度回调；TF-0185 策略与结果观察阶段取消；TF-0186 低阈值首次循环警告；TF-0187 策略改参后的调用 ID 关联；TF-0188 会话别名合并按时间排序。
+- 修复前：初批 21 个行为断言失败；复核再补出原地改参反例并修复。修复后：agents 59/59 + unit-fast 2/2，共 **61/61**；运行时类型、scoped typed lint、E2E 文件 ESLint、最终 runtime/Vite 构建、Gateway smoke、comms replay/compare 均通过；更新后的 Electron foreground E2E **2/2**。
+- 专用 Harness 在仅含本批实际变更且逐文件核对 SHA-256 的 detached 候选中，diff-aware validate/dry-run PASS。共享工作树的专用检查被原有 14 个未跟踪文件拦住；全局 `harness:ci` 仍在整个分支路径归属门失败，未计为通过。规则与路径范围未为此放宽。
+- 证据：`docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md`；spec 为 `harness/specs/tasks/live-tool-runtime-reliability.md`；原始日志、JSON 测试报告及隔离候选在 `%LOCALAPPDATA%/ClawX-scratch/tool-runtime-relay-20260912/`。native-hook relay 用例属于 unit-fast，不能只跑 agents 分片就宣称覆盖。
+- Task Forest 起始提案 `TFP-tool-runtime-relay-ten-start-20260912`、收口提案 `TFP-tool-runtime-relay-ten-close-20260912` 均已应用，validate/export PASS。十个新节点均 done/100，HTML 当前图与 JSON 导出一致；登记与文档工作未计入数量。
+- 下一步：只从新的可执行反例继续开节点。已发出的远程 node.invoke 仍不随本地 AbortSignal 终止远端进程；真实远程执行和具名真人验收未做，TF-0009/TF-0133、default-on 与产品锁不因本批完成而解锁。
+
 ## 当前接力：工具运行时可靠性十节点收口（2026-09-12，TF-0169..TF-0178 done）
 
 - 用户要求接力最新节点并至少完成十个节点。本批从可执行反例补齐 TF-0169 及后续 9 个独立缺口，不重做 TF-0156/0157，不把本地工程结果升级为产品放行。

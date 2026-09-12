@@ -1,6 +1,10 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import type { ToolLoopDetectionConfig } from "../config/types.tools.js";
 import type { SessionState } from "../logging/diagnostic-session-state.js";
+import {
+  getDiagnosticSessionState,
+  resetDiagnosticSessionStateForTest,
+} from "../logging/diagnostic-session-state.js";
 import {
   CRITICAL_THRESHOLD,
   GLOBAL_CIRCUIT_BREAKER_THRESHOLD,
@@ -15,6 +19,8 @@ import {
 function state(): SessionState {
   return { lastActivity: Date.now(), state: "processing", queueDepth: 0 };
 }
+
+afterEach(() => resetDiagnosticSessionStateForTest());
 
 function recordCalls(
   session: SessionState,
@@ -50,6 +56,27 @@ function recordCalls(
 }
 
 describe("tool-loop progress evidence", () => {
+  it("TF-0188 merges session aliases in chronological order so old outcomes cannot hide progress", () => {
+    const idOnly = getDiagnosticSessionState({ sessionId: "alias-id" });
+    const keyOnly = getDiagnosticSessionState({ sessionKey: "alias-key" });
+    const config = { warningThreshold: 2, criticalThreshold: 4, globalCircuitBreakerThreshold: 5 };
+    recordCalls(idOnly, 4, { config, runId: "alias-run", idPrefix: "old" });
+    idOnly.toolCallHistory!.forEach((record, index) => {
+      record.timestamp = index + 1;
+    });
+    recordCalls(keyOnly, 1, {
+      config,
+      runId: "alias-run",
+      idPrefix: "new",
+      result: { content: [{ type: "text", text: "actual progress" }] },
+    });
+    keyOnly.toolCallHistory![0].timestamp = 10;
+    const merged = getDiagnosticSessionState({ sessionId: "alias-id", sessionKey: "alias-key" });
+    const detection = detectToolCallLoop(merged, "read", {}, config, { runId: "alias-run" });
+    expect(detection.stuck && detection.level === "critical").toBe(false);
+    expect(merged.toolCallHistory!.map((record) => record.timestamp)).toEqual([1, 2, 3, 4, 10]);
+  });
+
   it.each(["generic_repeat", "global_circuit_breaker", "unknown_tool_repeat"] as const)(
     "retains enough bounded history to reach %s",
     (detector) => {
@@ -114,17 +141,19 @@ describe("tool-loop progress evidence", () => {
     };
     recordCalls(session, 8, { config, runId: "other-run", idPrefix: "other" });
     recordCalls(session, 6, { config, runId: "current-run", idPrefix: "current" });
-    expect(
-      detectToolCallLoop(session, "read", {}, config, { runId: "current-run" }),
-    ).toMatchObject({
-      stuck: true,
-      level: "critical",
-      detector: "generic_repeat",
-    });
-    const currentCount = session.toolCallHistory!.filter((record) => record.runId === "current-run")
-      .length;
-    const otherCount = session.toolCallHistory!.filter((record) => record.runId === "other-run")
-      .length;
+    expect(detectToolCallLoop(session, "read", {}, config, { runId: "current-run" })).toMatchObject(
+      {
+        stuck: true,
+        level: "critical",
+        detector: "generic_repeat",
+      },
+    );
+    const currentCount = session.toolCallHistory!.filter(
+      (record) => record.runId === "current-run",
+    ).length;
+    const otherCount = session.toolCallHistory!.filter(
+      (record) => record.runId === "other-run",
+    ).length;
     expect(currentCount).toBeGreaterThanOrEqual(6);
     expect(otherCount).toBeLessThanOrEqual(7);
   });

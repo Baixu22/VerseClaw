@@ -240,12 +240,14 @@ export async function executeNodeHostCommand(
           sessionKey: prepared.sessionKey,
         },
       });
+      params.signal?.throwIfAborted();
       if (decision.decision === "allow-once") {
         const approvalId = randomUUID();
         await registerNodeApproval(approvalId, {
           requireDeliveryRoute: false,
           suppressDelivery: true,
         });
+        params.signal?.throwIfAborted();
         await callGatewayTool(
           "exec.approval.resolve",
           { timeoutMs: 15_000 },
@@ -286,6 +288,8 @@ export async function executeNodeHostCommand(
         ...requestArgs,
         register: registerNodeApproval,
       });
+      // A cancelled foreground request must not create a detached approval follow-up.
+      params.signal?.throwIfAborted();
       if (
         shouldResolveExecApprovalUnavailableInline({
           trigger: params.trigger,
@@ -293,11 +297,10 @@ export async function executeNodeHostCommand(
           preResolvedDecision,
         })
       ) {
-        const { baseDecision, approvedByAsk, deniedReason } =
-          createExecApprovalDecisionState({
-            decision: preResolvedDecision,
-            askFallback,
-          });
+        const { baseDecision, approvedByAsk, deniedReason } = createExecApprovalDecisionState({
+          decision: preResolvedDecision,
+          askFallback,
+        });
         const strictInlineEvalDecision = enforceStrictInlineEvalApprovalBoundary({
           baseDecision,
           approvedByAsk,
@@ -470,6 +473,7 @@ export async function executeNodeHostCommand(
     cwd: prepared.cwd,
     agentId: prepared.agentId,
     sessionKey: prepared.sessionKey,
+    ...buildExecApprovalTurnSourceContext(params),
     approved: inlineApprovedByAsk,
     approvalDecision: inlineApprovalDecision,
     runId: inlineApprovalId,

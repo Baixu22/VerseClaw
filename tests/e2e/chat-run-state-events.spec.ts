@@ -101,13 +101,22 @@ test.describe('Verse Claw chat run state events', () => {
         await expect(step.getByTestId('chat-execution-step-detail')).not.toContainText('Use process');
         await app.evaluate(({ BrowserWindow }, terminal) => {
           const { status: terminalStatus, ...identity } = terminal;
+          const output = 'foreground output retained\nforeground error retained\nExecution stopped';
           for (const win of BrowserWindow.getAllWindows()) {
-            win.webContents.send('chat:runtime-event', { ...identity, type: 'tool.completed', toolCallId: 'foreground-call', name: 'exec', isError: true, result: { content: [{ type: 'text', text: 'Execution stopped' }] } });
+            win.webContents.send('chat:runtime-event', {
+              ...identity, type: 'tool.completed', toolCallId: 'foreground-call', name: 'exec', isError: true,
+              result: {
+                content: [{ type: 'text', text: output }],
+                details: { status: 'failed', aggregated: output, exitCode: null, timedOut: terminalStatus === 'error' },
+              },
+            });
             win.webContents.send('chat:runtime-event', { ...identity, type: 'run.ended', status: terminalStatus, endedAt: Date.now(), ...(terminalStatus === 'error' ? { error: 'Tool loop terminated' } : {}) });
           }
         }, { runId, sessionKey: MAIN_SESSION_KEY, status });
         await expect(send).toHaveAttribute('aria-label', /Send|发送/);
         await expect(page.getByTestId('chat-composer-input')).toBeEnabled();
+        await expect(step.getByTestId('chat-execution-step-detail')).toContainText('foreground output retained');
+        await expect(step.getByTestId('chat-execution-step-detail')).toContainText('foreground error retained');
       } finally {
         await closeElectronApp(app);
       }

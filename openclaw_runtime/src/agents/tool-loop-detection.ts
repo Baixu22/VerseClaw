@@ -835,10 +835,12 @@ export function recordToolCallOutcome(
     if (normalizeRunId(call.runId) !== runId) {
       continue;
     }
-    if (params.toolCallId && call.toolCallId !== params.toolCallId) {
-      continue;
-    }
-    if (call.toolName !== params.toolName || call.argsHash !== argsHash) {
+    // Policies can rewrite params after recording the request. Within one run,
+    // the call id pairs the result with its original request hash, even after in-place edits.
+    const sameCall = params.toolCallId
+      ? call.toolCallId === params.toolCallId
+      : call.argsHash === argsHash;
+    if (call.toolName !== params.toolName || !sameCall) {
       continue;
     }
     if (call.resultHash !== undefined) {
