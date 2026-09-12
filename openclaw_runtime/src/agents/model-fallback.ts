@@ -30,6 +30,8 @@ import { isActiveUnusableWindow } from "./auth-profiles/usage-state.js";
 import { DEFAULT_MODEL, DEFAULT_PROVIDER } from "./defaults.js";
 import { isLikelyContextOverflowError } from "./embedded-agent-helpers/errors.js";
 import type { FailoverReason } from "./embedded-agent-helpers/types.js";
+import { PostCompactionLoopPersistedError } from "./embedded-agent-runner/post-compaction-loop-guard.js";
+import { ToolLoopTerminatedError } from "./tool-loop-termination.js";
 import {
   FailoverError,
   buildFailoverRemediationHint,
@@ -329,6 +331,10 @@ async function runFallbackCandidate<T>(params: {
       result,
     };
   } catch (err) {
+    // Loop guards end the run, not a provider attempt. Fallback would restart it.
+    if (err instanceof ToolLoopTerminatedError || err instanceof PostCompactionLoopPersistedError) {
+      throw err;
+    }
     if (isCommandLaneTaskTimeoutError(err)) {
       throw err;
     }

@@ -40,4 +40,6 @@ export type ExecuteNodeHostCommandParams = {
   notifySessionKey?: string;
   notifyOnExit?: boolean;
   trustedSafeBinDirs?: ReadonlySet<string>;
+  /** Run abort signal; cancelled node-host exec must not start a remote invoke. */
+  signal?: AbortSignal;
 };

@@ -1519,6 +1519,7 @@ export function createExecTool(
         return markResolveExecEnvPrepared(execParams, state);
       })(),
     execute: async (_toolCallId, args, signal, onUpdate) => {
+      signal?.throwIfAborted();
       const params = isResolveExecEnvPrepared(args as ExecToolArgs)
         ? stripMalformedXmlArgValueSuffixFromKeys(
             args as ExecToolArgs,
@@ -1826,6 +1827,7 @@ export function createExecTool(
       }
 
       if (host === "node") {
+        signal?.throwIfAborted();
         return executeNodeHostCommand({
           command: params.command,
           workdir,
@@ -1856,6 +1858,7 @@ export function createExecTool(
           notifySessionKey,
           notifyOnExit,
           trustedSafeBinDirs,
+          ...(signal ? { signal } : {}),
         });
       }
 
@@ -1943,6 +1946,7 @@ export function createExecTool(
       if (!shouldSkipExecScriptPreflight({ host, security, ask })) {
         await validateScriptFileForShellBleed({ command: params.command, workdir });
       }
+      signal?.throwIfAborted();
 
       let goalWaitArm: GoalWakeArmResult | undefined;
       let goalYieldTriggered = false;
@@ -2058,6 +2062,8 @@ export function createExecTool(
 
       let run: Awaited<ReturnType<typeof runExecProcess>>;
       try {
+        // Async preflight/arming can finish after the caller has cancelled.
+        signal?.throwIfAborted();
         run = await runExecProcess({
           command: params.command,
           execCommand: execCommandOverride,
@@ -2172,6 +2178,7 @@ export function createExecTool(
         // tool_execution_update events even for backgrounded sessions (which
         // retrieve output via process poll/log instead of onUpdate callbacks).
         run.disableUpdates();
+        cleanupToolRunListeners();
         if (yielded || run.session.backgrounded) {
           return;
         }
@@ -2232,7 +2239,7 @@ export function createExecTool(
         };
 
         const onYieldNow = () => {
-          if (yielded) {
+          if (yielded || signal?.aborted || run.session.exited) {
             return;
           }
           yielded = true;
@@ -2248,14 +2255,7 @@ export function createExecTool(
           if (yieldWindow === 0) {
             onYieldNow();
           } else {
-            yieldTimer = setTimeout(() => {
-              if (yielded) {
-                return;
-              }
-              yielded = true;
-              markBackgrounded(run.session);
-              resolveRunning();
-            }, yieldWindow);
+            yieldTimer = setTimeout(onYieldNow, yieldWindow);
           }
         } else {
           // Foreground-only exec: background/process follow-up is unavailable, so
@@ -2266,31 +2266,35 @@ export function createExecTool(
           const heartbeatMs = resolveExecForegroundHeartbeatMs();
           if (heartbeatMs > 0 && typeof onUpdate === "function") {
             foregroundHeartbeat = setInterval(() => {
-              if (yielded || run.session.backgrounded) {
+              // Process cleanup may outlive the consumer; mirror the output update guard.
+              if (yielded || run.session.backgrounded || run.session.exited || signal?.aborted) {
                 return;
               }
-              const elapsedSeconds = Math.max(
-                1,
-                Math.round((Date.now() - run.startedAt) / 1000),
-              );
-              onUpdate({
-                content: [
-                  {
-                    type: "text",
-                    text: `${getWarningText()}Command still running (session ${run.session.id}, pid ${
-                      run.session.pid ?? "n/a"
-                    }, ${elapsedSeconds}s elapsed). Use process (list/poll/log/write/send-keys/submit/paste/kill/clear/remove) for follow-up.`,
+              const elapsedSeconds = Math.max(1, Math.round((Date.now() - run.startedAt) / 1000));
+              try {
+                onUpdate({
+                  content: [
+                    {
+                      type: "text",
+                      text: `${getWarningText()}Command still running (session ${run.session.id}, pid ${
+                        run.session.pid ?? "n/a"
+                      }, ${elapsedSeconds}s elapsed). Waiting for completion.${
+                        run.session.tail ? `\n${run.session.tail}` : ""
+                      }`,
+                    },
+                  ],
+                  details: {
+                    status: "running",
+                    sessionId: run.session.id,
+                    pid: run.session.pid ?? undefined,
+                    startedAt: run.startedAt,
+                    cwd: run.session.cwd,
+                    tail: run.session.tail,
                   },
-                ],
-                details: {
-                  status: "running",
-                  sessionId: run.session.id,
-                  pid: run.session.pid ?? undefined,
-                  startedAt: run.startedAt,
-                  cwd: run.session.cwd,
-                  tail: run.session.tail,
-                },
-              });
+                });
+              } catch {
+                // Progress is best-effort; a consumer error must not fail the still-running process.
+              }
             }, heartbeatMs);
             foregroundHeartbeat.unref?.();
           }

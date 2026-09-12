@@ -45,6 +45,8 @@ Product capability statements must be checked against the canonical matrix in `s
 
 写入后的自动验证同样需要显式开启，默认关闭。开启后，Verse Claw 只探测一个有界项目测试命令，并通过现有 effective `exec` 的 policy、审批、沙箱和超时路径执行；通过、失败、跳过原因和有界输出尾部会留在会话中，验证失败不会回滚已成功的写入。
 
+前台命令进度保留最近输出，并在取消或退出后停止。参数或策略准备完成后，已取消的工具不会再启动，取消后到达的成功结果也不会交付。严重工具循环终止也会停止模型回退；变化的图片、音频和资源结果会被识别为进展，process poll 的等待时长不算进展，有界历史窗口会按 run 覆盖已配置的终止阈值。
+
 启用 DCS 的编码 turn 会通过既有共享注入账本分别记录 knowledge、recent actions 与 tool registry 的真实 provider 可见 prompt 增长。固定预算不会因此放大：启用的 DCS 投影保留既有有界容量，截断和丢弃仍作为显式账目证据。
 
 本范围不包含 Runtime Memory 注入、SEKB 自动写回、Browser 无监督或私网访问、C6/C7 自动切换、Coding WAL、生产仓库自动合并及多 Forge/DAG 扩围。当前只有工程与真实进程测试证据，真人 canary 与发布审批仍未完成。组件唯一标注见 [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview)。

@@ -45,6 +45,8 @@ The current first-product validation target is **Verse Claw Windows x64 - DCS Co
 
 Post-write automatic verification is also opt-in and default-off. When enabled, Verse Claw detects one bounded project test command and runs it through the existing effective `exec` policy, approval, sandbox, and timeout path; the pass, failure, skip reason, and bounded output tail remain visible without rolling back a successful write.
 
+Foreground command progress retains recent output and stops after cancellation or exit. Cancelled tools do not start after parameter or policy preparation completes, and late success after cancel is not delivered. Critical tool-loop termination also stops model fallback; changing image/audio/resource results count as progress; process poll idle duration is not progress; the bounded history window expands per run as needed to reach configured termination thresholds.
+
 For DCS-enabled coding turns, knowledge, recent actions, and the tool registry now report their actual provider-visible prompt growth through the existing shared turn-injection ledger. The fixed budget is not enlarged: enabled DCS projections retain their existing bounded capacity, while truncation and drops remain explicit accounting evidence.
 
 This scope does not include Runtime Memory injection, SEKB automatic writeback, unsupervised or private-network Browser use, automatic C6/C7 cutover, Coding WAL, automatic repository merge, or multi-forge/DAG expansion. Engineering and real-process tests are available; human canary evidence and release approval are still pending. The canonical one-label component inventory is in [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview).

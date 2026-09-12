@@ -1,5 +1,16 @@
 # 会话交接（LATEST）
 
+## 当前接力：工具运行时可靠性十节点收口（2026-09-12，TF-0169..TF-0178 done）
+
+- 用户要求接力最新节点并至少完成十个节点。本批从可执行反例补齐 TF-0169 及后续 9 个独立缺口，不重做 TF-0156/0157，不把本地工程结果升级为产品放行。
+- 完成：TF-0169 循环窗口覆盖阈值；TF-0170 按 run 裁剪历史；TF-0171 原生 relay 仅 sessionId 仍检测循环；TF-0172 取消错误不入循环历史；TF-0173 取消后丢弃 onUpdate；TF-0174 心跳消费者异常不中断等待；TF-0175 node-host 解析后取消不 invoke；TF-0176 process poll/log idle 时长不算进展；TF-0177 取消后的晚到成功不交付；TF-0178 node-host prepare 后取消不继续审批/invoke。
+- 验证：agents 聚焦 Vitest 9 files / 39 tests PASS；`pnpm --dir openclaw_runtime tsgo:core` PASS；`pnpm run comms:replay` 与 `pnpm run comms:compare` PASS；foreground E2E 2/2 PASS（先重建 runtime dist）。
+- 证据：`docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md`；规格 `harness/specs/tasks/live-tool-runtime-reliability.md`。
+- 仍未完成：具名真人验收、Electron/CDP 复现、node-host 已发出的网关 invoke 不随 AbortSignal 取消、TF-0009/TF-0133 真人毕业。产品锁与 default-on 不变。
+- Task Forest 提案 `TFP-tool-runtime-ten-nodes-20260912` 已 apply；validate/export 通过。下一步只从新的可执行反例开节点。
+
+
+
 ## 当前接力：真实模型 CDP 首批语料已沉淀（2026-09-11，TF-0155 done）
 
 - 用户提供并明确授权第三方模型 `senseaudio-s2-flash`，本轮已用实际 Electron CDP 驱动完成 **6 会话 / 18 轮输入**。主交付：`artifacts/live-model-cdp/20260911-senseaudio-s2-flash/README.md`；数据在 `dataset.jsonl`，原生脱敏会话在 `transcripts/`，运行投影、截图、manifest 与离线 `verify.py` 同目录。

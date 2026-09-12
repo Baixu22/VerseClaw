@@ -728,7 +728,8 @@ export const FIELD_HELP: Record<string, string> = {
     'Optional allowlist of model ids (e.g. "gpt-5.4" or "openai/gpt-5.4").',
   "tools.loopDetection.enabled":
     "Enable repetitive tool-call loop detection and backoff safety checks (default: false).",
-  "tools.loopDetection.historySize": "Tool history window size for loop detection (default: 30).",
+  "tools.loopDetection.historySize":
+    "Requested tool history window (default: 30). Expanded when needed to cover configured termination thresholds.",
   "tools.loopDetection.warningThreshold":
     "Warning threshold for repetitive patterns when detector is enabled (default: 10).",
   "tools.loopDetection.unknownToolThreshold":
@@ -2106,14 +2107,12 @@ export const FIELD_HELP: Record<string, string> = {
     "Explicit true enables VT Working Context injection (default: false). Canary env: VERSE_VTOKEN_ASSEMBLY_ENABLED=1. Kill-switch: VERSE_VTOKEN_ASSEMBLY_ENABLED=0 or runtime.contextEnhancement.killSwitch.",
   "runtime.contextEnhancement.killSwitch":
     "Instant fail-closed cut for memory/context enhancement paths (VToken, chat-turn memory inject, DCS context-block flags). Env: VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH=1. Default false.",
-  "runtime.vtoken.assembly.budgetTokens":
-    "Token budget for VT assemble (default: 600).",
+  "runtime.vtoken.assembly.budgetTokens": "Token budget for VT assemble (default: 600).",
   "runtime.vtoken.assembly.renderMode":
     "VT render density: compact | dense | verbose (default: compact).",
   "runtime.vtoken.assembly.sessions":
     "Session scope for VT assembly: all | main-only (default: all).",
-  "runtime.vtoken.assembly.timeoutMs":
-    "VT RPC timeout in ms (default: 12000).",
+  "runtime.vtoken.assembly.timeoutMs": "VT RPC timeout in ms (default: 12000).",
   "runtime.vtoken.assembly.maxSourceFiles":
     "Max workspace bootstrap md files ingested per turn (default: 12).",
   "runtime.vtoken.assembly.maxSourceChars":
@@ -2173,8 +2172,7 @@ export const FIELD_HELP: Record<string, string> = {
     "Shadow-only flag that emits RuntimeTaskEvent records from TaskLoop lifecycle/checkpoint data without changing TaskLoop behavior.",
   "agents.defaults.taskLoop.runtimeCoreShadow":
     "Master shadow-only runtime-core flag for TaskLoop RuntimeTaskEvent projection. Leave off unless validating the runtime-core migration.",
-  "agents.list.*.taskLoop":
-    "Per-agent overrides for bounded self-checking task-loop behavior.",
+  "agents.list.*.taskLoop": "Per-agent overrides for bounded self-checking task-loop behavior.",
   "channels.mattermost.configWrites":
     "Allow Mattermost to write config in response to channel events/commands (default: true).",
   "channels.modelByChannel":

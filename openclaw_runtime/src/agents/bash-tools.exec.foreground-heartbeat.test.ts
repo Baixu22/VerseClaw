@@ -58,7 +58,9 @@ describe("exec foreground liveness", () => {
     const updates: Update[] = [];
     const result = (await tool.execute(
       "call-foreground-heartbeat",
-      { command: `node -e "setTimeout(function(){console.log('done')},1200)"` },
+      {
+        command: `node -e "console.log('started');setTimeout(function(){console.log('done')},1200)"`,
+      },
       undefined,
       collectUpdates(updates),
     )) as ExecResult;
@@ -67,6 +69,8 @@ describe("exec foreground liveness", () => {
     const heartbeats = heartbeatUpdates(updates);
     expect(heartbeats.length).toBeGreaterThan(0);
     expect(heartbeats.every((update) => update.details.status === "running")).toBe(true);
+    expect(heartbeats.every((update) => update.text.includes("started"))).toBe(true);
+    expect(heartbeats.every((update) => !update.text.includes("Use process"))).toBe(true);
     expect(result.content.map((entry) => entry.text).join("\n")).toContain(
       "background execution is disabled",
     );
