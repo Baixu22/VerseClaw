@@ -1,0 +1,267 @@
+{
+  "applied_at": "2026-09-12T13:47:40.821055Z",
+  "base_graph_hash": "93b0e615c44c33ee9d4c96ec18baab0a74ccf2966324e6c401968f7e30ae8c4c",
+  "base_summary": {
+    "edge_count": 333,
+    "node_count": 188,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0179",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.exec-host-node.abort.test.ts",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md"
+        ],
+        "execution_hints": [
+          "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "自动审核与审批登记等待中的取消均阻止后续登记或批准；新审批后台跟进也先检查取消。"
+      },
+      "id": "TF-0179"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0180",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.exec-host-node.output.test.ts",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md"
+        ],
+        "execution_hints": [
+          "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "可见文本和结构化结果共用完整 stdout/stderr/error 合并输出，保留远端 timedOut。"
+      },
+      "id": "TF-0180"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0181",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.exec-host-node.output.test.ts",
+          "openclaw_runtime/src/agents/bash-tools.exec-host-node.abort.test.ts",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md"
+        ],
+        "execution_hints": [
+          "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "直接与 prepare 两条 node 执行路径均保留发起消息的 channel、target、account、thread，零值 thread 有回归。"
+      },
+      "id": "TF-0181"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0182",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md"
+        ],
+        "execution_hints": [
+          "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "预取消 process 操作不写入、终止或消费输出；写入完成后取消不继续 EOF。"
+      },
+      "id": "TF-0182"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0183",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md"
+        ],
+        "execution_hints": [
+          "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "首次与后续 poll 保留 null exitCode 和 SIGTERM 等真实退出信号，缺失退出码不再伪造为 0。"
+      },
+      "id": "TF-0183"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0184",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md"
+        ],
+        "execution_hints": [
+          "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "成功及失败终态后停止向已结束的工具调用转发进度，执行中的正常更新保留。"
+      },
+      "id": "TF-0184"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0185",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md"
+        ],
+        "execution_hints": [
+          "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "异步策略 veto/failure 与结果观察阶段保留取消原因；后压缩观察器终止后不交付晚到成功。"
+      },
+      "id": "TF-0185"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0186",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md"
+        ],
+        "execution_hints": [
+          "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "低于十次的首个循环 warning 可达消费者，同桶重复仍限频，critical 阈值保持不变。"
+      },
+      "id": "TF-0186"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0187",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md"
+        ],
+        "execution_hints": [
+          "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "共享结果记录器按同 run 的 toolCallId 关联原请求，返回新参数与原地改参两类反例均通过，实际执行使用规范化参数。"
+      },
+      "id": "TF-0187"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0188",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.95,
+        "evidence": [
+          "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md"
+        ],
+        "execution_hints": [
+          "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "会话 ID/Key 别名合并按历史时间稳定排序，旧结果不再遮蔽最新进展或产生错误 critical。"
+      },
+      "id": "TF-0188"
+    }
+  ],
+  "created_at": "2026-09-12T13:47:40.555984Z",
+  "proposal_id": "TFP-tool-runtime-relay-ten-close-20260912",
+  "rationale": "按用户明确授权收口 TF-0179..TF-0188 十个真实开发节点。首次 21 条新增行为断言失败，复核再补原地改参失败；最终 22 条新反例与既有回归合计 61/61，Electron E2E 2/2，类型、lint、构建、comms 通过；本批隔离候选 diff-aware Harness validate/dry-run 通过。共享树既有未跟踪文件与全分支 Harness CI 归属失败仍如实记录，不改变父任务、真人计数、产品锁或默认开关。",
+  "session_id": "tool-runtime-relay-ten-20260912",
+  "status": "applied"
+}

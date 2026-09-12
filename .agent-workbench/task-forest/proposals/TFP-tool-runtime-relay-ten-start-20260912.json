@@ -1,0 +1,466 @@
+{
+  "applied_at": "2026-09-12T12:32:57.015358Z",
+  "base_graph_hash": "ac498d0ab0041f3b86f5ff4038cef79bf89615e4a969887c42a3b88691891605",
+  "base_summary": {
+    "edge_count": 323,
+    "node_count": 178,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "relay-179",
+      "node": {
+        "acceptance_criteria": [
+          "自动审核或审批登记期间取消后，不再登记或自动批准命令；审批策略保持原样。",
+          "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "工具运行时",
+          "接力",
+          "非GA"
+        ],
+        "difficulty": "low",
+        "estimated_total_minutes": 25,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.exec-host-node.abort.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "execution_hints": [
+          "按当前用户至少十节点授权依次完成，只有验证通过后记 done。"
+        ],
+        "kind": "subtask",
+        "priority": 2,
+        "progress": 0,
+        "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+        "requirements": [
+          "自动审核或审批登记期间取消后，不再登记或自动批准命令；审批策略保持原样。"
+        ],
+        "status": "in_progress",
+        "summary": "已用当前源码复现，待最小修复与独立回归。",
+        "title": "在自动审批异步阶段取消时停止后续授权"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 1,
+        "reason": "接续 TF-0156/0157 的工具运行时可靠性主线，以当前源码可执行反例为验收依据。"
+      },
+      "from": "relay-179",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "relay-180",
+      "node": {
+        "acceptance_criteria": [
+          "stdout、stderr 和错误原因同时可见，超时字段与远程原始结果一致。",
+          "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "工具运行时",
+          "接力",
+          "非GA"
+        ],
+        "difficulty": "low",
+        "estimated_total_minutes": 25,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.exec-host-node.output.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "execution_hints": [
+          "按当前用户至少十节点授权依次完成，只有验证通过后记 done。"
+        ],
+        "kind": "subtask",
+        "priority": 2,
+        "progress": 0,
+        "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+        "requirements": [
+          "stdout、stderr 和错误原因同时可见，超时字段与远程原始结果一致。"
+        ],
+        "status": "ready",
+        "summary": "已用当前源码复现，待最小修复与独立回归。",
+        "title": "远程 exec 完整返回标准输出、错误输出与超时信息"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 1,
+        "reason": "接续 TF-0156/0157 的工具运行时可靠性主线，以当前源码可执行反例为验收依据。"
+      },
+      "from": "relay-180",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "relay-181",
+      "node": {
+        "acceptance_criteria": [
+          "直接和 prepare 两条路径均保留 channel、target、account、thread 身份，包括数值 0 的 thread。",
+          "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "工具运行时",
+          "接力",
+          "非GA"
+        ],
+        "difficulty": "low",
+        "estimated_total_minutes": 25,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.exec-host-node.output.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "execution_hints": [
+          "按当前用户至少十节点授权依次完成，只有验证通过后记 done。"
+        ],
+        "kind": "subtask",
+        "priority": 2,
+        "progress": 0,
+        "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+        "requirements": [
+          "直接和 prepare 两条路径均保留 channel、target、account、thread 身份，包括数值 0 的 thread。"
+        ],
+        "status": "ready",
+        "summary": "已用当前源码复现，待最小修复与独立回归。",
+        "title": "远程 exec 保留发起会话的消息投递路由"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 1,
+        "reason": "接续 TF-0156/0157 的工具运行时可靠性主线，以当前源码可执行反例为验收依据。"
+      },
+      "from": "relay-181",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "relay-182",
+      "node": {
+        "acceptance_criteria": [
+          "预取消的 process 操作无副作用；写入等待中取消不得继续 EOF。",
+          "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "工具运行时",
+          "接力",
+          "非GA"
+        ],
+        "difficulty": "low",
+        "estimated_total_minutes": 25,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "execution_hints": [
+          "按当前用户至少十节点授权依次完成，只有验证通过后记 done。"
+        ],
+        "kind": "subtask",
+        "priority": 2,
+        "progress": 0,
+        "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+        "requirements": [
+          "预取消的 process 操作无副作用；写入等待中取消不得继续 EOF。"
+        ],
+        "status": "ready",
+        "summary": "已用当前源码复现，待最小修复与独立回归。",
+        "title": "进程控制取消后不得写入、关闭输入或消费输出"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 1,
+        "reason": "接续 TF-0156/0157 的工具运行时可靠性主线，以当前源码可执行反例为验收依据。"
+      },
+      "from": "relay-182",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "relay-183",
+      "node": {
+        "acceptance_criteria": [
+          "首次观察到信号退出的 poll 和后续 finished poll 返回同一终态，不能把 null exitCode 变成 0。",
+          "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "工具运行时",
+          "接力",
+          "非GA"
+        ],
+        "difficulty": "low",
+        "estimated_total_minutes": 25,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "execution_hints": [
+          "按当前用户至少十节点授权依次完成，只有验证通过后记 done。"
+        ],
+        "kind": "subtask",
+        "priority": 2,
+        "progress": 0,
+        "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+        "requirements": [
+          "首次观察到信号退出的 poll 和后续 finished poll 返回同一终态，不能把 null exitCode 变成 0。"
+        ],
+        "status": "ready",
+        "summary": "已用当前源码复现，待最小修复与独立回归。",
+        "title": "首次进程退出轮询保留真实退出码和信号"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 1,
+        "reason": "接续 TF-0156/0157 的工具运行时可靠性主线，以当前源码可执行反例为验收依据。"
+      },
+      "from": "relay-183",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "relay-184",
+      "node": {
+        "acceptance_criteria": [
+          "成功和失败两种终态之后的晚到更新均不再交付，执行期间的正常更新保留。",
+          "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "工具运行时",
+          "接力",
+          "非GA"
+        ],
+        "difficulty": "low",
+        "estimated_total_minutes": 25,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "execution_hints": [
+          "按当前用户至少十节点授权依次完成，只有验证通过后记 done。"
+        ],
+        "kind": "subtask",
+        "priority": 2,
+        "progress": 0,
+        "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+        "requirements": [
+          "成功和失败两种终态之后的晚到更新均不再交付，执行期间的正常更新保留。"
+        ],
+        "status": "ready",
+        "summary": "已用当前源码复现，待最小修复与独立回归。",
+        "title": "工具执行结束后关闭进度回调"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 1,
+        "reason": "接续 TF-0156/0157 的工具运行时可靠性主线，以当前源码可执行反例为验收依据。"
+      },
+      "from": "relay-184",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "relay-185",
+      "node": {
+        "acceptance_criteria": [
+          "异步策略拒绝或异常不能覆盖取消原因，结果观察器触发终止后不能交付成功。",
+          "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "工具运行时",
+          "接力",
+          "非GA"
+        ],
+        "difficulty": "low",
+        "estimated_total_minutes": 25,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "execution_hints": [
+          "按当前用户至少十节点授权依次完成，只有验证通过后记 done。"
+        ],
+        "kind": "subtask",
+        "priority": 2,
+        "progress": 0,
+        "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+        "requirements": [
+          "异步策略拒绝或异常不能覆盖取消原因，结果观察器触发终止后不能交付成功。"
+        ],
+        "status": "ready",
+        "summary": "已用当前源码复现，待最小修复与独立回归。",
+        "title": "策略与结果观察阶段保留运行取消终态"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 1,
+        "reason": "接续 TF-0156/0157 的工具运行时可靠性主线，以当前源码可执行反例为验收依据。"
+      },
+      "from": "relay-185",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "relay-186",
+      "node": {
+        "acceptance_criteria": [
+          "低于十次的首个 warning 能到达诊断消费者，同区间重复仍限频且 critical 正常终止。",
+          "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "工具运行时",
+          "接力",
+          "非GA"
+        ],
+        "difficulty": "low",
+        "estimated_total_minutes": 25,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "execution_hints": [
+          "按当前用户至少十节点授权依次完成，只有验证通过后记 done。"
+        ],
+        "kind": "subtask",
+        "priority": 2,
+        "progress": 0,
+        "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+        "requirements": [
+          "低于十次的首个 warning 能到达诊断消费者，同区间重复仍限频且 critical 正常终止。"
+        ],
+        "status": "ready",
+        "summary": "已用当前源码复现，待最小修复与独立回归。",
+        "title": "较低循环阈值仍发出首次警告"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 1,
+        "reason": "接续 TF-0156/0157 的工具运行时可靠性主线，以当前源码可执行反例为验收依据。"
+      },
+      "from": "relay-186",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "relay-187",
+      "node": {
+        "acceptance_criteria": [
+          "hook 规范化参数不再产生悬空和重复历史，按原始调用达到阈值并保留实际执行参数。",
+          "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "工具运行时",
+          "接力",
+          "非GA"
+        ],
+        "difficulty": "low",
+        "estimated_total_minutes": 25,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "execution_hints": [
+          "按当前用户至少十节点授权依次完成，只有验证通过后记 done。"
+        ],
+        "kind": "subtask",
+        "priority": 2,
+        "progress": 0,
+        "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+        "requirements": [
+          "hook 规范化参数不再产生悬空和重复历史，按原始调用达到阈值并保留实际执行参数。"
+        ],
+        "status": "ready",
+        "summary": "已用当前源码复现，待最小修复与独立回归。",
+        "title": "策略改写参数后循环调用与结果正确关联"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 1,
+        "reason": "接续 TF-0156/0157 的工具运行时可靠性主线，以当前源码可执行反例为验收依据。"
+      },
+      "from": "relay-187",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "relay-188",
+      "node": {
+        "acceptance_criteria": [
+          "sessionId 与 sessionKey 合并后，较旧输出不能盖过最新真实进展或触发错误终止。",
+          "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "工具运行时",
+          "接力",
+          "非GA"
+        ],
+        "difficulty": "low",
+        "estimated_total_minutes": 25,
+        "evidence": [
+          "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md"
+        ],
+        "execution_hints": [
+          "按当前用户至少十节点授权依次完成，只有验证通过后记 done。"
+        ],
+        "kind": "subtask",
+        "priority": 2,
+        "progress": 0,
+        "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+        "requirements": [
+          "sessionId 与 sessionKey 合并后，较旧输出不能盖过最新真实进展或触发错误终止。"
+        ],
+        "status": "ready",
+        "summary": "已用当前源码复现，待最小修复与独立回归。",
+        "title": "会话别名合并保持工具历史时间顺序"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 1,
+        "reason": "接续 TF-0156/0157 的工具运行时可靠性主线，以当前源码可执行反例为验收依据。"
+      },
+      "from": "relay-188",
+      "to": "TF-0102",
+      "type": "child_of"
+    }
+  ],
+  "created_at": "2026-09-12T12:31:33.227403Z",
+  "proposal_id": "TFP-tool-runtime-relay-ten-start-20260912",
+  "rationale": "用户明确要求接力最新节点开发并至少完成十个节点。本轮接续已完成的 TF-0169..TF-0178，从当前源码补写可执行反例：5 文件、33 用例中 21 个按行为断言失败，覆盖以下十个独立缺口。按本次授权登记并顺序实施；不重复计算历史 done、不计格式或文档登记为开发节点，不改变产品锁。",
+  "session_id": "tool-runtime-relay-ten-20260912",
+  "status": "applied"
+}

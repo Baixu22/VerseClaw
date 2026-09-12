@@ -12330,5 +12330,556 @@
     "summary": "",
     "title": "node-host exec 在 prepare 后取消不得继续审批或 invoke",
     "updated_at": "2026-09-12T10:04:38.037093Z"
+  },
+  "TF-0179": {
+    "acceptance_criteria": [
+      "自动审核或审批登记期间取消后，不再登记或自动批准命令；审批策略保持原样。",
+      "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "工具运行时",
+      "接力",
+      "非GA"
+    ],
+    "created_at": "2026-09-12T12:32:56.914337Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 25,
+    "evidence": [
+      "openclaw_runtime/src/agents/bash-tools.exec-host-node.abort.test.ts",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "harness/specs/rules/tool-runtime-lifecycle.md"
+    ],
+    "execution_hints": [
+      "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+    ],
+    "id": "TF-0179",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "自动审核或审批登记期间取消后，不再登记或自动批准命令；审批策略保持原样。"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "自动审核与审批登记等待中的取消均阻止后续登记或批准；新审批后台跟进也先检查取消。",
+    "title": "在自动审批异步阶段取消时停止后续授权",
+    "updated_at": "2026-09-12T13:47:40.754156Z"
+  },
+  "TF-0180": {
+    "acceptance_criteria": [
+      "stdout、stderr 和错误原因同时可见，超时字段与远程原始结果一致。",
+      "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "工具运行时",
+      "接力",
+      "非GA"
+    ],
+    "created_at": "2026-09-12T12:32:56.915575Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 25,
+    "evidence": [
+      "openclaw_runtime/src/agents/bash-tools.exec-host-node.output.test.ts",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "harness/specs/rules/tool-runtime-lifecycle.md"
+    ],
+    "execution_hints": [
+      "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+    ],
+    "id": "TF-0180",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "stdout、stderr 和错误原因同时可见，超时字段与远程原始结果一致。"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "可见文本和结构化结果共用完整 stdout/stderr/error 合并输出，保留远端 timedOut。",
+    "title": "远程 exec 完整返回标准输出、错误输出与超时信息",
+    "updated_at": "2026-09-12T13:47:40.754156Z"
+  },
+  "TF-0181": {
+    "acceptance_criteria": [
+      "直接和 prepare 两条路径均保留 channel、target、account、thread 身份，包括数值 0 的 thread。",
+      "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "工具运行时",
+      "接力",
+      "非GA"
+    ],
+    "created_at": "2026-09-12T12:32:56.916665Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 25,
+    "evidence": [
+      "openclaw_runtime/src/agents/bash-tools.exec-host-node.output.test.ts",
+      "openclaw_runtime/src/agents/bash-tools.exec-host-node.abort.test.ts",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "harness/specs/rules/tool-runtime-lifecycle.md"
+    ],
+    "execution_hints": [
+      "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+    ],
+    "id": "TF-0181",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "直接和 prepare 两条路径均保留 channel、target、account、thread 身份，包括数值 0 的 thread。"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "直接与 prepare 两条 node 执行路径均保留发起消息的 channel、target、account、thread，零值 thread 有回归。",
+    "title": "远程 exec 保留发起会话的消息投递路由",
+    "updated_at": "2026-09-12T13:47:40.754156Z"
+  },
+  "TF-0182": {
+    "acceptance_criteria": [
+      "预取消的 process 操作无副作用；写入等待中取消不得继续 EOF。",
+      "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "工具运行时",
+      "接力",
+      "非GA"
+    ],
+    "created_at": "2026-09-12T12:32:56.917701Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 25,
+    "evidence": [
+      "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "harness/specs/rules/tool-runtime-lifecycle.md"
+    ],
+    "execution_hints": [
+      "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+    ],
+    "id": "TF-0182",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "预取消的 process 操作无副作用；写入等待中取消不得继续 EOF。"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "预取消 process 操作不写入、终止或消费输出；写入完成后取消不继续 EOF。",
+    "title": "进程控制取消后不得写入、关闭输入或消费输出",
+    "updated_at": "2026-09-12T13:47:40.754156Z"
+  },
+  "TF-0183": {
+    "acceptance_criteria": [
+      "首次观察到信号退出的 poll 和后续 finished poll 返回同一终态，不能把 null exitCode 变成 0。",
+      "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "工具运行时",
+      "接力",
+      "非GA"
+    ],
+    "created_at": "2026-09-12T12:32:56.918704Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 25,
+    "evidence": [
+      "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "harness/specs/rules/tool-runtime-lifecycle.md"
+    ],
+    "execution_hints": [
+      "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+    ],
+    "id": "TF-0183",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "首次观察到信号退出的 poll 和后续 finished poll 返回同一终态，不能把 null exitCode 变成 0。"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "首次与后续 poll 保留 null exitCode 和 SIGTERM 等真实退出信号，缺失退出码不再伪造为 0。",
+    "title": "首次进程退出轮询保留真实退出码和信号",
+    "updated_at": "2026-09-12T13:47:40.754156Z"
+  },
+  "TF-0184": {
+    "acceptance_criteria": [
+      "成功和失败两种终态之后的晚到更新均不再交付，执行期间的正常更新保留。",
+      "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "工具运行时",
+      "接力",
+      "非GA"
+    ],
+    "created_at": "2026-09-12T12:32:56.919167Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 25,
+    "evidence": [
+      "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "harness/specs/rules/tool-runtime-lifecycle.md"
+    ],
+    "execution_hints": [
+      "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+    ],
+    "id": "TF-0184",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "成功和失败两种终态之后的晚到更新均不再交付，执行期间的正常更新保留。"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "成功及失败终态后停止向已结束的工具调用转发进度，执行中的正常更新保留。",
+    "title": "工具执行结束后关闭进度回调",
+    "updated_at": "2026-09-12T13:47:40.754156Z"
+  },
+  "TF-0185": {
+    "acceptance_criteria": [
+      "异步策略拒绝或异常不能覆盖取消原因，结果观察器触发终止后不能交付成功。",
+      "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "工具运行时",
+      "接力",
+      "非GA"
+    ],
+    "created_at": "2026-09-12T12:32:56.919167Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 25,
+    "evidence": [
+      "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "harness/specs/rules/tool-runtime-lifecycle.md"
+    ],
+    "execution_hints": [
+      "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+    ],
+    "id": "TF-0185",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "异步策略拒绝或异常不能覆盖取消原因，结果观察器触发终止后不能交付成功。"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "异步策略 veto/failure 与结果观察阶段保留取消原因；后压缩观察器终止后不交付晚到成功。",
+    "title": "策略与结果观察阶段保留运行取消终态",
+    "updated_at": "2026-09-12T13:47:40.755157Z"
+  },
+  "TF-0186": {
+    "acceptance_criteria": [
+      "低于十次的首个 warning 能到达诊断消费者，同区间重复仍限频且 critical 正常终止。",
+      "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "工具运行时",
+      "接力",
+      "非GA"
+    ],
+    "created_at": "2026-09-12T12:32:56.920704Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 25,
+    "evidence": [
+      "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "harness/specs/rules/tool-runtime-lifecycle.md"
+    ],
+    "execution_hints": [
+      "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+    ],
+    "id": "TF-0186",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "低于十次的首个 warning 能到达诊断消费者，同区间重复仍限频且 critical 正常终止。"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "低于十次的首个循环 warning 可达消费者，同桶重复仍限频，critical 阈值保持不变。",
+    "title": "较低循环阈值仍发出首次警告",
+    "updated_at": "2026-09-12T13:47:40.755157Z"
+  },
+  "TF-0187": {
+    "acceptance_criteria": [
+      "hook 规范化参数不再产生悬空和重复历史，按原始调用达到阈值并保留实际执行参数。",
+      "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "工具运行时",
+      "接力",
+      "非GA"
+    ],
+    "created_at": "2026-09-12T12:32:56.920704Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 25,
+    "evidence": [
+      "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "harness/specs/rules/tool-runtime-lifecycle.md"
+    ],
+    "execution_hints": [
+      "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+    ],
+    "id": "TF-0187",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "hook 规范化参数不再产生悬空和重复历史，按原始调用达到阈值并保留实际执行参数。"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "共享结果记录器按同 run 的 toolCallId 关联原请求，返回新参数与原地改参两类反例均通过，实际执行使用规范化参数。",
+    "title": "策略改写参数后循环调用与结果正确关联",
+    "updated_at": "2026-09-12T13:47:40.755157Z"
+  },
+  "TF-0188": {
+    "acceptance_criteria": [
+      "sessionId 与 sessionKey 合并后，较旧输出不能盖过最新真实进展或触发错误终止。",
+      "对应修复前失败、修复后通过的回归用例；通过所涉类型与通信检查。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "工具运行时",
+      "接力",
+      "非GA"
+    ],
+    "created_at": "2026-09-12T12:32:56.921777Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 25,
+    "evidence": [
+      "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "harness/specs/rules/tool-runtime-lifecycle.md"
+    ],
+    "execution_hints": [
+      "本节点工程验收完成。后续从新的可执行反例另开节点；不将本次本地验证外推为真人、default-on 或发布验收。"
+    ],
+    "id": "TF-0188",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "修复真实工具执行主线中可复现的终止、结果与诊断缺口。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "sessionId 与 sessionKey 合并后，较旧输出不能盖过最新真实进展或触发错误终止。"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "会话 ID/Key 别名合并按历史时间稳定排序，旧结果不再遮蔽最新进展或产生错误 critical。",
+    "title": "会话别名合并保持工具历史时间顺序",
+    "updated_at": "2026-09-12T13:47:40.755157Z"
   }
 }

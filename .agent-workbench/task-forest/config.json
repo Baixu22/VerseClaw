@@ -1,10 +1,10 @@
 {
   "created_at": "2026-07-19T08:57:06.675917Z",
-  "graph_hash": "ac498d0ab0041f3b86f5ff4038cef79bf89615e4a969887c42a3b88691891605",
-  "next_edge_number": 327,
-  "next_node_number": 179,
-  "next_snapshot_number": 558,
+  "graph_hash": "aca9d8015e292a4099dc524b27f6a7ea590de3ae6fabf334d2e7d145f683ba97",
+  "next_edge_number": 337,
+  "next_node_number": 189,
+  "next_snapshot_number": 560,
   "schema_version": 1,
-  "updated_at": "2026-09-12T10:04:38.104154Z",
+  "updated_at": "2026-09-12T13:47:40.823008Z",
   "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
 }

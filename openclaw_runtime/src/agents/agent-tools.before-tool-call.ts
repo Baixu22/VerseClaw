@@ -767,8 +767,8 @@ function shouldEmitLoopWarning(state: SessionState, warningKey: string, count: n
     state.toolLoopWarningBuckets = new Map();
   }
   const bucket = Math.floor(count / LOOP_WARNING_BUCKET_SIZE);
-  const lastBucket = state.toolLoopWarningBuckets.get(warningKey) ?? 0;
-  if (bucket <= lastBucket) {
+  const lastBucket = state.toolLoopWarningBuckets.get(warningKey);
+  if (lastBucket !== undefined && bucket <= lastBucket) {
     return false;
   }
   state.toolLoopWarningBuckets.set(warningKey, bucket);
@@ -1209,6 +1209,8 @@ export function wrapToolWithBeforeToolCallHook(
         signal,
         approvalMode: hookOptions.approvalMode,
       });
+      // Cancellation owns the terminal outcome even when an awaited policy vetoes or fails.
+      signal?.throwIfAborted();
       if (outcome.blocked) {
         if (outcome.kind !== "veto") {
           throw new Error(outcome.reason);
@@ -1248,6 +1250,7 @@ export function wrapToolWithBeforeToolCallHook(
           toolCallId,
           result: blockedResult,
         });
+        signal?.throwIfAborted();
         return blockedResult;
       }
       // An allowed async hook must not revive a tool cancelled while it was waiting.
@@ -1263,6 +1266,7 @@ export function wrapToolWithBeforeToolCallHook(
           executeParams,
           preparedParams,
         ) ?? executeParams;
+      signal?.throwIfAborted();
       recordAdjustedParamsForToolCall(toolCallId, executeParams, ctx?.runId);
       const normalizedToolName = normalizeToolName(toolName || "tool");
       const trace = resolveToolDiagnosticTrace(ctx);
@@ -1287,10 +1291,11 @@ export function wrapToolWithBeforeToolCallHook(
         });
       }
       const startedAt = Date.now();
+      let updatesOpen = true;
       const guardedOnUpdate =
         typeof onUpdate === "function"
           ? (((payload: unknown) => {
-              if (signal?.aborted) {
+              if (!updatesOpen || signal?.aborted) {
                 return;
               }
               onUpdate(payload as never);
@@ -1298,6 +1303,7 @@ export function wrapToolWithBeforeToolCallHook(
           : onUpdate;
       try {
         const result = await execute(toolCallId, executeParams, signal, guardedOnUpdate);
+        updatesOpen = false;
         signal?.throwIfAborted();
         const durationMs = Date.now() - startedAt;
         await recordLoopOutcome({
@@ -1307,6 +1313,7 @@ export function wrapToolWithBeforeToolCallHook(
           toolCallId,
           result,
         });
+        signal?.throwIfAborted();
         const skillMatch = findSkillUsageMatch({
           toolName: normalizedToolName,
           toolParams: executeParams,
@@ -1351,6 +1358,7 @@ export function wrapToolWithBeforeToolCallHook(
         }
         return result;
       } catch (err) {
+        updatesOpen = false;
         const cancelled = isAbortSignalCancellation(err, signal) || Boolean(signal?.aborted);
         const cause = unwrapErrorCause(err);
         const errorCode = diagnosticHttpStatusCode(cause);

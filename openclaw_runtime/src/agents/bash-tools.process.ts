@@ -253,6 +253,7 @@ export function createProcessTool(
     description: describeProcessTool({ hasCronTool: defaults?.hasCronTool === true }),
     parameters: processSchema,
     execute: async (_toolCallId, args, signal, _onUpdate): Promise<AgentToolResult<unknown>> => {
+      signal?.throwIfAborted();
       const params = args as {
         action:
           | "list"
@@ -386,6 +387,8 @@ export function createProcessTool(
             }
           });
         });
+        // A completed write must not let a cancelled call continue into EOF or a success result.
+        signal?.throwIfAborted();
       };
 
       const endStdin = async (stdin: WritableStdin) => {
@@ -429,14 +432,15 @@ export function createProcessTool(
                       `\n\nProcess exited with ${
                         scopedFinished.exitSignal
                           ? `signal ${scopedFinished.exitSignal}`
-                          : `code ${scopedFinished.exitCode ?? 0}`
+                          : `code ${scopedFinished.exitCode ?? "unknown"}`
                       }.`,
                   },
                 ],
                 details: {
                   status: scopedFinished.status === "completed" ? "completed" : "failed",
                   sessionId: params.sessionId,
-                  exitCode: scopedFinished.exitCode ?? undefined,
+                  exitCode: scopedFinished.exitCode ?? null,
+                  exitSignal: scopedFinished.exitSignal ?? undefined,
                   aggregated: scopedFinished.aggregated,
                   name: deriveSessionName(scopedFinished.command),
                 },
@@ -455,9 +459,10 @@ export function createProcessTool(
               await sleepPollInterval(Math.max(0, Math.min(250, deadline - Date.now())), signal);
             }
           }
+          signal?.throwIfAborted();
           const { stdout, stderr } = drainSession(scopedSession);
           const exited = scopedSession.exited;
-          const exitCode = scopedSession.exitCode ?? 0;
+          const exitCode = scopedSession.exitCode ?? null;
           const exitSignal = scopedSession.exitSignal ?? undefined;
           if (exited) {
             const status = exitCode === 0 && exitSignal == null ? "completed" : "failed";
@@ -490,7 +495,7 @@ export function createProcessTool(
                   (output || "(no new output)") +
                   (exited
                     ? `\n\nProcess exited with ${
-                        exitSignal ? `signal ${exitSignal}` : `code ${exitCode}`
+                        exitSignal ? `signal ${exitSignal}` : `code ${exitCode ?? "unknown"}`
                       }.`
                     : buildInputWaitHint(runtime) || "\n\nProcess still running."),
               },
@@ -499,6 +504,7 @@ export function createProcessTool(
               status,
               sessionId: params.sessionId,
               exitCode: exited ? exitCode : undefined,
+              exitSignal: exited ? exitSignal : undefined,
               aggregated: scopedSession.aggregated,
               name: deriveSessionName(scopedSession.command),
               ...(runtime ? runningSessionInputDetails(runtime) : {}),

@@ -4,8 +4,15 @@ title: 真实语料后续工具执行、终止与恢复可靠性
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 diffBase: HEAD
-intent: 接力 TF-0156/0157，修复工具取消、前台进度和循环终止在实际调用链中的剩余缺口，以独立回归证据逐项收口。
+intent: 接力已完成的 TF-0169..TF-0178，以当前源码可执行反例修复 TF-0179..TF-0188 的远程结果、进程控制、回调终态和循环状态缺口。
 ownedPaths:
+  - openclaw_runtime/src/agents/bash-tools.exec-host-node-phases.ts
+  - openclaw_runtime/src/agents/bash-tools.exec-host-node.output.test.ts
+  - openclaw_runtime/src/agents/bash-tools.process.ts
+  - openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts
+  - openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts
+  - openclaw_runtime/src/logging/diagnostic-session-state.ts
+  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md
   - openclaw_runtime/src/agents/bash-tools.exec.ts
   - openclaw_runtime/src/agents/native-hook-relay.loop-detection.test.ts
   - openclaw_runtime/src/agents/harness/native-hook-relay.ts
@@ -34,6 +41,13 @@ ownedPaths:
   - README.ja-JP.md
   - .agent-workbench/task-forest/**
 touchedAreas:
+  - openclaw_runtime/src/agents/bash-tools.exec-host-node-phases.ts
+  - openclaw_runtime/src/agents/bash-tools.exec-host-node.output.test.ts
+  - openclaw_runtime/src/agents/bash-tools.process.ts
+  - openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts
+  - openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts
+  - openclaw_runtime/src/logging/diagnostic-session-state.ts
+  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md
   - openclaw_runtime/src/agents/bash-tools.exec.ts
   - openclaw_runtime/src/agents/bash-tools.exec-host-node.ts
   - openclaw_runtime/src/agents/bash-tools.exec-host-node.types.ts
@@ -62,6 +76,10 @@ touchedAreas:
   - README.ja-JP.md
   - .agent-workbench/task-forest/**
 expectedUserBehavior:
+  - 远程命令保留完整输出、超时事实和发起消息的投递路由。
+  - process 取消后不写入输入或消费输出，首次退出轮询保留真实退出码和信号。
+  - 工具终态关闭进度回调；策略和结果观察器触发取消后不得交付错误的成功或拒绝结果。
+  - 低阈值警告、策略改写参数、会话别名合并均不破坏循环检测。
   - 取消工具执行后不再收到前台心跳，也不启动尚未启动的命令。
   - 前台进度只提示当前可用的操作，正常输出和最终结果保留。
   - 工具循环终止不能被模型回退重新启动，按会话标识隔离检测状态。
@@ -83,7 +101,8 @@ forbiddenPatterns:
 rollback:
   - 回退对应工具生命周期修复及其回归测试，无持久化格式迁移。
 requiredTests:
-  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts bash-tools.exec.foreground-heartbeat.test.ts bash-tools.exec.lifecycle.test.ts agent-tools.before-tool-call.loop-termination.test.ts agent-tools.before-tool-call.cancellation.test.ts agent-tools.before-tool-call.shadow-failure.test.ts model-fallback.loop-termination.test.ts tool-loop-detection.progress.test.ts bash-tools.exec-host-node.abort.test.ts native-hook-relay.loop-detection.test.ts --passWithNoTests=false
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts bash-tools.exec.foreground-heartbeat.test.ts bash-tools.exec.lifecycle.test.ts agent-tools.before-tool-call.loop-termination.test.ts agent-tools.before-tool-call.cancellation.test.ts agent-tools.before-tool-call.shadow-failure.test.ts model-fallback.loop-termination.test.ts tool-loop-detection.progress.test.ts bash-tools.exec-host-node.abort.test.ts bash-tools.exec-host-node.output.test.ts bash-tools.process.lifecycle.test.ts agent-tools.before-tool-call.reliability.test.ts --passWithNoTests=false
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit-fast.config.ts src/agents/native-hook-relay.loop-detection.test.ts
   - pnpm --dir openclaw_runtime tsgo:core
   - pnpm run comms:replay
   - pnpm run comms:compare
@@ -96,6 +115,7 @@ acceptance:
 docs:
   required: true
   files:
+    - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md
     - docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md
     - docs/dev/handoffs/LATEST.md
     - README.md
@@ -105,3 +125,7 @@ docs:
 
 本批按用户“至少完成十个节点”的授权顺序推进。后续子节点只从实际代码、真实语料或
 可执行反例发现的独立缺口建立，不重做 TF-0156/0157，不将本地工程结果升级为产品放行。
+
+本次接力的十节点是 TF-0179..TF-0188，上一批已完成节点保持历史状态。所有新节点先有
+行为断言失败再修复，文档与任务登记不计入开发完成数。远程 `node.invoke` 发出后的远程
+进程终止协议仍不在本批范围，不能把本地取消守卫解释为已经取消远程执行。

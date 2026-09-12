@@ -8,6 +8,24 @@ const phases = vi.hoisted(() => ({
   analyzeNodeApprovalRequirement: vi.fn(),
 }));
 
+const approvals = vi.hoisted(() => ({ register: vi.fn(), gateway: vi.fn() }));
+vi.mock("./tools/gateway.js", () => ({ callGatewayTool: approvals.gateway }));
+vi.mock("./bash-tools.exec-approval-request.js", () => ({
+  registerExecApprovalRequestForHostOrThrow: approvals.register,
+  buildExecApprovalRequesterContext: () => ({}),
+  buildExecApprovalTurnSourceContext: (params: {
+    turnSourceChannel?: string;
+    turnSourceTo?: string;
+    turnSourceAccountId?: string;
+    turnSourceThreadId?: string | number;
+  }) => ({
+    turnSourceChannel: params.turnSourceChannel,
+    turnSourceTo: params.turnSourceTo,
+    turnSourceAccountId: params.turnSourceAccountId,
+    turnSourceThreadId: params.turnSourceThreadId,
+  }),
+}));
+
 vi.mock("./bash-tools.exec-host-node-phases.js", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./bash-tools.exec-host-node-phases.js")>();
   return {
@@ -50,6 +68,90 @@ afterEach(() => {
 });
 
 describe("node-host exec cancellation", () => {
+  it.each(["review", "registration"] as const)(
+    "TF-0179 stops automatic approval after cancellation during %s",
+    async (phase) => {
+      const abort = new AbortController();
+      const reason = new DOMException("operator cancelled", "AbortError");
+      phases.resolveNodeExecutionTarget.mockResolvedValue(target);
+      phases.shouldSkipNodeApprovalPrepare.mockReturnValue(false);
+      phases.prepareNodeSystemRun.mockResolvedValue({
+        plan: {},
+        argv: ["echo", "done"],
+        rawCommand: "echo done",
+        cwd: "/tmp",
+        agentId: "main",
+        sessionKey: "session",
+      });
+      phases.analyzeNodeApprovalRequirement.mockResolvedValue({
+        analysisOk: true,
+        allowlistSatisfied: false,
+        durableApprovalSatisfied: false,
+        nodeApprovalPolicyKnown: true,
+        nodeSecurity: "allowlist",
+        nodeAsk: "on-miss",
+        inlineEvalHit: null,
+        requiresSecurityAuditSuppressionApproval: false,
+        autoReviewArgv: ["echo", "done"],
+      });
+      approvals.register.mockImplementation(async () => {
+        if (phase === "registration") abort.abort(reason);
+      });
+      const params = {
+        ...baseParams(abort.signal),
+        security: "allowlist" as const,
+        ask: "on-miss" as const,
+        autoReview: true,
+        autoReviewer: async () => {
+          if (phase === "review") abort.abort(reason);
+          return {
+            decision: "allow-once" as const,
+            risk: "low" as const,
+            rationale: "test command",
+          };
+        },
+      };
+      await expect(executeNodeHostCommand(params)).rejects.toBe(reason);
+      expect(approvals.register).toHaveBeenCalledTimes(phase === "review" ? 0 : 1);
+      expect(approvals.gateway).not.toHaveBeenCalled();
+    },
+  );
+
+  it("TF-0181 keeps the originating delivery route after node preparation", async () => {
+    phases.resolveNodeExecutionTarget.mockResolvedValue(target);
+    phases.shouldSkipNodeApprovalPrepare.mockReturnValue(false);
+    phases.prepareNodeSystemRun.mockResolvedValue({
+      plan: {},
+      argv: ["echo", "done"],
+      rawCommand: "echo done",
+      cwd: "/tmp",
+      agentId: "main",
+      sessionKey: "session",
+    });
+    phases.analyzeNodeApprovalRequirement.mockResolvedValue({
+      analysisOk: true,
+      allowlistSatisfied: true,
+      durableApprovalSatisfied: false,
+      inlineEvalHit: null,
+      requiresSecurityAuditSuppressionApproval: false,
+    });
+    approvals.gateway.mockResolvedValue({
+      payload: { stdout: "done", success: true, exitCode: 0 },
+    });
+    const route = {
+      turnSourceChannel: "telegram",
+      turnSourceTo: "chat-1",
+      turnSourceAccountId: "account-1",
+      turnSourceThreadId: 0,
+    };
+    await executeNodeHostCommand({ ...baseParams(new AbortController().signal), ...route });
+    expect(approvals.gateway).toHaveBeenCalledWith(
+      "node.invoke",
+      expect.anything(),
+      expect.objectContaining({ params: expect.objectContaining(route) }),
+    );
+  });
+
   it("does not invoke after cancellation during target resolution", async () => {
     const abort = new AbortController();
     const reason = new DOMException("operator cancelled", "AbortError");

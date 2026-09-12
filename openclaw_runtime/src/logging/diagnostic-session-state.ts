@@ -127,7 +127,11 @@ function mergeSessionState(target: SessionState, source: SessionState): void {
       ? undefined
       : Math.max(target.lastLongRunningWarnAgeMs, source.lastLongRunningWarnAgeMs);
   if (source.toolCallHistory?.length) {
-    target.toolCallHistory = [...(target.toolCallHistory ?? []), ...source.toolCallHistory];
+    // Id-only and key-only entries may interleave; old outcomes must not hide newer progress.
+    target.toolCallHistory = [
+      ...(target.toolCallHistory ?? []),
+      ...source.toolCallHistory,
+    ].toSorted((a, b) => a.timestamp - b.timestamp);
   }
   if (source.toolLoopWarningBuckets?.size) {
     const buckets = (target.toolLoopWarningBuckets ??= new Map());
