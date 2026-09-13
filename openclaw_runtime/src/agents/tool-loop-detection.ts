@@ -145,9 +145,15 @@ function resolveLoopDetectionConfig(config?: ToolLoopDetectionConfig): ResolvedL
 
 /**
  * Hash a tool call for pattern matching.
- * Uses tool name + deterministic JSON serialization digest of params.
+ * Uses tool name + deterministic JSON serialization digest of execution-relevant params.
  */
 export function hashToolCall(toolName: string, params: unknown): string {
+  if (toolName === "process" && isPlainObject(params) && params.action === "poll") {
+    // Poll backoff changes only how long to wait, not which process or output is observed.
+    const pollParams = { ...params };
+    delete pollParams.timeout;
+    return `${toolName}:${digestStable(pollParams)}`;
+  }
   return `${toolName}:${digestStable(params)}`;
 }
 
