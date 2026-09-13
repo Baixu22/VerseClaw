@@ -111,6 +111,17 @@ test.describe('Verse Claw chat run state events', () => {
                 details: { status: 'failed', aggregated: output, exitCode: terminalStatus === 'error' ? 0 : null, timedOut: terminalStatus === 'error' },
               },
             });
+            win.webContents.send('chat:runtime-event', {
+              ...identity, type: 'tool.started', toolCallId: 'process-input-call', name: 'process',
+              args: { action: 'write', sessionId: 'background-input', data: 'finish\n' },
+            });
+            win.webContents.send('chat:runtime-event', {
+              ...identity, type: 'tool.completed', toolCallId: 'process-input-call', name: 'process', isError: terminalStatus === 'error',
+              result: {
+                content: [{ type: 'text', text: 'Wrote 7 bytes to session background-input.\n\nprocess input output retained\n\nProcess exited with code 0.' }],
+                details: { status: terminalStatus === 'error' ? 'failed' : 'completed', sessionId: 'background-input', exitCode: 0, aggregated: 'process input output retained' },
+              },
+            });
             win.webContents.send('chat:runtime-event', { ...identity, type: 'run.ended', status: terminalStatus, endedAt: Date.now(), ...(terminalStatus === 'error' ? { error: 'Tool loop terminated' } : {}) });
           }
         }, { runId, sessionKey: MAIN_SESSION_KEY, status });
@@ -118,6 +129,11 @@ test.describe('Verse Claw chat run state events', () => {
         await expect(page.getByTestId('chat-composer-input')).toBeEnabled();
         await expect(step.getByTestId('chat-execution-step-detail')).toContainText('foreground output retained');
         await expect(step.getByTestId('chat-execution-step-detail')).toContainText('foreground error retained');
+        const inputStep = page.getByTestId('chat-execution-step').filter({ hasText: 'process' }).first();
+        await expect(inputStep).toBeVisible();
+        await inputStep.getByTestId('chat-execution-step-toggle').click();
+        await expect(inputStep.getByTestId('chat-execution-step-detail')).toContainText('process input output retained');
+        await expect(inputStep.getByTestId('chat-execution-step-detail')).toContainText('Process exited with code 0.');
       } finally {
         await closeElectronApp(app);
       }

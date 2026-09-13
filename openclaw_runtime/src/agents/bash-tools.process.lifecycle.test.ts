@@ -46,6 +46,44 @@ afterEach(() => {
 });
 
 describe("process control lifecycle", () => {
+  it.each(["write", "write-eof", "send-keys", "submit", "paste", "eof"] as const)(
+    "TF-0211 %s reports the owner's terminal outcome after input completes",
+    async (action) => {
+      for (const status of ["completed", "failed"] as const) {
+        const value = session();
+        const stdin = value.stdin!;
+        stdin.destroy = vi.fn();
+        const finish = (cb?: (error?: Error | null) => void) => {
+          appendOutput(value, "stdout", "final output\n");
+          markExited(value, 0, null, status, status === "failed" ? "overall-timeout" : "exit");
+          cb?.();
+        };
+        if (action === "eof") vi.mocked(stdin.end).mockImplementation(finish);
+        else vi.mocked(stdin.write).mockImplementation((_data, cb) => finish(cb));
+        const tool = createProcessTool();
+        const input = await tool.execute("finishing-input", {
+          action: action === "eof" || action === "write-eof" ? "write" : action,
+          sessionId: value.id,
+          data: "input",
+          literal: "input",
+          text: "input",
+          eof: action === "eof" || action === "write-eof",
+        });
+        const terminal = getFinishedSession(value.id);
+        if (action === "write-eof") expect(stdin.end).not.toHaveBeenCalled();
+        expect(input.details).toMatchObject({
+          status,
+          sessionId: value.id,
+          exitCode: 0,
+          aggregated: "final output\n",
+        });
+        const poll = await tool.execute("after-input", { action: "poll", sessionId: value.id });
+        expect(poll.details).toMatchObject({ status, exitCode: 0 });
+        expect(getFinishedSession(value.id)).toBe(terminal);
+      }
+    },
+  );
+
   it.each(["write", "send-keys", "submit", "paste", "eof"] as const)(
     "TF-0203 cancellation ends a pending stdin %s callback wait",
     async (action) => {
