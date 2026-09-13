@@ -20,7 +20,11 @@ import {
   setJobTtlMs,
 } from "./bash-process-registry.js";
 import { describeProcessTool } from "./bash-tools.descriptions.js";
-import { handleProcessSendKeys, type WritableStdin } from "./bash-tools.process-send-keys.js";
+import {
+  buildProcessInputResult,
+  handleProcessSendKeys,
+  type WritableStdin,
+} from "./bash-tools.process-send-keys.js";
 import { processSchema } from "./bash-tools.schemas.js";
 import {
   clampWithDefault,
@@ -410,18 +414,6 @@ export function createProcessTool(
         );
       };
 
-      const runningSessionResult = (
-        sessionLocal: ProcessSession,
-        text: string,
-      ): AgentToolResult<unknown> => ({
-        content: [{ type: "text", text }],
-        details: {
-          status: "running",
-          sessionId: params.sessionId,
-          name: deriveSessionName(sessionLocal.command),
-        },
-      });
-
       switch (params.action) {
         case "poll": {
           if (!scopedSession) {
@@ -624,10 +616,10 @@ export function createProcessTool(
             return resolved.result;
           }
           await writeToStdin(resolved.stdin, params.data ?? "");
-          if (params.eof) {
+          if (params.eof && !resolved.session.exited) {
             await endStdin(resolved.stdin);
           }
-          return runningSessionResult(
+          return buildProcessInputResult(
             resolved.session,
             `Wrote ${(params.data ?? "").length} bytes to session ${params.sessionId}${
               params.eof ? " (stdin closed)" : ""
@@ -657,7 +649,7 @@ export function createProcessTool(
             return resolved.result;
           }
           await writeToStdin(resolved.stdin, "\r");
-          return runningSessionResult(
+          return buildProcessInputResult(
             resolved.session,
             `Submitted session ${params.sessionId} (sent CR).`,
           );
@@ -681,7 +673,7 @@ export function createProcessTool(
             };
           }
           await writeToStdin(resolved.stdin, payload);
-          return runningSessionResult(
+          return buildProcessInputResult(
             resolved.session,
             `Pasted ${params.text?.length ?? 0} chars to session ${params.sessionId}.`,
           );

@@ -3,7 +3,7 @@
  * Encodes symbolic keys, hex bytes, and literal input before writing to a
  * live process stdin.
  */
-import type { ProcessSession } from "./bash-process-registry.js";
+import { getFinishedSession, type ProcessSession } from "./bash-process-registry.js";
 import { awaitWithAbort } from "../utils/await-with-abort.js";
 import { deriveSessionName } from "./bash-tools.shared.js";
 import { encodeKeySequence, hasCursorModeSensitiveKeys } from "./pty-keys.js";
@@ -28,6 +28,36 @@ function failText(text: string): AgentToolResult<unknown> {
       },
     ],
     details: { status: "failed" },
+  };
+}
+
+/** Acknowledge input against the process state observed after its write callback. */
+export function buildProcessInputResult(
+  session: ProcessSession,
+  text: string,
+): AgentToolResult<unknown> {
+  const terminal = session.exited ? getFinishedSession(session.id) : undefined;
+  const exitSignal = session.exitSignal ?? undefined;
+  const exitCode = session.exitCode ?? null;
+  const exitText = session.exited
+    ? `Process exited with ${exitSignal ? `signal ${exitSignal}` : `code ${exitCode ?? "unknown"}`}.`
+    : "";
+  return {
+    content: [
+      {
+        type: "text",
+        text: [text, ...(session.exited ? [session.tail, exitText] : [])]
+          .filter(Boolean)
+          .join("\n\n"),
+      },
+    ],
+    details: {
+      // The owner may record a timeout even when the child exits zero. A cleared record cannot confirm success.
+      status: session.exited ? (terminal?.status ?? "failed") : "running",
+      sessionId: session.id,
+      name: deriveSessionName(session.command),
+      ...(session.exited ? { exitCode, exitSignal, aggregated: session.aggregated } : {}),
+    },
   };
 }
 
@@ -76,19 +106,9 @@ export async function handleProcessSendKeys(params: {
     return failText("No key data provided.");
   }
   await writeToStdin(params.stdin, data, params.signal);
-  return {
-    content: [
-      {
-        type: "text",
-        text:
-          `Sent ${data.length} bytes to session ${params.sessionId}.` +
-          (warnings.length ? `\nWarnings:\n- ${warnings.join("\n- ")}` : ""),
-      },
-    ],
-    details: {
-      status: "running",
-      sessionId: params.sessionId,
-      name: deriveSessionName(params.session.command),
-    },
-  };
+  return buildProcessInputResult(
+    params.session,
+    `Sent ${data.length} bytes to session ${params.sessionId}.` +
+      (warnings.length ? `\nWarnings:\n- ${warnings.join("\n- ")}` : ""),
+  );
 }
