@@ -100,6 +100,45 @@ describe("tool wrapper lifecycle", () => {
     },
   );
 
+  it.each(["wrapper", "adapter"] as const)(
+    "TF-0210 cancels a pending %s preparation before it resolves",
+    async (entry) => {
+      const abort = new AbortController();
+      const reason = new Error("cancel pending preparation");
+      let release!: () => void;
+      const prepare = vi.fn(
+        () =>
+          new Promise<unknown>((resolve) => {
+            release = () => resolve({ path: "prepared.txt" });
+          }),
+      );
+      const execute = vi.fn(async () => result);
+      const tool = { ...definition(execute), prepareBeforeToolCallParams: prepare };
+      const wrapped =
+        entry === "wrapper"
+          ? wrapToolWithBeforeToolCallHook(tool, context())
+          : toToolDefinitions([tool], context())[0];
+      const pending = (wrapped.execute as AnyAgentTool["execute"])(
+        "pending-prepare",
+        {},
+        abort.signal,
+      );
+      const settled = vi.fn();
+      void pending.then(settled, settled);
+      await vi.waitFor(() => expect(prepare).toHaveBeenCalledOnce());
+      abort.abort(reason);
+      try {
+        await vi.waitFor(() => expect(settled).toHaveBeenCalledWith(reason), { timeout: 200 });
+      } finally {
+        release();
+      }
+      await expect(pending).rejects.toBe(reason);
+      expect(getEventListeners(abort.signal, "abort")).toHaveLength(0);
+      expect(callbacks.hook).not.toHaveBeenCalled();
+      expect(execute).not.toHaveBeenCalled();
+    },
+  );
+
   it.each(["success", "failure"] as const)(
     "TF-0184 drops callbacks after terminal %s",
     async (outcome) => {

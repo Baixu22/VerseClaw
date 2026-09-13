@@ -1190,11 +1190,16 @@ export function wrapToolWithBeforeToolCallHook(
       signal?.throwIfAborted();
       const prepare = (tool as BeforeToolCallPreparingTool).prepareBeforeToolCallParams;
       const preparedParams = prepare
-        ? await prepare(params, {
-            ...(toolCallId ? { toolCallId } : {}),
-            ...(ctx ? { hookContext: ctx } : {}),
-            ...(signal ? { signal } : {}),
-          })
+        ? await awaitWithAbort(
+            Promise.resolve(
+              prepare(params, {
+                ...(toolCallId ? { toolCallId } : {}),
+                ...(ctx ? { hookContext: ctx } : {}),
+                ...(signal ? { signal } : {}),
+              }),
+            ),
+            signal,
+          )
         : params;
       signal?.throwIfAborted();
       const hookParams = normalizeCodeModeExecBeforeHookParams({ tool, params: preparedParams });
