@@ -4,8 +4,9 @@ title: 真实语料后续工具执行、终止与恢复可靠性
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 diffBase: HEAD
-intent: 接力已完成的 TF-0189..TF-0198，以当前源码可执行反例完成 TF-0199..TF-0208 的工具委托、审批与输入取消、退出输出完整性及循环证据修复。
+intent: 接力已完成的 TF-0199..TF-0208，以当前源码可执行反例完成 TF-0209..TF-0213 的挂起策略与准备取消、输入终态、别名证据去重及轮询无进展检测修复。
 ownedPaths:
+  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md
   - openclaw_runtime/src/utils/await-with-abort.ts
   - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md
   - harness/specs/scenarios/gateway-backend-communication.md
@@ -50,6 +51,7 @@ ownedPaths:
   - README.ja-JP.md
   - .agent-workbench/task-forest/**
 touchedAreas:
+  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md
   - openclaw_runtime/src/utils/await-with-abort.ts
   - openclaw_runtime/src/agents/agent-tool-definition-adapter.ts
   - openclaw_runtime/src/agents/bash-tools.process-send-keys.ts
@@ -90,6 +92,9 @@ touchedAreas:
   - README.ja-JP.md
   - .agent-workbench/task-forest/**
 expectedUserBehavior:
+  - 策略钩子和工具准备尚未完成时，取消即可结束本地等待；晚到结果不得启动后续阶段。
+  - 输入确认时若进程已退出，应答保留所有者记录的终态、退出信息和输出。
+  - 别名合并后的同一工具调用只计一次；改变 process poll 等待时长不重置无进展证据。
   - 未包装工具与客户端委托在取消后不准备、不交付晚到成功或 pending，工具终态后不再投递进度。
   - 审批登记与输入回调等待均可取消；策略各异步阶段取消后不得启动后续钩子或审批。
   - 退出轮询等待输出读完，保留执行所有者的终态和退出原因；已移除进程不因晚到退出重新出现。
@@ -137,6 +142,7 @@ acceptance:
 docs:
   required: true
   files:
+    - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md
     - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md
     - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260913.md
     - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md
@@ -147,9 +153,9 @@ docs:
     - README.ja-JP.md
 ---
 
-本批按用户“至少完成十个节点”的授权顺序推进。后续子节点只从实际代码、真实语料或
+本批按用户“至少完成五个节点”的授权顺序推进。后续子节点只从实际代码、真实语料或
 可执行反例发现的独立缺口建立，不重做 TF-0156/0157，不将本地工程结果升级为产品放行。
 
-本次接力的十节点是 TF-0199..TF-0208，上一批已完成的 TF-0189..TF-0198 保持历史状态。所有新节点先有
+本次接力的五节点是 TF-0209..TF-0213，上一批已完成的 TF-0199..TF-0208 保持历史状态。所有新节点先有
 行为断言失败再修复，文档与任务登记不计入开发完成数。远程 `node.invoke` 发出后的远程
 进程终止协议仍不在本批范围，不能把本地等待取消解释为已经取消远程执行。

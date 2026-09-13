@@ -1,0 +1,211 @@
+{
+  "applied_at": "2026-09-13T06:30:43.599699Z",
+  "base_graph_hash": "cb0af579d5dc552e6f5402b767f463ce284dc7ce0907a28faf3795b50cbf7460",
+  "base_summary": {
+    "edge_count": 363,
+    "node_count": 213,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0209",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\final-evidence.json",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-review.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-r3.json",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\rollback-result.json",
+          "归属提交：75ab6707aac56a7714d78edc751b305c7d4b7e66；Task 单值，Lane: lane-1；文件数 2/5。",
+          "DEV-PROTOCOL §R1 A2：默认旗标：无新增默认关叶子，注册决定是否存在策略。 kill switch：无新增隐藏开关；signal 取消就是受验行为。 上游守卫：无策略同步允许，有策略进入 awaitWithAbort。 旁路：审批和 report 均在等待后，无跳过等待的新分支。",
+          "用户已明确采用完成的独立审查替代本批 CLI 审查；三次 CLI high demand 失败保留，不计为 clean。"
+        ],
+        "execution_hints": [
+          "本节点实际源码/测试归属：openclaw_runtime/src/agents/agent-tools.before-tool-call.ts；openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts。",
+          "逐节点反例、agents128/128、native2/2、独立88/88、L1六项、构建、通信及Electron2/2通过；独立提交门结果见记录。",
+          "回滚方式：对应提交源码与测试反向补丁；已实测只逆转本批源码时14条反例失败、恢复后88/88通过，index未改、审查指纹9/9一致。",
+          "跨五节点README/规格/报告/交接/提案/回滚登记由TF-0102集成提交如实计数；本批不关闭父节点或历史全局门。",
+          "后续只从新的可执行反例接力；不将本地工程证据外推为真人、远程执行、default-on或GA。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "tool-runtime-relay-r5-20260913"
+        ],
+        "summary": "trusted policy 与 before-tool hook 挂起时立即响应取消；晚到失败不启动审批或执行。"
+      },
+      "id": "TF-0209"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0210",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\final-evidence.json",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-review.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-r3.json",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\rollback-result.json",
+          "归属提交：a7ba8022e5c4a31c4eb632a79816362017f5efc3；Task 单值，Lane: lane-1；文件数 3/5。",
+          "DEV-PROTOCOL §R1 A2：默认旗标：真实 exec/lazy exec prepare 无新开关。 kill switch：已取消时 wrapper/adapter 均先退出。 上游守卫：无 prepare 用原参数，有 prepare 的两入口均可取消。 旁路：beforeHookWrapped 委托 wrapper 的同一守卫。",
+          "用户已明确采用完成的独立审查替代本批 CLI 审查；三次 CLI high demand 失败保留，不计为 clean。"
+        ],
+        "execution_hints": [
+          "本节点实际源码/测试归属：openclaw_runtime/src/agents/agent-tools.before-tool-call.ts；openclaw_runtime/src/agents/agent-tool-definition-adapter.ts；openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts。",
+          "逐节点反例、agents128/128、native2/2、独立88/88、L1六项、构建、通信及Electron2/2通过；独立提交门结果见记录。",
+          "回滚方式：对应提交源码与测试反向补丁；已实测只逆转本批源码时14条反例失败、恢复后88/88通过，index未改、审查指纹9/9一致。",
+          "跨五节点README/规格/报告/交接/提案/回滚登记由TF-0102集成提交如实计数；本批不关闭父节点或历史全局门。",
+          "后续只从新的可执行反例接力；不将本地工程证据外推为真人、远程执行、default-on或GA。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "tool-runtime-relay-r5-20260913"
+        ],
+        "summary": "包装器与原始适配器的工具准备等待均可立即取消，晚到参数不进入后续阶段。"
+      },
+      "id": "TF-0210"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0211",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts",
+          "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\final-evidence.json",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-review.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-r3.json",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\rollback-result.json",
+          "归属提交：0752b59aa07f02f7c652cb40eee0329dcc314c40；Task 单值，Lane: lane-1；文件数 4/5。",
+          "DEV-PROTOCOL §R1 A2：默认旗标：无新增开关或默认值。 kill switch：scope/backgrounded/stdin 可写限制保留。 上游守卫：无权、不存在、不可写时先失败，不发送输入。 旁路：write/submit/paste/send-keys/EOF 均到共享终态结果；退出后不发 EOF。",
+          "用户已明确采用完成的独立审查替代本批 CLI 审查；三次 CLI high demand 失败保留，不计为 clean。"
+        ],
+        "execution_hints": [
+          "本节点实际源码/测试归属：openclaw_runtime/src/agents/bash-tools.process.ts；openclaw_runtime/src/agents/bash-tools.process-send-keys.ts；openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts；tests/e2e/chat-run-state-events.spec.ts。",
+          "逐节点反例、agents128/128、native2/2、独立88/88、L1六项、构建、通信及Electron2/2通过；独立提交门结果见记录。",
+          "回滚方式：对应提交源码与测试反向补丁；已实测只逆转本批源码时14条反例失败、恢复后88/88通过，index未改、审查指纹9/9一致。",
+          "跨五节点README/规格/报告/交接/提案/回滚登记由TF-0102集成提交如实计数；本批不关闭父节点或历史全局门。",
+          "后续只从新的可执行反例接力；不将本地工程证据外推为真人、远程执行、default-on或GA。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "tool-runtime-relay-r5-20260913"
+        ],
+        "summary": "所有进程输入应答保留 owner 的完成/失败、退出信息和输出；写入后已退出不再发送 EOF。"
+      },
+      "id": "TF-0211"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0212",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts",
+          "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\final-evidence.json",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-review.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-r3.json",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\rollback-result.json",
+          "归属提交：0c17f3dbc842891fc5929f4081f44ba7f19a36d0；Task 单值，Lane: lane-1；文件数 2/5。",
+          "DEV-PROTOCOL §R1 A2：默认旗标：既有 loopDetection.enabled=true 不变。 kill switch：显式 disabled 仍关闭检测，没有默认隐藏修复。 上游守卫：无会话身份不跟踪，有身份正常记录。 旁路：请求和结果都重新获取别名状态；匿名及不同身份保持独立。",
+          "用户已明确采用完成的独立审查替代本批 CLI 审查；三次 CLI high demand 失败保留，不计为 clean。"
+        ],
+        "execution_hints": [
+          "本节点实际源码/测试归属：openclaw_runtime/src/logging/diagnostic-session-state.ts；openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts。",
+          "逐节点反例、agents128/128、native2/2、独立88/88、L1六项、构建、通信及Electron2/2通过；独立提交门结果见记录。",
+          "回滚方式：对应提交源码与测试反向补丁；已实测只逆转本批源码时14条反例失败、恢复后88/88通过，index未改、审查指纹9/9一致。",
+          "跨五节点README/规格/报告/交接/提案/回滚登记由TF-0102集成提交如实计数；本批不关闭父节点或历史全局门。",
+          "后续只从新的可执行反例接力；不将本地工程证据外推为真人、远程执行、default-on或GA。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "tool-runtime-relay-r5-20260913"
+        ],
+        "summary": "会话别名按 run/tool/toolCallId 合并同次调用，保留原请求与已有结果，不合并不同身份。"
+      },
+      "id": "TF-0212"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0213",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts",
+          "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\final-evidence.json",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-review.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-r3.json",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\rollback-result.json",
+          "归属提交：28ce72d3299c5fc2d4f4c8571a297b20a847ec64；Task 单值，Lane: lane-1；文件数 2/5。",
+          "DEV-PROTOCOL §R1 A2：默认旗标：默认检测器和阈值不变。 kill switch：既有 enabled/detectors 配置保留。 上游守卫：仅 process + plain object + poll 排除 timeout。 旁路：请求、检测和结果关联共同使用 hashToolCall，无遗漏入口。",
+          "用户已明确采用完成的独立审查替代本批 CLI 审查；三次 CLI high demand 失败保留，不计为 clean。"
+        ],
+        "execution_hints": [
+          "本节点实际源码/测试归属：openclaw_runtime/src/agents/tool-loop-detection.ts；openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts。",
+          "逐节点反例、agents128/128、native2/2、独立88/88、L1六项、构建、通信及Electron2/2通过；独立提交门结果见记录。",
+          "回滚方式：对应提交源码与测试反向补丁；已实测只逆转本批源码时14条反例失败、恢复后88/88通过，index未改、审查指纹9/9一致。",
+          "跨五节点README/规格/报告/交接/提案/回滚登记由TF-0102集成提交如实计数；本批不关闭父节点或历史全局门。",
+          "后续只从新的可执行反例接力；不将本地工程证据外推为真人、远程执行、default-on或GA。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "tool-runtime-relay-r5-20260913"
+        ],
+        "summary": "同一进程 poll 的 timeout 不改变调用身份；真实输出变化和不同进程仍能区分。"
+      },
+      "id": "TF-0213"
+    }
+  ],
+  "created_at": "2026-09-13T06:30:43.019493Z",
+  "proposal_id": "TFP-tool-runtime-relay-r5-close-20260913",
+  "rationale": "用户要求至少完成五个节点，并明确采用已完成的独立审查继续提交归属和收口。五项缺口均先红后绿，L1与相关工程门通过，回滚演练已恢复并登记；五节点有单值Task/Lane提交。仅在独立R3通过后应用此提案，关闭TF-0209～TF-0213，不改变父节点和产品锁。",
+  "session_id": "tool-runtime-relay-r5-20260913",
+  "status": "applied"
+}

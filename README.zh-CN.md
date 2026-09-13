@@ -49,6 +49,8 @@ Product capability statements must be checked against the canonical matrix in `s
 
 未包装工具、客户端委托、审批登记和各策略阶段同样尊重取消。取消原因优先于晚到的工具成功或失败，已取消的委托会丢弃待交接记录。等待进程输入回调时也可取消，但不会撤回已经写入的字节或终止后台进程。子进程退出后，poll 会等 stdout、stderr 读完再结束会话，保留执行所有者记录的终态，已移除的进程也不会因晚到的退出回调重新出现。同一 run 内已记录的工具终态重复投递只计一次；乒乓警告至少需要四次已完成的交替调用（`ABAB`），且两侧各自都有重复的稳定结果。证据与待验证项见[第四批本地验收记录](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md)。
 
+工具准备或策略钩子尚未返回时，取消即可结束本地等待，但不会终止插件内部已经开始的工作。输入确认期间进程已退出时，应答保留执行所有者记录的终态与输出。会话别名合并后，同一工具调用只计一次；只改变 `process poll` 的等待时长也不会重置无进展检测。详见[第五批验收记录](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md)。
+
 启用 DCS 的编码 turn 会通过既有共享注入账本分别记录 knowledge、recent actions 与 tool registry 的真实 provider 可见 prompt 增长。固定预算不会因此放大：启用的 DCS 投影保留既有有界容量，截断和丢弃仍作为显式账目证据。
 
 本范围不包含 Runtime Memory 注入、SEKB 自动写回、Browser 无监督或私网访问、C6/C7 自动切换、Coding WAL、生产仓库自动合并及多 Forge/DAG 扩围。当前只有工程与真实进程测试证据，真人 canary 与发布审批仍未完成。组件唯一标注见 [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview)。

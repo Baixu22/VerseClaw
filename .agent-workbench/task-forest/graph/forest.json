@@ -156,7 +156,12 @@
     "TFE-0320",
     "TFE-0322",
     "TFE-0324",
-    "TFE-0326"
+    "TFE-0326",
+    "TFE-0358",
+    "TFE-0360",
+    "TFE-0362",
+    "TFE-0364",
+    "TFE-0366"
   ],
   "edge_index": {
     "TF-0001": {
@@ -2229,7 +2234,12 @@
         "TFE-0353",
         "TFE-0354",
         "TFE-0355",
-        "TFE-0356"
+        "TFE-0356",
+        "TFE-0357",
+        "TFE-0359",
+        "TFE-0361",
+        "TFE-0363",
+        "TFE-0365"
       ],
       "outgoing": [
         "TFE-0184"
@@ -2298,7 +2308,12 @@
         "TFE-0353",
         "TFE-0354",
         "TFE-0355",
-        "TFE-0356"
+        "TFE-0356",
+        "TFE-0357",
+        "TFE-0359",
+        "TFE-0361",
+        "TFE-0363",
+        "TFE-0365"
       ],
       "tree_parent_edge": null
     },
@@ -4008,20 +4023,112 @@
       "blocking_edges": [
         "TFE-0356"
       ],
-      "cross_edges": [],
-      "incoming": [],
+      "cross_edges": [
+        "TFE-0358",
+        "TFE-0360",
+        "TFE-0362",
+        "TFE-0364",
+        "TFE-0366"
+      ],
+      "incoming": [
+        "TFE-0358",
+        "TFE-0360",
+        "TFE-0362",
+        "TFE-0364",
+        "TFE-0366"
+      ],
       "outgoing": [
         "TFE-0356"
       ],
       "tree_child_edges": [],
       "tree_parent_edge": "TFE-0356"
+    },
+    "TF-0209": {
+      "blocking_edges": [
+        "TFE-0357",
+        "TFE-0358"
+      ],
+      "cross_edges": [
+        "TFE-0358"
+      ],
+      "incoming": [],
+      "outgoing": [
+        "TFE-0357",
+        "TFE-0358"
+      ],
+      "tree_child_edges": [],
+      "tree_parent_edge": "TFE-0357"
+    },
+    "TF-0210": {
+      "blocking_edges": [
+        "TFE-0359",
+        "TFE-0360"
+      ],
+      "cross_edges": [
+        "TFE-0360"
+      ],
+      "incoming": [],
+      "outgoing": [
+        "TFE-0359",
+        "TFE-0360"
+      ],
+      "tree_child_edges": [],
+      "tree_parent_edge": "TFE-0359"
+    },
+    "TF-0211": {
+      "blocking_edges": [
+        "TFE-0361",
+        "TFE-0362"
+      ],
+      "cross_edges": [
+        "TFE-0362"
+      ],
+      "incoming": [],
+      "outgoing": [
+        "TFE-0361",
+        "TFE-0362"
+      ],
+      "tree_child_edges": [],
+      "tree_parent_edge": "TFE-0361"
+    },
+    "TF-0212": {
+      "blocking_edges": [
+        "TFE-0363",
+        "TFE-0364"
+      ],
+      "cross_edges": [
+        "TFE-0364"
+      ],
+      "incoming": [],
+      "outgoing": [
+        "TFE-0363",
+        "TFE-0364"
+      ],
+      "tree_child_edges": [],
+      "tree_parent_edge": "TFE-0363"
+    },
+    "TF-0213": {
+      "blocking_edges": [
+        "TFE-0365",
+        "TFE-0366"
+      ],
+      "cross_edges": [
+        "TFE-0366"
+      ],
+      "incoming": [],
+      "outgoing": [
+        "TFE-0365",
+        "TFE-0366"
+      ],
+      "tree_child_edges": [],
+      "tree_parent_edge": "TFE-0365"
     }
   },
   "edge_type_counts": {
-    "child_of": 196,
+    "child_of": 201,
     "clarifies": 0,
     "contributes_to": 19,
-    "depends_on": 117,
+    "depends_on": 122,
     "derived_from": 7,
     "duplicates": 0,
     "related_to": 11,
@@ -8273,10 +8380,130 @@
       "to": "TF-0102",
       "type": "child_of",
       "updated_at": "2026-09-13T01:13:37.640736Z"
+    },
+    "TFE-0357": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-09-13T05:32:33.023232Z",
+      "created_from_session": null,
+      "from": "TF-0209",
+      "id": "TFE-0357",
+      "reason": "接续最新工具运行时可靠性主线。",
+      "to": "TF-0102",
+      "type": "child_of",
+      "updated_at": "2026-09-13T05:32:33.023232Z"
+    },
+    "TFE-0358": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-09-13T05:32:33.024772Z",
+      "created_from_session": null,
+      "from": "TF-0209",
+      "id": "TFE-0358",
+      "reason": "以上一批已完成的运行时可靠性基线为前置。",
+      "to": "TF-0208",
+      "type": "depends_on",
+      "updated_at": "2026-09-13T05:32:33.024772Z"
+    },
+    "TFE-0359": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-09-13T05:32:33.025803Z",
+      "created_from_session": null,
+      "from": "TF-0210",
+      "id": "TFE-0359",
+      "reason": "接续最新工具运行时可靠性主线。",
+      "to": "TF-0102",
+      "type": "child_of",
+      "updated_at": "2026-09-13T05:32:33.025803Z"
+    },
+    "TFE-0360": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-09-13T05:32:33.026561Z",
+      "created_from_session": null,
+      "from": "TF-0210",
+      "id": "TFE-0360",
+      "reason": "以上一批已完成的运行时可靠性基线为前置。",
+      "to": "TF-0208",
+      "type": "depends_on",
+      "updated_at": "2026-09-13T05:32:33.026561Z"
+    },
+    "TFE-0361": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-09-13T05:32:33.027778Z",
+      "created_from_session": null,
+      "from": "TF-0211",
+      "id": "TFE-0361",
+      "reason": "接续最新工具运行时可靠性主线。",
+      "to": "TF-0102",
+      "type": "child_of",
+      "updated_at": "2026-09-13T05:32:33.027778Z"
+    },
+    "TFE-0362": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-09-13T05:32:33.028810Z",
+      "created_from_session": null,
+      "from": "TF-0211",
+      "id": "TFE-0362",
+      "reason": "以上一批已完成的运行时可靠性基线为前置。",
+      "to": "TF-0208",
+      "type": "depends_on",
+      "updated_at": "2026-09-13T05:32:33.028810Z"
+    },
+    "TFE-0363": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-09-13T05:32:33.029328Z",
+      "created_from_session": null,
+      "from": "TF-0212",
+      "id": "TFE-0363",
+      "reason": "接续最新工具运行时可靠性主线。",
+      "to": "TF-0102",
+      "type": "child_of",
+      "updated_at": "2026-09-13T05:32:33.029328Z"
+    },
+    "TFE-0364": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-09-13T05:32:33.029841Z",
+      "created_from_session": null,
+      "from": "TF-0212",
+      "id": "TFE-0364",
+      "reason": "以上一批已完成的运行时可靠性基线为前置。",
+      "to": "TF-0208",
+      "type": "depends_on",
+      "updated_at": "2026-09-13T05:32:33.029841Z"
+    },
+    "TFE-0365": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-09-13T05:32:33.030358Z",
+      "created_from_session": null,
+      "from": "TF-0213",
+      "id": "TFE-0365",
+      "reason": "接续最新工具运行时可靠性主线。",
+      "to": "TF-0102",
+      "type": "child_of",
+      "updated_at": "2026-09-13T05:32:33.030358Z"
+    },
+    "TFE-0366": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-09-13T05:32:33.031050Z",
+      "created_from_session": null,
+      "from": "TF-0213",
+      "id": "TFE-0366",
+      "reason": "以上一批已完成的运行时可靠性基线为前置。",
+      "to": "TF-0208",
+      "type": "depends_on",
+      "updated_at": "2026-09-13T05:32:33.031050Z"
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-13T04:58:39.971704Z",
+  "generated_at": "2026-09-13T06:31:22.542138Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -16132,7 +16359,12 @@
         "TF-0205",
         "TF-0206",
         "TF-0207",
-        "TF-0208"
+        "TF-0208",
+        "TF-0209",
+        "TF-0210",
+        "TF-0211",
+        "TF-0212",
+        "TF-0213"
       ],
       "confidence": 0.75,
       "context_tags": [
@@ -16167,7 +16399,8 @@
         "TFD-tf0124-agent-core-scope-record-20260905",
         "TFD-tf0149-governance-radius-review-20260905",
         "TFD-tf0108-bounded-closeout-scope-20260906",
-        "TFD-tf0108-cross-lane-landing-7cfbb1e6c-20260906"
+        "TFD-tf0108-cross-lane-landing-7cfbb1e6c-20260906",
+        "TFD-tool-runtime-relay-r5-rollback-drill-20260913"
       ],
       "difficulty": "very_high",
       "estimated_total_minutes": 6930,
@@ -23144,6 +23377,386 @@
       "summary": "乒乓判断要求两侧各自重复稳定结果，启用时窗口至少保留四条，低阈值配置已由失败反例复验。",
       "title": "乒乓循环必须在两侧都有重复结果",
       "updated_at": "2026-09-13T02:33:38.924538Z"
+    },
+    "TF-0209": {
+      "acceptance_criteria": [
+        "本节点修复前行为反例失败，修复后及相邻回归通过。",
+        "通过专用 Harness、类型与静态检查、通信回放及相关 Electron E2E；完成独立审查并记录工程边界。",
+        "通过官方 CLI 更新 Task Forest 与交接。"
+      ],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0.0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.98,
+      "context_tags": [
+        "tool-runtime",
+        "brb-S",
+        "relay-r5"
+      ],
+      "created_at": "2026-09-13T05:32:33.023232Z",
+      "deprecated_at": null,
+      "derived_progress": 100.0,
+      "desired_outcomes": [],
+      "deviations": [
+        "TFD-tool-runtime-relay-r5-rollback-drill-20260913"
+      ],
+      "difficulty": "medium",
+      "estimated_total_minutes": 45,
+      "evidence": [
+        "harness/specs/tasks/live-tool-runtime-reliability.md",
+        "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+        "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json",
+        "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\final-evidence.json",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-review.md",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-r3.json",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\rollback-result.json",
+        "归属提交：75ab6707aac56a7714d78edc751b305c7d4b7e66；Task 单值，Lane: lane-1；文件数 2/5。",
+        "DEV-PROTOCOL §R1 A2：默认旗标：无新增默认关叶子，注册决定是否存在策略。 kill switch：无新增隐藏开关；signal 取消就是受验行为。 上游守卫：无策略同步允许，有策略进入 awaitWithAbort。 旁路：审批和 report 均在等待后，无跳过等待的新分支。",
+        "用户已明确采用完成的独立审查替代本批 CLI 审查；三次 CLI high demand 失败保留，不计为 clean。"
+      ],
+      "execution_hints": [
+        "本节点实际源码/测试归属：openclaw_runtime/src/agents/agent-tools.before-tool-call.ts；openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts。",
+        "逐节点反例、agents128/128、native2/2、独立88/88、L1六项、构建、通信及Electron2/2通过；独立提交门结果见记录。",
+        "回滚方式：对应提交源码与测试反向补丁；已实测只逆转本批源码时14条反例失败、恢复后88/88通过，index未改、审查指纹9/9一致。",
+        "跨五节点README/规格/报告/交接/提案/回滚登记由TF-0102集成提交如实计数；本批不关闭父节点或历史全局门。",
+        "后续只从新的可执行反例接力；不将本地工程证据外推为真人、远程执行、default-on或GA。"
+      ],
+      "id": "TF-0209",
+      "kind": "subtask",
+      "non_goals": [
+        "不改变产品默认开关、真人验收状态或远程进程终止协议。"
+      ],
+      "primary_parent": "TF-0102",
+      "priority": 2,
+      "progress": 100.0,
+      "progress_source": "manual",
+      "purpose": "补齐真实工具使用链路的取消、终态和循环检测可靠性。",
+      "remaining_minutes_max": 0,
+      "remaining_minutes_min": 0,
+      "requirements": [
+        "trusted policy 与 before_tool_call hook 尚未完成时，取消应立即结束本地等待并保留原始取消原因；晚到失败不得启动执行或审批。"
+      ],
+      "source_sessions": [
+        "tool-runtime-relay-r5-20260913"
+      ],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "trusted policy 与 before-tool hook 挂起时立即响应取消；晚到失败不启动审批或执行。",
+      "title": "挂起的工具策略等待可立即取消",
+      "updated_at": "2026-09-13T06:30:43.523551Z"
+    },
+    "TF-0210": {
+      "acceptance_criteria": [
+        "本节点修复前行为反例失败，修复后及相邻回归通过。",
+        "通过专用 Harness、类型与静态检查、通信回放及相关 Electron E2E；完成独立审查并记录工程边界。",
+        "通过官方 CLI 更新 Task Forest 与交接。"
+      ],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0.0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.98,
+      "context_tags": [
+        "tool-runtime",
+        "brb-S",
+        "relay-r5"
+      ],
+      "created_at": "2026-09-13T05:32:33.025803Z",
+      "deprecated_at": null,
+      "derived_progress": 100.0,
+      "desired_outcomes": [],
+      "deviations": [
+        "TFD-tool-runtime-relay-r5-rollback-drill-20260913"
+      ],
+      "difficulty": "medium",
+      "estimated_total_minutes": 45,
+      "evidence": [
+        "harness/specs/tasks/live-tool-runtime-reliability.md",
+        "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+        "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json",
+        "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\final-evidence.json",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-review.md",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-r3.json",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\rollback-result.json",
+        "归属提交：a7ba8022e5c4a31c4eb632a79816362017f5efc3；Task 单值，Lane: lane-1；文件数 3/5。",
+        "DEV-PROTOCOL §R1 A2：默认旗标：真实 exec/lazy exec prepare 无新开关。 kill switch：已取消时 wrapper/adapter 均先退出。 上游守卫：无 prepare 用原参数，有 prepare 的两入口均可取消。 旁路：beforeHookWrapped 委托 wrapper 的同一守卫。",
+        "用户已明确采用完成的独立审查替代本批 CLI 审查；三次 CLI high demand 失败保留，不计为 clean。"
+      ],
+      "execution_hints": [
+        "本节点实际源码/测试归属：openclaw_runtime/src/agents/agent-tools.before-tool-call.ts；openclaw_runtime/src/agents/agent-tool-definition-adapter.ts；openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts。",
+        "逐节点反例、agents128/128、native2/2、独立88/88、L1六项、构建、通信及Electron2/2通过；独立提交门结果见记录。",
+        "回滚方式：对应提交源码与测试反向补丁；已实测只逆转本批源码时14条反例失败、恢复后88/88通过，index未改、审查指纹9/9一致。",
+        "跨五节点README/规格/报告/交接/提案/回滚登记由TF-0102集成提交如实计数；本批不关闭父节点或历史全局门。",
+        "后续只从新的可执行反例接力；不将本地工程证据外推为真人、远程执行、default-on或GA。"
+      ],
+      "id": "TF-0210",
+      "kind": "subtask",
+      "non_goals": [
+        "不改变产品默认开关、真人验收状态或远程进程终止协议。"
+      ],
+      "primary_parent": "TF-0102",
+      "priority": 2,
+      "progress": 100.0,
+      "progress_source": "manual",
+      "purpose": "补齐真实工具使用链路的取消、终态和循环检测可靠性。",
+      "remaining_minutes_max": 0,
+      "remaining_minutes_min": 0,
+      "requirements": [
+        "包装器和原始适配器等待 prepareBeforeToolCallParams 时均响应取消；晚到准备结果不得进入策略或执行阶段。"
+      ],
+      "source_sessions": [
+        "tool-runtime-relay-r5-20260913"
+      ],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "包装器与原始适配器的工具准备等待均可立即取消，晚到参数不进入后续阶段。",
+      "title": "挂起的工具准备阶段可立即取消",
+      "updated_at": "2026-09-13T06:30:43.523551Z"
+    },
+    "TF-0211": {
+      "acceptance_criteria": [
+        "本节点修复前行为反例失败，修复后及相邻回归通过。",
+        "通过专用 Harness、类型与静态检查、通信回放及相关 Electron E2E；完成独立审查并记录工程边界。",
+        "通过官方 CLI 更新 Task Forest 与交接。"
+      ],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0.0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.98,
+      "context_tags": [
+        "tool-runtime",
+        "brb-S",
+        "relay-r5"
+      ],
+      "created_at": "2026-09-13T05:32:33.027778Z",
+      "deprecated_at": null,
+      "derived_progress": 100.0,
+      "desired_outcomes": [],
+      "deviations": [
+        "TFD-tool-runtime-relay-r5-rollback-drill-20260913"
+      ],
+      "difficulty": "medium",
+      "estimated_total_minutes": 45,
+      "evidence": [
+        "harness/specs/tasks/live-tool-runtime-reliability.md",
+        "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts",
+        "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json",
+        "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\final-evidence.json",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-review.md",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-r3.json",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\rollback-result.json",
+        "归属提交：0752b59aa07f02f7c652cb40eee0329dcc314c40；Task 单值，Lane: lane-1；文件数 4/5。",
+        "DEV-PROTOCOL §R1 A2：默认旗标：无新增开关或默认值。 kill switch：scope/backgrounded/stdin 可写限制保留。 上游守卫：无权、不存在、不可写时先失败，不发送输入。 旁路：write/submit/paste/send-keys/EOF 均到共享终态结果；退出后不发 EOF。",
+        "用户已明确采用完成的独立审查替代本批 CLI 审查；三次 CLI high demand 失败保留，不计为 clean。"
+      ],
+      "execution_hints": [
+        "本节点实际源码/测试归属：openclaw_runtime/src/agents/bash-tools.process.ts；openclaw_runtime/src/agents/bash-tools.process-send-keys.ts；openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts；tests/e2e/chat-run-state-events.spec.ts。",
+        "逐节点反例、agents128/128、native2/2、独立88/88、L1六项、构建、通信及Electron2/2通过；独立提交门结果见记录。",
+        "回滚方式：对应提交源码与测试反向补丁；已实测只逆转本批源码时14条反例失败、恢复后88/88通过，index未改、审查指纹9/9一致。",
+        "跨五节点README/规格/报告/交接/提案/回滚登记由TF-0102集成提交如实计数；本批不关闭父节点或历史全局门。",
+        "后续只从新的可执行反例接力；不将本地工程证据外推为真人、远程执行、default-on或GA。"
+      ],
+      "id": "TF-0211",
+      "kind": "subtask",
+      "non_goals": [
+        "不改变产品默认开关、真人验收状态或远程进程终止协议。"
+      ],
+      "primary_parent": "TF-0102",
+      "priority": 2,
+      "progress": 100.0,
+      "progress_source": "manual",
+      "purpose": "补齐真实工具使用链路的取消、终态和循环检测可靠性。",
+      "remaining_minutes_max": 0,
+      "remaining_minutes_min": 0,
+      "requirements": [
+        "write、send-keys、submit、paste、EOF 等待输入确认时若进程已退出，应答须反映执行所有者的完成或失败状态及退出信息，并保留原终态记录和输出。"
+      ],
+      "source_sessions": [
+        "tool-runtime-relay-r5-20260913"
+      ],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "所有进程输入应答保留 owner 的完成/失败、退出信息和输出；写入后已退出不再发送 EOF。",
+      "title": "输入应答保留进程所有者的终态",
+      "updated_at": "2026-09-13T06:30:43.523551Z"
+    },
+    "TF-0212": {
+      "acceptance_criteria": [
+        "本节点修复前行为反例失败，修复后及相邻回归通过。",
+        "通过专用 Harness、类型与静态检查、通信回放及相关 Electron E2E；完成独立审查并记录工程边界。",
+        "通过官方 CLI 更新 Task Forest 与交接。"
+      ],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0.0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.98,
+      "context_tags": [
+        "tool-runtime",
+        "brb-S",
+        "relay-r5"
+      ],
+      "created_at": "2026-09-13T05:32:33.029328Z",
+      "deprecated_at": null,
+      "derived_progress": 100.0,
+      "desired_outcomes": [],
+      "deviations": [
+        "TFD-tool-runtime-relay-r5-rollback-drill-20260913"
+      ],
+      "difficulty": "medium",
+      "estimated_total_minutes": 45,
+      "evidence": [
+        "harness/specs/tasks/live-tool-runtime-reliability.md",
+        "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts",
+        "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json",
+        "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\final-evidence.json",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-review.md",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-r3.json",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\rollback-result.json",
+        "归属提交：0c17f3dbc842891fc5929f4081f44ba7f19a36d0；Task 单值，Lane: lane-1；文件数 2/5。",
+        "DEV-PROTOCOL §R1 A2：默认旗标：既有 loopDetection.enabled=true 不变。 kill switch：显式 disabled 仍关闭检测，没有默认隐藏修复。 上游守卫：无会话身份不跟踪，有身份正常记录。 旁路：请求和结果都重新获取别名状态；匿名及不同身份保持独立。",
+        "用户已明确采用完成的独立审查替代本批 CLI 审查；三次 CLI high demand 失败保留，不计为 clean。"
+      ],
+      "execution_hints": [
+        "本节点实际源码/测试归属：openclaw_runtime/src/logging/diagnostic-session-state.ts；openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts。",
+        "逐节点反例、agents128/128、native2/2、独立88/88、L1六项、构建、通信及Electron2/2通过；独立提交门结果见记录。",
+        "回滚方式：对应提交源码与测试反向补丁；已实测只逆转本批源码时14条反例失败、恢复后88/88通过，index未改、审查指纹9/9一致。",
+        "跨五节点README/规格/报告/交接/提案/回滚登记由TF-0102集成提交如实计数；本批不关闭父节点或历史全局门。",
+        "后续只从新的可执行反例接力；不将本地工程证据外推为真人、远程执行、default-on或GA。"
+      ],
+      "id": "TF-0212",
+      "kind": "subtask",
+      "non_goals": [
+        "不改变产品默认开关、真人验收状态或远程进程终止协议。"
+      ],
+      "primary_parent": "TF-0102",
+      "priority": 2,
+      "progress": 100.0,
+      "progress_source": "manual",
+      "purpose": "补齐真实工具使用链路的取消、终态和循环检测可靠性。",
+      "remaining_minutes_max": 0,
+      "remaining_minutes_min": 0,
+      "requirements": [
+        "sessionId 与 sessionKey 别名合并时，同一 run、工具和 toolCallId 的记录只计一次；保留请求身份与已有结果，避免误触循环阈值，不合并不同调用或不同运行。"
+      ],
+      "source_sessions": [
+        "tool-runtime-relay-r5-20260913"
+      ],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "会话别名按 run/tool/toolCallId 合并同次调用，保留原请求与已有结果，不合并不同身份。",
+      "title": "会话别名合并消除重复工具调用证据",
+      "updated_at": "2026-09-13T06:30:43.523551Z"
+    },
+    "TF-0213": {
+      "acceptance_criteria": [
+        "本节点修复前行为反例失败，修复后及相邻回归通过。",
+        "通过专用 Harness、类型与静态检查、通信回放及相关 Electron E2E；完成独立审查并记录工程边界。",
+        "通过官方 CLI 更新 Task Forest 与交接。"
+      ],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0.0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.98,
+      "context_tags": [
+        "tool-runtime",
+        "brb-S",
+        "relay-r5"
+      ],
+      "created_at": "2026-09-13T05:32:33.030358Z",
+      "deprecated_at": null,
+      "derived_progress": 100.0,
+      "desired_outcomes": [],
+      "deviations": [
+        "TFD-tool-runtime-relay-r5-rollback-drill-20260913"
+      ],
+      "difficulty": "medium",
+      "estimated_total_minutes": 45,
+      "evidence": [
+        "harness/specs/tasks/live-tool-runtime-reliability.md",
+        "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts",
+        "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json",
+        "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\final-evidence.json",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-review.md",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\independent-r3.json",
+        "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r5\\rollback-result.json",
+        "归属提交：28ce72d3299c5fc2d4f4c8571a297b20a847ec64；Task 单值，Lane: lane-1；文件数 2/5。",
+        "DEV-PROTOCOL §R1 A2：默认旗标：默认检测器和阈值不变。 kill switch：既有 enabled/detectors 配置保留。 上游守卫：仅 process + plain object + poll 排除 timeout。 旁路：请求、检测和结果关联共同使用 hashToolCall，无遗漏入口。",
+        "用户已明确采用完成的独立审查替代本批 CLI 审查；三次 CLI high demand 失败保留，不计为 clean。"
+      ],
+      "execution_hints": [
+        "本节点实际源码/测试归属：openclaw_runtime/src/agents/tool-loop-detection.ts；openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts。",
+        "逐节点反例、agents128/128、native2/2、独立88/88、L1六项、构建、通信及Electron2/2通过；独立提交门结果见记录。",
+        "回滚方式：对应提交源码与测试反向补丁；已实测只逆转本批源码时14条反例失败、恢复后88/88通过，index未改、审查指纹9/9一致。",
+        "跨五节点README/规格/报告/交接/提案/回滚登记由TF-0102集成提交如实计数；本批不关闭父节点或历史全局门。",
+        "后续只从新的可执行反例接力；不将本地工程证据外推为真人、远程执行、default-on或GA。"
+      ],
+      "id": "TF-0213",
+      "kind": "subtask",
+      "non_goals": [
+        "不改变产品默认开关、真人验收状态或远程进程终止协议。"
+      ],
+      "primary_parent": "TF-0102",
+      "priority": 2,
+      "progress": 100.0,
+      "progress_source": "manual",
+      "purpose": "补齐真实工具使用链路的取消、终态和循环检测可靠性。",
+      "remaining_minutes_max": 0,
+      "remaining_minutes_min": 0,
+      "requirements": [
+        "process poll 的 timeout 仅改变等待时长，不得让同一进程相同输出逃逸无进展检测；进程身份、真实输出变化和其他工具参数仍保持区分。"
+      ],
+      "source_sessions": [
+        "tool-runtime-relay-r5-20260913"
+      ],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "同一进程 poll 的 timeout 不改变调用身份；真实输出变化和不同进程仍能区分。",
+      "title": "轮询等待时长不重置无进展循环",
+      "updated_at": "2026-09-13T06:30:43.523551Z"
     }
   },
   "reason": "rebuild",
@@ -23410,7 +24023,12 @@
         "TF-0205",
         "TF-0206",
         "TF-0207",
-        "TF-0208"
+        "TF-0208",
+        "TF-0209",
+        "TF-0210",
+        "TF-0211",
+        "TF-0212",
+        "TF-0213"
       ],
       "in_progress": [
         "TF-0007",
@@ -23499,9 +24117,9 @@
   },
   "summary": {
     "blocked_count": 10,
-    "done_count": 162,
-    "edge_count": 353,
-    "node_count": 208,
+    "done_count": 167,
+    "edge_count": 363,
+    "node_count": 213,
     "open_count": 39,
     "review_needed_count": 0
   },
@@ -23701,7 +24319,12 @@
     "TFE-0353",
     "TFE-0354",
     "TFE-0355",
-    "TFE-0356"
+    "TFE-0356",
+    "TFE-0357",
+    "TFE-0359",
+    "TFE-0361",
+    "TFE-0363",
+    "TFE-0365"
   ],
   "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
 }

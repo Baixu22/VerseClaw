@@ -1,5 +1,17 @@
 # 会话交接（LATEST）
 
+## 当前接力：工具运行时可靠性第五批五节点完成（2026-09-13，TF-0209～TF-0213）
+
+- 按用户“至少完成五个节点”的授权，从干净的 `4f5869441` 接力；五项新缺口均已先复现再修复，挂 TF-0102，前置为已完成的 TF-0208。
+- 已完成策略与准备挂起时取消、进程输入保留终态、别名重复调用去重、poll 等待时间不能绕过无进展检测。逐节点与共同回归通过：agents 128/128、native 2/2、独立聚焦 88/88。
+- L1 六项、runtime/Gateway smoke、Vite、comms replay/compare、Electron foreground 2/2 已通过。首次 typed lint 与一个 Electron 启动因内存分配失败退出，串行复跑成功；原始失败日志保留。
+- 独立审核者结论 approve，无阻断发现；五个真实提交的 R3 全部 PASS，文件半径 2/3/4/2/2，schema/defaults 无命中，九文件指纹一致。提交依次为 `75ab6707a`、`a7ba8022e`、`0752b59aa`、`0c17f3dbc`、`28ce72d32`，每个只有一个对应 Task 和 Lane trailer。
+- autoreview CLI 同一引擎连续三次因服务端 high demand 失败，未计为 clean。用户明确选择“采用独立审查并继续收口（推荐）”，本批以已完成的独立审查收口。
+- 实际回滚演练为旧源码 74 passed/14 failed → 恢复源码 88/88；index 未改、字节复原，已登记 resolved 回滚偏差。官方 CLI 将五节点全部收口 done/100，validate/export 通过；HTML 当前图等同 JSON，另外 208 个节点的状态/进度保持不变。
+- 报告：`docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md`；完整本机日志、指纹和独立报告：`%LOCALAPPDATA%/ClawX-scratch/tool-runtime-relay-20260913-r5/`。跨节点 README/规格/报告/交接/提案/回滚登记按 TF-0102 集成提交单独计数，本批 authored 12 / full 20；不声明父节点整体 R3 或预算通过。
+- 专用 Harness 以本批起点 `4f5869441` 检查通过；全局 `harness:ci` 仍因整个分支 Gateway 场景的历史路径归属失败。父节点 TF-0102 保持 in_progress；真实 provider、远程执行、真人验收和产品锁边界保持原状。
+- 下一步仅从新的可执行反例接力，不重计这五个 done 节点。全局历史门与父节点验收仍需在其原范围独立处理。
+
 ## 当前收尾：提交第三、第四批成果（2026-09-13）
 
 - 用户已授权保存全部相关修改并保证工作区干净。本次范围为 TF-0189..TF-0208 的代码、测试、三语 README、Harness 规则、验收报告、任务提案与快照。

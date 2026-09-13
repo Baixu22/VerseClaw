@@ -49,6 +49,8 @@ Product capability statements must be checked against the canonical matrix in `s
 
 未ラップのツール、クライアント委譲、承認登録、各ポリシー段階でもキャンセルを尊重します。キャンセル理由は遅れて届くツールの成功・失敗より優先され、キャンセルされた委譲は引き継ぎ待ちの記録を破棄します。プロセス入力のコールバック待機もキャンセルできますが、書き込み済みのバイトを取り消したり、バックグラウンドプロセスを終了したりはしません。子プロセスの終了後、poll は stdout と stderr の読み取り完了を待ってセッションを終了し、実行の所有者が記録した終端状態を保持します。削除済みプロセスは遅れて届く終了コールバックでも再表示されません。同じ run 内で記録済みのツール結果が重複して届いても、計数は一度だけです。ピンポン警告には少なくとも四つの完了済み交互呼び出し（`ABAB`）が必要で、両側それぞれで安定した結果の繰り返しを確認します。証拠と未検証項目は[第4バッチのローカル検証記録](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md)を参照してください。
 
+ツールの準備やポリシーフックが戻る前でも、キャンセルでローカル待機を終了できます。プラグイン内部で既に始まった処理は停止しません。入力の確認中にプロセスが終了した場合、応答は実行所有者が記録した終了状態と出力を保持します。セッションのエイリアス統合では同じツール呼び出しを一度だけ数え、`process poll` の待機時間だけを変えても無進捗の検出はリセットしません。[第5バッチの検証記録](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md)を参照してください。
+
 DCS を有効にした coding turn では、knowledge、recent actions、tool registry の実際の provider-visible prompt 増加量を、既存の共有 turn-injection ledger に個別記録します。固定予算は拡大せず、有効な DCS projection には既存の有界容量を確保し、truncate と drop は明示的な会計証拠として残します。
 
 Runtime Memory 注入、SEKB 自動 writeback、Browser の無監督または private-network 利用、C6/C7 自動切替、Coding WAL、本番 repository の自動 merge、複数 Forge/DAG 拡張は対象外です。現時点の証拠は engineering と実プロセステストであり、human canary と release approval は未完了です。コンポーネントごとの唯一の分類は [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview) を参照してください。

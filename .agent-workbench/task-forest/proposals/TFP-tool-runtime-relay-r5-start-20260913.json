@@ -1,0 +1,321 @@
+{
+  "applied_at": "2026-09-13T05:32:33.148638Z",
+  "base_graph_hash": "e96ac8fe44b739b6bf5b10f81fd07cd037f3d2340ecf025509a520c992969b33",
+  "base_summary": {
+    "edge_count": 353,
+    "node_count": 208,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "TF-0209",
+      "node": {
+        "acceptance_criteria": [
+          "本节点修复前行为反例失败，修复后及相邻回归通过。",
+          "通过专用 Harness、类型与静态检查、通信回放及相关 Electron E2E；完成独立审查并记录工程边界。",
+          "通过官方 CLI 更新 Task Forest 与交接。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "tool-runtime",
+          "brb-S",
+          "relay-r5"
+        ],
+        "difficulty": "medium",
+        "estimated_total_minutes": 45,
+        "evidence": [
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json"
+        ],
+        "execution_hints": [
+          "本轮仅修改：openclaw_runtime/src/agents/agent-tools.before-tool-call.ts；openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts。",
+          "遵循 docs/dev/context-moat/DEV-PROTOCOL.md §R1/§R3，单节点生产与测试文件上限 5；本轮归属 TF-0102 的工具运行时后继开发。",
+          "序号 1/5，串行实现，聚焦转绿后交独立审查。"
+        ],
+        "id": "TF-0209",
+        "kind": "subtask",
+        "non_goals": [
+          "不改变产品默认开关、真人验收状态或远程进程终止协议。"
+        ],
+        "priority": 2,
+        "progress": 0,
+        "purpose": "补齐真实工具使用链路的取消、终态和循环检测可靠性。",
+        "requirements": [
+          "trusted policy 与 before_tool_call hook 尚未完成时，取消应立即结束本地等待并保留原始取消原因；晚到失败不得启动执行或审批。"
+        ],
+        "status": "in_progress",
+        "summary": "当前源码反例已失败，等待串行修复及工程验收。",
+        "title": "挂起的工具策略等待可立即取消"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "接续最新工具运行时可靠性主线。"
+      },
+      "from": "TF-0209",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "以上一批已完成的运行时可靠性基线为前置。"
+      },
+      "from": "TF-0209",
+      "to": "TF-0208",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "TF-0210",
+      "node": {
+        "acceptance_criteria": [
+          "本节点修复前行为反例失败，修复后及相邻回归通过。",
+          "通过专用 Harness、类型与静态检查、通信回放及相关 Electron E2E；完成独立审查并记录工程边界。",
+          "通过官方 CLI 更新 Task Forest 与交接。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "tool-runtime",
+          "brb-S",
+          "relay-r5"
+        ],
+        "difficulty": "medium",
+        "estimated_total_minutes": 45,
+        "evidence": [
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json"
+        ],
+        "execution_hints": [
+          "本轮仅修改：openclaw_runtime/src/agents/agent-tools.before-tool-call.ts；openclaw_runtime/src/agents/agent-tool-definition-adapter.ts；openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts。",
+          "遵循 docs/dev/context-moat/DEV-PROTOCOL.md §R1/§R3，单节点生产与测试文件上限 5；本轮归属 TF-0102 的工具运行时后继开发。",
+          "序号 2/5，串行实现，聚焦转绿后交独立审查。"
+        ],
+        "id": "TF-0210",
+        "kind": "subtask",
+        "non_goals": [
+          "不改变产品默认开关、真人验收状态或远程进程终止协议。"
+        ],
+        "priority": 2,
+        "progress": 0,
+        "purpose": "补齐真实工具使用链路的取消、终态和循环检测可靠性。",
+        "requirements": [
+          "包装器和原始适配器等待 prepareBeforeToolCallParams 时均响应取消；晚到准备结果不得进入策略或执行阶段。"
+        ],
+        "status": "ready",
+        "summary": "当前源码反例已失败，等待串行修复及工程验收。",
+        "title": "挂起的工具准备阶段可立即取消"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "接续最新工具运行时可靠性主线。"
+      },
+      "from": "TF-0210",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "以上一批已完成的运行时可靠性基线为前置。"
+      },
+      "from": "TF-0210",
+      "to": "TF-0208",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "TF-0211",
+      "node": {
+        "acceptance_criteria": [
+          "本节点修复前行为反例失败，修复后及相邻回归通过。",
+          "通过专用 Harness、类型与静态检查、通信回放及相关 Electron E2E；完成独立审查并记录工程边界。",
+          "通过官方 CLI 更新 Task Forest 与交接。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "tool-runtime",
+          "brb-S",
+          "relay-r5"
+        ],
+        "difficulty": "medium",
+        "estimated_total_minutes": 45,
+        "evidence": [
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts",
+          "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json"
+        ],
+        "execution_hints": [
+          "本轮仅修改：openclaw_runtime/src/agents/bash-tools.process.ts；openclaw_runtime/src/agents/bash-tools.process-send-keys.ts；openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts。",
+          "遵循 docs/dev/context-moat/DEV-PROTOCOL.md §R1/§R3，单节点生产与测试文件上限 5；本轮归属 TF-0102 的工具运行时后继开发。",
+          "序号 3/5，串行实现，聚焦转绿后交独立审查。"
+        ],
+        "id": "TF-0211",
+        "kind": "subtask",
+        "non_goals": [
+          "不改变产品默认开关、真人验收状态或远程进程终止协议。"
+        ],
+        "priority": 2,
+        "progress": 0,
+        "purpose": "补齐真实工具使用链路的取消、终态和循环检测可靠性。",
+        "requirements": [
+          "write、send-keys、submit、paste、EOF 等待输入确认时若进程已退出，应答须反映执行所有者的完成或失败状态及退出信息，并保留原终态记录和输出。"
+        ],
+        "status": "ready",
+        "summary": "当前源码反例已失败，等待串行修复及工程验收。",
+        "title": "输入应答保留进程所有者的终态"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "接续最新工具运行时可靠性主线。"
+      },
+      "from": "TF-0211",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "以上一批已完成的运行时可靠性基线为前置。"
+      },
+      "from": "TF-0211",
+      "to": "TF-0208",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "TF-0212",
+      "node": {
+        "acceptance_criteria": [
+          "本节点修复前行为反例失败，修复后及相邻回归通过。",
+          "通过专用 Harness、类型与静态检查、通信回放及相关 Electron E2E；完成独立审查并记录工程边界。",
+          "通过官方 CLI 更新 Task Forest 与交接。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "tool-runtime",
+          "brb-S",
+          "relay-r5"
+        ],
+        "difficulty": "medium",
+        "estimated_total_minutes": 45,
+        "evidence": [
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts",
+          "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json"
+        ],
+        "execution_hints": [
+          "本轮仅修改：openclaw_runtime/src/logging/diagnostic-session-state.ts；openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts。",
+          "遵循 docs/dev/context-moat/DEV-PROTOCOL.md §R1/§R3，单节点生产与测试文件上限 5；本轮归属 TF-0102 的工具运行时后继开发。",
+          "序号 4/5，串行实现，聚焦转绿后交独立审查。"
+        ],
+        "id": "TF-0212",
+        "kind": "subtask",
+        "non_goals": [
+          "不改变产品默认开关、真人验收状态或远程进程终止协议。"
+        ],
+        "priority": 2,
+        "progress": 0,
+        "purpose": "补齐真实工具使用链路的取消、终态和循环检测可靠性。",
+        "requirements": [
+          "sessionId 与 sessionKey 别名合并时，同一 run、工具和 toolCallId 的记录只计一次；保留请求身份与已有结果，避免误触循环阈值，不合并不同调用或不同运行。"
+        ],
+        "status": "ready",
+        "summary": "当前源码反例已失败，等待串行修复及工程验收。",
+        "title": "会话别名合并消除重复工具调用证据"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "接续最新工具运行时可靠性主线。"
+      },
+      "from": "TF-0212",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "以上一批已完成的运行时可靠性基线为前置。"
+      },
+      "from": "TF-0212",
+      "to": "TF-0208",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "TF-0213",
+      "node": {
+        "acceptance_criteria": [
+          "本节点修复前行为反例失败，修复后及相邻回归通过。",
+          "通过专用 Harness、类型与静态检查、通信回放及相关 Electron E2E；完成独立审查并记录工程边界。",
+          "通过官方 CLI 更新 Task Forest 与交接。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "tool-runtime",
+          "brb-S",
+          "relay-r5"
+        ],
+        "difficulty": "medium",
+        "estimated_total_minutes": 45,
+        "evidence": [
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts",
+          "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/red.json"
+        ],
+        "execution_hints": [
+          "本轮仅修改：openclaw_runtime/src/agents/tool-loop-detection.ts；openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts。",
+          "遵循 docs/dev/context-moat/DEV-PROTOCOL.md §R1/§R3，单节点生产与测试文件上限 5；本轮归属 TF-0102 的工具运行时后继开发。",
+          "序号 5/5，串行实现，聚焦转绿后交独立审查。"
+        ],
+        "id": "TF-0213",
+        "kind": "subtask",
+        "non_goals": [
+          "不改变产品默认开关、真人验收状态或远程进程终止协议。"
+        ],
+        "priority": 2,
+        "progress": 0,
+        "purpose": "补齐真实工具使用链路的取消、终态和循环检测可靠性。",
+        "requirements": [
+          "process poll 的 timeout 仅改变等待时长，不得让同一进程相同输出逃逸无进展检测；进程身份、真实输出变化和其他工具参数仍保持区分。"
+        ],
+        "status": "ready",
+        "summary": "当前源码反例已失败，等待串行修复及工程验收。",
+        "title": "轮询等待时长不重置无进展循环"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "接续最新工具运行时可靠性主线。"
+      },
+      "from": "TF-0213",
+      "to": "TF-0102",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "以上一批已完成的运行时可靠性基线为前置。"
+      },
+      "from": "TF-0213",
+      "to": "TF-0208",
+      "type": "depends_on"
+    }
+  ],
+  "created_at": "2026-09-13T05:31:03.564392Z",
+  "proposal_id": "TFP-tool-runtime-relay-r5-start-20260913",
+  "rationale": "用户本轮明确要求接力最新 Task Forest 开发并至少完成五个节点。最新 TF-0199..TF-0208 已完成且工作区起点干净；本轮五个后继缺口均已通过当前源码的失败反例复现（84 tests：71 passed，13 failed）。依本轮开发授权登记、串行实现并验收五个具体后继节点，不重计旧节点。",
+  "session_id": "tool-runtime-relay-r5-20260913",
+  "status": "applied"
+}

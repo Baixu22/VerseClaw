@@ -1,0 +1,73 @@
+{
+  "applied_at": "2026-09-13T06:24:15.064812Z",
+  "base_graph_hash": "6272a528dda0f9c50085ca9317bccd40b43a2cfd5b77d016d9f715a2ba7182db",
+  "base_summary": {
+    "edge_count": 363,
+    "node_count": 213,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "created_at": "2026-09-13T06:24:14.405971Z",
+        "decided_by": "用户授权本批开发与收口；实施者 /root；证据由 /root/r5_independent_review 独立核读。",
+        "evidence": [
+          "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/rollback-result.json",
+          "C:/Users/27933/AppData/Local/ClawX-scratch/tool-runtime-relay-20260913-r5/independent-restored-fingerprints.json",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md"
+        ],
+        "id": "TFD-tool-runtime-relay-r5-rollback-drill-20260913",
+        "impact": "只在共享工作树对本轮六个生产文件执行 git apply -R 和正向恢复；无 reset/stash/revert/index 回滚写入。基线 14 个失败按节点为 2/2/6/3/1，恢复后 88 项通过；9/9 审查文件指纹由独立审核者核对一致。未改变默认值、审批策略、持久化格式或其他节点。",
+        "kind": "rollback_executed",
+        "node_id": "TF-0102",
+        "related_task_ids": [
+          "TF-0102",
+          "TF-0209",
+          "TF-0210",
+          "TF-0211",
+          "TF-0212",
+          "TF-0213"
+        ],
+        "resolution": "源文件恢复到验收字节，运行时重新构建和 Gateway smoke 通过；提交集供独立 R3 复核后继续完成本批五节点。",
+        "status": "resolved",
+        "summary": "五节点回滚验证已执行并立即恢复，不是保留功能回退。"
+      }
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0209",
+      "progress": 0,
+      "status": "proposed"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0210",
+      "progress": 0,
+      "status": "proposed"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0211",
+      "progress": 0,
+      "status": "proposed"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0212",
+      "progress": 0,
+      "status": "proposed"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0213",
+      "progress": 0,
+      "status": "proposed"
+    }
+  ],
+  "created_at": "2026-09-13T06:24:14.388670Z",
+  "proposal_id": "TFP-tool-runtime-relay-r5-rollback-drill-20260913",
+  "rationale": "按 DEV-PROTOCOL R4.2(d)/R4.3 补记本批实际执行的工作树回滚演练。仅反向应用本轮六个生产文件，基线 74 passed/14 failed，随后立即按原补丁恢复，88/88 通过、全部源码字节复原、index 未变。先记录回滚阶段 proposed，再在独立 R3 完成后按已恢复的实际结果收口；不表示当前源码仍处于回滚状态。用户已明确采用完成的独立审查继续提交归属并收口。",
+  "session_id": "tool-runtime-relay-r5-20260913",
+  "status": "applied"
+}
