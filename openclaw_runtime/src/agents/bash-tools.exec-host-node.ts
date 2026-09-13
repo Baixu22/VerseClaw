@@ -12,6 +12,7 @@ import {
   resolveExecApprovalAllowedDecisions,
 } from "../infra/exec-approvals.js";
 import { defaultExecAutoReviewer, type ExecAutoReviewInput } from "../infra/exec-auto-review.js";
+import { awaitWithAbort } from "../utils/await-with-abort.js";
 import {
   buildExecApprovalRequesterContext,
   buildExecApprovalTurnSourceContext,
@@ -483,9 +484,16 @@ export async function executeNodeHostCommand(
   params.signal?.throwIfAborted();
   const raw =
     inlineApprovedByAsk && inlineApprovalId
-      ? await callGatewayTool("node.invoke", { timeoutMs: target.invokeTimeoutMs }, invoke, {
-          scopes: APPROVED_NODE_INVOKE_SCOPES,
-        })
-      : await callGatewayTool("node.invoke", { timeoutMs: target.invokeTimeoutMs }, invoke);
+      ? await awaitWithAbort(
+          callGatewayTool("node.invoke", { timeoutMs: target.invokeTimeoutMs }, invoke, {
+            scopes: APPROVED_NODE_INVOKE_SCOPES,
+          }),
+          params.signal,
+        )
+      : await awaitWithAbort(
+          callGatewayTool("node.invoke", { timeoutMs: target.invokeTimeoutMs }, invoke),
+          params.signal,
+        );
+  params.signal?.throwIfAborted();
   return formatNodeRunToolResult({ raw, startedAt, cwd: params.workdir });
 }

@@ -4,10 +4,19 @@ title: 真实语料后续工具执行、终止与恢复可靠性
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 diffBase: HEAD
-intent: 接力已完成的 TF-0169..TF-0178，以当前源码可执行反例修复 TF-0179..TF-0188 的远程结果、进程控制、回调终态和循环状态缺口。
+intent: 接力已完成的 TF-0189..TF-0198，以当前源码可执行反例完成 TF-0199..TF-0208 的工具委托、审批与输入取消、退出输出完整性及循环证据修复。
 ownedPaths:
+  - openclaw_runtime/src/utils/await-with-abort.ts
+  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md
+  - harness/specs/scenarios/gateway-backend-communication.md
   - openclaw_runtime/src/agents/bash-tools.exec-host-node-phases.ts
+  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260913.md
+  - openclaw_runtime/src/agents/bash-tools.process-send-keys.ts
+  - openclaw_runtime/src/agents/agent-tool-definition-adapter.ts
   - openclaw_runtime/src/agents/bash-tools.exec-host-node.output.test.ts
+  - openclaw_runtime/src/agents/agent-tool-definition-adapter.ts
+  - openclaw_runtime/src/agents/bash-tools.process-send-keys.ts
+  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260913.md
   - openclaw_runtime/src/agents/bash-tools.process.ts
   - openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts
   - openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts
@@ -41,6 +50,11 @@ ownedPaths:
   - README.ja-JP.md
   - .agent-workbench/task-forest/**
 touchedAreas:
+  - openclaw_runtime/src/utils/await-with-abort.ts
+  - openclaw_runtime/src/agents/agent-tool-definition-adapter.ts
+  - openclaw_runtime/src/agents/bash-tools.process-send-keys.ts
+  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md
+  - harness/specs/scenarios/gateway-backend-communication.md
   - openclaw_runtime/src/agents/bash-tools.exec-host-node-phases.ts
   - openclaw_runtime/src/agents/bash-tools.exec-host-node.output.test.ts
   - openclaw_runtime/src/agents/bash-tools.process.ts
@@ -76,10 +90,18 @@ touchedAreas:
   - README.ja-JP.md
   - .agent-workbench/task-forest/**
 expectedUserBehavior:
+  - 未包装工具与客户端委托在取消后不准备、不交付晚到成功或 pending，工具终态后不再投递进度。
+  - 审批登记与输入回调等待均可取消；策略各异步阶段取消后不得启动后续钩子或审批。
+  - 退出轮询等待输出读完，保留执行所有者的终态和退出原因；已移除进程不因晚到退出重新出现。
+  - 同一运行的同一工具终态不重复计数；乒乓两侧均需重复稳定结果才能判定无进展。
   - 远程命令保留完整输出、超时事实和发起消息的投递路由。
   - process 取消后不写入输入或消费输出，首次退出轮询保留真实退出码和信号。
   - 工具终态关闭进度回调；策略和结果观察器触发取消后不得交付错误的成功或拒绝结果。
   - 低阈值警告、策略改写参数、会话别名合并均不破坏循环检测。
+  - 策略钩子、插件审批和适配器路径上的取消保持取消语义，不改写成拦截。
+  - 本地等待 node.invoke 时取消不交付晚到成功。
+  - process remove 不能终止前台会话；send-keys 写入后仍检查取消；首次 poll 观察已退出子进程。
+  - 有进展的乒乓不警告；别名合并按活动周期保留告警退避，新进展重置不被覆盖；观察器异常不改变成功结果。
   - 取消工具执行后不再收到前台心跳，也不启动尚未启动的命令。
   - 前台进度只提示当前可用的操作，正常输出和最终结果保留。
   - 工具循环终止不能被模型回退重新启动，按会话标识隔离检测状态。
@@ -101,7 +123,7 @@ forbiddenPatterns:
 rollback:
   - 回退对应工具生命周期修复及其回归测试，无持久化格式迁移。
 requiredTests:
-  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts bash-tools.exec.foreground-heartbeat.test.ts bash-tools.exec.lifecycle.test.ts agent-tools.before-tool-call.loop-termination.test.ts agent-tools.before-tool-call.cancellation.test.ts agent-tools.before-tool-call.shadow-failure.test.ts model-fallback.loop-termination.test.ts tool-loop-detection.progress.test.ts bash-tools.exec-host-node.abort.test.ts bash-tools.exec-host-node.output.test.ts bash-tools.process.lifecycle.test.ts agent-tools.before-tool-call.reliability.test.ts --passWithNoTests=false
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts bash-tools.exec.foreground-heartbeat.test.ts bash-tools.exec.lifecycle.test.ts agent-tools.before-tool-call.loop-termination.test.ts agent-tools.before-tool-call.cancellation.test.ts agent-tools.before-tool-call.shadow-failure.test.ts agent-tools.before-tool-call.diagnostics.test.ts model-fallback.loop-termination.test.ts tool-loop-detection.progress.test.ts bash-tools.exec-host-node.abort.test.ts bash-tools.exec-host-node.output.test.ts bash-tools.process.lifecycle.test.ts agent-tools.before-tool-call.reliability.test.ts --passWithNoTests=false
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit-fast.config.ts src/agents/native-hook-relay.loop-detection.test.ts
   - pnpm --dir openclaw_runtime tsgo:core
   - pnpm run comms:replay
@@ -115,6 +137,8 @@ acceptance:
 docs:
   required: true
   files:
+    - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md
+    - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260913.md
     - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md
     - docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md
     - docs/dev/handoffs/LATEST.md
@@ -126,6 +150,6 @@ docs:
 本批按用户“至少完成十个节点”的授权顺序推进。后续子节点只从实际代码、真实语料或
 可执行反例发现的独立缺口建立，不重做 TF-0156/0157，不将本地工程结果升级为产品放行。
 
-本次接力的十节点是 TF-0179..TF-0188，上一批已完成节点保持历史状态。所有新节点先有
+本次接力的十节点是 TF-0199..TF-0208，上一批已完成的 TF-0189..TF-0198 保持历史状态。所有新节点先有
 行为断言失败再修复，文档与任务登记不计入开发完成数。远程 `node.invoke` 发出后的远程
-进程终止协议仍不在本批范围，不能把本地取消守卫解释为已经取消远程执行。
+进程终止协议仍不在本批范围，不能把本地等待取消解释为已经取消远程执行。

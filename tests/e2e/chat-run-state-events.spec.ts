@@ -107,7 +107,8 @@ test.describe('Verse Claw chat run state events', () => {
               ...identity, type: 'tool.completed', toolCallId: 'foreground-call', name: 'exec', isError: true,
               result: {
                 content: [{ type: 'text', text: output }],
-                details: { status: 'failed', aggregated: output, exitCode: null, timedOut: terminalStatus === 'error' },
+                // A timeout remains a failure even when the child handles termination and exits zero.
+                details: { status: 'failed', aggregated: output, exitCode: terminalStatus === 'error' ? 0 : null, timedOut: terminalStatus === 'error' },
               },
             });
             win.webContents.send('chat:runtime-event', { ...identity, type: 'run.ended', status: terminalStatus, endedAt: Date.now(), ...(terminalStatus === 'error' ? { error: 'Tool loop terminated' } : {}) });

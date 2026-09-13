@@ -41,6 +41,7 @@ export const WARNING_THRESHOLD = 10;
 export const UNKNOWN_TOOL_THRESHOLD = 10;
 export const CRITICAL_THRESHOLD = 20;
 export const GLOBAL_CIRCUIT_BREAKER_THRESHOLD = 30;
+const MIN_PING_PONG_HISTORY = 4;
 const DEFAULT_LOOP_DETECTION_CONFIG = {
   // P0-3: runaway identical-tool-call loops now warn/circuit-break by default
   // instead of only logging. Operators can still disable via tools.loopDetection.
@@ -114,6 +115,7 @@ function resolveLoopDetectionConfig(config?: ToolLoopDetectionConfig): ResolvedL
     config?.unknownToolThreshold,
     DEFAULT_LOOP_DETECTION_CONFIG.unknownToolThreshold,
   );
+  const pingPong = config?.detectors?.pingPong ?? DEFAULT_LOOP_DETECTION_CONFIG.detectors.pingPong;
 
   return {
     enabled: config?.enabled ?? DEFAULT_LOOP_DETECTION_CONFIG.enabled,
@@ -124,6 +126,7 @@ function resolveLoopDetectionConfig(config?: ToolLoopDetectionConfig): ResolvedL
       unknownToolThreshold,
       criticalThreshold,
       globalCircuitBreakerThreshold,
+      pingPong ? MIN_PING_PONG_HISTORY : 0,
     ),
     warningThreshold,
     unknownToolThreshold,
@@ -135,7 +138,7 @@ function resolveLoopDetectionConfig(config?: ToolLoopDetectionConfig): ResolvedL
       knownPollNoProgress:
         config?.detectors?.knownPollNoProgress ??
         DEFAULT_LOOP_DETECTION_CONFIG.detectors.knownPollNoProgress,
-      pingPong: config?.detectors?.pingPong ?? DEFAULT_LOOP_DETECTION_CONFIG.detectors.pingPong,
+      pingPong,
     },
   };
 }
@@ -520,7 +523,8 @@ function getPingPongStreak(
     alternatingTailCount += 1;
   }
 
-  if (alternatingTailCount < 2) {
+  // Both signatures need a repeated outcome; A/B or A/B/A is only first observation on one side.
+  if (alternatingTailCount < MIN_PING_PONG_HISTORY) {
     return { count: 0, noProgressEvidence: false };
   }
 
@@ -684,7 +688,11 @@ export function detectToolCallLoop(
     };
   }
 
-  if (resolvedConfig.detectors.pingPong && pingPong.count >= resolvedConfig.warningThreshold) {
+  if (
+    resolvedConfig.detectors.pingPong &&
+    pingPong.count >= resolvedConfig.warningThreshold &&
+    pingPong.noProgressEvidence
+  ) {
     log.warn(
       `Ping-pong loop warning: alternating calls count=${pingPong.count} currentTool=${toolName}`,
     );
@@ -825,6 +833,16 @@ export function recordToolCallOutcome(
   }
 
   const argsHash = hashToolCall(params.toolName, params.toolParams);
+  if (params.toolCallId) {
+    // Keep one identity hash beyond window trimming so late replay cannot displace newer progress.
+    // Diagnostic session pruning owns this metadata; no arguments or result payloads are retained.
+    const outcomeKey = hashToolCall(params.toolName, [runId, params.toolCallId]);
+    const completed = (state.toolCallOutcomeKeys ??= new Set());
+    if (completed.has(outcomeKey)) {
+      return undefined;
+    }
+    completed.add(outcomeKey);
+  }
   let matched = false;
   let recordedOutcome: ToolCallRecord | undefined;
   for (let i = state.toolCallHistory.length - 1; i >= 0; i -= 1) {
@@ -844,6 +862,10 @@ export function recordToolCallOutcome(
       continue;
     }
     if (call.resultHash !== undefined) {
+      // A terminal delivery can be replayed; one call must not advance either loop observer twice.
+      if (params.toolCallId) {
+        return undefined;
+      }
       continue;
     }
     call.resultHash = resultHash;

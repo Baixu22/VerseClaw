@@ -71,4 +71,49 @@ describe("node-host result and delivery contracts", () => {
       expect.objectContaining({ params: expect.objectContaining(route) }),
     );
   });
+
+  it("TF-0192 aborts the local wait for node.invoke without delivering late success", async () => {
+    let rejectGateway: ((error: unknown) => void) | undefined;
+    gatewayCall.mockImplementation(
+      () =>
+        new Promise((_, reject) => {
+          rejectGateway = reject;
+        }),
+    );
+    const abort = new AbortController();
+    const reason = new DOMException("operator cancelled", "AbortError");
+    const unhandled = vi.fn();
+    process.on("unhandledRejection", unhandled);
+    try {
+      const pending = invokeNodeSystemRunDirect({
+        request: {
+          command: "echo done",
+          workdir: undefined,
+          env: {},
+          security: "full",
+          ask: "off",
+          defaultTimeoutSec: 30,
+          approvalRunningNoticeMs: 0,
+          warnings: [],
+          signal: abort.signal,
+        },
+        target: {
+          nodeId: "node-1",
+          argv: ["sh", "-lc", "echo done"],
+          env: undefined,
+          invokeTimeoutMs: 35_000,
+          runTimeoutSec: 30,
+          supportsSystemRunPrepare: false,
+        },
+      });
+      await Promise.resolve();
+      abort.abort(reason);
+      await expect(pending).rejects.toBe(reason);
+      rejectGateway?.(new Error("gateway closed after cancel"));
+      await new Promise<void>((resolve) => setImmediate(resolve));
+      expect(unhandled).not.toHaveBeenCalled();
+    } finally {
+      process.removeListener("unhandledRejection", unhandled);
+    }
+  }, 1000);
 });
