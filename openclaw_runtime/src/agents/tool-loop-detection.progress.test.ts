@@ -127,6 +127,55 @@ describe("tool-loop progress evidence", () => {
     },
   );
 
+  it("TF-0213 changing poll wait duration cannot reset a no-progress streak", () => {
+    const session = state();
+    const config = { warningThreshold: 2, criticalThreshold: 3, globalCircuitBreakerThreshold: 4 };
+    const result = {
+      content: [{ type: "text", text: "(no new output)\n\nProcess still running." }],
+      details: { status: "running", aggregated: "输出暂未变化" },
+    };
+    for (const timeout of [0, 1000, 5000]) {
+      recordCalls(session, 1, {
+        toolName: "process",
+        toolParams: { action: "poll", sessionId: "job", timeout },
+        result,
+        config,
+        idPrefix: `wait-${timeout}`,
+      });
+    }
+    expect(
+      detectToolCallLoop(
+        session,
+        "process",
+        { action: "poll", sessionId: "job", timeout: 30000 },
+        config,
+      ),
+    ).toMatchObject({
+      stuck: true,
+      level: "critical",
+      detector: "known_poll_no_progress",
+      count: 3,
+    });
+    expect(
+      detectToolCallLoop(
+        session,
+        "process",
+        { action: "poll", sessionId: "other-job", timeout: 30000 },
+        config,
+      ),
+    ).toEqual({ stuck: false });
+    recordCalls(session, 1, {
+      toolName: "process",
+      toolParams: { action: "poll", sessionId: "job", timeout: 30000 },
+      config,
+      idPrefix: "progress",
+      result: { ...result, details: { status: "running", aggregated: "输出已有进展" } },
+    });
+    expect(
+      detectToolCallLoop(session, "process", { action: "poll", sessionId: "job" }, config),
+    ).toEqual({ stuck: false });
+  });
+
   it.each([false, true])(
     "TF-0207 replay after history trimming stays ignored across alias merge=%s",
     (merge) => {
