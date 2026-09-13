@@ -962,41 +962,44 @@ export async function runBeforeToolCallHook(args: {
     });
     const toolContext = buildToolContext(toolIdentity);
     const trustedPolicyResult = shouldRunTrustedPolicies
-      ? await runTrustedToolPolicies(
-          {
-            toolName,
-            params: normalizedParams,
-            ...toolIdentity,
-            ...(args.ctx?.runId && { runId: args.ctx.runId }),
-            ...(args.toolCallId && { toolCallId: args.toolCallId }),
-            ...(derivedToolParams.derivedPaths
-              ? { derivedPaths: derivedToolParams.derivedPaths }
-              : {}),
-          },
-          toolContext,
-          {
-            ...(args.ctx?.config ? { config: args.ctx.config } : {}),
-            deriveEvent: deriveToolEventParams,
-            normalizeEvent(eventValue) {
-              const normalizedEventParams = normalizeCodeModeExecBeforeHookParamsForToolKind({
-                toolKind: eventValue.toolKind,
-                params: eventValue.params,
-              });
-              if (!isPlainObject(normalizedEventParams)) {
-                return undefined;
-              }
-              const normalizedEventIdentity = getCodeModeExecBeforeHookMetadataForToolKind({
-                toolKind: eventValue.toolKind,
-                params: normalizedEventParams,
-              });
-              return {
-                params: normalizedEventParams,
-                ...(normalizedEventIdentity
-                  ? { event: normalizedEventIdentity, ctx: normalizedEventIdentity }
-                  : {}),
-              };
+      ? await awaitWithAbort(
+          runTrustedToolPolicies(
+            {
+              toolName,
+              params: normalizedParams,
+              ...toolIdentity,
+              ...(args.ctx?.runId && { runId: args.ctx.runId }),
+              ...(args.toolCallId && { toolCallId: args.toolCallId }),
+              ...(derivedToolParams.derivedPaths
+                ? { derivedPaths: derivedToolParams.derivedPaths }
+                : {}),
             },
-          },
+            toolContext,
+            {
+              ...(args.ctx?.config ? { config: args.ctx.config } : {}),
+              deriveEvent: deriveToolEventParams,
+              normalizeEvent(eventValue) {
+                const normalizedEventParams = normalizeCodeModeExecBeforeHookParamsForToolKind({
+                  toolKind: eventValue.toolKind,
+                  params: eventValue.params,
+                });
+                if (!isPlainObject(normalizedEventParams)) {
+                  return undefined;
+                }
+                const normalizedEventIdentity = getCodeModeExecBeforeHookMetadataForToolKind({
+                  toolKind: eventValue.toolKind,
+                  params: normalizedEventParams,
+                });
+                return {
+                  params: normalizedEventParams,
+                  ...(normalizedEventIdentity
+                    ? { event: normalizedEventIdentity, ctx: normalizedEventIdentity }
+                    : {}),
+                };
+              },
+            },
+          ),
+          args.signal,
         )
       : undefined;
     args.signal?.throwIfAborted();
@@ -1071,18 +1074,22 @@ export async function runBeforeToolCallHook(args: {
       return allowed;
     }
     const hookEventParams = isPlainObject(policyAdjustedParams) ? policyAdjustedParams : {};
-    const hookResult = await hookRunner.runBeforeToolCall(
-      {
-        toolName,
-        params: hookEventParams,
-        ...policyAdjustedToolIdentity,
-        ...(args.ctx?.runId && { runId: args.ctx.runId }),
-        ...(args.toolCallId && { toolCallId: args.toolCallId }),
-        ...(policyAdjustedDerivedToolParams.derivedPaths
-          ? { derivedPaths: policyAdjustedDerivedToolParams.derivedPaths }
-          : {}),
-      },
-      policyAdjustedToolContext,
+    // Plugins do not receive this signal; cancellation must not depend on their promise settling.
+    const hookResult = await awaitWithAbort(
+      hookRunner.runBeforeToolCall(
+        {
+          toolName,
+          params: hookEventParams,
+          ...policyAdjustedToolIdentity,
+          ...(args.ctx?.runId && { runId: args.ctx.runId }),
+          ...(args.toolCallId && { toolCallId: args.toolCallId }),
+          ...(policyAdjustedDerivedToolParams.derivedPaths
+            ? { derivedPaths: policyAdjustedDerivedToolParams.derivedPaths }
+            : {}),
+        },
+        policyAdjustedToolContext,
+      ),
+      args.signal,
     );
     args.signal?.throwIfAborted();
 
