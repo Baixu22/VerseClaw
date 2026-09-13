@@ -152,10 +152,26 @@ function mergeSessionState(target: SessionState, source: SessionState): void {
   }
   if (source.toolCallHistory?.length) {
     // Id-only and key-only entries may interleave; old outcomes must not hide newer progress.
-    target.toolCallHistory = [
-      ...(target.toolCallHistory ?? []),
-      ...source.toolCallHistory,
-    ].toSorted((a, b) => a.timestamp - b.timestamp);
+    const history = [...(target.toolCallHistory ?? []), ...source.toolCallHistory].toSorted(
+      (a, b) => a.timestamp - b.timestamp,
+    );
+    const calls = new Map<string, ToolCallRecord>();
+    target.toolCallHistory = history.filter((call) => {
+      if (!call.toolCallId) return true;
+      const key = JSON.stringify([call.runId ?? "", call.toolName, call.toolCallId]);
+      const prior = calls.get(key);
+      if (!prior) {
+        calls.set(key, call);
+        return true;
+      }
+      // Aliases can observe the same request/result independently. Keep its original
+      // arguments and timestamp, filling a missing result without counting it twice.
+      if (prior.resultHash === undefined && call.resultHash !== undefined) {
+        prior.resultHash = call.resultHash;
+        prior.unknownToolName = call.unknownToolName;
+      }
+      return false;
+    });
   }
   if (source.toolLoopWarningBuckets?.size) {
     const buckets = (target.toolLoopWarningBuckets ??= new Map());
