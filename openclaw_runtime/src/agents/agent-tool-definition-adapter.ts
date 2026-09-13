@@ -7,6 +7,7 @@ import { createHash } from "node:crypto";
 import { logDebug, logError } from "../logger.js";
 import { redactToolDetail } from "../logging/redact.js";
 import { isPlainObject } from "../utils.js";
+import { awaitWithAbort } from "../utils/await-with-abort.js";
 import type { HookContext } from "./agent-tools.before-tool-call.js";
 import {
   buildBlockedToolResult,
@@ -290,11 +291,16 @@ async function prepareToolParamsBeforeHook(params: {
 }): Promise<unknown> {
   const prepare = (params.tool as BeforeToolCallPreparingTool).prepareBeforeToolCallParams;
   return prepare
-    ? await prepare(params.rawParams, {
-        ...(params.toolCallId ? { toolCallId: params.toolCallId } : {}),
-        ...(params.hookContext ? { hookContext: params.hookContext } : {}),
-        ...(params.signal ? { signal: params.signal } : {}),
-      })
+    ? await awaitWithAbort(
+        Promise.resolve(
+          prepare(params.rawParams, {
+            ...(params.toolCallId ? { toolCallId: params.toolCallId } : {}),
+            ...(params.hookContext ? { hookContext: params.hookContext } : {}),
+            ...(params.signal ? { signal: params.signal } : {}),
+          }),
+        ),
+        params.signal,
+      )
     : params.rawParams;
 }
 
