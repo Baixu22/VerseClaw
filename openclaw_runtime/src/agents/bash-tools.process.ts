@@ -7,6 +7,7 @@ import { formatDurationCompact } from "../infra/format-time/format-duration.ts";
 import { getDiagnosticSessionState } from "../logging/diagnostic-session-state.js";
 import { killProcessTree } from "../process/kill-tree.js";
 import { getProcessSupervisor } from "../process/supervisor/index.js";
+import { awaitWithAbort } from "../utils/await-with-abort.js";
 import {
   type ProcessSession,
   deleteSession,
@@ -378,29 +379,35 @@ export function createProcessTool(
       };
 
       const writeToStdin = async (stdin: WritableStdin, data: string) => {
-        await new Promise<void>((resolve, reject) => {
-          stdin.write(data, (err) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          });
-        });
-        // A completed write must not let a cancelled call continue into EOF or a success result.
         signal?.throwIfAborted();
+        await awaitWithAbort(
+          new Promise<void>((resolve, reject) => {
+            stdin.write(data, (err) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve();
+              }
+            });
+          }),
+          signal,
+        );
       };
 
       const endStdin = async (stdin: WritableStdin) => {
-        await new Promise<void>((resolve, reject) => {
-          stdin.end((err) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          });
-        });
+        signal?.throwIfAborted();
+        await awaitWithAbort(
+          new Promise<void>((resolve, reject) => {
+            stdin.end((err) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve();
+              }
+            });
+          }),
+          signal,
+        );
       };
 
       const runningSessionResult = (
@@ -452,32 +459,52 @@ export function createProcessTool(
           if (!scopedSession.backgrounded) {
             return failText(`Session ${params.sessionId} is not backgrounded.`);
           }
+          const observeChildExit = () => {
+            if (scopedSession.exited) {
+              return;
+            }
+            const child = scopedSession.child;
+            if (!child || (child.exitCode == null && child.signalCode == null)) {
+              return;
+            }
+            // Node can publish exit before stdio ends; markExited destroys these streams.
+            if (
+              [child.stdout, child.stderr].some(
+                (stream) => stream?.readableEnded === false && !stream.destroyed,
+              )
+            ) {
+              return;
+            }
+            const exitCode = child.exitCode;
+            const exitSignal = child.signalCode;
+            const status = exitCode === 0 && exitSignal == null ? "completed" : "failed";
+            markExited(scopedSession, exitCode, exitSignal, status);
+          };
+          observeChildExit();
           const pollWaitMs = resolvePollWaitMs(params.timeout);
           if (pollWaitMs > 0 && !scopedSession.exited) {
             const deadline = Date.now() + pollWaitMs;
             while (!scopedSession.exited && Date.now() < deadline) {
+              observeChildExit();
+              if (scopedSession.exited) {
+                break;
+              }
               await sleepPollInterval(Math.max(0, Math.min(250, deadline - Date.now())), signal);
             }
+            observeChildExit();
           }
           signal?.throwIfAborted();
           const { stdout, stderr } = drainSession(scopedSession);
           const exited = scopedSession.exited;
           const exitCode = scopedSession.exitCode ?? null;
           const exitSignal = scopedSession.exitSignal ?? undefined;
-          if (exited) {
-            const status = exitCode === 0 && exitSignal == null ? "completed" : "failed";
-            markExited(
-              scopedSession,
-              scopedSession.exitCode ?? null,
-              scopedSession.exitSignal ?? null,
-              status,
-            );
-          }
-          const status = exited
-            ? exitCode === 0 && exitSignal == null
-              ? "completed"
-              : "failed"
-            : "running";
+          // The owner can report timeout/cancellation even if the child exits with code zero.
+          // Re-marking exit here would overwrite that status, reason, and retention timestamp.
+          const terminal = exited ? getFinishedSession(scopedSession.id) : undefined;
+          const completed = terminal
+            ? terminal.status === "completed"
+            : exitCode === 0 && exitSignal == null;
+          const status = exited ? (completed ? "completed" : "failed") : "running";
           const output = [stdout.trimEnd(), stderr.trimEnd()].filter(Boolean).join("\n").trim();
           const hasNewOutput = output.length > 0;
           const retryInMs = exited
@@ -620,6 +647,7 @@ export function createProcessTool(
             keys: params.keys,
             hex: params.hex,
             literal: params.literal,
+            signal,
           });
         }
 
@@ -715,6 +743,9 @@ export function createProcessTool(
 
         case "remove": {
           if (scopedSession) {
+            if (!scopedSession.backgrounded) {
+              return failText(`Session ${params.sessionId} is not backgrounded.`);
+            }
             const canceled = cancelManagedSession(scopedSession.id);
             if (canceled) {
               // Keep remove semantics deterministic: drop from process registry now.
@@ -727,6 +758,8 @@ export function createProcessTool(
                   `Unable to remove session ${params.sessionId}: no active supervisor run or process id.`,
                 );
               }
+              // The exit callback still owns this object after its registry entry is removed.
+              scopedSession.backgrounded = false;
               markExited(scopedSession, null, "SIGKILL", "failed");
               deleteSession(params.sessionId);
             }

@@ -1,0 +1,329 @@
+{
+  "applied_at": "2026-09-13T02:33:39.008024Z",
+  "base_graph_hash": "b26abd54d4d1865021698e47498db29cbb6fde70909220526522ec7f7cfcd2bd",
+  "base_summary": {
+    "edge_count": 353,
+    "node_count": 208,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0199",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r4\\TF-0199.log",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r4\\final-evidence.json"
+        ],
+        "execution_hints": [
+          "本节点开发、回归与工程复核已完成；共同 agents 106/106、native 2/2、Electron 2/2 通过，结构化复核两项发现均已关闭。",
+          "后续仅从新反例接力，不把工程验收作为真人、default-on 或 GA 放行。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "01a09844-eeed-7d92-9e54-09df17107685"
+        ],
+        "summary": "未包装工具适配器在准备与执行边界保持取消原因，并在成功、失败和取消后关闭进度。"
+      },
+      "id": "TF-0199"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0200",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r4\\final-evidence.json"
+        ],
+        "execution_hints": [
+          "本节点开发、回归与工程复核已完成；共同 agents 106/106、native 2/2、Electron 2/2 通过，结构化复核两项发现均已关闭。",
+          "后续仅从新反例接力，不把工程验收作为真人、default-on 或 GA 放行。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "01a09844-eeed-7d92-9e54-09df17107685"
+        ],
+        "summary": "客户端委托预取消不预约，预约或完成阶段取消会清理预约，不产生 pending 交接。"
+      },
+      "id": "TF-0200"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0201",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r4\\final-evidence.json"
+        ],
+        "execution_hints": [
+          "本节点开发、回归与工程复核已完成；共同 agents 106/106、native 2/2、Electron 2/2 通过，结构化复核两项发现均已关闭。",
+          "后续仅从新反例接力，不把工程验收作为真人、default-on 或 GA 放行。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "01a09844-eeed-7d92-9e54-09df17107685"
+        ],
+        "summary": "插件审批登记与决策等待均可取消；晚到批准不覆盖取消，仅通知 CANCELLED。"
+      },
+      "id": "TF-0201"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0202",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r4\\final-evidence.json"
+        ],
+        "execution_hints": [
+          "本节点开发、回归与工程复核已完成；共同 agents 106/106、native 2/2、Electron 2/2 通过，结构化复核两项发现均已关闭。",
+          "后续仅从新反例接力，不把工程验收作为真人、default-on 或 GA 放行。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "01a09844-eeed-7d92-9e54-09df17107685"
+        ],
+        "summary": "异步可信策略与插件钩子返回后先检查取消，不执行后续钩子、审批或错误地返回允许。"
+      },
+      "id": "TF-0202"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0203",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r4\\final-evidence.json"
+        ],
+        "execution_hints": [
+          "本节点开发、回归与工程复核已完成；共同 agents 106/106、native 2/2、Electron 2/2 通过，结构化复核两项发现均已关闭。",
+          "后续仅从新反例接力，不把工程验收作为真人、default-on 或 GA 放行。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "01a09844-eeed-7d92-9e54-09df17107685"
+        ],
+        "summary": "进程输入及 EOF 回调等待可及时取消并移除监听器，不继续后续副作用。"
+      },
+      "id": "TF-0203"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0204",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r4\\final-evidence.json"
+        ],
+        "execution_hints": [
+          "本节点开发、回归与工程复核已完成；共同 agents 106/106、native 2/2、Electron 2/2 通过，结构化复核两项发现均已关闭。",
+          "后续仅从新反例接力，不把工程验收作为真人、default-on 或 GA 放行。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "01a09844-eeed-7d92-9e54-09df17107685"
+        ],
+        "summary": "已退出 child 的未结束输出流保持可读，读完 stdout/stderr 后才结束轮询会话。"
+      },
+      "id": "TF-0204"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0205",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r4\\final-evidence.json"
+        ],
+        "execution_hints": [
+          "本节点开发、回归与工程复核已完成；共同 agents 106/106、native 2/2、Electron 2/2 通过，结构化复核两项发现均已关闭。",
+          "后续仅从新反例接力，不把工程验收作为真人、default-on 或 GA 放行。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "01a09844-eeed-7d92-9e54-09df17107685"
+        ],
+        "summary": "首次退出轮询沿用执行所有者终态，保留失败、退出原因及结束时间，不按零退出码重写成功。"
+      },
+      "id": "TF-0205"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0206",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r4\\final-evidence.json"
+        ],
+        "execution_hints": [
+          "本节点开发、回归与工程复核已完成；共同 agents 106/106、native 2/2、Electron 2/2 通过，结构化复核两项发现均已关闭。",
+          "后续仅从新反例接力，不把工程验收作为真人、default-on 或 GA 放行。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "01a09844-eeed-7d92-9e54-09df17107685"
+        ],
+        "summary": "PID fallback remove 使晚到退出回调无法重新创建 finished 会话。"
+      },
+      "id": "TF-0206"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0207",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r4\\final-evidence.json"
+        ],
+        "execution_hints": [
+          "本节点开发、回归与工程复核已完成；共同 agents 106/106、native 2/2、Electron 2/2 通过，结构化复核两项发现均已关闭。",
+          "后续仅从新反例接力，不把工程验收作为真人、default-on 或 GA 放行。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "01a09844-eeed-7d92-9e54-09df17107685"
+        ],
+        "summary": "完成身份摘要独立于循环历史裁剪，别名合并保留去重信息，按 run 隔离；首次 result-only 观察仍可用。"
+      },
+      "id": "TF-0207"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0208",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts",
+          "harness/specs/tasks/live-tool-runtime-reliability.md",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md",
+          "harness/specs/rules/tool-runtime-lifecycle.md",
+          "C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r4\\final-evidence.json"
+        ],
+        "execution_hints": [
+          "本节点开发、回归与工程复核已完成；共同 agents 106/106、native 2/2、Electron 2/2 通过，结构化复核两项发现均已关闭。",
+          "后续仅从新反例接力，不把工程验收作为真人、default-on 或 GA 放行。"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "01a09844-eeed-7d92-9e54-09df17107685"
+        ],
+        "summary": "乒乓判断要求两侧各自重复稳定结果，启用时窗口至少保留四条，低阈值配置已由失败反例复验。"
+      },
+      "id": "TF-0208"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          ".tmp/context-audit-blind-review-and-reconciliation-2026-08-24.md",
+          ".tmp/architecture-decision-legitimacy-2026-08-24.md",
+          ".tmp/moat-sizing-and-deliverable-boundary-2026-08-24.md",
+          "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md"
+        ]
+      },
+      "id": "TF-0102"
+    }
+  ],
+  "created_at": "2026-09-13T02:33:38.668348Z",
+  "proposal_id": "TFP-tool-runtime-relay-r4-close-20260913",
+  "rationale": "用户授权本轮至少十节点的开发、测试及验收。TF-0199..TF-0208 已各有失败反例与修复证据；最终106+2回归、2项Electron、类型静态检查、构建、通信、专用Harness通过，R1两项审查发现已修复且R2结构化审查无发现。全局Harness历史路径归属红门单独保留，不作为通过。",
+  "session_id": "01a09844-eeed-7d92-9e54-09df17107685",
+  "status": "applied"
+}

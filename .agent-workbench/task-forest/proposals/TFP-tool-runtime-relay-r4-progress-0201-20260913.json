@@ -1,0 +1,38 @@
+{
+  "applied_at": "2026-09-13T01:21:31.371884Z",
+  "base_graph_hash": "3120f178db0ad4db8dc3f568b8b91d00e4227f207234c14b28dfdf9b1df3844f",
+  "base_summary": {
+    "edge_count": 353,
+    "node_count": 208,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0201",
+      "progress": 85,
+      "status": "review_needed"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "execution_hints": [
+          "聚焦回归日志：C:\\Users\\27933\\AppData\\Local\\ClawX-scratch\\tool-runtime-relay-20260913-r4\\TF-0201.log"
+        ],
+        "summary": "实现及本节点聚焦回归通过；待共同构建、通信、Electron 与结构化复核。"
+      },
+      "id": "TF-0201"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0202",
+      "progress": 0,
+      "status": "in_progress"
+    }
+  ],
+  "created_at": "2026-09-13T01:21:31.118114Z",
+  "proposal_id": "TFP-tool-runtime-relay-r4-progress-0201-20260913",
+  "rationale": "用户授权持续完成十节点；本节点已通过聚焦回归，进入共同验收队列，顺序启动下一节点。",
+  "session_id": null,
+  "status": "applied"
+}

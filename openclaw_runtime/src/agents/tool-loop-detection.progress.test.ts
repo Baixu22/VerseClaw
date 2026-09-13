@@ -56,6 +56,125 @@ function recordCalls(
 }
 
 describe("tool-loop progress evidence", () => {
+  it.each([false, true])(
+    "TF-0207 replay after history trimming stays ignored across alias merge=%s",
+    (merge) => {
+      const session = merge ? getDiagnosticSessionState({ sessionId: "dedup-alias-id" }) : state();
+      recordCalls(session, 1, { runId: "trimmed-run", idPrefix: "completed" });
+      recordCalls(session, TOOL_CALL_HISTORY_SIZE + 5, {
+        runId: "trimmed-run",
+        idPrefix: "new-progress",
+        toolParams: { path: "new-file" },
+      });
+      let target = session;
+      if (merge) {
+        getDiagnosticSessionState({ sessionKey: "dedup-alias-key" });
+        target = getDiagnosticSessionState({
+          sessionId: "dedup-alias-id",
+          sessionKey: "dedup-alias-key",
+        });
+      }
+      const retained = [...target.toolCallHistory!];
+      expect(retained.some((call) => call.toolCallId === "completed-0")).toBe(false);
+      expect(
+        recordToolCallOutcome(target, {
+          toolName: "read",
+          toolParams: {},
+          toolCallId: "completed-0",
+          runId: "trimmed-run",
+          result: { content: [{ type: "text", text: "unchanged" }] },
+        }),
+      ).toBeUndefined();
+      expect(target.toolCallHistory).toEqual(retained);
+    },
+  );
+
+  it("TF-0207 still observes the first result-only delivery when general loop detection is disabled", () => {
+    const session = state();
+    const outcome = {
+      toolName: "read",
+      toolParams: {},
+      toolCallId: "result-only",
+      runId: "observer-run",
+      config: { enabled: false },
+      result: { content: [{ type: "text", text: "done" }] },
+    };
+    expect(recordToolCallOutcome(session, outcome)).toBeDefined();
+    expect(recordToolCallOutcome(session, outcome)).toBeUndefined();
+    expect(session.toolCallHistory).toHaveLength(1);
+  });
+
+  it("TF-0208 retains four completed calls even when every configured threshold fits three", () => {
+    const session = state();
+    const config: ToolLoopDetectionConfig = {
+      historySize: 3,
+      warningThreshold: 1,
+      criticalThreshold: 2,
+      globalCircuitBreakerThreshold: 3,
+      unknownToolThreshold: 3,
+      detectors: { genericRepeat: false, knownPollNoProgress: false, pingPong: true },
+    };
+    for (let index = 0; index < 8; index++) {
+      recordCalls(session, 1, {
+        config,
+        toolName: index % 2 === 0 ? "read" : "list",
+        idPrefix: "small-window-" + index,
+      });
+    }
+    expect(detectToolCallLoop(session, "read", {}, config)).toMatchObject({
+      stuck: true,
+      level: "critical",
+      detector: "ping_pong",
+    });
+    expect(session.toolCallHistory).toHaveLength(4);
+  });
+
+  it("TF-0207 duplicate terminal delivery does not inflate one run's loop history", () => {
+    const session = state();
+    const config = { warningThreshold: 2, criticalThreshold: 4, globalCircuitBreakerThreshold: 5 };
+    recordCalls(session, 2, { config, runId: "dedup-run" });
+    const originalHashes = session.toolCallHistory!.map((call) => call.resultHash);
+    for (let i = 0; i < 2; i++) {
+      expect(
+        recordToolCallOutcome(session, {
+          toolName: "read",
+          toolParams: {},
+          toolCallId: "call-" + i,
+          runId: "dedup-run",
+          config,
+          result: { content: [{ type: "text", text: "unchanged" }] },
+        }),
+      ).toBeUndefined();
+    }
+    expect(session.toolCallHistory).toHaveLength(2);
+    expect(session.toolCallHistory!.map((call) => call.resultHash)).toEqual(originalHashes);
+    const detection = detectToolCallLoop(session, "read", {}, config, { runId: "dedup-run" });
+    expect(detection.stuck && detection.level === "critical").toBe(false);
+    recordCalls(session, 1, { config, runId: "separate-run" });
+    expect(session.toolCallHistory).toHaveLength(3);
+  });
+
+  it("TF-0208 ping-pong requires repeated outcomes on both sides", () => {
+    const session = state();
+    const config = {
+      warningThreshold: 2,
+      criticalThreshold: 3,
+      globalCircuitBreakerThreshold: 6,
+      detectors: { genericRepeat: false, knownPollNoProgress: false, pingPong: true },
+    };
+    for (let i = 0; i < 4; i++) {
+      const toolName = i % 2 === 0 ? "read" : "list";
+      const before = detectToolCallLoop(session, toolName, {}, config);
+      expect(before.stuck).toBe(false);
+      recordCalls(session, 1, { config, toolName, idPrefix: "alternating-" + i });
+    }
+    expect(detectToolCallLoop(session, "read", {}, config)).toMatchObject({
+      stuck: true,
+      level: "critical",
+      detector: "ping_pong",
+    });
+  });
+
   it("TF-0188 merges session aliases in chronological order so old outcomes cannot hide progress", () => {
     const idOnly = getDiagnosticSessionState({ sessionId: "alias-id" });
     const keyOnly = getDiagnosticSessionState({ sessionKey: "alias-key" });
@@ -230,4 +349,94 @@ describe("tool-loop progress evidence", () => {
       }
     },
   );
+
+  it("TF-0195 does not warn on ping-pong that is still making progress", () => {
+    const session = state();
+    const config: ToolLoopDetectionConfig = {
+      warningThreshold: 4,
+      criticalThreshold: 8,
+      detectors: { genericRepeat: false, pingPong: true },
+    };
+    for (let index = 0; index < 6; index++) {
+      const toolName = index % 2 === 0 ? "read" : "write";
+      const toolParams = { path: toolName };
+      const toolCallId = `ping-pong-${index}`;
+      recordToolCall(session, toolName, toolParams, toolCallId, config);
+      recordToolCallOutcome(session, {
+        toolName,
+        toolParams,
+        toolCallId,
+        config,
+        result: { content: [{ type: "text", text: `progress-${index}` }] },
+      });
+    }
+    expect(detectToolCallLoop(session, "read", { path: "read" }, config)).toEqual({ stuck: false });
+  });
+
+  it("TF-0197 alias merge keeps existing stuck and long-running warn timestamps", () => {
+    const now = Date.now();
+    const idOnly = getDiagnosticSessionState({ sessionId: "warn-id" });
+    idOnly.state = "processing";
+    idOnly.lastStuckWarnAgeMs = 100;
+    idOnly.lastLongRunningWarnAgeMs = 200;
+    idOnly.lastActivity = now;
+    const keyOnly = getDiagnosticSessionState({ sessionKey: "warn-key" });
+    keyOnly.state = "processing";
+    keyOnly.lastActivity = now + 1;
+    const merged = getDiagnosticSessionState({ sessionId: "warn-id", sessionKey: "warn-key" });
+    expect(merged.lastStuckWarnAgeMs).toBe(100);
+    expect(merged.lastLongRunningWarnAgeMs).toBe(200);
+    expect(merged.lastActivity).toBe(now);
+  });
+
+  it.each([
+    { newer: "id", warning: undefined },
+    { newer: "key", warning: undefined },
+    { newer: "id", warning: 1000 },
+    { newer: "key", warning: 1000 },
+  ])("TF-0197 newer $newer activity keeps its warning cycle ($warning)", ({ newer, warning }) => {
+    const idOnly = getDiagnosticSessionState({ sessionId: "progress-warn-id" });
+    const keyOnly = getDiagnosticSessionState({ sessionKey: "progress-warn-key" });
+    const previous = newer === "id" ? keyOnly : idOnly;
+    const progressed = newer === "id" ? idOnly : keyOnly;
+    const now = Date.now();
+    previous.state = "processing";
+    previous.generation = 20;
+    previous.lastActivity = now - 600_000;
+    previous.lastStuckWarnAgeMs = 600_000;
+    previous.lastLongRunningWarnAgeMs = 600_000;
+    // Alias generations are independent; the newer activity can have the lower counter.
+    progressed.state = "processing";
+    progressed.generation = 1;
+    progressed.lastActivity = now;
+    progressed.lastStuckWarnAgeMs = warning;
+    progressed.lastLongRunningWarnAgeMs = warning;
+    const merged = getDiagnosticSessionState({
+      sessionId: "progress-warn-id",
+      sessionKey: "progress-warn-key",
+    });
+    expect(merged.lastActivity).toBe(now);
+    expect(merged.lastStuckWarnAgeMs).toBe(warning);
+    expect(merged.lastLongRunningWarnAgeMs).toBe(warning);
+  });
+
+  it("TF-0197 the same activity cycle keeps the later warning backoff", () => {
+    const idOnly = getDiagnosticSessionState({ sessionId: "same-cycle-id" });
+    const keyOnly = getDiagnosticSessionState({ sessionKey: "same-cycle-key" });
+    for (const alias of [idOnly, keyOnly]) {
+      alias.state = "processing";
+      alias.generation = 1;
+      alias.lastActivity = 1000;
+    }
+    idOnly.lastStuckWarnAgeMs = 100;
+    idOnly.lastLongRunningWarnAgeMs = 400;
+    keyOnly.lastStuckWarnAgeMs = 200;
+    keyOnly.lastLongRunningWarnAgeMs = 300;
+    const merged = getDiagnosticSessionState({
+      sessionId: "same-cycle-id",
+      sessionKey: "same-cycle-key",
+    });
+    expect(merged.lastStuckWarnAgeMs).toBe(200);
+    expect(merged.lastLongRunningWarnAgeMs).toBe(400);
+  });
 });

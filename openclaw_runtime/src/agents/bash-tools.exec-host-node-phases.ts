@@ -36,6 +36,7 @@ import {
   resolveSystemRunCommandRequest,
 } from "../infra/system-run-command.js";
 import { addSafeTimeoutDelayGraceMs } from "../utils/timer-delay.js";
+import { awaitWithAbort } from "../utils/await-with-abort.js";
 import type { ExecuteNodeHostCommandParams } from "./bash-tools.exec-host-node.types.js";
 import { renderExecOutputText } from "./bash-tools.exec-output.js";
 import type { ExecToolDetails } from "./bash-tools.exec-types.js";
@@ -362,23 +363,27 @@ export async function invokeNodeSystemRunDirect(params: {
   target: NodeExecutionTarget;
 }): Promise<AgentToolResult<ExecToolDetails>> {
   const startedAt = Date.now();
-  const raw = await callGatewayTool(
-    "node.invoke",
-    { timeoutMs: params.target.invokeTimeoutMs },
-    buildNodeSystemRunInvoke({
-      target: params.target,
-      command: params.target.argv,
-      rawCommand: params.request.command,
-      cwd: params.request.workdir,
-      agentId: params.request.agentId,
-      sessionKey: params.request.sessionKey,
-      turnSourceChannel: params.request.turnSourceChannel,
-      turnSourceTo: params.request.turnSourceTo,
-      turnSourceAccountId: params.request.turnSourceAccountId,
-      turnSourceThreadId: params.request.turnSourceThreadId,
-      notifyOnExit: params.request.notifyOnExit,
-    }),
+  const raw = await awaitWithAbort(
+    callGatewayTool(
+      "node.invoke",
+      { timeoutMs: params.target.invokeTimeoutMs },
+      buildNodeSystemRunInvoke({
+        target: params.target,
+        command: params.target.argv,
+        rawCommand: params.request.command,
+        cwd: params.request.workdir,
+        agentId: params.request.agentId,
+        sessionKey: params.request.sessionKey,
+        turnSourceChannel: params.request.turnSourceChannel,
+        turnSourceTo: params.request.turnSourceTo,
+        turnSourceAccountId: params.request.turnSourceAccountId,
+        turnSourceThreadId: params.request.turnSourceThreadId,
+        notifyOnExit: params.request.notifyOnExit,
+      }),
+    ),
+    params.request.signal,
   );
+  params.request.signal?.throwIfAborted();
   return formatNodeRunToolResult({ raw, startedAt, cwd: params.request.workdir });
 }
 

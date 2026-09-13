@@ -1,0 +1,28 @@
+{
+  "applied_at": "2026-09-13T02:08:15.106859Z",
+  "base_graph_hash": "da9c25a87fe1275450fd5213a9d4b99644d1bdfcb74e05ea45ea547f2201e4d1",
+  "base_summary": {
+    "edge_count": 353,
+    "node_count": 208,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0208",
+      "progress": 85,
+      "status": "review_needed"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0207",
+      "progress": 80,
+      "status": "in_progress"
+    }
+  ],
+  "created_at": "2026-09-13T02:08:14.850445Z",
+  "proposal_id": "TFP-tool-runtime-relay-r4-review-fixes-20260913",
+  "rationale": "结构化复核的两个具体缺陷已确认；TF-0208 小窗口反例已由红转绿，继续修复 TF-0207 历史裁剪后的去重缺口。",
+  "session_id": null,
+  "status": "applied"
+}

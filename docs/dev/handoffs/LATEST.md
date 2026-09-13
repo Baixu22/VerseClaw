@@ -1,5 +1,34 @@
 # 会话交接（LATEST）
 
+## 当前收尾：提交第三、第四批成果（2026-09-13）
+
+- 用户已授权保存全部相关修改并保证工作区干净。本次范围为 TF-0189..TF-0208 的代码、测试、三语 README、Harness 规则、验收报告、任务提案与快照。
+- 完整提交复核发现 TF-0197 新进展后的告警重置被旧别名覆盖，已补反例并修复。现在按真实活动周期合并告警退避，空别名创建不刷新停滞时钟；没有新增节点。
+- 收尾复验：agents **111/111**、native **2/2**、Electron **2/2**，runtime 类型、scoped typed lint、构建/Gateway smoke、通信回放通过。源代码外的全局 Harness 历史路径归属阻断仍保留。
+- 用户明确要求由独立 Astra 会话完成最后复核；审查代理已返回 `findings=[]`、`patch is correct`。CLI 和 ChatGPT 入口失败未计为通过。TF-0197 已重新收口，TF-0189..TF-0208 全部 done/100。
+- 日志与审查结果：`%LOCALAPPDATA%/ClawX-scratch/tool-runtime-commit-20260913/`，包括 `astra-independent-review.json`。详见 `docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260913.md` 文末。
+- 两批成果统一保存在本次本地提交 `fix(runtime): finalize tool lifecycle reliability for TF-0189..TF-0208` 中，提交后以 Git 状态为空作为收尾检查。临时日志和审查快照保存在工作区外，依赖与有效构建保留供后续开发使用。
+
+## 当前接力：工具运行时可靠性第四批十节点完成（2026-09-13，TF-0199..TF-0208）
+
+- 已按本轮用户“至少十节点”的授权，从第三批现有工作树增量开发 TF-0199..TF-0208；此前 TF-0189..TF-0198 的未提交成果完整保留。十个新节点均挂 TF-0102，已通过官方 CLI 收口为 done/100；开发、测试、工程验收闭环完成，文档与登记不计入数量。
+- 已修复：未包装工具终态与取消、客户端委托预约清理、审批登记取消、策略阶段取消、stdin/EOF 等待取消、child 输出读完再结束、poll 保留 owner 失败与终态、remove 防迟到退出恢复、重复 outcome 幂等、乒乓两侧重复证据。
+- 实际通过：逐节点 focused；最终 agents 12 文件 **106/106**、native unit-fast **2/2**；tsgo:core、scoped typed lint、E2E ESLint；最终 runtime 构建与 Gateway smoke、Vite 构建、通信 replay/compare、Electron foreground **2/2**、专用 Harness validate/dry-run。
+- 结构化审查 R1 发现两项 P2，均已补红门反例并修复：乒乓最小历史容量不足、历史裁剪后重复终态重新计数。R2 返回 `findings=[]`、`patch is correct`、exit 0。完成身份摘要随既有诊断会话状态清理，历史裁剪与别名合并不会丢失去重信息，首次 result-only 观察仍保留。
+- 全局 `harness:ci` 仍在整个分支 Gateway 场景路径归属检查失败，未计通过。没有扩大所有权或修改历史基线来消除红门。
+- 证据：`docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md`；本机日志、审查 JSON 与最终指纹在 `%LOCALAPPDATA%/ClawX-scratch/tool-runtime-relay-20260913-r4/`。最终 19 文件已与审查快照核对：所有代码与测试逐字节一致，只有任务规格做了不改变内容的换行归一化。
+- Task Forest 起始提案 `TFP-tool-runtime-relay-r4-start-20260913`、收口提案 `TFP-tool-runtime-relay-r4-close-20260913` 已应用；最终 validate/export 通过，HTML 当前图与 JSON 导出完全一致，十个新节点均 done/100。
+- 下一步：只从新的可执行反例继续接力。父节点 TF-0102 保持 in_progress；全局分支路径归属仍由既有基线节点处理。不将本地工程证据视为真实 provider、远程执行、具名真人或 GA；TF-0009/TF-0133 和产品锁保持原状态。
+
+## 当前接力：工具运行时可靠性第三批十节点完成（2026-09-13，TF-0189..TF-0198）
+
+- 本轮按用户“接力最新节点并至少完成十个节点”的授权，从当前源码的可执行反例接续 TF-0179..TF-0188。工作区为 `D:/ClawX`。
+- 完成：TF-0189 策略钩子取消不再改写成拦截；TF-0190 插件审批等待取消；TF-0191 适配器传入取消信号；TF-0192 本地等待 node.invoke 尊重取消；TF-0193 process remove 不终止前台会话；TF-0194 send-keys 写入后仍检查取消；TF-0195 有进展的乒乓不警告；TF-0196 首次 poll 观察已退出子进程；TF-0197 别名合并保留告警时间戳；TF-0198 观察器异常不把成功改成失败。
+- 修复前：10 个行为断言失败。修复后：agents 11 files / **71/71**，native-hook unit-fast **2/2**；`tsgo:core`、scoped oxlint、`build:runtime`+Gateway smoke、comms replay/compare、foreground E2E **2/2**、Harness validate/dry-run 均通过。
+- 证据：`docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260913.md`；spec 为 `harness/specs/tasks/live-tool-runtime-reliability.md`；原始日志在 `%LOCALAPPDATA%/ClawX-scratch/tool-runtime-relay-20260913/`。
+- Task Forest 起始提案 `TFP-tool-runtime-relay-ten-start-20260913`、收口提案 `TFP-tool-runtime-relay-ten-close-20260913` 均已应用，validate/export PASS。十个新节点均 done/100。登记与文档工作未计入数量。
+- 下一步：只从新的可执行反例继续开节点。已发出的远程 node.invoke 仍不随本地 AbortSignal 终止远端进程；真实远程执行和具名真人验收未做，TF-0009/TF-0133、default-on 与产品锁不因本批完成而解锁。
+
 ## 当前接力：工具运行时可靠性第二批十节点完成（2026-09-12，TF-0179..TF-0188）
 
 - 本轮按用户“接力最新节点并至少完成十个节点”的授权，从当前源码的可执行反例接续 TF-0169..TF-0178。工作区为 `D:/ClawX`；旧桌面路径是同一工作树的入口。

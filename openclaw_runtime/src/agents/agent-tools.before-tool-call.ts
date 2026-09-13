@@ -59,6 +59,7 @@ import {
 import type { SkillSnapshot, SkillTelemetrySource } from "../skills/types.js";
 import { resolveSkillWorkshopToolApproval } from "../skills/workshop/policy.js";
 import { isPlainObject } from "../utils.js";
+import { awaitWithAbort } from "../utils/await-with-abort.js";
 import { adjustedParamsByToolCallId } from "./agent-tools.before-tool-call.state.js";
 import { copyChannelAgentToolMeta, getChannelAgentToolMeta } from "./channel-tools.js";
 import {
@@ -477,29 +478,33 @@ async function requestPluginToolApproval(params: {
   const timeoutMs = resolvePluginToolApprovalTimeoutMs(approval);
   const gatewayTimeoutMs = resolvePluginToolApprovalGatewayTimeoutMs(timeoutMs);
   try {
+    params.signal?.throwIfAborted();
     const requestResult: {
       id?: string;
       status?: string;
       decision?: string | null;
-    } = await callGatewayTool(
-      "plugin.approval.request",
-      // Buffer beyond the approval timeout so the gateway can clean up
-      // and respond before the client-side RPC timeout fires.
-      { timeoutMs: gatewayTimeoutMs },
-      {
-        pluginId: approval.pluginId,
-        title: approval.title,
-        description: approval.description,
-        severity: approval.severity,
-        allowedDecisions: approval.allowedDecisions,
-        toolName: params.toolName,
-        toolCallId: params.toolCallId,
-        agentId: params.ctx?.agentId,
-        sessionKey: params.ctx?.sessionKey,
-        timeoutMs,
-        twoPhase: true,
-      },
-      { expectFinal: false },
+    } = await awaitWithAbort(
+      callGatewayTool(
+        "plugin.approval.request",
+        // Buffer beyond the approval timeout so the gateway can clean up
+        // and respond before the client-side RPC timeout fires.
+        { timeoutMs: gatewayTimeoutMs },
+        {
+          pluginId: approval.pluginId,
+          title: approval.title,
+          description: approval.description,
+          severity: approval.severity,
+          allowedDecisions: approval.allowedDecisions,
+          toolName: params.toolName,
+          toolCallId: params.toolCallId,
+          agentId: params.ctx?.agentId,
+          sessionKey: params.ctx?.sessionKey,
+          timeoutMs,
+          twoPhase: true,
+        },
+        { expectFinal: false },
+      ),
+      params.signal,
     );
     const id = requestResult?.id;
     if (!id) {
@@ -539,27 +544,7 @@ async function requestPluginToolApproval(params: {
         { timeoutMs: gatewayTimeoutMs },
         { id },
       );
-      let waitResult: { id?: string; decision?: string | null } | undefined;
-      if (params.signal) {
-        let onAbort: (() => void) | undefined;
-        const abortPromise = new Promise<never>((_, reject) => {
-          if (params.signal!.aborted) {
-            reject(toLintErrorObject(params.signal!.reason, "Non-Error rejection"));
-            return;
-          }
-          onAbort = () => reject(toLintErrorObject(params.signal!.reason, "Non-Error rejection"));
-          params.signal!.addEventListener("abort", onAbort, { once: true });
-        });
-        try {
-          waitResult = await Promise.race([waitPromise, abortPromise]);
-        } finally {
-          if (onAbort) {
-            params.signal.removeEventListener("abort", onAbort);
-          }
-        }
-      } else {
-        waitResult = await waitPromise;
-      }
+      const waitResult = await awaitWithAbort(waitPromise, params.signal);
       decision = waitResult?.decision;
     }
     const resolution: PluginApprovalResolution =
@@ -605,15 +590,8 @@ async function requestPluginToolApproval(params: {
     };
   } catch (err) {
     notifyPluginApprovalResolution(approval, PluginApprovalResolutions.CANCELLED);
-    if (isAbortSignalCancellation(err, params.signal)) {
-      log.warn(`plugin approval wait cancelled by run abort: ${String(err)}`);
-      return {
-        blocked: true,
-        kind: "failure",
-        deniedReason: "plugin-approval",
-        reason: "Approval cancelled (run aborted)",
-        params: params.baseParams,
-      };
+    if (isAbortSignalCancellation(err, params.signal) || params.signal?.aborted) {
+      throw params.signal?.aborted ? (params.signal.reason ?? err) : err;
     }
     log.warn(`plugin approval gateway request failed; blocking tool call: ${String(err)}`);
     return {
@@ -819,7 +797,11 @@ async function recordLoopOutcome(args: {
     log.warn(`tool loop outcome tracking failed: tool=${args.toolName} error=${String(err)}`);
   }
   if (recordedOutcome) {
-    args.ctx.onToolOutcome?.(recordedOutcome);
+    try {
+      args.ctx.onToolOutcome?.(recordedOutcome);
+    } catch (err) {
+      log.warn(`tool outcome observer failed: tool=${args.toolName} error=${String(err)}`);
+    }
   }
 }
 
@@ -841,6 +823,7 @@ export async function runBeforeToolCallHook(args: {
   if (args.ctx?.sessionKey || args.ctx?.sessionId) {
     const { getDiagnosticSessionState, logToolLoopAction, detectToolCallLoop, recordToolCall } =
       await loadBeforeToolCallRuntime();
+    args.signal?.throwIfAborted();
     const sessionState = getDiagnosticSessionState({
       sessionKey: args.ctx.sessionKey,
       sessionId: args.ctx.sessionId,
@@ -1016,6 +999,7 @@ export async function runBeforeToolCallHook(args: {
           },
         )
       : undefined;
+    args.signal?.throwIfAborted();
     if (trustedPolicyResult?.block) {
       return {
         blocked: true,
@@ -1037,6 +1021,7 @@ export async function runBeforeToolCallHook(args: {
         signal: args.signal,
         baseParams: params,
       });
+      args.signal?.throwIfAborted();
       if (approvalOutcome) {
         if (approvalOutcome.blocked) {
           return approvalOutcome;
@@ -1072,6 +1057,7 @@ export async function runBeforeToolCallHook(args: {
         ...(args.ctx ? { ctx: args.ctx } : {}),
         signal: args.signal,
       });
+      args.signal?.throwIfAborted();
       if (finalApprovalOutcome) {
         return finalApprovalOutcome;
       }
@@ -1098,6 +1084,7 @@ export async function runBeforeToolCallHook(args: {
       },
       policyAdjustedToolContext,
     );
+    args.signal?.throwIfAborted();
 
     if (hookResult?.block) {
       return {
@@ -1121,6 +1108,7 @@ export async function runBeforeToolCallHook(args: {
         signal: args.signal,
         baseParams: policyAdjustedParams,
       });
+      args.signal?.throwIfAborted();
       if (approvalOutcome) {
         if (approvalOutcome.blocked) {
           return approvalOutcome;
@@ -1144,6 +1132,7 @@ export async function runBeforeToolCallHook(args: {
       ...(args.ctx ? { ctx: args.ctx } : {}),
       signal: args.signal,
     });
+    args.signal?.throwIfAborted();
     if (finalApprovalOutcome) {
       return finalApprovalOutcome;
     }
@@ -1156,6 +1145,9 @@ export async function runBeforeToolCallHook(args: {
     }
     return allowed;
   } catch (err) {
+    if (isAbortSignalCancellation(err, args.signal) || args.signal?.aborted) {
+      throw args.signal?.aborted ? (args.signal.reason ?? err) : err;
+    }
     const toolCallId = args.toolCallId ? ` toolCallId=${args.toolCallId}` : "";
     const cause = unwrapErrorCause(err);
     log.error(`before_tool_call hook failed: tool=${toolName}${toolCallId} error=${String(cause)}`);
@@ -1485,17 +1477,3 @@ export const testing = {
   isPlainObject,
 };
 export { testing as __testing };
-
-function toLintErrorObject(value: unknown, fallbackMessage: string): Error {
-  if (value instanceof Error) {
-    return value;
-  }
-  if (typeof value === "string") {
-    return new Error(value, { cause: value });
-  }
-  const error = new Error(fallbackMessage, { cause: value });
-  if ((typeof value === "object" && value !== null) || typeof value === "function") {
-    Object.assign(error, value);
-  }
-  return error;
-}

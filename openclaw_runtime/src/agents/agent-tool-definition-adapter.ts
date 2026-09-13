@@ -371,7 +371,14 @@ export function toToolDefinitions(
       execute: async (...args: ToolExecuteArgs): Promise<AgentToolResult<unknown>> => {
         const { toolCallId, params, onUpdate, signal } = splitToolExecuteArgs(args);
         let executeParams = params;
+        let updatesOpen = true;
+        const guardedOnUpdate: AgentToolUpdateCallback | undefined = onUpdate
+          ? (update) => {
+              if (updatesOpen && !signal?.aborted) onUpdate(update);
+            }
+          : undefined;
         try {
+          signal?.throwIfAborted();
           if (!beforeHookWrapped) {
             const preparedParams = await prepareToolParamsBeforeHook({
               tool,
@@ -394,7 +401,9 @@ export function toToolDefinitions(
               ...hookMetadata,
               toolCallId,
               ctx: hookContext,
+              signal,
             });
+            signal?.throwIfAborted();
             if (hookOutcome.blocked) {
               if (hookOutcome.kind === "veto") {
                 return buildBlockedToolResult({
@@ -417,7 +426,11 @@ export function toToolDefinitions(
             });
             recordAdjustedParamsForToolCall(toolCallId, executeParams, hookContext?.runId);
           }
-          const rawResult = await tool.execute(toolCallId, executeParams, signal, onUpdate);
+          // Raw tools need the same terminal boundary as tools with the policy wrapper.
+          signal?.throwIfAborted();
+          const rawResult = await tool.execute(toolCallId, executeParams, signal, guardedOnUpdate);
+          updatesOpen = false;
+          signal?.throwIfAborted();
           const result = normalizeToolExecutionResult({
             toolName: normalizedName,
             result: rawResult,
@@ -425,7 +438,7 @@ export function toToolDefinitions(
           return result;
         } catch (err) {
           if (signal?.aborted) {
-            throw err;
+            signal.throwIfAborted();
           }
           if (isBeforeToolCallBlockedError(err)) {
             logDebug(`tools: ${normalizedName} blocked by before_tool_call: ${err.reason}`);
@@ -448,6 +461,8 @@ export function toToolDefinitions(
             toolName: normalizedName,
             message: described.message,
           });
+        } finally {
+          updatesOpen = false;
         }
       },
     } satisfies ToolDefinition;
@@ -500,23 +515,27 @@ export function toClientToolDefinitions(
       description: func.description ?? "",
       parameters: func.parameters as ToolDefinition["parameters"],
       execute: async (...args: ToolExecuteArgs): Promise<AgentToolResult<unknown>> => {
-        const { toolCallId, params } = splitToolExecuteArgs(args);
-        if (onClientToolCall && typeof onClientToolCall !== "function") {
-          onClientToolCall.reserve?.(toolCallId, func.name);
-        }
+        const { toolCallId, params, signal } = splitToolExecuteArgs(args);
+        signal?.throwIfAborted();
         const initialParamsRecord = coerceParamsRecord(params);
         try {
+          if (onClientToolCall && typeof onClientToolCall !== "function") {
+            onClientToolCall.reserve?.(toolCallId, func.name);
+          }
+          signal?.throwIfAborted();
           const outcome = await runBeforeToolCallHook({
             toolName: func.name,
             params: initialParamsRecord,
             toolCallId,
             ctx: hookContext,
+            signal,
           });
+          signal?.throwIfAborted();
           if (outcome.blocked) {
-            if (onClientToolCall && typeof onClientToolCall !== "function") {
-              onClientToolCall.discard?.(toolCallId, func.name);
-            }
             if (outcome.kind === "veto") {
+              if (onClientToolCall && typeof onClientToolCall !== "function") {
+                onClientToolCall.discard?.(toolCallId, func.name);
+              }
               return buildBlockedToolResult({
                 reason: outcome.reason,
                 deniedReason: outcome.deniedReason,
@@ -534,10 +553,13 @@ export function toClientToolDefinitions(
               onClientToolCall.complete(toolCallId, func.name, paramsRecord);
             }
           }
+          // A recorder may end the run while accepting the delegated call.
+          signal?.throwIfAborted();
         } catch (err) {
           if (onClientToolCall && typeof onClientToolCall !== "function") {
             onClientToolCall.discard?.(toolCallId, func.name);
           }
+          signal?.throwIfAborted();
           throw err;
         }
         // Return a terminal pending result; the client will execute the tool.
