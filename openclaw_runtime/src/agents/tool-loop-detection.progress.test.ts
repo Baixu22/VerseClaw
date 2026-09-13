@@ -56,6 +56,77 @@ function recordCalls(
 }
 
 describe("tool-loop progress evidence", () => {
+  it.each(["both", "id-only", "key-only"] as const)(
+    "TF-0212 alias merge counts one call once with outcomes in %s",
+    (completedAlias) => {
+      const idOnly = getDiagnosticSessionState({ sessionId: "same-call-id" });
+      const keyOnly = getDiagnosticSessionState({ sessionKey: "same-call-key" });
+      const config = {
+        warningThreshold: 2,
+        criticalThreshold: 3,
+        globalCircuitBreakerThreshold: 4,
+      };
+      for (const [alias, session] of [
+        ["id-only", idOnly],
+        ["key-only", keyOnly],
+      ] as const) {
+        recordToolCall(session, "read", {}, "shared-call", config, { runId: "alias-run" });
+        if (completedAlias === "both" || completedAlias === alias) {
+          recordToolCallOutcome(session, {
+            toolName: "read",
+            toolParams: {},
+            toolCallId: "shared-call",
+            runId: "alias-run",
+            result: { content: [{ type: "text", text: "same result" }] },
+          });
+        }
+      }
+      const merged = getDiagnosticSessionState({
+        sessionId: "same-call-id",
+        sessionKey: "same-call-key",
+      });
+      expect(merged.toolCallHistory).toHaveLength(1);
+      expect(merged.toolCallHistory![0].resultHash).toBeTypeOf("string");
+      expect(detectToolCallLoop(merged, "read", {}, config, { runId: "alias-run" })).toEqual({
+        stuck: false,
+      });
+      recordToolCallOutcome(merged, {
+        toolName: "read",
+        toolParams: {},
+        toolCallId: "shared-call",
+        runId: "different-run",
+        result: { content: [{ type: "text", text: "same result" }] },
+      });
+      expect(merged.toolCallHistory).toHaveLength(2);
+    },
+  );
+
+  it.each(["run", "tool", "anonymous"] as const)(
+    "TF-0212 preserves distinct %s identities during alias merge",
+    (difference) => {
+      const idOnly = getDiagnosticSessionState({ sessionId: "distinct-id" });
+      const keyOnly = getDiagnosticSessionState({ sessionKey: "distinct-key" });
+      const outcome = {
+        toolName: "read",
+        toolParams: {},
+        runId: "run-a",
+        toolCallId: difference === "anonymous" ? undefined : "call",
+        result: { content: [{ type: "text", text: "same result" }] },
+      };
+      recordToolCallOutcome(idOnly, outcome);
+      recordToolCallOutcome(keyOnly, {
+        ...outcome,
+        runId: difference === "run" ? "run-b" : outcome.runId,
+        toolName: difference === "tool" ? "list" : outcome.toolName,
+      });
+      const merged = getDiagnosticSessionState({
+        sessionId: "distinct-id",
+        sessionKey: "distinct-key",
+      });
+      expect(merged.toolCallHistory).toHaveLength(2);
+    },
+  );
+
   it.each([false, true])(
     "TF-0207 replay after history trimming stays ignored across alias merge=%s",
     (merge) => {
