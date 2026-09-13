@@ -1,3 +1,4 @@
+import { getEventListeners } from "node:events";
 import { Type } from "@sinclair/typebox";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
@@ -67,6 +68,38 @@ afterEach(() => {
 });
 
 describe("tool wrapper lifecycle", () => {
+  it.each(["trusted", "hook"] as const)(
+    "TF-0209 cancels a pending %s policy without waiting for its late rejection",
+    async (phase) => {
+      const abort = new AbortController();
+      const reason = new Error("cancel pending policy");
+      let rejectPolicy!: (error: Error) => void;
+      const policy = new Promise<never>((_resolve, reject) => {
+        rejectPolicy = reject;
+      });
+      const callback = phase === "trusted" ? callbacks.trusted : callbacks.hook;
+      callbacks.trustedEnabled = phase === "trusted";
+      callback.mockReturnValueOnce(policy);
+      const execute = vi.fn(async () => result);
+      const tool = wrapToolWithBeforeToolCallHook(definition(execute), context());
+      const pending = tool.execute("pending-policy", {}, abort.signal);
+      const settled = vi.fn();
+      void pending.then(settled, settled);
+      await vi.waitFor(() => expect(callback).toHaveBeenCalledOnce());
+      abort.abort(reason);
+      try {
+        await vi.waitFor(() => expect(settled).toHaveBeenCalledWith(reason), { timeout: 200 });
+      } finally {
+        rejectPolicy(new Error("late policy failure"));
+      }
+      await expect(pending).rejects.toBe(reason);
+      expect(getEventListeners(abort.signal, "abort")).toHaveLength(0);
+      expect(execute).not.toHaveBeenCalled();
+      expect(callbacks.gateway).not.toHaveBeenCalled();
+      if (phase === "trusted") expect(callbacks.hook).not.toHaveBeenCalled();
+    },
+  );
+
   it.each(["success", "failure"] as const)(
     "TF-0184 drops callbacks after terminal %s",
     async (outcome) => {
