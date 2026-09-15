@@ -92,7 +92,7 @@ function loadAllFacts(dbPath: string): RuntimeMemoryTemporalFact[] {
   });
   const loaded = persistence.loadStore();
   if (loaded.status !== "loaded") throw new Error("loadAllFacts: load failed");
-  return [...loaded.store.queryFacts({ includeInvalidated: true })] as any;
+  return [...loaded.store.queryFacts({ includeInvalidated: true })] as never;
 }
 
 function loadFactIds(dbPath: string): Set<string> {

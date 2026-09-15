@@ -33,11 +33,11 @@ describe('GatewayManager refreshReloadPolicy', () => {
 
   it('deduplicates concurrent refresh calls', async () => {
     const { GatewayManager } = await import('@electron/gateway/manager');
-    let resolveLoad: any = null;
+    let resolveLoad = ((_value: unknown) => {}) as (value: unknown) => void;
     mockLoadGatewayReloadPolicy.mockImplementationOnce(
       () =>
         new Promise((resolve) => {
-          resolveLoad = resolve;
+          resolveLoad = resolve as typeof resolveLoad;
         }),
     );
 
@@ -50,7 +50,7 @@ describe('GatewayManager refreshReloadPolicy', () => {
 
     expect(mockLoadGatewayReloadPolicy).toHaveBeenCalledTimes(1);
 
-    resolveLoad?.({ mode: 'reload', debounceMs: 1300 });
+    resolveLoad({ mode: 'reload', debounceMs: 1300 });
     await Promise.all([p1, p2]);
 
     expect((manager as unknown as { reloadPolicy: { mode: string; debounceMs: number } }).reloadPolicy).toEqual({

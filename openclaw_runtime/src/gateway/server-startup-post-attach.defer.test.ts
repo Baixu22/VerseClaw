@@ -24,7 +24,7 @@ describe("startGatewayPostAttachRuntime deferred sidecars", () => {
     const runtime = await startGatewayPostAttachRuntime(
       {
         minimalTestGateway: false,
-        cfgAtStart: {} as any,
+        cfgAtStart: {} as never,
         bindHost: "127.0.0.1",
         bindHosts: ["127.0.0.1"],
         port: 18789,
@@ -37,10 +37,10 @@ describe("startGatewayPostAttachRuntime deferred sidecars", () => {
         preserveFunnel: false,
         controlUiBasePath: "/",
         logTailscale: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
-        gatewayPluginConfigAtStart: {} as any,
-        pluginRegistry: { plugins: [] } as any,
+        gatewayPluginConfigAtStart: {} as never,
+        pluginRegistry: { plugins: [] } as never,
         defaultWorkspaceDir: "C:/tmp/openclaw-runtime-test",
-        deps: {} as any,
+        deps: {} as never,
         startChannels: vi.fn(),
         logHooks: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
         logChannels: { info: vi.fn(), error: vi.fn() },
@@ -48,7 +48,7 @@ describe("startGatewayPostAttachRuntime deferred sidecars", () => {
         loadStartupPlugins: async () => {
           pluginLoadStarted();
           await slowPluginLoad;
-          return { pluginRegistry: { plugins: [] } as any, gatewayMethods: [] };
+          return { pluginRegistry: { plugins: [] } as never, gatewayMethods: [] };
         },
         deferSidecars: true,
       },
@@ -62,7 +62,7 @@ describe("startGatewayPostAttachRuntime deferred sidecars", () => {
           return { pluginServices: null, postReadySidecars: [] };
         }),
         startGatewayTailscaleExposure: vi.fn(async () => null),
-      } as any,
+      } as never,
     );
 
     expect(runtime).toEqual({

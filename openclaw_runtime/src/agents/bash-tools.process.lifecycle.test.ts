@@ -11,6 +11,7 @@ import {
   type ProcessSession,
 } from "./bash-process-registry.js";
 import { createProcessTool } from "./bash-tools.process.js";
+import { getDiagnosticSessionState } from "../logging/diagnostic-session-state.js";
 
 const supervisor = vi.hoisted(() => ({ getRecord: vi.fn(), cancel: vi.fn() }));
 vi.mock("../process/supervisor/index.js", () => ({ getProcessSupervisor: () => supervisor }));
@@ -269,6 +270,33 @@ describe("process control lifecycle", () => {
       exitCode: null,
       exitSignal: "SIGTERM",
     });
+  });
+
+  it("TF-0219 ignores a late duplicate exit notification", () => {
+    const value = session();
+    markExited(value, 1, null, "failed", "overall-timeout");
+    const terminal = getFinishedSession(value.id);
+    markExited(value, 0, null, "completed", "exit");
+    expect(getFinishedSession(value.id)).toBe(terminal);
+    expect(terminal).toMatchObject({
+      status: "failed",
+      exitCode: 1,
+      exitReason: "overall-timeout",
+    });
+  });
+
+  it("TF-0220 clears poll backoff when reading a finished session log", async () => {
+    const value = session();
+    const tool = createProcessTool();
+    await tool.execute("seed-poll-backoff", { action: "poll", sessionId: value.id });
+    expect(getDiagnosticSessionState({ sessionId: value.id }).commandPollCounts?.has(value.id)).toBe(
+      true,
+    );
+    markExited(value, 1, null, "failed", "overall-timeout");
+    await tool.execute("finished-log", { action: "log", sessionId: value.id });
+    expect(getDiagnosticSessionState({ sessionId: value.id }).commandPollCounts?.has(value.id)).toBe(
+      false,
+    );
   });
 
   it("TF-0193 does not remove a foreground session", async () => {

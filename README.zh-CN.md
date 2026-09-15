@@ -51,6 +51,8 @@ Product capability statements must be checked against the canonical matrix in `s
 
 工具准备或策略钩子尚未返回时，取消即可结束本地等待，但不会终止插件内部已经开始的工作。输入确认期间进程已退出时，应答保留执行所有者记录的终态与输出。会话别名合并后，同一工具调用只计一次；只改变 `process poll` 的等待时长也不会重置无进展检测。详见[第五批验收记录](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md)。
 
+第六批还补齐了 node 目标解析、远程 prepare、审批快照、自动审阅和审批登记等待的取消边界；晚到结果不会启动后续执行阶段。重复退出通知保留首次终态，finished 日志读取会清除旧的 poll 退避，非法 poll/timeout 输入会回退到安全默认值。详见[第六批验收记录](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md)。
+
 启用 DCS 的编码 turn 会通过既有共享注入账本分别记录 knowledge、recent actions 与 tool registry 的真实 provider 可见 prompt 增长。固定预算不会因此放大：启用的 DCS 投影保留既有有界容量，截断和丢弃仍作为显式账目证据。
 
 本范围不包含 Runtime Memory 注入、SEKB 自动写回、Browser 无监督或私网访问、C6/C7 自动切换、Coding WAL、生产仓库自动合并及多 Forge/DAG 扩围。当前只有工程与真实进程测试证据，真人 canary 与发布审批仍未完成。组件唯一标注见 [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview)。
@@ -190,9 +192,12 @@ Task Ledger 页面为长期任务维护 workspace 级、Agent 中立的结构化
 Review Center 可以对未提交改动、相对基准分支的 diff 或指定 commit 运行只读 AI 审查。它会按 severity 结构化 findings，保留 file/line 锚点，写入脱敏 review trace，并可把单条 finding 或整次 review 转成 Task Ledger review node，不会暂存、提交或编辑文件。Git patch 会先经过共享结构化 patch contract 验证；malformed 或 producer-truncated diff 会在模型审查启动前停止。在 Chat 中，成功且有 write journal 支撑的 `edit` 与全文件 `write` 会显示富 diff，并可复制同一文本 patch；mutation lineage 缺失、过期或不完整时，不会用 Renderer 状态推断重建。Remote PR 标签页通过 Main-owned host API 有界读取 GitHub PR detail、commits、files、结构化 diff、checks、reviews、branch protection 和指定文件内容。完整性、能力与 readiness 会显式展示；缺失、截断、未授权或未知证据不会被解释为 ready。整体评审、行评论、线程回复和白名单 metadata 修改默认只生成草稿，只有精确匹配的一次性 action-bound approval 被消费后才会发布；head/version 漂移会 fail closed，partial 或 ambiguous 结果会显示 reconciliation，避免盲目重试。受控合并复用同一 Main-owned policy：动作前即时重读 head/readiness，消费绑定精确策略与 policy 证据的短时单次审批，并携带 expected head SHA。生产仓库不在 allowlist 中，Agent merge 默认关闭；合并后的 refresh 或 audit 失败会显示 reconciliation，而不会提示重试合并。
 
 ### 会话工作区
-Chat 会话工作区保持紧凑的连续工作面，固定显示 `Review`、`Terminal`、`Browser`、`Files`、`Artifacts`、`Audit` 六个标签；Changes 收入 Review，文件预览收入 Files。Browser 内部提供 Preview 和受监督的 Live，Terminal 可在底部面板与右侧标签间切换且不会创建第二个 shell 会话。窄窗口下 Files 在文件树与预览之间使用单视图切换。工作区继续使用 Main-owned Browser、终端、Git、Review、截图、snapshot 和审批 API；`/browser` 与 `/code-review` 仍作为兼容路由打开对应工作区上下文。Task Ledger 和 ClawGraph 继续通过工作区上下文入口打开全屏页面。
+Chat 会话工作区保持紧凑的连续工作面，按需打开 `Review`、`Terminal`、`Browser`、`Files`、`Artifacts`、`Audit` 及现有 Agents 工具标签；Changes 收入 Review，文件预览收入 Files。Browser 内部提供 Preview 和受监督的 Live，Terminal 可在底部面板与右侧标签间切换且不会创建第二个 shell 会话。窄窗口下 Files 在文件树与预览之间使用单视图切换。工作区继续使用 Main-owned Browser、终端、Git、Review、截图、snapshot 和审批 API；`/browser` 与 `/code-review` 仍作为兼容路由打开对应工作区上下文。Task Ledger 和 ClawGraph 继续通过工作区上下文入口打开全屏页面。恢复会话或打开只读 Review 不写项目文件；旧话题标记仅在显式新建会话、交接或创建新智能体会话时重置。
 
 ### Knowledge Hub
+
+知识库默认打开「资料库」，另一个主视图为「待复核队列」。队列按 Inbox、草稿和提案筛选，并打开原有复核操作。文档默认预览，点击「编辑」或「新建笔记」后才进入编辑；960px 窗口同时只显示一个编辑或预览面板。「更多 > 维护」和「来源工具」保留高级操作。「问知识库」进入 Chat 的知识问答模式，保留引用和本地对话检查点，返回时恢复未完成笔记及来源选择。保存回答只创建候选；没有提案的草稿须先准备变更提案，再由用户明确批准并应用。
+
 Knowledge 页面通过 OpenClaw `memory-wiki` 管理有来源支撑的 wiki 上下文。默认使用 Verse Claw 托管的隔离 native vault，可在不切换到 unsafe local-vault 模式的情况下导入受限的文本文件或文件夹，也可以验证并导入本地 OKF v0.1 Markdown bundle，作为覆盖在 `wiki.ingest` 之上的轻量兼容适配层。它提供状态、搜索、查看、compile、lint、Knowledge Inbox、draft/proposal 审查、provenance 和治理流程。Inbox 会把 Chat、任务账本、文件、OKF、ClawGraph 或 agent 提出的候选知识暂存在正式 wiki 之外，直到用户选择提升为草稿或忽略；provenance 只记录来源引用和读取/引用事件，不修改 wiki 页面。Chat 的知识范围（`None`、`Memory`、`Wiki` 或 `All`）只代表读取范围：agent 可以 search/get 上下文，但不能因为启用 scope 就写入、修改、归档、删除、合并或 apply 知识。在 Chat 中，`/wiki` 会搜索并以可见 chip 挂载明确的 wiki 引用后再发送，`/memory`、`/all`、`/none` 和 `/scope` 只调整读取范围，不会变成写权限。知识调用模式默认是 Suggest：相关知识只显示为可选 chip；Auto-read 需要用户显式开启，并且只会附加少量新鲜、高置信、只读引用。会话知识以及 agent/知识管理员建议都会先进入可编辑 draft/proposal，只有用户明确确认后才写入 wiki。Obsidian 是可选增强，不是必需依赖。治理仪表盘按需运行健康检查，呈现矛盾条目、陈旧页面和无主引用；监控目录只会把项目文档放入 pending Inbox，不会自动 direct-ingest 到正式 wiki，也不会自动生成 synthesis。
 
 高级 SEKB 诊断可显式启用默认关闭的 `runtime.contextBlock.sekb.shadowEvaluation.enabled`。它依赖 `runtime.contextBlock.sekb.enabled`；`OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED` 只能覆盖影子开关。该功能只保存有界、确定性的采集与完成证据建议元数据，不会过滤轨迹、写入原则或改变任务完成结论。
@@ -234,7 +239,7 @@ Verse Claw 现在还内置了腾讯官方个人微信渠道插件，可直接在
 
 **已安排** 页面现在会把 Cron 任务和监督式 Browser 运行投影到同一份紧凑列表中，但不会合并两类后端模型。Cron 继续保留创建、编辑、启停、删除、立即运行、投递配置和运行历史；Browser 运行可执行批准、拒绝、重试和取消，并展示有序步骤、时间及类型化结果或错误证据。窗口宽度为 960px 时，详情会替换列表，不会强行挤出第三栏。Browser Profile 与现有凭据 Vault 统一在 **设置 > Browser** 管理；提交的密码始终由 Main 进程持有，不会回显到渲染进程。
 
-Agent Browser 工作台与旧 `/browser` 路由继续作为兼容入口保留在侧边栏底部的 `...` 菜单中，并通过 Main 进程运行时提供相互隔离的标签页和实时会话。把这些实时会话迁入聊天工作区属于后续迁移阶段。聊天会在发送前依据真实 transcript 用量执行 token/费用预算门，限制持久化与渲染的工具输出，并在取消或硬超时时中止底层运行。
+侧边栏底部 `...` 菜单中的 Agent Browser 及旧 `/browser` 路由会打开 Chat 工作区的 Browser Live。浏览器任务归入已安排，配置与 Vault 元数据归入设置 > 浏览器。聊天会在发送前依据真实 transcript 用量执行 token/费用预算门，限制持久化与渲染的工具输出，并在取消或硬超时时中止底层运行。
 
 监督式 Browser 任务会先持久化为“等待授权”，在产生任何浏览器副作用前展示目标、站点、获批域名、模式、权限范围和有序计划。用户显式批准后，Main 进程才会执行有界的导航、等待与点击步骤，并返回类型化的成功或失败判定。该流程不开放无监督浏览或私网访问，凭据仍只以 Main 进程持有的 Vault 引用存在。
 
@@ -260,7 +265,7 @@ Skills 页面可展示来自多个 OpenClaw 来源的技能（托管目录、wor
 ### 🌙 自适应主题
 支持浅色模式、深色模式或跟随系统主题。Verse Claw 自动适应你的偏好设置。
 
-Windows、macOS 与 Linux 现在都默认启用 UI v2。界面采用与 FakeCoding 对齐的中性灰阶工作面、28-36 px 紧凑控件、黑白反转主操作、无衬线管理页标题和 120-180 ms 克制动效，同时保留各平台原生窗口控件。设置深链接继续保留背后的原页面并在关闭后恢复焦点；分阶段迁移期间可通过 `?uiVersion=legacy` 对比旧界面。
+Windows、macOS 与 Linux 现在都默认启用 UI v2。界面采用与 FakeCoding 对齐的中性灰阶工作面、28-36 px 紧凑控件、黑白反转主操作、无衬线管理页标题和 120-180 ms 克制动效，同时保留各平台原生窗口控件。设置采用独立页面，记住返回路径并恢复焦点。视觉迁移现已完成：旧 `uiVersion=legacy` 链接进入当前界面，Browser/Review 旧链接打开对应工作区面板。各设置分区、Setup 和 Observability 使用紧凑控件，诊断页需要纵向滚动时指标文字仍完整可见。
 
 ### 🚀 开机启动控制
 在 **设置 → 通用** 中，你可以开启 **开机自动启动**，让 Verse Claw 在系统登录后自动启动。
@@ -520,7 +525,8 @@ pnpm dev                  # 以热重载模式启动（若缺失会自动准备�
 
 # 代码质量
 pnpm lint                 # 运行 ESLint 检查
-pnpm typecheck            # TypeScript 类型检查
+pnpm run lint:check       # 不自动修复；要求零错误、最多 120 条警告
+pnpm typecheck            # 固定版本 tsgo：未缓存 node/web 检查及测试类型观测
 
 # 测试
 pnpm test                 # 运行单元测试
@@ -533,6 +539,9 @@ pnpm run comms:compare    # 将回放指标与基线阈值对比
 # Agent harness
 pnpm harness context --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
 pnpm harness validate --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
+# 场景基线扫描跨任务变更；任务规格仍严格校验文件归属。
+# 任务校验即使不传 --since 也检查差异；--no-diff 仅用于示例结构检查。
+pnpm harness run --spec harness/specs/scenarios/gateway-backend-communication.md --dry-run
 
 # Agent dev/test control plane
 pnpm agent-dev:make <page|e2e|host-route|skill|channel|plugin|scenario> my-scenario

@@ -1,5 +1,95 @@
 # 会话交接（LATEST）
 
+## 当前接力：工具运行时可靠性第六批十节点完成（2026-09-15，TF-0214～TF-0223）
+
+- 按用户“最近十个节点、blocked 默认跳过”的要求，完成十个新的可执行 runtime 反例；TF-0214～TF-0223 均挂 TF-0102，已通过官方 Task Forest CLI 登记 done/100。blocked 节点未修改、未强行验收，文档与登记未计入节点数量。
+- 修复了 node.list、system.run.prepare、远程审批快照、自动审阅和审批登记的本地等待取消；修复首次退出登记幂等、finished 日志清理 poll backoff、poll backoff 输入边界，以及普通/node exec 非法 timeout 回退默认值。
+- 修复后六文件 runtime 专项 57/57，spec 保留的 agents 相邻回归 12 files / 136 passed，native unit-fast 1 file / 2 passed；期间首次 runtime 类型门发现自动审阅器可同步返回，已以 Promise.resolve 包裹后 pnpm --dir openclaw_runtime tsgo:core 通过。pnpm run lint 通过（0 errors / 119 warnings），pnpm run build:vite、pnpm run build:runtime 与 Gateway smoke、comms replay/compare 均通过。
+- foreground Electron E2E 首次只因 runtime dist 过期被 fixture 拒绝；按要求执行 build:runtime 后同一命令 2/2 passed。没有改断言或绕过新鲜度检查。
+- Task Forest validate 与 export 通过，HTML 导出路径为 .agent-workbench/task-forest/exports/task-forest.html。结构校验 harness validate --no-diff 通过；共享工作树 diff-aware validate/run 仍因其他会话已有的大量未归属脏路径失败，未扩大本 spec 所有权或改历史基线。
+- 证据：docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md；规格：harness/specs/tasks/live-tool-runtime-reliability.md。取消只释放本地等待，不声称终止已经发出的远程调用/进程；真人/provider 验收、TF-0102 整体收口、产品锁和 default-on 保持原状态。
+
+## 当前接力：现有节点批次完成 TF-0076，其他阻塞跳过（2026-09-15）
+
+- 用户明确选择推进现有未完成节点，block 默认跳过。本轮检查原 15 个 blocked 与余下 17 个待办，实际完成 1 个 TF-0076；其他 31 个跳过，未达到 10 个完成，没有新建节点或重复计数 done。
+- TF-0076：书面预算总 token ≤1.20x、平均延迟 ≤1.50x、单样本新增 retry ≤1；旧汇总重算 2.5207629375x / 3.1071489568x，当前没有新 paired provider 成本证据，成本结论 NO-GO。按原验收允许的负面结论收口，生产保持 shadow。
+- 干净候选 `632e31b17ff83dd349a124f75dd1d2ebe36ad897` / tree `f0ca4ddfc22c4ab29c0876100549225bbd095fab` 的 11 条 requiredTests 全过，343 次测试执行、0 失败/跳过、19 个不同文件逐项覆盖；Node/Web 类型、lint 0 errors/114 warnings、comms、diff-aware Harness validate/dry-run 通过。原 spec 的所有测试文件保留，Runtime 采用其真实所属 unit / unit-fast / agents 配置。
+- 最终 manifest SHA-256 `07dfc01e4aba9e81b3835df63fe45f50f39e6967cfe407cfda2b38b7efd9c73e`；原始日志与报告 `D:/ClawX-acceptance/tf0076-20260915/attempt-03/`，隔离候选 `D:/ClawX-candidates/tf0076-cost-20260915`。前两轮拒收结果完整保留，不当最终通过。
+- 全局 harness:ci 仍 FAIL：44 项与 catalogs 通过，audit C/74 的四项否决均为 Agent Dev 证据旧于 package.json。没有称全局 CI、完整 fast profile、全量 root/Runtime、E2E 或独立 Verifier 通过。
+- TF-0029 已读取上一轮最终报告并转 blocked：14 pass/1 fail/12 blocked，NO-GO，测试7853/0/50；固定53 skip 不匹配，独立复验尚缺。后续12个 Runtime 待办受依赖阻塞；TF-0069、TF-0133、TF-0140 缺真人/外部记录，均按指示跳过，TF-0140 原状态保留。
+- 完整逐节点清单、成本裁决和证据：`docs/dev/task-forest-existing-nodes-20260915.md`。本轮没有产品配置改动、provider 调用或推送。主树其他改动保留；不要把 TF-0076 done 解读为成本改善或产品晋升。
+
+## 当前接力：TF-0029 环境修复与第二轮正式执行（2026-09-14）
+
+- 第一轮正式 `run/executor-report.json` 为 **NO-GO**：两项依赖安装通过，VerseShell Rust 集成测试失败，后续 24 门未运行；源树和临时树均无意外修改。原始清单、配置和日志保留在 `D:/ClawX-acceptance/tf0029-20260914/run/`。
+- 已保留完整诊断并定位根因：受控 Windows 环境遗漏 `COMPUTERNAME`，使两个主机名 JSON 断言失败。同源码同命令由 **48 passed / 2 failed** 恢复为 **50 passed / 0 failed**；完整 Rust 为 **268 passed / 1 个既有 ignored 基准项**，Python 两项 optional verifier 通过。该 ignored 项与 Root 固定 53 skips 是不同范围。
+- 第二轮候选仍为干净的 `b34892cc3c3808e1c973d3ad7d357da0211f077c`，新环境只补回真实 `COMPUTERNAME`，新 27 门清单位于 `D:/ClawX-acceptance/tf0029-20260914/attempt-02/run/manifest.json`。Executor 正在执行，已进入 VerseShell 双独立构建；最终状态必须读取此目录的实际报告，不能沿用第一轮或诊断结果。
+- npm shrinkwrap 离线预检曾因缺缓存返回 `ENOTCACHED`。已在正式门禁之外用原 `--all --check` 补齐 35 个包的元数据并通过比较，原离线命令正在复验；没有改锁文件或正式网络策略。
+- 独立 Verifier 已确认两个后续问题：P6-005 发布证据绑定旧提交，固定验证门没有外置证据输入；采集器的嵌套任务仍写 tracked artifacts。完整 E2E 还选择了 live 模型测试，当前受控环境实跑 **1 skipped**，与固定 `expectedSkips=0` 冲突。不得删测试、改预算、重签旧 SHA 或把真实数据暂缓称为通过。
+- 独立报告：`D:/ClawX-acceptance/tf0029-20260914/verifier-preflight/release-output-and-live-conflict.json`；实际诊断：同目录 `local-prerequisites.json` 和 `verseshell-diagnostic/`。独立子代理已授权，但正式 Verifier 仍须等待完整通过的 Executor。
+- Task Forest 通过 CLI 记录 `TFP-tf0029-environment-repair-20260914`，TF-0029 保持 `in_progress`。所有基线、产品锁、TF-0140 与其他节点不变；尚未新增源码提交或推送。
+
+## 当前接力：TF-0029 正式独立验收启动（2026-09-14）
+
+- 用户已开启 Windows 开发者模式，并明确授权独立验收子代理。主线程及独立 Verifier 的文件符号链接探针均成功，原 root-memory-files 现 15/15、0 skipped；TF-0029 恢复 `in_progress`。
+- 冻结候选保持 `b34892cc3c3808e1c973d3ad7d357da0211f077c`，源工作树 `D:/ClawX-candidates/active-20260913-audit` 保持干净。正式输出在 `D:/ClawX-acceptance/tf0029-20260914/run/`，同一 manifest 有 27 项完整 gates。
+- 独立子代理 `/root/tf0029_independent_verifier` 已核验所有源/复制输入、完整重推、工具版本与环境包装。Executor 身份 `tf0029-executor-20260914`，Verifier 身份 `tf0029-independent-verifier-20260914`；必须等 Executor 通过，再由子代理实际运行完整 verify。
+- `execution-config.json` 是两角色共用的受控环境；临时目录在 D 盘，固定 Python 3.10.3、Rust/Cargo 1.94.0、本地 VerseShell 固定提交镜像，依赖/Cargo 离线。包装器调用官方验收 API，没有替换 spawn、清单、计数或校验。原始输出与预检在该目录，进程状态以实际报告为准。
+- 正式结论仍待执行；不能将预检、此前 7819/54 的记录或代码复核改签为本轮通过。53 skips、Runtime 0 skips、产品锁和 TF-0140 保持不变。
+
+## 当前接力：TF-0029 收尾提交，保留环境阻塞（2026-09-14）
+
+- 用户要求尝试完整收尾并提交。候选在 `D:/ClawX-candidates/active-20260913-audit`，分支 `codex/tf0029-closeout-20260914`，基于已有 UI/Knowledge/Workspace 提交链 `981c9026...`。原主工作树保留，本轮没有推送。
+- 修复了图片插件默认导出访问与声明、TF-0028 的旧状态断言、Test 项目的五个 Runtime 包源码映射、测试命令分类、Node 直接 Vitest 入口、适配器 JSON 计数验证和 CI 浅历史问题；未降低断言或修改 skip 预算。
+- R3 完整根链 **7819 passed / 0 failed / 54 skipped / exit 0**；最后 Node 入口增量另有 **61/61** 聚焦回归。Node/Web/Test/Runtime core 类型、完整 lint **0 errors / 114 warnings**（≤120）及最终 scoped lint 通过。
+- Runtime/Gateway、V-08 八项、最终完整 Agent Dev 的 87 单测与 4 项 Electron 用例通过；最终 Harness CI 含 44 项、catalogs、严格审计 **A/94、无 veto**。旧 Runtime 过期与 Electron 安装产物缺失已在候选修复。
+- 四轮代码复核的首轮格式拒收不计通过；R2 四项、R3 一项已修复，最终 R4 helper **exit 0 / findings=[] / patch is correct**。复核只提供代码证据，不能充当独立工程 Verifier。
+- **TF-0029 转为 blocked，不标 Done**：文件符号链接探针仍为 `EPERM`，54 skips 超过固定 53；正式独立 Executor/Verifier 完整清单尚未执行通过。下一步在具备权限的 Windows 环境冻结提交、重建 manifest 并完整复验，不能重签 54 为通过或重用其他候选的绿灯。
+- 基线仍为 prerequisite `c860c12f...` / `3b08a466...`、comparison base `5dabc7ca...`、acceptedBase `73bdddbb...`。TF-0140 与其他节点不变。详细记录在 `docs/dev/task-forest-engineering-20260913.md` 最后一节；日志、复核与代码指纹在 `C:/Users/27933/AppData/Local/ClawX-scratch/tf0029-full-closeout-20260914/`。
+
+## 当前接力：TF-0029 日志与报告计数复核（2026-09-14）
+
+- 用户要求按推荐顺序优先收尾，环境与真实数据暂跳过。任务图没有 `review_needed`，本轮仅继续 TF-0029；其他节点保留。
+- 复现并修复公共报告校验缺口：日志中有额外 skip、stderr 中有失败或根本没有测试摘要，重算全部哈希后原校验仍可返回空错误。现在 `verifyLogs` 校验摘要后重新解析保存的 stdout/stderr，并要求报告计数一致；Verifier 在执行任何 gate 前拒绝矛盾证据。
+- 本轮验收器/provenance **45/45** 通过，Node/Web/Test 类型检查通过，完整 `lint:check` exit 0、**0 errors / 119 warnings**（120 上限不变）。真实差分 Harness validate / dry-run、基线与 prerequisite CLI 通过。
+- `harness:ci` 的 44 项单测与 catalogs 通过；最终 audit 仍 **B / 86、NO-GO**，唯一 veto 是此前 Electron Runtime 构建过期的 blocked 记录。该环境门、符号链接、第 54 个 skip、冷树 V-08、真实 Provider / 真人记录本轮均未重跑或计为通过；skip 预算仍 53。
+- TF-0029 保留 `in_progress`。正式独立 Executor/Verifier 与干净候选完整门禁仍待完成；不要用本轮 fixture 协议回归或重签报告代替。下一步在可用环境冻结候选并按完整 manifest 验证；无需重复本轮已补的日志/计数校验。
+- 详细记录：`docs/dev/task-forest-engineering-20260913.md` 最后一节。备份、红绿反例、测试、lint、类型与 Harness 日志、独立于既有修改的 `authored.diff`：`C:/Users/27933/AppData/Local/ClawX-scratch/tf0029-report-evidence-20260914/`。本轮没有提交、reset、stash 或 clean。
+
+## 当前接力：TF-0029 验收器补强，环境项暂跳过（2026-09-14）
+
+- 用户要求优先处理最接近 Done 的节点，按推荐项直接推进，遇到环境或真实数据暂跳过。最新任务图无 `review_needed`，TF-0021 / TF-0027 已 done，本轮只继续 TF-0029。
+- 修复完整 gate 清单可被删除/替换后重算 digest 放行的问题：从候选规格、实际 diff 和绑定 profiles 重建清单，逐项检查命令、顺序、timeout、skip 预算及 source inputs。显式 changed paths 无 comparison base 的计划不能正式验收；规格固定的 diffBase 也不能被改为一个空差分。
+- 修复失败/跳过段漏计，补 Playwright 与 Node spec/TAP 摘要；矛盾总数拒绝。禁止参数的引号、`=value` 与相邻 shell 操作符形式均有反例。旧 RC-00 单 gate bootstrap 只作阴性回归，不再当作工程通过。
+- 最终 **44/44** 聚焦单测通过；完整 lint **0 errors / 119 warnings**，120 上限已写入命令；Node/Web/Test 类型检查通过。provenance / RC baseline CLI 通过，三个基线身份与 skip 预算 **53** 保持不变。
+- Agent Dev fast 与 87 项单测、comms、完整 Vite/Electron 构建通过。构建 41.696 秒、单测 17.952 秒，未越硬上限。本任务实际差分 Harness validate / dry-run 通过；全局 CI 的 Harness 44 项及 catalogs 通过，但最终严格 audit **B/86、NO-GO**，唯一 veto 为 Electron 环境门。
+- 环境暂跳过：第 54 个 skip 已定位到 root-memory-files 的文件符号链接用例，实跑 14 passed / 1 skipped；Agent Dev Electron 4 项被 Runtime 构建过期挡住（`server-startup-post-attach.defer.test.ts` 比 dist/entry.js 新）。没有改预算、绕过新鲜度检查或把这些项计通过。
+- 正式独立 Executor/Verifier、干净候选完整根测试链、冷树 embedded-runner V-08 八项及真实 Provider/真人记录仍未完成。TF-0029 保持 in_progress，TF-0140 和其他节点不变。下一步在合适环境中冻结候选、重建 manifest 并补齐完整验收；不要重复已完成的 UI 和本轮验收器修复。
+- 本轮详细记录：`docs/dev/task-forest-engineering-20260913.md` 最后一节。原文件与所有日志：`C:/Users/27933/AppData/Local/ClawX-scratch/tf0029-validator-relay-20260914/`。当前主树原有修改完整保留，本轮未提交、reset、stash 或 clean。
+
+## 当前接力：TF-0029 工程收尾继续（2026-09-14，本会话）
+
+- 用户确认独立审核会话未派出，要求继续 TF-0029 收尾。主树仍脏，未 reset/stash/clean，未改产品锁，未把节点标 done。
+- V-01：当前 `eslint .` 为 0 errors / **119 warnings**（上限 120）。测试 `no-explicit-any` 已清零；剩余 75 条生产 any、35 条 react-refresh、9 条 hooks。机械 `any→unknown` 已撤销。
+- V-03～V-07：验收器已改为分段 Tests 求和、可计数 required-test 必须带 skip 预算、commandLine 禁止 `--fix` 并回绑候选 spec、required-test 在 detached worktree 执行、ignored `--copy` 锁定 sha256/bytes。`agent-engineering-acceptance` **32/32**。探针：7773/54 分段计数、`--fix` 被拒、4 份 copy 均有 digest。
+- V-02：新增 `scripts/rc01r-prerequisite-provenance.mjs`。历史 prerequisite `c860c12f` 对 `3b08a466` 的 38 路径 diff 核验通过，spec blob `4bfc17d7`；集成比较基线保持 `5dabc7ca`，acceptedBase 保持 `73bdddbb`，三者互不顶替。CLI 与单测 **2/2**。skip 预算仍冻结 **53**，独立观测到的 54 未授权上调。
+- 集成 spec `harness/specs/tasks/task-forest-active-node-engineering-closeout.md` 已按当前真实改动补路径；`pnpm harness validate --spec ... --since 5dabc7ca` **exit 0**。`rc01-baseline-validate` **PASS**；`openclaw_runtime tsgo:core` **exit 0**；`tsgo -p tsconfig.test.json` **exit 0**。
+- V-08 冷树 embedded-runner 120s watchdog 仍按环境项 pass，未计通过。完整 `pnpm test`、独立 Executor/Verifier 双 worktree 终报未跑，正式验收仍 NO-GO。
+- 下一步：干净候选上重跑 lint≤120 与完整分段计数；识别多出的 1 个 skip 后再谈是否授权 54；独立 Verifier 复验 V-03～V-07 与终报。TF-0140 / 真人节点 / default-on 不变。
+
+## 当前接力：原进行中节点批次，TF-0026 完成、TF-0027 继续（2026-09-14）
+
+- 用户要求处理原 12 个进行中节点，暂时跳过 TF-0140；后来确认 TF-0134 只按 M4 批准范围核查。TF-0140 状态、进度、要求、证据与更新时间核对未变。
+- TF-0025 / TF-0026 / TF-0074 / TF-0134 / TF-0135 已通过官方 Task Forest CLI 收口 done。TF-0007 / TF-0010 / TF-0028 / TF-0056 / TF-0102 因真人或外部收口条件标为 blocked；TF-0021 / TF-0029 的工程继续。TF-0027 已按 TF-0021 依赖启动。
+- Workspace 16/16 Electron E2E 通过，含四组尺寸主题、只读 Review、终端复用、文件预览及 Ledger/ClawGraph 深链。L0 引文匹配和 Responses 支持修复后，压缩 30 条真实语料的三阶段 live 门全通过，97 个相关单测通过；产品锁保持。
+- 旧完整测试候选 `8e7c3c0e1e1d06c894e23ee710532ffdac25e076`：7773 passed / 54 skipped / exit 0。VerseShell 双 source/target 重建字节相同，RC 基线恢复到规格指定的祖先 73bdddbb，堆增量 0.607 MiB、活动记录 0。当前隔离目录 `D:/ClawX-candidates/active-20260913-audit` 已推进到 UI 集成候选 `d7a00add7fde7ea8da856bffbd88bf6696001451`，不要混用各提交的验证范围。
+- 原 RC 文本的 120-warning 上限与正式独立验收尚未关闭。用户已明确允许独立只读子 Agent 验收；`/root/independent_engineering_acceptance` 已启动，在专用 worktree 核查，不修改主树或 Task Forest。独立验收者确认 ≤120 为硬门，当前 371 不能豁免。
+- TF-0026：两主视图、统一队列、显式编辑、Chat 问知识库、v1 检查点与路由往返已完成；原 KE 四用例已恢复，review-queue 文件 7/7，知识库总计 32 项覆盖。独立复核又发现迟到 Prepare 结果可能污染另一个草稿的预览，已在 d7a00add 改为原子草稿/提案选择、回包按发起草稿绑定、显示层检查关联；独立同一反例红→绿，完整 Knowledge 15/15 独立通过。所有早期失败日志保留。
+- TF-0027：已读 `harness/specs/tasks/fakecoding-secondary-surface-convergence.md`。标题、Provider 灰阶按钮、单主操作及 Observability 49px 指标裁切均已修复。12 设置分区/诊断页双尺寸双主题通过；Legacy 视觉分支已移除，旧 query 忽略，Browser/Review 进入工作区。Web 类型、127 单测、i18n/BOM、scoped lint、通信、完整 diff-aware Harness 及 harness:ci（44 tests，A/94，无 veto）通过。大轮 Electron 为 72/78；其中两项内存错误与三项旧控件/焦点/瞬态URL断言已在串行 5 项复跑中通过，唯独 Setup 真 HTTP 网络失败场景仍未出预期错误。当前正在 scratch/tf0027-setup-state.log 记录其页面状态；此问题解决前不要关闭 TF-0027。
+- TF-0029：压缩协议测试有 4 处 .mjs 声明缺失。独立确认当前警告中测试 any 有 254 条，修紧这些类型后预计能降至 120 上限内，优先修测试而不大改生产逻辑。正式验收目前 NO-GO，待修计数（完整 pnpm test 被 largestCount 只计首段）、必需测试无 testExpectation 也能通过、manifest 未绑定原 spec/commandLine 可混入 --fix、required-test 错跑 sourceRoot、5 份 ignored copy 输入未锁 hash/bytes。不得放宽门槛或仅把 skip 53 改54。
+- 独立报告：scratch/independent-verifier-20260914/independent-review.md 与 verification-results.json，Verifier 仍可用 followup_task 继续，不需新建 Agent。receipt-store/shadow-census 28/28、M4 39/39、独立堆测量 5/5（0.615 MiB）、30 份 live 输入身份/SHA 均通过；embedded-runner acceptance 8 项冷树超时尚未验证。原 RC prerequisite 已找回 c860c12f4ab88bca9bd46742facbc97e98bb9d60，基底 3b08a466，共38路径含spec；新增本批集成 spec 应固定 comparison base 5dabc7ca，只列真实本批路径，并保留 acceptedBase=73bdddbb，不能重签旧SHA或拿增量--since冒充旧spec验收。
+- 总记录 `docs/dev/task-forest-engineering-20260913.md`。所有原始日志、源文件备份、live 报告、候选索引位于 `%LOCALAPPDATA%/ClawX-scratch/task-forest-active-closeout-20260913/`；TF-0026 原文件另在该目录 `tf0026-before/`。主分支 HEAD 仍为 5dabc7ca5e86d2c08e5236e175323ebe4b4db804，原 21 项 dirty 已先备份，不得 reset/stash/clean。
+
 ## 当前接力：工具运行时可靠性第五批五节点完成（2026-09-13，TF-0209～TF-0213）
 
 - 按用户“至少完成五个节点”的授权，从干净的 `4f5869441` 接力；五项新缺口均已先复现再修复，挂 TF-0102，前置为已完成的 TF-0208。

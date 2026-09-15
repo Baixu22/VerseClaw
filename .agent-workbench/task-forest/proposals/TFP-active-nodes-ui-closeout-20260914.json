@@ -1,0 +1,61 @@
+{
+  "applied_at": "2026-09-14T01:46:10.395830Z",
+  "base_graph_hash": "93cac5ae9a26ef6512d9663ffa6226bfc91cdfbe3e5f962bfa7bde16318142f4",
+  "base_summary": {
+    "edge_count": 363,
+    "node_count": 213,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "节点已完成；后续集成正式验收由 TF-0029 承接。",
+        "summary": "两主视图、统一队列、显式编辑、Chat 知识问答与 v1 检查点已完成。保留 KE 四项原有验收；知识库32项Electron覆盖通过。独立发现的迟到提案预览串线已用原子选择/来源检查修复，同一反例转绿，Knowledge 15/15 独立单测通过。"
+      },
+      "id": "TF-0026"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/fakecoding-secondary-surface-convergence.md",
+          "候选 981c9026f4648ce9caec15c5d7e651c0b6e67563；完整变化由 d275a6c 后三个阶段保存并验证。",
+          "scratch/tf0027-e2e-serial.log：20 files / 78 passed / 0 skipped / exit 0。",
+          "scratch/tf0027-verification-lifecycle.log：31 passed；tf0027-setup-lifecycle-final.log：4 passed。",
+          "独立验证：知识库15/15、安装导航9项、Provider/Model原3反例及扩展9项均通过。",
+          "应用类型、i18n/BOM、ESLint、构建、comms、scoped Harness、harness:ci通过；后者44 tests、A/94无veto。",
+          "docs/dev/task-forest-engineering-20260913.md"
+        ],
+        "next_action": "节点已完成；不把 UI 完成视为 TF-0029 正式工程验收或产品/真人放行。",
+        "progress": 100,
+        "status": "done",
+        "summary": "设置等次级页面完成紧凑控件、灰阶主操作与几何收尾；视觉Legacy切换退役，旧Browser/Review链接进入工作区。修复指标裁切、Setup迟到安装回调越步及Provider/Model旧验证回包。20个Electron文件78/78串行通过；最后的验证生命周期变更另31单测与4项Electron复验通过，独立反例全绿。"
+      },
+      "id": "TF-0027"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "UI 主线已收口；全局工程验收器与固定警告基线继续由 TF-0029 处理。",
+        "progress": 100,
+        "status": "done",
+        "summary": "FakeCoding UI 与信息架构迁移各串行子节点已完成：Inbox/Scheduled、Workspace、Knowledge、次级设置页面及Legacy视觉收尾齐备。1280/960 Light/Dark及完整UI回归78/78通过，异步复核与Setup的独立反例已修复。不改变任何产品锁或真人验收状态。"
+      },
+      "id": "TF-0021"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "以5dabc7ca为明确集成比较基线保留旧c860c12 prerequisite provenance；补4处mjs类型声明，收紧测试中的254处any并用原120警告门；修复验收器R3缺口后冻结最终候选，复用已授权的独立Verifier完成全套。",
+        "summary": "自包含资源、固定acceptedBase与完整历史测试链已恢复；独立验收已获用户授权并启动，已验证receipt-store/shadow-census28项、M4 39项、30份live输入身份和堆门。当前仍NO-GO：警告超过120、验收器多段计数/必需测试预算/命令与spec绑定/执行cwd/copy输入锁有阻断，embedded 8项尚需补证。"
+      },
+      "id": "TF-0029"
+    }
+  ],
+  "created_at": "2026-09-14T01:46:10.040402Z",
+  "proposal_id": "TFP-active-nodes-ui-closeout-20260914",
+  "rationale": "按用户完成原进行中节点的授权，TF-0026、TF-0027 的实现及独立发现的异步问题已修复并验证，串行关闭 UI 父任务；TF-0029 继续修复独立验收阻断，TF-0140 保持完全不变。",
+  "session_id": "active-nodes-20260913",
+  "status": "applied"
+}

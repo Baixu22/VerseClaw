@@ -527,7 +527,7 @@ describe("端到端: multi_hop 查询完整流程", () => {
     expect(trace.temporalPolicy).toBe("strict_current");
     expect(trace.expansionFacts).toContain("f_answer");
     expect(trace.bridgeDiscovery?.bridgeLiftAtK).toBe(1);
-    expect((trace.bridgeDiscovery as any)?.selectedBridgeFactId).toBe("f1");
+    expect((trace.bridgeDiscovery as { selectedBridgeFactId?: string } | undefined)?.selectedBridgeFactId).toBe("f1");
     expect(trace.agentSteps).toHaveLength(5);
     expect(trace.llmCalls).toBe(1);
     expect(trace.tokensUsed).toBe(500);

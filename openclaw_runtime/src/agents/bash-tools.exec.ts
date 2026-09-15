@@ -1936,7 +1936,10 @@ export function createExecTool(
         hostPolicyApproved = host === "verseshell";
       }
 
-      const explicitTimeoutSec = typeof params.timeout === "number" ? params.timeout : null;
+      const explicitTimeoutSec =
+        typeof params.timeout === "number" && Number.isFinite(params.timeout) && params.timeout > 0
+          ? params.timeout
+          : null;
       const effectiveTimeout = explicitTimeoutSec ?? defaultTimeoutSec;
       const getWarningText = () => (warnings.length ? `${warnings.join("\n")}\n\n` : "");
       const usePty = params.pty === true && !sandbox;

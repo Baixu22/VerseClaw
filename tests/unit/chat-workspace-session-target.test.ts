@@ -30,9 +30,9 @@ function workspace(overrides: Partial<WorkspaceProfile> = {}): WorkspaceProfile 
 
 describe('resolveWorkspaceSessionTarget', () => {
   it('inherits the current agent when switching workspace', async () => {
+    const { resolveWorkspaceSessionTarget } = await import('@/pages/Chat');
     vi.spyOn(Date, 'now').mockReturnValue(12345);
     vi.spyOn(Math, 'random').mockReturnValue(0.123456);
-    const { resolveWorkspaceSessionTarget } = await import('@/pages/Chat');
 
     expect(resolveWorkspaceSessionTarget(workspace(), 'reviewer')).toEqual({
       agentId: 'reviewer',

@@ -1,0 +1,40 @@
+{
+  "applied_at": "2026-09-13T20:35:00.589714Z",
+  "base_graph_hash": "23db8cd80d0fbe68208c34e2ccdc3617dcb3dafc587e3d424753e4077f9e6bf0",
+  "base_summary": {
+    "edge_count": 363,
+    "node_count": 213,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/knowledge-hub-information-density.md",
+          "src/lib/knowledge-review-items.ts",
+          "src/pages/Knowledge/KnowledgeReviewQueue.tsx",
+          "tests/unit/knowledge-review-items.test.ts：2/2 通过。"
+        ],
+        "next_action": "完成 Librarian 组件迁移及 Chat 知识询问模式，补齐引用/草稿/复核回路，再执行 i18n、类型、构建、Electron E2E 与 scoped Harness。",
+        "progress": 10,
+        "status": "in_progress",
+        "summary": "已从知识库信息密度规格开工：统一 KnowledgeReviewItem 投影与 Review Queue 已接入，首屏收敛为 Library/Review Queue；开始显式编辑与窄屏单视图处理。Librarian 迁往 Chat、交互回归与最终验收仍进行中。"
+      },
+      "id": "TF-0026"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "在冻结候选上完成非实现者独立验收并处理原 RC 警告上限；不要把本地完整绿线直接写成 engineeringAcceptedByAgent 或产品批准。",
+        "summary": "Harness/diff 归属、冷类型检查、非祖先基线和 50-cycle 堆测量均已修复；锁定 VerseShell 源码在独立 source/target roots 重建通过。冻结候选 8e7c3c0e1e1d06c894e23ee710532ffdac25e076 的完整 pnpm test 链 exit 0：7773 passed / 54 skipped，保留原 skip，堆增量 0.607 MiB、活动记录 0。正式独立验收及原 RC 120-warning 条款仍未关闭。"
+      },
+      "id": "TF-0029"
+    }
+  ],
+  "created_at": "2026-09-13T20:35:00.284750Z",
+  "proposal_id": "TFP-active-nodes-tf0026-start-20260914",
+  "rationale": "用户要求继续完成原进行中节点；TF-0025 已完成后，按父任务 TF-0021 的依赖串行推进已有子节点 TF-0026，同时记录 TF-0029 冻结候选的完整测试链结果。",
+  "session_id": "active-nodes-20260913",
+  "status": "applied"
+}

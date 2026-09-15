@@ -25,7 +25,8 @@
     "runtime": "Runtime Lessons",
     "review": "Review",
     "governance": "Governance",
-    "sources": "Источники"
+    "sources": "Источники",
+    "reviewQueue": "Очередь проверки"
   },
   "actions": {
     "more": "Другие действия",
@@ -128,7 +129,7 @@
     "roleId": "knowledge-librarian",
     "currentDocument": "Текущий документ",
     "noSummary": "Напишите или откройте Markdown-документ, чтобы дать контекст библиотекарю.",
-    "openAssistant": "Открыть библиотекаря",
+    "openAssistant": "Спросить базу знаний",
     "askSteward": "Попросить steward",
     "related": "Связанные страницы",
     "noRelated": "Результаты поиска и связанные страницы появятся здесь.",
@@ -232,7 +233,9 @@
       "stewardReview": "Проверка steward",
       "openInbox": "Открыть inbox",
       "submitDraft": "Отправить черновик"
-    }
+    },
+    "chatTitle": "Спросить базу знаний",
+    "backToChat": "Вернуться в чат"
   },
   "inbox": {
     "title": "Knowledge Inbox",
@@ -412,7 +415,8 @@
       "semantic": "Семантический",
       "defaultRole": "Роль по умолчанию",
       "close": "Закрыть"
-    }
+    },
+    "prepareProposal": "Подготовить предложение"
   },
   "runtime": {
     "title": "Runtime Lessons",
@@ -629,5 +633,28 @@
     "troubleshootingRecipe": "Диагностика",
     "artifactCreated": "Studio-черновик создан",
     "question": "Создайте {{artifact}} из текущего Source Set."
+  },
+  "reviewQueue": {
+    "filterLabel": "Тип записи для проверки",
+    "filters": {
+      "all": "Все",
+      "inbox": "Входящие",
+      "draft": "Черновики",
+      "proposal": "Предложения"
+    },
+    "search": "Поиск записей для проверки",
+    "empty": "Нет записей, соответствующих фильтру.",
+    "back": "Назад к очереди проверки",
+    "status": {
+      "pending": "Ожидает",
+      "draft": "Черновик",
+      "steward_reviewed": "Проверено куратором",
+      "proposed": "Предложено",
+      "approved": "Одобрено",
+      "rejected": "Отклонено",
+      "applied": "Применено",
+      "promoted": "Перенесено в черновики",
+      "dismissed": "Исключено"
+    }
   }
 }

@@ -190,6 +190,6 @@ describe('P6-001 Windows signing policy', () => {
       { name: fileName, sha512Base64: newHash, size: newSize },
     ]);
     expect(missingHashResult.ok).toBe(false);
-    expect(missingHashResult.mismatches.some((item: any) => item.actual === '<missing>')).toBe(true);
+    expect(missingHashResult.mismatches.some((item: { actual?: string }) => item.actual === '<missing>')).toBe(true);
   });
 });

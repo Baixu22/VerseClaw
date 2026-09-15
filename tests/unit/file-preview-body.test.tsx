@@ -37,10 +37,10 @@ vi.mock('@/lib/file-preview-client', () => ({
 vi.mock('@/lib/host-api', () => ({
   hostApi: {
     dialog: {
-      message: dialogMessageMock as any,
+      message: dialogMessageMock as never,
     },
     shell: {
-      openPath: shellOpenPathMock as any,
+      openPath: shellOpenPathMock as never,
     },
   },
 }));

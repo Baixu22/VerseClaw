@@ -8,7 +8,7 @@ function exists(rel: string): boolean {
   return fs.existsSync(path.join(root, rel));
 }
 
-function readJson(rel: string): any {
+function readJson(rel: string) {
   const p = path.join(root, rel);
   expect(fs.existsSync(p), `missing ${rel}`).toBe(true);
   return JSON.parse(fs.readFileSync(p, 'utf8'));
@@ -104,10 +104,10 @@ describe('DCS ops canary hard veto (honesty locks)', () => {
     expect(p.hardBounds.jointSystemGa).toBe('NO-GO');
     expect(p.hardBounds.sekbAutoWriteback).toBe(false);
     expect(p.hardBounds.cutoverAllowed).toBe(false);
-    const ids = (p.profiles || []).map((x: any) => x.id);
+    const ids = (p.profiles || []).map((x: { id?: string }) => x.id);
     expect(ids).toEqual(expect.arrayContaining(['dcs-coding', 'sekb-assisted', 'browser-supervised']));
     for (const id of ['dcs-coding', 'sekb-assisted', 'browser-supervised']) {
-      const prof = p.profiles.find((x: any) => x.id === id);
+      const prof = p.profiles.find((x: { id?: string }) => x.id === id);
       expect(prof.owner || p.roles?.owner).toBeTruthy();
       expect(prof.kill).toBeTruthy();
       expect(prof.budget || prof.budgetTasks != null).toBeTruthy();

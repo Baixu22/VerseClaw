@@ -19,6 +19,12 @@ export type AcceptanceGate = {
   adapter?: string;
   safety?: Record<string, unknown>;
   testExpectation?: Record<string, unknown> | null;
+  copyInputs?: Array<{
+    path: string | null;
+    exists: boolean;
+    bytes: number | null;
+    sha256: string | null;
+  }>;
 };
 
 export type AcceptanceSourceFile = {
@@ -58,6 +64,12 @@ export type AcceptanceManifest = {
     lockFiles: AcceptanceSourceFile[];
     identityPolicy: string;
     eolPolicy: string;
+    provisionCopies?: Array<{
+      path: string | null;
+      exists: boolean;
+      bytes: number | null;
+      sha256: string | null;
+    }>;
   };
   gates: AcceptanceGate[];
   safety: Record<string, unknown>;
@@ -105,9 +117,10 @@ export type AcceptanceStatus = {
 export const ACCEPTANCE_SCHEMA: string;
 export const ACCEPTANCE_REPORT_SCHEMA: string;
 export const TF0009_ADAPTER_ID: string;
+export const ROOT_UNIT_EXPECTED_SKIPS: number;
 
 export function stableJson(value: unknown): string;
-export function sha256(value: string): string;
+export function sha256(value: string | Uint8Array): string;
 export function sha256File(filePath: string): string;
 export function digestReport(report: unknown): string;
 export function equalDigest(expected: unknown, actual: unknown): boolean;
@@ -126,7 +139,16 @@ export function validateAcceptanceEnvironment(
 ): { ok: boolean; errors: string[]; providerKeys: string[] };
 export function redactText(value: string, options?: Record<string, unknown>): string;
 export function assertSafeOutputDirectory(outputDir: string, sourceRoot?: string): string;
-export function parseTestCounts(stdout: string, stderr?: string): Record<string, unknown>;
+export function parseTestCounts(stdout: string, stderr?: string): {
+  passed: number;
+  failed: number;
+  skipped: number;
+  total: number;
+  source: string;
+  segments: number;
+} | null;
+export function isCountableTestCommand(command?: string | null, args?: string[], commandLine?: string): boolean;
+
 export function sealReport(report: AcceptanceReport): AcceptanceReport;
 export function runAcceptance(
   manifest: AcceptanceManifest,

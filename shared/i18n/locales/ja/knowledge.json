@@ -25,7 +25,8 @@
     "runtime": "Runtime Lessons",
     "review": "Review",
     "governance": "Governance",
-    "sources": "ソース"
+    "sources": "ソース",
+    "reviewQueue": "レビュー待ち"
   },
   "actions": {
     "more": "その他の操作",
@@ -128,7 +129,7 @@
     "roleId": "knowledge-librarian",
     "currentDocument": "現在の文書",
     "noSummary": "Markdown 文書を書くか開くと、Librarian が文脈を取得できます。",
-    "openAssistant": "Librarian を開く",
+    "openAssistant": "ナレッジベースに質問",
     "askSteward": "Steward に依頼",
     "related": "関連ページ",
     "noRelated": "検索結果と関連ページがここに表示されます。",
@@ -232,7 +233,9 @@
       "stewardReview": "Steward レビュー",
       "openInbox": "Inbox を開く",
       "submitDraft": "ドラフト送信"
-    }
+    },
+    "chatTitle": "ナレッジベースに質問",
+    "backToChat": "チャットに戻る"
   },
   "inbox": {
     "title": "Knowledge Inbox",
@@ -412,7 +415,8 @@
       "semantic": "セマンティック",
       "defaultRole": "デフォルトロール",
       "close": "閉じる"
-    }
+    },
+    "prepareProposal": "変更提案を作成"
   },
   "runtime": {
     "title": "Runtime Lessons",
@@ -629,5 +633,28 @@
     "troubleshootingRecipe": "トラブルシュート",
     "artifactCreated": "Studio 草稿を作成しました",
     "question": "現在の Source Set から {{artifact}} を作成します。"
+  },
+  "reviewQueue": {
+    "filterLabel": "レビュー項目の種類",
+    "filters": {
+      "all": "すべて",
+      "inbox": "受信項目",
+      "draft": "下書き",
+      "proposal": "変更提案"
+    },
+    "search": "レビュー項目を検索",
+    "empty": "この表示に一致するレビュー項目はありません。",
+    "back": "レビュー待ちに戻る",
+    "status": {
+      "pending": "保留中",
+      "draft": "下書き",
+      "steward_reviewed": "スチュワード確認済み",
+      "proposed": "提案済み",
+      "approved": "承認済み",
+      "rejected": "却下済み",
+      "applied": "適用済み",
+      "promoted": "下書きに移行済み",
+      "dismissed": "除外済み"
+    }
   }
 }

@@ -84,7 +84,7 @@ function loadAllFacts(dbPath: string): RuntimeMemoryTemporalFact[] {
   });
   const loaded = persistence.loadStore();
   if (loaded.status !== "loaded") throw new Error("loadAllFacts: load failed");
-  return [...loaded.store.queryFacts({ includeInvalidated: true })] as any;
+  return [...loaded.store.queryFacts({ includeInvalidated: true })] as never;
 }
 
 async function getMemoryContextFromFacts(
@@ -442,7 +442,7 @@ describe.skipIf(!hasDeepSeekKey())("CV4: LLM-judge L4 retention cross-validation
         maxTokens: 64,
       });
 
-      const agreementCount = votes.responses.filter((v: any) => v.content.includes(token)).length;
+      const agreementCount = votes.responses.filter((v: { content: string }) => v.content.includes(token)).length;
       expect(agreementCount).toBeGreaterThanOrEqual(2); // >=2/3 agreement
     },
     120_000,

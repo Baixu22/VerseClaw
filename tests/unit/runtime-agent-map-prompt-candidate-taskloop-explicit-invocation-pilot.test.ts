@@ -550,7 +550,7 @@ describe("AgentMap prompt candidate TaskLoop explicit invocation pilot", () => {
         explicitInvocation: item.explicitInvocation,
         result,
         config: item.config,
-        tokenBudget: (item as any).tokenBudget ?? 700,
+        tokenBudget: (item as { tokenBudget?: number }).tokenBudget ?? 700,
       });
 
       expect(pilot.status).toBe("legacy");

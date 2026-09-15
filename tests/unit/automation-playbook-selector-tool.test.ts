@@ -58,7 +58,7 @@ describe('select_automation_playbook tool (B2)', () => {
       ],
     });
     expect(select).toHaveBeenCalledTimes(1);
-    expect(((select as any).mock.calls as any)[0][0]).toMatchObject({ userContent: '分析当前页面这个接口参数' });
+    expect((vi.mocked(select).mock.calls[0][0])).toMatchObject({ userContent: '分析当前页面这个接口参数' });
   });
 
   it('returns selected:false when selector returns undefined', async () => {
@@ -91,7 +91,7 @@ describe('select_automation_playbook tool (B2)', () => {
       pageContextSummary: '标题：后台\nURL：https://example.com',
     });
 
-    expect(((select as any).mock.calls as any)[0][0]).toMatchObject({
+    expect((vi.mocked(select).mock.calls[0][0])).toMatchObject({
       userContent: '总结当前页面内容',
       pageContextSummary: '标题：后台\nURL：https://example.com',
     });
@@ -105,7 +105,7 @@ describe('select_automation_playbook tool (B2)', () => {
       userContent: '看看页面',
     });
 
-    const input = ((select as any).mock.calls as any)[0][0] as { userContent: string; pageContextSummary?: string };
+    const input = (vi.mocked(select).mock.calls[0][0]) as { userContent: string; pageContextSummary?: string };
     expect(input.userContent).toBe('看看页面');
     expect(input.pageContextSummary).toBeUndefined();
   });

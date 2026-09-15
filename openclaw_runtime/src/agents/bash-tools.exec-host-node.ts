@@ -217,30 +217,35 @@ export async function executeNodeHostCommand(
       !requiresSecurityAuditSuppressionApproval
     ) {
       const reviewer = params.autoReviewer ?? defaultExecAutoReviewer;
-      const decision = await reviewer({
-        command: prepared.rawCommand,
-        argv: autoReviewArgv,
-        cwd: prepared.cwd,
-        envKeys: Object.keys(params.requestedEnv ?? {}).toSorted(),
-        host: "node",
-        reason: resolveNodeAutoReviewReason({
-          inlineEvalHit,
-          hostSecurity,
-          analysisOk,
-          allowlistSatisfied,
-          durableApprovalSatisfied,
-        }),
-        analysis: {
-          parsed: analysisOk,
-          allowlistMatched: allowlistSatisfied,
-          durableApprovalMatched: durableApprovalSatisfied,
-          inlineEval: inlineEvalHit !== null,
-        },
-        agent: {
-          id: prepared.agentId,
-          sessionKey: prepared.sessionKey,
-        },
-      });
+      const decision = await awaitWithAbort(
+        Promise.resolve(
+          reviewer({
+            command: prepared.rawCommand,
+            argv: autoReviewArgv,
+            cwd: prepared.cwd,
+            envKeys: Object.keys(params.requestedEnv ?? {}).toSorted(),
+            host: "node",
+            reason: resolveNodeAutoReviewReason({
+              inlineEvalHit,
+              hostSecurity,
+              analysisOk,
+              allowlistSatisfied,
+              durableApprovalSatisfied,
+            }),
+            analysis: {
+              parsed: analysisOk,
+              allowlistMatched: allowlistSatisfied,
+              durableApprovalMatched: durableApprovalSatisfied,
+              inlineEval: inlineEvalHit !== null,
+            },
+            agent: {
+              id: prepared.agentId,
+              sessionKey: prepared.sessionKey,
+            },
+          }),
+        ),
+        params.signal,
+      );
       params.signal?.throwIfAborted();
       if (decision.decision === "allow-once") {
         const approvalId = randomUUID();
@@ -285,10 +290,13 @@ export async function executeNodeHostCommand(
         initiatingSurface,
         sentApproverDms,
         unavailableReason,
-      } = await createAndRegisterDefaultExecApprovalRequest({
-        ...requestArgs,
-        register: registerNodeApproval,
-      });
+      } = await awaitWithAbort(
+        createAndRegisterDefaultExecApprovalRequest({
+          ...requestArgs,
+          register: registerNodeApproval,
+        }),
+        params.signal,
+      );
       // A cancelled foreground request must not create a detached approval follow-up.
       params.signal?.throwIfAborted();
       if (

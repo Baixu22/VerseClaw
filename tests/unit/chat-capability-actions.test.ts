@@ -252,7 +252,7 @@ describe('chat capability actions', () => {
 
   it('stops MCP registration orchestration when structure check fails', async () => {
     const api = createApi();
-    (api.mcp.testServer as any).mockResolvedValueOnce({ success: false, error: 'bad config' });
+    vi.mocked(api.mcp.testServer).mockResolvedValueOnce({ success: false, error: 'bad config' });
     const result = await resolveChatCapabilityActions(`register MCP {
       "mcpServers": {
         "filesystem": {
@@ -334,8 +334,8 @@ describe('chat capability actions', () => {
     }));
 
     const results = await executeChatCapabilityActions(result.actions, {
-      ...({ confirmation: { required: true, confirmed: false, source: 'chat-preflight' } } as any),
-    }, api);
+      confirmation: { required: true, confirmed: false, source: 'chat-preflight' },
+    } as never, api);
 
     expect(api.mcp.createServer).not.toHaveBeenCalled();
     expect(api.mcp.reloadRuntime).not.toHaveBeenCalled();

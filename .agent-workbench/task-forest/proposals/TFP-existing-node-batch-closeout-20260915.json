@@ -1,0 +1,44 @@
+{
+  "applied_at": "2026-09-14T17:07:06.619119Z",
+  "base_graph_hash": "8de8858ed195f1fa63c0f3db798d539c0c8e71c887089f8dfad5e16d64d3d37c",
+  "base_summary": {
+    "edge_count": 363,
+    "node_count": 213,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "D:/verse_claw_worktree_compact/reports/context-compression/P6-WOULD-RETRY-CANARY-AUTO-2026-08-20.md:36",
+          "D:/verse_claw_worktree_compact/artifacts/comms/compare-report.md",
+          "diff-aware Harness 当前阻断路径：docs/dev/handoffs/LATEST.md、electron/main/index.ts、electron/main/process-error-handlers.ts、tests/e2e/app-smoke.spec.ts、tests/unit/main-unhandled-rejection.test.ts",
+          "外部收敛方案（2026-09-05）3.2 / 3.6；本节点实测基线：would-retry 2.521× total tokens、3.107× latency",
+          "openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-quality.ts:237-250（auditSummaryQuality 放行点，3.2 的拟接入位置）",
+          "openclaw_runtime/src/context-engine/context-health-monitor.ts:281-353（B-4 四维打分）、:355-379（recordContextHealth 仅内存历史）、:381-404（writeContextHealthSnapshot 落盘，生产零调用点 —— 外部方案 1.4/1.5 的 JSONL 落盘依赖它）",
+          "本轮证据目录 D:/ClawX-acceptance/tf0076-20260915/；隔离候选 D:/ClawX-candidates/tf0076-cost-20260915；不修改 promotionStage 或产品锁。",
+          "docs/dev/task-forest-existing-nodes-20260915.md",
+          "reports/context-compression/TF0076-COST-BUDGET-2026-09-15.md",
+          "2026-09-15 干净候选HEAD=632e31b17ff83dd349a124f75dd1d2ebe36ad897，tree=f0ca4ddfc22c4ab29c0876100549225bbd095fab；manifest SHA-256=07dfc01e4aba9e81b3835df63fe45f50f39e6967cfe407cfda2b38b7efd9c73e。",
+          "D:/ClawX-acceptance/tf0076-20260915/attempt-03/engineering-report.json：scopedEngineering=PASS，全部requiredTests通过，343次执行/0失败/0跳过，19文件覆盖；输入哈希和clean状态前后不变。",
+          "D:/ClawX-acceptance/tf0076-20260915/attempt-03/cost-decision.json：NO-GO，currentCandidateProviderMeasured=false，allowedPromotion=false。历史汇总仅作诊断，未冒充当前成功实验。",
+          "2026-09-15 Node/Web、lint 0 errors/114 warnings、comms、任务diff-aware Harness通过；global harness:ci仍C/74 FAIL（4项旧证据），不计全局通过。"
+        ],
+        "execution_hints": [
+          "本节点完成的是预算与不可放行裁决；不得自动翻转promotionStage或产品锁。",
+          "若未来重开成本实验，先固定预算与当前候选manifest，完整采集至少30条同集合paired provider usage/latency，再判定；新增retry触发必须计入同一总预算。"
+        ],
+        "progress": 100,
+        "status": "done",
+        "summary": "成本预算与干净候选工程验收完成：11条requiredTests、343次测试执行、19个不同文件均通过；成本判定NO-GO（历史2.5208x tokens/3.1071x latency超过1.20x/1.50x，且缺当前paired provider成本证据）。按原验收允许的明确不可放行结论收口，保持shadow。全局CI仍受TF-0029旧证据阻塞。"
+      },
+      "id": "TF-0076"
+    }
+  ],
+  "created_at": "2026-09-14T17:07:05.996727Z",
+  "proposal_id": "TFP-existing-node-batch-closeout-20260915",
+  "rationale": "用户要求推进现有未完成节点且阻塞直接跳过；TF-0076 的原验收允许明确不可放行结论，当前干净候选全部 requiredTests 已通过，只关闭该节点，其他跳过不计完成。",
+  "session_id": "goal-existing-ten-20260915",
+  "status": "applied"
+}

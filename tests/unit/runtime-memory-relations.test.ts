@@ -231,7 +231,7 @@ describe("Phase 6: Relation chain", () => {
       });
 
       const result = integration.appendFact(candidate);
-      expect((result as any).status).toBe("skipped");
+      expect((result as { status?: string; contextItems?: Array<{ metadata?: { factId?: string } }> }).status).toBe("skipped");
 
       const loaded = integration.loadStore();
       expect(loaded.status).toBe("loaded");
@@ -269,7 +269,7 @@ describe("Phase 6: Relation chain", () => {
       });
 
       const result = integration.appendFact(candidate);
-      expect((result as any).status).toBe("persisted");
+      expect((result as { status?: string; contextItems?: Array<{ metadata?: { factId?: string } }> }).status).toBe("persisted");
 
       const loaded = integration.loadStore();
       expect(loaded.status).toBe("loaded");
@@ -415,7 +415,7 @@ describe("Phase 6: Relation chain", () => {
       }, {});
 
       // The context items should include f2 (expanded) in addition to matched facts
-      const factIds = (result as any).contextItems.map((item: { metadata?: { factId?: string } }) => item.metadata?.factId).filter(Boolean);
+      const factIds = (result as { status?: string; contextItems: Array<{ metadata?: { factId?: string } }> }).contextItems.map((item: { metadata?: { factId?: string } }) => item.metadata?.factId).filter(Boolean);
       expect(factIds).toContain("f1");
       expect(factIds).toContain("f2");
     });
@@ -454,9 +454,9 @@ describe("Phase 6: Relation chain", () => {
       }, {});
 
       // Only 2 expanded facts should be included (MAX_RELATION_EXPANSIONS = 2)
-      const expandedFactIds = (result as any).contextItems
+      const expandedFactIds = (result as { status?: string; contextItems: Array<{ metadata?: { factId?: string } }> }).contextItems
         .map((item: { metadata?: { factId?: string } }) => item.metadata?.factId)
-        .filter((id: any) => typeof id === "string" && id.startsWith("rel_"));
+        .filter((id: unknown): id is string => typeof id === "string" && id.startsWith("rel_"));
       expect(expandedFactIds.length).toBeLessThanOrEqual(2);
     });
 
@@ -475,8 +475,8 @@ describe("Phase 6: Relation chain", () => {
         },
       }, {});
 
-      expect((result as any).status).toBe("success");
-      expect((result as any).contextItems.length).toBeGreaterThan(0);
+      expect((result as { status?: string; contextItems?: Array<{ metadata?: { factId?: string } }> }).status).toBe("success");
+      expect((result as { status?: string; contextItems: Array<{ metadata?: { factId?: string } }> }).contextItems.length).toBeGreaterThan(0);
     });
   });
 });

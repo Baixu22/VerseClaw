@@ -62,7 +62,6 @@ import { hostApi, type ChatKnowledgeReference, type KnowledgeRouteCandidate, typ
 import { errorMessageFrom, toastUserError } from '@/lib/user-error';
 import type { SendOptions } from '@shared/chat/types';
 import { cn } from '@/lib/utils';
-import { useUiVersion } from '@/components/layout/ui-overlay-context';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
@@ -980,8 +979,6 @@ export function ChatInput({
   onConfirmTaskLoopUpgrade,
   className,
 }: ChatInputProps) {
-  const uiVersion = useUiVersion();
-  const isUiV2 = uiVersion === 'v2';
   const resolvedTheme = useResolvedTheme();
   const { t } = useTranslation('chat');
   const [input, setInput] = useState(() => draftValue ?? '');
@@ -3120,7 +3117,7 @@ export function ChatInput({
       className={cn(
         'codex-composer-host',
         hero && 'codex-composer-host--hero',
-        isUiV2 ? 'mx-auto w-full max-w-[768px] px-4 pb-5 pt-2' : 'p-4 pb-6 w-full mx-auto max-w-3xl',
+        'mx-auto w-full max-w-[768px] px-4 pb-5 pt-2',
         className,
       )}
       onDragOver={handleDragOver}
@@ -3145,8 +3142,7 @@ export function ChatInput({
           className={cn(
             'relative rounded-[25px] px-3 pb-1.5 pt-2.5 min-h-[98px]',
             'transition-[border-color,box-shadow,background-color,transform] duration-180',
-            isUiV2 ? 'codex-composer-shell' : 'border border-black/10 bg-surface-modal shadow-sm dark:border-white/10',
-            !isUiV2 && dragOver && 'border-primary ring-1 ring-primary',
+            'codex-composer-shell',
           )}
         >
           <BorderBeam

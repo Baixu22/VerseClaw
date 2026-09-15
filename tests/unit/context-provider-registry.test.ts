@@ -313,7 +313,7 @@ describe("context provider registry pilot", () => {
       }),
     ]));
     expect(result.diagnostics.every(isRuntimeRegistryDiagnostic)).toBe(true);
-    expect((messages as any[]).map((message: any) => message.content)).toEqual([
+    expect((messages as Array<{ content?: unknown }>).map((message) => message.content)).toEqual([
       "Implement registry shadow only.",
       "Legacy messages stay authoritative.",
     ]);

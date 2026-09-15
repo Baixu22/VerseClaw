@@ -707,7 +707,7 @@ async function produceTaskLoopShadowDiagnostics(
       idFactory: (prefix) => `${prefix}_real_producer_registry`,
       now: () => 1_700_000_000_000,
       ensureTaskLedgerRoot: vi.fn(() => "tlroot_real_producer_registry"),
-      runObserved: (async (request: any) => fakeTaskLoopResult(request.templateId)) as never,
+      runObserved: (async (request: { templateId?: string }) => fakeTaskLoopResult(request.templateId)) as never,
       selfCheck: selfCheck as never,
       getSubagentRun: getEvidenceRun as never,
       lifecycle: (event) => lifecycle.push(event),

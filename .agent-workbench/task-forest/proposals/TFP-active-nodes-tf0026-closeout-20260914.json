@@ -1,0 +1,59 @@
+{
+  "applied_at": "2026-09-13T22:13:12.965519Z",
+  "base_graph_hash": "feb09e11426e56f584c9b222f18bd77e6d55ada548cb557abeb479cf3c130b05",
+  "base_summary": {
+    "edge_count": 363,
+    "node_count": 213,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/knowledge-hub-information-density.md",
+          "src/lib/knowledge-review-items.ts 与 src/pages/Knowledge/KnowledgeReviewQueue.tsx",
+          "src/pages/Chat/KnowledgeChat.tsx 与 src/pages/Knowledge/knowledge-view-utils.ts",
+          "tests/unit/knowledge-page.test.tsx、knowledge-review-items.test.ts、knowledge-chat.test.tsx：14 passed；startup-loading-experience 6 passed。",
+          "知识库 Electron 3 specs / 28 用例覆盖通过；最终几何复跑 3/3，包含 Light/Dark 960/1280、legacy bootstrap、复核提案绑定、Chat 往返。",
+          "隔离候选 c2b207e076dc1d34602eaf45fa304b02b4170211，父提交 5b4549d894262ec0ccff4db0e4daf9b0594737aa；两阶段 diff-aware Harness validate/dry-run 通过。",
+          "docs/dev/task-forest-engineering-20260913.md；原始日志与截图在本机 ClawX-scratch/task-forest-active-closeout-20260913/tf0026-*。"
+        ],
+        "next_action": "节点已完成；后续次级页面及全局视觉收尾由 TF-0027 承接。",
+        "progress": 100,
+        "status": "done",
+        "summary": "Library / Review Queue 两个主视图、统一候选投影、显式编辑和窄屏单面板已完成；Librarian 迁入 Chat 知识问答，保留 v1 检查点、引用与未保存笔记，候选返回对应复核页。修复草稿/提案串线、迟到审核结果串线和 4px 页面溢出。知识库 14 单测、28 项 Electron 覆盖、应用类型、i18n、构建、comms 与 scoped Harness 通过。"
+      },
+      "id": "TF-0026"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "补充次级页面任务规格，核查 Settings/Setup/Agents/Models/Channels/Skills/Observability 的实际界面及既有统一控件，再完成全局门禁和 Legacy 收尾条件。",
+        "progress": 5,
+        "status": "in_progress",
+        "summary": "TF-0026 已完成，开始次级页面与全局视觉收尾。首次补充全局 Electron 检查发现展示页仍使用圆角缩放前的 8px 断言，当前统一圆角为批准的 1.25 倍；待核对所有次级页面实际控件和迁移边界。"
+      },
+      "id": "TF-0027"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "TF-0025、TF-0026 已完成；串行完成 TF-0027 的次级页面、全局视觉门和 Legacy 收尾后再判定父节点。"
+      },
+      "id": "TF-0021"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "补齐上轮压缩协议测试 4 处 .mjs 导入的类型声明，处理原 RC 120-warning 条款并完成非实现者正式独立验收；子 Agent 授权仍未收到，不自动启动。"
+      },
+      "id": "TF-0029"
+    }
+  ],
+  "created_at": "2026-09-13T22:13:12.686223Z",
+  "proposal_id": "TFP-active-nodes-tf0026-closeout-20260914",
+  "rationale": "按用户继续完成原进行中节点的授权，完成 TF-0021 下的 TF-0026 后串行进入 TF-0027；记录实测剩余门禁，不改变 TF-0140。",
+  "session_id": "active-nodes-20260913",
+  "status": "applied"
+}

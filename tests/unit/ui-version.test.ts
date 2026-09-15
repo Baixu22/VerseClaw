@@ -8,9 +8,9 @@ describe('resolveUiVersion', () => {
     expect(resolveUiVersion('linux', '')).toBe('v2');
   });
 
-  it('allows an explicit development override', () => {
-    expect(resolveUiVersion('win32', '?uiVersion=legacy')).toBe('legacy');
-    expect(resolveUiVersion('darwin', '?uiVersion=legacy')).toBe('legacy');
+  it('keeps old visual query values compatible with the completed migration', () => {
+    expect(resolveUiVersion('win32', '?uiVersion=legacy')).toBe('v2');
+    expect(resolveUiVersion('darwin', '?uiVersion=legacy')).toBe('v2');
     expect(resolveUiVersion('linux', '?uiVersion=v2')).toBe('v2');
   });
 });

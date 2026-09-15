@@ -113,6 +113,8 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
   const [baseUrl, setBaseUrl] = useState('');
   const [validation, setValidation] = useState<ValidationState>({ phase: 'idle' });
   const [useExistingId, setUseExistingId] = useState<string | null>(null);
+  const validationGeneration = useRef(0);
+  useEffect(() => () => { validationGeneration.current += 1; }, []);
 
   useEffect(() => {
     void refreshProviderSnapshot();
@@ -140,6 +142,7 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
   );
 
   const resetValidation = useCallback(() => {
+    validationGeneration.current += 1;
     setValidation({ phase: 'idle' });
     onValidated(null);
   }, [onValidated]);
@@ -148,6 +151,7 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
 
   const handleValidateNew = async () => {
     if (!selectedType || !typeInfo) return;
+    const generation = ++validationGeneration.current;
     const effectiveBaseUrl = baseUrl.trim() || typeInfo.defaultBaseUrl;
     const failureFromEmpty = classifyProviderValidationError({
       apiKeyPresent: apiKey.trim().length > 0,
@@ -168,6 +172,7 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
     const result = await validateAccountApiKey(selectedType, apiKey.trim() || undefined, {
       baseUrl: effectiveBaseUrl,
     });
+    if (generation !== validationGeneration.current) return;
     if (!result.valid) {
       setValidation({
         phase: 'failed',
@@ -209,9 +214,11 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
         effectiveApiKey,
       );
     } catch (error) {
+      if (generation !== validationGeneration.current) return;
       setValidation({ phase: 'failed', failure: 'service', rawError: String(error) });
       return;
     }
+    if (generation !== validationGeneration.current) return;
     setValidation({ phase: 'valid', durationMs: result.durationMs });
     onValidated({
       accountId: id,
@@ -222,6 +229,7 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
   };
 
   const handleValidateExisting = async (account: ProviderAccount) => {
+    const generation = ++validationGeneration.current;
     setUseExistingId(account.id);
     setValidation({ phase: 'validating' });
     onValidated(null);
@@ -229,6 +237,7 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
       baseUrl: account.baseUrl,
       apiProtocol: account.apiProtocol,
     });
+    if (generation !== validationGeneration.current) return;
     if (!result.valid) {
       setValidation({
         phase: 'failed',
@@ -439,33 +448,59 @@ export function ModelStepContent({ pending, onVerified }: ModelStepContentProps)
   const [confirming, setConfirming] = useState(false);
   const [confirmedModel, setConfirmedModel] = useState<string | null>(null);
   const loadedForAccount = useRef<string | null>(null);
+  const mounted = useRef(false);
+  const listGeneration = useRef(0);
+  const confirmationGeneration = useRef(0);
+  const confirmationInFlight = useRef(false);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
 
   const loadModels = useCallback(async () => {
-    if (!pending) return;
+    const generation = ++listGeneration.current;
+    confirmationGeneration.current += 1;
+    setSelectedModel(null);
+    setConfirmedModel(null);
+    onVerified(null);
+    if (!pending) {
+      setModels(null);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setListError(null);
     setModels(null);
-    onVerified(null);
-    const result = await listAccountModels(pending.accountId, undefined, {
-      baseUrl: pending.baseUrl,
-      apiProtocol: pending.apiProtocol,
-    });
-    setLoading(false);
-    if (!result.success) {
-      setListError(result.error || 'model listing failed');
-      return;
+    try {
+      const result = await listAccountModels(pending.accountId, undefined, {
+        baseUrl: pending.baseUrl,
+        apiProtocol: pending.apiProtocol,
+      });
+      if (!mounted.current || generation !== listGeneration.current) return;
+      if (!result.success) {
+        setListError(result.error || 'model listing failed');
+        return;
+      }
+      setModels(result.models);
+    } catch (error) {
+      if (mounted.current && generation === listGeneration.current) setListError(String(error));
+    } finally {
+      if (mounted.current && generation === listGeneration.current) setLoading(false);
     }
-    setModels(result.models);
   }, [pending, listAccountModels, onVerified]);
 
   useEffect(() => {
-    if (!pending || loadedForAccount.current === pending.accountId) return;
-    loadedForAccount.current = pending.accountId;
+    const accountKey = pending ? JSON.stringify([pending.accountId, pending.baseUrl, pending.apiProtocol]) : null;
+    if (loadedForAccount.current === accountKey) return;
+    loadedForAccount.current = accountKey;
     void loadModels();
   }, [pending, loadModels]);
 
   const handleConfirm = async () => {
-    if (!pending || !selectedModel || !models?.includes(selectedModel)) return;
+    if (!pending || !selectedModel || !models?.includes(selectedModel) || confirmationInFlight.current) return;
+    confirmationInFlight.current = true;
+    const generation = ++confirmationGeneration.current;
+    const isCurrent = () => mounted.current && generation === confirmationGeneration.current;
     setConfirming(true);
     try {
       const account = useProviderStore
@@ -484,7 +519,9 @@ export function ModelStepContent({ pending, onVerified }: ModelStepContentProps)
           },
         },
       });
+      if (!isCurrent()) return;
       await setDefaultAccount(pending.accountId);
+      if (!isCurrent()) return;
       setSetupProviderVerification({
         status: 'verified',
         accountId: pending.accountId,
@@ -495,10 +532,13 @@ export function ModelStepContent({ pending, onVerified }: ModelStepContentProps)
       setConfirmedModel(selectedModel);
       onVerified({ model: selectedModel });
     } catch (error) {
-      setListError(String(error));
-      onVerified(null);
+      if (isCurrent()) {
+        setListError(String(error));
+        onVerified(null);
+      }
     } finally {
-      setConfirming(false);
+      confirmationInFlight.current = false;
+      if (mounted.current) setConfirming(false);
     }
   };
 
@@ -555,6 +595,7 @@ export function ModelStepContent({ pending, onVerified }: ModelStepContentProps)
               type="button"
               data-testid={`setup-model-option-${model}`}
               onClick={() => {
+                confirmationGeneration.current += 1;
                 setSelectedModel(model);
                 setConfirmedModel(null);
                 onVerified(null);

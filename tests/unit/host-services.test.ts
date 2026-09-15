@@ -134,22 +134,22 @@ const {
 }));
 
 vi.mock('@electron/utils/store', () => ({
-  getAllSettings: (...args: any[]) => getAllSettingsMock(...args),
-  getSetting: (...args: any[]) => getSettingMock(...args),
-  resetSettings: (...args: any[]) => resetSettingsMock(...args),
-  setSetting: (...args: any[]) => setSettingMock(...args),
+  getAllSettings: getAllSettingsMock,
+  getSetting: getSettingMock,
+  resetSettings: resetSettingsMock,
+  setSetting: setSettingMock,
 }));
 
 vi.mock('@electron/utils/openclaw-proxy', () => ({
-  syncProxyConfigToOpenClaw: (...args: any[]) => syncProxyConfigToOpenClawMock(...args),
+  syncProxyConfigToOpenClaw: syncProxyConfigToOpenClawMock,
 }));
 
 vi.mock('@electron/main/proxy', () => ({
-  applyProxySettings: (...args: any[]) => applyProxySettingsMock(...args),
+  applyProxySettings: applyProxySettingsMock,
 }));
 
 vi.mock('@electron/main/launch-at-startup', () => ({
-  syncLaunchAtStartupSettingFromStore: (...args: any[]) => syncLaunchAtStartupSettingFromStoreMock(...args),
+  syncLaunchAtStartupSettingFromStore: syncLaunchAtStartupSettingFromStoreMock,
 }));
 
 vi.mock('@electron/utils/logger', async (importOriginal) => {
@@ -162,24 +162,24 @@ vi.mock('@electron/utils/logger', async (importOriginal) => {
       getLogDir: () => logDir,
       getLogFilePath: () => join(logDir, 'verse-claw-current.log'),
       getRecentLogs: vi.fn(),
-      listLogFiles: (...args: any[]) => listLogFilesMock(...args),
-      readLogFile: (...args: any[]) => readLogFileMock(...args),
+      listLogFiles: listLogFilesMock,
+      readLogFile: readLogFileMock,
     },
-    readLogFileTail: (actual as any).readLogFileTail,
+    readLogFileTail: (actual as { readLogFileTail?: unknown }).readLogFileTail,
   };
 });
 
 vi.mock('@electron/utils/channel-config', () => ({
   cleanupDanglingWeChatPluginState: vi.fn(),
-  deleteChannelAccountConfig: (...args: any[]) => deleteChannelAccountConfigMock(...args),
-  deleteChannelConfig: (...args: any[]) => deleteChannelConfigMock(...args),
-  getChannelFormValues: (...args: any[]) => getChannelFormValuesMock(...args),
-  listConfiguredChannelAccountsFromConfig: (...args: any[]) => listConfiguredChannelAccountsFromConfigMock(...args),
-  listConfiguredChannels: (...args: any[]) => listConfiguredChannelsMock(...args),
-  listConfiguredChannelsFromConfig: (...args: any[]) => listConfiguredChannelsFromConfigMock(...args),
-  readOpenClawConfig: (...args: any[]) => readOpenClawConfigMock(...args),
-  writeOpenClawConfig: (...args: any[]) => writeOpenClawConfigMock(...args),
-  saveChannelConfig: (...args: any[]) => saveChannelConfigMock(...args),
+  deleteChannelAccountConfig: deleteChannelAccountConfigMock,
+  deleteChannelConfig: deleteChannelConfigMock,
+  getChannelFormValues: getChannelFormValuesMock,
+  listConfiguredChannelAccountsFromConfig: listConfiguredChannelAccountsFromConfigMock,
+  listConfiguredChannels: listConfiguredChannelsMock,
+  listConfiguredChannelsFromConfig: listConfiguredChannelsFromConfigMock,
+  readOpenClawConfig: readOpenClawConfigMock,
+  writeOpenClawConfig: writeOpenClawConfigMock,
+  saveChannelConfig: saveChannelConfigMock,
   setChannelDefaultAccount: vi.fn(),
   setChannelEnabled: vi.fn(),
   validateChannelConfig: vi.fn(),
@@ -192,28 +192,28 @@ vi.mock('@electron/services/mcp-api', () => ({
   createMcpApi: vi.fn(),
 }));
 vi.mock('@electron/utils/agent-config', () => ({
-  assignChannelAccountToAgent: (...args: any[]) => assignChannelAccountToAgentMock(...args),
-  assignChannelToAgent: (...args: any[]) => assignChannelToAgentMock(...args),
+  assignChannelAccountToAgent: assignChannelAccountToAgentMock,
+  assignChannelToAgent: assignChannelToAgentMock,
   clearAllBindingsForChannel: vi.fn(),
-  clearChannelBinding: (...args: any[]) => clearChannelBindingMock(...args),
-  createAgent: (...args: any[]) => createAgentMock(...args),
-  deleteAgentConfig: (...args: any[]) => deleteAgentConfigMock(...args),
-  listAgentsSnapshot: (...args: any[]) => listAgentsSnapshotMock(...args),
-  listAgentsSnapshotFromConfig: (...args: any[]) => listAgentsSnapshotFromConfigMock(...args),
-  readAgentBootstrapFile: (...args: any[]) => readAgentBootstrapFileMock(...args),
-  readAgentBootstrapTools: (...args: any[]) => readAgentBootstrapToolsMock(...args),
-  readAgentRoleProfile: (...args: any[]) => readAgentRoleProfileMock(...args),
-  readAgentSoul: (...args: any[]) => readAgentSoulMock(...args),
-  removeAgentWorkspaceDirectory: (...args: any[]) => removeAgentWorkspaceDirectoryMock(...args),
+  clearChannelBinding: clearChannelBindingMock,
+  createAgent: createAgentMock,
+  deleteAgentConfig: deleteAgentConfigMock,
+  listAgentsSnapshot: listAgentsSnapshotMock,
+  listAgentsSnapshotFromConfig: listAgentsSnapshotFromConfigMock,
+  readAgentBootstrapFile: readAgentBootstrapFileMock,
+  readAgentBootstrapTools: readAgentBootstrapToolsMock,
+  readAgentRoleProfile: readAgentRoleProfileMock,
+  readAgentSoul: readAgentSoulMock,
+  removeAgentWorkspaceDirectory: removeAgentWorkspaceDirectoryMock,
   resolveAccountIdForAgent: vi.fn((agentId: string) => agentId === 'main' ? 'default' : agentId),
   updateAgentModel: vi.fn(),
-  updateAgentAvatar: (...args: any[]) => updateAgentAvatarMock(...args),
-  resetAgentAvatar: (...args: any[]) => resetAgentAvatarMock(...args),
-  updateAgentName: (...args: any[]) => updateAgentNameMock(...args),
-  writeAgentBootstrapFile: (...args: any[]) => writeAgentBootstrapFileMock(...args),
-  writeAgentBootstrapTools: (...args: any[]) => writeAgentBootstrapToolsMock(...args),
-  writeAgentRoleProfile: (...args: any[]) => writeAgentRoleProfileMock(...args),
-  writeAgentSoul: (...args: any[]) => writeAgentSoulMock(...args),
+  updateAgentAvatar: updateAgentAvatarMock,
+  resetAgentAvatar: resetAgentAvatarMock,
+  updateAgentName: updateAgentNameMock,
+  writeAgentBootstrapFile: writeAgentBootstrapFileMock,
+  writeAgentBootstrapTools: writeAgentBootstrapToolsMock,
+  writeAgentRoleProfile: writeAgentRoleProfileMock,
+  writeAgentSoul: writeAgentSoulMock,
 }));
 
 vi.mock('@electron/services/workspaces-api', () => ({
@@ -221,13 +221,13 @@ vi.mock('@electron/services/workspaces-api', () => ({
 }));
 
 vi.mock('@electron/services/sandbox-api', () => ({
-  buildSandboxStatus: (...args: any[]) => buildSandboxStatusMock(...args),
+  buildSandboxStatus: buildSandboxStatusMock,
 }));
 
 vi.mock('@electron/utils/plugin-install', () => ({
   ensureDiscordPluginInstalled: vi.fn(),
   ensureDingTalkPluginInstalled: vi.fn(),
-  ensureFeishuPluginInstalled: (...args: any[]) => ensureFeishuPluginInstalledMock(...args),
+  ensureFeishuPluginInstalled: ensureFeishuPluginInstalledMock,
   ensureQQBotPluginInstalled: vi.fn(),
   ensureWeChatPluginInstalled: vi.fn(),
   ensureWeComPluginInstalled: vi.fn(),
@@ -241,11 +241,11 @@ vi.mock('@electron/utils/openclaw-workspace', () => ({
 vi.mock('@electron/services/providers/provider-runtime-sync', () => ({
   syncAllProviderAuthToRuntime: vi.fn(),
   syncAgentModelOverrideToRuntime: vi.fn(),
-  syncDefaultProviderToRuntime: (...args: any[]) => syncDefaultProviderToRuntimeMock(...args),
+  syncDefaultProviderToRuntime: syncDefaultProviderToRuntimeMock,
   syncDeletedProviderApiKeyToRuntime: vi.fn(),
   syncDeletedProviderToRuntime: vi.fn(),
   syncProviderApiKeyToRuntime: vi.fn(),
-  syncSavedProviderToRuntime: (...args: any[]) => syncSavedProviderToRuntimeMock(...args),
+  syncSavedProviderToRuntime: syncSavedProviderToRuntimeMock,
   syncUpdatedProviderToRuntime: vi.fn(),
   getOpenClawProviderKey: vi.fn((type: string) => type),
 }));
@@ -255,11 +255,11 @@ vi.mock('@electron/services/providers/provider-service', () => ({
 }));
 
 vi.mock('@electron/services/providers/provider-store', () => ({
-  providerAccountToConfig: providerAccountToConfigMock as any,
+  providerAccountToConfig: providerAccountToConfigMock as never,
 }));
 
 vi.mock('@electron/services/providers/provider-validation', () => ({
-  validateApiKeyWithProvider: (...args: any[]) => validateApiKeyWithProviderMock(...args),
+  validateApiKeyWithProvider: validateApiKeyWithProviderMock,
 }));
 
 vi.mock('@electron/utils/browser-oauth', () => ({

@@ -15,7 +15,6 @@ import {
   GenericRouteLoadingShell,
   SettingsRouteLoadingShell,
 } from '@/components/loading/RouteLoadingShell';
-import { useUiVersion } from './ui-overlay-context';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { useSettingsStore } from '@/stores/settings';
 
@@ -33,8 +32,6 @@ export function MainLayout() {
   const platform = window.electron?.platform;
   const isMac = platform === 'darwin';
   const isWin = platform === 'win32';
-  const uiVersion = useUiVersion();
-  const isUiV2 = uiVersion === 'v2';
   const isSettingsRoute = location.pathname.startsWith('/settings');
   const fetchWorkspaces = useWorkspacesStore((s) => s.fetchWorkspaces);
   const sidebarCollapsed = useSettingsStore((s) => s.sidebarCollapsed);
@@ -76,10 +73,10 @@ export function MainLayout() {
     <div
       data-testid="main-layout"
       data-platform={platform}
-      data-ui-version={uiVersion}
+      data-ui-version="v2"
       className={cn(
         'flex h-screen overflow-hidden',
-        isUiV2 ? 'bg-surface-sidebar' : isWin ? 'bg-surface-sidebar' : 'bg-background',
+        'bg-surface-sidebar',
         isMac ? 'flex-row' : 'flex-col',
       )}
     >
@@ -91,7 +88,7 @@ export function MainLayout() {
         data-depth="base"
         className={cn(
           'flex min-h-0 min-w-0 flex-1 overflow-hidden bg-surface-sidebar',
-          isUiV2 && !isSettingsRoute && 'app-content-stage-v2',
+          !isSettingsRoute && 'app-content-stage-v2',
         )}
       >
         {isSettingsRoute ? <SettingsSidebar /> : <Sidebar />}
@@ -101,7 +98,7 @@ export function MainLayout() {
             'relative min-h-0 min-w-0 flex-1 border-l border-border bg-background',
             isSettingsRoute
               ? 'overflow-hidden border-l-0 p-0 rounded-none shadow-none'
-              : cn('overflow-auto', isUiV2 ? 'p-5' : 'rounded-tl-2xl p-6'),
+              : 'overflow-auto p-5',
             !isWin && 'border-t border-border/60',
           )}
         >

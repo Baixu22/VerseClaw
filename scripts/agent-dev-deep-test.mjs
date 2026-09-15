@@ -63,8 +63,8 @@ const PERFORMANCE_BUDGETS = {
     targetMs: 3000,
     limitMs: 8000,
     loop: 'full-local',
-    owner: 'durable Agent Dev task-spec consistency',
-    mitigation: 'Keep the Agent Dev task spec reading list narrow and move reusable rules into harness/specs instead of broad source scans.',
+    owner: 'shared Agent Dev scenario baseline',
+    mitigation: 'Keep the shared scenario baseline separate from task-specific changed-path ownership checks.',
   },
   'vitest-agent-dev': {
     targetMs: 10000,
@@ -122,8 +122,8 @@ const BASE_STEPS = [
   {
     id: 'harness-agent-dev',
     command: 'pnpm',
-    args: ['harness', 'validate', '--spec', 'harness/specs/tasks/agent-dev-ecosystem-regularization.md'],
-    goal: 'Durable Agent Dev task-spec consistency',
+    args: ['harness', 'validate', '--spec', 'harness/specs/scenarios/agent-dev-composable-scenarios.md'],
+    goal: 'Shared Agent Dev scenario baseline; task ownership is validated separately for each change set',
   },
   {
     id: 'vitest-agent-dev',

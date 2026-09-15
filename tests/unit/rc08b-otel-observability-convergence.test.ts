@@ -63,7 +63,7 @@ describe('RC-08B OTel and observability convergence (root acceptance)', () => {
     const request = toOtlpExportTraceServiceRequest(makeTrace() as never);
     // The canonical OTLP ExportTraceServiceRequest envelope is the single schema.
     expect(request.resourceSpans).toHaveLength(1);
-    expect((request as any).resourceSpans[0].scopeSpans[0].spans.length).toBeGreaterThan(0);
+    expect((request as { resourceSpans: Array<{ scopeSpans: Array<{ spans: unknown[] }> }> }).resourceSpans[0].scopeSpans[0].spans.length).toBeGreaterThan(0);
     // OTel owns export; the exporter is the only trace path.
     const exporter = createObservabilityOtlpJsonExporter({ endpoint: 'http://collector/v1/traces', enabled: false });
     expect(exporter).toBeTypeOf('function');
@@ -95,7 +95,7 @@ describe('RC-08B OTel and observability convergence (root acceptance)', () => {
     }
     // The golden trace spans share one OTLP trace id derived from that digest.
     const exported = toOtlpExportTraceServiceRequest(makeTrace() as never);
-    const traceIds = new Set((exported as any).resourceSpans[0].scopeSpans[0].spans.map((span: any) => span.traceId));
+    const traceIds = new Set((exported as { resourceSpans: Array<{ scopeSpans: Array<{ spans: Array<{ traceId: string }> }> }> }).resourceSpans[0].scopeSpans[0].spans.map((span) => span.traceId));
     expect(traceIds.size).toBe(1);
   });
 

@@ -275,6 +275,11 @@ test.describe('Task ledger', () => {
       await page.getByRole('tab', { name: 'Review' }).click();
       await expect(page.getByTestId('task-ledger-review')).toContainText('Review agent-neutral schema');
 
+      await page.evaluate(() => { window.location.hash = '/task-ledger?nodeId=task-1'; });
+      await page.getByRole('tab', { name: 'Tree', exact: true }).click();
+      await expect(page.getByTestId('task-ledger-tree')).toContainText('Resolve export blocker');
+      await expect(page.getByTestId('task-ledger-tree').getByTestId('task-ledger-node')).toHaveCount(1);
+
       await page.evaluate(() => {
         window.location.hash = '/';
       });
@@ -434,10 +439,11 @@ test.describe('Task ledger', () => {
       await expect.poll(async () => {
         return await electronApp.evaluate(() => {
           const calls = (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: Record<string, unknown> | null }> }).__verseClawE2eHostCalls ?? [];
-          const appendCall = calls.findLast((call) => call.module === 'taskLedger' && call.action === 'appendEvents');
-          return appendCall?.payload ?? null;
+          return calls
+            .filter((call) => call.module === 'taskLedger' && call.action === 'appendEvents')
+            .map((call) => call.payload);
         });
-      }).toMatchObject({
+      }).toEqual(expect.arrayContaining([expect.objectContaining({
         workspaceId: 'default',
         events: expect.arrayContaining([
           expect.objectContaining({
@@ -470,7 +476,7 @@ test.describe('Task ledger', () => {
             }),
           }),
         ]),
-      });
+      })]));
 
       await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', /Send|发送/);
 

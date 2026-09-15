@@ -396,7 +396,7 @@ describe("跨组件一致性: bridge → expansion → trace", () => {
 
     expect(trace.expansionFacts).toEqual(expansionFactIds);
     expect(trace.bridgeDiscovery?.bridgeLiftAtK).toBe(1);
-    expect((trace.bridgeDiscovery as any)?.selectedBridgeFactId).toBe(bridgeFactIds[0]);
+    expect((trace.bridgeDiscovery as { selectedBridgeFactId?: string } | undefined)?.selectedBridgeFactId).toBe(bridgeFactIds[0]);
     expect(trace.category).toBe("multi_hop");
   });
 

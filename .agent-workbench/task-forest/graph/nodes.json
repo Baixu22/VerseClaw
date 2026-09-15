@@ -451,7 +451,8 @@
     "estimated_total_minutes": 960,
     "evidence": [
       "TF-0008 done：docs/dev/component-controlled-rollout-p0-closeout.md",
-      "TF-0009 ready：docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包"
+      "TF-0009 ready：docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包",
+      "docs/dev/task-forest-engineering-20260913.md"
     ],
     "execution_hints": [
       "一次只推进一个 ready 节点",
@@ -459,6 +460,7 @@
     ],
     "id": "TF-0007",
     "kind": "global_task",
+    "next_action": "由 operator 完成 TF-0009 的具名真人观察与 rollback，记录 owner verdict 后再评估父节点收口；不改变产品锁。",
     "non_goals": [
       "default-on",
       "联合系统 GA",
@@ -478,16 +480,16 @@
       "不解除 TF-0006 或宣称 joint-system GA"
     ],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "blocked",
     "success_metrics": [
       "未授权写入 0",
       "SEKB 未确认写入 0",
       "Browser 私网绕过 0",
       "kill switch 演练成功率 100%"
     ],
-    "summary": "P0 交付与真实集成证据已完成；下一阶段为 TF-0009 小范围受控 canary。因真实 canary 尚未执行，全局任务继续 in_progress。",
+    "summary": "工程基础保留；最终受控内测收口依赖 TF-0009 的真人 DCS/SEKB/Browser canary、rollback 和 owner verdict。当前模型质量评估不替代该真人证据。",
     "title": "DCS 与关联组件受控内测投用收口（非GA）",
-    "updated_at": "2026-08-21T15:28:26.301914Z"
+    "updated_at": "2026-09-13T18:20:19.098045Z"
   },
   "TF-0008": {
     "acceptance_criteria": [
@@ -734,7 +736,8 @@
       "docs/dev/unified-agent-system/runtime-convergence/",
       "harness/specs/tasks/runtime-authority-convergence-program.md",
       "C:/Users/27933/Desktop/result/final/dcs-first-architecture-synthesis-final-2026-08-02.md",
-      "docs/dev/full-chain-maturity-audit-2026-08-02.md"
+      "docs/dev/full-chain-maturity-audit-2026-08-02.md",
+      "docs/dev/task-forest-engineering-20260913.md"
     ],
     "execution_hints": [
       "唯一入口为 docs/dev/unified-agent-system/runtime-convergence/README.md",
@@ -743,7 +746,7 @@
     ],
     "id": "TF-0010",
     "kind": "global_task",
-    "next_action": "用户确认并应用本提案后，只启动 RC-00。",
+    "next_action": "继续 TF-0029 的基线与独立 Executor/Verifier；随后完成 RC-10 真人场景和用户 accepted verdict。",
     "non_goals": [
       "default-on、GA、发布批准或 TF-0006 解阻",
       "新增 Agent loop、workflow engine、memory/context store、协议、telemetry store 或 LLM router",
@@ -765,7 +768,7 @@
       "backend communication 改动必须引用 gateway-backend-communication"
     ],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "blocked",
     "success_metrics": [
       "未登记 semantic mutation 0",
       "重复副作用 0",
@@ -773,9 +776,9 @@
       "自动化 human/live 计数误增 0",
       "必需工程门禁通过率 100%"
     ],
-    "summary": "复用 OpenClaw 运行时、插件槽、MCP、OTel 和既有域执行器，按证据消除平行 Workflow/Context/Memory/Tool/Telemetry authority，并以跨入口 Context/Effect/Recovery lineage 形成 Operator Desktop 差异化。",
+    "summary": "Runtime/Operator 总任务仍缺当前候选的正式独立工程验收与用户最终真人 accepted verdict。TF-0029 可继续工程推进；本批不重签旧 SHA 的 STATUS 记录，也不把局部门禁绿当作总任务完成。",
     "title": "OpenClaw Runtime Authority 与 Operator 产品收敛（非 GA）",
-    "updated_at": "2026-08-21T15:28:26.301914Z"
+    "updated_at": "2026-09-13T18:20:19.098045Z"
   },
   "TF-0011": {
     "acceptance_criteria": [
@@ -1676,13 +1679,16 @@
     "deviations": [],
     "difficulty": "very_high",
     "estimated_total_minutes": 7200,
-    "evidence": [],
+    "evidence": [
+      "docs/dev/task-forest-engineering-20260913.md"
+    ],
     "execution_hints": [
       "一次只推进一个串行子节点",
       "每个节点先更新 Harness 与 E2E，再扩大视觉迁移面"
     ],
     "id": "TF-0021",
     "kind": "global_task",
+    "next_action": "UI 主线已收口；全局工程验收器与固定警告基线继续由 TF-0029 处理。",
     "non_goals": [
       "重写 Gateway、Host API 或后端数据模型",
       "合并 Task Ledger 与 ClawGraph 的状态真源",
@@ -1690,7 +1696,7 @@
       "把 Agent Browser 攟造成通用人类浏览器"
     ],
     "priority": 1,
-    "progress": 0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "降低导航和页面认知负担，在不削弱真实能力的前提下形成一致、安静、可发现的跨平台桌面体验。",
     "remaining_minutes_max": 9600,
@@ -1703,16 +1709,16 @@
       "960x800 下详情使用覆盖层或单视图，避免强制三栏"
     ],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [
       "管理页 H1 不超过 28px",
       "一级业务入口数量为 3",
       "Knowledge 顶级业务视图数量为 2",
       "迁移路径功能 E2E 覆盖率为 100%"
     ],
-    "summary": "以克制的灰阶工作界面重构 Verse Claw，同时按真实使用上下文重新归位现有能力。",
+    "summary": "FakeCoding UI 与信息架构迁移各串行子节点已完成：Inbox/Scheduled、Workspace、Knowledge、次级设置页面及Legacy视觉收尾齐备。1280/960 Light/Dark及完整UI回归78/78通过，异步复核与Setup的独立反例已修复。不改变任何产品锁或真人验收状态。",
     "title": "FakeCoding 设计体系与产品信息架构迁移",
-    "updated_at": "2026-07-31T11:00:30.784356Z"
+    "updated_at": "2026-09-14T01:46:10.309470Z"
   },
   "TF-0022": {
     "acceptance_criteria": [
@@ -1971,7 +1977,9 @@
     "deviations": [],
     "difficulty": "very_high",
     "estimated_total_minutes": 1500,
-    "evidence": [],
+    "evidence": [
+      "docs/dev/task-forest-engineering-20260913.md"
+    ],
     "execution_hints": [
       "先建立 Harness task，再完成 renderer 类型与旧状态迁移",
       "优先抽取共享 Terminal controller 和可嵌入 Review 子面板",
@@ -1980,6 +1988,7 @@
     ],
     "id": "TF-0025",
     "kind": "task",
+    "next_action": "本节点已完成；父任务 TF-0021 继续串行处理 TF-0026 Knowledge 收敛与 TF-0027 次级页面/Legacy 收尾。",
     "non_goals": [
       "Knowledge 信息架构收敛",
       "移除 ?uiVersion=legacy",
@@ -1987,7 +1996,7 @@
       "重写 Host API、Gateway、安全审批或后端状态模型"
     ],
     "priority": 1,
-    "progress": 0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "将会话内 Browser、Terminal、Files 与 Review 收敛为克制、连续且功能真实的 FakeCoding 式工作区，减少重复一级页面并保留深层能力。",
     "remaining_minutes_max": 2100,
@@ -2001,16 +2010,16 @@
       "不修改后端、Host API、Gateway、Browser 安全或持久化契约"
     ],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [
       "工作区可见标签数量固定为 6",
       "同一 Terminal intent 产生的后端 shell 数量为 1",
       "Browser 与 Review 语义重复一级页面数量为 0",
       "新增用户文案 en、zh、ja、ru 覆盖率为 100%"
     ],
-    "summary": "扩展会话 Browser 与 Review 标签，统一 openWorkspacePanel(intent)，并提供 Task Ledger/ClawGraph 上下文入口。",
+    "summary": "工作区能力与入口已完成验收：Browser/Review/Terminal/Files、深链及四组尺寸主题通过。修复恢复视图时的旧话题文件写入，显式新建/交接/fresh-agent 保留重置，分叉保留话题；44 项定向单测、16 项 Electron E2E、类型/构建/通信/Harness 门通过。",
     "title": "会话 Browser/Review 与工作区深层入口",
-    "updated_at": "2026-07-31T16:58:41.165423Z"
+    "updated_at": "2026-09-13T18:20:19.097045Z"
   },
   "TF-0026": {
     "acceptance_criteria": [
@@ -2021,7 +2030,7 @@
     ],
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0,
+      "fit_confidence": 0.0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -2037,13 +2046,22 @@
     "deviations": [],
     "difficulty": "very_high",
     "estimated_total_minutes": 1500,
-    "evidence": [],
+    "evidence": [
+      "harness/specs/tasks/knowledge-hub-information-density.md",
+      "src/lib/knowledge-review-items.ts 与 src/pages/Knowledge/KnowledgeReviewQueue.tsx",
+      "src/pages/Chat/KnowledgeChat.tsx 与 src/pages/Knowledge/knowledge-view-utils.ts",
+      "tests/unit/knowledge-page.test.tsx、knowledge-review-items.test.ts、knowledge-chat.test.tsx：14 passed；startup-loading-experience 6 passed。",
+      "知识库 Electron 3 specs / 28 用例覆盖通过；最终几何复跑 3/3，包含 Light/Dark 960/1280、legacy bootstrap、复核提案绑定、Chat 往返。",
+      "隔离候选 c2b207e076dc1d34602eaf45fa304b02b4170211，父提交 5b4549d894262ec0ccff4db0e4daf9b0594737aa；两阶段 diff-aware Harness validate/dry-run 通过。",
+      "docs/dev/task-forest-engineering-20260913.md；原始日志与截图在本机 ClawX-scratch/task-forest-active-closeout-20260913/tf0026-*。"
+    ],
     "execution_hints": [],
     "id": "TF-0026",
     "kind": "task",
+    "next_action": "节点已完成；后续集成正式验收由 TF-0029 承接。",
     "non_goals": [],
     "priority": 1,
-    "progress": 0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
@@ -2054,11 +2072,11 @@
       "Librarian 迁入 Chat 的询问知识库模式"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [],
-    "summary": "拆分 Knowledge 单体页，以 Library 和 Review Queue 为首屏，并将高级治理和来源工具按需披露。",
+    "summary": "两主视图、统一队列、显式编辑、Chat 知识问答与 v1 检查点已完成。保留 KE 四项原有验收；知识库32项Electron覆盖通过。独立发现的迟到提案预览串线已用原子选择/来源检查修复，同一反例转绿，Knowledge 15/15 独立单测通过。",
     "title": "Knowledge Library 与 Review Queue 收敛",
-    "updated_at": "2026-07-31T11:00:30.784356Z"
+    "updated_at": "2026-09-14T01:46:10.309470Z"
   },
   "TF-0027": {
     "acceptance_criteria": [
@@ -2069,7 +2087,7 @@
     ],
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0,
+      "fit_confidence": 0.0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -2085,13 +2103,22 @@
     "deviations": [],
     "difficulty": "very_high",
     "estimated_total_minutes": 1200,
-    "evidence": [],
+    "evidence": [
+      "harness/specs/tasks/fakecoding-secondary-surface-convergence.md",
+      "候选 981c9026f4648ce9caec15c5d7e651c0b6e67563；完整变化由 d275a6c 后三个阶段保存并验证。",
+      "scratch/tf0027-e2e-serial.log：20 files / 78 passed / 0 skipped / exit 0。",
+      "scratch/tf0027-verification-lifecycle.log：31 passed；tf0027-setup-lifecycle-final.log：4 passed。",
+      "独立验证：知识库15/15、安装导航9项、Provider/Model原3反例及扩展9项均通过。",
+      "应用类型、i18n/BOM、ESLint、构建、comms、scoped Harness、harness:ci通过；后者44 tests、A/94无veto。",
+      "docs/dev/task-forest-engineering-20260913.md"
+    ],
     "execution_hints": [],
     "id": "TF-0027",
     "kind": "task",
+    "next_action": "节点已完成；不把 UI 完成视为 TF-0029 正式工程验收或产品/真人放行。",
     "non_goals": [],
     "priority": 2,
-    "progress": 0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
@@ -2102,11 +2129,11 @@
       "同步三份 README 与设计说明"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [],
-    "summary": "统一 Settings、Setup、Agents、Models、Channels、Skills、Observability 等页面，并完成文档和全局门禁。",
+    "summary": "设置等次级页面完成紧凑控件、灰阶主操作与几何收尾；视觉Legacy切换退役，旧Browser/Review链接进入工作区。修复指标裁切、Setup迟到安装回调越步及Provider/Model旧验证回包。20个Electron文件78/78串行通过；最后的验证生命周期变更另31单测与4项Electron复验通过，独立反例全绿。",
     "title": "次级页面视觉收尾与 Legacy 移除",
-    "updated_at": "2026-07-31T11:00:30.784356Z"
+    "updated_at": "2026-09-14T01:46:10.309470Z"
   },
   "TF-0028": {
     "acceptance_criteria": [
@@ -2145,17 +2172,20 @@
     ],
     "difficulty": "very_high",
     "estimated_total_minutes": null,
-    "evidence": [],
+    "evidence": [
+      "docs/dev/task-forest-engineering-20260913.md"
+    ],
     "execution_hints": [],
     "id": "TF-0028",
     "kind": "milestone",
+    "next_action": "先完成 TF-0029 当前候选的正式复核，再取得 RC-10 六场景真人结果及 accepted verdict。",
     "non_goals": [
       "联合系统 GA",
       "默认开启实验能力",
       "平行推进 UI 收尾"
     ],
     "priority": 1,
-    "progress": 0,
+    "progress": 0.0,
     "progress_source": "manual",
     "purpose": "把 TF-0010 的收敛裁决变成可恢复、可验证、不会扩张跑偏的工程序列。",
     "remaining_minutes_max": null,
@@ -2166,15 +2196,15 @@
       "最终用户验收前不执行真人步骤"
     ],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "blocked",
     "success_metrics": [
       "必需 RC 包验收率 100%",
       "并行 active RC 包 0",
       "未授权新 authority 0"
     ],
-    "summary": "严格串行完成验收基础、权威重基线、DCS、Effect、Operator 切片、workflow/memory/standards 收敛、独立工程总验收和最终用户验收。",
+    "summary": "Runtime 收敛里程碑尚不能关闭：当前正式工程复核及 RC-10 真人场景/accepted verdict 仍缺。历史记录与本批本地工程验证分别保留。",
     "title": "Runtime Authority Convergence 与 Operator 验收",
-    "updated_at": "2026-08-02T13:07:59.996410Z"
+    "updated_at": "2026-09-13T18:20:19.098045Z"
   },
   "TF-0029": {
     "acceptance_criteria": [
@@ -2250,16 +2280,53 @@
       "2026-09-10 原始日志：C:/Users/27933/AppData/Local/ClawX-scratch/m2m4-l2-20260910/（l1.log、l2-shared.log、l2-maturity.log、rerun-test.log、seg5-*、seg7-*、baseline-seg57.log、verify-seg57.log）。",
       "docs/dev/context-moat/reviews/m2m4-closeout-20260911.md",
       "docs/dev/context-moat/reviews/revalidation-sec002-gov003-20260910.json",
-      "2026-09-11 最终 scoped Harness validate/dry-run 和 comms PASS；全局 harness:ci FAIL 于 Gateway 全分支路径覆盖。日志：C:/Users/27933/AppData/Local/ClawX-scratch/review-outcomes-20260910/harness-ci-final.log。"
+      "2026-09-11 最终 scoped Harness validate/dry-run 和 comms PASS；全局 harness:ci FAIL 于 Gateway 全分支路径覆盖。日志：C:/Users/27933/AppData/Local/ClawX-scratch/review-outcomes-20260910/harness-ci-final.log。",
+      "docs/dev/task-forest-engineering-20260913.md",
+      "2026-09-14 验收器补强：删除fast-unit-tests后重算digest仍通过的反例先失败；计数及参数10项反例修复前全失败；最终2文件44 passed/0 skipped/exit0。",
+      "2026-09-14 lint:check exit0，0 errors/119 warnings，--max-warnings 120已写入命令；Node/Web/Test及Runtime tsgo:core exit0，provenance与RC baseline CLI通过。",
+      "2026-09-14 Agent Dev fast通过，87项单测、comms replay/compare及Vite/Electron构建通过；构建41696ms<45000、单测17952ms<21000，未改变预算。",
+      "2026-09-14 环境暂跳过：符号链接测试14 passed/1 skipped；Electron四项因Runtime构建过期在交互前失败。deep-test blocked，最终严格audit B/86仅此veto；未声称完整CI或独立验收通过。",
+      "C:/Users/27933/AppData/Local/ClawX-scratch/tf0029-validator-relay-20260914/",
+      "docs/dev/task-forest-engineering-20260913.md：TF-0029验收器补强与环境暂跳过；docs/dev/handoffs/LATEST.md最新接力。",
+      "2026-09-14 日志计数反例先红：日志含 1 skip、报告称 0 skip，重算全部摘要后原 validateExecutorEvidence 返回空错误；修复后额外 skip、stderr 失败、缺失摘要三种情况均在 Verifier 执行前拒绝。",
+      "2026-09-14 本轮验收器/provenance 两文件45 passed/0 skipped；Node/Web/Test 类型、完整 lint:check exit0（0 errors/119 warnings，120上限不变）通过。",
+      "2026-09-14 实际差分 Harness validate/dry-run、baseline/provenance CLI通过；harness:ci 的44项回归和catalogs通过，最终audit B/86仍被已有Electron Runtime构建过期证据否决。环境、完整干净候选与独立Verifier均未计为通过。",
+      "C:/Users/27933/AppData/Local/ClawX-scratch/tf0029-report-evidence-20260914/",
+      "docs/dev/task-forest-engineering-20260913.md：TF-0029报告计数必须重放持久化日志；docs/dev/handoffs/LATEST.md最新接力。",
+      "2026-09-14 完整收尾尝试：Root/Runtime 离线 frozen 安装、Runtime/Gateway、V-08八项通过；补齐并核对 Electron40.8.4字节后完整Agent Dev通过。",
+      "2026-09-14 Root原2失败已复现修复；R3完整六段7819 passed/0 failed/54 skipped/exit0。最终Node Vitest入口增量另有61/61，不把新增两例虚加到整仓统计。",
+      "2026-09-14 代码复核R2四项、R3一项均先复现后修复；R4 helper exit0，findings=[]、patch is correct。首轮绝对路径格式拒收未计通过；代码复核不替代独立工程Verifier。",
+      "2026-09-14 Node/Web/Test/Runtime core类型、完整lint 0 errors/114 warnings（上限120）和最终scoped lint通过；最终Harness CI 44项、catalogs、严格audit A/94无veto。",
+      "2026-09-14 环境阻塞证据：真实文件symlink探针EPERM，完整根链skipBudgetMatches=false（expected53、actual54）。没有变更预算、产品锁或签发工程通过；正式双detached Executor/Verifier仍待完成。",
+      "候选工作树 D:/ClawX-candidates/active-20260913-audit；本地分支 codex/tf0029-closeout-20260914；最后代码审核快照 f7371a451a9492a32e550005f0621e24b66a10ba。",
+      "C:/Users/27933/AppData/Local/ClawX-scratch/tf0029-full-closeout-20260914/",
+      "docs/dev/task-forest-engineering-20260913.md：TF-0029完整收尾尝试与本地提交；docs/dev/handoffs/LATEST.md最新接力。",
+      "2026-09-14 用户明确授权独立验收；主线程和独立Verifier各自文件symlink探针均成功，root-memory-files 15/15、0 skipped。",
+      "2026-09-14 正式候选b34892cc3c3808e1c973d3ad7d357da0211f077c、tree0a2ab7ed2a0187c72602af5510fc124e1b8a3089；新manifest共27 gates、206 changed paths、11 source inputs、4 copy inputs，独立全量重推一致。",
+      "D:/ClawX-acceptance/tf0029-20260914/run/manifest.json",
+      "D:/ClawX-acceptance/tf0029-20260914/verifier-preflight/report.json",
+      "D:/ClawX-acceptance/tf0029-20260914/verifier-preflight/wrapper-contract.json",
+      "2026-09-14 正式首轮Executor NO-GO：root/runtime离线安装通过，VerseShell Rust集成失败，后续24门未运行；原run目录完整保留，source与detached tree均干净。",
+      "2026-09-14 已实证根因是受控环境缺COMPUTERNAME：同源码同命令48 passed/2 failed，补回真实系统变量后50 passed/0 failed；完整cargo test为268 passed、1个既有ignored基准项，Python两项optional_verify通过。",
+      "2026-09-14 attempt-02为新27门manifest，候选仍b34892cc3，环境只新增COMPUTERNAME；正式Executor已进入双独立VerseShell构建。原清单/配置/日志未覆盖，待最终报告，不能将诊断或旧证据计正式通过。",
+      "2026-09-14 独立预检发现发布证据旧SHA绑定且采集器嵌套写tracked artifacts；本地实跑release validator exit1。受控live E2E实跑1 skipped，与现有E2E expectedSkips=0冲突，未启用真实模型、删测试或改预算。",
+      "D:/ClawX-acceptance/tf0029-20260914/verseshell-diagnostic/",
+      "D:/ClawX-acceptance/tf0029-20260914/attempt-02/run/manifest.json",
+      "D:/ClawX-acceptance/tf0029-20260914/verifier-preflight/release-output-and-live-conflict.json",
+      "D:/ClawX-acceptance/tf0029-20260914/local-prerequisites.json",
+      "D:/ClawX-acceptance/tf0029-20260914/attempt-02/run/executor-report.json：generatedAt=2026-09-14T16:13:20.738Z，result=NO-GO，14 pass/1 fail/12 blocked，testCounts=7853 passed/0 failed/50 skipped，source/detached 均 clean。",
+      "2026-09-15 用户要求现有未完成节点遇 block 直接跳过；未重签旧发布证据、调整 skip 预算、调用真实 Provider 或冒称独立验收。"
     ],
     "execution_hints": [
-      "本轮活动 spec：harness/specs/tasks/rc01r-receipt-owner-proof.md；owner 修复和本地证明已完成。验证命令及证据见 docs/dev/unified-agent-system/runtime-convergence/RC01-RECEIPT-OWNER-PROOF.md。",
-      "8 个旧测试类型错误：tests/unit/agent-dev-regularization.test.ts 的两个 export 类型声明；tests/unit/runtime-memory-locomo-full-500.test.ts 的六处 _profileContext。根 typecheck 的观察模式不使这些错误消失。",
-      "共享树其他任务改动与全分支 Harness 范围阻断保留为残余；正式验收仍须干净候选、完整全局门禁及独立 Verifier。"
+      "规格task-forest-active-node-engineering-closeout；comparison base=5dabc7ca，prerequisite=c860c12f/3b08a466，acceptedBase=73bdddbb，三者不互换。",
+      "文件symlink限制已解除；受控Windows环境必须保留真实COMPUTERNAME。Rust 268 passed/1个既有ignored基准项与root固定53 skips是不同测试范围。",
+      "首轮正式run与第二轮attempt-02分别保存，不覆盖日志；诊断通过不能替代27门Executor或独立Verifier。",
+      "真实模型项依用户要求暂缓，不将skipped计通过；发布旧SHA不可改签，输出必须隔离且完整mutation检查保留。",
+      "TF-0140、其他节点、默认值与产品锁保持原状。"
     ],
     "id": "TF-0029",
     "kind": "task",
-    "next_action": "先处理全局 harness:ci 的跨任务路径覆盖问题并形成干净候选，再完成正式独立 Executor/Verifier 工程验收。追加自动代码复核三轮服务过载未返回结论，不计为通过；已完成的 M2/M4、TF-0154 回执子项与8个测试类型错误修复不必重复。P6-005 仍未达到全部发布门通过。",
+    "next_action": "完成attempt-02，记录真实门禁结果；在不改skip预算、不删除门禁或重签旧证据的前提下处理发布输出隔离与工程/live验收范围。Executor未全通过前不得签发独立工程接受。",
     "non_goals": [
       "新增生产能力（仅允许 receipt-owner 实证中已复现的现有 owner 缺陷修复）",
       "authority cutover"
@@ -2272,11 +2339,11 @@
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "blocked",
     "success_metrics": [],
-    "summary": "基线输入与 receipt-owner 修复已完成；8 个测试类型错误已清零，完整 L2 按既定标准通过。回执工程子项 TF-0154 已 done，M2/M4 复核收口独立记录；本节点仍待完整正式独立 Executor/Verifier 工程验收。",
+    "summary": "2026-09-15 读取 attempt-02 正式最终报告：14 门 pass，Agent Dev audit 因四类证据旧于 package.json 失败，后续 12 门未执行；Root skip 实际 50 与固定 53 不匹配。正式结论 NO-GO，独立 Verifier 未执行。按本轮用户指令跳过，保留原日志和产品锁。",
     "title": "RC-01R 自包含基线与全局绿线",
-    "updated_at": "2026-09-10T17:44:55.122970Z"
+    "updated_at": "2026-09-14T16:25:51.272177Z"
   },
   "TF-0030": {
     "acceptance_criteria": [
@@ -3752,7 +3819,8 @@
       "docs/dev/verseshell-foundation/STATUS.md",
       "harness/specs/tasks/verseshell-typed-aci-adaptation.md",
       "docs/dev/verseshell-foundation/P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md",
-      "docs/dev/verseshell-foundation/P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md"
+      "docs/dev/verseshell-foundation/P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md",
+      "docs/dev/task-forest-engineering-20260913.md"
     ],
     "execution_hints": [
       "只启动 TF-0059 / VS-P0-02；不并行启动 P0-03 或任何 P1+ 工作包。",
@@ -3760,7 +3828,7 @@
     ],
     "id": "TF-0056",
     "kind": "global_task",
-    "next_action": "TF-0065 closeout 已应用；仅启动 TF-0066 / VS-P2-03 diagnostics，保持严格串行，不得并行启动 write、provider canary 或 rollout。",
+    "next_action": "准备 TF-0069 的具名 operator/reviewer 及真实 paired canary、rollback、soak、平台握手记录。保持 default-off，不从二进制工程验证推导产品批准。",
     "non_goals": [
       "立即删除 PowerShell、Git Bash 或 native terminal",
       "向模型暴露所有 31 个 VerseShell operation",
@@ -3770,7 +3838,7 @@
       "自动 native fallback、外部 shell 写入自动事务化、default-on 或 GA"
     ],
     "priority": 1,
-    "progress": 12,
+    "progress": 12.0,
     "progress_source": "manual",
     "purpose": "为文件、仓库、进程、测试、构建、Git、诊断和结果查询提供统一、受治理的本地执行契约，同时保持模型工具面小且稳定。",
     "remaining_minutes_max": null,
@@ -3783,16 +3851,16 @@
       "不把 workspace jail 描述为 OS sandbox，不在 governed 路径自动 native fallback 或 effectful replay"
     ],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "blocked",
     "success_metrics": [
       "未授权执行、隐式 native fallback、effectful replay、workspace 越界和敏感输出泄漏均为 0",
       "二进制、source、patch、lockfile、crate、handshake 和 catalog identity 漂移为 0",
       "截断输出均有 omitted metadata 和 artifact；写入均有明确 journal 或 external_write 语义",
       "真实 canary 的 provider usage、recovery、rollback 和安全事件有独立、低敏、可审阅记录"
     ],
-    "summary": "VerseShell foundation 已完成 P0/P1 工程门禁、P2-01 只读 facade 与 P2-02 argv-only command profiles evidence；P2-02 closeout 后仅解锁 P2-03，所有 rollout/product locks 继续关闭。",
+    "summary": "现有工程交付保留；本批在独立目录从锁定源码与补丁栈重建 VerseShell，两个 source/target root 产物字节相同。最终 TF-0069 的 paired provider canary、operator rollback、soak、平台与 reviewer 裁决尚缺。",
     "title": "VerseShell 本地 Coding 执行基座（非 GA）",
-    "updated_at": "2026-08-14T15:19:17.816623Z"
+    "updated_at": "2026-09-13T18:20:19.098045Z"
   },
   "TF-0057": {
     "acceptance_criteria": [
@@ -5374,7 +5442,9 @@
       "D:/verse_claw_worktree_compact/artifacts/p6-tf0074-deterministic-recovery-30/batch-metadata.json",
       "D:/verse_claw_worktree_compact/artifacts/p6-tf0074-deterministic-recovery-30/eval/2026-08-21T14-30-55-402Z/summary.json",
       "root compact 66/66；runtime focused 79/79；Node/Web typecheck exit 0",
-      "would-retry self-test/ESLint PASS；Harness --no-diff PASS；comms replay/compare PASS"
+      "would-retry self-test/ESLint PASS；Harness --no-diff PASS；comms replay/compare PASS",
+      "docs/dev/task-forest-engineering-20260913.md",
+      "reports/context-compression/TF0074-ACCEPTANCE-2026-09-13.md"
     ],
     "execution_hints": [
       "先用 failure guideline 和最小反例定位语义缺口，再扩大到 30 条",
@@ -5382,13 +5452,13 @@
     ],
     "id": "TF-0074",
     "kind": "subtask",
-    "next_action": "TF-0074 工程节点已关闭。保持 liveReady=false、productApproved=false、defaultOn=false 和 SEKB 人工确认边界；TASK-P2-01 继续受真人/live 证据阻塞。任何 successor 必须单独评估和授权，本次不启动新节点。",
+    "next_action": "工程质量门已完成。原 next_action 中与 SEKB 人工捕获有关的错置文字由本记录更正；不自动启动 TF-0075、default-on 或产品晋升。",
     "non_goals": [
       "不以压缩率单独判定成功",
       "不以 deterministic proxy 代替真实 continuation"
     ],
     "priority": 1,
-    "progress": 55.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "证明 compact 的信息综合不仅结构完整，还具备可接受的忠实度、因果链与无虚构质量。",
     "remaining_minutes_max": 900,
@@ -5399,15 +5469,15 @@
       "关键事实丢失、stale leakage、fabrication 均 fail-closed"
     ],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [
       "noFabricationRate>=0.98",
       "schemaFreeOmissionRate<=0.10",
       "criticalDroppedSamples=0"
     ],
-    "summary": "deterministic 质量部分已闭合：固定 30 条 model-free Recovery Ledger batch 的 verified retention、critical recall、L0/L1/L2 和 paired regression 全通过，critical drop=0。真实 independent judge/schema-free/continuation 尚未执行，layer3=NOT_EXECUTED，full acceptance 继续 FAIL/evidenceInsufficient。",
+    "summary": "已重建固定 30 条真实语料的当前工程证据。Responses 协议 live judge/schema-free/model continuation 各 30/30，L0/L1/L2 和续跑门通过；no-fabrication=1.0，重大遗漏=0.10，关键丢失和 stale leakage=0。97 项相关单测通过，保持 shadow 与产品锁。",
     "title": "[05/07] 闭合 deterministic 与 live 质量门禁",
-    "updated_at": "2026-08-21T14:51:45.199801Z"
+    "updated_at": "2026-09-13T18:20:19.098045Z"
   },
   "TF-0075": {
     "acceptance_criteria": [
@@ -5508,11 +5578,18 @@
       "diff-aware Harness 当前阻断路径：docs/dev/handoffs/LATEST.md、electron/main/index.ts、electron/main/process-error-handlers.ts、tests/e2e/app-smoke.spec.ts、tests/unit/main-unhandled-rejection.test.ts",
       "外部收敛方案（2026-09-05）3.2 / 3.6；本节点实测基线：would-retry 2.521× total tokens、3.107× latency",
       "openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-quality.ts:237-250（auditSummaryQuality 放行点，3.2 的拟接入位置）",
-      "openclaw_runtime/src/context-engine/context-health-monitor.ts:281-353（B-4 四维打分）、:355-379（recordContextHealth 仅内存历史）、:381-404（writeContextHealthSnapshot 落盘，生产零调用点 —— 外部方案 1.4/1.5 的 JSONL 落盘依赖它）"
+      "openclaw_runtime/src/context-engine/context-health-monitor.ts:281-353（B-4 四维打分）、:355-379（recordContextHealth 仅内存历史）、:381-404（writeContextHealthSnapshot 落盘，生产零调用点 —— 外部方案 1.4/1.5 的 JSONL 落盘依赖它）",
+      "本轮证据目录 D:/ClawX-acceptance/tf0076-20260915/；隔离候选 D:/ClawX-candidates/tf0076-cost-20260915；不修改 promotionStage 或产品锁。",
+      "docs/dev/task-forest-existing-nodes-20260915.md",
+      "reports/context-compression/TF0076-COST-BUDGET-2026-09-15.md",
+      "2026-09-15 干净候选HEAD=632e31b17ff83dd349a124f75dd1d2ebe36ad897，tree=f0ca4ddfc22c4ab29c0876100549225bbd095fab；manifest SHA-256=07dfc01e4aba9e81b3835df63fe45f50f39e6967cfe407cfda2b38b7efd9c73e。",
+      "D:/ClawX-acceptance/tf0076-20260915/attempt-03/engineering-report.json：scopedEngineering=PASS，全部requiredTests通过，343次执行/0失败/0跳过，19文件覆盖；输入哈希和clean状态前后不变。",
+      "D:/ClawX-acceptance/tf0076-20260915/attempt-03/cost-decision.json：NO-GO，currentCandidateProviderMeasured=false，allowedPromotion=false。历史汇总仅作诊断，未冒充当前成功实验。",
+      "2026-09-15 Node/Web、lint 0 errors/114 warnings、comms、任务diff-aware Harness通过；global harness:ci仍C/74 FAIL（4项旧证据），不计全局通过。"
     ],
     "execution_hints": [
-      "优先压缩 recovery ledger 的重复 token，不改传输层",
-      "最终在隔离候选上重跑所有 requiredTests"
+      "本节点完成的是预算与不可放行裁决；不得自动翻转promotionStage或产品锁。",
+      "若未来重开成本实验，先固定预算与当前候选manifest，完整采集至少30条同集合paired provider usage/latency，再判定；新增retry触发必须计入同一总预算。"
     ],
     "id": "TF-0076",
     "kind": "subtask",
@@ -5521,7 +5598,7 @@
       "不把工程 gate 绿升级成 liveReady/productApproved/default-on"
     ],
     "priority": 1,
-    "progress": 50.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "在不牺牲质量的前提下证明 would-retry 成本可控，并把最终证据绑定干净候选。",
     "remaining_minutes_max": 960,
@@ -5535,15 +5612,15 @@
       "【门槛维度更正，2026-09-05】外部方案 3.6 提出的 promotionStage 翻转门槛为「累计 ≥200 次压缩 + 人工抽检 30 条误报率 <15%」。误报率不是当前阻塞变量 —— 本节点实测的阻塞是成本（2.521× tokens / 3.107× latency）。翻转门槛须至少含一条成本上限，否则门槛测的是错误维度，凑满 200 次样本也不会解除阻塞。该门槛的最终形态由本节点与 TF-0006 共同拥有，外部方案不得单方面写入 ADR。"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [
       "unbounded retry=0",
       "dirty candidate acceptance=0",
       "all required gates exit 0"
     ],
-    "summary": "本地 focused/typecheck/comms 已绿；旧 auto canary 的 would-retry 相比 shadow 为 2.521x total tokens、3.107x latency，尚无可接受预算。diff-aware Harness 仍被 5 个无关 dirty 路径阻断，未形成干净 scoped candidate。",
+    "summary": "成本预算与干净候选工程验收完成：11条requiredTests、343次测试执行、19个不同文件均通过；成本判定NO-GO（历史2.5208x tokens/3.1071x latency超过1.20x/1.50x，且缺当前paired provider成本证据）。按原验收允许的明确不可放行结论收口，保持shadow。全局CI仍受TF-0029旧证据阻塞。",
     "title": "[07/07] 建立成本预算并完成干净候选验收",
-    "updated_at": "2026-09-05T09:05:14.695574Z"
+    "updated_at": "2026-09-14T17:07:06.537553Z"
   },
   "TF-0077": {
     "acceptance_criteria": [
@@ -7419,7 +7496,8 @@
       ".tmp/context-audit-blind-review-and-reconciliation-2026-08-24.md",
       ".tmp/architecture-decision-legitimacy-2026-08-24.md",
       ".tmp/moat-sizing-and-deliverable-boundary-2026-08-24.md",
-      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md"
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md",
+      "docs/dev/task-forest-engineering-20260913.md"
     ],
     "execution_hints": [
       "顺序由 depends_on 边定义，不由本提示定义。本轮关键路径（叶子层、blocking 边、里程碑依赖下推、M0 内部并行取 max）：R3(150) → T-C1(360) → T-B4(300) = 810min；另一条同长分支为 R3(150) → T-C1(360) → T-E2(300)。",
@@ -7432,6 +7510,7 @@
     ],
     "id": "TF-0102",
     "kind": "global_task",
+    "next_action": "等待用户恢复 TF-0140 的签核与真人记录流程；其他已批准工程节点可继续，不擅自改变默认值。",
     "non_goals": [
       "不在 BrowseComp-ZH / LoCoMo 等 benchmark 上刷 SOTA",
       "不做学习型上下文策略（MemAct 路线，需 RL 训练管线）",
@@ -7458,7 +7537,7 @@
       "至少产出 1 份真人参与的 L3 证据，打破当前 humanRuns=0 的证据自循环"
     ],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "blocked",
     "success_metrics": [
       "生产零调用模块数：当前 8 → 0（buildToolPlan 按 SDK 边界单独处置）",
       "ContextHealthMonitor 有输入维度数：当前 1/4 → 4/4",
@@ -7467,9 +7546,9 @@
       "humanRuns：0 → ≥1",
       "越界收口事件数 = 0（超半径或改白名单外默认值仍标 done）"
     ],
-    "summary": "把已建成但未通电的上下文谱系/账本/损伤检测机制变成可对外的差异化能力：在长任务会话中用单元级谱系 + 确定性损伤检测驱动定向再注入，并能对任一失败点给出上下文损失归因。同时清偿导致这些机制无法通电的治理债与技术债。",
+    "summary": "M4 范围风险核查与本季度竞品复核已完成；父任务仍包含 TF-0140 default-on 签核与 14 天真人记录。用户本批明确跳过 TF-0140，因此父任务保持 blocked，M6 仍不计入本轮完成。",
     "title": "长任务上下文护城河：可归因的上下文治理（Context Provenance & Damage Attribution）",
-    "updated_at": "2026-09-13T02:33:38.924538Z"
+    "updated_at": "2026-09-13T18:20:19.098045Z"
   },
   "TF-0103": {
     "acceptance_criteria": [
@@ -9686,7 +9765,7 @@
   },
   "TF-0134": {
     "acceptance_criteria": [
-      "M4 收口时 src 下零调用模块数仍为 0"
+      "在用户确认的 M4 批准交付范围（TF-0128、TF-0138、TF-0143）内，新增运行时模块均有生产调用链或明确的 D1.4 非运行时归类，新增零调用运行时模块数为 0；不以此宣称全仓死代码清零。"
     ],
     "alignment": {
       "fit": "unknown",
@@ -9720,15 +9799,17 @@
       "2026-08-29 lane-1 人工复核启动：check-production-reachable --roots 实测 3457/5057；--blind-spots 17；applyContextLadder 为 NOT PRODUCTION REACHABLE（experiment/test-only，exit 1）；--exports 汇总 21701/14075/1044/6582/412/1714，focused test 2/2。继续人工复核，不把静态 inventory 解读为完整死代码证明。",
       "2026-08-29 独立 reviewer 复核：--exports 与单符号模式不是 TypeScript symbol/binder 级证明；informationNovelty 为字段名，正确导出为 scoreInformationNovelty；1714 拆分为 410 wildcard-export + 2 default-export + 1220 unreachable-module + 65 unresolved-relative-import + 17 computed-dynamic-import，且 412 与 export blind spots 重叠。DEV-PROTOCOL §D1.2 与 TF-0134.md 已补辅助 inventory 口径。",
       "2026-08-30 clean scoped candidate：D:\\ClawX-tf0134-candidate，base 06f7c32709e0de811a7359267f7920a7b03f4592，tree 8afd600ffafcca6440aee295bdeebd78bf34f894，report docs/dev/context-moat/reviews/TF-0134-exports-20260829-clean.json，SHA256 4009A0E8A992BE7B24A43312583CAE3332B75A6ED2C9287D0F61D9B79C40C4E7；--exports 21694/14075/1044/6575/412/1713，--roots 3457/5054，--blind-spots 17，--all-modules 1219，focused test 2/2。主工作树多出的 7 个 export 全部来自未跟踪 src/observability/host-trace-diagnostics.ts。",
-      "2026-08-30 独立 reviewer 复核 clean scoped candidate：base HEAD、tree hash、report SHA256 与 21694/14075/1044/6575/412/1713 均通过；7 个额外 export 全部来自 src/observability/host-trace-diagnostics.ts:4,5,6,7,50,293,359；scanned files 差异来自 runtime-coding-uftk.test.ts、host-trace-diagnostics.test.ts、host-trace-diagnostics.ts 三个未跟踪 TS 文件；其余差异为行号漂移且状态差异为 0。 reviewer 建议表述为 base HEAD + 3 个 scoped artifact 的候选态。"
+      "2026-08-30 独立 reviewer 复核 clean scoped candidate：base HEAD、tree hash、report SHA256 与 21694/14075/1044/6575/412/1713 均通过；7 个额外 export 全部来自 src/observability/host-trace-diagnostics.ts:4,5,6,7,50,293,359；scanned files 差异来自 runtime-coding-uftk.test.ts、host-trace-diagnostics.test.ts、host-trace-diagnostics.ts 三个未跟踪 TS 文件；其余差异为行号漂移且状态差异为 0。 reviewer 建议表述为 base HEAD + 3 个 scoped artifact 的候选态。",
+      "docs/dev/task-forest-engineering-20260913.md",
+      "docs/dev/context-moat/reviews/TF-0134-M4-closeout-20260913.md"
     ],
     "execution_hints": [],
     "id": "TF-0134",
     "kind": "risk",
-    "next_action": "人工复核暂不可用；保留 clean scoped candidate 证据，暂停逐符号人工复核，不阻塞后续工程节点。",
+    "next_action": "M4 风险核查已完成；更广的全仓逐符号审计不在本次确认范围内。保持 TF-0140 与 M6 的原边界。",
     "non_goals": [],
     "priority": 1,
-    "progress": 40.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "让最可能重演的失败模式被显式跟踪而非事后发现",
     "remaining_minutes_max": null,
@@ -9739,13 +9820,13 @@
       "若任一 M4 task 在收口时无法通过该脚本，状态只能到 landed-unwired 并触发 BRB 降 S"
     ],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [
       "新增零调用模块数 = 0"
     ],
-    "summary": "人工复核暂不可用：clean scoped candidate 与独立复核已完成，逐符号人工复核暂停，节点保持 in_progress，不因等待人工而阻塞后续工程节点。",
+    "summary": "按用户明确确认的 M4 范围完成核查：TF-0128/TF-0138/TF-0143 新增零调用运行时模块为 0；八个相关符号生产可达，0/1/2/3 对照有效，39 项功能测试和 2 项扫描器测试通过。全量 inventory 的盲区和候选项保留，不宣称全仓清零。",
     "title": "风险：本轮规划本身再生产零调用模块",
-    "updated_at": "2026-08-30T01:02:04.730310Z"
+    "updated_at": "2026-09-13T18:20:19.098045Z"
   },
   "TF-0135": {
     "acceptance_criteria": [
@@ -9779,15 +9860,17 @@
       "docs/dev/context-moat/DEV-PROTOCOL.md：L3 要求 1 名真人、1 个增强表面、14 天、可回滚记录。",
       "artifacts/runtime-memory-eval/report.json：synthetic/accepted=false，不能作为产品价值或数据壁垒证据。",
       "TF-0135 receipt baseline targeted checks：rc03 28/28、ReceiptStore 15/15、rc03 config 6/6；这些只证明 engineering contract，不升级为真实 receipt 证据。",
-      "artifacts/live-model-cdp/20260911-senseaudio-s2-flash/README.md：授权live-provider/agent-operated CDP实采6会话18输入，非mock；receipt-state.json只读统计runtime_receipts=0、context_blocks=0。"
+      "artifacts/live-model-cdp/20260911-senseaudio-s2-flash/README.md：授权live-provider/agent-operated CDP实采6会话18输入，非mock；receipt-state.json只读统计runtime_receipts=0、context_blocks=0。",
+      "docs/dev/task-forest-engineering-20260913.md",
+      "docs/dev/context-moat/reviews/TF-0135-2026Q3-competitive-review.md"
     ],
     "execution_hints": [],
     "id": "TF-0135",
     "kind": "risk",
-    "next_action": "本批 s05-t01 / s03-t02 两个真实复现样本已分别由 TF-0156、TF-0157 完成修复与测试（非端到端）。后续按既有受控流程继续 receipt baseline 与真人 L3；不再把缺少授权 Provider 列为语料采集阻塞。",
+    "next_action": "2026Q4 最迟 2026-12-13 再复核；若出现等价的单位级损失归因与结果证据则提前评估。未创建后台提醒或自动监控。",
     "non_goals": [],
     "priority": 2,
-    "progress": 20.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "避免把可复制的机制当作长期壁垒，从而错配投入",
     "remaining_minutes_max": null,
@@ -9798,13 +9881,13 @@
       "若 12 个月内主流产品上线同类功能，须重新评估 G-MOAT 的优先级"
     ],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [
       "真实会话谱系数据量持续增长"
     ],
-    "summary": "已有首批授权 live-provider CDP 语料：6会话/18输入，含真实工具与恢复证据；receipt行仍为0，真人L3仍缺，不升级为moat证明。",
+    "summary": "2026Q3 竞品复核已完成并记录官方来源：自动压缩、记忆及恢复已是主流能力；12–18 个月领先仍是未经验证的假设。done 表示本季度复核交付完成，风险继续存在，不表示已形成产品护城河。",
     "title": "风险：护城河时间窗 12-18 个月，机制本身易被复制",
-    "updated_at": "2026-09-11T07:10:55.167874Z"
+    "updated_at": "2026-09-13T18:20:19.098045Z"
   },
   "TF-0136": {
     "acceptance_criteria": [
@@ -14391,5 +14474,610 @@
     "summary": "同一进程 poll 的 timeout 不改变调用身份；真实输出变化和不同进程仍能区分。",
     "title": "轮询等待时长不重置无进展循环",
     "updated_at": "2026-09-13T06:30:43.523551Z"
+  },
+  "TF-0214": {
+    "acceptance_criteria": [
+      "修复前专用红测失败；修复后相邻行为测试通过；保留取消、终态所有权和通信边界；通过官方 Task Forest CLI 验证与导出。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.98,
+    "context_tags": [
+      "tool-runtime",
+      "lifecycle",
+      "comms",
+      "cancellation"
+    ],
+    "created_at": "2026-09-15T11:49:18.294237Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "取消正在等待 node.list 时，本地等待在 100ms 内结束且晚到节点列表不启动执行。"
+    ],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "openclaw_runtime/src/agents/bash-tools.exec-host-node-phases.abort.test.ts:TF-0214",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md"
+    ],
+    "execution_hints": [
+      "修复前红测命令记录于 docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md",
+      "修复后 focused runtime 专项 57/57 通过"
+    ],
+    "id": "TF-0214",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "接续工具运行时可靠性批次，修复当前源码中可执行的独立生命周期反例。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "取消正在等待 node.list 时，本地等待在 100ms 内结束且晚到节点列表不启动执行。"
+    ],
+    "source_sessions": [
+      "tool-runtime-relay-r6-20260915"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "focused runtime behavior test passes and no late side effect is observed"
+    ],
+    "summary": "取消正在等待 node.list 时，本地等待在 100ms 内结束且晚到节点列表不启动执行。",
+    "title": "节点目标解析等待响应取消",
+    "updated_at": "2026-09-15T12:34:01.708588Z"
+  },
+  "TF-0215": {
+    "acceptance_criteria": [
+      "修复前专用红测在 100ms 有界等待内失败；修复后相邻行为测试通过；晚到结果不启动后续副作用；通过官方 Task Forest CLI 验证与导出。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.98,
+    "context_tags": [
+      "tool-runtime",
+      "lifecycle",
+      "comms",
+      "cancellation"
+    ],
+    "created_at": "2026-09-15T11:49:43.658878Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "取消远程准备请求时立即释放本地等待，晚到 prepare 结果不进入审批或执行阶段。"
+    ],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "openclaw_runtime/src/agents/bash-tools.exec-host-node-phases.abort.test.ts:TF-0215",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md"
+    ],
+    "execution_hints": [
+      "修复前红测命令记录于 docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md",
+      "修复后 focused runtime 专项 57/57 通过"
+    ],
+    "id": "TF-0215",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "接续工具运行时可靠性批次，修复当前源码中可执行的独立生命周期反例。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "取消远程准备请求时立即释放本地等待，晚到 prepare 结果不进入审批或执行阶段。"
+    ],
+    "source_sessions": [
+      "tool-runtime-relay-r6-20260915"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "focused runtime behavior test passes and no late side effect is observed"
+    ],
+    "summary": "取消远程准备请求时立即释放本地等待，晚到 prepare 结果不进入审批或执行阶段。",
+    "title": "远程 system.run.prepare 等待响应取消",
+    "updated_at": "2026-09-15T11:53:59.511830Z"
+  },
+  "TF-0216": {
+    "acceptance_criteria": [
+      "修复前专用红测在 100ms 有界等待内失败；修复后相邻行为测试通过；晚到结果不启动后续副作用；通过官方 Task Forest CLI 验证与导出。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.98,
+    "context_tags": [
+      "tool-runtime",
+      "lifecycle",
+      "comms",
+      "cancellation"
+    ],
+    "created_at": "2026-09-15T11:50:09.246393Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "审批策略快照等待取消时重新抛出原始取消原因，不降级为普通审批分析结果。"
+    ],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "openclaw_runtime/src/agents/bash-tools.exec-host-node-phases.abort.test.ts:TF-0216",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md"
+    ],
+    "execution_hints": [
+      "修复前红测命令记录于 docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md",
+      "修复后 focused runtime 专项 57/57 通过"
+    ],
+    "id": "TF-0216",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "接续工具运行时可靠性批次，修复当前源码中可执行的独立生命周期反例。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "审批策略快照等待取消时重新抛出原始取消原因，不降级为普通审批分析结果。"
+    ],
+    "source_sessions": [
+      "tool-runtime-relay-r6-20260915"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "focused runtime behavior test passes and no late side effect is observed"
+    ],
+    "summary": "审批策略快照等待取消时重新抛出原始取消原因，不降级为普通审批分析结果。",
+    "title": "远程审批快照等待不吞取消",
+    "updated_at": "2026-09-15T11:54:24.378288Z"
+  },
+  "TF-0217": {
+    "acceptance_criteria": [
+      "修复前专用红测失败；修复后相邻行为测试通过；晚到结果不启动后续副作用；通过官方 Task Forest CLI 验证与导出。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.98,
+    "context_tags": [
+      "tool-runtime",
+      "lifecycle",
+      "comms",
+      "cancellation"
+    ],
+    "created_at": "2026-09-15T11:50:34.390668Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "自动审阅等待取消时立即释放本地等待，晚到结果不进入审批或执行阶段。"
+    ],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "openclaw_runtime/src/agents/bash-tools.exec-host-node.abort.test.ts:TF-0217",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md"
+    ],
+    "execution_hints": [
+      "修复前红测命令记录于 docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md",
+      "修复后 focused runtime 专项 57/57 通过"
+    ],
+    "id": "TF-0217",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "接续工具运行时可靠性批次，修复当前源码中可执行的独立生命周期反例。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "自动审阅 Promise 未完成时取消可立即结束本地等待，不交付晚到审阅结果。"
+    ],
+    "source_sessions": [
+      "tool-runtime-relay-r6-20260915"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "focused runtime behavior test passes and no late side effect is observed"
+    ],
+    "summary": "自动审阅 Promise 未完成时取消可立即结束本地等待，不把晚到审阅结果交付为批准或拒绝。",
+    "title": "自动审阅等待响应取消",
+    "updated_at": "2026-09-15T12:02:43.660319Z"
+  },
+  "TF-0218": {
+    "acceptance_criteria": [
+      "修复前专用红测在 100ms 有界等待内失败；修复后相邻行为测试通过；晚到结果不启动后续副作用；通过官方 Task Forest CLI 验证与导出。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.98,
+    "context_tags": [
+      "tool-runtime",
+      "lifecycle",
+      "comms",
+      "cancellation"
+    ],
+    "created_at": "2026-09-15T11:51:01.375321Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "审批登记 Promise 未完成时取消可立即结束本地等待，不创建 detached follow-up 或执行晚到批准。"
+    ],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "openclaw_runtime/src/agents/bash-tools.exec-host-node.abort.test.ts:TF-0218",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md"
+    ],
+    "execution_hints": [
+      "修复前红测命令记录于 docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md",
+      "修复后 focused runtime 专项 57/57 通过"
+    ],
+    "id": "TF-0218",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "接续工具运行时可靠性批次，修复当前源码中可执行的独立生命周期反例。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "审批登记 Promise 未完成时取消可立即结束本地等待，不创建 detached follow-up 或执行晚到批准。"
+    ],
+    "source_sessions": [
+      "tool-runtime-relay-r6-20260915"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "focused runtime behavior test passes and no late side effect is observed"
+    ],
+    "summary": "审批登记 Promise 未完成时取消可立即结束本地等待，不创建 detached follow-up 或执行晚到批准。",
+    "title": "审批登记等待响应取消",
+    "updated_at": "2026-09-15T11:54:49.713909Z"
+  },
+  "TF-0219": {
+    "acceptance_criteria": [
+      "修复前专用红测失败；修复后相邻行为测试通过；通过官方 Task Forest CLI 验证与导出。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.98,
+    "context_tags": [
+      "tool-runtime",
+      "lifecycle",
+      "comms"
+    ],
+    "created_at": "2026-09-15T12:03:09.711186Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "同一进程的首次退出终态具有所有权，重复退出事件不改写已登记结果。"
+    ],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts:TF-0219",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md"
+    ],
+    "execution_hints": [
+      "修复前红测命令记录于 docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md",
+      "修复后 focused runtime 专项 57/57 通过"
+    ],
+    "id": "TF-0219",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "接续工具运行时可靠性批次，修复当前源码中可执行的独立生命周期反例。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "重复退出回调不得覆盖首次终态登记。"
+    ],
+    "source_sessions": [
+      "tool-runtime-relay-r6-20260915"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "focused runtime lifecycle test preserves the first exit record"
+    ],
+    "summary": "重复退出回调只保留首次终态登记，不覆盖首次退出码、信号、原因或 finished 记录。",
+    "title": "退出登记幂等",
+    "updated_at": "2026-09-15T12:03:09.712300Z"
+  },
+  "TF-0220": {
+    "acceptance_criteria": [
+      "修复前专用红测失败；修复后相邻行为测试通过；通过官方 Task Forest CLI 验证与导出。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.98,
+    "context_tags": [
+      "tool-runtime",
+      "lifecycle",
+      "comms"
+    ],
+    "created_at": "2026-09-15T12:03:36.309310Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "finished 日志读取返回终态并清除对应 poll backoff 状态。"
+    ],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts:TF-0220",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md"
+    ],
+    "execution_hints": [
+      "修复前红测命令记录于 docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md",
+      "修复后 focused runtime 专项 57/57 通过"
+    ],
+    "id": "TF-0220",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "接续工具运行时可靠性批次，修复当前源码中可执行的独立生命周期反例。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "读取 finished 日志时必须清除对应会话的 poll backoff 状态。"
+    ],
+    "source_sessions": [
+      "tool-runtime-relay-r6-20260915"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "finished log read resets the session poll retry suggestion"
+    ],
+    "summary": "读取 finished 日志时清除会话级 poll backoff，已完成命令不继续消耗旧的无进展退避状态。",
+    "title": "finished 日志清理 poll backoff",
+    "updated_at": "2026-09-15T12:03:36.309310Z"
+  },
+  "TF-0221": {
+    "acceptance_criteria": [
+      "修复前专用红测失败；修复后相邻行为测试通过；通过官方 Task Forest CLI 验证与导出。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.98,
+    "context_tags": [
+      "tool-runtime",
+      "lifecycle",
+      "comms"
+    ],
+    "created_at": "2026-09-15T12:04:02.791058Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "轮询退避与清理使用有限、非负、可预测的输入边界。"
+    ],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "openclaw_runtime/src/agents/command-poll-backoff.test.ts:TF-0221",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md"
+    ],
+    "execution_hints": [
+      "修复前红测命令记录于 docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md",
+      "修复后 focused runtime 专项 57/57 通过"
+    ],
+    "id": "TF-0221",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "接续工具运行时可靠性批次，修复当前源码中可执行的独立生命周期反例。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "负数、NaN、非法计数和非法清理年龄均归一化到稳定 backoff 边界，不产生 NaN 或错误删除。"
+    ],
+    "source_sessions": [
+      "tool-runtime-relay-r6-20260915"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "poll backoff boundary tests pass without NaN or invalid pruning"
+    ],
+    "summary": "负数、NaN、非法计数和非法清理年龄均归一化到稳定 backoff 边界，不产生 NaN 或错误删除。",
+    "title": "轮询退避边界归一化",
+    "updated_at": "2026-09-15T12:04:02.791058Z"
+  },
+  "TF-0222": {
+    "acceptance_criteria": [
+      "修复前专用红测失败；修复后相邻行为测试通过；通过官方 Task Forest CLI 验证与导出。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.98,
+    "context_tags": [
+      "tool-runtime",
+      "lifecycle",
+      "comms"
+    ],
+    "created_at": "2026-09-15T12:04:25.462921Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "普通 exec 的非法 timeout 使用稳定默认值并保持现有有效 timeout 行为。"
+    ],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "openclaw_runtime/src/agents/bash-tools.exec.lifecycle.test.ts:TF-0222",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md"
+    ],
+    "execution_hints": [
+      "修复前红测命令记录于 docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md",
+      "修复后 focused runtime 专项 57/57 通过"
+    ],
+    "id": "TF-0222",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "接续工具运行时可靠性批次，修复当前源码中可执行的独立生命周期反例。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "普通 exec 的 0、负数、NaN、正无穷和负无穷 timeout 均回退到默认超时。"
+    ],
+    "source_sessions": [
+      "tool-runtime-relay-r6-20260915"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "ordinary exec timeout boundary tests preserve the configured default"
+    ],
+    "summary": "普通 exec 收到 0、负数、NaN 或无穷 timeout 时回退到默认超时，不把非法输入传入执行生命周期。",
+    "title": "普通 exec timeout 默认回退",
+    "updated_at": "2026-09-15T12:04:25.462921Z"
+  },
+  "TF-0223": {
+    "acceptance_criteria": [
+      "修复前专用红测失败；修复后相邻行为测试通过；通过官方 Task Forest CLI 验证与导出。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.98,
+    "context_tags": [
+      "tool-runtime",
+      "lifecycle",
+      "comms"
+    ],
+    "created_at": "2026-09-15T12:04:47.944024Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "node host 的非法 timeout 使用稳定默认值并保持有效 timeout 行为。"
+    ],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "openclaw_runtime/src/agents/bash-tools.exec-host-node.abort.test.ts:TF-0223",
+      "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md"
+    ],
+    "execution_hints": [
+      "修复前红测命令记录于 docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md",
+      "修复后 focused runtime 专项 57/57 通过"
+    ],
+    "id": "TF-0223",
+    "kind": "subtask",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "接续工具运行时可靠性批次，修复当前源码中可执行的独立生命周期反例。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "node host 的 0、负数、NaN、正无穷和负无穷 timeout 均回退到默认超时。"
+    ],
+    "source_sessions": [
+      "tool-runtime-relay-r6-20260915"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "node host timeout boundary tests preserve the configured default"
+    ],
+    "summary": "node host 收到 0、负数、NaN 或无穷 timeout 时回退到默认超时，不以非法值绕过执行限制。",
+    "title": "node timeout 默认回退",
+    "updated_at": "2026-09-15T12:04:47.944024Z"
   }
 }

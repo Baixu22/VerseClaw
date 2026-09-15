@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -243,6 +243,68 @@ Body`);
       },
     };
 
+    it('runs a scenario baseline across tasks while preserving boundary and task ownership failures', () => {
+      const fixtureRoot = mkdtempSync(join(tmpdir(), 'harness-scenario-baseline-'));
+      try {
+        cpSync(join(process.cwd(), 'harness', 'src'), join(fixtureRoot, 'harness', 'src'), { recursive: true });
+        mkdirSync(join(fixtureRoot, 'harness', 'specs', 'scenarios'), { recursive: true });
+        mkdirSync(join(fixtureRoot, 'harness', 'specs', 'tasks'), { recursive: true });
+        const scenarioPath = 'harness/specs/scenarios/gateway-backend-communication.md';
+        cpSync(join(process.cwd(), scenarioPath), join(fixtureRoot, scenarioPath));
+        const disguisedTaskPath = 'harness/specs/tasks/disguised-scenario.md';
+        cpSync(join(fixtureRoot, scenarioPath), join(fixtureRoot, disguisedTaskPath));
+        execFileSync('git', ['init', '--quiet'], { cwd: fixtureRoot });
+        execFileSync('git', ['config', 'user.email', 'harness-fixture@example.invalid'], { cwd: fixtureRoot });
+        execFileSync('git', ['config', 'user.name', 'Harness Fixture'], { cwd: fixtureRoot });
+        execFileSync('git', ['add', '.'], { cwd: fixtureRoot });
+        execFileSync('git', ['commit', '--quiet', '-m', 'fixture base'], { cwd: fixtureRoot });
+        writeFileSync(join(fixtureRoot, 'other-task.txt'), 'another task\n');
+
+        const run = (specPath: string) => spawnSync(process.execPath, [
+          join(fixtureRoot, 'harness', 'src', 'cli.mjs'), 'run', '--spec', specPath,
+          '--since', 'HEAD', '--dry-run',
+        ], { cwd: fixtureRoot, encoding: 'utf8' });
+        const baseline = run(scenarioPath);
+        expect(`${baseline.stdout}\n${baseline.stderr}`).toContain('Harness result: pass');
+        expect(baseline.status).toBe(0);
+        const report = JSON.parse(readFileSync(join(fixtureRoot, 'artifacts', 'harness', 'latest.json'), 'utf8'));
+        expect(report.changedFiles).toContain('other-task.txt');
+        expect(report.ownership.checked).toBe(false);
+        expect(report.selectedProfiles).toEqual(['fast', 'comms']);
+
+        const task = run(disguisedTaskPath);
+        expect(task.status).toBe(1);
+        expect(`${task.stdout}\n${task.stderr}`).toContain('changed files are not covered');
+
+        // A task can copy both scenario metadata and the scenario reference.
+        // Neither validate nor run may mistake that task for the registered scenario.
+        writeFileSync(join(fixtureRoot, disguisedTaskPath),
+          readFileSync(join(fixtureRoot, scenarioPath), 'utf8').replace(
+            'type: runtime-bridge',
+            'type: runtime-bridge\nscenario: gateway-backend-communication',
+          ));
+        for (const command of ['validate', 'run']) {
+          const disguised = spawnSync(process.execPath, [
+            join(fixtureRoot, 'harness', 'src', 'cli.mjs'), command, '--spec', disguisedTaskPath,
+            '--since', 'HEAD', ...(command === 'run' ? ['--dry-run'] : []),
+          ], { cwd: fixtureRoot, encoding: 'utf8' });
+          expect(disguised.status).toBe(1);
+          expect(`${disguised.stdout}\n${disguised.stderr}`).toContain('changed files are not covered');
+        }
+
+        mkdirSync(join(fixtureRoot, 'src', 'pages'), { recursive: true });
+        writeFileSync(join(fixtureRoot, 'src', 'pages', '越界 页面.tsx'),
+          'window.electron.ipcRenderer.invoke("forbidden");\n');
+        const boundary = run(scenarioPath);
+        expect(boundary.status).toBe(1);
+        expect(`${boundary.stdout}\n${boundary.stderr}`).toContain(
+          'src/pages/越界 页面.tsx: renderer page/component must not call',
+        );
+      } finally {
+        rmSync(fixtureRoot, { recursive: true, force: true, maxRetries: 3 });
+      }
+    });
+
     it('accepts changed paths covered by touchedAreas or the task spec ownedPaths', () => {
       expect(validateChangedPathOwnership(spec, null, [
         'scripts/lib/thing.mjs',
@@ -482,16 +544,23 @@ touchedAreas:
         execFileSync('git', ['commit', '--quiet', '-m', 'fixture base'], { cwd: fixtureRoot });
 
         writeFileSync(join(fixtureRoot, 'unowned-change.txt'), 'unowned\n', 'utf8');
-        const result = spawnSync(
-          process.execPath,
-          [join(fixtureRoot, 'harness', 'src', 'cli.mjs'), 'validate', '--spec', 'harness/specs/tasks/scenario-less.md', '--since', 'HEAD'],
-          { cwd: fixtureRoot, encoding: 'utf8' },
-        );
-        const output = `${result.stdout}\n${result.stderr}`;
+        execFileSync('git', ['update-ref', 'refs/remotes/origin/main', 'HEAD'], { cwd: fixtureRoot });
+        for (const args of [[], ['--since', 'HEAD']]) {
+          const result = spawnSync(process.execPath, [
+            join(fixtureRoot, 'harness', 'src', 'cli.mjs'), 'validate',
+            '--spec', 'harness/specs/tasks/scenario-less.md', ...args,
+          ], { cwd: fixtureRoot, encoding: 'utf8' });
+          const output = `${result.stdout}\n${result.stderr}`;
 
-        expect(result.status).toBe(1);
-        expect(output).toContain('changed files are not covered by touchedAreas or ownedPaths');
-        expect(output).toContain('unowned-change.txt');
+          expect(result.status).toBe(1);
+          expect(output).toContain('changed files are not covered by touchedAreas or ownedPaths');
+          expect(output).toContain('unowned-change.txt');
+        }
+        const structural = spawnSync(process.execPath, [
+          join(fixtureRoot, 'harness', 'src', 'cli.mjs'), 'validate',
+          '--spec', 'harness/specs/tasks/scenario-less.md', '--no-diff',
+        ], { cwd: fixtureRoot, encoding: 'utf8' });
+        expect(structural.status).toBe(0);
       } finally {
         rmSync(fixtureRoot, { recursive: true, force: true, maxRetries: 3 });
       }
