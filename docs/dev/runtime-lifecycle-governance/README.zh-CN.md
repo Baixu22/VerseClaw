@@ -64,3 +64,8 @@ pnpm run runtime-lifecycle-audit --phase <phase>
 - `docs/dev/goal-loop-durable-process-wake-prompt.md`：goal 实施提示词。
 
 这些支持文档是设计来源，不是规范权威；与 harness 规范冲突时以 harness 规范为准。
+
+
+## 50-cycle 内存门的执行环境（2026-09-14）
+
+根 Vitest 的 Node worker 通过 `execArgv: ["--expose-gc"]` 提供显式 GC。生命周期用例在 Node 环境运行，先预热，再对 50 次实际创建/停止循环前后各执行三次 GC，并让事件循环处理清理回调。2 MiB 堆增量上限、进程死亡、注册表和 sweeper 检查均保留。缺少 GC 时直接失败，不再通过分配大量数组来猜测自然回收低点。审计指标直接写入 stdout，避免被通用 console mock 隐藏。

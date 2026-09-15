@@ -216,7 +216,7 @@ describe("runtime provider/tool registry contracts and flags", () => {
     const result = await toolProvider("mcp-compat", 0).callTool(request);
 
     expect(isRuntimeContextProviderResult(contexts)).toBe(true);
-    expect((contexts as any).contextItems.every(isContextItem)).toBe(true);
+    expect((contexts as { contextItems: unknown[] }).contextItems.every(isContextItem)).toBe(true);
     expect(isRuntimeToolProviderResult(result)).toBe(true);
     expect(result).toMatchObject({ callId: "call-1", status: "success" });
   });

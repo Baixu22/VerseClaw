@@ -534,6 +534,7 @@ test.describe('Knowledge Hub MVP', () => {
     await expect(page.getByTestId('knowledge-assistant-overview')).not.toBeVisible();
     await expect(page.getByTestId('knowledge-metrics')).not.toBeVisible();
 
+    await page.getByTestId('knowledge-more-actions').click();
     await page.getByTestId('knowledge-tab-runtime').click();
     await expect(page.getByTestId('knowledge-runtime-lessons')).toBeVisible();
     await expect(page.getByText('Manual trajectories are audit-only and are not distillation candidates.')).toBeVisible();
@@ -578,7 +579,9 @@ test.describe('Knowledge Hub MVP', () => {
     await page.getByRole('menuitem', { name: /Import Files/ }).click();
     await expect(page.getByText(/Knowledge imported/)).toBeVisible();
 
-    await page.getByTestId('knowledge-tab-inbox').click();
+    await page.getByTestId('knowledge-tab-review-queue').click();
+    await page.getByTestId('knowledge-review-filter-inbox').click();
+    await page.getByTestId('knowledge-review-item').first().click();
     await expect(page.getByTestId('knowledge-inbox')).toContainText('Task decision candidate');
     await expect(page.getByTestId('knowledge-inbox-group-ready-for-review')).toContainText('Ready for review');
     await expect(page.getByTestId('knowledge-inbox-group-ready-for-review')).toContainText('Save');

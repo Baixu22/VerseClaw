@@ -12,7 +12,16 @@ import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from
 
 const SESSION_KEY = 'agent:main:main';
 
-type OrbReport = Record<string, any>;
+type OrbReport = {
+  canvases?: { total?: number };
+  summary?: { orbInsideScrollX?: boolean; canvas?: { w?: number; h?: number } | null; orb?: unknown; card?: unknown; scroll?: unknown };
+  inkDark?: { gray?: unknown[]; drawnPixels?: number } | null;
+  inkLight?: { gray?: unknown[]; drawnPixels?: number } | null;
+  tooltip?: unknown;
+  sidebarOrb?: { count?: number };
+  inline20px?: { count?: number } | null;
+  consoleErrors?: unknown[];
+};
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);

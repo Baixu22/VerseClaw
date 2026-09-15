@@ -54,7 +54,7 @@ describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)',
       idempotencyKey: 'idem-ws-id',
     });
 
-    const payload = (gatewayManager.rpc.mock.calls as any)[0]?.[1] as Record<string, unknown>;
+    const payload = (gatewayManager.rpc.mock.calls as unknown[][])[0]?.[1] as Record<string, unknown>;
     expect(payload.workspaceId).toBe('ws-app');
   });
 
@@ -75,7 +75,7 @@ describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)',
       idempotencyKey: 'idem-ws-fp',
     });
 
-    const payload = (gatewayManager.rpc.mock.calls as any)[0]?.[1] as Record<string, unknown>;
+    const payload = (gatewayManager.rpc.mock.calls as unknown[][])[0]?.[1] as Record<string, unknown>;
     expect(payload.workspaceId).toBe('ws-app');
     // Expected fingerprint: sha256 of lowercased absolute POSIX-style path, first 16 hex chars.
     const absolute = resolve(rootPath);
@@ -100,7 +100,7 @@ describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)',
       idempotencyKey: 'idem-no-ws',
     });
 
-    const payload = (gatewayManager.rpc.mock.calls as any)[0]?.[1] as Record<string, unknown>;
+    const payload = (gatewayManager.rpc.mock.calls as unknown[][])[0]?.[1] as Record<string, unknown>;
     expect(payload).not.toHaveProperty('workspaceId');
     expect(payload).not.toHaveProperty('workspaceFingerprint');
   });
@@ -121,7 +121,7 @@ describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)',
       idempotencyKey: 'idem-ws-no-root',
     });
 
-    const payload = (gatewayManager.rpc.mock.calls as any)[0]?.[1] as Record<string, unknown>;
+    const payload = (gatewayManager.rpc.mock.calls as unknown[][])[0]?.[1] as Record<string, unknown>;
     // workspaceId still forwarded so Gateway Task Ledger continuity is preserved.
     expect(payload.workspaceId).toBe('ws-orphan');
     // No fingerprint when rootPath cannot be resolved.

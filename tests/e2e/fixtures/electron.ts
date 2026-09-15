@@ -580,6 +580,19 @@ export async function installIpcMocks(
             }
           }
 
+          // Mocked UI scenarios must not depend on the developer machine's free
+          // space. Explicit system.info fixtures above can still test warnings.
+          if (request?.module === 'system' && request.action === 'info') {
+            return respond(request.id, {
+              success: true,
+              ram: { totalBytes: 16 * 1024 ** 3, freeBytes: 8 * 1024 ** 3, appUsedBytes: 256 * 1024 ** 2 },
+              disk: [{ root: '/', totalBytes: 100 * 1024 ** 3, freeBytes: 50 * 1024 ** 3 }],
+              cpu: { loadPercent: 10, cores: 4, available: true },
+              platform: process.platform,
+              arch: process.arch,
+            });
+          }
+
           if (request?.module === 'files') {
             const payload = request.payload ?? {};
             const path = typeof payload.path === 'string' ? payload.path : '';

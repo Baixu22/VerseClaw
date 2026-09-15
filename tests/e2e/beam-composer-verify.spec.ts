@@ -12,7 +12,22 @@
  */
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
-type BeamReport = Record<string, any>;
+type BeamReport = {
+  idle?: {
+    beam?: boolean;
+    beamInsideShell?: boolean;
+    beamMatchesShellSize?: boolean;
+    active?: boolean;
+    overflow?: string;
+  };
+  sending?: { active?: boolean; fading?: boolean; afterBackground?: string; strengthVar?: string } | null;
+  slashPalette?: { found?: boolean; paletteAboveBeam?: boolean; hitIsPalette?: boolean };
+  sendBtnState?: unknown;
+  sendBtnAfterFill?: unknown;
+  sendingInstant?: unknown;
+  lightTheme?: unknown;
+  consoleErrors?: unknown[];
+};
 const SESSION_KEY = 'agent:main:main';
 
 function stableStringify(value: unknown): string {
@@ -266,8 +281,8 @@ test('sunset beam wraps composer, lights on sending, menus unclipped', async ({ 
     expect(report.idle.beamMatchesShellSize).toBe(true);
     expect(report.idle.active).toBe(false); // idle → beam off
     expect(report.idle.overflow).toBe('hidden'); // inner ring clip
-    expect(report.sending.active).toBe(true); // sending → beam on
-    expect(report.sending.strengthVar).toBe('0.3');
+    expect(report.sending?.active).toBe(true); // sending → beam on
+    expect(report.sending?.strengthVar).toBe('0.3');
     expect(report.slashPalette.found).toBe(true);
     expect(report.slashPalette.paletteAboveBeam).toBe(true);
     expect(report.slashPalette.hitIsPalette).toBe(true);

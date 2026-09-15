@@ -33,6 +33,9 @@ const workspaceState = vi.hoisted(() => ({
 }));
 
 const hostApiMock = vi.hoisted(() => ({
+  files: {
+    writeText: vi.fn(),
+  },
   workspaces: {
     update: vi.fn(),
     getActive: vi.fn(),
@@ -97,6 +100,7 @@ describe('workspace session helpers', () => {
       activeSessionKey: 'agent:reviewer:old',
     };
     workspaceState.fetchWorkspaces.mockResolvedValue(undefined);
+    hostApiMock.files.writeText.mockResolvedValue({ success: true });
     hostApiMock.workspaces.update.mockResolvedValue({ success: true });
     hostApiMock.workspaces.moveSessionToFolder.mockResolvedValue({ success: true });
     hostApiMock.sessions.fork.mockResolvedValue({
@@ -123,6 +127,7 @@ describe('workspace session helpers', () => {
     });
     expect(workspaceState.fetchWorkspaces).toHaveBeenCalledTimes(1);
     expect(chatState.resetSessionView).toHaveBeenCalledWith('agent:reviewer:session-1711111111111-4fzyo8', { deferSessionEntry: true });
+    expect(hostApiMock.files.writeText).toHaveBeenCalledExactlyOnceWith('C:/a/.clawx-active-topic', '');
     expect(chatState.newSession).not.toHaveBeenCalled();
   });
 
@@ -156,6 +161,7 @@ describe('workspace session helpers', () => {
 
     await expect(createWorkspaceScopedHandoffSession('Continue from checkpoint A.'))
       .resolves.toBe('agent:reviewer:session-1711111111111-4fzyo8');
+    expect(hostApiMock.files.writeText).toHaveBeenCalledExactlyOnceWith('C:/a/.clawx-active-topic', '');
 
     expect(hostApiMock.workspaces.update).toHaveBeenCalledWith('workspace-a', {
       agentId: 'reviewer',
@@ -250,5 +256,6 @@ describe('workspace session helpers', () => {
       relation: 'forked_from',
     }));
     expect(chatState.resetSessionView).toHaveBeenCalledWith('agent:reviewer:dashboard:fork');
+    expect(hostApiMock.files.writeText).not.toHaveBeenCalled();
   });
 });

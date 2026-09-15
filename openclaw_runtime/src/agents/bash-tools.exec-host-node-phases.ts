@@ -81,7 +81,7 @@ function resolveNodeRunTimeoutSec(
   timeoutSec: number | null | undefined,
   defaultTimeoutSec: number,
 ): number {
-  return typeof timeoutSec === "number" && Number.isFinite(timeoutSec)
+  return typeof timeoutSec === "number" && Number.isFinite(timeoutSec) && timeoutSec > 0
     ? timeoutSec
     : defaultTimeoutSec;
 }
@@ -262,7 +262,7 @@ export async function resolveNodeExecutionTarget(
     throw new Error(`exec node not allowed (bound to ${params.boundNode})`);
   }
   const nodeQuery = params.boundNode || params.requestedNode;
-  const nodes = await listNodes({});
+  const nodes = await awaitWithAbort(listNodes({}), params.signal);
   if (nodes.length === 0) {
     throw new Error(
       "exec host=node requires a paired node (none available). This requires a companion app or node host.",
@@ -396,23 +396,26 @@ export async function prepareNodeSystemRun(params: {
     return buildLocalPreparedNodeRun(params);
   }
 
-  const prepareRaw = await callGatewayTool(
-    "node.invoke",
-    { timeoutMs: 15_000 },
-    {
-      nodeId: params.target.nodeId,
-      command: "system.run.prepare",
-      params: {
-        command: params.target.argv,
-        rawCommand: params.request.command,
-        ...(params.request.workdir != null ? { cwd: params.request.workdir } : {}),
-        ...(params.target.env !== undefined ? { env: params.target.env } : {}),
-        ...(params.request.strictInlineEval === true ? { strictInlineEval: true } : {}),
-        agentId: params.request.agentId,
-        sessionKey: params.request.sessionKey,
+  const prepareRaw = await awaitWithAbort(
+    callGatewayTool(
+      "node.invoke",
+      { timeoutMs: 15_000 },
+      {
+        nodeId: params.target.nodeId,
+        command: "system.run.prepare",
+        params: {
+          command: params.target.argv,
+          rawCommand: params.request.command,
+          ...(params.request.workdir != null ? { cwd: params.request.workdir } : {}),
+          ...(params.target.env !== undefined ? { env: params.target.env } : {}),
+          ...(params.request.strictInlineEval === true ? { strictInlineEval: true } : {}),
+          agentId: params.request.agentId,
+          sessionKey: params.request.sessionKey,
+        },
+        idempotencyKey: crypto.randomUUID(),
       },
-      idempotencyKey: crypto.randomUUID(),
-    },
+    ),
+    params.request.signal,
   );
   const prepared = parsePreparedSystemRunPayload(prepareRaw?.payload);
   if (!prepared) {
@@ -575,10 +578,13 @@ export async function analyzeNodeApprovalRequirement(params: {
     analysisOk
   ) {
     try {
-      const approvalsSnapshot = await callGatewayTool<{ file: string }>(
-        "exec.approvals.node.get",
-        { timeoutMs: 10_000 },
-        { nodeId: params.target.nodeId },
+      const approvalsSnapshot = await awaitWithAbort(
+        callGatewayTool<{ file: string }>(
+          "exec.approvals.node.get",
+          { timeoutMs: 10_000 },
+          { nodeId: params.target.nodeId },
+        ),
+        params.request.signal,
       );
       const approvalsFile =
         approvalsSnapshot && typeof approvalsSnapshot === "object"
@@ -643,6 +649,7 @@ export async function analyzeNodeApprovalRequirement(params: {
         analysisOk = allowlistEvals.some((entry) => entry.allowlistEval.analysisOk);
       }
     } catch {
+      params.request.signal?.throwIfAborted();
       // Fall back to requiring approval if node approvals cannot be fetched.
     }
   }

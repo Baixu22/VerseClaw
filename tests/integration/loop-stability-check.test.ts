@@ -364,7 +364,7 @@ describe("Integration: Task Loop stability", () => {
       {},
       {
         idFactory: (prefix) => prefix + "_int_s8",
-        runObserved: (async (request: any) => {
+        runObserved: (async (request: { templateId?: string }) => {
           usedTemplate = request.templateId ?? "";
           return fakeOrchestrationResult("security-audit");
         }) as never,

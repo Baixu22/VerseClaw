@@ -30,8 +30,7 @@ test.describe('Channels binding regression', () => {
         ],
       };
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (globalThis as any).__clawxE2eBindingRegression = state;
+      (globalThis as typeof globalThis & { __clawxE2eBindingRegression?: typeof state }).__clawxE2eBindingRegression = state;
 
       const originalHostInvoke = (ipcMain as unknown as {
         _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
@@ -45,8 +44,7 @@ test.describe('Channels binding regression', () => {
         action?: string;
         payload?: Record<string, unknown>;
       }) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const current = (globalThis as any).__clawxE2eBindingRegression as typeof state;
+        const current = (globalThis as typeof globalThis & { __clawxE2eBindingRegression?: typeof state }).__clawxE2eBindingRegression as typeof state;
 
         if (request?.module === 'channels' && request.action === 'accounts') {
           return respond(request.id, { success: true, channels: current.channels });
@@ -60,7 +58,7 @@ test.describe('Channels binding regression', () => {
         if (request?.module === 'channels' && request.action === 'saveConfig') {
           current.saveCount += 1;
           const body = request.payload ?? {};
-          const accountId = String((body as any).accountId || current.nextAccountId);
+          const accountId = String((body as { accountId?: string }).accountId || current.nextAccountId);
           const feishu = current.channels[0];
           if (!feishu.accounts.some((account) => account.accountId === accountId)) {
             feishu.accounts.push({
@@ -128,8 +126,7 @@ test.describe('Channels binding regression', () => {
     await expect(bindingSelect).toHaveValue('code');
 
     const counters = await electronApp.evaluate(() => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const state = (globalThis as any).__clawxE2eBindingRegression as { saveCount: number; bindingCount: number };
+      const state = (globalThis as typeof globalThis & { __clawxE2eBindingRegression?: typeof state }).__clawxE2eBindingRegression as { saveCount: number; bindingCount: number };
       return { saveCount: state.saveCount, bindingCount: state.bindingCount };
     });
 

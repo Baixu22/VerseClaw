@@ -343,7 +343,7 @@ describe('Remote Forge Main read adapter', () => {
       'malformed.txt': { content: 'not-base64!', encoding: 'base64', size: 4 },
       'large.txt': { content: 'YQ==', encoding: 'base64', size: REMOTE_FORGE_READ_LIMITS.maxDecodedContentBytes + 1 },
     };
-    const fetchImpl = (fixtureFetch as any)(async (url: any) => {
+    const fetchImpl = (fixtureFetch as unknown as (fn: (url: URL) => Promise<unknown>) => typeof fetch)(async (url) => {
       if (!url.pathname.includes('/contents/')) return undefined;
       active += 1;
       maxActive = Math.max(maxActive, active);

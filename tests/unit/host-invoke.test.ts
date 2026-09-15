@@ -141,7 +141,7 @@ describe('host invoke dispatcher', () => {
     const registry = new HostApiRegistry();
     registry.registerCoreServices({
       settings: {
-        getAll: vi.fn(() => ({ theme: 'dark' })) as any,
+        getAll: vi.fn(() => ({ theme: 'dark' })) as never,
       },
     });
 
@@ -156,7 +156,7 @@ describe('host invoke dispatcher', () => {
 describe('host invoke security (P1-002)', () => {
   it('rejects missing and unauthorized senders when senderAuth is configured', async () => {
     const dispatch = createHostInvokeDispatcher({
-      settings: { getAll: vi.fn(async () => ({ theme: 'dark' })) as any },
+      settings: { getAll: vi.fn(async () => ({ theme: 'dark' })) as never },
     }, {
       senderAuth: { allowedWebContentsIds: new Set([42]) },
     });
@@ -252,7 +252,7 @@ describe('host invoke security (P1-002)', () => {
 
   it('rejects unauthorized sender session URL prefixes when configured', async () => {
     const dispatch = createHostInvokeDispatcher({
-      settings: { getAll: vi.fn(async () => ({ theme: 'dark' })) as any },
+      settings: { getAll: vi.fn(async () => ({ theme: 'dark' })) as never },
     }, {
       senderAuth: {
         allowedWebContentsIds: new Set([7]),

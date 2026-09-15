@@ -574,6 +574,7 @@ export function createProcessTool(
             };
           }
           if (scopedFinished) {
+            resetPollRetrySuggestion(params.sessionId);
             const window = resolveLogSliceWindow(params.offset, params.limit);
             const { slice, totalLines, totalChars } = sliceLogLines(
               scopedFinished.aggregated,

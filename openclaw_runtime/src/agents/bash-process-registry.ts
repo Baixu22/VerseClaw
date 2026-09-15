@@ -211,6 +211,10 @@ export function markExited(
   status: ProcessStatus,
   exitReason?: TerminationReason,
 ) {
+  if (session.exited) {
+    // The first owner records terminal facts; late exit notifications must not overwrite them.
+    return;
+  }
   session.exited = true;
   session.exitCode = exitCode;
   session.exitSignal = exitSignal;

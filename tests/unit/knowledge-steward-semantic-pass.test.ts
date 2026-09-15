@@ -170,7 +170,7 @@ describe('Area 5 §3.2 — Semantic Steward pass', () => {
       const api = await getApi();
       const result = await api.stewardReview({ title: 'Migration plan', body: 'We will migrate the database schema in Q3.', sourceIds: ['notes/migration.md'], tags: ['migration'] });
       expect(result.success).toBe(true);
-      expect((result.config as any).classification).toBe('heuristic');
+      expect((result.config as { classification?: string }).classification).toBe('heuristic');
       // No semantic pass info in notes
       expect(result.notes).not.toContain('Semantic steward pass');
     });
@@ -181,7 +181,7 @@ describe('Area 5 §3.2 — Semantic Steward pass', () => {
       useInvoker(null);
       const result = await api.stewardReview({ title: 'Migration plan', body: 'We will migrate the database schema in Q3.', sourceIds: ['notes/migration.md'], tags: ['migration'] });
       expect(result.success).toBe(true);
-      expect((result.config as any).classification).toBe('semantic');
+      expect((result.config as { classification?: string }).classification).toBe('semantic');
       expect(result.notes).toContain('Semantic steward pass unavailable');
       expect(result.notes).toContain('no LLM invoker configured');
     });

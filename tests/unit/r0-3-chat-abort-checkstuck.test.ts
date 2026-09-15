@@ -127,7 +127,7 @@ describe('R0-3 chat abort/checkStuck reclamation', () => {
 
   it('keeps the run state when chat.abort fails and warns the user', async () => {
     const { useChatStore } = await import('@/stores/chat');
-    (useChatStore.setState as any)({
+    (useChatStore.setState as (value: unknown) => void)({
       ...seedStore(),
       sending: true,
       activeRunId: 'run-r0-3',
@@ -155,7 +155,7 @@ describe('R0-3 chat abort/checkStuck reclamation', () => {
 
   it('releases UI state only after a confirmed abort', async () => {
     const { useChatStore } = await import('@/stores/chat');
-    (useChatStore.setState as any)({
+    (useChatStore.setState as (value: unknown) => void)({
       ...seedStore(),
       sending: true,
       activeRunId: 'run-r0-3',
@@ -186,7 +186,7 @@ describe('R0-3 chat abort/checkStuck reclamation', () => {
 
     // Simulate the run draining, then send again: the old chain must be
     // cleared, leaving exactly one turn-timeout + one checkStuck timer.
-    (useChatStore.setState as any)({ sending: false });
+    (useChatStore.setState as (value: unknown) => void)({ sending: false });
     await useChatStore.getState().sendMessage('second message');
     const afterSecondSend = vi.getTimerCount();
     expect(afterSecondSend).toBe(2);

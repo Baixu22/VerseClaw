@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-08-30T03:40:41.000Z
+Generated at: 2026-09-13T07:12:59.891Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -268,4 +268,17 @@ This file is generated — edit the source of truth instead.
 - rollback: runtime.contextBlock.role-memory.enabled=false (default).
 
 > R3-1: role-memory projection 接收真实 role/task 输入且不移除其他 provider；默认关闭。
+
+## verseshell-patch-preview
+
+- wave: VS-P3
+- kind: config
+- key: `runtime.verseShellFoundation.patchPreview`
+- default: false
+- defaultDisplay: false
+- risk: read-only
+- enable: preview_patch 只在六个旗标同时为真且 kill switch 未生效时物化，缺一即不出现：runtime.verseShellFoundation 下的 verifiedRuntime / typedAci / facade / governedExec / artifactResults / patchPreview 全部 =true，且 killSwitch 未置（env VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH 亦未置）。每个旗标也可用 env VERSE_VERSESHELL_FOUNDATION_<NAME> 覆盖。
+- rollback: runtime.verseShellFoundation.patchPreview=false（默认）或移除该叶；preview_patch 从工具面消失，apply_patch 与其 write journal 完全不变。任一前置旗标关闭或 kill switch 生效有同样效果。
+
+> VS-P3-01：只读桥。clawx-patch-preview-v1 profile 只列 file.diff / file.hash / file.read_range，14 个写入与 tx.* operation 在请求发出前被机械拒绝；commit / undo / stale-write guard / recovery 仍只属 runtime.coding.writeJournal（见本表 write-journal 条）。已知登记缺口：同族另外 10 个 verseShellFoundation 旗标（VS-P0/P1/P2 交付物）尚未单独入本目录，故本条的 enable 串是目前唯一记录整条前置链的落盘处。
 

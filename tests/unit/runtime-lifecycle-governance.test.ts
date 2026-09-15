@@ -1,4 +1,6 @@
+// @vitest-environment node
 import v8 from "node:v8";
+import { spawnSync } from "node:child_process";
 import { afterEach, describe, expect, it } from "vitest";
 
 import {
@@ -26,31 +28,15 @@ afterEach(() => {
 });
 
 async function measureHeapMb(): Promise<number> {
-  if (typeof globalThis.gc === "function") {
-    for (let index = 0; index < 3; index += 1) {
-      globalThis.gc();
-    }
-    return v8.getHeapStatistics().used_heap_size / 1024 / 1024;
+  const collect = globalThis.gc;
+  if (typeof collect !== "function") {
+    throw new Error("The retained-heap gate requires a Node worker with --expose-gc.");
   }
-
-  // Node without --expose-gc cannot call gc() synchronously. Repeatedly build
-  // a short memory-pressure wave, yield to the event loop, and sample
-  // used_heap_size. V8 eventually runs a natural scavenge/mark-compact; the
-  // minimum of the post-wave samples is the natural-GC floor. The same floor
-  // is measured before and after the 50-cycle window, so the delta remains an
-  // honest leak measurement rather than a GC-timing artifact.
-  const samples: number[] = [];
-  for (let wave = 0; wave < 20; wave += 1) {
-    const pressure: number[][] = [];
-    for (let index = 0; index < 8; index += 1) {
-      pressure.push(new Array<number>(1024 * 1024).fill(index));
-      await new Promise((resolve) => setTimeout(resolve, 0));
-    }
-    pressure.length = 0;
-    await new Promise((resolve) => setTimeout(resolve, 10));
-    samples.push(v8.getHeapStatistics().used_heap_size / 1024 / 1024);
+  for (let index = 0; index < 3; index += 1) {
+    collect();
+    await new Promise<void>((resolve) => setImmediate(resolve));
   }
-  return Math.min(...samples);
+  return v8.getHeapStatistics().used_heap_size / 1024 / 1024;
 }
 
 function buildLeakChildTreeScript(): string {
@@ -110,6 +96,25 @@ async function waitForPidDeath(pid: number, timeoutMs = 10_000): Promise<void> {
   }
   throw new Error(`pid ${pid} survived drain`);
 }
+
+function canAuditWindowsProcessTrees(): boolean {
+  if (process.platform !== "win32") {
+    return true;
+  }
+  const probe = spawnSync(
+    "powershell",
+    [
+      "-NoProfile",
+      "-NonInteractive",
+      "-Command",
+      "Get-CimInstance -ClassName Win32_Process -Filter \"ProcessId = $PID\" | Out-Null",
+    ],
+    { timeout: 1_000, windowsHide: true, stdio: "ignore" },
+  );
+  return !probe.error && probe.status === 0;
+}
+
+const windowsProcessTreeAuditAvailable = canAuditWindowsProcessTrees();
 
 async function startLeakFixtureTree(
   identity: SessionAdmissionIdentity,
@@ -225,12 +230,10 @@ describe("Runtime Lifecycle Governance — Phase 0 lifecycle safety contract", (
 });
 
 describe("Runtime Lifecycle Governance — Phase 1 50-cycle leak fixture", () => {
-  it("drains 50 create/stop process-tree cycles without registry, timer, or heap leaks", async () => {
-    const heapMethod =
-      typeof globalThis.gc === "function"
-        ? "gc+used_heap_size"
-        : "v8.getHeapStatistics.used_heap_size";
-    console.log(`[runtime-lifecycle-audit] leak50CycleHeapMethod=${heapMethod}`);
+  it.skipIf(!windowsProcessTreeAuditAvailable)(
+    "drains 50 create/stop process-tree cycles without registry, timer, or heap leaks",
+    async () => {
+    process.stdout.write("[runtime-lifecycle-audit] leak50CycleHeapMethod=gc+used_heap_size\n");
     for (let warmup = 0; warmup < 2; warmup += 1) {
       await runLeakDrainCycle(warmup);
     }
@@ -243,9 +246,11 @@ describe("Runtime Lifecycle Governance — Phase 1 50-cycle leak fixture", () =>
     await new Promise((resolve) => setTimeout(resolve, 100));
     const afterHeapMb = await measureHeapMb();
     const heapDeltaMb = afterHeapMb - beforeHeapMb;
-    console.log(`[runtime-lifecycle-audit] leak50CycleHeapDeltaMb=${heapDeltaMb.toFixed(3)}`);
-    console.log(`[runtime-lifecycle-audit] leak50CycleActiveRecords=${activeRecords}`);
+    process.stdout.write(`[runtime-lifecycle-audit] leak50CycleHeapDeltaMb=${heapDeltaMb.toFixed(3)}\n`);
+    process.stdout.write(`[runtime-lifecycle-audit] leak50CycleActiveRecords=${activeRecords}\n`);
     expect(activeRecords).toBe(0);
     expect(heapDeltaMb).toBeLessThanOrEqual(2);
-  }, 300_000);
+    },
+    300_000,
+  );
 });

@@ -530,9 +530,9 @@ export function ObservabilityDashboard() {
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-3 bg-background" data-testid="observability-page">
-      <div className="flex items-center justify-between gap-3 border-b border-border pb-3">
+      <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border pb-3">
         <div>
-          <h2 className="font-serif text-xl font-normal tracking-tight">{t('title')}</h2>
+          <h1 className="font-serif text-xl font-normal tracking-tight">{t('title')}</h1>
           <p className="mt-0.5 max-w-2xl text-xs text-muted-foreground">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
@@ -549,7 +549,7 @@ export function ObservabilityDashboard() {
       </div>
 
       {snapshot && (
-        <div className="overflow-hidden rounded-lg border border-border bg-surface-modal">
+        <div className="shrink-0 overflow-hidden rounded-lg border border-border bg-surface-modal">
         <div className="flex shrink-0 overflow-x-auto divide-x divide-border" data-testid="observability-primary-metrics">
           {primaryMetrics.map((card) => (
             <div key={card.id} className="flex min-w-[148px] flex-1 items-center justify-between gap-3 px-3 py-2.5">

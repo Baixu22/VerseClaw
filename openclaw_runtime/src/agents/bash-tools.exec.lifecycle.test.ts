@@ -179,4 +179,28 @@ describe("foreground exec lifecycle", () => {
       await result.catch(() => undefined);
     }
   });
+
+  it.each([-10, 0, Number.NaN, Number.POSITIVE_INFINITY])(
+    "TF-0222 falls back to the default timeout for invalid explicit timeout %s",
+    async (timeout) => {
+      const processRun = pendingProcess();
+      const spawn = vi.spyOn(runtime, "runExecProcess").mockResolvedValue(processRun.handle);
+      const tool = createExecTool({
+        host: "gateway",
+        security: "full",
+        ask: "off",
+        allowBackground: false,
+      });
+      const result = tool.execute("invalid-timeout", { command: "echo done", timeout }, undefined);
+      try {
+        await vi.waitFor(() => expect(spawn).toHaveBeenCalledOnce());
+        expect(spawn).toHaveBeenCalledWith(expect.objectContaining({ timeoutSec: 1800 }));
+        processRun.finish();
+        await expect(result).resolves.toMatchObject({ details: { status: "completed" } });
+      } finally {
+        processRun.finish();
+        await result.catch(() => undefined);
+      }
+    },
+  );
 });

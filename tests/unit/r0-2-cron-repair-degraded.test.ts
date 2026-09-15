@@ -88,7 +88,7 @@ describe('R0-2 cron repair fail-closed', () => {
     expect(job!.repairDegraded).toBeUndefined();
 
     const updateCall = rpc.mock.calls.find(([method]) => method === 'cron.update');
-    expect((updateCall as any)?.[1]).toEqual({ id: 'job-fixable', patch: { delivery: { mode: 'none' } } });
+    expect((updateCall as unknown[] | undefined)?.[1]).toEqual({ id: 'job-fixable', patch: { delivery: { mode: 'none' } } });
   });
 
   it('applies the agentId repair on RPC success', async () => {

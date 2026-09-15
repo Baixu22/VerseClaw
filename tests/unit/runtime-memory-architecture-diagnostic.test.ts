@@ -199,7 +199,7 @@ describe("Architecture Diagnostic: Do claimed capabilities actually work?", () =
 
       // Even if facts are stored, the store should have ZERO relations
       // because the write path never calls appendRelation
-      const relations = (store as any).queryRelations();
+      const relations = (store as unknown as { queryRelations: (factId?: string) => unknown[] }).queryRelations();
       console.log(`[Q3] Relations in store: ${relations.length}`);
       expect(relations.length).toBe(0);
 
@@ -410,15 +410,15 @@ describe("Architecture Diagnostic: Do claimed capabilities actually work?", () =
       console.log(`[Q6] Facts in store: ${allFacts.map((f) => f.factId).join(", ")}`);
 
       // Check if invalidation chain preserves old facts
-      const allWithInvalidations = (store as any).factsWithInvalidations();
-      console.log(`[Q6] Facts with invalidations: ${allWithInvalidations.map((f: any) => `${f.factId}(invalid_at=${f.invalid_at ?? "none"})`).join(", ")}`);
+      const allWithInvalidations = (store as unknown as { factsWithInvalidations: () => Array<{ factId: string; invalid_at?: string }> }).factsWithInvalidations();
+      console.log(`[Q6] Facts with invalidations: ${allWithInvalidations.map((f: { factId: string; invalid_at?: string }) => `${f.factId}(invalid_at=${f.invalid_at ?? "none"})`).join(", ")}`);
 
       // The key question: does the old fact still exist after invalidation?
       const oldFactStillExists = allFacts.some((f) => f.factId === "old");
       console.log(`[Q6] Old fact still exists: ${oldFactStillExists}`);
 
       if (oldFactStillExists) {
-        const oldFactUpdated = allWithInvalidations.find((f: any) => f.factId === "old");
+        const oldFactUpdated = allWithInvalidations.find((f: { factId: string; invalid_at?: string }) => f.factId === "old");
         console.log(`[Q6] Old fact invalid_at: ${oldFactUpdated?.invalid_at}`);
       }
     });

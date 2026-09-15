@@ -71,7 +71,7 @@ describe('comms scripts', () => {
     const baseline = { aggregate: passing };
     const result = evaluateReport(current, baseline);
 
-    expect(result.failures.some((f: any) => f.includes('missing scenario'))).toBe(true);
+    expect(result.failures.some((f: string) => f.includes('missing scenario'))).toBe(true);
   });
 
   it('runs literal Node entrypoints and regenerates candidate-bound artifacts', () => {

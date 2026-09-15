@@ -315,11 +315,11 @@ test.describe('Verse Claw chat session fork', () => {
           sessionStates: {
             ...params.forkWorkspace.sessionStates,
             [params.sourceSessionKey]: {
-              ...(params.forkWorkspace.sessionStates as any)[params.sourceSessionKey],
+              ...(params.forkWorkspace.sessionStates as Record<string, object>)[params.sourceSessionKey],
               draftInput: savedSourceDraft,
             },
             [params.forkSessionKey]: {
-              ...(params.forkWorkspace.sessionStates as any)[params.forkSessionKey],
+              ...(params.forkWorkspace.sessionStates as Record<string, object>)[params.forkSessionKey],
               draftInput: savedSourceDraft,
             },
           },

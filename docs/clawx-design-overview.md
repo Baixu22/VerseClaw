@@ -2,24 +2,24 @@
 
 > Scope: A complete walk-through of the Verse Claw desktop app and the OpenClaw runtime it ships with, as of 2026-06-25.
 > Sandbox update: section 7.1 documents the Verse Claw lightweight layered sandbox control model implemented on 2026-06-17.
-> Cross-platform UI v2 update (2026-07-31): Windows, macOS, and Linux now default to the FakeCoding-aligned grayscale shell described below; `?uiVersion=legacy` remains a development-only rollback during the staged migration.
+> Cross-platform UI convergence (2026-09-14): the supported desktop platforms use the FakeCoding-aligned grayscale shell. The visual-only legacy rollback is retired; old query values resolve to the current UI.
 > Basis: codegraph index (10,026 files / 158,358 nodes / 470,892 edges) + source review of `electron/`, `src/`, `shared/`, `openclaw_runtime/src/`, and `openclaw_runtime/extensions/`. Updated with role-first runtime architecture (section 11), Lightweight Subagent Runner (sections 11.2 / 11.13), ClawGraph Runtime v1 (section 11.15), the long-task stability stack (section 8.5.3), Human Intervention / Resume Control (section 8.5.4), Mission Control / Mission Loop MVP+ (section 8.5.5), Knowledge Hub role-first governance (section 8.6), Chat slimming and legacy Work Mode compatibility (section 8.7), Work Provider v1 Office/Search orchestration (section 8.7), Task Ledger chat projection + explicit `/loop` root contract (section 8.5.0 - 2026-06-24), runtime-level Agent Browser automation for Cron-driven web tasks (section 6.6 - 2026-06-25), and Local Runtime Control Plane MVP observe-only diagnostics (section 8.4.1 - 2026-06-26).
 
 ---
 
 ## Cross-platform FakeCoding UI v2 shell and overlay routing
 
-- `UiVersion` resolves from `?uiVersion=legacy|v2`; every supported desktop platform defaults to `v2` during normal use.
-- Platform-native titlebar controls stay outside modal overlays. Opening Settings keeps the background application stage stationary, leaving native window controls interactive and avoiding a full-tree transform.
-- `/settings/*` is an overlay route. The last non-Settings location remains rendered as the background, direct deep links fall back to `/`, and category changes do not remount the drawer.
+- `UiVersion` is `v2` on every supported desktop platform. Compatibility query values cannot restore the previous shell or duplicate Browser/Review page destinations.
+- Platform-native titlebar controls remain interactive above content and modal overlays. Settings navigation does not transform the application tree.
+- `/settings/*` uses the shared full-page Settings shell. Navigation remembers the previous application route; direct links return to `/`. Section changes retain the Settings chrome and restore focus on return.
 - `AppleDrawer` is the only renderer wrapper allowed to import `vaul`. The project pins `vaul@1.1.2`; the wrapper caps the visible drawer transition at 180 ms and owns a 220 ms close fallback.
-- X, ESC, scrim, and drag dismissal share one close state machine. Navigation and focus restoration happen only after the exit animation completes.
-- Radix Select, Tooltip, Dialog, and Sheet portals inherit the active overlay host, preventing nested controls from escaping the drawer or being treated as outside interactions.
+- Shared dialogs and drawers retain their own close state machines; the Settings page returns through its route and focus restoration path.
+- Radix Select, Tooltip, Dialog and Sheet use the active app overlay host so nested controls remain interactive.
 - Light and dark UI v2 materials use neutral FakeCoding-aligned grays across semantic surfaces and `canvas/sidebar/panel/elevated/control`. Main content is a continuous work surface without a page-level decorative gradient or stacked glass.
 - Shared buttons, inputs, selects, tabs, and tooltips use a 28-36 px density contract. Primary actions invert foreground/background; blue is reserved for links, keyboard focus, and running state.
 - Management headings use the sans stack at no more than 28 px with zero letter spacing. Shared buttons and tabs do not use press-scale feedback.
 - Product navigation icons use the pinned SVG geometry from FakeCoding `codex-icons` and `officialMenuIcons`, preserving the original view box, stroke, fill, line cap, and line join rules.
-- Stable UI-version context is separated from changing overlay state so Settings does not invalidate Chat, ChatInput, or message consumers.
+- The retired visual-version context and its fallback branches are removed. Chat layout and messages do not subscribe to changing overlay state.
 - Reduced motion removes large movement and keeps only 100 ms opacity/color feedback.
 - This renderer-only architecture does not change IPC, host-api, Gateway transport, permissions, or persisted business schemas.
 
@@ -415,6 +415,10 @@ Runtime broadcast events 鈫?`dispatchJsonRpcNotification` / `dispatchProtocolEv
 Some runtime endpoints are HTTP-only (MCP-over-HTTP, OpenAI-compat, OpenResponses, file downloads). Verse Claw exposes `hostapi:fetch` and `gateway:httpProxy` so the renderer never sees a cross-origin URL.
 
 ### 6.4 Knowledge Hub flow
+
+Knowledge uses Library and Review Queue as its primary views. `KnowledgeReviewItem` projects existing Inbox, Draft and Proposal DTOs without creating another queue authority. Documents open in Preview; Edit is explicit, and the 960px layout never stacks both editor panes. Runtime Lessons and Governance live under More > Maintenance; source selection and Studio remain in Source tools.
+
+The Chat `?knowledge=ask` route hosts the existing bounded Librarian flow and version-1 local checkpoint. Router state preserves the unfinished Library editor, search results and source selection across visits. Citation links return to Library; candidate actions return to the corresponding queue item. A draft without a proposal exposes an explicit preparation step before approval. Selection and late steward results stay bound to the associated draft.
 
 Knowledge Hub follows the same renderer/Main/runtime boundary as the rest of Verse Claw:
 
@@ -1231,6 +1235,8 @@ Current contract:
 Work Provider v1 remains the Main-owned capability layer for Office/Search style operations. `shared/types/work-provider.ts` defines provider kinds (`officeDocument`, `officeSheet`, `officeSlide`, `pdf`, `webSearch`, `webRead`, `formatConversion`, `crawler`, `ocr`, `dataFrame`), install modes, status values, and legacy Work Kit-to-capability mapping. `electron/services/work-providers-api.ts` exposes `status`, `run`, and `validateArtifact` through typed host API only. The light core uses project-available JS libraries where present (`mammoth`, `xlsx`, `pdfjs-dist`, `@mozilla/readability`, `jsdom`) and reports missing dependencies for absent generators/converters instead of installing silently. Search is an explicit-provider interface: Tavily, Brave, Bing, SearXNG, or Custom HTTP can be configured later, but no search request is sent while config is missing. Heavy LibreOffice/Pandoc/OCR/crawler/dataframe stacks are status/interfaces only until configured.
 
 Future artifact workflows should be modeled as explicit provider/tool/artifact actions or dedicated UI surfaces, not by resurrecting Work Mode as a Chat behavior switch.
+
+Chat workspace panels open on demand: Review (Changes, AI Review, Pull Requests), Terminal, Browser (Preview, supervised Live), Files, Artifacts, Audit, and the existing Agents tool. `/browser` and `/code-review` open the corresponding panel; Task Ledger and ClawGraph remain full-page context destinations. Session restoration performs no legacy topic-file write. The shared explicit new-session/handoff helper resets that marker before entering the new view, fresh-agent creation keeps the same reset, and forks preserve their inherited topic.
 
 ---
 

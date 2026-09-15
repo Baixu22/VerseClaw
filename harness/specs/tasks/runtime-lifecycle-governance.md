@@ -59,6 +59,7 @@ touchedAreas:
   - shared/types/session-activity.ts
   - src/stores/session-activity.ts
   - tests/unit/runtime-lifecycle-governance.test.ts
+  - vitest.config.ts
   - tests/e2e/runtime-lifecycle-governance.spec.ts
   - docs/dev/runtime-lifecycle-governance/README.zh-CN.md
   - README.md
@@ -95,6 +96,7 @@ requiredTests:
   - pnpm run comms:compare
   - pnpm run test:e2e:run tests/e2e/runtime-lifecycle-governance.spec.ts
 acceptance:
+  - The 50-cycle leak gate measures retained heap after explicit GC in Node workers, fails if GC is unavailable, and keeps the 2 MiB limit plus registry/timer/process checks; allocation-pressure minima are not treated as completed collection.
   - Every phase below has entry criteria, exit criteria, not-in-scope list, and quantitative audit numbers. No phase may start before the previous phase's audit report is green and validates with `scripts/check-runtime-lifecycle-audit.mjs`.
   - New runtime modules meet coverage, cycle, dead-code, and line budget gates defined in the Quantitative Audit System.
   - No universal resource ledger, no desired-state controller, no second lifecycle writer is introduced.

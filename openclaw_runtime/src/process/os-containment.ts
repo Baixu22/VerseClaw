@@ -50,43 +50,80 @@ async function runProcessProbe(
 async function readWindowsProcessMap(): Promise<
   { ok: true; processes: Map<number, OsProcessRecord> } | { ok: false; detail: string }
 > {
-  const probe = await runProcessProbe("wmic", [
+  const parseProcessRows = (
+    rows: string[],
+    separator: string,
+    source: string,
+  ): { ok: true; processes: Map<number, OsProcessRecord> } | { ok: false; detail: string } => {
+    if (rows.length === 0) {
+      return { ok: false, detail: `${source} returned an empty process table` };
+    }
+    const processes = new Map<number, OsProcessRecord>();
+    for (const line of rows) {
+      const columns = line.split(separator);
+      const pid = Number.parseInt(columns[0] ?? "", 10);
+      const parentPid = Number.parseInt(columns[1] ?? "", 10);
+      const token = (columns[2] ?? "").trim();
+      if (!Number.isInteger(pid) || pid <= 0 || !token) {
+        continue;
+      }
+      processes.set(pid, {
+        pid,
+        parentPid: Number.isInteger(parentPid) ? parentPid : -1,
+        token,
+        zombie: false,
+      });
+    }
+    return { ok: true, processes };
+  };
+
+  // WMIC was removed from newer Windows installations. Prefer the supported
+  // CIM cmdlet and emit invariant, tab-separated values so locale-specific
+  // DateTime formatting cannot corrupt the process token.
+  const powershell = await runProcessProbe("powershell", [
+    "-NoProfile",
+    "-NonInteractive",
+    "-Command",
+    "$ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | ForEach-Object { \"{0}`t{1}`t{2}\" -f $_.ProcessId, $_.ParentProcessId, $_.CreationDate.ToFileTimeUtc() }",
+  ]);
+  if (powershell.ok) {
+    const parsed = parseProcessRows(
+      powershell.stdout.split(/\r?\n/).map((line) => line.trim()).filter(Boolean),
+      "\t",
+      "PowerShell Get-CimInstance",
+    );
+    if (parsed.ok && parsed.processes.size > 0) {
+      return parsed;
+    }
+  }
+
+  const wmic = await runProcessProbe("wmic", [
     "process",
     "get",
     "ProcessId,ParentProcessId,CreationDate",
     "/format:csv",
   ]);
-  if (!probe.ok) {
-    return { ok: false, detail: probe.detail };
-  }
-  const lines = probe.stdout.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-  if (lines.length === 0) {
-    return { ok: false, detail: "wmic returned an empty process table" };
-  }
-  const header = lines[0]?.split(",") ?? [];
-  const pidIndex = header.findIndex((column) => column.trim().toLowerCase() === "processid");
-  const parentIndex = header.findIndex((column) => column.trim().toLowerCase() === "parentprocessid");
-  const tokenIndex = header.findIndex((column) => column.trim().toLowerCase() === "creationdate");
-  if (pidIndex < 0 || parentIndex < 0 || tokenIndex < 0) {
-    return { ok: false, detail: `unexpected wmic columns: ${header.join(",")}` };
-  }
-  const processes = new Map<number, OsProcessRecord>();
-  for (const line of lines.slice(1)) {
-    const columns = line.split(",");
-    const pid = Number.parseInt(columns[pidIndex] ?? "", 10);
-    const parentPid = Number.parseInt(columns[parentIndex] ?? "", 10);
-    const token = (columns[tokenIndex] ?? "").trim();
-    if (!Number.isInteger(pid) || pid <= 0 || !token) {
-      continue;
+  if (wmic.ok) {
+    const lines = wmic.stdout.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    const header = lines[0]?.split(",") ?? [];
+    const pidIndex = header.findIndex((column) => column.trim().toLowerCase() === "processid");
+    const parentIndex = header.findIndex((column) => column.trim().toLowerCase() === "parentprocessid");
+    const tokenIndex = header.findIndex((column) => column.trim().toLowerCase() === "creationdate");
+    if (pidIndex >= 0 && parentIndex >= 0 && tokenIndex >= 0) {
+      const rows = lines.slice(1).map((line) => {
+        const columns = line.split(",");
+        return [columns[pidIndex] ?? "", columns[parentIndex] ?? "", columns[tokenIndex] ?? ""].join("\t");
+      });
+      const parsed = parseProcessRows(rows, "\t", "wmic");
+      if (parsed.ok) {
+        return parsed;
+      }
     }
-    processes.set(pid, {
-      pid,
-      parentPid: Number.isInteger(parentPid) ? parentPid : -1,
-      token,
-      zombie: false,
-    });
   }
-  return { ok: true, processes };
+
+  const powershellDetail = powershell.ok ? "empty process table" : powershell.detail;
+  const wmicDetail = wmic.ok ? "empty process table" : wmic.detail;
+  return { ok: false, detail: `PowerShell: ${powershellDetail}; WMIC: ${wmicDetail}` };
 }
 
 function parseLinuxProcStat(

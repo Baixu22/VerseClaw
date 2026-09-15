@@ -31,6 +31,7 @@ touchedAreas:
   - scripts/context-compression-would-retry-local-manifest.mjs
   - scripts/context-compression-deterministic-recovery-batch.mjs
   - tests/unit/context-compression-eval.test.ts
+  - tests/unit/context-compression-provider.test.ts
   - tests/unit/compression-artifact.test.ts
   - tests/unit/context-runtime-kit-recovery-context.test.ts
   - tests/unit/helpers/context-compression-eval.ts
@@ -56,15 +57,20 @@ requiredRules:
   - docs-sync
 requiredTests:
   - pnpm run typecheck
-  - pnpm exec vitest run tests/unit/compression-artifact.test.ts tests/unit/host-api-facade.test.ts tests/unit/host-services.test.ts tests/unit/chat-input.test.tsx
+  - pnpm exec vitest run tests/unit/context-compression-provider.test.ts --reporter=verbose
+  - pnpm exec vitest run tests/unit/compression-artifact.test.ts tests/unit/host-api-facade.test.ts tests/unit/host-services.test.ts tests/unit/chat-input.test.tsx --reporter=verbose
   - pnpm exec vitest run tests/unit/context-compression-eval.test.ts tests/unit/compression-artifact.test.ts tests/unit/context-runtime-kit-compression-artifact.test.ts tests/unit/context-runtime-kit-recovery-context.test.ts tests/unit/context-runtime-kit-recovery-default.test.ts --reporter=verbose
-  - pnpm --dir openclaw_runtime exec vitest run packages/gateway-protocol/src/schema/sessions.recall.test.ts packages/agent-core/src/harness/compaction/compression-artifact.test.ts --reporter=verbose
-  - pnpm --dir openclaw_runtime exec vitest run src/agents/agent-hooks/compaction-damage-rules.test.ts src/agents/agent-hooks/compaction-validated-pipeline.test.ts src/agents/agent-hooks/compaction-addressability.test.ts src/agents/embedded-agent-runner/run/manual-compaction.test.ts src/agents/embedded-agent-runner/run/preemptive-compaction.test.ts --reporter=dot
-  - pnpm --dir openclaw_runtime exec vitest run packages/agent-core/src/harness/compaction/compression-planner.test.ts src/context-engine/context-orchestrator.test.ts src/observability/deprecation-counters.test.ts --reporter=dot
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts packages/gateway-protocol/src/schema/sessions.recall.test.ts packages/agent-core/src/harness/compaction/compression-artifact.test.ts --reporter=verbose
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit-fast.config.ts src/agents/agent-hooks/compaction-damage-rules.test.ts src/agents/agent-hooks/compaction-addressability.test.ts src/agents/embedded-agent-runner/run/preemptive-compaction.test.ts --reporter=verbose
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts src/agents/agent-hooks/compaction-validated-pipeline.test.ts src/agents/embedded-agent-runner/run/manual-compaction.test.ts --reporter=verbose
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts packages/agent-core/src/harness/compaction/compression-planner.test.ts src/context-engine/context-orchestrator.test.ts src/observability/deprecation-counters.test.ts --reporter=verbose
   - pnpm harness validate --spec harness/specs/tasks/token-dense-recovery-compression-v1.md
   - pnpm run comms:replay
   - pnpm run comms:compare
 acceptance:
+  - The offline CLI resolves its real entry path through workspace junctions; importing its provider helper does not run the CLI, and invoking an aliased CLI path must produce a report rather than a silent exit 0.
+  - L0 checks the original quotes behind stitched objective reports; derived pending-objective control text remains required in L1 without pretending that its generated wording occurred verbatim in the transcript.
+  - Offline live evaluators accept an explicit COMPACTION_API_FORMAT=responses using the Responses input/text contract, normalize output_text for existing scoring, and reject incomplete, refused, or empty results without weakening quality thresholds; the default Chat Completions path remains compatible.
   - Runtime compaction details include artifact/quality metrics or deterministic fallback warnings.
   - Gateway exposes sessions.compressionArtifact and sessions.recoveryContext through formal protocol validators.
   - Renderer calls only Host API facade methods; it does not read transcripts or call Gateway directly.
@@ -125,9 +131,13 @@ acceptance:
   - P6 judge prompts must show the transcript excerpt as head plus authoritative tail (schema-free omission v4 or later) — head-only excerpts make the judge mistake legitimate tail-derived summary content for a different session; continuation prompts (v5 or later) must require at least one returned action so completed-task preserve-outcome decisions are never scored as empty-action misses.
   - P6 critical-only and limited enforce by cancelling real provider/LLM compactions only when validatedPipeline.wouldPreserveTurns is true; boundary remains non-enforcing.
   - P6 promotionStage is config/runtime additive plumbing with default shadow; no stage means no behavior change.
+  - TF-0076 uses the written cost budget in reports/context-compression/TF0076-COST-BUDGET-2026-09-15.md: paired actual total tokens <= 1.20x shadow, mean end-to-end latency <= 1.50x shadow, and at most one added provider retry per sample. Missing current-source paired evidence cannot pass; historical reports may support NO-GO but cannot be re-signed as a current success.
+  - TF-0076 may close with an explicit cost NO-GO only after all required engineering tests pass on one clean scoped candidate with HEAD/tree/manifest identity. Task completion does not authorize promotion, default-on, liveReady, or productApproved; extra retry triggers must fit the same total cost budget before adoption.
+  - P6 Runtime checks select the existing unit, unit-fast, and agents configs explicitly and verify that every declared test file actually executes. A green subset or an empty project is not complete coverage of the required file list.
 docs:
   required: true
   files:
+    - reports/context-compression/TF0076-COST-BUDGET-2026-09-15.md
     - docs/clawx-design-overview.md
     - README.md
     - README.zh-CN.md

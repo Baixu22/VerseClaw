@@ -536,7 +536,7 @@ describe('workspaces api compatibility migration', () => {
       agentId: 'main',
       selectedAgentId: 'main',
       activeSessionKey: 'agent:main:main',
-      permissionMode: 'not-a-mode' as any,
+      permissionMode: 'not-a-mode' as never,
       createdAt: 1,
       updatedAt: 1,
       lastOpenedAt: 1,

@@ -190,7 +190,7 @@ export function Agents({ embedded = false }: { embedded?: boolean } = {}) {
         )}>
           {!embedded && (
             <div>
-              <h1 className="text-5xl md:text-6xl font-serif text-foreground mb-3 font-normal tracking-tight">
+              <h1 className="text-2xl font-serif text-foreground mb-3 font-normal tracking-tight">
                 {t('title')}
               </h1>
               <p className="text-subtitle text-foreground/70 font-medium">{t('subtitle')}</p>

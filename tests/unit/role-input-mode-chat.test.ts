@@ -18,14 +18,14 @@ describe('createInputModeAction explicit mode', () => {
     const action = createInputModeAction('stop and reconsider', 'guide');
     expect(action.mode).toBe('guide');
     expect(action.abort).toBe(false);
-    expect((action as any).steeringMessages.length).toBeGreaterThan(0);
+    expect((action as { steeringMessages: unknown[] }).steeringMessages.length).toBeGreaterThan(0);
   });
 
   it('honors an explicit queue mode regardless of text content', () => {
     const action = createInputModeAction('do something urgent', 'queue');
     expect(action.mode).toBe('queue');
     expect(action.abort).toBe(false);
-    expect((action as any).followUpMessages.length).toBeGreaterThan(0);
+    expect((action as { followUpMessages: unknown[] }).followUpMessages.length).toBeGreaterThan(0);
   });
 
   it('falls back to the classifier when no explicit mode is given', () => {
@@ -39,7 +39,7 @@ describe('createInputModeAction explicit mode', () => {
 
   it('guide steering messages are prefixed as non-interrupting guidance', () => {
     const action = createInputModeAction('also handle timeouts', 'guide');
-    const text = (action as any).steeringMessages[0].content[0];
+    const text = (action as { steeringMessages: Array<{ content: Array<{ type?: string; text?: string }> }> }).steeringMessages[0].content[0];
     expect(text).toMatchObject({ type: 'text' });
     if (text.type === 'text') {
       expect(text.text).toContain('Non-interrupting guidance');

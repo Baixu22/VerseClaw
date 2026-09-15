@@ -209,7 +209,7 @@ describe('skill packs api', () => {
     const runnerCalls: Array<{ child: unknown; taskId: string }> = [];
 
     const result = await runOfficeCliInstallForSkillPack({
-      spawnProcess: ((command: any, args: any, options: any) => {
+      spawnProcess: ((command: string, args: string[], options: { detached?: boolean; windowsHide?: boolean } = {}) => {
         spawnCalls.push({ command, args, options });
         return child;
       }) as never,

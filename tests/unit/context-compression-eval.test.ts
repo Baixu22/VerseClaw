@@ -115,6 +115,23 @@ describe('context compression eval foundation', () => {
     return { latestRun, summary, samples, report };
   };
 
+  it.each([true, false])('checks original report quotes in L0 while retaining derived state in L1 (pending=%s)', (pending) => {
+    const { summary, samples } = runRealContextEval('report-provenance', [
+      { type: 'session', id: 'report-provenance' },
+      ...Array.from({ length: 50 }, (_, index) => ({ type: 'message', id: `noise-${index}`, message: { role: 'assistant', content: 'Neutral conversation context before the request.' } })),
+      { type: 'message', id: 'objective', message: { role: 'user', content: 'Objective: execute manual compaction and report the actual result. Must not modify any files.' } },
+      { type: 'message', id: 'report', message: { role: 'assistant', content: 'Key findings: manual compaction is unavailable in the CLI and no invocation was executed. The panel has a neutral appearance with ordinary toolbar buttons and labels. The observed contextTokens value is 512 and compaction remains unexecuted.' } },
+      ...(pending ? [{ type: 'message', id: 'new-request', message: { role: 'user', content: 'List the contents of the other directory without modifying it.' } }] : []),
+    ]);
+    expect(samples[0].expectedFacts).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: pending ? 'R1-pending-objective' : 'R1-objective-report' }),
+    ]));
+    if (pending) expect(samples[0].compressedSummary).toContain('Objective not verified complete');
+    expect(samples[0].compressedSummary).toContain('contextTokens value is 512');
+    expect(samples[0].layer1Local.recall).toBe(1);
+    expect(summary.layer0.recallMean).toBe(1);
+  });
+
   it('repairs only bounded JSON truncation and rejects unrelated invalid text', () => {
     const complete = { actions: [{ id: 'R1-continue' }], completed: true, rationale: 'verified' };
     const encoded = JSON.stringify(complete);
@@ -125,6 +142,24 @@ describe('context compression eval foundation', () => {
       completed: true,
     });
     expect(() => extractJsonObject('not JSON and not recoverable')).toThrow(/did not contain JSON/u);
+  });
+
+  it('runs the CLI through a workspace junction instead of silently succeeding', () => {
+    const root = mkdtempSync(join(tmpdir(), 'context-compression-cli-alias-'));
+    const alias = join(root, 'workspace');
+    const output = join(root, 'output');
+    symlinkSync(process.cwd(), alias, 'junction');
+    try {
+      execFileSync(process.execPath, [join(alias, 'scripts/context-compression-eval-runner.mjs'),
+        '--target', process.cwd(), '--samples', '1', '--sample-source', 'synthetic',
+        '--suite', 'daily', '--no-cache', '--out', output,
+      ], { stdio: 'pipe', windowsHide: true });
+    } catch (error) {
+      if (!existsSync(join(output, 'latest-run.txt'))) throw error;
+    }
+    expect(existsSync(join(output, 'latest-run.txt'))).toBe(true);
+    const run = readFileSync(join(output, 'latest-run.txt'), 'utf8').trim();
+    expect(JSON.parse(readFileSync(join(run, 'summary.json'), 'utf8')).sampleCount).toBe(1);
   });
 
   it('scores facts by exact and normalized matches with severity weighting', () => {
@@ -2205,11 +2240,11 @@ describe('P6 grounded extractor (v8 Phase 1): provenance verifier and conservati
     expect(result.conflicts).toHaveLength(1);
     expect(result.conflicts[0].resolution).toBe('kept_regex_conservative');
     // The conflicting completion claim must NOT enter the merged pool.
-    expect(result.mergedFacts.some((fact: any) => /completed and verified/i.test(fact.text))).toBe(false);
+    expect(result.mergedFacts.some((fact: { id?: string; text?: string; extractorAgreement?: string }) => /completed and verified/i.test(String(fact.text ?? "")))).toBe(false);
     // The pending regex fact survives untouched.
-    expect(result.mergedFacts.some((fact: any) => fact.id === 'R1-pending-objective')).toBe(true);
+    expect(result.mergedFacts.some((fact: { id?: string; text?: string; extractorAgreement?: string }) => fact.id === 'R1-pending-objective')).toBe(true);
     // The llm-only fact is kept but capped from critical to important.
-    const llmOnly = result.mergedFacts.find((fact: any) => fact.extractorAgreement === 'llm-only');
+    const llmOnly = result.mergedFacts.find((fact: { id?: string; text?: string; extractorAgreement?: string }) => fact.extractorAgreement === 'llm-only');
     expect(llmOnly?.severity).toBe('important');
     expect(result.llmOnlyCount).toBe(1);
   });
@@ -2310,7 +2345,7 @@ describe('P6 v8 round-3 mechanisms: story scoping and regression-aware attributi
     expect(next.schema).toBe('compact-guideline/v2');
     expect(next.generationDirectives).toEqual([{ line: 'VERIFIED presentation', scope: 'completed' }]);
     expect(next.extractorFocus).toContainEqual({ line: 'extract pending items verbatim', scope: 'pending' });
-    const reasons = next.patchLog.map((entry: any) => entry.reason);
+    const reasons = next.patchLog.map((entry: { reason?: string }) => entry.reason);
     expect(reasons).toContain('duplicate_line');
     expect(reasons.filter((reason: string) => reason === 'invalid_patch_shape').length).toBeGreaterThanOrEqual(1);
   });
@@ -2346,7 +2381,7 @@ describe('P6 v8 candidate-v4 enabler: verified next_action facts join the next-a
       }],
       sampleId: 'R1',
     });
-    const nextActionFact = result.mergedFacts.find((fact: any) => String(fact.id).includes('next-action'));
+    const nextActionFact = result.mergedFacts.find((fact: { id?: string; text?: string; extractorAgreement?: string }) => String(fact.id).includes('next-action'));
     expect(nextActionFact).toBeTruthy();
     expect(nextActionFact?.extractorAgreement).toBe('llm-only');
     expect(nextActionFact?.severity).toBe('important');
@@ -2405,9 +2440,9 @@ describe('P6 v8 extraction stabilization: k-shot majority extraction', () => {
     ];
     const merged = majorityMergeFactBallots(ballots);
     expect(merged).toHaveLength(2);
-    expect(merged.some((fact: any) => /io-B86lst6B/u.test(fact.text))).toBe(true);
-    expect(merged.some((fact: any) => /context usage/u.test(fact.text))).toBe(true);
-    expect(merged.some((fact: any) => /singleton/u.test(fact.text))).toBe(false);
+    expect(merged.some((fact: { id?: string; text?: string; extractorAgreement?: string }) => /io-B86lst6B/u.test(String(fact.text ?? "")))).toBe(true);
+    expect(merged.some((fact: { id?: string; text?: string; extractorAgreement?: string }) => /context usage/u.test(String(fact.text ?? "")))).toBe(true);
+    expect(merged.some((fact: { id?: string; text?: string; extractorAgreement?: string }) => /singleton/u.test(String(fact.text ?? "")))).toBe(false);
     // Single ballot passes through untouched.
     expect(majorityMergeFactBallots(ballots.slice(0, 1))).toHaveLength(2);
   });
@@ -2436,7 +2471,7 @@ describe('P6 v8 extraction stabilization: k-shot majority extraction', () => {
       ledger, model: 'stub', provider: { baseUrl: 'http://stub', apiKey: 'k' }, transport, votes: 3,
     });
     expect(result.chunks).toBe(1);
-    const texts = result.mergedFacts.map((fact: any) => fact.text).join(' | ');
+    const texts = result.mergedFacts.map((fact: { id?: string; text?: string; extractorAgreement?: string }) => fact.text).join(' | ');
     expect(/E-123/u.test(texts)).toBe(true);
     expect(/singleton/u.test(texts)).toBe(false);
     expect(result.verifiedCount).toBe(1);

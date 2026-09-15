@@ -53,7 +53,7 @@ describe('RC-01 authority inventory baseline', () => {
     const unclassified = [];
     for (const authority of Object.values(baseline.authorities)) {
       for (const list of ['writers', 'nonOwners', 'legacyWriters', 'candidates']) {
-        for (const writer of (authority as any)[list] ?? []) {
+        for (const writer of (authority as Record<string, Array<{ path?: string; classification?: string }> | undefined>)[list] ?? []) {
           if (writer && typeof writer === 'object' && !writer.classification) unclassified.push(writer.path ?? JSON.stringify(writer).slice(0, 80));
         }
       }
@@ -84,7 +84,7 @@ describe('RC-01 authority inventory baseline', () => {
     const found = new Set();
     for (const authority of Object.values(baseline.authorities)) {
       for (const list of ['writers', 'nonOwners', 'legacyWriters', 'candidates']) {
-        for (const writer of (authority as any)[list] ?? []) {
+        for (const writer of (authority as Record<string, Array<{ path?: string; classification?: string }> | undefined>)[list] ?? []) {
           if (!writer?.path) continue;
           for (const [name, pattern] of Object.entries(patterns)) {
             if (pattern.test(writer.path)) found.add(name);
@@ -117,11 +117,11 @@ describe('RC-01 authority inventory baseline', () => {
     expect(receipt.tableIsNewTypedAppendOnly).toBe(true);
     expect(receipt.hardConstraints).toHaveLength(7);
     // Constraint 2: content-sensitive idempotency.
-    const constraint2 = receipt.hardConstraints.find((c: any) => /idempotency_key/i.test(c));
+    const constraint2 = receipt.hardConstraints.find((c: string) => /idempotency_key/i.test(c));
     expect(constraint2).toMatch(/identical content/);
     expect(constraint2).toMatch(/conflict/);
     // Constraint 5: shadow-write failure fails RC-02 but never changes send behavior.
-    const constraint5 = receipt.hardConstraints.find((c: any) => /shadow write failure/i.test(c));
+    const constraint5 = receipt.hardConstraints.find((c: string) => /shadow write failure/i.test(c));
     expect(constraint5).toMatch(/fail RC-02/i);
     expect(constraint5).toMatch(/must not change send behavior/i);
     // Rejected owners recorded.
@@ -133,13 +133,13 @@ describe('RC-01 authority inventory baseline', () => {
       'channels/message/receipt.ts',
     ]));
     // RuntimeTaskEventLog stays diagnostic: default-off, prunable, no receipt/effect kind, role rejected.
-    const runtimeEventLog = receipt.candidates.find((candidate: any) => candidate.path.includes('event-log-persistence'));
+    const runtimeEventLog = receipt.candidates.find((candidate: { path: string }) => candidate.path.includes('event-log-persistence'));
     expect(runtimeEventLog.role).toBe('rejected');
     expect(runtimeEventLog.defaultOff).toBe(true);
     expect(runtimeEventLog.prunable).toBe(true);
     expect(runtimeEventLog.hasReceiptEffectKind).toBe(false);
     // long_task_checkpoints rejected: mutable under the same idempotency key.
-    const checkpointCandidate = receipt.candidates.find((candidate: any) => candidate.path.includes('long-task-control'));
+    const checkpointCandidate = receipt.candidates.find((candidate: { path: string }) => candidate.path.includes('long-task-control'));
     expect(checkpointCandidate.role).toBe('rejected');
     expect(checkpointCandidate.rejectionReason).toMatch(/mutable/i);
   });
@@ -186,7 +186,7 @@ describe('RC-01R self-contained baseline', () => {
     const missing: string[] = [];
     for (const [authorityKey, authority] of Object.entries<Record<string, unknown>>(baseline.authorities)) {
       for (const list of ['writers', 'nonOwners', 'legacyWriters', 'candidates']) {
-        for (const entry of ((authority as any)[list] as { path?: string }[] | undefined) ?? []) {
+        for (const entry of ((authority as Record<string, Array<{ path?: string; classification?: string }> | undefined>)[list] as { path?: string }[] | undefined) ?? []) {
           if (!entry || typeof entry !== 'object' || !entry.path) continue;
           const ownerPath = entry.path;
           const prefix = ownerPath.endsWith('/**') ? ownerPath.slice(0, -2) : ownerPath.endsWith('/') ? ownerPath : null;

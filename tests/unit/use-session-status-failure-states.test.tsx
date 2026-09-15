@@ -23,7 +23,7 @@ vi.mock('@/lib/host-api', () => ({
 
 vi.mock('@/lib/host-events', () => ({
   hostEvents: {
-    onSubagentLifecycle: lifecycleSubscribeMock as any,
+    onSubagentLifecycle: lifecycleSubscribeMock as never,
   },
 }));
 

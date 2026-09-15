@@ -25,7 +25,8 @@
     "drafts": "Drafts",
     "runtime": "Runtime Lessons",
     "review": "Review",
-    "governance": "Governance"
+    "governance": "Governance",
+    "reviewQueue": "Review Queue"
   },
   "actions": {
     "more": "More actions",
@@ -155,7 +156,7 @@
     "roleId": "knowledge-librarian",
     "currentDocument": "Current document",
     "noSummary": "Write or open a Markdown document to give the librarian context.",
-    "openAssistant": "Open librarian",
+    "openAssistant": "Ask the knowledge base",
     "askSteward": "Ask steward",
     "related": "Related pages",
     "noRelated": "Search results and related pages will appear here.",
@@ -259,7 +260,9 @@
       "stewardReview": "Steward review",
       "openInbox": "Open inbox",
       "submitDraft": "Submit draft"
-    }
+    },
+    "chatTitle": "Ask the knowledge base",
+    "backToChat": "Back to chat"
   },
   "inbox": {
     "title": "Knowledge Inbox",
@@ -439,7 +442,8 @@
       "semantic": "Semantic",
       "defaultRole": "Default role",
       "close": "Close"
-    }
+    },
+    "prepareProposal": "Prepare proposal"
   },
   "runtime": {
     "title": "Runtime Lessons",
@@ -629,5 +633,28 @@
     "okfImport": "OKF import failed.",
     "search": "Search failed.",
     "get": "Failed to load knowledge page."
+  },
+  "reviewQueue": {
+    "filterLabel": "Review item type",
+    "filters": {
+      "all": "All",
+      "inbox": "Inbox",
+      "draft": "Drafts",
+      "proposal": "Proposals"
+    },
+    "search": "Search review items",
+    "empty": "No review items match this view.",
+    "back": "Back to Review Queue",
+    "status": {
+      "pending": "Pending",
+      "draft": "Draft",
+      "steward_reviewed": "Steward reviewed",
+      "proposed": "Proposed",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "applied": "Applied",
+      "promoted": "Promoted",
+      "dismissed": "Dismissed"
+    }
   }
 }

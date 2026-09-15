@@ -103,7 +103,7 @@ test.describe('Verse Claw token usage history', () => {
 
   async function validateUsageHistory(page: Page): Promise<void> {
     const usageHistory = await page.evaluate(async () => {
-      return window.electron.ipcRenderer.invoke('usage:recentTokenHistory', 20) as any;
+      return window.electron.ipcRenderer.invoke('usage:recentTokenHistory', 20) as Promise<Array<{ sessionId?: string; totalTokens?: number; agentId?: string; provider?: string }>>;
     });
     if (!Array.isArray(usageHistory) || usageHistory.length === 0) {
       throw new Error('No usage history found in IPC usage:recentTokenHistory');
@@ -126,11 +126,11 @@ test.describe('Verse Claw token usage history', () => {
     await validateUsageHistory(page);
 
     const usageHistory = await page.evaluate(async () => {
-      return window.electron.ipcRenderer.invoke('usage:recentTokenHistory', 20) as any;
+      return window.electron.ipcRenderer.invoke('usage:recentTokenHistory', 20) as Promise<Array<{ sessionId?: string; totalTokens?: number; agentId?: string; provider?: string }>>;
     });
 
-    const zeroEntry = usageHistory.find((entry: any) => entry?.sessionId === ZERO_TOKEN_SESSION_ID);
-    const nonzeroEntry = usageHistory.find((entry: any) => entry?.sessionId === NONZERO_TOKEN_SESSION_ID);
+    const zeroEntry = usageHistory.find((entry: { sessionId?: string; totalTokens?: number; agentId?: string; provider?: string }) => entry?.sessionId === ZERO_TOKEN_SESSION_ID);
+    const nonzeroEntry = usageHistory.find((entry: { sessionId?: string; totalTokens?: number; agentId?: string; provider?: string }) => entry?.sessionId === NONZERO_TOKEN_SESSION_ID);
     expect(zeroEntry).toBeTruthy();
     expect(nonzeroEntry).toBeTruthy();
     expect(nonzeroEntry?.totalTokens).toBe(27);

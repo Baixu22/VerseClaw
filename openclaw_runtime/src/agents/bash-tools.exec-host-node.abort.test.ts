@@ -63,6 +63,17 @@ function baseParams(signal: AbortSignal) {
   };
 }
 
+async function expectAbortWithin<T>(promise: Promise<T>, reason: unknown) {
+  const outcome = await Promise.race([
+    promise.then(
+      () => "resolved",
+      (error) => error,
+    ),
+    new Promise((resolve) => setTimeout(() => resolve("timeout"), 100)),
+  ]);
+  expect(outcome).toBe(reason);
+}
+
 afterEach(() => {
   vi.clearAllMocks();
 });
@@ -183,5 +194,108 @@ describe("node-host exec cancellation", () => {
     await expect(executeNodeHostCommand(baseParams(abort.signal))).rejects.toBe(reason);
     expect(phases.invokeNodeSystemRunDirect).not.toHaveBeenCalled();
     expect(phases.analyzeNodeApprovalRequirement).not.toHaveBeenCalled();
+  });
+
+  it("TF-0217 releases a pending automatic reviewer wait on cancellation", async () => {
+    const abort = new AbortController();
+    const reason = new DOMException("operator cancelled", "AbortError");
+    phases.resolveNodeExecutionTarget.mockResolvedValue(target);
+    phases.shouldSkipNodeApprovalPrepare.mockReturnValue(false);
+    phases.prepareNodeSystemRun.mockResolvedValue({
+      plan: {},
+      argv: ["echo", "done"],
+      rawCommand: "echo done",
+      cwd: "/tmp",
+      agentId: "main",
+      sessionKey: "session",
+    });
+    phases.analyzeNodeApprovalRequirement.mockResolvedValue({
+      analysisOk: true,
+      allowlistSatisfied: false,
+      durableApprovalSatisfied: false,
+      nodeApprovalPolicyKnown: true,
+      nodeSecurity: "allowlist",
+      nodeAsk: "on-miss",
+      inlineEvalHit: null,
+      requiresSecurityAuditSuppressionApproval: false,
+      autoReviewArgv: ["echo", "done"],
+    });
+    let resolveReview!: (value: {
+      decision: "deny";
+      risk: "low";
+      rationale: string;
+    }) => void;
+    let reviewerStarted!: () => void;
+    const reviewerStartedPromise = new Promise<void>((resolve) => {
+      reviewerStarted = resolve;
+    });
+    const review = new Promise<{ decision: "deny"; risk: "low"; rationale: string }>((resolve) => {
+      resolveReview = resolve;
+    });
+    const pending = executeNodeHostCommand({
+      ...baseParams(abort.signal),
+      security: "allowlist",
+      ask: "on-miss",
+      autoReview: true,
+      autoReviewer: () => {
+        reviewerStarted();
+        return review;
+      },
+    });
+    await reviewerStartedPromise;
+    abort.abort(reason);
+    const outcome = await Promise.race([
+      pending.then(
+        () => "resolved",
+        (error) => error,
+      ),
+      new Promise((resolve) => setTimeout(() => resolve("timeout"), 100)),
+    ]);
+    await expect(outcome).toBe(reason);
+    resolveReview({ decision: "deny", risk: "low", rationale: "late" });
+    expect(approvals.register).not.toHaveBeenCalled();
+    expect(approvals.gateway).not.toHaveBeenCalled();
+  });
+
+  it("TF-0218 releases a pending approval registration wait on cancellation", async () => {
+    const abort = new AbortController();
+    const reason = new DOMException("operator cancelled", "AbortError");
+    phases.resolveNodeExecutionTarget.mockResolvedValue(target);
+    phases.shouldSkipNodeApprovalPrepare.mockReturnValue(false);
+    phases.prepareNodeSystemRun.mockResolvedValue({
+      plan: {},
+      argv: ["echo", "done"],
+      rawCommand: "echo done",
+      cwd: "/tmp",
+      agentId: "main",
+      sessionKey: "session",
+    });
+    phases.analyzeNodeApprovalRequirement.mockResolvedValue({
+      analysisOk: true,
+      allowlistSatisfied: false,
+      durableApprovalSatisfied: false,
+      nodeApprovalPolicyKnown: true,
+      nodeSecurity: "allowlist",
+      nodeAsk: "on-miss",
+      inlineEvalHit: null,
+      requiresSecurityAuditSuppressionApproval: false,
+    });
+    let resolveRegistration!: (value: unknown) => void;
+    approvals.register.mockReturnValue(
+      new Promise((resolve) => {
+        resolveRegistration = resolve;
+      }),
+    );
+    const pending = executeNodeHostCommand({
+      ...baseParams(abort.signal),
+      security: "allowlist",
+      ask: "on-miss",
+    });
+    await vi.waitFor(() => expect(approvals.register).toHaveBeenCalledOnce());
+    abort.abort(reason);
+    await expectAbortWithin(pending, reason);
+    resolveRegistration({ id: "late", expiresAtMs: Date.now(), finalDecision: null });
+    await Promise.resolve();
+    expect(approvals.gateway).not.toHaveBeenCalled();
   });
 });

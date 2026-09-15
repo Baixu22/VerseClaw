@@ -14,6 +14,49 @@ async function git(cwd: string, args: string[]): Promise<void> {
 }
 
 describe('harness git changed files', () => {
+  it('preserves Unicode and leading spaces across committed, staged, unstaged, and untracked paths', async () => {
+    const repo = await mkdtemp(path.join(tmpdir(), 'clawx-harness-git-unicode-'));
+    const names = ['已提交.txt', '已暂存.txt', '未暂存.txt', ' 新建文件.txt'];
+    try {
+      await git(repo, ['init']);
+      await git(repo, ['config', 'user.email', 'test@example.com']);
+      await git(repo, ['config', 'user.name', 'Test']);
+      await git(repo, ['config', 'core.quotePath', 'true']);
+      for (const name of names.slice(0, 3)) await writeFile(path.join(repo, name), 'before\n');
+      await git(repo, ['add', '.']);
+      await git(repo, ['commit', '-m', 'base']);
+      await git(repo, ['tag', 'baseline']);
+      await writeFile(path.join(repo, names[0]), 'committed\n');
+      await git(repo, ['add', names[0]]);
+      await git(repo, ['commit', '-m', 'change']);
+      await writeFile(path.join(repo, names[1]), 'staged\n');
+      await git(repo, ['add', names[1]]);
+      await writeFile(path.join(repo, names[2]), 'unstaged\n');
+      await writeFile(path.join(repo, names[3]), 'untracked\n');
+      expect(await getChangedFiles('baseline', repo)).toEqual([...names].sort());
+    } finally {
+      await rm(repo, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects a valid base with unrelated history instead of dropping the committed diff', async () => {
+    const repo = await mkdtemp(path.join(tmpdir(), 'clawx-harness-git-orphan-'));
+    try {
+      await git(repo, ['init']);
+      await git(repo, ['config', 'user.email', 'test@example.com']);
+      await git(repo, ['config', 'user.name', 'Test']);
+      await writeFile(path.join(repo, 'tracked.txt'), 'base\n');
+      await git(repo, ['add', '.']);
+      await git(repo, ['commit', '-m', 'base']);
+      await git(repo, ['tag', 'baseline']);
+      await git(repo, ['checkout', '--orphan', 'unrelated']);
+      await git(repo, ['commit', '-m', 'unrelated root']);
+      await expect(getChangedFiles('baseline', repo)).rejects.toThrow(/no merge base/);
+    } finally {
+      await rm(repo, { recursive: true, force: true });
+    }
+  });
+
   it('includes staged tracked files when collecting changed paths', async () => {
     const repo = await mkdtemp(path.join(tmpdir(), 'clawx-harness-git-'));
     const harnessDir = path.join(repo, 'harness', 'src');

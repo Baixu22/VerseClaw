@@ -16,6 +16,17 @@ import {
   emptyConfig,
   type CapturedRespond,
 } from '../unit/helpers/role-gateway-test-utils';
+
+const looseBuildHandlerArgs = buildHandlerArgs as unknown as (
+  ...args: unknown[]
+) => {
+  context: Record<string, unknown>;
+  req: unknown;
+  params: unknown;
+  client: unknown;
+  isWebchatConnect: unknown;
+  respond: unknown;
+};
 import {
   computeTaskDigest,
   recordRoutingMemo,
@@ -92,20 +103,20 @@ describe('P1 ordinary orchestration boundary', () => {
     const handler = roleOrchestrationHandlers['orchestrator.run'];
 
     await handler({
-      ...(buildHandlerArgs as any)({
+      ...looseBuildHandlerArgs({
         task: 'Coordinate a failing ordinary orchestration',
         sessionKey: 'agent:main:main',
         includeVerifier: false,
         workers: [{ roleName: 'reviewer', task: 'Review the change' }],
       }, emptyConfig(), captured),
       context: {
-        ...(buildHandlerArgs as any)({}, emptyConfig(), []).context,
+        ...looseBuildHandlerArgs({}, emptyConfig(), []).context,
         broadcast: vi.fn(),
-      },
-      respond: (ok, payload, error) => {
+      } as never,
+      respond: (ok: boolean, payload: unknown, error: unknown) => {
         captured.push({ ok, payload, error } as never);
       },
-    });
+    } as never);
 
     const payload = captured[0]?.payload as Record<string, unknown>;
     expect(captured[0]?.ok).toBe(true);
@@ -156,10 +167,10 @@ describe('P1 ordinary orchestration boundary', () => {
 
       const planResponses: CapturedRespond[] = [];
       await roleOrchestrationHandlers['orchestrator.plan'](
-        (buildHandlerArgs as any)({
+        looseBuildHandlerArgs({
           task: 'implement login flow',
           workspaceDir: workspace,
-        }, cfg, planResponses),
+        }, cfg, planResponses) as never,
       );
 
       const planPayload = planResponses[0]?.payload as { plan?: { leadRole?: string }; routeDiagnostics?: { reasons?: string[] } };
@@ -169,7 +180,7 @@ describe('P1 ordinary orchestration boundary', () => {
 
       const summaryResponses: CapturedRespond[] = [];
       await roleOrchestrationHandlers['routing_memo.summary'](
-        (buildHandlerArgs as any)({ workspaceDir: workspace }, cfg, summaryResponses),
+        looseBuildHandlerArgs({ workspaceDir: workspace }, cfg, summaryResponses) as never,
       );
 
       const summary = summaryResponses[0]?.payload as {
@@ -205,11 +216,11 @@ describe('P1 ordinary orchestration boundary', () => {
       const plan = async (qualityParams: Record<string, unknown> = {}) => {
         const responses: CapturedRespond[] = [];
         await roleOrchestrationHandlers['orchestrator.plan'](
-          (buildHandlerArgs as any)({
+          looseBuildHandlerArgs({
             task: 'review login flow',
             workspaceDir: workspace,
             ...qualityParams,
-          }, cfg, responses),
+          }, cfg, responses) as never,
         );
         expect(responses[0]?.ok).toBe(true);
         return responses[0]?.payload as {

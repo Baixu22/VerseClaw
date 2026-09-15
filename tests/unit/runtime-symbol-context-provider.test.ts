@@ -189,7 +189,7 @@ describe("Symbol context provider shadow boundary", () => {
     const diagnostic = result.diagnostics.find((item) =>
       item.message?.includes("grounding diagnostics-only")
     );
-    expect(diagnostic as any).toEqual(expect.objectContaining({
+    expect(diagnostic).toEqual(expect.objectContaining({
       providerId: SYMBOL_CONTEXT_PROVIDER_ID,
       status: "ok",
       reason: "registered",

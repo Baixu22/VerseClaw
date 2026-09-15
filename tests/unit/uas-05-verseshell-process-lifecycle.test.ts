@@ -78,7 +78,8 @@ describe("UAS-05 VerseShell process lifecycle boundary", () => {
 
     expect(nodes["TF-0016"]).toMatchObject({ status: "done", progress: 100 });
     expect(nodes["TF-0017"]).toMatchObject({ status: "deprecated" });
-    expect(nodes["TF-0028"]).toMatchObject({ status: "in_progress" });
+    // The parent is blocked on human acceptance; lifecycle proof cannot promote it.
+    expect(nodes["TF-0028"]).toMatchObject({ status: "blocked" });
     expect(nodes["TF-0041"]).toMatchObject({ status: "proposed" });
     expect(nodes["TF-0042"]).toMatchObject({ status: "blocked" });
     expect(evidence.frozenBoundaries).toMatchObject({

@@ -44,7 +44,7 @@ describe('artifact completionClass lint', () => {
     const errors: string[] = [];
     const exitCode = runCli(['--root', root, '--base-ref', 'HEAD'], {
       log: () => {},
-      error: (message: any) => errors.push(String(message)),
+      error: (message: unknown) => errors.push(String(message)),
     });
 
     expect(exitCode).toBe(1);

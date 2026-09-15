@@ -25,7 +25,8 @@
     "runtime": "运行经验",
     "review": "审查",
     "governance": "治理",
-    "sources": "来源"
+    "sources": "来源",
+    "reviewQueue": "待复核队列"
   },
   "actions": {
     "more": "更多操作",
@@ -128,7 +129,7 @@
     "roleId": "knowledge-librarian",
     "currentDocument": "当前文档",
     "noSummary": "写一篇 Markdown 或打开一篇文档，管理员就能获得上下文。",
-    "openAssistant": "打开管理员",
+    "openAssistant": "问知识库",
     "askSteward": "请求审查",
     "related": "相关页面",
     "noRelated": "搜索结果和相关页面会显示在这里。",
@@ -232,7 +233,9 @@
       "stewardReview": "Steward 审查",
       "openInbox": "打开收件箱",
       "submitDraft": "提交草稿"
-    }
+    },
+    "chatTitle": "问知识库",
+    "backToChat": "返回对话"
   },
   "inbox": {
     "title": "知识收件箱",
@@ -412,7 +415,8 @@
       "semantic": "语义",
       "defaultRole": "默认角色",
       "close": "关闭"
-    }
+    },
+    "prepareProposal": "准备变更提案"
   },
   "runtime": {
     "title": "运行经验",
@@ -629,5 +633,28 @@
     "troubleshootingRecipe": "排障",
     "artifactCreated": "Studio 草稿已创建",
     "question": "基于当前 Source Set 创建 {{artifact}}。"
+  },
+  "reviewQueue": {
+    "filterLabel": "复核条目类型",
+    "filters": {
+      "all": "全部",
+      "inbox": "收件项",
+      "draft": "草稿",
+      "proposal": "变更提案"
+    },
+    "search": "搜索复核条目",
+    "empty": "当前视图没有匹配的复核条目。",
+    "back": "返回待复核队列",
+    "status": {
+      "pending": "待处理",
+      "draft": "草稿",
+      "steward_reviewed": "管家已复核",
+      "proposed": "待复核",
+      "approved": "已批准",
+      "rejected": "已拒绝",
+      "applied": "已应用",
+      "promoted": "已转为草稿",
+      "dismissed": "已忽略"
+    }
   }
 }

@@ -7,8 +7,22 @@ import manifest from "../../../openclaw_runtime/extensions/codegraph/openclaw.pl
 import type { TaskLoopRunResult } from "../../../openclaw_runtime/src/agents/task-loop-controller";
 import type { MissionReviewerResult } from "../../../openclaw_runtime/src/agents/mission-control/types";
 
-function toolResult(value: unknown): { details?: Record<string, any> } {
-  return value as { details?: Record<string, any> };
+function toolResult(value: unknown): { details?: {
+  mustReadSource?: unknown;
+  sourceReadPolicy?: unknown;
+  filesToRead?: unknown;
+  freshness?: { status?: string };
+  stats?: { fileCount?: number };
+    path?: string;
+} } {
+  return value as { details?: {
+    mustReadSource?: unknown;
+    sourceReadPolicy?: unknown;
+    filesToRead?: unknown;
+    freshness?: { status?: string };
+    stats?: { fileCount?: number };
+    path?: string;
+  } };
 }
 
 export type RuntimeEffectivenessMode = "deterministic" | "live" | "hybrid";
@@ -725,8 +739,10 @@ async function evaluateTranscriptAndToolRepair(): Promise<RuntimeEffectivenessCo
     modelApi: "openai-completions",
   });
   const baseFn = () => createToolCallRepairStream('tool.read {"path":"src/app.ts"}') as never;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test helper intentionally bypasses StreamFn type with never-cast args; the repaired stream is consumed via duck typing below
-  const repairedStream = wrapStreamFnRepairMalformedToolCallArguments(baseFn as never)({} as never, {} as never, {} as never) as any;
+  const repairedStream = wrapStreamFnRepairMalformedToolCallArguments(baseFn as never)({} as never, {} as never, {} as never) as {
+    [Symbol.asyncIterator]: () => AsyncIterator<unknown>;
+    result: () => Promise<{ content?: Array<{ arguments?: { path?: string } }> }>;
+  };
   for await (const _event of repairedStream) {
     // Drain stream so repair wrappers can observe deltas.
   }

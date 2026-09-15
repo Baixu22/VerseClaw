@@ -247,7 +247,7 @@ describe("runtime memory embedding integration", () => {
     const result = await memoryProvider.getContext({
       taskId: "emb_test",
       metadata: { memoryQuery: { subject: "User", predicate: "knows" } },
-    }) as any;
+    }) as { status: string; contextItems: unknown[] };
 
     expect(result.status).toBe("success");
     expect(result.contextItems.length).toBeGreaterThan(0);
@@ -268,7 +268,7 @@ describe("runtime memory embedding integration", () => {
     const result = await memoryProvider.getContext({
       taskId: "emb_test",
       metadata: { memoryQuery: { subject: "User", predicate: "knows" } },
-    }) as any;
+    }) as { status: string; contextItems: unknown[] };
 
     expect(result.status).toBe("success");
     expect(result.contextItems.length).toBeGreaterThan(0);

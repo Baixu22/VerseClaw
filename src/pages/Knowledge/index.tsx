@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import type { KnowledgeChatContext } from '@/pages/Chat/KnowledgeChat';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { AlertTriangle, ArrowRight, BookOpen, Bot, Check, Columns3, Copy, Database, Edit3, Ellipsis, Eye, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, Link2, ListTodo, Loader2, Plus, Puzzle, RefreshCw, RotateCcw, Ruler, Save, Search, SendHorizontal, ShieldCheck, Sparkles, Tags, Upload, Wrench, X } from 'lucide-react';
+import { AlertTriangle, ArrowRight, BookOpen, Bot, Check, Columns3, Database, Edit3, Ellipsis, Eye, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, Link2, ListTodo, Loader2, Plus, Puzzle, RefreshCw, RotateCcw, Ruler, Save, Search, ShieldCheck, Sparkles, Tags, Upload, Wrench, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useTranslation } from 'react-i18next';
 import remarkGfm from 'remark-gfm';
@@ -42,46 +44,14 @@ import {
 } from '@/lib/host-api';
 import type { KnowledgeRuntimeLineage } from '@shared/host-api/contract';
 import { errorMessageFrom } from '@/lib/user-error';
-import {
-  buildGroundedLibrarianAnswer,
-  createDraftPayloadFromGroundedAnswer,
-  createErrorExperienceInboxPayloadFromGroundedAnswer,
-  type KnowledgeLibrarianGroundedAnswer,
-} from '@/lib/knowledge-librarian';
 import { cn } from '@/lib/utils';
-
-type SearchRow = Record<string, unknown>;
-type WorkbenchTab = 'library' | 'inbox' | 'drafts' | 'review' | 'runtime' | 'governance';
+import { asRecord, getString, getSearchRows, getLookup, getTitle, getPageBody, type SearchRow } from './knowledge-view-utils';
+import { projectKnowledgeReviewItems, type KnowledgeReviewItem } from '@/lib/knowledge-review-items';
+import { KnowledgeReviewQueue, type KnowledgeReviewFilter } from './KnowledgeReviewQueue';
+type WorkbenchTab = 'library' | 'review-queue' | 'inbox' | 'drafts' | 'review' | 'runtime' | 'governance';
 type MarkdownEditorMode = 'edit' | 'preview' | 'split';
 type KnowledgeUtilityPanel = 'status' | 'okf' | 'sources' | null;
-type KnowledgeLibrarianCitation = {
-  lookup: string;
-  title: string;
-  excerpt: string;
-  path?: string;
-  score?: number;
-};
-type KnowledgeLibrarianMessage = {
-  id: string;
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-  createdAt: string;
-  citations?: KnowledgeLibrarianCitation[];
-  groundedAnswer?: KnowledgeLibrarianGroundedAnswer;
-};
-type KnowledgeLibrarianCheckpoint = {
-  version: 1;
-  updatedAt: string;
-  vaultPath?: string;
-  editorTitle: string;
-  editorSource: string;
-  messages: KnowledgeLibrarianMessage[];
-};
-type KnowledgeLibrarianPromptSuggestion = {
-  id: string;
-  label: string;
-  prompt: string;
-};
+
 type KnowledgeQualityMetricKind =
   | 'stale_cards'
   | 'duplicate_clusters'
@@ -124,9 +94,8 @@ const QUIET_BUTTON_CLASS = 'h-9 rounded-lg border border-black/10 bg-transparent
 const MENU_ITEM_CLASS = 'flex h-9 cursor-default select-none items-center gap-2 rounded-md px-2.5 text-sm outline-none transition-colors data-[disabled]:opacity-40 data-[highlighted]:bg-black/5 dark:data-[highlighted]:bg-white/10 motion-reduce:transition-none';
 const ROW_CLASS = 'flex items-center justify-between gap-4 rounded-lg bg-surface-input px-3 py-2';
 const WORKSPACE_SECTION_CLASS = 'min-h-0 bg-surface-sidebar';
-const KNOWLEDGE_LIBRARIAN_STORAGE_KEY = 'clawx.knowledge.librarian.checkpoint.v1';
 const KNOWLEDGE_TYPES: KnowledgeDraftType[] = ['decision', 'architecture', 'command', 'troubleshooting', 'glossary', 'source-note', 'synthesis', 'procedure'];
-const PRIMARY_WORKBENCH_TABS: WorkbenchTab[] = ['library', 'inbox', 'drafts', 'review', 'runtime'];
+const PRIMARY_WORKBENCH_TABS = ['library', 'review-queue'] as const;
 const QUALITY_METRIC_KINDS: KnowledgeQualityMetricKind[] = [
   'stale_cards',
   'duplicate_clusters',
@@ -144,6 +113,7 @@ const STUDIO_ARTIFACTS: Array<{ type: KnowledgeArtifactType; labelKey: string }>
 
 const TAB_ICONS: Record<WorkbenchTab, React.ComponentType<{ className?: string }>> = {
   library: Layers,
+  'review-queue': ListTodo,
   inbox: Inbox,
   drafts: Edit3,
   review: ShieldCheck,
@@ -181,41 +151,6 @@ const TYPE_COLOR = {
   procedure: 'border-cyan-500/30 bg-cyan-500/5 text-cyan-700 dark:text-cyan-400 hover:border-cyan-500/50 hover:bg-cyan-500/10',
 } as const;
 
-function asRecord(value: unknown): Record<string, unknown> | null {
-  return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : null;
-}
-
-function getString(record: Record<string, unknown>, keys: string[]): string {
-  for (const key of keys) {
-    const value = record[key];
-    if (typeof value === 'string' && value.trim()) return value.trim();
-  }
-  return '';
-}
-
-function getSearchRows(result: KnowledgeSearchResult | null): SearchRow[] {
-  if (!result) return [];
-  if (Array.isArray(result.results)) return result.results as SearchRow[];
-  const candidates = ['items', 'matches', 'pages'];
-  for (const key of candidates) {
-    const value = (result as Record<string, unknown>)[key];
-    if (Array.isArray(value)) return value.filter((entry): entry is SearchRow => !!asRecord(entry));
-  }
-  return [];
-}
-
-function getLookup(row: SearchRow): string {
-  return getString(row, ['pagePath', 'path', 'relativePath', 'id', 'pageId', 'lookup']);
-}
-
-function getTitle(row: SearchRow): string {
-  return getString(row, ['title', 'pageTitle', 'name', 'id', 'pageId', 'pagePath']) || 'Result';
-}
-
-function getSnippet(row: SearchRow): string {
-  return getString(row, ['snippet', 'excerpt', 'text', 'summary', 'content']);
-}
-
 function sourceRefFromSearchRow(row: SearchRow): SourceSetRef | null {
   const lookup = getLookup(row);
   if (!lookup) return null;
@@ -225,24 +160,6 @@ function sourceRefFromSearchRow(row: SearchRow): SourceSetRef | null {
     path: lookup,
     label: getTitle(row),
   };
-}
-
-function getScore(row: SearchRow): number | undefined {
-  const value = row.score ?? row.rank ?? row.similarity;
-  if (typeof value === 'number' && Number.isFinite(value)) return value > 1 ? value / 100 : value;
-  if (typeof value === 'string') {
-    const parsed = Number(value);
-    if (Number.isFinite(parsed)) return parsed > 1 ? parsed / 100 : parsed;
-  }
-  return undefined;
-}
-
-function getPageBody(page: Record<string, unknown> | null): string {
-  if (!page) return '';
-  const direct = getString(page, ['content', 'markdown', 'text', 'body', 'raw']);
-  if (direct) return direct;
-  const nested = asRecord(page.page);
-  return nested ? getPageBody(nested) : JSON.stringify(page, null, 2);
 }
 
 function okfConceptTitle(concept: KnowledgeOkfConcept): string {
@@ -257,435 +174,6 @@ function knowledgeTypeCount(pageCounts: Record<string, number>, type: KnowledgeD
 
 function makeStarterMarkdown(title: string): string {
   return `# ${title}\n\n## Notes\n\n\n## Links\n\n- \n`;
-}
-
-function markdownSummary(body: string): string {
-  const compact = body
-    .replace(/^---[\s\S]*?---/u, '')
-    .replace(/[#>*_`[\]()-]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-  if (!compact) return '';
-  return compact.length > 180 ? `${compact.slice(0, 180)}...` : compact;
-}
-
-function readableExcerpt(body: string, fallback = ''): string {
-  const compact = (body || fallback)
-    .replace(/^---[\s\S]*?---/u, '')
-    .replace(/```[\s\S]*?```/gu, ' ')
-    .replace(/[#>*_`[\]()[\]-]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-  if (!compact) return '';
-  return compact.length > 220 ? `${compact.slice(0, 220)}...` : compact;
-}
-
-function makeLibrarianMessage(
-  role: KnowledgeLibrarianMessage['role'],
-  content: string,
-  citations?: KnowledgeLibrarianCitation[],
-  groundedAnswer?: KnowledgeLibrarianGroundedAnswer,
-): KnowledgeLibrarianMessage {
-  return {
-    id: `kl_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-    role,
-    content,
-    createdAt: new Date().toISOString(),
-    ...(citations && citations.length > 0 ? { citations } : {}),
-    ...(groundedAnswer ? { groundedAnswer } : {}),
-  };
-}
-
-function parseLibrarianCheckpoint(raw: string | null): KnowledgeLibrarianCheckpoint | null {
-  if (!raw) return null;
-  try {
-    const parsed = JSON.parse(raw) as Partial<KnowledgeLibrarianCheckpoint>;
-    if (parsed.version !== 1 || !Array.isArray(parsed.messages)) return null;
-    return {
-      version: 1,
-      updatedAt: typeof parsed.updatedAt === 'string' ? parsed.updatedAt : new Date().toISOString(),
-      vaultPath: typeof parsed.vaultPath === 'string' ? parsed.vaultPath : undefined,
-      editorTitle: typeof parsed.editorTitle === 'string' ? parsed.editorTitle : '',
-      editorSource: typeof parsed.editorSource === 'string' ? parsed.editorSource : '',
-      messages: parsed.messages.filter((message): message is KnowledgeLibrarianMessage => (
-        !!message
-        && typeof message.id === 'string'
-        && (message.role === 'user' || message.role === 'assistant' || message.role === 'system')
-        && typeof message.content === 'string'
-        && typeof message.createdAt === 'string'
-      )).slice(-30),
-    };
-  } catch {
-    return null;
-  }
-}
-
-function KnowledgeAssistantMarkdown({ content }: { content: string }) {
-  return (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      components={{
-        a({ href, children, ...props }) {
-          return (
-            <a
-              href={href}
-              target="_blank"
-              rel="noreferrer"
-              className="text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:decoration-primary"
-              {...props}
-            >
-              {children}
-            </a>
-          );
-        },
-        code({ className, children, ...props }) {
-          const block = /language-/u.test(className ?? '');
-          return block ? (
-            <code className={cn('font-mono text-xs', className)} {...props}>
-              {children}
-            </code>
-          ) : (
-            <code className="rounded bg-black/5 px-1 py-0.5 font-mono text-[0.85em] dark:bg-white/10" {...props}>
-              {children}
-            </code>
-          );
-        },
-        pre({ children, ...props }) {
-          return (
-            <pre
-              className="my-3 max-w-full overflow-x-auto rounded-lg border border-black/10 bg-black/[0.04] p-3 text-xs leading-5 dark:border-white/10 dark:bg-white/[0.06]"
-              {...props}
-            >
-              {children}
-            </pre>
-          );
-        },
-        ul({ children, ...props }) {
-          return <ul className="my-2 list-disc space-y-1 pl-5" {...props}>{children}</ul>;
-        },
-        ol({ children, ...props }) {
-          return <ol className="my-2 list-decimal space-y-1 pl-5" {...props}>{children}</ol>;
-        },
-        p({ children, ...props }) {
-          return <p className="my-2 first:mt-0 last:mb-0" {...props}>{children}</p>;
-        },
-        table({ children, ...props }) {
-          return (
-            <div className="my-3 max-w-full overflow-x-auto rounded-lg border border-black/10 dark:border-white/10">
-              <table className="w-full min-w-max border-collapse text-xs" {...props}>{children}</table>
-            </div>
-          );
-        },
-        th({ children, ...props }) {
-          return <th className="border-b border-black/10 bg-black/[0.04] px-2 py-1.5 text-left font-semibold dark:border-white/10 dark:bg-white/[0.06]" {...props}>{children}</th>;
-        },
-        td({ children, ...props }) {
-          return <td className="border-t border-black/5 px-2 py-1.5 align-top dark:border-white/10" {...props}>{children}</td>;
-        },
-      }}
-    >
-      {content}
-    </ReactMarkdown>
-  );
-}
-
-function KnowledgeAssistantMessage({
-  message,
-  copied,
-  copyLabel,
-  copiedLabel,
-  roleLabel,
-  userLabel,
-  citationsLabel,
-  sectionLabels,
-  actionLabels,
-  onCopy,
-  onOpenCitation,
-  onSaveDraft,
-  onCreateErrorExperience,
-  onSendToSteward,
-}: {
-  message: KnowledgeLibrarianMessage;
-  copied: boolean;
-  copyLabel: string;
-  copiedLabel: string;
-  roleLabel: string;
-  userLabel: string;
-  citationsLabel: string;
-  sectionLabels: {
-    answer: string;
-    sources: string;
-    unknowns: string;
-    nextAction: string;
-    retrieval: string;
-    query: string;
-    corpus: string;
-    roleTag: string;
-    resultCount: string;
-    selectedSources: string;
-    confidence: string;
-    groundingStatus: Record<KnowledgeLibrarianGroundedAnswer['groundingStatus'], string>;
-  };
-  actionLabels: {
-    saveDraft: string;
-    createErrorExperience: string;
-    sendToSteward: string;
-  };
-  onCopy: (content: string) => void;
-  onOpenCitation: (citation: KnowledgeLibrarianCitation) => void;
-  onSaveDraft: (answer: KnowledgeLibrarianGroundedAnswer) => void;
-  onCreateErrorExperience: (answer: KnowledgeLibrarianGroundedAnswer) => void;
-  onSendToSteward: (answer: KnowledgeLibrarianGroundedAnswer) => void;
-}) {
-  const isUser = message.role === 'user';
-  const label = isUser ? userLabel : roleLabel;
-  const groundedAnswer = !isUser ? message.groundedAnswer : undefined;
-  return (
-    <article
-      className={cn(
-        'group flex gap-2.5',
-        isUser ? 'justify-end' : 'justify-start',
-      )}
-      data-testid={`knowledge-librarian-message-${message.role}`}
-    >
-      {!isUser ? (
-        <div className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-black/10 bg-surface-input text-muted-foreground dark:border-white/10">
-          <Bot className="h-3.5 w-3.5" />
-        </div>
-      ) : null}
-      <div className={cn('min-w-0 max-w-[88%]', isUser && 'flex flex-col items-end')}>
-        <div className="mb-1 flex items-center gap-2 text-[11px] text-muted-foreground">
-          <span>{label}</span>
-          <span>{new Date(message.createdAt).toLocaleTimeString()}</span>
-          <button
-            type="button"
-            className="inline-flex h-5 w-5 items-center justify-center rounded-md opacity-0 transition-opacity hover:bg-black/5 group-hover:opacity-100 focus:opacity-100 dark:hover:bg-white/10"
-            onClick={() => onCopy(message.content)}
-            aria-label={copied ? copiedLabel : copyLabel}
-            title={copied ? copiedLabel : copyLabel}
-            data-testid="knowledge-librarian-copy"
-          >
-            {copied ? <Check className="h-3 w-3 text-green-700 dark:text-green-400" /> : <Copy className="h-3 w-3" />}
-          </button>
-        </div>
-        <div
-          className={cn(
-            'rounded-xl px-3.5 py-2.5 text-sm leading-6',
-            isUser
-              ? 'border border-black/10 bg-surface-input text-foreground dark:border-white/10'
-              : 'text-foreground',
-          )}
-        >
-          {isUser ? (
-            <div className="whitespace-pre-wrap break-words">{message.content}</div>
-          ) : groundedAnswer ? (
-            <div className="space-y-3" data-testid="knowledge-librarian-grounded-answer">
-              {/* Restraint: the grounding badge only earns space when grounding is
-                  imperfect. A fully grounded answer says so by simply citing sources. */}
-              {groundedAnswer.groundingStatus !== 'grounded' ? (
-                <Badge variant="outline" className="border-black/10 bg-black/5 text-[10px] font-medium text-muted-foreground dark:border-white/10 dark:bg-white/10">
-                  {sectionLabels.groundingStatus[groundedAnswer.groundingStatus]}
-                </Badge>
-              ) : null}
-              <div className="prose prose-sm max-w-none break-words text-foreground dark:prose-invert prose-headings:font-serif prose-headings:font-normal prose-a:text-primary" data-testid="knowledge-librarian-answer-section">
-                <KnowledgeAssistantMarkdown content={groundedAnswer.answer} />
-              </div>
-              <section data-testid="knowledge-librarian-sources-section">
-                <div className="grid gap-1.5">
-                  {groundedAnswer.sources.map((source, index) => (
-                    <button
-                      key={`${message.id}:source:${source.lookup}`}
-                      type="button"
-                      className="flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/5"
-                      onClick={() => onOpenCitation({ lookup: source.lookup, title: source.title, excerpt: source.excerpt, path: source.path, score: source.score })}
-                      data-testid="knowledge-librarian-source"
-                    >
-                      <span className="w-4 shrink-0 text-right font-mono text-[10px] text-muted-foreground">{index + 1}</span>
-                      <span className="min-w-0 flex-1 truncate font-medium text-foreground/90">{source.title}</span>
-                      <span className="min-w-0 max-w-[45%] shrink-0 truncate font-mono text-[10px] text-muted-foreground">{source.path || source.lookup}</span>
-                    </button>
-                  ))}
-                  {groundedAnswer.sources.length === 0 ? (
-                    <p className="text-xs text-muted-foreground">{groundedAnswer.unknowns[0]}</p>
-                  ) : null}
-                </div>
-              </section>
-              {/* Restraint: unknowns, next actions and the retrieval trace are
-                  diagnostics. They stay reachable, but folded by default so the
-                  answer itself is what the reader meets first. */}
-              <details className="group text-xs" data-testid="knowledge-librarian-retrieval-inspector">
-                <summary className="inline-flex cursor-pointer select-none items-center gap-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground">
-                  {sectionLabels.retrieval}
-                </summary>
-                <div className="mt-2 space-y-2 border-l border-black/10 pl-3 dark:border-white/10">
-                  {groundedAnswer.unknowns.length > 0 ? (
-                    <div data-testid="knowledge-librarian-unknowns-section">
-                      <div className="text-[11px] font-medium text-foreground/70">{sectionLabels.unknowns}</div>
-                      <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[11px] leading-5 text-muted-foreground">
-                        {groundedAnswer.unknowns.map((unknown) => <li key={unknown}>{unknown}</li>)}
-                      </ul>
-                    </div>
-                  ) : null}
-                  {groundedAnswer.nextActions.length > 0 ? (
-                    <div data-testid="knowledge-librarian-next-action-section">
-                      <div className="text-[11px] font-medium text-foreground/70">{sectionLabels.nextAction}</div>
-                      <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[11px] leading-5 text-muted-foreground">
-                        {groundedAnswer.nextActions.map((action) => <li key={action}>{action}</li>)}
-                      </ul>
-                    </div>
-                  ) : null}
-                  <dl className="grid gap-1 text-[11px] text-muted-foreground">
-                    <div className="flex justify-between gap-3"><dt>{sectionLabels.query}</dt><dd className="min-w-0 truncate font-mono">{groundedAnswer.retrieval.query}</dd></div>
-                    <div className="flex justify-between gap-3"><dt>{sectionLabels.resultCount}</dt><dd>{groundedAnswer.retrieval.resultCount}</dd></div>
-                    <div className="flex justify-between gap-3"><dt>{sectionLabels.confidence}</dt><dd>{Math.round(groundedAnswer.confidence * 100)}%</dd></div>
-                  </dl>
-                </div>
-              </details>
-              <div className="flex flex-wrap gap-1" data-testid="knowledge-librarian-candidate-actions">
-                <Button type="button" variant="ghost" size="sm" className="h-7 rounded-md px-2 text-[11px] font-normal text-muted-foreground hover:text-foreground" onClick={() => onSaveDraft(groundedAnswer)} data-testid="knowledge-librarian-save-draft">
-                  <FilePlus2 className="mr-1.5 h-3 w-3" />
-                  {actionLabels.saveDraft}
-                </Button>
-                <Button type="button" variant="ghost" size="sm" className="h-7 rounded-md px-2 text-[11px] font-normal text-muted-foreground hover:text-foreground" onClick={() => onCreateErrorExperience(groundedAnswer)} data-testid="knowledge-librarian-create-error-experience">
-                  <Wrench className="mr-1.5 h-3 w-3" />
-                  {actionLabels.createErrorExperience}
-                </Button>
-                <Button type="button" variant="ghost" size="sm" className="h-7 rounded-md px-2 text-[11px] font-normal text-muted-foreground hover:text-foreground" onClick={() => onSendToSteward(groundedAnswer)} data-testid="knowledge-librarian-send-steward">
-                  <ShieldCheck className="mr-1.5 h-3 w-3" />
-                  {actionLabels.sendToSteward}
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="prose prose-sm max-w-none break-words text-foreground dark:prose-invert prose-headings:font-serif prose-headings:font-normal prose-a:text-primary">
-              <KnowledgeAssistantMarkdown content={message.content} />
-            </div>
-          )}
-        </div>
-        {message.citations && message.citations.length > 0 && !groundedAnswer ? (
-          <div className="mt-1.5 grid gap-0.5" data-testid="knowledge-librarian-citations" aria-label={citationsLabel}>
-            {message.citations.map((citation, index) => (
-              <button
-                key={`${message.id}:${citation.lookup}`}
-                type="button"
-                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/5"
-                onClick={() => onOpenCitation(citation)}
-                data-testid="knowledge-librarian-citation"
-              >
-                <span className="w-4 shrink-0 text-right font-mono text-[10px] text-muted-foreground">{index + 1}</span>
-                <span className="min-w-0 flex-1 truncate font-medium text-foreground/90">{citation.title}</span>
-                <span className="min-w-0 max-w-[45%] shrink-0 truncate font-mono text-[10px] text-muted-foreground">{citation.lookup}</span>
-              </button>
-            ))}
-          </div>
-        ) : null}
-      </div>
-    </article>
-  );
-}
-
-function KnowledgeAssistantPromptInput({
-  value,
-  onChange,
-  onSubmit,
-  disabled,
-  running,
-  placeholder,
-  askLabel,
-  hint,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  onSubmit: () => void;
-  disabled: boolean;
-  running: boolean;
-  placeholder: string;
-  askLabel: string;
-  hint: string;
-}) {
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-    textarea.style.height = 'auto';
-    textarea.style.height = `${Math.min(textarea.scrollHeight, 150)}px`;
-  }, [value]);
-
-  return (
-    <form
-      className="rounded-xl border border-black/10 bg-surface-input px-3 py-2 transition-colors focus-within:border-primary/35 dark:border-white/10"
-      onSubmit={(event) => {
-        event.preventDefault();
-        onSubmit();
-      }}
-      data-testid="knowledge-librarian-composer"
-    >
-      <Textarea
-        ref={textareaRef}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            onSubmit();
-          }
-        }}
-        placeholder={placeholder}
-        data-testid="knowledge-librarian-question"
-        className="min-h-[48px] resize-none border-0 bg-transparent px-0 py-1 text-sm shadow-none focus-visible:ring-0"
-        disabled={disabled}
-      />
-      <div className="mt-1 flex items-center justify-between gap-2">
-        <p className="min-w-0 text-[11px] leading-4 text-muted-foreground">{hint}</p>
-        <Button type="submit" size="sm" className="h-8 rounded-lg px-3" disabled={disabled || !value.trim()} data-testid="knowledge-librarian-ask">
-          {running ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <SendHorizontal className="mr-2 h-3.5 w-3.5" />}
-          {askLabel}
-        </Button>
-      </div>
-    </form>
-  );
-}
-
-function KnowledgeAssistantErrorCard({
-  error,
-  retryLabel,
-  dismissLabel,
-  title,
-  onRetry,
-  onDismiss,
-}: {
-  error: string;
-  retryLabel: string;
-  dismissLabel: string;
-  title: string;
-  onRetry: () => void;
-  onDismiss: () => void;
-}) {
-  return (
-    <div
-      className="rounded-xl border border-red-500/25 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-400"
-      data-testid="knowledge-librarian-error"
-      role="alert"
-    >
-      <div className="flex items-start gap-2">
-        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-        <div className="min-w-0 flex-1">
-          <div className="font-medium">{title}</div>
-          <p className="mt-1 break-words text-xs leading-5">{error}</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Button type="button" variant="outline" size="sm" className="h-7 rounded-md px-2 text-[11px]" onClick={onRetry} data-testid="knowledge-librarian-retry">
-              <RotateCcw className="mr-1.5 h-3 w-3" />
-              {retryLabel}
-            </Button>
-            <Button type="button" variant="ghost" size="sm" className="h-7 rounded-md px-2 text-[11px]" onClick={onDismiss}>
-              {dismissLabel}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 type InboxRecommendation = 'save' | 'review' | 'archive-only';
@@ -851,6 +339,8 @@ function runtimeLineageBadges(lineage: KnowledgeRuntimeLineage | undefined, t: (
 
 export function Knowledge() {
   const { t } = useTranslation(['knowledge', 'common']);
+  const navigate = useNavigate();
+  const location = useLocation();
   const [status, setStatus] = useState<KnowledgeStatusResult['status'] | null>(null);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState<string | null>(null);
@@ -871,33 +361,28 @@ export function Knowledge() {
   const [editorSource, setEditorSource] = useState('');
   const [editorType, setEditorType] = useState<KnowledgeDraftType>('source-note');
   const [editorTags, setEditorTags] = useState('');
-  const [editorMode, setEditorMode] = useState<MarkdownEditorMode>('split');
+  const [editorMode, setEditorMode] = useState<MarkdownEditorMode>('preview');
+  const [narrowEditor, setNarrowEditor] = useState(() => window.innerWidth <= 960);
+  const effectiveEditorMode = narrowEditor && editorMode === 'split' ? 'preview' : editorMode;
   const [sourceSets, setSourceSets] = useState<KnowledgeSourceSet[]>([]);
   const [currentSourceRefs, setCurrentSourceRefs] = useState<SourceSetRef[]>([]);
   const [sourceSetTitle, setSourceSetTitle] = useState('');
   const [currentSourceSetId, setCurrentSourceSetId] = useState<string | null>(null);
-  const [librarianOpen, setLibrarianOpen] = useState(false);
-  const [librarianQuestion, setLibrarianQuestion] = useState('');
-  const [librarianError, setLibrarianError] = useState<string | null>(null);
-  const [lastLibrarianQuestion, setLastLibrarianQuestion] = useState('');
-  const [copiedLibrarianMessageId, setCopiedLibrarianMessageId] = useState<string | null>(null);
-  const [librarianMessages, setLibrarianMessages] = useState<KnowledgeLibrarianMessage[]>(() => {
-    if (typeof window === 'undefined') return [];
-    return parseLibrarianCheckpoint(window.localStorage.getItem(KNOWLEDGE_LIBRARIAN_STORAGE_KEY))?.messages ?? [];
-  });
-  const [librarianCheckpointAt, setLibrarianCheckpointAt] = useState<string | null>(() => {
-    if (typeof window === 'undefined') return null;
-    return parseLibrarianCheckpoint(window.localStorage.getItem(KNOWLEDGE_LIBRARIAN_STORAGE_KEY))?.updatedAt ?? null;
-  });
+
   const [workbenchTab, setWorkbenchTab] = useState<WorkbenchTab>('library');
+  const [reviewQueueFilter, setReviewQueueFilter] = useState<KnowledgeReviewFilter>('all');
+  const [reviewQueueQuery, setReviewQueueQuery] = useState('');
   const [utilityPanel, setUtilityPanel] = useState<KnowledgeUtilityPanel>(null);
   const [drafts, setDrafts] = useState<KnowledgeDraft[]>([]);
   const [inboxItems, setInboxItems] = useState<KnowledgeInboxItem[]>([]);
   const [proposals, setProposals] = useState<KnowledgeChangeProposal[]>([]);
+  const [reviewQueueLoaded, setReviewQueueLoaded] = useState(false);
+  const restoredLocation = useRef<string | null>(null);
   const [selectedInboxId, setSelectedInboxId] = useState<string | null>(null);
-  const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
-  const [selectedProposalId, setSelectedProposalId] = useState<string | null>(null);
-  const [stewardReview, setStewardReview] = useState<KnowledgeStewardReviewResult | null>(null);
+  const [reviewSelection, setReviewSelection] = useState<{ draftId: string | null; proposalId: string | null }>({ draftId: null, proposalId: null });
+  const { draftId: selectedDraftId, proposalId: selectedProposalId } = reviewSelection;
+  const [stewardReviewResult, setStewardReview] = useState<(KnowledgeStewardReviewResult & { draftId?: string }) | null>(null);
+  const stewardReview = stewardReviewResult?.draftId === selectedDraftId ? stewardReviewResult : null;
   const [stewardConfig, setStewardConfig] = useState<KnowledgeStewardConfigGetResult | null>(null);
   const [showStewardConfig, setShowStewardConfig] = useState(false);
   const [selectedProvenance, setSelectedProvenance] = useState<KnowledgeProvenanceRecord | null>(null);
@@ -934,6 +419,11 @@ export function Knowledge() {
   const [runtimeRetrieveResult, setRuntimeRetrieveResult] = useState<KnowledgeSekbRetrieveForTaskResult | null>(null);
 
   const rows = useMemo(() => getSearchRows(searchResult), [searchResult]);
+  useEffect(() => {
+    const update = () => setNarrowEditor(window.innerWidth <= 960);
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
   const pageCounts = (status?.pageCounts ?? {}) as Record<string, number>;
   const sourceCounts = (status?.sourceCounts ?? {}) as Record<string, number>;
   const warnings = status?.warnings ?? [];
@@ -953,9 +443,23 @@ export function Knowledge() {
     return groups;
   }, [inboxItems]);
   const orderedInboxItems = useMemo(() => INBOX_TRIAGE_ORDER.flatMap((key) => groupedInboxItems[key]), [groupedInboxItems]);
-  const selectedDraft = useMemo(() => drafts.find((draft) => draft.id === selectedDraftId) ?? drafts[0] ?? null, [drafts, selectedDraftId]);
+  const selectedDraft = useMemo(() => drafts.find((draft) => draft.id === selectedDraftId) ?? null, [drafts, selectedDraftId]);
   const selectedInboxItem = useMemo(() => inboxItems.find((item) => item.id === selectedInboxId) ?? orderedInboxItems[0] ?? null, [inboxItems, orderedInboxItems, selectedInboxId]);
-  const selectedProposal = useMemo(() => proposals.find((proposal) => proposal.id === selectedProposalId) ?? proposals[0] ?? null, [proposals, selectedProposalId]);
+  const selectedProposal = useMemo(() => proposals.find((proposal) => proposal.id === selectedProposalId && (proposal.draftId ?? null) === selectedDraftId) ?? null, [proposals, selectedProposalId, selectedDraftId]);
+  const reviewQueueItems = useMemo(() => projectKnowledgeReviewItems({ inboxItems, drafts, proposals }), [inboxItems, drafts, proposals]);
+  const openReviewItem = useCallback((item: Pick<KnowledgeReviewItem, 'kind' | 'id' | 'draftId'>) => {
+    setStewardReview(null);
+    if (item.kind === 'inbox') {
+      setSelectedInboxId(item.id);
+      setWorkbenchTab('inbox');
+      return;
+    }
+    setReviewSelection({
+      draftId: item.kind === 'draft' ? item.id : item.draftId ?? null,
+      proposalId: item.kind === 'proposal' ? item.id : proposals.find((proposal) => proposal.draftId === item.id)?.id ?? null,
+    });
+    setWorkbenchTab('review');
+  }, [proposals]);
   const draftCounts = useMemo(() => drafts.reduce<Record<string, number>>((acc, draft) => {
     acc[draft.status] = (acc[draft.status] ?? 0) + 1;
     return acc;
@@ -965,7 +469,6 @@ export function Knowledge() {
   const okfCanImport = Boolean(okfValidation?.success && okfPath && selectedOkfCount > 0);
   const okfAllSelected = okfConcepts.length > 0 && okfConcepts.every((concept) => selectedOkfConceptIds.has(concept.conceptId));
   const selectedRuntimeSuggestion = runtimeSuggestions[selectedRuntimeSuggestionIndex] ?? null;
-  const editorSummary = useMemo(() => markdownSummary(editorBody), [editorBody]);
   const editorSourceIds = useMemo(() => {
     const explicit = editorSource.trim();
     if (explicit) return [explicit];
@@ -973,26 +476,7 @@ export function Knowledge() {
     return [`manual:${slug || 'untitled'}`];
   }, [editorSource, editorTitle]);
   const relatedRows = useMemo(() => rows.filter((row) => getLookup(row) !== editorSource).slice(0, 4), [editorSource, rows]);
-  const librarianPromptSuggestions = useMemo<KnowledgeLibrarianPromptSuggestion[]>(() => {
-    const currentTitle = editorTitle.trim() || t('workspace.untitled');
-    return [
-      {
-        id: 'summarize-current',
-        label: t('librarian.suggestions.summarize.label'),
-        prompt: t('librarian.suggestions.summarize.prompt', { title: currentTitle }),
-      },
-      {
-        id: 'find-related',
-        label: t('librarian.suggestions.related.label'),
-        prompt: t('librarian.suggestions.related.prompt', { title: currentTitle }),
-      },
-      {
-        id: 'review-gaps',
-        label: t('librarian.suggestions.gaps.label'),
-        prompt: t('librarian.suggestions.gaps.prompt', { title: currentTitle }),
-      },
-    ];
-  }, [editorTitle, t]);
+
   const qualityMetricCards = useMemo(() => QUALITY_METRIC_KINDS.map((kind) => {
     const metric = governanceQualityMetrics?.metrics.find((entry) => entry.kind === kind);
     const count = metric?.count ?? 0;
@@ -1014,36 +498,6 @@ export function Knowledge() {
       hint: t(`governance.qualityMetrics.hints.${kind}`),
     };
   }), [governanceQualityMetrics, t]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || librarianMessages.length === 0) return;
-    const updatedAt = new Date().toISOString();
-    const checkpoint: KnowledgeLibrarianCheckpoint = {
-      version: 1,
-      updatedAt,
-      vaultPath: status?.vaultPath,
-      editorTitle,
-      editorSource,
-      messages: librarianMessages.slice(-30),
-    };
-    try {
-      window.localStorage.setItem(KNOWLEDGE_LIBRARIAN_STORAGE_KEY, JSON.stringify(checkpoint));
-      setLibrarianCheckpointAt(updatedAt);
-    } catch {
-      // Best-effort checkpoint only; never block the knowledge workspace.
-    }
-  }, [editorSource, editorTitle, librarianMessages, status?.vaultPath]);
-
-  const clearLibrarianThread = useCallback(() => {
-    setLibrarianMessages([]);
-    setLibrarianQuestion('');
-    setLibrarianError(null);
-    setLastLibrarianQuestion('');
-    setLibrarianCheckpointAt(null);
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem(KNOWLEDGE_LIBRARIAN_STORAGE_KEY);
-    }
-  }, []);
 
   const refreshStatus = useCallback(async () => {
     setLoading(true);
@@ -1074,6 +528,7 @@ export function Knowledge() {
     if (draftResult.success) setDrafts(draftResult.drafts);
     if (proposalResult.success) setProposals(proposalResult.proposals);
     if (sourceSetResult.success) setSourceSets(sourceSetResult.sourceSets);
+    setReviewQueueLoaded(true);
     try {
       const snapshot = await hostApi.dcsProdFlags.getFlags();
       const flag = snapshot.flags.find((entry) => entry.id === 'runtime-memory-candidate-generation');
@@ -1084,7 +539,10 @@ export function Knowledge() {
   }, []);
 
   useEffect(() => {
-    void refreshGovernance();
+    void refreshGovernance().catch((err) => {
+      setError(errorMessageFrom(err));
+      setReviewQueueLoaded(true);
+    });
   }, [refreshGovernance]);
 
   const refreshRuntimeLessons = useCallback(async () => {
@@ -1520,7 +978,8 @@ export function Knowledge() {
         ...(currentSourceSetId ? { sourceSetId: currentSourceSetId } : {}),
       });
       if (!result.success || !result.draft) throw new Error(result.error || t('errors.action'));
-      setSelectedDraftId(result.draft.id);
+      setReviewSelection({ draftId: result.draft.id, proposalId: null });
+      setStewardReview(null);
       setUtilityPanel(null);
       setWorkbenchTab('drafts');
       await refreshGovernance();
@@ -1533,225 +992,6 @@ export function Knowledge() {
       setRunning(null);
     }
   }, [currentSourceRefs, currentSourceSetId, refreshGovernance, t]);
-
-  const askLibrarian = useCallback(async (questionOverride?: string) => {
-    const question = (questionOverride ?? librarianQuestion).trim();
-    if (!question || running) return;
-    const userMessage = makeLibrarianMessage('user', question);
-    setLibrarianMessages((messages) => [...messages, userMessage].slice(-30));
-    setLibrarianQuestion('');
-    setLastLibrarianQuestion(question);
-    setLibrarianError(null);
-    setRunning('librarianAsk');
-    setError(null);
-    try {
-      if (currentSourceRefs.length > 0) {
-        const result = await hostApi.knowledge.answerFromSourceSet({
-          question,
-          sourceRefs: currentSourceRefs,
-          ...(currentSourceSetId ? { sourceSetId: currentSourceSetId } : {}),
-        });
-        if (!result.success) throw new Error(result.error || t('errors.search'));
-        const citations: KnowledgeLibrarianCitation[] = result.sources.map((source) => ({
-          lookup: source.lookup,
-          title: source.title,
-          path: source.path || source.lookup,
-          excerpt: source.excerpt || t('librarian.emptyCitation'),
-        }));
-        const groundedAnswer: KnowledgeLibrarianGroundedAnswer = {
-          question,
-          answer: result.answer,
-          sources: result.sources.map((source) => ({
-            id: source.id,
-            lookup: source.lookup,
-            title: source.title,
-            path: source.path || source.lookup,
-            excerpt: source.excerpt,
-            corpus: 'wiki',
-            reason: t('sourceSet.answerBoundary'),
-          })),
-          unknowns: result.unknowns,
-          suggestions: result.suggestedNextActions,
-          nextActions: result.suggestedNextActions,
-          confidence: result.confidence,
-          groundingStatus: result.groundingStatus,
-          retrieval: {
-            query: result.retrievalDiagnostics.query,
-            corpus: result.retrievalDiagnostics.corpus,
-            roleTag: 'knowledge-librarian',
-            resultCount: result.retrievalDiagnostics.resultCount,
-            selectedSources: result.sources.map((source) => ({
-              id: source.id,
-              lookup: source.lookup,
-              title: source.title,
-              path: source.path || source.lookup,
-              excerpt: source.excerpt,
-              corpus: 'wiki',
-            })),
-          },
-        };
-        setLibrarianMessages((messages) => [...messages, makeLibrarianMessage('assistant', groundedAnswer.answer, citations, groundedAnswer)].slice(-30));
-        return;
-      }
-      const result = await hostApi.knowledge.search({
-        query: question,
-        maxResults: 4,
-        corpus: 'wiki',
-        roleTag: 'knowledge-librarian',
-      });
-      if (!result.success) throw new Error(result.error || t('errors.search'));
-      setSearchResult(result);
-      setQuery(question);
-      const matches = getSearchRows(result).slice(0, 3);
-      const citations: KnowledgeLibrarianCitation[] = [];
-      for (const row of matches) {
-        const lookup = getLookup(row);
-        if (!lookup) continue;
-        let body = getSnippet(row);
-        try {
-          const page = await hostApi.knowledge.get({ lookup, lineCount: 80, corpus: 'wiki' });
-          if (page.success) body = getPageBody(page as Record<string, unknown>) || body;
-        } catch {
-          // Search snippets are still useful if a page preview fails.
-        }
-        const excerpt = readableExcerpt(body, getSnippet(row));
-        citations.push({
-          lookup,
-          title: getTitle(row),
-          path: getString(row, ['sourcePath', 'pagePath', 'path']) || lookup,
-          score: getScore(row),
-          excerpt: excerpt || t('librarian.emptyCitation'),
-        });
-        void hostApi.knowledge.recordKnowledgeReference({
-          targetId: lookup,
-          targetKind: 'wiki-page',
-          title: getTitle(row),
-          sourceRefs: [{ id: lookup, kind: 'wiki', path: lookup }],
-          reference: { kind: 'search', lookup, query: question },
-        }).catch(() => undefined);
-      }
-
-      if (citations.length === 0 && editorBody.trim()) {
-        citations.push({
-          lookup: editorSource || editorSourceIds[0],
-          title: editorTitle.trim() || t('workspace.untitled'),
-          path: editorSource || editorSourceIds[0],
-          excerpt: readableExcerpt(editorBody, editorSummary) || t('librarian.emptyCitation'),
-        });
-      }
-
-      const groundedAnswer = buildGroundedLibrarianAnswer({
-        question,
-        resultCount: getSearchRows(result).length,
-        corpus: 'wiki',
-        roleTag: 'knowledge-librarian',
-        sources: citations.map((citation) => ({
-          id: citation.lookup,
-          lookup: citation.lookup,
-          title: citation.title,
-          path: citation.path || citation.lookup,
-          excerpt: citation.excerpt,
-          corpus: 'wiki',
-          ...(typeof citation.score === 'number' ? { score: citation.score } : {}),
-          reason: t('librarian.retrieval.selectedReason'),
-        })),
-        messages: {
-          answerIntro: t('librarian.answerIntro', { count: citations.length }),
-          answerBoundary: t('librarian.answerBoundary'),
-          noAnswer: t('librarian.noAnswer'),
-          missingSources: t('librarian.unknowns.noSources'),
-          pageSnippetGrounding: t('librarian.unknowns.pageSnippetLevel'),
-          suggestionSaveDraft: t('librarian.suggestions.next.saveDraft'),
-          suggestionCreateErrorExperience: t('librarian.suggestions.next.createErrorExperience'),
-          suggestionSendToSteward: t('librarian.suggestions.next.sendToSteward'),
-          suggestionBroadenSearch: t('librarian.suggestions.next.broadenSearch'),
-        },
-      });
-      setLibrarianMessages((messages) => [...messages, makeLibrarianMessage('assistant', groundedAnswer.answer, citations, groundedAnswer)].slice(-30));
-    } catch (err) {
-      const message = errorMessageFrom(err);
-      setError(message);
-      setLibrarianError(message);
-      toast.error(message);
-    } finally {
-      setRunning(null);
-    }
-  }, [currentSourceRefs, currentSourceSetId, editorBody, editorSource, editorSourceIds, editorSummary, editorTitle, librarianQuestion, running, t]);
-
-  const copyLibrarianMessage = useCallback(async (messageId: string, content: string) => {
-    if (!content.trim()) return;
-    try {
-      await navigator.clipboard.writeText(content);
-      setCopiedLibrarianMessageId(messageId);
-      window.setTimeout(() => setCopiedLibrarianMessageId((current) => (current === messageId ? null : current)), 1600);
-    } catch {
-      toast.error(t('librarian.copyFailed'));
-    }
-  }, [t]);
-
-  const saveGroundedAnswerDraft = useCallback(async (answer: KnowledgeLibrarianGroundedAnswer) => {
-    setRunning('librarianDraft');
-    setError(null);
-    try {
-      const result = await hostApi.knowledge.createDraft(createDraftPayloadFromGroundedAnswer(answer, {
-        titlePrefix: t('librarian.candidate.draftTitlePrefix'),
-      }));
-      if (!result.success) throw new Error(result.error || t('errors.action'));
-      toast.success(t('toasts.librarianDraft'));
-      await refreshGovernance();
-      setWorkbenchTab('drafts');
-    } catch (err) {
-      const message = errorMessageFrom(err);
-      setError(message);
-      toast.error(message);
-    } finally {
-      setRunning(null);
-    }
-  }, [refreshGovernance, t]);
-
-  const createGroundedAnswerErrorExperience = useCallback(async (answer: KnowledgeLibrarianGroundedAnswer) => {
-    setRunning('librarianErrorExperience');
-    setError(null);
-    try {
-      const result = await hostApi.knowledge.createInboxItem(createErrorExperienceInboxPayloadFromGroundedAnswer(answer, {
-        titlePrefix: t('librarian.candidate.errorExperienceTitlePrefix'),
-        createdFromId: answer.question,
-      }));
-      if (!result.success) throw new Error(result.error || t('errors.action'));
-      toast.success(t('toasts.librarianErrorExperience'));
-      await refreshGovernance();
-      setWorkbenchTab('inbox');
-    } catch (err) {
-      const message = errorMessageFrom(err);
-      setError(message);
-      toast.error(message);
-    } finally {
-      setRunning(null);
-    }
-  }, [refreshGovernance, t]);
-
-  const sendGroundedAnswerToSteward = useCallback(async (answer: KnowledgeLibrarianGroundedAnswer) => {
-    setRunning('librarianSteward');
-    setError(null);
-    try {
-      const created = await hostApi.knowledge.createDraft(createDraftPayloadFromGroundedAnswer(answer, {
-        titlePrefix: t('librarian.candidate.stewardTitlePrefix'),
-      }));
-      if (!created.success || !created.draft) throw new Error(created.error || t('errors.action'));
-      const reviewed = await hostApi.knowledge.stewardReview({ draftId: created.draft.id });
-      if (!reviewed.success) throw new Error(reviewed.error || t('errors.action'));
-      setStewardReview(reviewed);
-      toast.success(t('toasts.librarianSteward'));
-      await refreshGovernance();
-      setWorkbenchTab('review');
-    } catch (err) {
-      const message = errorMessageFrom(err);
-      setError(message);
-      toast.error(message);
-    } finally {
-      setRunning(null);
-    }
-  }, [refreshGovernance, t]);
 
   const openResult = useCallback(async (row: SearchRow) => {
     const lookup = getLookup(row);
@@ -1769,6 +1009,7 @@ export function Knowledge() {
       setEditorBody(body || makeStarterMarkdown(getTitle(row)));
       setEditorSource(lookup);
       setEditorType('source-note');
+      setEditorMode('preview');
       setWorkbenchTab('library');
       try {
         const provenance = await hostApi.knowledge.recordKnowledgeReference({
@@ -1796,6 +1037,44 @@ export function Knowledge() {
     }
   }, [draftSources, query, t]);
 
+  useEffect(() => {
+    if (restoredLocation.current === location.key) return;
+    const search = new URLSearchParams(location.search);
+    if (search.get('view') === 'review-queue' && !reviewQueueLoaded) return;
+    restoredLocation.current = location.key;
+    const state = location.state as { knowledgeContext?: KnowledgeChatContext; knowledgeTitle?: string; stewardReview?: KnowledgeStewardReviewResult } | null;
+    const context = state?.knowledgeContext;
+    if (context) {
+      if (typeof context.editorTitle === 'string') setEditorTitle(context.editorTitle);
+      if (typeof context.editorBody === 'string') setEditorBody(context.editorBody);
+      if (typeof context.editorSource === 'string') setEditorSource(context.editorSource);
+      if (typeof context.editorTags === 'string') setEditorTags(context.editorTags);
+      if (context.editorType && KNOWLEDGE_TYPES.includes(context.editorType)) setEditorType(context.editorType);
+      if (context.editorMode && ['edit', 'preview', 'split'].includes(context.editorMode)) setEditorMode(context.editorMode);
+      if (typeof context.query === 'string') setQuery(context.query);
+      if (Array.isArray(context.sourceRefs)) setCurrentSourceRefs(context.sourceRefs);
+      setCurrentSourceSetId(context.sourceSetId ?? null);
+      setSourceSetTitle(context.sourceSetTitle ?? '');
+      setSearchResult(context.searchResult ?? null);
+      setSelectedRow(context.selectedRow ?? null);
+      setSelectedPage(context.selectedPage ?? null);
+      setSelectedLookup(context.editorSource ?? '');
+    }
+    if (search.get('view') === 'review-queue') {
+      setWorkbenchTab('review-queue');
+      const kind = search.get('kind');
+      if (kind === 'inbox' || kind === 'draft' || kind === 'proposal') setReviewQueueFilter(kind);
+      const item = reviewQueueItems.find((entry) => entry.kind === kind && entry.id === search.get('id'));
+      if (item) {
+        openReviewItem(item);
+        if (state?.stewardReview && item.kind === 'draft') setStewardReview({ ...state.stewardReview, draftId: item.id });
+      }
+    } else {
+      const lookup = search.get('lookup');
+      if (lookup) void openResult({ title: state?.knowledgeTitle || lookup, pagePath: lookup });
+    }
+  }, [location.key, location.search, location.state, openResult, openReviewItem, reviewQueueItems, reviewQueueLoaded]);
+
   const createEditorNote = useCallback(() => {
     const title = t('workspace.untitled');
     setEditorTitle(title);
@@ -1806,6 +1085,7 @@ export function Knowledge() {
     setSelectedPage(null);
     setSelectedRow(null);
     setSelectedLookup('');
+    setEditorMode('edit');
     setWorkbenchTab('library');
   }, [t]);
 
@@ -1838,8 +1118,8 @@ export function Knowledge() {
       if (!proposalResult.success) throw new Error(proposalResult.error || t('errors.action'));
       toast.success(t('toasts.createDraft'));
       await refreshGovernance();
-      setSelectedDraftId(draftResult.draft.id);
-      if (proposalResult.proposal) setSelectedProposalId(proposalResult.proposal.id);
+      setReviewSelection({ draftId: draftResult.draft.id, proposalId: proposalResult.proposal?.id ?? null });
+      setStewardReview(null);
       setWorkbenchTab('review');
     } catch (err) {
       const message = errorMessageFrom(err);
@@ -1860,8 +1140,8 @@ export function Knowledge() {
       if (!result.success) throw new Error(result.error || t('errors.action'));
       toast.success(t('toasts.promoteInbox'));
       await refreshGovernance();
-      if (result.draft) setSelectedDraftId(result.draft.id);
-      if (result.proposal) setSelectedProposalId(result.proposal.id);
+      setReviewSelection({ draftId: result.draft?.id ?? null, proposalId: result.proposal?.id ?? null });
+      setStewardReview(null);
       setWorkbenchTab('review');
     } catch (err) {
       const message = errorMessageFrom(err);
@@ -1931,8 +1211,13 @@ export function Knowledge() {
       if (!proposalResult.success) throw new Error(proposalResult.error || t('errors.action'));
       toast.success(t('toasts.createDraft'));
       await refreshGovernance();
-      setSelectedDraftId(draftResult.draft.id);
-      if (proposalResult.proposal) setSelectedProposalId(proposalResult.proposal.id);
+      setReviewSelection({ draftId: draftResult.draft.id, proposalId: proposalResult.proposal?.id ?? null });
+      setStewardReview(null);
+      setDraftTitle('');
+      setDraftBody('');
+      setDraftSources('');
+      setDraftTags('');
+      setDraftType('synthesis');
       setWorkbenchTab('review');
     } catch (err) {
       const message = errorMessageFrom(err);
@@ -1941,15 +1226,10 @@ export function Knowledge() {
     } finally {
       setRunning(null);
     }
-    setDraftTitle('');
-    setDraftBody('');
-    setDraftSources('');
-    setDraftTags('');
-    setDraftType('synthesis');
   }, [draftBody, draftSources, draftTags, draftTitle, draftType, refreshGovernance, t]);
 
-  const askSteward = useCallback(async (draft?: KnowledgeDraft | null) => {
-    const target = draft ?? selectedDraft;
+  const askSteward = useCallback(async (draft: KnowledgeDraft | null = selectedDraft) => {
+    const target = draft;
     setRunning('stewardReview');
     setError(null);
     try {
@@ -1962,7 +1242,7 @@ export function Knowledge() {
           tags: draftTags.split(/\r?\n|,/u).map((item) => item.trim()).filter(Boolean),
         });
       if (!result.success) throw new Error(result.error || t('errors.action'));
-      setStewardReview(result);
+      setStewardReview({ ...result, draftId: target?.id });
       toast.success(t('toasts.stewardReview'));
       await refreshGovernance();
     } catch (err) {
@@ -2007,8 +1287,30 @@ export function Knowledge() {
     void loadStewardConfig();
   }, [loadStewardConfig]);
 
+  const prepareDraftProposal = useCallback(async () => {
+    if (!selectedDraft || selectedProposal) return;
+    setRunning('proposeChange');
+    setError(null);
+    try {
+      const result = await hostApi.knowledge.proposeChange({
+        operation: 'create',
+        draftId: selectedDraft.id,
+        reason: t('draft.defaultProposalReason'),
+        sources: selectedDraft.sourceRefs,
+      });
+      if (!result.success || !result.proposal) throw new Error(result.error || t('errors.action'));
+      const proposalId = result.proposal.id;
+      setReviewSelection((selection) => selection.draftId === selectedDraft.id ? { ...selection, proposalId } : selection);
+      await refreshGovernance();
+    } catch (err) {
+      setError(errorMessageFrom(err));
+    } finally {
+      setRunning(null);
+    }
+  }, [refreshGovernance, selectedDraft, selectedProposal, t]);
+
   const reviewAndApply = useCallback(async () => {
-    if (!selectedDraft || !selectedProposal) return;
+    if (!selectedDraft || !selectedProposal || selectedProposal.draftId !== selectedDraft.id) return;
     setRunning('applyReviewedChange');
     setError(null);
     try {
@@ -2036,13 +1338,13 @@ export function Knowledge() {
   const busy = running != null || loading;
 
   return (
-    <div data-testid="knowledge-page" className="flex h-[calc(100vh-2.5rem)] min-h-0 flex-col overflow-hidden -m-6 bg-background">
+    <div data-testid="knowledge-page" className="-m-5 flex h-[calc(100%+2.5rem)] min-h-0 flex-col overflow-hidden bg-background">
       <TooltipProvider delayDuration={250}>
       <header className="shrink-0 border-b border-black/10 bg-surface-modal px-5 pt-4 dark:border-white/10 md:px-6">
         <div className="flex min-w-0 items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3">
             <BookOpen className="h-5 w-5 shrink-0 text-foreground/65" />
-            <h1 className="truncate text-2xl font-semibold tracking-normal text-foreground">{t('title')}</h1>
+            <h1 className="truncate font-serif text-2xl font-normal tracking-tight text-foreground">{t('title')}</h1>
             <button
               type="button"
               className={cn('inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md border px-2 text-xs font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5', statusTone)}
@@ -2069,7 +1371,14 @@ export function Knowledge() {
                   variant="ghost"
                   size="icon"
                   className="h-9 w-9 rounded-lg text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
-                  onClick={() => setLibrarianOpen(true)}
+                  onClick={() => {
+                    const knowledgeContext: KnowledgeChatContext = { editorTitle, editorBody, editorSource, editorTags, editorType, editorMode, query, sourceRefs: currentSourceRefs, sourceSetId: currentSourceSetId, sourceSetTitle, searchResult, selectedRow, selectedPage };
+                    navigate({ pathname: location.pathname, search: location.search }, { replace: true, state: { knowledgeContext } });
+                    const search = new URLSearchParams(location.search);
+                    for (const key of ['view', 'kind', 'id', 'lookup']) search.delete(key);
+                    search.set('knowledge', 'ask');
+                    navigate({ pathname: '/', search: search.toString() }, { state: { knowledgeContext } });
+                  }}
                   aria-label={t('librarian.openAssistant')}
                   data-testid="knowledge-librarian-open"
                 >
@@ -2138,6 +1447,10 @@ export function Knowledge() {
                     <Check className="h-4 w-4 text-muted-foreground" />
                     {t('actions.init')}
                   </DropdownMenu.Item>
+                  <DropdownMenu.Item className={MENU_ITEM_CLASS} onSelect={() => setWorkbenchTab('runtime')} data-testid="knowledge-tab-runtime">
+                    <History className="h-4 w-4 text-muted-foreground" />
+                    {t('tabs.runtime')}
+                  </DropdownMenu.Item>
                   <DropdownMenu.Item className={MENU_ITEM_CLASS} onSelect={() => setWorkbenchTab('governance')} data-testid="knowledge-tab-governance">
                     <ShieldCheck className="h-4 w-4 text-muted-foreground" />
                     {t('governance.openAudit')}
@@ -2151,8 +1464,8 @@ export function Knowledge() {
         <nav className="mt-3 flex h-10 items-end gap-1 overflow-x-auto" data-testid="knowledge-workbench-tabs" aria-label={t('tabs.navigation')}>
           {PRIMARY_WORKBENCH_TABS.map((tab) => {
             const TabIcon = TAB_ICONS[tab];
-            const isActive = workbenchTab === tab;
-            const count = tab === 'inbox' ? inboxItems.length : tab === 'drafts' ? drafts.length : 0;
+            const isActive = workbenchTab === tab || (tab === 'review-queue' && ['inbox', 'drafts', 'review'].includes(workbenchTab));
+            const count = tab === 'review-queue' ? reviewQueueItems.length : 0;
             return (
               <button
                 key={tab}
@@ -2168,7 +1481,7 @@ export function Knowledge() {
                 aria-current={isActive ? 'page' : undefined}
               >
                 <TabIcon className="h-4 w-4" />
-                {t(tab === 'library' ? 'tabs.library' : `tabs.${tab}`)}
+                {t(tab === 'library' ? 'tabs.library' : 'tabs.reviewQueue')}
                 {count > 0 ? <span className="text-xs tabular-nums text-muted-foreground">{count}</span> : null}
               </button>
             );
@@ -2188,7 +1501,13 @@ export function Knowledge() {
               card header repeating that name plus a read-only badge on every tab was
               duplicated chrome. Boundary wording now lives once per flow, at the
               point of action, rather than as a standing banner. */}
-          <CardContent className={cn('min-h-0 flex-1', workbenchTab === 'library' ? 'p-0' : 'overflow-y-auto p-4')}>
+          <CardContent className={cn('min-h-0 flex-1', workbenchTab === 'library' || workbenchTab === 'review-queue' ? 'p-0' : 'overflow-y-auto p-4')}>
+            {workbenchTab === 'review-queue' && <KnowledgeReviewQueue items={reviewQueueItems} filter={reviewQueueFilter} query={reviewQueueQuery} onFilterChange={setReviewQueueFilter} onQueryChange={setReviewQueueQuery} onSelect={openReviewItem} />}
+            {['inbox', 'drafts', 'review'].includes(workbenchTab) && (
+              <Button variant="ghost" size="sm" className="mb-3 h-8" onClick={() => setWorkbenchTab('review-queue')} data-testid="knowledge-review-back">
+                {t('reviewQueue.back')}
+              </Button>
+            )}
             {workbenchTab === 'library' && (
               <div className="grid h-full min-h-0 grid-cols-[232px_minmax(0,1fr)]" data-testid="knowledge-library">
                 <aside className={cn('flex min-h-0 flex-col border-r border-black/10 dark:border-white/10', WORKSPACE_SECTION_CLASS)} data-testid="knowledge-vault-sidebar">
@@ -2280,7 +1599,9 @@ export function Knowledge() {
                 <section className="flex min-h-0 flex-col bg-background" data-testid="knowledge-markdown-workspace">
                   <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-background p-3 dark:border-white/10">
                     <div className="min-w-0 flex-1">
-                      <Input value={editorTitle} onChange={(event) => setEditorTitle(event.target.value)} className="h-8 border-transparent bg-transparent px-0 font-serif text-xl tracking-tight shadow-none focus-visible:ring-0" data-testid="knowledge-editor-title" />
+                      {effectiveEditorMode === 'preview'
+                        ? <h2 className="truncate font-serif text-xl font-normal tracking-tight" data-testid="knowledge-editor-title">{editorTitle || t('workspace.untitled')}</h2>
+                        : <Input value={editorTitle} onChange={(event) => setEditorTitle(event.target.value)} className="h-8 border-transparent bg-transparent px-0 font-serif text-xl tracking-tight shadow-none focus-visible:ring-0" data-testid="knowledge-editor-title" />}
                       <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
                         <span className="max-w-72 truncate font-mono">{editorSource || t('workspace.localDraft')}</span>
                         {selectedProvenance ? <span>{t('provenance.references', { count: selectedProvenance.references.length })}</span> : null}
@@ -2295,10 +1616,10 @@ export function Knowledge() {
                         <Layers className="mr-1.5 h-3.5 w-3.5" />{t('workspace.sourceTools')}
                       </Button>
                       <div className="flex items-center gap-1 rounded-lg border border-black/10 bg-background p-1 dark:border-white/10">
-                        {(['edit', 'preview', 'split'] as MarkdownEditorMode[]).map((mode) => {
+                        {((narrowEditor ? ['edit', 'preview'] : ['edit', 'preview', 'split']) as MarkdownEditorMode[]).map((mode) => {
                           const ModeIcon = mode === 'edit' ? Edit3 : mode === 'preview' ? Eye : Columns3;
                           return (
-                            <button key={mode} type="button" className={cn('flex h-7 w-8 items-center justify-center rounded-md transition-colors', editorMode === mode ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5')} onClick={() => setEditorMode(mode)} title={t(`workspace.modes.${mode}`)} data-testid={`knowledge-editor-mode-${mode}`}>
+                            <button key={mode} type="button" className={cn('flex h-7 w-8 items-center justify-center rounded-md transition-colors', effectiveEditorMode === mode ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5')} onClick={() => setEditorMode(mode)} title={t(`workspace.modes.${mode}`)} aria-label={t(`workspace.modes.${mode}`)} aria-pressed={effectiveEditorMode === mode} data-testid={`knowledge-editor-mode-${mode}`}>
                               <ModeIcon className="h-3.5 w-3.5" />
                             </button>
                           );
@@ -2306,7 +1627,7 @@ export function Knowledge() {
                       </div>
                     </div>
                   </div>
-                  <div className="grid shrink-0 gap-2 border-b border-black/10 bg-surface-input p-2.5 dark:border-white/10 md:grid-cols-[160px_minmax(0,1fr)_150px]">
+                  {effectiveEditorMode !== 'preview' && <div className="grid shrink-0 gap-2 border-b border-black/10 bg-surface-input p-2.5 dark:border-white/10 md:grid-cols-[160px_minmax(0,1fr)_150px]">
                     <select value={editorType} onChange={(event) => setEditorType(event.target.value as KnowledgeDraftType)} className="h-9 rounded-lg border border-black/10 bg-surface-input px-3 text-sm shadow-none dark:border-white/10" data-testid="knowledge-editor-type" aria-label={t('draft.typeLabel')}>
                       {KNOWLEDGE_TYPES.map((type) => <option key={type} value={type}>{t(`types.${type}`)}</option>)}
                     </select>
@@ -2315,12 +1636,12 @@ export function Knowledge() {
                       {running === 'editorDraft' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                       {t('workspace.submitReview')}
                     </Button>
-                  </div>
-                  <div className={cn('grid min-h-0 flex-1 gap-0', editorMode === 'split' ? 'lg:grid-cols-2' : 'grid-cols-1')}>
-                    {(editorMode === 'edit' || editorMode === 'split') && (
+                  </div>}
+                  <div className={cn('grid min-h-0 flex-1 gap-0', effectiveEditorMode === 'split' ? 'grid-cols-2' : 'grid-cols-1')}>
+                    {(effectiveEditorMode === 'edit' || effectiveEditorMode === 'split') && (
                       <Textarea value={editorBody} onChange={(event) => setEditorBody(event.target.value)} className="h-full min-h-0 resize-none rounded-none border-0 bg-background p-5 font-mono text-sm leading-7 shadow-none focus-visible:ring-0" data-testid="knowledge-markdown-editor" />
                     )}
-                    {(editorMode === 'preview' || editorMode === 'split') && (
+                    {(effectiveEditorMode === 'preview' || effectiveEditorMode === 'split') && (
                       <div className="h-full min-h-0 overflow-auto border-black/10 bg-background p-5 text-sm leading-7 dark:border-white/10 lg:border-l [&_a]:text-primary [&_blockquote]:border-l-2 [&_blockquote]:border-black/20 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_code]:rounded [&_code]:bg-black/5 [&_code]:px-1 [&_h1]:mb-4 [&_h1]:font-serif [&_h1]:text-3xl [&_h1]:font-normal [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-normal [&_li]:ml-5 [&_ol]:list-decimal [&_p]:mb-3 [&_pre]:overflow-auto [&_pre]:rounded-lg [&_pre]:bg-black/5 [&_pre]:p-3 [&_ul]:list-disc" data-testid="knowledge-markdown-preview">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>{editorBody || t('workspace.emptyPreview')}</ReactMarkdown>
                       </div>
@@ -2636,10 +1957,7 @@ export function Knowledge() {
                             ? 'border-primary/30 bg-primary/5 shadow-sm'
                             : 'hover:bg-black/5 hover:border-black/20 dark:hover:bg-white/5 dark:hover:border-white/20',
                         )}
-                        onClick={() => {
-                          setSelectedDraftId(draft.id);
-                          setWorkbenchTab('review');
-                        }}
+                        onClick={() => openReviewItem({ kind: 'draft', id: draft.id })}
                         data-testid="knowledge-draft-row"
                       >
                         <div className="flex items-center gap-2">
@@ -2720,7 +2038,12 @@ export function Knowledge() {
                     <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap rounded-md bg-background p-2 text-xs leading-relaxed text-muted-foreground">{selectedProposal?.diff ?? selectedDraft?.body ?? t('review.noProposal')}</pre>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <Button onClick={() => void reviewAndApply()} disabled={busy || !selectedDraft || !selectedProposal} data-testid="knowledge-review-apply">
+                    {selectedDraft && !selectedProposal && (
+                      <Button onClick={() => void prepareDraftProposal()} disabled={busy} data-testid="knowledge-review-prepare">
+                        {t('review.prepareProposal')}
+                      </Button>
+                    )}
+                    <Button onClick={() => void reviewAndApply()} disabled={busy || !selectedDraft || !selectedProposal || selectedProposal.draftId !== selectedDraft.id} data-testid="knowledge-review-apply">
                       {running === 'applyReviewedChange' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                       {t('review.approveAndApply')}
                     </Button>
@@ -2792,7 +2115,7 @@ export function Knowledge() {
                             <button
                               type="button"
                               className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/5"
-                              onClick={() => setSelectedDraftId(draft.id)}
+                              onClick={() => openReviewItem({ kind: 'draft', id: draft.id })}
                             >
                               <span className="truncate font-medium text-foreground/80">{draft.title}</span>
                               <span className="shrink-0 text-muted-foreground">{t(`types.${draft.type}`)}</span>
@@ -3665,139 +2988,6 @@ export function Knowledge() {
                 ) : null}
               </div>
             ) : null}
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      {/* The librarian rides the shared Sheet rather than a hand-rolled fixed
-          overlay: it inherits the app's slide-in-from-right motion, the modal
-          z-index and backdrop tokens, and — importantly — Radix's focus trap,
-          Escape-to-close and scroll lock. The previous markup declared
-          aria-modal without any of that behaviour. */}
-      <Sheet open={librarianOpen} onOpenChange={setLibrarianOpen}>
-        <SheetContent
-          side="right"
-          className="bottom-0 top-10 flex h-auto w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-xl"
-          data-testid="knowledge-librarian-modal"
-        >
-          <SheetHeader className="shrink-0 flex-row items-center justify-between gap-3 space-y-0 border-b border-black/10 px-4 py-3 pr-14 text-left dark:border-white/10">
-            <div className="flex min-w-0 items-center gap-2.5">
-              <Bot className="h-4 w-4 shrink-0 text-muted-foreground" />
-              <SheetTitle className="truncate text-sm font-medium">{t('librarian.modalTitle')}</SheetTitle>
-              <SheetDescription className="sr-only">{t('librarian.modalSubtitle')}</SheetDescription>
-            </div>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-7 shrink-0 rounded-md px-2 text-[11px] font-normal text-muted-foreground hover:text-foreground"
-              onClick={clearLibrarianThread}
-              disabled={librarianMessages.length === 0}
-              data-testid="knowledge-librarian-clear"
-            >
-              {t('librarian.clearThread')}
-            </Button>
-          </SheetHeader>
-          <SheetClose asChild>
-            <Button type="button" variant="ghost" size="icon" className="absolute right-3 top-2.5 h-9 w-9 rounded-lg" aria-label={t('review.steward.close')}>
-              <X className="h-4 w-4" />
-            </Button>
-          </SheetClose>
-
-          {/* Restraint: the thread is the panel. Capability cards, the current-note
-              card, the quick-action grid and the write-boundary banner were resident
-              chrome that squeezed the conversation; their functions all remain
-              reachable from the workbench tabs and per-answer actions. */}
-          <div className="min-h-0 flex-1 overflow-auto px-4 py-3" data-testid="knowledge-librarian-thread">
-            <div className="space-y-3">
-              {librarianMessages.length === 0 ? (
-                <p className="px-1 py-8 text-center text-xs leading-5 text-muted-foreground">
-                  {t('librarian.threadEmpty')}
-                </p>
-              ) : librarianMessages.map((message) => (
-                <KnowledgeAssistantMessage
-                  key={message.id}
-                  message={message}
-                  copied={copiedLibrarianMessageId === message.id}
-                  copyLabel={t('librarian.copy')}
-                  copiedLabel={t('librarian.copied')}
-                  roleLabel={t('librarian.roleId')}
-                  userLabel={t('librarian.you')}
-                  citationsLabel={t('librarian.citations')}
-                  sectionLabels={{
-                    answer: t('librarian.sections.answer'),
-                    sources: t('librarian.sections.sources'),
-                    unknowns: t('librarian.sections.unknowns'),
-                    nextAction: t('librarian.sections.nextAction'),
-                    retrieval: t('librarian.sections.retrieval'),
-                    query: t('librarian.retrieval.query'),
-                    corpus: t('librarian.retrieval.corpus'),
-                    roleTag: t('librarian.retrieval.roleTag'),
-                    resultCount: t('librarian.retrieval.resultCount'),
-                    selectedSources: t('librarian.retrieval.selectedSources'),
-                    confidence: t('librarian.confidence'),
-                    groundingStatus: {
-                      grounded: t('librarian.groundingStatus.grounded'),
-                      partial: t('librarian.groundingStatus.partial'),
-                      missing_sources: t('librarian.groundingStatus.missingSources'),
-                    },
-                  }}
-                  actionLabels={{
-                    saveDraft: t('librarian.actions.saveDraft'),
-                    createErrorExperience: t('librarian.actions.createErrorExperience'),
-                    sendToSteward: t('librarian.actions.sendToSteward'),
-                  }}
-                  onCopy={(content) => void copyLibrarianMessage(message.id, content)}
-                  onOpenCitation={(citation) => void openResult({ title: citation.title, pagePath: citation.lookup, snippet: citation.excerpt })}
-                  onSaveDraft={(answer) => void saveGroundedAnswerDraft(answer)}
-                  onCreateErrorExperience={(answer) => void createGroundedAnswerErrorExperience(answer)}
-                  onSendToSteward={(answer) => void sendGroundedAnswerToSteward(answer)}
-                />
-              ))}
-              {running === 'librarianAsk' ? (
-                <div className="flex items-center gap-2 px-1 text-xs text-muted-foreground" data-testid="knowledge-librarian-loading">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none" />
-                  {t('librarian.searching')}
-                </div>
-              ) : null}
-              {librarianError ? (
-                <KnowledgeAssistantErrorCard
-                  error={librarianError}
-                  title={t('librarian.errorTitle')}
-                  retryLabel={t('librarian.retry')}
-                  dismissLabel={t('librarian.dismissError')}
-                  onRetry={() => void askLibrarian(lastLibrarianQuestion)}
-                  onDismiss={() => setLibrarianError(null)}
-                />
-              ) : null}
-            </div>
-          </div>
-
-          <div className="shrink-0 border-t border-black/10 px-4 pb-3 pt-2.5 dark:border-white/10">
-            <div className="mb-2 flex flex-wrap gap-1.5" data-testid="knowledge-librarian-suggestions">
-              {librarianPromptSuggestions.map((suggestion) => (
-                <button
-                  key={suggestion.id}
-                  type="button"
-                  className="rounded-full border border-black/10 px-2.5 py-1 text-[11px] font-normal text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none dark:border-white/10 dark:hover:bg-white/5"
-                  onClick={() => void askLibrarian(suggestion.prompt)}
-                  disabled={busy}
-                  data-testid={`knowledge-librarian-suggestion-${suggestion.id}`}
-                >
-                  {suggestion.label}
-                </button>
-              ))}
-            </div>
-            <KnowledgeAssistantPromptInput
-              value={librarianQuestion}
-              onChange={setLibrarianQuestion}
-              onSubmit={() => void askLibrarian()}
-              disabled={busy}
-              running={running === 'librarianAsk'}
-              placeholder={t('librarian.askPlaceholder')}
-              askLabel={t('librarian.askButton')}
-              hint={librarianCheckpointAt ? t('librarian.checkpointSaved', { time: new Date(librarianCheckpointAt).toLocaleTimeString() }) : t('librarian.askHint')}
-            />
           </div>
         </SheetContent>
       </Sheet>

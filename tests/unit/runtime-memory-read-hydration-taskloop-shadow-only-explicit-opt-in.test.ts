@@ -327,7 +327,7 @@ function taskLoopDeps(options: {
     idFactory: (prefix) => `${prefix}_${options.idSuffix}`,
     now: () => 1_700_000_000_000,
     ensureTaskLedgerRoot: vi.fn(() => `tlroot_${options.idSuffix}`),
-    runObserved: (async (request: any) => {
+    runObserved: (async (request: { templateId?: string; maxWorkers?: number; preferredLeadRole?: string }) => {
       options.observedRequests?.push({
         templateId: request.templateId,
         maxWorkers: request.maxWorkers,
@@ -338,7 +338,7 @@ function taskLoopDeps(options: {
       });
       return fakeResult(request.templateId);
     }) as never,
-    selfCheck: (async ({ contextPack }: { contextPack: any }) => {
+    selfCheck: (async ({ contextPack }: { contextPack: import("../../openclaw_runtime/src/agents/task-loop-context").TaskLoopContextPack }) => {
       options.reviewerPrompts?.push(formatTaskLoopContextPackForReviewer(contextPack));
       return {
         decision: "complete",

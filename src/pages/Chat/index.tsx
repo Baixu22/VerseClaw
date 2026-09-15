@@ -84,6 +84,7 @@ import {
   createWorkspaceScopedForkSession,
   createWorkspaceScopedHandoffSession,
   createWorkspaceScopedNewSession,
+  clearWorkspaceActiveTopicMarker,
   getAgentIdFromSessionKey,
   getWorkspaceAgentSessionKey,
 } from '@/lib/workspace-session';
@@ -106,7 +107,6 @@ import { WorkspacePickerMenu } from '@/components/chat/WorkspacePickerMenu';
 import { GeneratedFilesPanel } from '@/components/file-preview/GeneratedFilesPanel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
-import { useUiVersion } from '@/components/layout/ui-overlay-context';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -815,7 +815,6 @@ function KnowledgeErrorAdvisoryCard({
 
 export function Chat() {
   const { t } = useTranslation(['chat', 'common']);
-  const uiVersion = useUiVersion();
   const navigate = useNavigate();
   const location = useLocation();
   const gatewayStatus = useGatewayStore((s) => s.status);
@@ -901,13 +900,6 @@ export function Chat() {
   useEffect(() => {
     void refreshTaskLedger();
   }, [activeWorkspaceId, refreshTaskLedger]);
-
-  const clearActiveTopicMarker = useCallback(async (rootPath: string | undefined) => {
-    if (!rootPath) return;
-    try {
-      await hostApi.files.writeText(`${rootPath}/.clawx-active-topic`, '');
-    } catch { /* best-effort */ }
-  }, []);
 
   const agentsList = useAgentsStore((s) => s.agents);
   const currentAgent = useMemo(
@@ -1135,7 +1127,7 @@ export function Chat() {
       setRunActivityExpandedOverrides({});
       setRunActivityStepDetailsExpanded({});
       setKnowledgeScope('none');
-      void clearActiveTopicMarker(activeWorkspace.rootPath);
+      await clearWorkspaceActiveTopicMarker(activeWorkspace.rootPath);
     }
   }, [
     activeWorkspace,
@@ -1144,7 +1136,6 @@ export function Chat() {
     fetchWorkspaces,
     persistCurrentWorkspaceSessionState,
     resetSessionView,
-    clearActiveTopicMarker,
   ]);
 
   const handleCreateNewSession = useCallback(async () => {
@@ -1165,7 +1156,7 @@ export function Chat() {
     setContextRange(null);
     setLiveUsage(null);
     setKnowledgeScope('none');
-  }, [activeWorkspace?.id, activeWorkspace?.permissionMode, currentSessionKey, persistCurrentWorkspaceSessionState]);
+  }, [activeWorkspace?.id, currentSessionKey, persistCurrentWorkspaceSessionState]);
 
   // Callback for file cards in chat messages - opens the in-app preview
   // panel instead of the system default editor.
@@ -1347,12 +1338,13 @@ export function Chat() {
     setRunActivityStepDetailsExpanded(sessionState.turnSummaryStepDetailsExpanded ?? {});
     setKnowledgeScope(sessionState.knowledgeScope ?? 'none');
     setKnowledgeMode(sessionState.knowledgeMode ?? 'suggest');
-    void clearActiveTopicMarker(activeWorkspace.rootPath);
+    // Restoring a view is read-only; reset legacy topic files only on explicit
+    // new-session or fresh-agent actions.
     /* Panel state is per session, not per workspace: `getWorkspaceSessionState`
      * falls back to the workspace-level blob for legacy profiles, which made one
      * session's open panel reappear in every other session of that project. */
     restoreArtifactPanelState(activeWorkspace.sessionStates?.[currentSessionKey]?.artifactPanel ?? { open: false });
-  }, [activeWorkspace, clearActiveTopicMarker, currentSessionKey, restoreArtifactPanelState]);
+  }, [activeWorkspace, currentSessionKey, restoreArtifactPanelState]);
 
   useEffect(() => {
     if (!activeWorkspace?.id || activeWorkspace.activeSessionKey === currentSessionKey) return;
@@ -2949,10 +2941,6 @@ export function Chat() {
     }
   }, [userRunCards, currentSessionKey]);
 
-  const platform = window.electron?.platform;
-  const isMac = platform === 'darwin';
-  const isUiV2 = uiVersion === 'v2';
-
   return (
     <TooltipProvider>
     <div
@@ -2960,17 +2948,9 @@ export function Chat() {
       data-testid="chat-page"
       className={cn(
         'relative flex min-h-0 overflow-hidden transition-colors duration-180 motion-reduce:transition-none',
-        isUiV2 ? '-m-5' : '-m-6',
-        'bg-background',
-        // Stack above MainLayout's mac-main-drag-region (z-10) so the right-hand
-        // artifact/preview pane stays clickable; window drag is handled by the
-        // sidebar + chat-toolbar drag strips instead.
-        isMac && !isUiV2
-          ? 'z-20 rounded-tl-2xl shadow-[inset_1px_1px_0_hsl(var(--border)/0.55)]'
-          : 'rounded-tl-xl',
-        isUiV2 && 'bg-material-canvas shadow-[inset_1px_0_0_hsl(var(--border)/0.65)]',
+        '-m-5 rounded-tl-xl bg-material-canvas shadow-[inset_1px_0_0_hsl(var(--border)/0.65)]',
       )}
-      style={{ height: isUiV2 ? 'calc(100% + 2.5rem)' : isMac ? 'calc(100vh - 1px)' : 'calc(100vh - 2.5rem)' }}
+      style={{ height: 'calc(100% + 2.5rem)' }}
     >
       {/* verse-style background: grid, glows, noise.
         *
@@ -3020,7 +3000,7 @@ export function Chat() {
         data-testid="chat-toolbar-shell"
         className={cn(
         'chat-toolbar-shell relative flex shrink-0 items-center justify-between gap-3 px-4 py-2',
-        isUiV2 && 'min-h-11 bg-material-panel',
+        'min-h-11 bg-material-panel',
       )}
       >
         <div data-testid="chat-toolbar-drag-region" className="drag-region absolute inset-0 z-0" aria-hidden="true" />

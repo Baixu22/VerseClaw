@@ -5,11 +5,13 @@ import {
   mkdirSync,
   readFileSync,
   readdirSync,
+  realpathSync,
   statSync,
   writeFileSync,
 } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { basename, dirname, join, relative, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { repairTruncatedJson, extractJsonObject } from './context-compression-json-repair.mjs';
 
 const FACT_SEVERITIES = ['critical', 'important', 'nice_to_have'];
@@ -22,7 +24,7 @@ const DEFAULT_PRESSURE_COHORTS = ['0.60', '0.75', '0.85', '0.95', 'emergency'];
 const CACHE_VERSION = 'context-compression-eval-cache-v3';
 const PARSER_VERSION = 'transcript-parser-v4';
 const REDACTION_VERSION = 'redaction-v4';
-const FACT_EXTRACTOR_VERSION = 'real-fact-extractor-v12';
+const FACT_EXTRACTOR_VERSION = 'real-fact-extractor-v13';
 const SAMPLE_MANIFEST_VERSION = 2;
 const JUDGE_PROMPT_VERSION = 'judge-prompt-v11';
 const CONTINUATION_PROMPT_VERSION = 'continuation-prompt-v6';
@@ -1554,7 +1556,10 @@ function extractObjectiveReportFacts(segmentEntries, prefix, { objectiveText } =
     budget += sentence.length;
   }
   if (!picked.length) return [];
-  return [fact(`${prefix}-objective-report`, compactLine(picked.join(' '), 760), 'important', 'decision', [], evidence(report))];
+  return [{
+    ...fact(`${prefix}-objective-report`, compactLine(picked.join(' '), 760), 'important', 'decision', [], evidence(report)),
+    sourceQuotes: picked.map((text) => ({ text, evidence: evidence(report) })),
+  }];
 }
 
 function commandFromText(text) {
@@ -2326,6 +2331,11 @@ function extractRealFacts(entries, prefix) {
       ? `Objective not verified complete in its own task segment; latest objective report: ${objectiveReportFact.text}`
       : `Objective not verified complete in its own task segment; objective: ${compactLine(objective.text, 200)}`, 'important', 'decision', [], evidence(objective))
     : null;
+  if (pendingObjectiveFact) {
+    pendingObjectiveFact.generatedFromEvidence = true;
+    pendingObjectiveFact.sourceQuotes = objectiveReportFact?.sourceQuotes
+      ?? [{ text: compactLine(objective.text, 200), evidence: evidence(objective) }];
+  }
   const failureChains = extractFailureChains(scopedEntries, prefix);
   const toolFailureFacts = extractToolFailureFacts(scopedEntries, prefix);
   const highValueBlockerFacts = extractHighValueBlockerFacts(scopedEntries, prefix);
@@ -3657,13 +3667,17 @@ const PROVIDER_REQUEST_DELAY_MS = Number(process.env.COMPACTION_REQUEST_DELAY_MS
 // live acceptance run forever (observed: R10 stalled silently for 30+ min).
 const PROVIDER_REQUEST_TIMEOUT_MS = Number(process.env.COMPACTION_REQUEST_TIMEOUT_MS ?? 10 * 60 * 1000);
 
-async function fetchDeepSeekJson({ baseUrl, apiKey, model, system, user, sampleId, purpose }) {
+export async function fetchCompactionJson({ baseUrl, apiKey, model, system, user, sampleId, purpose }) {
+  const apiFormat = process.env.COMPACTION_API_FORMAT || 'chat-completions';
+  if (!['chat-completions', 'responses'].includes(apiFormat)) throw new Error(`Unsupported compaction API format: ${apiFormat}`);
+  const responses = apiFormat === 'responses';
   let lastError;
   if (PROVIDER_REQUEST_DELAY_MS > 0) await delay(PROVIDER_REQUEST_DELAY_MS);
   for (let attempt = 1; attempt <= PROVIDER_MAX_ATTEMPTS; attempt += 1) {
+    let requestTimeout;
     try {
       const abortController = new AbortController();
-      const requestTimeout = setTimeout(() => abortController.abort(), PROVIDER_REQUEST_TIMEOUT_MS);
+      requestTimeout = setTimeout(() => abortController.abort(), PROVIDER_REQUEST_TIMEOUT_MS);
       // Provider-specific request shaping (env-only, never persisted):
       // - COMPACTION_EXTRA_HEADERS: JSON object merged into request headers
       //   (e.g. client-identification headers some gateways require).
@@ -3678,7 +3692,9 @@ async function fetchDeepSeekJson({ baseUrl, apiKey, model, system, user, sampleI
           extraHeaders = {};
         }
       }
-      const response = await fetch(`${baseUrl}/chat/completions`, {
+      const messages = [{ role: 'system', content: system }, { role: 'user', content: user }];
+      const jsonFormat = process.env.COMPACTION_OMIT_RESPONSE_FORMAT !== '1';
+      const response = await fetch(`${baseUrl}/${responses ? 'responses' : 'chat/completions'}`, {
         method: 'POST',
         signal: abortController.signal,
         headers: {
@@ -3686,25 +3702,28 @@ async function fetchDeepSeekJson({ baseUrl, apiKey, model, system, user, sampleI
           'content-type': 'application/json',
           ...extraHeaders,
         },
-        body: JSON.stringify({
+        body: JSON.stringify(responses ? {
+          model,
+          input: messages,
+          max_output_tokens: 16000,
+          store: false,
+          ...(jsonFormat ? { text: { format: { type: 'json_object' } } } : {}),
+        } : {
           model,
           temperature: 0,
           max_tokens: 16000,
-          ...(process.env.COMPACTION_OMIT_RESPONSE_FORMAT === '1' ? {} : { response_format: { type: 'json_object' } }),
-          messages: [
-            { role: 'system', content: system },
-            { role: 'user', content: user },
-          ],
+          ...(jsonFormat ? { response_format: { type: 'json_object' } } : {}),
+          messages,
         }),
       });
-      clearTimeout(requestTimeout);
       if (!response.ok) {
         const retryable = response.status === 429 || response.status >= 500;
-        const errorBody = await response.text().catch(() => '');
+        const rawErrorBody = await response.text().catch(() => '');
+        const errorBody = apiKey ? rawErrorBody.replaceAll(apiKey, '[redacted]') : rawErrorBody;
         if (response.status === 429) {
           console.error(`[provider] ${purpose} ${sampleId} HTTP 429 attempt ${attempt}: ${errorBody.slice(0, 240)}`);
         }
-        lastError = new Error(`DeepSeek ${purpose} HTTP ${response.status} for ${sampleId}${errorBody ? ` (${errorBody.slice(0, 160)})` : ''}`);
+        lastError = new Error(`Compaction ${purpose} HTTP ${response.status} for ${sampleId}${errorBody ? ` (${errorBody.slice(0, 160)})` : ''}`);
         // 429s on rate-limited/free tiers need patient backoff. When the
         // provider states when the window resets (X-RateLimit-Reset epoch or
         // Retry-After), wait for the reset instead of burning the retry ladder
@@ -3730,9 +3749,16 @@ async function fetchDeepSeekJson({ baseUrl, apiKey, model, system, user, sampleI
         throw lastError;
       }
       const data = await response.json();
+      if (responses) {
+        if (data.status !== 'completed') throw new Error(`Compaction ${purpose} response is ${data.status ?? 'missing status'} for ${sampleId}`);
+        const parts = (data.output ?? []).filter((item) => item.type === 'message').flatMap((item) => item.content ?? []);
+        if (parts.some((part) => part.type === 'refusal')) throw new Error(`Compaction ${purpose} was refused for ${sampleId}`);
+        const text = parts.filter((part) => part.type === 'output_text' && typeof part.text === 'string').map((part) => part.text).join('');
+        data.choices = [{ message: { content: text } }];
+      }
       const content = data?.choices?.[0]?.message?.content;
       if (typeof content !== 'string' || !content.trim()) {
-        lastError = new Error(`DeepSeek ${purpose} returned empty content for ${sampleId}`);
+        lastError = new Error(`Compaction ${purpose} returned empty content for ${sampleId}`);
         if (attempt < PROVIDER_MAX_ATTEMPTS) {
           await delay(750 * attempt);
           continue;
@@ -3757,6 +3783,8 @@ async function fetchDeepSeekJson({ baseUrl, apiKey, model, system, user, sampleI
         continue;
       }
       throw lastError;
+    } finally {
+      clearTimeout(requestTimeout);
     }
   }
   throw lastError;
@@ -3828,6 +3856,7 @@ function judgeCacheKey(sample, { provider, model, baseUrl }) {
     provider,
     model,
     baseUrl,
+    apiFormat: process.env.COMPACTION_API_FORMAT || 'chat-completions',
     sampleId: sample.id,
     expectedHash: hashJson([...sample.expected, ...sample.edited].map((item) => ({
       text: item.text,
@@ -3863,7 +3892,7 @@ async function runDeepSeekJudge(samples, { maxSamples, model, cache }) {
       // never recorded as an all-false / score-0 verdict.
       let result;
       for (let judgeAttempt = 1; judgeAttempt <= PROVIDER_MAX_ATTEMPTS; judgeAttempt += 1) {
-        const data = await fetchDeepSeekJson({
+        const data = await fetchCompactionJson({
           baseUrl,
           apiKey,
           model,
@@ -4069,6 +4098,7 @@ function schemaFreeCacheKey(sample, { provider, model, baseUrl }) {
     provider,
     model,
     baseUrl,
+    apiFormat: process.env.COMPACTION_API_FORMAT || 'chat-completions',
     sampleId: sample.id,
     transcriptHash: sha256(sample.originalTranscript),
     summaryHash: sha256(sample.compressedSummary),
@@ -4102,7 +4132,7 @@ async function runDeepSeekSchemaFree(samples, { requested, maxSamples, model, ca
       if (!apiKey) {
         throw new Error('COMPACTION_API_KEY is not set in the environment and the schema-free judge cache is incomplete.');
       }
-      const data = await fetchDeepSeekJson({
+      const data = await fetchCompactionJson({
         baseUrl,
         apiKey,
         model,
@@ -4229,6 +4259,7 @@ function criticCacheKey(sample, { provider, model, baseUrl }) {
     provider,
     model,
     baseUrl,
+    apiFormat: process.env.COMPACTION_API_FORMAT || 'chat-completions',
     sampleId: sample.id,
     transcriptHash: sha256(sample.historyAfterResend),
     summaryHash: sha256(sample.compressedSummary),
@@ -4255,7 +4286,7 @@ async function runDeepSeekCritic(samples, { maxSamples, model, cache }) {
       if (!apiKey) {
         throw new Error('COMPACTION_API_KEY is not set in the environment and the critic cache is incomplete.');
       }
-      const data = await fetchDeepSeekJson({
+      const data = await fetchCompactionJson({
         baseUrl,
         apiKey,
         model,
@@ -4385,6 +4416,7 @@ function continuationCacheKey(sample, { provider, model, baseUrl }) {
     provider,
     model,
     baseUrl,
+    apiFormat: process.env.COMPACTION_API_FORMAT || 'chat-completions',
     sampleId: sample.id,
     scenarioHash: hashJson(sample.continuationScenario),
     staleHash: hashJson(sample.stale.map((item) => item.text)),
@@ -4414,7 +4446,7 @@ async function runDeepSeekContinuation(samples, { maxSamples, model, cache }) {
         throw new Error('COMPACTION_API_KEY is not set in the environment and the LLM continuation cache is incomplete.');
       }
       const fetchContinuationOnce = async (systemSuffix = '') => {
-        const data = await fetchDeepSeekJson({
+        const data = await fetchCompactionJson({
           baseUrl,
           apiKey,
           model,
@@ -5215,7 +5247,13 @@ async function main() {
   phaseStarted = Date.now();
   for (const sample of samples) {
     const expectedAfterResend = [...sample.expected, ...sample.edited];
-    const historyExpectedAfterResend = expectedAfterResend.filter((item) => !item.generatedFromEvidence);
+    // Stitched quotes and derived control text need not occur as one literal
+    // sentence in history. Check every original quote; L1 still checks the full fact.
+    const historyExpectedAfterResend = expectedAfterResend.flatMap((item) => (
+      item.sourceQuotes?.length
+        ? item.sourceQuotes.map((quote, index) => ({ ...item, ...quote, id: `${item.id}:quote-${index + 1}` }))
+        : item.generatedFromEvidence ? [] : [item]
+    ));
     const historyScore = evaluateFactSet({
       haystack: sample.historyAfterResend,
       expected: historyExpectedAfterResend,
@@ -5508,6 +5546,7 @@ async function main() {
         continuation: continuationModel,
       },
       runParameters: {
+        apiFormat: process.env.COMPACTION_API_FORMAT || 'chat-completions',
         target,
         suite,
         sampleSource,
@@ -5692,7 +5731,10 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+if (process.argv[1] && existsSync(process.argv[1])
+  && realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1])) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

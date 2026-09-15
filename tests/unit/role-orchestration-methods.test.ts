@@ -183,7 +183,7 @@ describe('roles.* / teams.* handlers', () => {
     const roles = (res?.payload as { roles: { name: string; origin?: string }[] }).roles;
     const reviewer = roles.find((r) => r.name === 'reviewer');
     expect(reviewer?.origin).toBe('config');
-    expect((reviewer as any)?.displayName).toBe('Custom Reviewer');
+    expect((reviewer as { displayName?: string } | undefined)?.displayName).toBe('Custom Reviewer');
   });
 
   it('roles.get surfaces origin field', async () => {

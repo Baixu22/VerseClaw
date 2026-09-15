@@ -1110,7 +1110,10 @@ function extractObjectiveReportFacts(segmentEntries, prefix, { objectiveText } =
     budget += sentence.length;
   }
   if (!picked.length) return [];
-  return [fact(`${prefix}-objective-report`, compactLine(picked.join(' '), 760), 'important', 'decision', [], evidence(report))];
+  return [{
+    ...fact(`${prefix}-objective-report`, compactLine(picked.join(' '), 760), 'important', 'decision', [], evidence(report)),
+    sourceQuotes: picked.map((text) => ({ text, evidence: evidence(report) })),
+  }];
 }
 
 function commandFromText(text) {
@@ -1886,6 +1889,11 @@ function extractRealFacts(entries, prefix) {
       ? `Objective not verified complete in its own task segment; latest objective report: ${objectiveReportFact.text}`
       : `Objective not verified complete in its own task segment; objective: ${compactLine(objective.text, 200)}`, 'important', 'decision', [], evidence(objective))
     : null;
+  if (pendingObjectiveFact) {
+    pendingObjectiveFact.generatedFromEvidence = true;
+    pendingObjectiveFact.sourceQuotes = objectiveReportFact?.sourceQuotes
+      ?? [{ text: compactLine(objective.text, 200), evidence: evidence(objective) }];
+  }
   const failureChains = extractFailureChains(scopedEntries, prefix);
   const toolFailureFacts = extractToolFailureFacts(scopedEntries, prefix);
   const highValueBlockerFacts = extractHighValueBlockerFacts(scopedEntries, prefix);

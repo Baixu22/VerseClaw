@@ -33,7 +33,6 @@ import { Shimmer } from '@/components/ai-elements/shimmer';
 import { NumberRoll } from '@/components/assistant-ui/number-roll';
 import { AttachmentName, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE, FileIcon, formatFileSize } from '@/components/assistant-ui/attachment';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
-import { useUiVersion } from '@/components/layout/ui-overlay-context';
 import type { AgentSummary } from '@/types/agent';
 
 import { formatTimestamp, isUnresolvableImageUrl } from './message-utils';
@@ -1105,15 +1104,11 @@ function UserMessageBubble({
 }: {
   text: string;
 }) {
-  const uiVersion = useUiVersion();
-  const isUiV2 = uiVersion === 'v2';
   return (
     <div
       className={cn(
         'relative min-w-0 overflow-hidden rounded-2xl px-3 py-2 text-left text-foreground transition-colors duration-150',
-        isUiV2
-          ? 'border border-primary/10 bg-primary/[0.07] backdrop-blur-sm dark:border-primary/15 dark:bg-primary/10'
-          : 'bg-foreground/[0.05]',
+        'border border-primary/10 bg-primary/[0.07] backdrop-blur-sm dark:border-primary/15 dark:bg-primary/10',
       )}
       data-testid="chat-user-message-bubble"
     >

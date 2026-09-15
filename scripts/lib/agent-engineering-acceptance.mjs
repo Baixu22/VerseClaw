@@ -30,10 +30,11 @@ const REPOSITORY_ROOT = resolve(dirname(THIS_FILE), '../..');
 const DEFAULT_OUTPUT_ROOT = join(REPOSITORY_ROOT, 'artifacts', 'agent-engineering-acceptance');
 const DEFAULT_TIMEOUT_MS = 30 * 60 * 1000;
 const MAX_OUTPUT_BYTES = 64 * 1024 * 1024;
-const ROOT_UNIT_EXPECTED_SKIPS = 53;
+export const ROOT_UNIT_EXPECTED_SKIPS = 53;
 const RUNTIME_UNIT_EXPECTED_SKIPS = 0;
 const SAFE_NETWORK_POLICIES = new Set(['none', 'isolated']);
 const REQUIRED_LOCK_FILES = ['package.json', 'pnpm-lock.yaml', '.npmrc'];
+const GATE_POLICY_FILES = ['harness/src/profiles.mjs'];
 const CANDIDATE_BOUND_GATE_ARTIFACTS = Object.freeze({
   'comms-replay': [{
     kind: 'comms-replay-metrics',
@@ -287,11 +288,11 @@ function assertBaseRef(root, since) {
   if (rev.status !== 0 || !/^[a-f0-9]{40}$/u.test(rev.stdout)) {
     throw new Error(`invalid or missing base ref: ${since}`);
   }
-  const mergeBase = runGit(root, ['merge-base', '--is-ancestor', base, 'HEAD'], { allowFailure: true });
+  const mergeBase = runGit(root, ['merge-base', '--is-ancestor', rev.stdout, 'HEAD'], { allowFailure: true });
   if (mergeBase.status !== 0) {
     throw new Error(`base ref is not an ancestor of HEAD: ${since}`);
   }
-  return base;
+  return rev.stdout;
 }
 
 function gitChangedPaths(root, since) {
@@ -550,11 +551,14 @@ export function createAcceptancePlan(options = {}) {
   } else if (typeof options.since === 'string' && options.since.trim() !== '') {
     baseRef = assertBaseRef(root, options.since);
   }
+  if (baseRef && spec.data?.diffBase && baseRef !== assertBaseRef(root, String(spec.data.diffBase))) {
+    throw new Error('comparison base must match the candidate task spec diffBase');
+  }
   const changedPaths = resolveChangedPaths(root, options);
   const coverage = inferCoverage(changedPaths);
   const profiles = inferProfiles(spec, coverage, mode);
   const rulePaths = collectRulePaths(spec);
-  const sourceFiles = [specPath, ...rulePaths, ...REQUIRED_LOCK_FILES];
+  const sourceFiles = [specPath, ...rulePaths, ...REQUIRED_LOCK_FILES, ...GATE_POLICY_FILES];
   const source = sourceFiles.map((path) => readRelativeFile(root, path, identity.commit));
   const missingSource = source.filter((entry) => !entry.exists).map((entry) => entry.path);
   const taskId = String(spec.data?.id ?? '');
@@ -564,6 +568,7 @@ export function createAcceptancePlan(options = {}) {
   const requiredTests = toArray(spec.data?.requiredTests).map(String).filter((value) => value.trim().length > 0);
   const gates = buildGates(profiles, { specPath, taskId, baseRef });
   for (const [index, commandLine] of requiredTests.entries()) {
+    const testExpectation = inferRequiredTestExpectation(commandLine);
     gates.push({
       id: `required-test-${index + 1}`,
       name: `Required test ${index + 1} (spec requiredTests)`,
@@ -579,7 +584,13 @@ export function createAcceptancePlan(options = {}) {
       timeoutMs: 180 * 60 * 1000,
       kind: 'required-test',
       safety: { network: 'none', productionEffects: false, humanEvidence: false },
+      ...(testExpectation ? { testExpectation } : {}),
     });
+  }
+  for (const gate of gates) {
+    if (gate.kind === 'provision-verseshell') {
+      gate.copyInputs = collectProvisionCopyInputs(root, gate.args);
+    }
   }
   const manifest = {
     schema: ACCEPTANCE_SCHEMA,
@@ -609,6 +620,7 @@ export function createAcceptancePlan(options = {}) {
       files: source,
       missing: missingSource,
       lockFiles: source.filter((entry) => REQUIRED_LOCK_FILES.includes(entry.path)),
+      provisionCopies: gates.flatMap((gate) => gate.copyInputs ?? []),
       identityPolicy: 'git-blob-v1',
       eolPolicy: 'git-blob',
     },
@@ -699,12 +711,40 @@ export function validateAcceptanceManifest(manifest, options = {}) {
         errors.push(`${gate.id}: test gate must declare a non-negative fixed expectedSkips budget`);
       }
     }
-    for (const arg of gate.args ?? []) {
+    for (const arg of gateCommandTokens(gate)) {
       if (FORBIDDEN_ARGUMENTS.some((pattern) => pattern.test(String(arg)))) {
         errors.push(`${gate.id}: forbidden argument ${String(arg)}`);
       }
       if (String(arg) === '--no-diff') {
         errors.push(`${gate.id}: --no-diff is forbidden for formal acceptance`);
+      }
+    }
+    if (gate.kind === 'required-test' && isCountableTestCommand(gate.command, gate.args, gate.commandLine)) {
+      if (!gate.testExpectation) {
+        errors.push(`${gate.id}: countable required-test gate must declare testExpectation`);
+      }
+    }
+    if (gate.kind === 'provision-verseshell') {
+      const copies = extractCopyPaths(gate.args ?? []);
+      const inputs = Array.isArray(gate.copyInputs) ? gate.copyInputs : [];
+      if (inputs.length !== copies.length) {
+        errors.push(`${gate.id}: provision copyInputs must map 1:1 to --copy paths`);
+      }
+      for (const [index, copyPath] of copies.entries()) {
+        const input = inputs[index];
+        if (!copyPath || !input || input.path !== copyPath) {
+          errors.push(`${gate.id}: provision copyInputs[${index}] path mismatch`);
+          continue;
+        }
+        if (
+          input.exists !== true
+          || !Number.isInteger(input.bytes)
+          || input.bytes < 0
+          || typeof input.sha256 !== 'string'
+          || !/^[a-f0-9]{64}$/u.test(input.sha256)
+        ) {
+          errors.push(`${gate.id}: provision copy ${copyPath} must lock sha256 and bytes`);
+        }
       }
     }
     const name = commandName(gate.command);
@@ -721,6 +761,64 @@ export function validateAcceptanceManifest(manifest, options = {}) {
   }
   if (options.root) {
     try {
+      if (options.requireFull && !manifest.baseRef) {
+        errors.push('formal acceptance requires a comparison base, not only explicit changed paths');
+      }
+      const expectedPlan = createAcceptancePlan({
+        root: options.root,
+        specPath: manifest.task.specPath,
+        since: manifest.baseRef ?? undefined,
+        // Explicit paths remain useful for diagnostic plans. A formal plan
+        // always re-reads its actual diff rather than trusting this list.
+        changedPaths: manifest.baseRef ? undefined : manifest.changedPaths,
+        mode: manifest.executionMode,
+        runId: manifest.runId,
+        createdAt: manifest.createdAt,
+      });
+      if (stableJson(expectedPlan.task.requiredTests) !== stableJson(declaredRequiredTests)) {
+        errors.push('manifest requiredTests must match the candidate task spec requiredTests');
+      }
+      for (const field of ['task', 'baseRef', 'changedPaths', 'coverage', 'requiredProfiles', 'safety']) {
+        if (stableJson(manifest[field]) !== stableJson(expectedPlan[field])) {
+          errors.push(`manifest ${field} must match the candidate-derived plan`);
+        }
+      }
+      if (stableJson(manifest.gates) !== stableJson(expectedPlan.gates)) {
+        errors.push('manifest gates must match the candidate-derived gate contracts');
+      }
+      // Git blobs, not checkout bytes, are authoritative for tracked inputs:
+      // an LF/CRLF checkout must not invalidate an otherwise identical plan.
+      const inputIdentities = (files) => (files ?? []).map(({ path, exists, gitBlob }) => ({ path, exists, gitBlob }));
+      for (const field of ['files', 'lockFiles']) {
+        if (stableJson(inputIdentities(manifest.source?.[field])) !== stableJson(inputIdentities(expectedPlan.source[field]))) {
+          errors.push(`manifest source.${field} must match the candidate-derived inputs`);
+        }
+      }
+      if (stableJson(manifest.source?.provisionCopies) !== stableJson(expectedPlan.source.provisionCopies)) {
+        errors.push('manifest source.provisionCopies must match the candidate-derived inputs');
+      }
+      for (const gate of manifest.gates ?? []) {
+        if (gate?.kind !== 'provision-verseshell') continue;
+        const actual = collectProvisionCopyInputs(options.root, gate.args ?? []);
+        const expected = Array.isArray(gate.copyInputs) ? gate.copyInputs : [];
+        if (actual.length !== expected.length) {
+          errors.push(`${gate.id}: provision copyInputs do not match source --copy paths`);
+          continue;
+        }
+        for (const [index, input] of expected.entries()) {
+          const current = actual[index];
+          if (
+            !input
+            || !current
+            || current.path !== input.path
+            || current.exists !== true
+            || current.bytes !== input.bytes
+            || current.sha256 !== input.sha256
+          ) {
+            errors.push(`${gate.id}: provision copy digest mismatch: ${input?.path ?? current?.path ?? index}`);
+          }
+        }
+      }
       const identity = repositoryIdentity(options.root);
       if (options.requireClean && !identity.clean) errors.push('source worktree is dirty');
       if (identity.commit !== manifest.candidate.commit) errors.push('candidate commit does not match source HEAD');
@@ -865,24 +963,146 @@ function makeEnvironment(options = {}) {
   return env;
 }
 
-function largestCount(text, label) {
-  const matches = [...text.matchAll(new RegExp(`\\b(\\d+)\\s+${label}\\b`, 'giu'))]
-    .map((match) => Number(match[1]))
-    .filter(Number.isSafeInteger);
-  return matches.length > 0 ? Math.max(...matches) : null;
+function extractCopyPaths(args = []) {
+  const paths = [];
+  for (let index = 0; index < args.length; index += 1) {
+    if (String(args[index]) !== '--copy') continue;
+    const value = args[index + 1];
+    index += 1;
+    paths.push(typeof value === 'string' ? normalizePath(value) : null);
+  }
+  return paths;
+}
+
+function collectProvisionCopyInputs(root, args) {
+  return extractCopyPaths(args).map((relativePath) => {
+    if (!relativePath) return { path: null, exists: false, bytes: null, sha256: null };
+    const fullPath = resolve(root, relativePath);
+    if (!pathInside(fullPath, root)) {
+      return { path: relativePath, exists: false, bytes: null, sha256: null };
+    }
+    if (!existsSync(fullPath) || !statSync(fullPath).isFile()) {
+      return { path: relativePath, exists: false, bytes: null, sha256: null };
+    }
+    const bytes = readFileSync(fullPath);
+    return {
+      path: relativePath,
+      exists: true,
+      bytes: bytes.length,
+      sha256: sha256(bytes),
+    };
+  });
+}
+
+function testCommandKinds(command, args = [], commandLine = '') {
+  const line = String(commandLine ?? '').trim();
+  const words = (line
+    ? line.match(/"(?:\\.|[^"\\])*"|'[^']*'|[^\s;&|]+/gu) ?? []
+    : [command, ...args].filter(Boolean))
+    .map((word) => String(word).replace(/^["']|["']$/gu, '').replaceAll('\\', '/'));
+  const kinds = [];
+  const isTestFile = (word) => /\.(?:test|spec)\.(?:ts|tsx|js|mjs|cjs)$/iu.test(word ?? '');
+  for (const [index, word] of words.entries()) {
+    const executable = commandName(word).replace(/\.(?:cmd|exe)$/iu, '');
+    if (executable === 'vitest' || (executable === 'playwright' && words[index + 1] === 'test')) {
+      kinds.push('test');
+    }
+    if (executable === 'node') {
+      let next = index + 1;
+      while (words[next]?.startsWith('-')) {
+        const option = words[next].split('=', 1)[0];
+        if (option === '--test') kinds.push('test');
+        next += ['--import', '--require', '-r', '--loader', '--conditions', '-C', '--eval', '-e', '--print', '-p'].includes(option)
+          && !words[next].includes('=') ? 2 : 1;
+      }
+      const entry = commandName(words[next]);
+      if (/^(?:run-)?vitest(?:\.mjs)?$/iu.test(entry) || isTestFile(entry)) kinds.push('test');
+    }
+    if (['pnpm', 'npm', 'yarn'].includes(executable)) {
+      let next = index + 1;
+      let selectedWorkspace = false;
+      while (words[next]?.startsWith('-')) {
+        const option = words[next].split('=', 1)[0];
+        const selectsWorkspace = ['--dir', '-C', '--prefix', '--filter', '-F', '--workspace'].includes(option)
+          || (executable === 'npm' && option === '-w');
+        const hasValue = selectsWorkspace || ['--reporter', '--loglevel'].includes(option);
+        selectedWorkspace ||= selectsWorkspace;
+        next += hasValue && !words[next].includes('=') ? 2 : 1;
+      }
+      if (words[next] === 'run') next += 1;
+      if (/^test(?::|$)/u.test(words[next] ?? '')) {
+        kinds.push(executable === 'pnpm' && words[next] === 'test' && !selectedWorkspace ? 'root-test' : 'test');
+      }
+    }
+  }
+  // A bare spec path is task metadata. A lint/diff argument naming that path
+  // must not turn the enclosing non-test command into a test runner.
+  if (words.length === 1 && isTestFile(words[0])) kinds.push('test');
+  return kinds;
+}
+
+export function isCountableTestCommand(command, args = [], commandLine = '') {
+  return testCommandKinds(command, args, commandLine).length > 0;
+}
+
+function inferredSkipBudget(command, args = [], commandLine = '') {
+  return testCommandKinds(command, args, commandLine).includes('root-test') ? ROOT_UNIT_EXPECTED_SKIPS : 0;
+}
+
+function inferRequiredTestExpectation(commandLine) {
+  if (!isCountableTestCommand(null, [], commandLine)) return null;
+  return { requireCounts: true, expectedSkips: inferredSkipBudget(null, [], commandLine) };
+}
+
+function gateCommandTokens(gate) {
+  const tokens = [...(gate.args ?? [])].map((value) => String(value));
+  if (typeof gate.commandLine === 'string' && gate.commandLine.trim()) {
+    tokens.push(...gate.commandLine.trim().split(/[\s"';&|]+/u));
+  }
+  return tokens.map((token) => token.split('=', 1)[0]);
 }
 
 export function parseTestCounts(stdout, stderr = '') {
   const text = `${String(stdout ?? '')}\n${String(stderr ?? '')}`.replace(/\u001B\[[0-?]*[ -/]*[@-~]/gu, '');
-  const passed = largestCount(text, 'passed');
-  const failed = largestCount(text, 'failed') ?? 0;
-  const skipped = largestCount(text, 'skipped') ?? 0;
-  if (passed === null) return null;
-  const totals = [...text.matchAll(/\((\d+)\)/gu)]
-    .map((match) => Number(match[1]))
-    .filter(Number.isSafeInteger);
-  const total = totals.length > 0 ? Math.max(...totals) : passed + failed + skipped;
-  return { passed, failed, skipped, total, source: 'parsed' };
+  const segments = [];
+  const statuses = {
+    passed: 'passed', pass: 'passed', flaky: 'passed',
+    failed: 'failed', fail: 'failed', interrupted: 'failed', cancelled: 'failed',
+    skipped: 'skipped', todo: 'skipped', 'did not run': 'skipped',
+  };
+  for (const line of text.split(/\r?\n/u)) {
+    const row = { passed: 0, failed: 0, skipped: 0 };
+    if (/^\s*Tests\s+\d+/iu.test(line)) {
+      const counts = [...line.matchAll(/\b(\d+)\s+(passed|failed|skipped|todo)\b/giu)];
+      if (!counts.length) return null;
+      for (const [, count, status] of counts) row[statuses[status.toLowerCase()]] += Number(count);
+      const declaredTotal = line.match(/\((\d+)\)\s*$/u);
+      if (declaredTotal && Number(declaredTotal[1]) !== row.passed + row.failed + row.skipped) return null;
+    } else {
+      // Playwright prints one status per line; Node's spec/TAP reporters use
+      // "ℹ pass 2" / "# pass 2". Test-file summaries are deliberately excluded.
+      const playwright = line.match(/^\s*(\d+)\s+(passed|failed|skipped|flaky|interrupted|did not run)(?:\s+\([^)]*\))?\s*$/iu);
+      const node = line.match(/^\s*(?:#|ℹ)\s+(pass|fail|cancelled|skipped|todo)\s+(\d+)\s*$/iu);
+      if (!playwright && !node) continue;
+      const [, count, status] = playwright ?? [null, node[2], node[1]];
+      row[statuses[status.toLowerCase()]] = Number(count);
+    }
+    if (!Object.values(row).every(Number.isSafeInteger)) return null;
+    segments.push(row);
+  }
+  if (segments.length === 0) return null;
+  const passed = segments.reduce((sum, row) => sum + row.passed, 0);
+  const failed = segments.reduce((sum, row) => sum + row.failed, 0);
+  const skipped = segments.reduce((sum, row) => sum + row.skipped, 0);
+  if (![passed, failed, skipped, passed + failed + skipped].every(Number.isSafeInteger)) return null;
+  return {
+    passed,
+    failed,
+    skipped,
+    total: passed + failed + skipped,
+    source: 'parsed',
+    segments: segments.length,
+  };
 }
 
 function pnpmGateSpawnSpec(command, args) {
@@ -987,6 +1207,10 @@ function writeGateLogs(outputDir, gateResult) {
   };
 }
 
+function tf0009TestCounts(report) {
+  return { passed: report.runs.length, failed: 0, skipped: 0, total: report.runs.length, source: 'adapter-report' };
+}
+
 function runTf0009Adapter(gate, options = {}) {
   const result = spawnGate(gate, options);
   if (result.status !== 'pass') return result;
@@ -1024,7 +1248,7 @@ function runTf0009Adapter(gate, options = {}) {
     humanEquivalent: false,
     liveEvidence: false,
   };
-  result.testCounts = { passed: 30, failed: 0, skipped: 0, total: 30, source: 'adapter-report' };
+  result.testCounts = tf0009TestCounts(report);
   return result;
 }
 
@@ -1080,7 +1304,7 @@ function runVerseShellBinaryProvision(gate, options = {}) {
     if (process.env.VERSESHELL_SOURCE_MIRROR) {
       rebuildArgs.push('--source-mirror', process.env.VERSESHELL_SOURCE_MIRROR);
     }
-    const rebuild = spawnSync(process.execPath, rebuildArgs, {
+    const rebuild = (options.spawn ?? spawnSync)(process.execPath, rebuildArgs, {
       cwd: worktree,
       encoding: 'utf8',
       env: { ...process.env, ...(options.env ?? {}) },
@@ -1115,17 +1339,34 @@ function runVerseShellBinaryProvision(gate, options = {}) {
     const copied = [];
     const sourceRoot = options.sourceRoot;
     if (!sourceRoot) return fail('provision copy requires sourceRoot and cwd');
-    const copyIndex = argv.indexOf('--copy');
-    const copyRelativePaths = copyIndex >= 0
-      ? argv.slice(copyIndex + 1).filter((value) => !value.startsWith('--'))
-      : [];
-    for (const copyRelative of copyRelativePaths) {
+    const expectedCopies = Array.isArray(gate.copyInputs) ? gate.copyInputs : [];
+    const copyRelativePaths = extractCopyPaths(argv);
+    if (expectedCopies.length !== copyRelativePaths.length) {
+      return fail('provision copyInputs must map 1:1 to --copy paths');
+    }
+    for (const [index, copyRelative] of copyRelativePaths.entries()) {
+      const expected = expectedCopies[index];
+      if (!copyRelative || !expected || expected.path !== copyRelative || expected.exists !== true) {
+        return fail(`provision copy is not locked: ${copyRelative ?? index}`);
+      }
       const sourcePath = resolve(sourceRoot, copyRelative);
-      if (!existsSync(sourcePath)) return fail(`provision source missing: ${copyRelative}`);
+      if (!existsSync(sourcePath) || !statSync(sourcePath).isFile()) {
+        return fail(`provision source missing: ${copyRelative}`);
+      }
+      const sourceBytes = readFileSync(sourcePath);
+      const sourceDigest = sha256(sourceBytes);
+      if (sourceDigest !== expected.sha256 || sourceBytes.length !== expected.bytes) {
+        return fail(`provision source digest mismatch: ${copyRelative}`);
+      }
       const destPath = resolve(worktree, copyRelative);
       mkdirSync(dirname(destPath), { recursive: true });
       copyFileSync(sourcePath, destPath);
-      copied.push(copyRelative);
+      const destBytes = readFileSync(destPath);
+      const destDigest = sha256(destBytes);
+      if (destDigest !== expected.sha256 || destBytes.length !== expected.bytes) {
+        return fail(`provision destination digest mismatch: ${copyRelative}`);
+      }
+      copied.push(`${copyRelative} (${destBytes.length} bytes, sha256 ${destDigest.slice(0, 16)}…)`);
     }
     if (copied.length > 0) stdout += `copied ${copied.join(', ')} from source repository\n`;
     if (argv.includes('--electron')) {
@@ -1259,8 +1500,9 @@ function prefixGateEvidence(gate, prefix) {
   };
 }
 
-function verifyLogs(outputDir, result) {
+function verifyLogs(outputDir, result, gate) {
   const errors = [];
+  const logText = {};
   for (const stream of ['stdout', 'stderr']) {
     const pathValue = result.logs?.[stream];
     if (!pathValue) {
@@ -1269,7 +1511,9 @@ function verifyLogs(outputDir, result) {
     }
     try {
       const { full } = safeRelativeOutputPath(outputDir, pathValue);
-      const actual = sha256File(full);
+      const bytes = readFileSync(full);
+      const actual = sha256(bytes);
+      logText[stream] = bytes.toString('utf8');
       const declared = result.logs[`${stream}Sha256`];
       if (typeof declared !== 'string' || !/^[a-f0-9]{64}$/u.test(declared) || !equalDigest(actual, declared)) {
         errors.push(`${result.id}: ${stream} log digest mismatch`);
@@ -1279,6 +1523,15 @@ function verifyLogs(outputDir, result) {
       }
     } catch (error) {
       errors.push(`${result.id}: ${stream} log unavailable (${error.message})`);
+    }
+  }
+  // Adapter counts are checked against their controlled JSON artifact below;
+  // only the candidate-derived gate kind can select that evidence source.
+  const usesAdapterCounts = gate.kind === 'adapter' && gate.adapter === TF0009_ADAPTER_ID;
+  if (errors.length === 0 && gate.testExpectation?.requireCounts && !usesAdapterCounts) {
+    const counts = parseTestCounts(logText.stdout, logText.stderr);
+    if (!counts || stableJson(counts) !== stableJson(result.testCounts)) {
+      errors.push(`${result.id}: persisted log test counts do not match the report`);
     }
   }
   return errors;
@@ -1510,13 +1763,10 @@ export function runAcceptance(manifest, options = {}) {
     checkout = createDetachedWorktree(root, { commit: manifest.candidate.commit });
     const workspace = checkout.path;
     for (const gate of manifest.gates) {
-      // Required-test gates are spec-declared command lines designed to run in
-      // the source repository (their --manifest/--output-dir paths are
-      // repo-relative), so execute them from the source root, not the detached
-      // worktree which lacks gitignored acceptance artifacts. Cap their Node
-      // heap so a nested acceptance run cannot compete with the outer run's
-      // detached-worktree processes for memory.
-      const gateCwd = gate.kind === 'required-test' ? root : workspace;
+      // R1: every required gate, including spec-declared required-test
+      // command lines, reruns in this role's detached worktree. Nested
+      // acceptance still gets a heap cap so it cannot starve the outer run.
+      const gateCwd = workspace;
       const gateEnv =
         gate.kind === 'required-test'
           ? { ...executionEnv, NODE_OPTIONS: '--max-old-space-size=4096' }
@@ -1627,6 +1877,31 @@ function verifyControlledArtifacts(outputDir, manifest, report, label) {
   if (!Array.isArray(report?.controlledArtifacts)) {
     errors.push(`${label} controlledArtifacts must be an array`);
     return errors;
+  }
+  for (const gate of manifest.gates ?? []) {
+    if (gate.kind !== 'adapter' || gate.adapter !== TF0009_ADAPTER_ID) continue;
+    const actual = report.gates?.find((result) => result.id === gate.id);
+    const artifacts = report.controlledArtifacts.filter((artifact) => artifact.kind === 'adapter-evidence' && artifact.gateId === gate.id);
+    if (artifacts.length !== 1) {
+      errors.push(`${label} must contain one required adapter evidence artifact: ${gate.id}`);
+      continue;
+    }
+    const artifact = artifacts[0];
+    if (actual?.adapterEvidence?.report !== artifact.path || actual?.adapterEvidence?.reportSha256 !== artifact.sha256) {
+      errors.push(`${label} adapter evidence record mismatch: ${gate.id}`);
+    }
+    try {
+      const { full } = safeRelativeOutputPath(outputDir, artifact.path);
+      const payload = readJson(full);
+      const validation = validateTf0009AgentSurrogateReport(payload);
+      if (!validation.ok) {
+        errors.push(`${label} adapter report invalid: ${validation.errors.join('; ')}`);
+      } else if (stableJson(actual?.testCounts) !== stableJson(tf0009TestCounts(payload))) {
+        errors.push(`${label} adapter test counts do not match the controlled artifact: ${gate.id}`);
+      }
+    } catch (error) {
+      errors.push(`${label} adapter evidence unavailable: ${gate.id} (${error.message})`);
+    }
   }
   const requiredCandidateArtifacts = (manifest?.gates ?? []).flatMap((gate) =>
     (CANDIDATE_BOUND_GATE_ARTIFACTS[gate?.id] ?? []).map((definition) => ({
@@ -1772,7 +2047,7 @@ export function validateReportEvidence(manifest, report, outputDir, options = {}
         }
       }
     }
-    errors.push(...verifyLogs(outputDir, actual));
+    errors.push(...verifyLogs(outputDir, actual, expected));
   }
   const expectedGateContractDigest = sha256(stableJson(actualGates.map(resultContract)));
   if (!equalDigest(expectedGateContractDigest, report?.gateContractDigest)) {

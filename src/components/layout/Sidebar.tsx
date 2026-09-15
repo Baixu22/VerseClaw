@@ -37,7 +37,7 @@ import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-st
 import { isGatewayRestarting } from '@/lib/gateway-status';
 import { rendererExtensionRegistry } from '@/extensions/registry';
 import { useSettingsStore } from '@/stores/settings';
-import { useUiOverlay, useUiVersion } from './ui-overlay-context';
+import { useUiOverlay } from './ui-overlay-context';
 import { useChatStore, type ChatRuntimeRunState, type ChatSession } from '@/stores/chat';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
@@ -72,7 +72,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { hostApi } from '@/lib/host-api';
 import type { WorkspaceSessionListState } from '@shared/types/workspace';
-import { SIDEBAR_COLLAPSED_WIDTH, MAC_SIDEBAR_CHROME_HEIGHT } from '@shared/sidebar-layout';
+import { MAC_SIDEBAR_CHROME_HEIGHT } from '@shared/sidebar-layout';
 import { useTranslation } from 'react-i18next';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useNewChatAction } from './use-new-chat-action';
@@ -550,8 +550,6 @@ function SidebarSettingsNavItem({ collapsed }: { collapsed: boolean }) {
 
 export function Sidebar() {
   const isMac = window.electron?.platform === 'darwin';
-  const uiVersion = useUiVersion();
-  const isUiV2 = uiVersion === 'v2';
   const { sidebarCollapsed, setSidebarCollapsed, sidebarWidth, setSidebarWidth, devModeUnlocked } = useSettingsStore(useShallow((state) => ({
     sidebarCollapsed: state.sidebarCollapsed,
     setSidebarCollapsed: state.setSidebarCollapsed,
@@ -1196,10 +1194,9 @@ export function Sidebar() {
         // `codex-sidebar` scopes the ported Codex sidebar recipe
         // (src/styles/codex-sidebar.css) to this subtree.
         'codex-sidebar codex-sidebar-surface relative flex min-h-0 shrink-0 flex-col overflow-hidden bg-surface-sidebar',
-        isUiV2 && 'bg-surface-sidebar',
         isResizing ? 'transition-none' : 'transition-[width] duration-180 ease-out',
       )}
-      style={{ width: sidebarCollapsed ? (isUiV2 ? 64 : SIDEBAR_COLLAPSED_WIDTH) : (isUiV2 ? Math.min(360, Math.max(240, sidebarWidth)) : sidebarWidth) }}
+      style={{ width: sidebarCollapsed ? 64 : Math.min(360, Math.max(240, sidebarWidth)) }}
     >
       {isMac && (
         <div

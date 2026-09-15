@@ -143,7 +143,7 @@ async function installScheduledMocks(electronApp: Parameters<typeof installIpcMo
       }
       if (request.action === 'saveProfile') {
         const profile = { ...request.payload, activeSessions: 0, source: 'metadata' };
-        const index = current.profiles.findIndex((entry: any) => entry.profile === (profile as any).profile);
+        const index = current.profiles.findIndex((entry: { profile?: string }) => entry.profile === (profile as { profile?: string }).profile);
         if (index >= 0) current.profiles[index] = { ...current.profiles[index], ...profile };
         else current.profiles.push(profile as typeof current.profiles[number]);
         return respond(request.id, { success: true, profile });

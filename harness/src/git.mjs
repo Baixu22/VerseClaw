@@ -8,13 +8,9 @@ export function resolveDiffBase(explicitSince, configuredDiffBase) {
   return explicitSince || configuredDiffBase || 'origin/main';
 }
 
-async function gitLines(args, cwd = ROOT) {
-  try {
-    const { stdout } = await execFileAsync('git', args, { cwd, encoding: 'utf8' });
-    return stdout.split('\n').map((line) => line.trim()).filter(Boolean);
-  } catch {
-    return [];
-  }
+async function gitPaths(args, cwd = ROOT) {
+  const { stdout } = await execFileAsync('git', args, { cwd, encoding: 'utf8' });
+  return stdout.split('\0').filter(Boolean);
 }
 
 // A base ref that does not resolve must fail closed. Swallowing the git error
@@ -35,9 +31,9 @@ export async function assertDiffBase(since, cwd = ROOT) {
 export async function getChangedFiles(since = 'origin/main', cwd = ROOT) {
   await assertDiffBase(since, cwd);
   const files = new Set();
-  for (const line of await gitLines(['diff', '--name-only', `${since}...HEAD`], cwd)) files.add(line);
-  for (const line of await gitLines(['diff', '--cached', '--name-only'], cwd)) files.add(line);
-  for (const line of await gitLines(['diff', '--name-only'], cwd)) files.add(line);
-  for (const line of await gitLines(['ls-files', '--others', '--exclude-standard'], cwd)) files.add(line);
+  for (const file of await gitPaths(['diff', '--name-only', '-z', `${since}...HEAD`], cwd)) files.add(file);
+  for (const file of await gitPaths(['diff', '--cached', '--name-only', '-z'], cwd)) files.add(file);
+  for (const file of await gitPaths(['diff', '--name-only', '-z'], cwd)) files.add(file);
+  for (const file of await gitPaths(['ls-files', '--others', '--exclude-standard', '-z'], cwd)) files.add(file);
   return [...files].sort();
 }

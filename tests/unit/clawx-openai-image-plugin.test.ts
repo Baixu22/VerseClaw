@@ -71,7 +71,7 @@ describe('Verse Claw OpenAI image plugin request shape', () => {
     try {
       const plugin = await import('../../resources/openclaw-plugins/clawx-openai-image/index.mjs');
       let provider: { generateImage: (req: Record<string, unknown>) => Promise<{ images: unknown[] }> } | undefined;
-      (plugin as any).default.register({
+      (plugin.default as unknown as { register: (api: { registerImageGenerationProvider: (p: typeof provider) => void }) => void }).register({
         registerImageGenerationProvider(nextProvider: typeof provider) {
           provider = nextProvider;
         },

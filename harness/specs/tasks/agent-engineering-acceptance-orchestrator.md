@@ -6,6 +6,7 @@ intent: Build a reproducible, dual-agent engineering acceptance runner that prov
 touchedAreas:
   - scripts/agent-engineering-acceptance.mjs
   - scripts/lib/agent-engineering-acceptance.mjs
+  - scripts/rc00-acceptance-bootstrap.mjs
   - tests/unit/agent-engineering-acceptance.test.ts
   - harness/specs/rules/agent-engineering-acceptance-boundary.md
   - harness/specs/tasks/agent-engineering-acceptance-orchestrator.md
@@ -26,8 +27,15 @@ requiredTests:
 acceptance:
   - The plan derives a stable, hash-addressed manifest from a Harness task spec, changed paths, rules, and lock inputs.
   - Runtime, UI, communication, maturity, and release paths add their required full gate families without replacing Harness profiles.
-  - A dirty or stale source, unsafe TLS/provider environment, forbidden side-effect argument, timeout, skipped gate, missing gate, or tampered log returns NO-GO.
-  - Every test gate has parsed counts and a fixed expectedSkips budget; missing counts or additional skips return NO-GO.
+  - A dirty or stale source, unsafe TLS/provider environment, forbidden side-effect argument in args or commandLine, timeout, skipped gate, missing gate, or tampered log returns NO-GO.
+  - Manifest requiredTests must match the candidate spec. Countable required-test gates declare parsed counts and a fixed expectedSkips budget; counts sum every Tests segment.
+  - Ignored provision copy inputs lock sha256 and bytes. Required-test command lines rerun in the role detached worktree.
+  - Both roles rederive the complete ordered gate contracts and source inputs from the candidate and actual comparison diff; rehashing an abbreviated or modified manifest cannot authorize it.
+  - Failure-only and skip-only test segments, Playwright summaries, and Node spec/TAP summaries preserve every outcome; contradictory totals are rejected.
+  - Test-runner report validation reparses the persisted stdout and stderr; counts that disagree with those logs remain NO-GO even after every evidence digest is recomputed.
+  - The TF-0009 adapter revalidates its required controlled JSON artifact and derives counts from its validated runs; ordinary runners cannot select this path by changing a source label.
+  - Test classification distinguishes lint/diff targets from execution and recognizes package-manager directory, filter, and workspace options.
+  - The abbreviated RC-00 bootstrap is a negative regression and cannot produce an engineering acceptance report.
   - The Executor cannot self-accept and the Verifier rejects an identical Executor identity.
   - The Verifier records engineeringAcceptedByAgent only after a separate detached-worktree rerun with matching gate contracts.
   - Run artifacts are independently addressed and redact workspace paths and secret values.

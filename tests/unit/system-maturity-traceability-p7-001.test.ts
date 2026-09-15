@@ -185,7 +185,7 @@ describe('P7-001 System Maturity traceability', () => {
     const report = fixture({ sourceTime: 5_000, evidenceTime: 300, globalEvidenceOk: false }).run();
     expect(report.ok).toBe(false);
     expect(report.findings[0].freshness).toBe('stale');
-    expect(report.findings[0].evidence.some((item: any) => item.kind === 'global-validation')).toBe(false);
+    expect(report.findings[0].evidence.some((item: { kind?: string }) => item.kind === 'global-validation')).toBe(false);
   });
 
   it('rejects a successful report when a captured gate log was tampered', () => {
@@ -209,7 +209,7 @@ describe('P7-001 System Maturity traceability', () => {
     }).run();
     expect(report.ok).toBe(false);
     expect(report.findings[0].freshness).toBe('stale');
-    expect(report.findings[0].evidence.some((item: any) => item.kind === 'global-validation')).toBe(false);
+    expect(report.findings[0].evidence.some((item: { kind?: string }) => item.kind === 'global-validation')).toBe(false);
   });
 
   it('fails a done task without checked acceptance evidence', () => {
