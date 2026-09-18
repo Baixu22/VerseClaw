@@ -1161,7 +1161,16 @@ function MarkdownCodeHeader({ language, code }: CodeHeaderProps) {
   );
 }
 
-function AssistantMarkdown({
+/**
+ * Memoized so the markdown tree (including `.prose table`) is rebuilt only when
+ * `text` / `isStreaming` actually change. `ChatMessage` re-renders on every
+ * periodic status / usage update; without this memo those re-renders rebuild the
+ * markdown table element and detach it mid-action, which is the
+ * `scrollIntoViewIfNeeded` / screenshot "Element is not attached to the DOM"
+ * failure tracked as issue #45. Both props are primitives, so the default
+ * shallow comparison is exact.
+ */
+const AssistantMarkdown = memo(function AssistantMarkdown({
   text,
   isStreaming,
 }: {
@@ -1266,7 +1275,7 @@ function AssistantMarkdown({
       )}
     </>
   );
-}
+});
 
 // ── File Card (for user-uploaded non-image files) ───────────────
 
