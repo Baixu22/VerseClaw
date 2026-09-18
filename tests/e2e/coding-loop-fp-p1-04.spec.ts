@@ -695,6 +695,16 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       const summaryToggle = page.getByTestId('chat-turn-summary-toggle').first();
       if (await summaryToggle.count() > 0) {
         await summaryToggle.click().catch(() => undefined);
+        /*
+         * The toggle is a controlled disclosure: the click hands the new
+         * `expanded` value to the parent, and React commits the details panel on
+         * a later frame. Reading the panel straight after the click therefore
+         * races the re-render and always saw nothing, which is why the
+         * `AUTO_VERIFY_PASS` assertion below failed even though the panel does
+         * render. Wait for the surface the assertions depend on.
+         */
+        await expect(page.getByTestId('chat-turn-summary-details').first())
+          .toBeVisible({ timeout: 15_000 });
       }
       const activity = page.getByTestId('chat-turn-summary-details').first();
       const activityText = (await activity.count()) > 0 ? await activity.innerText() : '<no-activity>';
