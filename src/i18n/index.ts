@@ -31,4 +31,21 @@ i18n
         },
     });
 
+// Keep the document language in sync with the active i18n language.
+// The store (settings.setLanguage / init) drives i18n.changeLanguage; without
+// this listener <html lang> stays at its initial value forever, so a UI
+// rendered in Russian is still announced as English to assistive tech — and
+// any contract that reads the lang attribute (E2E, a11y audits) sees a stale
+// value even though the rendered text is correct. (issue #49)
+function syncDocumentLanguage(lng: string | undefined): void {
+    if (typeof document === 'undefined') return;
+    const resolved = resolveSupportedLanguage(lng);
+    if (resolved && resolved !== document.documentElement.lang) {
+        document.documentElement.lang = resolved;
+    }
+}
+
+i18n.on('languageChanged', (lng: string) => syncDocumentLanguage(lng));
+syncDocumentLanguage(i18n.language);
+
 export default i18n;
