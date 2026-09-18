@@ -147,6 +147,31 @@ async function getStableWindow(app: ElectronApplication): Promise<Page> {
   throw new Error('No stable Electron window became available');
 }
 
+/**
+ * Electron clamps `page.setViewportSize()` to the real BrowserWindow, so a spec
+ * that needs a reproducible capture width has to resize the window itself.
+ *
+ * `setContentSize` is deliberate: it sizes the web contents area (what a
+ * screenshot of a page-level element actually sees) instead of the outer frame,
+ * so the result does not drift with the platform's title-bar metrics. The
+ * window is created with `minWidth: 960` / `minHeight: 600`, so requests below
+ * those bounds are clamped by Electron — the returned rect reports the truth.
+ */
+async function pinWindowContentSize(
+  app: ElectronApplication,
+  size: { width: number; height: number },
+): Promise<{ width: number; height: number }> {
+  return await app.evaluate(async ({ BrowserWindow }, target) => {
+    const win = BrowserWindow.getAllWindows()[0];
+    if (!win) throw new Error('pinWindowContentSize: no BrowserWindow available');
+    if (win.isFullScreen()) win.setFullScreen(false);
+    if (win.isMaximized()) win.unmaximize();
+    win.setContentSize(target.width, target.height);
+    const [width, height] = win.getContentSize();
+    return { width, height };
+  }, size);
+}
+
 async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Promise<void> {
   let closed = false;
 
@@ -335,6 +360,7 @@ export async function completeSetup(page: Page): Promise<void> {
 
 export { closeElectronApp };
 export { getStableWindow };
+export { pinWindowContentSize };
 export { expect };
 
 export async function openAgentDevScenario(
