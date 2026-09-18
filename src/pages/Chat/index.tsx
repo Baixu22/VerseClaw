@@ -137,6 +137,13 @@ const PanelResizeDividerLazy = lazy(() =>
   import('@/components/file-preview/PanelResizeDivider').then((m) => ({ default: m.PanelResizeDivider })),
 );
 
+/**
+ * How long a send keeps the transcript's scroll pin armed on its own, before
+ * `useChatStore.sending` takes over. Long enough to cover a slow send
+ * round-trip, short enough that a failed send cannot pin the view indefinitely.
+ */
+const OPTIMISTIC_RUN_WINDOW_MS = 15_000;
+
 type ChatMessageRenderRow = {
   index: number;
   key: string;
@@ -1230,7 +1237,32 @@ export function Chat() {
     }
   }, [currentSessionKey, persistCurrentWorkspaceSessionState]);
   const graphStepCache: Record<string, GraphStepCacheEntry> = graphStepCacheStore.get(currentSessionKey) ?? {};
-  const { contentRef, scrollRef, scrollToBottom, isAtBottom } = useStickToBottomInstant(currentSessionKey, sending);
+
+  /**
+   * Optimistic "a run is in flight" window for the transcript's scroll pin.
+   *
+   * `useChatStore.sending` only flips once the send round-trip resolves, but the
+   * transcript already grows before that: the optimistic user bubble lands on
+   * click and a fast gateway can push the first assistant delta before the
+   * response does. Pinning is gated on a run being active, so those early
+   * resizes went unpinned and left the view stranded above the bottom — the
+   * 240px drift the pin-to-bottom spec reports. Arm the gate on click, and let
+   * `sending` (or the safety timeout) take over from there.
+   */
+  const [optimisticRunActive, setOptimisticRunActive] = useState(false);
+  const optimisticRunTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (sending) setOptimisticRunActive(false);
+  }, [sending]);
+
+  useEffect(() => () => {
+    if (optimisticRunTimerRef.current != null) {
+      window.clearTimeout(optimisticRunTimerRef.current);
+    }
+  }, []);
+
+  const { contentRef, scrollRef, scrollToBottom, isAtBottom } = useStickToBottomInstant(currentSessionKey, sending || optimisticRunActive);
   /**
    * The transcript scroller as a plain ref.
    *
@@ -1421,6 +1453,15 @@ export function Chat() {
       setSendingAnimation(true);
       window.setTimeout(() => setSendingAnimation(false), 800);
     }
+
+    setOptimisticRunActive(true);
+    if (optimisticRunTimerRef.current != null) {
+      window.clearTimeout(optimisticRunTimerRef.current);
+    }
+    optimisticRunTimerRef.current = window.setTimeout(() => {
+      optimisticRunTimerRef.current = null;
+      setOptimisticRunActive(false);
+    }, OPTIMISTIC_RUN_WINDOW_MS);
 
     return sendMessage(text, resolved);
   }, [knowledgeMode, messages.length, sending, sendMessage]);
