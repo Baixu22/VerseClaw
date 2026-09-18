@@ -694,15 +694,22 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       // per-tool work panel (which carries the diff/verify text) is rendered.
       const summaryToggle = page.getByTestId('chat-turn-summary-toggle').first();
       if (await summaryToggle.count() > 0) {
-        await summaryToggle.click().catch(() => undefined);
         /*
-         * The toggle is a controlled disclosure: the click hands the new
-         * `expanded` value to the parent, and React commits the details panel on
-         * a later frame. Reading the panel straight after the click therefore
-         * races the re-render and always saw nothing, which is why the
-         * `AUTO_VERIFY_PASS` assertion below failed even though the panel does
-         * render. Wait for the surface the assertions depend on.
+         * No `.catch()` on the click on purpose: swallowing it turned a failed
+         * interaction into a silent `<no-activity>` log and then an unrelated
+         * assertion failure two lines later. The toggle is a controlled
+         * disclosure, so the panel only exists once the parent has committed the
+         * new `expanded` value — wait for it instead of reading immediately.
          */
+        await summaryToggle.click();
+        /*
+         * `aria-expanded` is the component's own view of the disclosure state,
+         * so asserting it first splits "the click never reached the state" from
+         * "the state says expanded but the panel is not rendered".
+         */
+        await expect
+          .poll(async () => summaryToggle.getAttribute('aria-expanded'), { timeout: 10_000 })
+          .toBe('true');
         await expect(page.getByTestId('chat-turn-summary-details').first())
           .toBeVisible({ timeout: 15_000 });
       }
