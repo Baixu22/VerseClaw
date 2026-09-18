@@ -2505,6 +2505,26 @@ export function Chat() {
       toast.error(t('messageActions.resendFailed'));
     });
   }, [currentSessionKey, inputRunActive, isGatewayRunning, resendUserMessage, t]);
+  /* Per-row resend handlers, memoized so ChatMessage's React.memo holds across
+   * parent re-renders. The inline arrow that used to live at the call site was
+   * recreated on every render, which broke memo and forced AssistantMarkdown to
+   * re-render on each periodic status update — rebuilding the markdown table
+   * element and detaching it mid-scroll/screenshot (issue #45). The cache is
+   * rebuilt only when the underlying handler changes identity (session/run
+   * state), which is rare. */
+  const getResendUserMessageHandler = useMemo(() => {
+    const cache = new Map<string, (messageText: string) => void>();
+    return (messageId: string | undefined, messageIndex: number) => {
+      const key = `${messageId ?? ''}@${messageIndex}`;
+      let handler = cache.get(key);
+      if (!handler) {
+        handler = (messageText: string) =>
+          handleResendUserMessage({ messageText, messageId, messageIndex });
+        cache.set(key, handler);
+      }
+      return handler;
+    };
+  }, [handleResendUserMessage]);
   /**
    * The plan and the processes the status card shows.
    *
@@ -3208,11 +3228,7 @@ export function Chat() {
                         onSubmitInteractionResponse={handleSubmitInteractionResponse}
                         onDraftInteractionResponse={handleAppendComposerDraft}
                         canResendUserMessage={isGatewayRunning && !inputRunActive}
-                        onResendUserMessage={(messageText) => handleResendUserMessage({
-                          messageText,
-                          messageId: row.message.id,
-                          messageIndex: row.index,
-                        })}
+                        onResendUserMessage={getResendUserMessageHandler(row.message.id, row.index)}
                       />
                       {row.runCards.map((card) => {
                         const runKey = card.runKey;
