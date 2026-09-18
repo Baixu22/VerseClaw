@@ -299,7 +299,10 @@
 .codex-sidebar .sidebar-row {
   height: 30px;
   position: relative;
-  border-radius: var(--radius-md);
+  /* 12.5px (radius-lg), not radius-md: the row recipe is a measured value
+   * from the FakeCoding/Codex reference (see this file's header comment —
+   * "30px rows, 12.5px radius ... they are measured"). radius-md renders 10px. */
+  border-radius: var(--radius-lg);
   transition: background 130ms ease;
   display: flex;
   align-items: center;
