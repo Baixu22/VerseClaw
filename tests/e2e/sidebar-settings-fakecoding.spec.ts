@@ -8,7 +8,7 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
       const page = await getStableWindow(app);
       await page.setViewportSize({ width: 1285, height: 820 });
       await expect(page.getByTestId('main-layout')).toBeVisible();
-      await expect(page.getByText('Conversations', { exact: true })).toBeVisible();
+      await expect(page.getByTestId('sidebar-session-section-toggle')).toContainText(/^(Projects|Conversations)$/);
       // Section actions exist but stay hidden until the heading is hovered.
       await expect(page.getByTestId('sidebar-session-search')).toHaveCount(1);
       await expect(page.locator('.section-heading-actions').first()).toHaveCSS('opacity', '0');
@@ -84,7 +84,10 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
       await page.getByTestId('sidebar-session-organize').click();
       const organizeMenu = page.locator('.sidebar-session-organize-menu');
       await expect(organizeMenu).toBeVisible();
-      await expect(organizeMenu.getByRole('menuitemradio')).toHaveCount(2);
+      // Two view-by (project/time) + three sort-by (newest/active/priority)
+      // radio items. The sort-by group was added to this menu after the
+      // spec was first written, so the total is 5, not 2.
+      await expect(organizeMenu.getByRole('menuitemradio')).toHaveCount(5);
       await page.waitForTimeout(180);
       const organizeGeometry = await organizeMenu.evaluate((element) => {
         const rect = element.getBoundingClientRect();
@@ -165,7 +168,7 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
       await page.getByTestId('settings-back-button').click();
       await expect(page).toHaveURL(/#\/$/);
       await expect(page.getByTestId('sidebar')).toBeVisible();
-      await expect(page.getByText('Conversations', { exact: true })).toBeVisible();
+      await expect(page.getByTestId('sidebar-session-section-toggle')).toContainText(/^(Projects|Conversations)$/);
     } finally {
       await closeElectronApp(app);
     }
@@ -176,7 +179,7 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
     try {
       const page = await getStableWindow(app);
       await page.setViewportSize({ width: 960, height: 600 });
-      await expect(page.getByText('Conversations', { exact: true })).toBeVisible();
+      await expect(page.getByTestId('sidebar-session-section-toggle')).toContainText(/^(Projects|Conversations)$/);
       const layout = await page.evaluate(() => {
         const scroll = document.querySelector<HTMLElement>('.sidebar-scroll')!.getBoundingClientRect();
         const footer = document.querySelector<HTMLElement>('.sidebar-footer')!.getBoundingClientRect();
@@ -230,7 +233,7 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
       const page = await getStableWindow(app);
       expect(new URL(page.url()).searchParams.get('e2eSettingsSectionDelayMs')).toBe('1200');
       await page.setViewportSize({ width: 1000, height: 820 });
-      await expect(page.getByText('Conversations', { exact: true })).toBeVisible();
+      await expect(page.getByTestId('sidebar-session-section-toggle')).toContainText(/^(Projects|Conversations)$/);
       await page.getByTestId('sidebar-nav-settings').click();
       await expect(page.getByTestId('settings-implementation')).toBeVisible();
       await expect(page.getByTestId('settings-sidebar')).toBeVisible();
