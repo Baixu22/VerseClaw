@@ -141,8 +141,12 @@ test.describe('Verse Claw assistant reply Markdown styling', () => {
       await expect(assistantProse.locator('input[type="checkbox"]')).toBeChecked();
       await expect(assistantProse.getByTestId('assistant-code-header')).toContainText('ts');
       await expect(assistantProse.locator('pre')).toContainText('const rich = true;');
+      // The button publishes its state through `aria-label`; the `title`
+      // attribute was dropped in the Codex visual polish and this assertion had
+      // been dead since. The 2000ms revert timer bounds the observable window,
+      // so keep the retry budget inside it.
       await assistantProse.getByTestId('assistant-code-copy').click();
-      await expect(assistantProse.getByTestId('assistant-code-copy')).toHaveAttribute('title', 'Copied', { timeout: 5000 });
+      await expect(assistantProse.getByTestId('assistant-code-copy')).toHaveAttribute('aria-label', 'Copied', { timeout: 2000 });
 
       const assistantStyles = await assistantProse.evaluate((el) => {
         const style = window.getComputedStyle(el);
