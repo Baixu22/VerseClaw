@@ -73,9 +73,13 @@ test.describe('Workspace Git MCP runtime', () => {
       const page = await getStableWindow(app);
       await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 30_000 });
 
+      // New workspaces default to 'readOnly' (least privilege, P2-001 /
+      // F-AUTH-001), which correctly blocks git write ops. This spec exercises
+      // the write path (git_stage), so it creates a writable workspace.
       await hostInvoke(page, 'workspaces', 'create', {
         name: 'Git MCP Runtime',
         rootPath: repoDir,
+        permissionMode: 'fullAccess',
       });
 
       const tools = await hostInvoke<{ tools: Array<{ name: string }> }>(page, 'mcp', 'listTools', {
