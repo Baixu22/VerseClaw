@@ -30,6 +30,33 @@ function commonHostApi() {
       activeWorkspaceId: null,
       activeWorkspace: null,
     },
+    /*
+     * The composer's first-send gate (FP-P1-01) intercepts the send and opens
+     * the provider dialog when no usable account exists. Without these entries
+     * the gate swallows every send in this spec: `chat.sendWithMedia` is never
+     * called, so the budget-denial, cancel and timeout paths below are never
+     * reached and the assertions fail on state that never moves.
+     *
+     * `isProviderRuntimeReady` accepts an account when it is enabled and either
+     * its `authMode` is not `api_key` or its key info reports `hasKey`.
+     */
+    [stableStringify(['providers', 'accounts', null])]: [
+      {
+        id: 'e2e-provider',
+        vendorId: 'openai',
+        label: 'E2E Provider',
+        authMode: 'api_key',
+        enabled: true,
+        isDefault: true,
+        createdAt: '2026-01-01T00:00:00.000Z',
+        updatedAt: '2026-01-01T00:00:00.000Z',
+      },
+    ],
+    [stableStringify(['providers', 'accountKeyInfo', null])]: [
+      { accountId: 'e2e-provider', hasKey: true, keyMasked: 'sk-***' },
+    ],
+    [stableStringify(['providers', 'vendors', null])]: [],
+    [stableStringify(['providers', 'getDefaultAccount', null])]: { accountId: 'e2e-provider' },
   };
 }
 
@@ -111,7 +138,10 @@ test.describe('System maturity Phase 4/5 runtime gates', () => {
         },
         hostApi: {
           ...commonHostApi(),
-          [stableStringify(['chat', 'sendWithMedia', null])]: { success: true, runId: 'run-p45' },
+          [stableStringify(['chat', 'sendWithMedia', null])]: {
+            success: true,
+            result: { runId: 'run-p45' },
+          },
         },
       });
       const page = await getStableWindow(app);
@@ -129,9 +159,20 @@ test.describe('System maturity Phase 4/5 runtime gates', () => {
        */
       await expect(primaryAction).toHaveAttribute('data-send-state', /starting|running/);
       await primaryAction.click();
-      await expect(input).toBeEnabled();
-
+      /*
+       * Clicking while a run is live pauses the session (pause + abort) instead
+       * of only cancelling it, so the composer parks in `paused` and the next
+       * click resumes rather than sends. Resume explicitly before the next
+       * turn: otherwise the third click is consumed by `resume`, no second
+       * `chat.sendWithMedia` is ever issued, and the run is never released.
+       */
+      await expect(primaryAction).toHaveAttribute('data-send-state', 'paused');
+      await primaryAction.click();
+      // Resume lands in `idle`: the composer is empty, so the primary action is
+      // disabled until there is something to send.
+      await expect(primaryAction).not.toHaveAttribute('data-send-state', 'paused');
       await input.fill('next turn works');
+      await expect(primaryAction).toHaveAttribute('data-send-state', 'ready');
       await primaryAction.click();
       const calls = await app.evaluate(() => (
         (globalThis as typeof globalThis & { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: { method?: string } }> })
@@ -157,7 +198,10 @@ test.describe('System maturity Phase 4/5 runtime gates', () => {
         },
         hostApi: {
           ...commonHostApi(),
-          [stableStringify(['chat', 'sendWithMedia', null])]: { success: true, runId: 'run-timeout-p45' },
+          [stableStringify(['chat', 'sendWithMedia', null])]: {
+            success: true,
+            result: { runId: 'run-timeout-p45' },
+          },
         },
       });
       const page = await getStableWindow(app);
