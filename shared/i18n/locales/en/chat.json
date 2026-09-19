@@ -28,6 +28,22 @@
     "brainstorming": "Multi-Agent Parallel",
     "brainstormingDesc": "Split work across coordinated agents"
   },
+  "memoryInjection": {
+    "title": "What was injected",
+    "description": "Memory this session's pre-reply retrieval added to the prompt, grouped by source. References and counts only, never raw content.",
+    "refresh": "Refresh",
+    "retry": "Retry",
+    "loading": "Reading injection receipts...",
+    "empty": "Nothing was injected this round. Pre-reply retrieval may be off, or no memory matched.",
+    "errorGeneric": "Could not read injection receipts.",
+    "errorTimeout": "Could not read injection receipts. The runtime may be unavailable or the request timed out.",
+    "summary": "{{selected}} injected, {{omitted}} trimmed",
+    "selectedCount": "{{count}} injected",
+    "omittedCount": "{{count}} trimmed",
+    "budget": "{{applied}}/{{requested}} chars",
+    "trimmed": "Budget trimmed",
+    "omittedToggle": "Trimmed by budget ({{count}})"
+  },
   "sessionActivity": {
     "title": "Session status",
     "description": "Live runtime, task, Git, goal, process, lineage, agent, and terminal activity for this conversation.",

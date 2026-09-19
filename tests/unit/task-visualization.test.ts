@@ -91,6 +91,60 @@ describe('deriveTaskSteps', () => {
       }),
     ]);
   });
+  // #41: the runtime's external-write classification rides across the
+  // approval.updated event as a display-only `risk` projection and lands on the
+  // system step so the renderer can badge it. It is not an authorization signal.
+  it('projects the external-write risk onto a governed exec approval step', () => {
+    const steps = deriveRuntimeTaskSteps({
+      runId: 'run-ew',
+      status: 'running',
+      assistantText: '',
+      thinkingText: '',
+      events: [
+        { type: 'run.started', runId: 'run-ew', sessionKey: 'agent:main:main' },
+        {
+          type: 'approval.updated',
+          runId: 'run-ew',
+          sessionKey: 'agent:main:main',
+          itemId: 'cmd-ew',
+          toolCallId: 'call-ew',
+          title: 'Command approval requested',
+          kind: 'exec',
+          phase: 'requested',
+          status: 'pending',
+          message: 'External process write: this command may write outside the ClawX write journal; those changes have no automatic rollback.',
+          risk: 'external-write',
+        },
+      ],
+    });
+
+    const approvalStep = steps.find((step) => step.kind === 'system');
+    expect(approvalStep).toBeDefined();
+    expect(approvalStep?.risk).toBe('external-write');
+
+    // A plain approval with no external-write classification carries no risk.
+    const plain = deriveRuntimeTaskSteps({
+      runId: 'run-plain',
+      status: 'running',
+      assistantText: '',
+      thinkingText: '',
+      events: [
+        { type: 'run.started', runId: 'run-plain', sessionKey: 'agent:main:main' },
+        {
+          type: 'approval.updated',
+          runId: 'run-plain',
+          sessionKey: 'agent:main:main',
+          itemId: 'cmd-plain',
+          toolCallId: 'call-plain',
+          title: 'Command approval requested',
+          kind: 'exec',
+          phase: 'requested',
+          status: 'pending',
+        },
+      ],
+    });
+    expect(plain.find((step) => step.kind === 'system')?.risk).toBeUndefined();
+  });
   it('builds running steps from streaming tool status without exposing chain-of-thought', () => {
     const streamingTools: ToolStatus[] = [
       {

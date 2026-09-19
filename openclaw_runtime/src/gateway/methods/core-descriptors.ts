@@ -129,6 +129,11 @@ export const CORE_GATEWAY_METHOD_SPECS: readonly CoreGatewayMethodSpec[] = [
   { name: "memory.conflicts", scope: "operator.read" },
   { name: "memory.conflictDetail", scope: "operator.read" },
   { name: "memory.explainInjection", scope: "operator.read" },
+  // R3-2.2 COMPASS memory-injection receipt read ("本轮注入了什么").
+  { name: "memory.injectionReceipts", scope: "operator.read" },
+  // R3-2.4 proposeFacts manual-confirm queue (read) + confirm (write).
+  { name: "memory.proposeFacts.list", scope: "operator.read" },
+  { name: "memory.proposeFacts.confirm", scope: "operator.write" },
   { name: "memory.proposals", scope: "operator.read" },
   { name: "memory.versions", scope: "operator.read" },
   { name: "memory.audit", scope: "operator.read" },

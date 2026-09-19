@@ -455,9 +455,12 @@ import type {
   WorkspaceWebPreviewStopPayload,
   MemoryDetailPayload,
   MemoryExplainInjectionPayload,
+  MemoryInjectionReceiptsPayload,
   MemoryListPayload,
   MemoryProposal,
   MemoryProposalPreviewResult,
+  MemoryProposeFactsConfirmPayload,
+  MemoryProposeFactsListPayload,
   MemorySearchPayload,
   MemoryUpdatePayload,
 } from '@shared/host-api/contract';
@@ -1124,6 +1127,12 @@ export const hostApi = {
     health: () => invokeHost('memory', 'health'),
     explainInjection: (input: MemoryExplainInjectionPayload) =>
       invokeHost('memory', 'explainInjection', input),
+    injectionReceipts: (input: MemoryInjectionReceiptsPayload) =>
+      invokeHost('memory', 'injectionReceipts', input),
+    proposeFactsList: (input: MemoryProposeFactsListPayload) =>
+      invokeHost('memory', 'proposeFactsList', input),
+    proposeFactsConfirm: (input: MemoryProposeFactsConfirmPayload) =>
+      invokeHost('memory', 'proposeFactsConfirm', input),
   },
   channels: {
     accounts: (options?: ChannelAccountsPayload) => (

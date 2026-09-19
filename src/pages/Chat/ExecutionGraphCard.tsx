@@ -95,6 +95,15 @@ function StepDetailRow({
               {t('taskPanel.stepStatus.error')}
             </span>
           )}
+          {step.risk === 'external-write' && (
+            <span
+              className="shrink-0 whitespace-nowrap rounded-md bg-amber-500/10 px-1.5 py-0.5 text-[11px] font-medium leading-4 text-amber-700 dark:text-amber-400"
+              data-testid="chat-execution-step-external-write"
+              title={t('approvals.externalWriteNoRollback')}
+            >
+              {t('approvals.risk.external-write')}
+            </span>
+          )}
           {hasDetail && (
             <ChevronRight
               className={cn(

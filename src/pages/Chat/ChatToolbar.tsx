@@ -1,6 +1,7 @@
-import { Activity, Gauge, RefreshCw } from 'lucide-react';
-import { useMemo, type ReactNode } from 'react';
+import { Activity, Gauge, PackageOpen, RefreshCw } from 'lucide-react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { MemoryInjectionPanel } from '@/components/chat/MemoryInjectionPanel';
 import { ResourceChip } from '@/components/chat/ResourceChip';
 import { WORKSPACE_BROWSER_ENABLED } from '@/components/file-preview/workspace-browser-config';
 import { Button } from '@/components/ui/button';
@@ -98,7 +99,9 @@ export function ChatToolbar({
   const refresh = useChatStore((state) => state.refresh);
   const loading = useChatStore((state) => state.loading);
   const currentAgentId = useChatStore((state) => state.currentAgentId);
+  const currentSessionKey = useChatStore((state) => state.currentSessionKey);
   const agents = useAgentsStore((state) => state.agents);
+  const [memoryInjectionOpen, setMemoryInjectionOpen] = useState(false);
   const openWorkspacePanel = useArtifactPanel((state) => state.openWorkspacePanel);
   const panelOpen = useArtifactPanel((state) => state.open);
   const closePanel = useArtifactPanel((state) => state.close);
@@ -206,6 +209,30 @@ export function ChatToolbar({
         </span>
         </ToolbarWipe>
       )}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            data-testid="chat-memory-injection-toggle"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-8 w-8 hover:bg-foreground/5 hover:text-foreground',
+              memoryInjectionOpen && 'bg-foreground/10 text-foreground',
+            )}
+            aria-label={t('memoryInjection.title')}
+            aria-expanded={memoryInjectionOpen}
+            onClick={() => setMemoryInjectionOpen(true)}
+          >
+            <PackageOpen className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" collisionPadding={8}><p>{t('memoryInjection.title')}</p></TooltipContent>
+      </Tooltip>
+      <MemoryInjectionPanel
+        open={memoryInjectionOpen}
+        onOpenChange={setMemoryInjectionOpen}
+        sessionKey={currentSessionKey}
+      />
       <ToolbarWipe wiped={panelOpen} order={1}>
         <Tooltip>
           <TooltipTrigger asChild>

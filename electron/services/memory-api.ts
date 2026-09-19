@@ -13,6 +13,12 @@ import { isRecord } from './payload-utils';
 import type {
   MemoryExplainInjectionPayload,
   MemoryExplainInjectionResult,
+  MemoryInjectionReceiptsPayload,
+  MemoryInjectionReceiptsResult,
+  MemoryProposeFactsListPayload,
+  MemoryProposeFactsListResult,
+  MemoryProposeFactsConfirmPayload,
+  MemoryProposeFactsConfirmResult,
   MemoryDetailPayload,
   MemoryDetailResult,
   MemoryHealthReportResult,
@@ -150,6 +156,49 @@ export function createMemoryApi(ctx: MemoryApiContext) {
         return unwrapResult<MemoryExplainInjectionResult>(raw);
       } catch (err) {
         logger.warn('[memory:explainInjection] failed', { err: String(err) });
+        return errorResult(String(err));
+      }
+    },
+
+    // R3-2.2 "本轮注入了什么": read sanitized COMPASS memory-injection receipts.
+    injectionReceipts: async (
+      payload: MemoryInjectionReceiptsPayload,
+    ): Promise<MemoryInjectionReceiptsResult> => {
+      if (!ctx.gatewayManager) return errorResult('Gateway manager unavailable');
+      try {
+        const raw = await ctx.gatewayManager.rpc('memory.injectionReceipts', payload, RPC_TIMEOUT_MS);
+        return unwrapResult<MemoryInjectionReceiptsResult>(raw);
+      } catch (err) {
+        logger.warn('[memory:injectionReceipts] failed', { err: String(err) });
+        return errorResult(String(err));
+      }
+    },
+
+    // R3-2.4 proposeFacts manual-confirm queue (read).
+    proposeFactsList: async (
+      payload: MemoryProposeFactsListPayload,
+    ): Promise<MemoryProposeFactsListResult> => {
+      if (!ctx.gatewayManager) return errorResult('Gateway manager unavailable');
+      try {
+        const raw = await ctx.gatewayManager.rpc('memory.proposeFacts.list', payload, RPC_TIMEOUT_MS);
+        return unwrapResult<MemoryProposeFactsListResult>(raw);
+      } catch (err) {
+        logger.warn('[memory:proposeFactsList] failed', { err: String(err) });
+        return errorResult(String(err));
+      }
+    },
+
+    // R3-2.4 proposeFacts confirm (write). Routes through the E-1 owner-
+    // convergence + promote + appendFact composition on the runtime.
+    proposeFactsConfirm: async (
+      payload: MemoryProposeFactsConfirmPayload,
+    ): Promise<MemoryProposeFactsConfirmResult> => {
+      if (!ctx.gatewayManager) return errorResult('Gateway manager unavailable');
+      try {
+        const raw = await ctx.gatewayManager.rpc('memory.proposeFacts.confirm', payload, RPC_TIMEOUT_MS);
+        return unwrapResult<MemoryProposeFactsConfirmResult>(raw);
+      } catch (err) {
+        logger.warn('[memory:proposeFactsConfirm] failed', { err: String(err) });
         return errorResult(String(err));
       }
     },

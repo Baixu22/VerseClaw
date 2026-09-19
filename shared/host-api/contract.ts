@@ -4854,6 +4854,64 @@ export type MemoryExplainInjectionResult = HostSuccess & {
   injections: MemoryInjectionRecord[];
 };
 
+// R3-2.2 "本轮注入了什么" — sanitized COMPASS memory-injection receipt entry.
+// Refs, counts, and producer source only; never raw injected content. Mirrors
+// openclaw_runtime MemoryInjectionReceiptEntry (context-engine).
+export type MemoryInjectionReceiptEntry = {
+  sessionKey?: string | null;
+  /** Producer source (the receipt adapter id, e.g. compass-pre-reply-retrieval). */
+  source: string;
+  selected: string[];
+  omitted: string[];
+  budgetCharsApplied: number;
+  budgetCharsRequested: number;
+  createdAt: number;
+};
+
+export type MemoryInjectionReceiptsPayload = {
+  sessionKey?: string;
+  limit?: number;
+};
+
+export type MemoryInjectionReceiptsResult = HostSuccess & {
+  receipts: MemoryInjectionReceiptEntry[];
+};
+
+// R3-2.4 proposeFacts manual-confirm queue — one pending runtime-memory fact
+// candidate awaiting human confirmation. Sanitized projection only.
+export type MemoryProposeFactsCandidate = {
+  factId: string;
+  subject: string;
+  predicate: string;
+  objectSummary: string;
+  confidence: number | null;
+  source: string;
+  proposedAt: number | null;
+};
+
+export type MemoryProposeFactsListPayload = {
+  limit?: number;
+};
+
+export type MemoryProposeFactsListResult = HostSuccess & {
+  /** False when the shadow/proposeFacts flags are off (default). */
+  enabled: boolean;
+  candidates: MemoryProposeFactsCandidate[];
+};
+
+export type MemoryProposeFactsConfirmPayload = {
+  factId: string;
+  approvedBy?: string;
+};
+
+// confirmed:false is a legitimate outcome (owner-convergence blocked or
+// persistence disabled), distinct from success:false (RPC/validation error).
+export type MemoryProposeFactsConfirmResult = HostSuccess & {
+  confirmed: boolean;
+  message: string;
+  factId?: string;
+};
+
 export type HostApiContract = {
   app: {
     version: () => string;
@@ -5478,6 +5536,9 @@ export type HostApiContract = {
     update: (payload: MemoryUpdatePayload) => MemoryUpdateResult;
     health: () => MemoryHealthReportResult;
     explainInjection: (payload: MemoryExplainInjectionPayload) => MemoryExplainInjectionResult;
+    injectionReceipts: (payload: MemoryInjectionReceiptsPayload) => MemoryInjectionReceiptsResult;
+    proposeFactsList: (payload: MemoryProposeFactsListPayload) => MemoryProposeFactsListResult;
+    proposeFactsConfirm: (payload: MemoryProposeFactsConfirmPayload) => MemoryProposeFactsConfirmResult;
   };
 };
 

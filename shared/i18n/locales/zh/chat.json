@@ -28,6 +28,22 @@
     "brainstorming": "多智能体并行",
     "brainstormingDesc": "让多个智能体协同拆分任务"
   },
+  "memoryInjection": {
+    "title": "本轮注入了什么",
+    "description": "本会话回复前检索注入到提示词的记忆，按来源分组。仅显示引用和计数，绝不显示原文。",
+    "refresh": "刷新",
+    "retry": "重试",
+    "loading": "正在读取注入回执…",
+    "empty": "本轮未注入任何内容。回复前检索可能已关闭，或没有匹配到记忆。",
+    "errorGeneric": "无法读取注入回执。",
+    "errorTimeout": "无法读取注入回执。运行时可能不可用，或请求超时。",
+    "summary": "注入 {{selected}} 条，裁剪 {{omitted}} 条",
+    "selectedCount": "注入 {{count}} 条",
+    "omittedCount": "裁剪 {{count}} 条",
+    "budget": "{{applied}}/{{requested}} 字符",
+    "trimmed": "已按预算裁剪",
+    "omittedToggle": "因预算裁剪（{{count}}）"
+  },
   "sessionActivity": {
     "title": "会话状态",
     "description": "当前会话的实时运行、任务、Git、目标、进程、谱系、子 Agent 和终端状态。",
