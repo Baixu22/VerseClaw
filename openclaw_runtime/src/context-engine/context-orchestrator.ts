@@ -43,10 +43,38 @@ import { runRc03SealHook, resolveRc03SealState } from "./rc03-seal-hook.js";
 import {
   beginTurnInjectionBudget,
   chargeTurnInjection,
+  reserveTurnInjectionCapacity,
   skipTurnInjection,
   type TurnInjectionChannel,
   type TurnInjectionLedger,
 } from "./turn-injection-budget.js";
+import { KNOWLEDGE_INJECTION_CHAR_BUDGET } from "./assembler.js";
+
+/**
+ * FP-P2-06. The three DCS projections are charged across several phases of one
+ * turn — `knowledge` and `tool_registry` during assembly, and `working_memory`
+ * again after every tool result — while the lower-precedence `cvk_addition`
+ * charges once, in the final candidate projection. Without a hold, that single
+ * CVK charge consumes the whole remaining budget and the later, higher-precedence
+ * `working_memory` charges are dropped, which inverts the frozen channel
+ * ownership declared by `TURN_INJECTION_PRECEDENCE`.
+ *
+ * `harness/specs/tasks/remote-forge-controlled-preview.md:204`: "A DCS-enabled
+ * attempt reserves the existing 2000-character DCS capacity in the same ledger
+ * before CVK is charged so earlier execution timing cannot invert the frozen
+ * channel ownership." That capacity is `KNOWLEDGE_INJECTION_CHAR_BUDGET`.
+ *
+ * The hold covers all three channels, not only the ones that have charged so
+ * far. Reserving just the observed ones is wrong: `working_memory` has not
+ * charged yet at this point, and `capacityReservedForHigherPrecedence` would
+ * then deduct the hold from working_memory's own limit (knowledge sits earlier
+ * in the precedence table), starving the channel the hold exists to protect.
+ */
+const DCS_PROJECTION_CHANNELS: readonly TurnInjectionChannel[] = [
+  "knowledge",
+  "working_memory",
+  "tool_registry",
+];
 
 export type ContextOrchestratorStage = "memory" | "vtoken";
 
@@ -275,6 +303,15 @@ export function finalizeContextOrchestratorTurn(params: {
    * re-injecting. Undefined keeps legacy behavior.
    */
   priorDedupKeys?: ReadonlySet<string>;
+  /**
+   * FP-P2-06: true when the attempt has at least one DCS context-block
+   * projection enabled. The DCS capacity is then held in the ledger before any
+   * lower-precedence charge can consume it. Undefined/false keeps the
+   * pre-existing budget behaviour byte for byte, so callers that are not a
+   * DCS-enabled attempt (and unit tests that project candidates directly) are
+   * unaffected.
+   */
+  dcsProjectionEnabled?: boolean;
 }): {
   messages: AgentMessage[];
   projection: ContextCandidateProjection;
@@ -282,6 +319,13 @@ export function finalizeContextOrchestratorTurn(params: {
   const wasFinalized = getContextCandidateCollection(params.turnId)?.diagnostics.finalized === true;
   gateBlockStoreInjectionForNativeContext(params.turnId);
   const ledger = beginTurnInjectionBudget({ turnId: params.turnId });
+  if (params.dcsProjectionEnabled === true) {
+    reserveTurnInjectionCapacity(
+      ledger,
+      DCS_PROJECTION_CHANNELS,
+      KNOWLEDGE_INJECTION_CHAR_BUDGET,
+    );
+  }
   const projected = projectContextCandidates({
     turnId: params.turnId,
     ledger,
