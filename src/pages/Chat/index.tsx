@@ -72,6 +72,7 @@ import {
   groupRunCardsByTriggerIndex,
   isRealUserMessage,
   mergeGraphStepCacheEntries,
+  turnDisclosureKey,
   type GraphStepCacheEntry,
   type UserRunCard,
 } from './execution-projection';
@@ -2624,8 +2625,8 @@ export function Chat() {
       || (card.active && card.streamingReplyText == null)
       || !card.hasVisibleReply;
     return cardApprovals.length > 0
-      || (runActivityExpandedOverrides[card.runKey] ?? defaultExpanded);
-  }, [approvalsByRunKey, runActivityExpandedOverrides, runActivityKeepExpandedOnComplete]);
+      || (runActivityExpandedOverrides[turnDisclosureKey(currentSessionKey, card)] ?? defaultExpanded);
+  }, [approvalsByRunKey, currentSessionKey, runActivityExpandedOverrides, runActivityKeepExpandedOnComplete]);
 
   const sessionActivityPlanVisibleInTranscript = useMemo(() => {
     // Newest turn first — the same card sessionActivityPlan fell back to.
@@ -3329,7 +3330,10 @@ export function Chat() {
                                 approvals: cardApprovals.length,
                               }}
                               onExpandedChange={(next) =>
-                                setRunActivityExpandedOverrides((prev) => ({ ...prev, [runKey]: next }))
+                                setRunActivityExpandedOverrides((prev) => ({
+                                  ...prev,
+                                  [turnDisclosureKey(currentSessionKey, card)]: next,
+                                }))
                               }
                             >
                               {/* Pending approvals first — the run is blocked on them. */}

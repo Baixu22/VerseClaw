@@ -80,6 +80,7 @@
       "runtime": "运行时"
     },
     "session": "浏览器会话",
+    "activeSessions": "活动会话",
     "newSession": "新会话",
     "url": "网址",
     "mode": "会话模式",

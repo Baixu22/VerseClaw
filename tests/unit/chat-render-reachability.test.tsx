@@ -13,7 +13,7 @@
  * Keep both files. Deleting either one re-opens the gap the other closes.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { act, render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 const { gatewayState, agentsState } = vi.hoisted(() => ({
@@ -1019,5 +1019,59 @@ describe('Turn summary contents badges', () => {
     // What we assert is that the count reaches the card at all.
     fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
     expect(screen.getByTestId('chat-run-pending-approvals')).toBeInTheDocument();
+  });
+});
+
+/**
+ * #47: a turn the user opened must stay open when its trigger message's id
+ * changes underneath it. The trigger user message is created optimistically
+ * with a client UUID and then replaced in place by the Gateway echo carrying
+ * the persisted id (`mergePendingOptimisticUserMessages` in stores/chat). The
+ * disclosure state used to key off `runKey` (`msg-<id>`), so that swap orphaned
+ * the user's override and the turn silently re-collapsed — exactly the symptom
+ * FP-P1-04 hit against a real runtime turn (aria-expanded stuck at "false").
+ */
+describe('Turn disclosure survives the optimistic→server id swap', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    approvalsMock.mockResolvedValue({ ok: true, approvals: [] });
+  });
+
+  it('keeps the turn open after the trigger message id changes', async () => {
+    await seedWorkspace();
+    await seedChat({
+      messages: [
+        { role: 'user', id: 'user-optimistic-uuid', content: 'weather in tokyo?', timestamp: 1_772_000_000 },
+        { role: 'assistant', id: 'weather-call', content: [{ type: 'tool_use', id: 'w-1', name: 'weather', input: WEATHER_INPUT }] },
+        { role: 'assistant', id: 'reply', content: [{ type: 'text', text: 'Here you go.' }] },
+      ],
+    });
+    await mountChat();
+
+    await waitFor(() => expect(screen.getByTestId('chat-turn-summary-toggle')).toBeInTheDocument());
+
+    // A finished turn folds by default; the user opens it.
+    const toggle = screen.getByTestId('chat-turn-summary-toggle');
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
+
+    // The Gateway echo swaps the optimistic user message for the persisted one:
+    // same position, same text/timestamp, different id.
+    const { useChatStore } = await import('@/stores/chat');
+    await act(async () => {
+      useChatStore.setState({
+        messages: [
+          { role: 'user', id: 'server-persisted-id', content: 'weather in tokyo?', timestamp: 1_772_000_000 },
+          { role: 'assistant', id: 'weather-call', content: [{ type: 'tool_use', id: 'w-1', name: 'weather', input: WEATHER_INPUT }] },
+          { role: 'assistant', id: 'reply', content: [{ type: 'text', text: 'Here you go.' }] },
+        ],
+      } as never);
+    });
+
+    await waitFor(() =>
+      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true'),
+    );
+    expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
   });
 });

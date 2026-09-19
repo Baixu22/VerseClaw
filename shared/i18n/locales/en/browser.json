@@ -80,6 +80,7 @@
       "runtime": "Runtime"
     },
     "session": "Browser session",
+    "activeSessions": "Active sessions",
     "newSession": "New session",
     "url": "URL",
     "mode": "Session mode",

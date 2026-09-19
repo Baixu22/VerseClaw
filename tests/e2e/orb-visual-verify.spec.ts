@@ -182,6 +182,19 @@ test('orbs render on turn-summary head with tooltip, both themes', async ({ laun
       content: '*, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }',
     });
     await expect(page.getByTestId('chat-page')).toBeVisible();
+
+    // The orb is the run's live "working" indicator, so it only renders while a
+    // run is actually open (TurnSummaryCard gates it on status === 'running').
+    // Arm the seeded turn with a live runtime run the way the app does — a
+    // `run.started` event over the runtime-event channel — so the head shows the
+    // working orb. Seeding history alone leaves the turn settled (no orb), which
+    // is correct product behaviour on reload.
+    await app.evaluate(({ BrowserWindow }, identity) => {
+      for (const win of BrowserWindow.getAllWindows()) {
+        win.webContents.send('chat:runtime-event', { ...identity, type: 'run.started', startedAt: Date.now() });
+      }
+    }, { runId: 'orb-run', sessionKey: SESSION_KEY });
+
     await expect(page.getByTestId('chat-turn-summary-orb').first()).toBeVisible();
 
     const report: OrbReport = {};

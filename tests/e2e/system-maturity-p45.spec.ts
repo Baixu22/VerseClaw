@@ -203,10 +203,14 @@ test.describe('System maturity Phase 4/5 runtime gates', () => {
       const page = await getStableWindow(app);
       await page.getByTestId('sidebar-footer-menu-trigger').click();
       await page.getByTestId('sidebar-more-browser').click();
-      await expect(page.getByText('Work tab')).toBeVisible();
-      await expect(page.getByText('Personal tab')).toBeVisible();
-      await expect(page.getByText('https://work.example')).toBeVisible();
-      await expect(page.getByText('https://personal.example')).toBeVisible();
+      // Both profile sessions are visibly isolated in the active-sessions strip,
+      // each carrying its own profile label, title and URL.
+      const activeSessions = page.getByTestId('workspace-browser-sessions');
+      await expect(activeSessions).toBeVisible();
+      await expect(activeSessions.getByText('Work tab')).toBeVisible();
+      await expect(activeSessions.getByText('Personal tab')).toBeVisible();
+      await expect(activeSessions.getByText('https://work.example')).toBeVisible();
+      await expect(activeSessions.getByText('https://personal.example')).toBeVisible();
     } finally {
       await app.close();
     }

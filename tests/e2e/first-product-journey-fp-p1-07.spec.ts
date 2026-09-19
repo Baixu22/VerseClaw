@@ -218,8 +218,8 @@ async function enableDcsPreview(page: Page): Promise<void> {
     'applied',
     { timeout: 30_000 },
   );
-  await page.getByTestId('settings-drawer-close').click();
-  await expect(page.getByTestId('settings-drawer-overlay')).toBeHidden();
+  await page.getByTestId('settings-back-button').click();
+  await expect(page.getByTestId('settings-page')).toHaveCount(0);
 }
 
 async function openChat(page: Page): Promise<void> {
