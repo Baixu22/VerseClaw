@@ -46,11 +46,32 @@ type LlmRequestLog = {
   projections: Record<DcsProjectionChannel, string[]>;
 };
 
+/**
+ * The Gateway envelopes an inbound user message with a `[Sat 2026-09-19 19:22
+ * GMT+8] ` timestamp prefix, and the DCS projections arrive as `user` messages.
+ * Their heading is therefore never at the start of a line, so the original
+ * anchored `^## Knowledge$` never matched a real request: `measured[channel]`
+ * read 0 for channels the ledger correctly reported as `applied`.
+ *
+ * Keep the line-anchored shape — a passing mention of the heading inside other
+ * content must still not count — but tolerate the envelope prefix.
+ */
+const ENVELOPE_PREFIX_PATTERN = String.raw`(?:\[[^\]\n]*\]\s*)?`;
+
 const DCS_PROJECTION_PATTERNS: Record<DcsProjectionChannel, RegExp> = {
-  knowledge: /^## Knowledge$/m,
-  working_memory: /^## Recent Actions$/m,
-  tool_registry: /^## Tools \(\d+ available\)$/m,
+  knowledge: new RegExp(`^${ENVELOPE_PREFIX_PATTERN}## Knowledge$`, 'm'),
+  working_memory: new RegExp(`^${ENVELOPE_PREFIX_PATTERN}## Recent Actions$`, 'm'),
+  tool_registry: new RegExp(`^${ENVELOPE_PREFIX_PATTERN}## Tools \\(\\d+ available\\)$`, 'm'),
 };
+
+/**
+ * The ledger charges the projection text the assembler produced, before the
+ * Gateway envelope prefixes it. Strip a leading envelope prefix so the measured
+ * character count and `byChannel[channel].applied` are the same quantity.
+ */
+function stripEnvelopePrefix(content: string): string {
+  return content.replace(/^\[[^\]\n]*\]\s*/, '');
+}
 
 /**
  * Scripted OpenAI-compatible chat/completions endpoint. Chooses the next tool
@@ -254,7 +275,7 @@ function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmReq
             channel,
             messages.flatMap((message) =>
               typeof message.content === 'string' && pattern.test(message.content)
-                ? [message.content]
+                ? [stripEnvelopePrefix(message.content)]
                 : [],
             ),
           ]),
@@ -807,6 +828,19 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
         'tool_registry',
       ]));
       for (const channel of Object.keys(measured) as DcsProjectionChannel[]) {
+        /*
+         * FP-P2-06 acceptance (harness/specs/tasks/remote-forge-controlled-preview.md):
+         * with the three DCS projections enabled, all three must be
+         * provider-visible and each channel's measured characters must equal the
+         * ledger's `applied`. A channel the ledger charged but that never
+         * reached the request is the "charged but injected something else" bug
+         * this comparison exists to catch.
+         *
+         * Do NOT relax this to "present only if the ledger applied > 0": that
+         * would accept a dropped higher-precedence channel, which the same spec
+         * forbids ("a prior low-priority CVK charge cannot consume reserved
+         * higher-priority DCS capacity").
+         */
         expect(measured[channel].requestCount, channel).toBeGreaterThan(0);
         expect(measured[channel].messageCount, channel).toBeGreaterThan(0);
         expect(lastTurn?.byChannel?.[channel]?.applied, channel).toBe(measured[channel].chars);
