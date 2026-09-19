@@ -668,6 +668,20 @@
         "backstoryTooltip": "Optional: describe identity background and special experience to create a richer role",
         "backstoryPlaceholder": "Optional: describe the Agent's background..."
     },
+    "proposeFacts": {
+        "title": "Fact confirmation queue",
+        "description": "Runtime-memory fact candidates awaiting human confirmation. Confirming promotes a candidate to a durable fact through the owner-convergence gate; it never writes on its own.",
+        "refresh": "Refresh",
+        "loading": "Loading candidates...",
+        "disabled": "The fact-proposal queue is off. Enable runtime memory shadow and proposeFacts to review candidates.",
+        "empty": "No candidates awaiting confirmation.",
+        "confirm": "Confirm",
+        "confirmed": "Fact confirmed and persisted.",
+        "notConfirmed": "Not confirmed. The selected memory owner does not allow persisting this fact.",
+        "confidence": "Confidence {{value}}",
+        "errorLoad": "Could not load the confirmation queue.",
+        "errorConfirm": "Could not confirm the fact."
+    },
     "toast": {
         "agentCreated": "Agent created",
         "agentCreateFailed": "Failed to create agent: {{error}}",

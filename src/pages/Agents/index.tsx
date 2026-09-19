@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/select';
 import RoleProfileEditor from '@/components/agents/RoleProfileEditor';
 import RolesOrchestrationPanel from '@/components/agents/RolesOrchestrationPanel';
+import { ProposeFactsConfirmQueue } from '@/components/agents/ProposeFactsConfirmQueue';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import { AgentAvatarEditor } from '@/components/agents/AgentAvatarEditor';
 import type { AgentRoleProfile } from '@shared/types/agent';
@@ -244,6 +245,7 @@ export function Agents({ embedded = false }: { embedded?: boolean } = {}) {
           </div>
 
           <RolesOrchestrationPanel agents={agents} />
+          <ProposeFactsConfirmQueue />
         </div>
       </div>
 

@@ -83,6 +83,15 @@ export type AgentApprovalEventData = {
   reason?: string;
   scope?: "turn" | "session";
   message?: string;
+  /**
+   * Display-only risk projection (#41). Carries the runtime's external-write
+   * classification across the approval-event boundary so the renderer can label
+   * the row — it is NOT an authorization signal and adds no decision surface
+   * (the OpenClaw exec-approval pipeline remains the only authorization plane,
+   * per the verseshell-external-write-policy-boundary rule). `'external-write'`
+   * means the command may write outside the ClawX journal with no auto-rollback.
+   */
+  risk?: "external-write";
 };
 
 /** Incremental command output payload associated with an item/tool call. */

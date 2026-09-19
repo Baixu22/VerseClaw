@@ -218,6 +218,8 @@ export function normalizeGatewayChatRuntimeEvent(payload: unknown): ChatRuntimeE
           phase: readString(data.phase),
           status: readString(data.status),
           message: readString(data.message),
+          // #41: carry the display-only external-write risk projection through.
+          risk: readString(data.risk) === 'external-write' ? 'external-write' : undefined,
         }
       : null;
   }

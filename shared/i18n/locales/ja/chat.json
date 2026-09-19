@@ -28,6 +28,22 @@
     "brainstorming": "マルチエージェント並列実行",
     "brainstormingDesc": "複数のエージェントで作業を分担します"
   },
+  "memoryInjection": {
+    "title": "今回の注入内容",
+    "description": "このセッションの返信前検索がプロンプトに追加したメモリを、ソース別にまとめて表示します。参照と件数のみで、本文は表示しません。",
+    "refresh": "更新",
+    "retry": "再試行",
+    "loading": "注入レシートを読み込み中…",
+    "empty": "今回は何も注入されませんでした。返信前検索が無効か、該当するメモリがない可能性があります。",
+    "errorGeneric": "注入レシートを読み込めませんでした。",
+    "errorTimeout": "注入レシートを読み込めませんでした。ランタイムが利用できないか、リクエストがタイムアウトした可能性があります。",
+    "summary": "注入 {{selected}} 件、削減 {{omitted}} 件",
+    "selectedCount": "注入 {{count}} 件",
+    "omittedCount": "削減 {{count}} 件",
+    "budget": "{{applied}}/{{requested}} 文字",
+    "trimmed": "予算により削減",
+    "omittedToggle": "予算により削減（{{count}}）"
+  },
   "sessionActivity": {
     "title": "セッション状態",
     "description": "この会話のランタイム、タスク、Git、ゴール、プロセス、系統、サブエージェント、ターミナルのリアルタイム状態。",
