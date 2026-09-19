@@ -222,6 +222,44 @@ async function enableDcsPreview(page: Page): Promise<void> {
   await expect(page.getByTestId('settings-page')).toHaveCount(0);
 }
 
+/**
+ * This journey drives every tool through the scripted model, so it patches two
+ * things onto the setup-produced config. Both are picked up by the DCS preview
+ * reload that immediately follows.
+ *
+ * 1. `tools.exec`: on the exec sink a missing `contentProvenance` is treated as
+ *    untrusted, which escalates the effective policy to
+ *    `security=allowlist, ask=on-miss` (agents/exec-provenance-policy.ts). A
+ *    scripted run has no human to answer that prompt, so every exec call parks
+ *    until the model timeout and the turn never finishes. fp-p1-04 grants the
+ *    same full access in the config it writes itself.
+ * 2. `runtime.coding.autoVerify=false`: post-write auto-verification belongs to
+ *    FP-P1-04, which configures it explicitly. Here the verify segment must
+ *    report the detected-but-disabled verdict the assertions below pin.
+ */
+async function patchScriptedRunConfig(userDataDir: string, homeDir: string): Promise<void> {
+  const sourceConfigPath = join(userDataDir, 'openclaw-source-state', 'openclaw.json');
+  const homeConfigPath = join(homeDir, '.openclaw', 'openclaw.json');
+  const config = JSON.parse(await readFile(sourceConfigPath, 'utf8')) as Record<string, unknown>;
+  const tools = (config.tools as Record<string, unknown> | undefined) ?? {};
+  const exec = (tools.exec as Record<string, unknown> | undefined) ?? {};
+  const runtime = (config.runtime as Record<string, unknown> | undefined) ?? {};
+  const coding = (runtime.coding as Record<string, unknown> | undefined) ?? {};
+  const serialized = `${JSON.stringify(
+    {
+      ...config,
+      tools: { ...tools, exec: { ...exec, host: 'gateway', security: 'full', ask: 'off' } },
+      runtime: { ...runtime, coding: { ...coding, autoVerify: { enabled: false } } },
+    },
+    null,
+    2,
+  )}\n`;
+  await mkdir(join(userDataDir, 'openclaw-source-state'), { recursive: true });
+  await mkdir(join(homeDir, '.openclaw'), { recursive: true });
+  await writeFile(sourceConfigPath, serialized, 'utf8');
+  await writeFile(homeConfigPath, serialized, 'utf8');
+}
+
 async function openChat(page: Page): Promise<void> {
   await page.getByTestId('sidebar-new-chat').click();
   await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 60_000 });
@@ -294,6 +332,8 @@ async function startValidationEndpoint(options: { fullModels: string[] }): Promi
 
 test.describe('FP-P1-07 first-product journey (real Electron + real Gateway)', () => {
   test('clean setup through coding, undo, restart recovery, and support bundle', async ({
+    homeDir,
+    userDataDir,
     launchElectronApp,
   }) => {
     test.setTimeout(1_200_000);
@@ -317,6 +357,7 @@ test.describe('FP-P1-07 first-product journey (real Electron + real Gateway)', (
       await enterProviderStep(app, page);
       await validateCustomProvider(page, `http://127.0.0.1:${llm.port}/v1`);
       await selectModelAndWorkspace(app, page, workspaceDir);
+      await patchScriptedRunConfig(userDataDir, homeDir);
       await enableDcsPreview(page);
       await openChat(page);
 
