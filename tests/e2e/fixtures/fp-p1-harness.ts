@@ -103,8 +103,24 @@ export function startScriptedLlm(script: LlmScript): Promise<{
   server: Server;
   port: number;
   log: LlmRequestLog[];
+  /** Requests the mock saw but could not answer usefully; see `recordAnomaly`. */
+  anomalies: string[];
 }> {
   const log: LlmRequestLog[] = [];
+  /**
+   * Requests the mock answered nothing useful for, or never saw at all.
+   *
+   * Without this, a request that misses an endpoint or throws inside the
+   * completions handler leaves no trace: `log` only records requests the script
+   * actually answered, so the caller sees a shorter transcript and the runtime
+   * reports a bare "the model did not respond" 120 seconds later. Record and
+   * print, so the failure names itself.
+   */
+  const anomalies: string[] = [];
+  const recordAnomaly = (detail: string): void => {
+    anomalies.push(detail);
+    process.stderr.write(`[fp-p1-harness] ${detail}\n`);
+  };
   return new Promise((resolve) => {
     const server = createHttpServer((req, res) => {
       if (!(req.url ?? '').includes('/chat/completions')) {
@@ -113,6 +129,11 @@ export function startScriptedLlm(script: LlmScript): Promise<{
           res.end(JSON.stringify({ data: [{ id: MOCK_MODEL_ID }] }));
           return;
         }
+        // A runtime that switches endpoint mid-turn lands here and would
+        // otherwise be invisible.
+        recordAnomaly(
+          `unmatched ${req.method ?? '?'} ${req.url ?? '?'} (log entries so far: ${log.length})`,
+        );
         res.writeHead(404, { 'content-type': 'application/json' });
         res.end(JSON.stringify({ error: { message: 'not found' } }));
         return;
@@ -120,6 +141,7 @@ export function startScriptedLlm(script: LlmScript): Promise<{
       let body = '';
       req.on('data', (chunk) => { body += chunk; });
       req.on('end', () => {
+        try {
         let parsed: {
           stream?: boolean;
           messages?: Array<{ role: string; content?: unknown; tool_call_id?: string }>;
@@ -219,12 +241,34 @@ export function startScriptedLlm(script: LlmScript): Promise<{
             usage,
           }));
         }
+        } catch (error) {
+          recordAnomaly(
+            `completions handler threw after ${log.length} answered request(s): ${String(error)}\n${(error as Error)?.stack ?? ''}`,
+          );
+          try {
+            res.writeHead(500, { 'content-type': 'application/json' });
+            res.end(
+              JSON.stringify({ error: { message: `scripted-llm handler error: ${String(error)}` } }),
+            );
+          } catch { /* response already committed */ }
+        }
       });
+    });
+    /*
+     * Connection-level evidence. `log` records only requests the script
+     * answered, so "the model did not respond" is ambiguous between a request
+     * that never arrived and one whose handler never replied. Counting raw
+     * connections separates the two.
+     */
+    let connectionCount = 0;
+    server.on('connection', () => {
+      connectionCount += 1;
+      process.stderr.write(`[fp-p1-harness] connection #${connectionCount}\n`);
     });
     server.listen(0, '127.0.0.1', () => {
       const address = server.address();
       if (!address || typeof address === 'string') throw new Error('llm port failed');
-      resolve({ server, port: address.port, log });
+      resolve({ server, port: address.port, log, anomalies });
     });
   });
 }

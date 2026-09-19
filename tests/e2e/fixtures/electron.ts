@@ -254,7 +254,7 @@ async function launchVerseClawElectron(
       DISPLAY: process.env.DISPLAY || ':1',
     }
     : {};
-  return await electron.launch({
+  const app = await electron.launch({
     executablePath: String(electronBinaryPath),
     args: [
       '--lang=en-US',
@@ -295,6 +295,21 @@ async function launchVerseClawElectron(
     }),
     timeout: 90_000,
   });
+  /*
+   * The app's own output is otherwise swallowed, which makes a stalled turn
+   * unattributable from the test side: the composer just goes idle and the
+   * runtime's reason never leaves the process. Opt in with CLAWX_E2E_APP_LOGS=1
+   * when diagnosing one.
+   */
+  if (process.env.CLAWX_E2E_APP_LOGS === '1') {
+    app.process().stdout?.on('data', (chunk: Buffer) => {
+      process.stderr.write(`[app:out] ${String(chunk)}`);
+    });
+    app.process().stderr?.on('data', (chunk: Buffer) => {
+      process.stderr.write(`[app:err] ${String(chunk)}`);
+    });
+  }
+  return app;
 }
 
 export const test = base.extend<ElectronFixtures>({
