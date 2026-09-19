@@ -309,9 +309,15 @@ forbidden-pattern list governs. Neither residual licenses a claim that E2E or `t
 
 The declared slice boundary is unchanged and now carried by the pre-existing deviations on
 `TF-0056`: other host and plugin write entry points are not covered, and the runtime
-`externalWritePolicy` is not yet wired to the ClawX approval surface, so "undeclared external write =
-0" does not yet hold repository-wide. No rollout lock, authorization boundary, approval channel,
-journal, undo stack, feature flag, or config leaf changed. Keep `default-off`, `liveReady=false`,
+`externalWritePolicy` is not wired to the ClawX approval surface, and as of 2026-09-19 that is a
+**decision rather than a gap**: the two planes stay disjoint, and the repository-wide metric
+"undeclared external write = 0" is **retired** in favour of a plane-scoped one. See the
+"Cross-plane metric retired" section of
+[`P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md`](./P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md)
+for the option (a)/(b) reasoning and what did and did not get verified. The runtime classification
+now reaches the renderer as a display-only `risk` badge, carrying no decision affordance. No rollout
+lock, authorization boundary, approval channel, journal, undo stack, feature flag, or config leaf
+changed. Keep `default-off`, `liveReady=false`,
 `productApproved=false`, and `defaultOn=false`. `TF-0069` / VS-P5-01 remains `proposed` and is not
 unlocked by this closeout.
 

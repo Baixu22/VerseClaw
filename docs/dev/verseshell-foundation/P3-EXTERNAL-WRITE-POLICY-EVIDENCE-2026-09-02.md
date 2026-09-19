@@ -319,3 +319,35 @@ The declared slice boundary is unchanged and is carried by the pre-existing `TF-
 other host and plugin write entry points are uncovered, and the runtime classification is not wired
 to the ClawX approval surface, so "undeclared external write = 0" does not yet hold repository-wide.
 `TF-0069` / VS-P5-01 stays `proposed`; this closeout does not unlock it.
+
+## Cross-plane metric retired — decision, 2026-09-19
+
+The slice boundary recorded above is now a **decided product position**, not an open gap. Recorded
+in response to issue #41: the runtime exec-approval plane and the ClawX host permission store stay
+disjoint, deliberately.
+
+- **The repository-wide metric "undeclared external write = 0" is retired.** It measures a
+  cross-plane property this boundary does not provide, so it could never be satisfied while the
+  boundary holds. It is replaced by a plane-scoped statement: *within the ClawX host permission
+  plane, the only producer of `risk: 'external-write'` is the out-of-workspace `files.writeText`
+  classification in `electron/services/workspace-permissions.ts`.*
+- **Option (a) is rejected.** Bridging `externalWritePolicy` into the ClawX approval store would
+  produce two approval systems for one command, which
+  `harness/specs/rules/verseshell-external-write-policy-boundary.md` forbids ("the existing OpenClaw
+  exec approval pipeline is the only authorization surface").
+- **Option (b) — a display-only projection — shipped.** The runtime's classification reaches the
+  renderer as data, with no decision affordance attached:
+  - `shared/chat-runtime-events.ts` — `risk?: 'external-write'` on the `approval.updated` payload
+  - `electron/gateway/chat-runtime-events.ts` — read across the runtime boundary
+  - `src/pages/Chat/task-visualization.ts` — projected onto the graph step
+  - `src/pages/Chat/ExecutionGraphCard.tsx` — badged (`chat-execution-step-external-write`)
+
+**Verified:** the projection renders both ways under unit test. **Not verified end to end:** the leg
+only fires for a governed VerseShell exec, which is default-off, so no production or test path emits
+the event. This document therefore makes no claim that the projection has been observed on a real
+command, and the acceptance criterion in issue #41 is **retired rather than met**.
+
+What this does not change: no rollout lock, no authorization boundary, no second approval channel,
+no new journal, undo stack, feature flag, or config leaf. The OpenClaw exec approval pipeline remains
+the sole authorization surface, and the runtime's static no-rollback warning text still renders only
+on its graph row.
