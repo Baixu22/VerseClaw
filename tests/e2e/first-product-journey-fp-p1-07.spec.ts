@@ -247,7 +247,13 @@ async function sendUiTurn(
     }
     await new Promise((resolve) => setTimeout(resolve, 1_000));
   }
-  throw new Error(`UI turn did not finish: ${message}`);
+  const recentRequests = log.slice(startAt).map((entry) => ({
+    issued: entry.issued,
+    toolResultKeys: Object.keys(entry.toolResults),
+  }));
+  const sendState = await page.getByTestId('chat-composer-send').getAttribute('data-send-state');
+  const visibleText = (await page.locator('body').innerText()).slice(-2_000);
+  throw new Error(`UI turn did not finish: ${message}\n${JSON.stringify({ recentRequests, sendState, visibleText })}`);
 }
 
 async function mainSession(app: ElectronApplication): Promise<{ sessionId?: string }> {
@@ -509,6 +515,8 @@ test.describe('FP-P1-07 first-product journey (real Electron + real Gateway)', (
       await page.getByTestId('setup-workspace-confirm').click();
       await expect(page.getByTestId('setup-workspace-confirmed')).toBeVisible({ timeout: 30_000 });
       await page.getByTestId('setup-next-button').click();
+      await expect(page.getByTestId('setup-complete-provider-verified')).toBeVisible();
+      await expect(page.getByTestId('setup-complete-workspace')).toBeVisible();
       await page.getByTestId('setup-next-button').click();
       await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
 

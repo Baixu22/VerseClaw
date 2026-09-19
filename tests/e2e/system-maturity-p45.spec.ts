@@ -120,7 +120,14 @@ test.describe('System maturity Phase 4/5 runtime gates', () => {
 
       await input.fill('cancel this turn');
       await primaryAction.click();
-      await expect(primaryAction).toHaveAttribute('title', /stop/i);
+      /*
+       * The primary action carries no `title` attribute: its tooltip is a Radix
+       * `TooltipContent`, and the trigger is a plain `<button>`. Asserting
+       * `title` here could never pass, even when the run really was live. The
+       * composer's own state attributes are `aria-label` and `data-send-state`,
+       * and `chat-run-state-events.spec.ts` asserts the same pair.
+       */
+      await expect(primaryAction).toHaveAttribute('data-send-state', /starting|running/);
       await primaryAction.click();
       await expect(input).toBeEnabled();
 
@@ -159,7 +166,9 @@ test.describe('System maturity Phase 4/5 runtime gates', () => {
       const primaryAction = page.getByTestId('chat-composer-send');
       await input.fill('timeout this turn');
       await primaryAction.click();
-      await expect(primaryAction).toHaveAttribute('title', /stop/i);
+      // Same stale-attribute fix as the cancel test above: assert the composer's
+      // real state attribute, not a `title` the button never renders.
+      await expect(primaryAction).toHaveAttribute('data-send-state', /starting|running/);
       await page.clock.fastForward(30 * 60 * 1000 + 1);
       await expect(page.getByText(/turn timed out/i)).toBeVisible();
       await expect(input).toBeEnabled();

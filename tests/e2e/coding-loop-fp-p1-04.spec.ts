@@ -701,7 +701,13 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
          * disclosure, so the panel only exists once the parent has committed the
          * new `expanded` value — wait for it instead of reading immediately.
          */
-        await summaryToggle.click();
+        // A live turn may still be marked active when sendTurn resolves. Active
+        // cards are intentionally open by default, so only click when the
+        // disclosure is currently closed; an unconditional click would hide
+        // the details and make this assertion test the opposite behavior.
+        if (await summaryToggle.getAttribute('aria-expanded') !== 'true') {
+          await summaryToggle.click();
+        }
         /*
          * `aria-expanded` is the component's own view of the disclosure state,
          * so asserting it first splits "the click never reached the state" from
@@ -735,13 +741,13 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       expect(rendered).toContain('util.js');
       expect(rendered).toContain('AUTO_VERIFY_PASS');
 
-      const fileReceipts = page.getByTestId('chat-generated-files').getByRole('button');
-      await expect(fileReceipts).toHaveCount(2, { timeout: 30_000 });
-      await expect(fileReceipts.nth(0)).toContainText('util.js');
-      await expect(fileReceipts.nth(1)).toContainText('summary.txt');
-      await fileReceipts.nth(0).click();
-      await expect(page.getByTestId('artifact-panel')).toBeVisible();
-      await expect(page.getByTestId('monaco-diff-viewer')).toBeVisible();
+      // Text files with a complete patch are owned by the inline diff surface;
+      // the generated-file chip row intentionally omits them to avoid
+      // announcing the same mutation twice (see Generated file ownership).
+      const mutationDiffs = page.getByTestId('chat-mutation-diffs');
+      await expect(mutationDiffs).toBeVisible({ timeout: 30_000 });
+      await expect(mutationDiffs).toContainText('util.js');
+      await expect(mutationDiffs).toContainText('summary.txt');
 
       // Shared injection budget accounting after a REAL turn (FP-P1-11).
       const ack = await hostInvoke<Record<string, unknown>>(app, 'gateway', 'rpc', {
