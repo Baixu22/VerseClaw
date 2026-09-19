@@ -128,7 +128,17 @@ export function isCodingWriteJournalEnabled(
   return fromConfig ?? DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.writeJournal.enabled"];
 }
 
-/** Resolve bounded post-write test execution. Default off. */
+/**
+ * Resolve bounded post-write test execution.
+ *
+ * The shipped default is `"auto"` (see `DEFAULT_CODING_FEATURE_FLAGS`): run one
+ * bounded project test command when, and only when, a runner is detected. It is
+ * neither "off" nor a bypass - the command still travels through the effective
+ * exec tool's policy and approval pipeline, so an unallowlisted command waits
+ * for approval exactly like a model-issued one. That is required, not a defect:
+ * FP-P2-05 states the write path "must never spawn directly or construct a
+ * second approval, sandbox, or timeout plane".
+ */
 export function resolveCodingAutoVerifyConfig(cfg?: OpenClawConfig): CodingAutoVerifyConfig {
   const leaf = asRecord(codingConfigFrom(cfg)?.autoVerify);
   const timeoutSeconds =

@@ -103,7 +103,7 @@
 | FP-P2-02 | 10 次真人 DCS coding + GitHub Forge 联合执行 | FP-P2 | P0 | engineering-validation-only | `engineering-validation-only` | FP-P2-01 | — | 2026-07-29 | fixture 10 run records 已备（`notHumanProductChat=true`）；9 类 blocking matrix；经用户授权降级，真实任务等待外部 reviewer |
 | FP-P2-03 | DCS + GitHub Forge 联合裁决与账目刷新 | FP-P2 | P0 | engineering-validation-only | — | FP-P2-02, FP-P2-04, FP-P2-05, FP-P2-06 | — | 2026-07-29 | fixture 4 分面 CONTINUE verdict 已备；proposal 不 apply；经用户授权降级，真实裁决等待外部 reviewer |
 | FP-P2-04 | 预算总额与 drop 告警线复核+配置化 | FP-P2 | P1 | backlog | — | FP-P2-02 | — | 2026-07-26 | 源自 FP-P0-05：0.1/6000 为起始线非经验值；禁止靠放大总额消除告警 |
-| FP-P2-05 | verify 段自动执行与结果回填 | FP-P2 | P2 | done | — | FP-P1-04 | Codex | 2026-07-28 | default-off；最终 effective exec 复用、nearest project/custom runner、八类结果与真 child 可见回填全绿；失败不回滚 write journal |
+| FP-P2-05 | verify 段自动执行与结果回填 | FP-P2 | P2 | done | — | FP-P1-04 | Codex | 2026-07-28 | 验收时 default-off；最终 effective exec 复用、nearest project/custom runner、八类结果与真 child 可见回填全绿；失败不回滚 write journal。**2026-07-31 起默认值改为 `"auto"`**（`f77d92dd2`，依 `coding-capability-audit-vs-source-archive.md` §3.3「autoVerify 按可信度默认开」） |
 | FP-P2-06 | 注入预算逐通道归因补全 | FP-P2 | P1 | done | — | FP-P1-04 | Codex | 2026-07-28 | 三通道真实 charge、同 ledger DCS 2000 容量 reservation、provider 独立比对与显式 CVK 截断全绿；总额仍 6000 |
 | FP-P2-07 | MergeBeacon 来源冻结与结构化 Patch/Error 契约 | FP-P2 | P1 | done | — | FP-P1-08 G5（验收依赖） | Codex | 2026-07-28 | 六切片收口：source/license、唯一 contract/adapter、Git/Code Review/DCS rich diff、canonical error envelope、脱敏与反向测试；真实 Electron E2E 全绿 |
 | FP-P2-08 | GitHub Remote Forge 只读控制面 | FP-P2 | P1 | done | — | FP-P2-07 | Codex | 2026-07-28 | Main-owned GitHub read、typed completeness/capability/readiness、bounded content、host-api/MCP/四语 UI 与 fake-provider Main-path E2E 全绿 |
