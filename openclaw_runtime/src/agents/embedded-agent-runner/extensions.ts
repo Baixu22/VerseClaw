@@ -344,6 +344,9 @@ function buildContextBlockFactory(params: {
       modelCallIndex,
       seal: options.seal !== false,
       priorDedupKeys: options.priorDedupKeys,
+      // FP-P2-06: a DCS-enabled attempt holds the DCS injection capacity in the
+      // ledger before the projection charges the lower-precedence CVK addition.
+      dcsProjectionEnabled: hasContextBlockProjection(params.projectionFlags),
     });
     // The projection that just sealed is the one that will enter the
     // transcript (or was already consumed for the system prompt); remember
