@@ -80,6 +80,7 @@
       "runtime": "Runtime"
     },
     "session": "Сеанс браузера",
+    "activeSessions": "Активные сеансы",
     "newSession": "Новый сеанс",
     "url": "URL",
     "mode": "Режим сессии",

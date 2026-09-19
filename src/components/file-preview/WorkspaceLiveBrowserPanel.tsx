@@ -308,6 +308,29 @@ export function WorkspaceLiveBrowserPanel({
         </div>
       </div>
 
+      {sessions.length > 0 && (
+        <ul
+          className="flex shrink-0 flex-wrap items-center gap-1.5 border-b border-border/60 px-2 py-1.5"
+          data-testid="workspace-browser-sessions"
+          aria-label={t('workspace.activeSessions')}
+        >
+          {sessions.map((session) => (
+            <li
+              key={session.id}
+              data-testid={`workspace-browser-session-${session.id}`}
+              className={cn(
+                'flex min-w-0 items-center gap-1.5 rounded-md px-2 py-1 text-[11px]',
+                session.id === sessionId ? 'bg-black/5 dark:bg-white/10' : 'bg-transparent',
+              )}
+            >
+              <span className="shrink-0 rounded bg-black/[0.06] px-1 py-0.5 font-medium text-muted-foreground dark:bg-white/[0.08]">{session.profile}</span>
+              <span className="shrink-0 font-medium text-foreground">{session.title || t('sessions.untitled')}</span>
+              <span className="min-w-0 truncate font-mono text-muted-foreground">{session.url || t('sessions.blank')}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
       {!selectedSession && (
         <div className="flex min-h-0 flex-1 items-center justify-center px-6 text-center">
           <div className="max-w-sm">

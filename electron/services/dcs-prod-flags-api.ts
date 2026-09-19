@@ -54,6 +54,53 @@ async function readAckTuning() {
   });
 }
 
+/**
+ * Wait out a transient `starting` state before deciding whether the gateway is
+ * up. A flag write trips config-sync's watcher, which launches its own restart,
+ * so the gateway is briefly `starting` right when the DCS control plane checks
+ * it. Returns the settled state ('running' once ready, or 'stopped'/'error' if
+ * the (re)start failed); gives up after `timeoutMs` and returns whatever state
+ * it last saw.
+ */
+async function waitForGatewaySettled(
+  gatewayManager: GatewayManager,
+  timeoutMs = 15_000,
+): Promise<string | undefined> {
+  const deadline = Date.now() + timeoutMs;
+  let state = gatewayManager.getStatus().state;
+  while (state === 'starting' && Date.now() < deadline) {
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    state = gatewayManager.getStatus().state;
+  }
+  return state;
+}
+
+/**
+ * Restart the gateway but fail closed within the host-action budget. A restart
+ * onto an unreadable/broken config leaves the child unable to become ready, and
+ * `waitForGatewayReady`'s 90s hard limit outlasts the 60s host-action timeout —
+ * so `setFlag`/`setPreview` would hang past the caller's deadline instead of
+ * returning an explainable `restart-failed` (FP-P1-05 S6). Bounding it here
+ * turns that hang into a prompt, catchable rejection. A successful restart is
+ * ~5s, so this ceiling only ever bites a genuinely stuck one.
+ */
+const DCS_RESTART_BUDGET_MS = 40_000;
+
+async function restartGatewayWithinBudget(gatewayManager: GatewayManager): Promise<void> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(
+      () => reject(new Error(`gateway restart did not settle within ${DCS_RESTART_BUDGET_MS}ms`)),
+      DCS_RESTART_BUDGET_MS,
+    );
+  });
+  try {
+    await Promise.race([gatewayManager.restart(), timeout]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 type OpenClawConfig = Record<string, unknown>;
 
 function storeEnabled(
@@ -273,8 +320,14 @@ export async function setDcsProdFlag(
 
     // FP-P0-04: the write only reaches `saved`. Everything past that has to be
     // proven by the child, so restart() resolving is no longer sufficient.
+    // The write above trips config-sync's watcher into its own restart, so let
+    // that transient `starting` settle before deciding — otherwise this guard
+    // bails to `pending-restart` mid-reload and never collects the ack.
     let restartedGateway = false;
-    if (!restartGateway || gatewayManager.getStatus().state !== 'running') {
+    const settledState = restartGateway
+      ? await waitForGatewaySettled(gatewayManager)
+      : gatewayManager.getStatus().state;
+    if (!restartGateway || settledState !== 'running') {
       return {
         success: true,
         id,
@@ -288,7 +341,7 @@ export async function setDcsProdFlag(
     }
 
     try {
-      await gatewayManager.restart();
+      await restartGatewayWithinBudget(gatewayManager);
       restartedGateway = true;
     } catch (error) {
       logger.warn('[dcs-prod-flags] gateway restart failed after flag set:', error);
@@ -490,7 +543,16 @@ export async function setDcsPreview(
     }
 
     let restartedGateway = false;
-    if (!restartGateway || gatewayManager.getStatus().state !== 'running') {
+    // Writing the combo config above trips config-sync's file watcher, which
+    // kicks off its own reload/restart. That leaves the gateway transiently in
+    // `starting` for a few seconds — and this guard used to read that as
+    // `gateway-not-running` and bail to `pending-restart` without ever
+    // collecting the ack, so a correctly-applied flag read as stuck (FP-P1-07 /
+    // FP-P1-05). Let an in-flight (re)start settle before deciding.
+    const settledState = restartGateway
+      ? await waitForGatewaySettled(gatewayManager)
+      : gatewayManager.getStatus().state;
+    if (!restartGateway || settledState !== 'running') {
       return {
         success: true,
         enabled,
@@ -504,7 +566,7 @@ export async function setDcsPreview(
     }
 
     try {
-      await gatewayManager.restart();
+      await restartGatewayWithinBudget(gatewayManager);
       restartedGateway = true;
     } catch (error) {
       logger.warn('[dcs-preview] gateway restart failed after combo set:', error);

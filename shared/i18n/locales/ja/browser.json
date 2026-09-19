@@ -80,6 +80,7 @@
       "runtime": "ランタイム"
     },
     "session": "ブラウザーセッション",
+    "activeSessions": "アクティブなセッション",
     "newSession": "新しいセッション",
     "url": "URL",
     "mode": "セッションモード",

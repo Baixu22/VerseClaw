@@ -155,6 +155,25 @@ export function createRunKey(
     : `${currentSessionKey}:trigger-${triggerIndex}`;
 }
 
+/**
+ * Key for the turn's disclosure (expand/collapse) state.
+ *
+ * Deliberately NOT `runKey`: a turn's trigger message is created optimistically
+ * with a client UUID and then replaced in place by the Gateway echo carrying the
+ * persisted id (see `mergePendingOptimisticUserMessages` in stores/chat), so
+ * `runKey` (`msg-<id>`) flips mid-turn and orphans any override the user set
+ * against the old id. The trigger's position survives that swap — the echo lands
+ * at the same index — so the disclosure state keys off it and outlives the id
+ * change. Cache/approval routing keep `runKey`; only the user's fold preference
+ * needs the stable anchor.
+ */
+export function turnDisclosureKey(
+  currentSessionKey: string,
+  card: Pick<UserRunCard, 'triggerIndex'>,
+): string {
+  return `${currentSessionKey}:trigger-${card.triggerIndex}`;
+}
+
 export function runtimeRunHasToolActivity(run: ChatRuntimeRunState | null | undefined): boolean {
   return Boolean(run?.events.some((event) =>
     event.type === 'tool.started'
