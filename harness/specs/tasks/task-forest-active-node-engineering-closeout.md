@@ -7,6 +7,14 @@ scenarios:
 taskType: runtime-bridge
 diffBase: 5dabc7ca5e86d2c08e5236e175323ebe4b4db804
 intent: Complete TF-0029 engineering verification for the explicitly requested active-node batch using its real initial checkout as the comparison base, preserving the historical RC-01R prerequisite identity and the separate approved runtime acceptedBase while enforcing the original 120-warning ceiling and independent full verification.
+# TF-0029 bounded scope (per docs/dev/engineering-product-node-plan-20260921.md §4):
+# this node owns writer inventory, receipt owner, type/lint/unit, build, core
+# runtime smoke, and comms. The full UI e2e regression suite and release
+# packaging/provenance validation are separately owned by TF-0041's final
+# engineering acceptance and are deferred here (recorded, not deleted).
+deferredProfiles:
+  e2e: "TF-0041 :: Full Electron UI regression suite is owned by TF-0041 final engineering acceptance / release freeze; TF-0029 verifies only the bounded baseline + core smoke."
+  release: "TF-0041 :: Release baseline packaging/provenance validation is owned by TF-0041 release freeze, not the TF-0029 self-contained baseline."
 touchedAreas:
   - .github/workflows/check.yml
   - README.ja-JP.md

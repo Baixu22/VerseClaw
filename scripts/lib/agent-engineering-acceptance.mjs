@@ -392,6 +392,31 @@ function hasHumanEvidenceRequirement(spec) {
   return /humanEvidence\s*:\s*required/iu.test(spec.body ?? '');
 }
 
+// Core profiles a node can never defer: they gate the node's own engineering
+// correctness. Only coverage-triggered, separately-ownable suites (full UI e2e,
+// release packaging/provenance, system-maturity) may be deferred to another
+// node, and only with an explicit owner + reason recorded in the manifest.
+const NON_DEFERRABLE_PROFILES = new Set(['fast', 'comms', 'runtime', 'full']);
+
+// Frontmatter form (the repo's minimal YAML subset supports nested key:value,
+// not list-of-objects), each value is "OWNER :: reason":
+//   deferredProfiles:
+//     e2e: "TF-0041 :: full UI regression owned by the release-freeze node"
+//     release: "TF-0041 :: release packaging/provenance owned by TF-0041"
+function parseDeferredProfiles(spec) {
+  const out = new Map();
+  const raw = spec.data?.deferredProfiles;
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+    for (const [profile, value] of Object.entries(raw)) {
+      const key = String(profile).trim();
+      if (!key) continue;
+      const [owner, ...rest] = String(value).split('::');
+      out.set(key, { profile: key, owner: owner.trim(), reason: rest.join('::').trim() });
+    }
+  }
+  return out;
+}
+
 function inferProfiles(spec, coverage, mode) {
   const profiles = new Set(['fast']);
   for (const profile of toArray(spec.data?.requiredProfiles)) profiles.add(String(profile));
@@ -401,7 +426,23 @@ function inferProfiles(spec, coverage, mode) {
   if (coverage.maturity) profiles.add('maturity');
   if (coverage.release) profiles.add('release');
   if (mode === 'full') profiles.add('full');
-  return [...profiles].sort(comparePath);
+
+  // A candidate can touch UI/release paths (so coverage triggers those gates)
+  // while a different node owns the full suite. Honest deferral: strip the
+  // deferred profile from THIS node's required set and record where it went.
+  // Core profiles cannot be deferred; the validator re-checks this fail-closed.
+  const deferralSpecs = parseDeferredProfiles(spec);
+  const deferredProfiles = [];
+  for (const [profile, record] of deferralSpecs) {
+    if (NON_DEFERRABLE_PROFILES.has(profile)) continue;
+    if (!profiles.has(profile)) continue;
+    profiles.delete(profile);
+    deferredProfiles.push(record);
+  }
+  return {
+    profiles: [...profiles].sort(comparePath),
+    deferredProfiles: deferredProfiles.sort((a, b) => comparePath(a.profile, b.profile)),
+  };
 }
 
 function inferTestExpectation(step) {
@@ -556,7 +597,7 @@ export function createAcceptancePlan(options = {}) {
   }
   const changedPaths = resolveChangedPaths(root, options);
   const coverage = inferCoverage(changedPaths);
-  const profiles = inferProfiles(spec, coverage, mode);
+  const { profiles, deferredProfiles } = inferProfiles(spec, coverage, mode);
   const rulePaths = collectRulePaths(spec);
   const sourceFiles = [specPath, ...rulePaths, ...REQUIRED_LOCK_FILES, ...GATE_POLICY_FILES];
   const source = sourceFiles.map((path) => readRelativeFile(root, path, identity.commit));
@@ -616,6 +657,7 @@ export function createAcceptancePlan(options = {}) {
     changedPaths,
     coverage,
     requiredProfiles: profiles,
+    deferredProfiles,
     source: {
       files: source,
       missing: missingSource,
@@ -691,8 +733,29 @@ export function validateAcceptanceManifest(manifest, options = {}) {
       errors.push(`required-test gate ${gate?.id ?? index}: commandLine must match the declared spec requiredTests entry`);
     }
   }
+  // Deferred profiles: honest gate-layering. A deferred profile must (1) not be
+  // a core profile, (2) name an owner node + reason, (3) not also appear in the
+  // required set, and (4) contribute zero gates to this manifest. This is the
+  // fail-closed check behind the spec's deferredProfiles declaration — deferral
+  // moves a suite to another node with a recorded owner; it never deletes it.
+  const deferred = Array.isArray(manifest.deferredProfiles) ? manifest.deferredProfiles : [];
+  const requiredProfileSet = new Set(toArray(manifest.requiredProfiles).map(String));
+  const deferredProfileNames = new Set();
+  for (const record of deferred) {
+    const profile = String(record?.profile ?? '').trim();
+    if (!profile) { errors.push('deferredProfiles: each entry must name a profile'); continue; }
+    if (deferredProfileNames.has(profile)) errors.push(`deferredProfiles: duplicate entry for ${profile}`);
+    deferredProfileNames.add(profile);
+    if (NON_DEFERRABLE_PROFILES.has(profile)) errors.push(`deferredProfiles: ${profile} is a core profile and cannot be deferred`);
+    if (!String(record?.owner ?? '').trim()) errors.push(`deferredProfiles: ${profile} must name an owner node`);
+    if (!String(record?.reason ?? '').trim()) errors.push(`deferredProfiles: ${profile} must record a reason`);
+    if (requiredProfileSet.has(profile)) errors.push(`deferredProfiles: ${profile} cannot be both required and deferred`);
+  }
   const gateIds = new Set();
   for (const gate of manifest.gates ?? []) {
+    if (gate?.profile && deferredProfileNames.has(String(gate.profile))) {
+      errors.push(`${gate?.id ?? '<gate>'}: belongs to deferred profile ${gate.profile} and must not appear in this manifest`);
+    }
     if (!gate?.id || gateIds.has(gate.id)) errors.push(`gate id is missing or duplicated: ${gate?.id ?? '<empty>'}`);
     gateIds.add(gate?.id);
     if (!gate.command && typeof gate.commandLine !== 'string') {

@@ -275,6 +275,86 @@ describe('Agent Engineering Acceptance', () => {
     expect(validateAcceptanceManifest(manifest)).toEqual({ ok: true, errors: [] });
   });
 
+  it('defers coverage-triggered suites to a named owner node without deleting them', () => {
+    const changedPaths = ['src/components/Settings.tsx', 'scripts/release-baseline-manifest.mjs'];
+    const specData = {
+      id: 'fixture-deferral',
+      title: 'Fixture deferral',
+      diffBase: undefined,
+      requiredRules: [],
+      requiredTests: [],
+      deferredProfiles: {
+        e2e: 'TF-0041 :: full UI suite owned by the release-freeze node',
+        release: 'TF-0041 :: release packaging owned by TF-0041',
+      },
+    };
+    const base = createAcceptancePlan({
+      spec: { path: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md', data: { ...specData, deferredProfiles: undefined }, body: '' },
+      specPath: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md',
+      changedPaths,
+      runId: 'defer-base',
+      createdAt: '2026-09-21T00:00:00.000Z',
+    });
+    // Baseline (no deferral): UI + release coverage pulls in those gates.
+    expect(base.requiredProfiles).toEqual(expect.arrayContaining(['e2e', 'release']));
+    expect(base.gates.map((g) => g.id)).toEqual(expect.arrayContaining(['electron-e2e', 'release-baseline-validate']));
+
+    const deferred = createAcceptancePlan({
+      spec: { path: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md', data: specData, body: '' },
+      specPath: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md',
+      changedPaths,
+      runId: 'defer-applied',
+      createdAt: '2026-09-21T00:00:00.000Z',
+    });
+    // Deferred: profiles stripped from THIS node, recorded with owner+reason.
+    expect(deferred.requiredProfiles).not.toContain('e2e');
+    expect(deferred.requiredProfiles).not.toContain('release');
+    expect(deferred.gates.map((g) => g.id)).not.toContain('electron-e2e');
+    expect(deferred.gates.map((g) => g.id)).not.toContain('release-baseline-validate');
+    expect(deferred.deferredProfiles).toEqual([
+      { profile: 'e2e', owner: 'TF-0041', reason: 'full UI suite owned by the release-freeze node' },
+      { profile: 'release', owner: 'TF-0041', reason: 'release packaging owned by TF-0041' },
+    ]);
+    expect(validateAcceptanceManifest(deferred)).toEqual({ ok: true, errors: [] });
+  });
+
+  it('rejects a deferred profile with no owner, a core profile deferral, or a lingering deferred gate', () => {
+    const changedPaths = ['src/components/Settings.tsx'];
+    const manifest = createAcceptancePlan({
+      spec: {
+        path: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md',
+        data: {
+          id: 'fixture-deferral-2', title: 'x', requiredRules: [], requiredTests: [],
+          deferredProfiles: { e2e: 'TF-0041 :: reason' },
+        },
+        body: '',
+      },
+      specPath: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md',
+      changedPaths,
+      runId: 'defer-bad',
+      createdAt: '2026-09-21T00:00:00.000Z',
+    });
+    // Ownerless deferral is rejected.
+    const noOwner = { ...manifest, deferredProfiles: [{ profile: 'e2e', owner: '', reason: 'x' }] };
+    expect(validateAcceptanceManifest(noOwner).errors).toEqual(
+      expect.arrayContaining([expect.stringContaining('must name an owner node')]),
+    );
+    // Core profile cannot be deferred.
+    const coreDefer = { ...manifest, deferredProfiles: [{ profile: 'fast', owner: 'TF-0041', reason: 'x' }] };
+    expect(validateAcceptanceManifest(coreDefer).errors).toEqual(
+      expect.arrayContaining([expect.stringContaining('core profile and cannot be deferred')]),
+    );
+    // A gate belonging to a deferred profile must not linger in the manifest.
+    const lingering = {
+      ...manifest,
+      deferredProfiles: [{ profile: 'e2e', owner: 'TF-0041', reason: 'x' }],
+      gates: [...manifest.gates, { id: 'electron-e2e', profile: 'e2e', required: true, allowSkip: false, command: 'pnpm', args: ['run', 'test:e2e'], safety: { network: 'none', productionEffects: false, humanEvidence: false } }],
+    };
+    expect(validateAcceptanceManifest(lingering).errors).toEqual(
+      expect.arrayContaining([expect.stringContaining('belongs to deferred profile e2e')]),
+    );
+  });
+
   it('has no blind coverage gap for runtime changes', () => {
     expect(inferCoverage(['openclaw_runtime/src/agents/tool.ts'])).toMatchObject({ runtime: true, comms: true });
   });
