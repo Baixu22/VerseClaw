@@ -1017,12 +1017,33 @@ export function createDetachedWorktree(root, options = {}) {
   };
 }
 
+// Loopback hosts that must never be routed through a forward proxy. Gate
+// subprocesses (unit/integration tests) stand up ephemeral servers on
+// 127.0.0.1 and fetch them back; if the acceptance environment has HTTP(S)_PROXY
+// set (e.g. to reach npm behind a corporate/dev proxy), those loopback fetches
+// would otherwise be tunneled to the proxy and fail with a connection error
+// that looks like a product defect (e.g. rc03-seal-wiring's guarded wire fetch).
+const LOOPBACK_NO_PROXY = ['127.0.0.1', 'localhost', '::1', '[::1]'];
+
 function makeEnvironment(options = {}) {
   const env = { ...(options.env ?? process.env) };
   // The validator rejects unsafe inherited values. We do not silently repair
   // them; deleting these keys here is only for explicitly supplied safe test
   // environments where the key is absent.
   delete env.NODE_TLS_REJECT_UNAUTHORIZED;
+  // If any forward proxy is configured, guarantee loopback bypasses it. This is
+  // an environment-hygiene fix, not a network-policy relaxation: it never adds
+  // outbound reach, it only keeps localhost local. Merge with any existing
+  // NO_PROXY so a caller's own exclusions are preserved.
+  const proxyConfigured = ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy']
+    .some((key) => String(env[key] ?? '').trim().length > 0);
+  if (proxyConfigured) {
+    for (const key of ['NO_PROXY', 'no_proxy']) {
+      const existing = String(env[key] ?? '').split(',').map((entry) => entry.trim()).filter(Boolean);
+      const merged = [...new Set([...existing, ...LOOPBACK_NO_PROXY])];
+      env[key] = merged.join(',');
+    }
+  }
   return env;
 }
 
