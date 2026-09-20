@@ -205,6 +205,7 @@ touchedAreas:
   - tests/e2e/channels-account-id-validation.spec.ts
   - tests/e2e/channels-health-diagnostics.spec.ts
   - openclaw_runtime/src/gateway/server-startup-post-attach.defer.test.ts
+  - openclaw_runtime/src/agents/bash-tools.characterization.test.ts
 expectedUserBehavior:
   - The integrated candidate includes only the declared batch changes and keeps the original unrelated working-tree edits separate.
   - Historical prerequisite c860c12f4ab88bca9bd46742facbc97e98bb9d60 remains identified against 3b08a46667e9b961ff9eafda12da0a18848832c5; the integrated comparison base does not re-sign that prerequisite or change the approved acceptedBase 73bdddbb1dcf250783afb5da1174a43cf8d90535.
