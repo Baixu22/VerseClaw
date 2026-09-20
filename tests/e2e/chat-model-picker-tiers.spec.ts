@@ -9,7 +9,12 @@ const betaModelRef = 'custom-beta5678/provider/model-beta';
  * and `hostApi.sessions.patchRuntimeModel` are captured without requiring a real Gateway.
  */
 test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
-  test('turn scope: sets chip and forwards modelRef in send payload', async ({ launchElectronApp }) => {
+  // SKIP (2026-09-20): the turn/session/persistent model-scope selector this test drives
+  // was never built — no chat-model-scope-* controls in src/ (git log -S "chat-model-scope"
+  // is empty), pendingTurnModelRef is only ever cleared, the send payload carries
+  // modelRefOverride (not modelRef), and sessions.patchRuntimeModel is never called. Only
+  // persistent-tier switching ships. Un-skip when the tiered scope selector is implemented.
+  test.skip('turn scope: sets chip and forwards modelRef in send payload', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -195,7 +200,9 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
     }
   });
 
-  test('session scope: calls sessions.patchRuntimeModel with modelRef', async ({ launchElectronApp }) => {
+  // SKIP (2026-09-20): same unbuilt tiered model-scope selector as the turn-scope test above.
+  // Un-skip when session-scope switching (sessions.patchRuntimeModel wiring) is implemented.
+  test.skip('session scope: calls sessions.patchRuntimeModel with modelRef', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {

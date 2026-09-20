@@ -119,11 +119,16 @@ test.describe('Channels binding regression', () => {
 
     const newAccountRow = page.locator('div.rounded-xl').filter({ hasText: newAccountId }).first();
     await expect(newAccountRow).toBeVisible();
-    const bindingSelect = newAccountRow.locator('select');
-    await expect(bindingSelect).toHaveValue('');
+    // The agent binding control migrated from a native <select> to a Radix
+    // Select: the trigger is a combobox showing the bound agent's name, and the
+    // "unassigned" state is the sentinel value '__unassigned__' rendered as
+    // "Unassigned" (an empty native value no longer exists).
+    const bindingSelect = newAccountRow.getByRole('combobox');
+    await expect(bindingSelect).toContainText('Unassigned');
 
-    await bindingSelect.selectOption('code');
-    await expect(bindingSelect).toHaveValue('code');
+    await bindingSelect.click();
+    await page.getByRole('option', { name: 'Code Agent' }).click();
+    await expect(bindingSelect).toContainText('Code Agent');
 
     const counters = await electronApp.evaluate(() => {
       const state = (globalThis as typeof globalThis & { __clawxE2eBindingRegression?: typeof state }).__clawxE2eBindingRegression as { saveCount: number; bindingCount: number };

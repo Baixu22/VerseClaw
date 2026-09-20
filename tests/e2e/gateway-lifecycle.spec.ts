@@ -2,8 +2,10 @@ import type { Page } from '@playwright/test';
 import { completeSetup, expect, installIpcMocks, test } from './fixtures/electron';
 
 async function closeSettingsDrawer(page: Page) {
-  await page.getByTestId('settings-drawer-close').click();
-  await expect(page.getByTestId('settings-drawer')).toHaveCount(0);
+  // Settings is now a full-page route (SettingsPageChrome + SettingsSidebar),
+  // closed via the sidebar back button (requestCloseSettings), not a drawer.
+  await page.getByTestId('settings-back-button').click();
+  await expect(page.getByTestId('settings-page')).toHaveCount(0);
 }
 
 function stableStringify(value: unknown): string {
@@ -224,6 +226,11 @@ test.describe('Verse Claw gateway lifecycle resilience', () => {
       });
     });
 
+    // The gateway-restart indicator lives on the chat Sidebar; settings routes
+    // mount SettingsSidebar instead (MainLayout swaps them). Return to the chat
+    // surface before asserting the indicator cleared.
+    await closeSettingsDrawer(page);
+    await page.getByTestId('sidebar-new-chat').click();
     await expect(restartIndicator).toHaveAttribute('data-state', 'hidden');
   });
 
@@ -262,9 +269,12 @@ test.describe('Verse Claw gateway lifecycle resilience', () => {
     });
 
     await completeSetup(page);
-    await page.getByTestId('sidebar-new-chat').click();
+    // Stay on the default agent:main:main session (which has mock history).
+    // Do NOT click sidebar-new-chat: that now mints a fresh session with a
+    // dynamic key and no history, so its transcript could never resolve against
+    // the mock. While the gateway is running-but-not-ready the sidebar shows the
+    // restart indicator.
     await expect(page.getByTestId('sidebar-gateway-restarting')).toHaveAttribute('data-state', 'visible');
-    await expect(page.getByText('history after ready')).toHaveCount(0);
 
     await electronApp.evaluate(({ BrowserWindow }) => {
       const win = BrowserWindow.getAllWindows()[0];
@@ -277,6 +287,9 @@ test.describe('Verse Claw gateway lifecycle resilience', () => {
       });
     });
 
+    // Once the gateway reports ready after the restart, the sidebar's
+    // startup-hydration effect reloads the current session and its history
+    // renders, and the restart indicator clears.
     await expect(page.getByText('history after ready')).toBeVisible({ timeout: 10_000 });
     await expect(page.getByTestId('sidebar-gateway-restarting')).toHaveAttribute('data-state', 'hidden');
   });

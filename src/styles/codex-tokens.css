@@ -226,7 +226,13 @@
 :root {
   --z-base: 0;
   --z-raised: 10;
-  --z-dropdown: 30;
+  /* Dropdowns/Selects/popovers can be summoned from inside a dialog, so they
+   * must clear the dialog layer (.verse-claw-dialog-overlay/content = 80/90 in
+   * globals.css) while staying under toast/tooltip (100). Was 30, which left an
+   * in-dialog Select rendering *beneath* the dialog (e.g. the avatar-style
+   * picker: a real user could not select an option). FLAG: the deeper fix is to
+   * reconcile the dialog layer onto --z-modal instead of hardcoding 80/90. */
+  --z-dropdown: 95;
   --z-modal: 50;
   --z-toast: 100;
 }

@@ -329,7 +329,9 @@ test('plus menu morph expands panel, occupies slot, closes on outside click / Es
     expect(idle.overflow).toBe('hidden');
     expect(idle.menuButtons).toBeGreaterThanOrEqual(3);
     expect(idle.position).toBe('absolute');
-    expect(idle.zIndex).toBe('30');
+    // --z-dropdown was raised 30→95 (codex-tokens.css) so in-dialog dropdowns clear
+    // the dialog layer (80/90); the plus-menu morph is a dropdown-class element.
+    expect(idle.zIndex).toBe('95');
     expect(open.open).toBe('true');
     expect(open.morphSize.w).toBeGreaterThan(150);
     expect(open.morphSize.h).toBeGreaterThan(90);

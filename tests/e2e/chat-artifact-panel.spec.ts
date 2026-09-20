@@ -218,7 +218,12 @@ test('keeps the conversation column in place until the workspace panel expands',
         },
         [stableStringify(['workspaces.getSessionState', { workspaceId: WORKSPACE.id, sessionKey: SESSION_KEY }])]: {
           success: true,
-          result: { artifactPanel: { open: false } },
+          // Open the panel on the artifact tab (collapsed — no `expanded` flag)
+          // so the aside renders without needing a workspace file tree. Opening
+          // it via the composer toggle instead would fight this same restored
+          // session state (which re-applies on load), so the panel is seeded
+          // open here exactly like the sibling tests above.
+          result: { artifactPanel: { open: true, activeTab: 'artifact' } },
         },
       },
       hostApi: baseHostApiMocks(),
@@ -226,20 +231,33 @@ test('keeps the conversation column in place until the workspace panel expands',
 
     const page = await getStableWindow(app);
     await page.setViewportSize({ width: 1440, height: 900 });
-    const workspaceToggle = page.getByTestId('chat-workspace-toggle');
-    await expect(workspaceToggle).toBeEnabled({ timeout: 30_000 });
+    await page.waitForTimeout(3000);
 
-    await workspaceToggle.click();
     const panel = page.getByTestId('artifact-panel-aside');
+    await expect(panel).toBeVisible({ timeout: 30_000 });
     await expect(panel).toHaveAttribute('data-expanded', 'false');
-    await expect.poll(async () => panel.evaluate((element) => getComputedStyle(element).position)).toBe('absolute');
+    // The workspace panel used to float as an `absolute` overlay while
+    // collapsed and only become a `relative` layout sibling once expanded. It
+    // was redesigned to always be a `relative` flex sibling of the conversation
+    // (see the aside comment in src/pages/Chat/index.tsx): collapsing/expanding
+    // now changes how MUCH width it takes, not which layer it lives on. So even
+    // collapsed it occupies real layout width and squeezes the conversation.
+    await expect.poll(async () => panel.evaluate((element) => getComputedStyle(element).position)).toBe('relative');
 
     const collapsedWidths = await page.evaluate(() => {
-      const page = document.querySelector<HTMLElement>('[data-testid="chat-page"]');
+      const pageEl = document.querySelector<HTMLElement>('[data-testid="chat-page"]');
       const conversation = document.querySelector<HTMLElement>('[data-testid="chat-conversation-column"]');
-      return { page: page?.getBoundingClientRect().width ?? 0, conversation: conversation?.getBoundingClientRect().width ?? 0 };
+      const aside = document.querySelector<HTMLElement>('[data-testid="artifact-panel-aside"]');
+      return {
+        page: pageEl?.getBoundingClientRect().width ?? 0,
+        conversation: conversation?.getBoundingClientRect().width ?? 0,
+        panel: aside?.getBoundingClientRect().width ?? 0,
+      };
     });
-    expect(Math.abs(collapsedWidths.page - collapsedWidths.conversation)).toBeLessThan(2);
+    // A collapsed panel already takes real width, so the conversation is
+    // narrower than the full page by roughly the panel's width.
+    expect(collapsedWidths.panel).toBeGreaterThan(0);
+    expect(collapsedWidths.conversation).toBeLessThan(collapsedWidths.page - 100);
 
     await page.getByTestId('artifact-panel-expand').click();
     await expect(panel).toHaveAttribute('data-expanded', 'true');
@@ -249,6 +267,7 @@ test('keeps the conversation column in place until the workspace panel expands',
       const conversation = document.querySelector<HTMLElement>('[data-testid="chat-conversation-column"]');
       return conversation?.getBoundingClientRect().width ?? 0;
     });
+    // Expanding takes even more width from the conversation column.
     expect(expandedWidths).toBeLessThan(collapsedWidths.conversation - 100);
   } finally {
     await closeElectronApp(app);

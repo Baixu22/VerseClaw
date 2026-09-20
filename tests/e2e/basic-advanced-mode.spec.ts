@@ -49,6 +49,20 @@ test.describe('Basic and advanced UI depth mode', () => {
             activeWorkspaceId: null,
             activeWorkspace: null,
           },
+          // Sending now passes through a first-send provider gate
+          // (isProviderRuntimeReady). Without a usable provider the click opens
+          // chat-provider-gate-dialog instead of dispatching. Provide a ready
+          // oauth account so the send reaches chat.sendWithMedia.
+          [stableStringify(['providers', 'accounts', null])]: [{
+            id: 'acct-ui-depth-e2e',
+            vendorId: 'openai',
+            label: 'UI depth E2E provider',
+            authMode: 'oauth_browser',
+            enabled: true,
+          }],
+          [stableStringify(['providers', 'accountKeyInfo', null])]: [],
+          [stableStringify(['providers', 'vendors', null])]: [],
+          [stableStringify(['providers', 'getDefaultAccount', null])]: { accountId: 'acct-ui-depth-e2e' },
           [stableStringify(['usage', 'contextRange', {
             messageCount: 0,
             modelRef: null,
@@ -105,7 +119,9 @@ test.describe('Basic and advanced UI depth mode', () => {
       });
 
       const page = await getStableWindow(app);
-      await expect(page.getByTestId('chat-composer-compact')).toBeVisible({ timeout: 30_000 });
+      // The composer compact icon and the in-composer compaction diagnostics were
+      // removed (see tests/unit/chat-input.test.tsx); gate readiness on the input.
+      await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('chat-compaction-view-artifact')).toHaveCount(0);
 
       await page.getByTestId('sidebar-nav-settings').click();
@@ -127,8 +143,12 @@ test.describe('Basic and advanced UI depth mode', () => {
       await page.evaluate(() => {
         window.location.hash = '#/';
       });
-      await expect(page.getByTestId('chat-compaction-view-artifact')).toBeVisible({ timeout: 30_000 });
-      await expect(page.getByTestId('chat-compaction-quality')).toBeVisible();
+      // Advanced depth is a renderer-local setting with no composer consumer:
+      // the compaction diagnostics stay out of the composer at every depth
+      // (they are not surfaced here), and dispatch must be identical to basic.
+      await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('chat-compaction-view-artifact')).toHaveCount(0);
+      await expect(page.getByTestId('chat-compaction-quality')).toHaveCount(0);
 
       await page.getByTestId('chat-composer-input').fill('dispatch payload unchanged');
       await page.getByTestId('chat-composer-send').click();

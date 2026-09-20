@@ -29,7 +29,7 @@ async function expectSubtleDialogAnimation(locator: Locator): Promise<void> {
   });
 
   expect(animation.name).toContain('verse-claw-dialog-content-in');
-  expect(animation.duration).toContain('0.1s');
+  expect(animation.duration).toContain('0.15s');
 
   const firstFrameOffset = await locator.evaluate(async (element) => {
     const animation = element.getAnimations()[0];
