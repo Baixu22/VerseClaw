@@ -370,9 +370,15 @@ test.describe('Chat page layout CDP checks', () => {
       await expect(permissionOption).toContainText(/risk|风险/);
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-permission-menu');
       await page.evaluate(() => document.documentElement.classList.add('dark'));
-      await page.waitForTimeout(240);
+      // The shell animates background-color (transition duration 180ms). A fixed
+      // wait races that transition under load and samples a mid-tween frame
+      // (e.g. oklab(0.31… / 0.93)); poll until the surface settles on the dark
+      // token: gray-800 (#212121) mixed at 96%, i.e. oklab(0.24… / 0.96).
+      await expect
+        .poll(() => composerShell.evaluate((element) => getComputedStyle(element).backgroundColor))
+        .toMatch(/oklab\(0\.24\d*\s.*\/\s*0\.96\)/);
       const darkComposerBackground = await composerShell.evaluate((element) => getComputedStyle(element).backgroundColor);
-      expect(darkComposerBackground).toMatch(/0\.96|0\.247/);
+      expect(darkComposerBackground).toMatch(/oklab\(0\.24/);
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-permission-menu-dark');
       await page.evaluate(() => document.documentElement.classList.remove('dark'));
       await page.getByTestId('chat-composer-input').fill('/');

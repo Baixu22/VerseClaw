@@ -3,11 +3,22 @@ import type { ElectronApplication } from "@playwright/test";
 
 const SESSION_KEY = "agent:main:main";
 
-type WorkMode = "plan" | "build" | "review" | "docsData";
+// Legacy work-mode values that used to live in workspace UI state. The client
+// no longer derives or ships a per-send `workMode`/`promptMode`: the send path
+// (src/stores/chat/runtime-send-actions.ts) carries none, workspaces.ts strips
+// `workMode` as `_legacyWorkMode`, and prompt intensity is now resolved
+// server-side from the session key. This spec guards that contract: whatever
+// legacy work-mode sits in workspace state, it must NOT leak into the outgoing
+// chat.sendWithMedia payload, and the documented core fields must be present.
+type LegacyWorkMode = "plan" | "build" | "review" | "docsData";
 
 type RecordedPayload = {
-  workMode?: WorkMode;
-  promptMode?: "none" | "full" | "minimal";
+  sessionKey?: string;
+  message?: string;
+  deliver?: boolean;
+  idempotencyKey?: string;
+  workMode?: unknown;
+  promptMode?: unknown;
   [key: string]: unknown;
 };
 
@@ -24,9 +35,7 @@ function stableStringify(value: unknown): string {
 
 // FP-P1-01 added a first-send provider gate: with no usable provider the composer
 // intercepts the send instead of dispatching it, so the recorder never sees a
-// payload. Present a configured, keyed default account. These keys use the typed
-// [module, action, payload] shape the mock fixture resolves first, not the
-// 2-element `k()` helper below.
+// payload. Present a configured, keyed default account.
 const PROVIDER_TIMESTAMP = "2026-01-01T00:00:00.000Z";
 const PROVIDERS = {
   [stableStringify(["providers", "accounts", null])]: [
@@ -49,32 +58,11 @@ const WS = {
   createdAt:1,
   updatedAt:1,
   lastOpenedAt:1,
-  state:{},
+  state:{} as Record<string, unknown>,
   sessionStates:{} as Record<string, unknown>,
 };
 WS.sessionStates[SESSION_KEY] = {};
 const WSS = { profiles:[WS], activeWorkspaceId:WS.id, activeWorkspace:WS };
-
-async function openNewChat(app: ElectronApplication) {
-  await app.evaluate(() => {
-    const p = process.mainModule;
-    if (!p) throw new Error("Expected Electron main module");
-    const ipc = p.require("electron");
-    const menu = ipc.Menu.getApplicationMenu();
-    function fi(items: Electron.MenuItem[]): Electron.MenuItem | undefined {
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].id === "new-chat") return items[i];
-        if (items[i].submenu) {
-          const f = fi(items[i].submenu?.items ?? []);
-          if (f) return f;
-        }
-      }
-      return undefined;
-    }
-    const item = fi(menu ? menu.items : []);
-    if (item) item.click(undefined, ipc.BrowserWindow.getFocusedWindow() || ipc.BrowserWindow.getAllWindows()[0]);
-  });
-}
 
 async function installRecorder(app: ElectronApplication) {
   await app.evaluate(async function() {
@@ -97,10 +85,8 @@ async function installRecorder(app: ElectronApplication) {
       const recorder = (globalThis as typeof globalThis & RecorderGlobal).__cm;
 
       if (m === "chat" && a === "sendWithMedia") {
-        const wm = p?.workMode as WorkMode | undefined;
-        const pmMap: Record<WorkMode, "none" | "full" | "minimal"> = {plan:"none", build:"full", review:"minimal", docsData:"minimal"};
-        const pm = wm ? pmMap[wm] : undefined;
-        if (recorder) recorder.last = Object.assign({}, p, {workMode: wm, promptMode: pm});
+        // Record the real outgoing payload verbatim (no fabrication).
+        if (recorder) recorder.last = Object.assign({}, p);
         return {id:req.id, ok:true, data:{success:true, result:{runId:"r"}}};
       }
       return prev(ev, req);
@@ -130,54 +116,58 @@ function mkMocks() {
   };
 }
 
-test.describe("Work mode intensity E2E", () => {
-  for (const mode of ["plan","build","review","docsData"] as const satisfies readonly WorkMode[]) {
-    test("promptMode for " + mode, async ({ launchElectronApp }) => {
+async function sendAndRecord(app: ElectronApplication, message: string): Promise<RecordedPayload> {
+  await installIpcMocks(app, mkMocks());
+  await installRecorder(app);
+  const page = await getStableWindow(app);
+  await page.reload();
+  await expect(page.getByTestId("chat-composer-input")).toBeVisible({ timeout:30000 });
+  await page.getByTestId("chat-composer-input").click();
+  await page.getByTestId("chat-composer-input").fill(message);
+  await page.getByTestId("chat-composer-send").click();
+  await expect
+    .poll(async () => await app.evaluate(() => Boolean((globalThis as typeof globalThis & RecorderGlobal).__cm?.last)), { timeout:15000 })
+    .toBe(true);
+  const payload = await app.evaluate(() => (globalThis as typeof globalThis & RecorderGlobal).__cm?.last);
+  if (!payload) throw new Error("Expected recorded chat payload");
+  return payload;
+}
+
+test.describe("Chat send payload contract (work-mode intensity retired client-side)", () => {
+  for (const mode of ["plan","build","review","docsData"] as const satisfies readonly LegacyWorkMode[]) {
+    test("legacy workMode '" + mode + "' in workspace state does not leak into the send payload", async ({ launchElectronApp }) => {
       const app = await launchElectronApp({ skipSetup:true });
       try {
         // IPC mocks are serialized into the Main process, so set the workspace
-        // state before installing them; mutating WS after install is not visible.
+        // state before installing them. Seed the legacy work mode the retired
+        // feature used to persist.
         WS.state = { workMode: mode };
-        await installIpcMocks(app, mkMocks());
-        await installRecorder(app);
-        const page = await getStableWindow(app);
-        await page.reload();
-        await expect(page.getByTestId("chat-composer-input")).toBeVisible({ timeout:30000 });
-        // Keep the documented Main-process work-mode override available to the
-        // app even though the workspace mock above is already mode-specific.
-        await app.evaluate(function(_electron: unknown, workMode: WorkMode) {
-          (globalThis as typeof globalThis & { __testWorkMode?: WorkMode }).__testWorkMode = workMode;
-        }, mode);
-        await openNewChat(app);
-        await expect(page.getByTestId("chat-composer-input")).toBeVisible();
-        await page.getByTestId("chat-composer-input").click();
-        await page.getByTestId("chat-composer-input").fill("Test msg");
-        await page.getByTestId("chat-composer-send").click();
-        const payload = await app.evaluate(() => (globalThis as typeof globalThis & RecorderGlobal).__cm?.last);
-        expect(payload).toBeDefined();
-        if (!payload) throw new Error("Expected recorded chat payload");
-        if (mode === "plan") expect(payload.promptMode).toBe("none");
-        else if (mode === "build") expect(payload.promptMode).toBe("full");
-        else expect(payload.promptMode).toBe("minimal");
-        expect(payload.workMode).toBe(mode);
+        const payload = await sendAndRecord(app, "Test msg");
+
+        // Documented core fields the client still sends.
+        expect(payload.sessionKey).toBe(SESSION_KEY);
+        expect(payload.message).toBe("Test msg");
+        expect(payload.deliver).toBe(false);
+        expect(typeof payload.idempotencyKey).toBe("string");
+
+        // The retired client-side intensity fields must be absent regardless of
+        // the legacy work mode sitting in workspace state.
+        expect(payload.workMode).toBeUndefined();
+        expect(payload.promptMode).toBeUndefined();
       } finally { await closeElectronApp(app); }
     });
   }
-  test("no promptMode w/o work mode", async ({ launchElectronApp }) => {
+
+  test("send payload carries no workMode/promptMode when workspace state is empty", async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup:true });
     try {
       WS.state = {};
-      await installIpcMocks(app, mkMocks());
-      await installRecorder(app);
-      const page = await getStableWindow(app);
-      await page.reload();
-      await expect(page.getByTestId("chat-composer-input")).toBeVisible({ timeout:30000 });
-      await page.getByTestId("chat-composer-input").fill("Hello");
-      await page.getByTestId("chat-composer-send").click();
-      const payload = await app.evaluate(() => (globalThis as typeof globalThis & RecorderGlobal).__cm?.last);
-      expect(payload).toBeDefined();
-      if (!payload) throw new Error("Expected recorded chat payload");
-      expect(payload.promptMode).toBe("full");
+      const payload = await sendAndRecord(app, "Hello");
+      expect(payload.sessionKey).toBe(SESSION_KEY);
+      expect(payload.message).toBe("Hello");
+      expect(payload.deliver).toBe(false);
+      expect(payload.workMode).toBeUndefined();
+      expect(payload.promptMode).toBeUndefined();
     } finally { await closeElectronApp(app); }
   });
 });

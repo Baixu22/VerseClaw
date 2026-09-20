@@ -113,7 +113,9 @@ test.describe('DCS production P0 packaging surface', () => {
     await ensureDevPanel(page);
 
     await page.getByTestId('settings-nav-general').click();
-    await page.getByRole('button', { name: '日本語', exact: true }).click();
+    // Language is now a SettingsSelect dropdown (listbox), not inline buttons.
+    await page.getByTestId('settings-language-select').click();
+    await page.getByRole('option', { name: '日本語', exact: true }).click();
     await page.getByTestId('settings-nav-developer').click();
     await expect(page.getByTestId('settings-context-layers-explainer')).toContainText(
       'コンテキスト層の違い（混同しないでください）',
@@ -123,7 +125,8 @@ test.describe('DCS production P0 packaging surface', () => {
     );
 
     await page.getByTestId('settings-nav-general').click();
-    await page.getByRole('button', { name: 'Русский', exact: true }).click();
+    await page.getByTestId('settings-language-select').click();
+    await page.getByRole('option', { name: 'Русский', exact: true }).click();
     await page.getByTestId('settings-nav-developer').click();
     await expect(page.getByTestId('settings-context-layers-explainer')).toContainText(
       'Различия слоёв контекста: не смешивайте их',
@@ -133,7 +136,8 @@ test.describe('DCS production P0 packaging surface', () => {
     );
 
     await page.getByTestId('settings-nav-general').click();
-    await page.getByRole('button', { name: 'English', exact: true }).click();
+    await page.getByTestId('settings-language-select').click();
+    await page.getByRole('option', { name: 'English', exact: true }).click();
   });
 
   test('toggles writable flags, persists store, and restores baseline', async ({ page }) => {

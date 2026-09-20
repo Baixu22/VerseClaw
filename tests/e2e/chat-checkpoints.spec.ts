@@ -128,7 +128,12 @@ function baseHostApiMocks() {
   };
 }
 
-test('checkpoints dialog lists and restores a session checkpoint', async ({ launchElectronApp }) => {
+// SKIP (2026-09-20): CheckpointsDialog (src/components/chat/CheckpointsDialog.tsx) is fully
+// implemented but orphaned — imported/rendered nowhere, the chat-session-checkpoints trigger
+// is absent, and resumeCheckpoints/restoreCheckpoint/checkpointDiff are called only by the dead
+// dialog. It was unwired at commit a4fa9036a ("long-task intervention UI"); the replacement
+// chat-long-task-intervention is a status label only. Un-skip when the dialog is re-wired.
+test.skip('checkpoints dialog lists and restores a session checkpoint', async ({ launchElectronApp }) => {
   const app = await launchElectronApp({ skipSetup: true });
   await installIpcMocks(app, {
     gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
