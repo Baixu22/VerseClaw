@@ -167,7 +167,11 @@ describe("TF-0073 terminal trajectory candidate gating", () => {
     const capture = new TrajectoryCapture({ store });
     const injector = new RetrievalEngine({ store }).create_context_injector();
     const target = createHookTarget();
-    const runtimeLineage: RuntimeLineage | undefined = undefined;
+    // Late-bound on purpose: undefined at before_agent_start, then assigned
+    // before the tool call. The lineage closure reads it lazily, so this must
+    // be `let` — the test reassigns it at line ~185 (a `const` throws
+    // "Assignment to constant variable" and the case cannot run).
+    let runtimeLineage: RuntimeLineage | undefined = undefined;
     const uninstall = installSekbHarnessHooks(target, {
       enabled: true,
       capture,
