@@ -75,7 +75,12 @@ async function assertRuntimeDistFresh(): Promise<void> {
       const full = join(dir, entry.name);
       if (entry.isDirectory()) {
         await walk(full);
-      } else if (entry.name.endsWith('.ts') || entry.name.endsWith('.js')) {
+      } else if (
+        (entry.name.endsWith('.ts') || entry.name.endsWith('.js')) &&
+        // Test/spec files are never inputs to the runtime bundle (entry.js), so a
+        // test edited after the last build must not report the dist as stale.
+        !/\.(test|spec)\.[cm]?[jt]s$/u.test(entry.name)
+      ) {
         const st = await stat(full);
         if (st.mtimeMs > distMtimeMs) stale.push(full);
       }
