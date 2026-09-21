@@ -91,7 +91,11 @@ const EXTRA_PROFILE_STEPS = {
       args: ['--dir', 'openclaw_runtime', 'test:unit'],
       testExpectation: { requireCounts: true, expectedSkips: RUNTIME_UNIT_EXPECTED_SKIPS },
     },
-    { id: 'runtime-static-check', profile: 'runtime', name: 'OpenClaw runtime static checks', command: 'pnpm', args: ['--dir', 'openclaw_runtime', 'check', '--include-test-types'] },
+    // Bounded to the runtime production core (tsgo:core). The full extension +
+    // test-type typecheck sweep (tsgo:all) is ambient repo debt owned by the
+    // release-freeze node (TF-0041), not this self-contained baseline. See
+    // docs/dev/engineering-product-node-plan-20260921.md §4.
+    { id: 'runtime-static-check', profile: 'runtime', name: 'OpenClaw runtime static checks', command: 'pnpm', args: ['--dir', 'openclaw_runtime', 'check', '--typecheck-scope=core'] },
   ],
   maturity: [
     { id: 'maturity-validate', profile: 'maturity', name: 'System maturity validation', command: 'pnpm', args: ['run', 'maturity:validate'] },
