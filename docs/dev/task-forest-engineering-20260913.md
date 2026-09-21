@@ -189,3 +189,21 @@ TF-0029 保持 `in_progress`，没有正式独立 Verifier；完整干净候选�
 第一次 autoreview 因绝对路径格式被 helper 拒收，不算通过；R2/R3/R4 使用同一 Codex 引擎，R4 只复核最后两文件增量。审核代码快照链为 `c973ea19195e3d6c46e9e17ed699439cb206bff6` → `481ced48f1bf72b56f2344f8e35be99e80632eb0` → `f7371a451a9492a32e550005f0621e24b66a10ba`，176 个代码输入的摘要保存于 `review-code-r4.json`。源码、全部失败与成功日志、复核 JSON、提交前后检查与计划存于 `C:/Users/27933/AppData/Local/ClawX-scratch/tf0029-full-closeout-20260914/`。
 
 剩余工作是在具备文件符号链接能力的 Windows 环境冻结已提交候选，满足 53 的预算，并让正式独立 Executor/Verifier 在两个 detached worktree 运行完整 manifest。当前检查没有覆盖这套完整正式流程；Agent Dev 通过、代码审查通过和本地测试 exit 0 均不替代它。三个基线身份、TF-0140、其他节点和所有产品锁保持原状。本轮提交只在本地保存，没有推送。
+
+## TF-0029 有界工程收口成立（2026-09-21）
+
+按 `docs/dev/engineering-product-node-plan-20260921.md` §4 的有界合同，在 `D:/ClawX-acceptance/tf0029-20260920/` 于同一天完成 run15～run19 共五轮正式跑，最终 run19 由 Executor 与独立 Verifier 双 pass：
+
+| 项 | 实际值 |
+| --- | --- |
+| 候选 | `tf0029-candidate-fixed@156e878d3efc6d05850ee66ea63d67534672b7ad`，tree `45c49139ac5b7157a45f631f8a5170d6d42833cc`，diffBase `5dabc7ca5`，cleanAtPlan=true |
+| 门禁 | 25 门（e2e/release 两个 profile 经 `deferredProfiles` 移交 TF-0041） |
+| Executor | `tf0029-executor-20260921`，25/25 pass，9398 passed / 0 failed / 50 skipped，reportDigest `9f57e5355a8f826f85f6022c4cb81d9bd428732a2b202571912058fbb44c6684` |
+| Verifier | `tf0029-independent-verifier-20260921`，第二 detached worktree 完整重跑 25/25 pass，reportDigest `801576fdc68519f06431fe06cc880de65e4f4b6cdd755f2daa7c550d8173432a`，`consistency.errors=[]`，`identicalGateContracts=true` |
+| 结论 | `engineeringAcceptedByAgent=true`，`allowedPromotion=false`，gateContractDigest `296d0ddaa7f8b562c0d62493ed8ff2592ab714087c3c38a7a46a00375693a791` |
+
+上一节"满足 53 的预算"的剩余工作以**身份解释**而非补数字收口：用 vitest JSON reporter 在候选（`23f4a0c3b`）与 diffBase（`5dabc7ca5`）各枚举出相同的 50 条 skip；53 是 2026-09-11 在缺少文件符号链接权限的进程上读到的，多出的 3 条即 `tests/unit/skills-symlink-cleanup.test.ts` 的 `fileSymlinkIt` 用例，本机它们实际执行并通过。预算改为 `ROOT_UNIT_SKIP_INVENTORY` 求和（49 个 `DEEPSEEK_API_KEY` 门控 + 1 个 `AGENCY_AGENTS_REPO` 门控），历史 53 保留为 provenance 记录并由测试钉住 `53 = 50 + 3`。
+
+五轮之间清掉的真缺陷：`typecheck:test` 的 `.d.mts` 漏声明（`deferredProfiles`、新导出）；Agent Dev 四类证据 24h 新鲜度过期（候选上重生成，audit A/94）。两次不可复现的环境抖动（shrinkwrap 守卫经代理访问 registry 失败、`smoke-openclaw-runtime` 退出码 0xC0000409）直接复现均通过，未改门、未改超时。
+
+未纳入本结论：TF-0041 拥有的全量 UI e2e 与发行封存、60 个既有测试类型债与 8 个 codex 扩展类型错误；产品锁、TF-0140、真人验收全部保持原状。
