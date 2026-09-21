@@ -1,115 +1,30 @@
 [
   {
     "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 0.94,
-      "user_goal": "完整编排 VerseShell foundation 并以真实 evidence 决定扩大范围。",
-      "validation_plan": [
-        "reviewed live evidence check",
-        "paired/rollback/soak audit",
-        "STATUS.md owner review"
-      ],
-      "why_not_enough": "即使证据充分，仍需 STATUS.md 和产品 owner 单独决定 rollout；不自动授权 GA。",
-      "why_this_task": "真实 canary 是路线图唯一允许评估扩大范围的阶段，且必须与工程 evidence 严格分离。"
+      "fit": "unknown",
+      "fit_confidence": 0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
     },
     "blocked_by": [],
-    "confidence": 0.6,
-    "context_tags": [
-      "verseshell",
-      "p5",
-      "canary",
-      "provider-evidence",
-      "operator"
-    ],
-    "desired_outcomes": [
-      "paired task 有 actual provider usage、latency/resource、completion 和 recovery evidence",
-      "kill-switch/explicit rollback 有 reviewed record",
-      "artifact recovery 和安全 veto 被真实验证",
-      "Windows x64 以外的平台具备最小 build/handshake evidence"
-    ],
+    "confidence": 0.88,
+    "context_tags": [],
+    "desired_outcomes": [],
     "difficulty": "very_high",
-    "id": "TF-0069",
-    "kind": "milestone",
-    "next_action": "仅在路线图 Phase 0 到 Phase 4 的全部节点 done 且独立审阅后启动；若证据不足，记录 continue/reduce/stop 而非推断产品批准。",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "用真实运营和 provider 证据决定是否值得扩大 VerseShell 范围，而不把工程矩阵误当成产品资格。",
-    "ready": true,
-    "remaining_minutes_max": 5760,
-    "remaining_minutes_min": 1440,
-    "status": "proposed",
-    "success_metrics": [
-      "eligible local native fallback 0",
-      "未授权执行/越权/敏感泄漏 0",
-      "provider actual usage 覆盖率 100%",
-      "rollback drill 成功率 100%"
-    ],
-    "title": "VS-P5-01 Provider-backed 真实 Canary、Rollback 与扩大裁决"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [],
-    "confidence": 0.6,
-    "context_tags": [
-      "graduation",
-      "human-evidence"
-    ],
-    "desired_outcomes": [],
-    "difficulty": "high",
-    "id": "TF-0133",
-    "kind": "milestone",
-    "next_action": "STATUS.md 的 L3 定义已更新为「1 名真人 × 1 个表面 × 14 天 × 可回滚」且 hardLocks 一致",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "让能力第一次真正毕业，并验证护城河的产品与合规两重价值",
-    "ready": true,
-    "remaining_minutes_max": 420,
-    "remaining_minutes_min": 420,
-    "status": "proposed",
-    "success_metrics": [
-      "humanRuns 0 → ≥1；default-on 增强表面数 0 → 1；completionClass 词汇违规数 0"
-    ],
-    "title": "M5 真人证据与毕业：L3 重定义、首个表面翻正、A/B 评测报告"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [],
-    "confidence": 0.62,
-    "context_tags": [
-      "graduation",
-      "human-evidence",
-      "brb-L"
-    ],
-    "desired_outcomes": [],
-    "difficulty": "high",
-    "id": "TF-0140",
+    "id": "TF-0030",
     "kind": "task",
-    "next_action": "用户于 2026-08-29 指示：14 天周期过长，先转为 in_progress，暂缓翻正与 soak，优先推进其他 lane2 工作。",
+    "next_action": "自动入口矩阵每次 source-runtime model call 双收据覆盖 100%",
     "priority": 1,
     "progress": 0.0,
-    "purpose": "产出第一份真人证据，验证护城河的产品价值",
+    "purpose": "",
     "ready": true,
-    "remaining_minutes_max": 300,
-    "remaining_minutes_min": 300,
-    "status": "in_progress",
-    "success_metrics": [
-      "humanRuns 0 → ≥1；default-on 增强表面数 0 → 1"
-    ],
-    "title": "T-E2 首个增强表面翻正：runtime.contextBlock.tool-registry.enabled default-on + 14 天真人记录"
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "RC-02 Full-payload Shadow Census"
   },
   {
     "alignment": {
@@ -141,44 +56,6 @@
     "status": "blocked",
     "success_metrics": [],
     "title": "第二轮候选：压缩层默认值翻转四项（masking / damageAudit / postCompactionSections / 周期性 I 帧）"
-  },
-  {
-    "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 0.92,
-      "user_goal": "构建成熟统一 Agent 产品系统",
-      "validation_plan": [
-        "逐节点 Harness 与测试证据",
-        "Windows 生命周期矩阵",
-        "真实 cohort paired A/B 与 soak"
-      ],
-      "why_not_enough": "仍不自动提供 default-on、TF-0006 解阻或 GA 授权。",
-      "why_this_task": "任务链覆盖审计识别的所有阻断级和高风险缺口。"
-    },
-    "blocked_by": [],
-    "confidence": 0.9,
-    "context_tags": [
-      "compact",
-      "context-compression",
-      "p6",
-      "would-retry",
-      "shadow",
-      "fail-closed"
-    ],
-    "desired_outcomes": [],
-    "difficulty": "unknown",
-    "id": "TF-0006",
-    "kind": "subtask",
-    "next_action": "澄清阻塞原因并决定解除或废止",
-    "priority": 3,
-    "progress": 48.0,
-    "purpose": "用真实 corpus 与 live A/B 支撑 default-on 讨论，不靠再写 honesty pack",
-    "ready": false,
-    "remaining_minutes_max": null,
-    "remaining_minutes_min": null,
-    "status": "blocked",
-    "success_metrics": [],
-    "title": "Compact/P6 证据升级与 would-retry 闭环（保持 shadow）"
   },
   {
     "alignment": {
@@ -655,66 +532,6 @@
   },
   {
     "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 1.0,
-      "user_goal": "先清除全局 lint/typecheck 债，再让 RC-00R 的 fail-closed 验收在干净候选上产生真实绿色 final-report.json。",
-      "validation_plan": [
-        "干净 worktree 复现并清除 lint/typecheck 债",
-        "RC-01R scoped Harness 与全局门禁",
-        "恢复 RC-00R 后运行双 detached worktree 验收"
-      ],
-      "why_not_enough": "RC-01R 不替代 RC-00R 的 F4 防护、独立 Executor/Verifier 或最终人类验收。",
-      "why_this_task": "RC-01R 直接消除 clean candidate 的 Chat/UI lint 与 nested runtime typecheck 阻塞。"
-    },
-    "blocked_by": [],
-    "confidence": 0.93,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "high",
-    "id": "TF-0029",
-    "kind": "task",
-    "next_action": "澄清阻塞原因并决定解除或废止",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "使 Runtime Authority Convergence 的后续验收基于真实全局绿线，而非从脏 UI 工作树借用 lint 修复或将 nested runtime typecheck 债排除。",
-    "ready": false,
-    "remaining_minutes_max": null,
-    "remaining_minutes_min": null,
-    "status": "blocked",
-    "success_metrics": [],
-    "title": "RC-01R 自包含基线与全局绿线"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0029"
-    ],
-    "confidence": 0.88,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "very_high",
-    "id": "TF-0030",
-    "kind": "task",
-    "next_action": "先完成依赖：TF-0029",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "",
-    "ready": false,
-    "remaining_minutes_max": null,
-    "remaining_minutes_min": null,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "RC-02 Full-payload Shadow Census"
-  },
-  {
-    "alignment": {
       "fit": "unknown",
       "fit_confidence": 0,
       "user_goal": "",
@@ -974,7 +791,7 @@
     "kind": "milestone",
     "next_action": "先完成依赖：TF-0041",
     "priority": 1,
-    "progress": 0.0,
+    "progress": 50.0,
     "purpose": "",
     "ready": false,
     "remaining_minutes_max": null,
@@ -982,96 +799,5 @@
     "status": "blocked",
     "success_metrics": [],
     "title": "RC-10 最终真人 Provider/Channel/Recovery 验收"
-  },
-  {
-    "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 0.96,
-      "user_goal": "读取 VerseShell foundation 路线图后，开始完整的可执行、可验证编排计划。",
-      "validation_plan": [
-        "Task Forest validate/export",
-        "每包 Harness/测试/independent evidence",
-        "STATUS.md rollout review"
-      ],
-      "why_not_enough": "DAG 不能代替每包的 scoped spec、实际实现、clean evidence 和产品 owner 决策。",
-      "why_this_task": "独立 foundation DAG 覆盖路线图的所有阶段和责任层，不把基础设施误并入现有 DCS 或 Runtime 收敛主线。"
-    },
-    "blocked_by": [],
-    "confidence": 0.9,
-    "context_tags": [
-      "verseshell",
-      "coding-foundation",
-      "execution-plane",
-      "default-off",
-      "fail-closed"
-    ],
-    "desired_outcomes": [
-      "OpenClaw policy/approval、ClawX workspace/journal 与 VerseShell execution/artifact 责任唯一且可验证",
-      "模型只使用 read_file、search_content、run_command、result_query 四个稳定 facade",
-      "coding 组件通过 adapter 复用同一 ACI、生命周期、输出和恢复契约",
-      "只有经真实证据和 STATUS.md 明确裁决后才讨论扩大 canary"
-    ],
-    "difficulty": "very_high",
-    "id": "TF-0056",
-    "kind": "global_task",
-    "next_action": "澄清阻塞原因并决定解除或废止",
-    "priority": 1,
-    "progress": 12.0,
-    "purpose": "为文件、仓库、进程、测试、构建、Git、诊断和结果查询提供统一、受治理的本地执行契约，同时保持模型工具面小且稳定。",
-    "ready": false,
-    "remaining_minutes_max": null,
-    "remaining_minutes_min": null,
-    "status": "blocked",
-    "success_metrics": [
-      "未授权执行、隐式 native fallback、effectful replay、workspace 越界和敏感输出泄漏均为 0",
-      "二进制、source、patch、lockfile、crate、handshake 和 catalog identity 漂移为 0",
-      "截断输出均有 omitted metadata 和 artifact；写入均有明确 journal 或 external_write 语义",
-      "真实 canary 的 provider usage、recovery、rollback 和安全事件有独立、低敏、可审阅记录"
-    ],
-    "title": "VerseShell 本地 Coding 执行基座（非 GA）"
-  },
-  {
-    "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 0.82,
-      "user_goal": "真实解决长任务上下文策略问题，做出有背书的差异化能力，同时不因强行差异化产生结构性问题",
-      "validation_plan": [
-        "M0 落地后逐 task 走 R1 审核 A1-A6 与 R2 的 L0/L1 门",
-        "M4 收口时对真实会话 JSONL 跑 scripts/context-compression-eval-runner.mjs --paired-summary 做 A/B",
-        "M5 产出 1 名真人 × 1 个表面 × 14 天可回滚记录"
-      ],
-      "why_not_enough": "本规划无法验证产品与合规两重价值（需 M5 真人证据）；也不覆盖 benchmark 层面的效果证明（明确列为 non_goal）。",
-      "why_this_task": "学术侧已确认长任务上下文管理为开放问题（arXiv:2606.29718 SOTA 34.74% / 最佳缓解 +6.8%；arXiv:2601.12030 ARC +11%），而单元级上下文归因是学术界与产品界共同空白；本仓库该机制已建成 60-80% 但通电度约 5%，投入产出比最高的动作是通电与清债而非新建。"
-    },
-    "blocked_by": [],
-    "confidence": 0.75,
-    "context_tags": [
-      "context-engine",
-      "memory",
-      "compaction",
-      "governance",
-      "differentiation"
-    ],
-    "desired_outcomes": [],
-    "difficulty": "very_high",
-    "id": "TF-0102",
-    "kind": "global_task",
-    "next_action": "澄清阻塞原因并决定解除或废止",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "在长任务场景下稳定输出高信息密度、高质量上下文；差异化点是可归因性而非压缩算法效果。",
-    "ready": false,
-    "remaining_minutes_max": 6930,
-    "remaining_minutes_min": 6930,
-    "status": "blocked",
-    "success_metrics": [
-      "生产零调用模块数：当前 8 → 0（buildToolPlan 按 SDK 边界单独处置）",
-      "ContextHealthMonitor 有输入维度数：当前 1/4 → 4/4",
-      "掏空摘要检出率：当前 0% → 100%（损伤检测器真有触发能力的判据）",
-      "达标真实语料数：0 → ≥1",
-      "humanRuns：0 → ≥1",
-      "越界收口事件数 = 0（超半径或改白名单外默认值仍标 done）"
-    ],
-    "title": "长任务上下文护城河：可归因的上下文治理（Context Provenance & Damage Attribution）"
   }
 ]

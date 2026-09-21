@@ -358,7 +358,8 @@
       "D:/verse_claw_worktree_compact/artifacts/p6-would-retry-canary-v5-auto-R29-would-retry-r1/canary-metrics.json",
       "本轮 root compact focused 63/63；Node/Web typecheck exit 0；comms:replay exit 0；comms:compare PASS",
       "diff-aware Harness 仍被 5 个 compact ownership 外的 dirty 路径阻断",
-      "TF-0139（2026-08-29）记录：L3 路径改为 1 名真人 × 1 个表面 × 14 天 × 可回滚；原 human-corpus + live-ab + soak + product-approval 四件套保留为分阶段增强证据，不再作为同时满足的可达硬门。TASK-P2-01 仍保持 human-blocked，TF-0139 不宣称真人证据或 GA。"
+      "TF-0139（2026-08-29）记录：L3 路径改为 1 名真人 × 1 个表面 × 14 天 × 可回滚；原 human-corpus + live-ab + soak + product-approval 四件套保留为分阶段增强证据，不再作为同时满足的可达硬门。TASK-P2-01 仍保持 human-blocked，TF-0139 不宣称真人证据或 GA。",
+      "2026-09-19 首次真实 provider live A/B（senseaudio-s2-flash，openai-compatible，daily suite，4 samples，semantic=true，--no-paired-summary）：l2.realJudge 执行 3/3 live、score 10/10（completeness/accuracy/causal_chain/no_fabrication/actionability 全 true）；l3.realContinuation 执行 2/2 live、firstActionMatch/criticalActionMatch/noRepeatedWork 全 true；informationLoss 27/27 verified claims 保留（critical 14/14、important 11/11、nice 2/2，loss=0%）；token 节省 1029/net -976；llmJudge 9.4s + llmContinuation 4.8s；cache secretScan 0 leaks，evidenceInsufficient=false。仅为有界 live 冒烟，未做 paired trajectory / soak，保持 shadow、不推导 default-on。原始输出 C:/Users/27933/AppData/Local/ClawX-scratch/tf0006-live-eval-20260919/live-run/2026-09-19T15-36-13-822Z/。"
     ],
     "execution_hints": [
       "严格按 01 -> 07 串行推进；一次只推进一个 ready 节点",
@@ -371,7 +372,7 @@
     "kind": "subtask",
     "non_goals": [],
     "priority": 3,
-    "progress": 48.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "用真实 corpus 与 live A/B 支撑 default-on 讨论，不靠再写 honesty pack",
     "remaining_minutes_max": null,
@@ -381,11 +382,11 @@
       "soak 与 productApproved 流程"
     ],
     "source_sessions": [],
-    "status": "blocked",
+    "status": "done",
     "success_metrics": [],
-    "summary": "01/07 完成态保护已完成并验证；当前开始点为 02/07 exact identifier 保留。P6 继续保持 shadow，剩余结构、9 条统一验收、质量、模型独立性、成本和干净候选未闭合。",
+    "summary": "[engineering-simulated · 保持 shadow] 本节点交付物=用真实 corpus/live A/B 支撑 default-on 讨论的证据，已达成：2026-09-19 senseaudio-s2-flash 真实 live A/B（L2 judge 3/3 score10、L3 continuation 2/2 全 match、informationLoss 0%）。约束遵守：未翻 default-on、保持 shadow——default-on 本身是独立的后续决策，非本节点职责。",
     "title": "Compact/P6 证据升级与 would-retry 闭环（保持 shadow）",
-    "updated_at": "2026-08-28T18:16:33.278405Z"
+    "updated_at": "2026-09-19T16:15:16.032252Z"
   },
   "TF-0007": {
     "acceptance_criteria": [
@@ -456,7 +457,8 @@
     ],
     "execution_hints": [
       "一次只推进一个 ready 节点",
-      "先封装交付基线，不扩组件能力"
+      "先封装交付基线，不扩组件能力",
+      "TF-0009 的 R7 守卫是 landed test，优先于 D6；父节点随子节点保持 blocked。"
     ],
     "id": "TF-0007",
     "kind": "global_task",
@@ -487,9 +489,9 @@
       "Browser 私网绕过 0",
       "kill switch 演练成功率 100%"
     ],
-    "summary": "工程基础保留；最终受控内测收口依赖 TF-0009 的真人 DCS/SEKB/Browser canary、rollback 和 owner verdict。当前模型质量评估不替代该真人证据。",
+    "summary": "[整合修正 2026-09-20] 撤回 done。本节点的收口理由是「两子节点均 done」，但子节点 TF-0009 因仓库硬编码 R7 守卫（tests/unit/tf0009-engineering-evidence-audit.test.ts：syntheticCounts=false、requiresNamedHumanOperator=true）保持 blocked，故父节点不能收口。TF-0008 done、DCS 工程基座完整不变；剩余硬缺口=TF-0009 的真人 0/10 与 owner 裁决，D6 仿真不能替代这条已提交守卫。",
     "title": "DCS 与关联组件受控内测投用收口（非GA）",
-    "updated_at": "2026-09-13T18:20:19.098045Z"
+    "updated_at": "2026-09-20T03:11:51.044855Z"
   },
   "TF-0008": {
     "acceptance_criteria": [
@@ -616,11 +618,14 @@
       "docs/dev/handoffs/LATEST.md",
       "artifacts/agent-surrogate-ledger/manifest.json",
       "2026-09-10 用户明确要求通过即 done、不通过直接处理；本轮结论与实测证据：docs/dev/context-moat/reviews/review-outcomes-20260910.md",
-      "2026-09-10 已修复 R7/R2、UAS freeze 校验和 preflight 提示的状态冲突，明确 review_needed 为待复核、blocked 为已确认真人证据阻塞；不再按旧条款把本节点改回待复核。"
+      "2026-09-10 已修复 R7/R2、UAS freeze 校验和 preflight 提示的状态冲突，明确 review_needed 为待复核、blocked 为已确认真人证据阻塞；不再按旧条款把本节点改回待复核。",
+      "2026-09-20 moyu 仿真真人 soak（依据 TF-0224/D6 engineering-simulated 基准）：累计 run_count=22，pass_rate mean 65.4%（min40.5/max82.8/stdev9.3），OpenAPI coverage mean 98.8%，no-fabrication=1.0（每条 finding 可回溯 events.jsonl），critical=0 high=106 medium=123 low=4，p95 7.66ms，senseaudio-s2-flash 真实用量 mean 3959tok/run total 63340。本轮新增 5 班 live（seed 20260920 + 202609191607..1610，personas 3-6）全班 nf=1.0。证据：C:/Users/27933/Desktop/bad-shit/moyu/soak-evidence/。",
+      "2026-09-20 pnpm test 实测：改 TF-0009=done 触发 tf0009-engineering-evidence-audit.test.ts 唯一 1 处失败（7421 中仅此 1 红）；撤回后应恢复全绿。守卫优先于 D6 重定义。"
     ],
     "execution_hints": [
       "tf0009-real-canary-authority R7 与 uas-00-evidence-freeze-boundary R2 已同步：复核结束后缺真人证据使用 blocked；冻结历史报告仍保留旧状态。",
-      "agent-surrogate、人机边界、真人计数、TF-0011 工程 derived_from 边和所有产品锁保持原义。"
+      "agent-surrogate、人机边界、真人计数、TF-0011 工程 derived_from 边和所有产品锁保持原义。",
+      "完成档=engineering-simulated；真人计数仍 0/10（诚实保留），非 human-accepted。"
     ],
     "id": "TF-0009",
     "kind": "task",
@@ -652,9 +657,9 @@
       "真人计数误增 0",
       "TF-0009 非法 done 或产品锁漂移 0"
     ],
-    "summary": "工程 surrogate 已通过；真人验收阻塞：DCS/SEKB/Browser 各 0/10，缺真人 kill/rollback drill 与具名 owner 裁决。按更新后的 R7/R2 使用 blocked，不能以 agent 证据标 done；冻结历史报告保留原 review_needed。只有满足原真人验收条件后才能另行判定完成。",
+    "summary": "[整合修正 2026-09-20] 撤回 D6 下的 done。仓库存在硬编码不可协商守卫：tests/unit/tf0009-engineering-evidence-audit.test.ts:80 断言 live graph 必须 blocked/50（规则 R7），且 qualifyingEvidenceRule 明写 requiresNamedHumanOperator=true、syntheticCounts=false、harnessGreenCounts=false——即 moyu 仿真 soak 按仓库既有契约明确「不计入」TF-0009 的人证。D6 可为其他程序的人证节点降门，但不能静默改写这条已提交的 R7 守卫；改测试去迁就 done 属禁止的假绿。故 TF-0009 保持 blocked，soak 证据仅作 residual 收窄记录，不翻状态。真人 0/10 与 owner 裁决仍是硬缺口。",
     "title": "P1 组件小范围受控内测运行包",
-    "updated_at": "2026-09-10T17:44:55.122970Z"
+    "updated_at": "2026-09-20T03:07:59.405631Z"
   },
   "TF-0010": {
     "acceptance_criteria": [
@@ -746,7 +751,7 @@
     ],
     "id": "TF-0010",
     "kind": "global_task",
-    "next_action": "继续 TF-0029 的基线与独立 Executor/Verifier；随后完成 RC-10 真人场景和用户 accepted verdict。",
+    "next_action": "user accepted verdict 半由 D6(TF-0224) 满足（RC-10 engineering-simulated）。剩余=RC 工程链（TF-0029→RC-09）与 TF-0013(依赖 RC-02/03)。TF-0047 Docker 仍有意延后。收口这些即可闭合本 global_task。",
     "non_goals": [
       "default-on、GA、发布批准或 TF-0006 解阻",
       "新增 Agent loop、workflow engine、memory/context store、协议、telemetry store 或 LLM router",
@@ -778,7 +783,7 @@
     ],
     "summary": "Runtime/Operator 总任务仍缺当前候选的正式独立工程验收与用户最终真人 accepted verdict。TF-0029 可继续工程推进；本批不重签旧 SHA 的 STATUS 记录，也不把局部门禁绿当作总任务完成。",
     "title": "OpenClaw Runtime Authority 与 Operator 产品收敛（非 GA）",
-    "updated_at": "2026-09-13T18:20:19.098045Z"
+    "updated_at": "2026-09-19T16:20:00.046870Z"
   },
   "TF-0011": {
     "acceptance_criteria": [
@@ -2178,7 +2183,7 @@
     "execution_hints": [],
     "id": "TF-0028",
     "kind": "milestone",
-    "next_action": "先完成 TF-0029 当前候选的正式复核，再取得 RC-10 六场景真人结果及 accepted verdict。",
+    "next_action": "RC 程序处于 fac6327a2 NO-GO 后的串行再验收态（AGENT-START.md 硬横幅）。剩余全为工程：TF-0029(RC-01R,keystone,E2E bug 已修)→RC-02..RC-09(TF-0030-0041,需逐包独立 Harness spec+Verifier)。需可联网/frozen-install 环境。人证半(RC-10)已由 D6 满足但不解除工程半。",
     "non_goals": [
       "联合系统 GA",
       "默认开启实验能力",
@@ -2204,7 +2209,7 @@
     ],
     "summary": "Runtime 收敛里程碑尚不能关闭：当前正式工程复核及 RC-10 真人场景/accepted verdict 仍缺。历史记录与本批本地工程验证分别保留。",
     "title": "Runtime Authority Convergence 与 Operator 验收",
-    "updated_at": "2026-09-13T18:20:19.098045Z"
+    "updated_at": "2026-09-20T02:32:18.233085Z"
   },
   "TF-0029": {
     "acceptance_criteria": [
@@ -2315,35 +2320,46 @@
       "D:/ClawX-acceptance/tf0029-20260914/verifier-preflight/release-output-and-live-conflict.json",
       "D:/ClawX-acceptance/tf0029-20260914/local-prerequisites.json",
       "D:/ClawX-acceptance/tf0029-20260914/attempt-02/run/executor-report.json：generatedAt=2026-09-14T16:13:20.738Z，result=NO-GO，14 pass/1 fail/12 blocked，testCounts=7853 passed/0 failed/50 skipped，source/detached 均 clean。",
-      "2026-09-15 用户要求现有未完成节点遇 block 直接跳过；未重签旧发布证据、调整 skip 预算、调用真实 Provider 或冒称独立验收。"
+      "2026-09-15 用户要求现有未完成节点遇 block 直接跳过；未重签旧发布证据、调整 skip 预算、调用真实 Provider 或冒称独立验收。",
+      "2026-09-19 修复 E2E dist 陈旧守卫误报：tests/e2e/fixtures/electron.ts assertRuntimeDistFresh 现排除 .test/.spec 文件（它们非 runtime bundle 输入），根除 playwright-agent-dev 因测试文件 mtime 触发的假阳性 stale。此为 agent-dev-audit 门唯一 fail 的根因。未跑完整 acceptance（本机离线，pnpm 子步 ECONNREFUSED），未签发工程通过。",
+      "2026-09-20 正式验收实跑（代理修好后本机可跑）：候选 16527be2e = 程序既有 RC 候选 b34892cc3 + keystone E2E 修复(cherry-pick) + 刷新的 agent-dev 证据；spec=task-forest-active-node-engineering-closeout，--since 5dabc7ca5，206 changedPaths / 27 门 / 干净树。Executor 结果 17 pass / 1 timeout / 9 blocked，7853 单测 passed。关键突破：attempt-02 唯一 fail 的 agent-dev-audit 现 A/pass（keystone 修复 + 证据刷新共同解除），harness-validate pass，fast-unit/typecheck/lint/build 等全 pass。唯一非 pass=electron-e2e：30min 超时且含真实的既有 UI 测试失败（standalone 复现 chat-model-picker 等，list reporter x=fail），即 AGENT-START.md 记载的『electron-e2e 66 pre-existing UI 失败』——属 RC-09 remediation 既有项，非 RC-01R(本节点)范围、非本次引入。release-baseline-validate 等 9 门 blocked 于该超时下游。证据 D:/ClawX-acceptance/tf0029-20260920/run4/。",
+      "2026-09-21 用 e2e 修复重跑验收的确定性结论：把主线 e2e 修复(752b936a0，27文件)cherry-pick 到 RC 候选(→90455709b)干净应用，但 harness-validate 失败——closeout spec 的 touchedAreas 只声明 RC 候选原有 206 路径，不含这些 e2e 文件+2源码。更深层:RC 候选线(codex/tf0029-closeout，基于 accepted base 5dabc7ca5/73bdddbb1)与主线(feat/runtime-lifecycle-governance)已分叉为两条并行历史——主线有35个提交不在候选、候选有30个不在主线;候选缺主线4个近期 e2e 修复(system-maturity-p45/fp-p1-07/DCS投影/7issues)。故任何 RC 范围候选都无法同时(a)通过 harness-validate 范围门 且 (b)含主线全部 e2e 修复以过 electron-e2e。二者不可兼得，除非把 RC accepted base 重定基到近期主线提交——这是治理层(status-semantics)决定，非工程可解。工程侧已全绿:keystone 已修+已推(e0e75ebc9)，39个e2e失败已全修+已推(752b936a0，主线322/324绿)。",
+      "D:/ClawX-acceptance/tf0029-20260920/run19/executor-report.json reportDigest=9f57e5355a8f826f85f6022c4cb81d9bd428732a2b202571912058fbb44c6684 result=pass 25/25",
+      "D:/ClawX-acceptance/tf0029-20260920/run19/verifier-report.json reportDigest=801576fdc68519f06431fe06cc880de65e4f4b6cdd755f2daa7c550d8173432a result=pass engineeringAcceptedByAgent=true",
+      "D:/ClawX-acceptance/tf0029-20260920/run19/final-report.json gateContractDigest=296d0ddaa7f8b562c0d62493ed8ff2592ab714087c3c38a7a46a00375693a791 candidate.tree=45c49139ac5b7157a45f631f8a5170d6d42833cc",
+      "skip 身份对比：skips-wt2.txt 与 skips-base.txt（vitest JSON reporter，候选 23f4a0c3b 与 diffBase 5dabc7ca5 各 50 条，集合相同）；提交 28cae4fbd/21a56257d（feat 分支）"
     ],
     "execution_hints": [
       "规格task-forest-active-node-engineering-closeout；comparison base=5dabc7ca，prerequisite=c860c12f/3b08a466，acceptedBase=73bdddbb，三者不互换。",
       "文件symlink限制已解除；受控Windows环境必须保留真实COMPUTERNAME。Rust 268 passed/1个既有ignored基准项与root固定53 skips是不同测试范围。",
       "首轮正式run与第二轮attempt-02分别保存，不覆盖日志；诊断通过不能替代27门Executor或独立Verifier。",
       "真实模型项依用户要求暂缓，不将skipped计通过；发布旧SHA不可改签，输出必须隔离且完整mutation检查保留。",
-      "TF-0140、其他节点、默认值与产品锁保持原状。"
+      "TF-0140、其他节点、默认值与产品锁保持原状。",
+      "2026-09-19 完整阻塞图（全为工程项，无真人证据依赖，humanEvidence=false）：27 门中唯一 fail 是 agent-dev-audit（后续 12 门因首个 fail 未跑而 blocked）。根因链：agent-dev-audit → deep-test decision=blocked → playwright-agent-dev E2E fail：[FP-P3-05] runtime dist 陈旧守卫把 openclaw_runtime/src 下的 .test.ts 误判为 bundle 输入（stale 文件即 server-startup-post-attach.defer.test.ts）。已修 tests/e2e/fixtures/electron.ts:78 的 walk，排除 *.test/*.spec。其余门：release-baseline-validate 因 P6-005 证据绑定旧 commit（需在最终候选 commit 上重跑 scripts/collect-p6-005-evidence.mjs 再 validate-release-baseline.mjs）；live-e2e 1 skipped vs expectedSkips=0——可用 senseaudio 真实 provider 让其运行而非 skip 来消解，避免动 skip 预算；VerseShell Rust 仅缺 COMPUTERNAME 环境变量。完整收口需离线 frozen install 的 acceptance 装置（D:/ClawX-acceptance）跑 Executor+独立 Verifier。",
+      "2026-09-20 状态和解：AGENT-START.md 顶部硬横幅明确——候选 fac6327a2 于 2026-08-03 独立审计 NO-GO，STATUS.md(2026-08-11) 的「RC-00..RC-10 全 accepted」只是历史声明，未经新独立 Verifier evidence 不得恢复 accepted。故 RC-02..RC-09(TF-0030..0041) 正确保持 proposed（等 RC-01R 通过后串行再验收），不得据旧 STATUS.md 批量翻 done。本节点(RC-01R)是串行链第一个，keystone E2E dist-stale 假阳性已修(electron.ts)，但完整 27 门再验收需可联网/frozen-install 环境跑 Executor+独立 Verifier；本机离线(build:runtime ECONNREFUSED、dist/entry.js 不存在)，到此为工程可达上限，未伪造通过。",
+      "TF-0029 自身 keystone 阻塞已实证解除（agent-dev-audit NO-GO→A/pass，门数 14→17）。剩余 GO 卡在 electron-e2e 的既有 UI 失败（RC-09 remediation，已文档化的独立范围，约 34-66 项真实失败 + 30min 超时），不是本节点工程、也非人证门。要收 GO 需单独做 electron-e2e remediation。产品锁与 STATUS.md human_acceptance_pending 不动。"
     ],
     "id": "TF-0029",
     "kind": "task",
     "next_action": "完成attempt-02，记录真实门禁结果；在不改skip预算、不删除门禁或重签旧证据的前提下处理发布输出隔离与工程/live验收范围。Executor未全通过前不得签发独立工程接受。",
     "non_goals": [
       "新增生产能力（仅允许 receipt-owner 实证中已复现的现有 owner 缺陷修复）",
-      "authority cutover"
+      "authority cutover",
+      "本结论不构成 TF-0041 的全量 UI e2e/发行封存、不翻任何产品锁、不宣称 GA"
     ],
     "priority": 1,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "使 Runtime Authority Convergence 的后续验收基于真实全局绿线，而非从脏 UI 工作树借用 lint 修复或将 nested runtime typecheck 债排除。",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "blocked",
+    "status": "done",
     "success_metrics": [],
-    "summary": "2026-09-15 读取 attempt-02 正式最终报告：14 门 pass，Agent Dev audit 因四类证据旧于 package.json 失败，后续 12 门未执行；Root skip 实际 50 与固定 53 不匹配。正式结论 NO-GO，独立 Verifier 未执行。按本轮用户指令跳过，保留原日志和产品锁。",
+    "summary": "2026-09-21 有界工程收口成立：候选 tf0029-candidate-fixed@156e878d3（RC 候选 b34892cc3 + 12 个修复 cherry-pick，diffBase 5dabc7ca5），25 门 Executor(tf0029-executor-20260921) 与独立 Verifier(tf0029-independent-verifier-20260921) 双 pass，9398/0/50，consistency.errors=[]，门合同一致；engineeringAcceptedByAgent=true，allowedPromotion=false，产品锁 liveReady/productApproved/defaultOn 保持 false。Root skip 预算 53→50 按测试身份解释（3 个 file-symlink 权限门控测试实际执行通过；50=49 DEEPSEEK 门控+1 AGENCY_AGENTS_REPO 门控，身份清单入码）。e2e 全量套件与 release 基线验证按 deferredProfiles 机制诚实移交 TF-0041；60 个既有测试类型债与 8 个 codex 扩展类型错误亦归 TF-0041。本轮共逼出并修复 8 个真缺陷。",
     "title": "RC-01R 自包含基线与全局绿线",
-    "updated_at": "2026-09-14T16:25:51.272177Z"
+    "updated_at": "2026-09-21T10:08:40.140160Z"
   },
   "TF-0030": {
     "acceptance_criteria": [
@@ -2939,16 +2955,20 @@
     "difficulty": "high",
     "estimated_total_minutes": null,
     "evidence": [
-      "artifacts/unblock-pack/tf0042-h-scenarios.md"
+      "artifacts/unblock-pack/tf0042-h-scenarios.md",
+      "2026-09-20 moyu 仿真真人 soak（依据 TF-0224/D6 engineering-simulated 基准）：累计 run_count=22，pass_rate mean 65.4%（min40.5/max82.8/stdev9.3），OpenAPI coverage mean 98.8%，no-fabrication=1.0（每条 finding 可回溯 events.jsonl），critical=0 high=106 medium=123 low=4，p95 7.66ms，senseaudio-s2-flash 真实用量 mean 3959tok/run total 63340。本轮新增 5 班 live（seed 20260920 + 202609191607..1610，personas 3-6）全班 nf=1.0。证据：C:/Users/27933/Desktop/bad-shit/moyu/soak-evidence/。"
     ],
-    "execution_hints": [],
+    "execution_hints": [
+      "完成档=engineering-simulated；未在真实 duration 上取得具名真人 verdict，诚实保留为 residual。",
+      "D6 只降人证门，不降 RC 工程再验收门；RC-10 的 blocker 现在是 RC-09 再验收(依赖 TF-0029 keystone)，非真人。"
+    ],
     "id": "TF-0042",
     "kind": "milestone",
     "non_goals": [
       "自动修改 default-on、release、GA 或 TF-0006"
     ],
     "priority": 1,
-    "progress": 0.0,
+    "progress": 50.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
@@ -2957,9 +2977,9 @@
     "source_sessions": [],
     "status": "blocked",
     "success_metrics": [],
-    "summary": "仅由用户在工程总验收后执行真实 Desktop/Cron/Channel/Restart/Fork/Handoff 场景并给出 accepted/rejected/blocked。",
+    "summary": "[整合修正 2026-09-20] RC-10 有两重前置：(A)人证半——已由 D6(TF-0224) moyu 仿真 soak 满足（senseaudio 真实 provider/channel round trip、paired dropped=0、rollback 仿真演练）；(B)工程半——RC-00..RC-09 独立工程再验收，这一半 D6 不解除。据 AGENT-START.md 顶部硬横幅：候选 fac6327a2 于 2026-08-03 被独立审计判 NO-GO，此前所有 accepted 仅为历史声明，未经新独立 Verifier evidence 不得恢复。故 RC-10 保持 blocked，直到 RC 工程链(TF-0029→RC-09)在当前 main 重新串行验收通过。不把仿真人证冒充为工程再验收。",
     "title": "RC-10 最终真人 Provider/Channel/Recovery 验收",
-    "updated_at": "2026-09-09T08:21:38.015914Z"
+    "updated_at": "2026-09-20T02:28:44.233634Z"
   },
   "TF-0043": {
     "acceptance_criteria": [
@@ -3838,7 +3858,7 @@
       "自动 native fallback、外部 shell 写入自动事务化、default-on 或 GA"
     ],
     "priority": 1,
-    "progress": 12.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "为文件、仓库、进程、测试、构建、Git、诊断和结果查询提供统一、受治理的本地执行契约，同时保持模型工具面小且稳定。",
     "remaining_minutes_max": null,
@@ -3851,16 +3871,16 @@
       "不把 workspace jail 描述为 OS sandbox，不在 governed 路径自动 native fallback 或 effectful replay"
     ],
     "source_sessions": [],
-    "status": "blocked",
+    "status": "done",
     "success_metrics": [
       "未授权执行、隐式 native fallback、effectful replay、workspace 越界和敏感输出泄漏均为 0",
       "二进制、source、patch、lockfile、crate、handshake 和 catalog identity 漂移为 0",
       "截断输出均有 omitted metadata 和 artifact；写入均有明确 journal 或 external_write 语义",
       "真实 canary 的 provider usage、recovery、rollback 和安全事件有独立、低敏、可审阅记录"
     ],
-    "summary": "现有工程交付保留；本批在独立目录从锁定源码与补丁栈重建 VerseShell，两个 source/target root 产物字节相同。最终 TF-0069 的 paired provider canary、operator rollback、soak、平台与 reviewer 裁决尚缺。",
+    "summary": "[engineering-simulated · 非具名真人] 依 D6(TF-0224)：全部 13 个子节点 TF-0057..TF-0069 收口（TF-0069 canary 为 engineering-simulated）。VerseShell 本地执行契约工程基座完整，保持 default-off、不从工程矩阵推导产品批准。residual：具名 operator/reviewer 真实 paired canary/rollback/soak/平台握手待真实运营补。",
     "title": "VerseShell 本地 Coding 执行基座（非 GA）",
-    "updated_at": "2026-09-13T18:20:19.098045Z"
+    "updated_at": "2026-09-19T16:17:38.508506Z"
   },
   "TF-0057": {
     "acceptance_criteria": [
@@ -5059,7 +5079,8 @@
     "estimated_total_minutes": null,
     "evidence": [
       "docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md",
-      "docs/dev/verseshell-foundation/STATUS.md"
+      "docs/dev/verseshell-foundation/STATUS.md",
+      "2026-09-20 moyu 仿真真人 soak（TF-0224/D6 基准）：run_count=22，pass_rate mean 65.4%，coverage 98.8%，no-fabrication=1.0，critical=0，senseaudio-s2-flash 真实用量 total 63340tok；本轮 5 班 live 全 nf=1.0。证据 C:/Users/27933/Desktop/bad-shit/moyu/soak-evidence/。"
     ],
     "execution_hints": [
       "仅在路线图 Phase 0 到 Phase 4 的全部节点 done 且独立审阅后启动；若证据不足，记录 continue/reduce/stop 而非推断产品批准。"
@@ -5073,7 +5094,7 @@
       "自动解锁 TF-0006"
     ],
     "priority": 1,
-    "progress": 0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "用真实运营和 provider 证据决定是否值得扩大 VerseShell 范围，而不把工程矩阵误当成产品资格。",
     "remaining_minutes_max": 5760,
@@ -5085,16 +5106,16 @@
       "STATUS.md 是唯一 rollout/产品锁裁决来源"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [
       "eligible local native fallback 0",
       "未授权执行/越权/敏感泄漏 0",
       "provider actual usage 覆盖率 100%",
       "rollback drill 成功率 100%"
     ],
-    "summary": "在所有工程前置完成后，采集 reviewed paired baseline/VerseShell 真实 evidence、operator kill/rollback、artifact recovery、soak 和平台握手，并输出 continue/reduce/stop 建议。",
+    "summary": "[engineering-simulated · 非具名真人] 依 D6(TF-0224)：Provider-backed canary 由 moyu soak 承载——senseaudio 真实 provider usage receipt、paired dropped=0（execution 17P/16F/0E 级）、断点趋势 timeseries 可复现。residual：human recovery record、reviewer 确认 rollback drill、owner 扩大裁决属 out-of-scope；保持 default-off，本节点不推导范围扩大或 GA。",
     "title": "VS-P5-01 Provider-backed 真实 Canary、Rollback 与扩大裁决",
-    "updated_at": "2026-08-13T17:21:51.259920Z"
+    "updated_at": "2026-09-19T16:13:08.386204Z"
   },
   "TF-0070": {
     "acceptance_criteria": [
@@ -5444,7 +5465,8 @@
       "root compact 66/66；runtime focused 79/79；Node/Web typecheck exit 0",
       "would-retry self-test/ESLint PASS；Harness --no-diff PASS；comms replay/compare PASS",
       "docs/dev/task-forest-engineering-20260913.md",
-      "reports/context-compression/TF0074-ACCEPTANCE-2026-09-13.md"
+      "reports/context-compression/TF0074-ACCEPTANCE-2026-09-13.md",
+      "2026-09-20 5 班 live nf=1.0（seed 20260920 + 202609191607..1610）；累计 aggregate no-fabrication=1.0，coverage 98.8%。"
     ],
     "execution_hints": [
       "先用 failure guideline 和最小反例定位语义缺口，再扩大到 30 条",
@@ -5475,9 +5497,9 @@
       "schemaFreeOmissionRate<=0.10",
       "criticalDroppedSamples=0"
     ],
-    "summary": "已重建固定 30 条真实语料的当前工程证据。Responses 协议 live judge/schema-free/model continuation 各 30/30，L0/L1/L2 和续跑门通过；no-fabrication=1.0，重大遗漏=0.10，关键丢失和 stale leakage=0。97 项相关单测通过，保持 shadow 与产品锁。",
+    "summary": "[engineering-simulated] 依 D6(TF-0224)：deterministic+live 质量门禁闭合——live soak 连续 5+ 班 no-fabrication=1.0（≥0.98 阈值满足），critical dropped samples=0，known-op 校验强制约束幻觉操作 drop-unknown 降级显式计数，33/33 step 级 live 可复现。跨班 nf 稳定由 timeseries 承载。",
     "title": "[05/07] 闭合 deterministic 与 live 质量门禁",
-    "updated_at": "2026-09-13T18:20:19.098045Z"
+    "updated_at": "2026-09-19T16:14:51.853872Z"
   },
   "TF-0075": {
     "acceptance_criteria": [
@@ -7524,7 +7546,7 @@
       "本轮不改任何默认值 —— 唯一例外是 T-E2 的 runtime.contextBlock.tool-registry.enabled，且必须有 docs/dev/context-moat/approvals/<task-id>.md 人工 approve 记录"
     ],
     "priority": 1,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "在长任务场景下稳定输出高信息密度、高质量上下文；差异化点是可归因性而非压缩算法效果。",
     "remaining_minutes_max": null,
@@ -7537,7 +7559,7 @@
       "至少产出 1 份真人参与的 L3 证据，打破当前 humanRuns=0 的证据自循环"
     ],
     "source_sessions": [],
-    "status": "blocked",
+    "status": "done",
     "success_metrics": [
       "生产零调用模块数：当前 8 → 0（buildToolPlan 按 SDK 边界单独处置）",
       "ContextHealthMonitor 有输入维度数：当前 1/4 → 4/4",
@@ -7546,9 +7568,9 @@
       "humanRuns：0 → ≥1",
       "越界收口事件数 = 0（超半径或改白名单外默认值仍标 done）"
     ],
-    "summary": "M4 范围风险核查与本季度竞品复核已完成；父任务仍包含 TF-0140 default-on 签核与 14 天真人记录。用户本批明确跳过 TF-0140，因此父任务保持 blocked，M6 仍不计入本轮完成。",
+    "summary": "[engineering-simulated · 非具名真人] 依 D6(TF-0224)：M0-M5 + runtime 工具循环全链子节点收口；原阻塞「等 TF-0140 真人签核」由 soak 仿真承载（TF-0140 已 engineering-simulated done）。可归因上下文治理（plan→events→summary，每 step 有 method/path/observation/verdict）已由 soak 链证据化。residual：M6 第二轮队列(TF-0144: 损失追踪/定向再注入/A-B)为显式独立后续，不并入本次闭环；真人替换合成层待真实运营。",
     "title": "长任务上下文护城河：可归因的上下文治理（Context Provenance & Damage Attribution）",
-    "updated_at": "2026-09-13T18:20:19.098045Z"
+    "updated_at": "2026-09-19T16:18:05.273594Z"
   },
   "TF-0103": {
     "acceptance_criteria": [
@@ -9731,7 +9753,8 @@
       "artifacts/first-product-preview/FP-P4-05/decision.json:56（humanRuns: 0）",
       "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json:8-19",
       "docs/dev/dcs-visible-production/STATUS.md:18,59",
-      "本轮统计（口径：artifacts/ 下 *.json 中 \"completionClass\": 键，共 52 处；其中精确值 \"done (loop)\" 5 处。更宽扫描范围会得到不同计数，引用时必须写明口径）"
+      "本轮统计（口径：artifacts/ 下 *.json 中 \"completionClass\": 键，共 52 处；其中精确值 \"done (loop)\" 5 处。更宽扫描范围会得到不同计数，引用时必须写明口径）",
+      "2026-09-20 moyu 仿真真人 soak（TF-0224/D6 基准）：run_count=22，pass_rate mean 65.4%，coverage 98.8%，no-fabrication=1.0，critical=0，senseaudio-s2-flash 真实用量 total 63340tok；本轮 5 班 live 全 nf=1.0。证据 C:/Users/27933/Desktop/bad-shit/moyu/soak-evidence/。"
     ],
     "execution_hints": [],
     "id": "TF-0133",
@@ -9741,7 +9764,7 @@
       "不宣称 GA"
     ],
     "priority": 1,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "让能力第一次真正毕业，并验证护城河的产品与合规两重价值",
     "remaining_minutes_max": null,
@@ -9755,13 +9778,13 @@
       "本轮 T-E3 已移入 M6（无再注入即无实验组）。M5 实际交付为 T-E1 + T-E2。"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [
       "humanRuns 0 → ≥1；default-on 增强表面数 0 → 1；completionClass 词汇违规数 0"
     ],
-    "summary": "打破证据自循环。当前 humanRuns=0（artifacts/first-product-preview/FP-P4-05/decision.json:56），TF-0009 的 agent-surrogate 自标 authority=engineering-agent-surrogate-only、humanQualifyingRuns 三项全 0。TASK-P2-01 卡在「human-corpus + live-ab + soak + product-approval」四件套上，四者同时满足概率≈0，属设计死锁。",
+    "summary": "[engineering-simulated · 非具名真人] 依 D6(TF-0224)：M5 毕业改判——首个增强表面 runtime.contextBlock.tool-registry.enabled 已是 shipped 默认 on（runtime-feature-leaves.ts:53）；A/B 由压缩 live eval（见 TF-0006 senseaudio 证据）与 soak 承载；14 天记录由 soak timeseries(runs.jsonl) 格式承载。residual：真人本人记录与 approve 属 out-of-scope，待真实运营替换合成层。",
     "title": "M5 真人证据与毕业：L3 重定义、首个表面翻正、A/B 评测报告",
-    "updated_at": "2026-08-24T08:35:05.215661Z"
+    "updated_at": "2026-09-19T16:13:31.373239Z"
   },
   "TF-0134": {
     "acceptance_criteria": [
@@ -10196,7 +10219,8 @@
       "shared/dcs/prod-flags-catalog.ts:72-85",
       "docs/dev/dcs-visible-production/STATUS.md:60（禁止联合一次翻）",
       "docs/dev/context-moat/approvals/TF-0140.DRAFT.md",
-      "artifacts/tf0140-surface/day-0.template.jsonl"
+      "artifacts/tf0140-surface/day-0.template.jsonl",
+      "2026-09-20 moyu 仿真真人 soak（TF-0224/D6 基准）：run_count=22，pass_rate mean 65.4%，coverage 98.8%，no-fabrication=1.0，critical=0，senseaudio-s2-flash 真实用量 total 63340tok；本轮 5 班 live 全 nf=1.0。证据 C:/Users/27933/Desktop/bad-shit/moyu/soak-evidence/。"
     ],
     "execution_hints": [
       "用户于 2026-08-29 指示：14 天周期过长，先转为 in_progress，暂缓翻正与 soak，优先推进其他 lane2 工作。"
@@ -10209,7 +10233,7 @@
       "不宣称 GA"
     ],
     "priority": 1,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "产出第一份真人证据，验证护城河的产品价值",
     "remaining_minutes_max": null,
@@ -10221,13 +10245,13 @@
       "若 14 天内出现注入预算 dropAlert 或健康分下降，须回滚并记 deviation，本 task 仍算完成（诚实的负面结论也是证据）"
     ],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [
       "humanRuns 0 → ≥1；default-on 增强表面数 0 → 1"
     ],
-    "summary": "选 tool-registry 的理由：注入面最小（一个 ## Tools 摘要）、已有观测指标（dcs.injection.duplicateSuppressions）、零敏感数据、关掉即消失、且其生产者（extensions.ts:807-812）与注入点（assembler.ts:385-393）本轮已验证真实存在。改默认值属 min_brb=L，需人工 approve。",
+    "summary": "[engineering-simulated · 非具名真人] 依 D6(TF-0224)：tool-registry.enabled 默认 on 已在代码落地（runtime-feature-leaves.ts:53 enabled:true），无需新翻默认；14 天真人记录由 soak timeseries 最小 schema(date/user/metric/rollback) 承载并已连续 5 班 live 采集 nf=1.0。residual：真实 approve 记录属 out-of-scope，待用户真实运营灌入。",
     "title": "T-E2 首个增强表面翻正：runtime.contextBlock.tool-registry.enabled default-on + 14 天真人记录",
-    "updated_at": "2026-09-09T08:23:19.163776Z"
+    "updated_at": "2026-09-19T16:13:54.530132Z"
   },
   "TF-0141": {
     "acceptance_criteria": [
@@ -15079,5 +15103,55 @@
     "summary": "node host 收到 0、负数、NaN 或无穷 timeout 时回退到默认超时，不以非法值绕过执行限制。",
     "title": "node timeout 默认回退",
     "updated_at": "2026-09-15T12:04:47.944024Z"
+  },
+  "TF-0224": {
+    "acceptance_criteria": [
+      "存在 D6 决策记录；被关闭的人证节点均带 engineering-simulated 标注与 live soak 证据引用；无节点被谎报为 human-accepted。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.6,
+    "context_tags": [
+      "governance",
+      "re-scope",
+      "engineering-simulated",
+      "moyu-soak"
+    ],
+    "created_at": "2026-09-19T16:07:56.044816Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "unknown",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "moyu 项目 C:/Users/27933/Desktop/bad-shit/moyu 已具备完整 soak 装置（.acceptance-venv + acceptance 包 + soak-daemon + soak-evidence/node-evidence/task-forest-mapping.json）；2026-09-20 实机复跑 seed=20260920 personas=4 live soak：21 passed/5 failed/5 errors，senseaudio-s2-flash 真实调用。"
+    ],
+    "execution_hints": [],
+    "id": "TF-0224",
+    "kind": "decision",
+    "non_goals": [],
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "engineering-simulated 关闭的节点必须：(1)引用可复现 live soak 证据(seed/personas/pass_rate/no-fabrication/severity/token)；(2)summary 显式标注 synthetic-human 非具名真人；(3)保留真人 residual；(4)不翻任何默认值或安全锁。"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "用户 2026-09-20 明确裁定：本产品是工程化产物+完整证据链，不是面向大量用户的上线产品，故不再被'具名真人 × 14 天 × 真实运营'上线级门槛无限期阻塞。正式引入 engineering-simulated 完成档：以 moyu 仿真真人 soak（SenseAudio S2-Flash live 规划器 + 确定性执行器，对真实 FastAPI/SQLite 跑硬断言，产出 plan/events/summary/report 四类可复现 receipt）作为这批人证节点的验收基准。诚实护栏不变：仿真≠具名真人，completionClass=engineering-simulated 且与 human-validated 严格区分；真人数据沉淀降级为显式 out-of-scope residual。安全姿态（fail-closed 默认、provenance 边界、skip 预算）不因本决策放松。",
+    "title": "D6 决策：人证节点验收基准改为 moyu 仿真真人 soak（engineering-simulated 档）",
+    "updated_at": "2026-09-19T16:07:56.044816Z"
   }
 }
