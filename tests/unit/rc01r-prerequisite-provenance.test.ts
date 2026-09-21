@@ -10,7 +10,11 @@ import {
   PREREQUISITE_SPEC_PATH,
   verifyRc01rPrerequisiteProvenance,
 } from '../../scripts/rc01r-prerequisite-provenance.mjs';
-import { ROOT_UNIT_EXPECTED_SKIPS } from '../../scripts/lib/agent-engineering-acceptance.mjs';
+import {
+  ROOT_UNIT_EXPECTED_SKIPS,
+  ROOT_UNIT_SKIP_INVENTORY,
+  ROOT_UNIT_SYMLINK_PRIVILEGE_SKIPS,
+} from '../../scripts/lib/agent-engineering-acceptance.mjs';
 
 describe('RC-01R prerequisite provenance', () => {
   it('keeps the historical prerequisite, comparison base and acceptedBase distinct', () => {
@@ -23,7 +27,21 @@ describe('RC-01R prerequisite provenance', () => {
     expect(PREREQUISITE_SPEC_PATH).toBe('harness/specs/tasks/rc01r-green-baseline.md');
     expect(PREREQUISITE_SPEC_BLOB).toBe('4bfc17d73c304fdea62c2debb4e213605a2ca227');
     expect(FROZEN_ROOT_UNIT_EXPECTED_SKIPS).toBe(53);
-    expect(ROOT_UNIT_EXPECTED_SKIPS).toBe(53);
+  });
+
+  it('derives the live root skip budget from the identity inventory, not from the historical frozen number', () => {
+    expect(ROOT_UNIT_EXPECTED_SKIPS).toBe(50);
+    expect(ROOT_UNIT_SKIP_INVENTORY.reduce((sum, entry) => sum + entry.skips, 0)).toBe(ROOT_UNIT_EXPECTED_SKIPS);
+    expect(new Set(ROOT_UNIT_SKIP_INVENTORY.map((entry) => entry.file)).size).toBe(ROOT_UNIT_SKIP_INVENTORY.length);
+    for (const entry of ROOT_UNIT_SKIP_INVENTORY) {
+      expect(entry.file).toMatch(/^tests\/unit\/.*\.test\.ts$/u);
+      expect(Number.isInteger(entry.skips) && entry.skips > 0).toBe(true);
+      expect(entry.gate.length).toBeGreaterThan(0);
+    }
+    expect(ROOT_UNIT_SKIP_INVENTORY.filter((entry) => entry.gate === 'DEEPSEEK_API_KEY withheld')
+      .reduce((sum, entry) => sum + entry.skips, 0)).toBe(49);
+    expect(ROOT_UNIT_SYMLINK_PRIVILEGE_SKIPS).toBe(3);
+    expect(ROOT_UNIT_EXPECTED_SKIPS + ROOT_UNIT_SYMLINK_PRIVILEGE_SKIPS).toBe(FROZEN_ROOT_UNIT_EXPECTED_SKIPS);
   });
 
   it('verifies the live repository identities without re-signing acceptedBase', () => {

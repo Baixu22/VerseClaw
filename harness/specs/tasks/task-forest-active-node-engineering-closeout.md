@@ -240,7 +240,7 @@ requiredTests:
 acceptance:
   - Root lint:check enforces zero errors and at most 120 warnings; no lint disable, exclusions, assertions removal, or widened runtime type exclusions are used to obtain the green result.
   - Root node/web/test and nested production-core typechecks pass with frozen dependency inputs.
-  - Complete root unit counts include every subprocess. The frozen skip budget remains 53 until the extra independently observed skip is identified and authorized; silently raising it to 54 is forbidden.
+  - Complete root unit counts include every subprocess. The root skip budget is the sum of the identity inventory in scripts/lib/agent-engineering-acceptance.mjs (50: 49 DEEPSEEK_API_KEY-gated tests across 15 files plus 1 AGENCY_AGENTS_REPO-gated test), enumerated by the vitest JSON reporter on both the candidate and its diffBase. The historical frozen 53 was read on a process without file-symlink privilege, where skills-symlink-cleanup.test.ts skips 3 more tests; on the acceptance host those 3 tests execute and pass. A reading above the inventory means a capability-gated test was skipped and must be fixed in the environment; silently raising the budget is forbidden.
   - Required test commands cannot omit parsed-count and skip expectations; non-test required checks remain distinguishable from test runners.
   - Manifest requirements and gate contracts are re-derived from the candidate-bound spec/rule/profile/lock inputs; forbidden arguments are rejected in executable command lines as well as argv.
   - Removing or reordering a mandatory gate, changing its command/timeout/skip budget, hiding comparison paths, or omitting profile/lock inputs remains NO-GO after rehashing. Abbreviated bootstrap fixtures cannot qualify as acceptance.

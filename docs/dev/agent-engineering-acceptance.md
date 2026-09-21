@@ -37,7 +37,13 @@ worktree. A source tree that is dirty, no longer resolves to the manifest candid
 or changed inputs, contains a TLS override or provider credentials, or requests mutation/network
 flags is rejected before a gate runs. `commandLine` is scanned for forbidden arguments such as
 `--fix`. Countable test commands must declare a fixed skip budget, and parsed counts sum every
-Vitest `Tests` segment instead of keeping the largest single number. Ignored provision copies
+Vitest `Tests` segment instead of keeping the largest single number. The root `pnpm test` budget
+is `ROOT_UNIT_EXPECTED_SKIPS`, derived from `ROOT_UNIT_SKIP_INVENTORY` in
+`scripts/lib/agent-engineering-acceptance.mjs`: one entry per test file whose skips are gated on
+an input the acceptance environment deliberately withholds (currently 50 = 49 `DEEPSEEK_API_KEY`
++ 1 `AGENCY_AGENTS_REPO`). A count above the inventory means a capability-gated test was skipped
+(for example the 3 file-symlink tests in `skills-symlink-cleanup.test.ts`); fix the host, do not
+raise the number. Ignored provision copies
 are locked by sha256 and byte length in the plan.
 
 Before either role runs, the validator regenerates the complete gate contracts from the
