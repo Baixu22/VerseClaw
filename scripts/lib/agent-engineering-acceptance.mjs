@@ -30,7 +30,35 @@ const REPOSITORY_ROOT = resolve(dirname(THIS_FILE), '../..');
 const DEFAULT_OUTPUT_ROOT = join(REPOSITORY_ROOT, 'artifacts', 'agent-engineering-acceptance');
 const DEFAULT_TIMEOUT_MS = 30 * 60 * 1000;
 const MAX_OUTPUT_BYTES = 64 * 1024 * 1024;
-export const ROOT_UNIT_EXPECTED_SKIPS = 53;
+// Identity-backed root skip budget. Every entry is a test file whose skips are
+// gated on an input the acceptance environment deliberately withholds, so the
+// count is deterministic there. Enumerated from the vitest JSON reporter on the
+// candidate (23f4a0c3b) and its diffBase (5dabc7ca5); both read identically.
+// A reading above this sum means a capability-gated test was skipped (for
+// example `skills-symlink-cleanup.test.ts` skips 3 tests when the process
+// cannot create file symlinks); fix the environment, do not raise the budget.
+export const ROOT_UNIT_SKIP_INVENTORY = Object.freeze([
+  { file: 'tests/unit/agency-role-importer.test.ts', skips: 1, gate: 'AGENCY_AGENTS_REPO checkout absent' },
+  { file: 'tests/unit/cross-encoder-rerank.test.ts', skips: 2, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/helpers/query-classifier.test.ts', skips: 2, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/justifier-rerank.test.ts', skips: 2, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/question-decomposer.test.ts', skips: 4, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/runtime-memory-adversarial-holdout.test.ts', skips: 3, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/runtime-memory-consumer-llm-judge.test.ts', skips: 3, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/runtime-memory-interleaved-read-write.test.ts', skips: 3, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/runtime-memory-llm-multi-judge.test.ts', skips: 4, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/runtime-memory-llm-real-usage.test.ts', skips: 8, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/runtime-memory-locomo-benchmark.test.ts', skips: 1, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/runtime-memory-locomo-full-500.test.ts', skips: 1, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/runtime-memory-long-conversation-real.test.ts', skips: 3, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/runtime-memory-retention-llm-judge.test.ts', skips: 4, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/runtime-memory-useless-content-judge.test.ts', skips: 6, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/runtime-memory-write-path-llm-judge.test.ts', skips: 3, gate: 'DEEPSEEK_API_KEY withheld' },
+].map(Object.freeze));
+export const ROOT_UNIT_EXPECTED_SKIPS = ROOT_UNIT_SKIP_INVENTORY.reduce((sum, entry) => sum + entry.skips, 0);
+// The 53 budget frozen on 2026-09-11 was read on a process without file-symlink
+// privilege, where skills-symlink-cleanup.test.ts skips these 3 tests.
+export const ROOT_UNIT_SYMLINK_PRIVILEGE_SKIPS = 3;
 const RUNTIME_UNIT_EXPECTED_SKIPS = 0;
 const SAFE_NETWORK_POLICIES = new Set(['none', 'isolated']);
 const REQUIRED_LOCK_FILES = ['package.json', 'pnpm-lock.yaml', '.npmrc'];
