@@ -95,7 +95,9 @@ const EXTRA_PROFILE_STEPS = {
     // test-type typecheck sweep (tsgo:all) is ambient repo debt owned by the
     // release-freeze node (TF-0041), not this self-contained baseline. See
     // docs/dev/engineering-product-node-plan-20260921.md §4.
-    { id: 'runtime-static-check', profile: 'runtime', name: 'OpenClaw runtime static checks', command: 'pnpm', args: ['--dir', 'openclaw_runtime', 'check', '--typecheck-scope=core'] },
+    // --typecheck-core (bare flag): pnpm swallows `--flag=value` forms as its
+    // own config so they never reach check.mjs; the bare alias does.
+    { id: 'runtime-static-check', profile: 'runtime', name: 'OpenClaw runtime static checks', command: 'pnpm', args: ['--dir', 'openclaw_runtime', 'check', '--typecheck-core'] },
   ],
   maturity: [
     { id: 'maturity-validate', profile: 'maturity', name: 'System maturity validation', command: 'pnpm', args: ['run', 'maturity:validate'] },

@@ -18,6 +18,8 @@ export function usage() {
     "  --include-test-types    Typecheck production and test sources (alias for --typecheck-scope=all).",
     "  --typecheck-scope=SCOPE core = runtime production core only; prod (default) = core + extensions;",
     "                          all = production + test sources. Bounded nodes use core; release freeze uses all.",
+    "  --typecheck-core        Bare alias for --typecheck-scope=core (use this when invoked via pnpm,",
+    "                          which intercepts --flag=value forms before they reach the script).",
     "  -h, --help              Show this help.",
   ].join("\n");
 }
@@ -52,6 +54,12 @@ export function parseCheckArgs(argv) {
         throw new Error(`--typecheck-scope must be core|prod|all (got: ${value})\n\n${usage()}`);
       }
       args.typecheckScope = value;
+    } else if (arg === "--typecheck-core") {
+      // No-`=` boolean alias for --typecheck-scope=core. pnpm intercepts
+      // `--flag=value` forms as its own config and they never reach this
+      // script when invoked as `pnpm ... check --typecheck-scope=core`, so a
+      // spawned acceptance gate must use this bare-flag form.
+      args.typecheckScope = "core";
     } else if (arg === "--help" || arg === "-h") {
       args.help = true;
     } else {
