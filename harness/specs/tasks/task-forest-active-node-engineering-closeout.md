@@ -209,6 +209,8 @@ touchedAreas:
   - openclaw_runtime/src/knowledge/sekb/terminal-trajectory-gating.test.ts
   - openclaw_runtime/scripts/check-duplicates.mjs
   - openclaw_runtime/scripts/check.mjs
+  - openclaw_runtime/src/infra/source-doctor.test.ts
+  - openclaw_runtime/src/infra/source-doctor.ts
 expectedUserBehavior:
   - The integrated candidate includes only the declared batch changes and keeps the original unrelated working-tree edits separate.
   - Historical prerequisite c860c12f4ab88bca9bd46742facbc97e98bb9d60 remains identified against 3b08a46667e9b961ff9eafda12da0a18848832c5; the integrated comparison base does not re-sign that prerequisite or change the approved acceptedBase 73bdddbb1dcf250783afb5da1174a43cf8d90535.

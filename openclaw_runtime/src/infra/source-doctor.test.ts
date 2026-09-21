@@ -18,7 +18,7 @@ describe("source runtime Doctor", () => {
     let output = "";
 
     const exitCode = await runSourceDoctor(["--json"], {
-      loadConfig: () => cfg,
+      readConfig: () => cfg,
       detectLegacyAuthProfileMigrations: () => plans,
       runLegacyAuthProfileMigrations: run,
       writeStdout: (text) => {
@@ -40,7 +40,7 @@ describe("source runtime Doctor", () => {
     let output = "";
 
     const exitCode = await runSourceDoctor(["--fix", "--yes", "--non-interactive"], {
-      loadConfig: () => cfg,
+      readConfig: () => cfg,
       detectLegacyAuthProfileMigrations: () => plans,
       runLegacyAuthProfileMigrations: run,
       writeStdout: (text) => {
