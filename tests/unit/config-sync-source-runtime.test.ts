@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 const {
   mockExecFile,
+  mockGetAllProviders,
   mockGetDefaultProvider,
   mockGetProvider,
   mockGetApiKey,
@@ -9,6 +10,7 @@ const {
   mockSyncDefaultProviderToRuntime,
 } = vi.hoisted(() => ({
   mockExecFile: vi.fn(),
+  mockGetAllProviders: vi.fn(),
   mockGetDefaultProvider: vi.fn(),
   mockGetProvider: vi.fn(),
   mockGetApiKey: vi.fn(),
@@ -26,6 +28,7 @@ vi.mock('node:child_process', () => ({
 }));
 
 vi.mock('@electron/utils/secure-storage', () => ({
+  getAllProviders: mockGetAllProviders,
   getApiKey: mockGetApiKey,
   getDefaultProvider: mockGetDefaultProvider,
   getProvider: mockGetProvider,
@@ -44,6 +47,28 @@ describe('syncDefaultProviderRuntimeBeforeLaunch', () => {
     await syncDefaultProviderRuntimeBeforeLaunch();
 
     expect(mockSyncDefaultProviderToRuntime).toHaveBeenCalledWith('deepseek');
+  });
+});
+
+describe('loadProviderEnv', () => {
+  it('injects the env SecretRef variable for keyed custom providers alongside registry keys', async () => {
+    mockGetDefaultProvider.mockResolvedValue('senseaudio');
+    mockGetProvider.mockResolvedValue({ id: 'senseaudio', type: 'custom', name: 'SenseAudio', enabled: true });
+    mockGetAllProviders.mockResolvedValue([
+      { id: 'senseaudio', type: 'custom', name: 'SenseAudio', enabled: true },
+      { id: 'deepseek', type: 'deepseek', name: 'DeepSeek', enabled: true },
+      { id: 'localgw', type: 'custom', name: 'Local', enabled: true },
+    ]);
+    mockGetApiKey.mockImplementation(async (id: string) => (
+      id === 'senseaudio' ? 'sk-custom' : id === 'deepseek' ? 'sk-deepseek' : null
+    ));
+
+    const { loadProviderEnv } = await import('@electron/gateway/config-sync');
+    const { providerEnv } = await loadProviderEnv();
+
+    expect(providerEnv.CUSTOM_SENSEAUD_API_KEY).toBe('sk-custom');
+    expect(providerEnv.DEEPSEEK_API_KEY).toBe('sk-deepseek');
+    expect(Object.keys(providerEnv).some((name) => name.startsWith('CUSTOM_LOCALGW'))).toBe(false);
   });
 });
 
@@ -248,6 +273,25 @@ describe('source runtime isolation user config merge', () => {
         {},
       ).config.runtime,
     ).toEqual(existingRuntime);
+  });
+
+  it('carries tools.exec (workspace permission mode) into the isolated source runtime config', async () => {
+    const {
+      applySourceRuntimeIsolationUserConfig,
+      buildInitialSourceRuntimeIsolationConfig,
+      SOURCE_RUNTIME_ISOLATION_SYNC_KEYS,
+    } = await import('@electron/gateway/config-sync');
+    expect(SOURCE_RUNTIME_ISOLATION_SYNC_KEYS).toContain('tools');
+
+    const tools = { exec: { host: 'gateway', security: 'full', ask: 'off' }, sessions: { visibility: 'all' } };
+    const initial = buildInitialSourceRuntimeIsolationConfig({ agents: {}, tools });
+    expect(initial.tools).toEqual(tools);
+    expect(buildInitialSourceRuntimeIsolationConfig({ agents: {} }).tools).toBeUndefined();
+
+    const merged = applySourceRuntimeIsolationUserConfig({ agents: {} }, { agents: {}, tools });
+    expect(merged.changed).toBe(true);
+    expect(merged.config.tools).toEqual(tools);
+    expect(applySourceRuntimeIsolationUserConfig({ agents: {}, tools }, { agents: {} }).config.tools).toEqual(tools);
   });
 
   it('includes runtime on initial isolated config when user set it', async () => {

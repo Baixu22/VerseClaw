@@ -24,6 +24,7 @@ import {
   OPENCLAW_PROVIDER_KEY_MOONSHOT_GLOBAL,
   isOAuthProviderType,
   isOpenClawOAuthPluginProviderKey,
+  type EnvApiKeySecretRef,
 } from './provider-keys';
 import { normalizePiAiModelCost, type PiAiModelCostRates } from '../shared/pi-ai-model-cost';
 import { withConfigLock } from './config-mutex';
@@ -1236,7 +1237,7 @@ export async function setOpenClawDefaultModel(
 interface RuntimeProviderConfigOverride {
   baseUrl?: string;
   api?: string;
-  apiKeyEnv?: string;
+  apiKeyEnv?: string | EnvApiKeySecretRef;
   headers?: Record<string, string>;
   authHeader?: boolean;
   request?: Record<string, unknown>;
@@ -1247,7 +1248,7 @@ interface RuntimeProviderConfigOverride {
 type ProviderEntryBuildOptions = {
   baseUrl: string;
   api: string;
-  apiKeyEnv?: string;
+  apiKeyEnv?: string | EnvApiKeySecretRef;
   headers?: Record<string, string>;
   authHeader?: boolean;
   request?: Record<string, unknown>;

@@ -23,6 +23,7 @@ import {
   type PiAiModelCostRates,
 } from '../../shared/pi-ai-model-cost';
 import { logger } from '../../utils/logger';
+import { buildMultiInstanceProviderApiKeySecretRef } from '../../utils/provider-keys';
 import { listAgentsSnapshot } from '../../utils/agent-config';
 
 const OPENAI_OAUTH_RUNTIME_PROVIDER = 'openai-codex';
@@ -378,7 +379,9 @@ async function syncRuntimeProviderConfig(
   await syncProviderConfigToOpenClaw(context.runtimeProviderKey, config.model, {
     baseUrl: normalizeProviderBaseUrl(config, config.baseUrl || context.meta?.baseUrl, context.api),
     api: context.api,
-    apiKeyEnv: context.meta?.apiKeyEnv,
+    apiKeyEnv: isUnregisteredProviderType(config.type)
+      ? (apiKey?.trim() || await getApiKey(config.id)) ? buildMultiInstanceProviderApiKeySecretRef(context.runtimeProviderKey) : undefined
+      : context.meta?.apiKeyEnv,
     // Merge instead of replace so a User-Agent/custom header never wipes vendor defaults.
     headers: { ...(context.meta?.headers ?? {}), ...(config.headers ?? {}) },
     ...(request ? { request } : {}),
@@ -734,6 +737,7 @@ export async function syncDefaultProviderToRuntime(
       await setOpenClawDefaultModelWithOverride(ock, modelOverride, {
         baseUrl: normalizeProviderBaseUrl(provider, provider.baseUrl, provider.apiProtocol || 'openai-completions'),
         api: provider.apiProtocol || 'openai-completions',
+        apiKeyEnv: providerKey ? buildMultiInstanceProviderApiKeySecretRef(ock) : undefined,
         headers: provider.headers,
       }, fallbackModels);
     } else if (shouldUseExplicitDefaultOverride(provider, ock)) {

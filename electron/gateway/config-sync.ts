@@ -16,8 +16,13 @@ function fsPath(filePath: string): string {
   return `\\\\?\\${windowsPath}`;
 }
 import { getAllSettings } from '../utils/store';
-import { getApiKey, getDefaultProvider, getProvider } from '../utils/secure-storage';
+import { getAllProviders, getApiKey, getDefaultProvider, getProvider } from '../utils/secure-storage';
 import { getProviderEnvVar, getKeyableProviderTypes } from '../utils/provider-registry';
+import {
+  getMultiInstanceProviderApiKeyEnvVar,
+  getOpenClawProviderKeyForType,
+  isMultiInstanceProviderType,
+} from '../utils/provider-keys';
 import {
   getOpenClawConfigDir,
   getOpenClawDir,
@@ -545,7 +550,7 @@ export async function syncDefaultProviderRuntimeBeforeLaunch(): Promise<void> {
   }
 }
 
-async function loadProviderEnv(): Promise<{ providerEnv: Record<string, string>; loadedProviderKeyCount: number }> {
+export async function loadProviderEnv(): Promise<{ providerEnv: Record<string, string>; loadedProviderKeyCount: number }> {
   const providerEnv: Record<string, string> = {};
   const providerTypes = getKeyableProviderTypes();
   let loadedProviderKeyCount = 0;
@@ -581,6 +586,23 @@ async function loadProviderEnv(): Promise<{ providerEnv: Record<string, string>;
     } catch (err) {
       logger.warn(`Failed to load API key for ${providerType}:`, err);
     }
+  }
+
+  // Custom/ollama accounts have no registry env var; their openclaw.json entry
+  // carries an env SecretRef, so the matching variable must exist in the
+  // Gateway environment or the source runtime reports "No API key found".
+  try {
+    for (const provider of await getAllProviders()) {
+      if (!isMultiInstanceProviderType(provider.type)) continue;
+      const key = await getApiKey(provider.id);
+      if (!key) continue;
+      const envVar = getMultiInstanceProviderApiKeyEnvVar(getOpenClawProviderKeyForType(provider.type, provider.id));
+      if (providerEnv[envVar]) continue;
+      providerEnv[envVar] = key;
+      loadedProviderKeyCount++;
+    }
+  } catch (err) {
+    logger.warn('Failed to load custom provider keys for environment injection:', err);
   }
 
   return { providerEnv, loadedProviderKeyCount };
@@ -785,7 +807,7 @@ export function buildSourceRuntimeIsolationEnv(params: {
  * 3. stripSourceRuntimeIncompatibleConfigKeys still only removes agents.list[].reasoningEffort
  *    and must not touch runtime.* keys.
  */
-export const SOURCE_RUNTIME_ISOLATION_SYNC_KEYS = ['agents', 'models', 'plugins', 'runtime'] as const;
+export const SOURCE_RUNTIME_ISOLATION_SYNC_KEYS = ['agents', 'models', 'plugins', 'runtime', 'tools'] as const;
 export type SourceRuntimeIsolationSyncKey = typeof SOURCE_RUNTIME_ISOLATION_SYNC_KEYS[number];
 
 export function applySourceRuntimeIsolationUserConfig(
@@ -826,6 +848,10 @@ export function buildInitialSourceRuntimeIsolationConfig(
     plugins: userConfig.plugins ?? { enabled: false },
     // Carry DCS/runtime flags from the desktop-facing config when present.
     ...(userConfig.runtime != null ? { runtime: userConfig.runtime } : {}),
+    // tools.exec carries the workspace permission mode (security/ask). Without it
+    // the source runtime treats every chat exec as provenance-missing, downgrades
+    // to allowlist/on-miss and parks the call on an approval ClawX never answers.
+    ...(userConfig.tools != null ? { tools: userConfig.tools } : {}),
     channels: {},
   };
 }
