@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   OPENAI_CODEX_RUNTIME_PROVIDER_KEY,
+  buildMultiInstanceProviderApiKeySecretRef,
   filterActiveProviderKeysForUi,
+  getMultiInstanceProviderApiKeyEnvVar,
   getOpenClawProviderKeyForType,
+  isMultiInstanceProviderType,
   isOpenClawOAuthPluginProviderKey,
   resolveOpenClawProviderKey,
 } from '@electron/utils/provider-keys';
@@ -41,5 +44,18 @@ describe('provider-keys', () => {
     expect(filterActiveProviderKeysForUi(['openai', 'openai-codex'], {
       hasConfiguredOpenAiApiKey: true,
     })).toEqual(['openai', 'openai-codex']);
+  });
+
+  it('derives a runtime-resolvable env SecretRef for custom and ollama runtime keys', () => {
+    expect(isMultiInstanceProviderType('custom')).toBe(true);
+    expect(isMultiInstanceProviderType('openai')).toBe(false);
+    expect(getMultiInstanceProviderApiKeyEnvVar('custom-senseaud')).toBe('CUSTOM_SENSEAUD_API_KEY');
+    expect(getMultiInstanceProviderApiKeyEnvVar('ollama-ollamafd')).toBe('OLLAMA_OLLAMAFD_API_KEY');
+    expect(buildMultiInstanceProviderApiKeySecretRef('custom-senseaud')).toEqual({
+      source: 'env',
+      provider: 'default',
+      id: 'CUSTOM_SENSEAUD_API_KEY',
+    });
+    expect(buildMultiInstanceProviderApiKeySecretRef('custom-senseaud').id).toMatch(/^[A-Z][A-Z0-9_]{0,127}$/);
   });
 });
