@@ -8,14 +8,16 @@ import { runManagedCommand } from "./lib/managed-child-process.mjs";
  */
 export function usage() {
   return [
-    "Usage: node scripts/check.mjs [--timed] [--include-architecture] [--include-test-types]",
+    "Usage: node scripts/check.mjs [--timed] [--include-architecture] [--include-test-types] [--typecheck-scope=core|prod|all]",
     "",
     "Runs the local check graph: guard preflights, typecheck, lint, and policy guards.",
     "",
     "Options:",
     "  --timed                 Print timing summary even when checks pass.",
     "  --include-architecture  Run architecture import-cycle checks instead of runtime cycles.",
-    "  --include-test-types    Typecheck production and test sources.",
+    "  --include-test-types    Typecheck production and test sources (alias for --typecheck-scope=all).",
+    "  --typecheck-scope=SCOPE core = runtime production core only; prod (default) = core + extensions;",
+    "                          all = production + test sources. Bounded nodes use core; release freeze uses all.",
     "  -h, --help              Show this help.",
   ].join("\n");
 }
@@ -28,6 +30,13 @@ export function parseCheckArgs(argv) {
     help: false,
     includeArchitecture: false,
     includeTestTypes: false,
+    // Typecheck scope: "core" = runtime production core only (tsgo:core);
+    // "prod" (default) = core + extensions (tsgo:prod); "all" = + test types
+    // (tsgo:all). A bounded acceptance node (e.g. TF-0029 self-contained
+    // baseline) may run "core"; the full extension + test-type sweep is owned
+    // by the release-freeze node (TF-0041). --include-test-types is kept as an
+    // alias for --typecheck-scope=all so existing callers are unaffected.
+    typecheckScope: null,
     timed: false,
   };
   for (const arg of argv) {
@@ -37,6 +46,12 @@ export function parseCheckArgs(argv) {
       args.includeArchitecture = true;
     } else if (arg === "--include-test-types") {
       args.includeTestTypes = true;
+    } else if (arg.startsWith("--typecheck-scope=")) {
+      const value = arg.slice("--typecheck-scope=".length);
+      if (!["core", "prod", "all"].includes(value)) {
+        throw new Error(`--typecheck-scope must be core|prod|all (got: ${value})\n\n${usage()}`);
+      }
+      args.typecheckScope = value;
     } else if (arg === "--help" || arg === "-h") {
       args.help = true;
     } else {
@@ -44,6 +59,16 @@ export function parseCheckArgs(argv) {
     }
   }
   return args;
+}
+
+// Resolve the effective typecheck scope + its pnpm script. Explicit
+// --typecheck-scope wins; otherwise --include-test-types maps to "all" and the
+// default is "prod" (unchanged historical behavior).
+export function resolveTypecheckScope(args) {
+  const scope = args.typecheckScope ?? (args.includeTestTypes ? "all" : "prod");
+  const script = scope === "core" ? "tsgo:core" : scope === "all" ? "tsgo:all" : "tsgo:prod";
+  const name = scope === "core" ? "typecheck core" : scope === "all" ? "typecheck all" : "typecheck prod";
+  return { scope, script, name };
 }
 
 /**
@@ -114,10 +139,10 @@ export async function main(argv = process.argv.slice(2)) {
       name: "typecheck",
       parallel: false,
       commands: [
-        {
-          name: args.includeTestTypes ? "typecheck all" : "typecheck prod",
-          args: [args.includeTestTypes ? "tsgo:all" : "tsgo:prod"],
-        },
+        (() => {
+          const tc = resolveTypecheckScope(args);
+          return { name: tc.name, args: [tc.script] };
+        })(),
       ],
     },
     {
