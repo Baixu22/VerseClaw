@@ -58,6 +58,7 @@ export type AcceptanceManifest = {
   changedPaths: string[];
   coverage: AcceptanceCoverage;
   requiredProfiles: string[];
+  deferredProfiles?: Array<{ profile: string; owner: string; reason: string }>;
   source: {
     files: AcceptanceSourceFile[];
     missing: string[];
@@ -118,6 +119,8 @@ export const ACCEPTANCE_SCHEMA: string;
 export const ACCEPTANCE_REPORT_SCHEMA: string;
 export const TF0009_ADAPTER_ID: string;
 export const ROOT_UNIT_EXPECTED_SKIPS: number;
+export const ROOT_UNIT_SKIP_INVENTORY: ReadonlyArray<{ readonly file: string; readonly skips: number; readonly gate: string }>;
+export const ROOT_UNIT_SYMLINK_PRIVILEGE_SKIPS: number;
 
 export function stableJson(value: unknown): string;
 export function sha256(value: string | Uint8Array): string;
