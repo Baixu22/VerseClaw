@@ -1,0 +1,231 @@
+{
+  "schema": "runtime-authority-convergence-rc-02-census/v1",
+  "generatedAt": "2026-09-22T16:47:04.287Z",
+  "node": "v24.15.0",
+  "candidate": {
+    "branch": "feat/runtime-lifecycle-governance",
+    "head": "b1f9247636e77edf84462db35167e325367499e7",
+    "headShort": "b1f924763",
+    "workingTree": "dirty",
+    "changedPaths": [
+      ".agent-workbench/task-forest/config.json",
+      ".agent-workbench/task-forest/deviations/deviations.jsonl",
+      ".agent-workbench/task-forest/exports/task-forest.graph.json",
+      ".agent-workbench/task-forest/exports/task-forest.todos.json",
+      ".agent-workbench/task-forest/graph/forest.json",
+      ".agent-workbench/task-forest/graph/nodes.json",
+      ".agent-workbench/task-forest/proposals/TFP-rc02r-real-entry-matrix-20260923.json",
+      ".agent-workbench/task-forest/snapshots/0643.json",
+      ".agent-workbench/task-forest/snapshots/0644.json",
+      ".agent-workbench/task-forest/todos/todos.json",
+      ".gitignore",
+      "artifacts/runtime-authority-convergence/rc-02/",
+      "docs/dev/handoffs/LATEST.md",
+      "docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md",
+      "harness/specs/tasks/rc02-full-payload-shadow-census.md",
+      "openclaw_runtime/src/agents/rc02-entry-matrix.acceptance.test.ts",
+      "openclaw_runtime/src/agents/rc02-shadow-census.acceptance.test.ts",
+      "scripts/rc02-shadow-census-report.mjs"
+    ]
+  },
+  "requiredGates": [
+    {
+      "id": "required-test-2",
+      "command": "pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts",
+      "exitCode": 0,
+      "testFiles": "1 passed (1)",
+      "tests": "61 passed (61)",
+      "outputSha256": "51dd4d36a0a9a815bcc0e5bd54485ed598e317a8e2b7f05c36cb3a67d1fbf4af"
+    },
+    {
+      "id": "required-test-3",
+      "command": "pnpm exec vitest run tests/unit/runtime-authority-convergence-control-pack.test.ts",
+      "exitCode": 0,
+      "testFiles": "1 passed (1)",
+      "tests": "8 passed (8)",
+      "outputSha256": "17eb5e01e9dbdbbe517ba2c2f52a854fe3e66dc3105335e65b8bfa1b076ab2a2"
+    },
+    {
+      "id": "required-test-4",
+      "command": "pnpm harness validate --spec harness/specs/tasks/rc02-full-payload-shadow-census.md",
+      "exitCode": 0,
+      "testFiles": "unknown",
+      "tests": "unknown",
+      "outputSha256": "74ca090c4a961b7abe30c9b2eb9fee547a9923579689a7af6d067595ad943d2d",
+      "specValid": true
+    }
+  ],
+  "suite": {
+    "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts receipt-store.test.ts shadow-census.test.ts rc02-shadow-census.acceptance.test.ts rc02-entry-matrix.acceptance.test.ts --passWithNoTests=false",
+    "cwd": "openclaw_runtime",
+    "exitCode": 0,
+    "testFiles": "4 passed (4)",
+    "tests": "46 passed (46)",
+    "totalTests": 46,
+    "passedCount": 46,
+    "failedCount": 0,
+    "failedTests": [],
+    "outputSha256": "722f5b132ec882d65c3a751a605b303ab01295ad995cb961818ed4dcc64bf863",
+    "outputBytes": 2881,
+    "log": "artifacts/runtime-authority-convergence/rc-02/suite.log",
+    "results": "artifacts/runtime-authority-convergence/rc-02/suite-results.json",
+    "passedTests": [
+      "accepts canonical refs with URL-encoded context segments (production candidate ids)",
+      "appends a shadow receipt and reads it back by idempotency key",
+      "canonicalizes budget key order for content-sensitive idempotency",
+      "computes the wire digest from exact serialized bytes without mutating the body",
+      "conflict-fails when the same idempotency key has different content (hard constraint 2)",
+      "context engine: the sealed context bundle and the guarded wire body join through one correlation digest",
+      "does not treat a provider id as an adapter owner",
+      "embedded attempt x registry api openai-chatgpt-responses: a dual receipt per real model call",
+      "embedded attempt x registry api openai-completions: a dual receipt per real model call",
+      "embedded attempt x registry api openai-responses: a dual receipt per real model call",
+      "embedded attempt: runEmbeddedAgent yields a dual receipt per real model call",
+      "embedded runner reaches the guarded production transport with correlated receipts",
+      "emits ShadowContextReceipt/v0 and ShadowWireReceipt/v0 for a source call",
+      "enforces receipt version, digest, identity, and index constraints in SQLite",
+      "fails the census when a shadow write cannot persist, without throwing (hard constraint 5)",
+      "is a no-op when the flag is off",
+      "is idempotent when the same call body is emitted twice",
+      "is idempotent when the same idempotency key has identical content",
+      "marks the npm fallback runtime_mode as npm without counting toward coverage",
+      "no approval or delivery traffic is added by observation",
+      "npm fallback reports runtimeMode=npm and never counts as source coverage",
+      "observer off/on parity: identical serialized bytes and tool order per registry api",
+      "owner-classification coverage: every provider-bound field maps to a producer/transform/named adapter (unknown=0)",
+      "preserves the outer model-call identity through a provider finalizer",
+      "propagates an actual storage failure for the shadow caller to record (hard constraint 5)",
+      "provider payload hook: the production cache-trace hook installs onPayload and receipts still bind the final bytes",
+      "recomputes contentDigest and rejects a forged digest before writing",
+      "records only digests/refs/indexes, never raw prompt or tool output (hard constraint 1)",
+      "refuses unbounded deletion and deletes only under an explicit lifecycle policy (hard constraint 4)",
+      "rejects a different receipt type under the same key: context/1 to wire/1",
+      "rejects a different receipt type under the same key: shadow_context/0 to context/1",
+      "rejects a different receipt type under the same key: wire/1 to effect/1",
+      "rejects non-canonical object properties, prototypes, arrays, nulls, versions, and digests",
+      "rejects raw payload fields and invalid call indexes before opening a write transaction",
+      "rejects unbounded identifiers, transforms, refs, budgets, and incomplete model identity",
+      "retains committed receipts across exited Node processes without implicit pruning",
+      "retry identity: a repeated wire attempt keeps the bytes and gets its own receipt",
+      "serializes concurrent Node writers with conflicting content",
+      "serializes concurrent Node writers with different-kind content",
+      "serializes concurrent Node writers with identical content",
+      "shadow write failure fails the census without changing send behavior",
+      "the census is disabled by default (flag off) so the legacy path is byte-identical",
+      "transport-level smoke: eight source-runtime model calls yield correlated receipts",
+      "uses explicit attempt/model-call/wire-attempt identity, not max(sequence)+1 (hard constraint 3)",
+      "uses the production source transport registry as the provider coverage denominator",
+      "zero-byte parity: observer installation does not mutate the payload object or final bytes"
+    ]
+  },
+  "entryMatrix": {
+    "realSurfaces": 4,
+    "namedSurfaces": 8,
+    "complete": false,
+    "surfaces": [
+      {
+        "id": "embedded-attempt",
+        "status": "real",
+        "driver": "openclaw_runtime/src/agents/embedded-agent-runner/run.ts (runEmbeddedAgent)",
+        "test": "embedded attempt: runEmbeddedAgent yields a dual receipt per real model call",
+        "suite": "rc02-entry-matrix.acceptance.test.ts"
+      },
+      {
+        "id": "provider-payload-hook",
+        "status": "real",
+        "driver": "openclaw_runtime/src/agents/cache-trace.ts (wrapStreamFn/onPayload) installed by run/attempt.ts:3060",
+        "test": "provider payload hook: the production cache-trace hook installs onPayload and receipts still bind the final bytes",
+        "suite": "rc02-entry-matrix.acceptance.test.ts"
+      },
+      {
+        "id": "context-engine",
+        "status": "real",
+        "driver": "openclaw_runtime/src/context-engine/rc03-seal-hook.ts (runRc03SealHook) + provider-transport-fetch.ts (guarded boundary)",
+        "test": "context engine: the sealed context bundle and the guarded wire body join through one correlation digest",
+        "suite": "rc02-entry-matrix.acceptance.test.ts"
+      },
+      {
+        "id": "provider-transport",
+        "status": "real",
+        "driver": "openclaw_runtime/src/agents/provider-transport-stream.ts (listSourceRuntimeTransportDescriptors registry)",
+        "test": "uses the production source transport registry as the provider coverage denominator",
+        "suite": "rc02-shadow-census.acceptance.test.ts"
+      },
+      {
+        "id": "desktop-chat",
+        "status": "gap",
+        "driver": null,
+        "gapReason": "the outermost chatHandlers[\"chat.send\"] handler (src/gateway/server-methods/chat.ts:3152) needs a full GatewayRequestContext, webchat channel plugin and session store fixture that this suite does not build"
+      },
+      {
+        "id": "cron",
+        "status": "gap",
+        "driver": null,
+        "gapReason": "runCronIsolatedAgentTurn (src/cron/isolated-agent/run.ts:1259) is only exercised through run.test-harness.ts, which mocks run-embedded.runtime.js; an unmocked driver does not exist yet"
+      },
+      {
+        "id": "channel-conformance-fixture",
+        "status": "gap",
+        "driver": null,
+        "gapReason": "dispatchInboundMessage (src/auto-reply/dispatch.ts:476) has no existing driver, and the rc05 operator fixture is transport-only (it makes no model call)"
+      },
+      {
+        "id": "cli-compact",
+        "status": "gap",
+        "driver": null,
+        "gapReason": "the CLI entry agentCommand (src/agents/agent-command.ts:2229) needs full config/session/env fixtures, and compactEmbeddedAgentSessionDirect (src/agents/embedded-agent-runner/compact.ts:526) needs a pre-filled session transcript past the token budget"
+      }
+    ]
+  },
+  "parity": [
+    {
+      "id": "observer-off-on-byte-parity",
+      "status": "proved",
+      "claim": "installing the observer does not change the serialized request bytes",
+      "test": "observer off/on parity: identical serialized bytes and tool order per registry api"
+    },
+    {
+      "id": "tool-order-parity",
+      "status": "proved",
+      "claim": "tool order stays canonical and identical with the observer installed (the transport sorts tools; observation does not reorder them)",
+      "test": "observer off/on parity: identical serialized bytes and tool order per registry api"
+    },
+    {
+      "id": "retry-identity-parity",
+      "status": "proved",
+      "claim": "a repeated wire attempt keeps identical bytes and gets its own wire_attempt_index receipt",
+      "test": "retry identity: a repeated wire attempt keeps the bytes and gets its own receipt"
+    },
+    {
+      "id": "no-extra-side-effect-traffic",
+      "status": "proved",
+      "claim": "observation adds no approval or delivery HTTP traffic",
+      "test": "no approval or delivery traffic is added by observation"
+    }
+  ],
+  "ownerClassification": {
+    "claim": "every persisted wire receipt carries a named adapter and provider and runtime_mode=source; the matrix fails if any row is unowned",
+    "limitation": "buildWireOwnerCensus currently assigns every final-body leaf to the named transport adapter; a per-field producer/transform split is not implemented, so this is an ownership-completeness check, not a field-level attribution map",
+    "enforcedBy": "rc02-entry-matrix.acceptance.test.ts"
+  },
+  "npmFallback": {
+    "claim": "runtimeMode=npm reports degraded, receiptCoverage=0, readiness=false and never counts as source coverage",
+    "enforcedBy": "rc02-shadow-census.acceptance.test.ts",
+    "verifiedInThisRun": true
+  },
+  "acceptance": {
+    "rc02SpecAcceptanceMet": false,
+    "reason": "acceptance requires both receipts for every source-runtime model call in all eight named entry surfaces; only the surfaces listed as real are driven by a real entry today, and no independent RC-00 Executor/Verifier run exists for this increment",
+    "remainingGaps": [
+      "desktop-chat",
+      "cron",
+      "channel-conformance-fixture",
+      "cli-compact"
+    ]
+  },
+  "productLocks": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false
+  }
+}

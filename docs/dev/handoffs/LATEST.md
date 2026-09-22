@@ -1,5 +1,15 @@
 # 会话交接（LATEST）
 
+## 当前接力（2026-09-22/23，TF-0030 · RC-02R 增量）：假八入口换成真实入口矩阵，**普查未完成**
+
+- **节点状态：TF-0030 仍未完成**（收尾时为 `proposed`；本增量只做了 RC-09 整改矩阵里 `RC-02R` 的两行之一）。起点是干净的 `b1f924763`（分支 `feat/runtime-lifecycle-governance`）。
+- **改了什么（全部在 spec 的 ownedPaths 内）**：① 新增 `openclaw_runtime/src/agents/rc02-entry-matrix.acceptance.test.ts`（9 项）——用**真实入口**驱动并断言每条 wire 收据的 `wire_digest` 等于网络边界上**真实截获字节**的 sha256，且与 context 收据按 `correlation_digest` 成对；② `rc02-shadow-census.acceptance.test.ts` 删掉「八入口」的**虚假声明**（该用例实际是直接调 transport 工厂，已改名为 transport-level smoke，标签由产品名改为调用 id，并指向真实矩阵）；③ 新增 `scripts/rc02-shadow-census-report.mjs` 与 `artifacts/runtime-authority-convergence/rc-02/{census.json,suite.log,suite-results.json}`；④ spec 钉 `diffBase: b1f924763`、补 ownedPaths/touchedAreas、requiredTests 加入新文件；⑤ `.gitignore` 允许跟踪 rc-02 证据；⑥ `WORK-PACKAGES.md` 记 RC-02R 状态。
+- **证据（只直读磁盘）**：`artifacts/runtime-authority-convergence/rc-02/census.json` —— 聚焦套件 `4 files / 46 tests` 全过、exit 0；**8 个命名入口里 4 个是真实驱动**（embedded attempt、provider payload hook、context engine、provider transport），**parity 4/4**（off/on 字节相同、工具顺序同为规范化序 `exec,read,write`、重复 wire attempt 各自独立身份、无额外审批/投递流量）；`pnpm harness validate --spec harness/specs/tasks/rc02-full-payload-shadow-census.md` → `Spec is valid`。provider 分母来自 `listSourceRuntimeTransportApis()`，新增 API 自动进矩阵。
+- **仍未完成（不得当作已收口）**：**desktop chat（`chat.send`）、Cron、channel conformance fixture、CLI/compact 四行没有真实驱动**，census 里逐条写明原因；**没有独立 RC-00 Executor/Verifier 运行**——本 checkout 里那条路被挡住（无 RC-02 范围的干净候选、`pnpm test` 有 3 个既有失败文件、Electron 二进制缺失、`pnpm -w test` skip 预算恰为 50）。侦察另记下 11 处真实覆盖洞（`SOURCE_RUNTIME_TRANSPORTS` 之外的 provider、`simple-completion-runtime` 丢 symbol、`amazon-bedrock-mantle`、`google-prompt-cache`、`btw.ts` 无 runId 等），尚未处理。
+- **环境抖动（已如实记录，未当作绿）**：同一套件早前两次分别失败于 `afterEach` 删除 `%TEMP%` 目录的 EPERM、以及并发写用例的 `database is locked`；本轮最终运行干净通过。
+- **下一步唯一动作**：为余下四个入口写真实驱动（chat.send 需要 GatewayRequestContext 夹具；Cron 不能用 mock 了 `run-embedded.runtime.js` 的 harness；channel fixture 走 `dispatchInboundMessage`；CLI/compact 需预填 transcript 超预算），再谈 RC-00 独立验收。
+- **铁律不变**：判决只用 Read 直读磁盘；不翻默认值；agent-driven 不写成真人；三锁 `liveReady` / `productApproved` / `defaultOn` 保持 false。
+
 ## 收尾完成（2026-09-22，D7 + D8，阶段 0–2）
 
 - **项目停在这里：** 阶段 0（卫生与口径）、阶段 1（护城河通电与审批边界）、阶段 2（材料与封存）全部 done；阶段 3（TF-0239～TF-0241）保持 proposed，可选、不影响收尾。里程碑 TF-0226 = done，tag `showcase-20260922` 指向最终 HEAD。

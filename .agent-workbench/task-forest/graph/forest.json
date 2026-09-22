@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-22T14:46:37.348763Z",
+  "generated_at": "2026-09-22T16:34:19.196542Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -12219,34 +12219,46 @@
       "context_tags": [],
       "created_at": "2026-08-02T13:07:59.996410Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 25.0,
       "desired_outcomes": [],
-      "deviations": [],
+      "deviations": [
+        "TFD-rc02r-fake-entry-matrix"
+      ],
       "difficulty": "very_high",
       "estimated_total_minutes": null,
       "evidence": [
         "RC-01 accepted with receipt-owner decision resolved (runtime_receipts via ReceiptStore); RC-02 full-payload shadow census may start",
         "RC-02 independent Verifier VERDICT=pass: runtime_receipts+ReceiptStore+ShadowContextReceipt/v0+ShadowWireReceipt/v0, zero-byte parity, 40/40 tests, schema verify clean",
-        "2026-09-22 D7 冻结：docs/dev/qa-synthesis-roadmap-20260922.md §1.2、§5；未提交增量 shadow-census.ts:459（adapterId 不再回落 providerId）"
+        "2026-09-22 D7 冻结：docs/dev/qa-synthesis-roadmap-20260922.md §1.2、§5；未提交增量 shadow-census.ts:459（adapterId 不再回落 providerId）",
+        "口径冲突留痕：上一条 evidence 声称 RC-02 独立 Verifier PASS（40/40），与 RC-09 整改矩阵把 RC-02R 列为未闭合项（假八入口/Anthropic-only、ReceiptStore 伪造 digest 绕过）矛盾。按 D8「判决只直读磁盘」口径，以 RC-09 整改矩阵与本次 census 实测为准；旧声明不改写、不删除。",
+        "2026-09-22/23 RC-02R 增量（未收口）：新增 openclaw_runtime/src/agents/rc02-entry-matrix.acceptance.test.ts（9 项）。真实入口驱动 + 字节绑定断言：每条 shadow_wire 收据的 wire_digest 必须等于网络边界（globalThis.fetch 截获）真实发送字节的 sha256，且与 shadow_context 收据按 correlation_digest 与 model_call_index 成对；provider 分母取自 listSourceRuntimeTransportApis()，注册表新增 API 自动进矩阵。",
+        "假八入口已拆除：rc02-shadow-census.acceptance.test.ts 里名为「entry matrix: real provider transports」的用例实际是直接调 transport 工厂（6/8 行与产品入口无关），已改名 transport-level smoke 并把标签由产品入口名改为调用 id，明确不再声称入口覆盖；其 8 条 transport 调用与 registry 分母用例保留为 transport 层证据。",
+        "parity 4/4（RC-09 整改矩阵要求）：off/on 序列化字节完全相同；工具顺序同为 transport 规范化序（exec,read,write）且 off/on 一致；重复 wire attempt 保持字节相同并各自拿到独立身份（wire_attempt_index 0/1）；观察不新增审批/投递流量（截获 URL 全部指向模型端点）。",
+        "证据 artifacts/runtime-authority-convergence/rc-02/census.json（由 scripts/rc02-shadow-census-report.mjs 从真实运行派生，非手写）：聚焦套件 4 files / 46 tests 全过 exit 0；required-test-2（agent-engineering-acceptance）1 file / 61 tests exit 0；required-test-3（control-pack）1 file / 8 tests exit 0；required-test-4 `pnpm harness validate --spec harness/specs/tasks/rc02-full-payload-shadow-census.md` exit 0 且输出 'Spec is valid'；entryMatrix 4/8 真实、parity 4/4；candidate 为 b1f924763 之上的 dirty 工作树并逐条列出 changedPaths。同目录留 suite.log 与 suite-results.json 供复核。",
+        "spec 变更：harness/specs/tasks/rc02-full-payload-shadow-census.md 钉 diffBase: b1f924763（共享分支早已偏离 origin/main，默认 diff base 会把整条分支算成改动）、ownedPaths/touchedAreas 补入新测试文件与证据路径、requiredTests 第 1 条加入 rc02-entry-matrix.acceptance.test.ts。",
+        "仍未完成：desktop chat（chat.send）、Cron、channel conformance fixture、CLI/compact 四行没有真实驱动；没有独立 RC-00 Executor/Verifier 运行——本 checkout 里那条路被挡住（无 RC-02 范围的干净候选、pnpm test 有 3 个既有失败文件、Electron 二进制缺失、pnpm -w test skip 预算恰为 50）。侦察另记下 11 处真实覆盖洞（SOURCE_RUNTIME_TRANSPORTS 之外的 provider、simple-completion-runtime 丢 symbol、amazon-bedrock-mantle、google-prompt-cache、btw.ts 无 runId 等），尚未处理。",
+        "环境抖动如实记录、未当作绿：同一套件早前两次分别失败于 afterEach 删除 %TEMP% 目录的 EPERM、并发写用例的 database is locked；本轮最终运行干净通过。",
+        "未改产品锁与默认值：liveReady / productApproved / defaultOn 保持 false；收据开关仍默认关，测试只在进程环境内显式开启。"
       ],
       "execution_hints": [],
       "id": "TF-0030",
       "kind": "task",
+      "next_action": "为余下四个入口写真实驱动（chat.send 需 GatewayRequestContext 夹具；Cron 需脱离 mock run-embedded.runtime.js 的 harness；channel fixture 走 dispatchInboundMessage；CLI/compact 需预填 transcript 超预算），随后跑 RC-00 独立 Executor/Verifier。证据：artifacts/runtime-authority-convergence/rc-02/census.json",
       "non_goals": [],
       "primary_parent": "TF-0028",
       "priority": 1,
-      "progress": 0.0,
+      "progress": 25.0,
       "progress_source": "manual",
       "purpose": "",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "in_progress",
       "success_metrics": [],
-      "summary": "[冻结 2026-09-22 · D7] 状态口径：proposed、依赖已满足（TF-0029 done）、todo ready、未开工未验收；LATEST 此前「自动转 ready」是口径超前，不是图已放行。收尾阶段 0 会以独立 commit 提交 wire owner 具名化（buildWireOwnerCensus 只接受 adapterId），这是本节点的局部增量，普查未完成；收尾阶段 1 的 J-03 会在生产路径上产出真实收据，是证据不是本节点验收。下一周期从本节点重启。原摘要：在 logical 与最终 guarded request-body 边界生成双 shadow receipt，建立全 payload 分母且保持零行为变化。",
+      "summary": "[冻结 2026-09-22 · D7；2026-09-22/23 RC-02R 增量，未收口] 本节点仍未完成。原摘要：在 logical 与最终 guarded request-body 边界生成双 shadow receipt，建立全 payload 分母且保持零行为变化。增量：把被 RC-09 整改矩阵判为假的「八入口矩阵」换成真实入口矩阵——embedded attempt、provider payload hook、context engine、provider transport 四行已由真实生产入口驱动，每条 wire 收据的 wire_digest 必须等于网络边界真实截获字节的 sha256 并与 context 收据按 correlation_digest 成对；provider 分母取自 listSourceRuntimeTransportApis()，新增 API 自动进矩阵；另补 off/on parity 4/4。余下四个入口（desktop chat、Cron、channel conformance fixture、CLI/compact）仍无真实驱动，逐条原因写在 artifacts/runtime-authority-convergence/rc-02/census.json。",
       "title": "RC-02 Full-payload Shadow Census",
-      "updated_at": "2026-09-22T08:15:57.494698Z"
+      "updated_at": "2026-09-22T16:31:21.782551Z"
     },
     "TF-0031": {
       "acceptance_criteria": [
@@ -27211,9 +27223,10 @@
         "TF-0240",
         "TF-0242"
       ],
-      "in_progress": [],
+      "in_progress": [
+        "TF-0030"
+      ],
       "proposed": [
-        "TF-0030",
         "TF-0031",
         "TF-0032",
         "TF-0033",

@@ -1,0 +1,30 @@
+{
+  "applied_at": "2026-09-22T16:33:36.308326Z",
+  "base_graph_hash": "5756f377a7d514ce3f1572ceffc4979a9e32afb0d08dd239b576c2b9b8d834f7",
+  "base_summary": {
+    "edge_count": 417,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "correction": "新增 openclaw_runtime/src/agents/rc02-entry-matrix.acceptance.test.ts：真实入口驱动（embedded attempt / provider payload hook / context engine / provider transport）+ 每条 wire 收据的 wire_digest 必须等于网络边界真实截获字节的 sha256 + registry 分母 + off/on parity 4/4；原用例改名 transport-level smoke 并把标签改为调用 id，不再声称入口覆盖。余下四个入口（desktop chat、Cron、channel conformance fixture、CLI/compact）仍为 gap，逐条写在 artifacts/runtime-authority-convergence/rc-02/census.json，节点保持 in_progress。",
+        "created_at": "2026-09-22T16:33:30.022970Z",
+        "id": "TFD-rc02r-fake-entry-matrix",
+        "kind": "acceptance_logic_error",
+        "reason": "验收测试用标签代替真实调用链，使「8 条 transport 调用」被读成「8 个入口已覆盖」；RC-09 整改矩阵已把它记为 RC-02R 的必证项（registry-driven provider x real-entry matrix）。",
+        "related_task_ids": [
+          "TF-0030"
+        ],
+        "summary": "RC-02 验收的「八入口矩阵」六行是假入口：直接调用 provider transport 工厂，却挂着 desktop-chat / Cron / CLI/compact 等产品入口名；provider 覆盖也只到 Anthropic 局部。"
+      }
+    }
+  ],
+  "created_at": "2026-09-22T16:33:30.005650Z",
+  "proposal_id": "TFP-rc02r-real-entry-matrix-20260923",
+  "rationale": "登记 RC-09 整改矩阵里 RC-02R 的假入口发现，并保留修复路径。该偏差是「验收测试声称的覆盖面与实际调用链不一致」这一类的实例：八入口矩阵的六行直接调用 provider transport 工厂，却携带 desktop-chat / Cron / CLI 等产品入口名，provider 覆盖也只到 Anthropic 局部，使读者把 transport 层调用误读为入口层覆盖。本轮把矩阵换成真实入口驱动（wire 收据绑定网络边界真实字节）并补 off/on parity，同时把原用例改名、去掉虚假入口标签；余下四个入口仍未真实驱动，已在 TF-0030 的 evidence 与 artifacts/runtime-authority-convergence/rc-02/census.json 中写明，本节点不因此收口。仅记录偏差，不改任何节点状态、不加节点或边。",
+  "session_id": "dsh-tf0030-rc02r-20260923",
+  "status": "applied"
+}
