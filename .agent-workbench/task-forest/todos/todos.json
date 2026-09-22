@@ -165,18 +165,18 @@
     "context_tags": [],
     "desired_outcomes": [],
     "difficulty": "low",
-    "id": "TF-0237",
+    "id": "TF-0238",
     "kind": "subtask",
-    "next_action": "manifest.json 覆盖目录内每个文件且重算一致",
+    "next_action": "LATEST.md 首段为收尾接力且不含旧的「当前接力」矛盾表述",
     "priority": 1,
     "progress": 0.0,
-    "purpose": "读者不需要本机环境也能核对每一件证据；演示日 provider 不可用也能讲完。",
+    "purpose": "让下一个接力 agent 只读一段文字就知道项目停在哪里、为什么停、再往下是什么。",
     "ready": true,
-    "remaining_minutes_max": 90,
-    "remaining_minutes_min": 90,
+    "remaining_minutes_max": 60,
+    "remaining_minutes_min": 60,
     "status": "proposed",
     "success_metrics": [],
-    "title": "演示包：三条旅程产物、收据 dump、审批对、哈希清单、离线核对说明与演示日预案"
+    "title": "封存：LATEST 收尾接力、Task Forest 收口（validate / export / check-landing）、打 showcase tag 并 push"
   },
   {
     "alignment": {
@@ -980,34 +980,5 @@
     "status": "blocked",
     "success_metrics": [],
     "title": "RC-10 最终真人 Provider/Channel/Recovery 验收"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0237"
-    ],
-    "confidence": 0.9,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "low",
-    "id": "TF-0238",
-    "kind": "subtask",
-    "next_action": "先完成依赖：TF-0237",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "让下一个接力 agent 只读一段文字就知道项目停在哪里、为什么停、再往下是什么。",
-    "ready": false,
-    "remaining_minutes_max": 60,
-    "remaining_minutes_min": 60,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "封存：LATEST 收尾接力、Task Forest 收口（validate / export / check-landing）、打 showcase tag 并 push"
   }
 ]

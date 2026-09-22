@@ -15917,15 +15917,26 @@
     "difficulty": "low",
     "display_order": 20,
     "estimated_total_minutes": 90,
-    "evidence": [],
+    "evidence": [
+      "artifacts/showcase-20260922/（59 文件）：journeys/J-02（12）、journeys/J-03（18）、journeys/J-04（25）+ README.md、VERIFY.md、tail-verdicts.md、manifest.json、credential-scan.json",
+      "manifest.json 覆盖目录内除自身外的每个文件（59 条，含 credential-scan.json），每条含 sha256 与字节数；node scripts/build-showcase-package.mjs --verify 输出 'verify OK: 59 files match manifest.json; journey counts asserted; 58 scanned; 0 credential hits'，exit 0",
+      "credential-scan.json：7 条模式（sk- 前缀 / Bearer / AKIA / gh[pousr]_ / xox* / PRIVATE KEY 块 / 通用 secret 赋值），覆盖 58 个文件（含 PNG 原始字节），命中 0",
+      "红绿反例（同一脚本）：篡改 journeys/J-03/receipt-join.json 一个字节 → --verify exit 1 'hash drift: journeys/J-03/receipt-join.json'；把 v1ContextWirePairs 改为 6 → exit 1 'hash drift' + 'J-03 receipt-join v1ContextWirePairs: expected 7, read 6'；重建后 exit 0",
+      "幂等性：包内容不变时重跑生成脚本，manifest.json 与 credential-scan.json 的 sha256 前后一致（无时间戳设计）",
+      "VERIFY.md：离线核对步骤——一条命令、PowerShell 与 Python 手工重算、14 条计数核对表（含 J-03 28 行收据/7 对 v1、J-04 readOnly 拦截文案与决定后继续的时间顺序、gateway-events 32/2/1 帧）、凭证扫描复跑、明确不在范围的三件事、失败分支",
+      "生成脚本 scripts/build-showcase-package.mjs 只依赖 node 内置模块（crypto/fs/path/process/url），核对过程不发起网络请求、不需要 provider key 或 Electron",
+      "链接检查：README.md 5 条、tail-verdicts.md 1 条相对链接全部命中，0 缺失；tail-verdicts.md 与 J-03 README 的五条尾项裁定一致（①不修 ②仍在 ③不修 ④仍在 ⑤不修）",
+      "两个已修缺陷的提交号 6760b372e 写在包 README（custom provider key 与 workspace tools.exec 权限到不了隔离运行时）"
+    ],
     "execution_hints": [],
     "id": "TF-0237",
     "kind": "subtask",
+    "next_action": "阶段 2 最后一步 TF-0238：LATEST.md 首段改为收尾接力、按自动收口门把阶段 0–2 各节点收口、validate/export/check-landing、打 showcase-20260922 tag 并 push。",
     "non_goals": [
       "不包含 task-forest 导出、codegraph 库等过程资产"
     ],
     "priority": 1,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "读者不需要本机环境也能核对每一件证据；演示日 provider 不可用也能讲完。",
     "remaining_minutes_max": null,
@@ -15935,11 +15946,11 @@
       "打包前密钥扫描 0 命中"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [],
-    "summary": "目录 artifacts/showcase-<日期>/：J-02/J-03/J-04 的 README、journey.json、session.jsonl、截图、calc.js 前后；J-03 的收据 join 结果；J-04 的 request/decision 对；两个已修缺陷的提交号（6760b372e）；5 条尾项裁定表；manifest.json（每文件 sha256）；VERIFY.md（如何离线核对哈希与计数）；演示日预案（provider 不可用时按留档讲解）。",
+    "summary": "演示包完成（2026-09-22）：artifacts/showcase-20260922/ 共 59 文件，含三条旅程的离线副本（J-02 12 / J-03 18 / J-04 25，含截图、driver、session 记录与 run-1-partial）、五条尾项裁定速查表、包级 README（演示日脚本 + 两个已修缺陷提交 6760b372e + 演示日预案）、VERIFY.md（离线核对步骤）与由脚本生成的 manifest.json（59 条 sha256）与 credential-scan.json（0 命中）。生成脚本 scripts/build-showcase-package.mjs 只依赖 node 内置模块：--verify 一次完成哈希重算、文件集合核对、14 条计数断言与凭证扫描，实测红（篡改一字节 → hash drift；改计数 → expected 7, read 6）绿（重建后 exit 0）双反例；包内容不变时重跑得到逐字节相同的 manifest 与扫描报告。演示包不包含 task-forest 导出、codegraph 库或任何凭证。阶段 2 的最后一项 TF-0238（封存与 tag）未开始。",
     "title": "演示包：三条旅程产物、收据 dump、审批对、哈希清单、离线核对说明与演示日预案",
-    "updated_at": "2026-09-22T08:15:57.471210Z"
+    "updated_at": "2026-09-22T13:45:29.661964Z"
   },
   "TF-0238": {
     "acceptance_criteria": [
