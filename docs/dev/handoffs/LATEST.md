@@ -1,12 +1,19 @@
 # 会话交接（LATEST）
 
-## 当前接力：TF-0029 有界工程收口成立，TF-0030 转 ready（2026-09-21）
+## 当前接力：实习展示收尾（2026-09-22，D7）
+
+- 定位已改口：项目是「Agent 基座 + Harness + LLM 工程化」实习展示，不是完整产品闭环；09-21 定调文档降为下一周期入口。裁决与去留记录在 Task Forest D7 = TF-0225；收尾里程碑 TF-0226（阶段 0～3，TF-0227～TF-0241）。**接力 agent 只读 `docs/dev/qa-synthesis-roadmap-20260922.md`。**
+- 24 个开放节点：冻结链 15（TF-0010/0028/0030～0042）、显式后置 6（M6 + Docker）、守卫阻塞 2（TF-0007/0009）、residual 归并 1（TF-0013）；0 废止、0 改状态。不做 RC-03～RC-10、M6、Docker、tf0009 守卫迁移；三锁保持 false。
+- 阶段 0 进行中：shadow-census 已独立提交（`1000fdbbb`，TF-0228）；本段与四份 QA/规划文档入库（TF-0229）；交接文档明文 key 已改为环境变量引用（TF-0230，用户裁定不轮换）。下一步：阶段 1 = J-03（带 `OPENCLAW_RC02_SHADOW_CENSUS=1 OPENCLAW_RC03_SEAL=1` 重跑，拿非 0 收据）+ J-04（非 fullAccess 审批边界经 `gateway.rpc exec.approval.*` 决定一次）+ 五条尾项裁定。
+- 铁律不变：判决只用 Read 直读磁盘；重跑前工作树必须干净；不翻默认值；agent-driven 不写成真人。
+
+## 当前接力（历史）：TF-0029 有界工程收口成立，TF-0030 依赖已满足（proposed / todo ready，未开工）（2026-09-21）
 
 - 候选 `tf0029-candidate-fixed@156e878d3`（RC 候选 `b34892cc3` + 12 个修复 cherry-pick，diffBase `5dabc7ca5`，spec `harness/specs/tasks/task-forest-active-node-engineering-closeout.md`）。run19：Executor `tf0029-executor-20260921` 25/25 pass（9398/0/50，reportDigest `9f57e535…4684`）；独立 Verifier `tf0029-independent-verifier-20260921` 在第二个 detached worktree 重跑 25/25 pass（reportDigest `801576fd…432a`），`consistency.errors=[]`、`identicalGateContracts=true`，`engineeringAcceptedByAgent=true`，`allowedPromotion=false`。判决全部用 Read 直读 `D:/ClawX-acceptance/tf0029-20260920/run19/{executor,verifier,final}-report.json`，未采信 bash 打印。
 - 两条尾巴按定调文档 §2 的要求收口：① Root skip 预算 53→50 **按测试身份**解释——用 vitest JSON reporter 在候选与 diffBase 各枚举 50 条 skip，集合相同；53 是 2026-09-11 在无文件符号链接权限的进程上读到的，`tests/unit/skills-symlink-cleanup.test.ts` 的 3 个 `fileSymlinkIt` 在验收主机实际执行并通过（环境恢复，非漏跑）；50 = 49 个 `DEEPSEEK_API_KEY` 门控 + 1 个 `AGENCY_AGENTS_REPO` 门控。预算改为 `scripts/lib/agent-engineering-acceptance.mjs` 中 `ROOT_UNIT_SKIP_INVENTORY` 求和，历史 `FROZEN_ROOT_UNIT_EXPECTED_SKIPS=53` 保留并在测试钉住 `53 = 50 + 3`；spec 第 243 行与 `docs/dev/agent-engineering-acceptance.md` 同步（`28cae4fbd`）。② `required-test-5: test counts were not parsed` 是 blocked 门叠加 `requireCounts` 的派生噪音，随 static-check 转绿自行消失，未改校验器。
 - 本轮再逼出 2 个真缺陷：`typecheck:test` 因 `.d.mts` 漏声明 `deferredProfiles` 与新导出失败（`21a56257d`）；Agent Dev 四类证据 24h 新鲜度在 run15/run16 之间过期，在候选上重生成并提交（候选线 `156e878d3`，audit A/94）。run17 shrinkwrap 守卫（声明 `network:none` 却访问 registry）与 run18 `smoke-openclaw-runtime` 0xC0000409 原生崩溃均为不可复现抖动，直接复现通过；run18 起加 `npm_config_prefer_offline=true` 降低 registry 抖动。
 - 明确移交 TF-0041：全量 Electron UI e2e 与 release 基线验证（`deferredProfiles`）、60 个既有测试类型债与 8 个 codex 扩展生产类型错误。产品锁 `liveReady/productApproved/defaultOn` 保持 false，不宣称 GA。
-- Task Forest：TF-0029 done/100（证据已登记），TF-0030 自动转 ready；validate/export 通过。未完成：§6 的 tf0009 R7 断言版本化迁移（涉及 TF-0009 状态语义，待用户确认后做）。
+- Task Forest：TF-0029 done/100（证据已登记），TF-0030 = proposed，依赖已满足、todo ready，未开工未验收（图内 status_queues.ready 为空；此前「自动转 ready」是口径超前，2026-09-22 纠正）；validate/export 通过。未完成：§6 的 tf0009 R7 断言版本化迁移（涉及 TF-0009 状态语义，待用户确认后做）。
 - 产品旅程（定调 §5）**首条已跑通**：`artifacts/live-model-cdp/20260921-senseaudio-journey-J02/`（58 秒，senseaudio 经 ClawX exec→read→edit→exec，3/3 测试通过并 git commit；agent-driven，非真人；收据表仍 0）。它逼出并修掉两个首版关键路径缺陷（`6760b372e`）：custom provider 的 key 与工作区 `tools.exec` 权限都到不了隔离源码运行时（前者报 `No API key found`，后者让每个 exec 卡在无人处理的 `exec.approval.requested` 上 6 分钟后被中止）。README 列出 5 条未修观察（`sessions.history` 同类路径错位、非 fullAccess 工作区仍会挂起 → TF-0032、首次配置需显式重启 Gateway、工作区创建的副作用文件、renderer 头部不刷新）。驱动脚本在 `%LOCALAPPDATA%/ClawX-live-data/journey-20260921/driver.mjs`（仓库内亦有副本）。
 
 ## 当前接力：工具运行时可靠性第六批十节点完成（2026-09-15，TF-0214～TF-0223）
