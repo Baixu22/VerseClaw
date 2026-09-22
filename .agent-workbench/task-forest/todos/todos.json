@@ -9,6 +9,33 @@
       "why_this_task": ""
     },
     "blocked_by": [],
+    "confidence": 0.6,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "medium",
+    "id": "TF-0239",
+    "kind": "task",
+    "next_action": "每个子任务要么 done 并有 e2e/单测证据，要么 deprecated 并写明原因；本阶段不作为里程碑关闭前置",
+    "priority": 3,
+    "progress": 0.0,
+    "purpose": "把唯一值得在收尾窗口碰产品代码的一件事（应用内审批桥）和一处演示可见的小修复，放在明确的可选位置，不与收尾出口绑定。",
+    "ready": true,
+    "remaining_minutes_max": 360,
+    "remaining_minutes_min": 360,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "阶段 3 · 可选增量（仅在阶段 0–2 出口达成后；做不了不影响收尾）"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
     "confidence": 0.55,
     "context_tags": [],
     "desired_outcomes": [],
@@ -79,104 +106,6 @@
     "status": "proposed",
     "success_metrics": [],
     "title": "RC-02 Full-payload Shadow Census"
-  },
-  {
-    "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 0.85,
-      "user_goal": "以最小成本完成实习展示项目的定调与收尾，保留最值得留下的路径与纪律，不为 Task Forest 涂绿",
-      "validation_plan": [
-        "阶段 1 两次实跑的 journey.json 用 Read 直读",
-        "阶段 2 演示包哈希清单离线核对",
-        "收尾时 task_forest validate / export / check-landing"
-      ],
-      "why_not_enough": "护城河通电与审批边界两项是代码核验后的推断，需阶段 1 实跑才能证实；senseaudio 与本机环境是外部依赖",
-      "why_this_task": "四阶段直接对应用户裁定的收尾边界（旅程可重复、护城河通电、审批边界、诚实限制），每项都有仓库内已有资产支撑，不新造功能"
-    },
-    "blocked_by": [],
-    "confidence": 0.8,
-    "context_tags": [
-      "showcase-closing",
-      "product-journey",
-      "d7"
-    ],
-    "desired_outcomes": [
-      "作者能在最终 HEAD 用仓库内 driver.mjs 重跑旅程；读者能离线核对全部产物哈希",
-      "护城河三层（执行有边界 / 上下文可归因 / 不把测试绿说成产品绿）各有一件真实产物而不只是源码",
-      "接力 agent 只读 docs/dev/qa-synthesis-roadmap-20260922.md 即可继续，不会重开 RC 链"
-    ],
-    "difficulty": "medium",
-    "id": "TF-0226",
-    "kind": "milestone",
-    "next_action": "环境：HTTP_PROXY/HTTPS_PROXY=http://127.0.0.1:7897；CLI 加 PYTHONUTF8=1 PYTHONIOENCODING=utf-8",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "用最小成本把仓库里已经跑通的路径讲清楚、再跑一次、把没接通的写成限制，让评委或读者能在留档证据上核对一切，而不是靠 224 个节点的 done 比例。",
-    "ready": true,
-    "remaining_minutes_max": 1500,
-    "remaining_minutes_min": 900,
-    "status": "in_progress",
-    "success_metrics": [
-      "J-03 收据表非 0，或明确记录回落原因",
-      "J-04 有一对 request/decision，或明确记录被 decideGatewayRpc 拦住的决策记录",
-      "5 条尾项每条有「仍在 / 已消失 / 不修理由」",
-      "收尾窗口内新增源码文件不碰 chat.ts / ChatInput.tsx / attempt.ts"
-    ],
-    "title": "实习展示收尾：一条可重复的 Windows 编码旅程 + 护城河通电一次 + 审批边界发生一次"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [],
-    "confidence": 0.85,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "low",
-    "id": "TF-0235",
-    "kind": "task",
-    "next_action": "两页文档存在于 docs/ 下，每句可指向文件或提交",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "把阶段 1 的产物讲成一页能指到文件的说明，打包成读者可离线核对的演示包，并把仓库与任务图封存在一个 tag 上。",
-    "ready": true,
-    "remaining_minutes_max": 300,
-    "remaining_minutes_min": 300,
-    "status": "in_progress",
-    "success_metrics": [],
-    "title": "阶段 2 · 材料与封存"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [],
-    "confidence": 0.9,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "low",
-    "id": "TF-0238",
-    "kind": "subtask",
-    "next_action": "LATEST.md 首段为收尾接力且不含旧的「当前接力」矛盾表述",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "让下一个接力 agent 只读一段文字就知道项目停在哪里、为什么停、再往下是什么。",
-    "ready": true,
-    "remaining_minutes_max": 60,
-    "remaining_minutes_min": 60,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "封存：LATEST 收尾接力、Task Forest 收口（validate / export / check-landing）、打 showcase tag 并 push"
   },
   {
     "alignment": {
@@ -343,35 +272,6 @@
       "第二轮开工时三条前置全部满足且有记录"
     ],
     "title": "M6 第二轮队列：上下文损失追踪、定向再注入、A/B 评测（不占本轮预算）"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0235"
-    ],
-    "confidence": 0.6,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "medium",
-    "id": "TF-0239",
-    "kind": "task",
-    "next_action": "先完成依赖：TF-0235",
-    "priority": 3,
-    "progress": 0.0,
-    "purpose": "把唯一值得在收尾窗口碰产品代码的一件事（应用内审批桥）和一处演示可见的小修复，放在明确的可选位置，不与收尾出口绑定。",
-    "ready": false,
-    "remaining_minutes_max": 360,
-    "remaining_minutes_min": 360,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "阶段 3 · 可选增量（仅在阶段 0–2 出口达成后；做不了不影响收尾）"
   },
   {
     "alignment": {

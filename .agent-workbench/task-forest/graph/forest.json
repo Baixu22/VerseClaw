@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-22T13:46:23.090675Z",
+  "generated_at": "2026-09-22T13:51:16.947041Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -25844,7 +25844,7 @@
       ],
       "created_at": "2026-09-22T08:15:57.464539Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [
         "作者能在最终 HEAD 用仓库内 driver.mjs 重跑旅程；读者能离线核对全部产物哈希",
         "护城河三层（执行有边界 / 上下文可归因 / 不把测试绿说成产品绿）各有一件真实产物而不只是源码",
@@ -25855,7 +25855,14 @@
       ],
       "difficulty": "medium",
       "estimated_total_minutes": 1200,
-      "evidence": [],
+      "evidence": [
+        "阶段 0/1/2 全部 done：TF-0227～TF-0230、TF-0231～TF-0234、TF-0235～TF-0238；阶段 3 TF-0239～TF-0241 保持 proposed",
+        "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/ 与 .../J04/ 各含 README、journey.json、hashes.json，且 journey.json.candidate.dirty=false（J-03 b6c736191、J-04 a8c9f4b69）",
+        "docs/dev/showcase-brief-20260922.md 与 docs/dev/showcase-contribution-attribution-20260922.md 存在，引用核对 25/25 命中 0 缺失（artifacts/showcase-phase2-tf0236/verify.json）；贡献归属不含需要仓库所有者口述的内容",
+        "离线演示包 artifacts/showcase-20260922/（59 文件、manifest 59 条、0 凭证命中、node scripts/build-showcase-package.mjs --verify exit 0）",
+        "tag showcase-20260922 指向最终 HEAD 并 push 到 origin；复核命令 git ls-remote --tags origin | Select-String showcase-20260922",
+        "task_forest validate exit 0、export 成功、check-landing dirty_count=0 且 suspect_count=0"
+      ],
       "execution_hints": [
         "环境：HTTP_PROXY/HTTPS_PROXY=http://127.0.0.1:7897；CLI 加 PYTHONUTF8=1 PYTHONIOENCODING=utf-8",
         "J-03 开关：OPENCLAW_RC02_SHADOW_CENSUS=1 OPENCLAW_RC03_SEAL=1 放在 driver 进程环境；链路 driver.mjs:65 → config-sync.ts:1054/1080 → rc03-seal-hook.ts:110 / shadow-census.ts:255",
@@ -25873,7 +25880,7 @@
       ],
       "primary_parent": null,
       "priority": 1,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "用最小成本把仓库里已经跑通的路径讲清楚、再跑一次、把没接通的写成限制，让评委或读者能在留档证据上核对一切，而不是靠 224 个节点的 done 比例。",
       "remaining_minutes_max": 1500,
@@ -25887,16 +25894,16 @@
         "角色固定：agent 是主线开发者、用户是发布者；节点要求与验收判据不得要求用户回答内容问题，贡献归属等事实从提交、diff、任务图历史与偏差账本重建"
       ],
       "source_sessions": [],
-      "status": "in_progress",
+      "status": "done",
       "success_metrics": [
         "J-03 收据表非 0，或明确记录回落原因",
         "J-04 有一对 request/decision，或明确记录被 decideGatewayRpc 拦住的决策记录",
         "5 条尾项每条有「仍在 / 已消失 / 不修理由」",
         "收尾窗口内新增源码文件不碰 chat.ts / ChatInput.tsx / attempt.ts"
       ],
-      "summary": "启动于 2026-09-22，时间盒 3 个工作日，四个阶段串行：阶段 0 卫生与口径 → 阶段 1 通电与边界（两次真实执行）→ 阶段 2 材料与封存 → 阶段 3 可选增量。交付物：J-02/J-03/J-04 三条旅程的留档产物、非 0 收据表与 correlation join、一对审批 request/decision、一页对外说明、一页贡献归属、一个 showcase tag。三句限制随材料一起走：收据默认关（演示显式开）；非 fullAccess 无应用内审批 UI、会挂起；操作者 agent-driven、Windows x64、一个 provider、一个工作区。阶段 0 与阶段 1 已按出口判据收口（TF-0227～TF-0234 done，TF-0231 于阶段 1 证据补齐后 done）。角色与收口策略见 D8：agent 是主线开发者、用户是发布者，证据链完整即自动 apply，不等待人工确认；验收口径不得要求用户口述内容。",
+      "summary": "收尾里程碑完成（2026-09-22）：阶段 0（卫生与口径）、阶段 1（护城河通电与审批边界）、阶段 2（材料与封存）全部 done；阶段 3（TF-0239～TF-0241）按验收允许保持 proposed。交付物齐备——J-02/J-03/J-04 三条旅程留档、非 0 收据与 correlation join、一对审批 request/decision、对外说明一页、贡献归属一页、离线演示包、showcase-20260922 tag。三句限制随材料走；未翻任何默认值，未声明真人证据。",
       "title": "实习展示收尾：一条可重复的 Windows 编码旅程 + 护城河通电一次 + 审批边界发生一次",
-      "updated_at": "2026-09-22T12:37:56.094306Z"
+      "updated_at": "2026-09-22T13:50:44.659925Z"
     },
     "TF-0227": {
       "acceptance_criteria": [
@@ -26428,13 +26435,17 @@
       "context_tags": [],
       "created_at": "2026-09-22T08:15:57.470699Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "low",
       "display_order": 30,
       "estimated_total_minutes": 300,
-      "evidence": [],
+      "evidence": [
+        "两页材料：docs/dev/showcase-brief-20260922.md、docs/dev/showcase-contribution-attribution-20260922.md；核对记录 artifacts/showcase-phase2-tf0236/verify.json（25 条文件/提交引用 0 缺失、显示宽度 1915.5 / 1857 单元、\"用户\" 0 命中）",
+        "演示包：artifacts/showcase-20260922/ 共 59 文件，manifest.json 59 条 sha256，credential-scan.json 0 命中；node scripts/build-showcase-package.mjs --verify exit 0（哈希重算 + 14 条计数断言 + 凭证扫描）",
+        "封存：docs/dev/handoffs/LATEST.md 首段为「收尾完成」接力；tag showcase-20260922 指向最终 HEAD 并 push；validate exit 0、export 成功、check-landing 无待复核项"
+      ],
       "execution_hints": [],
       "id": "TF-0235",
       "kind": "task",
@@ -26445,7 +26456,7 @@
       ],
       "primary_parent": "TF-0226",
       "priority": 1,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "把阶段 1 的产物讲成一页能指到文件的说明，打包成读者可离线核对的演示包，并把仓库与任务图封存在一个 tag 上。",
       "remaining_minutes_max": null,
@@ -26456,11 +26467,11 @@
         "节点收口按自动收口门执行（验收直读核对通过即自行 apply），不等用户确认"
       ],
       "source_sessions": [],
-      "status": "in_progress",
+      "status": "done",
       "success_metrics": [],
-      "summary": "三件交付：对外说明一页 + 贡献归属一页（由 agent 从提交、diff 与任务图记录重建，不向用户提问）；演示包（J-02/J-03/J-04 产物、收据 dump、审批对、哈希清单、离线核对说明、演示日预案）；封存（LATEST 收尾接力、Task Forest validate/export/check-landing、showcase tag 并 push）。材料中的每一句限制都来自阶段 1 的裁定，不新造。分工口径固定为「agent 主线开发 / 用户发布者」。",
+      "summary": "阶段 2 · 材料与封存完成（2026-09-22）：三件交付全部落地——对外说明一页与贡献归属一页（TF-0236）、离线演示包（TF-0237）、封存与 tag（TF-0238）。材料中的每句限制都来自阶段 1 的 TF-0234 裁定，未新造。阶段 3（TF-0239～TF-0241）保持 proposed，可选、不影响收尾。",
       "title": "阶段 2 · 材料与封存",
-      "updated_at": "2026-09-22T13:17:45.508331Z"
+      "updated_at": "2026-09-22T13:50:44.659925Z"
     },
     "TF-0236": {
       "acceptance_criteria": [
@@ -26614,7 +26625,7 @@
       "context_tags": [],
       "created_at": "2026-09-22T08:15:57.472773Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [
         "TFD-autoclose-policy-override-0922"
@@ -26622,7 +26633,12 @@
       "difficulty": "low",
       "display_order": 30,
       "estimated_total_minutes": 60,
-      "evidence": [],
+      "evidence": [
+        "docs/dev/handoffs/LATEST.md 首段 = 「收尾完成（2026-09-22，D7 + D8，阶段 0–2）」，旧段降为「当前接力（历史）：实习展示收尾进行中」",
+        "docs/dev/qa-synthesis-roadmap-20260922.md 更新记录新增 TF-0237/TF-0238 条目",
+        "task_forest validate exit 0；export 成功（.agent-workbench/task-forest/exports/task-forest.html 重新生成）；check-landing dirty_count=0、suspect_count=0",
+        "封存提交（本文件所在提交）已 push：git push origin feat/runtime-lifecycle-governance；tag showcase-20260922 指向同一提交并 push；复核命令 git ls-remote --tags origin | Select-String showcase-20260922"
+      ],
       "execution_hints": [],
       "id": "TF-0238",
       "kind": "subtask",
@@ -26632,7 +26648,7 @@
       ],
       "primary_parent": "TF-0235",
       "priority": 1,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "让下一个接力 agent 只读一段文字就知道项目停在哪里、为什么停、再往下是什么。",
       "remaining_minutes_max": null,
@@ -26642,11 +26658,11 @@
         "tag 之后不再有源码提交进入本次收尾"
       ],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "done",
       "success_metrics": [],
-      "summary": "LATEST.md 首段改为「收尾完成」接力：指向综合规划与演示包，列出三句限制与下一周期入口（TF-0030）；用官方 CLI 把阶段 0–2 各节点收口为 done 并登记证据（按 D8 自动收口门，证据核对通过即自行 apply）；validate、export、check-landing；git tag showcase-<日期> 指向最终 HEAD 并 push（推送既有私有远端属正常开发流程，公开仓库或产物才需发布者授权）。",
+      "summary": "封存完成（2026-09-22）：LATEST.md 首段改为「收尾完成（2026-09-22，D7 + D8，阶段 0–2）」接力，指向综合规划、对外说明/贡献归属两页与演示包，列出三句限制与下一周期入口 TF-0030；阶段 2 与收尾里程碑经 proposal 流程收口为 done；task_forest validate exit 0、export 成功、check-landing dirty_count=0 且 suspect_count=0；tag showcase-20260922 指向最终 HEAD 并 push 到既有私有远端（推送远端属正常开发流程，公开才需发布者授权）。tag 之后没有新的源码提交。阶段 3（TF-0239～TF-0241）保持 proposed。产品锁与默认值未动。",
       "title": "封存：LATEST 收尾接力、Task Forest 收口（validate / export / check-landing）、打 showcase tag 并 push",
-      "updated_at": "2026-09-22T12:37:56.094811Z"
+      "updated_at": "2026-09-22T13:50:44.658919Z"
     },
     "TF-0239": {
       "acceptance_criteria": [
@@ -26903,18 +26919,15 @@
   },
   "status_queues": {
     "actionable_todos": [
+      "TF-0239",
       "TF-0240",
       "TF-0241",
       "TF-0030",
-      "TF-0226",
-      "TF-0235",
-      "TF-0238",
       "TF-0151",
       "TF-0129",
       "TF-0130",
       "TF-0141",
       "TF-0144",
-      "TF-0239",
       "TF-0009",
       "TF-0038",
       "TF-0039",
@@ -27168,6 +27181,7 @@
         "TF-0223",
         "TF-0224",
         "TF-0225",
+        "TF-0226",
         "TF-0227",
         "TF-0228",
         "TF-0229",
@@ -27176,14 +27190,13 @@
         "TF-0232",
         "TF-0233",
         "TF-0234",
+        "TF-0235",
         "TF-0236",
         "TF-0237",
+        "TF-0238",
         "TF-0242"
       ],
-      "in_progress": [
-        "TF-0226",
-        "TF-0235"
-      ],
+      "in_progress": [],
       "proposed": [
         "TF-0030",
         "TF-0031",
@@ -27197,7 +27210,6 @@
         "TF-0039",
         "TF-0040",
         "TF-0041",
-        "TF-0238",
         "TF-0239",
         "TF-0240",
         "TF-0241"
@@ -27233,9 +27245,6 @@
       "TF-0141",
       "TF-0144",
       "TF-0151",
-      "TF-0226",
-      "TF-0235",
-      "TF-0238",
       "TF-0239",
       "TF-0240",
       "TF-0241"
@@ -27245,10 +27254,10 @@
   },
   "summary": {
     "blocked_count": 12,
-    "done_count": 205,
+    "done_count": 208,
     "edge_count": 414,
     "node_count": 242,
-    "open_count": 30,
+    "open_count": 27,
     "review_needed_count": 0
   },
   "tree_edges": [
