@@ -258,3 +258,7 @@ openclaw_runtime/_tmp_*
 # TF-0236 phase-2 material check (link/path resolution, A4 length, wording audit).
 !artifacts/showcase-phase2-tf0236/
 !artifacts/showcase-phase2-tf0236/**
+
+# TF-0237 demo package: copies of the three archived journeys plus manifest/verify docs.
+!artifacts/showcase-20260922/
+!artifacts/showcase-20260922/**
