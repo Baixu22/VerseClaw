@@ -2280,5 +2280,17 @@
     "waiting": "出力を待機中…",
     "noOutput": "このプロセスは出力を生成しませんでした。",
     "status": { "running": "実行中", "completed": "完了", "failed": "失敗" }
+  },
+  "runtimeApprovals": {
+    "title": "ランタイムの承認が必要です",
+    "description": "ランタイムはこのコマンドの実行前に停止し、あなたの判断を待っています。",
+    "commandLabel": "コマンド",
+    "cwdLabel": "作業ディレクトリ",
+    "unknownCommand": "（コマンドが報告されていません）",
+    "allowOnce": "今回のみ許可",
+    "allowAlways": "常に許可",
+    "deny": "拒否",
+    "busy": "判断を送信中…",
+    "resolveFailed": "ランタイムはこの判断を受け付けませんでした。"
   }
 }

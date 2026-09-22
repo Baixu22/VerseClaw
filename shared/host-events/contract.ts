@@ -63,6 +63,32 @@ export type OAuthErrorEvent = {
   message: string;
 };
 
+/**
+ * Runtime exec-approval boundary (ClawX bridge). The Gateway broadcasts
+ * `exec.approval.requested` / `exec.approval.resolved`; ClawX projects them into
+ * these two shapes so the renderer never parses raw gateway frames.
+ */
+export type RuntimeApprovalRequestedEvent = {
+  approvalId: string;
+  command: string;
+  commandPreview?: string | null;
+  cwd?: string | null;
+  host?: string | null;
+  agentId?: string | null;
+  sessionKey?: string | null;
+  /** Decisions the runtime will accept for this request, in runtime order. */
+  allowedDecisions: string[];
+  createdAtMs?: number;
+  expiresAtMs?: number;
+};
+
+export type RuntimeApprovalResolvedEvent = {
+  approvalId: string;
+  decision: string;
+  resolvedBy?: string | null;
+  ts?: number;
+};
+
 export type ChannelQrEvent = {
   qr?: string;
   raw?: string;
@@ -243,6 +269,10 @@ export type HostEventContract = {
     newChat: () => void;
     openClawCliInstalled: (installedPath: string) => void;
   };
+  runtimeApprovals: {
+    requested: (payload: RuntimeApprovalRequestedEvent) => void;
+    resolved: (payload: RuntimeApprovalResolvedEvent) => void;
+  };
 };
 
 export type HostEventModule = keyof HostEventContract;
@@ -312,6 +342,10 @@ export const HOST_EVENT_CHANNELS = {
     navigate: 'navigate',
     newChat: 'new-chat',
     openClawCliInstalled: 'openclaw:cli-installed',
+  },
+  runtimeApprovals: {
+    requested: 'runtime-approvals:requested',
+    resolved: 'runtime-approvals:resolved',
   },
 } as const satisfies {
   [M in Exclude<HostEventModule, 'channel'>]: {

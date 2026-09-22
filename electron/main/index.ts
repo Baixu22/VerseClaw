@@ -1264,6 +1264,17 @@ async function initialize(): Promise<void> {
     sendMainWindowEvent('chat:queue-status', data);
   });
 
+  // Runtime exec-approval boundary → renderer modal. The renderer answers through
+  // hostApi.runtimeApprovals.resolve, which re-enters the Gateway as
+  // exec.approval.resolve; nothing here decides anything on the user's behalf.
+  gatewayManager.on('approval:requested', (data) => {
+    sendMainWindowEvent('runtime-approvals:requested', data);
+  });
+
+  gatewayManager.on('approval:resolved', (data) => {
+    sendMainWindowEvent('runtime-approvals:resolved', data);
+  });
+
   gatewayManager.on('exit', (code) => {
     sendMainWindowEvent('gateway:exit', { code });
   });

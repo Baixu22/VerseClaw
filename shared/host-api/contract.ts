@@ -4912,6 +4912,34 @@ export type MemoryProposeFactsConfirmResult = HostSuccess & {
   factId?: string;
 };
 
+/**
+ * Runtime exec-approval boundary (TF-0240). `list` reads the Gateway's pending
+ * exec approvals; `resolve` answers exactly one of them with a decision the
+ * runtime already offered for that request.
+ */
+export type RuntimeApprovalPendingEntry = {
+  approvalId: string;
+  command: string;
+  commandPreview?: string | null;
+  cwd?: string | null;
+  host?: string | null;
+  agentId?: string | null;
+  sessionKey?: string | null;
+  allowedDecisions: string[];
+  createdAtMs?: number;
+  expiresAtMs?: number;
+};
+export type RuntimeApprovalListResult = {
+  pending: RuntimeApprovalPendingEntry[];
+};
+export type RuntimeApprovalResolvePayload = {
+  approvalId: string;
+  decision: string;
+};
+export type RuntimeApprovalResolveResult =
+  | { success: true; approvalId: string; decision: string }
+  | { success: false; error: string };
+
 export type HostApiContract = {
   app: {
     version: () => string;
@@ -5082,6 +5110,10 @@ export type HostApiContract = {
     controlUi: (payload?: GatewayControlUiPayload) => GatewayControlUiResult;
     copyGatewayToken: () => GatewayCopyTokenResult;
     rpc: (payload: GatewayRpcPayload) => unknown;
+  };
+  runtimeApprovals: {
+    list: () => RuntimeApprovalListResult;
+    resolve: (payload: RuntimeApprovalResolvePayload) => RuntimeApprovalResolveResult;
   };
   localControlPlane: {
     status: () => LocalControlPlaneStatusResult;

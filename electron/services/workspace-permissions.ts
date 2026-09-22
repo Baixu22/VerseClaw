@@ -114,7 +114,23 @@ const SAFE_GATEWAY_METHODS = new Set([
   'verification.status',
   'verification.results.list',
   'verification.results.get',
+  // TF-0240: pending runtime exec approvals are a pure read. An operator in
+  // readOnly must be able to see what the runtime is waiting on; the decision
+  // itself is a separate method with its own rule below.
+  'exec.approval.list',
 ]);
+
+/** Runtime exec-approval decision methods that answer a boundary the runtime
+ * already raised. Unlike the workspace mutations around them, these carry a human
+ * decision, so they stay reachable in every permission mode: blocking them in
+ * readOnly leaves the runtime waiting forever with no in-app way to answer (the
+ * J-04 hang). The runtime still enforces its own per-request decision vocabulary
+ * and expiry, so this opens the answer channel, not the action. */
+const RUNTIME_APPROVAL_DECISION_METHODS = new Set(['exec.approval.resolve']);
+
+export function isRuntimeApprovalDecisionRpc(method: string): boolean {
+  return RUNTIME_APPROVAL_DECISION_METHODS.has(method.trim());
+}
 
 const DEV_ONLY_GATEWAY_METHODS = new Set<string>([]);
 
@@ -379,6 +395,7 @@ export function decideGatewayRpc(
   const risk = classifyGatewayRpcRisk(method, params);
   if (risk === 'read') return { allowed: true, risk };
   if (mode === 'fullAccess') return { allowed: true, risk };
+  if (isRuntimeApprovalDecisionRpc(method)) return { allowed: true, risk };
   if (mode === 'plan') {
     return { allowed: false, risk, reason: 'Plan mode does not execute Gateway mutations' };
   }
