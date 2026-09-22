@@ -1,0 +1,40 @@
+{
+  "applied_at": "2026-09-22T13:19:51.826050Z",
+  "base_graph_hash": "c705c86bd0af77c6af3cfa147ae5bcb26a94caec8ee7a60d5b0d43626f404ed4",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/showcase-brief-20260922.md（对外说明一页；显示宽度 1915.5 单元 ≤ 一页 A4 参考 1920）",
+          "docs/dev/showcase-contribution-attribution-20260922.md（贡献归属一页；显示宽度 1857 单元）",
+          "artifacts/showcase-phase2-tf0236/verify.json：两页 13+11 条 markdown 链接与 25 条仓库路径引用全部命中、0 缺失；四栏/三层护城河/五条尾项/三句限制齐备；「用户」0 命中；本变更集之外的脏路径 0",
+          "docs/dev/qa-synthesis-roadmap-20260922.md 更新记录新增 TF-0236 条目",
+          "三层护城河坐标直读核对：openclaw_runtime/src/infra/exec-approvals.ts:105、agents/bash-tools.exec-approval-request.ts:187、gateway/server-methods/exec-approval.ts:357、context-engine/rc03-seal-hook.ts:284、agents/receipt-store.ts:469、agents/shadow-census.ts:181、context-engine/dcs-receipts.ts:18-19",
+          "第三层证据直读：artifacts/capability-claims/status-table.json（44 条：PARTIAL 21 / FP-OVERCLAIM 5 / TP-RUN 3，2026-07-05）、scripts/lib/agent-engineering-acceptance.mjs:1789-1795 与 :950-958、scripts/validate-runtime-authority-convergence.mjs:326、tests/unit/tf0009-engineering-evidence-audit.test.ts:113-119、docs/dev/task-forest-existing-nodes-20260915.md:46-47",
+          "贡献归属事实直读：git 714 提交、提交者分布 595/118/1，收尾窗口 2026-09-20 起 27 个提交全部为 OpenClaw UFTK Pilot；proposals/TFP-context-moat-2026-08-24.json:1725,1729（TF-0131 deprecated）、docs/dev/unified-agent-system/runtime-convergence/AGENT-START.md:3-6、任务图 TF-0007 摘要与提交 de54b5680、deviations.jsonl 113 条（含 TFD-autoclose-policy-override-0922、TFD-status-md-guard-0922）",
+          "阶段 1 裁定逐条来源：artifacts/live-model-cdp/20260922-senseaudio-journey-J03/README.md（五行尾项表）、.../J04/README.md（四条限制）"
+        ],
+        "next_action": "阶段 2 后续按顺序推进 TF-0237（演示包：三条旅程产物、收据 dump、审批对、哈希清单、离线核对说明与演示日预案）与 TF-0238（封存：LATEST 收尾接力、forest 收口、showcase tag）。",
+        "summary": "阶段 2 材料完成（2026-09-22）：对外说明一页 docs/dev/showcase-brief-20260922.md + 贡献归属一页 docs/dev/showcase-contribution-attribution-20260922.md。两页均 ≤ 一页 A4 等价长度（显示宽度 1915.5 / 1857 单元，参考 1920），共 25 条文件与提交引用全部直读命中、0 缺失；限制栏与阶段 1 的 TF-0234 裁定逐条一致（三句限制 + 五条尾项 ①不修 ②仍在 ③不修 ④仍在 ⑤不修）；全文对「真人」「GA」「默认开启」只作否定表述；无需要仓库所有者口述的内容（「用户」0 命中）。贡献归属的取舍逐条指向 proposals/TFP-context-moat-2026-08-24.json:1725,1729、docs/dev/task-forest-existing-nodes-20260915.md:44-48、AGENT-START.md:3-6、任务图 TF-0007 与提交 de54b5680。最终页为新文件，草稿 showcase-overview-20260922.md 保留为带日期的输入。演示包（TF-0237）与封存（TF-0238）未开始，阶段 2 尚未整体收口。"
+      },
+      "id": "TF-0236"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0236",
+      "progress": 100,
+      "status": "done"
+    }
+  ],
+  "created_at": "2026-09-22T13:19:45.166126Z",
+  "proposal_id": "TFP-showcase-phase2-tf0236-close-20260922",
+  "rationale": "按 AGENTS.md 的 Task Forest 自动收口门（规则 R3）：TF-0236 的每条验收判据都已用 Read 直读磁盘产物核对通过——两页材料存在、均 ≤ 一页 A4 等价长度、每句可指向文件或提交号、限制栏与阶段 1 的 TF-0234 裁定逐条一致、无与事实不符的措辞、无需要仓库所有者口述的内容。证据链完整，提案基线未漂移，结论自洽，故直接 apply，不等待发布者确认。",
+  "session_id": "session-2026-09-22-dsh-tf0236",
+  "status": "applied"
+}

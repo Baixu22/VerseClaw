@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-22T12:38:42.217076Z",
+  "generated_at": "2026-09-22T13:20:41.786037Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -26456,11 +26456,11 @@
         "节点收口按自动收口门执行（验收直读核对通过即自行 apply），不等用户确认"
       ],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "in_progress",
       "success_metrics": [],
       "summary": "三件交付：对外说明一页 + 贡献归属一页（由 agent 从提交、diff 与任务图记录重建，不向用户提问）；演示包（J-02/J-03/J-04 产物、收据 dump、审批对、哈希清单、离线核对说明、演示日预案）；封存（LATEST 收尾接力、Task Forest validate/export/check-landing、showcase tag 并 push）。材料中的每一句限制都来自阶段 1 的裁定，不新造。分工口径固定为「agent 主线开发 / 用户发布者」。",
       "title": "阶段 2 · 材料与封存",
-      "updated_at": "2026-09-22T12:37:56.094811Z"
+      "updated_at": "2026-09-22T13:17:45.508331Z"
     },
     "TF-0236": {
       "acceptance_criteria": [
@@ -26484,7 +26484,7 @@
       "context_tags": [],
       "created_at": "2026-09-22T08:15:57.471210Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [
         "TFD-autoclose-policy-override-0922"
@@ -26492,17 +26492,27 @@
       "difficulty": "low",
       "display_order": 10,
       "estimated_total_minutes": 120,
-      "evidence": [],
+      "evidence": [
+        "docs/dev/showcase-brief-20260922.md（对外说明一页；显示宽度 1915.5 单元 ≤ 一页 A4 参考 1920）",
+        "docs/dev/showcase-contribution-attribution-20260922.md（贡献归属一页；显示宽度 1857 单元）",
+        "artifacts/showcase-phase2-tf0236/verify.json：两页 13+11 条 markdown 链接与 25 条仓库路径引用全部命中、0 缺失；四栏/三层护城河/五条尾项/三句限制齐备；「用户」0 命中；本变更集之外的脏路径 0",
+        "docs/dev/qa-synthesis-roadmap-20260922.md 更新记录新增 TF-0236 条目",
+        "三层护城河坐标直读核对：openclaw_runtime/src/infra/exec-approvals.ts:105、agents/bash-tools.exec-approval-request.ts:187、gateway/server-methods/exec-approval.ts:357、context-engine/rc03-seal-hook.ts:284、agents/receipt-store.ts:469、agents/shadow-census.ts:181、context-engine/dcs-receipts.ts:18-19",
+        "第三层证据直读：artifacts/capability-claims/status-table.json（44 条：PARTIAL 21 / FP-OVERCLAIM 5 / TP-RUN 3，2026-07-05）、scripts/lib/agent-engineering-acceptance.mjs:1789-1795 与 :950-958、scripts/validate-runtime-authority-convergence.mjs:326、tests/unit/tf0009-engineering-evidence-audit.test.ts:113-119、docs/dev/task-forest-existing-nodes-20260915.md:46-47",
+        "贡献归属事实直读：git 714 提交、提交者分布 595/118/1，收尾窗口 2026-09-20 起 27 个提交全部为 OpenClaw UFTK Pilot；proposals/TFP-context-moat-2026-08-24.json:1725,1729（TF-0131 deprecated）、docs/dev/unified-agent-system/runtime-convergence/AGENT-START.md:3-6、任务图 TF-0007 摘要与提交 de54b5680、deviations.jsonl 113 条（含 TFD-autoclose-policy-override-0922、TFD-status-md-guard-0922）",
+        "阶段 1 裁定逐条来源：artifacts/live-model-cdp/20260922-senseaudio-journey-J03/README.md（五行尾项表）、.../J04/README.md（四条限制）"
+      ],
       "execution_hints": [],
       "id": "TF-0236",
       "kind": "subtask",
+      "next_action": "阶段 2 后续按顺序推进 TF-0237（演示包：三条旅程产物、收据 dump、审批对、哈希清单、离线核对说明与演示日预案）与 TF-0238（封存：LATEST 收尾接力、forest 收口、showcase tag）。",
       "non_goals": [
         "不用目录体积或节点数量代替贡献说明",
         "不把分工写成用户主导开发或用户口述来源"
       ],
       "primary_parent": "TF-0235",
       "priority": 1,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "让评委在十分钟内看懂：这是什么、跑通了什么、护城河在哪三处代码、没做什么、谁做了什么。",
       "remaining_minutes_max": null,
@@ -26514,11 +26524,11 @@
         "分工口径固定为「agent 主线开发 / 用户发布者」，与 D8 一致"
       ],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "done",
       "success_metrics": [],
-      "summary": "对外说明：定位一句（agent 与 AI 协作的 Agent 基座 + Harness 工程化展示，非 GA）；主线一句（本地优先桌面工作台，一个 agent 用一个模型在一个 Windows 工作区做完一件工程事并能解释过程）；三层护城河各一句并指向代码（tools.exec 策略 → exec.approval.requested；rc03-seal-hook → ReceiptStore + shadow-census → WireReceipt；能力表分类 / allowedPromotion=false / tf0009 守卫 / TF-0076 NO-GO）；四栏边界（跑过 / 只证明机制 / 未完成 / 范围外）；三句限制；演示日预案。贡献归属（由 agent 从仓库记录重建，不向用户提问）：分工口径为 agent 主线开发、用户发布者；设计决策与取舍逐条指向提交或 diff——TF-0131 因不改默认值被砍、TF-0076 成本 NO-GO、AGENT-START NO-GO 横幅、TF-0007 撤回 done；如何审查 AI 改动（验收器双执行者、判决只从磁盘读、禁凭证环境变量）。",
+      "summary": "阶段 2 材料完成（2026-09-22）：对外说明一页 docs/dev/showcase-brief-20260922.md + 贡献归属一页 docs/dev/showcase-contribution-attribution-20260922.md。两页均 ≤ 一页 A4 等价长度（显示宽度 1915.5 / 1857 单元，参考 1920），共 25 条文件与提交引用全部直读命中、0 缺失；限制栏与阶段 1 的 TF-0234 裁定逐条一致（三句限制 + 五条尾项 ①不修 ②仍在 ③不修 ④仍在 ⑤不修）；全文对「真人」「GA」「默认开启」只作否定表述；无需要仓库所有者口述的内容（「用户」0 命中）。贡献归属的取舍逐条指向 proposals/TFP-context-moat-2026-08-24.json:1725,1729、docs/dev/task-forest-existing-nodes-20260915.md:44-48、AGENT-START.md:3-6、任务图 TF-0007 与提交 de54b5680。最终页为新文件，草稿 showcase-overview-20260922.md 保留为带日期的输入。演示包（TF-0237）与封存（TF-0238）未开始，阶段 2 尚未整体收口。",
       "title": "对外说明一页 + 个人与 AI 贡献归属一页",
-      "updated_at": "2026-09-22T12:37:56.094811Z"
+      "updated_at": "2026-09-22T13:19:51.562683Z"
     },
     "TF-0237": {
       "acceptance_criteria": [
@@ -26887,7 +26897,6 @@
       "TF-0030",
       "TF-0226",
       "TF-0235",
-      "TF-0236",
       "TF-0237",
       "TF-0151",
       "TF-0129",
@@ -27157,10 +27166,12 @@
         "TF-0232",
         "TF-0233",
         "TF-0234",
+        "TF-0236",
         "TF-0242"
       ],
       "in_progress": [
-        "TF-0226"
+        "TF-0226",
+        "TF-0235"
       ],
       "proposed": [
         "TF-0030",
@@ -27175,8 +27186,6 @@
         "TF-0039",
         "TF-0040",
         "TF-0041",
-        "TF-0235",
-        "TF-0236",
         "TF-0237",
         "TF-0238",
         "TF-0239",
@@ -27216,7 +27225,6 @@
       "TF-0151",
       "TF-0226",
       "TF-0235",
-      "TF-0236",
       "TF-0237",
       "TF-0238",
       "TF-0239",
@@ -27228,10 +27236,10 @@
   },
   "summary": {
     "blocked_count": 12,
-    "done_count": 203,
+    "done_count": 204,
     "edge_count": 414,
     "node_count": 242,
-    "open_count": 32,
+    "open_count": 31,
     "review_needed_count": 0
   },
   "tree_edges": [

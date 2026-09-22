@@ -147,36 +147,9 @@
     "ready": true,
     "remaining_minutes_max": 300,
     "remaining_minutes_min": 300,
-    "status": "proposed",
+    "status": "in_progress",
     "success_metrics": [],
     "title": "阶段 2 · 材料与封存"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [],
-    "confidence": 0.85,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "low",
-    "id": "TF-0236",
-    "kind": "subtask",
-    "next_action": "两页均 ≤ 1 页 A4 等价长度，每句可指向文件或提交号",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "让评委在十分钟内看懂：这是什么、跑通了什么、护城河在哪三处代码、没做什么、谁做了什么。",
-    "ready": true,
-    "remaining_minutes_max": 120,
-    "remaining_minutes_min": 120,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "对外说明一页 + 个人与 AI 贡献归属一页"
   },
   {
     "alignment": {
@@ -1018,7 +991,6 @@
       "why_this_task": ""
     },
     "blocked_by": [
-      "TF-0236",
       "TF-0237"
     ],
     "confidence": 0.9,
@@ -1027,7 +999,7 @@
     "difficulty": "low",
     "id": "TF-0238",
     "kind": "subtask",
-    "next_action": "先完成依赖：TF-0236, TF-0237",
+    "next_action": "先完成依赖：TF-0237",
     "priority": 1,
     "progress": 0.0,
     "purpose": "让下一个接力 agent 只读一段文字就知道项目停在哪里、为什么停、再往下是什么。",
