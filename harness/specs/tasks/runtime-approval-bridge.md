@@ -65,6 +65,15 @@ ownedPaths:
   - tests/unit/runtime-approval-bridge.test.ts
   - tests/unit/runtime-approval-prompt.test.tsx
   - tests/e2e/runtime-approval-bridge.spec.ts
+# Agent Dev evidence refreshed in the same change set to clear the stale-evidence veto in
+# `pnpm run harness:ci`. That refresh belongs to the Agent Dev control plane, not to this
+# bridge, so it is declared as a review-visible residual instead of owned coverage.
+residualPaths:
+  - artifacts/agent-dev-workbench/evidence.json
+  - artifacts/agent-dev-deep-test/report.json
+  - artifacts/agent-dev-deep-test/report.md
+  - artifacts/agent-dev-deep-test/history.json
+  - artifacts/agent-dev-quality/report.json
 requiredProfiles:
   - fast
   - comms
