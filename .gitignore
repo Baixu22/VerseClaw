@@ -250,3 +250,7 @@ openclaw_runtime/_tmp_*
 
 # Local workbuddy tool state (per-day notes, not project content)
 .workbuddy/
+
+# Showcase closing journeys (J-02/J-03/J-04). Secrets stay out; the evidence is the deliverable.
+!artifacts/live-model-cdp/
+!artifacts/live-model-cdp/**
