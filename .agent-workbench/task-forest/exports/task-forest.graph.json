@@ -9652,7 +9652,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-22T08:16:16.416809Z",
+  "generated_at": "2026-09-22T09:26:47.045089Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -25869,7 +25869,7 @@
       "acceptance_criteria": [
         "git status 干净（含 docs 与 openclaw_runtime/src）",
         "docs/dev/handoffs/LATEST.md 首段不再出现「自动转 ready」，改为「TF-0030 = proposed，依赖已满足、todo ready，未开工未验收」",
-        "engineering-product-node-plan-20260921.md、runtime-convergence/STATUS.md、AGENT-START.md 头部各有一行日期与适用范围标注，且 git diff 仅限该行",
+        "engineering-product-node-plan-20260921.md、AGENT-START.md 头部各有一行日期与适用范围标注，且 git diff 仅限该行；STATUS.md 因守卫测试不得含注记，改由 AGENT-START.md 与综合规划说明（2026-09-22 按实测修订）",
         "HANDOFF-tf0029-product-convergence-20260921.md 不再含明文 key；对 docs/ artifacts/ 的密钥扫描 0 命中",
         "本提案（D7 + 收尾里程碑）已 proposal-apply，validate 通过"
       ],
@@ -25892,13 +25892,19 @@
       "context_tags": [],
       "created_at": "2026-09-22T08:15:57.464539Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
-      "deviations": [],
+      "deviations": [
+        "TFD-status-md-guard-0922"
+      ],
       "difficulty": "low",
       "display_order": 10,
       "estimated_total_minutes": 120,
-      "evidence": [],
+      "evidence": [
+        "提交序列：1000fdbbb（TF-0228）→ b2a406987（任务图）→ 29b2fd733（TF-0230）→ db29990af（TF-0229）；git status 干净",
+        "tests/unit/runtime-authority-convergence-control-pack.test.ts 8/8 passed（STATUS.md 未改）",
+        "task_forest validate 校验通过；export 已生成"
+      ],
       "execution_hints": [
         "提交按 pathspec 限定，不 git add -A",
         "Edit 工具会把行尾翻成 CRLF，提交前按文件既有 EOL 归一化"
@@ -25913,18 +25919,18 @@
       ],
       "primary_parent": "TF-0226",
       "priority": 1,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "让工作树干净、让所有「当前状态」文档不再互相当放行依据、让明文密钥离开文档，为阶段 1 的实跑扫清前置。",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "ready",
+      "status": "done",
       "success_metrics": [],
-      "summary": "三件事：提交未提交的 shadow-census 改动（独立 commit）；提交四份 QA/规划文档并统一口径（LATEST 首段改口、旧状态文档只加日期与适用范围一行）；把交接文档里的明文 API key 改成环境变量引用并扫描 docs/ 与 artifacts/。本阶段不改任何源码逻辑、不改 STATUS.md 正文、不动 tf0009 守卫。",
+      "summary": "已完成（2026-09-22）：三件事全部以独立提交落地——shadow-census 独立 commit 1000fdbbb；四份 QA/规划文档 + LATEST 收尾接力 + 两份旧文档日期标注 db29990af；交接文档 key → 环境变量引用 29b2fd733。任务图提案 b2a406987 已应用（D7 + 里程碑 17 节点 + 冻结注记），validate 通过。一处偏差：STATUS.md 受守卫测试保护不能加注记，改由 AGENT-START.md 与综合规划说明其时点。工作树干净，阶段 1 可开工。原摘要：三件事：提交未提交的 shadow-census 改动（独立 commit）；提交四份 QA/规划文档并统一口径（LATEST 首段改口、旧状态文档只加日期与适用范围一行）；把交接文档里的明文 API key 改成环境变量引用并扫描 docs/ 与 artifacts/。本阶段不改任何源码逻辑、不改 STATUS.md 正文、不动 tf0009 守卫。",
       "title": "阶段 0 · 卫生与口径收口（今天，不写功能）",
-      "updated_at": "2026-09-22T08:15:57.464539Z"
+      "updated_at": "2026-09-22T09:25:58.604697Z"
     },
     "TF-0228": {
       "acceptance_criteria": [
@@ -25947,14 +25953,17 @@
       "context_tags": [],
       "created_at": "2026-09-22T08:15:57.465047Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "low",
       "display_order": 10,
       "estimated_total_minutes": 20,
       "evidence": [
-        "git diff（2026-09-22）：+25/−1，唯一行为变化在 shadow-census.ts:459"
+        "git diff（2026-09-22）：+25/−1，唯一行为变化在 shadow-census.ts:459",
+        "提交 1000fdbbb：git show --stat 恰好 2 个文件（shadow-census.ts、shadow-census.test.ts）",
+        "pnpm --dir openclaw_runtime exec vitest run src/agents/shadow-census.test.ts：8 passed / 0 failed（含新增「provider id 不能当 adapter owner」用例）",
+        "TF-0030 状态与 progress 未变（proposed / 0）"
       ],
       "execution_hints": [],
       "id": "TF-0228",
@@ -25965,7 +25974,7 @@
       ],
       "primary_parent": "TF-0227",
       "priority": 1,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "让「谁序列化了最终请求可以被指认」这条可信度主张不再依赖 provider id 充数，同时不把这 23 行混进别的提交、不宣称 TF-0030 完成。",
       "remaining_minutes_max": null,
@@ -25976,11 +25985,11 @@
         "提交前运行 pnpm --dir openclaw_runtime exec vitest run src/agents/shadow-census.test.ts 并通过"
       ],
       "source_sessions": [],
-      "status": "ready",
+      "status": "done",
       "success_metrics": [],
       "summary": "唯一行为改动：openclaw_runtime/src/agents/shadow-census.ts 的 buildWireOwnerCensus(body, input.adapterId ?? input.providerId) → buildWireOwnerCensus(body, input.adapterId)；测试新增「provider id 不能当 adapter owner」用例，期望 acceptanceReady:false。已核验两个生产调用点（provider-transport-fetch.ts:867、stream-resolution.ts:298）都传 adapterId: model.api，故不会让 J-02 路径回归。",
       "title": "提交 shadow-census 的 wire owner 具名化改动为独立 commit（TF-0030 局部增量，普查未完成）",
-      "updated_at": "2026-09-22T08:15:57.465047Z"
+      "updated_at": "2026-09-22T09:25:58.604697Z"
     },
     "TF-0229": {
       "acceptance_criteria": [
@@ -26003,13 +26012,21 @@
       "context_tags": [],
       "created_at": "2026-09-22T08:15:57.466071Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
-      "deviations": [],
+      "deviations": [
+        "TFD-status-md-guard-0922"
+      ],
       "difficulty": "low",
       "display_order": 20,
       "estimated_total_minutes": 45,
-      "evidence": [],
+      "evidence": [
+        "提交 db29990af：qa-project-assessment / qa-review-report / qa-closing-verdict / qa-synthesis-roadmap 四份入库；前三份头部各加一行「输入，已被综合」标注",
+        "docs/dev/handoffs/LATEST.md：新首段「当前接力：实习展示收尾（2026-09-22，D7）」；09-21 段改标「历史」，TF-0030 口径改为「proposed，依赖已满足、todo ready，未开工未验收」。全文对「自动转 ready」的唯一剩余命中是该纠正句本身对旧措辞的引用",
+        "engineering-product-node-plan-20260921.md、runtime-convergence/AGENT-START.md：各 +2 行（头部一行标注 + 空行），正文未改；LF 保持，diff 无 CR",
+        "runtime-convergence/STATUS.md 未加注记：tests/unit/runtime-authority-convergence-control-pack.test.ts 断言其为纯 frontmatter、不含 '# '、正文为空；实测加一行即 1 failed，revert 后 8/8 passed。偏差见 deviations 记录",
+        "git status 干净"
+      ],
       "execution_hints": [],
       "id": "TF-0229",
       "kind": "subtask",
@@ -26019,7 +26036,7 @@
       ],
       "primary_parent": "TF-0227",
       "priority": 1,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "消除六份「当前状态」文档互相矛盾的叙事熵：只有 Task Forest（状态）、综合规划（方向）、LATEST 首段（接力）是真源，其余降为带日期的输入或历史。",
       "remaining_minutes_max": null,
@@ -26030,11 +26047,11 @@
         "LATEST.md 只改首段口径，不删历史接力段"
       ],
       "source_sessions": [],
-      "status": "ready",
+      "status": "done",
       "success_metrics": [],
       "summary": "提交 qa-project-assessment / qa-review-report / qa-closing-verdict / qa-synthesis-roadmap 四份文档（一个 docs commit），前三份头部加一行「输入，已被 qa-synthesis-roadmap-20260922.md 综合」；LATEST.md 首段把「TF-0030 自动转 ready」改为「TF-0030 = proposed，依赖已满足、todo ready，未开工未验收」并指向综合规划；engineering-product-node-plan-20260921.md、runtime-convergence/STATUS.md、AGENT-START.md 头部各加一行日期与适用范围（例：「本文快照 752b936a / 2026-08-11，2026-09-22 起定位见 qa-synthesis-roadmap」），不改正文。",
       "title": "提交四份 QA/规划文档并统一口径：LATEST 首段改口，旧状态文档只加日期与适用范围",
-      "updated_at": "2026-09-22T08:15:57.466071Z"
+      "updated_at": "2026-09-22T09:25:58.604697Z"
     },
     "TF-0230": {
       "acceptance_criteria": [
@@ -26057,13 +26074,17 @@
       "context_tags": [],
       "created_at": "2026-09-22T08:15:57.467096Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "low",
       "display_order": 30,
       "estimated_total_minutes": 20,
-      "evidence": [],
+      "evidence": [
+        "提交 29b2fd733：HANDOFF-tf0029-product-convergence-20260921.md:86 改为「key 见环境变量 SENSEAUDIO_API_KEY」，单文件单行改动",
+        "工作树扫描 docs/ artifacts/（sk- 前缀 32+ 位、已知片段、AKIA、ghp_、xox*、PRIVATE KEY）：0 个真实命中；仅 artifacts/local-quarantine-20260911/verseshell-runtime/src/safety.rs 的脱敏测试夹具（AWS 文档示例 key 与空 PEM）",
+        "git grep 已知片段：工作树 0 命中；HEAD~1 及更早历史仍含（用户裁定不轮换、不重写历史；仓库或演示包公开即轮换）"
+      ],
       "execution_hints": [],
       "id": "TF-0230",
       "kind": "subtask",
@@ -26073,7 +26094,7 @@
       ],
       "primary_parent": "TF-0227",
       "priority": 2,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "文档不携带凭证；演示包与仓库可以在不泄露 key 的前提下被阅读。",
       "remaining_minutes_max": null,
@@ -26083,11 +26104,11 @@
         "扫描命令与结果写进本节点 evidence（不写 key 本身）"
       ],
       "source_sessions": [],
-      "status": "ready",
+      "status": "done",
       "success_metrics": [],
       "summary": "docs/dev/HANDOFF-tf0029-product-convergence-20260921.md:86 含完整 senseaudio key（提交 dab4aaff7，已在私有 origin）。用户裁定：该 key 专用于真实数据沉淀、仓库私有，不轮换。本子任务只做：把该行改为「key 见环境变量 SENSEAUDIO_API_KEY」，对工作树 docs/ artifacts/ 扫描 sk- 前缀与已知 key 片段。残余风险如实记录：git 历史仍含该 key，不重写历史；若将来仓库或演示包公开，轮换成为强制项。",
       "title": "把交接文档里的明文 API key 改为环境变量引用，并对 docs/ 与 artifacts/ 做一次密钥扫描",
-      "updated_at": "2026-09-22T08:15:57.467096Z"
+      "updated_at": "2026-09-22T09:25:58.604697Z"
     },
     "TF-0231": {
       "acceptance_criteria": [
@@ -26725,12 +26746,11 @@
   },
   "status_queues": {
     "actionable_todos": [
-      "TF-0230",
       "TF-0030",
       "TF-0226",
-      "TF-0227",
-      "TF-0228",
-      "TF-0229",
+      "TF-0231",
+      "TF-0232",
+      "TF-0233",
       "TF-0151",
       "TF-0129",
       "TF-0130",
@@ -26758,9 +26778,6 @@
       "TF-0037",
       "TF-0041",
       "TF-0042",
-      "TF-0231",
-      "TF-0232",
-      "TF-0233",
       "TF-0235",
       "TF-0236",
       "TF-0237",
@@ -26999,7 +27016,11 @@
         "TF-0222",
         "TF-0223",
         "TF-0224",
-        "TF-0225"
+        "TF-0225",
+        "TF-0227",
+        "TF-0228",
+        "TF-0229",
+        "TF-0230"
       ],
       "in_progress": [
         "TF-0226"
@@ -27029,12 +27050,7 @@
         "TF-0240",
         "TF-0241"
       ],
-      "ready": [
-        "TF-0227",
-        "TF-0228",
-        "TF-0229",
-        "TF-0230"
-      ],
+      "ready": [],
       "review_needed": []
     },
     "evergreen_open_goals": [
@@ -27066,10 +27082,6 @@
       "TF-0144",
       "TF-0151",
       "TF-0226",
-      "TF-0227",
-      "TF-0228",
-      "TF-0229",
-      "TF-0230",
       "TF-0231",
       "TF-0232",
       "TF-0233",
@@ -27082,20 +27094,15 @@
       "TF-0240",
       "TF-0241"
     ],
-    "ready": [
-      "TF-0227",
-      "TF-0228",
-      "TF-0229",
-      "TF-0230"
-    ],
+    "ready": [],
     "review_needed": []
   },
   "summary": {
     "blocked_count": 12,
-    "done_count": 194,
+    "done_count": 198,
     "edge_count": 413,
     "node_count": 241,
-    "open_count": 40,
+    "open_count": 36,
     "review_needed_count": 0
   },
   "tree_edges": [

@@ -1,0 +1,94 @@
+{
+  "applied_at": "2026-09-22T09:25:58.696614Z",
+  "base_graph_hash": "ef5a6e2b676c4534b9cdd462de1ea0fafd31905499a3a228100ab18089ba4388",
+  "base_summary": {
+    "edge_count": 413,
+    "node_count": 241,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "git diff（2026-09-22）：+25/−1，唯一行为变化在 shadow-census.ts:459",
+          "提交 1000fdbbb：git show --stat 恰好 2 个文件（shadow-census.ts、shadow-census.test.ts）",
+          "pnpm --dir openclaw_runtime exec vitest run src/agents/shadow-census.test.ts：8 passed / 0 failed（含新增「provider id 不能当 adapter owner」用例）",
+          "TF-0030 状态与 progress 未变（proposed / 0）"
+        ],
+        "progress": 100,
+        "status": "done"
+      },
+      "id": "TF-0228"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "提交 db29990af：qa-project-assessment / qa-review-report / qa-closing-verdict / qa-synthesis-roadmap 四份入库；前三份头部各加一行「输入，已被综合」标注",
+          "docs/dev/handoffs/LATEST.md：新首段「当前接力：实习展示收尾（2026-09-22，D7）」；09-21 段改标「历史」，TF-0030 口径改为「proposed，依赖已满足、todo ready，未开工未验收」。全文对「自动转 ready」的唯一剩余命中是该纠正句本身对旧措辞的引用",
+          "engineering-product-node-plan-20260921.md、runtime-convergence/AGENT-START.md：各 +2 行（头部一行标注 + 空行），正文未改；LF 保持，diff 无 CR",
+          "runtime-convergence/STATUS.md 未加注记：tests/unit/runtime-authority-convergence-control-pack.test.ts 断言其为纯 frontmatter、不含 '# '、正文为空；实测加一行即 1 failed，revert 后 8/8 passed。偏差见 deviations 记录",
+          "git status 干净"
+        ],
+        "progress": 100,
+        "status": "done"
+      },
+      "id": "TF-0229"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "提交 29b2fd733：HANDOFF-tf0029-product-convergence-20260921.md:86 改为「key 见环境变量 SENSEAUDIO_API_KEY」，单文件单行改动",
+          "工作树扫描 docs/ artifacts/（sk- 前缀 32+ 位、已知片段、AKIA、ghp_、xox*、PRIVATE KEY）：0 个真实命中；仅 artifacts/local-quarantine-20260911/verseshell-runtime/src/safety.rs 的脱敏测试夹具（AWS 文档示例 key 与空 PEM）",
+          "git grep 已知片段：工作树 0 命中；HEAD~1 及更早历史仍含（用户裁定不轮换、不重写历史；仓库或演示包公开即轮换）"
+        ],
+        "progress": 100,
+        "status": "done"
+      },
+      "id": "TF-0230"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "acceptance_criteria": [
+          "git status 干净（含 docs 与 openclaw_runtime/src）",
+          "docs/dev/handoffs/LATEST.md 首段不再出现「自动转 ready」，改为「TF-0030 = proposed，依赖已满足、todo ready，未开工未验收」",
+          "engineering-product-node-plan-20260921.md、AGENT-START.md 头部各有一行日期与适用范围标注，且 git diff 仅限该行；STATUS.md 因守卫测试不得含注记，改由 AGENT-START.md 与综合规划说明（2026-09-22 按实测修订）",
+          "HANDOFF-tf0029-product-convergence-20260921.md 不再含明文 key；对 docs/ artifacts/ 的密钥扫描 0 命中",
+          "本提案（D7 + 收尾里程碑）已 proposal-apply，validate 通过"
+        ],
+        "evidence": [
+          "提交序列：1000fdbbb（TF-0228）→ b2a406987（任务图）→ 29b2fd733（TF-0230）→ db29990af（TF-0229）；git status 干净",
+          "tests/unit/runtime-authority-convergence-control-pack.test.ts 8/8 passed（STATUS.md 未改）",
+          "task_forest validate 校验通过；export 已生成"
+        ],
+        "progress": 100,
+        "status": "done",
+        "summary": "已完成（2026-09-22）：三件事全部以独立提交落地——shadow-census 独立 commit 1000fdbbb；四份 QA/规划文档 + LATEST 收尾接力 + 两份旧文档日期标注 db29990af；交接文档 key → 环境变量引用 29b2fd733。任务图提案 b2a406987 已应用（D7 + 里程碑 17 节点 + 冻结注记），validate 通过。一处偏差：STATUS.md 受守卫测试保护不能加注记，改由 AGENT-START.md 与综合规划说明其时点。工作树干净，阶段 1 可开工。原摘要：三件事：提交未提交的 shadow-census 改动（独立 commit）；提交四份 QA/规划文档并统一口径（LATEST 首段改口、旧状态文档只加日期与适用范围一行）；把交接文档里的明文 API key 改成环境变量引用并扫描 docs/ 与 artifacts/。本阶段不改任何源码逻辑、不改 STATUS.md 正文、不动 tf0009 守卫。"
+      },
+      "id": "TF-0227"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "correction": "撤销对 STATUS.md 的改动（8/8 测试恢复绿）；其时点与适用范围改写在 AGENT-START.md 头部与 docs/dev/qa-synthesis-roadmap-20260922.md §1/§4/§6；TF-0227 验收条目第 3 条按实测修订。",
+        "created_at": "2026-09-22T09:25:58.360591Z",
+        "id": "TFD-status-md-guard-0922",
+        "kind": "acceptance_criterion_infeasible",
+        "reason": "规划时未核对该文件的守卫测试；守卫的意图（STATUS 只放机器可读元数据）与收尾原则（不改 STATUS 正文）一致，应服从守卫而不是改测试。",
+        "related_task_ids": [
+          "TF-0227",
+          "TF-0229"
+        ],
+        "summary": "阶段 0 原验收要求给 runtime-convergence/STATUS.md 头部加一行日期与适用范围标注；实测该文件受 tests/unit/runtime-authority-convergence-control-pack.test.ts 保护（纯 frontmatter、不含 '# '、正文为空），加任何一行即测试红。"
+      }
+    }
+  ],
+  "created_at": "2026-09-22T09:25:58.342970Z",
+  "proposal_id": "TFP-showcase-closing-phase0-closeout-20260922",
+  "rationale": "阶段 0（TF-0227）三个子任务全部落地并有提交与测试证据：shadow-census 独立提交 1000fdbbb（8/8 测试）；四份 QA/规划文档、LATEST 收尾接力与两份旧文档的日期标注提交 db29990af；交接文档 key 改为环境变量引用提交 29b2fd733（扫描 0 命中）；任务图提案 b2a406987 已应用并 validate 通过。一处执行偏差如实登记：runtime-convergence/STATUS.md 受 control-pack 守卫测试保护（纯 frontmatter、不得含 '# '、正文为空），实测加一行即红，故未加注记，其时点标注改在 AGENT-START.md 与综合规划中说明。按用户 2026-09-08 的日常授权直接收口并汇报。",
+  "session_id": "qa-synthesis-20260922",
+  "status": "applied"
+}
