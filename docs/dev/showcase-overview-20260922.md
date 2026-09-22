@@ -2,9 +2,11 @@
 
 阶段 2 材料草稿；本次先由 TF-0234 固化限制栏，演示包、贡献归属和封存尚未验收。方向以 [综合规划](qa-synthesis-roadmap-20260922.md) 为准。
 
+分工口径（2026-09-22 裁定）：**agent 是主线开发者，用户是发布者。** 本页与贡献归属页的内容由 agent 从提交、diff 与任务图记录重建，不需要用户口述。
+
 这是一个人与 AI 协作的「Agent 基座 + Harness + LLM 工程化」展示。在 Windows x64 上，agent 通过 ClawX 和一个真实 provider，在独立练习工作区执行测试、修正代码并再测试；操作者不是具名真人。[J-03 留档](../../artifacts/live-model-cdp/20260922-senseaudio-journey-J03/README.md)记录 3/3 测试通过、28 行 runtime 收据及 7 对 ContextReceipt/v1–WireReceipt/v1。收据开关仅在演示进程中显式开启，默认仍关。
 
-J-04 记录了一次 Runtime 审批决定后的命令执行；它没有完成编码任务，也缺少最终 `journey.json`，不能称为整条旅程验收通过。[审批证据与限制](../../artifacts/live-model-cdp/20260922-senseaudio-journey-J04/README.md)
+J-04 记录了一次 Runtime 审批边界：`exec.approval.requested` → host RPC 在 readOnly 下被拦 → agent 直连 Gateway 作出 allow-once 决定 → 命令在决定后继续。留档已含最终 `journey.json`（候选洁净证明、24 文件哈希清单、凭证扫描 0 命中）。该运行本身没有完成编码任务——readOnly 工作区不允许写入，这是权限边界的预期结果，不是失败。[审批证据与限制](../../artifacts/live-model-cdp/20260922-senseaudio-journey-J04/README.md)
 
 ## 限制栏（对应 TF-0234 五项裁定）
 

@@ -46,7 +46,7 @@
 | 未提交 shadow-census | 讲收据才提交 | 提交，独立 commit | 提交；两个生产调用点已传 `adapterId: model.api`，不会回归 J-02 | **提交，独立 commit，措辞"TF-0030 局部增量，普查未完成"。** |
 | 停的判据 | 旅程通 + 失败可解释 + 收据默认关写明 | + 陌生人 30 分钟复现 | + 通电一次 + 边界一次；陌生人复现降为加分项 | **采 G**。30 分钟复现不现实（代理 7897、key、dist 三件套、Gateway 重启时序，作者的 agent 都跑了多轮）。改为"作者能用仓库内 driver 在最终 HEAD 重跑；读者能离线核对产物"。 |
 | 定调文档 §6 的 tf0009 守卫迁移 | 未提 | 未提 | 明确移出收尾 | **移出**。这是状态语义变更，展示不需要。 |
-| 是否新建 Task Forest 节点 | 不新建 | 不新建 | 不新建 | **只新建一个决策节点 D7**（仿 TF-0224 的 D6 形式，done/0），记录"实习展示收尾边界"，防止下一个接力 agent 重开 RC 链。不建任何工作节点。 |
+| 是否新建 Task Forest 节点 | 不新建 | 不新建 | 不新建 | **只新建决策节点**（仿 TF-0224 的 D6 形式，done/0）：D7 记录"实习展示收尾边界"，防止下一个接力 agent 重开 RC 链；D8 记录角色与自动收口策略（2026-09-22 追加）。不建任何工作节点。 |
 | 演示主路径"七成" | 给出 | 拒绝复述 | 用事实表 | **不用百分比**，用 §3 事实表。 |
 
 ### 1.3 本轮新增发现（各 QA 均未覆盖）
@@ -96,7 +96,7 @@
 | 0.2 | 提交 shadow-census（独立 commit：`fix(rc02): wire owner must be a named adapter; census incomplete`） | 工作树无源码改动 | agent |
 | 0.3 | 提交 E/F/G + 本文（一个 docs commit），头部各加一行"输入/历史/入口"标注 | `git status` 干净（J-02 驱动会记录 `dirty`） | agent |
 | 0.4 | LATEST.md 首段改口："TF-0030 = proposed，依赖已满足、todo ready，未开工未验收"；给 AGENT-START.md / A 文档头部各加日期与适用范围一行，**不改正文**。STATUS.md **不能加任何注记**：`tests/unit/runtime-authority-convergence-control-pack.test.ts` 断言它是纯 frontmatter、不含 `# `、正文为空（实测加一行即红）——其时点标注改写在 AGENT-START.md 与本文 §1 表 | 四份文档不再互相当放行依据；control-pack 测试 8/8 绿 | agent |
-| 0.5 | Task Forest：经官方 CLI 应用提案 `TFP-showcase-closing-program-20260922`——D7 决策节点 + 收尾里程碑（4 阶段 / 11 子任务，各带开发要求与验收判据）+ RC 链三个入口节点的冻结注记；不动任何既有节点状态 | proposal-apply 成功；validate 通过；export 成功 | agent（用户确认后应用） |
+| 0.5 | Task Forest：经官方 CLI 应用提案 `TFP-showcase-closing-program-20260922`——D7 决策节点 + 收尾里程碑（4 阶段 / 11 子任务，各带开发要求与验收判据）+ RC 链三个入口节点的冻结注记；不动任何既有节点状态 | proposal-apply 成功；validate 通过；export 成功 | agent（证据核对通过即自动应用，见 §6 收口策略） |
 
 **不做**：tf0009 守卫迁移、STATUS.md 正文、任何源码。
 
@@ -148,7 +148,7 @@ D7 决策（decision, done/0）  ←derived_from—  实习展示收尾（milest
 | --- | --- | --- |
 | 2.1 | **一页对外说明**（以 A 的场景为底、D 的出口）：定位一句、主线一句、三层护城河各一句并指向代码、四栏边界（跑过 / 只证明机制 / 未完成 / 范围外）、三句限制、演示日预案 | 每句能指到文件 |
 | 2.2 | 演示包：J-02 产物（journey.json、session.jsonl、前后哈希、截图）+ 1.1 的收据 dump 与 join 查询 + 1.2 的审批对 + 两个已修缺陷的提交 + 5 条尾项裁定 | 读者可离线核对全部哈希 |
-| 2.3 | 「个人 vs AI 贡献」一页：设计决策是什么、否决过哪些方案（TF-0131、TF-0076 NO-GO、AGENT-START NO-GO 横幅、TF-0007 撤回 done）、如何审查 AI 改动（验收器双执行者、判决只从磁盘读、禁凭证变量） | 回答"你做了什么"，不用目录体积 |
+| 2.3 | 「贡献归属」一页：**由 agent 从仓库记录重建**，不向用户提问——设计决策与取舍（TF-0131 因不改默认值被砍、TF-0076 成本 NO-GO、AGENT-START NO-GO 横幅、TF-0007 撤回 done）逐条指向提交或 diff；分工口径固定为「agent 是主线开发者、用户是发布者」；如何审查 AI 改动（验收器双执行者、判决只从磁盘读、禁凭证变量） | 每句可指向文件或提交号，不出现需要用户口述的内容 |
 | 2.4 | 更新 LATEST.md 首段为"收尾完成"接力，引用本文与演示包；README 三语只核对不改产品范围 | 下一个接力 agent 只读本文即可 |
 | 2.5 | 打 tag `showcase-20260924`（或实际日期）并 push；不打 release，不签名 | tag 指向最终 HEAD |
 
@@ -177,14 +177,24 @@ D7 决策（decision, done/0）  ←derived_from—  实习展示收尾（milest
 - **规则**：不再新增"当前状态"类文档；新信息写进 LATEST.md 首段或本文的"更新记录"。
 - **密钥**：任何文档不写 key；J-02 式"密钥扫描"以后覆盖 `docs/`。
 
+### 收口策略（2026-09-22 用户裁定，D8）
+
+角色固定：**agent 是主线开发者，用户是发布者。** 用户审查已完成且有证据的结果，不参与逐节点问答；任何验收口径都不得要求用户口述内容（贡献归属一页由 agent 从提交、diff、任务图历史与偏差账本重建）。
+
+**自动收口门**：某节点的每条验收判据都被直读磁盘核对通过、证据链完整、提案 `base_graph_hash` 未漂移、结论自洽时，agent 直接 `proposal-save` + `proposal-apply --yes`，随后 `validate`、`export`，并把状态与证据在同一个 change set 入库——不再等待用户确认 apply。该覆盖对本仓库显式生效，覆盖 task-forest skill 的默认"apply 前等用户确认"，并登记在 D8 节点与偏差账本。
+
+只有以下情形才停下询问用户：对外发布或公开仓库/产物、凭证轮换或新暴露、不可逆 git 操作、改动冻结的产品锁或默认值、声明真人证据、改动范围。自动收口是对证据的门，不是对自信的门：证据缺失、过期或互相矛盾的节点保持未完成，并把缺口写清楚。完整规则见 `harness/specs/rules/task-forest-autoclose-and-roles.md`。
+
 ---
 
-## 7. 需要用户拍板的根本问题（其余按授权由 agent 直接做）
+## 7. 需要用户拍板的事项（其余按授权由 agent 直接做）
 
 1. ~~key 轮换~~ → 已裁定不轮换（专用沉淀 key、仓库私有）；降为文档卫生。
-2. **确认改口**：A（完整产品）→ D（实习展示）以本文为准，写进 D7 节点——即确认应用提案 `TFP-showcase-closing-program-20260922`。这是状态语义变更，需要你一句确认。
-3. ~~展示时仓库/产物是否公开~~ → 已裁定当前不公开；若将来公开，key 轮换成为强制项（已写入节点 non_goals/残余风险）。
-4. **Phase 3 最小审批桥做不做**：唯一可能碰产品代码的项；不做也能收尾。节点已建为 proposed，可随时 deprecated。
+2. ~~确认改口 A → D 需用户一句确认~~ → **2026-09-22 已裁定**：改口本身、提案应用与节点收口都不再需要用户确认（见 §6 收口策略）；D7/D8 决策节点即为登记。
+3. ~~展示时仓库/产物是否公开~~ → 已裁定当前不公开；若将来公开，key 轮换成为强制项（已写入节点 non_goals/残余风险）。**公开动作仍属于需要用户授权的清单。**
+4. ~~Phase 3 最小审批桥做不做~~ → 不影响收尾，节点保持 proposed，可随时 deprecated；**无需用户确认**。
+
+当前没有等待用户答复的阻塞项。后续只有在 §6 列出的六类外部授权情形出现时，才会停下来询问。
 
 ---
 
@@ -197,6 +207,8 @@ D7 决策（decision, done/0）  ←derived_from—  实习展示收尾（milest
 | `decideGatewayRpc` 拦 `exec.approval.*` | 切 fullAccess 再调；再不通写限制 |
 | bash 输出被篡改（09-20/21 已发生） | 所有判决与计数只用 Read 直读磁盘文件；J-02 `receipts` 以 `journey.json` 为准 |
 | 接力 agent 重开 RC 链 | D7 节点 + 本文 §5；LATEST.md 首段只指向本文 |
+| 自动收口被当成"降低标准" | 规则 spec R6 + §6：门设在证据上，缺证据/过期/矛盾的节点保持未完成并写明缺口；提案基线漂移时默认拒绝应用 |
+| 接力 agent 又把内容问题抛回给用户 | AGENTS.md 收口策略段 + 规则 R1/R2：验收口径不得要求用户口述；贡献归属等事实从提交、diff、任务图历史与偏差账本重建 |
 | 工作树被其他会话弄脏导致 driver 记 `dirty` | Phase 0.3 先清空；重跑前 `git status --porcelain -- src electron shared openclaw_runtime/src` 必须为空 |
 
 ---
@@ -220,3 +232,5 @@ D7 决策（decision, done/0）  ←derived_from—  实习展示收尾（milest
 - 2026-09-22（证据审批与 apply）：用户授权「证据充足就认定节点 apply」后，逐项复核 TF-0232/TF-0234 全部验收条件，提案基线与当前任务图一致，正式应用 `TFP-tf0234-tail-verdict-20260922`。两节点 done/100；TF-0233/TF-0231 为 in_progress，其余状态未改。额外只读原 SQLite 得到 28 行与 7 对 v1，全部 correlation digest 与留档一致；离线回放原始 workload 的 before 1 pass/2 fail exit 1、after 3/3 exit 0。validate 通过；check-landing exit 1，2 条提示均是本次 done 状态及证据尚未提交。阶段 1 未完成，不启用阶段 2 封存或 Phase 3。
 
 - 2026-09-22（J-04 接力，TF-0233）：J-04 的证据缺口已在干净候选上重跑补齐。`artifacts/live-model-cdp/20260922-senseaudio-journey-J04/` 现有 `journey.json`（候选 `a8c9f4b69`、`candidate.dirty=false`、`stopReason=approval-boundary-observed`）：运行时 `exec.approval.requested`（`node --test`，`allow-once`/`deny`）→ host `gateway.rpc` 在 readOnly 下被拦 → 直连 Gateway 的 pending 列表与 `exec.approval.resolve(allow-once)` ok → 决定后 12:22:43.838Z 的 exec toolResult 继续；`gateway-events.jsonl` 32 帧含 requested/resolved 两个事件。第一次未写 `journey.json` 的尝试原样保存在 `run-1-partial/`；哈希清单 24 文件、凭证扫描 0 命中；独立复核脚本 15/15 通过。**更正**：J-03 README 里「J-04 缺 journey.json」是 TF-0234 当时的时点记录，现状以本节与 J-04 README 为准。产品源码改动 0，收据 flag 只在驱动进程（12 行 / 3 对 v1）。阶段 1 出口条件已具备，待 Task Forest 收口提案确认；阶段 2/3 仍未开始。
+
+- 2026-09-22（角色与收口策略改口，D8）：用户裁定接力角色固定为 **agent 是主线开发者、用户是发布者**，并取消收口前的人工确认门——证据链完整、验收逐条核对通过、提案基线未漂移、结论自洽时，agent 自行 `proposal-save` + `proposal-apply --yes`，随后 validate/export 并把状态与证据同批入库。据此：(a) 新增规则 `harness/specs/rules/task-forest-autoclose-and-roles.md`（R1–R6）与任务规格 `harness/specs/tasks/task-forest-autoclose-policy.md`；(b) AGENTS.md 增加"Task Forest closure policy (project override)"段，显式覆盖 task-forest skill 的默认确认步骤；(c) 本节 §6 新增收口策略、§7 清空待拍板项（保留对外发布、凭证轮换、不可逆操作、产品锁/默认值、真人证据、范围变更六类外部授权）；(d) Phase 2.3 的贡献归属一页改为由 agent 从提交与 diff 重建，不再向用户提问；(e) Task Forest 新增 D8 决策节点，TF-0236 验收口径去掉用户依赖，TF-0238 改为自动应用。据此自动收口 TF-0233 与 TF-0231（阶段 1 出口达成），阶段 2/3 未开始。产品源码改动 0，产品锁与默认值未动。
