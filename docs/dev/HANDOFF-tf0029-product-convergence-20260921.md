@@ -83,7 +83,7 @@ Task Forest：**192 done / 13 blocked / 12 proposed / 7 deprecated**。人证桶
 
 RC 链之外，定调文档反复强调的**真正产品价值**：跑通一条 30-60 分钟的真实旅程——启动 ClawX Electron → 配 senseaudio provider（key 见下）→ 工作区真实编码任务 → 查 UI 结果 + 真实文件/日志/`run/receipt/effect`。执行链 `CDP/Playwright → Main/host-api → Gateway → OpenClaw → provider/工具 → 真实工作区结果`。前期可用 moyu 或临时小项目当负载，真实项目到位后替换。**别把 provider/CDP 集成错误留到最后才发现。**
 
-- senseaudio（用户授权可调）：`https://api.senseaudio.cn/v1`，model `senseaudio-s2-flash`，key `sk-zHgiSREEeoXDhEFzR7xo3Ql9mwQNT40jA0A0Dd27952747818d3d3aCeAa6863Da`。OpenAI 兼容。
+- senseaudio（用户授权可调）：`https://api.senseaudio.cn/v1`，model `senseaudio-s2-flash`，key 见环境变量 `SENSEAUDIO_API_KEY`（不写入任何文档；2026-09-22 起按 TF-0230 从本文移除）。OpenAI 兼容。
 - 已有起点：`artifacts/live-model-cdp/20260911-senseaudio-s2-flash/`（真实经过 ClawX 的 CDP 数据），补当前候选与收据链即可，别重造采集系统。
 
 ## 7. 硬边界（全程不得违反）
