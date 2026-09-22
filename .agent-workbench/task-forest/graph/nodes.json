@@ -15552,7 +15552,10 @@
     "difficulty": "medium",
     "display_order": 20,
     "estimated_total_minutes": 360,
-    "evidence": [],
+    "evidence": [
+      "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/README.md",
+      "docs/dev/showcase-overview-20260922.md（限制栏草稿）"
+    ],
     "execution_hints": [
       "先 git status 确认干净，再重建 dist 三件套，再跑 driver",
       "收据计数只从 journey.json 用 Read 读；join 查询用 node:sqlite 只读打开 openclaw-source-state/state/openclaw.sqlite"
@@ -15573,11 +15576,11 @@
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "in_progress",
     "success_metrics": [],
-    "summary": "J-03：带 OPENCLAW_RC02_SHADOW_CENSUS=1 与 OPENCLAW_RC03_SEAL=1 重跑 J-02 编码旅程；J-04：非 fullAccess 工作区下让 exec.approval.requested 发生并经 gateway.rpc 决定；尾项复核：5 条逐条给「仍在 / 已消失 / 不修理由」。两条实跑的结果无论好坏都原样进材料——未注册 producer、写入失败、被 decideGatewayRpc 拦住，都是「收据链与审批链在真实调用上的行为」证据，不补注册、不改代码去把它做干净。",
+    "summary": "J-03 和五条尾项已有可核对证据；J-04 原始边界发生，但缺最终 journey.json 和 candidate.dirty 的可核对证明，不能关闭本阶段。下一步仅补齐/核对 J-04 归档（如无法从原始资料证明则按干净候选重跑），不得伪造原运行的洁净状态。阶段 2 草稿已接收五项限制，但未推进材料、封存或可选功能。",
     "title": "阶段 1 · 通电与边界（两次真实执行，零功能代码）",
-    "updated_at": "2026-09-22T08:15:57.467611Z"
+    "updated_at": "2026-09-22T11:51:14.335440Z"
   },
   "TF-0232": {
     "acceptance_criteria": [
@@ -15604,7 +15607,11 @@
     "difficulty": "medium",
     "display_order": 10,
     "estimated_total_minutes": 120,
-    "evidence": [],
+    "evidence": [
+      "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/journey.json：candidate、前后测试输出、28 行收据及补录说明。",
+      "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/receipt-join.json：逐条重计得到 7 个 v1 context/wire 对。",
+      "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/tail-review.json：原 13 个清单文件哈希一致、calc.after 一致，J-03/J-04 文本及本次文档凭证模式扫描 0；README 三条限制完整。"
+    ],
     "execution_hints": [
       "HTTP_PROXY/HTTPS_PROXY=http://127.0.0.1:7897",
       "计数与判决只用 Read 直读 journey.json",
@@ -15618,7 +15625,7 @@
       "不把开关写进 prod-flags-catalog 或任何默认配置"
     ],
     "priority": 1,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "把「上下文可归因」从源码和测试变成一张评委能看见的表：ContextReceipt/v1 与 WireReceipt/v1 成对、可按 correlation_digest join。",
     "remaining_minutes_max": null,
@@ -15629,11 +15636,11 @@
       "产物目录 artifacts/live-model-cdp/<日期>-senseaudio-journey-J03/，README 写明开关为演示显式开、默认仍关"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [],
-    "summary": "两条收据写入路径都在生产链上，只被默认关的环境变量门住：OPENCLAW_RC03_SEAL（rc03-seal-hook.ts:110-133，经 extensions.ts:337 → context-orchestrator.ts:341-355 持久化 ContextReceipt/v1）与 OPENCLAW_RC02_SHADOW_CENSUS（shadow-census.ts:255-259，经 stream-resolution.ts:307 → provider-transport-fetch.ts:864 持久化 WireReceipt/v1），两者以 correlationDigest 关联（stream-resolution.ts:311-329）。driver.mjs:65 把进程环境整体传给 Electron，config-sync.ts:1054/1080 再整体铺进 Gateway，enhancement kill switch 默认关。两条路径注释均写明纯观测、不改发送行为，所以开关不触碰 defaultOn。预期非 0；若 assertSealProducersRegistered 报未注册 producer 或写入失败，原样记录。",
+    "summary": "J-03 已完成并于 TF-0234 接力时直读复核：候选 b6c736191，dirty=false，测试 3/3，calc.js.after 哈希一致；runtime_receipts=28，context/v1 与 wire/v1 各 7，同 correlation_digest 的 v1 对 7。收据计数为原驱动异常后的同库只读补录，非新的模型运行；产品默认仍关。",
     "title": "J-03：在最终 HEAD 带收据开关重跑编码旅程，拿到真实模型调用上的非 0 收据",
-    "updated_at": "2026-09-22T08:15:57.468640Z"
+    "updated_at": "2026-09-22T11:51:14.335440Z"
   },
   "TF-0233": {
     "acceptance_criteria": [
@@ -15660,7 +15667,11 @@
     "difficulty": "medium",
     "display_order": 20,
     "estimated_total_minutes": 120,
-    "evidence": [],
+    "evidence": [
+      "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/approval-boundary.json：host 拦截与直连 Gateway 决定。",
+      "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/session.jsonl：10:25:24.410Z exec 结果晚于 10:25:22.830Z resolve；编码任务未完成。",
+      "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/tail-review.json：原 J-04 清单 7/7 一致，缺 journey.json 的边界明确。"
+    ],
     "execution_hints": [
       "与 J-03 共用重建后的 dist；可在 J-03 之后同一会话执行",
       "计数与判决只用 Read 直读 journey.json"
@@ -15684,11 +15695,11 @@
       "README 写明「ClawX 无应用内审批 UI；本次决定经 host RPC 由 agent 驱动作出」"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "in_progress",
     "success_metrics": [],
-    "summary": "运行时 gateway 已暴露 exec.approval.request / waitDecision / resolve / list / get 与 requested / resolved 事件；ClawX 的 electron/ src/ shared/ 对 exec.approval 零引用，所以非 fullAccess 下每条非白名单命令都挂在 exec.approval.requested 上直到 stuck-session 恢复（J-02 run5，377 秒）。本子任务不建 UI：用 J-02 同款驱动创建非 fullAccess 工作区 → 下达同一任务 → 观察 requested 事件 → 经 host gateway.rpc（electron/services/gateway-api.ts:402）调 exec.approval.list 看到 pending → exec.approval.resolve 批准 → 轮询 chat.history 确认执行继续。不确定点：decideGatewayRpc（gateway-api.ts:413）可能在非 fullAccess 下拦住这两个方法；若拦，切 fullAccess 再调，仍能证明运行时接受了一次决定；再不通则写成限制。",
+    "summary": "已有 J-04 readOnly host gate 拦截、driver 直连 Gateway resolve 和随后的 exec toolResult；本轮直读复核原 7 文件哈希一致、执行时间晚于决定。未完成：journey.json 缺失，candidate.dirty=false 目前只有 README 叙述，原始可核对证明未整理；不冒充完整 J-04 验收，且不把直连 Gateway 写成 host RPC 放行。",
     "title": "J-04：非 fullAccess 工作区下让审批边界发生一次（挂起 → 经 gateway.rpc 决定 → 继续）",
-    "updated_at": "2026-09-22T08:15:57.469152Z"
+    "updated_at": "2026-09-22T11:51:14.335440Z"
   },
   "TF-0234": {
     "acceptance_criteria": [
@@ -15711,11 +15722,20 @@
     "created_at": "2026-09-22T08:15:57.470178Z",
     "deprecated_at": null,
     "desired_outcomes": [],
-    "deviations": [],
+    "deviations": [
+      "TFD-4f2314a922",
+      "TFD-4f2314a922",
+      "TFD-4f2314a922"
+    ],
     "difficulty": "low",
     "display_order": 30,
     "estimated_total_minutes": 90,
-    "evidence": [],
+    "evidence": [
+      "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/README.md：五行裁定，每行附当前 HEAD 状态、来源和代码坐标。",
+      "docs/dev/showcase-overview-20260922.md：限制栏覆盖全部五项；阶段 2 草稿，不代表材料/封存节点验收。",
+      "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/tail-review-tests.json：3 files / 43 passed / 0 failed / 0 skipped，exit 0。",
+      "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/tail-review.json：源码指纹、原清单 13/13 + 7/7、两张截图、before 3 / after 52 文件分类、无产品源码 dirty。"
+    ],
     "execution_hints": [],
     "id": "TF-0234",
     "kind": "subtask",
@@ -15725,7 +15745,7 @@
       "不为 ② 建 UI"
     ],
     "priority": 2,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "把 J-02 README 里的 5 条未修观察从「交接清单」变成有结论的表，只修演示会碰到且单文件可改的那一条。",
     "remaining_minutes_max": null,
@@ -15735,11 +15755,11 @@
       "若修 ⑤：单文件 diff、前后截图、一条单测或 e2e；否则写限制"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [],
-    "summary": "预裁定（待 J-03 复跑证实）：① sessions.history 读 ~/.openclaw 而非 openclaw-source-state（paths.ts:71、sessions-api.ts）→ 不修，聊天走 Gateway RPC 不受影响、演示不从历史回放；② 非 fullAccess 挂起 → 由 J-04 演示，写「无应用内审批 UI」；③ Gateway 连上 8 秒内 reload 被跳过 / Windows 直接重启（manager.ts:861）→ 不修，驱动已 gateway.restart；④ 工作区创建副作用：现码只种 resources/workspace-harness 模板（workspaces-api.ts:560），git init 已 grep 不到 → 不再当现存缺陷，复跑再看；⑤ 工作区切换后头部仍显示默认工作区/Read only → 只有在 J-03 截图里可见时才修，且只修 workspace.permissionMode 绑定一处（ChatInput.tsx 约 3603 行附近），牵到大改就不修写限制。",
+    "summary": "当前 b6c736191 上五条尾项全部完成裁定并同步对外说明限制栏：①历史路径不修；②无应用内 Runtime 审批入口仍在；③保留显式重启；④Runtime bootstrap 仍 git init，纠正已消失预判；⑤截图陈旧属直接 host 调用绕过 renderer store 的证据，现有权限绑定存在，单改标签不能解决，按范围不修。产品源码改动 0，专项 43/43；未执行新的 Electron/provider 验收。",
     "title": "五条演示尾项在最终 HEAD 逐条复核并裁定（仍在 / 已消失 / 不修理由）",
-    "updated_at": "2026-09-22T08:15:57.470178Z"
+    "updated_at": "2026-09-22T11:51:14.335440Z"
   },
   "TF-0235": {
     "acceptance_criteria": [

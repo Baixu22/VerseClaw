@@ -1,0 +1,89 @@
+{
+  "applied_at": "2026-09-22T11:51:14.421942Z",
+  "base_graph_hash": "919544cc161625b955bc56c8c9cbd048590b790e0e16f2859656498295939e17",
+  "base_summary": {
+    "edge_count": 413,
+    "node_count": 241,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/journey.json：candidate、前后测试输出、28 行收据及补录说明。",
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/receipt-join.json：逐条重计得到 7 个 v1 context/wire 对。",
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/tail-review.json：原 13 个清单文件哈希一致、calc.after 一致，J-03/J-04 文本及本次文档凭证模式扫描 0；README 三条限制完整。"
+        ],
+        "progress": 100,
+        "status": "done",
+        "summary": "J-03 已完成并于 TF-0234 接力时直读复核：候选 b6c736191，dirty=false，测试 3/3，calc.js.after 哈希一致；runtime_receipts=28，context/v1 与 wire/v1 各 7，同 correlation_digest 的 v1 对 7。收据计数为原驱动异常后的同库只读补录，非新的模型运行；产品默认仍关。"
+      },
+      "id": "TF-0232"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "TFD-4f2314a922",
+          "TFD-4f2314a922",
+          "TFD-4f2314a922"
+        ],
+        "evidence": [
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/README.md：五行裁定，每行附当前 HEAD 状态、来源和代码坐标。",
+          "docs/dev/showcase-overview-20260922.md：限制栏覆盖全部五项；阶段 2 草稿，不代表材料/封存节点验收。",
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/tail-review-tests.json：3 files / 43 passed / 0 failed / 0 skipped，exit 0。",
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/tail-review.json：源码指纹、原清单 13/13 + 7/7、两张截图、before 3 / after 52 文件分类、无产品源码 dirty。"
+        ],
+        "progress": 100,
+        "status": "done",
+        "summary": "当前 b6c736191 上五条尾项全部完成裁定并同步对外说明限制栏：①历史路径不修；②无应用内 Runtime 审批入口仍在；③保留显式重启；④Runtime bootstrap 仍 git init，纠正已消失预判；⑤截图陈旧属直接 host 调用绕过 renderer store 的证据，现有权限绑定存在，单改标签不能解决，按范围不修。产品源码改动 0，专项 43/43；未执行新的 Electron/provider 验收。"
+      },
+      "id": "TF-0234"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/approval-boundary.json：host 拦截与直连 Gateway 决定。",
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/session.jsonl：10:25:24.410Z exec 结果晚于 10:25:22.830Z resolve；编码任务未完成。",
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/tail-review.json：原 J-04 清单 7/7 一致，缺 journey.json 的边界明确。"
+        ],
+        "status": "in_progress",
+        "summary": "已有 J-04 readOnly host gate 拦截、driver 直连 Gateway resolve 和随后的 exec toolResult；本轮直读复核原 7 文件哈希一致、执行时间晚于决定。未完成：journey.json 缺失，candidate.dirty=false 目前只有 README 叙述，原始可核对证明未整理；不冒充完整 J-04 验收，且不把直连 Gateway 写成 host RPC 放行。"
+      },
+      "id": "TF-0233"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/README.md",
+          "docs/dev/showcase-overview-20260922.md（限制栏草稿）"
+        ],
+        "status": "in_progress",
+        "summary": "J-03 和五条尾项已有可核对证据；J-04 原始边界发生，但缺最终 journey.json 和 candidate.dirty 的可核对证明，不能关闭本阶段。下一步仅补齐/核对 J-04 归档（如无法从原始资料证明则按干净候选重跑），不得伪造原运行的洁净状态。阶段 2 草稿已接收五项限制，但未推进材料、封存或可选功能。"
+      },
+      "id": "TF-0231"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "correction": "以原始文件清单、截图和完整调用路径改判；保留限制，源码零改动，不扩大范围或将截图问题写成已修复。",
+        "created_at": "2026-09-22T11:44:45.754Z",
+        "id": "TFD-4f2314a922",
+        "kind": "acceptance_assumption_correction",
+        "reason": "J-03 after 实含 .git；Runtime workspace.ts:797/1000 仍有初始化。ChatInput:1133 已绑定权限，driver 直接 hostInvoke 未更新 renderer store。",
+        "related_task_ids": [
+          "TF-0234"
+        ],
+        "summary": "五项预裁定中的 git init 已无与单处 permissionMode 绑定假设不成立。"
+      }
+    }
+  ],
+  "created_at": "2026-09-22T11:45:06.295457Z",
+  "proposal_id": "TFP-tf0234-tail-verdict-20260922",
+  "rationale": "按当前交接只执行 TF-0234 五条尾项复核；补登记已完成的 J-03 前置证据。J-04 缺 journey.json 与可核对的 candidate.dirty 记录，故阶段 1 保持 in_progress，阶段 2/3 与冻结 RC 链不推进。产品源码无改动。",
+  "session_id": "tf0234-relay-20260922",
+  "status": "applied"
+}

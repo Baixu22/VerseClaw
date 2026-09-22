@@ -215,3 +215,6 @@ D7 决策（decision, done/0）  ←derived_from—  实习展示收尾（milest
 
 - 2026-09-22：初版。综合 A–I 九项输入；新增 key 泄露发现；裁定 §1.2 八项分歧；给出 3 日时间盒。
 - 2026-09-22（同日）：用户裁定 key 不轮换、仓库不公开；24 个开放节点去留裁定与 17 个新节点（D7 + 里程碑 + 4 阶段 + 11 子任务）已保存为提案 `TFP-showcase-closing-program-20260922`，待确认后应用。
+- 2026-09-22（TF-0234 接力复核）：阶段 0 已完成，当前 HEAD `b6c736191`。J-03 已留档 3/3 测试与 7 对 v1 收据；J-04 只有 host 拦截、直连 Gateway 决定和随后执行的证据，缺最终 `journey.json`，阶段 1 尚未整体验收。本轮在 J-03 README 完成五行裁定，并将限制同步至 [对外说明草稿](showcase-overview-20260922.md)；没有产品源码改动或新的 provider 调用。**纠正 §4 Phase 1 的两项预判**：④ Runtime `workspace.ts:797` / `1000` 仍执行 bootstrap `git init`，J-03 的 after 清单确有 `.git/**`，不能写「已消失」；⑤ J-03 两张截图仍显示旧工作区/权限，但现有 ChatInput 已绑定 `workspace.permissionMode`，驱动直接 hostInvoke 未经过 renderer store 更新，单改标签不解决状态差异，按范围保留限制。①③不修，②仍在；五项完整证据见 J-03 README。专项 43/43、原哈希 J-03 13/13 与 J-04 7/7 通过。Task Forest 收口另存提案等待确认；阶段 2 草稿不代表材料/封存节点完成。
+
+- 2026-09-22（证据审批与 apply）：用户授权「证据充足就认定节点 apply」后，逐项复核 TF-0232/TF-0234 全部验收条件，提案基线与当前任务图一致，正式应用 `TFP-tf0234-tail-verdict-20260922`。两节点 done/100；TF-0233/TF-0231 为 in_progress，其余状态未改。额外只读原 SQLite 得到 28 行与 7 对 v1，全部 correlation digest 与留档一致；离线回放原始 workload 的 before 1 pass/2 fail exit 1、after 3/3 exit 0。validate 通过；check-landing exit 1，2 条提示均是本次 done 状态及证据尚未提交。阶段 1 未完成，不启用阶段 2 封存或 Phase 3。

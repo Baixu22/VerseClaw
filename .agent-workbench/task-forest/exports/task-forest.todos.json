@@ -9,6 +9,33 @@
       "why_this_task": ""
     },
     "blocked_by": [],
+    "confidence": 0.6,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "low",
+    "id": "TF-0241",
+    "kind": "subtask",
+    "next_action": "git diff --stat 恰好 1 个文件",
+    "priority": 3,
+    "progress": 0.0,
+    "purpose": "演示截图里不再出现「默认工作区 / Read only」的错误头部。",
+    "ready": true,
+    "remaining_minutes_max": 60,
+    "remaining_minutes_min": 60,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "工作区切换后头部不刷新：只修 permissionMode 绑定一处（仅当尾项复核判定仍在且演示可见）"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
     "confidence": 0.88,
     "context_tags": [],
     "desired_outcomes": [],
@@ -93,36 +120,9 @@
     "ready": true,
     "remaining_minutes_max": 360,
     "remaining_minutes_min": 360,
-    "status": "proposed",
+    "status": "in_progress",
     "success_metrics": [],
     "title": "阶段 1 · 通电与边界（两次真实执行，零功能代码）"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [],
-    "confidence": 0.7,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "medium",
-    "id": "TF-0232",
-    "kind": "subtask",
-    "next_action": "HTTP_PROXY/HTTPS_PROXY=http://127.0.0.1:7897",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "把「上下文可归因」从源码和测试变成一张评委能看见的表：ContextReceipt/v1 与 WireReceipt/v1 成对、可按 correlation_digest join。",
-    "ready": true,
-    "remaining_minutes_max": 120,
-    "remaining_minutes_min": 120,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "J-03：在最终 HEAD 带收据开关重跑编码旅程，拿到真实模型调用上的非 0 收据"
   },
   {
     "alignment": {
@@ -147,7 +147,7 @@
     "ready": true,
     "remaining_minutes_max": 120,
     "remaining_minutes_min": 120,
-    "status": "proposed",
+    "status": "in_progress",
     "success_metrics": [],
     "title": "J-04：非 fullAccess 工作区下让审批边界发生一次（挂起 → 经 gateway.rpc 决定 → 继续）"
   },
@@ -377,35 +377,6 @@
   },
   {
     "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0234"
-    ],
-    "confidence": 0.6,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "low",
-    "id": "TF-0241",
-    "kind": "subtask",
-    "next_action": "先完成依赖：TF-0234",
-    "priority": 3,
-    "progress": 0.0,
-    "purpose": "演示截图里不再出现「默认工作区 / Read only」的错误头部。",
-    "ready": false,
-    "remaining_minutes_max": 60,
-    "remaining_minutes_min": 60,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "工作区切换后头部不刷新：只修 permissionMode 绑定一处（仅当尾项复核判定仍在且演示可见）"
-  },
-  {
-    "alignment": {
       "fit": "aligned",
       "fit_confidence": 0.98,
       "user_goal": "在无真人测试成本时保证流程与实现完整",
@@ -572,35 +543,6 @@
     "status": "blocked",
     "success_metrics": [],
     "title": "修复 GitHub #22：恢复 Docker sandbox 基础镜像入口"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0232"
-    ],
-    "confidence": 0.8,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "low",
-    "id": "TF-0234",
-    "kind": "subtask",
-    "next_action": "先完成依赖：TF-0232",
-    "priority": 2,
-    "progress": 0.0,
-    "purpose": "把 J-02 README 里的 5 条未修观察从「交接清单」变成有结论的表，只修演示会碰到且单文件可改的那一条。",
-    "ready": false,
-    "remaining_minutes_max": 90,
-    "remaining_minutes_min": 90,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "五条演示尾项在最终 HEAD 逐条复核并裁定（仍在 / 已消失 / 不修理由）"
   },
   {
     "alignment": {
