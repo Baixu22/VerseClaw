@@ -12,6 +12,12 @@ requiredProfiles:
 requiredRules:
   - backend-communication-boundary
   - comms-regression
+expectedUserBehavior:
+  - With the A4 pilot gate enabled, decisions are audited and the low-quality counter stays at or under the 10% graduation budget.
+  - Every audited decision is covered in shadow mode (sampling rate 1.0) before the audit is treated as a gate.
+  - When the low-quality rate exceeds 10%, the pilot responds with `degrade_to_audit_only` instead of spending the rest of the turn budget.
+  - A4 degrades first in the documented order (A4→A3→A5→A1), so the per-turn cumulative latency budget is respected.
+  - With the pilot flag off, decision outcomes and the audit surface are unchanged.
 requiredTests:
   - tests/unit/deprecation-counters.test.ts
   - tests/unit/performance-budgets.test.ts

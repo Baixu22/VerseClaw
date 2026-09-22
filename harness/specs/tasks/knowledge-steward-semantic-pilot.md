@@ -16,6 +16,7 @@ expectedUserBehavior:
   - The steward can never apply changes directly (canApplyDirectly: false remains a literal type).
 requiredProfiles:
   - fast
+  - comms
 requiredTests:
   - tests/unit/knowledge-steward-semantic-pass.test.ts
   - tests/unit/knowledge-steward-registry.test.ts

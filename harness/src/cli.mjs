@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import process from 'node:process';
 import { buildContext, formatContext } from './context.mjs';
-import { getChangedFiles, resolveDiffBase } from './git.mjs';
+import { getChangedFiles, resolveDefaultDiffBase, resolveDiffBase } from './git.mjs';
 import { PROFILES, selectSteps } from './profiles.mjs';
 import { writeReport } from './report.mjs';
 import { runStep } from './runner.mjs';
@@ -83,9 +83,10 @@ async function validate(specPath, options = {}) {
   const isScenario = (await loadScenarioSpecs()).some((entry) => entry.path === spec.path);
   const scenario = spec.data.scenario ? await findScenario(spec.data.scenario) : null;
   const shouldCheckDiff = !options.noDiff;
-  const changedFiles = shouldCheckDiff
-    ? await getChangedFiles(resolveDiffBase(options.since, spec.data.diffBase))
-    : [];
+  const diffBase = shouldCheckDiff
+    ? resolveDiffBase(options.since, spec.data.diffBase, await resolveDefaultDiffBase())
+    : '';
+  const changedFiles = shouldCheckDiff ? await getChangedFiles(diffBase) : [];
   const failures = [];
   const ownershipFiles = isScenario ? [] : changedFiles;
 
@@ -129,7 +130,7 @@ async function validate(specPath, options = {}) {
     ...classifyChangedPathOwnership(spec, scenario, ownershipFiles),
     checked: !isScenario && shouldCheckDiff,
   };
-  return { spec, scenario, changedFiles, failures, ownership };
+  return { spec, scenario, changedFiles, diffBase, failures, ownership };
 }
 
 async function explain(specPath, options = {}) {
@@ -289,6 +290,11 @@ async function main() {
     if (result.failures.length > 0) {
       console.error(result.failures.map((failure) => `- ${failure}`).join('\n'));
       return 1;
+    }
+    // An empty diff is a pass, but never a silent one: say what was compared so a
+    // green run is not mistaken for a validated change set.
+    if (result.diffBase && result.changedFiles.length === 0) {
+      console.log(`NOTE: no changed files since ${result.diffBase}; the changed-path ownership gate had nothing to check.`);
     }
     console.log(`Spec is valid: ${result.spec.path}`);
     return 0;

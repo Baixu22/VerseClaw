@@ -5,7 +5,12 @@ import path from 'node:path';
 import { promisify } from 'node:util';
 import { describe, expect, it } from 'vitest';
 
-import { getChangedFiles, assertDiffBase } from '../../harness/src/git.mjs';
+import {
+  assertDiffBase,
+  getChangedFiles,
+  resolveDefaultDiffBase,
+  resolveDiffBase,
+} from '../../harness/src/git.mjs';
 
 const execFileAsync = promisify(execFile);
 
@@ -104,6 +109,59 @@ describe('harness git changed files', () => {
       // A valid base still resolves and still reports real changes.
       await writeFile(path.join(repo, 'tracked.txt'), 'after\n');
       await expect(getChangedFiles('HEAD', repo)).resolves.toContain('tracked.txt');
+    } finally {
+      await rm(repo, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('harness default diff base', () => {
+  it('lets an explicit since, then a spec diffBase, then the branch default win', () => {
+    expect(resolveDiffBase('release/main', 'task-start', 'origin/feature')).toBe('release/main');
+    expect(resolveDiffBase(undefined, 'task-start', 'origin/feature')).toBe('task-start');
+    expect(resolveDiffBase(undefined, undefined, 'origin/feature')).toBe('origin/feature');
+    expect(resolveDiffBase(undefined, undefined)).toBe('origin/main');
+  });
+
+  it('falls back to origin/main when the branch has no upstream', async () => {
+    const repo = await mkdtemp(path.join(tmpdir(), 'clawx-harness-git-no-upstream-'));
+    try {
+      await git(repo, ['init']);
+      await git(repo, ['config', 'user.email', 'test@example.com']);
+      await git(repo, ['config', 'user.name', 'Test']);
+      await writeFile(path.join(repo, 'tracked.txt'), 'base\n');
+      await git(repo, ['add', '.']);
+      await git(repo, ['commit', '-m', 'base']);
+
+      await expect(resolveDefaultDiffBase(repo)).resolves.toBe('origin/main');
+    } finally {
+      await rm(repo, { recursive: true, force: true });
+    }
+  });
+
+  it('uses the branch upstream so the ownership gate sees only unpushed work', async () => {
+    // The shared integration branch diverges from origin/main by thousands of files;
+    // without this the bare validate command failed for every task spec.
+    const repo = await mkdtemp(path.join(tmpdir(), 'clawx-harness-git-upstream-'));
+    try {
+      await git(repo, ['init']);
+      await git(repo, ['config', 'user.email', 'test@example.com']);
+      await git(repo, ['config', 'user.name', 'Test']);
+      await writeFile(path.join(repo, 'tracked.txt'), 'base\n');
+      await git(repo, ['add', '.']);
+      await git(repo, ['commit', '-m', 'base']);
+      const trunk = (
+        await execFileAsync('git', ['rev-parse', '--abbrev-ref', 'HEAD'], { cwd: repo, encoding: 'utf8' })
+      ).stdout.trim();
+      await git(repo, ['checkout', '-b', 'feature']);
+      await git(repo, ['branch', '--set-upstream-to', trunk, 'feature']);
+      await writeFile(path.join(repo, 'feature.txt'), 'feature\n');
+      await git(repo, ['add', '.']);
+      await git(repo, ['commit', '-m', 'feature work']);
+
+      const base = await resolveDefaultDiffBase(repo);
+      expect(base).toBe(trunk);
+      expect(await getChangedFiles(base, repo)).toEqual(['feature.txt']);
     } finally {
       await rm(repo, { recursive: true, force: true });
     }

@@ -18,6 +18,13 @@ requiredRules:
   - renderer-main-boundary
   - backend-communication-boundary
   - comms-regression
+expectedUserBehavior:
+  - With the A1 pilot gate enabled, tool calls are served by the layered isolation path and the legacy fallback counter stays under the 5% graduation budget.
+  - Every built-in write-capable tool (write/edit/bash/apply_patch/exec/process) declares its `writeRiskProfile` and `risk`, so the registry rejects an undeclared write instead of running it.
+  - A trace written under the wrong namespace (for example `claw.a4.tool.choice` on an A1 recorder) is rejected rather than silently recorded.
+  - The shadow write-event recorder flags tools that write outside their `declared_paths`/`no_writes` contract.
+  - When the fallback rate exceeds 5%, the pilot responds with `degrade_to_legacy` instead of continuing to serve the isolated path.
+  - With the pilot flag off, tool execution, tracing, and write behaviour are unchanged.
 requiredTests:
   - tests/unit/tool-registration.test.ts
   - tests/unit/policy-light-snapshotter.test.ts
