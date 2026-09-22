@@ -12,6 +12,7 @@ import {
   attachShadowReceiptOptions,
   beginShadowModelCall,
   emitShadowCensus,
+  emitShadowWireReceipt,
   getShadowCensusDiagnostics,
   resetShadowCensusDiagnosticsForTest,
   wireBodyDigest,
@@ -152,6 +153,27 @@ describe("emitShadowCensus (RC-02 shadow receipts)", () => {
     const rows = store.list({ kind: "shadow_wire" });
     expect(rows).toHaveLength(1);
     expect(rows[0].runtime_mode).toBe("npm");
+  });
+
+  it("does not treat a provider id as an adapter owner", () => {
+    const result = emitShadowWireReceipt(
+      makeBody(),
+      { providerId: "anthropic", modelId: "claude-3-5-sonnet" },
+      {
+        enabled: true,
+        sourceRuntime: true,
+        receiptStore: {
+          put: () => ({ ok: true, duplicate: false, receiptId: "rcpt_test", inserted: true }),
+        },
+      },
+    );
+
+    expect(result.receipt).toBeNull();
+    expect(result.failed).toBe(true);
+    expect(getShadowCensusDiagnostics()).toMatchObject({
+      acceptanceReady: false,
+      failures: [{ phase: "wire-owner", code: "wire-owner-incomplete", count: 1 }],
+    });
   });
 
   it("fails the census when a shadow write cannot persist, without throwing (hard constraint 5)", () => {

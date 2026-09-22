@@ -456,7 +456,9 @@ export function emitShadowWireReceipt(
   const wireDigest = wireBodyDigest(body);
   let ownerCensus: WireOwnerCensus;
   try {
-    ownerCensus = buildWireOwnerCensus(body, input.adapterId ?? input.providerId);
+    // Owner coverage requires a named transport adapter. A provider id is not
+    // sufficient evidence because it does not identify the serializer/finalizer.
+    ownerCensus = buildWireOwnerCensus(body, input.adapterId);
   } catch {
     recordShadowCensusFailure('wire-owner', 'final-wire-body-invalid');
     return { receipt: null, failed: true };
