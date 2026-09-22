@@ -7,6 +7,7 @@ touchedAreas:
   - src/pages/Chat/index.tsx
   - src/pages/Chat/ChatMessage.tsx
   - src/stores/chat.ts
+---
 
 ## 压测维度
 

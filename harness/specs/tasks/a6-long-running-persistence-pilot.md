@@ -16,6 +16,12 @@ requiredProfiles:
 requiredRules:
   - backend-communication-boundary
   - comms-regression
+expectedUserBehavior:
+  - With the A6 pilot gate enabled, resume cycles verify their contract and any volatile mislabel blocks graduation instead of being averaged away.
+  - A resume that followed a rollback is marked `requiresReverification=true` rather than trusted as a clean continuation.
+  - The fingerprint lease is committed before the checkpoint, so a resumed run cannot adopt a stale fingerprint.
+  - When a volatile mislabel appears or the verifier failure rate exceeds 5%, the pilot responds with `degrade_to_full_reverification`.
+  - With the pilot flag off, pause/resume behaviour is unchanged.
 requiredTests:
   - tests/unit/cross-area-composition.test.ts
   - tests/unit/performance-budgets.test.ts

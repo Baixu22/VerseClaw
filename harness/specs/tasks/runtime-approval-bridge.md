@@ -65,10 +65,21 @@ ownedPaths:
   - tests/unit/runtime-approval-bridge.test.ts
   - tests/unit/runtime-approval-prompt.test.tsx
   - tests/e2e/runtime-approval-bridge.spec.ts
-# Agent Dev evidence refreshed in the same change set to clear the stale-evidence veto in
-# `pnpm run harness:ci`. That refresh belongs to the Agent Dev control plane, not to this
-# bridge, so it is declared as a review-visible residual instead of owned coverage.
+# This spec's diffBase covers the whole session change set, which also carries three
+# concerns that are not this bridge's ownership: the Agent Dev evidence refresh that clears
+# the stale-evidence veto in `pnpm run harness:ci`, the six task specs repaired for
+# pre-existing structural defects, and the harness CLI default-diff-base fix. They are
+# declared as review-visible residuals instead of being claimed as owned coverage.
 residualPaths:
+  - harness/specs/tasks/a1-layered-isolation-pilot.md
+  - harness/specs/tasks/a2-multi-agent-orchestration-pilot.md
+  - harness/specs/tasks/a4-decision-quality-pilot.md
+  - harness/specs/tasks/a6-long-running-persistence-pilot.md
+  - harness/specs/tasks/knowledge-steward-semantic-pilot.md
+  - harness/specs/tasks/stress-test-windows-concurrency-v1.md
+  - harness/src/cli.mjs
+  - harness/src/git.mjs
+  - tests/unit/harness-git.test.ts
   - artifacts/agent-dev-workbench/evidence.json
   - artifacts/agent-dev-deep-test/report.json
   - artifacts/agent-dev-deep-test/report.md
