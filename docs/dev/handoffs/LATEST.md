@@ -1,6 +1,16 @@
 # 会话交接（LATEST）
 
-## 当前接力：实习展示收尾（2026-09-22，D7 + D8）
+## 收尾完成（2026-09-22，D7 + D8，阶段 0–2）
+
+- **项目停在这里：** 阶段 0（卫生与口径）、阶段 1（护城河通电与审批边界）、阶段 2（材料与封存）全部 done；阶段 3（TF-0239～TF-0241）保持 proposed，可选、不影响收尾。里程碑 TF-0226 = done，tag `showcase-20260922` 指向最终 HEAD。
+- **下一个接力 agent 只读这些入口：** 方向 [综合规划](../qa-synthesis-roadmap-20260922.md)；材料 [对外说明一页](../showcase-brief-20260922.md) 与 [贡献归属一页](../showcase-contribution-attribution-20260922.md)；演示包 [artifacts/showcase-20260922/README.md](../../../artifacts/showcase-20260922/README.md)，离线核对一条命令：`node scripts/build-showcase-package.mjs --verify`（59 个文件哈希 + 14 条计数 + 0 凭证命中）。
+- **三句限制随材料走：** ① 收据默认关，演示时只在驱动进程环境显式开启；② 非 fullAccess 没有应用内审批入口、会挂起，J-04 的决定由 agent 经直连 Gateway websocket 作出；③ 操作者是 agent-driven、Windows x64、一个 provider、一个工作区。
+- **下一周期入口：** 从 TF-0030（RC-02 全量普查）重启，顺序见综合规划 §5。本次收尾没有为那条链做任何顺手工作，也没有翻任何默认值。
+- **本轮落地提交：** 阶段 0 `1000fdbbb` / `b2a406987` / `29b2fd733` / `db29990af` / `b6c736191`；J-03/J-04 `e72f02ca6` / `a8c9f4b69` / `b7920af0c` / `3512acc3c`；D8 `f82207b4e`；TF-0236 `c4dce50ce`；TF-0237 `68bcb7aa8`；封存即本文件所在提交（tag `showcase-20260922`）。
+- **收口策略仍生效：** agent 是主线开发者、仓库所有者是发布者；证据链完整即自动 apply，规则见 [task-forest-autoclose-and-roles.md](../../../harness/specs/rules/task-forest-autoclose-and-roles.md) 与 AGENTS.md 的 Task Forest closure policy 段。
+- **铁律不变：** 判决只用 Read 直读磁盘；不翻默认值；agent-driven 不写成真人；三锁 `liveReady` / `productApproved` / `defaultOn` 保持 false。
+
+## 当前接力（历史）：实习展示收尾进行中（2026-09-22，D7 + D8）
 
 - **角色与收口策略（2026-09-22 用户裁定，D8）**：**agent 是主线开发者，用户是发布者。** 用户不参与逐节点问答；任何验收口径都不得要求用户口述内容（贡献归属等事实从提交、diff、任务图历史与偏差账本重建）。**证据链完整、验收逐条直读核对通过、提案基线未漂移、结论自洽时，agent 自行 `proposal-save` + `proposal-apply --yes`，随后 `validate`、`export`，并把状态与证据同批入库——不再等待用户确认 apply。** 该覆盖对本仓库显式生效，覆盖 task-forest skill 的默认确认步骤，登记在 D8 与偏差账本 `TFD-autoclose-policy-override-0922`。只有六类外部授权才停下询问用户：对外发布/公开仓库或产物、凭证轮换或新暴露、不可逆 git 操作、改动冻结的产品锁或默认值、声明真人证据、改动范围。完整规则：`harness/specs/rules/task-forest-autoclose-and-roles.md`；入口段落在 `AGENTS.md`。
 - 定位未变：项目是「Agent 基座 + Harness + LLM 工程化」实习展示，不是完整产品闭环；裁决在 D7 = TF-0225，角色与收口策略在 D8。收尾里程碑 TF-0226（阶段 0～3，TF-0227～TF-0241）。**接力 agent 只读 `docs/dev/qa-synthesis-roadmap-20260922.md`。**
