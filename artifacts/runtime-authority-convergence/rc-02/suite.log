@@ -1,0 +1,29 @@
+
+ RUN  v4.1.7 D:/ClawX/openclaw_runtime
+
+ ✓ |agents| src/agents/rc02-shadow-census.acceptance.test.ts (8 tests) 49961ms
+     ✓ embedded runner reaches the guarded production transport with correlated receipts  20963ms
+     ✓ transport-level smoke: eight source-runtime model calls yield correlated receipts  304ms
+     ✓ uses the production source transport registry as the provider coverage denominator  27943ms
+ ✓ |agents| src/agents/rc02-entry-matrix.acceptance.test.ts (9 tests) 68794ms
+     ✓ embedded attempt: runEmbeddedAgent yields a dual receipt per real model call  20929ms
+     ✓ provider payload hook: the production cache-trace hook installs onPayload and receipts still bind the final bytes  9257ms
+     ✓ embedded attempt x registry api openai-responses: a dual receipt per real model call  8146ms
+     ✓ embedded attempt x registry api openai-chatgpt-responses: a dual receipt per real model call  16069ms
+     ✓ embedded attempt x registry api openai-completions: a dual receipt per real model call  13570ms
+ ✓ |agents| src/agents/shadow-census.test.ts (8 tests) 658ms
+ ✓ |agents| src/agents/receipt-store.test.ts (21 tests) 20370ms
+     ✓ retains committed receipts across exited Node processes without implicit pruning  12584ms
+     ✓ serializes concurrent Node writers with identical content  1618ms
+     ✓ serializes concurrent Node writers with conflicting content  1745ms
+     ✓ serializes concurrent Node writers with different-kind content  1499ms
+
+ Test Files  4 passed (4)
+      Tests  46 passed (46)
+   Start at  00:41:08
+   Duration  120.54s (transform 74.30s, setup 1.32s, import 96.66s, tests 139.78s, environment 1ms)
+
+JSON report written to D:/ClawX/artifacts/runtime-authority-convergence/rc-02/suite-results.json
+[vitest] still running with no output for 30000ms (run --config test/vitest/vitest.agents.config.ts receipt-store.test.ts shadow-census.test.ts rc02-shadow-census.acceptance.test.ts rc02-entry-matrix.acceptance.test.ts --passWithNoTests=false --reporter=default --reporter=json --outputFile=D:\ClawX\artifacts\runtime-authority-convergence\rc-02\suite-results.json).
+[vitest] still running with no output for 60000ms (run --config test/vitest/vitest.agents.config.ts receipt-store.test.ts shadow-census.test.ts rc02-shadow-census.acceptance.test.ts rc02-entry-matrix.acceptance.test.ts --passWithNoTests=false --reporter=default --reporter=json --outputFile=D:\ClawX\artifacts\runtime-authority-convergence\rc-02\suite-results.json).
+[vitest] still running with no output for 90000ms (run --config test/vitest/vitest.agents.config.ts receipt-store.test.ts shadow-census.test.ts rc02-shadow-census.acceptance.test.ts rc02-entry-matrix.acceptance.test.ts --passWithNoTests=false --reporter=default --reporter=json --outputFile=D:\ClawX\artifacts\runtime-authority-convergence\rc-02\suite-results.json).
