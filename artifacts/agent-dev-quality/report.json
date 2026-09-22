@@ -1,7 +1,7 @@
 {
   "schema": "clawx.agent-dev.quality-report.v1",
-  "generatedAt": "2026-09-14T10:58:56.722Z",
-  "success": false,
+  "generatedAt": "2026-09-22T14:44:11.014Z",
+  "success": true,
   "buildReuse": {
     "mode": "fresh",
     "status": "fresh",
@@ -23,10 +23,10 @@
     ]
   },
   "decision": {
-    "status": "blocked",
-    "reason": "playwright-agent-dev failed; inspect stdoutTail/stderrTail before relying on this run.",
-    "dailyLoopReady": false,
-    "releaseReady": false,
+    "status": "daily-loop-ok",
+    "reason": "All selected Agent Dev gates passed within hard limits.",
+    "dailyLoopReady": true,
+    "releaseReady": true,
     "fullGateComplete": true,
     "budgetStatus": "watch",
     "fastPathModes": [],
@@ -42,23 +42,23 @@
   "e2eMode": "full",
   "build": {
     "ok": true,
-    "durationMs": 41696,
+    "durationMs": 39355,
     "commandLine": "pnpm run build:vite",
     "reused": false,
     "skipped": false,
     "reuseStatus": "fresh"
   },
   "playwright": {
-    "ok": false,
-    "durationMs": 3632,
+    "ok": true,
+    "durationMs": 17885,
     "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
     "spec": "tests/e2e/agent-dev-quality.spec.ts",
     "mode": "full",
     "expectedTests": 4,
     "diagnostics": {
       "kind": "playwright",
-      "passed": 0,
-      "reportedDurationMs": null,
+      "passed": 4,
+      "reportedDurationMs": 16600,
       "tests": []
     },
     "evidence": [

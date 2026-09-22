@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-22T14:25:22.105398Z",
+  "generated_at": "2026-09-22T14:46:37.348763Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -26746,7 +26746,7 @@
       "display_order": 10,
       "estimated_total_minutes": 300,
       "evidence": [
-        "任务规格 harness/specs/tasks/runtime-approval-bridge.md：pnpm harness validate --spec … --no-diff 输出 'Spec is valid'；diff-aware 版本因本分支既有的路径归属门失败（同一失败对无关既有 spec fix-tools-exec-config-hot-reload.md 同样出现，属既有条件，非本次引入）",
+        "任务规格 harness/specs/tasks/runtime-approval-bridge.md：pin diffBase 1cddcb1ba（本增量起点）并把 .agent-workbench/task-forest/** 与 README.md / README.zh-CN.md / README.ja-JP.md 纳入 ownedPaths——共享分支早已偏离 origin/main，默认 diff base 会把整条分支（2469 文件）算成改动；修好后 pnpm harness validate --spec … 输出 'Spec is valid'（diff-aware，exit 0），pnpm harness run --spec … --dry-run 输出 'Harness result: pass'",
         "事件链路：shared/host-events/contract.ts 新增 runtimeApprovals.requested/resolved；electron/gateway/event-dispatch.ts 归一化 exec.approval.requested/resolved 并丢弃无 approval id 的帧；electron/gateway/manager.ts 事件类型；electron/main/index.ts 转发；src/lib/host-events.ts 订阅。ClawX 以 operator.admin 连接，广播守卫（openclaw_runtime/src/gateway/server-broadcast.ts:96-102）本已放行 approvals 事件，故未改 ws-client scope",
         "host-api：shared/host-api/contract.ts 新增 runtimeApprovals.list/resolve 与载荷/结果类型；electron/services/runtime-approvals-api.ts 新服务；electron/main/ipc-handlers.ts 注册；src/lib/host-api.ts facade；pnpm contract:check 输出 'Contract check passed.'",
         "权限：electron/services/workspace-permissions.ts 新增 isRuntimeApprovalDecisionRpc 与 exec.approval.list 安全读归类；单测固定 readOnly/plan/acceptEdits/fullAccess 下 resolve 与 list 可达，且 config.set / workspace.create / tools.exec 在 readOnly 仍被拦（tests/unit/runtime-approval-bridge.test.ts）",
@@ -26754,7 +26754,8 @@
         "单测：pnpm exec vitest run tests/unit/runtime-approval-bridge.test.ts tests/unit/gateway-event-dispatch.test.ts tests/unit/runtime-approval-prompt.test.tsx tests/unit/workspace-permissions.test.ts → 4 files / 51 passed（含四语覆盖断言）",
         "E2E：pnpm run test:e2e tests/e2e/runtime-approval-bridge.spec.ts → 2 passed。真实 Electron：主进程发送生产同款 IPC 帧 runtime-approvals:requested → 模态出现并显示命令与 cwd → 点击 allow-once → host 层收到 runtimeApprovals.resolve({approvalId, decision:'allow-once'}) → 模态关闭；第二条只列 deny 时不渲染 allow 按钮。对照 tests/e2e/app-smoke.spec.ts 4 passed，证明环境可用",
         "门禁：pnpm run typecheck exit 0（node 11278ms / web 6449ms）；pnpm run lint:check exit 0（0 warnings / 0 errors）；pnpm run comms:replay 与 comms:compare exit 0 且全部 PASS（message_loss 0、rpc_timeout 0、order 0、qps/p95 delta 0.00%）；pnpm run build:vite exit 0",
-        "未改产品锁与默认值：未触碰 prod-flags-catalog / runtime-feature-leaves / openclaw.json；liveReady / productApproved / defaultOn 保持 false；本增量落在封存 tag showcase-20260922 之后，属阶段 3 可选增量，不进入已封存的收尾 change set"
+        "未改产品锁与默认值：未触碰 prod-flags-catalog / runtime-feature-leaves / openclaw.json；liveReady / productApproved / defaultOn 保持 false；本增量落在封存 tag showcase-20260922 之后，属阶段 3 可选增量，不进入已封存的收尾 change set",
+        "顺带修复 harness:ci：原为 exit 1（Agent Dev 四类证据 195.7h 过期 + 上次 deep-test decision=blocked: playwright-agent-dev failed）。核对后发现被记录的 4 个失败用例（tests/e2e/agent-dev-quality.spec.ts）现已全部通过（4 passed）；重跑 pnpm agent-dev:workbench 与 pnpm agent-dev:deep-test 后 decision=daily-loop-ok、fullGateComplete=true、releaseReady=true，pnpm run harness:ci exit 0 且 audit status=pass / grade A / disqualifiers=[]"
       ],
       "execution_hints": [],
       "id": "TF-0240",
@@ -26782,7 +26783,7 @@
       "success_metrics": [],
       "summary": "最小审批桥完成（2026-09-22，封存 tag 之后的可选增量）：运行时 exec.approval.requested/resolved 广播经 event-dispatch 归一化后由主进程转发到 renderer，应用级模态 RuntimeApprovalPrompt 展示待批命令与工作目录，按运行时给出的 allowedDecisions 逐条回传，经 host-api runtimeApprovals.resolve 走 gateway.rpc exec.approval.resolve 作答；resolve 失败（含 readOnly 拦截）时模态保留并显示原因。同时把「运行时审批决定」从工作区权限门里显式放行（exec.approval.list 归安全读，exec.approval.resolve 在任何模式下可达），使 readOnly 工作区不再因无法作答而挂起，其余变更在 readOnly 仍被拦。E2E 2/2、单测 51/51、typecheck / lint / contract / i18n / comms 全绿；未改任何默认值或产品锁。",
       "title": "最小审批桥：ClawX 订阅 exec.approval.requested，用独立模态展示并调用 exec.approval.resolve",
-      "updated_at": "2026-09-22T14:24:48.616569Z"
+      "updated_at": "2026-09-22T14:46:09.117739Z"
     },
     "TF-0241": {
       "acceptance_criteria": [

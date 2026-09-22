@@ -3,8 +3,15 @@ id: runtime-approval-bridge
 title: In-app runtime exec-approval bridge
 scenario: gateway-backend-communication
 taskType: runtime-bridge
+# Pinned to the commit this increment started from: the shared branch diverged from
+# origin/main long ago, so the default diff base would report the whole branch.
+diffBase: 1cddcb1ba
 intent: Give ClawX an in-app entry point for the runtime exec-approval boundary so a gated command can be answered from the app instead of hanging until the session is abandoned.
 touchedAreas:
+  - .agent-workbench/task-forest/**
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
   - harness/specs/tasks/runtime-approval-bridge.md
   - shared/host-events/contract.ts
   - shared/host-api/contract.ts
@@ -32,6 +39,32 @@ expectedUserBehavior:
   - A rejected decision keeps the prompt open and shows the runtime's reason; a decision taken elsewhere closes it.
   - Pending requests survive a renderer reload because the prompt seeds from the runtime's own pending list.
   - The bridge never decides on the user's behalf and never widens the decision vocabulary.
+ownedPaths:
+  - .agent-workbench/task-forest/**
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - harness/specs/tasks/runtime-approval-bridge.md
+  - shared/host-api/contract.ts
+  - shared/host-events/contract.ts
+  - shared/i18n/locales/en/chat.json
+  - shared/i18n/locales/zh/chat.json
+  - shared/i18n/locales/ja/chat.json
+  - shared/i18n/locales/ru/chat.json
+  - electron/gateway/event-dispatch.ts
+  - electron/gateway/manager.ts
+  - electron/main/index.ts
+  - electron/main/ipc-handlers.ts
+  - electron/services/runtime-approvals-api.ts
+  - electron/services/workspace-permissions.ts
+  - src/App.tsx
+  - src/components/runtime-approvals/RuntimeApprovalPrompt.tsx
+  - src/lib/host-api.ts
+  - src/lib/host-events.ts
+  - tests/unit/gateway-event-dispatch.test.ts
+  - tests/unit/runtime-approval-bridge.test.ts
+  - tests/unit/runtime-approval-prompt.test.tsx
+  - tests/e2e/runtime-approval-bridge.spec.ts
 requiredProfiles:
   - fast
   - comms
