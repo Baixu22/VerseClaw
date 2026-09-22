@@ -1,0 +1,48 @@
+{
+  "base_graph_hash": "bc3c5f786be4b065728ef7f770356d61aa19d5227034c00477e9b5dd306e6a91",
+  "base_summary": {
+    "edge_count": 413,
+    "node_count": 241,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/journey.json：候选 a8c9f4b69、dirty=false；stopReason=approval-boundary-observed、boundaryProven=true；含 requestedEvents 与 gatewayEvents。",
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/gateway-events.jsonl：32 帧，含 12:22:18.468Z exec.approval.requested（id 8089e5b5…、命令 node --test、allow-once/deny）与 12:22:41.816Z exec.approval.resolved。",
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/approval-boundary.json：host gateway.rpc 在 readOnly 下被拦（Read-only mode does not allow Gateway mutations）；直连 Gateway 的 pending 列表与 allow-once 决定。",
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/session.jsonl：决定后 12:22:43.838Z 的 exec toolResult 继续；12:22:52.970Z 出现下一条 requested。",
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/hashes.json：24 文件 sha256、凭证扫描 0 命中；run-1-partial/ 保留首次未写 journey.json 的尝试（含其原 7 文件清单）。",
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/README.md：三段运行对照、边界时间线、四条限制。"
+        ],
+        "progress": 100,
+        "status": "done",
+        "summary": "J-04 已在干净候选 a8c9f4b69 上重跑并留档（driver-r3.mjs 增加 operator 事件监听）：运行时 exec.approval.requested（node --test、allow-once/deny）→ host gateway.rpc 在 readOnly 被拦 → 直连 Gateway 的 exec.approval.list 见 pending → exec.approval.resolve(allow-once) ok → 决定后 exec toolResult 继续；stopReason=approval-boundary-observed，79 秒。ClawX 无应用内审批 UI，决定由 agent 直连 Gateway 作出，不写成 host RPC 放行。编码任务在 readOnly 下未完成（前后均 exit 1），非本节点判据。产品源码改动 0；收据 flag 只在驱动进程（12 行 / 3 对 v1）。"
+      },
+      "id": "TF-0233"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/journey.json 与 receipt-join.json：候选 b6c736191、dirty=false，runtime_receipts=28、7 对 v1 context/wire。",
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/journey.json、gateway-events.jsonl、approval-boundary.json、hashes.json：候选 a8c9f4b69、dirty=false，request/decision 对与后续执行；24 文件哈希、0 凭证命中。",
+          "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/README.md：五条尾项裁定（TF-0234）。",
+          "docs/dev/showcase-overview-20260922.md：限制栏草稿。",
+          "docs/dev/qa-synthesis-roadmap-20260922.md：更新记录中的 J-04 接力条目与对 J-03 README 时点表述的更正。"
+        ],
+        "progress": 100,
+        "status": "done",
+        "summary": "阶段 1 的两次真实执行与五条尾项均已留档：J-03（TF-0232）收据非 0 且可按 correlation_digest join；J-04（TF-0233）审批边界发生一次（requested → host 拦截 → 决定 → 继续）；TF-0234 五条尾项裁定完成。两个 journey.json 均为 candidate.dirty=false，两目录凭证扫描 0 命中。本阶段改动只在 artifacts/docs/task-forest 与驱动脚本，未改 permissions-api / gateway-api / 任何 UI 源码，也未改默认值（diff 无 prod-flags-catalog / runtime-feature-leaves / openclaw.json）。阶段 2 材料与封存、阶段 3 可选增量未开始。"
+      },
+      "id": "TF-0231"
+    }
+  ],
+  "created_at": "2026-09-22T12:27:02.159888Z",
+  "proposal_id": "TFP-tf0233-j04-boundary-20260922",
+  "rationale": "本轮只做顺序上的下一个节点 TF-0233（J-04 审批边界）。原始 J-04 边界确实发生，但缺 journey.json 与可核对的 candidate.dirty 证明；已在干净候选 a8c9f4b69 上用 driver-r3.mjs 重跑并留档（运行时 requested/resolved 事件、host 拦截、pending 列表、allow-once 决定、决定后继续），独立复核 15/15。证据满足 TF-0233 与 TF-0231 的全部验收条件，故一并收口；里程碑 TF-0226 与阶段 2/3 不动。",
+  "session_id": "tf0233-j04-relay-20260922",
+  "status": "proposed"
+}
