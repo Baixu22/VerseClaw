@@ -5,11 +5,71 @@ import type {
   GatewayChannelStatusEvent,
   GatewayChatMessageEvent,
   GatewayRuntimePayload,
+  RuntimeApprovalRequestedEvent,
+  RuntimeApprovalResolvedEvent,
 } from '@shared/host-events/contract';
 
 type GatewayEventEmitter = {
   emit: (event: string, payload: unknown) => boolean;
 };
+
+function readString(value: unknown): string {
+  return typeof value === 'string' ? value : '';
+}
+
+function readOptionalString(value: unknown): string | null {
+  return typeof value === 'string' && value.length > 0 ? value : null;
+}
+
+function readNumber(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === 'object' ? value as Record<string, unknown> : {};
+}
+
+function readDecisionList(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === 'string') : [];
+}
+
+/**
+ * ClawX receives `exec.approval.requested` because it connects as operator.admin
+ * (the broadcast guard in openclaw_runtime/src/gateway/server-broadcast.ts lets
+ * admin through every event). Project the raw runtime payload into the shape the
+ * approval modal renders, and drop frames that carry no approval id: an
+ * unanswerable request must not open a dialog.
+ */
+export function normalizeRuntimeApprovalRequested(payload: unknown): RuntimeApprovalRequestedEvent | null {
+  const frame = asRecord(payload);
+  const approvalId = readString(frame.id);
+  if (!approvalId) return null;
+  const request = asRecord(frame.request);
+  return {
+    approvalId,
+    command: readString(request.command) || readString(request.commandPreview),
+    commandPreview: readOptionalString(request.commandPreview),
+    cwd: readOptionalString(request.cwd),
+    host: readOptionalString(request.host),
+    agentId: readOptionalString(request.agentId),
+    sessionKey: readOptionalString(request.sessionKey),
+    allowedDecisions: readDecisionList(request.allowedDecisions),
+    createdAtMs: readNumber(frame.createdAtMs),
+    expiresAtMs: readNumber(frame.expiresAtMs),
+  };
+}
+
+export function normalizeRuntimeApprovalResolved(payload: unknown): RuntimeApprovalResolvedEvent | null {
+  const frame = asRecord(payload);
+  const approvalId = readString(frame.id);
+  if (!approvalId) return null;
+  return {
+    approvalId,
+    decision: readString(frame.decision),
+    resolvedBy: readOptionalString(frame.resolvedBy),
+    ts: readNumber(frame.ts),
+  };
+}
 
 export function dispatchProtocolEvent(
   emitter: GatewayEventEmitter,
@@ -59,6 +119,18 @@ export function dispatchProtocolEvent(
     case 'chat.queue-status':
       emitter.emit('chat:queue-status', payload);
       break;
+    // Runtime exec-approval boundary: the only events that let a person answer a
+    // command the exec policy gated. Frames without an approval id are dropped.
+    case 'exec.approval.requested': {
+      const requested = normalizeRuntimeApprovalRequested(payload);
+      if (requested) emitter.emit('approval:requested', requested);
+      break;
+    }
+    case 'exec.approval.resolved': {
+      const resolved = normalizeRuntimeApprovalResolved(payload);
+      if (resolved) emitter.emit('approval:resolved', resolved);
+      break;
+    }
     default:
       emitter.emit('notification', { method: event, params: payload });
   }

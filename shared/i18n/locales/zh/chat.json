@@ -2280,5 +2280,17 @@
     "waiting": "等待输出…",
     "noOutput": "这个进程没有输出。",
     "status": { "running": "运行中", "completed": "已完成", "failed": "失败" }
+  },
+  "runtimeApprovals": {
+    "title": "需要运行时批准",
+    "description": "运行时在执行这条命令前暂停，正在等待你的决定。",
+    "commandLabel": "命令",
+    "cwdLabel": "工作目录",
+    "unknownCommand": "（运行时未提供命令）",
+    "allowOnce": "仅允许这一次",
+    "allowAlways": "总是允许",
+    "deny": "拒绝",
+    "busy": "正在发送决定…",
+    "resolveFailed": "运行时没有接受这个决定。"
   }
 }

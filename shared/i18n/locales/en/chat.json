@@ -2280,5 +2280,17 @@
     "waiting": "Waiting for output…",
     "noOutput": "This process produced no output.",
     "status": { "running": "Running", "completed": "Done", "failed": "Failed" }
+  },
+  "runtimeApprovals": {
+    "title": "Runtime approval required",
+    "description": "The runtime paused before running this command and is waiting for your decision.",
+    "commandLabel": "Command",
+    "cwdLabel": "Working directory",
+    "unknownCommand": "(the runtime did not report a command)",
+    "allowOnce": "Allow once",
+    "allowAlways": "Always allow",
+    "deny": "Deny",
+    "busy": "Sending decision…",
+    "resolveFailed": "The runtime did not accept this decision."
   }
 }

@@ -1,0 +1,63 @@
+{
+  "applied_at": "2026-09-22T14:24:48.724918Z",
+  "base_graph_hash": "07e1c9442778974c3c71d5e92c85bd2251a82602a8ffb2a386d3a07e038d3d51",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "任务规格 harness/specs/tasks/runtime-approval-bridge.md：pnpm harness validate --spec … --no-diff 输出 'Spec is valid'；diff-aware 版本因本分支既有的路径归属门失败（同一失败对无关既有 spec fix-tools-exec-config-hot-reload.md 同样出现，属既有条件，非本次引入）",
+          "事件链路：shared/host-events/contract.ts 新增 runtimeApprovals.requested/resolved；electron/gateway/event-dispatch.ts 归一化 exec.approval.requested/resolved 并丢弃无 approval id 的帧；electron/gateway/manager.ts 事件类型；electron/main/index.ts 转发；src/lib/host-events.ts 订阅。ClawX 以 operator.admin 连接，广播守卫（openclaw_runtime/src/gateway/server-broadcast.ts:96-102）本已放行 approvals 事件，故未改 ws-client scope",
+          "host-api：shared/host-api/contract.ts 新增 runtimeApprovals.list/resolve 与载荷/结果类型；electron/services/runtime-approvals-api.ts 新服务；electron/main/ipc-handlers.ts 注册；src/lib/host-api.ts facade；pnpm contract:check 输出 'Contract check passed.'",
+          "权限：electron/services/workspace-permissions.ts 新增 isRuntimeApprovalDecisionRpc 与 exec.approval.list 安全读归类；单测固定 readOnly/plan/acceptEdits/fullAccess 下 resolve 与 list 可达，且 config.set / workspace.create / tools.exec 在 readOnly 仍被拦（tests/unit/runtime-approval-bridge.test.ts）",
+          "渲染层：src/components/runtime-approvals/RuntimeApprovalPrompt.tsx 挂在 src/App.tsx 的 #app-overlay-root 同级（应用级，未改 src/pages/Chat/ChatInput.tsx）；四语 key 写入 shared/i18n/locales/{en,zh,ja,ru}/chat.json；pnpm i18n:lint 输出 'i18n lint passed.'",
+          "单测：pnpm exec vitest run tests/unit/runtime-approval-bridge.test.ts tests/unit/gateway-event-dispatch.test.ts tests/unit/runtime-approval-prompt.test.tsx tests/unit/workspace-permissions.test.ts → 4 files / 51 passed（含四语覆盖断言）",
+          "E2E：pnpm run test:e2e tests/e2e/runtime-approval-bridge.spec.ts → 2 passed。真实 Electron：主进程发送生产同款 IPC 帧 runtime-approvals:requested → 模态出现并显示命令与 cwd → 点击 allow-once → host 层收到 runtimeApprovals.resolve({approvalId, decision:'allow-once'}) → 模态关闭；第二条只列 deny 时不渲染 allow 按钮。对照 tests/e2e/app-smoke.spec.ts 4 passed，证明环境可用",
+          "门禁：pnpm run typecheck exit 0（node 11278ms / web 6449ms）；pnpm run lint:check exit 0（0 warnings / 0 errors）；pnpm run comms:replay 与 comms:compare exit 0 且全部 PASS（message_loss 0、rpc_timeout 0、order 0、qps/p95 delta 0.00%）；pnpm run build:vite exit 0",
+          "未改产品锁与默认值：未触碰 prod-flags-catalog / runtime-feature-leaves / openclaw.json；liveReady / productApproved / defaultOn 保持 false；本增量落在封存 tag showcase-20260922 之后，属阶段 3 可选增量，不进入已封存的收尾 change set"
+        ],
+        "next_action": "本节点已收口。若继续，下一周期入口是 TF-0030（RC-02 全量普查），见 docs/dev/qa-synthesis-roadmap-20260922.md §5。",
+        "summary": "最小审批桥完成（2026-09-22，封存 tag 之后的可选增量）：运行时 exec.approval.requested/resolved 广播经 event-dispatch 归一化后由主进程转发到 renderer，应用级模态 RuntimeApprovalPrompt 展示待批命令与工作目录，按运行时给出的 allowedDecisions 逐条回传，经 host-api runtimeApprovals.resolve 走 gateway.rpc exec.approval.resolve 作答；resolve 失败（含 readOnly 拦截）时模态保留并显示原因。同时把「运行时审批决定」从工作区权限门里显式放行（exec.approval.list 归安全读，exec.approval.resolve 在任何模式下可达），使 readOnly 工作区不再因无法作答而挂起，其余变更在 readOnly 仍被拦。E2E 2/2、单测 51/51、typecheck / lint / contract / i18n / comms 全绿；未改任何默认值或产品锁。"
+      },
+      "id": "TF-0240"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0240",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0241",
+      "reason": "节点自身的进入条件不成立：它要求「阶段 1 尾项复核判定『仍在』且单处绑定可修」。TF-0234 已对该项裁定为「不修」——J-03 复核没有发现「标签未绑定」证据，驱动直接 hostInvoke 绕过 renderer store 更新，只改一处绑定不能修复外部 host 变更后的整份陈旧状态（超出本节点单处绑定范围）。保留节点与裁定作为审计痕迹，不再作为可执行任务。"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "TF-0240 done：harness/specs/tasks/runtime-approval-bridge.md + tests/e2e/runtime-approval-bridge.spec.ts（2 passed）+ tests/unit/runtime-approval-bridge.test.ts / runtime-approval-prompt.test.tsx（51 passed）",
+          "TF-0241 deprecated：TF-0234 五行尾项裁定第 ⑤ 项为「不修」，理由见 artifacts/live-model-cdp/20260922-senseaudio-journey-J03/README.md"
+        ],
+        "summary": "阶段 3 收口（2026-09-22）：TF-0240（最小审批桥）done，带 Electron e2e 与单测证据；TF-0241（头部绑定单处修复）deprecated，进入条件在阶段 1 已被 TF-0234 判定不成立。本阶段按验收口径不作为收尾里程碑关闭前置，两项均不改变产品锁或默认值。"
+      },
+      "id": "TF-0239"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0239",
+      "progress": 100,
+      "status": "done"
+    }
+  ],
+  "created_at": "2026-09-22T14:24:48.455497Z",
+  "proposal_id": "TFP-showcase-phase3-approval-bridge-20260922",
+  "rationale": "按 AGENTS.md 的 Task Forest 自动收口门（规则 R3）收口阶段 3：TF-0240 的每条验收判据都已直读核对——e2e 通过并留 trace、单测覆盖 resolve 调用参数与失败分支、默认值与旗标目录无 diff、非 fullAccess 场景经 UI 决定后由运行时接受。TF-0241 的进入条件在阶段 1 已被 TF-0234 判定为「不修」（单处绑定无法修复外部 host 变更后的陈旧状态），故按节点自身口径 deprecated 并写明原因。阶段 3 按验收允许不作为里程碑关闭前置。",
+  "session_id": "session-2026-09-22-dsh-tf0240",
+  "status": "applied"
+}

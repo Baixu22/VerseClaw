@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-22T13:51:16.947041Z",
+  "generated_at": "2026-09-22T14:25:22.105398Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -26686,13 +26686,16 @@
       "context_tags": [],
       "created_at": "2026-09-22T08:15:57.473279Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "medium",
       "display_order": 40,
       "estimated_total_minutes": 360,
-      "evidence": [],
+      "evidence": [
+        "TF-0240 done：harness/specs/tasks/runtime-approval-bridge.md + tests/e2e/runtime-approval-bridge.spec.ts（2 passed）+ tests/unit/runtime-approval-bridge.test.ts / runtime-approval-prompt.test.tsx（51 passed）",
+        "TF-0241 deprecated：TF-0234 五行尾项裁定第 ⑤ 项为「不修」，理由见 artifacts/live-model-cdp/20260922-senseaudio-journey-J03/README.md"
+      ],
       "execution_hints": [],
       "id": "TF-0239",
       "kind": "task",
@@ -26702,18 +26705,18 @@
       ],
       "primary_parent": "TF-0226",
       "priority": 3,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "把唯一值得在收尾窗口碰产品代码的一件事（应用内审批桥）和一处演示可见的小修复，放在明确的可选位置，不与收尾出口绑定。",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "done",
       "success_metrics": [],
-      "summary": "两项候选按价值排序：最小审批桥（护城河第一支柱的产品入口，也是 TF-0032 的前置产品面）；头部绑定修复（仅当阶段 1 尾项裁定「仍在且演示可见」且未在阶段 1 修）。任一项做不完可直接 deprecated，不影响里程碑关闭。约束：新增文件为主，不碰 chat.ts / ChatInput.tsx / attempt.ts 的大范围，不改默认值。",
+      "summary": "阶段 3 收口（2026-09-22）：TF-0240（最小审批桥）done，带 Electron e2e 与单测证据；TF-0241（头部绑定单处修复）deprecated，进入条件在阶段 1 已被 TF-0234 判定不成立。本阶段按验收口径不作为收尾里程碑关闭前置，两项均不改变产品锁或默认值。",
       "title": "阶段 3 · 可选增量（仅在阶段 0–2 出口达成后；做不了不影响收尾）",
-      "updated_at": "2026-09-22T08:15:57.473279Z"
+      "updated_at": "2026-09-22T14:24:48.616569Z"
     },
     "TF-0240": {
       "acceptance_criteria": [
@@ -26736,16 +26739,27 @@
       "context_tags": [],
       "created_at": "2026-09-22T08:15:57.473783Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "medium",
       "display_order": 10,
       "estimated_total_minutes": 300,
-      "evidence": [],
+      "evidence": [
+        "任务规格 harness/specs/tasks/runtime-approval-bridge.md：pnpm harness validate --spec … --no-diff 输出 'Spec is valid'；diff-aware 版本因本分支既有的路径归属门失败（同一失败对无关既有 spec fix-tools-exec-config-hot-reload.md 同样出现，属既有条件，非本次引入）",
+        "事件链路：shared/host-events/contract.ts 新增 runtimeApprovals.requested/resolved；electron/gateway/event-dispatch.ts 归一化 exec.approval.requested/resolved 并丢弃无 approval id 的帧；electron/gateway/manager.ts 事件类型；electron/main/index.ts 转发；src/lib/host-events.ts 订阅。ClawX 以 operator.admin 连接，广播守卫（openclaw_runtime/src/gateway/server-broadcast.ts:96-102）本已放行 approvals 事件，故未改 ws-client scope",
+        "host-api：shared/host-api/contract.ts 新增 runtimeApprovals.list/resolve 与载荷/结果类型；electron/services/runtime-approvals-api.ts 新服务；electron/main/ipc-handlers.ts 注册；src/lib/host-api.ts facade；pnpm contract:check 输出 'Contract check passed.'",
+        "权限：electron/services/workspace-permissions.ts 新增 isRuntimeApprovalDecisionRpc 与 exec.approval.list 安全读归类；单测固定 readOnly/plan/acceptEdits/fullAccess 下 resolve 与 list 可达，且 config.set / workspace.create / tools.exec 在 readOnly 仍被拦（tests/unit/runtime-approval-bridge.test.ts）",
+        "渲染层：src/components/runtime-approvals/RuntimeApprovalPrompt.tsx 挂在 src/App.tsx 的 #app-overlay-root 同级（应用级，未改 src/pages/Chat/ChatInput.tsx）；四语 key 写入 shared/i18n/locales/{en,zh,ja,ru}/chat.json；pnpm i18n:lint 输出 'i18n lint passed.'",
+        "单测：pnpm exec vitest run tests/unit/runtime-approval-bridge.test.ts tests/unit/gateway-event-dispatch.test.ts tests/unit/runtime-approval-prompt.test.tsx tests/unit/workspace-permissions.test.ts → 4 files / 51 passed（含四语覆盖断言）",
+        "E2E：pnpm run test:e2e tests/e2e/runtime-approval-bridge.spec.ts → 2 passed。真实 Electron：主进程发送生产同款 IPC 帧 runtime-approvals:requested → 模态出现并显示命令与 cwd → 点击 allow-once → host 层收到 runtimeApprovals.resolve({approvalId, decision:'allow-once'}) → 模态关闭；第二条只列 deny 时不渲染 allow 按钮。对照 tests/e2e/app-smoke.spec.ts 4 passed，证明环境可用",
+        "门禁：pnpm run typecheck exit 0（node 11278ms / web 6449ms）；pnpm run lint:check exit 0（0 warnings / 0 errors）；pnpm run comms:replay 与 comms:compare exit 0 且全部 PASS（message_loss 0、rpc_timeout 0、order 0、qps/p95 delta 0.00%）；pnpm run build:vite exit 0",
+        "未改产品锁与默认值：未触碰 prod-flags-catalog / runtime-feature-leaves / openclaw.json；liveReady / productApproved / defaultOn 保持 false；本增量落在封存 tag showcase-20260922 之后，属阶段 3 可选增量，不进入已封存的收尾 change set"
+      ],
       "execution_hints": [],
       "id": "TF-0240",
       "kind": "subtask",
+      "next_action": "本节点已收口。若继续，下一周期入口是 TF-0030（RC-02 全量普查），见 docs/dev/qa-synthesis-roadmap-20260922.md §5。",
       "non_goals": [
         "不做审批跨重启持久化（TF-0032）",
         "不改 permissions-api 的既有账本语义",
@@ -26753,7 +26767,7 @@
       ],
       "primary_parent": "TF-0239",
       "priority": 3,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "让「人批准什么」有一个应用内入口，把 J-04 里经 RPC 作出的决定变成用户在界面上作出的决定。",
       "remaining_minutes_max": null,
@@ -26764,11 +26778,11 @@
         "拒绝路径也要有测试：拒绝后不执行"
       ],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "done",
       "success_metrics": [],
-      "summary": "两端都已存在：运行时六个 exec.approval RPC 与事件；ClawX 侧 chat-runtime-events.ts:209 已把 approval 流转成 approval.updated 显示事件，permissions-api.ts 有自己的审批账本（与运行时不连通）。缺的只是一座桥：Electron 主进程监听 requested 事件 → 经 host API 推给 renderer → 独立模态（新组件，不进 ChatInput.tsx）→ 用户点批准/拒绝 → gateway.rpc exec.approval.resolve。以 J-04 的实测结果为设计输入（含 decideGatewayRpc 的放行情况）。",
+      "summary": "最小审批桥完成（2026-09-22，封存 tag 之后的可选增量）：运行时 exec.approval.requested/resolved 广播经 event-dispatch 归一化后由主进程转发到 renderer，应用级模态 RuntimeApprovalPrompt 展示待批命令与工作目录，按运行时给出的 allowedDecisions 逐条回传，经 host-api runtimeApprovals.resolve 走 gateway.rpc exec.approval.resolve 作答；resolve 失败（含 readOnly 拦截）时模态保留并显示原因。同时把「运行时审批决定」从工作区权限门里显式放行（exec.approval.list 归安全读，exec.approval.resolve 在任何模式下可达），使 readOnly 工作区不再因无法作答而挂起，其余变更在 readOnly 仍被拦。E2E 2/2、单测 51/51、typecheck / lint / contract / i18n / comms 全绿；未改任何默认值或产品锁。",
       "title": "最小审批桥：ClawX 订阅 exec.approval.requested，用独立模态展示并调用 exec.approval.resolve",
-      "updated_at": "2026-09-22T08:15:57.473783Z"
+      "updated_at": "2026-09-22T14:24:48.616569Z"
     },
     "TF-0241": {
       "acceptance_criteria": [
@@ -26789,7 +26803,7 @@
       "confidence": 0.6,
       "context_tags": [],
       "created_at": "2026-09-22T08:15:57.475004Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-09-22T14:24:48.616569Z",
       "derived_progress": 0.0,
       "desired_outcomes": [],
       "deviations": [],
@@ -26817,11 +26831,11 @@
         "一条单测或 e2e"
       ],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "deprecated",
       "success_metrics": [],
-      "summary": "J-02 观察：host 层 workspaces.switch 之后 renderer 头部仍显示默认工作区与 Read only。src/stores/workspaces.ts 的 switchWorkspace 会更新 store，权限控件在 ChatInput.tsx 约 3603 行读 workspace.permissionMode；疑似头部绑定未订阅切换。只在阶段 1 尾项复核判定「仍在」且未在阶段 1 修时进入本节点。",
+      "summary": "节点自身的进入条件不成立：它要求「阶段 1 尾项复核判定『仍在』且单处绑定可修」。TF-0234 已对该项裁定为「不修」——J-03 复核没有发现「标签未绑定」证据，驱动直接 hostInvoke 绕过 renderer store 更新，只改一处绑定不能修复外部 host 变更后的整份陈旧状态（超出本节点单处绑定范围）。保留节点与裁定作为审计痕迹，不再作为可执行任务。",
       "title": "工作区切换后头部不刷新：只修 permissionMode 绑定一处（仅当尾项复核判定仍在且演示可见）",
-      "updated_at": "2026-09-22T08:15:57.475004Z"
+      "updated_at": "2026-09-22T14:24:48.616569Z"
     },
     "TF-0242": {
       "acceptance_criteria": [
@@ -26919,9 +26933,6 @@
   },
   "status_queues": {
     "actionable_todos": [
-      "TF-0239",
-      "TF-0240",
-      "TF-0241",
       "TF-0030",
       "TF-0151",
       "TF-0129",
@@ -26984,7 +26995,8 @@
         "TF-0123",
         "TF-0125",
         "TF-0131",
-        "TF-0132"
+        "TF-0132",
+        "TF-0241"
       ],
       "done": [
         "TF-0001",
@@ -27194,6 +27206,8 @@
         "TF-0236",
         "TF-0237",
         "TF-0238",
+        "TF-0239",
+        "TF-0240",
         "TF-0242"
       ],
       "in_progress": [],
@@ -27209,10 +27223,7 @@
         "TF-0038",
         "TF-0039",
         "TF-0040",
-        "TF-0041",
-        "TF-0239",
-        "TF-0240",
-        "TF-0241"
+        "TF-0041"
       ],
       "ready": [],
       "review_needed": []
@@ -27244,20 +27255,17 @@
       "TF-0130",
       "TF-0141",
       "TF-0144",
-      "TF-0151",
-      "TF-0239",
-      "TF-0240",
-      "TF-0241"
+      "TF-0151"
     ],
     "ready": [],
     "review_needed": []
   },
   "summary": {
     "blocked_count": 12,
-    "done_count": 208,
+    "done_count": 210,
     "edge_count": 414,
     "node_count": 242,
-    "open_count": 27,
+    "open_count": 24,
     "review_needed_count": 0
   },
   "tree_edges": [

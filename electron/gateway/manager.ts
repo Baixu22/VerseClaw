@@ -68,6 +68,10 @@ import type {
   GatewayRuntimePayload,
 } from '@shared/host-events/contract';
 import type { ChatRuntimeEvent } from '@shared/chat-runtime-events';
+import type {
+  RuntimeApprovalRequestedEvent,
+  RuntimeApprovalResolvedEvent,
+} from '@shared/host-events/contract';
 
 export interface GatewayStatus {
   state: GatewayLifecycleState;
@@ -218,6 +222,8 @@ export interface GatewayManagerEvents {
   'chat:message': (data: GatewayChatMessageEvent) => void;
   'chat:runtime-event': (data: ChatRuntimeEvent) => void;
   'clawgraph:lifecycle': (data: unknown) => void;
+  'approval:requested': (data: RuntimeApprovalRequestedEvent) => void;
+  'approval:resolved': (data: RuntimeApprovalResolvedEvent) => void;
 }
 
 /**

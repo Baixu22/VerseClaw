@@ -9,6 +9,7 @@ import { Toaster } from 'sonner';
 import i18n from './i18n';
 import { MainLayout } from './components/layout/MainLayout';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { RuntimeApprovalPrompt } from '@/components/runtime-approvals/RuntimeApprovalPrompt';
 import { BootShellHandoff, SetupRouteLoadingShell } from './components/loading/RouteLoadingShell';
 import { useSettingsStore } from './stores/settings';
 import { useGatewayStore } from './stores/gateway';
@@ -413,6 +414,9 @@ function App() {
         </UiOverlayProvider>
 
         <div ref={setAppOverlayHost} id="app-overlay-root" data-testid="app-overlay-root" />
+
+        {/* Runtime exec-approval boundary: app-level, so it never touches ChatInput. */}
+        <RuntimeApprovalPrompt />
 
         {/* Global toast notifications */}
         <Toaster

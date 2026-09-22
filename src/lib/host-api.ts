@@ -360,6 +360,9 @@ import type {
   TaskLedgerWorkspacePayload,
   PermissionApprovalDecisionPayload,
   PermissionApprovalListPayload,
+  RuntimeApprovalListResult,
+  RuntimeApprovalResolvePayload,
+  RuntimeApprovalResolveResult,
   PermissionDecisionEventListPayload,
   PermissionDecisionEventListResult,
   OrchestrationPresetCreatePayload,
@@ -915,6 +918,12 @@ export const hostApi = {
     copyGatewayToken: () => invokeHost('gateway', 'copyGatewayToken'),
     rpc: <T = unknown>(method: string, params?: unknown, timeoutMs?: number, approvalId?: string) => (
       invokeHost('gateway', 'rpc', { method, params, timeoutMs, approvalId }) as Promise<T>
+    ),
+  },
+  runtimeApprovals: {
+    list: (): Promise<RuntimeApprovalListResult> => invokeHost('runtimeApprovals', 'list'),
+    resolve: (input: RuntimeApprovalResolvePayload): Promise<RuntimeApprovalResolveResult> => (
+      invokeHost('runtimeApprovals', 'resolve', input)
     ),
   },
   localControlPlane: {

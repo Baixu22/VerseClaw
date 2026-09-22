@@ -78,6 +78,7 @@ import { createSkillPacksApi } from '../services/skill-packs-api';
 import { createOfficeToolsApi } from '../services/office-tools-api';
 import { createUsageApi } from '../services/usage-api';
 import { createPermissionsApi } from '../services/permissions-api';
+import { createRuntimeApprovalsApi } from '../services/runtime-approvals-api';
 import { createOrchestrationPresetsApi } from '../services/orchestration-presets-api';
 import { createTerminalApi } from '../services/terminal-api';
 import { createHostTraceDiagnosticsService } from '../services/host-trace-diagnostics';
@@ -214,6 +215,7 @@ function registerTypedHostHandlers(
     sessionActivity: createSessionActivityApi({ gatewayManager, terminalManager }),
     git: createGitApi(),
     permissions: createPermissionsApi(),
+    runtimeApprovals: createRuntimeApprovalsApi(gatewayManager),
     orchestrationPresets: createOrchestrationPresetsApi(),
     webPreview: createWebPreviewApi({ webPreviewManager }),
     settings: createSettingsApi(gatewayManager),
