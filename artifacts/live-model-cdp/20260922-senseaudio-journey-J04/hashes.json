@@ -1,20 +1,90 @@
 {
+  "note": "sha256 of every file in this evidence directory, excluding this manifest. run-1-partial/ keeps the first J-04 attempt byte-for-byte; the top level is the r3 re-run.",
+  "candidate": "a8c9f4b69209c0a72c8ca91c8556d10bdabd234f",
   "files": {
+    "app.log": {
+      "bytes": 15999,
+      "sha256": "cdff7e565f38d4c3733904752b81462555fba8c1ac0159882e238dd01ce3be5d"
+    },
     "approval-boundary.json": {
-      "bytes": 1836,
-      "sha256": "a41ea66120d78761287e97e8c423fe9efa4978ec84a18d75bf504dfbe1a2ab73"
+      "bytes": 11253,
+      "sha256": "d42ceaf3054b37ce3a3eddd0fe55fae9166fc326cd4193e6189e27950dd17665"
+    },
+    "candidate.json": {
+      "bytes": 235,
+      "sha256": "73df61ca3b5d73e59a1285ddbfe6e5d686db2086f0f7bd68f8ef6f1af18a5cf6"
+    },
+    "driver-r2.mjs": {
+      "bytes": 20273,
+      "sha256": "e8606d37a80811097e594a7c4eda283ffb66565f62c13881c8da39e89e3a3a8e"
+    },
+    "driver-r3.mjs": {
+      "bytes": 23421,
+      "sha256": "1a1f216f2405f7f14e7137706718efc0f7f7934614e7e02601480d286017d273"
     },
     "driver.mjs": {
       "bytes": 17572,
       "sha256": "c8c1667abd0fcf4ec064c5538d12729eca2e82963eeb66365ed7a2d030d996be"
     },
-    "README.md": {
-      "bytes": 1736,
-      "sha256": "4d05bb917f61de8df15909b95844b2e41f9d1e6d1f0e8b0db936ab300be3fc35"
+    "events.jsonl": {
+      "bytes": 6737,
+      "sha256": "4b55d5a1b8471b30f855c2f85bd52e1db29279438c2caece532b80fe56c34a50"
     },
-    "session.jsonl": {
+    "gateway-events.jsonl": {
+      "bytes": 39000,
+      "sha256": "39de489ad98ea5e7a1bfe4eef55e4b109e36229ff1b0613d2ec24228eaa9464f"
+    },
+    "journey.json": {
+      "bytes": 101735,
+      "sha256": "131de1c1ccabfcaff6b859517c1302e3ec7ca07efca1b7c25ad77129159bdae0"
+    },
+    "README.md": {
+      "bytes": 4255,
+      "sha256": "03ef447620891c3826f477f33dd5e4a5193590f89f703c989d06bd2cf54c2eb4"
+    },
+    "run-1-partial/approval-boundary.json": {
+      "bytes": 1836,
+      "sha256": "a41ea66120d78761287e97e8c423fe9efa4978ec84a18d75bf504dfbe1a2ab73"
+    },
+    "run-1-partial/hashes.json": {
+      "bytes": 995,
+      "sha256": "95ea34196c28e49ee4285715503697ea59ac09bba1352c1e81d94091c992d794"
+    },
+    "run-1-partial/session.jsonl": {
       "bytes": 9441,
       "sha256": "22abd9986d29137bc330a75f76f2f2eba764ae5dd2126b4fb6917b86e658a6a3"
+    },
+    "screenshots/01-launched.png": {
+      "bytes": 664035,
+      "sha256": "0f110bd5291959226c2945b2063e845512d334f9b618f6d745f862aa8c8395cc"
+    },
+    "screenshots/02-provider.png": {
+      "bytes": 606044,
+      "sha256": "8a8dcb3dbae9737695e8f751174d7feb52f10bc6ba5c7a1fcfd77f1310108e18"
+    },
+    "screenshots/03-workspace.png": {
+      "bytes": 607567,
+      "sha256": "3937591f08c275299a120472aa3f89bb6aa811460203c7d5eeecdf20a135aa4c"
+    },
+    "screenshots/03b-listener.png": {
+      "bytes": 479476,
+      "sha256": "72d99aef0fcdf1a749d4ec074c8392136f493e31f8359d7b9d3ce88e0efc97b9"
+    },
+    "screenshots/04-sent.png": {
+      "bytes": 513484,
+      "sha256": "d4308c146420a3cd8a3c392b5a3dc90839cbeb585f8004d330ac5d1870f2a566"
+    },
+    "screenshots/06-final.png": {
+      "bytes": 544055,
+      "sha256": "b37bca28b3290ac7c4627bce832b9f56860fa1ffd6d91d29870fbd7dd11b7d23"
+    },
+    "session-history.json": {
+      "bytes": 8020,
+      "sha256": "d9b7ac2a1fd45fc654fdf773e8866e410008bffe2465f1b6dfb5c78a0a3cb02b"
+    },
+    "session.jsonl": {
+      "bytes": 8735,
+      "sha256": "5ed3af9d6125e2b0a4c04b779a7dbbf012c77b71aa36c5b6bda822d457c1a930"
     },
     "workload/calc.js": {
       "bytes": 196,
@@ -29,5 +99,7 @@
       "sha256": "8bae63e483e8dc9ae3b1ca3d568b0ef38a7f2672f1ae926f3c56d3d7ac38111f"
     }
   },
-  "secretHits": 0
+  "fileCount": 24,
+  "secretHits": 0,
+  "secretHitsDetail": []
 }
