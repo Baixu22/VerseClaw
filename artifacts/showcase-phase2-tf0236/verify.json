@@ -1,0 +1,66 @@
+{
+  "node": "TF-0236",
+  "generatedAt": "2026-09-22T13:21:48.804908Z",
+  "candidate": {
+    "commit": "f82207b4efe2983fc03d03ca7daf975dcd906c55",
+    "dirty": true,
+    "statusPorcelain": [
+      "M .agent-workbench/task-forest/config.json",
+      " M .agent-workbench/task-forest/exports/task-forest.graph.json",
+      " M .agent-workbench/task-forest/exports/task-forest.todos.json",
+      " M .agent-workbench/task-forest/graph/forest.json",
+      " M .agent-workbench/task-forest/graph/nodes.json",
+      " M .agent-workbench/task-forest/todos/todos.json",
+      " M .gitignore",
+      " M docs/dev/qa-synthesis-roadmap-20260922.md",
+      "?? .agent-workbench/task-forest/proposals/TFP-showcase-phase2-tf0236-close-20260922.json",
+      "?? .agent-workbench/task-forest/proposals/TFP-showcase-phase2-tf0236-start-20260922.json",
+      "?? .agent-workbench/task-forest/snapshots/0637.json",
+      "?? .agent-workbench/task-forest/snapshots/0638.json",
+      "?? artifacts/showcase-phase2-tf0236/",
+      "?? docs/dev/showcase-brief-20260922.md",
+      "?? docs/dev/showcase-contribution-attribution-20260922.md"
+    ],
+    "dirtyPathsOutsideThisChangeSet": []
+  },
+  "a4ReferenceUnits": 1920,
+  "pages": [
+    {
+      "path": "docs/dev/showcase-brief-20260922.md",
+      "chars": 3154,
+      "displayWidth": 1915.5,
+      "withinOneA4": true,
+      "markdownLinks": 13,
+      "refsChecked": 14,
+      "refsMissing": []
+    },
+    {
+      "path": "docs/dev/showcase-contribution-attribution-20260922.md",
+      "chars": 2992,
+      "displayWidth": 1857.0,
+      "withinOneA4": true,
+      "markdownLinks": 11,
+      "refsChecked": 11,
+      "refsMissing": []
+    }
+  ],
+  "checks": {
+    "fiveTailItemsCovered": true,
+    "threeLimitsCovered": true,
+    "fourColumnsPresent": true,
+    "moatLayersPresent": true,
+    "limitationItems": {
+      "历史回放": true,
+      "审批入口": true,
+      "8 秒 reload": true,
+      "git init": true,
+      "界面同步": true
+    },
+    "termsUsedOnlyInTruthfulNegation": {
+      "真人": 3,
+      "GA": 2,
+      "默认开启": 1
+    },
+    "publisherAnswerDependentMatches": 0
+  }
+}

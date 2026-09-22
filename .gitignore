@@ -254,3 +254,7 @@ openclaw_runtime/_tmp_*
 # Showcase closing journeys (J-02/J-03/J-04). Secrets stay out; the evidence is the deliverable.
 !artifacts/live-model-cdp/
 !artifacts/live-model-cdp/**
+
+# TF-0236 phase-2 material check (link/path resolution, A4 length, wording audit).
+!artifacts/showcase-phase2-tf0236/
+!artifacts/showcase-phase2-tf0236/**
