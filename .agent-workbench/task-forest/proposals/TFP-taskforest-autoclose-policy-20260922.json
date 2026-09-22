@@ -1,0 +1,173 @@
+{
+  "applied_at": "2026-09-22T12:37:56.271335Z",
+  "base_graph_hash": "d3ebe44fbd066d16b9ce5f60575f94634ff128b55b253dc087dd024c96bc5a90",
+  "base_summary": {
+    "edge_count": 413,
+    "node_count": 241,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "d8-autoclose",
+      "node": {
+        "acceptance_criteria": [
+          "存在 D8 决策记录，且被收尾里程碑以 derived_from 引用",
+          "AGENTS.md 写明该覆盖在本仓库生效并指向 harness/specs/rules/task-forest-autoclose-and-roles.md",
+          "偏差账本登记本次对 task-forest skill 默认确认步骤的覆盖及其理由",
+          "里程碑与阶段节点的要求、验收、提示中不再存在要求用户回答内容问题的条目；产品锁与默认值未变"
+        ],
+        "confidence": 0.95,
+        "evidence": [
+          "harness/specs/rules/task-forest-autoclose-and-roles.md",
+          "harness/specs/tasks/task-forest-autoclose-policy.md",
+          "AGENTS.md",
+          "docs/dev/qa-synthesis-roadmap-20260922.md",
+          "docs/dev/handoffs/LATEST.md"
+        ],
+        "execution_hints": [
+          "本决策不改变证据标准：自动收口只省掉「等用户重复核验」这一步，不省掉核验本身",
+          "接力时先读 AGENTS.md 的 Task Forest closure policy 段，再按 D7/D8 执行"
+        ],
+        "kind": "decision",
+        "non_goals": [
+          "不修改全局安装的 task-forest skill（跨项目共用，改它会影响其他工作区）",
+          "不降低证据标准、不允许自宣完成",
+          "不改变项目范围、三锁、默认值或任何既有验收条件",
+          "不把用户写成主线开发者，也不把 agent-driven 写成真人"
+        ],
+        "progress": 0,
+        "purpose": "把 2026-09-22 用户裁定的角色分工与自动收口策略固化进任务图，防止后续接力 agent 把设计/历史/贡献类问题抛回给用户，或把已经完成的核验再等一次人工确认。",
+        "requirements": [],
+        "status": "done",
+        "summary": "用户 2026-09-22 裁定：这个仓库里 agent 是主线开发者（选方案、写代码、产证据、对正确性负责），用户是发布者（审查已完成且有证据的结果，决定是否发布或展示），不是逐节点答案的来源。由此两条硬约束：(1) 任何节点的 requirements / acceptance_criteria / 接力提示都不得要求用户回答设计、历史或贡献问题；这类事实从提交、diff、任务图历史与偏差账本重建并注明出处，只在用户脑子里存在的事就写成限制而不是阻塞。(2) 收口门从「人工确认」改为「证据门」：某节点每条验收判据都被直读磁盘核对通过、证据链完整、提案 base_graph_hash 未漂移、结论自洽时，agent 直接 proposal-save + proposal-apply --yes，随后 validate、export，并把状态与证据同批入库，不再等待用户确认。该覆盖对本仓库显式生效，覆盖 task-forest skill 的默认「apply 前等用户确认」，并在偏差账本登记（TFD-autoclose-policy-override-0922）。只有六类外部授权才停下询问用户：对外发布或公开仓库/产物、凭证轮换或新暴露、不可逆 git 操作、改动冻结的产品锁或默认值、声明真人证据、改动范围；向既有私有远端 push 提交或 tag 属于正常开发流程，不属于发布。自动收口是对证据的门，不是对自信的门：证据缺失、过期或互相矛盾的节点保持未完成并写明缺口。落地物：规则 harness/specs/rules/task-forest-autoclose-and-roles.md（R1–R6）、任务规格 harness/specs/tasks/task-forest-autoclose-policy.md、AGENTS.md 的 Task Forest closure policy 段、方向文档 §6/§7。",
+        "title": "D8 决策：接力角色固定为「agent 主线开发 / 用户发布者」；证据链完整即自动收口，取消 apply 前的人工确认门"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "收尾里程碑按 D8 的角色与自动收口策略执行"
+      },
+      "from": "TF-0226",
+      "to": "d8-autoclose",
+      "type": "derived_from"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "acceptance_criteria": [
+          "阶段 0、1、2 全部 done；阶段 3 允许 proposed/deprecated",
+          "artifacts/live-model-cdp/ 下存在 J-03 与 J-04 目录，各含 README、journey.json、哈希清单，且 candidate.dirty=false",
+          "docs/ 下存在对外说明一页与贡献归属一页，每句可指向文件或提交号，且不含需要用户口述才能成立的内容",
+          "origin 上存在 showcase-<日期> tag，指向最终 HEAD",
+          "Task Forest validate 通过、export 成功、check-landing 无待人工复核项",
+          "每条阶段出口判据均有直读磁盘的证据；缺证据或证据矛盾的节点保持未完成并写明缺口"
+        ],
+        "execution_hints": [
+          "环境：HTTP_PROXY/HTTPS_PROXY=http://127.0.0.1:7897；CLI 加 PYTHONUTF8=1 PYTHONIOENCODING=utf-8",
+          "J-03 开关：OPENCLAW_RC02_SHADOW_CENSUS=1 OPENCLAW_RC03_SEAL=1 放在 driver 进程环境；链路 driver.mjs:65 → config-sync.ts:1054/1080 → rc03-seal-hook.ts:110 / shadow-census.ts:255",
+          "J-04 实测（已收口，纠正原预判）：readOnly 下 host gateway.rpc 的 exec.approval.* 被 decideGatewayRpc 拦截；演示驱动改用自建 Gateway websocket（operator.approvals）作决定。证据 artifacts/live-model-cdp/20260922-senseaudio-journey-J04/",
+          "唯一入口文档：docs/dev/qa-synthesis-roadmap-20260922.md；不再新增「当前状态」类文档",
+          "收口：按 AGENTS.md「Task Forest closure policy」自动 apply；完整规则 harness/specs/rules/task-forest-autoclose-and-roles.md"
+        ],
+        "requirements": [
+          "每个阶段按出口判据关闭，出口不达就停在该阶段写清楚，不顺延",
+          "所有判决与计数只用 Read 直读磁盘文件（journey.json、executor-report.json），不采信 bash 打印",
+          "重跑前工作树必须干净（driver 记录 candidate.dirty），源码改动只允许阶段 3 与阶段 1c 的单文件头部修复",
+          "不翻任何默认值；演示开关只在驱动进程环境中设置并在材料里写明",
+          "收口按 AGENTS.md 的自动收口门执行：验收逐条直读核对通过、证据链完整、提案基线未漂移、结论自洽即自行 proposal-save + proposal-apply，随后 validate/export 并把状态与证据同批入库；不等待用户确认 apply",
+          "角色固定：agent 是主线开发者、用户是发布者；节点要求与验收判据不得要求用户回答内容问题，贡献归属等事实从提交、diff、任务图历史与偏差账本重建"
+        ],
+        "summary": "启动于 2026-09-22，时间盒 3 个工作日，四个阶段串行：阶段 0 卫生与口径 → 阶段 1 通电与边界（两次真实执行）→ 阶段 2 材料与封存 → 阶段 3 可选增量。交付物：J-02/J-03/J-04 三条旅程的留档产物、非 0 收据表与 correlation join、一对审批 request/decision、一页对外说明、一页贡献归属、一个 showcase tag。三句限制随材料一起走：收据默认关（演示显式开）；非 fullAccess 无应用内审批 UI、会挂起；操作者 agent-driven、Windows x64、一个 provider、一个工作区。阶段 0 与阶段 1 已按出口判据收口（TF-0227～TF-0234 done，TF-0231 于阶段 1 证据补齐后 done）。角色与收口策略见 D8：agent 是主线开发者、用户是发布者，证据链完整即自动 apply，不等待人工确认；验收口径不得要求用户口述内容。"
+      },
+      "id": "TF-0226"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "acceptance_criteria": [
+          "两页文档存在于 docs/ 下，每句可指向文件或提交",
+          "贡献归属一页由 agent 从提交与 diff 重建，不含需要用户口述的内容",
+          "演示包目录含 manifest（每个文件 sha256），密钥扫描 0 命中",
+          "LATEST.md 首段为「收尾完成」接力并指向综合规划；forest validate 通过、export 成功、check-landing 无待复核项",
+          "origin 存在 showcase-<日期> tag 指向最终 HEAD"
+        ],
+        "requirements": [
+          "材料中每句话必须能指到文件、提交或留档产物；不得新造限制",
+          "收口与材料产出按 D8：agent 主线开发、用户发布者；贡献归属由 agent 从仓库记录重建，不向用户提问",
+          "节点收口按自动收口门执行（验收直读核对通过即自行 apply），不等用户确认"
+        ],
+        "summary": "三件交付：对外说明一页 + 贡献归属一页（由 agent 从提交、diff 与任务图记录重建，不向用户提问）；演示包（J-02/J-03/J-04 产物、收据 dump、审批对、哈希清单、离线核对说明、演示日预案）；封存（LATEST 收尾接力、Task Forest validate/export/check-landing、showcase tag 并 push）。材料中的每一句限制都来自阶段 1 的裁定，不新造。分工口径固定为「agent 主线开发 / 用户发布者」。"
+      },
+      "id": "TF-0235"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "acceptance_criteria": [
+          "两页均 ≤ 1 页 A4 等价长度，每句可指向文件或提交号",
+          "限制栏内容与阶段 1 裁定逐条一致",
+          "不出现「真人」「GA」「默认开启」等与事实不符的措辞",
+          "不出现需要用户口述或用户答复才能成立的内容"
+        ],
+        "non_goals": [
+          "不用目录体积或节点数量代替贡献说明",
+          "不把分工写成用户主导开发或用户口述来源"
+        ],
+        "requirements": [
+          "以 engineering-product-node-plan-20260921.md 的场景为底、D7 的出口为界",
+          "每句附文件路径或提交号",
+          "贡献归属由 agent 从提交、diff、任务图历史与偏差账本重建；不向用户提问、不等待用户口述",
+          "分工口径固定为「agent 主线开发 / 用户发布者」，与 D8 一致"
+        ],
+        "summary": "对外说明：定位一句（agent 与 AI 协作的 Agent 基座 + Harness 工程化展示，非 GA）；主线一句（本地优先桌面工作台，一个 agent 用一个模型在一个 Windows 工作区做完一件工程事并能解释过程）；三层护城河各一句并指向代码（tools.exec 策略 → exec.approval.requested；rc03-seal-hook → ReceiptStore + shadow-census → WireReceipt；能力表分类 / allowedPromotion=false / tf0009 守卫 / TF-0076 NO-GO）；四栏边界（跑过 / 只证明机制 / 未完成 / 范围外）；三句限制；演示日预案。贡献归属（由 agent 从仓库记录重建，不向用户提问）：分工口径为 agent 主线开发、用户发布者；设计决策与取舍逐条指向提交或 diff——TF-0131 因不改默认值被砍、TF-0076 成本 NO-GO、AGENT-START NO-GO 横幅、TF-0007 撤回 done；如何审查 AI 改动（验收器双执行者、判决只从磁盘读、禁凭证环境变量）。"
+      },
+      "id": "TF-0236"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "requirements": [
+          "节点收口经 proposal 流程，不手改 canonical 文件；按 AGENTS.md 自动收口门，验收直读核对通过即自行 proposal-save + proposal-apply，不等待用户确认",
+          "tag 之后不再有源码提交进入本次收尾"
+        ],
+        "summary": "LATEST.md 首段改为「收尾完成」接力：指向综合规划与演示包，列出三句限制与下一周期入口（TF-0030）；用官方 CLI 把阶段 0–2 各节点收口为 done 并登记证据（按 D8 自动收口门，证据核对通过即自行 apply）；validate、export、check-landing；git tag showcase-<日期> 指向最终 HEAD 并 push（推送既有私有远端属正常开发流程，公开仓库或产物才需发布者授权）。"
+      },
+      "id": "TF-0238"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "correction": "规则写入 harness/specs/rules/task-forest-autoclose-and-roles.md（R1–R6）与 AGENTS.md 的 Task Forest closure policy 段；决策登记为 D8；只在六类外部授权（对外发布/公开、凭证轮换、不可逆 git 操作、产品锁或默认值、真人证据声明、范围变更）时停下询问用户。",
+        "created_at": "2026-09-22T12:37:48.110243Z",
+        "decided_by": "用户 2026-09-22 裁定；实施者 agent",
+        "evidence": [
+          "AGENTS.md",
+          "harness/specs/rules/task-forest-autoclose-and-roles.md",
+          "harness/specs/tasks/task-forest-autoclose-policy.md",
+          "docs/dev/qa-synthesis-roadmap-20260922.md"
+        ],
+        "id": "TFD-autoclose-policy-override-0922",
+        "impact": "改变的是「谁做核验、何时收口」，不是证据标准：节点仍需逐条验收判据直读核对通过才可 done；证据缺失、过期或矛盾的节点保持未完成。未修改产品锁、默认值、项目范围或任何既有验收条件。",
+        "kind": "policy_override",
+        "node_id": "TF-0226",
+        "reason": "用户不是本项目的开发主线参与者，只是发布者；反复请求用户确认 apply 不产生额外验证价值，只会把 agent 已完成的核验再复制一遍。真正的门应设在证据上：验收逐条直读核对、证据链完整、提案基线未漂移、结论自洽。",
+        "related_task_ids": [
+          "TF-0226",
+          "TF-0242",
+          "TF-0236",
+          "TF-0238"
+        ],
+        "status": "resolved",
+        "summary": "本仓库显式覆盖 task-forest skill 的默认步骤「保存提案后等待用户确认再 proposal-apply」，改为证据链完整即自动应用；同时固定角色为 agent 主线开发、用户发布者，节点验收口径不得要求用户口述内容。"
+      }
+    }
+  ],
+  "created_at": "2026-09-22T12:37:48.094335Z",
+  "proposal_id": "TFP-taskforest-autoclose-policy-20260922",
+  "rationale": "用户 2026-09-22 裁定：接力角色固定为「agent 是主线开发者、用户是发布者」，用户不参与逐节点问答；并取消收口前的人工确认门——证据链完整、验收逐条直读核对通过、提案基线未漂移、结论自洽时，agent 自行保存并应用收口提案。本提案把该裁定固化进任务图：新增 D8 决策节点，改写里程碑与阶段节点的要求/验收/提示，使验收口径不再要求用户口述，并按新策略自动应用（AGENTS.md 的 Task Forest closure policy 覆盖 skill 默认确认步骤）。不改变项目范围、产品锁、默认值或任何既有验收条件。",
+  "session_id": "tf-d8-autoclose-policy-20260922",
+  "status": "applied"
+}

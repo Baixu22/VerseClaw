@@ -1,6 +1,15 @@
 # 会话交接（LATEST）
 
-## 当前接力：实习展示收尾（2026-09-22，D7）
+## 当前接力：实习展示收尾（2026-09-22，D7 + D8）
+
+- **角色与收口策略（2026-09-22 用户裁定，D8）**：**agent 是主线开发者，用户是发布者。** 用户不参与逐节点问答；任何验收口径都不得要求用户口述内容（贡献归属等事实从提交、diff、任务图历史与偏差账本重建）。**证据链完整、验收逐条直读核对通过、提案基线未漂移、结论自洽时，agent 自行 `proposal-save` + `proposal-apply --yes`，随后 `validate`、`export`，并把状态与证据同批入库——不再等待用户确认 apply。** 该覆盖对本仓库显式生效，覆盖 task-forest skill 的默认确认步骤，登记在 D8 与偏差账本 `TFD-autoclose-policy-override-0922`。只有六类外部授权才停下询问用户：对外发布/公开仓库或产物、凭证轮换或新暴露、不可逆 git 操作、改动冻结的产品锁或默认值、声明真人证据、改动范围。完整规则：`harness/specs/rules/task-forest-autoclose-and-roles.md`；入口段落在 `AGENTS.md`。
+- 定位未变：项目是「Agent 基座 + Harness + LLM 工程化」实习展示，不是完整产品闭环；裁决在 D7 = TF-0225，角色与收口策略在 D8。收尾里程碑 TF-0226（阶段 0～3，TF-0227～TF-0241）。**接力 agent 只读 `docs/dev/qa-synthesis-roadmap-20260922.md`。**
+- 阶段 0 已收口入库：TF-0227～TF-0230 = done。
+- **阶段 1 已达成出口并收口**：TF-0232（J-03 收据 28 行 / 7 对 v1）、TF-0233（J-04 审批边界，含最终 `journey.json`、运行时 requested/resolved 事件、host 在 readOnly 下拦截、直连 Gateway 的 allow-once 决定、决定后继续）、TF-0234（五条尾项裁定）均 done；TF-0231 亦 done。证据：`artifacts/live-model-cdp/20260922-senseaudio-journey-J03/`、`.../J04/`（各含哈希清单与 0 命中凭证扫描）。
+- 下一步按顺序是阶段 2：TF-0235 → TF-0236（对外说明 + 贡献归属，由 agent 从仓库记录重建）→ TF-0237（演示包）→ TF-0238（封存与 tag）。阶段 3（TF-0239～TF-0241）可选，不影响收尾。
+- 铁律不变：判决只用 Read 直读磁盘；重跑前工作树必须干净；不翻默认值；agent-driven 不写成真人。
+
+## 当前接力（历史）：阶段 1 证据补齐前的状态（2026-09-22，D7）
 
 - 定位已改口：项目是「Agent 基座 + Harness + LLM 工程化」实习展示，不是完整产品闭环；09-21 定调文档降为下一周期入口。裁决与去留记录在 Task Forest D7 = TF-0225；收尾里程碑 TF-0226（阶段 0～3，TF-0227～TF-0241）。**接力 agent 只读 `docs/dev/qa-synthesis-roadmap-20260922.md`。**
 - 24 个开放节点：冻结链 15（TF-0010/0028/0030～0042）、显式后置 6（M6 + Docker）、守卫阻塞 2（TF-0007/0009）、residual 归并 1（TF-0013）；0 废止、0 改状态。不做 RC-03～RC-10、M6、Docker、tf0009 守卫迁移；三锁保持 false。

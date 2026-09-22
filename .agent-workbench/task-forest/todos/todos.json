@@ -9,6 +9,33 @@
       "why_this_task": ""
     },
     "blocked_by": [],
+    "confidence": 0.55,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "medium",
+    "id": "TF-0240",
+    "kind": "subtask",
+    "next_action": "e2e 通过并留 trace；单测覆盖 resolve 调用参数",
+    "priority": 3,
+    "progress": 0.0,
+    "purpose": "让「人批准什么」有一个应用内入口，把 J-04 里经 RPC 作出的决定变成用户在界面上作出的决定。",
+    "ready": true,
+    "remaining_minutes_max": 300,
+    "remaining_minutes_min": 300,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "最小审批桥：ClawX 订阅 exec.approval.requested，用独立模态展示并调用 exec.approval.resolve"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
     "confidence": 0.6,
     "context_tags": [],
     "desired_outcomes": [],
@@ -107,22 +134,22 @@
       "why_this_task": ""
     },
     "blocked_by": [],
-    "confidence": 0.75,
+    "confidence": 0.85,
     "context_tags": [],
     "desired_outcomes": [],
-    "difficulty": "medium",
-    "id": "TF-0231",
+    "difficulty": "low",
+    "id": "TF-0235",
     "kind": "task",
-    "next_action": "先 git status 确认干净，再重建 dist 三件套，再跑 driver",
+    "next_action": "两页文档存在于 docs/ 下，每句可指向文件或提交",
     "priority": 1,
     "progress": 0.0,
-    "purpose": "让护城河在真实模型调用上留下产物：收据表非 0、审批边界发生一次；并把 5 条演示尾项在最终 HEAD 上裁定清楚。",
+    "purpose": "把阶段 1 的产物讲成一页能指到文件的说明，打包成读者可离线核对的演示包，并把仓库与任务图封存在一个 tag 上。",
     "ready": true,
-    "remaining_minutes_max": 360,
-    "remaining_minutes_min": 360,
-    "status": "in_progress",
+    "remaining_minutes_max": 300,
+    "remaining_minutes_min": 300,
+    "status": "proposed",
     "success_metrics": [],
-    "title": "阶段 1 · 通电与边界（两次真实执行，零功能代码）"
+    "title": "阶段 2 · 材料与封存"
   },
   {
     "alignment": {
@@ -134,22 +161,49 @@
       "why_this_task": ""
     },
     "blocked_by": [],
-    "confidence": 0.65,
+    "confidence": 0.85,
     "context_tags": [],
     "desired_outcomes": [],
-    "difficulty": "medium",
-    "id": "TF-0233",
+    "difficulty": "low",
+    "id": "TF-0236",
     "kind": "subtask",
-    "next_action": "与 J-03 共用重建后的 dist；可在 J-03 之后同一会话执行",
+    "next_action": "两页均 ≤ 1 页 A4 等价长度，每句可指向文件或提交号",
     "priority": 1,
     "progress": 0.0,
-    "purpose": "证明「执行有边界、人批准什么」这层护城河是真的，而不只是 J-02 run5 里一次无人处理的挂起。",
+    "purpose": "让评委在十分钟内看懂：这是什么、跑通了什么、护城河在哪三处代码、没做什么、谁做了什么。",
     "ready": true,
     "remaining_minutes_max": 120,
     "remaining_minutes_min": 120,
-    "status": "in_progress",
+    "status": "proposed",
     "success_metrics": [],
-    "title": "J-04：非 fullAccess 工作区下让审批边界发生一次（挂起 → 经 gateway.rpc 决定 → 继续）"
+    "title": "对外说明一页 + 个人与 AI 贡献归属一页"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
+    "confidence": 0.9,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "low",
+    "id": "TF-0237",
+    "kind": "subtask",
+    "next_action": "manifest.json 覆盖目录内每个文件且重算一致",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "读者不需要本机环境也能核对每一件证据；演示日 provider 不可用也能讲完。",
+    "ready": true,
+    "remaining_minutes_max": 90,
+    "remaining_minutes_min": 90,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "演示包：三条旅程产物、收据 dump、审批对、哈希清单、离线核对说明与演示日预案"
   },
   {
     "alignment": {
@@ -345,35 +399,6 @@
     "status": "proposed",
     "success_metrics": [],
     "title": "阶段 3 · 可选增量（仅在阶段 0–2 出口达成后；做不了不影响收尾）"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0233"
-    ],
-    "confidence": 0.55,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "medium",
-    "id": "TF-0240",
-    "kind": "subtask",
-    "next_action": "先完成依赖：TF-0233",
-    "priority": 3,
-    "progress": 0.0,
-    "purpose": "让「人批准什么」有一个应用内入口，把 J-04 里经 RPC 作出的决定变成用户在界面上作出的决定。",
-    "ready": false,
-    "remaining_minutes_max": 300,
-    "remaining_minutes_min": 300,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "最小审批桥：ClawX 订阅 exec.approval.requested，用独立模态展示并调用 exec.approval.resolve"
   },
   {
     "alignment": {
@@ -982,93 +1007,6 @@
     "status": "blocked",
     "success_metrics": [],
     "title": "RC-10 最终真人 Provider/Channel/Recovery 验收"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0231"
-    ],
-    "confidence": 0.85,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "low",
-    "id": "TF-0235",
-    "kind": "task",
-    "next_action": "先完成依赖：TF-0231",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "把阶段 1 的产物讲成一页能指到文件的说明，打包成读者可离线核对的演示包，并把仓库与任务图封存在一个 tag 上。",
-    "ready": false,
-    "remaining_minutes_max": 300,
-    "remaining_minutes_min": 300,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "阶段 2 · 材料与封存"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0231"
-    ],
-    "confidence": 0.85,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "low",
-    "id": "TF-0236",
-    "kind": "subtask",
-    "next_action": "先完成依赖：TF-0231",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "让评委在十分钟内看懂：这是什么、跑通了什么、护城河在哪三处代码、没做什么、谁做了什么。",
-    "ready": false,
-    "remaining_minutes_max": 120,
-    "remaining_minutes_min": 120,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "对外说明一页 + 个人与 AI 贡献归属一页"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0231"
-    ],
-    "confidence": 0.9,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "low",
-    "id": "TF-0237",
-    "kind": "subtask",
-    "next_action": "先完成依赖：TF-0231",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "读者不需要本机环境也能核对每一件证据；演示日 provider 不可用也能讲完。",
-    "ready": false,
-    "remaining_minutes_max": 90,
-    "remaining_minutes_min": 90,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "演示包：三条旅程产物、收据 dump、审批对、哈希清单、离线核对说明与演示日预案"
   },
   {
     "alignment": {

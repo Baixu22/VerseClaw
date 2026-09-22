@@ -155,3 +155,13 @@ Long-running maturity work must not rely on chat memory alone.
 - Skills: `task-forest`, `session-handoff-prompt`, `task-clarifier`, `user-profile-keeper` (installed under `%USERPROFILE%\.codex\skills\` from https://github.com/dongshuyan/compass-skills)
 
 Default policy: one ready TF node per session; no parallel mega-surfaces; do not treat Agent Dev green as joint-system GA.
+
+### Task Forest closure policy (project override)
+
+Roles are fixed: **the agent is the mainline developer; the repository owner is the publisher.** The publisher reviews the finished, evidence-backed result and decides whether it is released or shown — the publisher is not a source of task-level answers. Never write a node requirement, acceptance criterion, or handoff prompt that needs the publisher to answer a design, history, or contribution question; rebuild those facts from commits, diffs, task-forest history, and the deviation ledger, and cite the file or commit.
+
+**Auto-close**: when every acceptance criterion of a node is verified by reading artifacts on disk (never from a command's printed output alone), the evidence chain is complete, the proposal's `base_graph_hash` still matches, and the node's claims are self-consistent, save the proposal and apply it (`proposal-apply --yes`) without waiting for confirmation, then run `validate` and `export` and land the state and evidence in the same change set. This deliberately overrides the `task-forest` skill's default "wait for user confirmation before apply" step for this repository; the override is recorded in the D8 decision node and the deviation ledger.
+
+Stop and ask only for authority the agent does not have: publishing/deploying or making the repo or artifacts public, rotating or newly exposing a credential, destructive or irreversible git operations, changing a frozen product lock or default value, claiming real-human evidence, or changing project scope. Routine closure, status transitions, documentation, evidence generation, proposal application, and pushing commits or tags to the existing private remote are not in that list — making the repo or artifacts public is. Auto-close is a gate on evidence, never on confidence: missing, stale, or contradictory evidence leaves the node open with the gap written down.
+
+Full rule: `harness/specs/rules/task-forest-autoclose-and-roles.md`.

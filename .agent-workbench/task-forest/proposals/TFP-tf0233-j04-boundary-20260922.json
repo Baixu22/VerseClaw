@@ -1,4 +1,5 @@
 {
+  "applied_at": "2026-09-22T12:36:36.616178Z",
   "base_graph_hash": "bc3c5f786be4b065728ef7f770356d61aa19d5227034c00477e9b5dd306e6a91",
   "base_summary": {
     "edge_count": 413,
@@ -44,5 +45,5 @@
   "proposal_id": "TFP-tf0233-j04-boundary-20260922",
   "rationale": "本轮只做顺序上的下一个节点 TF-0233（J-04 审批边界）。原始 J-04 边界确实发生，但缺 journey.json 与可核对的 candidate.dirty 证明；已在干净候选 a8c9f4b69 上用 driver-r3.mjs 重跑并留档（运行时 requested/resolved 事件、host 拦截、pending 列表、allow-once 决定、决定后继续），独立复核 15/15。证据满足 TF-0233 与 TF-0231 的全部验收条件，故一并收口；里程碑 TF-0226 与阶段 2/3 不动。",
   "session_id": "tf0233-j04-relay-20260922",
-  "status": "proposed"
+  "status": "applied"
 }

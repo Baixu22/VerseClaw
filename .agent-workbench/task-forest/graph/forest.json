@@ -186,7 +186,8 @@
     "TFE-0413",
     "TFE-0414",
     "TFE-0415",
-    "TFE-0416"
+    "TFE-0416",
+    "TFE-0417"
   ],
   "edge_index": {
     "TF-0001": {
@@ -4344,7 +4345,8 @@
     "TF-0226": {
       "blocking_edges": [],
       "cross_edges": [
-        "TFE-0392"
+        "TFE-0392",
+        "TFE-0417"
       ],
       "incoming": [
         "TFE-0377",
@@ -4353,7 +4355,8 @@
         "TFE-0389"
       ],
       "outgoing": [
-        "TFE-0392"
+        "TFE-0392",
+        "TFE-0417"
       ],
       "tree_child_edges": [
         "TFE-0377",
@@ -4671,6 +4674,18 @@
       ],
       "tree_child_edges": [],
       "tree_parent_edge": "TFE-0391"
+    },
+    "TF-0242": {
+      "blocking_edges": [],
+      "cross_edges": [
+        "TFE-0417"
+      ],
+      "incoming": [
+        "TFE-0417"
+      ],
+      "outgoing": [],
+      "tree_child_edges": [],
+      "tree_parent_edge": null
     }
   },
   "edge_type_counts": {
@@ -4678,7 +4693,7 @@
     "clarifies": 0,
     "contributes_to": 21,
     "depends_on": 136,
-    "derived_from": 8,
+    "derived_from": 9,
     "duplicates": 0,
     "related_to": 19,
     "supersedes": 3
@@ -9649,10 +9664,22 @@
       "to": "TF-0013",
       "type": "related_to",
       "updated_at": "2026-09-22T08:15:57.492693Z"
+    },
+    "TFE-0417": {
+      "blocking": false,
+      "confidence": 0.95,
+      "created_at": "2026-09-22T12:37:56.093172Z",
+      "created_from_session": null,
+      "from": "TF-0226",
+      "id": "TFE-0417",
+      "reason": "收尾里程碑按 D8 的角色与自动收口策略执行",
+      "to": "TF-0242",
+      "type": "derived_from",
+      "updated_at": "2026-09-22T12:37:56.093172Z"
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-22T11:55:35.520184Z",
+  "generated_at": "2026-09-22T12:38:42.217076Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -25781,9 +25808,10 @@
       "acceptance_criteria": [
         "阶段 0、1、2 全部 done；阶段 3 允许 proposed/deprecated",
         "artifacts/live-model-cdp/ 下存在 J-03 与 J-04 目录，各含 README、journey.json、哈希清单，且 candidate.dirty=false",
-        "docs/ 下存在对外说明一页与贡献归属一页，每句可指向文件",
+        "docs/ 下存在对外说明一页与贡献归属一页，每句可指向文件或提交号，且不含需要用户口述才能成立的内容",
         "origin 上存在 showcase-<日期> tag，指向最终 HEAD",
-        "Task Forest validate 通过、export 成功、check-landing 无待人工复核项"
+        "Task Forest validate 通过、export 成功、check-landing 无待人工复核项",
+        "每条阶段出口判据均有直读磁盘的证据；缺证据或证据矛盾的节点保持未完成并写明缺口"
       ],
       "alignment": {
         "fit": "aligned",
@@ -25822,15 +25850,18 @@
         "护城河三层（执行有边界 / 上下文可归因 / 不把测试绿说成产品绿）各有一件真实产物而不只是源码",
         "接力 agent 只读 docs/dev/qa-synthesis-roadmap-20260922.md 即可继续，不会重开 RC 链"
       ],
-      "deviations": [],
+      "deviations": [
+        "TFD-autoclose-policy-override-0922"
+      ],
       "difficulty": "medium",
       "estimated_total_minutes": 1200,
       "evidence": [],
       "execution_hints": [
         "环境：HTTP_PROXY/HTTPS_PROXY=http://127.0.0.1:7897；CLI 加 PYTHONUTF8=1 PYTHONIOENCODING=utf-8",
         "J-03 开关：OPENCLAW_RC02_SHADOW_CENSUS=1 OPENCLAW_RC03_SEAL=1 放在 driver 进程环境；链路 driver.mjs:65 → config-sync.ts:1054/1080 → rc03-seal-hook.ts:110 / shadow-census.ts:255",
-        "J-04 决定经 host gateway.rpc（electron/services/gateway-api.ts:402）调 exec.approval.list / exec.approval.resolve；若 decideGatewayRpc 拦住，切 fullAccess 再调，仍不通则写限制",
-        "唯一入口文档：docs/dev/qa-synthesis-roadmap-20260922.md；不再新增「当前状态」类文档"
+        "J-04 实测（已收口，纠正原预判）：readOnly 下 host gateway.rpc 的 exec.approval.* 被 decideGatewayRpc 拦截；演示驱动改用自建 Gateway websocket（operator.approvals）作决定。证据 artifacts/live-model-cdp/20260922-senseaudio-journey-J04/",
+        "唯一入口文档：docs/dev/qa-synthesis-roadmap-20260922.md；不再新增「当前状态」类文档",
+        "收口：按 AGENTS.md「Task Forest closure policy」自动 apply；完整规则 harness/specs/rules/task-forest-autoclose-and-roles.md"
       ],
       "id": "TF-0226",
       "kind": "milestone",
@@ -25851,7 +25882,9 @@
         "每个阶段按出口判据关闭，出口不达就停在该阶段写清楚，不顺延",
         "所有判决与计数只用 Read 直读磁盘文件（journey.json、executor-report.json），不采信 bash 打印",
         "重跑前工作树必须干净（driver 记录 candidate.dirty），源码改动只允许阶段 3 与阶段 1c 的单文件头部修复",
-        "不翻任何默认值；演示开关只在驱动进程环境中设置并在材料里写明"
+        "不翻任何默认值；演示开关只在驱动进程环境中设置并在材料里写明",
+        "收口按 AGENTS.md 的自动收口门执行：验收逐条直读核对通过、证据链完整、提案基线未漂移、结论自洽即自行 proposal-save + proposal-apply，随后 validate/export 并把状态与证据同批入库；不等待用户确认 apply",
+        "角色固定：agent 是主线开发者、用户是发布者；节点要求与验收判据不得要求用户回答内容问题，贡献归属等事实从提交、diff、任务图历史与偏差账本重建"
       ],
       "source_sessions": [],
       "status": "in_progress",
@@ -25861,9 +25894,9 @@
         "5 条尾项每条有「仍在 / 已消失 / 不修理由」",
         "收尾窗口内新增源码文件不碰 chat.ts / ChatInput.tsx / attempt.ts"
       ],
-      "summary": "启动于 2026-09-22，时间盒 3 个工作日，四个阶段串行：阶段 0 卫生与口径（今天）→ 阶段 1 通电与边界（两次真实执行）→ 阶段 2 材料与封存 → 阶段 3 可选增量。交付物：J-02/J-03/J-04 三条旅程的留档产物、非 0 收据表与 correlation join、一对审批 request/decision、一页对外说明、一页个人与 AI 贡献归属、一个 showcase tag。三句限制随材料一起走：收据默认关（演示显式开）；非 fullAccess 无应用内审批 UI、会挂起；操作者 agent-driven、Windows x64、一个 provider、一个工作区。",
+      "summary": "启动于 2026-09-22，时间盒 3 个工作日，四个阶段串行：阶段 0 卫生与口径 → 阶段 1 通电与边界（两次真实执行）→ 阶段 2 材料与封存 → 阶段 3 可选增量。交付物：J-02/J-03/J-04 三条旅程的留档产物、非 0 收据表与 correlation join、一对审批 request/decision、一页对外说明、一页贡献归属、一个 showcase tag。三句限制随材料一起走：收据默认关（演示显式开）；非 fullAccess 无应用内审批 UI、会挂起；操作者 agent-driven、Windows x64、一个 provider、一个工作区。阶段 0 与阶段 1 已按出口判据收口（TF-0227～TF-0234 done，TF-0231 于阶段 1 证据补齐后 done）。角色与收口策略见 D8：agent 是主线开发者、用户是发布者，证据链完整即自动 apply，不等待人工确认；验收口径不得要求用户口述内容。",
       "title": "实习展示收尾：一条可重复的 Windows 编码旅程 + 护城河通电一次 + 审批边界发生一次",
-      "updated_at": "2026-09-22T08:15:57.464539Z"
+      "updated_at": "2026-09-22T12:37:56.094306Z"
     },
     "TF-0227": {
       "acceptance_criteria": [
@@ -26137,15 +26170,18 @@
       "context_tags": [],
       "created_at": "2026-09-22T08:15:57.467611Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "medium",
       "display_order": 20,
       "estimated_total_minutes": 360,
       "evidence": [
-        "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/README.md",
-        "docs/dev/showcase-overview-20260922.md（限制栏草稿）"
+        "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/journey.json 与 receipt-join.json：候选 b6c736191、dirty=false，runtime_receipts=28、7 对 v1 context/wire。",
+        "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/journey.json、gateway-events.jsonl、approval-boundary.json、hashes.json：候选 a8c9f4b69、dirty=false，request/decision 对与后续执行；24 文件哈希、0 凭证命中。",
+        "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/README.md：五条尾项裁定（TF-0234）。",
+        "docs/dev/showcase-overview-20260922.md：限制栏草稿。",
+        "docs/dev/qa-synthesis-roadmap-20260922.md：更新记录中的 J-04 接力条目与对 J-03 README 时点表述的更正。"
       ],
       "execution_hints": [
         "先 git status 确认干净，再重建 dist 三件套，再跑 driver",
@@ -26161,18 +26197,18 @@
       ],
       "primary_parent": "TF-0226",
       "priority": 1,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "让护城河在真实模型调用上留下产物：收据表非 0、审批边界发生一次；并把 5 条演示尾项在最终 HEAD 上裁定清楚。",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "in_progress",
+      "status": "done",
       "success_metrics": [],
-      "summary": "J-03 和五条尾项已有可核对证据；J-04 原始边界发生，但缺最终 journey.json 和 candidate.dirty 的可核对证明，不能关闭本阶段。下一步仅补齐/核对 J-04 归档（如无法从原始资料证明则按干净候选重跑），不得伪造原运行的洁净状态。阶段 2 草稿已接收五项限制，但未推进材料、封存或可选功能。",
+      "summary": "阶段 1 的两次真实执行与五条尾项均已留档：J-03（TF-0232）收据非 0 且可按 correlation_digest join；J-04（TF-0233）审批边界发生一次（requested → host 拦截 → 决定 → 继续）；TF-0234 五条尾项裁定完成。两个 journey.json 均为 candidate.dirty=false，两目录凭证扫描 0 命中。本阶段改动只在 artifacts/docs/task-forest 与驱动脚本，未改 permissions-api / gateway-api / 任何 UI 源码，也未改默认值（diff 无 prod-flags-catalog / runtime-feature-leaves / openclaw.json）。阶段 2 材料与封存、阶段 3 可选增量未开始。",
       "title": "阶段 1 · 通电与边界（两次真实执行，零功能代码）",
-      "updated_at": "2026-09-22T11:51:14.335440Z"
+      "updated_at": "2026-09-22T12:36:36.486163Z"
     },
     "TF-0232": {
       "acceptance_criteria": [
@@ -26258,16 +26294,19 @@
       "context_tags": [],
       "created_at": "2026-09-22T08:15:57.469152Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "medium",
       "display_order": 20,
       "estimated_total_minutes": 120,
       "evidence": [
-        "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/approval-boundary.json：host 拦截与直连 Gateway 决定。",
-        "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/session.jsonl：10:25:24.410Z exec 结果晚于 10:25:22.830Z resolve；编码任务未完成。",
-        "artifacts/live-model-cdp/20260922-senseaudio-journey-J03/tail-review.json：原 J-04 清单 7/7 一致，缺 journey.json 的边界明确。"
+        "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/journey.json：候选 a8c9f4b69、dirty=false；stopReason=approval-boundary-observed、boundaryProven=true；含 requestedEvents 与 gatewayEvents。",
+        "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/gateway-events.jsonl：32 帧，含 12:22:18.468Z exec.approval.requested（id 8089e5b5…、命令 node --test、allow-once/deny）与 12:22:41.816Z exec.approval.resolved。",
+        "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/approval-boundary.json：host gateway.rpc 在 readOnly 下被拦（Read-only mode does not allow Gateway mutations）；直连 Gateway 的 pending 列表与 allow-once 决定。",
+        "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/session.jsonl：决定后 12:22:43.838Z 的 exec toolResult 继续；12:22:52.970Z 出现下一条 requested。",
+        "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/hashes.json：24 文件 sha256、凭证扫描 0 命中；run-1-partial/ 保留首次未写 journey.json 的尝试（含其原 7 文件清单）。",
+        "artifacts/live-model-cdp/20260922-senseaudio-journey-J04/README.md：三段运行对照、边界时间线、四条限制。"
       ],
       "execution_hints": [
         "与 J-03 共用重建后的 dist；可在 J-03 之后同一会话执行",
@@ -26282,7 +26321,7 @@
       ],
       "primary_parent": "TF-0231",
       "priority": 1,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "证明「执行有边界、人批准什么」这层护城河是真的，而不只是 J-02 run5 里一次无人处理的挂起。",
       "remaining_minutes_max": null,
@@ -26293,11 +26332,11 @@
         "README 写明「ClawX 无应用内审批 UI；本次决定经 host RPC 由 agent 驱动作出」"
       ],
       "source_sessions": [],
-      "status": "in_progress",
+      "status": "done",
       "success_metrics": [],
-      "summary": "已有 J-04 readOnly host gate 拦截、driver 直连 Gateway resolve 和随后的 exec toolResult；本轮直读复核原 7 文件哈希一致、执行时间晚于决定。未完成：journey.json 缺失，candidate.dirty=false 目前只有 README 叙述，原始可核对证明未整理；不冒充完整 J-04 验收，且不把直连 Gateway 写成 host RPC 放行。",
+      "summary": "J-04 已在干净候选 a8c9f4b69 上重跑并留档（driver-r3.mjs 增加 operator 事件监听）：运行时 exec.approval.requested（node --test、allow-once/deny）→ host gateway.rpc 在 readOnly 被拦 → 直连 Gateway 的 exec.approval.list 见 pending → exec.approval.resolve(allow-once) ok → 决定后 exec toolResult 继续；stopReason=approval-boundary-observed，79 秒。ClawX 无应用内审批 UI，决定由 agent 直连 Gateway 作出，不写成 host RPC 放行。编码任务在 readOnly 下未完成（前后均 exit 1），非本节点判据。产品源码改动 0；收据 flag 只在驱动进程（12 行 / 3 对 v1）。",
       "title": "J-04：非 fullAccess 工作区下让审批边界发生一次（挂起 → 经 gateway.rpc 决定 → 继续）",
-      "updated_at": "2026-09-22T11:51:14.335440Z"
+      "updated_at": "2026-09-22T12:36:36.486163Z"
     },
     "TF-0234": {
       "acceptance_criteria": [
@@ -26365,6 +26404,7 @@
     "TF-0235": {
       "acceptance_criteria": [
         "两页文档存在于 docs/ 下，每句可指向文件或提交",
+        "贡献归属一页由 agent 从提交与 diff 重建，不含需要用户口述的内容",
         "演示包目录含 manifest（每个文件 sha256），密钥扫描 0 命中",
         "LATEST.md 首段为「收尾完成」接力并指向综合规划；forest validate 通过、export 成功、check-landing 无待复核项",
         "origin 存在 showcase-<日期> tag 指向最终 HEAD"
@@ -26410,19 +26450,24 @@
       "purpose": "把阶段 1 的产物讲成一页能指到文件的说明，打包成读者可离线核对的演示包，并把仓库与任务图封存在一个 tag 上。",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
-      "requirements": [],
+      "requirements": [
+        "材料中每句话必须能指到文件、提交或留档产物；不得新造限制",
+        "收口与材料产出按 D8：agent 主线开发、用户发布者；贡献归属由 agent 从仓库记录重建，不向用户提问",
+        "节点收口按自动收口门执行（验收直读核对通过即自行 apply），不等用户确认"
+      ],
       "source_sessions": [],
       "status": "proposed",
       "success_metrics": [],
-      "summary": "三件交付：对外说明一页 + 个人与 AI 贡献归属一页；演示包（J-02/J-03/J-04 产物、收据 dump、审批对、哈希清单、离线核对说明、演示日预案）；封存（LATEST 收尾接力、Task Forest validate/export/check-landing、showcase tag 并 push）。材料中的每一句限制都来自阶段 1 的裁定，不新造。",
+      "summary": "三件交付：对外说明一页 + 贡献归属一页（由 agent 从提交、diff 与任务图记录重建，不向用户提问）；演示包（J-02/J-03/J-04 产物、收据 dump、审批对、哈希清单、离线核对说明、演示日预案）；封存（LATEST 收尾接力、Task Forest validate/export/check-landing、showcase tag 并 push）。材料中的每一句限制都来自阶段 1 的裁定，不新造。分工口径固定为「agent 主线开发 / 用户发布者」。",
       "title": "阶段 2 · 材料与封存",
-      "updated_at": "2026-09-22T08:15:57.470699Z"
+      "updated_at": "2026-09-22T12:37:56.094811Z"
     },
     "TF-0236": {
       "acceptance_criteria": [
-        "两页均 ≤ 1 页 A4 等价长度，每句可指向文件",
+        "两页均 ≤ 1 页 A4 等价长度，每句可指向文件或提交号",
         "限制栏内容与阶段 1 裁定逐条一致",
-        "不出现「真人」「GA」「默认开启」等与事实不符的措辞"
+        "不出现「真人」「GA」「默认开启」等与事实不符的措辞",
+        "不出现需要用户口述或用户答复才能成立的内容"
       ],
       "alignment": {
         "fit": "unknown",
@@ -26441,7 +26486,9 @@
       "deprecated_at": null,
       "derived_progress": 0.0,
       "desired_outcomes": [],
-      "deviations": [],
+      "deviations": [
+        "TFD-autoclose-policy-override-0922"
+      ],
       "difficulty": "low",
       "display_order": 10,
       "estimated_total_minutes": 120,
@@ -26450,7 +26497,8 @@
       "id": "TF-0236",
       "kind": "subtask",
       "non_goals": [
-        "不用目录体积或节点数量代替贡献说明"
+        "不用目录体积或节点数量代替贡献说明",
+        "不把分工写成用户主导开发或用户口述来源"
       ],
       "primary_parent": "TF-0235",
       "priority": 1,
@@ -26461,14 +26509,16 @@
       "remaining_minutes_min": null,
       "requirements": [
         "以 engineering-product-node-plan-20260921.md 的场景为底、D7 的出口为界",
-        "每句附文件路径或提交号"
+        "每句附文件路径或提交号",
+        "贡献归属由 agent 从提交、diff、任务图历史与偏差账本重建；不向用户提问、不等待用户口述",
+        "分工口径固定为「agent 主线开发 / 用户发布者」，与 D8 一致"
       ],
       "source_sessions": [],
       "status": "proposed",
       "success_metrics": [],
-      "summary": "对外说明：定位一句（个人与 AI 协作的 Agent 基座 + Harness 工程化展示，非 GA）；主线一句（本地优先桌面工作台，一个人用一个模型在一个 Windows 工作区做完一件工程事并能解释过程）；三层护城河各一句并指向代码（tools.exec 策略 → exec.approval.requested；rc03-seal-hook → ReceiptStore + shadow-census → WireReceipt；能力表分类 / allowedPromotion=false / tf0009 守卫 / TF-0076 NO-GO）；四栏边界（跑过 / 只证明机制 / 未完成 / 范围外）；三句限制；演示日预案。贡献归属：设计决策是什么、否决过哪些方案（TF-0131 因不改默认值被砍、TF-0076 成本 NO-GO、AGENT-START NO-GO 横幅、TF-0007 撤回 done）、如何审查 AI 改动（验收器双执行者、判决只从磁盘读、禁凭证环境变量）。",
+      "summary": "对外说明：定位一句（agent 与 AI 协作的 Agent 基座 + Harness 工程化展示，非 GA）；主线一句（本地优先桌面工作台，一个 agent 用一个模型在一个 Windows 工作区做完一件工程事并能解释过程）；三层护城河各一句并指向代码（tools.exec 策略 → exec.approval.requested；rc03-seal-hook → ReceiptStore + shadow-census → WireReceipt；能力表分类 / allowedPromotion=false / tf0009 守卫 / TF-0076 NO-GO）；四栏边界（跑过 / 只证明机制 / 未完成 / 范围外）；三句限制；演示日预案。贡献归属（由 agent 从仓库记录重建，不向用户提问）：分工口径为 agent 主线开发、用户发布者；设计决策与取舍逐条指向提交或 diff——TF-0131 因不改默认值被砍、TF-0076 成本 NO-GO、AGENT-START NO-GO 横幅、TF-0007 撤回 done；如何审查 AI 改动（验收器双执行者、判决只从磁盘读、禁凭证环境变量）。",
       "title": "对外说明一页 + 个人与 AI 贡献归属一页",
-      "updated_at": "2026-09-22T08:15:57.471210Z"
+      "updated_at": "2026-09-22T12:37:56.094811Z"
     },
     "TF-0237": {
       "acceptance_criteria": [
@@ -26545,7 +26595,9 @@
       "deprecated_at": null,
       "derived_progress": 0.0,
       "desired_outcomes": [],
-      "deviations": [],
+      "deviations": [
+        "TFD-autoclose-policy-override-0922"
+      ],
       "difficulty": "low",
       "display_order": 30,
       "estimated_total_minutes": 60,
@@ -26565,15 +26617,15 @@
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [
-        "节点收口经 proposal 流程，不手改 canonical 文件",
+        "节点收口经 proposal 流程，不手改 canonical 文件；按 AGENTS.md 自动收口门，验收直读核对通过即自行 proposal-save + proposal-apply，不等待用户确认",
         "tag 之后不再有源码提交进入本次收尾"
       ],
       "source_sessions": [],
       "status": "proposed",
       "success_metrics": [],
-      "summary": "LATEST.md 首段改为「收尾完成」接力：指向综合规划与演示包，列出三句限制与下一周期入口（TF-0030）；用官方 CLI 把阶段 0–2 各节点收口为 done 并登记证据；validate、export、check-landing；git tag showcase-<日期> 指向最终 HEAD 并 push。",
+      "summary": "LATEST.md 首段改为「收尾完成」接力：指向综合规划与演示包，列出三句限制与下一周期入口（TF-0030）；用官方 CLI 把阶段 0–2 各节点收口为 done 并登记证据（按 D8 自动收口门，证据核对通过即自行 apply）；validate、export、check-landing；git tag showcase-<日期> 指向最终 HEAD 并 push（推送既有私有远端属正常开发流程，公开仓库或产物才需发布者授权）。",
       "title": "封存：LATEST 收尾接力、Task Forest 收口（validate / export / check-landing）、打 showcase tag 并 push",
-      "updated_at": "2026-09-22T08:15:57.472773Z"
+      "updated_at": "2026-09-22T12:37:56.094811Z"
     },
     "TF-0239": {
       "acceptance_criteria": [
@@ -26733,6 +26785,69 @@
       "summary": "J-02 观察：host 层 workspaces.switch 之后 renderer 头部仍显示默认工作区与 Read only。src/stores/workspaces.ts 的 switchWorkspace 会更新 store，权限控件在 ChatInput.tsx 约 3603 行读 workspace.permissionMode；疑似头部绑定未订阅切换。只在阶段 1 尾项复核判定「仍在」且未在阶段 1 修时进入本节点。",
       "title": "工作区切换后头部不刷新：只修 permissionMode 绑定一处（仅当尾项复核判定仍在且演示可见）",
       "updated_at": "2026-09-22T08:15:57.475004Z"
+    },
+    "TF-0242": {
+      "acceptance_criteria": [
+        "存在 D8 决策记录，且被收尾里程碑以 derived_from 引用",
+        "AGENTS.md 写明该覆盖在本仓库生效并指向 harness/specs/rules/task-forest-autoclose-and-roles.md",
+        "偏差账本登记本次对 task-forest skill 默认确认步骤的覆盖及其理由",
+        "里程碑与阶段节点的要求、验收、提示中不再存在要求用户回答内容问题的条目；产品锁与默认值未变"
+      ],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0.0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.95,
+      "context_tags": [],
+      "created_at": "2026-09-22T12:37:56.093172Z",
+      "deprecated_at": null,
+      "derived_progress": 100.0,
+      "desired_outcomes": [],
+      "deviations": [
+        "TFD-autoclose-policy-override-0922"
+      ],
+      "difficulty": "unknown",
+      "estimated_total_minutes": null,
+      "evidence": [
+        "harness/specs/rules/task-forest-autoclose-and-roles.md",
+        "harness/specs/tasks/task-forest-autoclose-policy.md",
+        "AGENTS.md",
+        "docs/dev/qa-synthesis-roadmap-20260922.md",
+        "docs/dev/handoffs/LATEST.md"
+      ],
+      "execution_hints": [
+        "本决策不改变证据标准：自动收口只省掉「等用户重复核验」这一步，不省掉核验本身",
+        "接力时先读 AGENTS.md 的 Task Forest closure policy 段，再按 D7/D8 执行"
+      ],
+      "id": "TF-0242",
+      "kind": "decision",
+      "non_goals": [
+        "不修改全局安装的 task-forest skill（跨项目共用，改它会影响其他工作区）",
+        "不降低证据标准、不允许自宣完成",
+        "不改变项目范围、三锁、默认值或任何既有验收条件",
+        "不把用户写成主线开发者，也不把 agent-driven 写成真人"
+      ],
+      "primary_parent": null,
+      "priority": 3,
+      "progress": 0.0,
+      "progress_source": "manual",
+      "purpose": "把 2026-09-22 用户裁定的角色分工与自动收口策略固化进任务图，防止后续接力 agent 把设计/历史/贡献类问题抛回给用户，或把已经完成的核验再等一次人工确认。",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [],
+      "source_sessions": [],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "用户 2026-09-22 裁定：这个仓库里 agent 是主线开发者（选方案、写代码、产证据、对正确性负责），用户是发布者（审查已完成且有证据的结果，决定是否发布或展示），不是逐节点答案的来源。由此两条硬约束：(1) 任何节点的 requirements / acceptance_criteria / 接力提示都不得要求用户回答设计、历史或贡献问题；这类事实从提交、diff、任务图历史与偏差账本重建并注明出处，只在用户脑子里存在的事就写成限制而不是阻塞。(2) 收口门从「人工确认」改为「证据门」：某节点每条验收判据都被直读磁盘核对通过、证据链完整、提案 base_graph_hash 未漂移、结论自洽时，agent 直接 proposal-save + proposal-apply --yes，随后 validate、export，并把状态与证据同批入库，不再等待用户确认。该覆盖对本仓库显式生效，覆盖 task-forest skill 的默认「apply 前等用户确认」，并在偏差账本登记（TFD-autoclose-policy-override-0922）。只有六类外部授权才停下询问用户：对外发布或公开仓库/产物、凭证轮换或新暴露、不可逆 git 操作、改动冻结的产品锁或默认值、声明真人证据、改动范围；向既有私有远端 push 提交或 tag 属于正常开发流程，不属于发布。自动收口是对证据的门，不是对自信的门：证据缺失、过期或互相矛盾的节点保持未完成并写明缺口。落地物：规则 harness/specs/rules/task-forest-autoclose-and-roles.md（R1–R6）、任务规格 harness/specs/tasks/task-forest-autoclose-policy.md、AGENTS.md 的 Task Forest closure policy 段、方向文档 §6/§7。",
+      "title": "D8 决策：接力角色固定为「agent 主线开发 / 用户发布者」；证据链完整即自动收口，取消 apply 前的人工确认门",
+      "updated_at": "2026-09-22T12:37:56.093172Z"
     }
   },
   "reason": "rebuild",
@@ -26751,7 +26866,8 @@
     "TF-0159",
     "TF-0224",
     "TF-0225",
-    "TF-0226"
+    "TF-0226",
+    "TF-0242"
   ],
   "schema_version": 1,
   "status_legend": {
@@ -26766,18 +26882,19 @@
   },
   "status_queues": {
     "actionable_todos": [
+      "TF-0240",
       "TF-0241",
       "TF-0030",
       "TF-0226",
-      "TF-0231",
-      "TF-0233",
+      "TF-0235",
+      "TF-0236",
+      "TF-0237",
       "TF-0151",
       "TF-0129",
       "TF-0130",
       "TF-0141",
       "TF-0144",
       "TF-0239",
-      "TF-0240",
       "TF-0009",
       "TF-0038",
       "TF-0039",
@@ -26796,9 +26913,6 @@
       "TF-0037",
       "TF-0041",
       "TF-0042",
-      "TF-0235",
-      "TF-0236",
-      "TF-0237",
       "TF-0238"
     ],
     "blocked": [
@@ -27039,13 +27153,14 @@
         "TF-0228",
         "TF-0229",
         "TF-0230",
+        "TF-0231",
         "TF-0232",
-        "TF-0234"
+        "TF-0233",
+        "TF-0234",
+        "TF-0242"
       ],
       "in_progress": [
-        "TF-0226",
-        "TF-0231",
-        "TF-0233"
+        "TF-0226"
       ],
       "proposed": [
         "TF-0030",
@@ -27100,8 +27215,6 @@
       "TF-0144",
       "TF-0151",
       "TF-0226",
-      "TF-0231",
-      "TF-0233",
       "TF-0235",
       "TF-0236",
       "TF-0237",
@@ -27115,10 +27228,10 @@
   },
   "summary": {
     "blocked_count": 12,
-    "done_count": 200,
-    "edge_count": 413,
-    "node_count": 241,
-    "open_count": 34,
+    "done_count": 203,
+    "edge_count": 414,
+    "node_count": 242,
+    "open_count": 32,
     "review_needed_count": 0
   },
   "tree_edges": [
