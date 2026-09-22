@@ -2,7 +2,34 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0,
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
+    "confidence": 0.9,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "low",
+    "id": "TF-0230",
+    "kind": "subtask",
+    "next_action": "HANDOFF 文档第 86 行不再含 key",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "文档不携带凭证；演示包与仓库可以在不泄露 key 的前提下被阅读。",
+    "ready": true,
+    "remaining_minutes_max": 20,
+    "remaining_minutes_min": 20,
+    "status": "ready",
+    "success_metrics": [],
+    "title": "把交接文档里的明文 API key 改为环境变量引用，并对 docs/ 与 artifacts/ 做一次密钥扫描"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -25,6 +52,131 @@
     "status": "proposed",
     "success_metrics": [],
     "title": "RC-02 Full-payload Shadow Census"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.85,
+      "user_goal": "以最小成本完成实习展示项目的定调与收尾，保留最值得留下的路径与纪律，不为 Task Forest 涂绿",
+      "validation_plan": [
+        "阶段 1 两次实跑的 journey.json 用 Read 直读",
+        "阶段 2 演示包哈希清单离线核对",
+        "收尾时 task_forest validate / export / check-landing"
+      ],
+      "why_not_enough": "护城河通电与审批边界两项是代码核验后的推断，需阶段 1 实跑才能证实；senseaudio 与本机环境是外部依赖",
+      "why_this_task": "四阶段直接对应用户裁定的收尾边界（旅程可重复、护城河通电、审批边界、诚实限制），每项都有仓库内已有资产支撑，不新造功能"
+    },
+    "blocked_by": [],
+    "confidence": 0.8,
+    "context_tags": [
+      "showcase-closing",
+      "product-journey",
+      "d7"
+    ],
+    "desired_outcomes": [
+      "作者能在最终 HEAD 用仓库内 driver.mjs 重跑旅程；读者能离线核对全部产物哈希",
+      "护城河三层（执行有边界 / 上下文可归因 / 不把测试绿说成产品绿）各有一件真实产物而不只是源码",
+      "接力 agent 只读 docs/dev/qa-synthesis-roadmap-20260922.md 即可继续，不会重开 RC 链"
+    ],
+    "difficulty": "medium",
+    "id": "TF-0226",
+    "kind": "milestone",
+    "next_action": "环境：HTTP_PROXY/HTTPS_PROXY=http://127.0.0.1:7897；CLI 加 PYTHONUTF8=1 PYTHONIOENCODING=utf-8",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "用最小成本把仓库里已经跑通的路径讲清楚、再跑一次、把没接通的写成限制，让评委或读者能在留档证据上核对一切，而不是靠 224 个节点的 done 比例。",
+    "ready": true,
+    "remaining_minutes_max": 1500,
+    "remaining_minutes_min": 900,
+    "status": "in_progress",
+    "success_metrics": [
+      "J-03 收据表非 0，或明确记录回落原因",
+      "J-04 有一对 request/decision，或明确记录被 decideGatewayRpc 拦住的决策记录",
+      "5 条尾项每条有「仍在 / 已消失 / 不修理由」",
+      "收尾窗口内新增源码文件不碰 chat.ts / ChatInput.tsx / attempt.ts"
+    ],
+    "title": "实习展示收尾：一条可重复的 Windows 编码旅程 + 护城河通电一次 + 审批边界发生一次"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
+    "confidence": 0.9,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "low",
+    "id": "TF-0227",
+    "kind": "task",
+    "next_action": "提交按 pathspec 限定，不 git add -A",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "让工作树干净、让所有「当前状态」文档不再互相当放行依据、让明文密钥离开文档，为阶段 1 的实跑扫清前置。",
+    "ready": true,
+    "remaining_minutes_max": 120,
+    "remaining_minutes_min": 120,
+    "status": "ready",
+    "success_metrics": [],
+    "title": "阶段 0 · 卫生与口径收口（今天，不写功能）"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
+    "confidence": 0.95,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "low",
+    "id": "TF-0228",
+    "kind": "subtask",
+    "next_action": "git show --stat <commit> 恰好 2 个文件",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "让「谁序列化了最终请求可以被指认」这条可信度主张不再依赖 provider id 充数，同时不把这 23 行混进别的提交、不宣称 TF-0030 完成。",
+    "ready": true,
+    "remaining_minutes_max": 20,
+    "remaining_minutes_min": 20,
+    "status": "ready",
+    "success_metrics": [],
+    "title": "提交 shadow-census 的 wire owner 具名化改动为独立 commit（TF-0030 局部增量，普查未完成）"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
+    "confidence": 0.9,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "low",
+    "id": "TF-0229",
+    "kind": "subtask",
+    "next_action": "grep -n \"自动转 ready\" docs/dev/handoffs/LATEST.md 首段 0 命中",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "消除六份「当前状态」文档互相矛盾的叙事熵：只有 Task Forest（状态）、综合规划（方向）、LATEST 首段（接力）是真源，其余降为带日期的输入或历史。",
+    "ready": true,
+    "remaining_minutes_max": 45,
+    "remaining_minutes_min": 45,
+    "status": "ready",
+    "success_metrics": [],
+    "title": "提交四份 QA/规划文档并统一口径：LATEST 首段改口，旧状态文档只加日期与适用范围"
   },
   {
     "alignment": {
@@ -194,6 +346,93 @@
   },
   {
     "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0235"
+    ],
+    "confidence": 0.6,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "medium",
+    "id": "TF-0239",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0235",
+    "priority": 3,
+    "progress": 0.0,
+    "purpose": "把唯一值得在收尾窗口碰产品代码的一件事（应用内审批桥）和一处演示可见的小修复，放在明确的可选位置，不与收尾出口绑定。",
+    "ready": false,
+    "remaining_minutes_max": 360,
+    "remaining_minutes_min": 360,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "阶段 3 · 可选增量（仅在阶段 0–2 出口达成后；做不了不影响收尾）"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0233"
+    ],
+    "confidence": 0.55,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "medium",
+    "id": "TF-0240",
+    "kind": "subtask",
+    "next_action": "先完成依赖：TF-0233",
+    "priority": 3,
+    "progress": 0.0,
+    "purpose": "让「人批准什么」有一个应用内入口，把 J-04 里经 RPC 作出的决定变成用户在界面上作出的决定。",
+    "ready": false,
+    "remaining_minutes_max": 300,
+    "remaining_minutes_min": 300,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "最小审批桥：ClawX 订阅 exec.approval.requested，用独立模态展示并调用 exec.approval.resolve"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0234"
+    ],
+    "confidence": 0.6,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "low",
+    "id": "TF-0241",
+    "kind": "subtask",
+    "next_action": "先完成依赖：TF-0234",
+    "priority": 3,
+    "progress": 0.0,
+    "purpose": "演示截图里不再出现「默认工作区 / Read only」的错误头部。",
+    "ready": false,
+    "remaining_minutes_max": 60,
+    "remaining_minutes_min": 60,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "工作区切换后头部不刷新：只修 permissionMode 绑定一处（仅当尾项复核判定仍在且演示可见）"
+  },
+  {
+    "alignment": {
       "fit": "aligned",
       "fit_confidence": 0.98,
       "user_goal": "在无真人测试成本时保证流程与实现完整",
@@ -360,6 +599,35 @@
     "status": "blocked",
     "success_metrics": [],
     "title": "修复 GitHub #22：恢复 Docker sandbox 基础镜像入口"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0232"
+    ],
+    "confidence": 0.8,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "low",
+    "id": "TF-0234",
+    "kind": "subtask",
+    "next_action": "先完成依赖：TF-0232",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "把 J-02 README 里的 5 条未修观察从「交接清单」变成有结论的表，只修演示会碰到且单文件可改的那一条。",
+    "ready": false,
+    "remaining_minutes_max": 90,
+    "remaining_minutes_min": 90,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "五条演示尾项在最终 HEAD 逐条复核并裁定（仍在 / 已消失 / 不修理由）"
   },
   {
     "alignment": {
@@ -799,5 +1067,211 @@
     "status": "blocked",
     "success_metrics": [],
     "title": "RC-10 最终真人 Provider/Channel/Recovery 验收"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0227"
+    ],
+    "confidence": 0.75,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "medium",
+    "id": "TF-0231",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0227",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "让护城河在真实模型调用上留下产物：收据表非 0、审批边界发生一次；并把 5 条演示尾项在最终 HEAD 上裁定清楚。",
+    "ready": false,
+    "remaining_minutes_max": 360,
+    "remaining_minutes_min": 360,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "阶段 1 · 通电与边界（两次真实执行，零功能代码）"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0228",
+      "TF-0229"
+    ],
+    "confidence": 0.7,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "medium",
+    "id": "TF-0232",
+    "kind": "subtask",
+    "next_action": "先完成依赖：TF-0228, TF-0229",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "把「上下文可归因」从源码和测试变成一张评委能看见的表：ContextReceipt/v1 与 WireReceipt/v1 成对、可按 correlation_digest join。",
+    "ready": false,
+    "remaining_minutes_max": 120,
+    "remaining_minutes_min": 120,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "J-03：在最终 HEAD 带收据开关重跑编码旅程，拿到真实模型调用上的非 0 收据"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0228",
+      "TF-0229"
+    ],
+    "confidence": 0.65,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "medium",
+    "id": "TF-0233",
+    "kind": "subtask",
+    "next_action": "先完成依赖：TF-0228, TF-0229",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "证明「执行有边界、人批准什么」这层护城河是真的，而不只是 J-02 run5 里一次无人处理的挂起。",
+    "ready": false,
+    "remaining_minutes_max": 120,
+    "remaining_minutes_min": 120,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "J-04：非 fullAccess 工作区下让审批边界发生一次（挂起 → 经 gateway.rpc 决定 → 继续）"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0231"
+    ],
+    "confidence": 0.85,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "low",
+    "id": "TF-0235",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0231",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "把阶段 1 的产物讲成一页能指到文件的说明，打包成读者可离线核对的演示包，并把仓库与任务图封存在一个 tag 上。",
+    "ready": false,
+    "remaining_minutes_max": 300,
+    "remaining_minutes_min": 300,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "阶段 2 · 材料与封存"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0231"
+    ],
+    "confidence": 0.85,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "low",
+    "id": "TF-0236",
+    "kind": "subtask",
+    "next_action": "先完成依赖：TF-0231",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "让评委在十分钟内看懂：这是什么、跑通了什么、护城河在哪三处代码、没做什么、谁做了什么。",
+    "ready": false,
+    "remaining_minutes_max": 120,
+    "remaining_minutes_min": 120,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "对外说明一页 + 个人与 AI 贡献归属一页"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0231"
+    ],
+    "confidence": 0.9,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "low",
+    "id": "TF-0237",
+    "kind": "subtask",
+    "next_action": "先完成依赖：TF-0231",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "读者不需要本机环境也能核对每一件证据；演示日 provider 不可用也能讲完。",
+    "ready": false,
+    "remaining_minutes_max": 90,
+    "remaining_minutes_min": 90,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "演示包：三条旅程产物、收据 dump、审批对、哈希清单、离线核对说明与演示日预案"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0236",
+      "TF-0237"
+    ],
+    "confidence": 0.9,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "low",
+    "id": "TF-0238",
+    "kind": "subtask",
+    "next_action": "先完成依赖：TF-0236, TF-0237",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "让下一个接力 agent 只读一段文字就知道项目停在哪里、为什么停、再往下是什么。",
+    "ready": false,
+    "remaining_minutes_max": 60,
+    "remaining_minutes_min": 60,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "封存：LATEST 收尾接力、Task Forest 收口（validate / export / check-landing）、打 showcase tag 并 push"
   }
 ]
