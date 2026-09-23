@@ -34,6 +34,7 @@ const SUITE_FILES = [
   "shadow-census.test.ts",
   "rc02-shadow-census.acceptance.test.ts",
   MATRIX_FILE,
+  "rc02-inbound-entry.acceptance.test.ts",
 ];
 const SUITE_COMMAND = `node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts ${SUITE_FILES.join(" ")} --passWithNoTests=false`;
 
@@ -71,8 +72,11 @@ const SURFACES = [
   },
   {
     id: "desktop-chat",
-    gapReason:
-      'the outermost chatHandlers["chat.send"] handler (src/gateway/server-methods/chat.ts:3152) needs a full GatewayRequestContext, webchat channel plugin and session store fixture. Measured 2026-09-23: driving the shared inbound entry dispatchInboundMessageWithBufferedDispatcher (src/auto-reply/dispatch.ts:532) with a minimal cfg produced no output for 120s and was killed by the vitest no-output watchdog, so this is not a config-only fixture. No test in the repo drives a gateway chat send end to end.',
+    test:
+      "desktop chat inbound: dispatchInboundMessage drives a real model call with dual receipts",
+    driver:
+      "openclaw_runtime/src/auto-reply/dispatch.ts dispatchInboundMessageWithBufferedDispatcher (the shared inbound entry behind chat.send), driven with a bounded bootstrap",
+    suite: "rc02-inbound-entry.acceptance.test.ts",
   },
   {
     id: "cron",
@@ -81,8 +85,11 @@ const SURFACES = [
   },
   {
     id: "channel-conformance-fixture",
-    gapReason:
-      "the inbound leg dispatchInboundMessage (src/auto-reply/dispatch.ts:476) shares the stalled driver above, and the rc05 operator fixture (extensions/channels/rc05-operator-fixture/adapter.ts) is transport-only: it makes no model call, so it cannot carry receipts on its own.",
+    test:
+      "channel conformance fixture inbound: the fixture surface reaches the same guarded boundary",
+    driver:
+      "openclaw_runtime/src/auto-reply/dispatch.ts dispatchInboundMessageWithBufferedDispatcher with the rc05 operator fixture surface; the fixture adapter itself is transport-only and is proven by its own conformance test",
+    suite: "rc02-inbound-entry.acceptance.test.ts",
   },
   {
     id: "cli-compact",
@@ -145,6 +152,8 @@ const PROBE_ATTEMPTS = [
       ],
       boundedBootstrapConclusion:
         "the entry is drivable only when bundled plugin loading is fast or bounded AND the model catalog still resolves; neither the allowlist nor explicit registration achieves that today, so this row stays a gap until a bounded-bootstrap harness exists",
+      resolution:
+        "resolved 2026-09-23: with bundled discovery disabled the entry completes in about 2s, and the model catalog is satisfied by seeding the resolved agent models.json (resolveDefaultAgentDir + providers.openai) plus OPENAI_API_KEY for auth. The real entry then drives real model calls through the guarded boundary in about 2.5s per surface, so desktop chat and the channel fixture are now real rows in rc02-inbound-entry.acceptance.test.ts. Remaining narrowing: bundled plugin discovery and the channel plugin layer are not exercised",
     },
     probeFileRemoved: true,
   },
