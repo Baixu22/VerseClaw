@@ -451,10 +451,9 @@ describe("RC-03R real-entry seal and dual v1 receipts", () => {
     const spy = installTransportSpy((index) => ({
       body: responsesTextSse(index === 0 ? "parent answer" : "child answer"),
     }));
-    let forked: { sessionId: string; sessionFile: string } | null = null;
     try {
       await runEmbeddedAgent(parent as never);
-      forked = await forkSessionFromParent({
+      const forked = await forkSessionFromParent({
         parentEntry: { sessionId: "rc03-parent", sessionFile: parentFile, updatedAt: Date.now() } as never,
         agentId: "main",
         sessionsDir,
