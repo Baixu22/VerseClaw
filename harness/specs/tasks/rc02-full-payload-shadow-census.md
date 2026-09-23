@@ -48,6 +48,7 @@ ownedPaths:
   - .agent-workbench/task-forest/**
   - docs/dev/handoffs/LATEST.md
   - docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md
+  - openclaw_runtime/src/agents/rc02-inbound-entry.acceptance.test.ts
 touchedAreas:
   - openclaw_runtime/src/agents/**
   - openclaw_runtime/src/state/**
@@ -85,7 +86,7 @@ rollback:
   - Disable the RC-02 feature flag to restore the legacy provider path byte-for-byte.
   - No migration rollback is required because the runtime_receipts table is append-only and bounded; on-conflict idempotency prevents duplicates.
 requiredTests:
-  - pnpm --dir openclaw_runtime exec vitest run src/agents/receipt-store.test.ts src/agents/shadow-census.test.ts src/agents/rc02-shadow-census.acceptance.test.ts src/agents/rc02-entry-matrix.acceptance.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run src/agents/receipt-store.test.ts src/agents/shadow-census.test.ts src/agents/rc02-shadow-census.acceptance.test.ts src/agents/rc02-entry-matrix.acceptance.test.ts src/agents/rc02-inbound-entry.acceptance.test.ts
   - pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts
   - pnpm exec vitest run tests/unit/runtime-authority-convergence-control-pack.test.ts
   - pnpm harness validate --spec harness/specs/tasks/rc02-full-payload-shadow-census.md

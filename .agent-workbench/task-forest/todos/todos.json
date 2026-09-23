@@ -17,7 +17,7 @@
     "kind": "task",
     "next_action": "自动入口矩阵每次 source-runtime model call 双收据覆盖 100%",
     "priority": 1,
-    "progress": 25.0,
+    "progress": 60.0,
     "purpose": "",
     "ready": true,
     "remaining_minutes_max": null,
