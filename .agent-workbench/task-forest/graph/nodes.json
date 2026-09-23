@@ -2409,15 +2409,18 @@
       "2026-09-23 卡死根因已定位（四个实验，全部实测）：① OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 让同一条 inbound 入口从 120s 卡死变成 2.2s 跑完，证明阻塞点就是捆绑插件的全量装载；但 provider 目录一并消失，运行以 `Unknown model: openai/gpt-rc02-inbound (model_not_found)` 失败，模型边界仍未到达。② plugins.allow=[\"openai\"] 保留捆绑发现时仍然卡死，白名单不阻止全量装载。③ 把 OPENCLAW_BUNDLED_PLUGINS_DIR 指向只含 openai 的临时根（junction）在运行前即被 fs-safe 拒绝（`Symlink escapes plugin root`）。④ 在禁用发现的前提下把 openai 插件的 provider 与 modelCatalogProviders 显式注册进 active registry，仍 model_not_found——模型目录不从这些集合解析。结论：该行只有在「捆绑装载被有界化且模型目录仍可解析」时才可驱动，今天两条路都不通。探针与失败的测试文件都已删除，树保持干净。",
       "2026-09-23 突破并落地（真实覆盖 4/8 → 6/8）：desktop chat 与 channel conformance fixture 两行现在是真实入口驱动。配方（全部实测）：OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 把引导从约 213s 的同步阻塞降到约 2s（该阻塞是有限的，不是无界——抬到 420s watchdog 后入口在 264s 跑完）；模型目录由预置 <resolveDefaultAgentDir>/models.json（providers.openai + 模型条目）满足，仅靠配置声明或显式注册 provider/modelCatalogProviders 都不够；provider 凭据由 OPENAI_API_KEY 环境变量提供（reply 路径从 agent auth store 读凭据，不读 config 里的 apiKey）。",
       "新增 openclaw_runtime/src/agents/rc02-inbound-entry.acceptance.test.ts（2 项，2.5s / 0.8s）：dispatchInboundMessageWithBufferedDispatcher（src/auto-reply/dispatch.ts，chat.send 与 channel 共用的 inbound 入口）真实跑通 reply→agent→guarded boundary，截获真实请求字节，并断言每条 wire 收据的 wire_digest 等于该字节的 sha256、与 context 收据按 correlation_digest 成对。census：entryMatrix.realSurfaces = 6/8（余 cron、cli-compact）、套件 5 files / 48 tests 绿、parity 4/4。",
-      "收窄口径已写明（不藏）：该夹具关闭了捆绑插件发现，且 channel 插件层未参与；真实的部分是入口、reply 路径、guarded transport 边界与收据。census 的 probeAttempts[].followUpProbe.resolution 记了完整配方与失败过的四条路。"
+      "收窄口径已写明（不藏）：该夹具关闭了捆绑插件发现，且 channel 插件层未参与；真实的部分是入口、reply 路径、guarded transport 边界与收据。census 的 probeAttempts[].followUpProbe.resolution 记了完整配方与失败过的四条路。",
+      "2026-09-23 八入口矩阵齐了（8/8 真实）：同一有界引导配方继续解锁余下两行——Cron 由 runCronIsolatedAgentTurn 驱动（2 次真实模型调用、2 条 wire 收据、约 12s；该 turn 自身 status=error 来自夹具无投递渠道且 stub SSE 无助手文本，已在测试注释里写明这与收据普查正交、未断言）；CLI 由 agentCommand 驱动（1 次真实调用、1 条收据、约 1.9s，用完整 Responses 事件序列后干净收尾）。新增 openclaw_runtime/src/agents/rc02-cron-entry.acceptance.test.ts 与 rc02-cli-entry.acceptance.test.ts；spec 的 ownedPaths 与 requiredTests 同步。",
+      "census 现状：entryMatrix.realSurfaces = 8/8、gaps 为空、套件 7 files / 50 tests 绿（attempt 1 exit 0）、parity 4/4（off/on 字节相同、工具顺序同为规范化序、重复 wire attempt 各自独立身份、无额外审批/投递流量）。收窄口径逐条写明：捆绑插件发现未参与、channel 插件层未参与、CLI/compact 的 compact 半支未单独驱动（列为 residual）。",
+      "本节点仍不可收口：spec acceptance 还要求「RC-02 independent Verifier 用 RC-00 批准的基础设施接受普查」，而该路在本 checkout 被挡住（无 RC-02 范围的干净候选、pnpm test 有既有失败文件、Electron 二进制缺失、pnpm -w test skip 预算恰为 50）。"
     ],
     "execution_hints": [],
     "id": "TF-0030",
     "kind": "task",
-    "next_action": "用已验证的「有界引导」配方（OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 + 预置 resolveDefaultAgentDir 下的 models.json + OPENAI_API_KEY）驱动余下两行：Cron（runCronIsolatedAgentTurn，注意绕开 mock 了 run-embedded.runtime.js 的 harness）与 CLI/compact（agentCommand / compactEmbeddedAgentSessionDirect）。两行都真实驱动后，RC-02 的八入口矩阵才齐；随后再谈独立 RC-00 Executor/Verifier。证据：artifacts/runtime-authority-convergence/rc-02/census.json",
+    "next_action": "八入口矩阵已齐（8/8 真实、parity 4/4、套件 7 files / 50 tests 绿）。下一步只剩独立验收：先做一个 RC-02 范围的干净候选（diff 只覆盖本 spec 的 ownedPaths），再跑 acceptance:agent plan → executor → 独立 verifier；若环境仍挡住（无干净候选、pnpm test 既有失败、Electron 二进制缺失、skip 预算 50），就把缺口写清楚并保持未完成，不降标准。证据：artifacts/runtime-authority-convergence/rc-02/census.json",
     "non_goals": [],
     "priority": 1,
-    "progress": 60.0,
+    "progress": 85.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
@@ -2428,7 +2431,7 @@
     "success_metrics": [],
     "summary": "[冻结 2026-09-22 · D7；2026-09-22/23 RC-02R 增量，未收口] 本节点仍未完成。原摘要：在 logical 与最终 guarded request-body 边界生成双 shadow receipt，建立全 payload 分母且保持零行为变化。增量：把被 RC-09 整改矩阵判为假的「八入口矩阵」换成真实入口矩阵——embedded attempt、provider payload hook、context engine、provider transport 四行已由真实生产入口驱动，每条 wire 收据的 wire_digest 必须等于网络边界真实截获字节的 sha256 并与 context 收据按 correlation_digest 成对；provider 分母取自 listSourceRuntimeTransportApis()，新增 API 自动进矩阵；另补 off/on parity 4/4。余下四个入口（desktop chat、Cron、channel conformance fixture、CLI/compact）仍无真实驱动，逐条原因写在 artifacts/runtime-authority-convergence/rc-02/census.json。",
     "title": "RC-02 Full-payload Shadow Census",
-    "updated_at": "2026-09-23T05:10:28.461452Z"
+    "updated_at": "2026-09-23T05:26:16.508980Z"
   },
   "TF-0031": {
     "acceptance_criteria": [

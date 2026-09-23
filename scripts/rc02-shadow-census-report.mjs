@@ -35,6 +35,8 @@ const SUITE_FILES = [
   "rc02-shadow-census.acceptance.test.ts",
   MATRIX_FILE,
   "rc02-inbound-entry.acceptance.test.ts",
+  "rc02-cron-entry.acceptance.test.ts",
+  "rc02-cli-entry.acceptance.test.ts",
 ];
 const SUITE_COMMAND = `node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts ${SUITE_FILES.join(" ")} --passWithNoTests=false`;
 
@@ -80,8 +82,11 @@ const SURFACES = [
   },
   {
     id: "cron",
-    gapReason:
-      "runCronIsolatedAgentTurn (src/cron/isolated-agent/run.ts:1259) is only exercised through run.test-harness.ts, which mocks run-embedded.runtime.js, so the existing coverage cannot prove the real entry. Measured 2026-09-23: an unmocked driver with OPENCLAW_TEST_FAST=1 and a minimal cfg produced no output for 120s and was killed by the no-output watchdog.",
+    test:
+      "cron isolated-agent entry: the real entry drives model calls through the guarded boundary with dual receipts",
+    driver:
+      "openclaw_runtime/src/cron/isolated-agent/run.ts runCronIsolatedAgentTurn -> run-executor -> runEmbeddedAgent, driven with the bounded bootstrap",
+    suite: "rc02-cron-entry.acceptance.test.ts",
   },
   {
     id: "channel-conformance-fixture",
@@ -93,8 +98,11 @@ const SURFACES = [
   },
   {
     id: "cli-compact",
-    gapReason:
-      "the CLI entry agentCommand (src/agents/agent-command.ts:2229) needs full config/session/env fixtures, and compactEmbeddedAgentSessionDirect (src/agents/embedded-agent-runner/compact.ts:526) needs a pre-filled session transcript past the token budget plus the same runtime bootstrap the stalled entries above hit.",
+    test:
+      "cli agentCommand entry: the real entry drives a model call through the guarded boundary with dual receipts",
+    driver:
+      "openclaw_runtime/src/agents/agent-command.ts agentCommand, driven with the bounded bootstrap; the compact half of this surface (compactEmbeddedAgentSessionDirect) is not separately driven and is named as a residual",
+    suite: "rc02-cli-entry.acceptance.test.ts",
   },
 ];
 
@@ -153,7 +161,7 @@ const PROBE_ATTEMPTS = [
       boundedBootstrapConclusion:
         "the entry is drivable only when bundled plugin loading is fast or bounded AND the model catalog still resolves; neither the allowlist nor explicit registration achieves that today, so this row stays a gap until a bounded-bootstrap harness exists",
       resolution:
-        "resolved 2026-09-23: with bundled discovery disabled the entry completes in about 2s, and the model catalog is satisfied by seeding the resolved agent models.json (resolveDefaultAgentDir + providers.openai) plus OPENAI_API_KEY for auth. The real entry then drives real model calls through the guarded boundary in about 2.5s per surface, so desktop chat and the channel fixture are now real rows in rc02-inbound-entry.acceptance.test.ts. Remaining narrowing: bundled plugin discovery and the channel plugin layer are not exercised",
+        "resolved 2026-09-23: with bundled discovery disabled the entry completes in about 2s, and the model catalog is satisfied by seeding the resolved agent models.json (resolveDefaultAgentDir + providers.openai) plus OPENAI_API_KEY for auth. The same recipe then drove every previously open surface: desktop chat and the channel fixture through dispatchInboundMessageWithBufferedDispatcher, cron through runCronIsolatedAgentTurn, and the CLI through agentCommand, so all eight named surfaces now have a real driver. Remaining narrowing: bundled plugin discovery is not exercised, the channel plugin layer is not exercised, and the compact half of the CLI/compact surface is not separately driven",
     },
     probeFileRemoved: true,
   },
