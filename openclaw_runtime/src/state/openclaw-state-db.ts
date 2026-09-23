@@ -877,12 +877,15 @@ export function openOpenClawStateDatabase(
   ensureOpenClawStatePermissions(pathname, env);
   const sqlite = requireNodeSqlite();
   const db = new sqlite.DatabaseSync(pathname);
+  // busy_timeout must precede the WAL switch: another process holding the
+  // write lock (opening, or checkpointing on close) otherwise fails the
+  // journal_mode pragma immediately with "database is locked".
+  db.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
   const walMaintenance = configureSqliteWalMaintenance(db, {
     databaseLabel: "openclaw-state",
     databasePath: pathname,
   });
   db.exec("PRAGMA synchronous = NORMAL;");
-  db.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
   db.exec("PRAGMA foreign_keys = ON;");
   try {
     ensureSchema(db, pathname);
