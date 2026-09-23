@@ -1,30 +1,22 @@
 {
   "schema": "runtime-authority-convergence-rc-02-census/v1",
-  "generatedAt": "2026-09-22T16:47:04.287Z",
+  "generatedAt": "2026-09-23T04:06:29.883Z",
   "node": "v24.15.0",
   "candidate": {
     "branch": "feat/runtime-lifecycle-governance",
-    "head": "b1f9247636e77edf84462db35167e325367499e7",
-    "headShort": "b1f924763",
+    "head": "b173dab2f873945391469e3a2e4cb8b38441e99b",
+    "headShort": "b173dab2f",
     "workingTree": "dirty",
     "changedPaths": [
       ".agent-workbench/task-forest/config.json",
-      ".agent-workbench/task-forest/deviations/deviations.jsonl",
       ".agent-workbench/task-forest/exports/task-forest.graph.json",
-      ".agent-workbench/task-forest/exports/task-forest.todos.json",
       ".agent-workbench/task-forest/graph/forest.json",
       ".agent-workbench/task-forest/graph/nodes.json",
-      ".agent-workbench/task-forest/proposals/TFP-rc02r-real-entry-matrix-20260923.json",
-      ".agent-workbench/task-forest/snapshots/0643.json",
-      ".agent-workbench/task-forest/snapshots/0644.json",
-      ".agent-workbench/task-forest/todos/todos.json",
-      ".gitignore",
-      "artifacts/runtime-authority-convergence/rc-02/",
+      ".agent-workbench/task-forest/snapshots/0645.json",
+      "artifacts/runtime-authority-convergence/rc-02/census.json",
+      "artifacts/runtime-authority-convergence/rc-02/suite-results.json",
+      "artifacts/runtime-authority-convergence/rc-02/suite.log",
       "docs/dev/handoffs/LATEST.md",
-      "docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md",
-      "harness/specs/tasks/rc02-full-payload-shadow-census.md",
-      "openclaw_runtime/src/agents/rc02-entry-matrix.acceptance.test.ts",
-      "openclaw_runtime/src/agents/rc02-shadow-census.acceptance.test.ts",
       "scripts/rc02-shadow-census-report.mjs"
     ]
   },
@@ -35,7 +27,7 @@
       "exitCode": 0,
       "testFiles": "1 passed (1)",
       "tests": "61 passed (61)",
-      "outputSha256": "51dd4d36a0a9a815bcc0e5bd54485ed598e317a8e2b7f05c36cb3a67d1fbf4af"
+      "outputSha256": "f9cb628d5d13041ba887d435b2cadcfdd84d7e407d611bd76286a45ca22a208b"
     },
     {
       "id": "required-test-3",
@@ -43,7 +35,7 @@
       "exitCode": 0,
       "testFiles": "1 passed (1)",
       "tests": "8 passed (8)",
-      "outputSha256": "17eb5e01e9dbdbbe517ba2c2f52a854fe3e66dc3105335e65b8bfa1b076ab2a2"
+      "outputSha256": "41063795b904f2b4ea67a151e9d199d5fb65575dff49941ee457ec87e36eb317"
     },
     {
       "id": "required-test-4",
@@ -65,8 +57,8 @@
     "passedCount": 46,
     "failedCount": 0,
     "failedTests": [],
-    "outputSha256": "722f5b132ec882d65c3a751a605b303ab01295ad995cb961818ed4dcc64bf863",
-    "outputBytes": 2881,
+    "outputSha256": "55f30041eaf848df244a31107c86a0e0552b6455345cf25d7dc943020f97e600",
+    "outputBytes": 2038,
     "log": "artifacts/runtime-authority-convergence/rc-02/suite.log",
     "results": "artifacts/runtime-authority-convergence/rc-02/suite-results.json",
     "passedTests": [
@@ -155,25 +147,25 @@
         "id": "desktop-chat",
         "status": "gap",
         "driver": null,
-        "gapReason": "the outermost chatHandlers[\"chat.send\"] handler (src/gateway/server-methods/chat.ts:3152) needs a full GatewayRequestContext, webchat channel plugin and session store fixture that this suite does not build"
+        "gapReason": "the outermost chatHandlers[\"chat.send\"] handler (src/gateway/server-methods/chat.ts:3152) needs a full GatewayRequestContext, webchat channel plugin and session store fixture. Measured 2026-09-23: driving the shared inbound entry dispatchInboundMessageWithBufferedDispatcher (src/auto-reply/dispatch.ts:532) with a minimal cfg produced no output for 120s and was killed by the vitest no-output watchdog, so this is not a config-only fixture. No test in the repo drives a gateway chat send end to end."
       },
       {
         "id": "cron",
         "status": "gap",
         "driver": null,
-        "gapReason": "runCronIsolatedAgentTurn (src/cron/isolated-agent/run.ts:1259) is only exercised through run.test-harness.ts, which mocks run-embedded.runtime.js; an unmocked driver does not exist yet"
+        "gapReason": "runCronIsolatedAgentTurn (src/cron/isolated-agent/run.ts:1259) is only exercised through run.test-harness.ts, which mocks run-embedded.runtime.js, so the existing coverage cannot prove the real entry. Measured 2026-09-23: an unmocked driver with OPENCLAW_TEST_FAST=1 and a minimal cfg produced no output for 120s and was killed by the no-output watchdog."
       },
       {
         "id": "channel-conformance-fixture",
         "status": "gap",
         "driver": null,
-        "gapReason": "dispatchInboundMessage (src/auto-reply/dispatch.ts:476) has no existing driver, and the rc05 operator fixture is transport-only (it makes no model call)"
+        "gapReason": "the inbound leg dispatchInboundMessage (src/auto-reply/dispatch.ts:476) shares the stalled driver above, and the rc05 operator fixture (extensions/channels/rc05-operator-fixture/adapter.ts) is transport-only: it makes no model call, so it cannot carry receipts on its own."
       },
       {
         "id": "cli-compact",
         "status": "gap",
         "driver": null,
-        "gapReason": "the CLI entry agentCommand (src/agents/agent-command.ts:2229) needs full config/session/env fixtures, and compactEmbeddedAgentSessionDirect (src/agents/embedded-agent-runner/compact.ts:526) needs a pre-filled session transcript past the token budget"
+        "gapReason": "the CLI entry agentCommand (src/agents/agent-command.ts:2229) needs full config/session/env fixtures, and compactEmbeddedAgentSessionDirect (src/agents/embedded-agent-runner/compact.ts:526) needs a pre-filled session transcript past the token budget plus the same runtime bootstrap the stalled entries above hit."
       }
     ]
   },
@@ -201,6 +193,24 @@
       "status": "proved",
       "claim": "observation adds no approval or delivery HTTP traffic",
       "test": "no approval or delivery traffic is added by observation"
+    }
+  ],
+  "probeAttempts": [
+    {
+      "id": "inbound-dispatch",
+      "entry": "openclaw_runtime/src/auto-reply/dispatch.ts:532 dispatchInboundMessageWithBufferedDispatcher (the shared inbound entry behind desktop chat and the channel fixture)",
+      "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts rc02-inbound-probe.test.ts --passWithNoTests=false",
+      "observed": "no stdout for 120000ms; the vitest no-output watchdog terminated the stalled process group before any assertion ran",
+      "conclusion": "not a config-only fixture: the entry needs a channel plugin, session store and agent workspace harness; no test in the repo drives a gateway chat send end to end",
+      "probeFileRemoved": true
+    },
+    {
+      "id": "cron-isolated-agent",
+      "entry": "openclaw_runtime/src/cron/isolated-agent/run.ts:1259 runCronIsolatedAgentTurn",
+      "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts rc02-cron-probe.test.ts --passWithNoTests=false",
+      "observed": "no stdout for 120000ms with OPENCLAW_TEST_FAST=1 and a minimal cfg; the watchdog terminated the stalled process group (the 90s per-test timeout never surfaced)",
+      "conclusion": "the only existing driver (run.test-harness.ts) mocks run-embedded.runtime.js, so it cannot prove the real entry; an unmocked driver stalls on the same runtime bootstrap",
+      "probeFileRemoved": true
     }
   ],
   "ownerClassification": {
