@@ -1741,6 +1741,20 @@ export async function startGatewayServer(
           cfg: getRuntimeConfig(),
         });
         stopDurableHelperRecovery = recovery.stop;
+        // RC-06B: ClawGraph runs live in this process only. A lifecycle that
+        // TaskFlow still shows as active belongs to a run the previous boot
+        // held, so it is settled as lost (no-op for the legacy writer).
+        try {
+          const { settleOrphanedClawGraphLifecycles } = await import(
+            "../agents/clawgraph/runtime.js"
+          );
+          const settled = settleOrphanedClawGraphLifecycles();
+          if (settled.length > 0) {
+            log.info(`gateway: settled ${settled.length} orphaned ClawGraph lifecycle(s) as lost`);
+          }
+        } catch (err) {
+          log.warn(`gateway: ClawGraph lifecycle restart recovery failed: ${String(err)}`);
+        }
         // TF-0081: reconcile supervisor runs orphaned by a previous gateway
         // boot (persisted manifest + fail-closed OS containment). Never
         // expands kill scope and never touches runs with a live owner.

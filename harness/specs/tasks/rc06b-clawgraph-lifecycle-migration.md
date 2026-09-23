@@ -2,15 +2,25 @@
 id: rc06b-clawgraph-lifecycle-migration
 title: RC-06B ClawGraph Lifecycle Migration
 taskType: engineering-acceptance
+# Pinned to the commit RC-06BR started from; the shared branch diverged from
+# origin/main long ago.
+diffBase: RC06B_BASE
 intent: Migrate ClawGraph run lifecycle from the process Map to the TaskFlow-backed owner using the four-step migration pattern (observe, read-only projection, cut one writer with idempotency and rollback proof, remove or freeze the legacy writer after a compatibility window). Compiler and UI remain; run state moves from process Map only after RC-06A proof. Restart, cancel, child task, and projection tests pass.
 ownedPaths:
   - openclaw_runtime/src/agents/clawgraph/runtime.ts
   - openclaw_runtime/src/agents/clawgraph/clawgraph-taskflow-projection.ts
   - openclaw_runtime/src/agents/clawgraph/clawgraph-taskflow-projection.test.ts
+  - openclaw_runtime/src/agents/clawgraph/clawgraph-lifecycle-cutover.test.ts
+  - openclaw_runtime/src/tasks/workflow-lifecycle-owner.ts
+  - openclaw_runtime/src/tasks/task-flow-registry.store.sqlite.ts
+  - openclaw_runtime/src/gateway/server.impl.ts
   - openclaw_runtime/src/tasks/task-flow-registry.ts
   - openclaw_runtime/src/tasks/task-flow-cas.ts
   - harness/specs/tasks/rc06b-clawgraph-lifecycle-migration.md
   - artifacts/runtime-authority-convergence/rc-06b/**
+  - .agent-workbench/task-forest/**
+  - docs/dev/handoffs/LATEST.md
+  - docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md
 touchedAreas:
   - openclaw_runtime/src/agents/clawgraph/**
   - openclaw_runtime/src/tasks/**
@@ -38,7 +48,7 @@ featureFlags:
 rollback:
   - Before cutover, disable the projection. After cutover, rollback explicitly restores the legacy writer and freezes the TaskFlow writer; dual-write is forbidden.
 requiredTests:
-  - pnpm --dir openclaw_runtime exec vitest run src/agents/clawgraph/clawgraph-taskflow-projection.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run src/agents/clawgraph/clawgraph-taskflow-projection.test.ts src/agents/clawgraph/clawgraph-lifecycle-cutover.test.ts
   - pnpm --dir openclaw_runtime exec vitest run src/tasks/task-flow-cas.test.ts
   - pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts
   - pnpm exec vitest run tests/unit/runtime-authority-convergence-control-pack.test.ts
@@ -59,8 +69,13 @@ docs:
 
 # RC-06B ClawGraph Lifecycle Migration
 
-RC-06B migrates ClawGraph run lifecycle from the process Map toward the TaskFlow-backed owner using
-the four-step migration pattern. This package implements step 1 (observe the legacy path without
-behavior change) and step 2 (a read-only TaskFlow projection) behind a default-off flag; the legacy
-process Map remains authoritative. Restart, cancel, child-task, and projection tests prove the
-projection before any writer cutover. Indefinite dual-write is not a migration strategy.
+RC-06B moves ClawGraph run lifecycle from the process Map to the TaskFlow owner. The writer is
+selected by `OPENCLAW_CLAWGRAPH_LIFECYCLE_WRITER`: `legacy` (default; TaskFlow is not written),
+`projection` (legacy stays authoritative, TaskFlow receives an observational copy and rejected
+writes are recorded as drift), or `taskflow` (the controlled cutover). Under the cutover a run is
+created only with its TaskFlow row, and every status change, cancel included, commits through the
+TaskFlow CAS writer before the in-memory run applies it; the Map is a cache and a rejected commit
+leaves the run unchanged (legacy freeze). Gateway start settles lifecycles whose run the previous
+boot held as lost, and a restarted process answers their status from TaskFlow. Emergency rollback
+is selecting `legacy` again, which freezes the TaskFlow writer; no mode writes both authorities as
+truth. The cutover is exercised by tests and stays opt-in; defaults and product locks do not change.
