@@ -92,7 +92,13 @@ afterEach(async () => {
     // tracked handle under the temp root before removal so Windows releases
     // the file locks.
     closeTrackedSqliteHandlesUnder(root);
-    fs.rmSync(root, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 });
+    try {
+      fs.rmSync(root, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 });
+    } catch {
+      // Windows can still hold a handle even after the tracked handles are
+      // closed. The directory is an OS temp dir, so a failed cleanup must not
+      // turn a passing acceptance test red.
+    }
   }
 });
 
@@ -221,7 +227,9 @@ describe("RC-02 full-payload shadow census acceptance", () => {
     const contextByCorrelation = new Map(
       contextRows.map((row) => [row.correlation_digest, row.model_call_index]),
     );
-    expect(wireRows.map((row) => row.model_call_index).toSorted()).toEqual([0, 1]);
+    expect(
+      wireRows.map((row) => Number(row.model_call_index)).toSorted((left, right) => left - right),
+    ).toEqual([0, 1]);
     for (const wire of wireRows) {
       expect(contextByCorrelation.get(wire.correlation_digest)).toBe(wire.model_call_index);
       expect(wire).toMatchObject({

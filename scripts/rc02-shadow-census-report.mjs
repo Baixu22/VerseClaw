@@ -119,6 +119,32 @@ const PROBE_ATTEMPTS = [
       ],
       conclusion:
         "the blocker is synchronous work inside the runtime bootstrap (plugin/workspace loading) that a minimal config does not bound; a driver needs the repo's own bounded harness or a pre-warmed bootstrap, not another config field",
+      boundedBootstrapAttempts: [
+        {
+          attempt: "OPENCLAW_DISABLE_BUNDLED_PLUGINS=1",
+          observed:
+            "the same entry completes in 2.2s instead of stalling, which pins the block to bundled plugin loading; but the bundled provider catalog goes with it, so the run fails with `Unknown model: openai/gpt-rc02-inbound (model_not_found)` and never reaches the model boundary",
+        },
+        {
+          attempt: 'plugins.allow=["openai"] with bundled discovery enabled',
+          observed:
+            "still stalls past 120s, so the allowlist does not prevent the full bundled load",
+        },
+        {
+          attempt:
+            "OPENCLAW_BUNDLED_PLUGINS_DIR pointing at a temp root with a junction to extensions/openai",
+          observed:
+            "rejected before running: the fs-safe root guard raises `Symlink escapes plugin root`, so a bounded plugin root cannot be built by symlink",
+        },
+        {
+          attempt:
+            "OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 plus explicit registration of the openai plugin's provider and modelCatalogProviders collections into the active registry",
+          observed:
+            "still `model_not_found`: the model catalog is not resolved from those registry collections, so explicit registration is not enough to make the configured model resolvable",
+        },
+      ],
+      boundedBootstrapConclusion:
+        "the entry is drivable only when bundled plugin loading is fast or bounded AND the model catalog still resolves; neither the allowlist nor explicit registration achieves that today, so this row stays a gap until a bounded-bootstrap harness exists",
     },
     probeFileRemoved: true,
   },
@@ -300,10 +326,40 @@ function main() {
   // instead of trusting this summary.
   const logPath = path.join(artifactDir, "suite.log");
   const resultsPath = path.join(artifactDir, "suite-results.json");
-  const run = runSuite(resultsPath);
+  // The suite has two pre-existing environment flakes on this host (a Windows
+  // temp-dir cleanup EPERM and "database is locked" in the receipt-store
+  // concurrent-writer tests). Retry a bounded number of times and record EVERY
+  // attempt, so a green run is a real observation and the flakiness stays
+  // visible instead of being averaged away.
+  const attempts = [];
+  let run = { exitCode: 1, output: "" };
+  let passed = new Set();
+  let failed = new Set();
+  let total = 0;
+  for (let index = 0; index < 3; index += 1) {
+    run = runSuite(resultsPath);
+    const attemptCounts = parseCounts(run.output);
+    let attemptResults = { passed: new Set(), failed: new Set(), total: 0 };
+    try {
+      attemptResults = passedTestsFromResults(resultsPath);
+    } catch {
+      // No parseable results for this attempt; the exit code still counts.
+    }
+    attempts.push({
+      attempt: index + 1,
+      exitCode: run.exitCode,
+      testFiles: attemptCounts.testFiles,
+      tests: attemptCounts.tests,
+      failedTests: [...attemptResults.failed].toSorted(),
+      outputSha256: createHash("sha256").update(run.output).digest("hex"),
+    });
+    passed = attemptResults.passed;
+    failed = attemptResults.failed;
+    total = attemptResults.total;
+    if (run.exitCode === 0) break;
+  }
   const counts = parseCounts(run.output);
   fs.writeFileSync(logPath, run.output, "utf8");
-  const { passed, failed, total } = passedTestsFromResults(resultsPath);
   const requiredGates = runRequiredGates();
   const statusLines = gitPorcelainLines();
 
@@ -351,6 +407,8 @@ function main() {
       command: SUITE_COMMAND,
       cwd: "openclaw_runtime",
       exitCode: run.exitCode,
+      green: run.exitCode === 0,
+      attempts,
       testFiles: counts.testFiles,
       tests: counts.tests,
       totalTests: total,

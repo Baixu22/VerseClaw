@@ -1,22 +1,24 @@
 {
   "schema": "runtime-authority-convergence-rc-02-census/v1",
-  "generatedAt": "2026-09-23T04:22:58.110Z",
+  "generatedAt": "2026-09-23T04:54:18.956Z",
   "node": "v24.15.0",
   "candidate": {
     "branch": "feat/runtime-lifecycle-governance",
-    "head": "9b141e1907e391688b3fa80c6d5cdcb00b6d9ac8",
-    "headShort": "9b141e190",
+    "head": "59c261fe230a78dc4538abd4a1a8dc7d00c7cbe4",
+    "headShort": "59c261fe2",
     "workingTree": "dirty",
     "changedPaths": [
       ".agent-workbench/task-forest/config.json",
       ".agent-workbench/task-forest/exports/task-forest.graph.json",
       ".agent-workbench/task-forest/graph/forest.json",
       ".agent-workbench/task-forest/graph/nodes.json",
-      ".agent-workbench/task-forest/snapshots/0646.json",
+      ".agent-workbench/task-forest/snapshots/0647.json",
       "artifacts/runtime-authority-convergence/rc-02/census.json",
       "artifacts/runtime-authority-convergence/rc-02/suite-results.json",
       "artifacts/runtime-authority-convergence/rc-02/suite.log",
       "docs/dev/handoffs/LATEST.md",
+      "openclaw_runtime/src/agents/rc02-entry-matrix.acceptance.test.ts",
+      "openclaw_runtime/src/agents/rc02-shadow-census.acceptance.test.ts",
       "scripts/rc02-shadow-census-report.mjs"
     ]
   },
@@ -27,7 +29,7 @@
       "exitCode": 0,
       "testFiles": "1 passed (1)",
       "tests": "61 passed (61)",
-      "outputSha256": "27b68a24421512aa138efa0a31a3b74666fa066cda3f0b06d8de9072fc7ce9c5"
+      "outputSha256": "f682522689ef1a177c8092ce192cc0160f456a8bf417fddfc81d32369aea92aa"
     },
     {
       "id": "required-test-3",
@@ -35,7 +37,7 @@
       "exitCode": 0,
       "testFiles": "1 passed (1)",
       "tests": "8 passed (8)",
-      "outputSha256": "688285a74393753705f260ce0f61197c2c0227aa0cd65f4a78c8da7165336b09"
+      "outputSha256": "6f09886bcd2b63fb99b2d33f5d91acb0d83d0b5d6da3a80b7b48a456f9a4f080"
     },
     {
       "id": "required-test-4",
@@ -51,14 +53,25 @@
     "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts receipt-store.test.ts shadow-census.test.ts rc02-shadow-census.acceptance.test.ts rc02-entry-matrix.acceptance.test.ts --passWithNoTests=false",
     "cwd": "openclaw_runtime",
     "exitCode": 0,
+    "green": true,
+    "attempts": [
+      {
+        "attempt": 1,
+        "exitCode": 0,
+        "testFiles": "4 passed (4)",
+        "tests": "46 passed (46)",
+        "failedTests": [],
+        "outputSha256": "95cc830fa206a96bb67eae7e888bfd18031a3216adc99838bc2fce2b9f49e90b"
+      }
+    ],
     "testFiles": "4 passed (4)",
     "tests": "46 passed (46)",
     "totalTests": 46,
     "passedCount": 46,
     "failedCount": 0,
     "failedTests": [],
-    "outputSha256": "368bbc85de592d7bd446e5bc825f8d74103cbbeea5e3ca06b5b278cf00142129",
-    "outputBytes": 2038,
+    "outputSha256": "95cc830fa206a96bb67eae7e888bfd18031a3216adc99838bc2fce2b9f49e90b",
+    "outputBytes": 2037,
     "log": "artifacts/runtime-authority-convergence/rc-02/suite.log",
     "results": "artifacts/runtime-authority-convergence/rc-02/suite-results.json",
     "passedTests": [
@@ -210,7 +223,26 @@
           "moving process.cwd() to a temp directory under the forks pool (where chdir is supported) did not change the stall, so repo-shaped CWD scanning is not the cause",
           "the per-test timeout never fired because a blocked event loop cannot run its timer"
         ],
-        "conclusion": "the blocker is synchronous work inside the runtime bootstrap (plugin/workspace loading) that a minimal config does not bound; a driver needs the repo's own bounded harness or a pre-warmed bootstrap, not another config field"
+        "conclusion": "the blocker is synchronous work inside the runtime bootstrap (plugin/workspace loading) that a minimal config does not bound; a driver needs the repo's own bounded harness or a pre-warmed bootstrap, not another config field",
+        "boundedBootstrapAttempts": [
+          {
+            "attempt": "OPENCLAW_DISABLE_BUNDLED_PLUGINS=1",
+            "observed": "the same entry completes in 2.2s instead of stalling, which pins the block to bundled plugin loading; but the bundled provider catalog goes with it, so the run fails with `Unknown model: openai/gpt-rc02-inbound (model_not_found)` and never reaches the model boundary"
+          },
+          {
+            "attempt": "plugins.allow=[\"openai\"] with bundled discovery enabled",
+            "observed": "still stalls past 120s, so the allowlist does not prevent the full bundled load"
+          },
+          {
+            "attempt": "OPENCLAW_BUNDLED_PLUGINS_DIR pointing at a temp root with a junction to extensions/openai",
+            "observed": "rejected before running: the fs-safe root guard raises `Symlink escapes plugin root`, so a bounded plugin root cannot be built by symlink"
+          },
+          {
+            "attempt": "OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 plus explicit registration of the openai plugin's provider and modelCatalogProviders collections into the active registry",
+            "observed": "still `model_not_found`: the model catalog is not resolved from those registry collections, so explicit registration is not enough to make the configured model resolvable"
+          }
+        ],
+        "boundedBootstrapConclusion": "the entry is drivable only when bundled plugin loading is fast or bounded AND the model catalog still resolves; neither the allowlist nor explicit registration achieves that today, so this row stays a gap until a bounded-bootstrap harness exists"
       },
       "probeFileRemoved": true
     },
