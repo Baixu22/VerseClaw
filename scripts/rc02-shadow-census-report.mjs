@@ -334,6 +334,91 @@ function runRequiredGates() {
   });
 }
 
+const ACCEPTANCE_RUN_DIR = "artifacts/agent-engineering-acceptance/runs/rc02r-accept-2";
+const ACCEPTANCE_ARCHIVE_DIR = "artifacts/runtime-authority-convergence/rc-02/acceptance";
+
+function readJsonIfPresent(filePath) {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Formal RC-00 acceptance evidence, derived from the run's own reports on disk.
+ * The reports are also archived byte-identically into the tracked rc-02 package
+ * directory, because the runner keeps its run outputs gitignored.
+ */
+function acceptanceSection(gaps) {
+  const runDir = path.join(repoRoot, ACCEPTANCE_RUN_DIR);
+  const archiveDir = path.join(repoRoot, ACCEPTANCE_ARCHIVE_DIR);
+  const reports = {
+    manifest: path.join(runDir, "manifest.json"),
+    plan: path.join(runDir, "plan.json"),
+    executorReport: path.join(runDir, "executor-report.json"),
+    verifierReport: path.join(runDir, "verifier-report.json"),
+    finalReport: path.join(runDir, "final-report.json"),
+  };
+  const finalReport = readJsonIfPresent(reports.finalReport);
+  if (!finalReport) {
+    return {
+      rc02SpecAcceptanceMet: false,
+      reason: `no RC-00 acceptance run found at ${ACCEPTANCE_RUN_DIR}`,
+      remainingGaps: gaps.map((gap) => gap.id),
+    };
+  }
+  const executorReport = readJsonIfPresent(reports.executorReport);
+  const manifest = readJsonIfPresent(reports.manifest);
+
+  fs.mkdirSync(archiveDir, { recursive: true });
+  const archivedReports = [];
+  for (const [id, source] of Object.entries(reports)) {
+    if (!fs.existsSync(source)) continue;
+    const target = path.join(archiveDir, `${id}.json`);
+    fs.copyFileSync(source, target);
+    archivedReports.push({
+      id,
+      source: path.relative(repoRoot, source).replaceAll("\\", "/"),
+      archive: path.relative(repoRoot, target).replaceAll("\\", "/"),
+      sha256: createHash("sha256").update(fs.readFileSync(source)).digest("hex"),
+    });
+  }
+
+  const failures = finalReport.failures ?? [];
+  const met =
+    finalReport.result === "pass" &&
+    finalReport.engineeringAcceptedByAgent === true &&
+    failures.length === 0 &&
+    gaps.length === 0;
+  return {
+    rc02SpecAcceptanceMet: met,
+    runDir: ACCEPTANCE_RUN_DIR,
+    candidate: manifest?.candidate?.commit,
+    cleanAtPlan: manifest?.candidate?.cleanAtPlan,
+    gateCount: manifest?.gates?.length,
+    executor: {
+      role: executorReport?.role,
+      result: executorReport?.result,
+      actor: executorReport?.actor,
+      failures: (executorReport?.failures ?? []).length,
+      reportDigest: executorReport?.reportDigest,
+      testCounts: executorReport?.testCounts,
+    },
+    final: {
+      role: finalReport.role,
+      result: finalReport.result,
+      actor: finalReport.actor,
+      engineeringAcceptedByAgent: finalReport.engineeringAcceptedByAgent,
+      failures: failures.length,
+      reportDigest: finalReport.reportDigest,
+      testCounts: finalReport.testCounts,
+    },
+    archivedReports,
+    ...(met ? {} : { remainingGaps: gaps.map((gap) => gap.id) }),
+  };
+}
+
 function main() {
   const options = parseArgs(process.argv.slice(2));
   const artifactDir = path.dirname(options.output);
@@ -458,12 +543,7 @@ function main() {
       enforcedBy: "rc02-shadow-census.acceptance.test.ts",
       verifiedInThisRun: passed.has("npm fallback reports runtimeMode=npm and never counts as source coverage"),
     },
-    acceptance: {
-      rc02SpecAcceptanceMet: false,
-      reason:
-        "acceptance requires both receipts for every source-runtime model call in all eight named entry surfaces; only the surfaces listed as real are driven by a real entry today, and no independent RC-00 Executor/Verifier run exists for this increment",
-      remainingGaps: gaps.map((gap) => gap.id),
-    },
+    acceptance: acceptanceSection(gaps),
     productLocks: {
       liveReady: false,
       productApproved: false,

@@ -1,6 +1,15 @@
 # 会话交接（LATEST）
 
-## 当前接力（2026-09-22/23，TF-0030 · RC-02R 增量）：假八入口换成真实入口矩阵，**普查未完成**
+## 收口完成（2026-09-23，TF-0030 · RC-02）：八入口矩阵 8/8 真实 + 正式 RC-00 验收 pass
+
+- **TF-0030 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`、`allowedPromotion=false`、`humanEvidenceRequired=false`——这是**工程验收**，不是产品放行或 GA。
+- **正式验收链（干净候选 `78dc12d1c`，`cleanAtPlan=true`，coverage `ui=false` 故不触发 Electron e2e）**：`acceptance:agent:plan` 出 23 门 → **Executor pass**（`failures=0`、`reportDigest a1297b3a…`、`9500 passed / 0 failed / 50 skipped`，恰为冻结 skip 预算）→ **独立 Verifier pass**（actor `rc02-verifier` ≠ `rc02-executor`、第二个 detached worktree 重跑全部 23 门、`final-report.json` `result=pass` / `engineeringAcceptedByAgent=true` / `failures=0` / `reportDigest 00c191f1…`、`consistency.errors=[]`、`identicalGateContracts=true`、`mutationCheck` 源与 detached 前后均干净、`safety` 三锁全 false）。
+- **环境前置（非仓库改动，已留痕）**：`provision-verseshell-resources` 门要求 Cargo/rustc 恰为 **1.94.0**，本机原为 1.98.1；首轮 Executor 因此 fail 且其后 22 门 fail-closed 为 blocked。用 `rustup toolchain install 1.94.0-x86_64-pc-windows-msvc` 并以 `RUSTUP_TOOLCHAIN` 指向它后该门通过（并顺带 provision 了 Electron dist）。**没有放宽任何门**。
+- **证据**：`artifacts/runtime-authority-convergence/rc-02/census.json`（`entryMatrix.realSurfaces 8/8`、`complete true`、parity 4/4、`acceptance.rc02SpecAcceptanceMet true`）+ 同目录 `acceptance/{manifest,plan,executorReport,verifierReport,finalReport}.json`（逐字节归档并记 sha256）。偏差 `TFD-rc02r-fake-entry-matrix` 已登记。
+- **residual 如实保留**：捆绑插件发现未参与、channel 插件层未参与、CLI/compact 的 compact 半支未单独驱动；owner-classification 是「每条收据都有具名 adapter」的完整性检查，字段级 producer/transform 拆分未实现（已写在 census）。
+- **下一周期入口**：TF-0031（RC-03 DCS Seal 与双收据），顺序见 `docs/dev/qa-synthesis-roadmap-20260922.md` §5。三锁与默认值全程未改，未声明真人证据。
+
+## 上一段接力（历史，2026-09-22/23，TF-0030 · RC-02R 增量）：假八入口换成真实入口矩阵
 
 - **节点状态：TF-0030 仍未完成**（收尾时为 `proposed`；本增量只做了 RC-09 整改矩阵里 `RC-02R` 的两行之一）。起点是干净的 `b1f924763`（分支 `feat/runtime-lifecycle-governance`），本增量落库提交 **`1a017a47d`**（20 文件）。
 - **改了什么（全部在 spec 的 ownedPaths 内）**：① 新增 `openclaw_runtime/src/agents/rc02-entry-matrix.acceptance.test.ts`（9 项）——用**真实入口**驱动并断言每条 wire 收据的 `wire_digest` 等于网络边界上**真实截获字节**的 sha256，且与 context 收据按 `correlation_digest` 成对；② `rc02-shadow-census.acceptance.test.ts` 删掉「八入口」的**虚假声明**（该用例实际是直接调 transport 工厂，已改名为 transport-level smoke，标签由产品名改为调用 id，并指向真实矩阵）；③ 新增 `scripts/rc02-shadow-census-report.mjs` 与 `artifacts/runtime-authority-convergence/rc-02/{census.json,suite.log,suite-results.json}`；④ spec 钉 `diffBase: b1f924763`、补 ownedPaths/touchedAreas、requiredTests 加入新文件；⑤ `.gitignore` 允许跟踪 rc-02 证据；⑥ `WORK-PACKAGES.md` 记 RC-02R 状态。

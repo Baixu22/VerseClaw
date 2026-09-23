@@ -1,0 +1,58 @@
+{
+  "applied_at": "2026-09-23T07:14:28.470958Z",
+  "base_graph_hash": "609b1202c390d98ef0507031617c182d087c0db80472a927ef5030258d5a3c33",
+  "base_summary": {
+    "edge_count": 417,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "RC-01 accepted with receipt-owner decision resolved (runtime_receipts via ReceiptStore); RC-02 full-payload shadow census may start",
+          "RC-02 independent Verifier VERDICT=pass: runtime_receipts+ReceiptStore+ShadowContextReceipt/v0+ShadowWireReceipt/v0, zero-byte parity, 40/40 tests, schema verify clean",
+          "2026-09-22 D7 冻结：docs/dev/qa-synthesis-roadmap-20260922.md §1.2、§5；未提交增量 shadow-census.ts:459（adapterId 不再回落 providerId）",
+          "口径冲突留痕：上一条 evidence 声称 RC-02 独立 Verifier PASS（40/40），与 RC-09 整改矩阵把 RC-02R 列为未闭合项（假八入口/Anthropic-only、ReceiptStore 伪造 digest 绕过）矛盾。按 D8「判决只直读磁盘」口径，以 RC-09 整改矩阵与本次 census 实测为准；旧声明不改写、不删除。",
+          "2026-09-22/23 RC-02R 增量（未收口）：新增 openclaw_runtime/src/agents/rc02-entry-matrix.acceptance.test.ts（9 项）。真实入口驱动 + 字节绑定断言：每条 shadow_wire 收据的 wire_digest 必须等于网络边界（globalThis.fetch 截获）真实发送字节的 sha256，且与 shadow_context 收据按 correlation_digest 与 model_call_index 成对；provider 分母取自 listSourceRuntimeTransportApis()，注册表新增 API 自动进矩阵。",
+          "假八入口已拆除：rc02-shadow-census.acceptance.test.ts 里名为「entry matrix: real provider transports」的用例实际是直接调 transport 工厂（6/8 行与产品入口无关），已改名 transport-level smoke 并把标签由产品入口名改为调用 id，明确不再声称入口覆盖；其 8 条 transport 调用与 registry 分母用例保留为 transport 层证据。",
+          "parity 4/4（RC-09 整改矩阵要求）：off/on 序列化字节完全相同；工具顺序同为 transport 规范化序（exec,read,write）且 off/on 一致；重复 wire attempt 保持字节相同并各自拿到独立身份（wire_attempt_index 0/1）；观察不新增审批/投递流量（截获 URL 全部指向模型端点）。",
+          "证据 artifacts/runtime-authority-convergence/rc-02/census.json（由 scripts/rc02-shadow-census-report.mjs 从真实运行派生，非手写）：聚焦套件 4 files / 46 tests 全过 exit 0；required-test-2（agent-engineering-acceptance）1 file / 61 tests exit 0；required-test-3（control-pack）1 file / 8 tests exit 0；required-test-4 `pnpm harness validate --spec harness/specs/tasks/rc02-full-payload-shadow-census.md` exit 0 且输出 'Spec is valid'；entryMatrix 4/8 真实、parity 4/4；candidate 为 b1f924763 之上的 dirty 工作树并逐条列出 changedPaths。同目录留 suite.log 与 suite-results.json 供复核。",
+          "spec 变更：harness/specs/tasks/rc02-full-payload-shadow-census.md 钉 diffBase: b1f924763（共享分支早已偏离 origin/main，默认 diff base 会把整条分支算成改动）、ownedPaths/touchedAreas 补入新测试文件与证据路径、requiredTests 第 1 条加入 rc02-entry-matrix.acceptance.test.ts。",
+          "仍未完成：desktop chat（chat.send）、Cron、channel conformance fixture、CLI/compact 四行没有真实驱动；没有独立 RC-00 Executor/Verifier 运行——本 checkout 里那条路被挡住（无 RC-02 范围的干净候选、pnpm test 有 3 个既有失败文件、Electron 二进制缺失、pnpm -w test skip 预算恰为 50）。侦察另记下 11 处真实覆盖洞（SOURCE_RUNTIME_TRANSPORTS 之外的 provider、simple-completion-runtime 丢 symbol、amazon-bedrock-mantle、google-prompt-cache、btw.ts 无 runId 等），尚未处理。",
+          "环境抖动如实记录、未当作绿：同一套件早前两次分别失败于 afterEach 删除 %TEMP% 目录的 EPERM、并发写用例的 database is locked；本轮最终运行干净通过。",
+          "未改产品锁与默认值：liveReady / productApproved / defaultOn 保持 false；收据开关仍默认关，测试只在进程环境内显式开启。",
+          "2026-09-23 实测（负结果留痕）：为余下四个入口写真实驱动时，两个外层入口在最小夹具下都会卡死——dispatchInboundMessageWithBufferedDispatcher（src/auto-reply/dispatch.ts:532，desktop chat 与 channel 共用的 inbound 入口）与 runCronIsolatedAgentTurn（src/cron/isolated-agent/run.ts:1259，OPENCLAW_TEST_FAST=1 + 最小 cfg）各自在 120s 内无任何输出，被 vitest no-output watchdog 终止。结论：这两条不是补字段就能驱动，需要 channel 插件 + session store + agent workspace 的完整夹具；仓库内没有任何端到端驱动 gateway chat.send 的测试可复用。两次探针文件已删除，未留在树里。",
+          "2026-09-23 证据更新：census 的四个 gap 原因已由静态推断升级为实测结论（含上述卡死读数与命令），见 artifacts/runtime-authority-convergence/rc-02/census.json 的 entryMatrix.surfaces[].gapReason。",
+          "2026-09-23 深入诊断（排除两个假设）：给卡死探针加 5s 心跳与 fetch 计数后确认——模型边界从未到达（fetch spy 零请求）；心跳在约 5–10s 后停止，说明事件循环被同步阻塞（不是 await 死锁，所以单测超时也无法触发）；阻塞前引导已装 12–20 个递归 FSEventWrap watcher；把 process.cwd() 移到临时目录（forks pool，支持 chdir）不改变卡死，故「扫仓库 CWD」不是原因。结论：阻塞在运行时引导的同步工作（插件/workspace 装载），最小 cfg 无法界定其规模；驱动需要仓库自己的有界 harness 或预热引导，而不是再加配置字段。诊断探针已删除，未留在树里。仓库内也没有任何测试直接驱动 getReplyFromConfig 或 gateway chat.send 可复用。",
+          "2026-09-23 卡死根因已定位（四个实验，全部实测）：① OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 让同一条 inbound 入口从 120s 卡死变成 2.2s 跑完，证明阻塞点就是捆绑插件的全量装载；但 provider 目录一并消失，运行以 `Unknown model: openai/gpt-rc02-inbound (model_not_found)` 失败，模型边界仍未到达。② plugins.allow=[\"openai\"] 保留捆绑发现时仍然卡死，白名单不阻止全量装载。③ 把 OPENCLAW_BUNDLED_PLUGINS_DIR 指向只含 openai 的临时根（junction）在运行前即被 fs-safe 拒绝（`Symlink escapes plugin root`）。④ 在禁用发现的前提下把 openai 插件的 provider 与 modelCatalogProviders 显式注册进 active registry，仍 model_not_found——模型目录不从这些集合解析。结论：该行只有在「捆绑装载被有界化且模型目录仍可解析」时才可驱动，今天两条路都不通。探针与失败的测试文件都已删除，树保持干净。",
+          "2026-09-23 突破并落地（真实覆盖 4/8 → 6/8）：desktop chat 与 channel conformance fixture 两行现在是真实入口驱动。配方（全部实测）：OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 把引导从约 213s 的同步阻塞降到约 2s（该阻塞是有限的，不是无界——抬到 420s watchdog 后入口在 264s 跑完）；模型目录由预置 <resolveDefaultAgentDir>/models.json（providers.openai + 模型条目）满足，仅靠配置声明或显式注册 provider/modelCatalogProviders 都不够；provider 凭据由 OPENAI_API_KEY 环境变量提供（reply 路径从 agent auth store 读凭据，不读 config 里的 apiKey）。",
+          "新增 openclaw_runtime/src/agents/rc02-inbound-entry.acceptance.test.ts（2 项，2.5s / 0.8s）：dispatchInboundMessageWithBufferedDispatcher（src/auto-reply/dispatch.ts，chat.send 与 channel 共用的 inbound 入口）真实跑通 reply→agent→guarded boundary，截获真实请求字节，并断言每条 wire 收据的 wire_digest 等于该字节的 sha256、与 context 收据按 correlation_digest 成对。census：entryMatrix.realSurfaces = 6/8（余 cron、cli-compact）、套件 5 files / 48 tests 绿、parity 4/4。",
+          "收窄口径已写明（不藏）：该夹具关闭了捆绑插件发现，且 channel 插件层未参与；真实的部分是入口、reply 路径、guarded transport 边界与收据。census 的 probeAttempts[].followUpProbe.resolution 记了完整配方与失败过的四条路。",
+          "2026-09-23 八入口矩阵齐了（8/8 真实）：同一有界引导配方继续解锁余下两行——Cron 由 runCronIsolatedAgentTurn 驱动（2 次真实模型调用、2 条 wire 收据、约 12s；该 turn 自身 status=error 来自夹具无投递渠道且 stub SSE 无助手文本，已在测试注释里写明这与收据普查正交、未断言）；CLI 由 agentCommand 驱动（1 次真实调用、1 条收据、约 1.9s，用完整 Responses 事件序列后干净收尾）。新增 openclaw_runtime/src/agents/rc02-cron-entry.acceptance.test.ts 与 rc02-cli-entry.acceptance.test.ts；spec 的 ownedPaths 与 requiredTests 同步。",
+          "census 现状：entryMatrix.realSurfaces = 8/8、gaps 为空、套件 7 files / 50 tests 绿（attempt 1 exit 0）、parity 4/4（off/on 字节相同、工具顺序同为规范化序、重复 wire attempt 各自独立身份、无额外审批/投递流量）。收窄口径逐条写明：捆绑插件发现未参与、channel 插件层未参与、CLI/compact 的 compact 半支未单独驱动（列为 residual）。",
+          "本节点仍不可收口：spec acceptance 还要求「RC-02 independent Verifier 用 RC-00 批准的基础设施接受普查」，而该路在本 checkout 被挡住（无 RC-02 范围的干净候选、pnpm test 有既有失败文件、Electron 二进制缺失、pnpm -w test skip 预算恰为 50）。",
+          "2026-09-23 正式 RC-00 验收完成（Executor pass → 独立 Verifier pass）：plan 23 门、candidate 78dc12d1c1e989f33cf7ca85955998ed40887352、cleanAtPlan=true、coverage ui=false（不触发 Electron e2e）。Executor 报告 result=pass、failures=0、reportDigest a1297b3aa0da2a69b6666b65319c675b4769b5726b9b32d3402da38ddce9f57f、testCounts 9500 passed / 0 failed / 50 skipped（恰为冻结 skip 预算）。独立 Verifier 由分开标识的 rc02-verifier 在第二个 detached worktree 重跑全部 23 门：final-report.json role=verifier、result=pass、engineeringAcceptedByAgent=true、failures=0、reportDigest 00c191f1dacbd9efcfceef350ce6c2e970db11c441b1ee3f96bc6c354963ab9b、executorActor=rc02-executor、consistency.errors=[]、identicalGateContracts=true、mutationCheck 源与 detached worktree 前后均干净（0 条）、safety 三锁全 false、promotionAuthorized=false。",
+          "环境前置（非仓库改动，已留痕）：provision-verseshell-resources 门要求 Cargo/rustc 恰为 1.94.0，本机原为 1.98.1，首轮 Executor 因此 fail 且其后 22 门 fail-closed 为 blocked；用 rustup 安装 1.94.0-x86_64-pc-windows-msvc 并以 RUSTUP_TOOLCHAIN 指向它后该门通过（并顺带 provision 了 Electron dist）。这不是代码问题，也没有放宽任何门。",
+          "证据归档：验收报告 manifest/plan/executor-report/verifier-report/final-report 由 scripts/rc02-shadow-census-report.mjs 逐字节复制进 artifacts/runtime-authority-convergence/rc-02/acceptance/ 并记录 sha256；census 的 acceptance.rc02SpecAcceptanceMet = true。四条验收判据逐条直读核对：① 入口矩阵 8/8 真实且每条 wire 收据的 wire_digest 等于网络边界真实发送字节的 sha256、与 context 收据按 correlation_digest 成对；② owner-classification 每条收据都有具名 adapter、unknown=0（字段级 producer/transform 拆分未实现，已在 census 写明为限制）；③ parity 4/4（off/on 字节、工具顺序、重复 wire attempt 身份、无额外审批/投递流量）；④ npm fallback 仅报 degraded、不计入 source coverage。",
+          "residual 如实保留（不阻塞本节点口径，已在 census 与 WORK-PACKAGES.md 写明）：捆绑插件发现未参与、channel 插件层未参与、CLI/compact 的 compact 半支未单独驱动；三锁 liveReady/productApproved/defaultOn 与所有默认值未改，未声明任何真人证据（humanEvidenceRequired=false、scope=engineering-only、allowedPromotion=false）。"
+        ],
+        "next_action": "本节点已收口（工程验收 accepted，scope=engineering-only、allowedPromotion=false、humanEvidenceRequired=false）。若继续，下一周期入口是 TF-0031（RC-03 DCS Seal 与双收据），顺序见 docs/dev/qa-synthesis-roadmap-20260922.md §5。",
+        "summary": "[2026-09-23 收口 · 工程验收 accepted，scope=engineering-only] RC-02 全 payload shadow census 完成： 八入口矩阵（desktop chat / Cron / channel conformance fixture / CLI·compact / embedded attempt / context engine / provider payload hook / provider transport）全部由真实生产入口驱动； 每条 source-runtime model call 同时产出 ShadowContextReceipt/v0 与 ShadowWireReceipt/v0，wire 收据的 wire_digest 必须等于网络边界真实截获字节的 sha256； provider 分母取自生产 registry（listSourceRuntimeTransportApis，新增 API 自动进矩阵）；off/on parity 4/4；npm fallback 仅 degraded。 正式 RC-00 验收：23 门全 pass、Executor pass、独立 Verifier pass（engineeringAcceptedByAgent=true、failures=0、9500 passed / 0 failed / 50 skipped）。 原「八入口」假标签问题按 RC-09 整改矩阵 RC-02R 修复，偏差登记 TFD-rc02r-fake-entry-matrix。 residual：捆绑插件发现与 channel 插件层未参与、compact 半支未单独驱动；三锁保持 false。"
+      },
+      "id": "TF-0030"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0030",
+      "progress": 100,
+      "status": "done"
+    }
+  ],
+  "created_at": "2026-09-23T07:14:28.231711Z",
+  "proposal_id": "TFP-tf0030-rc02-acceptance-closeout-20260923",
+  "rationale": "按 AGENTS.md 的 Task Forest 自动收口门（规则 R3）收口 TF-0030：四条验收判据与 spec 全部 acceptance 逐条直读磁盘核对通过，证据链完整（census + 归档的 manifest/plan/executor/verifier/final 报告 + sha256），提案基线未漂移，结论自洽——正式 RC-00 验收在干净候选 78dc12d1c 上 Executor pass、独立 Verifier（actor 与 Executor 不同、第二个 detached worktree、重跑全部 23 门）pass 且 engineeringAcceptedByAgent=true、failures=0。产品锁与默认值未改，humanEvidenceRequired=false、scope=engineering-only、allowedPromotion=false，因此不存在需要发布者授权的动作。",
+  "session_id": "dsh-tf0030-rc02r-20260923",
+  "status": "applied"
+}

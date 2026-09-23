@@ -2412,26 +2412,30 @@
       "收窄口径已写明（不藏）：该夹具关闭了捆绑插件发现，且 channel 插件层未参与；真实的部分是入口、reply 路径、guarded transport 边界与收据。census 的 probeAttempts[].followUpProbe.resolution 记了完整配方与失败过的四条路。",
       "2026-09-23 八入口矩阵齐了（8/8 真实）：同一有界引导配方继续解锁余下两行——Cron 由 runCronIsolatedAgentTurn 驱动（2 次真实模型调用、2 条 wire 收据、约 12s；该 turn 自身 status=error 来自夹具无投递渠道且 stub SSE 无助手文本，已在测试注释里写明这与收据普查正交、未断言）；CLI 由 agentCommand 驱动（1 次真实调用、1 条收据、约 1.9s，用完整 Responses 事件序列后干净收尾）。新增 openclaw_runtime/src/agents/rc02-cron-entry.acceptance.test.ts 与 rc02-cli-entry.acceptance.test.ts；spec 的 ownedPaths 与 requiredTests 同步。",
       "census 现状：entryMatrix.realSurfaces = 8/8、gaps 为空、套件 7 files / 50 tests 绿（attempt 1 exit 0）、parity 4/4（off/on 字节相同、工具顺序同为规范化序、重复 wire attempt 各自独立身份、无额外审批/投递流量）。收窄口径逐条写明：捆绑插件发现未参与、channel 插件层未参与、CLI/compact 的 compact 半支未单独驱动（列为 residual）。",
-      "本节点仍不可收口：spec acceptance 还要求「RC-02 independent Verifier 用 RC-00 批准的基础设施接受普查」，而该路在本 checkout 被挡住（无 RC-02 范围的干净候选、pnpm test 有既有失败文件、Electron 二进制缺失、pnpm -w test skip 预算恰为 50）。"
+      "本节点仍不可收口：spec acceptance 还要求「RC-02 independent Verifier 用 RC-00 批准的基础设施接受普查」，而该路在本 checkout 被挡住（无 RC-02 范围的干净候选、pnpm test 有既有失败文件、Electron 二进制缺失、pnpm -w test skip 预算恰为 50）。",
+      "2026-09-23 正式 RC-00 验收完成（Executor pass → 独立 Verifier pass）：plan 23 门、candidate 78dc12d1c1e989f33cf7ca85955998ed40887352、cleanAtPlan=true、coverage ui=false（不触发 Electron e2e）。Executor 报告 result=pass、failures=0、reportDigest a1297b3aa0da2a69b6666b65319c675b4769b5726b9b32d3402da38ddce9f57f、testCounts 9500 passed / 0 failed / 50 skipped（恰为冻结 skip 预算）。独立 Verifier 由分开标识的 rc02-verifier 在第二个 detached worktree 重跑全部 23 门：final-report.json role=verifier、result=pass、engineeringAcceptedByAgent=true、failures=0、reportDigest 00c191f1dacbd9efcfceef350ce6c2e970db11c441b1ee3f96bc6c354963ab9b、executorActor=rc02-executor、consistency.errors=[]、identicalGateContracts=true、mutationCheck 源与 detached worktree 前后均干净（0 条）、safety 三锁全 false、promotionAuthorized=false。",
+      "环境前置（非仓库改动，已留痕）：provision-verseshell-resources 门要求 Cargo/rustc 恰为 1.94.0，本机原为 1.98.1，首轮 Executor 因此 fail 且其后 22 门 fail-closed 为 blocked；用 rustup 安装 1.94.0-x86_64-pc-windows-msvc 并以 RUSTUP_TOOLCHAIN 指向它后该门通过（并顺带 provision 了 Electron dist）。这不是代码问题，也没有放宽任何门。",
+      "证据归档：验收报告 manifest/plan/executor-report/verifier-report/final-report 由 scripts/rc02-shadow-census-report.mjs 逐字节复制进 artifacts/runtime-authority-convergence/rc-02/acceptance/ 并记录 sha256；census 的 acceptance.rc02SpecAcceptanceMet = true。四条验收判据逐条直读核对：① 入口矩阵 8/8 真实且每条 wire 收据的 wire_digest 等于网络边界真实发送字节的 sha256、与 context 收据按 correlation_digest 成对；② owner-classification 每条收据都有具名 adapter、unknown=0（字段级 producer/transform 拆分未实现，已在 census 写明为限制）；③ parity 4/4（off/on 字节、工具顺序、重复 wire attempt 身份、无额外审批/投递流量）；④ npm fallback 仅报 degraded、不计入 source coverage。",
+      "residual 如实保留（不阻塞本节点口径，已在 census 与 WORK-PACKAGES.md 写明）：捆绑插件发现未参与、channel 插件层未参与、CLI/compact 的 compact 半支未单独驱动；三锁 liveReady/productApproved/defaultOn 与所有默认值未改，未声明任何真人证据（humanEvidenceRequired=false、scope=engineering-only、allowedPromotion=false）。"
     ],
     "execution_hints": [],
     "id": "TF-0030",
     "kind": "task",
-    "next_action": "八入口矩阵已齐（8/8 真实、parity 4/4、套件 7 files / 50 tests 绿）。下一步只剩独立验收：先做一个 RC-02 范围的干净候选（diff 只覆盖本 spec 的 ownedPaths），再跑 acceptance:agent plan → executor → 独立 verifier；若环境仍挡住（无干净候选、pnpm test 既有失败、Electron 二进制缺失、skip 预算 50），就把缺口写清楚并保持未完成，不降标准。证据：artifacts/runtime-authority-convergence/rc-02/census.json",
+    "next_action": "本节点已收口（工程验收 accepted，scope=engineering-only、allowedPromotion=false、humanEvidenceRequired=false）。若继续，下一周期入口是 TF-0031（RC-03 DCS Seal 与双收据），顺序见 docs/dev/qa-synthesis-roadmap-20260922.md §5。",
     "non_goals": [],
     "priority": 1,
-    "progress": 85.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [],
-    "summary": "[冻结 2026-09-22 · D7；2026-09-22/23 RC-02R 增量，未收口] 本节点仍未完成。原摘要：在 logical 与最终 guarded request-body 边界生成双 shadow receipt，建立全 payload 分母且保持零行为变化。增量：把被 RC-09 整改矩阵判为假的「八入口矩阵」换成真实入口矩阵——embedded attempt、provider payload hook、context engine、provider transport 四行已由真实生产入口驱动，每条 wire 收据的 wire_digest 必须等于网络边界真实截获字节的 sha256 并与 context 收据按 correlation_digest 成对；provider 分母取自 listSourceRuntimeTransportApis()，新增 API 自动进矩阵；另补 off/on parity 4/4。余下四个入口（desktop chat、Cron、channel conformance fixture、CLI/compact）仍无真实驱动，逐条原因写在 artifacts/runtime-authority-convergence/rc-02/census.json。",
+    "summary": "[2026-09-23 收口 · 工程验收 accepted，scope=engineering-only] RC-02 全 payload shadow census 完成： 八入口矩阵（desktop chat / Cron / channel conformance fixture / CLI·compact / embedded attempt / context engine / provider payload hook / provider transport）全部由真实生产入口驱动； 每条 source-runtime model call 同时产出 ShadowContextReceipt/v0 与 ShadowWireReceipt/v0，wire 收据的 wire_digest 必须等于网络边界真实截获字节的 sha256； provider 分母取自生产 registry（listSourceRuntimeTransportApis，新增 API 自动进矩阵）；off/on parity 4/4；npm fallback 仅 degraded。 正式 RC-00 验收：23 门全 pass、Executor pass、独立 Verifier pass（engineeringAcceptedByAgent=true、failures=0、9500 passed / 0 failed / 50 skipped）。 原「八入口」假标签问题按 RC-09 整改矩阵 RC-02R 修复，偏差登记 TFD-rc02r-fake-entry-matrix。 residual：捆绑插件发现与 channel 插件层未参与、compact 半支未单独驱动；三锁保持 false。",
     "title": "RC-02 Full-payload Shadow Census",
-    "updated_at": "2026-09-23T05:26:16.508980Z"
+    "updated_at": "2026-09-23T07:14:28.380966Z"
   },
   "TF-0031": {
     "acceptance_criteria": [
