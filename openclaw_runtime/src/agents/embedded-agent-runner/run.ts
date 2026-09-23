@@ -11,6 +11,12 @@ import { SILENT_REPLY_TOKEN } from "../../auto-reply/tokens.js";
 import { resolveStorePath, updateSessionStoreEntry } from "../../config/sessions.js";
 import { ensureContextEnginesInitialized } from "../../context-engine/init.js";
 import {
+  beginRc03RunAttempts,
+  clearRc03SealPlan,
+  endRc03RunAttempts,
+  resolveRc03SealState,
+} from "../../context-engine/rc03-seal-hook.js";
+import {
   resolveContextEngine,
   resolveContextEngineOwnerPluginId,
 } from "../../context-engine/registry.js";
@@ -1227,6 +1233,11 @@ export async function runEmbeddedAgent(
       let lastCompactionTokensAfter: number | undefined;
       let lastContextBudgetStatus: EmbeddedAgentMeta["contextBudgetStatus"];
       let runLoopIterations = 0;
+      // RC-03: a provider fallback re-enters under the same runId; continue its
+      // attempt identity instead of restarting at 0. Off: identity unchanged.
+      const rc03AttemptBase = resolveRc03SealState(params.config).enabled
+        ? beginRc03RunAttempts(params.runId)
+        : undefined;
       let overloadProfileRotations = 0;
       let planningOnlyRetryAttempts = 0;
       let reasoningOnlyRetryAttempts = 0;
@@ -1711,7 +1722,7 @@ export async function runEmbeddedAgent(
             timeoutMs: params.timeoutMs,
             runTimeoutOverrideMs: params.runTimeoutOverrideMs,
             runId: params.runId,
-            attemptIndex: runLoopIterations - 1,
+            attemptIndex: (rc03AttemptBase ?? 0) + runLoopIterations - 1,
             abortSignal: attemptAbortController.signal,
             replyOperation: params.replyOperation,
             shouldEmitToolResult: params.shouldEmitToolResult,
@@ -3857,6 +3868,11 @@ export async function runEmbeddedAgent(
         }
       } finally {
         forgetPromptBuildDrainCacheForRun(params.runId);
+        if (rc03AttemptBase === undefined) {
+          clearRc03SealPlan(params.runId);
+        } else {
+          endRc03RunAttempts(params.runId, rc03AttemptBase + runLoopIterations);
+        }
         stopRuntimeAuthRefreshTimer();
         await runAgentCleanupStep({
           runId: params.runId,

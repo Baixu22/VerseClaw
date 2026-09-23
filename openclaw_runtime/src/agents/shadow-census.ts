@@ -129,7 +129,8 @@ export type ShadowCensusFailureDiagnostic = {
     | "receipt-content-conflict"
     | "final-wire-body-unavailable"
     | "final-wire-body-invalid"
-    | "wire-owner-incomplete";
+    | "wire-owner-incomplete"
+    | "unsealed-model-call";
   count: number;
 };
 
