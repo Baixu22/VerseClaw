@@ -1,5 +1,15 @@
 # 会话交接（LATEST）
 
+## 收口完成（2026-09-24，TF-0031 · RC-03）：真实入口六类转换全覆盖 + 正式 RC-00 验收 pass
+
+- **TF-0031 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`、`allowedPromotion=false`、`humanEvidenceRequired=false`。
+- **本轮补齐**：fork（生产 `forkSessionFromParent`，子会话重放分叉历史、独立身份）与 handoff（`readSubagentOutput` + `buildChildCompletionFindings` 驱动新的父调用）真实入口驱动，逐请求 WireReceipt/v1 按 sha256 绑定且与 ContextReceipt/v1 成对。蓝图列的三处绕过已处理：seal 现在绑定 provider-bound system prompt 的摘要，并按内容归因 COMPASS SSP/检索、role-spawn memory pack、ContextEngine message replacement 与 attempt system prompt builder；seal 之后 system prompt 被改动记 census 失败 `post-seal-semantic-mutation`。
+- **验收途中修掉的真实缺陷**：`openclaw-state` / per-agent SQLite 在 WAL 切换之后才设 `busy_timeout`，并发打开时直接 `database is locked`（run4 的唯一失败），已改序并加子进程锁回归测试。另两次 NO-GO 为 lint（无用赋值）与 Agent Dev 证据过期（>24h，已重跑 deep-test：daily-loop-ok、audit A）。
+- **正式验收**：干净候选 `01398fb6f`，Executor pass → 独立 Verifier（`rc03-verifier` ≠ `rc03-executor`）pass，9532 / 0 / 50，`identicalGateContracts=true`，mutation 全干净，三锁 false。证据 `artifacts/runtime-authority-convergence/rc-03/acceptance/`（含 `SHA256SUMS`）。
+- **验收启动配方（非仓库改动）**：`D:/ClawX-acceptance/run-acceptance.sh <spec> <since> <executor> <verifier> <outdir>`——从验收库自身读取被禁凭证变量并逐个 `env -u`，`RUSTUP_TOOLCHAIN=1.94.0`，代理 7897。Agent Dev 证据有 24h 新鲜度窗口，过期就先跑 `pnpm agent-dev:deep-test`（先 `pnpm run build:runtime`，否则 stale-dist 守卫让 e2e 失败）。
+- **residual**：COMPASS 已归因并受摘要约束，但仍不计入 turn 注入预算（归 TF-0013）；归因按内容匹配，producer 若在进入 prompt 前改写自身文本，只由 seal 后摘要检查覆盖。
+- **下一步**：TF-0032（RC-04）。开发分支 `rc04-dev`（worktree `D:/ClawX-dev/rc04`）上已有 RC-04/05/06A 的修复提交，待逐个 rebase 进主分支并各自正式验收。
+
 ## 接力进行中（2026-09-23，TF-0031 · RC-03R）：真实入口复验，修掉三个缺陷
 
 - **节点状态：TF-0031 `in_progress` / 45，未验收。** 此前 RC-03 的测试都直接调用 seal hook；本轮新增 `openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts`（7 项），用**真实入口**（`runEmbeddedAgent`、`runWithModelFallback`）驱动，并要求每个被截获的请求都有按 sha256 绑定的 WireReceipt/v1，且按 correlation digest 与 ContextReceipt/v1 成对。

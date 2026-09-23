@@ -1,0 +1,43 @@
+{
+  "applied_at": "2026-09-23T21:36:10.846417Z",
+  "base_graph_hash": "0c9d8f6df7a013ba61f87e346a86b9c3635805868f9c16f08f0b72ebc0504eda",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "2026-09-24 fork/handoff 真实入口：openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts 新增 fork（生产 forkSessionFromParent，子调用携带分叉历史 'parent question rc03'，父/子各 [[0,0,0]]、两条独立 correlation）与 handoff（readSubagentOutput + buildChildCompletionFindings 把子结果作为新父调用，三个 run 各 [[0,0,0]] 且 wire/context 同 correlation_digest），套件 10/10。",
+          "2026-09-24 三处绕过处理（提交 84d132552）：seal 取 before_agent_start 的完整 system prompt，按 model call 记录其 sha256；COMPASS SSP/top-5（get-reply-run）与 role-spawn memory pack 在产出处登记内容，seal 时按内容归因到注册 producer（compass-ssp / compass-retrieval / role-spawn-memory-pack），其余字节归 embedded-system-prompt；ContextEngine 实际替换消息的 attempt 标记 cvk-message-replacement；wire 边界比对发送的 system prompt 与 seal 摘要，不一致记 post-seal-semantic-mutation；prompt-cache boundary strip 注册为 post-seal 非语义 transform。全部只在 seal 开启时记录，发送字节不变。",
+          "2026-09-24 验收途中缺陷：run2 NO-GO=lint no-useless-assignment + Agent Dev 证据 26h 过期（1330262c3 修复并重跑 deep-test：daily-loop-ok、audit pass/A）；run3 NO-GO=刷新证据不在 spec ownedPaths（529f52083）；run4 NO-GO=receipt-store 并发写测试 'database is locked'——根因 openclaw-state/per-agent SQLite 在 WAL 切换后才设 busy_timeout（01398fb6f 改序，子进程独占锁回归测试修复前失败、修复后通过）。",
+          "2026-09-24 正式 RC-00 验收 run5：candidate 01398fb6fa0386d05ec17bac78cae56d2c43252b，cleanAtPlan；Executor rc03-executor result=pass failures=[] reportDigest a7563bb6…；独立 Verifier rc03-verifier result=pass engineeringAcceptedByAgent=true failures=[] reportDigest 9e029c4b… consistency.errors=[] identicalGateContracts=true；9532 passed/0 failed/50 skipped；mutationCheck 源与 detached 均干净；safety 三锁 false、promotionAuthorized=false。报告逐字节归档 artifacts/runtime-authority-convergence/rc-03/acceptance/（SHA256SUMS）。",
+          "residual 如实保留：COMPASS 输出已归因并受 seal 摘要约束，但仍不计入 turn 注入预算（TF-0013 的预算判据不因此关闭）；归因按内容匹配，producer 若在进入 prompt 前改写自身文本，只由 seal 后摘要检查覆盖。"
+        ],
+        "next_action": "本节点已收口。下一步 TF-0032（RC-04 Durable Approval 与 Effect Reconciliation），修复提交在 rc04-dev 分支。",
+        "summary": "[2026-09-24 收口 · 工程验收 accepted，scope=engineering-only] RC-03 DCS seal 与双收据：六类身份转换（tool loop / same-provider retry / provider fallback / compact / fork / handoff）全部由真实生产入口驱动，每个截获请求都有按 sha256 绑定的 WireReceipt/v1 并与同一 model call 的 ContextReceipt/v1 成对；seal 绑定 provider-bound system prompt 摘要并按内容归因 COMPASS SSP/检索、role-spawn memory pack、ContextEngine message replacement 与 attempt system prompt builder，seal 后改动与未 seal 调用均记 census 失败；kill switch/seal 关闭字节一致。正式 RC-00 验收 Executor + 独立 Verifier pass（9532/0/50）。residual：COMPASS 未计入 turn 注入预算（归 TF-0013）；三锁保持 false。"
+      },
+      "id": "TF-0031"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0031",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0032",
+      "progress": 10,
+      "status": "in_progress"
+    }
+  ],
+  "created_at": "2026-09-23T21:34:51.393860Z",
+  "proposal_id": "TFP-tf0031-rc03-acceptance-closeout-20260924",
+  "rationale": "按 AGENTS.md Task Forest 自动收口门（R3）收口 TF-0031：spec 七条 acceptance 逐条直读磁盘核对通过——真实入口覆盖 tool loop/retry/fallback/compact/fork/handoff 并逐请求按 sha256 成对 v1 收据；COMPASS SSP 与 ContextEngine message replacement 为注册 pre-seal producer 且 seal 绑定 system prompt 摘要（seal 后改动计 census 失败）；seal 关闭字节一致、v1 为 0；正式 RC-00 验收在干净候选 01398fb6f 上 Executor pass、独立 Verifier（rc03-verifier≠rc03-executor，第二 detached worktree）pass，engineeringAcceptedByAgent=true、failures=0、9532/0/50。产品锁与默认值未改，scope=engineering-only，无需发布者授权。",
+  "session_id": "dsh-tf0031-rc03-20260924",
+  "status": "applied"
+}
