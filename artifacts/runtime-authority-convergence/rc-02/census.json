@@ -1,18 +1,18 @@
 {
   "schema": "runtime-authority-convergence-rc-02-census/v1",
-  "generatedAt": "2026-09-23T04:06:29.883Z",
+  "generatedAt": "2026-09-23T04:22:58.110Z",
   "node": "v24.15.0",
   "candidate": {
     "branch": "feat/runtime-lifecycle-governance",
-    "head": "b173dab2f873945391469e3a2e4cb8b38441e99b",
-    "headShort": "b173dab2f",
+    "head": "9b141e1907e391688b3fa80c6d5cdcb00b6d9ac8",
+    "headShort": "9b141e190",
     "workingTree": "dirty",
     "changedPaths": [
       ".agent-workbench/task-forest/config.json",
       ".agent-workbench/task-forest/exports/task-forest.graph.json",
       ".agent-workbench/task-forest/graph/forest.json",
       ".agent-workbench/task-forest/graph/nodes.json",
-      ".agent-workbench/task-forest/snapshots/0645.json",
+      ".agent-workbench/task-forest/snapshots/0646.json",
       "artifacts/runtime-authority-convergence/rc-02/census.json",
       "artifacts/runtime-authority-convergence/rc-02/suite-results.json",
       "artifacts/runtime-authority-convergence/rc-02/suite.log",
@@ -27,7 +27,7 @@
       "exitCode": 0,
       "testFiles": "1 passed (1)",
       "tests": "61 passed (61)",
-      "outputSha256": "f9cb628d5d13041ba887d435b2cadcfdd84d7e407d611bd76286a45ca22a208b"
+      "outputSha256": "27b68a24421512aa138efa0a31a3b74666fa066cda3f0b06d8de9072fc7ce9c5"
     },
     {
       "id": "required-test-3",
@@ -35,7 +35,7 @@
       "exitCode": 0,
       "testFiles": "1 passed (1)",
       "tests": "8 passed (8)",
-      "outputSha256": "41063795b904f2b4ea67a151e9d199d5fb65575dff49941ee457ec87e36eb317"
+      "outputSha256": "688285a74393753705f260ce0f61197c2c0227aa0cd65f4a78c8da7165336b09"
     },
     {
       "id": "required-test-4",
@@ -57,7 +57,7 @@
     "passedCount": 46,
     "failedCount": 0,
     "failedTests": [],
-    "outputSha256": "55f30041eaf848df244a31107c86a0e0552b6455345cf25d7dc943020f97e600",
+    "outputSha256": "368bbc85de592d7bd446e5bc825f8d74103cbbeea5e3ca06b5b278cf00142129",
     "outputBytes": 2038,
     "log": "artifacts/runtime-authority-convergence/rc-02/suite.log",
     "results": "artifacts/runtime-authority-convergence/rc-02/suite-results.json",
@@ -202,6 +202,16 @@
       "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts rc02-inbound-probe.test.ts --passWithNoTests=false",
       "observed": "no stdout for 120000ms; the vitest no-output watchdog terminated the stalled process group before any assertion ran",
       "conclusion": "not a config-only fixture: the entry needs a channel plugin, session store and agent workspace harness; no test in the repo drives a gateway chat send end to end",
+      "followUpProbe": {
+        "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts rc02-diag-probe.test.ts [--pool=forks] --passWithNoTests=false",
+        "observed": [
+          "the model boundary was never reached: the fetch spy logged zero requests before the stall",
+          "a 5s heartbeat printed the active resources once (12-20 recursive FSEventWrap watchers plus Timeouts) and then stopped firing, so the event loop is blocked synchronously rather than awaiting something",
+          "moving process.cwd() to a temp directory under the forks pool (where chdir is supported) did not change the stall, so repo-shaped CWD scanning is not the cause",
+          "the per-test timeout never fired because a blocked event loop cannot run its timer"
+        ],
+        "conclusion": "the blocker is synchronous work inside the runtime bootstrap (plugin/workspace loading) that a minimal config does not bound; a driver needs the repo's own bounded harness or a pre-warmed bootstrap, not another config field"
+      },
       "probeFileRemoved": true
     },
     {

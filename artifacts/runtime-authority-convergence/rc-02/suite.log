@@ -1,26 +1,26 @@
 
  RUN  v4.1.7 D:/ClawX/openclaw_runtime
 
- ✓ |agents| src/agents/rc02-entry-matrix.acceptance.test.ts (9 tests) 23406ms
-     ✓ embedded attempt: runEmbeddedAgent yields a dual receipt per real model call  7537ms
-     ✓ provider payload hook: the production cache-trace hook installs onPayload and receipts still bind the final bytes  3889ms
-     ✓ embedded attempt x registry api openai-responses: a dual receipt per real model call  3542ms
-     ✓ embedded attempt x registry api openai-chatgpt-responses: a dual receipt per real model call  4380ms
-     ✓ embedded attempt x registry api openai-completions: a dual receipt per real model call  3691ms
- ✓ |agents| src/agents/rc02-shadow-census.acceptance.test.ts (8 tests) 17106ms
-     ✓ embedded runner reaches the guarded production transport with correlated receipts  4865ms
-     ✓ uses the production source transport registry as the provider coverage denominator  11566ms
- ✓ |agents| src/agents/receipt-store.test.ts (21 tests) 4679ms
-     ✓ retains committed receipts across exited Node processes without implicit pruning  1642ms
-     ✓ serializes concurrent Node writers with identical content  643ms
-     ✓ serializes concurrent Node writers with conflicting content  574ms
-     ✓ serializes concurrent Node writers with different-kind content  564ms
- ✓ |agents| src/agents/shadow-census.test.ts (8 tests) 339ms
+ ✓ |agents| src/agents/rc02-shadow-census.acceptance.test.ts (8 tests) 19792ms
+     ✓ embedded runner reaches the guarded production transport with correlated receipts  7627ms
+     ✓ uses the production source transport registry as the provider coverage denominator  11694ms
+ ✓ |agents| src/agents/receipt-store.test.ts (21 tests) 4705ms
+     ✓ retains committed receipts across exited Node processes without implicit pruning  1413ms
+     ✓ serializes concurrent Node writers with identical content  657ms
+     ✓ serializes concurrent Node writers with conflicting content  690ms
+     ✓ serializes concurrent Node writers with different-kind content  611ms
+ ✓ |agents| src/agents/shadow-census.test.ts (8 tests) 351ms
+ ✓ |agents| src/agents/rc02-entry-matrix.acceptance.test.ts (9 tests) 26553ms
+     ✓ embedded attempt: runEmbeddedAgent yields a dual receipt per real model call  7626ms
+     ✓ provider payload hook: the production cache-trace hook installs onPayload and receipts still bind the final bytes  4476ms
+     ✓ embedded attempt x registry api openai-responses: a dual receipt per real model call  4667ms
+     ✓ embedded attempt x registry api openai-chatgpt-responses: a dual receipt per real model call  5268ms
+     ✓ embedded attempt x registry api openai-completions: a dual receipt per real model call  4134ms
 
  Test Files  4 passed (4)
       Tests  46 passed (46)
-   Start at  12:03:42
-   Duration  68.07s (transform 15.43s, setup 343ms, import 21.87s, tests 45.53s, environment 0ms)
+   Start at  12:20:24
+   Duration  46.04s (transform 28.38s, setup 651ms, import 37.68s, tests 51.40s, environment 0ms)
 
 JSON report written to D:/ClawX/artifacts/runtime-authority-convergence/rc-02/suite-results.json
 [vitest] still running with no output for 30000ms (run --config test/vitest/vitest.agents.config.ts receipt-store.test.ts shadow-census.test.ts rc02-shadow-census.acceptance.test.ts rc02-entry-matrix.acceptance.test.ts --passWithNoTests=false --reporter=default --reporter=json --outputFile=D:\ClawX\artifacts\runtime-authority-convergence\rc-02\suite-results.json).

@@ -108,6 +108,18 @@ const PROBE_ATTEMPTS = [
       "no stdout for 120000ms; the vitest no-output watchdog terminated the stalled process group before any assertion ran",
     conclusion:
       "not a config-only fixture: the entry needs a channel plugin, session store and agent workspace harness; no test in the repo drives a gateway chat send end to end",
+    followUpProbe: {
+      command:
+        "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts rc02-diag-probe.test.ts [--pool=forks] --passWithNoTests=false",
+      observed: [
+        "the model boundary was never reached: the fetch spy logged zero requests before the stall",
+        "a 5s heartbeat printed the active resources once (12-20 recursive FSEventWrap watchers plus Timeouts) and then stopped firing, so the event loop is blocked synchronously rather than awaiting something",
+        "moving process.cwd() to a temp directory under the forks pool (where chdir is supported) did not change the stall, so repo-shaped CWD scanning is not the cause",
+        "the per-test timeout never fired because a blocked event loop cannot run its timer",
+      ],
+      conclusion:
+        "the blocker is synchronous work inside the runtime bootstrap (plugin/workspace loading) that a minimal config does not bound; a driver needs the repo's own bounded harness or a pre-warmed bootstrap, not another config field",
+    },
     probeFileRemoved: true,
   },
   {
