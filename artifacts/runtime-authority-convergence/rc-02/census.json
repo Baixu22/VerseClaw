@@ -1,11 +1,11 @@
 {
   "schema": "runtime-authority-convergence-rc-02-census/v1",
-  "generatedAt": "2026-09-23T05:14:25.221Z",
+  "generatedAt": "2026-09-23T05:32:59.070Z",
   "node": "v24.15.0",
   "candidate": {
     "branch": "feat/runtime-lifecycle-governance",
-    "head": "79b3eb1fd92f9a8bb1bf03cefb9bee1597770b97",
-    "headShort": "79b3eb1fd",
+    "head": "b6128bf234dde4ce661acb37f401d975a496b629",
+    "headShort": "b6128bf23",
     "workingTree": "dirty",
     "changedPaths": [
       ".agent-workbench/task-forest/config.json",
@@ -13,14 +13,15 @@
       ".agent-workbench/task-forest/exports/task-forest.todos.json",
       ".agent-workbench/task-forest/graph/forest.json",
       ".agent-workbench/task-forest/graph/nodes.json",
-      ".agent-workbench/task-forest/snapshots/0648.json",
+      ".agent-workbench/task-forest/snapshots/0649.json",
       ".agent-workbench/task-forest/todos/todos.json",
       "artifacts/runtime-authority-convergence/rc-02/census.json",
       "artifacts/runtime-authority-convergence/rc-02/suite-results.json",
       "artifacts/runtime-authority-convergence/rc-02/suite.log",
       "docs/dev/handoffs/LATEST.md",
       "harness/specs/tasks/rc02-full-payload-shadow-census.md",
-      "openclaw_runtime/src/agents/rc02-inbound-entry.acceptance.test.ts",
+      "openclaw_runtime/src/agents/rc02-cli-entry.acceptance.test.ts",
+      "openclaw_runtime/src/agents/rc02-cron-entry.acceptance.test.ts",
       "scripts/rc02-shadow-census-report.mjs"
     ]
   },
@@ -31,7 +32,7 @@
       "exitCode": 0,
       "testFiles": "1 passed (1)",
       "tests": "61 passed (61)",
-      "outputSha256": "d2c4104b53d2b6de4a8ef481ebabfb77b3f556395e1ac47ebcb37720aa84fe3d"
+      "outputSha256": "8bec48b9ce13392f37c25b1f0593a6bc0bd6da7fc9a9ab19a8b89c906609d08e"
     },
     {
       "id": "required-test-3",
@@ -39,7 +40,7 @@
       "exitCode": 0,
       "testFiles": "1 passed (1)",
       "tests": "8 passed (8)",
-      "outputSha256": "d726b885f1d1e32f072f1fc449b21456714c0991a98749c0ab5ae1c779459c21"
+      "outputSha256": "60a71fbe077e6be438128ed0e5b4d68608ab18285b1a03b556e5cde9518ab1e5"
     },
     {
       "id": "required-test-4",
@@ -52,28 +53,38 @@
     }
   ],
   "suite": {
-    "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts receipt-store.test.ts shadow-census.test.ts rc02-shadow-census.acceptance.test.ts rc02-entry-matrix.acceptance.test.ts rc02-inbound-entry.acceptance.test.ts --passWithNoTests=false",
+    "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts receipt-store.test.ts shadow-census.test.ts rc02-shadow-census.acceptance.test.ts rc02-entry-matrix.acceptance.test.ts rc02-inbound-entry.acceptance.test.ts rc02-cron-entry.acceptance.test.ts rc02-cli-entry.acceptance.test.ts --passWithNoTests=false",
     "cwd": "openclaw_runtime",
     "exitCode": 0,
     "green": true,
     "attempts": [
       {
         "attempt": 1,
+        "exitCode": 1,
+        "testFiles": "1 failed | 6 passed (7)",
+        "tests": "1 failed | 49 passed (50)",
+        "failedTests": [
+          "serializes concurrent Node writers with different-kind content"
+        ],
+        "outputSha256": "4e828e2fbf7cbe06a3a89771707690398b8b3b507e372dd7d84ef3f09db51a3b"
+      },
+      {
+        "attempt": 2,
         "exitCode": 0,
-        "testFiles": "5 passed (5)",
-        "tests": "48 passed (48)",
+        "testFiles": "7 passed (7)",
+        "tests": "50 passed (50)",
         "failedTests": [],
-        "outputSha256": "b61cd5db578162118083e4e55e4fb71b6a7cb4e7a2c81c230ec4f1b08131418b"
+        "outputSha256": "1bbabaaa3007c25be6fa91092ccdae5d32e221f42a7384cc7caffa37eab36f3b"
       }
     ],
-    "testFiles": "5 passed (5)",
-    "tests": "48 passed (48)",
-    "totalTests": 48,
-    "passedCount": 48,
+    "testFiles": "7 passed (7)",
+    "tests": "50 passed (50)",
+    "totalTests": 50,
+    "passedCount": 50,
     "failedCount": 0,
     "failedTests": [],
-    "outputSha256": "b61cd5db578162118083e4e55e4fb71b6a7cb4e7a2c81c230ec4f1b08131418b",
-    "outputBytes": 2369,
+    "outputSha256": "1bbabaaa3007c25be6fa91092ccdae5d32e221f42a7384cc7caffa37eab36f3b",
+    "outputBytes": 2839,
     "log": "artifacts/runtime-authority-convergence/rc-02/suite.log",
     "results": "artifacts/runtime-authority-convergence/rc-02/suite-results.json",
     "passedTests": [
@@ -81,9 +92,11 @@
       "appends a shadow receipt and reads it back by idempotency key",
       "canonicalizes budget key order for content-sensitive idempotency",
       "channel conformance fixture inbound: the fixture surface reaches the same guarded boundary",
+      "cli agentCommand entry: the real entry drives a model call through the guarded boundary with dual receipts",
       "computes the wire digest from exact serialized bytes without mutating the body",
       "conflict-fails when the same idempotency key has different content (hard constraint 2)",
       "context engine: the sealed context bundle and the guarded wire body join through one correlation digest",
+      "cron isolated-agent entry: the real entry drives model calls through the guarded boundary with dual receipts",
       "desktop chat inbound: dispatchInboundMessage drives a real model call with dual receipts",
       "does not treat a provider id as an adapter owner",
       "embedded attempt x registry api openai-chatgpt-responses: a dual receipt per real model call",
@@ -128,9 +141,9 @@
     ]
   },
   "entryMatrix": {
-    "realSurfaces": 6,
+    "realSurfaces": 8,
     "namedSurfaces": 8,
-    "complete": false,
+    "complete": true,
     "surfaces": [
       {
         "id": "embedded-attempt",
@@ -169,9 +182,10 @@
       },
       {
         "id": "cron",
-        "status": "gap",
-        "driver": null,
-        "gapReason": "runCronIsolatedAgentTurn (src/cron/isolated-agent/run.ts:1259) is only exercised through run.test-harness.ts, which mocks run-embedded.runtime.js, so the existing coverage cannot prove the real entry. Measured 2026-09-23: an unmocked driver with OPENCLAW_TEST_FAST=1 and a minimal cfg produced no output for 120s and was killed by the no-output watchdog."
+        "status": "real",
+        "driver": "openclaw_runtime/src/cron/isolated-agent/run.ts runCronIsolatedAgentTurn -> run-executor -> runEmbeddedAgent, driven with the bounded bootstrap",
+        "test": "cron isolated-agent entry: the real entry drives model calls through the guarded boundary with dual receipts",
+        "suite": "rc02-cron-entry.acceptance.test.ts"
       },
       {
         "id": "channel-conformance-fixture",
@@ -182,9 +196,10 @@
       },
       {
         "id": "cli-compact",
-        "status": "gap",
-        "driver": null,
-        "gapReason": "the CLI entry agentCommand (src/agents/agent-command.ts:2229) needs full config/session/env fixtures, and compactEmbeddedAgentSessionDirect (src/agents/embedded-agent-runner/compact.ts:526) needs a pre-filled session transcript past the token budget plus the same runtime bootstrap the stalled entries above hit."
+        "status": "real",
+        "driver": "openclaw_runtime/src/agents/agent-command.ts agentCommand, driven with the bounded bootstrap; the compact half of this surface (compactEmbeddedAgentSessionDirect) is not separately driven and is named as a residual",
+        "test": "cli agentCommand entry: the real entry drives a model call through the guarded boundary with dual receipts",
+        "suite": "rc02-cli-entry.acceptance.test.ts"
       }
     ]
   },
@@ -249,7 +264,7 @@
           }
         ],
         "boundedBootstrapConclusion": "the entry is drivable only when bundled plugin loading is fast or bounded AND the model catalog still resolves; neither the allowlist nor explicit registration achieves that today, so this row stays a gap until a bounded-bootstrap harness exists",
-        "resolution": "resolved 2026-09-23: with bundled discovery disabled the entry completes in about 2s, and the model catalog is satisfied by seeding the resolved agent models.json (resolveDefaultAgentDir + providers.openai) plus OPENAI_API_KEY for auth. The real entry then drives real model calls through the guarded boundary in about 2.5s per surface, so desktop chat and the channel fixture are now real rows in rc02-inbound-entry.acceptance.test.ts. Remaining narrowing: bundled plugin discovery and the channel plugin layer are not exercised"
+        "resolution": "resolved 2026-09-23: with bundled discovery disabled the entry completes in about 2s, and the model catalog is satisfied by seeding the resolved agent models.json (resolveDefaultAgentDir + providers.openai) plus OPENAI_API_KEY for auth. The same recipe then drove every previously open surface: desktop chat and the channel fixture through dispatchInboundMessageWithBufferedDispatcher, cron through runCronIsolatedAgentTurn, and the CLI through agentCommand, so all eight named surfaces now have a real driver. Remaining narrowing: bundled plugin discovery is not exercised, the channel plugin layer is not exercised, and the compact half of the CLI/compact surface is not separately driven"
       },
       "probeFileRemoved": true
     },
@@ -275,10 +290,7 @@
   "acceptance": {
     "rc02SpecAcceptanceMet": false,
     "reason": "acceptance requires both receipts for every source-runtime model call in all eight named entry surfaces; only the surfaces listed as real are driven by a real entry today, and no independent RC-00 Executor/Verifier run exists for this increment",
-    "remainingGaps": [
-      "cron",
-      "cli-compact"
-    ]
+    "remainingGaps": []
   },
   "productLocks": {
     "liveReady": false,
