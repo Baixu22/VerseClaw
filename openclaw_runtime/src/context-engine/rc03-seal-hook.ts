@@ -5,6 +5,8 @@
 // ContextReceipt/v1 when the RC-03 flag is on. Gated by a feature flag
 // (default-off) and the existing enhancement kill switch; when off, it is a
 // no-op and the legacy path is byte-identical.
+import { createHash } from 'node:crypto';
+
 import { ReceiptStore } from '../agents/receipt-store.js';
 import {
   recordShadowCensusFailure,
@@ -19,6 +21,7 @@ import {
   getSealProducer,
 } from './seal-registry.js';
 import {
+  RC03_PRE_SEAL_PRODUCERS,
   rc03PreSealProducerIds,
   registerRc03SealProducers,
 } from './rc03-producers.js';
@@ -34,8 +37,16 @@ export const RC03_SEAL_POLICY_DIGEST =
  *  WireReceipt/v1 correlated to the sealed ContextBundle of the same run and
  *  model call. In-process only; cleared with the turn. */
 const sealedPlansByRun = new Map<string, Map<number, CompilePlan>>();
+/** sha256 of the provider-bound system prompt each sealed model call bound. */
+const sealedSystemPromptDigestsByRun = new Map<string, Map<number, string>>();
 
-export function recordRc03SealPlan(runId: string | undefined, plan: CompilePlan): void {
+const sha256 = (value: string) => createHash('sha256').update(value).digest('hex');
+
+export function recordRc03SealPlan(
+  runId: string | undefined,
+  plan: CompilePlan,
+  systemPromptDigest?: string,
+): void {
   if (!runId) return;
   let byModelCall = sealedPlansByRun.get(runId);
   if (!byModelCall) {
@@ -43,6 +54,22 @@ export function recordRc03SealPlan(runId: string | undefined, plan: CompilePlan)
     sealedPlansByRun.set(runId, byModelCall);
   }
   byModelCall.set(plan.callIndex.modelCallIndex, plan);
+  if (systemPromptDigest) {
+    let digests = sealedSystemPromptDigestsByRun.get(runId);
+    if (!digests) {
+      digests = new Map();
+      sealedSystemPromptDigestsByRun.set(runId, digests);
+    }
+    digests.set(plan.callIndex.modelCallIndex, systemPromptDigest);
+  }
+}
+
+export function getRc03SealedSystemPromptDigest(
+  runId: string | undefined,
+  modelCallIndex: number,
+): string | undefined {
+  if (!runId) return undefined;
+  return sealedSystemPromptDigestsByRun.get(runId)?.get(modelCallIndex);
 }
 
 export function getRc03SealPlan(
@@ -63,6 +90,23 @@ export function getRc03SealPlan(
 export function clearRc03SealPlan(runId: string | undefined): void {
   if (!runId) return;
   sealedPlansByRun.delete(runId);
+  sealedSystemPromptDigestsByRun.delete(runId);
+  for (const key of messageReplacementAttempts) {
+    if (key.startsWith(`${runId}|`)) messageReplacementAttempts.delete(key);
+  }
+}
+
+/** Attempts whose transcript the active ContextEngine replaced before the seal. */
+const messageReplacementAttempts = new Set<string>();
+
+export function markRc03MessageReplacement(
+  runId: string | undefined,
+  attemptIndex = 0,
+  cfg?: unknown,
+  env: NodeJS.ProcessEnv = process.env,
+): void {
+  if (!runId || !resolveRc03SealState(cfg, env).enabled) return;
+  messageReplacementAttempts.add(`${runId}|${attemptIndex}`);
 }
 
 /** Next free attempt index per runId after its embedded run ended. A provider
@@ -90,7 +134,50 @@ export function endRc03RunAttempts(runId: string | undefined, nextAttemptIndex: 
 
 export function resetRc03SealPlansForTest(): void {
   sealedPlansByRun.clear();
+  sealedSystemPromptDigestsByRun.clear();
   nextAttemptIndexByRun.clear();
+  systemPromptContributions.clear();
+  messageReplacementAttempts.clear();
+}
+
+/** Semantic system-prompt text produced outside the Context Orchestrator
+ *  (COMPASS pre-reply, role-spawn memory pack). The producer records what it
+ *  emitted; the seal attributes it by content in the provider-bound prompt.
+ *  In-memory only, never persisted, and recorded only while the seal is on. */
+const RC03_CONTRIBUTION_LIMIT = 256;
+const systemPromptContributions = new Map<string, { producerId: string; text: string }>();
+
+export function recordRc03SystemPromptContribution(
+  producerId: string,
+  text: string | undefined,
+  cfg?: unknown,
+  env: NodeJS.ProcessEnv = process.env,
+): void {
+  const trimmed = text?.trim();
+  if (!trimmed || !resolveRc03SealState(cfg, env).enabled) return;
+  const key = sha256(`${producerId}|${trimmed}`);
+  systemPromptContributions.delete(key);
+  systemPromptContributions.set(key, { producerId, text: trimmed });
+  while (systemPromptContributions.size > RC03_CONTRIBUTION_LIMIT) {
+    const oldest = systemPromptContributions.keys().next().value;
+    if (oldest === undefined) break;
+    systemPromptContributions.delete(oldest);
+  }
+}
+
+/** Registered contributions present in the provider-bound system prompt. */
+export function attributeRc03SystemPromptContributions(
+  systemPrompt: string,
+): Array<{ producerId: string; chars: number }> {
+  const chars = new Map<string, number>();
+  for (const { producerId, text } of systemPromptContributions.values()) {
+    if (systemPrompt.includes(text)) {
+      chars.set(producerId, (chars.get(producerId) ?? 0) + text.length);
+    }
+  }
+  return [...chars.entries()]
+    .map(([producerId, total]) => ({ producerId, chars: total }))
+    .sort((left, right) => left.producerId.localeCompare(right.producerId));
 }
 
 export type Rc03SealHookOptions = {
@@ -113,6 +200,10 @@ export type Rc03SealHookOptions = {
   /** A registered producer whose model call bypasses the Context Orchestrator
    *  and is sealed at the stream boundary; `chars` is its real semantic size. */
   boundaryProducer?: { id: string; chars: number };
+  /** The full provider-bound system prompt at the seal. Its digest is bound so
+   *  the wire boundary can detect any post-seal semantic mutation, and its
+   *  bytes are attributed to registered producers. */
+  systemPrompt?: string;
 };
 
 export type Rc03SealHookResult = {
@@ -257,9 +348,21 @@ export function runRc03SealHook(
   const unregisteredProducers = assertSealProducersRegistered(rc03PreSealProducerIds());
 
   const boundary = options.boundaryProducer;
+  const systemPrompt = boundary ? undefined : options.systemPrompt;
+  const attributed = systemPrompt ? attributeRc03SystemPromptContributions(systemPrompt) : [];
   const appliedProducerIds = boundary
     ? [boundary.id]
-    : (options.appliedProducerIds ?? appliedProducerIdsFromLineage(projection));
+    : [
+        ...new Set([
+          ...(options.appliedProducerIds ?? appliedProducerIdsFromLineage(projection)),
+          ...attributed.map((entry) => entry.producerId),
+          ...(systemPrompt ? [RC03_PRE_SEAL_PRODUCERS.embeddedSystemPrompt] : []),
+          ...(options.runId &&
+          messageReplacementAttempts.has(`${options.runId}|${options.attemptIndex ?? 0}`)
+            ? [RC03_PRE_SEAL_PRODUCERS.cvkMessageReplacement]
+            : []),
+        ]),
+      ].sort();
   const preSealProducers = rc03PreSealProducerIds().map((id) => {
     const registration = getSealProducer(id);
     return {
@@ -287,25 +390,30 @@ export function runRc03SealHook(
 
   // RC-02 typed store: receipt refs are canonical ref:context: ids, never raw
   // candidate ids.
+  const attributedRefs = attributed.map((entry) => `ref:context:producer:${entry.producerId}`);
+  const attributedChars = attributed.reduce((total, entry) => total + entry.chars, 0);
   const selectedRefs = boundary
     ? [`ref:context:boundary:${boundary.id}:${options.modelCallIndex ?? 0}`]
-    : projection.lineage
-        .filter((entry) => entry.charsApplied > 0)
-        .map((entry) => `ref:context:${entry.candidateId}`);
+    : [
+        ...projection.lineage
+          .filter((entry) => entry.charsApplied > 0)
+          .map((entry) => `ref:context:${entry.candidateId}`),
+        ...attributedRefs,
+      ];
   const omittedRefs = projection.lineage
     .filter((entry) => entry.charsApplied === 0)
     .map((entry) => `ref:context:${entry.candidateId}`);
   const charsRequested = boundary
     ? boundary.chars
-    : projection.lineage.reduce((t, e) => t + e.charsRequested, 0);
+    : projection.lineage.reduce((t, e) => t + e.charsRequested, 0) + attributedChars;
   const charsApplied = boundary
     ? boundary.chars
-    : projection.lineage.reduce((t, e) => t + e.charsApplied, 0);
+    : projection.lineage.reduce((t, e) => t + e.charsApplied, 0) + attributedChars;
 
   const bundle = sealContextBundle(
     createContextBundle({
       plan,
-      systemPrompt: projection.systemPromptAddition,
+      systemPrompt: systemPrompt ?? projection.systemPromptAddition,
       messages,
       appliedProducerIds,
       selectedRefs,
@@ -342,7 +450,7 @@ export function runRc03SealHook(
   if (!contextReceiptPersisted) {
     recordSealFailure('context-write', 'receipt-store-write-failed');
   }
-  recordRc03SealPlan(options.runId, plan);
+  recordRc03SealPlan(options.runId, plan, systemPrompt !== undefined ? sha256(systemPrompt) : undefined);
 
   return {
     engaged: true,

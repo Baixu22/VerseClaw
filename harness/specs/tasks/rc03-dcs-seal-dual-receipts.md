@@ -2,6 +2,9 @@
 id: rc03-dcs-seal-dual-receipts
 title: RC-03 DCS Seal And Dual Receipts
 taskType: engineering-acceptance
+# Pinned to the TF-0030 close commit RC-03R started from; the shared branch
+# diverged from origin/main long ago.
+diffBase: 32597a2d0
 intent: Establish an attempt-scoped CompilePlan, a model-call-scoped immutable ContextBundle, ContextReceipt/v1, and WireReceipt/v1; register every pre-seal semantic producer and post-seal non-semantic transport transform; move COMPASS SSP and ContextEngine message replacement under a registered pre-seal producer; keep ContextCandidate incremental and structured items atomic; use the single contextEngine slot and the RC-01/RC-02-approved ReceiptStore; ensure tool loop, retry, provider fallback, compact, fork, and handoff each produce correlated receipts; a kill switch restores the legacy path; unknown semantic mutation is zero.
 ownedPaths:
   - openclaw_runtime/src/context-engine/compile-plan.ts
@@ -25,12 +28,18 @@ ownedPaths:
   - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/run.ts
   - openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts
+  - openclaw_runtime/src/agents/role-spawn.ts
+  - openclaw_runtime/src/auto-reply/reply/get-reply-run.ts
   - harness/specs/tasks/rc03-dcs-seal-dual-receipts.md
   - artifacts/runtime-authority-convergence/rc-03/**
+  - .agent-workbench/task-forest/**
+  - docs/dev/handoffs/LATEST.md
+  - docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md
 touchedAreas:
   - openclaw_runtime/src/context-engine/**
   - openclaw_runtime/src/agents/**
   - openclaw_runtime/src/state/**
+  - openclaw_runtime/src/auto-reply/reply/**
   - tests/unit/**
   - harness/specs/**
   - artifacts/runtime-authority-convergence/rc-03/**

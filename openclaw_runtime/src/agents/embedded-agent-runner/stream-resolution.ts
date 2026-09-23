@@ -1,6 +1,8 @@
 /**
  * Resolves provider stream functions and API keys for embedded agents.
  */
+import { createHash } from "node:crypto";
+
 import { getApiProvider } from "../../llm/api-registry.js";
 import { streamSimple } from "../../llm/stream.js";
 import { createAnthropicVertexStreamFnForModel } from "../anthropic-vertex-stream.js";
@@ -11,7 +13,11 @@ import {
   recordShadowCensusFailure,
   resolveRc03WireCorrelationDigest,
 } from "../shadow-census.js";
-import { getRc03SealPlan, runRc03SealHook } from "../../context-engine/rc03-seal-hook.js";
+import {
+  getRc03SealPlan,
+  getRc03SealedSystemPromptDigest,
+  runRc03SealHook,
+} from "../../context-engine/rc03-seal-hook.js";
 import { RC03_PRE_SEAL_PRODUCERS } from "../../context-engine/rc03-producers.js";
 import type { CompilePlan } from "../../context-engine/compile-plan.js";
 import { SUMMARIZATION_SYSTEM_PROMPT } from "../../../packages/agent-core/src/harness/compaction/compaction.js";
@@ -357,6 +363,15 @@ function wrapEmbeddedAgentStreamFn(
     const plan =
       getRc03SealPlan(runId, modelCallIndex) ??
       sealBoundaryModelCall(context, { ...callContext, runId, modelCallIndex });
+    const sealedSystemPromptDigest = getRc03SealedSystemPromptDigest(runId, modelCallIndex);
+    if (
+      plan &&
+      sealedSystemPromptDigest !== undefined &&
+      createHash("sha256").update(context.systemPrompt ?? "").digest("hex") !==
+        sealedSystemPromptDigest
+    ) {
+      recordShadowCensusFailure("context-write", "post-seal-semantic-mutation");
+    }
     // R5-3: overwrite the wire-side correlation with the sealed
     // ContextReceipt's correlation digest (the bundle digest) so
     // WireReceipt/v1 and ContextReceipt/v1 join on the same value. A miss

@@ -284,6 +284,9 @@ function buildContextBlockFactory(params: {
   // set so re-collected working_memory content that did not change is
   // dispositioned "duplicate" instead of injected twice.
   const injectedDedupKeys = new Set<string>();
+  // RC-03: the provider-bound system prompt as it leaves before_agent_start;
+  // every sealed model call binds its digest.
+  let sealedSystemPrompt: string | undefined;
   async function finalizeCandidates(
     messages: AgentMessage[],
     options: {
@@ -342,6 +345,7 @@ function buildContextBlockFactory(params: {
       cfg: params.cfg,
       attemptIndex: params.attemptIndex,
       modelCallIndex,
+      systemPrompt: sealedSystemPrompt,
       seal: options.seal !== false,
       priorDedupKeys: options.priorDedupKeys,
       // FP-P2-06: a DCS-enabled attempt holds the DCS injection capacity in the
@@ -446,10 +450,14 @@ function buildContextBlockFactory(params: {
         // message list is never sent, so no ContextBundle is sealed for it.
         const finalized = await finalizeCandidates([], { seal: false });
         const addition = finalized?.projection.systemPromptAddition;
-        if (!addition) return undefined;
         const base = recordFromUnknown(event).systemPrompt;
+        if (!addition) {
+          sealedSystemPrompt = typeof base === "string" ? base : undefined;
+          return undefined;
+        }
         const systemPrompt =
           typeof base === "string" && base.length > 0 ? `${base}\n\n${addition}` : addition;
+        sealedSystemPrompt = systemPrompt;
         return { systemPrompt };
       });
     }

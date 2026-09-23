@@ -24,6 +24,14 @@ import { closeTrackedSqliteHandlesUnder } from "../infra/node-sqlite.js";
 import { ReceiptStore, type RuntimeReceiptRow } from "./receipt-store.js";
 import { runEmbeddedAgent } from "./embedded-agent-runner/run.js";
 import { runWithModelFallback } from "./model-fallback.js";
+import { forkSessionFromParent } from "../auto-reply/reply/session-fork.js";
+import { buildChildCompletionFindings, readSubagentOutput } from "./subagent-announce-output.js";
+import { getShadowCensusDiagnostics, resetShadowCensusDiagnosticsForTest } from "./shadow-census.js";
+import { RC03_PRE_SEAL_PRODUCERS } from "../context-engine/rc03-producers.js";
+import {
+  recordRc03SystemPromptContribution,
+  resetRc03SealPlansForTest,
+} from "../context-engine/rc03-seal-hook.js";
 
 const tempRoots: string[] = [];
 const store = () => new ReceiptStore({ env: process.env });
@@ -41,6 +49,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  resetRc03SealPlansForTest();
   resetPluginRuntimeStateForTest();
   clearTaskStateHandlerConfig();
   providerRuntimeTesting.clearProviderRuntimePluginCacheForTest();
@@ -388,5 +397,164 @@ describe("RC-03R real-entry seal and dual v1 receipts", () => {
     expect(store().list({ kind: "wire" })).toHaveLength(0);
     const on = await drive(true);
     expect(on).toEqual(off);
+  }, 120_000);
+
+  it("system prompt: COMPASS output written outside the orchestrator is attributed and sealed unchanged", async () => {
+    resetShadowCensusDiagnosticsForTest();
+    const ssp = "[COMPASS SSP rc03] goal=ship the seal; decisions=2";
+    const top5 = "[COMPASS top-5 rc03] 1. seal: bound by digest (conf: 0.9)";
+    recordRc03SystemPromptContribution(RC03_PRE_SEAL_PRODUCERS.compassSsp, ssp);
+    recordRc03SystemPromptContribution(RC03_PRE_SEAL_PRODUCERS.compassRetrieval, top5);
+    const spy = installTransportSpy(() => ({ body: responsesTextSse() }));
+    try {
+      const result = await runEmbeddedAgent(
+        runParams(tempRoot(), {
+          modelRun: false,
+          promptMode: "minimal",
+          extraSystemPrompt: `${ssp}\n\n${top5}`,
+        }),
+      );
+      expect(result.meta?.error).toBeUndefined();
+    } finally {
+      spy.restore();
+    }
+    expect(spy.captured[0]?.body).toContain("COMPASS SSP rc03");
+    const { context } = expectV1Pairs("compass", spy.captured);
+    const selected = JSON.parse(context[0]!.selected_json ?? "[]") as string[];
+    expect(selected).toEqual(
+      expect.arrayContaining([
+        "ref:context:producer:compass-retrieval",
+        "ref:context:producer:compass-ssp",
+      ]),
+    );
+    expect(
+      getShadowCensusDiagnostics().failures,
+      "the provider-bound system prompt changed after the seal",
+    ).toEqual([]);
+  }, 60_000);
+
+  it("fork: a child run on a transcript forked from the parent seals its own attempt identity", async () => {
+    const root = tempRoot();
+    const sessionsDir = path.join(root, "sessions");
+    fs.mkdirSync(sessionsDir, { recursive: true });
+    const parentFile = path.join(sessionsDir, "rc03-parent.jsonl");
+    const parent = runParams(root, {
+      sessionId: "rc03-parent",
+      sessionFile: parentFile,
+      runId: "rc03-parent-run",
+      prompt: "parent question rc03",
+      // A raw model run (modelRun or promptMode "none") does not replay history.
+      modelRun: false,
+      promptMode: "minimal",
+    }) as unknown as Record<string, unknown>;
+    fs.writeFileSync(parentFile, "");
+    const spy = installTransportSpy((index) => ({
+      body: responsesTextSse(index === 0 ? "parent answer" : "child answer"),
+    }));
+    let forked: { sessionId: string; sessionFile: string } | null = null;
+    try {
+      await runEmbeddedAgent(parent as never);
+      forked = await forkSessionFromParent({
+        parentEntry: { sessionId: "rc03-parent", sessionFile: parentFile, updatedAt: Date.now() } as never,
+        agentId: "main",
+        sessionsDir,
+      });
+      expect(forked, "the production fork did not produce a child transcript").not.toBeNull();
+      await runEmbeddedAgent({
+        ...parent,
+        sessionId: forked!.sessionId,
+        sessionFile: forked!.sessionFile,
+        // A thread/session fork replays the forked history; a subagent key would
+        // switch the child to task_state-only context.
+        sessionKey: "agent:main:rc03:thread:fork",
+        runId: "rc03-fork-run",
+        prompt: "child task rc03",
+      } as never);
+    } finally {
+      spy.restore();
+    }
+    expect(spy.captured[1]?.body, "the forked history did not reach the child call").toContain(
+      "parent question rc03",
+    );
+    const { context, wire } = expectV1Pairs("fork", spy.captured);
+    const byRun = (rows: RuntimeReceiptRow[], runId: string) =>
+      v1Identity(rows.filter((row) => row.run_id === runId));
+    expect(byRun(context, "rc03-parent-run")).toEqual([[0, 0, 0]]);
+    expect(byRun(context, "rc03-fork-run")).toEqual([[0, 0, 0]]);
+    expect(byRun(wire, "rc03-fork-run")).toEqual([[0, 0, 0]]);
+    expect(new Set(context.map((row) => row.correlation_digest)).size).toBe(2);
+  }, 90_000);
+
+  it("handoff: the child's completion handed to the parent is a new sealed, paired parent call", async () => {
+    const root = tempRoot();
+    const sessionsDir = path.join(root, "sessions");
+    fs.mkdirSync(sessionsDir, { recursive: true });
+    const parentFile = path.join(sessionsDir, "rc03-parent.jsonl");
+    const childFile = path.join(sessionsDir, "rc03-child.jsonl");
+    fs.writeFileSync(parentFile, "");
+    fs.writeFileSync(childFile, "");
+    const base = runParams(root, { modelRun: false, promptMode: "minimal" }) as unknown as Record<
+      string,
+      unknown
+    >;
+    const replies = ["delegating", "child result rc03: 3 files", "parent wrap-up"];
+    const spy = installTransportSpy((index) => ({ body: responsesTextSse(replies[index] ?? "ok") }));
+    let handoff: string | undefined;
+    try {
+      await runEmbeddedAgent({
+        ...base,
+        sessionId: "rc03-parent",
+        sessionFile: parentFile,
+        runId: "rc03-parent-run",
+        prompt: "delegate the count",
+      } as never);
+      await runEmbeddedAgent({
+        ...base,
+        sessionId: "rc03-child",
+        sessionFile: childFile,
+        sessionKey: "agent:main:subagent:rc03-child",
+        runId: "rc03-child-run",
+        prompt: "count the files",
+      } as never);
+      const childOutput = await readSubagentOutput("agent:main:subagent:rc03-child", undefined, {
+        sessionFile: childFile,
+      });
+      expect(childOutput).toContain("child result rc03");
+      handoff = buildChildCompletionFindings([
+        {
+          childSessionKey: "agent:main:subagent:rc03-child",
+          task: "count the files",
+          createdAt: 1,
+          endedAt: 2,
+          outcome: { status: "ok" },
+          frozenResultText: childOutput,
+        } as never,
+      ]);
+      expect(handoff).toBeDefined();
+      await runEmbeddedAgent({
+        ...base,
+        sessionId: "rc03-parent",
+        sessionFile: parentFile,
+        runId: "rc03-handoff-run",
+        prompt: handoff,
+      } as never);
+    } finally {
+      spy.restore();
+    }
+    expect(spy.captured[2]?.body, "the handoff did not reach the parent call").toContain(
+      "child result rc03",
+    );
+    expect(spy.captured[2]?.body, "the parent history was not continued").toContain(
+      "delegate the count",
+    );
+    const { context, wire } = expectV1Pairs("handoff", spy.captured);
+    const runs = ["rc03-parent-run", "rc03-child-run", "rc03-handoff-run"];
+    for (const runId of runs) {
+      expect(v1Identity(context.filter((row) => row.run_id === runId)), runId).toEqual([[0, 0, 0]]);
+      expect(v1Identity(wire.filter((row) => row.run_id === runId)), runId).toEqual([[0, 0, 0]]);
+    }
+    const handoffWire = wire.find((row) => row.run_id === "rc03-handoff-run")!;
+    const handoffContext = context.find((row) => row.run_id === "rc03-handoff-run")!;
+    expect(handoffWire.correlation_digest).toBe(handoffContext.correlation_digest);
   }, 120_000);
 });
