@@ -149,6 +149,7 @@ export async function sendCronAnnouncePayloadStrict(params: {
     isTruthyEnvValue(process.env.RC05_OPERATOR_SLICE);
   if (sliceEnabled) {
     const {
+      awaitOperatorInboxDecision,
       createOperatorSliceIntent,
       executeOperatorSliceEffect,
       resolveOperatorGovernancePolicy,
@@ -175,24 +176,35 @@ export async function sendCronAnnouncePayloadStrict(params: {
       throw new Error(`RC-05 operator slice intent failed: ${intent.reason}`);
     }
 
-    // 2. Governance: the explicit policy rule decides; the decision itself is
-    //    NOT hardcoded inline — it comes from the explicit runtime config
-    //    (runtime.rc05.cronAutoApprove). Default is deny: without the explicit
-    //    opt-in the announce is not delivered (fail-closed). A denial produces
-    //    zero effect.
-    const cronAutoApprove = params.cfg.runtime?.rc05?.cronAutoApprove === true;
-    const governance = resolveOperatorGovernancePolicy({
-      policyRule: OPERATOR_DEFAULT_POLICY_RULE,
-      decision: cronAutoApprove ? "approved" : "denied",
-      actor: "cron-policy",
-    });
-    const resolved = resolveOperatorSliceApproval({
-      approvalId: intent.approvalId,
-      governance,
-      options: { enabled: true },
-    });
-    if (!resolved.ok) {
-      throw new Error(`RC-05 operator slice rejected announce: ${resolved.reason}`);
+    // 2. Governance. With runtime.rc05.cronAutoApprove the explicit policy
+    //    rule approves (actor + policyDigest recorded). Otherwise the intent
+    //    stays pending for the desktop Inbox; an undecided intent is denied at
+    //    its expiry. A denial produces zero effect.
+    let governance;
+    if (params.cfg.runtime?.rc05?.cronAutoApprove === true) {
+      governance = resolveOperatorGovernancePolicy({
+        policyRule: OPERATOR_DEFAULT_POLICY_RULE,
+        decision: "approved",
+        actor: "cron-policy",
+      });
+      const resolved = resolveOperatorSliceApproval({
+        approvalId: intent.approvalId,
+        governance,
+        options: { enabled: true },
+      });
+      if (!resolved.ok) {
+        throw new Error(`RC-05 operator slice rejected announce: ${resolved.reason}`);
+      }
+    } else {
+      const decided = await awaitOperatorInboxDecision({
+        approvalId: intent.approvalId,
+        options: { enabled: true },
+        signal: params.abortSignal,
+      });
+      if (!decided.ok) {
+        throw new Error(`RC-05 operator slice rejected announce: ${decided.reason}`);
+      }
+      governance = decided.governance;
     }
 
     // 3. Execute: execution_started -> REAL channel send -> applied on ack.
