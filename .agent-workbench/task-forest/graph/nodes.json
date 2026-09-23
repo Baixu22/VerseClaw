@@ -2404,12 +2404,13 @@
       "环境抖动如实记录、未当作绿：同一套件早前两次分别失败于 afterEach 删除 %TEMP% 目录的 EPERM、并发写用例的 database is locked；本轮最终运行干净通过。",
       "未改产品锁与默认值：liveReady / productApproved / defaultOn 保持 false；收据开关仍默认关，测试只在进程环境内显式开启。",
       "2026-09-23 实测（负结果留痕）：为余下四个入口写真实驱动时，两个外层入口在最小夹具下都会卡死——dispatchInboundMessageWithBufferedDispatcher（src/auto-reply/dispatch.ts:532，desktop chat 与 channel 共用的 inbound 入口）与 runCronIsolatedAgentTurn（src/cron/isolated-agent/run.ts:1259，OPENCLAW_TEST_FAST=1 + 最小 cfg）各自在 120s 内无任何输出，被 vitest no-output watchdog 终止。结论：这两条不是补字段就能驱动，需要 channel 插件 + session store + agent workspace 的完整夹具；仓库内没有任何端到端驱动 gateway chat.send 的测试可复用。两次探针文件已删除，未留在树里。",
-      "2026-09-23 证据更新：census 的四个 gap 原因已由静态推断升级为实测结论（含上述卡死读数与命令），见 artifacts/runtime-authority-convergence/rc-02/census.json 的 entryMatrix.surfaces[].gapReason。"
+      "2026-09-23 证据更新：census 的四个 gap 原因已由静态推断升级为实测结论（含上述卡死读数与命令），见 artifacts/runtime-authority-convergence/rc-02/census.json 的 entryMatrix.surfaces[].gapReason。",
+      "2026-09-23 深入诊断（排除两个假设）：给卡死探针加 5s 心跳与 fetch 计数后确认——模型边界从未到达（fetch spy 零请求）；心跳在约 5–10s 后停止，说明事件循环被同步阻塞（不是 await 死锁，所以单测超时也无法触发）；阻塞前引导已装 12–20 个递归 FSEventWrap watcher；把 process.cwd() 移到临时目录（forks pool，支持 chdir）不改变卡死，故「扫仓库 CWD」不是原因。结论：阻塞在运行时引导的同步工作（插件/workspace 装载），最小 cfg 无法界定其规模；驱动需要仓库自己的有界 harness 或预热引导，而不是再加配置字段。诊断探针已删除，未留在树里。仓库内也没有任何测试直接驱动 getReplyFromConfig 或 gateway chat.send 可复用。"
     ],
     "execution_hints": [],
     "id": "TF-0030",
     "kind": "task",
-    "next_action": "下一轮把余下四个入口当夹具项目做：desktop chat / channel fixture 需要 channel 插件 + session store + agent workspace 夹具，且驱动必须带自身超时（不要依赖 120s watchdog）；Cron 需要绕开 mock 了 run-embedded.runtime.js 的 harness；compact 可先试 force + 预填 transcript。若某入口最终无法真实驱动，节点保持未完成并写明缺口，不改 spec 的验收口径。证据：artifacts/runtime-authority-convergence/rc-02/census.json",
+    "next_action": "余下四个入口不是配置问题：inbound dispatch 与 cron 入口在最小 cfg 下都会在运行时引导阶段同步阻塞事件循环（模型边界未到达），需要仓库自己的有界 harness 或预热引导；仓库内没有可复用的 getReplyFromConfig / gateway chat.send 驱动。下一轮应先做一个「有界引导」夹具（把插件/workspace 装载限定在临时根、必要时用独立 vitest project 与 forks pool），再分别驱动 desktop chat / channel fixture / Cron / compact；若某入口最终无法真实驱动，节点保持未完成并写明缺口，不改 spec 验收口径。证据：artifacts/runtime-authority-convergence/rc-02/census.json",
     "non_goals": [],
     "priority": 1,
     "progress": 25.0,
@@ -2423,7 +2424,7 @@
     "success_metrics": [],
     "summary": "[冻结 2026-09-22 · D7；2026-09-22/23 RC-02R 增量，未收口] 本节点仍未完成。原摘要：在 logical 与最终 guarded request-body 边界生成双 shadow receipt，建立全 payload 分母且保持零行为变化。增量：把被 RC-09 整改矩阵判为假的「八入口矩阵」换成真实入口矩阵——embedded attempt、provider payload hook、context engine、provider transport 四行已由真实生产入口驱动，每条 wire 收据的 wire_digest 必须等于网络边界真实截获字节的 sha256 并与 context 收据按 correlation_digest 成对；provider 分母取自 listSourceRuntimeTransportApis()，新增 API 自动进矩阵；另补 off/on parity 4/4。余下四个入口（desktop chat、Cron、channel conformance fixture、CLI/compact）仍无真实驱动，逐条原因写在 artifacts/runtime-authority-convergence/rc-02/census.json。",
     "title": "RC-02 Full-payload Shadow Census",
-    "updated_at": "2026-09-23T03:56:34.658640Z"
+    "updated_at": "2026-09-23T04:16:54.267208Z"
   },
   "TF-0031": {
     "acceptance_criteria": [
