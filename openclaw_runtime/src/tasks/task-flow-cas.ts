@@ -301,6 +301,20 @@ export class TaskFlowCasStore {
       query.selectFrom('flow_runs').selectAll().where('status', '=', status).orderBy('created_at', 'asc'),
     ).rows;
   }
+
+  /** List the flows one controller owns. */
+  listByController(controllerId: string): CasFlowRow[] {
+    const { db } = openOpenClawStateDatabase(this.#database);
+    const query = getNodeSqliteKysely<CasFlowDatabase>(db);
+    return executeSqliteQuerySync<CasFlowRow>(
+      db,
+      query
+        .selectFrom('flow_runs')
+        .selectAll()
+        .where('controller_id', '=', controllerId)
+        .orderBy('created_at', 'asc'),
+    ).rows;
+  }
 }
 
 function normalizeNumber(value: number | bigint | null | undefined): number | undefined {
