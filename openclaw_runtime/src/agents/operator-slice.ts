@@ -21,14 +21,14 @@ import { createHash } from 'node:crypto';
 import { appendFileSync, lstatSync, mkdirSync, realpathSync } from 'node:fs';
 import { basename, dirname, join, resolve, sep } from 'node:path';
 
-import { ApprovalLedger } from './approval-ledger.js';
+import { ApprovalLedger, OPERATOR_INTENT_CLIENT_ID } from './approval-ledger.js';
 import { EffectReceiptStore } from './effect-receipt.js';
 import { ReceiptStore, type RuntimeReceiptRuntimeMode } from './receipt-store.js';
 import { canonicalJsonValue } from './approval-ledger.js';
 
 export const OPERATOR_SLICE_SCHEMA_VERSION = '1';
 export const OPERATOR_SLICE_FLAG = 'rc05.operatorSlice';
-export const OPERATOR_SLICE_ACTOR = 'cron-ingress';
+export const OPERATOR_SLICE_ACTOR = OPERATOR_INTENT_CLIENT_ID;
 export const OPERATOR_DEFAULT_POLICY_RULE = 'cron-announce-under-operator-slice';
 
 export type OperatorSliceOptions = {
