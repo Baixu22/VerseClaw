@@ -9,13 +9,13 @@
       "why_this_task": ""
     },
     "blocked_by": [],
-    "confidence": 0.88,
+    "confidence": 0.84,
     "context_tags": [],
     "desired_outcomes": [],
     "difficulty": "very_high",
-    "id": "TF-0032",
+    "id": "TF-0033",
     "kind": "task",
-    "next_action": "pending/resolved approval 跨重启保留",
+    "next_action": "duplicate effect 0 且 denial effect 0",
     "priority": 1,
     "progress": 10.0,
     "purpose": "",
@@ -24,7 +24,7 @@
     "remaining_minutes_min": null,
     "status": "in_progress",
     "success_metrics": [],
-    "title": "RC-04 Durable Approval 与 Effect Reconciliation"
+    "title": "RC-05 最小 Operator 治理切片"
   },
   {
     "alignment": {
@@ -302,7 +302,6 @@
     },
     "blocked_by": [
       "TF-0039",
-      "TF-0032",
       "TF-0033"
     ],
     "confidence": 0.85,
@@ -311,7 +310,7 @@
     "difficulty": "high",
     "id": "TF-0040",
     "kind": "task",
-    "next_action": "先完成依赖：TF-0039, TF-0032, TF-0033",
+    "next_action": "先完成依赖：TF-0039, TF-0033",
     "priority": 2,
     "progress": 0.0,
     "purpose": "",
@@ -528,35 +527,6 @@
       "未授权新 authority 0"
     ],
     "title": "Runtime Authority Convergence 与 Operator 验收"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0032"
-    ],
-    "confidence": 0.84,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "very_high",
-    "id": "TF-0033",
-    "kind": "task",
-    "next_action": "先完成依赖：TF-0032",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "",
-    "ready": false,
-    "remaining_minutes_max": null,
-    "remaining_minutes_min": null,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "RC-05 最小 Operator 治理切片"
   },
   {
     "alignment": {

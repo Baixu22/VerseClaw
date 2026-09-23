@@ -1,0 +1,42 @@
+{
+  "applied_at": "2026-09-23T23:02:37.779915Z",
+  "base_graph_hash": "d5992084f26191ec7e4d809d744bd1feb2b173b90127e598fa791d08d601dfaa",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "2026-09-24 缺陷修复（提交 33a93df15）：① createGatewayAuxHandlers 给插件 ExecApprovalManager 接入同一 durable ledger 并 recoverPendingFromLedger；node-invoke 插件策略把 requester 传入 create() 原子绑定；② ExecApprovalManager 新增 ownsLedgerRow，exec/plugin 各只恢复 approvalLedgerRowSurface 属于自己的行；OPERATOR_SLICE_ACTOR 改由 ledger 模块的 OPERATOR_INTENT_CLIENT_ID 定义。回归测试经生产 createGatewayAuxHandlers 驱动：插件 pending 跨重启、三面行互不收养、exec.approval.resolve 无法批准 Inbox 意图、回滚模式零 ledger 行；修复前两条新测试失败（已实测）。",
+          "2026-09-24 正式 RC-00 验收 run1：candidate 33a93df153bb485f9d3db6ed18d5da13d9f7dc69；Executor rc04-executor result=pass failures=[] reportDigest 11c23ee3…；独立 Verifier rc04-verifier result=pass engineeringAcceptedByAgent=true failures=[] reportDigest 7773c292… consistency.errors=[] identicalGateContracts=true；9552 passed/0 failed/50 skipped；mutationCheck 源与 detached 均干净；三锁 false、promotionAuthorized=false。报告逐字节归档 artifacts/runtime-authority-convergence/rc-04/acceptance/（SHA256SUMS）。",
+          "既有证据延续：rc04-durable-approval.test.ts 覆盖完整状态序列、重启、幂等 resolve、denial 零 effect、未知结果停在 needs_reconciliation 且不自动重放、每个转换的 failure injection 由 domain journal 对账、revision CAS、legacy request_json 迁移为 digest-only、原始 secret 不落库、EffectReceipt 各维度幂等冲突。",
+          "residual：进程内过期的审批在 ledger 中保持 approval_pending（ledger 无 expired 状态，过期由 expires_at_ms 推导，重启恢复跳过过期行）。"
+        ],
+        "next_action": "本节点已收口。下一步 TF-0033（RC-05 最小 Operator 治理切片），修复提交在 rc04-dev 分支。",
+        "summary": "[2026-09-24 收口 · 工程验收 accepted，scope=engineering-only] RC-04 durable approval：exec 与插件审批的 pending/resolved 真相都由 openclaw-state 中唯一的 approval_ledger 持有并跨重启恢复；每个审批面只恢复/解决自己的行（exec / plugin: 前缀 / cron-ingress Inbox 意图），Inbox 意图不能再经 exec.approval.resolve 绕过治理；状态机 intent_reserved→approval_pending→approved|denied→execution_started→applied|not_applied|unknown→reconciled|needs_reconciliation 由 revision CAS 单事务推进，digest-only；紧急回滚=关 ledger 零写入。正式 RC-00 验收 Executor + 独立 Verifier pass（9552/0/50）。residual：进程内过期审批在 ledger 中仍为 approval_pending（无 expired 状态）。"
+      },
+      "id": "TF-0032"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0032",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0033",
+      "progress": 10,
+      "status": "in_progress"
+    }
+  ],
+  "created_at": "2026-09-23T23:02:37.527586Z",
+  "proposal_id": "TFP-tf0032-rc04-acceptance-closeout-20260924",
+  "rationale": "按 Task Forest 自动收口门（R3）收口 TF-0032：spec acceptance 逐条直读核对——pending/resolved 真相由 durable ledger 跨重启保存（exec 与插件两个面均接入并在启动恢复）、重复相同 resolve 幂等、denial 零 effect、各转换的 failure injection 由 domain journal 对账、unknown 停在 needs_reconciliation、EffectReceipt 只解释不重放、observe/cutover/rollback 各有证据（回滚=关 ledger 零写入）、未引入通用工作流引擎；正式 RC-00 验收在干净候选 33a93df15 上 Executor pass、独立 Verifier（rc04-verifier≠rc04-executor）pass，engineeringAcceptedByAgent=true、failures=0、9552/0/50。三锁与默认值未改。",
+  "session_id": "dsh-tf0032-rc04-20260924",
+  "status": "applied"
+}

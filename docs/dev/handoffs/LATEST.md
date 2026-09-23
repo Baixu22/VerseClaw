@@ -1,5 +1,13 @@
 # 会话交接（LATEST）
 
+## 收口完成（2026-09-24，TF-0032 · RC-04）：插件审批持久化 + 审批面隔离 + 正式 RC-00 验收 pass
+
+- **TF-0032 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。
+- **修掉的两个缺陷**：① 插件审批从未持久化（`createGatewayAuxHandlers` 给插件的 `ExecApprovalManager` 没接 ledger，重启即丢 pending/resolved）——现共享同一 durable ledger 并在启动时恢复，requester 在 reserve 时原子绑定；② 重启恢复会收养所有 `approval_pending` 行，Operator Inbox 意图重启后以 exec 审批出现、可被 `exec.approval.resolve` 绕过 Inbox 治理（actor + 服务端 policy digest）批准——现每个 manager 只恢复自己面的行（`approvalLedgerRowSurface`）。紧急回滚（关 ledger）为零 ledger 写入的 writer 切换。
+- **正式验收**：干净候选 `33a93df15`，Executor pass → 独立 Verifier pass，9552 / 0 / 50，`identicalGateContracts=true`，mutation 全干净，三锁 false。证据 `artifacts/runtime-authority-convergence/rc-04/acceptance/`。
+- **residual**：进程内过期的审批在 ledger 里仍是 `approval_pending`（没有 `expired` 状态，过期由 `expires_at_ms` 推导）。
+- **下一步**：TF-0033（RC-05）——修复提交在 `rc04-dev`（Inbox 成为 Cron 主路径的治理步）。
+
 ## 收口完成（2026-09-24，TF-0031 · RC-03）：真实入口六类转换全覆盖 + 正式 RC-00 验收 pass
 
 - **TF-0031 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`、`allowedPromotion=false`、`humanEvidenceRequired=false`。

@@ -2514,26 +2514,29 @@
     "difficulty": "very_high",
     "estimated_total_minutes": null,
     "evidence": [
-      "RC-03 accepted; RC-04 durable approval and effect reconciliation starts",
-      "RC-04 independent Verifier VERDICT=pass: approval_ledger+effect_receipts, ApprovalLedger state sequence, EffectReceiptStore, ExecApprovalManager durableLedger production wiring, 24+81+36 tests green"
+      "2026-09-24 缺陷修复（提交 33a93df15）：① createGatewayAuxHandlers 给插件 ExecApprovalManager 接入同一 durable ledger 并 recoverPendingFromLedger；node-invoke 插件策略把 requester 传入 create() 原子绑定；② ExecApprovalManager 新增 ownsLedgerRow，exec/plugin 各只恢复 approvalLedgerRowSurface 属于自己的行；OPERATOR_SLICE_ACTOR 改由 ledger 模块的 OPERATOR_INTENT_CLIENT_ID 定义。回归测试经生产 createGatewayAuxHandlers 驱动：插件 pending 跨重启、三面行互不收养、exec.approval.resolve 无法批准 Inbox 意图、回滚模式零 ledger 行；修复前两条新测试失败（已实测）。",
+      "2026-09-24 正式 RC-00 验收 run1：candidate 33a93df153bb485f9d3db6ed18d5da13d9f7dc69；Executor rc04-executor result=pass failures=[] reportDigest 11c23ee3…；独立 Verifier rc04-verifier result=pass engineeringAcceptedByAgent=true failures=[] reportDigest 7773c292… consistency.errors=[] identicalGateContracts=true；9552 passed/0 failed/50 skipped；mutationCheck 源与 detached 均干净；三锁 false、promotionAuthorized=false。报告逐字节归档 artifacts/runtime-authority-convergence/rc-04/acceptance/（SHA256SUMS）。",
+      "既有证据延续：rc04-durable-approval.test.ts 覆盖完整状态序列、重启、幂等 resolve、denial 零 effect、未知结果停在 needs_reconciliation 且不自动重放、每个转换的 failure injection 由 domain journal 对账、revision CAS、legacy request_json 迁移为 digest-only、原始 secret 不落库、EffectReceipt 各维度幂等冲突。",
+      "residual：进程内过期的审批在 ledger 中保持 approval_pending（ledger 无 expired 状态，过期由 expires_at_ms 推导，重启恢复跳过过期行）。"
     ],
     "execution_hints": [],
     "id": "TF-0032",
     "kind": "task",
+    "next_action": "本节点已收口。下一步 TF-0033（RC-05 最小 Operator 治理切片），修复提交在 rc04-dev 分支。",
     "non_goals": [],
     "priority": 1,
-    "progress": 10.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [],
-    "summary": "把进程内 approval truth 收敛到既有持久边界，建立 EffectReceipt 和未知结果人工 reconciliation，不声称全局 exactly-once。",
+    "summary": "[2026-09-24 收口 · 工程验收 accepted，scope=engineering-only] RC-04 durable approval：exec 与插件审批的 pending/resolved 真相都由 openclaw-state 中唯一的 approval_ledger 持有并跨重启恢复；每个审批面只恢复/解决自己的行（exec / plugin: 前缀 / cron-ingress Inbox 意图），Inbox 意图不能再经 exec.approval.resolve 绕过治理；状态机 intent_reserved→approval_pending→approved|denied→execution_started→applied|not_applied|unknown→reconciled|needs_reconciliation 由 revision CAS 单事务推进，digest-only；紧急回滚=关 ledger 零写入。正式 RC-00 验收 Executor + 独立 Verifier pass（9552/0/50）。residual：进程内过期审批在 ledger 中仍为 approval_pending（无 expired 状态）。",
     "title": "RC-04 Durable Approval 与 Effect Reconciliation",
-    "updated_at": "2026-09-23T21:36:10.761891Z"
+    "updated_at": "2026-09-23T23:02:37.701081Z"
   },
   "TF-0033": {
     "acceptance_criteria": [
@@ -2544,7 +2547,7 @@
     ],
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0,
+      "fit_confidence": 0.0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -2569,18 +2572,18 @@
     "kind": "task",
     "non_goals": [],
     "priority": 1,
-    "progress": 0,
+    "progress": 10.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "in_progress",
     "success_metrics": [],
     "summary": "用 Cron、Desktop Inbox、DCS receipt、durable approval、单一 bounded effect、restart recovery 和 channel fixture 建立可见闭环。",
     "title": "RC-05 最小 Operator 治理切片",
-    "updated_at": "2026-08-03T08:02:21.717409Z"
+    "updated_at": "2026-09-23T23:02:37.701081Z"
   },
   "TF-0034": {
     "acceptance_criteria": [

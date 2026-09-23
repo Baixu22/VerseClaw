@@ -118,9 +118,9 @@ artifacts/runtime-authority-convergence/rc-01/*
 !artifacts/runtime-authority-convergence/rc-02/
 artifacts/runtime-authority-convergence/rc-02/*
 !artifacts/runtime-authority-convergence/rc-02/**
-!artifacts/runtime-authority-convergence/rc-03/
-artifacts/runtime-authority-convergence/rc-03/*
-!artifacts/runtime-authority-convergence/rc-03/**
+!artifacts/runtime-authority-convergence/rc-0[3-9]*/
+artifacts/runtime-authority-convergence/rc-0[3-9]*/*
+!artifacts/runtime-authority-convergence/rc-0[3-9]*/acceptance/
 !artifacts/coding-c0/
 !artifacts/coding-c0/**
 !artifacts/coding-c1/
