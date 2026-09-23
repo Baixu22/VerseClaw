@@ -285,6 +285,8 @@ export function finalizeContextOrchestratorTurn(params: {
    */
   attemptIndex?: number;
   modelCallIndex?: number;
+  /** RC-03: the full provider-bound system prompt this model call sends. */
+  systemPrompt?: string;
   /**
    * F-01: seal only when a real model-call projection exists. The
    * before_agent_start pass finalizes for the system prompt but its empty
@@ -350,6 +352,7 @@ export function finalizeContextOrchestratorTurn(params: {
       providerId: params.providerId,
       attemptIndex: params.attemptIndex,
       modelCallIndex: params.modelCallIndex,
+      systemPrompt: params.systemPrompt,
       database: params.rc03Seal?.database,
     });
   }

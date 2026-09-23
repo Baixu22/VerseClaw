@@ -252,6 +252,7 @@ import {
   recordContextOrchestratorSourceDecision,
 } from "../../../context-engine/context-orchestrator.js";
 import { isContextEnhancementKillSwitchEngaged } from "../../../context-engine/enhancement-kill-switch.js";
+import { markRc03MessageReplacement } from "../../../context-engine/rc03-seal-hook.js";
 import { endTurnInjectionBudget } from "../../../context-engine/turn-injection-budget.js";
 import {
   createMemoryContextProviders,
@@ -3420,6 +3421,7 @@ export async function runEmbeddedAttempt(
               : assembled.messages;
             if (assembledMessages !== activeSession.messages) {
               activeSession.agent.state.messages = assembledMessages;
+              markRc03MessageReplacement(params.runId, params.attemptIndex ?? 0, params.config);
             }
             contextEnginePromptAuthority = assembled.promptAuthority ?? "assembled";
             if (contextEnginePromptAuthority === "preassembly_may_overflow") {

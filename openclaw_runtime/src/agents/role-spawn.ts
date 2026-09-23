@@ -30,6 +30,8 @@ import { getMemoryCards, ensureMemoryCardsLoaded, recordMemoryInjection, listMem
 import { isInjectableMemoryCard, isMemoryCardInContextScope, type MemoryCardScopeContext } from "../memory/memory-card.js";
 import { applyMemoryUseGateOverlay } from "../memory/memory-dual-gate.js";
 import { buildContextPack, renderContextPack } from "../memory/context-pack.js";
+import { RC03_PRE_SEAL_PRODUCERS } from "../context-engine/rc03-producers.js";
+import { recordRc03SystemPromptContribution } from "../context-engine/rc03-seal-hook.js";
 import type { MemoryCard } from "../memory/types.js";
 import type { TeamOrchestrationMetadata } from "./subagent-registry.types.js";
 import type { PermissionDecisionEvent } from "../../../shared/product-semantics.js";
@@ -160,6 +162,7 @@ export function buildRoleSystemPrompt(
       const rendered = renderContextPack(pack).trim();
       if (rendered) {
         parts.push(["", "## Memory Context", rendered, ""].join("\n"));
+        recordRc03SystemPromptContribution(RC03_PRE_SEAL_PRODUCERS.roleSpawnMemoryPack, rendered);
       }
       try {
         recordMemoryInjection({

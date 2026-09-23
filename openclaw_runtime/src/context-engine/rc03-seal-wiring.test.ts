@@ -20,6 +20,8 @@ import { beginContextCandidateCollection, collectContextCandidate, createContext
 import {
   appliedProducerIdsFromLineage,
   getRc03SealPlan,
+  markRc03MessageReplacement,
+  recordRc03SystemPromptContribution,
   resetRc03SealPlansForTest,
   resolveRc03SealState,
   runRc03SealHook,
@@ -512,5 +514,109 @@ describe('RC-03 production wiring (seal hook at the pre-seal convergence point)'
     expect(pairs).toHaveLength(1);
     expect(pairs[0].context.receipt_id).toBe(contextRows[0].receipt_id);
     expect(pairs[0].wire.receipt_id).toBe(wire.receipt_id);
+  });
+
+  it('RC-03R: a system prompt changed after the seal is an unknown semantic mutation in the census', async () => {
+    const { attachShadowReceiptOptions } = await import('../agents/shadow-census.js');
+    const { resolveEmbeddedAgentStreamFn } = await import('../agents/embedded-agent-runner/stream-resolution.js');
+    const model = {
+      provider: 'anthropic',
+      api: 'anthropic-messages',
+      id: 'claude-mutation',
+      name: 'claude-mutation',
+      baseUrl: 'http://127.0.0.1:40123/v1',
+      reasoning: false,
+      input: ['text'],
+      maxTokens: 4096,
+      contextWindow: 200000,
+      cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+    } as never;
+    const drive = async (runId: string, sealed: string, sent: string) => {
+      runRc03SealHook(
+        { lineage: [], systemPromptAddition: undefined } as never,
+        [{ role: 'user', content: 'hi' }],
+        {
+          enabled: true,
+          runId,
+          providerId: 'anthropic',
+          systemPrompt: sealed,
+          database: { env: process.env, path: path.join(stateDir, 'openclaw-state.db') },
+        },
+      );
+      const wrapped = resolveEmbeddedAgentStreamFn({
+        currentStreamFn: (() => ({})) as never,
+        sessionId: 'sess-mutation',
+        runId,
+        attemptIndex: 0,
+        model,
+      });
+      await wrapped(
+        model,
+        { systemPrompt: sent, messages: [{ role: 'user', content: 'hi' }] } as never,
+        attachShadowReceiptOptions({ apiKey: 'fixture-key' }, {
+          enabled: true,
+          sourceRuntime: true,
+          database: { env: process.env, path: path.join(stateDir, 'openclaw-state.db') },
+          runId,
+          providerId: 'anthropic',
+          adapterId: 'anthropic-messages',
+          attemptIndex: 0,
+          modelCallIndex: 0,
+        }) as never,
+      );
+      return getShadowCensusDiagnostics().failures.filter(
+        (failure) => failure.code === 'post-seal-semantic-mutation',
+      );
+    };
+    expect(await drive('run-unchanged', 'base prompt', 'base prompt')).toEqual([]);
+    const mutated = await drive('run-mutated', 'base prompt', 'base prompt\n\ninjected after seal');
+    expect(mutated).toEqual([
+      { phase: 'context-write', code: 'post-seal-semantic-mutation', count: 1 },
+    ]);
+  });
+
+  it('RC-03R: ContextEngine message replacement is applied only on the attempt that replaced', () => {
+    const database = { env: process.env, path: path.join(stateDir, 'openclaw-state.db') };
+    const seal = (runId: string, attemptIndex: number) =>
+      runRc03SealHook({ lineage: [], systemPromptAddition: undefined } as never, [], {
+        enabled: true,
+        runId,
+        attemptIndex,
+        database,
+      }).plan?.preSealProducers.find((p) => p.producerId === 'cvk-message-replacement')?.applied;
+    markRc03MessageReplacement('run-cvk', 0, undefined, {});
+    expect(seal('run-cvk', 0), 'marked while the seal is off').toBe(false);
+    markRc03MessageReplacement('run-cvk', 0, undefined, { OPENCLAW_RC03_SEAL: '1' });
+    expect(seal('run-cvk', 0)).toBe(true);
+    expect(seal('run-cvk', 1), 'a later attempt did not replace messages').toBe(false);
+  });
+
+  it('RC-03R: system-prompt contributions are attributed only while the seal is on', () => {
+    const database = { env: process.env, path: path.join(stateDir, 'openclaw-state.db') };
+    recordRc03SystemPromptContribution('role-spawn-memory-pack', 'pack text rc03', undefined, {});
+    const off = runRc03SealHook({ lineage: [], systemPromptAddition: undefined } as never, [], {
+      enabled: true,
+      runId: 'run-attr-off',
+      systemPrompt: 'soul\n## Memory Context\npack text rc03',
+      database,
+    });
+    expect(off.plan?.preSealProducers.find((p) => p.producerId === 'role-spawn-memory-pack')?.applied).toBe(false);
+    recordRc03SystemPromptContribution('role-spawn-memory-pack', 'pack text rc03', undefined, {
+      OPENCLAW_RC03_SEAL: '1',
+    });
+    const on = runRc03SealHook({ lineage: [], systemPromptAddition: undefined } as never, [], {
+      enabled: true,
+      runId: 'run-attr-on',
+      systemPrompt: 'soul\n## Memory Context\npack text rc03',
+      database,
+    });
+    const applied = on.plan?.preSealProducers.filter((p) => p.applied).map((p) => p.producerId);
+    expect(applied).toEqual(['role-spawn-memory-pack', 'embedded-system-prompt']);
+    const receipt = newStore()
+      .list({ kind: 'context', runId: 'run-attr-on' })
+      .filter((row) => row.version === '1')[0];
+    expect(JSON.parse(receipt!.selected_json ?? '[]')).toEqual([
+      'ref:context:producer:role-spawn-memory-pack',
+    ]);
   });
 });

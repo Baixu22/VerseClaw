@@ -15,6 +15,9 @@ export const RC03_PRE_SEAL_PRODUCERS = {
   vtokenPacker: 'vtoken-packer',
   memoryPilotInjection: 'memory-pilot-injection',
   compactionSummarizer: 'compaction-summarizer',
+  compassRetrieval: 'compass-retrieval',
+  roleSpawnMemoryPack: 'role-spawn-memory-pack',
+  embeddedSystemPrompt: 'embedded-system-prompt',
 } as const;
 
 const preSealRegistrations: SealProducerRegistration[] = [
@@ -88,14 +91,43 @@ const preSealRegistrations: SealProducerRegistration[] = [
     purpose: 'Compaction summarizer request (SUMMARIZATION_SYSTEM_PROMPT + serialized transcript). It bypasses the Context Orchestrator, so it is sealed at the stream boundary before transport serialization.',
     version: '1',
   },
+  {
+    id: RC03_PRE_SEAL_PRODUCERS.compassRetrieval,
+    mutates: 'system_prompt',
+    kind: 'semantic',
+    purpose: 'COMPASS pre-reply hybrid-retrieval top-5 facts (get-reply-run extraSystemPromptParts); attributed by content at the seal.',
+    version: '1',
+  },
+  {
+    id: RC03_PRE_SEAL_PRODUCERS.roleSpawnMemoryPack,
+    mutates: 'system_prompt',
+    kind: 'semantic',
+    purpose: 'Role Memory ContextPack rendered into a role-spawned subagent system prompt (role-spawn buildRoleSystemPrompt); attributed by content at the seal.',
+    version: '1',
+  },
+  {
+    id: RC03_PRE_SEAL_PRODUCERS.embeddedSystemPrompt,
+    mutates: 'system_prompt',
+    kind: 'semantic',
+    purpose: 'Attempt system prompt builder (attempt.ts buildAttemptSystemPrompt, provider transform, pre-loop hook overrides); owns every system-prompt byte not attributed to a narrower producer. Its digest is bound at the seal.',
+    version: '1',
+  },
 ];
 
 export const RC03_POST_SEAL_TRANSFORMS = {
   providerHeaders: 'transport-provider-headers',
   wireSerialization: 'transport-wire-serialization',
+  cacheBoundaryStrip: 'transport-cache-boundary-strip',
 } as const;
 
 const postSealRegistrations: SealProducerRegistration[] = [
+  {
+    id: RC03_POST_SEAL_TRANSFORMS.cacheBoundaryStrip,
+    mutates: 'transport',
+    kind: 'non-semantic',
+    purpose: 'stripSystemPromptCacheBoundary removes the prompt-cache boundary marker in the stream transformContext; no semantic text changes.',
+    version: '1',
+  },
   {
     id: RC03_POST_SEAL_TRANSFORMS.providerHeaders,
     mutates: 'transport',

@@ -130,7 +130,8 @@ export type ShadowCensusFailureDiagnostic = {
     | "final-wire-body-unavailable"
     | "final-wire-body-invalid"
     | "wire-owner-incomplete"
-    | "unsealed-model-call";
+    | "unsealed-model-call"
+    | "post-seal-semantic-mutation";
   count: number;
 };
 

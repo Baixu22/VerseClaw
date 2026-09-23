@@ -1,6 +1,8 @@
 /** Prepares and runs auto-reply agent turns, including prompt context and session policy. */
 import crypto from "node:crypto";
 import { recordCompassMemoryInjectionReceipt } from "../../context-engine/memory-injection-receipt.js";
+import { RC03_PRE_SEAL_PRODUCERS } from "../../context-engine/rc03-producers.js";
+import { recordRc03SystemPromptContribution } from "../../context-engine/rc03-seal-hook.js";
 import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
 import { asDateTimestampMs } from "@openclaw/normalization-core/number-coercion";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
@@ -649,6 +651,14 @@ export async function runPreparedReply(
     injection: compassInjection,
     candidateFacts: compassFacts,
   });
+  // RC-03: COMPASS writes the system prompt outside the Context Orchestrator;
+  // record its output so the seal attributes it to the registered producers.
+  recordRc03SystemPromptContribution(RC03_PRE_SEAL_PRODUCERS.compassSsp, compassInjection.sspString, cfg);
+  recordRc03SystemPromptContribution(
+    RC03_PRE_SEAL_PRODUCERS.compassRetrieval,
+    compassInjection.top5FactsString,
+    cfg,
+  );
   const extraSystemPromptParts = [
     compassInjection.sspString,        // COMPASS: SSP 注入 (最前)
     compassInjection.top5FactsString,  // COMPASS: Hybrid retrieval top-5
