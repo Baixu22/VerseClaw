@@ -72,22 +72,55 @@ const SURFACES = [
   {
     id: "desktop-chat",
     gapReason:
-      'the outermost chatHandlers["chat.send"] handler (src/gateway/server-methods/chat.ts:3152) needs a full GatewayRequestContext, webchat channel plugin and session store fixture that this suite does not build',
+      'the outermost chatHandlers["chat.send"] handler (src/gateway/server-methods/chat.ts:3152) needs a full GatewayRequestContext, webchat channel plugin and session store fixture. Measured 2026-09-23: driving the shared inbound entry dispatchInboundMessageWithBufferedDispatcher (src/auto-reply/dispatch.ts:532) with a minimal cfg produced no output for 120s and was killed by the vitest no-output watchdog, so this is not a config-only fixture. No test in the repo drives a gateway chat send end to end.',
   },
   {
     id: "cron",
     gapReason:
-      "runCronIsolatedAgentTurn (src/cron/isolated-agent/run.ts:1259) is only exercised through run.test-harness.ts, which mocks run-embedded.runtime.js; an unmocked driver does not exist yet",
+      "runCronIsolatedAgentTurn (src/cron/isolated-agent/run.ts:1259) is only exercised through run.test-harness.ts, which mocks run-embedded.runtime.js, so the existing coverage cannot prove the real entry. Measured 2026-09-23: an unmocked driver with OPENCLAW_TEST_FAST=1 and a minimal cfg produced no output for 120s and was killed by the no-output watchdog.",
   },
   {
     id: "channel-conformance-fixture",
     gapReason:
-      "dispatchInboundMessage (src/auto-reply/dispatch.ts:476) has no existing driver, and the rc05 operator fixture is transport-only (it makes no model call)",
+      "the inbound leg dispatchInboundMessage (src/auto-reply/dispatch.ts:476) shares the stalled driver above, and the rc05 operator fixture (extensions/channels/rc05-operator-fixture/adapter.ts) is transport-only: it makes no model call, so it cannot carry receipts on its own.",
   },
   {
     id: "cli-compact",
     gapReason:
-      "the CLI entry agentCommand (src/agents/agent-command.ts:2229) needs full config/session/env fixtures, and compactEmbeddedAgentSessionDirect (src/agents/embedded-agent-runner/compact.ts:526) needs a pre-filled session transcript past the token budget",
+      "the CLI entry agentCommand (src/agents/agent-command.ts:2229) needs full config/session/env fixtures, and compactEmbeddedAgentSessionDirect (src/agents/embedded-agent-runner/compact.ts:526) needs a pre-filled session transcript past the token budget plus the same runtime bootstrap the stalled entries above hit.",
+  },
+];
+
+/**
+ * Drives that were actually attempted for the open surfaces and did not produce
+ * a usable real-entry proof. Recorded so the gap reasons are measured facts
+ * rather than "nobody wrote a driver yet"; the probe files were deleted and are
+ * not part of the suite.
+ */
+const PROBE_ATTEMPTS = [
+  {
+    id: "inbound-dispatch",
+    entry:
+      "openclaw_runtime/src/auto-reply/dispatch.ts:532 dispatchInboundMessageWithBufferedDispatcher (the shared inbound entry behind desktop chat and the channel fixture)",
+    command:
+      "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts rc02-inbound-probe.test.ts --passWithNoTests=false",
+    observed:
+      "no stdout for 120000ms; the vitest no-output watchdog terminated the stalled process group before any assertion ran",
+    conclusion:
+      "not a config-only fixture: the entry needs a channel plugin, session store and agent workspace harness; no test in the repo drives a gateway chat send end to end",
+    probeFileRemoved: true,
+  },
+  {
+    id: "cron-isolated-agent",
+    entry:
+      "openclaw_runtime/src/cron/isolated-agent/run.ts:1259 runCronIsolatedAgentTurn",
+    command:
+      "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts rc02-cron-probe.test.ts --passWithNoTests=false",
+    observed:
+      "no stdout for 120000ms with OPENCLAW_TEST_FAST=1 and a minimal cfg; the watchdog terminated the stalled process group (the 90s per-test timeout never surfaced)",
+    conclusion:
+      "the only existing driver (run.test-harness.ts) mocks run-embedded.runtime.js, so it cannot prove the real entry; an unmocked driver stalls on the same runtime bootstrap",
+    probeFileRemoved: true,
   },
 ];
 
@@ -325,6 +358,7 @@ function main() {
       surfaces,
     },
     parity,
+    probeAttempts: PROBE_ATTEMPTS,
     ownerClassification: {
       claim:
         "every persisted wire receipt carries a named adapter and provider and runtime_mode=source; the matrix fails if any row is unowned",
