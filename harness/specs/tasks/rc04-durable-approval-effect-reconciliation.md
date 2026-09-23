@@ -2,6 +2,9 @@
 id: rc04-durable-approval-effect-reconciliation
 title: RC-04 Durable Approval And Effect Reconciliation
 taskType: engineering-acceptance
+# Pinned to the commit RC-04R started from; the shared branch diverged from
+# origin/main long ago.
+diffBase: 9385d2341
 intent: Replace the in-memory Gateway process Map approval truth with one durable owner in the existing OpenClaw state boundary; persist the state sequence intent_reserved -> approval_pending -> approved|denied -> execution_started -> applied|not_applied|unknown -> reconciled; define stable approval/effect IDs, idempotency keys, domain-journal joins, and needs_reconciliation; do not create a generic workflow engine or claim global exactly-once.
 ownedPaths:
   - openclaw_runtime/src/state/openclaw-state-schema.sql
@@ -12,7 +15,13 @@ ownedPaths:
   - openclaw_runtime/src/agents/rc04-durable-approval.test.ts
   - openclaw_runtime/src/agents/rc04-exec-approval-wiring.test.ts
   - openclaw_runtime/src/gateway/exec-approval-manager.ts
+  - openclaw_runtime/src/gateway/server-aux-handlers.ts
+  - openclaw_runtime/src/gateway/node-invoke-plugin-policy.ts
+  - openclaw_runtime/src/agents/operator-slice.ts
   - harness/specs/tasks/rc04-durable-approval-effect-reconciliation.md
+  - .agent-workbench/task-forest/**
+  - docs/dev/handoffs/LATEST.md
+  - docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md
   - artifacts/runtime-authority-convergence/rc-04/**
 touchedAreas:
   - openclaw_runtime/src/state/**
@@ -46,7 +55,7 @@ rollback:
   - Before cutover, disable the observer. After cutover, rollback is an explicit, audited, mutually exclusive writer transition back to the legacy owner; it never enables a durable mirror or dual write.
   - No migration rollback is required because the approval_ledger table is append-only and idempotent.
 requiredTests:
-  - pnpm --dir openclaw_runtime exec vitest run src/agents/rc04-durable-approval.test.ts src/agents/rc04-exec-approval-wiring.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run src/agents/rc04-durable-approval.test.ts src/agents/rc04-exec-approval-wiring.test.ts src/agents/operator-slice.test.ts src/gateway/server-methods/inbox.test.ts
   - pnpm --dir openclaw_runtime exec vitest run src/context-engine/rc03-seal.test.ts src/context-engine/rc03-seal-wiring.test.ts src/agents/receipt-store.test.ts
   - pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts
   - pnpm exec vitest run tests/unit/runtime-authority-convergence-control-pack.test.ts

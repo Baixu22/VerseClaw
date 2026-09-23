@@ -50,6 +50,22 @@ export type ApprovalLedgerInsert = Insertable<OpenClawStateKyselyDatabase['appro
 export type ApprovalLedgerRow = Selectable<OpenClawStateKyselyDatabase['approval_ledger']>;
 export type ApprovalLedgerDatabase = Pick<OpenClawStateKyselyDatabase, 'approval_ledger'>;
 
+/** Plugin approvals are created with ids under this prefix. */
+export const PLUGIN_APPROVAL_ID_PREFIX = 'plugin:';
+/** Client id the Cron ingress records on Operator Inbox intents. */
+export const OPERATOR_INTENT_CLIENT_ID = 'cron-ingress';
+
+/** Which approval surface governs a ledger row. One table serves exec
+ *  approvals, plugin approvals, and Operator Inbox intents; each surface may
+ *  only recover and resolve its own rows. */
+export function approvalLedgerRowSurface(
+  row: Pick<ApprovalLedgerRow, 'approval_id' | 'requested_by_client_id'>,
+): 'exec' | 'plugin' | 'operator' {
+  if (row.approval_id.startsWith(PLUGIN_APPROVAL_ID_PREFIX)) return 'plugin';
+  if (row.requested_by_client_id === OPERATOR_INTENT_CLIENT_ID) return 'operator';
+  return 'exec';
+}
+
 export type ApprovalRequestPayload = Record<string, unknown>;
 
 export type ApprovalLedgerOptions = OpenClawStateDatabaseOptions;
