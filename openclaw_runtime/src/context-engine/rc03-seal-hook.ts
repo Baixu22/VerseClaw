@@ -65,8 +65,32 @@ export function clearRc03SealPlan(runId: string | undefined): void {
   sealedPlansByRun.delete(runId);
 }
 
+/** Next free attempt index per runId after its embedded run ended. A provider
+ *  fallback re-enters the embedded runner under the same runId and must open a
+ *  new attempt identity instead of restarting at 0. Bounded: oldest run evicted. */
+const RC03_ATTEMPT_HIGH_WATER_LIMIT = 1024;
+const nextAttemptIndexByRun = new Map<string, number>();
+
+export function beginRc03RunAttempts(runId: string | undefined): number {
+  if (!runId) return 0;
+  return nextAttemptIndexByRun.get(runId) ?? 0;
+}
+
+/** Release the run's sealed plans and remember where its attempt identity ended. */
+export function endRc03RunAttempts(runId: string | undefined, nextAttemptIndex: number): void {
+  if (!runId) return;
+  clearRc03SealPlan(runId);
+  nextAttemptIndexByRun.delete(runId);
+  nextAttemptIndexByRun.set(runId, nextAttemptIndex);
+  if (nextAttemptIndexByRun.size > RC03_ATTEMPT_HIGH_WATER_LIMIT) {
+    const oldest = nextAttemptIndexByRun.keys().next().value;
+    if (oldest !== undefined) nextAttemptIndexByRun.delete(oldest);
+  }
+}
+
 export function resetRc03SealPlansForTest(): void {
   sealedPlansByRun.clear();
+  nextAttemptIndexByRun.clear();
 }
 
 export type Rc03SealHookOptions = {
@@ -86,6 +110,9 @@ export type Rc03SealHookOptions = {
    *  content this turn. When absent, the hook derives applied ids from the
    *  projection lineage instead of marking every registered producer. */
   appliedProducerIds?: string[];
+  /** A registered producer whose model call bypasses the Context Orchestrator
+   *  and is sealed at the stream boundary; `chars` is its real semantic size. */
+  boundaryProducer?: { id: string; chars: number };
 };
 
 export type Rc03SealHookResult = {
@@ -179,6 +206,8 @@ function producerIdForLineageSource(sourceId: string): string | undefined {
       return 'vtoken-packer';
     case 'memory-inject-pilot':
       return 'memory-pilot-injection';
+    case 'compaction-summarizer':
+      return 'compaction-summarizer';
     default:
       if (sourceId.startsWith('memory-inject-pilot:')) {
         return 'memory-pilot-injection';
@@ -227,8 +256,10 @@ export function runRc03SealHook(
   // Zero-bypass enforcement: every registered pre-seal producer must be present.
   const unregisteredProducers = assertSealProducersRegistered(rc03PreSealProducerIds());
 
-  const appliedProducerIds =
-    options.appliedProducerIds ?? appliedProducerIdsFromLineage(projection);
+  const boundary = options.boundaryProducer;
+  const appliedProducerIds = boundary
+    ? [boundary.id]
+    : (options.appliedProducerIds ?? appliedProducerIdsFromLineage(projection));
   const preSealProducers = rc03PreSealProducerIds().map((id) => {
     const registration = getSealProducer(id);
     return {
@@ -256,12 +287,20 @@ export function runRc03SealHook(
 
   // RC-02 typed store: receipt refs are canonical ref:context: ids, never raw
   // candidate ids.
-  const selectedRefs = projection.lineage
-    .filter((entry) => entry.charsApplied > 0)
-    .map((entry) => `ref:context:${entry.candidateId}`);
+  const selectedRefs = boundary
+    ? [`ref:context:boundary:${boundary.id}:${options.modelCallIndex ?? 0}`]
+    : projection.lineage
+        .filter((entry) => entry.charsApplied > 0)
+        .map((entry) => `ref:context:${entry.candidateId}`);
   const omittedRefs = projection.lineage
     .filter((entry) => entry.charsApplied === 0)
     .map((entry) => `ref:context:${entry.candidateId}`);
+  const charsRequested = boundary
+    ? boundary.chars
+    : projection.lineage.reduce((t, e) => t + e.charsRequested, 0);
+  const charsApplied = boundary
+    ? boundary.chars
+    : projection.lineage.reduce((t, e) => t + e.charsApplied, 0);
 
   const bundle = sealContextBundle(
     createContextBundle({
@@ -271,11 +310,7 @@ export function runRc03SealHook(
       appliedProducerIds,
       selectedRefs,
       omittedRefs,
-      budgetSummary: JSON.stringify({
-        unit: 'chars',
-        charsRequested: projection.lineage.reduce((t, e) => t + e.charsRequested, 0),
-        charsApplied: projection.lineage.reduce((t, e) => t + e.charsApplied, 0),
-      }),
+      budgetSummary: JSON.stringify({ unit: 'chars', charsRequested, charsApplied }),
     }),
   );
 

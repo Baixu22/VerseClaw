@@ -2,7 +2,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0,
+      "fit_confidence": 0.0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -17,12 +17,12 @@
     "kind": "task",
     "next_action": "未知 semantic mutation 0",
     "priority": 1,
-    "progress": 0.0,
+    "progress": 45.0,
     "purpose": "",
     "ready": true,
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
-    "status": "proposed",
+    "status": "in_progress",
     "success_metrics": [],
     "title": "RC-03 DCS Seal 与双收据"
   },

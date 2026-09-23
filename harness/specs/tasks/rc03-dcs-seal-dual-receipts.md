@@ -23,6 +23,8 @@ ownedPaths:
   - openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run.ts
+  - openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts
   - harness/specs/tasks/rc03-dcs-seal-dual-receipts.md
   - artifacts/runtime-authority-convergence/rc-03/**
 touchedAreas:
@@ -60,6 +62,7 @@ rollback:
   - No migration rollback is required because the runtime_receipts table is append-only and idempotent.
 requiredTests:
   - pnpm --dir openclaw_runtime exec vitest run src/context-engine/rc03-seal.test.ts src/context-engine/rc03-seal-wiring.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run src/agents/rc03-entry-transitions.acceptance.test.ts
   - pnpm --dir openclaw_runtime exec vitest run src/agents/receipt-store.test.ts src/agents/shadow-census.test.ts src/agents/rc02-shadow-census.acceptance.test.ts
   - pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts
   - pnpm exec vitest run tests/unit/runtime-authority-convergence-control-pack.test.ts

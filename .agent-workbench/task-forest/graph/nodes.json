@@ -2446,7 +2446,7 @@
     ],
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0,
+      "fit_confidence": 0.0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -2465,25 +2465,29 @@
     "evidence": [
       "RC-02 accepted; RC-03 DCS seal and dual receipts starts",
       "RC-03 independent Verifier NO-GO: seal infrastructure modules correct (13/13 tests, 53/53 full) but NO production wiring — seal registry/ContextBundle/receipts/8 semantic producers have zero production call sites, no feature-flag/kill-switch gate, ownedPaths production files (assembler/orchestrator/transport) don't reference seal. Blocker: rc03-no-production-wiring",
-      "RC-03 independent Verifier VERDICT=pass after production wiring: seal-hook in context-orchestrator pre-seal convergence point, 17+57+36 tests green, CompilePlan/seal-registry/ContextBundle/ContextReceipt-v1 all wired"
+      "RC-03 independent Verifier VERDICT=pass after production wiring: seal-hook in context-orchestrator pre-seal convergence point, 17+57+36 tests green, CompilePlan/seal-registry/ContextBundle/ContextReceipt-v1 all wired",
+      "2026-09-23 RC-03R real-entry re-verification (openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts, 7 tests, drives runEmbeddedAgent / runWithModelFallback and binds every intercepted request to WireReceipt/v1 by sha256 and to a ContextReceipt/v1 by correlation digest) found three production defects the unit-level tests hid: D1 the threshold-compaction summarizer model call went to the provider unsealed (no ContextReceipt/v1, no WireReceipt/v1); D2 clearRc03SealPlan had zero production callers, so sealed plans leaked for the process lifetime and a reused runId bound a stale plan (orphan WireReceipt); D3 provider fallback restarted at attemptIndex 0 under the same runId, so two models' bundles shared one identity.",
+      "2026-09-23 fixes (flag-gated, observational, no payload byte change): compaction-summarizer registered as a pre-seal producer and sealed at the stream boundary on exact SUMMARIZATION_SYSTEM_PROMPT match, any other unsealed call on an RC-03-engaged run records census failure context-write:unsealed-model-call; embedded run allocates attemptIndex base per runId (bounded 1024-entry high-water map, only when the seal is on) and releases the run's sealed plans in the run finally. Verified identities: tool loop call 0->1 same attempt; same-provider retry one bundle, wireAttempt 0->1; fallback attempt 0->1 with call reset; compact summarizer sealed as call 1; seal-off byte parity with zero v1 rows.",
+      "2026-09-23 gates: new suite 7/7; RC-03 + RC-02 required suites 9 files / 78 tests green; tsgo:core clean; tsgo:core:test 34 errors before and after (all pre-existing, none in touched files); harness validate --since HEAD: Spec is valid (spec ownedPaths += run.ts and the new test, requiredTests += the new test)."
     ],
     "execution_hints": [],
     "id": "TF-0031",
     "kind": "task",
+    "next_action": "Drive fork (subagent spawn) and handoff through real entries with v1 pairing; verify the blueprint bypass claims (post-orchestrator system prompt mutation, COMPASS pre-reply, role-spawn) against code and seal or register each; then clean candidate + RC-00 Executor/independent Verifier acceptance.",
     "non_goals": [],
     "priority": 1,
-    "progress": 0,
+    "progress": 45.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "in_progress",
     "success_metrics": [],
     "summary": "建立 attempt CompilePlan、per-model-call ContextBundle、ContextReceipt 与最终 WireReceipt，并收编所有语义 producer。",
     "title": "RC-03 DCS Seal 与双收据",
-    "updated_at": "2026-08-03T08:02:21.717409Z"
+    "updated_at": "2026-09-23T12:07:33.108222Z"
   },
   "TF-0032": {
     "acceptance_criteria": [

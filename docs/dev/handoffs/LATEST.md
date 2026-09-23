@@ -1,5 +1,14 @@
 # 会话交接（LATEST）
 
+## 接力进行中（2026-09-23，TF-0031 · RC-03R）：真实入口复验，修掉三个缺陷
+
+- **节点状态：TF-0031 `in_progress` / 45，未验收。** 此前 RC-03 的测试都直接调用 seal hook；本轮新增 `openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts`（7 项），用**真实入口**（`runEmbeddedAgent`、`runWithModelFallback`）驱动，并要求每个被截获的请求都有按 sha256 绑定的 WireReceipt/v1，且按 correlation digest 与 ContextReceipt/v1 成对。
+- **真实入口暴露了三个生产缺陷（均已修复）**：① 阈值 compaction 的 summarizer 模型调用**未经 seal** 就发往 provider，没有任何 v1 收据；② `clearRc03SealPlan` **没有生产调用方**，sealed plan 在进程内永久累积，复用 runId 时会绑到过期 plan（产生孤立 WireReceipt）；③ provider fallback 在同一 runId 下从 `attemptIndex=0` 重新开始，两个模型的 bundle 共用一个身份。
+- **修法（仅在 seal 开启时生效、纯观测、请求字节不变）**：`compaction-summarizer` 注册为 pre-seal producer，在 stream 边界按 `SUMMARIZATION_SYSTEM_PROMPT` 精确匹配后 seal；已启用 RC-03 的 run 若出现其他未 seal 的调用，记 census 失败 `context-write:unsealed-model-call`（让未知 mutation 可见，而不是被标注掩盖）；embedded run 按 runId 分配 attempt 基数（上限 1024 条的 high-water 表），并在 run 的 finally 中释放 plan。
+- **实测身份**：tool loop 同一 attempt 内 call 0→1；同 provider 重试共用一个 bundle，wireAttempt 0→1；fallback attempt 0→1、call 归零；compact 的 summarizer 作为 call 1 被 seal；seal 关闭时字节完全一致且 v1 行数为 0。
+- **门禁**：新套件 7/7；RC-03 + RC-02 规定套件 9 个文件 / 78 项全绿；`tsgo:core` 通过；`tsgo:core:test` 修改前后都是 34 个错误（均为既有错误，不在改动文件中）；`harness validate --since HEAD` → Spec is valid（spec 的 ownedPaths 与 requiredTests 已补充）。
+- **下一步（按顺序）**：① 用真实入口驱动 fork（subagent spawn）与 handoff，并验证 v1 成对；② 在代码中逐条核实蓝图列出的三处绕过（Orchestrator 之后的 system prompt 修改、COMPASS pre-reply、role-spawn），逐项 seal 或注册；③ 准备干净候选，跑 RC-00 Executor + 独立 Verifier。三锁与默认值未改，未声明真人证据。
+
 ## 收口完成（2026-09-23，TF-0030 · RC-02）：八入口矩阵 8/8 真实 + 正式 RC-00 验收 pass
 
 - **TF-0030 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`、`allowedPromotion=false`、`humanEvidenceRequired=false`——这是**工程验收**，不是产品放行或 GA。

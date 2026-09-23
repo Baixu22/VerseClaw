@@ -14,6 +14,7 @@ export const RC03_PRE_SEAL_PRODUCERS = {
   roleMemoryInjection: 'role-memory-injection',
   vtokenPacker: 'vtoken-packer',
   memoryPilotInjection: 'memory-pilot-injection',
+  compactionSummarizer: 'compaction-summarizer',
 } as const;
 
 const preSealRegistrations: SealProducerRegistration[] = [
@@ -78,6 +79,13 @@ const preSealRegistrations: SealProducerRegistration[] = [
     mutates: 'system_prompt',
     kind: 'semantic',
     purpose: 'Runtime Memory inject-pilot output collected by the Context Orchestrator (memory_pilot channel); must run before the bundle seal.',
+    version: '1',
+  },
+  {
+    id: RC03_PRE_SEAL_PRODUCERS.compactionSummarizer,
+    mutates: 'messages',
+    kind: 'semantic',
+    purpose: 'Compaction summarizer request (SUMMARIZATION_SYSTEM_PROMPT + serialized transcript). It bypasses the Context Orchestrator, so it is sealed at the stream boundary before transport serialization.',
     version: '1',
   },
 ];

@@ -1,0 +1,33 @@
+{
+  "applied_at": "2026-09-23T12:07:33.196667Z",
+  "base_graph_hash": "c8cb5370c51f87b380cf69007b1965e5bfe452f4b21c773e60ee664b4c059547",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "RC-02 accepted; RC-03 DCS seal and dual receipts starts",
+          "RC-03 independent Verifier NO-GO: seal infrastructure modules correct (13/13 tests, 53/53 full) but NO production wiring — seal registry/ContextBundle/receipts/8 semantic producers have zero production call sites, no feature-flag/kill-switch gate, ownedPaths production files (assembler/orchestrator/transport) don't reference seal. Blocker: rc03-no-production-wiring",
+          "RC-03 independent Verifier VERDICT=pass after production wiring: seal-hook in context-orchestrator pre-seal convergence point, 17+57+36 tests green, CompilePlan/seal-registry/ContextBundle/ContextReceipt-v1 all wired",
+          "2026-09-23 RC-03R real-entry re-verification (openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts, 7 tests, drives runEmbeddedAgent / runWithModelFallback and binds every intercepted request to WireReceipt/v1 by sha256 and to a ContextReceipt/v1 by correlation digest) found three production defects the unit-level tests hid: D1 the threshold-compaction summarizer model call went to the provider unsealed (no ContextReceipt/v1, no WireReceipt/v1); D2 clearRc03SealPlan had zero production callers, so sealed plans leaked for the process lifetime and a reused runId bound a stale plan (orphan WireReceipt); D3 provider fallback restarted at attemptIndex 0 under the same runId, so two models' bundles shared one identity.",
+          "2026-09-23 fixes (flag-gated, observational, no payload byte change): compaction-summarizer registered as a pre-seal producer and sealed at the stream boundary on exact SUMMARIZATION_SYSTEM_PROMPT match, any other unsealed call on an RC-03-engaged run records census failure context-write:unsealed-model-call; embedded run allocates attemptIndex base per runId (bounded 1024-entry high-water map, only when the seal is on) and releases the run's sealed plans in the run finally. Verified identities: tool loop call 0->1 same attempt; same-provider retry one bundle, wireAttempt 0->1; fallback attempt 0->1 with call reset; compact summarizer sealed as call 1; seal-off byte parity with zero v1 rows.",
+          "2026-09-23 gates: new suite 7/7; RC-03 + RC-02 required suites 9 files / 78 tests green; tsgo:core clean; tsgo:core:test 34 errors before and after (all pre-existing, none in touched files); harness validate --since HEAD: Spec is valid (spec ownedPaths += run.ts and the new test, requiredTests += the new test)."
+        ],
+        "next_action": "Drive fork (subagent spawn) and handoff through real entries with v1 pairing; verify the blueprint bypass claims (post-orchestrator system prompt mutation, COMPASS pre-reply, role-spawn) against code and seal or register each; then clean candidate + RC-00 Executor/independent Verifier acceptance.",
+        "progress": 45,
+        "status": "in_progress"
+      },
+      "id": "TF-0031"
+    }
+  ],
+  "created_at": "2026-09-23T12:07:32.884894Z",
+  "proposal_id": "TFP-tf0031-rc03r-real-entry-defects-20260923",
+  "rationale": "Record the TF-0031 RC-03R increment: real-entry re-verification, three defects fixed, remaining gaps named. Node is in progress, not accepted.",
+  "session_id": null,
+  "status": "applied"
+}
