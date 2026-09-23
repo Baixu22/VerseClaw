@@ -35,6 +35,11 @@ ownedPaths:
   - .agent-workbench/task-forest/**
   - docs/dev/handoffs/LATEST.md
   - docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md
+  # Agent Dev evidence refreshed so the acceptance audit gate sees it inside
+  # its 24h freshness window.
+  - artifacts/agent-dev-deep-test/**
+  - artifacts/agent-dev-quality/**
+  - artifacts/agent-dev-workbench/**
 touchedAreas:
   - openclaw_runtime/src/context-engine/**
   - openclaw_runtime/src/agents/**
