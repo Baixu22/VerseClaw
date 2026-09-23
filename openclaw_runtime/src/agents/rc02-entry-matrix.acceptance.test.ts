@@ -68,7 +68,13 @@ afterEach(async () => {
   delete process.env.OPENCLAW_CACHE_TRACE_FILE;
   for (const root of tempRoots.splice(0)) {
     closeTrackedSqliteHandlesUnder(root);
-    fs.rmSync(root, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 });
+    try {
+      fs.rmSync(root, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 });
+    } catch {
+      // Windows can still hold a handle on the state sqlite when a dist-inlined
+      // instance is loaded through the plugin SDK path. The directory is an OS
+      // temp dir, so a failed cleanup must not turn a passing test red.
+    }
   }
 });
 
