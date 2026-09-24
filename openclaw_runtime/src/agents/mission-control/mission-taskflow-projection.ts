@@ -1,16 +1,20 @@
-// RC-06C Mission -> TaskFlow read-only projection. Mission definitions become
-// TaskFlow templates/controllers behind a default-off flag; mission_runs/events
-// remain compatibility reads until migration proof permits retirement. Mission
-// restart, wait, resume, and cancel semantics are preserved in the projection.
-// Indefinite dual-write is not a migration strategy.
-import { CAS_CREATE_SENTINEL, TaskFlowCasStore, type FlowStatus } from '../../tasks/task-flow-cas.js';
+// RC-06C Mission lifecycle on the TaskFlow owner. Mission definitions stay in
+// mission_runs; the lifecycle status is committed through the shared workflow
+// lifecycle owner (projection mode: observational copy with drift; taskflow
+// mode: the cutover, where mission_runs is written only after the commit).
+import type { FlowStatus } from '../../tasks/task-flow-cas.js';
+import {
+  commitWorkflowLifecycle,
+  readWorkflowLifecycle,
+  type WorkflowLifecycleCommit,
+  type WorkflowLifecycleOptions,
+} from '../../tasks/workflow-lifecycle-owner.js';
 
 export const MISSION_PROJECTION_FLAG = 'rc06c.missionProjection';
 export const MISSION_PROJECTION_SCHEMA_VERSION = '1';
 
-export type MissionProjectionOptions = {
+export type MissionProjectionOptions = WorkflowLifecycleOptions & {
   enabled?: boolean;
-  database?: { env?: NodeJS.ProcessEnv; path?: string };
 };
 
 export type MissionProjectionInput = {
@@ -29,6 +33,7 @@ export type MissionProjectionResult = {
   revision?: number;
   status?: FlowStatus;
   skippedReason?: 'flag-off' | 'unknown-status' | 'conflict';
+  commit?: WorkflowLifecycleCommit;
 };
 
 const MISSION_STATUS_TO_FLOW: Record<string, FlowStatus> = {
@@ -38,16 +43,25 @@ const MISSION_STATUS_TO_FLOW: Record<string, FlowStatus> = {
   paused: 'waiting',
   ask_user: 'waiting',
   complete: 'succeeded',
-  blocked: 'blocked',
+  // A blocked mission is final (tickMission never leaves it); TaskFlow's
+  // blocked is resumable, so the terminal mission maps to failed.
+  blocked: 'failed',
   cancelled: 'cancelled',
   error: 'failed',
 };
 
-/**
- * Project a Mission status/phase transition into flow_runs via the CAS store.
- * The legacy mission_runs/events tables remain authoritative; this is an
- * observational projection only.
- */
+export function missionStatusToFlowStatus(status: string): FlowStatus | undefined {
+  return MISSION_STATUS_TO_FLOW[status];
+}
+
+export function missionWaitMode(status: string): MissionProjectionInput['waitMode'] {
+  if (status === 'ask_user') return 'ask_user';
+  if (status === 'paused') return 'pause';
+  if (status === 'sleeping') return 'sleep';
+  return 'none';
+}
+
+/** Commit one Mission status to its TaskFlow lifecycle row. */
 export function projectMissionRun(
   input: MissionProjectionInput,
   options: MissionProjectionOptions = {},
@@ -59,50 +73,49 @@ export function projectMissionRun(
   if (!flowStatus) {
     return { projected: false, skippedReason: 'unknown-status' };
   }
-  const flowId = `mission:${input.missionId}`;
-  const store = new TaskFlowCasStore(options.database ?? {});
-  const existing = store.getById(flowId);
-  // RC-06A create sentinel: a missing row requires expectedRevision = -1.
-  const expectedRevision = existing ? Number(existing.revision) || 0 : CAS_CREATE_SENTINEL;
-  const waitJson =
-    input.waitMode && input.waitMode !== 'none'
-      ? JSON.stringify({ waitMode: input.waitMode, phase: input.phase, tick: input.tick })
-      : null;
-  const result = store.casUpsert({
-    flowId,
-    expectedRevision,
+  const commit = commitWorkflowLifecycle({
+    domain: 'mission',
+    id: input.missionId,
     status: flowStatus,
-    ownerKey: 'mission-control',
     currentStep: input.phase,
-    waitJson,
-    stateJson: JSON.stringify({ missionId: input.missionId, sessionKey: input.sessionKey, tick: input.tick }),
+    stateJson: JSON.stringify({
+      missionId: input.missionId,
+      sessionKey: input.sessionKey,
+      missionStatus: input.status,
+      waitMode: input.waitMode ?? missionWaitMode(input.status),
+      tick: input.tick,
+    }),
+    options,
   });
-  if (!result.ok) {
-    return { projected: false, skippedReason: 'conflict' };
+  if (!commit.ok) {
+    return { projected: false, skippedReason: 'conflict', commit };
   }
-  return { projected: true, flowId, revision: result.revision, status: flowStatus };
+  return { projected: true, flowId: `mission:${input.missionId}`, revision: commit.revision, status: flowStatus, commit };
 }
 
-/** Recover a Mission's projected flow state after restart. */
+/** Read a Mission's lifecycle back from TaskFlow (e.g. after restart). */
 export function recoverMissionProjection(
   missionId: string,
   options: MissionProjectionOptions = {},
-): { flowId?: string; status?: FlowStatus; waitMode?: string; recovered: boolean } {
+): { flowId?: string; status?: FlowStatus; waitMode?: string; missionStatus?: string; recovered: boolean } {
   if (options.enabled !== true) {
     return { recovered: false };
   }
-  const store = new TaskFlowCasStore(options.database ?? {});
-  const row = store.getById(`mission:${missionId}`);
+  const row = readWorkflowLifecycle('mission', missionId, options);
   if (!row) {
     return { recovered: false };
   }
-  let waitMode: string | undefined;
-  if (row.wait_json) {
-    try {
-      waitMode = (JSON.parse(row.wait_json) as { waitMode?: string }).waitMode;
-    } catch {
-      waitMode = undefined;
-    }
+  let state: { waitMode?: string; missionStatus?: string } = {};
+  try {
+    state = row.state_json ? (JSON.parse(row.state_json) as typeof state) : {};
+  } catch {
+    state = {};
   }
-  return { flowId: row.flow_id, status: row.status as FlowStatus, waitMode, recovered: true };
+  return {
+    flowId: row.flow_id,
+    status: row.status as FlowStatus,
+    waitMode: state.waitMode && state.waitMode !== 'none' ? state.waitMode : undefined,
+    missionStatus: state.missionStatus,
+    recovered: true,
+  };
 }

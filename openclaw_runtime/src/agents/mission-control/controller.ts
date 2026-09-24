@@ -20,9 +20,13 @@ import {
 } from "../long-task-control/store.js";
 import { executeReplayRollback, type ReplayRollbackDeps } from "../replay-rollback-authority.js";
 import { ensureLongTaskLedgerRoot } from "../long-task-control/task-ledger.js";
-import { isTruthyEnvValue } from "../../infra/env.js";
 import { mergeRuntimeLineage, normalizeRuntimeLineage } from "../../runtime-core/lineage.js";
-import { projectMissionRun } from "./mission-taskflow-projection.js";
+import { missionWaitMode, projectMissionRun } from "./mission-taskflow-projection.js";
+import {
+  listWorkflowLifecycles,
+  resolveWorkflowLifecycleMode,
+  type WorkflowLifecycleCommit,
+} from "../../tasks/workflow-lifecycle-owner.js";
 import {
   defaultQualityAssessments,
   deriveValidationState,
@@ -161,10 +165,32 @@ export type MissionKnowledgeInboxItem = {
   };
 };
 
-/** RC-06C projection gate (default-off). Reads env so operators can enable the
- *  Mission -> TaskFlow read-only projection. */
-function missionProjectionEnabled(): boolean {
-  return isTruthyEnvValue(process.env.RC06C_MISSION_PROJECTION);
+/** Raised when the TaskFlow lifecycle owner rejects a Mission status under the
+ *  cutover; mission_runs is then left at its last committed state. */
+export class MissionLifecycleConflictError extends Error {
+  constructor(
+    readonly missionId: string,
+    readonly status: string,
+    readonly commit: WorkflowLifecycleCommit | undefined,
+  ) {
+    super(
+      `mission "${missionId}" lifecycle rejected by TaskFlow (${status}): ${
+        commit && !commit.ok ? commit.reason : "unknown"
+      }`,
+    );
+    this.name = "MissionLifecycleConflictError";
+  }
+}
+
+function missionLifecycleInput(record: MissionRunRecord) {
+  return {
+    missionId: record.missionId,
+    sessionKey: record.sessionKey,
+    status: record.status,
+    phase: record.phase,
+    tick: record.tick,
+    waitMode: missionWaitMode(record.status),
+  };
 }
 
 function defaultId(prefix: string): string {
@@ -345,6 +371,15 @@ function emit(
   const now = deps.now?.() ?? Date.now();
   record.updatedAt = now;
   record.progress = progressForPhase(record.phase, Math.max(1, record.tick), record.maxTicks);
+  // RC-06C cutover: TaskFlow owns the Mission lifecycle, so the status commits
+  // there first and mission_runs (a compatibility read) is written only after.
+  const lifecycleMode = resolveWorkflowLifecycleMode("mission");
+  if (lifecycleMode === "taskflow") {
+    const committed = projectMissionRun(missionLifecycleInput(record), { enabled: true });
+    if (!committed.projected) {
+      throw new MissionLifecycleConflictError(record.missionId, record.status, committed.commit);
+    }
+  }
   (deps.saveMission ?? saveMissionRun)(record);
   (deps.recordEvent ?? recordMissionEvent)({
     missionId: record.missionId,
@@ -407,31 +442,11 @@ function emit(
     ts: now,
     ...patch,
   });
-  // RC-06C read-only projection into TaskFlow (flow_runs) behind a default-off
-  // flag. Observational only: mission_runs/events remain authoritative; a
-  // projection failure never changes Mission behavior.
-  if (missionProjectionEnabled()) {
+  // RC-06C projection mode: an observational copy; mission_runs stays
+  // authoritative and a rejected write is recorded as drift by the owner.
+  if (lifecycleMode === "projection") {
     try {
-      projectMissionRun(
-        {
-          missionId: record.missionId,
-          sessionKey: record.sessionKey,
-          status: record.status,
-          phase: record.phase,
-          tick: record.tick,
-          waitMode:
-            record.status === "ask_user" ||
-            record.status === "sleeping" ||
-            record.status === "paused"
-              ? record.status === "ask_user"
-                ? "ask_user"
-                : record.status === "paused"
-                  ? "pause"
-                  : "sleep"
-              : "none",
-        },
-        { enabled: true },
-      );
+      projectMissionRun(missionLifecycleInput(record), { enabled: true });
     } catch {
       // Best-effort projection; the legacy Mission state stays authoritative.
     }
@@ -1631,6 +1646,11 @@ export async function tickMission(
     });
     return clone(record);
   } catch (error) {
+    if (error instanceof MissionLifecycleConflictError) {
+      // The lifecycle owner settled this mission elsewhere (e.g. a concurrent
+      // cancel); the tick stops and mission_runs keeps the committed state.
+      return clone(getMission(record.missionId) ?? record);
+    }
     const message = error instanceof Error ? error.message : String(error);
     record.status = "error";
     record.phase = "blocked";
@@ -1657,6 +1677,34 @@ export async function tickMission(
     if (typeof saved.revision === "number") record.revision = saved.revision;
     return clone(record);
   }
+}
+
+/**
+ * Restart recovery under the taskflow cutover: a mission whose lifecycle was
+ * running when the previous boot ended had its tick interrupted. It is put
+ * back to sleeping through the normal lifecycle path so the scheduler can tick
+ * it again. No-op for the legacy writer.
+ */
+export function recoverInterruptedMissionLifecycles(deps: MissionControllerDeps = {}): string[] {
+  if (resolveWorkflowLifecycleMode("mission") !== "taskflow") return [];
+  const recovered: string[] = [];
+  for (const row of listWorkflowLifecycles("mission")) {
+    if (row.status !== "running") continue;
+    const missionId = row.flow_id.slice("mission:".length);
+    const record = (deps.getMission ?? getMissionRunFromStore)(missionId);
+    if (!record || record.status !== "running") continue;
+    record.status = "sleeping";
+    record.phase = "schedule";
+    record.activeTickId = null;
+    record.lastReason = "tick interrupted by a gateway restart";
+    try {
+      emit(record, deps);
+      recovered.push(missionId);
+    } catch {
+      // A rejected commit leaves the mission at its committed state.
+    }
+  }
+  return recovered;
 }
 
 export function pauseMission(
