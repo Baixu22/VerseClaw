@@ -83,6 +83,8 @@
 
 **Exit:** duplicate effect count zero; denial produces zero effect; restart preserves pending and completed truth from RC-04; UI shows context/effect/recovery lineage; Electron E2E covers the visible path in all locales.
 
+**Status (2026-09-24, RC-05 accepted, engineering-only):** the desktop Inbox is now the governance step of the Cron primary path in production. Before, the Cron ingress resolved its own intent inline (auto-approve, or an immediate deny), so no intent was ever pending for the Inbox. Now, without `runtime.rc05.cronAutoApprove`, the intent stays `approval_pending` and the Cron delivery waits on the durable ledger (`awaitOperatorInboxDecision`) for `inbox.operator.decide`: an approval runs the bounded message effect once under the Inbox actor and its server-side policy digest; a denial produces zero effect; an undecided intent is denied at expiry as `operator-inbox-timeout` and can no longer be approved. Formal RC-00 acceptance on the clean candidate `99ef1b73e`: Executor pass, independent Verifier pass (`engineeringAcceptedByAgent=true`, `failures=0`, 9541 passed / 0 failed / 50 skipped, `identicalGateContracts=true`). Evidence: `artifacts/runtime-authority-convergence/rc-05/acceptance/`. Residuals: this increment changed no UI file, so the acceptance coverage had `ui=false` and did not rerun the Electron suite; `tests/e2e/rc05-operator-inbox.spec.ts` exercises the Inbox surface with IPC-mocked Gateway methods and its multi-locale coverage is not re-proven here. The Cron delivery holds its run for up to the intent expiry (60 s) while waiting for the Inbox. Product locks stay false.
+
 ## RC-06: Workflow Capability Proof And Convergence
 
 Run four serial subpackages with separate Harness specs:

@@ -1,5 +1,13 @@
 # 会话交接（LATEST）
 
+## 收口完成（2026-09-24，TF-0033 · RC-05）：Inbox 成为 Cron 主路径的治理步 + 正式 RC-00 验收 pass
+
+- **TF-0033 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。
+- **修掉的缺陷**：开启 Operator slice 后，Cron 入口会在原地自行 resolve 意图（自动批准或立即拒绝），Inbox 从来见不到 pending 意图，规格里的「Cron → desktop Inbox → durable approval → effect」在生产上并不存在。现在未开 `cronAutoApprove` 时意图保持 `approval_pending`，Cron 投递经 durable ledger 等待 `inbox.operator.decide`：批准→在 Inbox actor 与服务端 policy digest 下执行一次有界消息效果；拒绝→零效果；过期未决→以 `operator-inbox-timeout` 拒绝且之后不可再批准。
+- **正式验收**：干净候选 `99ef1b73e`，Executor pass → 独立 Verifier pass，9541 / 0 / 50，`identicalGateContracts=true`。证据 `artifacts/runtime-authority-convergence/rc-05/acceptance/`。
+- **residual**：本增量未改 UI，覆盖 `ui=false`，未重跑 Electron 套件；Inbox e2e 为 IPC mock，多语言覆盖本轮未重证；Cron 投递等待 Inbox 最长 60 s。
+- **下一步**：TF-0034（RC-06A）——CAS 图补齐遗留生命周期的修复在 `rc04-dev`，随后 RC-06B/C/D 的真实 cutover 也已在该分支。
+
 ## 收口完成（2026-09-24，TF-0032 · RC-04）：插件审批持久化 + 审批面隔离 + 正式 RC-00 验收 pass
 
 - **TF-0032 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。

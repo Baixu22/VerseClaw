@@ -2564,26 +2564,29 @@
     "difficulty": "very_high",
     "estimated_total_minutes": null,
     "evidence": [
-      "RC-04 accepted; RC-05 minimal Operator governance slice starts",
-      "RC-05 independent Verifier VERDICT=pass (3rd pass after channel-conformance fixture + cron-delivery production wiring + zod-schema parity fix): operator-slice, rc05-operator-fixture channel, 103+36 tests green"
+      "2026-09-24 缺陷修复（提交 99ef1b73e）：cron/delivery.ts 在未开 cronAutoApprove 时不再原地拒绝，而是 awaitOperatorInboxDecision 轮询 durable ledger；Inbox 与等待方共用 inboxGovernanceDecision（服务端 policy digest 单一定义）。inbox.test.ts 新增三条经真实 inbox.operator.list/decide 驱动的用例：批准→一次发送、ledger reconciled；拒绝→零 EffectReceipt、ledger denied；过期→denied(operator-inbox-timeout) 且迟到的批准被拒。",
+      "2026-09-24 正式 RC-00 验收 run1：candidate 99ef1b73ef808e325136e406631895b0a8c9d5fa；Executor rc05-executor pass reportDigest 5e562727…；独立 Verifier rc05-verifier pass engineeringAcceptedByAgent=true reportDigest 060280ca… consistency.errors=[] identicalGateContracts=true；9541 passed/0 failed/50 skipped；mutation 源与 detached 均干净；三锁 false。归档 artifacts/runtime-authority-convergence/rc-05/acceptance/（SHA256SUMS）。",
+      "既有证据延续：operator-slice.test.ts（主路径、治理 actor+digest、重复效果为零、并发仅一个 execution_started、治理身份替换被拒、denial 零效果、重启保留、flag 关闭 no-op、有界文件效果不可逃逸含 symlink、lineage 用真实 ContextReceipt）；extensions/channels/rc05-operator-fixture conformance 9/9；pnpm run channel:conformance failures=0。",
+      "residual：本增量未改 UI（acceptance coverage ui=false，未重跑 Electron 套件；tests/e2e/rc05-operator-inbox.spec.ts 以 IPC mock 驱动 Inbox，多语言覆盖本轮未重证）；Cron 投递在等待 Inbox 期间最长占用 60 s。"
     ],
     "execution_hints": [],
     "id": "TF-0033",
     "kind": "task",
+    "next_action": "本节点已收口。下一步 TF-0034（RC-06A TaskFlow CAS 能力证明），修复在 rc04-dev 分支。",
     "non_goals": [],
     "priority": 1,
-    "progress": 10.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [],
-    "summary": "用 Cron、Desktop Inbox、DCS receipt、durable approval、单一 bounded effect、restart recovery 和 channel fixture 建立可见闭环。",
+    "summary": "[2026-09-24 收口 · 工程验收 accepted，scope=engineering-only] RC-05 最小 Operator 治理切片：desktop Inbox 成为 Cron 主路径的真实治理步——未开 cronAutoApprove 时意图保持 approval_pending，Cron 投递经 durable ledger 等待 inbox.operator.decide；批准在 Inbox actor 与服务端 policy digest 下执行一次有界效果（execution_started 先于真实发送，applied 仅由执行器结果写入），拒绝零效果，过期以 operator-inbox-timeout 拒绝且不可再批准；channel-conformance fixture 覆盖断连/限流/重复投递/重启/拒绝/未知结果。正式 RC-00 验收 Executor + 独立 Verifier pass（9541/0/50）。residual：未改 UI 故未重跑 Electron 套件，Inbox e2e 为 IPC mock；Cron 等待 Inbox 最长 60 s。",
     "title": "RC-05 最小 Operator 治理切片",
-    "updated_at": "2026-09-23T23:02:37.701081Z"
+    "updated_at": "2026-09-24T00:33:02.720388Z"
   },
   "TF-0034": {
     "acceptance_criteria": [
@@ -2594,7 +2597,7 @@
     ],
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0,
+      "fit_confidence": 0.0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -2618,18 +2621,18 @@
     "kind": "task",
     "non_goals": [],
     "priority": 1,
-    "progress": 0,
+    "progress": 10.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "in_progress",
     "success_metrics": [],
     "summary": "证明或实现 SQLite CAS、合法 transition graph、restart persistence、concurrent-writer rejection 和 delivery consistency；通过前 TaskFlow 仍是候选。",
     "title": "RC-06A TaskFlow 能力与并发语义证明",
-    "updated_at": "2026-08-03T08:02:21.717409Z"
+    "updated_at": "2026-09-24T00:33:02.720388Z"
   },
   "TF-0035": {
     "acceptance_criteria": [

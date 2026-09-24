@@ -1,0 +1,42 @@
+{
+  "applied_at": "2026-09-24T00:33:02.802076Z",
+  "base_graph_hash": "48c3e7762c15fb091225f162680ff94d421bd987dc10fdde04b43fe64e560026",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "2026-09-24 缺陷修复（提交 99ef1b73e）：cron/delivery.ts 在未开 cronAutoApprove 时不再原地拒绝，而是 awaitOperatorInboxDecision 轮询 durable ledger；Inbox 与等待方共用 inboxGovernanceDecision（服务端 policy digest 单一定义）。inbox.test.ts 新增三条经真实 inbox.operator.list/decide 驱动的用例：批准→一次发送、ledger reconciled；拒绝→零 EffectReceipt、ledger denied；过期→denied(operator-inbox-timeout) 且迟到的批准被拒。",
+          "2026-09-24 正式 RC-00 验收 run1：candidate 99ef1b73ef808e325136e406631895b0a8c9d5fa；Executor rc05-executor pass reportDigest 5e562727…；独立 Verifier rc05-verifier pass engineeringAcceptedByAgent=true reportDigest 060280ca… consistency.errors=[] identicalGateContracts=true；9541 passed/0 failed/50 skipped；mutation 源与 detached 均干净；三锁 false。归档 artifacts/runtime-authority-convergence/rc-05/acceptance/（SHA256SUMS）。",
+          "既有证据延续：operator-slice.test.ts（主路径、治理 actor+digest、重复效果为零、并发仅一个 execution_started、治理身份替换被拒、denial 零效果、重启保留、flag 关闭 no-op、有界文件效果不可逃逸含 symlink、lineage 用真实 ContextReceipt）；extensions/channels/rc05-operator-fixture conformance 9/9；pnpm run channel:conformance failures=0。",
+          "residual：本增量未改 UI（acceptance coverage ui=false，未重跑 Electron 套件；tests/e2e/rc05-operator-inbox.spec.ts 以 IPC mock 驱动 Inbox，多语言覆盖本轮未重证）；Cron 投递在等待 Inbox 期间最长占用 60 s。"
+        ],
+        "next_action": "本节点已收口。下一步 TF-0034（RC-06A TaskFlow CAS 能力证明），修复在 rc04-dev 分支。",
+        "summary": "[2026-09-24 收口 · 工程验收 accepted，scope=engineering-only] RC-05 最小 Operator 治理切片：desktop Inbox 成为 Cron 主路径的真实治理步——未开 cronAutoApprove 时意图保持 approval_pending，Cron 投递经 durable ledger 等待 inbox.operator.decide；批准在 Inbox actor 与服务端 policy digest 下执行一次有界效果（execution_started 先于真实发送，applied 仅由执行器结果写入），拒绝零效果，过期以 operator-inbox-timeout 拒绝且不可再批准；channel-conformance fixture 覆盖断连/限流/重复投递/重启/拒绝/未知结果。正式 RC-00 验收 Executor + 独立 Verifier pass（9541/0/50）。residual：未改 UI 故未重跑 Electron 套件，Inbox e2e 为 IPC mock；Cron 等待 Inbox 最长 60 s。"
+      },
+      "id": "TF-0033"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0033",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0034",
+      "progress": 10,
+      "status": "in_progress"
+    }
+  ],
+  "created_at": "2026-09-24T00:33:02.544234Z",
+  "proposal_id": "TFP-tf0033-rc05-acceptance-closeout-20260924",
+  "rationale": "按 Task Forest 自动收口门（R3）收口 TF-0033：spec acceptance 逐条直读核对——自动化主路径 Cron ingress→run identity→Inbox→durable approval→有界效果→EffectReceipt→restart→recovery→delivery projection 现在由真实 inbox.operator.decide 驱动（此前 Inbox 不在生产路径上）；channel-conformance fixture 9/9 与 channel:conformance runner 0 failure；denial 零效果；重启保留 RC-04 真相；正式 RC-00 验收 Executor + 独立 Verifier pass（9541/0/50）。UI 未改动因而未重跑 Electron 套件，作为 residual 写明。三锁与默认值未改。",
+  "session_id": "dsh-tf0033-rc05-20260924",
+  "status": "applied"
+}
