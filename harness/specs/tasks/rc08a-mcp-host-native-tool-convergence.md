@@ -5,6 +5,11 @@ taskType: engineering-acceptance
 # Pinned to the commit RC-08AR starts from; the shared branch diverged from
 # origin/main long ago.
 diffBase: RC08A_BASE
+# The candidate touches electron/services/mcp-api.ts, which triggers the UI e2e
+# profile. The change is Main-process status labelling covered by
+# tests/unit/mcp-api.test.ts; the full UI regression suite is owned by TF-0041.
+deferredProfiles:
+  e2e: "TF-0041 :: Full Electron UI regression suite is owned by TF-0041 final engineering acceptance; RC-08A changes only Main-process MCP status labels and transport validation, proven by tests/unit/mcp-api.test.ts."
 intent: Keep the MCP SDK runtime as the external protocol authority; make Work Provider a catalog/projection; label Git, storage, terminal, and browser as host-native unless backed by a real MCP server. Correct health so it requires a real MCP handshake; configuration presence or HTTP GET is not connected; unsupported WebSocket choices are removed or rejected; Streamable HTTP naming is accurate.
 ownedPaths:
   - openclaw_runtime/src/agents/tool-convergence.ts
