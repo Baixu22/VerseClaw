@@ -6,8 +6,18 @@ import { DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT } from "../config/agent-limits.
 import { storeRuntimeTrace } from "../observability/trace-buffer.js";
 import { createRoleFirstTrace, completeObservedRun } from "../observability/role-first-observer.js";
 import type { ObservabilityTraceRecorder } from "../observability/trace-recorder.js";
-import { isTruthyEnvValue } from "../infra/env.js";
-import { projectTaskLoopRun } from "./task-loop-taskflow-projection.js";
+import {
+  projectTaskLoopRun,
+  taskLoopFlowStatus,
+  taskLoopStatusFromFlowStatus,
+} from "./task-loop-taskflow-projection.js";
+import {
+  readWorkflowLifecycle,
+  resolveWorkflowLifecycleMode,
+  settleOrphanedWorkflowLifecycles,
+  type WorkflowLifecycleCommit,
+} from "../tasks/workflow-lifecycle-owner.js";
+import type { FlowStatus } from "../tasks/task-flow-cas.js";
 import {
   localControlPlaneReportEnabled,
   recordLocalControlPlaneReport,
@@ -450,10 +460,52 @@ const taskLoopPhaseSideEffectResults = new WeakMap<
 >();
 const taskLoopPhaseLog = createSubsystemLogger("agents/task-loop");
 
-/** RC-06D projection gate (default-off). Reads env so operators can enable the
- *  Task Loop -> TaskFlow read-only projection. */
-function taskLoopProjectionEnabled(): boolean {
-  return isTruthyEnvValue(process.env.RC06D_TASK_LOOP_PROJECTION);
+/** Raised when the TaskFlow lifecycle owner rejects a Task Loop status under
+ *  the cutover; the run then stops at the committed lifecycle. */
+export class TaskLoopLifecycleConflictError extends Error {
+  constructor(
+    readonly loopRunId: string,
+    readonly status: string,
+    readonly commit: WorkflowLifecycleCommit | undefined,
+  ) {
+    super(
+      `task loop "${loopRunId}" lifecycle rejected by TaskFlow (${status}): ${
+        commit && !commit.ok ? commit.reason : "unknown"
+      }`,
+    );
+    this.name = "TaskLoopLifecycleConflictError";
+  }
+}
+
+/** Last flow status each run committed; phase-only changes do not write TaskFlow. */
+const committedTaskLoopFlowStatus = new WeakMap<TaskLoopRunRecord, FlowStatus>();
+
+function taskLoopLifecycleInput(record: TaskLoopRunRecord) {
+  return {
+    runId: record.loopRunId,
+    sessionKey: record.sessionKey,
+    status: record.status,
+    phase: record.phase,
+    waiting: record.status === "blocked" && hasGenuineHumanWait(record),
+    checkpointRef: `checkpoint:${record.loopRunId}`,
+  };
+}
+
+/**
+ * RC-06D cutover: commit the run's lifecycle status to TaskFlow before the
+ * controller acts on it. Only a change of lifecycle status writes; a rejection
+ * throws so the run stops at the committed lifecycle (legacy freeze).
+ */
+function commitTaskLoopLifecycle(record: TaskLoopRunRecord): void {
+  if (resolveWorkflowLifecycleMode("task-loop") !== "taskflow") return;
+  const input = taskLoopLifecycleInput(record);
+  const flowStatus = taskLoopFlowStatus(input);
+  if (!flowStatus || committedTaskLoopFlowStatus.get(record) === flowStatus) return;
+  const committed = projectTaskLoopRun(input, { enabled: true });
+  if (!committed.projected) {
+    throw new TaskLoopLifecycleConflictError(record.loopRunId, record.status, committed.commit);
+  }
+  committedTaskLoopFlowStatus.set(record, flowStatus);
 }
 const runtimeEventShadowFlags = new WeakMap<
   TaskLoopRunRecord,
@@ -2899,6 +2951,7 @@ function emit(
   deps: TaskLoopControllerDeps,
   patch: Partial<TaskLoopLifecycleEvent>,
 ): void {
+  commitTaskLoopLifecycle(record);
   record.updatedAt = deps.now?.() ?? Date.now();
   const evidenceGate =
     patch.evidenceGate ?? lifecycleGateSummary(record.evidenceGate, record.subagentEvidence);
@@ -2937,23 +2990,12 @@ function emit(
   recordTaskLoopMissionLifecycleReport(record, event);
   // DCS Stage 2: primary task_phase_change producer (exactly once per true runtime status change).
   void emitTaskLoopTaskPhaseChange(record, event);
-  // RC-06D read-only projection into TaskFlow (flow_runs) behind a default-off
-  // flag. Observational only: the legacy Task Loop Map remains authoritative;
-  // long_task_checkpoints retain checkpoint material only; a projection failure
-  // never changes Task Loop behavior and never executes effects.
-  if (taskLoopProjectionEnabled()) {
+  // RC-06D projection mode: an observational copy; the in-memory run stays
+  // authoritative, a rejected write is recorded as drift by the owner, and
+  // the projection never executes effects.
+  if (resolveWorkflowLifecycleMode("task-loop") === "projection") {
     try {
-      projectTaskLoopRun(
-        {
-          runId: record.loopRunId,
-          sessionKey: record.sessionKey,
-          status: record.status,
-          phase: record.phase,
-          waiting: record.status === "blocked" && hasGenuineHumanWait(record),
-          checkpointRef: `checkpoint:${record.loopRunId}`,
-        },
-        { enabled: true },
-      );
+      projectTaskLoopRun(taskLoopLifecycleInput(record), { enabled: true });
     } catch {
       // Best-effort projection; the legacy Task Loop state stays authoritative.
     }
@@ -3260,9 +3302,20 @@ export function cancelTaskLoopRun(
       evidenceRefs: [...record.evidenceRefs],
     };
   }
+  const previous = { status: record.status, phase: record.phase, nextActions: record.nextActions };
   record.status = "cancelled";
   record.phase = "complete";
   record.nextActions = ["cancelled_by_operator"];
+  try {
+    commitTaskLoopLifecycle(record);
+  } catch (error) {
+    // The lifecycle owner already settled this run; cancel changes nothing.
+    Object.assign(record, previous);
+    if (error instanceof TaskLoopLifecycleConflictError) {
+      return { ...record, iterations: [...record.iterations], evidenceRefs: [...record.evidenceRefs] };
+    }
+    throw error;
+  }
   snapshot(record);
   emit(record, deps, {});
   return { ...record, iterations: [...record.iterations], evidenceRefs: [...record.evidenceRefs] };
@@ -3280,6 +3333,31 @@ function hasGenuineHumanWait(record: TaskLoopRunRecord): boolean {
 
 export function clearTaskLoopRunsForTests(): void {
   taskLoopRuns.clear();
+}
+
+/** Restart recovery: Task Loop runs live in this process only, so a lifecycle
+ *  TaskFlow still shows as active belongs to a run the previous boot held and
+ *  is settled as lost. No-op for the legacy writer. */
+export function settleOrphanedTaskLoopLifecycles(): string[] {
+  if (resolveWorkflowLifecycleMode("task-loop") === "legacy") return [];
+  return settleOrphanedWorkflowLifecycles({
+    domain: "task-loop",
+    isLive: (loopRunId) => taskLoopRuns.has(loopRunId),
+  });
+}
+
+/** A run's lifecycle as TaskFlow holds it (answers status after a restart). */
+export function getTaskLoopLifecycle(
+  loopRunId: string,
+): { loopRunId: string; status: string; phase?: string; lifecycleSource: "taskflow" } | null {
+  const row = readWorkflowLifecycle("task-loop", loopRunId);
+  if (!row) return null;
+  return {
+    loopRunId,
+    status: taskLoopStatusFromFlowStatus(row.status as FlowStatus),
+    ...(row.current_step ? { phase: row.current_step } : {}),
+    lifecycleSource: "taskflow",
+  };
 }
 
 export async function runTaskLoop(
@@ -3409,6 +3487,11 @@ export async function runTaskLoop(
 
   try {
     for (let iteration = 1; iteration <= maxIterations; iteration += 1) {
+      // A cancel that landed while the previous iteration was repairing must
+      // stop the loop before another orchestration starts.
+      if (taskLoopWasCancelled(record)) {
+        break;
+      }
       record.iteration = iteration;
       record.phase = "plan";
       emit(record, deps, {});
@@ -3775,6 +3858,29 @@ export async function runTaskLoop(
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+    if (error instanceof TaskLoopLifecycleConflictError) {
+      // The lifecycle owner settled this run elsewhere; adopt the committed
+      // status instead of writing another one.
+      const row = readWorkflowLifecycle("task-loop", record.loopRunId);
+      if (row) {
+        record.status = taskLoopStatusFromFlowStatus(row.status as FlowStatus) as TaskLoopRunRecord["status"];
+        committedTaskLoopFlowStatus.set(record, row.status as FlowStatus);
+      }
+      record.error = message;
+      await awaitTaskLoopPhaseSideEffects(record);
+      return { ...record, iterations: [...record.iterations], evidenceRefs: [...record.evidenceRefs] };
+    }
+    if (
+      resolveWorkflowLifecycleMode("task-loop") === "taskflow" &&
+      (record.status === "complete" || record.status === "cancelled")
+    ) {
+      // Under the cutover a settled lifecycle is terminal in TaskFlow, so a
+      // failure in post-settle side effects (trace/memory) keeps the settled
+      // status and records the error instead of reopening it.
+      record.error = message;
+      await awaitTaskLoopPhaseSideEffects(record);
+      return { ...record, iterations: [...record.iterations], evidenceRefs: [...record.evidenceRefs] };
+    }
     record.phase = "error";
     record.status = "error";
     record.error = message;
