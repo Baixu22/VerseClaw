@@ -97,7 +97,6 @@ describe('RC-06C Mission -> TaskFlow read-only projection', () => {
     // waitMode=sleep) through controller.ts emit().
     process.env.RC06C_MISSION_PROJECTION = '1';
     const { createMission, pauseMission, resumeMission } = await import('./controller.js');
-    const { projectMissionRun } = await import('./mission-taskflow-projection.js');
     const missions = new Map<string, { missionId: string; status: string; phase: string; tick: number }>();
     const deps = {
       getMission: (id: string) => missions.get(id),
