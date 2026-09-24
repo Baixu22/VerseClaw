@@ -149,8 +149,21 @@ describe('mcp api registry', () => {
         id: 'clawx-git',
         localAddress: 'clawx://mcp/clawx-git',
       },
-      message: 'Verse Claw Git tools are available through the host Git service.',
+      message: 'Verse Claw Git tools are host-native: served by the host Git service, not an MCP server.',
     });
+
+    // A stdio config check is not an MCP handshake, so the fallback never reports connected.
+    await expect(api.heartbeat({ serverId: 'filesystem' })).resolves.toMatchObject({
+      success: true,
+      status: 'registered',
+      server: expect.objectContaining({ runtimeStatus: 'registered' }),
+    });
+
+    await expect(api.createServer({
+      name: 'Socket',
+      transport: 'websocket',
+      url: 'ws://127.0.0.1:9',
+    })).rejects.toThrow('MCP 不支持 WebSocket 传输');
 
     const updated = await api.updateServer({ id: 'filesystem', enabled: false });
     expect(updated.servers).toEqual(expect.arrayContaining([
@@ -582,7 +595,8 @@ describe('mcp api registry', () => {
     await expect(api.listTools({ serverId: 'clawx-git' })).resolves.toMatchObject({
       success: true,
       serverId: 'clawx-git',
-      status: 'connected',
+      // Host-native tools are served in Main; only an MCP handshake may report connected.
+      status: 'registered',
       tools: expect.arrayContaining([
         expect.objectContaining({ name: 'git_status' }),
         expect.objectContaining({ name: 'git_diff' }),

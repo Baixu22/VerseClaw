@@ -81,7 +81,8 @@ type McpApiContext = {
   toolProviderRegistryShadowSink?: (record: McpToolProviderRegistryShadowRecord) => void;
 };
 
-const VALID_TRANSPORTS = new Set<McpTransport>(['stdio', 'http', 'streamable-http', 'sse', 'websocket']);
+// The MCP SDK has no WebSocket client transport, so a websocket choice is rejected on save.
+const VALID_TRANSPORTS = new Set<McpTransport>(['stdio', 'http', 'streamable-http', 'sse']);
 const VALID_SCOPES = new Set<McpScope>(['global', 'agent', 'workspace']);
 const DEFAULT_TRANSPORT: McpTransport = 'stdio';
 const DEFAULT_SCOPE: McpScope = 'global';
@@ -98,7 +99,8 @@ const VERSE_CLAW_GIT_MCP_SERVER: McpServerConfig = {
   scope: 'workspace',
   ownerId: '*',
   networkPolicy: 'disabled',
-  runtimeStatus: 'connected',
+  // Host-native: served in Main, not through an MCP handshake, so never 'connected'.
+  runtimeStatus: 'registered',
   toolCount: 36,
   createdAt: 1,
   updatedAt: 1,
@@ -590,7 +592,7 @@ const VERSE_CLAW_STORAGE_MCP_SERVER: McpServerConfig = {
   scope: 'workspace',
   ownerId: '*',
   networkPolicy: 'disabled',
-  runtimeStatus: 'connected',
+  runtimeStatus: 'registered',
   toolCount: 4,
   createdAt: 1,
   updatedAt: 1,
@@ -744,12 +746,17 @@ function normalizeEnv(value: unknown): Record<string, string> | undefined {
 }
 
 function normalizeTransport(value: unknown): McpTransport {
+  if (value === 'websocket') {
+    throw new Error('MCP 不支持 WebSocket 传输，请改用 stdio、SSE 或 Streamable HTTP');
+  }
   return typeof value === 'string' && VALID_TRANSPORTS.has(value as McpTransport)
     ? value as McpTransport
     : DEFAULT_TRANSPORT;
 }
 
 function normalizeCanonicalTransport(value: unknown): McpCanonicalTransport {
+  // A server stored before WebSocket was rejected keeps its label; the runtime never mirrors it.
+  if (value === 'websocket') return 'websocket';
   const transport = normalizeTransport(value);
   return transport === 'http' ? 'streamable-http' : transport;
 }
@@ -1174,7 +1181,7 @@ async function checkMcpHeartbeat(server: McpServerConfig): Promise<{ message: st
   const startedAt = Date.now();
   if (server.transport === 'stdio') {
     return {
-      message: 'stdio 配置校验通过；实际进程由 Verse Claw MCP Runtime 通过 OpenClaw 沙盒启动',
+      message: 'stdio 配置校验通过（未握手，未连接）；实际进程由 Verse Claw MCP Runtime 通过 OpenClaw 沙盒启动',
       latencyMs: Date.now() - startedAt,
     };
   }
@@ -1190,7 +1197,7 @@ async function checkMcpHeartbeat(server: McpServerConfig): Promise<{ message: st
       signal: controller.signal,
     });
     return {
-      message: `端点可访问，HTTP ${response.status}`,
+      message: `端点可达（HTTP ${response.status}），尚未完成 MCP 握手`,
       latencyMs: Date.now() - startedAt,
     };
   } catch (error) {
@@ -1671,9 +1678,9 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           : await toRuntimeServer(server, await readEnvVault());
         if (!isBuiltin) validateServer(runtimeServer);
         const heartbeat = server.id === VERSE_CLAW_GIT_MCP_SERVER_ID
-          ? { message: 'Verse Claw Git tools are available through the host Git service.', latencyMs: 0 }
+          ? { message: 'Verse Claw Git tools are host-native: served by the host Git service, not an MCP server.', latencyMs: 0 }
           : server.id === VERSE_CLAW_STORAGE_MCP_SERVER_ID
-            ? { message: 'Verse Claw Storage tools are available through the host System service.', latencyMs: 0 }
+            ? { message: 'Verse Claw Storage tools are host-native: served by the host System service, not an MCP server.', latencyMs: 0 }
             : await checkMcpHeartbeat(runtimeServer);
         return {
           success: true,
@@ -1706,9 +1713,9 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
         return {
           success: true,
           serverId: id,
-          status: 'connected',
+          status: 'registered',
           latencyMs: 0,
-          message: 'Verse Claw Git tools are available through the host Git service.',
+          message: 'Verse Claw Git tools are host-native: served by the host Git service, not an MCP server.',
           server: toRendererServer(server),
         };
       }
@@ -1716,9 +1723,9 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
         return {
           success: true,
           serverId: id,
-          status: 'connected',
+          status: 'registered',
           latencyMs: 0,
-          message: 'Verse Claw Storage tools are available through the host System service.',
+          message: 'Verse Claw Storage tools are host-native: served by the host System service, not an MCP server.',
           server: toRendererServer(server),
         };
       }
@@ -1734,9 +1741,11 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
       }
       try {
         const runtimeServer = await toRuntimeServer(server, await readEnvVault());
+        // Only an MCP initialize handshake (the runtime answer above) proves
+        // 'connected'; a config check or HTTP reachability leaves it 'registered'.
         const heartbeat = await checkMcpHeartbeat(runtimeServer);
         const updated = await updateServerRuntimeFields(id, {
-          runtimeStatus: 'connected',
+          runtimeStatus: 'registered',
           lastHeartbeatAt: Date.now(),
           lastHeartbeatMs: heartbeat.latencyMs,
           lastHeartbeatError: undefined,
@@ -1744,7 +1753,7 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
         return {
           success: true,
           serverId: id,
-          status: 'connected',
+          status: 'registered',
           latencyMs: heartbeat.latencyMs,
           message: heartbeat.message,
           server: toRendererServer((updated ?? server) as McpServerConfig),
@@ -1788,8 +1797,8 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           success: true,
           serverId: id,
           tools: VERSE_CLAW_GIT_MCP_TOOLS,
-          status: 'connected',
-          message: 'Verse Claw Git host tools',
+          status: 'registered',
+          message: 'Verse Claw Git host-native tools',
         };
       }
       if (id === VERSE_CLAW_STORAGE_MCP_SERVER_ID) {
@@ -1797,8 +1806,8 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           success: true,
           serverId: id,
           tools: VERSE_CLAW_STORAGE_MCP_TOOLS,
-          status: 'connected',
-          message: 'Verse Claw Storage host tools',
+          status: 'registered',
+          message: 'Verse Claw Storage host-native tools',
         };
       }
       const runtime = await tryGatewayMcpRpc<McpListToolsResult>(ctx.gatewayManager, 'mcp.listTools', { serverId: id });
