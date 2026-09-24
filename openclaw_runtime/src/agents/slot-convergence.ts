@@ -6,9 +6,6 @@
 // no default or auto-writeback change.
 import { defaultSlotIdForKey } from '../plugins/slots.js';
 
-export const SLOT_CONVERGENCE_FLAG = 'rc07.slotConvergence';
-export const SLOT_CONVERGENCE_SCHEMA_VERSION = '1';
-
 export type SlotConvergenceRole =
   | 'store-owner'
   | 'candidate-producer'
@@ -100,18 +97,23 @@ export const RC07_CONTEXT_MECHANISMS: ContextMechanism[] = [
   },
 ];
 
+function declaresMemoryKind(kind: string | readonly string[] | undefined): boolean {
+  return Array.isArray(kind) ? kind.includes('memory') : kind === 'memory';
+}
+
 /**
- * Census built from REAL sources (registered plugin ids, contextEngine
- * registry ids, MemoryStore binding) instead of hardcoded arrays standing as
- * proof. The static classification table above is only the fallback shape for
- * ids the caller did not supply; the census the acceptance tests assert on is
- * derived from the live registry inputs.
+ * Census from the real plugin registry: a plugin writes memory only when its
+ * manifest declares the memory kind and the memory slot selects it (the
+ * loader's single-selection rule); other memory-kind plugins load without the
+ * writer role. The built-in runtime-memory owner writes only when selected and
+ * runtime.memory.persist is on. Non-plugin mechanisms (VToken, AgentMap, SEKB,
+ * Working Context) are classified in RC07_MEMORY_MECHANISMS.
  */
 export function buildSlotMechanismCensus(input: {
-  registeredPluginIds?: string[];
-  contextEngineIds?: string[];
-  memoryStoreConfigured?: boolean;
-  memorySlotId?: string;
+  registeredPlugins: ReadonlyArray<{ id: string; kind?: string | readonly string[] }>;
+  contextEngineIds?: readonly string[];
+  /** The normalized memory slot; null disables it. */
+  memorySlotId?: string | null;
   runtimeMemoryPersist?: boolean;
 }): {
   memory: Array<{ id: string; role: SlotConvergenceRole; mayWriteMemory: boolean }>;
@@ -119,130 +121,64 @@ export function buildSlotMechanismCensus(input: {
   parallelMemoryWriters: number;
   autoWritebackCount: number;
 } {
-  const pluginIds = input.registeredPluginIds ?? RC07_MEMORY_MECHANISMS.map((m) => m.id);
-  const engineIds = input.contextEngineIds ?? RC07_CONTEXT_MECHANISMS.map((c) => c.id);
-  const memoryStoreConfigured = input.memoryStoreConfigured ?? true;
-  const memorySlotId = input.memorySlotId ?? "memory-core";
-  const runtimeMemoryPersist = input.runtimeMemoryPersist === true;
-
-  // The active memory store owner: memory-core persists only when the real
-  // MemoryStore binding is configured; the built-in runtime-memory owner
-  // persists only when it is selected and runtime.memory.persist is on.
+  const memorySlotId =
+    input.memorySlotId === undefined ? defaultSlotIdForKey('memory') : input.memorySlotId;
   const memory: Array<{ id: string; role: SlotConvergenceRole; mayWriteMemory: boolean }> = [];
-  for (const id of pluginIds) {
-    const known = RC07_MEMORY_MECHANISMS.find((m) => m.id === id);
+  for (const plugin of input.registeredPlugins) {
+    if (!declaresMemoryKind(plugin.kind)) continue;
+    const selected = memorySlotId !== null && plugin.id === memorySlotId;
     memory.push({
-      id,
-      role: id === "runtime-memory" ? "store-owner" : known?.role ?? 'candidate-producer',
-      mayWriteMemory:
-        id === "runtime-memory"
-          ? memorySlotId === "runtime-memory" && runtimeMemoryPersist
-          : id === 'memory-core' && memoryStoreConfigured && memorySlotId === "memory-core",
+      id: plugin.id,
+      role: selected ? 'store-owner' : 'candidate-producer',
+      mayWriteMemory: selected,
+    });
+  }
+  if (memorySlotId === 'runtime-memory') {
+    memory.push({
+      id: 'runtime-memory',
+      role: 'store-owner',
+      mayWriteMemory: input.runtimeMemoryPersist === true,
     });
   }
 
-  const context: Array<{ id: string; role: SlotConvergenceRole; isContextEngineSlot: boolean }> = [];
-  for (const id of engineIds) {
-    const known = RC07_CONTEXT_MECHANISMS.find((c) => c.id === id);
-    context.push({
-      id,
-      role: known?.role ?? 'candidate-producer',
-      isContextEngineSlot: id === 'context-runtime-kit',
-    });
-  }
+  const context = (input.contextEngineIds ?? []).map((id) => ({
+    id,
+    role: RC07_CONTEXT_MECHANISMS.find((c) => c.id === id)?.role ?? ('candidate-producer' as const),
+    isContextEngineSlot: id === 'context-runtime-kit',
+  }));
 
-  const parallelMemoryWriters = memory.filter((m) => m.mayWriteMemory).length - 1;
+  const parallelMemoryWriters = Math.max(0, memory.filter((m) => m.mayWriteMemory).length - 1);
   const autoWritebackCount = RC07_MEMORY_MECHANISMS.filter((m) => m.autoWriteback === true).length;
   return { memory, context, parallelMemoryWriters, autoWritebackCount };
 }
 
 /**
- * Fail-closed enforcement entry: combines the memory slot and contextEngine
- * slot checks so runtime startup / plugin reload can reject an illegal
- * configuration before it becomes the normalized active config. Returns
- * errors; a non-empty result MUST block activation (never ignored).
- */
-export function enforceSlotConvergenceForConfig(config: {
-  memorySlotId?: string;
-  contextEngineId?: string;
-  crkEnabled?: boolean;
-  runtimeMemoryPersist?: boolean;
-}): { ok: boolean; errors: string[] } {
-  const memory = assertSingleMemorySlotOwner({
-    memorySlotId: config.memorySlotId,
-    runtimeMemoryPersist: config.runtimeMemoryPersist,
-  });
-  const context = assertSingleContextEngineSlot({
-    contextEngineId: config.contextEngineId,
-    crkEnabled: config.crkEnabled,
-  });
-  const errors = [...memory.errors, ...context.errors];
-  return { ok: errors.length === 0, errors };
-}
-
-/**
- * Resolve the single active memory slot owner id. Enforces exactly one; a
- * second configured memory slot owner is rejected.
- */
-export function resolveActiveMemorySlotOwner(config: {
-  memorySlotId?: string;
-}): { ownerId: string; warnings: string[] } {
-  const warnings: string[] = [];
-  const ownerId = config.memorySlotId ?? defaultSlotIdForKey('memory');
-  const otherWriters = RC07_MEMORY_MECHANISMS.filter((m) => m.mayWriteMemory && m.id !== ownerId);
-  for (const other of otherWriters) {
-    warnings.push(`parallel memory writer rejected: ${other.id} must be ${other.role}`);
-  }
-  return { ownerId, warnings };
-}
-
-/**
- * Enforce that an explicit memory slot selects a single store-owner:
- * memory-core by default, or the built-in runtime-memory owner when
- * runtime.memory.persist=true. Any other selection is rejected.
+ * Enforce that an explicit memory slot selects a store owner. The slot holds a
+ * single id, so any memory plugin (memory-core, memory-lancedb, ...) can own it;
+ * a mechanism classified as a non-owner (benchmark arm, candidate producer,
+ * review proposal, projection) is rejected, and the built-in runtime-memory
+ * owner requires runtime.memory.persist=true.
  */
 export function assertSingleMemorySlotOwner(config: {
-  memorySlotId?: string;
+  memorySlotId?: string | null;
   runtimeMemoryPersist?: boolean;
 }): { ok: boolean; errors: string[] } {
   const errors: string[] = [];
-  const slotId = config.memorySlotId ?? defaultSlotIdForKey('memory');
+  const slotId = config.memorySlotId === undefined ? defaultSlotIdForKey('memory') : config.memorySlotId;
+  if (slotId === null) {
+    return { ok: true, errors };
+  }
   if (slotId === 'runtime-memory') {
     if (config.runtimeMemoryPersist !== true) {
       errors.push('runtime-memory memory slot requires runtime.memory.persist=true');
     }
     return { ok: errors.length === 0, errors };
   }
-  const owner = RC07_MEMORY_MECHANISMS.find((m) => m.id === slotId);
-  if (!owner || !owner.mayWriteMemory) {
-    errors.push(`memory slot must be the single store-owner (memory-core), got ${slotId}`);
-  }
-  const parallelWriters = RC07_MEMORY_MECHANISMS.filter((m) => m.mayWriteMemory && m.id !== slotId);
-  for (const other of parallelWriters) {
-    errors.push(`parallel memory writer rejected: ${other.id} must be ${other.role}`);
+  const nonOwner = RC07_MEMORY_MECHANISMS.find((m) => m.id === slotId && !m.mayWriteMemory);
+  if (nonOwner) {
+    errors.push(`memory slot must select a store owner, got ${slotId} (${nonOwner.role})`);
   }
   return { ok: errors.length === 0, errors };
-}
-
-/**
- * Classify every memory/context mechanism. Parallel memory writes are zero when
- * exactly one store-owner is active; flag-off performs zero query/write; SEKB
- * auto-writeback is zero.
- */
-export function classifySlotMechanisms(): {
-  memory: Array<{ id: string; role: SlotConvergenceRole; mayWriteMemory: boolean }>;
-  context: Array<{ id: string; role: SlotConvergenceRole; isContextEngineSlot: boolean }>;
-  parallelMemoryWriters: number;
-  autoWritebackCount: number;
-} {
-  const memoryWriters = RC07_MEMORY_MECHANISMS.filter((m) => m.mayWriteMemory);
-  const autoWritebackCount = RC07_MEMORY_MECHANISMS.filter((m) => m.autoWriteback === true).length;
-  return {
-    memory: RC07_MEMORY_MECHANISMS.map((m) => ({ id: m.id, role: m.role, mayWriteMemory: m.mayWriteMemory })),
-    context: RC07_CONTEXT_MECHANISMS.map((c) => ({ id: c.id, role: c.role, isContextEngineSlot: c.isContextEngineSlot })),
-    parallelMemoryWriters: memoryWriters.length - 1,
-    autoWritebackCount,
-  };
 }
 
 /**

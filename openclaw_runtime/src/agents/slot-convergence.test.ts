@@ -2,138 +2,83 @@ import { describe, expect, it } from 'vitest';
 
 import {
   assertSingleContextEngineSlot,
+  assertSingleMemorySlotOwner,
   buildSlotMechanismCensus,
-  classifySlotMechanisms,
-  enforceSlotConvergenceForConfig,
   RC07_CONTEXT_MECHANISMS,
   RC07_MEMORY_MECHANISMS,
-  resolveActiveMemorySlotOwner,
 } from './slot-convergence.js';
 
+const MEMORY_PLUGINS = [
+  { id: 'memory-core', kind: 'memory' },
+  { id: 'memory-lancedb', kind: 'memory' },
+  { id: 'dual-memory-context', kind: ['memory', 'context-engine'] },
+  { id: 'browser', kind: undefined },
+] as const;
+
 describe('RC-07 memory/context slot convergence', () => {
-  it('classifies every memory mechanism into its slot role', () => {
-    const { memory, parallelMemoryWriters } = classifySlotMechanisms();
-    // Exactly one store-owner may write memory; parallel writers are zero.
-    expect(parallelMemoryWriters).toBe(0);
-    expect(memory.filter((m) => m.mayWriteMemory)).toHaveLength(1);
-    const memoryCore = memory.find((m) => m.id === 'memory-core');
-    expect(memoryCore?.role).toBe('store-owner');
-    const vtoken = memory.find((m) => m.id === 'vtoken-packer');
-    expect(vtoken?.role).toBe('benchmark-arm');
-    expect(vtoken?.mayWriteMemory).toBe(false);
-    const agentMap = memory.find((m) => m.id === 'agent-map');
-    expect(agentMap?.role).toBe('candidate-producer');
-    const sekb = memory.find((m) => m.id === 'sekb-governance');
-    expect(sekb?.role).toBe('review-proposal');
-    const workingContext = memory.find((m) => m.id === 'working-context');
-    expect(workingContext?.role).toBe('projection');
+  it('classifies the non-plugin memory mechanisms into non-owner roles', () => {
+    const role = (id: string) => RC07_MEMORY_MECHANISMS.find((m) => m.id === id);
+    expect(role('vtoken-packer')).toMatchObject({ role: 'benchmark-arm', mayWriteMemory: false, flagOffZeroQueryWrite: true });
+    expect(role('agent-map')).toMatchObject({ role: 'candidate-producer', mayWriteMemory: false, flagOffZeroQueryWrite: true });
+    expect(role('sekb-governance')).toMatchObject({ role: 'review-proposal', mayWriteMemory: false, autoWriteback: false });
+    expect(role('working-context')).toMatchObject({ role: 'projection', mayWriteMemory: false });
   });
 
-  it('enforces exactly one active memory slot owner', () => {
-    const { ownerId, warnings } = resolveActiveMemorySlotOwner({ memorySlotId: 'memory-core' });
-    expect(ownerId).toBe('memory-core');
-    // Exactly one store-owner exists (memory-core); no other mechanism may write
-    // memory in parallel, so a non-owner selection is rejected.
-    expect(RC07_MEMORY_MECHANISMS.filter((m) => m.mayWriteMemory)).toHaveLength(1);
-    expect(warnings).toEqual([]);
-    // A hypothetical second write-capable owner is rejected as parallel writer.
-    const custom = { ...RC07_MEMORY_MECHANISMS[0]!, mayWriteMemory: true };
-    const others = RC07_MEMORY_MECHANISMS.filter((m) => m.mayWriteMemory && m.id !== 'memory-core');
-    expect(others).toHaveLength(0);
-    expect(custom.mayWriteMemory).toBe(true);
+  it('the memory slot accepts any single store owner and rejects classified non-owners', () => {
+    expect(assertSingleMemorySlotOwner({ memorySlotId: 'memory-core' }).ok).toBe(true);
+    expect(assertSingleMemorySlotOwner({ memorySlotId: 'memory-lancedb' }).ok).toBe(true);
+    expect(assertSingleMemorySlotOwner({ memorySlotId: null }).ok).toBe(true);
+    for (const id of ['vtoken-packer', 'agent-map', 'sekb-governance', 'working-context']) {
+      const result = assertSingleMemorySlotOwner({ memorySlotId: id });
+      expect(result.ok).toBe(false);
+      expect(result.errors[0]).toContain('must select a store owner');
+    }
+    expect(assertSingleMemorySlotOwner({ memorySlotId: 'runtime-memory' }).ok).toBe(false);
+    expect(assertSingleMemorySlotOwner({ memorySlotId: 'runtime-memory', runtimeMemoryPersist: true }).ok).toBe(true);
+  });
+
+  it('the census derives writers from declared kind and the slot selection', () => {
+    const lancedb = buildSlotMechanismCensus({ registeredPlugins: MEMORY_PLUGINS, memorySlotId: 'memory-lancedb' });
+    expect(lancedb.memory.map((m) => m.id)).toEqual(['memory-core', 'memory-lancedb', 'dual-memory-context']);
+    expect(lancedb.memory.filter((m) => m.mayWriteMemory).map((m) => m.id)).toEqual(['memory-lancedb']);
+    expect(lancedb.memory.find((m) => m.id === 'memory-core')?.role).toBe('candidate-producer');
+    expect(lancedb.parallelMemoryWriters).toBe(0);
+
+    const dual = buildSlotMechanismCensus({ registeredPlugins: MEMORY_PLUGINS, memorySlotId: 'dual-memory-context' });
+    expect(dual.memory.filter((m) => m.mayWriteMemory).map((m) => m.id)).toEqual(['dual-memory-context']);
+
+    const disabled = buildSlotMechanismCensus({ registeredPlugins: MEMORY_PLUGINS, memorySlotId: null });
+    expect(disabled.memory.filter((m) => m.mayWriteMemory)).toEqual([]);
+    expect(disabled.parallelMemoryWriters).toBe(0);
+
+    const defaultSlot = buildSlotMechanismCensus({ registeredPlugins: MEMORY_PLUGINS });
+    expect(defaultSlot.memory.filter((m) => m.mayWriteMemory).map((m) => m.id)).toEqual(['memory-core']);
+  });
+
+  it('runtime-memory owns the slot only with persistence on', () => {
+    const on = buildSlotMechanismCensus({ registeredPlugins: MEMORY_PLUGINS, memorySlotId: 'runtime-memory', runtimeMemoryPersist: true });
+    expect(on.memory.filter((m) => m.mayWriteMemory).map((m) => m.id)).toEqual(['runtime-memory']);
+    const off = buildSlotMechanismCensus({ registeredPlugins: MEMORY_PLUGINS, memorySlotId: 'runtime-memory' });
+    expect(off.memory.filter((m) => m.mayWriteMemory)).toEqual([]);
   });
 
   it('SEKB auto-writeback is zero (human-confirmed governance only)', () => {
-    const { autoWritebackCount } = classifySlotMechanisms();
-    expect(autoWritebackCount).toBe(0);
-    const sekb = RC07_MEMORY_MECHANISMS.find((m) => m.id === 'sekb-governance');
-    expect(sekb?.autoWriteback).toBe(false);
+    expect(buildSlotMechanismCensus({ registeredPlugins: [] }).autoWritebackCount).toBe(0);
   });
 
   it('asserts the single contextEngine slot (CRK default, DCS assembly inside it)', () => {
-    // Default: context-runtime-kit resolves as the single slot owner.
     const ok = assertSingleContextEngineSlot({});
     expect(ok.ok).toBe(true);
     expect(ok.resolvedId).toBe('context-runtime-kit');
-    // An explicit CRK slot is accepted.
-    const explicit = assertSingleContextEngineSlot({ contextEngineId: 'context-runtime-kit' });
-    expect(explicit.ok).toBe(true);
-    // A non-owner slot id is rejected as a parallel second engine.
+    expect(assertSingleContextEngineSlot({ contextEngineId: 'context-runtime-kit' }).ok).toBe(true);
     const rejected = assertSingleContextEngineSlot({ contextEngineId: 'legacy-context-engine' });
     expect(rejected.ok).toBe(false);
     expect(rejected.errors.join(' ')).toContain('non-owner');
+    expect(RC07_CONTEXT_MECHANISMS.filter((c) => c.isContextEngineSlot).map((c) => c.id)).toEqual(['context-runtime-kit']);
   });
 
-  it('classifies context mechanisms (CRK store-owner slot, DCS assembly, others projection/candidate)', () => {
-    const { context } = classifySlotMechanisms();
-    expect(context).toHaveLength(RC07_CONTEXT_MECHANISMS.length);
-    expect(context.filter((c) => c.isContextEngineSlot)).toHaveLength(1);
-    const crk = context.find((c) => c.id === 'context-runtime-kit');
-    expect(crk?.role).toBe('store-owner');
-    expect(crk?.isContextEngineSlot).toBe(true);
-    const dcs = context.find((c) => c.id === 'dcs-assembler');
-    expect(dcs?.role).toBe('store-owner');
-    const workingContext = context.find((c) => c.id === 'working-context-query');
-    expect(workingContext?.role).toBe('projection');
-  });
-
-  it('flag-off performs zero query/write for benchmark/candidate arms', () => {
-    // VToken and AgentMap are default-off arms: flag-off means zero query/write.
-    for (const m of [RC07_MEMORY_MECHANISMS.find((x) => x.id === 'vtoken-packer'), RC07_MEMORY_MECHANISMS.find((x) => x.id === 'agent-map')]) {
-      expect(m?.flagOffZeroQueryWrite).toBe(true);
-    }
-  });
-
-  it('census is derived from REAL sources (registered plugins + engine registry + MemoryStore binding)', () => {
-    // Simulate the real registry inputs: the plugin registry reports exactly
-    // the mechanisms that exist, and the contextEngine registry reports the
-    // registered engines. The census follows the live input, not the table.
-    const census = buildSlotMechanismCensus({
-      registeredPluginIds: ['memory-core', 'vtoken-packer', 'agent-map', 'sekb-governance', 'working-context'],
-      contextEngineIds: ['context-runtime-kit', 'dcs-assembler', 'working-context-query', 'legacy-context-engine'],
-      memoryStoreConfigured: true,
-    });
-    expect(census.parallelMemoryWriters).toBe(0);
-    expect(census.memory.filter((m) => m.mayWriteMemory)).toHaveLength(1);
-    expect(census.memory.find((m) => m.id === 'memory-core')?.role).toBe('store-owner');
-    expect(census.context.filter((c) => c.isContextEngineSlot)).toHaveLength(1);
-    expect(census.context.find((c) => c.isContextEngineSlot)?.id).toBe('context-runtime-kit');
-
-    // A second memory writer reported by the registry is NOT granted write
-    // capability by the census: the slot owner stays the single writer.
-    const withImpostor = buildSlotMechanismCensus({
-      registeredPluginIds: ['memory-core', 'rogue-memory-writer'],
-      contextEngineIds: [],
-      memoryStoreConfigured: true,
-    });
-    expect(withImpostor.memory.filter((m) => m.mayWriteMemory)).toHaveLength(1);
-    expect(withImpostor.parallelMemoryWriters).toBe(0);
-
-    // MemoryStore not configured: zero writers (no owner can persist).
-    const unbound = buildSlotMechanismCensus({
-      registeredPluginIds: ['memory-core'],
-      contextEngineIds: [],
-      memoryStoreConfigured: false,
-    });
-    expect(unbound.memory.filter((m) => m.mayWriteMemory)).toHaveLength(0);
-  });
-
-  it('enforceSlotConvergenceForConfig fails closed on non-owner slots', () => {
-    const ok = enforceSlotConvergenceForConfig({
-      memorySlotId: 'memory-core',
-      contextEngineId: 'context-runtime-kit',
-      crkEnabled: true,
-    });
-    expect(ok.ok).toBe(true);
-    expect(ok.errors).toEqual([]);
-
-    // Non-owner memory slot + second context engine -> rejected.
-    const bad = enforceSlotConvergenceForConfig({
-      memorySlotId: 'vtoken-packer',
-      contextEngineId: 'legacy-context-engine',
-      crkEnabled: false,
-    });
-    expect(bad.ok).toBe(false);
-    expect(bad.errors.length).toBeGreaterThanOrEqual(2);
+  it('the census classifies the configured context engine', () => {
+    const census = buildSlotMechanismCensus({ registeredPlugins: [], contextEngineIds: ['context-runtime-kit'] });
+    expect(census.context).toEqual([{ id: 'context-runtime-kit', role: 'store-owner', isContextEngineSlot: true }]);
   });
 });
