@@ -9,13 +9,13 @@
       "why_this_task": ""
     },
     "blocked_by": [],
-    "confidence": 0.78,
+    "confidence": 0.76,
     "context_tags": [],
     "desired_outcomes": [],
     "difficulty": "very_high",
-    "id": "TF-0035",
+    "id": "TF-0036",
     "kind": "task",
-    "next_action": "restart/cancel/child-task/projection 测试通过",
+    "next_action": "mission restart/wait/resume/cancel 语义保持",
     "priority": 1,
     "progress": 10.0,
     "purpose": "",
@@ -24,7 +24,7 @@
     "remaining_minutes_min": null,
     "status": "in_progress",
     "success_metrics": [],
-    "title": "RC-06B ClawGraph Lifecycle 迁移"
+    "title": "RC-06C Mission Lifecycle 迁移"
   },
   {
     "alignment": {
@@ -526,35 +526,6 @@
       "未授权新 authority 0"
     ],
     "title": "Runtime Authority Convergence 与 Operator 验收"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0035"
-    ],
-    "confidence": 0.76,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "very_high",
-    "id": "TF-0036",
-    "kind": "task",
-    "next_action": "先完成依赖：TF-0035",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "",
-    "ready": false,
-    "remaining_minutes_max": null,
-    "remaining_minutes_min": null,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "RC-06C Mission Lifecycle 迁移"
   },
   {
     "alignment": {

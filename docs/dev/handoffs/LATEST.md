@@ -1,5 +1,13 @@
 # 会话交接（LATEST）
 
+## 收口完成（2026-09-24，TF-0035 · RC-06B）：ClawGraph 生命周期 cutover 到 TaskFlow + 正式 RC-00 验收 pass
+
+- **TF-0035 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。
+- **内容**：共享 workflow lifecycle owner（`openclaw_runtime/src/tasks/workflow-lifecycle-owner.ts`）让每个域只有一个写入者：`legacy`（默认）/`projection`/`taskflow`。ClawGraph 在 cutover 下每次状态变更先经 CAS 提交再落到内存 run，被拒即冻结；gateway 启动把孤儿生命周期结算为 `lost`；回滚=选 `legacy`。
+- **正式验收**：干净候选 `fd584722d`，Executor pass → 独立 Verifier（`rc06b-verifier`）pass，9489 / 0 / 50，`identicalGateContracts=true`。证据 `artifacts/runtime-authority-convergence/rc-06b/acceptance/`。
+- **residual**：默认 writer 仍为 `legacy`；未改 UI，未重跑 Electron 套件。
+- **下一步**：TF-0036（RC-06C）——Mission cutover 提交 `8ab609a36` 在 `rc04-dev`；RC-06D 的实现在 `D:/ClawX-dev/rc04` 工作树中进行。
+
 ## 收口完成（2026-09-24，TF-0034 · RC-06A）：TaskFlow CAS 能力证明 + 正式 RC-00 验收 pass
 
 - **TF-0034 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。

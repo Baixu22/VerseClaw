@@ -2663,26 +2663,29 @@
     "difficulty": "very_high",
     "estimated_total_minutes": null,
     "evidence": [
-      "RC-06A accepted; RC-06B ClawGraph lifecycle migration starts",
-      "RC-06B independent Verifier VERDICT=pass: ClawGraph->TaskFlow read-only projection, event mapping, flag-off no-op, restart, child-task, idempotent, legacy Map authoritative, 18+36 tests"
+      "2026-09-24 实现提交 b9f3a0ebc（rc04-dev 0b97c65de cherry-pick）+ diffBase 钉住 fd584722d：新增 tasks/workflow-lifecycle-owner.ts、clawgraph-lifecycle-cutover.test.ts；runtime.ts 的 applyRunStatus 先提交后应用；server.impl.ts 启动时 settleOrphanedClawGraphLifecycles；task-flow registry 不再缓存/修剪 CAS 所有的生命周期行。",
+      "2026-09-24 正式 RC-00 验收 run1：candidate fd584722d11129afd13deaaeb3863b392bc6f538（cleanAtPlan=true）；Executor rc06b-executor pass reportDigest 36625f09…；独立 Verifier rc06b-verifier pass engineeringAcceptedByAgent=true reportDigest e0c11938… consistency.errors=[] identicalGateContracts=true；9489 passed/0 failed/50 skipped；三锁 false。归档 artifacts/runtime-authority-convergence/rc-06b/acceptance/（SHA256SUMS）。",
+      "spec acceptance 对应用例：cutover（run exists only with a TaskFlow row）、cancel（cancel commits cancelled; cancelling a settled run changes nothing）、legacy freeze（in-memory run cannot move a lifecycle TaskFlow rejects）、restart（orphaned lifecycles settle as lost）、rollback（legacy freezes the TaskFlow writer）、projection（mirrors status, rejected writes as drift）、child-task（projection 测试 child-task 两项）。",
+      "residual：默认 writer 仍为 legacy（cutover 已证明、未默认开启）；acceptance coverage ui=false，未重跑 Electron 套件。"
     ],
     "execution_hints": [],
     "id": "TF-0035",
     "kind": "task",
+    "next_action": "本节点已收口。下一步 TF-0036（RC-06C Mission 生命周期 cutover），实现提交 8ab609a36 在 rc04-dev。",
     "non_goals": [],
     "priority": 1,
-    "progress": 10.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [],
-    "summary": "保留 compiler/UI，把 ClawGraph process Map 中的 run lifecycle 逐步迁到已证明的 TaskFlow。",
+    "summary": "[2026-09-24 收口 · 工程验收 accepted，scope=engineering-only] RC-06B ClawGraph 生命周期经共享 workflow lifecycle owner 完成受控单写 cutover：OPENCLAW_CLAWGRAPH_LIFECYCLE_WRITER 选 legacy（默认）/projection（观测副本，拒写记 drift）/taskflow（cutover）。cutover 下 run 仅在 TaskFlow 行创建后存在，每次状态变更（含 cancel）先经 CAS 提交再落到内存 run，被拒则 run 不变（legacy freeze）；gateway 启动把上次进程持有的孤儿生命周期结算为 lost 并从 TaskFlow 应答；回滚=选 legacy 并冻结 TaskFlow writer。正式 RC-00 验收 Executor + 独立 Verifier pass（9489/0/50）。",
     "title": "RC-06B ClawGraph Lifecycle 迁移",
-    "updated_at": "2026-09-24T07:46:12.195408Z"
+    "updated_at": "2026-09-24T10:45:34.767431Z"
   },
   "TF-0036": {
     "acceptance_criteria": [
@@ -2692,7 +2695,7 @@
     ],
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0,
+      "fit_confidence": 0.0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -2717,18 +2720,18 @@
     "kind": "task",
     "non_goals": [],
     "priority": 1,
-    "progress": 0,
+    "progress": 10.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "in_progress",
     "success_metrics": [],
     "summary": "把 Mission definitions 适配为 TaskFlow templates/controllers，并在迁移证明后退役旧 lifecycle writer。",
     "title": "RC-06C Mission Lifecycle 迁移",
-    "updated_at": "2026-08-03T08:02:21.717409Z"
+    "updated_at": "2026-09-24T10:45:34.767431Z"
   },
   "TF-0037": {
     "acceptance_criteria": [
