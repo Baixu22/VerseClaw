@@ -1,5 +1,13 @@
 # 会话交接（LATEST）
 
+## 收口完成（2026-09-24，TF-0034 · RC-06A）：TaskFlow CAS 能力证明 + 正式 RC-00 验收 pass
+
+- **TF-0034 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。
+- **证明内容**：SQL-level expected-revision CAS 原子拒绝旧版本写；显式合法迁移图拒绝非法迁移与终态复活；flow/delivery 状态重启存活；两个真实独立 SQLite 连接竞争同一 flow 只有一个写成功；delivery 与 lifecycle 不分裂。修复提交 `e148a521f` 让迁移图覆盖遗留生命周期写出的全部步骤（属性测试逐步推导）。
+- **正式验收**：干净候选 `e148a521f`，Executor pass → 独立 Verifier（`rc06a-verifier`）pass，9505 / 0 / 50，`identicalGateContracts=true`。证据 `artifacts/runtime-authority-convergence/rc-06a/acceptance/`。
+- **residual**：CAS store 本节点仍未接入活动路径；未改 UI，未重跑 Electron 套件。
+- **下一步**：TF-0035（RC-06B）——ClawGraph cutover 提交 `0b97c65de`、Mission cutover `8ab609a36` 在 `rc04-dev`。
+
 ## 收口完成（2026-09-24，TF-0033 · RC-05）：Inbox 成为 Cron 主路径的治理步 + 正式 RC-00 验收 pass
 
 - **TF-0033 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。

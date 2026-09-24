@@ -96,6 +96,8 @@ Run four serial subpackages with separate Harness specs:
 
 **Exit:** after all four packages, TaskFlow/TaskRegistry are the only workflow lifecycle writers; before each cutover, the legacy owner remains authoritative. If RC-06A fails, stop for owner review and do not import a replacement framework automatically.
 
+**Status (2026-09-24, RC-06A accepted, engineering-only):** TaskFlow's CAS layer is proven: SQL-level expected-revision CAS rejects a stale writer atomically; an explicit legal transition graph rejects illegal transitions and terminal resurrection; flow, revision, wait, terminal and delivery state survive restart; two real independent SQLite connections competing for one flow let exactly one writer win; delivery and lifecycle state never split. The graph now covers every step the legacy task lifecycles write (restart `lost`, queued settlement, queued hold/re-projection), proven by a property test over `deriveTaskFlowStatusFromTask`. Formal RC-00 acceptance on the clean candidate `e148a521f`: Executor pass, independent Verifier (`rc06a-verifier`) pass (`engineeringAcceptedByAgent=true`, `failures=0`, 9505 passed / 0 failed / 50 skipped, `identicalGateContracts=true`). Evidence: `artifacts/runtime-authority-convergence/rc-06a/acceptance/`. The CAS store was not yet wired into an active path at this point; RC-06B/C/D do the cutovers. Product locks stay false.
+
 ## RC-07: Memory And Context Slots
 
 **Deliver:** enforce one active configured `memory` slot and one DCS `contextEngine` slot. Define each existing mechanism as `store owner`, `candidate producer`, `review proposal`, `benchmark arm`, or `projection`.

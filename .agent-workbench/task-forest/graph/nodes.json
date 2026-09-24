@@ -2614,25 +2614,29 @@
     "difficulty": "very_high",
     "estimated_total_minutes": null,
     "evidence": [
-      "RC-06A independent Verifier VERDICT=pass: expected-revision CAS + legal transition graph + restart + concurrent-writer rejection + delivery consistency, 6+34+36 tests; TaskFlow stays candidate, legacy blind upsert is active path"
+      "2026-09-24 缺陷修复（提交 e148a521f）：CAS 迁移图补 queued->{succeeded,failed,blocked,lost,waiting,queued} 与 {running,waiting,blocked}->lost；属性测试经 deriveTaskFlowStatusFromTask 推导每一步遗留任务生命周期并要求均为合法 CAS 迁移；running->lost 经 CAS writer 驱动且 lost 保持终态。",
+      "2026-09-24 正式 RC-00 验收 run1：candidate e148a521f3a5595f05b9440db26241f576b53d73（cleanAtPlan=true）；Executor rc06a-executor pass reportDigest ae2a98d0…；独立 Verifier rc06a-verifier pass engineeringAcceptedByAgent=true reportDigest 678aaa2b… consistency.errors=[] identicalGateContracts=true；9505 passed/0 failed/50 skipped；三锁 false。归档 artifacts/runtime-authority-convergence/rc-06a/acceptance/（SHA256SUMS）。",
+      "spec acceptance 对应用例（task-flow-cas.test.ts）：stale revision writer rejected atomically；rejects an illegal transition even with the correct revision；terminal resurrection rejected；state survive restart；two REAL independent connections only one writer wins；delivery/lifecycle cannot split。",
+      "residual：acceptance coverage ui=false，未重跑 Electron 套件（本增量未改 UI）；CAS store 尚未成为活动写入者。"
     ],
     "execution_hints": [],
     "id": "TF-0034",
     "kind": "task",
+    "next_action": "本节点已收口。下一步 TF-0035（RC-06B ClawGraph 生命周期 cutover），实现提交 0b97c65de 在 rc04-dev。",
     "non_goals": [],
     "priority": 1,
-    "progress": 10.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [],
-    "summary": "证明或实现 SQLite CAS、合法 transition graph、restart persistence、concurrent-writer rejection 和 delivery consistency；通过前 TaskFlow 仍是候选。",
+    "summary": "[2026-09-24 收口 · 工程验收 accepted，scope=engineering-only] RC-06A TaskFlow CAS 能力证明：SQL-level expected-revision CAS 原子拒绝旧版本写；显式合法迁移图拒绝非法迁移与终态复活，并覆盖遗留生命周期写出的全部步骤（重启 lost、queued 直接结算、queued 挂起/重投影）；flow/delivery 状态重启存活；真实双连接竞争只有一个写成功；delivery 与 lifecycle 不分裂。正式 RC-00 验收 Executor + 独立 Verifier pass（9505/0/50）。CAS store 本节点仍未接入活动路径，cutover 归 RC-06B/C/D。",
     "title": "RC-06A TaskFlow 能力与并发语义证明",
-    "updated_at": "2026-09-24T00:33:02.720388Z"
+    "updated_at": "2026-09-24T07:46:12.195408Z"
   },
   "TF-0035": {
     "acceptance_criteria": [
@@ -2642,7 +2646,7 @@
     ],
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0,
+      "fit_confidence": 0.0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -2667,18 +2671,18 @@
     "kind": "task",
     "non_goals": [],
     "priority": 1,
-    "progress": 0,
+    "progress": 10.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "in_progress",
     "success_metrics": [],
     "summary": "保留 compiler/UI，把 ClawGraph process Map 中的 run lifecycle 逐步迁到已证明的 TaskFlow。",
     "title": "RC-06B ClawGraph Lifecycle 迁移",
-    "updated_at": "2026-08-03T08:02:21.717409Z"
+    "updated_at": "2026-09-24T07:46:12.195408Z"
   },
   "TF-0036": {
     "acceptance_criteria": [
