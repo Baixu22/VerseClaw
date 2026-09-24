@@ -1,5 +1,13 @@
 # 会话交接（LATEST）
 
+## 收口完成（2026-09-24，TF-0036 · RC-06C）：Mission 生命周期 cutover 到 TaskFlow + 正式 RC-00 验收 pass
+
+- **TF-0036 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。
+- **内容**：Mission 在 `OPENCLAW_MISSION_LIFECYCLE_WRITER=taskflow` 下每次状态变更先经 lifecycle owner 提交再写 `mission_runs`（兼容读）；被拒即 tick 停止并保留已提交状态；blocked mission 结算为 failed；gateway 启动把被中断 tick 的 mission 回到 sleeping。
+- **正式验收**：run1（`b17f2f38b`）仅因 lint 未使用 import NO-GO，修复后 run2 干净候选 `78c744d0c`，Executor pass → 独立 Verifier（`rc06c-verifier-2`）pass，9497 / 0 / 50。证据 `artifacts/runtime-authority-convergence/rc-06c/acceptance/`。
+- **经验**：根 `pnpm -w run lint:check`（eslint，`--max-warnings 120`）也覆盖 `openclaw_runtime` 测试文件，本地 `check --typecheck-core` 抓不到；验收前两者都要跑。
+- **下一步**：TF-0037（RC-06D）——Task Loop cutover 提交 `4f74a16df` 在 `rc04-dev`；RC-07 修复正在同一工作树进行。
+
 ## 收口完成（2026-09-24，TF-0035 · RC-06B）：ClawGraph 生命周期 cutover 到 TaskFlow + 正式 RC-00 验收 pass
 
 - **TF-0035 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。

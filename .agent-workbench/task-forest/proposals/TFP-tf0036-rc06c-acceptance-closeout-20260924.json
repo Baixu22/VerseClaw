@@ -1,0 +1,42 @@
+{
+  "applied_at": "2026-09-24T14:18:51.697313Z",
+  "base_graph_hash": "fbe5ee9dad503c4481a2f95f8f2ba3923959060d127d5b6d6725bb232a1f09e1",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "2026-09-24 实现提交 fa9efee1f（rc04-dev 8ab609a36 cherry-pick）+ diffBase 钉住 b17f2f38b + lint 修复 78c744d0c：controller.ts emit 先提交后写 mission_runs、recoverInterruptedMissionLifecycles；server.impl.ts 启动恢复；mission-lifecycle-cutover.test.ts 新增 7 项；两条错误断言 blocked mission 可恢复的 projection 用例改为真实 resume 路径。",
+          "2026-09-24 正式 RC-00 验收 run1（candidate b17f2f38b）：Executor NO-GO，唯一失败 fast-lint-without-autofix（mission-taskflow-projection.test.ts:100 未使用的 projectMissionRun），verifier 未运行；9497/0/50。",
+          "2026-09-24 正式 RC-00 验收 run2：candidate 78c744d0c90e4dcf3fd8c839d53403579dad4986（cleanAtPlan=true）；Executor rc06c-executor-2 pass reportDigest edd97ce5…；独立 Verifier rc06c-verifier-2 pass engineeringAcceptedByAgent=true reportDigest 9dbf57a9… consistency.errors=[] identicalGateContracts=true；9497 passed/0 failed/50 skipped；三锁 false。归档 artifacts/runtime-authority-convergence/rc-06c/acceptance/（SHA256SUMS）。",
+          "residual：默认 writer 仍为 legacy；acceptance coverage ui=false，未重跑 Electron 套件。"
+        ],
+        "next_action": "本节点已收口。下一步 TF-0037（RC-06D Task Loop 生命周期 cutover），实现提交 4f74a16df 在 rc04-dev。",
+        "summary": "[2026-09-24 收口 · 工程验收 accepted，scope=engineering-only] RC-06C Mission 生命周期经共享 workflow lifecycle owner 完成受控单写 cutover（OPENCLAW_MISSION_LIFECYCLE_WRITER）：taskflow 下每次状态变更先提交 TaskFlow 再写 mission_runs（兼容读），被拒抛 MissionLifecycleConflictError、tick 停止并保留已提交状态（legacy freeze）；blocked mission 为终态结算为 failed；flow state 记录 mission status 与 wait mode；gateway 启动把被中断 tick 的 mission 经同一 owner 回到 sleeping。正式 RC-00 验收 run2 Executor + 独立 Verifier pass（9497/0/50）。"
+      },
+      "id": "TF-0036"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0036",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0037",
+      "progress": 10,
+      "status": "in_progress"
+    }
+  ],
+  "created_at": "2026-09-24T14:18:51.344015Z",
+  "proposal_id": "TFP-tf0036-rc06c-acceptance-closeout-20260924",
+  "rationale": "按 Task Forest 自动收口门（R3）收口 TF-0036：spec acceptance 逐条直读核对——projection、controlled cutover、legacy freeze、emergency rollback 各有显式证据（mission-lifecycle-cutover.test.ts 经 createMission/tickMission/pause/resume/cancel 逐 writer 模式驱动）；Mission restart、wait、resume、cancel 语义保留（中断 tick 重启回 sleeping、pause→resume、cancel 后不再 tick）；cutover 下 TaskFlow 为 Mission 唯一生命周期写入者，mission_runs/events 为兼容读或互斥回滚。正式 RC-00 验收 run2 Executor + 独立 Verifier pass（9497/0/50）；run1 仅因 lint（未使用的 import）NO-GO，已修。默认 writer 仍为 legacy，三锁与默认值未改。",
+  "session_id": "dsh-tf0036-rc06c-20260924",
+  "status": "applied"
+}

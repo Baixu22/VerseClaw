@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-24T10:45:59.026961Z",
+  "generated_at": "2026-09-24T14:19:21.636794Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -12560,33 +12560,36 @@
       "context_tags": [],
       "created_at": "2026-08-02T13:07:59.996410Z",
       "deprecated_at": null,
-      "derived_progress": 10.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "very_high",
       "estimated_total_minutes": null,
       "evidence": [
-        "RC-06B accepted; RC-06C Mission lifecycle migration starts",
-        "RC-06C independent Verifier VERDICT=pass: Mission->TaskFlow projection + controller emit production wiring, wait/restart/resume/cancel semantics preserved, 14+22+36 tests"
+        "2026-09-24 实现提交 fa9efee1f（rc04-dev 8ab609a36 cherry-pick）+ diffBase 钉住 b17f2f38b + lint 修复 78c744d0c：controller.ts emit 先提交后写 mission_runs、recoverInterruptedMissionLifecycles；server.impl.ts 启动恢复；mission-lifecycle-cutover.test.ts 新增 7 项；两条错误断言 blocked mission 可恢复的 projection 用例改为真实 resume 路径。",
+        "2026-09-24 正式 RC-00 验收 run1（candidate b17f2f38b）：Executor NO-GO，唯一失败 fast-lint-without-autofix（mission-taskflow-projection.test.ts:100 未使用的 projectMissionRun），verifier 未运行；9497/0/50。",
+        "2026-09-24 正式 RC-00 验收 run2：candidate 78c744d0c90e4dcf3fd8c839d53403579dad4986（cleanAtPlan=true）；Executor rc06c-executor-2 pass reportDigest edd97ce5…；独立 Verifier rc06c-verifier-2 pass engineeringAcceptedByAgent=true reportDigest 9dbf57a9… consistency.errors=[] identicalGateContracts=true；9497 passed/0 failed/50 skipped；三锁 false。归档 artifacts/runtime-authority-convergence/rc-06c/acceptance/（SHA256SUMS）。",
+        "residual：默认 writer 仍为 legacy；acceptance coverage ui=false，未重跑 Electron 套件。"
       ],
       "execution_hints": [],
       "id": "TF-0036",
       "kind": "task",
+      "next_action": "本节点已收口。下一步 TF-0037（RC-06D Task Loop 生命周期 cutover），实现提交 4f74a16df 在 rc04-dev。",
       "non_goals": [],
       "primary_parent": "TF-0028",
       "priority": 1,
-      "progress": 10.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "in_progress",
+      "status": "done",
       "success_metrics": [],
-      "summary": "把 Mission definitions 适配为 TaskFlow templates/controllers，并在迁移证明后退役旧 lifecycle writer。",
+      "summary": "[2026-09-24 收口 · 工程验收 accepted，scope=engineering-only] RC-06C Mission 生命周期经共享 workflow lifecycle owner 完成受控单写 cutover（OPENCLAW_MISSION_LIFECYCLE_WRITER）：taskflow 下每次状态变更先提交 TaskFlow 再写 mission_runs（兼容读），被拒抛 MissionLifecycleConflictError、tick 停止并保留已提交状态（legacy freeze）；blocked mission 为终态结算为 failed；flow state 记录 mission status 与 wait mode；gateway 启动把被中断 tick 的 mission 经同一 owner 回到 sleeping。正式 RC-00 验收 run2 Executor + 独立 Verifier pass（9497/0/50）。",
       "title": "RC-06C Mission Lifecycle 迁移",
-      "updated_at": "2026-09-24T10:45:34.767431Z"
+      "updated_at": "2026-09-24T14:18:51.590681Z"
     },
     "TF-0037": {
       "acceptance_criteria": [
@@ -12623,7 +12626,7 @@
       "context_tags": [],
       "created_at": "2026-08-02T13:07:59.996410Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 10.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "very_high",
@@ -12637,18 +12640,18 @@
       "non_goals": [],
       "primary_parent": "TF-0028",
       "priority": 1,
-      "progress": 0.0,
+      "progress": 10.0,
       "progress_source": "manual",
       "purpose": "",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "in_progress",
       "success_metrics": [],
       "summary": "最后迁移 Task Loop lifecycle；long_task_checkpoints 只保留 checkpoint material，replay 永不执行 effect。",
       "title": "RC-06D Task Loop Lifecycle 迁移",
-      "updated_at": "2026-08-19T15:15:54.033484Z"
+      "updated_at": "2026-09-24T14:18:51.590681Z"
     },
     "TF-0038": {
       "acceptance_criteria": [
@@ -26976,7 +26979,7 @@
   },
   "status_queues": {
     "actionable_todos": [
-      "TF-0036",
+      "TF-0037",
       "TF-0151",
       "TF-0129",
       "TF-0130",
@@ -26991,7 +26994,6 @@
       "TF-0010",
       "TF-0013",
       "TF-0028",
-      "TF-0037",
       "TF-0041",
       "TF-0042"
     ],
@@ -27063,6 +27065,7 @@
         "TF-0033",
         "TF-0034",
         "TF-0035",
+        "TF-0036",
         "TF-0043",
         "TF-0044",
         "TF-0045",
@@ -27254,10 +27257,9 @@
         "TF-0242"
       ],
       "in_progress": [
-        "TF-0036"
+        "TF-0037"
       ],
       "proposed": [
-        "TF-0037",
         "TF-0038",
         "TF-0039",
         "TF-0040",
@@ -27275,7 +27277,6 @@
       "TF-0010",
       "TF-0013",
       "TF-0028",
-      "TF-0036",
       "TF-0037",
       "TF-0038",
       "TF-0039",
@@ -27294,10 +27295,10 @@
   },
   "summary": {
     "blocked_count": 12,
-    "done_count": 216,
+    "done_count": 217,
     "edge_count": 414,
     "node_count": 242,
-    "open_count": 18,
+    "open_count": 17,
     "review_needed_count": 0
   },
   "tree_edges": [
