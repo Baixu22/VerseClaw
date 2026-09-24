@@ -60,6 +60,15 @@ export function isTerminalFlowStatus(status: FlowStatus): boolean {
 export const LEGAL_FLOW_TRANSITIONS: ReadonlyArray<readonly [FlowStatus, FlowStatus]> = [
   ['queued', 'running'],
   ['queued', 'cancelled'],
+  // The legacy task registry settles queued work without it ever running:
+  // cron journal recovery (succeeded/failed, or a blocked outcome) and the
+  // maintenance sweep that marks a vanished active task lost.
+  ['queued', 'succeeded'],
+  ['queued', 'failed'],
+  ['queued', 'blocked'],
+  ['queued', 'lost'],
+  // A queued flow can be put on hold before it first runs (Mission pause).
+  ['queued', 'waiting'],
   ['running', 'waiting'],
   ['running', 'blocked'],
   ['running', 'succeeded'],
@@ -71,8 +80,13 @@ export const LEGAL_FLOW_TRANSITIONS: ReadonlyArray<readonly [FlowStatus, FlowSta
   ['blocked', 'running'],
   ['blocked', 'cancelled'],
   ['blocked', 'failed'],
+  // A restart finds the backing process gone: every active status can be lost.
+  ['running', 'lost'],
+  ['waiting', 'lost'],
+  ['blocked', 'lost'],
   // Repeated non-terminal progress events (e.g. ClawGraph node_ready/started)
   // re-project the same running/blocked status idempotently.
+  ['queued', 'queued'],
   ['running', 'running'],
   ['waiting', 'waiting'],
   ['blocked', 'blocked'],
