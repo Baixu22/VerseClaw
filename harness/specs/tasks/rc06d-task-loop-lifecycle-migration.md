@@ -4,7 +4,7 @@ title: RC-06D Task Loop Lifecycle Migration
 taskType: engineering-acceptance
 # Pinned to the commit RC-06DR starts from; the shared branch diverged from
 # origin/main long ago.
-diffBase: RC06D_BASE
+diffBase: 11ee016de
 intent: Migrate Task Loop lifecycle (waiting, cancel, terminal state) to TaskFlow last. long_task_checkpoints retain checkpoint material only; replay never executes effects. After this package, TaskFlow/TaskRegistry are the only workflow lifecycle writers.
 ownedPaths:
   - openclaw_runtime/src/agents/task-loop-controller.ts
