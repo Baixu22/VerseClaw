@@ -1755,6 +1755,19 @@ export async function startGatewayServer(
         } catch (err) {
           log.warn(`gateway: ClawGraph lifecycle restart recovery failed: ${String(err)}`);
         }
+        // RC-06C: a mission whose tick the previous boot interrupted goes back
+        // to sleeping through the TaskFlow lifecycle owner (taskflow writer only).
+        try {
+          const { recoverInterruptedMissionLifecycles } = await import(
+            "../agents/mission-control/controller.js"
+          );
+          const recovered = recoverInterruptedMissionLifecycles();
+          if (recovered.length > 0) {
+            log.info(`gateway: recovered ${recovered.length} interrupted mission tick(s)`);
+          }
+        } catch (err) {
+          log.warn(`gateway: Mission lifecycle restart recovery failed: ${String(err)}`);
+        }
         // TF-0081: reconcile supervisor runs orphaned by a previous gateway
         // boot (persisted manifest + fail-closed OS containment). Never
         // expands kill scope and never touches runs with a live owner.

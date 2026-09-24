@@ -66,15 +66,25 @@ describe('RC-06C Mission -> TaskFlow read-only projection', () => {
 
   it('preserves restart semantics (recover reads the same SQLite rows)', () => {
     expect(projectMissionRun(input({ status: 'running' }), options()).projected).toBe(true);
-    expect(projectMissionRun(input({ status: 'blocked' }), options()).projected).toBe(true);
+    expect(projectMissionRun(input({ status: 'sleeping', waitMode: 'sleep' }), options()).projected).toBe(true);
     const recovery = recoverMissionProjection('mission-1', options());
     expect(recovery.recovered).toBe(true);
-    expect(recovery.status).toBe('blocked');
+    expect(recovery.status).toBe('waiting');
+    expect(recovery.missionStatus).toBe('sleeping');
   });
 
-  it('preserves resume semantics (blocked -> running)', () => {
+  it('a blocked mission is final: it settles as failed and cannot resume', () => {
     expect(projectMissionRun(input({ status: 'running' }), options()).projected).toBe(true);
-    expect(projectMissionRun(input({ status: 'blocked' }), options()).projected).toBe(true);
+    const blocked = projectMissionRun(input({ status: 'blocked' }), options());
+    expect(blocked.status).toBe('failed');
+    const store = new TaskFlowCasStore(options().database);
+    expect(store.getById('mission:mission-1')?.ended_at).not.toBeNull();
+    expect(projectMissionRun(input({ status: 'running', tick: 2 }), options()).projected).toBe(false);
+  });
+
+  it('preserves resume semantics (sleeping -> running on the next tick)', () => {
+    expect(projectMissionRun(input({ status: 'running' }), options()).projected).toBe(true);
+    expect(projectMissionRun(input({ status: 'sleeping' }), options()).projected).toBe(true);
     const resumed = projectMissionRun(input({ status: 'running', phase: 'execute', tick: 2 }), options());
     expect(resumed.projected).toBe(true);
     expect(resumed.status).toBe('running');
@@ -102,9 +112,7 @@ describe('RC-06C Mission -> TaskFlow read-only projection', () => {
       deps as never,
     );
     missions.set(mission.missionId, mission);
-    // Bring the projected flow to running first (the mission ran a tick);
-    // queued -> waiting is not a legal transition, exactly like production.
-    expect(projectMissionRun(input({ missionId: mission.missionId, status: 'running', phase: 'execute', tick: 1 }), options()).projected).toBe(true);
+    // A new mission can be paused before its first tick (queued -> waiting).
 
     const paused = pauseMission(mission.missionId, deps as never);
     expect(paused.status).toBe('paused');
