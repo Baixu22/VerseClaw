@@ -26,6 +26,11 @@ ownedPaths:
   - .agent-workbench/task-forest/**
   - docs/dev/handoffs/LATEST.md
   - docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md
+  # Agent Dev evidence refreshed so the acceptance audit gate sees it inside
+  # its 24h freshness window.
+  - artifacts/agent-dev-deep-test/**
+  - artifacts/agent-dev-quality/**
+  - artifacts/agent-dev-workbench/**
 touchedAreas:
   - openclaw_runtime/src/plugins/**
   - openclaw_runtime/src/memory/**
@@ -60,7 +65,11 @@ rollback:
   - No data migration rollback is required because no new persistent store is introduced.
 requiredTests:
   - pnpm exec vitest run tests/unit/rc07-memory-context-slot-convergence.test.ts tests/unit/tf0018-correction-propagation.test.ts
-  - pnpm --dir openclaw_runtime exec vitest run src/agents/slot-convergence.test.ts src/memory/memory-policy.test.ts src/context-engine/block-store.test.ts
+  # One command per file: these sit in vitest projects with different maxWorkers,
+  # which vitest refuses to schedule in a single run.
+  - pnpm --dir openclaw_runtime exec vitest run src/agents/slot-convergence.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run src/memory/memory-policy.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run src/context-engine/block-store.test.ts
   - pnpm --dir openclaw_runtime exec vitest run src/tasks/task-flow-cas.test.ts src/agents/task-loop-taskflow-projection.test.ts
   - pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts
   - pnpm exec vitest run tests/unit/runtime-authority-convergence-control-pack.test.ts
