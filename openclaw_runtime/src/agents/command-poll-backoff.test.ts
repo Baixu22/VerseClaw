@@ -30,7 +30,8 @@ describe("command poll backoff bounds", () => {
 
   it("TF-0221 treats an invalid prune age as the default retention window", () => {
     const session = state();
-    session.commandPollCounts!.set("command", { count: 0, lastPollAt: Date.now() });
+    // A minute old: kept under the one-hour default, dropped if -1 were clamped to 0.
+    session.commandPollCounts!.set("command", { count: 0, lastPollAt: Date.now() - 60_000 });
     pruneStaleCommandPolls(session, -1);
     expect(session.commandPollCounts!.has("command")).toBe(true);
   });

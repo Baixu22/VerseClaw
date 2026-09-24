@@ -82,7 +82,7 @@ export function pruneStaleCommandPolls(state: SessionState, maxAgeMs = 3600000):
   }
 
   const now = Date.now();
-  const maxAge = Number.isFinite(maxAgeMs) ? Math.max(0, maxAgeMs) : 3600000;
+  const maxAge = Number.isFinite(maxAgeMs) && maxAgeMs >= 0 ? maxAgeMs : 3600000;
   for (const [commandId, data] of state.commandPollCounts.entries()) {
     if (now - data.lastPollAt > maxAge) {
       state.commandPollCounts.delete(commandId);
