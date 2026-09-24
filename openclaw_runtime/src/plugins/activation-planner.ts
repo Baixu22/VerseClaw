@@ -122,20 +122,15 @@ export function resolveManifestActivationPlan(
     })
     .toSorted((left, right) => left.pluginId.localeCompare(right.pluginId));
 
-  // RC-07 runtime census from REAL inputs: the manifest records this plan is
-  // about to activate and the resolved memory slot (never hardcoded ids). A
-  // non-zero parallel-memory-writer census is fail-closed — the plan is not
-  // produced and the illegal configuration can never activate.
+  // RC-07 runtime census from the real manifest registry: memory writers are
+  // the memory-kind plugins the slot selects. A non-zero parallel-memory-writer
+  // census is fail-closed; the plan is not produced.
   const census = buildSlotMechanismCensus({
-    registeredPluginIds: [
-      ...registry.plugins.map((plugin) => plugin.id),
-      ...(normalizedConfig.slots.memory === "runtime-memory" ? ["runtime-memory"] : []),
-    ],
+    registeredPlugins: registry.plugins,
     contextEngineIds: normalizedConfig.slots.contextEngine
       ? [normalizedConfig.slots.contextEngine]
       : [],
-    memoryStoreConfigured: normalizedConfig.slots.memory === "memory-core",
-    memorySlotId: normalizedConfig.slots.memory ?? undefined,
+    memorySlotId: normalizedConfig.slots.memory,
     runtimeMemoryPersist: params.config?.runtime?.memory?.persist === true,
   });
   if (census.parallelMemoryWriters > 0) {
