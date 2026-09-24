@@ -1,27 +1,22 @@
 [
   {
     "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 0.96,
-      "user_goal": "让功能都能正常投入使用",
-      "validation_plan": [
-        "task-forest validate/export",
-        "前置单测和集成测试",
-        "DCS/Knowledge E2E",
-        "fresh acceptance report"
-      ],
-      "why_not_enough": "完成工程任务后仍需要用户进行真实 channel/product acceptance，不能自动解锁 GA。",
-      "why_this_task": "任务链直接覆盖当前发现的跨层串写、异步落库、lineage 缺失和经验噪声四类孤岛。"
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
     },
     "blocked_by": [],
-    "confidence": 0.75,
+    "confidence": 0.8,
     "context_tags": [],
     "desired_outcomes": [],
     "difficulty": "very_high",
-    "id": "TF-0037",
+    "id": "TF-0038",
     "kind": "task",
-    "next_action": "wait/resume/cancel/terminal/restart 测试通过",
-    "priority": 1,
+    "next_action": "平行 memory writer 0",
+    "priority": 2,
     "progress": 10.0,
     "purpose": "",
     "ready": true,
@@ -29,7 +24,7 @@
     "remaining_minutes_min": null,
     "status": "in_progress",
     "success_metrics": [],
-    "title": "RC-06D Task Loop Lifecycle 迁移"
+    "title": "RC-07 Memory 与 Context 插件槽收敛"
   },
   {
     "alignment": {
@@ -237,35 +232,6 @@
       "TF-0009 非法 done 或产品锁漂移 0"
     ],
     "title": "P1 组件小范围受控内测运行包"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0037"
-    ],
-    "confidence": 0.8,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "very_high",
-    "id": "TF-0038",
-    "kind": "task",
-    "next_action": "先完成依赖：TF-0037",
-    "priority": 2,
-    "progress": 0.0,
-    "purpose": "",
-    "ready": false,
-    "remaining_minutes_max": null,
-    "remaining_minutes_min": null,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "RC-07 Memory 与 Context 插件槽收敛"
   },
   {
     "alignment": {
@@ -542,7 +508,6 @@
       "why_this_task": ""
     },
     "blocked_by": [
-      "TF-0037",
       "TF-0038",
       "TF-0039",
       "TF-0040"
@@ -553,7 +518,7 @@
     "difficulty": "high",
     "id": "TF-0041",
     "kind": "task",
-    "next_action": "先完成依赖：TF-0037, TF-0038, TF-0039, TF-0040",
+    "next_action": "先完成依赖：TF-0038, TF-0039, TF-0040",
     "priority": 1,
     "progress": 0.0,
     "purpose": "",

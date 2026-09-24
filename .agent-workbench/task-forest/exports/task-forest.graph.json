@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-24T14:19:21.636794Z",
+  "generated_at": "2026-09-24T17:01:29.356579Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -12626,32 +12626,36 @@
       "context_tags": [],
       "created_at": "2026-08-02T13:07:59.996410Z",
       "deprecated_at": null,
-      "derived_progress": 10.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "very_high",
       "estimated_total_minutes": null,
       "evidence": [
-        "RC-06D independent Verifier VERDICT=pass (zero findings): TaskLoop->TaskFlow projection + controller emit production wiring, wait/terminal/restart/checkpoint-separation/replay-0, 14+46+36 tests"
+        "2026-09-24 实现提交 6e23931be（rc04-dev 4f74a16df cherry-pick）+ diffBase 钉住 ee8be4aa1：task-loop-controller.ts commitTaskLoopLifecycle/TaskLoopLifecycleConflictError/settleOrphanedTaskLoopLifecycles/getTaskLoopLifecycle；task-loop-taskflow-projection.ts 改经 lifecycle owner；server.impl.ts 启动结算；新增 task-loop-lifecycle-cutover.test.ts 11 项（含删除 repair 期 cancel 检查后该用例失败的变异核对）。",
+        "2026-09-24 正式 RC-00 验收 run1（candidate ee8be4aa1）：Executor NO-GO，13 门同时失败于 detached worktree 内 eslint.js/tsgo.js MODULE_NOT_FOUND——验收期间另一工作树的 pnpm 命令与离线安装竞争；共享 store 完好，代码未改。",
+        "2026-09-25 正式 RC-00 验收 run2：candidate ee8be4aa19b0acd80affd778de9d7c2e8a0401e6（cleanAtPlan=true）；Executor rc06d-executor-2 pass reportDigest 461a83f9…；独立 Verifier rc06d-verifier-2 pass engineeringAcceptedByAgent=true reportDigest e84a64d2… consistency.errors=[] identicalGateContracts=true；9511 passed/0 failed/50 skipped；三锁 false。归档 artifacts/runtime-authority-convergence/rc-06d/acceptance/（SHA256SUMS）。",
+        "residual：三个域默认 writer 仍为 legacy（cutover 已证明、未默认开启）；acceptance coverage ui=false，未重跑 Electron 套件。"
       ],
       "execution_hints": [],
       "id": "TF-0037",
       "kind": "task",
+      "next_action": "本节点已收口，RC-06 四包全部验收。下一步 TF-0038（RC-07 Memory 与 Context 插件槽收敛），修复提交 4ee385cc3 在 rc04-dev。",
       "non_goals": [],
       "primary_parent": "TF-0028",
       "priority": 1,
-      "progress": 10.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "in_progress",
+      "status": "done",
       "success_metrics": [],
-      "summary": "最后迁移 Task Loop lifecycle；long_task_checkpoints 只保留 checkpoint material，replay 永不执行 effect。",
+      "summary": "[2026-09-25 收口 · 工程验收 accepted，scope=engineering-only] RC-06D Task Loop 生命周期经共享 workflow lifecycle owner 完成受控单写 cutover（OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER）：taskflow 下 controller 先提交状态再行动——人工等待→waiting、guardian/证据阻塞→blocked、cancel→cancelled；被拒即停并采用已提交状态（legacy freeze）；已结算后的副作用失败不重开生命周期；gateway 启动结算孤儿为 lost、getTaskLoopLifecycle 从 TaskFlow 应答且不重放效果；repair 期间落地的 cancel 在下次编排前停止。RC-06 四包全部验收。正式 RC-00 验收 run2 Executor + 独立 Verifier pass（9511/0/50）。",
       "title": "RC-06D Task Loop Lifecycle 迁移",
-      "updated_at": "2026-09-24T14:18:51.590681Z"
+      "updated_at": "2026-09-24T17:00:44.598760Z"
     },
     "TF-0038": {
       "acceptance_criteria": [
@@ -12662,7 +12666,7 @@
       ],
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0,
+        "fit_confidence": 0.0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -12675,7 +12679,7 @@
       "context_tags": [],
       "created_at": "2026-08-02T13:07:59.996410Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 10.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "very_high",
@@ -12690,18 +12694,18 @@
       "non_goals": [],
       "primary_parent": "TF-0028",
       "priority": 2,
-      "progress": 0,
+      "progress": 10.0,
       "progress_source": "manual",
       "purpose": "",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "in_progress",
       "success_metrics": [],
       "summary": "强制一个 configured memory slot owner 和一个 DCS contextEngine owner；其余机制降为 candidate、proposal、benchmark 或 projection。",
       "title": "RC-07 Memory 与 Context 插件槽收敛",
-      "updated_at": "2026-08-03T08:02:21.717409Z"
+      "updated_at": "2026-09-24T17:00:44.598760Z"
     },
     "TF-0039": {
       "acceptance_criteria": [
@@ -26979,14 +26983,13 @@
   },
   "status_queues": {
     "actionable_todos": [
-      "TF-0037",
+      "TF-0038",
       "TF-0151",
       "TF-0129",
       "TF-0130",
       "TF-0141",
       "TF-0144",
       "TF-0009",
-      "TF-0038",
       "TF-0039",
       "TF-0040",
       "TF-0047",
@@ -27066,6 +27069,7 @@
         "TF-0034",
         "TF-0035",
         "TF-0036",
+        "TF-0037",
         "TF-0043",
         "TF-0044",
         "TF-0045",
@@ -27257,10 +27261,9 @@
         "TF-0242"
       ],
       "in_progress": [
-        "TF-0037"
+        "TF-0038"
       ],
       "proposed": [
-        "TF-0038",
         "TF-0039",
         "TF-0040",
         "TF-0041"
@@ -27277,7 +27280,6 @@
       "TF-0010",
       "TF-0013",
       "TF-0028",
-      "TF-0037",
       "TF-0038",
       "TF-0039",
       "TF-0040",
@@ -27295,10 +27297,10 @@
   },
   "summary": {
     "blocked_count": 12,
-    "done_count": 217,
+    "done_count": 218,
     "edge_count": 414,
     "node_count": 242,
-    "open_count": 17,
+    "open_count": 16,
     "review_needed_count": 0
   },
   "tree_edges": [
