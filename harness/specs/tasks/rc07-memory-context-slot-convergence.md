@@ -31,6 +31,9 @@ ownedPaths:
   - artifacts/agent-dev-deep-test/**
   - artifacts/agent-dev-quality/**
   - artifacts/agent-dev-workbench/**
+  # A pre-existing timing-dependent defect the RC-07 run2 Verifier hit.
+  - openclaw_runtime/src/agents/command-poll-backoff.ts
+  - openclaw_runtime/src/agents/command-poll-backoff.test.ts
 touchedAreas:
   - openclaw_runtime/src/plugins/**
   - openclaw_runtime/src/memory/**
