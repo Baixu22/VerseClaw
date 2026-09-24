@@ -1,0 +1,42 @@
+{
+  "applied_at": "2026-09-24T22:31:27.285115Z",
+  "base_graph_hash": "f1165ea9d6ced6b186e3260a6eaa3efe80314595727f1df9ca5704629ba1b089",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "2026-09-25 实现提交 53a2b1d3b（rc04-dev 4ee385cc3 cherry-pick）+ diffBase 钉住 782782f99：slot-convergence.ts 以 registeredPlugins（kind + slot）建普查、assertSingleMemorySlotOwner 只拒非 owner、null slot 通过；activation-planner.ts 传真实 manifest 记录；config-normalization-shared.ts 透传 null；rc07 根测试加载 bundled manifest 注册表驱动真实 planner（memory-lancedb 与禁用 slot 可激活，非 owner 与第二 context engine fail-closed）并证明 AgentMap flag-off 零查询；spec 用真实 tf0018 更正传播测试替换不存在的 memory-store.test.ts。",
+          "2026-09-25 验收 run1（782782f99）NO-GO：Agent Dev 证据超 24h（24.37h）、required-test-2 混跑两个 vitest project（maxWorkers 不同）被 vitest 拒绝、环境失败（VerseShell 克隆 GitHub TLS 握手失败并级联到 provision 与 VerseShell 单测、runtime-build 原生崩溃 0xC0000409）。提交 5650cfc5f 刷新 Agent Dev 证据（daily-loop-ok，audit A；首次刷新 e2e-build 超硬限 0.5s，重跑而非放宽预算）并拆分 required test。",
+          "2026-09-25 验收 run2（5650cfc5f）：Executor pass，Verifier runtime-unit 1 失败——既有时序缺陷 pruneStaleCommandPolls 把负数保留期夹为 0；提交 a88e498e1 修复并让测试确定性（去掉修复即失败）。",
+          "2026-09-25 正式 RC-00 验收 run3：candidate a88e498e10436c5695437442bb1c2900c4e30f7b（cleanAtPlan=true）；Executor rc07-executor-3 pass reportDigest 00d43e9e…；独立 Verifier rc07-verifier-3 pass engineeringAcceptedByAgent=true reportDigest 5ab057b8… consistency.errors=[] identicalGateContracts=true；9559 passed/0 failed/50 skipped；三锁 false。归档 artifacts/runtime-authority-convergence/rc-07/acceptance/（SHA256SUMS）。"
+        ],
+        "next_action": "本节点已收口。下一步 TF-0039（RC-08A MCP 与 Host-native Tool 收敛），修复提交 7db293a69 + a0bda723b 在 rc04-dev。",
+        "summary": "[2026-09-25 收口 · 工程验收 accepted，scope=engineering-only] RC-07 Memory/Context 插件槽收敛：修掉 RC-07 守卫把除 memory-core/runtime-memory 外所有 memory slot 拒掉的缺陷（memory-lancedb 等真实记忆插件此前无法启动）；memory slot 接受任一单一 owner、拒绝被分类为非 owner 的机制；activation planner 从真实 manifest 注册表按声明 kind + slot 选择计数写入者并对并行写入 fail-closed；删除无生产调用方的 helper。正式 RC-00 验收 run3 Executor + 独立 Verifier pass（9559/0/50）。"
+      },
+      "id": "TF-0038"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0038",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0039",
+      "progress": 10,
+      "status": "in_progress"
+    }
+  ],
+  "created_at": "2026-09-24T22:31:27.003140Z",
+  "proposal_id": "TFP-tf0038-rc07-acceptance-closeout-20260925",
+  "rationale": "按 Task Forest 自动收口门（R3）收口 TF-0038：spec acceptance 逐条直读核对——唯一配置的 memory slot owner 写入记忆，其余机制分类为 candidate/review/benchmark/projection（真实 manifest 注册表 + 真实 activation planner 驱动）；DCS 占唯一 contextEngine slot，第二 context engine fail-closed；Runtime Memory 持久化在未选中 runtime-memory 时被拒为并行写入者；diagnostics-off 下 AgentMap 零查询（真实 provider 驱动）；删除/更正传播由 tf0018-correction-propagation 真实 store 测试证明；SEKB 零自动回写；默认值未改。正式 RC-00 验收 run3 Executor + 独立 Verifier pass（9559/0/50）。三锁 false。",
+  "session_id": "dsh-tf0038-rc07-20260925",
+  "status": "applied"
+}

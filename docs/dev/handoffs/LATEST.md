@@ -1,5 +1,12 @@
 # 会话交接（LATEST）
 
+## 收口完成（2026-09-25，TF-0038 · RC-07）：Memory/Context 插件槽收敛 + 正式 RC-00 验收 pass
+
+- **TF-0038 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。
+- **修掉的缺陷**：RC-07 守卫把除 `memory-core`/`runtime-memory` 外的所有 memory slot 拒掉，`memory-lancedb` 等真实记忆插件无法启动；写入者普查按硬编码 id。现在 memory slot 接受任一单一 owner、拒绝非 owner 机制；activation planner 从真实 manifest 注册表计数写入者。另修一个既有时序缺陷：`pruneStaleCommandPolls` 把负数保留期夹为 0。
+- **正式验收**：run3 干净候选 `a88e498e1`，Executor pass → 独立 Verifier（`rc07-verifier-3`）pass，9559 / 0 / 50。run1/run2 的 NO-GO 原因见 WORK-PACKAGES（证据过期、混 project 的 required test、GitHub TLS、原生崩溃、上述时序缺陷）。
+- **下一步**：TF-0039（RC-08A）——修复 `7db293a69`（Electron MCP 不再对 host-native 与未握手服务报 connected、拒绝 WebSocket）+ `a0bda723b`（e2e profile 按 deferredProfiles 移交 TF-0041）在 `rc04-dev`；RC-08B 修复 `4f57ec42d` 同在 `rc04-dev`。Agent Dev 证据生成于 2026-09-24T18:58Z，24h 内有效。
+
 ## 收口完成（2026-09-25，TF-0037 · RC-06D）：Task Loop 生命周期 cutover 到 TaskFlow + 正式 RC-00 验收 pass（RC-06 四包完成）
 
 - **TF-0037 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。RC-06A/B/C/D 全部验收：选 `taskflow` writer 时 TaskFlow 是 ClawGraph、Mission、Task Loop 的唯一生命周期写入者。

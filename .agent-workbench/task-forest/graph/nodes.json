@@ -2819,26 +2819,29 @@
     "difficulty": "very_high",
     "estimated_total_minutes": null,
     "evidence": [
-      "RC-06D accepted; RC-07 memory/context slot convergence starts",
-      "RC-07 independent Verifier VERDICT=pass (after NO-GO fix): slot-convergence classification + config-normalization production wiring, single memory slot owner, single contextEngine slot (CRK hosts DCS assembly), parallel writers 0, SEKB auto-writeback 0, 12+40+10 tests"
+      "2026-09-25 实现提交 53a2b1d3b（rc04-dev 4ee385cc3 cherry-pick）+ diffBase 钉住 782782f99：slot-convergence.ts 以 registeredPlugins（kind + slot）建普查、assertSingleMemorySlotOwner 只拒非 owner、null slot 通过；activation-planner.ts 传真实 manifest 记录；config-normalization-shared.ts 透传 null；rc07 根测试加载 bundled manifest 注册表驱动真实 planner（memory-lancedb 与禁用 slot 可激活，非 owner 与第二 context engine fail-closed）并证明 AgentMap flag-off 零查询；spec 用真实 tf0018 更正传播测试替换不存在的 memory-store.test.ts。",
+      "2026-09-25 验收 run1（782782f99）NO-GO：Agent Dev 证据超 24h（24.37h）、required-test-2 混跑两个 vitest project（maxWorkers 不同）被 vitest 拒绝、环境失败（VerseShell 克隆 GitHub TLS 握手失败并级联到 provision 与 VerseShell 单测、runtime-build 原生崩溃 0xC0000409）。提交 5650cfc5f 刷新 Agent Dev 证据（daily-loop-ok，audit A；首次刷新 e2e-build 超硬限 0.5s，重跑而非放宽预算）并拆分 required test。",
+      "2026-09-25 验收 run2（5650cfc5f）：Executor pass，Verifier runtime-unit 1 失败——既有时序缺陷 pruneStaleCommandPolls 把负数保留期夹为 0；提交 a88e498e1 修复并让测试确定性（去掉修复即失败）。",
+      "2026-09-25 正式 RC-00 验收 run3：candidate a88e498e10436c5695437442bb1c2900c4e30f7b（cleanAtPlan=true）；Executor rc07-executor-3 pass reportDigest 00d43e9e…；独立 Verifier rc07-verifier-3 pass engineeringAcceptedByAgent=true reportDigest 5ab057b8… consistency.errors=[] identicalGateContracts=true；9559 passed/0 failed/50 skipped；三锁 false。归档 artifacts/runtime-authority-convergence/rc-07/acceptance/（SHA256SUMS）。"
     ],
     "execution_hints": [],
     "id": "TF-0038",
     "kind": "task",
+    "next_action": "本节点已收口。下一步 TF-0039（RC-08A MCP 与 Host-native Tool 收敛），修复提交 7db293a69 + a0bda723b 在 rc04-dev。",
     "non_goals": [],
     "priority": 2,
-    "progress": 10.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [],
-    "summary": "强制一个 configured memory slot owner 和一个 DCS contextEngine owner；其余机制降为 candidate、proposal、benchmark 或 projection。",
+    "summary": "[2026-09-25 收口 · 工程验收 accepted，scope=engineering-only] RC-07 Memory/Context 插件槽收敛：修掉 RC-07 守卫把除 memory-core/runtime-memory 外所有 memory slot 拒掉的缺陷（memory-lancedb 等真实记忆插件此前无法启动）；memory slot 接受任一单一 owner、拒绝被分类为非 owner 的机制；activation planner 从真实 manifest 注册表按声明 kind + slot 选择计数写入者并对并行写入 fail-closed；删除无生产调用方的 helper。正式 RC-00 验收 run3 Executor + 独立 Verifier pass（9559/0/50）。",
     "title": "RC-07 Memory 与 Context 插件槽收敛",
-    "updated_at": "2026-09-24T17:00:44.598760Z"
+    "updated_at": "2026-09-24T22:31:27.194934Z"
   },
   "TF-0039": {
     "acceptance_criteria": [
@@ -2849,7 +2852,7 @@
     ],
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0,
+      "fit_confidence": 0.0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -2873,18 +2876,18 @@
     "kind": "task",
     "non_goals": [],
     "priority": 2,
-    "progress": 0,
+    "progress": 10.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "in_progress",
     "success_metrics": [],
     "summary": "保留 MCP SDK 为外部协议权威，把 Work Provider 降为 catalog/projection，并诚实标记 host-native 工具。",
     "title": "RC-08A MCP 与 Host-native Tool 收敛",
-    "updated_at": "2026-08-03T08:02:21.717409Z"
+    "updated_at": "2026-09-24T22:31:27.194934Z"
   },
   "TF-0040": {
     "acceptance_criteria": [

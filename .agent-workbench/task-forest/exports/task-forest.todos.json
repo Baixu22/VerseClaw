@@ -9,13 +9,13 @@
       "why_this_task": ""
     },
     "blocked_by": [],
-    "confidence": 0.8,
+    "confidence": 0.84,
     "context_tags": [],
     "desired_outcomes": [],
-    "difficulty": "very_high",
-    "id": "TF-0038",
+    "difficulty": "high",
+    "id": "TF-0039",
     "kind": "task",
-    "next_action": "平行 memory writer 0",
+    "next_action": "MCP real handshake/conformance 通过",
     "priority": 2,
     "progress": 10.0,
     "purpose": "",
@@ -24,7 +24,7 @@
     "remaining_minutes_min": null,
     "status": "in_progress",
     "success_metrics": [],
-    "title": "RC-07 Memory 与 Context 插件槽收敛"
+    "title": "RC-08A MCP 与 Host-native Tool 收敛"
   },
   {
     "alignment": {
@@ -232,35 +232,6 @@
       "TF-0009 非法 done 或产品锁漂移 0"
     ],
     "title": "P1 组件小范围受控内测运行包"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0038"
-    ],
-    "confidence": 0.84,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "high",
-    "id": "TF-0039",
-    "kind": "task",
-    "next_action": "先完成依赖：TF-0038",
-    "priority": 2,
-    "progress": 0.0,
-    "purpose": "",
-    "ready": false,
-    "remaining_minutes_max": null,
-    "remaining_minutes_min": null,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "RC-08A MCP 与 Host-native Tool 收敛"
   },
   {
     "alignment": {
@@ -508,7 +479,6 @@
       "why_this_task": ""
     },
     "blocked_by": [
-      "TF-0038",
       "TF-0039",
       "TF-0040"
     ],
@@ -518,7 +488,7 @@
     "difficulty": "high",
     "id": "TF-0041",
     "kind": "task",
-    "next_action": "先完成依赖：TF-0038, TF-0039, TF-0040",
+    "next_action": "先完成依赖：TF-0039, TF-0040",
     "priority": 1,
     "progress": 0.0,
     "purpose": "",
