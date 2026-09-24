@@ -1,5 +1,13 @@
 # 会话交接（LATEST）
 
+## 收口完成（2026-09-25，TF-0037 · RC-06D）：Task Loop 生命周期 cutover 到 TaskFlow + 正式 RC-00 验收 pass（RC-06 四包完成）
+
+- **TF-0037 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。RC-06A/B/C/D 全部验收：选 `taskflow` writer 时 TaskFlow 是 ClawGraph、Mission、Task Loop 的唯一生命周期写入者。
+- **内容**：Task Loop 在 `OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER=taskflow` 下先提交再行动（人工等待→waiting、阻塞→blocked、cancel→cancelled），被拒即停并采用已提交状态；gateway 启动结算孤儿为 `lost`，不重放效果；repair 期间落地的 cancel 在下一次编排前停止（此前会多跑一次）。
+- **正式验收**：run2 干净候选 `ee8be4aa1`，Executor pass → 独立 Verifier（`rc06d-verifier-2`）pass，9511 / 0 / 50。run1 NO-GO 是环境问题：验收期间在另一工作树跑 pnpm，与 detached 离线安装竞争致 `MODULE_NOT_FOUND`。**验收运行期间任何工作树都不要跑 pnpm。**
+- **residual**：三个域默认 writer 仍为 `legacy`。
+- **下一步**：TF-0038（RC-07）——修复提交 `4ee385cc3` 在 `rc04-dev`；RC-08A 的 Electron 修复在 `D:/ClawX-dev/rc04` 工作树中进行（会触发 UI e2e profile）。
+
 ## 收口完成（2026-09-24，TF-0036 · RC-06C）：Mission 生命周期 cutover 到 TaskFlow + 正式 RC-00 验收 pass
 
 - **TF-0036 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。
