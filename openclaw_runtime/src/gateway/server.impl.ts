@@ -1768,6 +1768,19 @@ export async function startGatewayServer(
         } catch (err) {
           log.warn(`gateway: Mission lifecycle restart recovery failed: ${String(err)}`);
         }
+        // RC-06D: Task Loop runs live in this process only, so a lifecycle
+        // TaskFlow still shows as active is settled as lost (no-op for legacy).
+        try {
+          const { settleOrphanedTaskLoopLifecycles } = await import(
+            "../agents/task-loop-controller.js"
+          );
+          const settled = settleOrphanedTaskLoopLifecycles();
+          if (settled.length > 0) {
+            log.info(`gateway: settled ${settled.length} orphaned Task Loop lifecycle(s) as lost`);
+          }
+        } catch (err) {
+          log.warn(`gateway: Task Loop lifecycle restart recovery failed: ${String(err)}`);
+        }
         // TF-0081: reconcile supervisor runs orphaned by a previous gateway
         // boot (persisted manifest + fail-closed OS containment). Never
         // expands kill scope and never touches runs with a live owner.
