@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "9192bb83858a197be62b7ab9c8a5679f549c6062",
-  "generatedAt": "2026-09-25T13:03:18.977Z",
+  "headSha": "8bb986586b87849de036dadae019d1fe0d69c89a",
+  "generatedAt": "2026-09-25T13:49:27.798Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,12 +34,12 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 241,
-  "rcOwnedPaths": 188,
-  "excludedPaths": 53,
+  "totalPaths": 243,
+  "rcOwnedPaths": 189,
+  "excludedPaths": 54,
   "byRc": {
     "RC-02": 23,
-    "RC-00": 94,
+    "RC-00": 95,
     "RC-03": 20,
     "RC-01R": 2,
     "RC-08A": 4,
@@ -54,7 +54,7 @@
   },
   "byExclusionWorkstream": {
     "feat(approvals)": 31,
-    "fix(rc09)": 5,
+    "fix(rc09)": 6,
     "docs(task-forest)": 2,
     "chore(harness)": 2,
     "chore(rc09)": 3,
@@ -812,6 +812,12 @@
       "declaredBySpec": true
     },
     {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/STATUS.md",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
       "path": "docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md",
       "rc": "RC-02",
       "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
@@ -1494,6 +1500,15 @@
         "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
         "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
         "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "tests/unit/uas-05-verseshell-process-lifecycle.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "8bb986586b87849de036dadae019d1fe0d69c89a",
+        "subject": "fix(rc09): clear the two pre-existing red unit tests blocking the acceptance run",
+        "workstream": "fix(rc09)"
       }
     }
   ]
