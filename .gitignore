@@ -100,13 +100,20 @@ artifacts/first-product-preview/*
 # checkout, otherwise the acceptance test fails with ENOENT for everyone
 # (issue #40 cause 3). Scoped to the single evidence file — sibling run
 # outputs under agent-engineering-acceptance/ stay ignored.
+#
+# manifest.json and final-report.json MUST stay ignored. The RC-09 protocol
+# writes them into this fixed output directory and then requires a clean source
+# worktree with HEAD === manifest.candidate.commit at executor, verifier and
+# validator time (validateAcceptanceManifest requireClean). Tracking them makes
+# the source worktree dirty the moment `plan` runs, so the executor reports
+# NO-GO with "source worktree is dirty" and the run cannot start. They are run
+# outputs; archive them under artifacts/runtime-authority-convergence/rc-09/
+# acceptance/ after the run, like every other RC package.
 !artifacts/agent-engineering-acceptance/
 artifacts/agent-engineering-acceptance/*
 !artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/
 artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/*
 !artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json
-!artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json
-!artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/final-report.json
 # RC-01 authority baseline is candidate material, not a run artifact: the
 # acceptance validator resolves it from the candidate tree, so it must be
 # tracked. Scoped to rc-01 only; other convergence run outputs stay ignored.
