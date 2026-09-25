@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-25T00:25:17.576335Z",
+  "generated_at": "2026-09-25T02:29:59.439825Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -12785,33 +12785,35 @@
       "context_tags": [],
       "created_at": "2026-08-02T13:07:59.996410Z",
       "deprecated_at": null,
-      "derived_progress": 10.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "high",
       "estimated_total_minutes": null,
       "evidence": [
-        "RC-08A accepted; RC-08B OTel/observability convergence starts",
-        "RC-08B independent Verifier VERDICT=pass: correlation-ids 5-segment digest + exporter-parity (exporter-off no second store, raw leakage 0) + official OTLP exporters, 48 tests"
+        "2026-09-25 实现提交 a9418c9f9（rc04-dev 4f57ec42d cherry-pick）+ diffBase 钉住 ff5b4f5f5：extensions/diagnostics-otel/src/service.ts exec span 接 activeInternalOrTrustedContext；删除 src/observability/exporter-parity.ts 与 trace-buffer 导出钩子；rc08b-otel.test.ts 改为真实 golden trace（去掉 exec 父修复即失败的变异核对）；根测试全仓静态核对单一导出者。",
+        "2026-09-25 正式 RC-00 验收 run1：candidate ff5b4f5f5bc803dd525c932133ccf5a6a2d7d3ce（cleanAtPlan=true）；Executor rc08b-executor pass reportDigest 196960d1…；独立 Verifier rc08b-verifier pass engineeringAcceptedByAgent=true reportDigest 00383115… consistency.errors=[] identicalGateContracts=true；9450 passed/0 failed/50 skipped；三锁 false。归档 artifacts/runtime-authority-convergence/rc-08b/acceptance/（SHA256SUMS）。",
+        "residual：根 OTel trace id 为随机值而非诊断 trace id，扩展对父 span 已结束后才到达的异步事件的 retained-context 回退无法命中；真实运行中异步队列在各段之间会排空。"
       ],
       "execution_hints": [],
       "id": "TF-0040",
       "kind": "task",
+      "next_action": "本节点已收口。RC-00..RC-08B 全部工程验收；下一步 TF-0041（RC-09）需要 owner 裁决候选范围。",
       "non_goals": [],
       "primary_parent": "TF-0028",
       "priority": 2,
-      "progress": 10.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "in_progress",
+      "status": "done",
       "success_metrics": [],
-      "summary": "OTel/OTLP 只负责 trace export；receipts/domain journals 保持事实，trajectory 有界，Observability JSONL 可重建。",
+      "summary": "[2026-09-25 收口 · 工程验收 accepted，scope=engineering-only] RC-08B OTel 与 Observability 收敛：diagnostics-otel（OTel NodeSDK + OTLP/protobuf）为唯一 trace 导出者；删除无生产调用方的手写 OTLP JSON 导出（exporter-parity.ts）与 trace-buffer 安装钩子；修复 openclaw.exec 效果 span 无父上下文、总被导出为孤立根 trace 的缺陷。golden 测试经真实 plugin-service host 驱动 ingress→run→model/tool→exec→delivery，在本地 collector 按 OTLP 字段号解码断言同一 trace 与父链、零原文泄漏、exporter-off 零导出。正式 RC-00 验收 Executor + 独立 Verifier pass（9450/0/50）。",
       "title": "RC-08B OTel 与 Observability 收敛",
-      "updated_at": "2026-09-25T00:24:55.715557Z"
+      "updated_at": "2026-09-25T02:29:26.703611Z"
     },
     "TF-0041": {
       "acceptance_criteria": [
@@ -12822,7 +12824,7 @@
       ],
       "alignment": {
         "fit": "unknown",
-        "fit_confidence": 0,
+        "fit_confidence": 0.0,
         "user_goal": "",
         "validation_plan": [],
         "why_not_enough": "",
@@ -12849,21 +12851,22 @@
       "execution_hints": [],
       "id": "TF-0041",
       "kind": "task",
+      "next_action": "需要 owner 裁决（2026-09-25 实测）：runtime-authority-convergence-final-acceptance spec 要求 changedPaths = git diff 6493d5cce..候选，且每个路径唯一归属 RC-00..RC-08B、拒绝其他工作流路径。当前分支自该基线 405 个提交、4587 个变更路径，含 public/lobe-icons（910）、showcase、system-maturity、visual-tune、live-model-cdp 等非 RC 工作流。二选一：①从 6493d5cce 重建只含 RC 提交的候选分支（数百次 cherry-pick、冲突风险高）；②修改 spec 口径，按 RC 各包 spec 的累计 ownedPaths 做归属、把非 RC 工作流显式排除并记录。依赖 TF-0037..TF-0040 均已 done。",
       "non_goals": [],
       "primary_parent": "TF-0028",
       "priority": 1,
-      "progress": 0,
+      "progress": 0.0,
       "progress_source": "manual",
       "purpose": "",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "blocked",
       "success_metrics": [],
       "summary": "在 clean candidate 上完成全量门禁和独立 Executor/Verifier 复跑，生成最终 manifest；只能进入 human_acceptance_pending。",
       "title": "RC-09 独立工程总验收与证据封存",
-      "updated_at": "2026-08-03T08:02:21.717409Z"
+      "updated_at": "2026-09-25T02:29:26.703611Z"
     },
     "TF-0042": {
       "acceptance_criteria": [
@@ -26990,7 +26993,6 @@
   },
   "status_queues": {
     "actionable_todos": [
-      "TF-0040",
       "TF-0151",
       "TF-0129",
       "TF-0130",
@@ -27011,6 +27013,7 @@
       "TF-0010",
       "TF-0013",
       "TF-0028",
+      "TF-0041",
       "TF-0042",
       "TF-0047",
       "TF-0129",
@@ -27027,6 +27030,7 @@
         "TF-0010",
         "TF-0013",
         "TF-0028",
+        "TF-0041",
         "TF-0042",
         "TF-0047",
         "TF-0129",
@@ -27077,6 +27081,7 @@
         "TF-0037",
         "TF-0038",
         "TF-0039",
+        "TF-0040",
         "TF-0043",
         "TF-0044",
         "TF-0045",
@@ -27267,12 +27272,8 @@
         "TF-0240",
         "TF-0242"
       ],
-      "in_progress": [
-        "TF-0040"
-      ],
-      "proposed": [
-        "TF-0041"
-      ],
+      "in_progress": [],
+      "proposed": [],
       "ready": [],
       "review_needed": []
     },
@@ -27285,7 +27286,6 @@
       "TF-0010",
       "TF-0013",
       "TF-0028",
-      "TF-0040",
       "TF-0041",
       "TF-0042",
       "TF-0047",
@@ -27299,11 +27299,11 @@
     "review_needed": []
   },
   "summary": {
-    "blocked_count": 12,
-    "done_count": 220,
+    "blocked_count": 13,
+    "done_count": 221,
     "edge_count": 414,
     "node_count": 242,
-    "open_count": 14,
+    "open_count": 13,
     "review_needed_count": 0
   },
   "tree_edges": [

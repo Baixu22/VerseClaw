@@ -1,5 +1,13 @@
 # 会话交接（LATEST）
 
+## 收口完成（2026-09-25，TF-0040 · RC-08B）：OTel 单一导出者 + 正式 RC-00 验收 pass；RC-00..RC-08B 全部工程验收
+
+- **TF-0040 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。
+- **内容**：diagnostics-otel 为唯一 trace 导出者；删除无生产调用方的手写 OTLP JSON 导出与 trace-buffer 钩子；`openclaw.exec` 效果 span 之前无父上下文、总导出为孤立根 trace，已修。golden 测试经真实 plugin-service host 启动、本地 collector 按 OTLP 字段号解码。
+- **正式验收**：干净候选 `ff5b4f5f5`，首跑 Executor pass → 独立 Verifier（`rc08b-verifier`）pass，9450 / 0 / 50。
+- **TF-0041（RC-09）已标 blocked，需要 owner 裁决**：其 spec 要求自 RC-01 基线 `6493d5cce` 以来的 4587 个变更路径（405 个提交）各自唯一归属 RC-00..08B、拒绝其他工作流路径，但分支含大量非 RC 工作流（图标资源、showcase、system-maturity 等）。选项：①重建只含 RC 提交的候选分支；②修改 spec，按各 RC spec 累计 ownedPaths 归属、显式排除并记录非 RC 工作流。
+- **注意**：Agent Dev 证据生成于 2026-09-24T18:58Z，下一次验收若晚于其后 24h 需先重跑 `pnpm agent-dev:deep-test`（e2e-build 硬限 45s，余量很小）。
+
 ## 收口完成（2026-09-25，TF-0039 · RC-08A）：MCP 不再报假连接 + 正式 RC-00 验收 pass
 
 - **TF-0039 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。

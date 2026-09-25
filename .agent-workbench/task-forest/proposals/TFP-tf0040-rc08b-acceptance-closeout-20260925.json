@@ -1,0 +1,48 @@
+{
+  "applied_at": "2026-09-25T02:29:26.814901Z",
+  "base_graph_hash": "661cf17bc95711b577991206f30f07ce86f1886cd44e01381358f41cc5e1d103",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "2026-09-25 实现提交 a9418c9f9（rc04-dev 4f57ec42d cherry-pick）+ diffBase 钉住 ff5b4f5f5：extensions/diagnostics-otel/src/service.ts exec span 接 activeInternalOrTrustedContext；删除 src/observability/exporter-parity.ts 与 trace-buffer 导出钩子；rc08b-otel.test.ts 改为真实 golden trace（去掉 exec 父修复即失败的变异核对）；根测试全仓静态核对单一导出者。",
+          "2026-09-25 正式 RC-00 验收 run1：candidate ff5b4f5f5bc803dd525c932133ccf5a6a2d7d3ce（cleanAtPlan=true）；Executor rc08b-executor pass reportDigest 196960d1…；独立 Verifier rc08b-verifier pass engineeringAcceptedByAgent=true reportDigest 00383115… consistency.errors=[] identicalGateContracts=true；9450 passed/0 failed/50 skipped；三锁 false。归档 artifacts/runtime-authority-convergence/rc-08b/acceptance/（SHA256SUMS）。",
+          "residual：根 OTel trace id 为随机值而非诊断 trace id，扩展对父 span 已结束后才到达的异步事件的 retained-context 回退无法命中；真实运行中异步队列在各段之间会排空。"
+        ],
+        "next_action": "本节点已收口。RC-00..RC-08B 全部工程验收；下一步 TF-0041（RC-09）需要 owner 裁决候选范围。",
+        "summary": "[2026-09-25 收口 · 工程验收 accepted，scope=engineering-only] RC-08B OTel 与 Observability 收敛：diagnostics-otel（OTel NodeSDK + OTLP/protobuf）为唯一 trace 导出者；删除无生产调用方的手写 OTLP JSON 导出（exporter-parity.ts）与 trace-buffer 安装钩子；修复 openclaw.exec 效果 span 无父上下文、总被导出为孤立根 trace 的缺陷。golden 测试经真实 plugin-service host 驱动 ingress→run→model/tool→exec→delivery，在本地 collector 按 OTLP 字段号解码断言同一 trace 与父链、零原文泄漏、exporter-off 零导出。正式 RC-00 验收 Executor + 独立 Verifier pass（9450/0/50）。"
+      },
+      "id": "TF-0040"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0040",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "需要 owner 裁决（2026-09-25 实测）：runtime-authority-convergence-final-acceptance spec 要求 changedPaths = git diff 6493d5cce..候选，且每个路径唯一归属 RC-00..RC-08B、拒绝其他工作流路径。当前分支自该基线 405 个提交、4587 个变更路径，含 public/lobe-icons（910）、showcase、system-maturity、visual-tune、live-model-cdp 等非 RC 工作流。二选一：①从 6493d5cce 重建只含 RC 提交的候选分支（数百次 cherry-pick、冲突风险高）；②修改 spec 口径，按 RC 各包 spec 的累计 ownedPaths 做归属、把非 RC 工作流显式排除并记录。依赖 TF-0037..TF-0040 均已 done。"
+      },
+      "id": "TF-0041"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0041",
+      "progress": 0,
+      "status": "blocked"
+    }
+  ],
+  "created_at": "2026-09-25T02:29:26.457005Z",
+  "proposal_id": "TFP-tf0040-rc08b-acceptance-closeout-20260925",
+  "rationale": "按 Task Forest 自动收口门（R3）收口 TF-0040：spec acceptance 逐条直读核对——OTel/OTLP 由 diagnostics-otel 独占导出，无调用方的手写 OTLP JSON 导出与 trace-buffer 安装钩子已删除（根测试全仓静态核对只有 diagnostics-otel 构造 OTLPTraceExporter）；ingress/run/model/tool/effect/delivery 同一 trace 且父链正确（golden 测试经真实 plugin-service host 启动、本地 HTTP collector 接收 OTLP/protobuf 并按字段号解码）；exporter-off 零导出；默认内容捕获下原始 prompt/system 文本零泄漏；trace buffer 为可重建缓存。正式 RC-00 验收 Executor + 独立 Verifier pass（9450/0/50）。TF-0041 依赖已全部完成，但其 spec 要求 RC-01 基线以来 4587 个变更路径各自唯一归属 RC-00..08B 且拒绝其他工作流路径，当前分支含大量非 RC 工作流（图标资源、showcase、system-maturity 等），需要 owner 裁决（重建只含 RC 提交的候选分支或修改 spec 口径），故标 blocked 并写明原因。",
+  "session_id": "dsh-tf0040-rc08b-20260925",
+  "status": "applied"
+}
