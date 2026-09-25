@@ -1,5 +1,13 @@
 # 会话交接（LATEST）
 
+## 收口完成（2026-09-25，TF-0039 · RC-08A）：MCP 不再报假连接 + 正式 RC-00 验收 pass
+
+- **TF-0039 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。
+- **修掉的缺陷**：Electron MCP 服务在没有 MCP 握手时报 `connected`（内置 Git/Storage 是 Main 里的 host-native 服务却硬编码 connected；Gateway 无应答时回退心跳把 stdio 配置校验或任意 HTTP GET 当连接）。现在只报 `registered`，仅运行时握手应答能报 `connected`；WebSocket 传输保存即拒绝。
+- **正式验收**：run2 干净候选 `a943155a3`，Executor pass → 独立 Verifier（`rc08a-verifier-2`）pass，8007 / 0 / 50；UI e2e profile 按 `deferredProfiles` 移交 TF-0041 并记入 manifest。run1 仅因 vitest fork worker 原生崩溃 NO-GO。
+- **residual**：Gateway 没有 `mcp.heartbeat`/`mcp.listTools`，用户 MCP 服务在桌面端显示 `registered`。
+- **下一步**：TF-0040（RC-08B）——修复 `4f57ec42d` 在 `rc04-dev`（diagnostics-otel 为唯一 trace 导出者、删除无调用方的手写 OTLP JSON 导出、exec 效果 span 挂到所属 trace）。
+
 ## 收口完成（2026-09-25，TF-0038 · RC-07）：Memory/Context 插件槽收敛 + 正式 RC-00 验收 pass
 
 - **TF-0038 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。

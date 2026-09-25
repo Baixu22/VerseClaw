@@ -1,0 +1,42 @@
+{
+  "applied_at": "2026-09-25T00:24:55.800247Z",
+  "base_graph_hash": "bc8e1b5517a5d1a6a6cd1b6ac2a56472e7eac7731b42ce247819d7c0813b9fa7",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "2026-09-25 实现提交 34eb49ff2（rc04-dev 7db293a69 cherry-pick）+ e857db2bb（deferredProfiles e2e→TF-0041）+ diffBase 钉住 a943155a3：electron/services/mcp-api.ts；tests/unit/mcp-api.test.ts 断言 host-native 为 registered、回退心跳为 registered、WebSocket 被拒；rc08a 根测试改为驱动生产 transport resolver。",
+          "2026-09-25 验收 run1（a943155a3）NO-GO：所有测试通过（7387/0/50）但 vitest fork worker 意外退出（Windows 原生崩溃），代码未改。",
+          "2026-09-25 正式 RC-00 验收 run2：candidate a943155a38f8f1b1beb89df1f06a3ca59ed716db（cleanAtPlan=true）；coverage ui=true、e2e 按 deferredProfiles 记入 manifest（owner TF-0041）；Executor rc08a-executor-2 pass reportDigest 043534ef…；独立 Verifier rc08a-verifier-2 pass engineeringAcceptedByAgent=true reportDigest b06c8b89… consistency.errors=[] identicalGateContracts=true；8007 passed/0 failed/50 skipped；三锁 false。归档 artifacts/runtime-authority-convergence/rc-08a/acceptance/（SHA256SUMS）。",
+          "residual：Gateway 仍无 mcp.heartbeat/mcp.listTools 方法，桌面端用户 MCP 服务显示 registered 而非握手支撑的 connected；完整 Electron UI 回归归 TF-0041。"
+        ],
+        "next_action": "本节点已收口。下一步 TF-0040（RC-08B OTel 与 Observability 收敛），修复提交 4f57ec42d 在 rc04-dev。",
+        "summary": "[2026-09-25 收口 · 工程验收 accepted，scope=engineering-only] RC-08A MCP 与 host-native 工具收敛：Electron MCP 服务此前在没有任何 MCP 握手时报 connected（内置 Git/Storage host-native 服务硬编码 connected；Gateway 无应答时的回退心跳把 stdio 配置校验或任意状态码的 HTTP GET 当作连接）。现在 host-native 与回退路径只报 registered，只有运行时握手应答能报 connected；WebSocket 传输保存即拒绝。UI e2e profile 显式移交 TF-0041。正式 RC-00 验收 run2 Executor + 独立 Verifier pass（8007/0/50）。"
+      },
+      "id": "TF-0039"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0039",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0040",
+      "progress": 10,
+      "status": "in_progress"
+    }
+  ],
+  "created_at": "2026-09-25T00:24:55.500700Z",
+  "proposal_id": "TFP-tf0039-rc08a-acceptance-closeout-20260925",
+  "rationale": "按 Task Forest 自动收口门（R3）收口 TF-0039：spec acceptance 逐条直读核对——MCP SDK 为外部协议权威（生产 transport resolver 驱动，WebSocket 解析为 null）；Git/Storage 等 host-native 工具不再被标为已连接 MCP；health 仅在真实 SDK 握手后为 connected，配置存在或 HTTP GET 只算 registered，无假连接态（tests/unit/mcp-api.test.ts 驱动 Electron 服务）；WebSocket 保存即拒绝、Streamable HTTP 命名准确；审批、SecretRef、网络策略与热重载路径未改。UI e2e profile 按 deferredProfiles 显式移交 TF-0041 并记入 manifest。正式 RC-00 验收 run2 Executor + 独立 Verifier pass（8007/0/50）。三锁 false。",
+  "session_id": "dsh-tf0039-rc08a-20260925",
+  "status": "applied"
+}
