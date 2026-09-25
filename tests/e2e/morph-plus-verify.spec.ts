@@ -12,6 +12,7 @@
  * Run: pnpm exec playwright test tests/e2e/morph-plus-verify.spec.ts
  */
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { evidencePath } from './fixtures/evidence-root';
 
 const SESSION_KEY = 'agent:main:main';
 
@@ -263,7 +264,7 @@ test('plus menu morph expands panel, occupies slot, closes on outside click / Es
       return { hitIsButton: !!(hit && first.contains(hit)) };
     });
 
-    await page.screenshot({ path: 'reports/visual-tune/morph-open.png' });
+    await page.screenshot({ path: evidencePath('reports/visual-tune/morph-open.png') });
 
     // 3. Outside click closes
     await page.mouse.click(500, 200);

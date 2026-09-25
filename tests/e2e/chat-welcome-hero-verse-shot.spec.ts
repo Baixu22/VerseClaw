@@ -10,7 +10,7 @@
  * Output goes to .design-staging/verse-hero/.
  */
 import { mkdir } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import {
   closeElectronApp,
   expect,
@@ -18,6 +18,7 @@ import {
   installIpcMocks,
   test,
 } from './fixtures/electron';
+import { evidencePath } from './fixtures/evidence-root';
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -141,7 +142,7 @@ async function seedEmptyHistory(app: Parameters<typeof installIpcMocks>[0]) {
   });
 }
 
-const OUT_DIR = join(process.cwd(), '.design-staging', 'verse-hero');
+const OUT_DIR = resolve(evidencePath('.design-staging/verse-hero'));
 
 for (const theme of ['dark', 'light'] as const) {
   test(`verse welcome hero screenshot — ${theme}`, async ({ launchElectronApp }) => {

@@ -4,8 +4,9 @@ import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { getStableWindow } from './fixtures/electron';
+import { evidencePath } from './fixtures/evidence-root';
 
-const OUT = 'reports/visual-tune';
+const OUT = evidencePath('reports/visual-tune');
 
 /**
  * Visual tuning harness (not a regression test): boots the real Electron app
