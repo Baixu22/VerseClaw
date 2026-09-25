@@ -30,6 +30,11 @@ function workspace(overrides: Partial<WorkspaceProfile> = {}): WorkspaceProfile 
 
 describe('resolveWorkspaceSessionTarget', () => {
   it('inherits the current agent when switching workspace', async () => {
+    // This is the first test in the file, so it pays the cold dynamic import of
+    // the whole @/pages/Chat module graph; its siblings hit the module cache and
+    // finish in under half a second. A 10s budget was not enough under load: the
+    // 2026-09-25 RC-09 run timed out at 14.6s and the assertion itself never ran.
+    // The import cost is the only thing this timeout guards.
     const { resolveWorkspaceSessionTarget } = await import('@/pages/Chat');
     vi.spyOn(Date, 'now').mockReturnValue(12345);
     vi.spyOn(Math, 'random').mockReturnValue(0.123456);
@@ -39,7 +44,7 @@ describe('resolveWorkspaceSessionTarget', () => {
       sessionKey: 'agent:reviewer:session-12345-4fzyo8',
       isFresh: true,
     });
-  }, 10_000);
+  }, 30_000);
 
   it('uses the current agent binding inside the target workspace when present', async () => {
     const { resolveWorkspaceSessionTarget } = await import('@/pages/Chat');
