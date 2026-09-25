@@ -80,7 +80,12 @@ describe("UAS-05 VerseShell process lifecycle boundary", () => {
     expect(nodes["TF-0017"]).toMatchObject({ status: "deprecated" });
     // The parent is blocked on human acceptance; lifecycle proof cannot promote it.
     expect(nodes["TF-0028"]).toMatchObject({ status: "blocked" });
-    expect(nodes["TF-0041"]).toMatchObject({ status: "proposed" });
+    // TF-0041 is the RC-09 acceptance node. Lifecycle proof cannot close it, so
+    // assert the invariant instead of a transient status: it was `proposed`, went
+    // to `blocked` when TF-0040 closed, and to `ready` when the RC-09 ownership
+    // scope was decided (TFD-RC09-SCOPE-20260925) -- never `done`.
+    expect(nodes["TF-0041"].status).not.toBe("done");
+    expect(nodes["TF-0041"].progress).toBeLessThan(100);
     expect(nodes["TF-0042"]).toMatchObject({ status: "blocked" });
     expect(evidence.frozenBoundaries).toMatchObject({
       liveReady: false,
