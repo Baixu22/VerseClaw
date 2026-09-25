@@ -304,8 +304,28 @@ function validateOwnershipMatrix(root, manifest, base, errors) {
   }
   const requiredOwners = requiredOwnerSet(root, errors);
   if (!requiredOwners) return;
-  if (matrix?.baseSha !== base || matrix?.headSha !== manifest.candidate.commit) {
-    errors.push('changed-path-ownership.json is not bound to the manifest base/candidate commits');
+  // The matrix is generated from `git diff <base>..<headSha>` and is then
+  // committed inside the candidate. `headSha` therefore can only ever be the
+  // candidate or one of its ancestors: a matrix generated against the candidate
+  // itself cannot be committed in that same candidate, because rewriting the
+  // matrix changes the commit it names (a hash fixed point). Binding is
+  // enforced as base equality plus head ancestry, and the coverage check below
+  // still requires the matrix to account for EVERY manifest changed path — so a
+  // matrix generated too early cannot pass by covering too little.
+  if (matrix?.baseSha !== base) {
+    errors.push('changed-path-ownership.json is not bound to the manifest base commit');
+  }
+  if (!isNonBlankString(matrix?.headSha) || !SHA1_HEX.test(String(matrix.headSha))) {
+    errors.push('changed-path-ownership.json headSha is missing or malformed');
+  } else if (isNonBlankString(manifest?.candidate?.commit) && SHA1_HEX.test(String(manifest.candidate.commit))) {
+    const ancestor = git(
+      root,
+      ['merge-base', '--is-ancestor', String(matrix.headSha), String(manifest.candidate.commit)],
+      { allowFailure: true },
+    );
+    if (ancestor.status !== 0) {
+      errors.push('changed-path-ownership.json headSha is not an ancestor of the candidate commit');
+    }
   }
   const declaredRequiredOwners = Array.isArray(matrix?.requiredOwners) ? [...matrix.requiredOwners].sort() : null;
   if (!declaredRequiredOwners || stableJson(declaredRequiredOwners) !== stableJson([...requiredOwners].sort())) {
