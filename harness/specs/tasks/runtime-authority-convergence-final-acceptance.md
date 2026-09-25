@@ -164,3 +164,19 @@ partitions it instead of pretending it is RC-only:
 The two sets must be disjoint and must together equal the cumulative diff; a path attributable to
 neither set fails the generator closed, and a matrix that is not bound to the manifest's base and
 candidate commits fails the validator closed.
+
+### Regenerating the matrix
+
+```text
+node scripts/generate-rc09-ownership-matrix.mjs --base <acceptedBaseSha> --head HEAD \
+  --output artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json
+```
+
+The matrix is generated from `git diff <base>..<headSha>` and is itself tracked, so it is always
+committed *inside* the candidate it describes. That makes `headSha` a generation point rather than
+the candidate SHA: a matrix generated against the candidate cannot be committed in that same
+candidate, because rewriting the matrix changes the commit it names (a hash fixed point). The
+validator therefore requires base equality plus `headSha` ancestry, and separately requires the
+matrix to account for every manifest changed path — so a matrix generated too early cannot pass by
+covering too little. Run the generator at the candidate, commit the result, and let the acceptance
+plan provision it into the detached worktrees.
