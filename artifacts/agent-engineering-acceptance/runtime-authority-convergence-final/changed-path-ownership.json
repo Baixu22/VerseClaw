@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "13db3fed33509cb3126278e547010d0116369a4b",
-  "generatedAt": "2026-09-25T16:11:38.330Z",
+  "headSha": "d362cd68e00673c764eb3d0881af1f81b7a01c51",
+  "generatedAt": "2026-09-25T16:48:14.675Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,9 +34,9 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 252,
+  "totalPaths": 253,
   "rcOwnedPaths": 190,
-  "excludedPaths": 62,
+  "excludedPaths": 63,
   "byRc": {
     "RC-02": 23,
     "RC-00": 96,
@@ -54,7 +54,7 @@
   },
   "byExclusionWorkstream": {
     "feat(approvals)": 31,
-    "fix(rc09)": 14,
+    "fix(rc09)": 15,
     "docs(task-forest)": 2,
     "chore(harness)": 2,
     "chore(rc09)": 3,
@@ -1517,6 +1517,15 @@
       "rc": "RC-00",
       "commit": null,
       "declaredBySpec": true
+    },
+    {
+      "path": "tests/unit/chat-workspace-session-target.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "d362cd68e00673c764eb3d0881af1f81b7a01c51",
+        "subject": "fix(rc09): give the first chat-workspace-session-target test a budget for its cold import",
+        "workstream": "fix(rc09)"
+      }
     },
     {
       "path": "tests/unit/gateway-event-dispatch.test.ts",
