@@ -11,6 +11,7 @@
  * Run: pnpm exec playwright test tests/e2e/beam-composer-verify.spec.ts
  */
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { evidencePath } from './fixtures/evidence-root';
 
 type BeamReport = {
   idle?: {
@@ -273,7 +274,7 @@ test('sunset beam wraps composer, lights on sending, menus unclipped', async ({ 
     console.log('BEAM_VERIFY_REPORT:', JSON.stringify(report, null, 2));
 
     // Screenshots
-    await page.screenshot({ path: 'reports/visual-tune/beam-app-sending.png' });
+    await page.screenshot({ path: evidencePath('reports/visual-tune/beam-app-sending.png') });
 
     // Assertions
     expect(report.idle.beam).toBe(true);

@@ -18,6 +18,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import type { ElectronApplication } from '@playwright/test';
 import { closeElectronApp, expect, test } from './fixtures/electron';
+import { evidencePath } from './fixtures/evidence-root';
 
 type HostResponse<T> = { ok: boolean; data?: T; error?: { message?: string } };
 
@@ -41,7 +42,7 @@ type VaultHealthResult = {
   };
 };
 
-const ARTIFACT_DIR = resolve(process.cwd(), 'artifacts', 'browser-security-recovery');
+const ARTIFACT_DIR = resolve(evidencePath('artifacts/browser-security-recovery'));
 const ARTIFACT_PATH = join(ARTIFACT_DIR, 'evidence.json');
 
 async function hostInvokeRaw(

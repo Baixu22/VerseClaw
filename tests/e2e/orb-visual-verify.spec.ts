@@ -9,6 +9,7 @@
  * Run: pnpm exec playwright test tests/e2e/orb-visual-verify.spec.ts
  */
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { evidencePath } from './fixtures/evidence-root';
 
 const SESSION_KEY = 'agent:main:main';
 
@@ -243,7 +244,7 @@ test('orbs render on turn-summary head with tooltip, both themes', async ({ laun
     });
 
     report.inkDark = await sampleInk();
-    await page.screenshot({ path: 'reports/visual-tune/orbs-app-dark.png' });
+    await page.screenshot({ path: evidencePath('reports/visual-tune/orbs-app-dark.png') });
 
     // Tooltip on the 64px orb
     await page.getByTestId('chat-turn-summary-orb').first().hover();
@@ -301,7 +302,7 @@ test('orbs render on turn-summary head with tooltip, both themes', async ({ laun
     });
     await page.waitForTimeout(800);
     report.inkLight = await sampleInk();
-    await page.screenshot({ path: 'reports/visual-tune/orbs-app-light.png' });
+    await page.screenshot({ path: evidencePath('reports/visual-tune/orbs-app-light.png') });
 
     // Console errors
     const errors: string[] = [];
