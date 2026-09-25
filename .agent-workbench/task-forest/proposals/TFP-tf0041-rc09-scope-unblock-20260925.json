@@ -1,0 +1,61 @@
+{
+  "applied_at": "2026-09-25T09:16:33.408215Z",
+  "base_graph_hash": "6e05c13d63e7db09f245b211b33c75ecabbe24079889f47e667a13eac9897439",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 1,
+        "created_at": "2026-09-25T09:16:26.619323Z",
+        "evidence": "harness/specs/tasks/runtime-authority-convergence-final-acceptance.md; scripts/generate-rc09-ownership-matrix.mjs; scripts/validate-runtime-authority-convergence.mjs; tests/unit/rc09-ownership-matrix.test.ts; tests/unit/agent-engineering-acceptance.test.ts; artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json; artifacts/runtime-authority-convergence/rc-01/baseline.json; docs/dev/unified-agent-system/runtime-convergence/RC-09-REMEDIATION-PLAN.md §18.1; docs/dev/unified-agent-system/runtime-convergence/ACCEPTANCE.md",
+        "expected_requirement": "RC-09 remediation plan §18.1.3：从新的 acceptedBaseSha 计算累计 changed paths；每条路径恰好映射到一个 RC，排除 workstream 数量为 0。",
+        "id": "TFD-RC09-SCOPE-20260925",
+        "kind": "acceptance_scope_amendment",
+        "observed_action_or_result": "RC 串行复验跑在共享集成分支 feat/runtime-lifecycle-governance 上。旧锚点 73bdddbb1 下累计窗口 4556 条路径中 3220 条无 RC owner，生成器 fail-closed 抛错；pnpm harness validate --spec <final spec> --since <acceptedBaseSha> 另有 1626 条未覆盖（lobe-icons 910、docs/dev 137、live-model-cdp 106、system-maturity 94、reports/* 132、showcase 60 …）。「排除 workstream 数量为 0」在现有历史上不可满足，除非重建 RC-only 候选分支。",
+        "reason": "remediation plan §18.1.3 隐含「候选分支是 RC-only」，但 RC 串行复验实际跑在共享集成分支上；不修则 TF-0041 永远无法进入 human_acceptance_pending。方案 A（保持旧锚点、在 spec 里精确枚举 1626 条非 RC 路径）会让 spec 膨胀约 1626 行；方案 C（重建 RC-only 候选分支）需约 90 次 cherry-pick 对撞约 309 个非 RC 提交、新树未经验收、且各包已验收证据绑定的 SHA 会失配。owner 于 2026-09-25 选择方案 B。",
+        "recommendation": "归属口径改为 RC-owned ∪ 具名排除：两个集合互斥且合计等于全量 diff，每条排除记录 first-touch commit SHA + subject + workstream，无法归属任一侧的路径 fail closed；宽 touchedAreas glob 不得用于吸收排除项。同时把 acceptedBaseSha 前移到 RC 串行复验窗口起点 1cddcb1ba（窗口 4556 → 225，Harness ownership 门零未覆盖），并按 §18.1 新增第 6 项记录该锚点约束。",
+        "related_task_ids": [
+          "TF-0041"
+        ],
+        "severity": "high",
+        "status": "open",
+        "summary": "RC-09「排除 workstream 数量为 0」在共享集成分支上不可满足；裁决改为 RC-owned ∪ 具名排除并把 acceptedBaseSha 前移到 RC 串行复验窗口起点。这是验收口径变更，必须留痕。"
+      }
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "RC-08B accepted; RC-09 final engineering acceptance ready",
+          "RC-09 final-acceptance spec + validate-runtime-authority-convergence.mjs delivered (fail-closed verified). BLOCKER: pnpm run typecheck final gate fails on 330 pre-existing typecheck debt errors (ACP manager.*, agent-loop, replay-tool-executor), all NOT introduced by RC-00..08B (verified zero new errors). Hard Stops forbid widening owned paths. Needs user decision on typecheck debt remediation or gate-scope adjustment.",
+          "2026-09-25 阻塞根因定位（实测 HEAD 0ee0cf360）：RC 链并非干净分支——6493d5cce..HEAD 有 406 个提交，仅 97 个 subject 带 RC 编号，309 个是非 RC 工作流；af60ab234（lobe-icons，995 条）与 2e5d99c12（recover sync，1338 条文件触达）两个批量提交即占绝大多数路径。归属矩阵在 4556 条累计路径上对 3220 条 fail-closed 抛错。",
+          "2026-09-25 顺带查出 4 个此前无人记录的硬缺陷：①生成器 fallback spec 列表由目录扫描得来，把 rc10-human-acceptance-runbook.md（92 条路径）与 rc01r-* 变体当成 owner；②validator 注释声称拒绝集合外 owner，代码从未实现该校验；③assertLinearRange 因窗口内 13 个 merge 提交而直接中止——生成器在这段历史上根本跑不起来；④fallback 使用 touchedAreas 宽 glob，RC-00 因此吞掉 640 条非 RC 路径（正是 §5 禁止的「扩大 glob 掩盖其他 workstream」）。另修正 spec 里与 baseline 不一致的过期 --since。",
+          "2026-09-25 修复后矩阵升 schema v2：RC-owned ∪ 具名排除 = 全量 diff，每条排除记录 first-touch commit SHA + subject + workstream；owner 集由 cumulativeOwnership.requiredSpecs 派生（13 个，RC-10/rc01r-* 已排除），fallback 只认 ownedPaths。生成器在新锚点下产出 225 条 → 182 RC-owned + 43 具名排除（4 个工作流）。tests/unit/rc09-ownership-matrix.test.ts + tests/unit/agent-engineering-acceptance.test.ts 66/66 绿；generator 对已提交矩阵逐字节可复现。",
+          "2026-09-25 第二个耦合阻塞（此前无人记录）：pnpm harness validate --spec <final spec> --since <acceptedBaseSha> 用同一累计 diff 比 spec 的 touchedAreas，旧锚点 73bdddbb1 下 1626 条未覆盖。根因是 acceptedBaseSha 锚得过早（RC 链早期），不是 spec 声明不足。",
+          "2026-09-25 裁决 TFD-RC09-SCOPE-20260925（方案 B）：acceptedBaseSha 前移到 1cddcb1ba5e23ebe445afca11174c2575c75f735（2026-09-22 封版＝分支上游，由 scripts/rc01-authority-inventory.mjs 重新生成、rc01-baseline-validate PASS）；final spec 固定 diffBase 指向该 SHA 并补齐 README/agent-dev 声明，pnpm harness validate --spec … 零未覆盖。",
+          "2026-09-25 复核上面第 2 条记录的第二个阻塞：pnpm run typecheck 现为 exit 0（typecheck:node 与 typecheck:web 均 0），「330 个既有类型错误」来自此后已被收窄的 gate 口径（typecheck-core 边界 + tsconfig.test.json 转观察模式），不再是阻塞。观察模式仍报 1 条既有声明漂移：tests/unit/harness-git.test.ts 导入 resolveDefaultDiffBase，而 harness/src/git.d.mts 未声明该导出——与本轮改动无关，记为 residual，未顺手修改以保持变更集可复核。",
+          "residual：①RC-09 工程重跑（plan → executor → 独立 verifier → engineering validator）尚未执行；artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/ 下的 manifest/final-report 仍是 2026-08-09 rejected/historical 世代，须按 §18.3 归档后使用全新输出目录重跑。②harness/src/git.d.mts 与 git.mjs 的导出声明漂移（观察模式 1 条，不阻塞 gate）。"
+        ],
+        "next_action": "阻塞已解除（TFD-RC09-SCOPE-20260925，方案 B）。执行 RC-09 工程验收：按 docs/dev/unified-agent-system/runtime-convergence/ACCEPTANCE.md 的 PowerShell 流程，用 acceptedBaseSha=1cddcb1ba5e23ebe445afca11174c2575c75f735 跑 plan → executor → 独立 verifier → engineering validator。旧的 2026-08-09 final 证据必须先归档（协议拒绝已存在的 final 目录）。依赖 TF-0037..TF-0040 均已 done。",
+        "summary": "[2026-09-25 阻塞解除 · ready] RC-09 独立工程总验收与证据封存：在 clean candidate 上完成全量门禁和独立 Executor/Verifier 复跑，生成最终 manifest，只能进入 human_acceptance_pending。归属口径已按 owner 裁决改为 RC-owned ∪ 具名排除（schema v2，互斥且合计等于全量 diff），acceptedBaseSha 前移到 RC 串行复验窗口起点 1cddcb1ba，累计窗口 4556 → 225 条，Harness ownership 门零未覆盖。同时修掉 4 个会让生成器根本跑不起来的硬缺陷。"
+      },
+      "id": "TF-0041"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0041",
+      "progress": 0,
+      "status": "ready"
+    }
+  ],
+  "created_at": "2026-09-25T09:16:26.601854Z",
+  "proposal_id": "TFP-tf0041-rc09-scope-unblock-20260925",
+  "rationale": "解除 TF-0041（RC-09 总验收）的阻塞。根因不是「有人漏了归属」，而是 RC 串行复验（RC-00R..RC-08B）跑在共享集成分支 feat/runtime-lifecycle-governance 上，而不是一条 RC-only 候选分支：旧锚点 6493d5cce..HEAD 有 406 个提交，仅 97 个 subject 带 RC 编号，309 个是非 RC 工作流；两个批量提交 af60ab234（lobe-icons，995 条）与 2e5d99c12（recover sync，1338 条文件触达）即占绝大多数路径。归属矩阵在 4556 条累计路径上对 3220 条 fail-closed 抛错，而 remediation plan §18.1.3 又要求「排除 workstream 数量为 0」，两者在现有历史上不可能同时成立。owner 裁决走方案 B：把归属口径改为 RC-owned ∪ 具名排除（互斥且合计等于全量 diff，每条排除记录 first-touch commit SHA + subject + workstream），并把 acceptedBaseSha 前移到 RC 串行复验窗口起点 1cddcb1ba（2026-09-22 封版，同时是分支上游），使累计窗口从 4556 条收敛到 225 条（182 RC-owned + 43 具名排除）。同时修掉 4 个此前无人记录、且会让生成器根本跑不起来的硬缺陷：fallback spec 列表由目录扫描改由 cumulativeOwnership.requiredSpecs 派生（此前把 RC-10 的 92 条路径和 rc01r-* 变体算成 owner）、validator 补上此前只在注释里声称的 owner 必需集合校验、去掉会因窗口内 13 个 merge 提交而中止的 assertLinearRange、fallback 只认 ownedPaths 不认宽 touchedAreas。",
+  "session_id": "dsh-tf0041-rc09-scope-20260925",
+  "status": "applied"
+}

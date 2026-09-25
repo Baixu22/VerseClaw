@@ -9,6 +9,33 @@
       "why_this_task": ""
     },
     "blocked_by": [],
+    "confidence": 0.9,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0041",
+    "kind": "task",
+    "next_action": "所有必需门禁通过且 skip budget 无漂移",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": true,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "ready",
+    "success_metrics": [],
+    "title": "RC-09 独立工程总验收与证据封存"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
     "confidence": 0.7,
     "context_tags": [
       "context-moat",
@@ -412,33 +439,6 @@
       "未授权新 authority 0"
     ],
     "title": "Runtime Authority Convergence 与 Operator 验收"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [],
-    "confidence": 0.9,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "high",
-    "id": "TF-0041",
-    "kind": "task",
-    "next_action": "澄清阻塞原因并决定解除或废止",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "",
-    "ready": false,
-    "remaining_minutes_max": null,
-    "remaining_minutes_min": null,
-    "status": "blocked",
-    "success_metrics": [],
-    "title": "RC-09 独立工程总验收与证据封存"
   },
   {
     "alignment": {

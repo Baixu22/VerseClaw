@@ -326,9 +326,11 @@ pnpm harness validate --spec harness/specs/tasks/<active-rc>.md
 
 1. 每个 RC 已有独立 green report，Task Forest 串行状态一致。
 2. 所有源码、spec、rule、测试、baseline、lockfile 和必要 fixture 已 commit；`git status --short` 为空。
-3. 从新的 `acceptedBaseSha` 计算累计 changed paths；每条路径恰好映射到一个 RC，排除 workstream 数量为 0。
+3. 从新的 `acceptedBaseSha` 计算累计 changed paths；每条路径要么恰好映射到一个 RC-00..RC-08B owner，要么落到一条**具名排除记录**（first-touch commit SHA + subject + workstream）。RC-owned 与 excluded 两个集合必须互斥，且合计等于全量 diff；无法归属任一侧的路径 fail closed，宽 `touchedAreas` glob 不得被用来吸收排除项。
+   - **2026-09-25 修订（TFD-RC09-SCOPE-20260925）**：本项原文为「排除 workstream 数量为 0」。该要求隐含候选分支是 RC-only，但 RC 串行复验（RC-00R..RC-08B）实际跑在共享集成分支 `feat/runtime-lifecycle-governance` 上，累计窗口内混有 309 个非 RC 提交（两个批量提交即占 1840 条路径）。逐条具名记录排除项、而不是把它们塞进 RC 的宽 glob，才是 §5「不得扩大 glob 来掩盖其他 workstream」的直接执行；把 `excludedWorkstreams` 记进 `changed-path-ownership.json` 后，原本被静默丢弃的路径全部变成可复核证据。
 4. 创建 detached candidate worktree；设置固定 Node/pnpm 环境、EOL 策略和无真实 provider credentials 的环境。
 5. 根和 nested runtime 依赖均 frozen/offline 安装，安装后 tree/lockfile 不变。
+6. `acceptedBaseSha` 必须锚在 RC 串行复验窗口的起点。当前值 `1cddcb1ba5e23ebe445afca11174c2575c75f735`（2026-09-22 封版，同时是 `feat/runtime-lifecycle-governance` 的上游）：窗口内 225 条路径、182 条 RC-owned、43 条具名排除（4 个工作流），`pnpm harness validate --spec runtime-authority-convergence-final-acceptance.md` 的 changed-path ownership 门零未覆盖。此前锚在 `73bdddbb1`（RC 链早期）会让窗口膨胀到 4556 条、其中 4066 条属于其他工作流。重新生成用 `node scripts/rc01-authority-inventory.mjs --accepted-base <sha>`（`generatedAt` 由 base commit 时间派生，可复现）。
 
 ### 18.2 最终强制门禁
 

@@ -193,7 +193,21 @@ function createConvergenceFixture() {
     acceptedBaseSha: base,
     productLocks: { liveReady: false, productApproved: false, defaultOn: false },
   }, null, 2)}\n`, 'utf8');
-  git(root, ['add', '--force', baselineRelative]);
+  // RC-09: the validator derives the required owner set from the final spec's
+  // cumulativeOwnership.requiredSpecs instead of trusting the matrix.
+  const finalSpecRelative = 'harness/specs/tasks/runtime-authority-convergence-final-acceptance.md';
+  writeFileSync(join(root, ...finalSpecRelative.split('/')), [
+    '---',
+    'id: runtime-authority-convergence-final-acceptance',
+    'title: RC-09 Final Engineering Acceptance',
+    'cumulativeOwnership:',
+    '  requiredSpecs:',
+    '    - harness/specs/tasks/rc00-agent-engineering-acceptance-bootstrap.md',
+    '---',
+    '# RC-09 fixture',
+    '',
+  ].join('\n'), 'utf8');
+  git(root, ['add', '--force', baselineRelative, finalSpecRelative]);
   git(root, ['commit', '--quiet', '-m', 'add convergence baseline']);
   return { root, base, baselineRelative };
 }
@@ -1397,17 +1411,23 @@ describe('Agent Engineering Acceptance', () => {
     mkdirSync(outputDir, { recursive: true });
     const manifestPath = join(outputDir, 'manifest.json');
 
-    // RC-09A: the validator requires the changed-path ownership matrix in the
-    // final evidence bundle; the fixture writes a valid one for its paths.
+    // RC-09: the validator requires the changed-path ownership matrix in the
+    // final evidence bundle; the fixture writes a valid v2 partition for its paths.
     const finalEvidenceDir = join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final');
     mkdirSync(finalEvidenceDir, { recursive: true });
+    const fixtureChangedPaths = resolveChangedPaths(root, { since: base });
     writeFileSync(join(finalEvidenceDir, 'changed-path-ownership.json'), `${JSON.stringify({
-      schema: 'runtime-authority-convergence-rc09-ownership/v1',
+      schema: 'runtime-authority-convergence-rc09-ownership/v2',
       baseSha: base,
       headSha: repositoryIdentity(root).commit,
-      totalPaths: resolveChangedPaths(root, { since: base }).length,
-      byRc: { 'RC-00': resolveChangedPaths(root, { since: base }).length },
-      entries: resolveChangedPaths(root, { since: base }).map((pathValue) => ({ path: pathValue, rc: 'RC-00', commit: null, preChain: true })),
+      requiredOwners: ['RC-00'],
+      requiredSpecs: ['harness/specs/tasks/rc00-agent-engineering-acceptance-bootstrap.md'],
+      totalPaths: fixtureChangedPaths.length,
+      rcOwnedPaths: fixtureChangedPaths.length,
+      excludedPaths: 0,
+      byRc: { 'RC-00': fixtureChangedPaths.length },
+      byExclusionWorkstream: {},
+      entries: fixtureChangedPaths.map((pathValue) => ({ path: pathValue, rc: 'RC-00', commit: null, declaredBySpec: true })),
     }, null, 2)}\n`, 'utf8');
     // The ownership report is a locked ignored input. Freeze it before planning.
     Object.assign(manifest, createAcceptancePlan({ root, specPath: manifest.task.specPath, since: base, runId: manifest.runId, createdAt: manifest.createdAt }));
@@ -1527,10 +1547,11 @@ describe('Agent Engineering Acceptance', () => {
     });
     expect(sourceResult.errors).toContain('source Git blob mismatch: package.json');
 
-    // RC-09A: a missing ownership matrix must fail closed.
+    // RC-09: a missing ownership matrix must fail closed.
+    const matrixPath = join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.json');
     const movedMatrix = join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.moved.json');
-    writeFileSync(movedMatrix, readFileSync(join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.json'), 'utf8'));
-    rmSync(join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.json'), { force: true });
+    writeFileSync(movedMatrix, readFileSync(matrixPath, 'utf8'));
+    rmSync(matrixPath, { force: true });
     const missingMatrix = validateRuntimeAuthorityConvergence({
       root,
       phase: 'engineering',
@@ -1539,21 +1560,65 @@ describe('Agent Engineering Acceptance', () => {
       baselinePath: baselineRelative,
     });
     expect(missingMatrix.errors).toContain('changed-path-ownership.json is missing from the final evidence bundle');
-    writeFileSync(join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.json'), readFileSync(movedMatrix, 'utf8'));
+    writeFileSync(matrixPath, readFileSync(movedMatrix, 'utf8'));
 
-    // RC-09A: an ownership matrix that drops a manifest changed path must fail closed.
-    const tamperedMatrix = structuredClone(JSON.parse(readFileSync(join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.json'), 'utf8')));
-    tamperedMatrix.entries = [];
-    writeFileSync(join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.json'), `${JSON.stringify(tamperedMatrix, null, 2)}\n`, 'utf8');
-    const tamperedOwner = validateRuntimeAuthorityConvergence({
-      root,
-      phase: 'engineering',
-      manifestPath,
-      engineeringReportPath: reportPath,
-      baselinePath: baselineRelative,
+    const tamperMatrix = (mutate: (matrix: Record<string, unknown>) => void) => {
+      const tampered = structuredClone(JSON.parse(readFileSync(matrixPath, 'utf8')));
+      mutate(tampered);
+      writeFileSync(matrixPath, `${JSON.stringify(tampered, null, 2)}\n`, 'utf8');
+      const result = validateRuntimeAuthorityConvergence({
+        root,
+        phase: 'engineering',
+        manifestPath,
+        engineeringReportPath: reportPath,
+        baselinePath: baselineRelative,
+      });
+      writeFileSync(matrixPath, readFileSync(movedMatrix, 'utf8'));
+      return result;
+    };
+
+    // RC-09: an ownership matrix that drops a manifest changed path must fail closed.
+    const tamperedOwner = tamperMatrix((matrix) => {
+      matrix.entries = [];
     });
-    expect(tamperedOwner.errors.some((error) => error.startsWith('changed path has no RC owner'))).toBe(true);
-    writeFileSync(join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.json'), readFileSync(movedMatrix, 'utf8'));
+    expect(tamperedOwner.errors.some((error) => error.startsWith('changed path is missing from changed-path-ownership.json'))).toBe(true);
+
+    // RC-09: a matrix that claims the old schema version must fail closed.
+    expect(tamperMatrix((matrix) => {
+      matrix.schema = 'runtime-authority-convergence-rc09-ownership/v1';
+    }).errors).toContain('changed-path-ownership.json schema mismatch');
+
+    // RC-09: an owner outside the required owner set must fail closed.
+    expect(tamperMatrix((matrix) => {
+      const entries = matrix.entries as Array<Record<string, unknown>>;
+      entries[0].rc = 'RC-10';
+      matrix.byRc = { 'RC-00': entries.length - 1, 'RC-10': 1 };
+    }).errors.some((error) => error.startsWith('changed path owned by a package outside the required owner set'))).toBe(true);
+
+    // RC-09: an excluded path with no introducing commit must fail closed.
+    expect(tamperMatrix((matrix) => {
+      const entries = matrix.entries as Array<Record<string, unknown>>;
+      entries[0].rc = null;
+      entries[0].excluded = { workstream: 'chore(assets)' };
+      matrix.rcOwnedPaths = entries.length - 1;
+      matrix.excludedPaths = 1;
+      matrix.byRc = { 'RC-00': entries.length - 1 };
+      matrix.byExclusionWorkstream = { 'chore(assets)': 1 };
+    }).errors.some((error) => error.startsWith('changed-path-ownership.json has an unattributed entry'))).toBe(true);
+
+    // RC-09: a valid exclusion that names its introducing commit is accepted.
+    // The manifest is sealed against the original matrix bytes, so the run may
+    // still report the provision-copy digest drift — but never an ownership error.
+    const excludedMatrix = tamperMatrix((matrix) => {
+      const entries = matrix.entries as Array<Record<string, unknown>>;
+      entries[0].rc = null;
+      entries[0].excluded = { commit: base, subject: 'chore(assets): fixture', workstream: 'chore(assets)' };
+      matrix.rcOwnedPaths = entries.length - 1;
+      matrix.excludedPaths = 1;
+      matrix.byRc = { 'RC-00': entries.length - 1 };
+      matrix.byExclusionWorkstream = { 'chore(assets)': 1 };
+    });
+    expect(excludedMatrix.errors.some((error) => /outside the required owner set|unattributed entry|missing from changed-path-ownership/u.test(error))).toBe(false);
 
     const badVerdictPath = join(outputDir, 'bad-human-verdict.yaml');
     writeFileSync(badVerdictPath, readFileSync(humanVerdictPath, 'utf8').replace('H-06', 'H-99'), 'utf8');

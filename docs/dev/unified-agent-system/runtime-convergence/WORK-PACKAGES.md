@@ -144,6 +144,13 @@ Run four serial subpackages with separate Harness specs:
 
 **Status (2026-08-09):** RC-09 最终独立验收 PASS。候选链重建于 new accepted base `b8a6c1832`（range 99 paths，零 UI/release coverage → 18-gate profile）；executor `rc09r-executor-4` + verifier `rc09r-verifier-4` 双 PASS（engineeringAcceptedByAgent=true、review_needed、humanEvidenceRequired=true、7116 passed/0 failed/52 skipped、mutationCheck 双 clean）；engineering-phase validator PASS。控制面修复：plan 自动生成 changed-path-ownership.json 并 provision 进双 detached worktree；runtime-unit skip budget 归零；final spec `--since` 固定为完整 acceptedBaseSha。`STATUS.md` 已置 `human_acceptance_pending`。证据：`artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/{plan,manifest,executor-report,verifier-report,final-report,changed-path-ownership}.json`。RC-10 保持 blocked；product locks false。
 
+**Status (2026-09-25, RC-09A 阻塞解除):** 上面那份 2026-08-09 证据是 `fac6327a2` 世代的历史声明，已被 2026-08-03 独立审计判为 rejected/historical；RC-00R..RC-08B 已在当前 `feat/runtime-lifecycle-governance` 上串行复验完毕，RC-09 需重跑。此前 RC-09 卡在两个耦合的 ownership 阻塞上，现已定位并修复：
+
+1. **归属矩阵**：累计窗口（旧锚点 `73bdddbb1`）有 4556 条路径，其中 3220 条无 RC owner，生成器 fail-closed 直接抛错。修掉 4 个硬缺陷——fallback spec 列表由目录扫描改由 `cumulativeOwnership.requiredSpecs` 派生（此前把 RC-10 的 92 条路径和 `rc01r-*` 变体算成 owner）、validator 补上此前只在注释里声称的「owner 必须在必需集合内」校验、去掉会因 13 个 merge 提交而中止的 `assertLinearRange`、fallback 只认 `ownedPaths` 不认宽 `touchedAreas`。矩阵升到 schema v2：RC-owned ∪ 具名排除 = 全量 diff，每条排除记录带 first-touch commit SHA + subject + workstream。
+2. **Harness ownership 门**：`pnpm harness validate --spec <final spec> --since <acceptedBaseSha>` 用同一个累计 diff 比 spec 的 `touchedAreas`，旧锚点下 1626 条未覆盖（lobe-icons 910、docs/dev 137、live-model-cdp 106、system-maturity 94…）。根因是 `acceptedBaseSha` 锚得太早（RC 链早期），而不是 spec 声明不足。
+
+**裁决（TFD-RC09-SCOPE-20260925，方案 B）：** 把 `acceptedBaseSha` 前移到 RC 串行复验窗口起点 `1cddcb1ba5e23ebe445afca11174c2575c75f735`（2026-09-22 封版，同时是分支上游）。窗口从 4556 → **225 条**：182 条 RC-owned、43 条具名排除（4 个工作流）。final spec 固定 `diffBase` 指向该 SHA，`pnpm harness validate --spec …` 零未覆盖；矩阵与 validator 单测 66/66 绿。RC-09 的工程重跑（plan → executor → 独立 verifier → engineering validator）尚未执行，TF-0041 由 blocked 转 ready。product locks 保持 false。
+
 ## RC-10: Final Human Acceptance
 
 The user executes only `HUMAN-ACCEPTANCE.md`. An explicit `accepted` verdict is required. Any failure returns the affected package to `review_needed`; it is not waived by engineering evidence.

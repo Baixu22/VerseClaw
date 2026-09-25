@@ -2,27 +2,35 @@
 // RC-09 changed-path ownership matrix generator.
 //
 // Builds artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/
-// changed-path-ownership.json from the exact cumulative candidate diff:
-// every changed path between the RC-01 accepted base and the RC-09 final
-// candidate is mapped to EXACTLY ONE owning RC package (RC-00..RC-08B).
+// changed-path-ownership.json from the exact cumulative candidate diff and
+// partitions it into two disjoint sets:
 //
-// The owner is the first chain commit (topological order) that introduced the
-// path, derived from `git diff-tree` — never from a hardcoded array standing as
-// proof. The chain is the accepted candidate lineage whose per-package commits
-// carry the RC id in their subject.
+//   RC-owned   — the path was first touched in the range by a commit whose
+//                subject carries a required RC package id, or no RC commit
+//                touched it and a required package spec declares it in
+//                ownedPaths.
+//   excluded   — every other path, attributed to the exact commit that first
+//                introduced it in the range (SHA, subject, derived workstream).
 //
-// Fail-closed: any path with no owner, or a first-touch commit outside the
-// accepted chain, aborts with a non-zero exit code.
-import { mkdirSync, realpathSync, writeFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+// The RC-owned set maps each path to EXACTLY ONE owning RC package from the
+// required owner set derived from the final spec's
+// `cumulativeOwnership.requiredSpecs`. The excluded set is evidence, not a
+// wildcard: ownership globs are never widened to absorb it, every excluded
+// path names its introducing commit, and a path that can be attributed to
+// neither set aborts the generator with a non-zero exit code.
+import { mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { basename, dirname, join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
+import { parse as parseYaml } from 'yaml';
+
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const SCHEMA = 'runtime-authority-convergence-rc09-ownership/v1';
+const SCHEMA = 'runtime-authority-convergence-rc09-ownership/v2';
+const FINAL_SPEC_RELATIVE = 'harness/specs/tasks/runtime-authority-convergence-final-acceptance.md';
 
 function git(args, options = {}) {
-  const result = spawnSync('git', args, {
+  const result = spawnSync(process.platform === 'win32' ? 'git.exe' : 'git', args, {
     cwd: repoRoot,
     encoding: 'utf8',
     shell: false,
@@ -34,29 +42,24 @@ function git(args, options = {}) {
   return String(result.stdout ?? '').trim();
 }
 
-// The accepted chain: every commit between the RC-01 acceptance base and the
-// RC-09 final candidate HEAD, in topological (oldest-first) order.
-function resolveChain(baseSha, headSha) {
-  const lines = git(['log', '--format=%H %s', '--reverse', `${baseSha}..${headSha}`])
-    .split('\n')
-    .filter(Boolean);
-  return lines.map((line) => {
-    const space = line.indexOf(' ');
-    return {
-      sha: line.slice(0, space),
-      subject: line.slice(space + 1),
-    };
-  });
+function toArray(value) {
+  return Array.isArray(value) ? value : [];
 }
 
-// RC id from an accepted chain commit subject. The chain commits carry their
-// package id in the subject (e.g. "accept(rc05r): ...", "fix(rc04r): ...").
-// The pre-chain control-package landing commit "land RC-00..RC-08B control
-// package" is the RC-00 owner for paths it introduced (remediation plan §7:
-// "将原 116 个 changed paths 重新分类到唯一 RC owner").
+function readFrontmatter(absolutePath) {
+  const text = readFileSync(absolutePath, 'utf8').replace(/^\uFEFF/u, '').replaceAll('\r\n', '\n');
+  const match = /^---\n([\s\S]*?)\n---(?:\n|$)/u.exec(text);
+  if (!match) return null;
+  return parseYaml(match[1]);
+}
+
+// RC id from a commit subject or a required-spec filename. The chain commits
+// carry their package id in the subject (e.g. "accept(rc05r): ...",
+// "fix(rc04r): ..."); the aggregate control-package landing commit
+// "land RC-00..RC-08B control package" is the RC-00 owner for paths it
+// introduced.
 function rcFromSubject(subject) {
   const text = subject ?? '';
-  // Hyphenated "RC-00"/"RC-08B" forms in aggregate-control subjects.
   const hyphenated = /RC-0(0|1|2|3|4|5|6[a-d]|7|8[a-b])(?:R)?\b/iu.exec(text);
   if (hyphenated) {
     const raw = hyphenated[0].toUpperCase();
@@ -70,7 +73,6 @@ function rcFromSubject(subject) {
   const match = /rc0(0|1|2|3|4|5|6[abcd]|7|8[ab])/iu.exec(text);
   if (!match) return null;
   const raw = match[0].toUpperCase();
-  // Normalize: rc06a -> RC-06A, rc08b -> RC-08B, rc01 -> RC-01R, etc.
   const map = {
     RC00: 'RC-00',
     RC01: 'RC-01R',
@@ -87,21 +89,6 @@ function rcFromSubject(subject) {
     RC08B: 'RC-08B',
   };
   return map[raw] ?? null;
-}
-
-/**
- * Pre-chain classification fallback. Paths first introduced by the rejected
- * pre-chain commits (fac6327a2 / 90e796893) carry no RC commit; they are
- * re-classified to the FIRST RC spec (deterministic RC-00..RC-08B order) whose
- * touchedAreas/ownedPaths cover the path — the remediation plan §7 requirement
- * ("将原 116 个 changed paths 重新分类到唯一 RC owner").
- */
-import { readdirSync, readFileSync } from 'node:fs';
-import { basename, join } from 'node:path';
-import { parse as parseYaml } from 'yaml';
-
-function toArray(value) {
-  return Array.isArray(value) ? value : [];
 }
 
 /** Glob-to-regexp for spec patterns (windows-safe; matches harness/src rules.mjs semantics). */
@@ -127,45 +114,47 @@ function patternToRegExp(pattern) {
   return new RegExp(`^${source.join('/')}$`);
 }
 
-function listTaskSpecs(specsDir) {
-  const specs = [];
-  for (const entry of readdirSync(specsDir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
-    if (!entry.isFile() || !entry.name.startsWith('rc') || !entry.name.endsWith('.md')) continue;
-    const name = entry.name;
-    if (name.includes('final')) continue;
-    let frontmatter;
-    try {
-      const text = readFileSync(join(specsDir, name), 'utf8');
-      // Frontmatter is delimited by --- lines; tolerate CRLF and BOM.
-      const normalized = text.replace(/^\uFEFF/u, '').replaceAll('\r\n', '\n');
-      const match = /^---\n([\s\S]*?)\n---(?:\n|$)/u.exec(normalized);
-      if (!match) continue;
-      frontmatter = parseYaml(match[1]);
-    } catch {
-      continue;
-    }
-    specs.push({
-      spec: name,
-      rc: rcFromSubject(name) ?? name.replace(/^rc(\d+[abcd]?)-.*$/u, (_, id) => `RC-${id.toUpperCase()}`),
-      patterns: [
-        ...toArray(frontmatter?.touchedAreas),
-        ...toArray(frontmatter?.ownedPaths),
-      ],
-    });
-  }
-  return specs;
-}
-
-function specPatterns(repoRoot) {
-  return listTaskSpecs(join(repoRoot, 'harness', 'specs', 'tasks'));
-}
-
 function pathMatchesPatterns(pathValue, patterns) {
   return patterns.some((pattern) => patternToRegExp(pattern).test(pathValue));
 }
 
-function classifyPreChainPath(pathValue, patterns) {
-  for (const entry of patterns) {
+/**
+ * The required owner set and the spec-declaration fallback both come from the
+ * final spec's `cumulativeOwnership.requiredSpecs` — never from a directory
+ * scan. Scanning harness/specs/tasks/rc*.md previously pulled in RC-10 and the
+ * RC-01R variant specs, which are outside the accepted RC-00..RC-08B set, and
+ * it let every package's broad `touchedAreas` globs absorb paths that no RC
+ * commit ever touched. Only `ownedPaths` (the explicit per-package
+ * declarations) may reclassify a path here.
+ */
+function loadRequiredPackages() {
+  const finalSpecPath = join(repoRoot, ...FINAL_SPEC_RELATIVE.split('/'));
+  const finalSpec = readFrontmatter(finalSpecPath);
+  const requiredSpecs = toArray(finalSpec?.cumulativeOwnership?.requiredSpecs);
+  if (requiredSpecs.length === 0) {
+    throw new Error(`${FINAL_SPEC_RELATIVE} declares no cumulativeOwnership.requiredSpecs`);
+  }
+  const specsDir = join(repoRoot, 'harness', 'specs', 'tasks');
+  const packages = [];
+  for (const specName of requiredSpecs) {
+    const specPath = join(specsDir, basename(String(specName)));
+    let frontmatter;
+    try {
+      frontmatter = readFrontmatter(specPath);
+    } catch {
+      frontmatter = null;
+    }
+    if (!frontmatter) throw new Error(`required spec ${specName} is missing or has no frontmatter`);
+    const rc = rcFromSubject(basename(String(specName)));
+    if (!rc) throw new Error(`required spec ${specName} does not resolve to an RC package id`);
+    packages.push({ spec: basename(String(specName)), rc, patterns: toArray(frontmatter.ownedPaths) });
+  }
+  const requiredOwners = [...new Set(packages.map((entry) => entry.rc))].sort();
+  return { packages, requiredOwners };
+}
+
+function classifyBySpecDeclaration(pathValue, packages) {
+  for (const entry of packages) {
     if (pathMatchesPatterns(pathValue, entry.patterns)) return entry.rc;
   }
   return null;
@@ -177,6 +166,19 @@ function normalizePath(value) {
   const normalized = pathValue.split('/').filter(Boolean).join('/');
   if (!normalized || normalized === '..' || normalized.startsWith('../') || normalized.includes('/../')) return null;
   return normalized;
+}
+
+/**
+ * Derived from a conventional-commit subject: `chore(assets): ...` becomes
+ * `chore(assets)`, `feat(ui)!: ...` becomes `feat(ui)`, `fix: ...` becomes
+ * `fix`. Subjects without a conventional prefix land in `uncategorized`, which
+ * still carries the exact commit SHA and subject.
+ */
+function workstreamFromSubject(subject) {
+  const match = /^([a-z]+)(?:\(([^)]*)\))?[!:]/iu.exec(String(subject ?? '').trim());
+  if (!match) return 'uncategorized';
+  const type = match[1].toLowerCase();
+  return match[2] ? `${type}(${match[2]})` : type;
 }
 
 function resolveSha(value, label) {
@@ -206,52 +208,44 @@ function parseArgs(argv) {
 /**
  * Builds a path -> first-owning-commit index in ONE `git log` pass.
  *
- * The previous implementation spawned `git diff-tree` once per
- * (path x commit) pair — ~5.6k subprocesses for the RC-09 range, which took
- * ~6 minutes on Windows and blew past the 120 s budget of the rc09
- * ownership-matrix test.
+ * Semantics: the owner of a path is the OLDEST commit in the range that touched
+ * it. Every commit is indexed (not only RC-subject commits), because a path
+ * with no RC owner still has to name the non-RC commit that introduced it.
  *
- * Semantics are preserved exactly: only commits whose subject carries an RC id
- * can own a path (rejected pre-chain commits fall through to the spec
- * classification fallback), and the owner is the OLDEST such commit that
- * touched the path. The range is asserted merge-free by `assertLinearRange`,
- * so per-commit file lists from `git log --name-only` match the old
- * `git diff-tree` output.
+ * The range is NOT assumed merge-free: `git log --name-only` emits no file list
+ * for merge commits, and a merge introduces no content beyond its parents, so
+ * the non-merge commits in the range cover every changed path. Any path the
+ * index misses fails closed at classification time rather than being silently
+ * attributed.
  */
 function buildFirstTouchIndex(baseSha, headSha) {
   const records = git([
     'log', '--reverse', '-z', '--format=@@@%H %s', '--name-only', `${baseSha}..${headSha}`,
   ]).split('\0');
   const index = new Map();
-  let owner = null;
+  let current = null;
   for (const record of records) {
     if (!record) continue;
     if (record.startsWith('@@@')) {
       const sha = record.slice(3, 43).toLowerCase();
       const subject = record.slice(44);
-      owner = rcFromSubject(subject) ? { sha, subject } : null;
+      current = { sha, subject, rc: rcFromSubject(subject) };
       continue;
     }
-    if (!owner) continue;
+    if (!current) continue;
     // `git log --format=... -z` emits the format string NUL-terminated but still
     // separates the commit body from the file list with a newline, so the FIRST
     // path of every commit arrives as "\npath". Trimming is required: without it
-    // the first path of each commit silently never matches and falls through to
-    // the pre-chain fallback (or fails closed as unowned).
+    // the first path of each commit silently never matches and is misreported as
+    // unattributable.
     const pathValue = normalizePath(record.trim());
-    if (pathValue && !index.has(pathValue)) index.set(pathValue, owner);
+    if (pathValue && !index.has(pathValue)) index.set(pathValue, current);
   }
   return index;
 }
 
-function assertLinearRange(baseSha, headSha) {
-  const merges = git(['rev-list', '--merges', `${baseSha}..${headSha}`]).split('\n').filter(Boolean);
-  if (merges.length > 0) {
-    throw new Error(
-      `rc09 ownership range ${baseSha}..${headSha} contains ${merges.length} merge commit(s); ` +
-      'the batched first-touch pass assumes a linear range',
-    );
-  }
+function countMerges(baseSha, headSha) {
+  return git(['rev-list', '--merges', `${baseSha}..${headSha}`]).split('\n').filter(Boolean).length;
 }
 
 export function generateRc09OwnershipMatrix(options = {}) {
@@ -261,71 +255,83 @@ export function generateRc09OwnershipMatrix(options = {}) {
     throw new Error('--base and --head must resolve to 40-hex commit SHAs');
   }
 
-  const chain = resolveChain(baseSha, headSha);
-  if (chain.length === 0) throw new Error('chain is empty: baseSha must be an ancestor of HEAD');
-  assertLinearRange(baseSha, headSha);
-  const firstTouchIndex = buildFirstTouchIndex(baseSha, headSha);
+  const { packages, requiredOwners } = loadRequiredPackages();
+  const requiredOwnerSet = new Set(requiredOwners);
 
+  const firstTouchIndex = buildFirstTouchIndex(baseSha, headSha);
   const changedPaths = git(['diff', '--name-only', '-z', `${baseSha}..${headSha}`])
     .split('\0')
     .filter(Boolean)
     .map(normalizePath)
     .filter(Boolean)
     .sort();
-
-  // Pre-chain re-classification: paths first introduced by the rejected
-  // pre-chain commits have no RC commit owner; classify them by the FIRST RC
-  // spec whose touchedAreas/ownedPaths cover them (deterministic RC order).
-  const specPatternsForFallback = specPatterns(repoRoot);
+  if (changedPaths.length === 0) throw new Error('candidate diff is empty');
 
   const entries = [];
-  const unowned = [];
-  const nonChain = [];
+  const byRc = {};
+  const byExclusionWorkstream = {};
+  const unattributable = [];
+  const ownerOutsideSet = [];
+
   for (const pathValue of changedPaths) {
-    // Batched first-touch lookup: buildFirstTouchIndex() already walked the
-    // range once. Calling a per-path helper here re-ran `git log` per path,
-    // which is why the generator was slow — and the helper no longer exists.
     const firstTouch = firstTouchIndex.get(pathValue) ?? null;
+    // An RC commit that first touched the path owns it outright.
+    if (firstTouch?.rc && requiredOwnerSet.has(firstTouch.rc)) {
+      entries.push({ path: pathValue, rc: firstTouch.rc, commit: firstTouch.sha });
+      byRc[firstTouch.rc] = (byRc[firstTouch.rc] ?? 0) + 1;
+      continue;
+    }
+    // Otherwise a required package may still declare the path explicitly. Broad
+    // touchedAreas globs are deliberately not consulted here.
+    const declaredRc = classifyBySpecDeclaration(pathValue, packages);
+    if (declaredRc) {
+      entries.push({ path: pathValue, rc: declaredRc, commit: null, declaredBySpec: true });
+      byRc[declaredRc] = (byRc[declaredRc] ?? 0) + 1;
+      continue;
+    }
+    if (firstTouch?.rc && !requiredOwnerSet.has(firstTouch.rc)) {
+      ownerOutsideSet.push({ path: pathValue, rc: firstTouch.rc, commit: firstTouch.sha });
+      continue;
+    }
     if (!firstTouch) {
-      const preChainRc = classifyPreChainPath(pathValue, specPatternsForFallback);
-      if (preChainRc) {
-        entries.push({ path: pathValue, rc: preChainRc, commit: null, preChain: true });
-        continue;
-      }
-      unowned.push(pathValue);
+      unattributable.push(pathValue);
       continue;
     }
-    const rc = rcFromSubject(firstTouch.subject);
-    if (!rc) {
-      nonChain.push({ path: pathValue, commit: firstTouch.sha, subject: firstTouch.subject });
-      continue;
-    }
+    const workstream = workstreamFromSubject(firstTouch.subject);
     entries.push({
       path: pathValue,
-      rc,
-      commit: firstTouch.sha,
+      rc: null,
+      excluded: { commit: firstTouch.sha, subject: firstTouch.subject, workstream },
     });
+    byExclusionWorkstream[workstream] = (byExclusionWorkstream[workstream] ?? 0) + 1;
   }
 
-  if (unowned.length > 0) {
-    throw new Error(`changed paths with no chain owner: ${unowned.join(', ')}`);
+  if (ownerOutsideSet.length > 0) {
+    throw new Error(
+      `changed paths first touched by a commit outside the required owner set ${JSON.stringify(requiredOwners)}: `
+      + JSON.stringify(ownerOutsideSet.slice(0, 20)),
+    );
   }
-  if (nonChain.length > 0) {
-    throw new Error(`changed paths first touched outside an RC commit: ${JSON.stringify(nonChain)}`);
-  }
-
-  const byRc = {};
-  for (const entry of entries) {
-    byRc[entry.rc] = (byRc[entry.rc] ?? 0) + 1;
+  if (unattributable.length > 0) {
+    throw new Error(`changed paths with no attributable commit: ${unattributable.join(', ')}`);
   }
 
+  entries.sort((left, right) => (left.path < right.path ? -1 : left.path > right.path ? 1 : 0));
+
+  const rcOwnedPaths = entries.filter((entry) => entry.rc !== null).length;
   const matrix = {
     schema: SCHEMA,
     baseSha,
     headSha,
     generatedAt: new Date().toISOString(),
+    requiredOwners,
+    requiredSpecs: packages.map((entry) => entry.spec),
+    mergeCommitsInRange: countMerges(baseSha, headSha),
     totalPaths: entries.length,
+    rcOwnedPaths,
+    excludedPaths: entries.length - rcOwnedPaths,
     byRc,
+    byExclusionWorkstream,
     entries,
   };
 
@@ -349,7 +355,11 @@ export function main(argv = process.argv.slice(2)) {
       headSha: args.headSha,
       output: args.output,
     });
-    console.log(`rc09 ownership matrix: ${matrix.totalPaths} paths -> ${Object.entries(matrix.byRc).map(([rc, n]) => `${rc}=${n}`).join(', ')}`);
+    const rcSummary = Object.entries(matrix.byRc).map(([rc, n]) => `${rc}=${n}`).join(', ');
+    console.log(
+      `rc09 ownership matrix: ${matrix.totalPaths} paths -> rc-owned ${matrix.rcOwnedPaths} (${rcSummary}), `
+      + `excluded ${matrix.excludedPaths} across ${Object.keys(matrix.byExclusionWorkstream).length} workstreams`,
+    );
     return 0;
   } catch (error) {
     console.error(`rc09 ownership matrix generator FAILED: ${error instanceof Error ? error.message : String(error)}`);
