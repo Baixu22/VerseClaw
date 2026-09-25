@@ -204,19 +204,89 @@ function validateChangedPaths(root, manifest, base, errors) {
   }
 }
 
+const OWNERSHIP_MATRIX_RELATIVE =
+  'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json';
+const FINAL_ACCEPTANCE_SPEC_RELATIVE = 'harness/specs/tasks/runtime-authority-convergence-final-acceptance.md';
+
+/** Mirrors scripts/generate-rc09-ownership-matrix.mjs rcFromSubject for spec names. */
+function rcOwnerFromSpecName(specName) {
+  const match = /rc0(0|1|2|3|4|5|6[abcd]|7|8[ab])/iu.exec(String(specName ?? ''));
+  if (!match) return null;
+  const map = {
+    RC00: 'RC-00',
+    RC01: 'RC-01R',
+    RC02: 'RC-02',
+    RC03: 'RC-03',
+    RC04: 'RC-04R',
+    RC05: 'RC-05R',
+    RC06A: 'RC-06A',
+    RC06B: 'RC-06B',
+    RC06C: 'RC-06C',
+    RC06D: 'RC-06D',
+    RC07: 'RC-07',
+    RC08A: 'RC-08A',
+    RC08B: 'RC-08B',
+  };
+  return map[match[0].toUpperCase()] ?? null;
+}
+
 /**
- * RC-09A ownership-matrix validation. The final evidence bundle must contain
- * changed-path-ownership.json generated from the exact candidate diff; every
- * manifest changed path maps to EXACTLY ONE RC owner (RC-00..RC-08B). Missing
- * matrix, path/owner mismatch, duplicate owners, or paths owned by an RC that is
- * not in the required package set all fail closed.
+ * The required owner set is derived from the final spec's
+ * `cumulativeOwnership.requiredSpecs`, never hardcoded here. A matrix that
+ * attributes a path to a package outside that set (RC-10, an RC-01R variant
+ * spec, or any invented id) must fail closed.
+ */
+function requiredOwnerSet(root, errors) {
+  const specPath = resolve(root, ...FINAL_ACCEPTANCE_SPEC_RELATIVE.split('/'));
+  if (!existsSync(specPath)) {
+    errors.push(`final acceptance spec is missing: ${FINAL_ACCEPTANCE_SPEC_RELATIVE}`);
+    return null;
+  }
+  let frontmatter;
+  try {
+    const text = readFileSync(specPath, 'utf8').replace(/^\uFEFF/u, '').replaceAll('\r\n', '\n');
+    const match = /^---\n([\s\S]*?)\n---(?:\n|$)/u.exec(text);
+    frontmatter = match ? parseYaml(match[1]) : null;
+  } catch (error) {
+    errors.push(`cannot read the final acceptance spec: ${error instanceof Error ? error.message : String(error)}`);
+    return null;
+  }
+  const requiredSpecs = Array.isArray(frontmatter?.cumulativeOwnership?.requiredSpecs)
+    ? frontmatter.cumulativeOwnership.requiredSpecs
+    : [];
+  if (requiredSpecs.length === 0) {
+    errors.push('final acceptance spec declares no cumulativeOwnership.requiredSpecs');
+    return null;
+  }
+  const owners = new Set();
+  for (const specName of requiredSpecs) {
+    const owner = rcOwnerFromSpecName(specName);
+    if (!owner) {
+      errors.push(`required spec does not resolve to an RC owner: ${specName}`);
+      return null;
+    }
+    owners.add(owner);
+  }
+  return owners;
+}
+
+/**
+ * RC-09 ownership-matrix validation. The final evidence bundle must contain
+ * changed-path-ownership.json generated from the exact candidate diff, and the
+ * matrix must partition that diff totally and disjointly:
+ *
+ *   - every RC-owned path maps to EXACTLY ONE owner inside the required owner
+ *     set derived from the final spec;
+ *   - every excluded path records the commit SHA, subject and workstream of the
+ *     non-RC commit that introduced it.
+ *
+ * Missing matrix, schema drift, duplicate paths, an owner outside the required
+ * set, an unattributed exclusion, or a partition that does not exactly cover
+ * manifest.changedPaths all fail closed.
  */
 function validateOwnershipMatrix(root, manifest, base, errors) {
   if (!base || !Array.isArray(manifest?.changedPaths)) return;
-  const matrixPath = resolve(
-    root,
-    'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json',
-  );
+  const matrixPath = resolve(root, ...OWNERSHIP_MATRIX_RELATIVE.split('/'));
   if (!existsSync(matrixPath)) {
     errors.push('changed-path-ownership.json is missing from the final evidence bundle');
     return;
@@ -228,36 +298,78 @@ function validateOwnershipMatrix(root, manifest, base, errors) {
     errors.push(`cannot read changed-path-ownership.json: ${error instanceof Error ? error.message : String(error)}`);
     return;
   }
-  if (matrix?.schema !== 'runtime-authority-convergence-rc09-ownership/v1') {
+  if (matrix?.schema !== 'runtime-authority-convergence-rc09-ownership/v2') {
     errors.push('changed-path-ownership.json schema mismatch');
     return;
+  }
+  const requiredOwners = requiredOwnerSet(root, errors);
+  if (!requiredOwners) return;
+  if (matrix?.baseSha !== base || matrix?.headSha !== manifest.candidate.commit) {
+    errors.push('changed-path-ownership.json is not bound to the manifest base/candidate commits');
+  }
+  const declaredRequiredOwners = Array.isArray(matrix?.requiredOwners) ? [...matrix.requiredOwners].sort() : null;
+  if (!declaredRequiredOwners || stableJson(declaredRequiredOwners) !== stableJson([...requiredOwners].sort())) {
+    errors.push('changed-path-ownership.json requiredOwners does not match the final spec required specs');
   }
   if (!Array.isArray(matrix.entries)) {
     errors.push('changed-path-ownership.json entries are missing');
     return;
   }
-  const owners = new Map();
+  const seen = new Set();
+  let rcOwned = 0;
+  let excluded = 0;
   for (const entry of matrix.entries) {
     const pathValue = normalizedPath(entry?.path);
-    const rc = isNonBlankString(entry?.rc) ? String(entry.rc) : null;
-    if (!pathValue || !rc) {
+    if (!pathValue) {
       errors.push(`changed-path-ownership.json has a malformed entry: ${JSON.stringify(entry)}`);
       continue;
     }
-    if (owners.has(pathValue)) {
-      errors.push(`changed path owned by multiple RC packages: ${pathValue}`);
+    if (seen.has(pathValue)) {
+      errors.push(`changed path appears more than once in changed-path-ownership.json: ${pathValue}`);
       continue;
     }
-    owners.set(pathValue, rc);
+    seen.add(pathValue);
+    if (isNonBlankString(entry?.rc)) {
+      rcOwned += 1;
+      if (!requiredOwners.has(String(entry.rc))) {
+        errors.push(`changed path owned by a package outside the required owner set: ${pathValue} -> ${entry.rc}`);
+      }
+      continue;
+    }
+    const excludedEntry = entry?.excluded;
+    if (
+      entry?.rc !== null
+      || !excludedEntry
+      || typeof excludedEntry !== 'object'
+      || !isNonBlankString(excludedEntry.commit)
+      || !SHA1_HEX.test(String(excludedEntry.commit))
+      || !isNonBlankString(excludedEntry.subject)
+      || !isNonBlankString(excludedEntry.workstream)
+    ) {
+      errors.push(`changed-path-ownership.json has an unattributed entry: ${JSON.stringify(entry)}`);
+      continue;
+    }
+    excluded += 1;
   }
   for (const pathValue of manifest.changedPaths) {
-    if (!owners.has(pathValue)) {
-      errors.push(`changed path has no RC owner in changed-path-ownership.json: ${pathValue}`);
+    if (!seen.has(pathValue)) {
+      errors.push(`changed path is missing from changed-path-ownership.json: ${pathValue}`);
     }
   }
-  const manifestOwnerCount = manifest.changedPaths.length;
-  if (owners.size !== manifestOwnerCount) {
-    errors.push(`changed-path-ownership.json owner count mismatch (matrix ${owners.size}, manifest ${manifestOwnerCount})`);
+  if (seen.size !== manifest.changedPaths.length) {
+    errors.push(`changed-path-ownership.json path count mismatch (matrix ${seen.size}, manifest ${manifest.changedPaths.length})`);
+  }
+  if (matrix.totalPaths !== seen.size || matrix.rcOwnedPaths !== rcOwned || matrix.excludedPaths !== excluded) {
+    errors.push('changed-path-ownership.json partition counts do not match its entries');
+  }
+  const byRcTotal = Object.values(matrix.byRc ?? {}).reduce((total, count) => total + (Number(count) || 0), 0);
+  if (byRcTotal !== rcOwned) {
+    errors.push(`changed-path-ownership.json byRc total ${byRcTotal} does not match ${rcOwned} RC-owned paths`);
+  }
+  const byWorkstreamTotal = Object.values(matrix.byExclusionWorkstream ?? {})
+    .reduce((total, count) => total + (Number(count) || 0), 0);
+  if (byWorkstreamTotal !== excluded) {
+    errors.push(`changed-path-ownership.json byExclusionWorkstream total ${byWorkstreamTotal} does not match ${excluded} excluded paths`);
   }
 }
 

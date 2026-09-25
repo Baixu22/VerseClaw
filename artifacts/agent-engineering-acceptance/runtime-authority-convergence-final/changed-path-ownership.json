@@ -1,872 +1,1370 @@
 {
-  "schema": "runtime-authority-convergence-rc09-ownership/v1",
-  "baseSha": "fd857e5d68c2016de1f52009f027f9a07bba8b7b",
-  "headSha": "9b08e3f5bd5c54ee6e0db2f41a615b8c7008add3",
-  "generatedAt": "2026-09-04T05:46:51.634Z",
-  "totalPaths": 170,
+  "schema": "runtime-authority-convergence-rc09-ownership/v2",
+  "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
+  "headSha": "0ee0cf3605535c012e4559d58492f55d6e81d89c",
+  "generatedAt": "2026-09-25T09:09:05.756Z",
+  "requiredOwners": [
+    "RC-00",
+    "RC-01R",
+    "RC-02",
+    "RC-03",
+    "RC-04R",
+    "RC-05R",
+    "RC-06A",
+    "RC-06B",
+    "RC-06C",
+    "RC-06D",
+    "RC-07",
+    "RC-08A",
+    "RC-08B"
+  ],
+  "requiredSpecs": [
+    "rc00-agent-engineering-acceptance-bootstrap.md",
+    "rc01-authority-inventory-baseline.md",
+    "rc02-full-payload-shadow-census.md",
+    "rc03-dcs-seal-dual-receipts.md",
+    "rc04-durable-approval-effect-reconciliation.md",
+    "rc05-minimal-operator-governance-slice.md",
+    "rc06a-taskflow-capability-proof.md",
+    "rc06b-clawgraph-lifecycle-migration.md",
+    "rc06c-mission-lifecycle-migration.md",
+    "rc06d-task-loop-lifecycle-migration.md",
+    "rc07-memory-context-slot-convergence.md",
+    "rc08a-mcp-host-native-tool-convergence.md",
+    "rc08b-otel-observability-convergence.md"
+  ],
+  "mergeCommitsInRange": 0,
+  "totalPaths": 225,
+  "rcOwnedPaths": 182,
+  "excludedPaths": 43,
   "byRc": {
-    "RC-00": 8,
-    "RC-01R": 85,
-    "RC-03": 15,
-    "RC-05R": 23,
-    "RC-04R": 8,
-    "RC-07": 14,
-    "RC-02": 9,
-    "RC-06B": 1,
-    "RC-06C": 2,
-    "RC-08B": 3,
-    "RC-06A": 2
+    "RC-02": 23,
+    "RC-00": 90,
+    "RC-03": 20,
+    "RC-08A": 4,
+    "RC-04R": 7,
+    "RC-05R": 4,
+    "RC-06A": 3,
+    "RC-06B": 7,
+    "RC-06C": 5,
+    "RC-06D": 5,
+    "RC-07": 8,
+    "RC-08B": 6
+  },
+  "byExclusionWorkstream": {
+    "feat(approvals)": 31,
+    "chore(harness)": 2,
+    "fix(harness)": 7,
+    "fix(state)": 3
   },
   "entries": [
     {
-      "path": ".gitattributes",
-      "rc": "RC-00",
-      "commit": "e03b1e628f39b05958a3935d62111fa94912bfe3"
+      "path": ".agent-workbench/task-forest/config.json",
+      "rc": "RC-02",
+      "commit": null,
+      "declaredBySpec": true
     },
     {
-      "path": "artifacts/runtime-authority-convergence/rc-01/baseline.json",
-      "rc": "RC-01R",
-      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+      "path": ".agent-workbench/task-forest/deviations/deviations.jsonl",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": ".agent-workbench/task-forest/exports/task-forest.graph.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/exports/task-forest.todos.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/graph/forest.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/graph/nodes.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-rc02r-real-entry-matrix-20260923.json",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-showcase-phase3-approval-bridge-20260922.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0030-rc02-acceptance-closeout-20260923.json",
+      "rc": "RC-00",
+      "commit": "32597a2d0ccc257b9a5afe0f2b19ac08ca4ec143"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0031-rc03-acceptance-closeout-20260924.json",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0031-rc03r-real-entry-defects-20260923.json",
+      "rc": "RC-03",
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0032-rc04-acceptance-closeout-20260924.json",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0033-rc05-acceptance-closeout-20260924.json",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0034-rc06a-acceptance-closeout-20260924.json",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0035-rc06b-acceptance-closeout-20260924.json",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0036-rc06c-acceptance-closeout-20260924.json",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0037-rc06d-acceptance-closeout-20260925.json",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0038-rc07-acceptance-closeout-20260925.json",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0039-rc08a-acceptance-closeout-20260925.json",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0040-rc08b-acceptance-closeout-20260925.json",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0240-harness-evidence-repair-20260922.json",
+      "rc": null,
+      "excluded": {
+        "commit": "a9c8d09edf0cde7584640242e41fec35addafff3",
+        "subject": "chore(harness): fix the two failing gates - spec diff base and stale Agent Dev evidence",
+        "workstream": "chore(harness)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0641.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0642.json",
+      "rc": null,
+      "excluded": {
+        "commit": "a9c8d09edf0cde7584640242e41fec35addafff3",
+        "subject": "chore(harness): fix the two failing gates - spec diff base and stale Agent Dev evidence",
+        "workstream": "chore(harness)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0643.json",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0644.json",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0645.json",
+      "rc": "RC-02",
+      "commit": "9b141e1907e391688b3fa80c6d5cdcb00b6d9ac8"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0646.json",
+      "rc": "RC-02",
+      "commit": "59c261fe230a78dc4538abd4a1a8dc7d00c7cbe4"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0647.json",
+      "rc": "RC-02",
+      "commit": "79b3eb1fd92f9a8bb1bf03cefb9bee1597770b97"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0648.json",
+      "rc": "RC-02",
+      "commit": "b6128bf234dde4ce661acb37f401d975a496b629"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0649.json",
+      "rc": "RC-02",
+      "commit": "78dc12d1c1e989f33cf7ca85955998ed40887352"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0650.json",
+      "rc": "RC-00",
+      "commit": "32597a2d0ccc257b9a5afe0f2b19ac08ca4ec143"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0651.json",
+      "rc": "RC-03",
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0652.json",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0653.json",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0654.json",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0655.json",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0656.json",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0657.json",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0658.json",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0659.json",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0660.json",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0661.json",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": ".agent-workbench/task-forest/todos/todos.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": ".gitignore",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "README.md",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "README.zh-CN.md",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "artifacts/agent-dev-deep-test/history.json",
+      "rc": "RC-03",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "artifacts/agent-dev-deep-test/report.json",
+      "rc": "RC-03",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "artifacts/agent-dev-deep-test/report.md",
+      "rc": "RC-03",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "artifacts/agent-dev-quality/report.json",
+      "rc": "RC-03",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "artifacts/agent-dev-workbench/evidence.json",
+      "rc": "RC-03",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "32597a2d0ccc257b9a5afe0f2b19ac08ca4ec143"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "32597a2d0ccc257b9a5afe0f2b19ac08ca4ec143"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "32597a2d0ccc257b9a5afe0f2b19ac08ca4ec143"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "32597a2d0ccc257b9a5afe0f2b19ac08ca4ec143"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "32597a2d0ccc257b9a5afe0f2b19ac08ca4ec143"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/census.json",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/suite-results.json",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/suite.log",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-03/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-03/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-03/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-03/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-03/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-03/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-04/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-04/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-04/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-04/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-04/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-04/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-05/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-05/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-05/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-05/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-05/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-05/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06a/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06a/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06a/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06a/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06a/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06a/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06b/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06b/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06b/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06b/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06b/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06b/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06c/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06c/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06c/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06c/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06c/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06c/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06d/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06d/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06d/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06d/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06d/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06d/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-07/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-07/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-07/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-07/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-07/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-07/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08a/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08a/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08a/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08a/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08a/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08a/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08b/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08b/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08b/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08b/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08b/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08b/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
     },
     {
       "path": "docs/dev/handoffs/LATEST.md",
-      "rc": "RC-00",
-      "commit": "8cf3aa70515e1ac7e11afaf656dfe1f8fda78a0d"
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
     },
     {
-      "path": "docs/dev/unified-agent-system/runtime-convergence/README.md",
-      "rc": "RC-00",
-      "commit": "8cf3aa70515e1ac7e11afaf656dfe1f8fda78a0d"
+      "path": "docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
     },
     {
-      "path": "docs/dev/unified-agent-system/runtime-convergence/STATUS.md",
-      "rc": "RC-01R",
-      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+      "path": "electron/gateway/event-dispatch.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
     },
     {
-      "path": "eslint.config.mjs",
-      "rc": "RC-01R",
-      "commit": "2d6cf606adb1a7face69bb4b7152b886da9fe97e"
+      "path": "electron/gateway/manager.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "electron/main/index.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "electron/main/ipc-handlers.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "electron/services/mcp-api.ts",
+      "rc": "RC-08A",
+      "commit": "34eb49ff28019631b47bb4d7e453f72f27381546"
+    },
+    {
+      "path": "electron/services/runtime-approvals-api.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "electron/services/workspace-permissions.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "harness/specs/layers/harness.md",
+      "rc": null,
+      "excluded": {
+        "commit": "b1f9247636e77edf84462db35167e325367499e7",
+        "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
+        "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/a1-layered-isolation-pilot.md",
+      "rc": null,
+      "excluded": {
+        "commit": "b1f9247636e77edf84462db35167e325367499e7",
+        "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
+        "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/a2-multi-agent-orchestration-pilot.md",
+      "rc": null,
+      "excluded": {
+        "commit": "b1f9247636e77edf84462db35167e325367499e7",
+        "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
+        "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/a4-decision-quality-pilot.md",
+      "rc": null,
+      "excluded": {
+        "commit": "b1f9247636e77edf84462db35167e325367499e7",
+        "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
+        "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/a6-long-running-persistence-pilot.md",
+      "rc": null,
+      "excluded": {
+        "commit": "b1f9247636e77edf84462db35167e325367499e7",
+        "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
+        "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/knowledge-steward-semantic-pilot.md",
+      "rc": null,
+      "excluded": {
+        "commit": "b1f9247636e77edf84462db35167e325367499e7",
+        "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
+        "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/rc02-full-payload-shadow-census.md",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
     },
     {
       "path": "harness/specs/tasks/rc03-dcs-seal-dual-receipts.md",
       "rc": "RC-03",
-      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
     },
     {
-      "path": "harness/specs/tasks/runtime-authority-convergence-final-acceptance.md",
-      "rc": "RC-00",
-      "commit": "8cf3aa70515e1ac7e11afaf656dfe1f8fda78a0d"
-    },
-    {
-      "path": "openclaw_runtime/.oxlintrc.json",
-      "rc": "RC-01R",
-      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
-    },
-    {
-      "path": "openclaw_runtime/apps/macos/Sources/OpenClaw/HostEnvSecurityPolicy.generated.swift",
-      "rc": "RC-01R",
-      "commit": "926f239c73e035288de105f9fb84f4beaa16ac93"
-    },
-    {
-      "path": "openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json",
-      "rc": "RC-01R",
-      "commit": "926f239c73e035288de105f9fb84f4beaa16ac93"
-    },
-    {
-      "path": "openclaw_runtime/config/tsconfig/oxlint.core.json",
-      "rc": "RC-01R",
-      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
-    },
-    {
-      "path": "openclaw_runtime/config/tsconfig/oxlint.extensions.json",
-      "rc": "RC-01R",
-      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
-    },
-    {
-      "path": "openclaw_runtime/config/tsconfig/oxlint.json",
-      "rc": "RC-01R",
-      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
-    },
-    {
-      "path": "openclaw_runtime/config/tsconfig/oxlint.scripts.json",
-      "rc": "RC-01R",
-      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
-    },
-    {
-      "path": "openclaw_runtime/extensions/browser/src/browser/server-context.remote-tab-ops.harness.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/browser/src/cli/browser-cli-actions-input/register.files-downloads.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/browser/src/node-host/invoke-browser.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/channels/rc05-operator-fixture/__tests__/conformance.test.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/extensions/chutes/index.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/codex/src/app-server/approval-bridge.ts",
+      "path": "harness/specs/tasks/rc04-durable-approval-effect-reconciliation.md",
       "rc": "RC-04R",
-      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
+      "commit": "33a93df153bb485f9d3db6ed18d5da13d9f7dc69"
     },
     {
-      "path": "openclaw_runtime/extensions/codex/src/app-server/elicitation-bridge.ts",
-      "rc": "RC-04R",
-      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
-    },
-    {
-      "path": "openclaw_runtime/extensions/codex/src/app-server/protocol.ts",
-      "rc": "RC-04R",
-      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
-    },
-    {
-      "path": "openclaw_runtime/extensions/codex/src/migration/apply.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/discord/src/outbound-adapter.test-harness.ts",
+      "path": "harness/specs/tasks/rc05-minimal-operator-governance-slice.md",
       "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+      "commit": "99ef1b73ef808e325136e406631895b0a8c9d5fa"
     },
     {
-      "path": "openclaw_runtime/extensions/discord/src/test-support/provider.test-support.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+      "path": "harness/specs/tasks/rc06a-taskflow-capability-proof.md",
+      "rc": "RC-06A",
+      "commit": "e148a521f3a5595f05b9440db26241f576b53d73"
     },
     {
-      "path": "openclaw_runtime/extensions/feishu/src/bitable.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/feishu/src/setup-surface.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/google/gemini-cli-provider.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/matrix/src/onboarding.test-harness.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/extensions/matrix/test-api.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/extensions/memory-core/src/cli.runtime.ts",
-      "rc": "RC-07",
-      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
-    },
-    {
-      "path": "openclaw_runtime/extensions/memory-wiki/src/markdown.ts",
-      "rc": "RC-07",
-      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
-    },
-    {
-      "path": "openclaw_runtime/extensions/minimax/provider-registration.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/msteams/src/setup-surface.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/ollama/src/setup.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/openai/openai-chatgpt-oauth.runtime.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/openai/openai-chatgpt-provider.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/qa-channel/api.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/extensions/qa-lab/src/live-transports/discord/discord-live.runtime.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/extensions/qa-lab/src/live-transports/slack/slack-live.runtime.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/extensions/qa-lab/src/live-transports/telegram/telegram-live.runtime.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/extensions/qa-lab/src/live-transports/whatsapp/whatsapp-live.runtime.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/extensions/qa-lab/src/runtime-tool-fixture.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/extensions/qa-lab/src/scenario-flow-runner.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/extensions/reach-readers/src/core/probe.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/reach-readers/src/tools/youtube.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/slack/src/monitor/message-handler/prepare.test-helpers.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/extensions/slack/src/monitor/provider-support.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/extensions/synology-chat/src/client.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/tsconfig.package-boundary.paths.json",
-      "rc": "RC-01R",
-      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
-    },
-    {
-      "path": "openclaw_runtime/extensions/voice-call/src/types.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/workboard/src/types.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/xai/xai-oauth.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/extensions/zalouser/npm-shrinkwrap.json",
-      "rc": "RC-01R",
-      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
-    },
-    {
-      "path": "openclaw_runtime/package.json",
-      "rc": "RC-02",
-      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
-    },
-    {
-      "path": "openclaw_runtime/pnpm-lock.yaml",
-      "rc": "RC-02",
-      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
-    },
-    {
-      "path": "openclaw_runtime/pnpm-workspace.yaml",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/scripts/generate-npm-shrinkwrap.mjs",
-      "rc": "RC-01R",
-      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
-    },
-    {
-      "path": "openclaw_runtime/scripts/prepare-extension-package-boundary-artifacts.mjs",
-      "rc": "RC-01R",
-      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/agent-tools.read.characterization.test.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/clawgraph/clawgraph-taskflow-projection.test.ts",
+      "path": "harness/specs/tasks/rc06b-clawgraph-lifecycle-migration.md",
       "rc": "RC-06B",
-      "commit": "c8b79dc5b559ecef8988522aa4a0d213e10247da"
+      "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
+    },
+    {
+      "path": "harness/specs/tasks/rc06c-mission-lifecycle-migration.md",
+      "rc": "RC-06C",
+      "commit": "fa9efee1fa9ca5c06d17d5f8106d86c77a9a0790"
+    },
+    {
+      "path": "harness/specs/tasks/rc06d-task-loop-lifecycle-migration.md",
+      "rc": "RC-06D",
+      "commit": "6e23931beb457f80d05f5677725dcb1c17255620"
+    },
+    {
+      "path": "harness/specs/tasks/rc07-memory-context-slot-convergence.md",
+      "rc": "RC-07",
+      "commit": "53a2b1d3b1812e6d3287d1c0b5d99edf49628638"
+    },
+    {
+      "path": "harness/specs/tasks/rc08a-mcp-host-native-tool-convergence.md",
+      "rc": "RC-08A",
+      "commit": "34eb49ff28019631b47bb4d7e453f72f27381546"
+    },
+    {
+      "path": "harness/specs/tasks/rc08b-otel-observability-convergence.md",
+      "rc": "RC-08B",
+      "commit": "a9418c9f9d47a4ecd67a3f2826065a4c69a88c03"
+    },
+    {
+      "path": "harness/specs/tasks/runtime-approval-bridge.md",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/stress-test-windows-concurrency-v1.md",
+      "rc": null,
+      "excluded": {
+        "commit": "b1f9247636e77edf84462db35167e325367499e7",
+        "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
+        "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/src/cli.mjs",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "harness/src/git.mjs",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "openclaw_runtime/extensions/diagnostics-otel/src/service.ts",
+      "rc": "RC-08B",
+      "commit": "a9418c9f9d47a4ecd67a3f2826065a4c69a88c03"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/approval-ledger.ts",
+      "rc": "RC-04R",
+      "commit": "33a93df153bb485f9d3db6ed18d5da13d9f7dc69"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/clawgraph/clawgraph-lifecycle-cutover.test.ts",
+      "rc": "RC-06B",
+      "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/clawgraph/clawgraph-taskflow-projection.ts",
+      "rc": "RC-06B",
+      "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/clawgraph/runtime.ts",
+      "rc": "RC-06B",
+      "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/command-poll-backoff.test.ts",
+      "rc": "RC-07",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/command-poll-backoff.ts",
+      "rc": "RC-07",
+      "commit": null,
+      "declaredBySpec": true
     },
     {
       "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
       "rc": "RC-03",
-      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+      "commit": "84d13255267d4da7fcc2728bc74b655c8e2de56f"
     },
     {
-      "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory.test.ts",
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run.ts",
       "rc": "RC-03",
-      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
     },
     {
       "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
       "rc": "RC-03",
-      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/embedded-agent-runner/sekb-runtime.ts",
-      "rc": "RC-07",
-      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+      "commit": "84d13255267d4da7fcc2728bc74b655c8e2de56f"
     },
     {
       "path": "openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts",
       "rc": "RC-03",
-      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
     },
     {
-      "path": "openclaw_runtime/src/agents/harness/native-hook-relay.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "openclaw_runtime/src/agents/mission-control/controller.ts",
+      "rc": "RC-06C",
+      "commit": "fa9efee1fa9ca5c06d17d5f8106d86c77a9a0790"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mission-control/mission-lifecycle-cutover.test.ts",
+      "rc": "RC-06C",
+      "commit": "fa9efee1fa9ca5c06d17d5f8106d86c77a9a0790"
     },
     {
       "path": "openclaw_runtime/src/agents/mission-control/mission-taskflow-projection.test.ts",
       "rc": "RC-06C",
-      "commit": "def40614c724ad57b127187d5e11f2c7dc9576f3"
+      "commit": "fa9efee1fa9ca5c06d17d5f8106d86c77a9a0790"
     },
     {
-      "path": "openclaw_runtime/src/agents/mission-control/rollback-wiring.test.ts",
+      "path": "openclaw_runtime/src/agents/mission-control/mission-taskflow-projection.ts",
       "rc": "RC-06C",
-      "commit": "def40614c724ad57b127187d5e11f2c7dc9576f3"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/openai-transport-stream.ts",
-      "rc": "RC-02",
-      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/operator-slice.test.ts",
-      "rc": "RC-04R",
-      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
+      "commit": "fa9efee1fa9ca5c06d17d5f8106d86c77a9a0790"
     },
     {
       "path": "openclaw_runtime/src/agents/operator-slice.ts",
       "rc": "RC-04R",
-      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
+      "commit": "33a93df153bb485f9d3db6ed18d5da13d9f7dc69"
     },
     {
-      "path": "openclaw_runtime/src/agents/parity-audit/parity-audit.test.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "openclaw_runtime/src/agents/rc02-cli-entry.acceptance.test.ts",
+      "rc": "RC-02",
+      "commit": "78dc12d1c1e989f33cf7ca85955998ed40887352"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/rc02-cron-entry.acceptance.test.ts",
+      "rc": "RC-02",
+      "commit": "78dc12d1c1e989f33cf7ca85955998ed40887352"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/rc02-entry-matrix.acceptance.test.ts",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/rc02-inbound-entry.acceptance.test.ts",
+      "rc": "RC-02",
+      "commit": "b6128bf234dde4ce661acb37f401d975a496b629"
     },
     {
       "path": "openclaw_runtime/src/agents/rc02-shadow-census.acceptance.test.ts",
       "rc": "RC-02",
-      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
     },
     {
-      "path": "openclaw_runtime/src/agents/rc04-durable-approval.test.ts",
-      "rc": "RC-04R",
-      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/receipt-store.test.ts",
-      "rc": "RC-02",
-      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/receipt-store.ts",
-      "rc": "RC-02",
-      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/sessions/keybindings.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/sessions/tools/edit.test.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/sessions/tools/read.test.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/sessions/tools/write.test.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/shadow-census.test.ts",
-      "rc": "RC-02",
-      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/tools/cron-tool-canonicalize.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/verseshell/governed-exec.test.ts",
-      "rc": "RC-04R",
-      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
-    },
-    {
-      "path": "openclaw_runtime/src/channels/plugins/channel-runtime-surface.types.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/src/channels/plugins/contracts/test-helpers.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/src/channels/plugins/types.plugin.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/src/cli/cli-utils.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/cli/progress.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/config/types.plugins.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/context-engine/assembler.ts",
+      "path": "openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts",
       "rc": "RC-03",
-      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
     },
     {
-      "path": "openclaw_runtime/src/context-engine/block-lifecycle.test.ts",
+      "path": "openclaw_runtime/src/agents/rc04-exec-approval-wiring.test.ts",
+      "rc": "RC-04R",
+      "commit": "33a93df153bb485f9d3db6ed18d5da13d9f7dc69"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/role-spawn.ts",
+      "rc": "RC-03",
+      "commit": "84d13255267d4da7fcc2728bc74b655c8e2de56f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/shadow-census.ts",
+      "rc": "RC-03",
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/slot-convergence.test.ts",
       "rc": "RC-07",
-      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+      "commit": "53a2b1d3b1812e6d3287d1c0b5d99edf49628638"
     },
     {
-      "path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+      "path": "openclaw_runtime/src/agents/slot-convergence.ts",
+      "rc": "RC-07",
+      "commit": "53a2b1d3b1812e6d3287d1c0b5d99edf49628638"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+      "rc": "RC-06D",
+      "commit": "6e23931beb457f80d05f5677725dcb1c17255620"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-lifecycle-cutover.test.ts",
+      "rc": "RC-06D",
+      "commit": "6e23931beb457f80d05f5677725dcb1c17255620"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-taskflow-projection.test.ts",
+      "rc": "RC-06D",
+      "commit": "6e23931beb457f80d05f5677725dcb1c17255620"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-taskflow-projection.ts",
+      "rc": "RC-06D",
+      "commit": "6e23931beb457f80d05f5677725dcb1c17255620"
+    },
+    {
+      "path": "openclaw_runtime/src/auto-reply/reply/get-reply-run.ts",
       "rc": "RC-03",
-      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+      "commit": "84d13255267d4da7fcc2728bc74b655c8e2de56f"
     },
     {
       "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
       "rc": "RC-03",
-      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
-    },
-    {
-      "path": "openclaw_runtime/src/context-engine/dcs-receipts.ts",
-      "rc": "RC-03",
-      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
-    },
-    {
-      "path": "openclaw_runtime/src/context-engine/factstore/factstore.test.ts",
-      "rc": "RC-03",
-      "commit": "821e6b918735426d33cf0e7884e5f9ce9f536cdb"
-    },
-    {
-      "path": "openclaw_runtime/src/context-engine/memory-context-provider.test.ts",
-      "rc": "RC-07",
-      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
-    },
-    {
-      "path": "openclaw_runtime/src/context-engine/pruned-runtime-build-contract.test.ts",
-      "rc": "RC-01R",
-      "commit": "ee1dd99951066c46eba07d537bf6702f861406a0"
+      "commit": "84d13255267d4da7fcc2728bc74b655c8e2de56f"
     },
     {
       "path": "openclaw_runtime/src/context-engine/rc03-producers.ts",
       "rc": "RC-03",
-      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
     },
     {
       "path": "openclaw_runtime/src/context-engine/rc03-seal-hook.ts",
       "rc": "RC-03",
-      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
     },
     {
       "path": "openclaw_runtime/src/context-engine/rc03-seal-wiring.test.ts",
       "rc": "RC-03",
-      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+      "commit": "84d13255267d4da7fcc2728bc74b655c8e2de56f"
     },
     {
-      "path": "openclaw_runtime/src/context-engine/rc03-seal.test.ts",
-      "rc": "RC-03",
-      "commit": "fb18a5476ade4f39c1761031ea53ca3182d03e9c"
+      "path": "openclaw_runtime/src/cron/delivery.ts",
+      "rc": "RC-05R",
+      "commit": "99ef1b73ef808e325136e406631895b0a8c9d5fa"
     },
     {
-      "path": "openclaw_runtime/src/context-engine/registry.ts",
-      "rc": "RC-07",
-      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
-    },
-    {
-      "path": "openclaw_runtime/src/context-engine/symbol-context-provider.test.ts",
-      "rc": "RC-07",
-      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
-    },
-    {
-      "path": "openclaw_runtime/src/gateway/cli-runtime/nodes-media.test.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/gateway/health-runtime/status.summary.runtime.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/gateway/node-pending-work.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/gateway/role-policy.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/hooks/module-loader.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/infra/exec-approvals-effective.ts",
+      "path": "openclaw_runtime/src/gateway/exec-approval-manager.ts",
       "rc": "RC-04R",
-      "commit": "b444d0b8423b2784865a85de0c9fcc82d6a12214"
+      "commit": "33a93df153bb485f9d3db6ed18d5da13d9f7dc69"
     },
     {
-      "path": "openclaw_runtime/src/infra/json-file.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "openclaw_runtime/src/gateway/node-invoke-plugin-policy.ts",
+      "rc": "RC-04R",
+      "commit": "33a93df153bb485f9d3db6ed18d5da13d9f7dc69"
     },
     {
-      "path": "openclaw_runtime/src/infra/net/ssrf.test.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "openclaw_runtime/src/gateway/server-aux-handlers.ts",
+      "rc": "RC-04R",
+      "commit": "33a93df153bb485f9d3db6ed18d5da13d9f7dc69"
     },
     {
-      "path": "openclaw_runtime/src/infra/net/ssrf.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "openclaw_runtime/src/gateway/server-methods/inbox.test.ts",
+      "rc": "RC-05R",
+      "commit": "99ef1b73ef808e325136e406631895b0a8c9d5fa"
     },
     {
-      "path": "openclaw_runtime/src/infra/outbound/send-deps.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "openclaw_runtime/src/gateway/server-methods/inbox.ts",
+      "rc": "RC-05R",
+      "commit": "99ef1b73ef808e325136e406631895b0a8c9d5fa"
     },
     {
-      "path": "openclaw_runtime/src/knowledge/sekb/batch-distillation-assistant.test.ts",
-      "rc": "RC-07",
-      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
+      "path": "openclaw_runtime/src/gateway/server.impl.ts",
+      "rc": "RC-06B",
+      "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
     },
     {
-      "path": "openclaw_runtime/src/knowledge/sekb/experience-block-bridge.ts",
-      "rc": "RC-07",
-      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
-    },
-    {
-      "path": "openclaw_runtime/src/knowledge/sekb/experience-shadow-product.test.ts",
-      "rc": "RC-07",
-      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
-    },
-    {
-      "path": "openclaw_runtime/src/knowledge/sekb/experience-shadow-product.ts",
-      "rc": "RC-07",
-      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
-    },
-    {
-      "path": "openclaw_runtime/src/knowledge/sekb/sekb.test.ts",
-      "rc": "RC-07",
-      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
-    },
-    {
-      "path": "openclaw_runtime/src/knowledge/sekb/shadow-evaluation-offline.test.ts",
-      "rc": "RC-07",
-      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
-    },
-    {
-      "path": "openclaw_runtime/src/llm/env-api-keys.ts",
-      "rc": "RC-02",
-      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
-    },
-    {
-      "path": "openclaw_runtime/src/memory/memory-store.ts",
-      "rc": "RC-07",
-      "commit": "c0a5fcdee9581a35af821eeaf273ed7a8835e2e1"
-    },
-    {
-      "path": "openclaw_runtime/src/node-host/invoke.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "openclaw_runtime/src/observability/exporter-parity.ts",
+      "rc": "RC-08B",
+      "commit": "a9418c9f9d47a4ecd67a3f2826065a4c69a88c03"
     },
     {
       "path": "openclaw_runtime/src/observability/rc08b-otel.test.ts",
       "rc": "RC-08B",
-      "commit": "e5ddec35be1e3ba2e55c7716da4a12299a7aee78"
+      "commit": "a9418c9f9d47a4ecd67a3f2826065a4c69a88c03"
     },
     {
-      "path": "openclaw_runtime/src/observability/trace-recorder.ts",
+      "path": "openclaw_runtime/src/observability/trace-buffer.ts",
       "rc": "RC-08B",
-      "commit": "e5ddec35be1e3ba2e55c7716da4a12299a7aee78"
+      "commit": "a9418c9f9d47a4ecd67a3f2826065a4c69a88c03"
     },
     {
-      "path": "openclaw_runtime/src/plugin-sdk/channel-config-helpers.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+      "path": "openclaw_runtime/src/plugins/activation-planner.ts",
+      "rc": "RC-07",
+      "commit": "53a2b1d3b1812e6d3287d1c0b5d99edf49628638"
     },
     {
-      "path": "openclaw_runtime/src/plugin-sdk/channel-entry-contract.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
+      "path": "openclaw_runtime/src/plugins/config-normalization-shared.ts",
+      "rc": "RC-07",
+      "commit": "53a2b1d3b1812e6d3287d1c0b5d99edf49628638"
     },
     {
-      "path": "openclaw_runtime/src/plugin-sdk/facade-loader.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "openclaw_runtime/src/state/openclaw-agent-db.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "01398fb6fa0386d05ec17bac78cae56d2c43252b",
+        "subject": "fix(state): set busy_timeout before the WAL switch so concurrent openers wait instead of failing",
+        "workstream": "fix(state)"
+      }
     },
     {
-      "path": "openclaw_runtime/src/plugin-sdk/facade-runtime.ts",
-      "rc": "RC-02",
-      "commit": "c3865f555fba6c4141f929959cc2dfc65342c0f3"
+      "path": "openclaw_runtime/src/state/openclaw-state-db.busy-open.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "01398fb6fa0386d05ec17bac78cae56d2c43252b",
+        "subject": "fix(state): set busy_timeout before the WAL switch so concurrent openers wait instead of failing",
+        "workstream": "fix(state)"
+      }
     },
     {
-      "path": "openclaw_runtime/src/plugin-sdk/json-store.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/plugin-sdk/qa-runner-runtime.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/src/plugin-sdk/test-helpers/public-surface-loader.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/src/plugin-sdk/test-helpers/subagent-hooks.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/src/plugins/hooks.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/plugins/host-hook-state.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/plugins/host-hooks.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/plugins/lazy-service-module.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/plugins/public-surface-loader.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/plugins/runtime/runtime-plugin-boundary.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/plugins/runtime/types-channel.ts",
-      "rc": "RC-05R",
-      "commit": "f67f1981700d0caf168f7e9381eff4e3d108b2ff"
-    },
-    {
-      "path": "openclaw_runtime/src/plugins/trusted-tool-policy.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/process/supervisor/types.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
-    },
-    {
-      "path": "openclaw_runtime/src/runtime-core/event-log-persistence.ts",
-      "rc": "RC-01R",
-      "commit": "2d6cf606adb1a7face69bb4b7152b886da9fe97e"
-    },
-    {
-      "path": "openclaw_runtime/src/runtime-core/event-log.ts",
-      "rc": "RC-01R",
-      "commit": "2d6cf606adb1a7face69bb4b7152b886da9fe97e"
-    },
-    {
-      "path": "openclaw_runtime/src/runtime-core/evidence-verifier.test.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "openclaw_runtime/src/state/openclaw-state-db.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "01398fb6fa0386d05ec17bac78cae56d2c43252b",
+        "subject": "fix(state): set busy_timeout before the WAL switch so concurrent openers wait instead of failing",
+        "workstream": "fix(state)"
+      }
     },
     {
       "path": "openclaw_runtime/src/tasks/task-flow-cas.test.ts",
       "rc": "RC-06A",
-      "commit": "b879501aa6232b2e0f9d7c08d4a8016e410ffc38"
+      "commit": "e148a521f3a5595f05b9440db26241f576b53d73"
     },
     {
-      "path": "openclaw_runtime/src/tasks/task-registry.sqlite.shared.ts",
+      "path": "openclaw_runtime/src/tasks/task-flow-cas.ts",
       "rc": "RC-06A",
-      "commit": "b879501aa6232b2e0f9d7c08d4a8016e410ffc38"
+      "commit": "e148a521f3a5595f05b9440db26241f576b53d73"
     },
     {
-      "path": "openclaw_runtime/src/test-utils/bundled-plugin-public-surface.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "openclaw_runtime/src/tasks/task-flow-registry.store.sqlite.ts",
+      "rc": "RC-06B",
+      "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
     },
     {
-      "path": "openclaw_runtime/src/test-utils/vitest-mock-fn.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "openclaw_runtime/src/tasks/workflow-lifecycle-owner.ts",
+      "rc": "RC-06B",
+      "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
     },
     {
-      "path": "openclaw_runtime/src/utils.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "scripts/rc02-shadow-census-report.mjs",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
     },
     {
-      "path": "openclaw_runtime/src/version.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "shared/host-api/contract.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
     },
     {
-      "path": "openclaw_runtime/test/helpers/agents/happy-path-prompt-snapshots.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "shared/host-events/contract.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
     },
     {
-      "path": "openclaw_runtime/test/helpers/auth-wizard.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "shared/i18n/locales/en/chat.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
     },
     {
-      "path": "openclaw_runtime/test/helpers/gateway-e2e-harness.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "shared/i18n/locales/ja/chat.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
     },
     {
-      "path": "openclaw_runtime/test/helpers/openclaw-test-instance.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "shared/i18n/locales/ru/chat.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
     },
     {
-      "path": "openclaw_runtime/test/helpers/wizard-prompter.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "shared/i18n/locales/zh/chat.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
     },
     {
-      "path": "openclaw_runtime/test/non-isolated-runner.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "src/App.tsx",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
     },
     {
-      "path": "openclaw_runtime/test/scripts/pruned-runtime-build-contract.test.ts",
-      "rc": "RC-01R",
-      "commit": "ee1dd99951066c46eba07d537bf6702f861406a0"
+      "path": "src/components/runtime-approvals/RuntimeApprovalPrompt.tsx",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
     },
     {
-      "path": "openclaw_runtime/test/setup-openclaw-runtime.ts",
-      "rc": "RC-01R",
-      "commit": "509d840e981a325504f59aec84eacfdbbcc1cfe5"
+      "path": "src/lib/host-api.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
     },
     {
-      "path": "openclaw_runtime/test/tsconfig/tsconfig.core.test.json",
-      "rc": "RC-01R",
-      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+      "path": "src/lib/host-events.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
     },
     {
-      "path": "openclaw_runtime/test/tsconfig/tsconfig.extensions.test.json",
-      "rc": "RC-01R",
-      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+      "path": "tests/e2e/runtime-approval-bridge.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
     },
     {
-      "path": "openclaw_runtime/tsdown.config.ts",
-      "rc": "RC-03",
-      "commit": "11038b3ec9c6df30162187c2309e492c0a956631"
+      "path": "tests/unit/gateway-event-dispatch.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
     },
     {
-      "path": "package.json",
+      "path": "tests/unit/harness-git.test.ts",
       "rc": "RC-00",
-      "commit": "8cf3aa70515e1ac7e11afaf656dfe1f8fda78a0d"
+      "commit": null,
+      "declaredBySpec": true
     },
     {
-      "path": "scripts/lib/agent-engineering-acceptance.mjs",
-      "rc": "RC-00",
-      "commit": "8cf3aa70515e1ac7e11afaf656dfe1f8fda78a0d"
+      "path": "tests/unit/mcp-api.test.ts",
+      "rc": "RC-08A",
+      "commit": "34eb49ff28019631b47bb4d7e453f72f27381546"
     },
     {
-      "path": "tests/unit/agent-engineering-acceptance.test.ts",
-      "rc": "RC-00",
-      "commit": "b2dd898a69a3e4466d853ecba966dfeac73901eb"
+      "path": "tests/unit/rc07-memory-context-slot-convergence.test.ts",
+      "rc": "RC-07",
+      "commit": "53a2b1d3b1812e6d3287d1c0b5d99edf49628638"
     },
     {
-      "path": "tests/unit/rc01-authority-inventory-baseline.test.ts",
-      "rc": "RC-01R",
-      "commit": "3465ccb0243c5e986cce6c3c32b233803db5ef12"
+      "path": "tests/unit/rc08a-mcp-host-native-tool-convergence.test.ts",
+      "rc": "RC-08A",
+      "commit": "34eb49ff28019631b47bb4d7e453f72f27381546"
     },
     {
       "path": "tests/unit/rc08b-otel-observability-convergence.test.ts",
       "rc": "RC-08B",
-      "commit": "e5ddec35be1e3ba2e55c7716da4a12299a7aee78"
+      "commit": "a9418c9f9d47a4ecd67a3f2826065a4c69a88c03"
     },
     {
-      "path": "tests/unit/rc09-ownership-matrix.test.ts",
-      "rc": "RC-00",
-      "commit": "51f5d837580bf1611e4608e98415027924102a18"
+      "path": "tests/unit/runtime-approval-bridge.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "tests/unit/runtime-approval-prompt.test.tsx",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
     }
   ]
 }
