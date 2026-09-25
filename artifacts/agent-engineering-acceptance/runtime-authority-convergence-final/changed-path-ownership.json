@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "e81d42bbe1ce977c3a84651e8fd8bc9115cb664c",
-  "generatedAt": "2026-09-25T09:29:41.160Z",
+  "headSha": "54d2e68eba275862670ff9c74032382e3438a18b",
+  "generatedAt": "2026-09-25T12:59:54.248Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,9 +34,9 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 236,
+  "totalPaths": 241,
   "rcOwnedPaths": 188,
-  "excludedPaths": 48,
+  "excludedPaths": 53,
   "byRc": {
     "RC-02": 23,
     "RC-00": 94,
@@ -55,7 +55,9 @@
   "byExclusionWorkstream": {
     "feat(approvals)": 31,
     "fix(rc09)": 5,
+    "docs(task-forest)": 2,
     "chore(harness)": 2,
+    "chore(rc09)": 3,
     "fix(harness)": 7,
     "fix(state)": 3
   },
@@ -191,6 +193,15 @@
       }
     },
     {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-unblock-landed-20260925.json",
+      "rc": null,
+      "excluded": {
+        "commit": "4680122b010713d5c923bad37a7f90280df0d480",
+        "subject": "docs(task-forest): record the landed RC-09 unblock evidence on TF-0041",
+        "workstream": "docs(task-forest)"
+      }
+    },
+    {
       "path": ".agent-workbench/task-forest/proposals/TFP-tf0240-harness-evidence-repair-20260922.json",
       "rc": null,
       "excluded": {
@@ -319,6 +330,15 @@
         "commit": "e81d42bbe1ce977c3a84651e8fd8bc9115cb664c",
         "subject": "fix(rc09): partition the cumulative diff and re-anchor the accepted base to unblock TF-0041",
         "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0663.json",
+      "rc": null,
+      "excluded": {
+        "commit": "4680122b010713d5c923bad37a7f90280df0d480",
+        "subject": "docs(task-forest): record the landed RC-09 unblock evidence on TF-0041",
+        "workstream": "docs(task-forest)"
       }
     },
     {
@@ -746,6 +766,33 @@
       "path": "artifacts/runtime-authority-convergence/rc-08b/acceptance/verifierReport.json",
       "rc": "RC-00",
       "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-09/rejected-20260809/README.md",
+      "rc": null,
+      "excluded": {
+        "commit": "54d2e68eba275862670ff9c74032382e3438a18b",
+        "subject": "chore(rc09): track the archived rejected evidence under rc-09",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-09/rejected-20260809/final-report.json",
+      "rc": null,
+      "excluded": {
+        "commit": "54d2e68eba275862670ff9c74032382e3438a18b",
+        "subject": "chore(rc09): track the archived rejected evidence under rc-09",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-09/rejected-20260809/manifest.json",
+      "rc": null,
+      "excluded": {
+        "commit": "54d2e68eba275862670ff9c74032382e3438a18b",
+        "subject": "chore(rc09): track the archived rejected evidence under rc-09",
+        "workstream": "chore(rc09)"
+      }
     },
     {
       "path": "docs/dev/handoffs/LATEST.md",
