@@ -60,6 +60,26 @@ export const ROOT_UNIT_EXPECTED_SKIPS = ROOT_UNIT_SKIP_INVENTORY.reduce((sum, en
 // privilege, where skills-symlink-cleanup.test.ts skips these 3 tests.
 export const ROOT_UNIT_SYMLINK_PRIVILEGE_SKIPS = 3;
 const RUNTIME_UNIT_EXPECTED_SKIPS = 0;
+// Identity-backed skip budget for the full Electron UI suite, enumerated from a
+// completed `pnpm run test:e2e` on Windows (314 passed / 2 failed / 10 skipped,
+// 47.9 min, 2026-09-25). Four entries are environment-gated. The other five
+// files hold six permanently `test.skip`-marked placeholder specs: those are
+// recorded as test debt, not as a capability the acceptance environment
+// withholds. A reading above this sum means either a new capability gate
+// appeared (provide the input) or a new placeholder was added (record it here
+// with its reason) — never raise the number without an identity.
+export const E2E_SKIP_INVENTORY = Object.freeze([
+  { file: 'tests/e2e/chat-cache-deepseek-cache-first.spec.ts', skips: 1, gate: 'CLAWX_LIVE_MODEL_E2E withheld' },
+  { file: 'tests/e2e/chat-cache-live-model.spec.ts', skips: 1, gate: 'live model credentials withheld' },
+  { file: 'tests/e2e/mac-titlebar-drag-region.spec.ts', skips: 1, gate: 'macOS-only (process.platform !== darwin)' },
+  { file: 'tests/e2e/visual-tune.spec.ts', skips: 1, gate: 'CLAWX_VISUAL_TUNE withheld' },
+  { file: 'tests/e2e/chat-checkpoints.spec.ts', skips: 1, gate: 'permanent test.skip placeholder (unimplemented)' },
+  { file: 'tests/e2e/chat-composer-git-strip.spec.ts', skips: 1, gate: 'permanent test.skip placeholder (unimplemented)' },
+  { file: 'tests/e2e/chat-model-picker-tiers.spec.ts', skips: 2, gate: 'permanent test.skip placeholder (unimplemented)' },
+  { file: 'tests/e2e/compaction-artifact-viewer.spec.ts', skips: 1, gate: 'permanent test.skip placeholder (unimplemented)' },
+  { file: 'tests/e2e/token-usage.spec.ts', skips: 1, gate: 'permanent test.skip placeholder (unimplemented)' },
+].map(Object.freeze));
+export const E2E_EXPECTED_SKIPS = E2E_SKIP_INVENTORY.reduce((sum, entry) => sum + entry.skips, 0);
 const SAFE_NETWORK_POLICIES = new Set(['none', 'isolated']);
 const REQUIRED_LOCK_FILES = ['package.json', 'pnpm-lock.yaml', '.npmrc'];
 const GATE_POLICY_FILES = ['harness/src/profiles.mjs'];
@@ -149,7 +169,7 @@ const EXTRA_PROFILE_STEPS = {
       // 2026-09-25 RC-09 run. The budget is raised here, not in DEFAULT_TIMEOUT_MS,
       // so the faster gates keep their tighter bound.
       timeoutMs: 60 * 60 * 1000,
-      testExpectation: { requireCounts: true, expectedSkips: 0 },
+      testExpectation: { requireCounts: true, expectedSkips: E2E_EXPECTED_SKIPS },
     },
   ],
 };
@@ -1070,6 +1090,14 @@ function makeEnvironment(options = {}) {
   // them; deleting these keys here is only for explicitly supplied safe test
   // environments where the key is absent.
   delete env.NODE_TLS_REJECT_UNAUTHORIZED;
+  // Terminal-presentation variables are not part of the acceptance environment.
+  // A caller's NO_COLOR combined with a child that sets FORCE_COLOR makes Node
+  // write "Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env
+  // being set." to the child's stderr, and
+  // tests/e2e/runtime-lifecycle-governance.spec.ts asserts that the goal-wake
+  // trace script's stderr is empty. Dropping them changes only colour output.
+  delete env.NO_COLOR;
+  delete env.FORCE_COLOR;
   // If any forward proxy is configured, guarantee loopback bypasses it. This is
   // an environment-hygiene fix, not a network-policy relaxation: it never adds
   // outbound reach, it only keeps localhost local. Merge with any existing
