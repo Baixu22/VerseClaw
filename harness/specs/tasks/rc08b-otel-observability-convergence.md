@@ -4,7 +4,7 @@ title: RC-08B OTel And Observability Convergence
 taskType: engineering-acceptance
 # Pinned to the commit RC-08BR starts from; the shared branch diverged from
 # origin/main long ago.
-diffBase: RC08B_BASE
+diffBase: 2941f3afb
 intent: Let OTel/OTLP own trace export; ingress, run, model/tool, effect, and delivery share correlation IDs; receipts and domain journals remain facts; trajectory is bounded flight-recorder evidence; Observability JSONL is rebuildable cache only. Exporter-off parity passes; default raw prompt/tool leakage is zero; one golden trace exports to a neutral OTLP fixture; no second trace schema/store is introduced.
 ownedPaths:
   - openclaw_runtime/extensions/diagnostics-otel/**
