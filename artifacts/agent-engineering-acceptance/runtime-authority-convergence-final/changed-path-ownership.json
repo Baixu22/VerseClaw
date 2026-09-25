@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "0ee0cf3605535c012e4559d58492f55d6e81d89c",
-  "generatedAt": "2026-09-25T09:09:05.756Z",
+  "headSha": "e81d42bbe1ce977c3a84651e8fd8bc9115cb664c",
+  "generatedAt": "2026-09-25T09:29:41.160Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,13 +34,14 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 225,
-  "rcOwnedPaths": 182,
-  "excludedPaths": 43,
+  "totalPaths": 236,
+  "rcOwnedPaths": 188,
+  "excludedPaths": 48,
   "byRc": {
     "RC-02": 23,
-    "RC-00": 90,
+    "RC-00": 94,
     "RC-03": 20,
+    "RC-01R": 2,
     "RC-08A": 4,
     "RC-04R": 7,
     "RC-05R": 4,
@@ -53,6 +54,7 @@
   },
   "byExclusionWorkstream": {
     "feat(approvals)": 31,
+    "fix(rc09)": 5,
     "chore(harness)": 2,
     "fix(harness)": 7,
     "fix(state)": 3
@@ -180,6 +182,15 @@
       "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
     },
     {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-scope-unblock-20260925.json",
+      "rc": null,
+      "excluded": {
+        "commit": "e81d42bbe1ce977c3a84651e8fd8bc9115cb664c",
+        "subject": "fix(rc09): partition the cumulative diff and re-anchor the accepted base to unblock TF-0041",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
       "path": ".agent-workbench/task-forest/proposals/TFP-tf0240-harness-evidence-repair-20260922.json",
       "rc": null,
       "excluded": {
@@ -302,6 +313,15 @@
       "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
     },
     {
+      "path": ".agent-workbench/task-forest/snapshots/0662.json",
+      "rc": null,
+      "excluded": {
+        "commit": "e81d42bbe1ce977c3a84651e8fd8bc9115cb664c",
+        "subject": "fix(rc09): partition the cumulative diff and re-anchor the accepted base to unblock TF-0041",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
       "path": ".agent-workbench/task-forest/todos/todos.json",
       "rc": null,
       "excluded": {
@@ -369,6 +389,21 @@
     {
       "path": "artifacts/agent-dev-workbench/evidence.json",
       "rc": "RC-03",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json",
+      "rc": null,
+      "excluded": {
+        "commit": "e81d42bbe1ce977c3a84651e8fd8bc9115cb664c",
+        "subject": "fix(rc09): partition the cumulative diff and re-anchor the accepted base to unblock TF-0041",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-01/baseline.json",
+      "rc": "RC-01R",
       "commit": null,
       "declaredBySpec": true
     },
@@ -718,6 +753,18 @@
       "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
     },
     {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/ACCEPTANCE.md",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/RC-09-REMEDIATION-PLAN.md",
+      "rc": "RC-01R",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
       "path": "docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md",
       "rc": "RC-02",
       "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
@@ -898,6 +945,12 @@
         "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
         "workstream": "feat(approvals)"
       }
+    },
+    {
+      "path": "harness/specs/tasks/runtime-authority-convergence-final-acceptance.md",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
     },
     {
       "path": "harness/specs/tasks/stress-test-windows-concurrency-v1.md",
@@ -1210,9 +1263,24 @@
       "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
     },
     {
+      "path": "scripts/generate-rc09-ownership-matrix.mjs",
+      "rc": null,
+      "excluded": {
+        "commit": "e81d42bbe1ce977c3a84651e8fd8bc9115cb664c",
+        "subject": "fix(rc09): partition the cumulative diff and re-anchor the accepted base to unblock TF-0041",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
       "path": "scripts/rc02-shadow-census-report.mjs",
       "rc": "RC-02",
       "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "scripts/validate-runtime-authority-convergence.mjs",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
     },
     {
       "path": "shared/host-api/contract.ts",
@@ -1314,6 +1382,12 @@
       }
     },
     {
+      "path": "tests/unit/agent-engineering-acceptance.test.ts",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
       "path": "tests/unit/gateway-event-dispatch.test.ts",
       "rc": null,
       "excluded": {
@@ -1347,6 +1421,15 @@
       "path": "tests/unit/rc08b-otel-observability-convergence.test.ts",
       "rc": "RC-08B",
       "commit": "a9418c9f9d47a4ecd67a3f2826065a4c69a88c03"
+    },
+    {
+      "path": "tests/unit/rc09-ownership-matrix.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "e81d42bbe1ce977c3a84651e8fd8bc9115cb664c",
+        "subject": "fix(rc09): partition the cumulative diff and re-anchor the accepted base to unblock TF-0041",
+        "workstream": "fix(rc09)"
+      }
     },
     {
       "path": "tests/unit/runtime-approval-bridge.test.ts",

@@ -1588,6 +1588,23 @@ describe('Agent Engineering Acceptance', () => {
       matrix.schema = 'runtime-authority-convergence-rc09-ownership/v1';
     }).errors).toContain('changed-path-ownership.json schema mismatch');
 
+    // RC-09: the matrix must be bound to the manifest base commit.
+    expect(tamperMatrix((matrix) => {
+      matrix.baseSha = '0'.repeat(40);
+    }).errors).toContain('changed-path-ownership.json is not bound to the manifest base commit');
+
+    // RC-09: a malformed headSha must fail closed.
+    expect(tamperMatrix((matrix) => {
+      matrix.headSha = 'not-a-sha';
+    }).errors).toContain('changed-path-ownership.json headSha is missing or malformed');
+
+    // RC-09: a headSha outside the candidate's ancestry must fail closed. The
+    // matrix is generated from diff(base..headSha) and committed inside the
+    // candidate, so headSha may only be the candidate or one of its ancestors.
+    expect(tamperMatrix((matrix) => {
+      matrix.headSha = '1'.repeat(40);
+    }).errors).toContain('changed-path-ownership.json headSha is not an ancestor of the candidate commit');
+
     // RC-09: an owner outside the required owner set must fail closed.
     expect(tamperMatrix((matrix) => {
       const entries = matrix.entries as Array<Record<string, unknown>>;
