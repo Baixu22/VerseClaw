@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "389b772a04e14604961ae1f09caa7dd71aefbf0a",
-  "generatedAt": "2026-09-26T01:44:08.746Z",
+  "headSha": "0287b807f05e6cefddd88101e2660876e84707f2",
+  "generatedAt": "2026-09-26T05:06:55.364Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,17 +34,17 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 256,
-  "rcOwnedPaths": 190,
-  "excludedPaths": 66,
+  "totalPaths": 263,
+  "rcOwnedPaths": 192,
+  "excludedPaths": 71,
   "byRc": {
     "RC-02": 23,
     "RC-00": 96,
     "RC-03": 20,
-    "RC-01R": 2,
+    "RC-01R": 3,
     "RC-08A": 4,
     "RC-04R": 7,
-    "RC-05R": 4,
+    "RC-05R": 5,
     "RC-06A": 3,
     "RC-06B": 7,
     "RC-06C": 5,
@@ -54,7 +54,7 @@
   },
   "byExclusionWorkstream": {
     "feat(approvals)": 31,
-    "fix(rc09)": 18,
+    "fix(rc09)": 23,
     "docs(task-forest)": 2,
     "chore(harness)": 2,
     "chore(rc09)": 3,
@@ -189,6 +189,15 @@
       "excluded": {
         "commit": "e81d42bbe1ce977c3a84651e8fd8bc9115cb664c",
         "subject": "fix(rc09): partition the cumulative diff and re-anchor the accepted base to unblock TF-0041",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-takeover-20260926.json",
+      "rc": null,
+      "excluded": {
+        "commit": "0287b807f05e6cefddd88101e2660876e84707f2",
+        "subject": "fix(rc09): clear Agent Dev evidence blockers before acceptance",
         "workstream": "fix(rc09)"
       }
     },
@@ -339,6 +348,15 @@
         "commit": "4680122b010713d5c923bad37a7f90280df0d480",
         "subject": "docs(task-forest): record the landed RC-09 unblock evidence on TF-0041",
         "workstream": "docs(task-forest)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0664.json",
+      "rc": null,
+      "excluded": {
+        "commit": "0287b807f05e6cefddd88101e2660876e84707f2",
+        "subject": "fix(rc09): clear Agent Dev evidence blockers before acceptance",
+        "workstream": "fix(rc09)"
       }
     },
     {
@@ -812,6 +830,12 @@
       "declaredBySpec": true
     },
     {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/README.md",
+      "rc": "RC-01R",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
       "path": "docs/dev/unified-agent-system/runtime-convergence/STATUS.md",
       "rc": "RC-00",
       "commit": null,
@@ -1019,6 +1043,15 @@
       "rc": "RC-00",
       "commit": null,
       "declaredBySpec": true
+    },
+    {
+      "path": "harness/src/git.d.mts",
+      "rc": null,
+      "excluded": {
+        "commit": "0287b807f05e6cefddd88101e2660876e84707f2",
+        "subject": "fix(rc09): clear Agent Dev evidence blockers before acceptance",
+        "workstream": "fix(rc09)"
+      }
     },
     {
       "path": "harness/src/git.mjs",
@@ -1316,6 +1349,21 @@
       "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
     },
     {
+      "path": "scripts/agent-dev-deep-test.mjs",
+      "rc": null,
+      "excluded": {
+        "commit": "0287b807f05e6cefddd88101e2660876e84707f2",
+        "subject": "fix(rc09): clear Agent Dev evidence blockers before acceptance",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "scripts/channel-conformance.mjs",
+      "rc": "RC-05R",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
       "path": "scripts/generate-rc09-ownership-matrix.mjs",
       "rc": null,
       "excluded": {
@@ -1536,6 +1584,15 @@
       "excluded": {
         "commit": "389b772a04e14604961ae1f09caa7dd71aefbf0a",
         "subject": "fix(rc09): absorb the commit-card snapshot's AA jitter and give E2E real headroom",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/unit/agent-dev-regularization.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "0287b807f05e6cefddd88101e2660876e84707f2",
+        "subject": "fix(rc09): clear Agent Dev evidence blockers before acceptance",
         "workstream": "fix(rc09)"
       }
     },
