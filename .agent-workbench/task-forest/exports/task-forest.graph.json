@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-26T12:41:52.014301Z",
+  "generated_at": "2026-09-26T12:47:17.242101Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -12865,12 +12865,14 @@
         "2026-09-26 Verifier 按设计未启动：runFull 在 executor 失败时直接写 final-report.json（NO-GO）并返回，不调用 verifyAcceptance。证据归档 D:/ClawX-acceptance/rc09-20260926/run-02-nogo-full-aa78e5b2/（bundleDigest 8544127780f76f179c62c9439d7ad5f01c940f6cafb25f34bad4012aca54bd40）；旧世代与 attempt-01 按 §18.3/§20 只读归档到 archived-final-evidence-20260926-prerun/ 与 attempt-01-electron-missing/，均未改变 candidate SHA。",
         "2026-09-26 NO-GO 根因①已修并验证：electron-e2e 写脏候选工作区的根因是 tests/e2e/fixtures/evidence-root.ts 早已实现 CLAWX_E2E_EVIDENCE_ROOT 重定向，但全仓库没有任何地方设置它，electron-e2e 门也不带 env。已在 scripts/lib/agent-engineering-acceptance.mjs 为 e2e profile 的门接上该变量（指向 <tmp>/clawx-e2e-evidence/<runId>，候选之外；verifier 复用同一段 gate 代码故同样生效），新增回归测试 points the Electron E2E evidence root outside the detached worktree。提交 68844e6e6。旁证：干净工作区上跑 required-test-3 原命令 pnpm harness validate --spec 得 Spec is valid / exit 0，说明该门此前纯粹被 e2e 改脏工作区拖挂。",
         "2026-09-26 NO-GO 根因②已修并验证：Agent Dev 四类证据过期（C/77、4 条 P0 evidence-source-newer）经 pnpm agent-dev:workbench + pnpm agent-dev:deep-test（decision daily-loop-ok、releaseReady true）重生成，pnpm agent-dev:audit 现为 A/97、0 disqualifier、exit 0。提交 c1d066026。",
-        "2026-09-26 未决根因③（既有缺陷，非本候选引入，需 owner 裁决）：electron-e2e 的两个失败。support-bundle-fp-p1-06.spec.ts:192 断言 report.totalHits>0 实得 0——electron/services/support-bundle.ts 的 providers 段按设计只导出 vendorId/authMode/enabled/hasKey/validation（注释 Never key material (hard lock)），测试植入的 key 形状 label 从不进入 bundle，该断言在现实现下不可满足，no-leak 属性另有该 spec 183-184 行单独断言且通过；windows-titlebar-chrome.spec.ts:6 为 worker 原生崩溃 0xC0000409（0ms，历史同类判为不可复现抖动）。两个 spec 与 support-bundle.ts 均不在本候选 changedPaths 内（最后改动分别是基线里的 9cdb6eb95 与 918ed8abd）。未擅自改这条安全用例断言、未降低任何断言。"
+        "2026-09-26 未决根因③（既有缺陷，非本候选引入，需 owner 裁决）：electron-e2e 的两个失败。support-bundle-fp-p1-06.spec.ts:192 断言 report.totalHits>0 实得 0——electron/services/support-bundle.ts 的 providers 段按设计只导出 vendorId/authMode/enabled/hasKey/validation（注释 Never key material (hard lock)），测试植入的 key 形状 label 从不进入 bundle，该断言在现实现下不可满足，no-leak 属性另有该 spec 183-184 行单独断言且通过；windows-titlebar-chrome.spec.ts:6 为 worker 原生崩溃 0xC0000409（0ms，历史同类判为不可复现抖动）。两个 spec 与 support-bundle.ts 均不在本候选 changedPaths 内（最后改动分别是基线里的 9cdb6eb95 与 918ed8abd）。未擅自改这条安全用例断言、未降低任何断言。",
+        "2026-09-26 未决根因③的定向复跑（关键修正）：用默认 TEMP 单跑 6 个相关 spec 得 7 passed / 1 skipped，仓库工作区保持干净。① support-bundle-fp-p1-06.spec.ts:192 复跑通过且 totalHits=3，命中来自 windows-user-path pattern——即该断言是环境相关的：验收把 TEMP 设在 D:\\ClawX-acceptance\\tmp，bundle 内不含任何 C:\\Users\\… 路径，故 totalHits=0。它真正想断言的（植入的 key 形状 label 被 redact）在现实现下不可满足：support-bundle.ts 的 providers 段只导出 vendorId/authMode/enabled/hasKey/validation，label 从不进入 bundle；no-leak 属性另有该 spec 183-185 行单独断言且通过。② windows-titlebar-chrome.spec.ts:6 复跑 6.4s 通过，确认是 0xC0000409 原生崩溃抖动。处置二选一：(a) 让 e2e 门在用户 profile 的 TEMP 下运行（与常规 pnpm run test:e2e 一致，属 RC-09 ownedPaths 内的 harness 改动）；(b) 把该断言改为对齐已加固的 no-label 契约。两条路都不允许降低安全断言，故未擅自实施。",
+        "2026-09-26 Fix 1 端到端实证：定向复跑时那 12 个被跟踪文件全部落到 D:\\ClawX-acceptance\\tmp\\e2e-verify\\，git status --porcelain --untracked-files=all 为空，证明 CLAWX_E2E_EVIDENCE_ROOT 重定向在真实套件里生效。另 pnpm harness validate --spec 的两种形式（带/不带 --since）均 exit 0 / Spec is valid。"
       ],
       "execution_hints": [],
       "id": "TF-0041",
       "kind": "task",
-      "next_action": "取得 owner 对 support-bundle 断言的裁决（改测试对齐已加固的 no-label 契约，或改产品纳入 label），修复后重跑 Executor → 独立 Verifier → engineering validator；若新增被跟踪路径先重生成 changed-path-ownership.json。",
+      "next_action": "等 owner 在 (a) e2e 门改用用户 profile TEMP / (b) 重锚 support-bundle 断言 之间裁决，实施后重跑 Executor → 独立 Verifier → engineering validator；若新增被跟踪路径先重生成 changed-path-ownership.json。",
       "non_goals": [],
       "primary_parent": "TF-0028",
       "priority": 1,
@@ -12885,7 +12887,7 @@
       "success_metrics": [],
       "summary": "RC-09 工程总验收：ownership 阻塞已解除；2026-09-26 正式 Executor 重跑（候选 ba257bb）NO-GO（21/23 门），三条根因已修其二并实测——e2e 证据根未接线（已接 CLAWX_E2E_EVIDENCE_ROOT + 回归测试）、Agent Dev 证据过期（已重生成，audit A/97）。剩余唯一阻塞是 electron-e2e 的两个既有失败（support-bundle 断言在 no-label 实现下不可满足、titlebar 原生崩溃抖动），需 owner 裁决后重跑。",
       "title": "RC-09 独立工程总验收与证据封存",
-      "updated_at": "2026-09-26T12:41:22.226143Z"
+      "updated_at": "2026-09-26T12:46:44.948861Z"
     },
     "TF-0042": {
       "acceptance_criteria": [
