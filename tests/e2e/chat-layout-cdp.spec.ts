@@ -241,11 +241,18 @@ test.describe('Chat page layout CDP checks', () => {
       await attachmentRemove.click();
       const dissolveCanvas = page.locator('canvas[data-smoky-dissolve="canvas"]');
       await expect(dissolveCanvas).toBeVisible({ timeout: 5_000 });
-      await expect.poll(() => dissolveCanvas.evaluate((canvas) => Number.parseFloat(canvas.style.opacity || '1'))).toBeLessThan(0.95);
-      const dissolveMotion = await dissolveCanvas.evaluate((canvas) => ({
-        opacity: Number.parseFloat(canvas.style.opacity),
-        transform: canvas.style.transform,
-      }));
+      // Sample the dissolve WHILE it is fading. Polling for `opacity < 0.95`
+      // also accepts a finished dissolve (0), so on a loaded machine the
+      // animation ended before the read and `opacity > 0` failed at 0
+      // (2026-09-25 RC-09 run, chat-layout-cdp.spec.ts:249). Waiting for an
+      // in-between value keeps the assertions about the running transition.
+      const dissolveMotion = await page.waitForFunction(() => {
+        const canvas = document.querySelector('canvas[data-smoky-dissolve="canvas"]') as HTMLCanvasElement | null;
+        if (!canvas) return null;
+        const opacity = Number.parseFloat(canvas.style.opacity);
+        if (!Number.isFinite(opacity) || opacity <= 0 || opacity >= 0.95) return null;
+        return { opacity, transform: canvas.style.transform };
+      }, null, { timeout: 5_000 }).then((handle) => handle.jsonValue() as Promise<{ opacity: number; transform: string }>);
       expect(dissolveMotion.opacity).toBeGreaterThan(0);
       expect(dissolveMotion.transform).toMatch(/translate\(0(?:\.0)?px,/);
       expect(dissolveMotion.transform).toMatch(/scale\(1(?:\.0+)?\)/);
