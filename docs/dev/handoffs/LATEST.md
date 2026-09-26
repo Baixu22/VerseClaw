@@ -1,5 +1,21 @@
 # 会话交接（LATEST）
 
+## 接力进行中（2026-09-26 晚，TF-0041 · RC-09）：正式 Executor 重跑 NO-GO —— 21/23 门通过，3 门失败
+
+- **节点状态：TF-0041 仍 `in_progress` / 50，未 accepted。** 本轮把"正式 Executor 仍未重跑"这个残项真正执行了一次，得到的是有证据的 NO-GO，不是通过。
+- **候选**：`ba257bbedcd8f1464095ab733c601a7fc1f38805`（分支 `feat/runtime-lifecycle-governance`，`cleanAtPlan=true`），baseRef `1cddcb1ba5e23ebe445afca11174c2575c75f735`，23 门、coverage `ui=true`（故本次触发 Electron E2E）。runId `aa78e5b2-a4d9-41a7-ba20-1e36ff8f613f`，输出固定在 `artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/`。
+- **两个环境前置已修复（此前无人记录）**：① `provision-verseshell-resources` 的 cargo test 实际可通过 —— run6/run7 的 `integration_tests` 失败**不可复现**：用隔离 scratch root 端到端重跑真实 gate 12 分钟、`GATE_EXIT=0`，重建出的 `ae.exe` sha256 与已提交 manifest **逐字节一致**；② 该门随后的 `--electron` 步骤要求源仓库存在 `node_modules/.pnpm/electron@40.8.4/node_modules/electron/{dist,path.txt}`，而依赖门用 `--ignore-scripts` 安装从未生成它 —— 补跑 electron postinstall 后该门通过。
+- **通过的 21 门**：两个离线依赖安装、provision、harness-validate、ext-bridge、lint、typecheck、fast-unit-tests（7867/0/50）、contract-check、i18n-lint、integration（28）、vite-build、runtime-build、runtime-smoke、comms-replay、comms-compare、runtime-unit（1481）、runtime-static-check、required-test-1、required-test-2。
+- **失败的 3 门（+1 条派生）**：
+  1. `agent-dev-audit` — C/77，4 条 P0 `evidence-source-newer`：四类 Agent Dev 证据早于本候选改过的 `scripts/agent-dev-deep-test.mjs`。
+  2. `electron-e2e` — 2 failed / 314 passed / 10 skipped：`support-bundle-fp-p1-06.spec.ts:192`（`report.totalHits>0` 实得 0，而 `report.verified` 为 true）与 `windows-titlebar-chrome.spec.ts:6`（worker 原生崩溃 `0xC0000409`，0ms，历史同类为不可复现抖动）。
+  3. `required-test-3`（`pnpm harness validate --spec <final spec>`，**无 `--since`**）— 12 条路径不在 touchedAreas/ownedPaths。
+  4. 派生：`detached worktree changed tracked or unexpected source files during acceptance` —— 与第 3 条同源：e2e 重写了 12 个**被跟踪**文件（`.design-staging/verse-hero/*.png` 6、`reports/visual-tune/*.png` 4、`artifacts/browser-security-recovery/evidence.json`、`artifacts/sekb-golden-path/evidence.json`）。**rc08b 绿灯时 `coverage.ui=false`、根本不跑 e2e，所以这条首次在 RC-09 暴露。**
+- **Verifier 未启动**：`runFull` 在 executor 失败时直接写 `final-report.json`（NO-GO）并返回，不调用 `verifyAcceptance`。
+- **证据**：`D:/ClawX-acceptance/rc09-20260926/run-02-nogo-full-aa78e5b2/`（含 `BUNDLE-MANIFEST.json`，bundleDigest `8544127780f76f179c62c9439d7ad5f01c940f6cafb25f34bad4012aca54bd40`）。旧世代已按 §18.3/§20 归档到 `D:/ClawX-acceptance/rc09-20260926/archived-final-evidence-20260926-prerun/` 与 `attempt-01-electron-missing/`（均只读、不改 candidate SHA）。
+- **下一步唯一动作**：按 `STATUS.md` 的 `blockers` 三条修完后重跑 Executor → 独立 Verifier → engineering validator；若新增被跟踪路径，先重生成 `changed-path-ownership.json` 并提交。RC-09 未 accepted，三锁 false。
+- **纪律不变**：验收期间不并发 pnpm；TEMP 留 D:（C: 仅剩约 6.7 GB）；旧 rejected evidence 只读保留。
+
 ## 接力进行中（2026-09-26，TF-0041 · RC-09）：修复 E2E 时序与类型声明，重建有效验收证据
 
 - 用户已暂停原主线并授权 Codex 接力；当前以 RC-09 为唯一主线。下面 2026-09-25 RC-08B 节的 ownership 阻塞描述已过时，现已按 TFD-RC09-SCOPE-20260925 解除，acceptedBaseSha 为 `1cddcb1ba5e23ebe445afca11174c2575c75f735`。
