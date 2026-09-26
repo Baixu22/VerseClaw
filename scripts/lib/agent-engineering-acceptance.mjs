@@ -164,11 +164,13 @@ const EXTRA_PROFILE_STEPS = {
       name: 'Electron end-to-end tests',
       command: 'pnpm',
       args: ['run', 'test:e2e'],
-      // The full Electron UI suite is ~310 tests at workers:1 and needs ~45 min
-      // on this machine; the 30-minute default killed it at test 227 of the
-      // 2026-09-25 RC-09 run. The budget is raised here, not in DEFAULT_TIMEOUT_MS,
+      // The full Electron UI suite is ~326 tests at workers:1. The 30-minute
+      // default killed it at test 227 on 2026-09-25; with the suite actually
+      // completing it took 56.8 min, which leaves only 3 minutes of headroom
+      // under a 60-minute cap. 75 minutes keeps the cap a hang backstop rather
+      // than a knife edge. The budget is raised here, not in DEFAULT_TIMEOUT_MS,
       // so the faster gates keep their tighter bound.
-      timeoutMs: 60 * 60 * 1000,
+      timeoutMs: 75 * 60 * 1000,
       testExpectation: { requireCounts: true, expectedSkips: E2E_EXPECTED_SKIPS },
     },
   ],

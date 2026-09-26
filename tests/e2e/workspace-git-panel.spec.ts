@@ -591,6 +591,14 @@ test.describe('Workspace Git panel', () => {
       await expect(commitCard).toHaveScreenshot('workspace-git-commit-card.png', {
         animations: 'disabled',
         caret: 'hide',
+        // This card is text heavy and its render is not bit-stable: the
+        // 2026-09-25 RC-09 run differed by 198 of 127,022 pixels (ratio 0.01) at
+        // an identical 422x301 size, with the drift spread across text columns
+        // and both borders, and the same test then passed three times in a row.
+        // That is anti-aliasing jitter, not a content or layout change -- the DOM
+        // assertions above still pin staged/unstaged/Done. Absorbing up to 1%
+        // keeps a real layout shift (which moves whole regions) failing.
+        maxDiffPixelRatio: 0.01,
       });
       await gitPanel.getByPlaceholder('Commit message').fill('Update demo');
       await gitPanel.getByRole('button', { name: 'Commit staged changes' }).click();
