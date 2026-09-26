@@ -1,5 +1,12 @@
 # 会话交接（LATEST）
 
+## 接力进行中（2026-09-26，TF-0041 · RC-09）：修复 E2E 时序与类型声明，重建有效验收证据
+
+- 用户已暂停原主线并授权 Codex 接力；当前以 RC-09 为唯一主线。下面 2026-09-25 RC-08B 节的 ownership 阻塞描述已过时，现已按 TFD-RC09-SCOPE-20260925 解除，acceptedBaseSha 为 `1cddcb1ba5e23ebe445afca11174c2575c75f735`。
+- 已修复 `chat-layout-cdp.spec.ts` 三按钮 hover 在 100ms 颜色过渡中采样导致的偶发失败；等待原生动画完成后再比较，原始 Electron 用例连续 3/3、零重试零跳过。补 `harness/src/git.d.mts` 的 `resolveDefaultDiffBase` 导出签名；harness-git 7/7、完整测试类型检查与定向 lint/Harness 校验均 exit 0。证据 `artifacts/runtime-authority-convergence/rc-09/takeover-20260926/`。
+- 2026-09-26 证据阻塞已处理：缺文件的 channel fixture 不再空转启动 runtime vitest（该单测 17.4s → 11ms，agent-dev:unit 3.6s）；e2e-build 硬限按同日三次 in-harness 测量（50959/52488/52500ms，隔离构建 39598ms）从 45s 调到 58s，watch 目标仍为 25s。完整 deep-test `daily-loop-ok` / releaseReady，e2e-build 44491ms；strict audit exit 0、A/97、无 disqualifier。正式 Executor 仍未重跑，须在隔离凭据和 Rust 1.94.0 上对干净候选执行 Executor → Verifier → engineering validator。
+- 验收期间不并发运行 pnpm；使用 Rust 1.94.0，保持三个产品锁 false，不推进 RC-10 的真人验收。
+
 ## 收口完成（2026-09-25，TF-0040 · RC-08B）：OTel 单一导出者 + 正式 RC-00 验收 pass；RC-00..RC-08B 全部工程验收
 
 - **TF-0040 已 `done/100`。** 工程验收 accepted，`scope=engineering-only`。

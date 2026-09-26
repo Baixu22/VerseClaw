@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-25T09:34:47.458186Z",
+  "generated_at": "2026-09-26T04:29:09.570020Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -12837,7 +12837,7 @@
       "context_tags": [],
       "created_at": "2026-08-02T13:07:59.996410Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 50.0,
       "desired_outcomes": [],
       "deviations": [
         "TFD-RC09-HISTORICAL-20260803",
@@ -12856,27 +12856,29 @@
         "2026-09-25 复核上面第 2 条记录的第二个阻塞：pnpm run typecheck 现为 exit 0（typecheck:node 与 typecheck:web 均 0），「330 个既有类型错误」来自此后已被收窄的 gate 口径（typecheck-core 边界 + tsconfig.test.json 转观察模式），不再是阻塞。观察模式仍报 1 条既有声明漂移：tests/unit/harness-git.test.ts 导入 resolveDefaultDiffBase，而 harness/src/git.d.mts 未声明该导出——与本轮改动无关，记为 residual，未顺手修改以保持变更集可复核。",
         "2026-09-25 落地提交 3 个：e81d42bbe（分区口径 + 前移锚点 + 4 个硬缺陷）、922bac731（矩阵绑定改为 base 相等 + headSha 祖先，修掉本轮自己引入的哈希不动点回归——原要求 matrix.headSha === candidate，但矩阵要被提交进候选本身，RC-09 将永远无法通过）、19d6210eb（把矩阵生成点语义写进 spec，避免下一个人重踩）。",
         "2026-09-25 最终候选实测：candidate 922bac731、baseRef 1cddcb1ba…、changedPaths 236 条 → 188 RC-owned + 48 具名排除（5 个工作流）。pnpm acceptance:agent:plan 在该候选上 exit 0（23 门、executionMode=full、cleanAtPlan=true、humanEvidence task+safety 均 required）；validator 归属段零错误（其余错误全部来自 2026-08-09 旧报告绑定的是另一个候选）。pnpm run typecheck / lint:check / harness:ci 均 exit 0；8 个受影响测试文件 168 项通过。",
-        "residual：①RC-09 工程重跑（plan → executor → 独立 verifier → engineering validator）尚未执行；artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/ 下的 manifest/final-report 仍是 2026-08-09 rejected/historical 世代，须按 §18.3 归档后使用全新输出目录重跑。②harness/src/git.d.mts 与 git.mjs 的导出声明漂移（观察模式 1 条，不阻塞 gate）。"
+        "residual：①RC-09 工程重跑（plan → executor → 独立 verifier → engineering validator）尚未执行；artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/ 下的 manifest/final-report 仍是 2026-08-09 rejected/historical 世代，须按 §18.3 归档后使用全新输出目录重跑。②harness/src/git.d.mts 与 git.mjs 的导出声明漂移（观察模式 1 条，不阻塞 gate）。",
+        "2026-09-26 接力验证：tests/e2e/chat-layout-cdp.spec.ts 的 hover 颜色比较在 100ms CSS 过渡中采样，原始复测失败；等待 getAnimations().finished 后，修改后的原始 Electron 用例连续 3/3 通过、零重试、零跳过。harness/src/git.d.mts 补 resolveDefaultDiffBase(cwd?: string): Promise<string>；harness-git 单测 7/7、完整 test typecheck、定向 ESLint、diff-aware Harness validate 全 exit 0。磁盘证据 artifacts/runtime-authority-convergence/rc-09/takeover-20260926/summary.json。",
+        "2026-09-26 最新正式启动记录仍 NO-GO：c2af32c8a 的 executor-report 在任何 gate 前被继承凭据变量拒绝。独立 strict audit 另确认四份 Agent Dev 证据超过 24h；必须刷新后重跑，不能复用旧绿报告。"
       ],
       "execution_hints": [],
       "id": "TF-0041",
       "kind": "task",
-      "next_action": "阻塞已解除并落地（提交 e81d42bbe / 922bac731 / 19d6210eb，TFD-RC09-SCOPE-20260925 方案 B）。执行 RC-09 工程验收：先按 §18.3 归档旧的 2026-08-09 final 证据（协议拒绝已存在的 final 目录），再按 docs/dev/unified-agent-system/runtime-convergence/ACCEPTANCE.md 的 PowerShell 流程，用 acceptedBaseSha=1cddcb1ba5e23ebe445afca11174c2575c75f735 跑 plan → executor → 独立 verifier → engineering validator。矩阵若需重生成，按 final spec「Regenerating the matrix」一节：在候选上生成、提交，headSha 为生成点（可为候选或其祖先）。依赖 TF-0037..TF-0040 均已 done。",
+      "next_action": "串行刷新 Agent Dev 完整 deep-test 和 strict audit；归档旧失败报告；提交修复与证据、重生成 ownership matrix；在隔离凭据和 Rust 1.94.0 环境上重跑 RC-09 Executor/Verifier。不得在验收期间并发 pnpm。",
       "non_goals": [],
       "primary_parent": "TF-0028",
       "priority": 1,
-      "progress": 0.0,
+      "progress": 50.0,
       "progress_source": "manual",
       "purpose": "",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "ready",
+      "status": "in_progress",
       "success_metrics": [],
-      "summary": "[2026-09-25 阻塞解除 · ready] RC-09 独立工程总验收与证据封存：在 clean candidate 上完成全量门禁和独立 Executor/Verifier 复跑，生成最终 manifest，只能进入 human_acceptance_pending。归属口径已按 owner 裁决改为 RC-owned ∪ 具名排除（schema v2，互斥且合计等于全量 diff），acceptedBaseSha 前移到 RC 串行复验窗口起点 1cddcb1ba，累计窗口 4556 → 225 条，Harness ownership 门零未覆盖。同时修掉 4 个会让生成器根本跑不起来的硬缺陷。",
+      "summary": "RC-09 工程总验收接力：当前主线已完成 ownership 阻塞解除和三类 E2E 修复；本轮补齐 hover 过渡采样及 Harness 导出类型声明，定向验证全过。尚需刷新 Agent Dev 过期证据、封装干净候选并完成 Executor/Verifier 与 engineering validator。",
       "title": "RC-09 独立工程总验收与证据封存",
-      "updated_at": "2026-09-25T09:34:19.318888Z"
+      "updated_at": "2026-09-26T04:29:09.377507Z"
     },
     "TF-0042": {
       "acceptance_criteria": [
@@ -27280,11 +27282,11 @@
         "TF-0240",
         "TF-0242"
       ],
-      "in_progress": [],
-      "proposed": [],
-      "ready": [
+      "in_progress": [
         "TF-0041"
       ],
+      "proposed": [],
+      "ready": [],
       "review_needed": []
     },
     "evergreen_open_goals": [
@@ -27305,9 +27307,7 @@
       "TF-0144",
       "TF-0151"
     ],
-    "ready": [
-      "TF-0041"
-    ],
+    "ready": [],
     "review_needed": []
   },
   "summary": {

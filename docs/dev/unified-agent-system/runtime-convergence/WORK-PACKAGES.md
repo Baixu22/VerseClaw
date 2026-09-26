@@ -138,6 +138,8 @@ Run four serial subpackages with separate Harness specs:
 
 ## RC-09: Final Engineering Acceptance
 
+**Status (2026-09-26, evidence blockers cleared, acceptance not rerun):** hover 采样与 `resolveDefaultDiffBase` 声明已修；缺文件 channel fixture 不再启动 runtime vitest。Agent Dev deep-test 为 daily-loop-ok，strict audit A/97、exit 0。尚未在隔离凭据环境重跑正式 Executor/Verifier，没有工程接受声明。三个产品锁 false。
+
 **Deliver:** clean candidate SHA, full gate results, independent Executor/Verifier reports, migration/rollback results, security/privacy scans, performance diagnostics, `artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json`, and the tested `scripts/validate-runtime-authority-convergence.mjs` validator for engineering and final human-verdict contracts.
 
 **Exit:** every required gate is green with the declared skip budget; no stale evidence; `STATUS.md` becomes `human_acceptance_pending`. It must not become `done`.
