@@ -210,9 +210,20 @@ export const x = 1;
         expect(Object.keys(finding).sort()).toEqual(['hits', 'type']);
       }
 
-      // Workspace lineage present; usernames in paths are masked.
+      // Workspace lineage present. The redactor masks Windows profile paths; when
+      // the acceptance runs with TEMP outside the user profile (a D: temp root)
+      // there is no profile path in the bundle to mask, so assert the invariant
+      // rather than the instance: any hit must be replaced by the mask marker,
+      // and no unmasked profile path may survive either way.
       expect(bundle.workspace).toBeTruthy();
-      expect(raw).toContain('[REDACTED:user]');
+      expect(report.scannedPatterns).toContain('windows-user-path');
+      const userPathHits = (report.findings ?? [])
+        .filter((finding) => finding.type === 'windows-user-path')
+        .reduce((sum, finding) => sum + finding.hits, 0);
+      if (userPathHits > 0) {
+        expect(raw).toContain('[REDACTED:user]');
+      }
+      expect(raw).not.toMatch(/[A-Za-z]:\\\\Users\\\\/u);
 
       // AC: no source-code bodies. The workspace holds a file with a unique
       // marker; the journal summary may name the path but must never carry the
