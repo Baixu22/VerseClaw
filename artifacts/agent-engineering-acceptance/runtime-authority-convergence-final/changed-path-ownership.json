@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "06bc0310fcf266bb55b73e60ea773ba9296a1836",
-  "generatedAt": "2026-09-26T14:24:10.222Z",
+  "headSha": "5bc086de6d848c61020706879dfd5d8ed06b5ad2",
+  "generatedAt": "2026-09-26T16:06:56.685Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
