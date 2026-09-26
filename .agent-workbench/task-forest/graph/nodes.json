@@ -2983,12 +2983,15 @@
       "2026-09-25 最终候选实测：candidate 922bac731、baseRef 1cddcb1ba…、changedPaths 236 条 → 188 RC-owned + 48 具名排除（5 个工作流）。pnpm acceptance:agent:plan 在该候选上 exit 0（23 门、executionMode=full、cleanAtPlan=true、humanEvidence task+safety 均 required）；validator 归属段零错误（其余错误全部来自 2026-08-09 旧报告绑定的是另一个候选）。pnpm run typecheck / lint:check / harness:ci 均 exit 0；8 个受影响测试文件 168 项通过。",
       "residual：①RC-09 工程重跑（plan → executor → 独立 verifier → engineering validator）尚未执行；artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/ 下的 manifest/final-report 仍是 2026-08-09 rejected/historical 世代，须按 §18.3 归档后使用全新输出目录重跑。②harness/src/git.d.mts 与 git.mjs 的导出声明漂移（观察模式 1 条，不阻塞 gate）。",
       "2026-09-26 接力验证：tests/e2e/chat-layout-cdp.spec.ts 的 hover 颜色比较在 100ms CSS 过渡中采样，原始复测失败；等待 getAnimations().finished 后，修改后的原始 Electron 用例连续 3/3 通过、零重试、零跳过。harness/src/git.d.mts 补 resolveDefaultDiffBase(cwd?: string): Promise<string>；harness-git 单测 7/7、完整 test typecheck、定向 ESLint、diff-aware Harness validate 全 exit 0。磁盘证据 artifacts/runtime-authority-convergence/rc-09/takeover-20260926/summary.json。",
-      "2026-09-26 最新正式启动记录仍 NO-GO：c2af32c8a 的 executor-report 在任何 gate 前被继承凭据变量拒绝。独立 strict audit 另确认四份 Agent Dev 证据超过 24h；必须刷新后重跑，不能复用旧绿报告。"
+      "2026-09-26 最新正式启动记录仍 NO-GO：c2af32c8a 的 executor-report 在任何 gate 前被继承凭据变量拒绝。独立 strict audit 另确认四份 Agent Dev 证据超过 24h；必须刷新后重跑，不能复用旧绿报告。",
+      "2026-09-26 正式 Executor 重跑（runId aa78e5b2-a4d9-41a7-ba20-1e36ff8f613f，候选 ba257bbedcd8f1464095ab733c601a7fc1f38805，baseRef 1cddcb1ba5e23ebe445afca11174c2575c75f735，23 门，coverage ui=true 故本次触发 Electron E2E）结果 NO-GO：21 门通过、3 门失败。两个环境前置已修复并实测：①provision-verseshell-resources 通过——run6/run7 的 integration_tests 失败不可复现，隔离 scratch root 端到端重跑真实 gate 12 分钟 GATE_EXIT=0，重建 ae.exe sha256 ac6a7a15… 与已提交 manifest 逐字节一致；②该门 --electron 步骤要求源仓库存在 node_modules/.pnpm/electron@40.8.4/node_modules/electron/{dist,path.txt}，而依赖门用 --ignore-scripts 安装从未生成，补跑 electron postinstall 后通过。",
+      "2026-09-26 三条失败根因：①agent-dev-audit C/77，4 条 P0 evidence-source-newer——agent-dev-workbench/evidence.json、agent-dev-deep-test/{report,history}.json、agent-dev-quality/report.json 早于本候选改过的 scripts/agent-dev-deep-test.mjs；②electron-e2e 2 failed/314 passed/10 skipped——support-bundle-fp-p1-06.spec.ts:192 report.totalHits>0 实得 0（report.verified 为 true）、windows-titlebar-chrome.spec.ts:6 worker 原生崩溃 0xC0000409（0ms）；③required-test-3（pnpm harness validate --spec，无 --since）报 12 条路径不在 touchedAreas/ownedPaths，与派生失败 detached worktree changed tracked or unexpected source files 同源：e2e 重写了 12 个被跟踪文件（.design-staging/verse-hero/*.png 6、reports/visual-tune/*.png 4、artifacts/browser-security-recovery/evidence.json、artifacts/sekb-golden-path/evidence.json）。rc08b 绿灯时 coverage.ui=false 不跑 e2e，故该问题首次在 RC-09 暴露。",
+      "2026-09-26 Verifier 按设计未启动：runFull 在 executor 失败时直接写 final-report.json（NO-GO）并返回，不调用 verifyAcceptance。证据归档 D:/ClawX-acceptance/rc09-20260926/run-02-nogo-full-aa78e5b2/（bundleDigest 8544127780f76f179c62c9439d7ad5f01c940f6cafb25f34bad4012aca54bd40）；旧世代与 attempt-01 按 §18.3/§20 只读归档到 archived-final-evidence-20260926-prerun/ 与 attempt-01-electron-missing/，均未改变 candidate SHA。"
     ],
     "execution_hints": [],
     "id": "TF-0041",
     "kind": "task",
-    "next_action": "串行刷新 Agent Dev 完整 deep-test 和 strict audit；归档旧失败报告；提交修复与证据、重生成 ownership matrix；在隔离凭据和 Rust 1.94.0 环境上重跑 RC-09 Executor/Verifier。不得在验收期间并发 pnpm。",
+    "next_action": "按 STATUS.md blockers 三条修复：①让 electron-e2e 不再写被跟踪文件（改写入 gitignore 路径，或刷新并提交这 12 个产物）；②重生成 Agent Dev 四类证据并提交；③判定 support-bundle totalHits=0 是回归还是环境依赖，titlebar 的 0xC0000409 按抖动复现；若新增被跟踪路径则先重生成 changed-path-ownership.json 并提交；随后重跑 Executor → 独立 Verifier → engineering validator。",
     "non_goals": [],
     "priority": 1,
     "progress": 50.0,
@@ -3000,9 +3003,9 @@
     "source_sessions": [],
     "status": "in_progress",
     "success_metrics": [],
-    "summary": "RC-09 工程总验收接力：当前主线已完成 ownership 阻塞解除和三类 E2E 修复；本轮补齐 hover 过渡采样及 Harness 导出类型声明，定向验证全过。尚需刷新 Agent Dev 过期证据、封装干净候选并完成 Executor/Verifier 与 engineering validator。",
+    "summary": "RC-09 工程总验收：ownership 阻塞已解除、三类 E2E 修复与 Agent Dev 证据刷新均已完成；2026-09-26 正式 Executor 重跑（候选 ba257bb）得 NO-GO——23 门中 21 门通过，两个环境前置（VerseShell provision 的 electron dist、cargo test 不可复现性）已修复实测；剩余 3 门失败：Agent Dev 四类证据过期、electron-e2e 2 例失败、e2e 重写 12 个被跟踪文件致 mutation check 与 required-test-3 失败。Verifier 按设计未启动。",
     "title": "RC-09 独立工程总验收与证据封存",
-    "updated_at": "2026-09-26T04:29:09.377507Z"
+    "updated_at": "2026-09-26T12:26:07.284245Z"
   },
   "TF-0042": {
     "acceptance_criteria": [
