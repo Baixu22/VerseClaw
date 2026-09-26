@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "7554c16794cd9ac992c5afcc6762f40eed812776",
-  "generatedAt": "2026-09-26T12:47:48.581Z",
+  "headSha": "06bc0310fcf266bb55b73e60ea773ba9296a1836",
+  "generatedAt": "2026-09-26T14:24:10.222Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,9 +34,9 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 269,
+  "totalPaths": 270,
   "rcOwnedPaths": 192,
-  "excludedPaths": 77,
+  "excludedPaths": 78,
   "byRc": {
     "RC-02": 23,
     "RC-00": 96,
@@ -59,7 +59,8 @@
     "docs(task-forest)": 2,
     "chore(harness)": 2,
     "fix(harness)": 7,
-    "fix(state)": 3
+    "fix(state)": 3,
+    "test(rc09)": 1
   },
   "entries": [
     {
@@ -1621,6 +1622,15 @@
         "commit": "13db3fed33509cb3126278e547010d0116369a4b",
         "subject": "fix(rc09): declare the E2E skip budget, keep colour vars out, finish the evidence redirect",
         "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/support-bundle-fp-p1-06.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "06bc0310fcf266bb55b73e60ea773ba9296a1836",
+        "subject": "test(rc09): anchor the support-bundle redaction assertion to the actual contract",
+        "workstream": "test(rc09)"
       }
     },
     {
