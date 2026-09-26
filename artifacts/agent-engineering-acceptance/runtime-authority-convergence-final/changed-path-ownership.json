@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "0287b807f05e6cefddd88101e2660876e84707f2",
-  "generatedAt": "2026-09-26T05:06:55.364Z",
+  "headSha": "034aec218a709c548278fad8d21c11fdbd08dac4",
+  "generatedAt": "2026-09-26T12:27:36.585Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,9 +34,9 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 263,
+  "totalPaths": 265,
   "rcOwnedPaths": 192,
-  "excludedPaths": 71,
+  "excludedPaths": 73,
   "byRc": {
     "RC-02": 23,
     "RC-00": 96,
@@ -54,10 +54,10 @@
   },
   "byExclusionWorkstream": {
     "feat(approvals)": 31,
+    "chore(rc09)": 5,
     "fix(rc09)": 23,
     "docs(task-forest)": 2,
     "chore(harness)": 2,
-    "chore(rc09)": 3,
     "fix(harness)": 7,
     "fix(state)": 3
   },
@@ -182,6 +182,15 @@
       "path": ".agent-workbench/task-forest/proposals/TFP-tf0040-rc08b-acceptance-closeout-20260925.json",
       "rc": "RC-00",
       "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-executor-nogo-20260926.json",
+      "rc": null,
+      "excluded": {
+        "commit": "034aec218a709c548278fad8d21c11fdbd08dac4",
+        "subject": "chore(rc09): record the executor NO-GO rerun and its three root causes",
+        "workstream": "chore(rc09)"
+      }
     },
     {
       "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-scope-unblock-20260925.json",
@@ -357,6 +366,15 @@
         "commit": "0287b807f05e6cefddd88101e2660876e84707f2",
         "subject": "fix(rc09): clear Agent Dev evidence blockers before acceptance",
         "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0665.json",
+      "rc": null,
+      "excluded": {
+        "commit": "034aec218a709c548278fad8d21c11fdbd08dac4",
+        "subject": "chore(rc09): record the executor NO-GO rerun and its three root causes",
+        "workstream": "chore(rc09)"
       }
     },
     {
