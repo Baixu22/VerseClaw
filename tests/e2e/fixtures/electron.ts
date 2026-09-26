@@ -200,9 +200,18 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Pr
     return;
   }
 
+  // Bound `app.close()` too. It was awaited without a limit, so when a real
+  // gateway child refused to quit the fixture hung here until Playwright's
+  // 90-second worker-teardown timeout fired and blamed the test that had just
+  // finished -- runtime-launch-contract-fp-p0.spec.ts:271 passed every
+  // assertion (its [fp-p0-02-config-kill] line was logged) and was still
+  // reported as a 7.0m failure.
   try {
-    await app.close();
-    return;
+    const closedByPlaywright = await Promise.race([
+      app.close().then(() => true, () => false),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), timeoutMs)),
+    ]);
+    if (closedByPlaywright) return;
   } catch {
     // Fall through to process kill if Playwright cannot close the app cleanly.
   }
