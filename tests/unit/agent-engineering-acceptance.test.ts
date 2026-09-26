@@ -1895,4 +1895,49 @@ requiredTests:
     expect(cwds[0].replaceAll('\\', '/')).toMatch(/clawx-agent-acceptance-[^/]+\/checkout$/u);
   });
 
+  it('points the Electron E2E evidence root outside the detached worktree', () => {
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-e2e-evidence-'));
+    temporaryPaths.push(outputDir);
+    const gate = {
+      id: 'electron-e2e',
+      name: 'Electron end-to-end tests',
+      profile: 'e2e',
+      command: 'node',
+      args: ['-e', 'process.exit(0)'],
+      required: true,
+      allowSkip: false,
+      timeoutMs: 1_000,
+      safety: { network: 'isolated', productionEffects: false, humanEvidence: false },
+    };
+    const manifest = createManifest(root, { gate });
+    const seen: { cwd: string; evidenceRoot: string }[] = [];
+    const result = runAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir,
+      actor: 'executor',
+      env: { PATH: process.env.PATH ?? '' },
+      spawn: (
+        _command: string,
+        _args: string[],
+        options: { cwd?: string; env?: Record<string, string | undefined> } = {},
+      ) => {
+        seen.push({
+          cwd: String(options.cwd ?? ''),
+          evidenceRoot: String(options.env?.CLAWX_E2E_EVIDENCE_ROOT ?? ''),
+        });
+        return { status: 0, signal: null, stdout: 'Tests 1 passed (1)\n', stderr: '' };
+      },
+    });
+    expect({ result: result.result, failures: result.failures }).toEqual({ result: 'pass', failures: [] });
+    expect(seen).toHaveLength(1);
+    // The suite publishes reviewable PNG/evidence artifacts; the acceptance
+    // requires the detached worktree to stay byte-clean, so the redirected root
+    // must exist and must not live inside the candidate checkout.
+    const evidenceRoot = seen[0].evidenceRoot.replaceAll('\\', '/');
+    const cwd = seen[0].cwd.replaceAll('\\', '/');
+    expect(evidenceRoot).toMatch(/clawx-e2e-evidence\/fixture-run$/u);
+    expect(evidenceRoot.startsWith(cwd)).toBe(false);
+  });
+
 });

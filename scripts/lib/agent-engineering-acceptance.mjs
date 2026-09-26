@@ -1911,6 +1911,16 @@ export function runAcceptance(manifest, options = {}) {
   let checkout;
   const executionEnv = makeEnvironment(options);
   const secrets = collectSecretValues(options.env ?? process.env);
+  // The Electron E2E specs publish reviewable PNG/evidence artifacts. They default
+  // to their historical tracked repository paths so the normal `pnpm run test:e2e`
+  // loop keeps publishing next to the code, and tests/e2e/fixtures/evidence-root.ts
+  // redirects them when CLAWX_E2E_EVIDENCE_ROOT is set. This acceptance requires the
+  // detached worktree to stay byte-clean afterwards, so point that root outside the
+  // candidate: without it the suite rewrites 12 tracked files (.design-staging,
+  // reports/visual-tune, artifacts/browser-security-recovery, artifacts/sekb-golden-path),
+  // which fails the mutation check and, through those files, required-test-3.
+  const e2eEvidenceRoot = join(tmpdir(), 'clawx-e2e-evidence', manifest.runId);
+  mkdirSync(e2eEvidenceRoot, { recursive: true });
   const gateResults = [];
   try {
     checkout = createDetachedWorktree(root, { commit: manifest.candidate.commit });
@@ -1923,7 +1933,9 @@ export function runAcceptance(manifest, options = {}) {
       const gateEnv =
         gate.kind === 'required-test'
           ? { ...executionEnv, NODE_OPTIONS: '--max-old-space-size=4096' }
-          : executionEnv;
+          : gate.profile === 'e2e'
+            ? { ...executionEnv, CLAWX_E2E_EVIDENCE_ROOT: e2eEvidenceRoot }
+            : executionEnv;
       const gateOptions = {
         cwd: gateCwd,
         env: gateEnv,
