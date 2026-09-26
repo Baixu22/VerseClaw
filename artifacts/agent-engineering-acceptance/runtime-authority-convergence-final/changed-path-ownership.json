@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "5bc086de6d848c61020706879dfd5d8ed06b5ad2",
-  "generatedAt": "2026-09-26T16:06:56.685Z",
+  "headSha": "555043d944ae79ee1207d1a006ec95db9b261e73",
+  "generatedAt": "2026-09-26T17:56:38.914Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,9 +34,9 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 270,
+  "totalPaths": 272,
   "rcOwnedPaths": 192,
-  "excludedPaths": 78,
+  "excludedPaths": 80,
   "byRc": {
     "RC-02": 23,
     "RC-00": 96,
@@ -54,7 +54,7 @@
   },
   "byExclusionWorkstream": {
     "feat(approvals)": 31,
-    "chore(rc09)": 9,
+    "chore(rc09)": 11,
     "fix(rc09)": 23,
     "docs(task-forest)": 2,
     "chore(harness)": 2,
@@ -218,6 +218,15 @@
         "commit": "0287b807f05e6cefddd88101e2660876e84707f2",
         "subject": "fix(rc09): clear Agent Dev evidence blockers before acceptance",
         "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-three-rounds-20260927.json",
+      "rc": null,
+      "excluded": {
+        "commit": "555043d944ae79ee1207d1a006ec95db9b261e73",
+        "subject": "chore(rc09): record the three formal acceptance rounds and the narrowed blocker",
+        "workstream": "chore(rc09)"
       }
     },
     {
@@ -411,6 +420,15 @@
       "excluded": {
         "commit": "7554c16794cd9ac992c5afcc6762f40eed812776",
         "subject": "chore(rc09): refine the remaining e2e blocker with the isolated-rerun evidence",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0668.json",
+      "rc": null,
+      "excluded": {
+        "commit": "555043d944ae79ee1207d1a006ec95db9b261e73",
+        "subject": "chore(rc09): record the three formal acceptance rounds and the narrowed blocker",
         "workstream": "chore(rc09)"
       }
     },
