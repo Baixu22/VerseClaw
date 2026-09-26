@@ -1,6 +1,6 @@
 {
   "schema": "clawx.agent-dev.quality-report.v1",
-  "generatedAt": "2026-09-26T05:03:08.514Z",
+  "generatedAt": "2026-09-26T12:37:06.738Z",
   "success": true,
   "buildReuse": {
     "mode": "fresh",
@@ -41,7 +41,7 @@
   "e2eMode": "full",
   "build": {
     "ok": true,
-    "durationMs": 44491,
+    "durationMs": 53077,
     "commandLine": "pnpm run build:vite",
     "reused": false,
     "skipped": false,
@@ -49,7 +49,7 @@
   },
   "playwright": {
     "ok": true,
-    "durationMs": 20362,
+    "durationMs": 21744,
     "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
     "spec": "tests/e2e/agent-dev-quality.spec.ts",
     "mode": "full",
@@ -57,25 +57,8 @@
     "diagnostics": {
       "kind": "playwright",
       "passed": 4,
-      "reportedDurationMs": 18900,
-      "tests": [
-        {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
-          "durationMs": 11600
-        },
-        {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
-          "durationMs": 11100
-        },
-        {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-          "durationMs": 6600
-        },
-        {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
-          "durationMs": 6100
-        }
-      ]
+      "reportedDurationMs": 20200,
+      "tests": []
     },
     "evidence": [
       "seeded scenario accessibility report",
