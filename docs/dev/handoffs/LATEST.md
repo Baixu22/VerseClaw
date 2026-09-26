@@ -1,5 +1,24 @@
 # 会话交接（LATEST）
 
+## 接力进行中（2026-09-27 凌晨，TF-0041 · RC-09）：连跑三轮正式验收，阻塞面从 3 门收窄到 1 门
+
+- **节点状态：TF-0041 仍 `in_progress` / 50。** 三处修复已全部落库，并连跑了三轮完整正式验收（每轮 plan → Executor）。
+- **阻塞面收窄轨迹**（同一候选线，逐步修）：
+  | run | 失败门 | 说明 |
+  |---|---|---|
+  | `aa78e5b2` | agent-dev-audit、electron-e2e、required-test-3 | 基线 NO-GO |
+  | `dd9cbaab` | 仅 electron-e2e | mutation check 与 required-test-3 **双双转绿**（Fix 1 生效），audit 转绿（Fix 2 生效） |
+  | `fbc804da` | 仅 electron-e2e | 失败用例又换了一批，support-bundle 已不再失败 |
+- **三处修复（均已提交并实测）**：
+  1. `68844e6e6` — 为 e2e profile 的门接上 `CLAWX_E2E_EVIDENCE_ROOT`（此前全仓库无人设置该变量），消除 e2e 写脏候选导致的 mutation check + required-test-3 失败，附回归测试。
+  2. `c1d066026` — 重生成 Agent Dev 四类证据，`pnpm agent-dev:audit` 由 C/77 变 **A/97、0 disqualifier**；在验收内连续两轮通过。
+  3. `06bc0310f` + `5bc086de6` — 重锚 support-bundle 两处**环境敏感**断言（`totalHits>0` 与 `toContain('[REDACTED:user]')` 都只在 bundle 含 `C:\Users\…` 路径时成立，而验收的 TEMP 在 D:）。改为断言不变量（报告必须 verified、必须列出已扫描 pattern、植入 label 必须缺席于 provider 记录与原文、发布的 total 必须等于 findings 之和、未脱敏 profile 路径不得残留），**更严不更松**，183-185 行的 no-leak 断言原样保留。
+- **剩余唯一阻塞：electron-e2e 的不稳定既有用例，不是本候选缺陷。** 三轮失败集合每次都不同，且四个 spec 全都不在本候选 changedPaths 内：`support-bundle-fp-p1-06`、`windows-titlebar-chrome`（0xC0000409 原生崩溃）、`dialog-transitions`（点击被 `.section-heading` 遮挡）、`knowledge-ux-cdp`（`electron.launch` 90s 超时）、`chat-user-message-actions:234`、`effort-intensity-smoke:152`。后两个孤立复跑 **3 passed / 21.4s**。
+  - **根因**：[playwright.config.ts](../../../playwright.config.ts) 是 `retries: process.env.CI ? 2 : 0`，验收 harness **没有设 `CI`**，所以取 0 —— 比项目自己的 CI（`.github/workflows/electron-e2e.yml` 设 `CI: 'true'`）更严；326 项单 worker 全量套件里任何抖动都直接判 fail。
+  - **需 owner 裁决**：是否让 acceptance 的 e2e 门以 CI 姿态运行（`CI=true`，与项目 CI 重试策略一致；属 RC-09 `ownedPaths` 内的 harness 改动）。
+- **证据**：`D:/ClawX-acceptance/rc09-20260926/` 下 `run-02-nogo-full-aa78e5b2/`、`run-03-nogo-e2e-dd9cbaab/`、`run-04-nogo-e2e-fbc804da/`（各含 `BUNDLE-MANIFEST.json` 与 bundleDigest），以及更早的 `archived-final-evidence-20260926-prerun/`、`attempt-01-electron-missing/`。
+- **下一步唯一动作**：拿到 e2e 重试姿态的裁决后重跑 Executor → 独立 Verifier → engineering validator；若新增被跟踪路径先重生成 `changed-path-ownership.json`。三锁 false，RC-09 未 accepted。
+
 ## 接力进行中（2026-09-26 夜，TF-0041 · RC-09）：NO-GO 三条根因修其二，剩一条既有 e2e 缺陷待裁决
 
 - **节点状态：TF-0041 仍 `in_progress` / 50。** 本轮在上一轮 NO-GO 的基础上做了两处**已实测**的修复，并把第三条的根因钉死。
