@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "d362cd68e00673c764eb3d0881af1f81b7a01c51",
-  "generatedAt": "2026-09-25T16:48:14.675Z",
+  "headSha": "389b772a04e14604961ae1f09caa7dd71aefbf0a",
+  "generatedAt": "2026-09-26T01:44:08.746Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,9 +34,9 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 253,
+  "totalPaths": 256,
   "rcOwnedPaths": 190,
-  "excludedPaths": 63,
+  "excludedPaths": 66,
   "byRc": {
     "RC-02": 23,
     "RC-00": 96,
@@ -54,7 +54,7 @@
   },
   "byExclusionWorkstream": {
     "feat(approvals)": 31,
-    "fix(rc09)": 15,
+    "fix(rc09)": 18,
     "docs(task-forest)": 2,
     "chore(harness)": 2,
     "chore(rc09)": 3,
@@ -1450,11 +1450,29 @@
       }
     },
     {
+      "path": "tests/e2e/chat-layout-cdp.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "aabb0894fc5174a86aeb026ba72b69b2851880b7",
+        "subject": "fix(rc09): stop the E2E suite losing a passing test to teardown, and sample the dissolve mid-flight",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
       "path": "tests/e2e/chat-welcome-hero-verse-shot.spec.ts",
       "rc": null,
       "excluded": {
         "commit": "f839ddf6d78225d501c0f98ffd24fa6c5f9e5fe2",
         "subject": "fix(rc09): keep E2E evidence writes out of the candidate and give the suite a real budget",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/fixtures/electron.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "aabb0894fc5174a86aeb026ba72b69b2851880b7",
+        "subject": "fix(rc09): stop the E2E suite losing a passing test to teardown, and sample the dissolve mid-flight",
         "workstream": "fix(rc09)"
       }
     },
@@ -1509,6 +1527,15 @@
       "excluded": {
         "commit": "f839ddf6d78225d501c0f98ffd24fa6c5f9e5fe2",
         "subject": "fix(rc09): keep E2E evidence writes out of the candidate and give the suite a real budget",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/workspace-git-panel.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "389b772a04e14604961ae1f09caa7dd71aefbf0a",
+        "subject": "fix(rc09): absorb the commit-card snapshot's AA jitter and give E2E real headroom",
         "workstream": "fix(rc09)"
       }
     },
