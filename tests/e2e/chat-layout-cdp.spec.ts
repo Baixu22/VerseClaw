@@ -303,12 +303,17 @@ test.describe('Chat page layout CDP checks', () => {
       });
       expect(controlTypography.permission).toEqual(controlTypography.execution);
       expect(controlTypography.knowledge).toEqual(controlTypography.execution);
-      await permissionTrigger.hover();
-      const permissionHover = await permissionTrigger.evaluate((element) => getComputedStyle(element).backgroundColor);
-      await knowledgeTrigger.hover();
-      const knowledgeHover = await knowledgeTrigger.evaluate((element) => getComputedStyle(element).backgroundColor);
-      await executionTrigger.hover();
-      const executionHover = await executionTrigger.evaluate((element) => getComputedStyle(element).backgroundColor);
+      const settledHoverBackground = async (trigger: typeof permissionTrigger) => {
+        await trigger.hover();
+        return trigger.evaluate(async (element) => {
+          // Compare the final hover colors, not different frames of the 100ms transition.
+          await Promise.all(element.getAnimations().map((animation) => animation.finished.catch(() => {})));
+          return getComputedStyle(element).backgroundColor;
+        });
+      };
+      const permissionHover = await settledHoverBackground(permissionTrigger);
+      const knowledgeHover = await settledHoverBackground(knowledgeTrigger);
+      const executionHover = await settledHoverBackground(executionTrigger);
       expect(permissionHover).toBe(executionHover);
       expect(knowledgeHover).toBe(executionHover);
       const composerControlAlignment = await composerShell.evaluate((shell) => {

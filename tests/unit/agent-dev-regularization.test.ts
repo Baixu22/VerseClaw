@@ -75,11 +75,8 @@ describe('agent dev regularization contracts', () => {
     ]);
   });
 
-  // The runner spawns a full `pnpm --dir openclaw_runtime exec vitest` child
-  // (channel-conformance.mjs runFixtureSuite), which takes ~10-15s on this
-  // machine — far beyond vitest's 5s default. Explicit timeout instead of
-  // betting on machine speed: this pre-existing timeout aborted agent-dev
-  // deep-test before its playwright step (R6 prerequisite cleanup).
+  // A scaffold whose runtime target file is absent fail-closes without booting
+  // vitest. The timeout stays for the real rc05 fixture path, which still spawns.
   it('writes fail-closed channel conformance reports for a scaffold-shaped channel', async () => {
     const originalRoot = process.env.CLAWX_CHANNEL_CONFORMANCE_ROOT;
     const originalArtifactRoot = process.env.CLAWX_CHANNEL_CONFORMANCE_ARTIFACT_ROOT;

@@ -74,6 +74,12 @@ function runFixtureSuite(fixtureRoot) {
   // vitest runs with cwd = openclaw_runtime (pnpm --dir), so pass the path
   // relative to that directory.
   const testFileRelative = join('extensions', 'channels', basename(fixtureRoot), '__tests__/conformance.test.ts').replace(/\\/g, '/');
+  // Vitest is always aimed at the runtime workspace path, not fixtureRoot.
+  // A missing target executed zero scenarios; booting the runtime project
+  // (~15s) only to report that does not add evidence.
+  if (!existsSync(join(ROOT, 'openclaw_runtime', testFileRelative))) {
+    return { testResults: [], failures: [] };
+  }
   // Note: win32 cmd passes quoted args verbatim to pnpm which breaks the
   // vitest file filter, so the win32 branch intentionally omits quotes. The
   // injection surface is mitigated by toKebab sanitization (alphanumeric+dashes)
