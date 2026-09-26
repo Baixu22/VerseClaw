@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "5b2dfe40ecc7a92eb702258bb589ad765332030c",
-  "generatedAt": "2026-09-26T12:42:30.530Z",
+  "headSha": "7554c16794cd9ac992c5afcc6762f40eed812776",
+  "generatedAt": "2026-09-26T12:47:48.581Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,9 +34,9 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 267,
+  "totalPaths": 269,
   "rcOwnedPaths": 192,
-  "excludedPaths": 75,
+  "excludedPaths": 77,
   "byRc": {
     "RC-02": 23,
     "RC-00": 96,
@@ -54,7 +54,7 @@
   },
   "byExclusionWorkstream": {
     "feat(approvals)": 31,
-    "chore(rc09)": 7,
+    "chore(rc09)": 9,
     "fix(rc09)": 23,
     "docs(task-forest)": 2,
     "chore(harness)": 2,
@@ -182,6 +182,15 @@
       "path": ".agent-workbench/task-forest/proposals/TFP-tf0040-rc08b-acceptance-closeout-20260925.json",
       "rc": "RC-00",
       "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-e2e-refined-20260926.json",
+      "rc": null,
+      "excluded": {
+        "commit": "7554c16794cd9ac992c5afcc6762f40eed812776",
+        "subject": "chore(rc09): refine the remaining e2e blocker with the isolated-rerun evidence",
+        "workstream": "chore(rc09)"
+      }
     },
     {
       "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-executor-nogo-20260926.json",
@@ -392,6 +401,15 @@
       "excluded": {
         "commit": "5b2dfe40ecc7a92eb702258bb589ad765332030c",
         "subject": "chore(rc09): record two of three NO-GO root causes as fixed, deviation for the third",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0667.json",
+      "rc": null,
+      "excluded": {
+        "commit": "7554c16794cd9ac992c5afcc6762f40eed812776",
+        "subject": "chore(rc09): refine the remaining e2e blocker with the isolated-rerun evidence",
         "workstream": "chore(rc09)"
       }
     },
