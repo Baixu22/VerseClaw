@@ -137,6 +137,35 @@ registers no account and knows no target (`channels.configured` → `[]`,
 past the already-accepted RC-09 commit `ae489d4a5` and invalidate that engineering acceptance. That is
 a scope decision for the owner, not something an acceptance run should decide by itself.
 
+### Status: A and B fixed and verified (2026-09-27, owner-authorized)
+
+The owner authorized fixing both and re-running the RC-09 engineering acceptance. Commit `bd42f81c3`:
+
+- **A** — `saveChannelConfig` no longer mirrors the channel account map into `plugins.entries.<id>`;
+  the entry carries enablement only, and the account stays in `channels.<id>`. Nothing read the
+  mirrored copy: account read-back goes through `channels.<id>`, and `setEnabled` already wrote
+  `enabled` alone.
+- **B** — `runOpenClawDoctorRepair` coerces both skip-channels fallbacks to `''`, so the recovery path
+  can no longer replace the real diagnostic with `TypeError: Invalid value for env`.
+
+Tests: `tests/unit/channel-config.test.ts` now asserts the plugin entry carries no
+`accounts`/`defaultAccount` and that the account map stays in `channels.<id>` (17 passing), and the new
+`tests/unit/gateway-doctor-repair-env.test.ts` reads the fork env and **was verified to fail without
+fix B** by reverting it (`AssertionError: expected [ [ 'OPENCLAW_SKIP_CHANNELS', … ] ] to deeply equal []`).
+
+End-to-end verification after rebuilding Electron — CHANNEL-PROBE run `2026-09-27T13-26-59-074Z`, a
+path that previously crashed:
+
+| Observation | Before | After |
+| --- | --- | --- |
+| `gateway.restart` | `{"code":"INTERNAL","message":"Invalid value for env"}` | `ok`, path `restart` |
+| Gateway health | `state: error`, never ready | `healthy`, `reasons: []` |
+| `channels.configured` | `[]` | qqbot, `defaultAccountId: default`, account `configured: true`, `isDefault: true` |
+| Gateway stderr | `plugins.entries.qqbot: Invalid input` | no config error |
+
+The channel still reports `disconnected`/`connected: false` and `channels.targets` is still empty, so
+H-02..H-06 still need a QQ delivery target before the announce can resolve.
+
 ## Channel findings (2026-09-27)
 
 1. **No bundled channel could be configured at all until the plugin mirrors existed.** The first
