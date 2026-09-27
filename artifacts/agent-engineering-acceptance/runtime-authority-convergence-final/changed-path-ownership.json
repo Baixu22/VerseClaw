@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "f1da1efc18a0d7d3821baa64c3b6bc9da4155e46",
-  "generatedAt": "2026-09-27T11:18:16.466Z",
+  "headSha": "bd42f81c3a5d2571d9a60de57a06d2f968accff0",
+  "generatedAt": "2026-09-27T13:25:38.852Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,9 +34,9 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 289,
+  "totalPaths": 308,
   "rcOwnedPaths": 193,
-  "excludedPaths": 96,
+  "excludedPaths": 115,
   "byRc": {
     "RC-02": 23,
     "RC-00": 97,
@@ -59,6 +59,9 @@
     "docs(task-forest)": 2,
     "chore(harness)": 2,
     "docs(policy)": 1,
+    "docs(rc10)": 1,
+    "feat(rc10)": 14,
+    "fix(channels)": 4,
     "fix(harness)": 7,
     "feat(policy)": 1,
     "fix(state)": 3,
@@ -969,6 +972,141 @@
       }
     },
     {
+      "path": "artifacts/runtime-authority-convergence/rc-10/README.md",
+      "rc": null,
+      "excluded": {
+        "commit": "6e26c5fca1b320071ab9afabd4329fe90732dc59",
+        "subject": "docs(rc10): record H-01 status, the recon for H-02..H-06, and the two findings",
+        "workstream": "docs(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/candidate.json",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/events.jsonl",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/final-history.json",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/hashes.json",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/journey.json",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/receipts.json",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/screenshots/01-launched.png",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/screenshots/02-provider.png",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/screenshots/03-workspace.png",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/screenshots/04-sent.png",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/screenshots/06-final.png",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/session.jsonl",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/workspace-after.json",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/driver.mjs",
+      "rc": null,
+      "excluded": {
+        "commit": "ca7f6522e67ca753f37d17b1d7dfca2ce681cc4f",
+        "subject": "feat(rc10): track the agent-driven live acceptance driver",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
       "path": "docs/dev/handoffs/LATEST.md",
       "rc": "RC-02",
       "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
@@ -1027,6 +1165,15 @@
       }
     },
     {
+      "path": "electron/gateway/supervisor.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "bd42f81c3a5d2571d9a60de57a06d2f968accff0",
+        "subject": "fix(channels): stop writing channel accounts into plugins.entries, and keep doctor-repair env strings",
+        "workstream": "fix(channels)"
+      }
+    },
+    {
       "path": "electron/main/index.ts",
       "rc": null,
       "excluded": {
@@ -1065,6 +1212,15 @@
         "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
         "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
         "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "electron/utils/channel-config.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "bd42f81c3a5d2571d9a60de57a06d2f968accff0",
+        "subject": "fix(channels): stop writing channel accounts into plugins.entries, and keep doctor-repair env strings",
+        "workstream": "fix(channels)"
       }
     },
     {
@@ -1837,12 +1993,30 @@
       "declaredBySpec": true
     },
     {
+      "path": "tests/unit/channel-config.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "bd42f81c3a5d2571d9a60de57a06d2f968accff0",
+        "subject": "fix(channels): stop writing channel accounts into plugins.entries, and keep doctor-repair env strings",
+        "workstream": "fix(channels)"
+      }
+    },
+    {
       "path": "tests/unit/chat-workspace-session-target.test.ts",
       "rc": null,
       "excluded": {
         "commit": "d362cd68e00673c764eb3d0881af1f81b7a01c51",
         "subject": "fix(rc09): give the first chat-workspace-session-target test a budget for its cold import",
         "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/unit/gateway-doctor-repair-env.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "bd42f81c3a5d2571d9a60de57a06d2f968accff0",
+        "subject": "fix(channels): stop writing channel accounts into plugins.entries, and keep doctor-repair env strings",
+        "workstream": "fix(channels)"
       }
     },
     {
