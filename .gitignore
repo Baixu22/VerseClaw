@@ -114,6 +114,13 @@ artifacts/agent-engineering-acceptance/*
 !artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/
 artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/*
 !artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json
+# The canonical accepted engineering evidence pair. The control pack
+# (tests/unit/runtime-authority-convergence-control-pack.test.ts) requires STATUS.md
+# to point at these paths *and* loads them, so they must exist in a fresh checkout.
+# `full` writes runs/<runId>/ and the canonical copy is promoted into this directory
+# afterwards, so tracking them never dirties a running acceptance.
+!artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json
+!artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/final-report.json
 # RC-01 authority baseline is candidate material, not a run artifact: the
 # acceptance validator resolves it from the candidate tree, so it must be
 # tracked. Scoped to rc-01 only; other convergence run outputs stay ignored.
