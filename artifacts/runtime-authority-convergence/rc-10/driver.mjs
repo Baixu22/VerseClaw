@@ -132,6 +132,13 @@ const app = await electron.launch({
       VERSE_CLAW_USER_DATA_DIR: userDataDir,
       VERSE_CLAW_PORT_CLAWX_HOST_API: String(hostApiPort),
       VERSE_CLAW_REMOTE_DEBUGGING_PORT: String(cdpPort),
+      // The qqbot manifest declares channelEnvVars, so credentials can arrive as
+      // process env instead of channel config. RC10_CHANNEL_VIA=env takes that
+      // path, which avoids the gateway start-up env assembly that rejects the
+      // config-configured account.
+      ...(process.env.RC10_CHANNEL_VIA === 'env' && process.env.RC10_QQBOT_APP_ID
+        ? { QQBOT_APP_ID: process.env.RC10_QQBOT_APP_ID, QQBOT_CLIENT_SECRET: process.env.RC10_QQBOT_CLIENT_SECRET }
+        : {}),
     }).filter(([, v]) => v !== undefined),
   ),
   timeout: 120_000,
@@ -209,8 +216,13 @@ if (scenario === 'CHANNEL-PROBE') {
   const appId = process.env.RC10_QQBOT_APP_ID;
   const clientSecret = process.env.RC10_QQBOT_CLIENT_SECRET;
   if (!appId || !clientSecret) throw new Error('Supply RC10_QQBOT_APP_ID and RC10_QQBOT_CLIENT_SECRET in the environment.');
-  const saved = await host('channels', 'saveConfig', { channelType, config: { enabled: true, appId, clientSecret } });
-  await host('channels', 'setEnabled', { channelType, enabled: true });
+  const via = process.env.RC10_CHANNEL_VIA === 'env' ? 'env' : 'config';
+  // `env` mode relies on the manifest's channelEnvVars being present on the
+  // Electron process; `config` mode installs an account through the host API.
+  const saved = via === 'env'
+    ? { skipped: 'credentials supplied through the process environment' }
+    : await host('channels', 'saveConfig', { channelType, config: { enabled: true, appId, clientSecret } });
+  if (via === 'config') await host('channels', 'setEnabled', { channelType, enabled: true });
   const configured = await host('channels', 'configured');
   await host('gateway', 'restart');
   await new Promise((r) => setTimeout(r, 5000));
@@ -223,6 +235,7 @@ if (scenario === 'CHANNEL-PROBE') {
     schema: 'rc10-channel-probe/v1',
     driven_by: 'agent',
     channelType,
+    via,
     saved,
     configured,
     gateway: { state: gwProbe.state, port: gwProbe.port, pid: gwProbe.pid },
@@ -234,6 +247,7 @@ if (scenario === 'CHANNEL-PROBE') {
   await writeFile(join(evidenceDir, 'channel-probe.json'), JSON.stringify(probe, null, 2));
   log('channel.probe', {
     channelType,
+    via,
     ok: saved?.ok ?? null,
     valid: validation?.valid ?? null,
     validationErrors: validation?.errors ?? null,
