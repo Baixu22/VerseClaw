@@ -17,6 +17,11 @@
 - **下一步（只剩人）**：由用户执行 RC-10（`docs/dev/unified-agent-system/runtime-convergence/HUMAN-ACCEPTANCE.md`，六个场景 H-01..H-06）并记录显式 `accepted` verdict；只有那时 RC-10 才能进 `accepted_work_packages`、TF-0041 才能 done。`accepted` 要求 `candidate_sha` 等于最终 manifest 候选、`manifest_sha256` 与 `engineering_report_sha256` 匹配归档文件。
 - **纪律提醒**：验收期间不要并发跑 pnpm/Electron；本轮第 5 轮曾因并发跑验证把 `reports/visual-tune/morph-open.png` 写回主仓库，触发过一次 `source worktree changed during acceptance`（已恢复，非候选缺陷）。
 
+- **过程约束（给 RC-10 的接手者，踩过）**：
+  1. `node scripts/validate-runtime-authority-convergence.mjs --phase engineering` **只能在候选提交上、对仓库内 live 运行目录**（`artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/`）运行 —— 它要求 manifest 位于候选工作区内、且 `source HEAD` 等于 manifest 的 candidate。收口提交（STATUS/handoff/归档/矩阵）一旦落库，HEAD 就走过候选，validator 便无法再复现。本轮的正确顺序是：run → **validator（PASSED）** → 归档 → 收口提交 → 重生成矩阵。
+  2. 同理，收口后 `changed-path-ownership.json` 会被重生成（286 路径）而 manifest 记的是运行时的 278，于是 live 目录上重跑 validator 会报 `provision copy digest mismatch`。这不是回归，是顺序使然。
+  3. 精简归档（5 个 JSON + SHA256SUMS，沿用 `archive-acceptance.sh`）**不含 logs/evidence 子树**，无法独立重跑 validator；因此本轮另存了完整 live 目录副本 `D:/ClawX-acceptance/rc09-20260926/run-06-pass-87f94a5b/`（102 文件，bundleDigest `242893e5…`）供复核。若要端到端复验，仍需把该副本放回仓库内并 checkout 到候选 `ae489d4a5`。
+
 ## 接力进行中（2026-09-27 凌晨，TF-0041 · RC-09）：连跑三轮正式验收，阻塞面从 3 门收窄到 1 门
 
 - **节点状态：TF-0041 仍 `in_progress` / 50。** 三处修复已全部落库，并连跑了三轮完整正式验收（每轮 plan → Executor）。
