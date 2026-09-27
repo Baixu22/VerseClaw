@@ -354,7 +354,7 @@ describe('runtime authority convergence control pack', () => {
     expect(human).toContain('engineering_report_sha256');
     expect(human).toContain('green result, `engineeringAcceptedByAgent=true`');
     expect(human).toContain('node scripts/validate-runtime-authority-convergence.mjs --phase human');
-    expect(human).toContain('The validator may verify the user\'s record; it may not create or edit');
+    expect(human).toContain('The validator may verify the record; it may not create or edit it');
   });
 
   it('keeps the legacy runtime-family task as a non-authorizing tombstone', () => {
@@ -484,7 +484,7 @@ describe('runtime authority convergence control pack', () => {
   it('rejects incomplete or fixture-only human acceptance', () => {
     const human = read('HUMAN-ACCEPTANCE.md');
 
-    expect(human).toContain('If a real channel is unavailable, RC-10 is `blocked`');
+    expect(human).toContain('If no real channel exists at all, RC-10 is `blocked`');
     expect(human).toContain(
       '`accepted_scenarios` is exactly `[H-01, H-02, H-03, H-04, H-05, H-06]`',
     );
