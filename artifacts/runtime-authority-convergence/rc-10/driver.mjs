@@ -297,19 +297,41 @@ try {
     }
     let tableRows = [];
     try {
-      tableRows = db.prepare('SELECT kind, correlation_digest, payload FROM runtime_receipts').all();
+      // The table keeps digests and the selected/omitted source lists, never raw
+      // prompt or tool text. selected_json/omitted_json are exactly the context
+      // lineage H-01 has to explain.
+      tableRows = db
+        .prepare(
+          'SELECT kind, correlation_digest, run_id, session_key, selected_json, omitted_json, created_at FROM runtime_receipts',
+        )
+        .all();
     } catch {
       db.close();
       continue;
     }
     db.close();
-    const context = tableRows.filter((r) => String(r.kind).startsWith('context'));
-    const wire = tableRows.filter((r) => String(r.kind).startsWith('wire'));
+    const parseJsonArray = (text) => {
+      try {
+        const value = JSON.parse(text ?? 'null');
+        return Array.isArray(value) ? value : null;
+      } catch {
+        return null;
+      }
+    };
+    const context = tableRows.filter((r) => String(r.kind).includes('context'));
+    const wire = tableRows.filter((r) => String(r.kind).includes('wire'));
     receipts.available = true;
     receipts.dbPath = dbPath;
     receipts.total = tableRows.length;
-    receipts.context = context.map((r) => ({ kind: r.kind, correlation_digest: r.correlation_digest }));
-    receipts.wire = wire.map((r) => ({ kind: r.kind, correlation_digest: r.correlation_digest }));
+    receipts.kinds = [...new Set(tableRows.map((r) => r.kind))];
+    receipts.context = context.map((r) => ({
+      kind: r.kind,
+      correlation_digest: r.correlation_digest,
+      run_id: r.run_id,
+      selected: parseJsonArray(r.selected_json),
+      omitted: parseJsonArray(r.omitted_json),
+    }));
+    receipts.wire = wire.map((r) => ({ kind: r.kind, correlation_digest: r.correlation_digest, run_id: r.run_id }));
     receipts.pairs = context.filter((c) => wire.some((w) => w.correlation_digest === c.correlation_digest)).length;
     break;
   }
