@@ -235,7 +235,33 @@ if (scenario === 'CHANNEL-PROBE') {
     restartPath = 'stop+start';
   }
   await new Promise((r) => setTimeout(r, 4000));
-  const gwProbe = await waitForGateway(180_000);
+  let gwProbe;
+  try {
+    gwProbe = await waitForGateway(180_000);
+  } catch (error) {
+    // Capture the app's own stderr and the gateway status so a failed start is
+    // diagnosable instead of just a timeout.
+    await writeFile(join(evidenceDir, 'app.log'), appLog.join(''));
+    await writeFile(
+      join(evidenceDir, 'channel-probe-failure.json'),
+      JSON.stringify(
+        {
+          schema: 'rc10-channel-probe-failure/v1',
+          driven_by: 'agent',
+          via,
+          restartPath,
+          restartResult: restarted,
+          error: String(error?.message ?? error),
+          gatewayStatus: await host('gateway', 'status'),
+        },
+        null,
+        2,
+      ),
+    );
+    log('channel.probe.failed', { via, restartPath, error: String(error?.message ?? error) });
+    await app.close().catch(() => {});
+    process.exit(1);
+  }
   log('channel.restartPath', { restartPath, restartResult: restarted });
   const validation = await host('channels', 'validateCredentials', { channelType });
   const accounts = await host('channels', 'accounts', { channelType });
