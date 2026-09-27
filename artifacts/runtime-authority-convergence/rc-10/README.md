@@ -70,6 +70,18 @@ agreed to supply, not a task-level question — see `AGENTS.md` §Human-in-the-l
 - Operator RPCs should go over the **direct gateway websocket** with an operator token and
   `['operator.admin','operator.read','operator.approvals']`, which is the pattern
   `artifacts/live-model-cdp/20260922-senseaudio-journey-J04/driver-r3.mjs` already proves.
+- Channel account configuration is a host-api module (`shared/host-api/contract.ts:5230`):
+  `channels.saveConfig({ channelType, accountId?, config })` → `channels.setEnabled` →
+  `channels.accounts` / `channels.targets({ channelType })` → gateway restart. That is the
+  product path for installing the credential, so the driver never writes a config file by hand.
+- **A webhook delivery plan carries no channel** (`cron/delivery-plan.ts:92` sets
+  `channel: undefined` for `mode === "webhook"`), so the operator slice cannot be exercised through
+  webhook mode — an announce *channel* is genuinely required. This was checked specifically before
+  concluding that H-02..H-06 are channel-bound.
+- `cron.add` shape constraints (`cron/service/jobs.ts`): `sessionTarget: "main"` requires
+  `payload.kind: "systemEvent"`; channel delivery is only valid for `sessionTarget: "isolated"`,
+  which needs `payload.kind: "agentTurn"`. `wakeMode: "now"` is the manual-run mode
+  (`cron/isolated-agent.test-harness.ts:61-63`).
 
 ## Findings recorded while getting H-01 green
 
