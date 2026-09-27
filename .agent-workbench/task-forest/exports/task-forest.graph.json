@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-26T17:55:59.292954Z",
+  "generated_at": "2026-09-27T09:23:02.475012Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -12837,7 +12837,7 @@
       "context_tags": [],
       "created_at": "2026-08-02T13:07:59.996410Z",
       "deprecated_at": null,
-      "derived_progress": 50.0,
+      "derived_progress": 90.0,
       "desired_outcomes": [],
       "deviations": [
         "TFD-RC09-HISTORICAL-20260803",
@@ -12870,27 +12870,30 @@
         "2026-09-26 Fix 1 端到端实证：定向复跑时那 12 个被跟踪文件全部落到 D:\\ClawX-acceptance\\tmp\\e2e-verify\\，git status --porcelain --untracked-files=all 为空，证明 CLAWX_E2E_EVIDENCE_ROOT 重定向在真实套件里生效。另 pnpm harness validate --spec 的两种形式（带/不带 --since）均 exit 0 / Spec is valid。",
         "2026-09-26/27 连跑三轮完整正式验收，阻塞面从 3 门收窄到 1 门：run aa78e5b2 失败门 = agent-dev-audit + electron-e2e + required-test-3；run dd9cbaab 与 run fbc804da 均只剩 electron-e2e（mutation check、required-test-3、agent-dev-audit 全部转绿）。旁证：worktree 在每轮结束后 git status 均为空。",
         "2026-09-27 修复 3 落地（06bc0310f + 5bc086de6）：support-bundle spec 的两处断言是环境敏感的——totalHits>0 与 toContain([REDACTED:user]) 都只在 bundle 含 C:\\Users\\… 路径时成立，而验收 TEMP 在 D:，故 run aa78e5b2 起该用例必挂。已改为断言不变量（报告必须 verified、必须列出已扫描 pattern、植入 label 必须缺席于 provider 记录与原文、发布 total 必须等于 findings 之和、未脱敏 profile 路径不得残留），更严不更松，183-185 行 no-leak 断言保留；run fbc804da 中该用例已不再失败。",
-        "2026-09-27 剩余唯一阻塞的根因（既有、非本候选）：electron-e2e 三轮失败集合每次不同，四个 spec（support-bundle / windows-titlebar-chrome / dialog-transitions / knowledge-ux-cdp / chat-user-message-actions / effort-intensity-smoke）均不在本候选 changedPaths 内；chat-user-message-actions:234 与 effort-intensity-smoke:152 孤立复跑 3 passed / 21.4s。根因是 playwright.config.ts 的 retries: process.env.CI ? 2 : 0，而 acceptance harness 未设 CI 故取 0，比项目自己的 CI（.github/workflows/electron-e2e.yml 设 CI: true）更严。需 owner 裁决是否让 acceptance 的 e2e 门以 CI 姿态运行。"
+        "2026-09-27 剩余唯一阻塞的根因（既有、非本候选）：electron-e2e 三轮失败集合每次不同，四个 spec（support-bundle / windows-titlebar-chrome / dialog-transitions / knowledge-ux-cdp / chat-user-message-actions / effort-intensity-smoke）均不在本候选 changedPaths 内；chat-user-message-actions:234 与 effort-intensity-smoke:152 孤立复跑 3 passed / 21.4s。根因是 playwright.config.ts 的 retries: process.env.CI ? 2 : 0，而 acceptance harness 未设 CI 故取 0，比项目自己的 CI（.github/workflows/electron-e2e.yml 设 CI: true）更严。需 owner 裁决是否让 acceptance 的 e2e 门以 CI 姿态运行。",
+        "2026-09-27 RC-09 工程验收 PASS。runId 87f94a5b-d790-4fd2-8d3e-08885a32e7c9，候选 ae489d4a5，baseRef 1cddcb1ba5e23ebe445afca11174c2575c75f735。Executor pass（failures 空）→ 独立 Verifier pass（actor rc09-verifier ≠ executorActor rc09-executor、engineeringAcceptedByAgent true、failures 空、consistency.errors 空、identicalGateContracts true）。23 门全部 exit 0；electron-e2e 316 passed / 0 failed / 10 skipped，且 Executor 与 Verifier 两轮一致。两侧 detached worktree 验收前后均干净。",
+        "2026-09-27 证据归档：按 archive-acceptance.sh 约定写入 artifacts/runtime-authority-convergence/rc-09/acceptance/（manifest.json、plan.json、executorReport.json、verifierReport.json、finalReport.json + SHA256SUMS）。测试 scripts/validate-runtime-authority-convergence.mjs --phase engineering 的 PASSED 输出已记录；pnpm acceptance:agent:status 报 result pass / engineeringAcceptedByAgent true / taskStatusRecommendation review_needed。STATUS.md 已置 program_status=human_acceptance_pending、engineering_verdict=pass、accepted_work_packages 含 RC-09、done_allowed=false。",
+        "2026-09-27 收口路径上实际修掉的阻塞（全部有提交与实测）：①为 e2e profile 的验收门接上 CLAWX_E2E_EVIDENCE_ROOT（此前全仓库无人设置），消除 e2e 写脏候选导致的 mutation check 与 required-test-3 失败；②重生成 Agent Dev 四类证据，strict audit 由 C/77 变 A/97、0 disqualifier；③重锚 support-bundle 两处环境敏感断言（totalHits>0 与 [REDACTED:user] 只在 bundle 含 C:\\Users\\… 时成立）为不变量断言，更严不更松；④修稳六个 e2e spec 的四个可复现抖动根因（getStableWindow 以 Timeout 中止 30s 轮询、sidebar 分区动作 pointer-events 竞态、chat-user-message-actions 漏强制 2px translate-y 位移、scrollbar-visibility 跨用例指针残留），并新增 hoverUntilVisible 处理 hover 显露控件在 re-render 后丢失 hover。未使用重试策略：playwright.config.ts 的 retries 与 CI 环境变量均未改动。"
       ],
       "execution_hints": [],
       "id": "TF-0041",
       "kind": "task",
-      "next_action": "等 owner 裁决 acceptance 的 e2e 门是否以 CI 姿态（CI=true，retries=2，与 .github/workflows/electron-e2e.yml 一致）运行；随后重跑 Executor → 独立 Verifier → engineering validator。",
+      "next_action": "由用户执行 RC-10 真人验收（HUMAN-ACCEPTANCE.md 的 H-01..H-06）并记录显式 accepted verdict；只有那时 RC-10 才进 accepted_work_packages、本节点才能 done、STATUS.md 才能转 done。代理侧不再有可推进的工程动作。",
       "non_goals": [],
       "primary_parent": "TF-0028",
       "priority": 1,
-      "progress": 50.0,
+      "progress": 90.0,
       "progress_source": "manual",
       "purpose": "",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "in_progress",
+      "status": "review_needed",
       "success_metrics": [],
-      "summary": "RC-09 工程总验收：ownership 阻塞已解除；三处已修并实测——e2e 证据根接线（消除 mutation check + required-test-3）、Agent Dev 四类证据刷新（audit A/97）、support-bundle 两处环境敏感断言重锚。连跑三轮正式验收后阻塞面从 3 门收窄到仅 electron-e2e，且该门三轮失败集合每次不同、孤立复跑全绿，根因是验收未设 CI 导致零重试（比项目 CI 更严）。需 owner 裁决 e2e 重试姿态后重跑。",
+      "summary": "RC-09 独立工程总验收已 PASS：Executor 与独立 Verifier 各跑满 23 门且 failures 为空，engineering validator PASSED，证据归档至 artifacts/runtime-authority-convergence/rc-09/acceptance/。收口路径上的环境与 e2e 抖动阻塞均已定位并修稳（未用重试）。程序进入 human_acceptance_pending，等待用户执行 RC-10 记录显式 accepted verdict。",
       "title": "RC-09 独立工程总验收与证据封存",
-      "updated_at": "2026-09-26T17:55:35.845274Z"
+      "updated_at": "2026-09-27T09:22:39.431767Z"
     },
     "TF-0042": {
       "acceptance_criteria": [
@@ -27294,12 +27297,12 @@
         "TF-0240",
         "TF-0242"
       ],
-      "in_progress": [
-        "TF-0041"
-      ],
+      "in_progress": [],
       "proposed": [],
       "ready": [],
-      "review_needed": []
+      "review_needed": [
+        "TF-0041"
+      ]
     },
     "evergreen_open_goals": [
       "TF-0010"
@@ -27320,7 +27323,9 @@
       "TF-0151"
     ],
     "ready": [],
-    "review_needed": []
+    "review_needed": [
+      "TF-0041"
+    ]
   },
   "summary": {
     "blocked_count": 12,
@@ -27328,7 +27333,7 @@
     "edge_count": 414,
     "node_count": 242,
     "open_count": 13,
-    "review_needed_count": 0
+    "review_needed_count": 1
   },
   "tree_edges": [
     "TFE-0001",

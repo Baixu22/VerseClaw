@@ -1,5 +1,22 @@
 # 会话交接（LATEST）
 
+## 收口完成（2026-09-27，TF-0041 · RC-09）：工程验收 PASS，程序进入 human_acceptance_pending
+
+- **RC-09 工程验收通过。** runId `87f94a5b-d790-4fd2-8d3e-08885a32e7c9`，候选 `ae489d4a5`，baseRef `1cddcb1ba5e23ebe445afca11174c2575c75f735`。
+  - **Executor pass**（`failures: []`）→ **独立 Verifier pass**（`actor rc09-verifier` ≠ `executorActor rc09-executor`、`engineeringAcceptedByAgent: true`、`failures: []`、`consistency.errors: []`、`identicalGateContracts: true`）。23 门全部 exit 0；`electron-e2e` 316 passed / 0 failed / 10 skipped，且 Executor 与 Verifier 两轮一致。
+  - 两侧 detached worktree 在验收前后均干净（`detachedStatusEntries: 0`、`sourceStatusEntries: 0`）。
+  - `node scripts/validate-runtime-authority-convergence.mjs --phase engineering --manifest … --engineering-report …` **PASSED**；`pnpm acceptance:agent:status` 报 `result: pass`、`engineeringAcceptedByAgent: true`、`taskStatusRecommendation: review_needed`。
+- **证据**：按 `archive-acceptance.sh` 约定归档到 `artifacts/runtime-authority-convergence/rc-09/acceptance/`（`manifest.json`、`plan.json`、`executorReport.json`、`verifierReport.json`、`finalReport.json` + `SHA256SUMS`）。各代中间证据另存 `D:/ClawX-acceptance/rc09-20260926/run-0{2,3,4,5}-*/`、`archived-final-evidence-20260926-prerun/`、`attempt-01-electron-missing/`。
+- **本轮实际修掉的阻塞（按发现顺序，全部有提交与实测）**：
+  1. `electron-e2e` 运行期重写 12 个被跟踪文件 → 在 acceptance harness 为 e2e profile 的门接上 `CLAWX_E2E_EVIDENCE_ROOT`（此前全仓库无人设置），带回归测试。这同时解决 mutation check 与 `required-test-3`。
+  2. Agent Dev 四类证据过期 → 重生成，strict audit 由 C/77 变 **A/97、0 disqualifier**。
+  3. support-bundle 两处**环境敏感**断言（`totalHits > 0`、`toContain('[REDACTED:user]')` 只在 bundle 含 `C:\Users\…` 时成立）→ 重锚为不变量断言，更严不更松。
+  4. e2e 抖动（6 个 spec）→ 四个可复现根因修稳：`getStableWindow` 用 `Timeout` 中止了 30s 轮询；sidebar 分区动作 `pointer-events` 竞态（新增 `revealSectionHeadingActions`）；`chat-user-message-actions` 只强制了 opacity、漏了 2px `translate-y` 位移（稳定 252 像素差）；`scrollbar-visibility` 受跨用例指针残留影响。另新增 `hoverUntilVisible` 处理 hover 显露控件在 re-render 后丢失 hover。
+  - **没有使用重试策略**：`playwright.config.ts` 的 `retries` 与 `CI` 环境变量均未改动，仍是零重试。
+- **状态**：`STATUS.md` → `program_status: human_acceptance_pending`、`engineering_verdict: pass`、`accepted_work_packages` 含 RC-09、`done_allowed: false`；TF-0041 → `review_needed`（**不是 done**）。三个产品锁 `live_ready` / `product_approved` / `default_on` 全程保持 false。
+- **下一步（只剩人）**：由用户执行 RC-10（`docs/dev/unified-agent-system/runtime-convergence/HUMAN-ACCEPTANCE.md`，六个场景 H-01..H-06）并记录显式 `accepted` verdict；只有那时 RC-10 才能进 `accepted_work_packages`、TF-0041 才能 done。`accepted` 要求 `candidate_sha` 等于最终 manifest 候选、`manifest_sha256` 与 `engineering_report_sha256` 匹配归档文件。
+- **纪律提醒**：验收期间不要并发跑 pnpm/Electron；本轮第 5 轮曾因并发跑验证把 `reports/visual-tune/morph-open.png` 写回主仓库，触发过一次 `source worktree changed during acceptance`（已恢复，非候选缺陷）。
+
 ## 接力进行中（2026-09-27 凌晨，TF-0041 · RC-09）：连跑三轮正式验收，阻塞面从 3 门收窄到 1 门
 
 - **节点状态：TF-0041 仍 `in_progress` / 50。** 三处修复已全部落库，并连跑了三轮完整正式验收（每轮 plan → Executor）。
