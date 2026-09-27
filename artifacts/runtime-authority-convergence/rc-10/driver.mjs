@@ -190,7 +190,8 @@ await shot('02-provider');
 // --- workspace ---
 const gw0 = await waitForGateway(180_000);
 log('gateway.ready', { state: gw0.state, port: gw0.port, pid: gw0.pid, gatewayReady: gw0.gatewayReady });
-const created = await host('workspaces', 'create', { name: 'rc10-live', rootPath: workspaceDir, permissionMode: 'acceptEdits' });
+const workspacePermissionMode = String(args['permission-mode'] ?? 'fullAccess');
+const created = await host('workspaces', 'create', { name: 'rc10-live', rootPath: workspaceDir, permissionMode: workspacePermissionMode });
 const norm = (p) => String(p ?? '').split(String.fromCharCode(92)).join('/').toLowerCase();
 const wsId = (created?.profiles ?? []).find((w) => norm(w.rootPath) === norm(workspaceDir))?.id ?? created?.activeWorkspaceId;
 await host('workspaces', 'switch', { id: wsId });
@@ -279,8 +280,13 @@ const receipts = { available: false, reason: null, context: [], wire: [], pairs:
 try {
   const { DatabaseSync } = await import('node:sqlite');
   const dbCandidates = [];
-  for (const f of await readdir(userDataDir, { recursive: true })) {
-    if (String(f).endsWith('.sqlite') || String(f).endsWith('.db')) dbCandidates.push(join(userDataDir, f));
+  for (const root of [userDataDir, homeDir, join(homeDir, '.openclaw')]) {
+    const found = await readdir(root, { recursive: true }).catch(() => []);
+    for (const f of found) {
+      if (String(f).endsWith('.sqlite') || String(f).endsWith('.db') || String(f).endsWith('.sqlite3')) {
+        dbCandidates.push(join(root, f));
+      }
+    }
   }
   for (const dbPath of dbCandidates) {
     let db;
@@ -326,7 +332,7 @@ const journey = {
   operator: 'agent-driven (Playwright over Electron CDP); no human operator',
   candidate,
   provider: { id: providerId, baseUrl: providerBaseUrl, apiProtocol: 'openai-responses', model: providerModel, keySource: 'process environment only' },
-  workspace: { id: wsId, rootPath: workspaceDir, permissionMode: 'acceptEdits' },
+  workspace: { id: wsId, rootPath: workspaceDir, permissionMode: workspacePermissionMode },
   run: { runId, sessionKey, stopReason, finished },
   observations: {
     taskCompleted: finished && after.tests.exitCode === 0,
