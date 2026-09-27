@@ -136,7 +136,11 @@ async function getStableWindow(app: ElectronApplication): Promise<Page> {
         await currentWindow.waitForLoadState('domcontentloaded', { timeout: 2_000 });
         return currentWindow;
       } catch (error) {
-        if (!String(error).includes('has been closed')) {
+        // A window that is not ready yet is expected while the app boots: this
+        // helper's contract is to poll until the deadline, so a slow load must
+        // not abort the loop. Only a window that actually closed is terminal.
+        const message = String(error);
+        if (!message.includes('has been closed') && !message.includes('Timeout')) {
           throw error;
         }
       }
@@ -150,6 +154,21 @@ async function getStableWindow(app: ElectronApplication): Promise<Page> {
   }
 
   throw new Error('No stable Electron window became available');
+}
+
+/**
+ * The sidebar's section actions are hover-revealed: `.section-heading-actions`
+ * starts at `opacity: 0; pointer-events: none` and only flips to `auto` while
+ * its heading is hovered. Clicking one of those 22x22 slots straight after a
+ * bare `hover()` can race that flip, because the click's hit test resolves
+ * `pointer-events` at the moment it runs and then reports the heading as
+ * intercepting the pointer. Hover the heading and wait for the slot to actually
+ * accept pointer events before touching it.
+ */
+export async function revealSectionHeadingActions(page: Page, index = 0): Promise<void> {
+  const heading = page.locator('.section-heading').nth(index);
+  await heading.hover();
+  await expect(heading.locator('.section-heading-actions')).toHaveCSS('pointer-events', 'auto');
 }
 
 /**

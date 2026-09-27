@@ -257,7 +257,26 @@ test.describe('Verse Claw user message hover actions', () => {
       expect(actionsBox).not.toBeNull();
       expect(actionsBox!.y).toBeGreaterThanOrEqual(bubbleBox!.y + bubbleBox!.height - 1);
       await actions.evaluate((element) => {
-        (element as HTMLElement).style.opacity = '1';
+        const bar = element as HTMLElement;
+        // The bar starts at `opacity-0 translate-y-0.5` and is revealed by
+        // `group-hover:opacity-100 group-hover:translate-y-0`. Forcing only the
+        // opacity left the 2px offset in place whenever the pointer was not over
+        // the row at capture time, which shifted the icons and produced a stable
+        // 252-pixel diff (region x731..810 y53..67) against the golden. Pin both
+        // halves of the revealed state so the capture does not depend on hover.
+        bar.style.opacity = '1';
+        bar.style.transform = 'translateY(0)';
+      });
+      // Capture the settled hover state. The reveal is a CSS transition, and
+      // sampling it mid-flight is what made this golden image flaky on a loaded
+      // machine: 252 pixels differed against a 128-pixel budget. Same class of
+      // fix as chat-layout-cdp's hover settle.
+      await messageRow.evaluate(async (element) => {
+        await Promise.all(
+          element
+            .getAnimations({ subtree: true })
+            .map((animation) => animation.finished.catch(() => undefined)),
+        );
       });
       await expect(messageRow).toHaveScreenshot('user-message-actions-hover-dark.png', {
         animations: 'disabled',
