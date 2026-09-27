@@ -83,6 +83,44 @@ agreed to supply, not a task-level question — see `AGENTS.md` §Human-in-the-l
   which needs `payload.kind: "agentTurn"`. `wakeMode: "now"` is the manual-run mode
   (`cron/isolated-agent.test-harness.ts:61-63`).
 
+## Environment blocker: intermittent native Electron crash (0xC0000409 / 0x80000003)
+
+Every RC-09 engineering acceptance attempt after the channel fix has come down to a **single**
+electron-e2e failure that is a native Electron crash, never a product assertion:
+
+| Attempt | Result | The failing e2e test |
+| --- | --- | --- |
+| `083ec4f1` | 2 e2e + 1 unit | `app-smoke.spec.ts:23:7`, `first-product-journey-fp-p1-07.spec.ts:334:7` |
+| `10fa388e` | 1 e2e | `work-mode-intensity.spec.ts:138:9` (test 311 of 326) |
+
+Playwright reports `Error: worker process exited unexpectedly (code=3221226505, signal=null)`
+(0xC0000409). The Windows event log gives the real signature:
+
+```
+出错应用程序名称: electron.exe，版本: 40.8.4.0
+出错模块名称: KERNELBASE.dll
+异常代码: 0x80000003
+错误偏移: 0x0000000000118e12
+```
+
+`0x80000003` is `STATUS_BREAKPOINT`: Chromium/Electron hit a **fatal CHECK** and called
+`DebugBreak()`, whose `__fastfail` then surfaces as 0xC0000409. It strikes a different spec each
+time and never the same assertion, so it is not spec-specific.
+
+Evidence that this is resource-driven rather than a product defect:
+
+- `%LOCALAPPDATA%\CrashDumps` holds 10 `electron.exe.*.dmp` minidumps since 2026-09-27 14:13, and
+  dumps also exist from windows where the acceptance **passed** — the crash is frequent and only
+  fails a test when it lands mid-test.
+- During the attempts the machine sat at **30.3 GB commit of a 50.9 GB limit with 2-4 GB free RAM**
+  (15.2 GB physical), and V8/Chromium OOM is a fatal-CHECK path.
+- Both crashed specs pass **4/4 in isolation**, and the attempt that failed at test 311 of 326
+  otherwise reported 315 passed / 1 failed / 10 skipped.
+
+Mitigations applied for the retry: kill every leftover `electron.exe` before launching, run the
+acceptance as a detached process, and keep monitoring to process counts / RAM only — the earlier
+recursive directory scans over the multi-GB worktree were themselves load during the e2e phase.
+
 ## RC-10 defect: configuring a bundled channel makes the gateway refuse to start
 
 Reproduced end to end and root-caused on 2026-09-27 (probe run `2026-09-27T12-41-43-821Z`). This is why
