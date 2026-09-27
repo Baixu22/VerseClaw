@@ -336,6 +336,14 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
       await page.getByTestId('chat-composer-input').fill('start a long validation run');
       await page.getByTestId('chat-composer-send').click();
       /*
+       * Let the run leave `starting` before typing the intervention draft. The send
+       * path clears the composer asynchronously, so a draft typed while the run is
+       * still starting can be wiped by that late clear: the primary button then
+       * stays `Stop`/`running` instead of becoming `Queue`, which is the flake this
+       * spec used to hit under full-suite load.
+       */
+      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'running');
+      /*
        * The intervention strip is the composer's "a run is in flight AND there
        * is a draft to intervene WITH" surface — every button in it (steer,
        * queue, interrupt-and-replace) consumes the draft, which is why it is
