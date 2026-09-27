@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "bd42f81c3a5d2571d9a60de57a06d2f968accff0",
-  "generatedAt": "2026-09-27T13:25:38.852Z",
+  "headSha": "3b6135c609b074d2c4d6d79472e55f1afd42c590",
+  "generatedAt": "2026-09-27T15:55:48.684Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,12 +34,12 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 308,
-  "rcOwnedPaths": 193,
-  "excludedPaths": 115,
+  "totalPaths": 310,
+  "rcOwnedPaths": 194,
+  "excludedPaths": 116,
   "byRc": {
     "RC-02": 23,
-    "RC-00": 97,
+    "RC-00": 98,
     "RC-03": 20,
     "RC-01R": 3,
     "RC-08A": 4,
@@ -65,6 +65,7 @@
     "fix(harness)": 7,
     "feat(policy)": 1,
     "fix(state)": 3,
+    "test(e2e)": 1,
     "test(rc09)": 7
   },
   "entries": [
@@ -1834,6 +1835,15 @@
       }
     },
     {
+      "path": "tests/e2e/chat-long-task-control.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "aaf41431453074720de6d6b2d458a0e744627d1b",
+        "subject": "test(e2e): let the long-task run settle before typing the intervention draft",
+        "workstream": "test(e2e)"
+      }
+    },
+    {
       "path": "tests/e2e/chat-user-message-actions.spec.ts",
       "rc": null,
       "excluded": {
@@ -2080,6 +2090,12 @@
         "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
         "workstream": "feat(approvals)"
       }
+    },
+    {
+      "path": "tests/unit/runtime-authority-convergence-control-pack.test.ts",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
     },
     {
       "path": "tests/unit/uas-05-verseshell-process-lifecycle.test.ts",
