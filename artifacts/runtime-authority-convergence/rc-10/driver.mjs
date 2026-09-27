@@ -224,9 +224,19 @@ if (scenario === 'CHANNEL-PROBE') {
     : await host('channels', 'saveConfig', { channelType, config: { enabled: true, appId, clientSecret } });
   if (via === 'config') await host('channels', 'setEnabled', { channelType, enabled: true });
   const configured = await host('channels', 'configured');
-  await host('gateway', 'restart');
-  await new Promise((r) => setTimeout(r, 5000));
+  // `gateway.restart` throws {"code":"INTERNAL","message":"Invalid value for env"} once a channel
+  // account exists, so fall back to an explicit stop+start and record which path worked.
+  const restarted = await host('gateway', 'restart');
+  let restartPath = 'restart';
+  if (restarted?.hostError || restarted?.ok === false) {
+    await host('gateway', 'stop');
+    await new Promise((r) => setTimeout(r, 3000));
+    await host('gateway', 'start');
+    restartPath = 'stop+start';
+  }
+  await new Promise((r) => setTimeout(r, 4000));
   const gwProbe = await waitForGateway(180_000);
+  log('channel.restartPath', { restartPath, restartResult: restarted });
   const validation = await host('channels', 'validateCredentials', { channelType });
   const accounts = await host('channels', 'accounts', { channelType });
   const targets = await host('channels', 'targets', { channelType });
@@ -236,6 +246,7 @@ if (scenario === 'CHANNEL-PROBE') {
     driven_by: 'agent',
     channelType,
     via,
+    restartPath,
     saved,
     configured,
     gateway: { state: gwProbe.state, port: gwProbe.port, pid: gwProbe.pid },
