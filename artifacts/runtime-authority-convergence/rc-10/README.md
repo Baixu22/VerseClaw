@@ -83,6 +83,36 @@ agreed to supply, not a task-level question — see `AGENTS.md` §Human-in-the-l
   which needs `payload.kind: "agentTurn"`. `wakeMode: "now"` is the manual-run mode
   (`cron/isolated-agent.test-harness.ts:61-63`).
 
+## Channel findings (2026-09-27)
+
+1. **No bundled channel could be configured at all until the plugin mirrors existed.** The first
+   `channels.saveConfig` failed with `Bundled QQBot plugin mirror not found`, and
+   `build/openclaw-plugins` was entirely absent from the checkout. `pnpm run bundle:openclaw-plugins`
+   creates it (qqbot, discord, whatsapp, wecom, dingtalk, feishu-openclaw-plugin, openclaw-weixin).
+2. **A config-configured channel account breaks gateway start-up.** With the qqbot account saved,
+   `gateway.restart` returns `{"code":"INTERNAL","message":"Invalid value for env"}` and
+   `gatewayReady` never becomes true. The account is written correctly to the *isolated* profile
+   (`channels.qqbot.accounts.default` in `…/home/.openclaw/openclaw.json`), and the owner's real
+   `~/.openclaw/openclaw.json` stays untouched — so this is a product bug in the gateway start-up
+   environment assembly, not a driver or credential problem. Likely locus:
+   `electron/gateway/config-sync.ts` (provider keys, DCS flags, source-runtime isolation env).
+3. **Credentials supplied through the channel's declared `channelEnvVars` avoid that crash.** With
+   `QQBOT_APP_ID` / `QQBOT_CLIENT_SECRET` on the Electron process (`RC10_CHANNEL_VIA=env`) the
+   gateway starts and reports `healthy`. But the product then registers **no account**
+   (`channels.configured` → `[]`) and knows **no target** (`channels.targets` → `[]`), so a cron
+   announce still has nothing to resolve.
+4. `channels.validateCredentials` returns `valid: true` together with the warning *"No online
+   validation available for this channel type"*. That is a structural pass and must **not** be read
+   as proof the credential reaches QQ; live connectivity still has to be proven separately.
+
+### What H-02..H-06 still need
+
+- A **QQ delivery target** the bot may push to (group or user id). `channels.targets` is empty, so
+  nothing can be discovered locally. H-03's "delivery returns to the origin" also has to work
+  without a human action, because the owner performs none.
+- Either the config-account start-up bug fixed, or a supported way to register an account that does
+  not go through it.
+
 ## Findings recorded while getting H-01 green
 
 1. **A non-`fullAccess` workspace hangs the agent.** In `acceptEdits` the model's `edit` call never
