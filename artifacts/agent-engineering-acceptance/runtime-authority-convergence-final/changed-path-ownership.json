@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "555043d944ae79ee1207d1a006ec95db9b261e73",
-  "generatedAt": "2026-09-26T17:56:38.914Z",
+  "headSha": "579141af777c16a754a9025f0bf09ea3f31dbf9b",
+  "generatedAt": "2026-09-27T04:59:29.849Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,9 +34,9 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 272,
+  "totalPaths": 277,
   "rcOwnedPaths": 192,
-  "excludedPaths": 80,
+  "excludedPaths": 85,
   "byRc": {
     "RC-02": 23,
     "RC-00": 96,
@@ -60,7 +60,7 @@
     "chore(harness)": 2,
     "fix(harness)": 7,
     "fix(state)": 3,
-    "test(rc09)": 1
+    "test(rc09)": 6
   },
   "entries": [
     {
@@ -1580,12 +1580,39 @@
       }
     },
     {
+      "path": "tests/e2e/chat-user-message-actions.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "4c3d0a511a5bf3b60c9fbc7b5843160dfe287269",
+        "subject": "test(rc09): fix four reproducible causes behind the flaky Electron E2E failures",
+        "workstream": "test(rc09)"
+      }
+    },
+    {
       "path": "tests/e2e/chat-welcome-hero-verse-shot.spec.ts",
       "rc": null,
       "excluded": {
         "commit": "f839ddf6d78225d501c0f98ffd24fa6c5f9e5fe2",
         "subject": "fix(rc09): keep E2E evidence writes out of the candidate and give the suite a real budget",
         "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/chat-workspace-header.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "4c3d0a511a5bf3b60c9fbc7b5843160dfe287269",
+        "subject": "test(rc09): fix four reproducible causes behind the flaky Electron E2E failures",
+        "workstream": "test(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/dialog-transitions.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "4c3d0a511a5bf3b60c9fbc7b5843160dfe287269",
+        "subject": "test(rc09): fix four reproducible causes behind the flaky Electron E2E failures",
+        "workstream": "test(rc09)"
       }
     },
     {
@@ -1640,6 +1667,24 @@
         "commit": "13db3fed33509cb3126278e547010d0116369a4b",
         "subject": "fix(rc09): declare the E2E skip budget, keep colour vars out, finish the evidence redirect",
         "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/sidebar-session-folders-archive.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "4c3d0a511a5bf3b60c9fbc7b5843160dfe287269",
+        "subject": "test(rc09): fix four reproducible causes behind the flaky Electron E2E failures",
+        "workstream": "test(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/sidebar-settings-fakecoding.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "4c3d0a511a5bf3b60c9fbc7b5843160dfe287269",
+        "subject": "test(rc09): fix four reproducible causes behind the flaky Electron E2E failures",
+        "workstream": "test(rc09)"
       }
     },
     {
