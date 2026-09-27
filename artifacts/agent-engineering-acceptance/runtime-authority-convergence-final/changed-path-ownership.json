@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "100d7bc43a6cebe86c38424cf3727d917d3975ac",
-  "generatedAt": "2026-09-27T09:23:38.480Z",
+  "headSha": "f1da1efc18a0d7d3821baa64c3b6bc9da4155e46",
+  "generatedAt": "2026-09-27T11:18:16.466Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,12 +34,12 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 286,
-  "rcOwnedPaths": 192,
-  "excludedPaths": 94,
+  "totalPaths": 289,
+  "rcOwnedPaths": 193,
+  "excludedPaths": 96,
   "byRc": {
     "RC-02": 23,
-    "RC-00": 96,
+    "RC-00": 97,
     "RC-03": 20,
     "RC-01R": 3,
     "RC-08A": 4,
@@ -58,7 +58,9 @@
     "fix(rc09)": 23,
     "docs(task-forest)": 2,
     "chore(harness)": 2,
+    "docs(policy)": 1,
     "fix(harness)": 7,
+    "feat(policy)": 1,
     "fix(state)": 3,
     "test(rc09)": 7
   },
@@ -463,6 +465,15 @@
       "path": ".gitignore",
       "rc": "RC-02",
       "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "AGENTS.md",
+      "rc": null,
+      "excluded": {
+        "commit": "147c65444035fe27de61c71dbc899b8f8261e020",
+        "subject": "docs(policy): owner declares no human actions or human data — automate and label as agent-driven",
+        "workstream": "docs(policy)"
+      }
     },
     {
       "path": "README.ja-JP.md",
@@ -969,6 +980,12 @@
       "declaredBySpec": true
     },
     {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/HUMAN-ACCEPTANCE.md",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
       "path": "docs/dev/unified-agent-system/runtime-convergence/RC-09-REMEDIATION-PLAN.md",
       "rc": "RC-01R",
       "commit": null,
@@ -1057,6 +1074,15 @@
         "commit": "b1f9247636e77edf84462db35167e325367499e7",
         "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
         "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/specs/rules/task-forest-autoclose-and-roles.md",
+      "rc": null,
+      "excluded": {
+        "commit": "c9793d9650b52f9a7ba9e2f618607516ffb1b19e",
+        "subject": "feat(policy): let the acceptance verdict be agent-driven, labelled honestly",
+        "workstream": "feat(policy)"
       }
     },
     {
