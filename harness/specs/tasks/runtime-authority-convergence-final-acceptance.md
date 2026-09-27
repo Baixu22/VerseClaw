@@ -36,6 +36,12 @@ touchedAreas:
   - package.json
   - tsconfig.node.json
   - eslint.config.mjs
+  # The owner-policy change that removes the human-operator requirement
+  # (AGENTS.md §Human-in-the-loop policy, 2026-09-27) lands in the same change
+  # set as the RC-09 close-out, so the top-level agent policy file is expected
+  # here. Declaring it in touchedAreas only states that the change is expected;
+  # it does not widen the ownership set, which is derived from ownedPaths alone.
+  - AGENTS.md
   # RC-09's own doc-sync and evidence-refresh surfaces. The AGENTS.md doc-sync
   # rule requires the READMEs to move with behavior, and the RC packages refresh
   # the Agent Dev evidence; both land inside the accepted window.
