@@ -18,6 +18,19 @@ test.describe('hover-only scrollbar visibility', () => {
       const scrollContainer = page.getByTestId('models-page');
       await expect(scrollContainer).toBeVisible();
 
+      // workers:1 keeps the pointer between tests, and the Settings chrome can
+      // leave it inside this container's hover scope, pre-arming the revealed
+      // thumb. Park the pointer in the window corner and wait for the un-hovered
+      // treatment before measuring it.
+      await page.mouse.move(2, 2);
+      await expect
+        .poll(() =>
+          scrollContainer.evaluate(
+            (element) => window.getComputedStyle(element, '::-webkit-scrollbar-thumb').backgroundColor,
+          ),
+        )
+        .toBe('rgba(0, 0, 0, 0)');
+
       const beforeHover = await scrollContainer.evaluate((element) => {
         const style = window.getComputedStyle(element);
         const thumbStyle = window.getComputedStyle(element, '::-webkit-scrollbar-thumb');

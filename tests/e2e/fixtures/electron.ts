@@ -1,5 +1,5 @@
 import electronBinaryPath from 'electron';
-import { _electron as electron, expect, test as base, type ElectronApplication, type Page } from '@playwright/test';
+import { _electron as electron, expect, test as base, type ElectronApplication, type Locator, type Page } from '@playwright/test';
 import { access, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
@@ -169,6 +169,25 @@ export async function revealSectionHeadingActions(page: Page, index = 0): Promis
   const heading = page.locator('.section-heading').nth(index);
   await heading.hover();
   await expect(heading.locator('.section-heading-actions')).toHaveCSS('pointer-events', 'auto');
+}
+
+/**
+ * Hover a row and wait until a hover-revealed control inside it actually
+ * appears. `row.hover()` on its own is not enough: the sidebar re-renders as its
+ * data settles and workers:1 keeps the pointer between tests, so the hover can be
+ * lost or never register, leaving the control at a zero-size box while the click
+ * waits out its whole 30s budget. Retry the hover under a bounded budget so a
+ * genuinely broken reveal still fails.
+ */
+export async function hoverUntilVisible(
+  row: Locator,
+  control: Locator,
+  timeoutMs = 30_000,
+): Promise<void> {
+  await expect(async () => {
+    await row.hover();
+    await expect(control).toBeVisible({ timeout: 2_000 });
+  }).toPass({ timeout: timeoutMs });
 }
 
 /**

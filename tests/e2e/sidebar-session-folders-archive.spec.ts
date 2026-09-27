@@ -1,4 +1,4 @@
-import { expect, revealSectionHeadingActions, test } from './fixtures/electron';
+import { expect, hoverUntilVisible, revealSectionHeadingActions, test } from './fixtures/electron';
 import type { Locator } from '@playwright/test';
 
 const SESSION_KEY_A = 'agent:main:session-1700000000000';
@@ -515,8 +515,13 @@ test.describe('Sidebar session workgroups and archive', () => {
     await expect(page.getByTestId('sidebar-session-project-workspace-folders')).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_B}`)).toBeVisible({ timeout: 15000 });
 
-    // Click the delete button on session B.
-    await page.getByTestId(`sidebar-session-${SESSION_KEY_B}`).hover();
+    // Click the delete button on session B. The row's action buttons are
+    // hover-revealed and the sidebar re-renders as sessions settle, so wait for
+    // the button to actually appear rather than trusting a single hover.
+    await hoverUntilVisible(
+      page.getByTestId(`sidebar-session-${SESSION_KEY_B}`),
+      page.getByTestId(`sidebar-session-delete-${SESSION_KEY_B}`),
+    );
     await page.getByTestId(`sidebar-session-delete-${SESSION_KEY_B}`).click();
 
     // The delete dialog should show three buttons.

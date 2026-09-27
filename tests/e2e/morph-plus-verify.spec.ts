@@ -11,7 +11,7 @@
  *
  * Run: pnpm exec playwright test tests/e2e/morph-plus-verify.spec.ts
  */
-import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { closeElectronApp, expect, getStableWindow, hoverUntilVisible, installIpcMocks, test } from './fixtures/electron';
 import { evidencePath } from './fixtures/evidence-root';
 
 const SESSION_KEY = 'agent:main:main';
@@ -164,8 +164,9 @@ test('plus menu morph expands panel, occupies slot, closes on outside click / Es
     await expect(page.getByTestId('chat-composer-actions')).toBeVisible();
 
     const sessionRow = page.getByTestId(`sidebar-session-${SESSION_KEY}`);
-    await sessionRow.hover();
-    await expect(page.getByTestId(`sidebar-session-tooltip-${SESSION_KEY}`)).toBeVisible();
+    // The tooltip is rendered from the hover state and the sidebar re-renders as
+    // its data settles, so retry the hover until the tooltip is really there.
+    await hoverUntilVisible(sessionRow, page.getByTestId(`sidebar-session-tooltip-${SESSION_KEY}`));
     await expect(page.getByTestId(`sidebar-session-tooltip-branch-${SESSION_KEY}`)).toHaveCount(0);
     await expect(sessionRow).not.toHaveAttribute('title');
 
