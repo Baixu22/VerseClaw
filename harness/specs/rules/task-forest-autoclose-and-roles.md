@@ -82,6 +82,25 @@ contradictory, or unverifiable stays open with the gap written down. Auto-close 
 "declare done and move on"; it means the agent finishes the verification it is already required to
 do, then records the outcome without a second human pass.
 
+## R7: Human steps are automated, never required (2026-09-27 amendment)
+
+The repository owner has declared a standing policy — see `AGENTS.md` §Human-in-the-loop policy,
+which outranks this rule — that they perform **no human actions and supply no human data** for this
+project. Consequences for this rule:
+
+- No node, spec, acceptance criterion, or runbook may require a human step or human data as a
+  precondition. "Waiting for the human verdict", "needs a real provider key from the user", and
+  "needs a real channel from the user" are **not** valid reasons to keep a node `open` or `blocked`.
+- Where a flow was written to need a human — clicking a UI, filling a form, supplying a credential,
+  judging a scenario, or recording a verdict — implement the automated agent-driven equivalent: a
+  script or agent that performs the steps and writes the artifacts.
+- Label those artifacts as agent-driven (`driven_by: agent`, `actor: <agent-name>`). R5's stop on
+  *claiming* real-human evidence is unchanged and still binding: dropping the *requirement* for
+  human evidence is not permission to *claim* it.
+- Where such a flow genuinely needs a third-party model or repository, the owner can supply the
+  credential or endpoint on request. Ask for that resource once, then automate against it; a
+  resource request is not a task-level question.
+
 ## Validation
 
 - `pnpm harness validate --spec harness/specs/tasks/task-forest-autoclose-policy.md`

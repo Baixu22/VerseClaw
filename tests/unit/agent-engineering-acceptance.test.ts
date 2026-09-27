@@ -1461,6 +1461,8 @@ describe('Agent Engineering Acceptance', () => {
     const humanVerdictPath = join(outputDir, 'human-verdict.yaml');
     writeFileSync(humanVerdictPath, [
       'schema: runtime-authority-convergence-human-verdict/v1',
+      'driven_by: agent',
+      'actor: rc10-fixture-agent',
       `candidate_sha: ${manifest.candidate.commit}`,
       `manifest_sha256: ${sha256File(manifestPath)}`,
       `engineering_report_sha256: ${sha256File(reportPath)}`,
