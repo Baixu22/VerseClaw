@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "579141af777c16a754a9025f0bf09ea3f31dbf9b",
-  "generatedAt": "2026-09-27T04:59:29.849Z",
+  "headSha": "48c8870ee9c206ce5f566dd9a6957be3819d7636",
+  "generatedAt": "2026-09-27T06:30:23.586Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,9 +34,9 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 277,
+  "totalPaths": 278,
   "rcOwnedPaths": 192,
-  "excludedPaths": 85,
+  "excludedPaths": 86,
   "byRc": {
     "RC-02": 23,
     "RC-00": 96,
@@ -60,7 +60,7 @@
     "chore(harness)": 2,
     "fix(harness)": 7,
     "fix(state)": 3,
-    "test(rc09)": 6
+    "test(rc09)": 7
   },
   "entries": [
     {
@@ -1658,6 +1658,15 @@
         "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
         "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
         "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "tests/e2e/scrollbar-visibility.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "48c8870ee9c206ce5f566dd9a6957be3819d7636",
+        "subject": "test(rc09): stabilise the remaining hover-reveal and pointer-state flakes",
+        "workstream": "test(rc09)"
       }
     },
     {
