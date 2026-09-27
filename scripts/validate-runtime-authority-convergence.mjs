@@ -28,6 +28,12 @@ const PHASES = new Set(['engineering', 'human']);
 const HUMAN_SCENARIOS = ['H-01', 'H-02', 'H-03', 'H-04', 'H-05', 'H-06'];
 const HUMAN_VERDICT_KEYS = [
   'schema',
+  // Who actually drove H-01..H-06. Owner policy is that the agent drives them
+  // (`AGENTS.md` §Human-in-the-loop policy), so the record must say so instead of
+  // leaving the claim implicit; declaring 'human' when no human drove it stays
+  // fabrication.
+  'driven_by',
+  'actor',
   'candidate_sha',
   'manifest_sha256',
   'engineering_report_sha256',
@@ -476,6 +482,10 @@ function validateHumanVerdict(manifest, manifestPath, reportPath, verdictPath, e
   const actualKeys = Object.keys(verdict).sort();
   if (stableJson(actualKeys) !== stableJson([...HUMAN_VERDICT_KEYS].sort())) errors.push('human verdict schema keys mismatch');
   if (verdict.schema !== 'runtime-authority-convergence-human-verdict/v1') errors.push('human verdict schema mismatch');
+  if (verdict.driven_by !== 'agent' && verdict.driven_by !== 'human') {
+    errors.push('human verdict driven_by must be agent or human');
+  }
+  if (!isNonBlankString(verdict.actor)) errors.push('human verdict actor is required');
   if (verdict.candidate_sha !== manifest?.candidate?.commit) errors.push('human verdict candidate_sha mismatch');
   if (!isNonBlankString(verdict.manifest_sha256) || !SHA256_HEX.test(verdict.manifest_sha256) || !equalDigest(sha256File(manifestPath), verdict.manifest_sha256)) {
     errors.push('human verdict manifest_sha256 mismatch');
