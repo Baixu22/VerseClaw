@@ -10,8 +10,8 @@ Do not start this document until RC-09 is engineering-accepted and `STATUS.md` s
   supplies no human data (see `AGENTS.md` §Human-in-the-loop policy), so there is no human operator to
   wait for. Pick and operate a real provider, one real channel, a disposable workspace, and a
   rollback window; if the provider credential or channel project is not already available, request
-  that resource from the owner **once** and then automate against it. If no real channel exists at
-  all, RC-10 is `blocked`; fixture evidence cannot waive it or permit `done`.
+  that resource from the owner **once** and then automate against it.
+- If no real channel exists at all, RC-10 is `blocked`; fixture evidence cannot waive it or permit `done`.
 - Do not leave RC-10 open merely because "the owner has not given a verdict" — producing the verdict
   is part of this runbook, not a separate human step.
 - No credential is copied into this document or an evidence report.
