@@ -83,6 +83,60 @@ agreed to supply, not a task-level question — see `AGENTS.md` §Human-in-the-l
   which needs `payload.kind: "agentTurn"`. `wakeMode: "now"` is the manual-run mode
   (`cron/isolated-agent.test-harness.ts:61-63`).
 
+## RC-10 defect: configuring a bundled channel makes the gateway refuse to start
+
+Reproduced end to end and root-caused on 2026-09-27 (probe run `2026-09-27T12-41-43-821Z`). This is why
+H-02..H-06 cannot run: every one of them needs an announce channel, and installing one bricks the
+gateway.
+
+**The chain, from the app log:**
+
+1. `channels.saveConfig({ channelType: "qqbot", … })` returns `ok: true` and logs
+   *"Channel config saved {channelType: qqbot, accountId: default, configFile: …}"*, then
+   *"Installed QQBot plugin from bundled mirror"*.
+2. The app restarts the gateway. The new gateway process exits with code 1 and its stderr says:
+   ```
+   Error: Invalid config at …\user-data\openclaw-source-state\openclaw.json.
+   plugins.entries.qqbot: Invalid input
+   Run "openclaw doctor --fix" to repair, then retry.
+   ```
+3. The app detects an invalid config and runs its recovery path, `doctor --fix`. That recovery path
+   then throws and replaces the real error:
+   ```
+   TypeError: Invalid value for env
+       at new ForkUtilityProcess (electron browser_init)
+       at async Object.runDoctorRepair
+   ```
+
+**Two distinct defects, each proven:**
+
+- **A — the saved plugin entry violates the runtime schema.**
+  `plugins.entries.qqbot` is written as `{ enabled, accounts, defaultAccount }`, but
+  `PluginEntrySchema` (`openclaw_runtime/src/config/zod-schema.ts:745-774`) is `.strict()` and accepts
+  only `enabled`, `hooks`, `subagent`, `llm`, `config`. The two channel-shaped keys are unknown, so the
+  strict object rejects the snapshot and the gateway refuses to start. Any bundled channel therefore
+  bricks the gateway. Note the split that makes it worse: the channel account itself is written to the
+  *isolated* `home/.openclaw/openclaw.json` (`channels.qqbot.accounts.default`), while the entry the
+  gateway validates lives in `user-data/openclaw-source-state/openclaw.json` — which carries no
+  `channels.qqbot` at all.
+- **B — the recovery path cannot run, and hides A.**
+  `electron/gateway/supervisor.ts:304-310` builds the doctor-repair fork env as
+  `OPENCLAW_SKIP_CHANNELS: skipChannels ? '1' : baseEnvPatched.OPENCLAW_SKIP_CHANNELS`.
+  When the variable is unset and `skipChannels` is false the value is `undefined`; Electron's
+  `utilityProcess.fork` rejects non-string env values with `TypeError: Invalid value for env`. A local
+  check confirms the message is Electron's, not Node's — `child_process.spawnSync` accepts object,
+  `undefined` and number env values without complaint. So the app's own repair path crashes and its
+  error replaces the actionable "invalid config" diagnostic.
+
+**Working around A is not possible from the driver.** Supplying the credential through the manifest's
+`channelEnvVars` avoids the bad entry and the gateway does start healthy — but the product then
+registers no account and knows no target (`channels.configured` → `[]`,
+`channels.targets` → `[]`), so a cron announce still has nothing to resolve.
+
+**Not patched on purpose.** Fixing A touches `electron/` product code, which would move the candidate
+past the already-accepted RC-09 commit `ae489d4a5` and invalidate that engineering acceptance. That is
+a scope decision for the owner, not something an acceptance run should decide by itself.
+
 ## Channel findings (2026-09-27)
 
 1. **No bundled channel could be configured at all until the plugin mirrors existed.** The first
