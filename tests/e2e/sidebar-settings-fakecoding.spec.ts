@@ -1,4 +1,4 @@
-import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
+import { closeElectronApp, expect, getStableWindow, revealSectionHeadingActions, test } from './fixtures/electron';
 
 test.describe('FakeCoding sidebar and full-page settings alignment', () => {
   test('keeps meaningful sidebar and settings shells visible at all states', async ({ launchElectronApp }, testInfo) => {
@@ -84,7 +84,7 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
 
       // Official section actions are hover-revealed, so the heading must be
       // hovered before its 22x22 slots accept pointer events.
-      await page.locator('.section-heading').first().hover();
+      await revealSectionHeadingActions(page);
       await page.getByTestId('sidebar-session-organize').click();
       const organizeMenu = page.locator('.sidebar-session-organize-menu');
       await expect(organizeMenu).toBeVisible();
