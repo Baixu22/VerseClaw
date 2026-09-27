@@ -135,6 +135,7 @@ artifacts/runtime-authority-convergence/rc-0[3-9]*/*
 !artifacts/runtime-authority-convergence/rc-1[0-9]*/
 artifacts/runtime-authority-convergence/rc-1[0-9]*/*
 !artifacts/runtime-authority-convergence/rc-1[0-9]*/driver*.mjs
+!artifacts/runtime-authority-convergence/rc-1[0-9]*/README.md
 !artifacts/runtime-authority-convergence/rc-1[0-9]*/acceptance/
 !artifacts/coding-c0/
 !artifacts/coding-c0/**
