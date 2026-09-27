@@ -202,6 +202,61 @@ const gw = await waitForGateway(180_000);
 log('gateway.restarted', { state: gw.state, port: gw.port, pid: gw.pid, pidChanged: gw.pid !== gw0.pid });
 await shot('03-workspace');
 
+// --- CHANNEL-PROBE: configure a real channel through the product path and prove it connects.
+// Sends nothing outward; it only installs the credential, restarts, then validates and probes.
+if (scenario === 'CHANNEL-PROBE') {
+  const channelType = process.env.RC10_CHANNEL ?? 'qqbot';
+  const appId = process.env.RC10_QQBOT_APP_ID;
+  const clientSecret = process.env.RC10_QQBOT_CLIENT_SECRET;
+  if (!appId || !clientSecret) throw new Error('Supply RC10_QQBOT_APP_ID and RC10_QQBOT_CLIENT_SECRET in the environment.');
+  const saved = await host('channels', 'saveConfig', { channelType, config: { enabled: true, appId, clientSecret } });
+  await host('channels', 'setEnabled', { channelType, enabled: true });
+  const configured = await host('channels', 'configured');
+  await host('gateway', 'restart');
+  await new Promise((r) => setTimeout(r, 5000));
+  const gwProbe = await waitForGateway(180_000);
+  const validation = await host('channels', 'validateCredentials', { channelType });
+  const accounts = await host('channels', 'accounts', { channelType });
+  const targets = await host('channels', 'targets', { channelType });
+  await shot('04-channel-probe');
+  const probe = {
+    schema: 'rc10-channel-probe/v1',
+    driven_by: 'agent',
+    channelType,
+    saved,
+    configured,
+    gateway: { state: gwProbe.state, port: gwProbe.port, pid: gwProbe.pid },
+    validation,
+    accounts,
+    targets,
+    at: new Date().toISOString(),
+  };
+  await writeFile(join(evidenceDir, 'channel-probe.json'), JSON.stringify(probe, null, 2));
+  log('channel.probe', {
+    channelType,
+    ok: saved?.ok ?? null,
+    valid: validation?.valid ?? null,
+    validationErrors: validation?.errors ?? null,
+    accountKeys: accounts && typeof accounts === 'object' ? Object.keys(accounts).slice(0, 8) : typeof accounts,
+    targetKeys: targets && typeof targets === 'object' ? Object.keys(targets).slice(0, 8) : typeof targets,
+  });
+  const files = {};
+  for (const f of await readdir(evidenceDir, { recursive: true })) {
+    const p = join(evidenceDir, f);
+    const s = await stat(p).catch(() => null);
+    if (s?.isFile()) files[String(f).replaceAll('\\', '/')] = { bytes: s.size, sha256: sha256(await readFile(p)) };
+  }
+  const hits = [];
+  for (const f of Object.keys(files)) {
+    const text = await readFile(join(evidenceDir, f), 'utf8').catch(() => '');
+    if (text.includes(clientSecret) || text.includes(appId)) hits.push(f);
+  }
+  await writeFile(join(evidenceDir, 'hashes.json'), JSON.stringify({ algorithm: 'sha256', credentialScanHits: hits, files }, null, 2));
+  await app.close().catch(() => {});
+  console.log(JSON.stringify({ scenario, channelType, valid: validation?.valid ?? null, credentialScanHits: hits.length, evidenceDir }));
+  process.exit(validation?.valid === true ? 0 : 1);
+}
+
 // --- H-01: send a normal desktop task ---
 const sessionKey = 'agent:main:main';
 const message = [
