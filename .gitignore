@@ -128,6 +128,14 @@ artifacts/runtime-authority-convergence/rc-02/*
 !artifacts/runtime-authority-convergence/rc-0[3-9]*/
 artifacts/runtime-authority-convergence/rc-0[3-9]*/*
 !artifacts/runtime-authority-convergence/rc-0[3-9]*/acceptance/
+# RC-10 is the agent-driven live acceptance (owner policy: no human operator), so
+# its driver and curated evidence are tracked like the other RC packages. Raw run
+# directories stay outside the repo; only the driver and the accepted evidence
+# bundle are copied in.
+!artifacts/runtime-authority-convergence/rc-1[0-9]*/
+artifacts/runtime-authority-convergence/rc-1[0-9]*/*
+!artifacts/runtime-authority-convergence/rc-1[0-9]*/driver*.mjs
+!artifacts/runtime-authority-convergence/rc-1[0-9]*/acceptance/
 !artifacts/coding-c0/
 !artifacts/coding-c0/**
 !artifacts/coding-c1/
