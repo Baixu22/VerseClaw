@@ -203,7 +203,11 @@ describe('WeCom plugin configuration', () => {
     expect(channels.whatsapp.accounts?.default?.enabled).toBe(true);
     expect(plugins.allow).toContain('whatsapp');
     expect(plugins.entries.whatsapp.enabled).toBe(true);
-    expect(plugins.entries.whatsapp.accounts?.default?.enabled).toBe(true);
+    // PluginEntrySchema is strict: accounts/defaultAccount belong in channels.<id>.
+    // Mirroring them into the plugin entry made the Gateway reject the startup
+    // config ("plugins.entries.<id>: Invalid input") and refuse to start.
+    expect(plugins.entries.whatsapp.accounts).toBeUndefined();
+    expect(plugins.entries.whatsapp.defaultAccount).toBeUndefined();
   });
 
   it('keeps whatsapp plugin registration when saving plugin-backed config', async () => {
@@ -242,9 +246,13 @@ describe('WeCom plugin configuration', () => {
     const plugins = config.plugins as { entries?: Record<string, { accounts?: Record<string, unknown> }> };
 
     expect(channels.qqbot.accounts?.default).toBeDefined();
-    expect(plugins.entries?.discord?.accounts?.default).toBeDefined();
-    expect(plugins.entries?.qqbot?.accounts?.default).toBeDefined();
-    expect(plugins.entries?.whatsapp?.accounts?.default).toBeDefined();
+    expect(channels.discord.accounts?.default).toBeDefined();
+    expect(channels.whatsapp.accounts?.default).toBeDefined();
+    // Strict PluginEntrySchema: a plugin entry carries enablement only, never the
+    // channel account map. Keeping accounts there broke Gateway startup.
+    for (const channelType of ['discord', 'qqbot', 'whatsapp']) {
+      expect(plugins.entries?.[channelType]?.accounts).toBeUndefined();
+    }
   });
 
   it('saves discord guild channel allowlist without schema-invalid allow flags', async () => {

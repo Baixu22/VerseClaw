@@ -919,19 +919,16 @@ export async function saveChannelConfig(
         // read channels.<type>.enabled still work.
         channelSection.enabled = transformedConfig.enabled ?? channelSection.enabled ?? true;
 
-        // Plugin-backed channel packages read their activation/config from
-        // plugins.entries.<id>. Mirror the enabled flag and account map there
-        // while preserving channels.<id> for Verse Claw's account list UI.
+        // Plugin-backed channel packages only need their enablement mirrored into
+        // plugins.entries.<id>; accounts live in channels.<id>, which is what the
+        // channel manifest's config schema describes. PluginEntrySchema is strict
+        // (enabled/hooks/subagent/llm/config only), so mirroring accounts or
+        // defaultAccount here makes the Gateway reject the snapshot and refuse to
+        // start ("plugins.entries.<id>: Invalid input").
         if (PLUGIN_CHANNELS.includes(resolvedChannelType)) {
             ensurePluginRegistration(currentConfig, resolvedChannelType);
             const pluginEntry = currentConfig.plugins!.entries![resolvedChannelType];
-            const pluginAccounts = ensureChannelAccountsMap(pluginEntry);
-            pluginEntry.defaultAccount = channelSection.defaultAccount;
             pluginEntry.enabled = channelSection.enabled;
-            pluginAccounts[resolvedAccountId] = {
-                ...pluginAccounts[resolvedAccountId],
-                ...accounts[resolvedAccountId],
-            };
         }
 
         // Most OpenClaw channel plugins/built-ins also read the default
