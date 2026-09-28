@@ -1,5 +1,5 @@
 import type { Locator } from '@playwright/test';
-import { closeElectronApp, completeSetup, expect, getStableWindow, installIpcMocks, revealSectionHeadingActions, test } from './fixtures/electron';
+import { closeElectronApp, completeSetup, expect, getStableWindow, installIpcMocks, revealSectionHeadingActionsFor, test } from './fixtures/electron';
 
 const MAIN_SESSION_KEY = 'agent:main:main';
 const SESSIONS_LIST_PAYLOAD = {
@@ -194,7 +194,7 @@ test.describe('dialog transitions', () => {
         }
       }
 
-      await revealSectionHeadingActions(page);
+      await revealSectionHeadingActionsFor(page.getByTestId('sidebar-session-organize'));
       await page.getByTestId('sidebar-session-organize').click();
       await page.getByRole('menuitemradio', { name: 'Time' }).click();
       const sessionRow = page.getByTestId(`sidebar-session-${MAIN_SESSION_KEY}`);

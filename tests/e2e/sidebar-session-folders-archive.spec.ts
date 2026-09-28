@@ -1,4 +1,4 @@
-import { expect, hoverUntilVisible, revealSectionHeadingActions, test } from './fixtures/electron';
+import { expect, hoverUntilVisible, revealSectionHeadingActionsFor, test } from './fixtures/electron';
 import type { Locator } from '@playwright/test';
 
 const SESSION_KEY_A = 'agent:main:session-1700000000000';
@@ -355,7 +355,7 @@ test.describe('Sidebar session workgroups and archive', () => {
       .evaluate((element) => getComputedStyle(element.closest('.sidebar-row') as Element).position);
     expect(stickyPosition).toBe('sticky');
 
-    await revealSectionHeadingActions(page);
+    await revealSectionHeadingActionsFor(page.getByTestId('sidebar-session-organize'));
     await page.getByTestId('sidebar-session-organize').click();
     await page.getByRole('menuitemradio', { name: 'Priority' }).click();
 
@@ -375,7 +375,7 @@ test.describe('Sidebar session workgroups and archive', () => {
     await page.getByTestId(`sidebar-session-${SESSION_KEY_B}`).click();
     await expect(page.getByTestId(`sidebar-session-unread-${SESSION_KEY_B}`)).toHaveCount(0);
 
-    await revealSectionHeadingActions(page);
+    await revealSectionHeadingActionsFor(page.getByTestId('sidebar-session-organize'));
     await page.getByTestId('sidebar-session-organize').click();
     await page.getByRole('menuitemradio', { name: 'Most active' }).click();
     const activeOrder = await page.locator('[data-testid^="sidebar-session-agent:main:session-"]').evaluateAll((elements) =>
@@ -401,7 +401,7 @@ test.describe('Sidebar session workgroups and archive', () => {
     await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 15000 });
     await expect(page.getByTestId('sidebar-session-project-toggle-workspace-folders')).toBeVisible({ timeout: 10000 });
 
-    await revealSectionHeadingActions(page);
+    await revealSectionHeadingActionsFor(page.getByTestId('sidebar-session-organize'));
     await page.getByTestId('sidebar-session-organize').click();
     await page.getByRole('menuitemradio', { name: 'Time' }).click();
 
@@ -486,7 +486,7 @@ test.describe('Sidebar session workgroups and archive', () => {
     await page.screenshot({ path: testInfo.outputPath('workgroup-sidebar.png'), fullPage: true });
 
     // Workgroup names participate in the spotlight search.
-    await revealSectionHeadingActions(page);
+    await revealSectionHeadingActionsFor(page.getByTestId('sidebar-session-search'));
     await page.getByTestId('sidebar-session-search').click();
     await page.getByPlaceholder('Search conversations by name, workgroup, workspace, or agent...').fill('Research');
     await expect(page.getByTestId('session-search-modal')).toBeVisible();
