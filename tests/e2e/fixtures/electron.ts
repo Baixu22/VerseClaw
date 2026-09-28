@@ -173,6 +173,32 @@ export async function revealSectionHeadingActions(page: Page, index = 0): Promis
 }
 
 /**
+ * Reveals the hover-only action slot that owns `control`.
+ *
+ * The sidebar has several `.section-heading` blocks (the nav sections and the
+ * conversations/projects section), each with its own hover-revealed actions, and
+ * only one is revealed at a time. Revealing by index therefore only works when the
+ * caller happens to know which heading owns the control: four specs clicked
+ * `sidebar-session-organize` -- which lives in the conversations/projects heading,
+ * not the first one -- after revealing index 0, so the slot kept
+ * `pointer-events: none` and the click died on "<div class=\"section-heading\">
+ * intercepts pointer events" once the sidebar had more than one heading. Resolve the
+ * owning heading from the control itself instead.
+ */
+export async function revealSectionHeadingActionsFor(control: Locator): Promise<void> {
+  // Hover the heading that owns the control, not the control itself: the slot
+  // starts at `pointer-events: none`, and hovering an element that cannot receive
+  // pointer events blocks until Playwright's own action timeout.
+  const heading = control.locator(
+    'xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " section-heading ")][1]',
+  );
+  await expect(async () => {
+    await heading.hover();
+    await expect(control).toHaveCSS('pointer-events', 'auto', { timeout: 2_000 });
+  }).toPass({ timeout: 30_000 });
+}
+
+/**
  * Hover a row and wait until a hover-revealed control inside it actually
  * appears. `row.hover()` on its own is not enough: the sidebar re-renders as its
  * data settles and workers:1 keeps the pointer between tests, so the hover can be
