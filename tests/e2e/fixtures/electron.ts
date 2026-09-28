@@ -387,13 +387,33 @@ export const test = base.extend<ElectronFixtures>({
   },
 
   launchElectronApp: async ({ homeDir, userDataDir }, provideLauncher) => {
-    await provideLauncher(async (options?: LaunchElectronOptions) => {
-      // Most production-path specs use this explicit launcher instead of the
-      // `electronApp` fixture. Keep the FP-P3-05 stale-runtime guard on both
-      // paths so a direct launch cannot silently test an older child bundle.
-      await assertRuntimeDistFresh();
-      return await launchVerseClawElectron(homeDir, userDataDir, options);
-    });
+    // Specs that launch through this helper are NOT covered by the `electronApp`
+    // fixture's auto-close, and three specs close fewer apps than they launch
+    // (provider-lifecycle 2/1, runtime-approval-bridge 2/0, system-maturity-p45
+    // 5/0). A leaked instance keeps the worker's handles open -- Playwright then
+    // reports "Worker teardown timeout of 90000ms exceeded ... 1 error was not a
+    // part of any test" after every test passed -- and holds a few hundred MB for
+    // the rest of the suite, which is also when Electron's native fatal CHECK
+    // fires. Track every launch here and close whatever is still running.
+    const launched: Array<{ app: ElectronApplication; closed: boolean }> = [];
+    try {
+      await provideLauncher(async (options?: LaunchElectronOptions) => {
+        // Most production-path specs use this explicit launcher instead of the
+        // `electronApp` fixture. Keep the FP-P3-05 stale-runtime guard on both
+        // paths so a direct launch cannot silently test an older child bundle.
+        await assertRuntimeDistFresh();
+        const app = await launchVerseClawElectron(homeDir, userDataDir, options);
+        const entry = { app, closed: false };
+        app.once('close', () => {
+          entry.closed = true;
+        });
+        launched.push(entry);
+        return app;
+      });
+    } finally {
+      const leaked = launched.filter((entry) => !entry.closed);
+      await Promise.all(leaked.map((entry) => closeElectronApp(entry.app).catch(() => undefined)));
+    }
   },
 
   electronApp: async ({ launchElectronApp }, provideElectronApp) => {
