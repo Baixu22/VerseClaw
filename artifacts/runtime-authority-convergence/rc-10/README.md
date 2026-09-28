@@ -4,6 +4,23 @@ Owner policy (`AGENTS.md` §Human-in-the-loop policy): **there is no human opera
 the operator, and every artifact here is labelled `driven_by: agent`. Nothing in this directory was
 performed or supplied by a human.
 
+## Correction (2026-09-28): the blocker was not a missing channel target
+
+The earlier reading below ("H-02..H-06 blocked on a real channel target") was
+wrong. A live probe showed the product accepted a full IRC channel config
+(`channels.configured=irc`, `validateCredentials` valid) and the gateway still
+never started it. Root cause, both fixed in `93b876df1`:
+
+- **Desktop launch path** hardcoded `OPENCLAW_SKIP_CHANNELS=1` for the source
+  runtime and never synced the `channels` block into the isolated source config.
+- **The vendored source runtime** never called `startChannels()` from
+  `startGatewaySidecars`; it only logged
+  "skipping channel start (channel gateway handlers disabled)".
+
+With both fixed, a self-hosted IRC peer observes `rc10bot` register and join
+`#rc10`, and the gateway reports `irc:connected`. H-02..H-06 therefore need no
+external credential; the remaining work is the driver scenarios themselves.
+
 ## Provider
 
 Owner-supplied, used through the product's own provider path (`providers.save`):
@@ -23,11 +40,11 @@ Provider id inside the run is `rc10-live`. Verified live before use: `/v1/respon
 | ID | Requirement | Status |
 | --- | --- | --- |
 | H-01 | Normal desktop task; context lineage explains selected and omitted sources; completes normally | **PASS** — `acceptance/H-01/` |
-| H-02 | Controlled Cron workflow; desktop Inbox decision; approval produces one effect and one receipt | blocked on a real channel target |
-| H-03 | H-02 through one real channel; delivery returns to the origin | blocked on a real channel target |
-| H-04 | Restart while approval pending; pending state recovers, no effect before approval | blocked on a real channel target |
-| H-05 | Restart after the effect completed; not repeated; recovery states what is irreversible | blocked on a real channel target |
-| H-06 | Deny, cancel, fork, hand off; denial/cancel create no effect | blocked on a real channel target |
+| H-02 | Controlled Cron workflow; desktop Inbox decision; approval produces one effect and one receipt | channel fixed 2026-09-28 (see correction below); driver scenario pending |
+| H-03 | H-02 through one real channel; delivery returns to the origin | channel fixed 2026-09-28 (see correction below); driver scenario pending |
+| H-04 | Restart while approval pending; pending state recovers, no effect before approval | channel fixed 2026-09-28 (see correction below); driver scenario pending |
+| H-05 | Restart after the effect completed; not repeated; recovery states what is irreversible | channel fixed 2026-09-28 (see correction below); driver scenario pending |
+| H-06 | Deny, cancel, fork, hand off; denial/cancel create no effect | channel fixed 2026-09-28 (see correction below); driver scenario pending |
 
 ### H-01 evidence (`acceptance/H-01/`)
 
