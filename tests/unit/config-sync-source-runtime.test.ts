@@ -305,3 +305,107 @@ describe('source runtime isolation user config merge', () => {
     expect(buildInitialSourceRuntimeIsolationConfig({ agents: {} }).runtime).toBeUndefined();
   });
 });
+
+describe('RC-10 source runtime channel startup', () => {
+  it('carries the channels block into the isolated source runtime config', async () => {
+    const {
+      SOURCE_RUNTIME_ISOLATION_SYNC_KEYS,
+      applySourceRuntimeIsolationUserConfig,
+      buildInitialSourceRuntimeIsolationConfig,
+    } = await import('@electron/gateway/config-sync');
+
+    expect(SOURCE_RUNTIME_ISOLATION_SYNC_KEYS).toContain('channels');
+
+    const channels = {
+      irc: {
+        enabled: true,
+        host: '127.0.0.1',
+        port: 6667,
+        tls: false,
+        nick: 'rc10bot',
+        channels: ['#rc10'],
+      },
+    };
+
+    const initial = buildInitialSourceRuntimeIsolationConfig({ agents: {}, channels });
+    expect(initial.channels).toEqual(channels);
+    expect(buildInitialSourceRuntimeIsolationConfig({ agents: {} }).channels).toEqual({});
+
+    const merged = applySourceRuntimeIsolationUserConfig({ agents: {}, channels: {} }, { agents: {}, channels });
+    expect(merged.changed).toBe(true);
+    expect(merged.config.channels).toEqual(channels);
+  });
+
+  it('does not wipe isolated channels when the user config omits them', async () => {
+    const { applySourceRuntimeIsolationUserConfig } = await import('@electron/gateway/config-sync');
+
+    const isolatedChannels = { irc: { enabled: true } };
+    const { config } = applySourceRuntimeIsolationUserConfig(
+      { agents: {}, channels: isolatedChannels },
+      { agents: {} },
+    );
+    expect(config.channels).toEqual(isolatedChannels);
+  });
+
+  it('skips channel startup only when no channel is configured', async () => {
+    const { buildChannelStartupPolicy } = await import('@electron/gateway/config-sync');
+
+    expect(buildChannelStartupPolicy([])).toEqual({
+      skipChannels: true,
+      channelStartupSummary: 'skipped(no configured channels)',
+    });
+    expect(buildChannelStartupPolicy(['irc'])).toEqual({
+      skipChannels: false,
+      channelStartupSummary: 'enabled(irc)',
+    });
+    expect(buildChannelStartupPolicy(['discord', 'irc'])).toEqual({
+      skipChannels: false,
+      channelStartupSummary: 'enabled(discord,irc)',
+    });
+  });
+});
+
+describe('RC-10 source runtime channel plugin enablement', () => {
+  it('leaves the config untouched when no channel is configured', async () => {
+    const { applySourceRuntimeChannelPluginEnablement } = await import('@electron/gateway/config-sync');
+
+    const config = { channels: {}, plugins: { enabled: false } };
+    const result = applySourceRuntimeChannelPluginEnablement(config);
+    expect(result.changed).toBe(false);
+    expect(result.config).toBe(config);
+  });
+
+  it('ignores channels that are explicitly disabled', async () => {
+    const { applySourceRuntimeChannelPluginEnablement } = await import('@electron/gateway/config-sync');
+
+    const result = applySourceRuntimeChannelPluginEnablement({
+      channels: { irc: { enabled: false } },
+      plugins: { enabled: false },
+    });
+    expect(result.changed).toBe(false);
+  });
+
+  it('turns the global plugin switch back on when a channel is configured', async () => {
+    const { applySourceRuntimeChannelPluginEnablement } = await import('@electron/gateway/config-sync');
+
+    const result = applySourceRuntimeChannelPluginEnablement({
+      channels: { irc: { enabled: true, host: '127.0.0.1', nick: 'rc10bot' } },
+      plugins: { enabled: false, entries: { browser: { enabled: true } } },
+    });
+
+    expect(result.changed).toBe(true);
+    expect(result.config.plugins).toEqual({
+      enabled: true,
+      entries: { browser: { enabled: true } },
+    });
+  });
+
+  it('is a no-op when the plugin switch is already on', async () => {
+    const { applySourceRuntimeChannelPluginEnablement } = await import('@electron/gateway/config-sync');
+
+    const config = { channels: { irc: { enabled: true } }, plugins: { enabled: true } };
+    const result = applySourceRuntimeChannelPluginEnablement(config);
+    expect(result.changed).toBe(false);
+    expect(result.config).toBe(config);
+  });
+});
