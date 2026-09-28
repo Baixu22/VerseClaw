@@ -1,4 +1,5 @@
 import electronBinaryPath from 'electron';
+import { spawn } from 'node:child_process';
 import { _electron as electron, expect, test as base, type ElectronApplication, type Locator, type Page } from '@playwright/test';
 import { access, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
@@ -215,6 +216,42 @@ async function pinWindowContentSize(
   }, size);
 }
 
+/**
+ * Kills the Electron process and every descendant it spawned.
+ *
+ * Closing only the Electron main process leaves its descendants alive -- in
+ * particular the Gateway child, which inherits the stdio pipes Playwright created
+ * for the app. Node keeps a handle open until every writer closes it, so one
+ * surviving descendant stops the worker from ever exiting; Playwright then reports
+ * "Worker teardown timeout of 90000ms exceeded ... 1 error was not a part of any
+ * test" even though every test passed. Descendants also keep hundreds of MB
+ * resident for the rest of the suite, which is when Electron's native fatal CHECK
+ * (KERNELBASE 0x80000003 -> 0xC0000409) fires.
+ *
+ * Best-effort by design: teardown must never throw or hang.
+ */
+async function killElectronProcessTree(app: ElectronApplication): Promise<void> {
+  if (process.platform !== 'win32') return;
+  let pid: number | undefined;
+  try {
+    pid = app.process().pid;
+  } catch {
+    return;
+  }
+  if (!pid) return;
+  await new Promise<void>((resolve) => {
+    try {
+      const killer = spawn('taskkill', ['/F', '/T', '/PID', String(pid)], { stdio: 'ignore' });
+      const done = () => resolve();
+      killer.on('close', done);
+      killer.on('error', done);
+      setTimeout(done, 5_000).unref();
+    } catch {
+      resolve();
+    }
+  });
+}
+
 async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Promise<void> {
   let closed = false;
 
@@ -235,6 +272,7 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Pr
   ]);
 
   if (closed) {
+    await killElectronProcessTree(app);
     return;
   }
 
@@ -259,6 +297,8 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Pr
   } catch {
     // Ignore process kill failures during e2e teardown.
   }
+
+  await killElectronProcessTree(app);
 }
 
 async function seedE2eSettings(userDataDir: string, theme?: LaunchElectronOptions['theme']): Promise<void> {
