@@ -1,0 +1,200 @@
+{
+  "available": true,
+  "reason": null,
+  "context": [
+    {
+      "kind": "context",
+      "correlation_digest": "7bd9ac0790757185e25ada102d4156c170bdc9559cc8aa4fd37113a8eecb3251",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f",
+      "selected": [
+        "ref:context:context-candidate:cvk-context-engine:cvk_addition:system_prompt:context-engine%3Acontext-runtime-kit:1.0.0:sha256:b81b9855596a3ceeb3046ddfd37c3cccacc4c048f85152b5175016d5a6f9428d",
+        "ref:context:producer:compass-ssp"
+      ],
+      "omitted": [
+        "ref:context:context-source:context-block%3Aknowledge:knowledge:message",
+        "ref:context:context-source:context-block%3Aworking-memory%3Aworking_memory:working_memory:message",
+        "ref:context:context-source:context-block%3Acvk%3Atool_registry:tool_registry:message",
+        "ref:context:context-source:vtoken-assembly:vtoken:system_prompt",
+        "ref:context:context-source:memory-inject-pilot:memory_pilot:system_prompt"
+      ]
+    },
+    {
+      "kind": "shadow_context",
+      "correlation_digest": "7e2f23d8768f985c9f08d9ffe9bb1a376d1589ee925b7d9bd78485e76ff2bdaa",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f",
+      "selected": null,
+      "omitted": null
+    },
+    {
+      "kind": "context",
+      "correlation_digest": "3fa6004f5dbe729fdc415ddf2bde1199c86f0af5026110655a35de86625d3930",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f",
+      "selected": [
+        "ref:context:producer:compass-ssp"
+      ],
+      "omitted": [
+        "ref:context:context-source:context-block%3Aknowledge:knowledge:message",
+        "ref:context:context-source:context-block%3Aworking-memory%3Aworking_memory:working_memory:message",
+        "ref:context:context-source:context-block%3Acvk%3Atool_registry:tool_registry:message"
+      ]
+    },
+    {
+      "kind": "shadow_context",
+      "correlation_digest": "24f902faaf74fdfcd6baa3be7c976083310af4a13e43db3aa000906742d75e45",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f",
+      "selected": null,
+      "omitted": null
+    },
+    {
+      "kind": "context",
+      "correlation_digest": "88441f2e7f2b0fe0de6f090576e5dc0d124427cfd79d1dd1b7a563dfcfeb8ac5",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f",
+      "selected": [
+        "ref:context:producer:compass-ssp"
+      ],
+      "omitted": [
+        "ref:context:context-source:context-block%3Aknowledge:knowledge:message",
+        "ref:context:context-source:context-block%3Aworking-memory%3Aworking_memory:working_memory:message",
+        "ref:context:context-source:context-block%3Acvk%3Atool_registry:tool_registry:message"
+      ]
+    },
+    {
+      "kind": "shadow_context",
+      "correlation_digest": "421590457f2280a985aab57b7be6a725925ac922475a7d980bbf96035aae30fc",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f",
+      "selected": null,
+      "omitted": null
+    },
+    {
+      "kind": "context",
+      "correlation_digest": "842eca21fd038dc27ef7df7e5a347485f74a02838c1391b650379005b98b60b4",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f",
+      "selected": [
+        "ref:context:producer:compass-ssp"
+      ],
+      "omitted": [
+        "ref:context:context-source:context-block%3Aknowledge:knowledge:message",
+        "ref:context:context-source:context-block%3Aworking-memory%3Aworking_memory:working_memory:message",
+        "ref:context:context-source:context-block%3Acvk%3Atool_registry:tool_registry:message"
+      ]
+    },
+    {
+      "kind": "shadow_context",
+      "correlation_digest": "a35bf15aed79948fe5e8194fafb18ff5ecdc541e737569f433bbd180431e0f39",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f",
+      "selected": null,
+      "omitted": null
+    },
+    {
+      "kind": "context",
+      "correlation_digest": "33d8b8a6c0e367bd86f354fa5ea54b26bbe52a93f282ab4b9d4589603d248526",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f",
+      "selected": [
+        "ref:context:producer:compass-ssp"
+      ],
+      "omitted": [
+        "ref:context:context-source:context-block%3Aknowledge:knowledge:message",
+        "ref:context:context-source:context-block%3Aworking-memory%3Aworking_memory:working_memory:message",
+        "ref:context:context-source:context-block%3Acvk%3Atool_registry:tool_registry:message"
+      ]
+    },
+    {
+      "kind": "shadow_context",
+      "correlation_digest": "d57cf020bedbd3126099febbff11bd6b35ba168dd9e1a65a0f837e14315bcb8b",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f",
+      "selected": null,
+      "omitted": null
+    },
+    {
+      "kind": "context",
+      "correlation_digest": "3212fc552375cfb0e246df349fb5b00aa304de08fa6a4c5c4c4aa1468eae3f25",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f",
+      "selected": [
+        "ref:context:producer:compass-ssp"
+      ],
+      "omitted": [
+        "ref:context:context-source:context-block%3Aknowledge:knowledge:message",
+        "ref:context:context-source:context-block%3Aworking-memory%3Aworking_memory:working_memory:message",
+        "ref:context:context-source:context-block%3Acvk%3Atool_registry:tool_registry:message"
+      ]
+    },
+    {
+      "kind": "shadow_context",
+      "correlation_digest": "0114bcd31209145f548e59625faab24a377c0765d1af2cfdf7d2d710e89d5b39",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f",
+      "selected": null,
+      "omitted": null
+    }
+  ],
+  "wire": [
+    {
+      "kind": "shadow_wire",
+      "correlation_digest": "7bd9ac0790757185e25ada102d4156c170bdc9559cc8aa4fd37113a8eecb3251",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f"
+    },
+    {
+      "kind": "wire",
+      "correlation_digest": "7bd9ac0790757185e25ada102d4156c170bdc9559cc8aa4fd37113a8eecb3251",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f"
+    },
+    {
+      "kind": "shadow_wire",
+      "correlation_digest": "3fa6004f5dbe729fdc415ddf2bde1199c86f0af5026110655a35de86625d3930",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f"
+    },
+    {
+      "kind": "wire",
+      "correlation_digest": "3fa6004f5dbe729fdc415ddf2bde1199c86f0af5026110655a35de86625d3930",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f"
+    },
+    {
+      "kind": "shadow_wire",
+      "correlation_digest": "88441f2e7f2b0fe0de6f090576e5dc0d124427cfd79d1dd1b7a563dfcfeb8ac5",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f"
+    },
+    {
+      "kind": "wire",
+      "correlation_digest": "88441f2e7f2b0fe0de6f090576e5dc0d124427cfd79d1dd1b7a563dfcfeb8ac5",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f"
+    },
+    {
+      "kind": "shadow_wire",
+      "correlation_digest": "842eca21fd038dc27ef7df7e5a347485f74a02838c1391b650379005b98b60b4",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f"
+    },
+    {
+      "kind": "wire",
+      "correlation_digest": "842eca21fd038dc27ef7df7e5a347485f74a02838c1391b650379005b98b60b4",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f"
+    },
+    {
+      "kind": "shadow_wire",
+      "correlation_digest": "33d8b8a6c0e367bd86f354fa5ea54b26bbe52a93f282ab4b9d4589603d248526",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f"
+    },
+    {
+      "kind": "wire",
+      "correlation_digest": "33d8b8a6c0e367bd86f354fa5ea54b26bbe52a93f282ab4b9d4589603d248526",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f"
+    },
+    {
+      "kind": "shadow_wire",
+      "correlation_digest": "3212fc552375cfb0e246df349fb5b00aa304de08fa6a4c5c4c4aa1468eae3f25",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f"
+    },
+    {
+      "kind": "wire",
+      "correlation_digest": "3212fc552375cfb0e246df349fb5b00aa304de08fa6a4c5c4c4aa1468eae3f25",
+      "run_id": "3d205b8d-6483-4099-8b88-d3549d14629f"
+    }
+  ],
+  "pairs": 6,
+  "dbPath": "C:\\Users\\27933\\AppData\\Local\\ClawX-live-data\\rc10\\H-01\\2026-09-27T11-41-45-946Z\\user-data\\openclaw-source-state\\state\\openclaw.sqlite",
+  "total": 24,
+  "kinds": [
+    "context",
+    "shadow_context",
+    "shadow_wire",
+    "wire"
+  ]
+}

@@ -1,0 +1,15 @@
+{"at":"2026-09-29T19:02:30.685Z","driven_by":"agent","actor":"rc10-operator-driver","event":"begin","candidate":{"commit":"843fcadb42db52c439b48c8db0df676f1804757d","tree":"cd5e31e9c04c35892c827b7794b27950f93ffca8","dirty":false},"scenario":"OPERATOR-ALL","root":"D:\\ClawX-acceptance\\rc09-20260929\\rc10-evidence\\OPERATOR-ALL"}
+{"at":"2026-09-29T19:02:56.292Z","driven_by":"agent","actor":"rc10-operator-driver","event":"ready","gateway":{"state":"running","port":64729,"reconnectAttempts":0,"gatewayReady":true,"pid":1972,"connectedAt":1790708576205,"uptime":1},"ircPort":64727}
+{"at":"2026-09-29T19:02:57.518Z","driven_by":"agent","actor":"rc10-operator-driver","event":"approval.pending","scenario":"H-02","jobId":"610d62fd-c55c-4e03-9979-c3f3d3395986","approvalId":"aprv_4f50f47e-c4c6-45e9-9d27-a95cc6948375"}
+{"at":"2026-09-29T19:02:59.020Z","driven_by":"agent","actor":"rc10-operator-driver","event":"scenario.pass","id":"H-02"}
+{"at":"2026-09-29T19:03:27.086Z","driven_by":"agent","actor":"rc10-operator-driver","event":"scenario.pass","id":"H-03"}
+{"at":"2026-09-29T19:03:27.535Z","driven_by":"agent","actor":"rc10-operator-driver","event":"approval.pending","scenario":"H-04","jobId":"21bee26d-8ad8-49ce-bc87-3df03dea2036","approvalId":"aprv_136dbf8d-ee24-4c62-9fbe-39ab4dd0031b"}
+{"at":"2026-09-29T19:03:37.622Z","driven_by":"agent","actor":"rc10-operator-driver","event":"gateway.restarted","oldPid":1972,"newPid":19192}
+{"at":"2026-09-29T19:03:38.752Z","driven_by":"agent","actor":"rc10-operator-driver","event":"scenario.pass","id":"H-04"}
+{"at":"2026-09-29T19:03:39.551Z","driven_by":"agent","actor":"rc10-operator-driver","event":"approval.pending","scenario":"H-05","jobId":"5be2c115-61bb-44b6-9a03-5250fb6ea90a","approvalId":"aprv_1f2e75f1-d200-4732-a2de-132c57cf9dd9"}
+{"at":"2026-09-29T19:03:53.834Z","driven_by":"agent","actor":"rc10-operator-driver","event":"gateway.restarted","oldPid":19192,"newPid":28296}
+{"at":"2026-09-29T19:03:55.538Z","driven_by":"agent","actor":"rc10-operator-driver","event":"scenario.pass","id":"H-05"}
+{"at":"2026-09-29T19:03:56.177Z","driven_by":"agent","actor":"rc10-operator-driver","event":"approval.pending","scenario":"H-06-deny","jobId":"47f178b7-e79b-4a82-9624-e22478c38e9e","approvalId":"aprv_7fbc3ac4-c69c-43d7-80da-77b3f907b342"}
+{"at":"2026-09-29T19:03:57.031Z","driven_by":"agent","actor":"rc10-operator-driver","event":"approval.pending","scenario":"H-06-cancel","jobId":"97123736-5f8c-4355-9484-dacfd318268c","approvalId":"aprv_08a6dbc4-794f-4338-b294-e9e7e64ad927"}
+{"at":"2026-09-29T19:04:06.472Z","driven_by":"agent","actor":"rc10-operator-driver","event":"scenario.pass","id":"H-06"}
+{"at":"2026-09-29T19:04:06.762Z","driven_by":"agent","actor":"rc10-operator-driver","event":"end","evidence":"D:\\ClawX-acceptance\\rc09-20260929\\rc10-evidence\\OPERATOR-ALL\\evidence","failures":[]}

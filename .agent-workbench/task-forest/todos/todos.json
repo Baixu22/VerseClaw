@@ -9,33 +9,6 @@
       "why_this_task": ""
     },
     "blocked_by": [],
-    "confidence": 0.9,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "high",
-    "id": "TF-0041",
-    "kind": "task",
-    "next_action": "复核产物并决定是否标记完成",
-    "priority": 1,
-    "progress": 90.0,
-    "purpose": "",
-    "ready": true,
-    "remaining_minutes_max": null,
-    "remaining_minutes_min": null,
-    "status": "review_needed",
-    "success_metrics": [],
-    "title": "RC-09 独立工程总验收与证据封存"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [],
     "confidence": 0.7,
     "context_tags": [
       "context-moat",
@@ -439,34 +412,5 @@
       "未授权新 authority 0"
     ],
     "title": "Runtime Authority Convergence 与 Operator 验收"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0041"
-    ],
-    "confidence": 0.86,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "high",
-    "id": "TF-0042",
-    "kind": "milestone",
-    "next_action": "先完成依赖：TF-0041",
-    "priority": 1,
-    "progress": 50.0,
-    "purpose": "",
-    "ready": false,
-    "remaining_minutes_max": null,
-    "remaining_minutes_min": null,
-    "status": "blocked",
-    "success_metrics": [],
-    "title": "RC-10 完成 Provider、Channel 与恢复场景的自动化验收"
   }
 ]
