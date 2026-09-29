@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-rc09-ownership/v2",
   "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
-  "headSha": "5cd8cb85b4d2516a0964c7f1bece5636534ae232",
-  "generatedAt": "2026-09-29T06:33:14.359Z",
+  "headSha": "521bdad0507c9955c7db405c5cc26162df7b2e3c",
+  "generatedAt": "2026-09-29T08:44:49.471Z",
   "requiredOwners": [
     "RC-00",
     "RC-01R",
@@ -34,9 +34,9 @@
     "rc08b-otel-observability-convergence.md"
   ],
   "mergeCommitsInRange": 0,
-  "totalPaths": 434,
+  "totalPaths": 436,
   "rcOwnedPaths": 197,
-  "excludedPaths": 237,
+  "excludedPaths": 239,
   "byRc": {
     "RC-02": 25,
     "RC-00": 98,
@@ -55,6 +55,7 @@
   "byExclusionWorkstream": {
     "feat(approvals)": 31,
     "chore(task-forest)": 8,
+    "docs(rc09)": 2,
     "chore(rc09)": 21,
     "fix(rc09)": 23,
     "docs(task-forest)": 2,
@@ -131,6 +132,15 @@
         "commit": "0a1a2ffa1dae80486dfd21a60b9f1ea497004f43",
         "subject": "chore(task-forest): record the RC-09 closure-advance contract deviation",
         "workstream": "chore(task-forest)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-rc09-e2e-evidence-screenshot-20260929.json",
+      "rc": null,
+      "excluded": {
+        "commit": "521bdad0507c9955c7db405c5cc26162df7b2e3c",
+        "subject": "docs(rc09): record the round-2 NO-GO, its root cause, and the evidence-capture fix",
+        "workstream": "docs(rc09)"
       }
     },
     {
@@ -529,6 +539,15 @@
         "commit": "0a1a2ffa1dae80486dfd21a60b9f1ea497004f43",
         "subject": "chore(task-forest): record the RC-09 closure-advance contract deviation",
         "workstream": "chore(task-forest)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0674.json",
+      "rc": null,
+      "excluded": {
+        "commit": "521bdad0507c9955c7db405c5cc26162df7b2e3c",
+        "subject": "docs(rc09): record the round-2 NO-GO, its root cause, and the evidence-capture fix",
+        "workstream": "docs(rc09)"
       }
     },
     {
