@@ -1,3 +1,17 @@
+# 收口完成（2026-09-30 凌晨，TF-0042 · RC-10）：H-01..H-06 由 agent 正式驱动，human 阶段 validator PASSED，程序 done
+
+- **RC-10 通过，程序收口。** RC-09 候选 `a1bd8d8cc`（runId `f262eaa4`）工程验收 PASS 之后，H-01..H-06 以**正式模式**（不带 `--development`，要求候选干净）分两轮由 agent 驱动，并如实标注 `driven_by: agent`：
+  - **H-01**（真实 provider：`http://127.0.0.1:3065/v1` + `glm-5.3-flash`）：桌面任务跑完，`stopReason: task-complete`，workload 测试 **`exit 1 -> 0`**（模型确实修好了那个 bug），**10 条 context + 10 条 wire 收据 = 5 对配对**，`credentialScanHits: 0`，13 个证据文件。
+  - **H-02..H-06**（`OPERATOR-ALL`，本地 scripted provider + 真实本地 IRC）：五场景全部 `scenario.pass`、`failures: []` —— Cron → durable Inbox 审批 → 一次效果 + 一张收据；真实 IRC 频道往返；审批挂起时重启；效果完成后重启；deny/cancel 产生零效果、fork/handoff 保留既有结果且不重放。
+- **human 阶段 validator PASSED**：`--phase human` 读 manifest + 独立 Verifier final report + verdict，重算两个 sha256 与语义 `reportDigest`，要求六场景齐备、`failed_scenarios` 空、产品锁未变。随后 **STATUS → done**（`done_allowed: true`、`accepted_work_packages` 等于 `required_work_packages` 的全部 15 个包、`human_verdict: accepted`、`human_verdict_record` 指向 canonical 路径）。
+- **证据归档**：两轮证据落 `artifacts/runtime-authority-convergence/rc-10/acceptance/{H-01, OPERATOR-ALL}`，旧一轮 H-01 保留为 `H-01-20260927`；verdict 写在 canonical 路径（该路径被 gitignore），另存一份 `rc-10/acceptance/human-verdict.yaml`，避免 `done` 依赖一个未版本化的文件。
+- **产品锁全程未动**：`live_ready` / `product_approved` / `default_on` 仍为 false；本 verdict 是 agent 驱动记录，不自动影响 TF-0006、发布或 GA —— 那些是独立的发布决策。
+- **收回一笔技术债的说明**：RC-10 的 H-01..H-06 之前只有开发证据，且旧 H-06 的通过依据只查了 source path；本次是候选绑定、正式模式、每场景带 runIds/receiptIds/result/recoveryObservation 的轮次。
+- **明确不在本程序内的剩余项**：D7 冻结集（TF-0010 / TF-0028 / TF-0129 / TF-0130 / TF-0141 / TF-0144 / TF-0151）、TF-0009 / TF-0007 的 R7 守卫与 2026-09-27 政策冲突（需所有者裁决）、TF-0047 Docker、TF-0013 residual；下一周期验收契约改进见 `D:/ClawX-acceptance/rc09-20260929/NEXT-CYCLE-ACCEPTANCE-DESIGN.md`。
+- **口径未改**：验收契约、`retries`、所有断言、门列表、矩阵规则一个字节未动。
+
+---
+
 # 收口完成（2026-09-30 凌晨，TF-0041 · RC-09）：工程验收 PASS，程序进入 human_acceptance_pending
 
 - **RC-09 在候选 C2 上通过。** 候选 `a1bd8d8cc3c8463bd787f6729f5ff6a2a7407240`，baseRef `1cddcb1ba5e23ebe445afca11174c2575c75f735`，runId `f262eaa4-7e68-4abb-90b3-a8356451f14e`：

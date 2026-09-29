@@ -3,14 +3,14 @@ schema: runtime-authority-convergence-status/v1
 program_id: runtime-authority-convergence
 task_forest_parent: TF-0010
 task_forest_proposal: TFP-runtime-authority-convergence-20260802
-program_status: human_acceptance_pending
-current_work_package: RC-10
-current_task_forest_node: TF-0042
+program_status: done
+current_work_package: null
+current_task_forest_node: null
 engineering_verdict: accepted
 engineering_report: artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/final-report.json
-human_verdict: not-run
-human_verdict_record: null
-done_allowed: false
+human_verdict: accepted
+human_verdict_record: artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/human-verdict.yaml
+done_allowed: true
 required_work_packages:
   - RC-00
   - RC-01
@@ -42,13 +42,13 @@ accepted_work_packages:
   - RC-08A
   - RC-08B
   - RC-09
+  - RC-10
 product_locks:
   live_ready: false
   product_approved: false
   default_on: false
 evidence_manifest: artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json
-blockers:
-  - Formal RC-10 still requires a candidate-bound H-01 through H-06 round and the human-phase validator; the RC-09 development evidence does not count as that round.
-last_verified_at: 2026-09-29T18:52:00.000Z
-next_action: "RC-09 工程验收 PASS（runId f262eaa4-7e68-4abb-90b3-a8356451f14e，候选 a1bd8d8cc，baseRef 1cddcb1ba）：Executor 与独立 Verifier 均 pass、failures 空、两轮 23 门逐门一致、consistency.errors 空、identicalGateContracts true；canonical 目录已提升本轮的 manifest 与 final-report，rc-09/acceptance 归档新一轮、旧的移入 accepted-20260927-ae489d4a5。程序进入 human_acceptance_pending，done_allowed 仍为 false：只有 RC-10（H-01..H-06，agent 驱动并如实标注 driven_by: agent）跑完并写入 accepted verdict 后才允许 done。三个产品锁保持 false。分支冻结继续有效：收口之后只接受 final spec 的 closureAdvance.allowedPaths 内提交。"
+blockers: []
+last_verified_at: 2026-09-29T19:10:00.000Z
+next_action: "程序完成：RC-00..RC-10 全部工程验收通过；RC-10 的 H-01..H-06 由 agent 驱动并如实标注 driven_by: agent，human 阶段 validator PASSED。本程序不改变任何产品锁 —— live_ready / product_approved / default_on 仍为 false，也不自动影响 TF-0006、发布或 GA，那些是独立的发布决策。RC-09 候选 a1bd8d8cc（runId f262eaa4，Executor 与独立 Verifier 双 pass、两轮 23 门一致）；RC-10 两轮正式 driver 通过（H-01 workload test 1->0、10 context + 10 wire 收据共 5 对；OPERATOR-ALL 五场景全 pass、failures 空）。明确不在本程序内的剩余项：D7 冻结集（TF-0010/TF-0028/TF-0129/TF-0130/TF-0141/TF-0144/TF-0151）、TF-0009/TF-0007 的 R7 守卫与 2026-09-27 政策冲突（需所有者裁决）、TF-0047 Docker、TF-0013 residual；下一周期验收契约改进见 D:/ClawX-acceptance/rc09-20260929/NEXT-CYCLE-ACCEPTANCE-DESIGN.md。"
 ---

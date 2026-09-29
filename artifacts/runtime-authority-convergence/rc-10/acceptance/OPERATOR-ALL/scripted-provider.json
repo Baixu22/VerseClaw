@@ -1,0 +1,30 @@
+{
+  "driven_by": "agent",
+  "model": "mock-coder",
+  "syntheticUsage": true,
+  "requests": [
+    {
+      "turn": "[Wed 2026-09-30 03:03 GMT+8] Create the controlled scheduled",
+      "toolResults": {},
+      "issued": "rc10origincron"
+    },
+    {
+      "turn": "[Wed 2026-09-30 03:02 GMT+8] Conversation info (untrusted me",
+      "toolResults": {
+        "rc10origincron": "{\n  \"id\": \"0258ced5-d955-4a90-a376-e844ca0ce9b1\",\n  \"agentId\": \"main\",\n  \"name\": \"RC10-H-03-81ce5646-6039-4898-ba09-6278f8eed89a\",\n  \"enabled\": true,\n  \"deleteAfterRun\": false,\n  \"createdAtMs\": 1790708584583,\n  \"updatedAtMs\": 1790708584583,\n  \"schedule\": {\n    \"kind\": \"at\",\n    \"at\": \"2026-09-29T19:03:14.180Z\"\n  },\n  \"sessionTarget\": \"isolated\",\n  \"wakeMode\": \"now\",\n  \"payload\": {\n    \"kind\": \"agentTurn\",\n    \"message\": \"DELIVER_RESULT RC10-H-03-81ce5646-6039-4898-ba09-6278f8eed89a\",\n    \"timeoutSeconds\": 120\n  },\n  \"delivery\": {\n    \"mode\": \"announce\",\n    \"channel\": \"irc\",\n    \"to\": \"#rc10\",\n    \"bestEffort\": false\n  },\n  \"state\": {\n    \"nextRunAtMs\": 1790708594180\n  }\n}"
+      },
+      "issued": "text:The requested scheduled task has been cr"
+    },
+    {
+      "turn": "[cron:0258ced5-d955-4a90-a376-e844ca0ce9b1 RC10-H-03-81ce564",
+      "toolResults": {},
+      "issued": "text:RC10-H-03-81ce5646-6039-4898-ba09-6278f8"
+    },
+    {
+      "turn": "# Handoff: continue this Verse Claw conversation\n\nUse this a",
+      "toolResults": {},
+      "issued": "text:Handoff received. Preserve the existing "
+    }
+  ],
+  "anomalies": []
+}
