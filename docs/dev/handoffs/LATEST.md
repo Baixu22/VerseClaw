@@ -1,3 +1,14 @@
+# 最新接力（2026-09-29 傍晚）：RC-09 候选 C 第一轮正式验收 NO-GO，根因在驱动采证超时
+
+- **Round 1（15:04）在第一道门就被拒**：`source worktree is dirty`。根因是我按 [ACCEPTANCE.md](../../../docs/dev/unified-agent-system/runtime-convergence/ACCEPTANCE.md) 显式传了 `--output-dir <canonical>`，于是 plan 把 `manifest.json` 直接写进那个目录——而 `97985461f`（"track the canonical accepted engineering evidence pair"）之后 `manifest.json` / `final-report.json` 是**被跟踪**的，写它们立刻弄脏工作树，executor 的 `requireClean` 随即 fail-closed。该提交说明写的是「`full` 写 `runs/<runId>/`、canonical 副本事后提升进来」，那只在**不传 `--output-dir`** 时成立。改用 CLI 默认布局（`artifacts/agent-engineering-acceptance/runs/<runId>/`，被 gitignore）后无需改仓库任何文件即可开跑。旧 canonical 对与整份 live 目录已归档到 `D:\ClawX-acceptance\rc09-20260929\pre-run-accepted-87f94a5b`（105 文件）。
+- **Round 2（runId `ae396e9a-198b-4ac9-9ec3-b61c9ad94932`，候选 `1c4a3c0cd`，15:08→16:38）**：**23 门里 22 门 pass，唯一 fail 是 `electron-e2e`**。`provision-verseshell-resources`（Rust 1.94、9.3 分钟）校验了 `ae.exe` 与**新归属矩阵**（`sha256 ed718fb96d…`）digest；`agent-dev-audit` A/97/0；`comms-compare` PASS；`integration` 5 文件 32 项全过（含新增 channel-startup 集成测试）；`fast-unit-tests` 692 s。executor 报告：`failures: ["electron-e2e: fail","electron-e2e: parsed failed tests=1"]`，Verifier 按设计未启动。
+- **失败点**：`electron-e2e` = **316 passed / 10 skipped / 1 failed（50.7 分钟）**，唯一失败是本次落库的新 spec `tests/e2e/rc10-operator-live.spec.ts`。驱动日志显示 H-02/H-03/H-04 全 pass，**H-05 挂在 `page.screenshot: Timeout 30000ms exceeded`**（"waiting for fonts to load / fonts loaded" 之后超时）。
+- **根因**：`artifacts/runtime-authority-convergence/rc-10/operator-driver.mjs` 的每场景采证截图用的是 Playwright 默认 30 s 超时；H-05 在 Gateway 重启后立刻截图，负载下超过 30 s，于是**功能断言全过却被采证步骤判 fail**。这是采证健壮性缺陷，不是产品行为缺陷，也不是 `0xC0000409` 原生崩溃。
+- **修法（不放宽任何门）**：新增 `captureEvidence()`——60 s × 最多 3 次 + `animations: 'disabled'`，**最后一次错误仍然抛出**，采证依旧是硬要求；成功路径与失败路径两处调用点都改用它。`node --check` 通过；该 spec 独立复跑 **1/1 pass，2.0 分钟**。
+- **下一步**：把驱动修复作为新的候选改动，重生成归属矩阵切出候选 `C2`，再跑一轮完整 plan → Executor → 独立 Verifier → validator。**验收口径、E2E 重试姿态、任何断言都未改动**；产品锁仍为 false。
+
+---
+
 # 最新接力（2026-09-29 下午）：RC-09 收口前进修复落地 + 分支冻结
 
 - **Phase A 已落地并提交**：`ee3e3840b`（validator 改为在候选的 detached worktree 上复验，并对候选之后的每条改动路径 fail-closed）、`48e079682`（3 个新用例覆盖 10 种场景）、`06d645e2b`/`a8aa64afb`（计划与 runbook）。2026-09-27 RC-09 一节「过程约束」里记的「validator 只能在候选提交上运行、收口一落库就不可复现」由本修复解除。
