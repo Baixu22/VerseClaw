@@ -41,7 +41,7 @@ vi.mock('@electron/services/providers/provider-runtime-sync', () => ({
 describe('syncDefaultProviderRuntimeBeforeLaunch', () => {
   it('syncs the configured default provider before Gateway launch config is copied', async () => {
     mockGetDefaultProvider.mockResolvedValue('deepseek');
-    mockSyncDefaultProviderToRuntime.mockResolvedValue(undefined);
+    mockSyncDefaultProviderToRuntime.mockResolvedValue({ degraded: false });
 
     const { syncDefaultProviderRuntimeBeforeLaunch } = await import('@electron/gateway/config-sync');
     await syncDefaultProviderRuntimeBeforeLaunch();

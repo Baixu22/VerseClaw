@@ -4,6 +4,56 @@ Owner policy (`AGENTS.md` §Human-in-the-loop policy): **there is no human opera
 the operator, and every artifact here is labelled `driven_by: agent`. Nothing in this directory was
 performed or supplied by a human.
 
+## Current driver (2026-09-29)
+
+H-02..H-06 now have separate real-product implementations. They use Electron,
+the Main host API, the source Gateway, persistent SQLite records, and a local IRC
+peer. The local model endpoint is scripted; its usage values are synthetic and
+no paid provider credentials are required. All evidence is agent-driven.
+
+```text
+node artifacts/runtime-authority-convergence/rc-10/driver.mjs --list-scenarios
+node artifacts/runtime-authority-convergence/rc-10/driver.mjs --repo . --development --scenario OPERATOR-ALL
+pnpm run test:e2e:run tests/e2e/rc10-operator-live.spec.ts --workers=1
+```
+
+The E2E command reuses existing builds. After product source changes, build the
+affected desktop/runtime once before running it. Use `check:rc10:dev` during
+development; this does not launch Electron or the full acceptance suite.
+
+The scenarios verify:
+
+- H-02: create a command Cron job, click the real Inbox approval, observe one IRC
+  result and one applied EffectReceipt.
+- H-03: an IRC message drives a scripted model to create an agentTurn Cron job;
+  both origin and Cron model calls have paired Context/Wire receipts, Inbox
+  approves the real delivery, and the lineage endpoint links the effect.
+- H-04: restart with an approval pending, read the same pending identity from
+  SQLite and lineage, and observe no result delivery. The temporary intent is
+  denied afterwards. This tests pending-state recovery, not continuation of an
+  interrupted command after a later approval.
+- H-05: restart after delivery, retain the same applied receipt/recovery record,
+  and observe no repeated message.
+- H-06: deny and cancel through real product paths with zero result effects;
+  fork and send the product-generated handoff to a separate receiving session.
+  The persisted Cron result must appear in the draft and the receiver, with
+  paired receiver receipts and no replay of the original channel effect.
+
+The startup defects from the previous round remain covered. This round also
+fixes the desktop's skipped device pairing/token authentication (UI only for pairing,
+then the Main backend role with its issued device token), agentTurn Cron's
+missing approval wrapper, automatic failure notifications that bypassed the
+approval boundary, IRC session keys rejected by ReceiptStore, and oversized
+ContextCandidate references rejected during the first model call. Source labels
+remain readable and full candidate identities are hashed within the existing
+receipt reference bound.
+
+Latest driver-completion evidence is under `completion-audit/`. The earlier
+`operator-dev/` H-06 check is superseded because a source path alone did not
+prove a useful handoff. It does not replace RC-09
+Executor/Verifier acceptance or a candidate-bound RC-10 verdict. H-01's archived
+run below remains historical.
+
 ## Correction (2026-09-28): the blocker was not a missing channel target
 
 The earlier reading below ("H-02..H-06 blocked on a real channel target") was
@@ -21,7 +71,24 @@ With both fixed, a self-hosted IRC peer observes `rc10bot` register and join
 `#rc10`, and the gateway reports `irc:connected`. H-02..H-06 therefore need no
 external credential; the remaining work is the driver scenarios themselves.
 
-## Provider
+## Development loop (2026-09-28)
+
+Run `pnpm run check:rc10:dev` while changing this path. It checks channel config,
+sidecar startup, real IRC transport, driver arguments, types and lint without a
+build or Electron launch. `test:integration` also includes the channel regression.
+The supplied startChannels callback uses the real IRC client; this check does not
+exercise the full plugin manager or replace live product acceptance.
+
+The first repair rejected unimplemented scenario names rather than letting them
+fall through to H-01. The current driver implements H-02..H-06 and still rejects
+unknown names before credentials or side effects.
+
+The archived RC-09 pass and H-01 run identify older candidates. They are historical
+evidence, not current-head acceptance. Finish scoped development, freeze the
+candidate, then execute one full Executor/Verifier cycle and the six scenarios.
+Do not re-sign old results or repeat the full suite after every local edit.
+
+## Historical H-01 provider
 
 Owner-supplied, used through the product's own provider path (`providers.save`):
 
@@ -39,12 +106,12 @@ Provider id inside the run is `rc10-live`. Verified live before use: `/v1/respon
 
 | ID | Requirement | Status |
 | --- | --- | --- |
-| H-01 | Normal desktop task; context lineage explains selected and omitted sources; completes normally | **PASS** — `acceptance/H-01/` |
-| H-02 | Controlled Cron workflow; desktop Inbox decision; approval produces one effect and one receipt | channel fixed 2026-09-28 (see correction below); driver scenario pending |
-| H-03 | H-02 through one real channel; delivery returns to the origin | channel fixed 2026-09-28 (see correction below); driver scenario pending |
-| H-04 | Restart while approval pending; pending state recovers, no effect before approval | channel fixed 2026-09-28 (see correction below); driver scenario pending |
-| H-05 | Restart after the effect completed; not repeated; recovery states what is irreversible | channel fixed 2026-09-28 (see correction below); driver scenario pending |
-| H-06 | Deny, cancel, fork, hand off; denial/cancel create no effect | channel fixed 2026-09-28 (see correction below); driver scenario pending |
+| H-01 | Normal desktop task; context lineage explains selected and omitted sources; completes normally | historical **PASS** on `5512d8f9`; current frozen candidate not yet run — `acceptance/H-01/` |
+| H-02 | Controlled Cron workflow; desktop Inbox decision; approval produces one effect and one receipt | implemented; current evidence: completion-audit/e2e/report.json |
+| H-03 | H-02 through one real channel; delivery returns to the origin | implemented; current evidence: completion-audit/e2e/report.json |
+| H-04 | Restart while approval pending; pending state recovers, no effect before approval | implemented; current evidence: completion-audit/e2e/report.json |
+| H-05 | Restart after the effect completed; not repeated; recovery states what is irreversible | implemented; current evidence: completion-audit/e2e/report.json |
+| H-06 | Deny, cancel, fork, hand off; denial/cancel create no effect | implemented; current evidence: completion-audit/e2e/report.json |
 
 ### H-01 evidence (`acceptance/H-01/`)
 
@@ -54,7 +121,13 @@ lineage is present as the requirement demands — 12 context receipts carrying e
 and **omitted (5)** source refs, 12 wire receipts, 6 correlation pairs. Screenshots, session
 transcript, `events.jsonl`, `hashes.json` and a credential scan (0 hits) are alongside it.
 
-## Why H-02..H-06 are blocked, and on exactly what
+## Historical investigation (superseded by the correction above)
+
+The channel/credential blockers below describe earlier attempts, not current
+requirements. Current gaps are scenario implementation and frozen-candidate
+acceptance.
+
+### Earlier diagnosis: why H-02..H-06 were thought blocked
 
 Every remaining scenario routes through the cron announce path, whose first step is
 `resolveCronAnnounceDelivery(cfg, agentId, { channel, to })`

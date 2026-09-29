@@ -1,3 +1,4 @@
+import { isCronOperatorApprovalEnabled } from "../cron/operator-delivery.js";
 // Gateway cron notification delivery.
 // Sends announce and webhook notifications for cron completion/failure events.
 import {
@@ -302,6 +303,10 @@ function dispatchCronFailureDestinationNotifications(params: {
   if (params.evt.status !== "error" || !params.job || params.job.delivery?.bestEffort === true) {
     return;
   }
+
+  // A denied, cancelled or interrupted governed delivery must not send an
+  // unapproved derived message. Its failure remains visible in Cron/Inbox state.
+  if (isCronOperatorApprovalEnabled(params.resolveCronAgent(params.job.agentId).cfg)) return;
 
   const failureMessage = `Cron job "${params.job.name}" failed: ${params.evt.error ?? "unknown error"}`;
   const failureDest = resolveFailureDestination(params.job, params.globalFailureDestination);

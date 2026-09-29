@@ -1109,9 +1109,17 @@ async function loadSessionSummary(sessionKey: string): Promise<SessionSummary> {
   }
 }
 
-async function loadSessionTranscriptByKey(sessionKey: string, limit: number): Promise<RawMessage[] | null> {
+async function loadSessionTranscriptByKey(sessionKey: string, limit: number, gateway?: Pick<GatewayManager, 'rpc'>): Promise<RawMessage[] | null> {
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) return null;
+
+  // The live runtime owns transcript location (including isolated source state).
+  // An empty runtime history is authoritative; never substitute another profile.
+  if (gateway) {
+    const result = await gateway.rpc<{ messages?: RawMessage[] }>('chat.history', { sessionKey, limit }, 10_000);
+    if (!Array.isArray(result?.messages)) throw new Error('Runtime history returned no messages array');
+    return result.messages;
+  }
 
   try {
     const sessionsDir = join(getOpenClawConfigDir(), 'agents', parsed.agentId, 'sessions');
@@ -1683,7 +1691,7 @@ export function createSessionsApi(ctx: {
       const limit = getLimit(payload);
 
       if (typeof body.sessionKey === 'string' && body.sessionKey.trim()) {
-        const messages = await loadSessionTranscriptByKey(body.sessionKey.trim(), limit);
+        const messages = await loadSessionTranscriptByKey(body.sessionKey.trim(), limit, ctx.gatewayManager);
         if (!messages) return { success: false, error: 'Transcript not found' };
         return { success: true, messages };
       }
@@ -2296,12 +2304,16 @@ export function createSessionsApi(ctx: {
 
       let messages: TranscriptMessage[] = [];
       try {
-        messages = await loadSessionTranscriptByKey(sessionKey, 80) ?? [];
+        const transcript = await loadSessionTranscriptByKey(sessionKey, 80, ctx.gatewayManager);
+        if (!transcript) throw new Error('Transcript not found');
+        messages = transcript;
+        const lastAssistant = [...messages].reverse().find((message) => message.role === 'assistant' && extractMessageText(message.content).trim());
+        const recentOutput = lastAssistant ? compactLine(extractMessageText(lastAssistant.content), 1200) : '';
         sources.push({
           id: 'transcript',
           label: 'Recent transcript',
           available: true,
-          summary: `${messages.length} recent message(s)`,
+          summary: `${messages.length} recent message(s)${recentOutput ? `; latest assistant output (unverified): ${recentOutput}` : ''}`,
         });
       } catch (error) {
         const warning = `Recent transcript unavailable: ${error instanceof Error ? error.message : String(error)}`;

@@ -985,13 +985,36 @@ export async function dispatchCronDelivery(
         }
         return send.status === "sent" || send.status === "partial_failed" ? send.results : [];
       };
-      const deliveryResults = options?.retryTransient
-        ? await retryTransientDirectCronDelivery({
-            jobId: params.job.id,
-            signal: params.abortSignal,
-            run: runDelivery,
-          })
-        : await runDelivery();
+      const { withCronOperatorApproval } = await import("../operator-delivery.js");
+      const deliveryResults = await withCronOperatorApproval(
+        {
+          cfg: params.cfgWithAgentDefaults,
+          agentId: params.agentId,
+          jobId: params.job.id,
+          // Match the model-run receipt identity, while delivery retains its origin route.
+          runId: createCronExecutionId(params.job.id, params.runStartedAt),
+          sessionKey: params.runSessionKey,
+          message: JSON.stringify({
+            channel: delivery.channel,
+            to: delivery.to,
+            accountId: delivery.accountId,
+            threadId: delivery.threadId,
+            payloads: payloadsForDelivery,
+          }),
+          signal: params.abortSignal,
+          isApplied: (results) => results.length > 0 && !hadPartialFailure,
+        },
+        async () => {
+          const results = options?.retryTransient
+            ? await retryTransientDirectCronDelivery({
+                jobId: params.job.id,
+                signal: params.abortSignal,
+                run: runDelivery,
+              })
+            : await runDelivery();
+          return results;
+        },
+      );
       // Only mark delivered when ALL payloads succeeded (no partial failure).
       delivered = deliveryResults.length > 0 && !hadPartialFailure;
       // Intentionally leave partial success uncached: replay may duplicate the

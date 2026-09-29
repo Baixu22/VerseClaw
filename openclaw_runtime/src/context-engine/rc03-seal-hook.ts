@@ -8,6 +8,7 @@
 import { createHash } from 'node:crypto';
 
 import { ReceiptStore } from '../agents/receipt-store.js';
+import { createSubsystemLogger } from '../logging/subsystem.js';
 import {
   recordShadowCensusFailure,
   type ShadowCensusFailureDiagnostic,
@@ -26,6 +27,8 @@ import {
   registerRc03SealProducers,
 } from './rc03-producers.js';
 import type { ContextCandidateProjection } from './context-candidate.js';
+
+const receiptLog = createSubsystemLogger('runtime-receipts');
 
 export const RC03_SEAL_FLAG = 'rc03.seal';
 export const RC03_SEAL_ENV = 'OPENCLAW_RC03_SEAL';
@@ -320,6 +323,15 @@ export function appliedProducerIdsFromLineage(
   return [...applied].sort();
 }
 
+// Candidate identities include encoded authority paths/versions and can exceed
+// the receipt's 256-character bound. Retain the source label and hash the full
+// identity, so refs stay bounded and do not persist private authority paths.
+function candidateReceiptRef(entry: ContextCandidateProjection['lineage'][number]): string {
+  const source = encodeURIComponent(entry.sourceId).slice(0, 96);
+  const digest = createHash('sha256').update(entry.candidateId).digest('hex');
+  return `ref:context:${source}:${digest}`;
+}
+
 function recordSealFailure(phase: ShadowCensusFailureDiagnostic['phase'], code: ShadowCensusFailureDiagnostic['code']) {
   recordShadowCensusFailure(phase, code);
 }
@@ -397,12 +409,12 @@ export function runRc03SealHook(
     : [
         ...projection.lineage
           .filter((entry) => entry.charsApplied > 0)
-          .map((entry) => `ref:context:${entry.candidateId}`),
+          .map(candidateReceiptRef),
         ...attributedRefs,
       ];
   const omittedRefs = projection.lineage
     .filter((entry) => entry.charsApplied === 0)
-    .map((entry) => `ref:context:${entry.candidateId}`);
+    .map(candidateReceiptRef);
   const charsRequested = boundary
     ? boundary.chars
     : projection.lineage.reduce((t, e) => t + e.charsRequested, 0) + attributedChars;
@@ -444,7 +456,9 @@ export function runRc03SealHook(
       }),
     );
     contextReceiptPersisted = result.ok === true;
-  } catch {
+    if (!result.ok) receiptLog.warn(`ContextReceipt rejected: ${result.reason}`);
+  } catch (error) {
+    receiptLog.warn(`ContextReceipt write failed: ${String(error).slice(0, 400)}`);
     contextReceiptPersisted = false;
   }
   if (!contextReceiptPersisted) {
