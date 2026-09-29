@@ -2,7 +2,7 @@
 // Runtime Authority Convergence final-evidence validator. It intentionally
 // fails closed: engineering evidence and the user-authored human verdict are
 // independently bound to one clean Git candidate and one acceptance manifest.
-import { existsSync, readFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,10 +11,12 @@ import { parse as parseYaml } from 'yaml';
 
 import {
   ACCEPTANCE_SCHEMA,
+  createDetachedWorktree,
   digestManifest,
   digestPlan,
   digestReport,
   equalDigest,
+  repositoryIdentity,
   sha256File,
   stableJson,
   validateAcceptanceManifest,
@@ -242,21 +244,30 @@ function rcOwnerFromSpecName(specName) {
  * attributes a path to a package outside that set (RC-10, an RC-01R variant
  * spec, or any invented id) must fail closed.
  */
-function requiredOwnerSet(root, errors) {
+/**
+ * Reads the final acceptance spec frontmatter from `root`. Callers pass the
+ * candidate root so a closure commit can never rewrite the rules it is judged
+ * by. Returns undefined (and records an error) when the spec is unreadable.
+ */
+function readFinalSpecFrontmatter(root, errors) {
   const specPath = resolve(root, ...FINAL_ACCEPTANCE_SPEC_RELATIVE.split('/'));
   if (!existsSync(specPath)) {
     errors.push(`final acceptance spec is missing: ${FINAL_ACCEPTANCE_SPEC_RELATIVE}`);
-    return null;
+    return undefined;
   }
-  let frontmatter;
   try {
     const text = readFileSync(specPath, 'utf8').replace(/^\uFEFF/u, '').replaceAll('\r\n', '\n');
     const match = /^---\n([\s\S]*?)\n---(?:\n|$)/u.exec(text);
-    frontmatter = match ? parseYaml(match[1]) : null;
+    return match ? parseYaml(match[1]) : null;
   } catch (error) {
     errors.push(`cannot read the final acceptance spec: ${error instanceof Error ? error.message : String(error)}`);
-    return null;
+    return undefined;
   }
+}
+
+function requiredOwnerSet(root, errors) {
+  const frontmatter = readFinalSpecFrontmatter(root, errors);
+  if (frontmatter === undefined) return null;
   const requiredSpecs = Array.isArray(frontmatter?.cumulativeOwnership?.requiredSpecs)
     ? frontmatter.cumulativeOwnership.requiredSpecs
     : [];
@@ -427,6 +438,183 @@ function validateSourceIdentity(root, manifest, errors) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Closure advance. Closing an acceptance round must commit STATUS, archives,
+// the canonical evidence pair and task-forest state, so the invoking HEAD
+// necessarily moves past the candidate. The validator therefore judges the
+// candidate inside a detached worktree of the candidate itself, and separately
+// proves that every path changed between the candidate and the invoking
+// worktree is a closure path declared by the CANDIDATE's final spec. Product,
+// test, script, spec, and locked-input changes after the candidate still fail
+// closed. See docs/dev/unified-agent-system/runtime-convergence/RC-09-CLOSURE-ADVANCE-FIX-PLAN.md.
+// ---------------------------------------------------------------------------
+
+const CLOSURE_CODE_EXTENSIONS = /\.(?:mjs|cjs|js|jsx|ts|tsx|mts|cts|sh|ps1|py)$/iu;
+const CLOSURE_FROZEN_FILES = Object.freeze([
+  'scripts/validate-runtime-authority-convergence.mjs',
+  'scripts/lib/agent-engineering-acceptance.mjs',
+  FINAL_ACCEPTANCE_SPEC_RELATIVE,
+]);
+const CLOSURE_ERROR = 'closure advance: ';
+
+function gitPathExistsAt(root, commit, pathValue) {
+  return git(root, ['cat-file', '-e', `${commit}:${pathValue}`], { allowFailure: true }).status === 0;
+}
+
+/**
+ * Returns the root that candidate checks run against. When the invoking
+ * worktree is exactly the clean candidate this is `root` itself (unchanged
+ * behavior). Otherwise it is a detached worktree of the candidate, into which
+ * the manifest's locked provision inputs that the candidate does not track are
+ * copied after their digests are verified. The caller must call cleanup().
+ */
+function openCandidateView(root, manifest, errors) {
+  const direct = { candidateRoot: root, advanced: false, cleanup() {} };
+  const commit = String(manifest?.candidate?.commit ?? '').toLowerCase();
+  const tree = String(manifest?.candidate?.tree ?? '').toLowerCase();
+  if (!SHA1_HEX.test(commit) || !SHA1_HEX.test(tree)) return direct;
+  let identity;
+  try {
+    identity = repositoryIdentity(root);
+  } catch (error) {
+    errors.push(`${CLOSURE_ERROR}cannot inspect the invoking worktree: ${error instanceof Error ? error.message : String(error)}`);
+    return direct;
+  }
+  if (identity.commit === commit && identity.tree === tree && identity.clean) return direct;
+  if (git(root, ['cat-file', '-e', `${commit}^{commit}`], { allowFailure: true }).status !== 0) return direct;
+
+  let checkout;
+  try {
+    checkout = createDetachedWorktree(root, { commit });
+  } catch (error) {
+    errors.push(`${CLOSURE_ERROR}cannot open a candidate worktree: ${error instanceof Error ? error.message : String(error)}`);
+    return direct;
+  }
+  const view = { candidateRoot: checkout.path, advanced: true, cleanup: () => checkout.cleanup() };
+  const copies = Array.isArray(manifest?.source?.provisionCopies) ? manifest.source.provisionCopies : [];
+  const copied = [];
+  for (const input of copies) {
+    const pathValue = normalizedPath(input?.path);
+    if (!pathValue || gitPathExistsAt(root, commit, pathValue)) continue;
+    const sourcePath = resolve(root, ...pathValue.split('/'));
+    const destPath = resolve(checkout.path, ...pathValue.split('/'));
+    const matches = (filePath) => existsSync(filePath)
+      && statSync(filePath).isFile()
+      && statSync(filePath).size === input.bytes
+      && equalDigest(sha256File(filePath), String(input.sha256 ?? ''));
+    if (!matches(sourcePath)) {
+      errors.push(`${CLOSURE_ERROR}provision copy digest mismatch: ${pathValue}`);
+      continue;
+    }
+    mkdirSync(dirname(destPath), { recursive: true });
+    copyFileSync(sourcePath, destPath);
+    if (!matches(destPath)) {
+      errors.push(`${CLOSURE_ERROR}provision copy digest mismatch: ${pathValue}`);
+      continue;
+    }
+    copied.push(pathValue);
+  }
+  try {
+    const status = repositoryIdentity(checkout.path);
+    if (!status.clean) {
+      // repositoryIdentity trims stdout, so the first porcelain line may have lost
+      // its leading status space; strip the XY code by pattern, not by offset.
+      const dirty = status.status
+        .split(/\r?\n/u)
+        .map((line) => normalizedPath(line.trim().replace(/^\S{1,2}\s+/u, '')))
+        .filter(Boolean);
+      for (const pathValue of dirty) {
+        errors.push(`${CLOSURE_ERROR}provisioned input is not ignored in the candidate: ${pathValue}`);
+      }
+      if (dirty.length === 0) errors.push(`${CLOSURE_ERROR}candidate worktree is dirty after provisioning (${copied.length} copies)`);
+    }
+  } catch (error) {
+    errors.push(`${CLOSURE_ERROR}cannot inspect the candidate worktree: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  return view;
+}
+
+function allowedPathMatcher(entry) {
+  if (!isNonBlankString(entry)) return null;
+  const value = entry.trim();
+  if (value.endsWith('/**')) {
+    const dir = value.slice(0, -3);
+    if (!dir || /[*?[\]{}]/u.test(dir) || normalizedPath(dir) !== dir) return null;
+    return { entry: value, covers: (pathValue) => pathValue.startsWith(`${dir}/`) };
+  }
+  if (/[*?[\]{}]/u.test(value) || normalizedPath(value) !== value) return null;
+  return { entry: value, covers: (pathValue) => pathValue === value };
+}
+
+function gitPathList(root, args) {
+  return git(root, args).stdout.split('\0').map(normalizedPath).filter(Boolean);
+}
+
+function validateClosureAdvance(root, candidateRoot, manifest, baselineRelative, errors) {
+  const candidate = String(manifest.candidate.commit).toLowerCase();
+
+  // 1. The invoking HEAD must descend from the candidate. This also catches a
+  //    branch ref that was silently rewound to an older packed ref.
+  if (git(root, ['merge-base', '--is-ancestor', candidate, 'HEAD'], { allowFailure: true }).status !== 0) {
+    errors.push(`${CLOSURE_ERROR}candidate is not an ancestor of HEAD`);
+  }
+
+  // 2-3. The allowlist is read from the CANDIDATE's spec, never from HEAD, and
+  //      only exact paths or <dir>/** prefixes are accepted.
+  const frontmatter = readFinalSpecFrontmatter(candidateRoot, errors);
+  const declared = frontmatter?.closureAdvance?.allowedPaths;
+  const matchers = [];
+  if (!Array.isArray(declared) || declared.length === 0) {
+    errors.push(`${CLOSURE_ERROR}candidate spec declares no closureAdvance.allowedPaths`);
+  } else {
+    for (const entry of declared) {
+      const matcher = allowedPathMatcher(entry);
+      if (matcher) matchers.push(matcher);
+      else errors.push(`${CLOSURE_ERROR}malformed allowedPaths entry: ${String(entry)}`);
+    }
+  }
+
+  // 4. Frozen inputs can never be closure paths.
+  const frozen = new Set([
+    ...CLOSURE_FROZEN_FILES,
+    ...(manifest.source?.files ?? []).map((file) => normalizedPath(file?.path)),
+    ...(manifest.source?.provisionCopies ?? []).map((input) => normalizedPath(input?.path)),
+    baselineRelative,
+  ].filter(Boolean));
+  for (const matcher of matchers) {
+    for (const pathValue of frozen) {
+      if (matcher.covers(pathValue)) {
+        errors.push(`${CLOSURE_ERROR}allowedPaths entry covers frozen input: ${matcher.entry} -> ${pathValue}`);
+      }
+    }
+  }
+
+  // 5. Every path that differs between the candidate and the invoking worktree:
+  //    committed and uncommitted tracked changes plus untracked, non-ignored
+  //    files. Renames are split so a moved frozen input still shows its source.
+  let changed;
+  try {
+    changed = [...new Set([
+      ...gitPathList(root, ['diff', '--name-only', '--no-renames', '-z', candidate]),
+      ...gitPathList(root, ['ls-files', '--others', '--exclude-standard', '-z']),
+    ])].sort();
+  } catch (error) {
+    errors.push(`${CLOSURE_ERROR}cannot compute the post-candidate diff: ${error instanceof Error ? error.message : String(error)}`);
+    return;
+  }
+
+  // 6. Classify each path. An empty diff (e.g. an empty commit) passes.
+  for (const pathValue of changed) {
+    if (frozen.has(pathValue)) {
+      errors.push(`${CLOSURE_ERROR}frozen input changed after candidate: ${pathValue}`);
+    } else if (CLOSURE_CODE_EXTENSIONS.test(pathValue)) {
+      errors.push(`${CLOSURE_ERROR}code file changed after candidate: ${pathValue}`);
+    } else if (!matchers.some((matcher) => matcher.covers(pathValue))) {
+      errors.push(`${CLOSURE_ERROR}non-closure path changed after candidate: ${pathValue}`);
+    }
+  }
+}
+
 function validateReportContract(manifest, report, reportPath, errors) {
   const evidenceRoot = dirname(reportPath);
   errors.push(...validateReportEvidence(manifest, report, evidenceRoot, {
@@ -511,16 +699,22 @@ export function validateRuntimeAuthorityConvergence(options = {}) {
   if (phase === 'engineering' && options.humanVerdictPath) errors.push('engineering phase must not receive a human verdict');
   if (phase === 'human' && !options.humanVerdictPath) errors.push('human phase requires --human-verdict');
 
+  // Evidence (manifest, report, verdict) is a closure product and is read from
+  // the invoking root; its integrity is carried by the digest chain. Everything
+  // the candidate is judged by (baseline, spec, matrix, source inputs, tree) is
+  // read from the candidate view.
   let manifest;
   let report;
   let baseline;
   let manifestPath;
   let reportPath;
   let verdictPath;
+  let baselineRelative;
   try {
     manifestPath = resolveInputPath(root, options.manifestPath, 'manifest');
     reportPath = resolveInputPath(root, options.engineeringReportPath, 'engineering report');
     const baselinePath = resolveInputPath(root, options.baselinePath ?? 'artifacts/runtime-authority-convergence/rc-01/baseline.json', 'baseline');
+    baselineRelative = normalizedPath(relative(root, baselinePath));
     if (!existsSync(manifestPath) || !existsSync(reportPath) || !existsSync(baselinePath)) throw new Error('manifest, engineering report, or baseline file is missing');
     if (phase === 'human') {
       verdictPath = resolveInputPath(root, options.humanVerdictPath, 'human verdict');
@@ -528,26 +722,39 @@ export function validateRuntimeAuthorityConvergence(options = {}) {
     }
     manifest = readJson(manifestPath, 'manifest');
     report = readJson(reportPath, 'engineering report');
-    baseline = readJson(baselinePath, 'baseline');
   } catch (error) {
     errors.push(error instanceof Error ? error.message : String(error));
     return { ok: false, errors };
   }
 
-  if (manifest.schema !== ACCEPTANCE_SCHEMA || manifest.manifestVersion !== 1) errors.push('manifest schema mismatch');
-  if (manifest.executionMode !== 'full') errors.push('manifest executionMode must be full');
-  if (manifest.candidate?.cleanAtPlan !== true) errors.push('candidate was dirty at plan');
-  validateManifestDigests(manifest, errors);
-  errors.push(...validateAcceptanceManifest(manifest, { root, requireClean: true, requireFull: true }).errors);
-  const base = validateBaseline(root, baseline, manifest, errors);
-  validateCandidateTree(root, manifest, errors);
-  validateChangedPaths(root, manifest, base, errors);
-  validateOwnershipMatrix(root, manifest, base, errors);
-  validateSourceIdentity(root, manifest, errors);
-  validateReportContract(manifest, report, reportPath, errors);
-  if (phase === 'human' && verdictPath) validateHumanVerdict(manifest, manifestPath, reportPath, verdictPath, errors);
+  const view = openCandidateView(root, manifest, errors);
+  try {
+    const candidateRoot = view.candidateRoot;
+    try {
+      baseline = readJson(resolve(candidateRoot, ...String(baselineRelative).split('/')), 'baseline');
+    } catch (error) {
+      errors.push(error instanceof Error ? error.message : String(error));
+      return { ok: false, errors };
+    }
 
-  return { ok: errors.length === 0, errors, phase, manifest, report, baseline };
+    if (manifest.schema !== ACCEPTANCE_SCHEMA || manifest.manifestVersion !== 1) errors.push('manifest schema mismatch');
+    if (manifest.executionMode !== 'full') errors.push('manifest executionMode must be full');
+    if (manifest.candidate?.cleanAtPlan !== true) errors.push('candidate was dirty at plan');
+    validateManifestDigests(manifest, errors);
+    errors.push(...validateAcceptanceManifest(manifest, { root: candidateRoot, requireClean: true, requireFull: true }).errors);
+    const base = validateBaseline(candidateRoot, baseline, manifest, errors);
+    validateCandidateTree(candidateRoot, manifest, errors);
+    if (view.advanced) validateClosureAdvance(root, candidateRoot, manifest, baselineRelative, errors);
+    validateChangedPaths(candidateRoot, manifest, base, errors);
+    validateOwnershipMatrix(candidateRoot, manifest, base, errors);
+    validateSourceIdentity(candidateRoot, manifest, errors);
+    validateReportContract(manifest, report, reportPath, errors);
+    if (phase === 'human' && verdictPath) validateHumanVerdict(manifest, manifestPath, reportPath, verdictPath, errors);
+
+    return { ok: errors.length === 0, errors, phase, manifest, report, baseline, closureAdvance: view.advanced };
+  } finally {
+    view.cleanup();
+  }
 }
 
 function usage() {

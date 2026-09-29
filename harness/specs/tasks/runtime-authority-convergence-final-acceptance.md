@@ -94,6 +94,21 @@ cumulativeOwnership:
       disjoint and must together equal git diff --name-only <acceptedBaseSha>..<candidateSha>,
       and a path that can be attributed to neither set fails the generator closed.
   evidence: artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json
+closureAdvance:
+  # Paths a closure commit may touch after the candidate. The validator reads
+  # this list from the CANDIDATE's copy of this spec, never from HEAD, so a
+  # closure commit cannot widen it. Exact paths or <dir>/** only. Frozen inputs
+  # (manifest source files, provision copies including the ownership matrix,
+  # the RC-01 baseline, the validator and its library) and code files are
+  # rejected even when an entry would cover them.
+  allowedPaths:
+    - docs/dev/unified-agent-system/runtime-convergence/STATUS.md
+    - docs/dev/handoffs/LATEST.md
+    - .agent-workbench/task-forest/**
+    - artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json
+    - artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/final-report.json
+    - artifacts/runtime-authority-convergence/rc-09/**
+    - artifacts/runtime-authority-convergence/rc-10/acceptance/**
 requiredProfiles:
   - fast
   - comms
@@ -108,6 +123,8 @@ forbiddenPatterns:
   - identical Executor/Verifier identities
   - product lock or promotion drift
   - marking the program done before final user acceptance
+  - regenerating changed-path-ownership.json after the candidate
+  - widening closureAdvance.allowedPaths after the candidate
 featureFlags:
   - No feature flag is added or changed.
 rollback:
@@ -130,6 +147,7 @@ acceptance:
   - The validate-runtime-authority-convergence.mjs validator passes for the engineering phase.
   - changed-path-ownership.json is generated from the exact candidate diff and partitions it totally and disjointly: every path is either RC-owned by exactly one package in the required owner set derived from cumulativeOwnership.requiredSpecs, or excluded with the recorded first-touch commit SHA, subject and workstream id; missing, duplicate, out-of-set-owner, unattributed-exclusion, or count-mismatched entries fail closed.
   - The program reaches human_acceptance_pending; it must not become done.
+  - The engineering and human validators pass both at the candidate and at any descendant whose candidate→worktree diff touches only closureAdvance.allowedPaths; a frozen input, a code file, or any other path changed after the candidate fails closed.
 docs:
   required: true
   files:
@@ -186,3 +204,14 @@ validator therefore requires base equality plus `headSha` ancestry, and separate
 matrix to account for every manifest changed path — so a matrix generated too early cannot pass by
 covering too little. Run the generator at the candidate, commit the result, and let the acceptance
 plan provision it into the detached worktrees.
+
+## Closure advance
+
+Closing a round must commit STATUS, the archived evidence, the canonical manifest/final-report pair
+and task-forest state, so HEAD always moves past the candidate. The validator therefore judges the
+candidate in a detached worktree of the candidate and, when HEAD has advanced, requires every path
+changed between the candidate and the invoking worktree to be covered by `closureAdvance.allowedPaths`
+as declared by the candidate's copy of this spec. Frozen inputs, code files, and every other path
+fail closed, so any product, test, script or spec change after the candidate still voids it. The
+ownership matrix is not regenerated after the candidate. From cutting the candidate until the round
+closes, the branch accepts only closure-path commits; other work lands elsewhere.
