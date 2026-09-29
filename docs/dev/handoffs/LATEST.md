@@ -1,3 +1,17 @@
+# 最新接力（2026-09-29 下午）：RC-09 收口前进修复落地 + 分支冻结
+
+- **Phase A 已落地并提交**：`ee3e3840b`（validator 改为在候选的 detached worktree 上复验，并对候选之后的每条改动路径 fail-closed）、`48e079682`（3 个新用例覆盖 10 种场景）、`06d645e2b`/`a8aa64afb`（计划与 runbook）。2026-09-27 RC-09 一节「过程约束」里记的「validator 只能在候选提交上运行、收口一落库就不可复现」由本修复解除。
+- **验证（本轮亲跑）**：`pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts tests/unit/runtime-authority-convergence-control-pack.test.ts` → **73 passed / 0 failed**，含 3 个 closure-advance 新用例；失败与成功路径的临时 worktree 均已清理。旧候选 `ae489d4a5` 的归档证据只读冒烟按预期 **FAILED**（`candidate spec declares no closureAdvance.allowedPaths`、4 个冻结输入被改、channel 修复的产品文件被改），旧候选不会被新规则误放行。
+- **Phase B 前置②（touchedAreas 缺口）已修**：`tests/integration/channel-startup.integration.test.ts` 是累计窗口内第一条 `tests/integration/**` 路径，`pnpm harness validate --spec harness/specs/tasks/runtime-authority-convergence-final-acceptance.md` 实测报 `changed files are not covered by touchedAreas or ownedPaths`；补 `tests/integration/**` 后为 `Spec is valid`。只声明「预期会变」，不扩大归属集合。提交 `077b1233b`。
+- **Phase B 前置①（工作树不干净）已处理**：共享树里那 133 个未提交文件是此前 RC-10 会话（`codex-*`）的开发变更集。落库前核过：audit 的 8 个 `sourceHashes` **8/8 与工作树逐字节一致**，`verification` 的 14 条日志 **sha256 全匹配且 exitCode 全为 0**，该会话已停写约 6.5 小时且 `audit.status=complete`。按 RC-10 变更集分四个提交落库：`f9aab70df`（产品与工具链 30 文件）、`699327ebe`（文档 6 文件）、`dac9485ff`（证据 84 文件）、`165b36dcb`（task-forest 13 文件）。作者会话身份保留在提交信息里（`driven_by: agent`，actor `codex-*`）。**没有 stash / reset / 改写任何人的工作。**
+- **为什么必须落库而不是移走**：Phase A 之后候选是粘性的——候选之后的任何产品/测试/脚本/spec 改动一律 fail-closed，所以这批改动只能进入候选，不能留到验收之后再落。
+- **偏差账目**：`TFP-rc09-closure-advance-contract-20260929` 已 `proposal-apply --yes`，`validate` 通过、`export` 完成；登记的是验收契约**收紧**（候选之后改动的逐路径证明与冻结输入保护），未放宽任何门，也未改产品锁。
+- **冻结生效**：从现在到 RC-10 收口，本分支只接受 final spec 的 `closureAdvance.allowedPaths` 内提交（STATUS、LATEST、task-forest、验收证据目录）；其它工作走别的分支。STATUS 的 `next_action` 已写入同一约束。
+- **下一步（Phase B→D，按 RC-09-CLOSURE-ADVANCE-FIX-PLAN.md 执行）**：刷新 Agent Dev 证据（`agent-dev:workbench` / `deep-test` / `audit`，strict exit 0）→ `lint:check`、`git status --porcelain` 为空 → 在 HEAD 重生成 `changed-path-ownership.json` 并**只提交该矩阵**（这个提交就是候选 `C`）→ plan → Executor(`rc09-executor`) → 独立 Verifier(`rc09-verifier`) → validator 快路径 → 收口提交（只碰白名单）→ **在收口后的 HEAD 上重跑 `--phase engineering` 并 PASS**（这是本修复的真实验收证据）→ 同一 `C` 上跑 H-01..H-06 与 `--phase human`。
+- **环境坑（本轮踩到）**：`pnpm harness validate` 在受限沙箱下会因 Node 以管道 spawn git 被 EPERM 拦掉，CLI 把它包装成 `invalid or missing diff base ref`——那是沙箱假象，不是仓库或 base ref 的问题；全权限下同一条命令报出真实结论。
+
+---
+
 # 最新接力（2026-09-29）：H-02..H-06 driver 完成审计补强
 
 - 上一轮 H-06 只检查 source session 引用，实际 handoff 草稿含“0 recent messages”，不能证明完整交接；旧 `operator-dev/e2e/` 的 H-06 结论已由本轮证据替代。

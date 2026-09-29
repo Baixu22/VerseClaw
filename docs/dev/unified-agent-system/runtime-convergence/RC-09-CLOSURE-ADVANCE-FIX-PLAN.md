@@ -151,10 +151,17 @@ closureAdvance:
 
 **Phase B：冻结并切候选**
 
-前置条件（2026-09-29 Phase A 完成时发现，必须先处理）：
+前置条件（2026-09-29 发现，同日已全部清除，见本节末尾的清除记录）：
 
 - **工作树不干净。** 共享树里有 133 个未提交文件，不属于本修复。来源是别的会话的 RC-10 工作：`openclaw_runtime/src/cron/operator-delivery.ts`、`receipt-store.ts`、`rc03-seal-hook.ts`、`electron/gateway/ws-client.ts` / `ws-trace.ts`、`electron/services/sessions-api.ts`、对应单测，以及约 89 个 `rc-10` 证据文件。候选必须 `cleanAtPlan: true`，所以这些改动要么由其作者验证后落库（进入新候选），要么移到别的分支。不能 stash / reset 别人的工作。
 - **touchedAreas 缺口。** 若 `tests/integration/channel-startup.integration.test.ts` 落库，它会成为累计 diff 里第一个 `tests/integration/**` 路径。final spec 的 `touchedAreas` 没有覆盖它，`harness-validate` 门会失败（`pnpm harness validate … --since HEAD` 已复现）。在切候选**之前**，把 `tests/integration/**` 加进 `touchedAreas`，因为 spec 属于冻结输入。这只声明"预期会变"，不扩大归属集合。
+
+**清除记录（2026-09-29，同一会话）**
+
+- **工作树不干净 → 已按 RC-10 变更集落库。** 落库前核对：audit 的 8 个 `sourceHashes` 8/8 与工作树逐字节一致；`verification` 的 14 条日志 sha256 全匹配且 exitCode 全为 0；来源会话已停写约 6.5 小时且 `audit.status=complete`。四个提交：`f9aab70df`（产品与工具链 30 文件）、`699327ebe`（文档 6 文件）、`dac9485ff`（证据 84 文件）、`165b36dcb`（task-forest 13 文件）。作者会话身份保留在提交信息里（`driven_by: agent`）。没有 stash / reset / 改写任何人的工作。**之所以必须落库而不能移走**：改动 A 之后候选是粘性的，候选之后的任何产品/测试/脚本改动一律 fail-closed，所以这批改动只能进入候选。
+- **touchedAreas 缺口 → 已修并复验。** `pnpm harness validate --spec harness/specs/tasks/runtime-authority-convergence-final-acceptance.md` 实测报 `changed files are not covered by touchedAreas or ownedPaths: tests/integration/channel-startup.integration.test.ts`；补 `tests/integration/**` 后同一条命令输出 `Spec is valid`。提交 `077b1233b`。
+- **§5 改动 D 的账目补齐**：偏差 `TFP-rc09-closure-advance-contract-20260929` 已 `proposal-apply --yes`，`validate` 通过、`export` 完成；LATEST.md 顶部新增一节，STATUS 的 `next_action` 写入冻结约束。
+- **复核结果**：`pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts tests/unit/runtime-authority-convergence-control-pack.test.ts` → 73 passed / 0 failed（含 3 个新增 closure-advance 用例）。**§6 第 12 步仍未执行**，本修复的真实验收证据仍待 Phase C。
 
 7. 在 STATUS `next_action` 和 LATEST.md 里写明：从现在到 RC-10 收口，本分支只接受 §3 白名单内的提交，其它工作走别的分支。
 8. 预检：
