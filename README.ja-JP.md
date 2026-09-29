@@ -526,7 +526,10 @@ pnpm typecheck            # 固定版 tsgo による未キャッシュ node/web 
 
 # テスト
 pnpm test                 # ユニットテストを実行
-pnpm run test:e2e         # Electron E2E スモークテストを実行
+pnpm run test:channel-startup  # channel 設定・sidecar・IRC の高速回帰テスト
+pnpm run check:rc10:dev       # RC-10 開発チェック。全量受入は候補固定後に実行
+pnpm run test:e2e:run tests/e2e/rc10-operator-live.spec.ts --workers=1  # 実動作の RC-10 5シナリオ。新しいビルドを再利用
+pnpm run test:e2e         # ビルド後に全 Electron E2E を実行
 pnpm run test:e2e:headed  # 表示付きウィンドウで Electron E2E を実行
 pnpm run comms:replay     # 通信リプレイ指標を算出
 pnpm run comms:baseline   # 通信ベースラインを更新
@@ -562,13 +565,15 @@ pnpm vtoken:test
 pnpm vtoken:worker
 
 # ビルド＆パッケージ
-pnpm run build:vite       # フロントエンドのみビルド
+pnpm run build:vite       # レンダラーと Electron バンドルをビルド
 pnpm build                # フルプロダクションビルド（パッケージアセット含む）
 pnpm package              # 現在のプラットフォーム向けにパッケージ化（同梱プリインストールスキルを含む）
 pnpm package:mac          # macOS向けにパッケージ化
 pnpm package:win          # Windows向けにパッケージ化
 pnpm package:linux        # Linux向けにパッケージ化
 ```
+
+会話の引き継ぎは稼働中の Gateway の履歴（分離された source runtime の会話を含む）を読み、長さを制限した直近のアシスタント結果を未検証のコンテキストとして新しい会話へ渡します。
 
 Verse Claw は active project workspace と OpenClaw agent workspace に `.clawx/harness/` の project harness ドキュメント骨格を生成します。rules、scenarios、task contracts、guides、layers、context-pack recipes、Task Ledger bridge docs を Verse Claw 独自の構造で扱い、並行する `.trellis/` や Markdown タスク状態の事実源は作りません。
 

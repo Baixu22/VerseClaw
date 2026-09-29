@@ -1,3 +1,49 @@
+# 最新接力（2026-09-29）：H-02..H-06 driver 完成审计补强
+
+- 上一轮 H-06 只检查 source session 引用，实际 handoff 草稿含“0 recent messages”，不能证明完整交接；旧 `operator-dev/e2e/` 的 H-06 结论已由本轮证据替代。
+- 修复同一读取入口的两个调用方：带 session key 的 history 与 prepareHandoff 在有 Gateway 时读取 runtime 的 `chat.history`，不再读另一个 profile 的本地缓存；空 runtime 历史不被旧缓存替换。handoff 带有有界的近期助手输出，明确作为未核验上下文。
+- 真实接收步骤又抓到旧认证修复的副作用：永久 UI mode 不能提交 backend-owned workspaceDir。最终握手只在配对阶段使用 UI，拿到 device token 后恢复 Main 的 backend mode；未放宽 runtime 权限检查。
+- H-06 现在检查产品生成的草稿包含已确认的原结果，并将原草稿发送到独立的新会话；接收方产生真实 run 和 Context/Wire 配对，原 IRC effect 未重放。每个 H 场景都有 runIds、receiptIds、result、recoveryObservation、agent note。
+- 新证据：`artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/report.json`；逐项审计 `completion-audit/audit.json`。五场景在一次定向 Electron E2E 全通过，124.962 秒；开发门 92 项通过，42.078 秒；相邻服务/握手 47 项通过，类型检查、lint 与 comms replay/compare 通过。
+- 原始 H-02..H-06 表格及每场景记录要求与 HEAD 版本逐字相同。H-04 的原要求是 pending 状态跨重启保留且批准前不发送，本轮据此验证；没有把自动继续中断命令或 release/GA 加入或冒充该结论。
+- driver 实现目标与 RC 程序正式收口分开：完整 RC-09 / 冻结候选的 H-01..H-06 / 最终 verdict 仍留在发布准备阶段；产品锁 false，历史正式报告不重签，当前改动未提交。
+
+---
+
+# 最新接力（2026-09-29）：H-02..H-06 专用 driver 与真实链路修复已验证
+
+- **开发验证完成，未进行正式发布验收。** `pnpm run check:rc10:dev`：61 项通过，43.839 秒；未缓存 node/web/test typecheck 全 exit 0，test observation 0 errors；runtime 定向 type-aware lint 零警告/错误。ReceiptStore 22 项、RC-03 seal 31 项通过。
+- 新增 `tests/e2e/rc10-operator-live.spec.ts`：`pnpm run test:e2e:run tests/e2e/rc10-operator-live.spec.ts --workers=1` **1/1 通过，109.466 秒**。内含 H-02..H-06 五场景，报告全部 pass、failures=[]。不是全量 316 E2E，也不是 23 门。
+- 五场景从产品 host API 操作真实 Electron / source Gateway / SQLite / 本地 IRC。H-02 审批后一个 effect+receipt；H-03 IRC 发起模型型 Cron，来源模型 2 对 Context/Wire、Cron 模型 1 对，lineage 链接实际 effect；H-04 待审批记录跨进程保留且无结果外发；H-05 已完成 effect 重启不重发；H-06 拒绝/取消零 effect，fork/handoff 保留已确认结果且不重放。
+- **H-04 边界**：本轮只证明 pending 状态恢复和不自动重放；随后用 Inbox deny 清理临时意图。没有证明中断命令在重启后、再次批准时自动继续，不得扩大该结论。
+- **本轮查实并修复的根因**：
+  1. 桌面声明 backend 跳过配对，且不使用 Gateway 发放的 device token；改为 UI 配对后升级设备认证，Inbox 安全要求保留，并脱敏设备 token。
+  2. agentTurn Cron 公告绕过 Operator slice；与命令型公告共用原有持久化审批/effect 所有者，flag-off 行为保留，不确定发送进入 reconciliation。
+  3. 受控任务拒绝/取消/重启时，自动失败公告绕过审批外发；受控模式把这类失败留在内部状态，普通模式不变。
+  4. ReceiptStore 拒绝真实 IRC session key 的 #；只修正 session key 字符集，其他 ID 和控制字符检查保留。
+  5. 首次 ContextCandidate 引用直接透传，不满足有界引用规范，ContextReceipt 写入失败；改为来源标签+完整身份摘要，保留来源信息与长度/隐私约束。
+- 临时 runtime 调试改动已撤掉；仅保留 receipt 写入失败的必要诊断。Windows formatter 映射写入失败用 stdin+原子保存解决，未扩大无关格式差异。
+- **磁盘证据**：`artifacts/runtime-authority-convergence/rc-10/operator-dev/summary.json`；完整五场景结果 `operator-dev/e2e/report.json`，15 个原始证据哈希全部核验；归档 manifest 给每个文件标注 agent actor，7 个已知测试凭据值扫描 0 命中。E2E 的三个 Gateway PID 均已退出。模型为本地 scripted provider，usage 是模拟数值，付费调用 0。
+- 代码/证据仍为当前工作区开发结果；H-01 旧记录和 RC-09 旧报告保持历史身份，三个产品锁 false。下一步只在发布准备阶段冻结候选，完成一次完整 RC-09 Executor/独立 Verifier 周期，再执行候选绑定的 H-01..H-06；不等待真人、不把本轮开发结果回填成旧候选正式通过。
+
+---
+
+# 最新接力（2026-09-28）：开发验证按改动面执行，发布仍验收冻结候选
+
+- 所有者本轮确认：开发阶段按改动面验证；正式发布仍对冻结候选执行完整验收。规则见 `harness/specs/guides/scoped-development-validation.md`。不要因每个 bug 自动重跑 RC-09 全量门；Harness 的 `fast` 仍是宽 profile，不能按名称当成秒级门。
+- 新入口 `pnpm run check:rc10:dev` 实测 exit 0、32.667 秒：21 项配置/IRC 集成测试、3 项 runtime sidecar 测试、11 项 driver 入口测试；未缓存 typecheck 的 node/web/test 项目全部 exit 0（test observation 0 errors），定向 ESLint 零警告，driver/IRC 语法检查通过。未跑 build、Electron、Playwright E2E 或正式 23 门。
+- 原有未提交 channel 集成测试与 IRC peer 导出已保留并接入固定命令。`test:integration` 包含 channel 回归，实测 32 项通过、14.350 秒。该测试调用真实配置同步、sidecar 和 IRC TCP client，但 supplied startChannels callback 未经过完整 plugin manager；不把它当作整机 E2E。
+- 修复 driver 误标风险：原先 `--scenario H-02` 等未实现值会直接跑 H-01 并以传入名字写证据；现在在凭据、写文件和启动 Electron 前非零退出。严格解析未知/缺值参数。修复 IRC peer 的目录联接入口空跑，真实子进程回归通过。旧 provider mock 已改成实际接口返回值。
+- 当前 **H-02..H-06 仍未实现**，不能声明 RC-10 完成。自建 IRC 已满足本地 channel 资源前提；剩余是 cron/Inbox/effect+receipt、重启恢复、deny/cancel/fork/handoff 的真实场景实现。全部由 agent 执行并标注 `driven_by: agent` / actor；不等待真人。
+- 磁盘复核：RC-09 归档通过绑定 `ae489d4a52cb3a0a167fbbb71d6144c910ed1881`；H-01 的历史记录绑定 `5512d8f915dc717b10f0205409aded0250425ba6`；两者均早于 channel 修复 `93b876df1`。STATUS 已撤下当前 RC-09 accepted 声明，回到 `in_progress` / `engineering_verdict: not-run`。历史产物未修改；三个产品锁仍 false。
+- 下一步：先用定向开发回路完成场景，再冻结候选，执行一次完整 RC-09 Executor/独立 Verifier 周期和 H-01..H-06。一次周期包含两种角色；若冻结后发现产品缺陷，先定向修复、重新冻结，再履行正式周期，不删 Verifier、不继承旧候选 verdict、不放宽重试/skip/断言。
+- Task Forest 更正提案已应用，validate/export 均 exit 0。全仓库 check-landing exit 1（156 条长期分支/归属问题，并存在本轮未提交改动）；本轮未将节点标为 done，未改 Git 历史。
+- 本轮检查、耗时和局限：`artifacts/runtime-authority-convergence/rc-10/dev-check/summary.json`。本轮是开发证据，不是新的正式验收或 GA。
+
+---
+
+以下为历史交接，关于“只剩人”的旧结论已被上述状态和 AGENTS.md 的 2026-09-27 政策取代。
+
 # 会话交接（LATEST）
 
 ## 收口完成（2026-09-27，TF-0041 · RC-09）：工程验收 PASS，程序进入 human_acceptance_pending

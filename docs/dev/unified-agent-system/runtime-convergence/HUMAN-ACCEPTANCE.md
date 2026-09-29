@@ -1,6 +1,9 @@
-# Final Human Acceptance
+# Final Agent-Driven Acceptance
 
-Do not start this document until RC-09 is engineering-accepted and `STATUS.md` says `human_acceptance_pending`.
+The formal round below starts after RC-09 is engineering-accepted and `STATUS.md`
+says `human_acceptance_pending`. Scenario implementation and focused development
+checks happen before the candidate freeze; they do not require repeatedly running
+the full RC-09 suite. See `harness/specs/guides/scoped-development-validation.md`.
 
 ## Preconditions
 
