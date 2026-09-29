@@ -1,3 +1,17 @@
+# 收口完成（2026-09-30 凌晨，TF-0041 · RC-09）：工程验收 PASS，程序进入 human_acceptance_pending
+
+- **RC-09 在候选 C2 上通过。** 候选 `a1bd8d8cc3c8463bd787f6729f5ff6a2a7407240`，baseRef `1cddcb1ba5e23ebe445afca11174c2575c75f735`，runId `f262eaa4-7e68-4abb-90b3-a8356451f14e`：
+  - **Executor pass**：`failures: []`，23 门全部 exit 0，其中 `electron-e2e` **317 passed / 10 skipped / 0 failed（54.2 分钟）**。
+  - **独立 Verifier pass**：actor `rc09-verifier` ≠ `rc09-executor`，`failures: []`，`consistency.errors: []`，`identicalGateContracts: true`，**两轮 23 门的 exit code 逐门一致**。
+- **前两次 verifier 是环境挡的，不是候选缺陷。** ① `runtime-build` exit `3221226505`（`0xC0000409` 原生崩溃，构建本身已跑完并打出 phase timings）；② `runtime-static-check` 挂在 `npm install --package-lock-only` exit 1（59.91 s；该 guard 自己的子进程上限是 10 分钟，所以不是超时；事后 `npm view pnpm version` 立即 200，同一门在同一内容上此前已三次通过）。两次都发生在**与其他 agent 会话共用、内存仅剩 2.1 GB** 的窗口里；9/29 的两个 `OpenConsole.exe` 转储（`0xC0000005` 访问冲突）也落在同一时间窗。
+- **第三次由静默窗口探测器自动触发并通过。** `closure/quiet-window-watch.ps1` 每分钟采样，要求「空闲 ≥ 5 GB 且系统 CPU ≤ 15%」连续 10 分钟才触发；01:29:18 确认（free 5.37 GB / cpu 5%）后自动跑 `verify`，exit 0。探测器在正式启用前拦下一个会导致**误触发**的缺陷：用"存活进程 CPU 累计求和"会因进程退出出现负值（实测 **−34.7%**），而负数必然低于阈值 —— 机器再忙也会被判成静默。已改用系统计数器 `Win32_PerfFormattedData_PerfOS_Processor/_Total.PercentProcessorTime`，并把回退路径的负增量判为「不可知 → 不算静默」。
+- **收口动作**：canonical 目录提升本轮的 `manifest.json` / `final-report.json`（`check-canonical-pair.mjs` 预检 PASSED，断言等价于 control pack）；`rc-09/acceptance` 归档新一轮 5 JSON + SHA256SUMS（`*` 格式与 rc-03..rc-08b 一致），9/27 那份移入 `rc-09/accepted-20260927-ae489d4a5`；STATUS → `human_acceptance_pending` / `engineering_verdict: accepted`，RC-09 加入 `accepted_work_packages`，`current_work_package` 改为 RC-10 / TF-0042。
+- **STATUS 上踩到一个 YAML 坑**：新 `next_action` 里写了 `driven_by: agent`，ASCII 冒号+空格让 YAML 报 `Nested mappings are not allowed in compact mappings`。这是**提交前**跑 control pack 单测抓到的（修正后 8/8 通过），已给该标量整体加引号。教训：STATUS 是纯 frontmatter 文件，正文里塞带 `: ` 的短语必须加引号。
+- **口径未动**：验收契约、`retries: 0`、所有断言、门列表、矩阵规则、三个产品锁（仍全 false）。
+- **下一步（Phase D / RC-10）**：H-01（凭据已实测可用：`http://127.0.0.1:3065/v1` + `glm-5.3-flash`，探测脚本 `closure/probe-provider.mjs`）与 H-02..H-06（本地 scripted provider + 本地 IRC，无需外部凭据）分别按正式模式跑，证据落 `rc-10/acceptance/`，写 `human-verdict.yaml`（`driven_by: agent`，生成器 `closure/write-human-verdict.mjs`）后跑 `--phase human`。`done` 仍被禁止。
+
+---
+
 # 最新接力（2026-09-29 傍晚）：RC-09 候选 C 第一轮正式验收 NO-GO，根因在驱动采证超时
 
 - **Round 1（15:04）在第一道门就被拒**：`source worktree is dirty`。根因是我按 [ACCEPTANCE.md](../../../docs/dev/unified-agent-system/runtime-convergence/ACCEPTANCE.md) 显式传了 `--output-dir <canonical>`，于是 plan 把 `manifest.json` 直接写进那个目录——而 `97985461f`（"track the canonical accepted engineering evidence pair"）之后 `manifest.json` / `final-report.json` 是**被跟踪**的，写它们立刻弄脏工作树，executor 的 `requireClean` 随即 fail-closed。该提交说明写的是「`full` 写 `runs/<runId>/`、canonical 副本事后提升进来」，那只在**不传 `--output-dir`** 时成立。改用 CLI 默认布局（`artifacts/agent-engineering-acceptance/runs/<runId>/`，被 gitignore）后无需改仓库任何文件即可开跑。旧 canonical 对与整份 live 目录已归档到 `D:\ClawX-acceptance\rc09-20260929\pre-run-accepted-87f94a5b`（105 文件）。
