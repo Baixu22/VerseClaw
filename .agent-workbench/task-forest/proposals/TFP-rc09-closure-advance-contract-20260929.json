@@ -1,0 +1,43 @@
+{
+  "applied_at": "2026-09-29T06:17:12.218654Z",
+  "base_graph_hash": "e30494c16d655b99da4f566e8f02f45c7ae0d268fb73213259d52c202e235a7e",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 1.0,
+        "correction": "scripts/validate-runtime-authority-convergence.mjs 改为：候选相关检查在候选的 detached worktree 上执行；当调用方 HEAD 已越过候选时，新增 fail-closed 检查 validateClosureAdvance——candidate→调用方工作树的每一条变化路径都必须落在候选 spec 自身声明的 closureAdvance.allowedPaths 内，且不得是冻结输入（manifest.source.files、provisionCopies、rc-01 baseline、validator 及其库）或代码文件（.mjs/.js/.cjs/.ts/.tsx/.mts/.cts/.sh/.ps1/.py），并校验候选是 HEAD 的祖先。白名单从候选版本的 spec 读取，收口提交无法自行放宽。",
+        "created_at": "2026-09-29T06:20:00Z",
+        "evidence": [
+          "scripts/validate-runtime-authority-convergence.mjs",
+          "harness/specs/tasks/runtime-authority-convergence-final-acceptance.md",
+          "tests/unit/agent-engineering-acceptance.test.ts",
+          "docs/dev/unified-agent-system/runtime-convergence/RC-09-CLOSURE-ADVANCE-FIX-PLAN.md",
+          "docs/dev/unified-agent-system/runtime-convergence/ACCEPTANCE.md"
+        ],
+        "expected_requirement": "收口之后仍须能复验已通过的候选；候选之后的任何产品/测试/脚本/spec/锁定输入改动必须作废候选。",
+        "id": "TFD-rc09-closure-advance-contract-20260929",
+        "kind": "acceptance_contract_tightened",
+        "observed_action_or_result": "73 个用例全绿（含 3 个新增 closure-advance 用例，覆盖 10 种候选之后的改动场景）；只读冒烟用旧候选归档证据跑 --phase engineering 按预期 FAILED，报出 candidate spec declares no closureAdvance.allowedPaths、4 个冻结输入被改，以及 channel 修复的产品文件；runAcceptance / verifyAcceptance / validateAcceptanceManifest / createAcceptancePlan 的 diff 为空。本修复的真实验收证据仍待 Phase C 第 12 步（收口后在 HEAD 上重跑 validator 并 PASS）。",
+        "reason": "这是收紧而不是放宽：旧规则只能在 HEAD == candidate 的瞬间验证，Equal 之后完全无法复验；新规则在任意后继上都能重放，且把「候选之后改了什么」变成逐路径、可枚举的失败条件。产品、测试、脚本、spec、锁定输入改动仍然一律作废候选。",
+        "recommendation": "真正证据是收口提交之后在 HEAD 上重跑 --phase engineering。在此之前只能声明「已实现、单测通过、尚未在真实候选上验证」。E2E 重试 / CI 姿态不属于本修复。",
+        "related_task_ids": [
+          "TF-0041"
+        ],
+        "severity": "high",
+        "status": "resolved",
+        "summary": "RC-09 验收契约收紧：validator 现在可以在候选的独立 worktree 上复验，并逐路径证明候选之后只发生收口改动。此前它要求调用方工作区 HEAD 恰好等于候选，导致收口一落库、已通过的证据就无法复现（LATEST.md 的顺序约束）。"
+      }
+    }
+  ],
+  "created_at": "2026-09-29T06:17:00.226108Z",
+  "proposal_id": "TFP-rc09-closure-advance-contract-20260929",
+  "rationale": "Phase A of the RC-09 closure-advance fix landed the validator change, its tests, and the spec whitelist; the accounting entry that records the contract being TIGHTENED (not relaxed) was deferred only because the handoff and ledger files still carried another session's uncommitted RC-10 changes. Those changes are now landed, so the ledger entry can be recorded.",
+  "session_id": "rc09-closure-advance-fix-20260929",
+  "status": "applied"
+}

@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-28T23:05:10.711350Z",
+  "generated_at": "2026-09-29T06:17:58.733800Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -12845,7 +12845,8 @@
         "TFD-b555353bfa",
         "TFD-7c53e09a42",
         "TFD-20260929e5",
-        "TFD-0929c0a017"
+        "TFD-0929c0a017",
+        "TFD-rc09-closure-advance-contract-20260929"
       ],
       "difficulty": "high",
       "estimated_total_minutes": null,
