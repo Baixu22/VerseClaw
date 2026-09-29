@@ -530,7 +530,10 @@ pnpm typecheck            # 固定版本 tsgo：未缓存 node/web 检查及测�
 
 # 测试
 pnpm test                 # 运行单元测试
-pnpm run test:e2e         # 运行 Electron E2E 冒烟测试
+pnpm run test:channel-startup  # channel 配置、sidecar、IRC 快回归
+pnpm run check:rc10:dev       # RC-10 定向开发检查；冻结候选后才跑全量验收
+pnpm run test:e2e:run tests/e2e/rc10-operator-live.spec.ts --workers=1  # 五个真实 RC-10 场景；复用新构建
+pnpm run test:e2e         # 构建并运行全量 Electron E2E
 pnpm run test:e2e:headed  # 以可见窗口运行 Electron E2E 测试
 pnpm run comms:replay     # 计算通信回放指标
 pnpm run comms:baseline   # 刷新通信基线快照
@@ -566,13 +569,15 @@ pnpm vtoken:test
 pnpm vtoken:worker
 
 # 构建与打包
-pnpm run build:vite       # 仅构建前端
+pnpm run build:vite       # 构建渲染层与 Electron bundles
 pnpm build                # 完整生产构建（含打包资源）
 pnpm package              # 为当前平台打包（包含预装技能资源）
 pnpm package:mac          # 为 macOS 打包
 pnpm package:win          # 为 Windows 打包
 pnpm package:linux        # 为 Linux 打包
 ```
+
+会话交接从当前 Gateway 读取历史（包括隔离 source runtime 会话），并把有长度限制的近期助手结果作为未核验上下文带入新会话。
 
 Verse Claw 现在会在 active project workspace 和 OpenClaw agent workspace 中播种 `.clawx/harness/` 项目 harness 文档骨架，用 Verse Claw 自有结构承载 rules、scenarios、task contracts、guides、layers、context-pack recipes 和 Task Ledger bridge docs，而不是引入并行的 `.trellis/` 或 Markdown 任务状态事实源。
 

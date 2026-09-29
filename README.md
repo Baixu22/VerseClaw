@@ -557,7 +557,10 @@ pnpm typecheck            # Uncached node/web checks and test observation via pi
 
 # Testing
 pnpm test                 # Run unit tests
-pnpm run test:e2e         # Run Electron E2E smoke tests with Playwright
+pnpm run test:channel-startup  # Fast channel config/sidecar/IRC regressions
+pnpm run check:rc10:dev       # Scoped RC-10 checks; full acceptance after candidate freeze
+pnpm run test:e2e:run tests/e2e/rc10-operator-live.spec.ts --workers=1  # Five real RC-10 scenarios; reuse fresh builds
+pnpm run test:e2e         # Run the full Electron E2E suite (builds first)
 pnpm run test:e2e:headed  # Run Electron E2E tests with a visible window
 pnpm run comms:replay     # Compute communication replay metrics
 pnpm run comms:baseline   # Refresh communication baseline snapshot
@@ -591,13 +594,15 @@ pnpm run test:e2e:agent-dev-quality:smoke  # Workbench E2E smoke loop only
 pnpm agent-dev:validate
 
 # Build & Package
-pnpm run build:vite       # Build frontend only
+pnpm run build:vite       # Build renderer and Electron bundles
 pnpm build                # Full production build (with packaging assets)
 pnpm package              # Package for current platform (includes bundled preinstalled skills)
 pnpm package:mac          # Package for macOS
 pnpm package:win          # Package for Windows
 pnpm package:linux        # Package for Linux
 ```
+
+Session handoffs read the active Gateway history, including isolated source-runtime sessions, and carry a bounded recent assistant result as unverified context.
 
 Verse Claw also seeds workspace-local `.clawx/harness/` docs for active project workspaces and OpenClaw agent workspaces. This provides a Trellis-inspired project harness for rules, scenarios, task contracts, guides, layers, context-pack recipes, and Task Ledger bridge docs without introducing a parallel `.trellis/` or Markdown task-state source of truth.
 
