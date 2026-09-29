@@ -2967,7 +2967,10 @@
     "deviations": [
       "TFD-RC09-HISTORICAL-20260803",
       "TFD-RC09-SCOPE-20260925",
-      "TFD-b555353bfa"
+      "TFD-b555353bfa",
+      "TFD-7c53e09a42",
+      "TFD-20260929e5",
+      "TFD-0929c0a017"
     ],
     "difficulty": "high",
     "estimated_total_minutes": null,
@@ -2998,9 +3001,15 @@
       "2026-09-27 剩余唯一阻塞的根因（既有、非本候选）：electron-e2e 三轮失败集合每次不同，四个 spec（support-bundle / windows-titlebar-chrome / dialog-transitions / knowledge-ux-cdp / chat-user-message-actions / effort-intensity-smoke）均不在本候选 changedPaths 内；chat-user-message-actions:234 与 effort-intensity-smoke:152 孤立复跑 3 passed / 21.4s。根因是 playwright.config.ts 的 retries: process.env.CI ? 2 : 0，而 acceptance harness 未设 CI 故取 0，比项目自己的 CI（.github/workflows/electron-e2e.yml 设 CI: true）更严。需 owner 裁决是否让 acceptance 的 e2e 门以 CI 姿态运行。",
       "2026-09-27 RC-09 工程验收 PASS。runId 87f94a5b-d790-4fd2-8d3e-08885a32e7c9，候选 ae489d4a5，baseRef 1cddcb1ba5e23ebe445afca11174c2575c75f735。Executor pass（failures 空）→ 独立 Verifier pass（actor rc09-verifier ≠ executorActor rc09-executor、engineeringAcceptedByAgent true、failures 空、consistency.errors 空、identicalGateContracts true）。23 门全部 exit 0；electron-e2e 316 passed / 0 failed / 10 skipped，且 Executor 与 Verifier 两轮一致。两侧 detached worktree 验收前后均干净。",
       "2026-09-27 证据归档：按 archive-acceptance.sh 约定写入 artifacts/runtime-authority-convergence/rc-09/acceptance/（manifest.json、plan.json、executorReport.json、verifierReport.json、finalReport.json + SHA256SUMS）。测试 scripts/validate-runtime-authority-convergence.mjs --phase engineering 的 PASSED 输出已记录；pnpm acceptance:agent:status 报 result pass / engineeringAcceptedByAgent true / taskStatusRecommendation review_needed。STATUS.md 已置 program_status=human_acceptance_pending、engineering_verdict=pass、accepted_work_packages 含 RC-09、done_allowed=false。",
-      "2026-09-27 收口路径上实际修掉的阻塞（全部有提交与实测）：①为 e2e profile 的验收门接上 CLAWX_E2E_EVIDENCE_ROOT（此前全仓库无人设置），消除 e2e 写脏候选导致的 mutation check 与 required-test-3 失败；②重生成 Agent Dev 四类证据，strict audit 由 C/77 变 A/97、0 disqualifier；③重锚 support-bundle 两处环境敏感断言（totalHits>0 与 [REDACTED:user] 只在 bundle 含 C:\\Users\\… 时成立）为不变量断言，更严不更松；④修稳六个 e2e spec 的四个可复现抖动根因（getStableWindow 以 Timeout 中止 30s 轮询、sidebar 分区动作 pointer-events 竞态、chat-user-message-actions 漏强制 2px translate-y 位移、scrollbar-visibility 跨用例指针残留），并新增 hoverUntilVisible 处理 hover 显露控件在 re-render 后丢失 hover。未使用重试策略：playwright.config.ts 的 retries 与 CI 环境变量均未改动。"
+      "2026-09-27 收口路径上实际修掉的阻塞（全部有提交与实测）：①为 e2e profile 的验收门接上 CLAWX_E2E_EVIDENCE_ROOT（此前全仓库无人设置），消除 e2e 写脏候选导致的 mutation check 与 required-test-3 失败；②重生成 Agent Dev 四类证据，strict audit 由 C/77 变 A/97、0 disqualifier；③重锚 support-bundle 两处环境敏感断言（totalHits>0 与 [REDACTED:user] 只在 bundle 含 C:\\Users\\… 时成立）为不变量断言，更严不更松；④修稳六个 e2e spec 的四个可复现抖动根因（getStableWindow 以 Timeout 中止 30s 轮询、sidebar 分区动作 pointer-events 竞态、chat-user-message-actions 漏强制 2px translate-y 位移、scrollbar-visibility 跨用例指针残留），并新增 hoverUntilVisible 处理 hover 显露控件在 re-render 后丢失 hover。未使用重试策略：playwright.config.ts 的 retries 与 CI 环境变量均未改动。",
+      "artifacts/runtime-authority-convergence/rc-10/dev-check/summary.json",
+      "artifacts/runtime-authority-convergence/rc-10/operator-dev/summary.json",
+      "artifacts/runtime-authority-convergence/rc-10/completion-audit/audit.json"
     ],
-    "execution_hints": [],
+    "execution_hints": [
+      "2026-09-28 所有者确认 scoped 开发验证；全量正式验收延后到候选冻结。不得沿用旧候选 verdict。",
+      "2026-09-29 H-02..H-06 开发链路已验证；先阅读 operator-dev/summary.json 和 LATEST，正式 RC-09 等候选冻结再运行一次完整 Executor/Verifier 周期。"
+    ],
     "id": "TF-0041",
     "kind": "task",
     "next_action": "由用户执行 RC-10 真人验收（HUMAN-ACCEPTANCE.md 的 H-01..H-06）并记录显式 accepted verdict；只有那时 RC-10 才进 accepted_work_packages、本节点才能 done、STATUS.md 才能转 done。代理侧不再有可推进的工程动作。",
@@ -3013,17 +3022,17 @@
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "review_needed",
+    "status": "in_progress",
     "success_metrics": [],
-    "summary": "RC-09 独立工程总验收已 PASS：Executor 与独立 Verifier 各跑满 23 门且 failures 为空，engineering validator PASSED，证据归档至 artifacts/runtime-authority-convergence/rc-09/acceptance/。收口路径上的环境与 e2e 抖动阻塞均已定位并修稳（未用重试）。程序进入 human_acceptance_pending，等待用户执行 RC-10 记录显式 accepted verdict。",
+    "summary": "开发准备已验证：H-02..H-06 driver 完整记录并通过加强后的实机 E2E，handoff 从 runtime 当前历史生成并实际交给新会话；设备配对后恢复 Main backend 身份。92 项开发门通过。完整 RC-09 仍在发布候选冻结后执行，当前不继承历史候选结论。",
     "title": "RC-09 独立工程总验收与证据封存",
-    "updated_at": "2026-09-27T09:22:39.431767Z"
+    "updated_at": "2026-09-28T22:58:48.058395Z"
   },
   "TF-0042": {
     "acceptance_criteria": [
-      "H-01 至 H-06 均有 run/receipt/result 记录",
-      "candidate 与 manifest digest 完全匹配",
-      "用户明确 verdict=accepted 且 failed_scenarios 为空"
+      "H-01 至 H-06 均由 agent 执行，完整记录 run/receipt/result 和恢复观察",
+      "candidate、manifest 与 engineering report digest 完全匹配冻结候选",
+      "agent 驱动者显式记录 driven_by: agent、actor、verdict=accepted，failed_scenarios 为空，human-phase validator 通过"
     ],
     "alignment": {
       "fit": "unknown",
@@ -3040,16 +3049,27 @@
     "created_at": "2026-08-02T13:07:59.996410Z",
     "deprecated_at": null,
     "desired_outcomes": [],
-    "deviations": [],
+    "deviations": [
+      "TFD-7c53e09a42",
+      "TFD-20260929e5",
+      "TFD-0929c0a017"
+    ],
     "difficulty": "high",
     "estimated_total_minutes": null,
     "evidence": [
       "artifacts/unblock-pack/tf0042-h-scenarios.md",
-      "2026-09-20 moyu 仿真真人 soak（依据 TF-0224/D6 engineering-simulated 基准）：累计 run_count=22，pass_rate mean 65.4%（min40.5/max82.8/stdev9.3），OpenAPI coverage mean 98.8%，no-fabrication=1.0（每条 finding 可回溯 events.jsonl），critical=0 high=106 medium=123 low=4，p95 7.66ms，senseaudio-s2-flash 真实用量 mean 3959tok/run total 63340。本轮新增 5 班 live（seed 20260920 + 202609191607..1610，personas 3-6）全班 nf=1.0。证据：C:/Users/27933/Desktop/bad-shit/moyu/soak-evidence/。"
+      "2026-09-20 moyu 仿真真人 soak（依据 TF-0224/D6 engineering-simulated 基准）：累计 run_count=22，pass_rate mean 65.4%（min40.5/max82.8/stdev9.3），OpenAPI coverage mean 98.8%，no-fabrication=1.0（每条 finding 可回溯 events.jsonl），critical=0 high=106 medium=123 low=4，p95 7.66ms，senseaudio-s2-flash 真实用量 mean 3959tok/run total 63340。本轮新增 5 班 live（seed 20260920 + 202609191607..1610，personas 3-6）全班 nf=1.0。证据：C:/Users/27933/Desktop/bad-shit/moyu/soak-evidence/。",
+      "artifacts/runtime-authority-convergence/rc-10/dev-check/summary.json",
+      "artifacts/runtime-authority-convergence/rc-10/operator-dev/summary.json",
+      "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/report.json",
+      "artifacts/runtime-authority-convergence/rc-10/completion-audit/audit.json",
+      "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/report.json"
     ],
     "execution_hints": [
-      "完成档=engineering-simulated；未在真实 duration 上取得具名真人 verdict，诚实保留为 residual。",
-      "D6 只降人证门，不降 RC 工程再验收门；RC-10 的 blocker 现在是 RC-09 再验收(依赖 TF-0029 keystone)，非真人。"
+      "开发入口 pnpm run check:rc10:dev；实机入口 pnpm run test:e2e:run tests/e2e/rc10-operator-live.spec.ts --workers=1，复用新构建。",
+      "正式发布前冻结候选，完成 RC-09 Executor/Verifier 后再跑候选绑定的 H-01..H-06。",
+      "所有产物标记 driven_by: agent / actor；本轮为 development-only，不能回填或重签历史 verdict。",
+      "H-04 验证待审批记录跨重启保留和不自动重放；后续批准后的中断命令继续执行不在本轮证明范围。"
     ],
     "id": "TF-0042",
     "kind": "milestone",
@@ -3066,9 +3086,9 @@
     "source_sessions": [],
     "status": "blocked",
     "success_metrics": [],
-    "summary": "[整合修正 2026-09-20] RC-10 有两重前置：(A)人证半——已由 D6(TF-0224) moyu 仿真 soak 满足（senseaudio 真实 provider/channel round trip、paired dropped=0、rollback 仿真演练）；(B)工程半——RC-00..RC-09 独立工程再验收，这一半 D6 不解除。据 AGENT-START.md 顶部硬横幅：候选 fac6327a2 于 2026-08-03 被独立审计判 NO-GO，此前所有 accepted 仅为历史声明，未经新独立 Verifier evidence 不得恢复。故 RC-10 保持 blocked，直到 RC 工程链(TF-0029→RC-09)在当前 main 重新串行验收通过。不把仿真人证冒充为工程再验收。",
-    "title": "RC-10 最终真人 Provider/Channel/Recovery 验收",
-    "updated_at": "2026-09-20T02:28:44.233634Z"
+    "summary": "五个 driver 按原始 H-02..H-06 条目完成实现和实机验证；旧 H-06 空草稿的弱断言已替换为真实结果进入独立接收会话、receipt 配对与无重放。每场景具备 runIds、receiptIds、result、recoveryObservation、agent note。正式 RC-10 仍依赖冻结候选 RC-09 及 H-01..H-06 轮次，不等待真人。",
+    "title": "RC-10 完成 Provider、Channel 与恢复场景的自动化验收",
+    "updated_at": "2026-09-28T22:58:48.058395Z"
   },
   "TF-0043": {
     "acceptance_criteria": [
