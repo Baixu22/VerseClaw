@@ -1,0 +1,103 @@
+{
+  "applied_at": "2026-09-29T18:56:21.050211Z",
+  "base_graph_hash": "a9b39646832b87e318733f4f0f89934721c26ecb8cd4a4c33bd7706bf09704da",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "RC-08B accepted; RC-09 final engineering acceptance ready",
+          "RC-09 final-acceptance spec + validate-runtime-authority-convergence.mjs delivered (fail-closed verified). BLOCKER: pnpm run typecheck final gate fails on 330 pre-existing typecheck debt errors (ACP manager.*, agent-loop, replay-tool-executor), all NOT introduced by RC-00..08B (verified zero new errors). Hard Stops forbid widening owned paths. Needs user decision on typecheck debt remediation or gate-scope adjustment.",
+          "2026-09-25 阻塞根因定位（实测 HEAD 0ee0cf360）：RC 链并非干净分支——6493d5cce..HEAD 有 406 个提交，仅 97 个 subject 带 RC 编号，309 个是非 RC 工作流；af60ab234（lobe-icons，995 条）与 2e5d99c12（recover sync，1338 条文件触达）两个批量提交即占绝大多数路径。归属矩阵在 4556 条累计路径上对 3220 条 fail-closed 抛错。",
+          "2026-09-25 顺带查出 4 个此前无人记录的硬缺陷：①生成器 fallback spec 列表由目录扫描得来，把 rc10-human-acceptance-runbook.md（92 条路径）与 rc01r-* 变体当成 owner；②validator 注释声称拒绝集合外 owner，代码从未实现该校验；③assertLinearRange 因窗口内 13 个 merge 提交而直接中止——生成器在这段历史上根本跑不起来；④fallback 使用 touchedAreas 宽 glob，RC-00 因此吞掉 640 条非 RC 路径（正是 §5 禁止的「扩大 glob 掩盖其他 workstream」）。另修正 spec 里与 baseline 不一致的过期 --since。",
+          "2026-09-25 修复后矩阵升 schema v2：RC-owned ∪ 具名排除 = 全量 diff，每条排除记录 first-touch commit SHA + subject + workstream；owner 集由 cumulativeOwnership.requiredSpecs 派生（13 个，RC-10/rc01r-* 已排除），fallback 只认 ownedPaths。tests/unit/rc09-ownership-matrix.test.ts + tests/unit/agent-engineering-acceptance.test.ts 66/66 绿；generator 对已提交矩阵逐字节可复现。",
+          "2026-09-25 第二个耦合阻塞（此前无人记录）：pnpm harness validate --spec <final spec> --since <acceptedBaseSha> 用同一累计 diff 比 spec 的 touchedAreas，旧锚点 73bdddbb1 下 1626 条未覆盖。根因是 acceptedBaseSha 锚得过早（RC 链早期），不是 spec 声明不足。",
+          "2026-09-25 裁决 TFD-RC09-SCOPE-20260925（方案 B）：acceptedBaseSha 前移到 1cddcb1ba5e23ebe445afca11174c2575c75f735（2026-09-22 封版＝分支上游，由 scripts/rc01-authority-inventory.mjs 重新生成、rc01-baseline-validate PASS）；final spec 固定 diffBase 指向该 SHA 并补齐 README/agent-dev 声明，pnpm harness validate --spec … 零未覆盖。",
+          "2026-09-25 复核上面第 2 条记录的第二个阻塞：pnpm run typecheck 现为 exit 0（typecheck:node 与 typecheck:web 均 0），「330 个既有类型错误」来自此后已被收窄的 gate 口径（typecheck-core 边界 + tsconfig.test.json 转观察模式），不再是阻塞。观察模式仍报 1 条既有声明漂移：tests/unit/harness-git.test.ts 导入 resolveDefaultDiffBase，而 harness/src/git.d.mts 未声明该导出——与本轮改动无关，记为 residual，未顺手修改以保持变更集可复核。",
+          "2026-09-25 落地提交 3 个：e81d42bbe（分区口径 + 前移锚点 + 4 个硬缺陷）、922bac731（矩阵绑定改为 base 相等 + headSha 祖先，修掉本轮自己引入的哈希不动点回归——原要求 matrix.headSha === candidate，但矩阵要被提交进候选本身，RC-09 将永远无法通过）、19d6210eb（把矩阵生成点语义写进 spec，避免下一个人重踩）。",
+          "2026-09-25 最终候选实测：candidate 922bac731、baseRef 1cddcb1ba…、changedPaths 236 条 → 188 RC-owned + 48 具名排除（5 个工作流）。pnpm acceptance:agent:plan 在该候选上 exit 0（23 门、executionMode=full、cleanAtPlan=true、humanEvidence task+safety 均 required）；validator 归属段零错误（其余错误全部来自 2026-08-09 旧报告绑定的是另一个候选）。pnpm run typecheck / lint:check / harness:ci 均 exit 0；8 个受影响测试文件 168 项通过。",
+          "residual：①RC-09 工程重跑（plan → executor → 独立 verifier → engineering validator）尚未执行；artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/ 下的 manifest/final-report 仍是 2026-08-09 rejected/historical 世代，须按 §18.3 归档后使用全新输出目录重跑。②harness/src/git.d.mts 与 git.mjs 的导出声明漂移（观察模式 1 条，不阻塞 gate）。",
+          "2026-09-26 接力验证：tests/e2e/chat-layout-cdp.spec.ts 的 hover 颜色比较在 100ms CSS 过渡中采样，原始复测失败；等待 getAnimations().finished 后，修改后的原始 Electron 用例连续 3/3 通过、零重试、零跳过。harness/src/git.d.mts 补 resolveDefaultDiffBase(cwd?: string): Promise<string>；harness-git 单测 7/7、完整 test typecheck、定向 ESLint、diff-aware Harness validate 全 exit 0。磁盘证据 artifacts/runtime-authority-convergence/rc-09/takeover-20260926/summary.json。",
+          "2026-09-26 最新正式启动记录仍 NO-GO：c2af32c8a 的 executor-report 在任何 gate 前被继承凭据变量拒绝。独立 strict audit 另确认四份 Agent Dev 证据超过 24h；必须刷新后重跑，不能复用旧绿报告。",
+          "2026-09-26 正式 Executor 重跑（runId aa78e5b2-a4d9-41a7-ba20-1e36ff8f613f，候选 ba257bbedcd8f1464095ab733c601a7fc1f38805，baseRef 1cddcb1ba5e23ebe445afca11174c2575c75f735，23 门，coverage ui=true 故本次触发 Electron E2E）结果 NO-GO：21 门通过、3 门失败。两个环境前置已修复并实测：①provision-verseshell-resources 通过——run6/run7 的 integration_tests 失败不可复现，隔离 scratch root 端到端重跑真实 gate 12 分钟 GATE_EXIT=0，重建 ae.exe sha256 ac6a7a15… 与已提交 manifest 逐字节一致；②该门 --electron 步骤要求源仓库存在 node_modules/.pnpm/electron@40.8.4/node_modules/electron/{dist,path.txt}，而依赖门用 --ignore-scripts 安装从未生成，补跑 electron postinstall 后通过。",
+          "2026-09-26 三条失败根因：①agent-dev-audit C/77，4 条 P0 evidence-source-newer——agent-dev-workbench/evidence.json、agent-dev-deep-test/{report,history}.json、agent-dev-quality/report.json 早于本候选改过的 scripts/agent-dev-deep-test.mjs；②electron-e2e 2 failed/314 passed/10 skipped——support-bundle-fp-p1-06.spec.ts:192 report.totalHits>0 实得 0（report.verified 为 true）、windows-titlebar-chrome.spec.ts:6 worker 原生崩溃 0xC0000409（0ms）；③required-test-3（pnpm harness validate --spec，无 --since）报 12 条路径不在 touchedAreas/ownedPaths，与派生失败 detached worktree changed tracked or unexpected source files 同源：e2e 重写了 12 个被跟踪文件（.design-staging/verse-hero/*.png 6、reports/visual-tune/*.png 4、artifacts/browser-security-recovery/evidence.json、artifacts/sekb-golden-path/evidence.json）。rc08b 绿灯时 coverage.ui=false 不跑 e2e，故该问题首次在 RC-09 暴露。",
+          "2026-09-26 Verifier 按设计未启动：runFull 在 executor 失败时直接写 final-report.json（NO-GO）并返回，不调用 verifyAcceptance。证据归档 D:/ClawX-acceptance/rc09-20260926/run-02-nogo-full-aa78e5b2/（bundleDigest 8544127780f76f179c62c9439d7ad5f01c940f6cafb25f34bad4012aca54bd40）；旧世代与 attempt-01 按 §18.3/§20 只读归档到 archived-final-evidence-20260926-prerun/ 与 attempt-01-electron-missing/，均未改变 candidate SHA。",
+          "2026-09-26 NO-GO 根因①已修并验证：electron-e2e 写脏候选工作区的根因是 tests/e2e/fixtures/evidence-root.ts 早已实现 CLAWX_E2E_EVIDENCE_ROOT 重定向，但全仓库没有任何地方设置它，electron-e2e 门也不带 env。已在 scripts/lib/agent-engineering-acceptance.mjs 为 e2e profile 的门接上该变量（指向 <tmp>/clawx-e2e-evidence/<runId>，候选之外；verifier 复用同一段 gate 代码故同样生效），新增回归测试 points the Electron E2E evidence root outside the detached worktree。提交 68844e6e6。旁证：干净工作区上跑 required-test-3 原命令 pnpm harness validate --spec 得 Spec is valid / exit 0，说明该门此前纯粹被 e2e 改脏工作区拖挂。",
+          "2026-09-26 NO-GO 根因②已修并验证：Agent Dev 四类证据过期（C/77、4 条 P0 evidence-source-newer）经 pnpm agent-dev:workbench + pnpm agent-dev:deep-test（decision daily-loop-ok、releaseReady true）重生成，pnpm agent-dev:audit 现为 A/97、0 disqualifier、exit 0。提交 c1d066026。",
+          "2026-09-26 未决根因③（既有缺陷，非本候选引入，需 owner 裁决）：electron-e2e 的两个失败。support-bundle-fp-p1-06.spec.ts:192 断言 report.totalHits>0 实得 0——electron/services/support-bundle.ts 的 providers 段按设计只导出 vendorId/authMode/enabled/hasKey/validation（注释 Never key material (hard lock)），测试植入的 key 形状 label 从不进入 bundle，该断言在现实现下不可满足，no-leak 属性另有该 spec 183-184 行单独断言且通过；windows-titlebar-chrome.spec.ts:6 为 worker 原生崩溃 0xC0000409（0ms，历史同类判为不可复现抖动）。两个 spec 与 support-bundle.ts 均不在本候选 changedPaths 内（最后改动分别是基线里的 9cdb6eb95 与 918ed8abd）。未擅自改这条安全用例断言、未降低任何断言。",
+          "2026-09-26 未决根因③的定向复跑（关键修正）：用默认 TEMP 单跑 6 个相关 spec 得 7 passed / 1 skipped，仓库工作区保持干净。① support-bundle-fp-p1-06.spec.ts:192 复跑通过且 totalHits=3，命中来自 windows-user-path pattern——即该断言是环境相关的：验收把 TEMP 设在 D:\\ClawX-acceptance\\tmp，bundle 内不含任何 C:\\Users\\… 路径，故 totalHits=0。它真正想断言的（植入的 key 形状 label 被 redact）在现实现下不可满足：support-bundle.ts 的 providers 段只导出 vendorId/authMode/enabled/hasKey/validation，label 从不进入 bundle；no-leak 属性另有该 spec 183-185 行单独断言且通过。② windows-titlebar-chrome.spec.ts:6 复跑 6.4s 通过，确认是 0xC0000409 原生崩溃抖动。处置二选一：(a) 让 e2e 门在用户 profile 的 TEMP 下运行（与常规 pnpm run test:e2e 一致，属 RC-09 ownedPaths 内的 harness 改动）；(b) 把该断言改为对齐已加固的 no-label 契约。两条路都不允许降低安全断言，故未擅自实施。",
+          "2026-09-26 Fix 1 端到端实证：定向复跑时那 12 个被跟踪文件全部落到 D:\\ClawX-acceptance\\tmp\\e2e-verify\\，git status --porcelain --untracked-files=all 为空，证明 CLAWX_E2E_EVIDENCE_ROOT 重定向在真实套件里生效。另 pnpm harness validate --spec 的两种形式（带/不带 --since）均 exit 0 / Spec is valid。",
+          "2026-09-26/27 连跑三轮完整正式验收，阻塞面从 3 门收窄到 1 门：run aa78e5b2 失败门 = agent-dev-audit + electron-e2e + required-test-3；run dd9cbaab 与 run fbc804da 均只剩 electron-e2e（mutation check、required-test-3、agent-dev-audit 全部转绿）。旁证：worktree 在每轮结束后 git status 均为空。",
+          "2026-09-27 修复 3 落地（06bc0310f + 5bc086de6）：support-bundle spec 的两处断言是环境敏感的——totalHits>0 与 toContain([REDACTED:user]) 都只在 bundle 含 C:\\Users\\… 路径时成立，而验收 TEMP 在 D:，故 run aa78e5b2 起该用例必挂。已改为断言不变量（报告必须 verified、必须列出已扫描 pattern、植入 label 必须缺席于 provider 记录与原文、发布 total 必须等于 findings 之和、未脱敏 profile 路径不得残留），更严不更松，183-185 行 no-leak 断言保留；run fbc804da 中该用例已不再失败。",
+          "2026-09-27 剩余唯一阻塞的根因（既有、非本候选）：electron-e2e 三轮失败集合每次不同，四个 spec（support-bundle / windows-titlebar-chrome / dialog-transitions / knowledge-ux-cdp / chat-user-message-actions / effort-intensity-smoke）均不在本候选 changedPaths 内；chat-user-message-actions:234 与 effort-intensity-smoke:152 孤立复跑 3 passed / 21.4s。根因是 playwright.config.ts 的 retries: process.env.CI ? 2 : 0，而 acceptance harness 未设 CI 故取 0，比项目自己的 CI（.github/workflows/electron-e2e.yml 设 CI: true）更严。需 owner 裁决是否让 acceptance 的 e2e 门以 CI 姿态运行。",
+          "2026-09-27 RC-09 工程验收 PASS。runId 87f94a5b-d790-4fd2-8d3e-08885a32e7c9，候选 ae489d4a5，baseRef 1cddcb1ba5e23ebe445afca11174c2575c75f735。Executor pass（failures 空）→ 独立 Verifier pass（actor rc09-verifier ≠ executorActor rc09-executor、engineeringAcceptedByAgent true、failures 空、consistency.errors 空、identicalGateContracts true）。23 门全部 exit 0；electron-e2e 316 passed / 0 failed / 10 skipped，且 Executor 与 Verifier 两轮一致。两侧 detached worktree 验收前后均干净。",
+          "2026-09-27 证据归档：按 archive-acceptance.sh 约定写入 artifacts/runtime-authority-convergence/rc-09/acceptance/（manifest.json、plan.json、executorReport.json、verifierReport.json、finalReport.json + SHA256SUMS）。测试 scripts/validate-runtime-authority-convergence.mjs --phase engineering 的 PASSED 输出已记录；pnpm acceptance:agent:status 报 result pass / engineeringAcceptedByAgent true / taskStatusRecommendation review_needed。STATUS.md 已置 program_status=human_acceptance_pending、engineering_verdict=pass、accepted_work_packages 含 RC-09、done_allowed=false。",
+          "2026-09-27 收口路径上实际修掉的阻塞（全部有提交与实测）：①为 e2e profile 的验收门接上 CLAWX_E2E_EVIDENCE_ROOT（此前全仓库无人设置），消除 e2e 写脏候选导致的 mutation check 与 required-test-3 失败；②重生成 Agent Dev 四类证据，strict audit 由 C/77 变 A/97、0 disqualifier；③重锚 support-bundle 两处环境敏感断言（totalHits>0 与 [REDACTED:user] 只在 bundle 含 C:\\Users\\… 时成立）为不变量断言，更严不更松；④修稳六个 e2e spec 的四个可复现抖动根因（getStableWindow 以 Timeout 中止 30s 轮询、sidebar 分区动作 pointer-events 竞态、chat-user-message-actions 漏强制 2px translate-y 位移、scrollbar-visibility 跨用例指针残留），并新增 hoverUntilVisible 处理 hover 显露控件在 re-render 后丢失 hover。未使用重试策略：playwright.config.ts 的 retries 与 CI 环境变量均未改动。",
+          "artifacts/runtime-authority-convergence/rc-10/dev-check/summary.json",
+          "artifacts/runtime-authority-convergence/rc-10/operator-dev/summary.json",
+          "artifacts/runtime-authority-convergence/rc-10/completion-audit/audit.json",
+          "2026-09-29/30 RC-09 在候选 C2 通过工程验收：runId f262eaa4-7e68-4abb-90b3-a8356451f14e，candidate a1bd8d8cc3c8463bd787f6729f5ff6a2a7407240，baseRef 1cddcb1ba5e23ebe445afca11174c2575c75f735。Executor result=pass failures=[] actor=rc09-executor；独立 Verifier result=pass failures=[] actor=rc09-verifier 不等于 executorActor，consistency.errors=[]，identicalGateContracts=true，两轮 23 门的 exit code 逐门一致。electron-e2e = 317 passed / 10 skipped / 0 failed（54.2 分钟）；provision-verseshell-resources（Rust 1.94）525-584 s，校验了 ae.exe 与归属矩阵 sha256 ed718fb96d...；agent-dev-audit A/97 0 disqualifier。",
+          "候选 C 的第一轮（runId ae396e9a-198b-4ac9-9ec3-b61c9ad94932，候选 1c4a3c0cd）为 22/23：唯一失败是本次落库的新 spec tests/e2e/rc10-operator-live.spec.ts —— H-02/H-03/H-04 pass，H-05 挂在 page.screenshot: Timeout 30000ms exceeded，即采证步骤用了 Playwright 默认 30 s 超时，功能断言全过却被判 fail。已修为 captureEvidence()（60 s 乘最多 3 次 + animations disabled，最后一次错误仍然抛出），node --check 通过、该 spec 独立复跑 1/1 pass（2.0 分钟）。据此切出候选 C2：82fec24fd（驱动修复）+ 521bdad05（文档与偏差）+ a1bd8d8cc（重生成归属矩阵）。",
+          "C2 上独立 verifier 两次被环境挡住、第三次才通过，均非产品缺陷：第一次 runtime-build exit 3221226505 = 0xC0000409 原生崩溃（构建本身已跑完并打出 phase timings）；第二次 runtime-static-check 的 npm shrinkwrap guard 中 npm install --package-lock-only exit 1（59.91 s；该 guard 的子进程上限是 10 分钟，故不是超时；事后 npm view pnpm version 立即 200；同一门在同一内容上此前已三次通过 390/303/312 s）。两次都发生在与其他 agent 会话共用、空闲内存仅 2.1 GB 的窗口；9/29 两个 OpenConsole.exe 转储（0xC0000005，ntdll/KERNELBASE 栈）落在同一时间窗，node 侧无转储。第三次由静默窗口探测器（closure/quiet-window-watch.ps1，要求空闲不小于 5 GB 且系统 CPU 不大于 15% 连续 10 分钟）于 01:29:18 触发（free 5.37 GB / cpu 5%）并 exit 0。",
+          "收口动作：canonical 目录提升 f262eaa4 的 manifest.json 与 final-report.json（提交前经 check-canonical-pair.mjs 预检，断言等价于 runtime-authority-convergence-control-pack.test.ts:60-111，8/8 单测通过）；rc-09/acceptance 归档 5 JSON + SHA256SUMS（星号格式与 rc-03..rc-08b 一致），9/27 那份 git mv 到 rc-09/accepted-20260927-ae489d4a5；STATUS 置 program_status=human_acceptance_pending、engineering_verdict=accepted、accepted_work_packages 含 RC-09、current_work_package=RC-10、current_task_forest_node=TF-0042、done_allowed=false。",
+          "本轮未改任何口径：验收契约、playwright.config.ts 的 retries（仍为 process.env.CI ? 2 : 0）、所有断言、门列表、矩阵口径规则、三个产品锁（live_ready/product_approved/default_on 全 false）。首轮已通过的 22 门未跨候选继承。",
+          "residual：① 收口提交之后需在 HEAD 上重跑 node scripts/validate-runtime-authority-convergence.mjs --phase engineering，走 closure-advance 前进路径 —— 那是 Phase A 修复（ee3e3840b）的真实验收证据，本提案落库时尚未执行；② 验收 e2e 门与项目 CI 的重试姿态差异（CI=true 时 retries=2，acceptance 未设 CI）仍未裁决，按计划留作唯一待决事项；③ operator-driver.mjs 仍有若干紧超时（:93 点击 15 s、:61 rpc 30 s、:222 与 :227 启动与等待 120 s、驱动预算 --timeout-min 8 对约 125 s 的标称场景集）。"
+        ]
+      },
+      "id": "TF-0041"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "artifacts/unblock-pack/tf0042-h-scenarios.md",
+          "2026-09-20 moyu 仿真真人 soak（依据 TF-0224/D6 engineering-simulated 基准）：累计 run_count=22，pass_rate mean 65.4%（min40.5/max82.8/stdev9.3），OpenAPI coverage mean 98.8%，no-fabrication=1.0（每条 finding 可回溯 events.jsonl），critical=0 high=106 medium=123 low=4，p95 7.66ms，senseaudio-s2-flash 真实用量 mean 3959tok/run total 63340。本轮新增 5 班 live（seed 20260920 + 202609191607..1610，personas 3-6）全班 nf=1.0。证据：C:/Users/27933/Desktop/bad-shit/moyu/soak-evidence/。",
+          "artifacts/runtime-authority-convergence/rc-10/dev-check/summary.json",
+          "artifacts/runtime-authority-convergence/rc-10/operator-dev/summary.json",
+          "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/report.json",
+          "artifacts/runtime-authority-convergence/rc-10/completion-audit/audit.json",
+          "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/report.json",
+          "2026-09-30 RC-09 在候选 a1bd8d8cc（runId f262eaa4）上 Executor 与独立 Verifier 双双 pass、failures 空、两轮 23 门一致，STATUS 进入 human_acceptance_pending，本节点的工程前置解除。",
+          "2026-09-30 H-01 前置实测：GET http://127.0.0.1:3065/v1/models 返回 200（目录含 glm-5-3-flash 等），POST /v1/responses（model glm-5.3-flash）返回 200 completed、text=OK、usage 50 in / 47 out（含 44 reasoning tokens），即真实模型而非桩；探针 closure/probe-provider.mjs 的 key 仅经环境变量传入、输出脱敏、未落盘。driver.mjs:56-65 把 home/user-data/workspace/evidence 全放在 --data-root 下，:109 要求候选干净，故可在仓库外目录正式跑而不污染真实 profile。",
+          "2026-09-30 H-01..H-06 的正式轮次与 human-verdict.yaml（driven_by: agent）尚未执行；本轮只做到工程前置已开，未把开发证据当作正式验收。"
+        ]
+      },
+      "id": "TF-0042"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 1,
+        "correction": "已从应用前快照 0674.json 恢复原数组并追加新条目（TF-0041 36 条、TF-0042 10 条）。后续任何 update_node 提案必须先读当前值（nodes.json 或最近快照）再整体写出。",
+        "created_at": "2026-09-30T03:05:00Z",
+        "evidence": [
+          ".agent-workbench/task-forest/snapshots/0674.json",
+          ".agent-workbench/task-forest/proposals/TFP-rc09-c2-engineering-accepted-20260930.json"
+        ],
+        "expected_requirement": "更新节点的证据时累积保留历史条目。",
+        "id": "TFD-task-forest-evidence-replace-20260930",
+        "kind": "process_gap",
+        "observed_action_or_result": "TFP-rc09-c2-engineering-accepted-20260930 应用后：TF-0041 evidence 30 -> 6，TF-0042 evidence 7 -> 3；快照 0674 保留完整数组，据此恢复。",
+        "reason": "历史证据是任务森林的审计面；静默截断会让后续接手者看不到此前定位过的根因与实测结论，而快照是唯一可恢复来源。",
+        "recommendation": "把“evidence 是整体替换”写进 task-forest 使用约定，并在提案前先落一次快照。",
+        "related_task_ids": [
+          "TF-0041",
+          "TF-0042"
+        ],
+        "severity": "medium",
+        "status": "resolved",
+        "summary": "Task Forest 的 update_node 对 evidence 是整体替换而非追加：一次 RC-09 收口提案只带了新条目，把 TF-0041 的历史证据从 30 条压成 6 条、TF-0042 从 7 条压成 3 条。"
+      }
+    }
+  ],
+  "created_at": "2026-09-29T18:56:20.842840Z",
+  "proposal_id": "TFP-rc09-c2-evidence-restore-20260930",
+  "rationale": "update_node REPLACES the evidence array rather than appending. The closure proposal supplied only the new entries, so TF-0041 lost 24 historical entries (30 -> 6) and TF-0042 lost 4 (7 -> 3). This restores the accumulated arrays from snapshot 0674 with the new entries appended, and records the tooling lesson.",
+  "session_id": "rc09-phase-c-closure-20260930",
+  "status": "applied"
+}

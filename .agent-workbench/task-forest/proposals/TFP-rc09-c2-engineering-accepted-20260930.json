@@ -1,0 +1,74 @@
+{
+  "applied_at": "2026-09-29T18:54:06.758231Z",
+  "base_graph_hash": "dada04df626f532f9539b7b949800ded9ef78f2c9f3819828bd32d41875e6cb2",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "2026-09-29/30 RC-09 在候选 C2 通过工程验收：runId f262eaa4-7e68-4abb-90b3-a8356451f14e，candidate a1bd8d8cc3c8463bd787f6729f5ff6a2a7407240，baseRef 1cddcb1ba5e23ebe445afca11174c2575c75f735。Executor result=pass failures=[] actor=rc09-executor；独立 Verifier result=pass failures=[] actor=rc09-verifier 不等于 executorActor，consistency.errors=[]，identicalGateContracts=true，两轮 23 门的 exit code 逐门一致。electron-e2e = 317 passed / 10 skipped / 0 failed（54.2 分钟）；provision-verseshell-resources（Rust 1.94）525-584 s，校验了 ae.exe 与归属矩阵 sha256 ed718fb96d...；agent-dev-audit A/97 0 disqualifier。",
+          "候选 C 的第一轮（runId ae396e9a-198b-4ac9-9ec3-b61c9ad94932，候选 1c4a3c0cd）为 22/23：唯一失败是本次落库的新 spec tests/e2e/rc10-operator-live.spec.ts —— H-02/H-03/H-04 pass，H-05 挂在 page.screenshot: Timeout 30000ms exceeded，即采证步骤用了 Playwright 默认 30 s 超时，功能断言全过却被判 fail。已修为 captureEvidence()（60 s 乘最多 3 次 + animations disabled，最后一次错误仍然抛出），node --check 通过、该 spec 独立复跑 1/1 pass（2.0 分钟）。据此切出候选 C2：82fec24fd（驱动修复）+ 521bdad05（文档与偏差）+ a1bd8d8cc（重生成归属矩阵）。",
+          "C2 上独立 verifier 两次被环境挡住、第三次才通过，均非产品缺陷：第一次 runtime-build exit 3221226505 = 0xC0000409 原生崩溃（构建本身已跑完并打出 phase timings）；第二次 runtime-static-check 的 npm shrinkwrap guard 中 npm install --package-lock-only exit 1（59.91 s；该 guard 的子进程上限是 10 分钟，故不是超时；事后 npm view pnpm version 立即 200；同一门在同一内容上此前已三次通过 390/303/312 s）。两次都发生在与其他 agent 会话共用、空闲内存仅 2.1 GB 的窗口；9/29 两个 OpenConsole.exe 转储（0xC0000005，ntdll/KERNELBASE 栈）落在同一时间窗，node 侧无转储。第三次由静默窗口探测器（closure/quiet-window-watch.ps1，要求空闲不小于 5 GB 且系统 CPU 不大于 15% 连续 10 分钟）于 01:29:18 触发（free 5.37 GB / cpu 5%）并 exit 0。",
+          "收口动作：canonical 目录提升 f262eaa4 的 manifest.json 与 final-report.json（提交前经 check-canonical-pair.mjs 预检，断言等价于 runtime-authority-convergence-control-pack.test.ts:60-111，8/8 单测通过）；rc-09/acceptance 归档 5 JSON + SHA256SUMS（星号格式与 rc-03..rc-08b 一致），9/27 那份 git mv 到 rc-09/accepted-20260927-ae489d4a5；STATUS 置 program_status=human_acceptance_pending、engineering_verdict=accepted、accepted_work_packages 含 RC-09、current_work_package=RC-10、current_task_forest_node=TF-0042、done_allowed=false。",
+          "本轮未改任何口径：验收契约、playwright.config.ts 的 retries（仍为 process.env.CI ? 2 : 0）、所有断言、门列表、矩阵口径规则、三个产品锁（live_ready/product_approved/default_on 全 false）。首轮已通过的 22 门未跨候选继承。",
+          "residual：① 收口提交之后需在 HEAD 上重跑 node scripts/validate-runtime-authority-convergence.mjs --phase engineering，走 closure-advance 前进路径 —— 那是 Phase A 修复（ee3e3840b）的真实验收证据，本提案落库时尚未执行；② 验收 e2e 门与项目 CI 的重试姿态差异（CI=true 时 retries=2，acceptance 未设 CI）仍未裁决，按计划留作唯一待决事项；③ operator-driver.mjs 仍有若干紧超时（:93 点击 15 s、:61 rpc 30 s、:222 与 :227 启动与等待 120 s、驱动预算 --timeout-min 8 对约 125 s 的标称场景集）。"
+        ],
+        "next_action": "Phase D / RC-10：正式跑 H-01（凭据已实测可用 http://127.0.0.1:3065/v1 + glm-5.3-flash）与 H-02..H-06（本地 scripted provider + 本地 IRC），证据落 rc-10/acceptance/，写 human-verdict.yaml（driven_by: agent）后跑 node scripts/validate-runtime-authority-convergence.mjs --phase human；随后按 AGENTS.md 的 Task Forest closure policy 收口本节点与 TF-0042。",
+        "progress": 90,
+        "status": "review_needed",
+        "summary": "RC-09 独立工程总验收已在候选 C2（a1bd8d8cc3c8463bd787f6729f5ff6a2a7407240）上 PASS：runId f262eaa4-7e68-4abb-90b3-a8356451f14e，Executor 与独立 Verifier 各跑满 23 门且 failures 为空、两轮 exit code 逐门一致、consistency.errors 空；canonical 目录已提升本轮的 manifest 与 final-report，rc-09/acceptance 归档新一轮，9/27 那份移入 accepted-20260927-ae489d4a5。程序进入 human_acceptance_pending，done_allowed 仍为 false —— 只有 RC-10（H-01..H-06）跑完并写入 accepted verdict 才允许 done。"
+      },
+      "id": "TF-0041"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "2026-09-30 RC-09 在候选 a1bd8d8cc（runId f262eaa4）上 Executor 与独立 Verifier 双双 pass、failures 空、两轮 23 门一致，STATUS 进入 human_acceptance_pending，本节点的工程前置解除。",
+          "2026-09-30 H-01 前置实测：GET http://127.0.0.1:3065/v1/models 返回 200（目录含 glm-5-3-flash 等），POST /v1/responses（model glm-5.3-flash）返回 200 completed、text=OK、usage 50 in / 47 out（含 44 reasoning tokens），即真实模型而非桩；探针 closure/probe-provider.mjs 的 key 仅经环境变量传入、输出脱敏、未落盘。driver.mjs:56-65 把 home/user-data/workspace/evidence 全放在 --data-root 下，:109 要求候选干净，故可在仓库外目录正式跑而不污染真实 profile。",
+          "2026-09-30 H-01..H-06 的正式轮次与 human-verdict.yaml（driven_by: agent）尚未执行；本轮只做到工程前置已开，未把开发证据当作正式验收。"
+        ],
+        "summary": "RC-09 工程验收已在候选 C2 上通过并进入 human_acceptance_pending，RC-10 的工程前置已开；五个 driver（H-02..H-06）此前已按原始条目完成实现和实机验证，H-01 的凭据与端点亦已实测可用。正式 RC-10 仍需候选绑定的一轮 H-01..H-06 与 human 阶段 validator；不得以开发证据代替，也不等待真人。"
+      },
+      "id": "TF-0042"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 1.0,
+        "correction": "不改门、不改断言、不放宽重试姿态：保持同一候选 C2 与同一 manifest，改用静默窗口探测器（空闲不小于 5 GB 且系统 CPU 不大于 15% 连续 10 分钟）在主机真正空闲时重跑 verify 一次即 pass（exit 0）。失败分类与后续建议写入 D:/ClawX-acceptance/rc09-20260929/NEXT-CYCLE-ACCEPTANCE-DESIGN.md。",
+        "created_at": "2026-09-30T03:00:00Z",
+        "evidence": [
+          "docs/dev/handoffs/LATEST.md",
+          "artifacts/agent-engineering-acceptance/runs/f262eaa4-7e68-4abb-90b3-a8356451f14e/final-report.json",
+          "D:/ClawX-acceptance/rc09-20260929/quiet-window.log",
+          "D:/ClawX-acceptance/rc09-20260929/acceptance-3-verify.log",
+          "D:/ClawX-acceptance/rc09-20260929/NEXT-CYCLE-ACCEPTANCE-DESIGN.md"
+        ],
+        "expected_requirement": "验收对同一候选给出稳定、可复现的工程结论；环境抖动不得被当作产品缺陷，也不得通过放宽门槛来掩盖。",
+        "id": "TFD-rc09-environment-blocked-verifier-20260930",
+        "kind": "environment_variance",
+        "observed_action_or_result": "run f262eaa4：executor pass（23 门 exit 0），verifier 第 1 次 runtime-build exit 3221226505（构建已跑完，进程退出时崩），verifier 第 2 次 runtime-static-check 的 npm shrinkwrap guard exit 1（59.91 s，guard 子进程上限 10 分钟，非超时），第 3 次由静默窗口探测器触发并通过，failures 空。",
+        "reason": "两次失败都发生在主机与其他 agent 会话共用、空闲内存仅 2.1 GB 的窗口内；失败在轮次之间与门之间游走，无复现缺陷；registry 事后立即可达，同一 npm 门在同一内容上此前已三次通过（390/303/312 s）。把这种失败与产品断言失败混在同一个 NO-GO 里，会让人误判候选有问题。",
+        "recommendation": "下一周期把失败分类（产品断言 / 环境 / UI 抖动）与门输入摘要继承写进验收协议，见 NEXT-CYCLE-ACCEPTANCE-DESIGN.md 的提案 A/B/C；发布仍要求冻结候选上的完整冷跑。",
+        "related_task_ids": [
+          "TF-0041",
+          "TF-0042"
+        ],
+        "severity": "medium",
+        "status": "resolved",
+        "summary": "RC-09 独立 verifier 两次 NO-GO 均非产品缺陷：一次是 runtime-build 的 0xC0000409 原生崩溃，一次是 runtime-static-check 里 npm install --package-lock-only 的瞬时 exit 1；同一候选、同一 manifest、同一门在第三次通过。"
+      }
+    }
+  ],
+  "created_at": "2026-09-29T18:53:57.919179Z",
+  "proposal_id": "TFP-rc09-c2-engineering-accepted-20260930",
+  "rationale": "RC-09 passed engineering acceptance on candidate C2 with a green independent verifier, so the program moves to human_acceptance_pending and TF-0041 moves to review_needed. It must not become done: its own acceptance criteria require STATUS to stay human_acceptance_pending until RC-10 records its verdict. Two of the three verifier attempts were blocked by environment-class failures rather than product defects, which is recorded as a deviation with the evidence that distinguishes the two.",
+  "session_id": "rc09-phase-c-closure-20260930",
+  "status": "applied"
+}
