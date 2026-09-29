@@ -151,6 +151,11 @@ closureAdvance:
 
 **Phase B：冻结并切候选**
 
+前置条件（2026-09-29 Phase A 完成时发现，必须先处理）：
+
+- **工作树不干净。** 共享树里有 133 个未提交文件，不属于本修复。来源是别的会话的 RC-10 工作：`openclaw_runtime/src/cron/operator-delivery.ts`、`receipt-store.ts`、`rc03-seal-hook.ts`、`electron/gateway/ws-client.ts` / `ws-trace.ts`、`electron/services/sessions-api.ts`、对应单测，以及约 89 个 `rc-10` 证据文件。候选必须 `cleanAtPlan: true`，所以这些改动要么由其作者验证后落库（进入新候选），要么移到别的分支。不能 stash / reset 别人的工作。
+- **touchedAreas 缺口。** 若 `tests/integration/channel-startup.integration.test.ts` 落库，它会成为累计 diff 里第一个 `tests/integration/**` 路径。final spec 的 `touchedAreas` 没有覆盖它，`harness-validate` 门会失败（`pnpm harness validate … --since HEAD` 已复现）。在切候选**之前**，把 `tests/integration/**` 加进 `touchedAreas`，因为 spec 属于冻结输入。这只声明"预期会变"，不扩大归属集合。
+
 7. 在 STATUS `next_action` 和 LATEST.md 里写明：从现在到 RC-10 收口，本分支只接受 §3 白名单内的提交，其它工作走别的分支。
 8. 预检：
    - 刷新 Agent Dev 证据：`pnpm agent-dev:workbench`、`pnpm agent-dev:deep-test`、`pnpm agent-dev:audit`，要求 strict exit 0；
