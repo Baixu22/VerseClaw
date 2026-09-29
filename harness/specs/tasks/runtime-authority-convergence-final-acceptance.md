@@ -27,6 +27,11 @@ touchedAreas:
   - openclaw_runtime/**
   - tests/unit/**
   - tests/e2e/**
+  # RC-10's channel-startup integration test is the first tests/integration/**
+  # path inside the accepted window. Declaring the area states that the change
+  # is expected; ownership is still derived from ownedPaths alone, so this does
+  # not make the path RC-owned.
+  - tests/integration/**
   - shared/**
   - electron/**
   - src/**
