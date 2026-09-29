@@ -15,6 +15,30 @@ import { allocatePort, startScriptedLlm, MOCK_MODEL_ID } from '../../../tests/e2
 const digest = (value) => createHash('sha256').update(value).digest('hex');
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms));
 
+/**
+ * Per-scenario evidence capture.
+ *
+ * The default 30 s screenshot timeout is too tight on a loaded acceptance host:
+ * H-05 captures the frame immediately after a Gateway restart, and in the
+ * 2026-09-29 RC-09 run a slow capture failed the scenario even though every
+ * functional assertion in it had already passed. Bounded retries keep the
+ * evidence mandatory — the last error is still rethrown and still fails the
+ * scenario — without making collection itself the flaky part.
+ */
+async function captureEvidence(page, file) {
+  let lastError;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      await page.screenshot({ path: file, timeout: 60_000, animations: 'disabled', caret: 'hide' });
+      return;
+    } catch (error) {
+      lastError = error;
+      await sleep(2_000);
+    }
+  }
+  throw lastError;
+}
+
 export async function runOperatorDriver({ repo, scenario, development = false, dataRoot, timeoutMin = 5 }) {
   const git = (...args) => execFileSync('git', args, { cwd: repo, encoding: 'utf8', windowsHide: true }).trim();
   const candidate = { commit: git('rev-parse', 'HEAD'), tree: git('rev-parse', 'HEAD^{tree}'), dirty: Boolean(git('status', '--porcelain')) };
@@ -327,7 +351,7 @@ export async function runOperatorDriver({ repo, scenario, development = false, d
         }
         const data = await snapshot();
         await save(id + '-state.json', data);
-        await page.screenshot({ path: join(evidence, id + '.png') });
+        await captureEvidence(page, join(evidence, id + '.png'));
         const runIds = result.runIds ?? [result.runId];
         assert(runIds.length > 0 && runIds.every((value) => typeof value === 'string' && value), 'scenario run IDs are required');
         const receiptIds = [...new Set([result.effectReceiptId, ...(result.effectReceiptIds ?? []), ...(result.contextReceiptIds ?? []), ...(result.wireReceiptIds ?? []), ...(result.origin?.contextReceiptIds ?? []), ...(result.origin?.wireReceiptIds ?? []), ...(result.handoffTransfer?.contextReceiptIds ?? []), ...(result.handoffTransfer?.wireReceiptIds ?? [])].filter(Boolean))];
@@ -345,7 +369,7 @@ export async function runOperatorDriver({ repo, scenario, development = false, d
         const detail = String(error?.stack ?? error);
         report.scenarios.push({ id, result: 'fail', durationMs: Date.now() - startedAt, error: detail });
         report.failures.push(id);
-        await page.screenshot({ path: join(evidence, id + '-failed.png') }).catch(() => {});
+        await captureEvidence(page, join(evidence, id + '-failed.png')).catch(() => {});
         await save(id + '-state.json', await snapshot());
         event('scenario.fail', { id, error: String(error?.message ?? error) });
         break;
