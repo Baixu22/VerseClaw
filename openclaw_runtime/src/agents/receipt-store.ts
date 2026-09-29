@@ -167,6 +167,9 @@ const RECEIPT_BUDGET_KEYS = new Set([
 ]);
 const SHA256_DIGEST_RE = /^[a-f0-9]{64}$/;
 const RECEIPT_ID_RE = /^[A-Za-z0-9][A-Za-z0-9._:@/-]*$/;
+// IRC channel routes contain # (agent:main:irc:group:#channel). Other receipt
+// identifiers remain on the stricter grammar; whitespace/control bytes stay invalid.
+const RECEIPT_SESSION_KEY_RE = /^[A-Za-z0-9][A-Za-z0-9._:@/#-]*$/;
 const RECEIPT_REFERENCE_RE =
   /^(?:ref:(?:context|file|memory|message|tool):[A-Za-z0-9][A-Za-z0-9._:@/+%-]*|owner-census:v0:[1-9]\d{0,5}:[a-f0-9]{64})$/;
 const MAX_IDEMPOTENCY_KEY_LENGTH = 512;
@@ -210,13 +213,13 @@ function assertOnlyKeys(value: Record<string, unknown>, keys: Set<string>, label
   }
 }
 
-function assertOptionalId(value: unknown, label: string, maxLength = MAX_IDENTITY_LENGTH): void {
+function assertOptionalId(value: unknown, label: string, pattern = RECEIPT_ID_RE): void {
   if (value === undefined) return;
   if (
     typeof value !== "string" ||
     value.length === 0 ||
-    value.length > maxLength ||
-    !RECEIPT_ID_RE.test(value)
+    value.length > MAX_IDENTITY_LENGTH ||
+    !pattern.test(value)
   ) {
     throw new TypeError(`${label} must be a bounded canonical identifier`);
   }
@@ -349,7 +352,11 @@ function validatePutReceiptInput(input: PutReceiptInput): void {
   assertPlainRecord(input.identity, "receipt identity");
   assertOnlyKeys(input.identity, RECEIPT_IDENTITY_KEYS, "receipt identity");
   for (const key of ["sessionKey", "runId", "traceId", "providerId", "adapterId"] as const) {
-    assertOptionalId(input.identity[key], `receipt identity ${key}`);
+    assertOptionalId(
+      input.identity[key],
+      `receipt identity ${key}`,
+      key === "sessionKey" ? RECEIPT_SESSION_KEY_RE : RECEIPT_ID_RE,
+    );
   }
   assertCanonicalStringArray(input.identity.transformIds, "receipt identity transformIds", {
     maxItems: MAX_TRANSFORM_IDS,

@@ -9,10 +9,10 @@
 import net from "node:net";
 import { appendFileSync, mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
+import { isMainEntrypoint } from "../../../scripts/lib/entrypoint.mjs";
 
-const port = Number(process.env.IRC_SERVER_PORT ?? 0);
-const host = process.env.IRC_SERVER_HOST ?? "127.0.0.1";
-const logPath = process.env.IRC_SERVER_LOG ? resolve(process.env.IRC_SERVER_LOG) : null;
+export async function startIrcServer({ port = 0, host = "127.0.0.1", logPath = null, onEvent = () => {} } = {}) {
+const events = [];
 if (logPath) mkdirSync(dirname(logPath), { recursive: true });
 
 const serverName = "rc10.local";
@@ -20,7 +20,10 @@ const clients = new Set();
 const channels = new Map();
 
 function record(row) {
-  const line = JSON.stringify({ t: new Date().toISOString(), ...row });
+  const event = { t: new Date().toISOString(), driven_by: "agent", actor: "rc10-irc-peer", ...row };
+  events.push(event);
+  onEvent(event);
+  const line = JSON.stringify(event);
   if (logPath) appendFileSync(logPath, `${line}\n`);
   if (process.env.IRC_SERVER_VERBOSE === "1") console.log(line);
 }
@@ -209,12 +212,29 @@ const server = net.createServer((socket) => {
   socket.on("error", cleanup);
 });
 
-server.listen(port, host, () => {
-  const actual = server.address().port;
-  record({ event: "listening", host, port: actual, logPath });
-  console.log(JSON.stringify({ ready: true, host, port: actual, logPath }));
+await new Promise((resolve, reject) => {
+  server.once("error", reject);
+  server.listen(port, host, resolve);
 });
+const actualPort = server.address().port;
+record({ event: "listening", host, port: actualPort });
+return {
+  port: actualPort, events,
+  close: () => new Promise((resolve, reject) => {
+    for (const client of clients) client.socket.destroy();
+    server.close(error => error ? reject(error) : resolve());
+  }),
+};
+}
 
-for (const signal of ["SIGINT", "SIGTERM"]) {
-  process.on(signal, () => server.close(() => process.exit(0)));
+if (isMainEntrypoint(import.meta.url)) {
+  const peer = await startIrcServer({
+    port: Number(process.env.IRC_SERVER_PORT ?? 0),
+    host: process.env.IRC_SERVER_HOST ?? "127.0.0.1",
+    logPath: process.env.IRC_SERVER_LOG ? resolve(process.env.IRC_SERVER_LOG) : null,
+  });
+  console.log(JSON.stringify({ ready: true, port: peer.port }));
+  for (const signal of ["SIGINT", "SIGTERM"]) {
+    process.once(signal, () => { void peer.close().then(() => process.exit(0)); });
+  }
 }

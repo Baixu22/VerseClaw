@@ -1288,6 +1288,39 @@ describe('host services', () => {
     });
   });
 
+  it('uses runtime history for keyed history and handoff rather than a stale local profile', async () => {
+    const sessionsDir = join(testOpenClawConfigDir, 'agents', 'main', 'sessions');
+    mkdirSync(sessionsDir, { recursive: true });
+    writeFileSync(join(sessionsDir, 'sessions.json'), JSON.stringify({
+      'agent:main:runtime-handoff': { sessionId: 'stale-local' },
+    }));
+    writeFileSync(join(sessionsDir, 'stale-local.jsonl'), JSON.stringify({
+      type: 'message', message: { role: 'assistant', content: 'STALE_LOCAL_RESULT' },
+    }));
+    const messages = [
+      { role: 'user', content: 'Report the already delivered result.' },
+      { role: 'assistant', content: [{ type: 'text', text: 'ACKNOWLEDGED_RUNTIME_RESULT' }] },
+    ];
+    const rpc = vi.fn(async (method: string) => {
+      if (method === 'chat.history') return { messages };
+      throw new Error('optional recovery endpoint unavailable');
+    });
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+    expect(await api.history({ sessionKey: 'agent:main:runtime-handoff', limit: 80 })).toMatchObject({ success: true, messages });
+    const handoff = await api.prepareHandoff({ sessionKey: 'agent:main:runtime-handoff' });
+    expect(handoff.draft).toContain('ACKNOWLEDGED_RUNTIME_RESULT');
+    expect(handoff.draft).not.toContain('STALE_LOCAL_RESULT');
+    expect(handoff.sources).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: 'transcript', available: true, summary: expect.stringContaining('2 recent message(s)') }),
+    ]));
+    expect(rpc).toHaveBeenCalledWith('chat.history', { sessionKey: 'agent:main:runtime-handoff', limit: 80 }, 10_000);
+
+    rpc.mockResolvedValue({ messages: [] });
+    expect(await api.history({ sessionKey: 'agent:main:runtime-handoff', limit: 80 })).toMatchObject({ messages: [] });
+    expect((await api.prepareHandoff({ sessionKey: 'agent:main:runtime-handoff' })).draft).not.toContain('STALE_LOCAL_RESULT');
+  });
+
   it('prepares deterministic session handoff without requiring Gateway', async () => {
     const sessionsDir = join(testOpenClawConfigDir, 'agents', 'main', 'sessions');
     mkdirSync(sessionsDir, { recursive: true });
@@ -1430,7 +1463,8 @@ describe('host services', () => {
         payload: 'Verified archived pre-compaction transcript excerpt.',
         archiveHandle: archiveHandle as never,
         diagnostics: [],
-    });
+      })
+      .mockResolvedValueOnce({ messages: [{ role: 'user', content: 'Continue the checkpoint migration.' }] });
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const sessionsApi = createSessionsApi({ gatewayManager: { rpc } as never });
 

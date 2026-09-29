@@ -439,7 +439,9 @@ describe("ReceiptStore (runtime_receipts via openclaw-state SQLite)", () => {
     Object.defineProperty(hidden.content, "cookie", { value: "secret", enumerable: false });
     expect(() => store.put(hidden)).toThrow(/unsupported field: cookie/);
 
-    const sparse = makeReceipt({ content: { selected: new Array<string>(1) } });
+    const sparseSelected: string[] = [];
+    sparseSelected.length = 1; // Deliberately keep a hole to exercise the dense-array guard.
+    const sparse = makeReceipt({ content: { selected: sparseSelected } });
     expect(() => store.put(sparse)).toThrow(/dense array/);
 
     const extraArray = ["ref:file:a"];
@@ -478,7 +480,9 @@ describe("ReceiptStore (runtime_receipts via openclaw-state SQLite)", () => {
       /dense array/,
     );
     expect(() =>
-      store.put(makeReceipt({ content: { selected: new Array(65).fill("ref:file:a") } })),
+      store.put(
+        makeReceipt({ content: { selected: Array.from({ length: 65 }, () => "ref:file:a") } }),
+      ),
     ).toThrow(/maximum item count/);
     expect(() =>
       store.put(
@@ -571,9 +575,32 @@ describe("ReceiptStore (runtime_receipts via openclaw-state SQLite)", () => {
     expect(() =>
       db
         .prepare(
-          `INSERT INTO runtime_receipts VALUES (${new Array(values.length).fill("?").join(",")})`,
+          `INSERT INTO runtime_receipts VALUES (${Array.from({ length: values.length }, () => "?").join(",")})`,
         )
         .run(...values),
     ).toThrow(/CHECK constraint failed/);
   });
+});
+
+it("stores IRC channel session keys without relaxing other receipt identifiers", () => {
+  const store = newStore();
+  const input = makeReceipt({
+    kind: "context",
+    version: "1",
+    identity: makeIdentity({ sessionKey: "agent:main:irc:group:#rc10" }),
+  });
+  expect(store.put(input).ok).toBe(true);
+  expect(store.getByIdempotencyKey(input.idempotencyKey)?.session_key).toBe(
+    "agent:main:irc:group:#rc10",
+  );
+  expect(() =>
+    store.put(makeReceipt({ identity: makeIdentity({ runId: "run#invalid" }) })),
+  ).toThrow("bounded canonical identifier");
+  expect(() =>
+    store.put(
+      makeReceipt({
+        identity: makeIdentity({ sessionKey: "agent:main:irc:group:#rc10\npayload" }),
+      }),
+    ),
+  ).toThrow("bounded canonical identifier");
 });

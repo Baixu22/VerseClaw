@@ -17,13 +17,33 @@ import { join, resolve, dirname } from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 import net from 'node:net';
+import { parseArgs } from 'node:util';
 
-const args = Object.fromEntries(
-  process.argv.slice(2).map((a, i, arr) => (a.startsWith('--') ? [a.slice(2), arr[i + 1]] : [])).filter(Boolean),
-);
+const { values: args } = parseArgs({
+  options: Object.fromEntries(
+    [...['repo', 'scenario', 'timeout-min', 'data-root', 'workload', 'permission-mode']
+      .map((name) => [name, { type: 'string' }]), ['development', { type: 'boolean' }], ['list-scenarios', { type: 'boolean' }]],
+  ),
+});
+if (args['list-scenarios']) {
+  console.log(JSON.stringify(['H-01', 'H-02', 'H-03', 'H-04', 'H-05', 'H-06', 'OPERATOR-ALL', 'CHANNEL-PROBE']));
+  process.exit(0);
+}
 const repo = resolve(args.repo ?? 'D:/ClawX');
 const scenario = String(args.scenario ?? 'H-01');
+// Reject before reading credentials, writing files or launching Electron. Without
+// this guard an unimplemented H-02 request ran H-01 and mislabelled its evidence.
+if (!['H-01', 'H-02', 'H-03', 'H-04', 'H-05', 'H-06', 'OPERATOR-ALL', 'CHANNEL-PROBE'].includes(scenario)) {
+  throw new Error('Unsupported RC-10 scenario: ' + scenario + '. Implemented: H-01..H-06, OPERATOR-ALL, CHANNEL-PROBE.');
+}
 const timeoutMin = Number(args['timeout-min'] ?? 15);
+if (!Number.isFinite(timeoutMin) || timeoutMin <= 0) {
+  throw new Error('--timeout-min must be a positive finite number');
+}
+if (['H-02', 'H-03', 'H-04', 'H-05', 'H-06', 'OPERATOR-ALL'].includes(scenario)) {
+  const { runOperatorDriver } = await import('./operator-driver.mjs');
+  process.exit(await runOperatorDriver({ repo, scenario, timeoutMin, dataRoot: args['data-root'], development: args.development === true }));
+}
 const apiKey = process.env.RC10_PROVIDER_KEY;
 const providerBaseUrl = process.env.RC10_PROVIDER_BASE_URL ?? 'http://127.0.0.1:3065/v1';
 const providerModel = process.env.RC10_PROVIDER_MODEL ?? 'glm-5.3-flash';
@@ -50,7 +70,7 @@ await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: '
 
 const events = [];
 const log = (event, data = {}) => {
-  const row = { t: new Date().toISOString(), scenario, event, ...data };
+  const row = { t: new Date().toISOString(), driven_by: 'agent', actor: 'rc10-driver', scenario, event, ...data };
   events.push(row);
   appendFileSync(join(evidenceDir, 'events.jsonl'), `${JSON.stringify(row)}\n`);
   console.log(JSON.stringify(row));
@@ -457,6 +477,7 @@ const journey = {
   schema: 'rc10-journey/v1',
   scenario,
   driven_by: 'agent',
+  actor: 'rc10-driver',
   operator: 'agent-driven (Playwright over Electron CDP); no human operator',
   candidate,
   provider: { id: providerId, baseUrl: providerBaseUrl, apiProtocol: 'openai-responses', model: providerModel, keySource: 'process environment only' },

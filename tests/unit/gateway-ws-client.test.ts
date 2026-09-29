@@ -92,6 +92,66 @@ describe('connectGatewaySocket', () => {
     wsState.sockets.length = 0;
   });
 
+
+  it.each([true, false])('upgrades to device-token auth before readiness (accepted=%s)', async (accepted) => {
+    const { generateKeyPairSync, verify } = await import('node:crypto');
+    const { buildDeviceAuthPayload } = await import('@electron/utils/device-identity');
+    const { publicKey, privateKey } = generateKeyPairSync('ed25519');
+    const deviceIdentity = {
+      deviceId: 'desktop-test-device',
+      publicKeyPem: publicKey.export({ type: 'spki', format: 'pem' }).toString(),
+      privateKeyPem: privateKey.export({ type: 'pkcs8', format: 'pem' }).toString(),
+    };
+    const pendingRequests = new Map();
+    const onHandshakeComplete = vi.fn();
+    const onCloseAfterHandshake = vi.fn();
+    const result = connectGatewaySocket({
+      port: 18789, platform: 'win32', deviceIdentity, pendingRequests,
+      getToken: async () => 'shared-bootstrap-token', onHandshakeComplete, onCloseAfterHandshake,
+      onMessage: (input) => {
+        const message = input as { id: string; ok: boolean; payload: unknown };
+        const request = pendingRequests.get(message.id);
+        if (message.ok) request?.resolve(message.payload);
+        else request?.reject(new Error('device rejected'));
+      },
+    }).then((socket) => ({ socket }), (error: Error) => ({ error }));
+    const bootstrap = getLatestSocket();
+    bootstrap.emitJsonMessage({ type: 'event', event: 'connect.challenge', payload: { nonce: 'first' } });
+    await flushMicrotasks();
+    const first = JSON.parse(bootstrap.sentFrames[0]);
+    expect(first.params.auth).toEqual({ token: 'shared-bootstrap-token' });
+    expect(first.params.client.mode).toBe('ui');
+    bootstrap.emitJsonMessage({ type: 'res', id: first.id, ok: true, payload: { auth: { deviceToken: 'issued-device-token' } } });
+    expect(bootstrap.terminate).toHaveBeenCalledOnce();
+    expect(onHandshakeComplete).not.toHaveBeenCalled();
+    bootstrap.emit('close', 1006, Buffer.from('bootstrap ended'));
+    expect(onCloseAfterHandshake).not.toHaveBeenCalled();
+    const authenticated = getLatestSocket();
+    expect(authenticated).not.toBe(bootstrap);
+    authenticated.emitJsonMessage({ type: 'event', event: 'connect.challenge', payload: { nonce: 'second' } });
+    await flushMicrotasks();
+    const second = JSON.parse(authenticated.sentFrames[0]);
+    expect(second.params.auth).toEqual({ deviceToken: 'issued-device-token' });
+    expect(second.params.client.mode).toBe('backend');
+    const signed = buildDeviceAuthPayload({
+      deviceId: deviceIdentity.deviceId, clientId: second.params.client.id,
+      clientMode: second.params.client.mode, role: second.params.role,
+      scopes: second.params.scopes, signedAtMs: second.params.device.signedAt,
+      token: 'issued-device-token', nonce: 'second',
+    });
+    expect(verify(null, Buffer.from(signed), publicKey, Buffer.from(second.params.device.signature, 'base64url'))).toBe(true);
+    authenticated.emitJsonMessage({ type: 'res', id: second.id, ok: accepted, payload: { auth: { deviceToken: 'issued-device-token' } } });
+    if (accepted) {
+      expect(await result).toEqual({ socket: authenticated });
+      expect(onHandshakeComplete).toHaveBeenCalledTimes(1);
+    } else {
+      expect(await result).toEqual({ error: new Error('device rejected') });
+      expect(onHandshakeComplete).not.toHaveBeenCalled();
+      expect(authenticated.terminate).toHaveBeenCalledOnce();
+    }
+    expect(wsState.sockets).toHaveLength(2);
+    expect(pendingRequests.size).toBe(0);
+  });
   it('keeps the handshake alive long enough for slower gateway restart responses', async () => {
     const pendingRequests = new Map();
     const onHandshakeComplete = vi.fn();

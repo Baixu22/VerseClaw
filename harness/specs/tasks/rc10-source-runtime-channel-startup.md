@@ -17,6 +17,7 @@ ownedPaths:
   - harness/specs/tasks/rc10-source-runtime-channel-startup.md
   - electron/gateway/config-sync.ts
   - tests/unit/config-sync-source-runtime.test.ts
+  - tests/integration/channel-startup.integration.test.ts
   - openclaw_runtime/src/gateway/server-startup-post-attach.ts
   - openclaw_runtime/src/gateway/server-startup-post-attach.channel-start.test.ts
 touchedAreas:
@@ -41,6 +42,8 @@ forbiddenPatterns:
   - starting channels for the source runtime when no channel is configured
   - writing channel credentials into any evidence or tracked file
   - changing product locks or default-on behavior
+requiredTests:
+  - pnpm run test:channel-startup
 acceptance:
   - Unit coverage proves the channels block is merged into the isolated source config on first write and on later syncs, and that an explicitly configured channel turns the sandbox plugins switch back on while a disabled/absent channel does not.
   - Unit coverage proves startGatewaySidecars invokes startChannels when startup is not skipped and does not when OPENCLAW_SKIP_CHANNELS / OPENCLAW_SKIP_PROVIDERS is set.
