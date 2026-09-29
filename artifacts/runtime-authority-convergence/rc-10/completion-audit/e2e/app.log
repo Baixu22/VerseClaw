@@ -1,0 +1,297 @@
+[2026-09-28T22:35:34.531Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[2026-09-28T22:35:34.532Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-09-28T22:35:34.532Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=5964, ppid=31912
+[2026-09-28T22:35:34.532Z] [INFO] Running in E2E mode: startup side effects minimized
+[2026-09-28T22:35:34.675Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-09-28T22:35:34.676Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-09-28T22:35:34.676Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-09-28T22:35:34.676Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[2026-09-28T22:35:34.713Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[2026-09-28T22:35:34.713Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[2026-09-28T22:35:34.713Z] [INFO] Gateway auto-start skipped in E2E mode
+Saved API key for provider "custom-rc10loca" to OpenClaw auth-profiles (agents: main)
+Saved API key for provider "custom-rc10loca" to OpenClaw auth-profiles (agents: main)
+Updated models.json for agent "main" provider "custom-rc10loca"
+[2026-09-28T22:35:35.098Z] [INFO] Scheduling Gateway reload after saving provider "custom-rc10loca" config
+[2026-09-28T22:35:35.099Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)
+[2026-09-28T22:35:35.125Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-09-28T22:35:35.125Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-09-28T22:35:35.126Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-09-28T22:35:35.126Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+Set OpenClaw default model to "custom-rc10loca/mock-coder" for provider "custom-rc10loca" (runtime override)
+Saved API key for provider "custom-rc10loca" to OpenClaw auth-profiles (agents: main)
+Updated models.json for agent "main" provider "custom-rc10loca"
+Updated models.json for agent "main" provider "custom-rc10loca"
+[2026-09-28T22:35:35.261Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\ClawX\test-results\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\rc10-operator\workspace\.verse-claw\harness
+[2026-09-28T22:35:35.352Z] [INFO] Channel config saved {"channelType":"irc","accountId":"default","configFile":"D:\\ClawX\\test-results\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\rc10-operator\\home\\.openclaw\\openclaw.json","rawKeys":["enabled","host","port","tls","nick","channels","groupPolicy","groups"],"transformedKeys":["enabled","host","port","tls","nick","channels","groupPolicy","groups"]}
+Saved channel config for irc account default
+[2026-09-28T22:35:35.355Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)
+[2026-09-28T22:35:35.355Z] [INFO] Gateway start requested (port=59376)
+[2026-09-28T22:35:35.359Z] [DEBUG] Device identity loaded (deviceId=baa3819d5697031baf25c259b5505cfc65f4eb1274461d19a6a10eb52c5a58b7)
+[2026-09-28T22:35:35.359Z] [DEBUG] Gateway state changed: stopped -> starting
+[2026-09-28T22:35:35.444Z] [DEBUG] Checking for existing Gateway...
+(node:5964) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[2026-09-28T22:35:35.492Z] [DEBUG] No existing Gateway found, starting new process...
+Set OpenClaw default model to "custom-rc10loca/mock-coder" for provider "custom-rc10loca" (runtime override)
+Saved API key for provider "custom-rc10loca" to OpenClaw auth-profiles (agents: main)
+Updated models.json for agent "main" provider "custom-rc10loca"
+Updated models.json for agent "main" provider "custom-rc10loca"
+[2026-09-28T22:35:35.624Z] [INFO] Region optimization enabled via locale/timezone (locale=zh-CN, tz=Asia/Shanghai)
+[2026-09-28T22:35:35.644Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[2026-09-28T22:35:35.646Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":85,"providerEnvMs":6,"channelStartupPolicyMs":28,"uvEnvMs":10,"mcpEnvMs":13,"runtimeConfigReadMs":1,"verseShellBundleMs":0,"totalMs":151,"maintenance":{},"configuredChannelCount":0}
+[2026-09-28T22:35:35.646Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=59376, entry="D:\ClawX\openclaw_runtime\dist\entry.js", args="gateway --port 59376 --token [redacted] --allow-unconfigured", execArgv="", cwd="D:\ClawX\openclaw_runtime", bundledBin=yes, providerKeys=2, channels=enabled(irc), proxy=disabled)
+[2026-09-28T22:35:35.687Z] [INFO] Gateway process started (pid=26492)
+[2026-09-28T22:35:35.688Z] [DEBUG] Gateway manager now owns process pid=26492
+[2026-09-28T22:35:36.299Z] [INFO] Deferring Gateway restart (reload) until startup/reconnect settles (state=starting, startLock=true)
+[2026-09-28T22:35:37.799Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[2026-09-28T22:35:39.919Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)
+[2026-09-28T22:35:44.200Z] [DEBUG] Gateway ready after 28 attempt(s)
+[2026-09-28T22:35:44.200Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:59376/ws)
+[2026-09-28T22:35:44.237Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=4321439a-36c0-4282-be99-73b936252751 peer=127.0.0.1:57530->127.0.0.1:59376 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:59376 ua=n/a code=1006 reason=n/a[39m
+[2026-09-28T22:35:44.250Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-09-28T22:35:44.250Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-09-28T22:35:44.251Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-09-28T22:35:44.254Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=26ac25a2-fed4-4bea-acf3-ae261a449705 peer=127.0.0.1:60487->127.0.0.1:59376 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:59376 ua=n/a code=1006 reason=n/a[39m
+[2026-09-28T22:35:44.487Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:59376/ws)
+[2026-09-28T22:35:44.488Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[2026-09-28T22:35:48.731Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-09-28T22:35:48.731Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-09-28T22:35:48.731Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-09-28T22:35:49.247Z] [DEBUG] Gateway connect handshake completed
+[2026-09-28T22:35:49.248Z] [DEBUG] Gateway state changed: starting -> running
+[2026-09-28T22:35:49.248Z] [DEBUG] Deferred Gateway restart still waiting (status:starting->running, state=running, startLock=true)
+[2026-09-28T22:35:49.249Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[2026-09-28T22:35:49.249Z] [INFO] [metric] gateway.startup {"configSyncMs":244,"spawnToReadyMs":8512,"readyToConnectMs":5049,"totalMs":13805}
+[2026-09-28T22:35:49.249Z] [INFO] Executing deferred Gateway restart now (start:finally)
+[2026-09-28T22:35:49.249Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=26492
+[2026-09-28T22:35:49.249Z] [INFO] Gateway stop requested
+[2026-09-28T22:35:49.250Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)
+[2026-09-28T22:35:49.250Z] [INFO] Sending kill to Gateway process (pid=26492)
+[2026-09-28T22:35:49.254Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[2026-09-28T22:35:49.254Z] [DEBUG] Gateway state changed: running -> stopped
+[2026-09-28T22:35:52.196Z] [INFO] Gateway process exited (code=1, expected=yes)
+[2026-09-28T22:35:52.197Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[2026-09-28T22:35:52.198Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)
+[2026-09-28T22:35:52.198Z] [INFO] Gateway start requested (port=59376)
+[2026-09-28T22:35:52.199Z] [DEBUG] Gateway state changed: stopped -> starting
+[2026-09-28T22:35:52.294Z] [DEBUG] Checking for existing Gateway...
+[2026-09-28T22:35:52.340Z] [DEBUG] No existing Gateway found, starting new process...
+Set OpenClaw default model to "custom-rc10loca/mock-coder" for provider "custom-rc10loca" (runtime override)
+Saved API key for provider "custom-rc10loca" to OpenClaw auth-profiles (agents: main)
+Updated models.json for agent "main" provider "custom-rc10loca"
+Updated models.json for agent "main" provider "custom-rc10loca"
+[2026-09-28T22:35:52.438Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[2026-09-28T22:35:52.439Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":79,"providerEnvMs":6,"channelStartupPolicyMs":1,"uvEnvMs":0,"mcpEnvMs":3,"runtimeConfigReadMs":1,"verseShellBundleMs":0,"totalMs":98,"maintenance":{},"configuredChannelCount":0}
+[2026-09-28T22:35:52.440Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=59376, entry="D:\ClawX\openclaw_runtime\dist\entry.js", args="gateway --port 59376 --token [redacted] --allow-unconfigured", execArgv="", cwd="D:\ClawX\openclaw_runtime", bundledBin=yes, providerKeys=2, channels=enabled(irc), proxy=disabled)
+[2026-09-28T22:35:52.459Z] [INFO] Gateway process started (pid=39928)
+[2026-09-28T22:35:52.460Z] [DEBUG] Gateway manager now owns process pid=39928
+[2026-09-28T22:35:54.563Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[2026-09-28T22:35:56.636Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)
+[2026-09-28T22:35:59.188Z] [DEBUG] Gateway ready after 23 attempt(s)
+[2026-09-28T22:35:59.188Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:59376/ws)
+[2026-09-28T22:35:59.191Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=984a2be6-a616-49cf-a305-eefa72f02231 peer=127.0.0.1:50210->127.0.0.1:59376 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:59376 ua=n/a code=1006 reason=n/a[39m
+[2026-09-28T22:35:59.193Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=80baf5e3-7a03-400d-be63-2f182934af2e peer=127.0.0.1:59149->127.0.0.1:59376 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:59376 ua=n/a code=1006 reason=n/a[39m
+[2026-09-28T22:35:59.197Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-09-28T22:35:59.198Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-09-28T22:35:59.198Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-09-28T22:35:59.207Z] [ERROR] Gateway connect handshake failed: Error: gateway starting; retry shortly
+Error: gateway starting; retry shortly
+    at xn.handleMessage (D:\ClawX\dist-electron\main\index-C3M18-8_.js:157:34346)
+    at Object.onMessage (D:\ClawX\dist-electron\main\index-C3M18-8_.js:157:33647)
+    at WebSocket.<anonymous> (D:\ClawX\dist-electron\main\index-C3M18-8_.js:78:8850)
+    at WebSocket.emit (node:events:508:28)
+    at Receiver.receiverOnMessage (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\websocket.js:1225:20)
+    at Receiver.emit (node:events:508:28)
+    at Receiver.dataMessage (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\receiver.js:596:14)
+    at Receiver.getData (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\receiver.js:496:10)
+    at Receiver.startLoop (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\receiver.js:167:16)
+    at Receiver._write (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\receiver.js:94:10)
+[2026-09-28T22:35:59.208Z] [WARN] Gateway connect rejected while still starting (Error: gateway starting; retry shortly); retrying in 500ms (1/6)
+[2026-09-28T22:35:59.208Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[2026-09-28T22:35:59.210Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=8fe23f21-6944-4d63-8ef5-488dc5ff3fa5 peer=127.0.0.1:50212->127.0.0.1:59376 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:59376 ua=n/a code=1006 reason=n/a[39m
+[2026-09-28T22:35:59.712Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:59376/ws)
+[2026-09-28T22:35:59.715Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-09-28T22:35:59.715Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-09-28T22:35:59.715Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-09-28T22:35:59.729Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:59376/ws)
+[2026-09-28T22:35:59.730Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[2026-09-28T22:36:03.684Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-09-28T22:36:03.685Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-09-28T22:36:03.685Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-09-28T22:36:04.164Z] [DEBUG] Gateway connect handshake completed
+[2026-09-28T22:36:04.165Z] [DEBUG] Gateway state changed: starting -> running
+[2026-09-28T22:36:04.165Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[2026-09-28T22:36:04.166Z] [INFO] Gateway connect succeeded after 2 attempt(s)
+[2026-09-28T22:36:04.166Z] [INFO] [metric] gateway.startup {"configSyncMs":166,"spawnToReadyMs":6728,"readyToConnectMs":4978,"totalMs":11872}
+[2026-09-28T22:36:04.166Z] [INFO] [metric] gateway.restart.executed {"gateway_restart_executed_total":1,"gateway_restart_suppressed_total":0,"gateway_restart_circuit_open_until":0}
+[2026-09-28T22:36:04.166Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=26492 pidAfter=39928 suppressed=0 executed=1 circuitOpenUntil=0
+[2026-09-28T22:36:06.454Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-09-28T22:36:06.454Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-09-28T22:36:06.454Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-09-28T22:36:06.454Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[2026-09-28T22:36:12.521Z] [WARN] [Gateway stderr] [33m[agent/embedded][39m [33m[trace:embedded-run] core-plugin-tool stages: runId=39bd0fc9-d631-4b43-b88a-57c081966785 sessionId=a20937ed-e510-4fdc-a465-dcd811925ff4 phase=core-plugin-tools totalMs=2428 stages=tool-policy:61ms@61ms,workspace-policy:1ms@62ms,base-coding-tools:0ms@62ms,shell-tools:2ms@64ms,openclaw-tools:session-workspace:0ms@64ms,openclaw-tools:image-tool:3ms@67ms,openclaw-tools:image-generate-tool:0ms@67ms,openclaw-tools:video-generate-tool:0ms@67ms,openclaw-tools:music-generate-tool:0ms@67ms,openclaw-tools:pdf-tool:0ms@67ms,openclaw-tools:web-search-tool:0ms@67ms,openclaw-tools:web-fetch-tool:0ms@67ms,openclaw-tools:agent-browser-tool:0ms@67ms,openclaw-tools:automation-playbook-selector-tool:0ms@67ms,openclaw-tools:message-tool:4ms@71ms,openclaw-tools:nodes-tool:0ms@71ms,openclaw-tools:core-tool-list:4ms@75ms,openclaw-tools:plugin-tools:2348ms@2423ms,openclaw-tools:0ms@2423ms,message-provider-policy:0ms@2423ms,model-provider-policy:0ms@2423ms,authorization-policy:0ms@2423ms,schema-normalization:4ms@2427ms,tool-hooks:0ms@2427ms,abort-wrappers:1ms@2428ms,deferred-followup-descriptions:0ms@2428ms,attempt:create-openclaw-coding-tools:0ms@2428ms,attempt:tools-allow:0ms@2428ms[39m
+[2026-09-28T22:36:35.938Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-09-28T22:36:35.938Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-09-28T22:36:35.938Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-09-28T22:36:35.938Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[2026-09-28T22:36:37.508Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=39928
+[2026-09-28T22:36:37.508Z] [INFO] Gateway stop requested
+[2026-09-28T22:36:37.508Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)
+[2026-09-28T22:36:37.508Z] [INFO] Sending kill to Gateway process (pid=39928)
+[2026-09-28T22:36:37.510Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[2026-09-28T22:36:37.510Z] [DEBUG] Gateway state changed: running -> stopped
+[2026-09-28T22:36:39.299Z] [INFO] Gateway process exited (code=1, expected=yes)
+[2026-09-28T22:36:39.300Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[2026-09-28T22:36:39.300Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (start)
+[2026-09-28T22:36:39.300Z] [INFO] Gateway start requested (port=59376)
+[2026-09-28T22:36:39.301Z] [DEBUG] Gateway state changed: stopped -> starting
+[2026-09-28T22:36:39.397Z] [DEBUG] Checking for existing Gateway...
+[2026-09-28T22:36:39.443Z] [DEBUG] No existing Gateway found, starting new process...
+Set OpenClaw default model to "custom-rc10loca/mock-coder" for provider "custom-rc10loca" (runtime override)
+Saved API key for provider "custom-rc10loca" to OpenClaw auth-profiles (agents: main)
+Updated models.json for agent "main" provider "custom-rc10loca"
+Updated models.json for agent "main" provider "custom-rc10loca"
+[2026-09-28T22:36:39.533Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[2026-09-28T22:36:39.534Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":73,"providerEnvMs":5,"channelStartupPolicyMs":2,"uvEnvMs":0,"mcpEnvMs":2,"runtimeConfigReadMs":0,"verseShellBundleMs":0,"totalMs":89,"maintenance":{},"configuredChannelCount":0}
+[2026-09-28T22:36:39.534Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=59376, entry="D:\ClawX\openclaw_runtime\dist\entry.js", args="gateway --port 59376 --token [redacted] --allow-unconfigured", execArgv="", cwd="D:\ClawX\openclaw_runtime", bundledBin=yes, providerKeys=2, channels=enabled(irc), proxy=disabled)
+[2026-09-28T22:36:39.555Z] [INFO] Gateway process started (pid=3684)
+[2026-09-28T22:36:39.556Z] [DEBUG] Gateway manager now owns process pid=3684
+[2026-09-28T22:36:41.604Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[2026-09-28T22:36:43.638Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)
+[2026-09-28T22:36:46.254Z] [DEBUG] Gateway ready after 23 attempt(s)
+[2026-09-28T22:36:46.254Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:59376/ws)
+[2026-09-28T22:36:46.255Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=41814269-2142-4dc3-8641-891b901300a6 peer=127.0.0.1:60076->127.0.0.1:59376 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:59376 ua=n/a code=1006 reason=n/a[39m
+[2026-09-28T22:36:46.265Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-09-28T22:36:46.266Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-09-28T22:36:46.266Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-09-28T22:36:46.267Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=fa5a115c-0962-4e95-af00-771680997d69 peer=127.0.0.1:60079->127.0.0.1:59376 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:59376 ua=n/a code=1006 reason=n/a[39m
+[2026-09-28T22:36:46.275Z] [ERROR] Gateway connect handshake failed: Error: gateway starting; retry shortly
+Error: gateway starting; retry shortly
+    at xn.handleMessage (D:\ClawX\dist-electron\main\index-C3M18-8_.js:157:34346)
+    at Object.onMessage (D:\ClawX\dist-electron\main\index-C3M18-8_.js:157:33647)
+    at WebSocket.<anonymous> (D:\ClawX\dist-electron\main\index-C3M18-8_.js:78:8850)
+    at WebSocket.emit (node:events:508:28)
+    at Receiver.receiverOnMessage (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\websocket.js:1225:20)
+    at Receiver.emit (node:events:508:28)
+    at Receiver.dataMessage (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\receiver.js:596:14)
+    at Receiver.getData (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\receiver.js:496:10)
+    at Receiver.startLoop (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\receiver.js:167:16)
+    at Receiver._write (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\receiver.js:94:10)
+[2026-09-28T22:36:46.275Z] [WARN] Gateway connect rejected while still starting (Error: gateway starting; retry shortly); retrying in 500ms (1/6)
+[2026-09-28T22:36:46.276Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[2026-09-28T22:36:46.277Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=a363eb33-69a5-4d9a-a0f6-3995eb5f7821 peer=127.0.0.1:60081->127.0.0.1:59376 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:59376 ua=n/a code=1006 reason=n/a[39m
+[2026-09-28T22:36:46.776Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:59376/ws)
+[2026-09-28T22:36:46.778Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-09-28T22:36:46.779Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-09-28T22:36:46.779Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-09-28T22:36:46.794Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:59376/ws)
+[2026-09-28T22:36:46.796Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[2026-09-28T22:36:50.266Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-09-28T22:36:50.267Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-09-28T22:36:50.267Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-09-28T22:36:50.768Z] [DEBUG] Gateway connect handshake completed
+[2026-09-28T22:36:50.768Z] [DEBUG] Gateway state changed: starting -> running
+[2026-09-28T22:36:50.768Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[2026-09-28T22:36:50.768Z] [INFO] Gateway connect succeeded after 2 attempt(s)
+[2026-09-28T22:36:50.769Z] [INFO] [metric] gateway.startup {"configSyncMs":159,"spawnToReadyMs":6698,"readyToConnectMs":4514,"totalMs":11371}
+[2026-09-28T22:36:50.769Z] [INFO] [metric] gateway.restart.executed {"gateway_restart_executed_total":2,"gateway_restart_suppressed_total":0,"gateway_restart_circuit_open_until":0}
+[2026-09-28T22:36:50.769Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=39928 pidAfter=3684 suppressed=0 executed=2 circuitOpenUntil=0
+[2026-09-28T22:36:50.854Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-09-28T22:36:50.854Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-09-28T22:36:50.854Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-09-28T22:36:50.854Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[2026-09-28T22:36:53.323Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-09-28T22:36:53.323Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-09-28T22:36:53.323Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-09-28T22:36:53.323Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[2026-09-28T22:36:56.385Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=3684
+[2026-09-28T22:36:56.385Z] [INFO] Gateway stop requested
+[2026-09-28T22:36:56.385Z] [DEBUG] Gateway lifecycle epoch advanced to 6 (stop)
+[2026-09-28T22:36:56.385Z] [INFO] Sending kill to Gateway process (pid=3684)
+[2026-09-28T22:36:56.389Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[2026-09-28T22:36:56.389Z] [DEBUG] Gateway state changed: running -> stopped
+[2026-09-28T22:36:58.312Z] [INFO] Gateway process exited (code=1, expected=yes)
+[2026-09-28T22:36:58.313Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[2026-09-28T22:36:58.313Z] [DEBUG] Gateway lifecycle epoch advanced to 7 (start)
+[2026-09-28T22:36:58.313Z] [INFO] Gateway start requested (port=59376)
+[2026-09-28T22:36:58.314Z] [DEBUG] Gateway state changed: stopped -> starting
+[2026-09-28T22:36:58.422Z] [DEBUG] Checking for existing Gateway...
+[2026-09-28T22:36:58.485Z] [DEBUG] No existing Gateway found, starting new process...
+Set OpenClaw default model to "custom-rc10loca/mock-coder" for provider "custom-rc10loca" (runtime override)
+Saved API key for provider "custom-rc10loca" to OpenClaw auth-profiles (agents: main)
+Updated models.json for agent "main" provider "custom-rc10loca"
+Updated models.json for agent "main" provider "custom-rc10loca"
+[2026-09-28T22:36:58.590Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[2026-09-28T22:36:58.592Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":84,"providerEnvMs":6,"channelStartupPolicyMs":2,"uvEnvMs":1,"mcpEnvMs":3,"runtimeConfigReadMs":0,"verseShellBundleMs":1,"totalMs":106,"maintenance":{},"configuredChannelCount":0}
+[2026-09-28T22:36:58.592Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=59376, entry="D:\ClawX\openclaw_runtime\dist\entry.js", args="gateway --port 59376 --token [redacted] --allow-unconfigured", execArgv="", cwd="D:\ClawX\openclaw_runtime", bundledBin=yes, providerKeys=2, channels=enabled(irc), proxy=disabled)
+[2026-09-28T22:36:58.618Z] [INFO] Gateway process started (pid=19080)
+[2026-09-28T22:36:58.619Z] [DEBUG] Gateway manager now owns process pid=19080
+[2026-09-28T22:37:00.680Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[2026-09-28T22:37:02.706Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)
+[2026-09-28T22:37:06.851Z] [DEBUG] Gateway ready after 28 attempt(s)
+[2026-09-28T22:37:06.851Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:59376/ws)
+[2026-09-28T22:37:06.854Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=577d1a55-3e6e-48ba-af49-3bd85d6c3943 peer=127.0.0.1:54776->127.0.0.1:59376 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:59376 ua=n/a code=1006 reason=n/a[39m
+[2026-09-28T22:37:06.857Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-09-28T22:37:06.858Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-09-28T22:37:06.858Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-09-28T22:37:06.860Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=afd4bdf2-3e75-4781-8e71-0e7f7f7172f8 peer=127.0.0.1:54779->127.0.0.1:59376 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:59376 ua=n/a code=1006 reason=n/a[39m
+[2026-09-28T22:37:06.868Z] [ERROR] Gateway connect handshake failed: Error: gateway starting; retry shortly
+Error: gateway starting; retry shortly
+    at xn.handleMessage (D:\ClawX\dist-electron\main\index-C3M18-8_.js:157:34346)
+    at Object.onMessage (D:\ClawX\dist-electron\main\index-C3M18-8_.js:157:33647)
+    at WebSocket.<anonymous> (D:\ClawX\dist-electron\main\index-C3M18-8_.js:78:8850)
+    at WebSocket.emit (node:events:508:28)
+    at Receiver.receiverOnMessage (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\websocket.js:1225:20)
+    at Receiver.emit (node:events:508:28)
+    at Receiver.dataMessage (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\receiver.js:596:14)
+    at Receiver.getData (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\receiver.js:496:10)
+    at Receiver.startLoop (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\receiver.js:167:16)
+    at Receiver._write (D:\ClawX\node_modules\.pnpm\ws@8.20.0\node_modules\ws\lib\receiver.js:94:10)
+[2026-09-28T22:37:06.869Z] [WARN] Gateway connect rejected while still starting (Error: gateway starting; retry shortly); retrying in 500ms (1/6)
+[2026-09-28T22:37:06.869Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[2026-09-28T22:37:06.871Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=ee2db4b7-beb2-469c-b2f3-e1ee8a1fb080 peer=127.0.0.1:49673->127.0.0.1:59376 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:59376 ua=n/a code=1006 reason=n/a[39m
+[2026-09-28T22:37:07.371Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:59376/ws)
+[2026-09-28T22:37:07.374Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-09-28T22:37:07.375Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-09-28T22:37:07.375Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-09-28T22:37:07.389Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:59376/ws)
+[2026-09-28T22:37:07.390Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[2026-09-28T22:37:11.054Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-09-28T22:37:11.054Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-09-28T22:37:11.055Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-09-28T22:37:11.540Z] [DEBUG] Gateway connect handshake completed
+[2026-09-28T22:37:11.540Z] [DEBUG] Gateway state changed: starting -> running
+[2026-09-28T22:37:11.541Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[2026-09-28T22:37:11.541Z] [INFO] Gateway connect succeeded after 2 attempt(s)
+[2026-09-28T22:37:11.542Z] [INFO] [metric] gateway.startup {"configSyncMs":197,"spawnToReadyMs":8232,"readyToConnectMs":4691,"totalMs":13120}
+[2026-09-28T22:37:11.542Z] [INFO] [metric] gateway.restart.executed {"gateway_restart_executed_total":3,"gateway_restart_suppressed_total":0,"gateway_restart_circuit_open_until":0}
+[2026-09-28T22:37:11.542Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=3684 pidAfter=19080 suppressed=0 executed=3 circuitOpenUntil=0
+[2026-09-28T22:37:13.986Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-09-28T22:37:13.986Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-09-28T22:37:13.986Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-09-28T22:37:13.987Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[2026-09-28T22:37:16.858Z] [INFO] [chat:sendWithMedia] Sending: message="# Handoff: continue this Verse Claw conversation
+
+Use this as the starting context for the new conve", attachments=0, fileRefs=0
+[2026-09-28T22:37:16.858Z] [INFO] [gateway-rpc] chat.send serialized id=a1326f1b-5d8f-4f98-b588-bea123b7e48d timeoutMs=120000 bytes=2925
+[2026-09-28T22:37:16.858Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=a1326f1b-5d8f-4f98-b588-bea123b7e48d
+[2026-09-28T22:37:16.859Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=a2192df3-9afa-435d-966a-519e953f8e40 id=a1326f1b-5d8f-4f98-b588-bea123b7e48d
+[2026-09-28T22:37:16.859Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=a2192df3-9afa-435d-966a-519e953f8e40 id=a1326f1b-5d8f-4f98-b588-bea123b7e48d
+[2026-09-28T22:37:16.860Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered
+[2026-09-28T22:37:16.865Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=a1a186ef-99fe-4679-84e8-323316b98ef9 sessionKey=agent:main:dashboard:4bc7f44b-f71c-40b3-a961-244bc9db6e32 loadSessionMs=0.585
+[2026-09-28T22:37:16.867Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=a1a186ef-99fe-4679-84e8-323316b98ef9 sessionKey=agent:main:dashboard:4bc7f44b-f71c-40b3-a961-244bc9db6e32 attachments=0
+[2026-09-28T22:37:16.867Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=a1a186ef-99fe-4679-84e8-323316b98ef9 sessionKey=agent:main:dashboard:4bc7f44b-f71c-40b3-a961-244bc9db6e32
+[2026-09-28T22:37:16.868Z] [INFO] [gateway-rpc] chat.send response id received durationMs=10
+[2026-09-28T22:37:16.868Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"a1a186ef-99fe-4679-84e8-323316b98ef9","status":"started"}
+[2026-09-28T22:37:16.874Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=a2192df3-9afa-435d-966a-519e953f8e40 id=a1326f1b-5d8f-4f98-b588-bea123b7e48d
+[2026-09-28T22:37:26.199Z] [INFO] Gateway stop requested
+[2026-09-28T22:37:26.199Z] [DEBUG] Gateway lifecycle epoch advanced to 8 (stop)
+[2026-09-28T22:37:26.199Z] [INFO] Sending kill to Gateway process (pid=19080)
+Debugger ending on ws://127.0.0.1:59378/89438ae3-8c99-4a56-a4bd-c7ffefff68b2
+For help, see: https://nodejs.org/en/docs/inspector
+[2026-09-28T22:37:26.202Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[2026-09-28T22:37:26.202Z] [DEBUG] Gateway state changed: running -> stopped
+[2026-09-28T22:37:28.878Z] [INFO] Gateway process exited (code=1, expected=yes)
+[2026-09-28T22:37:28.878Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[2026-09-28T22:37:28.893Z] [INFO] [ResourceTracker] Stopped
+[2026-09-28T22:37:28.893Z] [INFO] [ResourceTracker] Shutdown complete

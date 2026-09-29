@@ -1,0 +1,109 @@
+$ pnpm run test:channel-startup && pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.cron.config.ts src/cron/operator-delivery.test.ts && vitest run tests/unit/rc10-driver-entrypoint.test.ts tests/unit/gateway-ws-client.test.ts tests/unit/gateway-ws-trace.test.ts tests/unit/rc10-context-seal.test.ts tests/unit/cron-operator-notifications.test.ts tests/unit/host-services.test.ts && pnpm run typecheck && eslint tests/unit/config-sync-source-runtime.test.ts tests/integration/channel-startup.integration.test.ts tests/unit/rc10-driver-entrypoint.test.ts tests/unit/gateway-ws-client.test.ts tests/unit/gateway-ws-trace.test.ts tests/unit/rc10-context-seal.test.ts electron/gateway/ws-client.ts electron/gateway/ws-trace.ts tests/unit/cron-operator-notifications.test.ts tests/e2e/rc10-operator-live.spec.ts electron/services/sessions-api.ts tests/unit/host-services.test.ts --max-warnings 0 && node --check artifacts/runtime-authority-convergence/rc-10/driver.mjs && node --check artifacts/runtime-authority-convergence/rc-10/irc-server.mjs && node --check artifacts/runtime-authority-convergence/rc-10/operator-driver.mjs
+$ vitest run tests/unit/config-sync-source-runtime.test.ts tests/integration/channel-startup.integration.test.ts && pnpm --dir openclaw_runtime run test:gateway src/gateway/server-startup-post-attach.channel-start.test.ts
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mD:/ClawX[39m
+
+[90mstderr[2m | tests/unit/config-sync-source-runtime.test.ts[2m > [22m[2mapplySourceRuntimeSandboxAutoFallback[2m > [22m[2mforces sandbox off for defaults and per-agent overrides when Docker image is unavailable
+[22m[39m[2026-09-28T22:41:37.329Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+
+[90mstderr[2m | tests/unit/config-sync-source-runtime.test.ts[2m > [22m[2mapplySourceRuntimeSandboxAutoFallback[2m > [22m[2mremoves stale Verse Claw-only sandbox diagnostics from source runtime config
+[22m[39m[2026-09-28T22:41:37.331Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+
+ [32m✓[39m tests/unit/config-sync-source-runtime.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 1003[2mms[22m[39m
+     [33m[2m✓[22m[39m syncs the configured default provider before Gateway launch config is copied [33m 995[2mms[22m[39m
+ [32m✓[39m tests/integration/channel-startup.integration.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 147[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m21 passed[39m[22m[90m (21)[39m
+[2m   Start at [22m 06:41:34
+[2m   Duration [22m 4.18s[2m (transform 3.47s, setup 245ms, import 3.41s, tests 1.15s, environment 827ms)[22m
+
+$ node scripts/run-with-env.mjs OPENCLAW_GATEWAY_PROJECT_SHARDS=1 -- node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway.config.ts "src/gateway/server-startup-post-attach.channel-start.test.ts"
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.7 [39m[90mD:/ClawX/openclaw_runtime[39m
+
+ [32m✓[39m [30m[46m gateway-server [49m[39m ../../src/gateway/server-startup-post-attach.channel-start.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 260[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 06:41:41
+[2m   Duration [22m 961ms[2m (transform 1.44s, setup 302ms, import 180ms, tests 260ms, environment 0ms)[22m
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.7 [39m[90mD:/ClawX/openclaw_runtime[39m
+
+ [32m✓[39m [30m[43m cron [49m[39m src/cron/operator-delivery.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 879[2mms[22m[39m
+   [33m[2m✓[22m[39m requires a durable Inbox decision before sending: approved [33m 349[2mms[22m[39m
+   [33m[2m✓[22m[39m requires a durable Inbox decision before sending: denied [33m 319[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 06:41:43
+[2m   Duration [22m 1.71s[2m (transform 511ms, setup 298ms, import 231ms, tests 879ms, environment 0ms)[22m
+
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mD:/ClawX[39m
+
+ [32m✓[39m tests/unit/gateway-ws-client.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [32m✓[39m tests/unit/rc10-driver-entrypoint.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 713[2mms[22m[39m
+[90mstderr[2m | tests/unit/host-services.test.ts[2m > [22m[2mhost services[2m > [22m[2mreports degraded when the default account sync fails partially (R0-2)
+[22m[39m[providers] Default account saved but runtime sync degraded: models.json busy
+
+[90mstdout[2m | tests/unit/host-services.test.ts[2m > [22m[2mhost services[2m > [22m[2mdeletes agents by restarting gateway, removing workspace, and returning snapshot
+[22m[39m[agents] Gateway restart completed after agent deletion
+
+ [32m✓[39m tests/unit/cron-operator-notifications.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/gateway-ws-trace.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts [2m([22m[2m31 tests[22m[2m)[22m[33m 2085[2mms[22m[39m
+     [33m[2m✓[22m[39m runs proxy side effects and restarts a running gateway after settings.set [33m 504[2mms[22m[39m
+     [33m[2m✓[22m[39m sends staged media through the typed chat service with gateway attachments [33m 648[2mms[22m[39m
+ [32m✓[39m tests/unit/rc10-context-seal.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1004[2mms[22m[39m
+   [33m[2m✓[22m[39m seals context through the real SDK before a provider request [33m 844[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[32m64 passed[39m[22m[90m (64)[39m
+[2m   Start at [22m 06:41:45
+[2m   Duration [22m 11.24s[2m (transform 9.12s, setup 650ms, import 10.69s, tests 3.84s, environment 1.27s)[22m
+
+$ node scripts/typecheck-agent-dev.mjs
+[ext-bridge] No external extensions configured — empty stubs up to date.
+$ tsgo --noEmit -p tsconfig.node.json --composite false
+$ tsgo --noEmit -p tsconfig.web.json --composite false
+{
+  "success": true,
+  "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 0,
+    "durationMs": 13972,
+    "observationMode": true,
+    "errorCount": 0,
+    "errorLog": "D:\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
+  "cache": {
+    "enabled": false,
+    "status": "disabled",
+    "key": "b4ed0e23129af701f1b855255e3c7c40eafe3156cc10fcdb054c547929ffc424",
+    "inputCount": 801,
+    "report": "D:\\ClawX\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 14211,
+  "coverageNote": "Runs the node and web TypeScript projects as pnpm run typecheck after generating the extension bridge, and additionally typechecks tests/ (tsconfig.test.json) in observation mode: its legacy errors are reported under testTypes but do not fail the gate.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 41
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 12136
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 6571
+    }
+  ]
+}
