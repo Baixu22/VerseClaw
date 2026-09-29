@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-29T06:17:58.733800Z",
+  "generated_at": "2026-09-29T08:43:59.657687Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -12846,7 +12846,8 @@
         "TFD-7c53e09a42",
         "TFD-20260929e5",
         "TFD-0929c0a017",
-        "TFD-rc09-closure-advance-contract-20260929"
+        "TFD-rc09-closure-advance-contract-20260929",
+        "TFD-rc09-e2e-evidence-screenshot-20260929"
       ],
       "difficulty": "high",
       "estimated_total_minutes": null,
@@ -12931,7 +12932,8 @@
       "deviations": [
         "TFD-7c53e09a42",
         "TFD-20260929e5",
-        "TFD-0929c0a017"
+        "TFD-0929c0a017",
+        "TFD-rc09-e2e-evidence-screenshot-20260929"
       ],
       "difficulty": "high",
       "estimated_total_minutes": null,

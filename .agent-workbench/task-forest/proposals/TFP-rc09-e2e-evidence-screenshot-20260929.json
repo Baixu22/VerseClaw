@@ -1,0 +1,44 @@
+{
+  "applied_at": "2026-09-29T08:43:34.006958Z",
+  "base_graph_hash": "322f4f4380829f9657f16a448988cd27cf4ea7cb87dc743a728d0cd66f864f8c",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 1.0,
+        "correction": "artifacts/runtime-authority-convergence/rc-10/operator-driver.mjs 新增 captureEvidence()：60 s 超时、最多 3 次、animations disabled；最后一次错误仍然抛出，采证仍是硬要求。成功路径与失败路径两处调用点都改用它。",
+        "created_at": "2026-09-29T09:00:00Z",
+        "evidence": [
+          "docs/dev/handoffs/LATEST.md",
+          "artifacts/agent-engineering-acceptance/runs/ae396e9a-198b-4ac9-9ec3-b61c9ad94932/executor-report.json",
+          "artifacts/agent-engineering-acceptance/runs/ae396e9a-198b-4ac9-9ec3-b61c9ad94932/logs/electron-e2e.stdout.log",
+          "artifacts/runtime-authority-convergence/rc-10/operator-driver.mjs",
+          "tests/e2e/rc10-operator-live.spec.ts"
+        ],
+        "expected_requirement": "electron-e2e 门要求整套 Electron E2E 全绿，其中包含 H-02..H-06 的真实场景；采证失败不得把功能通过的场景改写为失败。",
+        "id": "TFD-rc09-e2e-evidence-screenshot-20260929",
+        "kind": "test_robustness_defect",
+        "observed_action_or_result": "runId ae396e9a-198b-4ac9-9ec3-b61c9ad94932，候选 1c4a3c0cd，15:08→16:38。23 门 22 门 pass；electron-e2e 316 passed / 10 skipped / 1 failed（50.7 分钟）。驱动事件流显示 H-02/H-03/H-04 pass，H-05 报 page.screenshot: Timeout 30000ms exceeded，report.failures=[H-05]，驱动退出码非零。",
+        "reason": "每场景采证用了 Playwright 默认 30 s 截图超时；H-05 在 Gateway 重启后立即截图，验收主机的负载下超过 30 s，于是功能已通过的场景被采证步骤判 fail 并写入 report.failures，spec 断言随之失败。这是采证健壮性缺陷，不是产品行为缺陷，也不是 0xC0000409 原生崩溃。",
+        "recommendation": "把驱动修复作为新的候选改动切出 C2 后重跑完整一轮；不放宽任何门、不改 E2E 重试姿态、不改任何断言。首轮成功运行的 22 门结果不跨候选继承。",
+        "related_task_ids": [
+          "TF-0041",
+          "TF-0042"
+        ],
+        "severity": "high",
+        "status": "resolved",
+        "summary": "RC-09 候选 C 首轮正式验收 NO-GO：新落库的 tests/e2e/rc10-operator-live.spec.ts 在 H-05 因采证截图 30 s 默认超时而失败，而该场景的功能断言全部通过。22/23 门通过，唯一失败门是 electron-e2e。"
+      }
+    }
+  ],
+  "created_at": "2026-09-29T08:43:33.774030Z",
+  "proposal_id": "TFP-rc09-e2e-evidence-screenshot-20260929",
+  "rationale": "The first formal RC-09 acceptance round on candidate C failed on a single E2E scenario whose only problem was evidence capture: the RC-10 operator driver used Playwright's default 30 s screenshot timeout, and H-05 captures the frame right after a Gateway restart. Every functional assertion in H-02 through H-06 had passed. The fix makes evidence collection bounded-retry instead of a 30 s coin flip, without touching the acceptance contract, the E2E retry posture, or any assertion.",
+  "session_id": "rc09-phase-c-20260929",
+  "status": "applied"
+}
