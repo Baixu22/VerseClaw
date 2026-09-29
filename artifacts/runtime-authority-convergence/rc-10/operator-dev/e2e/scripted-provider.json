@@ -1,0 +1,25 @@
+{
+  "driven_by": "agent",
+  "model": "mock-coder",
+  "syntheticUsage": true,
+  "requests": [
+    {
+      "turn": "[Tue 2026-09-29 04:58 GMT+8] Create the controlled scheduled",
+      "toolResults": {},
+      "issued": "rc10origincron"
+    },
+    {
+      "turn": "[Tue 2026-09-29 04:57 GMT+8] Conversation info (untrusted me",
+      "toolResults": {
+        "rc10origincron": "{\n  \"id\": \"19b6c397-18e2-4846-80e0-64f56cc7ca0a\",\n  \"agentId\": \"main\",\n  \"name\": \"RC10-H-03-2f219c37-f2ac-4041-bca4-85060c57f111\",\n  \"enabled\": true,\n  \"deleteAfterRun\": false,\n  \"createdAtMs\": 1790629081478,\n  \"updatedAtMs\": 1790629081478,\n  \"schedule\": {\n    \"kind\": \"at\",\n    \"at\": \"2026-09-28T20:58:11.062Z\"\n  },\n  \"sessionTarget\": \"isolated\",\n  \"wakeMode\": \"now\",\n  \"payload\": {\n    \"kind\": \"agentTurn\",\n    \"message\": \"DELIVER_RESULT RC10-H-03-2f219c37-f2ac-4041-bca4-85060c57f111\",\n    \"timeoutSeconds\": 120\n  },\n  \"delivery\": {\n    \"mode\": \"announce\",\n    \"channel\": \"irc\",\n    \"to\": \"#rc10\",\n    \"bestEffort\": false\n  },\n  \"state\": {\n    \"nextRunAtMs\": 1790629091062\n  }\n}"
+      },
+      "issued": "text:The requested scheduled task has been cr"
+    },
+    {
+      "turn": "[cron:19b6c397-18e2-4846-80e0-64f56cc7ca0a RC10-H-03-2f219c3",
+      "toolResults": {},
+      "issued": "text:RC10-H-03-2f219c37-f2ac-4041-bca4-85060c"
+    }
+  ],
+  "anomalies": []
+}

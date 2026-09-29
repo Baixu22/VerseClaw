@@ -1,0 +1,92 @@
+{
+  "schema": "rc10-driver-evidence/v1",
+  "driven_by": "agent",
+  "actor": "rc10-operator-driver",
+  "formalAcceptance": false,
+  "knownFixtureCredentialScan": {
+    "valuesChecked": 7,
+    "filesWithHits": []
+  },
+  "files": {
+    "app.log": {
+      "sha256": "c6d1c018a7ac0a03cabc7aea280a361eb9cbf89434f7d2f82db3ab155f0ebe9d",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "events.jsonl": {
+      "sha256": "2e2f6297808b3a83b01db54ef7b2317851cd4db96d987040f83896f6a7a7f0ad",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "H-02-state.json": {
+      "sha256": "2acf71513ff5c1550c62897af1b99793b550e62f1c5aa5d8f951e977d9c1c912",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "H-02.png": {
+      "sha256": "857aea184cd3974d1975861c7ce47997fb2140bf25c8bdf77eab03002b534ee9",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "H-03-state.json": {
+      "sha256": "6e44783fc5136062307f622fd3f9aebc4ea8a1669a160f49bac889675470cd10",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "H-03.png": {
+      "sha256": "f50b047744d942b6edfc87f3b0c8261625f5b29e45081ded0e62341910df6a7e",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "H-04-state.json": {
+      "sha256": "41be3dfa8b6a6c3b68fa6a412521ca5202f681cf10e0ca9c28231fecb68f1780",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "H-04.png": {
+      "sha256": "f19f827f1faf26db22fb649c567f307c52fcf41e8cb01d05f6468e43b216f6f3",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "H-05-state.json": {
+      "sha256": "a7da56ac3ea81f4c6ce7bd104a7596ac116e43217e50746da433b1119d82d1e8",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "H-05.png": {
+      "sha256": "068133f4ace9965849bfdbb068b5118411861f8a38d727725aa71de2a3e0adbb",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "H-06-state.json": {
+      "sha256": "c7778319daaeda81544cd16299c133c52ef25e46a87e7a8a02896370d9a629e9",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "H-06.png": {
+      "sha256": "f8405392fb034c73e1d58316622fa4fe4adc2fb5ffaa27ae9c6c7ecfe2d61f59",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "hashes.json": {
+      "sha256": "8c8a801e6775233b72eb7054fa675b89ba9020848a4636aa5ab2323649fcb529",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "irc.jsonl": {
+      "sha256": "cf33e7764025d6be0ebb125f5b07a940cb59b3ecb902ccb8485a1cf8bee9e5d2",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "report.json": {
+      "sha256": "ab1f606392e03848f893940812e257edca57ce21655e04212fb88525b381c130",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    },
+    "scripted-provider.json": {
+      "sha256": "fa838cf4850ffa1c7c2d54ebdb2f51ad2acaf5640cf04a3fbf05633725b4adab",
+      "driven_by": "agent",
+      "actor": "rc10-operator-driver"
+    }
+  }
+}
