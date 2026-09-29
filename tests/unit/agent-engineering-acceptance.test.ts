@@ -182,7 +182,16 @@ function resealManifest(manifest: Record<string, unknown>) {
   return manifest;
 }
 
-function createConvergenceFixture() {
+const CLOSURE_ALLOWED_PATHS = [
+  'docs/dev/unified-agent-system/runtime-convergence/STATUS.md',
+  'artifacts/runtime-authority-convergence/rc-09/**',
+  'artifacts/runtime-authority-convergence/rc-10/acceptance/**',
+];
+
+function createConvergenceFixture(options: { closureAllowedPaths?: string[] | null } = {}) {
+  const closureAllowedPaths = options.closureAllowedPaths === undefined
+    ? CLOSURE_ALLOWED_PATHS
+    : options.closureAllowedPaths;
   const root = createFixtureRepository();
   const base = repositoryIdentity(root).commit;
   const baselineRelative = 'artifacts/runtime-authority-convergence/rc-01/baseline.json';
@@ -203,6 +212,9 @@ function createConvergenceFixture() {
     'cumulativeOwnership:',
     '  requiredSpecs:',
     '    - harness/specs/tasks/rc00-agent-engineering-acceptance-bootstrap.md',
+    ...(closureAllowedPaths
+      ? ['closureAdvance:', '  allowedPaths:', ...closureAllowedPaths.map((entry) => `    - ${JSON.stringify(entry)}`)]
+      : []),
     '---',
     '# RC-09 fixture',
     '',
@@ -1663,6 +1675,193 @@ describe('Agent Engineering Acceptance', () => {
     });
     expect(hashTamper.errors).toContain('human verdict manifest_sha256 mismatch');
   }, 60_000);
+
+  describe('closure advance past the accepted candidate', () => {
+    const FINAL_DIR = 'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final';
+
+    /** Drives a convergence fixture to a green Executor/Verifier run at candidate C. */
+    function acceptedConvergenceCandidate(closureAllowedPaths?: string[] | null) {
+      const { root, base, baselineRelative } = createConvergenceFixture({ closureAllowedPaths });
+      const outputDir = join(root, 'artifacts', 'agent-engineering-acceptance', 'fixture-closure');
+      const manifest = createManifest(root, {
+        humanEvidence: 'required',
+        gate: {
+          id: 'fixture-closure-gate',
+          name: 'Fixture closure gate',
+          profile: 'fast',
+          command: 'node',
+          args: ['-e', 'console.log("Tests 1 passed (1)")'],
+          required: true,
+          allowSkip: false,
+          timeoutMs: 30_000,
+          safety: { network: 'none', productionEffects: false, humanEvidence: false },
+          testExpectation: { requireCounts: true, expectedSkips: 0 },
+        },
+      });
+      mkdirSync(outputDir, { recursive: true });
+      mkdirSync(join(root, ...FINAL_DIR.split('/')), { recursive: true });
+      const changedPaths = resolveChangedPaths(root, { since: base });
+      writeFileSync(join(root, ...FINAL_DIR.split('/'), 'changed-path-ownership.json'), `${JSON.stringify({
+        schema: 'runtime-authority-convergence-rc09-ownership/v2',
+        baseSha: base,
+        headSha: repositoryIdentity(root).commit,
+        requiredOwners: ['RC-00'],
+        requiredSpecs: ['harness/specs/tasks/rc00-agent-engineering-acceptance-bootstrap.md'],
+        totalPaths: changedPaths.length,
+        rcOwnedPaths: changedPaths.length,
+        excludedPaths: 0,
+        byRc: { 'RC-00': changedPaths.length },
+        byExclusionWorkstream: {},
+        entries: changedPaths.map((pathValue) => ({ path: pathValue, rc: 'RC-00', commit: null, declaredBySpec: true })),
+      }, null, 2)}\n`, 'utf8');
+      Object.assign(manifest, createAcceptancePlan({
+        root,
+        specPath: manifest.task.specPath,
+        since: base,
+        runId: manifest.runId,
+        createdAt: manifest.createdAt,
+      }));
+      const manifestPath = join(outputDir, 'manifest.json');
+      writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+      const env = { PATH: process.env.PATH ?? '' };
+      const executor = runAcceptance(manifest, { sourceRoot: root, outputDir, actor: 'closure-executor', env });
+      expect(executor.result).toBe('pass');
+      const verifier = verifyAcceptance(manifest, {
+        sourceRoot: root,
+        outputDir,
+        actor: 'closure-verifier',
+        env,
+        executorReport: executor,
+      });
+      expect(verifier).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: true });
+      const reportPath = join(outputDir, 'final-report.json');
+      const humanVerdictPath = join(outputDir, 'human-verdict.yaml');
+      writeFileSync(humanVerdictPath, [
+        'schema: runtime-authority-convergence-human-verdict/v1',
+        'driven_by: agent',
+        'actor: closure-fixture-agent',
+        `candidate_sha: ${manifest.candidate.commit}`,
+        `manifest_sha256: ${sha256File(manifestPath)}`,
+        `engineering_report_sha256: ${sha256File(reportPath)}`,
+        'verdict: accepted',
+        'accepted_scenarios: [H-01, H-02, H-03, H-04, H-05, H-06]',
+        'failed_scenarios: []',
+        'notes: closure fixture',
+        'decided_at: 2026-09-29T00:00:00.000Z',
+        '',
+      ].join('\n'), 'utf8');
+      const candidate = manifest.candidate.commit;
+      const validate = (phase: 'engineering' | 'human' = 'engineering') => validateRuntimeAuthorityConvergence({
+        root,
+        phase,
+        manifestPath,
+        engineeringReportPath: reportPath,
+        baselinePath: baselineRelative,
+        ...(phase === 'human' ? { humanVerdictPath } : {}),
+      });
+      // Every scenario starts from a clean detached checkout of C; ignored run
+      // output (manifest, report, verdict) survives because clean skips -x.
+      const resetToCandidate = () => {
+        git(root, ['checkout', '--quiet', '--force', '--detach', candidate]);
+        git(root, ['clean', '-fdq']);
+      };
+      const commitFiles = (files: Record<string, string>, message: string) => {
+        for (const [pathValue, body] of Object.entries(files)) {
+          mkdirSync(join(root, pathValue, '..'), { recursive: true });
+          writeFileSync(join(root, pathValue), body, 'utf8');
+          git(root, ['add', '--force', pathValue]);
+        }
+        git(root, ['commit', '--quiet', '-m', message]);
+      };
+      const worktreeCount = () => gitText(root, ['worktree', 'list', '--porcelain'])
+        .split(/\r?\n/u)
+        .filter((line) => line.startsWith('worktree ')).length;
+      return { root, candidate, validate, resetToCandidate, commitFiles, worktreeCount };
+    }
+
+    it('replays over closure-only descendants and fails closed on everything else', () => {
+      const fixture = acceptedConvergenceCandidate();
+      const { validate, resetToCandidate, commitFiles, worktreeCount } = fixture;
+      const statusPath = 'docs/dev/unified-agent-system/runtime-convergence/STATUS.md';
+
+      // 1. Fast path: HEAD is exactly the clean candidate.
+      const atCandidate = validate();
+      expect(atCandidate).toEqual(expect.objectContaining({ ok: true, errors: [], closureAdvance: false }));
+
+      // 2. Closure-only commits: engineering and human phases both replay.
+      resetToCandidate();
+      commitFiles({
+        [statusPath]: 'program_status: human_acceptance_pending\n',
+        'artifacts/runtime-authority-convergence/rc-09/archive/x.json': '{}\n',
+      }, 'closure');
+      expect(validate()).toEqual(expect.objectContaining({ ok: true, errors: [], closureAdvance: true }));
+      expect(validate('human')).toEqual(expect.objectContaining({ ok: true, errors: [], closureAdvance: true }));
+      expect(worktreeCount()).toBe(1);
+
+      // 3. A path outside the allowlist.
+      resetToCandidate();
+      commitFiles({ 'docs/other.md': '# other\n' }, 'non-closure');
+      expect(validate().errors).toContain('closure advance: non-closure path changed after candidate: docs/other.md');
+
+      // 4. A code file, even inside an allowlisted directory.
+      resetToCandidate();
+      commitFiles({ 'artifacts/runtime-authority-convergence/rc-10/acceptance/x.mjs': 'export {};\n' }, 'code');
+      expect(validate().errors).toContain(
+        'closure advance: code file changed after candidate: artifacts/runtime-authority-convergence/rc-10/acceptance/x.mjs',
+      );
+
+      // 5. Regenerating the ownership matrix after the candidate.
+      resetToCandidate();
+      commitFiles({ [`${FINAL_DIR}/changed-path-ownership.json`]: '{}\n' }, 'matrix');
+      expect(validate().errors).toContain(
+        `closure advance: frozen input changed after candidate: ${FINAL_DIR}/changed-path-ownership.json`,
+      );
+
+      // 6. A closure commit that widens its own allowlist: the candidate's spec wins.
+      resetToCandidate();
+      const specPath = 'harness/specs/tasks/runtime-authority-convergence-final-acceptance.md';
+      const widened = readFileSync(join(fixture.root, specPath), 'utf8')
+        .replace('  allowedPaths:\n', '  allowedPaths:\n    - "docs/**"\n');
+      commitFiles({ [specPath]: widened, 'docs/other.md': '# other\n' }, 'widen');
+      const widenedResult = validate();
+      expect(widenedResult.errors).toContain(`closure advance: frozen input changed after candidate: ${specPath}`);
+      expect(widenedResult.errors).toContain('closure advance: non-closure path changed after candidate: docs/other.md');
+
+      // 7. HEAD that does not descend from the candidate.
+      git(fixture.root, ['checkout', '--quiet', '--force', '--detach', `${fixture.candidate}^`]);
+      git(fixture.root, ['clean', '-fdq']);
+      commitFiles({ [statusPath]: 'program_status: in_progress\n' }, 'side branch');
+      expect(validate().errors).toContain('closure advance: candidate is not an ancestor of HEAD');
+
+      // 8. An uncommitted, untracked file in the invoking worktree.
+      resetToCandidate();
+      mkdirSync(join(fixture.root, 'docs'), { recursive: true });
+      writeFileSync(join(fixture.root, 'docs', 'scratch.md'), '# scratch\n', 'utf8');
+      expect(validate().errors).toContain('closure advance: non-closure path changed after candidate: docs/scratch.md');
+
+      // Success and failure paths both release the detached candidate worktree.
+      expect(worktreeCount()).toBe(1);
+    }, 180_000);
+
+    it('fails closed when the candidate spec declares no closure allowlist', () => {
+      const { validate, resetToCandidate, commitFiles, worktreeCount } = acceptedConvergenceCandidate(null);
+      expect(validate()).toEqual(expect.objectContaining({ ok: true, closureAdvance: false }));
+      resetToCandidate();
+      commitFiles({ 'artifacts/runtime-authority-convergence/rc-09/archive/x.json': '{}\n' }, 'closure');
+      expect(validate().errors).toContain('closure advance: candidate spec declares no closureAdvance.allowedPaths');
+      expect(worktreeCount()).toBe(1);
+    }, 120_000);
+
+    it('rejects allowlist entries that are not exact paths or directory prefixes', () => {
+      const { validate, resetToCandidate, commitFiles } = acceptedConvergenceCandidate([
+        'artifacts/runtime-authority-convergence/rc-09/**',
+        'a/*.json',
+      ]);
+      resetToCandidate();
+      commitFiles({ 'artifacts/runtime-authority-convergence/rc-09/archive/x.json': '{}\n' }, 'closure');
+      expect(validate().errors).toContain('closure advance: malformed allowedPaths entry: a/*.json');
+    }, 120_000);
+  });
 
   it('sums every Tests summary segment instead of taking the largest single count', () => {
     const stdout = [
