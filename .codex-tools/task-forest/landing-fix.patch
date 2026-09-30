@@ -1,0 +1,228 @@
+--- a/scripts/task_forest.py
++++ b/scripts/task_forest.py
+@@ -14,6 +14,7 @@
+ import uuid
+ from dataclasses import dataclass
+ from datetime import datetime, timezone
++from functools import lru_cache
+ from pathlib import Path
+ from typing import Any
+
+@@ -2229,8 +2230,8 @@
+     """从节点证据里挑出**真的存在**的提交 token。
+
+     证据在本森林里是自由文本（多数是读数说明），所以先做候选正则，再用
+-    `git cat-file -e <token>^{commit}` 过滤——只有能解析成提交对象的才算
+-    「这条证据指向了一个提交」。过滤掉随机十六进制串，是这条读数不撒谎的关键。
++    `git rev-parse --verify <token>^{commit}` 过滤并归一成完整 SHA；同一提交的
++    短 SHA 和完整 SHA 只计一次。只有能解析成提交对象的 token 才归因。
+     """
+     tokens: list[str] = []
+     seen: set[str] = set()
+@@ -2239,10 +2240,12 @@
+         for token in COMMIT_TOKEN_RE.findall(text):
+             if token in seen:
+                 continue
+-            probe = run_git("cat-file", "-e", f"{token}^{{commit}}")
++            probe = run_git("rev-parse", "--verify", f"{token}^{{commit}}")
+             if probe.returncode == 0:
+-                seen.add(token)
+-                tokens.append(token)
++                commit = probe.stdout.strip()
++                if commit not in seen:
++                    seen.add(commit)
++                    tokens.append(commit)
+     return tokens
+
+
+@@ -2266,13 +2269,17 @@
+          出现在别的分支上 = 真落库缺口；不属于任何分支 = 孤立提交（极狐镜像的
+          fresh-orphan 快照就是这一类），只报读数，不判漂移。
+
+-    本命令只报告读数，不做裁决。退出码 0/1，可直接当闸门用。
++    默认分支优先使用 origin/HEAD 指向的完整远端引用；缺失时依次回退到
++    origin/main 和本地 main。不会自动 fetch，调用者需先刷新远端引用。
++    分支使用 for-each-ref 读取，不能解析带 * / + 显示标记的 git branch 输出。
++    本命令只报告读数，不做裁决。Git 查询失败必须非零退出，不能跳过后报绿。
+     """
+     workspace = resolve_workspace(args.workspace)
+     store = Store(workspace, state_root(workspace, args.root))
+     with store.lock(args.lock_timeout):
+         _, nodes, _edges = store.load(assume_locked=True)
+
++    @lru_cache(maxsize=None)
+     def run_git(*git_args: str) -> subprocess.CompletedProcess:
+         return subprocess.run(
+             ["git", "-C", str(workspace), *git_args],
+@@ -2295,11 +2302,18 @@
+     problems: list[str] = []
+
+     default_branch = "main"
+-    branch_probe = run_git("symbolic-ref", "--short", "refs/remotes/origin/HEAD")
++    branch_probe = run_git("symbolic-ref", "--quiet", "refs/remotes/origin/HEAD")
+     if branch_probe.returncode == 0 and branch_probe.stdout.strip():
+-        default_branch = branch_probe.stdout.strip().split("/")[-1]
++        default_ref = branch_probe.stdout.strip()
++        default_branch = default_ref.removeprefix("refs/remotes/origin/")
+     else:
+-        notes.append("origin/HEAD 不可读，默认分支按 main 处理")
++        default_ref = "refs/remotes/origin/main"
++        if run_git("rev-parse", "--verify", "--quiet", default_ref).returncode != 0:
++            default_ref = "refs/heads/main"
++        notes.append(f"origin/HEAD 不可读，回退到 {default_ref}")
++    default_exists = run_git("rev-parse", "--verify", "--quiet", f"{default_ref}^{{commit}}").returncode == 0
++    if not default_exists:
++        problems.append(f"默认分支 {default_ref} 不存在，无法完成落库对账")
+
+     head = run_git("log", "-1", "--format=%H%n%cI")
+     head_sha = ""
+@@ -2313,37 +2327,37 @@
+     status = run_git("status", "--porcelain")
+     if status.returncode == 0:
+         dirty = [ln for ln in status.stdout.splitlines() if ln.strip()]
++    else:
++        problems.append("无法读取工作区状态，落库对账不完整")
+
+     # 1) HEAD 是否领先默认分支（有提交未落库）
+-    if run_git("rev-parse", "--verify", "--quiet", default_branch).returncode != 0:
+-        notes.append(f"默认分支 {default_branch} 不存在，跳过分支拓扑对账")
+-    else:
+-        ahead = run_git("log", "--oneline", f"{default_branch}..HEAD")
++    if default_exists:
++        ahead = run_git("log", "--oneline", f"{default_ref}..HEAD")
+         if ahead.returncode != 0:
+-            notes.append(f"无法读取 {default_branch}..HEAD，跳过该读数")
++            problems.append(f"无法读取 {default_ref}..HEAD，落库对账不完整")
+         else:
+             ahead_list = [ln for ln in ahead.stdout.splitlines() if ln.strip()]
+             if ahead_list:
+                 problems.append(
+-                    f"HEAD 领先 {default_branch} {len(ahead_list)} 个提交（未落库）："
++                    f"HEAD 有 {len(ahead_list)} 个提交不可达 {default_ref}（未落库）："
+                     + "；".join(ahead_list[:3])
+                     + ("…" if len(ahead_list) > 3 else "")
+                 )
+
+         # 2) 未合并分支是否携带代码
+-        unmerged = run_git("branch", "--no-merged", default_branch)
++        unmerged = run_git("for-each-ref", "--format=%(refname)", f"--no-merged={default_ref}", "refs/heads/")
+         if unmerged.returncode != 0:
+-            notes.append("无法列出未合并分支，跳过该读数")
++            problems.append("无法列出未合并分支，落库对账不完整")
+         else:
+             branches = [
+-                ln.replace("*", " ").strip()
++                ln.strip()
+                 for ln in unmerged.stdout.splitlines()
+                 if ln.strip()
+             ]
+             for branch in branches:
+-                diff = run_git("diff", "--name-only", f"{default_branch}...{branch}")
++                diff = run_git("diff", "--name-only", f"{default_ref}...{branch}")
+                 if diff.returncode != 0:
+-                    notes.append(f"无法比对分支 {branch}，跳过")
++                    problems.append(f"无法比对分支 {branch}（可能无共同祖先），落库对账不完整")
+                     continue
+                 files = [ln for ln in diff.stdout.splitlines() if ln.strip()]
+                 code = [
+@@ -2354,7 +2368,7 @@
+                 ]
+                 if code:
+                     problems.append(
+-                        f"分支 {branch} 有 {len(code)} 个代码文件未并入 {default_branch}："
++                        f"分支 {branch} 有 {len(code)} 个代码文件未并入 {default_ref}："
+                         + "、".join(code[:5])
+                         + ("…" if len(code) > 5 else "")
+                     )
+@@ -2383,12 +2397,12 @@
+                 }
+             )
+             continue
+-        for token in tokens:
+-            ancestry = run_git("merge-base", "--is-ancestor", token, default_branch)
++        for token in tokens if default_exists else []:
++            ancestry = run_git("merge-base", "--is-ancestor", token, default_ref)
+             if ancestry.returncode == 0:
+                 continue
+             if ancestry.returncode != 1:
+-                notes.append(
++                problems.append(
+                     f"节点 {node.get('id')} 的证据提交 {token} 无法判定可达性"
+                     f"（merge-base exit {ancestry.returncode}）"
+                 )
+@@ -2398,10 +2412,13 @@
+             #   b) 提交不属于任何分支 —— 孤立提交。本仓的极狐镜像用的就是
+             #      fresh-orphan 快照（刻意无历史、刻意不在任何分支上），
+             #      把它判成落库缺口是假阳性。两者都报读数，只有 a 算漂移。
+-            containing = run_git("branch", "--all", "--contains", token)
++            containing = run_git("for-each-ref", "--format=%(refname)", f"--contains={token}", "refs/heads/", "refs/remotes/")
++            if containing.returncode != 0:
++                problems.append(f"无法读取证据提交 {token} 所在分支，落库对账不完整")
++                continue
+             containing_branches = (
+                 [
+-                    ln.replace("*", " ").strip()
++                    ln.strip()
+                     for ln in containing.stdout.splitlines()
+                     if ln.strip()
+                 ]
+@@ -2411,7 +2428,7 @@
+             others = [
+                 branch
+                 for branch in containing_branches
+-                if branch not in (default_branch, f"origin/{default_branch}")
++                if branch != default_ref
+             ]
+             subject = run_git("log", "-1", "--format=%s", token).stdout.strip()
+             entry = {
+@@ -2430,19 +2447,20 @@
+     for suspect in suspects:
+         problems.append(
+             f"done 节点 {suspect['id']} 的证据提交 {suspect['commit']} 只出现在"
+-            f"未合并分支 {'、'.join(suspect['branches'])} 上，不是 {default_branch} 的祖先"
++            f"未合并分支 {'、'.join(suspect['branches'])} 上，不是 {default_ref} 的祖先"
+         )
+     for orphan in orphans:
+         notes.append(
+             f"done 节点 {orphan['id']} 的证据提交 {orphan['commit']} 不属于任何分支"
+             f"（孤立提交：{orphan['subject']}）——不判为漂移，但该节点的落库事实"
+-            "无法从默认分支复核，需人工裁决"
++            "无法从默认分支复核，需 agent 核对归档与后继交付证据"
+         )
+
+     payload = {
+         "applicable": True,
+         "repo_root": repo_root,
+         "default_branch": default_branch,
++        "default_ref": default_ref,
+         "head_sha": head_sha,
+         "head_committed_at": head_committed_at,
+         "dirty_count": len(dirty),
+@@ -2462,7 +2480,7 @@
+     else:
+         print("落库对账（check-landing）：只报告读数，不裁决。")
+         print(f"仓库：{repo_root}")
+-        print(f"默认分支：{default_branch}")
++        print(f"默认分支：{default_branch}（{default_ref}；本地引用读数，检查前需 fetch）")
+         if head_sha:
+             print(f"HEAD：{head_sha[:12]} @ {head_committed_at}")
+         else:
+--- a/SKILL.md
++++ b/SKILL.md
+@@ -42,7 +42,7 @@
+ 4. When the workspace has an authoritative task list, preserve its meaningful `goal -> phase -> module -> concrete task` hierarchy and sibling order for every `done` or `in_progress` task. Include necessary ancestors, omit wholly unstarted branches, and attach extra fixes under the feature they improve. Never collapse several phases into one node or rely on edge creation order. If one sibling needs `display_order`, set a unique numeric value for the whole sibling group; partial, duplicate, or invalid values must fail validation.
+ 5. Make every visible node independently understandable. Use a clear title plus `summary` or `purpose`; add outcomes or acceptance criteria when they clarify delivery. Treat internal codes as secondary labels, not as the task name.
+ 6. Show and save a proposal. Do not apply it before confirmation.
+-7. After confirmation, run `proposal-apply --yes`, `validate`, and `export`. For repos with code deliverables, also run `check-landing` before closing the session: a `done` node whose timestamp postdates the last commit means the landing needs a human look.
++7. After confirmation, run `proposal-apply --yes`, `validate`, and `export`. For repos with code deliverables, also run `check-landing` before closing the session. It checks default-branch reachability, not timestamps: refresh remote refs first. It uses the complete `origin/HEAD` target, falling back to `origin/main`, then local `main`. Query errors fail the check; historical branches remain repository-wide findings, not automatic proof of a current task defect.
+ 8. Return the proposal path and the single HTML path.
+
+ Use `$task-clarifier` when user intent or the target global goal is genuinely unclear.
+@@ -116,3 +116,7 @@
+ `scripts/smoke_test_locking.py`, and `scripts/test_lock_contention.py`. They cover
+ snapshot collision recovery, compact append-only events, progress excluding
+ retired children, and concurrent writes when the host forbids unlink.
++
++When changing landing checks, run `scripts/test_landing.py`. It covers stale local
++branches, default branch names containing slashes, linked worktrees, abbreviated
++commit IDs, missing refs, unrelated histories, and failed Git queries.
