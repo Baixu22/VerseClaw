@@ -150,5 +150,27 @@
     "Agent component campaign with an isolated Browser page runtime; no real-human/public-network claim.",
     "Dependency junctions reuse local packages; two ignored legacy test inputs are copied byte-for-byte and archived with their hashes. Not fresh-install supply-chain proof.",
     "No new full RC-09, Electron, paid-provider or release/GA acceptance; TF-0008 evidence is historical."
+  ],
+  "textNormalization": [
+    {
+      "file": "autoreview-final.json",
+      "originalSha256": "85f08f76a3ca4f18e9ff4588ec8ea95083f14fa935d5c1a8dccd04053fefc3fe",
+      "operation": "CRLF to LF in copied text only; original retained in acceptance run directory"
+    },
+    {
+      "file": "autoreview-final.md",
+      "originalSha256": "7a329b2e5b608c7406a9d395b246cc5ae811a69556935679b0f8eebb3e4c328b",
+      "operation": "CRLF to LF in copied text only; original retained in acceptance run directory"
+    },
+    {
+      "file": "legacy-test-inputs.json",
+      "originalSha256": "b88c84e405acea0e660b6d9718aeaed6c66fe9ccf26ef1e33f4ae314d2c85dab",
+      "operation": "CRLF to LF in copied text only; original retained in acceptance run directory"
+    },
+    {
+      "file": "typecheck-final.log",
+      "originalSha256": "030c08b3a559f5dc6de423f6a195654c2a8d2d789ccdbb68fdabd5d474227f98",
+      "operation": "CRLF to LF in copied text only; original retained in acceptance run directory"
+    }
   ]
 }
