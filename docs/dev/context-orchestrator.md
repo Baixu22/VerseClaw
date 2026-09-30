@@ -64,3 +64,9 @@ After each turn orchestration:
 - Does not replace BlockStore / SEKB writeback / TF-0004 E2E
 - Does not implement VToken MemStore/WAL/worker-pool or estimate semantics (TF-0014/UAS-03)
 - Does not graduate Runtime Memory, enable SEKB automatic writeback, or change live/product/default-on locks
+
+## COMPASS pre-reply budget (2026-09-30)
+
+SSP and retrieval are no longer appended directly to the pre-reply system prompt. Preparation checks the enhancement kill switch before SSP or fact loading; execution rechecks source flags before collecting both as knowledge candidates. Immediate, queued, CLI and native harness runs carry the same serializable context input. The existing owner performs sorting, identity deduplication and budget projection; no new budget or product flag is introduced.
+
+Seal attribution uses the projected text, including truncation, instead of matching the original over-budget text. Memory fact receipts and post-reply efficiency only count fully projected retrieval groups; partial bytes remain visible in candidate lineage without claiming that every fact survived. Runtime source tests intercept the actual provider request and pair its digest with v1 receipts. This is scoped development evidence, not a new RC acceptance verdict.

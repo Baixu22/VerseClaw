@@ -2,6 +2,7 @@
  * Selects and invokes native agent harnesses for embedded run attempts.
  */
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import { projectStandaloneCompassContext } from "../../context-engine/context-orchestrator.js";
 import {
   createChildDiagnosticTraceContext,
   createDiagnosticTraceContext,
@@ -279,8 +280,24 @@ export async function runAgentHarnessAttempt(
     agentHarnessRuntimeOverride: params.agentHarnessRuntimeOverride,
   });
   const harness = selection.harness;
+  // Native harnesses consume extraSystemPrompt without entering the embedded
+  // orchestrator. Project once here, then remove the unprojected input.
+  let preparedParams = params;
+  if (harness.id !== "openclaw" && params.compassContext) {
+    const compassPrompt = projectStandaloneCompassContext({
+      turnId: `harness:${params.sessionKey ?? params.sessionId}:${params.runId}:${params.attemptIndex ?? 0}`,
+      context: params.compassContext,
+      cfg: params.config,
+    });
+    preparedParams = {
+      ...params,
+      compassContext: undefined,
+      extraSystemPrompt:
+        [params.extraSystemPrompt, compassPrompt].filter(Boolean).join("\n\n") || undefined,
+    };
+  }
   const attemptParams =
-    harness.id === "openclaw" ? params : applyPluginHarnessDenyAllToolPolicy(params);
+    harness.id === "openclaw" ? params : applyPluginHarnessDenyAllToolPolicy(preparedParams);
   logAgentHarnessSelection(selection, {
     provider: params.provider,
     modelId: params.modelId,

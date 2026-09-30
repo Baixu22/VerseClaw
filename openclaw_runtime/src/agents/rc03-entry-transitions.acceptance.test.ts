@@ -433,6 +433,41 @@ describe("RC-03R real-entry seal and dual v1 receipts", () => {
     ).toEqual([]);
   }, 60_000);
 
+  it("COMPASS candidates reach the real wire only after the shared budget projection", async () => {
+    resetShadowCensusDiagnosticsForTest();
+    const compassContext = {
+      sessionKey: "agent:main:rc03",
+      injection: { sspString: "COMPASS-BUDGET:" + "S".repeat(8000), iFrameRefreshed: false },
+      candidateFactIds: [],
+      appliedFactIds: [],
+    };
+    const spy = installTransportSpy(() => ({ body: responsesTextSse() }));
+    try {
+      const result = await runEmbeddedAgent(
+        runParams(tempRoot(), {
+          modelRun: false,
+          promptMode: "minimal",
+          compassContext,
+        }),
+      );
+      expect(result.meta?.error).toBeUndefined();
+    } finally {
+      spy.restore();
+    }
+    const body = spy.captured[0]?.body ?? "";
+    expect(body).toContain("COMPASS-BUDGET:");
+    expect(body).not.toContain("S".repeat(6001));
+    expect(body.match(/COMPASS-BUDGET:/g)).toHaveLength(1);
+    const { context } = expectV1Pairs("compass-budget", spy.captured);
+    expect(
+      context.some((row) => row.selected_json?.includes("ref:context:producer:compass-ssp")),
+    ).toBe(true);
+    const budget = JSON.parse(context[0]!.budget_json ?? "{}");
+    expect(budget.charsRequested).toBe(compassContext.injection.sspString.length);
+    expect(budget.charsApplied).toBe(6000);
+    expect(getShadowCensusDiagnostics().failures).toEqual([]);
+  }, 60_000);
+
   it("fork: a child run on a transcript forked from the parent seals its own attempt identity", async () => {
     const root = tempRoot();
     const sessionsDir = path.join(root, "sessions");

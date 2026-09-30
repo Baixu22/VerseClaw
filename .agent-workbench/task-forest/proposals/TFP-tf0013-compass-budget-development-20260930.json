@@ -1,0 +1,43 @@
+{
+  "applied_at": "2026-09-30T12:16:36.918265Z",
+  "base_graph_hash": "38999877214fe48b7d4b43020613e876dec5d57b5180f845a4fda96f2f0bf73c",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md",
+          "C:/Users/27933/Desktop/result/final/dcs-first-architecture-synthesis-final-2026-08-02.md",
+          "docs/dev/full-chain-maturity-audit-2026-08-02.md",
+          "docs/dev/tf0013-residual-crosscheck-20260930.md",
+          "artifacts/runtime-authority-convergence/rc-02/acceptance/finalReport.json",
+          "artifacts/runtime-authority-convergence/rc-03/acceptance/finalReport.json",
+          "docs/dev/tf0013-compass-budget-20260930.md",
+          "artifacts/tf0013-compass-budget-20260930/verification.json",
+          "artifacts/tf0013-compass-budget-20260930/autoreview.json",
+          "artifacts/tf0013-compass-budget-20260930/source-hashes.json"
+        ],
+        "execution_hints": [
+          "Context Orchestrator 是最终 selection、dedup、budget、projection 与 lineage authority；禁止恢复私有生产预算或调用顺序优先级",
+          "无 turnId 私有预算只保留兼容路径，不得重新接入 attempt 或 compaction 生产入口",
+          "三个产品锁、C1 keep-off、TF-0006 blocked、Runtime Memory diagnostics-only 与 SEKB 零自动写回保持不变",
+          "COMPASS 预算增量已开发验证；下一项核验 ContextEngine messages replacement 的预算/历史语义。整节点收口仍要求当前候选证据，不得把局部开发测试升级为正式 RC 验收。"
+        ],
+        "next_action": "沿 ContextEngine assemble().messages replacement 区分历史消息与新增注入，检查新增内容是否经过唯一候选仲裁/总预算，补可执行反例；使用 UAS-02 Harness spec。COMPASS 增量见 docs/dev/tf0013-compass-budget-20260930.md；不解除 TF-0010/TF-0028 冻结。",
+        "status": "in_progress",
+        "summary": "COMPASS SSP/retrieval 已接入现有 knowledge 候选仲裁与 turn ledger，即时/排队/CLI/原生 harness 路径补齐；生产 wire 检查绑定裁剪后文本与双收据，收据避免重复计数。当前是工作树开发验证，未完成 TF-0013 全 residual 的当前候选验收；ContextEngine messages replacement 的新增注入预算边界仍需核验。"
+      },
+      "id": "TF-0013"
+    }
+  ],
+  "created_at": "2026-09-30T12:16:36.649709Z",
+  "proposal_id": "TFP-tf0013-compass-budget-development-20260930",
+  "rationale": "按用户接力指令完成一个最小工程缺口；恢复工程进行态，保留原60%估计及冻结边界，不宣称整节点完成。",
+  "session_id": "tf0013-compass-budget-20260930",
+  "status": "applied"
+}

@@ -1010,23 +1010,30 @@
     "evidence": [
       "harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md",
       "C:/Users/27933/Desktop/result/final/dcs-first-architecture-synthesis-final-2026-08-02.md",
-      "docs/dev/full-chain-maturity-audit-2026-08-02.md"
+      "docs/dev/full-chain-maturity-audit-2026-08-02.md",
+      "docs/dev/tf0013-residual-crosscheck-20260930.md",
+      "artifacts/runtime-authority-convergence/rc-02/acceptance/finalReport.json",
+      "artifacts/runtime-authority-convergence/rc-03/acceptance/finalReport.json",
+      "docs/dev/tf0013-compass-budget-20260930.md",
+      "artifacts/tf0013-compass-budget-20260930/verification.json",
+      "artifacts/tf0013-compass-budget-20260930/autoreview.json",
+      "artifacts/tf0013-compass-budget-20260930/source-hashes.json"
     ],
     "execution_hints": [
       "Context Orchestrator 是最终 selection、dedup、budget、projection 与 lineage authority；禁止恢复私有生产预算或调用顺序优先级",
       "无 turnId 私有预算只保留兼容路径，不得重新接入 attempt 或 compaction 生产入口",
       "三个产品锁、C1 keep-off、TF-0006 blocked、Runtime Memory diagnostics-only 与 SEKB 零自动写回保持不变",
-      "下一会话只可从 TF-0014/UAS-03 开始，并先读取路线文档、建立或确认 Harness task spec、运行 harness context"
+      "COMPASS 预算增量已开发验证；下一项核验 ContextEngine messages replacement 的预算/历史语义。整节点收口仍要求当前候选证据，不得把局部开发测试升级为正式 RC 验收。"
     ],
     "id": "TF-0013",
     "kind": "task",
-    "next_action": "由 RC-02 先做零行为变化 full-payload census，再由 RC-03 决定 DCS authority cutover。",
+    "next_action": "沿 ContextEngine assemble().messages replacement 区分历史消息与新增注入，检查新增内容是否经过唯一候选仲裁/总预算，补可执行反例；使用 UAS-02 Harness spec。COMPASS 增量见 docs/dev/tf0013-compass-budget-20260930.md；不解除 TF-0010/TF-0028 冻结。",
     "non_goals": [
       "learned context manager",
       "自动 Memory 写回"
     ],
     "priority": 1,
-    "progress": 60,
+    "progress": 60.0,
     "progress_source": "post-audit-reassessment",
     "purpose": "消除动态 Assembler 私有预算、调用顺序冒充优先级和跨 provider 重复投影。",
     "remaining_minutes_max": null,
@@ -1037,15 +1044,15 @@
       "P0 去重使用 authority object identity/version/content digest，不引入模型语义去重"
     ],
     "source_sessions": [],
-    "status": "blocked",
+    "status": "in_progress",
     "success_metrics": [
       "私有 context budget 0",
       "重复 authority object 注入 0",
       "声明和实际优先级偏差 0"
     ],
-    "summary": "UAS-02 已闭合受管增强候选的排序、去重、预算和 lineage，但 2026-08-02 独立审计证明它尚未覆盖完整 provider payload、ContextEngine messages replacement、COMPASS SSP 和最终 wire boundary。",
+    "summary": "COMPASS SSP/retrieval 已接入现有 knowledge 候选仲裁与 turn ledger，即时/排队/CLI/原生 harness 路径补齐；生产 wire 检查绑定裁剪后文本与双收据，收据避免重复计数。当前是工作树开发验证，未完成 TF-0013 全 residual 的当前候选验收；ContextEngine messages replacement 的新增注入预算边界仍需核验。",
     "title": "UAS-02 Context Orchestrator residual 收口",
-    "updated_at": "2026-08-02T13:07:59.996410Z"
+    "updated_at": "2026-09-30T12:16:36.830856Z"
   },
   "TF-0014": {
     "acceptance_criteria": [

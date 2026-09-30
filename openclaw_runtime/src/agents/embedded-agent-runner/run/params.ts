@@ -1,3 +1,4 @@
+import type { PreparedCompassContext } from "../../../context-engine/compass-context.js";
 /**
  * Shared parameter types for embedded-agent run orchestration.
  */
@@ -238,6 +239,7 @@ export type RunEmbeddedAgentParams = {
   lane?: string;
   enqueue?: CommandQueueEnqueueFn;
   extraSystemPrompt?: string;
+  compassContext?: PreparedCompassContext;
   sourceReplyDeliveryMode?: SourceReplyDeliveryMode;
   silentReplyPromptMode?: SilentReplyPromptMode;
   internalEvents?: AgentInternalEvent[];

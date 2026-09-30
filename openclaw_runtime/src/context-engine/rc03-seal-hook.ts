@@ -171,11 +171,16 @@ export function recordRc03SystemPromptContribution(
 /** Registered contributions present in the provider-bound system prompt. */
 export function attributeRc03SystemPromptContributions(
   systemPrompt: string,
+  alreadyProjected: ContextCandidateProjection['systemPromptContributions'] = [],
 ): Array<{ producerId: string; chars: number }> {
   const chars = new Map<string, number>();
   for (const { producerId, text } of systemPromptContributions.values()) {
     if (systemPrompt.includes(text)) {
-      chars.set(producerId, (chars.get(producerId) ?? 0) + text.length);
+      // Preserve the producer ref across calls, but do not charge text already
+      // represented by this call's candidate lineage a second time.
+      const represented = alreadyProjected.some((entry) =>
+        producerIdForLineageSource(entry.sourceId) === producerId && entry.text.trim() === text);
+      chars.set(producerId, (chars.get(producerId) ?? 0) + (represented ? 0 : text.length));
     }
   }
   return [...chars.entries()]
@@ -292,7 +297,10 @@ function producerIdForLineageSource(sourceId: string): string | undefined {
     case 'cvk-context-engine':
       return 'cvk-system-prompt-addition';
     case 'compass':
+    case 'compass-ssp':
       return 'compass-ssp';
+    case 'compass-retrieval':
+      return 'compass-retrieval';
     case 'role_memory':
       return 'role-memory-injection';
     case 'vtoken':
@@ -361,7 +369,9 @@ export function runRc03SealHook(
 
   const boundary = options.boundaryProducer;
   const systemPrompt = boundary ? undefined : options.systemPrompt;
-  const attributed = systemPrompt ? attributeRc03SystemPromptContributions(systemPrompt) : [];
+  const attributed = systemPrompt
+    ? attributeRc03SystemPromptContributions(systemPrompt, projection.systemPromptContributions)
+    : [];
   const appliedProducerIds = boundary
     ? [boundary.id]
     : [

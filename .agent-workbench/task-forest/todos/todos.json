@@ -1,6 +1,46 @@
 [
   {
     "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "实现统一而不重复的 Context 主路径",
+      "validation_plan": [
+        "entry scan",
+        "candidate ordering/dedup tests",
+        "combined provider integration tests",
+        "lineage assertions"
+      ],
+      "why_not_enough": "仍需 UAS-03 移除 VToken 自有业务状态和无关串行。",
+      "why_this_task": "它直接解决当前双入口、私账和重复投影问题。"
+    },
+    "blocked_by": [],
+    "confidence": 0.98,
+    "context_tags": [],
+    "desired_outcomes": [
+      "所有 context source 先产出 ContextCandidate",
+      "先排序去重再收费",
+      "最终 lineage 完整记录保留、截断和丢弃原因"
+    ],
+    "difficulty": "high",
+    "id": "TF-0013",
+    "kind": "task",
+    "next_action": "Context Orchestrator 是最终 selection、dedup、budget、projection 与 lineage authority；禁止恢复私有生产预算或调用顺序优先级",
+    "priority": 1,
+    "progress": 60.0,
+    "purpose": "消除动态 Assembler 私有预算、调用顺序冒充优先级和跨 provider 重复投影。",
+    "ready": true,
+    "remaining_minutes_max": 960,
+    "remaining_minutes_min": 960,
+    "status": "in_progress",
+    "success_metrics": [
+      "私有 context budget 0",
+      "重复 authority object 注入 0",
+      "声明和实际优先级偏差 0"
+    ],
+    "title": "UAS-02 Context Orchestrator residual 收口"
+  },
+  {
+    "alignment": {
       "fit": "unknown",
       "fit_confidence": 0.0,
       "user_goal": "",
@@ -251,46 +291,6 @@
       "必需工程门禁通过率 100%"
     ],
     "title": "OpenClaw Runtime Authority 与 Operator 产品收敛（非 GA）"
-  },
-  {
-    "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 0.95,
-      "user_goal": "实现统一而不重复的 Context 主路径",
-      "validation_plan": [
-        "entry scan",
-        "candidate ordering/dedup tests",
-        "combined provider integration tests",
-        "lineage assertions"
-      ],
-      "why_not_enough": "仍需 UAS-03 移除 VToken 自有业务状态和无关串行。",
-      "why_this_task": "它直接解决当前双入口、私账和重复投影问题。"
-    },
-    "blocked_by": [],
-    "confidence": 0.98,
-    "context_tags": [],
-    "desired_outcomes": [
-      "所有 context source 先产出 ContextCandidate",
-      "先排序去重再收费",
-      "最终 lineage 完整记录保留、截断和丢弃原因"
-    ],
-    "difficulty": "high",
-    "id": "TF-0013",
-    "kind": "task",
-    "next_action": "澄清阻塞原因并决定解除或废止",
-    "priority": 1,
-    "progress": 60.0,
-    "purpose": "消除动态 Assembler 私有预算、调用顺序冒充优先级和跨 provider 重复投影。",
-    "ready": false,
-    "remaining_minutes_max": 960,
-    "remaining_minutes_min": 960,
-    "status": "blocked",
-    "success_metrics": [
-      "私有 context budget 0",
-      "重复 authority object 注入 0",
-      "声明和实际优先级偏差 0"
-    ],
-    "title": "UAS-02 Context Orchestrator residual 收口"
   },
   {
     "alignment": {

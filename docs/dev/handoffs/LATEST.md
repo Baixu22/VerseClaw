@@ -1,3 +1,22 @@
+# 2026-09-30：TF-0013 COMPASS 共享预算开发增量完成
+
+- COMPASS SSP/retrieval 已接入既有候选仲裁与 turn 总预算，覆盖即时/排队回复、CLI 与原生 harness；source flags 和 kill switch 在准备/执行两侧生效。seal 使用裁剪后的实际文本，避免重复累计字数。
+- 最终开发检查 10 门 exit 0；测试 138 项通过、0 失败。回复准备 1、原生分发 2、runtime unit 111、真实 embedded entry 11、root focused 13；两侧类型检查与 comms replay/compare 通过。最终 autoreview clean；前三轮发现的漏转发、重复计数、原生分发缺口均已修复并补回归。
+- 证据：`artifacts/tf0013-compass-budget-20260930/`；说明：`docs/dev/tf0013-compass-budget-20260930.md`。这是 dirty 工作树的 development-only 证据，未重跑 RC-09/10、Electron 或外部原生插件服务，不升级旧 RC verdict。
+- Harness 范围 validate/dry-run 通过，仍检查实际 diff，仅临时排除原有 `%SystemDrive%/` 缓存目录；原全工作树检查的缓存越界保留为局限。三份已有未格式化文件保留原风格，HEAD 同样不通过 formatter；其余范围格式及全部改动的 diff check 通过。
+- TF-0013 更新为 in_progress，保留 60% 估计；下一最小项是核验 ContextEngine `assemble().messages` replacement 的历史/新增注入边界及总预算，补可执行反例。TF-0010/TF-0028 冻结解除、产品锁、6000/0.1 默认值与发布边界不变；不以等待真人或 RC-02/03 为阻塞依据。
+
+---
+
+# 2026-09-30：TF-0013 residual 证据对照与入口修正
+
+- RC-02/03 归档 manifest/report 的 runId、manifestDigest 引用匹配，Verifier pass、独立 actor 与空 consistency.errors 已核读；RC-03 SHA256SUMS 五文件匹配。本轮未重跑 RC 或完整日志链复验。
+- 四项对照见 `docs/dev/tf0013-residual-crosscheck-20260930.md`：已测 payload census、replacement 归因及 wire seal 有 RC 证据；COMPASS SSP/retrieval 仍绕过 turn 注入总预算，不能据此将 TF-0013 标成 done。
+- 下一最小工程项：在 TF-0013 下将 COMPASS 新增注入接入现有候选仲裁和 turn ledger，先补超额反例，再验证组合、去重与 flag-off/kill-switch；先运行 UAS-02 Harness context 并更新真实触点。
+- NEXT-GOAL.md 旧 “blocked on human inputs” 入口已替换；所有交互/verdict 使用 agent 自动化并如实标注。TF-0010/TF-0028 D7 冻结解除仍属决策，产品锁与默认值不变。本轮只更新 TF-0013 说明/next_action，status/progress 不变。
+
+---
+
 # 2026-09-30：check-landing 修复与 R7 任务交付收尾
 
 - 用户选择范围：修复检查器、当前任务收尾与验收、既有私有远端推送；不做全仓库历史分支整合。

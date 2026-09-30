@@ -2194,6 +2194,7 @@ export async function runAgentTurnWithFallback(params: {
                     runId,
                     lane: runLane,
                     extraSystemPrompt: params.followupRun.run.extraSystemPrompt,
+                    compassContext: params.followupRun.run.compassContext,
                     sourceReplyDeliveryMode: params.followupRun.run.sourceReplyDeliveryMode,
                     silentReplyPromptMode: params.followupRun.run.silentReplyPromptMode,
                     allowEmptyAssistantReplyAsSilent:
@@ -2314,6 +2315,7 @@ export async function runAgentTurnWithFallback(params: {
                     currentInboundEventKind: params.followupRun.currentInboundEventKind,
                     currentInboundContext: params.followupRun.currentInboundContext,
                     extraSystemPrompt: params.followupRun.run.extraSystemPrompt,
+                    compassContext: params.followupRun.run.compassContext,
                     sourceReplyDeliveryMode: params.followupRun.run.sourceReplyDeliveryMode,
                     forceMessageTool:
                       params.followupRun.run.sourceReplyDeliveryMode === "message_tool_only",
@@ -2788,8 +2790,8 @@ export async function runAgentTurnWithFallback(params: {
         if (effectiveRun !== runnableRun && effectiveRun !== params.followupRun.run) {
           applyLiveModelSwitchToRun(effectiveRun, err);
         }
-        void (err.provider);
-        void (err.model);
+        void err.provider;
+        void err.model;
         continue;
       }
       const message = formatErrorMessage(err);

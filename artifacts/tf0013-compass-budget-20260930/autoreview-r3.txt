@@ -1,0 +1,7 @@
+autoreview findings: 1
+[P2] [P2] Preserve COMPASS context for native plugin harnesses
+openclaw_runtime/src/auto-reply/reply/get-reply-run.ts:633
+When a reply selects the native Copilot harness, `runEmbeddedAttemptWithBackend` dispatches through `runAgentHarnessAttempt` directly to the plugin, bypassing the modified `runEmbeddedAttempt` and its COMPASS projection. Copilot's `createSystemMessageContent` still consumes only `params.extraSystemPrompt`; it never reads `compassContext`. Removing SSP/retrieval from this array therefore silently removes previously available COMPASS context from those replies, including queued runs. Project the context at a shared dispatch boundary or add a budgeted native-harness consumer before removing the old transport, with regression coverage for that path.
+
+overall: patch is incorrect (0.97)
+The new payload reaches the built-in embedded and CLI projection paths, but native plugin harnesses such as Copilot lose COMPASS context previously carried by extraSystemPrompt. Review was read-only; tests were not run.

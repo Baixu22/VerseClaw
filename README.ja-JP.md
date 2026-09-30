@@ -55,6 +55,8 @@ Product capability statements must be checked against the canonical matrix in `s
 
 DCS を有効にした coding turn では、knowledge、recent actions、tool registry の実際の provider-visible prompt 増加量を、既存の共有 turn-injection ledger に個別記録します。固定予算は拡大せず、有効な DCS projection には既存の有界容量を確保し、truncate と drop は明示的な会計証拠として残します。
 
+COMPASS SSP と応答前の検索も ContextCandidate の選択処理を通じて同じ turn 予算を共有し、キュー実行、CLI、ネイティブ harness にも適用されます。拡張 kill switch は準備処理を停止し、切り詰められた検索結果は完全に注入された事実として集計しません。
+
 Runtime Memory 注入、SEKB 自動 writeback、Browser の無監督または private-network 利用、C6/C7 自動切替、Coding WAL、本番 repository の自動 merge、複数 Forge/DAG 拡張は対象外です。現時点の証拠は engineering と実プロセステストであり、human canary と release approval は未完了です。コンポーネントごとの唯一の分類は [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview) を参照してください。
 
 ## 概要

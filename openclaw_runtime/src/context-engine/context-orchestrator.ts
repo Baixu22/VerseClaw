@@ -1,3 +1,8 @@
+import {
+  collectCompassContext,
+  recordCompassProjection,
+  type PreparedCompassContext,
+} from "./compass-context.js";
 /**
  * Context Orchestrator — single production entry for memory/context enhancement.
  *
@@ -39,10 +44,15 @@ import {
   type ContextCandidateTarget,
 } from "./context-candidate.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
-import { runRc03SealHook, resolveRc03SealState } from "./rc03-seal-hook.js";
+import {
+  runRc03SealHook,
+  resolveRc03SealState,
+  recordRc03SystemPromptContribution,
+} from "./rc03-seal-hook.js";
 import {
   beginTurnInjectionBudget,
   chargeTurnInjection,
+  endTurnInjectionBudget,
   reserveTurnInjectionCapacity,
   skipTurnInjection,
   type TurnInjectionChannel,
@@ -125,6 +135,7 @@ export type ContextOrchestratorLineage = {
 };
 
 export type ContextOrchestratorInput = {
+  compassContext?: PreparedCompassContext;
   sessionKey?: string;
   sessionId?: string;
   runId?: string;
@@ -194,7 +205,10 @@ function rememberLineage(lineage: ContextOrchestratorLineage): void {
   if (lineage.turnId) lineageByTurn.set(lineage.turnId, lineage);
 }
 
-function rememberNativeNegotiation(turnId: string | undefined, negotiation: NativeContextNegotiation): void {
+function rememberNativeNegotiation(
+  turnId: string | undefined,
+  negotiation: NativeContextNegotiation,
+): void {
   if (turnId) nativeNegotiationByTurn.set(turnId, negotiation);
 }
 
@@ -203,7 +217,11 @@ function gateBlockStoreInjectionForNativeContext(turnId: string): void {
   if (!negotiation?.nativeContextGating) return;
   const collection = getContextCandidateCollection(turnId);
   if (!collection || collection.diagnostics.finalized) return;
-  const blockedChannels = new Set<TurnInjectionChannel>(["knowledge", "working_memory", "tool_registry"]);
+  const blockedChannels = new Set<TurnInjectionChannel>([
+    "knowledge",
+    "working_memory",
+    "tool_registry",
+  ]);
   const keptCandidates: typeof collection.candidates = [];
   const keptLineageIndexes: typeof collection.candidateLineageIndexes = [];
   for (let index = 0; index < collection.candidates.length; index += 1) {
@@ -322,11 +340,7 @@ export function finalizeContextOrchestratorTurn(params: {
   gateBlockStoreInjectionForNativeContext(params.turnId);
   const ledger = beginTurnInjectionBudget({ turnId: params.turnId });
   if (params.dcsProjectionEnabled === true) {
-    reserveTurnInjectionCapacity(
-      ledger,
-      DCS_PROJECTION_CHANNELS,
-      KNOWLEDGE_INJECTION_CHAR_BUDGET,
-    );
+    reserveTurnInjectionCapacity(ledger, DCS_PROJECTION_CHANNELS, KNOWLEDGE_INJECTION_CHAR_BUDGET);
   }
   const projected = projectContextCandidates({
     turnId: params.turnId,
@@ -334,6 +348,13 @@ export function finalizeContextOrchestratorTurn(params: {
     messages: params.messages,
     priorDedupKeys: params.priorDedupKeys,
   });
+  // The first projection precedes the model-call seal. Register the charged
+  // text, so a later reopened collection still attributes the actual prompt.
+  for (const contribution of projected.projection.systemPromptContributions ?? []) {
+    if (contribution.sourceId === "compass-ssp" || contribution.sourceId === "compass-retrieval") {
+      recordRc03SystemPromptContribution(contribution.sourceId, contribution.text, params.cfg);
+    }
+  }
   // RC-03 production wiring: at the pre-seal semantic producer convergence
   // point, run the seal hook when the RC-03 flag is on (explicit override or
   // resolved from the real source-runtime config). It enforces that all
@@ -358,6 +379,7 @@ export function finalizeContextOrchestratorTurn(params: {
   }
   const collection = getContextCandidateCollection(params.turnId);
   const turnLineage = lineageByTurn.get(params.turnId);
+  if (collection && !wasFinalized) recordCompassProjection(collection, projected.projection);
   if (turnLineage && collection) {
     turnLineage.candidates = collection.lineage;
     turnLineage.candidateDiagnostics = collection.diagnostics;
@@ -389,6 +411,30 @@ export function endContextOrchestratorTurn(turnId: string): ContextCandidateColl
   lineageByTurn.delete(turnId);
   nativeNegotiationByTurn.delete(turnId);
   return endContextCandidateCollection(turnId);
+}
+
+/** CLI and native harnesses lack embedded assembly hooks; use the same candidate owner. */
+export function projectStandaloneCompassContext(params: {
+  turnId: string;
+  context?: PreparedCompassContext;
+  cfg?: unknown;
+}): string | undefined {
+  if (!params.context) return undefined;
+  beginTurnInjectionBudget({
+    turnId: params.turnId,
+    killed: isContextEnhancementKillSwitchEngaged(params.cfg),
+  });
+  try {
+    collectCompassContext(params.turnId, params.context, params.cfg);
+    return finalizeContextOrchestratorTurn({
+      turnId: params.turnId,
+      messages: [],
+      seal: false,
+    }).projection.systemPromptAddition;
+  } finally {
+    endContextOrchestratorTurn(params.turnId);
+    endTurnInjectionBudget(params.turnId);
+  }
 }
 
 function resolveStages(stages: ContextOrchestratorStage[] | undefined): ContextOrchestratorStage[] {
@@ -546,8 +592,7 @@ export async function computeContextExtraSystemPrompt(
   const stagesRequested = resolveStages(options.stages);
   const log = options.log;
   const nativeContext = resolveNativeContextNegotiation(cfg, input.nativeContextCapabilities);
-  const hasNativeDeclaration =
-    nativeContext.nativeMemory || nativeContext.nativeContextGating;
+  const hasNativeDeclaration = nativeContext.nativeMemory || nativeContext.nativeContextGating;
   rememberNativeNegotiation(input.turnId, nativeContext);
   const lineage: ContextOrchestratorLineage = {
     turnId: input.turnId,
@@ -595,6 +640,9 @@ export async function computeContextExtraSystemPrompt(
       })
     : undefined;
   const memorySourceId = resolveMemoryLineageSourceId(input.memoryProviderIds);
+  if (deferProjection && input.compassContext) {
+    collectCompassContext(input.turnId!, input.compassContext, cfg);
+  }
 
   try {
     if (isContextEnhancementKillSwitchEngaged(cfg)) {

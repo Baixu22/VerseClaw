@@ -1,0 +1,38 @@
+{
+  "applied_at": "2026-09-30T09:57:12.226535Z",
+  "base_graph_hash": "0972c5a43e6caa7ee94901fe1c5a1805a55bd7d4bc8d9f019e7bceb60a19125c",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md",
+          "C:/Users/27933/Desktop/result/final/dcs-first-architecture-synthesis-final-2026-08-02.md",
+          "docs/dev/full-chain-maturity-audit-2026-08-02.md",
+          "docs/dev/tf0013-residual-crosscheck-20260930.md",
+          "artifacts/runtime-authority-convergence/rc-02/acceptance/finalReport.json",
+          "artifacts/runtime-authority-convergence/rc-03/acceptance/finalReport.json"
+        ],
+        "execution_hints": [
+          "Context Orchestrator 是最终 selection、dedup、budget、projection 与 lineage authority；禁止恢复私有生产预算或调用顺序优先级",
+          "无 turnId 私有预算只保留兼容路径，不得重新接入 attempt 或 compaction 生产入口",
+          "三个产品锁、C1 keep-off、TF-0006 blocked、Runtime Memory diagnostics-only 与 SEKB 零自动写回保持不变",
+          "下一工程项为 COMPASS SSP/retrieval 接入现有候选仲裁与 turn 总预算；先运行 UAS-02 harness context，按真实调用点更新 spec；不启动 TF-0014 或冻结解除。"
+        ],
+        "next_action": "RC-02/03 证据对照已完成。先以超额注入反例复现 COMPASS SSP/retrieval 不收费，再接入现有 ContextCandidate 仲裁与 turn ledger，验证去重、组合启用、flag-off/kill-switch 和 seal/wire 一致性；见 docs/dev/tf0013-residual-crosscheck-20260930.md。",
+        "summary": "受管增强候选的排序、去重、预算和 lineage 已有 UAS-02 基线；RC-02/03 在已测范围提供 full-payload census、replacement 归因和最终 wire seal 证据。COMPASS SSP/retrieval 仍未计入 turn 注入总预算，TF-0013 不构成 done；缺口是工程工作，不是等待真人或 RC-02/03。"
+      },
+      "id": "TF-0013"
+    }
+  ],
+  "created_at": "2026-09-30T09:56:42.680342Z",
+  "proposal_id": "TFP-tf0013-residual-crosscheck-20260930",
+  "rationale": "按最新交接和用户纠正，对照 RC-02/03 磁盘证据更新 TF-0013 下一动作；修正失效入口，不改状态、进度或冻结决策。",
+  "session_id": "tf0013-residual-crosscheck-20260930",
+  "status": "applied"
+}

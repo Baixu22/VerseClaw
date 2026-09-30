@@ -1,3 +1,4 @@
+import { projectStandaloneCompassContext } from "../../context-engine/context-orchestrator.js";
 /**
  * Prepares CLI backend run context: backend config, prompts, bootstrap context,
  * MCP, auth epoch, and reusable session metadata.
@@ -202,7 +203,13 @@ export async function prepareCliRunContext(
     runtimeIntensityPolicy && runtimeIntensityPolicy.systemPromptLines.length > 0
       ? ["## Runtime Intensity", ...runtimeIntensityPolicy.systemPromptLines]
       : [];
+  const compassPrompt = projectStandaloneCompassContext({
+    turnId: `cli:${params.sessionId}:${params.runId}`,
+    context: params.compassContext,
+    cfg: params.config,
+  });
   const extraSystemPrompt = [
+    compassPrompt,
     params.extraSystemPrompt?.trim(),
     ...runtimeIntensityPromptLines,
   ]
