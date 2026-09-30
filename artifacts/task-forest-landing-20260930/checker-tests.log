@@ -1,0 +1,13 @@
+test_failed_git_query_cannot_report_clean (__main__.LandingTests) ... ok
+test_linked_worktree_branch_is_checked_without_display_markers (__main__.LandingTests) ... ok
+test_missing_default_ref_fails_closed (__main__.LandingTests) ... ok
+test_orphan_evidence_remains_an_explicit_limitation (__main__.LandingTests) ... ok
+test_remote_default_is_used_when_local_main_is_stale (__main__.LandingTests) ... ok
+test_remote_default_keeps_slashes_in_its_name (__main__.LandingTests) ... ok
+test_short_and_full_hashes_count_as_one_commit (__main__.LandingTests) ... ok
+test_unrelated_branch_fails_instead_of_silently_skipping (__main__.LandingTests) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 3.592s
+
+OK

@@ -21,6 +21,9 @@ artifacts/runtime-authority-convergence/rc-01/baseline.json -text
 
 # TF-0009 closure verifies exact report and manifest bytes on every platform.
 artifacts/first-product-preview/TF-0009/** -text
+# Task Forest repair files and evidence are hashed in the closeout manifest.
+artifacts/task-forest-landing-20260930/** -text
+.codex-tools/task-forest/** -text
 
 # Static-integrity generated artifacts are byte-compared by the runtime check
 # guards (npm shrinkwrap guard, tool display, host env policy). core.autocrlf
