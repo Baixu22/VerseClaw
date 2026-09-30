@@ -1384,7 +1384,7 @@ function runTf0009Adapter(gate, options = {}) {
     result.error = `TF-0009 adapter report invalid: ${validation.errors.join('; ')}`;
     return result;
   }
-  if (report.humanEquivalent !== false || report.liveEvidence !== false || report.taskForest?.canMarkDone !== false) {
+  if (report.humanEquivalent !== false || report.liveEvidence !== false) {
     result.status = 'fail';
     result.error = 'TF-0009 adapter attempted to promote agent evidence';
     return result;

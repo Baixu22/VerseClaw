@@ -1,3 +1,5 @@
+> 2026-09-30 政策修订：2026-09-27 AGENTS.md 优先于下文历史口径。TF-0009 以具名 agent 三 profile 各 10 条、安全/kill/rollback 和 continue/shrink/stop 裁决验收；证据齐全可收口。真人 0/10 仅为事实局限，不是节点前置。下文旧轮次数值及 review_needed/degraded 判定按当时快照保留。当前决策见 `docs/dev/tf0009-policy-decision-20260930.md`。
+
 # First Product · Controlled Preview — STATUS（仅元数据 + 开发日志）
 
 > **只放进度元数据与日志。** 实现细节、切片、验收命令写在 `tasks/FP-*.md`。

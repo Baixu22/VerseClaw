@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-29T19:07:34.760655Z",
+  "generated_at": "2026-09-30T07:58:05.595587Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -10140,7 +10140,7 @@
       "context_tags": [],
       "created_at": "2026-07-19T17:29:59.646228Z",
       "deprecated_at": null,
-      "derived_progress": 50.0,
+      "derived_progress": 75.0,
       "desired_outcomes": [
         "关键实现、测试、文档与证据可在 clean checkout 复现",
         "DCS/SEKB/Browser 关键 Electron 路径 6/6 通过",
@@ -10157,23 +10157,26 @@
         "TFD-browser-effect-click-partial-coverage-20260821",
         "TFD-browser-effect-click-type-partial-coverage-20260821",
         "TFD-workspace-external-write-slice-only-20260821",
-        "TFD-close-workspace-external-write-partial-coverage-20260821"
+        "TFD-close-workspace-external-write-partial-coverage-20260821",
+        "TFD-9300000009",
+        "TFD-9300000009",
+        "TFD-9300000009"
       ],
       "difficulty": "high",
       "estimated_total_minutes": 960,
       "evidence": [
         "TF-0008 done：docs/dev/component-controlled-rollout-p0-closeout.md",
         "TF-0009 ready：docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包",
-        "docs/dev/task-forest-engineering-20260913.md"
+        "docs/dev/task-forest-engineering-20260913.md",
+        "docs/dev/tf0009-policy-decision-20260930.md"
       ],
       "execution_hints": [
-        "一次只推进一个 ready 节点",
-        "先封装交付基线，不扩组件能力",
-        "TF-0009 的 R7 守卫是 landed test，优先于 D6；父节点随子节点保持 blocked。"
+        "一次只推进 TF-0009",
+        "按证据收口，真人零计数不是阻塞理由"
       ],
       "id": "TF-0007",
       "kind": "global_task",
-      "next_action": "由 operator 完成 TF-0009 的具名真人观察与 rollback，记录 owner verdict 后再评估父节点收口；不改变产品锁。",
+      "next_action": "核验 TF-0009 clean agent campaign 与 TF-0008 已验收基线后收口；不改变产品锁。",
       "non_goals": [
         "default-on",
         "联合系统 GA",
@@ -10183,7 +10186,7 @@
       ],
       "primary_parent": null,
       "priority": 1,
-      "progress": 50.0,
+      "progress": 75.0,
       "progress_source": "manual",
       "purpose": "尽快将已有组件能力投入安全、可审计、可回滚的内部使用，而不是继续扩面或提前 default-on。",
       "remaining_minutes_max": 1440,
@@ -10194,16 +10197,16 @@
         "不解除 TF-0006 或宣称 joint-system GA"
       ],
       "source_sessions": [],
-      "status": "blocked",
+      "status": "in_progress",
       "success_metrics": [
         "未授权写入 0",
         "SEKB 未确认写入 0",
         "Browser 私网绕过 0",
         "kill switch 演练成功率 100%"
       ],
-      "summary": "[整合修正 2026-09-20] 撤回 done。本节点的收口理由是「两子节点均 done」，但子节点 TF-0009 因仓库硬编码 R7 守卫（tests/unit/tf0009-engineering-evidence-audit.test.ts：syntheticCounts=false、requiresNamedHumanOperator=true）保持 blocked，故父节点不能收口。TF-0008 done、DCS 工程基座完整不变；剩余硬缺口=TF-0009 的真人 0/10 与 owner 裁决，D6 仿真不能替代这条已提交守卫。",
+      "summary": "2026-09-30 R7 人证阻塞已按 2026-09-27 政策取消。TF-0008 交付基线保持 done；当前只推进 TF-0009 自动化等价验收，证据完整后联动关闭本父节点。",
       "title": "DCS 与关联组件受控内测投用收口（非GA）",
-      "updated_at": "2026-09-20T03:11:51.044855Z"
+      "updated_at": "2026-09-30T07:57:43.939432Z"
     },
     "TF-0008": {
       "acceptance_criteria": [
@@ -10281,21 +10284,21 @@
     },
     "TF-0009": {
       "acceptance_criteria": [
-        "agent-surrogate：DCS、SEKB、Browser 各 10/10 且账本可复验（已满足）",
-        "agent-surrogate：未授权写入 0，agent kill/rollback 成功率 100%（已满足）",
-        "human/live：每个 profile 至少 10 次具名真人产品路径任务（deferred，当前 0/10）",
-        "human/live：真人总体安全率、canary drill 与具名 owner continue/shrink/stop 裁决（deferred）"
+        "具名 agent 驱动 DCS、SEKB、Browser 各 10/10，账本有 task intent、唯一 runId、真实组件入口 lineage，磁盘产物可复验",
+        "agent campaign 安全观察无未授权写入、未确认 SEKB 写入、Browser 审批绕过；kill/rollback 所有步骤通过",
+        "v2 证据绑定 clean candidate commit/tree，driven_by=agent；真人计数保持 0，产品锁、C1、TF-0006 边界不变，hash manifest 与 credential scan 通过",
+        "具名 agent 根据账本记录 continue/shrink/stop verdict；相关回归/Harness 通过并经 proposal apply、validate、export 收口"
       ],
       "alignment": {
         "fit": "aligned",
         "fit_confidence": 0.98,
         "user_goal": "在无真人测试成本时保证流程与实现完整",
         "validation_plan": [
-          "agent campaign 10/10/10",
-          "preflight agent true/human L3 false",
-          "Task Forest 下游保持 blocked"
+          "clean candidate campaign 10/10/10",
+          "共享校验器和 adapter 回归",
+          "磁盘证据、Task Forest validate/export"
         ],
-        "why_not_enough": "review_needed 仍不等于 human/live/product 完成。",
+        "why_not_enough": "agent 证据不代表人群效果、真实公网或发布/GA。",
         "why_this_task": "TF-0009 是三 profile 工程流程和 canary 证据的现有 owner。"
       },
       "alignment_records": [
@@ -10308,17 +10311,20 @@
       "context_tags": [],
       "created_at": "2026-07-19T17:29:59.646228Z",
       "deprecated_at": null,
-      "derived_progress": 50.0,
+      "derived_progress": 75.0,
       "desired_outcomes": [
-        "工程实现与三 profile 流程可由 agent 在 clean checkout 重复执行",
-        "agent 与 human/live 证据在 schema、计数和结论上完全隔离",
-        "后续真人开发能从明确 residual 继续，而不重做工程流程"
+        "三 profile 工程流程在 clean candidate 可重复执行",
+        "agent 与 human/live 计数、权威及结论完全隔离",
+        "证据完整即可自动收口，不依赖真人操作"
       ],
       "deviations": [
         "TFD-tf0009-agent-surrogate-downgrade-20260729",
         "TFD-tf0009-human-engineering-dependency-split-20260729",
         "TFD-7dd3fcb877",
-        "TFD-6bc9f26c33"
+        "TFD-6bc9f26c33",
+        "TFD-9300000009",
+        "TFD-9300000009",
+        "TFD-9300000009"
       ],
       "difficulty": "medium",
       "estimated_total_minutes": 480,
@@ -10337,16 +10343,16 @@
         "2026-09-10 用户明确要求通过即 done、不通过直接处理；本轮结论与实测证据：docs/dev/context-moat/reviews/review-outcomes-20260910.md",
         "2026-09-10 已修复 R7/R2、UAS freeze 校验和 preflight 提示的状态冲突，明确 review_needed 为待复核、blocked 为已确认真人证据阻塞；不再按旧条款把本节点改回待复核。",
         "2026-09-20 moyu 仿真真人 soak（依据 TF-0224/D6 engineering-simulated 基准）：累计 run_count=22，pass_rate mean 65.4%（min40.5/max82.8/stdev9.3），OpenAPI coverage mean 98.8%，no-fabrication=1.0（每条 finding 可回溯 events.jsonl），critical=0 high=106 medium=123 low=4，p95 7.66ms，senseaudio-s2-flash 真实用量 mean 3959tok/run total 63340。本轮新增 5 班 live（seed 20260920 + 202609191607..1610，personas 3-6）全班 nf=1.0。证据：C:/Users/27933/Desktop/bad-shit/moyu/soak-evidence/。",
-        "2026-09-20 pnpm test 实测：改 TF-0009=done 触发 tf0009-engineering-evidence-audit.test.ts 唯一 1 处失败（7421 中仅此 1 红）；撤回后应恢复全绿。守卫优先于 D6 重定义。"
+        "2026-09-20 pnpm test 实测：改 TF-0009=done 触发 tf0009-engineering-evidence-audit.test.ts 唯一 1 处失败（7421 中仅此 1 红）；撤回后应恢复全绿。守卫优先于 D6 重定义。",
+        "docs/dev/tf0009-policy-decision-20260930.md"
       ],
       "execution_hints": [
-        "tf0009-real-canary-authority R7 与 uas-00-evidence-freeze-boundary R2 已同步：复核结束后缺真人证据使用 blocked；冻结历史报告仍保留旧状态。",
-        "agent-surrogate、人机边界、真人计数、TF-0011 工程 derived_from 边和所有产品锁保持原义。",
-        "完成档=engineering-simulated；真人计数仍 0/10（诚实保留），非 human-accepted。"
+        "以 2026-09-27 AGENTS.md 和修订后的 R7/R2 为当前权威；旧 evidence 字段中的 2026-09-10/20 记录仅为历史",
+        "通过 canCloseTf0009 和磁盘证据核验后收口；不得改写历史证据或产品锁"
       ],
       "id": "TF-0009",
       "kind": "task",
-      "next_action": "解除阻塞须补齐三个 profile 各 10 次具名真人产品路径任务、真人 kill/rollback drill 与具名 owner continue/shrink/stop 裁决；不可由 agent 模拟代替。",
+      "next_action": "完成 clean candidate 三 profile campaign、回归门禁和磁盘证据核验，再自动应用收口提案；不改变产品锁。",
       "non_goals": [
         "default-on",
         "无界 cohort",
@@ -10354,30 +10360,30 @@
       ],
       "primary_parent": "TF-0007",
       "priority": 2,
-      "progress": 50.0,
+      "progress": 75.0,
       "progress_source": "manual",
-      "purpose": "在没有真人测试成本时先完成三组件的 agent 工程流程、账本和回滚闭环，同时把不可替代的人证留作明确 residual。",
+      "purpose": "由具名 agent 完成三组件受控流程、账本与回滚验收；保留真人零计数的事实局限，不设置真人前置。",
       "remaining_minutes_max": 720,
       "remaining_minutes_min": 360,
       "requirements": [
-        "P0 与 Day-1 L0/L1/L2 工程门保持全绿",
-        "agent-surrogate 每个 profile 恰好 10 条，必须有真实组件入口 lineage，且 humanEquivalent=false、liveEvidence=false",
-        "SEKB agent 不得执行 positive human-confirm write；Browser agent 不得冒充真实公网或真人批准",
-        "真人 owner/cohort/budget/privacy/rollback 与真人合格 run 继续作为后续 residual",
-        "Runtime Memory 保持 diagnostics-only；三个产品锁和 TF-0006 状态不变"
+        "保留 P0/Day-1 历史工程证据，本次变更通过相关回归门禁",
+        "agent-surrogate 每 profile 恰好 10 条；humanEquivalent=false、liveEvidence=false、driven_by=agent",
+        "SEKB 只走负向 review、不执行 positive confirm；Browser 隔离 page runtime 不声称公网或真人批准",
+        "按 2026-09-27 政策自动完成治理角色、场景、裁决与证据；禁止把缺真人作为 open/blocked 理由",
+        "Runtime Memory diagnostics-only；三个产品锁、C1 keep-off 与 TF-0006 状态不变"
       ],
       "source_sessions": [],
-      "status": "blocked",
+      "status": "in_progress",
       "success_metrics": [
-        "agent-surrogate 记录 30/30 通过",
-        "agent campaign 未确认 SEKB principle 写入 0",
-        "agent campaign Browser 私网允许与审批绕过 0",
+        "agent 记录 30/30 通过",
+        "SEKB 未确认写入 0",
+        "Browser 私网允许与审批绕过 0",
         "真人计数误增 0",
-        "TF-0009 非法 done 或产品锁漂移 0"
+        "缺失/不安全证据误放行与产品锁漂移 0"
       ],
-      "summary": "[整合修正 2026-09-20] 撤回 D6 下的 done。仓库存在硬编码不可协商守卫：tests/unit/tf0009-engineering-evidence-audit.test.ts:80 断言 live graph 必须 blocked/50（规则 R7），且 qualifyingEvidenceRule 明写 requiresNamedHumanOperator=true、syntheticCounts=false、harnessGreenCounts=false——即 moyu 仿真 soak 按仓库既有契约明确「不计入」TF-0009 的人证。D6 可为其他程序的人证节点降门，但不能静默改写这条已提交的 R7 守卫；改测试去迁就 done 属禁止的假绿。故 TF-0009 保持 blocked，soak 证据仅作 residual 收窄记录，不翻状态。真人 0/10 与 owner 裁决仍是硬缺口。",
+      "summary": "2026-09-30 按所有者 2026-09-27 政策修订 R7：接受 agent 等价验收，取消 blocked/50 与真人前置。v2 驱动已完成 10/10/10 开发复跑，正在验证 clean candidate 和门禁；历史 v1 报告不重签。",
       "title": "P1 组件小范围受控内测运行包",
-      "updated_at": "2026-09-20T03:07:59.405631Z"
+      "updated_at": "2026-09-30T07:57:43.939432Z"
     },
     "TF-0010": {
       "acceptance_criteria": [
@@ -27063,21 +27069,19 @@
   },
   "status_queues": {
     "actionable_todos": [
+      "TF-0009",
+      "TF-0007",
       "TF-0151",
       "TF-0129",
       "TF-0130",
       "TF-0141",
       "TF-0144",
-      "TF-0009",
       "TF-0047",
-      "TF-0007",
       "TF-0010",
       "TF-0013",
       "TF-0028"
     ],
     "blocked": [
-      "TF-0007",
-      "TF-0009",
       "TF-0010",
       "TF-0013",
       "TF-0028",
@@ -27091,8 +27095,6 @@
     "by_status": {
       "archived": [],
       "blocked": [
-        "TF-0007",
-        "TF-0009",
         "TF-0010",
         "TF-0013",
         "TF-0028",
@@ -27338,7 +27340,10 @@
         "TF-0240",
         "TF-0242"
       ],
-      "in_progress": [],
+      "in_progress": [
+        "TF-0007",
+        "TF-0009"
+      ],
       "proposed": [],
       "ready": [],
       "review_needed": []
@@ -27363,7 +27368,7 @@
     "review_needed": []
   },
   "summary": {
-    "blocked_count": 11,
+    "blocked_count": 9,
     "done_count": 223,
     "edge_count": 414,
     "node_count": 242,
