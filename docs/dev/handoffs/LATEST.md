@@ -1,3 +1,17 @@
+# 2026-09-30：TF-0009 / TF-0007 R7 修订与 agent 验收收口
+
+- 决策：按 2026-09-27 AGENTS.md 取消具名真人硬前置，修订 R7/R2 与共享守卫。真人 0/10 保留事实局限；不得声称 real-human。
+- 已完成：TF-0009 和父节点 TF-0007 均 done/100。政策提案 TFP-tf0009-r7-policy-20260930 与收口提案 TFP-tf0009-agent-acceptance-close-20260930 已应用；validate/export 通过。
+- 候选：812cba73ffda0d59fd81e78543e35e16940084ff（clean campaign，dirty=false）。DCS/SEKB/Browser 各 10/10，kill/rollback 通过，actor=codex/root、driven_by=agent、verdict=continue。
+- 验证：隔离候选 6 文件 / 102 单测通过；类型检查、定向 ESLint、runtime oxlint、Harness validate/dry-run、preflight、diff check 通过。最终 autoreview 无 actionable findings；收口后 28 项守卫回归通过。
+- 证据：artifacts/first-product-preview/TF-0009/policy-acceptance/verification.json 与 SHA256SUMS，20 文件封存、credential scan 0。历史收口使用独立归档，后续源码修改/重跑不使旧收口失效；新的收口另查当前源码与候选一致。
+- 复现准备：复用本地 node_modules；干净副本需原样补入 legacy-uas00-audit-manifest.json 和 legacy-uas06-live-observations.json 到 legacy-test-inputs.json 指定路径。首次失败及原始哈希已归档；未修改旧报告值或断言。历史 charter 归档只移除 EOF 多余空行，JSON 与原版一致。
+- TF-0008 的 Electron 6/6 与 maturity 证据按历史基线核读，本轮未重新运行。没有新全量 RC-09、真实公网 Browser、付费 provider、发布或 GA 验收。
+- 边界：TF-0006、C1 keep-off、liveReady/productApproved/defaultOn=false 不变；D7 冻结集与 TF-0047 Docker 延后决策不变。
+- 下一入口：先核对 TF-0013 四项 residual 与 RC-02/03 当前证据，再推进一个最小工程缺口；D7 中损失追踪分支先重新估价，TF-0151 不翻默认值。验收增量设计继续保持双方独立证据，禁止 Verifier 继承 Executor 结果冒充独立复验。完整决策：docs/dev/tf0009-policy-decision-20260930.md。
+
+---
+
 # 收口完成（2026-09-30 凌晨，TF-0042 · RC-10）：H-01..H-06 由 agent 正式驱动，human 阶段 validator PASSED，程序 done
 
 - **RC-10 通过，程序收口。** RC-09 候选 `a1bd8d8cc`（runId `f262eaa4`）工程验收 PASS 之后，H-01..H-06 以**正式模式**（不带 `--development`，要求候选干净）分两轮由 agent 驱动，并如实标注 `driven_by: agent`：

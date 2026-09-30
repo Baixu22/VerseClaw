@@ -1,0 +1,579 @@
+{
+  "schema": "unified-agent-system/uas-00-audit-manifest/v1",
+  "taskId": "TF-0011",
+  "phase": "UAS-00",
+  "generatedAt": "2026-07-29T15:53:35.549Z",
+  "evidenceClass": "dirty-engineering-baseline-not-release",
+  "releaseEligible": false,
+  "humanEquivalent": false,
+  "liveEvidence": false,
+  "repository": {
+    "headSha": "5d416810f5701036eb918fe473f175d7e12d7034",
+    "headRef": "main",
+    "trackedDiffSha256": "62c76945971d115e80e158c2ef62aa3f2b848be5e66f11dddcd1721823d4b87c",
+    "stagedDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trackedStatusEntries": [
+      " M .agent-workbench/task-forest/alignments/alignments.jsonl",
+      " M .agent-workbench/task-forest/config.json",
+      " M .agent-workbench/task-forest/events/events.jsonl",
+      " M .agent-workbench/task-forest/exports/task-forest.graph.json",
+      " M .agent-workbench/task-forest/exports/task-forest.html",
+      " M .agent-workbench/task-forest/exports/task-forest.timeline.json",
+      " M .agent-workbench/task-forest/exports/task-forest.todos.json",
+      " M .agent-workbench/task-forest/graph/edges.json",
+      " M .agent-workbench/task-forest/graph/forest.json",
+      " M .agent-workbench/task-forest/graph/nodes.json",
+      " M .agent-workbench/task-forest/todos/todos.json",
+      " M .gitignore",
+      " M artifacts/coding-c1/ab-metrics.json",
+      " M artifacts/coding-prod-p0/COMPLETE.md",
+      " M artifacts/coding-prod-p0/config-surface.json",
+      " M artifacts/coding-prod-p0/observability-export.json",
+      " M artifacts/coding-prod-p0/report.json",
+      " M artifacts/dcs-canary/c1/ab-metrics.json",
+      " M artifacts/dcs-canary/c1/decision.json",
+      " M artifacts/first-product-preview/FP-P0-05/reduction-factor-reconciliation.md",
+      " M docs/dev/component-operational-readiness-checklist.md",
+      " M docs/dev/dcs-deep-test-week1-kickoff.md",
+      " M docs/dev/dcs-ops-canary-runbook.md",
+      " M docs/dev/dcs-visible-production/P1-01-LIVE-AB-PROTOCOL.md",
+      " M docs/dev/dcs-visible-production/tasks/TASK-P1-01.md",
+      " M docs/dev/dcs-visible-production/tasks/TASK-P1-04.md",
+      " M docs/dev/first-product-controlled-preview/README.md",
+      " M docs/dev/first-product-controlled-preview/STATUS.md",
+      " M docs/dev/first-product-controlled-preview/tasks/FP-P2-03.md",
+      " M docs/dev/first-product-controlled-preview/tasks/FP-P3-04.md",
+      " M docs/dev/first-product-controlled-preview/tasks/FP-P4-01.md",
+      " M docs/dev/first-product-controlled-preview/tasks/FP-P4-02.md",
+      " M docs/dev/first-product-controlled-preview/tasks/FP-P4-05.md",
+      " M docs/dev/first-product-controlled-preview/tasks/FP-P4-06.md",
+      " M docs/dev/first-product-controlled-preview/tasks/FP-P4-07.md",
+      " M docs/dev/first-product-controlled-preview/tasks/FP-P4-08.md",
+      " M docs/dev/first-product-controlled-preview/tasks/README.md",
+      " M docs/dev/handoffs/LATEST.md",
+      " M docs/dev/handoffs/OVERNIGHT-HARVEST-BRIEF.md",
+      " M docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md",
+      " M docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md",
+      " M docs/dev/unified-agent-system/DEVELOPMENT-STRATEGY.zh-CN.md",
+      " M electron/services/vtoken-bridge.ts",
+      " M harness/specs/tasks/vtoken-foundation-bridge.md",
+      " M openclaw_runtime/CODING-PROD-P0-COMPLETE.md",
+      " M openclaw_runtime/scripts/coding-c1-ab.mts",
+      " M openclaw_runtime/src/context-engine/dcs-canary-c1.test.ts",
+      " M openclaw_runtime/src/context-engine/dcs-canary-c1.ts",
+      " M package.json",
+      " M packages/vtoken/README.HOST.md",
+      " M scripts/build-openclaw-runtime.mjs",
+      " M scripts/dcs-ops-preflight.mjs",
+      " M scripts/smoke-openclaw-runtime.mjs",
+      " M shared/i18n/locales/ja/settings.json",
+      " M shared/i18n/locales/ru/settings.json",
+      " M shared/vtoken/types.ts",
+      " M tests/e2e/dcs-prod-p0-settings.spec.ts",
+      " M tests/unit/dcs-ops-canary-hard-veto.test.ts"
+    ],
+    "untrackedFiles": [
+      {
+        "path": ".agent-workbench/task-forest/deviations/deviations.jsonl",
+        "bytes": 2603,
+        "sha256": "84bf5f4ac36ca3ffb7ccbf50923d77962c054ed641fef1961b59d3d72055e242"
+      },
+      {
+        "path": ".agent-workbench/task-forest/proposals/TFP-tf0009-agent-surrogate-degraded-20260729.json",
+        "bytes": 8366,
+        "sha256": "2abd744b6ccb7ff83012b6eb6e718af9a0b51895adeea30fc744d0935df4b85d"
+      },
+      {
+        "path": ".agent-workbench/task-forest/proposals/TFP-tf0009-engineering-evidence-audit-20260729.json",
+        "bytes": 4258,
+        "sha256": "c94824298e7b2bc067e96b68f8b7129aff69644b15a4979d2cc2907b32f51bf2"
+      },
+      {
+        "path": ".agent-workbench/task-forest/proposals/TFP-tf0011-engineering-chain-release-20260729.json",
+        "bytes": 7348,
+        "sha256": "f93f76e61e54674808dd1f643cb26dd5c142e18d5b9779050b9c69295edc93b1"
+      },
+      {
+        "path": ".agent-workbench/task-forest/proposals/TFP-tf0011-evidence-freeze-closeout-20260729.json",
+        "bytes": 3997,
+        "sha256": "2f3496cd68028311fa8347ea4987ecb0d5cfc45e13511f052f85b724da408a9b"
+      },
+      {
+        "path": ".agent-workbench/task-forest/proposals/TFP-tf0011-restore-alignment-after-tf0009-20260729.json",
+        "bytes": 2466,
+        "sha256": "a4e7284f326ce183b4d1a8d7d1ea50d1082f48b010f254eb34d05ec92f937ecb"
+      },
+      {
+        "path": ".agent-workbench/task-forest/snapshots/0021.json",
+        "bytes": 108794,
+        "sha256": "347e32761668a64c61d8984d9e527bcd5638fc741c09062903e9333e573c1b29"
+      },
+      {
+        "path": ".agent-workbench/task-forest/snapshots/0022.json",
+        "bytes": 109663,
+        "sha256": "cecd74bf97d064d0602af27727b7fc426bb0d1734507a68b63c71920e7ebce29"
+      },
+      {
+        "path": ".agent-workbench/task-forest/snapshots/0023.json",
+        "bytes": 108953,
+        "sha256": "03f4f524df14bdd7b32d11bc9eb9d7a975de15c4723c31e465e6fa954248ac74"
+      },
+      {
+        "path": "artifacts/dcs-deep-test-week1/day1-gates.json",
+        "bytes": 5066,
+        "sha256": "e868c3641baa30a3d538ee4df2a251ed200a4fa41e646af14ee52dcf8c5b3cfc"
+      },
+      {
+        "path": "artifacts/first-product-preview/FP-P4-05/decision.json",
+        "bytes": 2188,
+        "sha256": "db18db54e2fe88072f2cdfcb5cc61d05fd8795717e6f1128546c75ffe0cb6182"
+      },
+      {
+        "path": "artifacts/first-product-preview/FP-P4-05/decision.md",
+        "bytes": 743,
+        "sha256": "e95f36d104e31b1e60f32258c7fb722fbc7bb6adec9c80e071340f346ef0c321"
+      },
+      {
+        "path": "artifacts/first-product-preview/TF-0009/agent-surrogate-charter.json",
+        "bytes": 2592,
+        "sha256": "02198f824647298006503cee265de36c9abd58965531eb00e98ed59e8fe09c0d"
+      },
+      {
+        "path": "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json",
+        "bytes": 33602,
+        "sha256": "7665c03ea27c74a03b2640bc5a69f86a5b8a58fe582f5db7639f853a9bc19be8"
+      },
+      {
+        "path": "artifacts/first-product-preview/TF-0009/evidence-audit.json",
+        "bytes": 5719,
+        "sha256": "fcfc7e1261a656a037f5541c54940ffc5ead9bd2fdc3b0b91ecc2ff54fae9db3"
+      },
+      {
+        "path": "docs/dev/tf0009-engineering-evidence-audit.md",
+        "bytes": 5179,
+        "sha256": "d3d566f54735fe782b79e6e4af93cb54750ac6b4aee638a7fae0492cea140402"
+      },
+      {
+        "path": "harness/specs/rules/c1-gate-corpus-authority.md",
+        "bytes": 2142,
+        "sha256": "506d823cba5a841ae7c6439536e91ca448fb4088d1f8c1684ac029d231a57e0a"
+      },
+      {
+        "path": "harness/specs/rules/dcs-production-flags-localization.md",
+        "bytes": 1187,
+        "sha256": "e2fc8960f1064e21af17acece7626c8be09f4c514fed4ae2c9a121e43889e648"
+      },
+      {
+        "path": "harness/specs/rules/tf0009-real-canary-authority.md",
+        "bytes": 3429,
+        "sha256": "25e06fa917d967212060b794a48f02ca62b49d614aedcfc93094a71b79d04d30"
+      },
+      {
+        "path": "harness/specs/rules/uas-00-evidence-freeze-boundary.md",
+        "bytes": 1751,
+        "sha256": "5d0320b5f833243d48fdfc985202f22c8ff28751b80c7606f1cbd8864d11cfcf"
+      },
+      {
+        "path": "harness/specs/tasks/dcs-production-flags-localization.md",
+        "bytes": 2241,
+        "sha256": "3d1db9249eb06c05d9fd7686064beffec7cc3c1d5cc902e5b7f6618267625cbf"
+      },
+      {
+        "path": "harness/specs/tasks/p4-05-07-acceptance.md",
+        "bytes": 4624,
+        "sha256": "d61874ca898e1d837983ddeeffab7fa8c7ffb98ef6dd79bb4ccf648b5cb0c349"
+      },
+      {
+        "path": "harness/specs/tasks/tf0009-engineering-evidence-audit.md",
+        "bytes": 4812,
+        "sha256": "99448c17aade60b710c039d573e1d2bd859fc26c39826a847042fea11256015c"
+      },
+      {
+        "path": "harness/specs/tasks/uas-00-evidence-freeze-governance.md",
+        "bytes": 5388,
+        "sha256": "03a95e788ab3e580b3a5eb232505c46f9314b1037481cec5b40e413e222c31a6"
+      },
+      {
+        "path": "harness/specs/tasks/unified-c1-gate-corpus.md",
+        "bytes": 3984,
+        "sha256": "bbbdea9737e3a3989ff6af9388cd039e4a761f52ebfc0e94a25a719a62ed4ff8"
+      },
+      {
+        "path": "harness/specs/tasks/vtoken-default-off-documentation.md",
+        "bytes": 2298,
+        "sha256": "f82eda4eb265eb17d736bb8868fc30526b3214c4e876e86e57394e89ffa03589"
+      },
+      {
+        "path": "openclaw_runtime/scripts/tf0009-agent-surrogate.mts",
+        "bytes": 19765,
+        "sha256": "18c4692b8038e51ce7750584478f4e2e45c9e9509890033ff05ad45be963d72c"
+      },
+      {
+        "path": "scripts/c1-authoritative-decision.mjs",
+        "bytes": 10849,
+        "sha256": "2fecf7e187a09a0822d1f48385678b03c278e625d80c79708aa2980d03f181f8"
+      },
+      {
+        "path": "scripts/lib/tf0009-agent-surrogate.mjs",
+        "bytes": 6369,
+        "sha256": "4956d0d4b6c07a530196abc5f78476c11ce45df746b91437c75a545455eba59d"
+      },
+      {
+        "path": "scripts/lib/tf0009-canary-readiness.mjs",
+        "bytes": 5141,
+        "sha256": "a814c046794ee37c50cc3c7834f3adbffd714300930ae107a6558f903ae06d63"
+      },
+      {
+        "path": "scripts/uas-00-evidence-freeze.mjs",
+        "bytes": 17951,
+        "sha256": "ff3c739ce426792706ba048ee35b0c037c58b395f41491d0ae816e41d649c9e6"
+      },
+      {
+        "path": "tests/unit/c1-authoritative-decision.test.ts",
+        "bytes": 4546,
+        "sha256": "a8b36805d88389fc4b52d789df6df3a948dac7ec364c8a3cca5f05fbbcf56625"
+      },
+      {
+        "path": "tests/unit/dcs-production-flags-localization.test.ts",
+        "bytes": 3272,
+        "sha256": "aa341e332ead800703aa11b9594583dfa46f7bbc072a9c1c309a39bdd409c955"
+      },
+      {
+        "path": "tests/unit/sekb-runtime-build-contract.test.ts",
+        "bytes": 2277,
+        "sha256": "3f8acae7f3c451592c5f1274ce4ee9cc8ae25327f9bf736b245e590b9a4f5731"
+      },
+      {
+        "path": "tests/unit/tf0009-agent-surrogate.test.ts",
+        "bytes": 1644,
+        "sha256": "0a9a31b7dbf993ec72c616c3ca02b843223f0bb300306019dd757bc6e1933fbb"
+      },
+      {
+        "path": "tests/unit/tf0009-engineering-evidence-audit.test.ts",
+        "bytes": 7007,
+        "sha256": "9d9c6dda2b074f33bd544177ba506d68854d7275343afbaf4eb7b68f7edf01b1"
+      },
+      {
+        "path": "tests/unit/uas-00-evidence-freeze.test.ts",
+        "bytes": 4396,
+        "sha256": "428bd06c1775bafda0e060312b10d494ac637845003c1e926a0b0faa66e3c018"
+      },
+      {
+        "path": "tests/unit/vtoken-default-off-documentation.test.ts",
+        "bytes": 2046,
+        "sha256": "d6878ae168a692c45662f0946089be038517d67212cd13fa9ef3c5a2078c0e8a"
+      }
+    ],
+    "dirty": true,
+    "trackedChangeCount": 58,
+    "untrackedFileCount": 38,
+    "snapshotSha256": "afff6a4908e65dd726daba44870b99089c0f5ed1c58c44b0a4bb5a04dff1e69f"
+  },
+  "environment": {
+    "platform": "win32",
+    "arch": "x64",
+    "osType": "Windows_NT",
+    "osRelease": "10.0.26200",
+    "osVersion": "Windows 11 Home China",
+    "locale": "zh-CN",
+    "timeZone": "Asia/Shanghai",
+    "relevantEnv": {
+      "VERSE_CONTEXT_ASSEMBLER_ENABLED": null,
+      "VERSE_VTOKEN_ASSEMBLY_ENABLED": null,
+      "VERSE_VTOKEN_BRIDGE_ENABLED": null,
+      "VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH": null
+    },
+    "executables": [
+      {
+        "id": "node",
+        "path": "C:\\Program Files\\nodejs\\node.exe",
+        "version": "v24.15.0",
+        "bytes": 91694408,
+        "sha256": "3331e1ffe19874215472217c5e94f5a0c6d8e18c4ac7111d3937aa0ad5e9b4a5"
+      },
+      {
+        "id": "git",
+        "path": "C:\\Program Files\\Git\\bin\\git.exe",
+        "version": "git version 2.51.0.windows.1",
+        "bytes": 46480,
+        "sha256": "34a408843194be320d8a87a3c12cd5c7d2e08d03b24567a41db32e21d12569d2"
+      },
+      {
+        "id": "pnpm",
+        "path": "C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\bin\\pnpm.CMD",
+        "version": "11.2.2",
+        "bytes": 208,
+        "sha256": "04edefde99437b3ebe6c77d23a79354fcd10c9ea95066b8f33f1907e9ba8b4de"
+      },
+      {
+        "id": "python",
+        "path": "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+        "version": "Python 3.10.3",
+        "bytes": 99280,
+        "sha256": "693b56fd1f75f095946e397e50bcb4b711bcc2ce5175aaa4127b90b7b2ae954b"
+      },
+      {
+        "id": "electron",
+        "path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\node_modules\\electron\\dist\\electron.exe",
+        "version": "v40.8.4",
+        "bytes": 213919232,
+        "sha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e"
+      }
+    ]
+  },
+  "taskForest": {
+    "tf0009": {
+      "status": "review_needed",
+      "progress": 50,
+      "semanticLabel": "degraded-agent-complete",
+      "humanQualifyingRuns": {
+        "dcs-coding": 0,
+        "sekb-assisted": 0,
+        "browser-supervised": 0
+      },
+      "canMarkDone": false
+    },
+    "tf0011": {
+      "status": "done",
+      "progress": 100,
+      "engineeringEvidenceEdge": {
+        "id": "TFE-0032",
+        "type": "derived_from",
+        "blocking": false
+      }
+    },
+    "nextEngineeringNode": {
+      "id": "TF-0012",
+      "status": "ready"
+    },
+    "tf0006": "blocked",
+    "exportWorkspaceMetadata": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0",
+    "canonicalWorkspace": "C:\\Users\\27933\\Desktop\\clawx\\ClawX",
+    "workspaceMetadataMatchesCanonical": false
+  },
+  "frozenBoundaries": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false,
+    "c1ReductionFactor": 4.5,
+    "c1MeetsGate": false,
+    "c1Recommendation": "keep-off",
+    "tf0006": "blocked",
+    "runtimeMemory": "diagnostics-only",
+    "sekbAutoWriteback": false
+  },
+  "authorityMatrix": [
+    {
+      "surface": "durable-event-spine",
+      "owner": "TF-0012/UAS-01",
+      "currentAuthority": "existing trajectory/event owners",
+      "uas00Action": "freeze-only-no-second-journal"
+    },
+    {
+      "surface": "final-context-selection-budget-lineage",
+      "owner": "TF-0013/UAS-02",
+      "currentAuthority": "Context Orchestrator",
+      "uas00Action": "freeze-only-no-second-budget"
+    },
+    {
+      "surface": "vtoken-stateless-packing",
+      "owner": "TF-0014/UAS-03",
+      "currentAuthority": "VerseToken assembly worker",
+      "uas00Action": "freeze-default-off-no-memory-authority"
+    },
+    {
+      "surface": "coding-file-mutation",
+      "owner": "TF-0015/UAS-04",
+      "currentAuthority": "Coding tools and write journal",
+      "uas00Action": "freeze-only-no-second-write-path"
+    },
+    {
+      "surface": "local-process-lifecycle",
+      "owner": "TF-0016/UAS-05",
+      "currentAuthority": "existing native execution plus default-off VerseShell foundation",
+      "uas00Action": "freeze-only-no-cutover"
+    },
+    {
+      "surface": "cohort-local-execution-cutover",
+      "owner": "TF-0017/UAS-06",
+      "currentAuthority": "not-authorized",
+      "uas00Action": "freeze-only-no-canary-claim"
+    },
+    {
+      "surface": "long-term-memory-lifecycle",
+      "owner": "TF-0018/UAS-07",
+      "currentAuthority": "diagnostics-only; no production injection",
+      "uas00Action": "reserve-sole-owner-no-lifecycle-implementation"
+    }
+  ],
+  "evidenceInventory": [
+    {
+      "path": ".agent-workbench/task-forest/graph/forest.json",
+      "bytes": 85218,
+      "sha256": "d8ef5463eeb978ce782dce352cfeef15eb9391460876397ac4f1be9961b8292b"
+    },
+    {
+      "path": ".agent-workbench/task-forest/graph/nodes.json",
+      "bytes": 57020,
+      "sha256": "43b5442e24380075c1cc20c81bab5eb9c2ff6de44b2c7d2601c2c53b37d1e0d5"
+    },
+    {
+      "path": ".agent-workbench/task-forest/exports/task-forest.todos.json",
+      "bytes": 17903,
+      "sha256": "51da757fca8c69519b23b271f7247f2484be9a9bb82b74ee377ff1ff0d63a43a"
+    },
+    {
+      "path": "artifacts/first-product-preview/FP-P4-05/decision.json",
+      "bytes": 2188,
+      "sha256": "db18db54e2fe88072f2cdfcb5cc61d05fd8795717e6f1128546c75ffe0cb6182"
+    },
+    {
+      "path": "artifacts/first-product-preview/TF-0009/agent-surrogate-charter.json",
+      "bytes": 2592,
+      "sha256": "02198f824647298006503cee265de36c9abd58965531eb00e98ed59e8fe09c0d"
+    },
+    {
+      "path": "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json",
+      "bytes": 33602,
+      "sha256": "7665c03ea27c74a03b2640bc5a69f86a5b8a58fe582f5db7639f853a9bc19be8"
+    },
+    {
+      "path": "artifacts/first-product-preview/TF-0009/evidence-audit.json",
+      "bytes": 5719,
+      "sha256": "fcfc7e1261a656a037f5541c54940ffc5ead9bd2fdc3b0b91ecc2ff54fae9db3"
+    },
+    {
+      "path": "artifacts/tf0006-evidence-upgrade/status.json",
+      "bytes": 1483,
+      "sha256": "45b9f0c842e3e25ae1d4fc443d38bdf43870e04671e1dbee2001a3a8cebe1ea0"
+    },
+    {
+      "path": "docs/dev/default-config-matrix.md",
+      "bytes": 4908,
+      "sha256": "1830ded024a73e4ce8bc95fd43d04f02d1bdfda3e5d7cc19a609e5b5a618e11d"
+    },
+    {
+      "path": "docs/dev/first-product-controlled-preview/STATUS.md",
+      "bytes": 44545,
+      "sha256": "7bafc1e5ef341b5b05109c94f3d358c4f056f362d29383af5d9f37a3086aec3f"
+    },
+    {
+      "path": "docs/dev/first-product-controlled-preview/tasks/FP-P4-03.md",
+      "bytes": 3444,
+      "sha256": "eba5769221826160058dc6b7c53fd03345543cc48f8e674071e83ee00e6f00e1"
+    },
+    {
+      "path": "docs/dev/first-product-controlled-preview/tasks/FP-P4-04.md",
+      "bytes": 3517,
+      "sha256": "423fd3d53ac93de6c0da4bc1bab8a7da57a9096c692bae132c163516912a3f1d"
+    },
+    {
+      "path": "docs/dev/first-product-controlled-preview/tasks/FP-P4-06.md",
+      "bytes": 6148,
+      "sha256": "1073bdd0ce45237f7bd73bc5a06ad7dba66f225c04dea3a3810127a8c725f9ca"
+    },
+    {
+      "path": "docs/dev/handoffs/LATEST.md",
+      "bytes": 4696,
+      "sha256": "ae8ed7df2c44279c1fbec5864a61e871b1348af2ea682d59f80b7bc511d39933"
+    },
+    {
+      "path": "docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md",
+      "bytes": 33507,
+      "sha256": "0fc846566728a6df37a376dfbb227e0917abe8c4f012111b86bdc5ff232636bb"
+    },
+    {
+      "path": "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md",
+      "bytes": 20114,
+      "sha256": "c0e4685c3417fa2cd09a6df9e5593acac7b5bffdd145bc886d1a01d0fa2fa6ec"
+    },
+    {
+      "path": "docs/dev/unified-agent-system/DEVELOPMENT-STRATEGY.zh-CN.md",
+      "bytes": 15879,
+      "sha256": "ef489268db4e3cac4245eda4ce0cd74824fecdc51f6719eaf538ffa04dc18f73"
+    },
+    {
+      "path": "harness/specs/rules/tf0009-real-canary-authority.md",
+      "bytes": 3429,
+      "sha256": "25e06fa917d967212060b794a48f02ca62b49d614aedcfc93094a71b79d04d30"
+    },
+    {
+      "path": "harness/specs/rules/uas-00-evidence-freeze-boundary.md",
+      "bytes": 1751,
+      "sha256": "5d0320b5f833243d48fdfc985202f22c8ff28751b80c7606f1cbd8864d11cfcf"
+    },
+    {
+      "path": "harness/specs/rules/vtoken-foundation-boundary.md",
+      "bytes": 2430,
+      "sha256": "862d725386b26b1770d990b7099b14b1467940b993050140702802025051959d"
+    },
+    {
+      "path": "harness/specs/tasks/tf0009-engineering-evidence-audit.md",
+      "bytes": 4812,
+      "sha256": "99448c17aade60b710c039d573e1d2bd859fc26c39826a847042fea11256015c"
+    },
+    {
+      "path": "harness/specs/tasks/uas-00-evidence-freeze-governance.md",
+      "bytes": 5388,
+      "sha256": "03a95e788ab3e580b3a5eb232505c46f9314b1037481cec5b40e413e222c31a6"
+    },
+    {
+      "path": "harness/specs/tasks/vtoken-default-off-documentation.md",
+      "bytes": 2298,
+      "sha256": "f82eda4eb265eb17d736bb8868fc30526b3214c4e876e86e57394e89ffa03589"
+    },
+    {
+      "path": "harness/specs/tasks/vtoken-foundation-bridge.md",
+      "bytes": 2491,
+      "sha256": "44211feeac968533d065210500c671b5f337a1362e46a20bc10cd506b2e8684f"
+    },
+    {
+      "path": "package.json",
+      "bytes": 31286,
+      "sha256": "07994a9595b8bb46e0b75de021d782270949a2a56e33c4634306a10aaed6baa3"
+    },
+    {
+      "path": "scripts/uas-00-evidence-freeze.mjs",
+      "bytes": 17951,
+      "sha256": "ff3c739ce426792706ba048ee35b0c037c58b395f41491d0ae816e41d649c9e6"
+    },
+    {
+      "path": "tests/unit/uas-00-evidence-freeze.test.ts",
+      "bytes": 4396,
+      "sha256": "428bd06c1775bafda0e060312b10d494ac637845003c1e926a0b0faa66e3c018"
+    },
+    {
+      "path": "tests/unit/vtoken-default-off-documentation.test.ts",
+      "bytes": 2046,
+      "sha256": "d6878ae168a692c45662f0946089be038517d67212cd13fa9ef3c5a2078c0e8a"
+    }
+  ],
+  "evidenceInventorySha256": "e0faa974ca29172c7d22135c7ad1c56a326755293e7093382180972c7c32d88c",
+  "exactCommands": [
+    "pnpm run uas:00:evidence",
+    "pnpm run uas:00:evidence:check",
+    "pnpm harness context --spec harness/specs/tasks/uas-00-evidence-freeze-governance.md",
+    "pnpm harness validate --spec harness/specs/tasks/uas-00-evidence-freeze-governance.md --since HEAD",
+    "pnpm harness run --spec harness/specs/tasks/uas-00-evidence-freeze-governance.md --since HEAD",
+    "pnpm exec vitest run tests/unit/uas-00-evidence-freeze.test.ts tests/unit/tf0009-engineering-evidence-audit.test.ts tests/unit/tf0009-agent-surrogate.test.ts tests/unit/vtoken-default-off-documentation.test.ts tests/unit/default-config-matrix.test.ts",
+    "pnpm run comms:replay",
+    "pnpm run comms:compare",
+    "git diff --check"
+  ],
+  "readmeReview": {
+    "behaviorChanged": false,
+    "translationUpdateRequired": false,
+    "reviewed": [
+      "README.md",
+      "README.zh-CN.md",
+      "README.ja-JP.md"
+    ],
+    "reason": "UAS-00 adds engineering governance evidence only; no product behavior or interface changed."
+  },
+  "residuals": [
+    "TF-0009 human/live canary remains 0/10 per profile and review_needed.",
+    "Task Forest export metadata still names a workspace other than the canonical audit root.",
+    "TF-0012 through TF-0014 and FP-P4-03/04 implementation have not started.",
+    "No real provider, public-network, soak, or product-approval evidence is created by UAS-00."
+  ]
+}
