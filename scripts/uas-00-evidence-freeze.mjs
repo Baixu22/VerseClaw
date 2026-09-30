@@ -8,6 +8,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { canCloseTf0009, verifyTf0009ClosureEvidence } from "./lib/tf0009-agent-surrogate.mjs";
 
 const OUTPUT_RELATIVE = "artifacts/unified-agent-system/TF-0011/audit-manifest.json";
 const TASK_SPEC = "harness/specs/tasks/uas-00-evidence-freeze-governance.md";
@@ -221,9 +222,11 @@ function findEngineeringEvidenceEdge(forest) {
 export function buildUas00AuditManifest(root, options = {}) {
   const nodes = readJson(root, ".agent-workbench/task-forest/graph/nodes.json");
   const forest = readJson(root, ".agent-workbench/task-forest/graph/forest.json");
+  const tf0009Done = nodes["TF-0009"]?.status === "done";
   const tf0009Report = readJson(
     root,
-    "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json",
+    tf0009Done ? "artifacts/first-product-preview/TF-0009/policy-acceptance/campaign-report.json"
+      : "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json",
   );
   const c1 = readJson(root, "artifacts/first-product-preview/FP-P4-05/decision.json");
   const tf0006 = readJson(root, "artifacts/tf0006-evidence-upgrade/status.json");
@@ -235,10 +238,10 @@ export function buildUas00AuditManifest(root, options = {}) {
     (tf0011Status === "done" && tf0012Status === "ready");
 
   requireCondition(
-    ["review_needed", "blocked"].includes(nodes["TF-0009"]?.status),
-    "TF-0009 must await review or human evidence; agent evidence cannot complete it",
+    tf0009Done ? verifyTf0009ClosureEvidence(tf0009Report, root) : ["ready", "in_progress", "review_needed", "blocked"].includes(nodes["TF-0009"]?.status),
+    "TF-0009 closure requires clean, validated agent evidence under the 2026-09-27 policy",
   );
-  requireCondition(nodes["TF-0009"]?.progress === 50, "TF-0009 progress must remain 50");
+  requireCondition(!tf0009Done || nodes["TF-0009"]?.progress === 100, "TF-0009 done progress must be 100");
   requireCondition(
     validEngineeringChainState,
     "UAS engineering chain must be TF-0011 ready/TF-0012 proposed or TF-0011 done/TF-0012 ready",
@@ -251,7 +254,6 @@ export function buildUas00AuditManifest(root, options = {}) {
   requireCondition(Boolean(engineeringEvidenceEdge), "TF-0011 engineering evidence edge is missing");
   requireCondition(tf0009Report.humanEquivalent === false, "TF-0009 human evidence boundary drifted");
   requireCondition(tf0009Report.liveEvidence === false, "TF-0009 live evidence boundary drifted");
-  requireCondition(tf0009Report.taskForest?.canMarkDone === false, "TF-0009 done boundary drifted");
   requireCondition(c1.authority?.reductionFactor === 4.5, "C1 authority must remain 4.5x");
   requireCondition(c1.decision?.meetsGate === false, "C1 gate must remain false");
   requireCondition(c1.decision?.recommendation === "keep-off", "C1 recommendation drifted");
@@ -300,9 +302,9 @@ export function buildUas00AuditManifest(root, options = {}) {
       tf0009: {
         status: nodes["TF-0009"].status,
         progress: nodes["TF-0009"].progress,
-        semanticLabel: "degraded-agent-complete",
+        semanticLabel: tf0009Report.taskForest.semanticLabel,
         humanQualifyingRuns: tf0009Report.humanQualifyingRuns,
-        canMarkDone: false,
+        canMarkDone: tf0009Done || canCloseTf0009(tf0009Report, root),
       },
       tf0011: {
         status: nodes["TF-0011"].status,

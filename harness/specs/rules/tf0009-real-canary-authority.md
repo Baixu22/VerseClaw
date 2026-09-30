@@ -7,14 +7,13 @@ appliesTo:
 severity: error
 ---
 
-# Rule: TF-0009 keeps human-canary authority separate from agent evidence
+# Rule: TF-0009 accepts verified agent evidence without claiming human or product authority
+
+Effective 2026-09-27, per AGENTS.md. This supersedes the September 10 R7 human-only gate. Historical v1 reports keep their original values; current campaigns use v2.
 
 ## R1: A qualifying human run remains a real operator task
 
-Each `dcs-coding`, `sekb-assisted`, and `browser-supervised` profile still requires at least ten
-recorded internal tasks through the product path for human-canary graduation. A qualifying
-record has a named human operator, real task intent, complete lineage, and
-`notHumanProductChat=false` where that field exists.
+Each `dcs-coding`, `sekb-assisted`, and `browser-supervised` profile requires ten recorded agent tasks through the existing component entrypoints, with task intent, lineage and named agent attribution. Human counts remain zero. No human population or verdict is a prerequisite for node completion.
 
 ## R2: Agent-surrogate evidence has a separate count
 
@@ -40,25 +39,17 @@ count is zero.
 ## R5: Agent kill proof is not the human canary drill
 
 FP-P1-05 remains valid mechanism evidence. The agent campaign includes its own kill/rollback
-drill, but it does not replace a future canary-period human operator drill or establish its
-success rate.
+drill, which satisfies the node drill criterion. Its success rate describes only the observed agent campaign, never an unobserved human population.
 
 ## R6: Agent deferral is not the owner exit decision
 
-Fixture verdicts, agent deferral, and L0/L1 engineering summaries are not the TF-0009
-`continue` / `shrink` / `stop` decision. The accountable human owner may decide only after the
-real run ledger and safety inputs are complete.
+A named agent records the bounded `continue` / `shrink` / `stop` decision after reading the run ledger, safety observations and kill/rollback result. Record `driven_by: agent`; this grants no product approval.
 
 ## R7: Degraded status and downstream authority fail closed
 
-After the agent campaign, the evidence label is `degraded-agent-complete`. Pending review may
-use `review_needed`; once review confirms that the remaining work requires human evidence,
-TF-0009 must be `blocked`, never `done` on agent evidence alone. This workflow distinction follows
-the user's explicit 2026-09-10 closeout instruction; frozen historical reports retain their
-original status. The agent charter/report cannot self-authorize
-TF-0011 release. A separate, explicitly confirmed governance proposal may allow TF-0011 to
-consume the engineering evidence through a non-blocking `derived_from` edge while TF-0009 keeps
-all human/live residuals. That engineering release is not TF-0009 completion.
+Current v2 evidence uses `agent-acceptance-complete`. TF-0009 may be `done/100` after all four criteria are verified from a clean candidate, with artifact hashes and zero credential findings. Missing, unsafe or unverifiable agent evidence keeps the node open; missing human evidence never does. TF-0007 may close only after TF-0008 and TF-0009 are verified complete. Use the proposal/apply/validate/export workflow from `task-forest-autoclose-and-roles`.
+
+The v1 validator remains available for frozen July evidence; a v1 report cannot authorize current closure. The v2 validator rejects missing policy/driver/candidate identity, duplicate or missing runs, unsafe records, failed drill steps, human/live relabeling and product-lock changes. The historical `0/10` human counts remain factual limitations, not permanent blocking residuals. TF-0011 retains its separate non-blocking `derived_from` evidence edge.
 `liveReady`, `productApproved`, and `defaultOn` remain false; C1 remains `4.5x`,
 `meetsGate=false`, `recommendation=keep-off`; TF-0006 remains blocked.
 

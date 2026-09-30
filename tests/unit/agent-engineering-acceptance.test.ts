@@ -682,7 +682,7 @@ describe('Agent Engineering Acceptance', () => {
     expect(result.failures).toContain('detached worktree changed tracked or unexpected source files during acceptance');
   });
 
-  it('exports TF-0009 evidence from the disposable worktree into the run directory', () => {
+  it.each(['v1', 'v2'])('exports TF-0009 %s evidence without promoting product authority', (version) => {
     const root = createFixtureRepository();
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
     temporaryPaths.push(outputDir);
@@ -704,7 +704,10 @@ describe('Agent Engineering Acceptance', () => {
     const adapterSpawn = (_command: string, _args: string[], options: { cwd?: string } = {}) => {
       const reportPath = join(options.cwd!, 'artifacts', 'first-product-preview', 'TF-0009', 'agent-surrogate-report.json');
       mkdirSync(join(options.cwd!, 'artifacts', 'first-product-preview', 'TF-0009'), { recursive: true });
-      writeFileSync(reportPath, `${JSON.stringify(tf0009Report(), null, 2)}\n`, 'utf8');
+      const payload = version === 'v1' ? tf0009Report() : JSON.parse(readFileSync(
+        join(process.cwd(), 'artifacts/first-product-preview/TF-0009/agent-surrogate-report.json'), 'utf8',
+      ));
+      writeFileSync(reportPath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
       return { status: 0, signal: null, stdout: `adapter in ${options.cwd}`, stderr: '' };
     };
 

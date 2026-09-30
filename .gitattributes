@@ -19,6 +19,9 @@ resources/verseshell/patches/*.patch -text
 # deterministic generator cannot create an EOL-only worktree mutation.
 artifacts/runtime-authority-convergence/rc-01/baseline.json -text
 
+# TF-0009 closure verifies exact report and manifest bytes on every platform.
+artifacts/first-product-preview/TF-0009/** -text
+
 # Static-integrity generated artifacts are byte-compared by the runtime check
 # guards (npm shrinkwrap guard, tool display, host env policy). core.autocrlf
 # would smudge them to CRLF in fresh detached acceptance worktrees and make the

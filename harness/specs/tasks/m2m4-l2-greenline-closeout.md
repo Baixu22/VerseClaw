@@ -36,7 +36,7 @@ acceptance:
   - L1 六条门 exit 0；L2 五道门失败集 ⊆ GATE-BASELINE 冻结白名单，且 config-schema-parity 不在失败集内。
   - maturity 第 5 段失配集恰为 25 项钉住基线 ∪ 4 项 A2 轮外；第 7 段 ≤ 96；其余五段 exit 0。
   - P6-005 交付 EVIDENCE 哈希与实际 artifact 一致，被移走的审计文件按原字节恢复；不改 artifact 内容。
-  - TF-0009 按更新后的 tf0009-real-canary-authority R7 与 uas-00-evidence-freeze-boundary R2 表达已确认的真人证据阻塞（blocked）；历史冻结报告不重写，不以 agent 证据标 done。
+  - TF-0009 按 2026-09-27 政策与更新后的 R7/R2 接受具名 agent 证据收口；历史报告与真人零计数保留，不再因缺真人而 blocked。
   - 里程碑独立复核与 §R3.6 半径裁定缺位时，TF-0115/TF-0127 保持 in_progress，不冒充 done。
 docs:
   required: true
