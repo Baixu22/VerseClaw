@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-30T07:58:05.595587Z",
+  "generated_at": "2026-09-30T08:52:01.506542Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -10140,7 +10140,7 @@
       "context_tags": [],
       "created_at": "2026-07-19T17:29:59.646228Z",
       "deprecated_at": null,
-      "derived_progress": 75.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [
         "关键实现、测试、文档与证据可在 clean checkout 复现",
         "DCS/SEKB/Browser 关键 Electron 路径 6/6 通过",
@@ -10168,15 +10168,17 @@
         "TF-0008 done：docs/dev/component-controlled-rollout-p0-closeout.md",
         "TF-0009 ready：docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包",
         "docs/dev/task-forest-engineering-20260913.md",
-        "docs/dev/tf0009-policy-decision-20260930.md"
+        "docs/dev/tf0009-policy-decision-20260930.md",
+        "artifacts/first-product-preview/TF-0009/policy-acceptance/verification.json",
+        "artifacts/first-product-preview/TF-0009/policy-acceptance/SHA256SUMS"
       ],
       "execution_hints": [
-        "一次只推进 TF-0009",
-        "按证据收口，真人零计数不是阻塞理由"
+        "历史 blocked/50 与真人前置由 2026-09-27 政策明确取代；真人零计数仍为事实。",
+        "历史收口使用不可变归档校验，新增候选收口另须当前源码一致性校验。"
       ],
       "id": "TF-0007",
       "kind": "global_task",
-      "next_action": "核验 TF-0009 clean agent campaign 与 TF-0008 已验收基线后收口；不改变产品锁。",
+      "next_action": "本节点已完成 agent 驱动验收；后续按独立任务推进，不改变发布、GA、TF-0006 或冻结默认值。",
       "non_goals": [
         "default-on",
         "联合系统 GA",
@@ -10186,27 +10188,27 @@
       ],
       "primary_parent": null,
       "priority": 1,
-      "progress": 75.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "尽快将已有组件能力投入安全、可审计、可回滚的内部使用，而不是继续扩面或提前 default-on。",
-      "remaining_minutes_max": 1440,
-      "remaining_minutes_min": 720,
+      "remaining_minutes_max": 0,
+      "remaining_minutes_min": 0,
       "requirements": [
         "默认策略保持 fail-closed/opt-in",
         "不降低 host sender/workspace/approval 安全边界",
         "不解除 TF-0006 或宣称 joint-system GA"
       ],
       "source_sessions": [],
-      "status": "in_progress",
+      "status": "done",
       "success_metrics": [
         "未授权写入 0",
         "SEKB 未确认写入 0",
         "Browser 私网绕过 0",
         "kill switch 演练成功率 100%"
       ],
-      "summary": "2026-09-30 R7 人证阻塞已按 2026-09-27 政策取消。TF-0008 交付基线保持 done；当前只推进 TF-0009 自动化等价验收，证据完整后联动关闭本父节点。",
+      "summary": "2026-09-30 受控内测投用节点收口：TF-0008 历史交付基线已核读并保留，TF-0009 在 clean candidate 上完成具名 agent 三 profile 与 rollback 验收。两子节点完成；R7 人证硬阻塞已被所有者政策取代。非新全量 RC、发布或 GA 验收。",
       "title": "DCS 与关联组件受控内测投用收口（非GA）",
-      "updated_at": "2026-09-30T07:57:43.939432Z"
+      "updated_at": "2026-09-30T08:50:52.877793Z"
     },
     "TF-0008": {
       "acceptance_criteria": [
@@ -10311,7 +10313,7 @@
       "context_tags": [],
       "created_at": "2026-07-19T17:29:59.646228Z",
       "deprecated_at": null,
-      "derived_progress": 75.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [
         "三 profile 工程流程在 clean candidate 可重复执行",
         "agent 与 human/live 计数、权威及结论完全隔离",
@@ -10344,15 +10346,17 @@
         "2026-09-10 已修复 R7/R2、UAS freeze 校验和 preflight 提示的状态冲突，明确 review_needed 为待复核、blocked 为已确认真人证据阻塞；不再按旧条款把本节点改回待复核。",
         "2026-09-20 moyu 仿真真人 soak（依据 TF-0224/D6 engineering-simulated 基准）：累计 run_count=22，pass_rate mean 65.4%（min40.5/max82.8/stdev9.3），OpenAPI coverage mean 98.8%，no-fabrication=1.0（每条 finding 可回溯 events.jsonl），critical=0 high=106 medium=123 low=4，p95 7.66ms，senseaudio-s2-flash 真实用量 mean 3959tok/run total 63340。本轮新增 5 班 live（seed 20260920 + 202609191607..1610，personas 3-6）全班 nf=1.0。证据：C:/Users/27933/Desktop/bad-shit/moyu/soak-evidence/。",
         "2026-09-20 pnpm test 实测：改 TF-0009=done 触发 tf0009-engineering-evidence-audit.test.ts 唯一 1 处失败（7421 中仅此 1 红）；撤回后应恢复全绿。守卫优先于 D6 重定义。",
-        "docs/dev/tf0009-policy-decision-20260930.md"
+        "docs/dev/tf0009-policy-decision-20260930.md",
+        "artifacts/first-product-preview/TF-0009/policy-acceptance/verification.json",
+        "artifacts/first-product-preview/TF-0009/policy-acceptance/SHA256SUMS"
       ],
       "execution_hints": [
-        "以 2026-09-27 AGENTS.md 和修订后的 R7/R2 为当前权威；旧 evidence 字段中的 2026-09-10/20 记录仅为历史",
-        "通过 canCloseTf0009 和磁盘证据核验后收口；不得改写历史证据或产品锁"
+        "历史 blocked/50 与真人前置由 2026-09-27 政策明确取代；真人零计数仍为事实。",
+        "历史收口使用不可变归档校验，新增候选收口另须当前源码一致性校验。"
       ],
       "id": "TF-0009",
       "kind": "task",
-      "next_action": "完成 clean candidate 三 profile campaign、回归门禁和磁盘证据核验，再自动应用收口提案；不改变产品锁。",
+      "next_action": "本节点已完成 agent 驱动验收；后续按独立任务推进，不改变发布、GA、TF-0006 或冻结默认值。",
       "non_goals": [
         "default-on",
         "无界 cohort",
@@ -10360,11 +10364,11 @@
       ],
       "primary_parent": "TF-0007",
       "priority": 2,
-      "progress": 75.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "由具名 agent 完成三组件受控流程、账本与回滚验收；保留真人零计数的事实局限，不设置真人前置。",
-      "remaining_minutes_max": 720,
-      "remaining_minutes_min": 360,
+      "remaining_minutes_max": 0,
+      "remaining_minutes_min": 0,
       "requirements": [
         "保留 P0/Day-1 历史工程证据，本次变更通过相关回归门禁",
         "agent-surrogate 每 profile 恰好 10 条；humanEquivalent=false、liveEvidence=false、driven_by=agent",
@@ -10373,7 +10377,7 @@
         "Runtime Memory diagnostics-only；三个产品锁、C1 keep-off 与 TF-0006 状态不变"
       ],
       "source_sessions": [],
-      "status": "in_progress",
+      "status": "done",
       "success_metrics": [
         "agent 记录 30/30 通过",
         "SEKB 未确认写入 0",
@@ -10381,9 +10385,9 @@
         "真人计数误增 0",
         "缺失/不安全证据误放行与产品锁漂移 0"
       ],
-      "summary": "2026-09-30 按所有者 2026-09-27 政策修订 R7：接受 agent 等价验收，取消 blocked/50 与真人前置。v2 驱动已完成 10/10/10 开发复跑，正在验证 clean candidate 和门禁；历史 v1 报告不重签。",
+      "summary": "2026-09-30 agent 验收完成：clean candidate 812cba73f；DCS/SEKB/Browser 各 10/10，kill/rollback 通过，具名 agent continue verdict；相关 102 项单测、类型检查、lint、Harness 和 autoreview 通过；磁盘哈希与凭据扫描通过。真人 0/10 保留事实局限，不再是阻塞前置；所有产品锁不变。",
       "title": "P1 组件小范围受控内测运行包",
-      "updated_at": "2026-09-30T07:57:43.939432Z"
+      "updated_at": "2026-09-30T08:50:52.877793Z"
     },
     "TF-0010": {
       "acceptance_criteria": [
@@ -27069,8 +27073,6 @@
   },
   "status_queues": {
     "actionable_todos": [
-      "TF-0009",
-      "TF-0007",
       "TF-0151",
       "TF-0129",
       "TF-0130",
@@ -27122,7 +27124,9 @@
         "TF-0004",
         "TF-0005",
         "TF-0006",
+        "TF-0007",
         "TF-0008",
+        "TF-0009",
         "TF-0011",
         "TF-0012",
         "TF-0014",
@@ -27340,10 +27344,7 @@
         "TF-0240",
         "TF-0242"
       ],
-      "in_progress": [
-        "TF-0007",
-        "TF-0009"
-      ],
+      "in_progress": [],
       "proposed": [],
       "ready": [],
       "review_needed": []
@@ -27352,8 +27353,6 @@
       "TF-0010"
     ],
     "open": [
-      "TF-0007",
-      "TF-0009",
       "TF-0010",
       "TF-0013",
       "TF-0028",
@@ -27369,10 +27368,10 @@
   },
   "summary": {
     "blocked_count": 9,
-    "done_count": 223,
+    "done_count": 225,
     "edge_count": 414,
     "node_count": 242,
-    "open_count": 11,
+    "open_count": 9,
     "review_needed_count": 0
   },
   "tree_edges": [

@@ -25,3 +25,5 @@
 发布、GA、TF-0006、`liveReady` / `productApproved` / `defaultOn`、C1 keep-off、Runtime Memory diagnostics-only 与 SEKB 自动写回边界均不变。
 
 最终验收与节点状态见同目录交接 `handoffs/LATEST.md` 及 `artifacts/first-product-preview/TF-0009/policy-acceptance/verification.json`。
+
+收口结果：TF-0009 / TF-0007 均 done/100，clean candidate 812cba73f；三 profile 各 10/10、候选单测 102/102、收口后守卫 28/28。封存 20 文件，凭据扫描 0；validate/export 通过。历史 TF-0008 证据复用，未冒充本轮 Electron/maturity 重跑。
