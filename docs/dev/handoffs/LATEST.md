@@ -9,6 +9,7 @@
 - **收回一笔技术债的说明**：RC-10 的 H-01..H-06 之前只有开发证据，且旧 H-06 的通过依据只查了 source path；本次是候选绑定、正式模式、每场景带 runIds/receiptIds/result/recoveryObservation 的轮次。
 - **明确不在本程序内的剩余项**：D7 冻结集（TF-0010 / TF-0028 / TF-0129 / TF-0130 / TF-0141 / TF-0144 / TF-0151）、TF-0009 / TF-0007 的 R7 守卫与 2026-09-27 政策冲突（需所有者裁决）、TF-0047 Docker、TF-0013 residual；下一周期验收契约改进见 `D:/ClawX-acceptance/rc09-20260929/NEXT-CYCLE-ACCEPTANCE-DESIGN.md`。
 - **口径未改**：验收契约、`retries`、所有断言、门列表、矩阵规则一个字节未动。
+- **已推送**：`1cddcb1ba..b8637aab9` → `origin/feat/runtime-lifecycle-governance`（远端此前停在 RC-09 的 acceptedBaseSha）。推前核过三件事：`.env` 未被跟踪；全库与本次新增提交里对本次使用的 provider key 前缀**零命中**（key 只经环境变量传入、从未落盘）；`behind 0` 故为快进推送，无需强推。推送不改变任何产品锁或默认值。
 
 ---
 
