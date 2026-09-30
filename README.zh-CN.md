@@ -55,6 +55,8 @@ Product capability statements must be checked against the canonical matrix in `s
 
 启用 DCS 的编码 turn 会通过既有共享注入账本分别记录 knowledge、recent actions 与 tool registry 的真实 provider 可见 prompt 增长。固定预算不会因此放大：启用的 DCS 投影保留既有有界容量，截断和丢弃仍作为显式账目证据。
 
+COMPASS SSP 与回复前检索也通过 ContextCandidate 仲裁共享该 turn 预算，覆盖排队续跑、CLI 与原生 harness 路径。增强 kill switch 会阻止其准备；被截断的检索组不会计为完整注入的事实。
+
 本范围不包含 Runtime Memory 注入、SEKB 自动写回、Browser 无监督或私网访问、C6/C7 自动切换、Coding WAL、生产仓库自动合并及多 Forge/DAG 扩围。当前只有工程与真实进程测试证据，真人 canary 与发布审批仍未完成。组件唯一标注见 [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview)。
 
 ## 概述

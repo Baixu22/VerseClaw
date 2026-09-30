@@ -1,0 +1,6 @@
+{
+  "noDiff": false,
+  "validate": 0,
+  "dryRun": 0,
+  "excludedPreexistingUntracked": "/%SystemDrive%/"
+}

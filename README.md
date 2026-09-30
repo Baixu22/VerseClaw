@@ -55,6 +55,8 @@ The sixth batch also releases pending node target resolution, remote prepare, ap
 
 For DCS-enabled coding turns, knowledge, recent actions, and the tool registry now report their actual provider-visible prompt growth through the existing shared turn-injection ledger. The fixed budget is not enlarged: enabled DCS projections retain their existing bounded capacity, while truncation and drops remain explicit accounting evidence.
 
+COMPASS SSP and pre-reply retrieval now share this turn budget through ContextCandidate arbitration, including queued, CLI and native harness runs. The enhancement kill switch prevents their preparation; truncated retrieval groups are not counted as fully injected facts.
+
 This scope does not include Runtime Memory injection, SEKB automatic writeback, unsupervised or private-network Browser use, automatic C6/C7 cutover, Coding WAL, automatic repository merge, or multi-forge/DAG expansion. Engineering and real-process tests are available; human canary evidence and release approval are still pending. The canonical one-label component inventory is in [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview).
 
 ## Overview

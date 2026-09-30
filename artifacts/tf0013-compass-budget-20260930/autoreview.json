@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.85,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "No actionable defects identified in the scoped changes. Read-only inspection supports the COMPASS payload forwarding, shared budget projection, native harness dispatch, and corrected seal attribution. Tests were inspected but not executed, as requested."
+}

@@ -1739,6 +1739,7 @@ export async function runEmbeddedAgent(
             onAgentEvent: params.onAgentEvent,
             onExecutionPhase: params.onExecutionPhase,
             extraSystemPrompt: params.extraSystemPrompt,
+            compassContext: params.compassContext,
             sourceReplyDeliveryMode: params.sourceReplyDeliveryMode,
             inputProvenance: params.inputProvenance,
             contentProvenance: params.contentProvenance,

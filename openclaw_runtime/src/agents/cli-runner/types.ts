@@ -1,3 +1,4 @@
+import type { PreparedCompassContext } from "../../context-engine/compass-context.js";
 /**
  * Shared types for preparing and executing CLI-backed agent runs.
  */
@@ -60,6 +61,7 @@ export type RunCliAgentParams = {
   lane?: string;
   jobId?: string;
   extraSystemPrompt?: string;
+  compassContext?: PreparedCompassContext;
   sourceReplyDeliveryMode?: SourceReplyDeliveryMode;
   silentReplyPromptMode?: SilentReplyPromptMode;
   allowEmptyAssistantReplyAsSilent?: boolean;

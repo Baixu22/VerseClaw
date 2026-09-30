@@ -1,0 +1,11 @@
+
+ RUN  v4.1.7 D:/ClawX/openclaw_runtime
+
+[vitest] still running with no output for 30000ms (run --config test/vitest/vitest.agents.config.ts rc03-entry-transitions.acceptance.test.ts).
+[vitest] still running with no output for 60000ms (run --config test/vitest/vitest.agents.config.ts rc03-entry-transitions.acceptance.test.ts).
+[vitest] still running with no output for 90000ms (run --config test/vitest/vitest.agents.config.ts rc03-entry-transitions.acceptance.test.ts).
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  20:01:56
+   Duration  98.04s (transform 15.27s, setup 443ms, import 19.20s, tests 77.91s, environment 0ms)

@@ -78,6 +78,8 @@ export type ContextCandidateCollection = {
 
 export type ContextCandidateProjection = {
   systemPromptAddition?: string;
+  /** Ephemeral projected text for producer attribution; never persisted in lineage. */
+  systemPromptContributions?: Array<{ sourceId: string; text: string }>;
   messages: AgentMessage[];
   lineage: ContextCandidateLineage[];
 };
@@ -305,6 +307,7 @@ export function finalizeContextCandidates(params: {
 
   const seen = new Set<string>();
   const systemPromptParts: string[] = [];
+  const systemPromptContributions: Array<{ sourceId: string; text: string }> = [];
   const messages: AgentMessage[] = [];
   const injectedTexts: string[] = [...(params.historyWindow ?? [])];
   let noveltySum = 0;
@@ -346,6 +349,7 @@ export function finalizeContextCandidates(params: {
     injectedTexts.push(charged.text);
     if (candidate.target === "system_prompt") {
       systemPromptParts.push(charged.text);
+      systemPromptContributions.push({ sourceId: candidate.sourceId, text: charged.text });
     } else {
       messages.push({ role: "user", content: charged.text, timestamp: Date.now() });
     }
@@ -369,7 +373,7 @@ export function finalizeContextCandidates(params: {
   collection.diagnostics.finalized = true;
   collection.projection = {
     ...(systemPromptParts.length > 0
-      ? { systemPromptAddition: systemPromptParts.join("\n\n") }
+      ? { systemPromptAddition: systemPromptParts.join("\n\n"), systemPromptContributions }
       : {}),
     messages,
     lineage: orderedLineage,

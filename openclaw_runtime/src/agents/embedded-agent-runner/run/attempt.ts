@@ -2040,6 +2040,7 @@ export async function runEmbeddedAttempt(
       params.config,
       {
         turnId: injectionTurnId,
+        compassContext: params.compassContext,
         sessionKey: params.sessionKey,
         sessionId: params.sessionId,
         runId: params.runId,

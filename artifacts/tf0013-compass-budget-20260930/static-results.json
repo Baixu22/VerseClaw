@@ -1,0 +1,9 @@
+{
+  "formatBaselineFiles": [
+    "src/agents/embedded-agent-runner/run.ts",
+    "src/agents/rc03-entry-transitions.acceptance.test.ts",
+    "src/context-engine/rc03-seal-hook.ts"
+  ],
+  "oxlint": 0,
+  "formatScoped": 0
+}
