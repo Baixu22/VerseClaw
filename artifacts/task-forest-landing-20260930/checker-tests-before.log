@@ -1,0 +1,80 @@
+test_failed_git_query_cannot_report_clean (test_landing.LandingTests) ... FAIL
+test_linked_worktree_branch_is_checked_without_display_markers (test_landing.LandingTests) ... FAIL
+test_missing_default_ref_fails_closed (test_landing.LandingTests) ... FAIL
+test_orphan_evidence_remains_an_explicit_limitation (test_landing.LandingTests) ... FAIL
+test_remote_default_is_used_when_local_main_is_stale (test_landing.LandingTests) ... FAIL
+test_remote_default_keeps_slashes_in_its_name (test_landing.LandingTests) ... FAIL
+test_short_and_full_hashes_count_as_one_commit (test_landing.LandingTests) ... FAIL
+test_unrelated_branch_fails_instead_of_silently_skipping (test_landing.LandingTests) ... FAIL
+
+======================================================================
+FAIL: test_failed_git_query_cannot_report_clean (test_landing.LandingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\27933\Desktop\clawx\ClawX\.codex-tools\task-forest\test_landing.py", line 113, in test_failed_git_query_cannot_report_clean
+    self.assertEqual(result, 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_linked_worktree_branch_is_checked_without_display_markers (test_landing.LandingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\27933\Desktop\clawx\ClawX\.codex-tools\task-forest\test_landing.py", line 71, in test_linked_worktree_branch_is_checked_without_display_markers
+    self.assertTrue(any("分支 refs/heads/pending 有 1 个代码文件" in p for p in report["problems"]))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_missing_default_ref_fails_closed (test_landing.LandingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\27933\Desktop\clawx\ClawX\.codex-tools\task-forest\test_landing.py", line 86, in test_missing_default_ref_fails_closed
+    self.assertEqual(result, 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_orphan_evidence_remains_an_explicit_limitation (test_landing.LandingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\27933\Desktop\clawx\ClawX\.codex-tools\task-forest\test_landing.py", line 101, in test_orphan_evidence_remains_an_explicit_limitation
+    self.assertTrue(any("需 agent 核对" in n for n in report["notes"]))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_remote_default_is_used_when_local_main_is_stale (test_landing.LandingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\27933\Desktop\clawx\ClawX\.codex-tools\task-forest\test_landing.py", line 52, in test_remote_default_is_used_when_local_main_is_stale
+    self.assertEqual(result, 0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_remote_default_keeps_slashes_in_its_name (test_landing.LandingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\27933\Desktop\clawx\ClawX\.codex-tools\task-forest\test_landing.py", line 61, in test_remote_default_keeps_slashes_in_its_name
+    self.assertEqual(report["default_branch"], "release/stable")
+AssertionError: 'stable' != 'release/stable'
+- stable
++ release/stable
+
+
+======================================================================
+FAIL: test_short_and_full_hashes_count_as_one_commit (test_landing.LandingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\27933\Desktop\clawx\ClawX\.codex-tools\task-forest\test_landing.py", line 80, in test_short_and_full_hashes_count_as_one_commit
+    self.assertEqual(report["suspect_count"], 1)
+AssertionError: 3 != 1
+
+======================================================================
+FAIL: test_unrelated_branch_fails_instead_of_silently_skipping (test_landing.LandingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\27933\Desktop\clawx\ClawX\.codex-tools\task-forest\test_landing.py", line 93, in test_unrelated_branch_fails_instead_of_silently_skipping
+    self.assertEqual(result, 1)
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 8 tests in 3.629s
+
+FAILED (failures=8)

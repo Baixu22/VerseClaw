@@ -9679,7 +9679,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-09-30T08:52:01.506542Z",
+  "generated_at": "2026-09-30T09:38:58.990175Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -10166,11 +10166,15 @@
       "estimated_total_minutes": 960,
       "evidence": [
         "TF-0008 done：docs/dev/component-controlled-rollout-p0-closeout.md",
-        "TF-0009 ready：docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包",
+        "历史计划（已由 2026-09-30 收口取代）：TF-0009 ready：docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包",
         "docs/dev/task-forest-engineering-20260913.md",
         "docs/dev/tf0009-policy-decision-20260930.md",
         "artifacts/first-product-preview/TF-0009/policy-acceptance/verification.json",
-        "artifacts/first-product-preview/TF-0009/policy-acceptance/SHA256SUMS"
+        "artifacts/first-product-preview/TF-0009/policy-acceptance/SHA256SUMS",
+        "R7 证据封存收口提交 b4eaef66b6e058896cd082650918b20b6e0d9ec8；其祖先包含 agent 验收候选和节点收口。",
+        "2026-09-30 check-landing 工具修复提交 35636358ab014dad1d9f59cd508b85b8ed7aa672；8 项真实 Git 回归通过，完整检查仍诚实报告历史分支未整合。",
+        "artifacts/task-forest-landing-20260930/verification.json",
+        "docs/dev/task-forest-landing-closeout-20260930.md"
       ],
       "execution_hints": [
         "历史 blocked/50 与真人前置由 2026-09-27 政策明确取代；真人零计数仍为事实。",
@@ -10208,7 +10212,7 @@
       ],
       "summary": "2026-09-30 受控内测投用节点收口：TF-0008 历史交付基线已核读并保留，TF-0009 在 clean candidate 上完成具名 agent 三 profile 与 rollback 验收。两子节点完成；R7 人证硬阻塞已被所有者政策取代。非新全量 RC、发布或 GA 验收。",
       "title": "DCS 与关联组件受控内测投用收口（非GA）",
-      "updated_at": "2026-09-30T08:50:52.877793Z"
+      "updated_at": "2026-09-30T09:38:32.540734Z"
     },
     "TF-0008": {
       "acceptance_criteria": [
@@ -10348,7 +10352,11 @@
         "2026-09-20 pnpm test 实测：改 TF-0009=done 触发 tf0009-engineering-evidence-audit.test.ts 唯一 1 处失败（7421 中仅此 1 红）；撤回后应恢复全绿。守卫优先于 D6 重定义。",
         "docs/dev/tf0009-policy-decision-20260930.md",
         "artifacts/first-product-preview/TF-0009/policy-acceptance/verification.json",
-        "artifacts/first-product-preview/TF-0009/policy-acceptance/SHA256SUMS"
+        "artifacts/first-product-preview/TF-0009/policy-acceptance/SHA256SUMS",
+        "R7 证据封存收口提交 b4eaef66b6e058896cd082650918b20b6e0d9ec8；其祖先包含 agent 验收候选和节点收口。",
+        "2026-09-30 check-landing 工具修复提交 35636358ab014dad1d9f59cd508b85b8ed7aa672；8 项真实 Git 回归通过，完整检查仍诚实报告历史分支未整合。",
+        "artifacts/task-forest-landing-20260930/verification.json",
+        "docs/dev/task-forest-landing-closeout-20260930.md"
       ],
       "execution_hints": [
         "历史 blocked/50 与真人前置由 2026-09-27 政策明确取代；真人零计数仍为事实。",
@@ -10387,7 +10395,7 @@
       ],
       "summary": "2026-09-30 agent 验收完成：clean candidate 812cba73f；DCS/SEKB/Browser 各 10/10，kill/rollback 通过，具名 agent continue verdict；相关 102 项单测、类型检查、lint、Harness 和 autoreview 通过；磁盘哈希与凭据扫描通过。真人 0/10 保留事实局限，不再是阻塞前置；所有产品锁不变。",
       "title": "P1 组件小范围受控内测运行包",
-      "updated_at": "2026-09-30T08:50:52.877793Z"
+      "updated_at": "2026-09-30T09:38:32.540734Z"
     },
     "TF-0010": {
       "acceptance_criteria": [

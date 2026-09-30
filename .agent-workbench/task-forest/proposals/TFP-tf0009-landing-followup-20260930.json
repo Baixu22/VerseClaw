@@ -1,0 +1,64 @@
+{
+  "applied_at": "2026-09-30T09:38:32.630569Z",
+  "base_graph_hash": "407f768033e54cb08618fee3595ca2bf866ce3ca2121b9387d2388efd72298f9",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包",
+          "docs/dev/component-operational-readiness-checklist.md",
+          "docs/dev/tf0009-engineering-evidence-audit.md",
+          "artifacts/first-product-preview/TF-0009/evidence-audit.json",
+          "artifacts/first-product-preview/TF-0009/agent-surrogate-charter.json",
+          "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json",
+          "harness/specs/rules/tf0009-real-canary-authority.md",
+          "harness/specs/tasks/tf0009-engineering-evidence-audit.md",
+          "artifacts/dcs-deep-test-week1/day1-gates.json",
+          "docs/dev/handoffs/LATEST.md",
+          "artifacts/agent-surrogate-ledger/manifest.json",
+          "2026-09-10 用户明确要求通过即 done、不通过直接处理；本轮结论与实测证据：docs/dev/context-moat/reviews/review-outcomes-20260910.md",
+          "2026-09-10 已修复 R7/R2、UAS freeze 校验和 preflight 提示的状态冲突，明确 review_needed 为待复核、blocked 为已确认真人证据阻塞；不再按旧条款把本节点改回待复核。",
+          "2026-09-20 moyu 仿真真人 soak（依据 TF-0224/D6 engineering-simulated 基准）：累计 run_count=22，pass_rate mean 65.4%（min40.5/max82.8/stdev9.3），OpenAPI coverage mean 98.8%，no-fabrication=1.0（每条 finding 可回溯 events.jsonl），critical=0 high=106 medium=123 low=4，p95 7.66ms，senseaudio-s2-flash 真实用量 mean 3959tok/run total 63340。本轮新增 5 班 live（seed 20260920 + 202609191607..1610，personas 3-6）全班 nf=1.0。证据：C:/Users/27933/Desktop/bad-shit/moyu/soak-evidence/。",
+          "2026-09-20 pnpm test 实测：改 TF-0009=done 触发 tf0009-engineering-evidence-audit.test.ts 唯一 1 处失败（7421 中仅此 1 红）；撤回后应恢复全绿。守卫优先于 D6 重定义。",
+          "docs/dev/tf0009-policy-decision-20260930.md",
+          "artifacts/first-product-preview/TF-0009/policy-acceptance/verification.json",
+          "artifacts/first-product-preview/TF-0009/policy-acceptance/SHA256SUMS",
+          "R7 证据封存收口提交 b4eaef66b6e058896cd082650918b20b6e0d9ec8；其祖先包含 agent 验收候选和节点收口。",
+          "2026-09-30 check-landing 工具修复提交 35636358ab014dad1d9f59cd508b85b8ed7aa672；8 项真实 Git 回归通过，完整检查仍诚实报告历史分支未整合。",
+          "artifacts/task-forest-landing-20260930/verification.json",
+          "docs/dev/task-forest-landing-closeout-20260930.md"
+        ]
+      },
+      "id": "TF-0009"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "TF-0008 done：docs/dev/component-controlled-rollout-p0-closeout.md",
+          "历史计划（已由 2026-09-30 收口取代）：TF-0009 ready：docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包",
+          "docs/dev/task-forest-engineering-20260913.md",
+          "docs/dev/tf0009-policy-decision-20260930.md",
+          "artifacts/first-product-preview/TF-0009/policy-acceptance/verification.json",
+          "artifacts/first-product-preview/TF-0009/policy-acceptance/SHA256SUMS",
+          "R7 证据封存收口提交 b4eaef66b6e058896cd082650918b20b6e0d9ec8；其祖先包含 agent 验收候选和节点收口。",
+          "2026-09-30 check-landing 工具修复提交 35636358ab014dad1d9f59cd508b85b8ed7aa672；8 项真实 Git 回归通过，完整检查仍诚实报告历史分支未整合。",
+          "artifacts/task-forest-landing-20260930/verification.json",
+          "docs/dev/task-forest-landing-closeout-20260930.md"
+        ]
+      },
+      "id": "TF-0007"
+    }
+  ],
+  "created_at": "2026-09-30T09:36:50.340127Z",
+  "proposal_id": "TFP-tf0009-landing-followup-20260930",
+  "rationale": "用户明确选择修复检查器并完成当前任务收尾、验收与私有远端推送；不包含全仓库历史整合。补足当前交付的真实提交归因，保留全部历史证据与所有节点状态。",
+  "session_id": "tf0009-landing-followup-20260930",
+  "status": "applied"
+}

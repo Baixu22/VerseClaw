@@ -19,6 +19,7 @@ $patchPath = (Resolve-Path '.codex-tools/task-forest/landing-fix.patch').Path
 git -C $skillDir apply --check $patchPath
 # Run this only if the preceding command exits 0.
 git -C $skillDir apply $patchPath
+Copy-Item .codex-tools/task-forest/test_landing.py (Join-Path $skillDir 'scripts/test_landing.py')
 $env:PYTHONPATH = Join-Path $skillDir 'scripts'
 $env:PYTHONUTF8 = '1'
 python .codex-tools/task-forest/test_landing.py -v

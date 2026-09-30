@@ -1,0 +1,108 @@
+{
+  "schema": "task-forest-landing-closeout/v1",
+  "driven_by": "agent",
+  "actor": "codex/root",
+  "generatedAt": "2026-09-30T09:42:38.972654+00:00",
+  "scope": [
+    "repair installed check-landing",
+    "TF-0007 / TF-0009 evidence attribution and closeout",
+    "existing private remote push"
+  ],
+  "excludedScope": [
+    "integrate historical branches into main",
+    "new RC/GA acceptance",
+    "default or product-lock changes"
+  ],
+  "toolCandidate": {
+    "commit": "35636358ab014dad1d9f59cd508b85b8ed7aa672",
+    "tree": "6b80711104ecfd9a25dbe9b1842de3c05b842b43",
+    "source": "C:\\Users\\27933\\.codex\\skills\\task-forest\\scripts\\task_forest.py",
+    "sourceSha256": "8440b49b1f2749ee61d8b3f00466cac67737d6460358ba2bc127b1a13bfd9d89",
+    "originalSourceSha256": "1d6dc8aab0175e49c015d6de87bdee1002c7282b5219bef46728e30273ed5974",
+    "skillSha256": "e24c5c7d90d6caf208da490dc14afd401bc10d5b76e94bb940a4e664f9a96a63",
+    "originalSkillSha256": "6fed88e77f4b21fb976a4ed78e0dc179f95ccc2ab1fa4caf385a13eb9e209511"
+  },
+  "gates": [
+    {
+      "command": "PYTHONPATH=<skill>/scripts python .codex-tools/task-forest/test_landing.py -v",
+      "exitCode": 0,
+      "passed": 8,
+      "failed": 0,
+      "log": "checker-tests.log"
+    },
+    {
+      "command": "node node_modules/vitest/vitest.mjs run tests/unit/tf0009-agent-surrogate.test.ts tests/unit/tf0009-engineering-evidence-audit.test.ts --reporter=json",
+      "exitCode": 0,
+      "passed": 24,
+      "failed": 0,
+      "skipped": 0,
+      "report": "tf0009-tests.json"
+    },
+    {
+      "command": "verifyTf0009ClosureEvidence(archivedCampaign, workspace)",
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "command": "git apply --check; apply patch to original isolated copy; compare installed source",
+      "exitCode": 0,
+      "log": "patch-reproduction.log"
+    },
+    {
+      "command": "task_forest.py validate",
+      "exitCode": 0,
+      "log": "task-forest-validate.log"
+    },
+    {
+      "command": "task_forest.py export",
+      "exitCode": 0,
+      "log": "task-forest-export.log"
+    }
+  ],
+  "regressionProof": {
+    "originalCheckerExitCode": 1,
+    "failedTests": 8,
+    "log": "checker-tests-before.log"
+  },
+  "repoWideCheck": {
+    "beforeCount": 177,
+    "fixedBeforeAttributionCount": 179,
+    "beforeInvocationLimitation": "The first output wrapper timed out at 10000ms after the JSON had been written; no successful process exit is claimed for that invocation.",
+    "exitCode": 1,
+    "targetRef": "refs/remotes/origin/main",
+    "limitation": "Historical branches are not integrated; main merge preview reported 160 conflicts. User explicitly excluded that integration from this closeout.",
+    "finalCount": 183,
+    "suspectCount": 149,
+    "report": "check-landing-final.json"
+  },
+  "privateRemote": {
+    "name": "origin",
+    "visibilityVerified": "PRIVATE",
+    "branch": "feat/runtime-lifecycle-governance",
+    "observedHead": "35636358ab014dad1d9f59cd508b85b8ed7aa672",
+    "containsR7AndCheckerDelivery": true
+  },
+  "workspaceLimitation": "Pre-existing untracked %SystemDrive%/ Windows cache files are preserved. No claim of an entirely clean user worktree.",
+  "productLocksChanged": false,
+  "readmeReview": "README.md / README.zh-CN.md / README.ja-JP.md require no product documentation edits; only developer tooling changed.",
+  "trackedToolFiles": [
+    {
+      "path": ".codex-tools/task-forest/landing-fix.patch",
+      "sha256": "83ec780f0b19788cf4b732f4b78172fd31122c8eb72dfeba525191646536dfc9"
+    },
+    {
+      "path": ".codex-tools/task-forest/test_landing.py",
+      "sha256": "ce58ff130ce3b8157d022e948d55de2e8b859612809762b32d4c15a432f64d3b"
+    }
+  ],
+  "credentialScan": {
+    "hits": 0,
+    "scope": "all archived payload files",
+    "patterns": [
+      "\\bsk-[A-Za-z0-9_-]{20,}",
+      "\\b(?:ghp|github_pat)_[A-Za-z0-9_]{20,}",
+      "-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----",
+      "Bearer\\s+[A-Za-z0-9_-]{24,}"
+    ]
+  }
+}

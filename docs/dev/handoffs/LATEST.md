@@ -1,3 +1,15 @@
+# 2026-09-30：check-landing 修复与 R7 任务交付收尾
+
+- 用户选择范围：修复检查器、当前任务收尾与验收、既有私有远端推送；不做全仓库历史分支整合。
+- 已修复安装中的 task-forest 检查器：优先完整远端默认引用、正确读取多工作树分支、短/长 SHA 归一、Git 查询失败非零退出。补丁与测试已入库 `.codex-tools/task-forest/`，提交 `35636358a`。
+- 本轮实测：检查器 8 项通过（旧实现同套件 8 项失败）；R7 两文件 24 项通过、0 失败、0 跳过；历史封存证据校验 true；Task Forest validate/export 通过。没有重跑完整 RC、Electron 或 GA 验收。
+- `check-landing` 全仓库最终 183 项、exit 1：修复后首次为 179 项，补齐当前两节点的提交归因后增加 4 项。目标是远端 main；这不是已全部合并的声明。主线只读合并预检 160 处冲突，历史整合按用户选择留待独立范围。
+- R7 三笔提交及工具修复已推送 `origin/feat/runtime-lifecycle-governance`，直接远端读取已确认 `35636358a`；本轮记账与交接一并提交推送，最终 tip 结束前复核。TF-0007/0009 保持 done/100，所有节点 status/progress 无变化。
+- 证据：`artifacts/task-forest-landing-20260930/verification.json` 与 SHA256SUMS；完整说明 `docs/dev/task-forest-landing-closeout-20260930.md`。原 R7 封存文件未改；原有 `%SystemDrive%/` Windows 缓存保留。
+- 下一入口仍是 TF-0013 residual 与 RC-02/03 的证据对照；D7 冻结集、Docker 后置、发布/GA、产品锁及默认值保持原边界。
+
+---
+
 # 2026-09-30：TF-0009 / TF-0007 R7 修订与 agent 验收收口
 
 - 决策：按 2026-09-27 AGENTS.md 取消具名真人硬前置，修订 R7/R2 与共享守卫。真人 0/10 保留事实局限；不得声称 real-human。
