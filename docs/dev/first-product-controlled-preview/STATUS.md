@@ -2,6 +2,14 @@
 
 # First Product · Controlled Preview — STATUS（仅元数据 + 开发日志）
 
+> 2026-10-01 TF-0013 已完成节点级干净候选验收并自动收口（done/100）：18门、233测试、7次native请求通过，Codex package类型错误清零。见 `docs/dev/tf0013-authority-closeout-20261001.md`。不是新的全量RC、发布或GA，产品锁和默认值不变。
+
+> 2026-10-01 TF-0013：跨模块预算与 stale native thread 恢复修复已完成真实进程开发验证（agent 驱动 local provider）。见 `docs/dev/tf0013-native-wire-20261001.md`；插件 package 的 8 条基线类型错误保留，节点尚未进行干净候选整体验收。preview/历史 RC verdict 与产品锁不变。
+
+> 2026-09-30 TF-0013 原生预算增量：原生 harness SDK 已接入与 COMPASS 相同的 turn ledger，开发回归覆盖重试、失败回退和 kill switch。见 `docs/dev/tf0013-native-budget-20260930.md`；不改变 preview/RC 历史 verdict、产品锁或节点的正式验收资格。
+
+> 2026-09-30 TF-0013 开发增量：embedded ContextEngine 新增消息替换已接入共享预算及原子准入，原历史匹配、工具循环和失败回退有定向证据。详见 `docs/dev/tf0013-message-budget-20260930.md`。此记录不改变 preview/RC 历史 verdict 或产品锁。
+
 > **只放进度元数据与日志。** 实现细节、切片、验收命令写在 `tasks/FP-*.md`。
 > 丢上下文后：先读本文件 → 再打开 `status=in_progress` 或下一个 `ready` 的任务文档。
 > `done` 的唯一定义见 [DEFINITION-OF-DONE.md](./DEFINITION-OF-DONE.md)（G1 dev / G2 test / G3 runtime / G4 human / G5 accept 全绿）。

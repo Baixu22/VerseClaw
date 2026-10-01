@@ -17,6 +17,11 @@ import {
   type NativeHookRelayEvent,
   type NativeHookRelayRegistrationHandle,
 } from "openclaw/plugin-sdk/agent-harness-runtime";
+import {
+  createDiagnosticTraceContextFromActiveScope,
+  freezeDiagnosticTraceContext,
+  type DiagnosticTraceContext,
+} from "openclaw/plugin-sdk/diagnostic-runtime";
 import { handleCodexAppServerApprovalRequest } from "./approval-bridge.js";
 import { refreshCodexAppServerAuthTokens } from "./auth-bridge.js";
 import { isCodexAppServerApprovalRequest, type CodexAppServerClient } from "./client.js";
@@ -27,6 +32,7 @@ import {
   type CodexAppServerRuntimeOptions,
 } from "./config.js";
 import {
+  createCodexToolDiagnosticIdentity,
   emitDynamicToolErrorDiagnostic,
   emitDynamicToolStartedDiagnostic,
   emitDynamicToolTerminalDiagnostic,
@@ -127,6 +133,9 @@ export async function runCodexAppServerSideQuestion(
     };
   } = {},
 ): Promise<AgentHarnessSideQuestionResult> {
+  const diagnosticTrace = freezeDiagnosticTraceContext(
+    createDiagnosticTraceContextFromActiveScope(),
+  );
   const binding = await readCodexAppServerBinding(params.sessionFile, {
     agentDir: params.agentDir,
     config: params.cfg,
@@ -184,6 +193,7 @@ export async function runCodexAppServerSideQuestion(
       agentId: params.agentId,
     });
     const toolBridge = await createCodexSideToolBridge({
+      trace: diagnosticTrace,
       params,
       cwd,
       pluginConfig,
@@ -241,6 +251,7 @@ export async function runCodexAppServerSideQuestion(
       });
       const toolStartedAt = Date.now();
       const diagnosticContext = {
+        ...createCodexToolDiagnosticIdentity(diagnosticTrace),
         call,
         runId: sideRunParams.runId,
         sessionId: params.sessionId,
@@ -521,6 +532,7 @@ function buildSideRunAttemptParams(
 }
 
 async function createCodexSideToolBridge(input: {
+  trace: DiagnosticTraceContext;
   params: AgentHarnessSideQuestionParams;
   cwd: string;
   pluginConfig: ReturnType<typeof readCodexPluginConfig>;
@@ -602,6 +614,7 @@ async function createCodexSideToolBridge(input: {
     signal: input.signal,
     loading: resolveCodexDynamicToolsLoading(input.pluginConfig),
     hookContext: {
+      trace: input.trace,
       agentId: input.sessionAgentId,
       config: input.params.cfg,
       sessionId: input.params.sessionId,

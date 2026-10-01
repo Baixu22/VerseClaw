@@ -1,0 +1,20 @@
+{
+  "recording": "post-run working source and consumed build identity, not a clean candidate assertion",
+  "files": {
+    "openclaw_runtime/src/agents/harness/context-engine-lifecycle.ts": "055819ae60af17b898bd520f62410e553fe31850653e23b5bd93f2a2b3279224",
+    "openclaw_runtime/src/agents/harness/selection.ts": "7a516a7360728a8039616de80385a8142d0aff85b3bb2cdbcd7f37c6c23e1363",
+    "openclaw_runtime/src/agents/harness/selection.compass.test.ts": "2fa826a5df15b892bbdfcb414743494079bb9cee4567e621962e1c68cb402026",
+    "openclaw_runtime/src/context-engine/context-candidate.ts": "4cfb045918e52b84f8e2122678b0e50f42e594c7355e02ec5e11575d46ef2b52",
+    "openclaw_runtime/src/context-engine/context-orchestrator.ts": "33472c184936fe21fed77c5232e42a3a810a3913d53920f18347e3d96647c6b5",
+    "openclaw_runtime/src/context-engine/turn-injection-budget.ts": "0598575c3700a61f12b1702579ad5c994678f7135219b80b7ec173b04f1798b7",
+    "openclaw_runtime/src/plugin-sdk/agent-harness-runtime.ts": "08fd9eb5af368826a0b7ddd2b3a9bc375a51e2072b639757280f422989ea4f6d",
+    "openclaw_runtime/extensions/codex/src/app-server/run-attempt.ts": "227c996c268949a87b19a3fe06b5a701035d8fe99f60a44d61a3cdb3e6483a60",
+    "openclaw_runtime/extensions/codex/src/app-server/context-engine-projection.ts": "980adf00d4ae2701b1398a394034054ef1d9e7241bff30f20ab068b7fec90091",
+    "openclaw_runtime/extensions/codex/src/app-server/thread-lifecycle.ts": "0f5ee112522acf0873978aff9c4157144368de20e7755f454a883e2e30b361dc",
+    "harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md": "58074b73ce0873009fdf0f207197294ac60be362d92d225bbebabf6419ce7d9a",
+    "openclaw_runtime/dist/extensions/codex/index.js": "1bbcdba2dbbbfb22321554a3e2ed40f3de89cb15660c08608b6d7309a5e4ab66",
+    "openclaw_runtime/dist/plugin-sdk/agent-harness-runtime.js": "af56396ead9e6ee229189a26b8594fe866620fbc40259c41fb850cdb89f48f02",
+    "openclaw_runtime/dist/context-engine-lifecycle-Bv_9taLb.js": "26cebdc658f1b5fc4b625d892a88ddded86572e5b39045c13e4eec006bab470d",
+    "openclaw_runtime/dist/run-attempt-BOWNzL4P.js": "e81521476858eb3c77d65cbaadc5ba45fd133e47f36fd28a95081df9c1752c4e"
+  }
+}

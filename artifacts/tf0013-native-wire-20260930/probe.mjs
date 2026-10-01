@@ -1,0 +1,15 @@
+import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import fs from 'node:fs';
+const runtime = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../openclaw_runtime');
+const require = createRequire(path.join(runtime, 'package.json'));
+const { createJiti } = require('jiti');
+const jiti = createJiti(path.join(runtime, 'package.json'), { interopDefault: true });
+console.log('Loading source host');
+const { loadOpenClawPlugins } = await jiti.import(path.join(runtime, 'src/plugins/loader.ts'));
+console.log('Loading Codex plugin');
+const config = { plugins: { allow: ['codex'], entries: { codex: { enabled: true } } } };
+const registry = loadOpenClawPlugins({ config, onlyPluginIds: ['codex'], pluginSdkResolution: 'src', cache: false });
+console.log(JSON.stringify({ plugins: registry.plugins.map(p => ({ id: p.id, status: p.status, error: p.error })), harnesses: registry.agentHarnesses.map(h => ({ id: h.id, keys: Object.keys(h) })), diagnostics: registry.diagnostics }, null, 2));
+fs.writeFileSync(new URL('loader.json', import.meta.url), JSON.stringify(registry.plugins, null, 2));

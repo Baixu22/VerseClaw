@@ -1,7 +1,24 @@
 /**
  * Manages context-engine lifecycle hooks for native agent harnesses.
  */
+import { AsyncLocalStorage } from "node:async_hooks";
+import { isDeepStrictEqual } from "node:util";
 import type { MemoryCitationsMode } from "../../config/types.memory.js";
+import { collectCompassContext } from "../../context-engine/compass-context.js";
+import {
+  contextMessageReplacementText,
+  reopenContextCandidateCollection,
+} from "../../context-engine/context-candidate.js";
+import {
+  collectContextOrchestratorCandidate,
+  endContextOrchestratorTurn,
+  finalizeContextOrchestratorTurn,
+} from "../../context-engine/context-orchestrator.js";
+import { isContextEnhancementKillSwitchEngaged } from "../../context-engine/enhancement-kill-switch.js";
+import {
+  beginTurnInjectionBudget,
+  endTurnInjectionBudget,
+} from "../../context-engine/turn-injection-budget.js";
 import type {
   AssembleResult,
   ContextEngine,
@@ -18,8 +35,140 @@ import {
 import { stripRuntimeContextCustomMessages } from "../internal-runtime-context.js";
 import type { AgentMessage } from "../runtime/index.js";
 import type { SessionWriteLockAcquireTimeoutConfig } from "../session-write-lock.js";
+import type { AgentHarnessAttemptParams, AgentHarnessAttemptResult } from "./types.js";
 
 export type HarnessContextEngine = ContextEngine;
+
+// Carry the existing turn owner across the SDK call without changing plugin
+// engine identity or making embedded assembly pay a second time.
+type NativeContextBudgetAttempt = {
+  turnId: string;
+  cfg: AgentHarnessAttemptParams["config"];
+  previous?: { original: AgentMessage[]; assembled: AssembleResult; admitted: AssembleResult };
+};
+type NativeContextBudgetScope = {
+  cfg: AgentHarnessAttemptParams["config"];
+  admit: (original: AgentMessage[], assembled: AssembleResult) => AssembleResult;
+};
+// Source hosts and built plugin SDKs can load distinct module instances. Share
+// the scope, but route admission back to the attempt's original ledger owner.
+const nativeContextBudgetKey = Symbol.for("openclaw.nativeContextBudget.v1");
+const nativeContextBudgetGlobal = globalThis as typeof globalThis & {
+  [nativeContextBudgetKey]?: AsyncLocalStorage<NativeContextBudgetScope>;
+};
+const nativeContextBudget = (nativeContextBudgetGlobal[nativeContextBudgetKey] ??=
+  new AsyncLocalStorage<NativeContextBudgetScope>());
+
+export async function runWithHarnessContextBudget(
+  params: AgentHarnessAttemptParams,
+  native: boolean,
+  run: (prepared: AgentHarnessAttemptParams) => Promise<AgentHarnessAttemptResult>,
+): Promise<AgentHarnessAttemptResult> {
+  // A native tool can start an embedded child run. Its own assembly hooks must
+  // not inherit the parent's native budget or charge the child twice.
+  if (!native) return nativeContextBudget.exit(() => run(params));
+  const turnId = `harness:${params.sessionKey ?? params.sessionId}:${params.runId}:${params.attemptIndex ?? 0}`;
+  beginTurnInjectionBudget({
+    turnId,
+    killed: isContextEnhancementKillSwitchEngaged(params.config),
+  });
+  try {
+    // Knowledge has higher declared precedence than engine additions. Keep its
+    // charge alive until the native attempt (including startup retries) ends.
+    if (params.compassContext) collectCompassContext(turnId, params.compassContext, params.config);
+    const compassPrompt = finalizeContextOrchestratorTurn({
+      turnId,
+      messages: [],
+      cfg: params.config,
+      seal: false,
+    }).projection.systemPromptAddition;
+    const attempt: NativeContextBudgetAttempt = { turnId, cfg: params.config };
+    return await nativeContextBudget.run(
+      {
+        cfg: params.config,
+        admit: (original, assembled) => admitNativeAssembly(attempt, original, assembled),
+      },
+      () =>
+        run({
+          ...params,
+          compassContext: undefined,
+          extraSystemPrompt:
+            [params.extraSystemPrompt, compassPrompt].filter(Boolean).join("\n\n") || undefined,
+        }),
+    );
+  } finally {
+    endContextOrchestratorTurn(turnId);
+    endTurnInjectionBudget(turnId);
+  }
+}
+
+function admitNativeAssembly(
+  scope: NativeContextBudgetAttempt,
+  original: AgentMessage[],
+  assembled: AssembleResult,
+): AssembleResult {
+  const previous = scope.previous;
+  // A native startup retry may request the same projection again. Reuse only
+  // byte-equivalent input/output; never charge it twice or reuse a stale plan.
+  if (
+    previous &&
+    isDeepStrictEqual(previous.original, original) &&
+    isDeepStrictEqual(previous.assembled, assembled)
+  ) {
+    return structuredClone(previous.admitted);
+  }
+  reopenContextCandidateCollection(scope.turnId);
+  const text = contextMessageReplacementText(original, assembled.messages);
+  for (const candidate of [
+    ...(text
+      ? [
+          {
+            sourceId: "cvk-messages",
+            target: "message_replacement" as const,
+            text,
+            messageReplacement: { original, replacement: assembled.messages },
+          },
+        ]
+      : []),
+    ...(assembled.systemPromptAddition?.trim()
+      ? [
+          {
+            sourceId: "cvk",
+            target: "system_prompt" as const,
+            text: assembled.systemPromptAddition.trim(),
+          },
+        ]
+      : []),
+  ]) {
+    collectContextOrchestratorCandidate(scope.turnId, {
+      ...candidate,
+      channel: "cvk_addition",
+      authorityObjectId: candidate.sourceId,
+      authorityVersion: "1",
+    });
+  }
+  const { projection } = finalizeContextOrchestratorTurn({
+    turnId: scope.turnId,
+    messages: original,
+    cfg: scope.cfg,
+    seal: false,
+  });
+  const messages = text
+    ? (projection.messageReplacement?.replacement ?? original)
+    : assembled.messages;
+  const admitted = {
+    ...assembled,
+    messages,
+    systemPromptAddition: projection.systemPromptAddition,
+    // An engine fingerprint describes its full assembly. A budget-reduced
+    // projection must not establish/reuse that thread-bootstrap identity.
+    contextProjection: projection.lineage.some((entry) => entry.reason !== "applied")
+      ? undefined
+      : assembled.contextProjection,
+  };
+  scope.previous = structuredClone({ original, assembled, admitted });
+  return admitted;
+}
 
 /**
  * Run optional bootstrap + bootstrap maintenance for a harness-owned context engine.
@@ -86,10 +235,14 @@ export async function assembleHarnessContextEngine(params: {
     return undefined;
   }
   const messages = stripRuntimeContextCustomMessages(params.messages);
+  const scope = nativeContextBudget.getStore();
+  if (scope && isContextEnhancementKillSwitchEngaged(scope.cfg)) {
+    return { messages, estimatedTokens: 0 };
+  }
   const result = await params.contextEngine.assemble({
     sessionId: params.sessionId,
     sessionKey: params.sessionKey,
-    messages,
+    messages: scope ? structuredClone(messages) : messages,
     tokenBudget: params.tokenBudget,
     ...(params.availableTools ? { availableTools: params.availableTools } : {}),
     ...(params.activeTools ? { activeTools: params.activeTools } : {}),
@@ -99,7 +252,8 @@ export async function assembleHarnessContextEngine(params: {
     model: params.modelId,
     ...(params.prompt !== undefined ? { prompt: params.prompt } : {}),
   });
-  return ensureAssembleResultShape(result, params.contextEngine.info.id);
+  const assembled = ensureAssembleResultShape(result, params.contextEngine.info.id);
+  return scope ? scope.admit(messages, assembled) : assembled;
 }
 
 /**

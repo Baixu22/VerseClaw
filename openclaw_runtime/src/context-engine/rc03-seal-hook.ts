@@ -286,6 +286,8 @@ function producerIdForLineageSource(sourceId: string): string | undefined {
     }
   }
   switch (sourceId) {
+    case 'cvk-message-replacement':
+      return 'cvk-message-replacement';
     case 'dcs-knowledge':
     case 'knowledge':
       return 'dcs-knowledge';

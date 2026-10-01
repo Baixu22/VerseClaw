@@ -1,0 +1,32 @@
+{
+  "actor": "codex/root",
+  "driven_by": "agent",
+  "scope": "development-only",
+  "testedBaseHead": "48387ee04a9b082dc552ea461985224ba77faab3",
+  "sourceDirtyAtValidation": true,
+  "sha256": {
+    "harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md": "d8c7c9269dfd3bed7bdce21f9bd747150880a45fbb6afa7412a745c80dc49cab",
+    "openclaw_runtime/src/agents/embedded-agent-runner/extensions.tool-registry.test.ts": "6f8522b259c183fc97989d761ec555d8338272617ecf8601b710c28d9eb83cbf",
+    "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts": "765722726e537c5fbb97c013db9d1dc106cbdd82428b0d5b2817fcfc406905c9",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts": "dc464f5343837a022320ed643ced12a51d62e0c0f642683a0f7a3984a9e0e1b1",
+    "openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts": "9f2142bbe8a65e4c01b703f0e870c5870919b0fc5f0b609c52f9302bbc922db4",
+    "openclaw_runtime/src/context-engine/context-candidate.test.ts": "04dad7514bd4e222528e30ca2f2daaa9abca558ea6493026b3df27275554daba",
+    "openclaw_runtime/src/context-engine/context-candidate.ts": "4cfb045918e52b84f8e2122678b0e50f42e594c7355e02ec5e11575d46ef2b52",
+    "openclaw_runtime/src/context-engine/rc03-seal-hook.ts": "eef9d32bd940eb05af08318131521afab7a8301a6bcb4dc1ff37f81251f8de31",
+    "openclaw_runtime/src/context-engine/registry.ts": "6892ac5bcb740cf97bdd2ab0e6bf2b7b129e09df82924de75419e39ed816e5a0",
+    "openclaw_runtime/src/context-engine/turn-injection-budget.ts": "0598575c3700a61f12b1702579ad5c994678f7135219b80b7ec173b04f1798b7"
+  },
+  "tests": {
+    "runtime-entry": 22,
+    "runtime-unit": 115,
+    "runtime-extensions": 26,
+    "root-focused": 6
+  },
+  "totalTestsPassed": 169,
+  "notExecuted": [
+    "formal RC-09/10",
+    "Electron",
+    "native plugin external service",
+    "paid provider"
+  ]
+}

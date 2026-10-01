@@ -1,0 +1,15 @@
+{
+  "commit": "25b02171aa5514c403aab804a3c0480b47a756f9",
+  "parent": "48387ee04a9b082dc552ea461985224ba77faab3",
+  "tree": "5b970b41fa99b7a2f76a80448efa822070a09571",
+  "paths": [
+    "openclaw_runtime/extensions/codex/src/app-server/attempt-context.ts",
+    "openclaw_runtime/extensions/codex/src/app-server/dynamic-tool-diagnostics.ts",
+    "openclaw_runtime/extensions/codex/src/app-server/dynamic-tools.ts",
+    "openclaw_runtime/extensions/codex/src/app-server/event-projector.ts",
+    "openclaw_runtime/extensions/codex/src/app-server/run-attempt.ts",
+    "openclaw_runtime/extensions/codex/src/app-server/side-question.ts",
+    "openclaw_runtime/extensions/codex/src/app-server/diagnostic-contract.test.ts"
+  ],
+  "purpose": "Review object; real HEAD/index untouched, no clean candidate claim."
+}

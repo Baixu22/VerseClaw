@@ -1,0 +1,31 @@
+{
+  "actor": "codex/root",
+  "driven_by": "agent",
+  "provider": "scripted-local-responses",
+  "binaryVersion": "codex-cli 0.137.0",
+  "scratch": "C:\\Users\\27933\\AppData\\Local\\Temp\\tf0013-native-wire-KY9wUl",
+  "scenarios": [
+    {
+      "name": "atomic-drop",
+      "added": 7000,
+      "compass": 100,
+      "system": 100,
+      "killed": false,
+      "assemblies": 1,
+      "requests": 0,
+      "aborted": false,
+      "timedOut": false,
+      "promptError": "unexpected status 401 Unauthorized: Incorrect API key provided: agent-fi******************tial. You can find your API key at https://platform.openai.com/account/api-keys., url: https://api.openai.com/v1/responses, cf-ray: a434746dbe958eb8-NRT, request id: req_ebcc4dc996bd4b9ab71d5c0c32ec6302",
+      "ledgerReleased": true
+    }
+  ],
+  "plugins": [
+    {
+      "id": "codex",
+      "status": "loaded",
+      "source": "D:\\ClawX\\openclaw_runtime\\dist\\extensions\\codex\\index.js"
+    }
+  ],
+  "pass": false,
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'unexpected status 401 Unauthorized: Incorrect API key provided: agent-fi******************tial. You can find your API key at https://platform.openai.com/account/api-keys., url: https://api.openai.com/v1/responses, cf-ray: a434746dbe958eb8-NRT, request id: req_ebcc4dc996bd4b9ab71d5c0c32ec6302'\n- null\n\n    at file:///D:/ClawX/artifacts/tf0013-native-wire-20260930/run.mjs:111:12\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)"
+}

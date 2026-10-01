@@ -9,7 +9,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { closeOpenClawStateDatabase } from "../state/openclaw-state-db.js";
 import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
@@ -23,12 +23,17 @@ import { clearTaskStateHandlerConfig } from "./harness/lifecycle-hook-helpers.js
 import { closeTrackedSqliteHandlesUnder } from "../infra/node-sqlite.js";
 import { ReceiptStore, type RuntimeReceiptRow } from "./receipt-store.js";
 import { runEmbeddedAgent } from "./embedded-agent-runner/run.js";
+import { ContextRuntimeKitContextEngine } from "../context-engine/cvk/engine.js";
+import { clearContextEngineRuntimeQuarantine } from "../context-engine/registry.js";
+import { BlockStore } from "../context-engine/block-store.js";
+import { SessionManager } from "./sessions/session-manager.js";
 import { runWithModelFallback } from "./model-fallback.js";
 import { forkSessionFromParent } from "../auto-reply/reply/session-fork.js";
 import { buildChildCompletionFindings, readSubagentOutput } from "./subagent-announce-output.js";
 import { getShadowCensusDiagnostics, resetShadowCensusDiagnosticsForTest } from "./shadow-census.js";
 import { RC03_PRE_SEAL_PRODUCERS } from "../context-engine/rc03-producers.js";
 import {
+  getRc03SealPlan,
   recordRc03SystemPromptContribution,
   resetRc03SealPlansForTest,
 } from "../context-engine/rc03-seal-hook.js";
@@ -49,6 +54,8 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.restoreAllMocks();
+  clearContextEngineRuntimeQuarantine();
   resetRc03SealPlansForTest();
   resetPluginRuntimeStateForTest();
   clearTaskStateHandlerConfig();
@@ -263,6 +270,100 @@ function functionCallSse(name: string, args: Record<string, unknown>): string {
 }
 
 describe("RC-03R real-entry seal and dual v1 receipts", () => {
+  it.each(["fit", "oversize", "compass-full", "kill", "throw", "summary", "orphan", "passthrough", "window", "normalized", "source-failure"] as const)(
+    "ContextEngine replacement obeys the shared budget at the real wire: %s", async (mode) => {
+      const marker = "ENGINE-REPLACEMENT:";
+      const text = marker + "R".repeat(mode === "oversize" ? 8000 : 100);
+      const admitted = mode === "fit" || mode === "summary" || mode === "orphan" || mode === "normalized" || mode === "source-failure";
+      const injectedMessage = { role: "user" as const, content: mode === "normalized"
+        ? [{ type: "text" as const, text: "" }, { type: "text" as const, text }] : text, timestamp: 1 };
+      const failedQuery = mode === "source-failure"
+        ? vi.spyOn(BlockStore.prototype, "query").mockImplementation(() => { throw new Error("fixture read failure"); })
+        : undefined;
+      const runId = `tf0013-replacement-${mode}`;
+      const appliedProducers: boolean[] = [];
+      let calls = 0;
+      vi.spyOn(ContextRuntimeKitContextEngine.prototype, "assemble").mockImplementation(
+        async ({ messages }) => {
+          calls += 1;
+          if (mode === "passthrough") return { messages, estimatedTokens: 1 };
+          if (mode === "window") return { messages: messages.slice(-1), estimatedTokens: 1 };
+          if (mode === "summary") messages.splice(0);
+          messages.push(structuredClone(injectedMessage));
+          if (mode === "throw") {
+            const first = messages[0];
+            if (first?.role === "user") first.content = "FAILED-ENGINE-MUTATION";
+            throw new Error("fixture assemble failure after mutation");
+          }
+          return { messages, estimatedTokens: 1 };
+        },
+      );
+      const root = tempRoot();
+      const config = runConfig(path.join(root, "workspace"), mode === "summary" ? 32_768 : 200_000,
+        mode === "kill" ? { runtime: { contextEnhancement: { killSwitch: true } } }
+          : mode === "source-failure" ? { runtime: { contextBlock: { "working-memory": { enabled: true } } } } : {},
+      );
+      const spy = installTransportSpy((index) => {
+        appliedProducers.push(getRc03SealPlan(runId)?.preSealProducers.some(
+          (p) => p.producerId === "cvk-message-replacement" && p.applied,
+        ) ?? false);
+        return { body: index === 0 ? functionCallSse("read", { path: "absent.txt" }) : responsesTextSse() };
+      });
+      try {
+        const params = runParams(root, {
+          config, runId, modelRun: false, promptMode: "minimal", disableTools: false,
+          ...(mode === "compass-full" ? { compassContext: {
+            sessionKey: "agent:main:rc03",
+            injection: { sspString: "K".repeat(6000), iFrameRefreshed: false },
+            candidateFactIds: [], appliedFactIds: [],
+          } } : {}),
+        });
+        const session = SessionManager.open(path.join(root, "session.jsonl"));
+        if (mode !== "normalized") {
+        session.appendMessage({
+          role: "user", content: "ORIGINAL-HISTORY:" + "H".repeat(mode === "summary" ? 200_000 : 7000), timestamp: 1,
+        });
+        session.appendMessage({
+          role: "assistant", content: [{ type: "text", text: "previous answer" }],
+          api: "openai-responses", provider: "openai", model: "gpt-rc03", stopReason: "stop", timestamp: 2,
+          usage: { input: 1, output: 1, cacheRead: 0, cacheWrite: 0, totalTokens: 2,
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 } },
+        });
+        }
+        if (mode === "orphan") session.appendMessage({ role: "user", content: "ORPHAN-CONTEXT", timestamp: 3 });
+        const result = await runEmbeddedAgent(params);
+        expect(result.meta?.error).toBeUndefined();
+      } finally { spy.restore(); }
+      expect(calls).toBe(mode === "kill" ? 0 : 1);
+      expect(spy.captured).toHaveLength(2);
+      for (const request of spy.captured) {
+        expect(request.body.includes(marker)).toBe(admitted);
+        if (admitted) expect(request.body.match(/ENGINE-REPLACEMENT:/g)).toHaveLength(1);
+        expect(request.body).toContain("hello");
+        expect(request.body.includes("ORIGINAL-HISTORY:")).toBe(mode !== "summary" && mode !== "window" && mode !== "normalized");
+        if (mode === "orphan") expect(request.body.includes("ORPHAN-CONTEXT")).toBe(true);
+        expect(request.body.includes("FAILED-ENGINE-MUTATION")).toBe(false);
+      }
+      if (failedQuery) expect(failedQuery).toHaveBeenCalled();
+      expect(appliedProducers).toEqual([admitted || mode === "window", admitted || mode === "window"]);
+      if (mode === "kill") {
+        expect(store().list({ kind: "context" })).toHaveLength(0);
+        expect(store().list({ kind: "wire" })).toHaveLength(0);
+        return;
+      }
+      const { context } = expectV1Pairs(`replacement-${mode}`, spy.captured);
+      const first = context.find((row) => row.model_call_index === 0)!;
+      const budget = JSON.parse(first.budget_json ?? "{}");
+      if (admitted) {
+        expect(budget.charsApplied).toBe(JSON.stringify([injectedMessage]).length);
+        expect(first.selected_json).toContain("ref:context:cvk-message-replacement:");
+      } else if (mode === "oversize") {
+        expect(budget.charsRequested).toBeGreaterThan(6000);
+        expect(budget.charsApplied).toBe(0);
+      }
+    }, 60_000,
+  );
+
   it("plain turn: runEmbeddedAgent seals from real config and pairs v1 receipts", async () => {
     const spy = installTransportSpy(() => ({ body: responsesTextSse() }));
     try {

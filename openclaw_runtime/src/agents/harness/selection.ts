@@ -2,7 +2,6 @@
  * Selects and invokes native agent harnesses for embedded run attempts.
  */
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
-import { projectStandaloneCompassContext } from "../../context-engine/context-orchestrator.js";
 import {
   createChildDiagnosticTraceContext,
   createDiagnosticTraceContext,
@@ -32,6 +31,7 @@ import {
 } from "../subagent-capabilities.js";
 import { expandToolGroups, normalizeToolName } from "../tool-policy.js";
 import { createOpenClawAgentHarness } from "./builtin-openclaw.js";
+import { runWithHarnessContextBudget } from "./context-engine-lifecycle.js";
 import { MissingAgentHarnessError } from "./errors.js";
 import { runAgentHarnessLifecycleAttempt } from "./lifecycle.js";
 import {
@@ -280,31 +280,19 @@ export async function runAgentHarnessAttempt(
     agentHarnessRuntimeOverride: params.agentHarnessRuntimeOverride,
   });
   const harness = selection.harness;
-  // Native harnesses consume extraSystemPrompt without entering the embedded
-  // orchestrator. Project once here, then remove the unprojected input.
-  let preparedParams = params;
-  if (harness.id !== "openclaw" && params.compassContext) {
-    const compassPrompt = projectStandaloneCompassContext({
-      turnId: `harness:${params.sessionKey ?? params.sessionId}:${params.runId}:${params.attemptIndex ?? 0}`,
-      context: params.compassContext,
-      cfg: params.config,
-    });
-    preparedParams = {
-      ...params,
-      compassContext: undefined,
-      extraSystemPrompt:
-        [params.extraSystemPrompt, compassPrompt].filter(Boolean).join("\n\n") || undefined,
-    };
-  }
-  const attemptParams =
-    harness.id === "openclaw" ? params : applyPluginHarnessDenyAllToolPolicy(preparedParams);
   logAgentHarnessSelection(selection, {
     provider: params.provider,
     modelId: params.modelId,
     sessionKey: params.sessionKey,
     agentId: params.agentId,
   });
-  const runAttempt = () => runAgentHarnessLifecycleAttempt(harness, attemptParams);
+  const runAttempt = () =>
+    runWithHarnessContextBudget(params, harness.id !== "openclaw", (prepared) =>
+      runAgentHarnessLifecycleAttempt(
+        harness,
+        harness.id === "openclaw" ? prepared : applyPluginHarnessDenyAllToolPolicy(prepared),
+      ),
+    );
   if (harness.id === "openclaw") {
     return await runWithDiagnosticTraceContext(harnessTrace, runAttempt);
   }

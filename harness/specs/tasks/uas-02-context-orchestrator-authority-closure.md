@@ -5,6 +5,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: Close the TF-0002 residual by routing production Memory, VToken, DCS context-block, and CVK prompt additions through one ContextCandidate/v1 arbitration authority that deterministically orders, deduplicates, budgets, projects, and records lineage without changing product locks or implementing UAS-03 VerseToken storage and concurrency work.
 ownedPaths:
+  - openclaw_runtime/src/agents/harness/context-engine-lifecycle.ts
   - openclaw_runtime/src/agents/harness/selection.ts
   - openclaw_runtime/src/agents/harness/selection.compass.test.ts
   - openclaw_runtime/src/auto-reply/reply.test-harness.ts
@@ -43,9 +44,24 @@ ownedPaths:
   - openclaw_runtime/src/auto-reply/reply/get-reply-run.ts
   - openclaw_runtime/src/auto-reply/reply/queue/types.ts
   - openclaw_runtime/src/context-engine/rc03-seal-hook.ts
+  - openclaw_runtime/src/context-engine/registry.ts
   - openclaw_runtime/src/context-engine/compass-context.ts
   - openclaw_runtime/src/context-engine/context-orchestrator.compass.test.ts
 touchedAreas:
+  - artifacts/agent-dev-workbench/**
+  - artifacts/agent-dev-deep-test/**
+  - artifacts/agent-dev-quality/**
+  - openclaw_runtime/extensions/codex/src/app-server/side-question.ts
+  - openclaw_runtime/extensions/codex/src/app-server/attempt-context.ts
+  - openclaw_runtime/extensions/codex/src/app-server/dynamic-tool-diagnostics.ts
+  - openclaw_runtime/extensions/codex/src/app-server/dynamic-tools.ts
+  - openclaw_runtime/extensions/codex/src/app-server/event-projector.ts
+  - openclaw_runtime/extensions/codex/src/app-server/diagnostic-contract.test.ts
+  - artifacts/tf0013-codex-contract-20261001/**
+  - openclaw_runtime/extensions/codex/src/app-server/run-attempt.ts
+  - artifacts/tf0013-native-wire-20260930/**
+  - openclaw_runtime/src/agents/harness/context-engine-lifecycle.ts
+  - artifacts/tf0013-native-budget-20260930/**
   - openclaw_runtime/src/agents/harness/selection.ts
   - openclaw_runtime/src/agents/harness/selection.compass.test.ts
   - openclaw_runtime/src/auto-reply/reply.test-harness.ts
@@ -59,6 +75,7 @@ touchedAreas:
   - openclaw_runtime/src/auto-reply/reply/**
   - .agent-workbench/task-forest/**
   - artifacts/tf0013-compass-budget-20260930/**
+  - artifacts/tf0013-message-budget-20260930/**
   - tests/unit/**
   - docs/dev/**
 expectedUserBehavior:
@@ -100,6 +117,8 @@ rollback:
   - Existing BlockStore data, Runtime Memory stores, VToken RPC data, context-engine plugins, and turn accounting require no migration.
   - All source flags and product locks remain unchanged, so rollback is code-only and does not enable a fallback product path.
 requiredTests:
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.extension-codex.config.ts extensions/codex/src/app-server/diagnostic-contract.test.ts
+  - pnpm --dir openclaw_runtime exec node scripts/run-tsgo.mjs -p extensions/codex/tsconfig.json
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts harness/selection.compass.test.ts
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.auto-reply-top-level.config.ts reply.compass.test.ts
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/context-engine/context-orchestrator.compass.test.ts
@@ -114,6 +133,14 @@ requiredTests:
   - pnpm run comms:compare
   - git diff --check -- harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md openclaw_runtime/src/context-engine/context-orchestrator.ts openclaw_runtime/src/context-engine/context-candidate.ts openclaw_runtime/src/context-engine/assembler.ts openclaw_runtime/src/context-engine/turn-injection-budget.ts openclaw_runtime/src/context-engine/context-orchestrator.test.ts openclaw_runtime/src/context-engine/context-candidate.test.ts openclaw_runtime/src/context-engine/assembler.test.ts openclaw_runtime/src/context-engine/turn-injection-budget.test.ts openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts openclaw_runtime/src/agents/embedded-agent-runner/extensions.knowledge.test.ts openclaw_runtime/src/agents/embedded-agent-runner/extensions.working-memory.test.ts openclaw_runtime/src/agents/embedded-agent-runner/extensions.tool-registry.test.ts openclaw_runtime/src/agents/embedded-agent-runner/compact.ts openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts tests/unit/context-orchestrator-entry-scan.test.ts docs/dev/context-orchestrator.md docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md docs/dev/first-product-controlled-preview/STATUS.md docs/dev/handoffs/LATEST.md
 acceptance:
+  - Codex native and dynamic tool diagnostics carry a host-generated requestId and a resolved trace, with matching identity on each start/terminal pair; schema quarantine emits a valid standalone blocked event. Codex tool-definition reporting supplies the shared definitionChars field without changing its existing accounting convention.
+  - Separately loaded source hosts and built plugin SDKs share the native attempt scope, and admission executes against the original owner's candidate collection and ledger. Real native app-server requests verify atomic drop, shared exhaustion, kill, bootstrap reuse, and stale-thread recovery with an explicitly agent-driven local provider.
+  - Native harness dispatch and its SDK ContextEngine assembly share the existing attempt ledger with COMPASS; retained history is free, new message replacements are atomic, and system additions consume remaining capacity before plugin projection.
+  - Native startup retries reuse an identical admitted assembly without charging twice; failed assembly cannot mutate caller history, kill switch prevents engine assembly, and failed attempts release collection and ledger state.
+  - A reduced native assembly cannot retain its original thread-bootstrap fingerprint; plugin context-window rendering limits remain separate from the shared enhancement allowance.
+  - Embedded ContextEngine replacements containing new or rewritten messages enter the existing cvk_addition candidate arbitration; retained history is matched exactly with multiplicity and is not charged again.
+  - Structured replacements are atomic. Only the serialized new messages count toward the unchanged shared character budget; an over-budget replacement is dropped without truncating tool structures or removing original history. Engine input mutation cannot corrupt the live transcript on failure.
+  - A replacement admitted on the first call remains present exactly once in later tool-loop calls, and each intercepted request is bound to its own wire receipt and matching context receipt.
   - COMPASS SSP and retrieval are prepared behind source flags and the enhancement kill switch, transported through immediate and queued runs, and projected only by the existing candidate owner in embedded and CLI execution.
   - COMPASS receipts attribute the charged text after truncation; only fully projected retrieval groups count toward fact-use metrics. No raw pre-budget COMPASS text is appended to extraSystemPrompt.
   - ContextCandidate/v1 has stable candidateId and dedupKey fields derived from authority object identity, authority version, and a deterministic content digest.
@@ -149,4 +176,4 @@ The source stores and builders keep their domain ownership. ContextCandidate/v1 
 
 ## 2026-09-30 TF-0013 development slice
 
-COMPASS pre-reply output joins the existing knowledge channel and unchanged turn budget. Reply preparation produces serializable input, execution performs candidate arbitration, and the pre-seal attribution records projected bytes. This fixes the SSP/retrieval bypass only; it does not certify every ContextEngine replacement or untested plugin producer. Development proof uses the focused commands above plus runtime types/lint and comms; formal RC acceptance requires a fresh frozen candidate.
+COMPASS pre-reply output joins the existing knowledge channel and unchanged turn budget. Embedded ContextEngine message replacements join the same owner as atomic candidates after exact history matching. An unchanged or windowed history remains free; summaries and added copies are new content. Native harness dispatch now retains that ledger across SDK assembly and startup retries; admission precedes plugin prompt rendering without changing engine identity or the public SDK contract. Development proof uses the focused commands above plus runtime types/lint and comms; formal RC acceptance requires a fresh frozen candidate. Native external app-server transport is not proven by a dispatch/SDK fixture.

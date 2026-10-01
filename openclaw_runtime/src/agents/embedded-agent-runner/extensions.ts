@@ -2,6 +2,7 @@
  * Builds extension factories available to embedded-agent runtime sessions.
  */
 import { randomUUID } from "node:crypto";
+import { log } from "./logger.js";
 import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import {
@@ -14,8 +15,12 @@ import {
   finalizeContextOrchestratorTurn,
   getContextOrchestratorCollection,
 } from "../../context-engine/context-orchestrator.js";
-import { reopenContextCandidateCollection } from "../../context-engine/context-candidate.js";
+import {
+  reopenContextCandidateCollection,
+  type ContextCandidateProjection,
+} from "../../context-engine/context-candidate.js";
 import { resolveKillSwitchConfig } from "../../context-engine/kill-switch-config-source.js";
+import { isContextEnhancementKillSwitchEngaged } from "../../context-engine/enhancement-kill-switch.js";
 import { isWorkingMemoryRegatherEnabled } from "../../context-engine/working-memory-regather.js";
 import type { TurnInjectionChannel } from "../../context-engine/turn-injection-budget.js";
 import { dcsObservability } from "../../context-engine/dcs-observability.js";
@@ -180,6 +185,10 @@ function readWorkingMemoryEnvelope(
   };
 }
 
+export type PrepareEmbeddedContext = (
+  messages: AgentMessage[],
+) => Promise<ContextCandidateProjection | undefined>;
+
 function buildContextBlockFactory(params: {
   sessionId?: string;
   sessionKey?: string;
@@ -192,6 +201,8 @@ function buildContextBlockFactory(params: {
   /** Real source-runtime config: the RC-03 seal switch resolves from it. */
   cfg?: OpenClawConfig | undefined;
   objective?: string;
+  prepareToolRegistry?: () => Promise<void>;
+  registerContextPreparation?: (prepare: PrepareEmbeddedContext) => void;
 }): ExtensionFactory {
   const sessionId = params.sessionKey?.trim() || params.sessionId?.trim();
   let currentBlockStore: Pick<BlockStoreApi, "query" | "upsert"> | undefined =
@@ -312,30 +323,37 @@ function buildContextBlockFactory(params: {
       existingCollection = undefined;
     }
     if (!existingCollection?.diagnostics.finalized) {
-      const hasProjectionSource = hasContextBlockProjection(params.projectionFlags);
-      const store = hasProjectionSource ? getBlockStore() : undefined;
-      // DCS Stage 4: pass the production contextBlockSink so compass/role-memory
-      // knowledge Block writes are real when inputs are supplied (v3 task 3).
-      const assembler = new Assembler(
-        store || params.contextBlockSink
-          ? {
-              ...(store ? { workingMemoryStore: store } : {}),
-              ...(params.contextBlockSink ? { contextBlockSink: params.contextBlockSink } : {}),
-            }
-          : {},
-      );
-      await assembler.assemble(
-        {
-          session_id: sessionId ?? "",
-          turnId,
-          deferProjection: true,
-          ...(options.skipChannels && options.skipChannels.length > 0
-            ? { skipChannels: options.skipChannels }
-            : {}),
-        },
-        buildKnowledgeInputs(messages),
-        params.projectionFlags,
-      );
+      try {
+        await params.prepareToolRegistry?.();
+        const hasProjectionSource = hasContextBlockProjection(params.projectionFlags);
+        const store = hasProjectionSource ? getBlockStore() : undefined;
+        // DCS Stage 4: pass the production contextBlockSink so compass/role-memory
+        // knowledge Block writes are real when inputs are supplied (v3 task 3).
+        const assembler = new Assembler(
+          store || params.contextBlockSink
+            ? {
+                ...(store ? { workingMemoryStore: store } : {}),
+                ...(params.contextBlockSink ? { contextBlockSink: params.contextBlockSink } : {}),
+              }
+            : {},
+        );
+        await assembler.assemble(
+          {
+            session_id: sessionId ?? "",
+            turnId,
+            deferProjection: true,
+            ...(options.skipChannels && options.skipChannels.length > 0
+              ? { skipChannels: options.skipChannels }
+              : {}),
+          },
+          buildKnowledgeInputs(messages),
+          params.projectionFlags,
+        );
+      } catch (error) {
+        // Optional source reads were isolated by ExtensionRunner before eager
+        // preparation. Keep that behavior while still arbitrating collected candidates.
+        log.warn(`context source preparation failed: ${String(error)}`);
+      }
     }
     const finalized = finalizeContextOrchestratorTurn({
       turnId,
@@ -379,6 +397,11 @@ function buildContextBlockFactory(params: {
     }
     return finalized;
   }
+  // The runner needs the same admitted projection for its overflow precheck,
+  // after orphan repair but before prompt submission. Later events reuse it.
+  params.registerContextPreparation?.(
+    async (messages) => (await finalizeCandidates(messages, { seal: false }))?.projection,
+  );
   return (agent) => {
     if (params.projectionFlags[contextBlockFlagNameForSourceSystem("working-memory")]) {
       agent.on("tool_result", (rawEvent: unknown) => {
@@ -594,11 +617,12 @@ function buildContextPruningFactory(params: {
  * this handler is a parallel, flag-gated producer.
  */
 function buildToolRegistryFactory(params: {
+  cfg?: OpenClawConfig;
   sessionKey?: string;
   sessionId?: string;
   contextBlockSink?: ContextBlockSink;
   toolEntries?: ToolRegistryEntry[];
-}): ExtensionFactory | undefined {
+}): { factory: ExtensionFactory; prepare: () => Promise<void> } | undefined {
   const sessionKey = params.sessionKey?.trim() || params.sessionId?.trim();
   // Omit when missing deps or empty tool list: empty array is a valid mapped
   // production tools result (e.g. tools disabled) and must not register a
@@ -613,8 +637,10 @@ function buildToolRegistryFactory(params: {
   }
   const entries = params.toolEntries;
   const sink = params.contextBlockSink;
-  return (agent) => {
-    agent.on("before_agent_start", async () => {
+  let preparation: Promise<void> | undefined;
+  const prepare = () =>
+    (preparation ??= (async () => {
+      if (isContextEnhancementKillSwitchEngaged(params.cfg)) return;
       try {
         await handleBeforeAgentStartToolRegistry({
           sessionId: sessionKey,
@@ -624,8 +650,12 @@ function buildToolRegistryFactory(params: {
       } catch {
         // Best-effort write; failure does not block agent start.
       }
-      return undefined;
-    });
+    })());
+  return {
+    prepare,
+    factory: (agent) => {
+      agent.on("before_agent_start", prepare);
+    },
   };
 }
 
@@ -812,6 +842,7 @@ export function buildEmbeddedExtensionFactories(params: {
   /** B-3 v3: write-set coordinate forwarded into the child handoff. */
   writeSet?: string[];
   toolEntries?: ToolRegistryEntry[];
+  registerContextPreparation?: (prepare: PrepareEmbeddedContext) => void;
 }): ExtensionFactory[] {
   const factories: ExtensionFactory[] = [];
   if (resolveEffectiveCompactionMode(params.cfg) === "safeguard") {
@@ -844,14 +875,20 @@ export function buildEmbeddedExtensionFactories(params: {
   }
   const projectionFlags = resolveContextBlockProjectionFlags(params.cfg);
   // DCS Stage 3: tool-registry Block producer on before_agent_start.
-  if (isToolRegistryEnabled(params.cfg)) {
-    const toolRegistryFactory = buildToolRegistryFactory(params);
-    if (toolRegistryFactory) {
-      factories.push(toolRegistryFactory);
-    }
+  const toolRegistry = isToolRegistryEnabled(params.cfg)
+    ? buildToolRegistryFactory(params)
+    : undefined;
+  if (toolRegistry) {
+    factories.push(toolRegistry.factory);
   }
   if (params.injectionTurnId || hasContextBlockProjection(projectionFlags)) {
-    factories.push(buildContextBlockFactory({ ...params, projectionFlags }));
+    factories.push(
+      buildContextBlockFactory({
+        ...params,
+        projectionFlags,
+        prepareToolRegistry: toolRegistry?.prepare,
+      }),
+    );
   }
   const pruningFactory = buildContextPruningFactory(params);
   if (pruningFactory) {

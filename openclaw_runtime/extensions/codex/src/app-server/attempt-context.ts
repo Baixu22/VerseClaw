@@ -320,6 +320,7 @@ export function buildCodexSystemPromptReport(params: {
     tools: {
       listChars: 0,
       schemaChars,
+      definitionChars: schemaChars,
       entries: toolEntries,
     },
   };

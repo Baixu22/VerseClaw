@@ -24,7 +24,10 @@ import {
   type MessagingToolSourceReplyPayload,
   wrapToolWithBeforeToolCallHook,
 } from "openclaw/plugin-sdk/agent-harness-runtime";
-import { emitTrustedDiagnosticEvent } from "openclaw/plugin-sdk/diagnostic-runtime";
+import {
+  emitTrustedDiagnosticEvent,
+  type DiagnosticTraceContext,
+} from "openclaw/plugin-sdk/diagnostic-runtime";
 import type { ImageContent, TextContent } from "openclaw/plugin-sdk/llm";
 import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
 import {
@@ -32,6 +35,7 @@ import {
   isRecord,
 } from "openclaw/plugin-sdk/string-coerce-runtime";
 import type { CodexDynamicToolsLoading } from "./config.js";
+import { createCodexToolDiagnosticIdentity } from "./dynamic-tool-diagnostics.js";
 import { invalidInlineImageText, sanitizeInlineImageDataUrl } from "./image-payload-sanitizer.js";
 import type {
   CodexDynamicToolCallOutputContentItem,
@@ -43,6 +47,7 @@ import type {
 } from "./protocol.js";
 
 type CodexDynamicToolHookContext = {
+  trace?: DiagnosticTraceContext;
   agentId?: string;
   config?: EmbeddedRunAttemptParams["config"];
   sessionId?: string;
@@ -491,6 +496,7 @@ function emitQuarantinedDynamicToolDiagnostics(
   for (const tool of tools) {
     emitTrustedDiagnosticEvent({
       type: "tool.execution.blocked",
+      ...createCodexToolDiagnosticIdentity(ctx?.trace),
       runId: ctx?.runId,
       sessionId: ctx?.sessionId,
       sessionKey: ctx?.sessionKey,

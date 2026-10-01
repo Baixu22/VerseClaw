@@ -1,6 +1,6 @@
 {
   "schema": "clawx.agent-dev.workbench-evidence.v1",
-  "generatedAt": "2026-09-29T06:27:39.532Z",
+  "generatedAt": "2026-09-30T18:33:02.723Z",
   "scenarioCount": 15,
   "scenarios": [
     {
@@ -382,12 +382,12 @@
   "artifactStatus": {
     "workbench": true,
     "quality": true,
-    "channelConformance": true,
+    "channelConformance": false,
     "scenarioRecordings": true
   },
   "artifacts": {
     "quality": true,
-    "channelConformance": true,
+    "channelConformance": false,
     "scenarioRecordings": true
   },
   "gateCommands": {
@@ -408,9 +408,9 @@
   },
   "performance": {
     "latest": {
-      "generatedAt": "2026-09-29T06:27:39.142Z",
+      "generatedAt": "2026-09-30T18:33:02.319Z",
       "success": true,
-      "totalDurationMs": 87013,
+      "totalDurationMs": 79471,
       "decision": {
         "status": "daily-loop-ok",
         "reason": "All selected Agent Dev gates passed within hard limits.",
@@ -434,31 +434,31 @@
       "bottlenecks": [
         {
           "id": "e2e-build",
-          "durationMs": 42643,
+          "durationMs": 38513,
           "commandLine": "pnpm run build:vite",
           "skipped": false
         },
         {
           "id": "playwright-agent-dev",
-          "durationMs": 18460,
+          "durationMs": 18315,
           "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
           "skipped": false
         },
         {
           "id": "typecheck",
-          "durationMs": 16274,
+          "durationMs": 13689,
           "commandLine": "pnpm run typecheck",
           "skipped": false
         },
         {
           "id": "vitest-agent-dev",
-          "durationMs": 5471,
+          "durationMs": 3863,
           "commandLine": "pnpm agent-dev:unit",
           "skipped": false
         },
         {
           "id": "harness-agent-dev",
-          "durationMs": 1436,
+          "durationMs": 2456,
           "commandLine": "pnpm harness validate --spec harness/specs/scenarios/agent-dev-composable-scenarios.md",
           "skipped": false
         }
@@ -467,22 +467,22 @@
         "typecheck": {
           "stepId": "typecheck",
           "commandLine": "pnpm run typecheck",
-          "durationMs": 16274,
+          "durationMs": 13689,
           "kind": "typecheck",
           "mode": "parallel",
           "cache": {
             "enabled": false,
             "status": "disabled",
-            "key": "b4ed0e23129af701f1b855255e3c7c40eafe3156cc10fcdb054c547929ffc424",
+            "key": "657b85ae694f399ecbd40e94f556c11174a0fd463155e88ff8932e03eaf3ad23",
             "inputCount": 801,
-            "report": "D:\\ClawX\\artifacts\\typecheck-cache\\report.json"
+            "report": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt\\artifacts\\typecheck-cache\\report.json"
           },
-          "totalDurationMs": 15867,
+          "totalDurationMs": 13265,
           "coverageNote": "Runs the node and web TypeScript projects as pnpm run typecheck after generating the extension bridge, and additionally typechecks tests/ (tsconfig.test.json) in observation mode: its legacy errors are reported under testTypes but do not fail the gate.",
           "phases": [
             {
               "commandLine": "node scripts/generate-ext-bridge.mjs",
-              "durationMs": 45,
+              "durationMs": 50,
               "exitCode": 0,
               "ok": true,
               "skipped": false,
@@ -490,7 +490,7 @@
             },
             {
               "commandLine": "pnpm run typecheck:node",
-              "durationMs": 11031,
+              "durationMs": 11427,
               "exitCode": 0,
               "ok": true,
               "skipped": false,
@@ -498,7 +498,7 @@
             },
             {
               "commandLine": "pnpm run typecheck:web",
-              "durationMs": 5989,
+              "durationMs": 5515,
               "exitCode": 0,
               "ok": true,
               "skipped": false,
@@ -507,7 +507,7 @@
           ],
           "slowestPhase": {
             "commandLine": "pnpm run typecheck:node",
-            "durationMs": 11031,
+            "durationMs": 11427,
             "exitCode": 0,
             "ok": true,
             "skipped": false,
@@ -517,20 +517,20 @@
         "build": {
           "stepId": "e2e-build",
           "commandLine": "pnpm run build:vite",
-          "durationMs": 42643,
+          "durationMs": 38513,
           "kind": "vite-build",
           "buildPasses": [
             {
               "index": 1,
-              "durationMs": 37530
+              "durationMs": 33950
             },
             {
               "index": 2,
-              "durationMs": 3970
+              "durationMs": 3580
             },
             {
               "index": 3,
-              "durationMs": 20
+              "durationMs": 16
             }
           ],
           "largestAssets": [
@@ -570,108 +570,50 @@
           "warningCount": 3,
           "warnings": [
             "(!) Some chunks are larger than 500 kB after minification. Consider:",
-            "(!) D:/ClawX/electron/utils/store.ts is dynamically imported by D:/ClawX/electron/gateway/manager.ts but also statically imported by D:/ClawX/electron/gateway/config-sync.ts, D:/ClawX/electron/gateway/manager.ts, D:/ClawX/electron/main/index.ts, D:/ClawX/electron/main/ipc-handlers.ts, D:/ClawX/electron/main/launch-at-startup.ts, D:/ClawX/electron/main/menu.ts, D:/ClawX/electron/main/proxy.ts, D:/ClawX/electron/services/agent-dev-api.ts, D:/ClawX/electron/services/dcs-prod-flags-api.ts, D:/ClawX/electron/services/gateway-api.ts, D:/ClawX/electron/services/remote-control-api.ts, D:/ClawX/electron/services/remote-tasks-api.ts, D:/ClawX/electron/services/sensitive-capture-gate.ts, D:/ClawX/electron/services/settings-api.ts, D:/ClawX/electron/services/support-bundle.ts, D:/ClawX/electron/services/usage-api.ts, D:/ClawX/electron/services/work-providers-api.ts, D:/ClawX/electron/utils/app-version-rollback.ts, D:/ClawX/electron/utils/control-ui-device-pairing.ts, D:/ClawX/electron/utils/openclaw-auth.ts, D:/ClawX/electron/utils/telemetry.ts, dynamic import will not move module into another chunk.",
-            "(!) D:/ClawX/electron/utils/channel-config.ts is dynamically imported by D:/ClawX/electron/services/cron-api.ts but also statically imported by D:/ClawX/electron/gateway/config-sync.ts, D:/ClawX/electron/gateway/supervisor.ts, D:/ClawX/electron/services/agents-api.ts, D:/ClawX/electron/services/channels-api.ts, D:/ClawX/electron/services/dcs-prod-flags-api.ts, D:/ClawX/electron/services/mcp-api.ts, D:/ClawX/electron/services/roles-api.ts, D:/ClawX/electron/services/workspace-runtime-sync.ts, D:/ClawX/electron/utils/agent-config.ts, D:/ClawX/electron/utils/app-version-rollback.ts, D:/ClawX/electron/utils/openclaw-image-generation.ts, D:/ClawX/electron/utils/openclaw-proxy.ts, dynamic import will not move module into another chunk."
+            "(!) C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/utils/store.ts is dynamically imported by C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/gateway/manager.ts but also statically imported by C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/gateway/config-sync.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/gateway/manager.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/main/index.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/main/ipc-handlers.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/main/launch-at-startup.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/main/menu.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/main/proxy.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/agent-dev-api.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/dcs-prod-flags-api.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/gateway-api.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/remote-control-api.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/remote-tasks-api.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/sensitive-capture-gate.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/settings-api.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/support-bundle.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/usage-api.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/work-providers-api.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/utils/app-version-rollback.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/utils/control-ui-device-pairing.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/utils/openclaw-auth.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/utils/telemetry.ts, dynamic import will not move module into another chunk.",
+            "(!) C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/utils/channel-config.ts is dynamically imported by C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/cron-api.ts but also statically imported by C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/gateway/config-sync.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/gateway/supervisor.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/agents-api.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/channels-api.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/dcs-prod-flags-api.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/mcp-api.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/roles-api.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/services/workspace-runtime-sync.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/utils/agent-config.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/utils/app-version-rollback.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/utils/openclaw-image-generation.ts, C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/electron/utils/openclaw-proxy.ts, dynamic import will not move module into another chunk."
           ],
-          "totalReportedBuildMs": 41520
+          "totalReportedBuildMs": 37546
         },
         "playwright": {
           "stepId": "playwright-agent-dev",
           "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
-          "durationMs": 18460,
+          "durationMs": 18315,
           "kind": "playwright",
           "passed": 4,
-          "reportedDurationMs": 17100,
-          "tests": []
+          "reportedDurationMs": 16900,
+          "tests": [
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+              "durationMs": 9600
+            },
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+              "durationMs": 9000
+            },
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+              "durationMs": 6600
+            },
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+              "durationMs": 6000
+            }
+          ]
         }
       }
     },
     "history": {
       "trend": {
-        "direction": "improved",
-        "previousRunDeltaMs": -20551,
-        "sameModeDeltaMs": -20551,
-        "sameModeSampleCount": 19,
-        "previousRunGeneratedAt": "2026-09-27T15:55:35.055Z",
-        "previousSameModeGeneratedAt": "2026-09-27T15:55:35.055Z",
-        "note": "Compared with previous same-mode run 2026-09-27T15:55:35.055Z."
+        "direction": "regressed",
+        "previousRunDeltaMs": 11256,
+        "sameModeDeltaMs": 11256,
+        "sameModeSampleCount": 20,
+        "previousRunGeneratedAt": "2026-09-29T06:25:07.859Z",
+        "previousSameModeGeneratedAt": "2026-09-29T06:25:07.859Z",
+        "note": "Compared with previous same-mode run 2026-09-29T06:25:07.859Z."
       },
       "entries": [
-        {
-          "generatedAt": "2026-09-26T04:32:28.994Z",
-          "success": true,
-          "totalDurationMs": 134374,
-          "decisionStatus": "blocked",
-          "releaseReady": false,
-          "modes": {
-            "buildReuse": "fresh",
-            "unit": "full",
-            "typecheck": "full",
-            "e2e": "full"
-          },
-          "stepDurations": {
-            "typecheck": {
-              "durationMs": 27986,
-              "skipped": false,
-              "ok": true
-            },
-            "contract": {
-              "durationMs": 1138,
-              "skipped": false,
-              "ok": true
-            },
-            "i18n": {
-              "durationMs": 1305,
-              "skipped": false,
-              "ok": true
-            },
-            "workbench": {
-              "durationMs": 1048,
-              "skipped": false,
-              "ok": true
-            },
-            "harness-agent-dev": {
-              "durationMs": 2498,
-              "skipped": false,
-              "ok": true
-            },
-            "vitest-agent-dev": {
-              "durationMs": 24177,
-              "skipped": false,
-              "ok": true
-            },
-            "comms-replay": {
-              "durationMs": 1227,
-              "skipped": false,
-              "ok": true
-            },
-            "comms-compare": {
-              "durationMs": 1171,
-              "skipped": false,
-              "ok": true
-            },
-            "e2e-build": {
-              "durationMs": 52488,
-              "skipped": false,
-              "ok": true
-            },
-            "playwright-agent-dev": {
-              "durationMs": 20542,
-              "skipped": false,
-              "ok": true
-            },
-            "workbench-refresh": {
-              "durationMs": 779,
-              "skipped": false,
-              "ok": true
-            }
-          },
-          "budgetSummary": {
-            "ok": 6,
-            "watch": 3,
-            "limit": 2
-          }
-        },
         {
           "generatedAt": "2026-09-26T04:35:43.619Z",
           "success": true,
@@ -1196,20 +1138,95 @@
             "watch": 1,
             "limit": 0
           }
+        },
+        {
+          "generatedAt": "2026-09-29T06:27:39.562Z",
+          "success": true,
+          "totalDurationMs": 87432,
+          "decisionStatus": "daily-loop-ok",
+          "releaseReady": true,
+          "modes": {
+            "buildReuse": "fresh",
+            "unit": "full",
+            "typecheck": "full",
+            "e2e": "full"
+          },
+          "stepDurations": {
+            "typecheck": {
+              "durationMs": 16274,
+              "skipped": false,
+              "ok": true
+            },
+            "contract": {
+              "durationMs": 515,
+              "skipped": false,
+              "ok": true
+            },
+            "i18n": {
+              "durationMs": 695,
+              "skipped": false,
+              "ok": true
+            },
+            "workbench": {
+              "durationMs": 416,
+              "skipped": false,
+              "ok": true
+            },
+            "harness-agent-dev": {
+              "durationMs": 1436,
+              "skipped": false,
+              "ok": true
+            },
+            "vitest-agent-dev": {
+              "durationMs": 5471,
+              "skipped": false,
+              "ok": true
+            },
+            "comms-replay": {
+              "durationMs": 578,
+              "skipped": false,
+              "ok": true
+            },
+            "comms-compare": {
+              "durationMs": 519,
+              "skipped": false,
+              "ok": true
+            },
+            "e2e-build": {
+              "durationMs": 42643,
+              "skipped": false,
+              "ok": true
+            },
+            "playwright-agent-dev": {
+              "durationMs": 18460,
+              "skipped": false,
+              "ok": true
+            },
+            "workbench-refresh": {
+              "durationMs": 415,
+              "skipped": false,
+              "ok": true
+            }
+          },
+          "budgetSummary": {
+            "ok": 10,
+            "watch": 1,
+            "limit": 0
+          }
         }
       ]
     },
     "audit": {
       "status": "fail",
-      "grade": "B",
-      "totalScore": 89,
+      "grade": "C",
+      "totalScore": 77,
       "maxScore": 100,
       "confidence": {
-        "level": "high",
-        "reason": "Required generated evidence is present, parseable, and within the freshness window.",
-        "freshGeneratedCount": 4,
+        "level": "medium",
+        "reason": "4 generated evidence artifact(s) are stale.",
+        "freshGeneratedCount": 0,
         "generatedSourceCount": 4,
-        "staleGeneratedCount": 0
+        "staleGeneratedCount": 4
       },
       "scoreBreakdown": [
         {
@@ -1225,12 +1242,37 @@
         {
           "id": "evidence-completeness",
           "title": "Evidence Completeness",
-          "score": 20,
+          "score": 0,
           "maxScore": 20,
-          "deducted": 0,
-          "status": "pass",
-          "reason": "No findings deducted points for this dimension.",
-          "findings": []
+          "deducted": 20,
+          "status": "fail",
+          "reason": "4 finding(s) deducted 20 point(s).",
+          "findings": [
+            {
+              "id": "evidence-stale:workbench",
+              "severity": "fail",
+              "estimatedPenalty": 8,
+              "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+            },
+            {
+              "id": "evidence-stale:deep-test",
+              "severity": "fail",
+              "estimatedPenalty": 8,
+              "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+            },
+            {
+              "id": "evidence-stale:deep-test-history",
+              "severity": "fail",
+              "estimatedPenalty": 8,
+              "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+            },
+            {
+              "id": "evidence-stale:quality",
+              "severity": "fail",
+              "estimatedPenalty": 8,
+              "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+            }
+          ]
         },
         {
           "id": "coverage-breadth",
@@ -1245,18 +1287,12 @@
         {
           "id": "performance-discipline",
           "title": "Performance Discipline",
-          "score": 9,
+          "score": 17,
           "maxScore": 20,
-          "deducted": 11,
-          "status": "fail",
-          "reason": "2 finding(s) deducted 11 point(s).",
+          "deducted": 3,
+          "status": "warn",
+          "reason": "1 finding(s) deducted 3 point(s).",
           "findings": [
-            {
-              "id": "latest-decision-blocked",
-              "severity": "fail",
-              "estimatedPenalty": 8,
-              "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
-            },
             {
               "id": "performance-watch:e2e-build",
               "severity": "warn",
@@ -1286,13 +1322,13 @@
           "findings": []
         }
       ],
-      "disqualifierCount": 1
+      "disqualifierCount": 4
     },
     "quality": {
       "success": true,
       "build": {
         "ok": true,
-        "durationMs": 42643,
+        "durationMs": 38513,
         "commandLine": "pnpm run build:vite",
         "reused": false,
         "skipped": false,
@@ -1300,7 +1336,7 @@
       },
       "playwright": {
         "ok": true,
-        "durationMs": 18460,
+        "durationMs": 18315,
         "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
         "spec": "tests/e2e/agent-dev-quality.spec.ts",
         "mode": "full",
@@ -1308,8 +1344,25 @@
         "diagnostics": {
           "kind": "playwright",
           "passed": 4,
-          "reportedDurationMs": 17100,
-          "tests": []
+          "reportedDurationMs": 16900,
+          "tests": [
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+              "durationMs": 9600
+            },
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+              "durationMs": 9000
+            },
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+              "durationMs": 6600
+            },
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+              "durationMs": 6000
+            }
+          ]
         },
         "evidence": [
           "seeded scenario accessibility report",

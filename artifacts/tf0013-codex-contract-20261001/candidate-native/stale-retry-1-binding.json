@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "sessionFile": "C:\\Users\\27933\\AppData\\Local\\Temp\\tf0013-native-wire-yUznbs\\stale-retry.jsonl",
+  "threadId": "01a0f3a3-aa93-7ef3-a6dc-b16f9903eb2c",
+  "cwd": "C:\\Users\\27933\\AppData\\Local\\Temp\\tf0013-native-wire-yUznbs\\workspace",
+  "model": "gpt-5.5",
+  "modelProvider": "native_fixture",
+  "dynamicToolsFingerprint": "[]",
+  "dynamicToolsContainDeferred": false,
+  "nativeHookRelayGeneration": "99bb371e-221b-4879-aa59-84729e918b95",
+  "pluginAppsFingerprint": "f605efdec91e14114b2070e48edf0594d60346a9fba1d442cdca46f5b0764a71",
+  "pluginAppsInputFingerprint": "e07d42039abaca87362b007e6541157bde0f54e36976514b6782b3f3653ad344",
+  "pluginAppPolicyContext": {
+    "fingerprint": "6bec9b72fb9ab41c1f4b534ccac6df26b6c80efed76f12a0374dd4e944bd0249",
+    "apps": {},
+    "pluginAppIds": {}
+  },
+  "contextEngine": {
+    "schemaVersion": 1,
+    "engineId": "agent-budget-fixture",
+    "policyFingerprint": "{\"schemaVersion\":1,\"engineId\":\"agent-budget-fixture\",\"ownsCompaction\":false,\"contextTokenBudget\":128000,\"projectionMaxChars\":432000}",
+    "projection": {
+      "schemaVersion": 1,
+      "mode": "thread_bootstrap",
+      "epoch": "1",
+      "fingerprint": "stale-retry"
+    }
+  },
+  "createdAt": "2026-09-30T18:46:24.696Z",
+  "updatedAt": "2026-09-30T18:46:24.724Z"
+}
