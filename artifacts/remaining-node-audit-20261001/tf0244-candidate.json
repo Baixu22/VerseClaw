@@ -1,0 +1,12 @@
+{
+  "actor": "codex/root",
+  "driven_by": "agent",
+  "base": "0083060c4243da36c47ced313f86e41c9be3a46f",
+  "candidate": "dee2391c179610d71f33e8fc5273f05a62feaa90",
+  "tree": "06f1b95260dfb65c94e1692063c8a1ed9fd170a2",
+  "path": "C:\\tmp\\ClawX-tf0244-acceptance-sv3cj500",
+  "files": [
+    "docs/dev/verseconf-clawx-contract-v1.md",
+    "artifacts/verseconf-contract-v1"
+  ]
+}

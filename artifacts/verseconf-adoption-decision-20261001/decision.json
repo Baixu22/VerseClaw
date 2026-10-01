@@ -1,0 +1,69 @@
+{
+  "schema": "tf0245-adoption-decision/v1",
+  "taskId": "TF-0245",
+  "actor": "codex/root",
+  "driven_by": "agent",
+  "createdAt": "2026-10-01",
+  "decision": "shrink-and-hold",
+  "implementationAuthorization": false,
+  "freezeExceptionAuthorization": false,
+  "paidBudgetApproved": false,
+  "publicationAuthorized": false,
+  "basis": {
+    "tf0244Candidate": "dee2391c179610d71f33e8fc5273f05a62feaa90",
+    "offlineChecks": {
+      "passed": 88,
+      "total": 88
+    },
+    "productIntegrationVerdict": "not-run",
+    "runtimeTrials": "not-run"
+  },
+  "currentScope": {
+    "status": "contract-only",
+    "startTF0246": false,
+    "nextNodesRemainProposed": [
+      "TF-0246",
+      "TF-0247",
+      "TF-0248",
+      "TF-0249",
+      "TF-0250",
+      "TF-0251",
+      "TF-0252"
+    ]
+  },
+  "futureCandidateBoundary": {
+    "engine": "in-memory strict JSON only",
+    "consumer": "research-table",
+    "runtimeOwner": "existing mutation/journal/receipt/SQLite owner",
+    "transport": "existing agent run and host-api/Main/Gateway",
+    "forbidden": [
+      "new authority",
+      "arbitrary path",
+      "force",
+      "permission bypass",
+      "unbounded formats",
+      "automatic dual-engine switching"
+    ]
+  },
+  "resourceProposal": {
+    "paidModelCalls": 0,
+    "newCredentials": 0,
+    "publicationActions": 0,
+    "engineeringHours": "12-24 suggested estimate, not approved budget",
+    "inputProfilesKiB": [
+      4,
+      64,
+      256
+    ]
+  },
+  "stopConditions": [
+    "new general platform required",
+    "private reverse bridge required",
+    "permission widening required",
+    "unknown effect replay",
+    "unsupported rollback claim",
+    "arbitrary path/schema/command accepted"
+  ],
+  "humanEvidenceRequired": false,
+  "notes": "Recommendation records scope shrink; any future freeze exception, paid work, publication, or product-range change requires a separate explicit decision."
+}

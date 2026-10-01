@@ -1,0 +1,29 @@
+{
+  "oracleVersion": "research-two-field-oracle/v1",
+  "kind": "independently-authored-fixture-expectation",
+  "driven_by": "agent",
+  "actor": "claude/tf0244-contract",
+  "notAnIndependentReviewer": true,
+  "baseline": "research-before.json",
+  "expectedCandidate": "research-after.expected.json",
+  "recordOrder": ["rec-baseline", "rec-managed", "rec-kernel"],
+  "targets": [
+    {
+      "path": ["records", 1, "evidenceState"],
+      "recordId": "rec-managed",
+      "before": "unlinked",
+      "after": "linked"
+    },
+    {
+      "path": ["records", 1, "evidenceRefs"],
+      "recordId": "rec-managed",
+      "before": [],
+      "after": ["src-synthetic-check"]
+    }
+  ],
+  "semanticOracle": "Compare complete candidate values to the separately authored expected file, not an engine-generated expected result.",
+  "byteOracle": "The verifier's independent stdlib JSON locator finds these explicit fixture paths in both inputs; compare the three untouched byte segments around the two complete target values. Do not consume engine-provided spans.",
+  "rangeUnit": "UTF-8 bytes [startByte,endByte)",
+  "allowedTargetLexicalVariance": "Equivalent JSON value encodings inside the authorized value spans are allowed; every byte outside them must match.",
+  "evidenceMeaning": "linked means referenced ID exists, not that any real-world finding has been verified."
+}

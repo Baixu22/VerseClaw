@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "research-comparison/v1",
+  "title": "受控编辑路线比较（合成夹具，不是产品结论）",
+  "sources": [
+    {
+      "id": "src-synthetic-check",
+      "locator": "fixture://evidence/synthetic-check",
+      "label": "合成引用目标；不代表真实产品证据"
+    }
+  ],
+  "records": [
+    {
+      "id": "rec-baseline",
+      "subject": "通用文件编辑",
+      "finding": "字符串里的 \"evidenceRefs\": [] 不是字段；中文与 emoji 🧪。",
+      "evidenceState": "unlinked",
+      "evidenceRefs": [],
+      "limitations": null
+    },
+    {
+      "id": "rec-managed",
+      "subject": "宿主受管提交",
+      "finding": "只验证契约中的引用关联，不推断实现已经通过。",
+      "evidenceState": "linked",
+      "evidenceRefs": ["src-synthetic-check"],
+      "limitations": "尚未运行真实 runtime 验收"
+    },
+    {
+      "id": "rec-kernel",
+      "subject": "结构化编辑计算",
+      "finding": "=HYPERLINK(\"https://example.invalid\",\"仅作文本\")",
+      "evidenceState": "unlinked",
+      "evidenceRefs": [],
+      "limitations": "没有调用外部模型或冻结构建",
+      "notes": ""
+    }
+  ]
+}
