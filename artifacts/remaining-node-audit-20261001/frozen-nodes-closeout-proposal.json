@@ -1,0 +1,101 @@
+{
+  "proposal_id": "TFP-resolve-frozen-and-unexecuted-nodes-20261001",
+  "session_id": "remaining-nodes-governance-20261001",
+  "rationale": "完成当前可证据收口的节点；将已由D7/产品方向明确延后或由TF-0245保持冻结的未执行工作标为deprecated，保留历史证据并避免“done后自动放行”假状态。TF-0243收口为规划完成，TF-0244/0245已done。不得将未执行产品实现标成done。",
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0243",
+      "fields": {
+        "status": "done",
+        "progress": 100,
+        "progress_source": "manual",
+        "confidence": 0.98,
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（设计输入，非产品验收）",
+          "docs/dev/verseconf-clawx-adoption-decision.md",
+          "artifacts/verseconf-adoption-decision-20261001/decision.json",
+          "artifacts/remaining-node-audit-20261001/tf0244-acceptance.json",
+          "artifacts/remaining-node-audit-20261001/tf0245-closeout-proposal.json"
+        ],
+        "summary": "VerseConf × ClawX 探索规划已按证据收口：TF-0244 契约/夹具完成并在干净候选 88/88 通过；TF-0245 记录保持冻结、收缩当前周期的决定。后续实现节点在同一提案中废止，未执行工作不计完成。",
+        "next_action": "本探索分支已收口为契约资产与停止/保持冻结决定；若未来重新启动，必须由独立明确决定新建或恢复实施范围，不从本节点自动推导授权。"
+      }
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0246",
+      "reason": "2026-10-01 TF-0245 决定保持冻结、未授权 W1 实施；该真实运行提交节点未执行，现周期废止并保留 proposed 历史。"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0247",
+      "reason": "依赖 TF-0246 未获实施授权；当前周期保持冻结，版本/恢复扩展废止。"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0248",
+      "reason": "依赖 TF-0247 未获实施授权；不交付 wasm/Node 消费包，独立 VerseConf 路线继续冻结。"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0249",
+      "reason": "依赖 TF-0247/0248 未获实施授权；不启动产品 UI、产物界面或 Office 导出。"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0250",
+      "reason": "依赖 TF-0249 未获实施授权；不扩展记录操作、历史恢复或外部变更协调。"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0251",
+      "reason": "第二消费者扩展未获授权；不启动幻灯片大纲复用。"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0252",
+      "reason": "分发/采用裁决依赖未执行实现包；保留停止条件，当前周期废止。"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0047",
+      "reason": "既有产品方向已明确将 Docker sandbox 延后；静态契约通过但缺 Docker daemon 构建证据，本节点不再占用当前范围，保留历史证据。"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0129",
+      "reason": "D7/M6 第二轮范围冻结；真实语料与默认通电前置不可达，本节点当前周期废止，保留 spike 和字段修正证据。"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0130",
+      "reason": "依赖 TF-0129 且同属 D7/M6 冻结范围；未执行恢复实现废止。"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0141",
+      "reason": "依赖 TF-0130 且同属 D7/M6 冻结范围；未执行 A/B 评测废止。"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0144",
+      "reason": "M6 第二轮队列已被 D7 范围冻结；未执行工作废止，保留规划历史。"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0151",
+      "reason": "D7 冻结且四项默认值翻转需要独立产品/范围决定；不改变默认值，未执行候选废止。"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0010",
+      "reason": "2026-09-22 D7 将 Runtime Authority/Operator 全局程序冻结为下一周期入口；当前历史 RC 接受档案保留，但本节点不在当前产品周期继续，废止当前未完成目标。"
+    },
+    {
+      "action": "deprecate_node",
+      "id": "TF-0028",
+      "reason": "2026-09-22 D7 将 RC-02..RC-10 串行链冻结为下一周期入口；历史 RC archive 保留，当前里程碑不再推进，废止当前未完成目标。"
+    }
+  ]
+}

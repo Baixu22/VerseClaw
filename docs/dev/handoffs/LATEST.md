@@ -1,3 +1,14 @@
+# 2026-10-01：剩余节点治理收口；任务森林无活动 ready/in_progress 节点
+
+- TF-0013 已 done/100：干净候选 `ed97400bdc0a6e16c06387ba808e287bd1380475`，18 门、233 测试、7 次真实 native 请求通过；Codex 诊断契约 8 条类型错误清零。证据/说明：`docs/dev/tf0013-authority-closeout-20261001.md`。
+- TF-0244 已 done/100：干净候选 `dee2391c179610d71f33e8fc5273f05a62feaa90`，严格 JSON 契约和夹具离线检查 88/88，通过五类 `not-run` 试验设计、15 项 owner 映射和 5 项 Harness 映射；产品集成保持 `not-run`。证据：`docs/dev/verseconf-clawx-contract-v1.md`、`artifacts/verseconf-contract-v1/verification/20261001/contract-check-final.json`。
+- TF-0245 已 done/100：决定为 `shrink-and-hold`，当前周期保持 VerseConf 冻结；没有实施授权、付费预算或发布动作。决定：`docs/dev/verseconf-clawx-adoption-decision.md`。
+- 同一治理提案 `TFP-resolve-frozen-and-unexecuted-nodes-20261001` 已将 D7/M6/Docker 延后节点及 TF-0246..0252 未授权实现链标为 `deprecated`，保留历史证据；TF-0243 也以“契约完成、实现收缩”done/100。当前 Task Forest 统计：229 done、23 deprecated，0 in_progress，0 ready。validate/export exit 0。
+- `check-landing` 仍 exit 1，报告 183 项仓库级历史落库问题；这是分支历史对账边界，不是本轮节点验证失败。Windows `%SystemDrive%/` 缓存文件保留，未纳入提交。产品锁、D7 冻结和发布边界未改变。
+- 用户目标仍是完成剩余节点；当前可执行任务已全部收口或按明确冻结/未授权理由废止。若未来要恢复 deprecated 节点，需新的范围/冻结/预算决定，不从本轮状态自动解冻。
+
+---
+
 # 2026-10-01：TF-0013 完成干净候选验收并自动收口
 
 - TF-0013 已 done/100：候选 `ed97400bdc0a6e16c06387ba808e287bd1380475`，18门 exit 0、233项测试、7次真实native请求通过，逐门源码dirty=false。另有真实Agent Dev刷新87单测/4 Electron通过。未执行新全量RC或改产品锁。

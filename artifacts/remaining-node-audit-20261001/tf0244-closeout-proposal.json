@@ -1,0 +1,30 @@
+{
+  "proposal_id": "TFP-tf0244-contract-closeout-20261001",
+  "session_id": "tf0244-contract-closeout-20261001",
+  "rationale": "TF-0244契约、夹具、owner映射、五类not-run试验设计与独立候选复验已完成；按自动收口规则标记done/100，不实施产品接入、不解除后续节点或产品锁。",
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0244",
+      "fields": {
+        "status": "done",
+        "progress": 100,
+        "progress_source": "manual",
+        "confidence": 0.99,
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（契约设计来源）",
+          "docs/dev/verseconf-clawx-contract-v1.md",
+          "artifacts/verseconf-contract-v1/contract.json",
+          "artifacts/verseconf-contract-v1/owner-map.json",
+          "artifacts/verseconf-contract-v1/runtime-trials.json",
+          "artifacts/verseconf-contract-v1/SHA256SUMS",
+          "artifacts/verseconf-contract-v1/verification/20261001/contract-check-final.json",
+          "artifacts/remaining-node-audit-20261001/tf0244-acceptance.json",
+          "artifacts/remaining-node-audit-20261001/tf0244-candidate.json"
+        ],
+        "summary": "研究比较表首个试验契约与退出条件已完成：严格JSON schema、三记录/两字段联合修改夹具、独立字节oracle、五类not-run运行试验、15项owner静态映射和5项Harness映射均已在干净候选复验；88/88离线检查通过。产品集成、wasm、权限、UI、DB和Office运行仍明确未执行。",
+        "next_action": "TF-0244已自动收口；下一节点TF-0245仍为proposed，必须先做消费者专用有限实施/维护边界决定，不得把本契约当作实施授权。"
+      }
+    }
+  ]
+}

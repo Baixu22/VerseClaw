@@ -10143,7 +10143,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-10-01T06:10:31.563350Z",
+  "generated_at": "2026-10-01T08:04:33.427964Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -10943,7 +10943,7 @@
         "memory"
       ],
       "created_at": "2026-07-27T13:16:29.657781Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 0.0,
       "desired_outcomes": [
         "每次模型调用、审批、外部 effect 和恢复结果均可关联且可解释",
@@ -11005,7 +11005,7 @@
         "backend communication 改动必须引用 gateway-backend-communication"
       ],
       "source_sessions": [],
-      "status": "blocked",
+      "status": "deprecated",
       "success_metrics": [
         "未登记 semantic mutation 0",
         "重复副作用 0",
@@ -11013,9 +11013,9 @@
         "自动化 human/live 计数误增 0",
         "必需工程门禁通过率 100%"
       ],
-      "summary": "[冻结 2026-09-22 · D7] 项目定位改为实习展示收尾，本总任务冻结为下一周期入口；其验收条目（唯一 lifecycle writer、每次 model call 可关联双收据、EffectReceipt、独立 Executor/Verifier、真人 accepted）均不在本次收尾承诺内。原摘要：Runtime/Operator 总任务仍缺当前候选的正式独立工程验收与用户最终真人 accepted verdict。TF-0029 可继续工程推进；本批不重签旧 SHA 的 STATUS 记录，也不把局部门禁绿当作总任务完成。",
+      "summary": "2026-09-22 D7 将 Runtime Authority/Operator 全局程序冻结为下一周期入口；当前历史 RC 接受档案保留，但本节点不在当前产品周期继续，废止当前未完成目标。",
       "title": "OpenClaw Runtime Authority 与 Operator 产品收敛（非 GA）",
-      "updated_at": "2026-09-22T08:15:57.494698Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0011": {
       "acceptance_criteria": [
@@ -12510,7 +12510,7 @@
         "authority"
       ],
       "created_at": "2026-08-02T13:07:59.996410Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 0.0,
       "desired_outcomes": [],
       "deviations": [
@@ -12547,15 +12547,15 @@
         "最终用户验收前不执行真人步骤"
       ],
       "source_sessions": [],
-      "status": "blocked",
+      "status": "deprecated",
       "success_metrics": [
         "必需 RC 包验收率 100%",
         "并行 active RC 包 0",
         "未授权新 authority 0"
       ],
-      "summary": "[冻结 2026-09-22 · D7] 项目定位改为实习展示收尾，本里程碑及 RC-02～RC-10 串行链（TF-0030～TF-0042）冻结为下一周期入口，状态与依赖链不动，不为涂绿投入。原摘要：Runtime 收敛里程碑尚不能关闭：当前正式工程复核及 RC-10 真人场景/accepted verdict 仍缺。历史记录与本批本地工程验证分别保留。",
+      "summary": "2026-09-22 D7 将 RC-02..RC-10 串行链冻结为下一周期入口；历史 RC archive 保留，当前里程碑不再推进，废止当前未完成目标。",
       "title": "Runtime Authority Convergence 与 Operator 验收",
-      "updated_at": "2026-09-22T08:15:57.494698Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0029": {
       "acceptance_criteria": [
@@ -13757,7 +13757,7 @@
         "independent-product"
       ],
       "created_at": "2026-08-12T00:55:16.915975Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 90.0,
       "desired_outcomes": [],
       "deviations": [],
@@ -13789,11 +13789,11 @@
       "source_sessions": [
         "issue-fix-20260812-issue22"
       ],
-      "status": "blocked",
+      "status": "deprecated",
       "success_metrics": [],
-      "summary": "TF-0047 已按独立产品边界有意延后：静态契约测试、shell 语法检查与 Dockerfile 结构复核均通过，但真实 Docker build 不再作为当前验收阻塞项。OpenClaw 上游对照不再属于本产品验收口径；Docker 沙箱因当前过重，暂不继续投入。",
+      "summary": "既有产品方向已明确将 Docker sandbox 延后；静态契约通过但缺 Docker daemon 构建证据，本节点不再占用当前范围，保留历史证据。",
       "title": "修复 GitHub #22：恢复 Docker sandbox 基础镜像入口",
-      "updated_at": "2026-09-09T08:21:58.410289Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0048": {
       "acceptance_criteria": [
@@ -20398,7 +20398,7 @@
         "brb-L"
       ],
       "created_at": "2026-08-24T08:35:05.213643Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 0.0,
       "desired_outcomes": [],
       "deviations": [
@@ -20448,13 +20448,13 @@
         "【lane-2 在 TF-0138 审核中追加，2026-08-27】compaction 类的单元级定位有一处已知缺口，必须进字段清单：compaction-planning.ts:330-362 实测 droppedMessages += dropped.length + orphanedCount（计数含孤儿 tool_result）而 allDroppedMessages.push(...dropped)（单元列表不含），:357-360 的注释以「孤儿 tool_result 对摘要无用」为理由，该理由对摘要成立、对损失归因不成立 —— 一条被丢的孤儿 tool_result 就是一个丢失单元，而聚合计数与单元列表的差额没有任何地方解释。故 T-C2 若在 planning 站点记录 per-unit 丢弃（那是唯一知道 reason 的地方），必须同时落 orphanedCount 或让 repairToolUseResultPairing 返回被丢孤儿，否则会系统性漏计且漏计量不可从落盘数据反推。依据 reviews/TF-0138.md §3 发现 1。"
       ],
       "source_sessions": [],
-      "status": "blocked",
+      "status": "deprecated",
       "success_metrics": [
         "可归因丢弃事件覆盖率：目标 ≥90%（对已知五类决策）"
       ],
-      "summary": "【移入第二轮 · blocked】阻塞于：按 T-C0 字段清单重新估价。T-C0 绿结论已达成（TF-0138 done/100，结论「可行但需重定范围」，故 M6 预承诺的降级分支不触发）。语料前置已收窄（lane-2 裁决看板 XL-009，2026-08-27）：只有 loss-trace-spike.md §9 点名的三条验收项需要 >=2 次压缩的真实语料（跨轮摘要合并行为、多次压缩的 compactionBoundary 链、损失叠加），设计判定与实现部分不受其阻塞。开工前置见 M6 requirements。\n\n现有谱系（ContextCandidateLineage 含 disposition / reason / charsRequested / charsApplied / novelty）与账本（degradationOrder）都在生产，但 endContextCandidateCollection 在 attempt 结束即清除（context-candidate.ts:378-384、attempt.ts:5810），无法跨轮追溯。本 task 把每次 model call 的谱系与账本快照持久化，并提供查询：给定会话与轮次，输出被丢弃的单元、丢弃轮次、丢弃决策（budget-drop / compaction / limitHistoryTurns / archived / skipChannels）。",
+      "summary": "D7/M6 第二轮范围冻结；真实语料与默认通电前置不可达，本节点当前周期废止，保留 spike 和字段修正证据。",
       "title": "T-C2 上下文损失追踪（Context Loss Trace）：跨轮谱系持久化 + 归因查询",
-      "updated_at": "2026-09-09T08:22:38.646703Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0130": {
       "acceptance_criteria": [
@@ -20484,7 +20484,7 @@
         "brb-L"
       ],
       "created_at": "2026-08-24T08:35:05.214652Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 0.0,
       "desired_outcomes": [],
       "deviations": [
@@ -20523,13 +20523,13 @@
         "承接 TF-0147/TF-0121 的前向约束：若本 task 引入生产 archive writer，必须在 assembler 注入路径补 lifecycle filter，并覆盖 assembler 的所有 BlockStore query 路径；不得让 archived block 静默回流到注入面。该约束由 TF-0121 建立、TF-0147 转写。"
       ],
       "source_sessions": [],
-      "status": "blocked",
+      "status": "deprecated",
       "success_metrics": [
         "A/B 中 goal_token_decay 后续轮次的复发率下降；再注入开销 ≤10%"
       ],
-      "summary": "【移入第二轮 · blocked】阻塞于：按 T-C0 字段清单重新估价。T-C0 绿结论已达成（TF-0138 done/100，结论「可行但需重定范围」，故 M6 预承诺的降级分支不触发）。语料前置已收窄（lane-2 裁决看板 XL-009，2026-08-27）：只有 loss-trace-spike.md §9 点名的三条验收项需要 >=2 次压缩的真实语料（跨轮摘要合并行为、多次压缩的 compactionBoundary 链、损失叠加），设计判定与实现部分不受其阻塞。开工前置见 M6 requirements。\n\n触发信号 = T-C1 的损伤检测（goal_token_decay / entity_loss_risk 为主）；动作 = 从 BlockStore / receipt 取回被判定丢失的具体单元，按 knowledge 通道优先级重新注入，复用现有 candidate/ledger 管道。与 ARC 的差别：ARC 用 LLM 反思判断是否重组整个工作上下文（多次 LLM 调用），本方案用确定性检测判断具体哪一条该回来（零 LLM）。",
+      "summary": "依赖 TF-0129 且同属 D7/M6 冻结范围；未执行恢复实现废止。",
       "title": "T-C3 定向再注入 v1：损伤检测驱动的单元级恢复",
-      "updated_at": "2026-08-28T14:33:14.776005Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0131": {
       "acceptance_criteria": [
@@ -21251,7 +21251,7 @@
         "brb-S"
       ],
       "created_at": "2026-08-24T08:35:05.218966Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 0.0,
       "desired_outcomes": [],
       "deviations": [
@@ -21284,13 +21284,13 @@
         "报告的 completionClass 须遵守 T-E1 的词汇纪律"
       ],
       "source_sessions": [],
-      "status": "blocked",
+      "status": "deprecated",
       "success_metrics": [
         "产出一份可对外的量化报告；三项指标各有基线与实验值"
       ],
-      "summary": "【移入第二轮 · blocked】阻塞于：按 T-C0 字段清单重新估价。T-C0 绿结论已达成（TF-0138 done/100，结论「可行但需重定范围」，故 M6 预承诺的降级分支不触发）。语料前置已收窄（lane-2 裁决看板 XL-009，2026-08-27）：只有 loss-trace-spike.md §9 点名的三条验收项需要 >=2 次压缩的真实语料（跨轮摘要合并行为、多次压缩的 compactionBoundary 链、损失叠加），设计判定与实现部分不受其阻塞。开工前置见 M6 requirements。\n\n用 scripts/context-compression-eval-runner.mjs --paired-summary 在真实会话 JSONL 上做 A/B：对照组 = 现状压缩，实验组 = 开启 T-C3 定向再注入。报三项：goal_token_decay 与 entity_loss_risk 发生率对比、再注入 token 开销占比、以及可归因丢弃事件覆盖率。这是对外可展示的唯一量化产物。",
+      "summary": "依赖 TF-0130 且同属 D7/M6 冻结范围；未执行 A/B 评测废止。",
       "title": "T-E3 A/B 评测报告：损伤率、成本、长任务稳定性",
-      "updated_at": "2026-08-27T15:33:25.374198Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0142": {
       "acceptance_criteria": [
@@ -21475,7 +21475,7 @@
         "backlog"
       ],
       "created_at": "2026-08-24T08:35:05.228169Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 0.0,
       "desired_outcomes": [],
       "deviations": [
@@ -21513,13 +21513,13 @@
         "本轮已裁定不拉回的两项，第二轮必须执行：(1) T-C3 取回单元前检查 invalid_at —— 本轮无再注入动作，为不存在的动作先建守卫即是「建成未通电」模式的重演；(2) T-C2 的 lineage.reason 文法约束 —— 本轮无持久化，其在 T-C0 产出侧的暴露面已由 T-C0 的脱敏 requirement 关闭。"
       ],
       "source_sessions": [],
-      "status": "blocked",
+      "status": "deprecated",
       "success_metrics": [
         "第二轮开工时三条前置全部满足且有记录"
       ],
-      "summary": "【本轮不投入工时 · blocked】本轮不做。移入理由：T-C2+T-C3 合计 1800min（原净工时 22%）而 confidence 仅 0.62/0.60、difficulty=very_high，与本仓库已被证实的「建成未通电」失败模式同构（RISK-1 自认它们会成为第 9/10/11 处零调用模块）。开工前置（lane-2 按 XL-009 收窄，2026-08-27，详见 requirement-1）：T-C0 结论为绿（已达成，TF-0138 done/100）＋ 按 T-C0 的字段清单重新估价（仍是硬前置）；T-CORPUS 语料就位不再是整包前置，仅 loss-trace-spike.md §9 点名的三条验收项等语料。预承诺条款：若 T-C0 结论为「不可行或补齐成本 > T-C2 预算」，T-C2/T-C3 直接降级 follow_up，第二轮不得以「再试一次」为由扩 scope。",
+      "summary": "M6 第二轮队列已被 D7 范围冻结；未执行工作废止，保留规划历史。",
       "title": "M6 第二轮队列：上下文损失追踪、定向再注入、A/B 评测（不占本轮预算）",
-      "updated_at": "2026-08-27T15:34:38.929747Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0145": {
       "acceptance_criteria": [
@@ -22036,7 +22036,7 @@
         "default-flip"
       ],
       "created_at": "2026-09-05T08:03:20.242001Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 0.0,
       "desired_outcomes": [],
       "deviations": [],
@@ -22077,11 +22077,11 @@
         "【替代路径 · 本轮即可执行，不改默认值】按 TF-0131（T-C4）被砍时给出的同形替代（用 RC03_SEAL 环境变量开启以积累数据、不改默认值），masking 与 damageAudit 在本轮可用 env 开启方式产出 JSONL 数据。第二轮开工清单应增加一问：「是否已通过 env 路径取得该旗标的真实数据」；无数据即申请翻默认，仍应驳回。"
       ],
       "source_sessions": [],
-      "status": "blocked",
+      "status": "deprecated",
       "success_metrics": [],
-      "summary": "【本轮不投入工时 · blocked】外部收敛方案（2026-09-05）提出把 observationMasking.enabled、compaction.damageAudit.enabled（新增 config leaf，与 env OPENCLAW_COMPACTION_DAMAGE_AUDIT 或关系）、postCompactionSections 的 constraints 段默认注入、以及周期性全量重摘要（默认每 4 次）四项翻为默认开。本轮一律不得执行：§R5 技术-4『不改任何旗标默认值』，§R3.4 默认值白名单恰好一项（TF-0140 的 runtime.contextBlock.tool-registry.enabled），TF-0146 的成功指标为『本轮默认值改动次数 = 1』，白名单外任一默认值改动一律硬 FAIL（DEV-PROTOCOL.md:631）。同形提案 T-C4（TF-0131）已因构成第二个例外被砍，理由逐字在该节点。开工前置：四项各需 docs/dev/context-moat/approvals/<task-id>.md 人工 approve（先批准后改动，顺序不可倒置）、各自声明回滚方式并按 §R5 过程-9 验证该旗标存在执行器、以及按 T-C0 式字段清单重新估价。不得以『方案已经写好了』为由绕过前置。",
+      "summary": "D7 冻结且四项默认值翻转需要独立产品/范围决定；不改变默认值，未执行候选废止。",
       "title": "第二轮候选：压缩层默认值翻转四项（masking / damageAudit / postCompactionSections / 周期性 I 帧）",
-      "updated_at": "2026-09-09T08:23:38.151863Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0152": {
       "acceptance_criteria": [
@@ -27583,7 +27583,7 @@
         "TF-0251",
         "TF-0252"
       ],
-      "confidence": 0.85,
+      "confidence": 0.98,
       "context_tags": [
         "verseconf",
         "structured-artifacts",
@@ -27592,7 +27592,7 @@
       ],
       "created_at": "2026-09-30T14:12:38.154842Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [
         "一份可执行的首个消费者契约和独立判断标准",
         "经有限实施边界生效后，形成研究比较表从源修订到导出与恢复的闭环",
@@ -27603,7 +27603,11 @@
       "difficulty": "very_high",
       "estimated_total_minutes": null,
       "evidence": [
-        "docs/dev/verseconf-clawx-integration-exploration-20260930.md（设计输入，非产品验收）"
+        "docs/dev/verseconf-clawx-integration-exploration-20260930.md（设计输入，非产品验收）",
+        "docs/dev/verseconf-clawx-adoption-decision.md",
+        "artifacts/verseconf-adoption-decision-20261001/decision.json",
+        "artifacts/remaining-node-audit-20261001/tf0244-acceptance.json",
+        "artifacts/remaining-node-audit-20261001/tf0245-closeout-proposal.json"
       ],
       "execution_hints": [
         "本分支下一步仅执行首个试验契约任务；不要把本父节点视为第二个并行工程任务。",
@@ -27612,6 +27616,7 @@
       ],
       "id": "TF-0243",
       "kind": "global_task",
+      "next_action": "本探索分支已收口为契约资产与停止/保持冻结决定；若未来重新启动，必须由独立明确决定新建或恢复实施范围，不从本节点自动推导授权。",
       "non_goals": [
         "解除 VerseConf 独立产品线冻结、恢复 LSP/VSCode/多绑定/公共发布",
         "重开冻结 Runtime 总目标，或修改产品锁、默认开关和权限",
@@ -27620,7 +27625,7 @@
       ],
       "primary_parent": null,
       "priority": 2,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "把已有结构化编辑资产变成有边界、可拒绝、可恢复、可验收的 ClawX 消费能力，并允许在净收益不足时有据停止。",
       "remaining_minutes_max": null,
@@ -27635,16 +27640,16 @@
       "source_sessions": [
         "verseconf-clawx-tf-planning-20260930"
       ],
-      "status": "in_progress",
+      "status": "done",
       "success_metrics": [
         "越权写入、未知副作用自动重放、伪造成功或真人证据均为零容忍否决项",
         "每个已宣称可恢复版本均有可取回快照和真实操作关联",
         "不创建长期自动切换的双编辑引擎",
         "规划进展不计为产品完成率；当前产品交付进度保持 0"
       ],
-      "summary": "已开始规划，尚未实施产品接入。先定义研究比较表的最小试验，再验证受管提交、版本恢复与编辑内核，最后按证据决定是否扩展到幻灯片大纲和长期采用。",
+      "summary": "VerseConf × ClawX 探索规划已按证据收口：TF-0244 契约/夹具完成并在干净候选 88/88 通过；TF-0245 记录保持冻结、收缩当前周期的决定。后续实现节点在同一提案中废止，未执行工作不计完成。",
       "title": "结构化产物接入探索与采用评估（VerseConf × ClawX）",
-      "updated_at": "2026-09-30T14:12:38.188307Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0244": {
       "acceptance_criteria": [
@@ -27671,7 +27676,7 @@
       "alignment_records": [],
       "assumptions": [],
       "children": [],
-      "confidence": 0.92,
+      "confidence": 0.99,
       "context_tags": [
         "verseconf",
         "work-package-w0",
@@ -27680,7 +27685,7 @@
       ],
       "created_at": "2026-09-30T14:12:38.155840Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [
         "严格 JSON 研究表的 schema/操作/身份草案",
         "最小真实调用试验与五类失败路径设计",
@@ -27691,7 +27696,15 @@
       "display_order": 10,
       "estimated_total_minutes": null,
       "evidence": [
-        "docs/dev/verseconf-clawx-integration-exploration-20260930.md（契约设计来源）"
+        "docs/dev/verseconf-clawx-integration-exploration-20260930.md（契约设计来源）",
+        "docs/dev/verseconf-clawx-contract-v1.md",
+        "artifacts/verseconf-contract-v1/contract.json",
+        "artifacts/verseconf-contract-v1/owner-map.json",
+        "artifacts/verseconf-contract-v1/runtime-trials.json",
+        "artifacts/verseconf-contract-v1/SHA256SUMS",
+        "artifacts/verseconf-contract-v1/verification/20261001/contract-check-final.json",
+        "artifacts/remaining-node-audit-20261001/tf0244-acceptance.json",
+        "artifacts/remaining-node-audit-20261001/tf0244-candidate.json"
       ],
       "execution_hints": [
         "先核读探索方案第 5/6/11/12 节和当前 owner 源码，产出 docs/dev/verseconf-clawx-contract-v1.md；这是一份待创建的契约，不是已有证据。",
@@ -27700,6 +27713,7 @@
       ],
       "id": "TF-0244",
       "kind": "task",
+      "next_action": "TF-0244已自动收口；下一节点TF-0245仍为proposed，必须先做消费者专用有限实施/维护边界决定，不得把本契约当作实施授权。",
       "non_goals": [
         "实际接入 UI 或 wasm 消费包",
         "修改 live 配置、默认值或冻结源码",
@@ -27707,7 +27721,7 @@
       ],
       "primary_parent": "TF-0243",
       "priority": 3,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "让第一个提交能力试验有足够窄的范围、明确的 owner 和独立可判定的出口，避免边做边扩平台。",
       "remaining_minutes_max": null,
@@ -27721,14 +27735,14 @@
       "source_sessions": [
         "tf0244-contract-20261001"
       ],
-      "status": "in_progress",
+      "status": "done",
       "success_metrics": [
         "范围足以支撑一个最小提交 spike",
         "没有需要真人数据或手工 verdict 的验收项"
       ],
-      "summary": "已开始执行首个研究表契约任务：核对当前 owner，制作三记录/两字段夹具、独立预期结果、五类失败试验与边界建议；尚无产品集成验收。",
+      "summary": "研究比较表首个试验契约与退出条件已完成：严格JSON schema、三记录/两字段联合修改夹具、独立字节oracle、五类not-run运行试验、15项owner静态映射和5项Harness映射均已在干净候选复验；88/88离线检查通过。产品集成、wasm、权限、UI、DB和Office运行仍明确未执行。",
       "title": "锁定研究比较表的首个试验契约与退出条件",
-      "updated_at": "2026-09-30T16:14:08.544365Z"
+      "updated_at": "2026-10-01T07:41:34.098380Z"
     },
     "TF-0245": {
       "acceptance_criteria": [
@@ -27748,7 +27762,7 @@
       "alignment_records": [],
       "assumptions": [],
       "children": [],
-      "confidence": 0.9,
+      "confidence": 0.98,
       "context_tags": [
         "verseconf",
         "implementation-boundary",
@@ -27756,14 +27770,18 @@
       ],
       "created_at": "2026-09-30T14:12:38.155840Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "medium",
       "display_order": 20,
       "estimated_total_minutes": null,
       "evidence": [
-        "docs/dev/verseconf-clawx-integration-exploration-20260930.md（有限维护与冻结边界说明）"
+        "docs/dev/verseconf-clawx-integration-exploration-20260930.md（有限维护与冻结边界说明）",
+        "docs/dev/verseconf-clawx-adoption-decision.md",
+        "artifacts/verseconf-adoption-decision-20261001/decision.json",
+        "artifacts/remaining-node-audit-20261001/tf0244-acceptance.json",
+        "artifacts/verseconf-contract-v1/verification/20261001/contract-check-final.json"
       ],
       "execution_hints": [
         "在首个试验契约之后整理 docs/dev/verseconf-clawx-adoption-decision.md；该路径是未来产物，不是当前批准记录。",
@@ -27771,13 +27789,14 @@
       ],
       "id": "TF-0245",
       "kind": "decision",
+      "next_action": "本决策节点已完成；后续实现节点仍为proposed，只有独立明确授权才能启动W1。若未来决定永久停止，须在同一提案中废止后续实现节点。",
       "non_goals": [
         "全面解冻 VerseConf",
         "发布、公开仓库、默认启用或凭据暴露授权"
       ],
       "primary_parent": "TF-0243",
       "priority": 3,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "区分常规工程自主权与被冻结产品线、产品范围、付费资源的真实决策权，防止规划应用被误当全面解冻。",
       "remaining_minutes_max": null,
@@ -27788,11 +27807,11 @@
         "不改变全局产品锁、默认值或现有 TF-0010/TF-0028 状态；收费实验仅在预算被明确后执行"
       ],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "done",
       "success_metrics": [],
-      "summary": "首个契约完成后形成有证据的启动或停止决定；当前仅登记决策门，不代表已获准改动产品或 VerseConf 冻结范围。",
+      "summary": "已形成消费者专用有限实施与维护边界决定：当前周期收缩并保持冻结；TF-0246至TF-0252不自动放行，产品范围、默认值、付费预算和发布权限不变。",
       "title": "确认消费者专用的有限实施与维护边界",
-      "updated_at": "2026-09-30T14:12:38.187306Z"
+      "updated_at": "2026-10-01T07:49:02.592667Z"
     },
     "TF-0246": {
       "acceptance_criteria": [
@@ -27821,7 +27840,7 @@
         "gateway-backend-communication"
       ],
       "created_at": "2026-09-30T14:12:38.155840Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 0.0,
       "desired_outcomes": [],
       "deviations": [],
@@ -27857,11 +27876,11 @@
         "无必要恢复证据时拒绝新能力提交，不改变旧工具 fail-open 默认，不自动开启全局 journal"
       ],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "deprecated",
       "success_metrics": [],
-      "summary": "在当前 run 权限内完成一个单文件候选提交试验，优先验证拒绝、版本和恢复；允许用确定性 TS 候选隔离 wasm 变量。",
+      "summary": "2026-10-01 TF-0245 决定保持冻结、未授权 W1 实施；该真实运行提交节点未执行，现周期废止并保留 proposed 历史。",
       "title": "验证真实运行中的受管候选提交能力",
-      "updated_at": "2026-09-30T14:12:38.187306Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0247": {
       "acceptance_criteria": [
@@ -27890,7 +27909,7 @@
         "recovery"
       ],
       "created_at": "2026-09-30T14:12:38.155840Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 0.0,
       "desired_outcomes": [],
       "deviations": [],
@@ -27921,11 +27940,11 @@
         "不声称外部 shell/编辑器参与同一进程锁；新路径不双写第二份权威状态"
       ],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "deprecated",
       "success_metrics": [],
-      "summary": "将已通过的单文件机制补成源版本、真实幂等和相关写入入口协调，保证承诺可恢复的每个版本有可取回快照。",
+      "summary": "依赖 TF-0246 未获实施授权；当前周期保持冻结，版本/恢复扩展废止。",
       "title": "补齐写入协调、持久版本与重启恢复",
-      "updated_at": "2026-09-30T14:12:38.187306Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0248": {
       "acceptance_criteria": [
@@ -27954,7 +27973,7 @@
         "node-wasm"
       ],
       "created_at": "2026-09-30T14:12:38.155840Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 0.0,
       "desired_outcomes": [],
       "deviations": [],
@@ -27989,11 +28008,11 @@
         "按顺序开发；本规划不授权并行启动 W2/W3，也不恢复 web/native 多路线"
       ],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "deprecated",
       "success_metrics": [],
-      "summary": "在有限维护边界内补齐 JSON 内存读取、批次候选和检查，并交付可追溯的单一 Node wasm 包；不恢复独立产品线。",
+      "summary": "依赖 TF-0247 未获实施授权；不交付 wasm/Node 消费包，独立 VerseConf 路线继续冻结。",
       "title": "交付受限 JSON 编辑内核与 Node wasm 消费包",
-      "updated_at": "2026-09-30T14:12:38.187306Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0249": {
       "acceptance_criteria": [
@@ -28022,7 +28041,7 @@
         "vertical-slice"
       ],
       "created_at": "2026-09-30T14:12:38.155840Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 0.0,
       "desired_outcomes": [],
       "deviations": [],
@@ -28057,11 +28076,11 @@
         "新 UI 有 Electron E2E，四语 i18n、三语 README 与新场景/规则同步"
       ],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "deprecated",
       "success_metrics": [],
-      "summary": "交付首条真实纵向闭环：创建/导入、按 ID 联合修订、提交、Markdown/XLSX 导出、检查与跨重启展示。",
+      "summary": "依赖 TF-0247/0248 未获实施授权；不启动产品 UI、产物界面或 Office 导出。",
       "title": "贯通研究表修订、导出与产物界面",
-      "updated_at": "2026-09-30T14:12:38.188307Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0250": {
       "acceptance_criteria": [
@@ -28089,7 +28108,7 @@
         "record-lifecycle"
       ],
       "created_at": "2026-09-30T14:12:38.155840Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 0.0,
       "desired_outcomes": [],
       "deviations": [],
@@ -28118,11 +28137,11 @@
         "外部变更先校验和协调，恢复历史内容针对当前 revision 新提交；不 force 覆盖"
       ],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "deprecated",
       "success_metrics": [],
-      "summary": "在最小闭环通过后增加记录插入、删除、排序、历史恢复及外部改动处理，不扩大到任意格式保真编辑。",
+      "summary": "依赖 TF-0249 未获实施授权；不扩展记录操作、历史恢复或外部变更协调。",
       "title": "补齐记录操作、历史恢复与外部变更协调",
-      "updated_at": "2026-09-30T14:12:38.188307Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0251": {
       "acceptance_criteria": [
@@ -28151,7 +28170,7 @@
         "second-consumer"
       ],
       "created_at": "2026-09-30T14:12:38.155840Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 0.0,
       "desired_outcomes": [],
       "deviations": [],
@@ -28180,11 +28199,11 @@
         "视觉检查由 agent 自动执行并标注，环境缺渲染器是工程缺口而非等待真人"
       ],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "deprecated",
       "success_metrics": [],
-      "summary": "只增加 title/body 大纲、pageId、PPTX 映射与检查，复用既有受管提交和产物版本体系。",
+      "summary": "第二消费者扩展未获授权；不启动幻灯片大纲复用。",
       "title": "用幻灯片大纲验证第二消费者复用",
-      "updated_at": "2026-09-30T14:12:38.188307Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     },
     "TF-0252": {
       "acceptance_criteria": [
@@ -28213,7 +28232,7 @@
         "adoption-verdict"
       ],
       "created_at": "2026-09-30T14:12:38.155840Z",
-      "deprecated_at": null,
+      "deprecated_at": "2026-10-01T08:02:10.452938Z",
       "derived_progress": 0.0,
       "desired_outcomes": [],
       "deviations": [],
@@ -28244,11 +28263,11 @@
         "相同契约、schema、操作集、数据与独立 oracle 对照；付费模型实验须有明确有限预算"
       ],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "deprecated",
       "success_metrics": [],
-      "summary": "验证实际 source runtime 的安装、启用、依赖、包内执行和数据保留；在同一宿主契约下比较 TS 与 VerseConf，形成采用或停止结论。",
+      "summary": "分发/采用裁决依赖未执行实现包；保留停止条件，当前周期废止。",
       "title": "验证干净分发与升级，并裁定长期采用",
-      "updated_at": "2026-09-30T14:12:38.188307Z"
+      "updated_at": "2026-10-01T08:02:10.452938Z"
     }
   },
   "reason": "rebuild",
@@ -28283,56 +28302,35 @@
     "review_needed": "产物或判断已到可检查阶段，但需要复核验收标准、证据、不足风险和实际结果后，才能标为已完成。"
   },
   "status_queues": {
-    "actionable_todos": [
-      "TF-0244",
-      "TF-0151",
-      "TF-0129",
-      "TF-0130",
-      "TF-0141",
-      "TF-0144",
-      "TF-0245",
-      "TF-0246",
-      "TF-0247",
-      "TF-0047",
-      "TF-0248",
-      "TF-0249",
-      "TF-0250",
-      "TF-0251",
-      "TF-0252",
-      "TF-0010",
-      "TF-0028"
-    ],
-    "blocked": [
-      "TF-0010",
-      "TF-0028",
-      "TF-0047",
-      "TF-0129",
-      "TF-0130",
-      "TF-0141",
-      "TF-0144",
-      "TF-0151"
-    ],
+    "actionable_todos": [],
+    "blocked": [],
     "by_status": {
       "archived": [],
-      "blocked": [
-        "TF-0010",
-        "TF-0028",
-        "TF-0047",
-        "TF-0129",
-        "TF-0130",
-        "TF-0141",
-        "TF-0144",
-        "TF-0151"
-      ],
+      "blocked": [],
       "deprecated": [
+        "TF-0010",
         "TF-0017",
         "TF-0018",
         "TF-0019",
+        "TF-0028",
+        "TF-0047",
         "TF-0123",
         "TF-0125",
+        "TF-0129",
+        "TF-0130",
         "TF-0131",
         "TF-0132",
-        "TF-0241"
+        "TF-0141",
+        "TF-0144",
+        "TF-0151",
+        "TF-0241",
+        "TF-0246",
+        "TF-0247",
+        "TF-0248",
+        "TF-0249",
+        "TF-0250",
+        "TF-0251",
+        "TF-0252"
       ],
       "done": [
         "TF-0001",
@@ -28560,58 +28558,27 @@
         "TF-0238",
         "TF-0239",
         "TF-0240",
-        "TF-0242"
-      ],
-      "in_progress": [
+        "TF-0242",
         "TF-0243",
-        "TF-0244"
+        "TF-0244",
+        "TF-0245"
       ],
-      "proposed": [
-        "TF-0245",
-        "TF-0246",
-        "TF-0247",
-        "TF-0248",
-        "TF-0249",
-        "TF-0250",
-        "TF-0251",
-        "TF-0252"
-      ],
+      "in_progress": [],
+      "proposed": [],
       "ready": [],
       "review_needed": []
     },
-    "evergreen_open_goals": [
-      "TF-0010",
-      "TF-0243"
-    ],
-    "open": [
-      "TF-0010",
-      "TF-0028",
-      "TF-0047",
-      "TF-0129",
-      "TF-0130",
-      "TF-0141",
-      "TF-0144",
-      "TF-0151",
-      "TF-0243",
-      "TF-0244",
-      "TF-0245",
-      "TF-0246",
-      "TF-0247",
-      "TF-0248",
-      "TF-0249",
-      "TF-0250",
-      "TF-0251",
-      "TF-0252"
-    ],
+    "evergreen_open_goals": [],
+    "open": [],
     "ready": [],
     "review_needed": []
   },
   "summary": {
-    "blocked_count": 8,
-    "done_count": 226,
+    "blocked_count": 0,
+    "done_count": 229,
     "edge_count": 435,
     "node_count": 252,
-    "open_count": 18,
+    "open_count": 0,
     "review_needed_count": 0
   },
   "tree_edges": [

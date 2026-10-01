@@ -1,0 +1,26 @@
+{
+  "proposal_id": "TFP-tf0245-adoption-decision-20261001",
+  "session_id": "tf0245-adoption-decision-20261001",
+  "rationale": "基于TF-0244干净候选契约证据，记录消费者专用边界的收缩/保持冻结决定；不授权实施、付费资源、发布或冻结源码修改。后续实现节点保留proposed，必须另有明确授权才能启动。",
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0245",
+      "fields": {
+        "status": "done",
+        "progress": 100,
+        "progress_source": "manual",
+        "confidence": 0.98,
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（有限维护与冻结边界说明）",
+          "docs/dev/verseconf-clawx-adoption-decision.md",
+          "artifacts/verseconf-adoption-decision-20261001/decision.json",
+          "artifacts/remaining-node-audit-20261001/tf0244-acceptance.json",
+          "artifacts/verseconf-contract-v1/verification/20261001/contract-check-final.json"
+        ],
+        "summary": "已形成消费者专用有限实施与维护边界决定：当前周期收缩并保持冻结；TF-0246至TF-0252不自动放行，产品范围、默认值、付费预算和发布权限不变。",
+        "next_action": "本决策节点已完成；后续实现节点仍为proposed，只有独立明确授权才能启动W1。若未来决定永久停止，须在同一提案中废止后续实现节点。"
+      }
+    }
+  ]
+}

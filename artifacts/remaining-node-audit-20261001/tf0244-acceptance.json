@@ -1,0 +1,60 @@
+{
+  "actor": "codex/root",
+  "driven_by": "agent",
+  "task": "TF-0244",
+  "verdict": "pass",
+  "scope": "offline contract and fixture deliverable; no product implementation",
+  "candidate": {
+    "commit": "dee2391c179610d71f33e8fc5273f05a62feaa90",
+    "tree": "06f1b95260dfb65c94e1692063c8a1ed9fd170a2",
+    "dirty": false,
+    "path": "C:\\tmp\\ClawX-tf0244-acceptance-sv3cj500"
+  },
+  "report": {
+    "path": "artifacts/verseconf-contract-v1/verification/20261001/contract-check-final.json",
+    "sha256": "e0a351ac1f47b3b63edaaa2099ffe63e4a1c28ecd19f948f7e09bf7ad4af3fd3",
+    "counts": {
+      "total": 88,
+      "passed": 88,
+      "failed": 0
+    },
+    "productIntegrationVerdict": "not-run"
+  },
+  "criteria": [
+    {
+      "criterion": "存在三条记录的可读夹具、两字段联合修改请求、预期源内容和独立非目标字节判据",
+      "verified": true,
+      "proof": "research-before.json, revise-two-fields.json, research-after.expected.json, independent-oracle.json; candidate checker passed three-records-two-changes and joint byte oracle."
+    },
+    {
+      "criterion": "已有 owner 复用图覆盖调用入口、插件上下文、策略、写入队列、patch 预检、journal、收据、源运行时隔离配置",
+      "verified": true,
+      "proof": "owner-map.json contains 15 static owner observations with current SHA-256 and required anchors; final checker source-anchor checks passed."
+    },
+    {
+      "criterion": "readonly/deny、基线冲突、提交前取消、导出失败、提交后重启五类反例有输入、预期效果和取证方法；未执行项标记 not-run",
+      "verified": true,
+      "proof": "runtime-trials.json defines F1-F5; final checker five-runtime-families-remain-not-run passed; no product integration was claimed."
+    },
+    {
+      "criterion": "形成工作量与输入资源上限建议、成功/停止判据；不将建议当作已经批准的付费预算",
+      "verified": true,
+      "proof": "contract.json limitsProposal and docs §8/§9; report scope is offline contract only and realProviderCalls=0."
+    },
+    {
+      "criterion": "说明后续代码改动触点和 Harness 场景映射，并明确本任务没有验证产品集成",
+      "verified": true,
+      "proof": "owner-map.json harnessMapping and docs §10; report productIntegrationVerdict=not-run."
+    }
+  ],
+  "artifacts": {
+    "root": "artifacts/verseconf-contract-v1",
+    "sha256sums": "artifacts/verseconf-contract-v1/SHA256SUMS",
+    "contract": "docs/dev/verseconf-clawx-contract-v1.md"
+  },
+  "limitations": [
+    "Same agent authored contract and checker; oracle is independent of a mutation engine, not independent human review.",
+    "No runtime permissions, journal/DB effects, Electron UI, wasm or Office generation executed.",
+    "The candidate is clean and exact for this planning artifact; product integration remains a later node."
+  ]
+}

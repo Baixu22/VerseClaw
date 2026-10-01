@@ -1,0 +1,107 @@
+{
+  "schema": "clawx-structured-artifact-runtime-trial-design/v1",
+  "taskId": "TF-0244",
+  "driven_by": "agent",
+  "actor": "claude/tf0244-contract",
+  "executionStatus": "not-run",
+  "reason": "TF-0244 designs trials; the runtime mutation seam and driver are not implemented here.",
+  "sharedInput": {
+    "baselineFile": "fixtures/research-before.json",
+    "requestFile": "fixtures/revise-two-fields.json",
+    "expectedCandidateFile": "fixtures/research-after.expected.json",
+    "workspace": "new disposable workspace under the future driver; never the project root or user live workspace",
+    "identities": "driver must capture actual runtime artifact/revision/run/toolCall IDs; fixture IDs are symbolic only",
+    "provider": "scripted-provider for deterministic integration; label separately from actual-provider",
+    "renderTargets": ["markdown", "xlsx"],
+    "noAutomaticRecoveryReplay": true
+  },
+  "requiredEvidence": [
+    "candidate source/SDK/build identity and actual effective runtime config identity without secrets",
+    "real entry/approval/cancel/terminal events and call lineage",
+    "source pre/post bytes and SHA-256 read back from disk",
+    "operation journal, revision metadata and immutable snapshot reference",
+    "output references and content readback, each bound to a source revision",
+    "independent oracle outcome and explicit not-run/not-applicable fields"
+  ],
+  "happyPath": {
+    "id": "R0",
+    "executionStatus": "not-run",
+    "steps": [
+      "Create/import baseline through the future managed product entry and inspect its real revision.",
+      "Drive a real agent run with the two-field request using the returned artifact and revision IDs.",
+      "Check final source against the independent semantic and non-target-byte oracle.",
+      "Explicitly render Markdown and XLSX from the committed immutable source snapshot.",
+      "Read actual rows/IDs/values; ensure formula-looking text is stored as text; verify source/output revision binding.",
+      "Restart Gateway and query the same artifact identity and revision."
+    ],
+    "expected": { "source": "committed_source", "newSourceRevisions": 1, "output": "rendered_output", "factValidation": "not_run" }
+  },
+  "failureFamilies": [
+    {
+      "id": "F1",
+      "title": "只读或拒绝权限",
+      "executionStatus": "not-run",
+      "variants": [
+        { "id": "readonly", "input": { "filesystemWrite": "denied", "pluginInstalled": true }, "expectedCode": "permission_denied" },
+        { "id": "tool-deny", "input": { "filesystemWrite": "allowed", "toolPolicy": "deny structured mutation" }, "expectedCode": "tool_unavailable_or_permission_denied" },
+        { "id": "approval-deny", "input": { "approval": "required then denied via existing owner" }, "expectedCode": "permission_denied" }
+      ],
+      "faultAt": "existing policy/approval owner before mutation; exact available hook selected in W1, not a bypass",
+      "steps": ["Use the real runtime tool assembly and entry, not direct fs or internal helper invocation.", "Submit the same valid request under each variant.", "Read files and operation state after completion."],
+      "expectedEffects": { "source": "unchanged", "newSourceRevisions": 0, "newOutputs": 0, "unknownEffectReplay": 0 },
+      "proof": ["before/after file digest equality", "actual policy/approval refusal event", "no committed operation or new output", "existing flags and allow/deny unchanged"]
+    },
+    {
+      "id": "F2",
+      "title": "读取后源版本漂移",
+      "executionStatus": "not-run",
+      "input": {
+        "submittedRevision": "revision returned before drift",
+        "externalMutation": { "recordId": "rec-baseline", "field": "finding", "value": "外部修改（合成冲突夹具）" }
+      },
+      "faultAt": "after inspect and before final owner recheck under the file coordination boundary",
+      "steps": ["Capture inspect revision and baseline digest.", "Change the named field through a competing supported writer; separately test an external edit without pretending it shares the lock.", "Submit the old two-field request."],
+      "expectedCode": "version_conflict",
+      "expectedEffects": { "source": "preserve actual newer bytes", "newSourceRevisionsByStaleCall": 0, "newOutputsByStaleCall": 0, "forceRetry": false },
+      "proof": ["three digests: inspected base, competing result, final disk", "base/current revision in conflict result", "no replacement with stale or expected candidate bytes"]
+    },
+    {
+      "id": "F3",
+      "title": "提交前取消",
+      "executionStatus": "not-run",
+      "input": { "signal": "cancel actual run before first source effect" },
+      "variants": ["while waiting for approval", "while waiting for file coordination", "after candidate compute and before commit"],
+      "faultAt": "named owner await boundary, with a test barrier rather than wall-clock sleep",
+      "steps": ["Hold the named stage using a future test barrier.", "Cancel through the real run cancellation entry.", "Release the delayed stage and observe any late worker result."],
+      "expectedCode": "cancelled",
+      "expectedEffects": { "source": "unchanged", "newSourceRevisions": 0, "newOutputs": 0, "lateResultCommits": 0 },
+      "proof": ["cancel/terminal event and actual signal propagation", "before/after disk equality", "no late commit after barrier release", "queue released so a subsequent authorized call can run"]
+    },
+    {
+      "id": "F4",
+      "title": "源已提交但导出失败",
+      "executionStatus": "not-run",
+      "input": { "existingOutput": "previous valid output bound to baseline revision", "rendererFault": "throw a deterministic error before publishing a new output" },
+      "faultAt": "pure renderer or output verification after source commit, before latest-output reference update",
+      "steps": ["Prepare a valid baseline output through the product route.", "Commit the two-field source candidate.", "Inject the renderer failure for that exact committed revision.", "Query source, prior output, render attempt and UI status."],
+      "expectedCode": "render_failed",
+      "expectedEffects": { "source": "committed_source", "newSourceRevisions": 1, "previousValidOutput": "preserved and marked stale", "newValidOutputs": 0, "sourceRollback": false },
+      "proof": ["new source equals expected candidate", "prior output digest unchanged", "failed attempt bound to new revision", "UI distinguishes source committed from output failure", "temporary output cannot be mistaken for verified latest output"]
+    },
+    {
+      "id": "F5",
+      "title": "提交窗口中断与重启对账",
+      "executionStatus": "not-run",
+      "input": { "fault": "terminate only the disposable test Gateway process at an instrumented owner barrier" },
+      "variants": [
+        { "id": "after-prepared-before-write", "diskOnRestart": "pre-image", "expected": "not_applied; no automatic replay" },
+        { "id": "after-write-before-metadata", "diskOnRestart": "post-image", "expected": "reconcile already applied content to the prepared operation, or keep explicit recovery_required until reconciliation finishes; never repeat the write" },
+        { "id": "post-write-external-change", "diskOnRestart": "neither pre nor post", "expected": "recovery_required; preserve third content; no replay/overwrite" }
+      ],
+      "faultAt": "persistent prepared/first write/metadata transition inside the future mutation owner; test hooks are not implemented by TF-0244",
+      "steps": ["Persist real operation identity and snapshot evidence.", "Terminate the disposable Gateway at the selected barrier without modifying the real project or user config.", "Restart the same test profile and query recovery through the owner.", "Verify files, journal, revisions, receipts and retry behavior."],
+      "expectedEffects": { "unknownEffectReplay": 0, "duplicateSourceWrites": 0, "fabricatedSuccess": 0, "thirdContentOverwrite": 0 },
+      "proof": ["pre/post/current digests", "persistent operation identity and recovery classification", "restart generation and recovery event", "receipt consistent with actual owner outcome, not used as replay authorization", "no new latest-output claim without an actual verified output"]
+    }
+  ]
+}
