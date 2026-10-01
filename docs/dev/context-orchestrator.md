@@ -1,4 +1,4 @@
-﻿# Context Orchestrator (TF-0002)
+# Context Orchestrator (TF-0002)
 
 > Status: Active
 > Updated: 2026-07-30 (TF-0013/UAS-02)
@@ -18,6 +18,7 @@ import {
 - **Module**: `openclaw_runtime/src/context-engine/context-orchestrator.ts`
 - **Production source collection**: `run/attempt.ts` (Memory, VToken, CVK) and `extensions.ts` (DCS context-block)
 - **Production finalization**: `extensions.ts` before the provider request; `attempt.ts` and `compact.ts` both provide a turn identity and clean up the candidate collection and ledger
+- **Native harness**: `harness/selection.ts` retains the same ledger through `context-engine-lifecycle.ts`; SDK assembly admits new messages and system additions before plugin rendering. Identical startup retries reuse the admitted projection. Embedded child runs leave the native scope. The scope is shared across source/built module instances, while admission calls back into the original attempt owner so the SDK cannot charge a separate collection or ledger. See `docs/dev/tf0013-native-wire-20261001.md` for native-process development evidence and its limits.
 - **Gateway** (`server-methods/agent.ts`): passes base `extraSystemPrompt` through; does **not** inject memory/VToken
 
 ## Candidate protocol and stable order
@@ -66,6 +67,8 @@ After each turn orchestration:
 - Does not graduate Runtime Memory, enable SEKB automatic writeback, or change live/product/default-on locks
 
 ## COMPASS pre-reply budget (2026-09-30)
+
+Embedded ContextEngine `assemble().messages` replacements are collected as atomic `message_replacement` candidates in `cvk_addition`. Exact deep equality with multiplicity exempts retained history, including cloned or windowed messages; rewritten summaries and extra copies are charged by their serialized new-message length (including structural metadata). This conservative character accounting bounds structured payloads without splitting tool pairs. A rejected replacement retains the original history. Plugins receive a cloned input so mutation followed by failure cannot change the live transcript. Assembly follows orphan repair and heartbeat filtering. The existing projection preparation admits the replacement before overflow estimation; the runner materializes it once, and cached context callbacks never reapply it after replay normalization. Optional source read failures are isolated from prompt submission. Subsequent model calls retain the materialized history, current prompt and tool results; RC-03 attributes the selected producer and seals the resulting payload. This covers embedded execution only; native plugin-owned assembly needs separate verification.
 
 SSP and retrieval are no longer appended directly to the pre-reply system prompt. Preparation checks the enhancement kill switch before SSP or fact loading; execution rechecks source flags before collecting both as knowledge candidates. Immediate, queued, CLI and native harness runs carry the same serializable context input. The existing owner performs sorting, identity deduplication and budget projection; no new budget or product flag is introduced.
 

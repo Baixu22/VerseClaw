@@ -57,6 +57,10 @@ DCS を有効にした coding turn では、knowledge、recent actions、tool re
 
 COMPASS SSP と応答前の検索も ContextCandidate の選択処理を通じて同じ turn 予算を共有し、キュー実行、CLI、ネイティブ harness にも適用されます。拡張 kill switch は準備処理を停止し、切り詰められた検索結果は完全に注入された事実として集計しません。
 
+embedded runtime とネイティブ harness SDK の ContextEngine によるメッセージ置換は同じ予算を共有します。そのまま保持する履歴は再計上せず、新規・書き換えメッセージ全体が残り予算に収まらない場合は元の履歴を保持します。ネイティブの system addition も同じ残り予算を使い、同一内容での起動再試行は二重計上しません。ツール呼び出しの構造は切り詰めません。
+
+ソース runtime がビルド済みのネイティブプラグインを読み込む場合も、実行中の attempt が所有する元の予算で両側の追加内容を判定します。
+
 Runtime Memory 注入、SEKB 自動 writeback、Browser の無監督または private-network 利用、C6/C7 自動切替、Coding WAL、本番 repository の自動 merge、複数 Forge/DAG 拡張は対象外です。現時点の証拠は engineering と実プロセステストであり、human canary と release approval は未完了です。コンポーネントごとの唯一の分類は [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview) を参照してください。
 
 ## 概要

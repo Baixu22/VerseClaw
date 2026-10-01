@@ -1,0 +1,36 @@
+{
+  "actor": "codex/root",
+  "driven_by": "agent",
+  "candidate": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt",
+  "commit": "89a919ead7ca08746f609efd1e97a3508bbb10a7",
+  "tree": "d2875401579abe21ac66c97dbf3d222726472612",
+  "base": "48387ee04a9b082dc552ea461985224ba77faab3",
+  "dirtyBeforeDependencies": false,
+  "paths": [
+    "openclaw_runtime/extensions/codex/src/app-server/diagnostic-contract.test.ts",
+    "harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md",
+    "docs/dev/context-orchestrator.md",
+    "docs/dev/first-product-controlled-preview/STATUS.md",
+    "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md",
+    "docs/dev/tf0013-message-budget-20260930.md",
+    "docs/dev/tf0013-native-budget-20260930.md",
+    "docs/dev/tf0013-native-wire-20261001.md",
+    "README.md",
+    "README.zh-CN.md",
+    "README.ja-JP.md"
+  ],
+  "sourceHashes": {
+    "openclaw_runtime/extensions/codex/src/app-server/diagnostic-contract.test.ts": "12f4fb764bba3a8e4d2c71ab0782eae6c29ce9d537ffbc835e84ff9a6b25ff12",
+    "harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md": "e07c14c0958b7ddd709aeb80d7f29d3c5c0101730d5814a85c90b99874aa5485",
+    "docs/dev/context-orchestrator.md": "811c049157545038cfc7c99bc7eacc405f3470d3ceeb0465b134d5d1caafb24b",
+    "docs/dev/first-product-controlled-preview/STATUS.md": "2e93ca3a4e3ec47ff4c4c95b74da2f5c17ae04e551da2b9cd118d18e2a6ba475",
+    "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md": "bdad368ab9ebc133bad1820deb161556730f3151cb9364416e52c31aff2958a1",
+    "docs/dev/tf0013-message-budget-20260930.md": "f090046e7c2ebdfafc530c6d37b8727d7887ff372ddf50430315e2785ed8c405",
+    "docs/dev/tf0013-native-budget-20260930.md": "a9eb38fe0ee626372e3aa879ecb65c51b1060c52a4811e877eb4d8a3c793abf3",
+    "docs/dev/tf0013-native-wire-20261001.md": "62990d761f209b20bd50eb7b53e2ffb7be66ede775ceadc9df21475ff2d76eac",
+    "README.md": "ffcd804e4af8e563f0d23fcca579b8ccead2e940040c685de84a1df79af112dd",
+    "README.zh-CN.md": "85947cff138d574589bc3ed7d863324c32cc86e0c15370018f82929861845db4",
+    "README.ja-JP.md": "740f50868298a9be32f383bb245ba50814d429c2bc21f7e198a77f10bf0a025d"
+  },
+  "scope": "TF-0013 source candidate; no main HEAD/index mutation, no VerseConf graph or source changes"
+}

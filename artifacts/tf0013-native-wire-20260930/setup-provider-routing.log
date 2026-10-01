@@ -1,0 +1,20 @@
+Loading host and real Codex plugin
+Running atomic-drop
+[agent/embedded] codex app-server context-engine projection decision
+[agent/embedded] codex app-server wrote context-engine thread binding
+{"name":"atomic-drop","added":7000,"compass":100,"system":100,"killed":false,"assemblies":1,"requests":0,"aborted":false,"timedOut":false,"promptError":"unexpected status 401 Unauthorized: Incorrect API key provided: agent-fi******************tial. You can find your API key at https://platform.openai.com/account/api-keys., url: https://api.openai.com/v1/responses, cf-ray: a434746dbe958eb8-NRT, request id: req_ebcc4dc996bd4b9ab71d5c0c32ec6302","ledgerReleased":true}
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 'unexpected status 401 Unauthorized: Incorrect API key provided: agent-fi******************tial. You can find your API key at https://platform.openai.com/account/api-keys., url: https://api.openai.com/v1/responses, cf-ray: a434746dbe958eb8-NRT, request id: req_ebcc4dc996bd4b9ab71d5c0c32ec6302'
+- null
+
+    at file:///D:/ClawX/artifacts/tf0013-native-wire-20260930/run.mjs:111:12
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'unexpected status 401 Unauthorized: Incorrect API key provided: agent-fi******************tial. You can find your API key at https://platform.openai.com/account/api-keys., url: https://api.openai.com/v1/responses, cf-ray: a434746dbe958eb8-NRT, request id: req_ebcc4dc996bd4b9ab71d5c0c32ec6302',
+  expected: null,
+  operator: 'strictEqual',
+  diff: 'simple'
+}

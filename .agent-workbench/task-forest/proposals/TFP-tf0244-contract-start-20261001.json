@@ -1,0 +1,42 @@
+{
+  "applied_at": "2026-09-30T16:14:08.637577Z",
+  "base_graph_hash": "7502c9d97d4d48eebe55a64efa22e3606fd9df11e1bc8df63267e8bc7f981b70",
+  "base_summary": {
+    "edge_count": 435,
+    "node_count": 252,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.96,
+          "user_goal": "推进 TF-0244，交付首个研究表试验契约与可核验夹具，不开始产品接入。",
+          "validation_plan": [
+            "标准 JSON Schema 与夹具/请求自检",
+            "独立语义与非目标字节判据的反例测试",
+            "五类真实运行试验设计均标注未执行",
+            "核对源码 owner 哈希与 Harness 触点",
+            "磁盘证据核读与 Task Forest 校验"
+          ],
+          "why_not_enough": "离线契约自检不证明当前 runtime 已具备受管提交接口，也不代替干净候选或正式集成验收。",
+          "why_this_task": "在产品实现前锁定宿主权限、版本、失败效果和独立判据，减少后续适配范围漂移。"
+        },
+        "progress": 0,
+        "source_sessions": [
+          "tf0244-contract-20261001"
+        ],
+        "status": "in_progress",
+        "summary": "已开始执行首个研究表契约任务：核对当前 owner，制作三记录/两字段夹具、独立预期结果、五类失败试验与边界建议；尚无产品集成验收。"
+      },
+      "id": "TF-0244"
+    }
+  ],
+  "created_at": "2026-09-30T16:14:08.351293Z",
+  "proposal_id": "TFP-tf0244-contract-start-20261001",
+  "rationale": "用户明确要求推进 TF-0244。仅将该节点登记为进行中，执行已定范围的契约、夹具、独立判据与试验设计；不改变 acceptance，不放行 TF-0245，不修改产品运行路径或冻结源码。",
+  "session_id": "tf0244-contract-20261001",
+  "status": "applied"
+}

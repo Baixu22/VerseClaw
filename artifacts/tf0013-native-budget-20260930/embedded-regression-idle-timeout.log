@@ -1,0 +1,7 @@
+
+ RUN  v4.1.7 D:/ClawX/openclaw_runtime
+
+[vitest] still running with no output for 30000ms (run --config test/vitest/vitest.agents.config.ts rc03-entry-transitions.acceptance.test.ts embedded-agent-runner/extensions.knowledge.test.ts embedded-agent-runner/extensions.working-memory.test.ts embedded-agent-runner/extensions.tool-registry.test.ts --passWithNoTests=false).
+[vitest] still running with no output for 60000ms (run --config test/vitest/vitest.agents.config.ts rc03-entry-transitions.acceptance.test.ts embedded-agent-runner/extensions.knowledge.test.ts embedded-agent-runner/extensions.working-memory.test.ts embedded-agent-runner/extensions.tool-registry.test.ts --passWithNoTests=false).
+[vitest] still running with no output for 90000ms (run --config test/vitest/vitest.agents.config.ts rc03-entry-transitions.acceptance.test.ts embedded-agent-runner/extensions.knowledge.test.ts embedded-agent-runner/extensions.working-memory.test.ts embedded-agent-runner/extensions.tool-registry.test.ts --passWithNoTests=false).
+[vitest] no output for 120000ms; terminating stalled Vitest process group (run --config test/vitest/vitest.agents.config.ts rc03-entry-transitions.acceptance.test.ts embedded-agent-runner/extensions.knowledge.test.ts embedded-agent-runner/extensions.working-memory.test.ts embedded-agent-runner/extensions.tool-registry.test.ts --passWithNoTests=false).

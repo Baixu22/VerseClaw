@@ -1,0 +1,160 @@
+{
+  "actor": "codex/root",
+  "driven_by": "agent",
+  "provider": "scripted-local-responses",
+  "binaryVersion": "codex-cli 0.137.0",
+  "scratch": "C:\\Users\\27933\\AppData\\Local\\Temp\\tf0013-native-wire-g3tlqW",
+  "scenarios": [
+    {
+      "name": "atomic-drop",
+      "added": 7000,
+      "compass": 100,
+      "system": 100,
+      "killed": false,
+      "turn": 0,
+      "assemblies": 1,
+      "requests": 1,
+      "aborted": false,
+      "timedOut": false,
+      "promptError": null,
+      "ledgerReleased": true,
+      "rpcMethods": [
+        "initialize",
+        "initialized",
+        "account/read",
+        "account/login/start",
+        "thread/start",
+        "turn/start",
+        "thread/unsubscribe"
+      ],
+      "pass": true
+    },
+    {
+      "name": "shared-exhaustion",
+      "added": 100,
+      "compass": 8000,
+      "system": 100,
+      "killed": false,
+      "turn": 0,
+      "assemblies": 1,
+      "requests": 1,
+      "aborted": false,
+      "timedOut": false,
+      "promptError": null,
+      "ledgerReleased": true,
+      "rpcMethods": [
+        "thread/start",
+        "turn/start",
+        "thread/unsubscribe"
+      ],
+      "pass": true
+    },
+    {
+      "name": "kill",
+      "added": 100,
+      "compass": 100,
+      "system": 100,
+      "killed": true,
+      "turn": 0,
+      "assemblies": 0,
+      "requests": 1,
+      "aborted": false,
+      "timedOut": false,
+      "promptError": null,
+      "ledgerReleased": true,
+      "rpcMethods": [
+        "thread/start",
+        "turn/start",
+        "thread/unsubscribe"
+      ],
+      "pass": true
+    },
+    {
+      "name": "bootstrap",
+      "added": 100,
+      "compass": 100,
+      "system": 100,
+      "killed": false,
+      "turns": 2,
+      "turn": 0,
+      "assemblies": 1,
+      "requests": 1,
+      "aborted": false,
+      "timedOut": false,
+      "promptError": null,
+      "ledgerReleased": true,
+      "rpcMethods": [
+        "thread/start",
+        "turn/start",
+        "thread/unsubscribe"
+      ],
+      "pass": true
+    },
+    {
+      "name": "bootstrap",
+      "added": 100,
+      "compass": 100,
+      "system": 100,
+      "killed": false,
+      "turns": 2,
+      "turn": 1,
+      "assemblies": 1,
+      "requests": 1,
+      "aborted": false,
+      "timedOut": false,
+      "promptError": null,
+      "ledgerReleased": true,
+      "rpcMethods": [
+        "thread/resume",
+        "turn/start",
+        "thread/unsubscribe"
+      ],
+      "pass": true
+    },
+    {
+      "name": "stale-retry",
+      "added": 100,
+      "compass": 100,
+      "system": 5000,
+      "killed": false,
+      "turns": 2,
+      "turn": 0,
+      "assemblies": 1,
+      "requests": 1,
+      "aborted": false,
+      "timedOut": false,
+      "promptError": null,
+      "ledgerReleased": true,
+      "rpcMethods": [
+        "thread/start",
+        "turn/start",
+        "thread/unsubscribe"
+      ],
+      "pass": true
+    },
+    {
+      "name": "stale-retry",
+      "added": 100,
+      "compass": 100,
+      "system": 5000,
+      "killed": false,
+      "turns": 2,
+      "turn": 1,
+      "assemblies": 1,
+      "requests": 1,
+      "aborted": false,
+      "timedOut": false,
+      "promptError": null,
+      "ledgerReleased": true
+    }
+  ],
+  "plugins": [
+    {
+      "id": "codex",
+      "status": "loaded",
+      "source": "D:\\ClawX\\openclaw_runtime\\dist\\extensions\\codex\\index.js"
+    }
+  ],
+  "pass": false,
+  "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert(wire.includes('HISTORY_'))\n\n    at file:///D:/ClawX/artifacts/tf0013-native-wire-20260930/run.mjs:136:27\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)"
+}

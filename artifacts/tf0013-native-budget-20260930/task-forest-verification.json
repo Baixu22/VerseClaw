@@ -1,0 +1,8 @@
+{
+  "actor": "codex/root",
+  "driven_by": "agent",
+  "proposalStatus": "applied",
+  "validateExitCode": 0,
+  "exportExitCode": 0,
+  "htmlSha256": "582ec89da4a3d8dcca338092811081da45239d3d6b1b6deccae46e3164970876"
+}

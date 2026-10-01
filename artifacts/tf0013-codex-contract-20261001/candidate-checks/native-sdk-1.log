@@ -1,0 +1,18 @@
+
+ RUN  v4.1.7 C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/openclaw_runtime
+
+ ✓ |agents| src/agents/harness/selection.compass.test.ts > keeps a separately loaded SDK on the original attempt's ledger 305ms
+ ✓ |agents| src/agents/harness/selection.compass.test.ts > native assembly shares the attempt budget: 'admitted' 8ms
+ ✓ |agents| src/agents/harness/selection.compass.test.ts > native assembly shares the attempt budget: 'atomic drop' 3ms
+ ✓ |agents| src/agents/harness/selection.compass.test.ts > native assembly shares the attempt budget: 'shared exhaustion' 2ms
+ ✓ |agents| src/agents/harness/selection.compass.test.ts > native assembly shares the attempt budget: 'history only' 2ms
+ ✓ |agents| src/agents/harness/selection.compass.test.ts > native assembly shares the attempt budget: 'kill switch' 1ms
+ ✓ |agents| src/agents/harness/selection.compass.test.ts > keeps concurrent native attempts separate and rechecks changed retry output 3ms
+ ✓ |agents| src/agents/harness/selection.compass.test.ts > isolates failed native assembly mutation and releases the budget on harness failure 3ms
+ ✓ |agents| src/agents/harness/selection.compass.test.ts > native harness receives budgeted COMPASS with kill=false 2ms
+ ✓ |agents| src/agents/harness/selection.compass.test.ts > native harness receives budgeted COMPASS with kill=true 1ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  02:46:25
+   Duration  14.80s (transform 10.84s, setup 280ms, import 13.86s, tests 333ms, environment 0ms)

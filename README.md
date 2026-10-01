@@ -57,6 +57,10 @@ For DCS-enabled coding turns, knowledge, recent actions, and the tool registry n
 
 COMPASS SSP and pre-reply retrieval now share this turn budget through ContextCandidate arbitration, including queued, CLI and native harness runs. The enhancement kill switch prevents their preparation; truncated retrieval groups are not counted as fully injected facts.
 
+ContextEngine message replacements share this budget in the embedded runtime and native harness SDK. Retained history is free; new or rewritten messages must fit as a complete replacement, otherwise the original history is retained. Native system additions use the same remaining allowance, and identical startup retries are not charged twice. Tool-call structures are never truncated to fit.
+
+Native plugins retain the same budget when loaded from built artifacts by a source runtime. Both sides route admission to the running attempt's original budget owner.
+
 This scope does not include Runtime Memory injection, SEKB automatic writeback, unsupervised or private-network Browser use, automatic C6/C7 cutover, Coding WAL, automatic repository merge, or multi-forge/DAG expansion. Engineering and real-process tests are available; human canary evidence and release approval are still pending. The canonical one-label component inventory is in [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview).
 
 ## Overview

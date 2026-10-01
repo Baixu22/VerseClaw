@@ -1,0 +1,785 @@
+{
+  "applied_at": "2026-09-30T14:12:38.319322Z",
+  "base_graph_hash": "e145f315ebf40e067e0003d8e2049e3b853d91d407a89e652e8e00ddd6dca98e",
+  "base_summary": {
+    "edge_count": 414,
+    "node_count": 242,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "vc-program",
+      "node": {
+        "acceptance_criteria": [
+          "首个试验契约、维护边界、预算与不可事后放宽的退出条件有可读产物",
+          "若采用路线继续，声明范围内的两个消费者、拒绝/取消/冲突/重启、源输出关联和目标平台分发均有对应证据",
+          "若任一否决门要求停止，有明确停止裁决，并在记录停止的同一提案中废止未执行的条件性节点；未执行工作不得标为完成",
+          "最终报告区分机制可行、引擎净收益、分发可用与发布授权，不从局部通过外推 GA"
+        ],
+        "assumptions": [
+          "当前已有写入与 RC-04 收据资产可评估复用，但历史 done 不代表新的插件接入已经验收",
+          "后续是否采用 VerseConf 由同一宿主契约下的对照决定，不预先承诺净收益"
+        ],
+        "confidence": 0.85,
+        "context_tags": [
+          "verseconf",
+          "structured-artifacts",
+          "exploration-only",
+          "non-ga"
+        ],
+        "desired_outcomes": [
+          "一份可执行的首个消费者契约和独立判断标准",
+          "经有限实施边界生效后，形成研究比较表从源修订到导出与恢复的闭环",
+          "只有第一消费者通过且复用有价值时才扩展幻灯片大纲",
+          "最终选择单一生产编辑引擎，或保留工程资产并停止 VerseConf 特定投入"
+        ],
+        "difficulty": "very_high",
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（设计输入，非产品验收）"
+        ],
+        "execution_hints": [
+          "本分支下一步仅执行首个试验契约任务；不要把本父节点视为第二个并行工程任务。",
+          "设计输入：docs/dev/verseconf-clawx-integration-exploration-20260930.md。任务状态只以 Task Forest 为准。",
+          "产品实现包全部为 proposed；进入实现前先完成有限实施边界决定。"
+        ],
+        "kind": "global_task",
+        "non_goals": [
+          "解除 VerseConf 独立产品线冻结、恢复 LSP/VSCode/多绑定/公共发布",
+          "重开冻结 Runtime 总目标，或修改产品锁、默认开关和权限",
+          "新通用产物平台、通用 Office 无损编辑器或全局配置安全门禁",
+          "接管当前 Context/COMPASS residual 主线、任意 shell 写入或多进程强事务"
+        ],
+        "priority": 2,
+        "progress": 0,
+        "progress_source": "manual",
+        "purpose": "把已有结构化编辑资产变成有边界、可拒绝、可恢复、可验收的 ClawX 消费能力，并允许在净收益不足时有据停止。",
+        "requirements": [
+          "本次授权仅为规划；首个 ready 工作包只产生契约、夹具定义和试验设计，不改变产品代码、配置或冻结源码",
+          "一次只推进本分支一个 ready 叶子工作包；不与既有 Context/COMPASS 收敛混合改动",
+          "沿用 runtime 权限、写入、审批和收据 owner，不增加第二套任务、权限、记忆或提交权威",
+          "实现前建立窄 Harness task spec；通信改动关联 gateway-backend-communication",
+          "所有操作与验收由脚本或 agent 完成并标注 driven_by: agent；不要求真人数据或真人 verdict"
+        ],
+        "source_sessions": [
+          "verseconf-clawx-tf-planning-20260930"
+        ],
+        "status": "in_progress",
+        "success_metrics": [
+          "越权写入、未知副作用自动重放、伪造成功或真人证据均为零容忍否决项",
+          "每个已宣称可恢复版本均有可取回快照和真实操作关联",
+          "不创建长期自动切换的双编辑引擎",
+          "规划进展不计为产品完成率；当前产品交付进度保持 0"
+        ],
+        "summary": "已开始规划，尚未实施产品接入。先定义研究比较表的最小试验，再验证受管提交、版本恢复与编辑内核，最后按证据决定是否扩展到幻灯片大纲和长期采用。",
+        "title": "结构化产物接入探索与采用评估（VerseConf × ClawX）"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vc-w0",
+      "node": {
+        "acceptance_criteria": [
+          "存在三条记录的可读夹具、两字段联合修改请求、预期源内容和独立非目标字节判据",
+          "已有 owner 复用图覆盖调用入口、插件上下文、策略、写入队列、patch 预检、journal、收据、源运行时隔离配置",
+          "readonly/deny、基线冲突、提交前取消、导出失败、提交后重启五类反例有输入、预期效果和取证方法；未执行项标记 not-run",
+          "形成工作量与输入资源上限建议、成功/停止判据；不将建议当作已经批准的付费预算",
+          "说明后续代码改动触点和 Harness 场景映射，并明确本任务没有验证产品集成"
+        ],
+        "confidence": 0.92,
+        "context_tags": [
+          "verseconf",
+          "work-package-w0",
+          "contract",
+          "planning-only"
+        ],
+        "desired_outcomes": [
+          "严格 JSON 研究表的 schema/操作/身份草案",
+          "最小真实调用试验与五类失败路径设计",
+          "有限维护边界和工程估算建议"
+        ],
+        "difficulty": "medium",
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（契约设计来源）"
+        ],
+        "execution_hints": [
+          "先核读探索方案第 5/6/11/12 节和当前 owner 源码，产出 docs/dev/verseconf-clawx-contract-v1.md；这是一份待创建的契约，不是已有证据。",
+          "夹具与试验设计放在 artifacts/verseconf-contract-v1/，标注设计/执行状态、driven_by 和 actor；禁止修改旧冻结实验。",
+          "完成后通过常规提案登记证据；不自动把实施边界决定标为已批准。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "实际接入 UI 或 wasm 消费包",
+          "修改 live 配置、默认值或冻结源码",
+          "把既有探针通过记作本轮产品通过"
+        ],
+        "priority": 3,
+        "progress": 0,
+        "purpose": "让第一个提交能力试验有足够窄的范围、明确的 owner 和独立可判定的出口，避免边做边扩平台。",
+        "requirements": [
+          "严格 JSON、单 workspace、已有记录非重叠字段批次、显式导出为首轮范围",
+          "明确 null/absent、稳定 ID、baseRevision、expect、schema owner、取消与成功分层",
+          "模型只提交目标与变更，不提供可信 run/workspace/actor 或任意路径与 schema",
+          "只编写契约、测试夹具或研究脚本，不修改产品运行路径，不启动付费模型实验"
+        ],
+        "status": "ready",
+        "success_metrics": [
+          "范围足以支撑一个最小提交 spike",
+          "没有需要真人数据或手工 verdict 的验收项"
+        ],
+        "summary": "本分支唯一 ready 叶子。先把三条记录、两字段联合修订的研究表场景写成可执行契约与反例设计，不先改产品或冻结源码。",
+        "title": "锁定研究比较表的首个试验契约与退出条件"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vc-decision",
+      "node": {
+        "acceptance_criteria": [
+          "决策产物明确允许改动的消费者、宿主接口、绑定、维护责任、预算和停止条件",
+          "任何涉及冻结例外或产品范围变化的允许决定均有明确授权依据；本次 TF 规划请求不得被登记成该授权",
+          "决定采用、收缩或停止及其依据可读；停止时必须在记录决定的同一提案中废止后续实现节点，不能留下因 decision=done 而被自动视作可启动的候选节点",
+          "没有新增真人操作或真人数据要求；只有真正的范围/冻结/金钱决定升级"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "verseconf",
+          "implementation-boundary",
+          "decision-gate"
+        ],
+        "difficulty": "medium",
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（有限维护与冻结边界说明）"
+        ],
+        "execution_hints": [
+          "在首个试验契约之后整理 docs/dev/verseconf-clawx-adoption-decision.md；该路径是未来产物，不是当前批准记录。",
+          "只有明确允许实施的决定才能使 W1 进入 ready；若决定停止，即使决策节点完成也不得机械放行后续工作。"
+        ],
+        "kind": "decision",
+        "non_goals": [
+          "全面解冻 VerseConf",
+          "发布、公开仓库、默认启用或凭据暴露授权"
+        ],
+        "priority": 3,
+        "progress": 0,
+        "purpose": "区分常规工程自主权与被冻结产品线、产品范围、付费资源的真实决策权，防止规划应用被误当全面解冻。",
+        "requirements": [
+          "由 agent 提供完整建议、范围、成本和退出条件，不要求发布者补设计、历史或验收数据",
+          "如进入冻结资产适配，只记录 ClawX 消费者所需内存 API/Node 绑定的有限例外；独立语言与分发路线继续冻结",
+          "不改变全局产品锁、默认值或现有 TF-0010/TF-0028 状态；收费实验仅在预算被明确后执行"
+        ],
+        "status": "proposed",
+        "summary": "首个契约完成后形成有证据的启动或停止决定；当前仅登记决策门，不代表已获准改动产品或 VerseConf 冻结范围。",
+        "title": "确认消费者专用的有限实施与维护边界"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vc-w1",
+      "node": {
+        "acceptance_criteria": [
+          "真实 runtime 工具装配/策略/execute 路径完成一次受管候选提交，而非测试直接调用内部写函数",
+          "只读、工具拒绝、路径逃逸、工作区切换、取消与基线冲突均产生正确拒绝及零非预期写入",
+          "提交前快照失败、写后记账前中断和重启对账分别有实际源摘要与操作状态证据",
+          "无当前执行上下文的 tools.invoke 或自定义写 RPC 不能借此获得写权限",
+          "提出继续或停止结论及真实改动半径；TS 探针不称为 VerseConf 集成完成"
+        ],
+        "confidence": 0.83,
+        "context_tags": [
+          "verseconf",
+          "work-package-w1",
+          "managed-mutation",
+          "gateway-backend-communication"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（候选提交设计）"
+        ],
+        "execution_hints": [
+          "从 openclaw_runtime/src/agents/agent-tools.ts、apply-patch-preflight.ts、plugins/tool-types.ts 和真实 run 生命周期入口核查窄 seam。",
+          "本包先验证单文件；所需协作锁与持久化最小机制须真实存在，后续 W2 再做跨入口完整化。",
+          "若必须先重构整个运行系统才能通过，保留失败证据并执行停止裁决。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "通用事务平台",
+          "完整产物 UI",
+          "绕过现有策略或修改产品锁"
+        ],
+        "priority": 3,
+        "progress": 0,
+        "purpose": "先证明宿主能够安全承接结构化修改，不把插件安装成功或库可调用误当完整集成。",
+        "requirements": [
+          "只有有限实施决定明确放行后才可执行；先建立引用 gateway-backend-communication 的窄 Harness spec",
+          "基于现有写入 owner 和 patch 预检，不公开任意工具执行后门、不从插件 deep-import 私有核心",
+          "权限绑定当前 run/session/toolCall/workspace/signal/provenance；过期句柄不可跨 run 使用",
+          "无必要恢复证据时拒绝新能力提交，不改变旧工具 fail-open 默认，不自动开启全局 journal"
+        ],
+        "status": "proposed",
+        "summary": "在当前 run 权限内完成一个单文件候选提交试验，优先验证拒绝、版本和恢复；允许用确定性 TS 候选隔离 wasm 变量。",
+        "title": "验证真实运行中的受管候选提交能力"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vc-w2",
+      "node": {
+        "acceptance_criteria": [
+          "稳定 artifact/revision 身份、单调顺序、初始与最新历史快照均可持久查询和取回",
+          "同键同内容返回既有结果、同键不同内容冲突；恢复历史内容生成新 revision，no-op 不伪造修订",
+          "同路径 edit/write/patch/结构化提交竞争、取消等待、链接路径和异常释放有行为测试，无丢更新或死锁",
+          "prepared/写后记账前/DB故障/重启三态对账实测；未知效果不自动重放或覆盖第三种内容",
+          "容量拒绝、非自动淘汰的保留语义及旧 journal 边界清楚，没有顺带重写全部历史"
+        ],
+        "confidence": 0.8,
+        "context_tags": [
+          "verseconf",
+          "work-package-w2",
+          "revision-history",
+          "recovery"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（版本/提交/恢复契约）"
+        ],
+        "execution_hints": [
+          "保持公共 seam 通用，artifact 索引只引用 mutation/history owner；新运行状态按现有 SQLite 规则落库。",
+          "记录与普通文件路径共存边界；不要让旧 Main writer 直接覆盖新的受管业务源。"
+        ],
+        "kind": "task",
+        "priority": 3,
+        "progress": 0,
+        "purpose": "避免结构化工具与现有 edit/patch 互相覆盖，以及重启后只有 hash、没有内容或误重放副作用。",
+        "requirements": [
+          "复用现有写入 owner、SQLite/Kysely 与 RC-04 关联，不建插件私有事务日志或任务数据库",
+          "普通 edit/write、patch 和新提交对同一受管路径共享协调语义；不得新增第三套独立锁",
+          "操作状态、产物 metadata、效果收据职责分离；文件与 DB 不宣称天然原子事务",
+          "不声称外部 shell/编辑器参与同一进程锁；新路径不双写第二份权威状态"
+        ],
+        "status": "proposed",
+        "summary": "将已通过的单文件机制补成源版本、真实幂等和相关写入入口协调，保证承诺可恢复的每个版本有可取回快照。",
+        "title": "补齐写入协调、持久版本与重启恢复"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vc-w3",
+      "node": {
+        "acceptance_criteria": [
+          "null/absent/空值/递归值/安全整数、重复键/ID、重叠路径与最终一次校验在固定契约下结果一致",
+          "中文、emoji、CRLF、BOM 与转义键的 UTF-8 范围有独立字节判据",
+          "worker 懒加载、输入上限、超时/取消与迟到结果废弃有行为证据，不将 worker 误称安全沙箱",
+          "锁定源码、Cargo/Node 锁、工具链与 wasm-bindgen；包有 glue/wasm/types/license/manifest 和哈希",
+          "从干净消费环境加载及调用，无用户目录依赖；不通过省略 schema 绕开 wrapper 缺陷"
+        ],
+        "confidence": 0.79,
+        "context_tags": [
+          "verseconf",
+          "work-package-w3",
+          "json-contract",
+          "node-wasm"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（内存消费面与绑定缺口）"
+        ],
+        "execution_hints": [
+          "只在有限实施决定覆盖的源码与绑定范围修改 VerseConf；原始冻结证据不重写。",
+          "接口参考探索方案第 7 节；在真实消费包声明依赖，不能跨 root/runtime workspace 偷用 workspace:* 或 NODE_PATH。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "JSONC/TOML 或完整 JSON5 承诺",
+          "公共 npm 发布",
+          "更改冻结 VCF 旧语义"
+        ],
+        "priority": 2,
+        "progress": 0,
+        "purpose": "消除旧 wrapper、JSON 值、批次和构建契约缺口，使宿主消费面可测试且不依赖开发机。",
+        "requirements": [
+          "仅纯内存、严格 JSON、宿主可信 schema；不暴露任意 schema 路径、URL 外取或磁盘写入",
+          "Rust 导出、TS 类型、真实传参、错误信封、能力描述和测试一起更新",
+          "现有五工具探针不作为通用 JSON inspect/edit 已实现的依据",
+          "按顺序开发；本规划不授权并行启动 W2/W3，也不恢复 web/native 多路线"
+        ],
+        "status": "proposed",
+        "summary": "在有限维护边界内补齐 JSON 内存读取、批次候选和检查，并交付可追溯的单一 Node wasm 包；不恢复独立产品线。",
+        "title": "交付受限 JSON 编辑内核与 Node wasm 消费包"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vc-w4",
+      "node": {
+        "acceptance_criteria": [
+          "真实 run 完成三条记录源的两字段修订与两种导出，独立读回行 ID、关键值、引用与 Markdown 转义",
+          "创建/导入不覆盖未知文件；XLSX 外部文本不自动成为公式；missing/null/空字符串映射明确",
+          "源提交成功而渲染失败、旧版输出、invalid/checker error、缺依赖状态在 UI 正确显示",
+          "工具结果、transcript、Gateway history、事件与重启查询保持同一 artifact/revision/output 引用",
+          "至少一次 Electron 真实 host-api 路径操作有证据；模拟模型、实际模型、视觉检查的证据类别分别声明"
+        ],
+        "confidence": 0.83,
+        "context_tags": [
+          "verseconf",
+          "work-package-w4",
+          "research-table",
+          "vertical-slice"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（研究表与产物投影）"
+        ],
+        "execution_hints": [
+          "以 Artifact Panel 增量实现；保留 src/lib/generated-files.ts 对真实代码 diff 的严格 journal 关联。",
+          "测试必须覆盖 source v2/output v1 的过期关系；不要以文件头或同 writer 库 round-trip 作为全部独立判据。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "复活旧 Work Mode",
+          "通用 Office 编辑器",
+          "字段修改完成就宣称记录 CRUD 完整"
+        ],
+        "priority": 2,
+        "progress": 0,
+        "purpose": "把引擎与宿主基础转成能从界面和真实 agent run 使用的业务能力，而不是仅存在测试 helper。",
+        "requirements": [
+          "业务插件负责 schema/mapper，runtime owner 负责源与输出提交；Office 渲染函数不私自选择最终落盘位置",
+          "Renderer 经 host-api/Main/Gateway；UI 变更优先进入现有 agent run，不扩展私有反向桥",
+          "业务产物 typed 引用与普通附件/代码 diff 分开，禁止伪造 patch 或索引身份",
+          "新 UI 有 Electron E2E，四语 i18n、三语 README 与新场景/规则同步"
+        ],
+        "status": "proposed",
+        "summary": "交付首条真实纵向闭环：创建/导入、按 ID 联合修订、提交、Markdown/XLSX 导出、检查与跨重启展示。",
+        "title": "贯通研究表修订、导出与产物界面"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vc-w5",
+      "node": {
+        "acceptance_criteria": [
+          "插入/删除/移动后按 ID 的修订仍指向正确记录；重复 ID/无效邻接/冲突批次整体拒绝",
+          "历史恢复生成新 revision，旧输出可追溯且迟到渲染不覆盖当前输出指针",
+          "外部改源/改输出、文件缺失、复制导入的身份与验证过期状态有实际测试",
+          "跨会话访问按 workspace 权限检查，不能凭 artifactId 全局读取；删除会话不自动删除业务产物",
+          "独立字节/语义判据覆盖声明范围；未支持操作由工具 schema 和 UI 明确拒绝或不提供"
+        ],
+        "confidence": 0.8,
+        "context_tags": [
+          "verseconf",
+          "work-package-w5",
+          "record-lifecycle"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（有界完整生命周期）"
+        ],
+        "execution_hints": [
+          "先固定记录操作与保真语义，再扩工具面；不通过放宽原字段批次反例换取通过。"
+        ],
+        "kind": "task",
+        "priority": 2,
+        "progress": 0,
+        "purpose": "消除只会修改已有字段、不能持续维护真实研究表的业务断点。",
+        "requirements": [
+          "按稳定 ID 与明确 beforeId/afterId 操作，位置不充当身份",
+          "保真承诺按操作分级；重建集合时不谎称集合内注释全部保留",
+          "外部变更先校验和协调，恢复历史内容针对当前 revision 新提交；不 force 覆盖"
+        ],
+        "status": "proposed",
+        "summary": "在最小闭环通过后增加记录插入、删除、排序、历史恢复及外部改动处理，不扩大到任意格式保真编辑。",
+        "title": "补齐记录操作、历史恢复与外部变更协调"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vc-w6",
+      "node": {
+        "acceptance_criteria": [
+          "同一宿主契约完成大纲创建、按页 ID 修改/排序、重新生成和旧版本保留",
+          "独立读回 PPTX 页数、顺序和真实文本，不用 ZIP 文件头替代内容验收",
+          "页面实际渲染后检查中文、溢出和重叠；未做视觉检查不能标为视觉通过",
+          "如果发现共享层必须全面重写，形成收缩/停止裁决，不继续无界扩展",
+          "新增消费者有针对性的 Electron 交互和失败路径证据，原研究表回归不退化"
+        ],
+        "confidence": 0.77,
+        "context_tags": [
+          "verseconf",
+          "work-package-w6",
+          "slide-outline",
+          "second-consumer"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（第二消费者边界）"
+        ],
+        "execution_hints": [
+          "复用 Office 生成算法但把落盘留给 runtime owner；复杂演示继续由既有技能/OfficeCLI 路线承担。"
+        ],
+        "kind": "task",
+        "priority": 2,
+        "progress": 0,
+        "purpose": "验证共享边界确实服务第二个业务，而不是研究表专用逻辑披着通用平台外衣。",
+        "requirements": [
+          "不得为第二消费者重建权限、提交、审批或 metadata authority",
+          "PPTX 渲染固定源快照，输出版本化；复杂模板/动画/任意文件往返不在承诺内",
+          "视觉检查由 agent 自动执行并标注，环境缺渲染器是工程缺口而非等待真人"
+        ],
+        "status": "proposed",
+        "summary": "只增加 title/body 大纲、pageId、PPTX 映射与检查，复用既有受管提交和产物版本体系。",
+        "title": "用幻灯片大纲验证第二消费者复用"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vc-w7",
+      "node": {
+        "acceptance_criteria": [
+          "干净安装和目标平台 Electron 包内真实调用有构建/源码/wasm 指纹；未测平台明确不声明支持",
+          "source runtime 隔离配置、无 channel 安装、显式禁用/撤销、SDK不兼容与依赖缺失均有行为证据",
+          "schema 升级/未知版本、禁用/卸载、容量到顶与备份恢复不丢用户源或唯一历史",
+          "对照保留失败/拒绝/超时分母，报告任务正确率、误改/误拒、恢复轮次、冷/热延迟、RSS、包体与维护成本",
+          "形成单引擎采用、收缩或停止裁决；不得从工程通过推出发布/default-on/GA 授权"
+        ],
+        "confidence": 0.78,
+        "context_tags": [
+          "verseconf",
+          "work-package-w7",
+          "packaging",
+          "adoption-verdict"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（分发与工程对照）"
+        ],
+        "execution_hints": [
+          "小型包完整性 smoke 要在 W3/W4 前移，本包负责完整分发与采用裁决；不要最后才检查 wasm 是否随包。",
+          "停止时保留用户源/输出，并通过单独 proposal 处理未执行范围；不得把未执行内容标为 done。"
+        ],
+        "kind": "task",
+        "priority": 2,
+        "progress": 0,
+        "purpose": "防止只在开发机可用，或把宿主 UI/恢复能力的收益错误归因给 wasm 内核。",
+        "requirements": [
+          "固定源码/依赖/构建输入和目标平台，不依赖用户目录、旧 node_modules 或绝对开发路径",
+          "区分包可发现、插件可加载、契约兼容、当前 runtime 支持、当前 run 有权和 renderer 可用",
+          "缺包/错版/不支持 runtime 明确 unavailable，不自动改走 native/MCP/shell 或第二生产引擎",
+          "相同契约、schema、操作集、数据与独立 oracle 对照；付费模型实验须有明确有限预算"
+        ],
+        "status": "proposed",
+        "summary": "验证实际 source runtime 的安装、启用、依赖、包内执行和数据保留；在同一宿主契约下比较 TS 与 VerseConf，形成采用或停止结论。",
+        "title": "验证干净分发与升级，并裁定长期采用"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "reason": "首个消费者契约是探索入口"
+      },
+      "from": "vc-w0",
+      "to": "vc-program",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "reason": "有限维护决定属于本探索，不复活旧冻结主线"
+      },
+      "from": "vc-decision",
+      "to": "vc-program",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "reason": "先验证真实受管提交"
+      },
+      "from": "vc-w1",
+      "to": "vc-program",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "reason": "补齐版本与恢复基础"
+      },
+      "from": "vc-w2",
+      "to": "vc-program",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "reason": "交付选定的编辑内核消费面"
+      },
+      "from": "vc-w3",
+      "to": "vc-program",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "reason": "形成第一消费者的纵向闭环"
+      },
+      "from": "vc-w4",
+      "to": "vc-program",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "reason": "补齐声明范围的持续维护能力"
+      },
+      "from": "vc-w5",
+      "to": "vc-program",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "reason": "以第二消费者检验复用"
+      },
+      "from": "vc-w6",
+      "to": "vc-program",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "reason": "完成分发验证和采用裁决"
+      },
+      "from": "vc-w7",
+      "to": "vc-program",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "reason": "先有契约、成本和退出条件才能形成有限实施决定"
+      },
+      "from": "vc-decision",
+      "to": "vc-w0",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "reason": "只有明确允许实施的决定才放行；停止决定不得机械满足放行条件"
+      },
+      "from": "vc-w1",
+      "to": "vc-decision",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "reason": "单文件真实提交与拒绝机制先证明可行"
+      },
+      "from": "vc-w2",
+      "to": "vc-w1",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "reason": "本初稿按单包串行执行，先固定宿主版本/恢复契约再适配冻结资产"
+      },
+      "from": "vc-w3",
+      "to": "vc-w2",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "reason": "完整业务闭环需要持久版本和恢复基础"
+      },
+      "from": "vc-w4",
+      "to": "vc-w2",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "reason": "真实 VerseConf 消费包与宿主契约均通过后才形成集成闭环"
+      },
+      "from": "vc-w4",
+      "to": "vc-w3",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "reason": "先验证已有字段修订再扩记录操作"
+      },
+      "from": "vc-w5",
+      "to": "vc-w4",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "reason": "第一消费者完整且可恢复才扩第二消费者"
+      },
+      "from": "vc-w6",
+      "to": "vc-w5",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "reason": "按两个消费者的实际完成范围做完整分发与采用判断"
+      },
+      "from": "vc-w7",
+      "to": "vc-w6",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "reason": "复用已有 Coding 写入一致性与恢复资产；不重新打开旧节点，不继承新场景未做的验收"
+      },
+      "from": "vc-w1",
+      "to": "TF-0015",
+      "type": "related_to"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "reason": "沿用 RC-04 审批/效果关联边界，不建立第二权威，也不以旧 done 代替新验收"
+      },
+      "from": "vc-w2",
+      "to": "TF-0032",
+      "type": "related_to"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "reason": "核对现有 File Patch Preview/Journal Bridge 的复用边界，不接管 VerseShell 发布或写入 authority"
+      },
+      "from": "vc-w1",
+      "to": "TF-0067",
+      "type": "related_to"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "display_order": 10
+      },
+      "id": "vc-w0"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "display_order": 20
+      },
+      "id": "vc-decision"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "display_order": 30
+      },
+      "id": "vc-w1"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "display_order": 40
+      },
+      "id": "vc-w2"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "display_order": 50
+      },
+      "id": "vc-w3"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "display_order": 60
+      },
+      "id": "vc-w4"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "display_order": 70
+      },
+      "id": "vc-w5"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "display_order": 80
+      },
+      "id": "vc-w6"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "display_order": 90
+      },
+      "id": "vc-w7"
+    },
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "比较挂到冻结 Runtime 总目标、重开已完成 VerseShell/UI 总目标、以及建立独立有界探索分支三种归属。",
+        "confidence": 0.94,
+        "created_at": "2026-09-30T14:12:37.913216Z",
+        "id": "TFA-verseconf-clawx-plan-20260930",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.94,
+          "user_goal": "先建立有边界、可顺序推进的接入任务规划。",
+          "validation_plan": [
+            "检查只新增本分支，既有节点字段/状态不变",
+            "确认本分支只有一个 ready 叶子，后续节点依赖完整",
+            "运行当前活动 skill 的 validate/export，检查 HTML 未开始工作计数"
+          ],
+          "why_not_enough": "任务图和设计文档不是实施授权、实际功能或验收通过；新接口和分发还需真实代码与证据。",
+          "why_this_task": "完整保留两个消费者和分发/采用裁决路线，同时将当前可启动动作限制在契约与试验设计。"
+        },
+        "reason": "现有 242 节点无同义消费者分支；需要复用旧写入/收据资产但不改变旧节点状态或全局默认值。",
+        "rejected_options": [
+          "挂到 TF-0010/TF-0028 会混淆 D7 冻结和新消费者范围",
+          "重开 TF-0056/TF-0021 会改写旧已完成主线",
+          "直接将 W1-W7 设 ready 会把规划误当实施授权"
+        ],
+        "related_task_ids": [
+          "TF-0243"
+        ],
+        "selected_option": "独立的有界探索与采用评估分支；只放行首个契约任务，后续条件性规划。",
+        "user_goal": "先把 VerseConf × ClawX 接入方案落为初步 Task Forest 规划，不直接开始产品实现。"
+      }
+    }
+  ],
+  "created_at": "2026-09-30T14:12:37.867039Z",
+  "proposal_id": "TFP-verseconf-clawx-exploration-plan-20260930",
+  "rationale": "用户在核读 ClawX 侧接入探索方案后要求先开始 TF 规划。本提案只登记独立的探索与采用评估分支、首个 ready 契约任务和后续条件性工作包；不启动产品改造、不解除 VerseConf 独立产品线冻结、不重开 TF-0010/TF-0028 或已完成的旧主线。依据仓库 AGENTS.md 与 TF-0242 的常规 proposal 自主应用规则执行；没有节点在本提案中被标记 done。",
+  "session_id": "verseconf-clawx-tf-planning-20260930",
+  "status": "applied"
+}

@@ -57,6 +57,10 @@ Product capability statements must be checked against the canonical matrix in `s
 
 COMPASS SSP 与回复前检索也通过 ContextCandidate 仲裁共享该 turn 预算，覆盖排队续跑、CLI 与原生 harness 路径。增强 kill switch 会阻止其准备；被截断的检索组不会计为完整注入的事实。
 
+embedded runtime 与原生 harness SDK 的 ContextEngine 消息替换共享该预算。原样保留的历史不重复收费；新增或改写消息必须整组放入剩余预算，否则保留原历史，不截断工具调用结构。原生 system addition 使用同一剩余额度，相同启动重试不重复收费。
+
+源码 runtime 加载已构建的原生插件时也保持同一预算，两侧均交由当前 attempt 原有的预算所有者执行准入。
+
 本范围不包含 Runtime Memory 注入、SEKB 自动写回、Browser 无监督或私网访问、C6/C7 自动切换、Coding WAL、生产仓库自动合并及多 Forge/DAG 扩围。当前只有工程与真实进程测试证据，真人 canary 与发布审批仍未完成。组件唯一标注见 [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview)。
 
 ## 概述

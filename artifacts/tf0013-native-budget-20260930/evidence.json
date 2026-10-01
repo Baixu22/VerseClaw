@@ -1,0 +1,26 @@
+{
+  "actor": "codex/root",
+  "driven_by": "agent",
+  "scope": "development-only",
+  "head": "48387ee04a9b082dc552ea461985224ba77faab3",
+  "dirty": true,
+  "testsPassed": {
+    "native-sdk": 9,
+    "embedded-regression": 48,
+    "candidate-regression": 115,
+    "entry-scan": 6
+  },
+  "totalTestsPassed": 178,
+  "finalGatesPassed": 13,
+  "codexDependency": {
+    "tag": "rust-v0.137.0",
+    "commit": "f221438b691b8f749d98f22077c93ebe01923fbe"
+  },
+  "limitations": [
+    "Unscoped Harness validate exit 1: three pre-existing untracked Windows cache files; scoped diff-aware run excludes only %SystemDrive%/.",
+    "One embedded regression run was terminated at the unchanged 120-second no-output limit; saved log and report retained. Final rerun uses verbose reporter.",
+    "check-landing exit 1, 183 repository-wide historical findings against origin/main after git fetch.",
+    "No external native app-server/provider, Electron, packaged build, fresh RC acceptance, or publication.",
+    "Existing shared dirty changes and this development increment remain uncommitted; TF-0013 is not closed."
+  ]
+}

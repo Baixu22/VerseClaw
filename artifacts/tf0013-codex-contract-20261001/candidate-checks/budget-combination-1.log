@@ -1,0 +1,123 @@
+
+ RUN  v4.1.7 C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/openclaw_runtime
+
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Assembler > 使用共享谓词窄化 main session 81ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Assembler > 按 session 类型选择 main 的 legacy handler 1ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Assembler > 按 session 类型选择 agent:alpha:main 的 legacy handler 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Assembler > 按 session 类型选择 subagent:child 的 legacy handler 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Assembler > 按 session 类型选择 agent:alpha:subagent:child:turn:2 的 legacy handler 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Assembler > 按 session 类型选择 acp:worker 的 legacy handler 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Assembler > 按 session 类型选择 agent:alpha:acp:worker 的 legacy handler 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Assembler > 按 session 类型选择 agent:alpha:cron:job:run:run-id 的 legacy handler 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Assembler > 按 session 类型选择 agent:alpha:discord:channel:123 的 legacy handler 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Assembler > 两个 feature flag 默认 false，并保持 identity pass-through 2ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Assembler > 同时满足 session、flag、input 时才调用对应 builder 2ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Assembler > flag 开启但 input 缺失时不调用也不报错 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Assembler > working_memory flag 开启后只读 BlockStore 并注入 Recent Actions 1ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS v1.6.1 addendum 1: unique kebab/snake flag mapping > maps each canonical source system to exactly one assembler flag key 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS v1.6.1 addendum 1: unique kebab/snake flag mapping > covers every default flag key exactly once 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS v1.6.1 addendum 2: exactly-once working-memory injection > records dual-injection observability chars and suppressions 1ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS v1.6.1 addendum 2: exactly-once working-memory injection > keeps exactly one Recent Actions heading when both injection points assemble 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS v1.6.1 addendum 2: exactly-once working-memory injection > injects zero headings when the window is empty at both points 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 3: tool_registry Assembler injection > flag off: no query, no injection, identity pass-through 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 3: tool_registry Assembler injection > flag on: queries BlockStore and injects ## Tools heading 1ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 3: tool_registry Assembler injection > exactly-once: does not duplicate ## Tools heading 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 3: tool_registry Assembler injection > empty BlockStore: no injection 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 3: tool_registry Assembler injection > cvk maps to runtime.contextBlock.tool_registry.enabled 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 4: knowledge Assembler injection > compass flag off: no query, no injection, identity pass-through 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 4: knowledge Assembler injection > compass flag on (main session): queries BlockStore and injects ## Knowledge 1ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 4: knowledge Assembler injection > ANTI-3: compass flag on but subagent session — queries role-memory, not compass 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 4: knowledge Assembler injection > role_memory flag on (subagent session): queries BlockStore and injects ## Knowledge 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 4: knowledge Assembler injection > ANTI-3: role_memory flag on but main session — queries compass, not role-memory 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 4: knowledge Assembler injection > exactly-once: does not duplicate ## Knowledge heading 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 4: knowledge Assembler injection > empty BlockStore: no injection 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 4: knowledge Assembler injection > addendum 4: config-aware mainKey routes custom mainKey to compass 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 4: knowledge Assembler injection > compass maps to runtime.contextBlock.compass.enabled 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 4: knowledge Assembler injection > role-memory maps to runtime.contextBlock.role_memory.enabled 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 4: knowledge Assembler injection > addendum 6: KNOWLEDGE_INJECTION_CHAR_BUDGET is declared 0ms
+ ✓ |unit| src/context-engine/assembler.test.ts > DCS Stage 4: knowledge Assembler injection > compass flag on + sink: produces knowledge Block from PreReplyInjection 1ms
+ ✓ |unit| src/context-engine/assembler.test.ts > FP-P2-06 DCS turn-ledger attribution > charges all three real projections and independently balances appended characters 2ms
+ ✓ |unit| src/context-engine/assembler.test.ts > FP-P2-06 DCS turn-ledger attribution > deferred production mode collects all channels before the first budget charge 3ms
+ ✓ |unit| src/context-engine/assembler.test.ts > FP-P2-06 DCS turn-ledger attribution > deferred killed mode performs zero BlockStore queries and records explicit kill lineage 1ms
+ ✓ |unit| src/context-engine/assembler.test.ts > FP-P2-06 DCS turn-ledger attribution > preserves knowledge, truncates working memory, then drops tool registry 2ms
+ ✓ |unit| src/context-engine/assembler.test.ts > FP-P2-06 DCS turn-ledger attribution > does not invent charges for empty blocks, disabled flags, or a killed turn 2ms
+ ✓ |unit| src/context-engine/assembler.test.ts > FP-P2-06 DCS turn-ledger attribution > keeps the legacy private 2000-character budget when turnId is absent 0ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P0-05 precedence > orders correctness-bearing context before enrichment 0ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P0-05 precedence > declares a total order with no duplicates 0ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P0-05 shared budget > all sources in one turn share a single budget instance 1ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P0-05 shared budget > keeps separate turns on separate accounts 1ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P0-05 shared budget > accounting sums: applied + dropped + truncated-loss == requested 2ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P0-05 shared budget > degrades later-precedence sources first and the order is reproducible 3ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P0-05 shared budget > protects later-charging DCS capacity from an earlier CVK charge without fake entries 2ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P0-05 shared budget > distinguishes drop / truncate / skip in observation 2ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P0-05 shared budget > treats an empty/absent injection as skip, not as a drop 1ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P0-05 shared budget > kill switch zeroes the books: total 0, nothing applied, every entry skip 1ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P0-05 shared budget > raises the drop alert only past the declared ratio 2ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P0-05 shared budget > does not eliminate degradation by enlarging the total (accounting stays honest) 1ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P0-05 shared budget > end frees the ledger so turns cannot leak into each other 1ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P2-04 config overrides > defaults to the FP-P0-05 starting-line values 1ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P2-04 config overrides > setTurnInjectionBudgetConfig overrides the effective total 0ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P2-04 config overrides > setTurnInjectionBudgetConfig overrides the effective drop alert ratio 1ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P2-04 config overrides > resetTurnInjectionBudgetsForTests restores the FP-P0-05 defaults 1ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P2-04 config overrides > reads runtime.contextBlock.injectionBudget.* from the on-disk config 2ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P2-04 config overrides > an explicit setTurnInjectionBudgetConfig wins over the file override 1ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > FP-P2-04 config overrides > a missing or corrupt config falls back to the FP-P0-05 defaults 1ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > B-1 channel policy > declares a policy for every precedence channel 0ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > B-1 channel policy > keeps policy priority ordered the same way as precedence 0ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > B-1 channel policy > decays only when a finite half-life is configured 1ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > B-1 channel policy > decayFactorFor follows the exponential half-life curve 2ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > B-1 channel policy > a decaying channel gives budget back to fresher context as turns advance 1ms
+ ✓ |unit| src/context-engine/turn-injection-budget.test.ts > B-1 channel policy > records priority and decayFactor on charged entries for audit 1ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > is a no-op when the RC-03 flag is off (legacy path byte-identical) 82ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > flag-off matrix: zero injection, preserves base prompt bytes 1ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > memory-only canary injects Memory Context 1ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > keeps the selected runtime-memory provider in deferred lineage 2ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > does not scope memory to an ephemeral runId, but preserves an explicit stable taskId 0ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > vtoken-only canary injects Working Context 1ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > both flags on compose memory then vtoken 0ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > kill switch cuts both stages fail-closed 0ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > records lineage for diagnostics (session/run/sources/budget) 0ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > defers both stages, then projects declared precedence instead of lifecycle order 2ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > does not query lazy VToken memory inputs while its flag is off 1ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > nativeMemory=true negotiates memory and vtoken flag-off before provider queries 1ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > nativeContextGating=true closes both channels and keeps the provenance receipt 1ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > reads native capability declarations from cfg.capabilities when input omits them 1ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > nativeContextGating=true gates BlockStore candidates at finalize and keeps the receipt 1ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > absent native capability declarations keep the current enabled behavior 0ms
+ ✓ |unit| src/context-engine/context-orchestrator.test.ts > computeContextExtraSystemPrompt > does not construct Memory providers or query VToken when the kill switch is on 0ms
+ ✓ |unit| src/context-engine/context-orchestrator.compass.test.ts > deduplicates COMPASS before charging alongside every existing injection channel 4ms
+ ✓ |unit| src/context-engine/context-orchestrator.compass.test.ts > kill prevents preparation queries and projection of queued candidates 1ms
+ ✓ |unit| src/context-engine/context-orchestrator.compass.test.ts > off prevents preparation queries and projection of queued candidates 1ms
+ ✓ |unit| src/context-engine/context-orchestrator.compass.test.ts > does not claim complete facts when retrieval is truncated 2ms
+ ✓ |unit| src/context-engine/context-orchestrator.compass.test.ts > CLI uses the same budget and releases its collection before returning 1ms
+ ✓ |unit| src/context-engine/context-orchestrator.compass.test.ts > seal attribution counts projected bytes once and retains them after a collection reopens 0ms
+ ✓ |unit| src/context-engine/context-orchestrator.compass.test.ts > arbitrates oversized COMPASS output instead of forwarding it outside the turn budget 1ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > runs through finalizeContextOrchestratorTurn and persists a ContextReceipt/v1 when enabled 56ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > is killed (no seal, no receipt) when the enhancement kill switch is engaged 48ms
+ ✓ |unit| src/context-engine/context-candidate.test.ts > ContextCandidate/v1 > exempts exact historical copies once, but charges rewritten or duplicated messages 1ms
+ ✓ |unit| src/context-engine/context-candidate.test.ts > ContextCandidate/v1 > accepts structured replacements atomically after higher precedence (exhausted=false) 1ms
+ ✓ |unit| src/context-engine/context-candidate.test.ts > ContextCandidate/v1 > accepts structured replacements atomically after higher precedence (exhausted=true) 1ms
+ ✓ |unit| src/context-engine/context-candidate.test.ts > ContextCandidate/v1 > does not charge a replacement after the original history was repaired 0ms
+ ✓ |unit| src/context-engine/context-candidate.test.ts > ContextCandidate/v1 > uses authority identity for dedup and projection identity for candidate lineage 1ms
+ ✓ |unit| src/context-engine/context-candidate.test.ts > ContextCandidate/v1 > sorts every source by declared precedence independent of collection order 2ms
+ ✓ |unit| src/context-engine/context-candidate.test.ts > ContextCandidate/v1 > drops duplicate authority objects before charging the one turn ledger 1ms
+ ✓ |unit| src/context-engine/context-candidate.test.ts > ContextCandidate/v1 > records truncate, drop, empty, flag-off, and kill-switch decisions explicitly 1ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > enforces zero-bypass: all registered pre-seal producers are present 51ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > RC-03R: a normal agent turn seals from real source-runtime config without test parameters 51ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > RC-03R: the seal stays off when the config says off and no env override exists 46ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > RC-03R: the enhancement kill switch restores the legacy path byte-for-byte 47ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > RC-03R: records real producer execution, not blanket applied 49ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > RC-03R/F-02: appliedProducerIdsFromLineage resolves real assembler source ids, not only shorthands 2ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > R3-1: runtime-memory provider id survives ContextReceipt selection refs 51ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > RC-03R/F-02: the persisted ContextReceipt budget is the real char summary, not silently omitted 49ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > RC-03R: receipt write failure lands in the census diagnostics and fails acceptance 3ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > RC-03R: resolveRc03SealState honors env, config, and the kill switch 1ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > RC-03R: guarded wire boundary persists WireReceipt/v1 bound to the sealed plan and final body digest 3651ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > RC-03R: a system prompt changed after the seal is an unknown semantic mutation in the census 57ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > RC-03R: ContextEngine message replacement is applied only on the attempt that replaced 53ms
+ ✓ |unit| src/context-engine/rc03-seal-wiring.test.ts > RC-03 production wiring (seal hook at the pre-seal convergence point) > RC-03R: system-prompt contributions are attributed only while the seal is on 51ms
+
+ Test Files  6 passed (6)
+      Tests  115 passed (115)
+   Start at  02:48:48
+   Duration  6.08s (transform 4.52s, setup 542ms, import 2.35s, tests 4.52s, environment 1ms)

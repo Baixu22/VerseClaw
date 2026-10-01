@@ -993,7 +993,7 @@
     "assumptions": [
       "现有 TF-0002 保留历史 done，本任务只闭合 residual"
     ],
-    "confidence": 0.98,
+    "confidence": 0.99,
     "context_tags": [],
     "created_at": "2026-07-27T13:16:29.659095Z",
     "deprecated_at": null,
@@ -1017,24 +1017,51 @@
       "docs/dev/tf0013-compass-budget-20260930.md",
       "artifacts/tf0013-compass-budget-20260930/verification.json",
       "artifacts/tf0013-compass-budget-20260930/autoreview.json",
-      "artifacts/tf0013-compass-budget-20260930/source-hashes.json"
+      "artifacts/tf0013-compass-budget-20260930/source-hashes.json",
+      "docs/dev/tf0013-message-budget-20260930.md",
+      "artifacts/tf0013-message-budget-20260930/verification.json",
+      "artifacts/tf0013-message-budget-20260930/autoreview.json",
+      "artifacts/tf0013-message-budget-20260930/source-hashes.json",
+      "docs/dev/tf0013-native-budget-20260930.md",
+      "artifacts/tf0013-native-budget-20260930/evidence.json",
+      "artifacts/tf0013-native-budget-20260930/verification.json",
+      "artifacts/tf0013-native-budget-20260930/source-hashes.json",
+      "artifacts/tf0013-native-budget-20260930/review.json",
+      "docs/dev/tf0013-native-wire-20261001.md",
+      "artifacts/tf0013-native-wire-20260930/evidence.json",
+      "artifacts/tf0013-native-wire-20260930/verification.json",
+      "artifacts/tf0013-native-wire-20260930/native-report.json",
+      "artifacts/tf0013-native-wire-20260930/rpc.jsonl",
+      "artifacts/tf0013-native-wire-20260930/source-hashes.json",
+      "artifacts/tf0013-native-wire-20260930/autoreview.json",
+      "artifacts/tf0013-native-wire-20260930/autoreview-plugin.json",
+      "artifacts/tf0013-native-wire-20260930/plugin-types-baseline.json",
+      "docs/dev/tf0013-authority-closeout-20261001.md",
+      "artifacts/tf0013-codex-contract-20261001/acceptance.json",
+      "artifacts/tf0013-codex-contract-20261001/candidate-verification.json",
+      "artifacts/tf0013-codex-contract-20261001/source-hashes.json",
+      "artifacts/tf0013-codex-contract-20261001/autoreview.json",
+      "artifacts/tf0013-codex-contract-20261001/candidate-native/rpc.jsonl",
+      "artifacts/tf0013-codex-contract-20261001/candidate-native/provider-requests.json",
+      "artifacts/tf0013-codex-contract-20261001/SHA256SUMS"
     ],
     "execution_hints": [
       "Context Orchestrator 是最终 selection、dedup、budget、projection 与 lineage authority；禁止恢复私有生产预算或调用顺序优先级",
       "无 turnId 私有预算只保留兼容路径，不得重新接入 attempt 或 compaction 生产入口",
       "三个产品锁、C1 keep-off、TF-0006 blocked、Runtime Memory diagnostics-only 与 SEKB 零自动写回保持不变",
-      "COMPASS 预算增量已开发验证；下一项核验 ContextEngine messages replacement 的预算/历史语义。整节点收口仍要求当前候选证据，不得把局部开发测试升级为正式 RC 验收。"
+      "原生分发/公开 SDK 共享预算开发验证已完成；fixture 不等于外部 app-server 或正式 RC 证据。不得以真人 verdict/数据为前置。",
+      "2026-10-01 已完成真实 Codex app-server、本地 scripted provider 的预算和 bootstrap/stale resume 验证；actor=codex/root、driven_by=agent。历史 fixture 局限由本增量补充，不代表付费模型质量、全新安装包或 RC 验收。"
     ],
     "id": "TF-0013",
     "kind": "task",
-    "next_action": "沿 ContextEngine assemble().messages replacement 区分历史消息与新增注入，检查新增内容是否经过唯一候选仲裁/总预算，补可执行反例；使用 UAS-02 Harness spec。COMPASS 增量见 docs/dev/tf0013-compass-budget-20260930.md；不解除 TF-0010/TF-0028 冻结。",
+    "next_action": "本节点已按证据自动收口；继续用户全部剩余节点目标，核对TF-0010/TF-0028与既有RC归档，再推进其余就绪节点。产品默认值、D7范围裁决与发布权限保持独立。",
     "non_goals": [
       "learned context manager",
       "自动 Memory 写回"
     ],
     "priority": 1,
-    "progress": 60.0,
-    "progress_source": "post-audit-reassessment",
+    "progress": 100.0,
+    "progress_source": "manual",
     "purpose": "消除动态 Assembler 私有预算、调用顺序冒充优先级和跨 provider 重复投影。",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
@@ -1044,15 +1071,15 @@
       "P0 去重使用 authority object identity/version/content digest，不引入模型语义去重"
     ],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [
       "私有 context budget 0",
       "重复 authority object 注入 0",
       "声明和实际优先级偏差 0"
     ],
-    "summary": "COMPASS SSP/retrieval 已接入现有 knowledge 候选仲裁与 turn ledger，即时/排队/CLI/原生 harness 路径补齐；生产 wire 检查绑定裁剪后文本与双收据，收据避免重复计数。当前是工作树开发验证，未完成 TF-0013 全 residual 的当前候选验收；ContextEngine messages replacement 的新增注入预算边界仍需核验。",
+    "summary": "UAS-02 residual已完成干净候选验收：统一候选仲裁/预算覆盖embedded、COMPASS与原生SDK；跨模块共享owner、bootstrap恢复、诊断契约已修复。18门通过、233测试、7次真实native请求；Agent Dev证据刷新87单测/4 Electron通过。非新的全量RC、发布或GA。",
     "title": "UAS-02 Context Orchestrator residual 收口",
-    "updated_at": "2026-09-30T12:16:36.830856Z"
+    "updated_at": "2026-10-01T06:07:17.540316Z"
   },
   "TF-0014": {
     "acceptance_criteria": [
@@ -16395,5 +16422,669 @@
     "summary": "用户 2026-09-22 裁定：这个仓库里 agent 是主线开发者（选方案、写代码、产证据、对正确性负责），用户是发布者（审查已完成且有证据的结果，决定是否发布或展示），不是逐节点答案的来源。由此两条硬约束：(1) 任何节点的 requirements / acceptance_criteria / 接力提示都不得要求用户回答设计、历史或贡献问题；这类事实从提交、diff、任务图历史与偏差账本重建并注明出处，只在用户脑子里存在的事就写成限制而不是阻塞。(2) 收口门从「人工确认」改为「证据门」：某节点每条验收判据都被直读磁盘核对通过、证据链完整、提案 base_graph_hash 未漂移、结论自洽时，agent 直接 proposal-save + proposal-apply --yes，随后 validate、export，并把状态与证据同批入库，不再等待用户确认。该覆盖对本仓库显式生效，覆盖 task-forest skill 的默认「apply 前等用户确认」，并在偏差账本登记（TFD-autoclose-policy-override-0922）。只有六类外部授权才停下询问用户：对外发布或公开仓库/产物、凭证轮换或新暴露、不可逆 git 操作、改动冻结的产品锁或默认值、声明真人证据、改动范围；向既有私有远端 push 提交或 tag 属于正常开发流程，不属于发布。自动收口是对证据的门，不是对自信的门：证据缺失、过期或互相矛盾的节点保持未完成并写明缺口。落地物：规则 harness/specs/rules/task-forest-autoclose-and-roles.md（R1–R6）、任务规格 harness/specs/tasks/task-forest-autoclose-policy.md、AGENTS.md 的 Task Forest closure policy 段、方向文档 §6/§7。",
     "title": "D8 决策：接力角色固定为「agent 主线开发 / 用户发布者」；证据链完整即自动收口，取消 apply 前的人工确认门",
     "updated_at": "2026-09-22T12:37:56.093172Z"
+  },
+  "TF-0243": {
+    "acceptance_criteria": [
+      "首个试验契约、维护边界、预算与不可事后放宽的退出条件有可读产物",
+      "若采用路线继续，声明范围内的两个消费者、拒绝/取消/冲突/重启、源输出关联和目标平台分发均有对应证据",
+      "若任一否决门要求停止，有明确停止裁决，并在记录停止的同一提案中废止未执行的条件性节点；未执行工作不得标为完成",
+      "最终报告区分机制可行、引擎净收益、分发可用与发布授权，不从局部通过外推 GA"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "先建立有边界、可顺序推进的接入任务规划。",
+      "validation_plan": [
+        "检查只新增本分支，既有节点字段/状态不变",
+        "确认本分支只有一个 ready 叶子，后续节点依赖完整",
+        "运行当前活动 skill 的 validate/export，检查 HTML 未开始工作计数"
+      ],
+      "why_not_enough": "任务图和设计文档不是实施授权、实际功能或验收通过；新接口和分发还需真实代码与证据。",
+      "why_this_task": "完整保留两个消费者和分发/采用裁决路线，同时将当前可启动动作限制在契约与试验设计。"
+    },
+    "alignment_records": [
+      "TFA-verseconf-clawx-plan-20260930"
+    ],
+    "assumptions": [
+      "当前已有写入与 RC-04 收据资产可评估复用，但历史 done 不代表新的插件接入已经验收",
+      "后续是否采用 VerseConf 由同一宿主契约下的对照决定，不预先承诺净收益"
+    ],
+    "confidence": 0.85,
+    "context_tags": [
+      "verseconf",
+      "structured-artifacts",
+      "exploration-only",
+      "non-ga"
+    ],
+    "created_at": "2026-09-30T14:12:38.154842Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "一份可执行的首个消费者契约和独立判断标准",
+      "经有限实施边界生效后，形成研究比较表从源修订到导出与恢复的闭环",
+      "只有第一消费者通过且复用有价值时才扩展幻灯片大纲",
+      "最终选择单一生产编辑引擎，或保留工程资产并停止 VerseConf 特定投入"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseconf-clawx-integration-exploration-20260930.md（设计输入，非产品验收）"
+    ],
+    "execution_hints": [
+      "本分支下一步仅执行首个试验契约任务；不要把本父节点视为第二个并行工程任务。",
+      "设计输入：docs/dev/verseconf-clawx-integration-exploration-20260930.md。任务状态只以 Task Forest 为准。",
+      "产品实现包全部为 proposed；进入实现前先完成有限实施边界决定。"
+    ],
+    "id": "TF-0243",
+    "kind": "global_task",
+    "non_goals": [
+      "解除 VerseConf 独立产品线冻结、恢复 LSP/VSCode/多绑定/公共发布",
+      "重开冻结 Runtime 总目标，或修改产品锁、默认开关和权限",
+      "新通用产物平台、通用 Office 无损编辑器或全局配置安全门禁",
+      "接管当前 Context/COMPASS residual 主线、任意 shell 写入或多进程强事务"
+    ],
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "把已有结构化编辑资产变成有边界、可拒绝、可恢复、可验收的 ClawX 消费能力，并允许在净收益不足时有据停止。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "本次授权仅为规划；首个 ready 工作包只产生契约、夹具定义和试验设计，不改变产品代码、配置或冻结源码",
+      "一次只推进本分支一个 ready 叶子工作包；不与既有 Context/COMPASS 收敛混合改动",
+      "沿用 runtime 权限、写入、审批和收据 owner，不增加第二套任务、权限、记忆或提交权威",
+      "实现前建立窄 Harness task spec；通信改动关联 gateway-backend-communication",
+      "所有操作与验收由脚本或 agent 完成并标注 driven_by: agent；不要求真人数据或真人 verdict"
+    ],
+    "source_sessions": [
+      "verseconf-clawx-tf-planning-20260930"
+    ],
+    "status": "in_progress",
+    "success_metrics": [
+      "越权写入、未知副作用自动重放、伪造成功或真人证据均为零容忍否决项",
+      "每个已宣称可恢复版本均有可取回快照和真实操作关联",
+      "不创建长期自动切换的双编辑引擎",
+      "规划进展不计为产品完成率；当前产品交付进度保持 0"
+    ],
+    "summary": "已开始规划，尚未实施产品接入。先定义研究比较表的最小试验，再验证受管提交、版本恢复与编辑内核，最后按证据决定是否扩展到幻灯片大纲和长期采用。",
+    "title": "结构化产物接入探索与采用评估（VerseConf × ClawX）",
+    "updated_at": "2026-09-30T14:12:38.188307Z"
+  },
+  "TF-0244": {
+    "acceptance_criteria": [
+      "存在三条记录的可读夹具、两字段联合修改请求、预期源内容和独立非目标字节判据",
+      "已有 owner 复用图覆盖调用入口、插件上下文、策略、写入队列、patch 预检、journal、收据、源运行时隔离配置",
+      "readonly/deny、基线冲突、提交前取消、导出失败、提交后重启五类反例有输入、预期效果和取证方法；未执行项标记 not-run",
+      "形成工作量与输入资源上限建议、成功/停止判据；不将建议当作已经批准的付费预算",
+      "说明后续代码改动触点和 Harness 场景映射，并明确本任务没有验证产品集成"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "推进 TF-0244，交付首个研究表试验契约与可核验夹具，不开始产品接入。",
+      "validation_plan": [
+        "标准 JSON Schema 与夹具/请求自检",
+        "独立语义与非目标字节判据的反例测试",
+        "五类真实运行试验设计均标注未执行",
+        "核对源码 owner 哈希与 Harness 触点",
+        "磁盘证据核读与 Task Forest 校验"
+      ],
+      "why_not_enough": "离线契约自检不证明当前 runtime 已具备受管提交接口，也不代替干净候选或正式集成验收。",
+      "why_this_task": "在产品实现前锁定宿主权限、版本、失败效果和独立判据，减少后续适配范围漂移。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.92,
+    "context_tags": [
+      "verseconf",
+      "work-package-w0",
+      "contract",
+      "planning-only"
+    ],
+    "created_at": "2026-09-30T14:12:38.155840Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "严格 JSON 研究表的 schema/操作/身份草案",
+      "最小真实调用试验与五类失败路径设计",
+      "有限维护边界和工程估算建议"
+    ],
+    "deviations": [],
+    "difficulty": "medium",
+    "display_order": 10,
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseconf-clawx-integration-exploration-20260930.md（契约设计来源）"
+    ],
+    "execution_hints": [
+      "先核读探索方案第 5/6/11/12 节和当前 owner 源码，产出 docs/dev/verseconf-clawx-contract-v1.md；这是一份待创建的契约，不是已有证据。",
+      "夹具与试验设计放在 artifacts/verseconf-contract-v1/，标注设计/执行状态、driven_by 和 actor；禁止修改旧冻结实验。",
+      "完成后通过常规提案登记证据；不自动把实施边界决定标为已批准。"
+    ],
+    "id": "TF-0244",
+    "kind": "task",
+    "non_goals": [
+      "实际接入 UI 或 wasm 消费包",
+      "修改 live 配置、默认值或冻结源码",
+      "把既有探针通过记作本轮产品通过"
+    ],
+    "priority": 3,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "让第一个提交能力试验有足够窄的范围、明确的 owner 和独立可判定的出口，避免边做边扩平台。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "严格 JSON、单 workspace、已有记录非重叠字段批次、显式导出为首轮范围",
+      "明确 null/absent、稳定 ID、baseRevision、expect、schema owner、取消与成功分层",
+      "模型只提交目标与变更，不提供可信 run/workspace/actor 或任意路径与 schema",
+      "只编写契约、测试夹具或研究脚本，不修改产品运行路径，不启动付费模型实验"
+    ],
+    "source_sessions": [
+      "tf0244-contract-20261001"
+    ],
+    "status": "in_progress",
+    "success_metrics": [
+      "范围足以支撑一个最小提交 spike",
+      "没有需要真人数据或手工 verdict 的验收项"
+    ],
+    "summary": "已开始执行首个研究表契约任务：核对当前 owner，制作三记录/两字段夹具、独立预期结果、五类失败试验与边界建议；尚无产品集成验收。",
+    "title": "锁定研究比较表的首个试验契约与退出条件",
+    "updated_at": "2026-09-30T16:14:08.544365Z"
+  },
+  "TF-0245": {
+    "acceptance_criteria": [
+      "决策产物明确允许改动的消费者、宿主接口、绑定、维护责任、预算和停止条件",
+      "任何涉及冻结例外或产品范围变化的允许决定均有明确授权依据；本次 TF 规划请求不得被登记成该授权",
+      "决定采用、收缩或停止及其依据可读；停止时必须在记录决定的同一提案中废止后续实现节点，不能留下因 decision=done 而被自动视作可启动的候选节点",
+      "没有新增真人操作或真人数据要求；只有真正的范围/冻结/金钱决定升级"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.9,
+    "context_tags": [
+      "verseconf",
+      "implementation-boundary",
+      "decision-gate"
+    ],
+    "created_at": "2026-09-30T14:12:38.155840Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "display_order": 20,
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseconf-clawx-integration-exploration-20260930.md（有限维护与冻结边界说明）"
+    ],
+    "execution_hints": [
+      "在首个试验契约之后整理 docs/dev/verseconf-clawx-adoption-decision.md；该路径是未来产物，不是当前批准记录。",
+      "只有明确允许实施的决定才能使 W1 进入 ready；若决定停止，即使决策节点完成也不得机械放行后续工作。"
+    ],
+    "id": "TF-0245",
+    "kind": "decision",
+    "non_goals": [
+      "全面解冻 VerseConf",
+      "发布、公开仓库、默认启用或凭据暴露授权"
+    ],
+    "priority": 3,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "区分常规工程自主权与被冻结产品线、产品范围、付费资源的真实决策权，防止规划应用被误当全面解冻。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "由 agent 提供完整建议、范围、成本和退出条件，不要求发布者补设计、历史或验收数据",
+      "如进入冻结资产适配，只记录 ClawX 消费者所需内存 API/Node 绑定的有限例外；独立语言与分发路线继续冻结",
+      "不改变全局产品锁、默认值或现有 TF-0010/TF-0028 状态；收费实验仅在预算被明确后执行"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "首个契约完成后形成有证据的启动或停止决定；当前仅登记决策门，不代表已获准改动产品或 VerseConf 冻结范围。",
+    "title": "确认消费者专用的有限实施与维护边界",
+    "updated_at": "2026-09-30T14:12:38.187306Z"
+  },
+  "TF-0246": {
+    "acceptance_criteria": [
+      "真实 runtime 工具装配/策略/execute 路径完成一次受管候选提交，而非测试直接调用内部写函数",
+      "只读、工具拒绝、路径逃逸、工作区切换、取消与基线冲突均产生正确拒绝及零非预期写入",
+      "提交前快照失败、写后记账前中断和重启对账分别有实际源摘要与操作状态证据",
+      "无当前执行上下文的 tools.invoke 或自定义写 RPC 不能借此获得写权限",
+      "提出继续或停止结论及真实改动半径；TS 探针不称为 VerseConf 集成完成"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.83,
+    "context_tags": [
+      "verseconf",
+      "work-package-w1",
+      "managed-mutation",
+      "gateway-backend-communication"
+    ],
+    "created_at": "2026-09-30T14:12:38.155840Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "display_order": 30,
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseconf-clawx-integration-exploration-20260930.md（候选提交设计）"
+    ],
+    "execution_hints": [
+      "从 openclaw_runtime/src/agents/agent-tools.ts、apply-patch-preflight.ts、plugins/tool-types.ts 和真实 run 生命周期入口核查窄 seam。",
+      "本包先验证单文件；所需协作锁与持久化最小机制须真实存在，后续 W2 再做跨入口完整化。",
+      "若必须先重构整个运行系统才能通过，保留失败证据并执行停止裁决。"
+    ],
+    "id": "TF-0246",
+    "kind": "task",
+    "non_goals": [
+      "通用事务平台",
+      "完整产物 UI",
+      "绕过现有策略或修改产品锁"
+    ],
+    "priority": 3,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "先证明宿主能够安全承接结构化修改，不把插件安装成功或库可调用误当完整集成。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "只有有限实施决定明确放行后才可执行；先建立引用 gateway-backend-communication 的窄 Harness spec",
+      "基于现有写入 owner 和 patch 预检，不公开任意工具执行后门、不从插件 deep-import 私有核心",
+      "权限绑定当前 run/session/toolCall/workspace/signal/provenance；过期句柄不可跨 run 使用",
+      "无必要恢复证据时拒绝新能力提交，不改变旧工具 fail-open 默认，不自动开启全局 journal"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "在当前 run 权限内完成一个单文件候选提交试验，优先验证拒绝、版本和恢复；允许用确定性 TS 候选隔离 wasm 变量。",
+    "title": "验证真实运行中的受管候选提交能力",
+    "updated_at": "2026-09-30T14:12:38.187306Z"
+  },
+  "TF-0247": {
+    "acceptance_criteria": [
+      "稳定 artifact/revision 身份、单调顺序、初始与最新历史快照均可持久查询和取回",
+      "同键同内容返回既有结果、同键不同内容冲突；恢复历史内容生成新 revision，no-op 不伪造修订",
+      "同路径 edit/write/patch/结构化提交竞争、取消等待、链接路径和异常释放有行为测试，无丢更新或死锁",
+      "prepared/写后记账前/DB故障/重启三态对账实测；未知效果不自动重放或覆盖第三种内容",
+      "容量拒绝、非自动淘汰的保留语义及旧 journal 边界清楚，没有顺带重写全部历史"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.8,
+    "context_tags": [
+      "verseconf",
+      "work-package-w2",
+      "revision-history",
+      "recovery"
+    ],
+    "created_at": "2026-09-30T14:12:38.155840Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "display_order": 40,
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseconf-clawx-integration-exploration-20260930.md（版本/提交/恢复契约）"
+    ],
+    "execution_hints": [
+      "保持公共 seam 通用，artifact 索引只引用 mutation/history owner；新运行状态按现有 SQLite 规则落库。",
+      "记录与普通文件路径共存边界；不要让旧 Main writer 直接覆盖新的受管业务源。"
+    ],
+    "id": "TF-0247",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 3,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "避免结构化工具与现有 edit/patch 互相覆盖，以及重启后只有 hash、没有内容或误重放副作用。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "复用现有写入 owner、SQLite/Kysely 与 RC-04 关联，不建插件私有事务日志或任务数据库",
+      "普通 edit/write、patch 和新提交对同一受管路径共享协调语义；不得新增第三套独立锁",
+      "操作状态、产物 metadata、效果收据职责分离；文件与 DB 不宣称天然原子事务",
+      "不声称外部 shell/编辑器参与同一进程锁；新路径不双写第二份权威状态"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "将已通过的单文件机制补成源版本、真实幂等和相关写入入口协调，保证承诺可恢复的每个版本有可取回快照。",
+    "title": "补齐写入协调、持久版本与重启恢复",
+    "updated_at": "2026-09-30T14:12:38.187306Z"
+  },
+  "TF-0248": {
+    "acceptance_criteria": [
+      "null/absent/空值/递归值/安全整数、重复键/ID、重叠路径与最终一次校验在固定契约下结果一致",
+      "中文、emoji、CRLF、BOM 与转义键的 UTF-8 范围有独立字节判据",
+      "worker 懒加载、输入上限、超时/取消与迟到结果废弃有行为证据，不将 worker 误称安全沙箱",
+      "锁定源码、Cargo/Node 锁、工具链与 wasm-bindgen；包有 glue/wasm/types/license/manifest 和哈希",
+      "从干净消费环境加载及调用，无用户目录依赖；不通过省略 schema 绕开 wrapper 缺陷"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.79,
+    "context_tags": [
+      "verseconf",
+      "work-package-w3",
+      "json-contract",
+      "node-wasm"
+    ],
+    "created_at": "2026-09-30T14:12:38.155840Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "display_order": 50,
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseconf-clawx-integration-exploration-20260930.md（内存消费面与绑定缺口）"
+    ],
+    "execution_hints": [
+      "只在有限实施决定覆盖的源码与绑定范围修改 VerseConf；原始冻结证据不重写。",
+      "接口参考探索方案第 7 节；在真实消费包声明依赖，不能跨 root/runtime workspace 偷用 workspace:* 或 NODE_PATH。"
+    ],
+    "id": "TF-0248",
+    "kind": "task",
+    "non_goals": [
+      "JSONC/TOML 或完整 JSON5 承诺",
+      "公共 npm 发布",
+      "更改冻结 VCF 旧语义"
+    ],
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "消除旧 wrapper、JSON 值、批次和构建契约缺口，使宿主消费面可测试且不依赖开发机。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "仅纯内存、严格 JSON、宿主可信 schema；不暴露任意 schema 路径、URL 外取或磁盘写入",
+      "Rust 导出、TS 类型、真实传参、错误信封、能力描述和测试一起更新",
+      "现有五工具探针不作为通用 JSON inspect/edit 已实现的依据",
+      "按顺序开发；本规划不授权并行启动 W2/W3，也不恢复 web/native 多路线"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "在有限维护边界内补齐 JSON 内存读取、批次候选和检查，并交付可追溯的单一 Node wasm 包；不恢复独立产品线。",
+    "title": "交付受限 JSON 编辑内核与 Node wasm 消费包",
+    "updated_at": "2026-09-30T14:12:38.187306Z"
+  },
+  "TF-0249": {
+    "acceptance_criteria": [
+      "真实 run 完成三条记录源的两字段修订与两种导出，独立读回行 ID、关键值、引用与 Markdown 转义",
+      "创建/导入不覆盖未知文件；XLSX 外部文本不自动成为公式；missing/null/空字符串映射明确",
+      "源提交成功而渲染失败、旧版输出、invalid/checker error、缺依赖状态在 UI 正确显示",
+      "工具结果、transcript、Gateway history、事件与重启查询保持同一 artifact/revision/output 引用",
+      "至少一次 Electron 真实 host-api 路径操作有证据；模拟模型、实际模型、视觉检查的证据类别分别声明"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.83,
+    "context_tags": [
+      "verseconf",
+      "work-package-w4",
+      "research-table",
+      "vertical-slice"
+    ],
+    "created_at": "2026-09-30T14:12:38.155840Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "display_order": 60,
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseconf-clawx-integration-exploration-20260930.md（研究表与产物投影）"
+    ],
+    "execution_hints": [
+      "以 Artifact Panel 增量实现；保留 src/lib/generated-files.ts 对真实代码 diff 的严格 journal 关联。",
+      "测试必须覆盖 source v2/output v1 的过期关系；不要以文件头或同 writer 库 round-trip 作为全部独立判据。"
+    ],
+    "id": "TF-0249",
+    "kind": "task",
+    "non_goals": [
+      "复活旧 Work Mode",
+      "通用 Office 编辑器",
+      "字段修改完成就宣称记录 CRUD 完整"
+    ],
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "把引擎与宿主基础转成能从界面和真实 agent run 使用的业务能力，而不是仅存在测试 helper。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "业务插件负责 schema/mapper，runtime owner 负责源与输出提交；Office 渲染函数不私自选择最终落盘位置",
+      "Renderer 经 host-api/Main/Gateway；UI 变更优先进入现有 agent run，不扩展私有反向桥",
+      "业务产物 typed 引用与普通附件/代码 diff 分开，禁止伪造 patch 或索引身份",
+      "新 UI 有 Electron E2E，四语 i18n、三语 README 与新场景/规则同步"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "交付首条真实纵向闭环：创建/导入、按 ID 联合修订、提交、Markdown/XLSX 导出、检查与跨重启展示。",
+    "title": "贯通研究表修订、导出与产物界面",
+    "updated_at": "2026-09-30T14:12:38.188307Z"
+  },
+  "TF-0250": {
+    "acceptance_criteria": [
+      "插入/删除/移动后按 ID 的修订仍指向正确记录；重复 ID/无效邻接/冲突批次整体拒绝",
+      "历史恢复生成新 revision，旧输出可追溯且迟到渲染不覆盖当前输出指针",
+      "外部改源/改输出、文件缺失、复制导入的身份与验证过期状态有实际测试",
+      "跨会话访问按 workspace 权限检查，不能凭 artifactId 全局读取；删除会话不自动删除业务产物",
+      "独立字节/语义判据覆盖声明范围；未支持操作由工具 schema 和 UI 明确拒绝或不提供"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.8,
+    "context_tags": [
+      "verseconf",
+      "work-package-w5",
+      "record-lifecycle"
+    ],
+    "created_at": "2026-09-30T14:12:38.155840Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "display_order": 70,
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseconf-clawx-integration-exploration-20260930.md（有界完整生命周期）"
+    ],
+    "execution_hints": [
+      "先固定记录操作与保真语义，再扩工具面；不通过放宽原字段批次反例换取通过。"
+    ],
+    "id": "TF-0250",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "消除只会修改已有字段、不能持续维护真实研究表的业务断点。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "按稳定 ID 与明确 beforeId/afterId 操作，位置不充当身份",
+      "保真承诺按操作分级；重建集合时不谎称集合内注释全部保留",
+      "外部变更先校验和协调，恢复历史内容针对当前 revision 新提交；不 force 覆盖"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "在最小闭环通过后增加记录插入、删除、排序、历史恢复及外部改动处理，不扩大到任意格式保真编辑。",
+    "title": "补齐记录操作、历史恢复与外部变更协调",
+    "updated_at": "2026-09-30T14:12:38.188307Z"
+  },
+  "TF-0251": {
+    "acceptance_criteria": [
+      "同一宿主契约完成大纲创建、按页 ID 修改/排序、重新生成和旧版本保留",
+      "独立读回 PPTX 页数、顺序和真实文本，不用 ZIP 文件头替代内容验收",
+      "页面实际渲染后检查中文、溢出和重叠；未做视觉检查不能标为视觉通过",
+      "如果发现共享层必须全面重写，形成收缩/停止裁决，不继续无界扩展",
+      "新增消费者有针对性的 Electron 交互和失败路径证据，原研究表回归不退化"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.77,
+    "context_tags": [
+      "verseconf",
+      "work-package-w6",
+      "slide-outline",
+      "second-consumer"
+    ],
+    "created_at": "2026-09-30T14:12:38.155840Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "display_order": 80,
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseconf-clawx-integration-exploration-20260930.md（第二消费者边界）"
+    ],
+    "execution_hints": [
+      "复用 Office 生成算法但把落盘留给 runtime owner；复杂演示继续由既有技能/OfficeCLI 路线承担。"
+    ],
+    "id": "TF-0251",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "验证共享边界确实服务第二个业务，而不是研究表专用逻辑披着通用平台外衣。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "不得为第二消费者重建权限、提交、审批或 metadata authority",
+      "PPTX 渲染固定源快照，输出版本化；复杂模板/动画/任意文件往返不在承诺内",
+      "视觉检查由 agent 自动执行并标注，环境缺渲染器是工程缺口而非等待真人"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "只增加 title/body 大纲、pageId、PPTX 映射与检查，复用既有受管提交和产物版本体系。",
+    "title": "用幻灯片大纲验证第二消费者复用",
+    "updated_at": "2026-09-30T14:12:38.188307Z"
+  },
+  "TF-0252": {
+    "acceptance_criteria": [
+      "干净安装和目标平台 Electron 包内真实调用有构建/源码/wasm 指纹；未测平台明确不声明支持",
+      "source runtime 隔离配置、无 channel 安装、显式禁用/撤销、SDK不兼容与依赖缺失均有行为证据",
+      "schema 升级/未知版本、禁用/卸载、容量到顶与备份恢复不丢用户源或唯一历史",
+      "对照保留失败/拒绝/超时分母，报告任务正确率、误改/误拒、恢复轮次、冷/热延迟、RSS、包体与维护成本",
+      "形成单引擎采用、收缩或停止裁决；不得从工程通过推出发布/default-on/GA 授权"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.78,
+    "context_tags": [
+      "verseconf",
+      "work-package-w7",
+      "packaging",
+      "adoption-verdict"
+    ],
+    "created_at": "2026-09-30T14:12:38.155840Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "display_order": 90,
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseconf-clawx-integration-exploration-20260930.md（分发与工程对照）"
+    ],
+    "execution_hints": [
+      "小型包完整性 smoke 要在 W3/W4 前移，本包负责完整分发与采用裁决；不要最后才检查 wasm 是否随包。",
+      "停止时保留用户源/输出，并通过单独 proposal 处理未执行范围；不得把未执行内容标为 done。"
+    ],
+    "id": "TF-0252",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "防止只在开发机可用，或把宿主 UI/恢复能力的收益错误归因给 wasm 内核。",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "固定源码/依赖/构建输入和目标平台，不依赖用户目录、旧 node_modules 或绝对开发路径",
+      "区分包可发现、插件可加载、契约兼容、当前 runtime 支持、当前 run 有权和 renderer 可用",
+      "缺包/错版/不支持 runtime 明确 unavailable，不自动改走 native/MCP/shell 或第二生产引擎",
+      "相同契约、schema、操作集、数据与独立 oracle 对照；付费模型实验须有明确有限预算"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "验证实际 source runtime 的安装、启用、依赖、包内执行和数据保留；在同一宿主契约下比较 TS 与 VerseConf，形成采用或停止结论。",
+    "title": "验证干净分发与升级，并裁定长期采用",
+    "updated_at": "2026-09-30T14:12:38.188307Z"
   }
 }

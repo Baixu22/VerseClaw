@@ -2,42 +2,93 @@
   {
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.95,
-      "user_goal": "实现统一而不重复的 Context 主路径",
+      "fit_confidence": 0.96,
+      "user_goal": "推进 TF-0244，交付首个研究表试验契约与可核验夹具，不开始产品接入。",
       "validation_plan": [
-        "entry scan",
-        "candidate ordering/dedup tests",
-        "combined provider integration tests",
-        "lineage assertions"
+        "标准 JSON Schema 与夹具/请求自检",
+        "独立语义与非目标字节判据的反例测试",
+        "五类真实运行试验设计均标注未执行",
+        "核对源码 owner 哈希与 Harness 触点",
+        "磁盘证据核读与 Task Forest 校验"
       ],
-      "why_not_enough": "仍需 UAS-03 移除 VToken 自有业务状态和无关串行。",
-      "why_this_task": "它直接解决当前双入口、私账和重复投影问题。"
+      "why_not_enough": "离线契约自检不证明当前 runtime 已具备受管提交接口，也不代替干净候选或正式集成验收。",
+      "why_this_task": "在产品实现前锁定宿主权限、版本、失败效果和独立判据，减少后续适配范围漂移。"
     },
     "blocked_by": [],
-    "confidence": 0.98,
-    "context_tags": [],
-    "desired_outcomes": [
-      "所有 context source 先产出 ContextCandidate",
-      "先排序去重再收费",
-      "最终 lineage 完整记录保留、截断和丢弃原因"
+    "confidence": 0.92,
+    "context_tags": [
+      "verseconf",
+      "work-package-w0",
+      "contract",
+      "planning-only"
     ],
-    "difficulty": "high",
-    "id": "TF-0013",
+    "desired_outcomes": [
+      "严格 JSON 研究表的 schema/操作/身份草案",
+      "最小真实调用试验与五类失败路径设计",
+      "有限维护边界和工程估算建议"
+    ],
+    "difficulty": "medium",
+    "id": "TF-0244",
     "kind": "task",
-    "next_action": "Context Orchestrator 是最终 selection、dedup、budget、projection 与 lineage authority；禁止恢复私有生产预算或调用顺序优先级",
-    "priority": 1,
-    "progress": 60.0,
-    "purpose": "消除动态 Assembler 私有预算、调用顺序冒充优先级和跨 provider 重复投影。",
+    "next_action": "先核读探索方案第 5/6/11/12 节和当前 owner 源码，产出 docs/dev/verseconf-clawx-contract-v1.md；这是一份待创建的契约，不是已有证据。",
+    "priority": 3,
+    "progress": 0.0,
+    "purpose": "让第一个提交能力试验有足够窄的范围、明确的 owner 和独立可判定的出口，避免边做边扩平台。",
     "ready": true,
-    "remaining_minutes_max": 960,
-    "remaining_minutes_min": 960,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
     "status": "in_progress",
     "success_metrics": [
-      "私有 context budget 0",
-      "重复 authority object 注入 0",
-      "声明和实际优先级偏差 0"
+      "范围足以支撑一个最小提交 spike",
+      "没有需要真人数据或手工 verdict 的验收项"
     ],
-    "title": "UAS-02 Context Orchestrator residual 收口"
+    "title": "锁定研究比较表的首个试验契约与退出条件"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "先建立有边界、可顺序推进的接入任务规划。",
+      "validation_plan": [
+        "检查只新增本分支，既有节点字段/状态不变",
+        "确认本分支只有一个 ready 叶子，后续节点依赖完整",
+        "运行当前活动 skill 的 validate/export，检查 HTML 未开始工作计数"
+      ],
+      "why_not_enough": "任务图和设计文档不是实施授权、实际功能或验收通过；新接口和分发还需真实代码与证据。",
+      "why_this_task": "完整保留两个消费者和分发/采用裁决路线，同时将当前可启动动作限制在契约与试验设计。"
+    },
+    "blocked_by": [],
+    "confidence": 0.85,
+    "context_tags": [
+      "verseconf",
+      "structured-artifacts",
+      "exploration-only",
+      "non-ga"
+    ],
+    "desired_outcomes": [
+      "一份可执行的首个消费者契约和独立判断标准",
+      "经有限实施边界生效后，形成研究比较表从源修订到导出与恢复的闭环",
+      "只有第一消费者通过且复用有价值时才扩展幻灯片大纲",
+      "最终选择单一生产编辑引擎，或保留工程资产并停止 VerseConf 特定投入"
+    ],
+    "difficulty": "very_high",
+    "id": "TF-0243",
+    "kind": "global_task",
+    "next_action": "本分支下一步仅执行首个试验契约任务；不要把本父节点视为第二个并行工程任务。",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "把已有结构化编辑资产变成有边界、可拒绝、可恢复、可验收的 ClawX 消费能力，并允许在净收益不足时有据停止。",
+    "ready": true,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "in_progress",
+    "success_metrics": [
+      "越权写入、未知副作用自动重放、伪造成功或真人证据均为零容忍否决项",
+      "每个已宣称可恢复版本均有可取回快照和真实操作关联",
+      "不创建长期自动切换的双编辑引擎",
+      "规划进展不计为产品完成率；当前产品交付进度保持 0"
+    ],
+    "title": "结构化产物接入探索与采用评估（VerseConf × ClawX）"
   },
   {
     "alignment": {
@@ -207,6 +258,107 @@
   },
   {
     "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0244"
+    ],
+    "confidence": 0.9,
+    "context_tags": [
+      "verseconf",
+      "implementation-boundary",
+      "decision-gate"
+    ],
+    "desired_outcomes": [],
+    "difficulty": "medium",
+    "id": "TF-0245",
+    "kind": "decision",
+    "next_action": "先完成依赖：TF-0244",
+    "priority": 3,
+    "progress": 0.0,
+    "purpose": "区分常规工程自主权与被冻结产品线、产品范围、付费资源的真实决策权，防止规划应用被误当全面解冻。",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "确认消费者专用的有限实施与维护边界"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0245"
+    ],
+    "confidence": 0.83,
+    "context_tags": [
+      "verseconf",
+      "work-package-w1",
+      "managed-mutation",
+      "gateway-backend-communication"
+    ],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0246",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0245",
+    "priority": 3,
+    "progress": 0.0,
+    "purpose": "先证明宿主能够安全承接结构化修改，不把插件安装成功或库可调用误当完整集成。",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "验证真实运行中的受管候选提交能力"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0246"
+    ],
+    "confidence": 0.8,
+    "context_tags": [
+      "verseconf",
+      "work-package-w2",
+      "revision-history",
+      "recovery"
+    ],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0247",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0246",
+    "priority": 3,
+    "progress": 0.0,
+    "purpose": "避免结构化工具与现有 edit/patch 互相覆盖，以及重启后只有 hash、没有内容或误重放副作用。",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "补齐写入协调、持久版本与重启恢复"
+  },
+  {
+    "alignment": {
       "fit": "aligned",
       "fit_confidence": 0.97,
       "user_goal": "继续确定并修复可验证的 GitHub issue",
@@ -242,6 +394,176 @@
     "status": "blocked",
     "success_metrics": [],
     "title": "修复 GitHub #22：恢复 Docker sandbox 基础镜像入口"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0247"
+    ],
+    "confidence": 0.79,
+    "context_tags": [
+      "verseconf",
+      "work-package-w3",
+      "json-contract",
+      "node-wasm"
+    ],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0248",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0247",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "消除旧 wrapper、JSON 值、批次和构建契约缺口，使宿主消费面可测试且不依赖开发机。",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "交付受限 JSON 编辑内核与 Node wasm 消费包"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0247",
+      "TF-0248"
+    ],
+    "confidence": 0.83,
+    "context_tags": [
+      "verseconf",
+      "work-package-w4",
+      "research-table",
+      "vertical-slice"
+    ],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0249",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0247, TF-0248",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "把引擎与宿主基础转成能从界面和真实 agent run 使用的业务能力，而不是仅存在测试 helper。",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "贯通研究表修订、导出与产物界面"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0249"
+    ],
+    "confidence": 0.8,
+    "context_tags": [
+      "verseconf",
+      "work-package-w5",
+      "record-lifecycle"
+    ],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0250",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0249",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "消除只会修改已有字段、不能持续维护真实研究表的业务断点。",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "补齐记录操作、历史恢复与外部变更协调"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0250"
+    ],
+    "confidence": 0.77,
+    "context_tags": [
+      "verseconf",
+      "work-package-w6",
+      "slide-outline",
+      "second-consumer"
+    ],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0251",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0250",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "验证共享边界确实服务第二个业务，而不是研究表专用逻辑披着通用平台外衣。",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "用幻灯片大纲验证第二消费者复用"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0251"
+    ],
+    "confidence": 0.78,
+    "context_tags": [
+      "verseconf",
+      "work-package-w7",
+      "packaging",
+      "adoption-verdict"
+    ],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0252",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0251",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "防止只在开发机可用，或把宿主 UI/恢复能力的收益错误归因给 wasm 内核。",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "验证干净分发与升级，并裁定长期采用"
   },
   {
     "alignment": {

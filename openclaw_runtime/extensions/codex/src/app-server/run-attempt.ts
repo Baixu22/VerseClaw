@@ -148,6 +148,7 @@ import {
   shouldWarnCodexDynamicToolBuildStageSummary,
 } from "./dynamic-tool-build.js";
 import {
+  createCodexToolDiagnosticIdentity,
   emitDynamicToolErrorDiagnostic,
   emitDynamicToolStartedDiagnostic,
   emitDynamicToolTerminalDiagnostic,
@@ -636,6 +637,7 @@ export async function runCodexAppServerAttempt(
     loading: resolveCodexDynamicToolsLoadingForModel(pluginConfig, params.modelId),
     directToolNames: shouldForceMessageTool(params) ? ["message"] : [],
     hookContext: {
+      trace: codexModelCallTrace,
       agentId: sessionAgentId,
       config: params.config,
       sessionId: params.sessionId,
@@ -726,6 +728,7 @@ export async function runCodexAppServerAttempt(
   let developerInstructions = baseDeveloperInstructions;
   let prePromptMessageCount = historyMessages.length;
   let contextEngineProjection: CodexContextEngineThreadBootstrapProjection | undefined;
+  let reusedContextEngineBootstrapPrompt: string | undefined;
   let precomputedStaleBindingContinuityProjectionApplied = false;
   let staleBindingContinuityForcedFreshStart = false;
   let inactiveThreadBootstrapBindingForcedFreshStart =
@@ -805,6 +808,9 @@ export async function runCodexAppServerAttempt(
       projectedPromptChars: projection.promptText.length,
       developerInstructionAdditionChars: projection.developerInstructionAddition?.length ?? 0,
     });
+    reusedContextEngineBootstrapPrompt = projectionDecision.project
+      ? undefined
+      : projection.promptText;
     promptText = projectionDecision.project ? projection.promptText : params.prompt;
     developerInstructions = joinPresentSections(
       baseDeveloperInstructions,
@@ -1144,6 +1150,13 @@ export async function runCodexAppServerAttempt(
     await releaseSandboxExecEnvironment();
     params.abortSignal?.removeEventListener("abort", abortFromUpstream);
     throw error;
+  }
+  if (thread.lifecycle.action === "started" && reusedContextEngineBootstrapPrompt !== undefined) {
+    // A failed resume can create a fresh thread after bootstrap reuse was chosen.
+    // Restore the already admitted projection; reassembly could charge it again
+    // or change instructions after thread/start has fixed them.
+    promptText = reusedContextEngineBootstrapPrompt;
+    await rebuildCodexTurnPromptTextFromCurrentProjection();
   }
   if (applyNoContextEngineContinuityProjection(thread.lifecycle.action, thread)) {
     await rebuildCodexTurnPromptTextFromCurrentProjection();
@@ -1665,12 +1678,14 @@ export async function runCodexAppServerAttempt(
         tool: call.tool,
         toolCallId: call.callId,
       });
-      emitDynamicToolStartedDiagnostic({
+      const toolDiagnosticContext = {
+        ...createCodexToolDiagnosticIdentity(codexModelCallTrace),
         call,
         runId: params.runId,
         sessionId: params.sessionId,
         sessionKey: params.sessionKey,
-      });
+      };
+      emitDynamicToolStartedDiagnostic(toolDiagnosticContext);
       const toolProgressDetailMode = resolveCodexToolProgressDetailMode(params.toolProgressDetail);
       const toolMeta = inferCodexDynamicToolMeta(call, toolProgressDetailMode);
       const toolArgs = sanitizeCodexToolArguments(call.arguments);
@@ -1768,11 +1783,8 @@ export async function runCodexAppServerAttempt(
           })
         ) {
           emitDynamicToolTerminalDiagnostic({
+            ...toolDiagnosticContext,
             response,
-            call,
-            runId: params.runId,
-            sessionId: params.sessionId,
-            sessionKey: params.sessionKey,
             durationMs: toolDurationMs,
           });
         }
@@ -1802,10 +1814,7 @@ export async function runCodexAppServerAttempt(
           })
         ) {
           emitDynamicToolErrorDiagnostic({
-            call,
-            runId: params.runId,
-            sessionId: params.sessionId,
-            sessionKey: params.sessionKey,
+            ...toolDiagnosticContext,
             durationMs: Math.max(0, Date.now() - toolStartedAt),
           });
         }
@@ -2147,6 +2156,7 @@ export async function runCodexAppServerAttempt(
     imagesCount: params.images?.length ?? 0,
   });
   projectorRef.current = new CodexAppServerEventProjector(params, thread.threadId, activeTurnId, {
+    trace: codexModelCallTrace,
     nativePostToolUseRelayEnabled:
       nativeHookRelay?.allowedEvents.includes("post_tool_use") === true &&
       nativeHookRelay.shouldRelayEvent("post_tool_use"),

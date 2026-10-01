@@ -1,0 +1,23 @@
+{
+  "actor": "codex/root",
+  "driven_by": "agent",
+  "oxlint": 0,
+  "formatScoped": 0,
+  "formatCommand": [
+    "node",
+    "node_modules/oxfmt/bin/oxfmt",
+    "--check",
+    "--threads=1",
+    "src/context-engine/context-candidate.ts",
+    "src/context-engine/context-candidate.test.ts",
+    "src/context-engine/turn-injection-budget.ts",
+    "src/context-engine/registry.ts",
+    "src/agents/embedded-agent-runner/extensions.ts",
+    "src/agents/embedded-agent-runner/extensions.tool-registry.test.ts",
+    "src/agents/embedded-agent-runner/run/attempt.ts"
+  ],
+  "formatBaselineFiles": [
+    "src/agents/rc03-entry-transitions.acceptance.test.ts",
+    "src/context-engine/rc03-seal-hook.ts"
+  ]
+}

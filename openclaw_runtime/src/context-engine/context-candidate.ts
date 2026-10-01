@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { isDeepStrictEqual } from "node:util";
 import type { AgentMessage } from "../agents/runtime/index.js";
 import { computeNovelty } from "./context-health-monitor.js";
 import {
@@ -11,7 +12,12 @@ import {
 
 export const CONTEXT_CANDIDATE_SCHEMA = "ContextCandidate/v1" as const;
 
-export type ContextCandidateTarget = "system_prompt" | "message";
+export type ContextCandidateTarget = "system_prompt" | "message" | "message_replacement";
+
+export type ContextMessageReplacement = {
+  original: AgentMessage[];
+  replacement: AgentMessage[];
+};
 
 export type ContextCandidate = {
   schema: typeof CONTEXT_CANDIDATE_SCHEMA;
@@ -26,6 +32,7 @@ export type ContextCandidate = {
   channel: TurnInjectionChannel;
   target: ContextCandidateTarget;
   text: string;
+  messageReplacement?: ContextMessageReplacement;
 };
 
 export type ContextCandidateLineageReason =
@@ -37,6 +44,7 @@ export type ContextCandidateLineageReason =
   | "budget-drop"
   | "flag-off"
   | "kill-switch"
+  | "stale-history"
   | "skip-channel";
 
 export type ContextCandidateLineage = {
@@ -77,6 +85,7 @@ export type ContextCandidateCollection = {
 };
 
 export type ContextCandidateProjection = {
+  messageReplacement?: ContextMessageReplacement;
   systemPromptAddition?: string;
   /** Ephemeral projected text for producer attribution; never persisted in lineage. */
   systemPromptContributions?: Array<{ sourceId: string; text: string }>;
@@ -101,6 +110,7 @@ export function createContextCandidate(input: {
   channel: TurnInjectionChannel;
   target: ContextCandidateTarget;
   text: string;
+  messageReplacement?: ContextMessageReplacement;
 }): ContextCandidate {
   const contentDigest = digestText(input.text);
   const identity = [
@@ -127,7 +137,41 @@ export function createContextCandidate(input: {
     channel: input.channel,
     target: input.target,
     text: input.text,
+    ...(input.messageReplacement ? { messageReplacement: input.messageReplacement } : {}),
   };
+}
+
+/** Exact multiset matching exempts retained history, never a rewritten summary
+ * or a second copy of a historical message. No semantic inference is involved. */
+export function contextMessageReplacementText(
+  original: AgentMessage[],
+  replacement: AgentMessage[],
+): string {
+  // ponytail: quadratic matching over the bounded attempt history; use a
+  // canonical digest multiset if profiling shows long-history assembly cost.
+  const remaining = original.slice();
+  const added = replacement.filter((message) => {
+    const index = remaining.findIndex((prior) => isDeepStrictEqual(prior, message));
+    if (index < 0) return true;
+    remaining.splice(index, 1);
+    return false;
+  });
+  return added.length ? JSON.stringify(added) : "";
+}
+
+export function applyContextMessageReplacement(
+  messages: AgentMessage[],
+  plan?: ContextMessageReplacement,
+): AgentMessage[] {
+  // The runner materializes an admitted replacement once before precheck.
+  // Cached context callbacks must never reapply it after replay normalization.
+  if (
+    !plan ||
+    messages.length < plan.original.length ||
+    !isDeepStrictEqual(messages.slice(0, plan.original.length), plan.original)
+  )
+    return messages;
+  return [...plan.replacement, ...messages.slice(plan.original.length)];
 }
 
 export function recordContextCandidateSkip(
@@ -285,6 +329,7 @@ function reasonForDisposition(
 export function finalizeContextCandidates(params: {
   turnId: string;
   ledger: TurnInjectionLedger;
+  messages?: AgentMessage[];
   /**
    * B-4: previously injected context text (e.g. recent turns) used as the
    * novelty comparison window. Candidates are scored against this window plus
@@ -309,6 +354,7 @@ export function finalizeContextCandidates(params: {
   const systemPromptParts: string[] = [];
   const systemPromptContributions: Array<{ sourceId: string; text: string }> = [];
   const messages: AgentMessage[] = [];
+  let messageReplacement: ContextMessageReplacement | undefined;
   const injectedTexts: string[] = [...(params.historyWindow ?? [])];
   let noveltySum = 0;
   let noveltyCount = 0;
@@ -316,6 +362,20 @@ export function finalizeContextCandidates(params: {
   for (const index of sortedCandidateIndexes(collection)) {
     const candidate = collection.candidates[index]!;
     const lineage = collection.lineage[collection.candidateLineageIndexes[index]!]!;
+    if (
+      candidate.target === "message_replacement" &&
+      (!candidate.messageReplacement ||
+        !params.messages ||
+        !isDeepStrictEqual(
+          params.messages.slice(0, candidate.messageReplacement.original.length),
+          candidate.messageReplacement.original,
+        ))
+    ) {
+      lineage.disposition = "skip";
+      lineage.charsRequested = 0;
+      lineage.reason = "stale-history";
+      continue;
+    }
     if (params.priorDedupKeys?.has(candidate.dedupKey)) {
       lineage.disposition = "duplicate";
       lineage.reason = "duplicate";
@@ -336,7 +396,12 @@ export function finalizeContextCandidates(params: {
     noveltySum += lineage.novelty;
     noveltyCount += 1;
 
-    const charged = chargeTurnInjection(params.ledger, candidate.channel, candidate.text);
+    const charged = chargeTurnInjection(
+      params.ledger,
+      candidate.channel,
+      candidate.text,
+      candidate.target !== "message_replacement",
+    );
     const entry = params.ledger.entries.at(-1);
     lineage.disposition = entry?.disposition ?? "skip";
     lineage.charsRequested = entry?.charsRequested ?? 0;
@@ -347,7 +412,9 @@ export function finalizeContextCandidates(params: {
 
     if (!charged.text) continue;
     injectedTexts.push(charged.text);
-    if (candidate.target === "system_prompt") {
+    if (candidate.target === "message_replacement") {
+      messageReplacement = candidate.messageReplacement;
+    } else if (candidate.target === "system_prompt") {
       systemPromptParts.push(charged.text);
       systemPromptContributions.push({ sourceId: candidate.sourceId, text: charged.text });
     } else {
@@ -372,6 +439,7 @@ export function finalizeContextCandidates(params: {
   collection.lineage = orderedLineage;
   collection.diagnostics.finalized = true;
   collection.projection = {
+    ...(messageReplacement ? { messageReplacement } : {}),
     ...(systemPromptParts.length > 0
       ? { systemPromptAddition: systemPromptParts.join("\n\n"), systemPromptContributions }
       : {}),

@@ -1,3 +1,57 @@
+# 2026-10-01：TF-0013 完成干净候选验收并自动收口
+
+- TF-0013 已 done/100：候选 `ed97400bdc0a6e16c06387ba808e287bd1380475`，18门 exit 0、233项测试、7次真实native请求通过，逐门源码dirty=false。另有真实Agent Dev刷新87单测/4 Electron通过。未执行新全量RC或改产品锁。
+- Codex package 8条错误清零；工具诊断host requestId/trace跨start/terminal稳定，native/side-question/隔离拒绝路径有回归，已有统计契约补齐。结构化autoreview无actionable findings。
+- 收口证据 `artifacts/tf0013-codex-contract-20261001/acceptance.json`、`candidate-verification.json`、`SHA256SUMS`；说明 `docs/dev/tf0013-authority-closeout-20261001.md`。initial未封存日志被最终轮复用覆盖的局限已记录，只以最终候选日志作验收。
+- 提案 `TFP-tf0013-authority-closeout-20261001` 已应用，validate/export通过；使用agent驱动输入与本地scripted provider，不能声称真人或付费模型质量。
+- 总目标仍为“完成全部剩余节点，避免阻塞”。下一步核读TF-0010/TF-0028与现有RC最终归档，处理旧状态和未完成条件；其余按依赖推进。TF-0244仍由并发任务处理，不能覆盖其工作。D7产品范围、冻结默认值和发布权限仍需对应明确裁决。
+
+---
+
+# 2026-10-01：TF-0013 原生请求与恢复开发增量完成；总目标扩展为全部剩余节点
+
+- 修复源码宿主/构建 SDK 跨模块预算作用域丢失，以及 stale resume 后新线程遗漏已准入 bootstrap。真实 Codex 0.137.0 + agent 本地 scripted Responses provider，5 场景/7 次请求通过；10 项 SDK 回归、12 个开发门禁通过；两轮 autoreview 均无 actionable findings。
+- 证据：`artifacts/tf0013-native-wire-20260930/`；说明：`docs/dev/tf0013-native-wire-20261001.md`。保留 fresh-build 预算泄漏与 stale resume 丢历史的修复前反例、RPC、实际最终请求、事件、binding、类型对照和复审。不是 Electron、付费模型质量、全新安装包或完整 RC 验收。
+- 插件 package 类型检查 exit 2，共 8 条既有诊断；HEAD 插件配相同 SDK 也同样 8 条。接下来处理此工程缺口并形成干净 TF-0013 候选，完整核验四项 acceptance，再按证据自动收口。当前 in_progress/60%，不等待真人；没有声称节点 done。
+- 提案 `TFP-tf0013-native-wire-development-20261001` 已应用，validate/export exit 0；刷新 origin 后 check-landing 183 项 / exit 1，保留仓库历史整合问题。原有与并发 VerseConf 改动全部保留；未创建分支提交、未推送。
+- 用户已把长期目标扩展为“完成剩余的所有节点，避免阻塞”。当前目标 active；继续按依赖串行推进，不把本开发增量视为总体完成。TF-0244 正有另一任务推进，避免写入其文件；D7 冻结、产品默认值与发布决定依然按明确授权边界处理，不因 all-nodes 口号篡改证据或默认值。
+
+---
+
+# 2026-09-30：TF-0013 原生 harness SDK 共享预算增量完成
+
+- 原生分发保留 COMPASS 的 turn ledger 到 attempt 结束，公开 SDK ContextEngine 组装在插件渲染前将新增消息和 system addition 交给既有仲裁。原历史免计费、替换整组准入、重复启动重试不重复收费、失败修改不泄漏、kill switch 零 engine 调用；embedded 子运行退出原生 scope。
+- 最终 13 个开发门禁 exit 0，178 项测试通过：native SDK 9、embedded/扩展 48、候选预算 115、entry scan 6。两侧类型、定向 lint/格式、comms 通过。一次包装器 120 秒无输出终止已保留；verbose reporter 重跑 48/48 通过，未改断言/超时门槛。
+- 直接核读 sibling `../codex` 的 `rust-v0.137.0`，commit `f221438b691b8f749d98f22077c93ebe01923fbe`，核对 thread/start developer instructions 和 turn/start input 契约。fixture 使用实际分发与公开 SDK，但没有启动外部 app-server/provider、Electron 或完整 RC。
+- 证据：`artifacts/tf0013-native-budget-20260930/`；说明及四项 acceptance 对照：`docs/dev/tf0013-native-budget-20260930.md`。Harness 实际 diff 检查只临时排除原有 `%SystemDrive%/` 缓存；原全工作树失败如实记录。刷新 origin 后 check-landing 183 项历史问题 / exit 1。
+- TF-0013 保持 in_progress/60%。下一最小项：agent 驱动原生 app-server 最终请求与 bootstrap/retry，验证实际加载/打包路径的 SDK scope；随后冻结候选核验整节点四项 acceptance。外部请求与干净候选证据尚缺，不能据本轮将节点设 done；不等待真人。
+- 提案 `TFP-tf0013-native-budget-development-20260930` 已应用；Task Forest validate/export 通过，磁盘节点状态已核读。
+- 现有 embedded/共享图/VerseConf dirty 改动全部保留，未创建混合提交、未推送；D7 冻结、6000/0.1 默认值及产品锁不变。
+
+---
+
+# 2026-09-30：VerseConf × ClawX 独立探索规划已登记（未实施）
+
+- 新总目标 TF-0243，规划已开始、产品进度 0；TF-0244 是本分支唯一 ready 叶子，先形成研究表试验契约、夹具/反例和退出条件。TF-0245..TF-0252 均 proposed，覆盖有限实施决定、受管提交、版本恢复、Node wasm、研究表 UI、记录操作、幻灯片与分发/采用裁决。
+- 这是用户要求的独立 TF 规划，不替换 TF-0013 的当前工程入口，不重开 TF-0010/TF-0028 或其他已收口主线。仅以 related_to 关联 TF-0015/TF-0067/TF-0032 的既有能力；冻结源码适配、产品范围或付费预算仍需对应的明确决定，不将规划当作全面解冻。
+- 提案 TFP-verseconf-clawx-exploration-plan-20260930 已应用；应用时点 242 个旧节点字段不变，新增 10 个节点，全部 progress=0、没有新增 done。validate/export 与活动 skill 的 exporter 契约回归通过；HTML 诚实标注本分支 9 项未开始工作。
+- 刷新 origin 后 check-landing 仍为 183 项仓库级历史问题 / exit 1。未提交、未推送，未运行产品测试/构建/模型实验。说明见 `docs/dev/verseconf-clawx-task-forest-plan-20260930.md`；核验见 `artifacts/verseconf-tf-planning-20260930/`。
+- 本分支下一步只执行 TF-0244；若后续决定停止，应在记录停止的同一提案中废止未执行候选，不能仅将 decision 设 done 而意外放行实现包。实际状态继续以 Task Forest 为准。
+
+---
+
+# 2026-09-30：TF-0013 embedded ContextEngine 消息替换预算完成
+
+- 已将含新增/改写内容的 `assemble().messages` 替换接入既有候选仲裁与 turn ledger；纯历史匹配不收费，新增消息按 JSON 字符数整组准入，超额保留原历史。6000/0.1 默认值不变。
+- assembly 在 orphan 修复与 heartbeat 过滤之后运行，同一投影准备在溢出预检前完成准入；runner 只应用一次替换，避免 replay normalization 后重复插入。可选 source gather 失败隔离；registry 回退使用调用前消息，失败插件修改不泄漏。
+- 9 个开发检查 exit 0；测试 169 项通过、0 失败：真实 embedded 入口 22、候选/预算等 115、扩展 26、root scan 6。两侧类型检查、lint、范围格式检查、comms replay/compare 通过。最终 autoreview clean；前两轮 5 项 findings 均已修复并补反例。
+- 证据：`artifacts/tf0013-message-budget-20260930/`；说明：`docs/dev/tf0013-message-budget-20260930.md`。这是工作树 development-only 证据，未重跑正式 RC-09/10、Electron、外部原生插件服务或付费 provider，不重签旧 RC verdict。
+- Harness validate/dry-run 通过，仍检查实际 diff，仅临时排除原有 `%SystemDrive%/` 缓存目录。两份原有未格式化文件 HEAD 同样有格式问题，保留原风格。刷新 origin 后 check-landing 仍为 183 项历史漂移 / exit 1，不声称已合并 main。
+- 收尾时另一个 VerseConf 任务并发更新共享图（TF-0243..TF-0252）；保留原内容，本轮未创建混合提交。代码/证据与已应用的 TF-0013 提案留在工作区；本轮源码文档 diff check 为 0，共享图行尾问题单独保留。
+- TF-0013 保持 in_progress/60%。下一最小项：按插件 scoped AGENTS 读取实际 host/dependency 契约，核验原生插件 ContextEngine 自行组装/投影的共享预算边界，补真实调用反例；随后核验整节点当前候选四项 acceptance。TF-0010/TF-0028 D7 冻结、产品锁及发布边界不变，不以等待真人为阻塞。
+
+---
+
 # 2026-09-30：TF-0013 COMPASS 共享预算开发增量完成
 
 - COMPASS SSP/retrieval 已接入既有候选仲裁与 turn 总预算，覆盖即时/排队回复、CLI 与原生 harness；source flags 和 kill switch 在准备/执行两侧生效。seal 使用裁剪后的实际文本，避免重复累计字数。

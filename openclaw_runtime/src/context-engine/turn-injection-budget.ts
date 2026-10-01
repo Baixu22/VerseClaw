@@ -32,7 +32,10 @@ import {
   type ApplyBudgetResult,
   type InjectionBudgetState,
 } from "./injection-budget.js";
-import { resolveInjectionBudgetConfig, resetInjectionBudgetConfigCache } from "./injection-budget-config-source.js";
+import {
+  resolveInjectionBudgetConfig,
+  resetInjectionBudgetConfigCache,
+} from "./injection-budget-config-source.js";
 
 /**
  * Decision 1 — precedence. Lower index charges the budget first, so when the turn
@@ -141,16 +144,12 @@ export function setTurnInjectionBudgetConfig(params: {
 
 export function getEffectiveTurnInjectionCharBudget(env: NodeJS.ProcessEnv = process.env): number {
   if (configuredTotalChars !== undefined) return configuredTotalChars;
-  return (
-    resolveInjectionBudgetConfig(env)?.totalChars ?? TURN_INJECTION_CHAR_BUDGET
-  );
+  return resolveInjectionBudgetConfig(env)?.totalChars ?? TURN_INJECTION_CHAR_BUDGET;
 }
 
 export function getEffectiveDropAlertRatio(env: NodeJS.ProcessEnv = process.env): number {
   if (configuredDropAlertRatio !== undefined) return configuredDropAlertRatio;
-  return (
-    resolveInjectionBudgetConfig(env)?.dropAlertRatio ?? TURN_INJECTION_DROP_ALERT_RATIO
-  );
+  return resolveInjectionBudgetConfig(env)?.dropAlertRatio ?? TURN_INJECTION_DROP_ALERT_RATIO;
 }
 
 /**
@@ -217,7 +216,10 @@ export type TurnInjectionAccounting = {
   dropRatio: number;
   alert: boolean;
   killed: boolean;
-  byChannel: Record<string, { requested: number; applied: number; disposition: TurnInjectionDisposition }>;
+  byChannel: Record<
+    string,
+    { requested: number; applied: number; disposition: TurnInjectionDisposition }
+  >;
   /** Channels that degraded, in the order they were charged. */
   degradationOrder: Array<{ channel: TurnInjectionChannel; disposition: "truncate" | "drop" }>;
 };
@@ -290,7 +292,9 @@ export function beginTurnInjectionBudget(params: {
   const ledger: TurnInjectionLedger = {
     turnId: params.turnId,
     turnIndex: Math.max(0, Math.floor(params.turnIndex ?? 0)),
-    budget: createInjectionBudget(killed ? 0 : (params.total ?? getEffectiveTurnInjectionCharBudget())),
+    budget: createInjectionBudget(
+      killed ? 0 : (params.total ?? getEffectiveTurnInjectionCharBudget()),
+    ),
     entries: [],
     reservations: [],
     killed,
@@ -323,9 +327,10 @@ export function reserveTurnInjectionCapacity(
     Math.max(0, Math.floor(Number.isFinite(chars) ? chars : 0)),
   );
   if (uniqueChannels.length === 0 || requested === 0) return;
-  const existing = ledger.reservations.find((reservation) =>
-    reservation.channels.length === uniqueChannels.length &&
-    reservation.channels.every((channel, index) => channel === uniqueChannels[index]),
+  const existing = ledger.reservations.find(
+    (reservation) =>
+      reservation.channels.length === uniqueChannels.length &&
+      reservation.channels.every((channel, index) => channel === uniqueChannels[index]),
   );
   if (existing) {
     existing.remaining = Math.max(existing.remaining, requested);
@@ -360,6 +365,7 @@ export function chargeTurnInjection(
   ledger: TurnInjectionLedger,
   channel: TurnInjectionChannel,
   text: string | undefined,
+  allowTruncation = true,
 ): ApplyBudgetResult {
   const charsRequested = text?.length ?? 0;
   const order = precedenceIndexOf(channel);
@@ -391,17 +397,17 @@ export function chargeTurnInjection(
   // B-1: decay shrinks this channel's ceiling, never the reservations held for
   // higher-precedence channels (those were subtracted before the multiplier).
   const chargeLimit = Math.max(0, Math.floor(rawLimit * decayFactor));
-  const result = applyInjectionBudget(ledger.budget, text, channel, chargeLimit);
+  // Structured message replacements must fit whole: truncating serialized
+  // tool calls or summaries would change their meaning and break pairing.
+  const limit = !allowTruncation && charsRequested > chargeLimit ? 0 : chargeLimit;
+  const result = applyInjectionBudget(ledger.budget, text, channel, limit);
   for (const reservation of ledger.reservations) {
     if (reservation.channels.includes(channel)) {
       reservation.remaining = Math.max(0, reservation.remaining - result.charsApplied);
     }
   }
-  const disposition: TurnInjectionDisposition = result.charsApplied === 0
-    ? "drop"
-    : result.truncated
-      ? "truncate"
-      : "applied";
+  const disposition: TurnInjectionDisposition =
+    result.charsApplied === 0 ? "drop" : result.truncated ? "truncate" : "applied";
   ledger.entries.push({
     channel,
     disposition,
