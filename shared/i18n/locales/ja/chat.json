@@ -2271,7 +2271,13 @@
       "invalid": "無効",
       "validationError": "検証エラー",
       "error": "エラー"
-    }
+    },
+    "managedTitle": "管理対象の構造化アーティファクト",
+    "managedEmpty": "このワークスペースに管理対象のアーティファクトはありません",
+    "refresh": "更新",
+    "managedError": "構造化アーティファクトを利用できません",
+    "managedRevision": "リビジョン",
+    "managedRevisions": "件のリビジョン"
   },
   "processPanel": {
     "gone": "このプロセスは現在の実行には存在しません。",

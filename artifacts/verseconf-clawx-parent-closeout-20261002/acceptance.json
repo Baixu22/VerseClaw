@@ -1,0 +1,124 @@
+{
+  "schema": "tf0243-parent-closeout/v1",
+  "createdAt": "2026-10-02T13:33:22.710376+00:00",
+  "actor": "agent/verseconf-clawx-closeout",
+  "driven_by": "agent",
+  "taskId": "TF-0243",
+  "verdict": "complete-for-current-bounded-scope",
+  "checks": [
+    {
+      "name": "criterion-1-bounded-contract-maintenance-budget-exit",
+      "ok": true,
+      "evidence": [
+        "docs/dev/verseconf-clawx-adoption-decision.md",
+        "artifacts/verseconf-contract-v1/verification/20261001/contract-check-final.json",
+        "harness/specs/tasks/verseconf-clawx-integrated-consumer.md"
+      ]
+    },
+    {
+      "name": "criterion-2-two-consumers-and-negative-paths",
+      "ok": true,
+      "evidence": [
+        "artifacts/verseconf-clawx-integration/verification-20261001.json",
+        "artifacts/verseconf-clawx-integration/visual-20261001/visual-report.json",
+        ".agent-workbench/task-forest/graph/nodes.json"
+      ]
+    },
+    {
+      "name": "criterion-3-explicit-follow-on-authorization-and-no-unexecuted-children-claimed-done",
+      "ok": true,
+      "evidence": [
+        ".agent-workbench/task-forest/proposals/TFP-verseconf-clawx-implementation-closeout-20261001.json",
+        ".agent-workbench/task-forest/graph/nodes.json",
+        "docs/dev/verseconf-clawx-implementation-20261001.md"
+      ]
+    },
+    {
+      "name": "criterion-4-report-separates-mechanism-engine-distribution-publication",
+      "ok": true,
+      "evidence": [
+        "docs/dev/verseconf-clawx-implementation-20261001.md",
+        "artifacts/verseconf-clawx-integration/verification-20261001.json"
+      ]
+    },
+    {
+      "name": "evidence-visual-agent-driven",
+      "ok": true,
+      "evidence": [
+        "artifacts/verseconf-clawx-integration/visual-20261001/visual-report.json"
+      ]
+    }
+  ],
+  "allChecksPassed": true,
+  "children": {
+    "TF-0244": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0245": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0246": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0247": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0248": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0249": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0250": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0251": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0252": {
+      "status": "done",
+      "progress": 100.0
+    }
+  },
+  "boundaries": {
+    "defaultOn": false,
+    "productApproved": false,
+    "liveReady": false,
+    "publicPublish": false,
+    "sourceRuntimePathIsolation": true,
+    "noChannelInstallFallback": true
+  },
+  "nonClaims": [
+    "real-human evidence",
+    "paid-model quality",
+    "cross-platform release",
+    "public publication",
+    "default-on",
+    "GA"
+  ],
+  "sourceHashes": {
+    "verification": "sha256:e50cba336330b70df3430a740a9505771d866c2290cf56519477900816a528f5",
+    "adoptionDecision": "sha256:ebf698ddbf70d8fc0bc9430dce47f53238988be42f918190dbc43e1fb25d0b24",
+    "implementation": "sha256:bc957c9b3c3f2a146a0cc675a49e84b1a4a506d2ba29b13fb2c4d465ef251a75",
+    "harnessSpec": "sha256:fd66cbed41662634003a7bff51dc1bf707ba049ada8bfb52c27031bfba98b9ee",
+    "implementationProposal": "sha256:a486e95ab04eebc273cdf8f59c4cb6bf1f4e415d1447d1d95cd63931c411f041"
+  },
+  "updatedAt": "2026-10-02T13:40:00+08:00",
+  "evidenceIntegrity": {
+    "manifest": "artifacts/verseconf-clawx-parent-closeout-20261002/SHA256SUMS",
+    "credentialScan": "artifacts/verseconf-clawx-parent-closeout-20261002/credential-scan.json",
+    "status": "passed",
+    "credentialScanHits": 0,
+    "filesScanned": 1,
+    "manifestFiles": 2,
+    "driven_by": "agent"
+  }
+}

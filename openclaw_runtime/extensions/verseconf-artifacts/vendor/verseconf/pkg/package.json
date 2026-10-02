@@ -1,0 +1,20 @@
+{
+  "name": "verseconf-wasm",
+  "collaborators": [
+    "VerseConf Team"
+  ],
+  "description": "WebAssembly bindings for VerseConf",
+  "version": "0.3.0",
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Baixu22/Verse-conf"
+  },
+  "files": [
+    "verseconf_wasm_bg.wasm",
+    "verseconf_wasm.js",
+    "verseconf_wasm.d.ts"
+  ],
+  "main": "verseconf_wasm.js",
+  "types": "verseconf_wasm.d.ts"
+}

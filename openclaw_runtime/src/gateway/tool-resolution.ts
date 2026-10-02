@@ -163,6 +163,7 @@ export function resolveGatewayScopedTools(params: {
 
   const allTools = createOpenClawTools({
     agentSessionKey: params.sessionKey,
+    sessionId: sessionEntry?.sessionId,
     agentChannel: params.messageProvider ?? undefined,
     agentAccountId: params.accountId,
     inboundEventKind: params.inboundEventKind,

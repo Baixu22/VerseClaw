@@ -9,7 +9,7 @@
   !include "nsProcess.nsh"
 !endif
 
-Var /GLOBAL verse-clawRollbackDir
+Var /GLOBAL verseClawRollbackDir
 
 !macro customHeader
   ; Show install details by default so users can see what stage is running.
@@ -18,7 +18,7 @@ Var /GLOBAL verse-clawRollbackDir
 !macroend
 
 !ifndef BUILD_UNINSTALLER
-Function Verse ClawMoveLegacyInstallDir
+Function VerseClawMoveLegacyInstallDir
   Exch $R6
 
   ${if} $R6 == ""
@@ -67,10 +67,10 @@ Function Verse ClawMoveLegacyInstallDir
     Pop $R6
 FunctionEnd
 
-!macro verse-clawMoveLegacyInstallDir ROOT_KEY
+!macro verseClawMoveLegacyInstallDir ROOT_KEY
   ReadRegStr $R6 ${ROOT_KEY} "${INSTALL_REGISTRY_KEY}" InstallLocation
   Push $R6
-  Call Verse ClawMoveLegacyInstallDir
+  Call VerseClawMoveLegacyInstallDir
 !macroend
 !endif
 
@@ -200,7 +200,7 @@ FunctionEnd
     ${endIf}
 
   !ifndef BUILD_UNINSTALLER
-    StrCpy $verse-clawRollbackDir ""
+    StrCpy $verseClawRollbackDir ""
 
     ; Release NSIS's CWD on $INSTDIR BEFORE the rename check.
     ; NSIS sets CWD to $INSTDIR in .onInit; Windows refuses to rename a directory
@@ -210,8 +210,8 @@ FunctionEnd
     ; Move legacy installs discovered in both registry hives before handling the
     ; current $INSTDIR.  This covers per-user <-> per-machine migrations and
     ; custom install directories where the new $INSTDIR is not the old location.
-    !insertmacro verse-clawMoveLegacyInstallDir HKCU
-    !insertmacro verse-clawMoveLegacyInstallDir HKLM
+    !insertmacro verseClawMoveLegacyInstallDir HKCU
+    !insertmacro verseClawMoveLegacyInstallDir HKLM
 
     ; Pre-emptively clear the old installation directory so that the 7z
   ; extraction `CopyFiles` step in extractAppPackage.nsh won't fail on
@@ -267,7 +267,7 @@ FunctionEnd
       CreateDirectory "$INSTDIR"
       Goto _instdir_clean
   _stale_moved:
-    StrCpy $verse-clawRollbackDir "$INSTDIR._stale_$R8"
+    StrCpy $verseClawRollbackDir "$INSTDIR._stale_$R8"
     CreateDirectory "$INSTDIR"
   _instdir_clean:
 
