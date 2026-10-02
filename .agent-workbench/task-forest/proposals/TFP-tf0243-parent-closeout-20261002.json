@@ -1,0 +1,45 @@
+{
+  "applied_at": "2026-10-02T13:35:11.433331Z",
+  "base_graph_hash": "a1c2e883440ce353fe437712738c2d96d3994bc84e41bee859b0291119aff021",
+  "base_summary": {
+    "edge_count": 435,
+    "node_count": 252,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（设计输入，非产品验收）",
+          "docs/dev/verseconf-clawx-adoption-decision.md",
+          "artifacts/verseconf-adoption-decision-20261001/decision.json",
+          "artifacts/remaining-node-audit-20261001/tf0244-acceptance.json",
+          "artifacts/remaining-node-audit-20261001/tf0245-closeout-proposal.json",
+          "docs/dev/verseconf-clawx-implementation-20261001.md",
+          "artifacts/verseconf-clawx-integration/verification-20261001.json",
+          "harness/specs/tasks/verseconf-clawx-integrated-consumer.md",
+          "artifacts/verseconf-clawx-integration/visual-20261001/visual-report.json",
+          "release/Verse Claw-0.4.9-alpha.0-win-x64.exe (agent-built local ignored artifact)",
+          "artifacts/verseconf-clawx-parent-closeout-20261002/acceptance.json"
+        ],
+        "execution_hints": [
+          "父节点已按当前有界范围和 agent 驱动证据收口；不再作为第二个并行工程任务。",
+          "后续若恢复更广范围，必须新建并单独授权工作包；不得从本轮证据自动推出采用、GA、default-on 或公开发布。"
+        ],
+        "next_action": "当前有界范围已完成；后续只在新的明确授权下做证据刷新、缺陷修复或独立新范围，不改变产品锁、默认值、liveReady、productApproved 或公开发布边界。",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "VerseConf × ClawX 当前有界消费者闭环与采用边界已完成：契约、受管提交、持久版本、JSON/WASM、产物 UI/导出、记录操作、第二消费者、分发和 agent 驱动验收均有证据；后续扩展仍需新的明确授权，不等价于产品 GA/default-on。"
+      },
+      "id": "TF-0243"
+    }
+  ],
+  "created_at": "2026-10-02T13:34:21.327182Z",
+  "proposal_id": "TFP-tf0243-parent-closeout-20261002",
+  "rationale": "已直接读取 TF-0243 四条验收标准对应的契约、采用边界、实现、33/33 agent-driven 验证、第二消费者视觉产物和子节点状态；父节点当前有界范围满足验收，剩余更广扩展明确保持未授权，因此自动收口 TF-0243 为 done/100，不宣称产品 GA/default-on。",
+  "session_id": "verseconf-clawx-parent-closeout-20261002",
+  "status": "applied"
+}

@@ -2271,7 +2271,13 @@
       "invalid": "Invalid",
       "validationError": "Validation Error",
       "error": "Error"
-    }
+    },
+    "managedTitle": "Managed structured artifacts",
+    "managedEmpty": "No managed artifacts in this workspace",
+    "refresh": "Refresh",
+    "managedError": "Structured artifacts are unavailable",
+    "managedRevision": "Revision",
+    "managedRevisions": "revisions"
   },
   "processPanel": {
     "gone": "This process is no longer in the current run.",

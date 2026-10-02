@@ -1,0 +1,244 @@
+{
+  "applied_at": "2026-10-01T17:54:55.103306Z",
+  "base_graph_hash": "3735992218e639970be383015c8839259a584eddec3a83e5bb571b49b691bcab",
+  "base_summary": {
+    "edge_count": 435,
+    "node_count": 252,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deprecated_at": null,
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（设计输入，非产品验收）",
+          "docs/dev/verseconf-clawx-adoption-decision.md",
+          "artifacts/verseconf-adoption-decision-20261001/decision.json",
+          "artifacts/remaining-node-audit-20261001/tf0244-acceptance.json",
+          "artifacts/remaining-node-audit-20261001/tf0245-closeout-proposal.json",
+          "docs/dev/verseconf-clawx-implementation-20261001.md",
+          "artifacts/verseconf-clawx-integration/verification-20261001.json",
+          "harness/specs/tasks/verseconf-clawx-integrated-consumer.md",
+          "artifacts/verseconf-clawx-integration/visual-20261001/visual-report.json",
+          "release/Verse Claw-0.4.9-alpha.0-win-x64.exe (agent-built local ignored artifact)"
+        ],
+        "next_action": "继续按新证据维护规划与采用边界；不得从本轮工程通过自动推出 GA、default-on、公开发布或真人质量结论。",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "in_progress",
+        "summary": "VerseConf × ClawX 规划与受限实现已推进至 TF-0252：契约、受管提交、持久版本、JSON/WASM、产物 UI/导出、记录操作、第二消费者、分发和采用边界均有 agent 证据；总目标仍保持“规划进行中”，不等价于产品 GA/default-on。"
+      },
+      "id": "TF-0243"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "deprecated_at": null,
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done"
+      },
+      "id": "TF-0244"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "deprecated_at": null,
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done"
+      },
+      "id": "TF-0245"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.93,
+        "deprecated_at": null,
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（候选提交设计）",
+          "docs/dev/verseconf-clawx-implementation-20261001.md",
+          "artifacts/verseconf-clawx-integration/verification-20261001.json",
+          "harness/specs/tasks/verseconf-clawx-integrated-consumer.md",
+          "openclaw_runtime/extensions/verseconf-artifacts/index.ts",
+          "openclaw_runtime/extensions/verseconf-artifacts/src/tools.ts",
+          "openclaw_runtime/src/plugin-sdk/structured-artifacts.ts",
+          "openclaw_runtime/src/agents/tools/write-journal.ts",
+          "openclaw_runtime/extensions/verseconf-artifacts/src/structured-artifacts.seam.test.ts"
+        ],
+        "execution_hints": [
+          "节点已完成；后续只做证据刷新、缺陷修复或独立新授权范围，不改变产品锁和默认值。"
+        ],
+        "next_action": "本节点已按当前授权范围和 agent 驱动证据自动收口；继续保持产品锁、defaultOn、liveReady、productApproved 和公开发布边界不变。",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "真实插件工具装配、受信任上下文绑定和受管候选提交已完成；路径逃逸、取消、基线漂移、journal/receipt 和幂等回放拒绝均有 agent 驱动证据。"
+      },
+      "id": "TF-0246"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.93,
+        "deprecated_at": null,
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（版本/提交/恢复契约）",
+          "docs/dev/verseconf-clawx-implementation-20261001.md",
+          "artifacts/verseconf-clawx-integration/verification-20261001.json",
+          "harness/specs/tasks/verseconf-clawx-integrated-consumer.md",
+          "openclaw_runtime/extensions/verseconf-artifacts/src/store.ts",
+          "openclaw_runtime/extensions/verseconf-artifacts/src/consumer.test.ts",
+          "openclaw_runtime/src/state/openclaw-state-db.ts"
+        ],
+        "execution_hints": [
+          "节点已完成；后续只做证据刷新、缺陷修复或独立新授权范围，不改变产品锁和默认值。"
+        ],
+        "next_action": "本节点已按当前授权范围和 agent 驱动证据自动收口；继续保持产品锁、defaultOn、liveReady、productApproved 和公开发布边界不变。",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "复用 OpenClaw 既有 SQLite state owner、文件 lease 和 write journal，完成 artifact/revision/operation/output 持久化、恢复新 revision、容量限制与 prepared 重启对账。"
+      },
+      "id": "TF-0247"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.93,
+        "deprecated_at": null,
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（内存消费面与绑定缺口）",
+          "docs/dev/verseconf-clawx-implementation-20261001.md",
+          "artifacts/verseconf-clawx-integration/verification-20261001.json",
+          "harness/specs/tasks/verseconf-clawx-integrated-consumer.md",
+          "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/build-manifest.json",
+          "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg/verseconf_wasm_bg.wasm",
+          "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/worker/index.mjs",
+          "openclaw_runtime/extensions/verseconf-artifacts/src/engine.ts",
+          "openclaw_runtime/extensions/verseconf-artifacts/src/consumer.test.ts"
+        ],
+        "execution_hints": [
+          "节点已完成；后续只做证据刷新、缺陷修复或独立新授权范围，不改变产品锁和默认值。"
+        ],
+        "next_action": "本节点已按当前授权范围和 agent 驱动证据自动收口；继续保持产品锁、defaultOn、liveReady、productApproved 和公开发布边界不变。",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "固定 Node/WASM 交付包、严格 JSON/可信 schema、Unicode/CRLF/BOM、worker 取消和双 profile 内存边界均完成并有指纹证据；不是安全沙箱或公共 npm 发布。"
+      },
+      "id": "TF-0248"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.93,
+        "deprecated_at": null,
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（研究表与产物投影）",
+          "docs/dev/verseconf-clawx-implementation-20261001.md",
+          "artifacts/verseconf-clawx-integration/verification-20261001.json",
+          "harness/specs/tasks/verseconf-clawx-integrated-consumer.md",
+          "openclaw_runtime/extensions/verseconf-artifacts/src/render.ts",
+          "src/components/file-preview/ArtifactView.tsx",
+          "src/components/file-preview/ArtifactPanel.tsx",
+          "tests/e2e/chat-artifact-panel.spec.ts"
+        ],
+        "execution_hints": [
+          "节点已完成；后续只做证据刷新、缺陷修复或独立新授权范围，不改变产品锁和默认值。"
+        ],
+        "next_action": "本节点已按当前授权范围和 agent 驱动证据自动收口；继续保持产品锁、defaultOn、liveReady、productApproved 和公开发布边界不变。",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "研究表修订、Markdown/CSV/XLSX/PPTX 输出和 Artifact Panel managed history 查询完成；renderer 仅经现有 host-api.gateway.rpc。"
+      },
+      "id": "TF-0249"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.93,
+        "deprecated_at": null,
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（有界完整生命周期）",
+          "docs/dev/verseconf-clawx-implementation-20261001.md",
+          "artifacts/verseconf-clawx-integration/verification-20261001.json",
+          "harness/specs/tasks/verseconf-clawx-integrated-consumer.md",
+          "openclaw_runtime/extensions/verseconf-artifacts/src/domain.ts",
+          "openclaw_runtime/extensions/verseconf-artifacts/src/domain.test.ts",
+          "openclaw_runtime/extensions/verseconf-artifacts/src/store.ts"
+        ],
+        "execution_hints": [
+          "节点已完成；后续只做证据刷新、缺陷修复或独立新授权范围，不改变产品锁和默认值。"
+        ],
+        "next_action": "本节点已按当前授权范围和 agent 驱动证据自动收口；继续保持产品锁、defaultOn、liveReady、productApproved 和公开发布边界不变。",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "稳定 ID 的插入/删除/移动、邻接校验、外部漂移拒绝、历史恢复新 revision 和输出 lineage 完成。"
+      },
+      "id": "TF-0250"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.93,
+        "deprecated_at": null,
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（第二消费者边界）",
+          "docs/dev/verseconf-clawx-implementation-20261001.md",
+          "artifacts/verseconf-clawx-integration/verification-20261001.json",
+          "harness/specs/tasks/verseconf-clawx-integrated-consumer.md",
+          "openclaw_runtime/extensions/verseconf-artifacts/templates/slide-outline-template.pptx",
+          "openclaw_runtime/extensions/verseconf-artifacts/src/render.test.ts",
+          "artifacts/verseconf-clawx-integration/visual-20261001/visual-report.json",
+          "artifacts/verseconf-clawx-integration/visual-20261001/slide-outline.pdf"
+        ],
+        "execution_hints": [
+          "节点已完成；后续只做证据刷新、缺陷修复或独立新授权范围，不改变产品锁和默认值。"
+        ],
+        "next_action": "本节点已按当前授权范围和 agent 驱动证据自动收口；继续保持产品锁、defaultOn、liveReady、productApproved 和公开发布边界不变。",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "第二消费者 slide-outline 复用同一宿主契约和固定模板完成；LibreOffice/PyMuPDF agent 驱动 3 页 PDF/PNG/文本检查通过，未声称真人视觉证据。"
+      },
+      "id": "TF-0251"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.93,
+        "deprecated_at": null,
+        "evidence": [
+          "docs/dev/verseconf-clawx-integration-exploration-20260930.md（分发与工程对照）",
+          "docs/dev/verseconf-clawx-implementation-20261001.md",
+          "artifacts/verseconf-clawx-integration/verification-20261001.json",
+          "harness/specs/tasks/verseconf-clawx-integrated-consumer.md",
+          "openclaw_runtime/extensions/verseconf-artifacts/package.json",
+          "openclaw_runtime/extensions/verseconf-artifacts/openclaw.plugin.json",
+          "scripts/build-openclaw-runtime.mjs",
+          "scripts/after-pack.cjs",
+          "scripts/installer.nsh",
+          "release/Verse Claw-0.4.9-alpha.0-win-x64.exe (agent-built unpacked/NSIS output, local ignored artifact)"
+        ],
+        "execution_hints": [
+          "节点已完成；后续只做证据刷新、缺陷修复或独立新授权范围，不改变产品锁和默认值。"
+        ],
+        "next_action": "本节点已按当前授权范围和 agent 驱动证据自动收口；继续保持产品锁、defaultOn、liveReady、productApproved 和公开发布边界不变。",
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "单一 Node/WASM 交付、默认关闭、包内资源指纹、source/runtime 路径隔离、Electron unpacked 与 NSIS Windows x64 包检查完成；不改变 default-on/GA。"
+      },
+      "id": "TF-0252"
+    }
+  ],
+  "created_at": "2026-10-01T18:00:00.000000Z",
+  "proposal_id": "TFP-verseconf-clawx-implementation-closeout-20261001",
+  "rationale": "用户明确要求继续完成 TF-0246 至 TF-0252。当前实现、测试、agent 驱动验证、Electron E2E、package/unpacked/NSIS Windows x64 证据已落盘；按仓库自动收口政策将七个节点标记 done/100，同时保留 TF-0243 为 in_progress，明确总目标仍是规划进行中而不是产品完成。",
+  "session_id": "verseconf-clawx-implementation-20261001",
+  "status": "applied"
+}

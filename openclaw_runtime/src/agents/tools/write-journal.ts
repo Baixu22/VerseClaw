@@ -17,6 +17,7 @@ import path from "node:path";
 import { Type } from "typebox";
 import { codingObservability } from "../../context-engine/coding-observability.js";
 import { getToolParamsRecord } from "../agent-tools.params.js";
+import { acquirePatchBatchLocks } from "../apply-patch-batch-lock.js";
 import type { AnyAgentTool } from "../agent-tools.types.js";
 import { toRelativeWorkspacePath } from "../path-policy.js";
 import { generateUnifiedPatch } from "../sessions/tools/edit-diff.js";
@@ -598,9 +599,19 @@ export function wrapToolWithWriteJournal(
       } else if (typeof record?.path === "string" && record.path.trim()) {
         paths.push(record.path);
       }
-      const snapshots: WriteJournalEntry[] = [];
-      for (const filePath of paths) {
-        const entry = snapshotBeforeWrite({
+      const lockTargets =
+        tool.name === "apply_patch"
+          ? []
+          : paths.map((filePath) =>
+              path.isAbsolute(filePath)
+                ? path.resolve(filePath)
+                : path.resolve(options.workspaceRoot, filePath),
+            );
+      const release = await acquirePatchBatchLocks(lockTargets);
+      try {
+        const snapshots: WriteJournalEntry[] = [];
+        for (const filePath of paths) {
+          const entry = snapshotBeforeWrite({
           workspaceRoot: options.workspaceRoot,
           sessionId: options.sessionId,
           filePath,
@@ -638,22 +649,25 @@ export function wrapToolWithWriteJournal(
       const patchLineage = toolCallId
         ? bindPatchArtifactLineage({ details: detailsForLineage, snapshots, requestId: toolCallId })
         : {};
-      return {
-        ...result,
-        details: {
-          ...detailsForLineage,
-          ...patchLineage,
-          write_journal: {
-            undoable: true,
-            snapshots: snapshots.map((s) => ({
-              seq: s.seq,
-              journalEntryId: journalEntryId(s.lineage?.sessionId ?? "default", s.seq),
-              path: s.relPath,
-              hadPrior: s.hadPrior,
-            })),
+        return {
+          ...result,
+          details: {
+            ...detailsForLineage,
+            ...patchLineage,
+            write_journal: {
+              undoable: true,
+              snapshots: snapshots.map((s) => ({
+                seq: s.seq,
+                journalEntryId: journalEntryId(s.lineage?.sessionId ?? "default", s.seq),
+                path: s.relPath,
+                hadPrior: s.hadPrior,
+              })),
+            },
           },
-        },
-      };
+        };
+      } finally {
+        release();
+      }
     },
   };
 }

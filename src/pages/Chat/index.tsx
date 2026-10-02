@@ -3756,6 +3756,7 @@ export function Chat() {
                 onOpenWorkspaceWebView={handleOpenWorkspaceWebView}
                 onAppendComposerDraft={handleAppendComposerDraft}
                 artifacts={artifacts}
+                workspaceRoot={activeWorkspace?.rootPath ?? null}
                 selectedArtifactId={selectedArtifactId}
                 onArtifactSelect={setSelectedArtifactId}
                 onArtifactValidate={async (id) => {

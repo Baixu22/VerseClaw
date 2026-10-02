@@ -2271,7 +2271,13 @@
       "invalid": "无效",
       "validationError": "验证错误",
       "error": "错误"
-    }
+    },
+    "managedTitle": "受管结构化产物",
+    "managedEmpty": "此工作区暂无受管产物",
+    "refresh": "刷新",
+    "managedError": "结构化产物暂不可用",
+    "managedRevision": "版本",
+    "managedRevisions": "个版本"
   },
   "processPanel": {
     "gone": "这个进程已不在当前运行里。",

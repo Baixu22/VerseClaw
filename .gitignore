@@ -294,3 +294,13 @@ openclaw_runtime/_tmp_*
 # TF-0237 demo package: copies of the three archived journeys plus manifest/verify docs.
 !artifacts/showcase-20260922/
 !artifacts/showcase-20260922/**
+
+# Agent-driven VerseConf x ClawX integration evidence
+!artifacts/verseconf-clawx-integration/
+!artifacts/verseconf-clawx-integration/**
+!artifacts/verseconf-clawx-parent-closeout-20261002/
+!artifacts/verseconf-clawx-parent-closeout-20261002/**
+
+# Host-generated Windows cache path accidentally materialized by %SystemDrive% expansion
+%SystemDrive%/
+.agent-workbench/task-forest/lock

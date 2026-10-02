@@ -65,9 +65,10 @@ export interface ArtifactPanelProps {
   onSessionStateChange?: (patch: WorkspaceArtifactPanelState) => void;
   onOpenWorkspaceWebView?: () => void;
   onAppendComposerDraft?: (text: string) => void;
+  workspaceRoot?: string | null;
 }
 
-export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState, onSessionStateChange, onOpenWorkspaceWebView, onAppendComposerDraft, artifacts = [], selectedArtifactId, onArtifactSelect, onArtifactValidate, artifactGenerating }: ArtifactPanelProps) {
+export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState, onSessionStateChange, onOpenWorkspaceWebView, onAppendComposerDraft, artifacts = [], selectedArtifactId, onArtifactSelect, onArtifactValidate, artifactGenerating, workspaceRoot }: ArtifactPanelProps) {
   const { t } = useTranslation('chat');
   const isMac = window.electron?.platform === 'darwin';
   const tabs = useArtifactPanel((s) => s.tabs);
@@ -280,6 +281,7 @@ export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState
               onArtifactSelect={onArtifactSelect}
               onArtifactValidate={onArtifactValidate}
               artifactGenerating={artifactGenerating}
+              workspaceRoot={workspaceRoot}
             />
           </div>
         ))}
@@ -301,7 +303,7 @@ export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState
 interface PanelContentProps extends Pick<ArtifactPanelProps,
   'agent' | 'runStartedAt' | 'refreshSignal' | 'sessionState' | 'onSessionStateChange'
   | 'onOpenWorkspaceWebView' | 'onAppendComposerDraft' | 'artifacts' | 'selectedArtifactId'
-  | 'onArtifactSelect' | 'onArtifactValidate' | 'artifactGenerating'> {
+  | 'onArtifactSelect' | 'onArtifactValidate' | 'artifactGenerating' | 'workspaceRoot'> {
   kind: PanelTabKind;
   /** The tab's subject, for the multi-instance kinds. See `PanelTabInstance`. */
   subject?: string;
@@ -327,6 +329,7 @@ function PanelContent({
   onArtifactSelect,
   onArtifactValidate,
   artifactGenerating,
+  workspaceRoot,
 }: PanelContentProps) {
   switch (kind) {
     case 'review':
@@ -365,6 +368,7 @@ function PanelContent({
           onSelect={(id) => onArtifactSelect?.(id)}
           onValidate={(id) => onArtifactValidate?.(id)}
           generating={artifactGenerating ?? false}
+          workspaceRoot={workspaceRoot}
         />
       );
     case 'audit':

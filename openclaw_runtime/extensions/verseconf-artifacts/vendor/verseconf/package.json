@@ -1,0 +1,70 @@
+{
+  "name": "verseconf",
+  "private": true,
+  "version": "0.3.0",
+  "description": "VerseConf 的 JavaScript/WebAssembly 分发：宿主无需 Rust 工具链即可获得配置校验、安全审计与确定性最小改动编辑（未发布到 npm）",
+  "license": "MIT OR Apache-2.0",
+  "author": "VerseConf Contributors",
+  "homepage": "https://github.com/Baixu22/Verse-conf",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Baixu22/Verse-conf",
+    "directory": "integrations/verseconf-wasm/js-api"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./worker": {
+      "types": "./worker/index.d.ts",
+      "import": "./worker/index.mjs"
+    },
+    "./web": "./pkg-web/verseconf_wasm.js",
+    "./wasm": "./pkg/verseconf_wasm_bg.wasm",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "verseconf-mcp-wasm": "bin/verseconf-mcp-wasm.mjs"
+  },
+  "files": [
+    "dist",
+    "pkg",
+    "pkg-web",
+    "bin",
+    "worker",
+    "build-manifest.json",
+    "README.md",
+    "LICENSE-MIT",
+    "LICENSE-APACHE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "calibrate": "node scripts/calibrate-worker.mjs",
+    "prepublishOnly": "npm run build",
+    "pretest": "npm run build",
+    "test": "node test/load.test.mjs && node test/package.test.mjs && node test/business.test.mjs && node test/worker.test.mjs",
+    "test:parity": "node test/parity.mjs"
+  },
+  "keywords": [
+    "config",
+    "configuration",
+    "parser",
+    "wasm",
+    "webassembly",
+    "mcp",
+    "agent",
+    "verseconf"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.2"
+  }
+}

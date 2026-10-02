@@ -1,3 +1,13 @@
+# 2026-10-02：VerseConf × ClawX 当前有界范围完成，进入合并前收尾
+
+- canonical Task Forest 已完成当前范围收口：252 个节点，236 `done`、16 `deprecated`、0 `in_progress`、0 `ready`、0 `blocked`、0 `review_needed`；`todo` 为空；`validate` 与 `export` 均 exit 0。
+- `TF-0243` 已按当前有界范围自动收口为 `done/100`；提案 `TFP-tf0243-parent-closeout-20261002` 已应用。`artifacts/verseconf-clawx-parent-closeout-20261002/acceptance.json` 的 5 项检查全部通过；TF-0244 至 TF-0252 均为 `done/100`。
+- 当前实现与 agent-driven 证据保持不变：`artifacts/verseconf-clawx-integration/verification-20261001.json` 为 33/33 passed，凭据扫描 0 命中；`defaultOn=false`、`productApproved=false`、`liveReady=false`、`publicPublish=false`。
+- 本轮复核门禁：扩展 tsgo exit 0；专项 Vitest 5 files / 10 tests passed；`contract:check`、comms replay、comms compare 通过；Harness `validate --no-diff` 通过。完整 diff validation/dry-run 仍因工作区既有的跨任务 dirty 文件超出本 task spec 的 ownedPaths/touchedAreas 而失败，未清理、重置或强制删除这些文件。
+- 合并边界：只合并当前已落盘的私有分支提交；不发布、不公开、不改产品锁/默认值；若合并出现冲突，保留冲突现场并记录为待处理。
+
+---
+
 # 2026-10-01：剩余节点治理收口；任务森林无活动 ready/in_progress 节点
 
 - TF-0013 已 done/100：干净候选 `ed97400bdc0a6e16c06387ba808e287bd1380475`，18 门、233 测试、7 次真实 native 请求通过；Codex 诊断契约 8 条类型错误清零。证据/说明：`docs/dev/tf0013-authority-closeout-20261001.md`。

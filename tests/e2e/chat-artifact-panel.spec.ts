@@ -116,6 +116,56 @@ test.describe('Chat artifact panel', () => {
     }
   });
 
+  test('shows managed structured artifacts through the host gateway seam', async ({ launchElectronApp }) => {
+    const app = await launchElectronApp({ skipSetup: true });
+
+    try {
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', {}])]: {
+            success: true,
+            result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] },
+          },
+          [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200 }])]: {
+            success: true,
+            result: { messages: [], hasMore: false },
+          },
+          [stableStringify(['workspaces.getSessionState', { workspaceId: WORKSPACE.id, sessionKey: SESSION_KEY }])]: {
+            success: true,
+            result: { artifactPanel: { open: true, activeTab: 'artifact' } },
+          },
+          [stableStringify(['verseconf.artifacts.list', { workspaceDir: WORKSPACE.rootPath }])]: {
+            success: true,
+            result: {
+              artifacts: [{ artifactId: 'artifact-research', kind: 'research-table', sourcePath: 'research.json', currentRevisionId: 'rev-2', updatedAt: 2 }],
+            },
+          },
+          [stableStringify(['verseconf.artifacts.history', { workspaceDir: WORKSPACE.rootPath, artifactId: 'artifact-research' }])]: {
+            success: true,
+            result: {
+              artifact: { artifactId: 'artifact-research', kind: 'research-table', sourcePath: 'research.json', currentRevisionId: 'rev-2', updatedAt: 2 },
+              revisions: [{ revisionId: 'rev-1', sequence: 1, sourceSha256: 'before', status: 'committed', createdAt: 1 }, { revisionId: 'rev-2', sequence: 2, sourceSha256: 'after', status: 'committed', createdAt: 2 }],
+              outputs: [{ outputId: 'out-1', revisionId: 'rev-2', format: 'xlsx', path: '.openclaw/structured-artifacts/artifact-research/rev-2.xlsx', validationStatus: 'passed', journalRef: 'write-journal:session:1' }],
+            },
+          },
+        },
+        hostApi: baseHostApiMocks(),
+      });
+
+      const page = await getStableWindow(app);
+      await page.waitForTimeout(3000);
+      const managed = page.getByTestId('structured-artifacts-view');
+      await expect(managed).toBeVisible({ timeout: 10_000 });
+      await expect(managed).toContainText('artifact-research');
+      await managed.getByRole('button', { name: 'artifact-research' }).click();
+      await expect(managed).toContainText('Revision 2');
+      await expect(managed).toContainText('XLSX');
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
   test('shows empty state when no artifacts exist', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
