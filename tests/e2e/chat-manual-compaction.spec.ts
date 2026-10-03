@@ -79,6 +79,30 @@ test.describe('Verse Claw chat manual compaction', () => {
             success: true,
             usage: null,
           },
+          // Manual compaction now passes through a prompt-cache-risk gate
+          // (confirmPromptCacheRisk -> usage.promptCacheStatus). Without a mock
+          // the call falls through to the real assessment, which warns at high
+          // pressure and blocks on a toast decision the test never makes. Stub a
+          // no-warning assessment so the confirm proceeds to the Host API call.
+          [stableStringify(['usage', 'promptCacheStatus', null])]: {
+            success: true,
+            assessment: {
+              sessionKey: MAIN_SESSION_KEY,
+              shouldWarn: false,
+              severity: 'none',
+              status: 'unknown',
+              confidence: 'unknown',
+              providerStrategy: 'unknown',
+              hitRate: null,
+              promptTokens: 0,
+              cacheReadTokens: 0,
+              cacheWriteTokens: 0,
+              costEstimateReliable: false,
+              warningCount: 0,
+              cancelledBreakCount: 0,
+              updatedAt: 0,
+            },
+          },
           [stableStringify(['sessions', 'compactionStatus', {
             sessionKey: MAIN_SESSION_KEY,
             agentId: 'main',
@@ -132,8 +156,11 @@ test.describe('Verse Claw chat manual compaction', () => {
       const page = await getStableWindow(app);
       await page.waitForLoadState('domcontentloaded');
 
-      await expect(page.getByTestId('chat-composer-compact')).toBeVisible({ timeout: 30_000 });
-      await page.getByTestId('chat-composer-compact').click();
+      // The composer compact icon was removed; the slash palette is the entry
+      // point now (see tests/unit/chat-input.test.tsx). Open the dialog via /compact.
+      await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
+      await page.getByTestId('chat-composer-input').fill('/compact');
+      await page.getByTestId('chat-slash-command-option-compact').click();
       await expect(page.getByTestId('chat-compaction-dialog')).toBeVisible();
       await page.getByTestId('chat-compaction-instructions').fill('Keep the deployment decision.');
       await expect(page.getByTestId('chat-compaction-confirm')).toBeEnabled();

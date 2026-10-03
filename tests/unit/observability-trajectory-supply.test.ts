@@ -177,13 +177,13 @@ describe('WV-B2-02A renderer v2 trajectory supply', () => {
 
     // The v1 row is projected as legacy trace data but never enters the v2 supply.
     expect(supplyEvents).toHaveLength(1);
-    expect(supplyEvents[0].map((event) => event.seq)).toEqual([1, 3]);
-    expect(supplyEvents[0].every((event) => event.schemaVersion === 2)).toBe(true);
+    expect(supplyEvents[0].map((event: unknown) => (event as { seq?: number }).seq)).toEqual([1, 3]);
+    expect(supplyEvents[0].every((event: unknown) => (event as { schemaVersion?: number }).schemaVersion === 2)).toBe(true);
     expect(diagnostics.some((diagnostic) => diagnostic.kind === 'invalid')).toBe(true);
 
     // Raw rows are exact: the projector's normalized data merge must not leak.
     expect(supplyEvents[0][1]).toEqual(toolEvent(3, 'start'));
-    expect(projector.getV2Events('agent:main:mixed').map((event) => event.seq)).toEqual([1, 3]);
+    expect(projector.getV2Events('agent:main:mixed').map((event: unknown) => (event as { seq?: number }).seq)).toEqual([1, 3]);
   });
 
   it('does not emit duplicates or late/older events to the supply', async () => {
@@ -194,8 +194,8 @@ describe('WV-B2-02A renderer v2 trajectory supply', () => {
     await projector.ingest('agent:main:dupes', [runEvent(1, 'start')]);
 
     expect(supplyEvents).toHaveLength(1);
-    expect(supplyEvents[0].map((event) => event.seq)).toEqual([1, 2]);
-    expect(projector.getV2Events('agent:main:dupes').map((event) => event.seq)).toEqual([1, 2]);
+    expect(supplyEvents[0].map((event: unknown) => (event as { seq?: number }).seq)).toEqual([1, 2]);
+    expect(projector.getV2Events('agent:main:dupes').map((event: unknown) => (event as { seq?: number }).seq)).toEqual([1, 2]);
   });
 
   it('preserves stable IDs and full state across JSON serialization unchanged', async () => {
@@ -248,19 +248,19 @@ describe('WV-B2-02A renderer v2 trajectory supply', () => {
 
       // Renderer handoff contract: drop buffered realtime rows at or below asOfSeq.
       const buffered = realtime
-        .filter((event) => event.sessionKey === 'agent:main:supply')
-        .flatMap((event) => event.events);
+        .filter((event: ObservabilityTrajectorySupplyEvent<TrajectoryEventV2>) => event.sessionKey === 'agent:main:supply')
+        .flatMap((event: ObservabilityTrajectorySupplyEvent<TrajectoryEventV2>) => event.events);
       const joined = [
         ...page.events,
-        ...buffered.filter((event) => event.seq > page.asOfSeq),
+        ...buffered.filter((event: unknown) => Number((event as { seq?: number }).seq) > page.asOfSeq),
       ];
 
       const fullReplay = [...historyRows, ...liveRows];
-      expect(joined.map((event) => event.seq)).toEqual(fullReplay.map((event) => event.seq));
+      expect(joined.map((event: unknown) => (event as { seq?: number }).seq)).toEqual(fullReplay.map((event: unknown) => (event as { seq?: number }).seq));
       expect(JSON.parse(JSON.stringify(joined))).toEqual(fullReplay);
 
       // No record is lost or double-appended in the joined sequence.
-      expect(new Set(joined.map((event) => event.seq)).size).toBe(joined.length);
+      expect(new Set(joined.map((event: unknown) => (event as { seq?: number }).seq)).size).toBe(joined.length);
     } finally {
       await env.restore();
     }
@@ -289,8 +289,8 @@ describe('WV-B2-02A renderer v2 trajectory supply', () => {
       const api = createObservabilityApi({ gatewayManager: gateway });
       const page = await api.observability.trajectoryHistory({ sessionKey: 'agent:remote:cold', fromSeq: 0 });
 
-      expect(page.events.map((event) => event.seq)).toEqual([1, 2]);
-      expect(page.events.map((event) => event.schemaVersion)).toEqual([2, 2]);
+      expect(page.events.map((event: unknown) => (event as { seq?: number }).seq)).toEqual([1, 2]);
+      expect(page.events.map((event: unknown) => (event as { schemaVersion?: number }).schemaVersion)).toEqual([2, 2]);
       expect(page.rejected).toBe(3);
       expect(page.asOfSeq).toBe(2);
       expect(page.hasMore).toBe(false);

@@ -242,8 +242,11 @@ describe("handleProcessSendKeys", () => {
     };
   }
 
-  function fakeSession(overrides?: Partial<{ cursorKeyMode: string; command: string }>) {
+  function fakeSession(overrides?: Partial<{ cursorKeyMode: string; command: string; id: string }>) {
     return {
+      // handleProcessSendKeys reports details.sessionId from session.id (the
+      // authoritative resolved id), so a complete fixture must carry it.
+      id: "s1",
       cursorKeyMode: "normal",
       command: "vim notes.txt",
       ...overrides,

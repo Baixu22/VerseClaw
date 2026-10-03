@@ -77,11 +77,11 @@ requiredTests:
   - rg -n "agent-map-readonly-shadow|promptAssemblyExperiment|promptCandidateRuntimeShadow|promptCandidateControlledCutoverPilot|promptCandidateTaskLoopExplicitInvocationPilot|runtime\\.agentMap" openclaw_runtime/src/agents openclaw_runtime/src/gateway electron src shared
   - rg -n "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components
   - rg -n "AGENTMAP_COMPONENT_BOUNDARY_SENTINEL_DO_NOT_LEAK|AGENTMAP_CANDIDATE_SENTINEL_DO_NOT_LEAK|AGENTMAP_PRODUCTION_ENTRY_SENTINEL_DO_NOT_LEAK|AGENTMAP_DEFAULT_ON_SENTINEL_DO_NOT_LEAK|AGENTMAP_IMPLEMENTATION_READY_SENTINEL_DO_NOT_LEAK|AGENTMAP_IMPLEMENTATION_SPEC_SENTINEL_DO_NOT_LEAK|AGENTMAP_DEFAULT_ON_DEEP_VALIDATION_CANDIDATE_SENTINEL_DO_NOT_LEAK" openclaw_runtime/src electron src shared tests
-  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|fs\\.promises|localStorage|indexedDB|electron-store|sqlite|postgres|mysql|redis" harness/specs/tasks/phase-line-b-agentmap-component-boundary-hardening.md runtime-research/handoffs/line-b-agentmap-component-boundary-hardening tests/unit/runtime-agent-map-component-boundary-hardening.test.ts
-  - rg -n "createServer\\(|listen\\(|WebSocketServer|new WebSocket\\(|daemon|listener|external database|sqlite|postgres|mysql|redis|@temporalio|express\\(" harness/specs/tasks/phase-line-b-agentmap-component-boundary-hardening.md runtime-research/handoffs/line-b-agentmap-component-boundary-hardening tests/unit/runtime-agent-map-component-boundary-hardening.test.ts
-  - rg -n "rename|replaceBody|insertBefore|insertAfter|safeDelete|workspaceEdit|applyPatch|ast-grep.*apply|symbol.*apply" harness/specs/tasks/phase-line-b-agentmap-component-boundary-hardening.md runtime-research/handoffs/line-b-agentmap-component-boundary-hardening tests/unit/runtime-agent-map-component-boundary-hardening.test.ts
-  - rg -n "raw candidate|raw prompt|model message|provider payload|tool output|secret|auth header|trace raw body|Gateway payload|checkpoint body|lifecycle raw text" runtime-research/handoffs/line-b-agentmap-component-boundary-hardening tests/unit/runtime-agent-map-component-boundary-hardening.test.ts
-  - rg -n "default-on|default cutover|production-ready|accepted_line_b_agentmap_component_boundary_hardened_development_pause_recommended_default_on_still_forbidden|needs_follow_up|blocked" harness/specs/tasks/phase-line-b-agentmap-component-boundary-hardening.md runtime-research/handoffs/line-b-agentmap-component-boundary-hardening tests/unit/runtime-agent-map-component-boundary-hardening.test.ts runtime-research/agent-runtime-index.md
+  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|fs\\.promises|localStorage|indexedDB|electron-store|sqlite|postgres|mysql|redis" harness/specs/tasks/phase-line-b-agentmap-component-boundary-hardening.md docs/dev/runtime-research-boundaries.md tests/unit/runtime-agent-map-component-boundary-hardening.test.ts
+  - rg -n "createServer\\(|listen\\(|WebSocketServer|new WebSocket\\(|daemon|listener|external database|sqlite|postgres|mysql|redis|@temporalio|express\\(" harness/specs/tasks/phase-line-b-agentmap-component-boundary-hardening.md docs/dev/runtime-research-boundaries.md tests/unit/runtime-agent-map-component-boundary-hardening.test.ts
+  - rg -n "rename|replaceBody|insertBefore|insertAfter|safeDelete|workspaceEdit|applyPatch|ast-grep.*apply|symbol.*apply" harness/specs/tasks/phase-line-b-agentmap-component-boundary-hardening.md docs/dev/runtime-research-boundaries.md tests/unit/runtime-agent-map-component-boundary-hardening.test.ts
+  - rg -n "raw candidate|raw prompt|model message|provider payload|tool output|secret|auth header|trace raw body|Gateway payload|checkpoint body|lifecycle raw text" docs/dev/runtime-research-boundaries.md tests/unit/runtime-agent-map-component-boundary-hardening.test.ts
+  - rg -n "default-on|default cutover|production-ready|accepted_line_b_agentmap_component_boundary_hardened_development_pause_recommended_default_on_still_forbidden|needs_follow_up|blocked" harness/specs/tasks/phase-line-b-agentmap-component-boundary-hardening.md docs/dev/runtime-research-boundaries.md tests/unit/runtime-agent-map-component-boundary-hardening.test.ts
   - rg -n "AgentMap|agentMap|promptCandidateRuntimeShadow|promptAssemblyExperiment|prompt candidate|production entry|limited production opt-in|controlled internal opt-in|default-on" README.md README.zh-CN.md README.ja-JP.md README.ru-RU.md
 acceptance:
   - Handoff includes README, component contract, boundary stop line, authority denylist, allowed surfaces, forbidden surfaces, rollback and fail-closed proof, leakage proof, provider-ordering proof, persistence proof, telemetry boundary, future-work denylist, validation results, and synthesis.
@@ -92,20 +92,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-b-agentmap-component-boundary-hardening/README.md
-    - runtime-research/handoffs/line-b-agentmap-component-boundary-hardening/component-contract.md
-    - runtime-research/handoffs/line-b-agentmap-component-boundary-hardening/boundary-stop-line.md
-    - runtime-research/handoffs/line-b-agentmap-component-boundary-hardening/authority-denylist.md
-    - runtime-research/handoffs/line-b-agentmap-component-boundary-hardening/allowed-surfaces.md
-    - runtime-research/handoffs/line-b-agentmap-component-boundary-hardening/forbidden-surfaces.md
-    - runtime-research/handoffs/line-b-agentmap-component-boundary-hardening/rollback-and-fail-closed-proof.md
-    - runtime-research/handoffs/line-b-agentmap-component-boundary-hardening/leakage-proof.md
-    - runtime-research/handoffs/line-b-agentmap-component-boundary-hardening/provider-ordering-proof.md
-    - runtime-research/handoffs/line-b-agentmap-component-boundary-hardening/persistence-proof.md
-    - runtime-research/handoffs/line-b-agentmap-component-boundary-hardening/telemetry-boundary.md
-    - runtime-research/handoffs/line-b-agentmap-component-boundary-hardening/future-work-denylist.md
-    - runtime-research/handoffs/line-b-agentmap-component-boundary-hardening/validation-results.md
-    - runtime-research/handoffs/line-b-agentmap-component-boundary-hardening/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Line B AgentMap Component Boundary Hardening

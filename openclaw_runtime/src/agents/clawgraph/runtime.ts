@@ -2,8 +2,19 @@ import crypto from "node:crypto";
 import { isAbsolute, relative, resolve } from "node:path";
 import { spawnRoleSubagent, type SpawnFn } from "../role-spawn.js";
 import { listSubagentRunsForRequester, type SubagentRunRecord } from "../subagent-registry.js";
-import { isTruthyEnvValue } from "../../infra/env.js";
-import { projectClawgraphRunEvent } from "./clawgraph-taskflow-projection.js";
+import {
+  clawgraphRunStatusToFlowStatus,
+  flowStatusToClawgraphRunStatus,
+  projectClawgraphRunEvent,
+  settleOrphanedClawgraphRuns,
+} from "./clawgraph-taskflow-projection.js";
+import {
+  commitWorkflowLifecycle,
+  readWorkflowLifecycle,
+  resolveWorkflowLifecycleMode,
+  type WorkflowLifecycleMode,
+} from "../../tasks/workflow-lifecycle-owner.js";
+import type { FlowStatus } from "../../tasks/task-flow-cas.js";
 // [SPINE] Diagnostic-only runtime family hooks for ClawGraph shadow telemetry.
 import {
   eventBus,
@@ -54,6 +65,10 @@ type RuntimeRun = {
   reviewItems: ClawGraphReviewItem[];
   workspaceRoot?: string;
   spine?: ClawGraphSpineState;
+  /** Taskflow cutover: the run's status has a committed TaskFlow row. */
+  lifecycleCommitted?: boolean;
+  /** Taskflow cutover: the last lifecycle commit TaskFlow rejected. */
+  lifecycleConflict?: string;
 };
 
 type LifecycleFn = (event: ClawGraphRunEvent, snapshot: ClawGraphRunSnapshot) => void;
@@ -79,10 +94,37 @@ const SPINE_MODE = "diagnostic_only";
  */
 export let clawgraphProjectionFailureCount = 0;
 
-/** RC-06B projection gate (default-off). Reads env or config so operators can
- *  enable the ClawGraph -> TaskFlow read-only projection. */
-function clawgraphProjectionEnabled(): boolean {
-  return isTruthyEnvValue(process.env.RC06B_CLAWGRAPH_PROJECTION);
+/** RC-06B lifecycle writer: legacy (default), projection, or taskflow (cutover). */
+function lifecycleMode(): WorkflowLifecycleMode {
+  return resolveWorkflowLifecycleMode("clawgraph");
+}
+
+/**
+ * The single place a run's lifecycle status changes. Under the taskflow
+ * cutover the status is committed to TaskFlow first and applied to the run only
+ * if the commit succeeds; a rejected commit leaves the run unchanged and is
+ * recorded on it. Other modes keep the legacy in-memory write.
+ */
+function applyRunStatus(run: RuntimeRun, next: ClawGraphRunStatus): boolean {
+  if (lifecycleMode() !== "taskflow") {
+    run.snapshot.status = next;
+    return true;
+  }
+  if (run.snapshot.status === next && run.lifecycleCommitted) {
+    return true;
+  }
+  const committed = commitWorkflowLifecycle({
+    domain: "clawgraph",
+    id: run.snapshot.runId,
+    status: clawgraphRunStatusToFlowStatus(next),
+  });
+  if (!committed.ok) {
+    run.lifecycleConflict = `${committed.reason}: ${run.snapshot.status}->${next}`;
+    return false;
+  }
+  run.lifecycleCommitted = true;
+  run.snapshot.status = next;
+  return true;
 }
 
 function now(): number {
@@ -419,9 +461,9 @@ function emit(run: RuntimeRun, lifecycle: LifecycleFn | undefined, entry: ClawGr
   // RC-06B read-only projection into TaskFlow (flow_runs) behind a default-off
   // flag. Observational only: the legacy process Map remains authoritative; a
   // projection failure never changes ClawGraph behavior.
-  if (clawgraphProjectionEnabled()) {
+  if (lifecycleMode() === "projection") {
     try {
-      projectClawgraphRunEvent(entry, { enabled: true });
+      projectClawgraphRunEvent(entry, { enabled: true, runStatus: statusForRun(run) });
     } catch {
       // Best-effort projection; the legacy run state stays authoritative.
       // The failure is still observable as drift for diagnostics (never silent).
@@ -447,7 +489,9 @@ function projectRunSnapshot(run: RuntimeRun): ClawGraphRunSnapshot {
   const nodes = [...run.nodes.values()].map(({ task: _task, modelRef: _modelRef, checks: _checks, required: _required, ...node }) => node);
   const doneCount = nodes.filter((node) => node.status === "done").length;
   const progress = nodes.length === 0 ? 0 : Math.round((doneCount / nodes.length) * 100);
-  const status = statusForRun(run);
+  // Under the taskflow cutover the committed status is the truth; reading a
+  // snapshot never writes lifecycle.
+  const status = lifecycleMode() === "taskflow" ? run.snapshot.status : statusForRun(run);
   run.snapshot.status = status;
   return {
     ...run.snapshot,
@@ -870,7 +914,9 @@ async function startReadyNodes(run: RuntimeRun, request: ClawGraphRunRequest): P
 function maybeFinishRun(run: RuntimeRun, lifecycle?: LifecycleFn): void {
   const previous = run.snapshot.status;
   const next = statusForRun(run);
-  run.snapshot.status = next;
+  if (!applyRunStatus(run, next)) {
+    return;
+  }
   if (next === previous || next === "running" || next === "queued" || next === "review") {
     return;
   }
@@ -926,6 +972,27 @@ export async function startClawGraphRun(request: ClawGraphRunRequest): Promise<C
       updatedAt: createdAt,
     },
   };
+  if (lifecycleMode() === "taskflow") {
+    // The run exists only once TaskFlow owns its lifecycle row.
+    const created = commitWorkflowLifecycle({
+      domain: "clawgraph",
+      id: runId,
+      status: "queued",
+      stateJson: JSON.stringify({
+        workflowId: request.ir.workflowId,
+        title: request.ir.title,
+        objective: request.ir.objective,
+        sessionKey: request.sessionKey,
+        agentId: request.agentId ?? null,
+        workspaceId: request.workspaceId ?? null,
+        createdAt,
+      }),
+    });
+    if (!created.ok) {
+      throw new Error(`ClawGraph run lifecycle could not be created in TaskFlow: ${created.reason}`);
+    }
+    run.lifecycleCommitted = true;
+  }
   runs.set(runId, run);
   // [SPINE] Run execution start is shadow telemetry only.
   markSpineRunStarted(run);
@@ -966,9 +1033,42 @@ export async function advanceClawGraphRun(runId: string, request: Pick<ClawGraph
   return advanceClawGraphRunInternal(runId, request, "advance");
 }
 
+/** After a restart the in-memory run is gone; under the taskflow cutover its
+ *  lifecycle is still answered from the TaskFlow row. */
+function snapshotFromTaskFlow(runId: string): ClawGraphRunSnapshot | null {
+  const row = readWorkflowLifecycle("clawgraph", runId);
+  if (!row) return null;
+  let state: Record<string, unknown> = {};
+  try {
+    state = row.state_json ? (JSON.parse(row.state_json) as Record<string, unknown>) : {};
+  } catch {
+    state = {};
+  }
+  const text = (key: string) => (typeof state[key] === "string" ? (state[key] as string) : "");
+  const createdAt = typeof state.createdAt === "number" ? state.createdAt : Number(row.created_at);
+  return {
+    runId,
+    workflowId: text("workflowId"),
+    title: text("title"),
+    objective: text("objective"),
+    status: flowStatusToClawgraphRunStatus(row.status as FlowStatus),
+    sessionKey: text("sessionKey"),
+    ...(text("agentId") ? { agentId: text("agentId") } : {}),
+    workspaceId: text("workspaceId") || null,
+    progress: 0,
+    activeNodeIds: [],
+    blockedNodeIds: [],
+    reviewItems: [],
+    nodes: [],
+    eventsCount: 0,
+    createdAt,
+    updatedAt: Number(row.updated_at),
+  };
+}
+
 export async function getClawGraphRunStatus(runId: string, lifecycle?: LifecycleFn): Promise<ClawGraphRunSnapshot | null> {
   const run = runs.get(runId);
-  if (!run) return null;
+  if (!run) return lifecycleMode() === "taskflow" ? snapshotFromTaskFlow(runId) : null;
   return await advanceClawGraphRun(runId, {
     sessionKey: run.snapshot.sessionKey,
     agentId: run.snapshot.agentId,
@@ -989,13 +1089,14 @@ export function getClawGraphRunEvents(runId: string, limit?: number): ClawGraphR
 export function abortClawGraphRun(runId: string, reason?: string, lifecycle?: LifecycleFn): ClawGraphRunSnapshot | null {
   const run = runs.get(runId);
   if (!run) return null;
+  // A cancel the lifecycle owner rejects (e.g. the run already settled) changes nothing.
+  if (!applyRunStatus(run, "aborted")) return projectRunSnapshot(run);
   for (const node of run.nodes.values()) {
     if (node.status !== "done") {
       node.status = "aborted";
       node.endedAt = now();
     }
   }
-  run.snapshot.status = "aborted";
   emit(run, lifecycle, event(run, "run_aborted", { message: reason ?? "aborted" }));
   return projectRunSnapshot(run);
 }
@@ -1026,6 +1127,11 @@ export async function reviewClawGraphRun(params: {
     }
   }
   emit(run, params.lifecycle, event(run, "review_resolved", { nodeId: review.nodeId, payload: { review } }));
+  // A resolved review resumes the run; under the taskflow cutover that is its
+  // own lifecycle step (blocked -> running) before the run can settle.
+  if (lifecycleMode() === "taskflow" && !hasOpenReview(run)) {
+    applyRunStatus(run, "running");
+  }
   await advanceClawGraphRunInternal(params.runId, {
     sessionKey: run.snapshot.sessionKey,
     agentId: run.snapshot.agentId,
@@ -1038,6 +1144,18 @@ export async function reviewClawGraphRun(params: {
 
 export function resetClawGraphRunsForTests(): void {
   runs.clear();
+}
+
+/** Restart recovery: settle TaskFlow lifecycles of runs this process no longer
+ *  holds as lost. The legacy writer never touches TaskFlow, so this is a no-op
+ *  in legacy mode. */
+export function settleOrphanedClawGraphLifecycles(): string[] {
+  if (lifecycleMode() === "legacy") return [];
+  return settleOrphanedClawgraphRuns((runId) => runs.has(runId));
+}
+
+export function getClawGraphRunLifecycleConflict(runId: string): string | undefined {
+  return runs.get(runId)?.lifecycleConflict;
 }
 
 export function listClawGraphRunSnapshots(): ClawGraphRunSnapshot[] {

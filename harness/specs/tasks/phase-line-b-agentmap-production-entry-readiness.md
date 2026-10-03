@@ -102,26 +102,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/README.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/prerequisite-check.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/controlled-internal-opt-in-execution-plan.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/internal-sample-corpus.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/internal-sample-results.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/limited-production-readiness-review.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/production-entry-scorecard.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/production-veto-gates.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/security-authority-boundary.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/leakage-proof.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/provider-ordering-proof.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/rollback-drill-report.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/observability-metrics-plan.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/privacy-retention-boundary.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/operator-runbook.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/limited-production-opt-in-spec-draft.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/default-on-blocker-register.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/validation-plan.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/submission-template.md
-    - runtime-research/handoffs/line-b-agentmap-production-entry-readiness/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Line B AgentMap Production Entry Readiness

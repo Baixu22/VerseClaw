@@ -2,6 +2,10 @@
 id: rc02-full-payload-shadow-census
 title: RC-02 Full-Payload Shadow Census
 taskType: engineering-acceptance
+# Pinned to the commit this increment started from: the shared branch diverged
+# from origin/main long ago, so the default diff base would report the whole
+# branch (and every unrelated workstream) as changed.
+diffBase: b1f924763
 intent: Establish ShadowContextReceipt/v0 before provider projection and ShadowWireReceipt/v0 at the guarded request-body boundary after every provider-specific finalizer for every source-runtime model call in the automated entry matrix; write bounded evidence through the RC-01-approved ReceiptStore (typed append-only runtime_receipts in openclaw-state SQLite); record no raw payload by default; achieve owner-classification coverage 100% and zero-byte parity; the npm fallback reports explicit capability degradation and never counts as receipt coverage.
 ownedPaths:
   - openclaw_runtime/package.json
@@ -14,6 +18,7 @@ ownedPaths:
   - openclaw_runtime/src/agents/shadow-census.ts
   - openclaw_runtime/src/agents/shadow-census.test.ts
   - openclaw_runtime/src/agents/rc02-shadow-census.acceptance.test.ts
+  - openclaw_runtime/src/agents/rc02-entry-matrix.acceptance.test.ts
   - openclaw_runtime/src/agents/anthropic-transport-stream.ts
   - openclaw_runtime/src/agents/openai-transport-stream.ts
   - openclaw_runtime/src/agents/provider-transport-fetch.ts
@@ -38,6 +43,14 @@ ownedPaths:
   - openclaw_runtime/test/vitest/vitest.pattern-file.ts
   - harness/specs/tasks/rc02-full-payload-shadow-census.md
   - artifacts/runtime-authority-convergence/rc-02/**
+  - .gitignore
+  - scripts/rc02-shadow-census-report.mjs
+  - .agent-workbench/task-forest/**
+  - docs/dev/handoffs/LATEST.md
+  - docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md
+  - openclaw_runtime/src/agents/rc02-inbound-entry.acceptance.test.ts
+  - openclaw_runtime/src/agents/rc02-cron-entry.acceptance.test.ts
+  - openclaw_runtime/src/agents/rc02-cli-entry.acceptance.test.ts
 touchedAreas:
   - openclaw_runtime/src/agents/**
   - openclaw_runtime/src/state/**
@@ -46,6 +59,9 @@ touchedAreas:
   - openclaw_runtime/src/llm/**
   - tests/unit/**
   - harness/specs/**
+  - .agent-workbench/task-forest/**
+  - docs/dev/handoffs/**
+  - docs/dev/unified-agent-system/runtime-convergence/**
   - artifacts/runtime-authority-convergence/rc-02/**
 expectedUserBehavior:
   - No runtime send behavior, ordering, tools, retries, approvals, delivery, or payload bytes change.
@@ -72,7 +88,7 @@ rollback:
   - Disable the RC-02 feature flag to restore the legacy provider path byte-for-byte.
   - No migration rollback is required because the runtime_receipts table is append-only and bounded; on-conflict idempotency prevents duplicates.
 requiredTests:
-  - pnpm --dir openclaw_runtime exec vitest run src/agents/receipt-store.test.ts src/agents/shadow-census.test.ts src/agents/rc02-shadow-census.acceptance.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run src/agents/receipt-store.test.ts src/agents/shadow-census.test.ts src/agents/rc02-shadow-census.acceptance.test.ts src/agents/rc02-entry-matrix.acceptance.test.ts src/agents/rc02-inbound-entry.acceptance.test.ts src/agents/rc02-cron-entry.acceptance.test.ts src/agents/rc02-cli-entry.acceptance.test.ts
   - pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts
   - pnpm exec vitest run tests/unit/runtime-authority-convergence-control-pack.test.ts
   - pnpm harness validate --spec harness/specs/tasks/rc02-full-payload-shadow-census.md

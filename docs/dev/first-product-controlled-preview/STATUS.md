@@ -1,4 +1,14 @@
+> 2026-09-30 政策修订：2026-09-27 AGENTS.md 优先于下文历史口径。TF-0009 以具名 agent 三 profile 各 10 条、安全/kill/rollback 和 continue/shrink/stop 裁决验收；证据齐全可收口。真人 0/10 仅为事实局限，不是节点前置。下文旧轮次数值及 review_needed/degraded 判定按当时快照保留。当前决策见 `docs/dev/tf0009-policy-decision-20260930.md`。
+
 # First Product · Controlled Preview — STATUS（仅元数据 + 开发日志）
+
+> 2026-10-01 TF-0013 已完成节点级干净候选验收并自动收口（done/100）：18门、233测试、7次native请求通过，Codex package类型错误清零。见 `docs/dev/tf0013-authority-closeout-20261001.md`。不是新的全量RC、发布或GA，产品锁和默认值不变。
+
+> 2026-10-01 TF-0013：跨模块预算与 stale native thread 恢复修复已完成真实进程开发验证（agent 驱动 local provider）。见 `docs/dev/tf0013-native-wire-20261001.md`；插件 package 的 8 条基线类型错误保留，节点尚未进行干净候选整体验收。preview/历史 RC verdict 与产品锁不变。
+
+> 2026-09-30 TF-0013 原生预算增量：原生 harness SDK 已接入与 COMPASS 相同的 turn ledger，开发回归覆盖重试、失败回退和 kill switch。见 `docs/dev/tf0013-native-budget-20260930.md`；不改变 preview/RC 历史 verdict、产品锁或节点的正式验收资格。
+
+> 2026-09-30 TF-0013 开发增量：embedded ContextEngine 新增消息替换已接入共享预算及原子准入，原历史匹配、工具循环和失败回退有定向证据。详见 `docs/dev/tf0013-message-budget-20260930.md`。此记录不改变 preview/RC 历史 verdict 或产品锁。
 
 > **只放进度元数据与日志。** 实现细节、切片、验收命令写在 `tasks/FP-*.md`。
 > 丢上下文后：先读本文件 → 再打开 `status=in_progress` 或下一个 `ready` 的任务文档。
@@ -103,7 +113,7 @@
 | FP-P2-02 | 10 次真人 DCS coding + GitHub Forge 联合执行 | FP-P2 | P0 | engineering-validation-only | `engineering-validation-only` | FP-P2-01 | — | 2026-07-29 | fixture 10 run records 已备（`notHumanProductChat=true`）；9 类 blocking matrix；经用户授权降级，真实任务等待外部 reviewer |
 | FP-P2-03 | DCS + GitHub Forge 联合裁决与账目刷新 | FP-P2 | P0 | engineering-validation-only | — | FP-P2-02, FP-P2-04, FP-P2-05, FP-P2-06 | — | 2026-07-29 | fixture 4 分面 CONTINUE verdict 已备；proposal 不 apply；经用户授权降级，真实裁决等待外部 reviewer |
 | FP-P2-04 | 预算总额与 drop 告警线复核+配置化 | FP-P2 | P1 | backlog | — | FP-P2-02 | — | 2026-07-26 | 源自 FP-P0-05：0.1/6000 为起始线非经验值；禁止靠放大总额消除告警 |
-| FP-P2-05 | verify 段自动执行与结果回填 | FP-P2 | P2 | done | — | FP-P1-04 | Codex | 2026-07-28 | default-off；最终 effective exec 复用、nearest project/custom runner、八类结果与真 child 可见回填全绿；失败不回滚 write journal |
+| FP-P2-05 | verify 段自动执行与结果回填 | FP-P2 | P2 | done | — | FP-P1-04 | Codex | 2026-07-28 | 验收时 default-off；最终 effective exec 复用、nearest project/custom runner、八类结果与真 child 可见回填全绿；失败不回滚 write journal。**2026-07-31 起默认值改为 `"auto"`**（`f77d92dd2`，依 `coding-capability-audit-vs-source-archive.md` §3.3「autoVerify 按可信度默认开」） |
 | FP-P2-06 | 注入预算逐通道归因补全 | FP-P2 | P1 | done | — | FP-P1-04 | Codex | 2026-07-28 | 三通道真实 charge、同 ledger DCS 2000 容量 reservation、provider 独立比对与显式 CVK 截断全绿；总额仍 6000 |
 | FP-P2-07 | MergeBeacon 来源冻结与结构化 Patch/Error 契约 | FP-P2 | P1 | done | — | FP-P1-08 G5（验收依赖） | Codex | 2026-07-28 | 六切片收口：source/license、唯一 contract/adapter、Git/Code Review/DCS rich diff、canonical error envelope、脱敏与反向测试；真实 Electron E2E 全绿 |
 | FP-P2-08 | GitHub Remote Forge 只读控制面 | FP-P2 | P1 | done | — | FP-P2-07 | Codex | 2026-07-28 | Main-owned GitHub read、typed completeness/capability/readiness、bounded content、host-api/MCP/四语 UI 与 fake-provider Main-path E2E 全绿 |

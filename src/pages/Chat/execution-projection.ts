@@ -155,6 +155,25 @@ export function createRunKey(
     : `${currentSessionKey}:trigger-${triggerIndex}`;
 }
 
+/**
+ * Key for the turn's disclosure (expand/collapse) state.
+ *
+ * Deliberately NOT `runKey`: a turn's trigger message is created optimistically
+ * with a client UUID and then replaced in place by the Gateway echo carrying the
+ * persisted id (see `mergePendingOptimisticUserMessages` in stores/chat), so
+ * `runKey` (`msg-<id>`) flips mid-turn and orphans any override the user set
+ * against the old id. The trigger's position survives that swap — the echo lands
+ * at the same index — so the disclosure state keys off it and outlives the id
+ * change. Cache/approval routing keep `runKey`; only the user's fold preference
+ * needs the stable anchor.
+ */
+export function turnDisclosureKey(
+  currentSessionKey: string,
+  card: Pick<UserRunCard, 'triggerIndex'>,
+): string {
+  return `${currentSessionKey}:trigger-${card.triggerIndex}`;
+}
+
 export function runtimeRunHasToolActivity(run: ChatRuntimeRunState | null | undefined): boolean {
   return Boolean(run?.events.some((event) =>
     event.type === 'tool.started'
@@ -571,7 +590,14 @@ export function deriveUserRunProjection({
 
     // A run whose only output was promoted to a rich card (e.g. a single
     // `command.output`) has no graph rows left — it must still render.
-    const hasSurfaceContent = surfaces.terminals.length > 0 || surfaces.plan != null;
+    //
+    // Reasoning counts the same way. A turn that only thought — no tools, no
+    // files, the ordinary shape on a reasoning model — used to produce no card
+    // at all, which left its thinking with nowhere to live but the assistant
+    // message, at the same level as the answer. That is precisely the turn whose
+    // thinking is longest, so it is the one that most needs the disclosure.
+    const segmentHasReasoning = postTriggerMessages.some((segmentMessage) => !!extractThinking(segmentMessage));
+    const hasSurfaceContent = surfaces.terminals.length > 0 || surfaces.plan != null || segmentHasReasoning;
 
     if (steps.length === 0 && !hasSurfaceContent) {
       if (isLatestOpenRun && streamingReplyText != null) {

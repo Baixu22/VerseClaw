@@ -99,17 +99,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-production-readiness-plan/README.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-production-readiness-plan/production-readiness-plan.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-production-readiness-plan/replay-proof-plan.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-production-readiness-plan/cutover-readiness-plan.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-production-readiness-plan/controlled-opt-in-plan.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-production-readiness-plan/production-veto-gates.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-production-readiness-plan/quantitative-readiness-scorecard.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-production-readiness-plan/rollback-and-operator-plan.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-production-readiness-plan/validation-plan.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-production-readiness-plan/submission-template.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-production-readiness-plan/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Line B AgentMap Prompt Candidate TaskLoop Production Readiness Plan

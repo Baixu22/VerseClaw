@@ -6,7 +6,9 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { closeOpenClawStateDatabase } from '../state/openclaw-state-db.js';
 import { ApprovalLedger } from './approval-ledger.js';
+import { OPERATOR_SLICE_ACTOR } from './operator-slice.js';
 import { ExecApprovalManager } from '../gateway/exec-approval-manager.js';
+import { createGatewayAuxHandlers } from '../gateway/server-aux-handlers.js';
 
 const tempRoots: string[] = [];
 let stateDir = '';
@@ -134,5 +136,88 @@ describe('RC-04 ExecApprovalManager durable wiring', () => {
     await decisionPromise;
     const row = new ApprovalLedger(ledgerOptions()).getById('aprv-wire-4');
     expect(row?.state).toBe('approved');
+  });
+});
+
+function gatewayApprovalManagers(extra: Record<string, unknown> = {}) {
+  const handlers = createGatewayAuxHandlers({
+    log: { info: () => {}, warn: () => {}, error: () => {} },
+    activateRuntimeSecrets: (async () => ({})) as never,
+    sharedGatewaySessionGenerationState: {} as never,
+    resolveSharedGatewaySessionGenerationForConfig: () => undefined,
+    clients: [],
+    startChannel: async () => {},
+    stopChannel: async () => {},
+    logChannels: { info: () => {} },
+    durableLedgerDatabase: ledgerOptions(),
+    ...extra,
+  } as never);
+  return {
+    exec: handlers.execApprovalManager,
+    plugin: handlers.pluginApprovalManager,
+  };
+}
+
+describe('RC-04 one durable ledger shared by every approval surface (production Gateway wiring)', () => {
+  it('plugin approval pending truth survives a Gateway restart', () => {
+    const first = gatewayApprovalManagers();
+    const record = first.plugin.create(
+      { pluginId: 'p', title: 't', description: 'd', severity: 'warning' } as never,
+      60_000,
+      'plugin:rc04-restart',
+      { connId: 'conn-p', clientId: 'client-p' },
+    );
+    first.plugin.register(record, 60_000);
+    expect(new ApprovalLedger(ledgerOptions()).getById('plugin:rc04-restart')?.state).toBe(
+      'approval_pending',
+    );
+
+    const second = gatewayApprovalManagers();
+    expect(second.plugin.getSnapshot('plugin:rc04-restart')?.requestedByClientId).toBe('client-p');
+    expect(second.plugin.resolve('plugin:rc04-restart', 'deny', 'operator')).toBe(true);
+    expect(new ApprovalLedger(ledgerOptions()).getById('plugin:rc04-restart')?.state).toBe('denied');
+  });
+
+  it('restart recovery never hands one surface a row another surface governs', () => {
+    const ledger = new ApprovalLedger(ledgerOptions());
+    const first = gatewayApprovalManagers();
+    first.exec.register(
+      first.exec.create({ command: 'echo hi' } as never, 60_000, 'aprv-exec-owned'),
+      60_000,
+    );
+    first.plugin.register(
+      first.plugin.create({ pluginId: 'p' } as never, 60_000, 'plugin:owned'),
+      60_000,
+    );
+    // An Operator Inbox intent, reserved the way the Cron ingress does it.
+    const intent = ledger.reserve({
+      idempotencyKey: 'op:run-1:session-1',
+      request: { effect: 'announce' },
+      expiresAtMs: Date.now() + 60_000,
+      requestedByClientId: OPERATOR_SLICE_ACTOR,
+    });
+    expect(intent.ok).toBe(true);
+    const intentId = intent.ok ? intent.row.approval_id : '';
+
+    const second = gatewayApprovalManagers();
+    const execIds = second.exec.listPendingRecords().map((record) => record.id);
+    const pluginIds = second.plugin.listPendingRecords().map((record) => record.id);
+    expect(execIds).toEqual(['aprv-exec-owned']);
+    expect(pluginIds).toEqual(['plugin:owned']);
+    // exec.approval.resolve cannot reach the Inbox intent: its governance
+    // (actor + policy digest) stays with inbox.operator.decide.
+    expect(second.exec.resolve(intentId, 'allow-once', 'exec-client')).toBe(false);
+    expect(new ApprovalLedger(ledgerOptions()).getById(intentId)?.state).toBe('approval_pending');
+  });
+
+  it('emergency rollback is a mutually exclusive writer switch, never a dual write', async () => {
+    const legacy = gatewayApprovalManagers({ enableDurableApprovalLedger: false });
+    expect(legacy.exec.ledger).toBeUndefined();
+    expect(legacy.plugin.ledger).toBeUndefined();
+    const record = legacy.exec.create({ command: 'echo hi' } as never, 60_000, 'aprv-legacy');
+    const decision = legacy.exec.register(record, 60_000);
+    expect(legacy.exec.resolve('aprv-legacy', 'allow-once', 'operator')).toBe(true);
+    await decision;
+    expect(new ApprovalLedger(ledgerOptions()).getById('aprv-legacy')).toBeUndefined();
   });
 });

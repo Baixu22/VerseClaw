@@ -33,7 +33,7 @@ function baseBundle(overrides: Partial<OrchestrationResultBundle> = {}): Orchest
     memoryProposals: [],
     traceIds: ['trace_gate'],
     ...overrides,
-  };
+  } as OrchestrationResultBundle;
 }
 
 describe('orchestration gates', () => {

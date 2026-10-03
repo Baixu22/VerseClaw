@@ -50,7 +50,7 @@ requiredTests:
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/line-c-grounding-cutover-readiness-review.md --no-diff
   - node node_modules/vitest/vitest.mjs run tests/unit/runtime-grounding-authority-effectiveness.test.ts tests/unit/runtime-grounding-shadow-consumers.test.ts tests/unit/context-provider-registry.test.ts tests/unit/runtime-trace-context-provider.test.ts tests/unit/runtime-symbol-context-provider.test.ts tests/unit/runtime-agent-map-context-provider.test.ts tests/unit/runtime-memory-context-provider.test.ts
   - node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - git diff --check -- harness/specs/tasks/line-c-grounding-controlled-production-opt-in.md runtime-research/handoffs/line-c-grounding-controlled-production-opt-in/README.md runtime-research/handoffs/line-c-grounding-controlled-production-opt-in/implementation-synthesis.md runtime-research/agent-runtime-index.md
+  - git diff --check -- harness/specs/tasks/line-c-grounding-controlled-production-opt-in.md docs/dev/runtime-research-boundaries.md
 acceptance:
   - Phase E go recommendation, owner approval, cohort, production metrics, leak count 0, provider ordering/runtime decision diff 0, and rollback drill evidence are documented.
   - The synthesis may state controlled production opt-in runtime use only when this spec and synthesis are accepted and required verification passes.
@@ -58,9 +58,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-c-grounding-controlled-production-opt-in/README.md
-    - runtime-research/handoffs/line-c-grounding-controlled-production-opt-in/implementation-synthesis.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 nextPhaseEntry:
   Allowed next phase:
     - Phase G default-on proposal may proceed only after this synthesis is accepted; it must remain proposal-only.

@@ -67,6 +67,10 @@ export function validateWriteRiskProfile(profile: unknown): string | null {
  * Tool risk level. Used by `assertWriteRiskProfileForTool` to decide whether
  * a `writeRiskProfile` is required at registration time.
  *
+ * This is a filesystem-risk classification. `readonly` does not prove that a
+ * tool performs no durable state transition in an existing owner store; those
+ * transitions require an owning API contract and focused behavioral tests.
+ *
  * - `readonly`: tool does not write to the filesystem; profile optional.
  * - `write`: tool writes to the filesystem; `writeRiskProfile` is REQUIRED.
  * - `destructive`: tool performs irreversible operations; `writeRiskProfile`

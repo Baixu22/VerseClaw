@@ -1,9 +1,11 @@
 // R0-1: unhandledRejection no longer exits the process; uncaughtException dialogs first
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { EventEmitter } from 'node:events';
 import {
   handleUncaughtException,
   handleUnhandledRejection,
+  installOutputStreamErrorHandlers,
   type ProcessErrorReporter,
 } from '../../electron/main/process-error-handlers';
 
@@ -53,13 +55,38 @@ describe('process error handlers (R0-1)', () => {
 
   it('uncaughtException shows a fatal dialog with the log path', () => {
     const reporter = makeReporter();
-    handleUncaughtException(reporter, new Error('fatal'));
+    expect(handleUncaughtException(reporter, new Error('fatal'))).toBe('fatal');
 
     expect(reporter.showErrorBox).toHaveBeenCalledWith(
       'Verse Claw encountered a fatal error',
       expect.stringContaining('/tmp/verse-claw.log'),
     );
     expect(reporter.captureTelemetry).not.toHaveBeenCalled();
+  });
+
+  it('ignores broken output pipes instead of showing recursive fatal dialogs', () => {
+    const reporter = makeReporter();
+    const error = Object.assign(new Error('broken pipe, write'), { code: 'EPIPE' });
+
+    expect(handleUncaughtException(reporter, error)).toBe('ignored');
+    expect(reporter.logger.error).not.toHaveBeenCalled();
+    expect(reporter.showErrorBox).not.toHaveBeenCalled();
+  });
+
+  it('keeps non-pipe I/O errors fatal', () => {
+    const reporter = makeReporter();
+    const error = Object.assign(new Error('device I/O failed'), { code: 'EIO' });
+
+    expect(handleUncaughtException(reporter, error)).toBe('fatal');
+    expect(reporter.showErrorBox).toHaveBeenCalledOnce();
+  });
+
+  it('guards output streams against asynchronous EPIPE errors', () => {
+    const stream = new EventEmitter();
+    installOutputStreamErrorHandlers([stream as never]);
+
+    expect(() => stream.emit('error', Object.assign(new Error('write EPIPE'), { code: 'EPIPE' }))).not.toThrow();
+    expect(() => stream.emit('error', Object.assign(new Error('disk failed'), { code: 'EIO_OTHER' }))).toThrow('disk failed');
   });
 
   it('handles non-Error rejection reasons without throwing', () => {

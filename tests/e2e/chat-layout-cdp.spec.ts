@@ -241,11 +241,18 @@ test.describe('Chat page layout CDP checks', () => {
       await attachmentRemove.click();
       const dissolveCanvas = page.locator('canvas[data-smoky-dissolve="canvas"]');
       await expect(dissolveCanvas).toBeVisible({ timeout: 5_000 });
-      await expect.poll(() => dissolveCanvas.evaluate((canvas) => Number.parseFloat(canvas.style.opacity || '1'))).toBeLessThan(0.95);
-      const dissolveMotion = await dissolveCanvas.evaluate((canvas) => ({
-        opacity: Number.parseFloat(canvas.style.opacity),
-        transform: canvas.style.transform,
-      }));
+      // Sample the dissolve WHILE it is fading. Polling for `opacity < 0.95`
+      // also accepts a finished dissolve (0), so on a loaded machine the
+      // animation ended before the read and `opacity > 0` failed at 0
+      // (2026-09-25 RC-09 run, chat-layout-cdp.spec.ts:249). Waiting for an
+      // in-between value keeps the assertions about the running transition.
+      const dissolveMotion = await page.waitForFunction(() => {
+        const canvas = document.querySelector('canvas[data-smoky-dissolve="canvas"]') as HTMLCanvasElement | null;
+        if (!canvas) return null;
+        const opacity = Number.parseFloat(canvas.style.opacity);
+        if (!Number.isFinite(opacity) || opacity <= 0 || opacity >= 0.95) return null;
+        return { opacity, transform: canvas.style.transform };
+      }, null, { timeout: 5_000 }).then((handle) => handle.jsonValue() as Promise<{ opacity: number; transform: string }>);
       expect(dissolveMotion.opacity).toBeGreaterThan(0);
       expect(dissolveMotion.transform).toMatch(/translate\(0(?:\.0)?px,/);
       expect(dissolveMotion.transform).toMatch(/scale\(1(?:\.0+)?\)/);
@@ -296,12 +303,17 @@ test.describe('Chat page layout CDP checks', () => {
       });
       expect(controlTypography.permission).toEqual(controlTypography.execution);
       expect(controlTypography.knowledge).toEqual(controlTypography.execution);
-      await permissionTrigger.hover();
-      const permissionHover = await permissionTrigger.evaluate((element) => getComputedStyle(element).backgroundColor);
-      await knowledgeTrigger.hover();
-      const knowledgeHover = await knowledgeTrigger.evaluate((element) => getComputedStyle(element).backgroundColor);
-      await executionTrigger.hover();
-      const executionHover = await executionTrigger.evaluate((element) => getComputedStyle(element).backgroundColor);
+      const settledHoverBackground = async (trigger: typeof permissionTrigger) => {
+        await trigger.hover();
+        return trigger.evaluate(async (element) => {
+          // Compare the final hover colors, not different frames of the 100ms transition.
+          await Promise.all(element.getAnimations().map((animation) => animation.finished.catch(() => {})));
+          return getComputedStyle(element).backgroundColor;
+        });
+      };
+      const permissionHover = await settledHoverBackground(permissionTrigger);
+      const knowledgeHover = await settledHoverBackground(knowledgeTrigger);
+      const executionHover = await settledHoverBackground(executionTrigger);
       expect(permissionHover).toBe(executionHover);
       expect(knowledgeHover).toBe(executionHover);
       const composerControlAlignment = await composerShell.evaluate((shell) => {
@@ -370,9 +382,15 @@ test.describe('Chat page layout CDP checks', () => {
       await expect(permissionOption).toContainText(/risk|风险/);
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-permission-menu');
       await page.evaluate(() => document.documentElement.classList.add('dark'));
-      await page.waitForTimeout(240);
+      // The shell animates background-color (transition duration 180ms). A fixed
+      // wait races that transition under load and samples a mid-tween frame
+      // (e.g. oklab(0.31… / 0.93)); poll until the surface settles on the dark
+      // token: gray-800 (#212121) mixed at 96%, i.e. oklab(0.24… / 0.96).
+      await expect
+        .poll(() => composerShell.evaluate((element) => getComputedStyle(element).backgroundColor))
+        .toMatch(/oklab\(0\.24\d*\s.*\/\s*0\.96\)/);
       const darkComposerBackground = await composerShell.evaluate((element) => getComputedStyle(element).backgroundColor);
-      expect(darkComposerBackground).toMatch(/0\.96|0\.247/);
+      expect(darkComposerBackground).toMatch(/oklab\(0\.24/);
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-permission-menu-dark');
       await page.evaluate(() => document.documentElement.classList.remove('dark'));
       await page.getByTestId('chat-composer-input').fill('/');
@@ -472,6 +490,33 @@ test.describe('Chat page layout CDP checks', () => {
         expect(metrics.titlebar?.height).toBe(34);
         expect(metrics.titlebar?.top).toBe(0);
       }
+
+      await page.keyboard.press('Escape');
+      await page.setViewportSize({ width: 700, height: 800 });
+      await expect(permissionTrigger).toBeVisible();
+      await expect(knowledgeTrigger).toBeVisible();
+      const compactControlMetrics = await page.evaluate(() => {
+        const permission = document.querySelector<HTMLElement>('[data-testid="chat-composer-permission-mode"]');
+        const knowledge = document.querySelector<HTMLElement>('[data-testid="chat-knowledge-scope-button"]');
+        const permissionLabel = permission?.querySelector<HTMLElement>('.codex-permission-trigger__label');
+        const knowledgeLabel = knowledge?.querySelector<HTMLElement>('span');
+        const knowledgeChevron = knowledge?.querySelector<HTMLElement>('svg:last-child');
+        if (!permission || !knowledge || !permissionLabel || !knowledgeLabel || !knowledgeChevron) {
+          throw new Error('Missing compact composer controls');
+        }
+        return {
+          permissionWidth: permission.getBoundingClientRect().width,
+          knowledgeWidth: knowledge.getBoundingClientRect().width,
+          permissionLabelDisplay: getComputedStyle(permissionLabel).display,
+          knowledgeLabelDisplay: getComputedStyle(knowledgeLabel).display,
+          knowledgeChevronDisplay: getComputedStyle(knowledgeChevron).display,
+        };
+      });
+      expect(compactControlMetrics.permissionWidth).toBeLessThanOrEqual(32);
+      expect(compactControlMetrics.knowledgeWidth).toBeLessThanOrEqual(32);
+      expect(compactControlMetrics.permissionLabelDisplay).toBe('none');
+      expect(compactControlMetrics.knowledgeLabelDisplay).toBe('none');
+      expect(compactControlMetrics.knowledgeChevronDisplay).toBe('none');
     } finally {
       await closeElectronApp(app);
     }

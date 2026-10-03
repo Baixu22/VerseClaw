@@ -167,7 +167,7 @@ function SkillDetailDialog({ skill, isOpen, onClose, onToggle, onUninstall, onOp
                 </div>
               )}
             </div>
-            <h2 className="text-3xl font-serif text-foreground font-normal mb-3 text-center tracking-tight">
+            <h2 className="text-xl font-serif text-foreground font-normal mb-3 text-center tracking-tight">
               {skill.name}
             </h2>
             <div data-skill-detail-meta-row="1" className="flex items-center justify-center flex-wrap gap-2.5 mb-6 opacity-80">
@@ -452,7 +452,7 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
         )}>
           {!embedded && (
             <div>
-              <h1 className="text-5xl md:text-6xl font-serif text-foreground mb-3 font-normal tracking-tight">
+              <h1 className="text-2xl font-serif text-foreground mb-3 font-normal tracking-tight">
                 {t('title')}
               </h1>
               <p className="text-subtitle text-foreground/70 font-medium">

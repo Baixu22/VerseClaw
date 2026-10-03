@@ -29,3 +29,8 @@ describe('gateway ws trace', () => {
       .toEqual('event chat');
   });
 });
+
+it('redacts issued and bootstrap device credentials in nested handshake frames', () => {
+  const frame = { params: { auth: { deviceToken: 'private-device', bootstrapToken: 'private-bootstrap' } }, payload: { auth: { deviceToken: 'private-issued' } } };
+  expect(JSON.stringify(redactGatewayFrameForTrace(frame))).not.toContain('private-');
+});

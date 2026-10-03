@@ -9,6 +9,13 @@ import type { TaskLedgerNode, TaskLedgerSnapshot } from '@shared/types/task-ledg
 import { getOpenClawConfigDir } from '../utils/paths';
 import { logger } from '../utils/logger';
 import type { GatewayManager } from '../gateway/manager';
+import type { TerminalSessionManager } from './terminal-session-manager';
+import {
+  clearSessionDeleteGate,
+  persistSessionDeleteGate,
+  updateSessionDeleteGate,
+  withSessionDeleteGateLock,
+} from './session-delete-gate';
 import { buildResumeCheckpoint, renderResumeCheckpointSummary } from '../../shared/types/long-task-control';
 import type {
   LongTaskCheckpointRecord,
@@ -19,6 +26,7 @@ import type {
 import type {
   CompressionArtifact,
   CompressionArtifactQuality,
+  CompressionSemanticAtom,
   SessionDeleteResult,
   SessionExpandSelectorResult,
   SessionHandoffSource,
@@ -54,6 +62,7 @@ type SessionSummary = {
   sessionKey: string;
   firstUserText: string | null;
   lastTimestamp: number | null;
+  messageCount: number;
 };
 
 type TranscriptMessage = RawMessage;
@@ -224,11 +233,15 @@ async function readAllTranscriptMessages(transcriptPath: string): Promise<Transc
 function summarizeTranscriptMessages(sessionKey: string, messages: TranscriptMessage[]): SessionSummary {
   let firstUserText: string | null = null;
   let lastTimestamp: number | null = null;
+  let messageCount = 0;
 
   for (const message of messages) {
     const normalizedTs = normalizeTimestamp(message.timestamp);
     if (normalizedTs != null) {
       lastTimestamp = normalizedTs;
+    }
+    if (message.role === 'user') {
+      messageCount += 1;
     }
     if (firstUserText == null && message.role === 'user') {
       const text = cleanSummaryUserText(extractMessageText(message.content));
@@ -238,7 +251,7 @@ function summarizeTranscriptMessages(sessionKey: string, messages: TranscriptMes
     }
   }
 
-  return { sessionKey, firstUserText, lastTimestamp };
+  return { sessionKey, firstUserText, lastTimestamp, messageCount };
 }
 
 function parseSessionKey(sessionKey: string): { agentId: string; suffix: string } | null {
@@ -736,14 +749,184 @@ function mapCompressionQuality(value: unknown): CompressionArtifactQuality | und
   };
 }
 
-function mapCompressionArtifact(value: unknown): CompressionArtifact | undefined {
+const SEMANTIC_ATOM_TYPES = new Set<CompressionSemanticAtom['type']>([
+  'goal',
+  'latest_user_ask',
+  'decision',
+  'constraint',
+  'failed_attempt',
+  'entity',
+  'next_action',
+  'outcome',
+  'safety_boundary',
+]);
+
+const SEMANTIC_ATOM_STATUSES = new Set<CompressionSemanticAtom['status']>([
+  'verified',
+  'unverified',
+  'stale',
+  'superseded',
+]);
+
+const SEMANTIC_ATOM_SEVERITIES = new Set<CompressionSemanticAtom['severity']>([
+  'critical',
+  'important',
+  'nice_to_have',
+]);
+
+const SEMANTIC_ATOM_POLARITIES = new Set<CompressionSemanticAtom['polarity']>([
+  'positive',
+  'negative',
+  'neutral',
+]);
+
+const SEMANTIC_ATOM_SOURCE_KINDS = new Set<NonNullable<CompressionSemanticAtom['source']>['kind']>([
+  'summary',
+  'message',
+  'ledger',
+  'cvk',
+  'archive',
+]);
+
+const SEMANTIC_ATOM_EVIDENCE_TYPES = new Set<NonNullable<CompressionSemanticAtom['evidenceRefs'][number]>['type']>([
+  'session',
+  'trace',
+  'file',
+  'tool',
+  'task_ledger',
+  'clawgraph',
+  'manual',
+  'archive',
+  'cvk',
+  'other',
+]);
+
+function redactSemanticAtomText(value: string): string {
+  return value
+    .replace(
+      /\b([A-Za-z0-9_]*(?:API[_-]?KEY|TOKEN|SECRET|PASSWORD|PASSWD|PRIVATE[_-]?KEY)[A-Za-z0-9_]*)\s*[=:]\s*([^\s"',;]+)/gi,
+      (_match, name: string) => `${name}=[REDACTED]`,
+    )
+    .replace(/\bsk-[A-Za-z0-9_-]{8,}\b/g, '[REDACTED]')
+    .replace(/\b(ghp|github_pat|gsk|xox[baprs]|xapp|pplx|npm|hf|r8)_[A-Za-z0-9_-]{8,}\b/g, '[REDACTED]')
+    .replace(/\bBearer\s+[A-Za-z0-9._\-+=]{18,}\b/gi, 'Bearer [REDACTED]');
+}
+
+function mapSemanticAtomEvidenceRefs(value: unknown): CompressionSemanticAtom['evidenceRefs'] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!isRecord(item)) return [];
+    const ref = typeof item.ref === 'string' ? item.ref.trim().slice(0, 300) : '';
+    if (!ref) return [];
+    const type = typeof item.type === 'string'
+      && SEMANTIC_ATOM_EVIDENCE_TYPES.has(item.type as CompressionSemanticAtom['evidenceRefs'][number]['type'])
+      ? item.type as CompressionSemanticAtom['evidenceRefs'][number]['type']
+      : 'other';
+    return [{
+      type,
+      ref,
+      ...(typeof item.label === 'string' && item.label.trim()
+        ? { label: item.label.trim().slice(0, 120) }
+        : {}),
+    }];
+  }).slice(0, 8);
+}
+
+function mapSemanticAtoms(value: unknown): {
+  atoms?: CompressionSemanticAtom[];
+  warnings: string[];
+} {
+  if (!Array.isArray(value)) return { warnings: [] };
+  const warnings: string[] = [];
+  const atoms = value.flatMap((item) => {
+    if (!isRecord(item)) return [];
+    const type = typeof item.type === 'string' && SEMANTIC_ATOM_TYPES.has(item.type as CompressionSemanticAtom['type'])
+      ? item.type as CompressionSemanticAtom['type']
+      : undefined;
+    if (!type) return [];
+    const id = typeof item.id === 'string' && item.id.trim()
+      ? item.id.trim().slice(0, 120)
+      : `atom-${warnings.length + 1}`;
+    const textRaw = typeof item.text === 'string' ? item.text : '';
+    const text = redactSemanticAtomText(textRaw.replace(/\s+/g, ' ').trim()).slice(0, 240);
+    if (!text) return [];
+    const severity = typeof item.severity === 'string' && SEMANTIC_ATOM_SEVERITIES.has(item.severity as CompressionSemanticAtom['severity'])
+      ? item.severity as CompressionSemanticAtom['severity']
+      : 'nice_to_have';
+    const rawStatus = typeof item.status === 'string' && SEMANTIC_ATOM_STATUSES.has(item.status as CompressionSemanticAtom['status'])
+      ? item.status as CompressionSemanticAtom['status']
+      : 'unverified';
+    const evidenceRefs = mapSemanticAtomEvidenceRefs(item.evidenceRefs);
+    let status = rawStatus;
+    if (severity === 'critical' && evidenceRefs.length === 0) {
+      if (status === 'verified') status = 'unverified';
+      warnings.push('critical_atom_missing_evidence');
+    }
+    const sourceRecord = isRecord(item.source) ? item.source : undefined;
+    let source: CompressionSemanticAtom['source'] | undefined;
+    if (sourceRecord) {
+      const sourceKind = typeof sourceRecord.kind === 'string'
+        && SEMANTIC_ATOM_SOURCE_KINDS.has(sourceRecord.kind as NonNullable<CompressionSemanticAtom['source']>['kind'])
+        ? sourceRecord.kind as NonNullable<CompressionSemanticAtom['source']>['kind']
+        : 'ledger';
+      source = {
+        kind: sourceKind,
+        ref: typeof sourceRecord.ref === 'string' && sourceRecord.ref.trim()
+          ? sourceRecord.ref.trim().slice(0, 240)
+          : 'ledger',
+      };
+    }
+    return [{
+      id,
+      type,
+      canonicalIdentity: typeof item.canonicalIdentity === 'string' && item.canonicalIdentity.trim()
+        ? item.canonicalIdentity.trim().slice(0, 200)
+        : id,
+      severity,
+      confidence: typeof item.confidence === 'number' && Number.isFinite(item.confidence)
+        ? Math.max(0, Math.min(1, item.confidence))
+        : 0,
+      scope: typeof item.scope === 'string' && item.scope.trim()
+        ? item.scope.trim().slice(0, 120)
+        : 'session',
+      polarity: typeof item.polarity === 'string' && SEMANTIC_ATOM_POLARITIES.has(item.polarity as CompressionSemanticAtom['polarity'])
+        ? item.polarity as CompressionSemanticAtom['polarity']
+        : 'neutral',
+      status,
+      text,
+      evidenceRefs,
+      ...(Array.isArray(item.supersedes)
+        ? { supersedes: item.supersedes.filter((entry): entry is string => typeof entry === 'string' && Boolean(entry.trim())).map((entry) => entry.trim().slice(0, 160)).slice(0, 12) }
+        : {}),
+      ...(Array.isArray(item.conflicts)
+        ? { conflicts: item.conflicts.filter((entry): entry is string => typeof entry === 'string' && Boolean(entry.trim())).map((entry) => entry.trim().slice(0, 160)).slice(0, 12) }
+        : {}),
+      ...(typeof item.updatedAt === 'number' && Number.isFinite(item.updatedAt) && item.updatedAt >= 0
+        ? { updatedAt: Math.floor(item.updatedAt) }
+        : {}),
+      ...(source ? { source } : {}),
+    } satisfies CompressionSemanticAtom];
+  }).slice(0, 48);
+  return {
+    ...(atoms.length ? { atoms } : {}),
+    warnings: [...new Set(warnings)],
+  };
+}
+
+export function mapCompressionArtifact(value: unknown): CompressionArtifact | undefined {
   if (!isRecord(value) || value.schemaVersion !== 1) return undefined;
   const quality = mapCompressionQuality(value.quality);
   if (!quality) return undefined;
+  const mappedAtoms = mapSemanticAtoms(value.semanticAtoms);
+  const mappedQuality: CompressionArtifactQuality = {
+    ...quality,
+    warnings: [...new Set([...quality.warnings, ...mappedAtoms.warnings])],
+  };
   return {
     ...(value as unknown as Omit<CompressionArtifact, 'quality'>),
     schemaVersion: 1,
-    quality,
+    ...(mappedAtoms.atoms ? { semanticAtoms: mappedAtoms.atoms } : {}),
+    quality: mappedQuality,
   };
 }
 
@@ -908,7 +1091,7 @@ function resolveSessionTranscriptPathByKey(
 async function loadSessionSummary(sessionKey: string): Promise<SessionSummary> {
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) {
-    return { sessionKey, firstUserText: null, lastTimestamp: null };
+    return { sessionKey, firstUserText: null, lastTimestamp: null, messageCount: 0 };
   }
 
   try {
@@ -916,19 +1099,27 @@ async function loadSessionSummary(sessionKey: string): Promise<SessionSummary> {
     const sessionsJson = await readSessionsJson(parsed.agentId);
     const transcriptPath = resolveSessionTranscriptPathByKey(sessionKey, sessionsDir, sessionsJson);
     if (!transcriptPath) {
-      return { sessionKey, firstUserText: null, lastTimestamp: null };
+      return { sessionKey, firstUserText: null, lastTimestamp: null, messageCount: 0 };
     }
 
     const messages = await readAllTranscriptMessages(transcriptPath);
     return summarizeTranscriptMessages(sessionKey, messages);
   } catch {
-    return { sessionKey, firstUserText: null, lastTimestamp: null };
+    return { sessionKey, firstUserText: null, lastTimestamp: null, messageCount: 0 };
   }
 }
 
-async function loadSessionTranscriptByKey(sessionKey: string, limit: number): Promise<RawMessage[] | null> {
+async function loadSessionTranscriptByKey(sessionKey: string, limit: number, gateway?: Pick<GatewayManager, 'rpc'>): Promise<RawMessage[] | null> {
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) return null;
+
+  // The live runtime owns transcript location (including isolated source state).
+  // An empty runtime history is authoritative; never substitute another profile.
+  if (gateway) {
+    const result = await gateway.rpc<{ messages?: RawMessage[] }>('chat.history', { sessionKey, limit }, 10_000);
+    if (!Array.isArray(result?.messages)) throw new Error('Runtime history returned no messages array');
+    return result.messages;
+  }
 
   try {
     const sessionsDir = join(getOpenClawConfigDir(), 'agents', parsed.agentId, 'sessions');
@@ -973,8 +1164,18 @@ async function deleteSession(sessionKey: string): Promise<SessionDeleteResult> {
   const resolution = resolveSessionTranscriptPath(sessionsJson, sessionsDir, sessionKey);
   if (!resolution.ok) {
     if (resolution.failure.kind === 'not-found') {
-      logger.warn(`[session:delete] Cannot resolve file for "${sessionKey}". Raw value: ${JSON.stringify(sessionsJson[sessionKey])}`);
-      return { success: false, error: `Cannot resolve file for session: ${sessionKey}` };
+      removeSessionEntry(sessionsJson, sessionKey);
+      try {
+        await fsP.writeFile(sessionsJsonPath, JSON.stringify(sessionsJson, null, 2), 'utf8');
+        logger.info(`[session:delete] Entry already absent on disk; removed stale index for "${sessionKey}"`);
+        return { success: true };
+      } catch (error) {
+        return {
+          success: false,
+          partial: true,
+          error: `Session files were already absent but sessions.json could not be updated: ${String(error)}`,
+        };
+      }
     }
     logger.warn(`[session:delete] Refusing to delete out-of-scope path for "${sessionKey}": ${resolution.failure.resolvedPath}`);
     return {
@@ -1367,11 +1568,140 @@ async function emptyArchive(payload: SessionPayload): Promise<{ success: boolean
   return { success: true };
 }
 
-export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {}): CompleteHostServiceRegistry['sessions'] {
+type GatewaySessionDeleteResult = {
+  ok?: boolean;
+  deleted?: boolean;
+  archived?: string[];
+  sessionId?: string;
+  operationId?: string;
+  journalState?: string;
+  error?: string;
+  message?: string;
+};
+
+const sessionDeleteRequests = new Map<string, Promise<SessionDeleteResult>>();
+
+async function deleteSessionViaRuntime(
+  sessionKey: string,
+  gatewayManager: GatewayManager,
+  terminalManager?: TerminalSessionManager,
+): Promise<SessionDeleteResult> {
+  const parsed = parseSessionKey(sessionKey);
+  if (!parsed) {
+    return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
+  }
+
+  // Electron mirror gate: reuse a previously persisted operationId when the
+  // previous RPC failed or its outcome is unknown. A fresh operationId is
+  // generated and persisted before the first RPC for a session.
+  const gate = await persistSessionDeleteGate(sessionKey, parsed.agentId);
+
+  try {
+    const result = await gatewayManager.rpc<GatewaySessionDeleteResult>(
+      'sessions.delete',
+      { key: sessionKey, operationId: gate.operationId, deleteTranscript: true },
+    );
+
+    if (result?.ok !== true) {
+      const errorText =
+        result && (result.error || result.message)
+          ? String(result.error ?? result.message)
+          : JSON.stringify(result ?? {});
+      return { success: false, error: errorText };
+    }
+
+    if (
+      result.deleted !== true ||
+      result.operationId !== gate.operationId ||
+      result.journalState !== 'runtime_committed' ||
+      typeof result.sessionId !== 'string' ||
+      !result.sessionId.trim()
+    ) {
+      return {
+        success: false,
+        error: 'Gateway delete returned no matching runtime_committed receipt',
+      };
+    }
+
+    if (
+      gate.expectedSessionId &&
+      gate.expectedSessionId !== result.sessionId
+    ) {
+      return {
+        success: false,
+        error: `Gateway delete receipt belongs to session ${result.sessionId}, expected ${gate.expectedSessionId}`,
+      };
+    }
+
+    let currentGate = gate;
+    if (!currentGate.expectedSessionId) {
+      currentGate = await updateSessionDeleteGate(gate.operationId, {
+        expectedSessionId: result.sessionId,
+      }) ?? currentGate;
+    }
+    if (currentGate.terminalClosed !== true) {
+      terminalManager?.closeForSessionKey(sessionKey, 'session-delete');
+      currentGate = await updateSessionDeleteGate(gate.operationId, {
+        terminalClosed: true,
+      }) ?? currentGate;
+    }
+    if (currentGate.localSweepCommitted !== true) {
+      const sweepResult = await deleteSession(sessionKey);
+      if (!sweepResult.success) {
+        return sweepResult;
+      }
+      await updateSessionDeleteGate(gate.operationId, {
+        localSweepCommitted: true,
+      });
+    }
+
+    await clearSessionDeleteGate(gate.operationId);
+    return { success: true };
+  } catch (error) {
+    // RPC unknown (timeout, socket drop, reconnect): do not sweep, do not
+    // release the mirror gate. The persisted operationId makes the next delete
+    // a retry of the same operation.
+    return {
+      success: false,
+      error: `Gateway delete did not return a committed receipt: ${error instanceof Error ? error.message : String(error)}`,
+    };
+  }
+}
+
+async function deleteSessionViaRuntimeSerialized(
+  sessionKey: string,
+  gatewayManager: GatewayManager,
+  terminalManager?: TerminalSessionManager,
+): Promise<SessionDeleteResult> {
+  const previous = sessionDeleteRequests.get(sessionKey);
+  if (previous) return previous;
+  const current = withSessionDeleteGateLock(
+    sessionKey,
+    () => deleteSessionViaRuntime(sessionKey, gatewayManager, terminalManager),
+  );
+  sessionDeleteRequests.set(sessionKey, current);
+  void current.then(() => {
+    if (sessionDeleteRequests.get(sessionKey) === current) {
+      sessionDeleteRequests.delete(sessionKey);
+    }
+  }, () => {
+    if (sessionDeleteRequests.get(sessionKey) === current) {
+      sessionDeleteRequests.delete(sessionKey);
+    }
+  });
+  return current;
+}
+
+export function createSessionsApi(ctx: {
+  gatewayManager?: GatewayManager;
+  terminalManager?: TerminalSessionManager;
+} = {}): CompleteHostServiceRegistry['sessions'] {
   return {
     delete: async (payload) => {
       const sessionKey = getSessionKey(payload);
-      const result = await deleteSession(sessionKey);
+      const result = ctx.gatewayManager
+        ? await deleteSessionViaRuntimeSerialized(sessionKey, ctx.gatewayManager, ctx.terminalManager)
+        : await deleteSession(sessionKey);
       if (result.success) {
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
       }
@@ -1402,7 +1732,7 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
       const limit = getLimit(payload);
 
       if (typeof body.sessionKey === 'string' && body.sessionKey.trim()) {
-        const messages = await loadSessionTranscriptByKey(body.sessionKey.trim(), limit);
+        const messages = await loadSessionTranscriptByKey(body.sessionKey.trim(), limit, ctx.gatewayManager);
         if (!messages) return { success: false, error: 'Transcript not found' };
         return { success: true, messages };
       }
@@ -1730,6 +2060,9 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.queueDrain', {
         key: sessionKey,
         ...(agentId ? { agentId } : {}),
+        ...(typeof payload.expectedSessionId === 'string' && payload.expectedSessionId.trim()
+          ? { expectedSessionId: payload.expectedSessionId.trim() }
+          : {}),
       }, 30_000);
       return {
         success: true,
@@ -1738,6 +2071,30 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
         queueCount: toNumber(result.queueCount) ?? 0,
         ...(toNumber(result.messageCount) !== undefined ? { messageCount: toNumber(result.messageCount) } : {}),
         ...(typeof result.reason === 'string' ? { reason: result.reason } : {}),
+      };
+    },
+    stop: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const agentId = getOptionalAgentId(payload);
+      if (!ctx.gatewayManager) {
+        return {
+          success: false,
+          error: 'Gateway manager unavailable',
+          key: sessionKey,
+          stopped: false,
+        };
+      }
+      // Session-level stop runs the canonical stop front (queued state clear,
+      // recursive subagent stop, process drain); turn-level abort stays on
+      // chat.abort.
+      const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.stop', {
+        key: sessionKey,
+        ...(agentId ? { agentId } : {}),
+      }, 30_000);
+      return {
+        success: true,
+        key: typeof result.key === 'string' ? result.key : sessionKey,
+        stopped: result.ok === true,
       };
     },
     restoreCheckpoint: async (payload) => {
@@ -1988,12 +2345,16 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
 
       let messages: TranscriptMessage[] = [];
       try {
-        messages = await loadSessionTranscriptByKey(sessionKey, 80) ?? [];
+        const transcript = await loadSessionTranscriptByKey(sessionKey, 80, ctx.gatewayManager);
+        if (!transcript) throw new Error('Transcript not found');
+        messages = transcript;
+        const lastAssistant = [...messages].reverse().find((message) => message.role === 'assistant' && extractMessageText(message.content).trim());
+        const recentOutput = lastAssistant ? compactLine(extractMessageText(lastAssistant.content), 1200) : '';
         sources.push({
           id: 'transcript',
           label: 'Recent transcript',
           available: true,
-          summary: `${messages.length} recent message(s)`,
+          summary: `${messages.length} recent message(s)${recentOutput ? `; latest assistant output (unverified): ${recentOutput}` : ''}`,
         });
       } catch (error) {
         const warning = `Recent transcript unavailable: ${error instanceof Error ? error.message : String(error)}`;

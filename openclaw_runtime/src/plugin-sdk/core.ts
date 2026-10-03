@@ -856,3 +856,5 @@ export function createChannelPluginBase<TResolvedAccount>(
     setup: params.setup,
   } as CreatedChannelPluginBase<TResolvedAccount>;
 }
+
+export { commitStructuredArtifactBytes, commitStructuredArtifactCandidate, readStructuredArtifactSource, closeOpenClawStateDatabase, openOpenClawStateDatabase, runOpenClawStateWriteTransaction, type OpenClawStateDatabaseOptions } from "./structured-artifacts.js";

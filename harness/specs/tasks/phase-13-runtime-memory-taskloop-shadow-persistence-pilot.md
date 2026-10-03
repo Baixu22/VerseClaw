@@ -114,10 +114,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-13-runtime-memory-taskloop-shadow-persistence-pilot/README.md
-    - runtime-research/handoffs/phase-13-runtime-memory-taskloop-shadow-persistence-pilot/parallel-lanes.md
-    - runtime-research/handoffs/phase-13-runtime-memory-taskloop-shadow-persistence-pilot/window-prompts.md
-    - runtime-research/handoffs/phase-13-runtime-memory-taskloop-shadow-persistence-pilot/submission-template.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 13 Runtime Memory TaskLoop Shadow Persistence Pilot

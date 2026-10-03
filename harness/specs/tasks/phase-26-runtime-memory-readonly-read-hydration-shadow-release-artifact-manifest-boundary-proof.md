@@ -107,10 +107,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-26-runtime-memory-readonly-read-hydration-shadow-release-artifact-manifest-boundary-proof/README.md
-    - runtime-research/handoffs/phase-26-runtime-memory-readonly-read-hydration-shadow-release-artifact-manifest-boundary-proof/parallel-lanes.md
-    - runtime-research/handoffs/phase-26-runtime-memory-readonly-read-hydration-shadow-release-artifact-manifest-boundary-proof/window-prompts.md
-    - runtime-research/handoffs/phase-26-runtime-memory-readonly-read-hydration-shadow-release-artifact-manifest-boundary-proof/submission-template.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 26 Runtime Memory Readonly Read Hydration Shadow Release Artifact Manifest Boundary Proof

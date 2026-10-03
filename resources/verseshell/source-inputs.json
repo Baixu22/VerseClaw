@@ -41,8 +41,8 @@
       "order": 3,
       "role": "recovered-ignored-source-inputs",
       "path": "resources/verseshell/patches/aci-bench-source-inputs.patch",
-      "bytes": 32136,
-      "sha256": "f05d7bacdb2c754cd76a5f57a4ef9b1735ce95a76007bda69badaf99c887b72e",
+      "bytes": 32135,
+      "sha256": "0eb7c902e4b0b75d3617e2129f66694c01f9c4f657fcb140272ff8abbba5dffe",
       "changed_paths": [
         "bench/aci/fixtures/python_edit_and_retest/GOLDEN/greet.py",
         "bench/aci/fixtures/python_edit_and_retest/greet.py",
@@ -78,8 +78,8 @@
       },
       {
         "path": "bench/aci/scorers/score.py",
-        "bytes": 1081,
-        "sha256": "9ae6f43cd8b739192061259935ebad1ab32b7cc188cd29bfe2c75b421fafaaf9"
+        "bytes": 1080,
+        "sha256": "ef78658e0b6078217c17b9bd7944e71de7add7f873662cacd6d871c53980bbd4"
       },
       {
         "path": "bench/aci/fixtures/python_edit_and_retest/greet.py",
@@ -214,8 +214,8 @@
     },
     {
       "path": "bench/aci/scorers/score.py",
-      "bytes": 1081,
-      "sha256": "9ae6f43cd8b739192061259935ebad1ab32b7cc188cd29bfe2c75b421fafaaf9"
+      "bytes": 1080,
+      "sha256": "ef78658e0b6078217c17b9bd7944e71de7add7f873662cacd6d871c53980bbd4"
     },
     {
       "path": "bench/aci/tasks/python_edit_and_retest.json",
@@ -324,8 +324,8 @@
   },
   "identity": {
     "algorithm": "sha256(canonical-json-without-identity)",
-    "payload_sha256": "ea9d12f54dab1ce0fc6f3f29bb526f8d5e20b9e903df2a2ee46e93adb81a8880",
+    "payload_sha256": "a0fc3d80a3812203460ac826346a061efc6f52c22054ea04946a28f03e04e553",
     "combined_algorithm": "sha256(verseshell.source-identity/v1\\n + payload_sha256)",
-    "combined_sha256": "19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650"
+    "combined_sha256": "daa0b1720efaa89356f9ceed608a9f5bd200970a96f6ab2abec8a67cd101c8f8"
   }
 }

@@ -1,9 +1,12 @@
 import { afterEach, describe, expect, it } from "vitest";
 import {
   collectContextCandidate,
+  contextMessageReplacementText,
+  applyContextMessageReplacement,
   createContextCandidate,
   finalizeContextCandidates,
   getContextCandidateCollection,
+  projectContextCandidates,
   recordContextCandidateSkip,
   resetContextCandidateCollectionsForTests,
 } from "./context-candidate.js";
@@ -12,6 +15,7 @@ import {
   resetTurnInjectionBudgetsForTests,
   summarizeTurnInjection,
 } from "./turn-injection-budget.js";
+import type { AgentMessage } from "../agents/runtime/index.js";
 
 afterEach(() => {
   resetContextCandidateCollectionsForTests();
@@ -36,6 +40,97 @@ function candidate(params: {
 }
 
 describe("ContextCandidate/v1", () => {
+  it("exempts exact historical copies once, but charges rewritten or duplicated messages", () => {
+    const history: AgentMessage[] = [{ role: "user", content: "old history", timestamp: 1 }];
+    expect(contextMessageReplacementText(history, structuredClone(history))).toBe("");
+    expect(contextMessageReplacementText(history, [])).toBe("");
+    expect(contextMessageReplacementText(history, [...history, ...history])).toBe(
+      JSON.stringify(history),
+    );
+    const rewritten: AgentMessage[] = [{ role: "user", content: "new summary", timestamp: 1 }];
+    expect(contextMessageReplacementText(history, rewritten)).toBe(JSON.stringify(rewritten));
+  });
+
+  it.each([false, true])(
+    "accepts structured replacements atomically after higher precedence (exhausted=%s)",
+    (exhausted) => {
+      const turnId = "replacement-budget";
+      const original: AgentMessage[] = [{ role: "user", content: "history", timestamp: 1 }];
+      const replacement: AgentMessage[] = [{ role: "user", content: "summary", timestamp: 2 }];
+      const current: AgentMessage = { role: "user", content: "current prompt", timestamp: 3 };
+      const text = contextMessageReplacementText(original, replacement);
+      const ledger = beginTurnInjectionBudget({ turnId, total: text.length + 10 });
+      collectContextCandidate(
+        turnId,
+        createContextCandidate({
+          authorityObjectId: "engine:messages",
+          authorityVersion: "1",
+          sourceId: "cvk-message-replacement",
+          channel: "cvk_addition",
+          target: "message_replacement",
+          text,
+          messageReplacement: { original, replacement },
+        }),
+      );
+      collectContextCandidate(
+        turnId,
+        candidate({
+          objectId: "compass",
+          sourceId: "compass",
+          channel: "knowledge",
+          target: "system_prompt",
+          text: "K".repeat(exhausted ? 11 : 10),
+        }),
+      );
+      const projected = projectContextCandidates({
+        turnId,
+        ledger,
+        messages: [...original, current],
+      });
+      expect(
+        applyContextMessageReplacement(projected.messages, projected.projection.messageReplacement),
+      ).toEqual([...(exhausted ? original : replacement), current]);
+      const row = projected.projection.lineage.find(
+        (item) => item.target === "message_replacement",
+      )!;
+      expect(row.reason).toBe(exhausted ? "budget-drop" : "applied");
+      expect(row.charsApplied).toBe(exhausted ? 0 : text.length);
+      expect(ledger.budget.used).toBe(exhausted ? 11 : text.length + 10);
+      const plan = projected.projection.messageReplacement;
+      expect(applyContextMessageReplacement([...original, current, current], plan)).toEqual([
+        ...(exhausted ? original : replacement),
+        current,
+        current,
+      ]);
+    },
+  );
+
+  it("does not charge a replacement after the original history was repaired", () => {
+    const original: AgentMessage[] = [{ role: "user", content: "orphan", timestamp: 1 }];
+    const replacement: AgentMessage[] = [{ role: "user", content: "summary", timestamp: 2 }];
+    const turnId = "repaired-history";
+    const ledger = beginTurnInjectionBudget({ turnId, total: 1000 });
+    collectContextCandidate(
+      turnId,
+      createContextCandidate({
+        authorityObjectId: "engine",
+        authorityVersion: "1",
+        sourceId: "cvk-message-replacement",
+        channel: "cvk_addition",
+        target: "message_replacement",
+        text: contextMessageReplacementText(original, replacement),
+        messageReplacement: { original, replacement },
+      }),
+    );
+    const projected = projectContextCandidates({ turnId, ledger, messages: [] });
+    expect(projected.messages).toEqual([]);
+    expect(projected.projection.lineage[0]).toMatchObject({
+      reason: "stale-history",
+      charsApplied: 0,
+    });
+    expect(ledger.budget.used).toBe(0);
+  });
+
   it("uses authority identity for dedup and projection identity for candidate lineage", () => {
     const knowledge = candidate({
       objectId: "block-1",

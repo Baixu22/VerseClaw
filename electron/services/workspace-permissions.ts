@@ -114,7 +114,23 @@ const SAFE_GATEWAY_METHODS = new Set([
   'verification.status',
   'verification.results.list',
   'verification.results.get',
+  // TF-0240: pending runtime exec approvals are a pure read. An operator in
+  // readOnly must be able to see what the runtime is waiting on; the decision
+  // itself is a separate method with its own rule below.
+  'exec.approval.list',
 ]);
+
+/** Runtime exec-approval decision methods that answer a boundary the runtime
+ * already raised. Unlike the workspace mutations around them, these carry a human
+ * decision, so they stay reachable in every permission mode: blocking them in
+ * readOnly leaves the runtime waiting forever with no in-app way to answer (the
+ * J-04 hang). The runtime still enforces its own per-request decision vocabulary
+ * and expiry, so this opens the answer channel, not the action. */
+const RUNTIME_APPROVAL_DECISION_METHODS = new Set(['exec.approval.resolve']);
+
+export function isRuntimeApprovalDecisionRpc(method: string): boolean {
+  return RUNTIME_APPROVAL_DECISION_METHODS.has(method.trim());
+}
 
 const DEV_ONLY_GATEWAY_METHODS = new Set<string>([]);
 
@@ -157,21 +173,125 @@ function firstWords(command: string, count: number): string {
     .toLowerCase();
 }
 
+/** Git global flags that take a separate value token, so the value must not be
+ * mistaken for the subcommand (`git -C /repo status` → subcommand is `status`). */
+const GIT_GLOBAL_FLAGS_WITH_VALUE = new Set([
+  '-C',
+  '-c',
+  '--git-dir',
+  '--work-tree',
+  '--namespace',
+  '--config-env',
+  '--exec-path',
+]);
+
+/** Git global flags that can turn any read-only subcommand into arbitrary code
+ * execution or move it outside the workspace. `-c core.pager=…`, `-c alias.…`
+ * and `--config-env` run commands; `--exec-path` redirects git's own helper
+ * binaries; `--git-dir`/`--work-tree`/`-C` escape the workspace boundary.
+ * These are never safe on an agent-supplied command, whatever the subcommand. */
+const GIT_UNSAFE_GLOBAL_FLAGS = new Set([
+  '-c',
+  '-C',
+  '--git-dir',
+  '--work-tree',
+  '--namespace',
+  '--config-env',
+  '--exec-path',
+]);
+
+function isUnsafeGitGlobalFlag(token: string): boolean {
+  const bare = token.includes('=') ? token.slice(0, token.indexOf('=')) : token;
+  // -c is case-sensitive: -c sets config, -C changes directory. Both are unsafe.
+  return GIT_UNSAFE_GLOBAL_FLAGS.has(bare);
+}
+
+/** True when a git command carries `--output`, which makes an otherwise
+ * read-only subcommand write a file. `git diff --output=<path>` creates AND
+ * truncates <path>, and the path is unconstrained, so it can overwrite a file
+ * outside the workspace. Classified as read-only, readOnly mode allows it with
+ * no further checks.
+ *
+ * Only `--output=<path>` and `--output <path>` write; `-o` is not an alias for
+ * it, and `--output-indicator-new/old/context` merely pick a display character,
+ * so nothing but an exact match on the bare flag may count. */
+function hasGitOutputRedirect(tokens: string[]): boolean {
+  return tokens.some((token) => token === '--output' || token.startsWith('--output='));
+}
+
+/** Rewrite `git <global flags> <subcommand> …` as `git <subcommand> …` so the
+ * risk patterns below see the real subcommand. Without this, a leading global
+ * flag hides it: `git -c x=y reset --hard` fails the `\bgit\s+reset\b` test and
+ * silently downgrades from destructive to write. Returns null when the command
+ * is not a plain git invocation, or when it carries an unsafe global flag. */
+function normalizeGitCommand(normalized: string): { rewritten: string } | { unsafeFlag: string } | null {
+  const tokens = normalized.split(' ');
+  if (tokens.length === 0) return null;
+  const binary = (tokens[0] ?? '').toLowerCase().replace(/\.exe$/, '');
+  if (binary !== 'git' && !binary.endsWith('/git') && !binary.endsWith('\\git')) return null;
+
+  for (let index = 1; index < tokens.length; index += 1) {
+    const token = tokens[index] ?? '';
+    if (!token) continue;
+    if (token === '--') {
+      // Everything after -- is a pathspec, so there is no subcommand to expose.
+      return null;
+    }
+    if (token.startsWith('-')) {
+      if (isUnsafeGitGlobalFlag(token)) return { unsafeFlag: token };
+      if (!token.includes('=') && GIT_GLOBAL_FLAGS_WITH_VALUE.has(token)) index += 1;
+      continue;
+    }
+    return { rewritten: ['git', ...tokens.slice(index)].join(' ') };
+  }
+  return null;
+}
+
 export function classifyWorkspaceCommand(command: string): WorkspaceCommandRisk {
   const normalized = normalizeCommand(command);
   if (!normalized) return 'read';
-  if (DANGEROUS_PATTERNS.some((pattern) => pattern.test(normalized))) return 'destructive';
-  if (NETWORK_PATTERNS.some((pattern) => pattern.test(normalized))) return 'network';
-  if (WRITE_PATTERNS.some((pattern) => pattern.test(normalized))) return 'write';
 
-  const firstOne = firstWords(normalized, 1);
-  const firstTwo = firstWords(normalized, 2);
+  const git = normalizeGitCommand(normalized);
+  // A config-injection or boundary-escaping flag is destructive regardless of
+  // the subcommand: `git -c core.pager=… status` runs an arbitrary command.
+  if (git && 'unsafeFlag' in git) return 'destructive';
+  // Classify the flag-stripped form so global flags cannot mask the subcommand.
+  const subject = git ? git.rewritten : normalized;
+
+  if (DANGEROUS_PATTERNS.some((pattern) => pattern.test(subject))) return 'destructive';
+  if (NETWORK_PATTERNS.some((pattern) => pattern.test(subject))) return 'network';
+  if (WRITE_PATTERNS.some((pattern) => pattern.test(subject))) return 'write';
+
+  // A whitelisted read subcommand stops being read-only once it redirects its
+  // output to a file, so it must not reach the whitelist below.
+  if (git && 'rewritten' in git && hasGitOutputRedirect(subject.split(' '))) return 'write';
+
+  const firstOne = firstWords(subject, 1);
+  const firstTwo = firstWords(subject, 2);
   if (READ_ONLY_COMMANDS.has(firstOne) || READ_ONLY_COMMANDS.has(firstTwo)) return 'read';
   return 'write';
 }
 
 export function isApprovalRisk(risk: WorkspaceCommandRisk): risk is Exclude<WorkspaceCommandRisk, 'read' | 'write'> {
   return risk === 'network' || risk === 'destructive' || risk === 'external-write';
+}
+
+/** True when a path points at git repository metadata rather than project
+ * content. Writing here is not an ordinary edit: `.git/hooks/*` executes on the
+ * next commit, `.git/config` can point `core.pager`/`core.hooksPath`/`alias.*`
+ * at an arbitrary command, and `.git/HEAD` or `.git/refs/*` rewrite history out
+ * from under the user. These stay approval-gated even inside the workspace,
+ * where ordinary edits are auto-accepted.
+ *
+ * Matches a `.git` segment anywhere in the path, so nested repositories,
+ * submodules and linked worktrees are covered — including the bare `.git`
+ * pointer file a worktree/submodule uses, which could otherwise be rewritten
+ * to redirect the real gitdir elsewhere. */
+export function isGitMetadataPath(path: string): boolean {
+  return path
+    .replace(/\\/g, '/')
+    .split('/')
+    .some((segment) => segment.toLowerCase() === '.git');
 }
 
 export function decideWorkspaceCommand(
@@ -225,6 +345,17 @@ export function decideWorkspaceFileWrite(
       reason: `Write target is outside the workspace boundary (${workspace.rootPath}); external writes require approval`,
     };
   }
+  // Repository metadata is inside the workspace but is not project content:
+  // a hook or config written here runs on the next git invocation, so it stays
+  // gated instead of being auto-accepted with ordinary edits.
+  if (isGitMetadataPath(path)) {
+    return {
+      allowed: false,
+      requiresApproval: true,
+      risk: 'destructive',
+      reason: 'Write target is Git repository metadata (.git); hooks and config can execute commands, so this requires approval',
+    };
+  }
   // acceptEdits: auto-accept in-workspace file edits only; high-risk shell/git remain gated elsewhere.
   return { allowed: true, risk: 'write', reason: 'Accept-edits mode auto-accepts in-workspace file edits' };
 }
@@ -264,6 +395,7 @@ export function decideGatewayRpc(
   const risk = classifyGatewayRpcRisk(method, params);
   if (risk === 'read') return { allowed: true, risk };
   if (mode === 'fullAccess') return { allowed: true, risk };
+  if (isRuntimeApprovalDecisionRpc(method)) return { allowed: true, risk };
   if (mode === 'plan') {
     return { allowed: false, risk, reason: 'Plan mode does not execute Gateway mutations' };
   }

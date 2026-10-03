@@ -3,6 +3,7 @@
  * Resolves host/sandbox/node target, policy, approval, env, script preflight,
  * process launch, foreground result, and background session handoff.
  */
+import { createHash, randomUUID } from "node:crypto";
 import { constants as fsConstants } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -46,13 +47,26 @@ import {
   resolveAgentIdFromSessionKey,
 } from "../routing/session-key.js";
 import { createLazyImportLoader } from "../shared/lazy-promise.js";
+import { resolveConfigDir } from "../utils.js";
 import { normalizeDeliveryContext } from "../utils/delivery-context.js";
 import { splitShellArgs } from "../utils/shell-argv.js";
 import type { HookContext } from "./agent-tools.before-tool-call.js";
 import { stripMalformedXmlArgValueSuffixFromKeys } from "./agent-tools.params.js";
 import { markBackgrounded } from "./bash-process-registry.js";
 import { describeExecTool } from "./bash-tools.descriptions.js";
+import { goalWakeController, type GoalWakeArmResult } from "./goal-wake-controller.js";
+import {
+  countActiveDurableHelperRunsForSession,
+  markSessionDurableHelpersNeedsCleanup,
+} from "./goal-wake-durable-cleanup.js";
+import {
+  createDurableHelperIntent,
+  removeDurableHelperRunDir,
+  resolveDurableHelperRoot,
+} from "./goal-wake-helper-protocol.js";
+import { acquireSessionAdmissionPermit } from "../sessions/session-admission-registry.js";
 import { processGatewayAllowlist } from "./bash-tools.exec-host-gateway.js";
+import { resolveCommandExecProvenancePolicy } from "./exec-provenance-policy.js";
 import { executeNodeHostCommand } from "./bash-tools.exec-host-node.js";
 import { renderExecOutputText } from "./bash-tools.exec-output.js";
 import {
@@ -86,6 +100,7 @@ import {
   resolveVerseShellCommandPlan,
   type VerseShellCommandPlan,
 } from "./verseshell/command-profiles.js";
+import { appendVerseShellExternalWriteWarning } from "./verseshell/external-write-policy.js";
 
 export type { BashSandboxConfig } from "./bash-tools.shared.js";
 export type {
@@ -103,6 +118,7 @@ type ExecToolArgs = Record<string, unknown> & {
   timeout?: number;
   pty?: boolean;
   elevated?: boolean;
+  wait?: "none" | "session" | "goal";
   host?: string;
   security?: string;
   ask?: string;
@@ -1321,6 +1337,20 @@ function resolveExecReviewerDefaults(params: { defaults?: ExecToolDefaults; agen
   return agentExec?.reviewer ?? cfg?.tools?.exec?.reviewer;
 }
 
+/**
+ * Liveness-update interval for foreground-only exec runs (background execution
+ * unavailable). Returns 0 when disabled. Kept short enough to beat an interactive
+ * tool-call budget but long enough not to spam the update channel.
+ */
+function resolveExecForegroundHeartbeatMs(): number {
+  return clampWithDefault(
+    readEnvInt("OPENCLAW_EXEC_FOREGROUND_HEARTBEAT_MS"),
+    15_000,
+    1_000,
+    120_000,
+  );
+}
+
 /** Creates an exec tool instance with runtime defaults and approval policy wiring. */
 export function createExecTool(
   defaults?: ExecToolDefaults,
@@ -1489,6 +1519,7 @@ export function createExecTool(
         return markResolveExecEnvPrepared(execParams, state);
       })(),
     execute: async (_toolCallId, args, signal, onUpdate) => {
+      signal?.throwIfAborted();
       const params = isResolveExecEnvPrepared(args as ExecToolArgs)
         ? stripMalformedXmlArgValueSuffixFromKeys(
             args as ExecToolArgs,
@@ -1508,22 +1539,41 @@ export function createExecTool(
         warnings.push(approvalWarningText);
       }
       let execCommandOverride: string | undefined;
-      let executionPlan: import("./verseshell/command-profiles.js").VerseShellCommandPlan | undefined;
+      let executionPlan:
+        | import("./verseshell/command-profiles.js").VerseShellCommandPlan
+        | undefined;
       const backgroundRequested = params.background === true;
-      const yieldRequested = typeof params.yieldMs === "number";
-      if (!allowBackground && (backgroundRequested || yieldRequested)) {
-        warnings.push("Warning: background execution is disabled; running synchronously.");
+      const requestedWait =
+        params.wait === "session" || params.wait === "goal" || params.wait === "none"
+          ? params.wait
+          : "none";
+      const goalWaitRequested = requestedWait === "goal";
+      if (goalWaitRequested && !backgroundRequested) {
+        throw new Error('exec wait="goal" requires background=true');
       }
-      const yieldWindow = allowBackground
-        ? backgroundRequested
-          ? 0
-          : clampWithDefault(
-              params.yieldMs ?? defaultBackgroundMs,
-              defaultBackgroundMs,
-              10,
-              120_000,
-            )
-        : null;
+      const yieldRequested = typeof params.yieldMs === "number";
+      if (!allowBackground) {
+        // Foreground-only exec has no follow-up path, so the model must know the
+        // command cannot be backgrounded or polled: a long-running command will
+        // block the turn until it exits or hits the exec timeout.
+        warnings.push(
+          backgroundRequested || yieldRequested
+            ? "Warning: background execution is disabled; the requested background/yield mode is unavailable, so the command runs synchronously and returns only after the process exits."
+            : "Warning: background execution is disabled; running synchronously and returning only after the process exits.",
+        );
+      }
+      const yieldWindow = goalWaitRequested
+        ? 0
+        : allowBackground
+          ? backgroundRequested
+            ? 0
+            : clampWithDefault(
+                params.yieldMs ?? defaultBackgroundMs,
+                defaultBackgroundMs,
+                10,
+                120_000,
+              )
+          : null;
       const elevatedDefaults = defaults?.elevated;
       const elevatedAllowed = Boolean(elevatedDefaults?.enabled && elevatedDefaults.allowed);
       const elevatedDefaultMode =
@@ -1597,8 +1647,7 @@ export function createExecTool(
       // retry token; it does not replace host authorization.
       const explicitSecurity = defaults?.security;
       const configuredSecurity =
-        explicitSecurity ??
-        (host === "sandbox" ? "deny" : host === "verseshell" ? "full" : "full");
+        explicitSecurity ?? (host === "sandbox" ? "deny" : host === "verseshell" ? "full" : "full");
       const modePolicy = resolveExecModePolicy({
         mode: defaults?.mode,
         security: configuredSecurity,
@@ -1641,11 +1690,21 @@ export function createExecTool(
       const hostAsk = maxAsk(modePolicy.ask, approvalPolicy?.ask ?? modePolicy.ask);
       const trustedAsk = defaults?.messageProvider && hostAsk === "off" ? undefined : requestedAsk;
       let ask = maxAsk(hostAsk, trustedAsk ?? hostAsk);
+      const explicitFullAccess = defaults?.mode === "full" || defaults?.security === "full";
+      const provenancePolicy = resolveCommandExecProvenancePolicy({
+        provenance: defaults?.contentProvenance,
+        security,
+        ask,
+        explicitFullAccess,
+      });
+      security = provenancePolicy.security;
+      ask = provenancePolicy.ask;
       const bypassApprovals =
         elevatedRequested &&
         elevatedMode === "full" &&
         modePolicyAllowsFullBypass &&
-        hostPolicyAllowsFullBypass;
+        hostPolicyAllowsFullBypass &&
+        !provenancePolicy.constrained;
       if (bypassApprovals) {
         ask = "off";
       }
@@ -1768,6 +1827,7 @@ export function createExecTool(
       }
 
       if (host === "node") {
+        signal?.throwIfAborted();
         return executeNodeHostCommand({
           command: params.command,
           workdir,
@@ -1798,6 +1858,7 @@ export function createExecTool(
           notifySessionKey,
           notifyOnExit,
           trustedSafeBinDirs,
+          ...(signal ? { signal } : {}),
         });
       }
 
@@ -1817,6 +1878,7 @@ export function createExecTool(
               allowExplicitShell: true,
             })
           : undefined;
+      appendVerseShellExternalWriteWarning(warnings, preResolvedVerseShellPlan);
 
       if ((host === "gateway" || host === "verseshell") && !bypassApprovals) {
         const gatewayResult = await processGatewayAllowlist({
@@ -1874,7 +1936,10 @@ export function createExecTool(
         hostPolicyApproved = host === "verseshell";
       }
 
-      const explicitTimeoutSec = typeof params.timeout === "number" ? params.timeout : null;
+      const explicitTimeoutSec =
+        typeof params.timeout === "number" && Number.isFinite(params.timeout) && params.timeout > 0
+          ? params.timeout
+          : null;
       const effectiveTimeout = explicitTimeoutSec ?? defaultTimeoutSec;
       const getWarningText = () => (warnings.length ? `${warnings.join("\n")}\n\n` : "");
       const usePty = params.pty === true && !sandbox;
@@ -1884,37 +1949,226 @@ export function createExecTool(
       if (!shouldSkipExecScriptPreflight({ host, security, ask })) {
         await validateScriptFileForShellBleed({ command: params.command, workdir });
       }
+      signal?.throwIfAborted();
 
-      const run = await runExecProcess({
-        command: params.command,
-        execCommand: execCommandOverride,
-        executionPlan: executionPlan ?? preResolvedVerseShellPlan,
-        execHost: host,
-        hostPolicyApproved,
-        config: defaults?.config,
-        workdir,
-        env,
-        pathPrepend: defaultPathPrepend,
-        sandbox,
-        containerWorkdir,
-        usePty,
-        warnings,
-        maxOutput,
-        pendingMaxOutput,
-        notifyOnExit,
-        notifyOnExitEmptySuccess,
-        scopeKey: defaults?.scopeKey,
-        sessionKey: notifySessionKey,
-        mainKey: defaults?.mainKey,
-        sessionScope: defaults?.sessionScope,
-        eventRouting: defaults?.eventRouting,
-        notifyDeliveryContext,
-        timeoutSec: effectiveTimeout,
-        onUpdate,
-      });
+      let goalWaitArm: GoalWakeArmResult | undefined;
+      let goalYieldTriggered = false;
+      let releaseGoalWaitPermit = (): void => {};
+      let durableRunMeta:
+        | {
+            runId: string;
+            nonce: string;
+            ownerEpoch: string;
+            rootDir: string;
+            commandDigest: string;
+          }
+        | undefined;
+      if (goalWaitRequested) {
+        if (host === "sandbox") {
+          throw new Error('exec wait="goal" is only supported for local gateway execution in P0');
+        }
+        const boundSessionKey = notifySessionKey?.trim() || defaults?.sessionKey?.trim();
+        const mission = boundSessionKey
+          ? goalWakeController.getLatestMissionForSession(boundSessionKey)
+          : undefined;
+        if (!mission || mission.status !== "running") {
+          throw new Error('exec wait="goal" requires an active bound mission owner turn');
+        }
+        if (mission.agentId && agentId && mission.agentId !== agentId) {
+          throw new Error('exec wait="goal" is restricted to the mission owner/lead agent');
+        }
+        if (!defaults?.sessionId) {
+          throw new Error('exec wait="goal" requires an active session context');
+        }
+        releaseGoalWaitPermit = acquireSessionAdmissionPermit(
+          {
+            agentId,
+            canonicalSessionKey: mission.sessionKey,
+            expectedSessionId: defaults.sessionId,
+          },
+          "goal-wake-arm",
+        );
+        const commandDigest = createHash("sha256")
+          .update(`${execCommandOverride ?? params.command}\u0000${workdir}`)
+          .digest("hex");
+        const durableEnabled =
+          host === "gateway" && goalWakeController.durableHelperEnabled(defaults?.config);
+        if (durableEnabled) {
+          const policy = goalWakeController.resolveDurableHelperPolicy(defaults?.config);
+          if (
+            policy.maxRunsPerSession > 0 &&
+            (await countActiveDurableHelperRunsForSession(mission.sessionKey)) >=
+              policy.maxRunsPerSession
+          ) {
+            await markSessionDurableHelpersNeedsCleanup(mission.sessionKey, {
+              rootDir: resolveDurableHelperRoot(resolveConfigDir()),
+            });
+            throw new Error(
+              `exec wait="goal" durable helper quota reached (${policy.maxRunsPerSession} per session)`,
+            );
+          }
+          durableRunMeta = {
+            runId: `run_${randomUUID()}`,
+            nonce: randomUUID(),
+            ownerEpoch: createHash("sha256")
+              .update(`${defaults.sessionId}\u0000${mission.missionId}`)
+              .digest("hex"),
+            rootDir: resolveDurableHelperRoot(resolveConfigDir()),
+            commandDigest,
+          };
+          await createDurableHelperIntent(
+            {
+              runId: durableRunMeta.runId,
+              nonce: durableRunMeta.nonce,
+              commandDigest,
+              policyRevision: "runtime-lifecycle-phase4-v1",
+              ownerEpoch: durableRunMeta.ownerEpoch,
+            },
+            { rootDir: durableRunMeta.rootDir },
+          );
+        }
+        goalWaitArm = await goalWakeController.armGoalWaitProcess(
+          {
+            missionId: mission.missionId,
+            sessionKey: mission.sessionKey,
+            agentId,
+            expectedRevision: mission.revision ?? 0,
+            ...(mission.activeTickId ? { activeTickId: mission.activeTickId } : {}),
+            label: `goal-owned process (sha256:${commandDigest.slice(0, 16)})`,
+            commandDigest,
+            ...(durableRunMeta
+              ? {
+                  durableRun: {
+                    runId: durableRunMeta.runId,
+                    ownerEpoch: durableRunMeta.ownerEpoch,
+                    nonce: durableRunMeta.nonce,
+                    policyRevision: "runtime-lifecycle-phase4-v1",
+                  },
+                }
+              : {}),
+          },
+          defaults?.config,
+        );
+        if (!goalWaitArm.ok) {
+          if (durableRunMeta) {
+            await removeDurableHelperRunDir(durableRunMeta.runId, {
+              rootDir: durableRunMeta.rootDir,
+            }).catch(() => undefined);
+          }
+          throw new Error(
+            `goal-wake arm failed: ${goalWaitArm.reason}${
+              goalWaitArm.message ? ` (${goalWaitArm.message})` : ""
+            }`,
+          );
+        }
+      }
+
+      let run: Awaited<ReturnType<typeof runExecProcess>>;
+      try {
+        // Async preflight/arming can finish after the caller has cancelled.
+        signal?.throwIfAborted();
+        run = await runExecProcess({
+          command: params.command,
+          execCommand: execCommandOverride,
+          executionPlan: executionPlan ?? preResolvedVerseShellPlan,
+          execHost: host,
+          hostPolicyApproved,
+          config: defaults?.config,
+          workdir,
+          env,
+          pathPrepend: defaultPathPrepend,
+          sandbox,
+          containerWorkdir,
+          usePty,
+          warnings,
+          maxOutput,
+          pendingMaxOutput,
+          notifyOnExit,
+          notifyOnExitEmptySuccess,
+          scopeKey: defaults?.scopeKey,
+          sessionKey: notifySessionKey,
+          traceId: defaults?.trace?.traceId,
+          agentId,
+          expectedSessionId: defaults?.sessionId,
+          sessionStore: defaults?.sessionStore,
+          mainKey: defaults?.mainKey,
+          sessionScope: defaults?.sessionScope,
+          eventRouting: defaults?.eventRouting,
+          notifyDeliveryContext,
+          timeoutSec: effectiveTimeout,
+          onUpdate,
+          ...(goalWaitArm?.ok && durableRunMeta
+            ? {
+                durableHelper: {
+                  runId: durableRunMeta.runId,
+                  nonce: durableRunMeta.nonce,
+                  ownerEpoch: durableRunMeta.ownerEpoch,
+                  rootDir: durableRunMeta.rootDir,
+                  commandDigest: durableRunMeta.commandDigest,
+                },
+              }
+            : {}),
+        });
+      } catch (error) {
+        if (goalWaitArm?.ok) {
+          await goalWakeController.markGoalWaitSpawnUnknown(
+            goalWaitArm.taskId,
+            error instanceof Error ? error.message : String(error),
+          );
+        }
+        throw error;
+      } finally {
+        releaseGoalWaitPermit();
+      }
+
+      if (goalWaitArm?.ok) {
+        void run.promise
+          .then((outcome) =>
+            goalWakeController.finalizeGoalWaitTaskProcess({
+              taskId: goalWaitArm!.taskId,
+              status:
+                outcome.status === "completed"
+                  ? "succeeded"
+                  : outcome.timedOut
+                    ? "timed_out"
+                    : outcome.failureKind === "runtime-error"
+                      ? "lost"
+                      : outcome.failureKind === "signal" || outcome.failureKind === "aborted"
+                        ? "cancelled"
+                        : "failed",
+              exitCode: outcome.exitCode,
+              exitSignal: outcome.exitSignal == null ? null : String(outcome.exitSignal),
+              endedAt: Date.now(),
+              ...(outcome.status === "failed" ? { error: outcome.reason } : {}),
+              terminalSummary:
+                outcome.status === "completed"
+                  ? `goal-owned process exited ${outcome.exitCode}`
+                  : outcome.reason,
+            }),
+          )
+          .catch((error) =>
+            goalWakeController.markGoalWaitSpawnUnknown(
+              goalWaitArm!.taskId,
+              error instanceof Error ? error.message : String(error),
+            ),
+          );
+        // A committed arm immediately performs a terminal level-check; the
+        // process-exit hook above is only the normal fast-path accelerator.
+        await goalWakeController.runGoalWakeLevelCheckForTask(goalWaitArm.taskId, {
+          cfg: defaults?.config,
+        });
+        if (defaults?.onYield) {
+          await defaults.onYield(
+            `Goal-owned process armed: taskId=${goalWaitArm.taskId} flowId=${goalWaitArm.flowId}. ` +
+              "The mission tick resumes from process exit without polling.",
+          );
+          goalYieldTriggered = true;
+        }
+      }
 
       let yielded = false;
       let yieldTimer: NodeJS.Timeout | null = null;
+      let foregroundHeartbeat: NodeJS.Timeout | null = null;
       let registeredAbortSignal: AbortSignal | null = null;
 
       // Tool-call abort should not kill backgrounded sessions; timeouts still must.
@@ -1927,6 +2181,7 @@ export function createExecTool(
         // tool_execution_update events even for backgrounded sessions (which
         // retrieve output via process poll/log instead of onUpdate callbacks).
         run.disableUpdates();
+        cleanupToolRunListeners();
         if (yielded || run.session.backgrounded) {
           return;
         }
@@ -1941,6 +2196,10 @@ export function createExecTool(
         if (yieldTimer) {
           clearTimeout(yieldTimer);
           yieldTimer = null;
+        }
+        if (foregroundHeartbeat) {
+          clearInterval(foregroundHeartbeat);
+          foregroundHeartbeat = null;
         }
       };
 
@@ -1970,12 +2229,20 @@ export function createExecTool(
               startedAt: run.startedAt,
               cwd: run.session.cwd,
               tail: run.session.tail,
+              ...(goalWaitArm?.ok
+                ? {
+                    wait: "goal" as const,
+                    taskId: goalWaitArm.taskId,
+                    flowId: goalWaitArm.flowId,
+                    turnBarrier: goalWaitArm.turnBarrier,
+                  }
+                : {}),
             },
           });
         };
 
         const onYieldNow = () => {
-          if (yielded) {
+          if (yielded || signal?.aborted || run.session.exited) {
             return;
           }
           yielded = true;
@@ -1983,18 +2250,56 @@ export function createExecTool(
           resolveRunning();
         };
 
-        if (allowBackground && yieldWindow !== null) {
+        if (goalYieldTriggered) {
+          yielded = true;
+          markBackgrounded(run.session);
+          resolveRunning();
+        } else if (allowBackground && yieldWindow !== null) {
           if (yieldWindow === 0) {
             onYieldNow();
           } else {
-            yieldTimer = setTimeout(() => {
-              if (yielded) {
+            yieldTimer = setTimeout(onYieldNow, yieldWindow);
+          }
+        } else {
+          // Foreground-only exec: background/process follow-up is unavailable, so
+          // the promise settles only when the process exits and the turn stays
+          // blind until then (observed in the 2026-09-11 live CDP corpus, session
+          // s03-t02: the exec produced no result before the UI timeout while the
+          // command was still running). Emit periodic liveness updates instead.
+          const heartbeatMs = resolveExecForegroundHeartbeatMs();
+          if (heartbeatMs > 0 && typeof onUpdate === "function") {
+            foregroundHeartbeat = setInterval(() => {
+              // Process cleanup may outlive the consumer; mirror the output update guard.
+              if (yielded || run.session.backgrounded || run.session.exited || signal?.aborted) {
                 return;
               }
-              yielded = true;
-              markBackgrounded(run.session);
-              resolveRunning();
-            }, yieldWindow);
+              const elapsedSeconds = Math.max(1, Math.round((Date.now() - run.startedAt) / 1000));
+              try {
+                onUpdate({
+                  content: [
+                    {
+                      type: "text",
+                      text: `${getWarningText()}Command still running (session ${run.session.id}, pid ${
+                        run.session.pid ?? "n/a"
+                      }, ${elapsedSeconds}s elapsed). Waiting for completion.${
+                        run.session.tail ? `\n${run.session.tail}` : ""
+                      }`,
+                    },
+                  ],
+                  details: {
+                    status: "running",
+                    sessionId: run.session.id,
+                    pid: run.session.pid ?? undefined,
+                    startedAt: run.startedAt,
+                    cwd: run.session.cwd,
+                    tail: run.session.tail,
+                  },
+                });
+              } catch {
+                // Progress is best-effort; a consumer error must not fail the still-running process.
+              }
+            }, heartbeatMs);
+            foregroundHeartbeat.unref?.();
           }
         }
 

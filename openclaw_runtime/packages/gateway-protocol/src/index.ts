@@ -309,6 +309,10 @@ import {
   SecretsResolveResultSchema,
   type SessionsAbortParams,
   SessionsAbortParamsSchema,
+  type SessionsStopParams,
+  SessionsStopParamsSchema,
+  type SessionsStopResult,
+  SessionsStopResultSchema,
   type SessionsCompactParams,
   SessionsCompactParamsSchema,
   type SessionsCleanupParams,
@@ -352,6 +356,14 @@ import {
   SessionsQueueDrainParamsSchema,
   type SessionsQueueDrainResult,
   SessionsQueueDrainResultSchema,
+  type SessionsYieldStateParams,
+  SessionsYieldStateParamsSchema,
+  type SessionsYieldStateResult,
+  SessionsYieldStateResultSchema,
+  type SessionsLifecycleLedgerParams,
+  SessionsLifecycleLedgerParamsSchema,
+  type SessionsLifecycleLedgerResult,
+  SessionsLifecycleLedgerResultSchema,
   type SessionsRecallOriginalParams,
   SessionsRecallOriginalParamsSchema,
   type SessionsResumeCheckpointsParams,
@@ -687,6 +699,10 @@ export const validateSessionsMessagesUnsubscribeParams =
   lazyCompile<SessionsMessagesUnsubscribeParams>(SessionsMessagesUnsubscribeParamsSchema);
 export const validateSessionsAbortParams =
   lazyCompile<SessionsAbortParams>(SessionsAbortParamsSchema);
+export const validateSessionsStopParams =
+  lazyCompile<SessionsStopParams>(SessionsStopParamsSchema);
+export const validateSessionsStopResult =
+  lazyCompile<SessionsStopResult>(SessionsStopResultSchema);
 export const validateSessionsPatchParams =
   lazyCompile<SessionsPatchParams>(SessionsPatchParamsSchema);
 export const validateSessionsPluginPatchParams = lazyCompile<SessionsPluginPatchParams>(
@@ -721,6 +737,10 @@ export const validateSessionsRestoreCheckpointParams =
   lazyCompile<SessionsRestoreCheckpointParams>(SessionsRestoreCheckpointParamsSchema);
 export const validateSessionsQueueDrainParams =
   lazyCompile<SessionsQueueDrainParams>(SessionsQueueDrainParamsSchema);
+export const validateSessionsYieldStateParams =
+  lazyCompile<SessionsYieldStateParams>(SessionsYieldStateParamsSchema);
+export const validateSessionsLifecycleLedgerParams =
+  lazyCompile<SessionsLifecycleLedgerParams>(SessionsLifecycleLedgerParamsSchema);
 export const validateSessionsCompactionListParams = lazyCompile<SessionsCompactionListParams>(
   SessionsCompactionListParamsSchema,
 );
@@ -1093,6 +1113,10 @@ export {
   SessionsResumeCheckpointsResultSchema,
   SessionsQueueDrainParamsSchema,
   SessionsQueueDrainResultSchema,
+  SessionsYieldStateParamsSchema,
+  SessionsYieldStateResultSchema,
+  SessionsLifecycleLedgerParamsSchema,
+  SessionsLifecycleLedgerResultSchema,
   SessionsCompactionListParamsSchema,
   SessionsCompactionGetParamsSchema,
   SessionsCompactionBranchParamsSchema,
@@ -1100,6 +1124,8 @@ export {
   SessionsCreateParamsSchema,
   SessionsSendParamsSchema,
   SessionsAbortParamsSchema,
+  SessionsStopParamsSchema,
+  SessionsStopResultSchema,
   SessionsPatchParamsSchema,
   SessionsPluginPatchParamsSchema,
   SessionsResetParamsSchema,
@@ -1425,6 +1451,12 @@ export type {
   SessionsResumeCheckpointsResult,
   SessionsQueueDrainParams,
   SessionsQueueDrainResult,
+  SessionsYieldStateParams,
+  SessionsYieldStateResult,
+  SessionsLifecycleLedgerParams,
+  SessionsLifecycleLedgerResult,
+  SessionsStopParams,
+  SessionsStopResult,
   SessionsPatchParams,
   SessionsPatchResult,
   SessionsResetParams,

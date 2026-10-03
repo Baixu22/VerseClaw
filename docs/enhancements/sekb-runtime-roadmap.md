@@ -73,6 +73,13 @@ Closure seam:
   `appendContext`, `before_tool_call` for non-blocking call capture,
   `tool_result_persist` for visible tool-result advice, and `agent_end` for
   success/failure/aborted terminal state.
+- `agent_end` trajectories receive the latest bounded `runtime-lineage.v1`
+  before persistence, including when Task Loop binds the lineage after
+  `before_agent_start`.
+- Task-phase terminal notifications are deduplicated by their stable
+  session/run/trace lineage and remain lifecycle evidence only. Distillation
+  candidates require a terminal outcome, real tool-call/result evidence, and
+  a valid lineage; legacy incomplete rows remain queryable but are not promoted.
 - A standalone `abort` hook is not present in the plugin runner; OpenClaw aborts
   surface as `agent_end` with `success: false` and no error. The adapter keeps
   `subscribe({ type: "abort" })` support only for custom targets that already

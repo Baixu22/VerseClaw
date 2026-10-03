@@ -87,22 +87,18 @@ describe("AgentMap context provider shadow boundary", () => {
       taskId: "line-c-agent-map-grounding-default-off",
       tokenBudget: 128,
     };
-    const baseline = await createAgentMapContextProvider({
+    const baseline = expectProviderResult(await createAgentMapContextProvider({
       result: agentMapResult,
       config: agentMapProviderEnabledConfig,
-    }).getContext(input);
-    const disabled = await createAgentMapContextProvider({
+    }).getContext(input));
+    const disabled = expectProviderResult(await createAgentMapContextProvider({
       result: agentMapResult,
       config: agentMapProviderEnabledConfig,
       groundingDiagnostics: {
         enabled: false,
         refs: [buildGroundingRefFixture({ id: "agent_map_grounding_disabled" })],
       },
-    }).getContext(input);
-
-    expectProviderResult(baseline);
-    expectProviderResult(disabled);
-    expect(disabled).toEqual(baseline);
+    }).getContext(input));    expect(disabled).toEqual(baseline);
     expect(JSON.stringify(disabled)).not.toContain("groundingDiagnostics");
   });
 
@@ -112,10 +108,10 @@ describe("AgentMap context provider shadow boundary", () => {
       taskId: "line-c-agent-map-grounding-diagnostics",
       tokenBudget: 128,
     };
-    const baseline = await createAgentMapContextProvider({
+    const baseline = expectProviderResult(await createAgentMapContextProvider({
       result: agentMapResult,
       config: agentMapProviderEnabledConfig,
-    }).getContext(input);
+    }).getContext(input));
     const trusted = buildGroundingRefFixture({
       id: "agent_map_grounding_trusted",
       canonicalKey: "file:src/ui/Dashboard.tsx",
@@ -141,7 +137,7 @@ describe("AgentMap context provider shadow boundary", () => {
         rawTrace: RAW_GROUNDING_SENTINEL,
       } as never,
     });
-    const result = await createAgentMapContextProvider({
+    const result = expectProviderResult(await createAgentMapContextProvider({
       result: agentMapResult,
       config: agentMapProviderEnabledConfig,
       groundingDiagnostics: {
@@ -156,18 +152,14 @@ describe("AgentMap context provider shadow boundary", () => {
           secrets: { apiKey: RAW_GROUNDING_SENTINEL },
         } as never,
       },
-    }).getContext(input);
-
-    expectProviderResult(baseline);
-    expectProviderResult(result);
-    expect(result.status).toBe("success");
+    }).getContext(input));    expect(result.status).toBe("success");
     expect(result.contextItems).toEqual(baseline.contextItems);
     expect(result.evidenceRefs).toEqual(baseline.evidenceRefs);
     expect(result.diagnostics).toHaveLength(baseline.diagnostics.length + 1);
     expect(result.diagnostics.every(isRuntimeRegistryDiagnostic)).toBe(true);
 
     const diagnostic = result.diagnostics.find((item) =>
-      item.message.includes("grounding diagnostics-only")
+      item.message?.includes("grounding diagnostics-only")
     );
     expect(diagnostic).toEqual(expect.objectContaining({
       providerId: AGENT_MAP_CONTEXT_PROVIDER_ID,

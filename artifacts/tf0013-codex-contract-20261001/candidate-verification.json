@@ -1,0 +1,335 @@
+{
+  "actor": "codex/root",
+  "driven_by": "agent",
+  "commit": "ed97400bdc0a6e16c06387ba808e287bd1380475",
+  "tree": "0f33fc017c064dc88124eea217e3a0813e5fa559",
+  "runs": [
+    {
+      "gate": "runtime-build",
+      "attempt": 1,
+      "command": [
+        "node",
+        "scripts/build-all.mjs"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 235.672,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/runtime-build-1.log"
+    },
+    {
+      "gate": "native-wire",
+      "attempt": 1,
+      "command": [
+        "node",
+        "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt\\artifacts\\tf0013-native-candidate\\run.mjs"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt",
+      "exitCode": 0,
+      "seconds": 97.125,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/native-wire-1.log"
+    },
+    {
+      "gate": "native-sdk",
+      "attempt": 1,
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--reporter=verbose",
+        "--config",
+        "test/vitest/vitest.agents.config.ts",
+        "harness/selection.compass.test.ts"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 15.781,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/native-sdk-1.log"
+    },
+    {
+      "gate": "diagnostic-contract",
+      "attempt": 1,
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--reporter=verbose",
+        "--config",
+        "test/vitest/vitest.extension-codex.config.ts",
+        "extensions/codex/src/app-server/diagnostic-contract.test.ts"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 16.5,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/diagnostic-contract-1.log"
+    },
+    {
+      "gate": "reply-compass",
+      "attempt": 1,
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--reporter=verbose",
+        "--config",
+        "test/vitest/vitest.auto-reply-top-level.config.ts",
+        "reply.compass.test.ts"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 17.813,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/reply-compass-1.log"
+    },
+    {
+      "gate": "embedded",
+      "attempt": 1,
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--reporter=verbose",
+        "--config",
+        "test/vitest/vitest.agents.config.ts",
+        "rc03-entry-transitions.acceptance.test.ts",
+        "embedded-agent-runner/extensions.knowledge.test.ts",
+        "embedded-agent-runner/extensions.working-memory.test.ts",
+        "embedded-agent-runner/extensions.tool-registry.test.ts"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 92.625,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/embedded-1.log"
+    },
+    {
+      "gate": "budget-combination",
+      "attempt": 1,
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--reporter=verbose",
+        "--config",
+        "test/vitest/vitest.unit.config.ts",
+        "src/context-engine/context-candidate.test.ts",
+        "src/context-engine/context-orchestrator.test.ts",
+        "src/context-engine/context-orchestrator.compass.test.ts",
+        "src/context-engine/assembler.test.ts",
+        "src/context-engine/turn-injection-budget.test.ts",
+        "src/context-engine/rc03-seal-wiring.test.ts"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 6.782,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/budget-combination-1.log"
+    },
+    {
+      "gate": "entry-scan",
+      "attempt": 1,
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/context-orchestrator-entry-scan.test.ts"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt",
+      "exitCode": 0,
+      "seconds": 2.109,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/entry-scan-1.log"
+    },
+    {
+      "gate": "runtime-types",
+      "attempt": 1,
+      "command": [
+        "node",
+        "scripts/run-tsgo.mjs",
+        "-p",
+        "tsconfig.core.json"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 16.109,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/runtime-types-1.log"
+    },
+    {
+      "gate": "plugin-types",
+      "attempt": 1,
+      "command": [
+        "node",
+        "scripts/run-tsgo.mjs",
+        "-p",
+        "extensions/codex/tsconfig.json"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 1.157,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/plugin-types-1.log"
+    },
+    {
+      "gate": "root-types",
+      "attempt": 1,
+      "command": [
+        "node",
+        "scripts/typecheck-agent-dev.mjs"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt",
+      "exitCode": 0,
+      "seconds": 15.125,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/root-types-1.log"
+    },
+    {
+      "gate": "comms-replay",
+      "attempt": 1,
+      "command": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt",
+      "exitCode": 0,
+      "seconds": 0.234,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/comms-replay-1.log"
+    },
+    {
+      "gate": "comms-compare",
+      "attempt": 1,
+      "command": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt",
+      "exitCode": 0,
+      "seconds": 0.172,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/comms-compare-1.log"
+    },
+    {
+      "gate": "harness-context",
+      "attempt": 1,
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "context",
+        "--spec",
+        "harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt",
+      "exitCode": 0,
+      "seconds": 0.187,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/harness-context-1.log"
+    },
+    {
+      "gate": "harness-validate",
+      "attempt": 1,
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md",
+        "--since",
+        "48387ee04a9b082dc552ea461985224ba77faab3"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt",
+      "exitCode": 0,
+      "seconds": 0.562,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/harness-validate-1.log"
+    },
+    {
+      "gate": "harness-dry-run",
+      "attempt": 1,
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md",
+        "--since",
+        "48387ee04a9b082dc552ea461985224ba77faab3",
+        "--dry-run"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt",
+      "exitCode": 0,
+      "seconds": 0.406,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/harness-dry-run-1.log"
+    },
+    {
+      "gate": "harness-ci",
+      "attempt": 1,
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "harness:ci"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt",
+      "exitCode": 0,
+      "seconds": 14.313,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/harness-ci-1.log"
+    },
+    {
+      "gate": "diff-check",
+      "attempt": 1,
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "48387ee04a9b082dc552ea461985224ba77faab3",
+        "HEAD"
+      ],
+      "cwd": "C:\\tmp\\ClawX-tf0013-acceptance-8xnvkilt",
+      "exitCode": 0,
+      "seconds": 0.125,
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "dirtyPathsAfter": "",
+      "log": "candidate-checks/diff-check-1.log"
+    }
+  ]
+}

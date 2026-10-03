@@ -30,7 +30,7 @@
   },
   "sessionActivity": {
     "title": "Состояние сессии",
-    "description": "Состояние выполнения, задач, Git, субагентов и терминалов этого диалога в реальном времени.",
+    "description": "Активность выполнения, задач, Git, целей, процессов, родословной, субагентов и терминалов этого диалога в реальном времени.",
     "openRecovery": "Открыть восстановление сессии",
     "createMemoryDraft": "Сохранить как черновик памяти",
     "duration": "Длительность",
@@ -40,8 +40,13 @@
       "git": "Git рабочей области",
       "tasks": "Активные задачи",
       "subagents": "Субагенты",
+      "goals": "Цели и ожидания",
+      "processes": "Процессы",
+      "lineage": "Родословная",
       "terminals": "Терминалы",
-      "continuity": "Непрерывность"
+      "continuity": "Непрерывность",
+      "environment": "Окружение",
+      "plan": "Задачи разработки"
     },
     "status": {
       "idle": "Ожидание",
@@ -54,7 +59,8 @@
     "git": {
       "detached": "Отсоединённый HEAD",
       "changes": "Изменений: {{count}}",
-      "conflicts": "Конфликты"
+      "conflicts": "Конфликты",
+      "clean": "Чисто"
     },
     "taskKinds": {
       "mission": "Миссия",
@@ -72,7 +78,8 @@
       "aborted": "Прервано"
     },
     "subagents": {
-      "unknown": "Агент"
+      "unknown": "Агент",
+      "openTranscript": "Открыть стенограмму {{role}} в рабочей области"
     },
     "subagentStatus": {
       "started": "Выполняется",
@@ -104,6 +111,53 @@
         "medium": "средняя",
         "high": "высокая"
       }
+    },
+    "goalKinds": {
+      "mission": "Миссия",
+      "flow": "Ожидание цели"
+    },
+    "goalStatus": {
+      "queued": "В очереди",
+      "waiting": "Ожидание",
+      "running": "Выполняется",
+      "sleeping": "В спящем режиме",
+      "paused": "Приостановлено",
+      "blocked": "Заблокировано",
+      "completed": "Готово",
+      "failed": "Ошибка",
+      "aborted": "Прервано",
+      "lost": "Потеряно"
+    },
+    "processKinds": {
+      "bash": "Процесс",
+      "supervisor": "Управляемый процесс",
+      "goalOwned": "Процесс цели"
+    },
+    "processStatus": {
+      "queued": "В очереди",
+      "starting": "Запускается",
+      "running": "Выполняется",
+      "exiting": "Завершается",
+      "exited": "Завершён",
+      "completed": "Готово",
+      "failed": "Ошибка",
+      "killed": "Завершён принудительно",
+      "aborted": "Прервано",
+      "lost": "Потеряно"
+    },
+    "lineage": {
+      "parent": "Родительская сессия",
+      "child": "Дочерняя сессия"
+    },
+    "lineageStatus": {
+      "started": "Выполняется",
+      "completed": "Готово",
+      "aborted": "Прервано",
+      "error": "Ошибка"
+    },
+    "runningCount": "Выполняется: {{count}}",
+    "processes": {
+      "openOutput": "Открыть вывод {{command}}"
     }
   },
   "noLogs": "(Журналы ещё недоступны)",
@@ -206,12 +260,40 @@
       "external-write": "Внешняя запись",
       "destructive": "Разрушительная"
     },
+    "riskLabel": "Риск",
+    "externalWriteSummary": "Внешняя запись процесса (подробности скрыты)",
+    "externalWriteNoRollback": "Не покрывается журналом записей ClawX; автоматический откат невозможен.",
+    "sourceLabel": "Источник",
+    "modeLabel": "Режим",
     "status": {
       "pending": "Ожидает",
       "approved": "Одобрено",
       "denied": "Отклонено",
       "expired": "Использовано"
-    }
+    },
+    "workspaceSummary": "{{branch}} · {{state}}",
+    "repository": "Репозиторий",
+    "notRepository": "Эта рабочая область не является Git-репозиторием",
+    "timeline": "Жизненный цикл Git",
+    "timelineDescription": "Коммиты, переключения, сбросы, rebase и другие перемещения ссылок",
+    "timelineEmpty": "Записей жизненного цикла Git пока нет",
+    "timelineUnavailable": "Жизненный цикл Git недоступен",
+    "reflogUnavailable": "Жизненный цикл Git недоступен",
+    "approvalsUnavailable": "Записи одобрений недоступны",
+    "truncated": "Достигнут лимит отображения, старые записи скрыты",
+    "partialFailure": "Часть данных аудита недоступна",
+    "filterAll": "Все",
+    "filterApprovals": "Разрешения",
+    "filterGit": "Git",
+    "approvalCount": "Одобрений: {{count}}",
+    "gitCount": "Событий Git: {{count}}",
+    "operationCount": "Событий: {{count}}",
+    "showDetails": "Показать детали",
+    "hideDetails": "Скрыть детали",
+    "branch": "Ветка",
+    "clean": "Чисто",
+    "dirty": "Изменений: {{count}}",
+    "conflicts": "Конфликтов: {{count}}"
   },
   "gitPanel": {
     "title": "Git",
@@ -259,7 +341,15 @@
         "title": "Требуется разрешение",
         "approve": "Одобрить",
         "deny": "Отклонить",
-        "retryRequired": "Решение записано — попросите агента повторить действие."
+        "retryRequired": "Решение записано — попросите агента повторить действие.",
+        "externalWriteTitle": "Для внешней записи требуется одобрение",
+        "externalWriteWarning": "Этот внешний процесс может изменить файлы или другое состояние за пределами журнала записей ClawX.",
+        "externalWriteNoRollback": "Не покрывается журналом записей ClawX; автоматический откат невозможен.",
+        "externalWriteEffectLabel": "Эффект",
+        "externalWriteEffect": "Внешняя запись процесса",
+        "externalWriteRollbackLabel": "Откат",
+        "externalWriteSnapshotLabel": "Снимок",
+        "externalWriteSnapshot": "Привязан к этому запросу; одобрение лишь разрешает последующую повторную попытку."
       }
     },
     "actions": {
@@ -457,7 +547,9 @@
       "terminal": "Терминал",
       "files": "Файлы",
       "audit": "Аудит",
-      "agents": "Субагенты"
+      "agents": "Субагенты",
+      "subagent": "Субагент",
+      "process": "Процесс"
     },
     "workspaceTabs": {
       "files": "Файлы",
@@ -527,7 +619,8 @@
       "assistant": "Агент",
       "system": "Система",
       "toolresult": "Инструмент"
-    }
+    },
+    "openOwnTab": "Двойной щелчок — открыть в своей вкладке"
   },
   "filePreview": {
     "tabs": {
@@ -828,6 +921,9 @@
         "fetch": "Fetch",
         "pull": "Pull",
         "push": "Push",
+        "merge": "Merge",
+        "rebase": "Rebase",
+        "reset": "Reset",
         "addWorktree": "Добавить worktree",
         "removeWorktree": "Удалить",
         "pruneWorktrees": "Очистить",
@@ -879,6 +975,7 @@
         "worktrees": "Worktree",
         "commit": "Коммит",
         "branch": "Ветка",
+        "integrate": "Интеграция",
         "stash": "Stash",
         "github": "PR",
         "compactHint": "Компактные инструменты"
@@ -898,6 +995,14 @@
         "title": "Ветка и worktree",
         "branchPlaceholder": "Новая ветка",
         "worktreePlaceholder": "Ветка для worktree"
+      },
+      "integrate": {
+        "title": "Интеграция",
+        "help": "Объедините или перебазируйте текущую ветку либо сбросьте её к ссылке.",
+        "refLabel": "Ссылка интеграции",
+        "refPlaceholder": "Выберите ветку",
+        "resetMode": "Режим сброса",
+        "resetHelp": "Сброс изменяет историю и всегда требует разрешения."
       },
       "worktrees": {
         "title": "Worktrees",
@@ -1438,6 +1543,9 @@
     "resume": "Продолжить",
     "pauseTooltip": "Приостановить запуск и сохранить состояние сеанса для продолжения.",
     "resumeTooltip": "Продолжить приостановленный сеанс.",
+    "resumeDisabled": "Этот сеанс больше нельзя продолжить здесь.",
+    "startingTooltip": "Запуск… Нажмите, чтобы отменить отправку или приостановить текущий запуск.",
+    "queueTooltip": "Поставить черновик в очередь после текущего запуска. Двойной клик — приостановить.",
     "gatewayConnected": "подключён",
     "gatewayStatus": "шлюз {{state}} | порт: {{port}} {{pid}}",
     "contextMenu": {
@@ -1893,15 +2001,35 @@
     "work": "Задачи"
   },
   "sessionView": {
-    "project": "Рабочие группы",
+    "project": "Проекты",
     "time": "Время"
   },
   "sidebar": {
     "sectionConversations": "Диалоги",
+    "sectionProjects": "Проекты",
+    "sessionActions": "Действия с диалогом",
+    "forkSession": "Ответвить диалог",
+    "handoffSession": "Передать диалог",
+    "copyWorkPath": "Скопировать рабочий путь",
+    "copySessionId": "Скопировать ID диалога",
+    "copied": "Скопировано в буфер обмена",
+    "copyFailed": "Не удалось скопировать",
+    "noWorkPath": "У этого диалога нет пути проекта",
+    "menuBack": "Назад",
     "organizeSessions": "Упорядочить диалоги",
+    "pinSession": "Закрепить диалог",
+    "unpinSession": "Открепить диалог",
+    "markRead": "Отметить как прочитанное",
+    "markUnread": "Отметить как непрочитанное",
+    "pinnedSession": "Закреплённый диалог",
+    "unreadSession": "Непрочитанный диалог",
     "searchSessions": "Поиск диалогов",
     "addProject": "Добавить проект",
+    "viewBy": "Вид",
     "sortBy": "Сортировать",
+    "sortNewest": "Сначала новые",
+    "sortActive": "Самые активные",
+    "sortPriority": "Приоритет",
     "newSessionInProject": "Новая задача в {{name}}",
     "projectOptions": "Действия проекта {{name}}",
     "createFolder": "Новая папка",
@@ -1935,7 +2063,7 @@
     "create": "Новый рабочий поток",
     "namePlaceholder": "Имя рабочего потока",
     "rename": "Переименовать рабочий поток",
-    "delete": "Удалить рабочий поток",
+    "delete": "Убрать группировку",
     "moveTo": "Переместить в рабочий поток",
     "noWorkgroup": "Без рабочего потока",
     "ungrouped": "Вне потоков",
@@ -1954,7 +2082,9 @@
       "today": "Сегодня",
       "week": "На этой неделе",
       "earlier": "Ранее"
-    }
+    },
+    "autoGroupName": "{{name}} — группа",
+    "dropHint": "Перетащите на другой диалог, чтобы объединить их в группу"
   },
   "archive": {
     "searchPlaceholder": "Поиск в архиве",
@@ -2169,6 +2299,7 @@
       "minutesSeconds": "{{minutes}} мин {{seconds}} сек"
     },
     "badge": {
+      "thoughts": "{{count}} мыслей",
       "approvals": "{{count}} запросов",
       "plan": "{{count}} шагов",
       "agents": "{{count}} агентов",
@@ -2231,10 +2362,60 @@
       "invalid": "Недействителен",
       "validationError": "Ошибка проверки",
       "error": "Ошибка"
-    }
+    },
+    "managedTitle": "Управляемые структурированные артефакты",
+    "managedEmpty": "В этом рабочем пространстве нет управляемых артефактов",
+    "refresh": "Обновить",
+    "managedError": "Структурированные артефакты недоступны",
+    "managedRevision": "Ревизия",
+    "managedRevisions": "ревизий"
   },
   "knowledgeDenial": {
     "toast_one": "{{count}} ссылка на знания не была включена: {{reason}}",
     "toast_other": "{{count}} ссылок на знания не были включены: {{reason}}"
+  },
+  "memoryInjection": {
+    "title": "Что было внедрено",
+    "description": "Память, которую предответный поиск этой сессии добавил в подсказку, сгруппированная по источникам. Только ссылки и счётчики, без исходного содержимого.",
+    "refresh": "Обновить",
+    "retry": "Повторить",
+    "loading": "Чтение квитанций внедрения...",
+    "empty": "В этом раунде ничего не внедрено. Возможно, предответный поиск выключен или память не найдена.",
+    "errorGeneric": "Не удалось прочитать квитанции внедрения.",
+    "errorTimeout": "Не удалось прочитать квитанции внедрения. Среда выполнения недоступна или истекло время запроса.",
+    "summary": "Внедрено: {{selected}}, обрезано: {{omitted}}",
+    "selectedCount": "внедрено: {{count}}",
+    "omittedCount": "обрезано: {{count}}",
+    "budget": "{{applied}}/{{requested}} симв.",
+    "trimmed": "Обрезано по бюджету",
+    "omittedToggle": "Обрезано по бюджету ({{count}})"
+  },
+  "messageNav": {
+    "label": "Навигация по вопросам",
+    "jumpTo": "Перейти к вопросу {{ordinal}}"
+  },
+  "processPanel": {
+    "gone": "Этого процесса больше нет в текущем запуске.",
+    "exitCode": "код выхода {{code}}",
+    "truncated": "Ранний вывод был обрезан.",
+    "waiting": "Ожидание вывода…",
+    "noOutput": "Этот процесс не дал вывода.",
+    "status": {
+      "running": "Выполняется",
+      "completed": "Готово",
+      "failed": "Ошибка"
+    }
+  },
+  "runtimeApprovals": {
+    "title": "Требуется одобрение среды выполнения",
+    "description": "Среда выполнения приостановилась перед запуском этой команды и ждёт вашего решения.",
+    "commandLabel": "Команда",
+    "cwdLabel": "Рабочий каталог",
+    "unknownCommand": "（команда не передана）",
+    "allowOnce": "Разрешить один раз",
+    "allowAlways": "Разрешать всегда",
+    "deny": "Отклонить",
+    "busy": "Отправка решения…",
+    "resolveFailed": "Среда выполнения не приняла это решение."
   }
 }

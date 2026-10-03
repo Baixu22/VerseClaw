@@ -1,4 +1,4 @@
-import { loadConfig } from "../config/config.js";
+import { getRuntimeConfig } from "../config/config.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import {
   detectLegacyAuthProfileMigrations,
@@ -9,7 +9,7 @@ import {
 type MigrationResult = { changes: string[]; warnings: string[] };
 
 type SourceDoctorDependencies = {
-  loadConfig: () => OpenClawConfig;
+  readConfig: () => OpenClawConfig;
   detectLegacyAuthProfileMigrations: (params: {
     cfg: OpenClawConfig;
   }) => AuthProfileStateMigrationPlan[];
@@ -47,7 +47,9 @@ export async function runSourceDoctor(
   overrides: Partial<SourceDoctorDependencies> = {},
 ): Promise<number> {
   const dependencies: SourceDoctorDependencies = {
-    loadConfig: () => loadConfig({ pin: false }),
+    // getRuntimeConfig is the approved process-boundary config loader (source
+    // Doctor runs from entry.ts); a bare loadConfig() call is guard-banned.
+    readConfig: () => getRuntimeConfig({ pin: false }),
     detectLegacyAuthProfileMigrations,
     runLegacyAuthProfileMigrations,
     writeStdout: (text) => process.stdout.write(text),
@@ -58,7 +60,7 @@ export async function runSourceDoctor(
   const json = args.includes("--json");
 
   try {
-    const cfg = dependencies.loadConfig();
+    const cfg = dependencies.readConfig();
     const plans = dependencies.detectLegacyAuthProfileMigrations({ cfg });
     const preview = plans.map(
       (plan) => `- Auth profiles: ${plan.sourcePath} -> ${plan.targetPath}`,

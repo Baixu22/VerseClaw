@@ -310,20 +310,13 @@ export function createSessionActions(
 
     // ── Delete session ──
     //
-    // NOTE: The OpenClaw Gateway does NOT expose a sessions.delete (or equivalent)
-    // RPC — confirmed by inspecting client.ts, protocol.ts and the full codebase.
-    // Deletion is therefore performed locally: the renderer drops the session
-    // from the sidebar / labels / activity maps and the Main process hard-deletes
-    // the on-disk transcript so it stops appearing in sessions.list and stops
-    // contributing to the Dashboard token-usage history.
+    // The Gateway owns the session row/delete journal; Main owns the local mirror
+    // sweep and only releases its gate after a committed runtime receipt.
 
     deleteSession: async (key: string) => {
       clearSessionLabelHydrationTracking(key);
       clearPendingOptimisticUserMessages(key);
-      // Hard-delete the session's JSONL transcript on disk.
-      // The main process unlinks <id>.jsonl plus any leftover
-      // <id>.deleted.jsonl and <id>.jsonl.reset.* siblings, then removes the
-      // entry from sessions.json so sessions.list stops surfacing it.
+      // Main reconciles the local transcript/index mirror after runtime commit.
       try {
         const result = await hostApi.sessions.delete(key);
         if (!result.success) {

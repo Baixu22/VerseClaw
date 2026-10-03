@@ -103,7 +103,7 @@ describe('agents-api reasoning effort validation', () => {
       gatewayManager: { getStatus: () => ({ state: 'stopped' }) } as never,
     });
 
-    await expect(api.updateReasoningEffort({ id: 'main' })).rejects.toThrow(
+    await expect(api.updateReasoningEffort({ id: 'main' } as never)).rejects.toThrow(
       'reasoningEffort is invalid',
     );
     await expect(

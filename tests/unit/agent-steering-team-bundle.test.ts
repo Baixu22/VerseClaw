@@ -102,7 +102,7 @@ describe('agent steering team result bundles', () => {
     const taskGraph: NonNullable<TeamOrchestrationMetadata['taskGraph']> = {
       graphRunId: 'graph_bundle',
       mode: 'staged',
-      status: 'completed',
+      status: 'completed' as never,
       nodes: [
         {
           taskNodeId: 'implementer-1',
@@ -113,7 +113,7 @@ describe('agent steering team result bundles', () => {
           scope: 'implementation',
           requiredCapabilities: [],
           attemptPolicy: { maxRepairAttempts: 1, maxRedoAttempts: 1 },
-          status: 'completed',
+          status: 'completed' as never,
         },
         {
           taskNodeId: 'tester-1',
@@ -124,7 +124,7 @@ describe('agent steering team result bundles', () => {
           scope: 'verification',
           requiredCapabilities: [],
           attemptPolicy: { maxRepairAttempts: 1, maxRedoAttempts: 1 },
-          status: 'completed',
+          status: 'completed' as never,
         },
       ],
       edges: [

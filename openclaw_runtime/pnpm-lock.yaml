@@ -1662,6 +1662,22 @@ importers:
         specifier: workspace:*
         version: link:../../packages/plugin-sdk
 
+  extensions/verseconf-artifacts:
+    dependencies:
+      jszip:
+        specifier: 3.10.1
+        version: 3.10.1
+      typebox:
+        specifier: 1.1.39
+        version: 1.1.39
+    devDependencies:
+      '@openclaw/plugin-sdk':
+        specifier: workspace:*
+        version: link:../../packages/plugin-sdk
+      openclaw:
+        specifier: workspace:*
+        version: link:../..
+
   extensions/video-generation-core:
     devDependencies:
       '@openclaw/plugin-sdk':

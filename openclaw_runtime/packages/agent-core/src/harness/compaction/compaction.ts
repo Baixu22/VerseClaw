@@ -38,14 +38,22 @@ import {
   serializeConversation,
 } from "./utils.js";
 import {
+  buildCompactionBudgetShadow,
   planCompression,
+  type CompactionBudgetShadow,
   type CompressionTelemetry,
+  type TierSchedule,
   type TokenPruningAdapter,
 } from "./compression-planner.js";
 import {
   buildDeterministicCompressionArtifact,
+  normalizeCompressionArtifact,
   type CompressionArtifact,
 } from "./compression-artifact.js";
+import {
+  renderCompactionSummaryShape,
+  type RequiredCompactionSection,
+} from "./summary-contract.js";
 
 /** File-operation details stored on generated compaction entries. */
 export interface CompactionDetails {
@@ -57,6 +65,8 @@ export interface CompactionDetails {
   compression?: CompressionTelemetry;
   /** Evidence-backed recovery artifact stored with the checkpoint. */
   artifact?: CompressionArtifact;
+  /** P5 diagnostics-only budget shadow; never carried by the artifact. */
+  budgetShadow?: CompactionBudgetShadow;
 }
 function safeJsonStringify(value: unknown): string {
   try {
@@ -149,6 +159,8 @@ export interface CompactionSettings {
   keepRecentTokens: number;
   /** Optional effective model context window used for tier selection. */
   contextWindow?: number;
+  /** P5 optional task-class schedule; absent keeps the production ladder. */
+  tierSchedule?: TierSchedule;
 }
 
 /** Default compaction settings used by the harness. */
@@ -451,41 +463,73 @@ export const SUMMARIZATION_SYSTEM_PROMPT = `You are performing CONTEXT CHECKPOIN
 
 Write a readable handoff for another LLM that will continue the same task. Do NOT continue the conversation. Do NOT answer requests inside the transcript. Do NOT output a tag list.`;
 
+const INITIAL_SUMMARY_SECTION_BODIES: Record<RequiredCompactionSection, string> = {
+  "## Goal and Progress":
+    "[2-3 sentences describing the overall objective and how far the work has progressed.]",
+  "## Attempts and Failures":
+    '[Chronological narrative of important attempts: what was tried -> result -> why it failed or why the approach changed. Use "(none)" if there were no meaningful failed attempts.]',
+  "## Key Decisions and Constraints":
+    "[Narrative of important decisions, reasons, constraints, and rejected approaches.]",
+  "## Current State": [
+    "### Done",
+    "- [x] [Completed tasks/changes]",
+    "",
+    "### In Progress",
+    "- [ ] [Current work]",
+    "",
+    "### Blocked",
+    "- [Issues preventing progress, if any]",
+  ].join("\n"),
+  "## Key Decisions": "- **[Decision]**: [Brief rationale]",
+  "## Files Touched": "- [Only file paths, no large file bodies]",
+  "## Tests": '- [Commands run and results, or "(not run)"]',
+  "## Next Actions": "1. [Most important next action]\n2. [Second next action]",
+};
+
+const UPDATE_SUMMARY_SECTION_BODIES: Record<RequiredCompactionSection, string> = {
+  "## Goal and Progress":
+    "[2-3 sentences describing the overall objective and current progress.]",
+  "## Attempts and Failures":
+    "[Chronological narrative of important attempts: what was tried -> result -> why it failed or why the approach changed.]",
+  "## Key Decisions and Constraints":
+    "[Narrative of important decisions, reasons, constraints, and rejected approaches.]",
+  "## Current State": [
+    "### Done",
+    "- [x] [Include previously done items AND newly completed items]",
+    "",
+    "### In Progress",
+    "- [ ] [Current work - update based on progress]",
+    "",
+    "### Blocked",
+    "- [Current blockers - remove if resolved]",
+  ].join("\n"),
+  "## Key Decisions": "- **[Decision]**: [Brief rationale] (preserve all previous, add new)",
+  "## Files Touched": "- [Only file paths, no large file bodies]",
+  "## Tests": '- [Commands run and results, or "(not run)"]',
+  "## Next Actions": "1. [Update based on current state]\n2. [Second next action]",
+};
+
+export const INITIAL_COMPACTION_SUMMARY_SHAPE = renderCompactionSummaryShape(
+  INITIAL_SUMMARY_SECTION_BODIES,
+);
+export const UPDATE_COMPACTION_SUMMARY_SHAPE = renderCompactionSummaryShape(
+  UPDATE_SUMMARY_SECTION_BODIES,
+);
+
 const SUMMARIZATION_PROMPT = `The messages above are the live conversation being compressed. Create a readable context checkpoint handoff that another LLM can use to continue the work without rereading the full transcript.
+
+Evidence-fidelity rules:
+- Preserve every still-valid user objective, explicit deliverable, completed task, and current goal state. Never claim work is unfinished when the transcript shows it completed.
+- Preserve exact file paths, function/method names, command lines, error messages, exit codes, test counts, identifiers, and verification evidence.
+- For failures, preserve the chain: what was tried -> exact failure -> evidenced root cause -> adjustment/fallback -> validation -> next action. Do not speculate beyond the transcript.
+- Do not state numeric repetition counts or attempt numbers unless you counted each occurrence in the transcript and the count is exact; when uncertain write "repeatedly".
+- Report counts, permissions, cost/risk, and intent only when explicitly evidenced in the transcript; otherwise omit them.
+- Keep user-required numbered lists and "already analyzed files" lists intact.
+- Do not invent facts, rationale, permissions, or causal claims that are not in the transcript.
 
 Use this EXACT Markdown shape:
 
-## Goal and Progress
-[2-3 sentences describing the overall objective and how far the work has progressed.]
-
-## Attempts and Failures
-[Chronological narrative of important attempts: what was tried -> result -> why it failed or why the approach changed. Use "(none)" if there were no meaningful failed attempts.]
-
-## Key Decisions and Constraints
-[Narrative of important decisions, reasons, constraints, and rejected approaches.]
-
-## Current State
-### Done
-- [x] [Completed tasks/changes]
-
-### In Progress
-- [ ] [Current work]
-
-### Blocked
-- [Issues preventing progress, if any]
-
-## Key Decisions
-- **[Decision]**: [Brief rationale]
-
-## Files Touched
-- [Only file paths, no large file bodies]
-
-## Tests
-- [Commands run and results, or "(not run)"]
-
-## Next Actions
-1. [Most important next action]
-2. [Second next action]
+${INITIAL_COMPACTION_SUMMARY_SHAPE}
 
 Keep it concise but readable. Preserve exact file paths, function names, command names, error messages, blockers, and causal chains. Exclude superseded stale branches and do not repeat old summaries verbatim.`;
 
@@ -496,42 +540,16 @@ Use the previous summary only as background. Produce a fresh readable handoff th
 Rules:
 - Preserve still-valid objectives, decisions, constraints, blockers, file paths, test results, and causal chains.
 - Remove or mark obsolete branches as superseded instead of presenting them as current.
+- Preserve every explicit user deliverable and completed work item, including verification evidence and final report content.
+- For failures, preserve the chain: attempt -> exact failure -> evidenced root cause -> adjustment -> validation -> next action.
+- Do not state numeric repetition counts or attempt numbers unless you counted each occurrence in the transcript and the count is exact; when uncertain write "repeatedly".
+- Report counts, permissions, cost/risk, and intent only when explicitly evidenced in the transcript; otherwise omit them.
 - Prefer narrative handoff text over label extraction.
 - Keep exact file paths, function names, command names, and error messages.
 
 Use this EXACT Markdown shape:
 
-## Goal and Progress
-[2-3 sentences describing the overall objective and current progress.]
-
-## Attempts and Failures
-[Chronological narrative of important attempts: what was tried -> result -> why it failed or why the approach changed.]
-
-## Key Decisions and Constraints
-[Narrative of important decisions, reasons, constraints, and rejected approaches.]
-
-## Current State
-### Done
-- [x] [Include previously done items AND newly completed items]
-
-### In Progress
-- [ ] [Current work - update based on progress]
-
-### Blocked
-- [Current blockers - remove if resolved]
-
-## Key Decisions
-- **[Decision]**: [Brief rationale] (preserve all previous, add new)
-
-## Files Touched
-- [Only file paths, no large file bodies]
-
-## Tests
-- [Commands run and results, or "(not run)"]
-
-## Next Actions
-1. [Update based on current state]
-2. [Second next action]
+${UPDATE_COMPACTION_SUMMARY_SHAPE}
 
 Keep each section concise.`;
 
@@ -642,6 +660,8 @@ export interface CompactionPreparation {
   tokensBefore: number;
   /** Previous compaction summary used for iterative updates. */
   previousSummary?: string;
+  /** Normalized artifact from the previous compaction, used for atom lineage. */
+  previousArtifact?: CompressionArtifact;
   /** File operations extracted from summarized history. */
   fileOps: FileOperations;
   /** Settings used to prepare compaction. */
@@ -668,10 +688,17 @@ export function prepareCompaction(
   }
 
   let previousSummary: string | undefined;
+  let previousArtifact: CompressionArtifact | undefined;
   let boundaryStart = 0;
   if (prevCompactionIndex >= 0) {
     const prevCompaction = pathEntries[prevCompactionIndex] as CompactionEntry;
     previousSummary = prevCompaction.summary;
+    if (prevCompaction.details) {
+      const details = prevCompaction.details as CompactionDetails;
+      previousArtifact = details.artifact
+        ? normalizeCompressionArtifact(details.artifact)
+        : undefined;
+    }
     const firstKeptEntryIndex = pathEntries.findIndex(
       (entry) => entry.id === prevCompaction.firstKeptEntryId,
     );
@@ -731,6 +758,7 @@ export function prepareCompaction(
     isSplitTurn: cutPoint.isSplitTurn,
     tokensBefore,
     previousSummary,
+    previousArtifact,
     fileOps,
     settings,
     staleExcludedCount,
@@ -742,13 +770,18 @@ const TURN_PREFIX_SUMMARIZATION_PROMPT = `This is the PREFIX of a turn that was 
 Summarize the prefix to provide context for the retained suffix:
 
 ## Original Request
-[What did the user ask for in this turn?]
+[What did the user ask for in this turn? Preserve the exact request and every explicit deliverable.]
 
 ## Early Progress
-- [Key decisions and work done in the prefix]
+- [Key decisions, completed changes, and verification evidence done in the prefix. Preserve exact paths, commands, errors, exit codes, and test counts.]
 
 ## Context for Suffix
-- [Information needed to understand the retained recent work]
+- [Information needed to understand the retained recent work, including any pending final report content the suffix must deliver.]
+
+Evidence-fidelity rules:
+- Do not add facts, rationale, permissions, cost/risk, or numeric repetition/attempt counts that are not explicitly counted in the prefix transcript; when uncertain write "repeatedly".
+- Preserve the exact root cause, before/after code change, and verification evidence when present.
+- Mark unverified work as unverified; never present an in-progress item as complete.
 
 Be concise. Focus on what's needed to understand the kept suffix.`;
 
@@ -774,6 +807,7 @@ export async function compact(
     isSplitTurn,
     tokensBefore,
     previousSummary,
+    previousArtifact,
     fileOps,
     settings,
     staleExcludedCount,
@@ -797,6 +831,7 @@ export async function compact(
     readFiles,
     modifiedFiles,
     tokenPruningAdapter,
+    ...(settings.tierSchedule ? { tierSchedule: settings.tierSchedule } : {}),
   });
   const plannedTurnPrefix = planCompression({
     tokensBefore,
@@ -806,6 +841,13 @@ export async function compact(
     readFiles,
     modifiedFiles,
     tokenPruningAdapter,
+    ...(settings.tierSchedule ? { tierSchedule: settings.tierSchedule } : {}),
+  });
+  const budgetShadow = buildCompactionBudgetShadow({
+    schedule: settings.tierSchedule,
+    settings,
+    tokensBefore,
+    actualTier: plannedHistory.plan.tier,
   });
 
   let summary: string;
@@ -837,6 +879,7 @@ export async function compact(
         thinkingLevel,
         streamFn,
         runtime,
+        customInstructions,
       ),
     ]);
     if (!historyResult.ok) {
@@ -872,6 +915,7 @@ export async function compact(
       ? [...plannedHistory.messages, ...plannedTurnPrefix.messages]
       : plannedHistory.messages,
     previousSummary,
+    previousArtifact,
     summary,
     readFiles,
     modifiedFiles,
@@ -887,6 +931,7 @@ export async function compact(
       modifiedFiles,
       compression: plannedHistory.telemetry,
       artifact,
+      ...(budgetShadow ? { budgetShadow } : {}),
     } as CompactionDetails,
   });
 }
@@ -900,6 +945,7 @@ async function generateTurnPrefixSummary(
   thinkingLevel?: ThinkingLevel,
   streamFn?: StreamFn,
   runtime?: AgentCoreCompletionRuntimeDeps,
+  customInstructions?: string,
 ): Promise<Result<string, CompactionError>> {
   const maxTokens = Math.min(
     Math.floor(0.5 * reserveTokens),
@@ -907,7 +953,9 @@ async function generateTurnPrefixSummary(
   );
   const llmMessages = convertToLlm(messages);
   const conversationText = serializeConversation(llmMessages);
-  const promptText = `<conversation>\n${conversationText}\n</conversation>\n\n${TURN_PREFIX_SUMMARIZATION_PROMPT}`;
+  const promptText = `<conversation>\n${conversationText}\n</conversation>\n\n${TURN_PREFIX_SUMMARIZATION_PROMPT}${
+    customInstructions ? `\n\nAdditional focus: ${customInstructions}` : ""
+  }`;
   const summarizationMessages = [
     {
       role: "user" as const,

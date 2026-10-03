@@ -1,0 +1,573 @@
+{
+  "schema": "verseconf-clawx-integration-verification/v1",
+  "generatedAt": "2026-10-02T13:32:16.323Z",
+  "actor": "agent/verseconf-clawx-verifier",
+  "drivenBy": "agent",
+  "realHumanEvidence": false,
+  "paidModelCalls": 0,
+  "source": {
+    "pluginManifest": {
+      "id": "verseconf-artifacts",
+      "enabledByDefault": false,
+      "activation": {
+        "onStartup": true
+      },
+      "name": "VerseConf Structured Artifacts",
+      "description": "Bounded research-table and slide-outline artifacts with runtime-owned commits and history.",
+      "contracts": {
+        "tools": [
+          "structured_artifact_create",
+          "structured_artifact_inspect",
+          "structured_artifact_revise",
+          "structured_artifact_record_ops",
+          "structured_artifact_restore",
+          "structured_artifact_history",
+          "structured_artifact_export",
+          "structured_artifact_disable"
+        ]
+      },
+      "toolMetadata": {
+        "structured_artifact_create": {
+          "optional": true
+        },
+        "structured_artifact_inspect": {
+          "optional": true
+        },
+        "structured_artifact_revise": {
+          "optional": true
+        },
+        "structured_artifact_record_ops": {
+          "optional": true
+        },
+        "structured_artifact_restore": {
+          "optional": true
+        },
+        "structured_artifact_history": {
+          "optional": true
+        },
+        "structured_artifact_export": {
+          "optional": true
+        },
+        "structured_artifact_disable": {
+          "optional": true
+        }
+      },
+      "configSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+      }
+    },
+    "package": {
+      "name": "@openclaw/verseconf-artifacts",
+      "version": "2026.10.1",
+      "private": true,
+      "description": "Bounded VerseConf structured artifact consumer for ClawX/OpenClaw.",
+      "type": "module",
+      "dependencies": {
+        "jszip": "3.10.1",
+        "typebox": "1.1.39"
+      },
+      "devDependencies": {
+        "openclaw": "workspace:*",
+        "@openclaw/plugin-sdk": "workspace:*"
+      },
+      "peerDependencies": {
+        "openclaw": ">=2026.6.2"
+      },
+      "peerDependenciesMeta": {
+        "openclaw": {
+          "optional": true
+        }
+      },
+      "openclaw": {
+        "extensions": [
+          "./index.ts"
+        ],
+        "build": {
+          "bundledDist": true,
+          "staticAssets": [
+            {
+              "source": "schemas/research-source.schema.json",
+              "output": "schemas/research-source.schema.json"
+            },
+            {
+              "source": "templates/slide-outline-template.pptx",
+              "output": "templates/slide-outline-template.pptx"
+            },
+            {
+              "source": "vendor/verseconf/LICENSE-APACHE",
+              "output": "vendor/verseconf/LICENSE-APACHE"
+            },
+            {
+              "source": "vendor/verseconf/LICENSE-MIT",
+              "output": "vendor/verseconf/LICENSE-MIT"
+            },
+            {
+              "source": "vendor/verseconf/README.md",
+              "output": "vendor/verseconf/README.md"
+            },
+            {
+              "source": "vendor/verseconf/build-manifest.json",
+              "output": "vendor/verseconf/build-manifest.json"
+            },
+            {
+              "source": "vendor/verseconf/package.json",
+              "output": "vendor/verseconf/package.json"
+            },
+            {
+              "source": "vendor/verseconf/pkg/.npmignore",
+              "output": "vendor/verseconf/pkg/.npmignore"
+            },
+            {
+              "source": "vendor/verseconf/pkg/README.md",
+              "output": "vendor/verseconf/pkg/README.md"
+            },
+            {
+              "source": "vendor/verseconf/pkg/package.json",
+              "output": "vendor/verseconf/pkg/package.json"
+            },
+            {
+              "source": "vendor/verseconf/pkg/verseconf_wasm.js",
+              "output": "vendor/verseconf/pkg/verseconf_wasm.js"
+            },
+            {
+              "source": "vendor/verseconf/pkg/verseconf_wasm_bg.wasm",
+              "output": "vendor/verseconf/pkg/verseconf_wasm_bg.wasm"
+            },
+            {
+              "source": "vendor/verseconf/pkg/verseconf_wasm_bg.wasm.d.ts",
+              "output": "vendor/verseconf/pkg/verseconf_wasm_bg.wasm.d.ts"
+            },
+            {
+              "source": "vendor/verseconf/worker/compute-worker.mjs",
+              "output": "vendor/verseconf/worker/compute-worker.mjs"
+            },
+            {
+              "source": "vendor/verseconf/worker/index.d.mts",
+              "output": "vendor/verseconf/worker/index.d.mts"
+            },
+            {
+              "source": "vendor/verseconf/worker/index.mjs",
+              "output": "vendor/verseconf/worker/index.mjs"
+            },
+            {
+              "source": "vendor/verseconf/worker/limits.mjs",
+              "output": "vendor/verseconf/worker/limits.mjs"
+            }
+          ]
+        }
+      }
+    },
+    "vendorPackage": {
+      "name": "verseconf",
+      "private": true,
+      "version": "0.3.0",
+      "description": "VerseConf 的 JavaScript/WebAssembly 分发：宿主无需 Rust 工具链即可获得配置校验、安全审计与确定性最小改动编辑（未发布到 npm）",
+      "license": "MIT OR Apache-2.0",
+      "author": "VerseConf Contributors",
+      "homepage": "https://github.com/Baixu22/Verse-conf",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/Baixu22/Verse-conf",
+        "directory": "integrations/verseconf-wasm/js-api"
+      },
+      "main": "dist/index.cjs",
+      "module": "dist/index.mjs",
+      "types": "dist/index.d.ts",
+      "exports": {
+        ".": {
+          "types": "./dist/index.d.ts",
+          "import": "./dist/index.mjs",
+          "require": "./dist/index.cjs"
+        },
+        "./worker": {
+          "types": "./worker/index.d.ts",
+          "import": "./worker/index.mjs"
+        },
+        "./web": "./pkg-web/verseconf_wasm.js",
+        "./wasm": "./pkg/verseconf_wasm_bg.wasm",
+        "./package.json": "./package.json"
+      },
+      "bin": {
+        "verseconf-mcp-wasm": "bin/verseconf-mcp-wasm.mjs"
+      },
+      "files": [
+        "dist",
+        "pkg",
+        "pkg-web",
+        "bin",
+        "worker",
+        "build-manifest.json",
+        "README.md",
+        "LICENSE-MIT",
+        "LICENSE-APACHE"
+      ],
+      "engines": {
+        "node": ">=18"
+      },
+      "scripts": {
+        "build": "node scripts/build.mjs",
+        "calibrate": "node scripts/calibrate-worker.mjs",
+        "prepublishOnly": "npm run build",
+        "pretest": "npm run build",
+        "test": "node test/load.test.mjs && node test/package.test.mjs && node test/business.test.mjs && node test/worker.test.mjs",
+        "test:parity": "node test/parity.mjs"
+      },
+      "keywords": [
+        "config",
+        "configuration",
+        "parser",
+        "wasm",
+        "webassembly",
+        "mcp",
+        "agent",
+        "verseconf"
+      ],
+      "devDependencies": {
+        "@types/node": "^20.10.0",
+        "typescript": "^5.3.2"
+      }
+    },
+    "buildManifest": {
+      "manifest": "verseconf-node-wasm-build/v1",
+      "builtAt": "2026-10-01T08:45:38.649Z",
+      "deliveryTarget": "node",
+      "deliveredTargets": [
+        {
+          "target": "nodejs",
+          "outDir": "pkg",
+          "delivered": true
+        }
+      ],
+      "repositoryOnlyTargets": [
+        {
+          "target": "web",
+          "outDir": "pkg-web",
+          "delivered": false
+        }
+      ],
+      "package": {
+        "name": "verseconf",
+        "version": "0.3.0"
+      },
+      "toolchain": {
+        "wasmPack": "wasm-pack 0.14.0",
+        "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+        "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+        "wasmBindgenLocked": "0.2.118"
+      },
+      "locked": true,
+      "inputs": {
+        "cargoLockSha256": "eff982192233c4235e38f7ae2da306572abd8c9d068b1f0d28c0c0cfb0e7c646",
+        "cargoLockBytes": 69601,
+        "sourcesSha256": "b536beffe0d7045a9f49b6fba29a9dd5f1a05ebc4dfa2b6d281bcab04fe5168f",
+        "sourceFiles": 15,
+        "covers": [
+          "Cargo.lock",
+          "integrations/verseconf-wasm/Cargo.toml",
+          "integrations/verseconf-wasm/src/**/*.rs",
+          "integrations/verseconf-wasm/tests/**/*.rs",
+          "crates/verseconf-json/src/**/*.rs"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "pkg/verseconf_wasm_bg.wasm",
+          "bytes": 4371659,
+          "sha256": "d4b27977f29e69b682b9323f45021111ab9bc71535417fa340ca61b4bf177dd9"
+        },
+        {
+          "path": "pkg/verseconf_wasm.js",
+          "bytes": 19137,
+          "sha256": "427fe8ebd87c3a7a086245784198ad4b35f93aefa8dd26640bf9cf440e8c1d3d"
+        },
+        {
+          "path": "pkg/verseconf_wasm.d.ts",
+          "bytes": 3833,
+          "sha256": "372b90bda493b9cab25b1008563cdb745a317da96f3b0788551f32eb09362572"
+        },
+        {
+          "path": "pkg-web/verseconf_wasm.js",
+          "bytes": 21663,
+          "sha256": "97289b63317835cbe8cdfa45f509c9f77136fc82289a8388aeb4bdc9ee4cfc15"
+        },
+        {
+          "path": "dist/index.mjs",
+          "bytes": 10450,
+          "sha256": "7a7c6ff23e208565aa511478791297805cc8c2a32790cd1d7b8c3e0272d2a590"
+        },
+        {
+          "path": "dist/index.cjs",
+          "bytes": 12021,
+          "sha256": "c6eebc68c27714a52ffca8fec9536bb89a1095056f88f886372fa9ea09149284"
+        },
+        {
+          "path": "dist/index.d.ts",
+          "bytes": 17380,
+          "sha256": "ac9f7593bfc43b933412e674895f1085215b863b8d9c8e490aa3cdbc61311730"
+        }
+      ],
+      "fingerprintNote": "inputs.sourcesSha256 与 outputs[].sha256 一起回答「这份 wasm 是从哪份源码、用哪个工具链构建的」。"
+    },
+    "wasmSha256": "d4b27977f29e69b682b9323f45021111ab9bc71535417fa340ca61b4bf177dd9",
+    "glueSha256": "427fe8ebd87c3a7a086245784198ad4b35f93aefa8dd26640bf9cf440e8c1d3d"
+  },
+  "packagedElectron": {
+    "status": "passed",
+    "root": "release/win-unpacked/resources/openclaw-runtime/dist/extensions/verseconf-artifacts",
+    "installer": {
+      "status": "passed",
+      "path": "release/Verse Claw-0.4.9-alpha.0-win-x64.exe",
+      "sha256": "c850633fff0a6fda12f1b82e582ebe269f08e4af9b932e240dffdf8d8fdb18d2"
+    }
+  },
+  "limits": {
+    "defaultWasmLinearMemoryMax": 20971520,
+    "schemaValidationWasmLinearMemoryMax": 100663296,
+    "reason": "trusted-schema compiler path measured 44236800 bytes in the current Node/WASM build; schema validation uses a separate bounded worker profile"
+  },
+  "visualRender": {
+    "status": "passed",
+    "drivenBy": "agent",
+    "renderer": "LibreOffice + PyMuPDF",
+    "pages": 3,
+    "rows": [
+      {
+        "page": 1,
+        "text": "1. 通用文件编辑\n字符串里的 \"evidenceRefs\": [] 不是字段；中文与 emoji 🧪。\n",
+        "png": "D:\\ClawX\\artifacts\\verseconf-clawx-integration\\visual-20261001\\slide-outline-page-1.png",
+        "width": 720,
+        "height": 540
+      },
+      {
+        "page": 2,
+        "text": "2. 宿主受管提交\n只验证契约中的引用关联，不推断实现已经通过。\nLimitations: 尚未运行真实 runtime 验收\n",
+        "png": "D:\\ClawX\\artifacts\\verseconf-clawx-integration\\visual-20261001\\slide-outline-page-2.png",
+        "width": 720,
+        "height": 540
+      },
+      {
+        "page": 3,
+        "text": "3. 结构化编辑计算\n=HYPERLINK(\"https://example.invalid\",\" 仅作文本\")\nLimitations: 没有调用外部模型或冻结构建\n",
+        "png": "D:\\ClawX\\artifacts\\verseconf-clawx-integration\\visual-20261001\\slide-outline-page-3.png",
+        "width": 720,
+        "height": 540
+      }
+    ]
+  },
+  "scenarioCounts": {
+    "total": 33,
+    "passed": 33,
+    "failed": 0
+  },
+  "cases": [
+    {
+      "name": "manifest.plugin-is-disabled-by-default",
+      "ok": true
+    },
+    {
+      "name": "manifest.node-delivery-is-locked",
+      "ok": true
+    },
+    {
+      "name": "manifest.source-and-runtime-present",
+      "ok": true
+    },
+    {
+      "name": "manifest.has-no-channel-surface",
+      "ok": true
+    },
+    {
+      "name": "manifest.package-version-is-pinned",
+      "ok": true
+    },
+    {
+      "name": "manifest.wasm-fingerprint-matches-build",
+      "ok": true
+    },
+    {
+      "name": "manifest.glue-fingerprint-matches-build",
+      "ok": true
+    },
+    {
+      "name": "electron-unpacked-plugin-present",
+      "ok": true
+    },
+    {
+      "name": "electron-unpacked-plugin-has-no-developer-absolute-path",
+      "ok": true
+    },
+    {
+      "name": "electron-installer-present",
+      "ok": true
+    },
+    {
+      "name": "clean-consumption-environment.load",
+      "ok": true
+    },
+    {
+      "name": "wasm.capability",
+      "ok": true
+    },
+    {
+      "name": "wasm.capability-hot",
+      "ok": true
+    },
+    {
+      "name": "wasm.inspect.unicode-crlf",
+      "ok": true
+    },
+    {
+      "name": "wasm.apply.multi-field",
+      "ok": true
+    },
+    {
+      "name": "wasm.reject.invalid-json",
+      "ok": true
+    },
+    {
+      "name": "wasm.validate.trusted-schema-profile",
+      "ok": true
+    },
+    {
+      "name": "wasm.reject.bom",
+      "ok": true
+    },
+    {
+      "name": "wasm.cancelled-call",
+      "ok": true
+    },
+    {
+      "name": "gateway.real-runtime-managed-artifact-lifecycle",
+      "ok": true
+    },
+    {
+      "name": "electron-unpacked.real-runtime-managed-artifact",
+      "ok": true
+    },
+    {
+      "name": "tool.create",
+      "ok": true
+    },
+    {
+      "name": "tool.revise.managed-submit",
+      "ok": true
+    },
+    {
+      "name": "tool.revise.idempotent-replay",
+      "ok": true
+    },
+    {
+      "name": "tool.export.xlsx",
+      "ok": true
+    },
+    {
+      "name": "tool.record-ops",
+      "ok": true
+    },
+    {
+      "name": "tool.restore-new-revision",
+      "ok": true
+    },
+    {
+      "name": "tool.reject.external-drift",
+      "ok": true
+    },
+    {
+      "name": "tool.history-survives-reopen",
+      "ok": true
+    },
+    {
+      "name": "tool.disable-preserves-history",
+      "ok": true
+    },
+    {
+      "name": "store.backup-restore-preserves-history",
+      "ok": true
+    },
+    {
+      "name": "store.rejects-unknown-schema-version",
+      "ok": true
+    },
+    {
+      "name": "store.rejects-capacity-at-boundary",
+      "ok": true
+    }
+  ],
+  "boundaries": {
+    "defaultOn": false,
+    "productApproved": false,
+    "liveReady": false,
+    "publicPublish": false,
+    "sourceRuntimePathIsolation": true,
+    "noChannelInstallFallback": true
+  },
+  "evidenceIntegrity": {
+    "manifest": "artifacts/verseconf-clawx-integration/SHA256SUMS",
+    "credentialScan": "artifacts/verseconf-clawx-integration/credential-scan.json",
+    "credentialScanHits": 0,
+    "filesScanned": 7,
+    "manifestFiles": 8,
+    "status": "passed"
+  },
+  "performance": {
+    "drivenBy": "agent",
+    "failureDenominator": {
+      "totalCases": 33,
+      "failedCases": 0
+    },
+    "workerSamples": [
+      {
+        "label": "cold-capability",
+        "durationMs": 123.96,
+        "metrics": {
+          "durationMs": 2.3824,
+          "heapUsedBefore": 14594128,
+          "heapUsedAfter": 14616960,
+          "heapUsedDelta": 22832,
+          "wasmMemoryBefore": 1835008,
+          "wasmMemoryAfter": 1900544,
+          "wasmMemoryDelta": 65536,
+          "processArrayBuffers": 6584767,
+          "rssAfter": 574869504,
+          "resultBytes": 1263,
+          "glueLoads": 1
+        }
+      },
+      {
+        "label": "hot-capability",
+        "durationMs": 1.54,
+        "metrics": {
+          "durationMs": 0.1028,
+          "heapUsedBefore": 10868960,
+          "heapUsedAfter": 10871816,
+          "heapUsedDelta": 2856,
+          "wasmMemoryBefore": 1900544,
+          "wasmMemoryAfter": 1900544,
+          "wasmMemoryDelta": 0,
+          "processArrayBuffers": 2118579,
+          "rssAfter": 571629568,
+          "resultBytes": 1263,
+          "glueLoads": 1
+        }
+      }
+    ],
+    "packageBytes": {
+      "wasm": 4371659,
+      "installer": 461656644
+    },
+    "limits": {
+      "coldWorkerMs": 5000,
+      "hotWorkerMs": 2000,
+      "defaultWasmLinearMemoryMax": 20971520,
+      "schemaValidationWasmLinearMemoryMax": 100663296
+    },
+    "maintenanceCostProxy": {
+      "metric": "extension-source-files-bytes-lines",
+      "files": 26,
+      "bytes": 129275,
+      "lines": 2926
+    }
+  }
+}

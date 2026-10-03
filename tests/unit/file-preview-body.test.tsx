@@ -11,11 +11,22 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-const dialogMessageMock = vi.fn(async () => ({ response: 1 }));
-const shellOpenPathMock = vi.fn(async () => '');
-const readTextFile = vi.fn();
-const statFile = vi.fn();
-const writeTextFile = vi.fn();
+// `vi.mock` factories hoist above module-level consts, so anything they close
+// over must be created inside `vi.hoisted`. Declared as plain consts, collection
+// failed with "Cannot access 'dialogMessageMock' before initialization".
+const {
+  dialogMessageMock,
+  shellOpenPathMock,
+  readTextFile,
+  statFile,
+  writeTextFile,
+} = vi.hoisted(() => ({
+  dialogMessageMock: vi.fn(async () => ({ response: 1 })),
+  shellOpenPathMock: vi.fn(async () => ''),
+  readTextFile: vi.fn(),
+  statFile: vi.fn(),
+  writeTextFile: vi.fn(),
+}));
 
 vi.mock('@/lib/file-preview-client', () => ({
   readTextFile: (...args: unknown[]) => readTextFile(...args),
@@ -26,10 +37,10 @@ vi.mock('@/lib/file-preview-client', () => ({
 vi.mock('@/lib/host-api', () => ({
   hostApi: {
     dialog: {
-      message: (...args: unknown[]) => dialogMessageMock(...args),
+      message: dialogMessageMock as never,
     },
     shell: {
-      openPath: (...args: unknown[]) => shellOpenPathMock(...args),
+      openPath: shellOpenPathMock as never,
     },
   },
 }));

@@ -167,6 +167,9 @@ const RECEIPT_BUDGET_KEYS = new Set([
 ]);
 const SHA256_DIGEST_RE = /^[a-f0-9]{64}$/;
 const RECEIPT_ID_RE = /^[A-Za-z0-9][A-Za-z0-9._:@/-]*$/;
+// IRC channel routes contain # (agent:main:irc:group:#channel). Other receipt
+// identifiers remain on the stricter grammar; whitespace/control bytes stay invalid.
+const RECEIPT_SESSION_KEY_RE = /^[A-Za-z0-9][A-Za-z0-9._:@/#-]*$/;
 const RECEIPT_REFERENCE_RE =
   /^(?:ref:(?:context|file|memory|message|tool|request-envelope|compilation-snapshot|prompt-plan):[A-Za-z0-9][A-Za-z0-9._:@/+%-]*|owner-census:v0:[1-9]\d{0,5}:[a-f0-9]{64})$/;
 const MAX_IDEMPOTENCY_KEY_LENGTH = 512;
@@ -210,13 +213,13 @@ function assertOnlyKeys(value: Record<string, unknown>, keys: Set<string>, label
   }
 }
 
-function assertOptionalId(value: unknown, label: string, maxLength = MAX_IDENTITY_LENGTH): void {
+function assertOptionalId(value: unknown, label: string, pattern = RECEIPT_ID_RE): void {
   if (value === undefined) return;
   if (
     typeof value !== "string" ||
     value.length === 0 ||
-    value.length > maxLength ||
-    !RECEIPT_ID_RE.test(value)
+    value.length > MAX_IDENTITY_LENGTH ||
+    !pattern.test(value)
   ) {
     throw new TypeError(`${label} must be a bounded canonical identifier`);
   }
@@ -281,7 +284,11 @@ function assertBudget(value: unknown, label: string): asserts value is ReceiptBu
   if (value.unit === "tokens") {
     for (const key of ["inputLimit", "outputLimit"] as const) {
       const amount = value[key];
-      if (!Number.isSafeInteger(amount) || Number(amount) < 0 || Number(amount) > MAX_BUDGET_TOKENS) {
+      if (
+        !Number.isSafeInteger(amount) ||
+        Number(amount) < 0 ||
+        Number(amount) > MAX_BUDGET_TOKENS
+      ) {
         throw new TypeError(`${label} ${key} must be a bounded non-negative integer`);
       }
     }
@@ -290,7 +297,11 @@ function assertBudget(value: unknown, label: string): asserts value is ReceiptBu
   if (value.unit === "chars") {
     for (const key of ["charsRequested", "charsApplied"] as const) {
       const amount = value[key];
-      if (!Number.isSafeInteger(amount) || Number(amount) < 0 || Number(amount) > MAX_BUDGET_TOKENS) {
+      if (
+        !Number.isSafeInteger(amount) ||
+        Number(amount) < 0 ||
+        Number(amount) > MAX_BUDGET_TOKENS
+      ) {
         throw new TypeError(`${label} ${key} must be a bounded non-negative integer`);
       }
     }
@@ -341,7 +352,11 @@ function validatePutReceiptInput(input: PutReceiptInput): void {
   assertPlainRecord(input.identity, "receipt identity");
   assertOnlyKeys(input.identity, RECEIPT_IDENTITY_KEYS, "receipt identity");
   for (const key of ["sessionKey", "runId", "traceId", "providerId", "adapterId"] as const) {
-    assertOptionalId(input.identity[key], `receipt identity ${key}`);
+    assertOptionalId(
+      input.identity[key],
+      `receipt identity ${key}`,
+      key === "sessionKey" ? RECEIPT_SESSION_KEY_RE : RECEIPT_ID_RE,
+    );
   }
   assertCanonicalStringArray(input.identity.transformIds, "receipt identity transformIds", {
     maxItems: MAX_TRANSFORM_IDS,
@@ -465,8 +480,8 @@ export class ReceiptStore {
     this.#database = options;
   }
 
-  /** Append a receipt. Never throws into the send path; shadow callers surface
-   *  the result and must fail RC-02 acceptance on ok=false without changing
+  /** Append a receipt. Validation/storage errors propagate to the caller;
+   *  shadow callers catch them and record failed evidence without changing
    *  send behavior. */
   put(input: PutReceiptInput): PutReceiptResult {
     validatePutReceiptInput(input);
@@ -484,7 +499,13 @@ export class ReceiptStore {
           .where("idempotency_key", "=", input.idempotencyKey),
       );
       if (existing) {
-        if (existing.content_digest === contentDigest) {
+        // Kind/version are stored outside the stable content digest. A key
+        // collision must not turn one receipt type into evidence for another.
+        if (
+          existing.kind === input.kind &&
+          existing.version === input.version &&
+          existing.content_digest === contentDigest
+        ) {
           outcome = {
             ok: true,
             duplicate: true,
@@ -607,7 +628,10 @@ export class ReceiptStore {
     builder = builder.orderBy("created_at", "desc");
     if (options.limit) builder = builder.limit(options.limit);
     const rows = executeSqliteQuerySync<RuntimeReceiptRow>(db, builder).rows;
-    const byCorrelation = new Map<string, { context?: RuntimeReceiptRow; wire?: RuntimeReceiptRow }>();
+    const byCorrelation = new Map<
+      string,
+      { context?: RuntimeReceiptRow; wire?: RuntimeReceiptRow }
+    >();
     for (const row of rows) {
       const digest = row.correlation_digest;
       if (!digest) continue;

@@ -3,6 +3,10 @@
 > 日期：2026-08-11 · 分支：`codex/ui-polish` @ `2bce463c5`（工作树未提交）
 > 审计底稿：[frontend-render-audit-20260810.md](frontend-render-audit-20260810.md) · 批准计划：`.claude/plans/mock-peaceful-marshmallow.md`
 > 走查场景清单：[docs/dev/mock-render-scenarios.md](../docs/dev/mock-render-scenarios.md)
+>
+> 过程产物归档说明（2026-10-03）：本文保留原轮次事实。`reports/assets/frontend-render-fix-20260811/`
+> 与 `scripts/capture-render-evidence.cjs` 是本地历史归档，不再作为当前检出的必备输入或执行入口。
+> 下文命令和结果不代表当前 HEAD 已通过验收；当前回归应使用维护中的测试，勿为清理重新执行旧采图脚本。
 
 ## 结论
 

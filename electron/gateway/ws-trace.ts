@@ -1,5 +1,7 @@
 const SECRET_KEYS = new Set([
   'token',
+  'devicetoken',
+  'bootstraptoken',
   'authorization',
   'apikey',
   'api_key',

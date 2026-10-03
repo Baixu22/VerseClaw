@@ -554,6 +554,23 @@ export async function runSubagentAnnounceFlow(params: {
           })
         : targetRequesterOrigin;
     const directIdempotencyKey = buildAnnounceIdempotencyKey(announceId);
+    // TF-0082 generation pin: only the original requester target (no nested
+    // fallback redirect) carries the spawn-time sessionId pin. A redirected
+    // grandparent target is not the pinned generation and keeps legacy
+    // liveness-only behavior.
+    let expectedRequesterSessionId: string | undefined;
+    try {
+      const registryRuntime =
+        subagentRegistryRuntime ?? (await loadSubagentRegistryRuntime());
+      const run = registryRuntime.getLatestSubagentRunByChildSessionKey(
+        params.childSessionKey,
+      );
+      if (run?.requesterSessionId && targetRequesterSessionKey === run.requesterSessionKey) {
+        expectedRequesterSessionId = run.requesterSessionId;
+      }
+    } catch {
+      // Registry unavailable: keep legacy liveness-only wake behavior.
+    }
     const delivery = await deliverSubagentAnnouncement({
       requesterSessionKey: targetRequesterSessionKey,
       announceId,
@@ -561,6 +578,7 @@ export async function runSubagentAnnounceFlow(params: {
       steerMessage: triggerMessage,
       internalEvents,
       summaryLine: taskLabel,
+      expectedRequesterSessionId,
       requesterSessionOrigin: targetRequesterOrigin,
       requesterOrigin:
         expectsCompletionMessage && !requesterIsSubagent
@@ -605,6 +623,7 @@ export async function runSubagentAnnounceFlow(params: {
       await deleteSubagentSessionForCleanup({
         callGateway: subagentAnnounceDeps.callGateway,
         childSessionKey: params.childSessionKey,
+        runId: params.childRunId,
         spawnMode: params.spawnMode,
       });
     }

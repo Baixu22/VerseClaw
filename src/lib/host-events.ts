@@ -96,6 +96,11 @@ const onAppEvent = <E extends HostEventName<'app'>>(
   handler: HostEventHandler<'app', E>,
 ) => onIpc(HOST_EVENT_CHANNELS.app[event], handler);
 
+const onRuntimeApprovalEvent = <E extends HostEventName<'runtimeApprovals'>>(
+  event: E,
+  handler: HostEventHandler<'runtimeApprovals', E>,
+) => onIpc(HOST_EVENT_CHANNELS.runtimeApprovals[event], handler);
+
 export const hostEvents = {
   onGatewayStatus: (handler: HostEventHandler<'gateway', 'statusChanged'>) => (
     onGatewayEvent('statusChanged', handler)
@@ -189,4 +194,10 @@ export const hostEvents = {
   onOpenClawCliInstalled: (
     handler: HostEventHandler<'app', 'openClawCliInstalled'>,
   ) => onAppEvent('openClawCliInstalled', handler),
+  onRuntimeApprovalRequested: (
+    handler: HostEventHandler<'runtimeApprovals', 'requested'>,
+  ) => onRuntimeApprovalEvent('requested', handler),
+  onRuntimeApprovalResolved: (
+    handler: HostEventHandler<'runtimeApprovals', 'resolved'>,
+  ) => onRuntimeApprovalEvent('resolved', handler),
 };

@@ -1,6 +1,6 @@
 /**
- * Freeze the dirty UAS-00 engineering baseline without claiming a clean release.
- * The output file is excluded from its own untracked-file snapshot.
+ * Explicitly replay UAS-00 against a restored historical workspace.
+ * Never refresh sealed evidence or authorize acceptance of the current checkout.
  */
 import { execFileSync } from "node:child_process";
 import crypto from "node:crypto";
@@ -8,9 +8,13 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseArgs } from "node:util";
+import { isMainEntrypoint } from "./lib/entrypoint.mjs";
+import { canCloseTf0009, verifyTf0009ClosureEvidence } from "./lib/tf0009-agent-surrogate.mjs";
 
-const OUTPUT_RELATIVE = "artifacts/unified-agent-system/TF-0011/audit-manifest.json";
+const REPOSITORY_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const TASK_SPEC = "harness/specs/tasks/uas-00-evidence-freeze-governance.md";
+const USAGE = "Usage: node scripts/uas-00-evidence-freeze.mjs --history-replay --root=<absolute-restored-history-workspace> --output=<new-absolute-file-outside-source-workspaces> [--check]";
 
 const SOURCE_EVIDENCE = [
   ".agent-workbench/task-forest/graph/forest.json",
@@ -44,8 +48,8 @@ const SOURCE_EVIDENCE = [
 ];
 
 const EXACT_COMMANDS = [
-  "pnpm run uas:00:evidence",
-  "pnpm run uas:00:evidence:check",
+  "node scripts/uas-00-evidence-freeze.mjs --history-replay --root=<absolute-history-workspace> --output=<new-absolute-replay-output>",
+  "node scripts/uas-00-evidence-freeze.mjs --history-replay --root=<absolute-history-workspace> --output=<existing-absolute-replay-output> --check",
   `pnpm harness context --spec ${TASK_SPEC}`,
   `pnpm harness validate --spec ${TASK_SPEC} --since HEAD`,
   `pnpm harness run --spec ${TASK_SPEC} --since HEAD`,
@@ -101,7 +105,6 @@ function splitNull(buffer) {
 }
 
 function collectWorkspaceSnapshot(root) {
-  const output = normalizePath(OUTPUT_RELATIVE);
   const headSha = git(root, ["rev-parse", "HEAD"]).trim();
   let headRef = "detached";
   try {
@@ -119,7 +122,6 @@ function collectWorkspaceSnapshot(root) {
     git(root, ["ls-files", "--others", "--exclude-standard", "-z"], null),
   )
     .map(normalizePath)
-    .filter((relativePath) => relativePath !== output)
     .sort();
   const untrackedFiles = untrackedPaths.map((relativePath) => {
     const absolutePath = path.join(root, relativePath);
@@ -218,12 +220,29 @@ function findEngineeringEvidenceEdge(forest) {
   );
 }
 
+function isWithin(parent, child) {
+  const relative = path.relative(parent, child);
+  return relative === "" || (!relative.startsWith(`..${path.sep}`) && relative !== ".." && !path.isAbsolute(relative));
+}
+
+export function assertUas00HistoryRoot(root, options = {}) {
+  requireCondition(options.historyReplay === true, `Explicit historical replay is required. ${USAGE}`);
+  requireCondition(typeof root === "string" && path.isAbsolute(root), `An absolute historical root is required. ${USAGE}`);
+  requireCondition(fs.existsSync(root) && fs.statSync(root).isDirectory(), `Historical workspace is missing: ${root}`);
+  const canonicalRoot = fs.realpathSync(root);
+  requireCondition(!isWithin(fs.realpathSync(REPOSITORY_ROOT), canonicalRoot), "Restore history outside the current source workspace before replaying UAS-00");
+  return canonicalRoot;
+}
+
 export function buildUas00AuditManifest(root, options = {}) {
+  root = assertUas00HistoryRoot(root, options);
   const nodes = readJson(root, ".agent-workbench/task-forest/graph/nodes.json");
   const forest = readJson(root, ".agent-workbench/task-forest/graph/forest.json");
+  const tf0009Done = nodes["TF-0009"]?.status === "done";
   const tf0009Report = readJson(
     root,
-    "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json",
+    tf0009Done ? "artifacts/first-product-preview/TF-0009/policy-acceptance/campaign-report.json"
+      : "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json",
   );
   const c1 = readJson(root, "artifacts/first-product-preview/FP-P4-05/decision.json");
   const tf0006 = readJson(root, "artifacts/tf0006-evidence-upgrade/status.json");
@@ -234,8 +253,11 @@ export function buildUas00AuditManifest(root, options = {}) {
     (tf0011Status === "ready" && tf0012Status === "proposed") ||
     (tf0011Status === "done" && tf0012Status === "ready");
 
-  requireCondition(nodes["TF-0009"]?.status === "review_needed", "TF-0009 must remain review_needed");
-  requireCondition(nodes["TF-0009"]?.progress === 50, "TF-0009 progress must remain 50");
+  requireCondition(
+    tf0009Done ? verifyTf0009ClosureEvidence(tf0009Report, root) : ["ready", "in_progress", "review_needed", "blocked"].includes(nodes["TF-0009"]?.status),
+    "TF-0009 closure requires clean, validated agent evidence under the 2026-09-27 policy",
+  );
+  requireCondition(!tf0009Done || nodes["TF-0009"]?.progress === 100, "TF-0009 done progress must be 100");
   requireCondition(
     validEngineeringChainState,
     "UAS engineering chain must be TF-0011 ready/TF-0012 proposed or TF-0011 done/TF-0012 ready",
@@ -248,7 +270,6 @@ export function buildUas00AuditManifest(root, options = {}) {
   requireCondition(Boolean(engineeringEvidenceEdge), "TF-0011 engineering evidence edge is missing");
   requireCondition(tf0009Report.humanEquivalent === false, "TF-0009 human evidence boundary drifted");
   requireCondition(tf0009Report.liveEvidence === false, "TF-0009 live evidence boundary drifted");
-  requireCondition(tf0009Report.taskForest?.canMarkDone === false, "TF-0009 done boundary drifted");
   requireCondition(c1.authority?.reductionFactor === 4.5, "C1 authority must remain 4.5x");
   requireCondition(c1.decision?.meetsGate === false, "C1 gate must remain false");
   requireCondition(c1.decision?.recommendation === "keep-off", "C1 recommendation drifted");
@@ -271,6 +292,9 @@ export function buildUas00AuditManifest(root, options = {}) {
     taskId: "TF-0011",
     phase: "UAS-00",
     generatedAt: options.generatedAt ?? new Date().toISOString(),
+    driven_by: "agent",
+    actor: "uas00-history-replay",
+    historicalReplay: true,
     evidenceClass: "dirty-engineering-baseline-not-release",
     releaseEligible: false,
     humanEquivalent: false,
@@ -297,9 +321,9 @@ export function buildUas00AuditManifest(root, options = {}) {
       tf0009: {
         status: nodes["TF-0009"].status,
         progress: nodes["TF-0009"].progress,
-        semanticLabel: "degraded-agent-complete",
+        semanticLabel: tf0009Report.taskForest.semanticLabel,
         humanQualifyingRuns: tf0009Report.humanQualifyingRuns,
-        canMarkDone: false,
+        canMarkDone: tf0009Done || canCloseTf0009(tf0009Report, root),
       },
       tf0011: {
         status: nodes["TF-0011"].status,
@@ -384,7 +408,7 @@ export function buildUas00AuditManifest(root, options = {}) {
       reason: "UAS-00 adds engineering governance evidence only; no product behavior or interface changed.",
     },
     residuals: [
-      "TF-0009 human/live canary remains 0/10 per profile and review_needed.",
+      "TF-0009 human/live canary remains incomplete at 0/10 per profile.",
       ...(!workspaceMetadataMatchesCanonical
         ? ["Task Forest export metadata still names a workspace other than the canonical audit root."]
         : []),
@@ -415,43 +439,72 @@ export function compareUas00AuditManifest(expected, actual) {
   return { ok: errors.length === 0, errors };
 }
 
-function writeOrCheck(root, check) {
-  const outputPath = path.join(root, OUTPUT_RELATIVE);
-  if (check) {
-    requireCondition(fs.existsSync(outputPath), `missing UAS-00 manifest: ${OUTPUT_RELATIVE}`);
-    const expected = JSON.parse(fs.readFileSync(outputPath, "utf8"));
-    const actual = buildUas00AuditManifest(root, { generatedAt: expected.generatedAt });
+export function parseUas00ReplayArgs(argv) {
+  const { values } = parseArgs({
+    args: argv,
+    options: {
+      "history-replay": { type: "boolean" },
+      root: { type: "string" },
+      output: { type: "string" },
+      check: { type: "boolean" },
+    },
+    strict: true,
+    allowPositionals: false,
+  });
+  requireCondition(values["history-replay"] === true, `Explicit historical replay is required. ${USAGE}`);
+  requireCondition(typeof values.root === "string" && path.isAbsolute(values.root), `An absolute historical root is required. ${USAGE}`);
+  requireCondition(typeof values.output === "string" && path.isAbsolute(values.output), `An absolute replay output is required. ${USAGE}`);
+  return { historyReplay: true, root: values.root, output: values.output, check: values.check === true };
+}
+
+function canonicalOutput(output) {
+  let parent = path.resolve(output);
+  const absent = [];
+  while (!fs.existsSync(parent)) {
+    absent.unshift(path.basename(parent));
+    const next = path.dirname(parent);
+    requireCondition(next !== parent, `Cannot resolve replay output: ${output}`);
+    parent = next;
+  }
+  return path.join(fs.realpathSync(parent), ...absent);
+}
+
+export function replayUas00History(options) {
+  requireCondition(typeof options?.output === "string" && path.isAbsolute(options.output), `An absolute replay output is required. ${USAGE}`);
+  const root = assertUas00HistoryRoot(options.root, options);
+  const output = canonicalOutput(options.output);
+  requireCondition(!isWithin(root, output) && !isWithin(fs.realpathSync(REPOSITORY_ROOT), output), "Replay output must be outside both historical and current source workspaces");
+  if (options.check) {
+    requireCondition(fs.existsSync(output), `Missing UAS-00 replay manifest: ${output}`);
+    const expected = JSON.parse(fs.readFileSync(output, "utf8"));
+    requireCondition(expected.historicalReplay === true, "Only an explicit replay output can be checked; sealed historical evidence is read-only");
+    const actual = buildUas00AuditManifest(root, { historyReplay: true, generatedAt: expected.generatedAt });
     const comparison = compareUas00AuditManifest(expected, actual);
     requireCondition(comparison.ok, `UAS-00 manifest is stale: ${comparison.errors.join("; ")}`);
     return expected;
   }
 
-  const manifest = buildUas00AuditManifest(root);
-  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-  fs.writeFileSync(outputPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+  requireCondition(!fs.existsSync(output), `Refusing to overwrite existing evidence: ${output}`);
+  const manifest = buildUas00AuditManifest(root, { historyReplay: true });
+  fs.mkdirSync(path.dirname(output), { recursive: true });
+  fs.writeFileSync(output, `${JSON.stringify(manifest, null, 2)}\n`, { encoding: "utf8", flag: "wx" });
   return manifest;
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const rootArg = process.argv.find((arg) => arg.startsWith("--root="));
-  const root = rootArg
-    ? path.resolve(rootArg.slice("--root=".length))
-    : path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-  const check = process.argv.includes("--check");
-  const manifest = writeOrCheck(root, check);
-  console.log(
-    JSON.stringify(
-      {
-        ok: true,
-        check,
-        output: OUTPUT_RELATIVE,
-        evidenceClass: manifest.evidenceClass,
-        snapshotSha256: manifest.repository.snapshotSha256,
-        tf0009: manifest.taskForest.tf0009.status,
-        tf0011: manifest.taskForest.tf0011.status,
-      },
-      null,
-      2,
-    ),
-  );
+if (isMainEntrypoint(import.meta.url)) {
+  try {
+    const options = parseUas00ReplayArgs(process.argv.slice(2));
+    const manifest = replayUas00History(options);
+    console.log(JSON.stringify({
+      ok: true,
+      check: options.check,
+      output: options.output,
+      evidenceClass: manifest.evidenceClass,
+      historicalReplay: true,
+      snapshotSha256: manifest.repository.snapshotSha256,
+    }, null, 2));
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
+  }
 }

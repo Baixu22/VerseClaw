@@ -87,8 +87,8 @@ requiredTests:
   - rtk rg -n 'memory-runtime-integration|createRuntimeMemoryRuntimeIntegration|RuntimeMemoryRuntimeIntegration|createRuntimeMemoryPersistenceStore|memory-persistence|inspectRuntimeMemorySanitizedEpisodes|RUNTIME_MEMORY_PERSISTENCE_OWNER' openclaw_runtime/src/agents/task-loop-controller.ts tests/unit/task-loop-controller.test.ts tests/unit/runtime-memory-runtime-integration.test.ts tests/unit/runtime-memory-persistence.test.ts
   - rtk rg -n 'memory-runtime-integration|createRuntimeMemoryRuntimeIntegration|RuntimeMemoryRuntimeIntegration|createRuntimeMemoryPersistenceStore|inspectRuntimeMemorySanitizedEpisodes|memory-persistence|RUNTIME_MEMORY_PERSISTENCE_OWNER|RuntimeMemoryProvider|createRuntimeMemoryContextProvider' openclaw_runtime/src/gateway electron shared src/lib openclaw_runtime/src/context-engine/provider-registry.ts openclaw_runtime/src/runtime-core/index.ts
   - rtk rg -n 'appendFact|invalidateFact|loadStore|queryFacts|RuntimeMemoryProvider|createRuntimeMemoryContextProvider|runtime\.memory\.provider|proposeFacts|inspectRuntimeMemorySanitizedEpisodes' openclaw_runtime/src/agents/task-loop-controller.ts
-  - rtk rg -n 'rawChat|raw chat|transcript|jsonl|rawTrace|trace dump|prompt dump|toolArgs|toolOutput|stdout|stderr|process\.env|secret|apiKey|api[-_]?key|authorization|password|traceparent|tracestate|baggage|record_json|raw DB|raw row' tests/unit/runtime-memory-runtime-integration.test.ts tests/unit/runtime-memory-persistence.test.ts tests/unit/task-loop-controller.test.ts runtime-research/handoffs/phase-16-runtime-memory-readonly-episode-inspection harness/specs/tasks/phase-16-runtime-memory-readonly-episode-inspection.md
-  - rtk rg -n 'createServer\(|listen\(|WebSocketServer|new WebSocket\(|OTLP|Collector|opentelemetry.*export|@opentelemetry/exporter|@temporalio|express\(|database-service|listener|exporter|service|daemon' tests/unit/runtime-memory-runtime-integration.test.ts tests/unit/runtime-memory-persistence.test.ts tests/unit/task-loop-controller.test.ts runtime-research/handoffs/phase-16-runtime-memory-readonly-episode-inspection harness/specs/tasks/phase-16-runtime-memory-readonly-episode-inspection.md
+  - rtk rg -n 'rawChat|raw chat|transcript|jsonl|rawTrace|trace dump|prompt dump|toolArgs|toolOutput|stdout|stderr|process\.env|secret|apiKey|api[-_]?key|authorization|password|traceparent|tracestate|baggage|record_json|raw DB|raw row' tests/unit/runtime-memory-runtime-integration.test.ts tests/unit/runtime-memory-persistence.test.ts tests/unit/task-loop-controller.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/phase-16-runtime-memory-readonly-episode-inspection.md
+  - rtk rg -n 'createServer\(|listen\(|WebSocketServer|new WebSocket\(|OTLP|Collector|opentelemetry.*export|@opentelemetry/exporter|@temporalio|express\(|database-service|listener|exporter|service|daemon' tests/unit/runtime-memory-runtime-integration.test.ts tests/unit/runtime-memory-persistence.test.ts tests/unit/task-loop-controller.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/phase-16-runtime-memory-readonly-episode-inspection.md
   - rtk rg -n 'runtime\.memory\.persist|runtime\.memory\.shadow|createRuntimeMemoryPersistenceStore|inspectRuntimeMemorySanitizedEpisodes|RuntimeMemoryPersistence|runtime_memory_|openOpenClawStateDatabase|DatabaseSync|sqlite|jsonl|transcript' openclaw_runtime/src/runtime-core openclaw_runtime/src/context-engine openclaw_runtime/src/agents/task-loop-controller.ts openclaw_runtime/src/gateway electron shared src/lib tests/unit
   - rtk rg -n 'inspectRuntimeMemorySanitizedEpisodes[\s\S]*(migrate|appendEpisode|appendFact|invalidateFact|ensureRuntimeMemoryPersistenceSchema|withWriteTransaction|trimRows)' openclaw_runtime/src/runtime-core/memory-persistence.ts
   - rtk node scripts/comms/replay.mjs and rtk node scripts/comms/compare.mjs if Main/Gateway/host-api/api-client/provider transport paths are dirty or modified
@@ -103,10 +103,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-16-runtime-memory-readonly-episode-inspection/README.md
-    - runtime-research/handoffs/phase-16-runtime-memory-readonly-episode-inspection/parallel-lanes.md
-    - runtime-research/handoffs/phase-16-runtime-memory-readonly-episode-inspection/window-prompts.md
-    - runtime-research/handoffs/phase-16-runtime-memory-readonly-episode-inspection/submission-template.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 16 Runtime Memory Readonly Episode Inspection

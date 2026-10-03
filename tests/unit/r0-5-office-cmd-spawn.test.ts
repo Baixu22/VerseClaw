@@ -40,7 +40,7 @@ describe('R0-5 officecli windows spawn guard', () => {
     spawnOfficeCli('C:\\officecli.CMD', ['watch', 'a.docx', '--port', '9'], { windowsHide: true });
 
     expect(spawnMock).toHaveBeenCalledTimes(1);
-    const [command, args] = spawnMock.mock.calls[0] as [string, string[]];
+    const [command, args] = spawnMock.mock.calls[0] as unknown as [string, string[]];
     expect(command).toBe('C:\\Windows\\System32\\cmd.exe');
     expect(args.slice(0, 4)).toEqual(['/d', '/s', '/c', 'C:\\officecli.CMD']);
     expect(args.slice(4)).toEqual(['watch', 'a.docx', '--port', '9']);
@@ -52,7 +52,7 @@ describe('R0-5 officecli windows spawn guard', () => {
 
     spawnOfficeCli('C:\\officecli.EXE', ['watch'], {});
 
-    const [command, args] = spawnMock.mock.calls[0] as [string, string[]];
+    const [command, args] = spawnMock.mock.calls[0] as unknown as [string, string[]];
     expect(command).toBe('C:\\officecli.EXE');
     expect(args).toEqual(['watch']);
   });
@@ -63,7 +63,7 @@ describe('R0-5 officecli windows spawn guard', () => {
 
     spawnOfficeCli('/usr/bin/officecli.cmd', ['watch'], {});
 
-    const [command] = spawnMock.mock.calls[0] as [string];
+    const [command] = spawnMock.mock.calls[0] as unknown as [string];
     expect(command).toBe('/usr/bin/officecli.cmd');
   });
 });

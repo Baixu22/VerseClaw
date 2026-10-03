@@ -180,6 +180,18 @@ function rolesConfig(cfg: OpenClawConfig): { agents?: { roles?: unknown; teams?:
   return cfg as unknown as { agents?: { roles?: unknown; teams?: unknown } };
 }
 
+/**
+ * Selected memory slot owner (`plugins.slots.memory`), passed to the R3-1 E-1
+ * owner-convergence gate. Undefined defaults fail-closed to memory-core inside
+ * assertRuntimeMemoryOwnerConvergence, so runtime-memory persistence is only
+ * legal when the operator has explicitly selected the runtime-memory owner.
+ */
+function readMemorySlotId(cfg: OpenClawConfig): string | undefined {
+  const slot = (cfg as unknown as { plugins?: { slots?: { memory?: unknown } } })?.plugins?.slots
+    ?.memory;
+  return typeof slot === "string" && slot.length > 0 ? slot : undefined;
+}
+
 function respondMissingTask(respond: RespondFn, method: string): void {
   respond(
     false,
@@ -1316,5 +1328,145 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
         actor: { type: "user" },
       }),
     }, undefined);
+  },
+
+  // R3-2.2 "本轮注入了什么": read the sanitized COMPASS memory-injection
+  // receipts persisted by recordCompassMemoryInjectionReceipt through the
+  // approved ReceiptStore. This is NOT role-memory (memory.explainInjection);
+  // it is the runtime pre-reply retrieval receipt read path. The reader never
+  // throws (returns [] on any store error), so no role-memory gate applies.
+  "memory.injectionReceipts": async ({ params, respond }) => {
+    try {
+      const { listMemoryInjectionReceipts } = await import(
+        "../../context-engine/memory-injection-receipt.js"
+      );
+      const sessionKey = readString(params.sessionKey);
+      const receipts = listMemoryInjectionReceipts({
+        ...(sessionKey ? { sessionKey } : {}),
+        limit: readPositiveInteger(params.limit) ?? 50,
+      });
+      respond(true, { receipts }, undefined);
+    } catch (error) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `memory.injectionReceipts failed: ${error instanceof Error ? error.message : String(error)}`,
+        ),
+      );
+    }
+  },
+
+  // R3-2.4 proposeFacts confirm queue (read). Lists pending runtime-memory
+  // fact candidates awaiting human confirmation. Default-off: when the
+  // shadow/proposeFacts flags are off the queue is empty and no store is read.
+  "memory.proposeFacts.list": async ({ params, respond, context }) => {
+    try {
+      const cfg = context.getRuntimeConfig();
+      const { resolveRuntimeMemoryFeatureFlags, isRuntimeMemoryTemporalFactCandidate } =
+        await import("../../runtime-core/memory-context.js");
+      const flags = resolveRuntimeMemoryFeatureFlags(cfg);
+      if (!flags.shadow || !flags.proposeFacts) {
+        respond(true, { enabled: false, candidates: [] }, undefined);
+        return;
+      }
+      const { createRuntimeMemoryRuntimeIntegration } = await import(
+        "../../runtime-core/memory-runtime-integration.js"
+      );
+      const integration = createRuntimeMemoryRuntimeIntegration({ config: cfg });
+      const { store } = integration.loadStore();
+      const limit = readPositiveInteger(params.limit) ?? 50;
+      const candidates = store
+        .queryFacts({ verificationStatus: "candidate", limit })
+        .filter(isRuntimeMemoryTemporalFactCandidate)
+        .map((candidate) => ({
+          factId: candidate.factId,
+          subject: candidate.subject,
+          predicate: candidate.predicate,
+          objectSummary: candidate.objectSummary,
+          confidence: typeof candidate.confidence === "number" ? candidate.confidence : null,
+          source: candidate.source,
+          proposedAt: typeof candidate.proposedAt === "number" ? candidate.proposedAt : null,
+        }));
+      respond(true, { enabled: true, candidates }, undefined);
+    } catch (error) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `memory.proposeFacts.list failed: ${error instanceof Error ? error.message : String(error)}`,
+        ),
+      );
+    }
+  },
+
+  // R3-2.4 proposeFacts confirm (write). Promotes a shadow candidate into a
+  // durable human-approved fact through the SINGLE approved composition:
+  // assertRuntimeMemoryOwnerConvergence -> promoteRuntimeMemoryFactCandidate ->
+  // P0-B appendFact, all inside confirmRuntimeMemoryFactProposal. Fail-closed by
+  // the R3-1 E-1 authority ruling: a non-persisting outcome is a legitimate
+  // business result (confirmed:false), not an RPC error.
+  "memory.proposeFacts.confirm": async ({ params, respond, context }) => {
+    const factId = readString(params.factId);
+    if (!factId) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, 'memory.proposeFacts.confirm requires a "factId" string'),
+      );
+      return;
+    }
+    try {
+      const cfg = context.getRuntimeConfig();
+      const { createRuntimeMemoryRuntimeIntegration } = await import(
+        "../../runtime-core/memory-runtime-integration.js"
+      );
+      const { confirmRuntimeMemoryFactProposal } = await import(
+        "../../runtime-core/memory-proposal-shadow.js"
+      );
+      const { isRuntimeMemoryTemporalFactCandidate } = await import(
+        "../../runtime-core/memory-context.js"
+      );
+      const integration = createRuntimeMemoryRuntimeIntegration({ config: cfg });
+      const { store } = integration.loadStore();
+      const [candidate] = store.queryFacts({ factId, verificationStatus: "candidate", limit: 1 });
+      if (!candidate || !isRuntimeMemoryTemporalFactCandidate(candidate)) {
+        respond(
+          false,
+          undefined,
+          errorShape(ErrorCodes.NOT_FOUND, `no pending proposeFacts candidate for factId ${factId}`),
+        );
+        return;
+      }
+      const memorySlotId = readMemorySlotId(cfg);
+      const approvedBy = readString(params.approvedBy);
+      const result = confirmRuntimeMemoryFactProposal({
+        candidate,
+        evidenceRefs: [...candidate.evidenceRefs],
+        persistence: integration,
+        ...(memorySlotId ? { memorySlotId } : {}),
+        ...(approvedBy ? { approvedBy } : {}),
+      });
+      respond(
+        true,
+        {
+          confirmed: result.ok,
+          message: result.message,
+          ...(result.ok ? { factId: result.fact.factId } : {}),
+        },
+        undefined,
+      );
+    } catch (error) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `memory.proposeFacts.confirm failed: ${error instanceof Error ? error.message : String(error)}`,
+        ),
+      );
+    }
   },
 };

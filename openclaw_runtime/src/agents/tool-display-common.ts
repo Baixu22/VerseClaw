@@ -9,6 +9,7 @@ import {
 } from "@openclaw/normalization-core/string-coerce";
 import { parseStrictFiniteNumber } from "../infra/parse-finite-number.js";
 import { redactToolPayloadText } from "../logging/redact.js";
+import { resolveApplyPatchDetail } from "./tool-display-apply-patch.js";
 import { resolveExecDetail, type ToolDetailMode } from "./tool-display-exec.js";
 import { asRecord } from "./tool-display-record.js";
 
@@ -772,6 +773,9 @@ function resolveToolVerbAndDetail(params: {
   }
   if (!detail && params.toolKey === "tool_search_code") {
     detail = resolveToolSearchCodeDetail(params.args);
+  }
+  if (!detail && params.toolKey === "apply_patch") {
+    detail = resolveApplyPatchDetail(params.args);
   }
 
   const detailKeys =

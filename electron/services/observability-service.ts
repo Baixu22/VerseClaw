@@ -4,6 +4,7 @@ import type {
   ObservabilitySourceHealth,
   ObservabilityTrace,
   ObservabilityTraceIndexEntry,
+  ObservabilityHostDiagnostic,
 } from '../../shared/types/observability';
 
 // In-memory trace store shared with the Electron main process observability API.
@@ -15,6 +16,136 @@ const RUNNING_TRACE_MAX_AGE_MS = 30 * 60 * 1000;
 const traces = new Map<string, ObservabilityTrace>();
 // Scorecards merged from the runtime; keyed by traceId.
 const scorecards = new Map<string, ObservabilityScorecard>();
+const hostDiagnostics: ObservabilityHostDiagnostic[] = [];
+
+const HOST_DIAGNOSTIC_CAPACITY = 200;
+const HOST_DIAGNOSTIC_FAILURE_KINDS = new Set<ObservabilityHostDiagnostic['failureKind']>([
+  'compile',
+  'test',
+  'tool_missing',
+  'permission',
+  'environment',
+  'runtime',
+  'timeout',
+  'cancelled',
+  'unknown',
+]);
+const HOST_DIAGNOSTIC_SUGGESTED_ACTIONS = new Set<ObservabilityHostDiagnostic['suggestedAction']>([
+  'retry',
+  'ask_user',
+  'stop',
+  'continue_with_caution',
+]);
+const TRACE_ID_PATTERN = /^[a-f0-9]{32}$/u;
+const SPAN_ID_PATTERN = /^[a-f0-9]{16}$/u;
+const OPAQUE_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$/u;
+const DIGEST_PATTERN = /^[a-f0-9]{64}$/u;
+
+function ownData(value: unknown, key: string): unknown {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined;
+  try {
+    const descriptor = Object.getOwnPropertyDescriptor(value, key);
+    return descriptor && 'value' in descriptor ? descriptor.value : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function hasOnlyKeys(value: unknown, keys: readonly string[]): boolean {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  try {
+    const allowed = new Set(keys);
+    return Object.getOwnPropertyNames(value).every((key) => allowed.has(key))
+      && Object.getOwnPropertySymbols(value).length === 0;
+  } catch {
+    return false;
+  }
+}
+
+function boundedOptionalNumber(value: unknown, min: number, max: number): number | undefined {
+  return value === undefined
+    ? undefined
+    : typeof value === 'number' && Number.isSafeInteger(value) && value >= min && value <= max
+      ? value
+      : undefined;
+}
+
+function projectHostDiagnostic(value: unknown): ObservabilityHostDiagnostic | undefined {
+  if (!hasOnlyKeys(value, ['schemaVersion', 'trace', 'failureKind', 'suggestedAction', 'durationMs', 'exitCode', 'signal', 'redaction'])) {
+    return undefined;
+  }
+  if (ownData(value, 'schemaVersion') !== '1' || ownData(value, 'redaction') !== 'raw-fields-omitted') {
+    return undefined;
+  }
+
+  const trace = ownData(value, 'trace');
+  if (!hasOnlyKeys(trace, ['requestId', 'traceId', 'spanId', 'parentTraceId', 'runId', 'correlationDigest'])) {
+    return undefined;
+  }
+  const requestId = ownData(trace, 'requestId');
+  const traceId = ownData(trace, 'traceId');
+  const spanId = ownData(trace, 'spanId');
+  const parentTraceId = ownData(trace, 'parentTraceId');
+  const runId = ownData(trace, 'runId');
+  const correlationDigest = ownData(trace, 'correlationDigest');
+  if (
+    typeof requestId !== 'string' || !OPAQUE_ID_PATTERN.test(requestId)
+    || typeof traceId !== 'string' || !TRACE_ID_PATTERN.test(traceId) || /^0+$/u.test(traceId)
+    || typeof spanId !== 'string' || !SPAN_ID_PATTERN.test(spanId) || /^0+$/u.test(spanId)
+    || (parentTraceId !== undefined && (typeof parentTraceId !== 'string' || !TRACE_ID_PATTERN.test(parentTraceId) || /^0+$/u.test(parentTraceId)))
+    || (runId !== undefined && (typeof runId !== 'string' || !OPAQUE_ID_PATTERN.test(runId)))
+    || (correlationDigest !== undefined && (typeof correlationDigest !== 'string' || !DIGEST_PATTERN.test(correlationDigest)))
+  ) {
+    return undefined;
+  }
+
+  const failureKind = ownData(value, 'failureKind');
+  if (typeof failureKind !== 'string' || !HOST_DIAGNOSTIC_FAILURE_KINDS.has(failureKind as ObservabilityHostDiagnostic['failureKind'])) {
+    return undefined;
+  }
+  const suggestedAction = ownData(value, 'suggestedAction');
+  if (typeof suggestedAction !== 'string' || !HOST_DIAGNOSTIC_SUGGESTED_ACTIONS.has(suggestedAction as ObservabilityHostDiagnostic['suggestedAction'])) {
+    return undefined;
+  }
+  const durationMs = boundedOptionalNumber(ownData(value, 'durationMs'), 0, 24 * 60 * 60 * 1000);
+  const exitCode = boundedOptionalNumber(ownData(value, 'exitCode'), -1, 255);
+  const signal = ownData(value, 'signal');
+  if ((ownData(value, 'durationMs') !== undefined && durationMs === undefined)
+    || (ownData(value, 'exitCode') !== undefined && exitCode === undefined)
+    || (signal !== undefined && signal !== 'sigint' && signal !== 'sigterm' && signal !== 'sigkill' && signal !== 'other')) {
+    return undefined;
+  }
+
+  return Object.freeze({
+    schemaVersion: '1',
+    trace: Object.freeze({
+      requestId,
+      traceId,
+      spanId,
+      ...(parentTraceId !== undefined ? { parentTraceId } : {}),
+      ...(runId !== undefined ? { runId } : {}),
+      ...(correlationDigest !== undefined ? { correlationDigest } : {}),
+    }),
+    failureKind: failureKind as ObservabilityHostDiagnostic['failureKind'],
+    suggestedAction: suggestedAction as ObservabilityHostDiagnostic['suggestedAction'],
+    ...(durationMs !== undefined ? { durationMs } : {}),
+    ...(exitCode !== undefined ? { exitCode } : {}),
+    ...(signal !== undefined ? { signal } : {}),
+    redaction: 'raw-fields-omitted',
+  });
+}
+
+export function recordObservabilityHostDiagnostic(summary: unknown): boolean {
+  const projected = projectHostDiagnostic(summary);
+  if (!projected) return false;
+  hostDiagnostics.push(projected);
+  if (hostDiagnostics.length > HOST_DIAGNOSTIC_CAPACITY) hostDiagnostics.shift();
+  return true;
+}
+
+export function getObservabilityHostDiagnostics(): readonly ObservabilityHostDiagnostic[] {
+  return [...hostDiagnostics];
+}
 
 export function upsertObservabilityTrace(trace: ObservabilityTrace): void {
   traces.set(trace.id, trace);
@@ -53,6 +184,7 @@ export function upsertObservabilityScorecard(scorecard: ObservabilityScorecard):
 export function clearObservabilityTraceBuffer(): void {
   traces.clear();
   scorecards.clear();
+  hostDiagnostics.length = 0;
 }
 
 function dashboardRowFromIndex(entry: ObservabilityTraceIndexEntry): ObservabilityDashboardSnapshot['traces'][number] {

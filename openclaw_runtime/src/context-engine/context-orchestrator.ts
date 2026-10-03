@@ -1,3 +1,8 @@
+import {
+  collectCompassContext,
+  recordCompassProjection,
+  type PreparedCompassContext,
+} from "./compass-context.js";
 /**
  * Context Orchestrator — single production entry for memory/context enhancement.
  *
@@ -39,16 +44,62 @@ import {
   type ContextCandidateTarget,
 } from "./context-candidate.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
-import { runRc03SealHook, resolveRc03SealState } from "./rc03-seal-hook.js";
+import {
+  runRc03SealHook,
+  resolveRc03SealState,
+  recordRc03SystemPromptContribution,
+} from "./rc03-seal-hook.js";
 import {
   beginTurnInjectionBudget,
   chargeTurnInjection,
+  endTurnInjectionBudget,
+  reserveTurnInjectionCapacity,
   skipTurnInjection,
   type TurnInjectionChannel,
   type TurnInjectionLedger,
 } from "./turn-injection-budget.js";
+import { KNOWLEDGE_INJECTION_CHAR_BUDGET } from "./assembler.js";
+
+/**
+ * FP-P2-06. The three DCS projections are charged across several phases of one
+ * turn — `knowledge` and `tool_registry` during assembly, and `working_memory`
+ * again after every tool result — while the lower-precedence `cvk_addition`
+ * charges once, in the final candidate projection. Without a hold, that single
+ * CVK charge consumes the whole remaining budget and the later, higher-precedence
+ * `working_memory` charges are dropped, which inverts the frozen channel
+ * ownership declared by `TURN_INJECTION_PRECEDENCE`.
+ *
+ * `harness/specs/tasks/remote-forge-controlled-preview.md:204`: "A DCS-enabled
+ * attempt reserves the existing 2000-character DCS capacity in the same ledger
+ * before CVK is charged so earlier execution timing cannot invert the frozen
+ * channel ownership." That capacity is `KNOWLEDGE_INJECTION_CHAR_BUDGET`.
+ *
+ * The hold covers all three channels, not only the ones that have charged so
+ * far. Reserving just the observed ones is wrong: `working_memory` has not
+ * charged yet at this point, and `capacityReservedForHigherPrecedence` would
+ * then deduct the hold from working_memory's own limit (knowledge sits earlier
+ * in the precedence table), starving the channel the hold exists to protect.
+ */
+const DCS_PROJECTION_CHANNELS: readonly TurnInjectionChannel[] = [
+  "knowledge",
+  "working_memory",
+  "tool_registry",
+];
 
 export type ContextOrchestratorStage = "memory" | "vtoken";
+
+/** P5 additive native-model capability declarations. */
+export type NativeContextCapabilities = {
+  nativeMemory?: boolean;
+  nativeContextGating?: boolean;
+};
+
+export type NativeContextNegotiation = {
+  nativeMemory: boolean;
+  nativeContextGating: boolean;
+  memoryPilotDisabled: boolean;
+  vtokenDisabled: boolean;
+};
 
 export type ContextOrchestratorSource = {
   id: string;
@@ -79,12 +130,17 @@ export type ContextOrchestratorLineage = {
   totalCharsAdded: number;
   durationMs: number;
   error?: string;
+  /** Present only when a native capability declaration was received. */
+  nativeContext?: NativeContextNegotiation;
 };
 
 export type ContextOrchestratorInput = {
+  compassContext?: PreparedCompassContext;
   sessionKey?: string;
   sessionId?: string;
   runId?: string;
+  /** Stable logical task scope for memory retrieval; never infer it from runId. */
+  taskId?: string;
   requestId?: string;
   workspaceDir?: string;
   /** Task / user prompt hint for VToken assemble. */
@@ -103,6 +159,11 @@ export type ContextOrchestratorInput = {
   memoryProviderIds?: readonly string[];
   /** Optional VT RPC client (tests / shared worker). */
   vtokenClient?: VtokenRpcClient;
+  /**
+   * P5 additive model capability declaration. Absent declarations leave the
+   * existing memory/vtoken flag decisions byte-for-byte unchanged.
+   */
+  nativeContextCapabilities?: NativeContextCapabilities;
   /**
    * FP-P0-05: turn identifier. When supplied, memory-pilot and VToken charge the
    * turn-wide shared injection budget (the same ledger the DCS Assembler and the
@@ -137,10 +198,50 @@ const DEFAULT_STAGES: ContextOrchestratorStage[] = ["memory", "vtoken"];
 
 let lastLineage: ContextOrchestratorLineage | null = null;
 const lineageByTurn = new Map<string, ContextOrchestratorLineage>();
+const nativeNegotiationByTurn = new Map<string, NativeContextNegotiation>();
 
 function rememberLineage(lineage: ContextOrchestratorLineage): void {
   lastLineage = lineage;
   if (lineage.turnId) lineageByTurn.set(lineage.turnId, lineage);
+}
+
+function rememberNativeNegotiation(
+  turnId: string | undefined,
+  negotiation: NativeContextNegotiation,
+): void {
+  if (turnId) nativeNegotiationByTurn.set(turnId, negotiation);
+}
+
+function gateBlockStoreInjectionForNativeContext(turnId: string): void {
+  const negotiation = nativeNegotiationByTurn.get(turnId);
+  if (!negotiation?.nativeContextGating) return;
+  const collection = getContextCandidateCollection(turnId);
+  if (!collection || collection.diagnostics.finalized) return;
+  const blockedChannels = new Set<TurnInjectionChannel>([
+    "knowledge",
+    "working_memory",
+    "tool_registry",
+  ]);
+  const keptCandidates: typeof collection.candidates = [];
+  const keptLineageIndexes: typeof collection.candidateLineageIndexes = [];
+  for (let index = 0; index < collection.candidates.length; index += 1) {
+    const candidate = collection.candidates[index];
+    if (candidate && blockedChannels.has(candidate.channel)) {
+      const lineage = collection.lineage[collection.candidateLineageIndexes[index] ?? -1];
+      if (lineage) {
+        lineage.disposition = "skip";
+        lineage.charsRequested = 0;
+        lineage.charsApplied = 0;
+        lineage.reason = "flag-off";
+        lineage.novelty = undefined;
+      }
+      continue;
+    }
+    keptCandidates.push(candidate);
+    keptLineageIndexes.push(collection.candidateLineageIndexes[index] ?? -1);
+  }
+  collection.candidates = keptCandidates;
+  collection.candidateLineageIndexes = keptLineageIndexes;
 }
 
 export function getLastContextOrchestratorLineage(): ContextOrchestratorLineage | null {
@@ -150,6 +251,7 @@ export function getLastContextOrchestratorLineage(): ContextOrchestratorLineage 
 export function resetContextOrchestratorLineageForTests(): void {
   lastLineage = null;
   lineageByTurn.clear();
+  nativeNegotiationByTurn.clear();
 }
 
 export type ContextOrchestratorCandidateInput = Omit<
@@ -173,7 +275,7 @@ export function recordContextOrchestratorSourceDecision(
     sourceId: string;
     channel: TurnInjectionChannel;
     target: ContextCandidateTarget;
-    reason: "empty" | "flag-off" | "kill-switch";
+    reason: "empty" | "flag-off" | "kill-switch" | "skip-channel";
   },
 ): ContextCandidateLineage {
   return recordContextCandidateSkip(turnId, input);
@@ -201,6 +303,8 @@ export function finalizeContextOrchestratorTurn(params: {
    */
   attemptIndex?: number;
   modelCallIndex?: number;
+  /** RC-03: the full provider-bound system prompt this model call sends. */
+  systemPrompt?: string;
   /**
    * F-01: seal only when a real model-call projection exists. The
    * before_agent_start pass finalizes for the system prompt but its empty
@@ -212,17 +316,45 @@ export function finalizeContextOrchestratorTurn(params: {
     enabled?: boolean;
     database?: { env?: NodeJS.ProcessEnv; path?: string };
   };
+  /**
+   * T-B6 (TF-0126): dedupKeys injected by earlier model calls of this
+   * attempt, forwarded to candidate finalization so re-collected
+   * working_memory content that did not change deduplicates instead of
+   * re-injecting. Undefined keeps legacy behavior.
+   */
+  priorDedupKeys?: ReadonlySet<string>;
+  /**
+   * FP-P2-06: true when the attempt has at least one DCS context-block
+   * projection enabled. The DCS capacity is then held in the ledger before any
+   * lower-precedence charge can consume it. Undefined/false keeps the
+   * pre-existing budget behaviour byte for byte, so callers that are not a
+   * DCS-enabled attempt (and unit tests that project candidates directly) are
+   * unaffected.
+   */
+  dcsProjectionEnabled?: boolean;
 }): {
   messages: AgentMessage[];
   projection: ContextCandidateProjection;
 } {
   const wasFinalized = getContextCandidateCollection(params.turnId)?.diagnostics.finalized === true;
+  gateBlockStoreInjectionForNativeContext(params.turnId);
   const ledger = beginTurnInjectionBudget({ turnId: params.turnId });
+  if (params.dcsProjectionEnabled === true) {
+    reserveTurnInjectionCapacity(ledger, DCS_PROJECTION_CHANNELS, KNOWLEDGE_INJECTION_CHAR_BUDGET);
+  }
   const projected = projectContextCandidates({
     turnId: params.turnId,
     ledger,
     messages: params.messages,
+    priorDedupKeys: params.priorDedupKeys,
   });
+  // The first projection precedes the model-call seal. Register the charged
+  // text, so a later reopened collection still attributes the actual prompt.
+  for (const contribution of projected.projection.systemPromptContributions ?? []) {
+    if (contribution.sourceId === "compass-ssp" || contribution.sourceId === "compass-retrieval") {
+      recordRc03SystemPromptContribution(contribution.sourceId, contribution.text, params.cfg);
+    }
+  }
   // RC-03 production wiring: at the pre-seal semantic producer convergence
   // point, run the seal hook when the RC-03 flag is on (explicit override or
   // resolved from the real source-runtime config). It enforces that all
@@ -241,11 +373,13 @@ export function finalizeContextOrchestratorTurn(params: {
       providerId: params.providerId,
       attemptIndex: params.attemptIndex,
       modelCallIndex: params.modelCallIndex,
+      systemPrompt: params.systemPrompt,
       database: params.rc03Seal?.database,
     });
   }
   const collection = getContextCandidateCollection(params.turnId);
   const turnLineage = lineageByTurn.get(params.turnId);
+  if (collection && !wasFinalized) recordCompassProjection(collection, projected.projection);
   if (turnLineage && collection) {
     turnLineage.candidates = collection.lineage;
     turnLineage.candidateDiagnostics = collection.diagnostics;
@@ -275,7 +409,32 @@ export function finalizeContextOrchestratorTurn(params: {
 
 export function endContextOrchestratorTurn(turnId: string): ContextCandidateCollection | undefined {
   lineageByTurn.delete(turnId);
+  nativeNegotiationByTurn.delete(turnId);
   return endContextCandidateCollection(turnId);
+}
+
+/** CLI and native harnesses lack embedded assembly hooks; use the same candidate owner. */
+export function projectStandaloneCompassContext(params: {
+  turnId: string;
+  context?: PreparedCompassContext;
+  cfg?: unknown;
+}): string | undefined {
+  if (!params.context) return undefined;
+  beginTurnInjectionBudget({
+    turnId: params.turnId,
+    killed: isContextEnhancementKillSwitchEngaged(params.cfg),
+  });
+  try {
+    collectCompassContext(params.turnId, params.context, params.cfg);
+    return finalizeContextOrchestratorTurn({
+      turnId: params.turnId,
+      messages: [],
+      seal: false,
+    }).projection.systemPromptAddition;
+  } finally {
+    endContextOrchestratorTurn(params.turnId);
+    endTurnInjectionBudget(params.turnId);
+  }
 }
 
 function resolveStages(stages: ContextOrchestratorStage[] | undefined): ContextOrchestratorStage[] {
@@ -313,6 +472,59 @@ function resolveVtokenBudget(cfg: unknown): number | undefined {
   } catch {
     return undefined;
   }
+}
+
+function capabilityFromConfig(cfg: unknown): NativeContextCapabilities | undefined {
+  try {
+    if (!isRecord(cfg)) return undefined;
+    const runtime = isRecord(cfg.runtime) ? cfg.runtime : undefined;
+    const candidates = [
+      cfg.capabilities,
+      runtime?.capabilities,
+      isRecord(runtime?.model) ? runtime.model.capabilities : undefined,
+      cfg.model && isRecord(cfg.model) ? cfg.model.capabilities : undefined,
+      cfg.models && isRecord(cfg.models) ? cfg.models.capabilities : undefined,
+    ];
+    for (const candidate of candidates) {
+      if (!isRecord(candidate)) continue;
+      if (
+        typeof candidate.nativeMemory !== "boolean" &&
+        typeof candidate.nativeContextGating !== "boolean"
+      ) {
+        continue;
+      }
+      return {
+        ...(typeof candidate.nativeMemory === "boolean"
+          ? { nativeMemory: candidate.nativeMemory }
+          : {}),
+        ...(typeof candidate.nativeContextGating === "boolean"
+          ? { nativeContextGating: candidate.nativeContextGating }
+          : {}),
+      };
+    }
+  } catch {
+    // fail-closed: no declaration means current behavior.
+  }
+  return undefined;
+}
+
+/**
+ * P5 hd-double-compression-contract negotiation. Input declarations win over
+ * config-shaped capability declarations; absence returns all-off negotiation.
+ */
+export function resolveNativeContextNegotiation(
+  cfg: unknown,
+  input?: NativeContextCapabilities,
+): NativeContextNegotiation {
+  const declared = input ?? capabilityFromConfig(cfg);
+  const nativeMemory = declared?.nativeMemory === true;
+  const nativeContextGating = declared?.nativeContextGating === true;
+  return {
+    nativeMemory,
+    nativeContextGating,
+    memoryPilotDisabled: nativeMemory || nativeContextGating,
+    vtokenDisabled: nativeMemory || nativeContextGating,
+  };
 }
 
 function isMemoryPilotEnabled(cfg: unknown): boolean {
@@ -379,6 +591,9 @@ export async function computeContextExtraSystemPrompt(
   const started = Date.now();
   const stagesRequested = resolveStages(options.stages);
   const log = options.log;
+  const nativeContext = resolveNativeContextNegotiation(cfg, input.nativeContextCapabilities);
+  const hasNativeDeclaration = nativeContext.nativeMemory || nativeContext.nativeContextGating;
+  rememberNativeNegotiation(input.turnId, nativeContext);
   const lineage: ContextOrchestratorLineage = {
     turnId: input.turnId,
     sessionId: input.sessionId,
@@ -395,6 +610,7 @@ export async function computeContextExtraSystemPrompt(
     },
     totalCharsAdded: 0,
     durationMs: 0,
+    ...(hasNativeDeclaration ? { nativeContext } : {}),
   };
 
   const deferProjection = input.deferProjection === true && input.turnId !== undefined;
@@ -424,6 +640,9 @@ export async function computeContextExtraSystemPrompt(
       })
     : undefined;
   const memorySourceId = resolveMemoryLineageSourceId(input.memoryProviderIds);
+  if (deferProjection && input.compassContext) {
+    collectCompassContext(input.turnId!, input.compassContext, cfg);
+  }
 
   try {
     if (isContextEnhancementKillSwitchEngaged(cfg)) {
@@ -459,7 +678,7 @@ export async function computeContextExtraSystemPrompt(
     }
 
     if (stagesRequested.includes("memory")) {
-      const enabled = isMemoryPilotEnabled(cfg);
+      const enabled = !nativeContext.memoryPilotDisabled && isMemoryPilotEnabled(cfg);
       const before = result?.length ?? 0;
       if (!enabled) {
         if (deferProjection) {
@@ -502,7 +721,7 @@ export async function computeContextExtraSystemPrompt(
           input.sessionKey,
           input.memoryProviderFactory,
           log,
-          { workspace: input.workspaceDir, taskId: input.runId },
+          { workspace: input.workspaceDir, taskId: input.taskId },
         );
         if (deferProjection) {
           const text = computed?.trim();
@@ -556,7 +775,7 @@ export async function computeContextExtraSystemPrompt(
 
     if (stagesRequested.includes("vtoken")) {
       const vtokenConfig = resolveVtokenAssemblyConfig(cfg);
-      const enabled = vtokenConfig.enabled;
+      const enabled = !nativeContext.vtokenDisabled && vtokenConfig.enabled;
       lineage.budget.vtokenBudgetTokens = vtokenConfig.budgetTokens;
       const before = result?.length ?? 0;
       if (!enabled) {

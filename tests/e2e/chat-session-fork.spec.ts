@@ -315,11 +315,11 @@ test.describe('Verse Claw chat session fork', () => {
           sessionStates: {
             ...params.forkWorkspace.sessionStates,
             [params.sourceSessionKey]: {
-              ...params.forkWorkspace.sessionStates[params.sourceSessionKey],
+              ...(params.forkWorkspace.sessionStates as Record<string, object>)[params.sourceSessionKey],
               draftInput: savedSourceDraft,
             },
             [params.forkSessionKey]: {
-              ...params.forkWorkspace.sessionStates[params.forkSessionKey],
+              ...(params.forkWorkspace.sessionStates as Record<string, object>)[params.forkSessionKey],
               draftInput: savedSourceDraft,
             },
           },
@@ -426,17 +426,13 @@ test.describe('Verse Claw chat session fork', () => {
 
       await expect(page.getByText('Design the runtime-backed fork flow.')).toBeVisible({ timeout: 30_000 });
       await page.getByTestId('chat-composer-input').fill(SOURCE_DRAFT);
-      await expect(page.getByTestId('chat-composer-fork')).toBeVisible();
-      await expect(page.getByTestId('chat-composer-handoff')).toHaveCount(0);
 
       await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
       await expect(page.getByTestId('chat-session-fork')).toBeVisible();
       await expect(page.getByTestId('chat-session-handoff')).toBeVisible();
       await expect(page.getByTestId('chat-session-fork-recommended')).toBeVisible();
       await expect(page.getByTestId('chat-session-handoff-recommended')).toHaveCount(0);
-      await page.keyboard.press('Escape');
-
-      await page.getByTestId('chat-composer-fork').click();
+      await page.getByTestId('chat-session-fork').click();
 
       await expect.poll(async () => app.evaluate(() => {
         const calls = (globalThis as typeof globalThis & {
@@ -574,8 +570,8 @@ test.describe('Verse Claw chat session fork', () => {
       await page.reload();
       await page.waitForLoadState('domcontentloaded');
 
-      await expect(page.getByTestId('chat-composer-fork')).toBeVisible({ timeout: 30_000 });
-      await page.getByTestId('chat-composer-fork').click();
+      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-session-fork').click();
       await expect(page.getByText('Transcript is too large to fork')).toBeVisible({ timeout: 30_000 });
       await page.getByRole('button', { name: 'Prepare handoff' }).click();
 
@@ -647,7 +643,7 @@ test.describe('Verse Claw chat session fork', () => {
       await expect(page.getByTestId('chat-composer-input')).toBeEnabled({ timeout: 30_000 });
       await page.getByTestId('chat-composer-input').fill('run long task');
       await page.getByTestId('chat-composer-send').click();
-      await expect(page.getByTestId('chat-composer-fork')).toBeDisabled();
+      await expect(page.getByTestId('chat-composer-fork')).toHaveCount(0);
       await expect(page.getByTestId('chat-composer-handoff')).toHaveCount(0);
 
       await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();

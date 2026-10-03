@@ -4,6 +4,10 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
+    // The vitest path helpers and scripts/lib checkers are untyped .mjs. Letting
+    // TS infer their shapes gives the tests real types instead of implicit any;
+    // checkJs stays off, so the .mjs sources themselves are not type-checked.
+    "allowJs": true,
     "tsBuildInfoFile": "../../.artifacts/tsgo-cache/core-test.tsbuildinfo"
   },
   "include": ["../../src/**/*.test.ts", "../../src/**/*.test.tsx", "../../test/**/*.ts"],

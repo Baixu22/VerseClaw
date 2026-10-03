@@ -30,13 +30,14 @@ import {
   Clock3,
   Folder,
   GitBranch,
+  Pin,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
 import { isGatewayRestarting } from '@/lib/gateway-status';
 import { rendererExtensionRegistry } from '@/extensions/registry';
 import { useSettingsStore } from '@/stores/settings';
-import { useUiOverlay, useUiVersion } from './ui-overlay-context';
+import { useUiOverlay } from './ui-overlay-context';
 import { useChatStore, type ChatRuntimeRunState, type ChatSession } from '@/stores/chat';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
@@ -47,10 +48,13 @@ import {
   buildLatestRuntimeRunBySession,
   buildSidebarTimeSessions,
   buildSidebarWorkspaceSessionGroups,
+  compareSidebarSessionEntries,
+  type SidebarSessionSort,
   type SidebarSessionEntry,
 } from './session-buckets';
 import { SessionSearchModal } from './SessionSearchModal';
 import { SessionFolderTree } from './SessionFolderTree';
+import { SessionContextMenu, type SessionContextMenuTarget } from './SessionContextMenu';
 import { SidebarRow } from './SidebarRow';
 import {
   OfficialArchiveIcon,
@@ -67,13 +71,15 @@ import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { hostApi } from '@/lib/host-api';
-import { SIDEBAR_COLLAPSED_WIDTH, MAC_SIDEBAR_CHROME_HEIGHT } from '@shared/sidebar-layout';
+import type { WorkspaceSessionListState } from '@shared/types/workspace';
+import { MAC_SIDEBAR_CHROME_HEIGHT } from '@shared/sidebar-layout';
 import { useTranslation } from 'react-i18next';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useNewChatAction } from './use-new-chat-action';
 import { CalendarDays, FileText, Inbox as CodexInbox, Laptop, ListChecks, PenLine } from '@/components/icons/codex-icons';
 import { toast } from 'sonner';
-import { createFreshWorkspaceSessionKey } from '@/lib/workspace-session';
+import { useSessionIntentStore } from '@/stores/session-intent';
+import { createFreshWorkspaceSessionKey, createWorkspaceScopedForkSession } from '@/lib/workspace-session';
 
 interface NavItemProps {
   to: string;
@@ -119,6 +125,8 @@ interface SessionRowProps {
   isEditing: boolean;
   sessionLabel: string;
   sessionStatus?: SidebarSessionStatus | null;
+  isPinned: boolean;
+  isUnread: boolean;
   editingLabel: string;
   currentSessionKey: string;
   isOnChat: boolean;
@@ -132,6 +140,10 @@ interface SessionRowProps {
   navigate: (to: string) => void;
   onDeleteClick: (key: string, label: string) => void;
   onDismissSessionStatus: (key: string, signature: string) => void;
+  onMarkRead: (key: string) => void;
+  onTogglePinned: (key: string) => void;
+  /** Right-click opens the full action menu (SessionContextMenu). */
+  onOpenContextMenu: (key: string, x: number, y: number) => void;
   leadingActions?: React.ReactNode;
   forceActionsVisible?: boolean;
 }
@@ -149,6 +161,16 @@ type SidebarSessionStatus = {
 const COMPLETED_SESSION_STATUSES = new Set(['completed', 'success', 'done', 'finished']);
 const ERROR_SESSION_STATUSES = new Set(['failed', 'error', 'killed', 'timeout']);
 const ABORTED_SESSION_STATUSES = new Set(['aborted', 'cancelled', 'canceled']);
+const WAITING_SESSION_STATUSES = new Set([
+  'waiting',
+  'waiting_approval',
+  'awaiting_input',
+  'awaiting-input',
+  'needs_input',
+  'needs-input',
+  'pending_approval',
+  'pending-approval',
+]);
 
 function runHasWaitingApproval(run: ChatRuntimeRunState | null): boolean {
   if (!run) return false;
@@ -173,12 +195,16 @@ function buildSidebarSessionStatus(input: {
   const currentRunActive = isCurrentSession && (input.sending || input.pendingFinal || input.activeRunId != null);
   const sessionStatus = input.session.status?.toLowerCase();
   const latestRunStatus = latestRun?.status?.toLowerCase();
+  const waitingForInput = (isCurrentSession && input.pendingFinal)
+    || runHasWaitingApproval(latestRun)
+    || WAITING_SESSION_STATUSES.has(sessionStatus ?? '')
+    || WAITING_SESSION_STATUSES.has(latestRunStatus ?? '');
 
   let kind: SidebarSessionStatusKind | null = null;
   if (isCurrentSession && input.runError) {
     kind = 'error';
-  } else if (currentRunActive || input.session.hasActiveRun === true || sessionStatus === 'running' || latestRunStatus === 'running') {
-    kind = (isCurrentSession && input.pendingFinal) || runHasWaitingApproval(latestRun) ? 'waiting' : 'running';
+  } else if (waitingForInput || currentRunActive || input.session.hasActiveRun === true || sessionStatus === 'running' || latestRunStatus === 'running') {
+    kind = waitingForInput ? 'waiting' : 'running';
   } else if (COMPLETED_SESSION_STATUSES.has(latestRunStatus ?? '') || COMPLETED_SESSION_STATUSES.has(sessionStatus ?? '')) {
     kind = 'completed';
   } else if (ERROR_SESSION_STATUSES.has(latestRunStatus ?? '') || ERROR_SESSION_STATUSES.has(sessionStatus ?? '')) {
@@ -226,6 +252,8 @@ const SessionRowMemo = memo(function SessionRow({
   isEditing,
   sessionLabel,
   sessionStatus,
+  isPinned,
+  isUnread,
   editingLabel,
   currentSessionKey,
   isOnChat,
@@ -239,6 +267,9 @@ const SessionRowMemo = memo(function SessionRow({
   navigate,
   onDeleteClick,
   onDismissSessionStatus,
+  onMarkRead,
+  onTogglePinned,
+  onOpenContextMenu,
   leadingActions,
   forceActionsVisible = false,
 }: SessionRowProps) {
@@ -331,8 +362,29 @@ const SessionRowMemo = memo(function SessionRow({
       actionsClassName="task-hover-actions"
       onMouseEnter={handleRowHoverStart}
       onMouseLeave={handleRowHoverEnd}
+      /* Right-click anywhere on the row — including its hover controls — opens
+         the action menu. Everything that is not worth a permanent 22px button
+         lives there (migrate, fork, hand off, copy paths, unread). */
+      onContextMenu={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        onOpenContextMenu(s.key, event.clientX, event.clientY);
+      }}
       actions={(
         <>
+          <button
+            type="button"
+            data-testid={`sidebar-session-pin-${s.key}`}
+            aria-label={t(isPinned ? 'chat:sidebar.unpinSession' : 'chat:sidebar.pinSession')}
+            title={t(isPinned ? 'chat:sidebar.unpinSession' : 'chat:sidebar.pinSession')}
+            onClick={(e) => {
+              e.stopPropagation();
+              onTogglePinned(s.key);
+            }}
+            className={cn('task-hover-btn', isPinned && 'task-hover-btn--active')}
+          >
+            <Pin />
+          </button>
           {leadingActions}
           <button
             type="button"
@@ -370,6 +422,7 @@ const SessionRowMemo = memo(function SessionRow({
         type="button"
         data-testid={`sidebar-session-${s.key}`}
         onClick={() => {
+          onMarkRead(s.key);
           if (currentSessionKey === s.key) {
             void onLoadHistory(false);
           } else {
@@ -380,11 +433,29 @@ const SessionRowMemo = memo(function SessionRow({
         onDoubleClick={() => onStartRename(s.key, sessionLabel)}
         className="task-select"
       >
-        {/* Official row: the title is the first child so it receives the
-            flex/ellipsis/fade contract. Runtime state trails it, replacing the
-            reference's task-progress spinner slot, and is only present when a
-            session actually has state — idle rows reserve nothing. */}
-        <span className="marquee-text"><span className="marquee-text__inner">{sessionLabel}</span></span>
+        {/* One line, one title. The project name used to ride here as a
+            subtitle, which doubled every row's height for a fact that is
+            identical for every session in the group — it now lives in the
+            pinned project header (and in this row's tooltip). */}
+        <div className="task-title-block">
+          <span className={cn('marquee-text', isUnread && 'task-title--unread')}>
+            <span className="marquee-text__inner">{sessionLabel}</span>
+          </span>
+        </div>
+        {isPinned && (
+          <Pin
+            className="task-pinned-marker"
+            data-testid={`sidebar-session-pinned-${s.key}`}
+            aria-label={t('chat:sidebar.pinnedSession')}
+          />
+        )}
+        {isUnread && (
+          <span
+            className="task-unread-dot"
+            data-testid={`sidebar-session-unread-${s.key}`}
+            aria-label={t('chat:sidebar.unreadSession')}
+          />
+        )}
         {sessionStatus && (
           <span
             data-testid={`sidebar-session-status-${s.key}`}
@@ -479,8 +550,6 @@ function SidebarSettingsNavItem({ collapsed }: { collapsed: boolean }) {
 
 export function Sidebar() {
   const isMac = window.electron?.platform === 'darwin';
-  const uiVersion = useUiVersion();
-  const isUiV2 = uiVersion === 'v2';
   const { sidebarCollapsed, setSidebarCollapsed, sidebarWidth, setSidebarWidth, devModeUnlocked } = useSettingsStore(useShallow((state) => ({
     sidebarCollapsed: state.sidebarCollapsed,
     setSidebarCollapsed: state.setSidebarCollapsed,
@@ -509,9 +578,11 @@ export function Sidebar() {
   const archiveSession = useChatStore((s) => s.archiveSession);
   const renameSession = useChatStore((s) => s.renameSession);
   const loadHistory = useChatStore((s) => s.loadHistory);
+  const loadSessions = useChatStore((s) => s.loadSessions);
   const hydrateStartup = useChatStore((s) => s.hydrateStartup);
   const handleNewChat = useNewChatAction();
   const workspaceProfiles = useWorkspacesStore((s) => s.profiles);
+  const activeWorkspaceId = useWorkspacesStore((s) => s.activeWorkspaceId);
   const workspacesLoading = useWorkspacesStore((s) => s.loading);
   const workspacesError = useWorkspacesStore((s) => s.error);
   const fetchWorkspaces = useWorkspacesStore((s) => s.fetchWorkspaces);
@@ -521,6 +592,8 @@ export function Sidebar() {
   const renameWorkspaceFolder = useWorkspacesStore((s) => s.renameFolder);
   const deleteWorkspaceFolder = useWorkspacesStore((s) => s.deleteFolder);
   const moveSessionToFolder = useWorkspacesStore((s) => s.moveSessionToFolder);
+  const groupSessions = useWorkspacesStore((s) => s.groupSessions);
+  const saveWorkspaceState = useWorkspacesStore((s) => s.saveWorkspaceState);
   const inboxItems = useInboxStore((state) => state.items);
   const refreshInbox = useInboxStore((state) => state.refresh);
   const [dismissedCompletedStatuses, setDismissedCompletedStatuses] = useState<Record<string, string>>({});
@@ -577,6 +650,7 @@ export function Sidebar() {
   const [editingSessionKey, setEditingSessionKey] = useState<string | null>(null);
   const [editingLabel, setEditingLabel] = useState('');
   const [sessionView, setSessionView] = useState<'project' | 'time'>('project');
+  const [sessionSort, setSessionSort] = useState<SidebarSessionSort>('newest');
   /* Official sections are collapsible; conversations default to open so the
      restored session list is visible without an extra click. */
   const [sessionSectionOpen, setSessionSectionOpen] = useState(true);
@@ -585,6 +659,11 @@ export function Sidebar() {
   const [collapsedWorkspaceIds, setCollapsedWorkspaceIds] = useState<Record<string, boolean>>({});
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [projectMenu, setProjectMenu] = useState<{ workspaceId: string; top: number; left: number } | null>(null);
+  /* Right-click target for the conversation action menu. Kept as the anchor
+     only: everything the menu renders is derived at render time, so a session
+     that changes while the menu is open cannot show stale state. */
+  const [sessionContextMenu, setSessionContextMenu] = useState<{ sessionKey: string; x: number; y: number } | null>(null);
+  const requestSessionIntent = useSessionIntentStore((state) => state.request);
 
   useEffect(() => {
     void fetchAgents();
@@ -714,6 +793,141 @@ export function Sidebar() {
   const handleMoveSessionToFolder = useCallback(async (workspaceId: string, sessionKey: string, folderId: string | null) => {
     await moveSessionToFolder(workspaceId, sessionKey, folderId);
   }, [moveSessionToFolder]);
+
+  const handleDropSessionToGroup = useCallback(async (
+    workspaceId: string,
+    sourceSessionKey: string,
+    targetSessionKey: string,
+    autoGroupName: string,
+  ) => {
+    await groupSessions(workspaceId, sourceSessionKey, targetSessionKey, autoGroupName);
+  }, [groupSessions]);
+
+  const findWorkspaceForSession = useCallback((sessionKey: string) => (
+    workspaceProfiles.find((profile) => (
+      profile.activeSessionKey === sessionKey
+      || Boolean(profile.sessionStates?.[sessionKey])
+      || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey)
+    )) ?? null
+  ), [workspaceProfiles]);
+
+  const updateSessionListState = useCallback((sessionKey: string, patch: WorkspaceSessionListState) => {
+    const workspace = findWorkspaceForSession(sessionKey);
+    if (!workspace) return;
+    const current = workspace.sessionStates?.[sessionKey]?.sessionList ?? {};
+    void saveWorkspaceState({
+      id: workspace.id,
+      sessionKey,
+      state: { sessionList: { ...current, ...patch } },
+    });
+  }, [findWorkspaceForSession, saveWorkspaceState]);
+
+  const markSessionRead = useCallback((sessionKey: string) => {
+    updateSessionListState(sessionKey, { unread: false, lastReadAt: Date.now() });
+  }, [updateSessionListState]);
+
+  const toggleSessionUnread = useCallback((sessionKey: string) => {
+    const workspace = findWorkspaceForSession(sessionKey);
+    const current = workspace?.sessionStates?.[sessionKey]?.sessionList ?? {};
+    updateSessionListState(sessionKey, current.unread
+      ? { unread: false, lastReadAt: Date.now() }
+      : { unread: true });
+  }, [findWorkspaceForSession, updateSessionListState]);
+
+  const toggleSessionPinned = useCallback((sessionKey: string) => {
+    const workspace = findWorkspaceForSession(sessionKey);
+    const current = workspace?.sessionStates?.[sessionKey]?.sessionList ?? {};
+    updateSessionListState(sessionKey, { pinned: !current.pinned });
+  }, [findWorkspaceForSession, updateSessionListState]);
+
+  /*
+   * Conversation action menu (right-click).
+   *
+   * `openSessionContextMenu` MUST keep a stable identity: it is threaded into
+   * `renderSessionRow`, which is a prop of the memoized `SessionFolderTree`.
+   * Closing over the menu's own state here would re-render every session row on
+   * open/close — the exact regression `sidebar-render-containment` locks down.
+   */
+  const openSessionContextMenu = useCallback((sessionKey: string, x: number, y: number) => {
+    setSessionContextMenu({ sessionKey, x, y });
+  }, []);
+
+  const closeSessionContextMenu = useCallback(() => setSessionContextMenu(null), []);
+
+  const copyTextToClipboard = useCallback(async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(t('chat:sidebar.copied'));
+    } catch {
+      toast.error(t('chat:sidebar.copyFailed'));
+    }
+  }, [t]);
+
+  const handleCopySessionWorkPath = useCallback((sessionKey: string) => {
+    const workspace = findWorkspaceForSession(sessionKey);
+    if (!workspace?.rootPath) {
+      toast.error(t('chat:sidebar.noWorkPath'));
+      return;
+    }
+    void copyTextToClipboard(workspace.rootPath);
+  }, [copyTextToClipboard, findWorkspaceForSession, t]);
+
+  const handleMoveSessionFromMenu = useCallback(async (sessionKey: string, folderId: string | null) => {
+    const workspace = findWorkspaceForSession(sessionKey);
+    if (!workspace) return;
+    try {
+      await moveSessionToFolder(workspace.id, sessionKey, folderId);
+    } catch (error) {
+      toast.error(String(error instanceof Error ? error.message : error));
+    }
+  }, [findWorkspaceForSession, moveSessionToFolder]);
+
+  /** One step, as in the move menu: create the stream, then file the session. */
+  const handleCreateStreamAndMoveFromMenu = useCallback(async (sessionKey: string, name: string) => {
+    const workspace = findWorkspaceForSession(sessionKey);
+    const trimmed = name.trim();
+    if (!workspace || !trimmed) return;
+    try {
+      const folder = await createWorkspaceFolder(workspace.id, trimmed, null);
+      if (folder?.id) await moveSessionToFolder(workspace.id, sessionKey, folder.id);
+    } catch (error) {
+      toast.error(String(error instanceof Error ? error.message : error));
+    }
+  }, [createWorkspaceFolder, findWorkspaceForSession, moveSessionToFolder]);
+
+  /**
+   * Fork from the sidebar. `createWorkspaceScopedForkSession` files the branch
+   * into the ACTIVE workspace, so a session belonging to another project must
+   * become active first — otherwise the fork lands in the wrong project.
+   */
+  const handleForkSessionFromMenu = useCallback(async (sessionKey: string) => {
+    try {
+      const workspace = findWorkspaceForSession(sessionKey);
+      if (workspace && workspace.id !== activeWorkspaceId) {
+        await switchWorkspace(workspace.id);
+      }
+      await createWorkspaceScopedForkSession(sessionKey);
+      await loadSessions();
+      await loadHistory();
+      navigate('/');
+      toast.success(t('chat:composer.fork.toastCreated'));
+    } catch (error) {
+      toast.error(error instanceof Error && error.message
+        ? error.message
+        : t('chat:composer.fork.toastFailed'));
+    }
+  }, [activeWorkspaceId, findWorkspaceForSession, loadHistory, loadSessions, navigate, switchWorkspace, t]);
+
+  /**
+   * Handoff needs the draft dialog, which the chat page owns. Switch to the
+   * session, then park a one-shot intent the chat page picks up once the switch
+   * has landed (src/stores/session-intent.ts).
+   */
+  const handleHandoffSessionFromMenu = useCallback((sessionKey: string) => {
+    requestSessionIntent('handoff', sessionKey);
+    if (currentSessionKey !== sessionKey) switchSession(sessionKey);
+    navigate('/');
+  }, [currentSessionKey, navigate, requestSessionIntent, switchSession]);
 
   const handleRenameKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -875,16 +1089,39 @@ export function Sidebar() {
     Object.entries(sessionStatuses).map(([key, status]) => [key, status.kind]),
   ) as Record<string, SidebarSessionStatus['kind'] | undefined>, [sessionStatuses]);
 
+  const decorateSessionEntry = useCallback((entry: SidebarSessionEntry): SidebarSessionEntry => {
+    const workspace = findWorkspaceForSession(entry.session.key);
+    const listState = workspace?.sessionStates?.[entry.session.key]?.sessionList;
+    const isUnread = entry.session.key !== currentSessionKey && (
+      listState?.unread === true
+      || (typeof listState?.lastReadAt === 'number' && entry.activityMs > listState.lastReadAt)
+    );
+    return {
+      ...entry,
+      isPinned: listState?.pinned === true,
+      isUnread,
+      isPriority: isUnread || sessionStatuses[entry.session.key]?.kind === 'waiting',
+    };
+  }, [currentSessionKey, findWorkspaceForSession, sessionStatuses]);
+
+  const sortedTimeSessions = useMemo(
+    () => timeSessions.map(decorateSessionEntry).sort((left, right) => compareSidebarSessionEntries(left, right, sessionSort)),
+    [decorateSessionEntry, sessionSort, timeSessions],
+  );
+
+  const sortedWorkspaceSessionGroups = useMemo(() => (
+    workspaceSessionGroups.map((group) => ({
+      ...group,
+      sessions: group.sessions.map(decorateSessionEntry).sort((left, right) => compareSidebarSessionEntries(left, right, sessionSort)),
+    }))
+  ), [decorateSessionEntry, sessionSort, workspaceSessionGroups]);
+
   const renderSessionRow = useCallback((entry: SidebarSessionEntry, options?: {
     leadingActions?: React.ReactNode;
     forceActionsVisible?: boolean;
   }) => {
     const { session: s } = entry;
-    const workspace = workspaceProfiles.find((profile) => (
-      profile.activeSessionKey === s.key
-      || Boolean(profile.sessionStates?.[s.key])
-      || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === s.key)
-    ));
+    const workspace = findWorkspaceForSession(s.key);
     const sessionBranch = (s as ChatSession & { branch?: string; gitBranch?: string }).branch
       ?? (s as ChatSession & { branch?: string; gitBranch?: string }).gitBranch;
     const workspaceBranch = (workspace as (typeof workspace & { branch?: string; gitBranch?: string }))?.branch
@@ -899,6 +1136,8 @@ export function Sidebar() {
       isEditing={editingSessionKey === s.key}
       sessionLabel={sessionLabels[s.key] ?? s.label ?? s.displayName ?? s.key}
       sessionStatus={sessionStatuses[s.key] ?? null}
+      isPinned={entry.isPinned === true}
+      isUnread={entry.isUnread === true}
       editingLabel={editingLabel}
       currentSessionKey={currentSessionKey}
       isOnChat={isOnChat}
@@ -912,6 +1151,9 @@ export function Sidebar() {
       navigate={navigate}
       onDeleteClick={handleSessionDeleteClick}
       onDismissSessionStatus={handleDismissSessionStatus}
+      onMarkRead={markSessionRead}
+      onTogglePinned={toggleSessionPinned}
+      onOpenContextMenu={openSessionContextMenu}
       leadingActions={options?.leadingActions}
       forceActionsVisible={options?.forceActionsVisible}
     />;
@@ -919,12 +1161,17 @@ export function Sidebar() {
     agentNameById, editingSessionKey, editingLabel, sessionLabels, sessionStatuses,
     currentSessionKey, isOnChat, switchSession, loadHistory, navigate,
     handleStartRename, handleRenameSubmit, handleRenameCancel, handleRenameKeyDown,
-    handleSessionDeleteClick, handleDismissSessionStatus, workspaceProfiles,
+    handleSessionDeleteClick, handleDismissSessionStatus, findWorkspaceForSession,
+    markSessionRead, openSessionContextMenu, toggleSessionPinned,
   ]);
 
   const sidebarSessionEntries = sessionView === 'time' || (workspaceProfiles.length === 0 && sidebarSessions.length > 0 && !workspacesLoading)
-    ? timeSessions
+    ? sortedTimeSessions
     : null;
+  /* The heading names what the section is a list OF. In project view that is
+     projects — each one is a pinned header with its own conversations under it —
+     so the project name never has to be repeated on every row. */
+  const isProjectView = sidebarSessionEntries == null;
   const sessionPanelState = startupPhase === 'error'
     ? 'chat-error'
     : workspacesError
@@ -947,10 +1194,9 @@ export function Sidebar() {
         // `codex-sidebar` scopes the ported Codex sidebar recipe
         // (src/styles/codex-sidebar.css) to this subtree.
         'codex-sidebar codex-sidebar-surface relative flex min-h-0 shrink-0 flex-col overflow-hidden bg-surface-sidebar',
-        isUiV2 && 'bg-surface-sidebar',
         isResizing ? 'transition-none' : 'transition-[width] duration-180 ease-out',
       )}
-      style={{ width: sidebarCollapsed ? (isUiV2 ? 64 : SIDEBAR_COLLAPSED_WIDTH) : (isUiV2 ? Math.min(360, Math.max(240, sidebarWidth)) : sidebarWidth) }}
+      style={{ width: sidebarCollapsed ? 64 : Math.min(360, Math.max(240, sidebarWidth)) }}
     >
       {isMac && (
         <div
@@ -1032,7 +1278,7 @@ export function Sidebar() {
                 aria-expanded={sessionSectionOpen}
                 onClick={() => setSessionSectionOpen((open) => !open)}
               >
-                <span>{t('chat:sidebar.sectionConversations')}</span>
+                <span>{t(isProjectView ? 'chat:sidebar.sectionProjects' : 'chat:sidebar.sectionConversations')}</span>
                 <OfficialSectionChevron open={sessionSectionOpen} />
               </button>
               <div className="section-heading-actions">
@@ -1078,22 +1324,33 @@ export function Sidebar() {
               </div>
             </div>
 
-            {/* Session list */}
+            {/* Session list.
+                No `content-visibility: auto` here: skipping/restoring the whole
+                list's layout is what made the scroll height jump when a project
+                folded, and it also disables `position: sticky` for the project
+                headers inside. Row count in this list is bounded by the session
+                list itself, so there is nothing to virtualize away. */}
             <div className={cn('section-list-outer', sessionSectionOpen && 'open')} aria-hidden={!sessionSectionOpen}>
-            <div className="task-collection-list" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 31px' }}>
+            <div className="task-collection-list">
               {sidebarSessionEntries
                 ? sidebarSessionEntries.length > 0
                   ? sidebarSessionEntries.map((entry) => renderSessionRow(entry))
                   : <p className="px-2 py-2 text-xs text-muted-foreground">{sessionPanelMessage}</p>
-                : workspaceSessionGroups.length > 0
-                  ? workspaceSessionGroups.map((group) => {
+                 : sortedWorkspaceSessionGroups.length > 0
+                   ? sortedWorkspaceSessionGroups.map((group) => {
                   const collapsed = collapsedWorkspaceIds[group.workspace.id] ?? false;
+                  // Keep the project as an explicit parent even when there is
+                  // only one project. Workgroups belong to this boundary and
+                  // should never read as global sidebar groups.
+                   const showWorkspaceRow = true;
+                  const workspaceCollapsed = showWorkspaceRow && collapsed;
                   return (
                     <div
                       key={group.workspace.id}
                       data-testid={`sidebar-session-project-${group.workspace.id}`}
-                      data-state={collapsed ? 'collapsed' : 'expanded'}
+                      data-state={workspaceCollapsed ? 'collapsed' : 'expanded'}
                     >
+                      {showWorkspaceRow && (
                       <SidebarRow
                         className="project-row-wrap"
                         actionsClassName="project-hover-actions"
@@ -1145,21 +1402,27 @@ export function Sidebar() {
                           <span>{group.workspace.name}</span>
                         </button>
                       </SidebarRow>
+                      )}
                       <div
-                        className={cn('project-tasks-outer', !collapsed && 'open')}
-                        aria-hidden={collapsed}
+                        className={cn('project-tasks-outer', !workspaceCollapsed && 'open')}
+                        aria-hidden={workspaceCollapsed}
                       >
-                        <div className="project-tasks">
+                        {/* `flat` drops the indent the workspace row's icon
+                            column reserved, so group labels can sit on the
+                            sidebar's own left edge. */}
+                        <div className="project-tasks" data-flat={showWorkspaceRow ? undefined : 'true'}>
                           <SessionFolderTree
                             workspace={group.workspace}
                             sessions={group.sessions}
                             collapsedFolders={collapsedFolderIds}
                             sessionStatusKinds={sessionStatusKinds}
+                            sessionSort={sessionSort}
                             onToggleFolder={toggleFolder}
                             onCreateFolder={handleCreateFolder}
                             onRenameFolder={handleRenameFolder}
                             onDeleteFolder={handleDeleteFolder}
                             onMoveSession={handleMoveSessionToFolder}
+                            onDropSession={handleDropSessionToGroup}
                             renderSessionRow={renderSessionRow}
                           />
                         </div>
@@ -1200,7 +1463,7 @@ export function Sidebar() {
           className="codex-dropdown codex-dropdown--compact sidebar-session-organize-menu"
           style={{ top: sessionOrganizeMenu.top, left: sessionOrganizeMenu.left }}
         >
-          <div className="codex-dropdown__label">{t('chat:sidebar.sortBy')}</div>
+          <div className="codex-dropdown__label">{t('chat:sidebar.viewBy')}</div>
           {(['project', 'time'] as const).map((view) => {
             const checked = sessionView === view;
             return <button
@@ -1216,6 +1479,26 @@ export function Sidebar() {
             >
               <span className={cn('codex-dropdown__check', !checked && 'invisible')}><OfficialMenuCheckIcon /></span>
               <span className="codex-dropdown__text">{t(`chat:sessionView.${view}`)}</span>
+            </button>;
+          })}
+          <div className="codex-dropdown__sep" />
+          <div className="codex-dropdown__label">{t('chat:sidebar.sortBy')}</div>
+          {(['newest', 'active', 'priority'] as const).map((sort) => {
+            const checked = sessionSort === sort;
+            return <button
+              key={sort}
+              type="button"
+              role="menuitemradio"
+              data-testid={`sidebar-session-sort-${sort}`}
+              aria-checked={checked}
+              className={cn('codex-dropdown__item radio-item', checked && 'checked')}
+              onClick={() => {
+                setSessionSort(sort);
+                setSessionOrganizeMenu(null);
+              }}
+            >
+              <span className={cn('codex-dropdown__check', !checked && 'invisible')}><OfficialMenuCheckIcon /></span>
+              <span className="codex-dropdown__text">{t(`chat:sidebar.sort${sort[0].toUpperCase()}${sort.slice(1)}`)}</span>
             </button>;
           })}
         </div>,
@@ -1276,6 +1559,43 @@ export function Sidebar() {
         </div>,
         document.body,
       )}
+
+      {sessionContextMenu && (() => {
+        const workspace = findWorkspaceForSession(sessionContextMenu.sessionKey);
+        const listState = workspace?.sessionStates?.[sessionContextMenu.sessionKey]?.sessionList;
+        const assignedFolderId = workspace?.sessionFolderAssignments?.[sessionContextMenu.sessionKey] ?? null;
+        const folders = workspace?.sessionFolders ?? [];
+        const target: SessionContextMenuTarget = {
+          sessionKey: sessionContextMenu.sessionKey,
+          label: sessionLabels[sessionContextMenu.sessionKey]
+            ?? sidebarSessions.find((session) => session.key === sessionContextMenu.sessionKey)?.displayName
+            ?? sessionContextMenu.sessionKey,
+          x: sessionContextMenu.x,
+          y: sessionContextMenu.y,
+          isPinned: listState?.pinned === true,
+          isUnread: listState?.unread === true,
+          workspaceId: workspace?.id ?? null,
+          workspacePath: workspace?.rootPath,
+          folders,
+          currentFolderId: folders.some((folder) => folder.id === assignedFolderId) ? assignedFolderId : null,
+        };
+        return (
+          <SessionContextMenu
+            target={target}
+            onClose={closeSessionContextMenu}
+            onRename={handleStartRename}
+            onTogglePinned={toggleSessionPinned}
+            onToggleUnread={toggleSessionUnread}
+            onMoveToFolder={(sessionKey, folderId) => void handleMoveSessionFromMenu(sessionKey, folderId)}
+            onCreateFolderAndMove={(sessionKey, name) => void handleCreateStreamAndMoveFromMenu(sessionKey, name)}
+            onFork={(sessionKey) => void handleForkSessionFromMenu(sessionKey)}
+            onHandoff={handleHandoffSessionFromMenu}
+            onCopyWorkPath={handleCopySessionWorkPath}
+            onCopySessionId={(sessionKey) => void copyTextToClipboard(sessionKey)}
+            onDelete={handleSessionDeleteClick}
+          />
+        );
+      })()}
 
       <footer className="sidebar-footer">
         <span data-testid="sidebar-gateway-restarting" data-state={gatewayRestarting ? 'visible' : 'hidden'} className="sr-only" aria-live="polite">

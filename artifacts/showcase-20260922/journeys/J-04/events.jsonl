@@ -1,0 +1,37 @@
+{"t":"2026-09-22T12:21:40.087Z","event":"workspace.before","files":["calc.js","calc.test.js","package.json"],"testExit":1}
+{"t":"2026-09-22T12:21:40.354Z","event":"launch.begin","candidate":{"commit":"a8c9f4b69209c0a72c8ca91c8556d10bdabd234f","tree":"29869a91b8477c95d9c1e77e0dcd553b1d3223bb","branch":"feat/runtime-lifecycle-governance","statusPorcelain":"","sourceStatusPorcelain":"","dirty":false},"dist":{"dist/index.html":{"mtime":"2026-09-22T12:17:02.222Z","bytes":10067},"dist-electron/main/index.js":{"mtime":"2026-09-22T12:17:05.649Z","bytes":326},"openclaw_runtime/dist/entry.js":{"mtime":"2026-09-22T12:17:14.225Z","bytes":2470}},"hostApiPort":52309,"cdpPort":52310,"root":"C:\\Users\\27933\\AppData\\Local\\ClawX-live-data\\journey-20260922-j04-r3\\2026-09-22T12-21-39-956Z"}
+{"t":"2026-09-22T12:21:44.335Z","event":"launch.ready","url":"file:///D:/ClawX/dist/index.html?bootTheme=dark&e2eSkipSetup=1"}
+{"t":"2026-09-22T12:21:45.941Z","event":"host","module":"providers","action":"save","ok":true,"dataKeys":["success"]}
+{"t":"2026-09-22T12:21:46.050Z","event":"host","module":"providers","action":"setDefault","ok":true,"dataKeys":["success"]}
+{"t":"2026-09-22T12:21:46.053Z","event":"host","module":"providers","action":"hasApiKey","ok":true,"dataKeys":"boolean"}
+{"t":"2026-09-22T12:21:46.053Z","event":"provider.configured","save":{"success":true},"setDefault":{"success":true},"hasKey":true}
+{"t":"2026-09-22T12:21:46.495Z","event":"host","module":"gateway","action":"status","ok":true,"dataKeys":["state","port"]}
+{"t":"2026-09-22T12:21:49.500Z","event":"host","module":"gateway","action":"status","ok":true,"dataKeys":["state","port","error","pid","connectedAt","uptime","gatewayReady","reconnectAttempts"]}
+{"t":"2026-09-22T12:21:52.504Z","event":"host","module":"gateway","action":"status","ok":true,"dataKeys":["state","port","error","pid","connectedAt","uptime","gatewayReady","reconnectAttempts"]}
+{"t":"2026-09-22T12:21:55.520Z","event":"host","module":"gateway","action":"status","ok":true,"dataKeys":["state","port","error","pid","connectedAt","uptime","gatewayReady","reconnectAttempts"]}
+{"t":"2026-09-22T12:21:55.520Z","event":"gateway.ready","state":"running","port":18789,"pid":13212,"gatewayReady":true}
+{"t":"2026-09-22T12:21:55.635Z","event":"host","module":"workspaces","action":"create","ok":true,"dataKeys":["success","profiles","activeWorkspaceId","activeWorkspace"]}
+{"t":"2026-09-22T12:21:55.636Z","event":"workspace.created","wsId":"journey-calc","profiles":[{"id":"default","name":"默认工作区","permissionMode":"readOnly"},{"id":"journey-calc","name":"journey-calc","permissionMode":"readOnly"}]}
+{"t":"2026-09-22T12:21:55.652Z","event":"host","module":"workspaces","action":"switch","ok":true,"dataKeys":["success","activeWorkspaceId","activeWorkspace"]}
+{"t":"2026-09-22T12:21:55.652Z","event":"workspace.switched","wsId":"journey-calc","active":"C:\\Users\\27933\\AppData\\Local\\ClawX-live-data\\journey-20260922-j04-r3\\2026-09-22T12-21-39-956Z\\workspace","permissionMode":"readOnly"}
+{"t":"2026-09-22T12:22:01.378Z","event":"host","module":"gateway","action":"restart","ok":true,"dataKeys":["success"]}
+{"t":"2026-09-22T12:22:05.386Z","event":"host","module":"gateway","action":"status","ok":true,"dataKeys":["state","port","error","pid","connectedAt","uptime","gatewayReady","reconnectAttempts"]}
+{"t":"2026-09-22T12:22:05.387Z","event":"gateway.restarted","state":"running","port":18789,"pid":3320,"gatewayReady":true,"pidChanged":true}
+{"t":"2026-09-22T12:22:05.884Z","event":"host","module":"settings","action":"get","ok":true,"dataKeys":"string"}
+{"t":"2026-09-22T12:22:07.849Z","event":"gateway.listener","opened":true,"error":null,"port":18789,"tokenPresent":true}
+{"t":"2026-09-22T12:22:08.818Z","event":"gateway.rpc","method":"exec.approval.list","ok":true,"error":"Read-only mode does not allow Gateway mutations","blocked":true,"dataKeys":["success","blocked","error"]}
+{"t":"2026-09-22T12:22:08.819Z","event":"approval.boundary.begin","permissionMode":"readOnly"}
+{"t":"2026-09-22T12:22:09.035Z","event":"host","module":"chat","action":"sendWithMedia","ok":true,"dataKeys":["success","result"]}
+{"t":"2026-09-22T12:22:09.036Z","event":"chat.sent","runId":"f19c2082-14ef-4cca-9208-8a5dcc6b3198","send":{"success":true,"result":{"runId":"f19c2082-14ef-4cca-9208-8a5dcc6b3198"}}}
+{"t":"2026-09-22T12:22:18.468Z","event":"approval.requested.captured","approvalId":"8089e5b5-104d-44a1-9d5d-a9d5b30f3f86","command":"node --test","allowedDecisions":["allow-once","deny"]}
+{"t":"2026-09-22T12:22:25.522Z","event":"poll","messages":2,"lastRole":"assistant","testExit":1,"capturedRequested":1,"gatewayEvents":8}
+{"t":"2026-09-22T12:22:25.567Z","event":"gateway.rpc","method":"exec.approval.list","ok":true,"error":"Read-only mode does not allow Gateway mutations","blocked":true,"dataKeys":["success","blocked","error"]}
+{"t":"2026-09-22T12:22:41.426Z","event":"poll","messages":2,"lastRole":"assistant","testExit":1,"capturedRequested":1,"gatewayEvents":9}
+{"t":"2026-09-22T12:22:41.428Z","event":"host","module":"gateway","action":"status","ok":true,"dataKeys":["state","port","error","pid","connectedAt","uptime","gatewayReady","reconnectAttempts"]}
+{"t":"2026-09-22T12:22:41.430Z","event":"host","module":"settings","action":"get","ok":true,"dataKeys":"string"}
+{"t":"2026-09-22T12:22:41.437Z","event":"direct.gateway","method":"exec.approval.list","ok":true}
+{"t":"2026-09-22T12:22:41.816Z","event":"approval.resolved.captured","approvalId":"8089e5b5-104d-44a1-9d5d-a9d5b30f3f86"}
+{"t":"2026-09-22T12:22:41.818Z","event":"direct.gateway","method":"exec.approval.resolve","ok":true}
+{"t":"2026-09-22T12:22:52.970Z","event":"approval.requested.captured","approvalId":"dbe7de1c-27fc-4cdd-a87e-9775d44c2160","command":"npm test","allowedDecisions":["allow-once","deny"]}
+{"t":"2026-09-22T12:22:57.666Z","event":"poll","messages":6,"lastRole":"assistant","testExit":1,"capturedRequested":2,"gatewayEvents":31}
+{"t":"2026-09-22T12:22:58.433Z","event":"receipts","dbPath":"C:\\Users\\27933\\AppData\\Local\\ClawX-live-data\\journey-20260922-j04-r3\\2026-09-22T12-21-39-956Z\\user-data\\openclaw-source-state\\state\\openclaw.sqlite","runtime_receipts":12,"effect_receipts":0,"context_blocks":0,"columns":["receipt_id","idempotency_key","kind","runtime_mode","version","session_key","run_id","trace_id","attempt_index","model_call_index","wire_attempt_index","provider_id","adapter_id","transform_ids_json","selected_json","omitted_json","budget_json","policy_digest","logical_digest","wire_digest","correlation_digest","content_digest","created_at"],"flags":{"OPENCLAW_RC02_SHADOW_CENSUS":"1","OPENCLAW_RC03_SEAL":"1","scope":"driver process env only; product defaults unchanged"}}

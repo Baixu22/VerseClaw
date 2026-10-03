@@ -9,8 +9,20 @@
  * Run: pnpm exec playwright test tests/e2e/orb-visual-verify.spec.ts
  */
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { evidencePath } from './fixtures/evidence-root';
 
 const SESSION_KEY = 'agent:main:main';
+
+type OrbReport = {
+  canvases?: { total?: number };
+  summary?: { orbInsideScrollX?: boolean; canvas?: { w?: number; h?: number } | null; orb?: unknown; card?: unknown; scroll?: unknown };
+  inkDark?: { gray?: unknown[]; drawnPixels?: number } | null;
+  inkLight?: { gray?: unknown[]; drawnPixels?: number } | null;
+  tooltip?: unknown;
+  sidebarOrb?: { count?: number };
+  inline20px?: { count?: number } | null;
+  consoleErrors?: unknown[];
+};
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -171,9 +183,22 @@ test('orbs render on turn-summary head with tooltip, both themes', async ({ laun
       content: '*, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }',
     });
     await expect(page.getByTestId('chat-page')).toBeVisible();
+
+    // The orb is the run's live "working" indicator, so it only renders while a
+    // run is actually open (TurnSummaryCard gates it on status === 'running').
+    // Arm the seeded turn with a live runtime run the way the app does — a
+    // `run.started` event over the runtime-event channel — so the head shows the
+    // working orb. Seeding history alone leaves the turn settled (no orb), which
+    // is correct product behaviour on reload.
+    await app.evaluate(({ BrowserWindow }, identity) => {
+      for (const win of BrowserWindow.getAllWindows()) {
+        win.webContents.send('chat:runtime-event', { ...identity, type: 'run.started', startedAt: Date.now() });
+      }
+    }, { runId: 'orb-run', sessionKey: SESSION_KEY });
+
     await expect(page.getByTestId('chat-turn-summary-orb').first()).toBeVisible();
 
-    const report: Record<string, unknown> = {};
+    const report: OrbReport = {};
 
     report.canvases = await page.evaluate(() => ({
       total: document.querySelectorAll('canvas[role="img"]').length,
@@ -202,8 +227,10 @@ test('orbs render on turn-summary head with tooltip, both themes', async ({ laun
     const sampleInk = () => page.evaluate(() => {
       const c = document.querySelector('[data-testid="chat-turn-summary-orb"] canvas');
       if (!c) return null;
-      const ctx = c.getContext('2d');
-      const d = ctx.getImageData(0, 0, c.width, c.height).data;
+      const canvasEl = c as HTMLCanvasElement;
+      const ctx = canvasEl.getContext('2d');
+      if (!ctx) return { drawnPixels: 0, gray: [] as number[] };
+      const d = ctx.getImageData(0, 0, canvasEl.width, canvasEl.height).data;
       const gray = new Set();
       let drawn = 0;
       for (let i = 0; i < d.length; i += 4) {
@@ -217,7 +244,7 @@ test('orbs render on turn-summary head with tooltip, both themes', async ({ laun
     });
 
     report.inkDark = await sampleInk();
-    await page.screenshot({ path: 'reports/visual-tune/orbs-app-dark.png' });
+    await page.screenshot({ path: evidencePath('reports/visual-tune/orbs-app-dark.png') });
 
     // Tooltip on the 64px orb
     await page.getByTestId('chat-turn-summary-orb').first().hover();
@@ -236,8 +263,10 @@ test('orbs render on turn-summary head with tooltip, both themes', async ({ laun
       });
       if (!c) return { count: 0 };
       const r = c.getBoundingClientRect();
-      const ctx = c.getContext('2d');
-      const d = ctx.getImageData(0, 0, c.width, c.height).data;
+      const canvasEl = c as HTMLCanvasElement;
+      const ctx = canvasEl.getContext('2d');
+      if (!ctx) return { drawnPixels: 0, gray: [] as number[] };
+      const d = ctx.getImageData(0, 0, canvasEl.width, canvasEl.height).data;
       let drawn = 0;
       const gray = new Set();
       for (let i = 0; i < d.length; i += 4) {
@@ -273,7 +302,7 @@ test('orbs render on turn-summary head with tooltip, both themes', async ({ laun
     });
     await page.waitForTimeout(800);
     report.inkLight = await sampleInk();
-    await page.screenshot({ path: 'reports/visual-tune/orbs-app-light.png' });
+    await page.screenshot({ path: evidencePath('reports/visual-tune/orbs-app-light.png') });
 
     // Console errors
     const errors: string[] = [];

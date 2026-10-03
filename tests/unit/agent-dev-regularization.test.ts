@@ -11,6 +11,8 @@ import {
   buildAuditReport,
   maturityLevelForScore,
   parseAuditArgs,
+  collectGitSourceState,
+  resolveSourceChangeTimeMs,
 } from '../../scripts/agent-dev-audit.mjs';
 import {
   REQUIRED_BUILD_ARTIFACTS,
@@ -37,6 +39,8 @@ import {
 
 const execFileAsync = promisify(execFile);
 
+type Identified = { id: string; status?: string; severity?: string; args?: unknown; findings?: unknown };
+
 describe('agent dev regularization contracts', () => {
   async function writeFileWithMtime(path: string, content: string, date: Date) {
     await mkdir(join(path, '..'), { recursive: true });
@@ -61,7 +65,7 @@ describe('agent dev regularization contracts', () => {
       'denial produces zero effect',
       'unknown outcome',
     ]);
-    expect(CHECKS.map((check) => check.id)).toEqual([
+    expect(CHECKS.map((check: Identified) => check.id)).toEqual([
       'connection-drop',
       'rate-limiting',
       'duplicate-delivery',
@@ -71,11 +75,8 @@ describe('agent dev regularization contracts', () => {
     ]);
   });
 
-  // The runner spawns a full `pnpm --dir openclaw_runtime exec vitest` child
-  // (channel-conformance.mjs runFixtureSuite), which takes ~10-15s on this
-  // machine — far beyond vitest's 5s default. Explicit timeout instead of
-  // betting on machine speed: this pre-existing timeout aborted agent-dev
-  // deep-test before its playwright step (R6 prerequisite cleanup).
+  // A scaffold whose runtime target file is absent fail-closes without booting
+  // vitest. The timeout stays for the real rc05 fixture path, which still spawns.
   it('writes fail-closed channel conformance reports for a scaffold-shaped channel', async () => {
     const originalRoot = process.env.CLAWX_CHANNEL_CONFORMANCE_ROOT;
     const originalArtifactRoot = process.env.CLAWX_CHANNEL_CONFORMANCE_ARTIFACT_ROOT;
@@ -96,7 +97,7 @@ describe('agent dev regularization contracts', () => {
       // source-regex matches.
       expect(report.success).toBe(false);
       expect(report.scenarios).toHaveLength(REQUIRED_SCENARIOS.length);
-      expect(report.scenarios.every((check) => check.status === 'fail')).toBe(true);
+      expect(report.scenarios.every((check: Identified) => check.status === 'fail')).toBe(true);
     } finally {
       if (originalRoot === undefined) {
         delete process.env.CLAWX_CHANNEL_CONFORMANCE_ROOT;
@@ -509,7 +510,7 @@ export const AGENT_DEV_SCENARIOS = [
       },
     ]);
 
-    expect(limits.map((entry) => [entry.id, entry.severity])).toEqual([
+    expect(limits.map((entry: Identified) => [entry.id, entry.severity])).toEqual([
       ['e2e-build', 'limit'],
       ['typecheck', 'watch'],
       ['contract', 'ok'],
@@ -658,21 +659,21 @@ dist-electron/main/index.js  834.50 kB │ gzip: 247.48 kB
   it('keeps full deep-test commands by default and switches only requested fast paths', () => {
     const fullOptions = parseDeepTestArgs([]);
     const fullPlan = createDeepTestPlan(fullOptions, createFreshBuildReuse());
-    expect(fullPlan.find((step) => step.id === 'typecheck')?.args).toEqual(['run', 'typecheck']);
-    expect(fullPlan.find((step) => step.id === 'vitest-agent-dev')?.args).toEqual(['agent-dev:unit']);
-    expect(fullPlan.find((step) => step.id === 'playwright-agent-dev')?.args)
+    expect(fullPlan.find((step: Identified) => step.id === 'typecheck')?.args).toEqual(['run', 'typecheck']);
+    expect(fullPlan.find((step: Identified) => step.id === 'vitest-agent-dev')?.args).toEqual(['agent-dev:unit']);
+    expect(fullPlan.find((step: Identified) => step.id === 'playwright-agent-dev')?.args)
       .toEqual(['run', 'test:e2e:agent-dev-quality:run']);
 
     const fastOptions = parseDeepTestArgs(['--fast-unit', '--fast-typecheck', '--smoke-e2e']);
     const fastPlan = createDeepTestPlan(fastOptions, createFreshBuildReuse());
-    expect(fastPlan.find((step) => step.id === 'typecheck')?.args).toEqual(['run', 'typecheck:agent-dev']);
-    expect(fastPlan.find((step) => step.id === 'vitest-agent-dev')?.args).toEqual(['agent-dev:unit:fast']);
-    expect(fastPlan.find((step) => step.id === 'playwright-agent-dev')?.args)
+    expect(fastPlan.find((step: Identified) => step.id === 'typecheck')?.args).toEqual(['run', 'typecheck:agent-dev']);
+    expect(fastPlan.find((step: Identified) => step.id === 'vitest-agent-dev')?.args).toEqual(['agent-dev:unit:fast']);
+    expect(fastPlan.find((step: Identified) => step.id === 'playwright-agent-dev')?.args)
       .toEqual(['run', 'test:e2e:agent-dev-quality:smoke']);
 
     const cachedOptions = parseDeepTestArgs(['--cached-typecheck']);
     const cachedPlan = createDeepTestPlan(cachedOptions, createFreshBuildReuse());
-    expect(cachedPlan.find((step) => step.id === 'typecheck')?.args).toEqual(['run', 'typecheck:cached']);
+    expect(cachedPlan.find((step: Identified) => step.id === 'typecheck')?.args).toEqual(['run', 'typecheck:cached']);
 
     const dailyReuseOptions = parseDeepTestArgs(['--reuse-build', '--cached-typecheck', '--smoke-e2e']);
     const dailyReusePlan = createDeepTestPlan(dailyReuseOptions, {
@@ -680,11 +681,11 @@ dist-electron/main/index.js  834.50 kB │ gzip: 247.48 kB
       reusable: true,
       reason: 'fresh enough',
     });
-    expect(dailyReusePlan.find((step) => step.id === 'e2e-build')).toEqual(expect.objectContaining({
+    expect(dailyReusePlan.find((step: Identified) => step.id === 'e2e-build')).toEqual(expect.objectContaining({
       skipped: true,
       commandLine: 'reuse existing build',
     }));
-    expect(dailyReusePlan.find((step) => step.id === 'playwright-agent-dev')?.args)
+    expect(dailyReusePlan.find((step: Identified) => step.id === 'playwright-agent-dev')?.args)
       .toEqual(['run', 'test:e2e:agent-dev-quality:smoke']);
   });
 
@@ -694,7 +695,7 @@ dist-electron/main/index.js  834.50 kB │ gzip: 247.48 kB
       reusable: true,
       reason: 'fresh enough',
     });
-    const build = plan.find((step) => step.id === 'e2e-build');
+    const build = plan.find((step: Identified) => step.id === 'e2e-build');
 
     expect(build).toEqual(expect.objectContaining({
       skipped: true,
@@ -875,12 +876,12 @@ dist-electron/main/index.js  834.50 kB │ gzip: 247.48 kB
       impact: 'high',
       validationCommands: expect.arrayContaining(['pnpm agent-dev:audit:report']),
     }));
-    expect(blocked.scoreBreakdown.find((item) => item.id === 'performance-discipline'))
+    expect(blocked.scoreBreakdown.find((item: Identified) => item.id === 'performance-discipline'))
       .toEqual(expect.objectContaining({
         deducted: expect.any(Number),
         status: 'fail',
       }));
-    expect(blocked.disqualifiers.map((item) => item.id)).toEqual(expect.arrayContaining([
+    expect(blocked.disqualifiers.map((item: Identified) => item.id)).toEqual(expect.arrayContaining([
       'latest-decision-blocked',
       'performance-limit:typecheck',
     ]));
@@ -902,7 +903,7 @@ dist-electron/main/index.js  834.50 kB │ gzip: 247.48 kB
       level: 'medium',
       staleGeneratedCount: 1,
     }));
-    expect(stale.dimensions.find((dimension) => dimension.id === 'evidence-completeness')?.findings)
+    expect(stale.dimensions.find((dimension: Identified) => dimension.id === 'evidence-completeness')?.findings)
       .toEqual(expect.arrayContaining([
         expect.objectContaining({ id: 'evidence-stale:deep-test', severity: 'fail' }),
       ]));
@@ -928,7 +929,7 @@ dist-electron/main/index.js  834.50 kB │ gzip: 247.48 kB
         newestRelevantSource: { path: 'scripts/agent-dev-deep-test.mjs' },
       }],
     });
-    expect(sourceNewer.dimensions.find((dimension) => dimension.id === 'evidence-completeness')?.findings)
+    expect(sourceNewer.dimensions.find((dimension: Identified) => dimension.id === 'evidence-completeness')?.findings)
       .toEqual(expect.arrayContaining([
         expect.objectContaining({ id: 'evidence-source-newer:deep-test', severity: 'fail' }),
       ]));
@@ -937,6 +938,52 @@ dist-electron/main/index.js  834.50 kB │ gzip: 247.48 kB
     expect(sourceNewer.disqualifiers).toEqual(expect.arrayContaining([
       expect.objectContaining({ id: 'evidence-source-newer:deep-test', severity: 'fail' }),
     ]));
+  });
+
+  it('resolves agent-dev source change times through git for clean checkouts', async () => {
+    const root = join(tmpdir(), `clawx-agent-dev-audit-git-${Date.now()}`);
+    await mkdir(root, { recursive: true });
+    const git = (...args: string[]) => execFileAsync('git', args, { cwd: root });
+    await git('init', '-q');
+    await git('config', 'user.email', 'audit@test.local');
+    await git('config', 'user.name', 'audit');
+    const file = join(root, 'source.mjs');
+    await writeFile(file, 'export const a = 1;\n', 'utf8');
+    // An absurd future mtime must not poison freshness once the file is
+    // committed clean in git (clean checkouts share checkout-time mtimes).
+    const futureMtime = new Date('2035-01-01T00:00:00Z');
+    await utimes(file, futureMtime, futureMtime);
+    await git('add', 'source.mjs');
+    await git('commit', '-qm', 'add source');
+
+    const rel = 'source.mjs';
+    const cleanState = collectGitSourceState(root, [rel]);
+    expect(cleanState).not.toBeNull();
+    const clean = resolveSourceChangeTimeMs({ path: rel, mtimeMs: futureMtime.getTime() }, cleanState);
+    expect(clean.timeSource).toBe('git-commit');
+    expect(clean.timeMs).toBeLessThanOrEqual(Date.now());
+    expect(clean.timeMs).toBeLessThan(futureMtime.getTime());
+
+    // A dirty tracked file falls back to working-tree mtime so the daily
+    // loop keeps hard-failing until evidence is refreshed.
+    await writeFile(file, 'export const a = 2;\n', 'utf8');
+    await utimes(file, futureMtime, futureMtime);
+    const dirtyState = collectGitSourceState(root, [rel]);
+    const dirty = resolveSourceChangeTimeMs({ path: rel, mtimeMs: futureMtime.getTime() }, dirtyState);
+    expect(dirty.timeSource).toBe('worktree-mtime');
+    expect(dirty.timeMs).toBe(futureMtime.getTime());
+
+    // Untracked files keep working-tree mtime.
+    const untracked = resolveSourceChangeTimeMs({ path: 'new-file.mjs', mtimeMs: futureMtime.getTime() }, dirtyState);
+    expect(untracked.timeSource).toBe('worktree-mtime');
+    expect(untracked.timeMs).toBe(futureMtime.getTime());
+
+    // Without git state (not a repository) the previous mtime behavior holds.
+    const noGit = resolveSourceChangeTimeMs({ path: rel, mtimeMs: futureMtime.getTime() }, null);
+    expect(noGit.timeSource).toBe('worktree-mtime');
+    expect(noGit.timeMs).toBe(futureMtime.getTime());
+
+    await rm(root, { recursive: true, force: true });
   });
 
   it('parses audit CLI reporting mode and classifies maturity levels', () => {

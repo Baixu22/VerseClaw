@@ -127,12 +127,12 @@ describe('R0-3 chat abort/checkStuck reclamation', () => {
 
   it('keeps the run state when chat.abort fails and warns the user', async () => {
     const { useChatStore } = await import('@/stores/chat');
-    useChatStore.setState({
+    (useChatStore.setState as (value: unknown) => void)({
       ...seedStore(),
       sending: true,
       activeRunId: 'run-r0-3',
       streamingText: 'partial stream',
-      streamingTools: [{ id: 'tool-1' }],
+      streamingTools: [{ id: 'tool-1' } as never],
       pendingToolImages: [],
       pendingFinal: true,
       lastUserMessageAt: Date.now(),
@@ -155,12 +155,12 @@ describe('R0-3 chat abort/checkStuck reclamation', () => {
 
   it('releases UI state only after a confirmed abort', async () => {
     const { useChatStore } = await import('@/stores/chat');
-    useChatStore.setState({
+    (useChatStore.setState as (value: unknown) => void)({
       ...seedStore(),
       sending: true,
       activeRunId: 'run-r0-3',
       streamingText: 'partial stream',
-      streamingTools: [{ id: 'tool-1' }],
+      streamingTools: [{ id: 'tool-1' } as never],
       pendingFinal: true,
       lastUserMessageAt: Date.now(),
     });
@@ -178,7 +178,7 @@ describe('R0-3 chat abort/checkStuck reclamation', () => {
 
   it('keeps exactly one pending checkStuck chain across consecutive sends', async () => {
     const { useChatStore } = await import('@/stores/chat');
-    useChatStore.setState(seedStore());
+    useChatStore.setState(seedStore() as never);
 
     await useChatStore.getState().sendMessage('first message');
     const afterFirstSend = vi.getTimerCount();
@@ -186,7 +186,7 @@ describe('R0-3 chat abort/checkStuck reclamation', () => {
 
     // Simulate the run draining, then send again: the old chain must be
     // cleared, leaving exactly one turn-timeout + one checkStuck timer.
-    useChatStore.setState({ sending: false });
+    (useChatStore.setState as (value: unknown) => void)({ sending: false });
     await useChatStore.getState().sendMessage('second message');
     const afterSecondSend = vi.getTimerCount();
     expect(afterSecondSend).toBe(2);

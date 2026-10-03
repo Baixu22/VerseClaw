@@ -13,7 +13,7 @@
  * Keep both files. Deleting either one re-opens the gap the other closes.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { act, render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 const { gatewayState, agentsState } = vi.hoisted(() => ({
@@ -572,6 +572,12 @@ describe('Permission approvals', () => {
  * all three were closed — `metadata.reasoning` has no producer, the execution
  * graph drops `thinking` rows, and the streaming builder strips thinking blocks.
  * The runtime emitted the content all along.
+ *
+ * Reasoning now lives INSIDE the turn's process disclosure rather than beside
+ * the answer, and that disclosure folds once the run completes. So "is the
+ * reasoning reachable" means "is it there after opening the fold" — these cases
+ * open it explicitly. What must never happen is reasoning that is unreachable
+ * even with the fold open, or reasoning that renders in two places at once.
  */
 describe('Thinking reasoning', () => {
   beforeEach(() => {
@@ -596,6 +602,9 @@ describe('Thinking reasoning', () => {
     await mountChat();
 
     await waitFor(() => expect(screen.getAllByText('Pinned the algorithm to HS256.').length).toBeGreaterThan(0));
+    // A thinking-only turn — no tools, no files — still earns a process card;
+    // otherwise its reasoning would have nowhere to live.
+    expandTurnSummary();
     expect(screen.getByTestId('assistant-reasoning-panel')).toBeInTheDocument();
     expect(screen.getByText('The verify call has no algorithms allowlist.')).toBeInTheDocument();
   });
@@ -623,8 +632,142 @@ describe('Thinking reasoning', () => {
     await mountChat();
 
     await waitFor(() => expect(screen.getAllByText('Done.').length).toBeGreaterThan(0));
+    expandTurnSummary();
     expect(screen.getByTestId('assistant-reasoning-panel')).toBeInTheDocument();
     expect(screen.getByText('Checking where the signing key is loaded.')).toBeInTheDocument();
+  });
+
+  /**
+   * The complaint this whole disclosure exists for: with the fold shut, nothing
+   * between the prompt and the answer may reproduce the reasoning. One owner per
+   * turn — if this regresses, thinking is back at the answer's level.
+   */
+  it('hides reasoning entirely while the process fold is shut', async () => {
+    await seedChat({
+      messages: [
+        { role: 'user', content: 'fix the auth bug' },
+        {
+          role: 'assistant',
+          id: 'reply',
+          content: [
+            { type: 'thinking', thinking: 'The verify call has no algorithms allowlist.' },
+            { type: 'text', text: 'Pinned the algorithm to HS256.' },
+          ],
+        },
+      ],
+    });
+    await mountChat();
+
+    await waitFor(() => expect(screen.getAllByText('Pinned the algorithm to HS256.').length).toBeGreaterThan(0));
+    expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByTestId('assistant-reasoning-panel')).not.toBeInTheDocument();
+    expect(screen.queryByText('The verify call has no algorithms allowlist.')).not.toBeInTheDocument();
+  });
+
+  /** The collapsed header has to say what opening it would reveal. */
+  it('counts adopted thoughts on the collapsed header', async () => {
+    await seedChat({
+      messages: [
+        { role: 'user', content: 'fix the auth bug' },
+        {
+          role: 'assistant',
+          id: 'reply',
+          content: [
+            { type: 'thinking', thinking: 'First thought.' },
+            { type: 'thinking', thinking: 'Second thought.' },
+            { type: 'text', text: 'Pinned the algorithm to HS256.' },
+          ],
+        },
+      ],
+    });
+    await mountChat();
+
+    await waitFor(() => expect(screen.getAllByText('Pinned the algorithm to HS256.').length).toBeGreaterThan(0));
+    expect(screen.getByTestId('chat-turn-summary-badge-thoughts')).toBeInTheDocument();
+  });
+
+  /**
+   * Thinking spread across a run's intermediate narration turns belongs to the
+   * same process box — one merged stream, in the order the work happened, not
+   * one panel per message.
+   */
+  it('merges reasoning from every message in the run segment into one panel', async () => {
+    await seedChat({
+      messages: [
+        { role: 'user', content: 'fix the auth bug' },
+        {
+          role: 'assistant',
+          id: 'narration-1',
+          content: [
+            { type: 'thinking', thinking: 'Read the middleware first.' },
+            { type: 'tool_use', id: 't-1', name: 'bash', input: { command: 'rg jwt.verify' } },
+          ],
+        },
+        {
+          role: 'assistant',
+          id: 'narration-2',
+          content: [
+            { type: 'thinking', thinking: 'No allowlist on verify.' },
+            { type: 'tool_use', id: 't-2', name: 'bash', input: { command: 'rg algorithms' } },
+          ],
+        },
+        { role: 'assistant', id: 'reply', content: [{ type: 'text', text: 'Done.' }] },
+      ],
+    });
+    await mountChat();
+
+    await waitFor(() => expect(screen.getAllByText('Done.').length).toBeGreaterThan(0));
+    expandTurnSummary();
+    expect(screen.getAllByTestId('assistant-reasoning-panel')).toHaveLength(1);
+    expect(screen.getByText('Read the middleware first.')).toBeInTheDocument();
+    expect(screen.getByText('No allowlist on verify.')).toBeInTheDocument();
+  });
+
+  /**
+   * The mirror image of every other case here: a row that must NOT appear.
+   *
+   * `hasRenderableContent` counts `candidateAttachments`, the PRE-validation
+   * list, because path existence is async. A narration turn that references a
+   * file which then fails to validate therefore keeps its row alive while
+   * rendering nothing — and for an assistant turn "nothing" still costs an
+   * avatar. That was invisible while the turn's reasoning panel filled the row;
+   * once reasoning moved into the process disclosure it showed up as a bare
+   * avatar floating between the fold and the answer.
+   */
+  it('drops a narration row whose only content failed to materialize', async () => {
+    await seedChat({
+      messages: [
+        { role: 'user', content: 'fix the auth bug' },
+        {
+          role: 'assistant',
+          id: 'narration',
+          // Mirrors the real shape: thinking is adopted by the card, the text is
+          // folded into the graph, the tool card belongs to the run segment, and
+          // the referenced file does not exist.
+          content: [
+            { type: 'thinking', thinking: 'Read the middleware first.' },
+            { type: 'text', text: 'Let me look at the middleware.' },
+            { type: 'tool_use', id: 't-1', name: 'read_file', input: { path: '/repo/gone.ts' } },
+          ],
+          _attachedFiles: [{
+            fileName: 'gone.ts',
+            filePath: '/repo/gone.ts',
+            mimeType: 'text/plain',
+            fileSize: 0,
+            preview: null,
+            source: 'tool-result',
+          }],
+        },
+        { role: 'assistant', id: 'reply', content: [{ type: 'text', text: 'Done.' }] },
+      ],
+    });
+    await mountChat();
+
+    await waitFor(() => expect(screen.getAllByText('Done.').length).toBeGreaterThan(0));
+    const avatars = screen.getAllByTestId('chat-assistant-avatar');
+    // Exactly one assistant turn paints: the reply. The narration row must not
+    // survive as an avatar with an empty content column.
+    expect(avatars).toHaveLength(1);
   });
 
   it('shows live reasoning from the runtime run while streaming', async () => {
@@ -648,6 +791,8 @@ describe('Thinking reasoning', () => {
     await mountChat();
 
     await waitFor(() => expect(screen.getByTestId('assistant-reasoning-panel')).toBeInTheDocument());
+    // An active run's fold defaults open, so live thinking needs no interaction.
+    expect(screen.getAllByTestId('assistant-reasoning-panel')).toHaveLength(1);
     expect(screen.getByText('Reading the middleware.')).toBeInTheDocument();
     expect(screen.getByText('No allowlist on verify.')).toBeInTheDocument();
   });
@@ -807,7 +952,7 @@ describe('Turn summary contents badges', () => {
     approvalsMock.mockResolvedValue({ ok: true, approvals: [] });
   });
 
-  it('shows completed contents by default, then labels them when manually collapsed', async () => {
+  it('labels contents while collapsed, then shows them when opened', async () => {
     await seedChat({
       messages: [
         { role: 'user', content: 'do the thing' },
@@ -833,15 +978,17 @@ describe('Turn summary contents badges', () => {
 
     await waitFor(() => expect(screen.getAllByText('Done.').length).toBeGreaterThan(0));
 
-    // Completed run activity is visible by default.
-    expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
-    expect(screen.queryByTestId('chat-turn-summary-badges')).not.toBeInTheDocument();
+    /* A finished turn folds its process away by default
+     * (`runActivityKeepExpandedOnComplete` is off), so the badge row is the only
+     * thing standing between the prompt and the answer — which is the point. */
+    expect(screen.queryByTestId('chat-turn-summary-details')).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-turn-summary-badge-plan')).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
 
-    // Once manually collapsed, the badge row becomes the compact index.
-    expect(screen.queryByTestId('chat-turn-summary-details')).not.toBeInTheDocument();
-    expect(screen.getByTestId('chat-turn-summary-badge-plan')).toBeInTheDocument();
+    // Opened, the contents speak for themselves and the chips step aside.
+    expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-turn-summary-badges')).not.toBeInTheDocument();
   });
 
   it('marks a pending approval in the badge row', async () => {
@@ -872,5 +1019,59 @@ describe('Turn summary contents badges', () => {
     // What we assert is that the count reaches the card at all.
     fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
     expect(screen.getByTestId('chat-run-pending-approvals')).toBeInTheDocument();
+  });
+});
+
+/**
+ * #47: a turn the user opened must stay open when its trigger message's id
+ * changes underneath it. The trigger user message is created optimistically
+ * with a client UUID and then replaced in place by the Gateway echo carrying
+ * the persisted id (`mergePendingOptimisticUserMessages` in stores/chat). The
+ * disclosure state used to key off `runKey` (`msg-<id>`), so that swap orphaned
+ * the user's override and the turn silently re-collapsed — exactly the symptom
+ * FP-P1-04 hit against a real runtime turn (aria-expanded stuck at "false").
+ */
+describe('Turn disclosure survives the optimistic→server id swap', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    approvalsMock.mockResolvedValue({ ok: true, approvals: [] });
+  });
+
+  it('keeps the turn open after the trigger message id changes', async () => {
+    await seedWorkspace();
+    await seedChat({
+      messages: [
+        { role: 'user', id: 'user-optimistic-uuid', content: 'weather in tokyo?', timestamp: 1_772_000_000 },
+        { role: 'assistant', id: 'weather-call', content: [{ type: 'tool_use', id: 'w-1', name: 'weather', input: WEATHER_INPUT }] },
+        { role: 'assistant', id: 'reply', content: [{ type: 'text', text: 'Here you go.' }] },
+      ],
+    });
+    await mountChat();
+
+    await waitFor(() => expect(screen.getByTestId('chat-turn-summary-toggle')).toBeInTheDocument());
+
+    // A finished turn folds by default; the user opens it.
+    const toggle = screen.getByTestId('chat-turn-summary-toggle');
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
+
+    // The Gateway echo swaps the optimistic user message for the persisted one:
+    // same position, same text/timestamp, different id.
+    const { useChatStore } = await import('@/stores/chat');
+    await act(async () => {
+      useChatStore.setState({
+        messages: [
+          { role: 'user', id: 'server-persisted-id', content: 'weather in tokyo?', timestamp: 1_772_000_000 },
+          { role: 'assistant', id: 'weather-call', content: [{ type: 'tool_use', id: 'w-1', name: 'weather', input: WEATHER_INPUT }] },
+          { role: 'assistant', id: 'reply', content: [{ type: 'text', text: 'Here you go.' }] },
+        ],
+      } as never);
+    });
+
+    await waitFor(() =>
+      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true'),
+    );
+    expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
   });
 });

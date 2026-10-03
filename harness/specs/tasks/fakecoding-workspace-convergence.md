@@ -1,13 +1,16 @@
 ---
 id: fakecoding-workspace-convergence
 title: FakeCoding conversation workspace convergence
-scenario: windows-ui-v2
-taskType: implementation
+scenario: gateway-backend-communication
+scenarios:
+  - windows-ui-v2
+taskType: runtime-bridge
 intent: Converge the Chat workspace into a restrained FakeCoding-style Review, Terminal, Browser, Files, Artifacts, and Audit surface while preserving the existing real renderer-to-Main capabilities and compatibility routes.
 touchedAreas:
   - harness/specs/tasks/fakecoding-workspace-convergence.md
   - shared/types/workspace.ts
   - src/stores/artifact-panel.ts
+  - src/lib/workspace-session.ts
   - src/components/icons/**
   - src/components/file-preview/**
   - src/components/ai-elements/web-preview.tsx
@@ -23,8 +26,16 @@ touchedAreas:
   - tests/e2e/code-review-center.spec.ts
   - tests/e2e/remote-forge-controlled-preview.spec.ts
   - tests/e2e/agent-browser-workbench.spec.ts
+  - tests/e2e/fixtures/electron.ts
+  - tests/e2e/task-ledger.spec.ts
+  - tests/e2e/clawgraph.spec.ts
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - docs/clawx-design-overview.md
+  - docs/dev/task-forest-engineering-20260913.md
 expectedUserBehavior:
-  - The workspace exposes only Review, Terminal, Browser, Files, Artifacts, and Audit as visible top-level tabs.
+  - The workspace exposes Review, Terminal, Browser, Files, Artifacts, and Audit through on-demand tabs, alongside the existing Agents tool tab.
   - Review contains Changes, AI Review, and Pull Requests without restoring a separate top-level review page.
   - Browser contains Preview and Live; Live exposes supervised session navigation, visibility, screenshots, snapshots, UID interactions, and mode-upgrade approval without moving scheduled tasks or profile management into Chat.
   - Terminal can be shown in the bottom panel or the side tab while retaining one backend session, scrollback, and permission state.
@@ -32,9 +43,12 @@ expectedUserBehavior:
   - Task Ledger and ClawGraph remain full-page tools reached from workspace context links with optional nodeId or runId focus.
 requiredProfiles:
   - fast
+  - comms
   - e2e
 requiredRules:
   - renderer-main-boundary
+  - backend-communication-boundary
+  - comms-regression
   - agent-browser-supervised-task-boundary
   - ui-motion-material-system
   - renderer-loading-experience
@@ -46,13 +60,15 @@ requiredTests:
   - pnpm run i18n:lint
   - pnpm run typecheck
   - pnpm run build:vite
-  - pnpm run test:e2e:run tests/e2e/workspace-terminal-panel.spec.ts tests/e2e/workspace-web-preview-panel.spec.ts tests/e2e/workspace-git-panel.spec.ts tests/e2e/code-review-center.spec.ts tests/e2e/remote-forge-controlled-preview.spec.ts tests/e2e/agent-browser-workbench.spec.ts
+  - pnpm run test:e2e:run tests/e2e/workspace-terminal-panel.spec.ts tests/e2e/workspace-web-preview-panel.spec.ts tests/e2e/workspace-git-panel.spec.ts tests/e2e/code-review-center.spec.ts tests/e2e/remote-forge-controlled-preview.spec.ts tests/e2e/agent-browser-workbench.spec.ts tests/e2e/workspace-convergence-layout.spec.ts tests/e2e/task-ledger.spec.ts tests/e2e/clawgraph.spec.ts
 acceptance:
   - WorkspacePanelIntent is the only renderer entry for opening a workspace capability and persists only canonical tab and subview values.
   - Legacy changes and preview tabs restore as Review Changes and Files respectively; legacy workspaceView web and git restore as Browser Preview and Review Changes.
   - Switching Terminal between bottom and side placement does not open a second terminal session, duplicate host event subscriptions, or discard scrollback.
   - Browser Preview keeps dev-server detection, start, stop, logs, component selection, and composer capture; Browser Live uses existing typed hostApi.agentBrowser methods for all displayed actions.
   - Review Changes retains Git operations, AI Review retains codeReview execution and Task Ledger node creation, and Pull Requests retains Remote Forge approval and stale-head protections.
+  - Mocked workspace E2E scenarios use deterministic system resource metadata; explicit system.info fixtures can still exercise resource warnings.
+  - Restoring a workspace or opening read-only Review does not clear legacy topic files; the shared new-session and handoff paths and explicit fresh-agent actions retain topic reset, while forks retain their topic.
   - Official workspace tab icons preserve the exact FakeCoding 20x20 filled path geometry; command icons preserve their source 24x24 stroke geometry and attributes.
   - At 1280x800 and 960x800 in light and dark themes there is no horizontal overflow, clipped control text, incoherent overlap, duplicate heading, or duplicate primary action.
   - The renderer adds no direct IPC or Gateway calls and does not change backend, Host API, persistence, browser security, or approval contracts.

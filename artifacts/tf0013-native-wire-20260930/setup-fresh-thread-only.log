@@ -1,0 +1,38 @@
+Loading host and real Codex plugin
+Running atomic-drop
+[agent/embedded] codex app-server context-engine projection decision
+[agent/embedded] codex app-server wrote context-engine thread binding
+{"name":"atomic-drop","added":7000,"compass":100,"system":100,"killed":false,"turn":0,"assemblies":1,"requests":1,"aborted":false,"timedOut":false,"promptError":null,"ledgerReleased":true}
+Running shared-exhaustion
+[agent/embedded] codex app-server context-engine projection decision
+[agent/embedded] codex app-server wrote context-engine thread binding
+{"name":"shared-exhaustion","added":100,"compass":8000,"system":100,"killed":false,"turn":0,"assemblies":1,"requests":1,"aborted":false,"timedOut":false,"promptError":null,"ledgerReleased":true}
+Running kill
+[agent/embedded] codex app-server context-engine projection decision
+[agent/embedded] codex app-server wrote context-engine thread binding
+{"name":"kill","added":100,"compass":100,"system":100,"killed":true,"turn":0,"assemblies":0,"requests":1,"aborted":false,"timedOut":false,"promptError":null,"ledgerReleased":true}
+Running bootstrap
+[agent/embedded] codex app-server context-engine projection decision
+[agent/embedded] codex app-server wrote context-engine thread binding
+{"name":"bootstrap","added":100,"compass":100,"system":100,"killed":false,"turns":2,"turn":0,"assemblies":1,"requests":1,"aborted":false,"timedOut":false,"promptError":null,"ledgerReleased":true}
+[agent/embedded] codex app-server context-engine projection decision
+{"name":"bootstrap","added":100,"compass":100,"system":100,"killed":false,"turns":2,"turn":1,"assemblies":1,"requests":1,"aborted":false,"timedOut":false,"promptError":null,"ledgerReleased":true}
+Running stale-retry
+[agent/embedded] codex app-server context-engine projection decision
+[agent/embedded] codex app-server wrote context-engine thread binding
+{"name":"stale-retry","added":100,"compass":100,"system":5000,"killed":false,"turns":2,"turn":0,"assemblies":1,"requests":1,"aborted":false,"timedOut":false,"promptError":null,"ledgerReleased":true}
+[agent/embedded] codex app-server context-engine projection decision
+{"name":"stale-retry","added":100,"compass":100,"system":5000,"killed":false,"turns":2,"turn":1,"assemblies":1,"requests":1,"aborted":false,"timedOut":false,"promptError":null,"ledgerReleased":true}
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+1 !== 2
+
+    at file:///D:/ClawX/artifacts/tf0013-native-wire-20260930/run.mjs:146:14
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 2,
+  operator: 'strictEqual',
+  diff: 'simple'
+}

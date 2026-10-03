@@ -6,6 +6,7 @@
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "types": ["node"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -22,27 +23,28 @@
     "noFallthroughCasesInSwitch": true,
 
     /* Paths */
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@electron/*": ["electron/*"],
-      "@shared/*": ["shared/*"],
-      "@openclaw/normalization-core": ["openclaw_runtime/packages/normalization-core/src/index.ts"],
+      "@/*": ["./src/*"],
+      "@electron/*": ["./electron/*"],
+      "@shared/*": ["./shared/*"],
+      "@openclaw/normalization-core": ["./openclaw_runtime/packages/normalization-core/src/index.ts"],
       "@openclaw/normalization-core/number-coercion": [
-        "openclaw_runtime/packages/normalization-core/src/number-coercion.ts"
+        "./openclaw_runtime/packages/normalization-core/src/number-coercion.ts"
       ],
       "@openclaw/normalization-core/record-coerce": [
-        "openclaw_runtime/packages/normalization-core/src/record-coerce.ts"
+        "./openclaw_runtime/packages/normalization-core/src/record-coerce.ts"
       ],
       "@openclaw/normalization-core/string-coerce": [
-        "openclaw_runtime/packages/normalization-core/src/string-coerce.ts"
+        "./openclaw_runtime/packages/normalization-core/src/string-coerce.ts"
       ],
       "@openclaw/normalization-core/string-normalization": [
-        "openclaw_runtime/packages/normalization-core/src/string-normalization.ts"
+        "./openclaw_runtime/packages/normalization-core/src/string-normalization.ts"
       ],
-      "@openclaw/normalization-core/*": ["openclaw_runtime/packages/normalization-core/src/*"],
-      "@openclaw/acp-core": ["openclaw_runtime/packages/acp-core/src/index.ts"],
-      "@openclaw/acp-core/*": ["openclaw_runtime/packages/acp-core/src/*"]
+      "@openclaw/normalization-core/*": ["./openclaw_runtime/packages/normalization-core/src/*"],
+      "@openclaw/acp-core": ["./openclaw_runtime/packages/acp-core/src/index.ts"],
+      "@openclaw/acp-core/*": ["./openclaw_runtime/packages/acp-core/src/*"],
+      "@openclaw/runtime-redaction": ["./openclaw_runtime/src/logging/redact.ts"],
+      "@openclaw/provider-request-auth": ["./openclaw_runtime/src/agents/provider-request-auth.ts"]
     }
   },
   "include": ["src", "shared"],

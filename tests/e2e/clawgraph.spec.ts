@@ -149,6 +149,11 @@ test.describe('ClawGraph', () => {
           compile,
           snapshot: runSnapshot,
         },
+        [stableStringify(['clawGraph', 'status', { runId: 'clawgraph_run_1' }])]: {
+          success: true,
+          available: true,
+          snapshot: runSnapshot,
+        },
         [stableStringify(['clawGraph', 'events', { runId: 'clawgraph_run_1', limit: 200 }])]: {
           success: true,
           available: true,
@@ -177,5 +182,11 @@ test.describe('ClawGraph', () => {
 
     await page.getByRole('tab', { name: 'Review' }).click();
     await expect(page.getByTestId('clawgraph-review')).toContainText('Audit evidence needs user confirmation.');
+
+    await page.evaluate(() => { window.location.hash = '/'; });
+    await expect(page.getByTestId('clawgraph-page')).toHaveCount(0);
+    await page.evaluate(() => { window.location.hash = '/clawgraph?runId=clawgraph_run_1'; });
+    await expect(page.getByTestId('clawgraph-page')).toContainText('clawgraph_run_1');
+    await expect(page.getByTestId('clawgraph-dag')).toContainText('audit');
   });
 });

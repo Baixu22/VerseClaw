@@ -3,7 +3,7 @@ id: fakecoding-ui-convergence
 title: FakeCoding design-system and information-architecture convergence
 scenario: windows-ui-v2
 taskType: implementation
-intent: Establish the cross-platform FakeCoding UI foundation, preserve a development-only legacy rollback, and provide the serial contract for moving existing Verse Claw capabilities into Inbox, Scheduled, Chat workspace panels, and a focused Knowledge surface.
+intent: Establish the cross-platform FakeCoding UI foundation, provide the serial migration contract for moving existing Verse Claw capabilities into Inbox, Scheduled, Chat workspace panels, and a focused Knowledge surface.
 touchedAreas:
   - harness/specs/tasks/fakecoding-ui-convergence.md
   - harness/specs/tasks/windows-ui-v2-apple-motion.md
@@ -21,7 +21,7 @@ touchedAreas:
   - tests/unit/ui-version.test.ts
   - tests/e2e/windows-ui-v2.spec.ts
 expectedUserBehavior:
-  - UI v2 is the default on Windows, macOS, and Linux; `?uiVersion=legacy` remains available only while migration is in progress.
+  - UI v2 is the shared desktop shell; TF-0027 retires the temporary legacy override after the serial migration flows pass.
   - The application shell uses continuous grayscale work surfaces, fine dividers, compact toolbars, sans headings, and restrained motion.
   - Shared primary actions use foreground/background inversion; blue is limited to links, keyboard focus, and running state.
   - Shared controls stay within the 28-36px density contract and do not bounce or scale on press.
@@ -42,7 +42,7 @@ requiredTests:
   - pnpm run build:vite
   - pnpm run test:e2e:run tests/e2e/windows-ui-v2.spec.ts
 acceptance:
-  - `resolveUiVersion` defaults to v2 for every supported desktop platform and honors explicit v2/legacy query overrides.
+  - `resolveUiVersion` resolves v2 for every supported desktop platform; old visual query values remain compatible after the TF-0027 retirement.
   - Light and dark semantic materials use neutral FakeCoding-aligned grays; light mode no longer uses a warm cream family.
   - Shared primary buttons are grayscale, normal controls are at most 36px high, and shared buttons/tabs contain no `active:scale` classes.
   - Shared badges and switches are grayscale by default; cards and sheets do not use backdrop blur; dialog motion uses only opacity and a necessary 4px translation.

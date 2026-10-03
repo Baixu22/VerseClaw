@@ -1,0 +1,341 @@
+{
+  "schema": "runtime-authority-convergence-rc-02-census/v1",
+  "generatedAt": "2026-09-23T07:13:19.936Z",
+  "node": "v24.15.0",
+  "candidate": {
+    "branch": "feat/runtime-lifecycle-governance",
+    "head": "78dc12d1c1e989f33cf7ca85955998ed40887352",
+    "headShort": "78dc12d1c",
+    "workingTree": "dirty",
+    "changedPaths": [
+      "artifacts/runtime-authority-convergence/rc-02/suite-results.json",
+      "artifacts/runtime-authority-convergence/rc-02/suite.log",
+      "scripts/rc02-shadow-census-report.mjs"
+    ]
+  },
+  "requiredGates": [
+    {
+      "id": "required-test-2",
+      "command": "pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts",
+      "exitCode": 0,
+      "testFiles": "1 passed (1)",
+      "tests": "61 passed (61)",
+      "outputSha256": "66a9fe14b8a1bffafb9a039214fb3b3b2bdc5db2c42683328c5335b06c82a250"
+    },
+    {
+      "id": "required-test-3",
+      "command": "pnpm exec vitest run tests/unit/runtime-authority-convergence-control-pack.test.ts",
+      "exitCode": 0,
+      "testFiles": "1 passed (1)",
+      "tests": "8 passed (8)",
+      "outputSha256": "780c1f2e4996625675e2cdad9760f59c6403c5331eda6899c148ce9d5c9af517"
+    },
+    {
+      "id": "required-test-4",
+      "command": "pnpm harness validate --spec harness/specs/tasks/rc02-full-payload-shadow-census.md",
+      "exitCode": 0,
+      "testFiles": "unknown",
+      "tests": "unknown",
+      "outputSha256": "74ca090c4a961b7abe30c9b2eb9fee547a9923579689a7af6d067595ad943d2d",
+      "specValid": true
+    }
+  ],
+  "suite": {
+    "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts receipt-store.test.ts shadow-census.test.ts rc02-shadow-census.acceptance.test.ts rc02-entry-matrix.acceptance.test.ts rc02-inbound-entry.acceptance.test.ts rc02-cron-entry.acceptance.test.ts rc02-cli-entry.acceptance.test.ts --passWithNoTests=false",
+    "cwd": "openclaw_runtime",
+    "exitCode": 0,
+    "green": true,
+    "attempts": [
+      {
+        "attempt": 1,
+        "exitCode": 0,
+        "testFiles": "7 passed (7)",
+        "tests": "50 passed (50)",
+        "failedTests": [],
+        "outputSha256": "c255c346e089f589469f6ef57e75a78742a4e3318bf1557a2652de4fcfa111d7"
+      }
+    ],
+    "testFiles": "7 passed (7)",
+    "tests": "50 passed (50)",
+    "totalTests": 50,
+    "passedCount": 50,
+    "failedCount": 0,
+    "failedTests": [],
+    "outputSha256": "c255c346e089f589469f6ef57e75a78742a4e3318bf1557a2652de4fcfa111d7",
+    "outputBytes": 2839,
+    "log": "artifacts/runtime-authority-convergence/rc-02/suite.log",
+    "results": "artifacts/runtime-authority-convergence/rc-02/suite-results.json",
+    "passedTests": [
+      "accepts canonical refs with URL-encoded context segments (production candidate ids)",
+      "appends a shadow receipt and reads it back by idempotency key",
+      "canonicalizes budget key order for content-sensitive idempotency",
+      "channel conformance fixture inbound: the fixture surface reaches the same guarded boundary",
+      "cli agentCommand entry: the real entry drives a model call through the guarded boundary with dual receipts",
+      "computes the wire digest from exact serialized bytes without mutating the body",
+      "conflict-fails when the same idempotency key has different content (hard constraint 2)",
+      "context engine: the sealed context bundle and the guarded wire body join through one correlation digest",
+      "cron isolated-agent entry: the real entry drives model calls through the guarded boundary with dual receipts",
+      "desktop chat inbound: dispatchInboundMessage drives a real model call with dual receipts",
+      "does not treat a provider id as an adapter owner",
+      "embedded attempt x registry api openai-chatgpt-responses: a dual receipt per real model call",
+      "embedded attempt x registry api openai-completions: a dual receipt per real model call",
+      "embedded attempt x registry api openai-responses: a dual receipt per real model call",
+      "embedded attempt: runEmbeddedAgent yields a dual receipt per real model call",
+      "embedded runner reaches the guarded production transport with correlated receipts",
+      "emits ShadowContextReceipt/v0 and ShadowWireReceipt/v0 for a source call",
+      "enforces receipt version, digest, identity, and index constraints in SQLite",
+      "fails the census when a shadow write cannot persist, without throwing (hard constraint 5)",
+      "is a no-op when the flag is off",
+      "is idempotent when the same call body is emitted twice",
+      "is idempotent when the same idempotency key has identical content",
+      "marks the npm fallback runtime_mode as npm without counting toward coverage",
+      "no approval or delivery traffic is added by observation",
+      "npm fallback reports runtimeMode=npm and never counts as source coverage",
+      "observer off/on parity: identical serialized bytes and tool order per registry api",
+      "owner-classification coverage: every provider-bound field maps to a producer/transform/named adapter (unknown=0)",
+      "preserves the outer model-call identity through a provider finalizer",
+      "propagates an actual storage failure for the shadow caller to record (hard constraint 5)",
+      "provider payload hook: the production cache-trace hook installs onPayload and receipts still bind the final bytes",
+      "recomputes contentDigest and rejects a forged digest before writing",
+      "records only digests/refs/indexes, never raw prompt or tool output (hard constraint 1)",
+      "refuses unbounded deletion and deletes only under an explicit lifecycle policy (hard constraint 4)",
+      "rejects a different receipt type under the same key: context/1 to wire/1",
+      "rejects a different receipt type under the same key: shadow_context/0 to context/1",
+      "rejects a different receipt type under the same key: wire/1 to effect/1",
+      "rejects non-canonical object properties, prototypes, arrays, nulls, versions, and digests",
+      "rejects raw payload fields and invalid call indexes before opening a write transaction",
+      "rejects unbounded identifiers, transforms, refs, budgets, and incomplete model identity",
+      "retains committed receipts across exited Node processes without implicit pruning",
+      "retry identity: a repeated wire attempt keeps the bytes and gets its own receipt",
+      "serializes concurrent Node writers with conflicting content",
+      "serializes concurrent Node writers with different-kind content",
+      "serializes concurrent Node writers with identical content",
+      "shadow write failure fails the census without changing send behavior",
+      "the census is disabled by default (flag off) so the legacy path is byte-identical",
+      "transport-level smoke: eight source-runtime model calls yield correlated receipts",
+      "uses explicit attempt/model-call/wire-attempt identity, not max(sequence)+1 (hard constraint 3)",
+      "uses the production source transport registry as the provider coverage denominator",
+      "zero-byte parity: observer installation does not mutate the payload object or final bytes"
+    ]
+  },
+  "entryMatrix": {
+    "realSurfaces": 8,
+    "namedSurfaces": 8,
+    "complete": true,
+    "surfaces": [
+      {
+        "id": "embedded-attempt",
+        "status": "real",
+        "driver": "openclaw_runtime/src/agents/embedded-agent-runner/run.ts (runEmbeddedAgent)",
+        "test": "embedded attempt: runEmbeddedAgent yields a dual receipt per real model call",
+        "suite": "rc02-entry-matrix.acceptance.test.ts"
+      },
+      {
+        "id": "provider-payload-hook",
+        "status": "real",
+        "driver": "openclaw_runtime/src/agents/cache-trace.ts (wrapStreamFn/onPayload) installed by run/attempt.ts:3060",
+        "test": "provider payload hook: the production cache-trace hook installs onPayload and receipts still bind the final bytes",
+        "suite": "rc02-entry-matrix.acceptance.test.ts"
+      },
+      {
+        "id": "context-engine",
+        "status": "real",
+        "driver": "openclaw_runtime/src/context-engine/rc03-seal-hook.ts (runRc03SealHook) + provider-transport-fetch.ts (guarded boundary)",
+        "test": "context engine: the sealed context bundle and the guarded wire body join through one correlation digest",
+        "suite": "rc02-entry-matrix.acceptance.test.ts"
+      },
+      {
+        "id": "provider-transport",
+        "status": "real",
+        "driver": "openclaw_runtime/src/agents/provider-transport-stream.ts (listSourceRuntimeTransportDescriptors registry)",
+        "test": "uses the production source transport registry as the provider coverage denominator",
+        "suite": "rc02-shadow-census.acceptance.test.ts"
+      },
+      {
+        "id": "desktop-chat",
+        "status": "real",
+        "driver": "openclaw_runtime/src/auto-reply/dispatch.ts dispatchInboundMessageWithBufferedDispatcher (the shared inbound entry behind chat.send), driven with a bounded bootstrap",
+        "test": "desktop chat inbound: dispatchInboundMessage drives a real model call with dual receipts",
+        "suite": "rc02-inbound-entry.acceptance.test.ts"
+      },
+      {
+        "id": "cron",
+        "status": "real",
+        "driver": "openclaw_runtime/src/cron/isolated-agent/run.ts runCronIsolatedAgentTurn -> run-executor -> runEmbeddedAgent, driven with the bounded bootstrap",
+        "test": "cron isolated-agent entry: the real entry drives model calls through the guarded boundary with dual receipts",
+        "suite": "rc02-cron-entry.acceptance.test.ts"
+      },
+      {
+        "id": "channel-conformance-fixture",
+        "status": "real",
+        "driver": "openclaw_runtime/src/auto-reply/dispatch.ts dispatchInboundMessageWithBufferedDispatcher with the rc05 operator fixture surface; the fixture adapter itself is transport-only and is proven by its own conformance test",
+        "test": "channel conformance fixture inbound: the fixture surface reaches the same guarded boundary",
+        "suite": "rc02-inbound-entry.acceptance.test.ts"
+      },
+      {
+        "id": "cli-compact",
+        "status": "real",
+        "driver": "openclaw_runtime/src/agents/agent-command.ts agentCommand, driven with the bounded bootstrap; the compact half of this surface (compactEmbeddedAgentSessionDirect) is not separately driven and is named as a residual",
+        "test": "cli agentCommand entry: the real entry drives a model call through the guarded boundary with dual receipts",
+        "suite": "rc02-cli-entry.acceptance.test.ts"
+      }
+    ]
+  },
+  "parity": [
+    {
+      "id": "observer-off-on-byte-parity",
+      "status": "proved",
+      "claim": "installing the observer does not change the serialized request bytes",
+      "test": "observer off/on parity: identical serialized bytes and tool order per registry api"
+    },
+    {
+      "id": "tool-order-parity",
+      "status": "proved",
+      "claim": "tool order stays canonical and identical with the observer installed (the transport sorts tools; observation does not reorder them)",
+      "test": "observer off/on parity: identical serialized bytes and tool order per registry api"
+    },
+    {
+      "id": "retry-identity-parity",
+      "status": "proved",
+      "claim": "a repeated wire attempt keeps identical bytes and gets its own wire_attempt_index receipt",
+      "test": "retry identity: a repeated wire attempt keeps the bytes and gets its own receipt"
+    },
+    {
+      "id": "no-extra-side-effect-traffic",
+      "status": "proved",
+      "claim": "observation adds no approval or delivery HTTP traffic",
+      "test": "no approval or delivery traffic is added by observation"
+    }
+  ],
+  "probeAttempts": [
+    {
+      "id": "inbound-dispatch",
+      "entry": "openclaw_runtime/src/auto-reply/dispatch.ts:532 dispatchInboundMessageWithBufferedDispatcher (the shared inbound entry behind desktop chat and the channel fixture)",
+      "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts rc02-inbound-probe.test.ts --passWithNoTests=false",
+      "observed": "no stdout for 120000ms; the vitest no-output watchdog terminated the stalled process group before any assertion ran",
+      "conclusion": "not a config-only fixture: the entry needs a channel plugin, session store and agent workspace harness; no test in the repo drives a gateway chat send end to end",
+      "followUpProbe": {
+        "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts rc02-diag-probe.test.ts [--pool=forks] --passWithNoTests=false",
+        "observed": [
+          "the model boundary was never reached: the fetch spy logged zero requests before the stall",
+          "a 5s heartbeat printed the active resources once (12-20 recursive FSEventWrap watchers plus Timeouts) and then stopped firing, so the event loop is blocked synchronously rather than awaiting something",
+          "moving process.cwd() to a temp directory under the forks pool (where chdir is supported) did not change the stall, so repo-shaped CWD scanning is not the cause",
+          "the per-test timeout never fired because a blocked event loop cannot run its timer"
+        ],
+        "conclusion": "the blocker is synchronous work inside the runtime bootstrap (plugin/workspace loading) that a minimal config does not bound; a driver needs the repo's own bounded harness or a pre-warmed bootstrap, not another config field",
+        "boundedBootstrapAttempts": [
+          {
+            "attempt": "OPENCLAW_DISABLE_BUNDLED_PLUGINS=1",
+            "observed": "the same entry completes in 2.2s instead of stalling, which pins the block to bundled plugin loading; but the bundled provider catalog goes with it, so the run fails with `Unknown model: openai/gpt-rc02-inbound (model_not_found)` and never reaches the model boundary"
+          },
+          {
+            "attempt": "plugins.allow=[\"openai\"] with bundled discovery enabled",
+            "observed": "still stalls past 120s, so the allowlist does not prevent the full bundled load"
+          },
+          {
+            "attempt": "OPENCLAW_BUNDLED_PLUGINS_DIR pointing at a temp root with a junction to extensions/openai",
+            "observed": "rejected before running: the fs-safe root guard raises `Symlink escapes plugin root`, so a bounded plugin root cannot be built by symlink"
+          },
+          {
+            "attempt": "OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 plus explicit registration of the openai plugin's provider and modelCatalogProviders collections into the active registry",
+            "observed": "still `model_not_found`: the model catalog is not resolved from those registry collections, so explicit registration is not enough to make the configured model resolvable"
+          }
+        ],
+        "boundedBootstrapConclusion": "the entry is drivable only when bundled plugin loading is fast or bounded AND the model catalog still resolves; neither the allowlist nor explicit registration achieves that today, so this row stays a gap until a bounded-bootstrap harness exists",
+        "resolution": "resolved 2026-09-23: with bundled discovery disabled the entry completes in about 2s, and the model catalog is satisfied by seeding the resolved agent models.json (resolveDefaultAgentDir + providers.openai) plus OPENAI_API_KEY for auth. The same recipe then drove every previously open surface: desktop chat and the channel fixture through dispatchInboundMessageWithBufferedDispatcher, cron through runCronIsolatedAgentTurn, and the CLI through agentCommand, so all eight named surfaces now have a real driver. Remaining narrowing: bundled plugin discovery is not exercised, the channel plugin layer is not exercised, and the compact half of the CLI/compact surface is not separately driven"
+      },
+      "probeFileRemoved": true
+    },
+    {
+      "id": "cron-isolated-agent",
+      "entry": "openclaw_runtime/src/cron/isolated-agent/run.ts:1259 runCronIsolatedAgentTurn",
+      "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts rc02-cron-probe.test.ts --passWithNoTests=false",
+      "observed": "no stdout for 120000ms with OPENCLAW_TEST_FAST=1 and a minimal cfg; the watchdog terminated the stalled process group (the 90s per-test timeout never surfaced)",
+      "conclusion": "the only existing driver (run.test-harness.ts) mocks run-embedded.runtime.js, so it cannot prove the real entry; an unmocked driver stalls on the same runtime bootstrap",
+      "probeFileRemoved": true
+    }
+  ],
+  "ownerClassification": {
+    "claim": "every persisted wire receipt carries a named adapter and provider and runtime_mode=source; the matrix fails if any row is unowned",
+    "limitation": "buildWireOwnerCensus currently assigns every final-body leaf to the named transport adapter; a per-field producer/transform split is not implemented, so this is an ownership-completeness check, not a field-level attribution map",
+    "enforcedBy": "rc02-entry-matrix.acceptance.test.ts"
+  },
+  "npmFallback": {
+    "claim": "runtimeMode=npm reports degraded, receiptCoverage=0, readiness=false and never counts as source coverage",
+    "enforcedBy": "rc02-shadow-census.acceptance.test.ts",
+    "verifiedInThisRun": true
+  },
+  "acceptance": {
+    "rc02SpecAcceptanceMet": true,
+    "runDir": "artifacts/agent-engineering-acceptance/runs/rc02r-accept-2",
+    "candidate": "78dc12d1c1e989f33cf7ca85955998ed40887352",
+    "cleanAtPlan": true,
+    "gateCount": 23,
+    "executor": {
+      "role": "executor",
+      "result": "pass",
+      "actor": "rc02-executor",
+      "failures": 0,
+      "reportDigest": "a1297b3aa0da2a69b6666b65319c675b4769b5726b9b32d3402da38ddce9f57f",
+      "testCounts": {
+        "failed": 0,
+        "passed": 9500,
+        "skipped": 50,
+        "total": 9550,
+        "unavailableGates": 0
+      }
+    },
+    "final": {
+      "role": "verifier",
+      "result": "pass",
+      "actor": "rc02-verifier",
+      "engineeringAcceptedByAgent": true,
+      "failures": 0,
+      "reportDigest": "00c191f1dacbd9efcfceef350ce6c2e970db11c441b1ee3f96bc6c354963ab9b",
+      "testCounts": {
+        "failed": 0,
+        "passed": 9500,
+        "skipped": 50,
+        "total": 9550,
+        "unavailableGates": 0
+      }
+    },
+    "archivedReports": [
+      {
+        "id": "manifest",
+        "source": "artifacts/agent-engineering-acceptance/runs/rc02r-accept-2/manifest.json",
+        "archive": "artifacts/runtime-authority-convergence/rc-02/acceptance/manifest.json",
+        "sha256": "a191f2277c527754fa2e75ae92494915fc6e1cf5e2f4b1c7a39839fad8b0e332"
+      },
+      {
+        "id": "plan",
+        "source": "artifacts/agent-engineering-acceptance/runs/rc02r-accept-2/plan.json",
+        "archive": "artifacts/runtime-authority-convergence/rc-02/acceptance/plan.json",
+        "sha256": "0ce5cc4d79fe142d6f532f0bcb21d49691518331fc593438866be6e0ceb4d802"
+      },
+      {
+        "id": "executorReport",
+        "source": "artifacts/agent-engineering-acceptance/runs/rc02r-accept-2/executor-report.json",
+        "archive": "artifacts/runtime-authority-convergence/rc-02/acceptance/executorReport.json",
+        "sha256": "52d6f82b2ac064ee06c0bfdfe7736c2cbce6ca06e7769e28d2c128bad17c649e"
+      },
+      {
+        "id": "verifierReport",
+        "source": "artifacts/agent-engineering-acceptance/runs/rc02r-accept-2/verifier-report.json",
+        "archive": "artifacts/runtime-authority-convergence/rc-02/acceptance/verifierReport.json",
+        "sha256": "778d8a597c35cf68002689a63c86350dae46383f619418c937425e5324c8cdf9"
+      },
+      {
+        "id": "finalReport",
+        "source": "artifacts/agent-engineering-acceptance/runs/rc02r-accept-2/final-report.json",
+        "archive": "artifacts/runtime-authority-convergence/rc-02/acceptance/finalReport.json",
+        "sha256": "778d8a597c35cf68002689a63c86350dae46383f619418c937425e5324c8cdf9"
+      }
+    ]
+  },
+  "productLocks": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false
+  }
+}

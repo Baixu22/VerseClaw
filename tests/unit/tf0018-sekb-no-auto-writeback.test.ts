@@ -30,6 +30,16 @@ describe("TF-0018 SEKB confirm-only writeback", () => {
         `diagnose database outage ${index}`,
         "config/db",
         ["postgresql"],
+        {
+          // Distillation eligibility (TF-0018 anti-hallucination gate) requires
+          // real runtime lineage evidence on every captured trajectory.
+          runtimeLineage: {
+            schema: "runtime-lineage.v1",
+            sessionId: "session:tf0018",
+            loopRunId: `loop:tf0018:${index}`,
+            traceId: `trace:tf0018:${index}`,
+          },
+        },
       );
       capture.log_step(trajectoryId, "tool.call", { index }, { error: "Connection refused" });
       capture.finish_trajectory(trajectoryId, "failure", "Connection refused");
@@ -42,7 +52,7 @@ describe("TF-0018 SEKB confirm-only writeback", () => {
     expect(store.query_principles({ status: "active" })).toHaveLength(0);
 
     const principleId = distiller.confirm_and_save(suggestions[0]!, null, {
-      sessionId: "session:tf0018:confirm",
+      sessionId: "session:tf0018",
       requireSession: true,
       sourceSystem: "ui-confirm",
     });

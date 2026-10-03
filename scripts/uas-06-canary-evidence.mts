@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -14,7 +14,7 @@ const outputRelative = "artifacts/uas-06-single-local-exec-canary/report.json";
 const outputPath = path.join(root, outputRelative);
 const checkOnly = process.argv.includes("--check");
 
-const sourceEvidence = [
+export const UAS06_ENGINEERING_SOURCE_EVIDENCE = [
   "package.json",
   "README.md",
   "README.zh-CN.md",
@@ -41,7 +41,7 @@ const sourceEvidence = [
   "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md",
   "docs/dev/unified-agent-system/DEVELOPMENT-STRATEGY.zh-CN.md",
   "docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md",
-  "docs/dev/handoffs/LATEST.md",
+  "docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md",
 ] as const;
 
 const gates = [
@@ -75,9 +75,9 @@ function sha256(value: string | Buffer): string {
   return createHash("sha256").update(value).digest("hex");
 }
 
-function inventory() {
-  return sourceEvidence.map((relativePath) => {
-    const absolutePath = path.join(root, relativePath);
+export function inventoryUas06EngineeringSources(sourceRoot = root) {
+  return UAS06_ENGINEERING_SOURCE_EVIDENCE.map((relativePath) => {
+    const absolutePath = path.join(sourceRoot, relativePath);
     if (!existsSync(absolutePath))
       throw new Error(`missing UAS-06 source evidence: ${relativePath}`);
     const content = readFileSync(absolutePath);
@@ -160,7 +160,7 @@ export function buildUas06EngineeringReport() {
     taskForestNode: "TF-0017",
     taskSpec: "harness/specs/tasks/uas-06-single-local-exec-canary.md",
     qualification: "engineering-only",
-    sourceInventory: inventory(),
+    sourceInventory: inventoryUas06EngineeringSources(),
     verification,
     observations,
     summary,
@@ -191,7 +191,7 @@ export function checkUas06EngineeringReport() {
   const report = JSON.parse(readFileSync(outputPath, "utf8")) as ReturnType<
     typeof buildUas06EngineeringReport
   >;
-  const currentInventory = inventory();
+  const currentInventory = inventoryUas06EngineeringSources();
   if (JSON.stringify(report.sourceInventory) !== JSON.stringify(currentInventory)) {
     throw new Error("UAS-06 evidence is stale: source inventory changed");
   }
@@ -212,13 +212,17 @@ export function checkUas06EngineeringReport() {
   return report;
 }
 
-if (checkOnly) {
-  const report = checkUas06EngineeringReport();
-  console.log(`UAS-06 evidence current: ${outputRelative} (${report.summary.status})`);
-} else {
-  const report = buildUas06EngineeringReport();
-  mkdirSync(path.dirname(outputPath), { recursive: true });
-  writeFileSync(outputPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
-  console.log(`UAS-06 evidence written: ${outputRelative} (${report.summary.status})`);
-  if (report.verification.some((gate) => gate.status !== "passed")) process.exitCode = 1;
+// Importing the inventory must not run gates or overwrite accepted evidence.
+// Compare realpaths so the Windows workspace junction remains a valid CLI entry.
+if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {
+  if (checkOnly) {
+    const report = checkUas06EngineeringReport();
+    console.log(`UAS-06 evidence current: ${outputRelative} (${report.summary.status})`);
+  } else {
+    const report = buildUas06EngineeringReport();
+    mkdirSync(path.dirname(outputPath), { recursive: true });
+    writeFileSync(outputPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+    console.log(`UAS-06 evidence written: ${outputRelative} (${report.summary.status})`);
+    if (report.verification.some((gate) => gate.status !== "passed")) process.exitCode = 1;
+  }
 }

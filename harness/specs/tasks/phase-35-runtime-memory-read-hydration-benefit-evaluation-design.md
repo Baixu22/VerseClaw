@@ -117,7 +117,7 @@ requiredTests:
   - If full diff-aware validate is blocked by unrelated dirty files, run Phase 35 validate with `--no-diff` and record the blocker.
   - C:\Users\27933\.cherrystudio\bin\rtk.exe node node_modules/vitest/vitest.mjs run tests/unit/runtime-memory-read-hydration-benefit-evaluation.test.ts tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts tests/unit/runtime-memory-read-hydration-consumer-evaluation.test.ts
   - C:\Users\27933\.cherrystudio\bin\rtk.exe node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - C:\Users\27933\.cherrystudio\bin\rtk.exe rg -n 'Gateway route|Electron IPC|renderer UI|host-api|api-client|shared contract|TaskLoop default|prompt injection|model-message|context injection|runtime authority|durable fact authority|DB write authority|mutation authority' harness/specs/tasks/phase-35-runtime-memory-read-hydration-benefit-evaluation-design.md tests/unit/runtime-memory-read-hydration-benefit-evaluation.test.ts tests/fixtures/runtime-memory-benefit-eval/generate.mjs runtime-research/handoffs/phase-35-runtime-memory-read-hydration-benefit-evaluation-design/deep-validation.md
+  - C:\Users\27933\.cherrystudio\bin\rtk.exe rg -n 'Gateway route|Electron IPC|renderer UI|host-api|api-client|shared contract|TaskLoop default|prompt injection|model-message|context injection|runtime authority|durable fact authority|DB write authority|mutation authority' harness/specs/tasks/phase-35-runtime-memory-read-hydration-benefit-evaluation-design.md tests/unit/runtime-memory-read-hydration-benefit-evaluation.test.ts tests/fixtures/runtime-memory-benefit-eval/generate.mjs docs/dev/runtime-research-boundaries.md
   - C:\Users\27933\.cherrystudio\bin\rtk.exe rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components src/lib shared electron
   - C:\Users\27933\.cherrystudio\bin\rtk.exe rg -n 'readRuntimeMemoryHydrationShadow|hydrateRuntimeMemoryShadowContext|DatabaseSync|node:sqlite|appendEpisode|appendFact|invalidateFact|withWriteTransaction|insertInto|updateTable|deleteFrom' tests/unit/runtime-memory-read-hydration-benefit-evaluation.test.ts
 acceptance:
@@ -133,7 +133,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-35-runtime-memory-read-hydration-benefit-evaluation-design/deep-validation.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 35 Runtime Memory Read Hydration Benefit Evaluation Design

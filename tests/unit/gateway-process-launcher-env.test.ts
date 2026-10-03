@@ -40,4 +40,33 @@ describe('gateway process launcher env', () => {
     expect(env.PATH).toBeUndefined();
     expect(env.OPENCLAW_DISABLE_BONJOUR).toBe('1');
   });
+
+  it('defaults OPENCLAW_FALLBACK_SKIP_TTL_MS to 60000 when unset', async () => {
+    setPlatform('win32');
+    const { buildGatewayRuntimeEnv } = await import('@electron/gateway/process-launcher');
+
+    const env = buildGatewayRuntimeEnv({});
+
+    expect(env.OPENCLAW_FALLBACK_SKIP_TTL_MS).toBe('60000');
+  });
+
+  it('treats a blank inherited OPENCLAW_FALLBACK_SKIP_TTL_MS as unset', async () => {
+    setPlatform('win32');
+    const { buildGatewayRuntimeEnv } = await import('@electron/gateway/process-launcher');
+
+    const env = buildGatewayRuntimeEnv({ OPENCLAW_FALLBACK_SKIP_TTL_MS: '   ' });
+
+    expect(env.OPENCLAW_FALLBACK_SKIP_TTL_MS).toBe('60000');
+  });
+
+  it('preserves an explicit OPENCLAW_FALLBACK_SKIP_TTL_MS override including 0', async () => {
+    setPlatform('win32');
+    const { buildGatewayRuntimeEnv } = await import('@electron/gateway/process-launcher');
+
+    const disabled = buildGatewayRuntimeEnv({ OPENCLAW_FALLBACK_SKIP_TTL_MS: '0' });
+    const custom = buildGatewayRuntimeEnv({ OPENCLAW_FALLBACK_SKIP_TTL_MS: '90000' });
+
+    expect(disabled.OPENCLAW_FALLBACK_SKIP_TTL_MS).toBe('0');
+    expect(custom.OPENCLAW_FALLBACK_SKIP_TTL_MS).toBe('90000');
+  });
 });

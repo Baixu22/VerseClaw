@@ -1,0 +1,282 @@
+{
+  "schema": "verse-claw-live-cdp-manifest/v1",
+  "createdAt": "2026-09-11T03:18:33.649855+00:00",
+  "sourceCommit": "fdaef5b0ab8382a59a272b4748a52c40da6ca07d",
+  "workingTreeModified": true,
+  "sourceFiles": [
+    {
+      "path": "electron/utils/openclaw-auth.ts",
+      "sha256": "7529664cf5abef29c6b458168ee528a325799fc119bc8613c23468aba563765e"
+    },
+    {
+      "path": "tests/unit/openclaw-auth.test.ts",
+      "sha256": "50fe1f939e24ce4196b6ceda97360bd10f57fec4692d4b301e346a3ef26587d2"
+    },
+    {
+      "path": "tests/e2e/provider-lifecycle.spec.ts",
+      "sha256": "89925d82961ba42e8ed8a1b8056d316e1ce6318747b5d953f6426eac1d85bbf4"
+    },
+    {
+      "path": "dist-electron/main/index.js",
+      "sha256": "7f07bf4e6dd3ce7209d205854194c2f1a772a617cb09e51cb99f8dfb275ff55d"
+    },
+    {
+      "path": "openclaw_runtime/dist/entry.js",
+      "sha256": "e0e93b6ef0d1f0eec88861fb20cd8d3b6cc69b82251a3aa62ec4d916dbee2075"
+    }
+  ],
+  "evidenceClass": "live-provider-agent-operated-cdp",
+  "model": "senseaudio-s2-flash",
+  "mocked": false,
+  "humanQualifyingRuns": 0,
+  "sourceRecordPolicy": "Each original runtime message remains in a hashed sanitized transcript. Dataset groups retry attempts by the same submitted prompt and idempotency key. Failures remain visible.",
+  "secretPolicy": "API key passed through process environment only; raw system prompts and startup metadata excluded from exported trace projection.",
+  "files": [
+    {
+      "path": "cdp-actions.jsonl",
+      "bytes": 5060,
+      "sha256": "27e33a705c270b9af2173b1acd29708644ff510051dbca0a9ad0b0f588928061"
+    },
+    {
+      "path": "coding-independent-verification.json",
+      "bytes": 421,
+      "sha256": "b633a66c2f247792153ce658d097ec0791f62f49852fe1e4a1e8bf8bba3af164"
+    },
+    {
+      "path": "coding-terminal-verification.json",
+      "bytes": 426,
+      "sha256": "fb70740717a3ac97929317e4ec75924660914202eaf2222ed38485cdac80222c"
+    },
+    {
+      "path": "dataset.jsonl",
+      "bytes": 134193,
+      "sha256": "8e134c7eb7d2ec92bfbae0119a42b2a81b470a15013132377bc6148b771f0de4"
+    },
+    {
+      "path": "host-events.jsonl",
+      "bytes": 28581,
+      "sha256": "3450565805207882f4f0bfbb9cddec427abe4f3e13f55926f192b257f94baa50"
+    },
+    {
+      "path": "preflight.json",
+      "bytes": 900,
+      "sha256": "616af92d71aff3bb247bf5b5c557026141bd86f6a511fbb35456852fe1361559"
+    },
+    {
+      "path": "README.md",
+      "bytes": 5096,
+      "sha256": "307f7711eaa192d30962a7de37af29bae49cf80ba40f9306d42415fc8fece26d"
+    },
+    {
+      "path": "receipt-state.json",
+      "bytes": 366,
+      "sha256": "c5a38a2787ae49e2fde06c8c411a19a34f8c806a8557f800b26b4c2bbdf74a67"
+    },
+    {
+      "path": "run-config.json",
+      "bytes": 717,
+      "sha256": "26f84f2d2fe5511fcb81595150f516debf3266faa5d441d3bdb19c740b8e8d9c"
+    },
+    {
+      "path": "screenshots/provider-before-fix.png",
+      "bytes": 100640,
+      "sha256": "eaa785fc27d82c9e1c8d0f230d52658088734992dc338abcceecebac4ddd7ccb"
+    },
+    {
+      "path": "screenshots/s01-context.png",
+      "bytes": 667444,
+      "sha256": "54fd5f928098a2b842891b39bc5fbd4ef59994effa74d0ec25383eae739c40f5"
+    },
+    {
+      "path": "screenshots/s05-recovery.png",
+      "bytes": 602751,
+      "sha256": "41db16bd6da6a4a940df63b7413777b1716fa984dd5d7ebe4bf2ada07d288b3d"
+    },
+    {
+      "path": "screenshots/s06-after-reload.png",
+      "bytes": 665090,
+      "sha256": "35c329f32cef3d0ac376bfdac777778a8d10a0793eb0cc845e74408ded04cb0d"
+    },
+    {
+      "path": "secret-scan.json",
+      "bytes": 82,
+      "sha256": "9ae908f03182af27ed71dd21878cf06e738510d696ac50e651410c00c3f9c131"
+    },
+    {
+      "path": "sessions.json",
+      "bytes": 4547,
+      "sha256": "9e14773042b99b09decc39e417f35d5d614fbd1ffb8ab3d814e3743a788d0f8e"
+    },
+    {
+      "path": "setup-issues.json",
+      "bytes": 394,
+      "sha256": "71a7811a9141b8b1fa095b171ba119324bad49e5f5b33770d2a7b9d3c4758cd7"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 710,
+      "sha256": "3f9eb958480b6b671819e23cd5290ec4befe817b184e7d22669db50b1a73448c"
+    },
+    {
+      "path": "tool-protocol-preflight.json",
+      "bytes": 1803,
+      "sha256": "88112acfa0c63a35809bd4fceb0a8c1923eb07cff1a1de4bec845df62fef8511"
+    },
+    {
+      "path": "traces/s01-context.jsonl",
+      "bytes": 12743,
+      "sha256": "a8d321e974f42006b0e09a93d5c9f53ae0105a4eac56ef9d59727317fce929a7"
+    },
+    {
+      "path": "traces/s02-structured-data.jsonl",
+      "bytes": 15345,
+      "sha256": "4ea60ac645ae15d79f9d51c441085333106f59d700e487db158c286fae3e7ddb"
+    },
+    {
+      "path": "traces/s03-file-fix.jsonl",
+      "bytes": 16960,
+      "sha256": "c6f5c35c65b9c676c18e297914299eff6c796fc7d97aca4ba0243af7417b6fa2"
+    },
+    {
+      "path": "traces/s04-document-workflow.jsonl",
+      "bytes": 18273,
+      "sha256": "6c62bd2256fc3dc3b33c4df03b31a9c45d8939f9a8fb1ed1da30af94834d5bc5"
+    },
+    {
+      "path": "traces/s05-csv-update.jsonl",
+      "bytes": 61355,
+      "sha256": "9d9336e5d52c3e768760da9fcf1d396ec04b89f27b53574a81af7892b9ebb5cb"
+    },
+    {
+      "path": "traces/s06-cdp-reload.jsonl",
+      "bytes": 17531,
+      "sha256": "ea38425acc0f33e279f93ff8fadb1f97d37f99054054ca372fb6d2097b61eb2a"
+    },
+    {
+      "path": "transcripts/s01-context.jsonl",
+      "bytes": 4106,
+      "sha256": "0f1229b3db764f9089613c68b15efd641411fbe4a73610ac05ae6135e3d98f6b"
+    },
+    {
+      "path": "transcripts/s02-structured-data.jsonl",
+      "bytes": 6918,
+      "sha256": "4b0a53d60ad65e9b51e891a6ce037b929323868ae1b7d5f6cdfb439290e53c28"
+    },
+    {
+      "path": "transcripts/s03-file-fix.jsonl",
+      "bytes": 12961,
+      "sha256": "3f0ec803d938d09fbbc29c07e0d8c30951df7d02f72693a09290168be4bf40bd"
+    },
+    {
+      "path": "transcripts/s04-document-workflow.jsonl",
+      "bytes": 25114,
+      "sha256": "44a25c0a07f3c019a9a7dc4840c680afa4e6950f25159744d346377a74902613"
+    },
+    {
+      "path": "transcripts/s05-csv-update.jsonl",
+      "bytes": 61402,
+      "sha256": "0292eb5dec4fd94d32c3afd53d716d088955665d60eaac7d20ac67593b38400a"
+    },
+    {
+      "path": "transcripts/s06-cdp-reload.jsonl",
+      "bytes": 4815,
+      "sha256": "00a0c1d19cb05ed473245705db5830a848d5050866e40c1f2e5a566ca047df8d"
+    },
+    {
+      "path": "validation/build-live-cdp.log",
+      "bytes": 37044,
+      "sha256": "ce56af8ca600af4c2ea649b261d0e5ec62f33d1f013ae8eaeafe57ddc1794db4"
+    },
+    {
+      "path": "validation/build-runtime-live-cdp.log",
+      "bytes": 2011,
+      "sha256": "cac09c7911c8468f49beed08e5168c6c619f38f7e565f7a1d22f96e1e727eeba"
+    },
+    {
+      "path": "validation/comms-compare-live-cdp.log",
+      "bytes": 3432,
+      "sha256": "ac3241e118be560b8bdfb0f9605250bbda7a9d1caa8d10df7ab31a58e3bf94c0"
+    },
+    {
+      "path": "validation/comms-replay-live-cdp.log",
+      "bytes": 106,
+      "sha256": "0f782de541b882e11b85cce91da0a30df10399b4d651e266f6151b6f2f3be3c2"
+    },
+    {
+      "path": "validation/eslint-live-cdp.log",
+      "bytes": 175,
+      "sha256": "830395c2c664750d1457967484218426e69191eeffd9d41eb2f3ffbbb3332522"
+    },
+    {
+      "path": "validation/harness-ci-live-cdp.log",
+      "bytes": 108822,
+      "sha256": "a5d552cb6317ae0573493fab4292faf313c1f2f027352b83a771381c489214c3"
+    },
+    {
+      "path": "validation/harness-dry-run-live-cdp.log",
+      "bytes": 768,
+      "sha256": "a0dc95d2abc1cd5a97385c24a391a3e420ddc7129d8a97b31c49666f29314e15"
+    },
+    {
+      "path": "validation/harness-validate-live-cdp.log",
+      "bytes": 738,
+      "sha256": "5a4f2c58fce8675caaaff0fb7a3469886c45b6d1fd35ce61a0c5fc6099e9ecb0"
+    },
+    {
+      "path": "validation/provider-envref-final-e2e.log",
+      "bytes": 537,
+      "sha256": "313f034764ac4f57be47c336aa7adb47cafb9b7cb5ccd6f181439f9cc6c61ee6"
+    },
+    {
+      "path": "validation/results.json",
+      "bytes": 1024,
+      "sha256": "6db598e5803c8fff25a1de04de612237319e68d970153b426980cf3b13171b59"
+    },
+    {
+      "path": "validation/typecheck-live-cdp.log",
+      "bytes": 1401,
+      "sha256": "85c67d272a11aa639e26486fab7854885aafc60c091c4e1d05538e17cf52b943"
+    },
+    {
+      "path": "validation/typecheck-test-live-cdp.log",
+      "bytes": 55,
+      "sha256": "a5d6fd1dd484582650ab2c7b01fa7d3510f2ca46c1fa7cd5465af5658c998a03"
+    },
+    {
+      "path": "verify.py",
+      "bytes": 6752,
+      "sha256": "e2c686cab0afb4a82abfddf4cbbbc00a235b62a0b9817b26d20e73c11bec3fee"
+    },
+    {
+      "path": "workspace-final/coding/invoice.mjs",
+      "bytes": 170,
+      "sha256": "66e21ddcda5e87bef5267e309cd98104fb84741b8c2e57b86e2df7e895261f2a"
+    },
+    {
+      "path": "workspace-final/coding/invoice.test.mjs",
+      "bytes": 530,
+      "sha256": "3946743fd76c5346bc47628c2165b65cacb5b10aa9d692f86ce8c99d959a0d5b"
+    },
+    {
+      "path": "workspace-final/data/work-log.csv",
+      "bytes": 91,
+      "sha256": "fa6069af04eb5c72379d0bcb4cb270083b7142b848f2246d4afb5b929cceb9b9"
+    },
+    {
+      "path": "workspace-final/data/work-summary.json",
+      "bytes": 113,
+      "sha256": "66a35d1374790187bc157eb844dea2f4ac4913f67396b0133d4315cd2c378d4b"
+    },
+    {
+      "path": "workspace-final/docs/harbor-checklist.md",
+      "bytes": 1117,
+      "sha256": "7f12288e86366faa2a03b86ee8cef0357fbe191527dc2d282449378668332c7b"
+    },
+    {
+      "path": "workspace-final/docs/harbor-guide.md",
+      "bytes": 516,
+      "sha256": "982da0ba3b6ca30707ac65323927992fce0ce2ef7001ae756f21406778d57bc8"
+    }
+  ],
+  "exportLineEndings": "LF"
+}

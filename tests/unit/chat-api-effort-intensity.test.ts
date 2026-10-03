@@ -4,6 +4,10 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+const getSessionTokenUsageSummary = vi.fn();
+
+vi.mock('@electron/utils/token-usage', () => ({ getSessionTokenUsageSummary }));
+
 vi.mock('@electron/services/task-ledger-service', () => ({
   loadTaskLedgerSnapshot: vi.fn(),
 }));
@@ -15,12 +19,18 @@ vi.mock('@electron/services/workspaces-api', () => ({
 describe('chat-api reasoning effort and runtime intensity forwarding (W2)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    getSessionTokenUsageSummary.mockResolvedValue({
+      totalTokens: 0,
+      estimatedCostUsd: 0,
+    });
   });
 
   async function makeApi() {
     const { createChatApi } = await import('@electron/services/chat-api');
     const gatewayManager = {
-      rpc: vi.fn(async () => ({ runId: 'run-effort' })),
+      rpc: vi.fn(async (_method: string, _payload: Record<string, unknown>) => ({
+        runId: 'run-effort',
+      })),
       getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
     };
     return { api: createChatApi({ gatewayManager: gatewayManager as never }), gatewayManager };
@@ -36,7 +46,8 @@ describe('chat-api reasoning effort and runtime intensity forwarding (W2)', () =
       runtimeIntensity: 'high',
     });
     expect(result.success).toBe(true);
-    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as Record<string, unknown>;
+    const payload = gatewayManager.rpc.mock.calls[0]?.[1];
+    if (!payload) throw new Error('Expected Gateway rpc payload');
     expect(payload.reasoningEffort).toBe('high');
     expect(payload.runtimeIntensity).toBe('high');
   });
@@ -72,7 +83,8 @@ describe('chat-api reasoning effort and runtime intensity forwarding (W2)', () =
       message: 'plain',
       idempotencyKey: 'idem-effort-4',
     });
-    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as Record<string, unknown>;
+    const payload = gatewayManager.rpc.mock.calls[0]?.[1];
+    if (!payload) throw new Error('Expected Gateway rpc payload');
     expect(payload).not.toHaveProperty('reasoningEffort');
     expect(payload).not.toHaveProperty('runtimeIntensity');
   });

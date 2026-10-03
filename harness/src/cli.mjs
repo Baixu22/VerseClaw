@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import process from 'node:process';
 import { buildContext, formatContext } from './context.mjs';
-import { getChangedFiles, resolveDiffBase } from './git.mjs';
+import { getChangedFiles, resolveDefaultDiffBase, resolveDiffBase } from './git.mjs';
 import { PROFILES, selectSteps } from './profiles.mjs';
 import { writeReport } from './report.mjs';
 import { runStep } from './runner.mjs';
@@ -80,14 +80,17 @@ async function list() {
 
 async function validate(specPath, options = {}) {
   const spec = await loadSpec(specPath);
+  const isScenario = (await loadScenarioSpecs()).some((entry) => entry.path === spec.path);
   const scenario = spec.data.scenario ? await findScenario(spec.data.scenario) : null;
-  const shouldCheckDiff = !options.noDiff && (options.checkDiff || Boolean(spec.data.scenario));
-  const changedFiles = shouldCheckDiff
-    ? await getChangedFiles(resolveDiffBase(options.since, spec.data.diffBase))
-    : [];
+  const shouldCheckDiff = !options.noDiff;
+  const diffBase = shouldCheckDiff
+    ? resolveDiffBase(options.since, spec.data.diffBase, await resolveDefaultDiffBase())
+    : '';
+  const changedFiles = shouldCheckDiff ? await getChangedFiles(diffBase) : [];
   const failures = [];
+  const ownershipFiles = isScenario ? [] : changedFiles;
 
-  if (spec.data.type === 'runtime-bridge' && spec.data.id === 'gateway-backend-communication') {
+  if (isScenario && spec.data.type === 'runtime-bridge' && spec.data.id === 'gateway-backend-communication') {
     for (const profile of ['fast', 'comms']) {
       if (!toArray(spec.data.requiredProfiles).includes(profile)) {
         failures.push(`${spec.path}: requiredProfiles must include "${profile}"`);
@@ -106,12 +109,14 @@ async function validate(specPath, options = {}) {
     failures.push(`${spec.path}: spec must include id and title`);
   }
 
-  // Changed-path ownership is enforced for every spec family. The two
+  // Changed-path ownership is enforced for every task spec family. The two
   // scenario-bound validators above already run it internally, so only the
   // remaining (scenario-less) specs need it here. Without this, an RC package
   // spec could be validated against a diff containing paths it does not own.
+  // A registered scenario runs shared rules across tasks, so it has no task
+  // ownership obligation. Keep its full diff for the boundary scan below.
   if (!isGatewayBackendCommunicationTask(spec) && !isPluginLifecycleTask(spec)) {
-    failures.push(...validateChangedPathOwnership(spec, scenario, changedFiles));
+    failures.push(...validateChangedPathOwnership(spec, scenario, ownershipFiles));
   }
 
   if (changedFiles.length > 0 && touchesCommunicationPath(changedFiles) && isGatewayBackendCommunicationTask(spec)) {
@@ -121,12 +126,15 @@ async function validate(specPath, options = {}) {
     }
   }
 
-  const ownership = classifyChangedPathOwnership(spec, scenario, changedFiles);
-  return { spec, scenario, changedFiles, failures, ownership };
+  const ownership = {
+    ...classifyChangedPathOwnership(spec, scenario, ownershipFiles),
+    checked: !isScenario && shouldCheckDiff,
+  };
+  return { spec, scenario, changedFiles, diffBase, failures, ownership };
 }
 
 async function explain(specPath, options = {}) {
-  const result = await validate(specPath, { ...options, checkDiff: Boolean(options.since) });
+  const result = await validate(specPath, options);
   const requiredProfiles = toArray(result.spec.data.requiredProfiles);
   const scenarioProfiles = toArray(result.scenario?.data?.requiredProfiles);
   const profiles = [...new Set([...scenarioProfiles, ...requiredProfiles])];
@@ -154,7 +162,7 @@ async function explain(specPath, options = {}) {
 
 async function run(specPath, options = {}) {
   const startedAt = new Date().toISOString();
-  const validation = await validate(specPath, { ...options, checkDiff: true });
+  const validation = await validate(specPath, options);
   const requiredProfiles = [
     ...toArray(validation.scenario?.data?.requiredProfiles),
     ...toArray(validation.spec.data.requiredProfiles),
@@ -206,6 +214,7 @@ async function run(specPath, options = {}) {
     changedFiles: validation.changedFiles,
     residualPaths: validation.ownership.residual,
     ownership: {
+      checked: validation.ownership.checked,
       covered: validation.ownership.covered,
       residual: validation.ownership.residual,
       uncovered: validation.ownership.uncovered,
@@ -272,7 +281,6 @@ async function main() {
   if (command === 'validate') {
     const result = await validate(args.spec, {
       since: args.since,
-      checkDiff: Boolean(args.since),
       noDiff: Boolean(args['no-diff']),
     });
     if (result.ownership.residual.length > 0) {
@@ -282,6 +290,11 @@ async function main() {
     if (result.failures.length > 0) {
       console.error(result.failures.map((failure) => `- ${failure}`).join('\n'));
       return 1;
+    }
+    // An empty diff is a pass, but never a silent one: say what was compared so a
+    // green run is not mistaken for a validated change set.
+    if (result.diffBase && result.changedFiles.length === 0) {
+      console.log(`NOTE: no changed files since ${result.diffBase}; the changed-path ownership gate had nothing to check.`);
     }
     console.log(`Spec is valid: ${result.spec.path}`);
     return 0;

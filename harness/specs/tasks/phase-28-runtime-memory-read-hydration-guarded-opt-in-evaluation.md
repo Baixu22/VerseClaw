@@ -74,7 +74,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-28-runtime-memory-read-hydration-guarded-opt-in-evaluation/deep-validation.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 28 Runtime Memory Read Hydration Guarded Opt-in Evaluation

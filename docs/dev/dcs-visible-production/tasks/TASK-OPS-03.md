@@ -35,7 +35,9 @@ Original title “M1 exit review” assumed P1-01 + P1-02 done. They are **not**
 | Packaging smoke | defaultsUnchanged=true; productionMode=opt-in |
 | C1 synthetic canary | recommendation=**keep-off** |
 | TF-0006 | **blocked** |
-| Writable Settings flags | context-view-tools, stale-write-guard, symbol-lease, routing-memo-shadow, sekb-experience-shadow |
+| Writable Settings flags | context-view-tools, working-memory, tool-registry, stale-write-guard, symbol-lease, routing-memo-shadow, sekb-retrieval-shadow, runtime-memory-persist, runtime-memory-inject-pilot, runtime-memory-candidate-generation, compass-context-block, role-memory |
+
+`worktree-backend` and `sekb-experience-shadow` are API-only surfaces, not Writable Settings flags. Their config leaves remain observable through runtime acknowledgement but do not drive runtime behavior.
 
 ---
 

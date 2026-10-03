@@ -132,7 +132,7 @@ describe('files api permission approval flow', () => {
 
     const approvalId = first.approval?.id;
     expect(approvalId).toBeTruthy();
-    await permissions.decideApproval({ id: approvalId, decision: 'approved' });
+    await permissions.decideApproval({ id: approvalId, decision: 'approved' } as never);
 
     await expect(api.writeText({ path: filePath, content: 'new', approvalId })).resolves.toMatchObject({
       ok: true,

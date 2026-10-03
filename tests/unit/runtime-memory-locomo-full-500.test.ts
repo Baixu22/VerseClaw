@@ -134,7 +134,7 @@ import {
 } from "./helpers/memory-weighted-graph-traversal";
 import {
   consolidateObservations,
-  _applyObservationsToFacts,
+  applyObservationsToFacts as _applyObservationsToFacts,
   OBSERVATION_CACHE_VERSION,
   type ObservationFact,
   type ObservationInputFact,
@@ -561,8 +561,9 @@ function makeFactFromExtracted(
   // P0 #2 (Mem0 ADDITIVE fact graph): carry linkedFactIds forward via
   // metadata so retrieval can boost linked facts (P1/P2 work). Source:
   // mem0-main/mem0/configs/prompts.py ADDITIVE_EXTRACTION_PROMPT.
-  const linkedFactIds = Array.isArray(ef.linkedFactIds)
-    ? ef.linkedFactIds.filter((id) => typeof id === "string" && id.length > 0)
+  const linkedIds = (ef as { linkedFactIds?: unknown }).linkedFactIds;
+  const linkedFactIds = Array.isArray(linkedIds)
+    ? linkedIds.filter((id: unknown): id is string => typeof id === "string" && id.length > 0)
     : undefined;
   const extractionMetadata: Record<string, unknown> = {};
   if (linkedFactIds && linkedFactIds.length > 0) {
@@ -2540,7 +2541,6 @@ describe.skipIf(
             // Stage 1/2 constraint: UserProfile read-time augmentation stays disabled.
             // Two earlier profile-as-context variants regressed; profile-as-answer-source
             // routing is explicitly deferred to Stage 3.
-            let _profileContext: string[] | undefined;
 
             // Phase 4 (disproven): Multi-query LLM rewriting was tested in two variants
             // (sum RRF k=60, max RRF k=1 w=5) and BOTH regressed vs single-query baseline
@@ -3139,10 +3139,11 @@ describe.skipIf(
               }
             }
 
+            // Profile retrieval is retired; match the cached path's absent profile channel.
             const assembledContext = assembleGeneratorContext(
               episodicContext,
               retrievedFacts,
-              profileContext,
+              undefined,
             );
 
             let rawAnswer = await withRetry(() =>
@@ -3151,7 +3152,7 @@ describe.skipIf(
                 category,
                 episodicContext,
                 retrievedFacts,
-                profileContext,
+                undefined,
                 {
                   allowInternalAbstention: true,
                   reasoningHints: selfAskHopAnswers,
@@ -3182,7 +3183,7 @@ describe.skipIf(
                   category,
                   level1Episodic,
                   retrievedFacts,
-                  profileContext,
+                  undefined,
                   { allowInternalAbstention: true },
                 ),
               );
@@ -3191,7 +3192,7 @@ describe.skipIf(
               finalAssembledContext = assembleGeneratorContext(
                 level1Episodic,
                 retrievedFacts,
-                profileContext,
+                undefined,
               );
               escalationAttempts.push({
                 level: 1,
@@ -3257,7 +3258,7 @@ describe.skipIf(
                       category,
                       expandedContext,
                       retrievedFacts,
-                      profileContext,
+                      undefined,
                       {},
                     ),
                   );
@@ -3389,7 +3390,7 @@ describe.skipIf(
                   })),
                   episodicHits: cachedEpisodicHits,
                   episodicContext,
-                  profileContext: profileContext ?? [],
+                  profileContext: [],
                   assembledContext,
                 },
               });

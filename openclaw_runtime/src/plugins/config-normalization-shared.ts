@@ -257,7 +257,7 @@ export function normalizePluginsConfigWithResolver(
     memorySlot !== undefined &&
     !(memorySlot === "runtime-memory" && options?.runtimeMemoryPersist === undefined)
       ? assertSingleMemorySlotOwner({
-          memorySlotId: memorySlot ?? undefined,
+          memorySlotId: memorySlot,
           runtimeMemoryPersist: options?.runtimeMemoryPersist,
         })
       : { ok: true as const, errors: [] as string[] };

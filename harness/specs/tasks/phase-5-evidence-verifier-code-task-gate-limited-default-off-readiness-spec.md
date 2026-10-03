@@ -52,10 +52,10 @@ requiredTests:
   - pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-spec.md --no-diff
   - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-evidence-verifier-code-task-gate-shadow.test.ts tests/unit/task-loop-controller.test.ts
   - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-evidence-verifier-code-task-gate-shadow.test.ts tests/unit/runtime-evidence-verifier-code-task-gate-offline-corpus.test.ts tests/unit/runtime-evidence-verifier-contracts.test.ts tests/unit/runtime-evidence-verifier-collectors.test.ts tests/unit/task-loop-controller.test.ts
-  - git diff --check -- harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-spec.md runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-spec/README.md runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-internal-shadow-observation-evidence-review/README.md runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-shadow-mvp/README.md runtime-research/agent-runtime-index.md
-  - rg -n "active pilot approved|active enforcement approved|completionAuthority:\\s*true|default-on verifier gate|default enablement|reviewer prompt insertion|model-message insertion" harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-spec.md runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-spec runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-internal-shadow-observation-evidence-review/README.md runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-shadow-mvp/README.md runtime-research/agent-runtime-index.md
-  - rg -n "Gateway|host-api|api-client|ipcRenderer|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-spec.md runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-spec runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-internal-shadow-observation-evidence-review/README.md runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-shadow-mvp/README.md runtime-research/agent-runtime-index.md
-  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|spawn|exec\\(|vitest|eslint|tsc|pnpm|readFile|transcript|log|database|cache|service|listener|daemon|sidecar|exporter|collector" harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-spec.md runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-spec runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-internal-shadow-observation-evidence-review/README.md runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-shadow-mvp/README.md runtime-research/agent-runtime-index.md
+  - git diff --check -- harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-spec.md docs/dev/runtime-research-boundaries.md
+  - rg -n "active pilot approved|active enforcement approved|completionAuthority:\\s*true|default-on verifier gate|default enablement|reviewer prompt insertion|model-message insertion" harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-spec.md docs/dev/runtime-research-boundaries.md
+  - rg -n "Gateway|host-api|api-client|ipcRenderer|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-spec.md docs/dev/runtime-research-boundaries.md
+  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|spawn|exec\\(|vitest|eslint|tsc|pnpm|readFile|transcript|log|database|cache|service|listener|daemon|sidecar|exporter|collector" harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-spec.md docs/dev/runtime-research-boundaries.md
   - pnpm run comms:replay and pnpm run comms:compare only if implementation touches Gateway, runtime send/receive, channel delivery, fallback, host-api, api-client, Electron IPC, renderer, provider transport, or other communication paths.
 acceptance:
   - This task creates only a fresh limited default-off readiness spec, handoff package, and runtime index/handoff pointer updates.
@@ -69,10 +69,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-spec/README.md
-    - runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-internal-shadow-observation-evidence-review/README.md
-    - runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-shadow-mvp/README.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 5 Evidence Verifier Code Task Gate Limited Default-Off Readiness Spec

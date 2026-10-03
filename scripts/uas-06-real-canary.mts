@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -17,7 +17,7 @@ const engineeringReportRelative = `${artifactDirectory}/report.json`;
 const outputRelative = `${artifactDirectory}/real-cohort-report.json`;
 const checkOnly = process.argv.includes("--check");
 
-const sourceEvidence = [
+export const UAS06_REAL_SOURCE_EVIDENCE = [
   "package.json",
   "harness/specs/tasks/uas-06-single-local-exec-canary.md",
   "harness/specs/rules/verseshell-single-local-exec-canary-boundary.md",
@@ -32,12 +32,7 @@ const sourceEvidence = [
   "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md",
   "docs/dev/unified-agent-system/DEVELOPMENT-STRATEGY.zh-CN.md",
   "docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md",
-  "docs/dev/handoffs/LATEST.md",
 ] as const;
-
-if (process.argv.slice(2).some((argument) => argument !== "--check")) {
-  throw new Error("UAS-06 real evidence accepts no arguments other than --check");
-}
 
 function sha256(value: string | Buffer): string {
   return createHash("sha256").update(value).digest("hex");
@@ -54,9 +49,9 @@ function readJson(relativePath: string): { raw: string; value: unknown } {
   }
 }
 
-function inventory(): Uas06EvidenceSourceInventoryEntry[] {
-  return sourceEvidence.map((relativePath) => {
-    const absolutePath = path.join(root, relativePath);
+export function inventoryUas06RealSources(sourceRoot = root): Uas06EvidenceSourceInventoryEntry[] {
+  return UAS06_REAL_SOURCE_EVIDENCE.map((relativePath) => {
+    const absolutePath = path.join(sourceRoot, relativePath);
     if (!existsSync(absolutePath)) {
       throw new Error(`missing UAS-06 real evidence source: ${relativePath}`);
     }
@@ -105,7 +100,7 @@ function buildReport(): Uas06RealCohortReport {
     generatedAt: new Date().toISOString(),
     liveObservationsSha256: sha256(liveEvidence.raw),
     engineeringReportSha256: engineeringEvidence.sha256,
-    sourceInventory: inventory(),
+    sourceInventory: inventoryUas06RealSources(),
   });
 }
 
@@ -146,17 +141,24 @@ function assertCurrentReport(report: unknown, expected: Uas06RealCohortReport): 
   }
 }
 
-if (checkOnly) {
-  const outputPath = path.join(root, outputRelative);
-  if (!existsSync(outputPath)) throw new Error(`missing UAS-06 real cohort report: ${outputRelative}`);
-  const { value } = readJson(outputRelative);
-  const expected = buildReport();
-  assertCurrentReport(value, expected);
-  console.log(`UAS-06 real evidence current: ${outputRelative} (${expected.summary.status})`);
-} else {
-  const report = buildReport();
-  const outputPath = path.join(root, outputRelative);
-  mkdirSync(path.dirname(outputPath), { recursive: true });
-  writeFileSync(outputPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
-  console.log(`UAS-06 real evidence written: ${outputRelative} (${report.summary.status})`);
+// Inventory imports are read-only; only the explicit CLI may create a new report.
+// Use realpaths because this workspace is also reached through a Windows junction.
+if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {
+  if (process.argv.slice(2).some((argument) => argument !== "--check")) {
+    throw new Error("UAS-06 real evidence accepts no arguments other than --check");
+  }
+  if (checkOnly) {
+    const outputPath = path.join(root, outputRelative);
+    if (!existsSync(outputPath)) throw new Error(`missing UAS-06 real cohort report: ${outputRelative}`);
+    const { value } = readJson(outputRelative);
+    const expected = buildReport();
+    assertCurrentReport(value, expected);
+    console.log(`UAS-06 real evidence current: ${outputRelative} (${expected.summary.status})`);
+  } else {
+    const report = buildReport();
+    const outputPath = path.join(root, outputRelative);
+    mkdirSync(path.dirname(outputPath), { recursive: true });
+    writeFileSync(outputPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+    console.log(`UAS-06 real evidence written: ${outputRelative} (${report.summary.status})`);
+  }
 }

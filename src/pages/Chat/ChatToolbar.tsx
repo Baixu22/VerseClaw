@@ -1,7 +1,7 @@
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Activity, Gauge, ListTree, MoreHorizontal, RefreshCw, Slash } from 'lucide-react';
-import { useMemo } from 'react';
+import { Activity, Gauge, PackageOpen, RefreshCw } from 'lucide-react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { MemoryInjectionPanel } from '@/components/chat/MemoryInjectionPanel';
 import { ResourceChip } from '@/components/chat/ResourceChip';
 import { WORKSPACE_BROWSER_ENABLED } from '@/components/file-preview/workspace-browser-config';
 import { Button } from '@/components/ui/button';
@@ -13,20 +13,47 @@ import { useChatStore } from '@/stores/chat';
 import { PanelRightOpen } from '@/components/icons/codex-icons';
 import type { PromptCacheRiskAssessment, PromptCacheStatus } from '@shared/types/workspace';
 
-const MENU_ITEM_CLASS = 'flex min-h-9 cursor-default select-none items-center gap-2 rounded-md px-2.5 text-sm text-foreground outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-foreground/5';
-
 type ChatToolbarProps = {
-  questionDirectoryOpen?: boolean;
-  questionDirectoryCount?: number;
-  onToggleQuestionDirectory?: () => void;
-  onOpenSlashCommands?: () => void;
   promptCacheStatus?: PromptCacheRiskAssessment | null;
   sessionActivityAvailable?: boolean;
+  /** Reflects the rail's EFFECTIVE state, passive layer included. */
   sessionActivityOpen?: boolean;
   sessionActivityNeedsAttention?: boolean;
   onToggleSessionActivity?: () => void;
-  onOpenSessionActivity?: () => void;
 };
+
+/**
+ * A control the incoming workspace panel wipes away.
+ *
+ * The panel's leading edge crosses the toolbar as it slides in, and the controls
+ * it passes over go with it. They stay mounted and collapse their own width to
+ * zero from the right instead of unmounting, because unmounting would re-flow
+ * the row and drag the surviving button sideways — the one thing that has to
+ * hold still, since it is the switch the user is about to click again to close.
+ *
+ * `order` is the distance from the panel's edge: 1 is the rightmost control and
+ * leads the wipe, 2 follows a beat later. See codex-workspace-panel.css.
+ */
+function ToolbarWipe({
+  wiped,
+  order,
+  children,
+}: {
+  wiped: boolean;
+  order: 1 | 2;
+  children: ReactNode;
+}) {
+  return (
+    <span
+      className="codex-toolbar-wipe"
+      data-wiped={wiped ? 'true' : 'false'}
+      data-wipe-order={order}
+      aria-hidden={wiped || undefined}
+    >
+      {children}
+    </span>
+  );
+}
 
 function formatCacheTokens(value: number): string {
   if (!Number.isFinite(value) || value <= 0) return '0';
@@ -63,21 +90,18 @@ function shouldShowPromptCacheChip(status?: PromptCacheRiskAssessment | null): s
 }
 
 export function ChatToolbar({
-  questionDirectoryOpen = false,
-  questionDirectoryCount = 0,
-  onToggleQuestionDirectory,
-  onOpenSlashCommands,
   promptCacheStatus,
   sessionActivityAvailable = false,
   sessionActivityOpen = false,
   sessionActivityNeedsAttention = false,
   onToggleSessionActivity,
-  onOpenSessionActivity,
 }: ChatToolbarProps = {}) {
   const refresh = useChatStore((state) => state.refresh);
   const loading = useChatStore((state) => state.loading);
   const currentAgentId = useChatStore((state) => state.currentAgentId);
+  const currentSessionKey = useChatStore((state) => state.currentSessionKey);
   const agents = useAgentsStore((state) => state.agents);
+  const [memoryInjectionOpen, setMemoryInjectionOpen] = useState(false);
   const openWorkspacePanel = useArtifactPanel((state) => state.openWorkspacePanel);
   const panelOpen = useArtifactPanel((state) => state.open);
   const closePanel = useArtifactPanel((state) => state.close);
@@ -90,7 +114,6 @@ export function ChatToolbar({
   // The toggle opens/closes the whole panel now — the tab strip inside it owns
   // which view is showing, so there is no single "browser tab is active" state.
   const browserActive = WORKSPACE_BROWSER_ENABLED && panelOpen;
-  const questionDirectoryAvailable = questionDirectoryCount > 1 && Boolean(onToggleQuestionDirectory);
   const showPromptCacheChip = shouldShowPromptCacheChip(promptCacheStatus);
   const promptCacheReason = promptCacheStatus?.reason ?? promptCacheStatus?.lastRiskEvent?.reason;
 
@@ -156,8 +179,14 @@ export function ChatToolbar({
           <TooltipContent side="bottom" collisionPadding={8}><p>{t('toolbar.workspace')}</p></TooltipContent>
         </Tooltip>
       )}
-      {sessionActivityAvailable && onToggleSessionActivity && onOpenSessionActivity && (
-        <>
+      {sessionActivityAvailable && onToggleSessionActivity && (
+        <ToolbarWipe wiped={panelOpen} order={2}>
+        {/* Toggle only — the panel itself is the chat page's status rail, not a
+            dropdown owned by this button. A Radix dropdown would have re-parented
+            it into a portal, where it could not inset the transcript for the
+            passive layer, and its open state would have been the menu's rather
+            than the rail's. */}
+        <span className="chat-session-activity-control" data-testid="chat-session-activity-control">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -165,97 +194,63 @@ export function ChatToolbar({
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  'hidden h-8 w-8 hover:bg-foreground/5 hover:text-foreground xl:inline-flex',
+                  'h-8 w-8 hover:bg-foreground/5 hover:text-foreground',
                   sessionActivityOpen && 'bg-foreground/10 text-foreground',
                 )}
+                aria-label={t('sessionActivity.title')}
+                aria-expanded={sessionActivityOpen}
                 onClick={onToggleSessionActivity}
-                aria-label={t('sessionActivity.title')}
-                aria-pressed={sessionActivityOpen}
               >
                 <Activity className={cn('h-4 w-4', sessionActivityNeedsAttention && 'text-red-700 dark:text-red-400')} />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" collisionPadding={8}><p>{t('sessionActivity.title')}</p></TooltipContent>
           </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                data-testid="chat-session-activity-sheet-toggle"
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  'h-8 w-8 hover:bg-foreground/5 hover:text-foreground xl:hidden',
-                  sessionActivityOpen && 'bg-foreground/10 text-foreground',
-                )}
-                onClick={onOpenSessionActivity}
-                aria-label={t('sessionActivity.title')}
-                aria-pressed={sessionActivityOpen}
-              >
-                <Activity className={cn('h-4 w-4', sessionActivityNeedsAttention && 'text-red-700 dark:text-red-400')} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" collisionPadding={8}><p>{t('sessionActivity.title')}</p></TooltipContent>
-          </Tooltip>
-        </>
+        </span>
+        </ToolbarWipe>
       )}
-      {questionDirectoryAvailable && (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            data-testid="chat-memory-injection-toggle"
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-8 w-8 hover:bg-foreground/5 hover:text-foreground',
+              memoryInjectionOpen && 'bg-foreground/10 text-foreground',
+            )}
+            aria-label={t('memoryInjection.title')}
+            aria-expanded={memoryInjectionOpen}
+            onClick={() => setMemoryInjectionOpen(true)}
+          >
+            <PackageOpen className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" collisionPadding={8}><p>{t('memoryInjection.title')}</p></TooltipContent>
+      </Tooltip>
+      <MemoryInjectionPanel
+        open={memoryInjectionOpen}
+        onOpenChange={setMemoryInjectionOpen}
+        sessionKey={currentSessionKey}
+      />
+      <ToolbarWipe wiped={panelOpen} order={1}>
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
-              data-testid="chat-question-directory-toggle"
+              data-testid="chat-toolbar-refresh"
               variant="ghost"
               size="icon"
-              className={cn(
-                'h-8 w-8 hover:bg-foreground/5 hover:text-foreground',
-                questionDirectoryOpen && 'bg-foreground/10 text-foreground',
-              )}
-              onClick={onToggleQuestionDirectory}
-              aria-label={t('questionDirectory.title')}
+              className="h-8 w-8 hover:bg-foreground/5 hover:text-foreground"
+              onClick={() => refresh()}
+              disabled={loading}
+              aria-label={t('toolbar.refresh')}
             >
-              <ListTree className="h-4 w-4" />
+              <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} aria-hidden="true" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="bottom" collisionPadding={8}><p>{t('questionDirectory.title')}</p></TooltipContent>
+          <TooltipContent side="bottom" collisionPadding={8}><p>{t('toolbar.refresh')}</p></TooltipContent>
         </Tooltip>
-      )}
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger asChild>
-          <Button
-            data-testid="chat-toolbar-more"
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 hover:bg-foreground/5 hover:text-foreground"
-            aria-label={t('toolbar.moreActions')}
-          >
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Portal>
-          <DropdownMenu.Content
-            align="end"
-            sideOffset={6}
-            className="z-[90] min-w-52 rounded-[var(--radius-popover)] border border-border/70 bg-popover p-1.5 text-popover-foreground shadow-sm"
-          >
-            <DropdownMenu.Item
-              data-testid="chat-toolbar-slash"
-              className={MENU_ITEM_CLASS}
-              disabled={!onOpenSlashCommands}
-              onSelect={onOpenSlashCommands}
-            >
-              <Slash className="h-4 w-4" />
-              {t('toolbar.slashCommands')}
-            </DropdownMenu.Item>
-            <DropdownMenu.Item
-              className={MENU_ITEM_CLASS}
-              disabled={loading}
-              onSelect={() => refresh()}
-            >
-              <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
-              {t('toolbar.refresh')}
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Portal>
-      </DropdownMenu.Root>
+      </ToolbarWipe>
     </div>
   );
 }

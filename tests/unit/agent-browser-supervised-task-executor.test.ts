@@ -178,7 +178,7 @@ describe('agent browser supervised task executor', () => {
     });
 
     await expect(execute(createRunningTask(), new AbortController().signal, () => undefined))
-      .rejects.toMatchObject<Partial<AgentBrowserSupervisedTaskError>>({ code: 'PRIVATE_NETWORK_DENIED' });
+      .rejects.toMatchObject({ code: 'PRIVATE_NETWORK_DENIED' });
     expect(service.openSupervised).not.toHaveBeenCalled();
   });
 

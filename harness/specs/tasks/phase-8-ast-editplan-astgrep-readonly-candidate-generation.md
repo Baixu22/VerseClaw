@@ -65,13 +65,13 @@ rollback:
 requiredTests:
   - pnpm --config.verify-deps-before-run=false harness context --spec harness/specs/tasks/phase-8-ast-editplan-astgrep-readonly-candidate-generation.md
   - pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/phase-8-ast-editplan-astgrep-readonly-candidate-generation.md
-  - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-ast-edit-plan-foundation.test.ts tests/unit/runtime-ast-grep-edit-plan-adapter.test.ts tests/unit/runtime-ast-patch-planner-route-correction.test.ts tests/unit/runtime-ast-patch-planner-readonly-scan.test.ts tests/unit/runtime-ast-patch-planner-rule-validation.test.ts tests/unit/runtime-ast-patch-planner-resume-drift.test.ts tests/unit/runtime-ast-patch-planner-contracts.test.ts
+  - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-ast-edit-plan-foundation.test.ts tests/unit/runtime-ast-grep-edit-plan-adapter.test.ts tests/unit/runtime-ast-edit-plan-evidence-verifier-readiness.test.ts tests/unit/runtime-ast-patch-planner-readonly-scan.test.ts tests/unit/runtime-ast-patch-planner-rule-validation.test.ts tests/unit/runtime-ast-patch-planner-resume-drift.test.ts tests/unit/runtime-ast-patch-planner-contracts.test.ts
   - pnpm --config.verify-deps-before-run=false run tsgo:core
   - pnpm --config.verify-deps-before-run=false run comms:replay
   - pnpm --config.verify-deps-before-run=false run comms:compare
   - git diff --check
-  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|workspaceEdit|applyPatch|ast-grep.*apply|rename|replaceBody|insertBefore|insertAfter|safeDelete" openclaw_runtime/src/runtime-core/ast-grep-edit-plan-adapter.ts openclaw_runtime/src/runtime-core/ast-edit-plan.ts tests/unit/runtime-ast-grep-edit-plan-adapter.test.ts harness/specs/tasks/phase-8-ast-editplan-astgrep-readonly-candidate-generation.md runtime-research/handoffs/phase-8-ast-editplan-astgrep-readonly-candidate-generation
-  - rg -n "TaskLoop|task-loop|Gateway|host-api|api-client|ipcRenderer|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" openclaw_runtime/src/runtime-core/ast-grep-edit-plan-adapter.ts openclaw_runtime/src/runtime-core/ast-edit-plan.ts tests/unit/runtime-ast-grep-edit-plan-adapter.test.ts harness/specs/tasks/phase-8-ast-editplan-astgrep-readonly-candidate-generation.md runtime-research/handoffs/phase-8-ast-editplan-astgrep-readonly-candidate-generation
+  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|workspaceEdit|applyPatch|ast-grep.*apply|rename|replaceBody|insertBefore|insertAfter|safeDelete" openclaw_runtime/src/runtime-core/ast-grep-edit-plan-adapter.ts openclaw_runtime/src/runtime-core/ast-edit-plan.ts tests/unit/runtime-ast-grep-edit-plan-adapter.test.ts harness/specs/tasks/phase-8-ast-editplan-astgrep-readonly-candidate-generation.md docs/dev/runtime-research-boundaries.md
+  - rg -n "TaskLoop|task-loop|Gateway|host-api|api-client|ipcRenderer|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" openclaw_runtime/src/runtime-core/ast-grep-edit-plan-adapter.ts openclaw_runtime/src/runtime-core/ast-edit-plan.ts tests/unit/runtime-ast-grep-edit-plan-adapter.test.ts harness/specs/tasks/phase-8-ast-editplan-astgrep-readonly-candidate-generation.md docs/dev/runtime-research-boundaries.md
 acceptance:
   - Harness context and validation pass, or validation without --no-diff is blocked only by unrelated dirty tree state and --no-diff structural validation passes.
   - The adapter emits EditPlan IR through the phase 1 EditPlan shape and does not bypass or replace EditPlan.
@@ -84,8 +84,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-8-ast-editplan-astgrep-readonly-candidate-generation/README.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 8 AST EditPlan ast-grep Readonly Candidate Generation

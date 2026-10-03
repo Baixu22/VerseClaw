@@ -9,6 +9,7 @@ import { Toaster } from 'sonner';
 import i18n from './i18n';
 import { MainLayout } from './components/layout/MainLayout';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { RuntimeApprovalPrompt } from '@/components/runtime-approvals/RuntimeApprovalPrompt';
 import { BootShellHandoff, SetupRouteLoadingShell } from './components/loading/RouteLoadingShell';
 import { useSettingsStore } from './stores/settings';
 import { useGatewayStore } from './stores/gateway';
@@ -31,6 +32,7 @@ import { toRoutePath } from './lib/settings-overlay-routing';
 import { OverlayPortalProvider } from './components/ui/overlay-portal';
 
 const Chat = lazy(() => import('./pages/Chat').then((m) => ({ default: m.Chat })));
+const KnowledgeChat = lazy(() => import('./pages/Chat/KnowledgeChat').then((m) => ({ default: m.KnowledgeChat })));
 const Cron = lazy(() => import('./pages/Cron').then((m) => ({ default: m.Cron })));
 const Inbox = lazy(() => import('./pages/Inbox').then((m) => ({ default: m.Inbox })));
 const Dreams = lazy(() => import('./pages/Dreams').then((m) => ({ default: m.Dreams })));
@@ -38,21 +40,21 @@ const ImageGenerationPage = lazy(() => import('./pages/ImageGeneration').then((m
 const ObservabilityDashboard = lazy(() => import('./pages/Observability').then((m) => ({ default: m.ObservabilityDashboard })));
 const TaskLedgerPage = lazy(() => import('./pages/TaskLedger'));
 const ClawGraphPage = lazy(() => import('./pages/ClawGraph'));
-const CodeReviewPage = lazy(() => import('./pages/CodeReview'));
 const Knowledge = lazy(() => import('./pages/Knowledge').then((m) => ({ default: m.Knowledge })));
-const BrowserWorkbench = lazy(() => import('./pages/Browser').then((m) => ({ default: m.BrowserWorkbench })));
 const Setup = lazy(() => import('./pages/Setup').then((m) => ({ default: m.Setup })));
 const UiV2Showcase = lazy(() => import('./pages/UiV2Showcase').then((m) => ({ default: m.UiV2Showcase })));
 
+function ChatRoute() {
+  const location = useLocation();
+  return new URLSearchParams(location.search).get('knowledge') === 'ask' ? <KnowledgeChat /> : <Chat />;
+}
+
 function WorkspaceCompatibilityRoute({
   intent,
-  legacy,
 }: {
   intent: WorkspacePanelIntent;
-  legacy: ReactNode;
 }) {
   const location = useLocation();
-  if (resolveUiVersion(window.electron?.platform, location.search) === 'legacy') return legacy;
 
   const search = new URLSearchParams(location.search);
   search.set('workspacePanel', intent.panel);
@@ -102,7 +104,7 @@ const BackgroundRoutes = memo(function BackgroundRoutes({
       <Route path="/setup/*" element={<SetupRoute />} />
 
       <Route element={<MainLayout />}>
-        <Route path="/" element={<Chat />} />
+        <Route path="/" element={<ChatRoute />} />
         <Route path="/models" element={<Navigate to="/settings/models" replace />} />
         <Route path="/agents" element={<Navigate to="/settings/agents" replace />} />
         <Route path="/channels" element={<Navigate to="/settings/channels" replace />} />
@@ -117,7 +119,6 @@ const BackgroundRoutes = memo(function BackgroundRoutes({
           element={(
             <WorkspaceCompatibilityRoute
               intent={{ panel: 'review', view: 'ai-review' }}
-              legacy={<CodeReviewPage />}
             />
           )}
         />
@@ -127,7 +128,6 @@ const BackgroundRoutes = memo(function BackgroundRoutes({
           element={(
             <WorkspaceCompatibilityRoute
               intent={{ panel: 'browser', view: 'live' }}
-              legacy={<BrowserWorkbench />}
             />
           )}
         />
@@ -405,7 +405,7 @@ function App() {
     <ErrorBoundary>
       <OverlayPortalProvider container={appOverlayHost}>
       <TooltipProvider delayDuration={300}>
-        <UiOverlayProvider uiVersion={uiVersion} value={overlayContextValue}>
+        <UiOverlayProvider value={overlayContextValue}>
         <BackgroundRoutes
           location={location}
           devModeUnlocked={devModeUnlocked}
@@ -414,6 +414,9 @@ function App() {
         </UiOverlayProvider>
 
         <div ref={setAppOverlayHost} id="app-overlay-root" data-testid="app-overlay-root" />
+
+        {/* Runtime exec-approval boundary: app-level, so it never touches ChatInput. */}
+        <RuntimeApprovalPrompt />
 
         {/* Global toast notifications */}
         <Toaster

@@ -77,8 +77,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-b-agentmap-prompt-assembly-experiment/README.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-assembly-experiment/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Line B AgentMap Prompt Assembly Experiment

@@ -1,3 +1,5 @@
+> 2026-09-30 政策修订：2026-09-27 AGENTS.md 优先于下文历史口径。TF-0009 以具名 agent 三 profile 各 10 条、安全/kill/rollback 和 continue/shrink/stop 裁决验收；证据齐全可收口。真人 0/10 仅为事实局限，不是节点前置。下文旧轮次数值及 review_needed/degraded 判定按当时快照保留。当前决策见 `docs/dev/tf0009-policy-decision-20260930.md`。
+
 # 组件受控投用验收清单
 
 > P0 状态：完成。P1 agent-surrogate 工程流程完成，真人投放延后；任何硬性 NO-GO 仍立即停止 canary 或扩大灰度。

@@ -64,6 +64,10 @@ function createProjector(onTrace: (trace: ObservabilityTrace) => void) {
   return { diagnostics, projector };
 }
 
+async function getTraces(api: Awaited<ReturnType<typeof createObservabilityApi>>): Promise<ObservabilityTrace[]> {
+  return (await api.observability.traces()) as ObservabilityTrace[];
+}
+
 async function waitFor(assertion: () => void, timeoutMs = 500): Promise<void> {
   const deadline = Date.now() + timeoutMs;
   let lastError: unknown;
@@ -199,14 +203,14 @@ describe('Electron trajectory stream projection', () => {
       await clearObservabilityIndex();
 
       const firstApi = createObservabilityApi({ gatewayManager: gateway });
-      expect((await firstApi.observability.traces()).find((trace) => trace.runId === 'legacy-restart-run')?.tags)
+      expect((await getTraces(firstApi)).find((trace) => trace.runId === 'legacy-restart-run')?.tags)
         .toContain('legacy-v1-fallback');
 
       clearObservabilityTraceBuffer();
       resetObservabilityIndexForTests();
       await clearObservabilityIndex();
       const restartedApi = createObservabilityApi({ gatewayManager: gateway });
-      expect((await restartedApi.observability.traces()).find((trace) => trace.runId === 'legacy-restart-run')?.tags)
+      expect((await getTraces(restartedApi)).find((trace) => trace.runId === 'legacy-restart-run')?.tags)
         .toContain('legacy-v1-fallback');
     } finally {
       if (previousConfigDir == null) delete process.env.OPENCLAW_CONFIG_DIR;
@@ -271,7 +275,7 @@ describe('Electron trajectory stream projection', () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(readFromCalls.map((params) => params.fromSeq)).toEqual([0, 1]);
-      expect((await api.observability.traces()).at(-1)?.status).toBe('completed');
+      expect((await getTraces(api)).at(-1)?.status).toBe('completed');
     } finally {
       if (previousConfigDir == null) delete process.env.OPENCLAW_CONFIG_DIR;
       else process.env.OPENCLAW_CONFIG_DIR = previousConfigDir;

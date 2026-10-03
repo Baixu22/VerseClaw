@@ -76,12 +76,12 @@ requiredTests:
   - rg -n "agent-map-readonly-shadow|promptAssemblyExperiment|promptCandidateRuntimeShadow|promptCandidateControlledCutoverPilot|promptCandidateTaskLoopExplicitInvocationPilot|runtime\\.agentMap" openclaw_runtime/src/agents openclaw_runtime/src/gateway electron src shared
   - rg -n "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components
   - rg -n "AGENTMAP_CANDIDATE_SENTINEL_DO_NOT_LEAK|AGENTMAP_PRODUCTION_ENTRY_SENTINEL_DO_NOT_LEAK|AGENTMAP_DEFAULT_ON_SENTINEL_DO_NOT_LEAK|AGENTMAP_IMPLEMENTATION_READY_SENTINEL_DO_NOT_LEAK|AGENTMAP_DEFAULT_ON_DEEP_VALIDATION_CANDIDATE_SENTINEL_DO_NOT_LEAK" openclaw_runtime/src electron src shared tests
-  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|fs\\.promises|localStorage|indexedDB|electron-store|sqlite|postgres|mysql|redis" harness/specs/tasks/phase-line-b-agentmap-default-on-implementation-readiness.md runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts
-  - rg -n "createServer\\(|listen\\(|WebSocketServer|new WebSocket\\(|daemon|listener|external database|sqlite|postgres|mysql|redis|@temporalio|express\\(" harness/specs/tasks/phase-line-b-agentmap-default-on-implementation-readiness.md runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts
-  - rg -n "rename|replaceBody|insertBefore|insertAfter|safeDelete|workspaceEdit|applyPatch|ast-grep.*apply|symbol.*apply" harness/specs/tasks/phase-line-b-agentmap-default-on-implementation-readiness.md runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts
-  - rg -n "default-on|default cutover|production-ready|ready_for_default_on_implementation_spec|ready_for_default_on_proposal|needs_follow_up|blocked" harness/specs/tasks/phase-line-b-agentmap-default-on-implementation-readiness.md runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts runtime-research/agent-runtime-index.md
+  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|fs\\.promises|localStorage|indexedDB|electron-store|sqlite|postgres|mysql|redis" harness/specs/tasks/phase-line-b-agentmap-default-on-implementation-readiness.md docs/dev/runtime-research-boundaries.md tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts
+  - rg -n "createServer\\(|listen\\(|WebSocketServer|new WebSocket\\(|daemon|listener|external database|sqlite|postgres|mysql|redis|@temporalio|express\\(" harness/specs/tasks/phase-line-b-agentmap-default-on-implementation-readiness.md docs/dev/runtime-research-boundaries.md tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts
+  - rg -n "rename|replaceBody|insertBefore|insertAfter|safeDelete|workspaceEdit|applyPatch|ast-grep.*apply|symbol.*apply" harness/specs/tasks/phase-line-b-agentmap-default-on-implementation-readiness.md docs/dev/runtime-research-boundaries.md tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts
+  - rg -n "default-on|default cutover|production-ready|ready_for_default_on_implementation_spec|ready_for_default_on_proposal|needs_follow_up|blocked" harness/specs/tasks/phase-line-b-agentmap-default-on-implementation-readiness.md docs/dev/runtime-research-boundaries.md tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts
   - rg -n "AgentMap|agentMap|promptCandidateRuntimeShadow|promptAssemblyExperiment|prompt candidate|production entry|limited production opt-in|controlled internal opt-in|default-on" README.md README.zh-CN.md README.ja-JP.md README.ru-RU.md
-  - rg -n "legacy-context-engine|loop-context-pack|AgentMap provider|provider ordering|provider_ordering_drift|createContextProviderRegistryPilot" openclaw_runtime/src/context-engine/provider-registry.ts tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts tests/unit/context-provider-registry.test.ts runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/provider-ordering-proof.md
+  - rg -n "legacy-context-engine|loop-context-pack|AgentMap provider|provider ordering|provider_ordering_drift|createContextProviderRegistryPilot" openclaw_runtime/src/context-engine/provider-registry.ts tests/unit/runtime-agent-map-default-on-implementation-readiness.test.ts tests/unit/context-provider-registry.test.ts docs/dev/runtime-research-boundaries.md
 acceptance:
   - Handoff includes README, implementation readiness plan, boundary matrix, telemetry requirements, telemetry gap analysis, production rollback runbook, incident veto gates, leakage proof, provider ordering proof, authority boundary review, persistence retention review, default path proof, comms regression plan, UI/docs/i18n boundary, performance/noise scorecard, implementation risk register, implementation spec template, and synthesis.
   - Replay/internal corpus has at least 200 cases covering all requested flags, explicit invocation, AgentMapResult validity, budget, prompt, long-context, multi-file, failed, blocked, provider-ordering-sensitive, checkpoint/lifecycle-sensitive, shadow/cutover/TaskLoop pilots, sentinels, malformed candidate text, leakage scans, persistence scans, provider/model/Gateway transport scans, renderer IPC/Gateway scans, service/listener/database/server scans, mutation scans, README/i18n docs sync scans, and comms replay/compare decision.
@@ -91,24 +91,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/README.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/implementation-readiness-plan.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/boundary-matrix.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/telemetry-requirements.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/telemetry-gap-analysis.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/production-rollback-runbook.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/incident-veto-gates.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/leakage-proof.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/provider-ordering-proof.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/authority-boundary-review.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/persistence-retention-review.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/default-path-proof.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/comms-regression-plan.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/ui-docs-i18n-boundary.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/performance-noise-scorecard.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/implementation-risk-register.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/implementation-spec-template.md
-    - runtime-research/handoffs/line-b-agentmap-default-on-implementation-readiness/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Line B AgentMap Default-On Implementation Readiness

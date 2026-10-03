@@ -1,0 +1,22 @@
+[
+  {
+    "file": "src/agents/rc03-entry-transitions.acceptance.test.ts",
+    "command": [
+      "node",
+      "node_modules/oxfmt/bin/oxfmt",
+      "--check",
+      "C:\\Users\\27933\\AppData\\Local\\Temp\\tmp1n6k6cya.ts"
+    ],
+    "headFormatExit": 1
+  },
+  {
+    "file": "src/context-engine/rc03-seal-hook.ts",
+    "command": [
+      "node",
+      "node_modules/oxfmt/bin/oxfmt",
+      "--check",
+      "C:\\Users\\27933\\AppData\\Local\\Temp\\tmpyha2f440.ts"
+    ],
+    "headFormatExit": 1
+  }
+]

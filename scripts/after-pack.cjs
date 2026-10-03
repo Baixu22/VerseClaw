@@ -19,7 +19,7 @@
  *      @mariozechner/clipboard).
  */
 
-const { cpSync, existsSync, readdirSync, rmSync, statSync, mkdirSync, realpathSync, readFileSync, writeFileSync } = require('fs');
+const { cpSync, existsSync, readdirSync, rmSync, statSync, lstatSync, mkdirSync, realpathSync, readFileSync, writeFileSync } = require('fs');
 const { join, dirname, basename, relative } = require('path');
 const { ELECTRON_MAIN_RUNTIME_PACKAGES } = require('./openclaw-bundle-config.mjs');
 const { patchNsisExtractTemplate } = require('./patch-nsis-extract.mjs');
@@ -102,17 +102,28 @@ function cleanupUnnecessaryFiles(dir) {
     for (const entry of entries) {
       const fullPath = join(currentDir, entry.name);
 
-      if (entry.isDirectory()) {
-        if (REMOVE_DIRS.has(entry.name)) {
+      const name = entry.name;
+      const removeFileLike =
+        REMOVE_FILE_NAMES.has(name) || REMOVE_FILE_EXTS.some((extension) => name.endsWith(extension));
+      // Windows junctions copied from the runtime can report as directories even
+      // when their target is a declaration file. Treat those file-like junctions
+      // as removable files; otherwise 7za sees a `.d.ts\` directory and the
+      // NSIS archive fails with "directory name invalid".
+      let isReparseLink = entry.isSymbolicLink?.() === true;
+      if (!isReparseLink) {
+        try { isReparseLink = lstatSync(normWin(fullPath)).isSymbolicLink(); } catch { /* best effort */ }
+      }
+      const inRuntimeOverlay = /[\\/]dist-runtime[\\/]/u.test(currentDir);
+      if (isReparseLink && (removeFileLike || inRuntimeOverlay)) {
+        try { rmSync(fullPath, { recursive: true, force: true }); removedCount++; } catch { /* */ }
+      } else if (entry.isDirectory()) {
+        if (REMOVE_DIRS.has(name)) {
           try { rmSync(fullPath, { recursive: true, force: true }); removedCount++; } catch { /* */ }
         } else {
           walk(fullPath);
         }
-      } else if (entry.isFile()) {
-        const name = entry.name;
-        if (REMOVE_FILE_NAMES.has(name) || REMOVE_FILE_EXTS.some(e => name.endsWith(e))) {
-          try { rmSync(fullPath, { force: true }); removedCount++; } catch { /* */ }
-        }
+      } else if (entry.isFile() && removeFileLike) {
+        try { rmSync(fullPath, { force: true }); removedCount++; } catch { /* */ }
       }
     }
   }

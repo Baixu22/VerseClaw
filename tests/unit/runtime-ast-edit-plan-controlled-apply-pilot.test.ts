@@ -343,7 +343,7 @@ describe("AST EditPlan controlled explicit apply pilot", () => {
 
     const authorityDrift: EditPlan = {
       ...plan,
-      authority: { ...plan.authority, noPatchApply: false } as EditPlan["authority"],
+      authority: { ...plan.authority, noPatchApply: false } as unknown as EditPlan["authority"],
     };
     expect(runAstEditPlanControlledApplyPilot({
       editPlan: authorityDrift,

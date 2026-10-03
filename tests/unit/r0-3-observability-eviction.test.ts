@@ -37,7 +37,7 @@ function makeScorecard(traceId: string): ObservabilityScorecard {
     score: 0.5,
     verdict: 'mixed',
     createdAt: NOW,
-  } as ObservabilityScorecard;
+  } as unknown as ObservabilityScorecard;
 }
 
 beforeEach(() => {

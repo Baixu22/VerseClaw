@@ -11,7 +11,24 @@
  * Run: pnpm exec playwright test tests/e2e/beam-composer-verify.spec.ts
  */
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { evidencePath } from './fixtures/evidence-root';
 
+type BeamReport = {
+  idle?: {
+    beam?: boolean;
+    beamInsideShell?: boolean;
+    beamMatchesShellSize?: boolean;
+    active?: boolean;
+    overflow?: string;
+  };
+  sending?: { active?: boolean; fading?: boolean; afterBackground?: string; strengthVar?: string } | null;
+  slashPalette?: { found?: boolean; paletteAboveBeam?: boolean; hitIsPalette?: boolean };
+  sendBtnState?: unknown;
+  sendBtnAfterFill?: unknown;
+  sendingInstant?: unknown;
+  lightTheme?: unknown;
+  consoleErrors?: unknown[];
+};
 const SESSION_KEY = 'agent:main:main';
 
 function stableStringify(value: unknown): string {
@@ -147,7 +164,7 @@ test('sunset beam wraps composer, lights on sending, menus unclipped', async ({ 
     await expect(page.getByTestId('chat-page')).toBeVisible();
     await expect(page.getByTestId('chat-composer-shell')).toBeVisible();
 
-    const report: Record<string, unknown> = {};
+    const report: BeamReport = {};
 
     // 1. Beam idle — no active attr, but element exists INSIDE the shell
     report.idle = await page.evaluate(() => {
@@ -205,7 +222,7 @@ test('sunset beam wraps composer, lights on sending, menus unclipped', async ({ 
         fading: beam.hasAttribute('data-fading'),
         // beam pseudo-element layers exist with sunset palette
         afterBackground: getComputedStyle(beam, '::after').backgroundImage.slice(0, 120),
-        strengthVar: beam.style.getPropertyValue('--beam-strength'),
+        strengthVar: (beam as HTMLElement).style.getPropertyValue('--beam-strength'),
       };
     });
 
@@ -257,7 +274,7 @@ test('sunset beam wraps composer, lights on sending, menus unclipped', async ({ 
     console.log('BEAM_VERIFY_REPORT:', JSON.stringify(report, null, 2));
 
     // Screenshots
-    await page.screenshot({ path: 'reports/visual-tune/beam-app-sending.png' });
+    await page.screenshot({ path: evidencePath('reports/visual-tune/beam-app-sending.png') });
 
     // Assertions
     expect(report.idle.beam).toBe(true);
@@ -265,8 +282,8 @@ test('sunset beam wraps composer, lights on sending, menus unclipped', async ({ 
     expect(report.idle.beamMatchesShellSize).toBe(true);
     expect(report.idle.active).toBe(false); // idle → beam off
     expect(report.idle.overflow).toBe('hidden'); // inner ring clip
-    expect(report.sending.active).toBe(true); // sending → beam on
-    expect(report.sending.strengthVar).toBe('0.3');
+    expect(report.sending?.active).toBe(true); // sending → beam on
+    expect(report.sending?.strengthVar).toBe('0.3');
     expect(report.slashPalette.found).toBe(true);
     expect(report.slashPalette.paletteAboveBeam).toBe(true);
     expect(report.slashPalette.hitIsPalette).toBe(true);

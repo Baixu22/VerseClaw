@@ -1,0 +1,96 @@
+{
+  "schema": "p6-production-compaction-entries/v1",
+  "generatedAt": "2026-08-18T00:00:00Z",
+  "count": 11,
+  "transcriptRoot": "C:\\Users\\27933/.openclaw/agents",
+  "entries": [
+    {
+      "basename": "2026-08-12T12-58-18-419Z_10d2c531-c35a-44ae-9064-eeafe4107848.jsonl",
+      "line": 239,
+      "tokensBefore": 129959,
+      "fileHash": "85130cddda72fbf03945c649ecd9cb0069a028a92086d0add0f6ce4f9be33503",
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "basename": "2026-08-12T12-59-20-521Z_d18e461b-1f9e-481f-869b-ec9c87c1d6a0.jsonl",
+      "line": 239,
+      "tokensBefore": 129959,
+      "fileHash": "a37a858bb2b328810186fc1400ffda0b88891bfc6a8c041c9094720878b92d41",
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "basename": "2026-08-12T14-37-50-139Z_b8e370c7-f291-4340-9a56-d9287b550899.jsonl",
+      "line": 239,
+      "tokensBefore": 129959,
+      "fileHash": "eecf081097443b93595d969f365cc82f451824b7c8dd947a626776e283f858bf",
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "basename": "2026-08-12T15-07-29-396Z_554203ce-750a-485d-9096-8502ef7e57eb.jsonl",
+      "line": 239,
+      "tokensBefore": 129959,
+      "fileHash": "46b09053d7eb85eeb75c83e21113cae02493e0294df634d96c6919792af8e41f",
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "basename": "2026-08-12T15-47-34-555Z_86cb2530-4335-4155-8a89-6e59a68ee0e3.jsonl",
+      "line": 239,
+      "tokensBefore": 129959,
+      "fileHash": "404b6d8d4e5c668d1c26c570c9a0d1d74fbc043b97a16d3a1d32d8a09a8e1733",
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "basename": "2026-08-12T15-59-47-730Z_14eec152-b3bc-4d78-8f09-a62330b2227f.jsonl",
+      "line": 239,
+      "tokensBefore": 129959,
+      "fileHash": "1308b2e608c4fb106f052273d11c7d7f67ebfb59f82e49d1b69a310e1098a574",
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "basename": "2026-08-12T16-33-20-107Z_bd009fb4-d9a3-46ff-9918-b59aee4e1d7c.jsonl",
+      "line": 239,
+      "tokensBefore": 129959,
+      "fileHash": "c48ddb59be2db1afff1d25ac5afe6e5085debaa1e9062f9d5a3a8546695336cb",
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "basename": "2026-08-12T16-34-18-574Z_815d5026-f1ae-4011-846d-7e0728c26ccc.jsonl",
+      "line": 239,
+      "tokensBefore": 129959,
+      "fileHash": "b6028cd56e54dd89d3616d72a70e09d35385321afffa3ab4aa765c5c5e49e845",
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "basename": "2026-08-12T17-05-10-927Z_a160d602-e1fd-4404-9a97-080448a8d39b.jsonl",
+      "line": 239,
+      "tokensBefore": 129959,
+      "fileHash": "4f9b1e404b41eb750dca3344468d2eac9849c1bc5bf96e19a0f56258b7b2e5b1",
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "basename": "57c00668-baf0-44d4-8cb3-531fda2a6667.jsonl",
+      "line": 239,
+      "tokensBefore": 129959,
+      "fileHash": "0a0832406bca229886cb16c788989b09856c4b8154fd2589577d71d8decb2da6",
+      "summarySha256": "ca40a40ad12b2083a2a4cf427cd67f02c723a0a8241b67a19aa98a74cb1bb167",
+      "summaryChars": 6608
+    },
+    {
+      "basename": "d1974f40-ee16-44c9-956f-246fe2cc1a46.jsonl",
+      "line": 36,
+      "tokensBefore": 79724,
+      "fileHash": "932f6b7e6f2acfa028d529159a2944ce6200bca212218593edab3758a7d4ede9",
+      "summarySha256": "c6dce21d7dfbc77dc18836e9ec2672e13ffbd1a1639a137992e2a2152981fd18",
+      "summaryChars": 5233
+    }
+  ]
+}

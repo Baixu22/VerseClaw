@@ -1,0 +1,10 @@
+
+ RUN  v4.1.1 D:/ClawX
+
+[[31mERROR[0m] - (starship::print): Under a 'dumb' terminal (TERM=dumb).
+
+
+ Test Files  4 passed (4)
+      Tests  13 passed (13)
+   Start at  20:03:36
+   Duration  16.92s (transform 10.64s, setup 1.22s, import 18.00s, tests 3.14s, environment 5.28s)

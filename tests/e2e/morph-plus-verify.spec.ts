@@ -11,9 +11,56 @@
  *
  * Run: pnpm exec playwright test tests/e2e/morph-plus-verify.spec.ts
  */
-import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { closeElectronApp, expect, getStableWindow, hoverUntilVisible, installIpcMocks, test } from './fixtures/electron';
+import { evidencePath } from './fixtures/evidence-root';
 
 const SESSION_KEY = 'agent:main:main';
+
+type RectReport = { x: number; y: number; right: number; bottom: number };
+type SizeReport = { w: number; h: number };
+type IdleReport = {
+  open: string | null;
+  morphSize: SizeReport;
+  morphRect: RectReport;
+  slotRect: RectReport | null | undefined;
+  borderRadius: string;
+  overflow: string;
+  plusVisible: boolean;
+  menuButtons: number;
+  position: string;
+  zIndex: string;
+};
+type OpenReport = {
+  open: string | null;
+  morphSize: SizeReport;
+  morphRect: RectReport;
+  slotRect: RectReport | null | undefined;
+  shellRect: { x: number; right: number } | null | undefined;
+  borderRadius: string;
+  plusOpacity: string;
+  menuOpacity: string | null;
+  menuPointerEvents: string | null;
+  ariaExpanded: string | null | undefined;
+  labels: string[];
+};
+type PeerReport = Array<{ x: number; y: number; w: number; h: number }> | null;
+type ComposerFocusReport = {
+  idle: { border: string; shadow: string };
+  focused: { border: string; shadow: string };
+  nativeTitleCount: number;
+} | null;
+type MorphReport = {
+  idle: IdleReport | null;
+  open: OpenReport | null;
+  peersAfter: PeerReport;
+  noLayoutShift: boolean;
+  menuHit: { hitIsButton: boolean } | null;
+  closedByOutside: string | null | undefined;
+  closedByEsc: string | null | undefined;
+  composerFocus: ComposerFocusReport;
+  morePanel: { visible: boolean } | null;
+  consoleErrors: string[];
+};
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -117,19 +164,30 @@ test('plus menu morph expands panel, occupies slot, closes on outside click / Es
     await expect(page.getByTestId('chat-composer-actions')).toBeVisible();
 
     const sessionRow = page.getByTestId(`sidebar-session-${SESSION_KEY}`);
-    await sessionRow.hover();
-    await expect(page.getByTestId(`sidebar-session-tooltip-${SESSION_KEY}`)).toBeVisible();
+    // The tooltip is rendered from the hover state and the sidebar re-renders as
+    // its data settles, so retry the hover until the tooltip is really there.
+    await hoverUntilVisible(sessionRow, page.getByTestId(`sidebar-session-tooltip-${SESSION_KEY}`));
     await expect(page.getByTestId(`sidebar-session-tooltip-branch-${SESSION_KEY}`)).toHaveCount(0);
     await expect(sessionRow).not.toHaveAttribute('title');
 
-    const report: Record<string, unknown> = {};
+    const report: MorphReport = {
+      idle: null,
+      open: null,
+      peersAfter: null,
+      noLayoutShift: false,
+      menuHit: null,
+      closedByOutside: null,
+      closedByEsc: null,
+      composerFocus: null,
+      morePanel: null,
+      consoleErrors: [],
+    };
 
     // 1. Idle: compact closed circle, plus visible.
     report.idle = await page.evaluate(() => {
       const morph = document.querySelector('[data-testid="chat-composer-morph"]');
-      const slot = document.querySelector('[data-testid="chat-composer-morph-slot"]');
       const plus = document.querySelector('[data-testid="chat-composer-actions"]');
-      if (!morph || !plus) return { morph: !!morph, plus: !!plus, slot: !!slot };
+      if (!morph || !plus) throw new Error('Expected composer morph and plus controls');
       const mr = morph.getBoundingClientRect();
       const pr = plus.getBoundingClientRect();
       return {
@@ -164,7 +222,7 @@ test('plus menu morph expands panel, occupies slot, closes on outside click / Es
     await page.waitForTimeout(600);
     report.open = await page.evaluate(() => {
       const morph = document.querySelector('[data-testid="chat-composer-morph"]');
-      if (!morph) return null;
+      if (!morph) throw new Error('Expected open composer morph');
       const mr = morph.getBoundingClientRect();
       const shell = document.querySelector('[data-testid="chat-composer-shell"]')?.getBoundingClientRect();
       const menu = morph.querySelector('.pm-morph-menu');
@@ -207,7 +265,7 @@ test('plus menu morph expands panel, occupies slot, closes on outside click / Es
       return { hitIsButton: !!(hit && first.contains(hit)) };
     });
 
-    await page.screenshot({ path: 'reports/visual-tune/morph-open.png' });
+    await page.screenshot({ path: evidencePath('reports/visual-tune/morph-open.png') });
 
     // 3. Outside click closes
     await page.mouse.click(500, 200);
@@ -262,31 +320,37 @@ test('plus menu morph expands panel, occupies slot, closes on outside click / Es
     console.log('MORPH_VERIFY_REPORT:', JSON.stringify(report, null, 2));
 
     // Assertions
-    expect(report.idle.open).toBe('false');
-    expect(report.idle.morphSize.w).toBe(32);
-    expect(report.idle.morphSize.h).toBe(32);
-    expect(report.idle.borderRadius).toBe('999px');
-    expect(report.idle.overflow).toBe('hidden');
-    expect(report.idle.menuButtons).toBeGreaterThanOrEqual(3);
-    expect(report.idle.position).toBe('absolute');
-    expect(report.idle.zIndex).toBe('30');
-    expect(report.open.open).toBe('true');
-    expect(report.open.morphSize.w).toBeGreaterThan(150);
-    expect(report.open.morphSize.h).toBeGreaterThan(90);
-    expect(report.open.morphSize.h).toBeLessThanOrEqual(160);
-    expect(report.open.borderRadius).toBe('15px');
-    expect(report.open.morphRect.x).toBe(report.open.slotRect?.x);
-    expect(report.open.morphRect.bottom).toBe(report.open.slotRect?.bottom);
-    expect(report.open.morphRect.right).toBeGreaterThan(report.open.slotRect?.right ?? 0);
-    expect(report.open.morphRect.x).toBeGreaterThanOrEqual(report.open.shellRect?.x ?? 0);
-    expect(report.open.morphRect.right).toBeLessThanOrEqual(report.open.shellRect?.right ?? Number.POSITIVE_INFINITY);
-    expect(report.open.morphRect.y).toBeLessThan(report.open.slotRect?.y ?? Number.POSITIVE_INFINITY);
-    expect(report.open.labels).toContain('More');
-    expect(report.open.labels).not.toContain('composer.actions.more');
-    expect(report.open.plusOpacity).toBe('0');
-    expect(report.open.menuOpacity).toBe('1');
-    expect(report.open.menuPointerEvents).toBe('auto');
-    expect(report.open.ariaExpanded).toBe('true');
+    const idle = report.idle;
+    if (!idle) throw new Error('Missing idle morph report');
+    const open = report.open;
+    if (!open) throw new Error('Missing open morph report');
+    expect(idle.open).toBe('false');
+    expect(idle.morphSize.w).toBe(32);
+    expect(idle.morphSize.h).toBe(32);
+    expect(idle.borderRadius).toBe('999px');
+    expect(idle.overflow).toBe('hidden');
+    expect(idle.menuButtons).toBeGreaterThanOrEqual(3);
+    expect(idle.position).toBe('absolute');
+    // --z-dropdown was raised 30→95 (codex-tokens.css) so in-dialog dropdowns clear
+    // the dialog layer (80/90); the plus-menu morph is a dropdown-class element.
+    expect(idle.zIndex).toBe('95');
+    expect(open.open).toBe('true');
+    expect(open.morphSize.w).toBeGreaterThan(150);
+    expect(open.morphSize.h).toBeGreaterThan(90);
+    expect(open.morphSize.h).toBeLessThanOrEqual(160);
+    expect(open.borderRadius).toBe('15px');
+    expect(open.morphRect.x).toBe(open.slotRect?.x);
+    expect(open.morphRect.bottom).toBe(open.slotRect?.bottom);
+    expect(open.morphRect.right).toBeGreaterThan(open.slotRect?.right ?? 0);
+    expect(open.morphRect.x).toBeGreaterThanOrEqual(open.shellRect?.x ?? 0);
+    expect(open.morphRect.right).toBeLessThanOrEqual(open.shellRect?.right ?? Number.POSITIVE_INFINITY);
+    expect(open.morphRect.y).toBeLessThan(open.slotRect?.y ?? Number.POSITIVE_INFINITY);
+    expect(open.labels).toContain('More');
+    expect(open.labels).not.toContain('composer.actions.more');
+    expect(open.plusOpacity).toBe('0');
+    expect(open.menuOpacity).toBe('1');
+    expect(open.menuPointerEvents).toBe('auto');
+    expect(open.ariaExpanded).toBe('true');
     expect(report.noLayoutShift).toBe(true);
     expect(report.menuHit?.hitIsButton).toBe(true);
     expect(report.closedByOutside).toBe('false');

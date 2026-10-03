@@ -6,6 +6,8 @@ import { DatabaseSync } from 'node:sqlite';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { closeOpenClawStateDatabase } from '../state/openclaw-state-db.js';
+import { deriveTaskFlowStatusFromTask } from './task-flow-registry.js';
+import type { TaskRecord } from './task-registry.types.js';
 import {
   CAS_CREATE_SENTINEL,
   isLegalTransition,
@@ -50,8 +52,10 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
     // Illegal: succeeded can only stay succeeded (terminal absorbing).
     expect(isLegalTransition('succeeded', 'running')).toBe(false);
     expect(isLegalTransition('cancelled', 'running')).toBe(false);
-    expect(isLegalTransition('queued', 'succeeded')).toBe(false);
-    expect(isLegalTransition('queued', 'failed')).toBe(false);
+    expect(isLegalTransition('succeeded', 'failed')).toBe(false);
+    expect(isLegalTransition('lost', 'running')).toBe(false);
+    expect(isLegalTransition('waiting', 'queued')).toBe(false);
+    expect(isLegalTransition('queued', 'waiting')).toBe(true);
     expect(isTerminalFlowStatus('succeeded')).toBe(true);
     expect(isTerminalFlowStatus('queued')).toBe(false);
   });
@@ -138,13 +142,15 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
     expect(
       store.casUpsert({ flowId: 'flow-illegal', expectedRevision: CAS_CREATE_SENTINEL, status: 'queued' }).ok,
     ).toBe(true);
-    // queued -> succeeded is illegal.
-    const illegal = store.casUpsert({ flowId: 'flow-illegal', expectedRevision: 0, status: 'succeeded' });
+    // queued -> succeeded is legal (settled without running), but a flow
+    // never goes back: after running, returning to queued is illegal.
+    expect(store.casUpsert({ flowId: 'flow-illegal', expectedRevision: 0, status: 'running' }).ok).toBe(true);
+    const illegal = store.casUpsert({ flowId: 'flow-illegal', expectedRevision: 1, status: 'queued' });
     expect(illegal.ok).toBe(false);
     if (!illegal.ok) {
       expect(illegal.reason).toBe('illegal-transition');
     }
-    expect(store.getById('flow-illegal')?.status).toBe('queued');
+    expect(store.getById('flow-illegal')?.status).toBe('running');
   });
 
   it('terminal resurrection is rejected: a terminal flow cannot restart', () => {
@@ -275,18 +281,23 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
       store.casUpsert({
         flowId: 'flow-delivery',
         expectedRevision: CAS_CREATE_SENTINEL,
-        status: 'queued',
+        status: 'running',
         deliveryState: 'pending',
       }).ok,
     ).toBe(true);
-    // A rejected transition must not alter lifecycle OR delivery state.
-    const rejected = store.casUpsert({ flowId: 'flow-delivery', expectedRevision: 0, status: 'succeeded' });
+    // A rejected transition (running -> queued) must not alter lifecycle OR delivery state.
+    const rejected = store.casUpsert({
+      flowId: 'flow-delivery',
+      expectedRevision: 0,
+      status: 'queued',
+      deliveryState: 'dropped',
+    });
     expect(rejected.ok).toBe(false);
     if (!rejected.ok) {
       expect(rejected.reason).toBe('illegal-transition');
     }
     const afterReject = store.getById('flow-delivery');
-    expect(afterReject?.status).toBe('queued');
+    expect(afterReject?.status).toBe('running');
     expect(afterReject?.delivery_state).toBe('pending');
 
     // A valid transition carries the new delivery state atomically.
@@ -294,13 +305,13 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
       store.casUpsert({
         flowId: 'flow-delivery',
         expectedRevision: 0,
-        status: 'running',
-        deliveryState: 'delivering',
+        status: 'succeeded',
+        deliveryState: 'delivered',
       }).ok,
     ).toBe(true);
     const afterAdvance = store.getById('flow-delivery');
-    expect(afterAdvance?.status).toBe('running');
-    expect(afterAdvance?.delivery_state).toBe('delivering');
+    expect(afterAdvance?.status).toBe('succeeded');
+    expect(afterAdvance?.delivery_state).toBe('delivered');
   });
 
   it('explicit null clears state/wait/delivery fields consistently (documented contract)', () => {
@@ -333,5 +344,150 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
     expect(row?.state_json).toBeNull();
     expect(row?.wait_json).toBeNull();
     expect(row?.delivery_state).toBeNull();
+  });
+
+  it('creates a controller_id="goal-wake" waiting flow with blocked_task_id and persists both', () => {
+    const store = new TaskFlowCasStore(options());
+    const result = store.casUpsert({
+      flowId: 'flow-goal-wake',
+      expectedRevision: CAS_CREATE_SENTINEL,
+      status: 'waiting',
+      controllerId: 'goal-wake',
+      ownerKey: 'agent:agent-a:main',
+      blockedTaskId: 'task-process-1',
+      blockedSummary: 'waiting-for-process',
+      waitJson: JSON.stringify({ v: 1, turnBarrier: 'pending' }),
+      stateJson: JSON.stringify({ v: 1 }),
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.controller_id).toBe('goal-wake');
+    expect(result.row.status).toBe('waiting');
+    expect(result.row.blocked_task_id).toBe('task-process-1');
+    expect(result.row.wait_json).toContain('turnBarrier');
+  });
+
+  it('goal-wake transitions follow the legal graph including waiting -> failed', () => {
+    const store = new TaskFlowCasStore(options());
+    expect(
+      store.casUpsert({
+        flowId: 'flow-goal-wake-transitions',
+        expectedRevision: CAS_CREATE_SENTINEL,
+        status: 'waiting',
+        controllerId: 'goal-wake',
+      }).ok,
+    ).toBe(true);
+    expect(
+      store.casUpsert({
+        flowId: 'flow-goal-wake-transitions',
+        expectedRevision: 0,
+        status: 'running',
+        controllerId: 'goal-wake',
+      }).ok,
+    ).toBe(true);
+    expect(
+      store.casUpsert({
+        flowId: 'flow-goal-wake-transitions',
+        expectedRevision: 1,
+        status: 'succeeded',
+        controllerId: 'goal-wake',
+      }).ok,
+    ).toBe(true);
+  });
+
+  it('waiting -> failed is now legal and waiting -> succeeded remains illegal', () => {
+    const store = new TaskFlowCasStore(options());
+    expect(
+      store.casUpsert({
+        flowId: 'flow-goal-wake-failed',
+        expectedRevision: CAS_CREATE_SENTINEL,
+        status: 'waiting',
+        controllerId: 'goal-wake',
+      }).ok,
+    ).toBe(true);
+    expect(
+      store.casUpsert({
+        flowId: 'flow-goal-wake-failed',
+        expectedRevision: 0,
+        status: 'failed',
+        controllerId: 'goal-wake',
+      }).ok,
+    ).toBe(true);
+    expect(
+      store.casUpsert({
+        flowId: 'flow-goal-wake-illegal',
+        expectedRevision: CAS_CREATE_SENTINEL,
+        status: 'waiting',
+        controllerId: 'goal-wake',
+      }).ok,
+    ).toBe(true);
+    const illegal = store.casUpsert({
+      flowId: 'flow-goal-wake-illegal',
+      expectedRevision: 0,
+      status: 'succeeded',
+      controllerId: 'goal-wake',
+    });
+    expect(illegal.ok).toBe(false);
+    if (!illegal.ok) expect(illegal.reason).toBe('illegal-transition');
+  });
+
+  it('controller ownership is immutable once a flow row exists', () => {
+    const store = new TaskFlowCasStore(options());
+    expect(
+      store.casUpsert({
+        flowId: 'flow-goal-wake-controller',
+        expectedRevision: CAS_CREATE_SENTINEL,
+        status: 'waiting',
+        controllerId: 'goal-wake',
+      }).ok,
+    ).toBe(true);
+    const reassign = store.casUpsert({
+      flowId: 'flow-goal-wake-controller',
+      expectedRevision: 0,
+      status: 'running',
+      controllerId: 'other-controller',
+    });
+    expect(reassign.ok).toBe(false);
+    if (!reassign.ok) expect(reassign.reason).toBe('illegal-transition');
+  });
+
+
+  it('every lifecycle step the legacy task registry produces is a legal CAS transition', () => {
+    // Legacy task steps: start, settle while running, and settle while still
+    // queued (cron journal recovery, cancel, maintenance marking it lost).
+    type Step = Pick<TaskRecord, 'status' | 'terminalOutcome'>;
+    const settled: Step[] = [
+      { status: 'succeeded', terminalOutcome: 'succeeded' },
+      { status: 'succeeded', terminalOutcome: 'blocked' },
+      { status: 'failed' },
+      { status: 'timed_out' },
+      { status: 'cancelled' },
+      { status: 'lost' },
+    ];
+    const steps: Array<[Step, Step]> = [
+      [{ status: 'queued' }, { status: 'running' }],
+      ...settled.map((to): [Step, Step] => [{ status: 'queued' }, to]),
+      ...settled.map((to): [Step, Step] => [{ status: 'running' }, to]),
+    ];
+    const illegal = steps
+      .map(([from, to]) => [deriveTaskFlowStatusFromTask(from), deriveTaskFlowStatusFromTask(to)] as const)
+      .filter(([from, to]) => !isLegalTransition(from, to))
+      .map(([from, to]) => `${from}->${to}`);
+    expect(illegal).toEqual([]);
+  });
+
+  it('restart can settle an active flow as lost through the CAS writer', () => {
+    const store = new TaskFlowCasStore(options());
+    const created = store.casUpsert({ flowId: 'flow-lost', expectedRevision: CAS_CREATE_SENTINEL, status: 'running' });
+    expect(created.ok).toBe(true);
+    const lost = store.casUpsert({ flowId: 'flow-lost', expectedRevision: 0, status: 'lost' });
+    expect(lost.ok).toBe(true);
+    if (!lost.ok) return;
+    expect(lost.row.status).toBe('lost');
+    expect(lost.row.ended_at).toBeTypeOf('number');
+    expect(store.casUpsert({ flowId: 'flow-lost', expectedRevision: 1, status: 'running' })).toMatchObject({
+      ok: false,
+      reason: 'illegal-transition',
+    });
   });
 });

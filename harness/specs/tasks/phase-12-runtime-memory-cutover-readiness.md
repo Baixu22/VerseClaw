@@ -110,9 +110,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-12-runtime-memory-cutover-readiness/README.md
-    - runtime-research/handoffs/phase-12-runtime-memory-cutover-readiness/parallel-lanes.md
-    - runtime-research/handoffs/phase-12-runtime-memory-cutover-readiness/submission-template.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 12 Runtime Memory Cutover Readiness Spec

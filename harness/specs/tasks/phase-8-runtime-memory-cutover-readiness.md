@@ -84,12 +84,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-8-runtime-memory-cutover-readiness/README.md
-    - runtime-research/handoffs/phase-8-runtime-memory-cutover-readiness/parallel-lanes.md
-    - runtime-research/handoffs/phase-8-runtime-memory-cutover-readiness/window-prompts.md
-    - runtime-research/handoffs/phase-8-runtime-memory-cutover-readiness/submission-template.md
-    - runtime-research/handoffs/phase-8-runtime-memory-cutover-readiness/synthesis-template.md
-    - runtime-research/handoffs/phase-8-runtime-memory-cutover-readiness/submissions/lane-design-entry-prep.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 8 Runtime Memory Cutover Readiness

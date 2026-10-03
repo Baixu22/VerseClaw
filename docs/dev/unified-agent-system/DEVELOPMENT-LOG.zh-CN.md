@@ -1,5 +1,13 @@
 # 统一 Agent 系统开发日志
 
+> 2026-10-01 TF-0013 已完成节点级干净候选验收并自动收口（done/100）：18门、233测试、7次native请求通过，Codex package类型错误清零。见 `docs/dev/tf0013-authority-closeout-20261001.md`。不是新的全量RC、发布或GA，产品锁和默认值不变。
+
+> 2026-10-01 TF-0013 原生请求接力：修复 source/built SDK 跨模块预算作用域丢失，以及 stale thread resume 后新线程遗漏已准入 bootstrap。真实 Codex 0.137.0、本地 scripted provider、RPC/最终请求证据见 `docs/dev/tf0013-native-wire-20261001.md`。10 项 SDK 回归和 7 次 native 请求通过；插件 package 的 8 条既有类型诊断有 HEAD 对照。节点保持 in_progress，下一步干净候选四项验收；不重签 RC 或改产品锁。
+
+> 2026-09-30 TF-0013 原生预算接力：原生分发与公开 SDK 组装共用 attempt ledger，覆盖 COMPASS、原子消息替换、system addition、重复启动重试及 embedded 子运行隔离。开发证据见 `docs/dev/tf0013-native-budget-20260930.md`；外部 app-server 最终请求/持久线程证据与干净候选四项验收仍待补齐，节点保持 in_progress/60%。
+
+> 2026-09-30 TF-0013 接力：embedded ContextEngine 消息替换纳入既有候选仲裁与 turn 预算，新增/改写内容整组准入，超额保留原历史；补齐 quarantine 回退的输入修改隔离。开发测试及原生插件后续边界见 `docs/dev/tf0013-message-budget-20260930.md`。TF-0013 保持 in_progress/60%，不重签旧 RC verdict 或解除 D7 冻结。
+
 > 创建日期：2026-07-27
 >
 > 当前状态：UAS-06 工程路由与证据矩阵已完成，资格仍为 engineering-only；真实 cohort/provider/人工恢复/soak 证据均为 0，Task Forest 当前为 `TF-0017=in_progress/35%`

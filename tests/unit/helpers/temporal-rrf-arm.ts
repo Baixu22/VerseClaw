@@ -22,8 +22,8 @@
 // 2. Bucket coverage: prefer facts from under-represented buckets so the
 //    final result set spans the full timeline.
 
-import type { RuntimeMemoryQueryableFact } from "../../openclaw_runtime/src/runtime-core/memory-context";
-import type { HybridSearchHit } from "../../openclaw_runtime/src/runtime-core/memory-hybrid-retrieval";
+import type { RuntimeMemoryQueryableFact } from "../../../openclaw_runtime/src/runtime-core/memory-context";
+import type { HybridSearchHit } from "../../../openclaw_runtime/src/runtime-core/memory-hybrid-retrieval";
 
 export type TemporalRRFOptions = {
   /** Reference time for the query (ms since epoch). Required. */

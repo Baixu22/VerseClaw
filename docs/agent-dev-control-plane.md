@@ -86,6 +86,8 @@ The audit report includes:
 - `confidence`: whether the score is backed by fresh, parseable evidence.
 - `scoreBreakdown`: per-dimension deductions and the finding ids that explain the score.
 - `evidenceInventory`: every source used by the audit, with existence, parseability, timestamp, age, and whether relevant Agent Dev source files are newer than generated evidence.
+
+Source-newer comparison uses git commit time for clean tracked files and working-tree mtime only for dirty or untracked files, so evidence committed in the same change set stays valid in clean checkouts (acceptance worktrees, CI) while the daily loop still hard-fails on unrefreshed evidence after source edits.
 - `prioritizedFindings`: sorted `P0` / `P1` / `P2` findings so the first row is the next repair target.
 
 The generated static Workbench also indexes the latest deep-test bottlenecks, recent history entries, and audit score breakdown. Treat it as a fast status board; automation should read the JSON artifacts directly.

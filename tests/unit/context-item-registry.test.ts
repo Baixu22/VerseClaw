@@ -474,7 +474,7 @@ describe('Context Family archive handle MVP', () => {
       checksum: `sha256:${'0'.repeat(64)}`,
     };
 
-    await expect(verifyContextArchiveHandle(corrupted)).resolves.toMatchObject({
+    await expect(verifyContextArchiveHandle(corrupted as never)).resolves.toMatchObject({
       ok: false,
       reason: 'checksum_mismatch',
     });

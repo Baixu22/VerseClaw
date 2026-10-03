@@ -1,0 +1,30 @@
+$ node scripts/build-openclaw-runtime.mjs
+[build-all] tsdown
+[build-all] tsdown done in 6.34s
+[build-all] check-cli-bootstrap-imports
+[build-all] check-cli-bootstrap-imports done in 350ms
+[build-all] runtime-postbuild
+runtime-postbuild: plugin SDK root alias completed in 1ms
+[bundled-plugin-metadata] skipping missing skill path [workspace]\openclaw_runtime\extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 331ms
+runtime-postbuild: official channel catalog completed in 13ms
+runtime-postbuild: bundled plugin runtime overlay completed in 564ms
+runtime-postbuild: static extension assets completed in 0ms
+runtime-postbuild: stable root runtime imports completed in 272ms
+runtime-postbuild: stable root runtime aliases completed in 70ms
+runtime-postbuild: legacy root runtime compat aliases completed in 127ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 1ms
+[build-all] runtime-postbuild done in 1.56s
+[build-all] build-stamp
+[build-all] build-stamp done in 75ms
+[build-all] runtime-postbuild-stamp
+[build-all] runtime-postbuild-stamp done in 75ms
+[build-all] write-cli-startup-metadata
+[build-all] write-cli-startup-metadata done in 82ms
+[build-all] write-cli-compat
+[build-all] write-cli-compat done in 66ms
+[build-all] phase timings: total 8.55s; slowest tsdown 6.34s; runtime-postbuild 1.56s; check-cli-bootstrap-imports 350ms; write-cli-startup-metadata 82ms; runtime-postbuild-stamp 75ms; build-stamp 75ms; write-cli-compat 66ms
+
+  openclaw_runtime\dist\knowledge\sekb\index.js  355.8kb
+
+Done in 34ms

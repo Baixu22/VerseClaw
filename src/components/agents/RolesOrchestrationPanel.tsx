@@ -43,6 +43,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
+import { approvalDisplayDetails } from '@/lib/permission-approval-display';
 import {
   applyPlanEditOperation,
   buildPlanEditLedgerEvents,
@@ -3393,7 +3394,8 @@ export default function RolesOrchestrationPanel({ agents }: { agents: AgentLike[
                         {tt('roles.approvalTitle', 'Orchestration run needs approval')}
                       </p>
                       <p className="text-[11px] text-muted-foreground truncate">
-                        {pendingApproval.reason || tt('roles.approvalHint', 'Spawning subagents requires approval under the current permission mode')}
+                        {/* Redacted for external writes — see approvalDisplayDetails. */}
+                        {approvalDisplayDetails(pendingApproval).reason || tt('roles.approvalHint', 'Spawning subagents requires approval under the current permission mode')}
                       </p>
                     </div>
                   </div>

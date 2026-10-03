@@ -5,52 +5,58 @@
 // classifies every known writer, records source/npm runtime versions and the
 // accepted base SHA, and records the receipt-owner decision with its evidence.
 // No runtime code changes occur.
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
+import { RECEIPT_HARD_CONSTRAINTS, RECEIPT_OWNER } from './lib/rc01-receipt-contract.mjs';
 
-const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const repoRoot = fileURLToPath(new URL('..', import.meta.url));
 const SCHEMA = 'runtime-authority-convergence-baseline/v1';
 
 function git(root, args) {
+  // `git ls-files` on this repo returns ~18k lines, far past spawnSync's 1 MiB
+  // default buffer. Without an explicit maxBuffer the call dies with ENOBUFS,
+  // `status` is null and `stderr` is empty — which used to surface as the
+  // useless message "git ls-files failed: ".
   const result = spawnSync('git', args, {
     cwd: root,
     encoding: 'utf8',
     shell: false,
-    maxBuffer: 16 * 1024 * 1024,
+    maxBuffer: 64 * 1024 * 1024,
   });
-  if (result.status !== 0) throw new Error(`git ${args.join(' ')} failed: ${String(result.stderr ?? '')}`);
+  if (result.status !== 0) {
+    const detail = String(result.stderr ?? '').trim() || result.error?.message || `exit ${result.status}`;
+    throw new Error(`git ${args.join(' ')} failed: ${detail}`);
+  }
   return String(result.stdout ?? '').trim();
 }
 
 function readPkgVersion(path) {
-  try {
-    const pkg = JSON.parse(readFileSync(path, 'utf8'));
-    return { version: pkg.version ?? null, name: pkg.name ?? null };
-  } catch {
-    return { version: null, name: null };
+  const pkg = JSON.parse(readFileSync(path, 'utf8'));
+  if (typeof pkg.name !== 'string' || !pkg.name.trim() || typeof pkg.version !== 'string' || !pkg.version.trim()) {
+    throw new Error('source runtime package must declare name and version');
   }
+  return { version: pkg.version, name: pkg.name };
 }
 
 function readNpmOpenclawVersion(path) {
-  try {
-    const pkg = JSON.parse(readFileSync(path, 'utf8'));
-    const spec = pkg.dependencies?.openclaw ?? pkg.devDependencies?.openclaw ?? pkg.optionalDependencies?.openclaw;
-    return typeof spec === 'string' ? spec : null;
-  } catch {
-    return null;
+  const pkg = JSON.parse(readFileSync(path, 'utf8'));
+  const spec = pkg.dependencies?.openclaw ?? pkg.devDependencies?.openclaw ?? pkg.optionalDependencies?.openclaw;
+  if (typeof spec !== 'string' || !spec.trim()) {
+    throw new Error('package.json must declare an OpenClaw dependency');
   }
+  return spec;
 }
 
-// The accepted base is the commit the convergence work is measured *from*, not
-// the current candidate. Deriving it from HEAD made the tracked baseline
-// self-invalidating: committing it moved HEAD, so the next run rewrote the file
-// it had just committed. The merge-base against the accepted upstream is stable
-// across every commit on this branch.
-const ACCEPTED_BASE_REF = 'origin/main';
-const acceptedBaseSha = git(repoRoot, ['merge-base', 'HEAD', ACCEPTED_BASE_REF]).toLowerCase();
+// The caller selects the accepted base; a moving remote must never replace it.
+const { values } = parseArgs({ options: { 'accepted-base': { type: 'string' } } });
+const acceptedBaseRef = values['accepted-base']?.trim();
+if (!acceptedBaseRef) throw new Error('An explicit --accepted-base <commit> is required');
+const acceptedBaseSha = git(repoRoot, ['rev-parse', '--verify', '--end-of-options', `${acceptedBaseRef}^{commit}`]).toLowerCase();
 if (!/^[a-f0-9]{40}$/.test(acceptedBaseSha)) throw new Error(`invalid acceptedBaseSha: ${acceptedBaseSha}`);
+git(repoRoot, ['merge-base', '--is-ancestor', acceptedBaseSha, 'HEAD']);
 
 // Derived from the accepted base commit, never from wall-clock time: the
 // baseline is tracked candidate material, so regenerating it at the same commit
@@ -171,10 +177,7 @@ const inventory = {
     receipt: {
       name: 'Receipt persistence owner',
       decision: 'accepted',
-      selectedOwner: 'OpenClaw shared state SQLite / runtime_receipts via ReceiptStore',
-      logicalOwner: 'narrow ReceiptStore interface',
-      physicalOwner: 'existing openclaw-state SQLite',
-      tableName: 'runtime_receipts',
+      ...RECEIPT_OWNER,
       tableIsNewTypedAppendOnly: true,
       reusedCapabilities: [
         'openclaw-state SQLite (openclaw_runtime/src/state/openclaw-state-db.ts): schema/ensureSchema, permissions, WAL maintenance, PRAGMA synchronous=NORMAL, PRAGMA busy_timeout, restart persistence',
@@ -187,15 +190,7 @@ const inventory = {
         mission_events: 'mission-scoped append-only lifecycle journal',
         'channels/message/receipt.ts': 'pure normalization function; writes no table',
       },
-      hardConstraints: [
-        '1. receipt stores only digest, refs, call index, version, and policy digest; never raw prompt, tool output, credentials, cookies, or environment values',
-        '2. append-only; same idempotency_key with identical content is idempotent success, different content must conflict-fail',
-        '3. no max(sequence)+1; use explicit attempt/model-call/wire-attempt identity',
-        '4. no silent pruning; deletion requires an explicit lifecycle policy',
-        '5. shadow write failure must not change send behavior but must fail RC-02 acceptance',
-        '6. receipt explains and correlates facts only; it never authorizes replay; domain journals remain the effect/idempotency truth source',
-        '7. npm fallback continues to report degraded and does not count toward complete receipt coverage',
-      ],
+      hardConstraints: RECEIPT_HARD_CONSTRAINTS,
       noNewAuthority: 'no new database, sidecar, service, or second runtime authority is introduced',
       proofRequired: 'schema, atomic-sequence, retention, lookup, idempotency, failure-propagation, privacy, restart',
       candidates: [
@@ -328,10 +323,7 @@ const inventory = {
   receiptOwnerDecision: {
     status: 'accepted',
     blocker: null,
-    selectedOwner: 'OpenClaw shared state SQLite / runtime_receipts via ReceiptStore',
-    logicalOwner: 'narrow ReceiptStore interface',
-    physicalOwner: 'existing openclaw-state SQLite',
-    tableName: 'runtime_receipts',
+    ...RECEIPT_OWNER,
     comparisonCovered: ['RuntimeTaskEventLog', 'TaskFlow flow_runs', 'mission_events', 'long_task_checkpoints', 'trajectory', 'domain journals', 'same-state-DB typed receipt table'],
     reason: 'User-confirmed decision (2026-08-02). RC-01 completed the required comparison of existing domain journals, trajectory, TaskFlow/TaskRegistry evidence, RuntimeTaskEventLog, and a same-state-DB typed receipt table against receipt schema, atomic sequencing, retention, lookup, idempotency, failure propagation, privacy, and restart requirements. None of the existing owners qualifies: RuntimeTaskEventLog is default-off/prunable/without receipt kinds and stays diagnostic; TaskFlow flow_runs is workflow-scoped with in-process CAS; mission_events is mission-scoped; long_task_checkpoints is mutable checkpoint/resume truth that updates checkpoint_json under the same idempotency key and cannot cover ordinary model calls. The decision is to add a typed, append-only runtime_receipts table in the existing openclaw-state SQLite, exposed through a narrow ReceiptStore interface, reusing the shared state DB capabilities (schema, permissions, WAL, busy timeout, restart persistence, immediate transaction). No new database, sidecar, service, or second runtime authority is introduced. The seven hard constraints (digest-only payload, append-only with content-sensitive idempotency, explicit attempt/model-call/wire-attempt identity, no silent pruning, shadow-write failure fails RC-02 but never changes send behavior, receipt explains facts without authorizing replay, npm fallback stays degraded) are binding.',
   },
@@ -343,13 +335,12 @@ const inventory = {
 };
 
 const outDir = join(repoRoot, 'artifacts', 'runtime-authority-convergence', 'rc-01');
-mkdirSync(outDir, { recursive: true });
 const outPath = join(outDir, 'baseline.json');
 
 // Fail closed when a classified owner path no longer exists in the candidate.
 // A baseline that names paths the tree does not contain is not an inventory of
 // the candidate, and the RC-09 remediation plan requires the opposite.
-const trackedFiles = git(repoRoot, ['ls-files']).split('\n').filter(Boolean);
+const trackedFiles = git(repoRoot, ['ls-files', '-z']).split('\0').filter(Boolean);
 const trackedSet = new Set(trackedFiles);
 const missingOwnerPaths = [];
 for (const [authorityKey, authority] of Object.entries(inventory.authorities)) {
@@ -358,7 +349,9 @@ for (const [authorityKey, authority] of Object.entries(inventory.authorities)) {
       if (!entry || typeof entry !== 'object' || !entry.path) continue;
       const ownerPath = entry.path;
       const prefix = ownerPath.endsWith('/**') ? ownerPath.slice(0, -2) : ownerPath.endsWith('/') ? ownerPath : null;
-      const exists = prefix === null ? trackedSet.has(ownerPath) : trackedFiles.some((file) => file.startsWith(prefix));
+      const exists = prefix === null
+        ? trackedSet.has(ownerPath) && existsSync(join(repoRoot, ownerPath))
+        : trackedFiles.some((file) => file.startsWith(prefix) && existsSync(join(repoRoot, file)));
       if (!exists) missingOwnerPaths.push(`${authorityKey}.${list}: ${ownerPath}`);
     }
   }
@@ -367,6 +360,7 @@ if (missingOwnerPaths.length > 0) {
   throw new Error(`owner paths absent from the candidate tree:\n  ${missingOwnerPaths.join('\n  ')}`);
 }
 
+mkdirSync(outDir, { recursive: true });
 writeFileSync(outPath, `${JSON.stringify(inventory, null, 2)}\n`, 'utf8');
 console.log(`RC-01 baseline written: ${outPath}`);
 console.log(`schema=${SCHEMA} acceptedBaseSha=${acceptedBaseSha} sourceRuntime=${sourceRuntime.name}@${sourceRuntime.version} npmRuntime=${npmRuntime.name}@${npmRuntime.spec}`);

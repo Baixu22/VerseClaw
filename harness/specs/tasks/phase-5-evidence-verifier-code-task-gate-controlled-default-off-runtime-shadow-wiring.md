@@ -68,8 +68,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-shadow-mvp/README.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 5 Evidence Verifier Code Task Gate Controlled Default-Off Runtime Shadow Wiring

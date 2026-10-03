@@ -15,6 +15,7 @@ import type { AgentHarnessTaskRuntimeScope } from "../../../tasks/agent-harness-
 import type { AcceptedSessionSpawn } from "../../accepted-session-spawn.js";
 import type { ManualCompactionRequest } from "../../manual-compaction-request.js";
 import type { ToolOutcomeObserver } from "../../agent-tools.before-tool-call.js";
+import type { ToolLoopTerminationObserver } from "../../tool-loop-termination.js";
 import type { AuthProfileStore } from "../../auth-profiles/types.js";
 import type { AgentBrowserAutomationEvent } from "../../tools/agent-browser-automation-event.js";
 import type {
@@ -72,6 +73,12 @@ export type EmbeddedRunAttemptParams = EmbeddedRunAttemptBase & {
   agentHarnessTaskRuntimeScope?: AgentHarnessTaskRuntimeScope;
   /** Live observer called after wrapped tool outcomes are recorded. */
   onToolOutcome?: ToolOutcomeObserver;
+  /**
+   * Live observer called when a critical tool-loop veto must end the turn.
+   * Wired to the attempt abort controller so a runaway identical-call loop
+   * terminates instead of blocking one call at a time forever.
+   */
+  onToolLoopTermination?: ToolLoopTerminationObserver;
   model: Model;
   authStorage: AuthStorage;
   /** Auth profile store already resolved during startup for this attempt. */

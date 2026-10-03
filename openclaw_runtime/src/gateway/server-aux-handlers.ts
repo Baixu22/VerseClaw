@@ -19,7 +19,7 @@ import {
   type GatewayReloadPlan,
 } from "./config-reload-plan.js";
 import { createExecApprovalIosPushDelivery } from "./exec-approval-ios-push.js";
-import { ApprovalLedger } from "../agents/approval-ledger.js";
+import { ApprovalLedger, approvalLedgerRowSurface } from "../agents/approval-ledger.js";
 import { ExecApprovalManager } from "./exec-approval-manager.js";
 import type { GatewayRequestHandler, GatewayRequestHandlers } from "./server-methods/types.js";
 import {
@@ -84,7 +84,13 @@ export function createGatewayAuxHandlers(params: {
   const durableLedger = params.enableDurableApprovalLedger !== false
     ? new ApprovalLedger(params.durableLedgerDatabase)
     : undefined;
-  const execApprovalManager = new ExecApprovalManager(durableLedger ? { durableLedger } : undefined);
+  // One durable ledger serves exec, plugin, and Operator Inbox approvals; each
+  // manager recovers and resolves only the rows its own surface governs.
+  const execApprovalManager = new ExecApprovalManager(
+    durableLedger
+      ? { durableLedger, ownsLedgerRow: (row) => approvalLedgerRowSurface(row) === "exec" }
+      : undefined,
+  );
   // RC-04 restart recovery: re-register pending approvals from the durable
   // owner so pending truth survives a Gateway restart.
   execApprovalManager.recoverPendingFromLedger();
@@ -100,7 +106,12 @@ export function createGatewayAuxHandlers(params: {
         }),
     ));
   const buildReloadPlan = params.buildReloadPlan ?? buildGatewayReloadPlan;
-  const pluginApprovalManager = new ExecApprovalManager<PluginApprovalRequestPayload>();
+  const pluginApprovalManager = new ExecApprovalManager<PluginApprovalRequestPayload>(
+    durableLedger
+      ? { durableLedger, ownsLedgerRow: (row) => approvalLedgerRowSurface(row) === "plugin" }
+      : undefined,
+  );
+  pluginApprovalManager.recoverPendingFromLedger();
   let pluginApprovalHandlersPromise: Promise<GatewayRequestHandlers> | null = null;
   const loadPluginApprovalHandlers = () =>
     (pluginApprovalHandlersPromise ??= import("./server-methods/plugin-approval.js").then(

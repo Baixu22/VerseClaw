@@ -2,18 +2,28 @@
 id: rc06c-mission-lifecycle-migration
 title: RC-06C Mission Lifecycle Migration
 taskType: engineering-acceptance
+# Pinned to the commit RC-06CR started from; the shared branch diverged from
+# origin/main long ago.
+diffBase: e064194d5
 intent: Migrate Mission definitions and run lifecycle toward TaskFlow templates/controllers while keeping mission_runs/events as compatibility reads until migration proof permits retirement. Mission restart, wait, resume, and cancel semantics are preserved; migration and rollback pass.
 ownedPaths:
   - openclaw_runtime/src/agents/mission-control/store.ts
   - openclaw_runtime/src/agents/mission-control/controller.ts
   - openclaw_runtime/src/agents/mission-control/mission-taskflow-projection.ts
   - openclaw_runtime/src/agents/mission-control/mission-taskflow-projection.test.ts
+  - openclaw_runtime/src/agents/mission-control/mission-lifecycle-cutover.test.ts
+  - openclaw_runtime/src/tasks/workflow-lifecycle-owner.ts
+  - openclaw_runtime/src/gateway/server.impl.ts
   - openclaw_runtime/src/tasks/task-flow-registry.ts
   - openclaw_runtime/src/tasks/task-flow-cas.ts
   - harness/specs/tasks/rc06c-mission-lifecycle-migration.md
   - artifacts/runtime-authority-convergence/rc-06c/**
+  - .agent-workbench/task-forest/**
+  - docs/dev/handoffs/LATEST.md
+  - docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md
 touchedAreas:
   - openclaw_runtime/src/agents/mission-control/**
+  - openclaw_runtime/src/gateway/**
   - openclaw_runtime/src/tasks/**
   - harness/specs/**
   - artifacts/runtime-authority-convergence/rc-06c/**
@@ -39,7 +49,7 @@ featureFlags:
 rollback:
   - Before cutover, disable the projection. After cutover, rollback explicitly restores the legacy writer and freezes the TaskFlow writer; dual-write is forbidden.
 requiredTests:
-  - pnpm --dir openclaw_runtime exec vitest run src/agents/mission-control/mission-taskflow-projection.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run src/agents/mission-control/mission-taskflow-projection.test.ts src/agents/mission-control/mission-lifecycle-cutover.test.ts
   - pnpm --dir openclaw_runtime exec vitest run src/agents/clawgraph/clawgraph-taskflow-projection.test.ts src/tasks/task-flow-cas.test.ts
   - pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts
   - pnpm exec vitest run tests/unit/runtime-authority-convergence-control-pack.test.ts
@@ -60,8 +70,14 @@ docs:
 
 # RC-06C Mission Lifecycle Migration
 
-RC-06C migrates Mission definitions and run lifecycle toward TaskFlow templates/controllers while
-keeping mission_runs/events as compatibility reads until migration proof permits retirement. This
-package implements the read-only TaskFlow projection behind a default-off flag; the legacy
-mission_runs writer remains authoritative. Mission restart, wait, resume, and cancel semantics are
-preserved, and migration and rollback pass. Indefinite dual-write is not a migration strategy.
+RC-06C moves the Mission lifecycle to the TaskFlow owner while mission definitions stay in
+`mission_runs`. The writer is selected by `OPENCLAW_MISSION_LIFECYCLE_WRITER`: `legacy` (default),
+`projection` (mission_runs authoritative, TaskFlow an observational copy with drift recorded), or
+`taskflow` (the controlled cutover). Under the cutover every Mission status change (create, tick,
+pause, resume, cancel, complete, error) commits through the TaskFlow CAS writer before
+`mission_runs` is written, so `mission_runs` becomes a compatibility read of committed truth; a
+rejected commit stops the tick or operation and leaves `mission_runs` at the committed state (legacy
+freeze). A blocked mission is final and settles as failed. Gateway start returns a mission whose
+tick the previous boot interrupted to sleeping through the same owner. Emergency rollback is
+selecting `legacy`, which freezes the TaskFlow writer. The cutover stays opt-in; defaults and product
+locks do not change.

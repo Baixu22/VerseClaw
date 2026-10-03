@@ -71,11 +71,7 @@ forbiddenPatterns:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/runtime-failure-replay-harness-core-fixtures/README.md
-    - runtime-research/handoffs/runtime-failure-replay-harness-core-fixtures/validation-plan.md
-    - runtime-research/handoffs/runtime-failure-replay-harness-core-fixtures/synthesis.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/schema-decision-log.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Runtime Failure Replay Harness Core Fixtures

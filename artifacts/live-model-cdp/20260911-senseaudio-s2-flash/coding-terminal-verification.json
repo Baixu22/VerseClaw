@@ -1,0 +1,12 @@
+{
+  "success": false,
+  "blocked": false,
+  "reason": "当前 OpenClaw 运行时未暴露直接终端执行 RPC；请通过对话中的 OpenClaw exec 工具执行，权限策略仍会通过 tools.exec.security/ask 生效。",
+  "cwd": "<WORKSPACE>",
+  "command": "node --test coding/invoice.test.mjs",
+  "exitCode": null,
+  "stdout": "",
+  "stderr": "Error: unknown method: tools.exec",
+  "durationMs": 9,
+  "risk": "write"
+}

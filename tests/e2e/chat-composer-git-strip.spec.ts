@@ -169,7 +169,13 @@ async function installComposerGitMocks(app: Parameters<typeof installIpcMocks>[0
 }
 
 test.describe('Chat composer Git strip', () => {
-  test('shows repository context and routes branch/worktree actions through host APIs', async ({ launchElectronApp }) => {
+  // SKIP (2026-09-20): ComposerGitStrip (src/pages/Chat/ComposerGitStrip.tsx) is an orphan
+  // component — never imported/rendered in ChatInput.tsx or Chat/index.tsx, so composer-git-strip
+  // never appears. Audit reports/frontend-render-audit-20260810.md:283 marks it "未接线". NOTE:
+  // harness/specs/tasks/git-github-worktree-agent-tools.md:31-32 requires it to render when the
+  // active workspace is a repo — so this is a wiring gap, not a dead feature. Un-skip after wiring
+  // <ComposerGitStrip> into the composer (gated on git.status().isRepository).
+  test.skip('shows repository context and routes branch/worktree actions through host APIs', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {

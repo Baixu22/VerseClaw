@@ -8,8 +8,12 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { closeOpenClawStateDatabase } from '../../state/openclaw-state-db.js';
 import { ApprovalLedger } from '../../agents/approval-ledger.js';
+import { EffectReceiptStore } from '../../agents/effect-receipt.js';
 import {
+  awaitOperatorInboxDecision,
   createOperatorSliceIntent,
+  executeOperatorSliceEffect,
+  OPERATOR_INBOX_TIMEOUT_ACTOR,
   OPERATOR_SLICE_ACTOR,
 } from '../../agents/operator-slice.js';
 import { createInboxHandlers } from './inbox.js';
@@ -227,5 +231,96 @@ describe('RC-05 inbox.operator security gates', () => {
     } as unknown as GatewayRequestHandlerOptions);
     expect(result.ok).toBe(true);
     expect(result.lineage).toBeDefined();
+  });
+});
+
+describe('RC-05 the desktop Inbox is the governance step of the Cron primary path', () => {
+  const sliceOptions = () => ({ enabled: true, database: databaseOptions() }) as const;
+  const cronIdentity = { sessionKey: 'cron:main', runId: 'job-1:1000', cronJobId: 'job-1' };
+
+  async function inboxDecide(approvalId: string, decision: 'approved' | 'denied') {
+    let ok: boolean | undefined;
+    await createInboxHandlers(databaseOptions())['inbox.operator.decide']({
+      params: { approvalId, decision },
+      client: deviceTokenClient('device-operator'),
+      respond: (value: boolean) => {
+        ok = value;
+      },
+    } as unknown as GatewayRequestHandlerOptions);
+    return ok;
+  }
+
+  it('waits for the Inbox decision, then runs the effect once under the Inbox actor', async () => {
+    const intent = createOperatorSliceIntent({
+      identity: cronIdentity,
+      requestJson: { jobId: 'job-1', message: 'hi' },
+      options: sliceOptions(),
+    });
+    if (!intent.ok) throw new Error('intent');
+    const waiting = awaitOperatorInboxDecision({
+      approvalId: intent.approvalId,
+      options: sliceOptions(),
+      pollMs: 5,
+    });
+    const listed: unknown[] = [];
+    await createInboxHandlers(databaseOptions())['inbox.operator.list']({
+      params: {},
+      respond: (_ok: boolean, payload?: { intents?: unknown[] }) => listed.push(...(payload?.intents ?? [])),
+    } as unknown as GatewayRequestHandlerOptions);
+    expect(listed).toHaveLength(1);
+    expect(await inboxDecide(intent.approvalId, 'approved')).toBe(true);
+    const decided = await waiting;
+    expect(decided.ok).toBe(true);
+    if (!decided.ok) return;
+    expect(decided.governance.actor).toBe('device-operator');
+
+    let sends = 0;
+    const result = await executeOperatorSliceEffect({
+      identity: cronIdentity,
+      approvalId: intent.approvalId,
+      effect: { kind: 'message', text: 'hi' },
+      governance: decided.governance,
+      options: sliceOptions(),
+      executor: () => {
+        sends += 1;
+        return { outcome: 'applied', journalRef: 'journal:cron:job-1' };
+      },
+    });
+    expect(result.ok).toBe(true);
+    expect(sends).toBe(1);
+    expect(new ApprovalLedger(databaseOptions()).getById(intent.approvalId)?.state).toBe('reconciled');
+  });
+
+  it('an Inbox denial produces zero effect', async () => {
+    const intent = createOperatorSliceIntent({
+      identity: { ...cronIdentity, runId: 'job-1:2000' },
+      requestJson: { jobId: 'job-1', message: 'hi' },
+      options: sliceOptions(),
+    });
+    if (!intent.ok) throw new Error('intent');
+    const waiting = awaitOperatorInboxDecision({ approvalId: intent.approvalId, options: sliceOptions(), pollMs: 5 });
+    expect(await inboxDecide(intent.approvalId, 'denied')).toBe(true);
+    expect(await waiting).toMatchObject({ ok: false, reason: 'denied' });
+    expect(new EffectReceiptStore(databaseOptions()).listByApproval(intent.approvalId)).toHaveLength(0);
+    expect(new ApprovalLedger(databaseOptions()).getById(intent.approvalId)?.state).toBe('denied');
+  });
+
+  it('an undecided intent is denied at its expiry and the Inbox can no longer approve it', async () => {
+    const intent = createOperatorSliceIntent({
+      identity: { ...cronIdentity, runId: 'job-1:3000' },
+      requestJson: { jobId: 'job-1', message: 'hi' },
+      options: sliceOptions(),
+    });
+    if (!intent.ok) throw new Error('intent');
+    const expired = await awaitOperatorInboxDecision({
+      approvalId: intent.approvalId,
+      options: sliceOptions(),
+      now: () => Date.now() + 120_000,
+    });
+    expect(expired).toMatchObject({ ok: false, reason: 'denied' });
+    const row = new ApprovalLedger(databaseOptions()).getById(intent.approvalId);
+    expect(row?.state).toBe('denied');
+    expect(row?.resolved_by).toBe(OPERATOR_INBOX_TIMEOUT_ACTOR);
+    expect(await inboxDecide(intent.approvalId, 'approved')).toBe(false);
   });
 });

@@ -1,0 +1,439 @@
+{
+  "version": 1,
+  "generatedAt": "2026-08-18T17:55:37.747Z",
+  "atomLimit": 36,
+  "guidelines": [
+    {
+      "id": "guideline-constraint-10",
+      "canonicalIdentity": ".openclaw/factstore.sqlite is OpenClaw's active memory/fact store held open by the runtime",
+      "type": "constraint",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R4"
+      ],
+      "repairGuideline": "Original states the SQLite files are OpenClaw's own memory/fact store and are 'held open and undeletable ... expected while the runtime is active'. Compressed context only speculates 'likely file locks or filesystem issues', losing the definitive OS-level lock cause and opening the door to misreporting the failure as policy-related or repo corruption."
+    },
+    {
+      "id": "guideline-entity-38",
+      "canonicalIdentity": "AGENT_TEST.md (210 B, timestamp 2026/8/11 18:02) was previously created by the assistant; earlier test artifacts (chain_audit_test.md, out_test) were cleaned before the user's explicit chain_audit_tes",
+      "type": "entity",
+      "severity": "nice_to_have",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R10"
+      ],
+      "repairGuideline": "Establishes file provenance inside the project directory; without it the agent could misattribute AGENT_TEST.md or misclassify the user's explicit write/undo audit request as an unrelated detour."
+    },
+    {
+      "id": "guideline-entity-62",
+      "canonicalIdentity": "AGENT_TEST.md was created at the user's request with three lines (JForum project analysis, main problem, suggestion) and read back successfully (210 bytes); it still exists in the directory listing.",
+      "type": "entity",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R14"
+      ],
+      "repairGuideline": "AGENT_TEST.md appears in the compressed modified-files list but is missing from 'Files Touched' and the summary. Its creation/content is part of the completed work and any later check of directory or file state needs this fact."
+    },
+    {
+      "id": "guideline-goal-82",
+      "canonicalIdentity": "AGENT_TEST.md was explicitly user-requested and created with 3 specified lines (210 bytes)",
+      "type": "goal",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R17"
+      ],
+      "repairGuideline": "The user explicitly asked to create AGENT_TEST.md with specific three-line content and read it back; the assistant succeeded. The compressed context omits this deliverable entirely even though AGENT_TEST.md appears in modified-files, losing a completed user task and a workspace artifact."
+    },
+    {
+      "id": "guideline-goal-30",
+      "canonicalIdentity": "All user requests completed; only next user instruction is pending (no outstanding dir/README task)",
+      "type": "goal",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R10"
+      ],
+      "repairGuideline": "The compressed context claims the original directory-listing/README request was never fulfilled and invents a compaction investigation. The transcript shows every user request — directory listing, not-a-git-repo git status, README 15-line summary, Post.java analysis, web_fetch, sessions_spawn, memory_search, and the chain_audit_test.md audit — was executed and reported. Without this goal-state, the agent would re-run finished tasks and misreport conversation state."
+    },
+    {
+      "id": "guideline-entity-41",
+      "canonicalIdentity": "analyzed files #1-#5: TopicWatchExtension.java, AdminController.java, AvatarAdminController.java, BadWordAdminController.java, BanlistAdminController.java",
+      "type": "entity",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "The transcript repeatedly maintains this numbered list to avoid repeats. The compressed context omits the numbered list, breaking the user's explicit requirement to remember previously analyzed files."
+    },
+    {
+      "id": "guideline-next_action-100",
+      "canonicalIdentity": "Announced roadmap for new sequence: Round 2 on attachments/votes/cascade; Round 3 on query mapping/@Formula/@ColumnTransformer",
+      "type": "next_action",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R24"
+      ],
+      "repairGuideline": "The assistant explicitly promises these two future rounds in the final message, but the compressed context replaces this roadmap with a different optional suggestion (PostDAO/query patterns). Without the real roadmap, the model would not know what content the user expects next in the ongoing sequence."
+    },
+    {
+      "id": "guideline-decision-97",
+      "canonicalIdentity": "Assistant decision to treat the repeated request as a new sequence ('这是新一轮...')",
+      "type": "decision",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R24"
+      ],
+      "repairGuideline": "In the final assistant turn, the assistant explicitly frames the repeated prompt as a new multi-round sequence rather than declaring the old task finished. This decision is absent from the compressed context, which instead says 'task complete' and 'no further action required.' Missing this decision makes the model likely to stop or respond incorrectly."
+    },
+    {
+      "id": "guideline-outcome-91",
+      "canonicalIdentity": "attempt_count_6",
+      "type": "outcome",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R23"
+      ],
+      "repairGuideline": "The user explicitly asked to report how many attempts were made. The original transcript records 6 distinct tool invocations, but the compressed context incorrectly says 4, which would cause the final report to be wrong."
+    },
+    {
+      "id": "guideline-safety_boundary-101",
+      "canonicalIdentity": "BOOTSTRAP.md presence and safety boundary: no destructive bootstrap actions",
+      "type": "safety_boundary",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R26"
+      ],
+      "repairGuideline": "The original final answer explicitly warns that BOOTSTRAP.md exists in the working tree, that the environment cannot safely complete the full bootstrap process, and that no destructive action was taken. The compressed context omits this blocker, so a downstream agent could unknowingly attempt bootstrap actions or modify files."
+    },
+    {
+      "id": "guideline-entity-15",
+      "canonicalIdentity": "buildStoreFilename_storage_scheme",
+      "type": "entity",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R6"
+      ],
+      "repairGuideline": "The full root-cause explanation relies on the storage scheme in AttachmentService.buildStoreFilename (year/month/day + MD5 + extension) to show why getRealFilename is not the physical stored path. The compressed context only labels buildDownloadPath as the physical path without this supporting detail, weakening the required root-cause report."
+    },
+    {
+      "id": "guideline-outcome-71",
+      "canonicalIdentity": "category_admin_analysis_progress",
+      "type": "outcome",
+      "severity": "nice_to_have",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R15"
+      ],
+      "repairGuideline": "The session was in the middle of sequential JForum controller analysis: CategoryAdminController.java was just analyzed as file #6 and the tracking markdown was updated. This explains the broader context and helps the agent maintain continuity, though it is less critical than the active Post.java edit task."
+    },
+    {
+      "id": "guideline-goal-83",
+      "canonicalIdentity": "chain_audit_test.md create-read-undo was a direct user request, not an assistant self-test",
+      "type": "goal",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R17"
+      ],
+      "repairGuideline": "The compressed context frames chain_audit_test.md as the assistant's own test of compaction/write capabilities, but the transcript shows the user explicitly instructed creating it with two lines, reading it, undoing it, and reporting each step. This misattribution changes the required continuation and misstates the file's status."
+    },
+    {
+      "id": "guideline-outcome-113",
+      "canonicalIdentity": "checkpoint_status_conclusion_no_checkpoints",
+      "type": "outcome",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R30"
+      ],
+      "repairGuideline": "The original report concluded, based on the successful session_status output (compactions=0), that this is a first session with no checkpoint snapshots, no compression handoff, and no recoverable resumeCheckpoints. The compressed context only carries 'compactions: 0' and 'does not expose checkpointDiff data'; it omits the explicit conclusion, which is the core answer to the user's request."
+    },
+    {
+      "id": "guideline-entity-94",
+      "canonicalIdentity": "complete_tool_list_with_ls",
+      "type": "entity",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R23"
+      ],
+      "repairGuideline": "The original final report lists `ls` among the tools/commands used. The compressed context's tool list omits `ls`, which would cause an inaccurate report of which tools were used."
+    },
+    {
+      "id": "guideline-outcome-43",
+      "canonicalIdentity": "completed initial task: AGENT_TEST.md created with three specified lines and read back successfully; outside-workspace test skip is normal",
+      "type": "outcome",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "This explains why AGENT_TEST.md appears in the directory listing and why verify_tests was skipped. The compressed context replaces this with an unrelated chain_audit_test.md write/undo story."
+    },
+    {
+      "id": "guideline-constraint-48",
+      "canonicalIdentity": "constraint: do not re-read already analyzed files; maintain and respect the numbered tracking list to avoid duplicates",
+      "type": "constraint",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "The user explicitly asked to remember prior files and avoid repeats, and the assistant committed to following this rule. This constraint is entirely absent from the compressed context."
+    },
+    {
+      "id": "guideline-constraint-109",
+      "canonicalIdentity": "Constructor catch block: catch (Exception e) { throw new ForumException(e); }",
+      "type": "constraint",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R28"
+      ],
+      "repairGuideline": "The original final root-cause report cites this constructor-level catch as additional evidence that the class consistently handles errors instead of swallowing them. The compressed context does not mention it, so the model cannot fully reproduce the original reasoning about style consistency."
+    },
+    {
+      "id": "guideline-decision-46",
+      "canonicalIdentity": "decision: after PowerShell '&&' parse error, use PowerShell-compatible syntax for terminal commands",
+      "type": "decision",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "The transcript shows the first successful exec failed due to PowerShell not supporting '&&', and the assistant switched syntax. Future terminal commands depend on this knowledge."
+    },
+    {
+      "id": "guideline-decision-105",
+      "canonicalIdentity": "Decision: after the PowerShell parse error, switch to PowerShell-compatible command syntax instead of `&&`",
+      "type": "decision",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R27"
+      ],
+      "repairGuideline": "This decision is the immediate remedy that allowed the repository file to be located. Omitting it hides how the location was obtained and why the later grep/verification command was issued differently, potentially causing the same error to recur."
+    },
+    {
+      "id": "guideline-outcome-51",
+      "canonicalIdentity": "Definitive verification result: chain_audit_test.md does NOT exist on disk; Test-Path -LiteralPath and [System.IO.File]::Exists both returned False; the earlier Test-Path True was a false positive (Po",
+      "type": "outcome",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R13"
+      ],
+      "repairGuideline": "This resolves the file-existence discrepancy and confirms undo_write succeeded. The compressed context ambiguously says the file was 'restored', which could make the agent believe the file still exists and continue debugging a non-issue."
+    },
+    {
+      "id": "guideline-failed_attempt-65",
+      "canonicalIdentity": "dir_list_and_file_fetch_require_paired_nodes",
+      "type": "failed_attempt",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R15"
+      ],
+      "repairGuideline": "Both dir_list and file_fetch failed with 'no paired nodes available'. This is the key blocker that forced the fallback to local read/exec tools; without this atom, the agent may retry unusable paired-node tools or misunderstand why they failed."
+    },
+    {
+      "id": "guideline-outcome-44",
+      "canonicalIdentity": "directory listing and git status results: doc/, gradle/, src/, upgrade/, .gitignore, AGENT_TEST.md plus full git status file list",
+      "type": "outcome",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "The user asked for these results and they were successfully produced. The compressed context falsely states the original request remains unanswered."
+    },
+    {
+      "id": "guideline-outcome-81",
+      "canonicalIdentity": "Directory listing result: 4 folders (doc, gradle, src, upgrade) and 10 files including AGENT_TEST.md and pom.xml",
+      "type": "outcome",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R17"
+      ],
+      "repairGuideline": "The concrete directory contents were reported in the full transcript, but the compressed context treats the listing as still pending and omits the detailed file list, losing state needed for any later question about the workspace."
+    },
+    {
+      "id": "schemafree-R10-1",
+      "canonicalIdentity": "The active user request for consecutive Java-file analysis (task #2: read and summarize any file under src/main/java, avoiding already analyzed files) is not present in the handoff; the transcript still shows this task in progress (AdminController.java was just read, memory tracking update pending).",
+      "type": "other",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R10"
+      ],
+      "repairGuideline": "The compressed context declares all work complete and tells the next engineer to wait, but the transcript excerpt shows an unfinished user task: the assistant had read AdminController.java and was about to update the analysis-tracking file and deliver the requested one-line summary. Without knowing this, the next engineer would drop the outstanding request, not continue the consecutive-task sequence, and lack the analyzed-file history needed to avoid duplicates. This is a major omission, not a minor formatting loss."
+    },
+    {
+      "id": "schemafree-R11-2",
+      "canonicalIdentity": "Directory listing of C:/Users/27933/Desktop/shit/JForum-master was already successfully obtained: doc, gradle, src, upgrade, .gitignore, AGENT_TEST.md, build.gradle, build.xml, gdk.psd, gradlew, gradlew.bat, license.txt, pom.xml, README.md.",
+      "type": "other",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R11"
+      ],
+      "repairGuideline": "The compressed context is materially inconsistent with the source transcript. It claims the original request was never completed and directs the next engineer to list the directory and read README.md, but those actions were already completed successfully. Following the compressed context would cause redundant work and skip the real pending task of summarizing a Java file. It also omits critical outcomes such as the non-Git status, the directory listing, the README summary, and the AGENT_TEST.md confirmation. This handoff is unusable for correct continuation."
+    },
+    {
+      "id": "schemafree-R13-3",
+      "canonicalIdentity": "The ongoing continuous-task workflow is missing: the user asked the assistant to read one new Java file per task, avoid repeats, and track analyzed files in memory/jforum-analyzed-files.md. The handoff does not state that TopicWatchExtension.java and AdminController.java were already analyzed, nor that the sequence may still be pending.",
+      "type": "other",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R13"
+      ],
+      "repairGuideline": "The immediate undo_write/file-existence issue is well documented: path, commands, outputs, resolution, and next report are clear. However, the compressed context loses the user's ongoing continuous-task workflow (read Java files one by one, track analyzed files). If the user says 'continue', the next engineer would likely repeat already-analyzed files or regress to the already-completed list/README step, which is the wrong next action. This is a major omission, though the handoff is still usable for the immediate file-deletion report."
+    },
+    {
+      "id": "schemafree-R14-4",
+      "canonicalIdentity": "The handoff states the original file-listing/README request is not yet done, but the transcript shows it was completed (directory contents and README summary were already provided).",
+      "type": "other",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R14"
+      ],
+      "repairGuideline": "The compressed context misidentifies the next action and omits the active task. A competent engineer following this handoff would redo already-completed work (listing files, reading README, explaining the project) and would miss the user's pending request to analyze a Java file. This is a misleading handoff that would cause wrong next steps rather than a minor missing detail."
+    },
+    {
+      "id": "schemafree-R15-5",
+      "canonicalIdentity": "The actual active task in the source transcript: sequentially reading JForum controller files and summarizing them (Tasks #6-#8), not listing the directory/reading README.",
+      "type": "other",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R15"
+      ],
+      "repairGuideline": "The compressed context does not preserve the actual state of the source task. It directs the next engineer to list files/read README and to resume after CategoryAdminController (#6), but the source transcript shows the user asked to read and summarize Java controller files, file #7 was already completed, and file #8 was in progress. Following the handoff would cause the engineer to repeat completed work and ignore the in-progress GroupAdminController.java analysis. The lack of a coherent active-task statement makes the handoff effectively unusable for the source transcript's task."
+    },
+    {
+      "id": "schemafree-R16-6",
+      "canonicalIdentity": "The actual user request in the source transcript: list the directory and run `git status`, along with the completed result showing the directory is not a Git repository (`fatal: not a git repository`)",
+      "type": "other",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R16"
+      ],
+      "repairGuideline": "The compressed context is fundamentally disconnected from the source transcript. It presents a different 'original request' (list directory + read README) and treats it as unfinished, while the source shows that request was actually list directory + git status and was already completed, with a concrete result (not a Git repo). More importantly, it drops the active continuous task: the user is in the middle of a multi-part Java-file summarization sequence, task #1 is complete and tracked, and task #2 has started with `AdminController.java` but is unfinished. Following the compressed handoff would lead an engineer to repeat completed work and abandon the actual in-progress task, so the omission is critical."
+    },
+    {
+      "id": "schemafree-R17-7",
+      "canonicalIdentity": "The user's latest request was to read any Java file under src/main/java and summarize its purpose; the handoff omits this pending task entirely and instead directs the next action to README.md.",
+      "type": "other",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R17"
+      ],
+      "repairGuideline": "The compressed context misidentifies the active task and next action. The source transcript shows the README explanation was completed earlier, directory listing and git status were subsequently handled, and the final outstanding request was to summarize a Java file. The handoff instead lists README work as in-progress and omits the Java-file task entirely, so a competent engineer would repeat already-completed work and ignore the user's actual pending request. This is a major omission because it directly changes the correct next engineering action."
+    },
+    {
+      "id": "schemafree-R24-8",
+      "canonicalIdentity": "The new sequence Round 1 was actually delivered in the transcript, with content on @GeneratedValue strategy comparison (AUTO/IDENTITY/SEQUENCE) and lifecycle hooks (@PrePersist/@PreUpdate/@PreRemove); the compressed context incorrectly marks it as 'announced but not yet delivered'.",
+      "type": "other",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R24"
+      ],
+      "repairGuideline": "The compressed context preserves the overall roadmap and completed first sequence, but it contains a critical factual error about the new sequence: it claims Round 1 was not delivered when the source transcript clearly contains it. Following the compressed context's Next Actions would cause a competent engineer to repeat already-delivered work or infer content unnecessarily, changing the correct next engineering action. The roadmap for Rounds 2 and 3 is intact, so the handoff is not unusable, but the misclassification of Round 1 status makes this a major omission."
+    },
+    {
+      "id": "nofab-R12-9",
+      "canonicalIdentity": "no-fabrication repair: base summary must not contradict transcript",
+      "type": "constraint",
+      "severity": "critical",
+      "failureKind": "other",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "All six Expected Facts appear verbatim or as exact paraphrases in the Critical Recovery Ledger and Important Recovery Ledger, so completeness is satisfied. Accuracy is false because the Goal and Progress section claims the user asked to read the first 20 lines of README.md and that directory listing is still pending, while the original transcript shows the directory listing/git status was completed and the active task chain is Java-file analysis tasks #4/#5."
+    },
+    {
+      "id": "nofab-R16-10",
+      "canonicalIdentity": "no-fabrication repair: base summary must not contradict transcript",
+      "type": "constraint",
+      "severity": "critical",
+      "failureKind": "other",
+      "count": 1,
+      "sampleIds": [
+        "R16"
+      ],
+      "repairGuideline": "Completeness: All Expected Facts To Preserve are present verbatim or by clear paraphrase in the Critical/Important Recovery Ledger, including the manual-compaction objective, the README one-line JForum description, the memory_search failure chain, the memory index metadata blocker, the file_context entries, and the undo/report decision. Accuracy: The summary states the original directory-listing + README request was 'not yet fulfilled' and refers to reading the 'first 20 lines', but the evidence shows the README's first 15 lines were successfully read and reported (e.g., '✅ 读取前 15 行成功...'). This is a material factual contradiction."
+    },
+    {
+      "id": "nofab-R24-11",
+      "canonicalIdentity": "no-fabrication repair: base summary must not contradict transcript",
+      "type": "constraint",
+      "severity": "critical",
+      "failureKind": "other",
+      "count": 1,
+      "sampleIds": [
+        "R24"
+      ],
+      "repairGuideline": "Completeness: The expected facts are preserved verbatim in the Critical Recovery Ledger and Important Recovery Ledger (critical/decision, critical/constraint, important/test_result), so they count as preserved. Accuracy: The summary incorrectly states that the new sequence's Round 1 was 'not yet delivered' and 'content unknown', but the transcript's final assistant message actually delivers Round 1 (ID generation strategy differences and entity lifecycle hooks). This contradicts the source transcript."
+    },
+    {
+      "id": "nofab-R29-12",
+      "canonicalIdentity": "no-fabrication repair: base summary must not contradict transcript",
+      "type": "constraint",
+      "severity": "critical",
+      "failureKind": "other",
+      "count": 1,
+      "sampleIds": [
+        "R29"
+      ],
+      "repairGuideline": "All Expected Facts To Preserve are present, including the creation fact, the deletion success/test_result fact, file_context, and the Cargo fact (verbatim in ledgers). Accuracy is undermined by the Early Progress section attributing the verify_tests no-manifest skip to the first write, whereas the first write had the outside-workspace skip and no-manifest belonged to the second write; the summary also substitutes an unverified concrete username (27933) for the original [REDACTED_USER]."
+    }
+  ]
+}

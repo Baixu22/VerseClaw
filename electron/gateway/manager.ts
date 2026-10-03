@@ -68,6 +68,10 @@ import type {
   GatewayRuntimePayload,
 } from '@shared/host-events/contract';
 import type { ChatRuntimeEvent } from '@shared/chat-runtime-events';
+import type {
+  RuntimeApprovalRequestedEvent,
+  RuntimeApprovalResolvedEvent,
+} from '@shared/host-events/contract';
 
 export interface GatewayStatus {
   state: GatewayLifecycleState;
@@ -148,6 +152,7 @@ const VERSE_CLAW_REQUIRED_GATEWAY_METHODS = [
   'sessions.list',
   'sessions.patch',
   'sessions.fork',
+  'sessions.stop',
   'sessions.delete',
   'cron.list',
   'cron.add',
@@ -217,6 +222,8 @@ export interface GatewayManagerEvents {
   'chat:message': (data: GatewayChatMessageEvent) => void;
   'chat:runtime-event': (data: ChatRuntimeEvent) => void;
   'clawgraph:lifecycle': (data: unknown) => void;
+  'approval:requested': (data: RuntimeApprovalRequestedEvent) => void;
+  'approval:resolved': (data: RuntimeApprovalResolvedEvent) => void;
 }
 
 /**
@@ -317,6 +324,12 @@ export class GatewayManager extends EventEmitter {
     // so that async file I/O and key generation don't block module loading.
 
     this.on('gateway:ready', () => {
+      if (this.missingRequiredRuntimeMethods.length > 0) {
+        logger.warn(
+          `Ignoring gateway:ready while required runtime methods are missing: ${this.missingRequiredRuntimeMethods.join(', ')}`,
+        );
+        return;
+      }
       this.resetGatewayReadyFallback();
       this.clearInitialReadyHeartbeatRecoveryTimer();
       if (this.status.state === 'running' && !this.status.gatewayReady) {
@@ -1001,6 +1014,15 @@ export class GatewayManager extends EventEmitter {
     const startedAt = Date.now();
     try {
       await this.rpc('system-presence', {}, 5_000);
+      if (this.missingRequiredRuntimeMethods.length > 0) {
+        this.capabilityMonitor.recordCoreProbe({
+          ok: false,
+          checkedAt: Date.now(),
+          durationMs: Date.now() - startedAt,
+          error: `Missing runtime methods: ${this.missingRequiredRuntimeMethods.join(', ')}`,
+        });
+        return;
+      }
       this.capabilityMonitor.recordCoreProbe({
         ok: true,
         checkedAt: Date.now(),

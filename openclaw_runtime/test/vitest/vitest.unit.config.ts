@@ -36,7 +36,7 @@ export function loadExtraExcludePatternsFromEnv(
   return loadPatternListFromEnv("OPENCLAW_VITEST_EXTRA_EXCLUDE_FILE", env) ?? [];
 }
 
-const defaultUnitCoverageRoots = ["src", "packages", "test"] as const;
+const defaultUnitCoverageRoots = ["src", "packages", "test", "experiments"] as const;
 
 function toRepoPath(filePath: string): string {
   return path.relative(repoRoot, filePath).split(path.sep).join("/");

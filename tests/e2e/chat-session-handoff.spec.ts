@@ -328,17 +328,12 @@ test.describe('Verse Claw chat session handoff', () => {
       await page.reload();
       await page.waitForLoadState('domcontentloaded');
 
-      await expect(page.getByTestId('chat-composer-handoff')).toBeVisible({ timeout: 30_000 });
-      await expect(page.getByTestId('chat-composer-fork')).toHaveCount(0);
-
       await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
       await expect(page.getByTestId('chat-session-fork')).toBeVisible();
       await expect(page.getByTestId('chat-session-handoff')).toBeVisible();
       await expect(page.getByTestId('chat-session-handoff-recommended')).toBeVisible();
       await expect(page.getByTestId('chat-session-fork-recommended')).toHaveCount(0);
-      await page.keyboard.press('Escape');
-
-      await page.getByTestId('chat-composer-handoff').click();
+      await page.getByTestId('chat-session-handoff').click();
       await expect(page.getByTestId('chat-handoff-dialog')).toBeVisible();
       await expect(page.getByTestId('chat-handoff-recommendation-note')).toBeVisible();
       await expect(page.getByTestId('chat-handoff-dialog').getByText('Runtime checkpoint', { exact: true }))
@@ -443,7 +438,7 @@ test.describe('Verse Claw chat session handoff', () => {
       await expect(page.getByTestId('chat-composer-input')).toBeEnabled({ timeout: 30_000 });
       await page.getByTestId('chat-composer-input').fill('run long task');
       await page.getByTestId('chat-composer-send').click();
-      await expect(page.getByTestId('chat-composer-fork')).toBeDisabled();
+      await expect(page.getByTestId('chat-composer-fork')).toHaveCount(0);
       await expect(page.getByTestId('chat-composer-handoff')).toHaveCount(0);
 
       await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();

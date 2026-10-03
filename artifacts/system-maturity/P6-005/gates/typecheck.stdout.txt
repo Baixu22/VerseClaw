@@ -1,31 +1,42 @@
-[ext-bridge] No external extensions configured — empty stubs generated.
+[ext-bridge] No external extensions configured — empty stubs up to date.
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.
 {
-  "success": true,
+  "success": false,
   "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 1,
+    "durationMs": 631,
+    "observationMode": true,
+    "errorCount": 0,
+    "errorLog": "C:\\Users\\27933\\AppData\\Local\\Temp\\clawx-p6-005-rerun-20260908\\fresh\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
   "cache": {
     "enabled": false,
     "status": "disabled",
-    "key": "f9b6a7f4e9558abf0d5bf6ca90ef4e9cda4499841482bb172b50102e2890af03",
-    "inputCount": 676,
-    "report": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0-p6-005-clean-v6\\artifacts\\typecheck-cache\\report.json"
+    "key": "71eb76d71472108c9f2cf296b0f64fdbb77d7f8de9afa4a5aa19d4091d6fd30d",
+    "inputCount": 792,
+    "report": "C:\\Users\\27933\\AppData\\Local\\Temp\\clawx-p6-005-rerun-20260908\\fresh\\artifacts\\typecheck-cache\\report.json"
   },
-  "totalDurationMs": 17152,
-  "coverageNote": "Runs the same node and web TypeScript projects as pnpm run typecheck after generating the extension bridge, but executes the two project checks concurrently.",
+  "totalDurationMs": 805,
+  "coverageNote": "Runs the node and web TypeScript projects as pnpm run typecheck after generating the extension bridge, and additionally typechecks tests/ (tsconfig.test.json) in observation mode: its legacy errors are reported under testTypes but do not fail the gate.",
   "results": [
     {
       "commandLine": "node scripts/generate-ext-bridge.mjs",
       "exitCode": 0,
-      "durationMs": 46
+      "durationMs": 43
     },
     {
       "commandLine": "pnpm run typecheck:node",
-      "exitCode": 0,
-      "durationMs": 7184
+      "exitCode": 1,
+      "durationMs": 613
     },
     {
       "commandLine": "pnpm run typecheck:web",
-      "exitCode": 0,
-      "durationMs": 16986
+      "exitCode": 1,
+      "durationMs": 619
     }
   ]
 }
+[ELIFECYCLE] Command failed with exit code 1.

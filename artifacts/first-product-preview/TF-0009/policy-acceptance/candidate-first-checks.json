@@ -1,0 +1,35 @@
+[
+  {
+    "id": "campaign",
+    "command": [
+      "node",
+      "--import",
+      "tsx",
+      "scripts/tf0009-agent-surrogate.mts"
+    ],
+    "cwd": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate\\openclaw_runtime",
+    "exitCode": 0,
+    "durationMs": 3687,
+    "log": "candidate-campaign.log"
+  },
+  {
+    "id": "unit",
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/tf0009-agent-surrogate.test.ts",
+      "tests/unit/tf0009-engineering-evidence-audit.test.ts",
+      "tests/unit/dcs-ops-canary-hard-veto.test.ts",
+      "tests/unit/sekb-runtime-build-contract.test.ts",
+      "tests/unit/uas-00-evidence-freeze.test.ts",
+      "tests/unit/agent-engineering-acceptance.test.ts",
+      "--reporter=json",
+      "--outputFile=D:/ClawX-acceptance/tf0009-20260930/candidate-unit.json"
+    ],
+    "cwd": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate",
+    "exitCode": 1,
+    "durationMs": 162766,
+    "log": "candidate-unit.log"
+  }
+]

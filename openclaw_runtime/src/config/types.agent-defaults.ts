@@ -546,6 +546,12 @@ export type AgentDefaultsConfig = {
 };
 
 export type AgentCompactionMode = "default" | "safeguard";
+export type AgentCompactionPromotionStage =
+  | "shadow"
+  | "would-retry"
+  | "provider-pressure-pilot"
+  | "critical-only"
+  | "limited";
 export type AgentCompactionPostIndexSyncMode = "off" | "async" | "await";
 export type AgentCompactionIdentifierPolicy = "strict" | "off" | "custom";
 export type AgentCompactionQualityGuardConfig = {
@@ -566,6 +572,11 @@ export type AgentCompactionMidTurnPrecheckConfig = {
 export type AgentCompactionConfig = {
   /** Compaction summarization mode. */
   mode?: AgentCompactionMode;
+  /**
+   * P6 controlled promotion stage. Default shadow; higher stages are
+   * explicit operator opt-in and are still subject to the P6 evidence gate.
+   */
+  promotionStage?: AgentCompactionPromotionStage;
   /** Embedded OpenClaw reserve tokens target before floor enforcement. */
   reserveTokens?: number;
   /** Embedded OpenClaw keepRecentTokens budget used for cut-point selection. */

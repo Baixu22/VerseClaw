@@ -12,6 +12,7 @@ import { setPathExistingStrict } from "../../secrets/path-utils.js";
 import { resolveSecretRefValue } from "../../secrets/resolve.js";
 import { assertExpectedResolvedSecretValue } from "../../secrets/secret-value.js";
 import { discoverConfigSecretTargetsByIds } from "../../secrets/target-registry.js";
+import type { DiscoveredConfigSecretTarget } from "../../secrets/target-registry-types.js";
 
 export type CommandSecretResolutionMode =
   | "enforce_resolved"
@@ -28,6 +29,11 @@ export type CommandSecretTargetState =
   | "inactive_surface"
   | "unresolved";
 
+export type CommandSecretReadTarget = Pick<
+  DiscoveredConfigSecretTarget,
+  "path" | "pathSegments" | "providerId" | "accountId"
+>;
+
 export type ResolveCommandSecretRefsViaGatewayOptions = {
   config: OpenClawConfig;
   commandName: string;
@@ -36,6 +42,11 @@ export type ResolveCommandSecretRefsViaGatewayOptions = {
   allowedPaths?: ReadonlySet<string>;
   forcedActivePaths?: ReadonlySet<string>;
   optionalActivePaths?: ReadonlySet<string>;
+  /** Host-owned sink check invoked after selecting refs and before resolution. */
+  authorizeSecretRead?: (params: {
+    commandName: string;
+    selectedTargets: readonly CommandSecretReadTarget[];
+  }) => void | Promise<void>;
 };
 
 export type ResolveCommandSecretRefsViaGatewayResult = {
@@ -45,7 +56,9 @@ export type ResolveCommandSecretRefsViaGatewayResult = {
   hadUnresolvedTargets: boolean;
 };
 
-function normalizeMode(mode: CommandSecretResolutionModeInput | undefined): CommandSecretResolutionMode {
+function normalizeMode(
+  mode: CommandSecretResolutionModeInput | undefined,
+): CommandSecretResolutionMode {
   if (!mode || mode === "strict" || mode === "enforce_resolved") {
     return "enforce_resolved";
   }
@@ -161,9 +174,20 @@ async function resolveLocally(
 export async function resolveCommandSecretRefsViaGateway(
   options: ResolveCommandSecretRefsViaGatewayOptions,
 ): Promise<ResolveCommandSecretRefsViaGatewayResult> {
-  if (selectedConfiguredTargets(options).length === 0) {
+  const selectedTargets = selectedConfiguredTargets(options);
+  if (selectedTargets.length === 0) {
     return emptyResult(options.config);
   }
+
+  await options.authorizeSecretRead?.({
+    commandName: options.commandName,
+    selectedTargets: selectedTargets.map(({ path, pathSegments, providerId, accountId }) => ({
+      path,
+      pathSegments,
+      ...(providerId ? { providerId } : {}),
+      ...(accountId ? { accountId } : {}),
+    })),
+  });
 
   let payload: unknown;
   try {
@@ -175,9 +199,7 @@ export async function resolveCommandSecretRefsViaGateway(
         commandName: options.commandName,
         targetIds: [...options.targetIds],
         ...(options.allowedPaths ? { allowedPaths: [...options.allowedPaths] } : {}),
-        ...(options.forcedActivePaths
-          ? { forcedActivePaths: [...options.forcedActivePaths] }
-          : {}),
+        ...(options.forcedActivePaths ? { forcedActivePaths: [...options.forcedActivePaths] } : {}),
         ...(options.optionalActivePaths
           ? { optionalActivePaths: [...options.optionalActivePaths] }
           : {}),

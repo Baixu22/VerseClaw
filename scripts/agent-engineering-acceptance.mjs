@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { existsSync, writeFileSync } from 'node:fs';
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -232,6 +233,6 @@ export function main(argv = process.argv.slice(2)) {
   }
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))) {
+if (isMainEntrypoint(import.meta.url)) {
   process.exitCode = main();
 }

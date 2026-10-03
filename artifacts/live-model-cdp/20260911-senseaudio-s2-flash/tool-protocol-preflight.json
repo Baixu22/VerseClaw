@@ -1,0 +1,81 @@
+{
+  "startedAt": "2026-09-11T02:25:34.587Z",
+  "request": {
+    "model": "senseaudio-s2-flash",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Call the add function with a=2 and b=3. Do not answer in text."
+      }
+    ],
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "add",
+          "description": "Add two numbers",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "a": {
+                "type": "number"
+              },
+              "b": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      }
+    ],
+    "tool_choice": {
+      "type": "function",
+      "function": {
+        "name": "add"
+      }
+    },
+    "max_tokens": 150,
+    "stream": false
+  },
+  "status": 200,
+  "response": {
+    "id": "chatcmpl-bccb187f-54a4-4e81-9498-ec0dd3a408fd",
+    "choices": [
+      {
+        "index": 0,
+        "finish_reason": "stop",
+        "message": {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "index": 0,
+              "type": "function",
+              "id": "chatcmpl-tool-aceb71efe4fde68f",
+              "function": {
+                "name": "add",
+                "arguments": "{\"a\": 2, \"b\": 3}"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "created": 1789093535,
+    "model": "senseaudio-s2-flash",
+    "object": "chat.completion",
+    "system_fingerprint": "vllm-0.26.0-tp2-238f92b1",
+    "usage": {
+      "prompt_tokens": 495,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "completion_tokens": 35,
+      "total_tokens": 530
+    }
+  }
+}

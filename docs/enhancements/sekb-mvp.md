@@ -21,6 +21,14 @@ capture.finish_trajectory(trajectoryId, "success");
 
 For failures, pass the raw error to `finish_trajectory`. The capture layer extracts and caches a deterministic signature such as `ConnectionError::db_connection_refused::postgresql`.
 
+Terminal task-phase notifications are retained as lifecycle evidence, but they
+are not distillation candidates by themselves. New candidate suggestions
+require a terminal trajectory with a real `tool.call` or `tool.result` step and
+a valid `runtime-lineage.v1` containing `sessionId`, `loopRunId`, and `traceId`.
+Replayed task-phase terminal capture for the same lineage returns the existing
+trajectory instead of persisting a duplicate. Legacy rows remain readable but
+are not silently promoted when that evidence is missing.
+
 ## Manual Distillation
 
 MVP distillation is explicit:
@@ -33,6 +41,10 @@ const principleId = distiller.confirm_and_save(suggestions[0], {
 ```
 
 `confirm_and_save` stores an active L2 principle, marks source trajectories as distilled, and sets their expiry to 90 days after confirmation. `reject_suggestion` records the rejection reason for later prompt or distillation tuning.
+
+Candidate generation remains read-only and deterministic: repeated source ids
+are collapsed, source ordering is stable, and no principle or experience Block
+is written until `confirm_and_save` is called.
 
 ## Storage
 

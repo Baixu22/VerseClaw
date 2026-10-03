@@ -36,7 +36,7 @@ vi.mock('rastermill', () => ({
   RastermillUnavailableError: class RastermillUnavailableError extends Error {},
   readImageProbeFromHeader: vi.fn(),
   readImageMetadataFromHeader: vi.fn(),
-}), { virtual: true });
+}));
 
 // Gateway handlers â€?the integration surface under test.
 import { roleOrchestrationHandlers } from '../../openclaw_runtime/src/gateway/server-methods/role-orchestration-methods';
@@ -183,7 +183,7 @@ describe('roles.* / teams.* handlers', () => {
     const roles = (res?.payload as { roles: { name: string; origin?: string }[] }).roles;
     const reviewer = roles.find((r) => r.name === 'reviewer');
     expect(reviewer?.origin).toBe('config');
-    expect(reviewer?.displayName).toBe('Custom Reviewer');
+    expect((reviewer as { displayName?: string } | undefined)?.displayName).toBe('Custom Reviewer');
   });
 
   it('roles.get surfaces origin field', async () => {
@@ -622,7 +622,6 @@ describe('team_orchestrate tool', () => {
       plan: { mode: string };
       children: unknown[];
       pendingVerifier: boolean;
-      resultPolicy: { completion: string };
       quality: Array<{ roleName: string; overall: string }>;
       qualityState: null | 'shadow' | 'active';
       qualityStateReason: string;

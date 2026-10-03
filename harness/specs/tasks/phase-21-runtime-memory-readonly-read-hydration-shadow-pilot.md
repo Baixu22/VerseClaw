@@ -85,8 +85,8 @@ requiredTests:
   - rtk.exe rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components
   - rtk.exe rg -n 'hydrateRuntimeMemoryShadowContext|readRuntimeMemoryHydrationShadow|RuntimeMemoryProvider|createRuntimeMemoryContextProvider|runtime\.memory\.provider|proposeFacts' openclaw_runtime/src/gateway electron shared src/lib openclaw_runtime/src/context-engine/provider-registry.ts openclaw_runtime/src/agents/task-loop-controller.ts
   - rtk.exe rg -n 'appendFact|invalidateFact|loadStore|queryFacts|RuntimeMemoryProvider|createRuntimeMemoryContextProvider|runtime\.memory\.provider|proposeFacts|hydrateRuntimeMemoryShadowContext|readRuntimeMemoryHydrationShadow' openclaw_runtime/src/agents/task-loop-controller.ts
-  - rtk.exe rg -n 'rawChat|raw chat|transcript|jsonl|rawTrace|trace dump|prompt dump|toolArgs|toolOutput|stdout|stderr|process\.env|secret|apiKey|api[-_]?key|authorization|password|traceparent|tracestate|baggage|record_json|raw DB|raw row|self-check|subagent|template|facts/candidates raw|provider context|runtime authority' tests/unit/runtime-memory-read-hydration-shadow.test.ts runtime-research/handoffs/phase-21-runtime-memory-readonly-read-hydration-shadow-pilot harness/specs/tasks/phase-21-runtime-memory-readonly-read-hydration-shadow-pilot.md openclaw_runtime/src/runtime-core/memory-read-hydration-shadow.ts
-  - rtk.exe rg -n 'createServer\(|listen\(|WebSocketServer|new WebSocket\(|OTLP|Collector|opentelemetry.*export|@opentelemetry/exporter|@temporalio|express\(|database-service|listener|exporter|service|daemon' openclaw_runtime/src/runtime-core/memory-read-hydration-shadow.ts tests/unit/runtime-memory-read-hydration-shadow.test.ts runtime-research/handoffs/phase-21-runtime-memory-readonly-read-hydration-shadow-pilot harness/specs/tasks/phase-21-runtime-memory-readonly-read-hydration-shadow-pilot.md package.json scripts/build-openclaw-runtime.mjs
+  - rtk.exe rg -n 'rawChat|raw chat|transcript|jsonl|rawTrace|trace dump|prompt dump|toolArgs|toolOutput|stdout|stderr|process\.env|secret|apiKey|api[-_]?key|authorization|password|traceparent|tracestate|baggage|record_json|raw DB|raw row|self-check|subagent|template|facts/candidates raw|provider context|runtime authority' tests/unit/runtime-memory-read-hydration-shadow.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/phase-21-runtime-memory-readonly-read-hydration-shadow-pilot.md openclaw_runtime/src/runtime-core/memory-read-hydration-shadow.ts
+  - rtk.exe rg -n 'createServer\(|listen\(|WebSocketServer|new WebSocket\(|OTLP|Collector|opentelemetry.*export|@opentelemetry/exporter|@temporalio|express\(|database-service|listener|exporter|service|daemon' openclaw_runtime/src/runtime-core/memory-read-hydration-shadow.ts tests/unit/runtime-memory-read-hydration-shadow.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/phase-21-runtime-memory-readonly-read-hydration-shadow-pilot.md package.json scripts/build-openclaw-runtime.mjs
   - rtk.exe rg -n 'migrate|appendEpisode|appendFact|invalidateFact|ensureRuntimeMemoryPersistenceSchema|withWriteTransaction|trimRows|insertInto|updateTable|deleteFrom' openclaw_runtime/src/runtime-core/memory-read-hydration-shadow.ts
   - rtk.exe rg -n '"(predev|dev|build|package|release)"\s*:\s*"[^"]*(hydrateRuntimeMemoryShadowContext|readRuntimeMemoryHydrationShadow|memory-read-hydration-shadow|--read-shadow|--database|gateway|server|listener|daemon|createServer|listen\()' package.json
   - rtk.exe node scripts/comms/replay.mjs and rtk.exe node scripts/comms/compare.mjs only if Main/Gateway/host-api/api-client/provider transport paths are modified by Phase 21 or dirty communication-adjacent files block comms judgment.
@@ -99,10 +99,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-21-runtime-memory-readonly-read-hydration-shadow-pilot/README.md
-    - runtime-research/handoffs/phase-21-runtime-memory-readonly-read-hydration-shadow-pilot/parallel-lanes.md
-    - runtime-research/handoffs/phase-21-runtime-memory-readonly-read-hydration-shadow-pilot/window-prompts.md
-    - runtime-research/handoffs/phase-21-runtime-memory-readonly-read-hydration-shadow-pilot/submission-template.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 21 Runtime Memory Readonly Read Hydration Shadow Pilot

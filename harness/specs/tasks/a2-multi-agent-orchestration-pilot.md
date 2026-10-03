@@ -14,6 +14,12 @@ requiredProfiles:
 requiredRules:
   - backend-communication-boundary
   - comms-regression
+expectedUserBehavior:
+  - With the A2 pilot gate enabled, wave planning defers consistently and the deferral-disagreement counter stays under the 10% graduation budget.
+  - A wave that has already started is never re-planned; the scheduler rejects the re-plan request instead of silently reordering running work.
+  - Resuming a multi-worker orchestration creates new child sessions rather than reconnecting to finished ones.
+  - When the disagreement rate exceeds 10%, the pilot responds with `degrade_to_live_only` instead of continuing to schedule.
+  - With the pilot flag off, wave scheduling and orchestration outcomes are unchanged.
 requiredTests:
   - tests/unit/resource-aware-wave-scheduler.test.ts
   - tests/unit/cross-area-composition.test.ts

@@ -6,6 +6,7 @@ import {
   countLongTaskQueuedMessages,
   getLatestLongTaskCheckpoint,
 } from "../../agents/long-task-control/store.js";
+import { collectSessionActivityReadProjection } from "./session-activity-projection.js";
 import type { GatewayRequestHandlers } from "./types.js";
 
 function readSessionKey(params: Record<string, unknown>): string | null {
@@ -80,16 +81,21 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       summary: run.outcome?.error,
       status: !run.endedAt
         ? "started"
-        : run.outcome?.status === "ok"
-          ? "completed"
-          : run.endedReason
-            ? "aborted"
-            : "error",
+        // A yielded run keeps endedAt but clears outcome/endedReason, so it must
+        // be matched before the terminal branches or it reads as an error.
+        : run.pauseReason === "sessions_yield"
+          ? "yielded"
+          : run.outcome?.status === "ok"
+            ? "completed"
+            : run.endedReason
+              ? "aborted"
+              : "error",
       updatedAt: run.endedAt ?? run.startedAt ?? run.createdAt,
       source: "snapshot",
     }));
     const queueCount = countLongTaskQueuedMessages(sessionKey);
     const checkpoint = getLatestLongTaskCheckpoint(sessionKey);
+    const readProjection = collectSessionActivityReadProjection(sessionKey, mission);
     const now = Date.now();
 
     respond(true, {
@@ -106,6 +112,9 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
         },
         tasks,
         subagents,
+        goals: readProjection.goals,
+        processes: readProjection.processes,
+        lineage: readProjection.lineage,
         continuity: {
           queueCount,
           checkpoint: Boolean(checkpoint),

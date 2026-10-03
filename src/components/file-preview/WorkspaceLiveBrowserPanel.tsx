@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Loader2, MousePointerClick, ShieldCheck, Square, Type } from 'lucide-react';
+import { Loader2, ListChecks, MousePointerClick, ShieldCheck, Square, Type } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,9 @@ import {
 import { hostApi } from '@/lib/host-api';
 import { cn } from '@/lib/utils';
 import { useArtifactPanel } from '@/stores/artifact-panel';
-import type { AgentBrowserSession } from '@shared/host-api/contract';
+import { useChatStore } from '@/stores/chat';
+import { useWorkspacesStore } from '@/stores/workspaces';
+import type { AgentBrowserProfileEntry, AgentBrowserSession } from '@shared/host-api/contract';
 import type { WorkspaceArtifactPanelState } from '@shared/types/workspace';
 
 type InspectKind = 'network' | 'console' | 'sources' | 'source-maps' | 'runtime';
@@ -35,6 +37,7 @@ export function WorkspaceLiveBrowserPanel({
   const storedUrl = useArtifactPanel((state) => state.browserUrl);
   const setBrowserSessionId = useArtifactPanel((state) => state.setBrowserSessionId);
   const [sessions, setSessions] = useState<AgentBrowserSession[]>([]);
+  const [profiles, setProfiles] = useState<AgentBrowserProfileEntry[]>([]);
   const [sessionId, setSessionId] = useState<string | null>(storedSessionId);
   const [url, setUrl] = useState(storedUrl ?? '');
   const [busyAction, setBusyAction] = useState<string | null>(null);
@@ -48,7 +51,19 @@ export function WorkspaceLiveBrowserPanel({
   const [inspectOpen, setInspectOpen] = useState(false);
   const [inspectKind, setInspectKind] = useState<InspectKind>('network');
   const [runtimePaths, setRuntimePaths] = useState('window.location, document.title');
-  const [visibleSessionIds, setVisibleSessionIds] = useState<Set<string>>(() => new Set());
+  const [newSessionMode, setNewSessionMode] = useState<'headless' | 'visible'>('visible');
+  const [newSessionProfile, setNewSessionProfile] = useState('default');
+  const [automationOpen, setAutomationOpen] = useState(false);
+  const [automationName, setAutomationName] = useState('Check current page');
+  const [automationObjective, setAutomationObjective] = useState('Read the current page and verify it is available');
+  const [automationSuccess, setAutomationSuccess] = useState('');
+  const [automationMode, setAutomationMode] = useState<'headless' | 'visible'>('headless');
+  const [automationBusy, setAutomationBusy] = useState(false);
+  const activeWorkspace = useWorkspacesStore((state) => state.activeWorkspace);
+  const currentSessionKey = useChatStore((state) => state.currentSessionKey);
+  const workspaceId = activeWorkspace?.id;
+  const sessionKey = currentSessionKey || activeWorkspace?.activeSessionKey;
+  const agentId = activeWorkspace?.selectedAgentId ?? activeWorkspace?.agentId;
 
   const selectedSession = useMemo(
     () => sessions.find((session) => session.id === sessionId) ?? null,
@@ -70,8 +85,15 @@ export function WorkspaceLiveBrowserPanel({
   const refresh = useCallback(async (preferredId?: string | null) => {
     setError(null);
     try {
-      const result = await hostApi.agentBrowser.status();
+      const [result, profileResult] = await Promise.all([
+        hostApi.agentBrowser.status(),
+        hostApi.agentBrowser.profiles(),
+      ]);
       const nextSessions = result.sessions ?? [];
+      setProfiles(profileResult.profiles ?? []);
+      if (profileResult.profiles?.length && !profileResult.profiles.some((entry) => entry.profile === newSessionProfile)) {
+        setNewSessionProfile(profileResult.profiles[0].profile);
+      }
       setSessions(nextSessions);
       const targetId = preferredId ?? sessionId ?? storedSessionId;
       const next = nextSessions.find((session) => session.id === targetId) ?? nextSessions[0] ?? null;
@@ -79,7 +101,7 @@ export function WorkspaceLiveBrowserPanel({
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : String(reason));
     }
-  }, [persistSession, sessionId, storedSessionId]);
+  }, [newSessionProfile, persistSession, sessionId, storedSessionId]);
 
   useEffect(() => {
     void refresh(storedSessionId);
@@ -109,7 +131,48 @@ export function WorkspaceLiveBrowserPanel({
       await run('navigate', () => hostApi.agentBrowser.navigate({ sessionId: selectedSession.id, url: target }));
       return;
     }
-    await run('open', () => hostApi.agentBrowser.open({ url: target, mode: 'visible' }));
+    await run('open', () => hostApi.agentBrowser.open({
+      url: target,
+      mode: newSessionMode,
+      profile: newSessionProfile,
+      authPersistence: 'profile',
+      workspaceId,
+      sessionKey,
+      agentId,
+    }));
+  };
+
+  const createAutomation = async () => {
+    const target = (selectedSession?.url || url).trim();
+    const success = automationSuccess.trim();
+    if (!target || !automationName.trim() || !automationObjective.trim() || !success) return;
+    setAutomationBusy(true);
+    setError(null);
+    try {
+      const hostname = new URL(target).hostname;
+      await hostApi.agentBrowser.createTask({
+        name: automationName.trim(),
+        url: target,
+        objective: automationObjective.trim(),
+        profile: selectedSession?.profile || newSessionProfile,
+        mode: automationMode,
+        allowedDomains: [hostname],
+        steps: [{ action: 'wait-for-selector', selector: 'body' }],
+        successCriteria: { kind: 'text-includes', value: success },
+        workspaceId,
+        sessionKey,
+        agentId,
+      });
+      setAutomationOpen(false);
+      setAutomationSuccess('');
+      toast.success(t('workspace.automation.created'));
+    } catch (reason) {
+      const message = reason instanceof Error ? reason.message : String(reason);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setAutomationBusy(false);
+    }
   };
 
   const capture = async () => {
@@ -187,18 +250,12 @@ export function WorkspaceLiveBrowserPanel({
 
   const toggleVisible = async () => {
     if (!selectedSession) return;
-    const isVisible = visibleSessionIds.has(selectedSession.id);
+    const isVisible = selectedSession.mode === 'visible';
     await run(isVisible ? 'hide' : 'show', () => (
       isVisible
         ? hostApi.agentBrowser.hide({ sessionId: selectedSession.id })
         : hostApi.agentBrowser.show({ sessionId: selectedSession.id })
     ));
-    setVisibleSessionIds((current) => {
-      const next = new Set(current);
-      if (isVisible) next.delete(selectedSession.id);
-      else next.add(selectedSession.id);
-      return next;
-    });
   };
 
   return (
@@ -235,13 +292,14 @@ export function WorkspaceLiveBrowserPanel({
           <button className="rs-icon-btn" type="button" onClick={() => selectedSession ? void run('refresh', () => hostApi.agentBrowser.navigate({ sessionId: selectedSession.id, url: selectedSession.url || url })) : void refresh()} aria-label={t('actions.refresh')} title={t('actions.refresh')}>
             <RefreshCw className={cn('h-3.5 w-3.5', busyAction === 'refresh' && 'animate-spin')} />
           </button>
-          {selectedSession && <button className="rs-icon-btn" type="button" onClick={() => void run('focus', () => hostApi.agentBrowser.focus({ sessionId: selectedSession.id }))} aria-label={t('workspace.focus')} title={t('workspace.focus')}><Eye className="h-3.5 w-3.5" /></button>}
-          {selectedSession && <button className="rs-icon-btn" type="button" onClick={() => void toggleVisible()} aria-label={visibleSessionIds.has(selectedSession.id) ? t('actions.hide') : t('actions.takeOver')} title={visibleSessionIds.has(selectedSession.id) ? t('actions.hide') : t('actions.takeOver')}><Monitor className="h-3.5 w-3.5" /></button>}
-          {selectedSession && <button className="rs-icon-btn" type="button" onClick={() => void capture()} aria-label={t('workspace.screenshot')} title={t('workspace.screenshot')}><Camera className="h-3.5 w-3.5" /></button>}
+          {selectedSession && <button className="rs-icon-btn" type="button" onClick={() => void toggleVisible()} aria-label={selectedSession.mode === 'visible' ? t('actions.hide') : t('actions.takeOver')} title={selectedSession.mode === 'visible' ? t('actions.hide') : t('actions.takeOver')}><Monitor className="h-3.5 w-3.5" /></button>}
           {selectedSession && <details className="relative">
             <summary className="rs-icon-btn list-none" aria-label={t('workspace.more')} title={t('workspace.more')}><Ellipsis className="h-3.5 w-3.5" /></summary>
             <div className="absolute right-0 top-8 z-30 min-w-44 rounded-md border border-border bg-surface-modal p-1 shadow-lg">
+              <button type="button" className="rs-browser-options-item" onClick={() => void run('focus', () => hostApi.agentBrowser.focus({ sessionId: selectedSession.id }))}><Eye className="h-3.5 w-3.5" />{t('workspace.focus')}</button>
+              <button type="button" className="rs-browser-options-item" onClick={() => void capture()}><Camera className="h-3.5 w-3.5" />{t('workspace.screenshot')}</button>
               <button type="button" className="rs-browser-options-item" onClick={() => void takeSnapshot()}>{t('workspace.snapshot')}</button>
+              <button type="button" className="rs-browser-options-item" onClick={() => setAutomationOpen(true)}><ListChecks className="h-3.5 w-3.5" />{t('workspace.automation.open')}</button>
               <button type="button" className="rs-browser-options-item" onClick={() => { setInspectOpen(true); setInspectOutput(null); }}>{t('workspace.inspect')}</button>
               <button type="button" className="rs-browser-options-item" onClick={() => void run('upgrade', () => hostApi.agentBrowser.requestModeUpgrade({ sessionId: selectedSession.id, targetMode: 'controlled_enhanced', reason: 'workspace-inspection', userApproval: true }))}><ShieldCheck className="h-3.5 w-3.5" />{t('runtimeMode.upgrade')}</button>
               <button type="button" className="rs-browser-options-item text-red-700 dark:text-red-400" onClick={() => void run('close', async () => { const result = await hostApi.agentBrowser.close({ sessionId: selectedSession.id }); persistSession(null); return { ...result, session: undefined }; })}><Square className="h-3.5 w-3.5" />{t('actions.stop')}</button>
@@ -250,11 +308,55 @@ export function WorkspaceLiveBrowserPanel({
         </div>
       </div>
 
+      {sessions.length > 0 && (
+        <ul
+          className="flex shrink-0 flex-wrap items-center gap-1.5 border-b border-border/60 px-2 py-1.5"
+          data-testid="workspace-browser-sessions"
+          aria-label={t('workspace.activeSessions')}
+        >
+          {sessions.map((session) => (
+            <li
+              key={session.id}
+              data-testid={`workspace-browser-session-${session.id}`}
+              className={cn(
+                'flex min-w-0 items-center gap-1.5 rounded-md px-2 py-1 text-[11px]',
+                session.id === sessionId ? 'bg-black/5 dark:bg-white/10' : 'bg-transparent',
+              )}
+            >
+              <span className="shrink-0 rounded bg-black/[0.06] px-1 py-0.5 font-medium text-muted-foreground dark:bg-white/[0.08]">{session.profile}</span>
+              <span className="shrink-0 font-medium text-foreground">{session.title || t('sessions.untitled')}</span>
+              <span className="min-w-0 truncate font-mono text-muted-foreground">{session.url || t('sessions.blank')}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
       {!selectedSession && (
         <div className="flex min-h-0 flex-1 items-center justify-center px-6 text-center">
           <div className="max-w-sm">
             <Globe className="mx-auto h-7 w-7 text-muted-foreground" />
             <p className="mt-3 text-sm text-muted-foreground">{t('workspace.empty')}</p>
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <select
+                className="h-8 rounded-md border border-input bg-surface-input px-2 text-xs"
+                aria-label={t('workspace.mode')}
+                value={newSessionMode}
+                onChange={(event) => setNewSessionMode(event.target.value as 'headless' | 'visible')}
+              >
+                <option value="visible">{t('modes.visible')}</option>
+                <option value="headless">{t('modes.headless')}</option>
+              </select>
+              <select
+                className="h-8 max-w-32 rounded-md border border-input bg-surface-input px-2 text-xs"
+                aria-label={t('workspace.profile')}
+                value={newSessionProfile}
+                onChange={(event) => setNewSessionProfile(event.target.value)}
+              >
+                {(profiles.length ? profiles : [{ profile: 'default', source: 'metadata' as const }]).map((profile) => (
+                  <option key={profile.profile} value={profile.profile}>{profile.label || profile.profile}</option>
+                ))}
+              </select>
+            </div>
             <Button className="mt-4 h-8" disabled={!url.trim() || busyAction !== null} onClick={() => void openOrNavigate()}>
               {busyAction === 'open' && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
               {t('workspace.open')}
@@ -282,18 +384,45 @@ export function WorkspaceLiveBrowserPanel({
                   ))}
                 </div>
               )}
-              <div className="flex flex-wrap items-center gap-1.5 border-b border-border/60 p-2">
-                <Input className="h-8 min-w-28 flex-1 font-mono text-xs" value={uid} onChange={(event) => setUid(event.target.value)} placeholder={t('workspace.uid')} />
-                <Input className="h-8 min-w-32 flex-1 text-xs" value={uidValue} onChange={(event) => setUidValue(event.target.value)} placeholder={t('workspace.value')} />
-                <Button variant="outline" size="sm" className="h-8" disabled={!uid} onClick={() => void run('uid-click', () => hostApi.agentBrowser.clickByUid({ sessionId: selectedSession.id, uid }))}><MousePointerClick className="mr-1 h-3.5 w-3.5" />{t('workspace.click')}</Button>
-                <Button variant="outline" size="sm" className="h-8" disabled={!uid} onClick={() => void run('uid-fill', () => hostApi.agentBrowser.fillByUid({ sessionId: selectedSession.id, uid, value: uidValue, clear: true }))}><Type className="mr-1 h-3.5 w-3.5" />{t('workspace.fill')}</Button>
-                <Input className="h-8 w-24 font-mono text-xs" value={keyValue} onChange={(event) => setKeyValue(event.target.value)} aria-label={t('workspace.key')} />
-                <Button variant="outline" size="sm" className="h-8" disabled={!keyValue} onClick={() => void run('press-key', () => hostApi.agentBrowser.pressKey({ sessionId: selectedSession.id, key: keyValue }))}>{t('workspace.pressKey')}</Button>
-              </div>
+              <details className="border-b border-border/60 p-2">
+                <summary className="cursor-pointer text-xs text-muted-foreground hover:text-foreground">{t('workspace.advancedControls')}</summary>
+                <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                  <Input className="h-8 min-w-28 flex-1 font-mono text-xs" value={uid} onChange={(event) => setUid(event.target.value)} placeholder={t('workspace.uid')} />
+                  <Input className="h-8 min-w-32 flex-1 text-xs" value={uidValue} onChange={(event) => setUidValue(event.target.value)} placeholder={t('workspace.value')} />
+                  <Button variant="outline" size="sm" className="h-8" disabled={!uid} onClick={() => void run('uid-click', () => hostApi.agentBrowser.clickByUid({ sessionId: selectedSession.id, uid }))}><MousePointerClick className="mr-1 h-3.5 w-3.5" />{t('workspace.click')}</Button>
+                  <Button variant="outline" size="sm" className="h-8" disabled={!uid} onClick={() => void run('uid-fill', () => hostApi.agentBrowser.fillByUid({ sessionId: selectedSession.id, uid, value: uidValue, clear: true }))}><Type className="mr-1 h-3.5 w-3.5" />{t('workspace.fill')}</Button>
+                  <Input className="h-8 w-24 font-mono text-xs" value={keyValue} onChange={(event) => setKeyValue(event.target.value)} aria-label={t('workspace.key')} />
+                  <Button variant="outline" size="sm" className="h-8" disabled={!keyValue} onClick={() => void run('press-key', () => hostApi.agentBrowser.pressKey({ sessionId: selectedSession.id, key: keyValue }))}>{t('workspace.pressKey')}</Button>
+                </div>
+              </details>
               <pre className="max-h-80 overflow-auto whitespace-pre-wrap p-3 font-mono text-[11px] leading-5 text-foreground">{snapshot}</pre>
             </section>
           )}
         </div>
+      )}
+      {automationOpen && selectedSession && (
+        <section className="absolute inset-x-2 bottom-2 z-30 rounded-md border border-border bg-surface-modal p-3 shadow-xl" data-testid="workspace-browser-automation">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-xs font-medium"><ListChecks className="h-3.5 w-3.5" />{t('workspace.automation.title')}</div>
+            <button type="button" className="rs-icon-btn" onClick={() => setAutomationOpen(false)} aria-label={t('workspace.automation.close')} title={t('workspace.automation.close')}><X className="h-3.5 w-3.5" /></button>
+          </div>
+          <p className="mb-2 truncate font-mono text-[11px] text-muted-foreground" title={selectedSession.url}>{selectedSession.url}</p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Input className="h-8 text-xs" aria-label={t('workspace.automation.name')} value={automationName} onChange={(event) => setAutomationName(event.target.value)} placeholder={t('workspace.automation.name')} />
+            <Input className="h-8 text-xs" aria-label={t('workspace.automation.objective')} value={automationObjective} onChange={(event) => setAutomationObjective(event.target.value)} placeholder={t('workspace.automation.objective')} />
+            <Input className="h-8 text-xs sm:col-span-2" aria-label={t('workspace.automation.success')} value={automationSuccess} onChange={(event) => setAutomationSuccess(event.target.value)} placeholder={t('workspace.automation.success')} />
+          </div>
+          <div className="mt-2 flex items-center justify-between gap-2">
+            <select className="h-8 rounded-md border border-input bg-surface-input px-2 text-xs" aria-label={t('workspace.mode')} value={automationMode} onChange={(event) => setAutomationMode(event.target.value as 'headless' | 'visible')}>
+              <option value="headless">{t('modes.headless')}</option>
+              <option value="visible">{t('modes.visible')}</option>
+            </select>
+            <Button size="sm" className="h-8" disabled={automationBusy || !automationSuccess.trim()} onClick={() => void createAutomation()}>
+              {automationBusy && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
+              {t('workspace.automation.submit')}
+            </Button>
+          </div>
+        </section>
       )}
       {inspectOpen && selectedSession && (
         <aside

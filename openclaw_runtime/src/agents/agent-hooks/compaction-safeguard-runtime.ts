@@ -1,5 +1,8 @@
 /** Session-manager scoped runtime state for compaction safeguard configuration. */
-import type { AgentCompactionIdentifierPolicy } from "../../config/types.agent-defaults.js";
+import type {
+  AgentCompactionIdentifierPolicy,
+  AgentCompactionPromotionStage,
+} from "../../config/types.agent-defaults.js";
 import type { Model } from "../../llm/types.js";
 import { createSessionManagerRuntimeRegistry } from "./session-manager-runtime-registry.js";
 
@@ -27,6 +30,8 @@ export type CompactionSafeguardRuntimeValue = {
    * `summarize()` is called instead of the built-in `summarizeInStages()`.
    */
   provider?: string;
+  /** P6 controlled promotion stage. Default shadow. */
+  promotionStage?: AgentCompactionPromotionStage;
   /**
    * Pending human-readable cancel reason from the current safeguard compaction
    * attempt. OpenClaw consumes this to replace the upstream generic

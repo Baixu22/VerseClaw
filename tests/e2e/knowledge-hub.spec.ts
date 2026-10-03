@@ -231,6 +231,15 @@ test.describe('Knowledge Hub MVP', () => {
             context_fingerprint: ['knowledge', 'runtime-lessons'],
             outcome: 'success',
             error_signature: null,
+            lineage: {
+              schema: 'runtime-lineage.v1',
+              sessionId: 'session-e2e-runtime-1',
+              missionId: 'mission-e2e-1',
+              missionTick: 1,
+              loopRunId: 'loop-e2e-1',
+              traceId: 'trace-e2e-1',
+              taskLedgerRootId: 'ledger-e2e-1',
+            },
           }, {
             trajectory_id: 'traj-e2e-2',
             created_at: '2026-07-06T00:01:00.000Z',
@@ -248,6 +257,16 @@ test.describe('Knowledge Hub MVP', () => {
             criticality: 'medium',
             retrieval_count: 2,
             adoption_count: 1,
+            source_trajectories: ['traj-e2e-1'],
+            lineage: {
+              schema: 'runtime-lineage.v1',
+              sessionId: 'session-e2e-runtime-1',
+              missionId: 'mission-e2e-1',
+              missionTick: 1,
+              loopRunId: 'loop-e2e-1',
+              traceId: 'trace-e2e-1',
+              taskLedgerRootId: 'ledger-e2e-1',
+            },
           }],
           indexPreview: 'E2E runtime lesson index',
         },
@@ -266,6 +285,19 @@ test.describe('Knowledge Hub MVP', () => {
           success: true,
           available: true,
           principleId: 'principle-e2e-confirmed',
+          provenance: {
+            schema: 'sekb-confirm-provenance.v1',
+            sessionId: 'session-e2e-runtime-1',
+            sourceSystem: 'ui-confirm',
+            sourceTrajectoryIds: ['traj-e2e-1'],
+            integrity: 'confirmed',
+            confirmedAt: '2026-07-06T00:02:00.000Z',
+            revokeKey: 'revoke:sekb-principle:principle-e2e-confirmed',
+            taskId: 'P3-002',
+            findingIds: ['F-DATA-002', 'F-DATA-004'],
+            summaryOnlyClaimDowngraded: false,
+            highTrustEligible: true,
+          },
           dcsWrite: 'written',
           principleOnly: false,
         },
@@ -545,10 +577,14 @@ test.describe('Knowledge Hub MVP', () => {
     await expect(page.getByTestId('knowledge-assistant-overview')).not.toBeVisible();
     await expect(page.getByTestId('knowledge-metrics')).not.toBeVisible();
 
+    await page.getByTestId('knowledge-more-actions').click();
     await page.getByTestId('knowledge-tab-runtime').click();
-    await expect(page.getByTestId('knowledge-runtime-suggest')).toBeVisible();
+    await expect(page.getByTestId('knowledge-runtime-lessons')).toBeVisible();
+    await expect(page.getByText('Manual trajectories are audit-only and are not distillation candidates.')).toBeVisible();
     await page.getByTestId('knowledge-runtime-suggest').click();
     await expect(page.getByTestId('knowledge-runtime-suggestion-list')).toContainText('Review before durable knowledge writes');
+    await expect(page.getByTestId('knowledge-runtime-lineage-traj-e2e-1')).toContainText('mission-e2e-1');
+    await expect(page.getByTestId('knowledge-runtime-review-lineage-traj-e2e-1')).toContainText('trace-e2e-1');
     const preConfirmKnowledgeActions = await electronApp.evaluate(() => (
       (globalThis as unknown as { __clawxKnowledgeRequests?: Array<{ action?: string }> }).__clawxKnowledgeRequests ?? []
     ).map((request) => request.action));
@@ -559,6 +595,7 @@ test.describe('Knowledge Hub MVP', () => {
     await page.getByTestId('knowledge-runtime-session-id').fill('session-e2e-runtime-1');
     await page.getByTestId('knowledge-runtime-confirm').click();
     await expect(page.getByTestId('knowledge-runtime-confirm-result')).toContainText('principle-e2e-confirmed');
+    await expect(page.getByTestId('knowledge-runtime-confirm-provenance')).toContainText('session-e2e-runtime-1');
 
     await page.getByTestId('knowledge-runtime-suggestion-0').click();
     await page.getByTestId('knowledge-runtime-reject').click();
@@ -585,7 +622,9 @@ test.describe('Knowledge Hub MVP', () => {
     await page.getByRole('menuitem', { name: /Import Files/ }).click();
     await expect(page.getByText(/Knowledge imported/)).toBeVisible();
 
-    await page.getByTestId('knowledge-tab-inbox').click();
+    await page.getByTestId('knowledge-tab-review-queue').click();
+    await page.getByTestId('knowledge-review-filter-inbox').click();
+    await page.getByTestId('knowledge-review-item').first().click();
     await expect(page.getByTestId('knowledge-inbox')).toContainText('Task decision candidate');
     await expect(page.getByTestId('knowledge-inbox-group-ready-for-review')).toContainText('Ready for review');
     await expect(page.getByTestId('knowledge-inbox-group-ready-for-review')).toContainText('Save');

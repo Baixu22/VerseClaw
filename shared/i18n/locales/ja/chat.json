@@ -30,7 +30,7 @@
   },
   "sessionActivity": {
     "title": "セッション状態",
-    "description": "この会話のランタイム、タスク、Git、サブエージェント、ターミナルのリアルタイム状態。",
+    "description": "この会話のランタイム、タスク、Git、ゴール、プロセス、系統、サブエージェント、ターミナルのリアルタイム状態。",
     "openRecovery": "セッション復旧を開く",
     "createMemoryDraft": "メモリ草案として保存",
     "duration": "経過時間",
@@ -40,8 +40,13 @@
       "git": "ワークスペース Git",
       "tasks": "実行中のタスク",
       "subagents": "サブエージェント",
+      "goals": "ゴールと待機",
+      "processes": "プロセス",
+      "lineage": "系統",
       "terminals": "ターミナル",
-      "continuity": "継続性"
+      "continuity": "継続性",
+      "environment": "環境",
+      "plan": "開発タスク"
     },
     "status": {
       "idle": "待機中",
@@ -54,7 +59,8 @@
     "git": {
       "detached": "デタッチ HEAD",
       "changes": "{{count}} 件の変更",
-      "conflicts": "競合"
+      "conflicts": "競合",
+      "clean": "クリーン"
     },
     "taskKinds": {
       "mission": "ミッション",
@@ -72,7 +78,8 @@
       "aborted": "中止"
     },
     "subagents": {
-      "unknown": "エージェント"
+      "unknown": "エージェント",
+      "openTranscript": "ワークスペースで {{role}} の会話記録を開く"
     },
     "subagentStatus": {
       "started": "実行中",
@@ -104,6 +111,53 @@
         "medium": "中",
         "high": "高"
       }
+    },
+    "goalKinds": {
+      "mission": "ミッション",
+      "flow": "ゴール待機"
+    },
+    "goalStatus": {
+      "queued": "待機中",
+      "waiting": "待機中",
+      "running": "実行中",
+      "sleeping": "スリープ中",
+      "paused": "一時停止中",
+      "blocked": "ブロック中",
+      "completed": "完了",
+      "failed": "失敗",
+      "aborted": "中止",
+      "lost": "消失"
+    },
+    "processKinds": {
+      "bash": "プロセス",
+      "supervisor": "監視プロセス",
+      "goalOwned": "ゴールプロセス"
+    },
+    "processStatus": {
+      "queued": "待機中",
+      "starting": "起動中",
+      "running": "実行中",
+      "exiting": "終了中",
+      "exited": "終了",
+      "completed": "完了",
+      "failed": "失敗",
+      "killed": "強制終了",
+      "aborted": "中止",
+      "lost": "消失"
+    },
+    "lineage": {
+      "parent": "親セッション",
+      "child": "子セッション"
+    },
+    "lineageStatus": {
+      "started": "実行中",
+      "completed": "完了",
+      "aborted": "中止",
+      "error": "エラー"
+    },
+    "runningCount": "実行中 {{count}} 件",
+    "processes": {
+      "openOutput": "{{command}} の出力を開く"
     }
   },
   "noLogs": "（ログはまだありません）",
@@ -206,12 +260,40 @@
       "external-write": "外部書き込み",
       "destructive": "破壊的"
     },
+    "riskLabel": "リスク",
+    "externalWriteSummary": "外部プロセスの書き込み（詳細は非表示）",
+    "externalWriteNoRollback": "ClawX の書き込みジャーナル対象外です。自動ロールバックはありません。",
+    "sourceLabel": "ソース",
+    "modeLabel": "モード",
     "status": {
       "pending": "保留中",
       "approved": "承認済み",
       "denied": "拒否済み",
       "expired": "消費済み"
-    }
+    },
+    "workspaceSummary": "{{branch}} · {{state}}",
+    "repository": "リポジトリ",
+    "notRepository": "このワークスペースは Git リポジトリではありません",
+    "timeline": "Git ライフサイクル",
+    "timelineDescription": "コミット、チェックアウト、リセット、リベースなどの参照移動",
+    "timelineEmpty": "Git ライフサイクルの記録はまだありません",
+    "timelineUnavailable": "Git ライフサイクルを利用できません",
+    "reflogUnavailable": "Git ライフサイクルを利用できません",
+    "approvalsUnavailable": "承認記録を利用できません",
+    "truncated": "表示上限に達したため、古い項目は非表示です",
+    "partialFailure": "一部の監査データを利用できません",
+    "filterAll": "すべて",
+    "filterApprovals": "承認",
+    "filterGit": "Git",
+    "approvalCount": "承認 {{count}} 件",
+    "gitCount": "Git イベント {{count}} 件",
+    "operationCount": "イベント {{count}} 件",
+    "showDetails": "詳細を表示",
+    "hideDetails": "詳細を隠す",
+    "branch": "ブランチ",
+    "clean": "クリーン",
+    "dirty": "変更 {{count}} 件",
+    "conflicts": "競合 {{count}} 件"
   },
   "gitPanel": {
     "title": "Git",
@@ -259,7 +341,15 @@
         "title": "許可が必要です",
         "approve": "承認",
         "deny": "拒否",
-        "retryRequired": "決定を記録しました。エージェントに操作の再試行を依頼してください。"
+        "retryRequired": "決定を記録しました。エージェントに操作の再試行を依頼してください。",
+        "externalWriteTitle": "外部書き込みには承認が必要です",
+        "externalWriteWarning": "この外部プロセスは ClawX の書き込みジャーナル外でファイルやその他の状態を変更する可能性があります。",
+        "externalWriteNoRollback": "ClawX の書き込みジャーナル対象外です。自動ロールバックはありません。",
+        "externalWriteEffectLabel": "効果",
+        "externalWriteEffect": "外部プロセスの書き込み",
+        "externalWriteRollbackLabel": "ロールバック",
+        "externalWriteSnapshotLabel": "スナップショット",
+        "externalWriteSnapshot": "このリクエストにバインドされています。承認は後続の再試行のみを許可します。"
       }
     },
     "actions": {
@@ -457,7 +547,9 @@
       "terminal": "ターミナル",
       "files": "ファイル",
       "audit": "監査",
-      "agents": "サブエージェント"
+      "agents": "サブエージェント",
+      "subagent": "サブエージェント",
+      "process": "プロセス"
     },
     "workspaceTabs": {
       "files": "ファイル",
@@ -527,7 +619,8 @@
       "assistant": "エージェント",
       "system": "システム",
       "toolresult": "ツール"
-    }
+    },
+    "openOwnTab": "ダブルクリックで独立したタブを開く"
   },
   "filePreview": {
     "tabs": {
@@ -828,6 +921,9 @@
         "fetch": "Fetch",
         "pull": "Pull",
         "push": "Push",
+        "merge": "Merge",
+        "rebase": "Rebase",
+        "reset": "Reset",
         "addWorktree": "worktree を追加",
         "removeWorktree": "削除",
         "pruneWorktrees": "整理",
@@ -879,6 +975,7 @@
         "worktrees": "Worktree",
         "commit": "コミット",
         "branch": "ブランチ",
+        "integrate": "Integrate",
         "stash": "Stash",
         "github": "PR",
         "compactHint": "コンパクトツール"
@@ -898,6 +995,14 @@
         "title": "ブランチと worktree",
         "branchPlaceholder": "新しいブランチ",
         "worktreePlaceholder": "worktree 用ブランチ"
+      },
+      "integrate": {
+        "title": "Integrate",
+        "help": "現在のブランチを merge / rebase、または ref に reset します。",
+        "refLabel": "Integration ref",
+        "refPlaceholder": "ブランチを選択",
+        "resetMode": "Reset mode",
+        "resetHelp": "Reset は破壊的な操作のため、常に承認が必要です。"
       },
       "worktrees": {
         "title": "Worktrees",
@@ -1438,6 +1543,9 @@
     "resume": "再開",
     "pauseTooltip": "実行を一時停止し、再開できるセッション状態を保存します。",
     "resumeTooltip": "一時停止したセッションを再開します。",
+    "resumeDisabled": "このセッションはここでは再開できません。",
+    "startingTooltip": "起動中…クリックで送信をキャンセルするか、現在の実行を一時停止します。",
+    "queueTooltip": "この下書きをキューに入れ、現在の実行後に送信します。ダブルクリックで一時停止に切り替えます。",
     "gatewayConnected": "接続済み",
     "gatewayStatus": "ゲートウェイ {{state}} | ポート: {{port}} {{pid}}",
     "contextMenu": {
@@ -1893,15 +2001,35 @@
     "work": "タスク"
   },
   "sessionView": {
-    "project": "ワークグループ",
+    "project": "プロジェクト",
     "time": "時間"
   },
   "sidebar": {
     "sectionConversations": "会話",
+    "sectionProjects": "プロジェクト",
+    "sessionActions": "会話の操作",
+    "forkSession": "会話をフォーク",
+    "handoffSession": "会話を引き継ぐ",
+    "copyWorkPath": "作業パスをコピー",
+    "copySessionId": "会話 ID をコピー",
+    "copied": "クリップボードにコピーしました",
+    "copyFailed": "コピーに失敗しました",
+    "noWorkPath": "この会話にはプロジェクトパスがありません",
+    "menuBack": "戻る",
     "organizeSessions": "会話を整理",
+    "pinSession": "会話をピン留め",
+    "unpinSession": "ピン留めを解除",
+    "markRead": "既読にする",
+    "markUnread": "未読にする",
+    "pinnedSession": "ピン留め済みの会話",
+    "unreadSession": "未読の会話",
     "searchSessions": "会話を検索",
     "addProject": "プロジェクトを追加",
+    "viewBy": "表示方法",
     "sortBy": "並び替え",
+    "sortNewest": "新しい順",
+    "sortActive": "アクティブ順",
+    "sortPriority": "優先",
     "newSessionInProject": "{{name}} で新しいタスク",
     "projectOptions": "{{name}} のプロジェクト操作",
     "createFolder": "新規フォルダ",
@@ -1935,7 +2063,7 @@
     "create": "新しいワークストリーム",
     "namePlaceholder": "ワークストリーム名",
     "rename": "ワークストリーム名を変更",
-    "delete": "ワークストリームを削除",
+    "delete": "グループを解除",
     "moveTo": "ワークストリームへ移動",
     "noWorkgroup": "ワークストリームなし",
     "ungrouped": "未分類",
@@ -1954,7 +2082,9 @@
       "today": "今日",
       "week": "今週",
       "earlier": "それ以前"
-    }
+    },
+    "autoGroupName": "{{name}} グループ",
+    "dropHint": "別の会話にドラッグしてグループ化"
   },
   "archive": {
     "searchPlaceholder": "アーカイブ済みの会話を検索",
@@ -2169,6 +2299,7 @@
       "minutesSeconds": "{{minutes}} 分 {{seconds}} 秒"
     },
     "badge": {
+      "thoughts": "思考 {{count}} 件",
       "approvals": "承認待ち {{count}} 件",
       "plan": "計画 {{count}} ステップ",
       "agents": "エージェント {{count}} 体",
@@ -2231,10 +2362,60 @@
       "invalid": "無効",
       "validationError": "検証エラー",
       "error": "エラー"
-    }
+    },
+    "managedTitle": "管理対象の構造化アーティファクト",
+    "managedEmpty": "このワークスペースに管理対象のアーティファクトはありません",
+    "refresh": "更新",
+    "managedError": "構造化アーティファクトを利用できません",
+    "managedRevision": "リビジョン",
+    "managedRevisions": "件のリビジョン"
   },
   "knowledgeDenial": {
     "toast_one": "{{count}} 件のナレッジ参照が含まれませんでした：{{reason}}",
     "toast_other": "{{count}} 件のナレッジ参照が含まれませんでした：{{reason}}"
+  },
+  "memoryInjection": {
+    "title": "今回の注入内容",
+    "description": "このセッションの返信前検索がプロンプトに追加したメモリを、ソース別にまとめて表示します。参照と件数のみで、本文は表示しません。",
+    "refresh": "更新",
+    "retry": "再試行",
+    "loading": "注入レシートを読み込み中…",
+    "empty": "今回は何も注入されませんでした。返信前検索が無効か、該当するメモリがない可能性があります。",
+    "errorGeneric": "注入レシートを読み込めませんでした。",
+    "errorTimeout": "注入レシートを読み込めませんでした。ランタイムが利用できないか、リクエストがタイムアウトした可能性があります。",
+    "summary": "注入 {{selected}} 件、削減 {{omitted}} 件",
+    "selectedCount": "注入 {{count}} 件",
+    "omittedCount": "削減 {{count}} 件",
+    "budget": "{{applied}}/{{requested}} 文字",
+    "trimmed": "予算により削減",
+    "omittedToggle": "予算により削減（{{count}}）"
+  },
+  "messageNav": {
+    "label": "質問ナビゲーション",
+    "jumpTo": "{{ordinal}} 番目の質問へ移動"
+  },
+  "processPanel": {
+    "gone": "このプロセスは現在の実行には存在しません。",
+    "exitCode": "終了コード {{code}}",
+    "truncated": "古い出力は切り詰められました。",
+    "waiting": "出力を待機中…",
+    "noOutput": "このプロセスは出力を生成しませんでした。",
+    "status": {
+      "running": "実行中",
+      "completed": "完了",
+      "failed": "失敗"
+    }
+  },
+  "runtimeApprovals": {
+    "title": "ランタイムの承認が必要です",
+    "description": "ランタイムはこのコマンドの実行前に停止し、あなたの判断を待っています。",
+    "commandLabel": "コマンド",
+    "cwdLabel": "作業ディレクトリ",
+    "unknownCommand": "（コマンドが報告されていません）",
+    "allowOnce": "今回のみ許可",
+    "allowAlways": "常に許可",
+    "deny": "拒否",
+    "busy": "判断を送信中…",
+    "resolveFailed": "ランタイムはこの判断を受け付けませんでした。"
   }
 }

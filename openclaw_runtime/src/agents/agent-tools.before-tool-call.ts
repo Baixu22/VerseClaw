@@ -5,6 +5,7 @@
  */
 import os from "node:os";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 import { addTimerTimeoutGraceMs } from "@openclaw/normalization-core/number-coercion";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { ToolLoopDetectionConfig } from "../config/types.tools.js";
@@ -14,12 +15,15 @@ import {
 } from "../infra/diagnostic-error-metadata.js";
 import {
   emitTrustedDiagnosticEvent,
+  resolveDiagnosticCodingOperation,
   type DiagnosticToolParamsSummary,
   type DiagnosticToolSource,
 } from "../infra/diagnostic-events.js";
 import {
   createChildDiagnosticTraceContext,
+  createDiagnosticTraceContextFromActiveScope,
   freezeDiagnosticTraceContext,
+  getActiveDiagnosticTraceContext,
   type DiagnosticTraceContext,
 } from "../infra/diagnostic-trace-context.js";
 import {
@@ -55,6 +59,7 @@ import {
 import type { SkillSnapshot, SkillTelemetrySource } from "../skills/types.js";
 import { resolveSkillWorkshopToolApproval } from "../skills/workshop/policy.js";
 import { isPlainObject } from "../utils.js";
+import { awaitWithAbort } from "../utils/await-with-abort.js";
 import { adjustedParamsByToolCallId } from "./agent-tools.before-tool-call.state.js";
 import { copyChannelAgentToolMeta, getChannelAgentToolMeta } from "./channel-tools.js";
 import {
@@ -68,6 +73,7 @@ import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
 import { normalizeToolName } from "./tool-policy.js";
 import type { AnyAgentTool } from "./tools/common.js";
 import { callGatewayTool } from "./tools/gateway.js";
+import type { ToolLoopTerminationObserver } from "./tool-loop-termination.js";
 
 export type ToolOutcomeObservation = {
   toolName: string;
@@ -106,6 +112,12 @@ export type HookContext = {
   channelId?: string;
   loopDetection?: ToolLoopDetectionConfig;
   onToolOutcome?: ToolOutcomeObserver;
+  /**
+   * Host callback invoked when a critical tool-loop veto ends the turn.
+   * Without it the veto is only a blocked tool result and the model can keep
+   * re-issuing the same call until an operator stops the run (#s05-t01).
+   */
+  onToolLoopTermination?: ToolLoopTerminationObserver;
   skillsSnapshot?: SkillSnapshot;
   skillCommand?: {
     commandName: string;
@@ -311,6 +323,19 @@ function resolveToolDiagnosticIdentity(tool: AnyAgentTool): ToolDiagnosticIdenti
   return { toolSource: "core" };
 }
 
+function resolveToolDiagnosticTrace(ctx?: HookContext): DiagnosticTraceContext {
+  const parent = ctx?.trace ?? getActiveDiagnosticTraceContext();
+  return freezeDiagnosticTraceContext(
+    parent
+      ? createChildDiagnosticTraceContext(parent)
+      : createDiagnosticTraceContextFromActiveScope(),
+  );
+}
+
+function createToolDiagnosticRequestId(): string {
+  return `tool-${randomUUID()}`;
+}
+
 type SkillUsageMatch = {
   skillName: string;
   skillSource: SkillTelemetrySource;
@@ -453,29 +478,33 @@ async function requestPluginToolApproval(params: {
   const timeoutMs = resolvePluginToolApprovalTimeoutMs(approval);
   const gatewayTimeoutMs = resolvePluginToolApprovalGatewayTimeoutMs(timeoutMs);
   try {
+    params.signal?.throwIfAborted();
     const requestResult: {
       id?: string;
       status?: string;
       decision?: string | null;
-    } = await callGatewayTool(
-      "plugin.approval.request",
-      // Buffer beyond the approval timeout so the gateway can clean up
-      // and respond before the client-side RPC timeout fires.
-      { timeoutMs: gatewayTimeoutMs },
-      {
-        pluginId: approval.pluginId,
-        title: approval.title,
-        description: approval.description,
-        severity: approval.severity,
-        allowedDecisions: approval.allowedDecisions,
-        toolName: params.toolName,
-        toolCallId: params.toolCallId,
-        agentId: params.ctx?.agentId,
-        sessionKey: params.ctx?.sessionKey,
-        timeoutMs,
-        twoPhase: true,
-      },
-      { expectFinal: false },
+    } = await awaitWithAbort(
+      callGatewayTool(
+        "plugin.approval.request",
+        // Buffer beyond the approval timeout so the gateway can clean up
+        // and respond before the client-side RPC timeout fires.
+        { timeoutMs: gatewayTimeoutMs },
+        {
+          pluginId: approval.pluginId,
+          title: approval.title,
+          description: approval.description,
+          severity: approval.severity,
+          allowedDecisions: approval.allowedDecisions,
+          toolName: params.toolName,
+          toolCallId: params.toolCallId,
+          agentId: params.ctx?.agentId,
+          sessionKey: params.ctx?.sessionKey,
+          timeoutMs,
+          twoPhase: true,
+        },
+        { expectFinal: false },
+      ),
+      params.signal,
     );
     const id = requestResult?.id;
     if (!id) {
@@ -515,27 +544,7 @@ async function requestPluginToolApproval(params: {
         { timeoutMs: gatewayTimeoutMs },
         { id },
       );
-      let waitResult: { id?: string; decision?: string | null } | undefined;
-      if (params.signal) {
-        let onAbort: (() => void) | undefined;
-        const abortPromise = new Promise<never>((_, reject) => {
-          if (params.signal!.aborted) {
-            reject(toLintErrorObject(params.signal!.reason, "Non-Error rejection"));
-            return;
-          }
-          onAbort = () => reject(toLintErrorObject(params.signal!.reason, "Non-Error rejection"));
-          params.signal!.addEventListener("abort", onAbort, { once: true });
-        });
-        try {
-          waitResult = await Promise.race([waitPromise, abortPromise]);
-        } finally {
-          if (onAbort) {
-            params.signal.removeEventListener("abort", onAbort);
-          }
-        }
-      } else {
-        waitResult = await waitPromise;
-      }
+      const waitResult = await awaitWithAbort(waitPromise, params.signal);
       decision = waitResult?.decision;
     }
     const resolution: PluginApprovalResolution =
@@ -581,15 +590,8 @@ async function requestPluginToolApproval(params: {
     };
   } catch (err) {
     notifyPluginApprovalResolution(approval, PluginApprovalResolutions.CANCELLED);
-    if (isAbortSignalCancellation(err, params.signal)) {
-      log.warn(`plugin approval wait cancelled by run abort: ${String(err)}`);
-      return {
-        blocked: true,
-        kind: "failure",
-        deniedReason: "plugin-approval",
-        reason: "Approval cancelled (run aborted)",
-        params: params.baseParams,
-      };
+    if (isAbortSignalCancellation(err, params.signal) || params.signal?.aborted) {
+      throw params.signal?.aborted ? (params.signal.reason ?? err) : err;
     }
     log.warn(`plugin approval gateway request failed; blocking tool call: ${String(err)}`);
     return {
@@ -743,8 +745,8 @@ function shouldEmitLoopWarning(state: SessionState, warningKey: string, count: n
     state.toolLoopWarningBuckets = new Map();
   }
   const bucket = Math.floor(count / LOOP_WARNING_BUCKET_SIZE);
-  const lastBucket = state.toolLoopWarningBuckets.get(warningKey) ?? 0;
-  if (bucket <= lastBucket) {
+  const lastBucket = state.toolLoopWarningBuckets.get(warningKey);
+  if (lastBucket !== undefined && bucket <= lastBucket) {
     return false;
   }
   state.toolLoopWarningBuckets.set(warningKey, bucket);
@@ -795,7 +797,11 @@ async function recordLoopOutcome(args: {
     log.warn(`tool loop outcome tracking failed: tool=${args.toolName} error=${String(err)}`);
   }
   if (recordedOutcome) {
-    args.ctx.onToolOutcome?.(recordedOutcome);
+    try {
+      args.ctx.onToolOutcome?.(recordedOutcome);
+    } catch (err) {
+      log.warn(`tool outcome observer failed: tool=${args.toolName} error=${String(err)}`);
+    }
   }
 }
 
@@ -810,12 +816,14 @@ export async function runBeforeToolCallHook(args: {
   signal?: AbortSignal;
   approvalMode?: "request" | "report" | "defer";
 }): Promise<HookOutcome> {
+  args.signal?.throwIfAborted();
   const toolName = normalizeToolName(args.toolName || "tool");
   const params = args.params;
 
-  if (args.ctx?.sessionKey) {
+  if (args.ctx?.sessionKey || args.ctx?.sessionId) {
     const { getDiagnosticSessionState, logToolLoopAction, detectToolCallLoop, recordToolCall } =
       await loadBeforeToolCallRuntime();
+    args.signal?.throwIfAborted();
     const sessionState = getDiagnosticSessionState({
       sessionKey: args.ctx.sessionKey,
       sessionId: args.ctx.sessionId,
@@ -843,6 +851,15 @@ export async function runBeforeToolCallHook(args: {
           count: loopResult.count,
           message: loopResult.message,
           pairedToolName: loopResult.pairedToolName,
+        });
+        // The veto alone only blocks this one call. Tell the host that owns the
+        // run lifecycle so it can end the turn; otherwise a model that keeps
+        // re-issuing the identical call spins until an operator stops the run.
+        args.ctx.onToolLoopTermination?.({
+          toolName,
+          detector: loopResult.detector,
+          count: loopResult.count,
+          message: loopResult.message,
         });
         return {
           blocked: true,
@@ -945,43 +962,47 @@ export async function runBeforeToolCallHook(args: {
     });
     const toolContext = buildToolContext(toolIdentity);
     const trustedPolicyResult = shouldRunTrustedPolicies
-      ? await runTrustedToolPolicies(
-          {
-            toolName,
-            params: normalizedParams,
-            ...toolIdentity,
-            ...(args.ctx?.runId && { runId: args.ctx.runId }),
-            ...(args.toolCallId && { toolCallId: args.toolCallId }),
-            ...(derivedToolParams.derivedPaths
-              ? { derivedPaths: derivedToolParams.derivedPaths }
-              : {}),
-          },
-          toolContext,
-          {
-            ...(args.ctx?.config ? { config: args.ctx.config } : {}),
-            deriveEvent: deriveToolEventParams,
-            normalizeEvent(eventValue) {
-              const normalizedEventParams = normalizeCodeModeExecBeforeHookParamsForToolKind({
-                toolKind: eventValue.toolKind,
-                params: eventValue.params,
-              });
-              if (!isPlainObject(normalizedEventParams)) {
-                return undefined;
-              }
-              const normalizedEventIdentity = getCodeModeExecBeforeHookMetadataForToolKind({
-                toolKind: eventValue.toolKind,
-                params: normalizedEventParams,
-              });
-              return {
-                params: normalizedEventParams,
-                ...(normalizedEventIdentity
-                  ? { event: normalizedEventIdentity, ctx: normalizedEventIdentity }
-                  : {}),
-              };
+      ? await awaitWithAbort(
+          runTrustedToolPolicies(
+            {
+              toolName,
+              params: normalizedParams,
+              ...toolIdentity,
+              ...(args.ctx?.runId && { runId: args.ctx.runId }),
+              ...(args.toolCallId && { toolCallId: args.toolCallId }),
+              ...(derivedToolParams.derivedPaths
+                ? { derivedPaths: derivedToolParams.derivedPaths }
+                : {}),
             },
-          },
+            toolContext,
+            {
+              ...(args.ctx?.config ? { config: args.ctx.config } : {}),
+              deriveEvent: deriveToolEventParams,
+              normalizeEvent(eventValue) {
+                const normalizedEventParams = normalizeCodeModeExecBeforeHookParamsForToolKind({
+                  toolKind: eventValue.toolKind,
+                  params: eventValue.params,
+                });
+                if (!isPlainObject(normalizedEventParams)) {
+                  return undefined;
+                }
+                const normalizedEventIdentity = getCodeModeExecBeforeHookMetadataForToolKind({
+                  toolKind: eventValue.toolKind,
+                  params: normalizedEventParams,
+                });
+                return {
+                  params: normalizedEventParams,
+                  ...(normalizedEventIdentity
+                    ? { event: normalizedEventIdentity, ctx: normalizedEventIdentity }
+                    : {}),
+                };
+              },
+            },
+          ),
+          args.signal,
         )
       : undefined;
+    args.signal?.throwIfAborted();
     if (trustedPolicyResult?.block) {
       return {
         blocked: true,
@@ -1003,6 +1024,7 @@ export async function runBeforeToolCallHook(args: {
         signal: args.signal,
         baseParams: params,
       });
+      args.signal?.throwIfAborted();
       if (approvalOutcome) {
         if (approvalOutcome.blocked) {
           return approvalOutcome;
@@ -1038,6 +1060,7 @@ export async function runBeforeToolCallHook(args: {
         ...(args.ctx ? { ctx: args.ctx } : {}),
         signal: args.signal,
       });
+      args.signal?.throwIfAborted();
       if (finalApprovalOutcome) {
         return finalApprovalOutcome;
       }
@@ -1051,19 +1074,24 @@ export async function runBeforeToolCallHook(args: {
       return allowed;
     }
     const hookEventParams = isPlainObject(policyAdjustedParams) ? policyAdjustedParams : {};
-    const hookResult = await hookRunner.runBeforeToolCall(
-      {
-        toolName,
-        params: hookEventParams,
-        ...policyAdjustedToolIdentity,
-        ...(args.ctx?.runId && { runId: args.ctx.runId }),
-        ...(args.toolCallId && { toolCallId: args.toolCallId }),
-        ...(policyAdjustedDerivedToolParams.derivedPaths
-          ? { derivedPaths: policyAdjustedDerivedToolParams.derivedPaths }
-          : {}),
-      },
-      policyAdjustedToolContext,
+    // Plugins do not receive this signal; cancellation must not depend on their promise settling.
+    const hookResult = await awaitWithAbort(
+      hookRunner.runBeforeToolCall(
+        {
+          toolName,
+          params: hookEventParams,
+          ...policyAdjustedToolIdentity,
+          ...(args.ctx?.runId && { runId: args.ctx.runId }),
+          ...(args.toolCallId && { toolCallId: args.toolCallId }),
+          ...(policyAdjustedDerivedToolParams.derivedPaths
+            ? { derivedPaths: policyAdjustedDerivedToolParams.derivedPaths }
+            : {}),
+        },
+        policyAdjustedToolContext,
+      ),
+      args.signal,
     );
+    args.signal?.throwIfAborted();
 
     if (hookResult?.block) {
       return {
@@ -1087,6 +1115,7 @@ export async function runBeforeToolCallHook(args: {
         signal: args.signal,
         baseParams: policyAdjustedParams,
       });
+      args.signal?.throwIfAborted();
       if (approvalOutcome) {
         if (approvalOutcome.blocked) {
           return approvalOutcome;
@@ -1110,6 +1139,7 @@ export async function runBeforeToolCallHook(args: {
       ...(args.ctx ? { ctx: args.ctx } : {}),
       signal: args.signal,
     });
+    args.signal?.throwIfAborted();
     if (finalApprovalOutcome) {
       return finalApprovalOutcome;
     }
@@ -1122,6 +1152,9 @@ export async function runBeforeToolCallHook(args: {
     }
     return allowed;
   } catch (err) {
+    if (isAbortSignalCancellation(err, args.signal) || args.signal?.aborted) {
+      throw args.signal?.aborted ? (args.signal.reason ?? err) : err;
+    }
     const toolCallId = args.toolCallId ? ` toolCallId=${args.toolCallId}` : "";
     const cause = unwrapErrorCause(err);
     log.error(`before_tool_call hook failed: tool=${toolName}${toolCallId} error=${String(cause)}`);
@@ -1154,14 +1187,21 @@ export function wrapToolWithBeforeToolCallHook(
   const wrappedTool: AnyAgentTool = {
     ...tool,
     execute: async (toolCallId, params, signal, onUpdate) => {
+      signal?.throwIfAborted();
       const prepare = (tool as BeforeToolCallPreparingTool).prepareBeforeToolCallParams;
       const preparedParams = prepare
-        ? await prepare(params, {
-            ...(toolCallId ? { toolCallId } : {}),
-            ...(ctx ? { hookContext: ctx } : {}),
-            ...(signal ? { signal } : {}),
-          })
+        ? await awaitWithAbort(
+            Promise.resolve(
+              prepare(params, {
+                ...(toolCallId ? { toolCallId } : {}),
+                ...(ctx ? { hookContext: ctx } : {}),
+                ...(signal ? { signal } : {}),
+              }),
+            ),
+            signal,
+          )
         : params;
+      signal?.throwIfAborted();
       const hookParams = normalizeCodeModeExecBeforeHookParams({ tool, params: preparedParams });
       const hookMetadata = getCodeModeExecBeforeHookMetadata({ tool, params: preparedParams });
       const outcome = await runBeforeToolCallHook({
@@ -1173,20 +1213,24 @@ export function wrapToolWithBeforeToolCallHook(
         signal,
         approvalMode: hookOptions.approvalMode,
       });
+      // Cancellation owns the terminal outcome even when an awaited policy vetoes or fails.
+      signal?.throwIfAborted();
       if (outcome.blocked) {
         if (outcome.kind !== "veto") {
           throw new Error(outcome.reason);
         }
         const normalizedToolName = normalizeToolName(toolName || "tool");
-        const trace = ctx?.trace
-          ? freezeDiagnosticTraceContext(createChildDiagnosticTraceContext(ctx.trace))
-          : undefined;
+        const trace = resolveToolDiagnosticTrace(ctx);
+        const requestId = createToolDiagnosticRequestId();
+        const codingOperation = resolveDiagnosticCodingOperation(normalizedToolName);
         const eventBase = {
+          requestId,
           ...(ctx?.runId && { runId: ctx.runId }),
           ...(ctx?.sessionKey && { sessionKey: ctx.sessionKey }),
           ...(ctx?.sessionId && { sessionId: ctx.sessionId }),
           ...(trace && { trace }),
           toolName: normalizedToolName,
+          ...(codingOperation ? { codingOperation } : {}),
           ...diagnosticIdentity,
           ...(toolCallId && { toolCallId }),
           paramsSummary: summarizeToolParams(outcome.params ?? hookParams),
@@ -1210,8 +1254,11 @@ export function wrapToolWithBeforeToolCallHook(
           toolCallId,
           result: blockedResult,
         });
+        signal?.throwIfAborted();
         return blockedResult;
       }
+      // An allowed async hook must not revive a tool cancelled while it was waiting.
+      signal?.throwIfAborted();
       let executeParams = reconcileCodeModeExecBeforeHookParams({
         tool,
         originalParams: preparedParams,
@@ -1223,17 +1270,20 @@ export function wrapToolWithBeforeToolCallHook(
           executeParams,
           preparedParams,
         ) ?? executeParams;
+      signal?.throwIfAborted();
       recordAdjustedParamsForToolCall(toolCallId, executeParams, ctx?.runId);
       const normalizedToolName = normalizeToolName(toolName || "tool");
-      const trace = ctx?.trace
-        ? freezeDiagnosticTraceContext(createChildDiagnosticTraceContext(ctx.trace))
-        : undefined;
+      const trace = resolveToolDiagnosticTrace(ctx);
+      const requestId = createToolDiagnosticRequestId();
+      const codingOperation = resolveDiagnosticCodingOperation(normalizedToolName);
       const eventBase = {
+        requestId,
         ...(ctx?.runId && { runId: ctx.runId }),
         ...(ctx?.sessionKey && { sessionKey: ctx.sessionKey }),
         ...(ctx?.sessionId && { sessionId: ctx.sessionId }),
         ...(trace && { trace }),
         toolName: normalizedToolName,
+        ...(codingOperation ? { codingOperation } : {}),
         ...diagnosticIdentity,
         ...(toolCallId && { toolCallId }),
         paramsSummary: summarizeToolParams(executeParams),
@@ -1245,8 +1295,20 @@ export function wrapToolWithBeforeToolCallHook(
         });
       }
       const startedAt = Date.now();
+      let updatesOpen = true;
+      const guardedOnUpdate =
+        typeof onUpdate === "function"
+          ? (((payload: unknown) => {
+              if (!updatesOpen || signal?.aborted) {
+                return;
+              }
+              onUpdate(payload as never);
+            }) as typeof onUpdate)
+          : onUpdate;
       try {
-        const result = await execute(toolCallId, executeParams, signal, onUpdate);
+        const result = await execute(toolCallId, executeParams, signal, guardedOnUpdate);
+        updatesOpen = false;
+        signal?.throwIfAborted();
         const durationMs = Date.now() - startedAt;
         await recordLoopOutcome({
           ctx,
@@ -1255,6 +1317,7 @@ export function wrapToolWithBeforeToolCallHook(
           toolCallId,
           result,
         });
+        signal?.throwIfAborted();
         const skillMatch = findSkillUsageMatch({
           toolName: normalizedToolName,
           toolParams: executeParams,
@@ -1280,35 +1343,30 @@ export function wrapToolWithBeforeToolCallHook(
         // query so the routing memo JSONL can feed future tool-routing
         // analysis. Pure shadow — never affects prompt injection.
         if (ctx?.workspaceDir && ctx.config) {
-          try {
-            void (async () => {
-              const { isCodingRoutingMemoShadowEnabled } = await import(
-                "../context-engine/coding-runtime-flags.js"
-              );
-              if (!isCodingRoutingMemoShadowEnabled(ctx.config)) return;
-              const { appendRoutingMemo } = await import(
-                "../knowledge/routing-memo-shadow.js"
-              );
-              const queryText = summarizeToolParams(executeParams);
-              appendRoutingMemo(ctx.workspaceDir!, {
-                atMs: Date.now(),
-                sessionId: ctx.sessionId ?? "unknown",
-                query: queryText.kind === "string"
-                  ? `(${queryText.length} chars)`
-                  : queryText.kind,
-                chosenTool: normalizedToolName,
-                success: true,
-              });
-            })();
-          } catch {
+          void (async () => {
+            const { isCodingRoutingMemoShadowEnabled } =
+              await import("../context-engine/coding-runtime-flags.js");
+            if (!isCodingRoutingMemoShadowEnabled(ctx.config)) return;
+            const { appendRoutingMemo } = await import("../knowledge/routing-memo-shadow.js");
+            const queryText = summarizeToolParams(executeParams);
+            appendRoutingMemo(ctx.workspaceDir!, {
+              atMs: Date.now(),
+              sessionId: ctx.sessionId ?? "unknown",
+              query: queryText.kind === "string" ? `(${queryText.length} chars)` : queryText.kind,
+              chosenTool: normalizedToolName,
+              success: true,
+            });
+          })().catch(() => {
             // Routing memo shadow is best-effort; never perturb tool execution.
-          }
+          });
         }
         return result;
       } catch (err) {
+        updatesOpen = false;
+        const cancelled = isAbortSignalCancellation(err, signal) || Boolean(signal?.aborted);
         const cause = unwrapErrorCause(err);
         const errorCode = diagnosticHttpStatusCode(cause);
-        if (hookOptions.emitDiagnostics) {
+        if (hookOptions.emitDiagnostics && !cancelled) {
           emitTrustedDiagnosticEvent({
             type: "tool.execution.error",
             ...eventBase,
@@ -1317,14 +1375,16 @@ export function wrapToolWithBeforeToolCallHook(
             ...(errorCode ? { errorCode } : {}),
           });
         }
-        await recordLoopOutcome({
-          ctx,
-          toolName: normalizedToolName,
-          toolParams: executeParams,
-          toolCallId,
-          error: err,
-        });
-        throw err;
+        if (!cancelled) {
+          await recordLoopOutcome({
+            ctx,
+            toolName: normalizedToolName,
+            toolParams: executeParams,
+            toolCallId,
+            error: err,
+          });
+        }
+        throw signal?.aborted ? (signal.reason ?? err) : err;
       }
     },
   };
@@ -1429,17 +1489,3 @@ export const testing = {
   isPlainObject,
 };
 export { testing as __testing };
-
-function toLintErrorObject(value: unknown, fallbackMessage: string): Error {
-  if (value instanceof Error) {
-    return value;
-  }
-  if (typeof value === "string") {
-    return new Error(value, { cause: value });
-  }
-  const error = new Error(fallbackMessage, { cause: value });
-  if ((typeof value === "object" && value !== null) || typeof value === "function") {
-    Object.assign(error, value);
-  }
-  return error;
-}

@@ -3,7 +3,7 @@ id: uas-00-evidence-freeze-governance
 title: UAS-00 evidence freeze and governance registration
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Freeze the current unified-agent engineering baseline in a reproducible manifest, resolve governance/spec drift, and prepare TF-0012 without changing production behavior or promoting agent evidence to human/live authority.
+intent: Preserve and explicitly replay the historical unified-agent engineering baseline from one restored workspace, without requiring local task history for default tests or promoting historical evidence to acceptance of the current checkout.
 touchedAreas:
   - .agent-workbench/task-forest/**
   - .gitignore
@@ -54,7 +54,7 @@ touchedAreas:
   - tests/unit/vtoken-default-off-documentation.test.ts
 expectedUserBehavior:
   - Maintainers can reproduce the exact dirty engineering baseline from HEAD, tracked diff, untracked file, environment, and executable hashes.
-  - TF-0009 remains degraded-agent-complete and review_needed while TF-0011 consumes only its engineering evidence.
+  - Historical TF-0009 records retain their degraded label; current v2 agent evidence may close the node under the 2026-09-27 policy without human/product claims.
   - VToken remains default OFF and no production runtime behavior changes during UAS-00.
   - Authority ownership for events, context, VToken packing, coding mutation, local execution, and long-term memory remains explicit and non-overlapping.
 requiredProfiles:
@@ -75,8 +75,9 @@ acceptance:
   - A machine-readable audit manifest records HEAD, tracked and staged diff hashes, untracked file hashes, environment, executable hashes, and exact reproduction commands.
   - The manifest has a check mode that fails when the frozen working-tree inputs drift.
   - The owner matrix identifies one authority per governed surface and reserves TF-0018 as the only long-term Memory lifecycle owner.
-  - Active Harness, Task Forest, STATUS, development-log, and handoff text agree on the legal chain state: TF-0011 ready / TF-0012 proposed before confirmed closeout, then TF-0011 done / TF-0012 ready after it.
-  - TF-0009 stays review_needed with zero human/live evidence and does not become done.
+  - In an explicit restored history workspace, the original chain remains TF-0011 ready / TF-0012 proposed or TF-0011 done / TF-0012 ready. Default tests do not require a current local task graph, export, or handoff.
+  - Historical replay rejects missing authorization, relative or missing input roots, output inside either source workspace, existing output files, and input drift; it never rewrites sealed evidence.
+  - TF-0009 keeps zero human/live counts; done requires clean validated v2 agent evidence, not a human verdict.
   - VToken active authority remains default OFF and the FP-P4-06 drift regression remains green.
   - Product locks, TF-0006 blocked state, C1 4.5x keep-off authority, and Runtime Memory diagnostics-only remain unchanged.
 docs:
@@ -86,18 +87,28 @@ docs:
     - docs/dev/unified-agent-system/DEVELOPMENT-STRATEGY.zh-CN.md
     - docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md
     - docs/dev/first-product-controlled-preview/STATUS.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/repository-artifact-retention.md
 ---
 
 # UAS-00 evidence freeze and governance registration
 
-Use this task spec only for `TF-0011/UAS-00`. It freezes and checks the current engineering
-baseline before cross-layer implementation begins. It does not implement TF-0012, TF-0013,
-TF-0014, FP-P4-03, or FP-P4-04 and does not authorize live, product, or default-on claims.
+This spec preserves `TF-0011/UAS-00` as historical engineering evidence. Default tests
+read the tracked legacy manifest; they do not require a local Task Forest or handoff.
+Explicit replay binds every input to a restored historical root and writes only a
+new external output:
+
+```sh
+node scripts/uas-00-evidence-freeze.mjs --history-replay --root=<absolute-history-workspace> --output=<new-absolute-external-output>
+```
+
+Use the same arguments with `--check` to detect drift in that replay. Missing local
+history is a replay-input error, not a new product blocker. This tool does not
+implement TF-0012, TF-0013, TF-0014, FP-P4-03, or FP-P4-04 or authorize live,
+product, or default-on claims.
 
 ## Frozen boundaries
 
-- `TF-0009=review_needed`, semantic label `degraded-agent-complete`
+- Historical TF-0009 manifests retain `degraded-agent-complete`; current closure follows `tf0009-real-canary-authority` R7 and the 2026-09-27 owner policy.
 - `liveReady=false`
 - `productApproved=false`
 - `defaultOn=false`

@@ -103,11 +103,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-cutover-readiness/README.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-cutover-readiness/parallel-lanes.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-cutover-readiness/submission-template.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-cutover-readiness/window-prompts.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-cutover-readiness/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Line B AgentMap Prompt Candidate Cutover Readiness Spec

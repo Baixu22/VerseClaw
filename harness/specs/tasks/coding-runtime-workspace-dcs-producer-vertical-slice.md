@@ -43,7 +43,7 @@ expectedUserBehavior:
   - Successful production edit, write, and apply_patch results emit an explicit producer-owned working-memory envelope. Read, search, CodeGraph, and generic exec/process results do not.
   - With working memory enabled, the next LLM call shows exactly one transient `## Recent Actions` block derived from accepted persisted actions; repeated LLM calls do not accumulate it and transcripts do not contain it.
   - With the flag disabled or an absent envelope, the run remains a no-op for DCS working memory and preserves existing output identity.
-  - When `runtime.coding.autoVerify.enabled` is explicitly enabled, a successful mutation runs one bounded project test command through the final effective exec tool and appends the outcome to the same visible tool result. The default remains disabled.
+  - When `runtime.coding.autoVerify.enabled` is enabled, a successful mutation runs one bounded project test command through the final effective exec tool and appends the outcome to the same visible tool result. The default is `"auto"` - run when, and only when, a runner is detected - changed on 2026-07-31; this task's own acceptance ran with the default disabled.
 requiredProfiles:
   - fast
   - comms
@@ -136,3 +136,18 @@ provider, sandbox, subagent, allow/deny, hook, and abort wrapping. The write pat
 must never spawn directly or construct a second approval, sandbox, or timeout
 plane. Verification is post-mutation evidence: its failure cannot undo, hide, or
 change the successful mutation or write-journal record.
+
+Three consequences are worth stating explicitly, because each is easy to misread
+as a defect:
+
+- **An unallowlisted verification command waits for approval.** On the exec sink
+  a command with no `contentProvenance` is classified untrusted and the effective
+  policy becomes `security=allowlist, ask=on-miss`
+  (`agents/exec-provenance-policy.ts`; `DEFAULT_EXEC_ASK` is already `on-miss`).
+  That reuse is the point of the rule above, not a regression.
+- **So `"auto"` does not mean "unattended".** `"auto"` decides only that the
+  command is derived automatically when a runner is detected. Whether it runs
+  without a human is the exec allowlist's business: grant `tools.exec` full
+  access, or allowlist the detected runner, to get unattended verification.
+- **A scripted E2E has no approver**, so it parks on that approval and surfaces
+  only as a stalled turn. Grant exec access explicitly in those fixtures.

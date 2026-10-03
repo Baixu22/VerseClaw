@@ -38,6 +38,7 @@ import { readAgentBrowserAutomationEvents } from "./tools/agent-browser-automati
 import { REQUIRED_PARAM_GROUPS, type RequiredParamGroup } from "./agent-tools.params.js";
 import type { ApplyPatchSummary } from "./apply-patch.js";
 import type { ExecToolDetails } from "./bash-tools.exec-types.js";
+import { VERSESHELL_EXTERNAL_WRITE_WARNING_TEXT } from "./verseshell/external-write-policy.js";
 import { sanitizeForConsole } from "./console-sanitize.js";
 import { normalizeTextForComparison } from "./embedded-agent-helpers.js";
 import { isMessagingTool, isMessagingToolSendAction } from "./embedded-agent-messaging.js";
@@ -1383,6 +1384,13 @@ export async function handleToolExecutionEnd(
         host: execDetails.host,
         ...(execDetails.status === "approval-unavailable" ? { reason: execDetails.reason } : {}),
         message: execDetails.warningText,
+        // #41: project the external-write classification (display-only) so the
+        // renderer can label the row. The warning text is appended exactly when
+        // resolveVerseShellExternalWritePolicy returns effectLevel 'external-write'
+        // (appendVerseShellExternalWriteWarning), so its presence is the signal.
+        ...(execDetails.warningText?.includes(VERSESHELL_EXTERNAL_WRITE_WARNING_TEXT)
+          ? { risk: "external-write" as const }
+          : {}),
       };
       emitAgentApprovalEvent({
         runId: ctx.params.runId,

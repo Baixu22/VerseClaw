@@ -40,6 +40,7 @@ import {
   resolveAgentIdFromSessionKey,
 } from "../../routing/session-key.js";
 import { createLazyImportLoader } from "../../shared/lazy-promise.js";
+import { buildSessionDeleteOperationId } from "../../sessions/session-delete-operation-id.js";
 import { shouldAttemptTtsPayload } from "../../tts/tts-config.js";
 import { createCronExecutionId } from "../run-id.js";
 import { hasScheduledNextRunAtMs } from "../service/jobs.js";
@@ -264,6 +265,7 @@ export async function cleanupDirectCronSession(params: {
       method: "sessions.delete",
       params: {
         key: params.agentSessionKey,
+        operationId: buildSessionDeleteOperationId("cron-cleanup", params.sessionId),
         deleteTranscript: true,
         emitLifecycleHooks: false,
       },
@@ -983,13 +985,36 @@ export async function dispatchCronDelivery(
         }
         return send.status === "sent" || send.status === "partial_failed" ? send.results : [];
       };
-      const deliveryResults = options?.retryTransient
-        ? await retryTransientDirectCronDelivery({
-            jobId: params.job.id,
-            signal: params.abortSignal,
-            run: runDelivery,
-          })
-        : await runDelivery();
+      const { withCronOperatorApproval } = await import("../operator-delivery.js");
+      const deliveryResults = await withCronOperatorApproval(
+        {
+          cfg: params.cfgWithAgentDefaults,
+          agentId: params.agentId,
+          jobId: params.job.id,
+          // Match the model-run receipt identity, while delivery retains its origin route.
+          runId: createCronExecutionId(params.job.id, params.runStartedAt),
+          sessionKey: params.runSessionKey,
+          message: JSON.stringify({
+            channel: delivery.channel,
+            to: delivery.to,
+            accountId: delivery.accountId,
+            threadId: delivery.threadId,
+            payloads: payloadsForDelivery,
+          }),
+          signal: params.abortSignal,
+          isApplied: (results) => results.length > 0 && !hadPartialFailure,
+        },
+        async () => {
+          const results = options?.retryTransient
+            ? await retryTransientDirectCronDelivery({
+                jobId: params.job.id,
+                signal: params.abortSignal,
+                run: runDelivery,
+              })
+            : await runDelivery();
+          return results;
+        },
+      );
       // Only mark delivered when ALL payloads succeeded (no partial failure).
       delivered = deliveryResults.length > 0 && !hadPartialFailure;
       // Intentionally leave partial success uncached: replay may duplicate the

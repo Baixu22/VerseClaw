@@ -15,6 +15,7 @@
  */
 import { createServer, type Server } from 'node:http';
 import { createServer as createNetServer } from 'node:net';
+import { mkdirSync } from 'node:fs';
 import type { ElectronApplication } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 
@@ -122,12 +123,26 @@ test.describe('FP-P1-01 Setup provider/model verification (real Electron + real 
     test.setTimeout(420_000);
     const endpoint = await startProviderEndpoint();
     const goodBaseUrl = `http://127.0.0.1:${endpoint.port}/v1`;
-    const deadPort = await allocatePort(); // allocated then released ⇒ nothing listens
-    const deadBaseUrl = `http://127.0.0.1:${deadPort}/v1`;
 
     const app = await launchElectronApp({ skipSetup: false });
     try {
       const page = await getStableWindow(app);
+      /*
+       * Run the wizard without its arc.
+       *
+       * Step cards ride a framer-motion 3D ring (`.setup-arc-orbit`,
+       * translateZ/rotateY — see THE ARC in src/pages/Setup/index.tsx), so an
+       * ANCESTOR transform is in flight for ~700ms after every step change.
+       * Playwright refuses to click an element whose box is still moving, and
+       * on a loaded machine that animation plus the step swap outlived the
+       * retry budget: `setup-model-option-*` failed as "element is not stable"
+       * and then "detached from the DOM". Nothing here tests the arc, and the
+       * page already drops it entirely under reduced motion (the variants emit
+       * no transform at all), so this removes the flake without weakening what
+       * the test actually verifies: real provider/model verification over real
+       * HTTP.
+       */
+      await page.emulateMedia({ reducedMotion: 'reduce' });
       await expect(page.getByTestId('setup-page')).toBeVisible({ timeout: 60_000 });
 
       // ---- Welcome → Runtime ----
@@ -160,12 +175,16 @@ test.describe('FP-P1-01 Setup provider/model verification (real Electron + real 
       await expect(page.getByTestId('setup-next-button')).toBeDisabled();
 
       // ---- failure 3: 网络不可达 (closed port — connection refused) ----
+      // Allocate after Gateway startup so startup cannot claim the released port.
+      const deadPort = await allocatePort();
+      const deadBaseUrl = `http://127.0.0.1:${deadPort}/v1`;
       await page.getByTestId('setup-provider-base-url').fill(deadBaseUrl);
       await page.getByTestId('setup-provider-api-key').fill(VALID_KEY);
       await page.getByTestId('setup-provider-validate').click();
-      await expect(page.getByTestId('setup-provider-error-network')).toBeVisible({
-        timeout: 60_000,
-      });
+      await expect(page.getByTestId('setup-provider-validate')).toBeEnabled({ timeout: 60_000 });
+      const networkFailure = page.locator('[data-testid^="setup-provider-error-"]');
+      await expect(networkFailure).toBeVisible({ timeout: 60_000 });
+      expect(await networkFailure.getAttribute('data-testid'), await networkFailure.innerText()).toBe('setup-provider-error-network');
       await expect(page.getByTestId('setup-next-button')).toBeDisabled();
 
       // ---- success: real 200 from the real endpoint ----
@@ -181,6 +200,20 @@ test.describe('FP-P1-01 Setup provider/model verification (real Electron + real 
       await page.getByTestId(`setup-model-option-${MOCK_MODELS[0]}`).click();
       await page.getByTestId('setup-model-confirm').click();
       await expect(page.getByTestId('setup-model-verified')).toBeVisible({ timeout: 30_000 });
+      await page.getByTestId('setup-next-button').click();
+
+      // Complete the current wizard's explicit workspace preflight as well.
+      await expect(page.getByTestId('setup-workspace-step')).toBeVisible();
+      const workspacePath = test.info().outputPath('workspace');
+      mkdirSync(workspacePath, { recursive: true });
+      await app.evaluate(({ dialog }, selectedFolder) => {
+        dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [selectedFolder] });
+      }, workspacePath);
+      await page.getByTestId('setup-workspace-pick').click();
+      await expect(page.getByTestId('setup-workspace-preflight')).toBeVisible();
+      await page.getByTestId('setup-workspace-mode-readOnly').click();
+      await page.getByTestId('setup-workspace-confirm').click();
+      await expect(page.getByTestId('setup-workspace-confirmed')).toBeVisible();
       await page.getByTestId('setup-next-button').click();
 
       // ---- Complete: verified, NOT limited mode ----
@@ -213,6 +246,9 @@ test.describe('FP-P1-01 Setup provider/model verification (real Electron + real 
     const app = await launchElectronApp({ skipSetup: false });
     try {
       const page = await getStableWindow(app);
+      // Same reason as the verified path above: no arc, no moving ancestors
+      // under the wizard's controls.
+      await page.emulateMedia({ reducedMotion: 'reduce' });
       await expect(page.getByTestId('setup-page')).toBeVisible({ timeout: 60_000 });
 
       // Skip from the Welcome step — the escape hatch stays available but is
@@ -241,6 +277,18 @@ test.describe('FP-P1-01 Setup provider/model verification (real Electron + real 
         timeout: 30_000,
       });
       await expect(page.getByTestId('chat-provider-gate-configure')).toBeVisible();
+      /*
+       * And the composer stops pretending. Clicking send raises an optimistic
+       * "starting" state so the click has an immediate consequence; a REJECTED
+       * send has to drop it at once, or a Stop icon sits over the composer
+       * while this dialog explains that nothing was sent. The tight timeout is
+       * the point: it is shorter than the optimistic window
+       * (RUN_START_AFFORDANCE_MS, 620ms), so waiting that window out instead of
+       * rolling back on rejection fails here.
+       */
+      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'ready', {
+        timeout: 400,
+      });
     } finally {
       await closeElectronApp(app);
     }

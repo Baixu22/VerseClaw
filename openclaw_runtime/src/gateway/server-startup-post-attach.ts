@@ -805,11 +805,28 @@ export async function startGatewaySidecars(params: {
     isTruthyEnvValue(process.env.OPENCLAW_SKIP_CHANNELS) ||
     isTruthyEnvValue(process.env.OPENCLAW_SKIP_PROVIDERS);
   await measureStartup(params.startupTrace, "sidecars.channels", async () => {
+    if (!skipChannels) {
+      try {
+        schedulePrimaryModelPrewarm(
+          {
+            cfg: params.cfg,
+            workspaceDir: params.defaultWorkspaceDir,
+            log: params.log,
+            startupTrace: params.startupTrace,
+          },
+          params.prewarmPrimaryModel,
+        );
+        await measureStartup(params.startupTrace, "sidecars.channel-start", () =>
+          params.startChannels(),
+        );
+      } catch (err) {
+        params.logChannels.error(`channel startup failed: ${String(err)}`);
+      }
+      return;
+    }
     await measureStartup(params.startupTrace, "sidecars.channel-skip", () =>
       params.logChannels.info(
-        skipChannels
-          ? "skipping channel start (OPENCLAW_SKIP_CHANNELS=1 or OPENCLAW_SKIP_PROVIDERS=1)"
-          : "skipping channel start (channel gateway handlers disabled)",
+        "skipping channel start (OPENCLAW_SKIP_CHANNELS=1 or OPENCLAW_SKIP_PROVIDERS=1)",
       ),
     );
   });

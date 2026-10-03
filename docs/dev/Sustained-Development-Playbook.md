@@ -5,7 +5,8 @@
 > 状态：Active
 > 生效日期：2026-07-19
 > 适用范围：ClawX / Verse Claw 成熟度推进、DCS/MEM/Context/SEKB/Browser 相关开发
-> 权威任务图：.agent-workbench/task-forest/ (HTML: .agent-workbench/task-forest/exports/task-forest.html)
+> 本地权威任务图：.agent-workbench/task-forest/ (HTML: .agent-workbench/task-forest/exports/task-forest.html)，不再随源码提交。
+> 源码与私有归档边界：`docs/dev/repository-artifact-retention.md`。新检出不要求具备旧任务图或交接；续接历史时从私有归档恢复，当前规范与最终证据仍跟踪。
 > 配套 skills: task-forest / session-handoff-prompt / task-clarifier / user-profile-keeper
 
 ---
@@ -78,19 +79,20 @@ Sprint 3+: TF-0006
 
 ```text
 1. docs/dev/Sustained-Development-Playbook.md
-2. task-forest todo / HTML
-3. docs/dev/handoffs/LATEST.md
+2. task-forest todo / HTML（本地存在且状态有效时）
+3. docs/dev/handoffs/LATEST.md（本地存在时）
 4. read the active program STATUS; advance only its one ready node
+5. 新检出先读当前 task spec；续接历史再恢复私有归档，不把缺图当作完成或失败。
 ```
 
 ### 4.2 高歧义时：task-clarifier
 ### 4.3 执行中：harness context / E2E / i18n / AGENTS.md
 ### 4.4 会话结束（必做）
 
-1. task-forest proposal -> confirm -> apply -> validate -> export
-2. session-handoff-prompt -> docs/dev/handoffs/LATEST.md
+1. 本地 task-forest proposal -> evidence gate -> apply -> validate -> export
+2. session-handoff-prompt -> 本地 docs/dev/handoffs/LATEST.md
 3. optional run-history-skill-builder
-4. code + harness + docs same PR
+4. code + harness + durable docs + curated final evidence same PR；任务图、快照和交接不入 Git
 
 ---
 
@@ -193,8 +195,8 @@ Follow docs/dev/Sustained-Development-Playbook.md strictly.
 2. For Runtime work, read runtime-convergence/STATUS.md and README.md
 3. Run task-forest todo; advance only the active program's one ready node
 4. No parallel mega-surfaces; no full-system GA discussion
-5. Before end: update task-forest after confirmation; write handoff LATEST.md;
-   summarize done / evidence / next first step
+5. Before end: verify evidence and update local task-forest; write local handoff LATEST.md;
+   summarize done / evidence / next first step; commit durable decisions, not local history
 ```
 
 ---

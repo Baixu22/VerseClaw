@@ -6,6 +6,7 @@ import {
   ReplyRunAlreadyActiveError,
   type ReplyOperation,
 } from "./reply-run-registry.js";
+import { acquireSessionAdmissionPermit } from "../../sessions/session-admission-registry.js";
 
 /** Kinds of turns that compete for one reply run slot per session. */
 export type ReplyTurnKind = "visible" | "heartbeat" | "queued_followup" | "control_abort";
@@ -33,24 +34,33 @@ export async function admitReplyTurn(params: {
   upstreamAbortSignal?: AbortSignal;
   waitTimeoutMs?: number;
   waitForActive?: boolean;
+  agentId?: string;
 }): Promise<ReplyTurnAdmission> {
   let sessionId = params.sessionId;
   while (true) {
     if (isAbortSignalAborted(params.upstreamAbortSignal)) {
       return { status: "skipped", reason: "aborted" };
     }
+    const releasePermit = acquireSessionAdmissionPermit(
+      {
+        agentId: params.agentId,
+        canonicalSessionKey: params.sessionKey,
+        expectedSessionId: sessionId,
+      },
+      "reply-turn",
+    );
     try {
-      return {
-        status: "owned",
-        operation: createReplyOperation({
-          sessionKey: params.sessionKey,
-          sessionId,
-          resetTriggered: params.resetTriggered,
-          routeThreadId: params.routeThreadId,
-          upstreamAbortSignal: params.upstreamAbortSignal,
-        }),
-      };
+      const operation = createReplyOperation({
+        sessionKey: params.sessionKey,
+        sessionId,
+        resetTriggered: params.resetTriggered,
+        routeThreadId: params.routeThreadId,
+        upstreamAbortSignal: params.upstreamAbortSignal,
+      });
+      releasePermit();
+      return { status: "owned", operation };
     } catch (error) {
+      releasePermit();
       if (!(error instanceof ReplyRunAlreadyActiveError)) {
         throw error;
       }

@@ -1,0 +1,4 @@
+{
+  "retiredReport": "candidate-verification-before-evidence-refresh.json",
+  "limitation": "The two unsealed validation rounds reused gate log filenames. Earlier raw logs were overwritten; only the earlier measured metrics remain. They are not used as final acceptance evidence. The final report and raw logs all belong to ed97400bdc0a6e16c06387ba808e287bd1380475. Future runs use a commit-specific log directory."
+}

@@ -62,7 +62,6 @@ import { hostApi, type ChatKnowledgeReference, type KnowledgeRouteCandidate, typ
 import { errorMessageFrom, toastUserError } from '@/lib/user-error';
 import type { SendOptions } from '@shared/chat/types';
 import { cn } from '@/lib/utils';
-import { useUiVersion } from '@/components/layout/ui-overlay-context';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
@@ -101,10 +100,10 @@ import type {
   WorkspacePermissionMode,
   WorkspaceProfile,
 } from '@shared/types/workspace';
+import { normalizeWorkspacePermissionMode } from '@shared/types/workspace';
 import type { ChatCapabilityActionPlan, ChatCapabilityActionResult, SessionCompactionStatus } from '@shared/host-api/contract';
 import type { LongTaskControlStatus, LongTaskInputMode } from '@shared/types/long-task-control';
 import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
-import type { SessionContinuityPreflight, SessionContinuityRecommendation } from './session-continuity';
 import { useResolvedTheme } from '@/lib/theme';
 import { BorderBeam } from 'border-beam';
 import { PlusMenuMorph } from '@/components/ui/plus-menu-morph';
@@ -140,7 +139,6 @@ interface ChatInputProps {
   workspace?: WorkspaceProfile | null;
   contextRange?: WorkspaceContextRange | null;
   liveUsage?: LiveTokenUsage | null;
-  messageCount?: number;
   /**
    * Empty-state presentation. The composer is the same component in both
    * states — remounting it on first send would drop the draft, the caret and
@@ -148,7 +146,6 @@ interface ChatInputProps {
    */
   hero?: boolean;
   draftValue?: string;
-  slashRequest?: number;
   onDraftChange?: (value: string) => void;
   onPermissionModeChange?: (mode: WorkspacePermissionMode) => void;
   onPickWorkspaceFolder?: () => void;
@@ -156,8 +153,6 @@ interface ChatInputProps {
   onNewSession?: () => void | Promise<void>;
   onForkSession?: () => void | Promise<void>;
   onHandoffSession?: () => void | Promise<void>;
-  continuityRecommendation?: SessionContinuityRecommendation;
-  continuityPreflight?: SessionContinuityPreflight;
   forkDisabled?: boolean;
   forkBusy?: boolean;
   handoffDisabled?: boolean;
@@ -191,6 +186,111 @@ type PendingCapabilitySend = {
 };
 
 // ── Helpers ──────────────────────────────────────────────────────
+
+// 主按钮交互策略（详见 send-button-states-design.md）：
+//   idle                无内容，禁用
+//   ready               有内容，点击发送
+//   starting            热启动缓冲；有内容时点击立即中止发送，无内容时降级为暂停当前运行
+//   running             运行中且无草稿，点击暂停（保存可恢复检查点）
+//   running-with-draft  运行中且有草稿：单击默认排队（防抖），双击仍可暂停
+//   paused              会话已暂停，点击恢复
+type ComposerSendState =
+  | 'idle'
+  | 'ready'
+  | 'starting'
+  | 'running'
+  | 'running-with-draft'
+  | 'paused';
+
+type ComposerSendStateMeta = {
+  icon: ComponentType<{ className?: string }>;
+  iconClassName: string;
+  disabled: boolean;
+  labelKey: string;
+  tooltipKey: string;
+};
+
+const SEND_CLICK_DEBOUNCE_MS = 260;
+
+/**
+ * How long the composer may claim a run is starting before the run itself has
+ * to take over. It is a ceiling on optimism, not a schedule: a rejected send
+ * cancels it immediately (see `cancelOptimisticRunStart`).
+ */
+const RUN_START_AFFORDANCE_MS = 620;
+
+function getComposerSendStateMeta(
+  state: ComposerSendState,
+  options: { queueable: boolean; resumable: boolean },
+): ComposerSendStateMeta {
+  switch (state) {
+    case 'ready':
+      return {
+        icon: ArrowUp,
+        iconClassName: 'h-5 w-5',
+        disabled: false,
+        labelKey: 'composer.send',
+        tooltipKey: 'composer.send',
+      };
+    case 'starting':
+      return {
+        icon: Loader2,
+        iconClassName: 'h-4 w-4 animate-spin',
+        disabled: false,
+        labelKey: 'composer.stop',
+        tooltipKey: 'composer.startingTooltip',
+      };
+    case 'running':
+      return {
+        icon: Square,
+        iconClassName: 'h-3.5 w-3.5 fill-current',
+        disabled: false,
+        labelKey: 'composer.stop',
+        tooltipKey: 'composer.pauseTooltip',
+      };
+    case 'running-with-draft':
+      return options.queueable
+        ? {
+            icon: ArrowUp,
+            iconClassName: 'h-5 w-5',
+            disabled: false,
+            labelKey: 'composer.intervention.queue',
+            tooltipKey: 'composer.queueTooltip',
+          }
+        : {
+            icon: Square,
+            iconClassName: 'h-3.5 w-3.5 fill-current',
+            disabled: false,
+            labelKey: 'composer.stop',
+            tooltipKey: 'composer.pauseTooltip',
+          };
+    case 'paused':
+      return options.resumable
+        ? {
+            icon: Play,
+            iconClassName: 'ml-0.5 h-4 w-4 fill-current',
+            disabled: false,
+            labelKey: 'composer.resume',
+            tooltipKey: 'composer.resumeTooltip',
+          }
+        : {
+            icon: Play,
+            iconClassName: 'ml-0.5 h-4 w-4 fill-current',
+            disabled: true,
+            labelKey: 'composer.resume',
+            tooltipKey: 'composer.resumeDisabled',
+          };
+    case 'idle':
+    default:
+      return {
+        icon: ArrowUp,
+        iconClassName: 'h-5 w-5',
+        disabled: true,
+        labelKey: 'composer.send',
+        tooltipKey: 'composer.send',
+      };
+  }
+}
 
 type KnowledgeSearchRow = Record<string, unknown>;
 
@@ -851,10 +951,8 @@ export function ChatInput({
   onResumeSession,
   contextRange,
   liveUsage,
-  messageCount,
   hero = false,
   draftValue,
-  slashRequest = 0,
   onDraftChange,
   workspace,
   onPermissionModeChange,
@@ -863,8 +961,6 @@ export function ChatInput({
   onNewSession,
   onForkSession,
   onHandoffSession,
-  continuityRecommendation,
-  continuityPreflight,
   forkDisabled = false,
   forkBusy = false,
   handoffDisabled = false,
@@ -883,8 +979,6 @@ export function ChatInput({
   onConfirmTaskLoopUpgrade,
   className,
 }: ChatInputProps) {
-  const uiVersion = useUiVersion();
-  const isUiV2 = uiVersion === 'v2';
   const resolvedTheme = useResolvedTheme();
   const { t } = useTranslation('chat');
   const [input, setInput] = useState(() => draftValue ?? '');
@@ -933,7 +1027,19 @@ export function ChatInput({
   }, []);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const runStartTimerRef = useRef<number | null>(null);
+  const runStartingRef = useRef(false);
+  const sendClickTimerRef = useRef<number | null>(null);
   const previousSendingRef = useRef(sending);
+  /**
+   * Latest `sending`, readable from async callbacks.
+   *
+   * `handleSend` can bail out long after the click (provider gate, capability
+   * preflight, an extension's before-send hook), and the optimistic "starting"
+   * affordance has to know whether a run actually began before it rolls itself
+   * back. Reading the prop from the closure would give the value at click time,
+   * which is always `false`.
+   */
+  const sendingRef = useRef(sending);
   const composerHostRef = useRef<HTMLDivElement>(null);
   const heroComposerRectRef = useRef<{ top: number } | null>(null);
   const composerTransitionRef = useRef<Animation | null>(null);
@@ -946,7 +1052,6 @@ export function ChatInput({
   const knowledgePickerRef = useRef<HTMLDivElement>(null);
   const isComposingRef = useRef(false);
   const lastDraftValueRef = useRef(draftValue);
-  const lastSlashRequestRef = useRef(0);
   const gatewayStatus = useGatewayStore((s) => s.status);
   const agents = useAgentsStore((s) => s.agents);
   const updateAgentModel = useAgentsStore((s) => s.updateAgentModel);
@@ -1025,7 +1130,7 @@ export function ChatInput({
     || onSwitchAgent
     || onNewSession,
   );
-  const activePermissionMode = workspace?.permissionMode ?? 'readOnly';
+  const activePermissionMode = normalizeWorkspacePermissionMode(workspace?.permissionMode);
   const workspaceMenuTitle = workspace && onPermissionModeChange
     ? t('composer.permissionModeTitle')
     : t('composer.workspaceActions');
@@ -1035,28 +1140,52 @@ export function ChatInput({
   const skillTokenRanges = useMemo(() => findSkillTokenRanges(input), [input]);
   const openWorkspacePanel = useArtifactPanel((s) => s.openWorkspacePanel);
 
+  /**
+   * The optimistic "starting" affordance.
+   *
+   * Two things can raise it: the send button (instantly, so the click has a
+   * visible consequence before the store has done any async work) and the
+   * `sending` transition itself. Both hand it to the same timer, and
+   * `cancelOptimisticRunStart` is the one way down — a send that is REJECTED
+   * (no provider, unsupported capability, an extension veto) must drop the
+   * affordance the moment it is rejected rather than leave a Stop icon sitting
+   * over the composer while a modal explains why nothing was sent.
+   */
+  const beginOptimisticRunStart = useCallback(() => {
+    if (runStartTimerRef.current != null) window.clearTimeout(runStartTimerRef.current);
+    runStartingRef.current = true;
+    setRunStarting(true);
+    runStartTimerRef.current = window.setTimeout(() => {
+      runStartingRef.current = false;
+      setRunStarting(false);
+      runStartTimerRef.current = null;
+    }, RUN_START_AFFORDANCE_MS);
+  }, []);
+
+  const cancelOptimisticRunStart = useCallback(() => {
+    if (runStartTimerRef.current != null) {
+      window.clearTimeout(runStartTimerRef.current);
+      runStartTimerRef.current = null;
+    }
+    runStartingRef.current = false;
+    setRunStarting(false);
+  }, []);
+
   useEffect(() => {
+    sendingRef.current = sending;
     const wasSending = previousSendingRef.current;
     previousSendingRef.current = sending;
     if (!sending || wasSending) return;
-    if (runStartTimerRef.current != null) window.clearTimeout(runStartTimerRef.current);
-    setRunStarting(true);
-    runStartTimerRef.current = window.setTimeout(() => {
-      setRunStarting(false);
-      runStartTimerRef.current = null;
-    }, 620);
-    return () => {
-      if (runStartTimerRef.current != null) {
-        window.clearTimeout(runStartTimerRef.current);
-        runStartTimerRef.current = null;
-      }
-      setRunStarting(false);
-    };
-  }, [sending]);
+    beginOptimisticRunStart();
+    return cancelOptimisticRunStart;
+  }, [beginOptimisticRunStart, cancelOptimisticRunStart, sending]);
 
   useEffect(() => () => {
     if (runStartTimerRef.current != null) {
       window.clearTimeout(runStartTimerRef.current);
+    }
+    if (sendClickTimerRef.current != null) {
+      window.clearTimeout(sendClickTimerRef.current);
     }
   }, []);
 
@@ -1231,34 +1360,6 @@ export function ChatInput({
     t,
   ]);
 
-  const composerContextParts = useMemo(() => {
-    const parts: string[] = [];
-    const normalizedMessageCount = messageCount ?? 0;
-    if (normalizedMessageCount > 0) {
-      parts.push(t('composer.messageCount', { count: normalizedMessageCount }));
-    }
-
-    const usedTokens = liveUsage?.totalTokens ?? contextRange?.usedTokens ?? null;
-    const maxTokens = contextRange?.maxTokens ?? null;
-    if (usedTokens != null && usedTokens > 0) {
-      parts.push(maxTokens != null && maxTokens > 0
-        ? t('composer.tokenUsageWithLimit', {
-          used: formatCompactNumber(usedTokens),
-          max: formatCompactNumber(maxTokens),
-        })
-        : t('composer.tokenUsage', {
-          tokens: formatCompactNumber(usedTokens),
-        }));
-    }
-
-    const truncatedMessages = contextRange?.truncatedMessageCount ?? 0;
-    if (truncatedMessages > 0) {
-      parts.push(t('composer.contextHidden', { count: truncatedMessages }));
-    }
-
-    return parts;
-  }, [contextRange?.maxTokens, contextRange?.truncatedMessageCount, contextRange?.usedTokens, liveUsage?.totalTokens, messageCount, t]);
-
   const closeComposerPopovers = useCallback(() => {
     setActionMenuOpen(false);
     setMorphOpen(false);
@@ -1284,56 +1385,11 @@ export function ChatInput({
     return null;
   }, [compactionBusy, compactionStatus?.available, compactionStatus?.canCompact, compactionStatus?.inProgress, compactionStatus?.reason, onManualCompact, sending, t]);
   const compactDisabled = Boolean(compactDisabledReason);
-  const compactAttention = compactionStatus?.pressure === 'high';
   const queuedFollowupCount = longTaskControlStatus?.queueCount ?? 0;
-  const effectiveContinuityRecommendation = continuityPreflight?.recommendation ?? continuityRecommendation;
-  const continuityHealth = continuityPreflight?.health;
-  const recommendedContinuityAction = effectiveContinuityRecommendation?.action ?? 'fork';
-  const composerContinuityAction = recommendedContinuityAction === 'handoff' && onHandoffSession
-    ? {
-      id: 'handoff' as const,
-      testId: 'chat-composer-handoff',
-      busy: handoffBusy,
-      disabled: handoffDisabled,
-      onClick: onHandoffSession,
-      icon: FileText,
-    }
-    : onForkSession
-      ? {
-        id: 'fork' as const,
-        testId: 'chat-composer-fork',
-        busy: forkBusy,
-        disabled: forkDisabled,
-        onClick: onForkSession,
-        icon: GitBranchPlus,
-      }
-      : onHandoffSession
-        ? {
-          id: 'handoff' as const,
-          testId: 'chat-composer-handoff',
-          busy: handoffBusy,
-          disabled: handoffDisabled,
-          onClick: onHandoffSession,
-          icon: FileText,
-        }
-        : null;
-  const composerContinuityTooltip = composerContinuityAction
-    ? composerContinuityAction.disabled
-      ? t(`composer.${composerContinuityAction.id}.disabledActiveRun`)
-      : [
-        continuityHealth
-          ? t(`composer.continuity.health.${continuityHealth.status}`, {
-            defaultValue: t('composer.continuity.health.healthy'),
-          })
-          : '',
-        t(`composer.continuity.tooltip.${composerContinuityAction.id}.${effectiveContinuityRecommendation?.reason ?? 'default'}`, {
-          defaultValue: t(`composer.${composerContinuityAction.id}.tooltip`),
-        }),
-        // R7-1 T3: fork must say what it copies and what it does not.
-        composerContinuityAction.id === 'fork' ? t('composer.fork.boundaryNote') : '',
-      ].filter(Boolean).join(' - ')
-    : '';
-  const ComposerContinuityIcon = composerContinuityAction?.icon ?? GitBranchPlus;
+  const hasLongTaskControlDetails = queuedFollowupCount > 0
+    || Boolean(longTaskControlStatus?.latestCheckpoint?.trigger)
+    || Boolean(longTaskControlStatus?.latestIntervention)
+    || (longTaskControlStatus?.warnings?.length ?? 0) > 0;
   const slashInput = useMemo(() => parseSlashInput(input), [input]);
   const slashItems = useMemo<SlashPaletteItem[]>(() => {
     if (!slashInput.active) return [];
@@ -1627,20 +1683,6 @@ export function ChatInput({
     lastDraftValueRef.current = draftValue;
     setInput(draftValue ?? '');
   }, [draftValue]);
-
-  useEffect(() => {
-    if (slashRequest <= 0 || slashRequest === lastSlashRequestRef.current) return;
-    lastSlashRequestRef.current = slashRequest;
-    const nextValue = input.trim() ? `${input.trim()} /` : '/';
-    updateInput(nextValue);
-    setSlashMenuDismissed(false);
-    requestAnimationFrame(() => {
-      const textarea = textareaRef.current;
-      textarea?.focus();
-      const position = nextValue.length;
-      textarea?.setSelectionRange(position, position);
-    });
-  }, [input, slashRequest, updateInput]);
 
   useEffect(() => {
     if (knowledgeMode !== 'suggest' || knowledgeScope === 'none' || selectedKnowledgeRefs.length > 0 || slashInput.active) {
@@ -2095,21 +2137,30 @@ export function ChatInput({
   // 运行时会对显式 inputMode 返回 INVALID_REQUEST——禁用并提示，避免"按钮可点但不可用"。
   const longTaskAvailable = longTaskControlStatus?.available !== false;
   const canIntervene = sending && hasComposerDraft && allReady && !inputDisabled && !hasFailedAttachments && !capabilityExecuting && longTaskAvailable;
+  // 排队默认动作与干预按钮同门禁：有草稿但附件未就绪/存在失败附件时，运行中的
+  // 主按钮保持纯暂停语义，避免误触一次排队行为。
+  const canQueueDraft = sending && hasComposerDraft && !inputDisabled && !capabilityExecuting && longTaskAvailable && allReady && !hasFailedAttachments;
   const composerSendState = paused
     ? 'paused'
     : runStarting
       ? 'starting'
       : sending
-        ? 'running'
+        ? hasComposerDraft
+          ? 'running-with-draft'
+          : 'running'
         : canSend
           ? 'ready'
           : 'idle';
+  const sendButtonMeta = getComposerSendStateMeta(composerSendState, {
+    queueable: canQueueDraft,
+    resumable: !paused || Boolean(onResumeSession),
+  });
+  const SendButtonIcon = sendButtonMeta.icon ?? ArrowUp;
   const showInlineComposerStatus = !isGatewayUsable
     || chatComposerStatusComponents.length > 0
-    || Boolean(longTaskControlStatus)
-    || compactAttention
-    || hasFailedAttachments
-    || Boolean(composerContinuityAction);
+    || pendingMessages.length > 0
+    || hasLongTaskControlDetails
+    || hasFailedAttachments;
 
   const completeSend = useCallback(async (
     textToSend: string,
@@ -2811,23 +2862,65 @@ export function ChatInput({
     }
   }, [capabilityExecuting, completeSend, confirmPromptCacheRisk, currentAgentId, pendingCapabilitySend, t, workspace?.id]);
 
+  const cancelQueuedSendClick = useCallback(() => {
+    if (sendClickTimerRef.current != null) {
+      window.clearTimeout(sendClickTimerRef.current);
+      sendClickTimerRef.current = null;
+    }
+  }, []);
+
   const handlePrimaryComposerAction = useCallback(() => {
+    cancelQueuedSendClick();
     if (paused) {
       void onResumeSession?.();
       return;
     }
-    if (sending) {
+    if (composerSendState === 'running-with-draft' && canQueueDraft) {
+      // 运行中且有可排队草稿：单击默认排队（防抖），双击落到暂停。
+      sendClickTimerRef.current = window.setTimeout(() => {
+        sendClickTimerRef.current = null;
+        void handleInterventionSend('queue');
+      }, SEND_CLICK_DEBOUNCE_MS);
+      return;
+    }
+    if (composerSendState === 'running-with-draft' || sending) {
       void onPauseSession?.();
       return;
     }
-    if (runStartTimerRef.current != null) window.clearTimeout(runStartTimerRef.current);
-    setRunStarting(true);
-    runStartTimerRef.current = window.setTimeout(() => {
-      setRunStarting(false);
-      runStartTimerRef.current = null;
-    }, 620);
-    void handleSend();
-  }, [handleSend, onPauseSession, onResumeSession, paused, sending]);
+    if (!canSend) return;
+    beginOptimisticRunStart();
+    /*
+     * `handleSend` returns without dispatching whenever a precondition fails —
+     * no validated provider (FP-P1-01), an unsupported capability, an extension
+     * before-send veto. In those cases no run ever starts, so `sending` stays
+     * false and the button must stop pretending: roll the affordance back as
+     * soon as the attempt settles instead of waiting out the timer with a Stop
+     * icon on screen behind the dialog that says nothing was sent.
+     */
+    void handleSend().finally(() => {
+      if (!sendingRef.current) cancelOptimisticRunStart();
+    });
+  }, [
+    beginOptimisticRunStart,
+    cancelOptimisticRunStart,
+    cancelQueuedSendClick,
+    canQueueDraft,
+    canSend,
+    composerSendState,
+    handleInterventionSend,
+    handleSend,
+    onPauseSession,
+    onResumeSession,
+    paused,
+    sending,
+  ]);
+
+  const handlePrimaryComposerDoubleClick = useCallback(() => {
+    // 在排队防抖窗口内的第二次点击：取消排队，直接暂停当前运行。
+    if (sendClickTimerRef.current == null) return;
+    cancelQueuedSendClick();
+    void onPauseSession?.();
+  }, [cancelQueuedSendClick, onPauseSession]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -3024,7 +3117,7 @@ export function ChatInput({
       className={cn(
         'codex-composer-host',
         hero && 'codex-composer-host--hero',
-        isUiV2 ? 'mx-auto w-full max-w-[768px] px-4 pb-5 pt-2' : 'p-4 pb-6 w-full mx-auto max-w-3xl',
+        'mx-auto w-full max-w-[768px] px-4 pb-5 pt-2',
         className,
       )}
       onDragOver={handleDragOver}
@@ -3049,8 +3142,7 @@ export function ChatInput({
           className={cn(
             'relative rounded-[25px] px-3 pb-1.5 pt-2.5 min-h-[98px]',
             'transition-[border-color,box-shadow,background-color,transform] duration-180',
-            isUiV2 ? 'codex-composer-shell' : 'border border-black/10 bg-surface-modal shadow-sm dark:border-white/10',
-            !isUiV2 && dragOver && 'border-primary ring-1 ring-primary',
+            'codex-composer-shell',
           )}
         >
           <BorderBeam
@@ -3316,7 +3408,7 @@ export function ChatInput({
           </div>
 
           {/* Action Row — icons on their own line */}
-          <div className="mt-1.5 flex items-center gap-1">
+          <div className="codex-composer-actions-row mt-1.5 flex min-w-0 items-center gap-1">
             <div ref={actionMenuRef} className="contents">
               {/* Plus menu morph — the composer's primary add affordance.
                   The compact circle morphs its own container into the measured
@@ -3417,6 +3509,10 @@ export function ChatInput({
                         }}
                       />
                     )}
+                    <TaskNodeSelector
+                      selectedTaskNodeId={activeTaskNodeId}
+                      onSelect={setActiveTaskNodeId}
+                    />
                   </ComposerActionGroup>
 
                   <ComposerActionGroup title={t('composer.actions.skills')} testId="chat-composer-action-group-skills">
@@ -3506,7 +3602,7 @@ export function ChatInput({
                         type="button"
                         data-testid="chat-composer-permission-mode"
                         className={cn(
-                          'codex-composer-control codex-permission-trigger',
+                          'codex-composer-control codex-permission-trigger codex-permission-control',
                           workspaceMenuOpen && 'is-active',
                           activePermissionMode === 'fullAccess' && 'codex-permission-trigger--warning',
                         )}
@@ -3523,7 +3619,7 @@ export function ChatInput({
                       >
                         <span className="codex-permission-trigger__icon">
                           {(() => {
-                            const Icon = PERMISSION_MODE_ICONS[activePermissionMode];
+                            const Icon = PERMISSION_MODE_ICONS[activePermissionMode] ?? CodexHand;
                             return <Icon className="h-4 w-4" />;
                           })()}
                         </span>
@@ -3748,7 +3844,7 @@ export function ChatInput({
               <button
                 type="button"
                 className={cn(
-                  'codex-composer-control max-w-[152px]',
+                  'codex-composer-control codex-knowledge-trigger max-w-[152px]',
                   (knowledgePickerOpen || knowledgeScope !== 'none' || selectedKnowledgeRefs.length > 0)
                     && 'is-active',
                 )}
@@ -4099,33 +4195,21 @@ export function ChatInput({
                 <span className="inline-flex">
               <Button
                 onClick={handlePrimaryComposerAction}
-                disabled={composerSendState === 'idle' || composerSendState === 'starting'}
+                onDoubleClick={handlePrimaryComposerDoubleClick}
+                disabled={sendButtonMeta.disabled}
                 size="icon"
                 data-testid="chat-composer-send"
                 data-send-state={composerSendState}
                 className="composer-send-button"
                 variant="ghost"
-                aria-label={
-                  composerSendState === 'paused'
-                    ? t('composer.resume')
-                    : composerSendState === 'running' || composerSendState === 'starting'
-                      ? t('composer.stop')
-                      : t('composer.send')
-                }
+                aria-label={t(sendButtonMeta.labelKey)}
               >
-                {composerSendState === 'starting' && <Loader2 className="h-4 w-4 animate-spin" />}
-                {composerSendState === 'running' && <Square className="h-3.5 w-3.5 fill-current" />}
-                {composerSendState === 'paused' && <Play className="ml-0.5 h-4 w-4 fill-current" />}
-                {(composerSendState === 'idle' || composerSendState === 'ready') && <ArrowUp className="h-5 w-5" />}
+                <SendButtonIcon className={sendButtonMeta.iconClassName} />
               </Button>
                 </span>
               </TooltipTrigger>
               <TooltipContent side="top" collisionPadding={8}>
-                {composerSendState === 'paused'
-                  ? t('composer.resumeTooltip')
-                  : composerSendState === 'running' || composerSendState === 'starting'
-                    ? t('composer.pauseTooltip')
-                    : t('composer.send')}
+                {t(sendButtonMeta.tooltipKey)}
               </TooltipContent>
             </Tooltip>
             </div>
@@ -4160,17 +4244,11 @@ export function ChatInput({
               ))}
             </div>
           )}
-          {(composerContextParts.length > 0 || longTaskControlStatus || composerContinuityAction) && (
+          {(pendingMessages.length > 0 || hasLongTaskControlDetails) && (
             <div
               className="ml-auto flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-1.5 text-right"
               data-testid="chat-composer-context-status"
             >
-              {composerContextParts.map((part, index) => (
-                <span key={`${index}:${part}`} className="inline-flex items-center gap-1.5">
-                  {index > 0 && <span aria-hidden="true" className="text-muted-foreground/35">|</span>}
-                  <span>{part}</span>
-                </span>
-              ))}
               {pendingMessages.length > 0 && (
                 <Badge
                   variant="outline"
@@ -4260,39 +4338,8 @@ export function ChatInput({
                   )}
                 </>
               )}
-              {composerContinuityAction && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        data-testid={composerContinuityAction.testId}
-                        disabled={composerContinuityAction.disabled || composerContinuityAction.busy}
-                        onClick={() => void composerContinuityAction.onClick()}
-                        className="h-6 w-6 rounded-md text-muted-foreground transition-colors hover:text-foreground"
-                        aria-label={t(`composer.${composerContinuityAction.id}.action`)}
-                      >
-                        {composerContinuityAction.busy ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        ) : (
-                          <ComposerContinuityIcon className="h-3.5 w-3.5" />
-                        )}
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs text-xs">
-                    {composerContinuityTooltip}
-                  </TooltipContent>
-                </Tooltip>
-              )}
             </div>
           )}
-          <TaskNodeSelector
-            selectedTaskNodeId={activeTaskNodeId}
-            onSelect={setActiveTaskNodeId}
-          />
           {hasFailedAttachments && (
             <Button
               variant="link"

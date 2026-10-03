@@ -1,0 +1,30 @@
+{
+  "id": "verseconf-artifacts",
+  "enabledByDefault": false,
+  "activation": { "onStartup": true },
+  "name": "VerseConf Structured Artifacts",
+  "description": "Bounded research-table and slide-outline artifacts with runtime-owned commits and history.",
+  "contracts": {
+    "tools": [
+      "structured_artifact_create",
+      "structured_artifact_inspect",
+      "structured_artifact_revise",
+      "structured_artifact_record_ops",
+      "structured_artifact_restore",
+      "structured_artifact_history",
+      "structured_artifact_export",
+      "structured_artifact_disable"
+    ]
+  },
+  "toolMetadata": {
+    "structured_artifact_create": { "optional": true },
+    "structured_artifact_inspect": { "optional": true },
+    "structured_artifact_revise": { "optional": true },
+    "structured_artifact_record_ops": { "optional": true },
+    "structured_artifact_restore": { "optional": true },
+    "structured_artifact_history": { "optional": true },
+    "structured_artifact_export": { "optional": true },
+    "structured_artifact_disable": { "optional": true }
+  },
+  "configSchema": { "type": "object", "additionalProperties": false, "properties": {} }
+}

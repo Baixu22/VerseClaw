@@ -288,14 +288,15 @@ describe('Area 5 §3.4 — roleTags', () => {
       };
       const api = await getApi(gatewayManager);
       const result = await api.search({ query: 'test', roleTag: 'planner' });
+      const results = result.results;
       expect(result.success).toBe(true);
-      expect(result.results).toHaveLength(4);
+      expect(results).toHaveLength(4);
       // Planner-tagged results rank first (stable among themselves).
-      expect((result.results[0] as { id: string }).id).toBe('p2');
-      expect((result.results[1] as { id: string }).id).toBe('p4');
+      expect((results?.[0] as { id: string }).id).toBe('p2');
+      expect((results?.[1] as { id: string }).id).toBe('p4');
       // Non-matching results remain visible.
-      expect((result.results[2] as { id: string }).id).toBe('p1');
-      expect((result.results[3] as { id: string }).id).toBe('p3');
+      expect((results?.[2] as { id: string }).id).toBe('p1');
+      expect((results?.[3] as { id: string }).id).toBe('p3');
     });
 
     it('does not reorder when roleTag is absent', async () => {
@@ -309,9 +310,10 @@ describe('Area 5 §3.4 — roleTags', () => {
       };
       const api = await getApi(gatewayManager);
       const result = await api.search({ query: 'test' });
+      const results = result.results;
       expect(result.success).toBe(true);
-      expect((result.results[0] as { id: string }).id).toBe('p1');
-      expect((result.results[1] as { id: string }).id).toBe('p2');
+      expect((results?.[0] as { id: string }).id).toBe('p1');
+      expect((results?.[1] as { id: string }).id).toBe('p2');
     });
 
     it('does not reorder when no results carry roleTags', async () => {
@@ -325,9 +327,10 @@ describe('Area 5 §3.4 — roleTags', () => {
       };
       const api = await getApi(gatewayManager);
       const result = await api.search({ query: 'test', roleTag: 'planner' });
+      const results = result.results;
       expect(result.success).toBe(true);
-      expect((result.results[0] as { id: string }).id).toBe('p1');
-      expect((result.results[1] as { id: string }).id).toBe('p2');
+      expect((results?.[0] as { id: string }).id).toBe('p1');
+      expect((results?.[1] as { id: string }).id).toBe('p2');
     });
   });
 

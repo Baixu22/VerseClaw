@@ -69,14 +69,25 @@ async function hostInvokeRaw(
   payload: Record<string, unknown> | null = null,
 ): Promise<HostResponse<unknown>> {
   return await app.evaluate(async (_electron, request) => {
-    const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+    const { ipcMain, BrowserWindow } = process.mainModule!.require('electron') as typeof import('electron');
     const handlers = (ipcMain as unknown as {
       _invokeHandlers?: Map<string, (event: unknown, request: Record<string, unknown>) => Promise<unknown>>;
     })._invokeHandlers;
     const handler = handlers?.get('host:invoke');
     if (!handler) throw new Error('host:invoke handler is not registered');
 
-    return await handler({}, {
+    // host:invoke now enforces sender authorization: the event must carry a
+    // sender whose webContents id is the main window's. Supply the real window's
+    // webContents (bare `{}` fails with "Host request missing sender").
+    const win = BrowserWindow.getAllWindows().find((candidate) => !candidate.isDestroyed());
+    if (!win) throw new Error('No BrowserWindow available for host:invoke sender auth');
+    const sender = win.webContents;
+    const event = {
+      sender,
+      senderFrame: { url: typeof sender.getURL === 'function' ? sender.getURL() : '' },
+    };
+
+    return await handler(event, {
       id: `t3-codegraph-raw-${Date.now()}-${Math.random().toString(16).slice(2)}`,
       module: request.module,
       action: request.action,

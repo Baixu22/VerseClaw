@@ -1,11 +1,12 @@
 // R2: WorkspaceAgentsPanel transcript failure must render failed+retry,
 // not an empty transcript.
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WorkspaceAgentsPanel } from '@/components/file-preview/WorkspaceAgentsPanel';
+import { DEFAULT_SESSION_KEY } from '@shared/chat/types';
+import type { SessionActivitySubagent } from '@shared/types/session-activity';
 
 const historyMock = vi.fn();
-const lifecycleSubscribeMock = vi.fn(() => () => {});
 
 vi.mock('@/lib/host-api', () => ({
   hostApi: {
@@ -14,29 +15,27 @@ vi.mock('@/lib/host-api', () => ({
   },
 }));
 
-vi.mock('@/lib/host-events', () => ({
-  hostEvents: {
-    onSubagentLifecycle: (...args: unknown[]) => lifecycleSubscribeMock(...args),
-  },
-}));
+/* The roster is the session-activity store's, not this panel's. One completed
+ * worker with its own child session is all the transcript path needs. */
+const SUBAGENT: SessionActivitySubagent = {
+  id: 'agent-1',
+  role: 'planner',
+  task: 'Plan the work',
+  status: 'completed',
+  childSessionKey: 'agent:main:child-1',
+  agentId: 'main',
+  updatedAt: 1,
+  source: 'event',
+};
 
-// Fire a completed sub-agent event with its own session so the panel loads a transcript.
-function emitCompletedAgent() {
-  const handler = lifecycleSubscribeMock.mock.calls.at(-1)?.[0] as ((event: unknown) => void) | undefined;
-  if (!handler) throw new Error('lifecycle subscriber not registered');
-  act(() => {
-    handler({
-      type: 'subagent.started',
-      key: 'agent-1',
-      roleName: 'planner',
-      task: 'Plan the work',
-      status: 'completed',
-      childSessionKey: 'agent:main:child-1',
-      agentId: 'main',
-      ts: Date.now(),
-    });
-  });
-}
+/* One stable state object: the real store hands out the same array reference
+ * until it updates, and a fresh literal per render would make the panel look
+ * like it refetches on every event. */
+const ACTIVITY_STATE = { snapshots: { [DEFAULT_SESSION_KEY]: { subagents: [SUBAGENT] } } };
+
+vi.mock('@/stores/session-activity', () => ({
+  useSessionActivityStore: (selector: (state: unknown) => unknown) => selector(ACTIVITY_STATE),
+}));
 
 const LABELS: Record<string, string> = {
   'agentsPanel.title': 'Agents',
@@ -67,13 +66,11 @@ vi.mock('react-i18next', async (importOriginal) => {
 describe('WorkspaceAgentsPanel transcript failure (R2)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    lifecycleSubscribeMock.mockReturnValue(() => {});
     historyMock.mockRejectedValue(new Error('history boom sk-12345678901234567890'));
   });
 
   it('renders failed+retry instead of an empty transcript when history fails', async () => {
     render(<WorkspaceAgentsPanel />);
-    emitCompletedAgent();
 
     const failed = await screen.findByTestId('workspace-agents-transcript-failed');
     expect(failed).toHaveTextContent('Could not load this transcript.');

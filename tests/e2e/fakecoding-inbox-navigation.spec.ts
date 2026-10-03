@@ -210,7 +210,10 @@ test.describe('FakeCoding Inbox navigation', () => {
     await testInfo.attach('Inbox 1280 dark', { path: darkDesktop, contentType: 'image/png' });
 
     await page.getByTestId('inbox-item-permission:approval-e2e').click();
-    await expect(page.getByTestId('inbox-detail')).toContainText('git push origin main');
+    await expect(page.getByTestId('inbox-detail')).toContainText('External write requires approval');
+    await expect(page.getByTestId('inbox-detail')).toContainText('Details withheld');
+    await expect(page.getByTestId('inbox-detail')).toContainText('cannot be automatically rolled back');
+    await expect(page.getByTestId('inbox-detail')).not.toContainText('git push origin main');
     await page.getByTestId('inbox-action-approve').click();
     await expect(page.getByTestId('sidebar-nav-inbox-badge')).toHaveText('2');
 

@@ -74,7 +74,7 @@ requiredTests:
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/line-c-grounding-single-explicit-diagnostics-consumer-implementation.md --no-diff
   - node node_modules/vitest/vitest.mjs run tests/unit/runtime-grounding-single-explicit-diagnostics-consumer.test.ts tests/unit/runtime-grounding-default-on-diagnostics.test.ts tests/unit/runtime-grounding-shadow-consumers.test.ts tests/unit/runtime-grounding-authority-effectiveness.test.ts
   - node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - git diff --check -- harness/specs/tasks/line-c-grounding-single-explicit-diagnostics-consumer-implementation.md openclaw_runtime/src/runtime-core/grounding-shadow-consumers.ts openclaw_runtime/src/runtime-core/index.ts tests/unit/runtime-grounding-single-explicit-diagnostics-consumer.test.ts runtime-research/handoffs/line-c-grounding-single-explicit-diagnostics-consumer-implementation/README.md runtime-research/handoffs/line-c-grounding-single-explicit-diagnostics-consumer-implementation/implementation-synthesis.md runtime-research/agent-runtime-index.md
+  - git diff --check -- harness/specs/tasks/line-c-grounding-single-explicit-diagnostics-consumer-implementation.md openclaw_runtime/src/runtime-core/grounding-shadow-consumers.ts openclaw_runtime/src/runtime-core/index.ts tests/unit/runtime-grounding-single-explicit-diagnostics-consumer.test.ts docs/dev/runtime-research-boundaries.md
   - rg boundary scan for prompt/model-message/provider ordering/provider selection/Gateway request/TaskLoop/runtime decision/completion/tool/security/approval/retry/raw retention/includeRaw/includeUntrusted/untrusted refs/persistence/cache/service/listener/exporter/database/sidecar/memory promotion/fact acceptance/episode write/patch apply/workspace edit/symbol mutation/UI/API/transport/production rollout over touched files
 acceptance:
   - Fresh implementation spec exists and validates before implementation.
@@ -89,9 +89,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-c-grounding-single-explicit-diagnostics-consumer-implementation/README.md
-    - runtime-research/handoffs/line-c-grounding-single-explicit-diagnostics-consumer-implementation/implementation-synthesis.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 nextPhaseEntry:
   Allowed after acceptance:
     - The single explicit diagnostics-only consumer may be used only by explicit runtime-core callsites that pass the fixed consumer id and sanitized summary input.

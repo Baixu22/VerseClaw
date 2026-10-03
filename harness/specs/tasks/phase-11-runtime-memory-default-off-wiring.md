@@ -105,10 +105,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-11-runtime-memory-default-off-wiring/README.md
-    - runtime-research/handoffs/phase-11-runtime-memory-default-off-wiring/parallel-lanes.md
-    - runtime-research/handoffs/phase-11-runtime-memory-default-off-wiring/window-prompts.md
-    - runtime-research/handoffs/phase-11-runtime-memory-default-off-wiring/submission-template.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 11 Runtime Memory Default-Off Wiring MVP

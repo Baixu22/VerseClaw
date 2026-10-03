@@ -83,12 +83,7 @@ nextPhaseEntry:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-6-trace-context-provider/README.md
-    - runtime-research/handoffs/phase-6-trace-context-provider/parallel-lanes.md
-    - runtime-research/handoffs/phase-6-trace-context-provider/submission-template.md
-    - runtime-research/handoffs/phase-6-trace-context-provider/synthesis-template.md
-    - runtime-research/handoffs/phase-6-trace-context-provider/synthesis.md
-    - runtime-research/handoffs/phase-6-trace-context-provider/submissions/lane-design-entry-tightening.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 6 Trace Context Provider

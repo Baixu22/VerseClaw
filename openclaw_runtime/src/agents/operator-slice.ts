@@ -21,14 +21,14 @@ import { createHash } from 'node:crypto';
 import { appendFileSync, lstatSync, mkdirSync, realpathSync } from 'node:fs';
 import { basename, dirname, join, resolve, sep } from 'node:path';
 
-import { ApprovalLedger } from './approval-ledger.js';
+import { ApprovalLedger, OPERATOR_INTENT_CLIENT_ID } from './approval-ledger.js';
 import { EffectReceiptStore } from './effect-receipt.js';
 import { ReceiptStore, type RuntimeReceiptRuntimeMode } from './receipt-store.js';
 import { canonicalJsonValue } from './approval-ledger.js';
 
 export const OPERATOR_SLICE_SCHEMA_VERSION = '1';
 export const OPERATOR_SLICE_FLAG = 'rc05.operatorSlice';
-export const OPERATOR_SLICE_ACTOR = 'cron-ingress';
+export const OPERATOR_SLICE_ACTOR = OPERATOR_INTENT_CLIENT_ID;
 export const OPERATOR_DEFAULT_POLICY_RULE = 'cron-announce-under-operator-slice';
 
 export type OperatorSliceOptions = {
@@ -139,6 +139,57 @@ export function createOperatorSliceIntent(input: {
   return { ok: true, approvalId: reserved.row.approval_id, state: reserved.row.state };
 }
 
+/** Governance decision recorded by the desktop Inbox. */
+export function inboxGovernanceDecision(input: {
+  decision: 'approved' | 'denied';
+  actor: string;
+}): OperatorGovernanceDecision {
+  // The digest binds the Inbox decision rule and is always computed
+  // server-side; a client-supplied digest is never trusted.
+  const policyDigest = sha256Text(`inbox-operator-decision:v1:${input.decision}`);
+  return { decision: input.decision, actor: input.actor, policyDigest };
+}
+
+export const OPERATOR_INBOX_TIMEOUT_ACTOR = 'operator-inbox-timeout';
+
+/**
+ * Step 2 (Inbox governance): wait for the desktop Inbox to decide a pending
+ * intent. The durable ledger is the only channel between the Inbox and the
+ * waiting ingress. When the intent expires undecided it is denied as
+ * OPERATOR_INBOX_TIMEOUT_ACTOR (zero effect); a concurrent Inbox decision
+ * that lands first wins the CAS.
+ */
+export async function awaitOperatorInboxDecision(input: {
+  approvalId: string;
+  options: OperatorSliceOptions;
+  pollMs?: number;
+  signal?: AbortSignal;
+  now?: () => number;
+}): Promise<{ ok: true; governance: OperatorGovernanceDecision } | { ok: false; reason: 'denied' | 'error'; message?: string }> {
+  const ledger = openLedger(input.options);
+  const now = input.now ?? Date.now;
+  const pollMs = input.pollMs ?? 250;
+  for (;;) {
+    const row = ledger.getById(input.approvalId);
+    if (!row) return { ok: false, reason: 'error', message: 'approval intent not found' };
+    if (row.state !== 'approval_pending') {
+      if (row.state === 'approved' && row.resolved_by) {
+        return { ok: true, governance: inboxGovernanceDecision({ decision: 'approved', actor: row.resolved_by }) };
+      }
+      return { ok: false, reason: 'denied', message: `inbox decision ${row.state}` };
+    }
+    if (input.signal?.aborted || row.expires_at_ms <= now()) {
+      const expired = ledger.resolve({
+        approvalId: input.approvalId,
+        decision: 'denied',
+        resolvedBy: OPERATOR_INBOX_TIMEOUT_ACTOR,
+      });
+      if (!expired.ok && expired.row?.state === 'approved') continue;
+      return { ok: false, reason: 'denied', message: 'inbox decision timed out' };
+    }
+    await new Promise((resolve) => setTimeout(resolve, pollMs));
+  }
+}
 /**
  * Step 2 (governance): resolve the approval from a real governance decision.
  * Denied approvals never start execution and produce zero effect.

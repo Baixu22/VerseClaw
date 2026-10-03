@@ -223,7 +223,7 @@ async function buildEffectivenessEvaluation(): Promise<{
       },
     },
     sessionId: "line-c-effectiveness-registry",
-    groundingShadow: hostileGroundingDiagnosticsOptions("registry"),
+    groundingShadow: hostileGroundingDiagnosticsOptions("registry") as never,
   });
   const registryMetadata = metadataOrThrow(
     registryResult.diagnostics.find((item) =>
@@ -319,7 +319,7 @@ async function traceComparisonResult(): Promise<ProviderComparison> {
       await createRuntimeTraceContextProvider({
         store: traceStore,
         config: { runtime: { traceContext: { provider: true } } },
-        groundingDiagnostics: hostileGroundingDiagnosticsOptions("trace"),
+        groundingDiagnostics: hostileGroundingDiagnosticsOptions("trace") as never,
       }).getContext(input),
       "trace effectiveness diagnostics",
     ),
@@ -346,7 +346,7 @@ async function symbolComparisonResult(): Promise<ProviderComparison> {
     diagnostics: providerResultOrThrow(
       await createSymbolContextProvider({
         overviews: [overview],
-        groundingDiagnostics: hostileGroundingDiagnosticsOptions("symbol"),
+        groundingDiagnostics: hostileGroundingDiagnosticsOptions("symbol") as never,
       }).getContext(input),
       "symbol effectiveness diagnostics",
     ),
@@ -367,7 +367,7 @@ async function agentMapComparisonResult(): Promise<ProviderComparison> {
     diagnostics: providerResultOrThrow(
       await createAgentMapContextProvider({
         ...options,
-        groundingDiagnostics: hostileGroundingDiagnosticsOptions("agent_map"),
+        groundingDiagnostics: hostileGroundingDiagnosticsOptions("agent_map") as never,
       }).getContext(input),
       "AgentMap effectiveness diagnostics",
     ),
@@ -393,7 +393,7 @@ async function memoryComparisonResult(): Promise<ProviderComparison> {
     diagnostics: providerResultOrThrow(
       await createRuntimeMemoryContextProvider({
         ...options,
-        groundingDiagnostics: hostileGroundingDiagnosticsOptions("memory"),
+        groundingDiagnostics: hostileGroundingDiagnosticsOptions("memory") as never,
       }).getContext(input),
       "Runtime Memory effectiveness diagnostics",
     ),

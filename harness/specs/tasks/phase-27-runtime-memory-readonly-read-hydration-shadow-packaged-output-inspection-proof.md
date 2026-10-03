@@ -114,10 +114,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-27-runtime-memory-readonly-read-hydration-shadow-packaged-output-inspection-proof/README.md
-    - runtime-research/handoffs/phase-27-runtime-memory-readonly-read-hydration-shadow-packaged-output-inspection-proof/parallel-lanes.md
-    - runtime-research/handoffs/phase-27-runtime-memory-readonly-read-hydration-shadow-packaged-output-inspection-proof/window-prompts.md
-    - runtime-research/handoffs/phase-27-runtime-memory-readonly-read-hydration-shadow-packaged-output-inspection-proof/submission-template.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 27 Runtime Memory Readonly Read Hydration Shadow Packaged Output Inspection Proof

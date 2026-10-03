@@ -70,11 +70,7 @@ forbiddenPatterns:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/runtime-failure-evidence-envelope-failure-summary/README.md
-    - runtime-research/handoffs/runtime-failure-evidence-envelope-failure-summary/validation-plan.md
-    - runtime-research/handoffs/runtime-failure-evidence-envelope-failure-summary/synthesis.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/schema-decision-log.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Runtime Failure Evidence Envelope Failure Summary

@@ -16,15 +16,15 @@ const COMPLIANCE_FILES = {
   source_inputs_file: 'source-inputs.json',
 } as const;
 
-const EXPECTED_SOURCE_INPUTS_SHA256 = '158d0ca4d2ec51080b2aa0bdeb6274755c7009af9a904f86eacf624993dcd489';
-const EXPECTED_SOURCE_IDENTITY_SHA256 = '19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650';
+const EXPECTED_SOURCE_INPUTS_SHA256 = 'a2b3fd6c05cae9a664304ab7e0f5ff851ac357071a8415b5bee7c5aee5e876bd';
+const EXPECTED_SOURCE_IDENTITY_SHA256 = 'daa0b1720efaa89356f9ceed608a9f5bd200970a96f6ab2abec8a67cd101c8f8';
 const EXPECTED_SOURCE_REPOSITORY = 'https://github.com/Baixu22/VerseShell.git';
 const EXPECTED_SOURCE_COMMIT = 'c3983694407a9ddb23505e05fad4a9eae653b283';
 const EXPECTED_SOURCE_COMMIT_EPOCH = 1785123525;
 const EXPECTED_PATCHES = [
   ['resources/verseshell/patches/uas-05-process-lifecycle.patch', 106755, 'cabfb192f6f9688156f5a3ab5a19307fcd1af3fb2ee2c59b2d494a557d417098'],
   ['resources/verseshell/patches/p0-runtime-startup.patch', 1645, '17214efd7bf09e009256eb149c84a84e8fe85afcd467968ac2a6e472fbdb5aba'],
-  ['resources/verseshell/patches/aci-bench-source-inputs.patch', 32136, 'f05d7bacdb2c754cd76a5f57a4ef9b1735ce95a76007bda69badaf99c887b72e'],
+  ['resources/verseshell/patches/aci-bench-source-inputs.patch', 32135, '0eb7c902e4b0b75d3617e2129f66694c01f9c4f657fcb140272ff8abbba5dffe'],
   ['resources/verseshell/patches/python-current-interpreter.patch', 2444, 'ccc4a92220dd3ca47a142ded6c3734749918f3d86b5014f1e5444ffd53bc0922'],
 ] as const;
 const EXPECTED_RECOVERED_PATHS = [
@@ -288,7 +288,7 @@ function parseSourceInputs(raw: string, sourceInputsPath: string): VerseShellSou
   try {
     sourceInputs = JSON.parse(raw) as VerseShellSourceInputs;
   } catch (error) {
-    throw new Error(`Invalid VerseShell source-input manifest at ${sourceInputsPath}: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(`Invalid VerseShell source-input manifest at ${sourceInputsPath}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
   }
   requireObject(sourceInputs, 'VerseShell source inputs');
   if (

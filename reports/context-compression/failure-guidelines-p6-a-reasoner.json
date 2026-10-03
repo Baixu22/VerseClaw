@@ -1,0 +1,295 @@
+{
+  "version": 1,
+  "generatedAt": "2026-08-18T14:24:12.051Z",
+  "atomLimit": 24,
+  "guidelines": [
+    {
+      "id": "guideline-entity-10",
+      "canonicalIdentity": ".openclaw/factstore.sqlite is OpenClaw's own memory/fact store",
+      "type": "entity",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R4"
+      ],
+      "repairGuideline": "The original transcript identifies these files as runtime-owned state. This explains why they are expected to be locked/in-use and why failing to delete them is not a policy failure."
+    },
+    {
+      "id": "guideline-outcome-113",
+      "canonicalIdentity": "当前会话尚无任何 checkpoint 快照/接力点（首次会话，Compactions=0）",
+      "type": "outcome",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R30"
+      ],
+      "repairGuideline": "用户请求的是接力/checkpoint 状态报告，核心答复就是'当前不存在任何 checkpoint 或可恢复接力点'。压缩上下文只列出了 Compactions=0 的原始数字，没有保留这个明确结论，导致重放时可能无法向用户断言没有接力点。"
+    },
+    {
+      "id": "guideline-next_action-116",
+      "canonicalIdentity": "可选的后续动作：检查 openclaw_runtime/dist 目录完整性，可能需要重新 build 或重装运行时",
+      "type": "next_action",
+      "severity": "nice_to_have",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R30"
+      ],
+      "repairGuideline": "原回复末尾提供进一步的排查/修复选项；若保留，用户可据此解决工具不可用的问题。"
+    },
+    {
+      "id": "guideline-constraint-107",
+      "canonicalIdentity": "请修复空 catch 吞异常的问题，保持与相邻代码一致的错误处理风格，再用 grep 确认修复生效，报告根因和你的修改。",
+      "type": "constraint",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R28"
+      ],
+      "repairGuideline": "The compressed context replaces the original Chinese user request with an English paraphrase, losing the explicit deliverable of reporting root cause and modification in the same language/format. The successful final answer is written in Chinese with headings like 根因 and 我的修改; without this constraint the suffix may not match the required report."
+    },
+    {
+      "id": "guideline-constraint-114",
+      "canonicalIdentity": "上下文占用 28k/1.0m (3%)，远低于约 50–70% 的压缩触发阈值，短期内不需要接力",
+      "type": "constraint",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R30"
+      ],
+      "repairGuideline": "原报告用这个阈值来说明'短期内不需要接力'。压缩上下文只给出 3% 的数字，遗漏了阈值判断，使得结论缺少依据。"
+    },
+    {
+      "id": "guideline-constraint-90",
+      "canonicalIdentity": "adjacent_catch_style: logger.error(\"Error while trying to load custom settings...\", e) at lines 132-133",
+      "type": "constraint",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R22"
+      ],
+      "repairGuideline": "The user's consistency requirement hinges on comparing the finally catch with this adjacent catch. The compressed context mentions the style but does not preserve the exact adjacent catch code, weakening the comparison that proves the finally block is already consistent."
+    },
+    {
+      "id": "guideline-entity-40",
+      "canonicalIdentity": "ag_test_md_sentinel_file",
+      "type": "entity",
+      "severity": "nice_to_have",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R10"
+      ],
+      "repairGuideline": "AGENT_TEST.md (210 bytes, timestamp 2026-08-11 18:02) is a sentinel the assistant created earlier to mark its own writes and appears both in the listing and modified-files; knowing it is assistant-created helps distinguish it from the 2014 repo files."
+    },
+    {
+      "id": "guideline-outcome-85",
+      "canonicalIdentity": "AGENT_TEST.md creation with three specific lines and read-back confirmation",
+      "type": "outcome",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R17"
+      ],
+      "repairGuideline": "The compressed context discusses chain_audit_test.md but omits that AGENT_TEST.md was created earlier with specific content (JForum 项目分析, the main problem found, and a recommendation) and confirmed by reading it back. This file appears in the directory listing and in prior work, so losing it makes the new context unaware of its own earlier actions."
+    },
+    {
+      "id": "guideline-outcome-65",
+      "canonicalIdentity": "AGENT_TEST.md was created and read earlier (three lines: JForum project analysis, main problem, suggestion)",
+      "type": "outcome",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R14"
+      ],
+      "repairGuideline": "This is a prior user-requested write operation that explains the file's presence in the directory listing and modified-files list; omitting it makes the workspace state confusing."
+    },
+    {
+      "id": "guideline-outcome-43",
+      "canonicalIdentity": "AGENT_TEST.md was written (210 bytes) and read back with exact three-line content",
+      "type": "outcome",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "The file was successfully created and verified in the transcript. Compressed context omits this completed deliverable, making the state appear incomplete."
+    },
+    {
+      "id": "guideline-entity-48",
+      "canonicalIdentity": "Already analyzed files: #1 TopicWatchExtension, #2 AdminController, #3 AvatarAdminController, #4 BadWordAdminController, #5 BanlistAdminController",
+      "type": "entity",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "The transcript records these five files as already analyzed. Compressed context omits this list, making it impossible to continue the continuous task without repeating."
+    },
+    {
+      "id": "guideline-outcome-56",
+      "canonicalIdentity": "Analysis of net/jforum/entities/Post.java: 30 import statements; exact grep found 30 files importing net.jforum.entities.Post; Post is a core entity referenced across controllers, repositories, servic",
+      "type": "outcome",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R13"
+      ],
+      "repairGuideline": "This was an explicit user request and produced key architectural findings. The compressed context only lists file paths as read files, not the analysis result, so the model cannot report or build on the dependency findings."
+    },
+    {
+      "id": "guideline-next_action-99",
+      "canonicalIdentity": "Announced Round 2 of the new sequence: Post's one-to-many/many-to-many mappings for votes/attachments and cascade deletion details.",
+      "type": "next_action",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R24"
+      ],
+      "repairGuideline": "The last assistant message explicitly promises '第 2 轮我会深入 Post 与投票/附件表的一对多、多对多及级联删除细节'. This next action must be retained for correct continuation."
+    },
+    {
+      "id": "guideline-next_action-100",
+      "canonicalIdentity": "Announced Round 3 of the new sequence: query mapping, DTOs, @Formula, and @ColumnTransformer.",
+      "type": "next_action",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R24"
+      ],
+      "repairGuideline": "The last assistant message also promises '第 3 轮讲查询映射、DTO 与 @Formula、@ColumnTransformer 等进阶字段映射'. This is needed to complete the new 3-round sequence."
+    },
+    {
+      "id": "guideline-outcome-97",
+      "canonicalIdentity": "Assistant's latest response (885de8c0) is headed '第 1 轮（新序列）' and covers ID generation strategies (AUTO/IDENTITY/SEQUENCE) and lifecycle callbacks (@PrePersist/@PreUpdate/@PreRemove).",
+      "type": "outcome",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R24"
+      ],
+      "repairGuideline": "This is the actual current state of the conversation. Without it, the compressed context has no record that a new sequence started or what content was already delivered in its Round 1."
+    },
+    {
+      "id": "guideline-next_action-110",
+      "canonicalIdentity": "At the start of the retained suffix, the file test_del.md has been created but not yet deleted; deletion is the next pending action",
+      "type": "next_action",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R29"
+      ],
+      "repairGuideline": "The compressed context opens by saying 'Both operations completed successfully' and later states the file was deleted and verified gone. This directly contradicts the Turn Context note that the next step is to delete the file. Omitting the pending-deletion state is a blocker: it can make the model skip the delete attempt or report success before performing the action, causing the failure."
+    },
+    {
+      "id": "guideline-failed_attempt-63",
+      "canonicalIdentity": "Attempt to list directory/run git status via terminal failed repeatedly (exec denied)",
+      "type": "failed_attempt",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R14"
+      ],
+      "repairGuideline": "Documents that terminal-based listing is impossible under current security settings, reinforcing the reliance on alternative tools."
+    },
+    {
+      "id": "guideline-constraint-49",
+      "canonicalIdentity": "Avoid re-reading already analyzed Java files in subsequent continuous tasks",
+      "type": "constraint",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "Task #5 explicitly required remembering previously analyzed files to avoid repetition; this constraint is absent from the compressed context."
+    },
+    {
+      "id": "guideline-safety_boundary-101",
+      "canonicalIdentity": "BOOTSTRAP.md blocker and no-destructive-action boundary",
+      "type": "safety_boundary",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R26"
+      ],
+      "repairGuideline": "In the successful transcript, the final report explicitly says BOOTSTRAP.md is present in the workspace, the running environment cannot safely complete bootstrap in this session, and no destructive action should be taken; the user must confirm/delete it in the main session. The compressed context omits this blocker entirely, which matches the failure kind 'omitted_blocker' and would prevent the compressed run from surfacing the required safety notice."
+    },
+    {
+      "id": "guideline-constraint-109",
+      "canonicalIdentity": "catch (Exception e) { throw new ForumException(e); }",
+      "type": "constraint",
+      "severity": "important",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R28"
+      ],
+      "repairGuideline": "The successful root-cause report uses the constructor's outer catch as additional evidence that the surrounding code consistently logs/handles exceptions. This atom appears in the original file/grep output but is not present in the compressed context."
+    },
+    {
+      "id": "guideline-constraint-98",
+      "canonicalIdentity": "Constraint: the new sequence requires 3 rounds, but only 1 round has been delivered; no final verification summary has been reached for this new sequence.",
+      "type": "constraint",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R24"
+      ],
+      "repairGuideline": "The compressed context says 'context accumulation verification has passed' and lists every task as Done. This is the omitted blocker: the model believes the job is finished, whereas the assistant is only 1/3 through a new round of the same task."
+    },
+    {
+      "id": "guideline-next_action-79",
+      "canonicalIdentity": "Continuation after gateway restart: finish the interrupted response, which is to report that the file is confirmed deleted, undo worked correctly, and the earlier Test-Path True was misleading",
+      "type": "next_action",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R16"
+      ],
+      "repairGuideline": "The compressed context's Next Actions section directs the assistant to redo a stale directory/README task instead of completing the interrupted verification report. The split-turn conclusion must be the active next action."
+    },
+    {
+      "id": "guideline-next_action-50",
+      "canonicalIdentity": "Continue with continuous task #6 using memory file to pick a new file",
+      "type": "next_action",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "The session had completed task #5 and was awaiting the next consecutive task, using the memory file to select an unanalyzed file. Compressed context instead proposes answering an old README request, pointing the assistant in the wrong direction."
+    },
+    {
+      "id": "guideline-goal-41",
+      "canonicalIdentity": "Create AGENT_TEST.md with three specified lines and read it back",
+      "type": "goal",
+      "severity": "critical",
+      "failureKind": "omitted_blocker",
+      "count": 1,
+      "sampleIds": [
+        "R12"
+      ],
+      "repairGuideline": "This is the opening user request in the transcript; the compressed context omits it and instead describes a different, unanswered request about README.md, so the entire session goal is misrepresented."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schema": "live-cdp-collection/v1",
+  "createdAt": "2026-09-11T01:59:40.086Z",
+  "model": "senseaudio-s2-flash",
+  "endpoint": "https://api.senseaudio.cn/v1/chat/completions",
+  "operator": "codex-agent",
+  "authorization": "explicit-user-authorized",
+  "dataProvenance": "fresh-agent-authored-benign-prompts",
+  "runBounds": {
+    "plannedSessions": 6,
+    "plannedUserTurns": 18,
+    "maxOutputTokensPerRequest": 1600
+  },
+  "environment": {
+    "appMode": "production-build",
+    "mocked": false,
+    "cdpPort": 53098,
+    "gatewayPort": 53099,
+    "hostApiPort": 53100,
+    "userData": "<RUN_STATE>\\user-data",
+    "workspace": "<WORKSPACE>"
+  },
+  "secretSource": "process-environment:SENSEAUDIO_API_KEY"
+}

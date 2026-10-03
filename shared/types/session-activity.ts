@@ -3,10 +3,37 @@ import type { GitRepositoryStatus } from './git';
 export type SessionActivityRunStatus = 'idle' | 'running' | 'waiting_approval' | 'completed' | 'failed' | 'aborted';
 export type SessionActivityTaskKind = 'mission' | 'taskLoop' | 'clawGraph' | 'taskLedger';
 export type SessionActivityTaskStatus = 'queued' | 'running' | 'review' | 'blocked' | 'completed' | 'failed' | 'aborted';
-export type SessionActivitySubagentStatus = 'started' | 'completed' | 'error' | 'aborted' | 'verified';
+export type SessionActivitySubagentStatus = 'started' | 'yielded' | 'completed' | 'error' | 'aborted' | 'verified';
 export type SessionActivityTerminalKind = 'interactive' | 'agentCommand' | 'webPreviewDevServer';
 export type SessionActivityTerminalStatus = 'idle' | 'starting' | 'running' | 'exited' | 'blocked' | 'completed' | 'error';
 export type SessionActivityAttentionLevel = 'none' | 'passive' | 'active' | 'attention';
+export type SessionActivityGoalKind = 'mission' | 'flow';
+export type SessionActivityGoalStatus = 'queued' | 'waiting' | 'running' | 'sleeping' | 'paused' | 'blocked' | 'completed' | 'failed' | 'aborted' | 'lost';
+export type SessionActivityProcessKind = 'bash' | 'supervisor' | 'goalOwned';
+export type SessionActivityProcessStatus = 'queued' | 'starting' | 'running' | 'exiting' | 'exited' | 'completed' | 'failed' | 'killed' | 'aborted' | 'lost';
+export type SessionActivityLineageKind = 'parent' | 'child';
+export type SessionActivityLineageStatus = 'started' | 'yielded' | 'completed' | 'aborted' | 'error';
+
+/**
+ * Correlation identity for one projected session effect (TF-0082).
+ *
+ * Every field is copied from the owner that already records it; nothing is
+ * derived from another identifier, and a field is absent when its owner does
+ * not record one. This is the single lineage shape shared by goals, processes,
+ * and lineage rows — consumers must not build a second session identity.
+ */
+export type SessionActivityLineageRef = {
+  /** Session generation (`sessionId`) the effect is pinned to. */
+  sessionId?: string;
+  /** Run that produced the effect. */
+  runId?: string;
+  /** Session that requested the run, when the owner records a requester. */
+  parentSessionKey?: string;
+  /** Durable owner epoch, when the owner defines one. */
+  ownerEpoch?: string;
+  /** Mission correlation shared by mission goals, goal-wake flows, and their processes. */
+  missionId?: string;
+};
 
 export type SessionActivityTask = {
   id: string;
@@ -24,9 +51,62 @@ export type SessionActivitySubagent = {
   role?: string;
   task?: string;
   summary?: string;
+  /** Kept apart from `summary` so a failure can be rendered as one. */
+  error?: string;
   status: SessionActivitySubagentStatus;
+  /**
+   * The child's own session, once the runtime reports one.
+   *
+   * This is what makes a sub-agent row openable: the workspace Agents tab
+   * fetches `sessions.history` for this key. A roster entry without it can be
+   * listed but not opened, so the row stays inert rather than leading to an
+   * empty transcript pane.
+   */
+  childSessionKey?: string;
+  /** The child's own agent id, for its avatar in the workspace roster. */
+  agentId?: string;
   updatedAt: number;
   source: 'event' | 'snapshot';
+};
+
+export type SessionActivityGoal = {
+  id: string;
+  kind: SessionActivityGoalKind;
+  /** Redacted display label. Never carries raw goal, command, cwd, or env text. */
+  label: string;
+  status: SessionActivityGoalStatus;
+  phase?: string;
+  progress?: number;
+  /** Redacted command/objective digest only; raw text is never projected. */
+  digest?: string;
+  /** Correlation identity for this goal; absent when no owner records one. */
+  lineage?: SessionActivityLineageRef;
+  updatedAt: number;
+};
+
+export type SessionActivityProcess = {
+  id: string;
+  kind: SessionActivityProcessKind;
+  /** Redacted display label. Never carries raw argv, command, cwd, or env text. */
+  label: string;
+  status: SessionActivityProcessStatus;
+  pid?: number;
+  /** Redacted command digest only; raw text is never projected. */
+  digest?: string;
+  /** Correlation identity for this process; absent when no owner records one. */
+  lineage?: SessionActivityLineageRef;
+  updatedAt: number;
+};
+
+export type SessionActivityLineage = {
+  id: string;
+  kind: SessionActivityLineageKind;
+  sessionKey: string;
+  role?: string;
+  status: SessionActivityLineageStatus;
+  /** Correlation identity for this run, including the parent generation pin. */
+  lineage?: SessionActivityLineageRef;
+  updatedAt: number;
 };
 
 export type SessionActivityTerminal = {
@@ -53,6 +133,9 @@ export type SessionActivitySnapshot = {
   tasks: SessionActivityTask[];
   subagents: SessionActivitySubagent[];
   terminals: SessionActivityTerminal[];
+  goals: SessionActivityGoal[];
+  processes: SessionActivityProcess[];
+  lineage: SessionActivityLineage[];
   continuity: {
     queueCount: number;
     contextPressure?: 'low' | 'medium' | 'high' | null;
@@ -85,6 +168,9 @@ export function createEmptySessionActivitySnapshot(sessionKey: string, capturedA
     tasks: [],
     subagents: [],
     terminals: [],
+    goals: [],
+    processes: [],
+    lineage: [],
     continuity: { queueCount: 0, contextPressure: null, checkpoint: false, blockedReason: null },
     availability: { git: false, tasks: false, subagents: true, terminals: false, continuity: true },
     capturedAt,
@@ -94,6 +180,9 @@ export function createEmptySessionActivitySnapshot(sessionKey: string, capturedA
 const COMPLETED_TASK_STATUSES = new Set<SessionActivityTaskStatus>(['completed', 'aborted']);
 const COMPLETED_SUBAGENT_STATUSES = new Set<SessionActivitySubagentStatus>(['completed', 'verified', 'aborted']);
 const COMPLETED_TERMINAL_STATUSES = new Set<SessionActivityTerminalStatus>(['completed', 'exited']);
+const COMPLETED_GOAL_STATUSES = new Set<SessionActivityGoalStatus>(['completed', 'aborted', 'lost']);
+const COMPLETED_PROCESS_STATUSES = new Set<SessionActivityProcessStatus>(['completed', 'exited']);
+const COMPLETED_LINEAGE_STATUSES = new Set<SessionActivityLineageStatus>(['completed', 'aborted']);
 
 export function retainRecentSessionActivity(
   snapshot: SessionActivitySnapshot,
@@ -108,6 +197,9 @@ export function retainRecentSessionActivity(
     tasks: snapshot.tasks.filter((task) => !COMPLETED_TASK_STATUSES.has(task.status) || keepCompleted(task.updatedAt)),
     subagents: snapshot.subagents.filter((agent) => !COMPLETED_SUBAGENT_STATUSES.has(agent.status) || keepCompleted(agent.updatedAt)),
     terminals: snapshot.terminals.filter((terminal) => !COMPLETED_TERMINAL_STATUSES.has(terminal.status) || keepCompleted(terminal.updatedAt)),
+    goals: snapshot.goals.filter((goal) => !COMPLETED_GOAL_STATUSES.has(goal.status) || keepCompleted(goal.updatedAt)),
+    processes: snapshot.processes.filter((process) => !COMPLETED_PROCESS_STATUSES.has(process.status) || keepCompleted(process.updatedAt)),
+    lineage: snapshot.lineage.filter((entry) => !COMPLETED_LINEAGE_STATUSES.has(entry.status) || keepCompleted(entry.updatedAt)),
   };
 }
 
@@ -124,6 +216,9 @@ export function classifySessionActivity(
     || Boolean(showGit && snapshot.git?.hasConflicts)
     || snapshot.tasks.some((task) => task.status === 'blocked' || task.status === 'failed')
     || snapshot.subagents.some((agent) => agent.status === 'error')
+    || snapshot.goals.some((goal) => goal.status === 'blocked' || goal.status === 'failed')
+    || snapshot.processes.some((process) => process.status === 'failed' || process.status === 'killed')
+    || snapshot.lineage.some((entry) => entry.status === 'error')
     || terminals.some((terminal) => terminal.status === 'blocked' || terminal.status === 'error')
     || snapshot.continuity.queueCount > 0
     || snapshot.continuity.contextPressure === 'high'
@@ -134,7 +229,10 @@ export function classifySessionActivity(
   const active = snapshot.session.status === 'running'
     || snapshot.session.status === 'waiting_approval'
     || snapshot.tasks.some((task) => task.status === 'running' || task.status === 'review')
-    || snapshot.subagents.some((agent) => agent.status === 'started')
+    || snapshot.subagents.some((agent) => agent.status === 'started' || agent.status === 'yielded')
+    || snapshot.goals.some((goal) => goal.status === 'running' || goal.status === 'waiting' || goal.status === 'sleeping' || goal.status === 'paused')
+    || snapshot.processes.some((process) => process.status === 'starting' || process.status === 'running' || process.status === 'exiting' || process.status === 'queued')
+    || snapshot.lineage.some((entry) => entry.status === 'started' || entry.status === 'yielded')
     || terminals.some((terminal) => terminal.status === 'starting' || terminal.status === 'running')
     || snapshot.continuity.contextPressure === 'medium';
   if (active) return 'active';
@@ -144,6 +242,9 @@ export function classifySessionActivity(
     || Boolean(showGit && snapshot.git?.isRepository && !snapshot.git.clean)
     || snapshot.tasks.length > 0
     || snapshot.subagents.length > 0
+    || snapshot.goals.length > 0
+    || snapshot.processes.length > 0
+    || snapshot.lineage.length > 0
     || terminals.length > 0;
   return passive ? 'passive' : 'none';
 }

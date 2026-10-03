@@ -47,6 +47,25 @@ async function countLines(filePath: string): Promise<number> {
   return content.split("\n").length;
 }
 
+// TF-0092: reading every tracked .ts/.tsx file with an unbounded Promise.all
+// exhausted file descriptors on large checkouts (EMFILE) before the gate could
+// report anything. Keep the scan bounded; the verdict semantics are unchanged.
+const LOC_SCAN_CONCURRENCY = 64;
+
+async function countLinesBatched(
+  filePaths: string[],
+): Promise<Array<{ filePath: string; lines: number }>> {
+  const results: Array<{ filePath: string; lines: number }> = [];
+  for (let start = 0; start < filePaths.length; start += LOC_SCAN_CONCURRENCY) {
+    const batch = filePaths.slice(start, start + LOC_SCAN_CONCURRENCY);
+    const batchResults = await Promise.all(
+      batch.map(async (filePath) => ({ filePath, lines: await countLines(filePath) })),
+    );
+    results.push(...batchResults);
+  }
+  return results;
+}
+
 async function main() {
   // Makes `... | head` safe.
   process.stdout.on("error", (error: NodeJS.ErrnoException) => {
@@ -61,9 +80,7 @@ async function main() {
     .filter((filePath) => existsSync(filePath))
     .filter((filePath) => filePath.endsWith(".ts") || filePath.endsWith(".tsx"));
 
-  const results = await Promise.all(
-    files.map(async (filePath) => ({ filePath, lines: await countLines(filePath) })),
-  );
+  const results = await countLinesBatched(files);
 
   const offenders = results
     .filter((result) => result.lines > maxLines)

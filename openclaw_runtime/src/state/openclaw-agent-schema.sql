@@ -36,3 +36,16 @@ CREATE TABLE IF NOT EXISTS auth_profile_state (
   state_json TEXT NOT NULL,
   updated_at INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS session_delete_operation_journal (
+  operation_id TEXT NOT NULL PRIMARY KEY,
+  manifest_json TEXT NOT NULL,
+  manifest_digest TEXT NOT NULL,
+  state TEXT NOT NULL,
+  receipt_json TEXT,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_session_delete_operation_journal_updated
+  ON session_delete_operation_journal(updated_at DESC);

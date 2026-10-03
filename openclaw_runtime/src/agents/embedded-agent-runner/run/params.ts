@@ -1,3 +1,4 @@
+import type { PreparedCompassContext } from "../../../context-engine/compass-context.js";
 /**
  * Shared parameter types for embedded-agent run orchestration.
  */
@@ -26,15 +27,13 @@ import type {
 } from "../../embedded-agent-subscribe.shared-types.js";
 import type { AgentInternalEvent } from "../../internal-events.js";
 import type { AgentMessage } from "../../runtime/index.js";
-import type {
-  RuntimeIntensityPreference,
-  RuntimeIntensitySource,
-} from "../../intensity-policy.js";
+import type { RuntimeIntensityPreference, RuntimeIntensitySource } from "../../intensity-policy.js";
 import type { SilentReplyPromptMode } from "../../system-prompt.types.js";
 import type { PromptMode } from "../../system-prompt.types.js";
 import type { EmbeddedAgentExecutionPhase } from "../execution-phase.js";
 import type { AuthProfileFailurePolicy } from "./auth-profile-failure-policy.types.js";
 import type { ResolvedChatKnowledgeRef } from "../../../context-engine/chat-knowledge-intent.js";
+import type { RuntimeLineage } from "../../../runtime-core/lineage.js";
 export type { ClientToolDefinition } from "../../command/shared-types.js";
 
 export type EmbeddedRunTrigger = "cron" | "heartbeat" | "manual" | "memory" | "overflow" | "user";
@@ -193,6 +192,8 @@ export type RunEmbeddedAgentParams = {
    */
   runTimeoutOverrideMs?: number;
   runId: string;
+  /** Explicit Mission/Task Loop lineage supplied by a runtime owner. */
+  lineage?: RuntimeLineage;
   abortSignal?: AbortSignal;
   onExecutionStarted?: () => void;
   onExecutionPhase?: (info: {
@@ -241,10 +242,13 @@ export type RunEmbeddedAgentParams = {
   lane?: string;
   enqueue?: CommandQueueEnqueueFn;
   extraSystemPrompt?: string;
+  compassContext?: PreparedCompassContext;
   sourceReplyDeliveryMode?: SourceReplyDeliveryMode;
   silentReplyPromptMode?: SilentReplyPromptMode;
   internalEvents?: AgentInternalEvent[];
   inputProvenance?: InputProvenance;
+  /** Optional authoritative content sidecar; invalid values remain unknown at sinks. */
+  contentProvenance?: unknown;
   streamParams?: AgentStreamParams;
   ownerNumbers?: string[];
   enforceFinalTag?: boolean;

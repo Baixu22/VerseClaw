@@ -2,6 +2,7 @@
  * Builds extension factories available to embedded-agent runtime sessions.
  */
 import { randomUUID } from "node:crypto";
+import { log } from "./logger.js";
 import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import {
@@ -18,21 +19,34 @@ import {
   collectContextCandidate,
   createContextCandidate,
   reopenContextCandidateCollection,
+  type ContextCandidateProjection,
 } from "../../context-engine/context-candidate.js";
 import {
   packResolvedChatKnowledgeRef,
   type ResolvedChatKnowledgeRef,
 } from "../../context-engine/chat-knowledge-intent.js";
+import { resolveKillSwitchConfig } from "../../context-engine/kill-switch-config-source.js";
+import { isContextEnhancementKillSwitchEngaged } from "../../context-engine/enhancement-kill-switch.js";
+import { isWorkingMemoryRegatherEnabled } from "../../context-engine/working-memory-regather.js";
 import type { TurnInjectionChannel } from "../../context-engine/turn-injection-budget.js";
 import { dcsObservability } from "../../context-engine/dcs-observability.js";
 import type { BlockStoreApi, ContextBlock, ContextBlockSink } from "../../context-engine/block.js";
 import { BlockStore } from "../../context-engine/block-store.js";
 import { handleWorkingMemoryAction } from "../../context-engine/handlers/working-memory-handler.js";
-import { handleBeforeAgentStartToolRegistry, type ToolRegistryEntry } from "../../context-engine/handlers/tool-registry-handler.js";
-import { restoreChildState, buildChildHandoffFromParent, writeChildHandoffPack, CHILD_CONTEXT_READ_INSTRUCTION } from "../../context-engine/handlers/task-loop-handler.js";
+import {
+  handleBeforeAgentStartToolRegistry,
+  type ToolRegistryEntry,
+} from "../../context-engine/handlers/tool-registry-handler.js";
+import {
+  restoreChildState,
+  buildChildHandoffFromParent,
+  writeChildHandoffPack,
+  CHILD_CONTEXT_READ_INSTRUCTION,
+} from "../../context-engine/handlers/task-loop-handler.js";
 import { createWorkspaceFactStoreBridge } from "../../context-engine/views/factstore-bridge.js";
 import { resolveCompassConfig } from "../../runtime-core/memory-pre-reply-injection.js";
 import type { RuntimeMemoryQueryableFact } from "../../runtime-core/memory-context.js";
+import type { RuntimeLineage } from "../../runtime-core/lineage.js";
 import { createRuntimeMemoryRuntimeIntegration } from "../../runtime-core/memory-runtime-integration.js";
 import type { TrajectoryCapture } from "../../knowledge/sekb/trajectory-capture.js";
 import type { EmbeddedSekbRuntime, SekbInstallableAgent } from "./sekb-runtime.js";
@@ -41,6 +55,8 @@ import { isSubagentSessionKey } from "../../sessions/session-key-utils.js";
 import { openOpenClawStateDatabase } from "../../state/openclaw-state-db.js";
 import type { ProviderRuntimeModel } from "../../plugins/provider-runtime-model.types.js";
 import {
+  clearTaskStateHandlerConfig,
+  getTaskStateHandlerConfig,
   setTaskStateHandlerConfig,
 } from "../harness/lifecycle-hook-helpers.js";
 import { setCompactionSafeguardRuntime } from "../agent-hooks/compaction-safeguard-runtime.js";
@@ -156,9 +172,9 @@ export function isContextBlockProjectionEnabled(cfg: OpenClawConfig | undefined)
   return hasContextBlockProjection(resolveContextBlockProjectionFlags(cfg));
 }
 
-function readWorkingMemoryEnvelope(details: unknown):
-  | { result_summary: string; significance: "high" | "medium" | "low" }
-  | undefined {
+function readWorkingMemoryEnvelope(
+  details: unknown,
+): { result_summary: string; significance: "high" | "medium" | "low" } | undefined {
   const detailsRecord = recordFromUnknown(details);
   const workingMemory = recordFromUnknown(detailsRecord.working_memory);
   const resultSummary = workingMemory.result_summary;
@@ -175,6 +191,10 @@ function readWorkingMemoryEnvelope(details: unknown):
   };
 }
 
+export type PrepareEmbeddedContext = (
+  messages: AgentMessage[],
+) => Promise<ContextCandidateProjection | undefined>;
+
 function buildContextBlockFactory(params: {
   sessionId?: string;
   sessionKey?: string;
@@ -189,6 +209,8 @@ function buildContextBlockFactory(params: {
   /** KS-04: DCS-admitted typed knowledge refs for this model call. */
   chatKnowledgeRefs?: ResolvedChatKnowledgeRef[];
   objective?: string;
+  prepareToolRegistry?: () => Promise<void>;
+  registerContextPreparation?: (prepare: PrepareEmbeddedContext) => void;
 }): ExtensionFactory {
   const sessionId = params.sessionKey?.trim() || params.sessionId?.trim();
   let currentBlockStore: Pick<BlockStoreApi, "query" | "upsert"> | undefined =
@@ -238,7 +260,9 @@ function buildContextBlockFactory(params: {
                 // The memory store intentionally returns deep-frozen snapshots.
                 // buildPreReplyInjection only reads them, so clone into mutable
                 // plain objects for the legacy assembler input contract.
-                return frozenFacts.map((fact) => structuredClone(fact)) as RuntimeMemoryQueryableFact[];
+                return frozenFacts.map((fact) =>
+                  structuredClone(fact),
+                ) as RuntimeMemoryQueryableFact[];
               } catch {
                 return undefined;
               }
@@ -269,8 +293,19 @@ function buildContextBlockFactory(params: {
   let modelCallIndex = 0;
   let sawFirstContextCall = false;
   // Channels whose content already entered this attempt's transcript through an
-  // earlier projection. Later model calls must not collect them again.
+  // earlier projection. Later model calls must not collect them again —
+  // except working_memory when the T-B6 regather gate is on: it produces new
+  // Blocks as the tool loop runs, so it is re-queried and deduplicated by
+  // dedupKey instead of channel-skipped (see the context callback below).
   const injectedChannels = new Set<TurnInjectionChannel>();
+  // T-B6: dedupKeys of everything injected so far in this attempt
+  // (contentDigest is part of the dedupKey). Later model calls receive this
+  // set so re-collected working_memory content that did not change is
+  // dispositioned "duplicate" instead of injected twice.
+  const injectedDedupKeys = new Set<string>();
+  // RC-03: the provider-bound system prompt as it leaves before_agent_start;
+  // every sealed model call binds its digest.
+  let sealedSystemPrompt: string | undefined;
   async function finalizeCandidates(
     messages: AgentMessage[],
     options: {
@@ -278,6 +313,8 @@ function buildContextBlockFactory(params: {
       advanceModelCall?: boolean;
       /** F-01: seal only real model-call projections (default true). */
       seal?: boolean;
+      /** T-B6: dedupKeys injected by earlier model calls (regather gate). */
+      priorDedupKeys?: ReadonlySet<string>;
     } = {},
   ) {
     const turnId = params.injectionTurnId;
@@ -294,52 +331,57 @@ function buildContextBlockFactory(params: {
       existingCollection = undefined;
     }
     if (!existingCollection?.diagnostics.finalized) {
-      // KS-04: inject DCS-admitted typed knowledge refs through the same
-      // dcs-knowledge candidate channel used by the DCS Assembler. Denied refs
-      // are not injected and were already reported to the renderer. Once the
-      // knowledge channel was applied in an earlier model call of this attempt,
-      // later calls skip it (same exactly-once rule as the assembler channels).
-      if (!options.skipChannels?.includes("knowledge")) {
-        for (const ref of params.chatKnowledgeRefs ?? []) {
-        collectContextCandidate(
-          turnId,
-          createContextCandidate({
-            authorityObjectId: `chat-knowledge:${ref.owner}:${ref.subjectId}`,
-            authorityVersion: ref.revision,
-            sourceId: "dcs-knowledge",
-            channel: "knowledge",
-            target: "message",
-            text: packResolvedChatKnowledgeRef(ref),
-          }),
-        );
+      try {
+        await params.prepareToolRegistry?.();
+        // KS-04: inject DCS-admitted typed knowledge refs through the same
+        // dcs-knowledge candidate channel used by the DCS Assembler. Denied refs
+        // are not injected and were already reported to the renderer. Once the
+        // knowledge channel was applied in an earlier model call of this attempt,
+        // later calls skip it (same exactly-once rule as the assembler channels).
+        if (!options.skipChannels?.includes("knowledge")) {
+          for (const ref of params.chatKnowledgeRefs ?? []) {
+          collectContextCandidate(
+            turnId,
+            createContextCandidate({
+              authorityObjectId: `chat-knowledge:${ref.owner}:${ref.subjectId}`,
+              authorityVersion: ref.revision,
+              sourceId: "dcs-knowledge",
+              channel: "knowledge",
+              target: "message",
+              text: packResolvedChatKnowledgeRef(ref),
+            }),
+          );
+          }
         }
+        const hasProjectionSource = hasContextBlockProjection(params.projectionFlags);
+        const store = hasProjectionSource ? getBlockStore() : undefined;
+        // DCS Stage 4: pass the production contextBlockSink so compass/role-memory
+        // knowledge Block writes are real when inputs are supplied (v3 task 3).
+        const assembler = new Assembler(
+          store || params.contextBlockSink
+            ? {
+                ...(store ? { workingMemoryStore: store } : {}),
+                ...(params.contextBlockSink ? { contextBlockSink: params.contextBlockSink } : {}),
+              }
+            : {},
+        );
+        await assembler.assemble(
+          {
+            session_id: sessionId ?? "",
+            turnId,
+            deferProjection: true,
+            ...(options.skipChannels && options.skipChannels.length > 0
+              ? { skipChannels: options.skipChannels }
+              : {}),
+          },
+          buildKnowledgeInputs(messages),
+          params.projectionFlags,
+        );
+      } catch (error) {
+        // Optional source reads were isolated by ExtensionRunner before eager
+        // preparation. Keep that behavior while still arbitrating collected candidates.
+        log.warn(`context source preparation failed: ${String(error)}`);
       }
-      const hasProjectionSource = hasContextBlockProjection(params.projectionFlags);
-      const store = hasProjectionSource ? getBlockStore() : undefined;
-      // DCS Stage 4: pass the production contextBlockSink so compass/role-memory
-      // knowledge Block writes are real when inputs are supplied (v3 task 3).
-      const assembler = new Assembler(
-        store || params.contextBlockSink
-          ? {
-              ...(store ? { workingMemoryStore: store } : {}),
-              ...(params.contextBlockSink
-                ? { contextBlockSink: params.contextBlockSink }
-                : {}),
-            }
-          : {},
-      );
-      await assembler.assemble(
-        {
-          session_id: sessionId ?? "",
-          turnId,
-          deferProjection: true,
-          ...(options.skipChannels && options.skipChannels.length > 0
-            ? { skipChannels: options.skipChannels }
-            : {}),
-        },
-        buildKnowledgeInputs(messages),
-        params.projectionFlags,
-      );
     }
     const finalized = finalizeContextOrchestratorTurn({
       turnId,
@@ -349,7 +391,12 @@ function buildContextBlockFactory(params: {
       cfg: params.cfg,
       attemptIndex: params.attemptIndex,
       modelCallIndex,
+      systemPrompt: sealedSystemPrompt,
       seal: options.seal !== false,
+      priorDedupKeys: options.priorDedupKeys,
+      // FP-P2-06: a DCS-enabled attempt holds the DCS injection capacity in the
+      // ledger before the projection charges the lower-precedence CVK addition.
+      dcsProjectionEnabled: hasContextBlockProjection(params.projectionFlags),
     });
     // The projection that just sealed is the one that will enter the
     // transcript (or was already consumed for the system prompt); remember
@@ -357,6 +404,7 @@ function buildContextBlockFactory(params: {
     for (const entry of finalized.projection.lineage) {
       if (entry.charsApplied > 0) {
         injectedChannels.add(entry.channel);
+        injectedDedupKeys.add(entry.dedupKey);
       }
     }
     if (!projectionObservabilityRecorded) {
@@ -377,6 +425,11 @@ function buildContextBlockFactory(params: {
     }
     return finalized;
   }
+  // The runner needs the same admitted projection for its overflow precheck,
+  // after orphan repair but before prompt submission. Later events reuse it.
+  params.registerContextPreparation?.(
+    async (messages) => (await finalizeCandidates(messages, { seal: false }))?.projection,
+  );
   return (agent) => {
     if (params.projectionFlags[contextBlockFlagNameForSourceSystem("working-memory")]) {
       agent.on("tool_result", (rawEvent: unknown) => {
@@ -391,15 +444,17 @@ function buildContextBlockFactory(params: {
         const significance: "high" | "medium" = envelope.significance;
         return enqueue(async () => {
           const store = getBlockStore();
-          const sink = params.contextBlockSink ?? (store
-            ? async (writes: Parameters<ContextBlockSink>[0]) => {
-                const results = [];
-                for (const write of writes) {
-                  results.push(await store.upsert(write.block, write.admission));
+          const sink =
+            params.contextBlockSink ??
+            (store
+              ? async (writes: Parameters<ContextBlockSink>[0]) => {
+                  const results = [];
+                  for (const write of writes) {
+                    results.push(await store.upsert(write.block, write.admission));
+                  }
+                  return results;
                 }
-                return results;
-              }
-            : undefined);
+              : undefined);
           if (!sink) {
             return undefined;
           }
@@ -446,10 +501,14 @@ function buildContextBlockFactory(params: {
         // message list is never sent, so no ContextBundle is sealed for it.
         const finalized = await finalizeCandidates([], { seal: false });
         const addition = finalized?.projection.systemPromptAddition;
-        if (!addition) return undefined;
         const base = recordFromUnknown(event).systemPrompt;
+        if (!addition) {
+          sealedSystemPrompt = typeof base === "string" ? base : undefined;
+          return undefined;
+        }
         const systemPrompt =
           typeof base === "string" && base.length > 0 ? `${base}\n\n${addition}` : addition;
+        sealedSystemPrompt = systemPrompt;
         return { systemPrompt };
       });
     }
@@ -467,12 +526,26 @@ function buildContextBlockFactory(params: {
         // sealed at before_agent_start (modelCallIndex 0). Every later callback
         // is a new model call: skip channels already injected into the
         // transcript and collect only what the tool loop produced since the
-        // last call (working_memory), sealing modelCallIndex N.
+        // last call, sealing modelCallIndex N.
+        //
+        // T-B6 (TF-0126): working_memory produces new Blocks as the tool loop
+        // runs, so with the regather gate on it is NOT channel-skipped on
+        // later calls — it is re-queried, and unchanged content is
+        // deduplicated by dedupKey (contentDigest) via priorDedupKeys. Gate
+        // off: legacy permanent skip, byte-identical behavior.
         const isFirstContextCall = !sawFirstContextCall;
         sawFirstContextCall = true;
+        const regatherEnabled = isWorkingMemoryRegatherEnabled(
+          resolveKillSwitchConfig(process.env),
+          process.env,
+        );
+        const nextSkipChannels = [...injectedChannels].filter(
+          (channel) => !(regatherEnabled && channel === "working_memory"),
+        );
         const finalized = await finalizeCandidates(messages as AgentMessage[], {
           advanceModelCall: !isFirstContextCall,
-          ...(!isFirstContextCall ? { skipChannels: [...injectedChannels] } : {}),
+          ...(!isFirstContextCall ? { skipChannels: nextSkipChannels } : {}),
+          priorDedupKeys: regatherEnabled ? injectedDedupKeys : undefined,
         });
         return { messages: finalized?.messages ?? messages };
       }
@@ -484,9 +557,7 @@ function buildContextBlockFactory(params: {
         store || params.contextBlockSink
           ? {
               ...(store ? { workingMemoryStore: store } : {}),
-              ...(params.contextBlockSink
-                ? { contextBlockSink: params.contextBlockSink }
-                : {}),
+              ...(params.contextBlockSink ? { contextBlockSink: params.contextBlockSink } : {}),
             }
           : {},
       );
@@ -574,11 +645,12 @@ function buildContextPruningFactory(params: {
  * this handler is a parallel, flag-gated producer.
  */
 function buildToolRegistryFactory(params: {
+  cfg?: OpenClawConfig;
   sessionKey?: string;
   sessionId?: string;
   contextBlockSink?: ContextBlockSink;
   toolEntries?: ToolRegistryEntry[];
-}): ExtensionFactory | undefined {
+}): { factory: ExtensionFactory; prepare: () => Promise<void> } | undefined {
   const sessionKey = params.sessionKey?.trim() || params.sessionId?.trim();
   // Omit when missing deps or empty tool list: empty array is a valid mapped
   // production tools result (e.g. tools disabled) and must not register a
@@ -593,8 +665,10 @@ function buildToolRegistryFactory(params: {
   }
   const entries = params.toolEntries;
   const sink = params.contextBlockSink;
-  return (agent) => {
-    agent.on("before_agent_start", async () => {
+  let preparation: Promise<void> | undefined;
+  const prepare = () =>
+    (preparation ??= (async () => {
+      if (isContextEnhancementKillSwitchEngaged(params.cfg)) return;
       try {
         await handleBeforeAgentStartToolRegistry({
           sessionId: sessionKey,
@@ -604,8 +678,12 @@ function buildToolRegistryFactory(params: {
       } catch {
         // Best-effort write; failure does not block agent start.
       }
-      return undefined;
-    });
+    })());
+  return {
+    prepare,
+    factory: (agent) => {
+      agent.on("before_agent_start", prepare);
+    },
   };
 }
 
@@ -613,7 +691,7 @@ function buildToolRegistryFactory(params: {
  * DCS Stage 2: Build the task-state extension factory.
  *
  * Registers a `before_agent_start` handler that restores the child HandoffPack
- * from BlockStore for subagent sessions. Also sets the global task-state handler
+ * from BlockStore for subagent sessions. Also registers a run-scoped task-state handler
  * config so that `runAgentHarnessTaskPhaseChangeHook` can produce system-managed
  * task_state Block writes and trigger terminal-phase SEKB trajectory capture.
  *
@@ -621,6 +699,8 @@ function buildToolRegistryFactory(params: {
  * sink and no store), so it does not register an empty extension.
  */
 function buildTaskStateFactory(params: {
+  runId?: string;
+  lineage?: RuntimeLineage;
   sessionKey?: string;
   sessionId?: string;
   contextBlockSink?: ContextBlockSink;
@@ -638,18 +718,25 @@ function buildTaskStateFactory(params: {
   const hasSink = Boolean(params.contextBlockSink);
   const hasStore = Boolean(params.workingMemoryStore);
   if (!hasSink && !hasStore) {
+    // A failed/disabled DCS initialization must invalidate only this run's
+    // prior registration; another embedded run may still be active.
+    clearTaskStateHandlerConfig({ runId: params.runId, sessionId: sessionKey });
     return undefined;
   }
 
-  // Set the global task-state handler config so that
+  // Register the run-scoped task-state handler config so that
   // runAgentHarnessTaskPhaseChangeHook can produce task_state Block writes
   // and trigger terminal-phase SEKB trajectory capture.
   setTaskStateHandlerConfig({
+    ...(params.runId ? { runId: params.runId } : {}),
+    ...(params.runId ? { ownerRunId: params.runId } : {}),
+    ...(sessionKey ? { sessionId: sessionKey } : {}),
     ...(params.contextBlockSink ? { contextBlockSink: params.contextBlockSink } : {}),
     ...(params.workingMemoryStore ? { workingMemoryStore: params.workingMemoryStore } : {}),
     ...(params.trajectoryCapture ? { trajectoryCapture: params.trajectoryCapture } : {}),
     ...(params.objective ? { objective: params.objective } : {}),
     ...(params.parentSessionId ? { parentSessionId: params.parentSessionId } : {}),
+    ...(params.lineage ? { lineage: params.lineage } : {}),
   });
 
   // DCS Stage 2: Parent writes child HandoffPack before spawn.
@@ -737,6 +824,10 @@ function buildTaskStateFactory(params: {
 function buildSekbFactory(params: {
   sekbRuntime?: EmbeddedSekbRuntime;
   cfg?: OpenClawConfig | undefined;
+  lineage?: RuntimeLineage;
+  runId?: string;
+  sessionId?: string;
+  sessionKey?: string;
 }): ExtensionFactory | undefined {
   // sekbRuntime is only supplied when resolveEmbeddedSekbRuntime saw enablement
   // (config and/or OPENCLAW_SEKB_ENABLED). Gate on the runtime object so env-only
@@ -746,7 +837,14 @@ function buildSekbFactory(params: {
   }
   const runtime = params.sekbRuntime;
   return (agent) => {
-    installEmbeddedSekbHarnessHooks(agent as unknown as SekbInstallableAgent, runtime);
+    const lineage = params.lineage
+      ? params.lineage
+      : () =>
+          getTaskStateHandlerConfig({
+            runId: params.runId,
+            sessionId: params.sessionKey ?? params.sessionId,
+          })?.lineage;
+    installEmbeddedSekbHarnessHooks(agent as unknown as SekbInstallableAgent, runtime, lineage);
   };
 }
 
@@ -760,6 +858,7 @@ export function buildEmbeddedExtensionFactories(params: {
   sessionId?: string;
   sessionKey?: string;
   runId?: string;
+  lineage?: RuntimeLineage;
   injectionTurnId?: string;
   attemptIndex?: number;
   contextBlockSink?: ContextBlockSink;
@@ -772,6 +871,7 @@ export function buildEmbeddedExtensionFactories(params: {
   writeSet?: string[];
   toolEntries?: ToolRegistryEntry[];
   chatKnowledgeRefs?: ResolvedChatKnowledgeRef[];
+  registerContextPreparation?: (prepare: PrepareEmbeddedContext) => void;
 }): ExtensionFactory[] {
   const factories: ExtensionFactory[] = [];
   if (resolveEffectiveCompactionMode(params.cfg) === "safeguard") {
@@ -798,19 +898,26 @@ export function buildEmbeddedExtensionFactories(params: {
       workspaceDir: params.workspaceDir,
       postCompactionSections: compactionCfg?.postCompactionSections,
       provider: compactionCfg?.provider,
+      promotionStage: compactionCfg?.promotionStage,
     });
     factories.push(compactionSafeguardExtension);
   }
   const projectionFlags = resolveContextBlockProjectionFlags(params.cfg);
   // DCS Stage 3: tool-registry Block producer on before_agent_start.
-  if (isToolRegistryEnabled(params.cfg)) {
-    const toolRegistryFactory = buildToolRegistryFactory(params);
-    if (toolRegistryFactory) {
-      factories.push(toolRegistryFactory);
-    }
+  const toolRegistry = isToolRegistryEnabled(params.cfg)
+    ? buildToolRegistryFactory(params)
+    : undefined;
+  if (toolRegistry) {
+    factories.push(toolRegistry.factory);
   }
   if (params.injectionTurnId || hasContextBlockProjection(projectionFlags)) {
-    factories.push(buildContextBlockFactory({ ...params, projectionFlags }));
+    factories.push(
+      buildContextBlockFactory({
+        ...params,
+        projectionFlags,
+        prepareToolRegistry: toolRegistry?.prepare,
+      }),
+    );
   }
   const pruningFactory = buildContextPruningFactory(params);
   if (pruningFactory) {

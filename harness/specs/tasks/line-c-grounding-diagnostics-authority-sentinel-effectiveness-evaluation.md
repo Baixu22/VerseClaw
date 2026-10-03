@@ -59,7 +59,7 @@ requiredTests:
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/line-c-grounding-diagnostics-authority-sentinel-hardening.md --no-diff
   - node node_modules/vitest/vitest.mjs run tests/unit/runtime-grounding-authority-effectiveness.test.ts tests/unit/runtime-grounding-shadow-consumers.test.ts
   - node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - git diff --check -- harness/specs/tasks/line-c-grounding-diagnostics-authority-sentinel-effectiveness-evaluation.md runtime-research/handoffs/line-c-grounding-diagnostics-authority-sentinel-effectiveness-evaluation/design-research.md runtime-research/handoffs/line-c-grounding-diagnostics-authority-sentinel-effectiveness-evaluation/quantitative-evaluation.md runtime-research/handoffs/line-c-grounding-diagnostics-authority-sentinel-effectiveness-evaluation/implementation-synthesis.md tests/unit/runtime-grounding-authority-effectiveness.test.ts
+  - git diff --check -- harness/specs/tasks/line-c-grounding-diagnostics-authority-sentinel-effectiveness-evaluation.md docs/dev/runtime-research-boundaries.md tests/unit/runtime-grounding-authority-effectiveness.test.ts
   - rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components electron shared --glob '!**/*.md'
   - rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components --glob '!**/*.md'
   - rg -n 'createServer\(|listen\(|WebSocketServer|new WebSocket\(|OTLP|Collector|opentelemetry.*export|@opentelemetry/exporter|@temporalio|express\(|daemon|listener|service|database|sqlite|postgres|mysql|redis|sidecar' <line-c-effectiveness-evaluation-touched-files>
@@ -88,9 +88,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-c-grounding-diagnostics-authority-sentinel-effectiveness-evaluation/design-research.md
-    - runtime-research/handoffs/line-c-grounding-diagnostics-authority-sentinel-effectiveness-evaluation/quantitative-evaluation.md
-    - runtime-research/handoffs/line-c-grounding-diagnostics-authority-sentinel-effectiveness-evaluation/implementation-synthesis.md
+    - docs/dev/runtime-research-boundaries.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

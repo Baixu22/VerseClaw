@@ -25,7 +25,8 @@
     "runtime": "Runtime Lessons",
     "review": "Review",
     "governance": "Governance",
-    "sources": "Источники"
+    "sources": "Источники",
+    "reviewQueue": "Очередь проверки"
   },
   "actions": {
     "more": "Другие действия",
@@ -128,7 +129,7 @@
     "roleId": "knowledge-librarian",
     "currentDocument": "Текущий документ",
     "noSummary": "Напишите или откройте Markdown-документ, чтобы дать контекст библиотекарю.",
-    "openAssistant": "Открыть библиотекаря",
+    "openAssistant": "Спросить базу знаний",
     "askSteward": "Попросить steward",
     "related": "Связанные страницы",
     "noRelated": "Результаты поиска и связанные страницы появятся здесь.",
@@ -232,7 +233,9 @@
       "stewardReview": "Проверка steward",
       "openInbox": "Открыть inbox",
       "submitDraft": "Отправить черновик"
-    }
+    },
+    "chatTitle": "Спросить базу знаний",
+    "backToChat": "Вернуться в чат"
   },
   "inbox": {
     "title": "Knowledge Inbox",
@@ -412,7 +415,8 @@
       "semantic": "Семантический",
       "defaultRole": "Роль по умолчанию",
       "close": "Закрыть"
-    }
+    },
+    "prepareProposal": "Подготовить предложение"
   },
   "runtime": {
     "title": "Runtime Lessons",
@@ -484,7 +488,7 @@
       "shadow": "Отчет теневой оценки готов"
     },
     "captureTitle": "Захват траектории",
-    "captureDescription": "Записать траекторию задачи в SEKB для последующей дистилляции.",
+    "captureDescription": "Ручные траектории предназначены только для аудита и не становятся кандидатами на дистилляцию.",
     "outcome": "Результат",
     "outcomeSuccess": "Успех",
     "outcomePartial": "Частично",
@@ -506,7 +510,15 @@
     "shadowKeyPlaceholder": "Ключ для офлайн-данных оценки",
     "shadowReport": "Сгенерировать отчет",
     "shadowRunning": "Генерация…",
-    "dcsWriteLabel": "Запись DCS"
+    "dcsWriteLabel": "Запись DCS",
+    "lineageSession": "Сессия",
+    "lineageMission": "Миссия",
+    "lineageTick": "Тик",
+    "lineageLoop": "Цикл",
+    "lineageTrace": "Трасса",
+    "lineageLedger": "Журнал задач",
+    "sourceTrajectories": "Исходные траектории",
+    "confirmProvenance": "Сессия {{sessionId}} · источники {{trajectories}}"
   },
   "governance": {
     "title": "Governance",
@@ -659,6 +671,29 @@
     },
     "toasts": {
       "proposed": "Предложение жизненного цикла создано и ожидает подтверждения."
+    }
+  },
+  "reviewQueue": {
+    "filterLabel": "Тип записи для проверки",
+    "filters": {
+      "all": "Все",
+      "inbox": "Входящие",
+      "draft": "Черновики",
+      "proposal": "Предложения"
+    },
+    "search": "Поиск записей для проверки",
+    "empty": "Нет записей, соответствующих фильтру.",
+    "back": "Назад к очереди проверки",
+    "status": {
+      "pending": "Ожидает",
+      "draft": "Черновик",
+      "steward_reviewed": "Проверено куратором",
+      "proposed": "Предложено",
+      "approved": "Одобрено",
+      "rejected": "Отклонено",
+      "applied": "Применено",
+      "promoted": "Перенесено в черновики",
+      "dismissed": "Исключено"
     }
   }
 }

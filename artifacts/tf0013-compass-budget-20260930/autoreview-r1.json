@@ -1,0 +1,18 @@
+{
+  "findings": [
+    {
+      "body": "`compassContext` is prepared here but never assigned to `followupRun.run`. Both immediate execution and queued followups read it exclusively from that run object, so they always receive `undefined`. Since this patch also removes SSP/retrieval from `extraSystemPromptParts`, ordinary auto-replies now lose all COMPASS context, and `appliedFactIds` remains empty for post-reply metrics. Add `compassContext` to the constructed run payload and cover the preparation-to-execution path; the new tests pass context directly to lower-level runners and therefore miss this regression.",
+      "category": "regression",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/auto-reply/reply/get-reply-run.ts",
+        "line": 628
+      },
+      "confidence": 1,
+      "priority": "P1",
+      "title": "Forward prepared COMPASS context into the followup run payload"
+    }
+  ],
+  "overall_confidence": 0.99,
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The budget projection and downstream forwarding are implemented, but the production reply entry never supplies the prepared context to them. This disables COMPASS injection for ordinary immediate and queued replies. Review used read-only inspection; no tests were run."
+}

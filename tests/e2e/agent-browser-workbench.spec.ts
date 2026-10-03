@@ -1,8 +1,4 @@
-import { mkdir } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
 import { completeSetup, expect, installIpcMocks, test } from './fixtures/electron';
-
-const EVIDENCE_DIR = resolve(process.cwd(), 'artifacts', 'first-product-preview', 'FP-P4-02');
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -14,7 +10,7 @@ function stableStringify(value: unknown): string {
 }
 
 test.describe('Agent Browser workbench', () => {
-  test('shows real Host API session, task, profile, and Vault metadata', async ({ electronApp, page }) => {
+  test('shows Host API session, task, profile, and Vault metadata at their workspace destinations', async ({ electronApp, page }, testInfo) => {
     await installIpcMocks(electronApp, {
       hostApi: {
         [stableStringify(['agentBrowser', 'status', null])]: {
@@ -149,6 +145,10 @@ test.describe('Agent Browser workbench', () => {
             updatedAt: '2026-07-11T08:00:00.000Z',
           }],
         },
+        [stableStringify(['agentBrowser', 'vaultHealth', null])]: {
+          success: true,
+          health: { state: 'ready', path: '/mock/vault.json', credentialCount: 1 },
+        },
         [stableStringify(['agentBrowser', 'approveTask', { taskId: 'task-3' }])]: {
           success: true,
           task: { id: 'task-3', status: 'completed' },
@@ -161,42 +161,55 @@ test.describe('Agent Browser workbench', () => {
     });
 
     await completeSetup(page);
+    await page.setViewportSize({ width: 1280, height: 800 });
     await page.getByTestId('sidebar-footer-menu-trigger').click();
     await page.getByTestId('sidebar-more-browser').click();
-    const diskSpaceNotice = page.getByText('Disk space is running low', { exact: true });
-    if (await diskSpaceNotice.isVisible().catch(() => false)) {
-      await diskSpaceNotice.locator('xpath=ancestor::*[@data-sonner-toast][1]').getByRole('button').click();
-    }
-    await expect(page.getByTestId('browser-workbench')).toBeVisible();
-    await expect(page.getByText('Operations dashboard')).toBeVisible();
-    await expect(page.getByText('https://example.com/dashboard')).toBeVisible();
+    const live = page.getByTestId('workspace-browser-live');
+    await expect(live).toBeVisible();
+    await expect(live.getByRole('combobox')).toHaveValue('session-1');
+    await expect(live.getByRole('option', { name: 'Operations dashboard' })).toHaveCount(1);
+    await expect(live.locator('input.rs-browser-address-input')).toHaveValue('https://example.com/dashboard');
+    await page.screenshot({ path: testInfo.outputPath('browser-live-1280.png') });
 
-    await page.getByRole('tab', { name: /Tasks|任务|タスク|Задачи/ }).click();
-    await expect(page.getByText('Check dashboard')).toBeVisible();
-    await expect(page.getByText('Resume interrupted audit')).toBeVisible();
-    await expect(page.getByText('Interrupted', { exact: true })).toBeVisible();
-    await expect(page.getByTestId('task-row-task-2').getByRole('button', { name: 'Retry' })).toBeVisible();
-    await expect(page.getByTestId('task-steps-task-1')).toContainText(/Wait for element|等待元素|要素を待機|Ждать элемент/);
-    await expect(page.getByText(/Verified|验证通过|検証済み|Проверено/)).toBeVisible();
-    await expect(page.getByText(/Verification failed|验证失败|検証失敗|Проверка не пройдена/)).toBeVisible();
-    await expect(page.getByTestId('task-approval-task-3')).toContainText('example.com');
-    await mkdir(EVIDENCE_DIR, { recursive: true });
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.screenshot({ path: join(EVIDENCE_DIR, 'browser-workbench-desktop.png'), fullPage: true });
-    await page.setViewportSize({ width: 720, height: 900 });
-    await page.screenshot({ path: join(EVIDENCE_DIR, 'browser-workbench-narrow.png'), fullPage: true });
-    await page.getByTestId('task-row-task-3').screenshot({ path: join(EVIDENCE_DIR, 'browser-approval-narrow.png') });
-    await page.getByRole('button', { name: /Approve and run|批准并运行|承認して実行|Подтвердить и запустить/ }).click();
+    await page.getByTestId('sidebar-nav-cron').click();
+    await page.getByTestId('scheduled-source-browser-task').click();
+    await expect(page.getByTestId('browser-task-card-task-1')).toContainText('Check dashboard');
+    await expect(page.getByTestId('browser-task-card-task-2')).toContainText('Resume interrupted audit');
+    await page.getByTestId('browser-task-card-task-2').click();
+    const detail = page.getByTestId('browser-task-detail-panel');
+    await expect(detail).toContainText('Interrupted');
+    await expect(detail.getByRole('button', { name: 'Retry' })).toBeVisible();
+    await page.getByTestId('scheduled-detail-back').click();
+    await page.getByTestId('browser-task-card-task-1').click();
+    await expect(page.getByTestId('browser-detail-steps')).toContainText('Wait for element');
+    await expect(page.getByTestId('browser-detail-verification')).toContainText('Verified');
+    await page.getByTestId('scheduled-detail-back').click();
+    await page.getByTestId('browser-task-card-task-4').click();
+    await expect(page.getByTestId('browser-detail-verification')).toContainText('Verification failed');
+    await page.getByTestId('scheduled-detail-back').click();
+    await page.getByTestId('browser-task-card-task-3').click();
+    await expect(page.getByTestId('browser-detail-domains')).toContainText('example.com');
+    await page.screenshot({ path: testInfo.outputPath('browser-tasks-1280.png') });
+    await page.setViewportSize({ width: 960, height: 800 });
+    await page.screenshot({ path: testInfo.outputPath('browser-tasks-960.png') });
+    await detail.screenshot({ path: testInfo.outputPath('browser-approval-960.png') });
+    await page.getByTestId('browser-detail-approve').click();
     const approveCalls = await electronApp.evaluate(() => (
       (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> }).__verseClawE2eHostCalls ?? []
     ).filter((call) => call.module === 'agentBrowser' && call.action === 'approveTask'));
     expect(approveCalls).toEqual([{ module: 'agentBrowser', action: 'approveTask', payload: { taskId: 'task-3' } }]);
-    await page.getByTestId('task-row-task-5').getByRole('button').click();
+    await page.getByTestId('scheduled-detail-back').click();
+    await page.getByTestId('browser-task-card-task-5').click();
+    await detail.getByRole('button', { name: 'Cancel', exact: true }).click();
     const cancelCalls = await electronApp.evaluate(() => (
       (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> }).__verseClawE2eHostCalls ?? []
     ).filter((call) => call.module === 'agentBrowser' && call.action === 'cancelTask'));
     expect(cancelCalls).toEqual([{ module: 'agentBrowser', action: 'cancelTask', payload: { taskId: 'task-5' } }]);
-    await page.getByRole('tab', { name: /Vault|凭据库|保管庫|Хранилище/ }).click();
+    await page.getByTestId('scheduled-detail-back').click();
+    await page.getByTestId('scheduled-browser-settings').click();
+    await expect(page.getByTestId('browser-settings-panel')).toBeVisible();
+    await expect(page.getByTestId('browser-profile-work')).toContainText('Work');
+    await page.getByTestId('browser-settings-view').getByRole('button', { name: 'Vault' }).click();
     await expect(page.getByText('ada@example.com')).toBeVisible();
     await expect(page.locator('body')).not.toContainText('password');
   });

@@ -16,7 +16,7 @@ import {
 import {
   adaptMemoryEmbeddingProvider,
   probeEmbeddingDimension,
-} from "../../openclaw_runtime/src/context-engine/runtime-embedding-adapter";
+} from "../../openclaw_runtime/experiments/runtime-embedding-adapter";
 import type { MemoryEmbeddingProvider } from "../../openclaw_runtime/src/plugins/memory-embedding-providers";
 import { createRuntimeMemoryPersistenceStore } from "../../openclaw_runtime/src/runtime-core/memory-persistence";
 import {
@@ -94,7 +94,7 @@ function makeFact(
     objectSummary,
     taskId: "emb_test",
     ...overrides,
-  });
+  } as never);
 }
 
 afterEach(() => {
@@ -160,7 +160,7 @@ describe("runtime memory embedding integration", () => {
   });
 
   it("persists and retrieves embeddings through the persistence store", () => {
-    const dbPath = createTempDbPath("emb-persist-", tempDirs);
+    const dbPath = createTempDbPath("emb-persist-");
     const store = createRuntimeMemoryPersistenceStore({
       config: PERSIST_CONFIG,
       database: { path: dbPath },
@@ -247,7 +247,7 @@ describe("runtime memory embedding integration", () => {
     const result = await memoryProvider.getContext({
       taskId: "emb_test",
       metadata: { memoryQuery: { subject: "User", predicate: "knows" } },
-    });
+    }) as { status: string; contextItems: unknown[] };
 
     expect(result.status).toBe("success");
     expect(result.contextItems.length).toBeGreaterThan(0);
@@ -268,7 +268,7 @@ describe("runtime memory embedding integration", () => {
     const result = await memoryProvider.getContext({
       taskId: "emb_test",
       metadata: { memoryQuery: { subject: "User", predicate: "knows" } },
-    });
+    }) as { status: string; contextItems: unknown[] };
 
     expect(result.status).toBe("success");
     expect(result.contextItems.length).toBeGreaterThan(0);

@@ -91,7 +91,7 @@ function seedConversationFacts(
     const fact = turnToFact(turn, conversation.conversationId);
     const result = store.appendFact(fact);
     if (result.status === "persisted") {
-      facts.push(result.value);
+      facts.push(result.value as never);
     }
   }
   return facts;

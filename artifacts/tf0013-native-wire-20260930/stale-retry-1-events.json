@@ -1,0 +1,75 @@
+[
+  {
+    "stream": "codex_app_server.lifecycle",
+    "data": {
+      "phase": "startup"
+    }
+  },
+  {
+    "stream": "codex_app_server.lifecycle",
+    "data": {
+      "phase": "thread_ready",
+      "threadId": "01a0f344-d0bb-7d70-87e5-681152db720b"
+    }
+  },
+  {
+    "stream": "codex_app_server.lifecycle",
+    "data": {
+      "phase": "turn_starting",
+      "threadId": "01a0f344-d0bb-7d70-87e5-681152db720b"
+    }
+  },
+  {
+    "stream": "lifecycle",
+    "data": {
+      "phase": "start",
+      "startedAt": 1790787768266
+    }
+  },
+  {
+    "stream": "codex_app_server.item",
+    "data": {
+      "phase": "started",
+      "itemId": "9f1c6725-face-42f6-b5fe-e4f0f10ef132",
+      "type": "userMessage"
+    }
+  },
+  {
+    "stream": "codex_app_server.item",
+    "data": {
+      "phase": "completed",
+      "itemId": "9f1c6725-face-42f6-b5fe-e4f0f10ef132",
+      "type": "userMessage"
+    }
+  },
+  {
+    "stream": "codex_app_server.item",
+    "data": {
+      "phase": "started",
+      "itemId": "message-7",
+      "type": "agentMessage"
+    }
+  },
+  {
+    "stream": "codex_app_server.item",
+    "data": {
+      "phase": "completed",
+      "itemId": "message-7",
+      "type": "agentMessage"
+    }
+  },
+  {
+    "stream": "assistant",
+    "data": {
+      "text": "agent fixture complete"
+    }
+  },
+  {
+    "stream": "lifecycle",
+    "data": {
+      "startedAt": 1790787768266,
+      "endedAt": 1790787768577,
+      "phase": "end"
+    }
+  }
+]

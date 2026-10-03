@@ -46,11 +46,32 @@ type LlmRequestLog = {
   projections: Record<DcsProjectionChannel, string[]>;
 };
 
+/**
+ * The Gateway envelopes an inbound user message with a `[Sat 2026-09-19 19:22
+ * GMT+8] ` timestamp prefix, and the DCS projections arrive as `user` messages.
+ * Their heading is therefore never at the start of a line, so the original
+ * anchored `^## Knowledge$` never matched a real request: `measured[channel]`
+ * read 0 for channels the ledger correctly reported as `applied`.
+ *
+ * Keep the line-anchored shape — a passing mention of the heading inside other
+ * content must still not count — but tolerate the envelope prefix.
+ */
+const ENVELOPE_PREFIX_PATTERN = String.raw`(?:\[[^\]\n]*\]\s*)?`;
+
 const DCS_PROJECTION_PATTERNS: Record<DcsProjectionChannel, RegExp> = {
-  knowledge: /^## Knowledge$/m,
-  working_memory: /^## Recent Actions$/m,
-  tool_registry: /^## Tools \(\d+ available\)$/m,
+  knowledge: new RegExp(`^${ENVELOPE_PREFIX_PATTERN}## Knowledge$`, 'm'),
+  working_memory: new RegExp(`^${ENVELOPE_PREFIX_PATTERN}## Recent Actions$`, 'm'),
+  tool_registry: new RegExp(`^${ENVELOPE_PREFIX_PATTERN}## Tools \\(\\d+ available\\)$`, 'm'),
 };
+
+/**
+ * The ledger charges the projection text the assembler produced, before the
+ * Gateway envelope prefixes it. Strip a leading envelope prefix so the measured
+ * character count and `byChannel[channel].applied` are the same quantity.
+ */
+function stripEnvelopePrefix(content: string): string {
+  return content.replace(/^\[[^\]\n]*\]\s*/, '');
+}
 
 /**
  * Scripted OpenAI-compatible chat/completions endpoint. Chooses the next tool
@@ -254,7 +275,7 @@ function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmReq
             channel,
             messages.flatMap((message) =>
               typeof message.content === 'string' && pattern.test(message.content)
-                ? [message.content]
+                ? [stripEnvelopePrefix(message.content)]
                 : [],
             ),
           ]),
@@ -694,7 +715,30 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       // per-tool work panel (which carries the diff/verify text) is rendered.
       const summaryToggle = page.getByTestId('chat-turn-summary-toggle').first();
       if (await summaryToggle.count() > 0) {
-        await summaryToggle.click().catch(() => undefined);
+        /*
+         * No `.catch()` on the click on purpose: swallowing it turned a failed
+         * interaction into a silent `<no-activity>` log and then an unrelated
+         * assertion failure two lines later. The toggle is a controlled
+         * disclosure, so the panel only exists once the parent has committed the
+         * new `expanded` value — wait for it instead of reading immediately.
+         */
+        // A live turn may still be marked active when sendTurn resolves. Active
+        // cards are intentionally open by default, so only click when the
+        // disclosure is currently closed; an unconditional click would hide
+        // the details and make this assertion test the opposite behavior.
+        if (await summaryToggle.getAttribute('aria-expanded') !== 'true') {
+          await summaryToggle.click();
+        }
+        /*
+         * `aria-expanded` is the component's own view of the disclosure state,
+         * so asserting it first splits "the click never reached the state" from
+         * "the state says expanded but the panel is not rendered".
+         */
+        await expect
+          .poll(async () => summaryToggle.getAttribute('aria-expanded'), { timeout: 10_000 })
+          .toBe('true');
+        await expect(page.getByTestId('chat-turn-summary-details').first())
+          .toBeVisible({ timeout: 15_000 });
       }
       const activity = page.getByTestId('chat-turn-summary-details').first();
       const activityText = (await activity.count()) > 0 ? await activity.innerText() : '<no-activity>';
@@ -718,13 +762,13 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       expect(rendered).toContain('util.js');
       expect(rendered).toContain('AUTO_VERIFY_PASS');
 
-      const fileReceipts = page.getByTestId('chat-generated-files').getByRole('button');
-      await expect(fileReceipts).toHaveCount(2, { timeout: 30_000 });
-      await expect(fileReceipts.nth(0)).toContainText('util.js');
-      await expect(fileReceipts.nth(1)).toContainText('summary.txt');
-      await fileReceipts.nth(0).click();
-      await expect(page.getByTestId('artifact-panel')).toBeVisible();
-      await expect(page.getByTestId('monaco-diff-viewer')).toBeVisible();
+      // Text files with a complete patch are owned by the inline diff surface;
+      // the generated-file chip row intentionally omits them to avoid
+      // announcing the same mutation twice (see Generated file ownership).
+      const mutationDiffs = page.getByTestId('chat-mutation-diffs');
+      await expect(mutationDiffs).toBeVisible({ timeout: 30_000 });
+      await expect(mutationDiffs).toContainText('util.js');
+      await expect(mutationDiffs).toContainText('summary.txt');
 
       // Shared injection budget accounting after a REAL turn (FP-P1-11).
       const ack = await hostInvoke<Record<string, unknown>>(app, 'gateway', 'rpc', {
@@ -784,6 +828,19 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
         'tool_registry',
       ]));
       for (const channel of Object.keys(measured) as DcsProjectionChannel[]) {
+        /*
+         * FP-P2-06 acceptance (harness/specs/tasks/remote-forge-controlled-preview.md):
+         * with the three DCS projections enabled, all three must be
+         * provider-visible and each channel's measured characters must equal the
+         * ledger's `applied`. A channel the ledger charged but that never
+         * reached the request is the "charged but injected something else" bug
+         * this comparison exists to catch.
+         *
+         * Do NOT relax this to "present only if the ledger applied > 0": that
+         * would accept a dropped higher-precedence channel, which the same spec
+         * forbids ("a prior low-priority CVK charge cannot consume reserved
+         * higher-priority DCS capacity").
+         */
         expect(measured[channel].requestCount, channel).toBeGreaterThan(0);
         expect(measured[channel].messageCount, channel).toBeGreaterThan(0);
         expect(lastTurn?.byChannel?.[channel]?.applied, channel).toBe(measured[channel].chars);

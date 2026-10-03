@@ -1,6 +1,6 @@
 import { mkdirSync, copyFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { closeElectronApp, expect, getStableWindow, installIpcMocks, pinWindowContentSize, test } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
 const CLOUD_ARTIFACT_PATH = '/opt/cursor/artifacts/chat_assistant_rendering_visual.png';
@@ -237,7 +237,32 @@ test.describe('Verse Claw assistant-style rendering layer', () => {
       await expect(page.getByTestId('assistant-token-usage-roll')).toHaveCount(0);
       await expect(page.getByTestId('assistant-status-dot-matrix')).toHaveCount(0);
 
-      await page.setViewportSize({ width: 1280, height: 900 });
+      // Screenshot widths must come from the real window: Electron clamps
+      // `page.setViewportSize()` to the BrowserWindow, which is why these
+      // baselines drifted (they were committed at a ~960px window while the app
+      // default is 1280px). Pin the content size first, then wait for the
+      // renderer to actually re-lay-out — the sidebar density effect and the
+      // chat re-wrap land after the resize, and capturing in between freezes a
+      // half-relaid frame into the baseline. 800x844 is below the app's
+      // `minWidth: 960`, so it clamps to the minimum-window state.
+      const pinCapture = async (width: number, height: number) => {
+        await pinWindowContentSize(app, { width, height });
+        await page.setViewportSize({ width, height });
+        let previous = '';
+        for (let attempt = 0; attempt < 50; attempt += 1) {
+          const current = await page.evaluate(() => {
+            const container = document.querySelector<HTMLElement>('[data-testid="chat-scroll-container"]');
+            const rect = container?.getBoundingClientRect();
+            return `${window.innerWidth}x${window.innerHeight}|${Math.round(rect?.width ?? 0)}x${Math.round(rect?.height ?? 0)}`;
+          });
+          if (current === previous) return current;
+          previous = current;
+          await page.waitForTimeout(100);
+        }
+        throw new Error(`chat layout never settled at ${width}x${height}`);
+      };
+
+      await pinCapture(1280, 900);
       await expect(scrollContainer).toHaveScreenshot('assistant-render-chat-desktop-light.png', {
         animations: 'disabled',
         caret: 'hide',
@@ -250,7 +275,7 @@ test.describe('Verse Claw assistant-style rendering layer', () => {
         animations: 'disabled',
         caret: 'hide',
       });
-      await page.setViewportSize({ width: 800, height: 844 });
+      await pinCapture(800, 844);
       await page.evaluate(() => {
         document.documentElement.classList.remove('dark');
         document.documentElement.classList.add('light');
@@ -260,7 +285,7 @@ test.describe('Verse Claw assistant-style rendering layer', () => {
         animations: 'disabled',
         caret: 'hide',
       });
-      await page.setViewportSize({ width: 1280, height: 900 });
+      await pinCapture(1280, 900);
 
       await page.getByTestId('assistant-reasoning-panel').getByRole('button').click();
       await expect(page.getByText('Mapped runtime metadata into visible cards')).toBeVisible();

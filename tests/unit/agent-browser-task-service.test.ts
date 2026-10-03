@@ -233,7 +233,7 @@ describe('agent browser task service', () => {
         retryCount: 0,
         createdAt: '2026-07-19T10:00:00.000Z',
         updatedAt: '2026-07-19T10:00:00.000Z',
-      },
+      } as never,
       {
         id: 't2',
         name: 'Run',
@@ -246,7 +246,7 @@ describe('agent browser task service', () => {
         createdAt: '2026-07-19T10:00:00.000Z',
         updatedAt: '2026-07-19T10:00:00.000Z',
         sessionId: 's1',
-      },
+      } as never,
     ];
     const recovered = recoverTasksAfterRestart(tasks, '2026-07-19T11:00:00.000Z');
     expect(recovered[0]).toMatchObject({
@@ -276,6 +276,28 @@ describe('agent browser task service', () => {
     const raw = await readFile(storagePath, 'utf8');
     expect(raw).toContain('waiting-approval');
     await mkdir(join(root, 'nested'), { recursive: true }); // ensure path ops ok
+  });
+
+  it('persists workspace context as metadata without changing its approval gate', () => {
+    const service = new AgentBrowserTaskService({ execute: async (task) => passedExecution(task) });
+    const task = service.create({
+      name: 'Workspace health check',
+      url: 'https://example.com/status',
+      objective: 'Confirm the status page is available',
+      profile: 'default',
+      mode: 'headless',
+      workspaceId: 'workspace-demo',
+      sessionKey: 'agent:main:main',
+      agentId: 'main',
+    });
+
+    expect(task).toMatchObject({
+      workspaceId: 'workspace-demo',
+      sessionKey: 'agent:main:main',
+      agentId: 'main',
+      status: 'waiting-approval',
+      approval: { status: 'pending' },
+    });
   });
 
   it('rejects before execution and requires a fresh approval after retry', async () => {

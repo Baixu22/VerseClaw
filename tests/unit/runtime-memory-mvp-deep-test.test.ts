@@ -186,7 +186,7 @@ function runModuleA() {
 
   for (const candidate of candidates) {
     const decision = decideAUDN(candidate, accumulated, DEFAULT_WRITE_CURATION_CONFIG);
-    actionCounts[decision.action]++;
+    (actionCounts as Record<string, number>)[decision.action]++;
     if (decision.action === "NONE") {
       const reason = decision.reason;
       noneReasons[reason] = (noneReasons[reason] ?? 0) + 1;

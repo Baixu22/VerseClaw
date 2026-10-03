@@ -62,7 +62,7 @@ requiredTests:
   - If full diff-aware validate is blocked by unrelated dirty files, run Phase 30 validate with `--no-diff` and record the blocker.
   - C:\Users\27933\.cherrystudio\bin\rtk.exe node node_modules/vitest/vitest.mjs run tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts tests/unit/runtime-memory-read-hydration-consumer-evaluation.test.ts tests/unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts
   - C:\Users\27933\.cherrystudio\bin\rtk.exe node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - C:\Users\27933\.cherrystudio\bin\rtk.exe rg -n 'Gateway route|Electron IPC|renderer UI|host-api|api-client|shared contract|TaskLoop default|prompt injection|model-message|context injection|runtime authority|durable fact authority|DB write authority|mutation authority' openclaw_runtime/src/runtime-core/memory-read-hydration-consumer.ts tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts harness/specs/tasks/phase-30-runtime-memory-read-hydration-controlled-db-replay-regression-harness.md runtime-research/handoffs/phase-30-runtime-memory-read-hydration-controlled-db-replay-regression-harness/deep-validation.md
+  - C:\Users\27933\.cherrystudio\bin\rtk.exe rg -n 'Gateway route|Electron IPC|renderer UI|host-api|api-client|shared contract|TaskLoop default|prompt injection|model-message|context injection|runtime authority|durable fact authority|DB write authority|mutation authority' openclaw_runtime/src/runtime-core/memory-read-hydration-consumer.ts tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts harness/specs/tasks/phase-30-runtime-memory-read-hydration-controlled-db-replay-regression-harness.md docs/dev/runtime-research-boundaries.md
   - C:\Users\27933\.cherrystudio\bin\rtk.exe rg -n 'migrate|appendEpisode|appendFact|invalidateFact|ensureRuntimeMemoryPersistenceSchema|withWriteTransaction|trimRows|insertInto|updateTable|deleteFrom|DatabaseSync|node:sqlite|readRuntimeMemoryHydrationShadow|hydrateRuntimeMemoryShadowContext' openclaw_runtime/src/runtime-core/memory-read-hydration-consumer.ts
 acceptance:
   - Phase 30 starts only after AGENTS, scoped runtime AGENTS, Phase 28 task/deep-validation, Phase 29 task/deep-validation, existing hydration shadow helper, Phase 28 consumer, persistence, and related tests are read.
@@ -75,7 +75,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-30-runtime-memory-read-hydration-controlled-db-replay-regression-harness/deep-validation.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 30 Runtime Memory Read Hydration Controlled DB Replay Regression Harness

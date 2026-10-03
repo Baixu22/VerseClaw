@@ -4,16 +4,16 @@ import { GatewayRpcBackpressure } from '../../electron/gateway/rpc-backpressure'
 describe('GatewayRpcBackpressure', () => {
   it('coalesces duplicate in-flight chat.history requests', async () => {
     const backpressure = new GatewayRpcBackpressure({ maxConcurrentHistory: 2 });
-    let resolveRunner: ((value: unknown) => void) | null = null;
+    let resolveRunner = ((_value: unknown) => {}) as (value: unknown) => void;
     const runner = vi.fn(() => new Promise((resolve) => {
-      resolveRunner = resolve;
+      resolveRunner = resolve as typeof resolveRunner;
     }));
 
     const first = backpressure.run('chat.history', { sessionKey: 'agent:main:one', limit: 200 }, undefined, runner);
     const second = backpressure.run('chat.history', { limit: 200, sessionKey: 'agent:main:one' }, undefined, runner);
 
     expect(runner).toHaveBeenCalledTimes(1);
-    resolveRunner?.({ messages: ['ok'] });
+    resolveRunner({ messages: ['ok'] });
     await expect(first).resolves.toEqual({ messages: ['ok'] });
     await expect(second).resolves.toEqual({ messages: ['ok'] });
   });

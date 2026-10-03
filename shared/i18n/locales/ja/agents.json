@@ -668,6 +668,20 @@
         "backstoryTooltip": "任意: Agent の背景や特別な経験を説明し、より豊かな役割像を作ります",
         "backstoryPlaceholder": "任意: Agent の背景を説明..."
     },
+    "proposeFacts": {
+        "title": "事実確認キュー",
+        "description": "人間の確認を待つランタイムメモリの事実候補です。確認すると、所有者収束ゲートを通じて候補を永続的な事実に昇格します。単独で書き込むことはありません。",
+        "refresh": "更新",
+        "loading": "候補を読み込み中…",
+        "disabled": "事実提案キューは無効です。候補を確認するには、ランタイムメモリの shadow と proposeFacts を有効にしてください。",
+        "empty": "確認待ちの候補はありません。",
+        "confirm": "確認",
+        "confirmed": "事実を確認し、永続化しました。",
+        "notConfirmed": "確認されませんでした。選択されたメモリ所有者はこの事実の永続化を許可していません。",
+        "confidence": "信頼度 {{value}}",
+        "errorLoad": "確認キューを読み込めませんでした。",
+        "errorConfirm": "事実を確認できませんでした。"
+    },
     "toast": {
         "agentCreated": "Agent を作成しました",
         "agentCreateFailed": "Agent の作成に失敗しました: {{error}}",

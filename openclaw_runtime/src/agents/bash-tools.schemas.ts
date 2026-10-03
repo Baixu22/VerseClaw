@@ -20,6 +20,12 @@ export const execSchema = Type.Object({
     }),
   ),
   background: Type.Optional(Type.Boolean({ description: "Run in background immediately" })),
+  wait: Type.Optional(
+    Type.Union([Type.Literal("none"), Type.Literal("session"), Type.Literal("goal")], {
+      description:
+        "Exit/wake delivery mode. none/session keep legacy behavior; goal requires a bound mission and is default-off.",
+    }),
+  ),
   timeout: Type.Optional(
     Type.Number({
       description: "Timeout in seconds (optional, kills process on expiry)",

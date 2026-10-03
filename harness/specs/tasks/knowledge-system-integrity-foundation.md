@@ -40,7 +40,7 @@ requiredTests:
   - pnpm harness validate --no-diff --spec harness/specs/tasks/knowledge-system-integrity-foundation.md
   - git diff --check
 acceptance:
-  - one-plan-entrypoint: WORKTREE.md and the development plan point to the same serial KS-00..KS-09 route.
+  - one-plan-entrypoint: The tracked development plan and authority ADR define the same serial KS-00..KS-09 route; local WORKTREE.md is optional historical context, not a checkout prerequisite.
   - authority-matrix-frozen: ADR and plan agree on canonical owners, write boundaries, and product locks.
   - artifact-contract-frozen: ContextRef/v1, GovernanceProposal/v1, CompilationSnapshot, PromptPlan, RequestEnvelope, CapabilityGrant, and EffectReceipt are named consistently.
   - dirty-wip-labelled: baseline evidence lists relevant concurrent WIP and explicitly separates implementation from verified evidence.
@@ -51,7 +51,7 @@ docs:
   files:
     - docs/dev/knowledge-system-unification-development-plan.zh-CN.md
     - docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md
-    - WORKTREE.md
+    - docs/dev/repository-artifact-retention.md
 ---
 
 # KS-00：基线与权威冻结

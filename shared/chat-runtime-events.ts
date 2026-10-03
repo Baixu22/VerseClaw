@@ -92,4 +92,11 @@ export type ChatRuntimeEvent =
       phase?: string;
       status?: string;
       message?: string;
+      /**
+       * Display-only external-write risk projection (#41). Lets the renderer
+       * label a governed VerseShell exec's approval row as an external write;
+       * carries no decision affordance — the OpenClaw exec-approval pipeline
+       * stays the sole authorization surface.
+       */
+      risk?: 'external-write';
     });

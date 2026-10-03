@@ -66,11 +66,11 @@ requiredTests:
   - rtk pnpm run typecheck
   - rtk pnpm --dir openclaw_runtime db:kysely:check
   - rtk pnpm --dir openclaw_runtime lint:kysely
-  - rtk rg -n "runtime\\.resume\\.preferEventLog|preferEventLog|cutover_enabled|event_log_authoritative|prefer_event_log|eventLogAuthoritative:\\s*true|legacyAuthoritative:\\s*false" openclaw_runtime/src tests/unit harness/specs runtime-research
-  - rtk rg -n "resume authority|event-log-first|default_on|default-on|defaultOn|event_log_authoritative" openclaw_runtime/src tests/unit harness/specs runtime-research
+  - rtk rg -n "runtime\\.resume\\.preferEventLog|preferEventLog|cutover_enabled|event_log_authoritative|prefer_event_log|eventLogAuthoritative:\\s*true|legacyAuthoritative:\\s*false" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
+  - rtk rg -n "resume authority|event-log-first|default_on|default-on|defaultOn|event_log_authoritative" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
   - rtk rg -n "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components electron shared openclaw_runtime/src/gateway
   - rtk rg -n "create table|create index|migration|migrate|insertInto|updateTable|deleteFrom|append\\(|appendMany\\(" openclaw_runtime/src/runtime-core tests/unit harness/specs/tasks/runtime-event-log-controlled-dual-read-resume-pilot-implementation.md
-  - rtk rg -n "createServer|listen\\(|WebSocketServer|http\\.createServer|net\\.createServer|database-service|listener|daemon|sidecar|exporter|collector|jsonl" openclaw_runtime/src/runtime-core harness/specs runtime-research
+  - rtk rg -n "createServer|listen\\(|WebSocketServer|http\\.createServer|net\\.createServer|database-service|listener|daemon|sidecar|exporter|collector|jsonl" openclaw_runtime/src/runtime-core harness/specs docs/dev/runtime-research-boundaries.md
   - rtk pnpm run comms:replay and rtk pnpm run comms:compare only if implementation touches Gateway, runtime send/receive, channel delivery, fallback, host-api, api-client, Electron IPC, renderer, or provider transport paths.
 acceptance:
   - This spec implements only an explicit diagnostic helper and documentation package.
@@ -87,7 +87,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/runtime-event-log-controlled-dual-read-resume-pilot-implementation/README.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Runtime Event Log Controlled Dual-Read Resume Pilot Implementation

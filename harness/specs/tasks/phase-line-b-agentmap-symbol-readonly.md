@@ -81,12 +81,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-b-agentmap-symbol-readonly-planning/README.md
-    - runtime-research/handoffs/line-b-agentmap-symbol-readonly-planning/development-phases.md
-    - runtime-research/handoffs/line-b-agentmap-symbol-readonly-planning/parallel-lanes.md
-    - runtime-research/agent-runtime-index.md
-    - runtime-research/implementation-roadmap.md
-    - runtime-research/migration-execution-plan.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Line B AgentMap And Symbol Tool Readonly/Shadow Boundary

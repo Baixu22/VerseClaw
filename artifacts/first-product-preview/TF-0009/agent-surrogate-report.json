@@ -1,10 +1,18 @@
 {
-  "schema": "tf0009-agent-surrogate-report/v1",
+  "schema": "tf0009-agent-surrogate-report/v2",
+  "policy": "AGENTS.md#human-in-the-loop-2026-09-27",
+  "driven_by": "agent",
+  "actor": "codex/root",
+  "candidate": {
+    "commit": "812cba73ffda0d59fd81e78543e35e16940084ff",
+    "tree": "df5b958a049a3369ced0dd2852a6d8335981c7b9",
+    "dirty": false
+  },
   "taskId": "TF-0009",
-  "generatedAt": "2026-07-29T14:10:17.734Z",
-  "campaignId": "4882c6c4-67ad-4702-8366-7a3fae658365",
+  "generatedAt": "2026-09-30T08:41:51.594Z",
+  "campaignId": "856927b0-6393-4be3-b177-f25aaaf1ba8e",
   "authority": "engineering-agent-surrogate-only",
-  "result": "degraded-engineering-complete",
+  "result": "agent-acceptance-complete",
   "humanEquivalent": false,
   "liveEvidence": false,
   "charter": "artifacts/first-product-preview/TF-0009/agent-surrogate-charter.json",
@@ -20,6 +28,7 @@
   },
   "runs": [
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-dcs-01",
       "profile": "dcs-coding",
       "actor": {
@@ -58,6 +67,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-dcs-02",
       "profile": "dcs-coding",
       "actor": {
@@ -96,6 +106,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-dcs-03",
       "profile": "dcs-coding",
       "actor": {
@@ -134,6 +145,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-dcs-04",
       "profile": "dcs-coding",
       "actor": {
@@ -174,6 +186,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-dcs-05",
       "profile": "dcs-coding",
       "actor": {
@@ -214,6 +227,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-dcs-06",
       "profile": "dcs-coding",
       "actor": {
@@ -254,6 +268,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-dcs-07",
       "profile": "dcs-coding",
       "actor": {
@@ -290,6 +305,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-dcs-08",
       "profile": "dcs-coding",
       "actor": {
@@ -326,6 +342,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-dcs-09",
       "profile": "dcs-coding",
       "actor": {
@@ -362,6 +379,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-dcs-10",
       "profile": "dcs-coding",
       "actor": {
@@ -393,6 +411,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-sekb-01",
       "profile": "sekb-assisted",
       "actor": {
@@ -427,6 +446,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-sekb-02",
       "profile": "sekb-assisted",
       "actor": {
@@ -461,6 +481,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-sekb-03",
       "profile": "sekb-assisted",
       "actor": {
@@ -495,6 +516,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-sekb-04",
       "profile": "sekb-assisted",
       "actor": {
@@ -529,6 +551,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-sekb-05",
       "profile": "sekb-assisted",
       "actor": {
@@ -563,6 +586,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-sekb-06",
       "profile": "sekb-assisted",
       "actor": {
@@ -597,6 +621,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-sekb-07",
       "profile": "sekb-assisted",
       "actor": {
@@ -631,6 +656,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-sekb-08",
       "profile": "sekb-assisted",
       "actor": {
@@ -665,6 +691,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-sekb-09",
       "profile": "sekb-assisted",
       "actor": {
@@ -699,6 +726,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-sekb-10",
       "profile": "sekb-assisted",
       "actor": {
@@ -733,6 +761,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-browser-01",
       "profile": "browser-supervised",
       "actor": {
@@ -765,6 +794,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-browser-02",
       "profile": "browser-supervised",
       "actor": {
@@ -797,6 +827,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-browser-03",
       "profile": "browser-supervised",
       "actor": {
@@ -829,6 +860,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-browser-04",
       "profile": "browser-supervised",
       "actor": {
@@ -861,6 +893,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-browser-05",
       "profile": "browser-supervised",
       "actor": {
@@ -893,6 +926,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-browser-06",
       "profile": "browser-supervised",
       "actor": {
@@ -925,6 +959,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-browser-07",
       "profile": "browser-supervised",
       "actor": {
@@ -957,6 +992,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-browser-08",
       "profile": "browser-supervised",
       "actor": {
@@ -989,6 +1025,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-browser-09",
       "profile": "browser-supervised",
       "actor": {
@@ -1021,6 +1058,7 @@
       }
     },
     {
+      "driven_by": "agent",
       "runId": "tf0009-agent-browser-10",
       "profile": "browser-supervised",
       "actor": {
@@ -1054,6 +1092,7 @@
     }
   ],
   "killRollbackDrill": {
+    "driven_by": "agent",
     "kind": "agent-surrogate",
     "actor": {
       "kind": "agent",
@@ -1085,18 +1124,19 @@
     ]
   },
   "decision": {
-    "value": "deferred-human-validation",
+    "value": "continue",
+    "driven_by": "agent",
     "actor": {
       "kind": "agent",
       "id": "codex/root"
     },
     "productApproval": false,
-    "reason": "Agent evidence completed the engineering workflow but cannot supply human/live/product authority."
+    "reason": "Continue bounded opt-in use: all 30 agent tasks and the kill/rollback drill passed. The 2026-09-27 policy permits node closure; human/live/product claims remain false."
   },
   "taskForest": {
-    "recommendedStatus": "review_needed",
-    "semanticLabel": "degraded-agent-complete",
-    "canMarkDone": false,
+    "recommendedStatus": "done",
+    "semanticLabel": "agent-acceptance-complete",
+    "canMarkDone": true,
     "canReleaseTF0011": false,
     "proposalRequired": true
   },
@@ -1111,7 +1151,7 @@
     "runtimeMemory": "diagnostics-only"
   },
   "residuals": [
-    "No named human operator or accountable owner evidence",
+    "Human runs remain zero as an evidence limitation, not a node prerequisite",
     "No human satisfaction or qualitative usability evidence",
     "No real public-network Browser evidence",
     "No positive SEKB human-confirm write in the agent campaign",

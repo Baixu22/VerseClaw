@@ -11,7 +11,10 @@ const BACKOFF_SCHEDULE_MS = [5000, 10000, 30000, 60000];
  * Implements exponential backoff schedule: 5s → 10s → 30s → 60s (capped).
  */
 export function calculateBackoffMs(consecutiveNoOutputPolls: number): number {
-  const index = Math.min(consecutiveNoOutputPolls, BACKOFF_SCHEDULE_MS.length - 1);
+  const normalizedCount = Number.isFinite(consecutiveNoOutputPolls)
+    ? Math.max(0, Math.floor(consecutiveNoOutputPolls))
+    : 0;
+  const index = Math.min(normalizedCount, BACKOFF_SCHEDULE_MS.length - 1);
   return BACKOFF_SCHEDULE_MS[index] ?? 60000;
 }
 
@@ -39,7 +42,9 @@ export function recordCommandPoll(
     return BACKOFF_SCHEDULE_MS[0] ?? 5000;
   }
 
-  const newCount = (existing?.count ?? -1) + 1;
+  const priorCount =
+    existing && Number.isSafeInteger(existing.count) && existing.count >= 0 ? existing.count : -1;
+  const newCount = priorCount + 1;
   state.commandPollCounts.set(commandId, { count: newCount, lastPollAt: now });
 
   return calculateBackoffMs(newCount);
@@ -77,8 +82,9 @@ export function pruneStaleCommandPolls(state: SessionState, maxAgeMs = 3600000):
   }
 
   const now = Date.now();
+  const maxAge = Number.isFinite(maxAgeMs) && maxAgeMs >= 0 ? maxAgeMs : 3600000;
   for (const [commandId, data] of state.commandPollCounts.entries()) {
-    if (now - data.lastPollAt > maxAgeMs) {
+    if (now - data.lastPollAt > maxAge) {
       state.commandPollCounts.delete(commandId);
     }
   }

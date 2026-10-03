@@ -1,0 +1,81 @@
+{
+  "manifest": "verseconf-node-wasm-build/v1",
+  "builtAt": "2026-10-01T08:45:38.649Z",
+  "deliveryTarget": "node",
+  "deliveredTargets": [
+    {
+      "target": "nodejs",
+      "outDir": "pkg",
+      "delivered": true
+    }
+  ],
+  "repositoryOnlyTargets": [
+    {
+      "target": "web",
+      "outDir": "pkg-web",
+      "delivered": false
+    }
+  ],
+  "package": {
+    "name": "verseconf",
+    "version": "0.3.0"
+  },
+  "toolchain": {
+    "wasmPack": "wasm-pack 0.14.0",
+    "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "wasmBindgenLocked": "0.2.118"
+  },
+  "locked": true,
+  "inputs": {
+    "cargoLockSha256": "eff982192233c4235e38f7ae2da306572abd8c9d068b1f0d28c0c0cfb0e7c646",
+    "cargoLockBytes": 69601,
+    "sourcesSha256": "b536beffe0d7045a9f49b6fba29a9dd5f1a05ebc4dfa2b6d281bcab04fe5168f",
+    "sourceFiles": 15,
+    "covers": [
+      "Cargo.lock",
+      "integrations/verseconf-wasm/Cargo.toml",
+      "integrations/verseconf-wasm/src/**/*.rs",
+      "integrations/verseconf-wasm/tests/**/*.rs",
+      "crates/verseconf-json/src/**/*.rs"
+    ]
+  },
+  "outputs": [
+    {
+      "path": "pkg/verseconf_wasm_bg.wasm",
+      "bytes": 4371659,
+      "sha256": "d4b27977f29e69b682b9323f45021111ab9bc71535417fa340ca61b4bf177dd9"
+    },
+    {
+      "path": "pkg/verseconf_wasm.js",
+      "bytes": 19137,
+      "sha256": "427fe8ebd87c3a7a086245784198ad4b35f93aefa8dd26640bf9cf440e8c1d3d"
+    },
+    {
+      "path": "pkg/verseconf_wasm.d.ts",
+      "bytes": 3833,
+      "sha256": "372b90bda493b9cab25b1008563cdb745a317da96f3b0788551f32eb09362572"
+    },
+    {
+      "path": "pkg-web/verseconf_wasm.js",
+      "bytes": 21663,
+      "sha256": "97289b63317835cbe8cdfa45f509c9f77136fc82289a8388aeb4bdc9ee4cfc15"
+    },
+    {
+      "path": "dist/index.mjs",
+      "bytes": 10450,
+      "sha256": "7a7c6ff23e208565aa511478791297805cc8c2a32790cd1d7b8c3e0272d2a590"
+    },
+    {
+      "path": "dist/index.cjs",
+      "bytes": 12021,
+      "sha256": "c6eebc68c27714a52ffca8fec9536bb89a1095056f88f886372fa9ea09149284"
+    },
+    {
+      "path": "dist/index.d.ts",
+      "bytes": 17380,
+      "sha256": "ac9f7593bfc43b933412e674895f1085215b863b8d9c8e490aa3cdbc61311730"
+    }
+  ],
+  "fingerprintNote": "inputs.sourcesSha256 与 outputs[].sha256 一起回答「这份 wasm 是从哪份源码、用哪个工具链构建的」。"
+}

@@ -1,0 +1,17 @@
+src/agents/rc03-entry-transitions.acceptance.test.ts
+Checking formatting...
+
+C:/Users/27933/AppData/Local/Temp/tmp1n6k6cya.ts (5ms)
+
+Format issues found in above 1 files. Run without `--check` to fix.
+Finished in 143ms on 1 files using 16 threads.
+No config found, using defaults. Please add a config file or try `oxfmt --init` if needed.
+
+src/context-engine/rc03-seal-hook.ts
+Checking formatting...
+
+C:/Users/27933/AppData/Local/Temp/tmpyha2f440.ts (2ms)
+
+Format issues found in above 1 files. Run without `--check` to fix.
+Finished in 135ms on 1 files using 16 threads.
+No config found, using defaults. Please add a config file or try `oxfmt --init` if needed.

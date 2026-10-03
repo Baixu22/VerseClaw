@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:34316) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34316) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\e2e\provider-lifecycle.spec.ts:25:7 › Verse Claw provider lifecycle › recognizes an environment SecretRef without saving the API key (9.3s)
+
+  1 passed (10.2s)

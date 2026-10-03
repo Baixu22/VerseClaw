@@ -342,6 +342,58 @@ describe('provider-runtime-sync refresh strategy', () => {
     expect(gateway.debouncedReload).toHaveBeenCalledTimes(1);
   });
 
+  it('writes an env SecretRef for a keyed custom provider so the source runtime can resolve it', async () => {
+    const customProvider = createProvider({
+      id: 'senseaudio',
+      type: 'custom',
+      name: 'SenseAudio',
+      model: 'senseaudio-s2-flash',
+      baseUrl: 'https://api.senseaudio.cn/v1',
+      apiProtocol: 'openai-completions',
+    });
+    const secretRef = { source: 'env', provider: 'default', id: 'CUSTOM_SENSEAUD_API_KEY' };
+
+    mocks.getProvider.mockResolvedValue(customProvider);
+    mocks.getDefaultProvider.mockResolvedValue('senseaudio');
+    mocks.getProviderConfig.mockReturnValue(undefined);
+    mocks.getApiKey.mockResolvedValue('sk-live');
+
+    const gateway = createGateway('running');
+    await syncSavedProviderToRuntime(customProvider, 'sk-live', gateway as GatewayManager);
+    expect(mocks.syncProviderConfigToOpenClaw).toHaveBeenCalledWith(
+      'custom-senseaud',
+      'senseaudio-s2-flash',
+      expect.objectContaining({ api: 'openai-completions', apiKeyEnv: secretRef }),
+    );
+
+    await syncDefaultProviderToRuntime('senseaudio', gateway as GatewayManager);
+    expect(mocks.setOpenClawDefaultModelWithOverride).toHaveBeenCalledWith(
+      'custom-senseaud',
+      'custom-senseaud/senseaudio-s2-flash',
+      expect.objectContaining({ api: 'openai-completions', apiKeyEnv: secretRef }),
+      expect.any(Array),
+    );
+  });
+
+  it('leaves a keyless custom provider without an apiKey SecretRef', async () => {
+    const customProvider = createProvider({
+      id: 'localgw',
+      type: 'custom',
+      name: 'Local gateway',
+      model: 'm',
+      baseUrl: 'http://127.0.0.1:8080/v1',
+    });
+    mocks.getProviderConfig.mockReturnValue(undefined);
+    mocks.getApiKey.mockResolvedValue(null);
+
+    await syncSavedProviderToRuntime(customProvider, undefined, createGateway('running') as GatewayManager);
+    expect(mocks.syncProviderConfigToOpenClaw).toHaveBeenCalledWith(
+      'custom-localgw',
+      'm',
+      expect.objectContaining({ apiKeyEnv: undefined }),
+    );
+  });
+
   it('removes Ollama provider from runtime on delete', async () => {
     const ollamaProvider = createProvider({
       id: 'ollamafd',

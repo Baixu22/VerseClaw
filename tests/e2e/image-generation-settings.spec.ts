@@ -167,7 +167,7 @@ test.describe('Image generation settings page', () => {
         },
         '["/api/media/image-generation","PUT"]': {
           ok: true,
-          data: { status: 200, ok: true, json: { success: true, ...clearedResponse } },
+          data: { status: 200, ok: true, json: { ...clearedResponse, success: true } },
         },
       },
     });

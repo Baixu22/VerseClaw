@@ -45,6 +45,12 @@ function dispatchContentAnimationEnd(
   } as ReactAnimationEvent<HTMLDivElement>);
 }
 
+function getDrawerContent(): HTMLDivElement {
+  const content = screen.getByTestId('settings-drawer');
+  expect(content).toBeInstanceOf(HTMLDivElement);
+  return content as HTMLDivElement;
+}
+
 describe('settings drawer routing contract', () => {
   it('preserves the full background route when settings is opened', () => {
     expect(toRoutePath({ pathname: '/knowledge', search: '?tab=drafts', hash: '#proposal' }))
@@ -77,7 +83,7 @@ describe('AppleDrawer animation lifecycle', () => {
       </AppleDrawer>,
     );
 
-    const content = screen.getByTestId('settings-drawer');
+    const content = getDrawerContent();
     dispatchContentAnimationEnd(
       content,
       screen.getByTestId('drawer-child'),

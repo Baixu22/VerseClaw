@@ -35,6 +35,7 @@ vi.mock("../agents/embedded-agent.js", () => ({
 
 vi.mock("../agents/model-catalog.runtime.js", () => ({
   loadModelCatalog: (...args: unknown[]) => replyRuntimeMockState.mocks.loadModelCatalog(...args),
+  loadManifestModelCatalog: () => [],
 }));
 
 vi.mock("../agents/auth-profiles/session-override.js", () => ({
@@ -61,6 +62,7 @@ vi.mock("../agents/embedded-agent.runtime.js", () => ({
   isEmbeddedAgentRunActive: vi.fn().mockReturnValue(false),
   isEmbeddedAgentRunStreaming: vi.fn().mockReturnValue(false),
   resolveActiveEmbeddedRunSessionId: vi.fn().mockReturnValue(undefined),
+  resolveActiveEmbeddedRunSessionIdBySessionFile: vi.fn().mockReturnValue(undefined),
   resolveEmbeddedSessionLane: (key: string) => `session:${key.trim() || "main"}`,
   waitForEmbeddedAgentRunEnd: vi.fn(async () => undefined),
 }));
@@ -74,6 +76,8 @@ vi.mock("./reply/agent-runner.runtime.js", () => ({
         agentDir: string;
         agentId: string;
         config: unknown;
+        compassContext?: unknown;
+        extraSystemPrompt?: string;
         execOverrides?: unknown;
         inputProvenance?: unknown;
         messageProvider?: string;
@@ -99,6 +103,8 @@ vi.mock("./reply/agent-runner.runtime.js", () => ({
       agentDir: params.followupRun.run.agentDir,
       agentId: params.followupRun.run.agentId,
       config: params.followupRun.run.config,
+      compassContext: params.followupRun.run.compassContext,
+      extraSystemPrompt: params.followupRun.run.extraSystemPrompt,
       execOverrides: params.followupRun.run.execOverrides,
       inputProvenance: params.followupRun.run.inputProvenance,
       messageProvider: params.followupRun.run.messageProvider,

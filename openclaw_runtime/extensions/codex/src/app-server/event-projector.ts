@@ -20,11 +20,15 @@ import {
   type MessagingToolSourceReplyPayload,
   type ToolProgressDetailMode,
 } from "openclaw/plugin-sdk/agent-harness-runtime";
-import { emitTrustedDiagnosticEvent } from "openclaw/plugin-sdk/diagnostic-runtime";
+import {
+  emitTrustedDiagnosticEvent,
+  type DiagnosticTraceContext,
+} from "openclaw/plugin-sdk/diagnostic-runtime";
 import { generatedImageAssetFromBase64 } from "openclaw/plugin-sdk/image-generation";
 import type { AssistantMessage, Usage } from "openclaw/plugin-sdk/llm";
 import { saveMediaBuffer } from "openclaw/plugin-sdk/media-store";
 import { asDateTimestampMs } from "openclaw/plugin-sdk/number-runtime";
+import { createCodexToolDiagnosticIdentity } from "./dynamic-tool-diagnostics.js";
 import { resolveCodexLocalRuntimeAttribution } from "./local-runtime-attribution.js";
 import {
   readCodexNotificationThreadId,
@@ -64,6 +68,7 @@ export type CodexAppServerToolTelemetry = {
 };
 
 export type CodexAppServerEventProjectorOptions = {
+  trace?: DiagnosticTraceContext;
   nativePostToolUseRelayEnabled?: boolean;
   trajectoryRecorder?: CodexTrajectoryRecorder | null;
 };
@@ -185,7 +190,10 @@ export class CodexAppServerEventProjector {
   private readonly nativeGeneratedMediaUrls = new Set<string>();
   private readonly nativeGeneratedMediaItemIds = new Set<string>();
   private readonly nativeGeneratedMediaUrlsByItemId = new Map<string, string>();
-  private readonly diagnosticToolStartedAtByItem = new Map<string, number>();
+  private readonly diagnosticToolByItem = new Map<
+    string,
+    { startedAt: number; identity: ReturnType<typeof createCodexToolDiagnosticIdentity> }
+  >();
   private readonly afterToolCallObservedItemIds = new Set<string>();
   private assistantStarted = false;
   private reasoningStarted = false;
@@ -1185,7 +1193,10 @@ export class CodexAppServerEventProjector {
     name: string;
     status: ReturnType<typeof itemStatus>;
   }): void {
+    const diagnostic = this.diagnosticToolByItem.get(params.item.id);
+    const identity = diagnostic?.identity ?? createCodexToolDiagnosticIdentity(this.options.trace);
     const base = {
+      ...identity,
       runId: this.params.runId,
       sessionId: this.params.sessionId,
       sessionKey: this.params.sessionKey,
@@ -1193,7 +1204,10 @@ export class CodexAppServerEventProjector {
       toolCallId: params.item.id,
     };
     if (params.phase === "start") {
-      this.diagnosticToolStartedAtByItem.set(params.item.id, Date.now());
+      this.diagnosticToolByItem.set(params.item.id, {
+        startedAt: diagnostic?.startedAt ?? Date.now(),
+        identity,
+      });
       emitTrustedDiagnosticEvent({
         type: "tool.execution.started",
         ...base,
@@ -1201,8 +1215,8 @@ export class CodexAppServerEventProjector {
       return;
     }
 
-    const startedAt = this.diagnosticToolStartedAtByItem.get(params.item.id);
-    this.diagnosticToolStartedAtByItem.delete(params.item.id);
+    const startedAt = diagnostic?.startedAt;
+    this.diagnosticToolByItem.delete(params.item.id);
     const itemDurationMs =
       typeof params.item.durationMs === "number" ? params.item.durationMs : undefined;
     const durationMs =

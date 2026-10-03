@@ -1,6 +1,6 @@
 /** Prepares and runs auto-reply agent turns, including prompt context and session policy. */
 import crypto from "node:crypto";
-import { recordCompassMemoryInjectionReceipt } from "../../context-engine/memory-injection-receipt.js";
+import { prepareCompassContext } from "../../context-engine/compass-context.js";
 import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
 import { asDateTimestampMs } from "@openclaw/normalization-core/number-coercion";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
@@ -114,12 +114,7 @@ import type { TypingController } from "./typing.js";
 // COMPASS 2.0: Pre-reply injection (SSP + Hybrid Retrieval).
 // 生产路径启用: SSP 默认开启 (256 tokens 有界状态), retrieval 需配合 runtime.memory.persist.
 // 环境变量 escape hatch: OPENCLAW_COMPASS_DISABLE=1 全部关闭.
-import {
-  buildPreReplyInjection,
-  resolveCompassConfig,
-  loadCompassFacts,
-  observePostReplyInjection,
-} from "../../runtime-core/memory-pre-reply-injection.js";
+import { observePostReplyInjection } from "../../runtime-core/memory-pre-reply-injection.js";
 
 type InternalGetReplyOptions = GetReplyOptions & {
   /**
@@ -419,7 +414,7 @@ type RunPreparedReplyParams = {
   directives: InlineDirectives;
   defaultActivation: Parameters<typeof buildGroupIntro>[0]["defaultActivation"];
   resolvedThinkLevel: ThinkLevel | undefined;
-  resolvedPromptMode: 'full' | 'minimal' | 'none' | undefined;
+  resolvedPromptMode: "full" | "minimal" | "none" | undefined;
   resolvedVerboseLevel: VerboseLevel | undefined;
   resolvedReasoningLevel: ReasoningLevel;
   resolvedElevatedLevel: ElevatedLevel;
@@ -628,30 +623,14 @@ export async function runPreparedReply(
     isNewSession ? sessionCtx : { ...sessionCtx, ThreadStarterBody: undefined },
     { includeFormattingHints: !useFastReplyRuntime },
   );
-  // COMPASS 2.0: Pre-reply injection (SSP + Hybrid Retrieval top-5).
-  // 方案 D — unshift 到 extraSystemPromptParts 最前, 绕过 context-engine.
-  // 生产路径启用: resolveCompassConfig 从 cfg + 环境变量解析 flags (SSP 默认开, retrieval 默认关).
-  const compassUserInputText =
-    ctx.Body ?? ctx.RawBody ?? ctx.CommandBody ?? sessionCtx.Body ?? "";
-  const compassConfig = resolveCompassConfig(cfg);
-  const compassFacts = compassConfig.featureFlags.enablePreReplyRetrieval
-    ? loadCompassFacts(cfg)
-    : [];
-  const compassInjection = await buildPreReplyInjection({
+  // Prepare candidates only; execution owns final arbitration and charging.
+  const compassUserInputText = ctx.Body ?? ctx.RawBody ?? ctx.CommandBody ?? sessionCtx.Body ?? "";
+  const { context: compassContext, facts: compassFacts } = await prepareCompassContext({
     sessionKey: runtimePolicySessionKey ?? sessionKey ?? sessionId,
     userInputText: typeof compassUserInputText === "string" ? compassUserInputText : "",
-    config: compassConfig,
-    facts: compassFacts,
-  });
-  // R3-2.1: record a sanitized memory-injection receipt (observational, never throws).
-  recordCompassMemoryInjectionReceipt({
-    sessionKey: runtimePolicySessionKey ?? sessionKey ?? sessionId,
-    injection: compassInjection,
-    candidateFacts: compassFacts,
+    cfg,
   });
   const extraSystemPromptParts = [
-    compassInjection.sspString,        // COMPASS: SSP 注入 (最前)
-    compassInjection.top5FactsString,  // COMPASS: Hybrid retrieval top-5
     inboundMetaPrompt,
     directChatContext,
     groupChatContext,
@@ -1395,6 +1374,7 @@ export async function runPreparedReply(
       ownerNumbers: command.ownerList.length > 0 ? command.ownerList : undefined,
       inputProvenance,
       extraSystemPrompt: extraSystemPromptParts.join("\n\n") || undefined,
+      compassContext,
       sourceReplyDeliveryMode,
       silentReplyPromptMode,
       extraSystemPromptStatic: extraSystemPromptStaticParts.join("\n\n"),
@@ -1467,10 +1447,10 @@ export async function runPreparedReply(
   // 降级: injectedFactIds 为空 / reply 文本为空 / facts 为空 → observePostReplyInjection 返回 null.
   void observePostReplyInjection({
     reply: compassReply,
-    injectedFactIds: compassInjection.injectedFactIds,
+    injectedFactIds: compassContext.appliedFactIds,
     facts: compassFacts,
     sessionKey: runtimePolicySessionKey ?? sessionKey ?? sessionId,
-    turn: (compassInjection.updatedSSP?.decisionHistory.length ?? 0) + 1,
+    turn: (compassContext.injection.updatedSSP?.decisionHistory.length ?? 0) + 1,
   }).catch(() => {
     // 降级: 观测失败不影响 reply 返回
   });

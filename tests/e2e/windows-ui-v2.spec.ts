@@ -154,10 +154,11 @@ test.describe('Cross-platform FakeCoding UI v2 shell', () => {
       expect(contract.iconLineCap).toBe('round');
       expect(contract.iconLineJoin).toBe('round');
       expect(contract.badgeHeight).toBe(20);
-      expect(contract.badgeRadius).toBeLessThanOrEqual(8);
+      // The shared ladder is fixed at 1.25x: md = 8px * 1.25, lg = 10px * 1.25.
+      expect(contract.badgeRadius).toBeCloseTo(10, 1);
       expect(contract.switchWidth).toBe(32);
       expect(contract.switchHeight).toBe(20);
-      expect(contract.cardRadius).toBeLessThanOrEqual(8);
+      expect(contract.cardRadius).toBeCloseTo(12.5, 1);
       expect(contract.cardBackdrop).toBe('none');
       expect(contract.textareaFontSize).toBe(13);
       for (const color of [contract.badgeBackground, contract.switchBackground, contract.textareaBackground]) {
@@ -244,7 +245,7 @@ test.describe('Cross-platform FakeCoding UI v2 shell', () => {
     }
   });
 
-  test('supports the development-only legacy query override', async ({ launchElectronApp }) => {
+  test('keeps old visual query values on the current shell and workspace destinations', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true, theme: 'light' });
 
     try {
@@ -255,9 +256,14 @@ test.describe('Cross-platform FakeCoding UI v2 shell', () => {
       url.hash = '#/';
       await page.goto(url.toString());
 
-      await expect(page.getByTestId('main-layout')).toHaveAttribute('data-ui-version', 'legacy');
-      await expect(page.getByTestId('app-content-stage')).not.toHaveClass(/app-content-stage-v2/);
+      await expect(page.getByTestId('main-layout')).toHaveAttribute('data-ui-version', 'v2');
+      await expect(page.getByTestId('app-content-stage')).toHaveClass(/app-content-stage-v2/);
       await expect(page.getByTestId('settings-drawer')).toHaveCount(0);
+      for (const [route, panel] of [['browser', 'browser'], ['code-review', 'review']]) {
+        await page.evaluate((path) => { window.location.hash = `/${path}?uiVersion=legacy`; }, route);
+        await expect(page.getByTestId(`artifact-panel-tab-${panel}`)).toHaveAttribute('aria-selected', 'true');
+        await expect.poll(() => new URL(page.url()).hash.split('?')[0]).toBe('#/');
+      }
     } finally {
       await closeElectronApp(app);
     }

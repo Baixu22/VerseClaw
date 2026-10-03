@@ -194,6 +194,20 @@ knowledge unification锛圡5b锛夈€丼EKB closure锛圡6+T1锛夌敱 R4+ 浜�
 
 ---
 
+### TF-0071 durability addendum (2026-08-20)
+
+TaskLoop phase side effects now have an explicit completion boundary. Each run
+serializes its task-state and terminal trajectory hooks on a per-run promise
+queue, and normal/error loop returns drain that queue before resolving. Hook
+results expose accepted, rejected, failed, or skipped task-state status plus
+separate trajectory status. Sink and capture failures are structured evidence
+and warnings; they remain degradation and do not change loop control results.
+Cancellation checks after awaited orchestration prevent late work from
+reviving a cancelled run. This preserves the Stage 2 default-off and
+no-automatic-SEKB-writeback boundaries.
+
+---
+
 ## Stage 3 Tool Registry Block Producer 涓?Assembler Injection锛圧4 鏀跺彛锛?
 
 R4 浜?2026-07-12 鍦?main 鍒嗘敮鏀跺彛锛圖CS-ROUND4-COMPLETE锛夈€俙before_agent_start`

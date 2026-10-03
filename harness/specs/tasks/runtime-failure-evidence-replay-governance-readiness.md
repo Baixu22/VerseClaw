@@ -63,7 +63,7 @@ rollback:
 requiredTests:
   - pnpm --config.verify-deps-before-run=false harness context --spec harness/specs/tasks/runtime-failure-evidence-replay-governance-readiness.md
   - pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/runtime-failure-evidence-replay-governance-readiness.md
-  - rg -n "runtime-failure-evidence-replay-governance-readiness|Failure Intelligence|Evidence Envelope|Replay Harness|Outcome Scorecard|Tool Invocation Governance" harness/specs/tasks runtime-research
+  - rg -n "runtime-failure-evidence-replay-governance-readiness|Failure Intelligence|Evidence Envelope|Replay Harness|Outcome Scorecard|Tool Invocation Governance" harness/specs/tasks docs/dev/runtime-research-boundaries.md
 acceptance:
   - The readiness package records the five-lane objective, staged dependency order, parallelizable work streams, non-goals, authority boundaries, and validation gates.
   - `constraint-brief.md` contains the durable constraint wording future agents must preserve when writing implementation specs.
@@ -80,17 +80,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/README.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/constraint-brief.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/development-plan.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/contracts-and-boundaries.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/validation-plan.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/risk-register.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/implementation-spec-template.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/milestone-checklist.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/parallel-workstreams.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/schema-decision-log.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Runtime Failure/Evidence/Replay Governance Readiness

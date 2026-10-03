@@ -70,8 +70,8 @@ requiredTests:
   - pnpm --config.verify-deps-before-run=false run typecheck
   - pnpm --config.verify-deps-before-run=false run comms:replay
   - pnpm --config.verify-deps-before-run=false run comms:compare
-  - rg -n "provider ordering|default provider|default-on|prompt cutover|model messages|Gateway request|formatTaskLoopContextPackForReviewer|runAgentPrompt|provider transport|TaskLoop authority|tool authority" openclaw_runtime/src/runtime-core/registries.ts openclaw_runtime/src/context-engine/provider-registry.ts openclaw_runtime/src/agents/task-loop-controller.ts electron/services/tool-provider-registry.ts electron/services/mcp-api.ts tests/unit/runtime-provider-tool-registry.test.ts tests/unit/context-provider-registry.test.ts tests/unit/tool-provider-registry.test.ts tests/unit/mcp-api.test.ts tests/unit/task-loop-controller.test.ts harness/specs/tasks/phase-3-provider-tool-registry-controlled-diagnostic-consumer-readiness.md runtime-research/handoffs/runtime-use-prerequisites.md
-  - rg -n "createServer\\(|listen\\(|WebSocketServer|new WebSocket\\(|daemon|listener|external database|sqlite|postgres|mysql|redis|@temporalio|express\\(" openclaw_runtime/src/runtime-core/registries.ts openclaw_runtime/src/context-engine/provider-registry.ts openclaw_runtime/src/agents/task-loop-controller.ts electron/services/tool-provider-registry.ts electron/services/mcp-api.ts tests/unit/runtime-provider-tool-registry.test.ts tests/unit/context-provider-registry.test.ts tests/unit/tool-provider-registry.test.ts tests/unit/mcp-api.test.ts tests/unit/task-loop-controller.test.ts harness/specs/tasks/phase-3-provider-tool-registry-controlled-diagnostic-consumer-readiness.md runtime-research/handoffs/runtime-use-prerequisites.md
+  - rg -n "provider ordering|default provider|default-on|prompt cutover|model messages|Gateway request|formatTaskLoopContextPackForReviewer|runAgentPrompt|provider transport|TaskLoop authority|tool authority" openclaw_runtime/src/runtime-core/registries.ts openclaw_runtime/src/context-engine/provider-registry.ts openclaw_runtime/src/agents/task-loop-controller.ts electron/services/tool-provider-registry.ts electron/services/mcp-api.ts tests/unit/runtime-provider-tool-registry.test.ts tests/unit/context-provider-registry.test.ts tests/unit/tool-provider-registry.test.ts tests/unit/mcp-api.test.ts tests/unit/task-loop-controller.test.ts harness/specs/tasks/phase-3-provider-tool-registry-controlled-diagnostic-consumer-readiness.md docs/dev/runtime-research-boundaries.md
+  - rg -n "createServer\\(|listen\\(|WebSocketServer|new WebSocket\\(|daemon|listener|external database|sqlite|postgres|mysql|redis|@temporalio|express\\(" openclaw_runtime/src/runtime-core/registries.ts openclaw_runtime/src/context-engine/provider-registry.ts openclaw_runtime/src/agents/task-loop-controller.ts electron/services/tool-provider-registry.ts electron/services/mcp-api.ts tests/unit/runtime-provider-tool-registry.test.ts tests/unit/context-provider-registry.test.ts tests/unit/tool-provider-registry.test.ts tests/unit/mcp-api.test.ts tests/unit/task-loop-controller.test.ts harness/specs/tasks/phase-3-provider-tool-registry-controlled-diagnostic-consumer-readiness.md docs/dev/runtime-research-boundaries.md
   - rg -n "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components
 acceptance:
   - The prerequisite status is confirmed as accepted_runtime_use_prerequisites_complete.
@@ -86,9 +86,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/runtime-use-prerequisites.md
-    - runtime-research/agent-runtime-index.md
-    - runtime-research/handoffs/phase-3-provider-tool-registry-diagnostic-collector/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 3 Provider/Tool Registry Controlled Diagnostic Consumer Readiness

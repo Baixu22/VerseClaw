@@ -59,7 +59,7 @@ requiredTests:
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/line-c-grounding-formal-runtime-use-readiness.md --no-diff
   - git status --short
   - git diff --stat
-  - git diff --check -- harness/specs/tasks/line-c-grounding-formal-runtime-use-readiness.md runtime-research/handoffs/line-c-grounding-formal-runtime-use-readiness/README.md runtime-research/handoffs/line-c-grounding-formal-runtime-use-readiness/implementation-synthesis.md runtime-research/agent-runtime-index.md
+  - git diff --check -- harness/specs/tasks/line-c-grounding-formal-runtime-use-readiness.md docs/dev/runtime-research-boundaries.md
   - rg boundary scan for runtime authority/prompt/model-message/provider ordering/provider selection/Gateway request/TaskLoop/runtime decision/completion/tool/security/approval/retry/raw retention/includeRaw/includeUntrusted/untrusted refs/persistence/cache/service/listener/exporter/database/sidecar/memory promotion/fact acceptance/episode write/patch apply/workspace edit/symbol mutation
 acceptance:
   - Fresh readiness spec exists and validates structurally.
@@ -70,9 +70,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-c-grounding-formal-runtime-use-readiness/README.md
-    - runtime-research/handoffs/line-c-grounding-formal-runtime-use-readiness/implementation-synthesis.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 nextPhaseEntry:
   Allowed next phase:
     - A narrower future spec may propose a single explicit diagnostics-only consumer surface only if it preserves all required markers and proves zero prompt/model-message/provider/Gateway/TaskLoop/runtime-decision drift.

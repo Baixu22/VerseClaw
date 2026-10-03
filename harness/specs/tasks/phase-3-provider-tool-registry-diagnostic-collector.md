@@ -81,11 +81,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-3-provider-tool-registry-diagnostic-collector/README.md
-    - runtime-research/handoffs/phase-3-provider-tool-registry-diagnostic-collector/parallel-lanes.md
-    - runtime-research/handoffs/phase-3-provider-tool-registry-diagnostic-collector/window-prompts.md
-    - runtime-research/handoffs/phase-3-provider-tool-registry-diagnostic-collector/submission-template.md
-    - runtime-research/handoffs/phase-3-provider-tool-registry-diagnostic-collector/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 3 Provider Tool Registry Diagnostic Collector

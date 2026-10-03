@@ -1,0 +1,16 @@
+{
+  "result": "agent-acceptance-complete",
+  "agentSurrogateRuns": {
+    "dcs-coding": 10,
+    "sekb-assisted": 10,
+    "browser-supervised": 10
+  },
+  "humanQualifyingRuns": {
+    "dcs-coding": 0,
+    "sekb-assisted": 0,
+    "browser-supervised": 0
+  },
+  "killRollbackDrill": "pass",
+  "recommendedStatus": "done",
+  "reportPath": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate\\artifacts\\first-product-preview\\TF-0009\\agent-surrogate-report.json"
+}

@@ -22,8 +22,7 @@ describe('orchestration plan Task Ledger projection', () => {
         reasons: ['explicit-workers'],
         taskGraph: {
           graphRunId: 'explicit-workers',
-          mode: 'staged',
-          status: 'planned',
+          status: 'planned' as never,
           nodes: [
             {
               taskNodeId: 'planner-1',
@@ -33,9 +32,8 @@ describe('orchestration plan Task Ledger projection', () => {
               dependsOn: [],
               scope: 'Plan the stabilization work',
               requiredCapabilities: ['planning'],
-              attemptPolicy: { maxRepairAttempts: 1, maxRedoAttempts: 0 },
               status: 'ready',
-            },
+            } as never,
             {
               taskNodeId: 'tester-1',
               roleName: 'tester',
@@ -44,9 +42,8 @@ describe('orchestration plan Task Ledger projection', () => {
               dependsOn: ['planner-1'],
               scope: 'Verify the smoke tests',
               requiredCapabilities: ['test'],
-              attemptPolicy: { maxRepairAttempts: 1, maxRedoAttempts: 0 },
               status: 'planned',
-            },
+            } as never,
             {
               taskNodeId: 'reviewer-1',
               roleName: 'reviewer',
@@ -55,10 +52,9 @@ describe('orchestration plan Task Ledger projection', () => {
               dependsOn: ['planner-1', 'tester-1'],
               scope: 'Verify worker evidence',
               requiredCapabilities: ['verification'],
-              attemptPolicy: { maxRepairAttempts: 0, maxRedoAttempts: 0 },
-              status: 'planned',
+              status: 'planned' as never,
               isVerifier: true,
-            },
+            } as never,
           ],
           edges: [
             { from: 'planner-1', to: 'tester-1', type: 'dependency' },

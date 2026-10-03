@@ -83,3 +83,65 @@ describe('TerminalSessionManager', () => {
     expect(options?.env?.PATH).toBeUndefined();
   });
 });
+
+describe('TerminalSessionManager idle classification', () => {
+  const policy = { outputIdleMs: 5_000, interactionIdleMs: 10_000 };
+
+  function latestPty() {
+    const instance = ptyMocks.spawn.mock.results.at(-1)?.value as
+      | { onData: ReturnType<typeof vi.fn>; onExit: ReturnType<typeof vi.fn>; write: ReturnType<typeof vi.fn> }
+      | undefined;
+    if (!instance) throw new Error('pty not spawned');
+    return instance;
+  }
+
+  it('classifies pure states including output freshness winning over interaction staleness', async () => {
+    const { classifyTerminalIdle } = await import('@electron/services/terminal-session-manager');
+    expect(classifyTerminalIdle({ status: 'exited', lastOutputAtMs: null, lastInteractionAtMs: null, nowMs: 0, policy })).toBe('completed');
+    // Stale interaction but fresh child output: still a running process.
+    expect(classifyTerminalIdle({ status: 'running', lastOutputAtMs: 96_000, lastInteractionAtMs: 0, nowMs: 100_000, policy })).toBe('running-process');
+    expect(classifyTerminalIdle({ status: 'running', lastOutputAtMs: 90_000, lastInteractionAtMs: 95_000, nowMs: 100_000, policy })).toBe('interactive');
+    expect(classifyTerminalIdle({ status: 'running', lastOutputAtMs: 0, lastInteractionAtMs: 0, nowMs: 100_000, policy })).toBe('idle');
+  });
+
+  it('transitions interactive -> running-process -> interactive -> idle with real event flow', async () => {
+    let nowMs = 0;
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    const manager = new TerminalSessionManager({ idlePolicy: policy, now: () => nowMs });
+    const opened = manager.open({ workspace: workspace(process.cwd()) });
+    expect(opened.idle?.classification).toBe('interactive');
+
+    nowMs = 1_000;
+    const emitData = latestPty().onData.mock.calls[0]?.[0] as (data: string) => void;
+    emitData('build output');
+    expect(manager.status({ sessionId: opened.sessionId ?? '' }).idle?.classification).toBe('running-process');
+
+    nowMs = 7_000; // output 6s stale, interaction 7s fresh
+    expect(manager.classifyTerminal(opened.sessionId ?? '')?.classification).toBe('interactive');
+
+    nowMs = 12_000; // output 11s stale, interaction 12s stale
+    expect(manager.classifyTerminal(opened.sessionId ?? '')?.classification).toBe('idle');
+
+    nowMs = 12_500;
+    manager.write({ sessionId: opened.sessionId ?? '', data: 'ls\r' });
+    nowMs = 13_000;
+    expect(manager.classifyTerminal(opened.sessionId ?? '')?.classification).toBe('interactive');
+
+    manager.close(opened.sessionId ?? '');
+    expect(manager.classifyTerminal(opened.sessionId ?? '')).toBeNull();
+  });
+
+  it('honors the CLAWX_TERMINAL_OUTPUT_IDLE_MS environment override', async () => {
+    process.env = { ...process.env, CLAWX_TERMINAL_OUTPUT_IDLE_MS: '2000' };
+    let nowMs = 0;
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    const manager = new TerminalSessionManager({ now: () => nowMs });
+    const opened = manager.open({ workspace: workspace(process.cwd()) });
+    const sessionId = opened.sessionId ?? '';
+
+    nowMs = 1_000;
+    (latestPty().onData.mock.calls[0]?.[0] as (data: string) => void)('tick');
+    nowMs = 3_500; // output 2.5s stale > 2s override, interaction fresh
+    expect(manager.classifyTerminal(sessionId)?.classification).toBe('interactive');
+  });
+});

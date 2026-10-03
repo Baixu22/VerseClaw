@@ -28,6 +28,7 @@ import { isTimeoutError } from "./failover-error.js";
 import type { AgentMessage } from "./runtime/index.js";
 import type { ExtensionContext } from "./sessions/index.js";
 import { generateSummary as agentGenerateSummary } from "./sessions/index.js";
+import { REQUIRED_COMPACTION_SECTIONS } from "../../packages/agent-core/src/harness/compaction/summary-contract.js";
 
 export {
   BASE_CHUNK_RATIO,
@@ -47,8 +48,11 @@ const log = createSubsystemLogger("compaction");
 type PartialSummaryError = Error & { partialSummary?: string };
 
 const DEFAULT_SUMMARY_FALLBACK = "No prior history.";
-const MERGE_SUMMARIES_INSTRUCTIONS = [
+export const MERGE_SUMMARIES_INSTRUCTIONS = [
   "Merge these partial summaries into a single cohesive summary.",
+  "",
+  "Return the merged summary using these exact top-level sections in order:",
+  ...REQUIRED_COMPACTION_SECTIONS,
   "",
   "MUST PRESERVE:",
   "- Active tasks and their current status (in-progress, blocked, pending)",

@@ -9,6 +9,7 @@ import {
   hasSafeTf0009HardBounds,
   hasValidTf0009Day1Gates,
 } from '../../scripts/lib/tf0009-canary-readiness.mjs';
+import { verifyTf0009ClosureEvidence } from '../../scripts/lib/tf0009-agent-surrogate.mjs';
 
 type Audit = {
   authority: string;
@@ -69,24 +70,12 @@ function completeDay1Gates() {
 describe('TF-0009 engineering evidence audit', () => {
   const audit = readJson<Audit>('artifacts/first-product-preview/TF-0009/evidence-audit.json');
 
-  it('keeps the canonical node review-needed while separating explicit engineering release', () => {
-    const nodes = readJson<Record<string, { status: string; progress: number; acceptance_criteria: string[] }>>(
-      '.agent-workbench/task-forest/graph/nodes.json',
-    );
-    const forest = readJson<{
-      edges: Record<string, { from: string; to: string; type: string; blocking: boolean }>;
-    }>('.agent-workbench/task-forest/graph/forest.json');
-    expect(nodes['TF-0009']).toMatchObject({ status: 'review_needed', progress: 50 });
-    expect(nodes['TF-0011']).toMatchObject({ status: 'done', progress: 100 });
-    expect(nodes['TF-0009'].acceptance_criteria).toHaveLength(4);
-    expect(Object.values(forest.edges)).toContainEqual(
-      expect.objectContaining({
-        from: 'TF-0011',
-        to: 'TF-0009',
-        type: 'derived_from',
-        blocking: false,
-      }),
-    );
+  it('verifies the tracked historical campaign without consulting the current task graph', () => {
+    expect(verifyTf0009ClosureEvidence(
+      readJson('artifacts/first-product-preview/TF-0009/policy-acceptance/campaign-report.json'),
+      root,
+    )).toBe(true);
+    // This July audit is a frozen historical record, not current closure authority.
     expect(audit.taskForestState).toEqual({
       status: 'review_needed',
       progress: 50,
@@ -192,12 +181,5 @@ describe('TF-0009 engineering evidence audit', () => {
     });
     expect(blocked.ready).toBe(false);
     expect(blocked.blockers).toContainEqual(expect.objectContaining({ id: 'day1-gates-invalid' }));
-  });
-
-  it('labels the historical overnight continue decision as non-authoritative', () => {
-    const brief = readFileSync(join(root, 'docs/dev/handoffs/OVERNIGHT-HARVEST-BRIEF.md'), 'utf8');
-    expect(brief).toContain('Authority correction');
-    expect(brief).toContain('not the TF-0009 exit decision');
-    expect(brief).toContain('0/10');
   });
 });

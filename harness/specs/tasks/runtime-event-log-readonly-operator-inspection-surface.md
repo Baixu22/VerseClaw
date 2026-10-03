@@ -66,9 +66,9 @@ requiredTests:
   - rtk pnpm --dir openclaw_runtime lint:kysely
   - rtk rg -n 'runtime\.resume\.preferEventLog|preferEventLog' openclaw_runtime/src tests/unit
   - rtk rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components electron shared openclaw_runtime/src/gateway
-  - rtk rg -n 'createServer|listen\(|new WebSocketServer|WebSocketServer|http\.createServer|net\.createServer|@temporalio|Temporal|database-service|listener|daemon|jsonl|sidecar|exporter|collector' openclaw_runtime/src/runtime-core/event-log-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-event-log.mjs tests/unit/runtime-event-log-operator-inspection.test.ts runtime-research/handoffs/runtime-event-log-readonly-operator-inspection-surface harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
+  - rtk rg -n 'createServer|listen\(|new WebSocketServer|WebSocketServer|http\.createServer|net\.createServer|@temporalio|Temporal|database-service|listener|daemon|jsonl|sidecar|exporter|collector' openclaw_runtime/src/runtime-core/event-log-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-event-log.mjs tests/unit/runtime-event-log-operator-inspection.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
   - rtk rg -n 'migrate|ensure.*schema|create table|create index|insertInto|updateTable|deleteFrom|append\(|appendMany\(|pruneRuntimeTaskEventLogRecords\(' openclaw_runtime/src/runtime-core/event-log-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-event-log.mjs
-  - rtk rg -n 'record_json|raw row|raw DB|transcript|jsonl|prompt dump|checkpoint payload|toolArgs|toolOutput|stdout|stderr|process\.env|secret|apiKey|api[-_]?key|authorization|password|traceparent|tracestate|baggage|completion proof' openclaw_runtime/src/runtime-core/event-log-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-event-log.mjs tests/unit/runtime-event-log-operator-inspection.test.ts runtime-research/handoffs/runtime-event-log-readonly-operator-inspection-surface harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
+  - rtk rg -n 'record_json|raw row|raw DB|transcript|jsonl|prompt dump|checkpoint payload|toolArgs|toolOutput|stdout|stderr|process\.env|secret|apiKey|api[-_]?key|authorization|password|traceparent|tracestate|baggage|completion proof' openclaw_runtime/src/runtime-core/event-log-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-event-log.mjs tests/unit/runtime-event-log-operator-inspection.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
   - rtk pnpm run comms:replay and rtk pnpm run comms:compare only if implementation touches Gateway, runtime send/receive, channel delivery, fallback, host-api, api-client, Electron IPC, or provider transport paths.
 acceptance:
   - The surface is introduced only by this fresh task spec and does not extend the robustness/retention MVP into product/runtime cutover.
@@ -82,7 +82,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/runtime-event-log-readonly-operator-inspection-surface/README.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Runtime Event Log Readonly Operator Inspection Surface

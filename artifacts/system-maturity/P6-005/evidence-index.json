@@ -1,31 +1,39 @@
 {
   "schemaVersion": 1,
   "taskId": "P6-005",
-  "root": "../ClawX-maturity-p0/artifacts/system-maturity/P6-005",
+  "root": "../output7",
   "files": {
     "release-source-manifest.json": {
-      "bytes": 3527377,
-      "sha256": "453553124189783c7949c7c62f975cad62d520e8caced5aac52902bc1f861284"
+      "bytes": 4211823,
+      "sha256": "bc093301ab2b2ee16864bcf1aacff1f8825ceef179f970d0d1c7470ddfbeab7b"
     },
     "release-gate-evidence.json": {
-      "bytes": 5228,
-      "sha256": "9f3e1b4e220aef7c37b9ba181f9b310ee814e29985ad7552a3171fea099a1c4e"
+      "bytes": 6083,
+      "sha256": "a5e89abc675a3cc29e7f6129139cdc8db81cea59a9202b0eb89acef2a4c7302a"
     },
     "acceptance-matrix.json": {
-      "bytes": 1108,
-      "sha256": "d96c22c4d6dbb7beaa30e3643e58246b046d81505a1781ca85c83d81fc2035fd"
+      "bytes": 805,
+      "sha256": "54de0c2f20de09fe0d94161088b89b838db0c02e8febf9bc9f87f1689464fb42"
+    },
+    "gates/runtime-build-preflight.stdout.txt": {
+      "bytes": 456,
+      "sha256": "68f00dc893bbbc8bacfe5e959f2e3cc8b0b6b409de6c60587144ed4cfec32700"
+    },
+    "gates/runtime-build-preflight.stderr.txt": {
+      "bytes": 1568,
+      "sha256": "9802c0c197b2f7f9e80b6f6ccb07e44d4acabf4264afdd514d176704b96ff7ed"
     },
     "gates/maturity-baseline.stdout.txt": {
-      "bytes": 1077,
-      "sha256": "142d8ca865e99f6b0f146a23d77a716d4c547e961d3fdcf9b302b032e4023ebd"
+      "bytes": 987,
+      "sha256": "16165734e74e4ac10ec2e91cd43d675b89f467f80d6c990b927b0629fbd37d87"
     },
     "gates/maturity-baseline.stderr.txt": {
-      "bytes": 3561,
-      "sha256": "66208b56f81e1692ff30c67ab40f65c0fb36654b864724f48d18190e0aba8586"
+      "bytes": 4826,
+      "sha256": "d1220002f4e94cc7088bd039ac37d90520c4f61c5daa927b66131d5059111404"
     },
     "gates/maturity-plan.stdout.txt": {
-      "bytes": 4066,
-      "sha256": "e079f509b068351007a960d063c3a04295b8e1e8fb54c095188308370c5488e7"
+      "bytes": 5513,
+      "sha256": "197914e236cb5839188cc5660f9cb16f1b9d84ede34a3c9c150545f1f001b429"
     },
     "gates/maturity-plan.stderr.txt": {
       "bytes": 0,
@@ -39,6 +47,22 @@
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
+    "gates/maturity-validate.stdout.txt": {
+      "bytes": 27255,
+      "sha256": "4bb58312a5ab3652c90f7f393644b5e8e7096e3ed2ab268fa54286d774410554"
+    },
+    "gates/maturity-validate.stderr.txt": {
+      "bytes": 14148,
+      "sha256": "3cb8253e11f1f50641c33584424f861a10bae2c2af2539e0386611863b46639f"
+    },
+    "gates/maturity-security-full.stdout.txt": {
+      "bytes": 109,
+      "sha256": "3612d0fbf4f4e722504bad99699c84efccf92a622c8490f9cf2710f37b3780d9"
+    },
+    "gates/maturity-security-full.stderr.txt": {
+      "bytes": 262,
+      "sha256": "7fc3bdc1dd7a3c980bd3fa7eb20a690fa97a697c69b906dc99384327484c0ce0"
+    },
     "gates/contract-check.stdout.txt": {
       "bytes": 23,
       "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
@@ -48,64 +72,56 @@
       "sha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
     },
     "gates/test.stdout.txt": {
-      "bytes": 1673,
-      "sha256": "4b56387c7da9750c9b83d6417aaf2d649cfc5f994341587915a3d253d29eff15"
+      "bytes": 54,
+      "sha256": "d7fd6a4c2cc2c743b5335f639cd2a7d4f8717831616b97fd6a6845ea67c01573"
     },
     "gates/test.stderr.txt": {
-      "bytes": 6072,
-      "sha256": "f3010fc1230b50dc37be053a8a91eae03cd87215a9179a132ee28f646505a9fc"
+      "bytes": 515,
+      "sha256": "3cdcecea6647ddb3b3a5d6b8ea03dec2830701d1e4b7f40c6a2a241562fcf77d"
     },
     "gates/lint-check.stdout.txt": {
-      "bytes": 19730,
-      "sha256": "20de2507035b0b47ca632a4c1f93fe22d2925f8938ef4380b5696552069fdf10"
+      "bytes": 63,
+      "sha256": "cb72a5ef311bfed1ca1933249a0e765d547dec795d6dfdf43cbb2e017830b417"
     },
     "gates/lint-check.stderr.txt": {
-      "bytes": 3211,
-      "sha256": "d93d152e20a5003c1cac09588ed745d085e38e2f41ebd11257a6ac80f3907d4c"
+      "bytes": 239,
+      "sha256": "952056054eec4f560e3d14db10c90f924701e95e8a1ec78cbb75c69e6db4034f"
     },
     "gates/typecheck.stdout.txt": {
-      "bytes": 969,
-      "sha256": "82ce041683605bb9545a648d8dfc186d42052d78d00e90241e1d50c101c00e3e"
+      "bytes": 1514,
+      "sha256": "6fa5e7cb444aa27ce5e02cf989148c3714e147215cdd6b3c6cb09ec2367dc71d"
     },
     "gates/typecheck.stderr.txt": {
-      "bytes": 148,
-      "sha256": "b9dc801248da3af9eef9021d08d90bc326bd4a354a8147813f5d5a2cbece6b58"
+      "bytes": 404,
+      "sha256": "9230210271427a6886154af5e51ad36b81cb2364c03c2c9ce3181a9f131eb21d"
     },
     "gates/harness-ci.stdout.txt": {
-      "bytes": 5680,
-      "sha256": "ec63e92e78c3df44e766028632feab94b5cbdd832d3a698bc2e0b971a6ccf65f"
+      "bytes": 8781,
+      "sha256": "0e0e66582f32b566735c11d2db5f50a5db03cabce33310bffd7b2b83a5ece7f2"
     },
     "gates/harness-ci.stderr.txt": {
-      "bytes": 1213,
-      "sha256": "66836381b700446b14fe14633ce20eb1db5174909e7da87bacf94df62b16501f"
+      "bytes": 90602,
+      "sha256": "f3efd1dcc372d796edc3d0c4f30b1102bb9bdec0052b694c080f5ddbe19e3c56"
     },
     "gates/agent-dev-deep-test.stdout.txt": {
-      "bytes": 57786,
-      "sha256": "26c03cde11f84a9b9d3c627925d9bc74f0581c09c74760825b4a63ab37d0d638"
+      "bytes": 2557,
+      "sha256": "f67b8442a500a1b5f0322645ff872527fb9f0551920c0d6204a77c5bca15e318"
     },
     "gates/agent-dev-deep-test.stderr.txt": {
-      "bytes": 8137,
-      "sha256": "f08bb279c9976a35a8a35182c36708e2775a9aec50efda8d9466abc49d354265"
+      "bytes": 443,
+      "sha256": "54b951539e8b864310f8ccefaa27c7397085aa15dc79e40039f84aa4b26e4ab9"
     },
     "gates/test-e2e-agent-dev-quality.stdout.txt": {
-      "bytes": 53476,
-      "sha256": "f9b972299ec24da57059eaa9a31adadffa4130d1f1e223b8ab1d85c2360e3850"
+      "bytes": 1206,
+      "sha256": "7e405ca779ae1e8c4a157c3aedb93033ada0a721efbe2e18260a34ecd9e17af2"
     },
     "gates/test-e2e-agent-dev-quality.stderr.txt": {
-      "bytes": 7149,
-      "sha256": "05659bd086d398c7d36c6c8cbf29f140c20295c131bc0fcce28eb11fa872e480"
-    },
-    "gates/maturity-validate.stdout.txt": {
-      "bytes": 17390,
-      "sha256": "034690d21b71a173974b885d053f7adf37e0dc975825fe7d59d82dc61cb33011"
-    },
-    "gates/maturity-validate.stderr.txt": {
-      "bytes": 3830,
-      "sha256": "c1c123cc0af66d9b59b7fce233b194b6f460c0fdea869a9846f3b605f0b7e7ba"
+      "bytes": 4423,
+      "sha256": "815edfb12fab611bea32e5d12595bb08f533a035ecfc55a86853d606dabc62b4"
     },
     "gates/release-validate.stdout.txt": {
-      "bytes": 98,
-      "sha256": "6be6c6d06ec94eb4bd8f5259c0432a4dbeb0fd6a868c13d1d58cf7c99eba9cb3"
+      "bytes": 114,
+      "sha256": "0ada888a4b5588fc3cc98198e215c9c2afe4eb426f28d59005ac82059f6e4d88"
     },
     "gates/release-validate.stderr.txt": {
       "bytes": 46,

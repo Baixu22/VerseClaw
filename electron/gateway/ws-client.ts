@@ -130,6 +130,7 @@ const GATEWAY_PROTOCOL_VERSION = 4;
 export function buildGatewayConnectFrame(options: {
   challengeNonce: string;
   token: string;
+  deviceToken?: string;
   deviceIdentity: DeviceIdentity | null;
   platform: string;
 }): { connectId: string; frame: Record<string, unknown> } {
@@ -138,7 +139,9 @@ export function buildGatewayConnectFrame(options: {
   const scopes = ['operator.admin', 'operator.read'];
   const signedAtMs = Date.now();
   const clientId = 'gateway-client';
-  const clientMode = 'backend';
+  // Pair a signed device as UI, then restore Main's backend identity when using
+  // its issued token. Workspace overrides remain restricted to backend callers.
+  const clientMode = options.deviceIdentity && !options.deviceToken ? 'ui' : 'backend';
 
   const device = (() => {
     if (!options.deviceIdentity) return undefined;
@@ -150,7 +153,7 @@ export function buildGatewayConnectFrame(options: {
       role,
       scopes,
       signedAtMs,
-      token: options.token ?? null,
+      token: options.deviceToken ?? options.token ?? null,
       nonce: options.challengeNonce,
     });
     const signature = signDevicePayload(options.deviceIdentity.privateKeyPem, payload);
@@ -179,9 +182,7 @@ export function buildGatewayConnectFrame(options: {
           platform: options.platform,
           mode: clientMode,
         },
-        auth: {
-          token: options.token,
-        },
+        auth: options.deviceToken ? { deviceToken: options.deviceToken } : { token: options.token },
         caps: ['tool-events'],
         role,
         scopes,
@@ -193,6 +194,7 @@ export function buildGatewayConnectFrame(options: {
 
 export async function connectGatewaySocket(options: {
   port: number;
+  deviceToken?: string;
   deviceIdentity: DeviceIdentity | null;
   platform: string;
   pendingRequests: Map<string, PendingGatewayRequest>;
@@ -263,6 +265,7 @@ export async function connectGatewaySocket(options: {
       const connectPayload = buildGatewayConnectFrame({
         challengeNonce,
         token: currentToken,
+        deviceToken: options.deviceToken,
         deviceIdentity: options.deviceIdentity,
         platform: options.platform,
       });
@@ -287,6 +290,16 @@ export async function connectGatewaySocket(options: {
 
       options.pendingRequests.set(connectId, {
         resolve: (payload) => {
+          // Bootstrap with the shared secret, then use the Gateway-issued device
+          // token before exposing this connection to callers such as Inbox.
+          const auth = (payload as { auth?: { deviceToken?: unknown } } | null)?.auth;
+          if (!options.deviceToken && options.deviceIdentity && typeof auth?.deviceToken === 'string' && auth.deviceToken.trim()) {
+            settled = true;
+            cleanupHandshakeRequest();
+            ws.terminate();
+            void connectGatewaySocket({ ...options, deviceToken: auth.deviceToken }).then(resolve, reject);
+            return;
+          }
           handshakeComplete = true;
           logger.debug('Gateway connect handshake completed');
           options.onHandshakeComplete(ws, payload);

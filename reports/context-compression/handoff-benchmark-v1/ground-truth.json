@@ -1,0 +1,1017 @@
+{
+  "schema": "handoff-benchmark-ground-truth/v1",
+  "createdAt": "2026-08-24T17:02:06.128Z",
+  "status": "draft",
+  "annotator": "codex-agent (draft; pending user review and lock)",
+  "selectionRef": "reports/context-compression/handoff-benchmark-v1/selection.json",
+  "notes": [
+    "Evidence anchors (messageId:line) refer to the sample transcript window used by buildRecoveryLedger.",
+    "R10/R11/R13/R14/R16/R17 are six snapshot windows of the same audit session family; anchors verified in the R11 transcript (2026-08-12T12-59-20-521Z_d18e461b-1f9e-481f-869b-ec9c87c1d6a0.jsonl); sibling snapshots share the same messageIds (bbe2b6de:159, d11a18b8:235, 081e2e77:185 confirmed identical across R10/R13/R16 digests).",
+    "R5/R8 share the completed JForum precedence-fix story; R26 is the same objective but the fix already existed in commit 53742dd."
+  ],
+  "samples": {
+    "R5": {
+      "correctEndState": "Objective COMPLETE and verified: the operator-precedence bug in UserController.insertSave (line 253) is fixed — parentheses added so the !error guard covers both indexOf checks (< and >) — and the fix was confirmed with grep; root cause reported (Java && binds tighter than ||, so the > check was unguarded). Test suite was skipped: no project manifest (package.json/pyproject.toml/Cargo.toml/go.mod) found.",
+      "correctNextAction": {
+        "kind": "decision",
+        "target": "preserve validated outcome",
+        "params": {},
+        "rationale": "The fix is already applied and verified with grep; the only correct move is to preserve the outcome and not redo the fix."
+      },
+      "completedWork": [
+        {
+          "text": "fix operator precedence on line 253 of UserController.insertSave and confirm with grep",
+          "evidence": {
+            "messageId": "13bf9bd6",
+            "line": 18
+          }
+        },
+        {
+          "text": "report root cause: && binds tighter than || so the > indexOf check lacked the !error guard",
+          "evidence": {
+            "messageId": "13bf9bd6",
+            "line": 18
+          }
+        }
+      ],
+      "rejectedPaths": [
+        {
+          "text": "re-apply or re-edit the precedence fix in UserController.insertSave (already fixed and grep-verified)",
+          "evidence": {
+            "messageId": "13bf9bd6",
+            "line": 18
+          }
+        }
+      ],
+      "probeQuestions": [
+        {
+          "id": "q1",
+          "type": "state",
+          "question": "Which file and method received the fix?",
+          "expectedAnswer": "src/main/java/net/jforum/controllers/UserController.java insertSave",
+          "evidence": {
+            "messageId": "f2c9d36c",
+            "line": 5
+          }
+        },
+        {
+          "id": "q2",
+          "type": "state",
+          "question": "What happened with the test suite?",
+          "expectedAnswer": "verify_tests skipped: no project manifest (package.json/pyproject.toml/Cargo.toml/go.mod) found, no test suite was run",
+          "evidence": {
+            "messageId": "51671843",
+            "line": 15
+          }
+        },
+        {
+          "id": "q3",
+          "type": "constraint",
+          "question": "Should the precedence fix be applied again?",
+          "expectedAnswer": "No: the fix is already applied and grep-verified; preserve the outcome and do not repeat it",
+          "evidence": {
+            "messageId": "13bf9bd6",
+            "line": 18
+          }
+        },
+        {
+          "id": "q4",
+          "type": "constraint",
+          "question": "Can tests be executed for this project?",
+          "expectedAnswer": "No: there is no project manifest, so no test suite can run",
+          "evidence": {
+            "messageId": "51671843",
+            "line": 15
+          }
+        }
+      ]
+    },
+    "R8": {
+      "correctEndState": "Objective COMPLETE and verified: the operator-precedence bug in UserController.insertSave (line 253) is fixed — parentheses added so the !error guard covers both indexOf checks (< and >) — and the fix was confirmed with grep; root cause reported (Java && binds tighter than ||, so the > check was unguarded). Test suite was skipped: no project manifest (package.json/pyproject.toml/Cargo.toml/go.mod) found.",
+      "correctNextAction": {
+        "kind": "decision",
+        "target": "preserve validated outcome",
+        "params": {},
+        "rationale": "The fix is already applied and verified with grep; the only correct move is to preserve the outcome and not redo the fix."
+      },
+      "completedWork": [
+        {
+          "text": "fix operator precedence on line 253 of UserController.insertSave and confirm with grep",
+          "evidence": {
+            "messageId": "cb80d44e",
+            "line": 14
+          }
+        },
+        {
+          "text": "report root cause: && binds tighter than || so the > indexOf check lacked the !error guard",
+          "evidence": {
+            "messageId": "cb80d44e",
+            "line": 14
+          }
+        }
+      ],
+      "rejectedPaths": [
+        {
+          "text": "re-apply or re-edit the precedence fix in UserController.insertSave (already fixed and grep-verified)",
+          "evidence": {
+            "messageId": "cb80d44e",
+            "line": 14
+          }
+        }
+      ],
+      "probeQuestions": [
+        {
+          "id": "q1",
+          "type": "state",
+          "question": "Which file and method received the fix?",
+          "expectedAnswer": "src/main/java/net/jforum/controllers/UserController.java insertSave",
+          "evidence": {
+            "messageId": "890c1d0e",
+            "line": 5
+          }
+        },
+        {
+          "id": "q2",
+          "type": "state",
+          "question": "What happened with the test suite?",
+          "expectedAnswer": "verify_tests skipped: no project manifest (package.json/pyproject.toml/Cargo.toml/go.mod) found, no test suite was run",
+          "evidence": {
+            "messageId": "431b9abb",
+            "line": 11
+          }
+        },
+        {
+          "id": "q3",
+          "type": "constraint",
+          "question": "Should the precedence fix be applied again?",
+          "expectedAnswer": "No: the fix is already applied and grep-verified; preserve the outcome and do not repeat it",
+          "evidence": {
+            "messageId": "cb80d44e",
+            "line": 14
+          }
+        },
+        {
+          "id": "q4",
+          "type": "constraint",
+          "question": "Can tests be executed for this project?",
+          "expectedAnswer": "No: there is no project manifest, so no test suite can run",
+          "evidence": {
+            "messageId": "431b9abb",
+            "line": 11
+          }
+        }
+      ]
+    },
+    "R9": {
+      "correctEndState": "Investigation reported: the gateway knowledge-base status query could NOT be performed — every gateway method fails because the OpenClaw runtime itself is corrupted (missing dist chunks io-B86lst6B.js, bash-tools-CNYGmtk8.js, call-BpnOBNBM.js). Diagnosis: stale hashed chunk filenames no longer exist on disk — a corrupted/incomplete deployment, not a missing wiki.status method. The failure report was delivered.",
+      "correctNextAction": {
+        "kind": "repair_environment",
+        "target": "rebuild or reinstall openclaw_runtime dist",
+        "params": {},
+        "rationale": "The gateway is broken at the module level; the knowledge-base status query can only be retried after the runtime dist is repaired."
+      },
+      "completedWork": [
+        {
+          "text": "diagnose gateway failures as runtime corruption (stale hashed chunk filenames), not a missing wiki.status method",
+          "evidence": {
+            "messageId": "70bdfa3a",
+            "line": 24
+          }
+        },
+        {
+          "text": "deliver the failure report for the knowledge-base status query",
+          "evidence": {
+            "messageId": "70bdfa3a",
+            "line": 24
+          }
+        }
+      ],
+      "rejectedPaths": [
+        {
+          "text": "treat the gateway failure as a missing wiki.status method (it is runtime corruption)",
+          "evidence": {
+            "messageId": "70bdfa3a",
+            "line": 24
+          }
+        }
+      ],
+      "probeQuestions": [
+        {
+          "id": "q1",
+          "type": "state",
+          "question": "Which module files are missing from the runtime dist?",
+          "expectedAnswer": "dist/io-B86lst6B.js, dist/bash-tools-CNYGmtk8.js, dist/call-BpnOBNBM.js",
+          "evidence": {
+            "messageId": "e6fb7dc7",
+            "line": 7
+          }
+        },
+        {
+          "id": "q2",
+          "type": "state",
+          "question": "What is the diagnosed root cause of the gateway failures?",
+          "expectedAnswer": "corrupted/incomplete deployment: stale hashed chunk filenames no longer exist on disk",
+          "evidence": {
+            "messageId": "89888cb9",
+            "line": 19
+          }
+        },
+        {
+          "id": "q3",
+          "type": "constraint",
+          "question": "Is this a missing-method problem (no wiki.status)?",
+          "expectedAnswer": "No: the runtime is broken at the module level; it is not a method-not-found issue",
+          "evidence": {
+            "messageId": "f72c1390",
+            "line": 11
+          }
+        },
+        {
+          "id": "q4",
+          "type": "constraint",
+          "question": "What must happen before the knowledge-base status can be queried again?",
+          "expectedAnswer": "repair/rebuild the OpenClaw runtime dist first, then retry",
+          "evidence": {
+            "messageId": "70bdfa3a",
+            "line": 24
+          }
+        }
+      ]
+    },
+    "R10": {
+      "correctEndState": "Manual session compaction objective NOT executed — investigation only. Findings: no dedicated manual-compaction tool exists in the toolset (sessions_list/sessions_history/sessions_send/sessions_spawn/sessions_yield perform no compaction); OpenClaw compaction is automatic via the compaction-safeguard extension and the /compact user-facing slash command (source: compaction-safeguard-quality.ts); the openclaw CLI is unreachable from the shell (CommandNotFoundException); context usage is totalTokens 109329 of contextTokens 1000000 (~11%).",
+      "correctNextAction": {
+        "kind": "execute_compaction",
+        "target": "/compact slash command or compaction-safeguard/compaction-planning path",
+        "params": {},
+        "rationale": "The objective explicitly requires executing the compaction entry point if found and reporting success plus post-compaction session state; investigation found /compact and the compaction-safeguard path but never executed compaction."
+      },
+      "completedWork": [
+        {
+          "text": "investigate manual compaction tool availability across session tools and CLI",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "text": "JForum project analysis (README overview: Java forum system, mvn package build)",
+          "evidence": {
+            "messageId": "081e2e77",
+            "line": 185
+          }
+        },
+        {
+          "text": "chain_audit_test.md created then reverted via undo_write ok:true",
+          "evidence": {
+            "messageId": "d11a18b8",
+            "line": 235
+          }
+        }
+      ],
+      "rejectedPaths": [
+        {
+          "text": "treat the manual compaction objective as completed (it was never executed)",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "text": "invoke the openclaw CLI from the shell (CommandNotFoundException; CLI unavailable)",
+          "evidence": {
+            "messageId": "28178333",
+            "line": 131
+          }
+        }
+      ],
+      "probeQuestions": [
+        {
+          "id": "q1",
+          "type": "state",
+          "question": "What is the current session context usage?",
+          "expectedAnswer": "totalTokens 109329 of contextTokens 1000000 (~11%)",
+          "evidence": {
+            "messageId": "bc8a0b11",
+            "line": 161
+          }
+        },
+        {
+          "id": "q2",
+          "type": "state",
+          "question": "Was manual compaction executed?",
+          "expectedAnswer": "No: investigation only, compaction was not executed",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "id": "q3",
+          "type": "constraint",
+          "question": "Is the openclaw CLI available from the shell?",
+          "expectedAnswer": "No: CommandNotFoundException, the CLI is unreachable",
+          "evidence": {
+            "messageId": "28178333",
+            "line": 131
+          }
+        },
+        {
+          "id": "q4",
+          "type": "constraint",
+          "question": "Which session tools exist and can any of them compact?",
+          "expectedAnswer": "sessions_list, sessions_history, sessions_send, sessions_spawn, sessions_yield — none performs compaction",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        }
+      ]
+    },
+    "R11": {
+      "correctEndState": "Manual session compaction objective NOT executed — investigation only. Findings: no dedicated manual-compaction tool exists in the toolset (sessions_list/sessions_history/sessions_send/sessions_spawn/sessions_yield perform no compaction); OpenClaw compaction is automatic via the compaction-safeguard extension and the /compact user-facing slash command (source: compaction-safeguard-quality.ts); the openclaw CLI is unreachable from the shell (CommandNotFoundException); context usage is totalTokens 109329 of contextTokens 1000000 (~11%).",
+      "correctNextAction": {
+        "kind": "execute_compaction",
+        "target": "/compact slash command or compaction-safeguard/compaction-planning path",
+        "params": {},
+        "rationale": "The objective explicitly requires executing the compaction entry point if found and reporting success plus post-compaction session state; investigation found /compact and the compaction-safeguard path but never executed compaction."
+      },
+      "completedWork": [
+        {
+          "text": "investigate manual compaction tool availability across session tools and CLI",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "text": "JForum project analysis (README overview: Java forum system, mvn package build)",
+          "evidence": {
+            "messageId": "081e2e77",
+            "line": 185
+          }
+        },
+        {
+          "text": "chain_audit_test.md created then reverted via undo_write ok:true",
+          "evidence": {
+            "messageId": "d11a18b8",
+            "line": 235
+          }
+        }
+      ],
+      "rejectedPaths": [
+        {
+          "text": "treat the manual compaction objective as completed (it was never executed)",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "text": "invoke the openclaw CLI from the shell (CommandNotFoundException; CLI unavailable)",
+          "evidence": {
+            "messageId": "28178333",
+            "line": 131
+          }
+        }
+      ],
+      "probeQuestions": [
+        {
+          "id": "q1",
+          "type": "state",
+          "question": "What is the current session context usage?",
+          "expectedAnswer": "totalTokens 109329 of contextTokens 1000000 (~11%)",
+          "evidence": {
+            "messageId": "bc8a0b11",
+            "line": 161
+          }
+        },
+        {
+          "id": "q2",
+          "type": "state",
+          "question": "Was manual compaction executed?",
+          "expectedAnswer": "No: investigation only, compaction was not executed",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "id": "q3",
+          "type": "constraint",
+          "question": "Is the openclaw CLI available from the shell?",
+          "expectedAnswer": "No: CommandNotFoundException, the CLI is unreachable",
+          "evidence": {
+            "messageId": "28178333",
+            "line": 131
+          }
+        },
+        {
+          "id": "q4",
+          "type": "constraint",
+          "question": "Which session tools exist and can any of them compact?",
+          "expectedAnswer": "sessions_list, sessions_history, sessions_send, sessions_spawn, sessions_yield — none performs compaction",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        }
+      ]
+    },
+    "R13": {
+      "correctEndState": "Manual session compaction objective NOT executed — investigation only. Findings: no dedicated manual-compaction tool exists in the toolset (sessions_list/sessions_history/sessions_send/sessions_spawn/sessions_yield perform no compaction); OpenClaw compaction is automatic via the compaction-safeguard extension and the /compact user-facing slash command (source: compaction-safeguard-quality.ts); the openclaw CLI is unreachable from the shell (CommandNotFoundException); context usage is totalTokens 109329 of contextTokens 1000000 (~11%).",
+      "correctNextAction": {
+        "kind": "execute_compaction",
+        "target": "/compact slash command or compaction-safeguard/compaction-planning path",
+        "params": {},
+        "rationale": "The objective explicitly requires executing the compaction entry point if found and reporting success plus post-compaction session state; investigation found /compact and the compaction-safeguard path but never executed compaction."
+      },
+      "completedWork": [
+        {
+          "text": "investigate manual compaction tool availability across session tools and CLI",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "text": "JForum project analysis (README overview: Java forum system, mvn package build)",
+          "evidence": {
+            "messageId": "081e2e77",
+            "line": 185
+          }
+        },
+        {
+          "text": "chain_audit_test.md created then reverted via undo_write ok:true",
+          "evidence": {
+            "messageId": "d11a18b8",
+            "line": 235
+          }
+        }
+      ],
+      "rejectedPaths": [
+        {
+          "text": "treat the manual compaction objective as completed (it was never executed)",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "text": "invoke the openclaw CLI from the shell (CommandNotFoundException; CLI unavailable)",
+          "evidence": {
+            "messageId": "28178333",
+            "line": 131
+          }
+        }
+      ],
+      "probeQuestions": [
+        {
+          "id": "q1",
+          "type": "state",
+          "question": "What is the current session context usage?",
+          "expectedAnswer": "totalTokens 109329 of contextTokens 1000000 (~11%)",
+          "evidence": {
+            "messageId": "bc8a0b11",
+            "line": 161
+          }
+        },
+        {
+          "id": "q2",
+          "type": "state",
+          "question": "Was manual compaction executed?",
+          "expectedAnswer": "No: investigation only, compaction was not executed",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "id": "q3",
+          "type": "constraint",
+          "question": "Is the openclaw CLI available from the shell?",
+          "expectedAnswer": "No: CommandNotFoundException, the CLI is unreachable",
+          "evidence": {
+            "messageId": "28178333",
+            "line": 131
+          }
+        },
+        {
+          "id": "q4",
+          "type": "constraint",
+          "question": "Which session tools exist and can any of them compact?",
+          "expectedAnswer": "sessions_list, sessions_history, sessions_send, sessions_spawn, sessions_yield — none performs compaction",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        }
+      ]
+    },
+    "R14": {
+      "correctEndState": "Manual session compaction objective NOT executed — investigation only. Findings: no dedicated manual-compaction tool exists in the toolset (sessions_list/sessions_history/sessions_send/sessions_spawn/sessions_yield perform no compaction); OpenClaw compaction is automatic via the compaction-safeguard extension and the /compact user-facing slash command (source: compaction-safeguard-quality.ts); the openclaw CLI is unreachable from the shell (CommandNotFoundException); context usage is totalTokens 109329 of contextTokens 1000000 (~11%).",
+      "correctNextAction": {
+        "kind": "execute_compaction",
+        "target": "/compact slash command or compaction-safeguard/compaction-planning path",
+        "params": {},
+        "rationale": "The objective explicitly requires executing the compaction entry point if found and reporting success plus post-compaction session state; investigation found /compact and the compaction-safeguard path but never executed compaction."
+      },
+      "completedWork": [
+        {
+          "text": "investigate manual compaction tool availability across session tools and CLI",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "text": "JForum project analysis (README overview: Java forum system, mvn package build)",
+          "evidence": {
+            "messageId": "081e2e77",
+            "line": 185
+          }
+        },
+        {
+          "text": "chain_audit_test.md created then reverted via undo_write ok:true",
+          "evidence": {
+            "messageId": "d11a18b8",
+            "line": 235
+          }
+        }
+      ],
+      "rejectedPaths": [
+        {
+          "text": "treat the manual compaction objective as completed (it was never executed)",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "text": "invoke the openclaw CLI from the shell (CommandNotFoundException; CLI unavailable)",
+          "evidence": {
+            "messageId": "28178333",
+            "line": 131
+          }
+        }
+      ],
+      "probeQuestions": [
+        {
+          "id": "q1",
+          "type": "state",
+          "question": "What is the current session context usage?",
+          "expectedAnswer": "totalTokens 109329 of contextTokens 1000000 (~11%)",
+          "evidence": {
+            "messageId": "bc8a0b11",
+            "line": 161
+          }
+        },
+        {
+          "id": "q2",
+          "type": "state",
+          "question": "Was manual compaction executed?",
+          "expectedAnswer": "No: investigation only, compaction was not executed",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "id": "q3",
+          "type": "constraint",
+          "question": "Is the openclaw CLI available from the shell?",
+          "expectedAnswer": "No: CommandNotFoundException, the CLI is unreachable",
+          "evidence": {
+            "messageId": "28178333",
+            "line": 131
+          }
+        },
+        {
+          "id": "q4",
+          "type": "constraint",
+          "question": "Which session tools exist and can any of them compact?",
+          "expectedAnswer": "sessions_list, sessions_history, sessions_send, sessions_spawn, sessions_yield — none performs compaction",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        }
+      ]
+    },
+    "R16": {
+      "correctEndState": "Manual session compaction objective NOT executed — investigation only. Findings: no dedicated manual-compaction tool exists in the toolset (sessions_list/sessions_history/sessions_send/sessions_spawn/sessions_yield perform no compaction); OpenClaw compaction is automatic via the compaction-safeguard extension and the /compact user-facing slash command (source: compaction-safeguard-quality.ts); the openclaw CLI is unreachable from the shell (CommandNotFoundException); context usage is totalTokens 109329 of contextTokens 1000000 (~11%).",
+      "correctNextAction": {
+        "kind": "execute_compaction",
+        "target": "/compact slash command or compaction-safeguard/compaction-planning path",
+        "params": {},
+        "rationale": "The objective explicitly requires executing the compaction entry point if found and reporting success plus post-compaction session state; investigation found /compact and the compaction-safeguard path but never executed compaction."
+      },
+      "completedWork": [
+        {
+          "text": "investigate manual compaction tool availability across session tools and CLI",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "text": "JForum project analysis (README overview: Java forum system, mvn package build)",
+          "evidence": {
+            "messageId": "081e2e77",
+            "line": 185
+          }
+        },
+        {
+          "text": "chain_audit_test.md created then reverted via undo_write ok:true",
+          "evidence": {
+            "messageId": "d11a18b8",
+            "line": 235
+          }
+        }
+      ],
+      "rejectedPaths": [
+        {
+          "text": "treat the manual compaction objective as completed (it was never executed)",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "text": "invoke the openclaw CLI from the shell (CommandNotFoundException; CLI unavailable)",
+          "evidence": {
+            "messageId": "28178333",
+            "line": 131
+          }
+        }
+      ],
+      "probeQuestions": [
+        {
+          "id": "q1",
+          "type": "state",
+          "question": "What is the current session context usage?",
+          "expectedAnswer": "totalTokens 109329 of contextTokens 1000000 (~11%)",
+          "evidence": {
+            "messageId": "bc8a0b11",
+            "line": 161
+          }
+        },
+        {
+          "id": "q2",
+          "type": "state",
+          "question": "Was manual compaction executed?",
+          "expectedAnswer": "No: investigation only, compaction was not executed",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "id": "q3",
+          "type": "constraint",
+          "question": "Is the openclaw CLI available from the shell?",
+          "expectedAnswer": "No: CommandNotFoundException, the CLI is unreachable",
+          "evidence": {
+            "messageId": "28178333",
+            "line": 131
+          }
+        },
+        {
+          "id": "q4",
+          "type": "constraint",
+          "question": "Which session tools exist and can any of them compact?",
+          "expectedAnswer": "sessions_list, sessions_history, sessions_send, sessions_spawn, sessions_yield — none performs compaction",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        }
+      ]
+    },
+    "R17": {
+      "correctEndState": "Manual session compaction objective NOT executed — investigation only. Findings: no dedicated manual-compaction tool exists in the toolset (sessions_list/sessions_history/sessions_send/sessions_spawn/sessions_yield perform no compaction); OpenClaw compaction is automatic via the compaction-safeguard extension and the /compact user-facing slash command (source: compaction-safeguard-quality.ts); the openclaw CLI is unreachable from the shell (CommandNotFoundException); context usage is totalTokens 109329 of contextTokens 1000000 (~11%).",
+      "correctNextAction": {
+        "kind": "execute_compaction",
+        "target": "/compact slash command or compaction-safeguard/compaction-planning path",
+        "params": {},
+        "rationale": "The objective explicitly requires executing the compaction entry point if found and reporting success plus post-compaction session state; investigation found /compact and the compaction-safeguard path but never executed compaction."
+      },
+      "completedWork": [
+        {
+          "text": "investigate manual compaction tool availability across session tools and CLI",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "text": "JForum project analysis (README overview: Java forum system, mvn package build)",
+          "evidence": {
+            "messageId": "081e2e77",
+            "line": 185
+          }
+        },
+        {
+          "text": "chain_audit_test.md created then reverted via undo_write ok:true",
+          "evidence": {
+            "messageId": "d11a18b8",
+            "line": 235
+          }
+        }
+      ],
+      "rejectedPaths": [
+        {
+          "text": "treat the manual compaction objective as completed (it was never executed)",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "text": "invoke the openclaw CLI from the shell (CommandNotFoundException; CLI unavailable)",
+          "evidence": {
+            "messageId": "28178333",
+            "line": 131
+          }
+        }
+      ],
+      "probeQuestions": [
+        {
+          "id": "q1",
+          "type": "state",
+          "question": "What is the current session context usage?",
+          "expectedAnswer": "totalTokens 109329 of contextTokens 1000000 (~11%)",
+          "evidence": {
+            "messageId": "bc8a0b11",
+            "line": 161
+          }
+        },
+        {
+          "id": "q2",
+          "type": "state",
+          "question": "Was manual compaction executed?",
+          "expectedAnswer": "No: investigation only, compaction was not executed",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        },
+        {
+          "id": "q3",
+          "type": "constraint",
+          "question": "Is the openclaw CLI available from the shell?",
+          "expectedAnswer": "No: CommandNotFoundException, the CLI is unreachable",
+          "evidence": {
+            "messageId": "28178333",
+            "line": 131
+          }
+        },
+        {
+          "id": "q4",
+          "type": "constraint",
+          "question": "Which session tools exist and can any of them compact?",
+          "expectedAnswer": "sessions_list, sessions_history, sessions_send, sessions_spawn, sessions_yield — none performs compaction",
+          "evidence": {
+            "messageId": "bbe2b6de",
+            "line": 159
+          }
+        }
+      ]
+    },
+    "R25": {
+      "correctEndState": "Investigation complete and reported: exec approval gating is DISABLED — config tools.exec is {security: full, ask: off, host: gateway}, so exec commands are auto-approved and no approval request is ever generated; .openclaw/exec-approvals.json is empty (agents: {}). Separately, the runtime dist is broken (missing chunks agent-tools-B36VBWaQ.js, io-B86lst6B.js, call-BpnOBNBM.js, tools-DsggoUbD.js, approval-gateway-runtime-DVsM_pL7.js) and the CLI fails with module errors.",
+      "correctNextAction": {
+        "kind": "repair_environment",
+        "target": "rebuild or reinstall openclaw_runtime dist",
+        "params": {},
+        "rationale": "The approval question is answered (ask=off); the open item is the broken runtime dist blocking gateway/exec/memory tools, which must be repaired before any re-verification."
+      },
+      "completedWork": [
+        {
+          "text": "inspect tools.exec config: security=full, ask=off, host=gateway",
+          "evidence": {
+            "messageId": "cc8407b7",
+            "line": 40
+          }
+        },
+        {
+          "text": "inspect .openclaw/exec-approvals.json (empty, agents {}) and .openclaw/openclaw.json",
+          "evidence": {
+            "messageId": "cc8407b7",
+            "line": 40
+          }
+        },
+        {
+          "text": "report why no approval requests are generated",
+          "evidence": {
+            "messageId": "cc8407b7",
+            "line": 40
+          }
+        }
+      ],
+      "rejectedPaths": [
+        {
+          "text": "wait for or trigger an exec approval request (ask=off means approvals are never generated)",
+          "evidence": {
+            "messageId": "cc8407b7",
+            "line": 40
+          }
+        }
+      ],
+      "probeQuestions": [
+        {
+          "id": "q1",
+          "type": "state",
+          "question": "What is the configured value of tools.exec.ask?",
+          "expectedAnswer": "off",
+          "evidence": {
+            "messageId": "cc8407b7",
+            "line": 40
+          }
+        },
+        {
+          "id": "q2",
+          "type": "state",
+          "question": "What does .openclaw/exec-approvals.json contain?",
+          "expectedAnswer": "empty: agents {}",
+          "evidence": {
+            "messageId": "cc8407b7",
+            "line": 40
+          }
+        },
+        {
+          "id": "q3",
+          "type": "constraint",
+          "question": "Why are no exec approval requests ever generated?",
+          "expectedAnswer": "ask=off means exec commands are auto-approved; the approval gate is disabled",
+          "evidence": {
+            "messageId": "cc8407b7",
+            "line": 40
+          }
+        },
+        {
+          "id": "q4",
+          "type": "constraint",
+          "question": "What is the state of the OpenClaw runtime?",
+          "expectedAnswer": "broken: dist module files missing (agent-tools/io/call/tools/approval-gateway-runtime chunks); CLI fails with module errors",
+          "evidence": {
+            "messageId": "d7a89cb9",
+            "line": 19
+          }
+        }
+      ]
+    },
+    "R26": {
+      "correctEndState": "Investigation complete: the precedence bug DID exist before the latest commit but was ALREADY FIXED by commit 53742dd (the most recent commit, authored today ~21:xx); current line 253 already carries the parenthesized expression; git status shows no uncommitted divergence. No code change is needed — only the conclusion must be reported.",
+      "correctNextAction": {
+        "kind": "decision",
+        "target": "report that the fix already exists in commit 53742dd",
+        "params": {},
+        "rationale": "The objective is satisfied by confirming and reporting the existing fix; re-applying it would be redundant work."
+      },
+      "completedWork": [
+        {
+          "text": "verify current code and git state (git status, grep line 253)",
+          "evidence": {
+            "messageId": "cfeab0b8",
+            "line": 8
+          }
+        },
+        {
+          "text": "identify commit 53742dd as the fix via git blame",
+          "evidence": {
+            "messageId": "fd25d09c",
+            "line": 18
+          }
+        }
+      ],
+      "rejectedPaths": [
+        {
+          "text": "re-apply the precedence fix on line 253 (already fixed in commit 53742dd)",
+          "evidence": {
+            "messageId": "fd25d09c",
+            "line": 18
+          }
+        }
+      ],
+      "probeQuestions": [
+        {
+          "id": "q1",
+          "type": "state",
+          "question": "Which commit already contains the fix?",
+          "expectedAnswer": "53742dd",
+          "evidence": {
+            "messageId": "fd25d09c",
+            "line": 18
+          }
+        },
+        {
+          "id": "q2",
+          "type": "state",
+          "question": "How was the current state verified?",
+          "expectedAnswer": "git status, grep of line 253, and git blame",
+          "evidence": {
+            "messageId": "cfeab0b8",
+            "line": 8
+          }
+        },
+        {
+          "id": "q3",
+          "type": "constraint",
+          "question": "Should the fix be applied again?",
+          "expectedAnswer": "No: the bug was already fixed in commit 53742dd; no code change needed",
+          "evidence": {
+            "messageId": "fd25d09c",
+            "line": 18
+          }
+        },
+        {
+          "id": "q4",
+          "type": "constraint",
+          "question": "Does the current line 253 expression have parentheses?",
+          "expectedAnswer": "Yes: if (!error && (user.getUsername().indexOf('<') > -1 || user.getUsername().indexOf('>') > -1))",
+          "evidence": {
+            "messageId": "cfeab0b8",
+            "line": 8
+          }
+        }
+      ]
+    },
+    "R30": {
+      "correctEndState": "Checkpoint/handoff status report delivered: this is the FIRST session — no checkpoint snapshots, no compression handoff, no recovery-point records; context usage is only 3%, far from the compaction trigger (~50-70%), so no handoff is needed short-term. Gateway RPCs sessions.resumeCheckpoints and sessions.checkpointDiff FAIL with a missing module error (dist/io-B86lst6B.js); session_status succeeded and supplied the data.",
+      "correctNextAction": {
+        "kind": "repair_environment",
+        "target": "rebuild or reinstall openclaw_runtime dist",
+        "params": {},
+        "rationale": "The checkpoint RPCs are blocked by the missing dist module; repairing the runtime is the only way to restore the handoff/checkpoint interfaces."
+      },
+      "completedWork": [
+        {
+          "text": "obtain session status via session_status",
+          "evidence": {
+            "messageId": "5195c485",
+            "line": 12
+          }
+        },
+        {
+          "text": "report checkpoint/handoff status including the partial gateway tooling failure",
+          "evidence": {
+            "messageId": "5195c485",
+            "line": 12
+          }
+        }
+      ],
+      "rejectedPaths": [
+        {
+          "text": "rely on sessions.resumeCheckpoints while it fails with the runtime module-resolution error",
+          "evidence": {
+            "messageId": "5195c485",
+            "line": 12
+          }
+        }
+      ],
+      "probeQuestions": [
+        {
+          "id": "q1",
+          "type": "state",
+          "question": "How many checkpoint snapshots exist for this session?",
+          "expectedAnswer": "none: first session, no checkpoint snapshots and no recovery points",
+          "evidence": {
+            "messageId": "5195c485",
+            "line": 12
+          }
+        },
+        {
+          "id": "q2",
+          "type": "state",
+          "question": "What is the current context usage?",
+          "expectedAnswer": "3%, far below the compaction trigger (~50-70%)",
+          "evidence": {
+            "messageId": "5195c485",
+            "line": 12
+          }
+        },
+        {
+          "id": "q3",
+          "type": "constraint",
+          "question": "Which gateway RPCs are currently unavailable?",
+          "expectedAnswer": "sessions.resumeCheckpoints and sessions.checkpointDiff (module-resolution error, dist/io-B86lst6B.js missing)",
+          "evidence": {
+            "messageId": "e6c78fe5",
+            "line": 7
+          }
+        },
+        {
+          "id": "q4",
+          "type": "constraint",
+          "question": "Can a handoff point be resumed right now?",
+          "expectedAnswer": "No: there is no resumable handoff point, and the interface is unavailable due to the runtime error",
+          "evidence": {
+            "messageId": "5195c485",
+            "line": 12
+          }
+        }
+      ]
+    }
+  }
+}

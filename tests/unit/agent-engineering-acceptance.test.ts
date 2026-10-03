@@ -1,4 +1,4 @@
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -8,31 +8,57 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   ACCEPTANCE_SCHEMA,
   TF0009_ADAPTER_ID,
+  type AcceptanceGate,
+  type AcceptanceManifest,
+  type AcceptanceReport,
   createAcceptancePlan,
   digestManifest,
   digestPlan,
   digestReport,
   inferCoverage,
+  isCountableTestCommand,
+  parseTestCounts,
   redactText,
   readAcceptanceStatus,
   repositoryIdentity,
   resolveChangedPaths,
-  runAcceptance,
+  runAcceptance as runActualAcceptance,
+  sha256,
   sha256File,
+  stableJson,
   validateAcceptanceEnvironment,
   validateAcceptanceManifest,
   validateExecutorEvidence,
   validateReportEvidence,
-  verifyAcceptance,
+  verifyAcceptance as verifyActualAcceptance,
 } from '../../scripts/lib/agent-engineering-acceptance.mjs';
 import { main as acceptanceCliMain } from '../../scripts/agent-engineering-acceptance.mjs';
 import { validateRuntimeAuthorityConvergence } from '../../scripts/validate-runtime-authority-convergence.mjs';
 
 const temporaryPaths: string[] = [];
+const fixturePolicy = vi.hoisted(() => ({ steps: null as AcceptanceGate[] | null }));
+const fixtureGateIds = new Set<string>();
+
+vi.mock('../../harness/src/profiles.mjs', async (importOriginal) => {
+  const actual = await importOriginal<{ selectSteps: (profiles: string[]) => AcceptanceGate[] }>();
+  return {
+    ...actual,
+    selectSteps: (profiles: string[]) => fixturePolicy.steps ?? actual.selectSteps(profiles),
+  };
+});
 
 afterEach(() => {
   vi.unstubAllEnvs();
-  for (const path of temporaryPaths.splice(0)) rmSync(path, { recursive: true, force: true });
+  fixturePolicy.steps = null;
+  fixtureGateIds.clear();
+  for (const path of temporaryPaths.splice(0)) {
+    try {
+      rmSync(path, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException)?.code;
+      if (code !== 'EPERM' && code !== 'EBUSY' && code !== 'ENOTEMPTY') throw error;
+    }
+  }
 });
 
 function git(root: string, args: string[]) {
@@ -50,9 +76,23 @@ function createFixtureRepository() {
   writeFileSync(join(root, 'package.json'), '{"name":"fixture","version":"1.0.0"}\n', 'utf8');
   writeFileSync(join(root, 'pnpm-lock.yaml'), 'lockfileVersion: 9\n', 'utf8');
   writeFileSync(join(root, '.npmrc'), 'strict-peer-dependencies=false\n', 'utf8');
-  writeFileSync(join(root, '.gitignore'), 'artifacts/\n', 'utf8');
+  writeFileSync(join(root, '.gitignore'), 'artifacts/\nnode_modules/\nresources/bin/\nopenclaw_runtime/apps/\n', 'utf8');
   writeFileSync(join(root, '.gitattributes'), '*.md text\n', 'utf8');
   writeFileSync(join(root, 'harness', 'specs', 'tasks', 'fixture.md'), '# fixture\n', 'utf8');
+  mkdirSync(join(root, 'harness', 'src'), { recursive: true });
+  writeFileSync(join(root, 'harness', 'src', 'profiles.mjs'), readFileSync('harness/src/profiles.mjs'));
+  const fixtureFiles = {
+    'resources/verseshell/manifest.json': JSON.stringify({ artifacts: { 'win32-x64': { sha256: sha256('fixture'), bytes: 7 } } }),
+    'artifacts/uas-06-single-local-exec-canary/live-observations.json': '{}',
+    'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json': '{}',
+    'openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json': '{}',
+    'node_modules/.pnpm/electron@40.8.4/node_modules/electron/path.txt': 'electron.exe',
+    'node_modules/.pnpm/electron@40.8.4/node_modules/electron/dist/electron.exe': 'fixture',
+  };
+  for (const [path, body] of Object.entries(fixtureFiles)) {
+    mkdirSync(join(root, path, '..'), { recursive: true });
+    writeFileSync(join(root, path), body, 'utf8');
+  }
   git(root, ['init', '--quiet']);
   git(root, ['config', 'user.email', 'fixture@example.invalid']);
   git(root, ['config', 'user.name', 'Acceptance Fixture']);
@@ -61,40 +101,8 @@ function createFixtureRepository() {
   return root;
 }
 
-function createManifest(root: string, options: { gate?: Record<string, unknown>; humanEvidence?: 'required' | 'not-required' } = {}) {
-  const identity = repositoryIdentity(root);
-  const sourceFiles = ['package.json', 'pnpm-lock.yaml', '.npmrc', 'harness/specs/tasks/fixture.md'].map((path) => ({
-    path,
-    exists: true,
-    sha256: sha256File(join(root, path)),
-    gitBlob: gitText(root, ['rev-parse', '--verify', `HEAD:${path}`]),
-  }));
-  const manifest: { [key: string]: unknown; gates: Array<Record<string, unknown>> } = {
-    schema: ACCEPTANCE_SCHEMA,
-    manifestVersion: 1,
-    runId: 'fixture-run',
-    createdAt: '2026-07-31T00:00:00.000Z',
-    task: {
-      id: 'fixture-task',
-      title: 'Fixture task',
-      specPath: 'harness/specs/tasks/fixture.md',
-      humanEvidence: options.humanEvidence ?? 'not-required',
-      requiredRules: [],
-    },
-    executionMode: 'full',
-    candidate: { commit: identity.commit, tree: identity.tree, ref: identity.ref, cleanAtPlan: true },
-    baseRef: 'HEAD^',
-    changedPaths: ['src/example.ts'],
-    coverage: { runtime: false, ui: true, comms: false, release: false },
-    requiredProfiles: ['fast'],
-    source: {
-      files: sourceFiles,
-      missing: [],
-      lockFiles: sourceFiles.slice(0, 3),
-      identityPolicy: 'git-blob-v1',
-      eolPolicy: 'git-blob',
-    },
-    gates: [options.gate ?? {
+function createManifest(root: string, options: { gate?: AcceptanceGate; humanEvidence?: 'required' | 'not-required' } = {}) {
+  const gate = options.gate ?? {
       id: 'fixture-gate',
       name: 'Fixture gate',
       profile: 'fast',
@@ -104,23 +112,67 @@ function createManifest(root: string, options: { gate?: Record<string, unknown>;
       allowSkip: false,
       timeoutMs: 1_000,
       safety: { network: 'none', productionEffects: false, humanEvidence: false },
-    }],
-    safety: {
-      scope: 'engineering-only',
-      networkPolicy: 'none-or-isolated',
-      productionEffects: false,
-      realProvider: false,
-      humanEvidence: options.humanEvidence ?? 'not-required',
-      productLocksMutable: false,
-      allowedPromotion: false,
-      prohibitedClaims: ['liveReady', 'productApproved', 'defaultOn'],
-    },
-    eligibility: { cleanWorktreeRequired: true, fullModeRequired: true, sourceComplete: true, cleanAtPlan: true },
-    residuals: [],
   };
-  manifest.planDigest = digestPlan(manifest);
-  manifest.manifestDigest = digestManifest(manifest);
-  return manifest;
+  const requiredTests = gate.commandLine ? [gate.commandLine] : [];
+  const adapter = gate.adapter === TF0009_ADAPTER_ID;
+  const comms = gate.id === 'comms-replay';
+  fixturePolicy.steps = requiredTests.length || adapter || comms ? [] : [gate];
+  fixtureGateIds.clear();
+  fixtureGateIds.add(gate.id);
+  const data = {
+    id: adapter ? 'tf0009-engineering-evidence-audit' : 'fixture-task',
+    title: 'Fixture task',
+    humanEvidence: options.humanEvidence ?? 'not-required',
+    requiredRules: [],
+    requiredProfiles: comms ? ['fast', 'comms'] : ['fast'],
+    requiredTests,
+  };
+  const frontmatter = Object.entries(data).flatMap(([key, value]) => Array.isArray(value)
+    ? [`${key}:`, ...value.map((entry) => `  - ${entry}`)]
+    : [`${key}: ${value}`]).join('\n');
+  writeFileSync(join(root, 'harness/specs/tasks/fixture.md'), `---\n${frontmatter}\n---\n# fixture\n`, 'utf8');
+  git(root, ['add', 'harness/specs/tasks/fixture.md']);
+  git(root, ['commit', '--quiet', '--allow-empty', '-m', 'fixture candidate']);
+  return createAcceptancePlan({
+    root,
+    specPath: 'harness/specs/tasks/fixture.md',
+    since: 'HEAD^',
+    runId: 'fixture-run',
+    createdAt: '2026-07-31T00:00:00.000Z',
+  });
+}
+
+type FixtureSpawn = typeof passingSpawn;
+
+function fixtureOptions(manifest: AcceptanceManifest, options: Record<string, unknown>) {
+  let index = 0;
+  const spawn = options.spawn as FixtureSpawn | undefined;
+  return {
+    ...options,
+    spawn: (command: string, args: string[], spawnOptions: { cwd: string }) => {
+      const gate = manifest.gates[index++];
+      if (fixtureGateIds.has(gate.id)) return (spawn ?? spawnSync)(command, args, spawnOptions);
+      if (gate.kind === 'provision-verseshell') {
+        mkdirSync(join(spawnOptions.cwd, 'resources/bin/win32-x64'), { recursive: true });
+        writeFileSync(join(spawnOptions.cwd, 'resources/bin/win32-x64/ae.exe'), 'fixture');
+      }
+      if (gate.id === 'comms-compare') {
+        mkdirSync(join(spawnOptions.cwd, 'artifacts/comms'), { recursive: true });
+        writeFileSync(join(spawnOptions.cwd, 'artifacts/comms/compare-report.json'), JSON.stringify({ schema: 'comms-compare-report/v1', candidate: manifest.candidate, fixture: true }));
+      }
+      return passingSpawn(command, args, spawnOptions);
+    },
+  };
+}
+
+// Keep every derived gate in protocol tests. Only the selected fixture gate
+// uses each test's spawner; unrelated build/install steps are simulated.
+function runAcceptance(manifest: AcceptanceManifest, options: Record<string, unknown>): AcceptanceReport {
+  return runActualAcceptance(manifest, fixtureOptions(manifest, options));
+}
+
+function verifyAcceptance(manifest: AcceptanceManifest, options: Record<string, unknown>): AcceptanceReport {
+  return verifyActualAcceptance(manifest, fixtureOptions(manifest, options));
 }
 
 function resealManifest(manifest: Record<string, unknown>) {
@@ -129,7 +181,16 @@ function resealManifest(manifest: Record<string, unknown>) {
   return manifest;
 }
 
-function createConvergenceFixture() {
+const CLOSURE_ALLOWED_PATHS = [
+  'docs/dev/unified-agent-system/runtime-convergence/STATUS.md',
+  'artifacts/runtime-authority-convergence/rc-09/**',
+  'artifacts/runtime-authority-convergence/rc-10/acceptance/**',
+];
+
+function createConvergenceFixture(options: { closureAllowedPaths?: string[] | null } = {}) {
+  const closureAllowedPaths = options.closureAllowedPaths === undefined
+    ? CLOSURE_ALLOWED_PATHS
+    : options.closureAllowedPaths;
   const root = createFixtureRepository();
   const base = repositoryIdentity(root).commit;
   const baselineRelative = 'artifacts/runtime-authority-convergence/rc-01/baseline.json';
@@ -140,7 +201,24 @@ function createConvergenceFixture() {
     acceptedBaseSha: base,
     productLocks: { liveReady: false, productApproved: false, defaultOn: false },
   }, null, 2)}\n`, 'utf8');
-  git(root, ['add', '--force', baselineRelative]);
+  // RC-09: the validator derives the required owner set from the final spec's
+  // cumulativeOwnership.requiredSpecs instead of trusting the matrix.
+  const finalSpecRelative = 'harness/specs/tasks/runtime-authority-convergence-final-acceptance.md';
+  writeFileSync(join(root, ...finalSpecRelative.split('/')), [
+    '---',
+    'id: runtime-authority-convergence-final-acceptance',
+    'title: RC-09 Final Engineering Acceptance',
+    'cumulativeOwnership:',
+    '  requiredSpecs:',
+    '    - harness/specs/tasks/rc00-agent-engineering-acceptance-bootstrap.md',
+    ...(closureAllowedPaths
+      ? ['closureAdvance:', '  allowedPaths:', ...closureAllowedPaths.map((entry) => `    - ${JSON.stringify(entry)}`)]
+      : []),
+    '---',
+    '# RC-09 fixture',
+    '',
+  ].join('\n'), 'utf8');
+  git(root, ['add', '--force', baselineRelative, finalSpecRelative]);
   git(root, ['commit', '--quiet', '-m', 'add convergence baseline']);
   return { root, base, baselineRelative };
 }
@@ -222,6 +300,86 @@ describe('Agent Engineering Acceptance', () => {
     expect(validateAcceptanceManifest(manifest)).toEqual({ ok: true, errors: [] });
   });
 
+  it('defers coverage-triggered suites to a named owner node without deleting them', () => {
+    const changedPaths = ['src/components/Settings.tsx', 'scripts/release-baseline-manifest.mjs'];
+    const specData = {
+      id: 'fixture-deferral',
+      title: 'Fixture deferral',
+      diffBase: undefined,
+      requiredRules: [],
+      requiredTests: [],
+      deferredProfiles: {
+        e2e: 'TF-0041 :: full UI suite owned by the release-freeze node',
+        release: 'TF-0041 :: release packaging owned by TF-0041',
+      },
+    };
+    const base = createAcceptancePlan({
+      spec: { path: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md', data: { ...specData, deferredProfiles: undefined }, body: '' },
+      specPath: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md',
+      changedPaths,
+      runId: 'defer-base',
+      createdAt: '2026-09-21T00:00:00.000Z',
+    });
+    // Baseline (no deferral): UI + release coverage pulls in those gates.
+    expect(base.requiredProfiles).toEqual(expect.arrayContaining(['e2e', 'release']));
+    expect(base.gates.map((g) => g.id)).toEqual(expect.arrayContaining(['electron-e2e', 'release-baseline-validate']));
+
+    const deferred = createAcceptancePlan({
+      spec: { path: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md', data: specData, body: '' },
+      specPath: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md',
+      changedPaths,
+      runId: 'defer-applied',
+      createdAt: '2026-09-21T00:00:00.000Z',
+    });
+    // Deferred: profiles stripped from THIS node, recorded with owner+reason.
+    expect(deferred.requiredProfiles).not.toContain('e2e');
+    expect(deferred.requiredProfiles).not.toContain('release');
+    expect(deferred.gates.map((g) => g.id)).not.toContain('electron-e2e');
+    expect(deferred.gates.map((g) => g.id)).not.toContain('release-baseline-validate');
+    expect(deferred.deferredProfiles).toEqual([
+      { profile: 'e2e', owner: 'TF-0041', reason: 'full UI suite owned by the release-freeze node' },
+      { profile: 'release', owner: 'TF-0041', reason: 'release packaging owned by TF-0041' },
+    ]);
+    expect(validateAcceptanceManifest(deferred)).toEqual({ ok: true, errors: [] });
+  });
+
+  it('rejects a deferred profile with no owner, a core profile deferral, or a lingering deferred gate', () => {
+    const changedPaths = ['src/components/Settings.tsx'];
+    const manifest = createAcceptancePlan({
+      spec: {
+        path: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md',
+        data: {
+          id: 'fixture-deferral-2', title: 'x', requiredRules: [], requiredTests: [],
+          deferredProfiles: { e2e: 'TF-0041 :: reason' },
+        },
+        body: '',
+      },
+      specPath: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md',
+      changedPaths,
+      runId: 'defer-bad',
+      createdAt: '2026-09-21T00:00:00.000Z',
+    });
+    // Ownerless deferral is rejected.
+    const noOwner = { ...manifest, deferredProfiles: [{ profile: 'e2e', owner: '', reason: 'x' }] };
+    expect(validateAcceptanceManifest(noOwner).errors).toEqual(
+      expect.arrayContaining([expect.stringContaining('must name an owner node')]),
+    );
+    // Core profile cannot be deferred.
+    const coreDefer = { ...manifest, deferredProfiles: [{ profile: 'fast', owner: 'TF-0041', reason: 'x' }] };
+    expect(validateAcceptanceManifest(coreDefer).errors).toEqual(
+      expect.arrayContaining([expect.stringContaining('core profile and cannot be deferred')]),
+    );
+    // A gate belonging to a deferred profile must not linger in the manifest.
+    const lingering = {
+      ...manifest,
+      deferredProfiles: [{ profile: 'e2e', owner: 'TF-0041', reason: 'x' }],
+      gates: [...manifest.gates, { id: 'electron-e2e', profile: 'e2e', required: true, allowSkip: false, command: 'pnpm', args: ['run', 'test:e2e'], safety: { network: 'none', productionEffects: false, humanEvidence: false } }],
+    };
+    expect(validateAcceptanceManifest(lingering).errors).toEqual(
+      expect.arrayContaining([expect.stringContaining('belongs to deferred profile e2e')]),
+    );
+  });
+
   it('has no blind coverage gap for runtime changes', () => {
     expect(inferCoverage(['openclaw_runtime/src/agents/tool.ts'])).toMatchObject({ runtime: true, comms: true });
   });
@@ -241,8 +399,9 @@ describe('Agent Engineering Acceptance', () => {
     const root = createFixtureRepository();
     const manifest = createManifest(root);
     const unsafe = structuredClone(manifest);
-    unsafe.gates[0].allowSkip = true;
-    unsafe.gates[0].args = ['--fix'];
+    const unsafeGate = unsafe.gates.find((gate) => gate.id === 'fixture-gate')!;
+    unsafeGate.allowSkip = true;
+    unsafeGate.args = ['--fix'];
     unsafe.planDigest = digestPlan(unsafe);
     unsafe.manifestDigest = digestManifest(unsafe);
     expect(validateAcceptanceManifest(unsafe).errors).toEqual(expect.arrayContaining([
@@ -270,6 +429,12 @@ describe('Agent Engineering Acceptance', () => {
     git(crlfCheckout, ['config', 'core.autocrlf', 'false']);
     git(crlfCheckout, ['config', 'core.eol', 'crlf']);
     git(crlfCheckout, ['reset', '--hard', '--quiet']);
+    for (const checkout of [lfCheckout, crlfCheckout]) {
+      for (const input of manifest.source.provisionCopies ?? []) {
+        mkdirSync(join(checkout, input.path!, '..'), { recursive: true });
+        writeFileSync(join(checkout, input.path!), readFileSync(join(root, input.path!)));
+      }
+    }
 
     expect(gitText(lfCheckout, ['config', '--get', 'core.eol'])).toBe('lf');
     expect(gitText(crlfCheckout, ['config', '--get', 'core.eol'])).toBe('crlf');
@@ -349,6 +514,59 @@ describe('Agent Engineering Acceptance', () => {
     expect(verifier.failures.join('\n')).toContain('stdout log digest mismatch');
   });
 
+  it('rejects rehashed reports whose persisted logs contradict their test counts', () => {
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
+    temporaryPaths.push(outputDir);
+    const manifest = createManifest(root);
+    const env = { PATH: process.env.PATH ?? '' };
+    const executor = runAcceptance(manifest, { sourceRoot: root, outputDir, actor: 'executor', env, spawn: passingSpawn });
+    expect(validateExecutorEvidence(manifest, executor, outputDir)).toEqual([]);
+    const originalGate = executor.gates.find(({ id }) => id === 'integration')!;
+    const originalLogs = originalGate.logs as Record<string, string>;
+    const stdout = readFileSync(join(outputDir, originalLogs.stdout), 'utf8');
+
+    for (const changedLogs of [
+      { stdout: 'Tests 1 passed | 1 skipped (2)\n', stderr: '', source: 'parsed' },
+      { stdout, stderr: 'Tests 1 failed (1)\n', source: 'parsed' },
+      { stdout: 'completed without a test summary\n', stderr: '', source: 'parsed' },
+      { stdout: '{"result":"pass"}\n', stderr: '', source: 'adapter-report' },
+    ]) {
+      const forged = structuredClone(executor);
+      const gate = forged.gates.find(({ id }) => id === 'integration')!;
+      (gate.testCounts as Record<string, unknown>).source = changedLogs.source;
+      const logs = gate.logs as Record<string, string>;
+      for (const stream of ['stdout', 'stderr'] as const) {
+        writeFileSync(join(outputDir, logs[stream]), changedLogs[stream], 'utf8');
+        logs[`${stream}Sha256`] = sha256(changedLogs[stream]);
+        gate[`${stream}Sha256`] = logs[`${stream}Sha256`];
+        gate[`${stream}Bytes`] = Buffer.byteLength(changedLogs[stream]);
+      }
+      // Re-sign every documented contract field: the rejection must come
+      // from the log/count mismatch, not a stale hash left by the test.
+      const contractFields = [
+        'id', 'profile', 'name', 'command', 'args', 'status', 'exitCode', 'timedOut',
+        'required', 'allowSkip', 'timeoutMs', 'safety', 'testExpectation', 'testCounts', 'logs',
+      ];
+      Object.assign(forged, {
+        gateContractDigest: sha256(stableJson(forged.gates.map((result) =>
+          Object.fromEntries(contractFields.map((key) => [key, result[key]]))))),
+      });
+      forged.reportDigest = digestReport(forged);
+      expect(validateExecutorEvidence(manifest, forged, outputDir)).toEqual([
+        'integration: persisted log test counts do not match the report',
+      ]);
+
+      const spawn = vi.fn(passingSpawn);
+      const verifier = verifyAcceptance(manifest, {
+        sourceRoot: root, outputDir, actor: 'verifier', env, executorReport: forged, spawn,
+      });
+      expect(verifier).toMatchObject({ result: 'NO-GO', engineeringAcceptedByAgent: false });
+      expect(verifier.gates).toEqual([]);
+      expect(spawn).not.toHaveBeenCalled();
+    }
+  });
+
   it('replays historical non-zero and timeout evidence as NO-GO', () => {
     const root = createFixtureRepository();
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
@@ -412,7 +630,7 @@ describe('Agent Engineering Acceptance', () => {
       spawn: () => ({ status: 0, signal: null, stdout: 'Tests 1 passed | 1 skipped (2)\n', stderr: '' }),
     });
     expect(skipped).toMatchObject({ result: 'NO-GO', engineeringAcceptedByAgent: false });
-    expect(skipped.testCounts).toMatchObject({ passed: 1, skipped: 1, total: 2 });
+    expect(skipped.gates.find((gate) => gate.id === 'fixture-test-gate')?.testCounts).toMatchObject({ passed: 1, skipped: 1, total: 2 });
     expect(skipped.failures).toContain('fixture-test-gate: skip budget mismatch expected=0 actual=1');
 
     const hiddenManifest = structuredClone(manifest);
@@ -463,7 +681,7 @@ describe('Agent Engineering Acceptance', () => {
     expect(result.failures).toContain('detached worktree changed tracked or unexpected source files during acceptance');
   });
 
-  it('exports TF-0009 evidence from the disposable worktree into the run directory', () => {
+  it.each(['v1', 'v2'])('exports TF-0009 %s evidence without promoting product authority', (version) => {
     const root = createFixtureRepository();
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
     temporaryPaths.push(outputDir);
@@ -485,7 +703,10 @@ describe('Agent Engineering Acceptance', () => {
     const adapterSpawn = (_command: string, _args: string[], options: { cwd?: string } = {}) => {
       const reportPath = join(options.cwd!, 'artifacts', 'first-product-preview', 'TF-0009', 'agent-surrogate-report.json');
       mkdirSync(join(options.cwd!, 'artifacts', 'first-product-preview', 'TF-0009'), { recursive: true });
-      writeFileSync(reportPath, `${JSON.stringify(tf0009Report(), null, 2)}\n`, 'utf8');
+      const payload = version === 'v1' ? tf0009Report() : JSON.parse(readFileSync(
+        join(process.cwd(), 'artifacts/first-product-preview/TF-0009/agent-surrogate-report.json'), 'utf8',
+      ));
+      writeFileSync(reportPath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
       return { status: 0, signal: null, stdout: `adapter in ${options.cwd}`, stderr: '' };
     };
 
@@ -499,6 +720,28 @@ describe('Agent Engineering Acceptance', () => {
     expect(result).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: false });
     expect(existsSync(join(outputDir, 'adapters', 'tf0009', 'agent-surrogate-report.json'))).toBe(true);
     expect(existsSync(join(root, 'artifacts', 'first-product-preview', 'TF-0009', 'agent-surrogate-report.json'))).toBe(false);
+    expect(validateExecutorEvidence(manifest, result, outputDir)).toEqual([]);
+    const verifier = verifyAcceptance(manifest, {
+      sourceRoot: root, outputDir, actor: 'verifier', env: { PATH: process.env.PATH ?? '' },
+      executorReport: result, spawn: adapterSpawn,
+    });
+    expect(verifier).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: true });
+
+    const missing = structuredClone(result);
+    missing.controlledArtifacts = missing.controlledArtifacts?.filter((artifact) => artifact.kind !== 'adapter-evidence');
+    missing.reportDigest = digestReport(missing);
+    expect(validateExecutorEvidence(manifest, missing, outputDir).join('\n')).toContain('required adapter evidence');
+
+    const changed = structuredClone(result);
+    const artifact = changed.controlledArtifacts!.find((entry) => entry.kind === 'adapter-evidence')!;
+    const payload = tf0009Report();
+    payload.runs[0].result = 'fail';
+    writeFileSync(join(outputDir, String(artifact.path)), JSON.stringify(payload));
+    artifact.sha256 = sha256File(join(outputDir, String(artifact.path)));
+    const adapter = changed.gates.find(({ id }) => id === 'tf0009-agent-surrogate')!.adapterEvidence as Record<string, unknown>;
+    adapter.reportSha256 = artifact.sha256;
+    changed.reportDigest = digestReport(changed);
+    expect(validateExecutorEvidence(manifest, changed, outputDir).join('\n')).toContain('adapter report invalid');
   });
 
   it('requires non-empty candidate-bound comms artifacts in acceptance evidence', () => {
@@ -555,7 +798,7 @@ describe('Agent Engineering Acceptance', () => {
       expect.objectContaining({ kind: 'comms-replay-metrics', path: 'evidence/comms-replay/current-metrics.json' }),
     ]));
     const missingArtifactRecord = structuredClone(passing);
-    missingArtifactRecord.controlledArtifacts = missingArtifactRecord.controlledArtifacts.filter(
+    missingArtifactRecord.controlledArtifacts = (missingArtifactRecord.controlledArtifacts ?? []).filter(
       (artifact) => artifact.kind !== 'comms-replay-metrics',
     );
     missingArtifactRecord.reportDigest = digestReport(missingArtifactRecord);
@@ -620,14 +863,15 @@ describe('Agent Engineering Acceptance', () => {
       spawn: passingSpawn,
     });
     expect(passing).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: false });
-    expect(passing.gates[0].command).toBe('node scripts/fixture-required-test.mjs --flag value');
-    expect(passing.gates[0].args).toEqual([]);
+    const requiredResult = passing.gates.find((gate) => gate.id === 'required-test-1')!;
+    expect(requiredResult.command).toBe('node scripts/fixture-required-test.mjs --flag value');
+    expect(requiredResult.args).toEqual([]);
     expect(validateReportEvidence(manifest, passing, outputDir, {
       expectedRole: 'executor',
       label: 'executor report',
     })).toEqual([]);
     const tampered = structuredClone(passing);
-    tampered.gates[0].command = 'node scripts/other.mjs';
+    tampered.gates.find((gate) => gate.id === 'required-test-1')!.command = 'node scripts/other.mjs';
     tampered.reportDigest = digestReport(tampered);
     expect(validateReportEvidence(manifest, tampered, outputDir, {
       expectedRole: 'executor',
@@ -719,7 +963,7 @@ describe('Agent Engineering Acceptance', () => {
     const reorderedGate = { ...baseReport, gates: [{ id: 'second-gate', result: 'pass' }, { id: 'fixture-gate', result: 'pass' }] };
     expect(validateExecutorEvidence(twoGateManifest, reorderedGate, outputDir)).toContain('executor report gate set/order mismatch');
 
-    const inOrderGates = { ...baseReport, gates: [{ id: 'fixture-gate', result: 'pass' }, { id: 'second-gate', result: 'pass' }] };
+    const inOrderGates = { ...baseReport, gates: twoGateManifest.gates.map(({ id }) => ({ id, result: 'pass' })) };
     expect(validateExecutorEvidence(twoGateManifest, inOrderGates, outputDir)).not.toContain('executor report gate set/order mismatch');
   });
 
@@ -782,8 +1026,9 @@ describe('Agent Engineering Acceptance', () => {
     });
     const harnessGate = plan.gates.find((gate) => gate.id === 'harness-validate');
     expect(harnessGate).toBeDefined();
+    if (!harnessGate) throw new Error('Expected harness gate');
     expect(harnessGate.args).toContain('--since');
-    expect(harnessGate.args[harnessGate.args.indexOf('--since') + 1]).toBe('HEAD');
+    expect(harnessGate.args[harnessGate.args.indexOf('--since') + 1]).toBe(repositoryIdentity(root).commit);
     for (const gate of plan.gates) {
       expect(gate.args ?? []).not.toContain('--no-diff');
     }
@@ -800,8 +1045,8 @@ describe('Agent Engineering Acceptance', () => {
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
     temporaryPaths.push(outputDir);
     const manifest = createManifest(root);
-    const withDigest = (report) => {
-      const copy = { ...report, reportDigest: undefined };
+    const withDigest = (report: Record<string, unknown>) => {
+      const copy: Record<string, unknown> = { ...report, reportDigest: undefined };
       copy.reportDigest = digestReport(copy);
       return copy;
     };
@@ -888,8 +1133,8 @@ describe('Agent Engineering Acceptance', () => {
       controlledArtifacts: [],
       gates: [{ id: 'fixture-gate', result: 'pass' }],
     };
-    const withDigest = (report) => {
-      const copy = { ...report, reportDigest: undefined };
+    const withDigest = (report: Record<string, unknown>) => {
+      const copy: Record<string, unknown> = { ...report, reportDigest: undefined };
       copy.reportDigest = digestReport(copy);
       return copy;
     };
@@ -1000,7 +1245,7 @@ describe('Agent Engineering Acceptance', () => {
       expect(planExit).toBe(0);
       expect(existsSync(join(outputDir, 'manifest.json'))).toBe(true);
       const manifest = JSON.parse(readFileSync(join(outputDir, 'manifest.json'), 'utf8'));
-      expect(manifest.baseRef).toBe('HEAD^');
+      expect(manifest.baseRef).toBe(gitText(process.cwd(), ['rev-parse', 'HEAD^']));
 
       const statusExit = acceptanceCliMain(['status', '--output-dir', outputDir]);
       expect(statusExit).toBe(0);
@@ -1058,10 +1303,9 @@ describe('Agent Engineering Acceptance', () => {
     expect(flatStatus.runs[0].path).toBe('final-report.json');
   });
 
-  it('proves RC-00 end-to-end on a real isolated fixture with real gate execution', () => {
-    // This is the RC-00 exit proof: a clean fixture repo, a real (unmocked)
-    // detached-worktree gate run, a separately identified Executor and Verifier,
-    // explicit output-dir, redacted logs, and green verifier/final reports.
+  it('reproduces a real fixture gate in separate worktrees with simulated baseline steps', () => {
+    // The selected Node gate executes for real; fixtureOptions simulates the
+    // unrelated install/build gates. This proves the protocol, not RC-00 acceptance.
     const root = createFixtureRepository();
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-real-'));
     temporaryPaths.push(outputDir);
@@ -1088,12 +1332,12 @@ describe('Agent Engineering Acceptance', () => {
     expect(executor.reportDigest).toMatch(/^[a-f0-9]{64}$/);
     expect(existsSync(join(outputDir, 'executor-report.json'))).toBe(true);
     expect(existsSync(join(outputDir, 'logs', 'fixture-real-gate.stdout.log'))).toBe(true);
-    expect(executor.testCounts).toMatchObject({ passed: 1, failed: 0, skipped: 0, total: 1 });
+    expect(executor.gates.find((gate) => gate.id === 'fixture-real-gate')?.testCounts).toMatchObject({ passed: 1, failed: 0, skipped: 0, total: 1 });
     // Logs are redacted: the fixture output dir must not leak into the log.
     const logText = readFileSync(join(outputDir, 'logs', 'fixture-real-gate.stdout.log'), 'utf8');
     expect(logText).not.toContain(tmpdir());
 
-    // Independent Verifier reruns the same manifest in a second worktree.
+    // The Verifier role reruns the same fixture manifest in a second worktree.
     const verifier = verifyAcceptance(manifest, {
       sourceRoot: root,
       outputDir,
@@ -1120,7 +1364,7 @@ describe('Agent Engineering Acceptance', () => {
     });
     expect(finalReport.safety).toMatchObject({ liveReady: false, productApproved: false, defaultOn: false, promotionAuthorized: false });
 
-    // A second Agent reproduction: a fresh output dir, same manifest, same
+    // A second fixture reproduction: a fresh output dir, same manifest, same
     // identities, must independently produce a green final report.
     const secondOutput = mkdtempSync(join(tmpdir(), 'agent-acceptance-real2-'));
     temporaryPaths.push(secondOutput);
@@ -1137,7 +1381,7 @@ describe('Agent Engineering Acceptance', () => {
     expect(finalReport2).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: true });
   });
 
-  it('keeps the standalone RC-00 bootstrap manifest digests canonical', () => {
+  it('rejects the standalone abbreviated RC-00 bootstrap before any command runs', () => {
     const outputDir = mkdtempSync(join(tmpdir(), 'rc00-bootstrap-test-'));
     temporaryPaths.push(outputDir);
 
@@ -1147,14 +1391,16 @@ describe('Agent Engineering Acceptance', () => {
       { cwd: process.cwd(), encoding: 'utf8' },
     );
 
-    const finalReport = JSON.parse(readFileSync(join(outputDir, 'final-report.json'), 'utf8'));
+    const finalReport = JSON.parse(readFileSync(join(outputDir, 'verifier-report.json'), 'utf8'));
     expect(finalReport).toMatchObject({
-      result: 'pass',
-      engineeringAcceptedByAgent: true,
+      result: 'NO-GO',
+      engineeringAcceptedByAgent: false,
       role: 'verifier',
       executorActor: 'rc00-executor',
       verifierActor: 'rc00-verifier',
     });
+    expect(finalReport.failures).toContain('manifest gates must match the candidate-derived gate contracts');
+    expect(finalReport.gates).toEqual([]);
     expect(finalReport.reportDigest).toMatch(/^[a-f0-9]{64}$/);
   });
 
@@ -1176,25 +1422,30 @@ describe('Agent Engineering Acceptance', () => {
         testExpectation: { requireCounts: true, expectedSkips: 0 },
       },
     });
-    manifest.baseRef = base;
-    manifest.changedPaths = [baselineRelative];
-    resealManifest(manifest);
     mkdirSync(outputDir, { recursive: true });
     const manifestPath = join(outputDir, 'manifest.json');
-    writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
 
-    // RC-09A: the validator requires the changed-path ownership matrix in the
-    // final evidence bundle; the fixture writes a valid one for its paths.
+    // RC-09: the validator requires the changed-path ownership matrix in the
+    // final evidence bundle; the fixture writes a valid v2 partition for its paths.
     const finalEvidenceDir = join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final');
     mkdirSync(finalEvidenceDir, { recursive: true });
+    const fixtureChangedPaths = resolveChangedPaths(root, { since: base });
     writeFileSync(join(finalEvidenceDir, 'changed-path-ownership.json'), `${JSON.stringify({
-      schema: 'runtime-authority-convergence-rc09-ownership/v1',
+      schema: 'runtime-authority-convergence-rc09-ownership/v2',
       baseSha: base,
       headSha: repositoryIdentity(root).commit,
-      totalPaths: manifest.changedPaths.length,
-      byRc: { 'RC-00': manifest.changedPaths.length },
-      entries: manifest.changedPaths.map((pathValue) => ({ path: pathValue, rc: 'RC-00', commit: null, preChain: true })),
+      requiredOwners: ['RC-00'],
+      requiredSpecs: ['harness/specs/tasks/rc00-agent-engineering-acceptance-bootstrap.md'],
+      totalPaths: fixtureChangedPaths.length,
+      rcOwnedPaths: fixtureChangedPaths.length,
+      excludedPaths: 0,
+      byRc: { 'RC-00': fixtureChangedPaths.length },
+      byExclusionWorkstream: {},
+      entries: fixtureChangedPaths.map((pathValue) => ({ path: pathValue, rc: 'RC-00', commit: null, declaredBySpec: true })),
     }, null, 2)}\n`, 'utf8');
+    // The ownership report is a locked ignored input. Freeze it before planning.
+    Object.assign(manifest, createAcceptancePlan({ root, specPath: manifest.task.specPath, since: base, runId: manifest.runId, createdAt: manifest.createdAt }));
+    writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
 
     const executor = runAcceptance(manifest, {
       sourceRoot: root,
@@ -1224,6 +1475,8 @@ describe('Agent Engineering Acceptance', () => {
     const humanVerdictPath = join(outputDir, 'human-verdict.yaml');
     writeFileSync(humanVerdictPath, [
       'schema: runtime-authority-convergence-human-verdict/v1',
+      'driven_by: agent',
+      'actor: rc10-fixture-agent',
       `candidate_sha: ${manifest.candidate.commit}`,
       `manifest_sha256: ${sha256File(manifestPath)}`,
       `engineering_report_sha256: ${sha256File(reportPath)}`,
@@ -1268,7 +1521,7 @@ describe('Agent Engineering Acceptance', () => {
     expect(badPhase.errors).toContain('phase must be one of: engineering, human');
 
     const tamperedReport = structuredClone(verifier);
-    tamperedReport.gates[0].command = 'echo';
+    tamperedReport.gates.find((gate) => gate.id === 'fixture-validator-gate')!.command = 'echo';
     tamperedReport.reportDigest = digestReport(tamperedReport);
     const tamperedReportPath = join(outputDir, 'tampered-report.json');
     writeFileSync(tamperedReportPath, `${JSON.stringify(tamperedReport, null, 2)}\n`, 'utf8');
@@ -1297,7 +1550,7 @@ describe('Agent Engineering Acceptance', () => {
     expect(actorTamper.errors).toContain('Executor/Verifier identity separation failed');
 
     const sourceTamper = structuredClone(manifest);
-    sourceTamper.source.files[0].gitBlob = '0'.repeat(40);
+    sourceTamper.source.files.find(({ path }) => path === 'package.json')!.gitBlob = '0'.repeat(40);
     resealManifest(sourceTamper);
     const sourceTamperPath = join(outputDir, 'tampered-source-manifest.json');
     writeFileSync(sourceTamperPath, `${JSON.stringify(sourceTamper, null, 2)}\n`, 'utf8');
@@ -1310,10 +1563,11 @@ describe('Agent Engineering Acceptance', () => {
     });
     expect(sourceResult.errors).toContain('source Git blob mismatch: package.json');
 
-    // RC-09A: a missing ownership matrix must fail closed.
+    // RC-09: a missing ownership matrix must fail closed.
+    const matrixPath = join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.json');
     const movedMatrix = join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.moved.json');
-    writeFileSync(movedMatrix, readFileSync(join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.json'), 'utf8'));
-    rmSync(join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.json'), { force: true });
+    writeFileSync(movedMatrix, readFileSync(matrixPath, 'utf8'));
+    rmSync(matrixPath, { force: true });
     const missingMatrix = validateRuntimeAuthorityConvergence({
       root,
       phase: 'engineering',
@@ -1322,21 +1576,82 @@ describe('Agent Engineering Acceptance', () => {
       baselinePath: baselineRelative,
     });
     expect(missingMatrix.errors).toContain('changed-path-ownership.json is missing from the final evidence bundle');
-    writeFileSync(join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.json'), readFileSync(movedMatrix, 'utf8'));
+    writeFileSync(matrixPath, readFileSync(movedMatrix, 'utf8'));
 
-    // RC-09A: an ownership matrix that drops a manifest changed path must fail closed.
-    const tamperedMatrix = structuredClone(JSON.parse(readFileSync(join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.json'), 'utf8')));
-    tamperedMatrix.entries = [];
-    writeFileSync(join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.json'), `${JSON.stringify(tamperedMatrix, null, 2)}\n`, 'utf8');
-    const tamperedOwner = validateRuntimeAuthorityConvergence({
-      root,
-      phase: 'engineering',
-      manifestPath,
-      engineeringReportPath: reportPath,
-      baselinePath: baselineRelative,
+    const tamperMatrix = (mutate: (matrix: Record<string, unknown>) => void) => {
+      const tampered = structuredClone(JSON.parse(readFileSync(matrixPath, 'utf8')));
+      mutate(tampered);
+      writeFileSync(matrixPath, `${JSON.stringify(tampered, null, 2)}\n`, 'utf8');
+      const result = validateRuntimeAuthorityConvergence({
+        root,
+        phase: 'engineering',
+        manifestPath,
+        engineeringReportPath: reportPath,
+        baselinePath: baselineRelative,
+      });
+      writeFileSync(matrixPath, readFileSync(movedMatrix, 'utf8'));
+      return result;
+    };
+
+    // RC-09: an ownership matrix that drops a manifest changed path must fail closed.
+    const tamperedOwner = tamperMatrix((matrix) => {
+      matrix.entries = [];
     });
-    expect(tamperedOwner.errors.some((error) => error.startsWith('changed path has no RC owner'))).toBe(true);
-    writeFileSync(join(root, 'artifacts', 'agent-engineering-acceptance', 'runtime-authority-convergence-final', 'changed-path-ownership.json'), readFileSync(movedMatrix, 'utf8'));
+    expect(tamperedOwner.errors.some((error) => error.startsWith('changed path is missing from changed-path-ownership.json'))).toBe(true);
+
+    // RC-09: a matrix that claims the old schema version must fail closed.
+    expect(tamperMatrix((matrix) => {
+      matrix.schema = 'runtime-authority-convergence-rc09-ownership/v1';
+    }).errors).toContain('changed-path-ownership.json schema mismatch');
+
+    // RC-09: the matrix must be bound to the manifest base commit.
+    expect(tamperMatrix((matrix) => {
+      matrix.baseSha = '0'.repeat(40);
+    }).errors).toContain('changed-path-ownership.json is not bound to the manifest base commit');
+
+    // RC-09: a malformed headSha must fail closed.
+    expect(tamperMatrix((matrix) => {
+      matrix.headSha = 'not-a-sha';
+    }).errors).toContain('changed-path-ownership.json headSha is missing or malformed');
+
+    // RC-09: a headSha outside the candidate's ancestry must fail closed. The
+    // matrix is generated from diff(base..headSha) and committed inside the
+    // candidate, so headSha may only be the candidate or one of its ancestors.
+    expect(tamperMatrix((matrix) => {
+      matrix.headSha = '1'.repeat(40);
+    }).errors).toContain('changed-path-ownership.json headSha is not an ancestor of the candidate commit');
+
+    // RC-09: an owner outside the required owner set must fail closed.
+    expect(tamperMatrix((matrix) => {
+      const entries = matrix.entries as Array<Record<string, unknown>>;
+      entries[0].rc = 'RC-10';
+      matrix.byRc = { 'RC-00': entries.length - 1, 'RC-10': 1 };
+    }).errors.some((error) => error.startsWith('changed path owned by a package outside the required owner set'))).toBe(true);
+
+    // RC-09: an excluded path with no introducing commit must fail closed.
+    expect(tamperMatrix((matrix) => {
+      const entries = matrix.entries as Array<Record<string, unknown>>;
+      entries[0].rc = null;
+      entries[0].excluded = { workstream: 'chore(assets)' };
+      matrix.rcOwnedPaths = entries.length - 1;
+      matrix.excludedPaths = 1;
+      matrix.byRc = { 'RC-00': entries.length - 1 };
+      matrix.byExclusionWorkstream = { 'chore(assets)': 1 };
+    }).errors.some((error) => error.startsWith('changed-path-ownership.json has an unattributed entry'))).toBe(true);
+
+    // RC-09: a valid exclusion that names its introducing commit is accepted.
+    // The manifest is sealed against the original matrix bytes, so the run may
+    // still report the provision-copy digest drift — but never an ownership error.
+    const excludedMatrix = tamperMatrix((matrix) => {
+      const entries = matrix.entries as Array<Record<string, unknown>>;
+      entries[0].rc = null;
+      entries[0].excluded = { commit: base, subject: 'chore(assets): fixture', workstream: 'chore(assets)' };
+      matrix.rcOwnedPaths = entries.length - 1;
+      matrix.excludedPaths = 1;
+      matrix.byRc = { 'RC-00': entries.length - 1 };
+      matrix.byExclusionWorkstream = { 'chore(assets)': 1 };
+    });
+    expect(excludedMatrix.errors.some((error) => /outside the required owner set|unattributed entry|missing from changed-path-ownership/u.test(error))).toBe(false);
 
     const badVerdictPath = join(outputDir, 'bad-human-verdict.yaml');
     writeFileSync(badVerdictPath, readFileSync(humanVerdictPath, 'utf8').replace('H-06', 'H-99'), 'utf8');
@@ -1361,5 +1676,470 @@ describe('Agent Engineering Acceptance', () => {
       baselinePath: baselineRelative,
     });
     expect(hashTamper.errors).toContain('human verdict manifest_sha256 mismatch');
+  }, 60_000);
+
+  describe('closure advance past the accepted candidate', () => {
+    const FINAL_DIR = 'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final';
+
+    /** Drives a convergence fixture to a green Executor/Verifier run at candidate C. */
+    function acceptedConvergenceCandidate(closureAllowedPaths?: string[] | null) {
+      const { root, base, baselineRelative } = createConvergenceFixture({ closureAllowedPaths });
+      const outputDir = join(root, 'artifacts', 'agent-engineering-acceptance', 'fixture-closure');
+      const manifest = createManifest(root, {
+        humanEvidence: 'required',
+        gate: {
+          id: 'fixture-closure-gate',
+          name: 'Fixture closure gate',
+          profile: 'fast',
+          command: 'node',
+          args: ['-e', 'console.log("Tests 1 passed (1)")'],
+          required: true,
+          allowSkip: false,
+          timeoutMs: 30_000,
+          safety: { network: 'none', productionEffects: false, humanEvidence: false },
+          testExpectation: { requireCounts: true, expectedSkips: 0 },
+        },
+      });
+      mkdirSync(outputDir, { recursive: true });
+      mkdirSync(join(root, ...FINAL_DIR.split('/')), { recursive: true });
+      const changedPaths = resolveChangedPaths(root, { since: base });
+      writeFileSync(join(root, ...FINAL_DIR.split('/'), 'changed-path-ownership.json'), `${JSON.stringify({
+        schema: 'runtime-authority-convergence-rc09-ownership/v2',
+        baseSha: base,
+        headSha: repositoryIdentity(root).commit,
+        requiredOwners: ['RC-00'],
+        requiredSpecs: ['harness/specs/tasks/rc00-agent-engineering-acceptance-bootstrap.md'],
+        totalPaths: changedPaths.length,
+        rcOwnedPaths: changedPaths.length,
+        excludedPaths: 0,
+        byRc: { 'RC-00': changedPaths.length },
+        byExclusionWorkstream: {},
+        entries: changedPaths.map((pathValue) => ({ path: pathValue, rc: 'RC-00', commit: null, declaredBySpec: true })),
+      }, null, 2)}\n`, 'utf8');
+      Object.assign(manifest, createAcceptancePlan({
+        root,
+        specPath: manifest.task.specPath,
+        since: base,
+        runId: manifest.runId,
+        createdAt: manifest.createdAt,
+      }));
+      const manifestPath = join(outputDir, 'manifest.json');
+      writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+      const env = { PATH: process.env.PATH ?? '' };
+      const executor = runAcceptance(manifest, { sourceRoot: root, outputDir, actor: 'closure-executor', env });
+      expect(executor.result).toBe('pass');
+      const verifier = verifyAcceptance(manifest, {
+        sourceRoot: root,
+        outputDir,
+        actor: 'closure-verifier',
+        env,
+        executorReport: executor,
+      });
+      expect(verifier).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: true });
+      const reportPath = join(outputDir, 'final-report.json');
+      const humanVerdictPath = join(outputDir, 'human-verdict.yaml');
+      writeFileSync(humanVerdictPath, [
+        'schema: runtime-authority-convergence-human-verdict/v1',
+        'driven_by: agent',
+        'actor: closure-fixture-agent',
+        `candidate_sha: ${manifest.candidate.commit}`,
+        `manifest_sha256: ${sha256File(manifestPath)}`,
+        `engineering_report_sha256: ${sha256File(reportPath)}`,
+        'verdict: accepted',
+        'accepted_scenarios: [H-01, H-02, H-03, H-04, H-05, H-06]',
+        'failed_scenarios: []',
+        'notes: closure fixture',
+        'decided_at: 2026-09-29T00:00:00.000Z',
+        '',
+      ].join('\n'), 'utf8');
+      const candidate = manifest.candidate.commit;
+      const validate = (phase: 'engineering' | 'human' = 'engineering') => validateRuntimeAuthorityConvergence({
+        root,
+        phase,
+        manifestPath,
+        engineeringReportPath: reportPath,
+        baselinePath: baselineRelative,
+        ...(phase === 'human' ? { humanVerdictPath } : {}),
+      });
+      // Every scenario starts from a clean detached checkout of C; ignored run
+      // output (manifest, report, verdict) survives because clean skips -x.
+      const resetToCandidate = () => {
+        git(root, ['checkout', '--quiet', '--force', '--detach', candidate]);
+        git(root, ['clean', '-fdq']);
+      };
+      const commitFiles = (files: Record<string, string>, message: string) => {
+        for (const [pathValue, body] of Object.entries(files)) {
+          mkdirSync(join(root, pathValue, '..'), { recursive: true });
+          writeFileSync(join(root, pathValue), body, 'utf8');
+          git(root, ['add', '--force', pathValue]);
+        }
+        git(root, ['commit', '--quiet', '-m', message]);
+      };
+      const worktreeCount = () => gitText(root, ['worktree', 'list', '--porcelain'])
+        .split(/\r?\n/u)
+        .filter((line) => line.startsWith('worktree ')).length;
+      return { root, candidate, validate, resetToCandidate, commitFiles, worktreeCount };
+    }
+
+    it('replays over closure-only descendants and fails closed on everything else', () => {
+      const fixture = acceptedConvergenceCandidate();
+      const { validate, resetToCandidate, commitFiles, worktreeCount } = fixture;
+      const statusPath = 'docs/dev/unified-agent-system/runtime-convergence/STATUS.md';
+
+      // 1. Fast path: HEAD is exactly the clean candidate.
+      const atCandidate = validate();
+      expect(atCandidate).toEqual(expect.objectContaining({ ok: true, errors: [], closureAdvance: false }));
+
+      // 2. Closure-only commits: engineering and human phases both replay.
+      resetToCandidate();
+      commitFiles({
+        [statusPath]: 'program_status: human_acceptance_pending\n',
+        'artifacts/runtime-authority-convergence/rc-09/archive/x.json': '{}\n',
+      }, 'closure');
+      expect(validate()).toEqual(expect.objectContaining({ ok: true, errors: [], closureAdvance: true }));
+      expect(validate('human')).toEqual(expect.objectContaining({ ok: true, errors: [], closureAdvance: true }));
+      expect(worktreeCount()).toBe(1);
+
+      // 3. A path outside the allowlist.
+      resetToCandidate();
+      commitFiles({ 'docs/other.md': '# other\n' }, 'non-closure');
+      expect(validate().errors).toContain('closure advance: non-closure path changed after candidate: docs/other.md');
+
+      // 4. A code file, even inside an allowlisted directory.
+      resetToCandidate();
+      commitFiles({ 'artifacts/runtime-authority-convergence/rc-10/acceptance/x.mjs': 'export {};\n' }, 'code');
+      expect(validate().errors).toContain(
+        'closure advance: code file changed after candidate: artifacts/runtime-authority-convergence/rc-10/acceptance/x.mjs',
+      );
+
+      // 5. Regenerating the ownership matrix after the candidate.
+      resetToCandidate();
+      commitFiles({ [`${FINAL_DIR}/changed-path-ownership.json`]: '{}\n' }, 'matrix');
+      expect(validate().errors).toContain(
+        `closure advance: frozen input changed after candidate: ${FINAL_DIR}/changed-path-ownership.json`,
+      );
+
+      // 6. A closure commit that widens its own allowlist: the candidate's spec wins.
+      resetToCandidate();
+      const specPath = 'harness/specs/tasks/runtime-authority-convergence-final-acceptance.md';
+      const widened = readFileSync(join(fixture.root, specPath), 'utf8')
+        .replace('  allowedPaths:\n', '  allowedPaths:\n    - "docs/**"\n');
+      commitFiles({ [specPath]: widened, 'docs/other.md': '# other\n' }, 'widen');
+      const widenedResult = validate();
+      expect(widenedResult.errors).toContain(`closure advance: frozen input changed after candidate: ${specPath}`);
+      expect(widenedResult.errors).toContain('closure advance: non-closure path changed after candidate: docs/other.md');
+
+      // 7. HEAD that does not descend from the candidate.
+      git(fixture.root, ['checkout', '--quiet', '--force', '--detach', `${fixture.candidate}^`]);
+      git(fixture.root, ['clean', '-fdq']);
+      commitFiles({ [statusPath]: 'program_status: in_progress\n' }, 'side branch');
+      expect(validate().errors).toContain('closure advance: candidate is not an ancestor of HEAD');
+
+      // 8. An uncommitted, untracked file in the invoking worktree.
+      resetToCandidate();
+      mkdirSync(join(fixture.root, 'docs'), { recursive: true });
+      writeFileSync(join(fixture.root, 'docs', 'scratch.md'), '# scratch\n', 'utf8');
+      expect(validate().errors).toContain('closure advance: non-closure path changed after candidate: docs/scratch.md');
+
+      // Success and failure paths both release the detached candidate worktree.
+      expect(worktreeCount()).toBe(1);
+    }, 180_000);
+
+    it('fails closed when the candidate spec declares no closure allowlist', () => {
+      const { validate, resetToCandidate, commitFiles, worktreeCount } = acceptedConvergenceCandidate(null);
+      expect(validate()).toEqual(expect.objectContaining({ ok: true, closureAdvance: false }));
+      resetToCandidate();
+      commitFiles({ 'artifacts/runtime-authority-convergence/rc-09/archive/x.json': '{}\n' }, 'closure');
+      expect(validate().errors).toContain('closure advance: candidate spec declares no closureAdvance.allowedPaths');
+      expect(worktreeCount()).toBe(1);
+    }, 120_000);
+
+    it('rejects allowlist entries that are not exact paths or directory prefixes', () => {
+      const { validate, resetToCandidate, commitFiles } = acceptedConvergenceCandidate([
+        'artifacts/runtime-authority-convergence/rc-09/**',
+        'a/*.json',
+      ]);
+      resetToCandidate();
+      commitFiles({ 'artifacts/runtime-authority-convergence/rc-09/archive/x.json': '{}\n' }, 'closure');
+      expect(validate().errors).toContain('closure advance: malformed allowedPaths entry: a/*.json');
+    }, 120_000);
   });
+
+  it('sums every Tests summary segment instead of taking the largest single count', () => {
+    const stdout = [
+      ' Test Files  823 passed | 3 skipped (826)',
+      '      Tests  7309 passed | 53 skipped (7362)',
+      ' Test Files  3 passed (3)',
+      '      Tests  12 passed (12)',
+      ' Test Files  40 passed (40)',
+      '      Tests  452 passed | 1 skipped (453)',
+    ].join('\n');
+    expect(parseTestCounts(stdout)).toEqual({
+      passed: 7773,
+      failed: 0,
+      skipped: 54,
+      total: 7827,
+      source: 'parsed',
+      segments: 3,
+    });
+  });
+
+  it.each([
+    ['pnpm exec eslint tests/unit/example.test.ts', false],
+    ['git diff --check -- tests/unit/example.test.ts', false],
+    ['pnpm exec eslint vitest.config.ts', false],
+    ['pnpm exec eslint scripts/run-vitest.mjs', false],
+    ['pnpm exec eslint node_modules/vitest/vitest.mjs', false],
+    ['pnpm --dir resources/verseshell-mcp test', true],
+    ['pnpm -C "resources/with spaces" test', true],
+    ['pnpm --filter @scope/package run test', true],
+    ['pnpm --dir=resources/verseshell-mcp test', true],
+    ['npm --prefix resources/verseshell-mcp test', true],
+    ['pnpm -w test', true],
+    ['node --test scripts/example.test.mjs', true],
+    ['node node_modules/vitest/vitest.mjs run tests/unit/example.test.ts', true],
+    ['pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts', true],
+    ['pnpm exec playwright test tests/e2e/example.spec.ts', true],
+    ['tests/unit/example.test.ts', true],
+  ])('classifies actual test execution: %s', (commandLine, expected) => {
+    expect(isCountableTestCommand(null, [], commandLine)).toBe(expected);
+  });
+
+  it.each([
+    ['Tests 2 passed (2)\nTests 1 failed (1)', { passed: 2, failed: 1, skipped: 0, total: 3 }],
+    ['Tests 2 passed (2)\nTests 3 skipped (3)', { passed: 2, failed: 0, skipped: 3, total: 5 }],
+    ['Tests 2 passed | 1 todo (3)', { passed: 2, failed: 0, skipped: 1, total: 3 }],
+    ['  1 failed\n  2 skipped\n  4 passed (12.3s)\n', { passed: 4, failed: 1, skipped: 2, total: 7 }],
+    ['# tests 4\n# pass 2\n# fail 1\n# skipped 1\n# todo 0\n', { passed: 2, failed: 1, skipped: 1, total: 4 }],
+  ])('counts every outcome in the runner summary: %s', (stdout, expected) => {
+    expect(parseTestCounts(stdout)).toMatchObject(expected);
+  });
+
+  it('rejects a malformed summary instead of silently discarding its missing tests', () => {
+    expect(parseTestCounts('Tests 2 passed (2)\nTests 1 passed | 1 skipped (4)')).toBeNull();
+  });
+
+  it.each(['"--fix"', '--fix=true', "'--no-diff'", '--fix&&true'])('rejects executable forbidden argument spellings: %s', (argument) => {
+    const root = createFixtureRepository();
+    const manifest = createManifest(root);
+    const gate = manifest.gates.find(({ id }) => id === 'fixture-gate')!;
+    gate.commandLine = `pnpm exec eslint . ${argument}`;
+    resealManifest(manifest);
+    expect(validateAcceptanceManifest(manifest).ok).toBe(false);
+  });
+
+  it('rejects requiredTests that drift from the candidate spec or hide --fix in commandLine', () => {
+    const root = createFixtureRepository();
+    const comparisonBase = repositoryIdentity(root).commit;
+    writeFileSync(join(root, 'harness', 'specs', 'tasks', 'fixture.md'), `---
+id: fixture-task
+title: Fixture task
+diffBase: ${comparisonBase}
+requiredTests:
+  - pnpm exec vitest run tests/unit/example.test.ts
+  - pnpm exec eslint tests/unit/example.test.ts
+  - pnpm --dir resources/verseshell-mcp test
+  - node node_modules/vitest/vitest.mjs run tests/unit/example.test.ts
+---
+# fixture
+`, 'utf8');
+    const copyFiles = [
+      'artifacts/uas-06-single-local-exec-canary/live-observations.json',
+      'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json',
+      'openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json',
+    ];
+    for (const relative of copyFiles) {
+      const full = join(root, ...relative.split('/'));
+      mkdirSync(join(full, '..'), { recursive: true });
+      writeFileSync(full, '{"fixture":true}\n', 'utf8');
+    }
+    git(root, ['add', 'harness/specs/tasks/fixture.md', '.gitignore']);
+    git(root, ['commit', '--quiet', '-m', 'spec requiredTests']);
+    const plan = createAcceptancePlan({
+      root,
+      specPath: 'harness/specs/tasks/fixture.md',
+      since: 'HEAD^',
+      runId: 'fixture-required-bind',
+      createdAt: '2026-07-31T00:00:00.000Z',
+    });
+    expect(plan.gates.find((gate) => gate.id === 'required-test-1')?.testExpectation).toEqual({
+      requireCounts: true,
+      expectedSkips: 0,
+    });
+    expect(plan.gates.find((gate) => gate.id === 'required-test-2')?.testExpectation).toBeUndefined();
+    expect(plan.gates.find((gate) => gate.id === 'required-test-3')?.testExpectation).toEqual({
+      requireCounts: true, expectedSkips: 0,
+    });
+    expect(plan.gates.find((gate) => gate.id === 'required-test-4')?.testExpectation).toEqual({
+      requireCounts: true, expectedSkips: 0,
+    });
+    expect(plan.gates.find((gate) => gate.id === 'provision-verseshell-resources')?.copyInputs).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          path: 'artifacts/uas-06-single-local-exec-canary/live-observations.json',
+          exists: true,
+          bytes: expect.any(Number),
+          sha256: expect.stringMatching(/^[a-f0-9]{64}$/u),
+        }),
+      ]),
+    );
+    expect(validateAcceptanceManifest(plan, { root, requireClean: true, requireFull: true })).toEqual({ ok: true, errors: [] });
+    expect(() => createAcceptancePlan({
+      root,
+      specPath: plan.task.specPath,
+      since: plan.candidate.commit,
+    })).toThrow('comparison base must match the candidate task spec diffBase');
+    const rebased = structuredClone(plan);
+    rebased.baseRef = plan.candidate.commit;
+    rebased.changedPaths = [];
+    const harnessGate = rebased.gates.find(({ id }) => id === 'harness-validate')!;
+    harnessGate.args[harnessGate.args.indexOf('--since') + 1] = plan.candidate.commit;
+    resealManifest(rebased);
+    expect(validateAcceptanceManifest(rebased, { root, requireClean: true, requireFull: true }).errors.join('\n')).toContain(
+      'comparison base must match the candidate task spec diffBase',
+    );
+
+    const omitted = structuredClone(plan);
+    omitted.gates = omitted.gates.filter((gate) => gate.id !== 'fast-unit-tests');
+    resealManifest(omitted);
+    expect(validateAcceptanceManifest(omitted, { root, requireClean: true, requireFull: true }).errors).toContain(
+      'manifest gates must match the candidate-derived gate contracts',
+    );
+    const withoutBase = structuredClone(plan);
+    withoutBase.baseRef = null;
+    resealManifest(withoutBase);
+    expect(validateAcceptanceManifest(withoutBase, { root, requireClean: true, requireFull: true }).errors).toContain(
+      'formal acceptance requires a comparison base, not only explicit changed paths',
+    );
+    for (const mutate of [
+      (value: AcceptanceManifest) => { value.gates.reverse(); },
+      (value: AcceptanceManifest) => { value.gates.find(({ id }) => id === 'fast-unit-tests')!.commandLine = 'node -e "process.exit(0)"'; },
+      (value: AcceptanceManifest) => { value.gates.find(({ id }) => id === 'fast-unit-tests')!.testExpectation = { requireCounts: true, expectedSkips: 54 }; },
+      (value: AcceptanceManifest) => { value.gates.find(({ id }) => id === 'required-test-1')!.timeoutMs = 1; },
+      (value: AcceptanceManifest) => { value.source.files = value.source.files.filter(({ path }) => path !== 'harness/src/profiles.mjs'); },
+      (value: AcceptanceManifest) => { value.source.lockFiles = []; },
+      (value: AcceptanceManifest) => { value.changedPaths = []; },
+      (value: AcceptanceManifest) => { value.requiredProfiles = []; },
+    ]) {
+      const changed = structuredClone(plan);
+      mutate(changed);
+      resealManifest(changed);
+      expect(validateAcceptanceManifest(changed, { root, requireClean: true, requireFull: true }).ok).toBe(false);
+    }
+
+    const drifted = structuredClone(plan);
+    drifted.task.requiredTests[0] = 'pnpm exec eslint . --fix';
+    const requiredGate = drifted.gates.find((gate) => gate.id === 'required-test-1');
+    if (!requiredGate) throw new Error('expected required-test-1');
+    requiredGate.commandLine = drifted.task.requiredTests[0];
+    delete requiredGate.testExpectation;
+    drifted.planDigest = digestPlan(drifted);
+    drifted.manifestDigest = digestManifest(drifted);
+    expect(validateAcceptanceManifest(drifted, { root, requireClean: true, requireFull: true }).errors).toEqual(
+      expect.arrayContaining([
+        'manifest requiredTests must match the candidate task spec requiredTests',
+        'required-test-1: forbidden argument --fix',
+      ]),
+    );
+
+    writeFileSync(join(root, ...copyFiles[0].split('/')), '{"tampered":true}\n', 'utf8');
+    expect(validateAcceptanceManifest(plan, { root, requireClean: true, requireFull: true }).errors).toEqual(
+      expect.arrayContaining([
+        'provision-verseshell-resources: provision copy digest mismatch: artifacts/uas-06-single-local-exec-canary/live-observations.json',
+      ]),
+    );
+  });
+
+  it('runs required-test gates in the detached worktree rather than the source root', () => {
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-required-cwd-'));
+    temporaryPaths.push(outputDir);
+    const commandLine = 'node scripts/fixture-required-test.mjs --flag value';
+    writeFileSync(join(root, 'harness', 'specs', 'tasks', 'fixture.md'), `---
+id: fixture-task
+requiredTests:
+  - ${commandLine}
+---
+# fixture
+`, 'utf8');
+    git(root, ['add', 'harness/specs/tasks/fixture.md']);
+    git(root, ['commit', '--quiet', '-m', 'required-test spec']);
+    const gate = {
+      id: 'required-test-1',
+      name: 'Required test 1 (spec requiredTests)',
+      profile: 'required-tests',
+      commandLine,
+      command: null,
+      args: [],
+      required: true,
+      allowSkip: false,
+      timeoutMs: 1_000,
+      kind: 'required-test',
+      safety: { network: 'none', productionEffects: false, humanEvidence: false },
+    };
+    const manifest = createManifest(root, { gate });
+    manifest.task.requiredTests = [commandLine];
+    resealManifest(manifest);
+    const cwds: string[] = [];
+    const result = runAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir,
+      actor: 'executor',
+      env: { PATH: process.env.PATH ?? '' },
+      spawn: (_command: string, _args: string[], options: { cwd?: string } = {}) => {
+        cwds.push(String(options.cwd ?? ''));
+        return { status: 0, signal: null, stdout: 'Tests 1 passed (1)\n', stderr: '' };
+      },
+    });
+    expect({ result: result.result, failures: result.failures }).toEqual({ result: 'pass', failures: [] });
+    expect(cwds).toHaveLength(1);
+    expect(cwds[0]).not.toBe(root);
+    expect(cwds[0].replaceAll('\\', '/')).toMatch(/clawx-agent-acceptance-[^/]+\/checkout$/u);
+  });
+
+  it('points the Electron E2E evidence root outside the detached worktree', () => {
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-e2e-evidence-'));
+    temporaryPaths.push(outputDir);
+    const gate = {
+      id: 'electron-e2e',
+      name: 'Electron end-to-end tests',
+      profile: 'e2e',
+      command: 'node',
+      args: ['-e', 'process.exit(0)'],
+      required: true,
+      allowSkip: false,
+      timeoutMs: 1_000,
+      safety: { network: 'isolated', productionEffects: false, humanEvidence: false },
+    };
+    const manifest = createManifest(root, { gate });
+    const seen: { cwd: string; evidenceRoot: string }[] = [];
+    const result = runAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir,
+      actor: 'executor',
+      env: { PATH: process.env.PATH ?? '' },
+      spawn: (
+        _command: string,
+        _args: string[],
+        options: { cwd?: string; env?: Record<string, string | undefined> } = {},
+      ) => {
+        seen.push({
+          cwd: String(options.cwd ?? ''),
+          evidenceRoot: String(options.env?.CLAWX_E2E_EVIDENCE_ROOT ?? ''),
+        });
+        return { status: 0, signal: null, stdout: 'Tests 1 passed (1)\n', stderr: '' };
+      },
+    });
+    expect({ result: result.result, failures: result.failures }).toEqual({ result: 'pass', failures: [] });
+    expect(seen).toHaveLength(1);
+    // The suite publishes reviewable PNG/evidence artifacts; the acceptance
+    // requires the detached worktree to stay byte-clean, so the redirected root
+    // must exist and must not live inside the candidate checkout.
+    const evidenceRoot = seen[0].evidenceRoot.replaceAll('\\', '/');
+    const cwd = seen[0].cwd.replaceAll('\\', '/');
+    expect(evidenceRoot).toMatch(/clawx-e2e-evidence\/fixture-run$/u);
+    expect(evidenceRoot.startsWith(cwd)).toBe(false);
+  });
+
 });

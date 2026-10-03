@@ -4,29 +4,25 @@ import {
   type ExecCommandAnalysis,
   type ExecCommandSegment,
 } from "../../infra/exec-approvals-analysis.js";
+import {
+  getVerseShellCommandProfileDefinition,
+  VERSESHELL_COMMAND_PROFILE_IDS,
+  type VerseShellCommandPlanMode,
+  type VerseShellCommandProfile,
+  type VerseShellCommandProfileDefinition,
+} from "./command-profile-definitions.js";
+import {
+  resolveVerseShellExternalWritePolicy,
+  type VerseShellExternalWritePolicy,
+} from "./external-write-policy.js";
 import { resolveExplicitVerseShellCommandArgv } from "./shell-command.js";
 
-export const VERSESHELL_COMMAND_PROFILE_IDS = [
-  "generic",
-  "test",
-  "build",
-  "lint",
-  "git",
-  "terminal-shell",
-] as const;
-
-export type VerseShellCommandProfile = (typeof VERSESHELL_COMMAND_PROFILE_IDS)[number];
-export type VerseShellCommandPlanMode = "argv" | "explicit-shell";
-
-export type VerseShellCommandProfileDefinition = {
-  id: VerseShellCommandProfile;
-  maxTimeoutMs: number;
-  maxOutputBytes: number;
-  cwdPolicy: "workspace-relative";
-  envPolicy: "host-sanitized";
-  /** Classification only; P2-02 does not grant write authority. */
-  writePolicy: "deny-unless-policy" | "external-write-visible";
-  declaredWriteDirs: readonly string[];
+export {
+  getVerseShellCommandProfileDefinition,
+  VERSESHELL_COMMAND_PROFILE_IDS,
+  type VerseShellCommandPlanMode,
+  type VerseShellCommandProfile,
+  type VerseShellCommandProfileDefinition,
 };
 
 /**
@@ -40,12 +36,20 @@ export type VerseShellCommandPlan = {
   displayCommand: string;
   executable: string;
   resolvedExecutable?: string;
+  /**
+   * The executable exactly as the operator's command named it, before host PATH
+   * resolution rewrote argv[0]. Read-only classification is keyed on this so a
+   * resolved absolute path can never inherit a bare command name's trust.
+   */
+  sourceExecutable?: string;
   /** Canonical script identity retained when Windows executes a batch shim. */
   resolvedScript?: string;
   interpreter?: string;
   /** Runtime-owned interpreter path for an audited Windows batch payload. */
   interpreterProfile?: "windows-cmd";
   profileDefinition: VerseShellCommandProfileDefinition;
+  /** Host-owned external process write classification; never grants authority. */
+  externalWritePolicy: VerseShellExternalWritePolicy;
 };
 
 export class VerseShellCommandPlanError extends Error {
@@ -102,69 +106,6 @@ const MAX_ARG_BYTES = 64 * 1024;
 const MAX_ENV_KEYS = 512;
 const MAX_ENV_BYTES = 256 * 1024;
 
-const PROFILE_DEFINITIONS: Readonly<Record<VerseShellCommandProfile, VerseShellCommandProfileDefinition>> = {
-  generic: {
-    id: "generic",
-    maxTimeoutMs: 10 * 60 * 1000,
-    maxOutputBytes: 8 * 1024 * 1024,
-    cwdPolicy: "workspace-relative",
-    envPolicy: "host-sanitized",
-    writePolicy: "deny-unless-policy",
-    declaredWriteDirs: [],
-  },
-  test: {
-    id: "test",
-    maxTimeoutMs: 30 * 60 * 1000,
-    maxOutputBytes: 32 * 1024 * 1024,
-    cwdPolicy: "workspace-relative",
-    envPolicy: "host-sanitized",
-    writePolicy: "deny-unless-policy",
-    declaredWriteDirs: [".cache", ".pytest_cache", "coverage", "test-results"],
-  },
-  build: {
-    id: "build",
-    maxTimeoutMs: 60 * 60 * 1000,
-    maxOutputBytes: 32 * 1024 * 1024,
-    cwdPolicy: "workspace-relative",
-    envPolicy: "host-sanitized",
-    writePolicy: "deny-unless-policy",
-    declaredWriteDirs: [".cache", "build", "dist", "out", "target"],
-  },
-  lint: {
-    id: "lint",
-    maxTimeoutMs: 20 * 60 * 1000,
-    maxOutputBytes: 16 * 1024 * 1024,
-    cwdPolicy: "workspace-relative",
-    envPolicy: "host-sanitized",
-    writePolicy: "deny-unless-policy",
-    declaredWriteDirs: [".cache"],
-  },
-  git: {
-    id: "git",
-    maxTimeoutMs: 10 * 60 * 1000,
-    maxOutputBytes: 16 * 1024 * 1024,
-    cwdPolicy: "workspace-relative",
-    envPolicy: "host-sanitized",
-    writePolicy: "deny-unless-policy",
-    declaredWriteDirs: [],
-  },
-  "terminal-shell": {
-    id: "terminal-shell",
-    maxTimeoutMs: 30 * 60 * 1000,
-    maxOutputBytes: 32 * 1024 * 1024,
-    cwdPolicy: "workspace-relative",
-    envPolicy: "host-sanitized",
-    writePolicy: "external-write-visible",
-    declaredWriteDirs: [],
-  },
-};
-
-export function getVerseShellCommandProfileDefinition(
-  profile: VerseShellCommandProfile,
-): VerseShellCommandProfileDefinition {
-  return PROFILE_DEFINITIONS[profile];
-}
-
 function executableBase(value: string | undefined): string {
   const token = value?.trim() ?? "";
   const base = token.split(/[\\/]/u).at(-1)?.toLowerCase() ?? "";
@@ -188,8 +129,9 @@ function envValue(env: NodeJS.ProcessEnv, key: string): string | undefined {
 }
 
 function resolveWindowsCommandInterpreter(env: NodeJS.ProcessEnv): string {
-  const interpreter = envValue(env, "ComSpec")?.trim()
-    || (envValue(env, "SystemRoot")?.trim()
+  const interpreter =
+    envValue(env, "ComSpec")?.trim() ||
+    (envValue(env, "SystemRoot")?.trim()
       ? `${envValue(env, "SystemRoot")!.trim()}\\System32\\cmd.exe`
       : "");
   if (!interpreter || interpreter.includes("\0") || !/[\\/]/u.test(interpreter)) {
@@ -221,7 +163,10 @@ function displayArgv(argv: readonly string[]): string {
 
 function normalizeArgv(argv: readonly string[]): string[] {
   if (argv.length === 0 || argv.length > MAX_ARGC) {
-    throw new VerseShellCommandPlanError("E_VERSESHELL_ARGV_BOUNDS", "argv item count is outside the profile bound");
+    throw new VerseShellCommandPlanError(
+      "E_VERSESHELL_ARGV_BOUNDS",
+      "argv item count is outside the profile bound",
+    );
   }
   const normalized = argv.map((value, index) => {
     if (typeof value !== "string" || value.includes("\0")) {
@@ -247,23 +192,35 @@ function normalizeArgv(argv: readonly string[]): string[] {
 function validateProfileEnvironment(env: NodeJS.ProcessEnv): void {
   const entries = Object.entries(env);
   if (entries.length > MAX_ENV_KEYS) {
-    throw new VerseShellCommandPlanError("E_VERSESHELL_ENV_BOUNDS", "environment key count exceeds the profile bound");
+    throw new VerseShellCommandPlanError(
+      "E_VERSESHELL_ENV_BOUNDS",
+      "environment key count exceeds the profile bound",
+    );
   }
   let bytes = 0;
   for (const [key, value] of entries) {
     if (key.includes("\0") || value?.includes("\0")) {
-      throw new VerseShellCommandPlanError("E_VERSESHELL_ENV_INVALID", "environment contains a NUL value");
+      throw new VerseShellCommandPlanError(
+        "E_VERSESHELL_ENV_INVALID",
+        "environment contains a NUL value",
+      );
     }
     bytes += new TextEncoder().encode(`${key}=${value ?? ""}`).byteLength;
   }
   if (bytes > MAX_ENV_BYTES) {
-    throw new VerseShellCommandPlanError("E_VERSESHELL_ENV_BOUNDS", "environment bytes exceed the profile bound");
+    throw new VerseShellCommandPlanError(
+      "E_VERSESHELL_ENV_BOUNDS",
+      "environment bytes exceed the profile bound",
+    );
   }
 }
 
 function validateWorkspaceCwd(cwd: string | undefined): void {
   if (!cwd || cwd.trim().length === 0 || cwd.includes("\0")) {
-    throw new VerseShellCommandPlanError("E_VERSESHELL_CWD_INVALID", "command profile requires a NUL-free workspace cwd");
+    throw new VerseShellCommandPlanError(
+      "E_VERSESHELL_CWD_INVALID",
+      "command profile requires a NUL-free workspace cwd",
+    );
   }
 }
 
@@ -401,6 +358,7 @@ function explicitShellPlan(
     executable: argv[0] ?? "",
     interpreter,
     profileDefinition,
+    externalWritePolicy: resolveVerseShellExternalWritePolicy({ profile: "terminal-shell", argv }),
   };
 }
 
@@ -409,6 +367,7 @@ function directArgvPlan(
   displayCommand: string | undefined,
   platform: NodeJS.Platform,
   env: NodeJS.ProcessEnv,
+  sourceExecutable?: string,
 ): VerseShellCommandPlan {
   const normalized = normalizeArgv(argv);
   const executable = normalized[0] ?? "";
@@ -422,6 +381,7 @@ function directArgvPlan(
     );
   }
   const interpreter = isBatch ? resolveWindowsCommandInterpreter(env) : undefined;
+  const source = sourceExecutable?.trim() || undefined;
   return {
     mode: "argv",
     profile,
@@ -431,6 +391,7 @@ function directArgvPlan(
     ...(executable.includes("\\") || executable.includes("/")
       ? { resolvedExecutable: executable }
       : {}),
+    ...(source ? { sourceExecutable: source } : {}),
     ...(isBatch
       ? {
           resolvedScript: executable,
@@ -439,6 +400,12 @@ function directArgvPlan(
         }
       : {}),
     profileDefinition,
+    externalWritePolicy: resolveVerseShellExternalWritePolicy({
+      profile,
+      argv: normalized,
+      ...(source ? { sourceExecutable: source } : {}),
+      ...(isBatch ? { resolvedScript: executable, interpreterProfile: "windows-cmd" as const } : {}),
+    }),
   };
 }
 
@@ -459,34 +426,63 @@ export type VerseShellCommandPlanInput = {
  * single-segment command becomes direct argv. Shell syntax is admitted only as
  * an explicit terminal-shell payload and never as an implicit default.
  */
-export function resolveVerseShellCommandPlan(input: VerseShellCommandPlanInput): VerseShellCommandPlan {
+export function resolveVerseShellCommandPlan(
+  input: VerseShellCommandPlanInput,
+): VerseShellCommandPlan {
   const platform = input.platform ?? process.platform;
   const env = input.env ?? process.env;
   validateWorkspaceCwd(input.cwd ?? process.cwd());
   validateProfileEnvironment(env);
   const command = input.command?.trim() ?? "";
-  const analysis = input.analysis ?? (command
-    ? analyzeShellCommand({ command, cwd: input.cwd, env, platform })
-    : undefined);
+  const analysis =
+    input.analysis ??
+    (command ? analyzeShellCommand({ command, cwd: input.cwd, env, platform }) : undefined);
   const segments = input.segments ?? analysis?.segments;
   const first = segments?.length === 1 ? segments[0] : undefined;
   const explicitByText = command.length > 0 && hasExplicitVerseShellSyntax(command, platform);
 
   if (input.argv !== undefined) {
-    const direct = directArgvPlan(input.argv, command, platform, env);
-    if (!isExplicitVerseShellInterpreter(direct.argv) && !isWindowsShellBuiltin(direct.argv, platform) && !explicitByText) return direct;
-    if (input.allowExplicitShell !== false && command) return explicitShellPlan(command, env, platform);
-    throw new VerseShellCommandPlanError("E_VERSESHELL_SHELL_EXPLICIT", "shell interpreter requires an explicit terminal profile");
+    const direct = directArgvPlan(input.argv, command, platform, env, input.argv[0]);
+    if (
+      !isExplicitVerseShellInterpreter(direct.argv) &&
+      !isWindowsShellBuiltin(direct.argv, platform) &&
+      !explicitByText
+    )
+      return direct;
+    if (input.allowExplicitShell !== false && command)
+      return explicitShellPlan(command, env, platform);
+    throw new VerseShellCommandPlanError(
+      "E_VERSESHELL_SHELL_EXPLICIT",
+      "shell interpreter requires an explicit terminal profile",
+    );
   }
 
-  if (first && !explicitByText && !isExplicitVerseShellInterpreter(first.argv) && !isWindowsShellBuiltin(first.argv, platform)) {
+  if (
+    first &&
+    !explicitByText &&
+    !isExplicitVerseShellInterpreter(first.argv) &&
+    !isWindowsShellBuiltin(first.argv, platform)
+  ) {
     const planned = resolvePlannedSegmentArgv(first);
-    if (planned && planned.length > 0) return directArgvPlan(planned, command || first.raw, platform, env);
+    if (planned && planned.length > 0)
+      return directArgvPlan(
+        planned,
+        command || first.raw,
+        platform,
+        env,
+        // The pre-resolution token the operator actually typed. `resolution`
+        // rewrites argv[0] to an absolute path, which must not be mistaken for
+        // an operator-supplied bare command name.
+        first.sourceArgv?.[0] ?? first.argv[0],
+      );
   }
 
-  const explicitShell = explicitByText || Boolean(
-    first && (isExplicitVerseShellInterpreter(first.argv) || isWindowsShellBuiltin(first.argv, platform)),
-  );
+  const explicitShell =
+    explicitByText ||
+    Boolean(
+      first &&
+      (isExplicitVerseShellInterpreter(first.argv) || isWindowsShellBuiltin(first.argv, platform)),
+    );
   if (input.allowExplicitShell !== false && explicitShell && command) {
     return explicitShellPlan(command, env, platform);
   }

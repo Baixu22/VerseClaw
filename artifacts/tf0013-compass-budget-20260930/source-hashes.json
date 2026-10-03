@@ -1,0 +1,30 @@
+{
+  "actor": "codex/root",
+  "driven_by": "agent",
+  "scope": "development-only",
+  "capture": "post-verification",
+  "head": "6104cd9a147737e8d6ec037f1a81fafc814598d2",
+  "workingTreeDirty": true,
+  "sourceHashes": {
+    "openclaw_runtime/src/agents/cli-runner.ts": "a19da9be71586f591e6387160652c97e05f40d392de98bbb41e821aa20415057",
+    "openclaw_runtime/src/agents/cli-runner/prepare.ts": "85f1bd55158ee4b1af0929dfe60e644d2856eabeb54bc57fef3c9a5e8342b935",
+    "openclaw_runtime/src/agents/cli-runner/types.ts": "72faaaa221ba2f3c3109605ad8a540e74c441f34d01e0b78673582092286e529",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run.ts": "f82f7a790d8d763338521a4e10b7b9341122527dc7e102dd936edf3eb0a52ef1",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts": "fb94f5495d3552a0ed739406c02f91da41349a7002f35aa930d8a5f79d30829c",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run/params.ts": "a56037e9ef48d3118479c1f32450e48fe24fa6071e5bbb2e55c41199678ea07d",
+    "openclaw_runtime/src/agents/harness/selection.compass.test.ts": "0076cfad4accd53576545ddfc02d5b1b990d3ec6dea0eb8cd7cc016a96d088fe",
+    "openclaw_runtime/src/agents/harness/selection.ts": "fc3f791ab5fdb84e4d6405afec8a7d120ec37d0832b6bbf74ca46bcd46a20600",
+    "openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts": "26233b252d0c11babfaa93888e8c77eb582f71867377313c488a2aa933b68e16",
+    "openclaw_runtime/src/auto-reply/reply.compass.test.ts": "d771179bd4c418bec6409158b15dc74ebcc08612976ae9625a01c4b1ca737067",
+    "openclaw_runtime/src/auto-reply/reply.test-harness.ts": "c60b5fb44779bd0deceec068d84e2005b9ac23595ae0d12fd4b7a5bc3b01c9d6",
+    "openclaw_runtime/src/auto-reply/reply/agent-runner-execution.ts": "154202e4c00ed787b65a0fa272d7ff151409ba51a1fa2885b019464e3f9edf8c",
+    "openclaw_runtime/src/auto-reply/reply/followup-runner.ts": "de6e91b8dd0e061bc4e341289bf83fd6eaba3ea6df3e70ae29259761a233ea65",
+    "openclaw_runtime/src/auto-reply/reply/get-reply-run.ts": "48a6e245cf2891079888cc38cc31b63fbc5f95310f29cbaa74ceb40807ce8e44",
+    "openclaw_runtime/src/auto-reply/reply/queue/types.ts": "27abd565981ddcdc8c644bb16a4197d11dd7a5ce29e0fa19e271a7a9bc4c0489",
+    "openclaw_runtime/src/context-engine/compass-context.ts": "2b5058181c97e5465c1aade454204e3aacb03ca989c44a7dd1b6553133d79a58",
+    "openclaw_runtime/src/context-engine/context-candidate.ts": "f461b1d1e897fbd20ced248da3a3c52ba116ab3502b6039cf65ecc60161b0596",
+    "openclaw_runtime/src/context-engine/context-orchestrator.compass.test.ts": "95b14d99bede0347082e67f8baaa01b8466f5704b50ef1a706ea471839a772ed",
+    "openclaw_runtime/src/context-engine/context-orchestrator.ts": "33472c184936fe21fed77c5232e42a3a810a3913d53920f18347e3d96647c6b5",
+    "openclaw_runtime/src/context-engine/rc03-seal-hook.ts": "a2cb40dc388192efa8f431dc098cf607a9d0b3bc91a2d9d2ca057183e3973da6"
+  }
+}
