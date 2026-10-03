@@ -1,0 +1,37 @@
+{
+  "schema": "clawx-structured-artifact-owner-map/v1",
+  "taskId": "TF-0244",
+  "observationType": "source-inspection-not-runtime-proof",
+  "driven_by": "agent",
+  "actor": "claude/tf0244-contract",
+  "owners": [
+    { "area": "renderer-boundary", "path": "src/lib/host-api.ts", "anchors": ["export const hostApi"], "reuse": "Renderer uses the existing facade; no direct IPC/Gateway or transport selection.", "gap": "A typed structured-artifact projection is future W4 work." },
+    { "area": "plugin-factory", "path": "openclaw_runtime/src/plugins/tool-types.ts", "anchors": ["export type OpenClawPluginToolContext", "fsPolicy?:", "sessionId?:"], "reuse": "Existing trusted factory context carries workspace/session and filesystem policy.", "gap": "No current run mutation executor, runId or sandbox filesystem bridge is exposed here." },
+    { "area": "plugin-caller", "path": "openclaw_runtime/src/agents/openclaw-plugin-tools.ts", "anchors": ["resolveOpenClawPluginToolsForOptions", "const pluginTools = resolvePluginTools"], "reuse": "Tool resolution uses plugin allow/deny and current runtime config.", "gap": "Factory metadata does not itself grant a run-bound write handle." },
+    { "area": "plugin-callback", "path": "openclaw_runtime/src/plugins/tools.ts", "anchors": ["function wrapPluginToolCallbacks", "const scopedExecute"], "reuse": "Execution preserves plugin scope and passes cancellation arguments.", "gap": "Plugin scope is not a sandbox against trusted plugin code doing direct Node IO." },
+    { "area": "tool-policy-write-kit", "path": "openclaw_runtime/src/agents/agent-tools.ts", "anchors": ["const applyWriteKit", "wrapToolWithWorkspaceExternalWriteProvenance", "autoVerifyExecToolRef"], "reuse": "Existing write wrappers and final tool policy remain owner mechanisms.", "gap": "Only selected coding writes receive this kit; do not rebuild a wider toolset inside a plugin." },
+    { "area": "real-run-lifecycle", "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts", "anchors": ["toolSearchCatalogExecutor = async", "await runToolLifecycle"], "reuse": "Internal example of real tool lifecycle, run abort signal and transcript lineage.", "gap": "Only a narrow capability may be exposed, not this unrestricted internal executor. File also contains concurrent Context work." },
+    { "area": "edit-write-coordination", "path": "openclaw_runtime/src/agents/sessions/tools/file-mutation-queue.ts", "anchors": ["const fileMutationQueues", "withFileMutationQueue"], "reuse": "Serializes participating writes by a real-file key inside the process.", "gap": "Separate map from patch locking; not a cross-process CAS." },
+    { "area": "patch-coordination", "path": "openclaw_runtime/src/agents/apply-patch-batch-lock.ts", "anchors": ["const fileLocks", "acquirePatchBatchLocks"], "reuse": "Stable-order batch locking and release.", "gap": "Must share coordination semantics with relevant edit/write paths before claiming unified safety." },
+    { "area": "preflight-commit", "path": "openclaw_runtime/src/agents/apply-patch-preflight.ts", "anchors": ["export async function preflightPatch", "export async function applyPreparedBatch", "verifyPatchPreviewBinding"], "reuse": "Precomputed candidate, preview binding, journal states and outcome handling.", "gap": "Not a ready public full-candidate SDK, and optional journal can be absent." },
+    { "area": "journal", "path": "openclaw_runtime/src/agents/tools/write-journal.ts", "anchors": ["Fail-open: journal failures never block", "snapshotPreparedWrite", "setWriteJournalBatchState"], "reuse": "Pre-image and restart-readable recovery assets belong to the existing writer.", "gap": "New recovery promise must be explicit; keep legacy default semantics and avoid a parallel plugin log." },
+    { "area": "effect-receipt", "path": "openclaw_runtime/src/agents/effect-receipt.ts", "anchors": ["Domain journals remain the effect/idempotency truth", "export type EffectReceiptInput"], "reuse": "Existing durable effect correlation, digest privacy and duplicate/conflict handling.", "gap": "Receipt presence does not authorize an operation or unknown-effect replay." },
+    { "area": "invoke-boundary", "path": "openclaw_runtime/src/gateway/tools-invoke-shared.ts", "anchors": ["gatewayTool.execute?.(toolCallId, hookResult.params)"], "reuse": "Gateway invoke has policy/hook handling.", "gap": "This call does not supply full managed run context; do not treat it as W1 proof." },
+    { "area": "runtime-isolation", "path": "electron/gateway/config-sync.ts", "anchors": ["SOURCE_RUNTIME_ISOLATION_SYNC_KEYS", "applySourceRuntimeIsolationUserConfig", "OPENCLAW_CONFIG_PATH"], "reuse": "Main selects isolated config/state/home and synchronizes selected user keys.", "gap": "Writing the user config alone does not prove effective plugin activation or revocation." },
+    { "area": "office-render", "path": "electron/services/work-providers-api.ts", "anchors": ["async function runSheetWrite", "async function runSlideWrite", "async function validateArtifact"], "reuse": "Existing generation libraries and mappers can be extracted as pure rendering.", "gap": "Main writers currently own IO and only basic checks; do not call them as a runtime backchannel." },
+    { "area": "artifact-projection", "path": "src/pages/Chat/index.tsx", "anchors": ["id: `artifact-${idx}`", "hostApi.workProviders.validateArtifact"], "reuse": "Current file/Artifact Panel placement can receive typed projections.", "gap": "Index-derived identity and discarded validation result are not durable revision state." }
+  ],
+  "harnessMapping": {
+    "currentTask": "Offline contract/fixture research only; no backend calls or runtime source modifications.",
+    "futureScenario": "harness/specs/scenarios/gateway-backend-communication.md",
+    "futureRules": [
+      "harness/specs/rules/renderer-main-boundary.md",
+      "harness/specs/rules/backend-communication-boundary.md",
+      "harness/specs/rules/api-client-transport-policy.md",
+      "harness/specs/rules/comms-regression.md",
+      "harness/specs/rules/docs-sync.md"
+    ],
+    "futureImplementationProcedure": "Create a narrow task spec for the selected ready work package, run harness context before implementation, validate actual touched areas, and run the selected comms/E2E/build gates. Do not reuse retired Work Mode acceptance.",
+    "currentReadmeReview": "No product behavior or public interface changes in TF-0244; no new README edits needed. Existing concurrent README modifications are preserved."
+  }
+}

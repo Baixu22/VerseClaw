@@ -30,6 +30,11 @@ const args = process.argv.slice(2);
 if (args[0] === "doctor") {
   const { runSourceDoctor } = await import("./infra/source-doctor.js");
   process.exitCode = await runSourceDoctor(args.slice(1));
+} else if (args[0] === "goal-wake-helper-run") {
+  // Internal Phase 4 detached helper entry. The payload (raw argv/env/cwd) is
+  // read from stdin and never persisted in the runDir file protocol.
+  const { runGoalWakeHelperEntry } = await import("./agents/goal-wake-helper-entry.js");
+  process.exitCode = await runGoalWakeHelperEntry();
 } else {
   const port = readPort(args);
   const token = readOption(args, "--token") ?? process.env.OPENCLAW_GATEWAY_TOKEN ?? "";

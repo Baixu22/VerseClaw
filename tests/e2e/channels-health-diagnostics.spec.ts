@@ -66,8 +66,7 @@ test.describe('Channels health diagnostics', () => {
         diagnosticsCount: 0,
       };
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (globalThis as any).__clawxE2eChannelHealth = state;
+      (globalThis as typeof globalThis & { __clawxE2eChannelHealth?: typeof state }).__clawxE2eChannelHealth = state;
 
       const originalHostInvoke = (ipcMain as unknown as {
         _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
@@ -76,8 +75,7 @@ test.describe('Channels health diagnostics', () => {
 
       ipcMain.removeHandler('host:invoke');
       ipcMain.handle('host:invoke', async (event, request: { id?: string; module?: string; action?: string }) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const current = (globalThis as any).__clawxE2eChannelHealth as typeof state;
+        const current = (globalThis as typeof globalThis & { __clawxE2eChannelHealth?: typeof state }).__clawxE2eChannelHealth as typeof state;
 
         if (request?.module === 'channels' && request.action === 'accounts') {
           return respond(request.id, {
@@ -168,8 +166,7 @@ test.describe('Channels health diagnostics', () => {
       Object.defineProperty(navigator, 'clipboard', {
         value: {
           writeText: (value: string) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (window as any).__copiedDiagnostics = value;
+            (window as typeof window & { __copiedDiagnostics?: string }).__copiedDiagnostics = value;
             return Promise.resolve();
           },
         },
@@ -195,8 +192,7 @@ test.describe('Channels health diagnostics', () => {
     await expect(page.getByTestId('channels-diagnostics')).toBeVisible();
 
     const result = await electronApp.evaluate(() => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const state = (globalThis as any).__clawxE2eChannelHealth as { restartCount: number; diagnosticsCount: number };
+      const state = (globalThis as typeof globalThis & { __clawxE2eChannelHealth?: typeof state }).__clawxE2eChannelHealth as { restartCount: number; diagnosticsCount: number };
       return {
         restartCount: state.restartCount,
         diagnosticsCount: state.diagnosticsCount,
@@ -207,8 +203,7 @@ test.describe('Channels health diagnostics', () => {
     expect(result.diagnosticsCount).toBeGreaterThanOrEqual(1);
 
     const copied = await page.evaluate(() => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (window as any).__copiedDiagnostics as string;
+      return (window as typeof window & { __copiedDiagnostics?: string }).__copiedDiagnostics as string;
     });
     expect(copied).toContain('"platform": "darwin"');
   });

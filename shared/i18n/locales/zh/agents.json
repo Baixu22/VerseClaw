@@ -668,6 +668,20 @@
         "backstoryTooltip": "可选: 描述 Agent 的身份背景和特殊经历，帮助建立更丰富的角色形象",
         "backstoryPlaceholder": "可选: 描述 Agent 的身份背景..."
     },
+    "proposeFacts": {
+        "title": "事实确认队列",
+        "description": "等待人工确认的运行时记忆事实候选。确认会通过所有者收敛门将候选提升为持久事实；它本身不会写入。",
+        "refresh": "刷新",
+        "loading": "正在加载候选…",
+        "disabled": "事实提议队列已关闭。请启用运行时记忆 shadow 和 proposeFacts 后再审阅候选。",
+        "empty": "没有等待确认的候选。",
+        "confirm": "确认",
+        "confirmed": "事实已确认并持久化。",
+        "notConfirmed": "未确认。所选记忆所有者不允许持久化此事实。",
+        "confidence": "置信度 {{value}}",
+        "errorLoad": "无法加载确认队列。",
+        "errorConfirm": "无法确认该事实。"
+    },
     "toast": {
         "agentCreated": "Agent 已创建",
         "agentCreateFailed": "创建 Agent 失败：{{error}}",

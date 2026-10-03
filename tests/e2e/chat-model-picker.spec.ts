@@ -166,8 +166,12 @@ test.describe('Verse Claw chat model picker', () => {
       await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-alpha');
       await page.getByTestId('chat-model-picker-button').click();
       await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
-      await expect(page.getByTestId('chat-model-picker-menu')).toContainText('provider/model-beta');
-      await page.getByTestId('chat-model-picker-menu').getByRole('button', { name: 'provider/model-beta' }).click();
+      // The picker menu is a collapsed accordion (Model / Reasoning effort rows);
+      // expand the Model section before the configured models are listed.
+      await page.getByTestId('chat-model-picker-menu').locator('.codex-execution-settings__row').first().click();
+      await expect(page.getByTestId('chat-model-options')).toBeVisible();
+      await expect(page.getByTestId('chat-model-options')).toContainText('provider/model-beta');
+      await page.getByTestId('chat-model-options').getByRole('button', { name: 'provider/model-beta' }).click();
       await expect(page.getByTestId('chat-model-picker-button')).toContainText('provider/model-beta');
 
       const requests = await app.evaluate(() => (

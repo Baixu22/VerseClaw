@@ -1,0 +1,43 @@
+{
+  "schema": "rc10-journey/v1",
+  "scenario": "H-01",
+  "driven_by": "agent",
+  "actor": "rc10-driver",
+  "operator": "agent-driven (Playwright over Electron CDP); no human operator",
+  "candidate": {
+    "commit": "843fcadb42db52c439b48c8db0df676f1804757d",
+    "tree": "cd5e31e9c04c35892c827b7794b27950f93ffca8",
+    "branch": "feat/runtime-lifecycle-governance",
+    "statusPorcelain": "",
+    "dirty": false
+  },
+  "provider": {
+    "id": "rc10-live",
+    "baseUrl": "http://127.0.0.1:3065/v1",
+    "apiProtocol": "openai-responses",
+    "model": "glm-5.3-flash",
+    "keySource": "process environment only"
+  },
+  "workspace": {
+    "id": "rc10-live",
+    "rootPath": "D:\\ClawX-acceptance\\rc09-20260929\\rc10-evidence\\H-01\\workspace",
+    "permissionMode": "fullAccess"
+  },
+  "run": {
+    "runId": "5814149e-34ab-4aa6-9bf4-2097f662d83a",
+    "sessionKey": "agent:main:main",
+    "stopReason": "task-complete",
+    "finished": true
+  },
+  "observations": {
+    "taskCompleted": true,
+    "testsBefore": 1,
+    "testsAfter": 0,
+    "contextReceipts": 10,
+    "wireReceipts": 10,
+    "receiptPairs": 5
+  },
+  "startedAt": "2026-09-29T19:00:46.438Z",
+  "finishedAt": "2026-09-29T19:02:09.560Z",
+  "evidence": "events.jsonl, candidate.json, session.jsonl, final-history.json, receipts.json, workspace-after.json, screenshots/"
+}

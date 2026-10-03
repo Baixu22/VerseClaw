@@ -364,7 +364,7 @@ describe("Integration: Task Loop stability", () => {
       {},
       {
         idFactory: (prefix) => prefix + "_int_s8",
-        runObserved: (async (request) => {
+        runObserved: (async (request: { templateId?: string }) => {
           usedTemplate = request.templateId ?? "";
           return fakeOrchestrationResult("security-audit");
         }) as never,
@@ -603,7 +603,7 @@ describe("Integration: Context pack reviewer format", () => {
           source: "task_loop.self_check",
         },
       ],
-      validationState: { status: "passed", checks: ["lint clean"], evidenceRefs: ["run_abc"] },
+      validationState: { status: "passed", checks: ["lint clean"], evidenceRefs: ["run_abc"] as never },
       acceptanceStatus: { status: "partial", criteria: ["tests pass", "lint clean"], gaps: ["lint clean not run"] },
     });
     const formatted = formatTaskLoopContextPackForReviewer(pack);
@@ -638,7 +638,7 @@ describe("Integration: Mission Control stability", () => {
       createdAt: 1,
       updatedAt: 2,
       iterations: [],
-    };
+    } as never;
   }
 
   function fakeReview(

@@ -85,11 +85,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-7-runtime-memory-provider/README.md
-    - runtime-research/handoffs/phase-7-runtime-memory-provider/parallel-lanes.md
-    - runtime-research/handoffs/phase-7-runtime-memory-provider/submission-template.md
-    - runtime-research/handoffs/phase-7-runtime-memory-provider/synthesis-template.md
-    - runtime-research/handoffs/phase-7-runtime-memory-provider/submissions/lane-design-entry-prep.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 7 Runtime Memory Provider

@@ -1,6 +1,7 @@
 import { Value } from "typebox/value";
 import { describe, expect, it } from "vitest";
 import {
+  CompressionArtifactSchema,
   SessionsCompressionArtifactParamsSchema,
   SessionsCompressionArtifactResultSchema,
   SessionsExpandSelectorParamsSchema,
@@ -70,5 +71,85 @@ describe("session recall and compression schemas", () => {
 
   it.each(cases)("rejects undeclared properties for $name", ({ schema, value }) => {
     expect(Value.Check(schema, { ...value, undeclared: true })).toBe(false);
+  });
+});
+
+const minimalArtifact = {
+  schemaVersion: 1,
+  objective: "Compression artifact fixture",
+  constraints: [],
+  currentState: "Fixture state",
+  done: [],
+  inProgress: [],
+  blocked: [],
+  decisions: [],
+  filesTouched: [],
+  testsRun: [],
+  failedAttempts: [],
+  deviations: [],
+  nextAction: "Run schema checks",
+  reviewNeeded: [],
+  evidenceRefs: [],
+  unverifiedClaims: [],
+  quality: {
+    score: 1,
+    level: "high",
+    fieldCoverage: 1,
+    evidenceCoverage: 1,
+    artifactTokens: 10,
+    projectionTokens: 10,
+    warnings: [],
+  },
+} as const;
+
+describe("compression artifact semantic atom schema", () => {
+  it("accepts a legacy v1 artifact without semanticAtoms", () => {
+    expect(Value.Check(CompressionArtifactSchema, minimalArtifact)).toBe(true);
+  });
+
+  it("accepts legal semanticAtoms and rejects undeclared atom fields", () => {
+    const atom = {
+      id: "atom-goal-a",
+      type: "goal",
+      canonicalIdentity: "goal:fixture",
+      severity: "critical",
+      confidence: 0.95,
+      scope: "session",
+      polarity: "positive",
+      status: "verified",
+      text: "A bounded atom projection.",
+      evidenceRefs: [{ type: "session", ref: "message:1" }],
+    };
+    expect(Value.Check(CompressionArtifactSchema, {
+      ...minimalArtifact,
+      semanticAtoms: [atom],
+    })).toBe(true);
+    expect(Value.Check(CompressionArtifactSchema, {
+      ...minimalArtifact,
+      semanticAtoms: [{ ...atom, undeclared: true }],
+    })).toBe(false);
+  });
+
+  it("rejects critical verified atoms without evidence and invalid atom fields", () => {
+    const criticalNoEvidence = {
+      id: "atom-bad",
+      type: "decision",
+      canonicalIdentity: "decision:bad",
+      severity: "critical",
+      confidence: 0.9,
+      scope: "task",
+      polarity: "neutral",
+      status: "verified",
+      text: "No evidence.",
+      evidenceRefs: [],
+    };
+    expect(Value.Check(CompressionArtifactSchema, {
+      ...minimalArtifact,
+      semanticAtoms: [criticalNoEvidence],
+    })).toBe(false);
+    expect(Value.Check(CompressionArtifactSchema, {
+      ...minimalArtifact,
+      semanticAtoms: [{ ...criticalNoEvidence, type: "unsupported", evidenceRefs: [{ type: "session", ref: "message:1" }] }],
+    })).toBe(false);
   });
 });

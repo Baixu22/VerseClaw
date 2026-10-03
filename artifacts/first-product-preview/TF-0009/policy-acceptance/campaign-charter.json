@@ -1,0 +1,90 @@
+{
+  "schema": "tf0009-agent-surrogate-charter/v2",
+  "taskId": "TF-0009",
+  "authorizedAt": "2026-09-27",
+  "authority": "user-directed-agent-surrogate",
+  "evidenceClass": "engineering-agent-surrogate",
+  "purpose": "Complete and verify the bounded three-profile agent campaign under the owner policy; node closure does not grant product or human authority.",
+  "humanEquivalent": false,
+  "liveEvidence": false,
+  "requiredRunsPerProfile": 10,
+  "terminalTaskStatus": "done",
+  "mayMarkDone": true,
+  "mayReleaseTF0011": false,
+  "actors": {
+    "governance": "explicit workspace-user instruction",
+    "operator": {
+      "kind": "agent",
+      "id": "codex/root"
+    },
+    "safety": {
+      "kind": "agent-policy",
+      "id": "tf0009-hard-veto"
+    }
+  },
+  "hardBounds": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false,
+    "c1ReductionFactor": 4.5,
+    "c1MeetsGate": false,
+    "c1Recommendation": "keep-off",
+    "tf0006": "blocked",
+    "sekbAutoWriteback": false,
+    "browserPrivateNetwork": "deny",
+    "runtimeMemory": "diagnostics-only"
+  },
+  "profiles": [
+    {
+      "id": "dcs-coding",
+      "operator": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "componentPath": "real DCS context tools over an isolated temporary workspace",
+      "coverage": "read-only impact, understand, verify, and registration tasks",
+      "stopConditions": [
+        "unexpected workspace write",
+        "tool failure",
+        "product lock drift"
+      ]
+    },
+    {
+      "id": "sekb-assisted",
+      "operator": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "componentPath": "real SEKB capture, suggestion, rejection, and retrieval components over an isolated database",
+      "coverage": "safe negative review path only; agent confirmation is prohibited",
+      "stopConditions": [
+        "unconfirmed principle write",
+        "auto writeback",
+        "production-store access"
+      ]
+    },
+    {
+      "id": "browser-supervised",
+      "operator": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "componentPath": "real Browser task approval state machine and supervised executor over an isolated page runtime",
+      "coverage": "public-domain guard, bounded approval, ordered steps, verification, and kill",
+      "stopConditions": [
+        "private-network allowance",
+        "approval bypass",
+        "credential exposure"
+      ]
+    }
+  ],
+  "residuals": [
+    "Human runs remain zero as an evidence limitation, not a node prerequisite",
+    "No human satisfaction or qualitative usability evidence",
+    "No real public-network Browser evidence",
+    "No positive SEKB human-confirm write in the agent campaign",
+    "No product approval, live A/B, or soak authority"
+  ],
+  "policy": "AGENTS.md#human-in-the-loop-2026-09-27",
+  "driven_by": "agent"
+}

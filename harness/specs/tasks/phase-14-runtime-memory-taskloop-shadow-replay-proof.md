@@ -102,10 +102,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-14-runtime-memory-taskloop-shadow-replay-proof/README.md
-    - runtime-research/handoffs/phase-14-runtime-memory-taskloop-shadow-replay-proof/parallel-lanes.md
-    - runtime-research/handoffs/phase-14-runtime-memory-taskloop-shadow-replay-proof/window-prompts.md
-    - runtime-research/handoffs/phase-14-runtime-memory-taskloop-shadow-replay-proof/submission-template.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 14 Runtime Memory TaskLoop Shadow Replay Proof

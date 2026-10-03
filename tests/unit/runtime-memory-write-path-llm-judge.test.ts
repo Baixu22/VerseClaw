@@ -80,7 +80,7 @@ function buildEvalSet(): EvalItem[] {
   // === Reject: secret (3) ===
   items.push({
     id: "sec_1", category: "secret", expectedVerdict: "reject",
-    objectSummary: "User API key is sk-test-not-a-real-key-0000000000000000",
+    objectSummary: "User API key is sk-TEST-PLACEHOLDER-DO-NOT-USE",
     subject: "TestInput", predicate: "content", taskId: "task_raw_4",
   });
   items.push({

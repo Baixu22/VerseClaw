@@ -1,6 +1,6 @@
-import { VerseShellContractError } from './errors';
+import { VerseShellContractError } from './errors.js';
 import { decodeArtifactDescriptor, decodeStreamCapture } from './validation.js';
-import type { ArtifactDescriptor, JsonObject, JsonValue, Observation, StreamCapture } from './types';
+import type { ArtifactDescriptor, JsonObject, JsonValue, Observation, StreamCapture } from './types.js';
 
 export const VERSESHELL_ARTIFACT_HANDLE_PATTERN = /^result:\/\/sha256\/[0-9a-f]{64}$/u;
 export const VERSESHELL_APPROVAL_TOKEN_PATTERN = /^apv_[0-9a-f]{16}$/u;

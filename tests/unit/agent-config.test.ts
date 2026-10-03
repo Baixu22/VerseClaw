@@ -172,7 +172,7 @@ describe('agent config lifecycle', () => {
 
     await updateAgentModel('coder', null);
     config = await readOpenClawJson();
-    coder = ((config.agents as { list: Array<{ id: string; model?: unknown }> }).list)
+    coder = ((config.agents as { list: Array<{ id: string; model?: { primary?: string } }> }).list)
       .find((agent) => agent.id === 'coder');
     expect(coder?.model).toBeUndefined();
 

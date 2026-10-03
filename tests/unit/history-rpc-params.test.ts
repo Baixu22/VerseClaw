@@ -31,7 +31,7 @@ describe('history-rpc-params', () => {
       }
       throw new Error(`Unexpected RPC: ${method}`);
     });
-    await expect(resolveChatHistoryMaxChars(rpc)).resolves.toBe(DEFAULT_CHAT_HISTORY_MAX_CHARS);
+    await expect(resolveChatHistoryMaxChars(rpc as never)).resolves.toBe(DEFAULT_CHAT_HISTORY_MAX_CHARS);
     await vi.waitFor(async () => {
       await expect(resolveChatHistoryMaxChars()).resolves.toBe(250_000);
     });
@@ -45,7 +45,7 @@ describe('history-rpc-params', () => {
       }
       throw new Error(`Unexpected RPC: ${method}`);
     });
-    await expect(resolveChatHistoryMaxChars(rpc)).resolves.toBe(DEFAULT_CHAT_HISTORY_MAX_CHARS);
+    await expect(resolveChatHistoryMaxChars(rpc as never)).resolves.toBe(DEFAULT_CHAT_HISTORY_MAX_CHARS);
     await vi.waitFor(async () => {
       await expect(resolveChatHistoryMaxChars()).resolves.toBe(OPENCLAW_CHAT_HISTORY_MAX_CHARS_CAP);
     });
@@ -60,7 +60,7 @@ describe('history-rpc-params', () => {
       throw new Error(`Unexpected RPC: ${method}`);
     });
 
-    expect(getChatHistoryMaxChars(rpc)).toBe(500_000);
+    expect(getChatHistoryMaxChars(rpc as never)).toBe(500_000);
     await vi.waitFor(() => {
       expect(getChatHistoryMaxChars()).toBe(180_000);
     });

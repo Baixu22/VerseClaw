@@ -80,8 +80,8 @@ requiredTests:
   - rtk rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components
   - rtk rg -n 'inspectRuntimeMemorySanitizedEpisodes|createRuntimeMemoryPersistenceStore|RuntimeMemoryProvider|createRuntimeMemoryContextProvider|runtime\.memory\.provider|proposeFacts' openclaw_runtime/src/gateway electron shared src/lib openclaw_runtime/src/context-engine/provider-registry.ts openclaw_runtime/src/agents/task-loop-controller.ts
   - rtk rg -n 'appendFact|invalidateFact|loadStore|queryFacts|RuntimeMemoryProvider|createRuntimeMemoryContextProvider|runtime\.memory\.provider|proposeFacts|inspectRuntimeMemorySanitizedEpisodes' openclaw_runtime/src/agents/task-loop-controller.ts
-  - rtk rg -n 'rawChat|raw chat|transcript|jsonl|rawTrace|trace dump|prompt dump|toolArgs|toolOutput|stdout|stderr|process\.env|secret|apiKey|api[-_]?key|authorization|password|traceparent|tracestate|baggage|record_json|raw DB|raw row' tests/unit/runtime-memory-operator-inspection.test.ts runtime-research/handoffs/phase-17-runtime-memory-readonly-operator-inspection-surface harness/specs/tasks/phase-17-runtime-memory-readonly-operator-inspection-surface.md
-  - rtk rg -n 'createServer\(|listen\(|WebSocketServer|new WebSocket\(|OTLP|Collector|opentelemetry.*export|@opentelemetry/exporter|@temporalio|express\(|database-service|listener|exporter|service|daemon' openclaw_runtime/src/runtime-core/memory-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-memory-episodes.mjs tests/unit/runtime-memory-operator-inspection.test.ts runtime-research/handoffs/phase-17-runtime-memory-readonly-operator-inspection-surface harness/specs/tasks/phase-17-runtime-memory-readonly-operator-inspection-surface.md
+  - rtk rg -n 'rawChat|raw chat|transcript|jsonl|rawTrace|trace dump|prompt dump|toolArgs|toolOutput|stdout|stderr|process\.env|secret|apiKey|api[-_]?key|authorization|password|traceparent|tracestate|baggage|record_json|raw DB|raw row' tests/unit/runtime-memory-operator-inspection.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/phase-17-runtime-memory-readonly-operator-inspection-surface.md
+  - rtk rg -n 'createServer\(|listen\(|WebSocketServer|new WebSocket\(|OTLP|Collector|opentelemetry.*export|@opentelemetry/exporter|@temporalio|express\(|database-service|listener|exporter|service|daemon' openclaw_runtime/src/runtime-core/memory-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-memory-episodes.mjs tests/unit/runtime-memory-operator-inspection.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/phase-17-runtime-memory-readonly-operator-inspection-surface.md
   - rtk rg -n 'migrate|appendEpisode|appendFact|invalidateFact|ensureRuntimeMemoryPersistenceSchema|withWriteTransaction|trimRows|insertInto|updateTable|deleteFrom' openclaw_runtime/src/runtime-core/memory-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-memory-episodes.mjs
   - rtk node scripts/comms/replay.mjs and rtk node scripts/comms/compare.mjs if Main/Gateway/host-api/api-client/provider transport paths are modified by Phase 17 or block validation because of dirty communication-adjacent files.
 acceptance:
@@ -95,10 +95,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-17-runtime-memory-readonly-operator-inspection-surface/README.md
-    - runtime-research/handoffs/phase-17-runtime-memory-readonly-operator-inspection-surface/parallel-lanes.md
-    - runtime-research/handoffs/phase-17-runtime-memory-readonly-operator-inspection-surface/window-prompts.md
-    - runtime-research/handoffs/phase-17-runtime-memory-readonly-operator-inspection-surface/submission-template.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 17 Runtime Memory Readonly Operator Inspection Surface

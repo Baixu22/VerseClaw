@@ -4,8 +4,6 @@
 import { describe, expect, it } from "vitest";
 import { createDeepSeekV4OpenAICompatibleThinkingWrapper } from "./provider-stream-shared.js";
 
-type PayloadPatchFn = (payload: Record<string, unknown>) => void;
-
 function renderPatchedPayload(thinkingLevel: string): Record<string, unknown> {
   let patched: Record<string, unknown> | undefined;
   const baseStreamFn = ((_model: unknown, _context: unknown, options: unknown) => {

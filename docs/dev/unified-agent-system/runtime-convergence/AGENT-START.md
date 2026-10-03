@@ -1,3 +1,5 @@
+> 【2026-09-22 标注】RC 串行复验（RC-00..RC-09）自 2026-09-22 起冻结为下一周期入口（Task Forest D7 = TF-0225）；本文件的接管指引在冻结期间不启动。当前方向见 `docs/dev/qa-synthesis-roadmap-20260922.md`。
+
 > **2026-08-03 独立审计覆盖声明**：候选 `fac6327a2` 的结论是 `NO-GO`。
 > 下文所有审计前的“已完成/已通过”只能视为历史声明，不能授权继续 RC-10 或后续实现。
 > 当前先读 `RC-09-REMEDIATION-PLAN.md`，通过受支持的 Task Forest proposal 串行重开并复验
@@ -65,8 +67,8 @@
 - `C:\Users\27933\Desktop\result\final\dcs-first-architecture-synthesis-final-2026-08-02.md`
 - `pnpm harness context --spec <active-spec>`
 - `pnpm harness validate --spec <active-spec>`
-- `node scripts/rc01-authority-inventory.mjs --accepted-base <RC-01 accepted base SHA>`（从固定基线重新生成 baseline）
-- `node scripts/rc01-baseline-validate.mjs`（校验 baseline）
+- `node scripts/rc01-authority-inventory.mjs --accepted-base <RC-01 accepted base SHA>`（必填；显式选择候选 HEAD 的祖先 commit，不依赖 `origin/main`。重建现有基线时使用其 `acceptedBaseSha`，缺失/错误参数、非 commit 或非祖先均在写入前失败）
+- `node scripts/rc01-baseline-validate.mjs`（校验基线、提交时间、source/npm package 版本和已跟踪且存在的 owner 路径；两份 receipt-owner 声明与七条硬约束必须符合 `scripts/lib/rc01-receipt-contract.mjs` 中已批准的契约，不能用重复条目或关键词匹配放行；支持含空格、中文或 URL 保留字符的 checkout 路径）
 - `pnpm acceptance:agent:*`
 - `.agent-workbench/task-forest/exports/task-forest.html`
 

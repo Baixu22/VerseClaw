@@ -99,13 +99,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-c-evidence-trace-grounding-planning/README.md
-    - runtime-research/handoffs/line-c-evidence-trace-grounding-planning/synthesis.md
-    - runtime-research/handoffs/line-c-evidence-trace-grounding-planning/deep-validation.md
-    - runtime-research/handoffs/line-c-evidence-trace-grounding-planning/submissions/next-spec-draft.md
-    - runtime-research/handoffs/line-c-evidence-trace-grounding-planning/submissions/next-spec-boundary-audit.md
-    - runtime-research/handoffs/line-c-evidence-trace-grounding-planning/submissions/next-spec-validation-matrix.md
-    - runtime-research/handoffs/line-c-evidence-trace-grounding-planning/next-spec-synthesis.md
+    - docs/dev/runtime-research-boundaries.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

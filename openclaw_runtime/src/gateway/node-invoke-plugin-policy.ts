@@ -71,10 +71,13 @@ function createApprovalRuntime(params: {
         agentId: normalizeOptionalString(input.agentId) ?? null,
         sessionKey: normalizeOptionalString(input.sessionKey) ?? null,
       };
-      const record = manager.create(request, timeoutMs, `plugin:${randomUUID()}`);
-      record.requestedByConnId = params.client?.connId ?? null;
-      record.requestedByDeviceId = params.client?.connect?.device?.id ?? null;
-      record.requestedByClientId = params.client?.connect?.client?.id ?? null;
+      // The requester identity goes into create() so the durable ledger binds it
+      // atomically with the reservation and it survives a Gateway restart.
+      const record = manager.create(request, timeoutMs, `plugin:${randomUUID()}`, {
+        connId: params.client?.connId ?? null,
+        deviceId: params.client?.connect?.device?.id ?? null,
+        clientId: params.client?.connect?.client?.id ?? null,
+      });
       record.requestedByDeviceTokenAuth = params.client?.isDeviceTokenAuth === true;
       const decisionPromise = manager.register(record, timeoutMs);
       const requestEvent = {

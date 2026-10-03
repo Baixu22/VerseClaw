@@ -2,7 +2,10 @@ import crypto, { createHash } from "node:crypto";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { AgentConfig } from "../../config/types.agents.js";
 import { storeRuntimeTrace } from "../../observability/trace-buffer.js";
-import { createRoleFirstTrace, completeObservedRun } from "../../observability/role-first-observer.js";
+import {
+  createRoleFirstTrace,
+  completeObservedRun,
+} from "../../observability/role-first-observer.js";
 import type { ObservabilityTraceRecorder } from "../../observability/trace-recorder.js";
 import {
   localControlPlaneReportEnabled,
@@ -15,13 +18,15 @@ import {
   listLongTaskCheckpoints,
   recordLongTaskCheckpoint,
 } from "../long-task-control/store.js";
-import {
-  executeReplayRollback,
-  type ReplayRollbackDeps,
-} from "../replay-rollback-authority.js";
+import { executeReplayRollback, type ReplayRollbackDeps } from "../replay-rollback-authority.js";
 import { ensureLongTaskLedgerRoot } from "../long-task-control/task-ledger.js";
-import { isTruthyEnvValue } from "../../infra/env.js";
-import { projectMissionRun } from "./mission-taskflow-projection.js";
+import { mergeRuntimeLineage, normalizeRuntimeLineage } from "../../runtime-core/lineage.js";
+import { missionWaitMode, projectMissionRun } from "./mission-taskflow-projection.js";
+import {
+  listWorkflowLifecycles,
+  resolveWorkflowLifecycleMode,
+  type WorkflowLifecycleCommit,
+} from "../../tasks/workflow-lifecycle-owner.js";
 import {
   defaultQualityAssessments,
   deriveValidationState,
@@ -42,6 +47,7 @@ import { extractMemoryProposalDrafts } from "../../memory/memory-extractor.js";
 import type { MemoryEvidenceRef, MemoryProposal } from "../../memory/types.js";
 import { resolveAnomalyPatternForReviewer } from "../anomaly-classifier.js";
 import { buildMissionContextPack } from "./context.js";
+import { goalWakeController } from "../goal-wake-controller.js";
 import { runMissionReviewer } from "./reviewer.js";
 import {
   getLatestMissionForSession,
@@ -105,7 +111,16 @@ const missionLocalControlPlaneConfigs = new WeakMap<MissionRunRecord, OpenClawCo
 export type MissionKnowledgeInboxSourceRef = {
   id: string;
   label?: string;
-  kind?: "chat" | "file" | "wiki" | "task_ledger" | "trace" | "task_loop" | "manual" | "search_result" | "other";
+  kind?:
+    | "chat"
+    | "file"
+    | "wiki"
+    | "task_ledger"
+    | "trace"
+    | "task_loop"
+    | "manual"
+    | "search_result"
+    | "other";
   path?: string;
   url?: string;
 };
@@ -114,7 +129,15 @@ export type MissionKnowledgeInboxItem = {
   title: string;
   body: string;
   kind: "chat-session" | "task-ledger";
-  type: "source-note" | "synthesis" | "decision" | "architecture" | "command" | "troubleshooting" | "glossary" | "procedure";
+  type:
+    | "source-note"
+    | "synthesis"
+    | "decision"
+    | "architecture"
+    | "command"
+    | "troubleshooting"
+    | "glossary"
+    | "procedure";
   status: "pending";
   sourceIds: string[];
   sourceRefs: MissionKnowledgeInboxSourceRef[];
@@ -142,29 +165,61 @@ export type MissionKnowledgeInboxItem = {
   };
 };
 
-/** RC-06C projection gate (default-off). Reads env so operators can enable the
- *  Mission -> TaskFlow read-only projection. */
-function missionProjectionEnabled(): boolean {
-  return isTruthyEnvValue(process.env.RC06C_MISSION_PROJECTION);
+/** Raised when the TaskFlow lifecycle owner rejects a Mission status under the
+ *  cutover; mission_runs is then left at its last committed state. */
+export class MissionLifecycleConflictError extends Error {
+  constructor(
+    readonly missionId: string,
+    readonly status: string,
+    readonly commit: WorkflowLifecycleCommit | undefined,
+  ) {
+    super(
+      `mission "${missionId}" lifecycle rejected by TaskFlow (${status}): ${
+        commit && !commit.ok ? commit.reason : "unknown"
+      }`,
+    );
+    this.name = "MissionLifecycleConflictError";
+  }
+}
+
+function missionLifecycleInput(record: MissionRunRecord) {
+  return {
+    missionId: record.missionId,
+    sessionKey: record.sessionKey,
+    status: record.status,
+    phase: record.phase,
+    tick: record.tick,
+    waitMode: missionWaitMode(record.status),
+  };
 }
 
 function defaultId(prefix: string): string {
   return `${prefix}_${crypto.randomUUID()}`;
 }
 
-function positiveInt(value: unknown, fallback: number, min = 1, max = Number.MAX_SAFE_INTEGER): number {
+function positiveInt(
+  value: unknown,
+  fallback: number,
+  min = 1,
+  max = Number.MAX_SAFE_INTEGER,
+): number {
   if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
   return Math.max(min, Math.min(max, Math.floor(value)));
 }
 
-function resolveAgentMissionConfig(cfg: OpenClawConfig | undefined, agentId?: string): MissionConfig {
+function resolveAgentMissionConfig(
+  cfg: OpenClawConfig | undefined,
+  agentId?: string,
+): MissionConfig {
   const defaults = cfg?.agents?.defaults?.missionLoop ?? {};
   const agent = cfg?.agents?.list?.find((entry: AgentConfig) => entry.id === agentId);
   return { ...defaults, ...(agent?.missionLoop ?? {}) };
 }
 
 function terminal(status: MissionStatus): boolean {
-  return status === "complete" || status === "blocked" || status === "cancelled" || status === "error";
+  return (
+    status === "complete" || status === "blocked" || status === "cancelled" || status === "error"
+  );
 }
 
 function progressForPhase(phase: MissionPhase, tick: number, maxTicks: number): number {
@@ -201,12 +256,20 @@ function clone(record: MissionRunRecord): MissionRunRecord {
       evidenceRefs: [...tick.evidenceRefs],
       controlSignals: tick.controlSignals ? [...tick.controlSignals] : undefined,
       validationState: tick.validationState ? { ...tick.validationState } : undefined,
-      reviewer: tick.reviewer ? {
-        ...tick.reviewer,
-        controlSignals: tick.reviewer.controlSignals ? [...tick.reviewer.controlSignals] : undefined,
-        validationState: tick.reviewer.validationState ? { ...tick.reviewer.validationState } : undefined,
-        acceptanceStatus: tick.reviewer.acceptanceStatus ? { ...tick.reviewer.acceptanceStatus } : undefined,
-      } : undefined,
+      reviewer: tick.reviewer
+        ? {
+            ...tick.reviewer,
+            controlSignals: tick.reviewer.controlSignals
+              ? [...tick.reviewer.controlSignals]
+              : undefined,
+            validationState: tick.reviewer.validationState
+              ? { ...tick.reviewer.validationState }
+              : undefined,
+            acceptanceStatus: tick.reviewer.acceptanceStatus
+              ? { ...tick.reviewer.acceptanceStatus }
+              : undefined,
+          }
+        : undefined,
     })),
     metadata: { ...(record.metadata ?? {}) },
   };
@@ -220,7 +283,7 @@ function missionSeverity(status: MissionStatus): LocalControlPlaneDiagnostic["se
 
 function missionEvidenceRefsForReport(record: MissionRunRecord) {
   return record.evidenceRefs.map((ref) => ({
-    type: ref.type === "task_loop" ? "task_loop" as const : ref.type,
+    type: ref.type === "task_loop" ? ("task_loop" as const) : ref.type,
     ref: ref.ref,
     ...(ref.label ? { label: ref.label } : {}),
     ...(ref.summary ? { summary: ref.summary } : {}),
@@ -248,19 +311,23 @@ function recordMissionLifecycleReport(
         },
       },
       ...(event.blockedReason
-        ? [{
-            code: "mission.blocked_reason",
-            severity: "warning" as const,
-            message: event.blockedReason,
-          }]
+        ? [
+            {
+              code: "mission.blocked_reason",
+              severity: "warning" as const,
+              message: event.blockedReason,
+            },
+          ]
         : []),
       ...(record.remaining.length
-        ? [{
-            code: "mission.remaining_evidence_or_work",
-            severity: "warning" as const,
-            message: "Mission has remaining evidence or verification gaps.",
-            metadata: { remainingCount: record.remaining.length },
-          }]
+        ? [
+            {
+              code: "mission.remaining_evidence_or_work",
+              severity: "warning" as const,
+              message: "Mission has remaining evidence or verification gaps.",
+              metadata: { remainingCount: record.remaining.length },
+            },
+          ]
         : []),
     ];
     recordLocalControlPlaneReport(cfg, {
@@ -296,10 +363,23 @@ function recordMissionLifecycleReport(
   }
 }
 
-function emit(record: MissionRunRecord, deps: MissionControllerDeps, patch: Partial<MissionLifecycleEvent> = {}): void {
+function emit(
+  record: MissionRunRecord,
+  deps: MissionControllerDeps,
+  patch: Partial<MissionLifecycleEvent> = {},
+): void {
   const now = deps.now?.() ?? Date.now();
   record.updatedAt = now;
   record.progress = progressForPhase(record.phase, Math.max(1, record.tick), record.maxTicks);
+  // RC-06C cutover: TaskFlow owns the Mission lifecycle, so the status commits
+  // there first and mission_runs (a compatibility read) is written only after.
+  const lifecycleMode = resolveWorkflowLifecycleMode("mission");
+  if (lifecycleMode === "taskflow") {
+    const committed = projectMissionRun(missionLifecycleInput(record), { enabled: true });
+    if (!committed.projected) {
+      throw new MissionLifecycleConflictError(record.missionId, record.status, committed.commit);
+    }
+  }
   (deps.saveMission ?? saveMissionRun)(record);
   (deps.recordEvent ?? recordMissionEvent)({
     missionId: record.missionId,
@@ -315,6 +395,7 @@ function emit(record: MissionRunRecord, deps: MissionControllerDeps, patch: Part
       blockedReason: record.blockedReason,
       taskLoopRunId: record.taskLoopRunId,
       traceId: record.traceId,
+      lineage: record.lineage,
       controlSignals: record.controlSignals,
       validationState: record.validationState,
       ...patch,
@@ -335,6 +416,7 @@ function emit(record: MissionRunRecord, deps: MissionControllerDeps, patch: Part
     blockedReason: record.blockedReason,
     taskLoopRunId: record.taskLoopRunId,
     traceId: record.traceId,
+    ...(record.lineage ? { lineage: record.lineage } : {}),
     controlSignals: record.controlSignals,
     validationState: record.validationState,
     ts: now,
@@ -354,34 +436,17 @@ function emit(record: MissionRunRecord, deps: MissionControllerDeps, patch: Part
     blockedReason: record.blockedReason,
     taskLoopRunId: record.taskLoopRunId,
     traceId: record.traceId,
+    ...(record.lineage ? { lineage: record.lineage } : {}),
     controlSignals: record.controlSignals,
     validationState: record.validationState,
     ts: now,
     ...patch,
   });
-  // RC-06C read-only projection into TaskFlow (flow_runs) behind a default-off
-  // flag. Observational only: mission_runs/events remain authoritative; a
-  // projection failure never changes Mission behavior.
-  if (missionProjectionEnabled()) {
+  // RC-06C projection mode: an observational copy; mission_runs stays
+  // authoritative and a rejected write is recorded as drift by the owner.
+  if (lifecycleMode === "projection") {
     try {
-      projectMissionRun(
-        {
-          missionId: record.missionId,
-          sessionKey: record.sessionKey,
-          status: record.status,
-          phase: record.phase,
-          tick: record.tick,
-          waitMode:
-            record.status === "ask_user" || record.status === "sleeping" || record.status === "paused"
-              ? record.status === "ask_user"
-                ? "ask_user"
-                : record.status === "paused"
-                  ? "pause"
-                  : "sleep"
-              : "none",
-        },
-        { enabled: true },
-      );
+      projectMissionRun(missionLifecycleInput(record), { enabled: true });
     } catch {
       // Best-effort projection; the legacy Mission state stays authoritative.
     }
@@ -401,9 +466,13 @@ function checkpointSummary(sessionKey: string): string {
     checkpoint.openBlockers.length ? `Open blockers: ${checkpoint.openBlockers.join("; ")}` : "",
     checkpoint.filesTouched.length ? `Files touched: ${checkpoint.filesTouched.join("; ")}` : "",
     checkpoint.testsRun.length ? `Tests run: ${checkpoint.testsRun.join("; ")}` : "",
-    checkpoint.reviewNeededItems.length ? `Review needed: ${checkpoint.reviewNeededItems.join("; ")}` : "",
+    checkpoint.reviewNeededItems.length
+      ? `Review needed: ${checkpoint.reviewNeededItems.join("; ")}`
+      : "",
     checkpoint.nextAction ? `Next action: ${checkpoint.nextAction}` : "",
-  ].filter(Boolean).join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 function evidenceFromTaskLoop(result: TaskLoopRunResult): MissionEvidenceRef[] {
@@ -416,7 +485,20 @@ function evidenceFromTaskLoop(result: TaskLoopRunResult): MissionEvidenceRef[] {
     },
   ];
   if (result.traceId) {
-    refs.push({ type: "trace", ref: result.traceId, label: "Mission task-loop trace", summary: result.finalSummary });
+    refs.push({
+      type: "trace",
+      ref: result.traceId,
+      label: "Mission task-loop trace",
+      summary: result.finalSummary,
+    });
+  }
+  if (result.sekbTrajectoryId) {
+    refs.push({
+      type: "other",
+      ref: result.sekbTrajectoryId,
+      label: "SEKB task-loop trajectory",
+      summary: "Terminal task-loop phase trajectory captured by the DCS bridge.",
+    });
   }
   for (const ref of result.evidenceRefs) {
     refs.push({
@@ -429,36 +511,47 @@ function evidenceFromTaskLoop(result: TaskLoopRunResult): MissionEvidenceRef[] {
   return refs;
 }
 
-function buildNoProgressHash(decision: MissionDecision, repairBrief: string | undefined, evidence: readonly MissionEvidenceRef[]): string {
+function buildNoProgressHash(
+  decision: MissionDecision,
+  repairBrief: string | undefined,
+  evidence: readonly MissionEvidenceRef[],
+): string {
   return createHash("sha256")
-    .update(JSON.stringify({
-      decision,
-      repairBrief: repairBrief ?? "",
-      evidence: evidence.map((ref) => [ref.type, ref.ref, ref.summary ?? ""]),
-    }))
+    .update(
+      JSON.stringify({
+        decision,
+        repairBrief: repairBrief ?? "",
+        evidence: evidence.map((ref) => [ref.type, ref.ref, ref.summary ?? ""]),
+      }),
+    )
     .digest("hex");
 }
 
 function missionHasOpenControlSignals(reviewer: MissionReviewerResult): boolean {
-  return reviewer.missingEvidence.length > 0
-    || reviewer.verificationGaps.length > 0
-    || hasBlockingControlSignal(reviewer.controlSignals)
-    || reviewer.validationState?.status === "failed"
-    || reviewer.validationState?.status === "missing"
-    || reviewer.validationState?.status === "partial"
-    || reviewer.validationState?.status === "not_run"
-    || reviewer.acceptanceStatus?.status === "missing"
-    || reviewer.acceptanceStatus?.status === "partial"
-    || reviewer.acceptanceStatus?.status === "changed";
+  return (
+    reviewer.missingEvidence.length > 0 ||
+    reviewer.verificationGaps.length > 0 ||
+    hasBlockingControlSignal(reviewer.controlSignals) ||
+    reviewer.validationState?.status === "failed" ||
+    reviewer.validationState?.status === "missing" ||
+    reviewer.validationState?.status === "partial" ||
+    reviewer.validationState?.status === "not_run" ||
+    reviewer.acceptanceStatus?.status === "missing" ||
+    reviewer.acceptanceStatus?.status === "partial" ||
+    reviewer.acceptanceStatus?.status === "changed"
+  );
 }
 
-function missionNeedsUserConfirmation(signals: readonly LongConversationControlSignal[] | undefined): boolean {
-  return (signals ?? []).some((signal) =>
-    signal.suggestedAction === "ask_user"
-      || signal.suggestedAction === "replan"
-      || signal.kind === "scope_drift"
-      || signal.kind === "replan_required"
-      || signal.kind === "permission_wait",
+function missionNeedsUserConfirmation(
+  signals: readonly LongConversationControlSignal[] | undefined,
+): boolean {
+  return (signals ?? []).some(
+    (signal) =>
+      signal.suggestedAction === "ask_user" ||
+      signal.suggestedAction === "replan" ||
+      signal.kind === "scope_drift" ||
+      signal.kind === "replan_required" ||
+      signal.kind === "permission_wait",
   );
 }
 
@@ -486,10 +579,12 @@ function gateMissionReviewerCompletion(
       repairable: canRepair,
     }),
   ]);
-  const validationState = reviewer.validationState ?? deriveValidationState({
-    status: "missing",
-    gaps: verificationGaps,
-  });
+  const validationState =
+    reviewer.validationState ??
+    deriveValidationState({
+      status: "missing",
+      gaps: verificationGaps,
+    });
   const decision: MissionDecision = missionNeedsUserConfirmation(controlSignals)
     ? "ask_user"
     : canRepair
@@ -499,22 +594,34 @@ function gateMissionReviewerCompletion(
     ...reviewer,
     decision,
     confidence: Math.min(reviewer.confidence, decision === "repair" ? 0.55 : 0.4),
-    reason: reviewer.reason || "Mission completion was downgraded because control signals remained open.",
+    reason:
+      reviewer.reason || "Mission completion was downgraded because control signals remained open.",
     missingEvidence,
     verificationGaps,
-    repairBrief: decision === "repair"
-      ? reviewer.repairBrief ?? `Resolve Mission completion gaps: ${[...missingEvidence, ...verificationGaps].join("; ")}`
-      : reviewer.repairBrief,
+    repairBrief:
+      decision === "repair"
+        ? (reviewer.repairBrief ??
+          `Resolve Mission completion gaps: ${[...missingEvidence, ...verificationGaps].join("; ")}`)
+        : reviewer.repairBrief,
     controlSignals,
     validationState,
     quality: defaultQualityAssessments({ signals: controlSignals, validationState }),
-    checkpointSummary: reviewer.checkpointSummary || "Mission completion was downgraded because control signals remained open.",
+    checkpointSummary:
+      reviewer.checkpointSummary ||
+      "Mission completion was downgraded because control signals remained open.",
   };
 }
 
-function withInnerTaskLoopConfig(cfg: OpenClawConfig | undefined, missionConfig: MissionConfig): OpenClawConfig | undefined {
+function withInnerTaskLoopConfig(
+  cfg: OpenClawConfig | undefined,
+  missionConfig: MissionConfig,
+): OpenClawConfig | undefined {
   const inner = missionConfig.innerLoop;
-  if (!cfg || !inner || (inner.maxIterations === undefined && inner.maxRepairIterations === undefined)) {
+  if (
+    !cfg ||
+    !inner ||
+    (inner.maxIterations === undefined && inner.maxRepairIterations === undefined)
+  ) {
     return cfg;
   }
   return {
@@ -526,7 +633,9 @@ function withInnerTaskLoopConfig(cfg: OpenClawConfig | undefined, missionConfig:
         taskLoop: {
           ...cfg.agents?.defaults?.taskLoop,
           ...(inner.maxIterations !== undefined ? { maxIterations: inner.maxIterations } : {}),
-          ...(inner.maxRepairIterations !== undefined ? { maxRepairIterations: inner.maxRepairIterations } : {}),
+          ...(inner.maxRepairIterations !== undefined
+            ? { maxRepairIterations: inner.maxRepairIterations }
+            : {}),
         },
       },
     },
@@ -535,11 +644,28 @@ function withInnerTaskLoopConfig(cfg: OpenClawConfig | undefined, missionConfig:
 
 function memoryEvidenceRefs(record: MissionRunRecord): MemoryEvidenceRef[] {
   return record.evidenceRefs.flatMap((ref) => {
-    if (ref.type === "trace" || ref.type === "session" || ref.type === "tool" || ref.type === "manual") {
-      return [{ type: ref.type, ref: ref.ref, ...(ref.summary ? { excerpt: ref.summary.slice(0, 500) } : {}) }];
+    if (
+      ref.type === "trace" ||
+      ref.type === "session" ||
+      ref.type === "tool" ||
+      ref.type === "manual"
+    ) {
+      return [
+        {
+          type: ref.type,
+          ref: ref.ref,
+          ...(ref.summary ? { excerpt: ref.summary.slice(0, 500) } : {}),
+        },
+      ];
     }
     if (ref.type === "task_loop") {
-      return [{ type: "tool" as const, ref: ref.ref, ...(ref.summary ? { excerpt: ref.summary.slice(0, 500) } : {}) }];
+      return [
+        {
+          type: "tool" as const,
+          ref: ref.ref,
+          ...(ref.summary ? { excerpt: ref.summary.slice(0, 500) } : {}),
+        },
+      ];
     }
     return [];
   });
@@ -550,23 +676,33 @@ function clampScore(value: number): number {
 }
 
 function titleFromKnowledgeCandidate(candidate: MissionMemoryCandidate): string {
-  const firstLine = candidate.summary.split(/\r?\n/u).map((line) => line.trim()).find(Boolean);
+  const firstLine = candidate.summary
+    .split(/\r?\n/u)
+    .map((line) => line.trim())
+    .find(Boolean);
   if (!firstLine) return "Mission knowledge candidate";
   return firstLine.length <= 88 ? firstLine : `${firstLine.slice(0, 85)}...`;
 }
 
-function knowledgeDraftTypeFromCandidate(candidate: MissionMemoryCandidate, failed: boolean): MissionKnowledgeInboxItem["type"] {
+function knowledgeDraftTypeFromCandidate(
+  candidate: MissionMemoryCandidate,
+  failed: boolean,
+): MissionKnowledgeInboxItem["type"] {
   const text = candidate.summary.toLowerCase();
-  if (failed || /error|failed|failure|blocked|bug|排障|故障|失败|错误/u.test(text)) return "troubleshooting";
+  if (failed || /error|failed|failure|blocked|bug|排障|故障|失败|错误/u.test(text))
+    return "troubleshooting";
   if (/decision|rationale|chose|chosen|选择|决策|取舍/u.test(text)) return "decision";
   if (/workflow|procedure|steps|流程|步骤/u.test(text)) return "procedure";
   if (/architecture|架构/u.test(text)) return "architecture";
   return "synthesis";
 }
 
-function temporalityFromSummary(summary: string): MissionKnowledgeInboxItem["metadata"]["temporality"] {
+function temporalityFromSummary(
+  summary: string,
+): MissionKnowledgeInboxItem["metadata"]["temporality"] {
   if (/temporary|workaround|hack|临时|绕过/u.test(summary)) return "ephemeral";
-  if (/v\d+|version|migration|upgrade|Next\.js|React|TypeScript|版本|迁移|升级/u.test(summary)) return "versioned";
+  if (/v\d+|version|migration|upgrade|Next\.js|React|TypeScript|版本|迁移|升级/u.test(summary))
+    return "versioned";
   return "stable";
 }
 
@@ -594,24 +730,40 @@ function sourceRefFromEvidence(ref: MissionEvidenceRef): MissionKnowledgeInboxSo
 
 function knowledgeCandidateCaptureHash(candidate: MissionMemoryCandidate): string {
   return createHash("sha256")
-    .update(JSON.stringify({
-      summary: candidate.summary.trim(),
-      evidenceRefs: [...candidate.evidenceRefs].map((ref) => ref.trim()).filter(Boolean).sort(),
-    }))
+    .update(
+      JSON.stringify({
+        summary: candidate.summary.trim(),
+        evidenceRefs: [...candidate.evidenceRefs]
+          .map((ref) => ref.trim())
+          .filter(Boolean)
+          .sort(),
+      }),
+    )
     .digest("hex")
     .slice(0, 16);
 }
 
-function knowledgeCandidateCaptureKey(record: MissionRunRecord, candidate: MissionMemoryCandidate): string {
+function knowledgeCandidateCaptureKey(
+  record: MissionRunRecord,
+  candidate: MissionMemoryCandidate,
+): string {
   return `mission:${record.missionId}:tick:${record.tick}:knowledge:${knowledgeCandidateCaptureHash(candidate)}`;
 }
 
-function outcomeFromReviewer(record: MissionRunRecord, reviewer: MissionReviewerResult, failedOverride = false): MissionStatus {
+function outcomeFromReviewer(
+  record: MissionRunRecord,
+  reviewer: MissionReviewerResult,
+  failedOverride = false,
+): MissionStatus {
   if (failedOverride) return "blocked";
   if (reviewer.decision === "complete") return "complete";
   if (reviewer.decision === "blocked") return "blocked";
   if (reviewer.decision === "ask_user") return "ask_user";
-  if (reviewer.decision === "repair" || reviewer.decision === "sleep" || reviewer.decision === "continue") {
+  if (
+    reviewer.decision === "repair" ||
+    reviewer.decision === "sleep" ||
+    reviewer.decision === "continue"
+  ) {
     return record.tick >= record.maxTicks ? "blocked" : "sleeping";
   }
   return record.status;
@@ -641,8 +793,12 @@ function buildKnowledgeSourceRefs(
     refs.set(source.id, source);
   }
 
-  const metadata = record.metadata && typeof record.metadata === "object" ? record.metadata as Record<string, unknown> : {};
-  const taskLedgerRootId = typeof metadata.taskLedgerRootId === "string" ? metadata.taskLedgerRootId : undefined;
+  const metadata =
+    record.metadata && typeof record.metadata === "object"
+      ? (record.metadata as Record<string, unknown>)
+      : {};
+  const taskLedgerRootId =
+    typeof metadata.taskLedgerRootId === "string" ? metadata.taskLedgerRootId : undefined;
   if (taskLedgerRootId) {
     refs.set(taskLedgerRootId, {
       id: taskLedgerRootId,
@@ -662,8 +818,18 @@ function scoreKnowledgeCandidate(params: {
   captureKey: string;
 }): MissionKnowledgeInboxItem["metadata"] {
   const { record, reviewer, sourceRefs, failed, captureKey } = params;
-  const strongEvidence = sourceRefs.some((ref) => ref.kind === "task_ledger" || ref.kind === "file" || ref.kind === "trace" || ref.kind === "task_loop" || ref.id.startsWith("trace:") || ref.id.startsWith("task_loop:"));
-  const validated = reviewer.validationState?.status === "passed" || reviewer.acceptanceStatus?.status === "satisfied";
+  const strongEvidence = sourceRefs.some(
+    (ref) =>
+      ref.kind === "task_ledger" ||
+      ref.kind === "file" ||
+      ref.kind === "trace" ||
+      ref.kind === "task_loop" ||
+      ref.id.startsWith("trace:") ||
+      ref.id.startsWith("task_loop:"),
+  );
+  const validated =
+    reviewer.validationState?.status === "passed" ||
+    reviewer.acceptanceStatus?.status === "satisfied";
   const complete = reviewer.decision === "complete" || record.status === "complete";
   const recommendation: MissionKnowledgeInboxItem["metadata"]["recommendation"] = failed
     ? "archive-only"
@@ -672,13 +838,21 @@ function scoreKnowledgeCandidate(params: {
       : "review";
   const reusability = recommendation === "save" ? 0.82 : recommendation === "review" ? 0.62 : 0.58;
   const uniqueness = 0.5;
-  const confidence = recommendation === "save" ? (validated ? 0.86 : 0.76) : recommendation === "review" ? 0.55 : 0.48;
-  const overall = clampScore((reusability * 0.4) + (uniqueness * 0.2) + (confidence * 0.4));
-  const reason = recommendation === "save"
-    ? "Mission completed with reusable evidence-backed knowledge."
-    : recommendation === "archive-only"
-      ? "Mission did not fully succeed; keep the lesson reviewable without formal wiki writes."
-      : "Mission produced a reusable lesson, but evidence or validation needs user review.";
+  const confidence =
+    recommendation === "save"
+      ? validated
+        ? 0.86
+        : 0.76
+      : recommendation === "review"
+        ? 0.55
+        : 0.48;
+  const overall = clampScore(reusability * 0.4 + uniqueness * 0.2 + confidence * 0.4);
+  const reason =
+    recommendation === "save"
+      ? "Mission completed with reusable evidence-backed knowledge."
+      : recommendation === "archive-only"
+        ? "Mission did not fully succeed; keep the lesson reviewable without formal wiki writes."
+        : "Mission produced a reusable lesson, but evidence or validation needs user review.";
 
   return {
     mvpVersion: "knowledge-interaction-mvp-1",
@@ -705,7 +879,11 @@ function buildMissionKnowledgeInboxItem(
   candidate: MissionMemoryCandidate,
   failedOverride = false,
 ): MissionKnowledgeInboxItem {
-  const failed = failedOverride || record.status === "blocked" || record.status === "error" || reviewer.decision === "blocked";
+  const failed =
+    failedOverride ||
+    record.status === "blocked" ||
+    record.status === "error" ||
+    reviewer.decision === "blocked";
   const sourceRefs = buildKnowledgeSourceRefs(record, candidate);
   const captureKey = knowledgeCandidateCaptureKey(record, candidate);
   const metadata = scoreKnowledgeCandidate({ record, reviewer, sourceRefs, failed, captureKey });
@@ -721,7 +899,8 @@ function buildMissionKnowledgeInboxItem(
     workspaceId: record.workspaceId,
     agentId: record.agentId,
     createdBy: "agent",
-    warnings: sourceRefs.length === 0 ? ["Mission knowledge candidate has no evidence references."] : [],
+    warnings:
+      sourceRefs.length === 0 ? ["Mission knowledge candidate has no evidence references."] : [],
     metadata: {
       ...metadata,
       temporality: temporalityFromSummary(candidate.summary),
@@ -729,7 +908,11 @@ function buildMissionKnowledgeInboxItem(
   };
 }
 
-function proposeMemoryCandidates(record: MissionRunRecord, candidates: readonly MissionMemoryCandidate[], deps: MissionControllerDeps): number {
+function proposeMemoryCandidates(
+  record: MissionRunRecord,
+  candidates: readonly MissionMemoryCandidate[],
+  deps: MissionControllerDeps,
+): number {
   const propose = deps.proposeMemory ?? proposeMemoryCard;
   let proposed = 0;
   for (const candidate of candidates) {
@@ -759,7 +942,10 @@ function proposeMemoryCandidates(record: MissionRunRecord, candidates: readonly 
   return proposed;
 }
 
-function proposeExtractedMemoryCandidates(record: MissionRunRecord, deps: MissionControllerDeps): number {
+function proposeExtractedMemoryCandidates(
+  record: MissionRunRecord,
+  deps: MissionControllerDeps,
+): number {
   const propose = deps.proposeMemory ?? proposeMemoryCard;
   // Extract explicit "remember" style statements from the tick's reviewable
   // text (latest reason + task-loop final summary + checkpoint summary).
@@ -821,13 +1007,20 @@ function proposeExtractedMemoryCandidates(record: MissionRunRecord, deps: Missio
   return proposed;
 }
 
-function proposeKnowledgeInboxCandidates(record: MissionRunRecord, reviewer: MissionReviewerResult, deps: MissionControllerDeps, failedOverride = false): number {
+function proposeKnowledgeInboxCandidates(
+  record: MissionRunRecord,
+  reviewer: MissionReviewerResult,
+  deps: MissionControllerDeps,
+  failedOverride = false,
+): number {
   if (!deps.createKnowledgeInboxItem) return 0;
   let proposed = 0;
   for (const candidate of reviewer.memoryCandidates) {
     if (candidate.kind !== "knowledge_draft" || !candidate.summary.trim()) continue;
     try {
-      deps.createKnowledgeInboxItem(buildMissionKnowledgeInboxItem(record, reviewer, candidate, failedOverride));
+      deps.createKnowledgeInboxItem(
+        buildMissionKnowledgeInboxItem(record, reviewer, candidate, failedOverride),
+      );
       proposed += 1;
     } catch {
       // Knowledge Inbox capture is best-effort; Mission state remains authoritative.
@@ -896,12 +1089,18 @@ export function createMission(
   return clone(record);
 }
 
-export function getMissionRun(missionId: string, deps: MissionControllerDeps = {}): MissionRunRecord | null {
+export function getMissionRun(
+  missionId: string,
+  deps: MissionControllerDeps = {},
+): MissionRunRecord | null {
   const record = (deps.getMission ?? getMissionRunFromStore)(missionId);
   return record ? clone(record) : null;
 }
 
-export function getLatestMission(sessionKey: string, deps: MissionControllerDeps = {}): MissionRunRecord | null {
+export function getLatestMission(
+  sessionKey: string,
+  deps: MissionControllerDeps = {},
+): MissionRunRecord | null {
   const record = (deps.getLatestMissionForSession ?? getLatestMissionForSession)(sessionKey);
   return record ? clone(record) : null;
 }
@@ -911,7 +1110,9 @@ export async function runMission(
   cfg: OpenClawConfig | undefined,
   deps: MissionControllerDeps = {},
 ): Promise<MissionRunResult> {
-  const existing = request.missionId ? (deps.getMission ?? getMissionRunFromStore)(request.missionId) : undefined;
+  const existing = request.missionId
+    ? (deps.getMission ?? getMissionRunFromStore)(request.missionId)
+    : undefined;
   const mission = existing ?? createMission(request, cfg, deps);
   return tickMission({ missionId: mission.missionId, reason: "manual" }, cfg, deps);
 }
@@ -922,9 +1123,12 @@ export async function tickMission(
   deps: MissionControllerDeps = {},
 ): Promise<MissionRunResult> {
   const getMission = deps.getMission ?? getMissionRunFromStore;
-  const saveMission = deps.saveMission ?? saveMissionRun;
   const record = getMission(input.missionId);
   if (!record) throw new Error(`unknown mission "${input.missionId}"`);
+  const missionFencingEnabled = goalWakeController.isMissionFencingEnabled();
+  const saveMission =
+    deps.saveMission ??
+    (missionFencingEnabled ? goalWakeController.saveMissionRunFenced : saveMissionRun);
   missionLocalControlPlaneConfigs.set(record, cfg);
   const config = resolveAgentMissionConfig(cfg, record.agentId);
   const now = deps.now ?? Date.now;
@@ -951,10 +1155,57 @@ export async function tickMission(
     attributes: { missionId: record.missionId, nextTick: record.tick + 1 },
   });
 
+  let fencedTickClaimed = false;
+  const goalWakePreClaim = input.wake?.preClaimed;
+  if (goalWakePreClaim && missionFencingEnabled) {
+    record.revision = goalWakePreClaim.revision;
+    record.activeTickId = goalWakePreClaim.activeTickId;
+    record.tick = goalWakePreClaim.tick;
+    record.lastWakeId = input.wake?.wakeId;
+    record.status = "running";
+    record.metadata = {
+      ...(record.metadata ?? {}),
+      ...(input.wakePayload ? { lastGoalWake: input.wakePayload } : {}),
+      lastGoalWakeAt: now(),
+    };
+    fencedTickClaimed = true;
+  } else if (missionFencingEnabled) {
+    const claim = goalWakeController.claimMissionTick({
+      missionId: record.missionId,
+      expectedRevision: record.revision ?? 0,
+      activeTickId: traceRunId,
+      allowedStatuses: ["idle", "sleeping", "ask_user"],
+    });
+    if (!claim.ok) {
+      throw new Error(
+        `mission tick fencing claim failed for "${input.missionId}": ${claim.reason}${
+          claim.message ? ` (${claim.message})` : ""
+        }`,
+      );
+    }
+    record.revision = claim.revision;
+    record.activeTickId = claim.row.active_tick_id;
+    record.tick = claim.row.tick_count;
+    record.status = "running";
+    fencedTickClaimed = true;
+  }
+
   let taskLoopResult: TaskLoopRunResult | undefined;
   try {
-    record.tick += 1;
-    record.status = "running";
+    if (!fencedTickClaimed) {
+      record.tick += 1;
+      record.status = "running";
+    }
+    const missionLineage = normalizeRuntimeLineage({
+      sessionId: record.sessionKey,
+      missionId: record.missionId,
+      missionTick: record.tick,
+      taskLedgerRootId:
+        typeof record.metadata?.taskLedgerRootId === "string"
+          ? record.metadata.taskLedgerRootId
+          : undefined,
+    });
+    record.lineage = missionLineage;
     record.phase = "context_pack";
     emit(record, deps);
 
@@ -963,7 +1214,8 @@ export async function tickMission(
       objective: record.objective,
       acceptance: record.acceptance,
       tick: record.tick,
-      taskLedgerSummary: input.taskLedgerSummary ?? String(record.metadata?.taskLedgerSummary ?? ""),
+      taskLedgerSummary:
+        input.taskLedgerSummary ?? String(record.metadata?.taskLedgerSummary ?? ""),
       checkpointSummary: checkpointSummary(record.sessionKey),
       previousReviewerSummary: record.lastReviewerSummary,
       memorySummary: input.memorySummary ?? String(record.metadata?.memorySummary ?? ""),
@@ -993,14 +1245,20 @@ export async function tickMission(
       sessionKey: record.sessionKey,
       agentId: record.agentId,
       workspaceId: record.workspaceId,
-      taskLedgerRootId: typeof record.metadata?.taskLedgerRootId === "string"
-        ? record.metadata.taskLedgerRootId
-        : undefined,
+      taskLedgerRootId:
+        typeof record.metadata?.taskLedgerRootId === "string"
+          ? record.metadata.taskLedgerRootId
+          : undefined,
       acceptance: record.acceptance,
-      fileHints: Array.isArray(record.metadata?.fileHints) ? record.metadata.fileHints as string[] : [],
+      fileHints: Array.isArray(record.metadata?.fileHints)
+        ? (record.metadata.fileHints as string[])
+        : [],
       important: record.metadata?.important === true,
-      templateId: typeof record.metadata?.templateId === "string" ? record.metadata.templateId : undefined,
-      leadRole: typeof record.metadata?.leadRole === "string" ? record.metadata.leadRole : undefined,
+      templateId:
+        typeof record.metadata?.templateId === "string" ? record.metadata.templateId : undefined,
+      leadRole:
+        typeof record.metadata?.leadRole === "string" ? record.metadata.leadRole : undefined,
+      ...(record.lineage ? { lineage: record.lineage } : {}),
     };
     taskLoopResult = await (deps.runTaskLoop ?? runTaskLoop)(
       taskRequest,
@@ -1009,6 +1267,15 @@ export async function tickMission(
     );
     record.taskLoopRunId = taskLoopResult.loopRunId;
     record.traceId = taskLoopResult.traceId;
+    record.lineage = mergeRuntimeLineage(
+      record.lineage,
+      taskLoopResult.lineage ?? {
+        sessionId: record.sessionKey,
+        loopRunId: taskLoopResult.loopRunId,
+        traceId: taskLoopResult.traceId,
+        taskLedgerRootId: taskLoopResult.taskLedgerRootId,
+      },
+    );
     record.evidenceRefs = evidenceFromTaskLoop(taskLoopResult);
     record.risks = taskLoopResult.risks;
     record.remaining = taskLoopResult.remaining;
@@ -1023,7 +1290,8 @@ export async function tickMission(
     // Flag-gated seam — when `runtime.resilience.anomalyClassifierPilot !== 'shadow'`,
     // returns `undefined` and `anomalyPattern` stays undefined (flag-off parity).
     // When 'shadow', classifies recent signals into an advisory AnomalyPattern.
-    const failures = taskLoopResult.status === "error" ? [taskLoopResult.error ?? "task_loop error"] : [];
+    const failures =
+      taskLoopResult.status === "error" ? [taskLoopResult.error ?? "task_loop error"] : [];
     const anomalyPattern = resolveAnomalyPatternForReviewer(cfg?.runtime, {
       tick: record.tick,
       repairTicksUsed: record.repairTicks,
@@ -1037,40 +1305,49 @@ export async function tickMission(
       // the current hash yet, so we omit it; classifier relies on the other signals.
     });
 
-    const rawReviewer = await (deps.reviewer ?? runMissionReviewer)({
-      cfg,
-      agentId: record.agentId,
-      reviewer: config.reviewer,
-      contextPack: buildMissionContextPack({
-        missionId: record.missionId,
-        objective: record.objective,
-        acceptance: record.acceptance,
+    const rawReviewer = await (deps.reviewer ?? runMissionReviewer)(
+      {
+        cfg,
+        agentId: record.agentId,
+        reviewer: config.reviewer,
+        contextPack: buildMissionContextPack({
+          missionId: record.missionId,
+          objective: record.objective,
+          acceptance: record.acceptance,
+          tick: record.tick,
+          taskLedgerSummary:
+            input.taskLedgerSummary ?? String(record.metadata?.taskLedgerSummary ?? ""),
+          checkpointSummary: checkpointSummary(record.sessionKey),
+          previousReviewerSummary: record.lastReviewerSummary,
+          memorySummary: input.memorySummary ?? String(record.metadata?.memorySummary ?? ""),
+          evidenceRefs: record.evidenceRefs,
+          openBlockers: input.openBlockers,
+          reviewItems: input.reviewItems,
+          repairBrief: input.repairBrief,
+          controlSignals: record.controlSignals,
+          validationState: record.validationState,
+          acceptanceStatus: record.acceptanceStatus,
+          scopeSummary: record.lastReason,
+        }),
+        taskLoopResult,
+        failures,
         tick: record.tick,
-        taskLedgerSummary: input.taskLedgerSummary ?? String(record.metadata?.taskLedgerSummary ?? ""),
-        checkpointSummary: checkpointSummary(record.sessionKey),
-        previousReviewerSummary: record.lastReviewerSummary,
-        memorySummary: input.memorySummary ?? String(record.metadata?.memorySummary ?? ""),
-        evidenceRefs: record.evidenceRefs,
-        openBlockers: input.openBlockers,
-        reviewItems: input.reviewItems,
-        repairBrief: input.repairBrief,
-        controlSignals: record.controlSignals,
-        validationState: record.validationState,
-        acceptanceStatus: record.acceptanceStatus,
-        scopeSummary: record.lastReason,
-      }),
-      taskLoopResult,
-      failures,
-      tick: record.tick,
-      repairTicksUsed: record.repairTicks,
-      maxRepairTicks: record.maxRepairTicks,
-      maxTicks: record.maxTicks,
-      ...(anomalyPattern != null ? { anomalyPattern } : {}),
-    }, deps.reviewerDeps);
+        repairTicksUsed: record.repairTicks,
+        maxRepairTicks: record.maxRepairTicks,
+        maxTicks: record.maxTicks,
+        ...(anomalyPattern != null ? { anomalyPattern } : {}),
+      },
+      deps.reviewerDeps,
+    );
     let reviewer = gateMissionReviewerCompletion(rawReviewer, record);
 
-    const noProgressHash = buildNoProgressHash(reviewer.decision, reviewer.repairBrief, record.evidenceRefs);
-    const repeatedRepair = reviewer.decision === "repair" && record.noProgressHash === noProgressHash;
+    const noProgressHash = buildNoProgressHash(
+      reviewer.decision,
+      reviewer.repairBrief,
+      record.evidenceRefs,
+    );
+    const repeatedRepair =
+      reviewer.decision === "repair" && record.noProgressHash === noProgressHash;
     record.noProgressHash = noProgressHash;
     record.lastDecision = reviewer.decision;
     record.lastReason = reviewer.reason;
@@ -1100,15 +1377,27 @@ export async function tickMission(
       controlSignals: reviewer.controlSignals,
       validationState: reviewer.validationState,
     });
-    const proposedMemory = config.memory?.proposeAfterTick === false
-      ? 0
-      : proposeMemoryCandidates(record, reviewer.memoryCandidates, deps);
-    const proposedExtracted = config.memory?.proposeAfterTick === false
-      ? 0
-      : proposeExtractedMemoryCandidates(record, deps);
-    const proposedKnowledge = proposeKnowledgeInboxCandidates(record, reviewer, deps, repeatedRepair);
+    const proposedMemory =
+      config.memory?.proposeAfterTick === false
+        ? 0
+        : proposeMemoryCandidates(record, reviewer.memoryCandidates, deps);
+    const proposedExtracted =
+      config.memory?.proposeAfterTick === false
+        ? 0
+        : proposeExtractedMemoryCandidates(record, deps);
+    const proposedKnowledge = proposeKnowledgeInboxCandidates(
+      record,
+      reviewer,
+      deps,
+      repeatedRepair,
+    );
     recorder.recordEvent("mission.memory_propose", String(proposedMemory + proposedExtracted), {
-      attributes: { missionId: record.missionId, proposedMemory, proposedExtracted, proposedKnowledge },
+      attributes: {
+        missionId: record.missionId,
+        proposedMemory,
+        proposedExtracted,
+        proposedKnowledge,
+      },
     });
 
     record.phase = "checkpoint";
@@ -1123,9 +1412,10 @@ export async function tickMission(
       sessionKey: record.sessionKey,
       agentId: record.agentId,
       workspaceId: record.workspaceId ?? undefined,
-      taskLedgerRootId: typeof record.metadata?.taskLedgerRootId === "string"
-        ? record.metadata.taskLedgerRootId
-        : undefined,
+      taskLedgerRootId:
+        typeof record.metadata?.taskLedgerRootId === "string"
+          ? record.metadata.taskLedgerRootId
+          : undefined,
       trigger:
         record.guardianTripped === true
           ? "audit_fail"
@@ -1135,7 +1425,11 @@ export async function tickMission(
       activeTask: record.objective,
       nextAction: reviewer.decision,
       reviewNeededItems: reviewer.decision === "ask_user" ? reviewer.missingEvidence : [],
-      evidenceRefs: record.evidenceRefs.map((ref) => ({ type: ref.type, ref: ref.ref, label: ref.label })),
+      evidenceRefs: record.evidenceRefs.map((ref) => ({
+        type: ref.type,
+        ref: ref.ref,
+        label: ref.label,
+      })),
       controlSignals: reviewer.controlSignals,
       validationState: reviewer.validationState,
       acceptanceStatus: reviewer.acceptanceStatus,
@@ -1154,9 +1448,10 @@ export async function tickMission(
       sessionKey: record.sessionKey,
       agentId: record.agentId,
       workspaceId: record.workspaceId ?? undefined,
-      taskLedgerRootId: typeof record.metadata?.taskLedgerRootId === "string"
-        ? record.metadata.taskLedgerRootId
-        : undefined,
+      taskLedgerRootId:
+        typeof record.metadata?.taskLedgerRootId === "string"
+          ? record.metadata.taskLedgerRootId
+          : undefined,
       runId: record.missionId,
       traceId: record.traceId,
       trigger: checkpoint.trigger,
@@ -1185,13 +1480,18 @@ export async function tickMission(
         const rollbackDecision = {
           decision: "repair" as const,
           repairStrategy: "replay_rollback" as const,
-          reason: record.blockedReason ?? "Mission blocked because repair evidence repeated without progress.",
+          reason:
+            record.blockedReason ??
+            "Mission blocked because repair evidence repeated without progress.",
           requestedAtTick: record.tick,
         };
         const rollbackResult = checkpoint
           ? await executeReplayRollback(
               rollbackDecision,
-              { enabled: false, reason: "event-log replay not implemented; legacy checkpoint fallback" },
+              {
+                enabled: false,
+                reason: "event-log replay not implemented; legacy checkpoint fallback",
+              },
               { kind: "checkpoint", checkpointId: checkpoint.id },
               deps.rollback,
             )
@@ -1213,13 +1513,17 @@ export async function tickMission(
           record.lastDecision = "repair";
           record.phase = "schedule";
           record.status = "sleeping";
-          record.nextWakeAt = reviewer.nextTick?.afterMs ? now() + reviewer.nextTick.afterMs : now() + 60_000;
+          record.nextWakeAt = reviewer.nextTick?.afterMs
+            ? now() + reviewer.nextTick.afterMs
+            : now() + 60_000;
         } else {
           // Rollback unavailable/failed: preserve the legacy blocked outcome.
           record.status = "blocked";
           record.phase = "blocked";
           record.blockedReason = `Mission blocked because repair evidence repeated without progress${
-            rollbackResult ? `; rollback failed: ${rollbackResult.reason} (${rollbackResult.detail})` : "; no checkpoint available for rollback"
+            rollbackResult
+              ? `; rollback failed: ${rollbackResult.reason} (${rollbackResult.detail})`
+              : "; no checkpoint available for rollback"
           }.`;
           record.lastDecision = "blocked";
           record.completedAt = now();
@@ -1254,13 +1558,18 @@ export async function tickMission(
     } else if (reviewer.decision === "sleep") {
       record.status = "sleeping";
       record.phase = "schedule";
-      record.nextWakeAt = reviewer.nextTick?.afterMs ? now() + reviewer.nextTick.afterMs : undefined;
+      record.nextWakeAt = reviewer.nextTick?.afterMs
+        ? now() + reviewer.nextTick.afterMs
+        : undefined;
     } else {
       record.repairTicks += reviewer.decision === "repair" ? 1 : 0;
       record.status = record.tick >= record.maxTicks ? "blocked" : "sleeping";
       record.phase = record.status === "blocked" ? "blocked" : "schedule";
-      record.blockedReason = record.status === "blocked" ? "Mission reached the maximum tick limit." : undefined;
-      record.nextWakeAt = reviewer.nextTick?.afterMs ? now() + reviewer.nextTick.afterMs : undefined;
+      record.blockedReason =
+        record.status === "blocked" ? "Mission reached the maximum tick limit." : undefined;
+      record.nextWakeAt = reviewer.nextTick?.afterMs
+        ? now() + reviewer.nextTick.afterMs
+        : undefined;
     }
     if (record.phase === "schedule") {
       recorder.recordEvent("mission.schedule", record.status, {
@@ -1281,6 +1590,7 @@ export async function tickMission(
       decision: record.lastDecision,
       taskLoopRunId: record.taskLoopRunId,
       traceId: record.traceId,
+      lineage: record.lineage,
       evidenceRefs: [...record.evidenceRefs],
       reviewer,
       controlSignals: reviewer.controlSignals,
@@ -1295,7 +1605,11 @@ export async function tickMission(
     });
 
     recorder.recordEvent("mission.reflect", reviewer.decision, {
-      attributes: { missionId: record.missionId, confidence: reviewer.confidence, risks: reviewer.risks },
+      attributes: {
+        missionId: record.missionId,
+        confidence: reviewer.confidence,
+        risks: reviewer.risks,
+      },
     });
     const { trace, scorecard } = completeObservedRun(
       recorder as ObservabilityTraceRecorder,
@@ -1304,7 +1618,26 @@ export async function tickMission(
     );
     record.traceId = trace.id;
     (deps.storeTrace ?? storeRuntimeTrace)(trace, scorecard);
-    saveMission(record);
+    if (missionFencingEnabled && record.activeTickId) {
+      const finish = goalWakeController.finishMissionTick({
+        missionId: record.missionId,
+        expectedRevision: record.revision ?? 0,
+        activeTickId: record.activeTickId,
+        status: record.status,
+      });
+      if (!finish.ok) {
+        throw new Error(
+          `mission tick fencing finish failed for "${input.missionId}": ${finish.reason}${
+            finish.message ? ` (${finish.message})` : ""
+          }`,
+        );
+      }
+      record.revision = finish.revision;
+      record.activeTickId = null;
+      record.updatedAt = finish.row.updated_at;
+    }
+    const saved = saveMission(record);
+    if (typeof saved.revision === "number") record.revision = saved.revision;
     emit(record, deps, {
       traceId: record.traceId,
       reviewerDecision: record.lastDecision,
@@ -1313,6 +1646,11 @@ export async function tickMission(
     });
     return clone(record);
   } catch (error) {
+    if (error instanceof MissionLifecycleConflictError) {
+      // The lifecycle owner settled this mission elsewhere (e.g. a concurrent
+      // cancel); the tick stops and mission_runs keeps the committed state.
+      return clone(getMission(record.missionId) ?? record);
+    }
     const message = error instanceof Error ? error.message : String(error);
     record.status = "error";
     record.phase = "blocked";
@@ -1322,12 +1660,57 @@ export async function tickMission(
     const { trace, scorecard } = completeObservedRun(recorder, "error", message);
     record.traceId = trace.id;
     (deps.storeTrace ?? storeRuntimeTrace)(trace, scorecard);
-    saveMission(record);
+    if (missionFencingEnabled && record.activeTickId) {
+      const finish = goalWakeController.finishMissionTick({
+        missionId: record.missionId,
+        expectedRevision: record.revision ?? 0,
+        activeTickId: record.activeTickId,
+        status: record.status,
+      });
+      if (finish.ok) {
+        record.revision = finish.revision;
+        record.activeTickId = null;
+        record.updatedAt = finish.row.updated_at;
+      }
+    }
+    const saved = saveMission(record);
+    if (typeof saved.revision === "number") record.revision = saved.revision;
     return clone(record);
   }
 }
 
-export function pauseMission(missionId: string, deps: MissionControllerDeps = {}): MissionRunRecord {
+/**
+ * Restart recovery under the taskflow cutover: a mission whose lifecycle was
+ * running when the previous boot ended had its tick interrupted. It is put
+ * back to sleeping through the normal lifecycle path so the scheduler can tick
+ * it again. No-op for the legacy writer.
+ */
+export function recoverInterruptedMissionLifecycles(deps: MissionControllerDeps = {}): string[] {
+  if (resolveWorkflowLifecycleMode("mission") !== "taskflow") return [];
+  const recovered: string[] = [];
+  for (const row of listWorkflowLifecycles("mission")) {
+    if (row.status !== "running") continue;
+    const missionId = row.flow_id.slice("mission:".length);
+    const record = (deps.getMission ?? getMissionRunFromStore)(missionId);
+    if (!record || record.status !== "running") continue;
+    record.status = "sleeping";
+    record.phase = "schedule";
+    record.activeTickId = null;
+    record.lastReason = "tick interrupted by a gateway restart";
+    try {
+      emit(record, deps);
+      recovered.push(missionId);
+    } catch {
+      // A rejected commit leaves the mission at its committed state.
+    }
+  }
+  return recovered;
+}
+
+export function pauseMission(
+  missionId: string,
+  deps: MissionControllerDeps = {},
+): MissionRunRecord {
   const record = (deps.getMission ?? getMissionRunFromStore)(missionId);
   if (!record) throw new Error(`unknown mission "${missionId}"`);
   if (!terminal(record.status)) {
@@ -1338,7 +1721,10 @@ export function pauseMission(missionId: string, deps: MissionControllerDeps = {}
   return clone(record);
 }
 
-export function resumeMission(missionId: string, deps: MissionControllerDeps = {}): MissionRunRecord {
+export function resumeMission(
+  missionId: string,
+  deps: MissionControllerDeps = {},
+): MissionRunRecord {
   const record = (deps.getMission ?? getMissionRunFromStore)(missionId);
   if (!record) throw new Error(`unknown mission "${missionId}"`);
   if (record.status === "paused") {
@@ -1349,7 +1735,10 @@ export function resumeMission(missionId: string, deps: MissionControllerDeps = {
   return clone(record);
 }
 
-export function cancelMission(missionId: string, deps: MissionControllerDeps = {}): MissionRunRecord {
+export function cancelMission(
+  missionId: string,
+  deps: MissionControllerDeps = {},
+): MissionRunRecord {
   const record = (deps.getMission ?? getMissionRunFromStore)(missionId);
   if (!record) throw new Error(`unknown mission "${missionId}"`);
   if (!terminal(record.status)) {

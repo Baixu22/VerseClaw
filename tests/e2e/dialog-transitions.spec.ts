@@ -1,5 +1,5 @@
 import type { Locator } from '@playwright/test';
-import { closeElectronApp, completeSetup, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { closeElectronApp, completeSetup, expect, getStableWindow, installIpcMocks, revealSectionHeadingActionsFor, test } from './fixtures/electron';
 
 const MAIN_SESSION_KEY = 'agent:main:main';
 const SESSIONS_LIST_PAYLOAD = {
@@ -29,7 +29,7 @@ async function expectSubtleDialogAnimation(locator: Locator): Promise<void> {
   });
 
   expect(animation.name).toContain('verse-claw-dialog-content-in');
-  expect(animation.duration).toContain('0.1s');
+  expect(animation.duration).toContain('0.15s');
 
   const firstFrameOffset = await locator.evaluate(async (element) => {
     const animation = element.getAnimations()[0];
@@ -194,7 +194,7 @@ test.describe('dialog transitions', () => {
         }
       }
 
-      await page.locator('.section-heading').first().hover();
+      await revealSectionHeadingActionsFor(page.getByTestId('sidebar-session-organize'));
       await page.getByTestId('sidebar-session-organize').click();
       await page.getByRole('menuitemradio', { name: 'Time' }).click();
       const sessionRow = page.getByTestId(`sidebar-session-${MAIN_SESSION_KEY}`);

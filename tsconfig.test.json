@@ -5,8 +5,101 @@
     "noEmit": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "types": ["node", "vitest/globals", "@testing-library/jest-dom"]
+    "types": [
+      "node",
+      "vitest/globals",
+      "@testing-library/jest-dom"
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@electron/*": [
+        "./electron/*"
+      ],
+      "@shared/*": [
+        "./shared/*"
+      ],
+      "@openclaw/normalization-core": [
+        "./openclaw_runtime/packages/normalization-core/src/index.ts"
+      ],
+      "@openclaw/normalization-core/number-coercion": [
+        "./openclaw_runtime/packages/normalization-core/src/number-coercion.ts"
+      ],
+      "@openclaw/normalization-core/record-coerce": [
+        "./openclaw_runtime/packages/normalization-core/src/record-coerce.ts"
+      ],
+      "@openclaw/normalization-core/string-coerce": [
+        "./openclaw_runtime/packages/normalization-core/src/string-coerce.ts"
+      ],
+      "@openclaw/normalization-core/string-normalization": [
+        "./openclaw_runtime/packages/normalization-core/src/string-normalization.ts"
+      ],
+      "@openclaw/normalization-core/*": [
+        "./openclaw_runtime/packages/normalization-core/src/*"
+      ],
+      "@openclaw/acp-core": [
+        "./openclaw_runtime/packages/acp-core/src/index.ts"
+      ],
+      "@openclaw/acp-core/*": [
+        "./openclaw_runtime/packages/acp-core/src/*"
+      ],
+      "@openclaw/llm-core": [
+        "./openclaw_runtime/packages/llm-core/src/index.ts"
+      ],
+      "@openclaw/llm-core/*": [
+        "./openclaw_runtime/packages/llm-core/src/*"
+      ],
+      "@openclaw/gateway-protocol": [
+        "./openclaw_runtime/packages/gateway-protocol/src/index.ts"
+      ],
+      "@openclaw/gateway-protocol/*": [
+        "./openclaw_runtime/packages/gateway-protocol/src/*"
+      ],
+      "@openclaw/media-core": [
+        "./openclaw_runtime/packages/media-core/src/index.ts"
+      ],
+      "@openclaw/media-core/*": [
+        "./openclaw_runtime/packages/media-core/src/*"
+      ],
+      "@openclaw/model-catalog-core": [
+        "./openclaw_runtime/packages/model-catalog-core/src/index.ts"
+      ],
+      "@openclaw/model-catalog-core/*": [
+        "./openclaw_runtime/packages/model-catalog-core/src/*"
+      ],
+      "@openclaw/net-policy": [
+        "./openclaw_runtime/packages/net-policy/src/index.ts"
+      ],
+      "@openclaw/net-policy/*": [
+        "./openclaw_runtime/packages/net-policy/src/*"
+      ],
+      "@openclaw/runtime-redaction": [
+        "./openclaw_runtime/src/logging/redact.ts"
+      ],
+      "@openclaw/provider-request-auth": [
+        "./openclaw_runtime/src/agents/provider-request-auth.ts"
+      ],
+      "openclaw/plugin-sdk": [
+        "./openclaw_runtime/src/plugin-sdk/index.ts"
+      ],
+      "openclaw/plugin-sdk/*": [
+        "./openclaw_runtime/src/plugin-sdk/*.ts"
+      ]
+    }
   },
-  "include": ["tests", "src/vite-env.d.ts", "src/types/electron.d.ts"],
-  "exclude": ["node_modules", "dist", "dist-electron"]
+  "include": [
+    "tests",
+    "src/vite-env.d.ts",
+    "src/types/electron.d.ts",
+    "scripts/context-compression-eval-runner.d.mts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "dist-electron",
+    "tests/fixtures/ast-grep-edit-plan",
+    "tests/fixtures/ast-patch-planner",
+    "tests/fixtures/agent-map/clawx-like-workspace"
+  ]
 }

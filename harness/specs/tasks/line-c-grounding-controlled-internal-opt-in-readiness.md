@@ -69,7 +69,7 @@ requiredTests:
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/line-c-grounding-diagnostics-authority-sentinel-effectiveness-evaluation.md --no-diff
   - node node_modules/vitest/vitest.mjs run tests/unit/runtime-grounding-authority-effectiveness.test.ts tests/unit/runtime-grounding-shadow-consumers.test.ts tests/unit/context-provider-registry.test.ts tests/unit/runtime-trace-context-provider.test.ts tests/unit/runtime-symbol-context-provider.test.ts tests/unit/runtime-agent-map-context-provider.test.ts tests/unit/runtime-memory-context-provider.test.ts
   - node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - git diff --check -- harness/specs/tasks/line-c-grounding-controlled-internal-opt-in-readiness.md runtime-research/handoffs/line-c-grounding-controlled-internal-opt-in-readiness/README.md runtime-research/handoffs/line-c-grounding-controlled-internal-opt-in-readiness/design-research.md runtime-research/handoffs/line-c-grounding-controlled-internal-opt-in-readiness/implementation-synthesis.md runtime-research/handoffs/line-c-grounding-controlled-internal-opt-in-readiness/deep-validation.md runtime-research/agent-runtime-index.md
+  - git diff --check -- harness/specs/tasks/line-c-grounding-controlled-internal-opt-in-readiness.md docs/dev/runtime-research-boundaries.md
   - rg -n "window\\.electron\\.ipcRenderer\\.invoke|fetch\\(['\\\"]http://127\\.0\\.0\\.1:18789|new WebSocket\\(|gateway:httpProxy|hostapi:fetch" src electron shared
   - rg -n "createServer\\(|listen\\(|WebSocketServer|OTLP|Collector|@opentelemetry/exporter|express\\(|daemon|listener|service|database|sqlite|postgres|mysql|redis|sidecar|createWriteStream|writeFile|appendFile" <line-c-controlled-internal-opt-in-readiness-touched-files>
   - rg -n "raw trace|trace dump|full trace|raw payload|full payload|full checkpoint|rawChat|raw chat|transcript|jsonl|full tool args|full tool output|toolArgs|toolOutput|stdout|stderr|process\\.env|complete env|secret|apiKey|api[-_]?key|authorization|password|traceparent|tracestate|baggage" <line-c-controlled-internal-opt-in-readiness-touched-files>
@@ -90,11 +90,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-c-grounding-controlled-internal-opt-in-readiness/README.md
-    - runtime-research/handoffs/line-c-grounding-controlled-internal-opt-in-readiness/design-research.md
-    - runtime-research/handoffs/line-c-grounding-controlled-internal-opt-in-readiness/implementation-synthesis.md
-    - runtime-research/handoffs/line-c-grounding-controlled-internal-opt-in-readiness/deep-validation.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

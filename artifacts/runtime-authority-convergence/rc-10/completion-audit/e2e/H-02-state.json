@@ -1,0 +1,40 @@
+{
+  "approvals": [
+    {
+      "approval_id": "aprv_504a1145-79d9-4067-b967-69a5604ccd7d",
+      "idempotency_key": "op:9772c359-38c4-4ff4-8040-4a91ee44c542:1790634964960:agent:main:rc10-operator",
+      "state": "reconciled",
+      "request_digest": "5b187bd840fd583c45121386fdd50101a492fa2f345ee4d9727c47709469a171",
+      "revision": 5,
+      "requested_by_conn_id": null,
+      "requested_by_device_id": null,
+      "requested_by_client_id": "cron-ingress",
+      "expires_at_ms": 1790635025381,
+      "resolved_at_ms": 1790634966742,
+      "decision": "approved",
+      "resolved_by": "baa3819d5697031baf25c259b5505cfc65f4eb1274461d19a6a10eb52c5a58b7",
+      "effect_receipt_id": "efx_d59a79c4-4351-4757-a4c3-d5cfb200a1c3",
+      "domain_journal_ref": "journal:cron:9772c359-38c4-4ff4-8040-4a91ee44c542",
+      "outcome": "applied",
+      "created_at": 1790634965382,
+      "updated_at": 1790634966898
+    }
+  ],
+  "effects": [
+    {
+      "effect_receipt_id": "efx_d59a79c4-4351-4757-a4c3-d5cfb200a1c3",
+      "idempotency_key": "efx:op:9772c359-38c4-4ff4-8040-4a91ee44c542:1790634964960:agent:main:rc10-operator",
+      "approval_id": "aprv_504a1145-79d9-4067-b967-69a5604ccd7d",
+      "proposal_digest": "abbde2da194f3cfa4c3be1c97ae30265b43836321e0dc1259057705d11777a87",
+      "approval_decision": "approved",
+      "domain_executor": "operator-slice",
+      "outcome": "applied",
+      "artifact_ref": null,
+      "journal_ref": "journal:cron:9772c359-38c4-4ff4-8040-4a91ee44c542",
+      "recoverability": "none-needed",
+      "schema_version": "2",
+      "created_at": 1790634966897
+    }
+  ],
+  "receipts": []
+}

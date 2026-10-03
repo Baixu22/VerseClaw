@@ -95,14 +95,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-deep-validation/README.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-deep-validation/validation-plan.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-deep-validation/boundary-tightening-matrix.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-deep-validation/quantitative-scorecard.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-deep-validation/replay-cases.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-deep-validation/rollback-proof.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-deep-validation/submission-template.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-deep-validation/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Line B AgentMap Prompt Candidate TaskLoop Explicit Invocation Deep Validation

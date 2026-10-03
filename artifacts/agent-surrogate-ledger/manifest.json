@@ -1,0 +1,25 @@
+{
+  "schema": "agent-surrogate-ledger/v1",
+  "generatedAt": "2026-09-09T15:45:00+08:00",
+  "purpose": "TF-0009 AC2 账本：每 profile ≥10 具名产品路径任务记录（实测可行），humanQualifyingRuns 依然可以如实保持 0",
+  "profiles": ["dcs-coding", "sekb-assisted", "browser-supervised"],
+  "requiredPerProfile": 10,
+  "charter": "artifacts/first-product-preview/TF-0009/agent-surrogate-charter.json",
+  "report": "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json",
+  "surrogateScript": "openclaw_runtime/scripts/tf0009-agent-surrogate.mts",
+  "currentEvidence": {
+    "dcs-coding": { "agentSurrogateRuns": 10, "humanQualifyingRuns": 0, "status": "已满足 AC0" },
+    "sekb-assisted": { "agentSurrogateRuns": 10, "humanQualifyingRuns": 0, "status": "已满足 AC0" },
+    "browser-supervised": { "agentSurrogateRuns": 10, "humanQualifyingRuns": 0, "status": "已满足 AC0" }
+  },
+  "unauthorizedWrites": 0,
+  "killRollbackSuccess": 1.0,
+  "humanLiveRuns": {
+    "note": "AC2/AC3 需具名真人；本轮仅 agent-surrogate，不得伪造 humanLiveRuns 计数",
+    "dcs-coding": 0,
+    "sekb-assisted": 0,
+    "browser-supervised": 0
+  },
+  "verdict": "AC0/AC1 PASS by去年报告; AC/codex2 AC3 保持 deferred（未尝假）",
+  "nextHumanStep": "由唯一开发者跑 pnpm agent-dev:fast 接入 host-api 后，在 Settings>Agent Dev Workbench 跑真人任务并归档"
+}

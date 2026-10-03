@@ -13,7 +13,7 @@ import type {
   ExecApprovalRequestPayload as InfraExecApprovalRequestPayload,
 } from "../infra/exec-approvals.js";
 import { resolveTimerTimeoutMs } from "../shared/number-coercion.js";
-import type { ApprovalLedger } from "../agents/approval-ledger.js";
+import type { ApprovalLedger, ApprovalLedgerRow } from "../agents/approval-ledger.js";
 
 // Grace period to keep resolved entries for late awaitDecision calls
 const RESOLVED_ENTRY_GRACE_MS = 15_000;
@@ -70,15 +70,21 @@ export type ExecApprovalIdLookupResult =
 export type ExecApprovalManagerOptions = {
   /** RC-04 durable approval owner. When present it is the sole approval truth. */
   durableLedger?: ApprovalLedger;
+  /** Ledger rows this manager owns. The ledger is shared with other approval
+   *  surfaces (plugin approvals, Operator Inbox intents); restart recovery must
+   *  never adopt a row another surface governs. Defaults to every row. */
+  ownsLedgerRow?: (row: ApprovalLedgerRow) => boolean;
 };
 
 export class ExecApprovalManager<TPayload = ExecApprovalRequestPayload> {
   private pending = new Map<string, PendingEntry<TPayload>>();
   /** RC-04 durable approval owner; when present it is authoritative. */
   private readonly durableLedger?: ApprovalLedger;
+  private readonly ownsLedgerRow: (row: ApprovalLedgerRow) => boolean;
 
   constructor(options: ExecApprovalManagerOptions = {}) {
     this.durableLedger = options.durableLedger;
+    this.ownsLedgerRow = options.ownsLedgerRow ?? (() => true);
   }
 
   /** The durable ledger when configured (authority mode). */
@@ -246,6 +252,9 @@ export class ExecApprovalManager<TPayload = ExecApprovalRequestPayload> {
     let restored = 0;
     for (const row of rows) {
       if (this.pending.has(row.approval_id)) {
+        continue;
+      }
+      if (!this.ownsLedgerRow(row)) {
         continue;
       }
       if (row.expires_at_ms <= now) {

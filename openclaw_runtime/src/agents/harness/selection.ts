@@ -31,6 +31,7 @@ import {
 } from "../subagent-capabilities.js";
 import { expandToolGroups, normalizeToolName } from "../tool-policy.js";
 import { createOpenClawAgentHarness } from "./builtin-openclaw.js";
+import { runWithHarnessContextBudget } from "./context-engine-lifecycle.js";
 import { MissingAgentHarnessError } from "./errors.js";
 import { runAgentHarnessLifecycleAttempt } from "./lifecycle.js";
 import {
@@ -279,15 +280,19 @@ export async function runAgentHarnessAttempt(
     agentHarnessRuntimeOverride: params.agentHarnessRuntimeOverride,
   });
   const harness = selection.harness;
-  const attemptParams =
-    harness.id === "openclaw" ? params : applyPluginHarnessDenyAllToolPolicy(params);
   logAgentHarnessSelection(selection, {
     provider: params.provider,
     modelId: params.modelId,
     sessionKey: params.sessionKey,
     agentId: params.agentId,
   });
-  const runAttempt = () => runAgentHarnessLifecycleAttempt(harness, attemptParams);
+  const runAttempt = () =>
+    runWithHarnessContextBudget(params, harness.id !== "openclaw", (prepared) =>
+      runAgentHarnessLifecycleAttempt(
+        harness,
+        harness.id === "openclaw" ? prepared : applyPluginHarnessDenyAllToolPolicy(prepared),
+      ),
+    );
   if (harness.id === "openclaw") {
     return await runWithDiagnosticTraceContext(harnessTrace, runAttempt);
   }

@@ -67,6 +67,13 @@ export async function ensureActiveWorkspaceForSession(): Promise<WorkspaceProfil
   return active.activeWorkspace ?? null;
 }
 
+export async function clearWorkspaceActiveTopicMarker(rootPath: string | undefined): Promise<void> {
+  if (!rootPath) return;
+  try {
+    await hostApi.files.writeText(`${rootPath}/.clawx-active-topic`, '');
+  } catch { /* Legacy topic reset is best-effort, as before. */ }
+}
+
 export async function createWorkspaceScopedNewSession(): Promise<string> {
   const chatState = useChatStore.getState();
   const currentAgentId = chatState.currentAgentId || getAgentIdFromSessionKey(chatState.currentSessionKey);
@@ -87,6 +94,7 @@ export async function createWorkspaceScopedNewSession(): Promise<string> {
   });
   await inheritSessionWorkgroup(workspace, sourceSessionKey, sessionKey);
   await useWorkspacesStore.getState().fetchWorkspaces();
+  await clearWorkspaceActiveTopicMarker(workspace.rootPath);
   chatState.resetSessionView(sessionKey, { deferSessionEntry: true });
   return sessionKey;
 }
@@ -111,6 +119,7 @@ export async function createWorkspaceScopedHandoffSession(draftInput: string): P
   });
   await inheritSessionWorkgroup(workspace, sourceSessionKey, sessionKey);
   await useWorkspacesStore.getState().fetchWorkspaces();
+  await clearWorkspaceActiveTopicMarker(workspace.rootPath);
   chatState.resetSessionView(sessionKey);
   return sessionKey;
 }

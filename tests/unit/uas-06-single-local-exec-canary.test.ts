@@ -1,5 +1,7 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { createHash } from "node:crypto";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   summarizeUas06Canary,
@@ -94,10 +96,56 @@ describe("UAS-06 single local execution plane boundary", () => {
     expect(task).toContain("changing liveReady, productApproved, defaultOn, TF-0006");
   });
 
+  it("inventories both evidence channels without a local session handoff", async () => {
+    const engineering = await import("../../scripts/uas-06-canary-evidence.mts");
+    const real = await import("../../scripts/uas-06-real-canary.mts");
+    const stableRunbook = "docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md";
+    const inventories = [
+      {
+        paths: engineering.UAS06_ENGINEERING_SOURCE_EVIDENCE,
+        inventory: engineering.inventoryUas06EngineeringSources,
+      },
+      {
+        paths: real.UAS06_REAL_SOURCE_EVIDENCE,
+        inventory: real.inventoryUas06RealSources,
+      },
+    ];
+    const fixtureRoot = mkdtempSync(resolve(tmpdir(), "uas06-source-inventory-"));
+    const fixtureContent = "agent-driven source inventory fixture\n";
+    try {
+      for (const { paths } of inventories) {
+        expect(paths).toContain(stableRunbook);
+        expect(new Set(paths).size).toBe(paths.length);
+        expect(paths.some((file) => file.startsWith("docs/dev/handoffs/"))).toBe(false);
+        for (const file of paths) {
+          const destination = resolve(fixtureRoot, file);
+          mkdirSync(dirname(destination), { recursive: true });
+          writeFileSync(destination, fixtureContent);
+        }
+      }
+      expect(existsSync(resolve(fixtureRoot, "docs/dev/handoffs"))).toBe(false);
+      for (const { paths, inventory } of inventories) {
+        const result = inventory(fixtureRoot);
+        expect(result.map((entry) => entry.path)).toEqual([...paths]);
+        expect(result).toContainEqual({
+          path: stableRunbook,
+          bytes: Buffer.byteLength(fixtureContent),
+          sha256: createHash("sha256").update(fixtureContent).digest("hex"),
+        });
+      }
+      rmSync(resolve(fixtureRoot, stableRunbook));
+      for (const { inventory } of inventories) {
+        expect(() => inventory(fixtureRoot)).toThrow(stableRunbook);
+      }
+    } finally {
+      rmSync(fixtureRoot, { recursive: true, force: true });
+    }
+  });
+
   it("keeps reviewed live records in a separate, non-executing evidence channel", () => {
     const packageJson = JSON.parse(read("package.json")) as { scripts?: Record<string, string> };
     const template = JSON.parse(
-      read("artifacts/uas-06-single-local-exec-canary/live-observations.json"),
+      read("tests/fixtures/uas-06-live-observations.json"),
     );
     const script = read("scripts/uas-06-real-canary.mts");
 

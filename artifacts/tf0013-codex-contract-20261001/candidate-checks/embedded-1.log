@@ -1,0 +1,106 @@
+
+ RUN  v4.1.7 C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/openclaw_runtime
+
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.working-memory.test.ts > DCS Stage 1 embedded working-memory extension > does not register working-memory handlers when the feature flag is omitted 19ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.working-memory.test.ts > DCS Stage 1 embedded working-memory extension > dispatches only explicit high/medium working-memory envelopes to contextBlockSink 385ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.working-memory.test.ts > DCS Stage 1 embedded working-memory extension > registers a context handler that awaits assembler injection 7ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.working-memory.test.ts > DCS Stage 1 S1-B same-session tool_result serialization > merges overlapping same-session callbacks in callback-entry order without lost updates 200ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.working-memory.test.ts > DCS Stage 1 S1-B same-session tool_result serialization > context callback waits for queued tool_result writes before querying BlockStore 194ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.working-memory.test.ts > DCS Stage 1 S1-B same-session tool_result serialization > keeps the last accepted Block as merge baseline when a sink write is rejected 188ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.working-memory.test.ts > F-01 model-call boundary: tool-produced working_memory enters the next model call > re-seals per model call: second context callback injects tool-produced working_memory once, without re-injecting knowledge, and receipts carry modelCallIndex 0 then 1 281ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.working-memory.test.ts > F-01 model-call boundary: tool-produced working_memory enters the next model call > skips already-injected channels only within the same attempt: a second context callback without new tool results stays stable 88ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.knowledge.test.ts > DCS Stage 4 knowledge extension wiring > compass flag on: registers the shared context projection factory 1ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.knowledge.test.ts > DCS Stage 4 knowledge extension wiring > role-memory flag on: registers the shared context projection factory 1ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.knowledge.test.ts > DCS Stage 4 knowledge extension wiring > role-memory projection keeps an existing memory candidate in the same pass 6ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.knowledge.test.ts > DCS Stage 4 knowledge extension wiring > passes compass projection and injectionTurnId into the shared ledger 10ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.knowledge.test.ts > DCS Stage 4 knowledge extension wiring > compass flag on + sink: production inputs write a non-empty compass knowledge Block 8ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.knowledge.test.ts > DCS Stage 4 knowledge extension wiring > compass flag on + sink: no before_agent_start handler writes a knowledge Block (assembler owns production) 1ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.knowledge.test.ts > DCS Stage 4 knowledge extension wiring > finalizes Memory or VToken candidates even when every DCS projection flag is off 2ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.knowledge.test.ts > DCS Stage 4 knowledge extension wiring > finalizes knowledge, working memory, tools, CVK, VToken, and Memory in one deterministic pass 14ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.tool-registry.test.ts > DCS Stage 3 tool-registry extension wiring > shares precheck and before-start preparation without duplicate writes (killed=false) 3ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.tool-registry.test.ts > DCS Stage 3 tool-registry extension wiring > shares precheck and before-start preparation without duplicate writes (killed=true) 1ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.tool-registry.test.ts > DCS Stage 3 tool-registry extension wiring > omits the tool-registry factory when flag is off 0ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.tool-registry.test.ts > DCS Stage 3 tool-registry extension wiring > omits the tool-registry factory when no sink is provided even if flag is on 0ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.tool-registry.test.ts > DCS Stage 3 tool-registry extension wiring > omits the tool-registry factory when no toolEntries are provided even if flag is on 0ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.tool-registry.test.ts > DCS Stage 3 tool-registry extension wiring > registers a before_agent_start handler that writes a tool_registry Block 1ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.tool-registry.test.ts > DCS Stage 3 tool-registry extension wiring > best-effort: sink failure does not block agent start (handler returns undefined) 0ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.tool-registry.test.ts > DCS Stage 3 tool-registry extension wiring > omits the tool-registry factory when toolEntries is an empty array 0ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.tool-registry.test.ts > DCS Stage 3 tool-registry extension wiring > flag on + mapped real agent tools writes tool_registry with those entries 1ms
+ ✓ |agents| src/agents/embedded-agent-runner/extensions.tool-registry.test.ts > DCS Stage 3 tool-registry extension wiring > flag off does not write even when real mapped toolEntries are provided 0ms
+[[31mERROR[0m] - (starship::print): Under a 'dumb' terminal (TERM=dumb).
+
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: fit
+[tools] read failed: ENOENT: no such file or directory, access 'C:\Users\27933\AppData\Local\Temp\rc03-entry-PRBkoI\workspace\absent.txt' raw_params={"path":"absent.txt"}
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: fit 6008ms
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: oversize
+[tools] read failed: ENOENT: no such file or directory, access 'C:\Users\27933\AppData\Local\Temp\rc03-entry-YUAJUb\workspace\absent.txt' raw_params={"path":"absent.txt"}
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: oversize 3380ms
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: compass-full
+[tools] read failed: ENOENT: no such file or directory, access 'C:\Users\27933\AppData\Local\Temp\rc03-entry-zBhGDp\workspace\absent.txt' raw_params={"path":"absent.txt"}
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: compass-full 3199ms
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: kill
+[tools] read failed: ENOENT: no such file or directory, access 'C:\Users\27933\AppData\Local\Temp\rc03-entry-Hm5h8i\workspace\absent.txt' raw_params={"path":"absent.txt"}
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: kill 3181ms
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: throw
+[context-engine] Context engine "context-runtime-kit" owner=core failed during assemble: fixture assemble failure after mutation; quarantining it for this process and falling back to default engine "legacy".
+
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: throw
+[tools] read failed: ENOENT: no such file or directory, access 'C:\Users\27933\AppData\Local\Temp\rc03-entry-HaYTzO\workspace\absent.txt' raw_params={"path":"absent.txt"}
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: throw 3104ms
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: summary
+[tools] read failed: ENOENT: no such file or directory, access 'C:\Users\27933\AppData\Local\Temp\rc03-entry-OoopJP\workspace\absent.txt' raw_params={"path":"absent.txt"}
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: summary 3100ms
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: orphan
+[tools] read failed: ENOENT: no such file or directory, access 'C:\Users\27933\AppData\Local\Temp\rc03-entry-qwrBo5\workspace\absent.txt' raw_params={"path":"absent.txt"}
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: orphan 3093ms
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: passthrough
+[tools] read failed: ENOENT: no such file or directory, access 'C:\Users\27933\AppData\Local\Temp\rc03-entry-wzL7R5\workspace\absent.txt' raw_params={"path":"absent.txt"}
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: passthrough 3109ms
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: window
+[tools] read failed: ENOENT: no such file or directory, access 'C:\Users\27933\AppData\Local\Temp\rc03-entry-iBTyCT\workspace\absent.txt' raw_params={"path":"absent.txt"}
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: window 3111ms
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: normalized
+[tools] read failed: ENOENT: no such file or directory, access 'C:\Users\27933\AppData\Local\Temp\rc03-entry-Ymu3kO\workspace\absent.txt' raw_params={"path":"absent.txt"}
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: normalized 3140ms
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: source-failure
+[tools] read failed: ENOENT: no such file or directory, access 'C:\Users\27933\AppData\Local\Temp\rc03-entry-XP2HfS\workspace\absent.txt' raw_params={"path":"absent.txt"}
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > ContextEngine replacement obeys the shared budget at the real wire: source-failure 3144ms
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > plain turn: runEmbeddedAgent seals from real config and pairs v1 receipts 2748ms
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > tool loop: the follow-up model call after a tool result gets its own sealed bundle 2788ms
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > same-provider retry: a retried wire attempt is bound to its own WireReceipt/v1 3249ms
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > provider fallback: the fallback model call starts a new attempt with its own seal 4310ms
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > seal plans are released at run end, so a reused runId cannot bind a stale plan 2782ms
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > compact: the threshold compaction summarizer call is sealed and paired 2818ms
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > seal off: identical request bytes and zero v1 receipts (legacy path parity) 4070ms
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > system prompt: COMPASS output written outside the orchestrator is attributed and sealed unchanged
+[context-engine] Context engine "context-runtime-kit" owner=core failed during assemble: Invalid resource id: skill:agent-reach-login-handoff@sha256:9d66c0fd0f416ac7; quarantining it for this process and falling back to default engine "legacy".
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > system prompt: COMPASS output written outside the orchestrator is attributed and sealed unchanged 3005ms
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > COMPASS candidates reach the real wire only after the shared budget projection
+[context-engine] Context engine "context-runtime-kit" owner=core failed during assemble: Invalid resource id: skill:agent-reach-login-handoff@sha256:9d66c0fd0f416ac7; quarantining it for this process and falling back to default engine "legacy".
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > COMPASS candidates reach the real wire only after the shared budget projection 2978ms
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > fork: a child run on a transcript forked from the parent seals its own attempt identity
+[context-engine] Context engine "context-runtime-kit" owner=core failed during assemble: Invalid resource id: skill:agent-reach-login-handoff@sha256:9d66c0fd0f416ac7; quarantining it for this process and falling back to default engine "legacy".
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > fork: a child run on a transcript forked from the parent seals its own attempt identity 4419ms
+stderr | src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > handoff: the child's completion handed to the parent is a new sealed, paired parent call
+[context-engine] Context engine "context-runtime-kit" owner=core failed during assemble: Invalid resource id: skill:agent-reach-login-handoff@sha256:9d66c0fd0f416ac7; quarantining it for this process and falling back to default engine "legacy".
+
+ ✓ |agents| src/agents/rc03-entry-transitions.acceptance.test.ts > RC-03R real-entry seal and dual v1 receipts > handoff: the child's completion handed to the parent is a new sealed, paired parent call 5753ms
+
+ Test Files  4 passed (4)
+      Tests  48 passed (48)
+   Start at  02:47:16
+   Duration  91.80s (transform 14.36s, setup 553ms, import 21.10s, tests 77.91s, environment 0ms)

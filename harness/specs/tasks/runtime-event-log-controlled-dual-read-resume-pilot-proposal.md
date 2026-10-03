@@ -58,11 +58,11 @@ requiredTests:
   - rtk pnpm run typecheck
   - rtk pnpm --dir openclaw_runtime db:kysely:check
   - rtk pnpm --dir openclaw_runtime lint:kysely
-  - rtk rg -n "runtime\\.resume\\.preferEventLog|preferEventLog|cutover_enabled|event_log_authoritative|prefer_event_log" openclaw_runtime/src tests/unit harness/specs runtime-research
-  - rtk rg -n "legacyAuthoritative:\\s*false|eventLogAuthoritative:\\s*true|resume authority|event-log-first|default_on" openclaw_runtime/src tests/unit harness/specs runtime-research
+  - rtk rg -n "runtime\\.resume\\.preferEventLog|preferEventLog|cutover_enabled|event_log_authoritative|prefer_event_log" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
+  - rtk rg -n "legacyAuthoritative:\\s*false|eventLogAuthoritative:\\s*true|resume authority|event-log-first|default_on" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
   - rtk rg -n "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components electron shared openclaw_runtime/src/gateway
   - rtk rg -n "create table|create index|migration|migrate|insertInto|updateTable|deleteFrom|append\\(|appendMany\\(" openclaw_runtime/src/runtime-core tests/unit harness/specs/tasks/runtime-event-log-controlled-dual-read-resume-pilot-proposal.md
-  - rtk rg -n "createServer|listen\\(|WebSocketServer|http\\.createServer|net\\.createServer|database-service|listener|daemon|sidecar|exporter|collector|jsonl" openclaw_runtime/src/runtime-core harness/specs runtime-research
+  - rtk rg -n "createServer|listen\\(|WebSocketServer|http\\.createServer|net\\.createServer|database-service|listener|daemon|sidecar|exporter|collector|jsonl" openclaw_runtime/src/runtime-core harness/specs docs/dev/runtime-research-boundaries.md
   - rtk pnpm run comms:replay and rtk pnpm run comms:compare only if implementation touches Gateway, runtime send/receive, channel delivery, fallback, host-api, api-client, Electron IPC, renderer, or provider transport paths.
 acceptance:
   - This spec explicitly scopes phase 4 to a proposal-only package for a future limited controlled dual-read pilot.
@@ -76,7 +76,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/runtime-event-log-controlled-dual-read-resume-pilot-proposal/README.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Runtime Event Log Controlled Dual-Read Resume Pilot Proposal

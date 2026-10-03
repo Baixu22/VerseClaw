@@ -4,6 +4,8 @@
 import type { SessionEntry } from "../config/sessions.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import {
+  DEFAULT_EXEC_ASK,
+  DEFAULT_EXEC_SECURITY,
   loadExecApprovals,
   type ExecAsk,
   type ExecHost,
@@ -200,8 +202,9 @@ export function resolveExecDefaults(params: {
     elevatedRequested: params.elevatedRequested === true,
     sandboxAvailable,
   });
-  const defaultSecurity = resolved.effectiveHost === "sandbox" ? "deny" : "full";
-  const approvalDefaults =
+  const defaultSecurity = resolved.effectiveHost === "sandbox" ? "deny" : DEFAULT_EXEC_SECURITY;
+  const defaultAsk = resolved.effectiveHost === "sandbox" ? "off" : DEFAULT_EXEC_ASK;
+  const approvalResolution =
     resolved.effectiveHost === "sandbox"
       ? undefined
       : resolveExecApprovalsFromFile({
@@ -209,12 +212,13 @@ export function resolveExecDefaults(params: {
           agentId: resolvedAgentId,
           overrides: {
             security: defaultSecurity,
-            ask: "off",
+            ask: defaultAsk,
           },
-        }).agent;
+        });
+  const approvalDefaults = approvalResolution?.agent;
   const basePolicy: LayeredExecPolicy = {
     security: approvalDefaults?.security ?? defaultSecurity,
-    ask: approvalDefaults?.ask ?? "off",
+    ask: approvalDefaults?.ask ?? defaultAsk,
   };
   const layeredPolicy = applyExecPolicyLayer(
     applySessionLegacyExecPolicyLayer(
@@ -226,13 +230,19 @@ export function resolveExecDefaults(params: {
   const modePolicy = resolveExecModePolicy(layeredPolicy);
   // Approval files are safety bounds: they can only reduce security/ask from
   // config-derived policy, never grant a less restrictive effective mode.
+  const approvalSecurityBound = approvalResolution?.agentSources.security
+    ? approvalDefaults?.security
+    : undefined;
+  const approvalAskBound = approvalResolution?.agentSources.ask
+    ? approvalDefaults?.ask
+    : undefined;
   const security =
-    approvalDefaults?.security !== undefined
-      ? minSecurity(modePolicy.security, approvalDefaults.security)
+    approvalSecurityBound !== undefined
+      ? minSecurity(modePolicy.security, approvalSecurityBound)
       : modePolicy.security;
   const ask =
-    approvalDefaults?.ask !== undefined
-      ? maxAsk(modePolicy.ask, approvalDefaults.ask)
+    approvalAskBound !== undefined
+      ? maxAsk(modePolicy.ask, approvalAskBound)
       : modePolicy.ask;
   const mode =
     security === modePolicy.security && ask === modePolicy.ask

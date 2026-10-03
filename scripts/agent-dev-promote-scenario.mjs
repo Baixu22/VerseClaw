@@ -1,4 +1,5 @@
 import { existsSync } from 'node:fs';
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -172,7 +173,7 @@ test('${kebab} promoted agent-dev scenario is reachable', async ({ page }) => {
   };
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (isMainEntrypoint(import.meta.url)) {
   if (!rawArtifactPath || !rawName) {
     usage();
     process.exit(1);

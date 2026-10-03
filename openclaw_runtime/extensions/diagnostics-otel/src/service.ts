@@ -3153,6 +3153,7 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
 
       const recordExecProcessCompleted = (
         evt: Extract<DiagnosticEventPayload, { type: "exec.process.completed" }>,
+        metadata: DiagnosticEventMetadata,
       ) => {
         const attrs: Record<string, string | number> = {
           "openclaw.exec.target": evt.target,
@@ -3199,7 +3200,10 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
           spanAttrs["openclaw.exec.native_fallback"] = evt.nativeFallback;
         }
 
+        // The process effect belongs to the tool call that ran it; without a
+        // parent it would export as an unrelated root trace.
         const span = spanWithDuration("openclaw.exec", spanAttrs, evt.durationMs, {
+          parentContext: activeInternalOrTrustedContext(evt, metadata),
           endTimeMs: evt.ts,
         });
         if (evt.outcome === "failed") {
@@ -3455,7 +3459,7 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
               recordSkillUsed(evt, metadata);
               return;
             case "exec.process.completed":
-              recordExecProcessCompleted(evt);
+              recordExecProcessCompleted(evt, metadata);
               return;
             case "log.record":
               recordLogRecord?.(evt, metadata);

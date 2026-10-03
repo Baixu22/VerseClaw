@@ -402,10 +402,10 @@ export function ProvidersSettings() {
   return (
     <div data-testid="providers-settings" className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 data-testid="providers-settings-title" className="text-3xl font-serif text-foreground font-normal tracking-tight">
+        <h2 data-testid="providers-settings-title" className="text-xl font-serif text-foreground font-normal tracking-tight">
           {t('aiProviders.title', 'AI Providers')}
         </h2>
-        <Button data-testid="providers-add-button" onClick={() => setShowAddDialog(true)} className="rounded-full px-5 h-9 shadow-none font-medium text-meta">
+        <Button data-testid="providers-add-button" variant={displayProviders.length === 0 ? 'outline' : 'default'} onClick={() => setShowAddDialog(true)} className="rounded-lg px-4 h-8 shadow-none font-medium text-meta">
           <Plus className="h-4 w-4 mr-2" />
           {t('aiProviders.add')}
         </Button>
@@ -422,7 +422,7 @@ export function ProvidersSettings() {
           <p className="text-meta text-center mb-6 max-w-sm">
             {t('aiProviders.empty.desc')}
           </p>
-          <Button onClick={() => setShowAddDialog(true)} className="rounded-full px-6 h-10 bg-brand hover:bg-brand-hover text-white">
+          <Button onClick={() => setShowAddDialog(true)} className="rounded-lg px-4 h-8">
             <Plus className="h-4 w-4 mr-2" />
             {t('aiProviders.empty.cta')}
           </Button>
@@ -2051,7 +2051,7 @@ function AddProviderDialog({
                         data-testid="add-provider-oauth-login-button"
                         onClick={handleStartOAuth}
                         disabled={oauthFlowing}
-                        className="w-full rounded-full h-[42px] font-semibold bg-brand hover:bg-brand-hover text-white shadow-sm"
+                        className="w-full rounded-lg h-9 font-medium"
                       >
                         {oauthFlowing ? (
                           <><Loader2 className="h-4 w-4 mr-2 animate-spin" />{t('aiProviders.oauth.waiting')}</>
@@ -2108,7 +2108,7 @@ function AddProviderDialog({
                               />
 
                               <Button
-                                className="w-full rounded-full h-[42px] font-semibold bg-brand hover:bg-brand-hover text-white"
+                                className="w-full rounded-lg h-9 font-medium"
                                 onClick={handleSubmitManualOAuthCode}
                                 disabled={!manualCodeInput.trim()}
                               >

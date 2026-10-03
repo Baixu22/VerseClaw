@@ -1,0 +1,16 @@
+[
+  {
+    "path": "artifacts/uas-06-single-local-exec-canary/live-observations.json",
+    "sha256": "73df65b63147ac5ad52661732c61c2c69c03275d1e2ad56cc51ca97c930d9818",
+    "bytes": 68,
+    "source": "existing local historical acceptance input",
+    "resigned": false
+  },
+  {
+    "path": "artifacts/unified-agent-system/TF-0011/audit-manifest.json",
+    "sha256": "c7f487cf077ad56a182c9100bf3467dffde1c27c83fae898da3c78ca6d8ce00b",
+    "bytes": 23094,
+    "source": "existing local historical acceptance input",
+    "resigned": false
+  }
+]

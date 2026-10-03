@@ -32,7 +32,11 @@ import {
 } from '../utils/openclaw-workspace';
 import { autoInstallCliIfNeeded, generateCompletionCache, installCompletionToProfile } from '../utils/openclaw-cli';
 import { isQuitting, setQuitting } from './app-state';
-import { handleUncaughtException, handleUnhandledRejection } from './process-error-handlers';
+import {
+  handleUncaughtException,
+  handleUnhandledRejection,
+  installOutputStreamErrorHandlers,
+} from './process-error-handlers';
 import { getMacTrafficLightPosition, syncMacTrafficLightPosition } from './traffic-light-layout';
 import { getSetting } from '../utils/store';
 import { reconcileAppVersionRollback } from '../utils/app-version-rollback';
@@ -74,6 +78,8 @@ const WINDOWS_APP_USER_MODEL_ID = 'app.verse-claw.desktop';
 const isE2EMode = process.env.VERSE_CLAW_E2E === '1';
 const requestedUserDataDir = process.env.VERSE_CLAW_USER_DATA_DIR?.trim();
 const requestedRemoteDebuggingPort = resolveRemoteDebuggingLaunchPort(app);
+
+installOutputStreamErrorHandlers();
 
 if (requestedRemoteDebuggingPort != null) {
   app.commandLine.appendSwitch('remote-debugging-port', String(requestedRemoteDebuggingPort));
@@ -1258,6 +1264,17 @@ async function initialize(): Promise<void> {
     sendMainWindowEvent('chat:queue-status', data);
   });
 
+  // Runtime exec-approval boundary → renderer modal. The renderer answers through
+  // hostApi.runtimeApprovals.resolve, which re-enters the Gateway as
+  // exec.approval.resolve; nothing here decides anything on the user's behalf.
+  gatewayManager.on('approval:requested', (data) => {
+    sendMainWindowEvent('runtime-approvals:requested', data);
+  });
+
+  gatewayManager.on('approval:resolved', (data) => {
+    sendMainWindowEvent('runtime-approvals:resolved', data);
+  });
+
   gatewayManager.on('exit', (code) => {
     sendMainWindowEvent('gateway:exit', { code });
   });
@@ -1480,7 +1497,7 @@ if (gotTheLock) {
     // Fail-closed on truly fatal errors: surface a native dialog with the log
     // path BEFORE the best-effort gateway cleanup and forced exit, so the user
     // is not left with a silent quit.
-    handleUncaughtException(
+    const disposition = handleUncaughtException(
       {
         logger,
         captureTelemetry: captureTelemetryEvent,
@@ -1488,6 +1505,7 @@ if (gotTheLock) {
       },
       error,
     );
+    if (disposition === 'ignored') return;
     emergencyGatewayCleanup('Uncaught exception in main process', error);
   });
 

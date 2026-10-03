@@ -29,6 +29,12 @@ export interface TaskStep {
   parentId?: string;
   /** Extracted URL for web_fetch tool, used to render a clickable link icon. */
   url?: string;
+  /**
+   * Display-only external-write risk projection (#41). Set on a governed
+   * VerseShell exec approval row so the renderer can badge it; it never gates
+   * a decision (the exec-approval pipeline is the sole authorization surface).
+   */
+  risk?: 'external-write';
 }
 
 /**
@@ -499,6 +505,7 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
           kind: 'system',
           detail: runtimeDetail(event.message),
           depth: 1,
+          ...(event.risk === 'external-write' ? { risk: 'external-write' as const } : {}),
         });
         break;
       }

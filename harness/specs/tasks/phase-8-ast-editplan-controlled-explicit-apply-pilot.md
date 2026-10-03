@@ -103,8 +103,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-8-ast-editplan-controlled-explicit-apply-pilot/README.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 8 AST EditPlan Controlled Explicit Apply Pilot

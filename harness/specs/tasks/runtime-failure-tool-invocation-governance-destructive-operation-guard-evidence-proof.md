@@ -73,11 +73,7 @@ forbiddenPatterns:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-destructive-operation-guard-evidence-proof/README.md
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-destructive-operation-guard-evidence-proof/validation-plan.md
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-destructive-operation-guard-evidence-proof/synthesis.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/schema-decision-log.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Runtime Failure Tool Invocation Governance Destructive Operation Guard Evidence Proof

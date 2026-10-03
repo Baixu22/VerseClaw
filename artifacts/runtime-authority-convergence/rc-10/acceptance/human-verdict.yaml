@@ -1,0 +1,17 @@
+schema: runtime-authority-convergence-human-verdict/v1
+driven_by: agent
+actor: "rc10-agent"
+candidate_sha: "a1bd8d8cc3c8463bd787f6729f5ff6a2a7407240"
+manifest_sha256: "361460fafa66e52cdd6b08287acff8924b70902a4dab3ee502b5bbfa0aaf7fc1"
+engineering_report_sha256: "f92c0ea7be83a04996ea99c0e95e05b6e09b9b6143af9f79a5c04872ba7a0443"
+verdict: accepted
+accepted_scenarios:
+  - H-01
+  - H-02
+  - H-03
+  - H-04
+  - H-05
+  - H-06
+failed_scenarios: []
+notes: "Agent-driven H-01..H-06 on candidate C2 (a1bd8d8cc). H-01 ran formally against the owner-provided local endpoint (glm-5.3-flash): task completed, workload test exit 1 -> 0, 10 context + 10 wire receipts in 5 pairs, 0 credential-scan hits. H-02..H-06 ran formally as OPERATOR-ALL: Cron -> durable Inbox approval -> one effect and one receipt; a real IRC channel round trip; restart while approval pending; restart after the effect completed; deny/cancel producing no effect and fork/handoff preserving the prior result without replay. All five scenarios pass with empty failures. Evidence archived under artifacts/runtime-authority-convergence/rc-10/acceptance/{H-01,OPERATOR-ALL,  H-01-20260927}."
+decided_at: "2026-09-29T19:05:00.609Z"

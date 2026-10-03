@@ -81,7 +81,7 @@ describe('Context engine registry default-on CRK resolution', () => {
         },
       },
     });
-    const engine = await resolveContextEngine(parsed);
+    const engine = await resolveContextEngine(parsed as never);
 
     expect(engine.info.id).toBe('legacy');
   });
@@ -104,7 +104,7 @@ describe('Context engine registry default-on CRK resolution', () => {
         },
       },
     });
-    const engine = await resolveContextEngine(parsed);
+    const engine = await resolveContextEngine(parsed as never);
 
     const assembled = await engine.assemble({
       sessionId: 'session-status',

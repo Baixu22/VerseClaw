@@ -1,4 +1,4 @@
-import type { JsonSchema, OperationCatalogEntry } from './types';
+import type { JsonSchema, OperationCatalogEntry } from './types.js';
 
 export interface ClawXFacadeOperation {
   name: 'read_file' | 'search_content' | 'run_command' | 'result_query';

@@ -94,7 +94,7 @@ describe('RC-06D Task Loop -> TaskFlow read-only projection', () => {
     // never collapses a real cancel into blocked/waiting.
     expect(cancelled.status).toBe('cancelled');
     const store = new TaskFlowCasStore(options().database);
-    const row = store.getById('taskloop:taskloop-1');
+    const row = store.getById('task-loop:taskloop-1');
     expect(row?.status).toBe('cancelled');
     expect(row?.status).not.toBe('blocked');
     expect(row?.status).not.toBe('waiting');
@@ -113,7 +113,7 @@ describe('RC-06D Task Loop -> TaskFlow read-only projection', () => {
     expect(recovery.recovered).toBe(true);
     expect(recovery.status).toBe('cancelled');
     const store = new TaskFlowCasStore(options().database);
-    expect(store.getById('taskloop:taskloop-1')?.ended_at).not.toBeNull();
+    expect(store.getById('task-loop:taskloop-1')?.ended_at).not.toBeNull();
   });
 
   it('waiting (manual review) and cancel are distinguishable states', () => {
@@ -187,7 +187,7 @@ describe('RC-06D Task Loop -> TaskFlow read-only projection', () => {
     expect(result.projected).toBe(false);
     expect(result.skippedReason).toBe('flag-off');
     const store = new TaskFlowCasStore(options().database);
-    expect(store.getById('taskloop:taskloop-1')).toBeUndefined();
+    expect(store.getById('task-loop:taskloop-1')).toBeUndefined();
   });
 
   it('checkpoint material is retained separately; the projection never executes effects', () => {
@@ -198,7 +198,7 @@ describe('RC-06D Task Loop -> TaskFlow read-only projection', () => {
     expect(result.projected).toBe(true);
     // The checkpoint ref is recorded as state, not executed.
     const store = new TaskFlowCasStore(options().database);
-    const row = store.getById('taskloop:taskloop-1');
+    const row = store.getById('task-loop:taskloop-1');
     expect(row?.state_json).toContain('checkpoint:taskloop-1:1');
   });
 });

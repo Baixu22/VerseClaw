@@ -56,7 +56,7 @@ requiredTests:
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/line-c-grounding-default-on-diagnostics-only-implementation.md --no-diff
   - node node_modules/vitest/vitest.mjs run tests/unit/runtime-grounding-default-on-diagnostics.test.ts tests/unit/runtime-grounding-shadow-consumers.test.ts tests/unit/runtime-grounding-authority-effectiveness.test.ts
   - node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - git diff --check -- harness/specs/tasks/line-c-grounding-default-on-diagnostics-only-implementation.md openclaw_runtime/src/runtime-core/grounding.ts openclaw_runtime/src/runtime-core/grounding-shadow-consumers.ts tests/unit/runtime-grounding-default-on-diagnostics.test.ts runtime-research/handoffs/line-c-grounding-default-on-diagnostics-only-implementation/README.md runtime-research/handoffs/line-c-grounding-default-on-diagnostics-only-implementation/implementation-synthesis.md runtime-research/agent-runtime-index.md
+  - git diff --check -- harness/specs/tasks/line-c-grounding-default-on-diagnostics-only-implementation.md openclaw_runtime/src/runtime-core/grounding.ts openclaw_runtime/src/runtime-core/grounding-shadow-consumers.ts tests/unit/runtime-grounding-default-on-diagnostics.test.ts docs/dev/runtime-research-boundaries.md
   - rg boundary scan for default-on/runtime authority/prompt/model-message/provider ordering/memory promotion/fact acceptance/episode write/persistence/database/sidecar/cache/exporter/listener/service/raw prompt/raw trace/full payload/tool args/stdout/stderr/env/secret/api key/auth header/traceparent/tracestate/baggage/includeRaw/includeUntrusted/patch apply/workspace edit/symbol mutation
 acceptance:
   - The new implementation spec is accepted and is distinct from the Phase G proposal-only spec.
@@ -67,9 +67,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-c-grounding-default-on-diagnostics-only-implementation/README.md
-    - runtime-research/handoffs/line-c-grounding-default-on-diagnostics-only-implementation/implementation-synthesis.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 nextPhaseEntry:
   Allowed next phase:
     - Wider product/runtime integration may be proposed only after this metadata-only implementation has accepted synthesis and evidence.

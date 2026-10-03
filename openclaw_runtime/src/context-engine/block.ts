@@ -1,4 +1,5 @@
 import type { RuntimeTaskStatus } from "../runtime-core/types.js";
+import type { RuntimeLineage } from "../runtime-core/lineage.js";
 
 export type BlockType =
   | "persona"
@@ -86,6 +87,8 @@ export interface HandoffPack {
    * pre-fetch), not injected verbatim into the child prompt.
    */
   entity_snapshot?: EntitySnapshot;
+  /** Optional Mission/Task Loop correlation metadata; absent on legacy packs. */
+  lineage?: RuntimeLineage;
 }
 
 /**
@@ -151,6 +154,12 @@ export interface BlockEntityQuery extends BlockQuery {
   entities: string[];
 }
 
+export interface ArchivedBlockRecallQuery {
+  requester_session_id: string;
+  session_id?: string;
+  block_ids: string[];
+}
+
 export interface BlockStoreStats {
   source_system?: SourceSystem;
   total_blocks: number;
@@ -166,12 +175,11 @@ export interface BlockDeleteResult {
 }
 
 export interface BlockStoreApi {
-  upsert(
-    block: ContextBlock,
-    admission?: BlockAdmissionContext,
-  ): Promise<BlockWriteResult>;
+  upsert(block: ContextBlock, admission?: BlockAdmissionContext): Promise<BlockWriteResult>;
   query(params: BlockQuery): Promise<ContextBlock[]>;
   queryByEntity(params: BlockEntityQuery): Promise<ContextBlock[]>;
+  /** Lifecycle-only upsert used by explicit context_read recall/page-in. */
+  recallArchivedBlocks?(params: ArchivedBlockRecallQuery): Promise<ContextBlock[]>;
   invalidate(block_id: string): Promise<void>;
   /** KS-02 owner API: enumerate every row owned by a source ref or session id. */
   enumerateBySource(sourceRef: string): Promise<ContextBlock[]>;

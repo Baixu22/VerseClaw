@@ -343,7 +343,7 @@ describe('Remote Forge Main read adapter', () => {
       'malformed.txt': { content: 'not-base64!', encoding: 'base64', size: 4 },
       'large.txt': { content: 'YQ==', encoding: 'base64', size: REMOTE_FORGE_READ_LIMITS.maxDecodedContentBytes + 1 },
     };
-    const fetchImpl = fixtureFetch(async (url) => {
+    const fetchImpl = (fixtureFetch as unknown as (fn: (url: URL) => Promise<unknown>) => typeof fetch)(async (url) => {
       if (!url.pathname.includes('/contents/')) return undefined;
       active += 1;
       maxActive = Math.max(maxActive, active);
@@ -608,7 +608,7 @@ describe('Remote Forge Main read adapter', () => {
     const approvals = approvalHarness();
     const fetchImpl = fixtureFetch((url, init) => (
       url.pathname.endsWith('/pulls/7/reviews') && init.method === 'POST'
-        ? json({ message: 'Authorization Bearer hidden-response' }, status, headers)
+        ? json({ message: 'Authorization Bearer hidden-response' }, status, headers as Record<string, string>)
         : undefined
     ));
     const api = createMutationApi(fetchImpl, approvals);

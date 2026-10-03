@@ -1,5 +1,6 @@
 import electronBinaryPath from 'electron';
-import { _electron as electron, expect, test as base, type ElectronApplication, type Page } from '@playwright/test';
+import { spawn } from 'node:child_process';
+import { _electron as electron, expect, test as base, type ElectronApplication, type Locator, type Page } from '@playwright/test';
 import { access, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
@@ -31,6 +32,20 @@ type ElectronFixtures = {
   launchElectronApp: (options?: LaunchElectronOptions) => Promise<ElectronApplication>;
 };
 
+type AgentDevTestWindow = Window & {
+  __CLAWX_TEST__?: {
+    getSnapshot?: () => unknown;
+    setHostApiReplay?: (config: unknown) => void;
+    hostApiCalls?: unknown[];
+  };
+};
+
+function envWithoutUndefined(env: Record<string, string | undefined>): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(env).filter((entry): entry is [string, string] => entry[1] !== undefined),
+  );
+}
+
 const repoRoot = resolve(process.cwd());
 const electronEntry = join(repoRoot, 'dist-electron/main/index.js');
 const rendererEntryUrl = pathToFileURL(join(repoRoot, 'dist', 'index.html')).toString();
@@ -61,7 +76,12 @@ async function assertRuntimeDistFresh(): Promise<void> {
       const full = join(dir, entry.name);
       if (entry.isDirectory()) {
         await walk(full);
-      } else if (entry.name.endsWith('.ts') || entry.name.endsWith('.js')) {
+      } else if (
+        (entry.name.endsWith('.ts') || entry.name.endsWith('.js')) &&
+        // Test/spec files are never inputs to the runtime bundle (entry.js), so a
+        // test edited after the last build must not report the dist as stale.
+        !/\.(test|spec)\.[cm]?[jt]s$/u.test(entry.name)
+      ) {
         const st = await stat(full);
         if (st.mtimeMs > distMtimeMs) stale.push(full);
       }
@@ -117,7 +137,11 @@ async function getStableWindow(app: ElectronApplication): Promise<Page> {
         await currentWindow.waitForLoadState('domcontentloaded', { timeout: 2_000 });
         return currentWindow;
       } catch (error) {
-        if (!String(error).includes('has been closed')) {
+        // A window that is not ready yet is expected while the app boots: this
+        // helper's contract is to poll until the deadline, so a slow load must
+        // not abort the loop. Only a window that actually closed is terminal.
+        const message = String(error);
+        if (!message.includes('has been closed') && !message.includes('Timeout')) {
           throw error;
         }
       }
@@ -131,6 +155,127 @@ async function getStableWindow(app: ElectronApplication): Promise<Page> {
   }
 
   throw new Error('No stable Electron window became available');
+}
+
+/**
+ * The sidebar's section actions are hover-revealed: `.section-heading-actions`
+ * starts at `opacity: 0; pointer-events: none` and only flips to `auto` while
+ * its heading is hovered. Clicking one of those 22x22 slots straight after a
+ * bare `hover()` can race that flip, because the click's hit test resolves
+ * `pointer-events` at the moment it runs and then reports the heading as
+ * intercepting the pointer. Hover the heading and wait for the slot to actually
+ * accept pointer events before touching it.
+ */
+export async function revealSectionHeadingActions(page: Page, index = 0): Promise<void> {
+  const heading = page.locator('.section-heading').nth(index);
+  await heading.hover();
+  await expect(heading.locator('.section-heading-actions')).toHaveCSS('pointer-events', 'auto');
+}
+
+/**
+ * Reveals the hover-only action slot that owns `control`.
+ *
+ * The sidebar has several `.section-heading` blocks (the nav sections and the
+ * conversations/projects section), each with its own hover-revealed actions, and
+ * only one is revealed at a time. Revealing by index therefore only works when the
+ * caller happens to know which heading owns the control: four specs clicked
+ * `sidebar-session-organize` -- which lives in the conversations/projects heading,
+ * not the first one -- after revealing index 0, so the slot kept
+ * `pointer-events: none` and the click died on "<div class=\"section-heading\">
+ * intercepts pointer events" once the sidebar had more than one heading. Resolve the
+ * owning heading from the control itself instead.
+ */
+export async function revealSectionHeadingActionsFor(control: Locator): Promise<void> {
+  // Hover the heading that owns the control, not the control itself: the slot
+  // starts at `pointer-events: none`, and hovering an element that cannot receive
+  // pointer events blocks until Playwright's own action timeout.
+  const heading = control.locator(
+    'xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " section-heading ")][1]',
+  );
+  await expect(async () => {
+    await heading.hover();
+    await expect(control).toHaveCSS('pointer-events', 'auto', { timeout: 2_000 });
+  }).toPass({ timeout: 30_000 });
+}
+
+/**
+ * Hover a row and wait until a hover-revealed control inside it actually
+ * appears. `row.hover()` on its own is not enough: the sidebar re-renders as its
+ * data settles and workers:1 keeps the pointer between tests, so the hover can be
+ * lost or never register, leaving the control at a zero-size box while the click
+ * waits out its whole 30s budget. Retry the hover under a bounded budget so a
+ * genuinely broken reveal still fails.
+ */
+export async function hoverUntilVisible(
+  row: Locator,
+  control: Locator,
+  timeoutMs = 30_000,
+): Promise<void> {
+  await expect(async () => {
+    await row.hover();
+    await expect(control).toBeVisible({ timeout: 2_000 });
+  }).toPass({ timeout: timeoutMs });
+}
+
+/**
+ * Electron clamps `page.setViewportSize()` to the real BrowserWindow, so a spec
+ * that needs a reproducible capture width has to resize the window itself.
+ *
+ * `setContentSize` is deliberate: it sizes the web contents area (what a
+ * screenshot of a page-level element actually sees) instead of the outer frame,
+ * so the result does not drift with the platform's title-bar metrics. The
+ * window is created with `minWidth: 960` / `minHeight: 600`, so requests below
+ * those bounds are clamped by Electron — the returned rect reports the truth.
+ */
+async function pinWindowContentSize(
+  app: ElectronApplication,
+  size: { width: number; height: number },
+): Promise<{ width: number; height: number }> {
+  return await app.evaluate(async ({ BrowserWindow }, target) => {
+    const win = BrowserWindow.getAllWindows()[0];
+    if (!win) throw new Error('pinWindowContentSize: no BrowserWindow available');
+    if (win.isFullScreen()) win.setFullScreen(false);
+    if (win.isMaximized()) win.unmaximize();
+    win.setContentSize(target.width, target.height);
+    const [width, height] = win.getContentSize();
+    return { width, height };
+  }, size);
+}
+
+/**
+ * Kills the Electron process and every descendant it spawned.
+ *
+ * Closing only the Electron main process leaves its descendants alive -- in
+ * particular the Gateway child, which inherits the stdio pipes Playwright created
+ * for the app. Node keeps a handle open until every writer closes it, so one
+ * surviving descendant stops the worker from ever exiting; Playwright then reports
+ * "Worker teardown timeout of 90000ms exceeded ... 1 error was not a part of any
+ * test" even though every test passed. Descendants also keep hundreds of MB
+ * resident for the rest of the suite, which is when Electron's native fatal CHECK
+ * (KERNELBASE 0x80000003 -> 0xC0000409) fires.
+ *
+ * Best-effort by design: teardown must never throw or hang.
+ */
+async function killElectronProcessTree(app: ElectronApplication): Promise<void> {
+  if (process.platform !== 'win32') return;
+  let pid: number | undefined;
+  try {
+    pid = app.process().pid;
+  } catch {
+    return;
+  }
+  if (!pid) return;
+  await new Promise<void>((resolve) => {
+    try {
+      const killer = spawn('taskkill', ['/F', '/T', '/PID', String(pid)], { stdio: 'ignore' });
+      const done = () => resolve();
+      killer.on('close', done);
+      killer.on('error', done);
+      setTimeout(done, 5_000).unref();
+    } catch {
+      resolve();
+    }
+  });
 }
 
 async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Promise<void> {
@@ -153,12 +298,22 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Pr
   ]);
 
   if (closed) {
+    await killElectronProcessTree(app);
     return;
   }
 
+  // Bound `app.close()` too. It was awaited without a limit, so when a real
+  // gateway child refused to quit the fixture hung here until Playwright's
+  // 90-second worker-teardown timeout fired and blamed the test that had just
+  // finished -- runtime-launch-contract-fp-p0.spec.ts:271 passed every
+  // assertion (its [fp-p0-02-config-kill] line was logged) and was still
+  // reported as a 7.0m failure.
   try {
-    await app.close();
-    return;
+    const closedByPlaywright = await Promise.race([
+      app.close().then(() => true, () => false),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), timeoutMs)),
+    ]);
+    if (closedByPlaywright) return;
   } catch {
     // Fall through to process kill if Playwright cannot close the app cleanly.
   }
@@ -168,6 +323,8 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Pr
   } catch {
     // Ignore process kill failures during e2e teardown.
   }
+
+  await killElectronProcessTree(app);
 }
 
 async function seedE2eSettings(userDataDir: string, theme?: LaunchElectronOptions['theme']): Promise<void> {
@@ -215,8 +372,8 @@ async function launchVerseClawElectron(
       DISPLAY: process.env.DISPLAY || ':1',
     }
     : {};
-  return await electron.launch({
-    executablePath: electronBinaryPath,
+  const app = await electron.launch({
+    executablePath: String(electronBinaryPath),
     args: [
       '--lang=en-US',
       '--disable-gpu',
@@ -226,7 +383,7 @@ async function launchVerseClawElectron(
       '--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization',
       electronEntry,
     ],
-    env: {
+    env: envWithoutUndefined({
       ...process.env,
       ...electronEnv,
       ...options.env,
@@ -253,9 +410,24 @@ async function launchVerseClawElectron(
       ...(options.skipSetup ? { VERSE_CLAW_E2E_SKIP_SETUP: '1' } : {}),
       VERSE_CLAW_PORT_CLAWX_HOST_API: String(hostApiPort),
       VERSE_CLAW_REMOTE_DEBUGGING_PORT: String(cdpPort),
-    },
+    }),
     timeout: 90_000,
   });
+  /*
+   * The app's own output is otherwise swallowed, which makes a stalled turn
+   * unattributable from the test side: the composer just goes idle and the
+   * runtime's reason never leaves the process. Opt in with CLAWX_E2E_APP_LOGS=1
+   * when diagnosing one.
+   */
+  if (process.env.CLAWX_E2E_APP_LOGS === '1') {
+    app.process().stdout?.on('data', (chunk: Buffer) => {
+      process.stderr.write(`[app:out] ${String(chunk)}`);
+    });
+    app.process().stderr?.on('data', (chunk: Buffer) => {
+      process.stderr.write(`[app:err] ${String(chunk)}`);
+    });
+  }
+  return app;
 }
 
 export const test = base.extend<ElectronFixtures>({
@@ -281,13 +453,33 @@ export const test = base.extend<ElectronFixtures>({
   },
 
   launchElectronApp: async ({ homeDir, userDataDir }, provideLauncher) => {
-    await provideLauncher(async (options?: LaunchElectronOptions) => {
-      // Most production-path specs use this explicit launcher instead of the
-      // `electronApp` fixture. Keep the FP-P3-05 stale-runtime guard on both
-      // paths so a direct launch cannot silently test an older child bundle.
-      await assertRuntimeDistFresh();
-      return await launchVerseClawElectron(homeDir, userDataDir, options);
-    });
+    // Specs that launch through this helper are NOT covered by the `electronApp`
+    // fixture's auto-close, and three specs close fewer apps than they launch
+    // (provider-lifecycle 2/1, runtime-approval-bridge 2/0, system-maturity-p45
+    // 5/0). A leaked instance keeps the worker's handles open -- Playwright then
+    // reports "Worker teardown timeout of 90000ms exceeded ... 1 error was not a
+    // part of any test" after every test passed -- and holds a few hundred MB for
+    // the rest of the suite, which is also when Electron's native fatal CHECK
+    // fires. Track every launch here and close whatever is still running.
+    const launched: Array<{ app: ElectronApplication; closed: boolean }> = [];
+    try {
+      await provideLauncher(async (options?: LaunchElectronOptions) => {
+        // Most production-path specs use this explicit launcher instead of the
+        // `electronApp` fixture. Keep the FP-P3-05 stale-runtime guard on both
+        // paths so a direct launch cannot silently test an older child bundle.
+        await assertRuntimeDistFresh();
+        const app = await launchVerseClawElectron(homeDir, userDataDir, options);
+        const entry = { app, closed: false };
+        app.once('close', () => {
+          entry.closed = true;
+        });
+        launched.push(entry);
+        return app;
+      });
+    } finally {
+      const leaked = launched.filter((entry) => !entry.closed);
+      await Promise.all(leaked.map((entry) => closeElectronApp(entry.app).catch(() => undefined)));
+    }
   },
 
   electronApp: async ({ launchElectronApp }, provideElectronApp) => {
@@ -321,6 +513,7 @@ export async function completeSetup(page: Page): Promise<void> {
 
 export { closeElectronApp };
 export { getStableWindow };
+export { pinWindowContentSize };
 export { expect };
 
 export async function openAgentDevScenario(
@@ -345,7 +538,7 @@ export async function openAgentDevScenario(
 }
 
 export async function getAgentDevSnapshot(page: Page): Promise<unknown> {
-  return page.evaluate(() => window.__CLAWX_TEST__?.getSnapshot?.() ?? null);
+  return page.evaluate(() => (window as AgentDevTestWindow).__CLAWX_TEST__?.getSnapshot?.() ?? null);
 }
 
 export async function configureAgentDevHostReplay(
@@ -356,12 +549,12 @@ export async function configureAgentDevHostReplay(
   },
 ): Promise<void> {
   await page.evaluate((replayConfig) => {
-    window.__CLAWX_TEST__?.setHostApiReplay(replayConfig);
+    (window as AgentDevTestWindow).__CLAWX_TEST__?.setHostApiReplay?.(replayConfig);
   }, config);
 }
 
 export async function getAgentDevHostCalls(page: Page): Promise<unknown[]> {
-  return page.evaluate(() => window.__CLAWX_TEST__?.hostApiCalls ?? []);
+  return page.evaluate(() => (window as AgentDevTestWindow).__CLAWX_TEST__?.hostApiCalls ?? []);
 }
 
 export async function installIpcMocks(
@@ -564,6 +757,19 @@ export async function installIpcMocks(
                 return respond(request.id, unwrapLegacyResponse(mockConfig.hostApi[key]));
               }
             }
+          }
+
+          // Mocked UI scenarios must not depend on the developer machine's free
+          // space. Explicit system.info fixtures above can still test warnings.
+          if (request?.module === 'system' && request.action === 'info') {
+            return respond(request.id, {
+              success: true,
+              ram: { totalBytes: 16 * 1024 ** 3, freeBytes: 8 * 1024 ** 3, appUsedBytes: 256 * 1024 ** 2 },
+              disk: [{ root: '/', totalBytes: 100 * 1024 ** 3, freeBytes: 50 * 1024 ** 3 }],
+              cpu: { loadPercent: 10, cores: 4, available: true },
+              platform: process.platform,
+              arch: process.arch,
+            });
           }
 
           if (request?.module === 'files') {

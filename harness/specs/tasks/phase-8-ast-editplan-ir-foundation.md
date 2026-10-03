@@ -46,26 +46,20 @@ rollback:
 requiredTests:
   - pnpm --config.verify-deps-before-run=false harness context --spec harness/specs/tasks/phase-8-ast-editplan-ir-foundation.md
   - pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/phase-8-ast-editplan-ir-foundation.md --no-diff
-  - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-ast-edit-plan-foundation.test.ts tests/unit/runtime-ast-patch-planner-route-correction.test.ts tests/unit/runtime-ast-patch-planner-contracts.test.ts tests/unit/runtime-ast-patch-planner-readonly-scan.test.ts tests/unit/runtime-ast-patch-planner-resume-drift.test.ts
+  - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-ast-edit-plan-foundation.test.ts tests/unit/runtime-ast-edit-plan-evidence-verifier-readiness.test.ts tests/unit/runtime-ast-patch-planner-contracts.test.ts tests/unit/runtime-ast-patch-planner-readonly-scan.test.ts tests/unit/runtime-ast-patch-planner-resume-drift.test.ts
   - pnpm --config.verify-deps-before-run=false run typecheck
 acceptance:
   - Runtime-core defines EditPlan IR fields for schemaVersion, planId, engineId, source/mode, sourceScope, targetFiles, sourceHashes, match evidence including AST kind/range/excerpt hash, ordered edit operations, conflict diagnostics, preview diff metadata, verifier requirements, applyEligibility, authority boundary, and evidenceRefs.
   - A conversion helper maps scanAstPatchPlannerReadonly results into EditPlan IR without changing scan behavior.
   - applyEligibility is descriptive only and supports ineligible, review_required, and eligible_after_verification.
   - Conversion can represent unfixable rules, disabled preview diff, and overlap/review_required diagnostics.
-  - The route-correction sentinel still passes.
+  - The EditPlan and verifier-readiness behavior regressions preserve structured planning without apply or completion authority.
   - Agent runtime index records this Phase 1 foundation without widening authority.
   - Boundary scans show no unexplained apply/write/workspace edit/symbol mutation/runtime integration authority.
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-8-ast-patch-planner-route-correction/README.md
-    - runtime-research/handoffs/phase-8-ast-patch-planner-route-correction/short-term-foundation.md
-    - runtime-research/handoffs/phase-8-ast-patch-planner-route-correction/next-phase-prompt.md
-    - runtime-research/ast-grep/rule-structure.md
-    - runtime-research/ast-grep/patch-flow.md
-    - runtime-research/ast-grep/clawx-mapping.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 8 AST EditPlan IR Foundation

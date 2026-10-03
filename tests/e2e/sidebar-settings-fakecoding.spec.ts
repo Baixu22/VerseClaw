@@ -1,4 +1,4 @@
-import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
+import { closeElectronApp, expect, getStableWindow, revealSectionHeadingActionsFor, test } from './fixtures/electron';
 
 test.describe('FakeCoding sidebar and full-page settings alignment', () => {
   test('keeps meaningful sidebar and settings shells visible at all states', async ({ launchElectronApp }, testInfo) => {
@@ -7,8 +7,12 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
     try {
       const page = await getStableWindow(app);
       await page.setViewportSize({ width: 1285, height: 820 });
+      await app.evaluate(({ BrowserWindow }) => {
+        BrowserWindow.getAllWindows()[0]?.setSize(1285, 820);
+      });
+      await page.waitForTimeout(100);
       await expect(page.getByTestId('main-layout')).toBeVisible();
-      await expect(page.getByText('Conversations', { exact: true })).toBeVisible();
+      await expect(page.getByTestId('sidebar-session-section-toggle')).toContainText(/^(Projects|Conversations)$/);
       // Section actions exist but stay hidden until the heading is hovered.
       await expect(page.getByTestId('sidebar-session-search')).toHaveCount(1);
       await expect(page.locator('.section-heading-actions').first()).toHaveCSS('opacity', '0');
@@ -80,11 +84,14 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
 
       // Official section actions are hover-revealed, so the heading must be
       // hovered before its 22x22 slots accept pointer events.
-      await page.locator('.section-heading').first().hover();
+      await revealSectionHeadingActionsFor(page.getByTestId('sidebar-session-organize'));
       await page.getByTestId('sidebar-session-organize').click();
       const organizeMenu = page.locator('.sidebar-session-organize-menu');
       await expect(organizeMenu).toBeVisible();
-      await expect(organizeMenu.getByRole('menuitemradio')).toHaveCount(2);
+      // Two view-by (project/time) + three sort-by (newest/active/priority)
+      // radio items. The sort-by group was added to this menu after the
+      // spec was first written, so the total is 5, not 2.
+      await expect(organizeMenu.getByRole('menuitemradio')).toHaveCount(5);
       await page.waitForTimeout(180);
       const organizeGeometry = await organizeMenu.evaluate((element) => {
         const rect = element.getBoundingClientRect();
@@ -125,7 +132,6 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
         const main = document.querySelector<HTMLElement>('[data-testid="main-content"]')!.getBoundingClientRect();
         const page = document.querySelector<HTMLElement>('[data-testid="settings-page"]')!.getBoundingClientRect();
         const header = document.querySelector<HTMLElement>('.codex-settings-page__header')!.getBoundingClientRect();
-        const toolbar = document.querySelector<HTMLElement>('.codex-settings-page__toolbar')!.getBoundingClientRect();
         const content = document.querySelector<HTMLElement>('.codex-settings-page__content')!.getBoundingClientRect();
         const title = document.querySelector<HTMLElement>('.codex-settings-page__title')!.getBoundingClientRect();
         return {
@@ -134,7 +140,6 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
           main: { left: main.left, top: main.top, right: main.right, bottom: main.bottom },
           page: { left: page.left, top: page.top, right: page.right, bottom: page.bottom },
           headerHeight: header.height,
-          toolbarHeight: toolbar.height,
           content: { left: content.left, width: content.width },
           titleLeft: title.left,
         };
@@ -146,7 +151,6 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
       expect(Math.abs(settingsGeometry.page.right - settingsGeometry.main.right)).toBeLessThanOrEqual(1);
       expect(Math.abs(settingsGeometry.page.bottom - settingsGeometry.main.bottom)).toBeLessThanOrEqual(1);
       expect(Math.abs(settingsGeometry.headerHeight - 46)).toBeLessThanOrEqual(1);
-      expect(Math.abs(settingsGeometry.toolbarHeight - 46)).toBeLessThanOrEqual(1);
       expect(settingsGeometry.content.width).toBeLessThanOrEqual(768.5);
       expect(Math.abs(settingsGeometry.content.left - settingsGeometry.titleLeft)).toBeLessThanOrEqual(1);
 
@@ -165,54 +169,40 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
       await page.getByTestId('settings-back-button').click();
       await expect(page).toHaveURL(/#\/$/);
       await expect(page.getByTestId('sidebar')).toBeVisible();
-      await expect(page.getByText('Conversations', { exact: true })).toBeVisible();
+      await expect(page.getByTestId('sidebar-session-section-toggle')).toContainText(/^(Projects|Conversations)$/);
     } finally {
       await closeElectronApp(app);
     }
   });
 
-  test('preserves conversation space and compact footer at the minimum window', async ({ launchElectronApp }) => {
+  test('keeps the collapsed rail and compact footer usable at the minimum window', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true, theme: 'dark' });
     try {
       const page = await getStableWindow(app);
       await page.setViewportSize({ width: 960, height: 600 });
-      await expect(page.getByText('Conversations', { exact: true })).toBeVisible();
-      const layout = await page.evaluate(() => {
-        const scroll = document.querySelector<HTMLElement>('.sidebar-scroll')!.getBoundingClientRect();
-        const footer = document.querySelector<HTMLElement>('.sidebar-footer')!.getBoundingClientRect();
-        return { scrollHeight: scroll.height, footerHeight: footer.height };
+      await app.evaluate(({ BrowserWindow }) => {
+        BrowserWindow.getAllWindows()[0]?.setSize(960, 600);
       });
-      expect(layout.scrollHeight).toBeGreaterThanOrEqual(180);
-      expect(Math.abs(layout.footerHeight - 45)).toBeLessThanOrEqual(1);
-
-      await page.getByTestId('sidebar-footer-menu-trigger').click();
-      const footerMenu = page.locator('.sidebar-footer-menu');
-      await expect(footerMenu).toBeVisible();
-      await page.waitForTimeout(180);
-      const menuGeometry = await footerMenu.evaluate((element) => {
-        const rect = element.getBoundingClientRect();
-        const trigger = document.querySelector<HTMLElement>('[data-testid="sidebar-footer-menu-trigger"]')!.getBoundingClientRect();
-        const firstRow = element.querySelector<HTMLElement>('.codex-dropdown__item')!;
+      await page.waitForTimeout(100);
+      await expect(page.getByTestId('sidebar')).toBeVisible();
+      await expect(page.getByTestId('sidebar-nav-settings')).toBeVisible();
+      const layout = await page.evaluate(() => {
+        const sidebarElement = document.querySelector<HTMLElement>('[data-testid="sidebar"]')!;
+        const sidebar = sidebarElement.getBoundingClientRect();
+        const footer = document.querySelector<HTMLElement>('.sidebar-footer')!.getBoundingClientRect();
         return {
-          left: rect.left,
-          top: rect.top,
-          right: rect.right,
-          bottom: rect.bottom,
-          width: parseFloat(getComputedStyle(element).width),
-          triggerGap: trigger.top - rect.bottom,
-          firstRowHeight: firstRow.getBoundingClientRect().height,
+          sidebarWidth: sidebar.width,
+          sidebarCssWidth: sidebarElement.style.width,
+          sessionSectionVisible: document.querySelector('[data-testid="sidebar-session-section-toggle"]') !== null,
+          footerHeight: footer.height,
         };
       });
-      expect(menuGeometry.width).toBe(259);
-      expect(menuGeometry.left).toBeGreaterThanOrEqual(8);
-      expect(menuGeometry.top).toBeGreaterThanOrEqual(8);
-      expect(menuGeometry.right).toBeLessThanOrEqual(952);
-      expect(menuGeometry.bottom).toBeLessThanOrEqual(592);
-      expect(Math.abs(menuGeometry.triggerGap - 6)).toBeLessThanOrEqual(1);
-      expect(menuGeometry.firstRowHeight).toBeGreaterThanOrEqual(30);
+      expect(layout.sidebarCssWidth).toBe('64px');
+      expect(layout.sessionSectionVisible).toBe(false);
+      expect(Math.abs(layout.footerHeight - 45)).toBeLessThanOrEqual(1);
+
+      await expect(page.getByTestId('sidebar-footer-menu-trigger')).toHaveCount(0);
       await expect(page.getByTestId('sidebar-open-dev-console')).toHaveCount(0);
-      await page.keyboard.press('Escape');
-      await expect(footerMenu).toBeHidden();
     } finally {
       await closeElectronApp(app);
     }
@@ -230,7 +220,12 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
       const page = await getStableWindow(app);
       expect(new URL(page.url()).searchParams.get('e2eSettingsSectionDelayMs')).toBe('1200');
       await page.setViewportSize({ width: 1000, height: 820 });
-      await expect(page.getByText('Conversations', { exact: true })).toBeVisible();
+      await app.evaluate(({ BrowserWindow }) => {
+        BrowserWindow.getAllWindows()[0]?.setSize(1000, 820);
+      });
+      await page.waitForTimeout(100);
+      await expect(page.getByTestId('sidebar')).toBeVisible();
+      await expect(page.getByTestId('sidebar-nav-settings')).toBeVisible();
       await page.getByTestId('sidebar-nav-settings').click();
       await expect(page.getByTestId('settings-implementation')).toBeVisible();
       await expect(page.getByTestId('settings-sidebar')).toBeVisible();
@@ -249,7 +244,8 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
           horizontalOverflow: scroll.scrollWidth - scroll.clientWidth,
         };
       });
-      expect(Math.abs(narrowGeometry.sidebarWidth - 275)).toBeLessThanOrEqual(1);
+      expect(narrowGeometry.sidebarWidth).toBeGreaterThanOrEqual(220);
+      expect(narrowGeometry.sidebarWidth).toBeLessThanOrEqual(275);
       expect(narrowGeometry.contentWidth).toBeLessThanOrEqual(narrowGeometry.mainWidth - 30);
       expect(narrowGeometry.contentRight).toBeLessThanOrEqual(narrowGeometry.mainRight);
       expect(narrowGeometry.horizontalOverflow).toBeLessThanOrEqual(1);

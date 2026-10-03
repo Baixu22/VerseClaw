@@ -1,6 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { Knowledge } from '@/pages/Knowledge';
+import { KnowledgeChat } from '@/pages/Chat/KnowledgeChat';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+
+function renderKnowledge(initialEntry = '/knowledge') {
+  return render(<MemoryRouter initialEntries={[initialEntry]}><Routes>
+    <Route path="/knowledge" element={<Knowledge />} />
+    <Route path="/" element={<KnowledgeChat />} />
+  </Routes></MemoryRouter>);
+}
 
 const hostApiMock = vi.hoisted(() => ({
   status: vi.fn(),
@@ -175,6 +184,8 @@ const labels: Record<string, string> = {
   'okf.selectedConcepts': '{{count}} selected',
   'tabs.navigation': 'Knowledge primary navigation',
   'tabs.library': 'Library',
+  'tabs.reviewQueue': 'Review Queue',
+  'review.prepareProposal': 'Prepare proposal',
   'tabs.sources': 'Sources',
   'tabs.inbox': 'Inbox',
   'tabs.drafts': 'Draft Inbox',
@@ -241,6 +252,8 @@ const labels: Record<string, string> = {
   'librarian.boundaryDraft': 'Can prepare drafts and proposals, not silently write the vault.',
   'librarian.boundarySources': 'Must surface missing sources, conflicts, and stale claims.',
   'librarian.modalTitle': 'Knowledge Librarian',
+  'librarian.chatTitle': 'Ask the knowledge base',
+  'librarian.backToChat': 'Back to chat',
   'librarian.modalSubtitle': 'Ask, organize, and review your Markdown knowledge base.',
   'librarian.writeBoundary': 'The librarian can help organize and draft knowledge.',
   'librarian.askPlaceholder': 'Ask about this vault or the current document',
@@ -1023,6 +1036,7 @@ describe('Knowledge page', () => {
     });
     hostApiMock.reviewDraft.mockResolvedValue({ success: true, draft: { id: 'draft-1', status: 'approved' } });
     hostApiMock.applyReviewedChange.mockResolvedValue({ success: true });
+    hostApiMock.createInboxItem.mockResolvedValue({ success: true, item: { id: 'inbox-1' } });
     hostApiMock.stewardReview.mockResolvedValue({
       success: true,
       type: 'synthesis',
@@ -1072,7 +1086,7 @@ describe('Knowledge page', () => {
   });
 
   it('initializes, imports, searches, opens results, and applies drafts', async () => {
-    render(<Knowledge />);
+    renderKnowledge();
 
     await screen.findByTestId('knowledge-page');
     await waitFor(() => expect(hostApiMock.status).toHaveBeenCalled());
@@ -1090,7 +1104,7 @@ describe('Knowledge page', () => {
 
     fireEvent.click(screen.getByText('Import Files'));
     await waitFor(() => expect(hostApiMock.ingestFiles).toHaveBeenCalledWith({ paths: ['C:/notes/decision.md'] }));
-    expect(screen.getByTestId('knowledge-workbench-tabs').querySelectorAll('button')).toHaveLength(5);
+    expect(screen.getByTestId('knowledge-workbench-tabs').querySelectorAll('button')).toHaveLength(2);
 
     fireEvent.pointerDown(screen.getByTestId('knowledge-more-actions'));
     fireEvent.click(screen.getByText('Audit Center'));
@@ -1109,7 +1123,9 @@ describe('Knowledge page', () => {
     fireEvent.click(screen.getByTestId('knowledge-search-result'));
     await screen.findByTestId('knowledge-markdown-preview');
     expect(screen.getByTestId('knowledge-markdown-workspace')).toBeInTheDocument();
-    expect(screen.getByTestId('knowledge-editor-title')).toHaveValue('Decision');
+    expect(screen.getByTestId('knowledge-editor-title')).toHaveTextContent('Decision');
+    expect(screen.queryByTestId('knowledge-markdown-editor')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('knowledge-editor-mode-edit'));
     expect(screen.getByTestId('knowledge-markdown-editor')).toHaveValue('# Decision\nUse native wiki.');
     expect(hostApiMock.get).toHaveBeenCalledWith({ lookup: 'notes/decision.md', lineCount: 120, corpus: 'wiki' });
     expect(hostApiMock.recordKnowledgeReference).toHaveBeenCalledWith({
@@ -1152,7 +1168,7 @@ describe('Knowledge page', () => {
   });
 
   it('builds a Source Set from search results and creates Studio artifact drafts without applying', async () => {
-    render(<Knowledge />);
+    renderKnowledge();
 
     await screen.findByTestId('knowledge-page');
     expect(hostApiMock.listSourceSets).toHaveBeenCalled();
@@ -1194,11 +1210,12 @@ describe('Knowledge page', () => {
   });
 
   it('shows grouped inbox candidates and promotes or dismisses them without applying', async () => {
-    render(<Knowledge />);
+    renderKnowledge();
 
     await screen.findByTestId('knowledge-page');
-    await screen.findByText('Inbox');
-    fireEvent.click(screen.getByTestId('knowledge-tab-inbox'));
+    fireEvent.click(screen.getByTestId('knowledge-tab-review-queue'));
+    fireEvent.click(await screen.findByTestId('knowledge-review-filter-inbox'));
+    fireEvent.click((await screen.findAllByTestId('knowledge-review-item'))[0]);
 
     await screen.findByTestId('knowledge-inbox');
     expect(screen.getAllByText('Task decision candidate').length).toBeGreaterThan(0);
@@ -1254,7 +1271,7 @@ describe('Knowledge page', () => {
   });
 
   it('shows Governance quality metrics after a health check', async () => {
-    render(<Knowledge />);
+    renderKnowledge();
 
     await screen.findByTestId('knowledge-page');
     fireEvent.pointerDown(screen.getByTestId('knowledge-more-actions'));
@@ -1276,11 +1293,11 @@ describe('Knowledge page', () => {
   });
 
   it('answers knowledge librarian questions with local citations and a checkpoint', async () => {
-    render(<Knowledge />);
+    renderKnowledge();
 
     await screen.findByTestId('knowledge-page');
     fireEvent.click(screen.getByTestId('knowledge-librarian-open'));
-    await screen.findByTestId('knowledge-librarian-modal');
+    await screen.findByTestId('knowledge-chat-page');
     expect(screen.getByTestId('knowledge-librarian-composer')).toBeInTheDocument();
     expect(screen.getByTestId('knowledge-librarian-suggestions')).toHaveTextContent('Summarize current note');
 
@@ -1317,6 +1334,8 @@ describe('Knowledge page', () => {
       }),
     })));
 
+    fireEvent.click(await screen.findByTestId('knowledge-librarian-open'));
+    await screen.findByTestId('knowledge-chat-page');
     fireEvent.click(screen.getByTestId('knowledge-librarian-create-error-experience'));
     await waitFor(() => expect(hostApiMock.createInboxItem).toHaveBeenCalledWith(expect.objectContaining({
       kind: 'manual',
@@ -1330,6 +1349,8 @@ describe('Knowledge page', () => {
       }),
     })));
 
+    fireEvent.click(await screen.findByTestId('knowledge-librarian-open'));
+    await screen.findByTestId('knowledge-chat-page');
     fireEvent.click(screen.getByTestId('knowledge-librarian-send-steward'));
     await waitFor(() => expect(hostApiMock.stewardReview).toHaveBeenCalledWith({ draftId: 'draft-1' }));
     expect(hostApiMock.applyDraft).not.toHaveBeenCalled();
@@ -1345,11 +1366,11 @@ describe('Knowledge page', () => {
         results: [{ pagePath: 'notes/decision.md', title: 'Decision', snippet: 'Use native wiki.' }],
       });
 
-    render(<Knowledge />);
+    renderKnowledge();
 
     await screen.findByTestId('knowledge-page');
     fireEvent.click(screen.getByTestId('knowledge-librarian-open'));
-    await screen.findByTestId('knowledge-librarian-modal');
+    await screen.findByTestId('knowledge-chat-page');
 
     fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'Why use native wiki?' } });
     await waitFor(() => expect(screen.getByTestId('knowledge-librarian-ask')).not.toBeDisabled());
@@ -1365,9 +1386,98 @@ describe('Knowledge page', () => {
     expect(screen.queryByTestId('knowledge-librarian-error')).not.toBeInTheDocument();
   });
 
+  it('preserves an unfinished note when visiting Chat knowledge mode and returning', async () => {
+    renderKnowledge('/knowledge?uiVersion=legacy');
+    await screen.findByTestId('knowledge-markdown-preview');
+    fireEvent.click(screen.getByTestId('knowledge-new-note'));
+    fireEvent.change(screen.getByTestId('knowledge-editor-title'), { target: { value: 'Unfinished note' } });
+    fireEvent.change(screen.getByTestId('knowledge-markdown-editor'), { target: { value: '# Still editing\nUnsaved details.' } });
+    fireEvent.change(screen.getByTestId('knowledge-search-input'), { target: { value: 'research context' } });
+    fireEvent.click(screen.getByTestId('knowledge-librarian-open'));
+    await screen.findByTestId('knowledge-chat-page');
+    expect(screen.queryByTestId('knowledge-page')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('knowledge-chat-library'));
+    await waitFor(() => expect(screen.getByTestId('knowledge-editor-title')).toHaveValue('Unfinished note'));
+    expect(screen.getByTestId('knowledge-markdown-editor')).toHaveValue('# Still editing\nUnsaved details.');
+    expect(screen.getByTestId('knowledge-search-input')).toHaveValue('research context');
+    expect(hostApiMock.createDraft).not.toHaveBeenCalled();
+    expect(hostApiMock.applyReviewedChange).not.toHaveBeenCalled();
+  });
+
+  it('requires the selected draft to have its own proposal before approval', async () => {
+    const { drafts: [draft] } = await hostApiMock.listDrafts();
+    const { proposals: [proposal] } = await hostApiMock.listProposals();
+    const { bundles: [bundle] } = await hostApiMock.listReviewBundles();
+    const secondDraft = { ...draft, id: 'draft-2', title: 'Unlinked draft', status: 'steward_reviewed' };
+    hostApiMock.listDrafts.mockResolvedValue({ success: true, drafts: [draft, secondDraft] });
+    let resolveReview!: (value: unknown) => void;
+    hostApiMock.stewardReview.mockReturnValueOnce(new Promise((resolve) => { resolveReview = resolve; }));
+    renderKnowledge('/knowledge?view=review-queue&kind=proposal&id=proposal-1');
+    await screen.findByTestId('knowledge-review');
+    fireEvent.click(screen.getByTestId('knowledge-steward-review'));
+    await waitFor(() => expect(hostApiMock.stewardReview).toHaveBeenCalledWith({ draftId: 'draft-1' }));
+    fireEvent.click(within(screen.getByTestId('knowledge-steward-queue')).getByText('Unlinked draft'));
+    resolveReview({ success: true, type: 'synthesis', tags: [], warnings: [], notes: 'Only draft one was reviewed.' });
+    await waitFor(() => expect(screen.getByTestId('knowledge-review-prepare')).not.toBeDisabled());
+    expect(screen.getByTestId('knowledge-review')).not.toHaveTextContent('Only draft one was reviewed.');
+    expect(screen.getByTestId('knowledge-review-apply')).toBeDisabled();
+    fireEvent.click(screen.getByTestId('knowledge-review-apply'));
+    expect(hostApiMock.reviewDraft).not.toHaveBeenCalled();
+    expect(hostApiMock.applyReviewedChange).not.toHaveBeenCalled();
+
+    const secondProposal = { ...proposal, id: 'proposal-2', draftId: 'draft-2' };
+    hostApiMock.proposeChange.mockImplementationOnce(async () => {
+      hostApiMock.listProposals.mockResolvedValue({ success: true, proposals: [proposal, secondProposal] });
+      hostApiMock.listReviewBundles.mockResolvedValue({ success: true, bundles: [bundle, {
+        ...bundle, id: 'kb_proposal-2_draft-2', draftId: secondDraft.id, proposalId: secondProposal.id,
+        draft: secondDraft, proposal: secondProposal,
+      }] });
+      return { success: true, proposal: secondProposal };
+    });
+    fireEvent.click(screen.getByTestId('knowledge-review-prepare'));
+    await waitFor(() => expect(hostApiMock.proposeChange).toHaveBeenCalledWith(expect.objectContaining({ draftId: 'draft-2' })));
+    await waitFor(() => expect(screen.getByTestId('knowledge-review-apply')).not.toBeDisabled());
+    expect(hostApiMock.applyReviewedChange).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('knowledge-review-apply'));
+    await waitFor(() => expect(hostApiMock.reviewDraft).toHaveBeenCalledWith(expect.objectContaining({ id: 'draft-2', action: 'approve' })));
+    await waitFor(() => expect(hostApiMock.applyReviewedChange).toHaveBeenCalledWith({ reviewBundleId: 'kb_proposal-2_draft-2' }));
+  });
+
+  it('keeps the current draft and proposal when an earlier proposal request finishes late', async () => {
+    const { drafts: [first] } = await hostApiMock.listDrafts();
+    const { proposals: [proposal] } = await hostApiMock.listProposals();
+    const { bundles: [bundle] } = await hostApiMock.listReviewBundles();
+    const second = { ...first, id: 'draft-2', title: 'Second independent draft', status: 'steward_reviewed' };
+    const secondProposal = { ...proposal, id: 'proposal-2', draftId: second.id, diff: 'ONLY_SECOND_DRAFT_DIFF' };
+    const lateProposal = { ...proposal, diff: 'ONLY_FIRST_DRAFT_DIFF' };
+    hostApiMock.listDrafts.mockResolvedValue({ success: true, drafts: [first, second] });
+    hostApiMock.listProposals.mockResolvedValue({ success: true, proposals: [secondProposal] });
+    hostApiMock.listReviewBundles.mockResolvedValue({ success: true, bundles: [{
+      ...bundle, id: 'kb_proposal-2_draft-2', draftId: second.id, proposalId: secondProposal.id,
+      draft: second, proposal: secondProposal,
+    }] });
+    let finishProposal!: (value: unknown) => void;
+    hostApiMock.proposeChange.mockImplementationOnce(() => new Promise((resolve) => { finishProposal = resolve; }));
+    renderKnowledge('/knowledge?view=review-queue&kind=draft&id=draft-1');
+    fireEvent.click(await screen.findByTestId('knowledge-review-prepare'));
+    await waitFor(() => expect(hostApiMock.proposeChange).toHaveBeenCalledWith(expect.objectContaining({ draftId: first.id })));
+    fireEvent.click(within(screen.getByTestId('knowledge-steward-queue')).getByText(second.title));
+    expect(screen.getByTestId('knowledge-review')).toHaveTextContent('ONLY_SECOND_DRAFT_DIFF');
+    hostApiMock.listProposals.mockResolvedValue({ success: true, proposals: [lateProposal, secondProposal] });
+    finishProposal({ success: true, proposal: lateProposal });
+    await waitFor(() => expect(screen.getByTestId('knowledge-review-apply')).not.toBeDisabled());
+    expect(screen.getByTestId('knowledge-review')).toHaveTextContent(second.title);
+    expect(screen.getByTestId('knowledge-review')).toHaveTextContent('ONLY_SECOND_DRAFT_DIFF');
+    expect(screen.getByTestId('knowledge-review')).not.toHaveTextContent('ONLY_FIRST_DRAFT_DIFF');
+    expect(screen.queryByTestId('knowledge-review-prepare')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('knowledge-review-apply'));
+    await waitFor(() => expect(hostApiMock.reviewDraft).toHaveBeenCalledWith(expect.objectContaining({ id: second.id })));
+    await waitFor(() => expect(hostApiMock.applyReviewedChange).toHaveBeenCalledWith({ reviewBundleId: 'kb_proposal-2_draft-2' }));
+  });
+
   it('validates an OKF folder and imports only user-selected concepts', async () => {
     hostApiMock.dialogOpen.mockResolvedValueOnce({ canceled: false, filePaths: ['C:/okf'] });
-    render(<Knowledge />);
+    renderKnowledge();
 
     await screen.findByTestId('knowledge-page');
     fireEvent.pointerDown(screen.getByTestId('knowledge-more-actions'));
@@ -1396,10 +1506,11 @@ describe('Knowledge page', () => {
   });
 
   it('keeps SEKB suggestions review-only until explicit confirm and supports reject plus retrieve', async () => {
-    render(<Knowledge />);
+    renderKnowledge();
 
     await screen.findByTestId('knowledge-page');
-    fireEvent.click(screen.getByTestId('knowledge-tab-runtime'));
+    fireEvent.pointerDown(screen.getByTestId('knowledge-more-actions'));
+    fireEvent.click(await screen.findByTestId('knowledge-tab-runtime'));
 
     await waitFor(() => expect(hostApiMock.runtimeLessonsReport).toHaveBeenCalledTimes(1));
     expect(screen.getByTestId('knowledge-runtime-lessons')).toHaveTextContent('Preserve review boundaries');

@@ -1,4 +1,4 @@
-import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { closeElectronApp, expect, getStableWindow, installIpcMocks, revealSectionHeadingActionsFor, test } from './fixtures/electron';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -142,7 +142,7 @@ test.describe('Verse Claw chat workspace header', () => {
       await expect(page.getByTestId('chat-project-session-header')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('chat-project-session-header')).toContainText('Demo Workspace');
       await expect(page.getByTestId('chat-topic-selector')).toHaveCount(0);
-      await page.locator('.section-heading').first().hover();
+      await revealSectionHeadingActionsFor(page.getByTestId('sidebar-session-organize'));
       await expect(page.getByTestId('sidebar-session-organize')).toBeVisible();
       await expect(page.getByTestId('sidebar-session-search')).toBeVisible();
       await expect(page.getByTestId('sidebar-session-project-workspace-1')).toContainText('Demo Workspace');
@@ -213,7 +213,7 @@ test.describe('Verse Claw chat workspace header', () => {
       await page.getByTestId('sidebar-session-project-toggle-workspace-1').click();
       await expect(page.getByTestId(`sidebar-session-${SESSION_KEY}`)).toBeVisible();
 
-      await page.locator('.section-heading').first().hover();
+      await revealSectionHeadingActionsFor(page.getByTestId('sidebar-session-organize'));
       await page.getByTestId('sidebar-session-organize').click();
       await page.getByRole('menuitemradio', { name: 'Time' }).click();
       await expect(page.getByTestId('sidebar-session-project-workspace-1')).toHaveCount(0);

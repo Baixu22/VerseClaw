@@ -90,20 +90,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-b-agentmap-production-readiness-mvp/README.md
-    - runtime-research/handoffs/line-b-agentmap-production-readiness-mvp/cutover-readiness-review.md
-    - runtime-research/handoffs/line-b-agentmap-production-readiness-mvp/real-shadow-mvp-plan.md
-    - runtime-research/handoffs/line-b-agentmap-production-readiness-mvp/controlled-internal-opt-in-plan.md
-    - runtime-research/handoffs/line-b-agentmap-production-readiness-mvp/quality-scorecard.md
-    - runtime-research/handoffs/line-b-agentmap-production-readiness-mvp/production-veto-gates.md
-    - runtime-research/handoffs/line-b-agentmap-production-readiness-mvp/security-authority-boundary.md
-    - runtime-research/handoffs/line-b-agentmap-production-readiness-mvp/observability-diagnostics-plan.md
-    - runtime-research/handoffs/line-b-agentmap-production-readiness-mvp/limited-production-opt-in-plan.md
-    - runtime-research/handoffs/line-b-agentmap-production-readiness-mvp/default-on-proposal-template.md
-    - runtime-research/handoffs/line-b-agentmap-production-readiness-mvp/rollback-playbook.md
-    - runtime-research/handoffs/line-b-agentmap-production-readiness-mvp/validation-plan.md
-    - runtime-research/handoffs/line-b-agentmap-production-readiness-mvp/submission-template.md
-    - runtime-research/handoffs/line-b-agentmap-production-readiness-mvp/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Line B AgentMap Production Readiness MVP

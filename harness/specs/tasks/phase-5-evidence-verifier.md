@@ -59,10 +59,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-5-evidence-verifier/README.md
-    - runtime-research/handoffs/phase-5-evidence-verifier/parallel-lanes.md
-    - runtime-research/handoffs/phase-5-evidence-verifier/submission-template.md
-    - runtime-research/handoffs/phase-5-evidence-verifier/synthesis-template.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 5 Evidence Verifier

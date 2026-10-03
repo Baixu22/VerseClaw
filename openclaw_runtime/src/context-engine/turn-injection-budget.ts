@@ -21,6 +21,7 @@ import {
   contextHealthScoreToScorecard,
   recordContextHealth,
   scoreContextHealth,
+  scoreInformationNovelty,
   scoreInjectionPressure,
 } from "./context-health-monitor.js";
 import { storeRuntimeScorecard } from "../observability/trace-buffer.js";
@@ -31,7 +32,10 @@ import {
   type ApplyBudgetResult,
   type InjectionBudgetState,
 } from "./injection-budget.js";
-import { resolveInjectionBudgetConfig, resetInjectionBudgetConfigCache } from "./injection-budget-config-source.js";
+import {
+  resolveInjectionBudgetConfig,
+  resetInjectionBudgetConfigCache,
+} from "./injection-budget-config-source.js";
 
 /**
  * Decision 1 — precedence. Lower index charges the budget first, so when the turn
@@ -140,16 +144,12 @@ export function setTurnInjectionBudgetConfig(params: {
 
 export function getEffectiveTurnInjectionCharBudget(env: NodeJS.ProcessEnv = process.env): number {
   if (configuredTotalChars !== undefined) return configuredTotalChars;
-  return (
-    resolveInjectionBudgetConfig(env)?.totalChars ?? TURN_INJECTION_CHAR_BUDGET
-  );
+  return resolveInjectionBudgetConfig(env)?.totalChars ?? TURN_INJECTION_CHAR_BUDGET;
 }
 
 export function getEffectiveDropAlertRatio(env: NodeJS.ProcessEnv = process.env): number {
   if (configuredDropAlertRatio !== undefined) return configuredDropAlertRatio;
-  return (
-    resolveInjectionBudgetConfig(env)?.dropAlertRatio ?? TURN_INJECTION_DROP_ALERT_RATIO
-  );
+  return resolveInjectionBudgetConfig(env)?.dropAlertRatio ?? TURN_INJECTION_DROP_ALERT_RATIO;
 }
 
 /**
@@ -186,6 +186,18 @@ export type TurnInjectionLedger = {
   reservations: TurnInjectionReservation[];
   /** True once the kill switch zeroed this turn; every entry is then `skip`/0. */
   killed: boolean;
+  /**
+   * T-C1: mean novelty (0..1) of the unique candidates collected for this turn,
+   * set by `collectContextCandidates`. Absent when nothing was collected.
+   *
+   * Carried on the ledger rather than recomputed here because
+   * `context-candidate.ts` already computes it per candidate and averages it
+   * (`diagnostics.avgNovelty`); requirement-4 is explicit that novelty must be
+   * reused, not computed twice. Before this, that average had zero consumers —
+   * it was written and never read, which is why `informationNovelty` was one of
+   * the three health dimensions with no production input.
+   */
+  avgNovelty?: number;
 };
 
 export type TurnInjectionReservation = {
@@ -204,7 +216,10 @@ export type TurnInjectionAccounting = {
   dropRatio: number;
   alert: boolean;
   killed: boolean;
-  byChannel: Record<string, { requested: number; applied: number; disposition: TurnInjectionDisposition }>;
+  byChannel: Record<
+    string,
+    { requested: number; applied: number; disposition: TurnInjectionDisposition }
+  >;
   /** Channels that degraded, in the order they were charged. */
   degradationOrder: Array<{ channel: TurnInjectionChannel; disposition: "truncate" | "drop" }>;
 };
@@ -277,7 +292,9 @@ export function beginTurnInjectionBudget(params: {
   const ledger: TurnInjectionLedger = {
     turnId: params.turnId,
     turnIndex: Math.max(0, Math.floor(params.turnIndex ?? 0)),
-    budget: createInjectionBudget(killed ? 0 : (params.total ?? getEffectiveTurnInjectionCharBudget())),
+    budget: createInjectionBudget(
+      killed ? 0 : (params.total ?? getEffectiveTurnInjectionCharBudget()),
+    ),
     entries: [],
     reservations: [],
     killed,
@@ -310,9 +327,10 @@ export function reserveTurnInjectionCapacity(
     Math.max(0, Math.floor(Number.isFinite(chars) ? chars : 0)),
   );
   if (uniqueChannels.length === 0 || requested === 0) return;
-  const existing = ledger.reservations.find((reservation) =>
-    reservation.channels.length === uniqueChannels.length &&
-    reservation.channels.every((channel, index) => channel === uniqueChannels[index]),
+  const existing = ledger.reservations.find(
+    (reservation) =>
+      reservation.channels.length === uniqueChannels.length &&
+      reservation.channels.every((channel, index) => channel === uniqueChannels[index]),
   );
   if (existing) {
     existing.remaining = Math.max(existing.remaining, requested);
@@ -347,6 +365,7 @@ export function chargeTurnInjection(
   ledger: TurnInjectionLedger,
   channel: TurnInjectionChannel,
   text: string | undefined,
+  allowTruncation = true,
 ): ApplyBudgetResult {
   const charsRequested = text?.length ?? 0;
   const order = precedenceIndexOf(channel);
@@ -378,17 +397,17 @@ export function chargeTurnInjection(
   // B-1: decay shrinks this channel's ceiling, never the reservations held for
   // higher-precedence channels (those were subtracted before the multiplier).
   const chargeLimit = Math.max(0, Math.floor(rawLimit * decayFactor));
-  const result = applyInjectionBudget(ledger.budget, text, channel, chargeLimit);
+  // Structured message replacements must fit whole: truncating serialized
+  // tool calls or summaries would change their meaning and break pairing.
+  const limit = !allowTruncation && charsRequested > chargeLimit ? 0 : chargeLimit;
+  const result = applyInjectionBudget(ledger.budget, text, channel, limit);
   for (const reservation of ledger.reservations) {
     if (reservation.channels.includes(channel)) {
       reservation.remaining = Math.max(0, reservation.remaining - result.charsApplied);
     }
   }
-  const disposition: TurnInjectionDisposition = result.charsApplied === 0
-    ? "drop"
-    : result.truncated
-      ? "truncate"
-      : "applied";
+  const disposition: TurnInjectionDisposition =
+    result.charsApplied === 0 ? "drop" : result.truncated ? "truncate" : "applied";
   ledger.entries.push({
     channel,
     disposition,
@@ -417,7 +436,16 @@ export function skipTurnInjection(
   });
 }
 
-/** Summarize the ledger; `charsApplied` must equal the turn's real prompt growth. */
+/**
+ * Summarize the ledger. `charsApplied` equals only the characters the DCS
+ * injection channels actually appended to this turn under the injection
+ * budget (per-entry results from `applyInjectionBudget` in
+ * injection-budget.ts). It is NOT the turn's total prompt growth: baseline
+ * prompt components that never charge the budget — the base system prompt
+ * and agent-level extra system prompt text — are not in this denominator.
+ * The two-tier boundary between injected growth and baseline growth belongs
+ * to T-C5 (M4), not to this ledger.
+ */
 export function summarizeTurnInjection(ledger: TurnInjectionLedger): TurnInjectionAccounting {
   let charsApplied = 0;
   let charsRequested = 0;
@@ -470,6 +498,7 @@ export function endTurnInjectionBudget(turnId: string): TurnInjectionAccounting 
   const ledger = ledgers.get(turnId);
   if (!ledger) return undefined;
   const accounting = summarizeTurnInjection(ledger);
+  const avgNovelty = ledger.avgNovelty;
   ledgers.delete(turnId);
   try {
     // FP-P1-11: byChannel/degradationOrder ride along so the runtime ack can
@@ -478,9 +507,20 @@ export function endTurnInjectionBudget(turnId: string): TurnInjectionAccounting 
     // B-4: score the turn's injection pressure into the context-health registry
     // and project it onto the Observability scorecard pipeline (synthetic
     // `ctx-health-<turnId>` trace id, bounded by its own cap).
+    //
+    // T-C1: informationNovelty now rides along when the candidate collector
+    // recorded one. Left `undefined` when it did not, so the score reports it in
+    // `noDataDimensions` instead of defaulting to a misleading 100.
     const healthScore = scoreContextHealth({
       turnId,
       injectionPressure: scoreInjectionPressure(accounting),
+      ...(avgNovelty === undefined
+        ? {}
+        : {
+            informationNovelty: scoreInformationNovelty([
+              { channel: "aggregate", novelty: avgNovelty },
+            ]),
+          }),
     });
     recordContextHealth(healthScore);
     storeRuntimeScorecard(contextHealthScoreToScorecard(healthScore));

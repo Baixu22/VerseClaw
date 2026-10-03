@@ -1,0 +1,15 @@
+Loading host and real Codex plugin
+Running atomic-drop
+[agent/embedded] codex app-server context-engine projection decision
+[agent/embedded] codex app-server wrote context-engine thread binding
+{"name":"atomic-drop","added":7000,"compass":100,"system":100,"killed":false,"assemblies":1,"requests":1,"aborted":false,"timedOut":false,"promptError":null,"ledgerReleased":true}
+AssertionError [ERR_ASSERTION]: over-budget replacement leaked into native provider request
+    at file:///D:/ClawX/artifacts/tf0013-native-wire-20260930/run.mjs:117:5
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}

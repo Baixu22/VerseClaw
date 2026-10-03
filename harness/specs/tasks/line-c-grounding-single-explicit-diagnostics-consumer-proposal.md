@@ -61,7 +61,7 @@ requiredTests:
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/line-c-grounding-single-explicit-diagnostics-consumer-proposal.md --no-diff
   - git status --short --branch
   - git diff --name-status
-  - git diff --check -- harness/specs/tasks/line-c-grounding-single-explicit-diagnostics-consumer-proposal.md runtime-research/handoffs/line-c-grounding-single-explicit-diagnostics-consumer-proposal/README.md runtime-research/handoffs/line-c-grounding-single-explicit-diagnostics-consumer-proposal/implementation-synthesis.md runtime-research/agent-runtime-index.md
+  - git diff --check -- harness/specs/tasks/line-c-grounding-single-explicit-diagnostics-consumer-proposal.md docs/dev/runtime-research-boundaries.md
   - rg boundary scan for runtime authority/prompt/model-message/provider ordering/provider selection/Gateway request/TaskLoop/runtime decision/completion/tool/security/approval/retry/raw retention/includeRaw/includeUntrusted/untrusted refs/persistence/cache/service/listener/exporter/database/sidecar/memory promotion/fact acceptance/episode write/patch apply/workspace edit/symbol mutation/UI/API/transport/production rollout
 acceptance:
   - Fresh task spec exists before any implementation work.
@@ -73,9 +73,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-c-grounding-single-explicit-diagnostics-consumer-proposal/README.md
-    - runtime-research/handoffs/line-c-grounding-single-explicit-diagnostics-consumer-proposal/implementation-synthesis.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 nextPhaseEntry:
   Allowed next phase:
     - If this docs/proposal package is accepted, a later fresh task spec may request actual implementation for exactly one explicit diagnostics-only consumer and must prove every boundary again before code changes.

@@ -66,11 +66,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-8-ast-patch-planner-readonly-scan/README.md
-    - runtime-research/handoffs/phase-8-ast-patch-planner-readonly-scan/parallel-lanes.md
-    - runtime-research/handoffs/phase-8-ast-patch-planner-readonly-scan/window-prompts.md
-    - runtime-research/handoffs/phase-8-ast-patch-planner-readonly-scan/submission-template.md
-    - runtime-research/handoffs/phase-8-ast-patch-planner-readonly-scan/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 8 AST Patch Planner Readonly Scan

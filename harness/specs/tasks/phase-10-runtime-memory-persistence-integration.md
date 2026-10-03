@@ -91,9 +91,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-10-runtime-memory-persistence-integration/README.md
-    - runtime-research/handoffs/phase-10-runtime-memory-persistence-integration/parallel-lanes.md
-    - runtime-research/handoffs/phase-10-runtime-memory-persistence-integration/submission-template.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 10 Runtime Memory Persistence Integration Planning

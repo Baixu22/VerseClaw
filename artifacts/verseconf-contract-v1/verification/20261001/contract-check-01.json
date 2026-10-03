@@ -1,0 +1,670 @@
+{
+  "schema": "tf0244-offline-contract-verification/v1",
+  "taskId": "TF-0244",
+  "driven_by": "agent",
+  "actor": "claude/tf0244-contract",
+  "createdAt": "2026-09-30T16:51:17.079214+00:00",
+  "scope": "offline fixture/schema/oracle and static-reference checks only",
+  "environment": {
+    "python": "3.10.3 (tags/v3.10.3:a342a49, Mar 16 2022, 13:07:40) [MSC v.1929 64 bit (AMD64)]",
+    "jsonschema": "4.23.0",
+    "referencing": "0.36.2"
+  },
+  "candidate": {
+    "head": "48387ee04a9b082dc552ea461985224ba77faab3",
+    "dirty": true,
+    "status": [
+      "M .agent-workbench/task-forest/alignments/alignments.jsonl",
+      " M .agent-workbench/task-forest/config.json",
+      " M .agent-workbench/task-forest/exports/task-forest.graph.json",
+      " M .agent-workbench/task-forest/exports/task-forest.todos.json",
+      " M .agent-workbench/task-forest/graph/edges.json",
+      " M .agent-workbench/task-forest/graph/forest.json",
+      " M .agent-workbench/task-forest/graph/nodes.json",
+      " M .agent-workbench/task-forest/todos/todos.json",
+      " M README.ja-JP.md",
+      " M README.md",
+      " M README.zh-CN.md",
+      " M docs/dev/context-orchestrator.md",
+      " M docs/dev/first-product-controlled-preview/STATUS.md",
+      " M docs/dev/handoffs/LATEST.md",
+      " M docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md",
+      " M harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md",
+      " M openclaw_runtime/extensions/codex/src/app-server/run-attempt.ts",
+      " M openclaw_runtime/src/agents/embedded-agent-runner/extensions.tool-registry.test.ts",
+      " M openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+      " M openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      " M openclaw_runtime/src/agents/harness/context-engine-lifecycle.ts",
+      " M openclaw_runtime/src/agents/harness/selection.compass.test.ts",
+      " M openclaw_runtime/src/agents/harness/selection.ts",
+      " M openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts",
+      " M openclaw_runtime/src/context-engine/context-candidate.test.ts",
+      " M openclaw_runtime/src/context-engine/context-candidate.ts",
+      " M openclaw_runtime/src/context-engine/rc03-seal-hook.ts",
+      " M openclaw_runtime/src/context-engine/registry.ts",
+      " M openclaw_runtime/src/context-engine/turn-injection-budget.ts",
+      "?? %SystemDrive%/",
+      "?? .agent-workbench/task-forest/proposals/TFP-tf0013-message-budget-development-20260930.json",
+      "?? .agent-workbench/task-forest/proposals/TFP-tf0013-native-budget-development-20260930.json",
+      "?? .agent-workbench/task-forest/proposals/TFP-tf0244-contract-start-20261001.json",
+      "?? .agent-workbench/task-forest/proposals/TFP-verseconf-clawx-exploration-plan-20260930.json",
+      "?? .agent-workbench/task-forest/snapshots/0683.json",
+      "?? .agent-workbench/task-forest/snapshots/0684.json",
+      "?? .agent-workbench/task-forest/snapshots/0685.json",
+      "?? .agent-workbench/task-forest/snapshots/0686.json",
+      "?? docs/dev/tf0013-message-budget-20260930.md",
+      "?? docs/dev/tf0013-native-budget-20260930.md",
+      "?? docs/dev/verseconf-clawx-contract-v1.md",
+      "?? docs/dev/verseconf-clawx-integration-exploration-20260930.md",
+      "?? docs/dev/verseconf-clawx-task-forest-plan-20260930.md"
+    ]
+  },
+  "inputs": {
+    "artifacts/verseconf-contract-v1/contract.json": "9f18d7a7f6b45b0b18e15edcfc0756db9dc6cca18478d691d4b7871978669440",
+    "artifacts/verseconf-contract-v1/owner-map.json": "a6eab9ab0aa468c7ba6a0701a1c34819e259603b4c94c6f375656281faa8e81d",
+    "artifacts/verseconf-contract-v1/runtime-trials.json": "f7399e985e545e95e14f6ee108edda880a1f146aff7393e0aebc1dc0ddae6936",
+    "artifacts/verseconf-contract-v1/schemas/research-source.schema.json": "57e7c8878951d5e860562763fbffb808bc34d9bb0ad565792f4f915256528979",
+    "artifacts/verseconf-contract-v1/schemas/revise-request.schema.json": "8fb8172bc3bd43d8e1d532e9247f03b2749fb38f352df12c0c17d2d5d0898688",
+    "artifacts/verseconf-contract-v1/fixtures/research-before.json": "0061b60757f0382eb3da1efe8ecb7bc3ce6a87fdec6f07c82740d05d2dd84cd8",
+    "artifacts/verseconf-contract-v1/fixtures/research-after.expected.json": "ebb4ee8bd9a08fce266ae3149195e685c9a4eb8d15e3f2d769dfdf893ce6f299",
+    "artifacts/verseconf-contract-v1/fixtures/revise-two-fields.json": "6d8a6bc559f6c7a96f5f265e17acb5d4aef75f9f7bea10a19ae9277d077d987c",
+    "artifacts/verseconf-contract-v1/fixtures/independent-oracle.json": "59d37fe1c80c0ae97b554f0b111cef687e982a67ba6d01d128cbe725e2e5c558",
+    "artifacts/verseconf-contract-v1/verify.py": "f1f0eaaf0d60e0ce1fd936a738d2ef6946410239d59b1c16a9762097399d7bc6",
+    "artifacts/verseconf-contract-v1/requirements.txt": "4d1e8faf75bc68b101982f8914d1b9f42e380eb70f7ca7cb7db70603868200a1",
+    "docs/dev/verseconf-clawx-contract-v1.md": "285315f52752f5166e39b201835717a1a5ffd8bdad20ebf97e62863ec9ae1820"
+  },
+  "ownerObservations": [
+    {
+      "path": "src/lib/host-api.ts",
+      "sha256": "bcab31faded752be0129f7198a91655bcd00981184d16e9540a222f7e5156c95",
+      "anchors": [
+        {
+          "symbol": "export const hostApi",
+          "line": 728
+        }
+      ],
+      "observationType": "static-source-reference"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/tool-types.ts",
+      "sha256": "f68e860689d044bae44b7754717a1c8c22bbe2b8c05f1fdf1dbf898cfe8316af",
+      "anchors": [
+        {
+          "symbol": "export type OpenClawPluginToolContext",
+          "line": 15
+        },
+        {
+          "symbol": "fsPolicy?:",
+          "line": 22
+        },
+        {
+          "symbol": "sessionId?:",
+          "line": 28
+        }
+      ],
+      "observationType": "static-source-reference"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/openclaw-plugin-tools.ts",
+      "sha256": "9f43c5af680804859c5d6dd1edb4ad7e594e0edbda49043c08814ad5421f443f",
+      "anchors": [
+        {
+          "symbol": "resolveOpenClawPluginToolsForOptions",
+          "line": 81
+        },
+        {
+          "symbol": "const pluginTools = resolvePluginTools",
+          "line": 139
+        }
+      ],
+      "observationType": "static-source-reference"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/tools.ts",
+      "sha256": "84d1ccad299eb6c7100ddf536448646852d35e5642898e2dd0ea6d322132edb2",
+      "anchors": [
+        {
+          "symbol": "function wrapPluginToolCallbacks",
+          "line": 128
+        },
+        {
+          "symbol": "const scopedExecute",
+          "line": 141
+        }
+      ],
+      "observationType": "static-source-reference"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.ts",
+      "sha256": "899eb7d975102565d7e883f969053704bb61f33f069a070c166305e3679dbacb",
+      "anchors": [
+        {
+          "symbol": "const applyWriteKit",
+          "line": 846
+        },
+        {
+          "symbol": "wrapToolWithWorkspaceExternalWriteProvenance",
+          "line": 92
+        },
+        {
+          "symbol": "autoVerifyExecToolRef",
+          "line": 806
+        }
+      ],
+      "observationType": "static-source-reference"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "sha256": "dc464f5343837a022320ed643ced12a51d62e0c0f642683a0f7a3984a9e0e1b1",
+      "anchors": [
+        {
+          "symbol": "toolSearchCatalogExecutor = async",
+          "line": 3700
+        },
+        {
+          "symbol": "await runToolLifecycle",
+          "line": 3702
+        }
+      ],
+      "observationType": "static-source-reference"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/file-mutation-queue.ts",
+      "sha256": "b281af8f3d695e6c3eb8bc36caee4f60f9f2b8d349b1fa04c5632abca0be3d27",
+      "anchors": [
+        {
+          "symbol": "const fileMutationQueues",
+          "line": 9
+        },
+        {
+          "symbol": "withFileMutationQueue",
+          "line": 24
+        }
+      ],
+      "observationType": "static-source-reference"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/apply-patch-batch-lock.ts",
+      "sha256": "6ff6fca92f81e3ccab168f24fb04d8f8c9bcd66548c26f81459207da8f3d9aa2",
+      "anchors": [
+        {
+          "symbol": "const fileLocks",
+          "line": 3
+        },
+        {
+          "symbol": "acquirePatchBatchLocks",
+          "line": 11
+        }
+      ],
+      "observationType": "static-source-reference"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/apply-patch-preflight.ts",
+      "sha256": "cb802f8393d375ecbfc07b6a2abd893e9d2c4f8d22e70d8562a0904c1a5b03cf",
+      "anchors": [
+        {
+          "symbol": "export async function preflightPatch",
+          "line": 279
+        },
+        {
+          "symbol": "export async function applyPreparedBatch",
+          "line": 308
+        },
+        {
+          "symbol": "verifyPatchPreviewBinding",
+          "line": 15
+        }
+      ],
+      "observationType": "static-source-reference"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/write-journal.ts",
+      "sha256": "00efd85a784da62c2ab441b21b576f57a35f9298e1d77bfb8ed816fb57440a09",
+      "anchors": [
+        {
+          "symbol": "Fail-open: journal failures never block",
+          "line": 3
+        },
+        {
+          "symbol": "snapshotPreparedWrite",
+          "line": 344
+        },
+        {
+          "symbol": "setWriteJournalBatchState",
+          "line": 418
+        }
+      ],
+      "observationType": "static-source-reference"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/effect-receipt.ts",
+      "sha256": "04803fd4fbe3515ef7b1e9238f738362ce390feb8e09b7b738b4d6a6c2a855d5",
+      "anchors": [
+        {
+          "symbol": "Domain journals remain the effect/idempotency truth",
+          "line": 2
+        },
+        {
+          "symbol": "export type EffectReceiptInput",
+          "line": 40
+        }
+      ],
+      "observationType": "static-source-reference"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/tools-invoke-shared.ts",
+      "sha256": "8dbbd0402aa712645a4f44f3206f239cbbc61f57cc40c4ae4237f8d289b37720",
+      "anchors": [
+        {
+          "symbol": "gatewayTool.execute?.(toolCallId, hookResult.params)",
+          "line": 487
+        }
+      ],
+      "observationType": "static-source-reference"
+    },
+    {
+      "path": "electron/gateway/config-sync.ts",
+      "sha256": "c173cd82f6eb9437cf86c1535f7c19a93cdda67a2ff227e220f69a4cf3e04cc2",
+      "anchors": [
+        {
+          "symbol": "SOURCE_RUNTIME_ISOLATION_SYNC_KEYS",
+          "line": 822
+        },
+        {
+          "symbol": "applySourceRuntimeIsolationUserConfig",
+          "line": 814
+        },
+        {
+          "symbol": "OPENCLAW_CONFIG_PATH",
+          "line": 790
+        }
+      ],
+      "observationType": "static-source-reference"
+    },
+    {
+      "path": "electron/services/work-providers-api.ts",
+      "sha256": "80cce2805326ccbc9c3fa690185653aac8af2b122d8ef39b6466b82c4458376a",
+      "anchors": [
+        {
+          "symbol": "async function runSheetWrite",
+          "line": 455
+        },
+        {
+          "symbol": "async function runSlideWrite",
+          "line": 474
+        },
+        {
+          "symbol": "async function validateArtifact",
+          "line": 592
+        }
+      ],
+      "observationType": "static-source-reference"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "38e92778f923c65f5ca248a393c95c774185ce94206154175f99203bf0f408f2",
+      "anchors": [
+        {
+          "symbol": "id: `artifact-${idx}`",
+          "line": 2974
+        },
+        {
+          "symbol": "hostApi.workProviders.validateArtifact",
+          "line": 3766
+        }
+      ],
+      "observationType": "static-source-reference"
+    }
+  ],
+  "counts": {
+    "total": 83,
+    "passed": 83,
+    "failed": 0
+  },
+  "checks": [
+    {
+      "name": "source-schema-meta-valid",
+      "pass": true
+    },
+    {
+      "name": "request-schema-meta-valid",
+      "pass": true
+    },
+    {
+      "name": "baseline-source-valid",
+      "pass": true
+    },
+    {
+      "name": "authored-expected-source-valid",
+      "pass": true
+    },
+    {
+      "name": "three-records-two-changes",
+      "pass": true
+    },
+    {
+      "name": "request-preconditions-valid",
+      "pass": true
+    },
+    {
+      "name": "joint-candidate-semantic-and-byte-oracle",
+      "pass": true
+    },
+    {
+      "name": "crlf-preserved",
+      "pass": true
+    },
+    {
+      "name": "equivalent-target-escape-permitted",
+      "pass": true
+    },
+    {
+      "name": "intermediate-1-invalid",
+      "pass": true
+    },
+    {
+      "name": "intermediate-2-invalid",
+      "pass": true
+    },
+    {
+      "name": "reverse-order-same-baseline-preconditions",
+      "pass": true
+    },
+    {
+      "name": "envelope-value-null",
+      "pass": true
+    },
+    {
+      "name": "envelope-value-bool",
+      "pass": true
+    },
+    {
+      "name": "envelope-value-integer",
+      "pass": true
+    },
+    {
+      "name": "envelope-value-float",
+      "pass": true
+    },
+    {
+      "name": "envelope-value-empty-string",
+      "pass": true
+    },
+    {
+      "name": "envelope-value-empty-array",
+      "pass": true
+    },
+    {
+      "name": "envelope-value-empty-object",
+      "pass": true
+    },
+    {
+      "name": "envelope-value-recursive-null",
+      "pass": true
+    },
+    {
+      "name": "reject-nan",
+      "pass": true
+    },
+    {
+      "name": "reject-infinity",
+      "pass": true
+    },
+    {
+      "name": "reject-unsafe-int",
+      "pass": true
+    },
+    {
+      "name": "reject-duplicate-key",
+      "pass": true
+    },
+    {
+      "name": "reject-duplicate-nested",
+      "pass": true
+    },
+    {
+      "name": "reject-comments",
+      "pass": true
+    },
+    {
+      "name": "reject-trailing-comma",
+      "pass": true
+    },
+    {
+      "name": "reject-single-quotes",
+      "pass": true
+    },
+    {
+      "name": "reject-bom",
+      "pass": true
+    },
+    {
+      "name": "reject-utf8",
+      "pass": true
+    },
+    {
+      "name": "reject-lone-surrogate",
+      "pass": true
+    },
+    {
+      "name": "reject-depth-over-limit",
+      "pass": true
+    },
+    {
+      "name": "reject-byte-over-limit",
+      "pass": true
+    },
+    {
+      "name": "reject-authority-argument-runId",
+      "pass": true
+    },
+    {
+      "name": "reject-authority-argument-workspace",
+      "pass": true
+    },
+    {
+      "name": "reject-authority-argument-actor",
+      "pass": true
+    },
+    {
+      "name": "reject-authority-argument-force",
+      "pass": true
+    },
+    {
+      "name": "reject-authority-argument-sourcePath",
+      "pass": true
+    },
+    {
+      "name": "reject-authority-argument-schema",
+      "pass": true
+    },
+    {
+      "name": "reject-unknown-operation",
+      "pass": true
+    },
+    {
+      "name": "reject-identity-field",
+      "pass": true
+    },
+    {
+      "name": "reject-deep-path",
+      "pass": true
+    },
+    {
+      "name": "reject-missing-value",
+      "pass": true
+    },
+    {
+      "name": "reject-missing-expect-value",
+      "pass": true
+    },
+    {
+      "name": "reject-duplicate-target",
+      "pass": true
+    },
+    {
+      "name": "reject-revision-mismatch",
+      "pass": true
+    },
+    {
+      "name": "reject-wrong-expect",
+      "pass": true
+    },
+    {
+      "name": "reject-absent-is-not-null",
+      "pass": true
+    },
+    {
+      "name": "reject-set-missing-field",
+      "pass": true
+    },
+    {
+      "name": "null-expectation-is-an-existing-value",
+      "pass": true
+    },
+    {
+      "name": "bool-is-not-number",
+      "pass": true
+    },
+    {
+      "name": "reject-duplicate-record-id",
+      "pass": true
+    },
+    {
+      "name": "reject-dangling-reference",
+      "pass": true
+    },
+    {
+      "name": "oracle-rejects-wrong-record",
+      "pass": true
+    },
+    {
+      "name": "oracle-rejects-untouched-baseline",
+      "pass": true
+    },
+    {
+      "name": "oracle-rejects-outside-whitespace",
+      "pass": true
+    },
+    {
+      "name": "oracle-rejects-outside-unicode-reserialization",
+      "pass": true
+    },
+    {
+      "name": "reject-schema-wrong-draft",
+      "pass": true
+    },
+    {
+      "name": "reject-schema-external-ref",
+      "pass": true
+    },
+    {
+      "name": "reject-schema-local-file-ref",
+      "pass": true
+    },
+    {
+      "name": "five-runtime-families-remain-not-run",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-renderer-boundary",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-plugin-factory",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-plugin-caller",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-plugin-callback",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-tool-policy-write-kit",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-real-run-lifecycle",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-edit-write-coordination",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-patch-coordination",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-preflight-commit",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-journal",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-effect-receipt",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-invoke-boundary",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-runtime-isolation",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-office-render",
+      "pass": true
+    },
+    {
+      "name": "source-anchor-artifact-projection",
+      "pass": true
+    },
+    {
+      "name": "harness-mapping-gateway-backend-communication",
+      "pass": true
+    },
+    {
+      "name": "harness-mapping-renderer-main-boundary",
+      "pass": true
+    },
+    {
+      "name": "harness-mapping-backend-communication-boundary",
+      "pass": true
+    },
+    {
+      "name": "harness-mapping-api-client-transport-policy",
+      "pass": true
+    },
+    {
+      "name": "harness-mapping-comms-regression",
+      "pass": true
+    },
+    {
+      "name": "harness-mapping-docs-sync",
+      "pass": true
+    },
+    {
+      "name": "inputs-unchanged-during-verification",
+      "pass": true
+    }
+  ],
+  "pass": true,
+  "elapsedSeconds": 0.195,
+  "productIntegrationVerdict": "not-run",
+  "runtimeTrialExecutionStatus": "not-run",
+  "realProviderCalls": 0,
+  "productSourceFilesWritten": 0,
+  "independentReviewer": false,
+  "limitations": [
+    "Same agent authored the fixture and checker; independent refers to oracle mechanism, not a second reviewer.",
+    "No runtime permissions, journal/DB effects, Electron UI, wasm or Office generation were executed.",
+    "A dirty working-tree check is development evidence, not a clean candidate acceptance."
+  ]
+}

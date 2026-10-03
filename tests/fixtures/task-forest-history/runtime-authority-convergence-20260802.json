@@ -1,0 +1,53 @@
+{
+  "schema": "task-forest-history/runtime-authority-convergence/v1",
+  "authority": "non-authorizing-historical-fixture",
+  "provenance": {
+    "sourcePath": ".agent-workbench/task-forest/proposals/TFP-runtime-authority-convergence-20260802.json",
+    "sourceCommit": "3f9aeee4765d60fa5a21c83ed0e7617cdc60b400",
+    "sourceGitBlob": "51031d9cf8e6826a1fa32546243784a98761e68f",
+    "selection": "Only the RC alias/title mapping, tested TF-0020 fields, and tested dependency edges are retained. Historical wording is not a current task, status, acceptance verdict, or authorization to apply a proposal.",
+    "driven_by": "agent",
+    "actor": "repository-artifact-localization-agent"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0020",
+      "fields": {
+        "next_action": "直接承担 RC-00：在隔离 fixture 上证明 acceptance:agent fail closed，只在证明失败时修复基础设施。",
+        "acceptance_criteria": [
+          "缺失或异常 actor、相同 Executor/Verifier 身份、错误或缺失 semantic reportDigest 均 NO-GO",
+          "真实隔离 fixture 生成绿色 verifier-report.json 与 final-report.json"
+        ]
+      }
+    },
+    { "action": "add_node", "alias": "rc-program", "node": { "title": "Runtime Authority Convergence 与 Operator 验收" } },
+    { "action": "add_node", "alias": "rc-01", "node": { "title": "RC-01 权威重基线与停止扩张清单" } },
+    { "action": "add_node", "alias": "rc-02", "node": { "title": "RC-02 Full-payload Shadow Census" } },
+    { "action": "add_node", "alias": "rc-03", "node": { "title": "RC-03 DCS Seal 与双收据" } },
+    { "action": "add_node", "alias": "rc-04", "node": { "title": "RC-04 Durable Approval 与 Effect Reconciliation" } },
+    { "action": "add_node", "alias": "rc-05", "node": { "title": "RC-05 最小 Operator 治理切片" } },
+    { "action": "add_node", "alias": "rc-06a", "node": { "title": "RC-06A TaskFlow 能力与并发语义证明" } },
+    { "action": "add_node", "alias": "rc-06b", "node": { "title": "RC-06B ClawGraph Lifecycle 迁移" } },
+    { "action": "add_node", "alias": "rc-06c", "node": { "title": "RC-06C Mission Lifecycle 迁移" } },
+    { "action": "add_node", "alias": "rc-06d", "node": { "title": "RC-06D Task Loop Lifecycle 迁移" } },
+    { "action": "add_node", "alias": "rc-07", "node": { "title": "RC-07 Memory 与 Context 插件槽收敛" } },
+    { "action": "add_node", "alias": "rc-08a", "node": { "title": "RC-08A MCP 与 Host-native Tool 收敛" } },
+    { "action": "add_node", "alias": "rc-08b", "node": { "title": "RC-08B OTel 与 Observability 收敛" } },
+    { "action": "add_node", "alias": "rc-09", "node": { "title": "RC-09 独立工程总验收与证据封存" } },
+    { "action": "add_node", "alias": "rc-10", "node": { "title": "RC-10 最终真人 Provider/Channel/Recovery 验收" } },
+    { "action": "add_edge", "from": "rc-01", "to": "TF-0020", "type": "depends_on" },
+    { "action": "add_edge", "from": "rc-02", "to": "rc-01", "type": "depends_on" },
+    { "action": "add_edge", "from": "rc-03", "to": "rc-02", "type": "depends_on" },
+    { "action": "add_edge", "from": "rc-04", "to": "rc-03", "type": "depends_on" },
+    { "action": "add_edge", "from": "rc-05", "to": "rc-04", "type": "depends_on" },
+    { "action": "add_edge", "from": "rc-06b", "to": "rc-06a", "type": "depends_on" },
+    { "action": "add_edge", "from": "rc-06c", "to": "rc-06b", "type": "depends_on" },
+    { "action": "add_edge", "from": "rc-06d", "to": "rc-06c", "type": "depends_on" },
+    { "action": "add_edge", "from": "rc-07", "to": "rc-06d", "type": "depends_on" },
+    { "action": "add_edge", "from": "rc-08a", "to": "rc-07", "type": "depends_on" },
+    { "action": "add_edge", "from": "rc-08b", "to": "rc-08a", "type": "depends_on" },
+    { "action": "add_edge", "from": "rc-09", "to": "rc-08b", "type": "depends_on" },
+    { "action": "add_edge", "from": "rc-10", "to": "rc-09", "type": "depends_on" }
+  ]
+}

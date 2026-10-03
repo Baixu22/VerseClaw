@@ -183,7 +183,7 @@ export type ToolLoopPostCompactionGuardConfig = {
 export type ToolLoopDetectionConfig = {
   /** Enable tool-loop protection (default: false). */
   enabled?: boolean;
-  /** Maximum tool call history entries retained for loop detection (default: 30). */
+  /** Requested history window (default: 30); expanded to cover configured termination thresholds. */
   historySize?: number;
   /** Warning threshold before a warning-only loop classification (default: 10). */
   warningThreshold?: number;

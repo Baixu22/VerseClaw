@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { tmpdir } from 'node:os';
+import type { KnowledgeRoleRegistryFile } from '@shared/host-api/contract';
 
 // Area 5 §3.1 — KB Role Registry tests. The registry loader is exercised
 // through the host API surface so tests stay aligned with the real read path.
@@ -329,14 +330,22 @@ describe('Area 5 §3.1 — KB Role Registry', () => {
   describe('stewardConfigUpdate host route (§3.1)', () => {
     it('persists a valid new registry and returns it', async () => {
       const api = await getApi();
-      const newRegistry = {
+      const newRegistry: KnowledgeRoleRegistryFile = {
         version: 1 as const,
         defaultRoleId: 'knowledge-steward',
         roles: [
           {
             roleId: 'knowledge-steward',
             enabled: true,
-            capabilities: { canApplyDirectly: false, canSearch: true },
+            capabilities: {
+              canSearch: true,
+              canRead: false,
+              canProposeDraft: false,
+              canClassify: false,
+              canSuggestMerge: false,
+              canSuggestArchive: false,
+              canApplyDirectly: false,
+            },
             scope: { workspace: true, agent: false, global: false },
           },
         ],
@@ -356,6 +365,7 @@ describe('Area 5 §3.1 — KB Role Registry', () => {
     it('refuses to persist a registry that normalizes to DEFAULT_REGISTRY (zero accepted roles)', async () => {
       const api = await getApi();
       const updateResult = await api.stewardConfigUpdate({
+        // Intentionally invalid: the boundary test submits canApplyDirectly=true.
         registry: {
           version: 1,
           defaultRoleId: 'knowledge-steward',
@@ -363,7 +373,7 @@ describe('Area 5 §3.1 — KB Role Registry', () => {
             // Entry that will be rejected (canApplyDirectly: true) → zero accepted roles
             { roleId: 'knowledge-steward', enabled: true, capabilities: { canApplyDirectly: true }, scope: {} },
           ],
-        },
+        } as unknown as KnowledgeRoleRegistryFile,
       });
       expect(updateResult.success).toBe(false);
       expect(updateResult.issues?.length).toBeGreaterThan(0);
@@ -391,8 +401,34 @@ describe('Area 5 §3.1 — KB Role Registry', () => {
           version: 1,
           defaultRoleId: 'knowledge-steward',
           roles: [
-            { roleId: 'knowledge-steward', enabled: true, capabilities: { canApplyDirectly: false }, scope: {} },
-            { roleId: 'knowledge-curator', enabled: true, capabilities: { canApplyDirectly: false }, scope: {} },
+            {
+              roleId: 'knowledge-steward',
+              enabled: true,
+              capabilities: {
+                canSearch: true,
+                canRead: true,
+                canProposeDraft: true,
+                canClassify: true,
+                canSuggestMerge: true,
+                canSuggestArchive: true,
+                canApplyDirectly: false,
+              },
+              scope: { workspace: true, agent: false, global: false },
+            },
+            {
+              roleId: 'knowledge-curator',
+              enabled: true,
+              capabilities: {
+                canSearch: true,
+                canRead: true,
+                canProposeDraft: true,
+                canClassify: true,
+                canSuggestMerge: true,
+                canSuggestArchive: true,
+                canApplyDirectly: false,
+              },
+              scope: { workspace: true, agent: false, global: false },
+            },
           ],
         },
       });

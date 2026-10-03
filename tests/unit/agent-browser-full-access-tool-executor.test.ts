@@ -62,7 +62,7 @@ describe('完全访问工具执行器', () => {
 
     expect(result.isError).toBeUndefined();
     expect(result.content).toContain('123456');
-    const params = evaluate.mock.calls[0]?.[0] as { expression: string; awaitPromise: boolean; returnByValue: boolean };
+    const params = (evaluate.mock.calls as unknown[][])[0]?.[0] as unknown as { expression: string; awaitPromise: boolean; returnByValue: boolean };
     expect(params.awaitPromise).toBe(true);
     expect(params.returnByValue).toBe(true);
     expect(params.expression).toContain('"credentials":"include"');

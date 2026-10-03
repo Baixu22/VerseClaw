@@ -10,10 +10,12 @@ function sha256(path: string): string {
   return createHash("sha256").update(readFileSync(path)).digest("hex");
 }
 
+// Source-text checks below pin catalog/routing contracts; they do not execute a process lifecycle.
 describe("UAS-05 VerseShell process lifecycle boundary", () => {
   const manifestPath = "resources/verseshell/manifest.json";
   const patchPath = "resources/verseshell/patches/uas-05-process-lifecycle.patch";
   const binaryPath = "resources/bin/win32-x64/ae.exe";
+  const SOURCE_INPUTS_PATH = "resources/verseshell/source-inputs.json";
   const manifest = JSON.parse(read(manifestPath));
   const sourcePatch = read(patchPath);
 
@@ -25,9 +27,11 @@ describe("UAS-05 VerseShell process lifecycle boundary", () => {
         "sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7",
     });
     expect(manifest.provenance.unrecorded_changes).toBe(false);
-    expect(manifest.provenance.source_inputs.identity_sha256).toBe(
-      "19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650",
-    );
+    const sourceInputs = JSON.parse(readFileSync(SOURCE_INPUTS_PATH, "utf8"));
+    const expectedCombinedSha = sourceInputs.identity?.combined_sha256;
+    expect(typeof expectedCombinedSha).toBe("string");
+    expect(expectedCombinedSha).toMatch(/^[a-f0-9]{64}$/u);
+    expect(manifest.provenance.source_inputs.identity_sha256).toBe(expectedCombinedSha);
     expect(manifest.compliance).toMatchObject({
       corresponding_source_status: "tracked_ordered_patch_stack",
       patch_paths: expect.arrayContaining([patchPath]),
@@ -68,16 +72,10 @@ describe("UAS-05 VerseShell process lifecycle boundary", () => {
     expect(registry).toContain('"verseshell"');
   });
 
-  it("leaves Task Forest release order and product graduation locks unchanged", () => {
-    const nodes = JSON.parse(read(".agent-workbench/task-forest/graph/nodes.json"));
+  it("preserves the recorded frozen product boundaries without consulting local task status", () => {
     const evidence = JSON.parse(read("artifacts/first-product-preview/TF-0009/evidence-audit.json"));
     const surrogate = read("artifacts/first-product-preview/TF-0009/agent-surrogate-report.json");
 
-    expect(nodes["TF-0016"]).toMatchObject({ status: "done", progress: 100 });
-    expect(nodes["TF-0017"]).toMatchObject({ status: "deprecated" });
-    expect(nodes["TF-0028"]).toMatchObject({ status: "in_progress" });
-    expect(nodes["TF-0041"]).toMatchObject({ status: "proposed" });
-    expect(nodes["TF-0042"]).toMatchObject({ status: "blocked" });
     expect(evidence.frozenBoundaries).toMatchObject({
       liveReady: false,
       productApproved: false,

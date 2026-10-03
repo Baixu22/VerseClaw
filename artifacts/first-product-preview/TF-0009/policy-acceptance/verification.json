@@ -1,0 +1,176 @@
+{
+  "schema": "tf0009-policy-verification/v1",
+  "driven_by": "agent",
+  "actor": "codex/root",
+  "candidate": {
+    "commit": "812cba73ffda0d59fd81e78543e35e16940084ff",
+    "tree": "df5b958a049a3369ced0dd2852a6d8335981c7b9",
+    "dirty": false
+  },
+  "reportSha256": "39b3d68aaa324151e4bf1f1f4ad5db9df5c5d274945ae0ad28620c4938343abd",
+  "charterSha256": "30c820f4f67f9e74837bf5de588e8ebe49419c562cb6c0d6a51db0dbca49656b",
+  "credentialScan": {
+    "hits": 0,
+    "patterns": [
+      "\\bsk-[A-Za-z0-9_-]{20,}",
+      "\\b(?:ghp|github_pat)_[A-Za-z0-9_]{20,}",
+      "-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----",
+      "Bearer\\s+[A-Za-z0-9_-]{24,}"
+    ],
+    "scope": "every evidence file except self/manifest"
+  },
+  "gates": [
+    {
+      "id": "campaign",
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "scripts/tf0009-agent-surrogate.mts"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 3687,
+      "log": "candidate-campaign.log"
+    },
+    {
+      "id": "unit",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/tf0009-agent-surrogate.test.ts",
+        "tests/unit/tf0009-engineering-evidence-audit.test.ts",
+        "tests/unit/dcs-ops-canary-hard-veto.test.ts",
+        "tests/unit/sekb-runtime-build-contract.test.ts",
+        "tests/unit/uas-00-evidence-freeze.test.ts",
+        "tests/unit/agent-engineering-acceptance.test.ts",
+        "--reporter=json",
+        "--outputFile=D:/ClawX-acceptance/tf0009-20260930/candidate-unit.json"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate",
+      "exitCode": 0,
+      "durationMs": 164359,
+      "log": "candidate-unit.log"
+    },
+    {
+      "id": "harness",
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/tf0009-engineering-evidence-audit.md",
+        "--since",
+        "1622a24e8a113c43643b44ac1fcd5755726019c8"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate",
+      "exitCode": 0,
+      "durationMs": 406,
+      "log": "candidate-harness.log"
+    },
+    {
+      "id": "harness-dry-run",
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/tf0009-engineering-evidence-audit.md",
+        "--since",
+        "1622a24e8a113c43643b44ac1fcd5755726019c8",
+        "--dry-run"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate",
+      "exitCode": 0,
+      "durationMs": 391,
+      "log": "candidate-harness-dry-run.log"
+    },
+    {
+      "id": "preflight",
+      "command": [
+        "node",
+        "scripts/dcs-ops-preflight.mjs"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate",
+      "exitCode": 0,
+      "durationMs": 47,
+      "log": "candidate-preflight.log"
+    },
+    {
+      "id": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "1622a24e8a113c43643b44ac1fcd5755726019c8"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate",
+      "exitCode": 0,
+      "durationMs": 141,
+      "log": "candidate-diff-check.log",
+      "note": "Removed an inherited extra EOF blank line from the historical charter copy; JSON verified identical to original. No source or assertions changed."
+    },
+    {
+      "id": "typecheck",
+      "exitCode": 0,
+      "command": "pnpm run typecheck",
+      "log": "typecheck-final.log",
+      "scope": "candidate source in primary checkout"
+    },
+    {
+      "id": "lint",
+      "exitCode": 0,
+      "command": "pnpm exec eslint <8 changed JS/TS files>",
+      "log": "lint-final.log",
+      "scope": "same source before candidate commit"
+    },
+    {
+      "id": "autoreview",
+      "exitCode": 0,
+      "command": "python openclaw_runtime/.agents/skills/autoreview/scripts/autoreview --mode local --no-web-search",
+      "report": "autoreview-final.json",
+      "scope": "same source before candidate commit"
+    }
+  ],
+  "testCounts": {
+    "numPassedTests": 102,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  },
+  "parentBaseline": {
+    "path": "artifacts/component-controlled-rollout-p0/final-report.json",
+    "sha256": "f716ea2354289538edc38bdb89c8b893d1dcaadae30e623f95ce4745c0eca6fc",
+    "generatedAt": "2026-07-20T05:24:21.6026934+08:00",
+    "historicalNotRerun": true,
+    "electronPassed": 6,
+    "maturityExitCode": 0
+  },
+  "limitations": [
+    "Agent component campaign with an isolated Browser page runtime; no real-human/public-network claim.",
+    "Dependency junctions reuse local packages; two ignored legacy test inputs are copied byte-for-byte and archived with their hashes. Not fresh-install supply-chain proof.",
+    "No new full RC-09, Electron, paid-provider or release/GA acceptance; TF-0008 evidence is historical."
+  ],
+  "textNormalization": [
+    {
+      "file": "autoreview-final.json",
+      "originalSha256": "85f08f76a3ca4f18e9ff4588ec8ea95083f14fa935d5c1a8dccd04053fefc3fe",
+      "operation": "CRLF to LF in copied text only; original retained in acceptance run directory"
+    },
+    {
+      "file": "autoreview-final.md",
+      "originalSha256": "7a329b2e5b608c7406a9d395b246cc5ae811a69556935679b0f8eebb3e4c328b",
+      "operation": "CRLF to LF in copied text only; original retained in acceptance run directory"
+    },
+    {
+      "file": "legacy-test-inputs.json",
+      "originalSha256": "b88c84e405acea0e660b6d9718aeaed6c66fe9ccf26ef1e33f4ae314d2c85dab",
+      "operation": "CRLF to LF in copied text only; original retained in acceptance run directory"
+    },
+    {
+      "file": "typecheck-final.log",
+      "originalSha256": "030c08b3a559f5dc6de423f6a195654c2a8d2d789ccdbb68fdabd5d474227f98",
+      "operation": "CRLF to LF in copied text only; original retained in acceptance run directory"
+    }
+  ]
+}

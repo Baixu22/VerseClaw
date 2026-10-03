@@ -1,4 +1,6 @@
-import { completeSetup, expect, test } from './fixtures/electron';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { closeElectronApp, completeSetup, expect, getStableWindow, test } from './fixtures/electron';
 
 const TEST_PROVIDER_ID = 'moonshot-e2e';
 const TEST_PROVIDER_LABEL = 'Moonshot E2E';
@@ -20,6 +22,45 @@ async function seedTestProvider(page: Parameters<typeof completeSetup>[0]): Prom
 }
 
 test.describe('Verse Claw provider lifecycle', () => {
+  test('recognizes an environment SecretRef without saving the API key', async ({ homeDir, launchElectronApp }) => {
+    const configDir = join(homeDir, '.openclaw');
+    const configPath = join(configDir, 'openclaw.json');
+    await mkdir(configDir, { recursive: true });
+    await writeFile(configPath, JSON.stringify({
+      models: { providers: { 'custom-envprobe': {
+        api: 'openai-completions',
+        baseUrl: 'https://example.invalid/v1',
+        apiKey: { source: 'env', provider: 'default', id: 'CLAWX_TEST_PROVIDER_ENV_KEY' },
+        models: [{ id: 'env-model', name: 'env-model' }],
+      } } },
+    }));
+    const app = await launchElectronApp({
+      skipSetup: true,
+      env: { CLAWX_TEST_PROVIDER_ENV_KEY: 'test-environment-token' },
+    });
+    try {
+      const page = await getStableWindow(app);
+      await page.getByTestId('sidebar-nav-settings').click();
+      await page.getByTestId('settings-nav-models').click();
+      const card = page.getByTestId('provider-card-custom-envprobe');
+      await expect(card).toBeVisible();
+      await expect(card).toContainText('Configured');
+      await expect(card).not.toContainText('test-environment-token');
+      const keyInfo = await page.evaluate(async () => {
+        if (!window.verseClaw) throw new Error('hostInvoke bridge unavailable');
+        return window.verseClaw.hostInvoke({
+          id: crypto.randomUUID(), module: 'providers', action: 'accountKeyInfo',
+        });
+      });
+      expect(keyInfo).toMatchObject({ ok: true, data: [
+        { accountId: 'custom-envprobe', hasKey: true },
+      ] });
+      expect(await readFile(configPath, 'utf8')).not.toContain('test-environment-token');
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
   test('shows a saved provider and removes it cleanly after deletion', async ({ page }) => {
     await completeSetup(page);
     await seedTestProvider(page);

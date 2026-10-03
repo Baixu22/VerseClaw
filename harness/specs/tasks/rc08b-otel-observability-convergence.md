@@ -2,6 +2,9 @@
 id: rc08b-otel-observability-convergence
 title: RC-08B OTel And Observability Convergence
 taskType: engineering-acceptance
+# Pinned to the commit RC-08BR starts from; the shared branch diverged from
+# origin/main long ago.
+diffBase: 2941f3afb
 intent: Let OTel/OTLP own trace export; ingress, run, model/tool, effect, and delivery share correlation IDs; receipts and domain journals remain facts; trajectory is bounded flight-recorder evidence; Observability JSONL is rebuildable cache only. Exporter-off parity passes; default raw prompt/tool leakage is zero; one golden trace exports to a neutral OTLP fixture; no second trace schema/store is introduced.
 ownedPaths:
   - openclaw_runtime/extensions/diagnostics-otel/**
@@ -15,6 +18,9 @@ ownedPaths:
   - tests/unit/rc08b-otel-observability-convergence.test.ts
   - harness/specs/tasks/rc08b-otel-observability-convergence.md
   - artifacts/runtime-authority-convergence/rc-08b/**
+  - .agent-workbench/task-forest/**
+  - docs/dev/handoffs/LATEST.md
+  - docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md
 touchedAreas:
   - openclaw_runtime/extensions/diagnostics-otel/**
   - openclaw_runtime/src/observability/**
@@ -40,9 +46,9 @@ forbiddenPatterns:
   - default raw prompt/tool content leakage into the exporter
   - changing product locks, liveReady, productApproved, defaultOn, or human/live evidence counts
 featureFlags:
-  - The OTel exporter is behind a feature flag default-off; the kill switch restores exporter-off parity.
+  - The OTel exporter is the diagnostics-otel extension, gated by the existing `diagnostics.otel.enabled` config (default off); with it off the extension never subscribes and exports nothing.
 rollback:
-  - Disable the OTel exporter flag to restore exporter-off behavior.
+  - Set `diagnostics.otel.enabled=false` to restore exporter-off behavior.
   - No migration rollback is required because no data migration occurs.
 requiredTests:
   - pnpm exec vitest run tests/unit/rc08b-otel-observability-convergence.test.ts
@@ -67,8 +73,13 @@ docs:
 
 # RC-08B OTel And Observability Convergence
 
-RC-08B lets OTel/OTLP own trace export and makes ingress, run, model/tool, effect, and delivery
-share correlation IDs. Receipts and domain journals remain factual evidence, trajectory is bounded
-flight-recorder evidence, and Observability JSONL is rebuildable cache only. Exporter-off parity
-passes, default raw prompt/tool leakage is zero, and one golden trace exports to a neutral OTLP
-fixture. No second trace schema or store is introduced.
+The diagnostics-otel extension (OTel NodeSDK with the OTLP/protobuf trace exporter) is the only
+trace exporter. A hand-rolled OTLP JSON exporter in `src/observability/exporter-parity.ts` and its
+trace-buffer install hook had no production caller and were a dormant second export path; they are
+removed, and the trace buffer is an in-memory cache that exports nothing. Correlation comes from the
+production diagnostic trace context: ingress, run, model call, tool execution, the process effect it
+runs, and delivery export as one trace with a parent chain. The process-effect span (`openclaw.exec`)
+previously had no parent and exported as an unrelated root trace; it now parents on the active trace.
+The golden test starts the extension through the real plugin-service host, receives the export on a
+local HTTP collector, and decodes it by OTLP field number; with the exporter off the same events export
+nothing, and default content capture leaks no raw prompt text.

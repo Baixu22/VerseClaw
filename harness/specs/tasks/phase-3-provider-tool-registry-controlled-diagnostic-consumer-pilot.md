@@ -62,13 +62,13 @@ requiredTests:
   - pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/phase-3-provider-tool-registry-controlled-diagnostic-consumer-pilot.md --no-diff
   - pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/phase-3-provider-tool-registry-controlled-diagnostic-consumer-readiness.md --no-diff
   - pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/phase-3-provider-tool-registry-diagnostic-collector.md --no-diff
-  - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-controlled-runtime-use-pilot-readiness.test.ts tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts
+  - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-provider-tool-registry.test.ts tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts
   - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-provider-tool-registry.test.ts tests/unit/context-provider-registry.test.ts tests/unit/tool-provider-registry.test.ts tests/unit/mcp-api.test.ts tests/unit/task-loop-controller.test.ts
   - pnpm --config.verify-deps-before-run=false run typecheck
   - pnpm --config.verify-deps-before-run=false run comms:replay
   - pnpm --config.verify-deps-before-run=false run comms:compare
-  - rg -n "provider ordering|default provider|default-on|prompt cutover|model messages|Gateway request|formatTaskLoopContextPackForReviewer|runAgentPrompt|provider transport|TaskLoop authority|tool authority" openclaw_runtime/src/runtime-core/registries.ts openclaw_runtime/src/context-engine/provider-registry.ts openclaw_runtime/src/agents/task-loop-controller.ts electron/services/tool-provider-registry.ts electron/services/mcp-api.ts tests/unit/runtime-provider-tool-registry.test.ts tests/unit/context-provider-registry.test.ts tests/unit/tool-provider-registry.test.ts tests/unit/mcp-api.test.ts tests/unit/task-loop-controller.test.ts tests/unit/runtime-controlled-runtime-use-*.test.ts harness/specs/tasks/phase-3-provider-tool-registry-controlled-diagnostic-consumer-pilot.md runtime-research/handoffs/phase-3-provider-tool-registry-controlled-diagnostic-consumer-pilot runtime-research/handoffs/controlled-runtime-use-pilot-readiness
-  - rg -n "createServer\\(|listen\\(|WebSocketServer|new WebSocket\\(|daemon|listener|external database|sqlite|postgres|mysql|redis|@temporalio|express\\(" openclaw_runtime/src/runtime-core/registries.ts openclaw_runtime/src/context-engine/provider-registry.ts openclaw_runtime/src/agents/task-loop-controller.ts electron/services/tool-provider-registry.ts electron/services/mcp-api.ts tests/unit/runtime-provider-tool-registry.test.ts tests/unit/context-provider-registry.test.ts tests/unit/tool-provider-registry.test.ts tests/unit/mcp-api.test.ts tests/unit/task-loop-controller.test.ts tests/unit/runtime-controlled-runtime-use-*.test.ts harness/specs/tasks/phase-3-provider-tool-registry-controlled-diagnostic-consumer-pilot.md runtime-research/handoffs/phase-3-provider-tool-registry-controlled-diagnostic-consumer-pilot runtime-research/handoffs/controlled-runtime-use-pilot-readiness
+  - rg -n "provider ordering|default provider|default-on|prompt cutover|model messages|Gateway request|formatTaskLoopContextPackForReviewer|runAgentPrompt|provider transport|TaskLoop authority|tool authority" openclaw_runtime/src/runtime-core/registries.ts openclaw_runtime/src/context-engine/provider-registry.ts openclaw_runtime/src/agents/task-loop-controller.ts electron/services/tool-provider-registry.ts electron/services/mcp-api.ts tests/unit/runtime-provider-tool-registry.test.ts tests/unit/context-provider-registry.test.ts tests/unit/tool-provider-registry.test.ts tests/unit/mcp-api.test.ts tests/unit/task-loop-controller.test.ts tests/unit/runtime-controlled-runtime-use-*.test.ts harness/specs/tasks/phase-3-provider-tool-registry-controlled-diagnostic-consumer-pilot.md docs/dev/runtime-research-boundaries.md
+  - rg -n "createServer\\(|listen\\(|WebSocketServer|new WebSocket\\(|daemon|listener|external database|sqlite|postgres|mysql|redis|@temporalio|express\\(" openclaw_runtime/src/runtime-core/registries.ts openclaw_runtime/src/context-engine/provider-registry.ts openclaw_runtime/src/agents/task-loop-controller.ts electron/services/tool-provider-registry.ts electron/services/mcp-api.ts tests/unit/runtime-provider-tool-registry.test.ts tests/unit/context-provider-registry.test.ts tests/unit/tool-provider-registry.test.ts tests/unit/mcp-api.test.ts tests/unit/task-loop-controller.test.ts tests/unit/runtime-controlled-runtime-use-*.test.ts harness/specs/tasks/phase-3-provider-tool-registry-controlled-diagnostic-consumer-pilot.md docs/dev/runtime-research-boundaries.md
   - rg -n "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components
 acceptance:
   - Prerequisite status is confirmed as accepted_runtime_use_prerequisites_complete.
@@ -79,16 +79,11 @@ acceptance:
   - The quantitative scorecard assigns registry pilot scores across usable value 25, current evidence strength 20, boundary safety 20, verification quantifiability 15, dependency maturity 10, and rollback/reversibility 10.
   - Hard veto gates block any default-on behavior, provider ordering drift, leakage, fail-closed rate below 100 percent, renderer bypass, AST mutation/apply/write surface, TaskLoop/Gateway/provider transport authority drift, rollback failure, or missing required validation without a blocked reason.
   - Harness context and structural validation pass for this pilot spec and predecessor registry specs.
-  - Focused registry, context-provider, tool-provider, MCP, TaskLoop, controlled readiness boundary, pilot readiness doc sentinel, typecheck, comms replay, comms compare, and boundary scans pass or are recorded with a blocked reason.
+  - Focused registry, context-provider, tool-provider, MCP, TaskLoop, controlled readiness boundary, maintained registry behavior regressions, typecheck, comms replay, comms compare, and boundary scans pass or are recorded with a blocked reason.
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-3-provider-tool-registry-controlled-diagnostic-consumer-pilot/README.md
-    - runtime-research/handoffs/phase-3-provider-tool-registry-controlled-diagnostic-consumer-pilot/validation-plan.md
-    - runtime-research/handoffs/controlled-runtime-use-pilot-readiness/sample-matrix.md
-    - runtime-research/handoffs/controlled-runtime-use-pilot-readiness/scorecard.md
-    - runtime-research/handoffs/controlled-runtime-use-pilot-readiness/veto-gates.md
-    - runtime-research/handoffs/controlled-runtime-use-pilot-readiness/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 3 Provider Tool Registry Controlled Diagnostic Consumer Pilot

@@ -1,0 +1,170 @@
+{
+  "available": true,
+  "reason": null,
+  "context": [
+    {
+      "kind": "context",
+      "correlation_digest": "c911b166d3649bc5fb9daeb3e7ade74a1b500c248251c2f81debce064a121c18",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a",
+      "selected": [
+        "ref:context:cvk-context-engine:7219159c5f368739608b4dac4ea7cd35468d251bdca4c6e8b2d421f60c2eb1ef",
+        "ref:context:producer:compass-ssp"
+      ],
+      "omitted": [
+        "ref:context:context-block%3Aknowledge:893b0719796bf818cc016f36564db938aa33ba303445501d71f6c997ad4f5b7e",
+        "ref:context:context-block%3Aworking-memory%3Aworking_memory:0e90ceeb0197e3363b540dfed51aeabed145da25983e874b943cc4d0155e5d15",
+        "ref:context:context-block%3Acvk%3Atool_registry:489aa5964c05295769dcf2754712708f187f9177b0c71497326c2bf52cf1f410",
+        "ref:context:vtoken-assembly:52983526569ed1de6c145431f3ac63a25d44622160c0ec01a3401601e3f98469",
+        "ref:context:memory-inject-pilot:c64cb6db53d8f687449c51cfc97971a020edcc9eee05f599b85ff4b888eee31c"
+      ]
+    },
+    {
+      "kind": "shadow_context",
+      "correlation_digest": "6c70776f7df60a7c5e55c43619463e5194fbacd5f42f252217408c4cc636e3a8",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a",
+      "selected": null,
+      "omitted": null
+    },
+    {
+      "kind": "context",
+      "correlation_digest": "2935bd8662f679a5c86f1aac4339e8d221e7b90228dcffbc4692515d7a8d7f11",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a",
+      "selected": [
+        "ref:context:producer:compass-ssp"
+      ],
+      "omitted": [
+        "ref:context:context-block%3Aknowledge:893b0719796bf818cc016f36564db938aa33ba303445501d71f6c997ad4f5b7e",
+        "ref:context:context-block%3Aworking-memory%3Aworking_memory:0e90ceeb0197e3363b540dfed51aeabed145da25983e874b943cc4d0155e5d15",
+        "ref:context:context-block%3Acvk%3Atool_registry:489aa5964c05295769dcf2754712708f187f9177b0c71497326c2bf52cf1f410"
+      ]
+    },
+    {
+      "kind": "shadow_context",
+      "correlation_digest": "38b9236b8db6f570f874b036d15f03b3699d45ccf2b59b78143d761b435307aa",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a",
+      "selected": null,
+      "omitted": null
+    },
+    {
+      "kind": "context",
+      "correlation_digest": "060bf5d4f602f4b16f6a538c8ad97201ca153494bf17c97f38ca35ae13a45baa",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a",
+      "selected": [
+        "ref:context:producer:compass-ssp"
+      ],
+      "omitted": [
+        "ref:context:context-block%3Aknowledge:893b0719796bf818cc016f36564db938aa33ba303445501d71f6c997ad4f5b7e",
+        "ref:context:context-block%3Aworking-memory%3Aworking_memory:0e90ceeb0197e3363b540dfed51aeabed145da25983e874b943cc4d0155e5d15",
+        "ref:context:context-block%3Acvk%3Atool_registry:489aa5964c05295769dcf2754712708f187f9177b0c71497326c2bf52cf1f410"
+      ]
+    },
+    {
+      "kind": "shadow_context",
+      "correlation_digest": "28b11ee752d84eca39eb2cc4dfc93503f286260cfe0a9e6fdd57b8c41c08e975",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a",
+      "selected": null,
+      "omitted": null
+    },
+    {
+      "kind": "context",
+      "correlation_digest": "341f499928759cf25109804d35c9073ae6e7f56a03aae774c66e95304e30d307",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a",
+      "selected": [
+        "ref:context:producer:compass-ssp"
+      ],
+      "omitted": [
+        "ref:context:context-block%3Aknowledge:893b0719796bf818cc016f36564db938aa33ba303445501d71f6c997ad4f5b7e",
+        "ref:context:context-block%3Aworking-memory%3Aworking_memory:0e90ceeb0197e3363b540dfed51aeabed145da25983e874b943cc4d0155e5d15",
+        "ref:context:context-block%3Acvk%3Atool_registry:489aa5964c05295769dcf2754712708f187f9177b0c71497326c2bf52cf1f410"
+      ]
+    },
+    {
+      "kind": "shadow_context",
+      "correlation_digest": "d1f72fb1d1cd386b885a744cf8b9f0ac5df51eee88f90205d436b9017883d57f",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a",
+      "selected": null,
+      "omitted": null
+    },
+    {
+      "kind": "context",
+      "correlation_digest": "48050ebdf5eca5042f3328386d3b7cdc4a6445b4dbb5e851ffb33b0924cc77d9",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a",
+      "selected": [
+        "ref:context:producer:compass-ssp"
+      ],
+      "omitted": [
+        "ref:context:context-block%3Aknowledge:893b0719796bf818cc016f36564db938aa33ba303445501d71f6c997ad4f5b7e",
+        "ref:context:context-block%3Aworking-memory%3Aworking_memory:0e90ceeb0197e3363b540dfed51aeabed145da25983e874b943cc4d0155e5d15",
+        "ref:context:context-block%3Acvk%3Atool_registry:489aa5964c05295769dcf2754712708f187f9177b0c71497326c2bf52cf1f410"
+      ]
+    },
+    {
+      "kind": "shadow_context",
+      "correlation_digest": "51884f08c3643288065836904379bdab4028ad164ebd948a0535d0fb4d57e978",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a",
+      "selected": null,
+      "omitted": null
+    }
+  ],
+  "wire": [
+    {
+      "kind": "shadow_wire",
+      "correlation_digest": "c911b166d3649bc5fb9daeb3e7ade74a1b500c248251c2f81debce064a121c18",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a"
+    },
+    {
+      "kind": "wire",
+      "correlation_digest": "c911b166d3649bc5fb9daeb3e7ade74a1b500c248251c2f81debce064a121c18",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a"
+    },
+    {
+      "kind": "shadow_wire",
+      "correlation_digest": "2935bd8662f679a5c86f1aac4339e8d221e7b90228dcffbc4692515d7a8d7f11",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a"
+    },
+    {
+      "kind": "wire",
+      "correlation_digest": "2935bd8662f679a5c86f1aac4339e8d221e7b90228dcffbc4692515d7a8d7f11",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a"
+    },
+    {
+      "kind": "shadow_wire",
+      "correlation_digest": "060bf5d4f602f4b16f6a538c8ad97201ca153494bf17c97f38ca35ae13a45baa",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a"
+    },
+    {
+      "kind": "wire",
+      "correlation_digest": "060bf5d4f602f4b16f6a538c8ad97201ca153494bf17c97f38ca35ae13a45baa",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a"
+    },
+    {
+      "kind": "shadow_wire",
+      "correlation_digest": "341f499928759cf25109804d35c9073ae6e7f56a03aae774c66e95304e30d307",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a"
+    },
+    {
+      "kind": "wire",
+      "correlation_digest": "341f499928759cf25109804d35c9073ae6e7f56a03aae774c66e95304e30d307",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a"
+    },
+    {
+      "kind": "shadow_wire",
+      "correlation_digest": "48050ebdf5eca5042f3328386d3b7cdc4a6445b4dbb5e851ffb33b0924cc77d9",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a"
+    },
+    {
+      "kind": "wire",
+      "correlation_digest": "48050ebdf5eca5042f3328386d3b7cdc4a6445b4dbb5e851ffb33b0924cc77d9",
+      "run_id": "5814149e-34ab-4aa6-9bf4-2097f662d83a"
+    }
+  ],
+  "pairs": 5,
+  "dbPath": "D:\\ClawX-acceptance\\rc09-20260929\\rc10-evidence\\H-01\\user-data\\openclaw-source-state\\state\\openclaw.sqlite",
+  "total": 20,
+  "kinds": [
+    "context",
+    "shadow_context",
+    "shadow_wire",
+    "wire"
+  ]
+}

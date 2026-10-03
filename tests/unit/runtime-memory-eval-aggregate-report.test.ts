@@ -24,7 +24,7 @@ describe("aggregate report generator", () => {
     const enhancedReport = generateEnhancedReport(MOCK_DIMS, { now: () => 1_000 });
     const report = generateAggregateReport({
       enhancedReport,
-      firedReasons: ALL_REJECTION_REASONS,
+      firedReasons: [...ALL_REJECTION_REASONS],
       testSuite: { totalFiles: 12, passedFiles: 12, failedFiles: [] },
       now: () => 1_000,
     });
@@ -82,11 +82,34 @@ describe("aggregate report generator", () => {
     expect(report.testSuite.failedFiles).toEqual([]);
   });
 
+  it("defaults aggregate evidence to unaccepted synthetic data", () => {
+    const enhancedReport = generateEnhancedReport(MOCK_DIMS);
+    const report = generateAggregateReport({ enhancedReport });
+
+    expect(report.evidenceClass).toBe("synthetic");
+    expect(report.accepted).toBe(false);
+    expect(report.acceptanceNote).toContain("not runtime or live-session");
+  });
+
+  it("preserves an explicitly supplied evidence classification", () => {
+    const enhancedReport = generateEnhancedReport(MOCK_DIMS);
+    const report = generateAggregateReport({
+      enhancedReport,
+      evidenceClass: "runtime-fixture",
+      accepted: false,
+      acceptanceNote: "Fixture-only regression evidence.",
+    });
+
+    expect(report.evidenceClass).toBe("runtime-fixture");
+    expect(report.accepted).toBe(false);
+    expect(report.acceptanceNote).toBe("Fixture-only regression evidence.");
+  });
+
   it("Markdown output contains all sections", () => {
     const enhancedReport = generateEnhancedReport(MOCK_DIMS, { now: () => 1_000 });
     const report = generateAggregateReport({
       enhancedReport,
-      firedReasons: ALL_REJECTION_REASONS,
+      firedReasons: [...ALL_REJECTION_REASONS],
       testSuite: { totalFiles: 12, passedFiles: 11, failedFiles: ["test-x.ts"] },
       now: () => 1_000,
     });
@@ -105,7 +128,7 @@ describe("aggregate report generator", () => {
     const enhancedReport = generateEnhancedReport(MOCK_DIMS, { now: () => 1_000 });
     const report = generateAggregateReport({
       enhancedReport,
-      firedReasons: ALL_REJECTION_REASONS,
+      firedReasons: [...ALL_REJECTION_REASONS],
       now: () => 1_000,
     });
     const md = formatAggregateReportAsMarkdown(report);

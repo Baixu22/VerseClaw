@@ -102,6 +102,7 @@ import type { ChannelRouteRef } from "../../plugin-sdk/channel-route.js";
 import { isPluginOwnedSessionBindingRecord } from "../../plugins/conversation-binding.js";
 import { normalizeAgentId, scopeLegacySessionKeyToAgent } from "../../routing/session-key.js";
 import { normalizeInputProvenance, type InputProvenance } from "../../sessions/input-provenance.js";
+import { acquireSessionAdmissionPermit } from "../../sessions/session-admission-registry.js";
 import { resolveSendPolicy } from "../../sessions/send-policy.js";
 import { parseAgentSessionKey } from "../../sessions/session-key-utils.js";
 import {
@@ -2728,7 +2729,21 @@ async function handleChatHistoryRequest({
 export async function drainQueuedUserMessagesForSession(
   context: GatewayRequestContext,
   sessionKey: string,
+  options?: { expectedSessionId?: string },
 ): Promise<{ drained: boolean; messageCount: number; queueCount: number; reason?: string }> {
+  // TF-0082 generation guard: refuse to dequeue for a pinned generation that
+  // no longer owns this session; queued messages must survive untouched.
+  if (options?.expectedSessionId) {
+    const { entry: currentEntry } = loadSessionEntry(sessionKey);
+    if (currentEntry && currentEntry.sessionId !== options.expectedSessionId) {
+      return {
+        drained: false,
+        messageCount: 0,
+        queueCount: peekUserMessageCount(sessionKey),
+        reason: "generation-mismatch",
+      };
+    }
+  }
   const messages = drainUserMessages(sessionKey);
   if (messages.length === 0) {
     return {
@@ -3429,27 +3444,39 @@ export const chatHandlers: GatewayRequestHandlers = {
     }
 
     if (stopCommand) {
-      const defaultAgentId = resolveDefaultAgentId(cfg);
-      const stopAgentId =
-        sessionKey === "global" ? (selectedAgent.agentId ?? defaultAgentId) : selectedAgent.agentId;
-      const res = await abortChatRunsForSessionKeyWithPartials({
-        context,
-        ops: createChatAbortOps(context),
-        sessionKey: rawSessionKey,
-        sessionKeyAliases: sessionKey === rawSessionKey ? undefined : [sessionKey],
-        agentId: stopAgentId,
-        sessionId: entry?.sessionId,
-        persistSessionKey: sessionKey,
-        defaultAgentId,
-        abortOrigin: "stop-command",
-        stopReason: "stop",
-        requester: resolveChatAbortRequester(client),
-      });
-      if (res.unauthorized) {
-        respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "unauthorized"));
-        return;
+      const releaseStopPermit = acquireSessionAdmissionPermit(
+        {
+          agentId,
+          canonicalSessionKey: sessionKey,
+          expectedSessionId: backingSessionId ?? requestedSessionId ?? clientRunId,
+        },
+        "chat-send",
+      );
+      try {
+        const defaultAgentId = resolveDefaultAgentId(cfg);
+        const stopAgentId =
+          sessionKey === "global" ? (selectedAgent.agentId ?? defaultAgentId) : selectedAgent.agentId;
+        const res = await abortChatRunsForSessionKeyWithPartials({
+          context,
+          ops: createChatAbortOps(context),
+          sessionKey: rawSessionKey,
+          sessionKeyAliases: sessionKey === rawSessionKey ? undefined : [sessionKey],
+          agentId: stopAgentId,
+          sessionId: entry?.sessionId,
+          persistSessionKey: sessionKey,
+          defaultAgentId,
+          abortOrigin: "stop-command",
+          stopReason: "stop",
+          requester: resolveChatAbortRequester(client),
+        });
+        if (res.unauthorized) {
+          respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "unauthorized"));
+          return;
+        }
+        respond(true, { ok: true, aborted: res.aborted, runIds: res.runIds });
+      } finally {
+        releaseStopPermit();
       }
-      respond(true, { ok: true, aborted: res.aborted, runIds: res.runIds });
       return;
     }
 
@@ -3581,27 +3608,40 @@ export const chatHandlers: GatewayRequestHandlers = {
           evidenceRefs: [{ type: "session", ref: sessionKey }],
           metadata: { inputMode: action.mode },
         });
-        const queuedMsg = enqueueUserMessage(sessionKey, {
-          text: inboundMessage,
-          agentId: selectedAgent.agentId,
-          workspaceId,
-          taskLedgerRootId,
-          source: "queue",
-          idempotencyKey: `chat:${clientRunId}:queue:item`,
-        });
-        recordLongTaskInterventionEvent({
-          idempotencyKey: `chat:${clientRunId}:queue:event`,
-          sessionKey,
-          agentId: selectedAgent.agentId,
-          workspaceId,
-          taskLedgerRootId,
-          runId: activeEntryForSession.runId,
-          checkpointId: checkpoint.id,
-          mode: "queue",
-          trigger: interventionPolicy.resumeTrigger ?? "queue_drain",
-          status: "queued",
-          payload: { queueItemId: queuedMsg.id, message: inboundMessage },
-        });
+        const releaseQueuePermit = acquireSessionAdmissionPermit(
+          {
+            agentId,
+            canonicalSessionKey: sessionKey,
+            expectedSessionId: backingSessionId ?? requestedSessionId ?? clientRunId,
+          },
+          "chat-send",
+        );
+        let queuedMsg: ReturnType<typeof enqueueUserMessage>;
+        try {
+          queuedMsg = enqueueUserMessage(sessionKey, {
+            text: inboundMessage,
+            agentId: selectedAgent.agentId,
+            workspaceId,
+            taskLedgerRootId,
+            source: "queue",
+            idempotencyKey: `chat:${clientRunId}:queue:item`,
+          });
+          recordLongTaskInterventionEvent({
+            idempotencyKey: `chat:${clientRunId}:queue:event`,
+            sessionKey,
+            agentId: selectedAgent.agentId,
+            workspaceId,
+            taskLedgerRootId,
+            runId: activeEntryForSession.runId,
+            checkpointId: checkpoint.id,
+            mode: "queue",
+            trigger: interventionPolicy.resumeTrigger ?? "queue_drain",
+            status: "queued",
+            payload: { queueItemId: queuedMsg.id, message: inboundMessage },
+          });
+        } finally {
+          releaseQueuePermit();
+        }
         const queuePos = peekUserMessageCount(sessionKey);
         // Broadcast queue status so the UI shows a "queued" indicator.
         try {
@@ -3715,6 +3755,14 @@ export const chatHandlers: GatewayRequestHandlers = {
           await import("../../agents/embedded-agent-runner/runs.js");
         const activeSessionId = resolveActiveEmbeddedRunSessionId(sessionKey);
         if (activeSessionId) {
+          const releaseGuidePermit = acquireSessionAdmissionPermit(
+            {
+              agentId,
+              canonicalSessionKey: sessionKey,
+              expectedSessionId: backingSessionId ?? requestedSessionId ?? clientRunId,
+            },
+            "chat-send",
+          );
           try {
             const outcome = await queueEmbeddedAgentMessageWithOutcomeAsync(
               activeSessionId,
@@ -3771,6 +3819,8 @@ export const chatHandlers: GatewayRequestHandlers = {
             });
           } catch {
             // Best-effort steering; fall through to normal send on failure.
+          } finally {
+            releaseGuidePermit();
           }
         }
         // No active run resolvable, or steering failed: deliver as a normal run.
@@ -3856,20 +3906,33 @@ export const chatHandlers: GatewayRequestHandlers = {
         return;
       }
     }
-    const activeRunAbort = registerChatAbortController({
-      chatAbortControllers: context.chatAbortControllers,
-      runId: clientRunId,
-      sessionId: backingSessionId ?? clientRunId,
-      sessionKey,
-      agentId: selectedAgent.agentId,
-      timeoutMs,
-      now,
-      ownerConnId: normalizeOptionalText(client?.connId),
-      ownerDeviceId: normalizeOptionalText(client?.connect?.device?.id),
-      providerId: resolvedSessionModel.provider,
-      authProviderId: resolvedSessionAuthProvider,
-      kind: "chat-send",
-    });
+    const releaseChatAdmission = acquireSessionAdmissionPermit(
+      {
+        agentId,
+        canonicalSessionKey: sessionKey,
+        expectedSessionId: backingSessionId ?? requestedSessionId ?? clientRunId,
+      },
+      "chat-send",
+    );
+    let activeRunAbort: ReturnType<typeof registerChatAbortController>;
+    try {
+      activeRunAbort = registerChatAbortController({
+        chatAbortControllers: context.chatAbortControllers,
+        runId: clientRunId,
+        sessionId: backingSessionId ?? clientRunId,
+        sessionKey,
+        agentId: selectedAgent.agentId,
+        timeoutMs,
+        now,
+        ownerConnId: normalizeOptionalText(client?.connId),
+        ownerDeviceId: normalizeOptionalText(client?.connect?.device?.id),
+        providerId: resolvedSessionModel.provider,
+        authProviderId: resolvedSessionAuthProvider,
+        kind: "chat-send",
+      });
+    } finally {
+      releaseChatAdmission();
+    }
     if (!activeRunAbort.registered) {
       respond(true, { runId: clientRunId, status: "in_flight" as const }, undefined, {
         cached: true,

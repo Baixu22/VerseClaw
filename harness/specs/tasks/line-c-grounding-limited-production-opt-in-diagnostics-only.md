@@ -50,7 +50,7 @@ requiredTests:
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/line-c-grounding-diagnostics-presentation-operator-readiness.md --no-diff
   - node node_modules/vitest/vitest.mjs run tests/unit/runtime-grounding-authority-effectiveness.test.ts tests/unit/runtime-grounding-shadow-consumers.test.ts tests/unit/context-provider-registry.test.ts tests/unit/runtime-trace-context-provider.test.ts tests/unit/runtime-symbol-context-provider.test.ts tests/unit/runtime-agent-map-context-provider.test.ts tests/unit/runtime-memory-context-provider.test.ts
   - node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - git diff --check -- harness/specs/tasks/line-c-grounding-limited-production-opt-in-diagnostics-only.md runtime-research/handoffs/line-c-grounding-limited-production-opt-in-diagnostics-only/README.md runtime-research/handoffs/line-c-grounding-limited-production-opt-in-diagnostics-only/implementation-synthesis.md runtime-research/agent-runtime-index.md
+  - git diff --check -- harness/specs/tasks/line-c-grounding-limited-production-opt-in-diagnostics-only.md docs/dev/runtime-research-boundaries.md
 acceptance:
   - Production owner, cohort, sampling ceiling, budget ceiling, privacy review, metrics, and rollback gates are documented.
   - No prompt/model/provider/runtime decision impact is accepted.
@@ -59,9 +59,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-c-grounding-limited-production-opt-in-diagnostics-only/README.md
-    - runtime-research/handoffs/line-c-grounding-limited-production-opt-in-diagnostics-only/implementation-synthesis.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 nextPhaseEntry:
   Allowed next phase:
     - Phase D runtime shadow replay proof may proceed only after this synthesis is accepted.

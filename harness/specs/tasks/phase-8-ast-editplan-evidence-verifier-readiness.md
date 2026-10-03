@@ -73,8 +73,8 @@ requiredTests:
   - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-ast-edit-plan-foundation.test.ts tests/unit/runtime-ast-grep-edit-plan-adapter.test.ts tests/unit/runtime-evidence-verifier-contracts.test.ts tests/unit/runtime-evidence-verifier-collectors.test.ts tests/unit/runtime-ast-edit-plan-evidence-verifier-readiness.test.ts
   - pnpm --config.verify-deps-before-run=false run typecheck
   - git diff --check
-  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|workspaceEdit|applyPatch|ast-grep.*apply|rename|replaceBody|insertBefore|insertAfter|safeDelete" openclaw_runtime/src/runtime-core/ast-edit-plan-evidence-verifier-readiness.ts tests/unit/runtime-ast-edit-plan-evidence-verifier-readiness.test.ts harness/specs/tasks/phase-8-ast-editplan-evidence-verifier-readiness.md runtime-research/handoffs/phase-8-ast-editplan-evidence-verifier-readiness
-  - rg -n "TaskLoop|task-loop|Gateway|host-api|api-client|ipcRenderer|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(|completion evidence|task-completion evidence|completed" openclaw_runtime/src/runtime-core/ast-edit-plan-evidence-verifier-readiness.ts tests/unit/runtime-ast-edit-plan-evidence-verifier-readiness.test.ts harness/specs/tasks/phase-8-ast-editplan-evidence-verifier-readiness.md runtime-research/handoffs/phase-8-ast-editplan-evidence-verifier-readiness
+  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|workspaceEdit|applyPatch|ast-grep.*apply|rename|replaceBody|insertBefore|insertAfter|safeDelete" openclaw_runtime/src/runtime-core/ast-edit-plan-evidence-verifier-readiness.ts tests/unit/runtime-ast-edit-plan-evidence-verifier-readiness.test.ts harness/specs/tasks/phase-8-ast-editplan-evidence-verifier-readiness.md docs/dev/runtime-research-boundaries.md
+  - rg -n "TaskLoop|task-loop|Gateway|host-api|api-client|ipcRenderer|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(|completion evidence|task-completion evidence|completed" openclaw_runtime/src/runtime-core/ast-edit-plan-evidence-verifier-readiness.ts tests/unit/runtime-ast-edit-plan-evidence-verifier-readiness.test.ts harness/specs/tasks/phase-8-ast-editplan-evidence-verifier-readiness.md docs/dev/runtime-research-boundaries.md
 acceptance:
   - Harness context and validation pass, or validation without --no-diff is blocked only by unrelated dirty tree state and --no-diff structural validation passes.
   - A runtime-core helper converts valid EditPlan IR into Evidence Verifier readiness diagnostics and a bounded verifier input/report shape without executing verification commands or mutating workspace state.
@@ -89,8 +89,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-8-ast-editplan-evidence-verifier-readiness/README.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 8 AST EditPlan Evidence Verifier Readiness Bridge

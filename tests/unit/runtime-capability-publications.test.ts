@@ -159,6 +159,8 @@ describe('runtime capability publications', () => {
             displayName: 'Capability Test Role',
             rolePrompt: 'Narrow published capabilities for this focused test role.',
             tools: ['mcp:allowed-server'],
+            // Required by the role but never published in this context, so the
+            // result must carry a roleToolRequirementMissing warning.
             toolRequirements: ['mcp:missing-server'],
             permissions: { filesystem: 'read', network: 'none', commands: [] },
             outputSchema: { format: 'markdown' },

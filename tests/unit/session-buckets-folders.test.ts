@@ -67,7 +67,7 @@ describe('buildSidebarWorkspaceFolderGroups', () => {
     expect(result.folders[0].sessions).toEqual([]);
   });
 
-  it('nests sub-folders under their parent', () => {
+  it('normalizes legacy sub-folders into independent root-level groups', () => {
     const root = makeFolder('root', 'Projects', null, 0);
     const child = makeFolder('child', 'Alpha', 'root', 0);
     const grandchild = makeFolder('grand', 'Deep', 'child', 0);
@@ -82,17 +82,14 @@ describe('buildSidebarWorkspaceFolderGroups', () => {
       assignments: { s1: 'root', s2: 'child', s3: 'grand' },
     });
     expect(result.rootSessions).toEqual([]);
-    expect(result.folders).toHaveLength(1);
-    const rootNode = result.folders[0];
-    expect(rootNode.folder.id).toBe('root');
-    expect(rootNode.sessions.map((e) => e.session.key)).toEqual(['s1']);
-    expect(rootNode.children).toHaveLength(1);
-    const childNode = rootNode.children[0];
-    expect(childNode.folder.id).toBe('child');
-    expect(childNode.sessions.map((e) => e.session.key)).toEqual(['s2']);
-    expect(childNode.children).toHaveLength(1);
-    expect(childNode.children[0].folder.id).toBe('grand');
-    expect(childNode.children[0].sessions.map((e) => e.session.key)).toEqual(['s3']);
+    expect(result.folders.map((node) => node.folder.id)).toEqual(['root', 'child', 'grand']);
+    expect(result.folders.every((node) => node.folder.parentId === null)).toBe(true);
+    expect(result.folders.every((node) => node.depth === 0 && node.children.length === 0)).toBe(true);
+    expect(result.folders.map((node) => node.sessions.map((e) => e.session.key))).toEqual([
+      ['s1'],
+      ['s2'],
+      ['s3'],
+    ]);
   });
 
   it('falls back to rootSessions when assignment points to a non-existent folder', () => {
@@ -118,7 +115,7 @@ describe('buildSidebarWorkspaceFolderGroups', () => {
     expect(result.folders.map((f) => f.folder.id)).toEqual(['f2', 'f1', 'f3']);
   });
 
-  it('collectFolderSessionKeys gathers keys from the entire subtree', () => {
+  it('collectFolderSessionKeys stays local to one root-level group', () => {
     const sessions = [
       makeEntry(makeSession('s1', 1)),
       makeEntry(makeSession('s2', 2)),
@@ -129,8 +126,7 @@ describe('buildSidebarWorkspaceFolderGroups', () => {
       folders: [makeFolder('root', 'R', null, 0), makeFolder('child', 'C', 'root', 0)],
       assignments: { s1: 'root', s2: 'child', s3: 'root' },
     });
-    const rootNode = result.folders[0];
-    const keys = collectFolderSessionKeys(rootNode);
+    const keys = result.folders.flatMap(collectFolderSessionKeys);
     expect(keys.sort()).toEqual(['s1', 's2', 's3']);
   });
 });

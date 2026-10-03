@@ -29,6 +29,7 @@ async function runVerseShell(config?: OpenClawConfig) {
     command: "node --version",
     execHost: "verseshell",
     hostPolicyApproved: true,
+    agentId: "verseshell-rollout-test",
     config,
     workdir: process.cwd(),
     env: {},

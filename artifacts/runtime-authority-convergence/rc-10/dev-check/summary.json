@@ -1,0 +1,139 @@
+{
+  "schema": "rc10-development-checks/v1",
+  "driven_by": "agent",
+  "actor": "codex-rc10-dev-loop",
+  "scope": "development-only",
+  "formalAcceptance": false,
+  "head": "1de18d5b397c421d08b2fdf93ba8760a50fd0edf",
+  "workingTreeDirty": true,
+  "preExistingChanges": [
+    "artifacts/runtime-authority-convergence/rc-10/irc-server.mjs",
+    "tests/integration/channel-startup.integration.test.ts"
+  ],
+  "commands": [
+    {
+      "command": "pnpm run check:rc10:dev",
+      "exitCode": 0,
+      "durationMs": 32667,
+      "log": "artifacts/runtime-authority-convergence/rc-10/dev-check/dev-check.log",
+      "logSha256": "a3432bb71cd00b9b504657b59ff507f9f656ef6454fe0e73d651f37a04e271c8"
+    },
+    {
+      "command": "pnpm run test:integration",
+      "exitCode": 0,
+      "durationMs": 14350,
+      "log": "artifacts/runtime-authority-convergence/rc-10/dev-check/integration.log",
+      "logSha256": "88231ac289ddac663dea1048c518c23a2a1ea77614f3d409af64bca19679f8a9"
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/runtime-authority-convergence-control-pack.test.ts",
+      "exitCode": 0,
+      "durationMs": 2360,
+      "log": "artifacts/runtime-authority-convergence/rc-10/dev-check/control-pack.log",
+      "logSha256": "832b3c7db6c9860b88fb7157c011da79785884582bd3b724fbb722d357972f50"
+    },
+    {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 838,
+      "log": "artifacts/runtime-authority-convergence/rc-10/dev-check/comms-replay.log",
+      "logSha256": "3e319f33f3659dee738f50669f095a1a198196454b91e5e91c0950b551121ac6"
+    },
+    {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 760,
+      "log": "artifacts/runtime-authority-convergence/rc-10/dev-check/comms-compare.log",
+      "logSha256": "e1702058ee91cc54009589934873e626e41f88033aebd0c0813d492aa69a54b9"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/rc10-development-loop.md",
+      "exitCode": 0,
+      "durationMs": 1408,
+      "log": "artifacts/runtime-authority-convergence/rc-10/dev-check/harness-validate.log",
+      "logSha256": "4ebc3753871b2f6c1cd336b36bb6f48eaff4c1586fece9fe8d276f1a547b0af6"
+    },
+    {
+      "command": "pnpm harness run --spec harness/specs/tasks/rc10-development-loop.md --dry-run",
+      "exitCode": 0,
+      "durationMs": 1355,
+      "log": "artifacts/runtime-authority-convergence/rc-10/dev-check/harness-dry-run.log",
+      "logSha256": "629739cbb80984a20117ce40a9032fe708718183cf41e1cda2af0aff3a7909b9"
+    },
+    {
+      "command": "py -3 <task-forest>/scripts/task_forest.py validate",
+      "exitCode": 0,
+      "durationMs": 172,
+      "log": "artifacts/runtime-authority-convergence/rc-10/dev-check/forest-validate.log",
+      "logSha256": "03ad0beb4fb888a17984d09a515abe99597f9d4c2e5dd0a960a5a9e5f6f277ab"
+    },
+    {
+      "command": "py -3 <task-forest>/scripts/task_forest.py export",
+      "exitCode": 0,
+      "durationMs": 24157,
+      "log": "artifacts/runtime-authority-convergence/rc-10/dev-check/forest-export.log",
+      "logSha256": "0bc4369e62e6eb26386957751a57728a1e8114c796f803af032d9994fd92396c"
+    },
+    {
+      "command": "py -3 <task-forest>/scripts/task_forest.py check-landing --json",
+      "exitCode": 1,
+      "durationMs": 52076,
+      "log": "artifacts/runtime-authority-convergence/rc-10/dev-check/forest-landing.log",
+      "logSha256": "fb64071099995bd6758be25dfcd5dbe835dc97661c916b9a5c6752eec8304a9d"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/rc10-development-loop.md",
+      "exitCode": 0,
+      "durationMs": 1721,
+      "log": "artifacts/runtime-authority-convergence/rc-10/dev-check/harness-final.log",
+      "logSha256": "4ebc3753871b2f6c1cd336b36bb6f48eaff4c1586fece9fe8d276f1a547b0af6"
+    }
+  ],
+  "tests": {
+    "config": 17,
+    "channelIntegration": 4,
+    "runtimeSidecar": 3,
+    "driverEntrypoint": 11,
+    "integrationGate": 32,
+    "controlPack": 8
+  },
+  "typecheck": {
+    "cached": false,
+    "nodeExit": 0,
+    "webExit": 0,
+    "testObservationExit": 0,
+    "testObservationErrors": 0
+  },
+  "notRun": [
+    "build:vite",
+    "build:runtime",
+    "Electron live probe",
+    "Playwright E2E",
+    "RC-09 formal acceptance",
+    "H-01..H-06 formal scenarios"
+  ],
+  "limitations": [
+    "Channel integration supplies startChannels and does not exercise the complete plugin manager or Electron.",
+    "H-02..H-06 scenario-specific drivers are not implemented; unsupported requests now fail closed.",
+    "Historical RC-09 and H-01 reports do not accept the current product candidate."
+  ],
+  "files": {
+    "package.json": "35f55b50cbfc25933fb095cb0c4d43e4bf4db34080cc55f416a13aaff3ea0181",
+    "tests/unit/config-sync-source-runtime.test.ts": "d66422e62aa7b886695376bc5ef29f2b2a7855e35413d9fd78ff771fecd924a5",
+    "tests/integration/channel-startup.integration.test.ts": "dffd7a1479e085446a284dd6ed57998e4cd2a5a586a02224108ba666d7ff1166",
+    "tests/unit/rc10-driver-entrypoint.test.ts": "1741859d4db89582ff6fa866926d95c9357f9c94e563421625876a7d61171594",
+    "artifacts/runtime-authority-convergence/rc-10/driver.mjs": "86de6daf0d3e34acc241002be5994c9779a350380853321d47283574790f394f",
+    "artifacts/runtime-authority-convergence/rc-10/irc-server.mjs": "faeebcacc148aed92ffb6cc7956cbef38e8a9e2160a291a46993db911293794d",
+    "artifacts/runtime-authority-convergence/rc-10/irc-server.d.mts": "21edd8ff1b98e572f6bf2daec179c35d89c205f89850a58545016687f5d8253b"
+  },
+  "taskForest": {
+    "proposal": "TFP-rc10-development-loop-20260928",
+    "applied": true,
+    "validateExit": 0,
+    "exportExit": 0,
+    "landingExit": 1,
+    "landingProblems": 156,
+    "landingNotes": "Global check reports long-lived branches/commit attribution plus this uncommitted worktree; no nodes marked done."
+  },
+  "verifiedAt": "2026-09-28T15:42:22.283Z"
+}

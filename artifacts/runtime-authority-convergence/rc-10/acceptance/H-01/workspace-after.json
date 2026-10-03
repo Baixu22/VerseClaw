@@ -1,0 +1,202 @@
+{
+  "AGENTS.md": {
+    "bytes": 5479,
+    "sha256": "a0156429d5d27c66161b83c7641e8ff790cb75c76b5fc0af29026b820e3da166"
+  },
+  "BOOTSTRAP.md": {
+    "bytes": 1451,
+    "sha256": "fd511a2a533652dad3b8b4b1f09dd4fb174162c66cf1fd95a263a8b725541028"
+  },
+  "calc.js": {
+    "bytes": 207,
+    "sha256": "e2fa77739f05c983184e421b84d9612d3f048edd5aac360e5d3c2034922a9a11"
+  },
+  "calc.test.js": {
+    "bytes": 522,
+    "sha256": "2a518b6ff4da54440a41c884bac08fb571ac20ab2f03f5871e64f43638a3a15f"
+  },
+  "HEARTBEAT.md": {
+    "bytes": 244,
+    "sha256": "ecce558615751a35aa173731e892ff3993f44bb4f5a1219c0a02994790c85528"
+  },
+  "IDENTITY.md": {
+    "bytes": 694,
+    "sha256": "2fae9080af26ec75ac44d419089bfcabb17770e3151abf584b4ee325028e8e9f"
+  },
+  "package.json": {
+    "bytes": 110,
+    "sha256": "8bae63e483e8dc9ae3b1ca3d568b0ef38a7f2672f1ae926f3c56d3d7ac38111f"
+  },
+  "SOUL.md": {
+    "bytes": 1798,
+    "sha256": "ec0907364c88d161e9cc2d28393f509c2ae2b76f82a1d937900a3fda26d70dc5"
+  },
+  "TOOLS.md": {
+    "bytes": 281,
+    "sha256": "fcd325e81cd6a20c52aba0c38b374c02c2f8996e0695d386770214ae8d20bcbc"
+  },
+  "USER.md": {
+    "bytes": 212,
+    "sha256": "891b73f3da5d735347170e3a27b7d1bf243b865002a62f5d3a76db9427910365"
+  },
+  ".verse-claw/harness/README.md": {
+    "bytes": 2711,
+    "sha256": "f7c5c72414aacbd024c5bbbc4c356387516e4a368eb6ad9724a5930bb47d6b8f"
+  },
+  ".verse-claw/harness/workspace/.gitignore": {
+    "bytes": 48,
+    "sha256": "009e02614c8715ad87b6f3eb4d3cfc1f0ec55463fc23146da87594cf770d3856"
+  },
+  ".verse-claw/harness/workspace/context-packs.md": {
+    "bytes": 635,
+    "sha256": "1465a956df3c8c4321e750e9fb44d77b45cfdd8bf621722f6aa7941574b58814"
+  },
+  ".verse-claw/harness/workspace/decisions.md": {
+    "bytes": 389,
+    "sha256": "14001be866c79a19e74d48e3d9a027cdaeabc1320e89555afc7adde37aafb2b5"
+  },
+  ".verse-claw/harness/workspace/README.md": {
+    "bytes": 993,
+    "sha256": "467d82de9faa6a582998ab51c165e2a726d379625617a392838306d0f006924c"
+  },
+  ".verse-claw/harness/workspace/risks.md": {
+    "bytes": 709,
+    "sha256": "78f2ecc4da87c9f049421ab3c5107bdd58ebcc6374333ad3bd93912aada4847b"
+  },
+  ".verse-claw/harness/workspace/schema.md": {
+    "bytes": 397,
+    "sha256": "13a447dd25f89e7ca7eb4ee1aeb0cbb7fadfff626deb07a3063f6a025cbdb078"
+  },
+  ".verse-claw/harness/workspace/task-index.md": {
+    "bytes": 1050,
+    "sha256": "974683603d72fc413d178704f78c39f85af33487c2a7291a5cb04bd46737151e"
+  },
+  ".verse-claw/harness/workspace/validation.md": {
+    "bytes": 573,
+    "sha256": "a4da65c773d21dc573a15f2a2aa09f509c4337751c926e0d78aac3a6badd7937"
+  },
+  ".verse-claw/harness/specs/README.md": {
+    "bytes": 1061,
+    "sha256": "f3a39ac5dd721214aa3ccc704d041370ae049d74da53cb77833e974aba11d926"
+  },
+  ".verse-claw/harness/specs/tasks/README.md": {
+    "bytes": 730,
+    "sha256": "77f7eb612922c9e3c5d55be8f976b989df4d3c839ea45a47071fea2f17d896d3"
+  },
+  ".verse-claw/harness/specs/tasks/_template.md": {
+    "bytes": 575,
+    "sha256": "cd109130bd700659b700489f3ec69d35336245a87538f8bc08f322058ce1d84e"
+  },
+  ".verse-claw/harness/specs/scenarios/README.md": {
+    "bytes": 451,
+    "sha256": "db49eb02bd94edc305241b0bad485e191f8c4b8e6e9b1775c464f724c8ed7839"
+  },
+  ".verse-claw/harness/specs/rules/README.md": {
+    "bytes": 422,
+    "sha256": "169556c156a6a93813bc2e2df4d987cada427cc8dbe0c14c8e6a6d600b7a1ed4"
+  },
+  ".verse-claw/harness/specs/layers/README.md": {
+    "bytes": 358,
+    "sha256": "0e0579eff3306d4e23b7b8104dc38ad01619a10abc24e4eddc2266fb73f3c5ca"
+  },
+  ".verse-claw/harness/specs/guides/README.md": {
+    "bytes": 408,
+    "sha256": "02ee0f6caf3d1c820be419508d34778bea757f19fedd57fb5471889fd857d165"
+  },
+  ".openclaw/factstore.sqlite": {
+    "bytes": 4096,
+    "sha256": "2fb9e76bc8b8bb820a77e21342abe7b079f687749503315e13c0cf95106675e0"
+  },
+  ".openclaw/factstore.sqlite-shm": {
+    "bytes": 32768,
+    "sha256": "9d55c426036c808d14dbdd29e0367f70fafe4d82acfad1cf6b2ad7e85c07f191"
+  },
+  ".openclaw/factstore.sqlite-wal": {
+    "bytes": 177192,
+    "sha256": "1a10b9feb16f80623e82dee379e0166995b942689e066b02c965af0a329ad5d0"
+  },
+  ".openclaw/workspace-state.json": {
+    "bytes": 70,
+    "sha256": "87ae8bb847aa0d562624a1bf1bc403c5f9f1d4c27e9cf9b80cdf3c8b3eb86e79"
+  },
+  ".openclaw/journal/ac5c1ebf-fcb5-4493-979d-92bee4ada7ab/0001-calc.js.pre": {
+    "bytes": 196,
+    "sha256": "5fac642c649e34be4ddccaf9c141a27e7f446f88f4e45a004a0b09375255630d"
+  },
+  ".openclaw/journal/ac5c1ebf-fcb5-4493-979d-92bee4ada7ab/0001-calc.js.pre.meta.json": {
+    "bytes": 491,
+    "sha256": "6a29e372628b8638cd495e344ff7a22054d1ca295c75db76b5e069e4a5b2fa67"
+  },
+  ".git/config": {
+    "bytes": 130,
+    "sha256": "05becdb83bb897f6103c8d91439e2e9092144edf5b3955a746fce4975c12bfdc"
+  },
+  ".git/description": {
+    "bytes": 73,
+    "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee"
+  },
+  ".git/HEAD": {
+    "bytes": 23,
+    "sha256": "f6f2b945f6c411b02ba3da9c7ace88dcf71b6af65ba2e0d89aa82900042b5a10"
+  },
+  ".git/info/exclude": {
+    "bytes": 240,
+    "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1"
+  },
+  ".git/hooks/applypatch-msg.sample": {
+    "bytes": 478,
+    "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7"
+  },
+  ".git/hooks/commit-msg.sample": {
+    "bytes": 896,
+    "sha256": "1f74d5e9292979b573ebd59741d46cb93ff391acdd083d340b94370753d92437"
+  },
+  ".git/hooks/fsmonitor-watchman.sample": {
+    "bytes": 4726,
+    "sha256": "e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0"
+  },
+  ".git/hooks/post-update.sample": {
+    "bytes": 189,
+    "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5"
+  },
+  ".git/hooks/pre-applypatch.sample": {
+    "bytes": 424,
+    "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475"
+  },
+  ".git/hooks/pre-commit.sample": {
+    "bytes": 1649,
+    "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b"
+  },
+  ".git/hooks/pre-merge-commit.sample": {
+    "bytes": 416,
+    "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53"
+  },
+  ".git/hooks/pre-push.sample": {
+    "bytes": 1374,
+    "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a"
+  },
+  ".git/hooks/pre-rebase.sample": {
+    "bytes": 4898,
+    "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3"
+  },
+  ".git/hooks/pre-receive.sample": {
+    "bytes": 544,
+    "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989"
+  },
+  ".git/hooks/prepare-commit-msg.sample": {
+    "bytes": 1492,
+    "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619"
+  },
+  ".git/hooks/push-to-checkout.sample": {
+    "bytes": 2783,
+    "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f"
+  },
+  ".git/hooks/sendemail-validate.sample": {
+    "bytes": 2308,
+    "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92"
+  },
+  ".git/hooks/update.sample": {
+    "bytes": 3650,
+    "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106"
+  }
+}

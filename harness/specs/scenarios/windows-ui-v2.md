@@ -24,11 +24,12 @@ Give the Electron application a coherent FakeCoding-aligned grayscale shell, com
 
 ## Flow
 
-1. Windows, macOS, and Linux resolve UI v2 by default; `?uiVersion=legacy` keeps a development rollback path during migration.
+1. Windows, macOS and Linux use UI v2; the temporary visual rollback is retired after TF-0027. Old query values resolve to the current shell.
 2. The application shell remains mounted while pages and settings sections load.
-3. Navigating to `/settings/*` preserves route and focus behavior while using the platform-appropriate settings surface without invalidating the background render tree.
-4. Closing settings completes its exit animation before returning to the background route and restoring focus.
+3. Navigating to `/settings/*` uses the shared full-page Settings chrome and remembers the application return route.
+4. Returning from Settings restores the remembered application route and focus.
 5. Existing page functionality remains unchanged while shared page shells, compact controls, grayscale materials, migrated SVGs, and restrained motion provide the new visual language.
+6. Knowledge has Library and Review Queue as its two primary views. Inbox, Draft and Proposal records remain projections of the existing knowledge service. More > Maintenance and Source tools preserve advanced operations. Documents open in Preview; editing is explicit, and a 960px window shows only one editor pane. The Chat knowledge mode preserves local conversation checkpoints and returns to Library or governed review with its source context.
 
 ## Validation
 

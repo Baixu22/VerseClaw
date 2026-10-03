@@ -134,22 +134,22 @@ const {
 }));
 
 vi.mock('@electron/utils/store', () => ({
-  getAllSettings: (...args: unknown[]) => getAllSettingsMock(...args),
-  getSetting: (...args: unknown[]) => getSettingMock(...args),
-  resetSettings: (...args: unknown[]) => resetSettingsMock(...args),
-  setSetting: (...args: unknown[]) => setSettingMock(...args),
+  getAllSettings: getAllSettingsMock,
+  getSetting: getSettingMock,
+  resetSettings: resetSettingsMock,
+  setSetting: setSettingMock,
 }));
 
 vi.mock('@electron/utils/openclaw-proxy', () => ({
-  syncProxyConfigToOpenClaw: (...args: unknown[]) => syncProxyConfigToOpenClawMock(...args),
+  syncProxyConfigToOpenClaw: syncProxyConfigToOpenClawMock,
 }));
 
 vi.mock('@electron/main/proxy', () => ({
-  applyProxySettings: (...args: unknown[]) => applyProxySettingsMock(...args),
+  applyProxySettings: applyProxySettingsMock,
 }));
 
 vi.mock('@electron/main/launch-at-startup', () => ({
-  syncLaunchAtStartupSettingFromStore: (...args: unknown[]) => syncLaunchAtStartupSettingFromStoreMock(...args),
+  syncLaunchAtStartupSettingFromStore: syncLaunchAtStartupSettingFromStoreMock,
 }));
 
 vi.mock('@electron/utils/logger', async (importOriginal) => {
@@ -162,24 +162,24 @@ vi.mock('@electron/utils/logger', async (importOriginal) => {
       getLogDir: () => logDir,
       getLogFilePath: () => join(logDir, 'verse-claw-current.log'),
       getRecentLogs: vi.fn(),
-      listLogFiles: (...args: unknown[]) => listLogFilesMock(...args),
-      readLogFile: (...args: unknown[]) => readLogFileMock(...args),
+      listLogFiles: listLogFilesMock,
+      readLogFile: readLogFileMock,
     },
-    readLogFileTail: actual.readLogFileTail,
+    readLogFileTail: (actual as { readLogFileTail?: unknown }).readLogFileTail,
   };
 });
 
 vi.mock('@electron/utils/channel-config', () => ({
   cleanupDanglingWeChatPluginState: vi.fn(),
-  deleteChannelAccountConfig: (...args: unknown[]) => deleteChannelAccountConfigMock(...args),
-  deleteChannelConfig: (...args: unknown[]) => deleteChannelConfigMock(...args),
-  getChannelFormValues: (...args: unknown[]) => getChannelFormValuesMock(...args),
-  listConfiguredChannelAccountsFromConfig: (...args: unknown[]) => listConfiguredChannelAccountsFromConfigMock(...args),
-  listConfiguredChannels: (...args: unknown[]) => listConfiguredChannelsMock(...args),
-  listConfiguredChannelsFromConfig: (...args: unknown[]) => listConfiguredChannelsFromConfigMock(...args),
-  readOpenClawConfig: (...args: unknown[]) => readOpenClawConfigMock(...args),
-  writeOpenClawConfig: (...args: unknown[]) => writeOpenClawConfigMock(...args),
-  saveChannelConfig: (...args: unknown[]) => saveChannelConfigMock(...args),
+  deleteChannelAccountConfig: deleteChannelAccountConfigMock,
+  deleteChannelConfig: deleteChannelConfigMock,
+  getChannelFormValues: getChannelFormValuesMock,
+  listConfiguredChannelAccountsFromConfig: listConfiguredChannelAccountsFromConfigMock,
+  listConfiguredChannels: listConfiguredChannelsMock,
+  listConfiguredChannelsFromConfig: listConfiguredChannelsFromConfigMock,
+  readOpenClawConfig: readOpenClawConfigMock,
+  writeOpenClawConfig: writeOpenClawConfigMock,
+  saveChannelConfig: saveChannelConfigMock,
   setChannelDefaultAccount: vi.fn(),
   setChannelEnabled: vi.fn(),
   validateChannelConfig: vi.fn(),
@@ -192,28 +192,28 @@ vi.mock('@electron/services/mcp-api', () => ({
   createMcpApi: vi.fn(),
 }));
 vi.mock('@electron/utils/agent-config', () => ({
-  assignChannelAccountToAgent: (...args: unknown[]) => assignChannelAccountToAgentMock(...args),
-  assignChannelToAgent: (...args: unknown[]) => assignChannelToAgentMock(...args),
+  assignChannelAccountToAgent: assignChannelAccountToAgentMock,
+  assignChannelToAgent: assignChannelToAgentMock,
   clearAllBindingsForChannel: vi.fn(),
-  clearChannelBinding: (...args: unknown[]) => clearChannelBindingMock(...args),
-  createAgent: (...args: unknown[]) => createAgentMock(...args),
-  deleteAgentConfig: (...args: unknown[]) => deleteAgentConfigMock(...args),
-  listAgentsSnapshot: (...args: unknown[]) => listAgentsSnapshotMock(...args),
-  listAgentsSnapshotFromConfig: (...args: unknown[]) => listAgentsSnapshotFromConfigMock(...args),
-  readAgentBootstrapFile: (...args: unknown[]) => readAgentBootstrapFileMock(...args),
-  readAgentBootstrapTools: (...args: unknown[]) => readAgentBootstrapToolsMock(...args),
-  readAgentRoleProfile: (...args: unknown[]) => readAgentRoleProfileMock(...args),
-  readAgentSoul: (...args: unknown[]) => readAgentSoulMock(...args),
-  removeAgentWorkspaceDirectory: (...args: unknown[]) => removeAgentWorkspaceDirectoryMock(...args),
+  clearChannelBinding: clearChannelBindingMock,
+  createAgent: createAgentMock,
+  deleteAgentConfig: deleteAgentConfigMock,
+  listAgentsSnapshot: listAgentsSnapshotMock,
+  listAgentsSnapshotFromConfig: listAgentsSnapshotFromConfigMock,
+  readAgentBootstrapFile: readAgentBootstrapFileMock,
+  readAgentBootstrapTools: readAgentBootstrapToolsMock,
+  readAgentRoleProfile: readAgentRoleProfileMock,
+  readAgentSoul: readAgentSoulMock,
+  removeAgentWorkspaceDirectory: removeAgentWorkspaceDirectoryMock,
   resolveAccountIdForAgent: vi.fn((agentId: string) => agentId === 'main' ? 'default' : agentId),
   updateAgentModel: vi.fn(),
-  updateAgentAvatar: (...args: unknown[]) => updateAgentAvatarMock(...args),
-  resetAgentAvatar: (...args: unknown[]) => resetAgentAvatarMock(...args),
-  updateAgentName: (...args: unknown[]) => updateAgentNameMock(...args),
-  writeAgentBootstrapFile: (...args: unknown[]) => writeAgentBootstrapFileMock(...args),
-  writeAgentBootstrapTools: (...args: unknown[]) => writeAgentBootstrapToolsMock(...args),
-  writeAgentRoleProfile: (...args: unknown[]) => writeAgentRoleProfileMock(...args),
-  writeAgentSoul: (...args: unknown[]) => writeAgentSoulMock(...args),
+  updateAgentAvatar: updateAgentAvatarMock,
+  resetAgentAvatar: resetAgentAvatarMock,
+  updateAgentName: updateAgentNameMock,
+  writeAgentBootstrapFile: writeAgentBootstrapFileMock,
+  writeAgentBootstrapTools: writeAgentBootstrapToolsMock,
+  writeAgentRoleProfile: writeAgentRoleProfileMock,
+  writeAgentSoul: writeAgentSoulMock,
 }));
 
 vi.mock('@electron/services/workspaces-api', () => ({
@@ -221,13 +221,13 @@ vi.mock('@electron/services/workspaces-api', () => ({
 }));
 
 vi.mock('@electron/services/sandbox-api', () => ({
-  buildSandboxStatus: (...args: unknown[]) => buildSandboxStatusMock(...args),
+  buildSandboxStatus: buildSandboxStatusMock,
 }));
 
 vi.mock('@electron/utils/plugin-install', () => ({
   ensureDiscordPluginInstalled: vi.fn(),
   ensureDingTalkPluginInstalled: vi.fn(),
-  ensureFeishuPluginInstalled: (...args: unknown[]) => ensureFeishuPluginInstalledMock(...args),
+  ensureFeishuPluginInstalled: ensureFeishuPluginInstalledMock,
   ensureQQBotPluginInstalled: vi.fn(),
   ensureWeChatPluginInstalled: vi.fn(),
   ensureWeComPluginInstalled: vi.fn(),
@@ -241,11 +241,11 @@ vi.mock('@electron/utils/openclaw-workspace', () => ({
 vi.mock('@electron/services/providers/provider-runtime-sync', () => ({
   syncAllProviderAuthToRuntime: vi.fn(),
   syncAgentModelOverrideToRuntime: vi.fn(),
-  syncDefaultProviderToRuntime: (...args: unknown[]) => syncDefaultProviderToRuntimeMock(...args),
+  syncDefaultProviderToRuntime: syncDefaultProviderToRuntimeMock,
   syncDeletedProviderApiKeyToRuntime: vi.fn(),
   syncDeletedProviderToRuntime: vi.fn(),
   syncProviderApiKeyToRuntime: vi.fn(),
-  syncSavedProviderToRuntime: (...args: unknown[]) => syncSavedProviderToRuntimeMock(...args),
+  syncSavedProviderToRuntime: syncSavedProviderToRuntimeMock,
   syncUpdatedProviderToRuntime: vi.fn(),
   getOpenClawProviderKey: vi.fn((type: string) => type),
 }));
@@ -255,11 +255,11 @@ vi.mock('@electron/services/providers/provider-service', () => ({
 }));
 
 vi.mock('@electron/services/providers/provider-store', () => ({
-  providerAccountToConfig: (...args: unknown[]) => providerAccountToConfigMock(...args),
+  providerAccountToConfig: providerAccountToConfigMock as never,
 }));
 
 vi.mock('@electron/services/providers/provider-validation', () => ({
-  validateApiKeyWithProvider: (...args: unknown[]) => validateApiKeyWithProviderMock(...args),
+  validateApiKeyWithProvider: validateApiKeyWithProviderMock,
 }));
 
 vi.mock('@electron/utils/browser-oauth', () => ({
@@ -568,7 +568,7 @@ describe('host services', () => {
     await expect(createProvidersApi({
       gatewayManager: gatewayManager as never,
       mainWindow: {} as never,
-    }).createAccount({ account, apiKey: 'sk-test' })).resolves.toEqual({
+    }).createAccount({ account: account as never, apiKey: 'sk-test' })).resolves.toEqual({
       success: true,
       account,
     });
@@ -708,7 +708,7 @@ describe('host services', () => {
           },
         ],
       });
-    await expect(channelsApi.targets({ accountId: 'ding-main' })).rejects.toThrow('channelType is required');
+    await expect(channelsApi.targets({ accountId: 'ding-main' } as never)).rejects.toThrow('channelType is required');
   });
 
   it('saves channel binding for existing agents and schedules channel refresh', async () => {
@@ -1054,9 +1054,10 @@ describe('host services', () => {
       .resolves.toEqual({
         success: true,
         summaries: [{
-          sessionKey: 'agent:main:abc123',
-          firstUserText: 'Hello from transcript',
-          lastTimestamp: 1001000,
+           sessionKey: 'agent:main:abc123',
+           firstUserText: 'Hello from transcript',
+           lastTimestamp: 1001000,
+           messageCount: 1,
         }],
       });
     await expect(sessionsApi.history({ sessionKey: 'agent:main:abc123', limit: 5 }))
@@ -1208,7 +1209,7 @@ describe('host services', () => {
       .mockResolvedValueOnce({
         ok: true,
         payload: 'archived output',
-        archiveHandle,
+        archiveHandle: archiveHandle as never,
         diagnostics: [],
       })
       .mockResolvedValueOnce({
@@ -1220,7 +1221,7 @@ describe('host services', () => {
 
     await expect(sessionsApi.recallOriginal({
       sessionKey: 'agent:main:main',
-      archiveHandle,
+      archiveHandle: archiveHandle as never,
     })).resolves.toMatchObject({
       success: true,
       ok: true,
@@ -1285,6 +1286,39 @@ describe('host services', () => {
       error: 'Gateway manager unavailable',
       forkedFromParent: false,
     });
+  });
+
+  it('uses runtime history for keyed history and handoff rather than a stale local profile', async () => {
+    const sessionsDir = join(testOpenClawConfigDir, 'agents', 'main', 'sessions');
+    mkdirSync(sessionsDir, { recursive: true });
+    writeFileSync(join(sessionsDir, 'sessions.json'), JSON.stringify({
+      'agent:main:runtime-handoff': { sessionId: 'stale-local' },
+    }));
+    writeFileSync(join(sessionsDir, 'stale-local.jsonl'), JSON.stringify({
+      type: 'message', message: { role: 'assistant', content: 'STALE_LOCAL_RESULT' },
+    }));
+    const messages = [
+      { role: 'user', content: 'Report the already delivered result.' },
+      { role: 'assistant', content: [{ type: 'text', text: 'ACKNOWLEDGED_RUNTIME_RESULT' }] },
+    ];
+    const rpc = vi.fn(async (method: string) => {
+      if (method === 'chat.history') return { messages };
+      throw new Error('optional recovery endpoint unavailable');
+    });
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+    expect(await api.history({ sessionKey: 'agent:main:runtime-handoff', limit: 80 })).toMatchObject({ success: true, messages });
+    const handoff = await api.prepareHandoff({ sessionKey: 'agent:main:runtime-handoff' });
+    expect(handoff.draft).toContain('ACKNOWLEDGED_RUNTIME_RESULT');
+    expect(handoff.draft).not.toContain('STALE_LOCAL_RESULT');
+    expect(handoff.sources).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: 'transcript', available: true, summary: expect.stringContaining('2 recent message(s)') }),
+    ]));
+    expect(rpc).toHaveBeenCalledWith('chat.history', { sessionKey: 'agent:main:runtime-handoff', limit: 80 }, 10_000);
+
+    rpc.mockResolvedValue({ messages: [] });
+    expect(await api.history({ sessionKey: 'agent:main:runtime-handoff', limit: 80 })).toMatchObject({ messages: [] });
+    expect((await api.prepareHandoff({ sessionKey: 'agent:main:runtime-handoff' })).draft).not.toContain('STALE_LOCAL_RESULT');
   });
 
   it('prepares deterministic session handoff without requiring Gateway', async () => {
@@ -1400,7 +1434,7 @@ describe('host services', () => {
           workspaceId: 'workspace-a',
           trigger: 'compaction',
           status: 'ready',
-          archiveHandle,
+          archiveHandle: archiveHandle as never,
           checkpoint: {
             schemaVersion: 1,
             id: 'ltcp-1',
@@ -1427,9 +1461,10 @@ describe('host services', () => {
       .mockResolvedValueOnce({
         ok: true,
         payload: 'Verified archived pre-compaction transcript excerpt.',
-        archiveHandle,
+        archiveHandle: archiveHandle as never,
         diagnostics: [],
-    });
+      })
+      .mockResolvedValueOnce({ messages: [{ role: 'user', content: 'Continue the checkpoint migration.' }] });
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const sessionsApi = createSessionsApi({ gatewayManager: { rpc } as never });
 

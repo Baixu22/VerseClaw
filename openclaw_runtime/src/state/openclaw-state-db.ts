@@ -783,7 +783,19 @@ function ensureAdditiveStateColumns(db: DatabaseSync): void {
   ensureColumn(db, "gateway_restart_sentinel", "doctor_hint TEXT");
   ensureColumn(db, "gateway_restart_sentinel", "stats_json TEXT");
   ensureColumn(db, "subagent_runs", "task_name TEXT");
+  ensureColumn(db, "mission_runs", "revision INTEGER NOT NULL DEFAULT 0");
+  ensureColumn(db, "mission_runs", "active_tick_id TEXT");
+  ensureColumn(db, "mission_runs", "last_wake_id TEXT");
   ensureColumn(db, "flow_runs", "delivery_state TEXT");
+  if (tableExists(db, "flow_runs")) {
+    db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_flow_runs_blocked_task
+        ON flow_runs(blocked_task_id, status, updated_at)
+        WHERE blocked_task_id IS NOT NULL;
+      CREATE INDEX IF NOT EXISTS idx_flow_runs_controller_status
+        ON flow_runs(controller_id, status, updated_at);
+    `);
+  }
   ensureColumn(db, "long_task_checkpoints", "task_ledger_root_id TEXT");
   ensureColumn(db, "long_task_intervention_events", "task_ledger_root_id TEXT");
   ensureColumn(db, "long_task_user_queue", "task_ledger_root_id TEXT");
@@ -868,12 +880,15 @@ export function openOpenClawStateDatabase(
   ensureOpenClawStatePermissions(pathname, env);
   const sqlite = requireNodeSqlite();
   const db = new sqlite.DatabaseSync(pathname);
+  // busy_timeout must precede the WAL switch: another process holding the
+  // write lock (opening, or checkpointing on close) otherwise fails the
+  // journal_mode pragma immediately with "database is locked".
+  db.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
   const walMaintenance = configureSqliteWalMaintenance(db, {
     databaseLabel: "openclaw-state",
     databasePath: pathname,
   });
   db.exec("PRAGMA synchronous = NORMAL;");
-  db.exec(`PRAGMA busy_timeout = ${OPENCLAW_SQLITE_BUSY_TIMEOUT_MS};`);
   db.exec("PRAGMA foreign_keys = ON;");
   try {
     ensureSchema(db, pathname);

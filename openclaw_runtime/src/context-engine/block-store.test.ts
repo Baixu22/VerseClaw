@@ -501,6 +501,45 @@ describe("DCS BlockStore", () => {
 
     expect((await store.stats()).authorization_rejections).toBe(3);
   });
+
+  it("recall only updates archived blocks visible to the requester", async () => {
+    const { store } = createStore();
+    await store.upsert(
+      makeBlock("self-archived", "working_memory", {
+        source_system: "working-memory",
+        presence: {
+          always_on: false,
+          lifecycle_state: "archived",
+          archived_at: BASE_TIME.toISOString(),
+          heat: 2,
+        },
+      }),
+      { significance: "high" },
+    );
+    await store.upsert(
+      makeBlock("other-archived", "working_memory", {
+        session_id: "session-b",
+        source_system: "working-memory",
+        presence: {
+          always_on: false,
+          lifecycle_state: "archived",
+          archived_at: BASE_TIME.toISOString(),
+          heat: 5,
+        },
+      }),
+      { significance: "high" },
+    );
+
+    const recalled = await store.recallArchivedBlocks({
+      requester_session_id: "session-a",
+      block_ids: ["self-archived", "other-archived"],
+    });
+    expect(recalled.map((block) => block.block_id)).toEqual(["self-archived"]);
+    expect(recalled[0]?.presence).toMatchObject({ lifecycle_state: "active", heat: 3 });
+
+    const other = (await store.query({ requester_session_id: "session-b" }))[0];
+    expect(other?.presence).toMatchObject({ lifecycle_state: "archived", heat: 5 });
+  });
 });
 
 function createStore(options?: {

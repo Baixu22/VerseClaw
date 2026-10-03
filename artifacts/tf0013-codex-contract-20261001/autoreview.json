@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.9,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "No actionable defects found in the scoped diagnostic changes. Inspected production callers, trace capture, lifecycle identity reuse, native notification filtering, diagnostic ownership, SDK exports, and deferred-schema accounting against the requested Codex source commit. Dynamic tool notifications are excluded from native diagnostic projection, avoiding double instrumentation. The previously reviewed stale-resume fix was excluded. Tests were not run, as requested; this verdict does not imply full node or RC acceptance."
+}

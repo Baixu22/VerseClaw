@@ -73,11 +73,7 @@ forbiddenPatterns:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-limited-active-guard-design/README.md
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-limited-active-guard-design/validation-plan.md
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-limited-active-guard-design/synthesis.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/schema-decision-log.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Runtime Failure Tool Invocation Governance Limited Active Guard Design

@@ -88,8 +88,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-c-grounding-runtime-memory-diagnostics-consumer/design-research.md
-    - runtime-research/handoffs/line-c-grounding-runtime-memory-diagnostics-consumer/implementation-synthesis.md
+    - docs/dev/runtime-research-boundaries.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

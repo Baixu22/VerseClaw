@@ -72,7 +72,9 @@ describe("SEKB golden path (TF-0004)", () => {
     expect(result.lineage.principleId).toBe(result.principleId);
     expect(result.lineage.provenance?.schema).toBe("sekb-confirm-provenance.v1");
     expect(result.lineage.provenance?.sessionId).toBe("session:tf-0004:golden");
-    expect(result.lineage.sourceTrajectoryIds).toEqual(expect.arrayContaining(result.trajectoryIds));
+    expect(result.lineage.sourceTrajectoryIds).toEqual(
+      expect.arrayContaining(result.trajectoryIds),
+    );
 
     expect(result.stages.map((s) => s.stage)).toEqual([
       "execute",
@@ -103,7 +105,14 @@ describe("SEKB golden path (TF-0004)", () => {
     const store = createStore();
     const cap = new TrajectoryCapture({ store });
     for (let i = 0; i < 2; i += 1) {
-      const id = cap.start_trajectory(`intent-${i}`, "config/db", ["postgresql"]);
+      const id = cap.start_trajectory(`intent-${i}`, "config/db", ["postgresql"], {
+        runtimeLineage: {
+          schema: "runtime-lineage.v1",
+          sessionId: "session-golden-no-write",
+          loopRunId: `loop-${i}`,
+          traceId: `trace-${i}`,
+        },
+      });
       cap.log_step(id, "tool.call", { i }, { error: "refused" });
       cap.finish_trajectory(id, "failure", "Connection refused");
     }

@@ -3,7 +3,7 @@ import { join, resolve } from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const storeState = vi.hoisted(() => ({
-  activeWorkspaceId: 'legacy',
+  activeWorkspaceId: 'legacy' as string | null,
   profiles: [] as unknown[],
   approvals: [] as unknown[],
   decisionEvents: [] as unknown[],
@@ -113,6 +113,32 @@ describe('workspaces api compatibility migration', () => {
         },
       }],
     });
+  });
+
+  it('normalizes legacy nested session folders and new parent input to one level', async () => {
+    storeState.profiles[0] = {
+      ...(storeState.profiles[0] as Record<string, unknown>),
+      sessionFolders: [
+        { id: 'root', name: 'Root', parentId: null, order: 0, createdAt: 1, updatedAt: 1 },
+        { id: 'child', name: 'Child', parentId: 'root', order: 1, createdAt: 2, updatedAt: 2 },
+      ],
+      sessionFolderAssignments: { 'agent:research:main': 'child' },
+    };
+    const { createWorkspacesApi } = await import('@electron/services/workspaces-api');
+    const api = createWorkspacesApi();
+
+    const listed = await api.list();
+    expect(listed.profiles?.[0]?.sessionFolders).toEqual([
+      expect.objectContaining({ id: 'root', parentId: null }),
+      expect.objectContaining({ id: 'child', parentId: null }),
+    ]);
+
+    const created = await api.createFolder({
+      workspaceId: 'legacy',
+      name: 'Always root',
+      parentId: 'child',
+    });
+    expect(created.folder).toEqual(expect.objectContaining({ name: 'Always root', parentId: null }));
   });
 
   it('creates the default workspace from list when no workspace exists', async () => {
@@ -472,9 +498,11 @@ describe('workspaces api compatibility migration', () => {
       permissionMode: 'acceptEdits',
     });
     expect(created.activeWorkspace?.permissionMode).toBe('acceptEdits');
+    const workspaceId = created.activeWorkspaceId;
+    if (!workspaceId) throw new Error('Expected created workspace id');
 
     const updated = await api.update({
-      id: created.activeWorkspaceId,
+      id: workspaceId,
       permissionMode: 'readOnly',
     });
     expect(updated.activeWorkspace?.permissionMode).toBe('readOnly');
@@ -508,7 +536,7 @@ describe('workspaces api compatibility migration', () => {
       agentId: 'main',
       selectedAgentId: 'main',
       activeSessionKey: 'agent:main:main',
-      permissionMode: 'not-a-mode' as any,
+      permissionMode: 'not-a-mode' as never,
       createdAt: 1,
       updatedAt: 1,
       lastOpenedAt: 1,

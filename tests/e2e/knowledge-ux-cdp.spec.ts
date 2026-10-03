@@ -12,6 +12,20 @@
  */
 import { completeSetup, expect, getAgentDevHostCalls, installIpcMocks, test } from './fixtures/electron';
 
+type RemoteControlData = {
+  success?: boolean;
+  effectiveEnabled?: boolean;
+  effectivePort?: number;
+  targets?: unknown[];
+  url?: string;
+  textSample?: string;
+  dataUrl?: string;
+};
+type HostInvokeEnvelope<T = RemoteControlData> = {
+  ok?: boolean;
+  data: T;
+};
+
 // ── Helpers ──────────────────────────────────────────────────────────
 
 function stableStringify(value: unknown): string {
@@ -325,10 +339,10 @@ test.describe('Knowledge Hub UX', () => {
   test('workbench tabs render with icons for each tab', async ({ page }) => {
     const tabsContainer = page.getByTestId('knowledge-workbench-tabs');
     const tabs = tabsContainer.getByRole('button');
-    await expect(tabs).toHaveCount(4);
+    await expect(tabs).toHaveCount(2);
 
     // Every tab should have an SVG icon
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 2; i++) {
       await expect(tabs.nth(i).locator('svg')).toBeVisible();
     }
     await page.getByTestId('knowledge-more-actions').click();
@@ -344,7 +358,9 @@ test.describe('Knowledge Hub UX', () => {
     await expect(libraryTab).toHaveClass(/border-foreground/);
 
     // Click Inbox tab — verify Library deactivates
-    await page.getByTestId('knowledge-tab-inbox').click();
+    await page.getByTestId('knowledge-tab-review-queue').click();
+    await page.getByTestId('knowledge-review-filter-inbox').click();
+    await page.getByTestId('knowledge-review-item').first().click();
     await expect(page.getByTestId('knowledge-inbox')).toBeVisible();
   });
 
@@ -360,7 +376,7 @@ test.describe('Knowledge Hub UX', () => {
     await page.keyboard.press('Escape');
   });
 
-  test('markdown workspace supports editing, preview mode, and librarian modal', async ({ page }) => {
+  test('markdown workspace supports explicit editing, preview, and Chat knowledge mode', async ({ page }) => {
     await page.getByTestId('knowledge-tab-library').click();
     await page.getByTestId('knowledge-new-note').click();
     await page.getByTestId('knowledge-editor-title').fill('Local operating notes');
@@ -369,7 +385,7 @@ test.describe('Knowledge Hub UX', () => {
     await expect(page.getByTestId('knowledge-markdown-preview')).toContainText('Keep reusable notes in Markdown.');
 
     await page.getByTestId('knowledge-librarian-open').click();
-    await expect(page.getByTestId('knowledge-librarian-modal')).toBeVisible();
+    await expect(page.getByTestId('knowledge-chat-page')).toBeVisible();
     await expect(page.getByTestId('knowledge-librarian-thread')).toBeVisible();
     await expect(page.getByTestId('knowledge-librarian-composer')).toBeVisible();
     await expect(page.getByTestId('knowledge-librarian-suggestions')).toContainText('Summarize');
@@ -386,7 +402,7 @@ test.describe('Knowledge Hub UX', () => {
     await inspector.locator('summary').click();
     await expect(page.getByTestId('knowledge-librarian-unknowns-section')).toBeVisible();
     await expect(inspector).toContainText('What is this note about?');
-    await expect(page.getByTestId('knowledge-librarian-citation')).toContainText('notes/local-operating-notes.md');
+    await expect(page.getByTestId('knowledge-librarian-source')).toContainText('notes/local-operating-notes.md');
     await page.getByTestId('knowledge-librarian-create-error-experience').click();
     await expect.poll(async () => {
       const calls = await getAgentDevHostCalls(page);
@@ -402,7 +418,9 @@ test.describe('Knowledge Hub UX', () => {
   // ── Inbox tab ─────────────────────────────────────────────────────
 
   test('inbox panel shows pending items with source and warning info', async ({ page }) => {
-    await page.getByTestId('knowledge-tab-inbox').click();
+    await page.getByTestId('knowledge-tab-review-queue').click();
+    await page.getByTestId('knowledge-review-filter-inbox').click();
+    await page.getByTestId('knowledge-review-item').first().click();
     await expect(page.getByTestId('knowledge-inbox')).toBeVisible();
 
     const inboxRows = page.getByTestId('knowledge-inbox-row');
@@ -422,11 +440,12 @@ test.describe('Knowledge Hub UX', () => {
 
   // ── Drafts tab ────────────────────────────────────────────────────
 
-  test('draft list shows entries with type information', async ({ page }) => {
-    await page.getByTestId('knowledge-tab-drafts').click();
-    await expect(page.getByTestId('knowledge-draft-inbox')).toBeVisible();
+  test('review queue filters drafts and retains their status information', async ({ page }) => {
+    await page.getByTestId('knowledge-tab-review-queue').click();
+    await page.getByTestId('knowledge-review-filter-draft').click();
+    await expect(page.getByTestId('knowledge-review-queue')).toBeVisible();
 
-    const draftRows = page.getByTestId('knowledge-draft-row');
+    const draftRows = page.getByTestId('knowledge-review-item');
     await expect(draftRows).toHaveCount(3);
 
     // Each draft row should have an SVG (type icon)
@@ -761,7 +780,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
 
   test('CDP status and inspect returns active debugging state', async ({ page }) => {
     const status = await page.evaluate(async () => {
-      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({ id: 'test-status', module: 'remoteControl', action: 'status' });
+      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope> } }).verseClaw.hostInvoke({ id: 'test-status', module: 'remoteControl', action: 'status' });
       return res;
     });
     console.log("CDP STATUS RESULT:", status);
@@ -771,19 +790,19 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
     expect(status.data.effectivePort).toBeGreaterThan(0);
 
     const inspect = await page.evaluate(async () => {
-      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({ id: 'test-inspect', module: 'remoteControl', action: 'inspect' });
+      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope> } }).verseClaw.hostInvoke({ id: 'test-inspect', module: 'remoteControl', action: 'inspect' });
       return res;
     });
     console.log("CDP INSPECT RESULT:", inspect);
     expect(inspect.ok).toBe(true);
     expect(inspect.data.success).toBe(true);
-    expect(inspect.data.targets.length).toBeGreaterThan(0);
+    expect(inspect.data.targets?.length).toBeGreaterThan(0);
   });
 
   test('CDP click drives UI navigation on the knowledge page', async ({ page }) => {
     // Navigate to knowledge page via CDP click
     const navClick = await page.evaluate(async () => {
-      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({
+      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope> } }).verseClaw.hostInvoke({
         id: 'test-navclick',
         module: 'remoteControl',
         action: 'click',
@@ -797,9 +816,9 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
     await expect(page.getByTestId('knowledge-page')).toBeVisible();
 
     // Click tabs via CDP click
-    for (const tab of ['inbox', 'drafts', 'review', 'library']) {
+    for (const tab of ['review-queue', 'library']) {
       const tabClick = await page.evaluate(async (tabName) => {
-        const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({
+        const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope> } }).verseClaw.hostInvoke({
           id: `test-tabclick-${tabName}`,
           module: 'remoteControl',
           action: 'click',
@@ -818,7 +837,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
     await page.getByTestId('knowledge-more-actions').click();
     await expect(page.getByTestId('knowledge-tab-governance')).toBeVisible();
     const governanceClick = await page.evaluate(async () => {
-      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({
+      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope> } }).verseClaw.hostInvoke({
         id: 'test-governance-menu-click',
         module: 'remoteControl',
         action: 'click',
@@ -833,7 +852,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
   test('CDP pageInfo and screenshot retrieves live DOM state', async ({ page }) => {
     // Navigate to knowledge page
     await page.evaluate(async () => {
-      await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({
+      await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope> } }).verseClaw.hostInvoke({
         id: 'test-navclick-2',
         module: 'remoteControl',
         action: 'click',
@@ -844,7 +863,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
 
     // Retrieve page info via CDP pageInfo
     const pageInfo = await page.evaluate(async () => {
-      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({
+      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope> } }).verseClaw.hostInvoke({
         id: 'test-pageinfo',
         module: 'remoteControl',
         action: 'pageInfo',
@@ -858,7 +877,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
 
     // Take screenshot via CDP screenshot
     const screenshot = await page.evaluate(async () => {
-      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({
+      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<HostInvokeEnvelope> } }).verseClaw.hostInvoke({
         id: 'test-screenshot',
         module: 'remoteControl',
         action: 'screenshot',

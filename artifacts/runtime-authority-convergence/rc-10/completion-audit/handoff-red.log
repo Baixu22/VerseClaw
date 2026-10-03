@@ -1,0 +1,80 @@
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX[39m
+
+ [31m❯[39m tests/unit/host-services.test.ts [2m([22m[2m31 tests[22m[2m | [22m[31m1 failed[39m[2m | [22m[33m30 skipped[39m[2m)[22m[33m 500[2mms[22m[39m
+     [2m[90m↓[39m[22m runs proxy side effects and restarts a running gateway after settings.set
+     [2m[90m↓[39m[22m restarts a running gateway when the Role Memory setting changes
+     [2m[90m↓[39m[22m runs launch-at-startup side effects after settings.setMany and reset
+     [2m[90m↓[39m[22m routes gateway rpc through backpressure
+     [2m[90m↓[39m[22m exposes provider account snapshot actions through the typed providers service
+     [2m[90m↓[39m[22m validates provider keys using account metadata and caller options
+     [2m[90m↓[39m[22m creates provider accounts and syncs runtime config through the typed providers service
+     [2m[90m↓[39m[22m sets the default provider account and syncs runtime defaults
+     [2m[90m↓[39m[22m reports degraded when the default account sync fails partially (R0-2)
+     [2m[90m↓[39m[22m builds channel accounts from config without gateway rpc in config mode
+     [2m[90m↓[39m[22m lists channel targets from session history and validates channel type
+     [2m[90m↓[39m[22m saves channel binding for existing agents and schedules channel refresh
+     [2m[90m↓[39m[22m installs plugin, saves config, ensures scoped binding, and schedules refresh on saveConfig
+     [2m[90m↓[39m[22m deletes agents by restarting gateway, removing workspace, and returning snapshot
+     [2m[90m↓[39m[22m updates and resets avatars through the typed agents Host API
+     [2m[90m↓[39m[22m reads and updates agent bootstrap tooling config
+     [2m[90m↓[39m[22m assigns agent channels and schedules gateway reload
+     [2m[90m↓[39m[22m returns diagnostics snapshot with channel view and log tails
+     [2m[90m↓[39m[22m reads only selected log files from the log directory
+     [2m[90m↓[39m[22m sends staged media through the typed chat service with gateway attachments
+     [2m[90m↓[39m[22m loads session summaries and transcript history through the typed sessions service
+     [2m[90m↓[39m[22m reports compaction status unavailable when Gateway is missing
+     [2m[90m↓[39m[22m reports long-task control status unavailable when Gateway is missing
+     [2m[90m↓[39m[22m proxies long-task control RPCs through Gateway
+     [2m[90m↓[39m[22m proxies manual compaction to Gateway with force and appended instructions
+     [2m[90m↓[39m[22m proxies read-only context recall through Gateway without local archive reads
+     [2m[90m↓[39m[22m forks sessions through Gateway without local transcript fallback
+     [2m[90m↓[39m[22m does not fork locally when Gateway is unavailable
+[31m     [31m×[31m uses runtime history for keyed history and handoff rather than a stale local profile[39m[33m 499[2mms[22m[39m
+     [2m[90m↓[39m[22m prepares deterministic session handoff without requiring Gateway
+     [2m[90m↓[39m[22m merges runtime checkpoint handoff with ledger, git, observability, and transcript sources
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22muses runtime history for keyed history and handoff rather than a stale local profile
+[31m[1mAssertionError[22m: expected { success: true, …(1) } to match object { success: true, messages: [ …(2) ] }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "messages": [[22m
+[2m      {[22m
+[32m-       "content": "Report the already delivered result.",[39m
+[32m-       "role": "user",[39m
+[32m-     },[39m
+[32m-     {[39m
+[32m-       "content": [[39m
+[32m-         {[39m
+[32m-           "text": "ACKNOWLEDGED_RUNTIME_RESULT",[39m
+[32m-           "type": "text",[39m
+[32m-         },[39m
+[32m-       ],[39m
+[31m+       "content": "STALE_LOCAL_RESULT",[39m
+[2m        "role": "assistant",[22m
+[2m      },[22m
+[2m    ],[22m
+[2m    "success": true,[22m
+[2m  }[22m
+
+[36m [2m❯[22m D:/ClawX/tests/unit/host-services.test.ts:[2m1310:88[22m[39m
+    [90m1308|[39m     const { createSessionsApi } = await import('@electron/services/ses…
+    [90m1309|[39m     const api = createSessionsApi({ gatewayManager: { rpc } as never }…
+    [90m1310|[39m     expect(await api.history({ sessionKey: 'agent:main:runtime-handoff…
+    [90m   |[39m                                                                                        [31m^[39m
+    [90m1311|[39m     const handoff = await api.prepareHandoff({ sessionKey: 'agent:main…
+    [90m1312|[39m     [34mexpect[39m(handoff[33m.[39mdraft)[33m.[39m[34mtoContain[39m([32m'ACKNOWLEDGED_RUNTIME_RESULT'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[33m30 skipped[39m[90m (31)[39m
+[2m   Start at [22m 06:10:38
+[2m   Duration [22m 1.04s[2m (transform 317ms, setup 122ms, import 80ms, tests 500ms, environment 0ms)[22m
+

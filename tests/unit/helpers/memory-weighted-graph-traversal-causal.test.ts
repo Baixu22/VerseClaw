@@ -13,12 +13,12 @@ import {
   graphHitsToRRFHits,
   weightedGraphTraversal,
 } from "./memory-weighted-graph-traversal";
-import type { EntityStoreLike } from "../../openclaw_runtime/src/runtime-core/memory-entity-extraction";
+import type { EntityStoreLike } from "../../../openclaw_runtime/src/runtime-core/memory-entity-extraction";
 import type {
   RuntimeMemoryFactRelation,
   RuntimeMemoryQueryableFact,
-} from "../../openclaw_runtime/src/runtime-core/memory-context";
-import type { HybridSearchHit } from "../../openclaw_runtime/src/runtime-core/memory-hybrid-retrieval";
+} from "../../../openclaw_runtime/src/runtime-core/memory-context";
+import type { HybridSearchHit } from "../../../openclaw_runtime/src/runtime-core/memory-hybrid-retrieval";
 
 // --- Test helpers ---
 

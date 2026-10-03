@@ -116,7 +116,7 @@ describe('ResourceTracker', () => {
     it('TCP-pings a live port and returns true', async () => {
       const { port, server } = await startServer('ping-live');
       try {
-        const alive = await internals(tracker).tcpPing(port);
+        const alive = await (internals(tracker) as { tcpPing: (port: number) => Promise<unknown> }).tcpPing(port);
         expect(alive).toBe(true);
       } finally {
         await stopServer(server);
@@ -125,7 +125,7 @@ describe('ResourceTracker', () => {
 
     it('TCP-pings a dead port and returns false', async () => {
       const freePort = await findFreePort();
-      const dead = await internals(tracker).tcpPing(freePort);
+      const dead = await (internals(tracker) as { tcpPing: (port: number) => Promise<unknown> }).tcpPing(freePort);
       expect(dead).toBe(false);
     });
 
@@ -142,7 +142,7 @@ describe('ResourceTracker', () => {
         const resource = tracker.getSnapshot().resources.find((entry) => entry.id === id)!;
         resource.sessionLastActiveAt = new Date(Date.now() - 11 * 60 * 1000).toISOString();
 
-        await internals(tracker).probeResource(resource);
+        await (internals(tracker) as { probeResource: (resource: unknown) => Promise<unknown> }).probeResource(resource);
 
         const updated = tracker.getSnapshot().resources.find((entry) => entry.id === id)!;
         expect(updated.status).toBe('idle');
@@ -291,7 +291,7 @@ describe('ResourceTracker', () => {
       resource.status = 'idle';
       resource.sessionLastActiveAt = new Date(Date.now() - 31 * 60 * 1000).toISOString();
 
-      await internals(tracker).autoCleanup();
+      await (internals(tracker) as { autoCleanup: () => Promise<unknown> }).autoCleanup();
 
       expect(tracker.getSnapshot().resources).toHaveLength(0);
     });

@@ -572,6 +572,7 @@ export function createFollowupRunner(params: {
         resetTriggered: false,
         routeThreadId: queued.originatingThreadId,
         upstreamAbortSignal: queued.abortSignal,
+        agentId: run.agentId,
       });
       if (admission.status === "skipped") {
         if (admission.reason === "active-run") {
@@ -933,6 +934,7 @@ export function createFollowupRunner(params: {
                     timeoutMs: run.timeoutMs,
                     runId,
                     extraSystemPrompt: run.extraSystemPrompt,
+                    compassContext: run.compassContext,
                     sourceReplyDeliveryMode: run.sourceReplyDeliveryMode,
                     silentReplyPromptMode: run.silentReplyPromptMode,
                     allowEmptyAssistantReplyAsSilent: run.allowEmptyAssistantReplyAsSilent,
@@ -1018,6 +1020,7 @@ export function createFollowupRunner(params: {
                 currentInboundAudio: queued.currentInboundAudio,
                 currentInboundContext: queued.currentInboundContext,
                 extraSystemPrompt: run.extraSystemPrompt,
+                compassContext: run.compassContext,
                 silentReplyPromptMode: run.silentReplyPromptMode,
                 sourceReplyDeliveryMode: run.sourceReplyDeliveryMode,
                 forceMessageTool: run.sourceReplyDeliveryMode === "message_tool_only",

@@ -41,6 +41,7 @@ import { ReceiptStore } from "./receipt-store.js";
 import { runEmbeddedAgent } from "./embedded-agent-runner/run.js";
 import {
   emitShadowCensus,
+  getShadowCensusDiagnostics,
   resetShadowCensusDiagnosticsForTest,
   resolveShadowCensusCapability,
   wireBodyDigest,
@@ -91,7 +92,13 @@ afterEach(async () => {
     // tracked handle under the temp root before removal so Windows releases
     // the file locks.
     closeTrackedSqliteHandlesUnder(root);
-    fs.rmSync(root, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 });
+    try {
+      fs.rmSync(root, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 });
+    } catch {
+      // Windows can still hold a handle even after the tracked handles are
+      // closed. The directory is an OS temp dir, so a failed cleanup must not
+      // turn a passing acceptance test red.
+    }
   }
 });
 
@@ -220,7 +227,9 @@ describe("RC-02 full-payload shadow census acceptance", () => {
     const contextByCorrelation = new Map(
       contextRows.map((row) => [row.correlation_digest, row.model_call_index]),
     );
-    expect(wireRows.map((row) => row.model_call_index).toSorted()).toEqual([0, 1]);
+    expect(
+      wireRows.map((row) => Number(row.model_call_index)).toSorted((left, right) => left - right),
+    ).toEqual([0, 1]);
     for (const wire of wireRows) {
       expect(contextByCorrelation.get(wire.correlation_digest)).toBe(wire.model_call_index);
       expect(wire).toMatchObject({
@@ -276,7 +285,14 @@ describe("RC-02 full-payload shadow census acceptance", () => {
     expect(wireRows[0].wire_digest).toBe(wireBodyDigest({ ...body, stream: true }));
   });
 
-  it("entry matrix: real provider transports yield correlated receipts", async () => {
+  // Transport-level smoke only. These rows call provider transport factories
+  // directly, so they prove per-call receipt correlation and byte parity but NOT
+  // entry identity: a label here is a call id, not a production surface. The
+  // real-entry matrix (desktop chat, Cron, CLI/compact, embedded attempt,
+  // context engine, provider payload hook, provider transport) is driven in
+  // rc02-entry-matrix.acceptance.test.ts, and the registry denominator below is
+  // the provider axis.
+  it("transport-level smoke: eight source-runtime model calls yield correlated receipts", async () => {
     process.env.OPENCLAW_RC02_SHADOW_CENSUS = "1";
     process.env.AZURE_OPENAI_ENDPOINT = "http://127.0.0.1:40123/v1";
     const originalFetch = globalThis.fetch;
@@ -332,42 +348,42 @@ describe("RC-02 full-payload shadow census acceptance", () => {
     const context = { messages: [{ role: "user" as const, content: "hello", timestamp: 1 }] };
     const entries = [
       {
-        id: "desktop-chat",
+        id: "call-openai-responses",
         model: makeModel("openai-responses", "openai", "gpt-rc02"),
         stream: createOpenAIResponsesTransportStreamFn(),
       },
       {
-        id: "cron",
+        id: "call-openai-completions",
         model: makeModel("openai-completions", "openai", "gpt-rc02"),
         stream: createOpenAICompletionsTransportStreamFn(),
       },
       {
-        id: "channel-conformance",
+        id: "call-azure-openai-responses",
         model: makeModel("azure-openai-responses", "azure-openai", "gpt-rc02"),
         stream: createAzureOpenAIResponsesTransportStreamFn(),
       },
       {
-        id: "cli-compact",
+        id: "call-anthropic-messages",
         model: makeModel("anthropic-messages", "anthropic", "claude-rc02"),
         stream: createAnthropicMessagesTransportStreamFn(),
       },
       {
-        id: "embedded-attempt",
+        id: "call-google-generative-ai",
         model: makeModel("google-generative-ai", "google", "gemini-rc02"),
         stream: createGoogleGenerativeAiTransportStreamFn(),
       },
       {
-        id: "context-engine",
+        id: "call-openai-chatgpt-responses",
         model: makeModel("openai-chatgpt-responses", "openai", "gpt-rc02"),
         stream: createOpenAIResponsesTransportStreamFn(),
       },
       {
-        id: "provider-payload-hook",
+        id: "call-openai-responses-repeat",
         model: makeModel("openai-responses", "openai", "gpt-rc02"),
         stream: createOpenAIResponsesTransportStreamFn(),
       },
       {
-        id: "provider-transport",
+        id: "call-anthropic-messages-repeat",
         model: makeModel("anthropic-messages", "anthropic", "claude-rc02"),
         stream: createAnthropicMessagesTransportStreamFn(),
       },
@@ -643,12 +659,24 @@ describe("RC-02 full-payload shadow census acceptance", () => {
     const blocker = path.join(stateDir, "blocker.txt");
     fs.writeFileSync(blocker, "not a directory");
     const broken = { env: process.env, path: path.join(blocker, "openclaw-state.db") };
+    const body = { model: "x", messages: [] };
+    const before = JSON.stringify(body);
     const result = emitShadowCensus(
-      { model: "x", messages: [] },
-      { providerId: "anthropic" },
+      body,
+      { providerId: "anthropic", adapterId: "anthropic-messages" },
       { enabled: true, sourceRuntime: true, database: broken },
     );
     expect(result.failed).toBe(true);
+    expect(result.contextReceipt).toBeNull();
+    expect(result.wireReceipt).toBeNull();
+    expect(JSON.stringify(body)).toBe(before);
+    expect(getShadowCensusDiagnostics()).toMatchObject({
+      acceptanceReady: false,
+      failures: [
+        { phase: "context-write", code: "receipt-store-write-failed", count: 1 },
+        { phase: "wire-write", code: "receipt-store-write-failed", count: 1 },
+      ],
+    });
   });
 
   it("the census is disabled by default (flag off) so the legacy path is byte-identical", () => {

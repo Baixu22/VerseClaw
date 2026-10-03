@@ -23,7 +23,9 @@ function createRule(partial: Partial<ExtractionRule> = {}): ExtractionRule {
 }
 
 function mockEvaluate(result: ExtractPageTextResult) {
-  return vi.fn(async () => ({ result: { value: JSON.stringify(result) } }));
+  return vi.fn(async (_params: Record<string, unknown>) => ({
+    result: { value: JSON.stringify(result) },
+  }));
 }
 
 describe('页面文本提取器', () => {
@@ -38,7 +40,8 @@ describe('页面文本提取器', () => {
     });
 
     expect(result).toEqual({ text: '正文内容', truncated: false, usedFallback: false, matchedRuleId: 'rule-1' });
-    const params = evaluate.mock.calls[0]?.[0] as { expression: string; awaitPromise: boolean; returnByValue: boolean };
+    const params = evaluate.mock.calls[0]?.[0];
+    if (!params) throw new Error('Expected evaluate call');
     expect(params.awaitPromise).toBe(true);
     expect(params.returnByValue).toBe(true);
     expect(params.expression).toContain('https://example.com/article');
@@ -56,7 +59,8 @@ describe('页面文本提取器', () => {
       rules: [],
     });
 
-    const params = evaluate.mock.calls[0]?.[0] as { expression: string };
+    const params = evaluate.mock.calls[0]?.[0];
+    if (!params) throw new Error('Expected evaluate call');
     expect(params.expression).toContain('"extractMode":"text"');
     expect(params.expression).toContain('"maxLength":100000');
     expect(params.expression).toContain('"allowFallback":true');
@@ -74,7 +78,8 @@ describe('页面文本提取器', () => {
       allowFallback: false,
     });
 
-    const params = evaluate.mock.calls[0]?.[0] as { expression: string };
+    const params = evaluate.mock.calls[0]?.[0];
+    if (!params) throw new Error('Expected evaluate call');
     expect(params.expression).toContain('"extractMode":"all"');
     expect(params.expression).toContain('"selectorType":"css"');
     expect(params.expression).toContain('"allowFallback":false');
@@ -110,7 +115,8 @@ describe('页面文本提取器', () => {
       ],
     });
 
-    const params = evaluate.mock.calls[0]?.[0] as { expression: string };
+    const params = evaluate.mock.calls[0]?.[0];
+    if (!params) throw new Error('Expected evaluate call');
     expect(params.expression).toContain('"id":"rule-late"');
     expect(params.expression).toContain('"id":"rule-first"');
     expect(params.expression).toContain('"sortOrder":20');

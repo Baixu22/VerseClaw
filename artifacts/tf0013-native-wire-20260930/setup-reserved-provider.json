@@ -1,0 +1,17 @@
+{
+  "actor": "codex/root",
+  "driven_by": "agent",
+  "provider": "scripted-local-responses",
+  "binaryVersion": "codex-cli 0.137.0",
+  "scratch": "C:\\Users\\27933\\AppData\\Local\\Temp\\tf0013-native-wire-fJk7R8",
+  "scenarios": [],
+  "plugins": [
+    {
+      "id": "codex",
+      "status": "loaded",
+      "source": "D:\\ClawX\\openclaw_runtime\\dist\\extensions\\codex\\index.js"
+    }
+  ],
+  "pass": false,
+  "error": "Error: codex app-server exited: code=1 signal=null stderr=\"WARNING: proceeding, even though we could not update PATH: Refusing to create helper binaries under temporary dir \\\"C:\\\\\\\\Users\\\\\\\\27933\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\\\\" (codex_home: AbsolutePathBuf(\\\"C:\\\\\\\\Users\\\\\\\\27933\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tf0013-native-wire-fJk7R8\\\\\\\\agent\\\\\\\\codex-home\\\")) Error: error loading default config after config error: model_providers contains reserved built-in provider IDs: `openai`. Built-in providers cannot be overridden. Rename your custom provider (for example, `openai-custom`). i...\"\n    at buildCodexAppServerExitError (file:///D:/ClawX/openclaw_runtime/dist/client-FT__krXe.js:683:25)\n    at ChildProcess.<anonymous> (file:///D:/ClawX/openclaw_runtime/dist/client-FT__krXe.js:298:24)\n    at Object.onceWrapper (node:events:631:26)\n    at ChildProcess.emit (node:events:509:28)\n    at ChildProcess._handle.onexit (node:internal/child_process:295:12)"
+}

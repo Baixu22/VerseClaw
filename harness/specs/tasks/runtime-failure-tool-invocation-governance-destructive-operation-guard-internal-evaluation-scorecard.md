@@ -75,13 +75,7 @@ forbiddenPatterns:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-destructive-operation-guard-internal-evaluation-scorecard/README.md
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-destructive-operation-guard-internal-evaluation-scorecard/validation-plan.md
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-destructive-operation-guard-internal-evaluation-scorecard/quantitative-scorecard.md
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-destructive-operation-guard-internal-evaluation-scorecard/optimization-plan.md
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-destructive-operation-guard-internal-evaluation-scorecard/synthesis.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/schema-decision-log.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Runtime Failure Tool Invocation Governance Destructive Operation Guard Internal Evaluation Scorecard

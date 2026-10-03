@@ -204,8 +204,11 @@ test.describe('Knowledge steward config (Area 5 §3.5)', () => {
     await page.getByTestId('sidebar-nav-knowledge').click();
     await expect(page.getByTestId('knowledge-page')).toBeVisible();
 
-    // Navigate to the Review tab.
-    await page.getByTestId('knowledge-tab-review').click();
+    // The single-draft review view is now reached through the Review Queue tab:
+    // open the queue, then select a review item to enter the review workspace.
+    await page.getByTestId('knowledge-tab-review-queue').click();
+    await expect(page.getByTestId('knowledge-review-queue')).toBeVisible();
+    await page.getByTestId('knowledge-review-item').filter({ hasText: 'Steward-reviewed decision' }).click();
     await expect(page.getByTestId('knowledge-review')).toBeVisible();
 
     // Steward review result section is present (no review yet for no selected draft).

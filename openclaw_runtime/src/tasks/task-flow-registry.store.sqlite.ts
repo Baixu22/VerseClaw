@@ -1,5 +1,9 @@
 // Persists managed task-flow records through the OpenClaw SQLite state database.
 import type { DatabaseSync } from "node:sqlite";
+import {
+  isWorkflowLifecycleControllerId,
+  WORKFLOW_LIFECYCLE_CONTROLLER_IDS,
+} from "./workflow-lifecycle-owner.js";
 import type { Insertable, Selectable } from "kysely";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "../infra/kysely-sync.js";
 import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
@@ -36,6 +40,10 @@ type FlowRegistryDatabase = {
 // SQLite-backed task-flow store mirrors the in-process registry into openclaw-state.db.
 let cachedDatabase: FlowRegistryDatabase | null = null;
 
+
+const WORKFLOW_LIFECYCLE_CONTROLLER_SQL_LIST = Object.values(WORKFLOW_LIFECYCLE_CONTROLLER_IDS)
+  .map((id) => `'${id}'`)
+  .join(", ");
 function normalizeNumber(value: number | bigint | null): number | undefined {
   if (typeof value === "bigint") {
     return Number(value);
@@ -137,12 +145,18 @@ function pruneFlowsNotInSnapshot(params: { db: DatabaseSync; ids: readonly strin
   for (const id of params.ids) {
     insert.run(id);
   }
+  // SQL CAS is the only writer for controller_id="goal-wake" wait rows. The
+  // in-memory Map is a read cache only and must never prune rows it has not
+  // mirrored yet.
+  // Workflow lifecycle rows (ClawGraph / Mission / Task Loop) are owned by the
+  // same CAS writer and are never part of this snapshot either.
   params.db.exec(`
     DELETE FROM flow_runs
-    WHERE NOT EXISTS (
-      SELECT 1 FROM ${tempTableName}
-      WHERE ${tempTableName}.id = flow_runs.flow_id
-    )
+    WHERE COALESCE(controller_id, '') NOT IN ('goal-wake', ${WORKFLOW_LIFECYCLE_CONTROLLER_SQL_LIST})
+      AND NOT EXISTS (
+        SELECT 1 FROM ${tempTableName}
+        WHERE ${tempTableName}.id = flow_runs.flow_id
+      )
   `);
   params.db.exec(`DELETE FROM ${tempTableName}`);
 }
@@ -233,7 +247,10 @@ function withWriteTransaction(write: (database: FlowRegistryDatabase) => void) {
 
 export function loadTaskFlowRegistryStateFromSqlite(): TaskFlowRegistryStoreSnapshot {
   const { db } = openFlowRegistryDatabase();
-  const rows = selectFlowRows(db);
+  // Workflow lifecycle rows change only through their CAS writer; a restored
+  // in-memory copy would go stale on the next commit, so the registry reads
+  // them from TaskFlow instead of caching them.
+  const rows = selectFlowRows(db).filter((row) => !isWorkflowLifecycleControllerId(row.controller_id));
   return {
     flows: new Map(rows.map((row) => [row.flow_id, rowToFlowRecord(row)])),
   };
@@ -241,13 +258,9 @@ export function loadTaskFlowRegistryStateFromSqlite(): TaskFlowRegistryStoreSnap
 
 export function saveTaskFlowRegistryStateToSqlite(snapshot: TaskFlowRegistryStoreSnapshot) {
   withWriteTransaction(({ db }) => {
-    const kysely = getFlowRegistryKysely(db);
-    const flowIds = [...snapshot.flows.keys()];
-    if (flowIds.length === 0) {
-      executeSqliteQuerySync(db, kysely.deleteFrom("flow_runs"));
-      return;
-    }
-    pruneFlowsNotInSnapshot({ db, ids: flowIds });
+    // An empty snapshot prunes through the same guard: CAS-owned rows are
+    // never part of a registry snapshot, so they are never deleted by one.
+    pruneFlowsNotInSnapshot({ db, ids: [...snapshot.flows.keys()] });
     for (const flow of snapshot.flows.values()) {
       upsertFlowRow(db, bindFlowRecord(flow));
     }

@@ -36,6 +36,7 @@ import { DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS } from "./assembler.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
 import { isDcsContextViewToolsEnabled } from "./dcs-context-tools-flags.js";
 import { resolveVtokenAssemblyConfig } from "./chat-turn-vtoken-injection.js";
+import { resolveKeRetrievalShadowEnabled } from "../runtime-core/ke-retrieval-shadow.js";
 import { dcsObservability } from "./dcs-observability.js";
 import {
   getEffectiveTurnInjectionCharBudget,
@@ -274,6 +275,7 @@ export function resolveEffectiveRuntimeFlagsWithSources(
     "runtime.coding.symbolLease.mode": resolveSymbolLeaseMode(cfg),
     "runtime.coding.patchFlow.default": isCodingPatchFlowDefault(cfg),
     "runtime.coding.sekb.experienceShadow": isCodingSekbExperienceShadowEnabled(cfg),
+    "runtime.coding.sekb.retrievalShadow": resolveKeRetrievalShadowEnabled(cfg),
     "runtime.coding.routingMemo.shadow": isCodingRoutingMemoShadowEnabled(cfg),
   };
 

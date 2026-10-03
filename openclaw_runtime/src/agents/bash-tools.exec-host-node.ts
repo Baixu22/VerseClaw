@@ -12,6 +12,7 @@ import {
   resolveExecApprovalAllowedDecisions,
 } from "../infra/exec-approvals.js";
 import { defaultExecAutoReviewer, type ExecAutoReviewInput } from "../infra/exec-auto-review.js";
+import { awaitWithAbort } from "../utils/await-with-abort.js";
 import {
   buildExecApprovalRequesterContext,
   buildExecApprovalTurnSourceContext,
@@ -107,6 +108,7 @@ function nodePolicyBlocksAutoReview(params: {
 export async function executeNodeHostCommand(
   params: ExecuteNodeHostCommandParams,
 ): Promise<AgentToolResult<ExecToolDetails>> {
+  params.signal?.throwIfAborted();
   const { hostSecurity, hostAsk, askFallback } = resolveExecHostApprovalContext({
     agentId: params.agentId,
     security: params.security,
@@ -114,6 +116,7 @@ export async function executeNodeHostCommand(
     host: "node",
   });
   const target = await resolveNodeExecutionTarget(params);
+  params.signal?.throwIfAborted();
   if (
     shouldSkipNodeApprovalPrepare({
       hostSecurity,
@@ -121,10 +124,12 @@ export async function executeNodeHostCommand(
       strictInlineEval: params.strictInlineEval,
     })
   ) {
+    params.signal?.throwIfAborted();
     return await invokeNodeSystemRunDirect({ request: params, target });
   }
 
   const prepared = await prepareNodeSystemRun({ request: params, target });
+  params.signal?.throwIfAborted();
   const approvalAnalysis = await analyzeNodeApprovalRequirement({
     request: params,
     target,
@@ -132,6 +137,7 @@ export async function executeNodeHostCommand(
     hostSecurity,
     hostAsk,
   });
+  params.signal?.throwIfAborted();
   const {
     analysisOk,
     allowlistSatisfied,
@@ -211,36 +217,43 @@ export async function executeNodeHostCommand(
       !requiresSecurityAuditSuppressionApproval
     ) {
       const reviewer = params.autoReviewer ?? defaultExecAutoReviewer;
-      const decision = await reviewer({
-        command: prepared.rawCommand,
-        argv: autoReviewArgv,
-        cwd: prepared.cwd,
-        envKeys: Object.keys(params.requestedEnv ?? {}).toSorted(),
-        host: "node",
-        reason: resolveNodeAutoReviewReason({
-          inlineEvalHit,
-          hostSecurity,
-          analysisOk,
-          allowlistSatisfied,
-          durableApprovalSatisfied,
-        }),
-        analysis: {
-          parsed: analysisOk,
-          allowlistMatched: allowlistSatisfied,
-          durableApprovalMatched: durableApprovalSatisfied,
-          inlineEval: inlineEvalHit !== null,
-        },
-        agent: {
-          id: prepared.agentId,
-          sessionKey: prepared.sessionKey,
-        },
-      });
+      const decision = await awaitWithAbort(
+        Promise.resolve(
+          reviewer({
+            command: prepared.rawCommand,
+            argv: autoReviewArgv,
+            cwd: prepared.cwd,
+            envKeys: Object.keys(params.requestedEnv ?? {}).toSorted(),
+            host: "node",
+            reason: resolveNodeAutoReviewReason({
+              inlineEvalHit,
+              hostSecurity,
+              analysisOk,
+              allowlistSatisfied,
+              durableApprovalSatisfied,
+            }),
+            analysis: {
+              parsed: analysisOk,
+              allowlistMatched: allowlistSatisfied,
+              durableApprovalMatched: durableApprovalSatisfied,
+              inlineEval: inlineEvalHit !== null,
+            },
+            agent: {
+              id: prepared.agentId,
+              sessionKey: prepared.sessionKey,
+            },
+          }),
+        ),
+        params.signal,
+      );
+      params.signal?.throwIfAborted();
       if (decision.decision === "allow-once") {
         const approvalId = randomUUID();
         await registerNodeApproval(approvalId, {
           requireDeliveryRoute: false,
           suppressDelivery: true,
         });
+        params.signal?.throwIfAborted();
         await callGatewayTool(
           "exec.approval.resolve",
           { timeoutMs: 15_000 },
@@ -277,10 +290,15 @@ export async function executeNodeHostCommand(
         initiatingSurface,
         sentApproverDms,
         unavailableReason,
-      } = await createAndRegisterDefaultExecApprovalRequest({
-        ...requestArgs,
-        register: registerNodeApproval,
-      });
+      } = await awaitWithAbort(
+        createAndRegisterDefaultExecApprovalRequest({
+          ...requestArgs,
+          register: registerNodeApproval,
+        }),
+        params.signal,
+      );
+      // A cancelled foreground request must not create a detached approval follow-up.
+      params.signal?.throwIfAborted();
       if (
         shouldResolveExecApprovalUnavailableInline({
           trigger: params.trigger,
@@ -288,11 +306,10 @@ export async function executeNodeHostCommand(
           preResolvedDecision,
         })
       ) {
-        const { baseDecision, approvedByAsk, deniedReason } =
-          createExecApprovalDecisionState({
-            decision: preResolvedDecision,
-            askFallback,
-          });
+        const { baseDecision, approvedByAsk, deniedReason } = createExecApprovalDecisionState({
+          decision: preResolvedDecision,
+          askFallback,
+        });
         const strictInlineEvalDecision = enforceStrictInlineEvalApprovalBoundary({
           baseDecision,
           approvedByAsk,
@@ -465,17 +482,26 @@ export async function executeNodeHostCommand(
     cwd: prepared.cwd,
     agentId: prepared.agentId,
     sessionKey: prepared.sessionKey,
+    ...buildExecApprovalTurnSourceContext(params),
     approved: inlineApprovedByAsk,
     approvalDecision: inlineApprovalDecision,
     runId: inlineApprovalId,
     notifyOnExit: params.notifyOnExit,
     systemRunPlan: prepared.plan,
   });
+  params.signal?.throwIfAborted();
   const raw =
     inlineApprovedByAsk && inlineApprovalId
-      ? await callGatewayTool("node.invoke", { timeoutMs: target.invokeTimeoutMs }, invoke, {
-          scopes: APPROVED_NODE_INVOKE_SCOPES,
-        })
-      : await callGatewayTool("node.invoke", { timeoutMs: target.invokeTimeoutMs }, invoke);
+      ? await awaitWithAbort(
+          callGatewayTool("node.invoke", { timeoutMs: target.invokeTimeoutMs }, invoke, {
+            scopes: APPROVED_NODE_INVOKE_SCOPES,
+          }),
+          params.signal,
+        )
+      : await awaitWithAbort(
+          callGatewayTool("node.invoke", { timeoutMs: target.invokeTimeoutMs }, invoke),
+          params.signal,
+        );
+  params.signal?.throwIfAborted();
   return formatNodeRunToolResult({ raw, startedAt, cwd: params.workdir });
 }

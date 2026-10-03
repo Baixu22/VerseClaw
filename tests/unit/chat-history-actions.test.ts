@@ -47,11 +47,11 @@ const shouldDropMessageFromHistory = vi.fn((msg: { role?: unknown; content?: unk
   return isInternalMessage(msg);
 });
 const setLastChatEventAt = vi.fn();
-const loadMissingPreviews = vi.fn(async () => false);
+const loadMissingPreviews = vi.fn(async (_messages?: Array<{ _attachedFiles?: unknown[] }>) => false);
 const toMs = vi.fn((ts: number) => ts < 1e12 ? ts * 1000 : ts);
 
 vi.mock('@/lib/host-api', () => ({
-  hostApiFetch: (...args: unknown[]) => hostApiFetchMock(...args),
+  hostApiFetch: hostApiFetchMock,
   hostApi: {
     gateway: {
       rpc: async (method: string, params?: unknown, timeoutMs?: number) => {
@@ -84,24 +84,24 @@ vi.mock('@/stores/gateway', () => ({
 
 vi.mock('@/stores/chat/helpers', () => ({
   enrichWithTeamOrchestrationToolResults: (messages: unknown[]) => messages as never,
-  clearHistoryPoll: (...args: unknown[]) => clearHistoryPoll(...args),
-  enrichWithCachedImages: (...args: unknown[]) => enrichWithCachedImages(...args),
-  enrichWithToolResultFiles: (...args: unknown[]) => enrichWithToolResultFiles(...args),
-  enrichWithToolCallAttachments: (...args: unknown[]) => enrichWithToolCallAttachments(...args),
+  clearHistoryPoll: clearHistoryPoll as never,
+  enrichWithCachedImages: enrichWithCachedImages as never,
+  enrichWithToolResultFiles: enrichWithToolResultFiles as never,
+  enrichWithToolCallAttachments: enrichWithToolCallAttachments as never,
   getLatestOptimisticUserMessage: (messages: Array<{ role: string; timestamp?: number }>, userTimestampMs: number) =>
     [...messages].reverse().find(
       (message) => message.role === 'user'
         && (!message.timestamp || Math.abs(toMs(message.timestamp) - userTimestampMs) < 120_000),
     ),
-  getMessageText: (...args: unknown[]) => getMessageText(...args),
-  hasNonToolAssistantContent: (...args: unknown[]) => hasNonToolAssistantContent(...args),
+  getMessageText: getMessageText as never,
+  hasNonToolAssistantContent: hasNonToolAssistantContent as never,
   hasAssistantAfterLastRealUser: (messages: Array<{ role?: string }>) =>
     messages.some((message) => message.role === 'assistant'),
-  isInternalMessage: (...args: unknown[]) => isInternalMessage(...args),
-  shouldDropMessageFromHistory: (...args: unknown[]) => shouldDropMessageFromHistory(...args),
-  isToolResultRole: (...args: unknown[]) => isToolResultRole(...args),
-  loadMissingPreviews: (...args: unknown[]) => loadMissingPreviews(...args),
-  setLastChatEventAt: (...args: unknown[]) => setLastChatEventAt(...args),
+  isInternalMessage: isInternalMessage as never,
+  shouldDropMessageFromHistory: shouldDropMessageFromHistory as never,
+  isToolResultRole: isToolResultRole as never,
+  loadMissingPreviews: loadMissingPreviews as never,
+  setLastChatEventAt: setLastChatEventAt as never,
   mergePendingOptimisticUserMessages: (_sessionKey: string, messages: unknown[]) => messages,
   hasOptimisticServerEcho: (
     loadedMessages: Array<{ role: string; timestamp?: number; content?: unknown; _attachedFiles?: Array<{ filePath?: string; fileName?: string; mimeType?: string; fileSize?: number }> }>,
@@ -153,9 +153,9 @@ vi.mock('@/stores/chat/helpers', () => ({
     if (candidateAttachments && optimisticAttachments && candidateAttachments === optimisticAttachments && (!hasCandidateTimestamp || timestampMatches)) return true;
     return false;
   },
-  getMessageErrorMessage: (...args: unknown[]) => getMessageErrorMessage(...args),
-  getMessageStopReason: (...args: unknown[]) => getMessageStopReason(...args),
-  toMs: (...args: unknown[]) => toMs(...args as Parameters<typeof toMs>),
+  getMessageErrorMessage: getMessageErrorMessage as never,
+  getMessageStopReason: getMessageStopReason as never,
+  toMs,
 }));
 
 type ChatLikeState = {
@@ -655,9 +655,9 @@ describe('chat history actions', () => {
 
   it('drops stale history results after the user switches sessions', async () => {
     const { createHistoryActions } = await import('@/stores/chat/history-actions');
-    let resolveHistory: ((value: unknown) => void) | null = null;
+    let resolveHistory = ((_value: unknown) => {}) as (value: unknown) => void;
     gatewayRpcMock.mockImplementationOnce(() => new Promise((resolve) => {
-      resolveHistory = resolve;
+      resolveHistory = resolve as typeof resolveHistory;
     }));
 
     const h = makeHarness({
@@ -683,7 +683,7 @@ describe('chat history actions', () => {
         },
       ],
     });
-    resolveHistory?.({
+    resolveHistory({
       success: true,
       result: {
         messages: [
@@ -704,11 +704,13 @@ describe('chat history actions', () => {
 
   it('preserves newer same-session messages when preview hydration finishes later', async () => {
     const { createHistoryActions } = await import('@/stores/chat/history-actions');
-    let releasePreviewHydration: (() => void) | null = null;
-    loadMissingPreviews.mockImplementationOnce(async (messages) => {
+    let releasePreviewHydration = (() => {}) as () => void;
+    vi.mocked(loadMissingPreviews).mockImplementationOnce(async (messages) => {
       await new Promise<void>((resolve) => {
         releasePreviewHydration = () => {
-          messages[0]!._attachedFiles = [
+          const first = messages?.[0];
+          if (!first) return;
+          first._attachedFiles = [
             {
               fileName: 'image.png',
               mimeType: 'image/png',
@@ -756,14 +758,14 @@ describe('chat history actions', () => {
       ],
     }));
 
-    releasePreviewHydration?.();
+    releasePreviewHydration();
     await Promise.resolve();
 
     expect(h.read().messages.map((message) => message.content)).toEqual([
       'older message',
       'newer message',
     ]);
-    expect(h.read().messages[0]?._attachedFiles?.[0]?.preview).toBe('data:image/png;base64,abc');
+    expect((h.read().messages[0]?._attachedFiles?.[0] as { preview?: string } | undefined)?.preview).toBe('data:image/png;base64,abc');
   });
 
   it('preserves existing image previews when quiet history refresh rebuilds attachments', async () => {
@@ -773,7 +775,7 @@ describe('chat history actions', () => {
       currentSessionKey: 'agent:main:main',
       messages: [
         {
-          id: 'generated-image',
+          ...({ id: 'generated-image' } as unknown as { id: string }),
           role: 'assistant',
           content: 'Generated image',
           timestamp: 1000,
@@ -797,7 +799,7 @@ describe('chat history actions', () => {
       result: {
         messages: [
           {
-            id: 'generated-image',
+            ...({ id: 'generated-image' } as unknown as { id: string }),
             role: 'assistant',
             content: 'Generated image',
             timestamp: 1000,

@@ -250,7 +250,15 @@ export const missionControlHandlers: GatewayRequestHandlers = {
       return;
     }
     try {
-      respond(true, { mission: resumeMission(missionId) }, undefined);
+      const mission = resumeMission(missionId);
+      // Level-triggered reconciliation: a dependency that finished while the
+      // mission was parked produced no continuation at the time, so resume must
+      // re-read current row state and continue from it. Never a command replay.
+      const { runGoalWakeLevelCheckForMission } = await import(
+        "../../agents/goal-wake-dispatch.js"
+      );
+      const reconciled = await runGoalWakeLevelCheckForMission(missionId);
+      respond(true, { mission, reconciled }, undefined);
     } catch (err) {
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, err instanceof Error ? err.message : String(err)));
     }
@@ -263,7 +271,31 @@ export const missionControlHandlers: GatewayRequestHandlers = {
       return;
     }
     try {
-      respond(true, { mission: cancelMission(missionId) }, undefined);
+      // Mission terminal truth first. This also closes the arm path (arm
+      // refuses a non-running mission), so the sweep below cannot race a
+      // newly armed wait into existence behind it.
+      const mission = cancelMission(missionId);
+      const { cancelGoalWakeWaitsForMission } = await import("../../agents/goal-wake-cancel.js");
+      const cascade = await cancelGoalWakeWaitsForMission({
+        missionId,
+        reason: "mission cancelled",
+      });
+      if (cascade.helperCancelFailures.length > 0) {
+        // Rows are terminal, but OS containment is unproven. Fail closed so the
+        // operator never reads "cancelled" as "nothing is still running".
+        respond(
+          false,
+          undefined,
+          errorShape(
+            ErrorCodes.UNAVAILABLE,
+            `mission ${missionId} rows are terminal but durable-helper containment is unproven: ${cascade.helperCancelFailures
+              .map((failure) => `${failure.runId}: ${failure.reason}`)
+              .join("; ")}`,
+          ),
+        );
+        return;
+      }
+      respond(true, { mission, cascade }, undefined);
     } catch (err) {
       respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, err instanceof Error ? err.message : String(err)));
     }

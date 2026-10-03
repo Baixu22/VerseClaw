@@ -56,6 +56,90 @@ const COMPOSER_WORKSPACE = {
 };
 
 test.describe('Verse Claw chat run state events', () => {
+  for (const status of ['error', 'aborted'] as const) {
+    test(`preserves foreground exec output and releases the composer after ${status}`, async ({ launchElectronApp }) => {
+      const app = await launchElectronApp({ skipSetup: true });
+      const runId = `foreground-${status}`;
+      try {
+        await installIpcMocks(app, {
+          gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+          gatewayRpc: {
+            [stableStringify(['sessions.list', {}])]: { success: true, result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] } },
+            [stableStringify(['chat.history', null])]: { success: true, result: { messages: [] } },
+            [stableStringify(['chat.send', null])]: { success: true, result: { runId } },
+          },
+          hostApi: {
+            ...PROVIDER_HOST_API_MOCKS,
+            [stableStringify(['chat', 'sendWithMedia', null])]: { success: true, result: { runId } },
+            [stableStringify(['/api/agents', 'GET'])]: { ok: true, data: { status: 200, ok: true, json: { success: true, agents: [{ id: 'main', name: 'Main' }] } } },
+          },
+        });
+        const page = await getStableWindow(app);
+        await page.reload();
+        const send = page.getByTestId('chat-composer-send');
+        await expect(page.getByTestId('chat-composer-input')).toBeEnabled({ timeout: 30_000 });
+        await page.getByTestId('chat-composer-input').fill('Run the foreground check');
+        await send.click();
+        await app.evaluate(({ BrowserWindow }, identity) => {
+          for (const win of BrowserWindow.getAllWindows()) {
+            win.webContents.send('chat:runtime-event', { ...identity, type: 'run.started', startedAt: Date.now() });
+            win.webContents.send('chat:runtime-event', { ...identity, type: 'tool.started', toolCallId: 'foreground-call', name: 'exec', args: { command: 'node check.mjs' } });
+            win.webContents.send('chat:runtime-event', {
+              ...identity, type: 'tool.updated', toolCallId: 'foreground-call', name: 'exec',
+              partialResult: {
+                content: [{ type: 'text', text: 'Command still running (session foreground, pid 123, 15s elapsed). Waiting for completion.\nforeground output retained' }],
+                details: { status: 'running', sessionId: 'foreground', tail: 'foreground output retained' },
+              },
+            });
+          }
+        }, { runId, sessionKey: MAIN_SESSION_KEY });
+        await expect(send).toHaveAttribute('aria-label', /Stop|停止/);
+        const step = page.getByTestId('chat-execution-step').filter({ hasText: 'exec' }).first();
+        await expect(step).toBeVisible();
+        await step.getByTestId('chat-execution-step-toggle').click();
+        await expect(step.getByTestId('chat-execution-step-detail')).toContainText('foreground output retained');
+        await expect(step.getByTestId('chat-execution-step-detail')).not.toContainText('Use process');
+        await app.evaluate(({ BrowserWindow }, terminal) => {
+          const { status: terminalStatus, ...identity } = terminal;
+          const output = 'foreground output retained\nforeground error retained\nExecution stopped';
+          for (const win of BrowserWindow.getAllWindows()) {
+            win.webContents.send('chat:runtime-event', {
+              ...identity, type: 'tool.completed', toolCallId: 'foreground-call', name: 'exec', isError: true,
+              result: {
+                content: [{ type: 'text', text: output }],
+                // A timeout remains a failure even when the child handles termination and exits zero.
+                details: { status: 'failed', aggregated: output, exitCode: terminalStatus === 'error' ? 0 : null, timedOut: terminalStatus === 'error' },
+              },
+            });
+            win.webContents.send('chat:runtime-event', {
+              ...identity, type: 'tool.started', toolCallId: 'process-input-call', name: 'process',
+              args: { action: 'write', sessionId: 'background-input', data: 'finish\n' },
+            });
+            win.webContents.send('chat:runtime-event', {
+              ...identity, type: 'tool.completed', toolCallId: 'process-input-call', name: 'process', isError: terminalStatus === 'error',
+              result: {
+                content: [{ type: 'text', text: 'Wrote 7 bytes to session background-input.\n\nprocess input output retained\n\nProcess exited with code 0.' }],
+                details: { status: terminalStatus === 'error' ? 'failed' : 'completed', sessionId: 'background-input', exitCode: 0, aggregated: 'process input output retained' },
+              },
+            });
+            win.webContents.send('chat:runtime-event', { ...identity, type: 'run.ended', status: terminalStatus, endedAt: Date.now(), ...(terminalStatus === 'error' ? { error: 'Tool loop terminated' } : {}) });
+          }
+        }, { runId, sessionKey: MAIN_SESSION_KEY, status });
+        await expect(send).toHaveAttribute('aria-label', /Send|发送/);
+        await expect(page.getByTestId('chat-composer-input')).toBeEnabled();
+        await expect(step.getByTestId('chat-execution-step-detail')).toContainText('foreground output retained');
+        await expect(step.getByTestId('chat-execution-step-detail')).toContainText('foreground error retained');
+        const inputStep = page.getByTestId('chat-execution-step').filter({ hasText: 'process' }).first();
+        await expect(inputStep).toBeVisible();
+        await inputStep.getByTestId('chat-execution-step-toggle').click();
+        await expect(inputStep.getByTestId('chat-execution-step-detail')).toContainText('process input output retained');
+        await expect(inputStep.getByTestId('chat-execution-step-detail')).toContainText('Process exited with code 0.');
+      } finally {
+        await closeElectronApp(app);
+      }
+    });
+  }
+
   test('anchors the live thinking matrix to the latest assistant output and clears it after completion', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 

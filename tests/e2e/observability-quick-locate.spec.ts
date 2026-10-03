@@ -279,6 +279,9 @@ test.describe('Observability quick-locate navigator', () => {
     // Open the multi-turn trace (6 graph nodes → panel should appear).
     await page.getByTestId('observability-trace-row').filter({ hasText: 'Multi-turn agent run' }).click();
     await expect(page.getByTestId('observability-trace-graph')).toBeVisible();
+    // Close the auto-selected node before typing into controls behind the drawer.
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('observability-detail-panel')).toBeHidden();
 
     // Quick-locate panel renders all 6 turns.
     const panel = page.getByTestId('observability-quick-locate');

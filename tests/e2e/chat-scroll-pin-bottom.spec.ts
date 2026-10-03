@@ -48,6 +48,32 @@ test.describe('Verse Claw chat scroll pin-to-bottom during runs', () => {
           },
         },
         hostApi: {
+          /*
+           * The renderer sends through `chat.sendWithMedia` (Host API), not the
+           * legacy `chat.send` gateway RPC mocked above — without this the send
+           * falls through to the real handler, fails, and `sending` never
+           * becomes true, so there is no run to pin the scroll to.
+           */
+          [stableStringify(['chat', 'sendWithMedia', null])]: {
+            success: true,
+            result: { runId: RUN_ID },
+          },
+          /*
+           * Sending is gated on a validated provider (FP-P1-01): without an
+           * account the click opens `chat-provider-gate-dialog` instead of
+           * starting a run, and nothing below — which all depends on
+           * `sending === true` — can happen.
+           */
+          [stableStringify(['providers', 'accounts', null])]: [{
+            id: 'acct-scroll-pin-e2e',
+            vendorId: 'openai',
+            label: 'Scroll pin E2E provider',
+            authMode: 'oauth_browser',
+            enabled: true,
+          }],
+          [stableStringify(['providers', 'accountKeyInfo', null])]: [],
+          [stableStringify(['providers', 'vendors', null])]: [],
+          [stableStringify(['providers', 'getDefaultAccount', null])]: { accountId: 'acct-scroll-pin-e2e' },
           [stableStringify(['/api/gateway/status', 'GET'])]: {
             ok: true,
             data: {
@@ -96,32 +122,56 @@ test.describe('Verse Claw chat scroll pin-to-bottom during runs', () => {
       };
 
       // Assert the scrollbar is glued to the very bottom (within a small epsilon
-      // that tolerates sub-pixel rounding).
-      const expectPinnedToBottom = async () => {
-        await expect
-          .poll(
-            async () =>
-              scrollContainer.evaluate((el) => {
-                const element = el as HTMLElement;
-                return Math.round(element.scrollHeight - element.clientHeight - element.scrollTop);
-              }),
-            { timeout: 5_000 },
-          )
-          .toBeLessThanOrEqual(8);
+      // that tolerates sub-pixel rounding). The step label and the geometry dump
+      // exist so a failure says *where* the pin was lost and by how much, which
+      // is what pinned this down to the first streaming delta.
+      const expectPinnedToBottom = async (step: string) => {
+        try {
+          await expect
+            .poll(
+              async () =>
+                scrollContainer.evaluate((el) => {
+                  const element = el as HTMLElement;
+                  return Math.round(element.scrollHeight - element.clientHeight - element.scrollTop);
+                }),
+              { timeout: 5_000 },
+            )
+            .toBeLessThanOrEqual(8);
+        } catch (error) {
+          const dump = await scrollContainer.evaluate((el) => {
+            const element = el as HTMLElement;
+            const content = element.firstElementChild as HTMLElement | null;
+            return {
+              scrollTop: Math.round(element.scrollTop),
+              scrollHeight: Math.round(element.scrollHeight),
+              clientHeight: Math.round(element.clientHeight),
+              gap: Math.round(element.scrollHeight - element.clientHeight - element.scrollTop),
+              contentHeight: content ? Math.round(content.getBoundingClientRect().height) : -1,
+            };
+          });
+          const sendLabel = await page
+            .getByTestId('chat-composer-send')
+            .getAttribute('aria-label')
+            .catch(() => null);
+          console.log(`[pin-fail] step=${step} sendLabel=${sendLabel} ${JSON.stringify(dump)}`);
+          throw error;
+        }
       };
 
       // Start a run so pinning becomes active (sending === true).
       await expect(page.getByTestId('chat-composer-input')).toBeEnabled({ timeout: 30_000 });
       await page.getByTestId('chat-composer-input').fill('do a multi-tool task');
       await page.getByTestId('chat-composer-send').click();
-      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('title', 'Stop');
+      // The run is active once the button flips to Stop. Its label lives on
+      // `aria-label`; the visible hint is a Tooltip, not a `title` attribute.
+      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', 'Stop');
 
       // Growing text stream -> height keeps increasing; bar must stay at bottom.
       await emitDelta({ role: 'assistant', content: [{ type: 'text', text: streamingText(3) }] });
-      await expectPinnedToBottom();
+      await expectPinnedToBottom('grow-3');
 
       await emitDelta({ role: 'assistant', content: [{ type: 'text', text: streamingText(8) }] });
-      await expectPinnedToBottom();
+      await expectPinnedToBottom('grow-8');
 
       // Tool round -> layout oscillates (bubble/graph/tool-status churn); the
       // bar must still snap to the bottom rather than jitter upward.
@@ -132,11 +182,11 @@ test.describe('Verse Claw chat scroll pin-to-bottom during runs', () => {
           { type: 'toolCall', id: 'tool-1', name: 'exec', arguments: { command: 'ls -la' } },
         ],
       });
-      await expectPinnedToBottom();
+      await expectPinnedToBottom('tool-round');
 
       // Back to text growth after the tool round.
       await emitDelta({ role: 'assistant', content: [{ type: 'text', text: streamingText(14) }] });
-      await expectPinnedToBottom();
+      await expectPinnedToBottom('grow-14');
 
       // Manual scroll-up while the run is live: pinning must yield to the user
       // and surface the "scroll to latest" affordance.

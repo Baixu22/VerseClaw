@@ -5,15 +5,15 @@
 > Status source: `.agent-workbench/task-forest/`
 > Parent goal: `TF-0010`
 > Current metadata: `STATUS.md`
-> Updated: 2026-08-09
+> Updated: 2026-09-26
 
-> Program status: `done`（2026-08-09，user-accepted）。工程验收候选链 `rc09-final-candidate`（`3209f098…`）通过独立 engineering + human-phase validator；`STATUS.md` 记录 program_status=done、engineering_verdict=accepted、human_verdict=accepted。product locks 保持 false（live_ready/product_approved/default_on 均未解锁），done 不改变 default-on/GA/TF-0006 状态。
+> Current program status: `in_progress`，唯一活动包为 RC-09（TF-0041）。当前分支已完成 RC-00..RC-08B 工程复验；RC-09 正在刷新证据并重跑独立 Executor/Verifier，尚未 accepted。以 Task Forest 和 `STATUS.md` 的当前状态为准；2026-08-09 的 `done` 与验收候选链仅为历史，不授权当前候选完成。product locks 保持 false（live_ready/product_approved/default_on 均未解锁）。
 >
-> 历史：candidate `fac6327a2` 曾于 2026-08-03 被独立审计拒绝并进入 fail-closed remediation；该段是历史证据，不再授权新实施。RC-10 的 H-03 真实 channel 轮次与后续 runtime owner 复核（FP-P1-11 DCS budget-channel 偏差、FP-P1-01 Setup 验证方差）按 `HUMAN-ACCEPTANCE.md` 与 `STATUS.md.next_action` 跟进，不因 done 而免除。
+> 历史：candidate `fac6327a2` 曾于 2026-08-03 被独立审计拒绝并进入 fail-closed remediation；该段是历史证据。RC-10 真人验收仍按 `HUMAN-ACCEPTANCE.md` 执行，不得用工程复验或历史 accepted 记录替代。
 
 ## Purpose
 
-This control pack governs convergence from parallel runtime implementations to an OpenClaw-based Operator Desktop. The original Task Forest proposal was applied; the `fac6327a2` candidate failed independent audit and the program was placed in fail-closed remediation, after which the revalidation sequence (RC-00..RC-10) was executed serially and the program reached `done` with user acceptance on 2026-08-09. Old pre-audit completion claims remain non-authorizing historical evidence.
+This control pack governs convergence from parallel runtime implementations to an OpenClaw-based Operator Desktop. The current serial revalidation has accepted RC-00 through RC-08B and is working on RC-09. RC-09 may reach `human_acceptance_pending` only after its clean candidate passes independent engineering verification; RC-10 remains required before program completion. Earlier completion claims are historical evidence and do not authorize the current candidate.
 
 ## Read Order
 

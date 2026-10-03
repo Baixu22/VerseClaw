@@ -4,9 +4,15 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSessionStatus } from '@/pages/Chat/use-session-status';
 
-const gitStatusMock = vi.fn();
-const terminalStatusMock = vi.fn();
-const lifecycleSubscribeMock = vi.fn(() => () => {});
+// `vi.mock` factories are hoisted above module-level consts, so the mocks they
+// close over have to be created inside `vi.hoisted` — the idiom the rest of this
+// suite uses. Declared as plain consts, collection failed with
+// "Cannot access 'lifecycleSubscribeMock' before initialization".
+const { gitStatusMock, terminalStatusMock, lifecycleSubscribeMock } = vi.hoisted(() => ({
+  gitStatusMock: vi.fn(),
+  terminalStatusMock: vi.fn(),
+  lifecycleSubscribeMock: vi.fn(() => () => {}),
+}));
 
 vi.mock('@/lib/host-api', () => ({
   hostApi: {
@@ -17,7 +23,7 @@ vi.mock('@/lib/host-api', () => ({
 
 vi.mock('@/lib/host-events', () => ({
   hostEvents: {
-    onSubagentLifecycle: (...args: unknown[]) => lifecycleSubscribeMock(...args),
+    onSubagentLifecycle: lifecycleSubscribeMock as never,
   },
 }));
 

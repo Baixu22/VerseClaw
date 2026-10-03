@@ -75,14 +75,7 @@ forbiddenPatterns:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-destructive-operation-guard-boundary-tightening-internal-optimization-runtime-coupling-readiness/README.md
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-destructive-operation-guard-boundary-tightening-internal-optimization-runtime-coupling-readiness/validation-plan.md
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-destructive-operation-guard-boundary-tightening-internal-optimization-runtime-coupling-readiness/boundary-tightening.md
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-destructive-operation-guard-boundary-tightening-internal-optimization-runtime-coupling-readiness/internal-optimization.md
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-destructive-operation-guard-boundary-tightening-internal-optimization-runtime-coupling-readiness/runtime-coupling-readiness.md
-    - runtime-research/handoffs/runtime-failure-tool-invocation-governance-destructive-operation-guard-boundary-tightening-internal-optimization-runtime-coupling-readiness/synthesis.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/schema-decision-log.md
-    - runtime-research/handoffs/runtime-failure-evidence-replay-governance-readiness/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Runtime Failure Tool Invocation Governance Destructive Operation Guard Boundary Tightening Internal Optimization Runtime Coupling Readiness

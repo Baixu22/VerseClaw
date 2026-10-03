@@ -1,0 +1,33 @@
+
+ RUN  v4.1.7 D:/ClawX/openclaw_runtime
+
+ ✓ |agents| src/agents/rc02-shadow-census.acceptance.test.ts (8 tests) 19472ms
+     ✓ embedded runner reaches the guarded production transport with correlated receipts  7727ms
+     ✓ uses the production source transport registry as the provider coverage denominator  11287ms
+ ✓ |agents| src/agents/receipt-store.test.ts (21 tests) 4735ms
+     ✓ retains committed receipts across exited Node processes without implicit pruning  1519ms
+     ✓ serializes concurrent Node writers with identical content  685ms
+     ✓ serializes concurrent Node writers with conflicting content  705ms
+     ✓ serializes concurrent Node writers with different-kind content  632ms
+ ✓ |agents| src/agents/rc02-entry-matrix.acceptance.test.ts (9 tests) 26100ms
+     ✓ embedded attempt: runEmbeddedAgent yields a dual receipt per real model call  7735ms
+     ✓ provider payload hook: the production cache-trace hook installs onPayload and receipts still bind the final bytes  4347ms
+     ✓ embedded attempt x registry api openai-responses: a dual receipt per real model call  4173ms
+     ✓ embedded attempt x registry api openai-chatgpt-responses: a dual receipt per real model call  5192ms
+     ✓ embedded attempt x registry api openai-completions: a dual receipt per real model call  4306ms
+ ✓ |agents| src/agents/rc02-cron-entry.acceptance.test.ts (1 test) 1452ms
+     ✓ cron isolated-agent entry: the real entry drives model calls through the guarded boundary with dual receipts  1452ms
+ ✓ |agents| src/agents/rc02-inbound-entry.acceptance.test.ts (2 tests) 3727ms
+     ✓ desktop chat inbound: dispatchInboundMessage drives a real model call with dual receipts  2976ms
+     ✓ channel conformance fixture inbound: the fixture surface reaches the same guarded boundary  751ms
+ ✓ |agents| src/agents/shadow-census.test.ts (8 tests) 273ms
+ ✓ |agents| src/agents/rc02-cli-entry.acceptance.test.ts (1 test) 1429ms
+     ✓ cli agentCommand entry: the real entry drives a model call through the guarded boundary with dual receipts  1428ms
+
+ Test Files  7 passed (7)
+      Tests  50 passed (50)
+   Start at  15:10:45
+   Duration  50.70s (transform 29.16s, setup 849ms, import 41.14s, tests 57.19s, environment 0ms)
+
+JSON report written to D:/ClawX/artifacts/runtime-authority-convergence/rc-02/suite-results.json
+[vitest] still running with no output for 30000ms (run --config test/vitest/vitest.agents.config.ts receipt-store.test.ts shadow-census.test.ts rc02-shadow-census.acceptance.test.ts rc02-entry-matrix.acceptance.test.ts rc02-inbound-entry.acceptance.test.ts rc02-cron-entry.acceptance.test.ts rc02-cli-entry.acceptance.test.ts --passWithNoTests=false --reporter=default --reporter=json --outputFile=D:\ClawX\artifacts\runtime-authority-convergence\rc-02\suite-results.json).

@@ -88,12 +88,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-9-runtime-memory-persistence-foundation/README.md
-    - runtime-research/handoffs/phase-9-runtime-memory-persistence-foundation/parallel-lanes.md
-    - runtime-research/handoffs/phase-9-runtime-memory-persistence-foundation/window-prompts.md
-    - runtime-research/handoffs/phase-9-runtime-memory-persistence-foundation/submission-template.md
-    - runtime-research/handoffs/phase-9-runtime-memory-persistence-foundation/synthesis-template.md
-    - runtime-research/handoffs/phase-9-runtime-memory-persistence-foundation/submissions/lane-design-entry-prep.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 9 Runtime Memory Persistence Foundation

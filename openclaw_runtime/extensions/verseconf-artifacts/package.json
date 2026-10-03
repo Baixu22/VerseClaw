@@ -1,0 +1,101 @@
+{
+  "name": "@openclaw/verseconf-artifacts",
+  "version": "2026.10.1",
+  "private": true,
+  "description": "Bounded VerseConf structured artifact consumer for ClawX/OpenClaw.",
+  "type": "module",
+  "dependencies": {
+    "jszip": "3.10.1",
+    "typebox": "1.1.39"
+  },
+  "devDependencies": {
+    "openclaw": "workspace:*",
+    "@openclaw/plugin-sdk": "workspace:*"
+  },
+  "peerDependencies": {
+    "openclaw": ">=2026.6.2"
+  },
+  "peerDependenciesMeta": {
+    "openclaw": {
+      "optional": true
+    }
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ],
+    "build": {
+      "bundledDist": true,
+      "staticAssets": [
+        {
+          "source": "schemas/research-source.schema.json",
+          "output": "schemas/research-source.schema.json"
+        },
+        {
+          "source": "templates/slide-outline-template.pptx",
+          "output": "templates/slide-outline-template.pptx"
+        },
+        {
+          "source": "vendor/verseconf/LICENSE-APACHE",
+          "output": "vendor/verseconf/LICENSE-APACHE"
+        },
+        {
+          "source": "vendor/verseconf/LICENSE-MIT",
+          "output": "vendor/verseconf/LICENSE-MIT"
+        },
+        {
+          "source": "vendor/verseconf/README.md",
+          "output": "vendor/verseconf/README.md"
+        },
+        {
+          "source": "vendor/verseconf/build-manifest.json",
+          "output": "vendor/verseconf/build-manifest.json"
+        },
+        {
+          "source": "vendor/verseconf/package.json",
+          "output": "vendor/verseconf/package.json"
+        },
+        {
+          "source": "vendor/verseconf/pkg/.npmignore",
+          "output": "vendor/verseconf/pkg/.npmignore"
+        },
+        {
+          "source": "vendor/verseconf/pkg/README.md",
+          "output": "vendor/verseconf/pkg/README.md"
+        },
+        {
+          "source": "vendor/verseconf/pkg/package.json",
+          "output": "vendor/verseconf/pkg/package.json"
+        },
+        {
+          "source": "vendor/verseconf/pkg/verseconf_wasm.js",
+          "output": "vendor/verseconf/pkg/verseconf_wasm.js"
+        },
+        {
+          "source": "vendor/verseconf/pkg/verseconf_wasm_bg.wasm",
+          "output": "vendor/verseconf/pkg/verseconf_wasm_bg.wasm"
+        },
+        {
+          "source": "vendor/verseconf/pkg/verseconf_wasm_bg.wasm.d.ts",
+          "output": "vendor/verseconf/pkg/verseconf_wasm_bg.wasm.d.ts"
+        },
+        {
+          "source": "vendor/verseconf/worker/compute-worker.mjs",
+          "output": "vendor/verseconf/worker/compute-worker.mjs"
+        },
+        {
+          "source": "vendor/verseconf/worker/index.d.mts",
+          "output": "vendor/verseconf/worker/index.d.mts"
+        },
+        {
+          "source": "vendor/verseconf/worker/index.mjs",
+          "output": "vendor/verseconf/worker/index.mjs"
+        },
+        {
+          "source": "vendor/verseconf/worker/limits.mjs",
+          "output": "vendor/verseconf/worker/limits.mjs"
+        }
+      ]
+    }
+  }
+}

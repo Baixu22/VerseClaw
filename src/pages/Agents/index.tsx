@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/select';
 import RoleProfileEditor from '@/components/agents/RoleProfileEditor';
 import RolesOrchestrationPanel from '@/components/agents/RolesOrchestrationPanel';
+import { ProposeFactsConfirmQueue } from '@/components/agents/ProposeFactsConfirmQueue';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import { AgentAvatarEditor } from '@/components/agents/AgentAvatarEditor';
 import type { AgentRoleProfile } from '@shared/types/agent';
@@ -190,7 +191,7 @@ export function Agents({ embedded = false }: { embedded?: boolean } = {}) {
         )}>
           {!embedded && (
             <div>
-              <h1 className="text-5xl md:text-6xl font-serif text-foreground mb-3 font-normal tracking-tight">
+              <h1 className="text-2xl font-serif text-foreground mb-3 font-normal tracking-tight">
                 {t('title')}
               </h1>
               <p className="text-subtitle text-foreground/70 font-medium">{t('subtitle')}</p>
@@ -244,6 +245,7 @@ export function Agents({ embedded = false }: { embedded?: boolean } = {}) {
           </div>
 
           <RolesOrchestrationPanel agents={agents} />
+          <ProposeFactsConfirmQueue />
         </div>
       </div>
 

@@ -14,6 +14,8 @@ export type SessionState = {
   queueDepth: number;
   activeQueuedTurn?: boolean;
   toolCallHistory?: ToolCallRecord[];
+  /** Terminal identity hashes live until session-state pruning, independently of the evidence window. */
+  toolCallOutcomeKeys?: Set<string>;
   toolLoopWarningBuckets?: Map<string, number>;
   commandPollCounts?: Map<string, { count: number; lastPollAt: number }>;
 };
@@ -102,37 +104,85 @@ function sessionStatePriority(state: SessionStateValue): number {
 
 function mergeSessionState(target: SessionState, source: SessionState): void {
   const sourceIsNewer = source.lastActivity > target.lastActivity;
+  const hasRecordedActivity = (state: SessionState) =>
+    (state.generation ?? 0) > 0 ||
+    state.lastStuckWarnAgeMs !== undefined ||
+    state.lastLongRunningWarnAgeMs !== undefined;
+  const sourceHasActivity = hasRecordedActivity(source);
+  const targetHasActivity = hasRecordedActivity(target);
+  const sourceOwnsActivity =
+    sourceHasActivity !== targetHasActivity ? sourceHasActivity : sourceIsNewer;
+  const sameActivityCycle =
+    sourceHasActivity === targetHasActivity && source.lastActivity === target.lastActivity;
   const sourceIsSameAgeAndMoreActive =
-    source.lastActivity === target.lastActivity &&
-    sessionStatePriority(source.state) > sessionStatePriority(target.state);
+    sameActivityCycle && sessionStatePriority(source.state) > sessionStatePriority(target.state);
   target.sessionId ??= source.sessionId;
   target.sessionKey ??= source.sessionKey;
   if (source.sessionFile && (sourceIsNewer || !target.sessionFile)) {
     target.sessionFile = source.sessionFile;
   }
-  if (sourceIsNewer || sourceIsSameAgeAndMoreActive) {
+  if (sourceOwnsActivity || sourceIsSameAgeAndMoreActive) {
     target.state = source.state;
   }
   target.generation = Math.max(target.generation ?? 0, source.generation ?? 0);
-  target.lastActivity = Math.max(target.lastActivity, source.lastActivity);
+  // Creating an empty alias is not progress and must not restart the inactivity clock.
+  target.lastActivity = sourceOwnsActivity ? source.lastActivity : target.lastActivity;
   // Queue depth is additive when session id/key aliases collapse into one diagnostic entry.
   target.queueDepth += source.queueDepth;
   target.activeQueuedTurn ||= source.activeQueuedTurn;
-  target.lastStuckWarnAgeMs =
-    target.lastStuckWarnAgeMs === undefined || source.lastStuckWarnAgeMs === undefined
-      ? undefined
-      : Math.max(target.lastStuckWarnAgeMs, source.lastStuckWarnAgeMs);
-  target.lastLongRunningWarnAgeMs =
-    target.lastLongRunningWarnAgeMs === undefined || source.lastLongRunningWarnAgeMs === undefined
-      ? undefined
-      : Math.max(target.lastLongRunningWarnAgeMs, source.lastLongRunningWarnAgeMs);
+  // Warning ages are relative to lastActivity. A new cycle owns its reset or backoff.
+  if (sourceOwnsActivity) {
+    target.lastStuckWarnAgeMs = source.lastStuckWarnAgeMs;
+    target.lastLongRunningWarnAgeMs = source.lastLongRunningWarnAgeMs;
+  } else if (sameActivityCycle) {
+    target.lastStuckWarnAgeMs =
+      target.lastStuckWarnAgeMs === undefined
+        ? source.lastStuckWarnAgeMs
+        : Math.max(
+            target.lastStuckWarnAgeMs,
+            source.lastStuckWarnAgeMs ?? target.lastStuckWarnAgeMs,
+          );
+    target.lastLongRunningWarnAgeMs =
+      target.lastLongRunningWarnAgeMs === undefined
+        ? source.lastLongRunningWarnAgeMs
+        : Math.max(
+            target.lastLongRunningWarnAgeMs,
+            source.lastLongRunningWarnAgeMs ?? target.lastLongRunningWarnAgeMs,
+          );
+  }
   if (source.toolCallHistory?.length) {
-    target.toolCallHistory = [...(target.toolCallHistory ?? []), ...source.toolCallHistory];
+    // Id-only and key-only entries may interleave; old outcomes must not hide newer progress.
+    const history = [...(target.toolCallHistory ?? []), ...source.toolCallHistory].toSorted(
+      (a, b) => a.timestamp - b.timestamp,
+    );
+    const calls = new Map<string, ToolCallRecord>();
+    target.toolCallHistory = history.filter((call) => {
+      if (!call.toolCallId) return true;
+      const key = JSON.stringify([call.runId ?? "", call.toolName, call.toolCallId]);
+      const prior = calls.get(key);
+      if (!prior) {
+        calls.set(key, call);
+        return true;
+      }
+      // Aliases can observe the same request/result independently. Keep its original
+      // arguments and timestamp, filling a missing result without counting it twice.
+      if (prior.resultHash === undefined && call.resultHash !== undefined) {
+        prior.resultHash = call.resultHash;
+        prior.unknownToolName = call.unknownToolName;
+      }
+      return false;
+    });
   }
   if (source.toolLoopWarningBuckets?.size) {
     const buckets = (target.toolLoopWarningBuckets ??= new Map());
     for (const [bucket, count] of source.toolLoopWarningBuckets) {
       buckets.set(bucket, Math.max(buckets.get(bucket) ?? 0, count));
+    }
+  }
+  if (source.toolCallOutcomeKeys?.size) {
+    const completed = (target.toolCallOutcomeKeys ??= new Set());
+    for (const key of source.toolCallOutcomeKeys) {
+      completed.add(key);
     }
   }
   if (source.commandPollCounts?.size) {

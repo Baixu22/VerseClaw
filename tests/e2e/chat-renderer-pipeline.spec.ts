@@ -193,8 +193,9 @@ test.describe('Chat renderer pipeline — assistant-ui + tool-ui coexistence', (
       await expect(assistantProse.locator('pre')).toContainText('pipeline');
 
       // Code copy button interaction — proves the assistant-ui code header is interactive.
+      // State is published via `aria-label` (not `title`), and reverts after 2000ms.
       await assistantProse.getByTestId('assistant-code-copy').click();
-      await expect(assistantProse.getByTestId('assistant-code-copy')).toHaveAttribute('title', 'Copied');
+      await expect(assistantProse.getByTestId('assistant-code-copy')).toHaveAttribute('aria-label', 'Copied', { timeout: 2000 });
 
       // ── tool-ui card assertions ──
       // Each card type has a dedicated data-testid proving parseToolUiContent

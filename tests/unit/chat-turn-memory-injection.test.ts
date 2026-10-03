@@ -417,7 +417,7 @@ describe("computeMemoryExtraSystemPrompt (gateway wiring helper)", () => {
       contextItems: [],
       status: "fallback",
       diagnostics: [],
-    });
+    } as never);
     const result = await computeMemoryExtraSystemPrompt(
       "original prompt",
       enabledCfg,

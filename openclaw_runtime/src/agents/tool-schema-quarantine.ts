@@ -4,7 +4,12 @@
  * Model providers can reject unsupported schema shapes, so runtime projection
  * reports quarantined tools with trusted diagnostics before the model call.
  */
-import { emitTrustedDiagnosticEvent } from "../infra/diagnostic-events.js";
+import { randomUUID } from "node:crypto";
+import {
+  emitTrustedDiagnosticEvent,
+  resolveDiagnosticCodingOperation,
+} from "../infra/diagnostic-events.js";
+import { createDiagnosticTraceContextFromActiveScope, freezeDiagnosticTraceContext } from "../infra/diagnostic-trace-context.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { getPluginToolMeta } from "../plugins/tools.js";
 import type { RuntimeToolSchemaDiagnostic } from "./tool-schema-projection.js";
@@ -41,12 +46,17 @@ export function logRuntimeToolSchemaQuarantine(params: {
       const owner = pluginId ? ` plugin=${pluginId}` : "";
       // Emit structured evidence per quarantined tool; the warning below is
       // compact for operator logs.
+      const trace = freezeDiagnosticTraceContext(createDiagnosticTraceContextFromActiveScope());
+      const codingOperation = resolveDiagnosticCodingOperation(diagnostic.toolName);
       emitTrustedDiagnosticEvent({
         type: "tool.execution.blocked",
+        requestId: `tool-schema-${randomUUID()}`,
+        trace,
         runId: params.runId,
         ...(params.sessionKey ? { sessionKey: params.sessionKey } : {}),
         ...(params.sessionId ? { sessionId: params.sessionId } : {}),
         toolName: diagnostic.toolName,
+        ...(codingOperation ? { codingOperation } : {}),
         toolSource: pluginId ? "plugin" : "core",
         ...(pluginId ? { toolOwner: pluginId } : {}),
         deniedReason: "unsupported_tool_schema",

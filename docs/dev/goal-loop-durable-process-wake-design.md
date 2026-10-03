@@ -1,6 +1,6 @@
 # Goal/Loop 切换与耐久后台进程续跑设计（v2，可转实现规格）
 
-> 状态：v2 草案；已吸收外部设计评审的 8 项意见与 5 项拍板建议。
+> 状态：Design source；已并入 Runtime Lifecycle Governance。执行以 `harness/specs/tasks/runtime-lifecycle-governance.md` 和 `harness/specs/rules/runtime-lifecycle-governance-boundary.md` 为权威。Phase 0-3 已交付；Phase 4 durable helper / restart recovery 已交付（`artifacts/runtime-lifecycle-governance/audit-4.json`）。
 > 日期：2026-08-16
 > 上游：`docs/dev/mission-goal-durable-scheduler-development-plan.md`、`harness/specs/tasks/mission-control-loop-mvp.md`。
 > v1 主要修订：flow 写入权威统一、Mission fencing、原子 arm 事务、typed yield barrier、helper claim/start 协议、秘密卫生、终态对账、阶段重排。
@@ -50,8 +50,8 @@ helper exit.json（原子）
 
 现状问题（评审确认）：
 
-- `task-flow-registry.ts:502` 的 expected-revision 只检查内存 Map，随后 SQLite 无条件 upsert；
-- `task-flow-cas.ts:51` 有合法状态图，但主 Registry 并不经过它；
+- `openclaw_runtime/src/tasks/task-flow-registry.ts:502` 的 expected-revision 只检查内存 Map，随后 SQLite 无条件 upsert；
+- `openclaw_runtime/src/tasks/task-flow-cas.ts:51` 有合法状态图，但主 Registry 并不经过它；
 - `setFlowWaiting(blockedTaskId)` 实际写 `status="blocked"`，不是 `waiting + blocked_task_id`；
 - CAS 图有 `waiting -> running`，没有 `waiting -> queued`。
 
@@ -239,7 +239,7 @@ Flow 只有在 **effect owner 持久 ACK** 后才 `running -> succeeded`：
 
 ## 5. 终态与生命周期策略（v2 补齐）
 
-1. **task observer 只是加速器**。`task-registry.store.ts:35` 明确 best-effort。启动恢复和 sweep 必须做 level-triggered 对账：
+1. **task observer 只是加速器**。`openclaw_runtime/src/tasks/task-registry.store.ts:52` 明确 best-effort。启动恢复和 sweep 必须做 level-triggered 对账：
    ```text
    for each flow(controller_id='goal-wake', status IN ('waiting','running'))
       recompute from blocked_task_id/task_runs and effect owner claims
@@ -299,11 +299,11 @@ exec(background=true, wait?: "none" | "session" | "goal")
 - `goal_wait` 上下文绑定与 schema 限制；
 - 单元测试：双 writer 竞争、stale mission writer、arm 事务回滚、重复 wake 去重。
 
-### P0b：同 Gateway、单 process 依赖、仅 mission_tick 闭环
+### P0b：同 Gateway、单 process 依赖、仅 mission_tick 闭环（Phase 3 已交付）
 
 - `runtime="process"` + `runtime_json`（同 Gateway 路径暂用现有 supervisor，但 task 行与 flow 已持久）；
 - helper 协议可先以同进程 mock 验证 exit.json/started.json；
-- `exec wait="goal"` -> arm -> yield -> exit -> task observer + level-check -> flow resume -> mission.tick(wake payload)；
+- `exec wait="goal"` -> arm -> yield -> exit -> process-exit finalize + level-check -> flow resume -> mission.tick(wake payload)；（已交付，`processPollToolCalls=0`）
 - 最小 E2E：**全程无 `process poll` 轮询**；重复投递不重复 tick；资源上限生效。
 
 ### P1：跨 Gateway 重启 + Windows/Electron 打包
@@ -352,3 +352,14 @@ exec(background=true, wait?: "none" | "session" | "goal")
 | `approval_ledger` / `effect_receipts` | command continuation 的预检、重验与 effect 幂等 |
 | `infra/system-events.ts` + `heartbeat-wake.ts` | 仅作通知加速器，不再是 wake truth |
 | `process/supervisor` | 仅普通 foreground/short background；goal 耐久进程走 helper |
+
+---
+
+## 10. Phase 4 实现接缝（2026-08-18）
+
+- 文件协议：`openclaw_runtime/src/agents/goal-wake-helper-protocol.ts`。API 不接收 raw argv/cwd/env/command；`intent.json -> started.json -> exit.json` 全部单文件原子 rename，root 0700、文件 0600；cancel 只写 `control.json`。
+- detached helper：`goal-wake-helper-host.ts` 复用当前 Gateway entry/loader（source: tsx cli；packaged: electron + `ELECTRON_RUN_AS_NODE=1`）并 `detached:true + unref()`；helper entry 在 `entry.ts --goal-wake-helper-run`，stdin 传递 OS argv/env/cwd。
+- 恢复：`process-run-reconciler.ts` 只读 intent/started/exit + OS liveness；`goal-wake-recovery.ts` 启动/低频 sweep 做 task terminal -> flow level-check -> mission tick 顺序，fs.watch + 递归 setTimeout，不用 setInterval/process.poll。
+- 清理：`goal-wake-durable-cleanup.ts` 接入 `session-drain-service.ts`；control nonce+ownerEpoch 校验、等待 exit、终态 task/flow、删 runDir、重复调用幂等。
+- 配额/开关：`runtime.mission.goalWake.durableHelper` 默认关，maxRunsPerSession=4、maxOutputBytesPerRun=10MB、runTtlMs=24h、sweepIntervalMs=60s。
+- Windows detached 实测通过 `goal-wake-helper-host.test.ts`；packaged Electron 未在本机复现，fail-closed fallback 在 `resolveDurableHelperLaunch` 记录为 blocked。

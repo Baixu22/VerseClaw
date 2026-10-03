@@ -1,0 +1,224 @@
+Scope: all 3 workspace projects
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +1782
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 1782, reused 194, downloaded 0, added 0
+Progress: resolved 1782, reused 282, downloaded 0, added 0
+Progress: resolved 1782, reused 283, downloaded 0, added 0
+Progress: resolved 1782, reused 325, downloaded 0, added 0
+Progress: resolved 1782, reused 404, downloaded 0, added 0
+Progress: resolved 1782, reused 455, downloaded 0, added 0
+Progress: resolved 1782, reused 563, downloaded 0, added 0
+Progress: resolved 1782, reused 649, downloaded 0, added 0
+Progress: resolved 1782, reused 770, downloaded 0, added 0
+Progress: resolved 1782, reused 893, downloaded 0, added 0
+Progress: resolved 1782, reused 918, downloaded 0, added 0
+Progress: resolved 1782, reused 994, downloaded 0, added 0
+Progress: resolved 1782, reused 1070, downloaded 0, added 0
+Progress: resolved 1782, reused 1130, downloaded 0, added 0
+Progress: resolved 1782, reused 1226, downloaded 0, added 0
+Progress: resolved 1782, reused 1268, downloaded 0, added 0
+Progress: resolved 1782, reused 1408, downloaded 0, added 0
+Progress: resolved 1782, reused 1654, downloaded 0, added 0
+Progress: resolved 1782, reused 1773, downloaded 0, added 11
+Progress: resolved 1782, reused 1775, downloaded 0, added 99
+Progress: resolved 1782, reused 1778, downloaded 0, added 175
+Progress: resolved 1782, reused 1778, downloaded 0, added 221
+Progress: resolved 1782, reused 1779, downloaded 0, added 291
+Progress: resolved 1782, reused 1779, downloaded 0, added 331
+Progress: resolved 1782, reused 1779, downloaded 0, added 346
+Progress: resolved 1782, reused 1779, downloaded 0, added 393
+Progress: resolved 1782, reused 1779, downloaded 0, added 421
+Progress: resolved 1782, reused 1779, downloaded 0, added 464
+Progress: resolved 1782, reused 1779, downloaded 0, added 535
+Progress: resolved 1782, reused 1779, downloaded 0, added 603
+Progress: resolved 1782, reused 1779, downloaded 0, added 619
+Progress: resolved 1782, reused 1779, downloaded 0, added 653
+Progress: resolved 1782, reused 1779, downloaded 0, added 661
+Progress: resolved 1782, reused 1779, downloaded 0, added 714
+Progress: resolved 1782, reused 1779, downloaded 0, added 737
+Progress: resolved 1782, reused 1779, downloaded 0, added 756
+Progress: resolved 1782, reused 1779, downloaded 0, added 761
+Progress: resolved 1782, reused 1779, downloaded 0, added 773
+Progress: resolved 1782, reused 1779, downloaded 0, added 803
+Progress: resolved 1782, reused 1779, downloaded 0, added 894
+Progress: resolved 1782, reused 1779, downloaded 0, added 901
+Progress: resolved 1782, reused 1779, downloaded 0, added 905
+Progress: resolved 1782, reused 1779, downloaded 0, added 928
+Progress: resolved 1782, reused 1779, downloaded 0, added 960
+Progress: resolved 1782, reused 1779, downloaded 0, added 1001
+Progress: resolved 1782, reused 1779, downloaded 0, added 1017
+Progress: resolved 1782, reused 1779, downloaded 0, added 1083
+Progress: resolved 1782, reused 1779, downloaded 0, added 1101
+Progress: resolved 1782, reused 1779, downloaded 0, added 1105
+Progress: resolved 1782, reused 1779, downloaded 0, added 1113
+Progress: resolved 1782, reused 1779, downloaded 0, added 1128
+Progress: resolved 1782, reused 1779, downloaded 0, added 1151
+Progress: resolved 1782, reused 1779, downloaded 0, added 1248
+Progress: resolved 1782, reused 1779, downloaded 0, added 1293
+Progress: resolved 1782, reused 1779, downloaded 0, added 1332
+Progress: resolved 1782, reused 1779, downloaded 0, added 1429
+Progress: resolved 1782, reused 1779, downloaded 0, added 1537
+Progress: resolved 1782, reused 1779, downloaded 0, added 1586
+Progress: resolved 1782, reused 1779, downloaded 0, added 1623
+Progress: resolved 1782, reused 1779, downloaded 0, added 1642
+Progress: resolved 1782, reused 1779, downloaded 0, added 1671
+Progress: resolved 1782, reused 1779, downloaded 0, added 1755
+Progress: resolved 1782, reused 1779, downloaded 0, added 1775
+Progress: resolved 1782, reused 1779, downloaded 0, added 1776
+Progress: resolved 1782, reused 1779, downloaded 0, added 1777
+Progress: resolved 1782, reused 1779, downloaded 0, added 1778
+Progress: resolved 1782, reused 1779, downloaded 0, added 1779
+Progress: resolved 1782, reused 1779, downloaded 0, added 1780
+Progress: resolved 1782, reused 1779, downloaded 0, added 1781
+Progress: resolved 1782, reused 1779, downloaded 0, added 1782
+Progress: resolved 1782, reused 1779, downloaded 0, added 1782, done
+
+dependencies:
++ @assistant-ui/react 0.14.22
++ @assistant-ui/react-markdown 0.14.4
++ @ast-grep/napi 0.44.0
++ @dicebear/core 10.3.0
++ @dicebear/styles 10.2.0
++ @jridgewell/trace-mapping 0.3.31
++ @lobehub/assets-fileicon 1.0.0
++ @lobehub/ui 5.28.1
++ @lydell/node-pty 1.2.0-beta.12
++ @pierre/diffs 1.2.12
++ @xterm/addon-fit 0.11.0
++ @xterm/xterm 6.0.0
++ ansi-to-react 6.2.6
++ border-beam 1.3.0
++ chalk 5.6.2
++ electron-store 11.0.2
++ electron-updater 6.8.3
++ heat-graph 0.0.12
++ html2canvas 1.4.1
++ json5 2.2.3
++ motion 13.0.0
++ node-machine-id 1.1.12
++ posthog-node 5.28.5
++ react-virtuoso 4.18.7
++ remark-parse 11.0.0
++ tar 6.2.1
++ thinking-orbs 0.2.0
++ unified 11.0.5
++ ws 8.20.0
++ yaml 2.9.0
++ zod 4.4.3
+
+devDependencies:
++ @buape/carbon 0.16.0
++ @discordjs/voice 0.19.2
++ @electron/fuses 1.8.0
++ @eslint/js 10.0.1
++ @grammyjs/runner 2.0.3
++ @grammyjs/transformer-throttler 1.2.1
++ @homebridge/ciao 1.3.7
++ @larksuite/openclaw-lark 2026.5.20
++ @larksuiteoapi/node-sdk 1.62.0
++ @monaco-editor/react 4.7.0
++ @mozilla/readability 0.6.0
++ @openclaw/discord 2026.5.20
++ @openclaw/qqbot 2026.5.20
++ @openclaw/whatsapp 2026.5.20
++ @playwright/test 1.59.0
++ @radix-ui/react-dialog 1.1.15
++ @radix-ui/react-dropdown-menu 2.1.16
++ @radix-ui/react-label 2.1.8
++ @radix-ui/react-progress 1.1.8
++ @radix-ui/react-radio-group 1.3.8
++ @radix-ui/react-select 2.2.6
++ @radix-ui/react-separator 1.1.8
++ @radix-ui/react-slot 1.2.4
++ @radix-ui/react-switch 1.2.6
++ @radix-ui/react-tabs 1.1.13
++ @radix-ui/react-toast 1.2.15
++ @radix-ui/react-tooltip 1.2.8
++ @sinclair/typebox 0.34.48
++ @soimy/dingtalk 3.6.4
++ @tencent-connect/qqbot-connector 1.1.0
++ @tencent-weixin/openclaw-weixin 2.4.3
++ @testing-library/jest-dom 6.9.1
++ @testing-library/react 16.3.2
++ @types/diff 8.0.0
++ @types/node 25.5.0
++ @types/react 19.2.14
++ @types/react-dom 19.2.3
++ @types/ws 8.18.1
++ @typescript-eslint/eslint-plugin 8.57.2
++ @typescript-eslint/parser 8.57.2
++ @typescript/native-preview 7.0.0-dev.20260527.2
++ @vitejs/plugin-react 5.2.0
++ @wecom/wecom-openclaw-plugin 2026.5.14
++ @whiskeysockets/baileys 7.0.0-rc.9
++ acpx 0.5.3
++ autoprefixer 10.4.27
++ cheerio 1.2.0
++ chokidar 5.0.0
++ class-variance-authority 0.7.1
++ clsx 2.1.1
++ diff 9.0.0
++ discord-api-types 0.38.47
++ docx 9.7.1
++ electron 40.8.4
++ electron-builder 26.8.1
++ eslint 10.1.0
++ eslint-plugin-react-hooks 7.0.1
++ eslint-plugin-react-refresh 0.5.2
++ exceljs 4.4.0
++ framer-motion 12.38.0
++ globals 17.4.0
++ grammy 1.42.0
++ https-proxy-agent 9.0.0
++ i18next 25.10.9
++ jsdom 28.1.0
++ katex 0.16.45
++ lru-cache 11.2.7
++ lucide-react 0.563.0
++ mammoth 1.12.0
++ monaco-editor 0.55.1
++ mpg123-decoder 1.0.3
++ ms 2.1.3
++ openclaw 2026.5.20
++ opusscript 0.1.1
++ papaparse 5.5.4
++ pdf-lib 1.17.1
++ pdfjs-dist 5.7.284
++ playwright-core 1.59.1
++ png2icons 2.0.1
++ postcss 8.5.8
++ pptxgenjs 4.0.1
++ qrcode-terminal 0.12.0
++ react 19.2.4
++ react-dom 19.2.4
++ react-i18next 16.6.6
++ react-is 19.2.7
++ react-markdown 10.1.0
++ react-router-dom 7.13.2
++ recharts 3.9.0
++ rehype-katex 7.0.1
++ remark-frontmatter 5.0.0
++ remark-gfm 4.0.1
++ remark-math 6.0.0
++ sharp 0.34.5
++ silk-wasm 3.7.1
++ sonner 2.0.7
++ tailwind-merge 3.5.0
++ tailwindcss 3.4.19
++ tailwindcss-animate 1.0.7
++ turndown 7.2.4
++ typescript 5.9.3
++ undici 8.1.0
++ use-stick-to-bottom 1.1.3
++ vaul 1.1.2
++ vite 7.3.1
++ vite-plugin-electron 0.29.1
++ vite-plugin-electron-renderer 0.14.6
++ vitest 4.1.1
++ xlsx 0.18.5
++ zustand 5.0.12
++ zx 8.8.5
+
+Done in 1m 15s using pnpm v11.2.2

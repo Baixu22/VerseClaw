@@ -61,7 +61,7 @@ requiredTests:
   - pnpm --config.verify-deps-before-run=false harness context --spec harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-shadow-mvp.md
   - pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-shadow-mvp.md
   - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-evidence-verifier-code-task-gate-shadow.test.ts tests/unit/runtime-evidence-verifier-code-task-gate-offline-corpus.test.ts tests/unit/runtime-evidence-verifier-contracts.test.ts
-  - git diff --check -- openclaw_runtime/src/runtime-core/evidence-verifier-code-task-gate-shadow.ts tests/unit/runtime-evidence-verifier-code-task-gate-shadow.test.ts tests/unit/runtime-evidence-verifier-code-task-gate-offline-corpus.test.ts harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-shadow-mvp.md runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-shadow-mvp/README.md
+  - git diff --check -- openclaw_runtime/src/runtime-core/evidence-verifier-code-task-gate-shadow.ts tests/unit/runtime-evidence-verifier-code-task-gate-shadow.test.ts tests/unit/runtime-evidence-verifier-code-task-gate-offline-corpus.test.ts harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-shadow-mvp.md docs/dev/runtime-research-boundaries.md
   - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|spawn|exec\\(|vitest|eslint|tsc|pnpm" openclaw_runtime/src/runtime-core/evidence-verifier-code-task-gate-shadow.ts
   - rg -n "TaskLoop|task-loop|Gateway|host-api|api-client|ipcRenderer|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" openclaw_runtime/src/runtime-core/evidence-verifier-code-task-gate-shadow.ts tests/unit/runtime-evidence-verifier-code-task-gate-shadow.test.ts tests/unit/runtime-evidence-verifier-code-task-gate-offline-corpus.test.ts
 acceptance:
@@ -83,8 +83,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-5-evidence-verifier-code-task-gate-shadow-mvp/README.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 5 Evidence Verifier Code Task Gate Shadow MVP

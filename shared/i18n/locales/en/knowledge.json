@@ -25,7 +25,8 @@
     "drafts": "Drafts",
     "runtime": "Runtime Lessons",
     "review": "Review",
-    "governance": "Governance"
+    "governance": "Governance",
+    "reviewQueue": "Review Queue"
   },
   "actions": {
     "more": "More actions",
@@ -155,7 +156,7 @@
     "roleId": "knowledge-librarian",
     "currentDocument": "Current document",
     "noSummary": "Write or open a Markdown document to give the librarian context.",
-    "openAssistant": "Open librarian",
+    "openAssistant": "Ask the knowledge base",
     "askSteward": "Ask steward",
     "related": "Related pages",
     "noRelated": "Search results and related pages will appear here.",
@@ -259,7 +260,9 @@
       "stewardReview": "Steward review",
       "openInbox": "Open inbox",
       "submitDraft": "Submit draft"
-    }
+    },
+    "chatTitle": "Ask the knowledge base",
+    "backToChat": "Back to chat"
   },
   "inbox": {
     "title": "Knowledge Inbox",
@@ -439,7 +442,8 @@
       "semantic": "Semantic",
       "defaultRole": "Default role",
       "close": "Close"
-    }
+    },
+    "prepareProposal": "Prepare proposal"
   },
   "runtime": {
     "title": "Runtime Lessons",
@@ -511,7 +515,7 @@
       "shadow": "Shadow evaluation report ready"
     },
     "captureTitle": "Capture trajectory",
-    "captureDescription": "Manually record a task trajectory into SEKB for later distillation.",
+    "captureDescription": "Manual trajectories are audit-only and are not distillation candidates.",
     "outcome": "Outcome",
     "outcomeSuccess": "Success",
     "outcomePartial": "Partial",
@@ -533,7 +537,15 @@
     "shadowKeyPlaceholder": "Key for offline evaluation evidence",
     "shadowReport": "Generate report",
     "shadowRunning": "Generating…",
-    "dcsWriteLabel": "DCS write"
+    "dcsWriteLabel": "DCS write",
+    "lineageSession": "Session",
+    "lineageMission": "Mission",
+    "lineageTick": "Tick",
+    "lineageLoop": "Loop",
+    "lineageTrace": "Trace",
+    "lineageLedger": "Task ledger",
+    "sourceTrajectories": "Source trajectories",
+    "confirmProvenance": "Session {{sessionId}} · sources {{trajectories}}"
   },
   "governance": {
     "title": "Governance",
@@ -659,6 +671,29 @@
     },
     "toasts": {
       "proposed": "Lifecycle proposal created and awaiting confirmation."
+    }
+  },
+  "reviewQueue": {
+    "filterLabel": "Review item type",
+    "filters": {
+      "all": "All",
+      "inbox": "Inbox",
+      "draft": "Drafts",
+      "proposal": "Proposals"
+    },
+    "search": "Search review items",
+    "empty": "No review items match this view.",
+    "back": "Back to Review Queue",
+    "status": {
+      "pending": "Pending",
+      "draft": "Draft",
+      "steward_reviewed": "Steward reviewed",
+      "proposed": "Proposed",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "applied": "Applied",
+      "promoted": "Promoted",
+      "dismissed": "Dismissed"
     }
   }
 }

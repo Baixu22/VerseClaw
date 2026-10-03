@@ -50,9 +50,7 @@ function makePrinciple(overrides: Partial<Principle> = {}): Principle {
   };
 }
 
-function makeSuggestion(
-  overrides: Partial<DistillationSuggestion> = {},
-): DistillationSuggestion {
+function makeSuggestion(overrides: Partial<DistillationSuggestion> = {}): DistillationSuggestion {
   return {
     cluster_summary: "Similar config/db trajectories (2)",
     source_trajectory_ids: ["traj-001", "traj-002"],
@@ -212,9 +210,7 @@ describe("DCS Stage 5 experience-block-bridge", () => {
 
   describe("ANTI-8: suggest_principles_from_trajectories must NOT write Blocks", () => {
     it("advisory results never invoke ContextBlockSink", () => {
-      const root = mkdtempSync(
-        path.join(os.tmpdir(), "openclaw-sekb-anti8-"),
-      );
+      const root = mkdtempSync(path.join(os.tmpdir(), "openclaw-sekb-anti8-"));
       tempRoots.push(root);
       const store = new KnowledgeStore({
         database: { path: path.join(root, "openclaw.sqlite") },
@@ -227,14 +223,28 @@ describe("DCS Stage 5 experience-block-bridge", () => {
         task_intent: "connect to PostgreSQL",
         task_type: "config/db",
         context_fingerprint: ["postgresql"],
-        steps: [],
+        steps: [
+          {
+            action: "tool.call",
+            input: { tool: "psql" },
+            output: { ok: false },
+            timestamp: "2026-07-12T00:00:00.000Z",
+          },
+        ],
         outcome: "failure",
         error_signature: null,
         cost: { tokens: 10, duration_seconds: 1, retries: 0 },
         distilled: false,
         distilled_into: [],
         expires_at: null,
-        metadata: {},
+        metadata: {
+          runtimeLineage: {
+            schema: "runtime-lineage.v1",
+            sessionId: "session-anti-8",
+            loopRunId: trajectoryId,
+            traceId: `trace-${trajectoryId}`,
+          },
+        },
       });
       store.save_trajectory({
         trajectory_id: "traj-anti-8-b",
@@ -242,14 +252,28 @@ describe("DCS Stage 5 experience-block-bridge", () => {
         task_intent: "connect to PostgreSQL",
         task_type: "config/db",
         context_fingerprint: ["postgresql"],
-        steps: [],
+        steps: [
+          {
+            action: "tool.call",
+            input: { tool: "psql" },
+            output: { ok: false },
+            timestamp: "2026-07-12T00:00:00.000Z",
+          },
+        ],
         outcome: "failure",
         error_signature: null,
         cost: { tokens: 10, duration_seconds: 1, retries: 0 },
         distilled: false,
         distilled_into: [],
         expires_at: null,
-        metadata: {},
+        metadata: {
+          runtimeLineage: {
+            schema: "runtime-lineage.v1",
+            sessionId: "session-anti-8",
+            loopRunId: "traj-anti-8-b",
+            traceId: "trace-traj-anti-8-b",
+          },
+        },
       });
 
       const tool = new DistillationTool({ store });
@@ -270,9 +294,7 @@ describe("DCS Stage 5 experience-block-bridge", () => {
 
   describe("confirm_and_save integration with ContextBlockSink", () => {
     it("writes an experience Block through the sink when sink + sessionId are provided", async () => {
-      const root = mkdtempSync(
-        path.join(os.tmpdir(), "openclaw-sekb-integ-"),
-      );
+      const root = mkdtempSync(path.join(os.tmpdir(), "openclaw-sekb-integ-"));
       tempRoots.push(root);
       const store = new KnowledgeStore({
         database: { path: path.join(root, "openclaw.sqlite") },
@@ -334,9 +356,7 @@ describe("DCS Stage 5 experience-block-bridge", () => {
     });
 
     it("does NOT invoke sink when sessionId is missing (defensive guard)", async () => {
-      const root = mkdtempSync(
-        path.join(os.tmpdir(), "openclaw-sekb-nosession-"),
-      );
+      const root = mkdtempSync(path.join(os.tmpdir(), "openclaw-sekb-nosession-"));
       tempRoots.push(root);
       const store = new KnowledgeStore({
         database: { path: path.join(root, "openclaw.sqlite") },
@@ -372,9 +392,7 @@ describe("DCS Stage 5 experience-block-bridge", () => {
     });
 
     it("best-effort: returns principleId even when sink throws synchronously", async () => {
-      const root = mkdtempSync(
-        path.join(os.tmpdir(), "openclaw-sekb-throw-"),
-      );
+      const root = mkdtempSync(path.join(os.tmpdir(), "openclaw-sekb-throw-"));
       tempRoots.push(root);
       const store = new KnowledgeStore({
         database: { path: path.join(root, "openclaw.sqlite") },
@@ -419,9 +437,7 @@ describe("DCS Stage 5 experience-block-bridge", () => {
     });
 
     it("best-effort: returns principleId even when sink rejects (accepted=false)", async () => {
-      const root = mkdtempSync(
-        path.join(os.tmpdir(), "openclaw-sekb-reject-"),
-      );
+      const root = mkdtempSync(path.join(os.tmpdir(), "openclaw-sekb-reject-"));
       tempRoots.push(root);
       const store = new KnowledgeStore({
         database: { path: path.join(root, "openclaw.sqlite") },

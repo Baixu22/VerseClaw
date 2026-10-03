@@ -177,7 +177,9 @@ export type ShadowCensusFailureDiagnostic = {
     | "request-envelope-incomplete"
     | "prompt-plan-not-sealed"
     | "snapshot-plan-mismatch"
-    | "unregistered-transform";
+    | "unregistered-transform"
+    | "unsealed-model-call"
+    | "post-seal-semantic-mutation";
   count: number;
 };
 
@@ -504,7 +506,9 @@ export function emitShadowWireReceipt(
   const wireDigest = wireBodyDigest(body);
   let ownerCensus: WireOwnerCensus;
   try {
-    ownerCensus = buildWireOwnerCensus(body, input.adapterId ?? input.providerId);
+    // Owner coverage requires a named transport adapter. A provider id is not
+    // sufficient evidence because it does not identify the serializer/finalizer.
+    ownerCensus = buildWireOwnerCensus(body, input.adapterId);
   } catch {
     recordShadowCensusFailure('wire-owner', 'final-wire-body-invalid');
     return { receipt: null, failed: true };

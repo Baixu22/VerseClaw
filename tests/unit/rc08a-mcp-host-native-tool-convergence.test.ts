@@ -26,8 +26,14 @@ const MCP_TRANSPORTS = ['stdio', 'sse', 'streamable-http'] as const;
 
 describe('RC-08A MCP and host-native tool convergence (root acceptance)', () => {
   it('the MCP SDK transport set is the protocol authority; no WebSocket-only choice', () => {
-    expect(MCP_TRANSPORTS).toEqual(['stdio', 'sse', 'streamable-http']);
-    expect(MCP_TRANSPORTS).not.toContain('websocket');
+    // Every SDK transport resolves through the production resolver; WebSocket does not.
+    for (const transport of MCP_TRANSPORTS) {
+      const config = transport === 'stdio'
+        ? { command: 'node', args: ['server.js'] }
+        : { transport, url: 'https://mcp.example.test/mcp' };
+      expect(resolveMcpTransportConfig(`${transport}-server`, config as never)).not.toBeNull();
+    }
+    expect(resolveMcpTransportConfig('ws-server', { transport: 'websocket', url: 'ws://127.0.0.1:1' } as never)).toBeNull();
   });
 
   it('Git/storage/terminal/browser are host-native surfaces through the production classifier', () => {

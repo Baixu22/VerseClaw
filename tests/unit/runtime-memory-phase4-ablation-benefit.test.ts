@@ -385,7 +385,7 @@ describe("Phase 4 ablation: self-edit effectiveness (memory_strengthen)", () => 
     expect(store.getFactById("low_control")).toBeUndefined();
   });
 
-  it("memory_strengthen increments usage count", () => {
+  it("memory_strengthen increments usage count", async () => {
     const store = new RuntimeMemoryStore({
       maxFacts: 100,
       evictionPolicy: "fifo",
@@ -398,15 +398,15 @@ describe("Phase 4 ablation: self-edit effectiveness (memory_strengthen)", () => 
 
     const ctx: MemorySelfEditToolContext = { store, now };
 
-    const result1 = executeMemorySelfEditTool("memory_strengthen", { factId: "target" }, ctx);
+    const result1 = await executeMemorySelfEditTool("memory_strengthen", { factId: "target" }, ctx);
     expect(result1.ok).toBe(true);
     expect(result1.data).toMatchObject({ usageCount: 1 });
 
-    const result2 = executeMemorySelfEditTool("memory_strengthen", { factId: "target" }, ctx);
+    const result2 = await executeMemorySelfEditTool("memory_strengthen", { factId: "target" }, ctx);
     expect(result2.ok).toBe(true);
     expect(result2.data).toMatchObject({ usageCount: 2 });
 
-    const result3 = executeMemorySelfEditTool("memory_strengthen", { factId: "target" }, ctx);
+    const result3 = await executeMemorySelfEditTool("memory_strengthen", { factId: "target" }, ctx);
     expect(result3.ok).toBe(true);
     expect(result3.data).toMatchObject({ usageCount: 3 });
   });

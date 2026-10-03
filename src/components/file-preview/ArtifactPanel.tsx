@@ -23,6 +23,8 @@ import { PanelBottom, PanelRight, PanelRightOpen, Plus, X } from '@/components/i
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { AgentAvatar } from '@/components/agents/AgentAvatar';
+import { subagentIdentity } from '@shared/subagent-identity';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { supportsRichDocumentPreview, type GeneratedFile } from '@/lib/generated-files';
 import { hostApi } from '@/lib/host-api';
@@ -32,6 +34,8 @@ import { useWorkspacesStore } from '@/stores/workspaces';
 import { WorkspaceBrowserBody } from './WorkspaceBrowserBody';
 import { WorkspaceAuditPanel } from './WorkspaceAuditPanel';
 import { WorkspaceAgentsPanel } from './WorkspaceAgentsPanel';
+import { WorkspaceSubagentPanel } from './WorkspaceSubagentPanel';
+import { WorkspaceProcessPanel } from './WorkspaceProcessPanel';
 import { WorkspaceTerminalPanel } from './WorkspaceTerminalPanel';
 import { WorkspaceBrowserPanel } from './WorkspaceBrowserPanel';
 import { WorkspaceReviewPanel } from './WorkspaceReviewPanel';
@@ -61,9 +65,10 @@ export interface ArtifactPanelProps {
   onSessionStateChange?: (patch: WorkspaceArtifactPanelState) => void;
   onOpenWorkspaceWebView?: () => void;
   onAppendComposerDraft?: (text: string) => void;
+  workspaceRoot?: string | null;
 }
 
-export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState, onSessionStateChange, onOpenWorkspaceWebView, onAppendComposerDraft, artifacts = [], selectedArtifactId, onArtifactSelect, onArtifactValidate, artifactGenerating }: ArtifactPanelProps) {
+export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState, onSessionStateChange, onOpenWorkspaceWebView, onAppendComposerDraft, artifacts = [], selectedArtifactId, onArtifactSelect, onArtifactValidate, artifactGenerating, workspaceRoot }: ArtifactPanelProps) {
   const { t } = useTranslation('chat');
   const isMac = window.electron?.platform === 'darwin';
   const tabs = useArtifactPanel((s) => s.tabs);
@@ -77,7 +82,6 @@ export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState
   const setTerminalPlacement = useArtifactPanel((s) => s.setTerminalPlacement);
   const expanded = useArtifactPanel((s) => s.expanded);
   const setExpanded = useArtifactPanel((s) => s.setExpanded);
-  const close = useArtifactPanel((s) => s.close);
   const [newTabMenuOpen, setNewTabMenuOpen] = useState(false);
   const newTabButtonRef = useRef<HTMLButtonElement | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
@@ -243,15 +247,11 @@ export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState
               ? <PanelRight className="h-4 w-4 pointer-events-none" />
               : <PanelRightOpen className="h-4 w-4 pointer-events-none" />}
           </button>
-          <button
-            type="button"
-            className="rs-panel-control-btn"
-            onClick={close}
-            data-testid="artifact-panel-close"
-            aria-label={t('filePreview.actions.close', 'Close')}
-          >
-            <X className="h-4 w-4 pointer-events-none" />
-          </button>
+          {/* No ✕ here. It duplicated the toolbar's workspace toggle, which
+            * already closes the panel when pressed while open — and that toggle
+            * is the one control the entry animation deliberately leaves standing,
+            * so it is the obvious place for "close" to live. This button keeps
+            * the distinct job it always had: how much width the panel takes. */}
         </div>
       </div>
 
@@ -266,6 +266,7 @@ export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState
           >
             <PanelContent
               kind={entry.kind}
+              subject={entry.subject}
               agent={agent}
               runStartedAt={runStartedAt}
               refreshSignal={refreshSignal}
@@ -280,6 +281,7 @@ export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState
               onArtifactSelect={onArtifactSelect}
               onArtifactValidate={onArtifactValidate}
               artifactGenerating={artifactGenerating}
+              workspaceRoot={workspaceRoot}
             />
           </div>
         ))}
@@ -301,8 +303,10 @@ export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState
 interface PanelContentProps extends Pick<ArtifactPanelProps,
   'agent' | 'runStartedAt' | 'refreshSignal' | 'sessionState' | 'onSessionStateChange'
   | 'onOpenWorkspaceWebView' | 'onAppendComposerDraft' | 'artifacts' | 'selectedArtifactId'
-  | 'onArtifactSelect' | 'onArtifactValidate' | 'artifactGenerating'> {
+  | 'onArtifactSelect' | 'onArtifactValidate' | 'artifactGenerating' | 'workspaceRoot'> {
   kind: PanelTabKind;
+  /** The tab's subject, for the multi-instance kinds. See `PanelTabInstance`. */
+  subject?: string;
   selectedPath: string | null;
   onSelectedPathChange: (path: string | null) => void;
 }
@@ -310,6 +314,7 @@ interface PanelContentProps extends Pick<ArtifactPanelProps,
 /** Routes a tab kind to the panel that renders it. */
 function PanelContent({
   kind,
+  subject,
   agent,
   runStartedAt,
   refreshSignal,
@@ -324,6 +329,7 @@ function PanelContent({
   onArtifactSelect,
   onArtifactValidate,
   artifactGenerating,
+  workspaceRoot,
 }: PanelContentProps) {
   switch (kind) {
     case 'review':
@@ -362,12 +368,19 @@ function PanelContent({
           onSelect={(id) => onArtifactSelect?.(id)}
           onValidate={(id) => onArtifactValidate?.(id)}
           generating={artifactGenerating ?? false}
+          workspaceRoot={workspaceRoot}
         />
       );
     case 'audit':
       return <WorkspaceAuditPanel />;
     case 'agents':
       return <WorkspaceAgentsPanel />;
+    /* Subject-bearing kinds. A tab of these kinds without its subject cannot
+     * name what it is about, so it renders nothing rather than an empty shell. */
+    case 'subagent':
+      return subject ? <WorkspaceSubagentPanel childSessionKey={subject} /> : null;
+    case 'process':
+      return subject ? <WorkspaceProcessPanel processId={subject} /> : null;
   }
 }
 
@@ -461,7 +474,15 @@ function PanelTabChip({
   const pointerActivated = useRef(false);
   const meta = PANEL_TAB_META[tab.kind];
   const Icon = meta.icon;
-  const label = tab.title || t(meta.labelKey, meta.labelFallback);
+  /* A sub-agent chip is identified by who the worker is, not by what kind of tab
+   * it is: three reviewers would otherwise be three identical "Sub-agent" chips.
+   * The identity comes from the same generator the status card row and the page
+   * header use, so the three never disagree. */
+  const identity = tab.kind === 'subagent' && tab.subject ? subagentIdentity(tab.subject) : null;
+  const label = identity?.name ?? tab.title ?? t(meta.labelKey, meta.labelFallback);
+  /* Subject-bearing kinds are multi-instance, so the kind alone is not a unique
+   * handle for tests or automation. */
+  const testKey = tab.subject ? `${tab.kind}-${tab.subject.replace(/[^a-zA-Z0-9_-]/g, '-')}` : tab.kind;
 
   return (
     <div className={cn('rs-tab-chip', active && 'active')}>
@@ -469,8 +490,8 @@ function PanelTabChip({
         type="button"
         role="tab"
         aria-selected={active}
-        title={label}
-        data-testid={`artifact-panel-tab-${tab.kind}`}
+        title={tab.title && tab.title !== label ? `${label} · ${tab.title}` : label}
+        data-testid={`artifact-panel-tab-${testKey}`}
         className="rs-tab-chip-btn"
         onPointerDown={(event) => {
           if (event.button !== 0) return;
@@ -486,13 +507,17 @@ function PanelTabChip({
           onSelect();
         }}
       >
-        <span className="rs-tab-icon"><Icon className="h-4 w-4" /></span>
+        <span className="rs-tab-icon">
+          {identity
+            ? <AgentAvatar agentId={identity.avatarId} name={identity.name} avatar={identity.avatar} size={16} />
+            : <Icon className="h-4 w-4" />}
+        </span>
         <span className="rs-tab-label">{label}</span>
       </button>
       <button
         type="button"
         className="rs-tab-close"
-        data-testid={`artifact-panel-tab-close-${tab.kind}`}
+        data-testid={`artifact-panel-tab-close-${testKey}`}
         aria-label={t('artifactPanel.actions.closeTab', 'Close {{label}} tab', { label })}
         onClick={(event) => {
           event.stopPropagation();

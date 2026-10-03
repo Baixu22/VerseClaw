@@ -19,10 +19,13 @@ test.describe('Reach Readers packaged plugin', () => {
     await completeSetup(page);
     await expect(page.getByTestId('main-layout')).toBeVisible();
 
+    // The packaged `build/openclaw-runtime/` tree is produced only by the
+    // electron-builder bundle step (scripts/bundle-openclaw-runtime.mjs), which
+    // copies the runtime workspace verbatim and does not run during e2e. Read the
+    // authoritative runtime source that the bundle ships and that the app loads.
     const pluginDir = join(
       process.cwd(),
-      'build',
-      'openclaw-runtime',
+      'openclaw_runtime',
       'extensions',
       'reach-readers',
     );

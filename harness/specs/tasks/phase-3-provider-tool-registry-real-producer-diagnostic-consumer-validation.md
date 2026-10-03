@@ -97,7 +97,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-3-provider-tool-registry-real-producer-diagnostic-consumer-validation/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 3 Provider Tool Registry Real Producer Diagnostic Consumer Validation

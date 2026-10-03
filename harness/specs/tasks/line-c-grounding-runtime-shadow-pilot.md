@@ -80,8 +80,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-c-grounding-runtime-shadow-pilot/design-research.md
-    - runtime-research/handoffs/line-c-grounding-runtime-shadow-pilot/implementation-synthesis.md
+    - docs/dev/runtime-research-boundaries.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

@@ -1,0 +1,40 @@
+{
+  "findings": [
+    {
+      "body": "New or rewritten messages now remain queued until before_agent_start, but the overflow precheck runs earlier against activeSession.messages. When an engine returns a fitting summary with promptAuthority=\"assembled\" for an oversized history, the precheck still sees the original history and skips prompt submission to request compaction. Previously it examined the assembled messages. Finalize admission before the precheck and use the admitted replacement, or original history on rejection, for pressure estimation.",
+      "category": "regression",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+        "line": 3433
+      },
+      "confidence": 0.98,
+      "priority": "P2",
+      "title": "Evaluate overflow against the admitted replacement"
+    },
+    {
+      "body": "A replacement can be charged and reported as applied even when this prefix check rejects it. For example, assembly snapshots a transcript ending in an orphaned user message; the later mergeOrphanedTrailingUserPrompt path removes that leaf and rebuilds activeSession.messages. before_agent_start then admits the candidate, but the context callback cannot match its original prefix and sends unchanged messages. The replacement consumes budget and appears in selected receipt lineage despite never reaching the wire. Reconcile the snapshot after transcript repairs and verify applicability before committing applied accounting.",
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+        "line": 170
+      },
+      "confidence": 0.97,
+      "priority": "P2",
+      "title": "Do not charge replacements that cannot match the live history"
+    },
+    {
+      "body": "Because assemble now receives a structured clone, this reference inequality is true even for the default CVK and legacy engines returning their input unchanged. With RC-03 enabled, ordinary pass-through calls therefore mark cvk-message-replacement as an applied producer, including unchanged legacy fallback after an engine failure. Previously unchanged pass-through arrays did not trigger this marker. Compare the assembled history with the preassembly snapshot by value before recording a replacement, while still recognizing genuine free windowing or reordering.",
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+        "line": 3449
+      },
+      "confidence": 0.99,
+      "priority": "P2",
+      "title": "Avoid attributing cloned pass-through history as a replacement"
+    }
+  ],
+  "overall_confidence": 0.97,
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "Atomic charging and fallback cloning are sound, but deferred replacement conflicts with overflow checks and transcript repairs, and cloning introduces false producer attribution. Review was read-only; tests were not run."
+}

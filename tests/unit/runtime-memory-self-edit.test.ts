@@ -77,13 +77,13 @@ describe("Phase 4.4: Self-editing memory interface", () => {
   });
 
   describe("memory_recall", () => {
-    it("returns matching facts from the store", () => {
+    it("returns matching facts from the store", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
       store.appendFact(makeFact("f1", { subject: "UserPref" }));
       store.appendFact(makeFact("f2", { subject: "UserPref" }));
       store.appendFact(makeFact("f3", { subject: "OtherPref" }));
 
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_recall",
         { subject: "UserPref" },
         makeContext(store),
@@ -96,12 +96,12 @@ describe("Phase 4.4: Self-editing memory interface", () => {
       expect(data.map((f) => f.factId)).toEqual(["f1", "f2"]);
     });
 
-    it("returns all facts when no filter is provided", () => {
+    it("returns all facts when no filter is provided", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
       store.appendFact(makeFact("f1"));
       store.appendFact(makeFact("f2"));
 
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_recall",
         {},
         makeContext(store),
@@ -112,13 +112,13 @@ describe("Phase 4.4: Self-editing memory interface", () => {
       expect(data).toHaveLength(2);
     });
 
-    it("respects limit argument", () => {
+    it("respects limit argument", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
       for (let i = 0; i < 5; i++) {
         store.appendFact(makeFact(`f${i}`));
       }
 
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_recall",
         { limit: 2 },
         makeContext(store),
@@ -131,7 +131,7 @@ describe("Phase 4.4: Self-editing memory interface", () => {
   });
 
   describe("memory_update", () => {
-    it("supersedes an existing fact with new information", () => {
+    it("supersedes an existing fact with new information", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
       store.appendFact(makeFact("old_fact", {
         subject: "OldSubject",
@@ -139,7 +139,7 @@ describe("Phase 4.4: Self-editing memory interface", () => {
         confidence: 0.5,
       }));
 
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_update",
         {
           factId: "old_fact",
@@ -173,13 +173,13 @@ describe("Phase 4.4: Self-editing memory interface", () => {
       expect(oldInvalidation?.invalid_at).toBe(2000);
     });
 
-    it("preserves memoryType from the old fact", () => {
+    it("preserves memoryType from the old fact", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
       store.appendFact(makeFact("proc_fact", {
         memoryType: "procedural",
       }));
 
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_update",
         { factId: "proc_fact", objectSummary: "Updated procedural." },
         makeContext(store, 2000),
@@ -191,9 +191,9 @@ describe("Phase 4.4: Self-editing memory interface", () => {
       expect(newFact?.memoryType).toBe("procedural");
     });
 
-    it("fails when factId is missing", () => {
+    it("fails when factId is missing", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_update",
         {},
         makeContext(store),
@@ -202,9 +202,9 @@ describe("Phase 4.4: Self-editing memory interface", () => {
       expect(result.message).toContain("factId");
     });
 
-    it("fails when fact is not found", () => {
+    it("fails when fact is not found", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_update",
         { factId: "nonexistent" },
         makeContext(store),
@@ -215,11 +215,11 @@ describe("Phase 4.4: Self-editing memory interface", () => {
   });
 
   describe("memory_forget", () => {
-    it("invalidates a fact with reason 'retracted' by default", () => {
+    it("invalidates a fact with reason 'retracted' by default", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
       store.appendFact(makeFact("forget_me"));
 
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_forget",
         { factId: "forget_me" },
         makeContext(store, 2000),
@@ -239,11 +239,11 @@ describe("Phase 4.4: Self-editing memory interface", () => {
       expect(inv?.invalid_at).toBe(2000);
     });
 
-    it("accepts 'human_rejected' as reason", () => {
+    it("accepts 'human_rejected' as reason", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
       store.appendFact(makeFact("reject_me"));
 
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_forget",
         { factId: "reject_me", reason: "human_rejected" },
         makeContext(store, 2000),
@@ -254,9 +254,9 @@ describe("Phase 4.4: Self-editing memory interface", () => {
       expect(data.reason).toBe("human_rejected");
     });
 
-    it("fails when fact is not found", () => {
+    it("fails when fact is not found", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_forget",
         { factId: "nonexistent" },
         makeContext(store),
@@ -264,9 +264,9 @@ describe("Phase 4.4: Self-editing memory interface", () => {
       expect(result.ok).toBe(false);
     });
 
-    it("fails when factId is missing", () => {
+    it("fails when factId is missing", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_forget",
         {},
         makeContext(store),
@@ -277,7 +277,7 @@ describe("Phase 4.4: Self-editing memory interface", () => {
   });
 
   describe("memory_strengthen", () => {
-    it("increments usage count for the fact", () => {
+    it("increments usage count for the fact", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
       store.appendFact(makeFact("strengthen_me"));
 
@@ -286,7 +286,7 @@ describe("Phase 4.4: Self-editing memory interface", () => {
       const beforeStat = beforeStats.find((s) => s.factId === "strengthen_me");
       expect(beforeStat?.count).toBe(0);
 
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_strengthen",
         { factId: "strengthen_me" },
         makeContext(store),
@@ -304,12 +304,12 @@ describe("Phase 4.4: Self-editing memory interface", () => {
       expect(afterStat?.count).toBe(1);
     });
 
-    it("can be called multiple times to further strengthen", () => {
+    it("can be called multiple times to further strengthen", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
       store.appendFact(makeFact("multi"));
 
       for (let i = 1; i <= 3; i++) {
-        const result = executeMemorySelfEditTool(
+        const result = await executeMemorySelfEditTool(
           "memory_strengthen",
           { factId: "multi" },
           makeContext(store),
@@ -320,9 +320,9 @@ describe("Phase 4.4: Self-editing memory interface", () => {
       }
     });
 
-    it("fails when fact is not found", () => {
+    it("fails when fact is not found", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_strengthen",
         { factId: "nonexistent" },
         makeContext(store),
@@ -331,9 +331,9 @@ describe("Phase 4.4: Self-editing memory interface", () => {
       expect(result.message).toContain("not found");
     });
 
-    it("fails when factId is missing", () => {
+    it("fails when factId is missing", async () => {
       const store = new RuntimeMemoryStore({ now: () => 1000 });
-      const result = executeMemorySelfEditTool(
+      const result = await executeMemorySelfEditTool(
         "memory_strengthen",
         {},
         makeContext(store),

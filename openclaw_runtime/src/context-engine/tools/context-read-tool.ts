@@ -2,6 +2,7 @@ import type { BlockStoreApi, BlockType, ContextBlock } from "../block.js";
 import {
   filterBlocksByLifecycle,
   hydrateLifecycleBlock,
+  isArchived,
   type LifecycleBlock,
 } from "../block-lifecycle.js";
 
@@ -32,7 +33,7 @@ export interface ReadContextParams {
   sessionId: string;
   /** Optional target session; defaults to sessionId. Parent reads go through BlockStore auth. */
   targetSessionId?: string;
-  blockStore: Pick<BlockStoreApi, "query">;
+  blockStore: Pick<BlockStoreApi, "query" | "recallArchivedBlocks">;
   limit?: number;
   /** When true, include archived lifecycle blocks (C6-1). Default false. */
   includeArchived?: boolean;
@@ -126,9 +127,59 @@ export async function readContext(params: ReadContextParams): Promise<ReadContex
   });
 
   const lifecycleBlocks: LifecycleBlock[] = blocks.map((block) => hydrateLifecycleBlock(block));
-  const visible = filterBlocksByLifecycle(lifecycleBlocks, {
-    includeArchived: params.includeArchived === true,
-  });
+  let visible = filterBlocksByLifecycle(lifecycleBlocks);
+  if (params.includeArchived === true) {
+    // TF-0121 is the DCS BlockStore lifecycle page-in path. It is distinct
+    // from the Context Family ArchiveHandle read-only recall surface: this
+    // explicit opt-in restores lifecycle metadata and records a heat touch in
+    // the existing BlockStore authority.
+    const archived = lifecycleBlocks.filter(isArchived);
+    if (archived.length > 0) {
+      const recall = params.blockStore.recallArchivedBlocks?.bind(params.blockStore);
+      if (!recall) {
+        return {
+          ok: false,
+          block_type: params.block_type,
+          count: 0,
+          contents: [],
+          reason: "archived recall unsupported by block store",
+        };
+      }
+      let recalled: ContextBlock[];
+      try {
+        recalled = await recall({
+          requester_session_id: requester,
+          session_id: target,
+          block_ids: archived.map((block) => block.block_id),
+        });
+      } catch {
+        return {
+          ok: false,
+          block_type: params.block_type,
+          count: 0,
+          contents: [],
+          reason: "archived recall failed",
+        };
+      }
+      const recalledById = new Map(recalled.map((block) => [block.block_id, block]));
+      if (archived.some((block) => !recalledById.has(block.block_id))) {
+        return {
+          ok: false,
+          block_type: params.block_type,
+          count: 0,
+          contents: [],
+          reason: "archived recall incomplete",
+        };
+      }
+      visible = lifecycleBlocks.flatMap((block) => {
+        if (!isArchived(block)) return [block];
+        const recalledBlock = recalledById.get(block.block_id);
+        if (!recalledBlock) return [];
+        const recalledLifecycle = hydrateLifecycleBlock(recalledBlock);
+        return isArchived(recalledLifecycle) ? [] : [recalledLifecycle];
+      });
+    }
+  }
 
   const contents = visible.map((block) => {
     if (params.block_type === "tool_registry" && params.category?.trim()) {

@@ -1,0 +1,33 @@
+{
+  "files": {
+    "approval-boundary.json": {
+      "bytes": 1836,
+      "sha256": "a41ea66120d78761287e97e8c423fe9efa4978ec84a18d75bf504dfbe1a2ab73"
+    },
+    "driver.mjs": {
+      "bytes": 17572,
+      "sha256": "c8c1667abd0fcf4ec064c5538d12729eca2e82963eeb66365ed7a2d030d996be"
+    },
+    "README.md": {
+      "bytes": 1736,
+      "sha256": "4d05bb917f61de8df15909b95844b2e41f9d1e6d1f0e8b0db936ab300be3fc35"
+    },
+    "session.jsonl": {
+      "bytes": 9441,
+      "sha256": "22abd9986d29137bc330a75f76f2f2eba764ae5dd2126b4fb6917b86e658a6a3"
+    },
+    "workload/calc.js": {
+      "bytes": 196,
+      "sha256": "5fac642c649e34be4ddccaf9c141a27e7f446f88f4e45a004a0b09375255630d"
+    },
+    "workload/calc.test.js": {
+      "bytes": 522,
+      "sha256": "2a518b6ff4da54440a41c884bac08fb571ac20ab2f03f5871e64f43638a3a15f"
+    },
+    "workload/package.json": {
+      "bytes": 110,
+      "sha256": "8bae63e483e8dc9ae3b1ca3d568b0ef38a7f2672f1ae926f3c56d3d7ac38111f"
+    }
+  },
+  "secretHits": 0
+}

@@ -276,6 +276,17 @@ export function Setup() {
   const { t } = useTranslation(['setup', 'channels']);
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<number>(STEP.WELCOME);
+  const currentStepRef = useRef<number>(STEP.WELCOME);
+  const goToStep = useCallback((expected: number, next: number) => {
+    if (currentStepRef.current !== expected) return;
+    currentStepRef.current = next;
+    setCurrentStep(next);
+  }, []);
+  const installationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (installationTimer.current) clearTimeout(installationTimer.current);
+    installationTimer.current = null;
+  }, [currentStep]);
   const reduceMotion = useReducedMotion() ?? false;
   const stepOrbitVariants = useMemo(() => buildStepOrbitVariants(reduceMotion), [reduceMotion]);
 
@@ -328,15 +339,12 @@ export function Setup() {
     }
   }, [safeStepIndex, runtimeChecksPassed, pendingProvider, modelVerified, workspaceConfirmed]);
 
-  // Under AnimatePresence mode="wait" the outgoing step stays mounted while it
-  // leaves, so a fast double-click can reach a handler on a step that is
-  // already going away. The step-index updates below are functional, so a
-  // repeat advance is harmless; committing setup twice is not — markSetupComplete
-  // + navigate firing twice races the route change. This latch makes the
-  // terminal actions run at most once.
+  // Outgoing animated controls and installation results may arrive after navigation.
+  // Step transitions check their origin; the terminal action also commits only once.
   const committedRef = useRef(false);
 
   const handleNext = async () => {
+    if (currentStepRef.current !== safeStepIndex || !canProceed) return;
     if (isLastStep) {
       // FP-P1-01: Complete is only reachable as 'verified' (provider+model both
       // live-checked) or via the explicit Skip path which records 'skipped'.
@@ -346,12 +354,12 @@ export function Setup() {
       toast.success(t('complete.title'));
       navigate('/');
     } else {
-      setCurrentStep((i) => i + 1);
+      goToStep(safeStepIndex, safeStepIndex + 1);
     }
   };
 
   const handleBack = () => {
-    setCurrentStep((i) => Math.max(i - 1, 0));
+    goToStep(safeStepIndex, Math.max(safeStepIndex - 1, 0));
   };
 
   const handleSkip = () => {
@@ -368,12 +376,13 @@ export function Setup() {
 
   // Auto-proceed when installation is complete
   const handleInstallationComplete = useCallback((skills: string[]) => {
+    if (currentStepRef.current !== STEP.INSTALLING) return;
     setInstalledSkills(skills);
-    // Auto-proceed to next step after a short delay
-    setTimeout(() => {
-      setCurrentStep((i) => i + 1);
+    if (installationTimer.current) clearTimeout(installationTimer.current);
+    installationTimer.current = setTimeout(() => {
+      goToStep(STEP.INSTALLING, STEP.PROVIDER);
     }, 1000);
-  }, []);
+  }, [goToStep]);
 
 
   return (
@@ -441,7 +450,7 @@ export function Setup() {
             className="mx-auto max-w-2xl p-8"
           >
             <motion.div variants={stepHeadingVariants} className="text-center mb-8">
-              <h1 className="text-3xl font-serif font-normal tracking-tight mb-2">{t(`steps.${step.id}.title`)}</h1>
+              <h1 className="text-xl font-serif font-normal tracking-tight mb-2">{t(`steps.${step.id}.title`)}</h1>
               <p className="text-muted-foreground">{t(`steps.${step.id}.description`)}</p>
             </motion.div>
 
@@ -484,7 +493,7 @@ export function Setup() {
                     <InstallingContent
                       skills={getDefaultSkills(t)}
                       onComplete={handleInstallationComplete}
-                      onSkip={() => setCurrentStep((i) => i + 1)}
+                      onSkip={() => goToStep(STEP.INSTALLING, STEP.PROVIDER)}
                     />
                   )}
                   {safeStepIndex === STEP.PROVIDER && (
@@ -975,6 +984,11 @@ function InstallingContent({ skills, onComplete, onSkip }: InstallingContentProp
   const [overallProgress, setOverallProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const installStarted = useRef(false);
+  const mounted = useRef(false);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
 
   // Real installation process
   useEffect(() => {
@@ -989,19 +1003,21 @@ function InstallingContent({ skills, onComplete, onSkip }: InstallingContentProp
 
         // Step 2: Call the backend to install uv and setup Python
         const result = await hostApi.uv.installAll();
+        if (!mounted.current) return;
 
         if (result.success) {
           setSkillStates(prev => prev.map(s => ({ ...s, status: 'completed' })));
           setOverallProgress(100);
 
           await new Promise((resolve) => setTimeout(resolve, 800));
-          onComplete(skills.map(s => s.id));
+          if (mounted.current) onComplete(skills.map(s => s.id));
         } else {
           setSkillStates(prev => prev.map(s => ({ ...s, status: 'failed' })));
           setErrorMessage(result.error || 'Unknown error during installation');
           toast.error('Environment setup failed');
         }
       } catch (err) {
+        if (!mounted.current) return;
         setSkillStates(prev => prev.map(s => ({ ...s, status: 'failed' })));
         setErrorMessage(String(err));
         toast.error('Installation error');

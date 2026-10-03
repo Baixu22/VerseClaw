@@ -12,6 +12,19 @@ requiredRules:
   - renderer-main-boundary
   - docs-sync
 touchedAreas:
+  - package.json
+  - pnpm-lock.yaml
+  - tsconfig.node.json
+  - tsconfig.web.json
+  - tsconfig.test.json
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
+  - artifacts/agent-dev-deep-test/**
+  - artifacts/agent-dev-quality/**
+  - artifacts/agent-dev-workbench/**
+  - docs/generated/catalogs/tools.md
+  - docs/generated/catalogs/prod-flags.md
   - shared/agent-dev/**
   - shared/host-api/**
   - src/lib/host-api.ts
@@ -65,3 +78,7 @@ Regularize Agent Dev feature development so scaffolds, contracts, scenarios, i18
 ## Notes
 
 Scenario recorder artifacts must stay redacted and require human review before promotion into `shared/agent-dev/**`, `harness/specs/**`, fixtures, or E2E. Gate layering is fast PR (`contract:check`, `i18n:lint`, targeted unit, Workbench), full local (`agent-dev:validate`, targeted E2E, relevant conformance), and nightly/release (comms replay/compare plus broader E2E/report evidence).
+
+Deep diagnostics validate the registered `agent-dev-composable-scenarios` baseline across the
+current branch. Changes to Agent Dev still require this task spec's diff-aware validation against
+their scoped candidate; the shared baseline does not establish task ownership.

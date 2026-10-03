@@ -1,18 +1,25 @@
-// RC-06B ClawGraph -> TaskFlow read-only projection. Step 1+2 of the four-step
-// migration: observe the legacy ClawGraph process Map without behavior change and
-// project run lifecycle events into flow_runs (via the RC-06A CAS store) behind a
-// default-off flag. The legacy ClawGraph process Map remains authoritative until a
-// separate cutover with idempotency and rollback proof. Indefinite dual-write is
-// not a migration strategy.
-import type { ClawGraphRunEvent } from './types.js';
-import { CAS_CREATE_SENTINEL, TaskFlowCasStore, type FlowStatus } from '../../tasks/task-flow-cas.js';
+// RC-06B ClawGraph lifecycle on the TaskFlow owner. Event projection
+// (projection mode) and status commits (taskflow mode, the cutover) both go
+// through the shared workflow lifecycle owner, so every rejected write is
+// recorded as drift instead of being dropped.
+import type { ClawGraphRunEvent, ClawGraphRunStatus } from './types.js';
+import type { FlowStatus } from '../../tasks/task-flow-cas.js';
+import {
+  commitWorkflowLifecycle,
+  readWorkflowLifecycle,
+  settleOrphanedWorkflowLifecycles,
+  type WorkflowLifecycleOptions,
+} from '../../tasks/workflow-lifecycle-owner.js';
 
 export const CLAWGRAPH_PROJECTION_FLAG = 'rc06b.clawgraphProjection';
 export const CLAWGRAPH_PROJECTION_SCHEMA_VERSION = '1';
 
-export type ClawgraphProjectionOptions = {
+export type ClawgraphProjectionOptions = WorkflowLifecycleOptions & {
   enabled?: boolean;
-  database?: { env?: NodeJS.ProcessEnv; path?: string };
+  /** The run's own status after the event. When given it decides the flow
+   *  status, so a terminal event reports what the run actually became
+   *  (run_blocked is emitted for both blocked and failed runs). */
+  runStatus?: ClawGraphRunStatus;
 };
 
 export type ClawgraphProjectionResult = {
@@ -20,7 +27,7 @@ export type ClawgraphProjectionResult = {
   flowId?: string;
   revision?: number;
   status?: FlowStatus;
-  skippedReason?: 'flag-off' | 'unknown-event' | 'revision-conflict' | 'illegal-transition';
+  skippedReason?: 'flag-off' | 'unknown-event' | 'revision-conflict' | 'illegal-transition' | 'error';
 };
 
 const EVENT_TO_FLOW_STATUS: Record<string, FlowStatus> = {
@@ -30,8 +37,8 @@ const EVENT_TO_FLOW_STATUS: Record<string, FlowStatus> = {
   node_handoff: 'running',
   node_audit: 'running',
   node_done: 'running',
-  // A failed node does not end the run: ClawGraph may continue/retry or emit a
-  // later run_failed/run_aborted event; those events carry the terminal status.
+  // A failed node does not end the run: ClawGraph may retry it; the run's own
+  // terminal event carries the terminal status.
   node_failed: 'running',
   review_requested: 'blocked',
   review_resolved: 'running',
@@ -40,11 +47,36 @@ const EVENT_TO_FLOW_STATUS: Record<string, FlowStatus> = {
   run_aborted: 'cancelled',
 };
 
-/**
- * Project one ClawGraph run lifecycle event into flow_runs using the CAS store.
- * The ClawGraph process Map remains authoritative; this is an observational
- * projection only. Returns whether the projection was applied.
- */
+const RUN_STATUS_TO_FLOW_STATUS: Record<ClawGraphRunStatus, FlowStatus> = {
+  queued: 'queued',
+  running: 'running',
+  review: 'blocked',
+  blocked: 'blocked',
+  complete: 'succeeded',
+  failed: 'failed',
+  aborted: 'cancelled',
+};
+
+const FLOW_STATUS_TO_RUN_STATUS: Record<FlowStatus, ClawGraphRunStatus> = {
+  queued: 'queued',
+  running: 'running',
+  waiting: 'running',
+  blocked: 'blocked',
+  succeeded: 'complete',
+  failed: 'failed',
+  cancelled: 'aborted',
+  lost: 'failed',
+};
+
+export function clawgraphRunStatusToFlowStatus(status: ClawGraphRunStatus): FlowStatus {
+  return RUN_STATUS_TO_FLOW_STATUS[status];
+}
+
+export function flowStatusToClawgraphRunStatus(status: FlowStatus): ClawGraphRunStatus {
+  return FLOW_STATUS_TO_RUN_STATUS[status];
+}
+
+/** Projection mode: copy one run event's lifecycle into TaskFlow. */
 export function projectClawgraphRunEvent(
   event: ClawGraphRunEvent,
   options: ClawgraphProjectionOptions = {},
@@ -52,44 +84,34 @@ export function projectClawgraphRunEvent(
   if (options.enabled !== true) {
     return { projected: false, skippedReason: 'flag-off' };
   }
-  const targetStatus = EVENT_TO_FLOW_STATUS[event.type];
+  const targetStatus = options.runStatus
+    ? RUN_STATUS_TO_FLOW_STATUS[options.runStatus]
+    : EVENT_TO_FLOW_STATUS[event.type];
   if (!targetStatus) {
     return { projected: false, skippedReason: 'unknown-event' };
   }
-  const flowId = `clawgraph:${event.runId}`;
-  const store = new TaskFlowCasStore(options.database ?? {});
-  // Read the current row to compute the expected revision (CAS write).
-  // RC-06A create sentinel: a missing row requires expectedRevision = -1.
-  const existing = store.getById(flowId);
-  const expectedRevision = existing ? normalizeRevision(existing.revision) : CAS_CREATE_SENTINEL;
-  const result = store.casUpsert({
-    flowId,
-    expectedRevision,
+  const committed = commitWorkflowLifecycle({
+    domain: 'clawgraph',
+    id: event.runId,
     status: targetStatus,
-    ownerKey: 'clawgraph-runtime',
     currentStep: event.nodeId ? `node:${event.nodeId}` : undefined,
-    stateJson: JSON.stringify({ eventId: event.id, message: event.message }),
+    options,
   });
-  if (!result.ok) {
-    // Report the REAL skip reason instead of masking conflicts: a CAS conflict
-    // means drift between the projection and flow_runs and must be observable
-    // (revision-conflict) rather than disguised as flag-off/unknown-event.
+  if (!committed.ok) {
     return {
       projected: false,
       skippedReason:
-        result.reason === 'illegal-transition'
+        committed.reason === 'illegal-transition'
           ? 'illegal-transition'
-          : result.reason === 'revision-conflict'
-            ? 'revision-conflict'
-            : result.reason === 'not-found'
-              ? 'revision-conflict'
-              : 'flag-off',
+          : committed.reason === 'error'
+            ? 'error'
+            : 'revision-conflict',
     };
   }
-  return { projected: true, flowId, revision: result.revision, status: targetStatus };
+  return { projected: true, flowId: `clawgraph:${event.runId}`, revision: committed.revision, status: targetStatus };
 }
 
-/** Recover a ClawGraph run's projected flow state after restart. */
+/** Read a ClawGraph run's lifecycle back from TaskFlow (e.g. after restart). */
 export function recoverClawgraphProjection(
   runId: string,
   options: ClawgraphProjectionOptions = {},
@@ -97,15 +119,17 @@ export function recoverClawgraphProjection(
   if (options.enabled !== true) {
     return { recovered: false };
   }
-  const store = new TaskFlowCasStore(options.database ?? {});
-  const row = store.getById(`clawgraph:${runId}`);
+  const row = readWorkflowLifecycle('clawgraph', runId, options);
   if (!row) {
     return { recovered: false };
   }
   return { flowId: row.flow_id, status: row.status as FlowStatus, recovered: true };
 }
 
-function normalizeRevision(value: number | bigint | null | undefined): number {
-  if (typeof value === 'bigint') return Number(value);
-  return typeof value === 'number' ? value : 0;
+/** Restart recovery: settle ClawGraph lifecycles whose run is gone as lost. */
+export function settleOrphanedClawgraphRuns(
+  isLive: (runId: string) => boolean,
+  options: WorkflowLifecycleOptions = {},
+): string[] {
+  return settleOrphanedWorkflowLifecycles({ domain: 'clawgraph', isLive, options });
 }

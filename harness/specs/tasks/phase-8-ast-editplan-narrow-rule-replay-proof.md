@@ -67,8 +67,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-8-ast-editplan-narrow-rule-replay-proof/README.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 8 AST EditPlan Narrow-Rule Replay Proof

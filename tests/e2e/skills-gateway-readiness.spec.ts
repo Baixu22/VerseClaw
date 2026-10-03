@@ -128,7 +128,11 @@ test.describe('Skills page gateway readiness', () => {
       });
     });
 
-    await expect(page.getByTestId('sidebar-gateway-restarting')).toHaveAttribute('data-state', 'visible');
+    // The `sidebar-gateway-restarting` indicator lives on the chat Sidebar; the
+    // Skills view is a settings route where MainLayout mounts SettingsSidebar
+    // instead, so that indicator is not in the DOM here. The behaviour under
+    // test is that the Skills page's own stale startup banner clears once local
+    // skills load while the runtime RPC is still starting.
     await expect(page.getByTestId('skills-gateway-banner')).toHaveCount(0, { timeout: 3_500 });
 
     await installIpcMocks(electronApp, {

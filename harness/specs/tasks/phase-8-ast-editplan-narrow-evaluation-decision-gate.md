@@ -50,10 +50,10 @@ rollback:
 requiredTests:
   - pnpm --config.verify-deps-before-run=false harness context --spec harness/specs/tasks/phase-8-ast-editplan-narrow-evaluation-decision-gate.md
   - pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/phase-8-ast-editplan-narrow-evaluation-decision-gate.md
-  - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-ast-edit-plan-narrow-evaluation-decision-gate.test.ts
+  - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-ast-edit-plan-evidence-verifier-readiness.test.ts tests/unit/runtime-ast-edit-plan-apply-gate-readiness.test.ts tests/unit/runtime-ast-edit-plan-controlled-apply-pilot.test.ts tests/unit/runtime-ast-edit-plan-narrow-rule-replay-proof.test.ts tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts
   - pnpm --config.verify-deps-before-run=false run typecheck
   - git diff --check
-  - Boundary scan over the P7 handoff, sentinel test, and task spec for forbidden ready/approved marker phrases.
+  - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts
 acceptance:
   - Harness context and validation pass, or validation without --no-diff is blocked only by unrelated dirty tree state and --no-diff structural validation passes.
   - The P7 synthesis status is accepted_phase_8_ast_editplan_narrow_evaluation_decision_gate.
@@ -66,9 +66,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-8-ast-editplan-narrow-evaluation-decision-gate/README.md
-    - runtime-research/handoffs/phase-8-ast-editplan-narrow-evaluation-decision-gate/synthesis.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 8 AST EditPlan Narrow-Evaluation Decision Gate

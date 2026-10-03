@@ -3,14 +3,13 @@
 // durable RC-04 approval ledger (never a fabricated list), records the operator
 // decision with actor + policy digest, and projects the context/effect/recovery
 // lineage from real ContextReceipt / EffectReceipt data.
-import { createHash } from "node:crypto";
 import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
 import { ErrorCodes, errorShape } from "../../../packages/gateway-protocol/src/index.js";
 import { ApprovalLedger } from "../../agents/approval-ledger.js";
 import {
+  inboxGovernanceDecision,
   OPERATOR_SLICE_ACTOR,
   projectOperatorLineage,
-  type OperatorGovernanceDecision,
 } from "../../agents/operator-slice.js";
 import type { GatewayRequestHandler, GatewayRequestHandlers } from "./types.js";
 
@@ -26,19 +25,6 @@ function normalizeOptionalString(value: unknown): string | null {
 
 function normalizeDecision(value: unknown): "approved" | "denied" | null {
   return value === "approved" || value === "denied" ? value : null;
-}
-
-/** Build the governance decision from the operator's resolve request. */
-function buildInboxGovernance(input: {
-  decision: "approved" | "denied";
-  actor: string;
-}): OperatorGovernanceDecision {
-  // The Inbox decision is a real governance decision: actor is the resolving
-  // client and the policy digest binds the decision surface (v1 inbox rule).
-  // The digest is always computed server-side — never trusted from the client.
-  const rule = `inbox-operator-decision:v1:${input.decision}`;
-  const digest = createHash("sha256").update(rule).digest("hex");
-  return { decision: input.decision, actor: input.actor, policyDigest: digest };
 }
 
 /** List pending + recently resolved operator intents from the durable ledger. */
@@ -100,7 +86,7 @@ export function createInboxHandlers(options: InboxDatabaseOptions = {}): Gateway
     }
     // The policy digest is computed server-side from the decision rule; a
     // client-supplied digest is never trusted verbatim.
-    const governance = buildInboxGovernance({ decision, actor });
+    const governance = inboxGovernanceDecision({ decision, actor });
     // Security review fix: the Inbox may only decide OPERATOR slice intents
     // (created by the Cron ingress). Resolving arbitrary ledger rows from the
     // shared approval store would pollute the durable audit trail and strand

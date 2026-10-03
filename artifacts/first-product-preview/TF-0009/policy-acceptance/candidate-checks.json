@@ -1,0 +1,93 @@
+[
+  {
+    "id": "campaign",
+    "command": [
+      "node",
+      "--import",
+      "tsx",
+      "scripts/tf0009-agent-surrogate.mts"
+    ],
+    "cwd": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate\\openclaw_runtime",
+    "exitCode": 0,
+    "durationMs": 3687,
+    "log": "candidate-campaign.log"
+  },
+  {
+    "id": "unit",
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/tf0009-agent-surrogate.test.ts",
+      "tests/unit/tf0009-engineering-evidence-audit.test.ts",
+      "tests/unit/dcs-ops-canary-hard-veto.test.ts",
+      "tests/unit/sekb-runtime-build-contract.test.ts",
+      "tests/unit/uas-00-evidence-freeze.test.ts",
+      "tests/unit/agent-engineering-acceptance.test.ts",
+      "--reporter=json",
+      "--outputFile=D:/ClawX-acceptance/tf0009-20260930/candidate-unit.json"
+    ],
+    "cwd": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate",
+    "exitCode": 0,
+    "durationMs": 164359,
+    "log": "candidate-unit.log"
+  },
+  {
+    "id": "harness",
+    "command": [
+      "node",
+      "harness/src/cli.mjs",
+      "validate",
+      "--spec",
+      "harness/specs/tasks/tf0009-engineering-evidence-audit.md",
+      "--since",
+      "1622a24e8a113c43643b44ac1fcd5755726019c8"
+    ],
+    "cwd": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate",
+    "exitCode": 0,
+    "durationMs": 406,
+    "log": "candidate-harness.log"
+  },
+  {
+    "id": "harness-dry-run",
+    "command": [
+      "node",
+      "harness/src/cli.mjs",
+      "run",
+      "--spec",
+      "harness/specs/tasks/tf0009-engineering-evidence-audit.md",
+      "--since",
+      "1622a24e8a113c43643b44ac1fcd5755726019c8",
+      "--dry-run"
+    ],
+    "cwd": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate",
+    "exitCode": 0,
+    "durationMs": 391,
+    "log": "candidate-harness-dry-run.log"
+  },
+  {
+    "id": "preflight",
+    "command": [
+      "node",
+      "scripts/dcs-ops-preflight.mjs"
+    ],
+    "cwd": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate",
+    "exitCode": 0,
+    "durationMs": 47,
+    "log": "candidate-preflight.log"
+  },
+  {
+    "id": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "1622a24e8a113c43643b44ac1fcd5755726019c8"
+    ],
+    "cwd": "D:\\ClawX-acceptance\\tf0009-20260930\\candidate",
+    "exitCode": 0,
+    "durationMs": 141,
+    "log": "candidate-diff-check.log",
+    "note": "Removed an inherited extra EOF blank line from the historical charter copy; JSON verified identical to original. No source or assertions changed."
+  }
+]

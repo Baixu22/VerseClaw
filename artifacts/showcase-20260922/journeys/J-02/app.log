@@ -1,0 +1,113 @@
+
+================================================================================
+[2026-09-21T14:01:58.351Z] === Verse Claw Session Start (v40.8.4) ===
+================================================================================
+[2026-09-21T14:01:58.352Z] [INFO] === Verse Claw Application Starting ===
+[2026-09-21T14:01:58.436Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[2026-09-21T14:01:58.437Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-09-21T14:01:58.437Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=41168, ppid=36720
+[2026-09-21T14:01:58.437Z] [INFO] Running in E2E mode: startup side effects minimized
+[2026-09-21T14:01:58.611Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-09-21T14:01:58.611Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-09-21T14:01:58.611Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-09-21T14:01:58.611Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[2026-09-21T14:01:58.645Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[2026-09-21T14:01:58.645Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[2026-09-21T14:01:58.646Z] [INFO] Gateway auto-start skipped in E2E mode
+[2026-09-21T14:01:59.034Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-09-21T14:01:59.034Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-09-21T14:01:59.034Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-09-21T14:01:59.034Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[2026-09-21T14:02:00.427Z] [INFO] Scheduling Gateway reload after saving provider "custom-senseaud" config
+[2026-09-21T14:02:00.427Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)
+[2026-09-21T14:02:01.641Z] [INFO] [gateway-refresh] mode=reload requested pid=n/a state=stopped
+[2026-09-21T14:02:01.641Z] [WARN] [gateway-refresh] mode=reload result=fallback_restart cause=not_running
+[2026-09-21T14:02:01.641Z] [WARN] Gateway reload requested while not running; falling back to restart
+[2026-09-21T14:02:01.642Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=n/a
+[2026-09-21T14:02:01.642Z] [INFO] Gateway stop requested
+[2026-09-21T14:02:01.642Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[2026-09-21T14:02:01.642Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (start)
+[2026-09-21T14:02:01.643Z] [INFO] Gateway start requested (port=18789)
+[2026-09-21T14:02:01.647Z] [DEBUG] Device identity loaded (deviceId=eab65db67cac7404e81658639574607b9f8178d338a770add76d516b8cc9ea42)
+[2026-09-21T14:02:01.647Z] [DEBUG] Gateway state changed: stopped -> starting
+[2026-09-21T14:02:01.736Z] [DEBUG] Checking for existing Gateway...
+[2026-09-21T14:02:01.790Z] [DEBUG] No existing Gateway found, starting new process...
+[2026-09-21T14:02:01.908Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)
+[2026-09-21T14:02:01.932Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[2026-09-21T14:02:01.934Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":98,"providerEnvMs":9,"uvEnvMs":8,"mcpEnvMs":15,"runtimeConfigReadMs":0,"verseShellBundleMs":0,"totalMs":141,"maintenance":{},"configuredChannelCount":0}
+[2026-09-21T14:02:01.934Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=18789, entry="D:\ClawX\openclaw_runtime\dist\entry.js", args="gateway --port 18789 --token [redacted] --allow-unconfigured", execArgv="", cwd="D:\ClawX\openclaw_runtime", bundledBin=no, providerKeys=2, channels=skipped(source runtime isolated config), proxy=disabled)
+[2026-09-21T14:02:01.963Z] [INFO] Gateway process started (pid=30072)
+[2026-09-21T14:02:01.963Z] [DEBUG] Gateway manager now owns process pid=30072
+[2026-09-21T14:02:04.054Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[2026-09-21T14:02:05.279Z] [DEBUG] [Gateway stderr] (node:30072) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[2026-09-21T14:02:05.280Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[2026-09-21T14:02:05.280Z] [WARN] [Gateway stderr] (Use `electron --trace-deprecation ...` to show where the warning was created)
+[2026-09-21T14:02:07.230Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=46db2406-04db-4183-989c-61584fb0e715 peer=127.0.0.1:55826->127.0.0.1:18789 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:18789 ua=n/a code=1006 reason=n/a[39m
+[2026-09-21T14:02:07.398Z] [DEBUG] Gateway ready after 20 attempt(s)
+[2026-09-21T14:02:07.398Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:18789/ws)
+[2026-09-21T14:02:07.400Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=6235f03c-2b0d-4112-b2d7-b03b82a3c4d5 peer=127.0.0.1:55831->127.0.0.1:18789 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:18789 ua=n/a code=1006 reason=n/a[39m
+[2026-09-21T14:02:07.400Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-09-21T14:02:07.401Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-09-21T14:02:07.401Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-09-21T14:02:07.412Z] [DEBUG] Gateway connect handshake completed
+[2026-09-21T14:02:07.412Z] [DEBUG] Gateway state changed: starting -> running
+[2026-09-21T14:02:07.413Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[2026-09-21T14:02:07.413Z] [INFO] [metric] gateway.startup {"configSyncMs":228,"spawnToReadyMs":5435,"readyToConnectMs":15,"totalMs":5678}
+[2026-09-21T14:02:07.413Z] [INFO] [metric] gateway.restart.executed {"gateway_restart_executed_total":1,"gateway_restart_suppressed_total":0,"gateway_restart_circuit_open_until":0}
+[2026-09-21T14:02:07.413Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=n/a pidAfter=30072 suppressed=0 executed=1 circuitOpenUntil=0
+[2026-09-21T14:02:09.927Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at C:\Users\27933\AppData\Local\ClawX-live-data\journey-20260921\2026-09-21T14-01-51-182Z\workspace\.verse-claw\harness
+[2026-09-21T14:02:10.059Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=30072
+[2026-09-21T14:02:10.059Z] [INFO] Gateway stop requested
+[2026-09-21T14:02:10.059Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (stop)
+[2026-09-21T14:02:10.060Z] [INFO] Sending kill to Gateway process (pid=30072)
+[2026-09-21T14:02:10.064Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[2026-09-21T14:02:10.064Z] [DEBUG] Gateway state changed: running -> stopped
+[2026-09-21T14:02:10.355Z] [INFO] Gateway process exited (code=1, expected=yes)
+[2026-09-21T14:02:10.356Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[2026-09-21T14:02:10.356Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (start)
+[2026-09-21T14:02:10.357Z] [INFO] Gateway start requested (port=18789)
+[2026-09-21T14:02:10.359Z] [DEBUG] Gateway state changed: stopped -> starting
+[2026-09-21T14:02:10.446Z] [DEBUG] Checking for existing Gateway...
+[2026-09-21T14:02:10.486Z] [DEBUG] No existing Gateway found, starting new process...
+[2026-09-21T14:02:10.600Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[2026-09-21T14:02:10.602Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":93,"providerEnvMs":8,"uvEnvMs":1,"mcpEnvMs":2,"runtimeConfigReadMs":0,"verseShellBundleMs":0,"totalMs":115,"maintenance":{},"configuredChannelCount":0}
+[2026-09-21T14:02:10.602Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=18789, entry="D:\ClawX\openclaw_runtime\dist\entry.js", args="gateway --port 18789 --token [redacted] --allow-unconfigured", execArgv="", cwd="D:\ClawX\openclaw_runtime", bundledBin=no, providerKeys=2, channels=skipped(source runtime isolated config), proxy=disabled)
+[2026-09-21T14:02:10.626Z] [INFO] Gateway process started (pid=36160)
+[2026-09-21T14:02:10.626Z] [DEBUG] Gateway manager now owns process pid=36160
+[2026-09-21T14:02:12.702Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[2026-09-21T14:02:13.183Z] [DEBUG] [Gateway stderr] (node:36160) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[2026-09-21T14:02:13.184Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[2026-09-21T14:02:13.184Z] [WARN] [Gateway stderr] (Use `electron --trace-deprecation ...` to show where the warning was created)
+[2026-09-21T14:02:14.792Z] [DEBUG] Gateway ready after 15 attempt(s)
+[2026-09-21T14:02:14.792Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:18789/ws)
+[2026-09-21T14:02:14.820Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=22938775-5560-4730-ab45-4f2f852b92a0 peer=127.0.0.1:52591->127.0.0.1:18789 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:18789 ua=n/a code=1006 reason=n/a[39m
+[2026-09-21T14:02:14.827Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-09-21T14:02:14.827Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-09-21T14:02:14.828Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-09-21T14:02:14.838Z] [DEBUG] Gateway connect handshake completed
+[2026-09-21T14:02:14.838Z] [DEBUG] Gateway state changed: starting -> running
+[2026-09-21T14:02:14.838Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[2026-09-21T14:02:14.839Z] [INFO] [metric] gateway.startup {"configSyncMs":180,"spawnToReadyMs":4166,"readyToConnectMs":47,"totalMs":4393}
+[2026-09-21T14:02:14.839Z] [INFO] [metric] gateway.restart.executed {"gateway_restart_executed_total":2,"gateway_restart_suppressed_total":0,"gateway_restart_circuit_open_until":0}
+[2026-09-21T14:02:14.839Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=30072 pidAfter=36160 suppressed=0 executed=2 circuitOpenUntil=0
+[2026-09-21T14:02:19.287Z] [INFO] [chat:sendWithMedia] Sending: message="In this workspace, run `node --test` first. The `total()` function in calc.js ignores item quantity,", attachments=0, fileRefs=0
+[2026-09-21T14:02:19.288Z] [INFO] [gateway-rpc] chat.send serialized id=07b2c06b-2d97-4a95-bf6b-368d5b57cd26 timeoutMs=120000 bytes=635
+[2026-09-21T14:02:19.288Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=07b2c06b-2d97-4a95-bf6b-368d5b57cd26
+[2026-09-21T14:02:23.733Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=e094b992-7044-4bba-9499-0a21acf538a4 id=07b2c06b-2d97-4a95-bf6b-368d5b57cd26
+[2026-09-21T14:02:23.870Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=e094b992-7044-4bba-9499-0a21acf538a4 id=07b2c06b-2d97-4a95-bf6b-368d5b57cd26
+[2026-09-21T14:02:23.883Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered
+[2026-09-21T14:02:23.925Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=c5b3d298-c7fd-46b1-b982-30f8dee68092 sessionKey=agent:main:main loadSessionMs=26.975
+[2026-09-21T14:02:24.002Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=c5b3d298-c7fd-46b1-b982-30f8dee68092 sessionKey=agent:main:main attachments=0
+[2026-09-21T14:02:24.004Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=c5b3d298-c7fd-46b1-b982-30f8dee68092 sessionKey=agent:main:main
+[2026-09-21T14:02:24.004Z] [INFO] [gateway-rpc] chat.send response id received durationMs=4716
+[2026-09-21T14:02:24.004Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"c5b3d298-c7fd-46b1-b982-30f8dee68092","status":"started"}
+[2026-09-21T14:02:24.015Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=e094b992-7044-4bba-9499-0a21acf538a4 id=07b2c06b-2d97-4a95-bf6b-368d5b57cd26
+[2026-09-21T14:03:28.446Z] [INFO] Gateway stop requested
+[2026-09-21T14:03:28.446Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (stop)
+[2026-09-21T14:03:28.446Z] [INFO] Sending kill to Gateway process (pid=36160)
+[2026-09-21T14:03:28.449Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[2026-09-21T14:03:28.450Z] [DEBUG] Gateway state changed: running -> stopped
+[2026-09-21T14:03:28.667Z] [INFO] Gateway process exited (code=1, expected=yes)
+[2026-09-21T14:03:28.667Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[2026-09-21T14:03:28.683Z] [INFO] [ResourceTracker] Stopped
+[2026-09-21T14:03:28.683Z] [INFO] [ResourceTracker] Shutdown complete

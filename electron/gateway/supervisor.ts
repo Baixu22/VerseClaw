@@ -305,8 +305,10 @@ export async function runOpenClawDoctorRepair(): Promise<boolean> {
       ...baseEnvPatched,
       ...uvEnv,
       OPENCLAW_NO_RESPAWN: '1',
-      OPENCLAW_SKIP_CHANNELS: skipChannels ? '1' : baseEnvPatched.OPENCLAW_SKIP_CHANNELS,
-      CLAWDBOT_SKIP_CHANNELS: skipChannels ? '1' : baseEnvPatched.CLAWDBOT_SKIP_CHANNELS,
+      // Electron's utilityProcess.fork rejects non-string env values, so an unset
+      // inherited skip-channels flag must fall back to '' rather than undefined.
+      OPENCLAW_SKIP_CHANNELS: skipChannels ? '1' : (baseEnvPatched.OPENCLAW_SKIP_CHANNELS ?? ''),
+      CLAWDBOT_SKIP_CHANNELS: skipChannels ? '1' : (baseEnvPatched.CLAWDBOT_SKIP_CHANNELS ?? ''),
     };
 
     const child = utilityProcess.fork(entryScript, doctorArgs, {

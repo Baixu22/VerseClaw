@@ -51,7 +51,7 @@ requiredTests:
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/line-c-grounding-production-entry-readiness-plan.md --no-diff
   - node node_modules/vitest/vitest.mjs run tests/unit/runtime-grounding-authority-effectiveness.test.ts tests/unit/runtime-grounding-shadow-consumers.test.ts tests/unit/context-provider-registry.test.ts tests/unit/runtime-trace-context-provider.test.ts tests/unit/runtime-symbol-context-provider.test.ts tests/unit/runtime-agent-map-context-provider.test.ts tests/unit/runtime-memory-context-provider.test.ts
   - node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - git diff --check -- harness/specs/tasks/line-c-grounding-controlled-internal-opt-in-pilot.md runtime-research/handoffs/line-c-grounding-controlled-internal-opt-in-pilot/README.md runtime-research/handoffs/line-c-grounding-controlled-internal-opt-in-pilot/implementation-synthesis.md runtime-research/agent-runtime-index.md
+  - git diff --check -- harness/specs/tasks/line-c-grounding-controlled-internal-opt-in-pilot.md docs/dev/runtime-research-boundaries.md
 acceptance:
   - Context and validation pass, or normal validation is blocked only by unrelated dirty worktree state and `--no-diff` passes.
   - Disabled parity, explicit-only activation, no raw/untrusted retention, `authority: "none"`, and rollback drill evidence are documented.
@@ -60,9 +60,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-c-grounding-controlled-internal-opt-in-pilot/README.md
-    - runtime-research/handoffs/line-c-grounding-controlled-internal-opt-in-pilot/implementation-synthesis.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 nextPhaseEntry:
   Allowed next phase:
     - Phase B diagnostics presentation/operator readiness may proceed only after this synthesis is accepted.

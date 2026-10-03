@@ -67,7 +67,7 @@ requiredTests:
   - If full diff-aware validate is blocked by unrelated dirty files, run Phase 32 validate with `--no-diff` and record the blocker.
   - C:\Users\27933\.cherrystudio\bin\rtk.exe node node_modules/vitest/vitest.mjs run tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts tests/unit/runtime-memory-read-hydration-consumer-evaluation.test.ts tests/unit/task-loop-controller.test.ts
   - C:\Users\27933\.cherrystudio\bin\rtk.exe node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - C:\Users\27933\.cherrystudio\bin\rtk.exe rg -n 'Gateway route|Electron IPC|renderer UI|host-api|api-client|shared contract|TaskLoop default|prompt injection|model-message|context injection|runtime authority|durable fact authority|DB write authority|mutation authority' openclaw_runtime/src/agents/task-loop-runtime-memory-read-hydration-shadow.ts tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts harness/specs/tasks/phase-32-runtime-memory-read-hydration-controlled-internal-shadow-pilot.md runtime-research/handoffs/phase-32-runtime-memory-read-hydration-controlled-internal-shadow-pilot/deep-validation.md
+  - C:\Users\27933\.cherrystudio\bin\rtk.exe rg -n 'Gateway route|Electron IPC|renderer UI|host-api|api-client|shared contract|TaskLoop default|prompt injection|model-message|context injection|runtime authority|durable fact authority|DB write authority|mutation authority' openclaw_runtime/src/agents/task-loop-runtime-memory-read-hydration-shadow.ts tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts harness/specs/tasks/phase-32-runtime-memory-read-hydration-controlled-internal-shadow-pilot.md docs/dev/runtime-research-boundaries.md
   - C:\Users\27933\.cherrystudio\bin\rtk.exe rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components src/lib shared electron
   - C:\Users\27933\.cherrystudio\bin\rtk.exe rg -n 'readRuntimeMemoryHydrationShadow|hydrateRuntimeMemoryShadowContext|DatabaseSync|node:sqlite|appendEpisode|appendFact|invalidateFact|withWriteTransaction|insertInto|updateTable|deleteFrom' openclaw_runtime/src/agents/task-loop-controller.ts openclaw_runtime/src/agents/task-loop-runtime-memory-read-hydration-shadow.ts tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts
 acceptance:
@@ -83,7 +83,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-32-runtime-memory-read-hydration-controlled-internal-shadow-pilot/deep-validation.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 32 Runtime Memory Read Hydration Controlled Internal Shadow Pilot

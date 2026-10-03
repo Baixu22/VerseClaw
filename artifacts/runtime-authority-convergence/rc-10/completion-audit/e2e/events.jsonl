@@ -1,0 +1,15 @@
+{"at":"2026-09-28T22:35:29.155Z","driven_by":"agent","actor":"rc10-operator-driver","event":"begin","candidate":{"commit":"1de18d5b397c421d08b2fdf93ba8760a50fd0edf","tree":"c9728d66f4c9aa81c203f6fd2f0fe82c272513f8","dirty":true},"scenario":"OPERATOR-ALL","root":"D:\\ClawX\\test-results\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\rc10-operator"}
+{"at":"2026-09-28T22:36:04.342Z","driven_by":"agent","actor":"rc10-operator-driver","event":"ready","gateway":{"state":"running","port":59376,"reconnectAttempts":0,"gatewayReady":true,"pid":39928,"connectedAt":1790634964165,"uptime":1},"ircPort":59374}
+{"at":"2026-09-28T22:36:05.527Z","driven_by":"agent","actor":"rc10-operator-driver","event":"approval.pending","scenario":"H-02","jobId":"9772c359-38c4-4ff4-8040-4a91ee44c542","approvalId":"aprv_504a1145-79d9-4067-b967-69a5604ccd7d"}
+{"at":"2026-09-28T22:36:07.190Z","driven_by":"agent","actor":"rc10-operator-driver","event":"scenario.pass","id":"H-02"}
+{"at":"2026-09-28T22:36:37.014Z","driven_by":"agent","actor":"rc10-operator-driver","event":"scenario.pass","id":"H-03"}
+{"at":"2026-09-28T22:36:37.499Z","driven_by":"agent","actor":"rc10-operator-driver","event":"approval.pending","scenario":"H-04","jobId":"7f49987c-54d1-46cd-8a16-0770fc7b8bc9","approvalId":"aprv_0fce7c94-7231-425d-987b-7b4c9586f9c1"}
+{"at":"2026-09-28T22:36:50.777Z","driven_by":"agent","actor":"rc10-operator-driver","event":"gateway.restarted","oldPid":39928,"newPid":3684}
+{"at":"2026-09-28T22:36:51.865Z","driven_by":"agent","actor":"rc10-operator-driver","event":"scenario.pass","id":"H-04"}
+{"at":"2026-09-28T22:36:53.301Z","driven_by":"agent","actor":"rc10-operator-driver","event":"approval.pending","scenario":"H-05","jobId":"f4d63a3f-a0b9-427a-b4d7-2f3578e8afa5","approvalId":"aprv_132f3af1-78d5-4c97-92a2-49d944458905"}
+{"at":"2026-09-28T22:37:11.552Z","driven_by":"agent","actor":"rc10-operator-driver","event":"gateway.restarted","oldPid":3684,"newPid":19080}
+{"at":"2026-09-28T22:37:13.295Z","driven_by":"agent","actor":"rc10-operator-driver","event":"scenario.pass","id":"H-05"}
+{"at":"2026-09-28T22:37:13.970Z","driven_by":"agent","actor":"rc10-operator-driver","event":"approval.pending","scenario":"H-06-deny","jobId":"c7681832-b0c3-46e0-83ad-d8a794f514c9","approvalId":"aprv_de82fcda-c3e3-4742-89fc-c0db0603238a"}
+{"at":"2026-09-28T22:37:14.842Z","driven_by":"agent","actor":"rc10-operator-driver","event":"approval.pending","scenario":"H-06-cancel","jobId":"4d63976e-ab8f-4e7e-8d8e-1f30c63b4210","approvalId":"aprv_38840c98-ea7e-4454-a076-079757dcef7a"}
+{"at":"2026-09-28T22:37:26.195Z","driven_by":"agent","actor":"rc10-operator-driver","event":"scenario.pass","id":"H-06"}
+{"at":"2026-09-28T22:37:31.601Z","driven_by":"agent","actor":"rc10-operator-driver","event":"end","evidence":"D:\\ClawX\\test-results\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\rc10-operator\\evidence","failures":[]}

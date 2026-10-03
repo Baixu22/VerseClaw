@@ -1,0 +1,115 @@
+{
+  "acceptance_criteria": [
+    "生产静态扫描只有一个 assembly authority",
+    "任意 source 不能绕过总预算",
+    "组合测试覆盖 working-memory、role-memory、CVK、VToken 同时开启",
+    "flag off/kill switch 零查询零注入"
+  ],
+  "alignment": {
+    "fit": "aligned",
+    "fit_confidence": 0.95,
+    "user_goal": "实现统一而不重复的 Context 主路径",
+    "validation_plan": [
+      "entry scan",
+      "candidate ordering/dedup tests",
+      "combined provider integration tests",
+      "lineage assertions"
+    ],
+    "why_not_enough": "仍需 UAS-03 移除 VToken 自有业务状态和无关串行。",
+    "why_this_task": "它直接解决当前双入口、私账和重复投影问题。"
+  },
+  "alignment_records": [],
+  "assumptions": [
+    "现有 TF-0002 保留历史 done，本任务只闭合 residual"
+  ],
+  "children": [],
+  "confidence": 0.99,
+  "context_tags": [],
+  "created_at": "2026-07-27T13:16:29.659095Z",
+  "deprecated_at": null,
+  "derived_progress": 100.0,
+  "desired_outcomes": [
+    "所有 context source 先产出 ContextCandidate",
+    "先排序去重再收费",
+    "最终 lineage 完整记录保留、截断和丢弃原因"
+  ],
+  "deviations": [
+    "TFD-67e4e8fbdf"
+  ],
+  "difficulty": "high",
+  "estimated_total_minutes": 2400,
+  "evidence": [
+    "harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md",
+    "C:/Users/27933/Desktop/result/final/dcs-first-architecture-synthesis-final-2026-08-02.md",
+    "docs/dev/full-chain-maturity-audit-2026-08-02.md",
+    "docs/dev/tf0013-residual-crosscheck-20260930.md",
+    "artifacts/runtime-authority-convergence/rc-02/acceptance/finalReport.json",
+    "artifacts/runtime-authority-convergence/rc-03/acceptance/finalReport.json",
+    "docs/dev/tf0013-compass-budget-20260930.md",
+    "artifacts/tf0013-compass-budget-20260930/verification.json",
+    "artifacts/tf0013-compass-budget-20260930/autoreview.json",
+    "artifacts/tf0013-compass-budget-20260930/source-hashes.json",
+    "docs/dev/tf0013-message-budget-20260930.md",
+    "artifacts/tf0013-message-budget-20260930/verification.json",
+    "artifacts/tf0013-message-budget-20260930/autoreview.json",
+    "artifacts/tf0013-message-budget-20260930/source-hashes.json",
+    "docs/dev/tf0013-native-budget-20260930.md",
+    "artifacts/tf0013-native-budget-20260930/evidence.json",
+    "artifacts/tf0013-native-budget-20260930/verification.json",
+    "artifacts/tf0013-native-budget-20260930/source-hashes.json",
+    "artifacts/tf0013-native-budget-20260930/review.json",
+    "docs/dev/tf0013-native-wire-20261001.md",
+    "artifacts/tf0013-native-wire-20260930/evidence.json",
+    "artifacts/tf0013-native-wire-20260930/verification.json",
+    "artifacts/tf0013-native-wire-20260930/native-report.json",
+    "artifacts/tf0013-native-wire-20260930/rpc.jsonl",
+    "artifacts/tf0013-native-wire-20260930/source-hashes.json",
+    "artifacts/tf0013-native-wire-20260930/autoreview.json",
+    "artifacts/tf0013-native-wire-20260930/autoreview-plugin.json",
+    "artifacts/tf0013-native-wire-20260930/plugin-types-baseline.json",
+    "docs/dev/tf0013-authority-closeout-20261001.md",
+    "artifacts/tf0013-codex-contract-20261001/acceptance.json",
+    "artifacts/tf0013-codex-contract-20261001/candidate-verification.json",
+    "artifacts/tf0013-codex-contract-20261001/source-hashes.json",
+    "artifacts/tf0013-codex-contract-20261001/autoreview.json",
+    "artifacts/tf0013-codex-contract-20261001/candidate-native/rpc.jsonl",
+    "artifacts/tf0013-codex-contract-20261001/candidate-native/provider-requests.json",
+    "artifacts/tf0013-codex-contract-20261001/SHA256SUMS"
+  ],
+  "execution_hints": [
+    "Context Orchestrator 是最终 selection、dedup、budget、projection 与 lineage authority；禁止恢复私有生产预算或调用顺序优先级",
+    "无 turnId 私有预算只保留兼容路径，不得重新接入 attempt 或 compaction 生产入口",
+    "三个产品锁、C1 keep-off、TF-0006 blocked、Runtime Memory diagnostics-only 与 SEKB 零自动写回保持不变",
+    "原生分发/公开 SDK 共享预算开发验证已完成；fixture 不等于外部 app-server 或正式 RC 证据。不得以真人 verdict/数据为前置。",
+    "2026-10-01 已完成真实 Codex app-server、本地 scripted provider 的预算和 bootstrap/stale resume 验证；actor=codex/root、driven_by=agent。历史 fixture 局限由本增量补充，不代表付费模型质量、全新安装包或 RC 验收。"
+  ],
+  "id": "TF-0013",
+  "kind": "task",
+  "next_action": "本节点已按证据自动收口；继续用户全部剩余节点目标，核对TF-0010/TF-0028与既有RC归档，再推进其余就绪节点。产品默认值、D7范围裁决与发布权限保持独立。",
+  "non_goals": [
+    "learned context manager",
+    "自动 Memory 写回"
+  ],
+  "primary_parent": "TF-0010",
+  "priority": 1,
+  "progress": 100.0,
+  "progress_source": "manual",
+  "purpose": "消除动态 Assembler 私有预算、调用顺序冒充优先级和跨 provider 重复投影。",
+  "remaining_minutes_max": null,
+  "remaining_minutes_min": null,
+  "requirements": [
+    "纳入 working-memory、CVK、role/runtime memory 和 VToken",
+    "使用稳定 candidateId/dedupKey",
+    "P0 去重使用 authority object identity/version/content digest，不引入模型语义去重"
+  ],
+  "source_sessions": [],
+  "status": "done",
+  "success_metrics": [
+    "私有 context budget 0",
+    "重复 authority object 注入 0",
+    "声明和实际优先级偏差 0"
+  ],
+  "summary": "UAS-02 residual已完成干净候选验收：统一候选仲裁/预算覆盖embedded、COMPASS与原生SDK；跨模块共享owner、bootstrap恢复、诊断契约已修复。18门通过、233测试、7次真实native请求；Agent Dev证据刷新87单测/4 Electron通过。非新的全量RC、发布或GA。",
+  "title": "UAS-02 Context Orchestrator residual 收口",
+  "updated_at": "2026-10-01T06:07:17.540316Z"
+}

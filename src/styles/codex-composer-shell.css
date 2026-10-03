@@ -92,9 +92,16 @@
 
 .composer-send-button[data-send-state='ready'],
 .composer-send-button[data-send-state='running'],
+.composer-send-button[data-send-state='running-with-draft'],
 .composer-send-button[data-send-state='paused'] {
   color: var(--color-text-button-primary);
   background: var(--color-background-button-primary);
+}
+
+/* 运行中且有草稿：主按钮语义切换为"排队这条草稿"，用一圈强调描边提示它
+ * 与旁边纯暂停语义（无草稿时）不同。双击仍可暂停。 */
+.composer-send-button[data-send-state='running-with-draft'] {
+  box-shadow: 0 0 0 1.5px color-mix(in oklab, var(--color-background-button-primary) 45%, transparent);
 }
 
 .composer-send-button[data-send-state='starting'] {
@@ -110,9 +117,14 @@
 
 .composer-send-button[data-send-state='ready']:hover,
 .composer-send-button[data-send-state='running']:hover,
+.composer-send-button[data-send-state='running-with-draft']:hover,
 .composer-send-button[data-send-state='paused']:hover {
   color: var(--color-text-button-primary);
   background: color-mix(in oklab, var(--color-background-button-primary) 84%, var(--color-background-surface));
+}
+
+.composer-send-button[data-send-state='running-with-draft']:hover {
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-background-button-primary) 60%, transparent);
 }
 
 .composer-send-button[data-send-state='idle']:disabled {

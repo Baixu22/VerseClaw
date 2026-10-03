@@ -79,7 +79,7 @@ describe("memory host API facade", () => {
       source: "user",
       evidenceRefs: [{ type: "manual" as const, ref: "test" }],
     };
-    await api.propose(proposal);
+    await api.propose(proposal as never);
 
     expect(gatewayManager.rpc).toHaveBeenCalledWith(
       "memory.propose",
@@ -132,7 +132,7 @@ describe("memory host API facade", () => {
     const api = createMemoryApi({ gatewayManager: gatewayManager as never });
 
     const payload = { id: "card-1", patch: { content: "updated content" } };
-    await api.update(payload);
+    await api.update(payload as never);
 
     expect(gatewayManager.rpc).toHaveBeenCalledWith("memory.update", payload, 15_000);
   });

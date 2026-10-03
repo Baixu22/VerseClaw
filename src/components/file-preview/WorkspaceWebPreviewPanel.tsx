@@ -349,6 +349,9 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
         width: 1280,
         height: 900,
         authPersistence: 'profile',
+        workspaceId,
+        sessionKey: currentSessionKey,
+        agentId: activeWorkspace?.selectedAgentId ?? activeWorkspace?.agentId,
       });
       let nextSession = result.session;
       persistAgentBrowserSession(nextSession);

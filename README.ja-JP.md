@@ -45,7 +45,21 @@ Product capability statements must be checked against the canonical matrix in `s
 
 書き込み後の自動検証も明示的な opt-in で、既定では無効です。有効化すると、Verse Claw は有界なプロジェクトテストコマンドを 1 つ検出し、既存の effective `exec` の policy、approval、sandbox、timeout 経路で実行します。成功、失敗、skip 理由、有界な出力末尾は会話に表示され、検証失敗によって成功済みの書き込みが rollback されることはありません。
 
+フォアグラウンドコマンドの進捗には直近の出力を保持し、キャンセルまたは終了後は更新を止めます。ツールの成功・失敗後に届く進捗も返しません。引数やポリシーの準備中にキャンセルされたツールは起動せず、キャンセル後の遅延成功も返しません。非同期のポリシー確認と結果の観測中もキャンセルを尊重します。リモート `exec` は stdout、stderr、エラーテキスト、タイムアウト状態を保持し、直接実行と prepare 経由のどちらも元メッセージのルーティング情報を渡します。キャンセルされた `process` 呼び出しは、その後の入力書き込み、stdin のクローズ、出力の消費に進まず、poll 結果は実際の `exitCode` と `exitSignal` を保持します。重大なツールループの終了時はモデルのフォールバックも停止します。画像・音声・リソースの内容変化を進捗として認識し、process poll の待機時間は進捗に数えず、履歴ウィンドウは run ごとに設定された終了しきい値へ届く範囲まで拡張します。低く設定したしきい値でもループ警告を出し、ポリシーによる引数の書き換えやセッションのエイリアス統合後も、ループ検出に必要な履歴を保持します。ポリシー、承認、アダプタ経路のキャンセルはツール遮断に変換せず、キャンセルとして再送出します。`node.invoke` のローカル待機はキャンセル時に遅延成功を返しません。`process remove` はフォアグラウンドセッションを終了できず、`send-keys` は書き込み後もキャンセルを確認し、最初の poll は既に終了した子プロセスを観測します。ピンポン警告には無進捗の証拠が必要で、エイリアス統合は同じ活動周期の警告待機時間を保持して新しい進捗によるリセットを維持し、結果オブザーバの例外で成功結果を失敗に変えません。
+
+未ラップのツール、クライアント委譲、承認登録、各ポリシー段階でもキャンセルを尊重します。キャンセル理由は遅れて届くツールの成功・失敗より優先され、キャンセルされた委譲は引き継ぎ待ちの記録を破棄します。プロセス入力のコールバック待機もキャンセルできますが、書き込み済みのバイトを取り消したり、バックグラウンドプロセスを終了したりはしません。子プロセスの終了後、poll は stdout と stderr の読み取り完了を待ってセッションを終了し、実行の所有者が記録した終端状態を保持します。削除済みプロセスは遅れて届く終了コールバックでも再表示されません。同じ run 内で記録済みのツール結果が重複して届いても、計数は一度だけです。ピンポン警告には少なくとも四つの完了済み交互呼び出し（`ABAB`）が必要で、両側それぞれで安定した結果の繰り返しを確認します。証拠と未検証項目は[第4バッチのローカル検証記録](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md)を参照してください。
+
+ツールの準備やポリシーフックが戻る前でも、キャンセルでローカル待機を終了できます。プラグイン内部で既に始まった処理は停止しません。入力の確認中にプロセスが終了した場合、応答は実行所有者が記録した終了状態と出力を保持します。セッションのエイリアス統合では同じツール呼び出しを一度だけ数え、`process poll` の待機時間だけを変えても無進捗の検出はリセットしません。[第5バッチの検証記録](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md)を参照してください。
+
+第6バッチでは、node ターゲット解決、リモート prepare、承認スナップショット、自動レビュー、承認登録の待機もキャンセルで解放し、遅れて届く結果が後続実行を開始しないようにしました。重複する終了通知は最初の終端記録を保持し、finished ログの読み取りは古い poll backoff を消去し、無効な poll/timeout 入力は安全な既定値へ戻します。[第6バッチの検証記録](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md)を参照してください。
+
 DCS を有効にした coding turn では、knowledge、recent actions、tool registry の実際の provider-visible prompt 増加量を、既存の共有 turn-injection ledger に個別記録します。固定予算は拡大せず、有効な DCS projection には既存の有界容量を確保し、truncate と drop は明示的な会計証拠として残します。
+
+COMPASS SSP と応答前の検索も ContextCandidate の選択処理を通じて同じ turn 予算を共有し、キュー実行、CLI、ネイティブ harness にも適用されます。拡張 kill switch は準備処理を停止し、切り詰められた検索結果は完全に注入された事実として集計しません。
+
+embedded runtime とネイティブ harness SDK の ContextEngine によるメッセージ置換は同じ予算を共有します。そのまま保持する履歴は再計上せず、新規・書き換えメッセージ全体が残り予算に収まらない場合は元の履歴を保持します。ネイティブの system addition も同じ残り予算を使い、同一内容での起動再試行は二重計上しません。ツール呼び出しの構造は切り詰めません。
+
+ソース runtime がビルド済みのネイティブプラグインを読み込む場合も、実行中の attempt が所有する元の予算で両側の追加内容を判定します。
 
 Runtime Memory 注入、SEKB 自動 writeback、Browser の無監督または private-network 利用、C6/C7 自動切替、Coding WAL、本番 repository の自動 merge、複数 Forge/DAG 拡張は対象外です。現時点の証拠は engineering と実プロセステストであり、human canary と release approval は未完了です。コンポーネントごとの唯一の分類は [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview) を参照してください。
 
@@ -136,7 +150,9 @@ OfficeCLI も 設定 -> スキル -> 機能プラグイン から管理できま
 コンポーザーから挿入した Skill は `/skill-name` 形式のチップとして表示され、チップをクリックすると右側のプレビュー側欄でその Skill の `SKILL.md` を開けます。
 コンポーザーで `/` を入力すると、Context Palette が開き、Wiki 検索、読み取り専用ナレッジ範囲の変更、レビュー、CI 修復、テスト作成、diff 説明、Task Ledger、Mission Control、圧縮、セッション fork のクイックアクションを使えます。いずれも既存の Chat / Session フローを使います。セッションライフサイクルコマンド（`/new`、`/resume <キーワード>`、`/rename <名前>`、`/archive`、`/delete`、`/clear`、`/copy`）はサイドバーと同じ store/host 経路を使用します：`/new` で新しいチャットを開始、`/resume` でキーワードに一致するセッションに切替、`/rename` で現在のセッション名を変更、`/archive` と `/delete` でアーカイブまたは完全削除、`/clear` でローカルメッセージ表示をリセット、`/copy` でセッション記録を markdown としてコピーします。
 `@agent` で別のエージェントを選ぶと、Verse Claw はデフォルトエージェントを経由せず、そのエージェント自身の会話コンテキストへ直接切り替えます。各エージェントのワークスペースは既定で分離されていますが、より強い実行時分離は OpenClaw の sandbox 設定に依存します。
-Verse Claw は既定で軽量な `policy-light` サンドボックス層を使い、Main プロセスの権限ゲート、ワークスペースルート検査、Gateway RPC 承認、OpenClaw exec approval を組み合わせて制御します。Docker と SSH は明示的に選択する `strong` provider として残り、起動要件ではありません。
+Verse Claw は既定で軽量な `policy-light` サンドボックス層を使い、Main プロセスの権限ゲート、ワークスペースルート検査、Gateway RPC 承認、OpenClaw exec approval を組み合わせて制御します。Docker と SSH は明示的に選択する `strong` provider として残り、起動要件ではありません。ランタイムの exec 承認境界にもアプリ内の入口があります。OpenClaw があるコマンドを保留すると、アプリレベルのプロンプトがコマンドと作業ディレクトリを示し、ランタイムが提示した決定のいずれかを `exec.approval.resolve` で返します。拒否した場合はプロンプトが残り、ランタイムの理由が表示されます。回答はどのワークスペース権限モードでも可能です。
+コマンドのリスク判定は前方一致ではなくサブコマンド単位で行うため、先頭のグローバルフラグでコマンドの実体を隠すことはできません。`git` では、任意コード実行につながるフラグ（`core.pager`/`core.editor`/`alias.*` を設定する `-c`、`--config-env`）、helper バイナリの探索先を差し替えるフラグ（`--exec-path`）、操作を別リポジトリへ移すフラグ（`-C`、`--git-dir`、`--work-tree`、`--namespace`）は、後続のサブコマンドが何であっても高リスクとして扱われます。グローバルフラグによって破壊的操作やネットワーク操作が通常の write に格下げされることもありません。
+通常の編集が自動承認されるワークスペース内であっても、Git リポジトリのメタデータへの書き込みは承認付きのままです。そこに書かれた hook や config は次の Git 実行時に動作するためで、ネストしたリポジトリ、submodule、linked worktree が使う `.git` ポインタファイルも対象になります（`.gitignore`、`.gitattributes`、`.github/` は通常のファイルのままです）。破壊的な Git 操作の承認プロンプトは一般的な警告ではなく判定根拠を示します。push の対象リモートと branch、その branch が共有 branch かどうか、branch 未指定時に適用される refspec の範囲、reset が作業ツリーの変更を破棄するのか branch ポインタを移動するだけなのか、を提示します。
 Docker サンドボックスが Windows ホスト上で動作し、デーモンが WSL2（または `DOCKER_HOST` 経由の他の Linux デーモン）にある場合、バインドソースは自動的に WSL2 マウント名前空間へ変換されます（`C:\...\workspace` → `/mnt/c/.../workspace`、`\wsl$\<distro>\...` → POSIX）。`invalid volume specification` でボリュームマウントが失敗しなくなり、ローカルの Windows named-pipe デーモンと macOS/Linux ホストには影響しません。
 Settings、Doctor、diagnostics は同じ effective sandbox policy を表示し、要求/有効 provider、runtime level、exec/network policy、Docker の利用可否、縮退理由を確認できます。
 Settings → System & Runtime には Project Rules Center もあり、現在の workspace の `AGENTS.md` を確認し、`.clawx/rules/*.md` を一覧表示し、決定的な検証 warning を示し、欠落時には新しいルール真実源を作らずに保守的な `AGENTS.md` テンプレートを作成できます。
@@ -181,16 +197,18 @@ Task Ledger ページは、長期作業のために workspace 単位かつ Agent
 Review Center は、未コミット変更、ベースブランチとの差分、または指定 commit に対して読み取り専用の AI review を実行します。severity 付きの findings、file/line アンカー、サニタイズ済み review trace を生成し、finding または review 全体を Task Ledger review node に変換できます。stage、commit、ファイル編集は行いません。Git patch は共有の構造化 patch contract で検証され、malformed または producer-truncated の diff はモデルレビュー開始前に停止します。Chat では、write journal で裏付けられた成功済みの `edit` とファイル全体の `write` に rich diff と同一 text patch のコピー操作を表示します。mutation lineage が欠落、古い、または不完全な場合、Renderer の状態から diff を推測して再構築しません。Remote PR タブは Main-owned host API を通じて GitHub PR の detail、commits、files、構造化 diff、checks、reviews、branch protection、および指定ファイル内容を上限付きで読み取ります。完全性、capability、readiness は明示され、不足、truncated、unauthorized、unknown の証拠が ready と解釈されることはありません。review、line comment、thread reply、許可リスト内の metadata 更新は既定で draft に留まり、完全一致する一回限りの action-bound approval を消費した場合だけ公開されます。head/version drift は fail closed となり、partial または ambiguous な結果は無条件再試行ではなく reconciliation を表示します。制御された merge も同じ Main-owned policy を使い、実行直前に head と readiness を再取得し、正確な strategy と policy 証拠に結び付いた短時間・一回限りの approval を消費して expected head SHA を送信します。本番 repository は allowlist 外、Agent merge は既定で無効であり、merge 後の refresh または audit の失敗は merge 再試行ではなく reconciliation として表示されます。
 
 ### セッションワークスペース
-Chat のワークスペースは、連続したコンパクトな作業面として `Review`、`Terminal`、`Browser`、`Files`、`Artifacts`、`Audit` の 6 タブを表示します。Changes は Review に、ファイルプレビューは Files に含まれます。Browser には Preview と監督付き Live があり、Terminal は同じシェルセッションを保ったまま下部パネルとサイドタブを切り替えられます。狭い画面では Files がツリーとプレビューの単一ビューを切り替えます。既存の Main 所有 Browser、Terminal、Git、Review、スクリーンショット、snapshot、承認 API を引き続き利用し、`/browser` と `/code-review` は対応するワークスペースを開く互換ルートとして残しています。Task Ledger と ClawGraph はワークスペースのコンテキスト入口から全画面ツールとして開けます。
+Chat のワークスペースは、連続したコンパクトな作業面として `Review`、`Terminal`、`Browser`、`Files`、`Artifacts`、`Audit` と既存の Agents ツールタブを必要に応じて開きます。Changes は Review に、ファイルプレビューは Files に含まれます。Browser には Preview と監督付き Live があり、Terminal は同じシェルセッションを保ったまま下部パネルとサイドタブを切り替えられます。狭い画面では Files がツリーとプレビューの単一ビューを切り替えます。既存の Main 所有 Browser、Terminal、Git、Review、スクリーンショット、snapshot、承認 API を引き続き利用し、`/browser` と `/code-review` は対応するワークスペースを開く互換ルートとして残しています。Task Ledger と ClawGraph はワークスペースのコンテキスト入口から全画面ツールとして開けます。会話の復元や読み取り専用 Review の表示ではプロジェクトファイルを書き換えません。旧トピックのリセットは、新規会話、ハンドオフ、新しいエージェント会話の明示的な作成時に行います。
 
 ### Knowledge Hub
+Knowledge は Library を既定表示とし、もう一つの主ビューは Review Queue です。Inbox、Draft、Proposal で絞り込み、既存のレビュー操作を開けます。文書は Preview で開き、Edit または New note を明示的に選ぶと編集できます。960px 幅では編集とプレビューの一方だけを表示します。More > Maintenance と Source tools から高度な操作を利用できます。ナレッジベースへの質問は Chat の専用モードで行い、引用とローカル会話チェックポイントを保持します。Library に戻ると未完成のノートと選択した出典が復元されます。回答の保存は候補作成までで、提案のないドラフトは変更提案を作成してから、ユーザーが明示的に承認・適用します。
+
 Knowledge ページは OpenClaw `memory-wiki` を通じて、出典付き wiki コンテキストを管理します。既定では Verse Claw 管理の隔離 native vault を使い、unsafe local-vault モードへ切り替えずに、制限されたテキストファイルやフォルダーを取り込めます。また、ローカル OKF v0.1 Markdown bundle を検証して `wiki.ingest` 上の薄い互換アダプターとしてインポートできます。状態確認、検索、結果確認、compile、lint、Knowledge Inbox、draft/proposal レビュー、provenance、ガバナンスの流れを備えています。Inbox は Chat、Task Ledger、ファイル、OKF、ClawGraph、agent 由来の候補知識を正式な wiki の外に保持し、ユーザーがドラフトへ昇格または破棄するまで書き込みません。provenance は出典参照と読み取り/参照イベントだけを記録し、wiki ページを変更しません。Chat の知識範囲（`None`、`Memory`、`Wiki`、`All`）は読み取り範囲だけを表します。Agent は search/get で文脈を読めますが、scope が有効でも書き込み、更新、アーカイブ、削除、マージ、apply はできません。Chat では `/wiki` で検索し、明示的な wiki 参照を visible chip として添付してから送信できます。`/memory`、`/all`、`/none`、`/scope` は読み取り範囲だけを変更し、書き込み権限にはなりません。知識呼び出しモードの既定は Suggest で、関連知識は任意の chip として表示されます。Auto-read は明示的に有効化した場合のみ、少数の新しく高信頼な読み取り専用参照を添付します。セッション由来の知識や agent/Knowledge Steward の提案は編集可能な draft/proposal に入り、ユーザーの明示的な確認後にだけ、単一の ReviewBundle を通じて wiki へ適用されます。Host は適用前に digest・revision・状態を再検証します。ガバナンスメタデータは共有 openclaw-state SQLite に保存され、セッションの完全削除は派生データのクリーンアップ完了後に transcript を削除し、失敗時は incomplete/retryable として報告します。知識検索は DCS 派生の SourceSet レポートを出力できるようになりました。exact/lexical/semantic のハイブリッド検索、競合の明示的な開示、freshness による並び替え、引用解決可能な claim、証拠ルールから計算される grounded/partial/missing_sources 状態を含みます。Runtime Memory はこのレポートでは shadow 比較のみです。これはパッケージレベルの工学的証拠であり、enabled by default や generally available を意味しません。Knowledge のレビューワークスペースでは、単一の ReviewBundle 確認経路で governed なページライフサイクル操作（更新、マージ、アーカイブ、失効、削除、復元）を実行できるようになりました。expectedRevision CAS、冪等性、EffectReceipt、表示可能な receipt 履歴を含みます。サポートされない直接 wiki 変更は引き続き利用できません。6 面（明示的参照、自動検索、Role Memory、SEKB 検索、Source Set 合成、タスク後候補キャプチャ）の canary レポートは再現可能に生成され、shadow/opt-in に留まり、E4/E5 は明示的に not-evaluated/blocked です。Obsidian は任意の拡張であり、必須依存ではありません。ガバナンスダッシュボードはオンデマンドの健全性チェックにより矛盾、陳腐化、未解決参照を可視化します。監視ディレクトリはプロジェクト文書を pending Inbox にだけ入れ、正式な wiki への direct-ingest や synthesis 作成は自動実行しません。
 
 高度な SEKB 診断では、既定でオフの `runtime.contextBlock.sekb.shadowEvaluation.enabled` を明示的に有効化できます。`runtime.contextBlock.sekb.enabled` も必要であり、`OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED` は shadow フラグだけを上書きします。この機能は capture と completion の証拠用に有界で決定的な advisory metadata を保存するだけで、trajectory の除外、principle の書き込み、タスク完了判定の変更は行いません。
 
 任意の `runtime.contextBlock.sekb.batchDistillationAssistant.enabled` も既定ではオフで、SEKB の主ゲートが必要です。`OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED` はこの assistant のフラグだけを上書きします。operator は明示的に手動実行する必要があります。Host/CLI は DEEPSEEK_API_KEY があればそれを使い、なければ deterministic fallback になります。この assistant が送信するのは、有界かつ秘匿化した trajectory projection と有界な既存 principle summary だけです。可観測な 30 秒の retry は一度だけで、provider unavailable、timeout、無効な JSON/schema、または上限到達時には既存の決定的な distillation suggestion を返します。安全な集約 trace/cost evidence だけを記録し、既存の `confirm_and_save` 確認パスより前に Principle、Memory、ContextBlock、index、trajectory state を書き換えることはありません。
 
-Knowledge > Runtime Lessons は既存の typed 経路を使い、決定的な提案、正確な候補レビュー、明示的な確認または却下、確認済み原則の取得を提供します。提案とレビューは書き込みを行いません。確認には可視のセッション系譜が必要で、引き続き `confirm_and_save` を使います。取得結果は有界な助言テキストとして表示するだけで、Chat へ自動添付しません。Hermes の shadow export/protocol/report と batch 運用は引き続き CLI/Host 専用です。すべての feature flag は既定オフのままで、principle / memory / ContextBlock / index / trajectory state を自動書き込みしません。`artifacts/sekb-hermes-phase-a5/` のオフライン成果物は非権威の評価証跡です。
+Knowledge > More > Runtime Lessons は既存の typed 経路を使い、決定的な提案、正確な候補レビュー、明示的な確認または却下、確認済み原則の取得を提供します。提案とレビューは書き込みを行いません。確認には可視のセッション系譜が必要で、引き続き `confirm_and_save` を使います。取得結果は有界な助言テキストとして表示するだけで、Chat へ自動添付しません。Hermes の shadow export/protocol/report と batch 運用は引き続き CLI/Host 専用です。すべての feature flag は既定オフのままで、principle / memory / ContextBlock / index / trajectory state を自動書き込みしません。`artifacts/sekb-hermes-phase-a5/` のオフライン成果物は非権威の評価証跡です。
 
 ローカル CLI/Host ops は `openclaw_runtime/dist/knowledge/sekb/index.js` を読み込みます。`pnpm build:runtime` または `pnpm exec node scripts/build-openclaw-runtime.mjs --sekb-only` で構築してください。dist がない場合 Host は `runtimeUnavailable` に降格し、CLI はビルド案内を出します。`pnpm sekb:hermes:gate` に dist は不要です。
 
@@ -209,7 +227,7 @@ Shadow V1 のスコアリングと閾値 50 は凍結。ラベリング kit の�
 
 ### Workspace Git コントロール
 Workspace サイドバーはまずコンパクトな入口ランチャーを開きます。現在の workspace が Git リポジトリの場合だけ Review 入口が表示され、Git ではないプロジェクトには Git コントロールを表示しません。
-Workspace サイドバーには Git ワークベンチがあり、リポジトリ状態、side-by-side ファイル diff、stage、patch コピー、承認付きのファイル revert、commit、branch、stash、worktree、GitHub Pull Request を扱えます。上部の readiness strip はローカル Git、組み込み Agent Git tools、worktree 数、`gh` 認証状態を数値化し、今使える能力をその場で確認できます。Worktree 追加は新規 branch と既存 branch の両方に対応し、新しい worktree は既定でリポジトリの隣に作られます。同じ Main プロセスの Git service が組み込み `clawx-git` MCP server も支えるため、Agent は shell コマンドを直接組み立てず、Verse Claw の権限管理を通じて制御された Git / PR ツールを呼び出します。revert、pull、push、worktree remove/prune、PR 作成など状態を書き換えたり公開したりする操作は承認付きです。
+Workspace サイドバーには Git ワークベンチがあり、リポジトリ状態、side-by-side ファイル diff、stage、patch コピー、承認付きのファイル revert、commit、branch、stash、worktree、merge、rebase、reset、GitHub Pull Request を扱えます。コンパクトな Audit タブは権限判断と最新の `git reflog --all` エントリーをまとめて表示し（有界ビュー、上限を超えた古い項目は明示）、commit、checkout、reset、rebase、その他の参照移動を示します。上部の readiness strip はローカル Git、組み込み Agent Git tools、worktree 数、`gh` 認証状態を数値化し、今使える能力をその場で確認できます。Worktree 追加は新規 branch と既存 branch の両方に対応し、新しい worktree は既定でリポジトリの隣に作られます。統一 diff は構造化された patch エンジンを通じて適用、revert、または書き込みなしの事前チェックができ、適用済み・skip・conflict のパスをそれぞれ個別に報告します。形式が壊れているか切り詰められた patch は、ファイルに触れる前に拒否され、部分適用されることはありません。読み取り専用の base 比較は HEAD を最も近いリモート祖先（明示的な ref、branch の upstream、または `origin/HEAD`）と diff し、そのどれを使ったかを報告します。リモート祖先が存在しない場合や、両者に共通 commit がない場合は、base を推測せずに比較を利用不可として報告します。同じ Main プロセスの Git service が組み込み `clawx-git` MCP server も支えるため、Agent は shell コマンドを直接組み立てず、Verse Claw の権限管理を通じて制御された Git / PR ツールを呼び出します。revert、pull、push、merge、rebase、reset、patch の適用/revert、worktree remove/prune、PR 作成など状態を書き換えたり公開したりする操作は承認付きです。
 
 ### 📡 マルチチャネル管理
 複数のAIチャネルを同時に設定・監視できます。各チャネルは独立して動作するため、異なるタスクに特化したエージェントを実行できます。
@@ -225,7 +243,7 @@ AIタスクを自動的に実行するようスケジュール設定できます
 
 **スケジュール済み** ページでは、Cron ジョブと監督対象 Browser run を、バックエンドモデルを統合せずに一つのコンパクトなリストへ投影します。Cron では作成、編集、有効化/一時停止、削除、即時実行、配信設定、実行履歴を引き続き利用でき、Browser run では承認、拒否、再試行、キャンセル、順序付き手順、時刻、型付きの結果またはエラー証拠を確認できます。幅 960px では、混雑した 3 列表示にせず、詳細がリストを置き換えます。Browser profile と既存の資格情報 Vault は **設定 > Browser** で管理し、送信したパスワードは Main プロセスだけが保持して Renderer へ再表示しません。
 
-Agent Browser ワークベンチと旧 `/browser` ルートは、サイドバー下部の `...` メニューから開く互換エントリとして引き続き残り、Main プロセス所有のランタイムを通じて分離されたタブとライブ session を提供します。これらのライブ session を Chat ワークスペースへ移す作業は後続の移行段階です。Chat は送信前に実 transcript 使用量から token/cost 予算を判定し、永続化・描画される tool 出力を制限し、キャンセルまたはハードタイムアウト時には基盤の実行を中止します。
+サイドバー下部の `...` メニューの Agent Browser と旧 `/browser` ルートは、Chat ワークスペースの Browser Live を開きます。ブラウザータスクは Scheduled、プロファイルと Vault メタデータは Settings > Browser にあります。Chat は送信前に実 transcript 使用量から token/cost 予算を判定し、永続化・描画される tool 出力を制限し、キャンセルまたはハードタイムアウト時には基盤の実行を中止します。
 
 監督対象の Browser タスクは、ブラウザーに副作用を発生させる前に承認待ちとして永続化されます。承認画面には目的、対象サイト、承認済みドメイン、モード、権限範囲、順序付き実行計画が表示され、ユーザーの明示的な承認後にのみ Main プロセスが上限付きの移動、待機、クリック手順を実行し、型付きの成功または失敗判定を返します。このフローは無人ブラウジングやプライベートネットワークアクセスを許可せず、認証情報は Main プロセス所有の Vault 参照に留まります。
 
@@ -246,11 +264,12 @@ Skills ページでは OpenClaw の複数ソース（管理ディレクトリ、
 開発者モードでは、専用の Image Generation ページで、独立した OpenAI 互換の画像生成エンドポイント（Base URL、API キー、`gpt-image-2` などのモデル名）を設定でき、画像生成だけ専用の `/v1/images/generations` サービスを使い、チャットは通常の OpenAI Provider のまま継続できます。
 OpenAI-compatible ゲートウェイを **Custom プロバイダー** で使う場合、**設定 → AI Providers → Provider 編集** でカスタム `User-Agent` を設定でき、互換性が必要なエンドポイントで有効です。
 互換ゲートウェイで `/models` が認証以外の理由で使えない場合、Verse Claw は API キー検証時に軽量な `/chat/completions` または `/responses` プローブへ自動フォールバックします。
+`openclaw.json` の環境変数 SecretRef で設定したプロバイダーも、Verse Claw が変数を読み取れ、secret provider が許可していれば利用可能と認識されます。環境変数のキーは設定ファイルへコピーされません。
 
 ### 🌙 アダプティブテーマ
 ライトモード、ダークモード、またはシステム同期テーマ。Verse Clawはあなたの好みに自動的に適応します。
 
-Windows、macOS、Linux では UI v2 が既定で有効になりました。FakeCoding に合わせたニュートラルなグレースケールの作業面、28-36 px のコンパクトなコントロール、白黒反転の主要操作、サンセリフの管理画面見出し、120-180 ms の控えめなモーションを採用し、各プラットフォーム固有のウィンドウ操作は維持します。設定のディープリンクは背後のページを保持し、閉じた後にフォーカスを復元します。段階的な移行中は `?uiVersion=legacy` で旧 UI と比較できます。
+Windows、macOS、Linux では UI v2 が既定で有効になりました。FakeCoding に合わせたニュートラルなグレースケールの作業面、28-36 px のコンパクトなコントロール、白黒反転の主要操作、サンセリフの管理画面見出し、120-180 ms の控えめなモーションを採用し、各プラットフォーム固有のウィンドウ操作は維持します。設定は独立したページで表示し、戻り先とフォーカスを復元します。視覚的な移行は完了し、旧 `uiVersion=legacy` リンクも現在の UI を表示します。Browser/Review の旧 URL は対応するワークスペースパネルを開きます。設定、Setup、Observability はコンパクトな共通コントロールを使い、診断ページを縦にスクロールしても指標の文字が切れません。
 
 ### 🚀 自動起動設定
 **設定 → 一般** から **システム起動時に自動起動** を有効化すると、ログイン後に Verse Claw が自動的に起動します。
@@ -411,6 +430,8 @@ P2-01 read-only facade は、安定した `read_file`、`search_content`、`resu
 
 P2-02 argv-only command profile は、OpenClaw の承認前 command analysis を不変の host-owned execution plan へ収束します。通常の test/build/lint/git コマンドは direct argv で実行され、pipeline・chain・redirect・heredoc・inline evaluation・明示的 interpreter は独立した terminal-shell payload のままです。profile（`pnpm`/`npm`/`corepack` の `exec`/`dlx` runner パススルーを含む）は host が導出し、model が profile、interpreter、PATH/PATHEXT、policy、approval token を選ぶことはありません。Windows の `.exe`/`.com` は direct argv のまま、`.cmd`/`.bat` は監査済み `cmd.exe` interpreter の下で resolved script identity を保持し、承認後に display command を再解釈しません。cwd/env/argv/timeout/output の境界違反は fail-closed で、native/MCP/legacy fallback はありません。これは engineering evidence であり、diagnostics、write、canary、enabled by default、generally available、product approval を有効化しません。[P2-02 evidence](docs/dev/verseshell-foundation/P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md) を参照してください。
 
+P3 external-write policy は、compiler、script、Git hook、terminal shell、その他の副作用を持ちうる process command を不変の command plan 上で external write として明示します。既存の OpenClaw exec approval が唯一の承認面であり、静的な警告は command text や credential を複製しません。これらの process write は ClawX write journal の外にあり、`rollbackClaim=false` で、自動 rollback も行いません。この engineering slice は write、canary traffic、default-on、GA、product approval を有効化しません。[P3 evidence](docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md) を参照してください。
+
 保守的な `openclaw.json` 設定は次のとおりです。
 
 ```json
@@ -455,6 +476,12 @@ AI を開発ワークフローに統合できます。エージェントを使�
 ---
 
 ## 開発
+
+Task Forest の状態、セッション引き継ぎ、生成されたレビュー出力はローカルの開発履歴であり、ソースのチェックアウトには不要です。回帰テスト、固定 fixture、ゲート設定、選別された最終証拠は引き続き追跡します。復元・整理の前に[ソース保持とアーカイブ復元](docs/dev/repository-artifact-retention.md)を参照してください。
+
+### Runtime Lifecycle Governance（Phase 2、デフォルト無効）
+
+Runtime Lifecycle Governance は段階的に提供されます。Phase 0 では共有基盤を、Phase 1 では canonical cleanup finalizer と drain パイプラインを、Phase 2 では delete operation journal、`operationId` 駆動の Electron mirror gate、端末 keep-on-leave を追加しました。Phase 3 ではデフォルト無効の同一 Gateway goal wake loop（1 つの SQLite immediate arm トランザクション、完全 idle 後の `turnBarrier` ack、mission owner/lead 限定の `goal_wait`、`exec(background=true, wait="goal")`、プロセス終了 level-check と重複 wake 除去）を追加しました。Phase 4 ではデフォルト無効の durable helper ファイルプロトコル（`intent.json -> started.json -> exit.json`、`<trusted-root>/background-processes/<runId>/`）、`ProcessRunReconciler` の起動/低頻度 sweep 復旧、session reset/delete の ownerEpoch 失効、runDir クォータ/TTL/redaction、Windows detached helper パスを追加しました。復旧はコマンドを再実行せず、`intent` に `started` がなく live helper もない場合は `lost` と判定します。Phase 5 では `SessionActivity` 読み取りモデルを拡張し、既存の読み取り専用プローブ（`mission_runs`、goal-wake `flow_runs`/`task_runs`、bash process registry、supervisor snapshot、subagent lineage）だけを情報源とする goal / process / lineage 投影を追加しました。Electron サービスは転送と型付き集約のみを行い、Chat のセッション状態パネルは `react-i18next` と既存デザイントークンで新しい状態を表示し、ライフサイクルボタンや削除・復旧操作は追加しません。読み取りモデルテストは `activitySnapshotWriteFindings=0` を報告します。監査は `armTxCount=1`、`processPollToolCalls=0`、Phase 4 で `secretPersistenceFindings=0` を維持し、通常の Chat と既定の `background=true` 動作は変わりません。Phase 6 では evidence-only の本番クローズアウトを完了しました。`audit-0.json` から `audit-6.json` までが `pnpm run runtime-lifecycle-audit --phase all` ですべて検証され、旧フェーズの一時プロンプトは削除済みです。クローズアウトは `docs/dev/handoffs/LATEST.md` とタスクフォレスト `TF-0077` に記録し、将来のアイデアは `future-work.json` に保持しています。2026-08-19 の GA hardening で packaged Electron durable-helper 検証と 10 サイクルの実プロセス goal-wake canary を追加し、RLG-only 受け入れは無条件 PASS になりました。goal-wake / durable-helper のデフォルトとすべての製品ロックは変更していません。詳細は `docs/dev/runtime-lifecycle-governance/README.zh-CN.md`、`artifacts/runtime-lifecycle-governance/audit-6.json`、`artifacts/runtime-lifecycle-governance/ga-acceptance.json` を参照してください。
 
 ### 前提条件
 
@@ -501,11 +528,15 @@ pnpm dev                  # ホットリロードで起動（不足時は同梱�
 
 # コード品質
 pnpm lint                 # ESLintを実行
-pnpm typecheck            # TypeScriptの型チェック
+pnpm run lint:check       # 自動修正なし；エラー 0 件、警告は最大 120 件
+pnpm typecheck            # 固定版 tsgo による未キャッシュ node/web 検査とテスト型観測
 
 # テスト
 pnpm test                 # ユニットテストを実行
-pnpm run test:e2e         # Electron E2E スモークテストを実行
+pnpm run test:channel-startup  # channel 設定・sidecar・IRC の高速回帰テスト
+pnpm run check:rc10:dev       # RC-10 開発チェック。全量受入は候補固定後に実行
+pnpm run test:e2e:run tests/e2e/rc10-operator-live.spec.ts --workers=1  # 実動作の RC-10 5シナリオ。新しいビルドを再利用
+pnpm run test:e2e         # ビルド後に全 Electron E2E を実行
 pnpm run test:e2e:headed  # 表示付きウィンドウで Electron E2E を実行
 pnpm run comms:replay     # 通信リプレイ指標を算出
 pnpm run comms:baseline   # 通信ベースラインを更新
@@ -514,6 +545,9 @@ pnpm run comms:compare    # リプレイ指標をベースライン閾値と比�
 # Agent harness
 pnpm harness context --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
 pnpm harness validate --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
+# シナリオはタスクをまたぐ変更を検査し、タスク仕様はファイルの所有範囲を検証します。
+# --since を省略しても差分を検証します。--no-diff はサンプルの構造確認専用です。
+pnpm harness run --spec harness/specs/scenarios/gateway-backend-communication.md --dry-run
 
 # Agent dev/test control plane
 pnpm agent-dev:make <page|e2e|host-route|skill|channel|plugin|scenario> my-scenario
@@ -538,13 +572,15 @@ pnpm vtoken:test
 pnpm vtoken:worker
 
 # ビルド＆パッケージ
-pnpm run build:vite       # フロントエンドのみビルド
+pnpm run build:vite       # レンダラーと Electron バンドルをビルド
 pnpm build                # フルプロダクションビルド（パッケージアセット含む）
 pnpm package              # 現在のプラットフォーム向けにパッケージ化（同梱プリインストールスキルを含む）
 pnpm package:mac          # macOS向けにパッケージ化
 pnpm package:win          # Windows向けにパッケージ化
 pnpm package:linux        # Linux向けにパッケージ化
 ```
+
+会話の引き継ぎは稼働中の Gateway の履歴（分離された source runtime の会話を含む）を読み、長さを制限した直近のアシスタント結果を未検証のコンテキストとして新しい会話へ渡します。
 
 Verse Claw は active project workspace と OpenClaw agent workspace に `.clawx/harness/` の project harness ドキュメント骨格を生成します。rules、scenarios、task contracts、guides、layers、context-pack recipes、Task Ledger bridge docs を Verse Claw 独自の構造で扱い、並行する `.trellis/` や Markdown タスク状態の事実源は作りません。
 

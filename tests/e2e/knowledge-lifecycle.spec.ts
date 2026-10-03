@@ -6,7 +6,7 @@ async function installLifecycleGatewayRpc(
   electronApp: ElectronApplication,
   operation: Exclude<KnowledgeChangeOperation, 'create'>,
 ): Promise<void> {
-  await electronApp.evaluate(async ({ lifecycleOperation }) => {
+  await electronApp.evaluate(async (_electron, { lifecycleOperation }) => {
     const bundled = process.mainModule?.require?.('./dist-electron/main/index.js') as unknown as
       | { gatewayManager?: { rpc: (method: string, params?: unknown, timeoutMs?: number) => Promise<unknown> } }
       | undefined;
@@ -61,6 +61,7 @@ for (const operation of LIFECYCLE_OPS) {
     await completeSetup(page);
     await page.getByTestId('sidebar-nav-knowledge').click();
     await expect(page.getByTestId('knowledge-page')).toBeVisible();
+    await page.getByTestId('knowledge-more-actions').click();
     await page.getByTestId('knowledge-tab-review').click();
     await expect(page.getByTestId('knowledge-lifecycle')).toBeVisible();
 

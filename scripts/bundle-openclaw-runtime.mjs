@@ -156,6 +156,18 @@ const SKIP_SCOPES = [
 const RUNTIME_EXTRA_PACKAGES = [
   'tsx',
   'typescript',
+  // dist/sessions imports this bare runtime dependency; source pnpm linking
+  // hides it during development, but the flattened packaged runtime needs it.
+  'picomatch',
+  // Agent tool startup imports the bundled Tree-sitter grammars by bare name.
+  'tree-sitter',
+  'tree-sitter-bash',
+  'tree-sitter-go',
+  'tree-sitter-java',
+  'tree-sitter-python',
+  'tree-sitter-rust',
+  'tree-sitter-wasms',
+  'web-tree-sitter',
   ...ELECTRON_MAIN_RUNTIME_PACKAGES,
 ];
 

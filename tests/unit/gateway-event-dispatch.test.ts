@@ -145,4 +145,60 @@ describe('dispatchProtocolEvent', () => {
     dispatchProtocolEvent(emitter, 'some.custom.event', { data: 1 });
     expect(emitter.emit).toHaveBeenCalledWith('notification', { method: 'some.custom.event', params: { data: 1 } });
   });
+
+  it('dispatches exec.approval.requested as approval:requested with the runtime fields', () => {
+    const emitter = createMockEmitter();
+    dispatchProtocolEvent(emitter, 'exec.approval.requested', {
+      id: 'approval-1',
+      request: {
+        command: 'node --test',
+        cwd: 'C:/workspace',
+        host: 'gateway',
+        agentId: 'main',
+        allowedDecisions: ['allow-once', 'deny'],
+      },
+      createdAtMs: 1,
+      expiresAtMs: 2,
+    });
+
+    expect(emitter.emit).toHaveBeenCalledWith('approval:requested', {
+      approvalId: 'approval-1',
+      command: 'node --test',
+      commandPreview: null,
+      cwd: 'C:/workspace',
+      host: 'gateway',
+      agentId: 'main',
+      sessionKey: null,
+      allowedDecisions: ['allow-once', 'deny'],
+      createdAtMs: 1,
+      expiresAtMs: 2,
+    });
+    expect(emitter.emit).not.toHaveBeenCalledWith('notification', expect.anything());
+  });
+
+  it('dispatches exec.approval.resolved as approval:resolved', () => {
+    const emitter = createMockEmitter();
+    dispatchProtocolEvent(emitter, 'exec.approval.resolved', {
+      id: 'approval-1',
+      decision: 'allow-once',
+      resolvedBy: 'operator',
+      ts: 3,
+    });
+
+    expect(emitter.emit).toHaveBeenCalledWith('approval:resolved', {
+      approvalId: 'approval-1',
+      decision: 'allow-once',
+      resolvedBy: 'operator',
+      ts: 3,
+    });
+  });
+
+  it('drops approval frames without an approval id instead of opening an unanswerable dialog', () => {
+    const emitter = createMockEmitter();
+    dispatchProtocolEvent(emitter, 'exec.approval.requested', { request: { command: 'node --test' } });
+    dispatchProtocolEvent(emitter, 'exec.approval.resolved', { decision: 'deny' });
+
+    expect(emitter.emit).not.toHaveBeenCalledWith('approval:requested', expect.anything());
+    expect(emitter.emit).not.toHaveBeenCalledWith('approval:resolved', expect.anything());
+  });
 });

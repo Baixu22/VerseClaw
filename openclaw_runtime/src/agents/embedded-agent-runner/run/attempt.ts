@@ -66,7 +66,10 @@ import {
 } from "../../../plugins/provider-runtime.js";
 import { getPluginToolMeta } from "../../../plugins/tools.js";
 import { isSubagentSessionKey } from "../../../routing/session-key.js";
-import { annotateInterSessionPromptText } from "../../../sessions/input-provenance.js";
+import {
+  annotateInterSessionPromptText,
+  toContentProvenance,
+} from "../../../sessions/input-provenance.js";
 import { resolveSkillsPromptForRun } from "../../../skills/loading/workspace.js";
 import { resolveEmbeddedRunSkillEntries } from "../../../skills/runtime/embedded-run-entries.js";
 import {
@@ -199,6 +202,8 @@ import {
   isSubagentEnvelopeSession,
   resolveSubagentCapabilityStore,
 } from "../../subagent-capabilities.js";
+import { goalWakeController } from "../../goal-wake-controller.js";
+import { acquireSessionAdmissionPermit } from "../../../sessions/session-admission-registry.js";
 import {
   ackPendingAgentSteeringItems,
   leasePendingAgentSteeringItems,
@@ -247,6 +252,12 @@ import {
   recordContextOrchestratorSourceDecision,
 } from "../../../context-engine/context-orchestrator.js";
 import { isContextEnhancementKillSwitchEngaged } from "../../../context-engine/enhancement-kill-switch.js";
+import {
+  contextMessageReplacementText,
+  applyContextMessageReplacement,
+} from "../../../context-engine/context-candidate.js";
+import { isDeepStrictEqual } from "node:util";
+import { markRc03MessageReplacement } from "../../../context-engine/rc03-seal-hook.js";
 import { endTurnInjectionBudget } from "../../../context-engine/turn-injection-budget.js";
 import {
   createMemoryContextProviders,
@@ -261,7 +272,11 @@ import {
   resolveTrustedWorkspaceFingerprint,
 } from "../../../context-engine/workspace-fingerprint.js";
 import { invalidateWorkspaceFactServiceByFingerprint } from "../../../context-engine/factstore/workspace-fact-service.js";
-import { buildEmbeddedExtensionFactories, isContextBlockProjectionEnabled } from "../extensions.js";
+import {
+  buildEmbeddedExtensionFactories,
+  isContextBlockProjectionEnabled,
+  type PrepareEmbeddedContext,
+} from "../extensions.js";
 import { mapToolsToToolRegistryEntries } from "../../../context-engine/handlers/tool-registry-handler.js";
 import {
   applyExtraParamsToAgent,
@@ -1326,6 +1341,8 @@ export async function runEmbeddedAttempt(
       : (() => {
           const allTools = createOpenClawCodingTools({
             agentId: sessionAgentId,
+            contentProvenance:
+              params.contentProvenance ?? toContentProvenance(params.inputProvenance),
             ...buildEmbeddedAttemptToolRunContext({ ...params, trace: runTrace }),
             exec: {
               ...params.execOverrides,
@@ -1415,6 +1432,7 @@ export async function runEmbeddedAttempt(
             authProfileStore: params.authProfileStore,
             recordToolPrepStage: (name) => corePluginToolStages.mark(name),
             onToolOutcome: params.onToolOutcome,
+            onToolLoopTermination: params.onToolLoopTermination,
             skillsSnapshot: skillsSnapshotForRun,
             onYield: (message) => {
               yieldDetected = true;
@@ -1739,6 +1757,7 @@ export async function runEmbeddedAttempt(
         agentId: sessionAgentId,
       }),
       onToolOutcome: params.onToolOutcome,
+      onToolLoopTermination: params.onToolLoopTermination,
     };
     const codeModeTools = codeModeControlsEnabledForRun
       ? createCodeModeTools({
@@ -2030,9 +2049,11 @@ export async function runEmbeddedAttempt(
       params.config,
       {
         turnId: injectionTurnId,
+        compassContext: params.compassContext,
         sessionKey: params.sessionKey,
         sessionId: params.sessionId,
         runId: params.runId,
+        taskId: params.lineage?.taskLedgerRootId,
         workspaceDir: effectiveWorkspace,
         taskHint: params.prompt,
         markdownSources: hookAdjustedBootstrapFiles
@@ -2074,10 +2095,7 @@ export async function runEmbeddedAttempt(
           // R3-1.1: wire the Runtime Memory provider when the pilot requests it
           // (runtime.memory.injectPilot.enabled + providers includes
           // 'runtime-memory'). The provider self-gates on runtime.memory.provider.
-          if (
-            memoryPilotConfig.enabled &&
-            memoryPilotConfig.providers.includes("runtime-memory")
-          ) {
+          if (memoryPilotConfig.enabled && memoryPilotConfig.providers.includes("runtime-memory")) {
             providers.push(
               createRuntimeMemoryContextProvider({
                 config: params.config,
@@ -2093,9 +2111,7 @@ export async function runEmbeddedAttempt(
           }
           return providers;
         },
-        ...(memoryPilotConfig.enabled
-          ? { memoryProviderIds: memoryPilotConfig.providers }
-          : {}),
+        ...(memoryPilotConfig.enabled ? { memoryProviderIds: memoryPilotConfig.providers } : {}),
         deferProjection: true,
       },
       {
@@ -2233,12 +2249,9 @@ export async function runEmbeddedAttempt(
         skillsTotal: runtimeIntensitySkillsTotal,
         toolResultMaxChars: runtimeIntensityToolResultMaxChars,
         estimatedSavedChars: estimatedSkillsPromptSavedChars,
-        requestedReasoning:
-          params.requestedReasoningEffort ?? params.thinkLevel ?? undefined,
+        requestedReasoning: params.requestedReasoningEffort ?? params.thinkLevel ?? undefined,
         effectiveReasoning: params.thinkLevel,
-        requestedIntensity:
-          params.requestedRuntimeIntensity ??
-          runtimeIntensityPolicy.level,
+        requestedIntensity: params.requestedRuntimeIntensity ?? runtimeIntensityPolicy.level,
         effectiveIntensity: runtimeIntensityPolicy.level,
         intensitySource: params.runtimeIntensitySource,
         couplingMode: "linked-v1",
@@ -2249,11 +2262,9 @@ export async function runEmbeddedAttempt(
       systemPrompt: appendPrompt,
       promptMode: effectivePromptMode,
       policy: runtimeIntensityPolicy,
-      requestedReasoning:
-        params.requestedReasoningEffort ?? params.thinkLevel ?? undefined,
+      requestedReasoning: params.requestedReasoningEffort ?? params.thinkLevel ?? undefined,
       effectiveReasoning: params.thinkLevel,
-      requestedIntensity:
-        params.requestedRuntimeIntensity ?? runtimeIntensityPolicy.level,
+      requestedIntensity: params.requestedRuntimeIntensity ?? runtimeIntensityPolicy.level,
       effectiveIntensity: runtimeIntensityPolicy.level,
       intensitySource: params.runtimeIntensitySource,
       policyAdherence: "full",
@@ -2414,7 +2425,11 @@ export async function runEmbeddedAttempt(
       // task-state factory can set TaskStateHandlerConfig for phase producer writes.
       // DCS Stage 3 / W3: pass this attempt's real agent tool list so tool_registry
       // can be produced from production tools when the feature flag is on.
+      let prepareContextProjection: PrepareEmbeddedContext | undefined;
       const extensionFactories = buildEmbeddedExtensionFactories({
+        registerContextPreparation: (prepare) => {
+          prepareContextProjection = prepare;
+        },
         cfg: params.config,
         sessionManager,
         provider: params.provider,
@@ -2423,6 +2438,7 @@ export async function runEmbeddedAttempt(
         sessionId: params.sessionId,
         sessionKey: params.sessionKey,
         runId: params.runId,
+        ...(params.lineage ? { lineage: params.lineage } : {}),
         injectionTurnId,
         attemptIndex: params.attemptIndex,
         workingMemoryStore: dcsExtensionDeps?.workingMemoryStore,
@@ -2557,6 +2573,7 @@ export async function runEmbeddedAttempt(
               runId: params.runId,
               loopDetection: clientToolLoopDetection,
               onToolOutcome: params.onToolOutcome,
+              onToolLoopTermination: params.onToolLoopTermination,
             },
           )
         : [];
@@ -3238,8 +3255,7 @@ export async function runEmbeddedAttempt(
           contentCapture: resolveDiagnosticModelContentCapturePolicy(params.config),
           nextCallId: () => `${params.runId}:model:${(diagnosticModelCallSeq += 1)}`,
           onStarted: ({ callId }) => {
-            const trajectoryStepId =
-              `${params.runId}:attempt:${params.attemptIndex ?? 0}:step:${callId}`;
+            const trajectoryStepId = `${params.runId}:attempt:${params.attemptIndex ?? 0}:step:${callId}`;
             trajectoryProducer?.startStep(
               trajectoryStepId,
               {
@@ -3258,8 +3274,7 @@ export async function runEmbeddedAttempt(
             });
           },
           onFinished: ({ callId, outcome, durationMs, errorCategory }) => {
-            const trajectoryStepId =
-              `${params.runId}:attempt:${params.attemptIndex ?? 0}:step:${callId}`;
+            const trajectoryStepId = `${params.runId}:attempt:${params.attemptIndex ?? 0}:step:${callId}`;
             const state = {
               status: outcome,
               callId,
@@ -3389,97 +3404,6 @@ export async function runEmbeddedAttempt(
           if (limited.length > 0 || prior.length > 0) {
             activeSession.agent.state.messages = limited;
           }
-        }
-
-        const contextEnhancementKilled = isContextEnhancementKillSwitchEngaged(params.config);
-        if (activeContextEngine && !contextEnhancementKilled) {
-          try {
-            // Snapshot before assemble: the assemble contract does not require
-            // the input array to be treated immutably, so an engine that windows
-            // history in place would otherwise leave the precheck reading
-            // already-windowed messages instead of the true pre-assembly state.
-            const preassemblyContextEngineMessagesForPrecheck = activeSession.messages.slice();
-            const assembled = await assembleAttemptContextEngine({
-              contextEngine: activeContextEngine,
-              sessionId: params.sessionId,
-              sessionKey: params.sessionKey,
-              messages: activeSession.messages,
-              tokenBudget: params.contextTokenBudget,
-              availableTools: new Set(effectiveTools.map((tool) => tool.name)),
-              activeTools: effectiveTools,
-              projectContextFiles: mapContextEngineProjectContextFiles(contextFiles),
-              skillsMetadata: mapContextEngineSkillMetadata(promptSkillEntries),
-              citationsMode: params.config?.memory?.citations,
-              modelId: params.modelId,
-              ...(params.prompt !== undefined ? { prompt: params.prompt } : {}),
-            });
-            if (!assembled) {
-              throw new Error("context engine assemble returned no result");
-            }
-            const assembledMessages = transcriptPolicy.repairToolUseResultPairing
-              ? repairAttemptToolUseResultPairing(assembled.messages, isOpenAIResponsesApi)
-              : assembled.messages;
-            if (assembledMessages !== activeSession.messages) {
-              activeSession.agent.state.messages = assembledMessages;
-            }
-            contextEnginePromptAuthority = assembled.promptAuthority ?? "assembled";
-            if (contextEnginePromptAuthority === "preassembly_may_overflow") {
-              unwindowedContextEngineMessagesForPrecheck =
-                preassemblyContextEngineMessagesForPrecheck;
-            }
-            // UAS-02: CVK remains the context-engine source owner, but its prompt
-            // addition is only a candidate. Context Orchestrator applies final
-            // precedence, deduplication, budget, projection, and lineage.
-            if (assembled.systemPromptAddition) {
-              collectContextOrchestratorCandidate(injectionTurnId, {
-                authorityObjectId: `context-engine:${activeContextEngine.info.id}`,
-                authorityVersion:
-                  assembled.contextProjection?.epoch ??
-                  assembled.contextProjection?.fingerprint ??
-                  activeContextEngine.info.version ??
-                  "1",
-                sourceId: "cvk-context-engine",
-                channel: "cvk_addition",
-                target: "system_prompt",
-                text: assembled.systemPromptAddition,
-              });
-              log.debug(
-                `context engine: collected system prompt candidate (${assembled.systemPromptAddition.length} chars)`,
-              );
-            } else {
-              recordContextOrchestratorSourceDecision(injectionTurnId, {
-                sourceId: "cvk-context-engine",
-                channel: "cvk_addition",
-                target: "system_prompt",
-                reason: "empty",
-              });
-            }
-          } catch (assembleErr) {
-            recordContextOrchestratorSourceDecision(injectionTurnId, {
-              sourceId: "cvk-context-engine",
-              channel: "cvk_addition",
-              target: "system_prompt",
-              reason: "empty",
-            });
-            log.warn(
-              `context engine assemble failed, using pipeline messages: ${String(assembleErr)}`,
-            );
-          }
-        } else if (activeContextEngine && contextEnhancementKilled) {
-          recordContextOrchestratorSourceDecision(injectionTurnId, {
-            sourceId: "cvk-context-engine",
-            channel: "cvk_addition",
-            target: "system_prompt",
-            reason: "kill-switch",
-          });
-          log.debug("context engine: skipped assembly (enhancement kill switch)");
-        } else {
-          recordContextOrchestratorSourceDecision(injectionTurnId, {
-            sourceId: "cvk-context-engine",
-            channel: "cvk_addition",
-            target: "system_prompt",
-            reason: "flag-off",
-          });
         }
       } catch (err) {
         await flushPendingToolResultsAfterIdle({
@@ -4276,6 +4200,132 @@ export async function runEmbeddedAttempt(
           if (filteredMessages.length < activeSession.messages.length) {
             activeSession.agent.state.messages = filteredMessages;
           }
+          const contextEnhancementKilled = isContextEnhancementKillSwitchEngaged(params.config);
+          if (activeContextEngine && !contextEnhancementKilled) {
+            try {
+              // Snapshot before assemble: the assemble contract does not require
+              // the input array to be treated immutably, so an engine that windows
+              // history in place would otherwise leave the precheck reading
+              // already-windowed messages instead of the true pre-assembly state.
+              const preassemblyContextEngineMessagesForPrecheck = structuredClone(
+                activeSession.messages,
+              );
+              const assembled = await assembleAttemptContextEngine({
+                contextEngine: activeContextEngine,
+                sessionId: params.sessionId,
+                sessionKey: params.sessionKey,
+                // Engines may mutate their input, including nested content. Keep
+                // the live transcript intact until a replacement is accepted.
+                messages: structuredClone(preassemblyContextEngineMessagesForPrecheck),
+                tokenBudget: params.contextTokenBudget,
+                availableTools: new Set(effectiveTools.map((tool) => tool.name)),
+                activeTools: effectiveTools,
+                projectContextFiles: mapContextEngineProjectContextFiles(contextFiles),
+                skillsMetadata: mapContextEngineSkillMetadata(promptSkillEntries),
+                citationsMode: params.config?.memory?.citations,
+                modelId: params.modelId,
+                ...(params.prompt !== undefined ? { prompt: params.prompt } : {}),
+              });
+              if (!assembled) {
+                throw new Error("context engine assemble returned no result");
+              }
+              const assembledMessages = transcriptPolicy.repairToolUseResultPairing
+                ? repairAttemptToolUseResultPairing(assembled.messages, isOpenAIResponsesApi)
+                : assembled.messages;
+              const replacementText = contextMessageReplacementText(
+                preassemblyContextEngineMessagesForPrecheck,
+                assembledMessages,
+              );
+              if (replacementText) {
+                collectContextOrchestratorCandidate(injectionTurnId, {
+                  authorityObjectId: `context-engine:${activeContextEngine.info.id}:messages`,
+                  authorityVersion:
+                    assembled.contextProjection?.epoch ??
+                    assembled.contextProjection?.fingerprint ??
+                    activeContextEngine.info.version ??
+                    "1",
+                  sourceId: "cvk-message-replacement",
+                  channel: "cvk_addition",
+                  target: "message_replacement",
+                  text: replacementText,
+                  messageReplacement: {
+                    original: preassemblyContextEngineMessagesForPrecheck,
+                    replacement: structuredClone(assembledMessages),
+                  },
+                });
+              } else if (
+                !isDeepStrictEqual(assembledMessages, preassemblyContextEngineMessagesForPrecheck)
+              ) {
+                activeSession.agent.state.messages = assembledMessages;
+                markRc03MessageReplacement(params.runId, params.attemptIndex ?? 0, params.config);
+              }
+              contextEnginePromptAuthority = assembled.promptAuthority ?? "assembled";
+              if (contextEnginePromptAuthority === "preassembly_may_overflow") {
+                unwindowedContextEngineMessagesForPrecheck =
+                  preassemblyContextEngineMessagesForPrecheck;
+              }
+              // UAS-02: CVK remains the context-engine source owner, but its prompt
+              // addition is only a candidate. Context Orchestrator applies final
+              // precedence, deduplication, budget, projection, and lineage.
+              if (assembled.systemPromptAddition) {
+                collectContextOrchestratorCandidate(injectionTurnId, {
+                  authorityObjectId: `context-engine:${activeContextEngine.info.id}`,
+                  authorityVersion:
+                    assembled.contextProjection?.epoch ??
+                    assembled.contextProjection?.fingerprint ??
+                    activeContextEngine.info.version ??
+                    "1",
+                  sourceId: "cvk-context-engine",
+                  channel: "cvk_addition",
+                  target: "system_prompt",
+                  text: assembled.systemPromptAddition,
+                });
+                log.debug(
+                  `context engine: collected system prompt candidate (${assembled.systemPromptAddition.length} chars)`,
+                );
+              } else {
+                recordContextOrchestratorSourceDecision(injectionTurnId, {
+                  sourceId: "cvk-context-engine",
+                  channel: "cvk_addition",
+                  target: "system_prompt",
+                  reason: "empty",
+                });
+              }
+            } catch (assembleErr) {
+              recordContextOrchestratorSourceDecision(injectionTurnId, {
+                sourceId: "cvk-context-engine",
+                channel: "cvk_addition",
+                target: "system_prompt",
+                reason: "empty",
+              });
+              log.warn(
+                `context engine assemble failed, using pipeline messages: ${String(assembleErr)}`,
+              );
+            }
+          } else if (activeContextEngine && contextEnhancementKilled) {
+            recordContextOrchestratorSourceDecision(injectionTurnId, {
+              sourceId: "cvk-context-engine",
+              channel: "cvk_addition",
+              target: "system_prompt",
+              reason: "kill-switch",
+            });
+            log.debug("context engine: skipped assembly (enhancement kill switch)");
+          } else {
+            recordContextOrchestratorSourceDecision(injectionTurnId, {
+              sourceId: "cvk-context-engine",
+              channel: "cvk_addition",
+              target: "system_prompt",
+              reason: "flag-off",
+            });
+          }
+          const preparedProjection = await prepareContextProjection?.(activeSession.messages);
+          activeSession.agent.state.messages = applyContextMessageReplacement(
+            activeSession.messages,
+            preparedProjection?.messageReplacement,
+          );
+          if (preparedProjection?.messageReplacement) {
+            markRc03MessageReplacement(params.runId, params.attemptIndex ?? 0, params.config);
+          }
           prePromptMessageCount = activeSession.messages.length;
           const contextTokenBudget = params.contextTokenBudget ?? DEFAULT_CONTEXT_TOKENS;
           const promptToolResultMaxChars = resolveLiveToolResultMaxChars({
@@ -4365,7 +4415,11 @@ export async function runEmbeddedAttempt(
                 : (runtimeContextForHook?.length ?? 0),
             };
           }
-          const systemPromptForHook = systemPromptText;
+          const systemPromptForHook = preparedProjection?.systemPromptAddition
+            ? `${systemPromptText}
+
+${preparedProjection.systemPromptAddition}`
+            : systemPromptText;
 
           const persistBlockedBeforeAgentRun = async (block: {
             message: string;
@@ -4994,6 +5048,25 @@ export async function runEmbeddedAttempt(
                 await persistSessionsYieldContextMessage(activeSession, yieldMessage);
               }
             });
+            // Turn barrier: the run is fully idle here. Take the admission
+            // permit before persisting the barrier ack so a concurrent
+            // delete/reset fence cannot race the ack side effect.
+            const releaseGoalWakeAck = acquireSessionAdmissionPermit(
+              {
+                agentId: sessionAgentId,
+                canonicalSessionKey: params.sessionKey ?? "",
+                expectedSessionId: params.sessionId,
+              },
+              "goal-wake-ack",
+            );
+            try {
+              await goalWakeController.ackPendingGoalWaitFlowsForSession(
+                params.sessionKey ?? "",
+                params.config,
+              );
+            } finally {
+              releaseGoalWakeAck();
+            }
           } else if (isMidTurnPrecheckSignal(err)) {
             await sessionLockController.waitForSessionEvents(activeSession);
             await sessionLockController.withSessionWriteLock(() => {

@@ -131,7 +131,7 @@ describe("AgentMap real-repo input hardening", () => {
     const runtime = Object.assign(Object.create(ts) as typeof import("typescript"), {
       createSourceFile,
     });
-    agentMapInternalsForTest.setTypeScriptRuntimeForTest(runtime);
+    agentMapInternalsForTest.setTypeScriptRuntimeForTest(runtime as never);
 
     const result = await buildBudgetedAgentMapResult({
       request: buildHardeningRequest(["src/good.ts", "src/broken.ts"], {

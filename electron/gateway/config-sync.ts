@@ -16,8 +16,13 @@ function fsPath(filePath: string): string {
   return `\\\\?\\${windowsPath}`;
 }
 import { getAllSettings } from '../utils/store';
-import { getApiKey, getDefaultProvider, getProvider } from '../utils/secure-storage';
+import { getAllProviders, getApiKey, getDefaultProvider, getProvider } from '../utils/secure-storage';
 import { getProviderEnvVar, getKeyableProviderTypes } from '../utils/provider-registry';
+import {
+  getMultiInstanceProviderApiKeyEnvVar,
+  getOpenClawProviderKeyForType,
+  isMultiInstanceProviderType,
+} from '../utils/provider-keys';
 import {
   getOpenClawConfigDir,
   getOpenClawDir,
@@ -545,7 +550,7 @@ export async function syncDefaultProviderRuntimeBeforeLaunch(): Promise<void> {
   }
 }
 
-async function loadProviderEnv(): Promise<{ providerEnv: Record<string, string>; loadedProviderKeyCount: number }> {
+export async function loadProviderEnv(): Promise<{ providerEnv: Record<string, string>; loadedProviderKeyCount: number }> {
   const providerEnv: Record<string, string> = {};
   const providerTypes = getKeyableProviderTypes();
   let loadedProviderKeyCount = 0;
@@ -583,7 +588,46 @@ async function loadProviderEnv(): Promise<{ providerEnv: Record<string, string>;
     }
   }
 
+  // Custom/ollama accounts have no registry env var; their openclaw.json entry
+  // carries an env SecretRef, so the matching variable must exist in the
+  // Gateway environment or the source runtime reports "No API key found".
+  try {
+    for (const provider of await getAllProviders()) {
+      if (!isMultiInstanceProviderType(provider.type)) continue;
+      const key = await getApiKey(provider.id);
+      if (!key) continue;
+      const envVar = getMultiInstanceProviderApiKeyEnvVar(getOpenClawProviderKeyForType(provider.type, provider.id));
+      if (providerEnv[envVar]) continue;
+      providerEnv[envVar] = key;
+      loadedProviderKeyCount++;
+    }
+  } catch (err) {
+    logger.warn('Failed to load custom provider keys for environment injection:', err);
+  }
+
   return { providerEnv, loadedProviderKeyCount };
+}
+
+/**
+ * Pure configured-channel startup policy shared by every runtime mode.
+ * Channel startup is skipped only when nothing is configured; the source runtime
+ * used to hard-skip even when channels existed, which RC-10 must not regress to.
+ */
+export function buildChannelStartupPolicy(configuredChannels: readonly string[]): {
+  skipChannels: boolean;
+  channelStartupSummary: string;
+} {
+  if (configuredChannels.length === 0) {
+    return {
+      skipChannels: true,
+      channelStartupSummary: 'skipped(no configured channels)',
+    };
+  }
+
+  return {
+    skipChannels: false,
+    channelStartupSummary: `enabled(${configuredChannels.join(',')})`,
+  };
 }
 
 async function resolveChannelStartupPolicy(): Promise<{
@@ -593,17 +637,7 @@ async function resolveChannelStartupPolicy(): Promise<{
   try {
     const rawCfg = await readOpenClawConfig();
     const configuredChannels = await listConfiguredChannelsFromConfig(rawCfg);
-    if (configuredChannels.length === 0) {
-      return {
-        skipChannels: true,
-        channelStartupSummary: 'skipped(no configured channels)',
-      };
-    }
-
-    return {
-      skipChannels: false,
-      channelStartupSummary: `enabled(${configuredChannels.join(',')})`,
-    };
+    return buildChannelStartupPolicy(configuredChannels);
   } catch (error) {
     logger.warn('Failed to determine configured channels for gateway launch:', error);
     return {
@@ -785,7 +819,7 @@ export function buildSourceRuntimeIsolationEnv(params: {
  * 3. stripSourceRuntimeIncompatibleConfigKeys still only removes agents.list[].reasoningEffort
  *    and must not touch runtime.* keys.
  */
-export const SOURCE_RUNTIME_ISOLATION_SYNC_KEYS = ['agents', 'models', 'plugins', 'runtime'] as const;
+export const SOURCE_RUNTIME_ISOLATION_SYNC_KEYS = ['agents', 'models', 'plugins', 'runtime', 'tools', 'channels'] as const;
 export type SourceRuntimeIsolationSyncKey = typeof SOURCE_RUNTIME_ISOLATION_SYNC_KEYS[number];
 
 export function applySourceRuntimeIsolationUserConfig(
@@ -826,8 +860,60 @@ export function buildInitialSourceRuntimeIsolationConfig(
     plugins: userConfig.plugins ?? { enabled: false },
     // Carry DCS/runtime flags from the desktop-facing config when present.
     ...(userConfig.runtime != null ? { runtime: userConfig.runtime } : {}),
-    channels: {},
+    // tools.exec carries the workspace permission mode (security/ask). Without it
+    // the source runtime treats every chat exec as provenance-missing, downgrades
+    // to allowlist/on-miss and parks the call on an approval ClawX never answers.
+    ...(userConfig.tools != null ? { tools: userConfig.tools } : {}),
+    // Carry the channel block so the isolated gateway can start the channels the
+    // desktop configured (RC-10 H-02..H-06 need a real channel effect).
+    channels: userConfig.channels ?? {},
   };
+}
+
+/**
+ * True when the config block carries at least one channel that is not explicitly
+ * disabled. The desktop writes channel entries as either a channel-wide block or
+ * accounts.<id>; both keep the channel id key present.
+ */
+function hasConfiguredChannelBlock(config: Record<string, unknown>): boolean {
+  const channels = config.channels;
+  if (!channels || typeof channels !== 'object' || Array.isArray(channels)) {
+    return false;
+  }
+  return Object.entries(channels as Record<string, unknown>).some(([channelId, entry]) => {
+    if (channelId === 'defaults' || channelId === 'modelByChannel') {
+      return false;
+    }
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+      return false;
+    }
+    return (entry as { enabled?: unknown }).enabled !== false;
+  });
+}
+
+/**
+ * The source-runtime isolation sandbox ships with `plugins.enabled=false` so a
+ * sandboxed gateway never loads user plugins by default. Every channel plugin is
+ * a manifest owner, and the runtime blocks all of them while that global switch
+ * is off (resolveManifestOwnerBasePolicyBlock returns "plugins-disabled" before
+ * any per-channel bypass applies). An explicitly configured channel therefore
+ * has to turn the switch back on. Only the switch is touched: entries, allow and
+ * deny stay exactly as the user config had them.
+ */
+export function applySourceRuntimeChannelPluginEnablement(config: Record<string, unknown>): {
+  config: Record<string, unknown>;
+  changed: boolean;
+} {
+  if (!hasConfiguredChannelBlock(config)) {
+    return { config, changed: false };
+  }
+  const plugins = config.plugins && typeof config.plugins === 'object' && !Array.isArray(config.plugins)
+    ? (config.plugins as Record<string, unknown>)
+    : {};
+  if (plugins.enabled === true) {
+    return { config, changed: false };
+  }
+  return { config: { ...config, plugins: { ...plugins, enabled: true } }, changed: true };
 }
 
 function prepareSourceRuntimeIsolation(): {
@@ -859,7 +945,9 @@ function prepareSourceRuntimeIsolation(): {
 
   if (!existsSync(fsPath(configPath))) {
     const minimalConfig = buildInitialSourceRuntimeIsolationConfig(userConfig);
-    const isolatedConfig = applySourceRuntimeSandboxAutoFallback(stripSourceRuntimeIncompatibleConfigKeys(minimalConfig));
+    const schemaSafeConfig = stripSourceRuntimeIncompatibleConfigKeys(minimalConfig);
+    const channelReadyConfig = applySourceRuntimeChannelPluginEnablement(schemaSafeConfig).config;
+    const isolatedConfig = applySourceRuntimeSandboxAutoFallback(channelReadyConfig);
     writeFileSync(fsPath(configPath), `${JSON.stringify(isolatedConfig, null, 2)}\n`, 'utf-8');
   } else {
     try {
@@ -895,6 +983,15 @@ function prepareSourceRuntimeIsolation(): {
       const sandboxAdjustedConfig = applySourceRuntimeSandboxAutoFallback(nextConfig);
       if (JSON.stringify(sandboxAdjustedConfig) !== JSON.stringify(nextConfig)) {
         nextConfig = sandboxAdjustedConfig;
+        needsWrite = true;
+      }
+
+      // A sandboxed gateway must still start channels the desktop configured;
+      // see applySourceRuntimeChannelPluginEnablement for why the global plugin
+      // switch is the blocker.
+      const channelReadyConfig = applySourceRuntimeChannelPluginEnablement(nextConfig);
+      if (channelReadyConfig.changed) {
+        nextConfig = channelReadyConfig.config;
         needsWrite = true;
       }
 
@@ -986,16 +1083,15 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
   const binPathExists = existsSync(binPath);
 
   const { providerEnv, loadedProviderKeyCount } = await measureAsync(timingsMs, 'providerEnvMs', loadProviderEnv);
-  const { skipChannels, channelStartupSummary } = runtimeMode === 'source'
-    ? {
-      skipChannels: true,
-      channelStartupSummary: 'skipped(source runtime isolated config)',
-    }
-    : await measureAsync(
-      timingsMs,
-      'channelStartupPolicyMs',
-      resolveChannelStartupPolicy,
-    );
+  // Both runtime modes share one configured-channel policy: skip channel startup
+  // only when no channel is configured. The source runtime previously hard-skipped
+  // channels, which made every channel scenario unobservable; the isolated config
+  // now carries the same channels block, so the same policy is correct here.
+  const { skipChannels, channelStartupSummary } = await measureAsync(
+    timingsMs,
+    'channelStartupPolicyMs',
+    resolveChannelStartupPolicy,
+  );
   const uvEnv = await measureAsync(timingsMs, 'uvEnvMs', getUvMirrorEnv);
   const mcpEnv = await measureAsync(timingsMs, 'mcpEnvMs', loadMcpRuntimeEnv);
   const sourceRuntimeIsolation = runtimeMode === 'source' ? prepareSourceRuntimeIsolation() : null;

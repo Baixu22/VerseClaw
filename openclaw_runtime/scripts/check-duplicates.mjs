@@ -29,7 +29,10 @@ const sourceExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".cjs"]);
 const sourcePattern = "**/*.{ts,tsx,js,mjs,cjs}";
 const testPattern = "**/*.{test,e2e.test,live.test}.{ts,tsx,js,mjs,cjs}";
 // Keep local agent support trees and vendored snapshots classified but outside jscpd.
-const intentionallyUnscannedPrefixes = [".agents/", "vendor/"];
+// experiments/ is exploratory A/B fixture + corpus code (moved out of src/ by
+// T-D1); it is intentionally duplicative by design and not production, so it is
+// classified here rather than held to production duplicate limits.
+const intentionallyUnscannedPrefixes = [".agents/", "vendor/", "experiments/"];
 
 const generatedIgnores = [
   "extensions/qa-matrix/src/shared/**",

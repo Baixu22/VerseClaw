@@ -7,7 +7,7 @@ import {
   CODING_AB_FIXTURES,
   type AbArm,
   type CodingAbFixture,
-} from "./coding-ab-fixtures.js";
+} from "../../experiments/coding-ab-fixtures.js";
 import {
   estimateTokensFromChars,
   type DcsCorpusArm,

@@ -193,8 +193,8 @@ test.describe('Code Review Center', () => {
       });
       await page.getByTestId('sidebar-footer-menu-trigger').click();
       await page.getByTestId('sidebar-more-code-review').click();
-      await expect(page.getByTestId('code-review-page')).toBeVisible();
-      await expect(page.getByTestId('code-review-readonly')).toContainText('Read-only review');
+      await expect(page.getByTestId('workspace-ai-review')).toBeVisible();
+      await expect(page.getByTestId('workspace-review-view-ai-review')).toHaveAttribute('aria-selected', 'true');
 
       await page.getByTestId('code-review-target-baseBranch').click();
       await expect(page.getByTestId('code-review-base-input')).toBeVisible();
@@ -205,6 +205,7 @@ test.describe('Code Review Center', () => {
       await page.getByTestId('code-review-run').click();
 
       await expect(page.getByTestId('code-review-summary')).toContainText('Two findings');
+      await expect(page.getByTestId('workspace-ai-review').locator('dl > div').filter({ hasText: 'Read-only' })).toContainText('Yes');
       const findings = page.getByTestId('code-review-finding');
       await expect(findings).toHaveCount(2);
       await expect(findings.first()).toContainText('High');

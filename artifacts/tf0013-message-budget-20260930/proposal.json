@@ -1,0 +1,38 @@
+{
+  "proposal_id": "TFP-tf0013-message-budget-development-20260930",
+  "session_id": "tf0013-message-budget-20260930",
+  "rationale": "接续一个最小工程缺口；完成 embedded 消息替换预算与失败回退修复，保留 in_progress/60% 和冻结边界。",
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0013",
+      "fields": {
+        "status": "in_progress",
+        "summary": "COMPASS 与 embedded ContextEngine 新增消息已纳入既有候选仲裁和 turn ledger。消息替换整组准入，超额保留原历史；完成 orphan 修复后的准入、溢出预检、透传归因及 quarantine 回退隔离，当前证据为工作树开发验证。原生插件自行组装/投影路径及整节点当前候选验收仍未完成。",
+        "next_action": "核验原生插件 ContextEngine 组装与投影的共享预算边界；先读插件 scoped AGENTS 及实际 host/dependency 源码契约，再补真实调用反例。使用 UAS-02 spec；不解除 TF-0010/TF-0028 冻结。",
+        "execution_hints": [
+          "Context Orchestrator 是最终 selection、dedup、budget、projection 与 lineage authority；禁止恢复私有生产预算或调用顺序优先级",
+          "无 turnId 私有预算只保留兼容路径，不得重新接入 attempt 或 compaction 生产入口",
+          "三个产品锁、C1 keep-off、TF-0006 blocked、Runtime Memory diagnostics-only 与 SEKB 零自动写回保持不变",
+          "COMPASS 与 embedded ContextEngine replacement 已开发验证；原生插件自行组装/投影的共享预算边界待核验。整节点仍需当前候选四项 acceptance，不升级局部开发证据为正式 RC 验收。"
+        ],
+        "evidence": [
+          "harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md",
+          "C:/Users/27933/Desktop/result/final/dcs-first-architecture-synthesis-final-2026-08-02.md",
+          "docs/dev/full-chain-maturity-audit-2026-08-02.md",
+          "docs/dev/tf0013-residual-crosscheck-20260930.md",
+          "artifacts/runtime-authority-convergence/rc-02/acceptance/finalReport.json",
+          "artifacts/runtime-authority-convergence/rc-03/acceptance/finalReport.json",
+          "docs/dev/tf0013-compass-budget-20260930.md",
+          "artifacts/tf0013-compass-budget-20260930/verification.json",
+          "artifacts/tf0013-compass-budget-20260930/autoreview.json",
+          "artifacts/tf0013-compass-budget-20260930/source-hashes.json",
+          "docs/dev/tf0013-message-budget-20260930.md",
+          "artifacts/tf0013-message-budget-20260930/verification.json",
+          "artifacts/tf0013-message-budget-20260930/autoreview.json",
+          "artifacts/tf0013-message-budget-20260930/source-hashes.json"
+        ]
+      }
+    }
+  ]
+}

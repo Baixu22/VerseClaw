@@ -11,6 +11,12 @@ import { SILENT_REPLY_TOKEN } from "../../auto-reply/tokens.js";
 import { resolveStorePath, updateSessionStoreEntry } from "../../config/sessions.js";
 import { ensureContextEnginesInitialized } from "../../context-engine/init.js";
 import {
+  beginRc03RunAttempts,
+  clearRc03SealPlan,
+  endRc03RunAttempts,
+  resolveRc03SealState,
+} from "../../context-engine/rc03-seal-hook.js";
+import {
   resolveContextEngine,
   resolveContextEngineOwnerPluginId,
 } from "../../context-engine/registry.js";
@@ -25,6 +31,7 @@ import { enqueueCommandInLane } from "../../process/command-queue.js";
 import type { CommandQueueEnqueueOptions } from "../../process/command-queue.types.js";
 import { createAgentHarnessTaskRuntimeScope } from "../../tasks/agent-harness-task-runtime-scope.js";
 import { resolveUserPath } from "../../utils.js";
+import { acquireSessionAdmissionPermit } from "../../sessions/session-admission-registry.js";
 import { isMarkdownCapableMessageChannel } from "../../utils/message-channel.js";
 import {
   retireSessionMcpRuntime,
@@ -126,6 +133,10 @@ import {
   PostCompactionLoopPersistedError,
   type PostCompactionGuardObservation,
 } from "./post-compaction-loop-guard.js";
+import {
+  ToolLoopTerminatedError,
+  type ToolLoopTerminationObserver,
+} from "../tool-loop-termination.js";
 import { createEmbeddedRunReplayState, observeReplayMetadata } from "./replay-state.js";
 import { handleAssistantFailover } from "./run/assistant-failover.js";
 import {
@@ -568,9 +579,19 @@ export async function runEmbeddedAgent(
 
   throwIfAborted();
 
-  return enqueueSession(() => {
-    throwIfAborted();
-    return enqueueGlobal(async () => {
+  const releaseEmbeddedPermit = acquireSessionAdmissionPermit(
+    {
+      agentId: params.agentId,
+      canonicalSessionKey: effectiveSessionKey || params.sessionId,
+      expectedSessionId: params.sessionId,
+    },
+    "embedded-agent",
+  );
+  let queuedRun: Promise<EmbeddedAgentRunResult>;
+  try {
+    queuedRun = enqueueSession(() => {
+      throwIfAborted();
+      return enqueueGlobal(async () => {
       throwIfAborted();
       const started = Date.now();
       const startupStages = createEmbeddedRunStageTracker();
@@ -1212,6 +1233,11 @@ export async function runEmbeddedAgent(
       let lastCompactionTokensAfter: number | undefined;
       let lastContextBudgetStatus: EmbeddedAgentMeta["contextBudgetStatus"];
       let runLoopIterations = 0;
+      // RC-03: a provider fallback re-enters under the same runId; continue its
+      // attempt identity instead of restarting at 0. Off: identity unchanged.
+      const rc03AttemptBase = resolveRc03SealState(params.config).enabled
+        ? beginRc03RunAttempts(params.runId)
+        : undefined;
       let overloadProfileRotations = 0;
       let planningOnlyRetryAttempts = 0;
       let reasoningOnlyRetryAttempts = 0;
@@ -1237,16 +1263,27 @@ export async function runEmbeddedAgent(
         resolvedLoopDetectionConfig?.postCompactionGuard,
         { enabled: resolvedLoopDetectionConfig?.enabled !== false },
       );
-      let postCompactionAbortController: AbortController | undefined;
+      // Attempt-scoped abort controller shared by the loop guards below. The
+      // post-compaction guard and the critical tool-loop veto both end the
+      // attempt through it so a stuck tool loop cannot keep the turn alive.
+      let attemptLoopAbortController: AbortController | undefined;
       let postCompactionAbortError: PostCompactionLoopPersistedError | undefined;
+      let toolLoopAbortError: ToolLoopTerminatedError | undefined;
       const observePostCompactionToolOutcome = (
         observation: PostCompactionGuardObservation,
       ): void => {
         const verdict = postCompactionGuard.observe(observation);
         if (verdict.shouldAbort) {
           postCompactionAbortError ??= PostCompactionLoopPersistedError.fromVerdict(verdict);
-          postCompactionAbortController?.abort(postCompactionAbortError);
+          attemptLoopAbortController?.abort(postCompactionAbortError);
         }
+      };
+      // Critical tool-loop veto (#s05-t01): the detector already blocked the
+      // individual call, but a model that keeps re-issuing the identical call
+      // would spin until an operator stops the run. Abort the attempt instead.
+      const observeToolLoopTermination: ToolLoopTerminationObserver = (info) => {
+        toolLoopAbortError ??= new ToolLoopTerminatedError(info);
+        attemptLoopAbortController?.abort(toolLoopAbortError);
       };
       let lastRetryFailoverReason: FailoverReason | null = null;
       let planningOnlyRetryInstruction: string | null = null;
@@ -1578,7 +1615,7 @@ export async function runEmbeddedAgent(
           }
 
           const attemptAbortController = new AbortController();
-          postCompactionAbortController = attemptAbortController;
+          attemptLoopAbortController = attemptAbortController;
           const parentAbortSignal = params.abortSignal;
           const relayParentAbort = (): void => {
             attemptAbortController.abort(parentAbortSignal?.reason);
@@ -1673,6 +1710,7 @@ export async function runEmbeddedAgent(
             beforeAgentStartResult,
             thinkLevel,
             onToolOutcome: observePostCompactionToolOutcome,
+            onToolLoopTermination: observeToolLoopTermination,
             onRunProgress: notifyRunProgress,
             fastMode: params.fastMode,
             verboseLevel: params.verboseLevel,
@@ -1684,7 +1722,7 @@ export async function runEmbeddedAgent(
             timeoutMs: params.timeoutMs,
             runTimeoutOverrideMs: params.runTimeoutOverrideMs,
             runId: params.runId,
-            attemptIndex: runLoopIterations - 1,
+            attemptIndex: (rc03AttemptBase ?? 0) + runLoopIterations - 1,
             abortSignal: attemptAbortController.signal,
             replyOperation: params.replyOperation,
             shouldEmitToolResult: params.shouldEmitToolResult,
@@ -1701,8 +1739,10 @@ export async function runEmbeddedAgent(
             onAgentEvent: params.onAgentEvent,
             onExecutionPhase: params.onExecutionPhase,
             extraSystemPrompt: params.extraSystemPrompt,
+            compassContext: params.compassContext,
             sourceReplyDeliveryMode: params.sourceReplyDeliveryMode,
             inputProvenance: params.inputProvenance,
+            contentProvenance: params.contentProvenance,
             streamParams: params.streamParams,
             modelRun: params.modelRun,
             promptMode: params.promptMode,
@@ -1732,16 +1772,19 @@ export async function runEmbeddedAgent(
             onAssistantErrorMessagePersisted: params.onAssistantErrorMessagePersisted,
           })
             .catch((err: unknown): never => {
-              throw postCompactionAbortError ?? err;
+              throw postCompactionAbortError ?? toolLoopAbortError ?? err;
             })
             .finally(() => {
               parentAbortSignal?.removeEventListener?.("abort", relayParentAbort);
-              if (postCompactionAbortController === attemptAbortController) {
-                postCompactionAbortController = undefined;
+              if (attemptLoopAbortController === attemptAbortController) {
+                attemptLoopAbortController = undefined;
               }
             });
           if (postCompactionAbortError) {
             throw postCompactionAbortError;
+          }
+          if (toolLoopAbortError) {
+            throw toolLoopAbortError;
           }
           const attempt = normalizeEmbeddedRunAttemptResult(rawAttempt);
 
@@ -3826,6 +3869,11 @@ export async function runEmbeddedAgent(
         }
       } finally {
         forgetPromptBuildDrainCacheForRun(params.runId);
+        if (rc03AttemptBase === undefined) {
+          clearRc03SealPlan(params.runId);
+        } else {
+          endRc03RunAttempts(params.runId, rc03AttemptBase + runLoopIterations);
+        }
         stopRuntimeAuthRefreshTimer();
         await runAgentCleanupStep({
           runId: params.runId,
@@ -3866,6 +3914,10 @@ export async function runEmbeddedAgent(
       }
     });
   });
+  } finally {
+    releaseEmbeddedPermit();
+  }
+  return queuedRun;
 }
 
 function resolveAuthProfileStateProvider(

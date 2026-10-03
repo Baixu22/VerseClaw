@@ -1,0 +1,26 @@
+
+=== DCS ops preflight ===
+[OK  ] defaultsUnchanged=true
+[OK  ] readyForDefaultFlagGraduation=false
+[OK  ] productionMode=opt-in
+[OK  ] packaging redLines all safe
+[OK  ] canary recommendation=keep-off
+[OK  ] canary liveReady=false
+[OK  ] canary productApproved=false
+[OK  ] canary defaultsUnchanged=true
+[OK  ] C1 gate authority=coding-c1-hand-authored-real-tools
+[OK  ] C1 authoritative reduction=4.5x; meetsGate=false
+[OK  ] C1 unified decision keeps product locks closed
+[OK  ] TF-0006 remains blocked
+[OK  ] present: docs/dev/dcs-ops-canary-runbook.md
+[OK  ] present: artifacts/dcs-deep-test-week1/day1-gates.json
+[WARN] missing: artifacts/dcs-deep-test-week1/decision.md
+       next: Required at canary close-out
+[WARN] L3 blocked [profiles-missing]: Three-profile canary governance is missing
+       next: Fill artifacts/dcs-deep-test-week1/profiles.json with named roles and bounded scopes
+[OK  ] agent-surrogate engineering campaign complete: 10/10/10; human runs remain 0/10
+[OK  ] agent-surrogate status=agent-acceptance-complete; verified agent evidence permits node closure under the 2026-09-27 policy, without product or downstream release
+
+result: PASS hardStop=false
+nextStep: Agent campaign is complete. Verify clean-candidate evidence and apply the Task Forest proposal under the 2026-09-27 policy; human counts stay zero. Separate L3 governance gaps do not require a human.
+wrote: artifacts/dcs-deep-test-week1/preflight-last.json

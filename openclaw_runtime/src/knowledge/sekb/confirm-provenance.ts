@@ -26,6 +26,7 @@ export type ConfirmProvenance = {
 export type ConfirmProvenanceErrorCode =
   | "missing_session"
   | "missing_suggestion"
+  | "source_lineage_mismatch"
   | "unknown_source_high_trust"
   | "summary_integrity_claim";
 
@@ -56,9 +57,7 @@ export function normalizeConfirmSourceSystem(value: unknown): ConfirmSourceSyste
   return "unknown";
 }
 
-export function normalizeConfirmIntegrityClaim(
-  value: unknown,
-): ConfirmIntegrityLevel | undefined {
+export function normalizeConfirmIntegrityClaim(value: unknown): ConfirmIntegrityLevel | undefined {
   if (value === "advisory" || value === "confirmed" || value === "high_trust") {
     return value;
   }
@@ -182,7 +181,10 @@ export function buildConfirmProvenance(input: {
 }
 
 export function canEnterHighTrustContext(
-  provenance: Pick<ConfirmProvenance, "integrity" | "sourceSystem" | "sessionId" | "sourceTrajectoryIds">,
+  provenance: Pick<
+    ConfirmProvenance,
+    "integrity" | "sourceSystem" | "sessionId" | "sourceTrajectoryIds"
+  >,
 ): boolean {
   return (
     provenance.integrity === "high_trust" &&

@@ -280,9 +280,11 @@ export type ExecApprovalsResolved = {
 // Keep CLI + gateway defaults in sync.
 export const DEFAULT_EXEC_APPROVAL_TIMEOUT_MS = 1_800_000;
 
-const DEFAULT_SECURITY: ExecSecurity = "full";
-const DEFAULT_ASK: ExecAsk = "off";
-export const DEFAULT_EXEC_APPROVAL_ASK_FALLBACK: ExecSecurity = "full";
+// Missing policy must fail closed at the tool boundary. Explicit workspace
+// modes may still opt into full/off; these values only cover absent config.
+export const DEFAULT_EXEC_SECURITY: ExecSecurity = "allowlist";
+export const DEFAULT_EXEC_ASK: ExecAsk = "on-miss";
+export const DEFAULT_EXEC_APPROVAL_ASK_FALLBACK: ExecSecurity = "allowlist";
 const DEFAULT_AUTO_ALLOW_SKILLS = false;
 const DEFAULT_SOCKET = "~/.openclaw/exec-approvals.sock";
 const DEFAULT_FILE = "~/.openclaw/exec-approvals.json";
@@ -1045,8 +1047,8 @@ export function resolveExecApprovalsFromFile(params: {
   const wildcard = file.agents?.["*"] ?? {};
   const rawAgent = rawFile.agents?.[agentKey] ?? {};
   const rawWildcard = rawFile.agents?.["*"] ?? {};
-  const fallbackSecurity = params.overrides?.security ?? DEFAULT_SECURITY;
-  const fallbackAsk = params.overrides?.ask ?? DEFAULT_ASK;
+  const fallbackSecurity = params.overrides?.security ?? DEFAULT_EXEC_SECURITY;
+  const fallbackAsk = params.overrides?.ask ?? DEFAULT_EXEC_ASK;
   const fallbackAskFallback = params.overrides?.askFallback ?? DEFAULT_EXEC_APPROVAL_ASK_FALLBACK;
   const fallbackAutoAllowSkills = params.overrides?.autoAllowSkills ?? DEFAULT_AUTO_ALLOW_SKILLS;
   const resolvedDefaults: Required<ExecApprovalsDefaults> = {

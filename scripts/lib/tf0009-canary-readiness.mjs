@@ -112,7 +112,7 @@ export function evaluateTf0009L3Readiness({
       block(
         `role-${role}-missing`,
         `Named ${role} is missing`,
-        'Name the accountable human roles before L3',
+        'Name the accountable agent roles before L3; label the campaign driven_by=agent',
       );
     }
   }

@@ -10,8 +10,26 @@ test.describe('hover-only scrollbar visibility', () => {
     await page.getByTestId('settings-nav-models').click();
       await expect(page.getByTestId('models-page')).toBeVisible();
 
-      const scrollContainer = page.locator('[data-testid="models-page"] .overflow-y-auto').first();
+      // The hover-only scrollbar treatment is applied globally (the `*` selector
+      // in styles/globals.css), not by a dedicated `.overflow-y-auto` utility.
+      // In Settings the models page renders embedded (its own overflow container
+      // moved to the settings chrome, which carries a distinct always-on thumb),
+      // so assert the global behaviour on the models-page element itself.
+      const scrollContainer = page.getByTestId('models-page');
       await expect(scrollContainer).toBeVisible();
+
+      // workers:1 keeps the pointer between tests, and the Settings chrome can
+      // leave it inside this container's hover scope, pre-arming the revealed
+      // thumb. Park the pointer in the window corner and wait for the un-hovered
+      // treatment before measuring it.
+      await page.mouse.move(2, 2);
+      await expect
+        .poll(() =>
+          scrollContainer.evaluate(
+            (element) => window.getComputedStyle(element, '::-webkit-scrollbar-thumb').backgroundColor,
+          ),
+        )
+        .toBe('rgba(0, 0, 0, 0)');
 
       const beforeHover = await scrollContainer.evaluate((element) => {
         const style = window.getComputedStyle(element);

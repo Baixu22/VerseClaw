@@ -289,7 +289,7 @@ export function Models({ embedded = false }: { embedded?: boolean } = {}) {
         {!embedded && (
           <div className="flex flex-col md:flex-row md:items-start justify-between mb-12 shrink-0 gap-4">
             <div>
-              <h1 data-testid="models-page-title" className="text-5xl md:text-6xl font-serif text-foreground mb-3 font-normal tracking-tight">
+              <h1 data-testid="models-page-title" className="text-2xl font-serif text-foreground mb-3 font-normal tracking-tight">
                 {t('dashboard:models.title')}
               </h1>
               <p className="text-subtitle text-foreground/70 font-medium">
@@ -309,7 +309,7 @@ export function Models({ embedded = false }: { embedded?: boolean } = {}) {
 
           {/* Token Usage History Section */}
           <div>
-            <h2 className="text-3xl font-serif text-foreground mb-6 font-normal tracking-tight">
+            <h2 className="text-xl font-serif text-foreground mb-6 font-normal tracking-tight">
               {t('dashboard:recentTokenHistory.title', 'Token Usage History')}
             </h2>
             <div>

@@ -38,6 +38,31 @@ function stableStringify(value: unknown): string {
   return `{${entries.join(',')}}`;
 }
 
+// A minimal-but-usable provider account, so the composer's first-send gate
+// (isProviderRuntimeReady) is satisfied and send reaches the capability
+// preflight instead of being intercepted by the "configure a provider" gate.
+const PROVIDER_READY_HOST_API: Record<string, unknown> = {
+  [stableStringify(['providers', 'accounts', null])]: [
+    {
+      id: 'alpha1234',
+      vendorId: 'custom',
+      label: 'Alpha',
+      authMode: 'api_key',
+      baseUrl: 'http://127.0.0.1:1111/v1',
+      model: 'model-alpha',
+      enabled: true,
+      isDefault: true,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+    },
+  ],
+  [stableStringify(['providers', 'accountKeyInfo', null])]: [
+    { accountId: 'alpha1234', hasKey: true, keyMasked: 'sk-***' },
+  ],
+  [stableStringify(['providers', 'vendors', null])]: [],
+  [stableStringify(['providers', 'getDefaultAccount', null])]: { accountId: 'alpha1234' },
+};
+
 test.describe('Verse Claw chat skill trigger', () => {
   test('renders localized skill access inside the slash palette', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
@@ -144,9 +169,15 @@ test.describe('Verse Claw chat skill trigger', () => {
       await expect(page.getByTestId('chat-composer-permission-menu')).toHaveCount(0);
       await expect(page.getByTestId('chat-composer-agent')).toBeVisible();
       await expect(page.getByTestId('chat-composer-skill')).toHaveCount(0);
-      await expect(page.getByTestId('chat-model-picker-button')).toHaveCount(0);
+      // The model picker is now a persistent composer control: it stays visible
+      // whenever an agent is active (it falls back to the agent model even before
+      // provider accounts hydrate), so it is present rather than absent here.
+      await expect(page.getByTestId('chat-model-picker-button')).toBeVisible();
 
+      // The composer add-affordance now opens a compact morph (attach / knowledge
+      // / model / more); the full grouped action menu is reached via "More".
       await page.getByTestId('chat-composer-actions').click();
+      await page.getByTestId('chat-composer-action-more').click();
       await expect(page.getByTestId('chat-composer-actions-menu')).toBeVisible();
       await expect(page.getByTestId('chat-composer-action-group-context')).toBeVisible();
       await expect(page.getByTestId('chat-composer-action-group-skills')).toBeVisible();
@@ -157,6 +188,7 @@ test.describe('Verse Claw chat skill trigger', () => {
       await page.getByTestId('chat-composer-input').fill('');
 
       await page.getByTestId('chat-composer-actions').click();
+      await page.getByTestId('chat-composer-action-more').click();
       await page.getByTestId('chat-composer-action-office-word').click();
       await expect(page.getByTestId('chat-composer-input')).toHaveValue(/\/officecli-docx {2}.+/);
       await page.getByTestId('chat-composer-input').fill('');
@@ -265,7 +297,9 @@ test.describe('Verse Claw chat skill trigger', () => {
       await page.getByTestId('chat-composer-skill-token').click();
 
       await expect(page.getByTestId('artifact-panel')).toBeVisible({ timeout: 15_000 });
-      await expect(page.getByTestId('artifact-panel-tab-preview')).toBeVisible();
+      // The skill manifest preview now opens inside the Files panel tab (the
+      // standalone "preview" tab was folded into the Files view).
+      await expect(page.getByTestId('artifact-panel-tab-files')).toBeVisible();
     } finally {
       await closeElectronApp(app);
     }
@@ -330,6 +364,7 @@ test.describe('Verse Claw chat skill trigger', () => {
             sessionKey: SESSION_KEY,
             state: {},
           }])]: { success: true },
+          ...PROVIDER_READY_HOST_API,
           [stableStringify(['capabilities', 'publications', {
             includeCandidates: true,
             includeDiagnostics: true,
@@ -439,6 +474,7 @@ test.describe('Verse Claw chat skill trigger', () => {
             sessionKey: SESSION_KEY,
             state: {},
           }])]: { success: true },
+          ...PROVIDER_READY_HOST_API,
         },
       });
 

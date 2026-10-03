@@ -88,7 +88,10 @@ export type CohortAggregate = {
   recallCriticalMean: number;
   recallCriticalMin: number;
   recallImportantMean: number;
+  recallImportantMin: number;
   recallNiceToHaveMean: number;
+  criticalDroppedSamples: number;
+  staleLeakSamples: number;
   forbiddenFoundTotal: number;
   expectedFoundTotal: number;
   expectedTotal: number;
@@ -288,10 +291,10 @@ const DEFAULT_FACT_DENSITIES: FactDensity[] = ['sparse', 'normal', 'dense'];
 
 export const DEFAULT_LAYER1_CI_THRESHOLDS: Layer1Thresholds = {
   recallCriticalMeanMin: 0.95,
-  recallCriticalMinMin: 0.85,
-  recallImportantMeanMin: 0.75,
+  recallCriticalMinMin: 1,
+  recallImportantMeanMin: 0.85,
   recallNiceToHaveMeanMin: 0.5,
-  weightedRecallMeanMin: 0.82,
+  weightedRecallMeanMin: 0.9,
   precisionMeanMin: 1,
   forbiddenFoundTotalMax: 0,
   compressionRatioMeanMin: 0.12,
@@ -300,11 +303,11 @@ export const DEFAULT_LAYER1_CI_THRESHOLDS: Layer1Thresholds = {
 };
 
 export const DEFAULT_LAYER3_THRESHOLDS: Layer3Thresholds = {
-  firstActionMatchRateMin: 0.85,
-  criticalActionMatchRateMin: 0.9,
-  noRepeatedWorkRateMin: 0.95,
-  noContradictoryActionRateMin: 0.95,
-  decisionConsistencyRateMin: 0.9,
+  firstActionMatchRateMin: 0.95,
+  criticalActionMatchRateMin: 0.95,
+  noRepeatedWorkRateMin: 0.98,
+  noContradictoryActionRateMin: 1,
+  decisionConsistencyRateMin: 0.95,
   taskCompletionDeltaMax: 0.08,
 };
 
@@ -493,7 +496,10 @@ export function aggregateFactSetEvaluations(evaluations: FactSetEvaluation[]): C
     recallCriticalMean: round(mean(evaluations.map((item) => item.recallBySeverity.critical.recall))),
     recallCriticalMin: round(Math.min(...evaluations.map((item) => item.recallBySeverity.critical.recall))),
     recallImportantMean: round(mean(evaluations.map((item) => item.recallBySeverity.important.recall))),
+    recallImportantMin: round(Math.min(...evaluations.map((item) => item.recallBySeverity.important.recall))),
     recallNiceToHaveMean: round(mean(evaluations.map((item) => item.recallBySeverity.nice_to_have.recall))),
+    criticalDroppedSamples: evaluations.filter((item) => item.recallBySeverity.critical.total - item.recallBySeverity.critical.found > 0).length,
+    staleLeakSamples: evaluations.filter((item) => item.forbiddenFound > 0).length,
     forbiddenFoundTotal: evaluations.reduce((sum, item) => sum + item.forbiddenFound, 0),
     expectedFoundTotal: evaluations.reduce((sum, item) => sum + item.expectedFound, 0),
     expectedTotal: evaluations.reduce((sum, item) => sum + item.expectedTotal, 0),
@@ -583,29 +589,19 @@ export function assessLayer1Gate(
       actual: aggregate.forbiddenFoundTotal,
       expected: `<= ${thresholds.forbiddenFoundTotalMax}`,
     },
+    {
+      id: 'criticalDropped.samples',
+      pass: aggregate.criticalDroppedSamples === 0,
+      actual: aggregate.criticalDroppedSamples,
+      expected: '= 0',
+    },
+    {
+      id: 'staleLeak.samples',
+      pass: aggregate.staleLeakSamples === 0,
+      actual: aggregate.staleLeakSamples,
+      expected: '= 0',
+    },
   ];
-  if (aggregate.compressionRatioMean !== null) {
-    checks.push({
-      id: 'compressionRatio.mean.min',
-      pass: aggregate.compressionRatioMean >= thresholds.compressionRatioMeanMin,
-      actual: aggregate.compressionRatioMean,
-      expected: `>= ${thresholds.compressionRatioMeanMin}`,
-    });
-    checks.push({
-      id: 'compressionRatio.mean.max',
-      pass: aggregate.compressionRatioMean <= thresholds.compressionRatioMeanMax,
-      actual: aggregate.compressionRatioMean,
-      expected: `<= ${thresholds.compressionRatioMeanMax}`,
-    });
-  }
-  if (aggregate.informationDensityMean !== null) {
-    checks.push({
-      id: 'informationDensity.mean',
-      pass: aggregate.informationDensityMean >= thresholds.informationDensityMeanMin,
-      actual: aggregate.informationDensityMean,
-      expected: `>= ${thresholds.informationDensityMeanMin}`,
-    });
-  }
   return {
     pass: checks.every((check) => check.pass),
     checks,
@@ -863,5 +859,227 @@ export function assessLayer3Gate(
   return {
     pass: checks.every((check) => check.pass),
     checks,
+  };
+}
+
+// P4 paired-trajectory and model-cascade types/functions.
+
+export type PairedTrajectoryRow = {
+  sampleId: string;
+  compressedSummary: string;
+  fullContextSuccess: boolean;
+  compressedSuccess: boolean;
+  failureKind?: 'wrong_next_action' | 'omitted_blocker' | 'repeated_work' | 'stale_branch' | 'other' | null;
+  compressorModel?: string;
+  retryCount?: number;
+  latencyMs?: number;
+  tokenUsage?: { input: number; output: number; cacheRead?: number; cacheWrite?: number };
+  cost?: { input: number; output: number; cacheRead?: number; cacheWrite?: number };
+};
+
+export type TrajectoryDamageClass =
+  | 'compression_induced_failure'
+  | 'preexisting_failure'
+  | 'compressed_success'
+  | 'indeterminate';
+
+export type CriticalAtomCriticResult = {
+  sampleId: string;
+  model: string;
+  promptVersion: string;
+  missingAtoms: Array<{
+    canonicalIdentity: string;
+    type: string;
+    severity: 'critical' | 'important' | 'nice_to_have';
+    rationale: string;
+  }>;
+  repairGuideline: string;
+};
+
+export type FailureGuideline = {
+  id: string;
+  canonicalIdentity: string;
+  type: string;
+  severity: string;
+  failureKind: string;
+  count: number;
+  sampleIds: string[];
+  repairGuideline: string;
+};
+
+export type FailureGuidelineSet = {
+  version: 1;
+  generatedAt: string;
+  atomLimit: number;
+  guidelines: FailureGuideline[];
+};
+
+export type ModelIndependenceAudit = {
+  ok: boolean;
+  reason: string;
+  compressorModel?: string;
+  judgeModel?: string;
+  schemaFreeModel?: string;
+  continuationModel?: string;
+  criticModel?: string;
+};
+
+export function classifyPairedTrajectory(row: PairedTrajectoryRow): TrajectoryDamageClass {
+  if (row.fullContextSuccess && !row.compressedSuccess) {
+    return 'compression_induced_failure';
+  }
+  if (!row.fullContextSuccess) {
+    return 'preexisting_failure';
+  }
+  if (row.compressedSuccess) {
+    return 'compressed_success';
+  }
+  return 'indeterminate';
+}
+
+export function assertModelIndependence(params: {
+  compressorModel?: string;
+  judgeModel?: string;
+  schemaFreeModel?: string;
+  continuationModel?: string;
+  criticModel?: string;
+}): ModelIndependenceAudit {
+  const compressor = params.compressorModel?.trim();
+  const judge = params.judgeModel?.trim();
+  const schemaFree = params.schemaFreeModel?.trim();
+  const continuation = params.continuationModel?.trim();
+  const critic = params.criticModel?.trim();
+  const evaluatorModels = [...new Set([judge, schemaFree, continuation, critic].filter(Boolean))];
+  const sharedWithCompressor = evaluatorModels.filter((model) => model === compressor);
+  const ok = Boolean(compressor) && evaluatorModels.length > 0 && sharedWithCompressor.length === 0;
+  return {
+    ok,
+    reason: !compressor
+      ? 'Missing explicit compressor model.'
+      : evaluatorModels.length === 0
+        ? 'Missing explicit judge/schema-free/continuation/critic model.'
+        : sharedWithCompressor.length > 0
+          ? `Compressor model ${compressor} is reused by an evaluation stage; compressor must differ from judge/schema-free/continuation/critic models.`
+          : `Compressor ${compressor} differs from every configured evaluation model: ${evaluatorModels.join(', ')}.`,
+    ...(compressor ? { compressorModel: compressor } : {}),
+    ...(judge ? { judgeModel: judge } : {}),
+    ...(schemaFree ? { schemaFreeModel: schemaFree } : {}),
+    ...(continuation ? { continuationModel: continuation } : {}),
+    ...(critic ? { criticModel: critic } : {}),
+  };
+}
+
+export function buildFailureGuidelines(params: {
+  rows: PairedTrajectoryRow[];
+  criticResults?: CriticalAtomCriticResult[];
+  maxAtoms?: number;
+  generatedAt?: string;
+}): FailureGuidelineSet {
+  const maxAtoms = Math.max(1, Math.floor(params.maxAtoms ?? 24));
+  const byIdentity = new Map<string, FailureGuideline>();
+  for (const row of params.rows) {
+    if (classifyPairedTrajectory(row) !== 'compression_induced_failure') continue;
+    const critic = (params.criticResults ?? []).find((item) => item.sampleId === row.sampleId);
+    if (!critic) continue;
+    for (const atom of critic.missingAtoms.slice(0, maxAtoms)) {
+      const identity = atom.canonicalIdentity || atom.type;
+      const key = `${atom.type}\u0000${identity}`;
+      const existing = byIdentity.get(key);
+      if (existing) {
+        existing.count += 1;
+        existing.sampleIds = [...new Set([...existing.sampleIds, row.sampleId])].slice(0, 12);
+        if (atom.rationale) existing.repairGuideline = atom.rationale;
+        continue;
+      }
+      byIdentity.set(key, {
+        id: `guideline-${atom.type}-${byIdentity.size + 1}`,
+        canonicalIdentity: identity,
+        type: atom.type,
+        severity: atom.severity,
+        failureKind: row.failureKind ?? 'other',
+        count: 1,
+        sampleIds: [row.sampleId],
+        repairGuideline: atom.rationale || critic.repairGuideline || '',
+      });
+    }
+  }
+  const guidelines = [...byIdentity.values()]
+    .sort((left, right) => right.count - left.count || left.canonicalIdentity.localeCompare(right.canonicalIdentity))
+    .slice(0, maxAtoms);
+  return {
+    version: 1,
+    generatedAt: params.generatedAt ?? new Date(0).toISOString(),
+    atomLimit: maxAtoms,
+    guidelines,
+  };
+}
+
+export function summarizePairedTrajectoryMetrics(params: {
+  rows: PairedTrajectoryRow[];
+  criticResults?: CriticalAtomCriticResult[];
+}): {
+  sampleCount: number;
+  compressionInducedFailureCount: number;
+  preexistingFailureCount: number;
+  compressedSuccessCount: number;
+  indeterminateCount: number;
+  retryRate: number;
+  latency: { mean: number; min: number; max: number };
+  tokens: { inputMean: number; inputMin: number; inputMax: number; outputMean: number; outputMin: number; outputMax: number };
+  cost: { mean: number; min: number; max: number };
+  criticCoverage: { matchedFailures: number; totalFailures: number; rate: number };
+} {
+  const rows = params.rows;
+  const failures = rows.filter((row) => classifyPairedTrajectory(row) === 'compression_induced_failure');
+  const retries = rows.map((row) => row.retryCount ?? 0);
+  const latencies = rows
+    .map((row) => row.latencyMs)
+    .filter((value): value is number => typeof value === 'number' && Number.isFinite(value));
+  const tokenInputs = rows
+    .map((row) => row.tokenUsage?.input)
+    .filter((value): value is number => typeof value === 'number' && Number.isFinite(value));
+  const tokenOutputs = rows
+    .map((row) => row.tokenUsage?.output)
+    .filter((value): value is number => typeof value === 'number' && Number.isFinite(value));
+  const costs = rows
+    .map((row) => {
+      const cost = row.cost;
+      if (!cost) return undefined;
+      const total = (cost.input ?? 0) + (cost.output ?? 0) + (cost.cacheRead ?? 0) + (cost.cacheWrite ?? 0);
+      return Number.isFinite(total) ? total : undefined;
+    })
+    .filter((value): value is number => typeof value === 'number' && Number.isFinite(value));
+  const criticMatched = (params.criticResults ?? []).filter((item) => item.sampleId).length;
+  const sum = (values: number[]) => values.reduce((acc, value) => acc + value, 0);
+  return {
+    sampleCount: rows.length,
+    compressionInducedFailureCount: failures.length,
+    preexistingFailureCount: rows.filter((row) => classifyPairedTrajectory(row) === 'preexisting_failure').length,
+    compressedSuccessCount: rows.filter((row) => classifyPairedTrajectory(row) === 'compressed_success').length,
+    indeterminateCount: rows.filter((row) => classifyPairedTrajectory(row) === 'indeterminate').length,
+    retryRate: retries.length ? retries.filter((value) => value > 0).length / retries.length : 0,
+    latency: {
+      mean: latencies.length ? sum(latencies) / latencies.length : 0,
+      min: latencies.length ? Math.min(...latencies) : 0,
+      max: latencies.length ? Math.max(...latencies) : 0,
+    },
+    tokens: {
+      inputMean: tokenInputs.length ? sum(tokenInputs) / tokenInputs.length : 0,
+      inputMin: tokenInputs.length ? Math.min(...tokenInputs) : 0,
+      inputMax: tokenInputs.length ? Math.max(...tokenInputs) : 0,
+      outputMean: tokenOutputs.length ? sum(tokenOutputs) / tokenOutputs.length : 0,
+      outputMin: tokenOutputs.length ? Math.min(...tokenOutputs) : 0,
+      outputMax: tokenOutputs.length ? Math.max(...tokenOutputs) : 0,
+    },
+    cost: {
+      mean: costs.length ? sum(costs) / costs.length : 0,
+      min: costs.length ? Math.min(...costs) : 0,
+      max: costs.length ? Math.max(...costs) : 0,
+    },
+    criticCoverage: {
+      matchedFailures: criticMatched,
+      totalFailures: failures.length,
+      rate: failures.length ? criticMatched / failures.length : 0,
+    },
   };
 }

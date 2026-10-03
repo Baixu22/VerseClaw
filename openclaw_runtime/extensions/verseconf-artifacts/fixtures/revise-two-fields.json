@@ -1,0 +1,20 @@
+{
+  "artifactId": "artifact-fixture-research",
+  "baseRevision": "revision-fixture-1",
+  "changes": [
+    {
+      "op": "setField",
+      "recordId": "rec-managed",
+      "fieldPath": ["evidenceState"],
+      "expected": { "kind": "value", "value": "unlinked" },
+      "value": "linked"
+    },
+    {
+      "op": "setField",
+      "recordId": "rec-managed",
+      "fieldPath": ["evidenceRefs"],
+      "expected": { "kind": "value", "value": [] },
+      "value": ["src-synthetic-check"]
+    }
+  ]
+}

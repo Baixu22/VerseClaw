@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { hostApi, type WorkspaceTerminalSessionResult } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
+import { approvalDisplayDetails } from '@/lib/permission-approval-display';
 import { cn } from '@/lib/utils';
 import { describeUserError, toastUserError } from '@/lib/user-error';
 import type { SurfaceErrorState } from '@/lib/async-surface-state';
@@ -361,7 +362,12 @@ export function WorkspaceTerminalPanel() {
 
       {pendingApproval && (
         <div className="flex items-center justify-between gap-3 border-b border-amber-500/25 bg-amber-500/10 px-3 py-2 text-xs">
-          <p className="truncate text-amber-800 dark:text-amber-300">{pendingApproval.reason}</p>
+          <p className="truncate text-amber-800 dark:text-amber-300">
+            {/* Redacted for external writes — that reason embeds the workspace
+                root path verbatim. */}
+            {approvalDisplayDetails(pendingApproval).reason
+              ?? t('workspace.terminal.toast.approvalRequired', 'Interactive terminal requires approval')}
+          </p>
           <Button size="sm" className="h-7" disabled={busy} onClick={() => void approveOpen()}>
             <Check className="mr-1.5 h-3 w-3" />{t('workspace.terminal.actions.approve', 'Approve')}
           </Button>

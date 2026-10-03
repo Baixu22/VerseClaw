@@ -13,16 +13,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ExtensionAPI, SessionManager } from "../sessions/index.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
-import type {
-  BlockStoreApi,
-  ContextBlockSink,
-} from "../../context-engine/block.js";
+import type { BlockStoreApi, ContextBlockSink } from "../../context-engine/block.js";
 import type { ProviderRuntimeModel } from "../../plugins/provider-runtime-model.types.js";
 import {
   mapToolsToToolRegistryEntries,
   type ToolRegistryEntry,
 } from "../../context-engine/handlers/tool-registry-handler.js";
-import { buildEmbeddedExtensionFactories } from "./extensions.js";
+import { buildEmbeddedExtensionFactories, type PrepareEmbeddedContext } from "./extensions.js";
+import { endContextOrchestratorTurn } from "../../context-engine/context-orchestrator.js";
+import { endTurnInjectionBudget } from "../../context-engine/turn-injection-budget.js";
 
 type RegisteredHandler = (event: unknown, ctx: { cwd?: string }) => unknown;
 
@@ -74,6 +73,42 @@ beforeEach(() => {
 });
 
 describe("DCS Stage 3 tool-registry extension wiring", () => {
+  it.each([false, true])(
+    "shares precheck and before-start preparation without duplicate writes (killed=%s)",
+    async (killed) => {
+      vi.stubEnv("VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH", killed ? "1" : "0");
+      const turnId = `tool-preparation-${killed}`;
+      const sink: ContextBlockSink = vi.fn(async () => [{ accepted: true }]);
+      const store = {
+        query: vi.fn(async () => []),
+        upsert: vi.fn(async () => ({ accepted: true })),
+      };
+      const agent = createAgentRecorder();
+      let prepare: PrepareEmbeddedContext | undefined;
+      try {
+        for (const factory of buildEmbeddedExtensionFactories({
+          ...baseFactoryParams(enabledCfg, sink, store, toolEntries),
+          injectionTurnId: turnId,
+          registerContextPreparation: (callback) => {
+            prepare = callback;
+          },
+        }))
+          void factory(agent as unknown as ExtensionAPI);
+        expect(prepare).toBeTypeOf("function");
+        await prepare!([]);
+        for (const handler of agent.handlers.before_agent_start ?? []) {
+          await handler({ type: "before_agent_start", prompt: "test" }, {});
+        }
+        expect(sink).toHaveBeenCalledTimes(killed ? 0 : 1);
+        if (killed) expect(store.query).not.toHaveBeenCalled();
+      } finally {
+        endContextOrchestratorTurn(turnId);
+        endTurnInjectionBudget(turnId);
+        vi.unstubAllEnvs();
+      }
+    },
+  );
+
   it("omits the tool-registry factory when flag is off", async () => {
     const sink: ContextBlockSink = vi.fn(async () => [{ accepted: true }]);
     const store: Pick<BlockStoreApi, "query" | "upsert"> = {
@@ -134,9 +169,7 @@ describe("DCS Stage 3 tool-registry extension wiring", () => {
   });
 
   it("registers a before_agent_start handler that writes a tool_registry Block", async () => {
-    const sink: ContextBlockSink = vi.fn(async (writes) =>
-      writes.map(() => ({ accepted: true })),
-    );
+    const sink: ContextBlockSink = vi.fn(async (writes) => writes.map(() => ({ accepted: true })));
     const store: Pick<BlockStoreApi, "query" | "upsert"> = {
       query: vi.fn(async () => []),
       upsert: vi.fn(async () => ({ accepted: true })),
@@ -215,9 +248,7 @@ describe("DCS Stage 3 tool-registry extension wiring", () => {
   });
 
   it("flag on + mapped real agent tools writes tool_registry with those entries", async () => {
-    const sink: ContextBlockSink = vi.fn(async (writes) =>
-      writes.map(() => ({ accepted: true })),
-    );
+    const sink: ContextBlockSink = vi.fn(async (writes) => writes.map(() => ({ accepted: true })));
     const store: Pick<BlockStoreApi, "query" | "upsert"> = {
       query: vi.fn(async () => []),
       upsert: vi.fn(async () => ({ accepted: true })),
@@ -272,9 +303,7 @@ describe("DCS Stage 3 tool-registry extension wiring", () => {
       query: vi.fn(async () => []),
       upsert: vi.fn(async () => ({ accepted: true })),
     };
-    const mapped = mapToolsToToolRegistryEntries([
-      { name: "edit", description: "Edit a file" },
-    ]);
+    const mapped = mapToolsToToolRegistryEntries([{ name: "edit", description: "Edit a file" }]);
     const agent = createAgentRecorder();
     for (const factory of buildEmbeddedExtensionFactories(
       baseFactoryParams(disabledCfg, sink, store, mapped),
@@ -286,5 +315,4 @@ describe("DCS Stage 3 tool-registry extension wiring", () => {
     }
     expect(sink).not.toHaveBeenCalled();
   });
-
 });

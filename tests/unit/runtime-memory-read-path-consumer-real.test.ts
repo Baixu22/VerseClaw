@@ -277,8 +277,8 @@ describe("Layer 2: provider context format — parseable by LLM", () => {
       verificationStatus: "candidate" as const,
       proposedAt: 100,
     };
-    delete (candidateFact as Partial<typeof verifiedFact>).acceptedAt;
-    delete (candidateFact as Partial<typeof verifiedFact>).promotion;
+    delete (candidateFact as unknown as Partial<typeof verifiedFact>).acceptedAt;
+    delete (candidateFact as unknown as Partial<typeof verifiedFact>).promotion;
 
     const result = await createRuntimeMemoryProviderResult(
       { facts: [verifiedFact, candidateFact as never], defaultTokenBudget: 256, defaultLimit: 8 },

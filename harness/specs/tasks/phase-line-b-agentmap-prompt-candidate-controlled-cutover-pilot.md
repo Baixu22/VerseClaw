@@ -117,12 +117,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-controlled-cutover-pilot/README.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-controlled-cutover-pilot/implementation-plan.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-controlled-cutover-pilot/validation-matrix.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-controlled-cutover-pilot/rollback-proof.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-controlled-cutover-pilot/submission-template.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-controlled-cutover-pilot/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Line B AgentMap Prompt Candidate Controlled Cutover Pilot

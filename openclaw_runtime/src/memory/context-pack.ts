@@ -90,9 +90,23 @@ const SCOPE_WEIGHTS: Record<string, number> = {
   global: 0.4,
 };
 
-function keywordOverlap(content: string, task?: string): number {
+/**
+ * Keyword overlap between card content and task state. ASCII words (3+
+ * chars) match as before; CJK matches by bigram intersection (TF-0114 /
+ * T-P0-6). The previous split kept a whole Chinese run as a single token and
+ * required a verbatim whole-run `includes`, which made the taskMatch
+ * thresholds (0.35 / 0.75) de facto unreachable for Chinese text.
+ */
+export function keywordOverlap(content: string, task?: string): number {
   if (!task?.trim()) return 0;
-  const words = new Set(task.toLowerCase().split(/[^a-z0-9_\u4e00-\u9fa5]+/i).filter((word) => word.length >= 3));
+  const asciiWords = task.toLowerCase().match(/[a-z0-9_]{3,}/g) ?? [];
+  const cjkBigrams: string[] = [];
+  for (const run of task.match(/[\u4e00-\u9fff]{2,}/g) ?? []) {
+    for (let i = 0; i + 2 <= run.length; i += 1) {
+      cjkBigrams.push(run.slice(i, i + 2));
+    }
+  }
+  const words = new Set<string>([...asciiWords, ...cjkBigrams]);
   if (words.size === 0) return 0;
   const normalized = content.toLowerCase();
   let matches = 0;

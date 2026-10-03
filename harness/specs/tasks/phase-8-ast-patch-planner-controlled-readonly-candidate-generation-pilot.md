@@ -59,13 +59,13 @@ requiredTests:
   - pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/phase-8-ast-patch-planner-controlled-readonly-candidate-generation-pilot.md --no-diff
   - pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/phase-8-ast-patch-planner-runtime-use-readiness.md --no-diff
   - pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/phase-8-ast-patch-planner-readonly-scan.md --no-diff
-  - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-controlled-runtime-use-pilot-readiness.test.ts tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts
+  - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-ast-grep-edit-plan-adapter.test.ts tests/unit/runtime-ast-edit-plan-evidence-verifier-readiness.test.ts tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts
   - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-ast-patch-planner-contracts.test.ts tests/unit/runtime-ast-patch-planner-rule-validation.test.ts tests/unit/runtime-ast-patch-planner-readonly-scan.test.ts tests/unit/runtime-ast-patch-planner-resume-drift.test.ts
   - pnpm --config.verify-deps-before-run=false run typecheck
   - pnpm --config.verify-deps-before-run=false run comms:replay
   - pnpm --config.verify-deps-before-run=false run comms:compare
-  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|workspaceEdit|applyPatch|ast-grep.*apply|rename|replaceBody|insertBefore|insertAfter|safeDelete" openclaw_runtime/src/runtime-core/ast-patch-planner.ts tests/unit/runtime-ast-patch-planner*.test.ts tests/unit/runtime-controlled-runtime-use-*.test.ts harness/specs/tasks/phase-8-ast-patch-planner-controlled-readonly-candidate-generation-pilot.md runtime-research/handoffs/phase-8-ast-patch-planner-controlled-readonly-candidate-generation-pilot runtime-research/handoffs/controlled-runtime-use-pilot-readiness
-  - rg -n "TaskLoop|task-loop|Gateway|host-api|api-client|ipcRenderer|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" openclaw_runtime/src/runtime-core/ast-patch-planner.ts tests/unit/runtime-ast-patch-planner*.test.ts tests/unit/runtime-controlled-runtime-use-*.test.ts harness/specs/tasks/phase-8-ast-patch-planner-controlled-readonly-candidate-generation-pilot.md runtime-research/handoffs/phase-8-ast-patch-planner-controlled-readonly-candidate-generation-pilot runtime-research/handoffs/controlled-runtime-use-pilot-readiness
+  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|workspaceEdit|applyPatch|ast-grep.*apply|rename|replaceBody|insertBefore|insertAfter|safeDelete" openclaw_runtime/src/runtime-core/ast-patch-planner.ts tests/unit/runtime-ast-patch-planner*.test.ts tests/unit/runtime-controlled-runtime-use-*.test.ts harness/specs/tasks/phase-8-ast-patch-planner-controlled-readonly-candidate-generation-pilot.md docs/dev/runtime-research-boundaries.md
+  - rg -n "TaskLoop|task-loop|Gateway|host-api|api-client|ipcRenderer|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" openclaw_runtime/src/runtime-core/ast-patch-planner.ts tests/unit/runtime-ast-patch-planner*.test.ts tests/unit/runtime-controlled-runtime-use-*.test.ts harness/specs/tasks/phase-8-ast-patch-planner-controlled-readonly-candidate-generation-pilot.md docs/dev/runtime-research-boundaries.md
   - rg -n "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components
 acceptance:
   - Prerequisite status is confirmed as accepted_runtime_use_prerequisites_complete.
@@ -76,16 +76,11 @@ acceptance:
   - The quantitative scorecard assigns AST pilot scores across usable value 25, current evidence strength 20, boundary safety 20, verification quantifiability 15, dependency maturity 10, and rollback/reversibility 10.
   - Hard veto gates block any default-on behavior, provider ordering drift, leakage, fail-closed rate below 100 percent, renderer bypass, AST mutation/apply/write surface, TaskLoop/Gateway/provider transport authority drift, rollback failure, or missing required validation without a blocked reason.
   - Harness context and structural validation pass for this pilot spec and predecessor AST specs.
-  - Focused AST planner tests, controlled readiness boundary sentinels, pilot readiness doc sentinels, typecheck, comms replay, comms compare, and boundary scans pass or are recorded with a blocked reason.
+  - Focused AST planner tests, controlled readiness boundary sentinels, adapter and verifier-readiness behavior regressions, typecheck, comms replay, comms compare, and boundary scans pass or are recorded with a blocked reason.
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-8-ast-patch-planner-controlled-readonly-candidate-generation-pilot/README.md
-    - runtime-research/handoffs/phase-8-ast-patch-planner-controlled-readonly-candidate-generation-pilot/validation-plan.md
-    - runtime-research/handoffs/controlled-runtime-use-pilot-readiness/sample-matrix.md
-    - runtime-research/handoffs/controlled-runtime-use-pilot-readiness/scorecard.md
-    - runtime-research/handoffs/controlled-runtime-use-pilot-readiness/veto-gates.md
-    - runtime-research/handoffs/controlled-runtime-use-pilot-readiness/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 8 AST Patch Planner Controlled Readonly Candidate Generation Pilot

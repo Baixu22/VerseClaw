@@ -1,0 +1,17 @@
+{
+  "schema": "live-cdp-offline-verification/v1",
+  "status": "passed",
+  "checkedAt": "2026-09-11T13:14:35.361094+00:00",
+  "hashedFiles": 49,
+  "cdpUserTurns": 18,
+  "sessions": 6,
+  "nativeRetryPreserved": true,
+  "failureSamplesPreserved": true,
+  "secretPatternMatches": 0,
+  "fixtureReplay": {
+    "exitCode": 0,
+    "stdout": "✔ quantity is included (1.3653ms)\n✔ empty invoice is zero (0.0894ms)\n✔ discount cannot make total negative (0.0773ms)\n✔ no discount (0.0691ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 80.3986\n",
+    "stderr": ""
+  },
+  "modelOrNetworkRequests": 0
+}

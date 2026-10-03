@@ -39,6 +39,25 @@ export function getOpenClawProviderKeyForType(type: string, providerId: string):
   return PROVIDER_KEY_ALIASES[type] ?? type;
 }
 
+export function isMultiInstanceProviderType(type: string): boolean {
+  return MULTI_INSTANCE_PROVIDER_TYPES.has(type);
+}
+
+export type EnvApiKeySecretRef = { source: 'env'; provider: 'default'; id: string };
+
+/**
+ * Multi-instance (custom/ollama) providers have no registry env var, so their
+ * key reaches the source runtime as an env SecretRef in openclaw.json plus the
+ * matching variable injected into the Gateway process environment.
+ */
+export function getMultiInstanceProviderApiKeyEnvVar(runtimeProviderKey: string): string {
+  return `${runtimeProviderKey.toUpperCase().replace(/[^A-Z0-9]/g, '_')}_API_KEY`;
+}
+
+export function buildMultiInstanceProviderApiKeySecretRef(runtimeProviderKey: string): EnvApiKeySecretRef {
+  return { source: 'env', provider: 'default', id: getMultiInstanceProviderApiKeyEnvVar(runtimeProviderKey) };
+}
+
 /**
  * Resolve the OpenClaw runtime provider key for a saved account.
  * Browser OAuth for OpenAI is stored under vendorId `openai` but runs as `openai-codex`.

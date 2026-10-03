@@ -7,7 +7,7 @@ intent: Persist the planning, ownership, sequencing, and acceptance contract for
 ownedPaths:
   - harness/specs/tasks/runtime-authority-convergence-program.md
   - harness/specs/rules/runtime-authority-convergence-boundary.md
-  - .agent-workbench/task-forest/proposals/TFP-runtime-authority-convergence-20260802.json
+  - tests/fixtures/task-forest-history/runtime-authority-convergence-20260802.json
   - docs/dev/unified-agent-system/runtime-convergence/**
   - docs/dev/unified-agent-system/DEVELOPMENT-STRATEGY.zh-CN.md
   - docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md
@@ -16,7 +16,7 @@ ownedPaths:
 touchedAreas:
   - harness/specs/**
   - docs/dev/**
-  - .agent-workbench/task-forest/proposals/TFP-runtime-authority-convergence-20260802.json
+  - tests/fixtures/task-forest-history/runtime-authority-convergence-20260802.json
   - tests/unit/runtime-authority-convergence-control-pack.test.ts
 expectedUserBehavior:
   - No runtime, renderer, Main, Gateway, provider, channel, approval, effect, memory, context, tool, telemetry, default, or readiness behavior changes.
@@ -73,9 +73,16 @@ docs:
     - docs/dev/unified-agent-system/runtime-convergence/HUMAN-ACCEPTANCE.md
     - docs/dev/unified-agent-system/runtime-convergence/STATUS.md
     - docs/dev/unified-agent-system/runtime-convergence/AGENT-START.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/repository-artifact-retention.md
 ---
 
 # Runtime Authority Convergence Program
 
-This task is planning and governance only. It authorizes no runtime implementation. The first implementation activity is RC-00, and RC-00 must receive a separate scoped Harness task spec after the Task Forest proposal is confirmed and applied.
+This task is planning and governance only. It authorizes no runtime implementation.
+Task Forest proposals and status are local continuity data, not committed source
+inputs. Default control-pack tests use the provenance-labelled, non-authorizing
+historical mapping fixture; they never infer current acceptance from a developer's
+task graph. RC-00 and later implementations require their own scoped Harness task
+spec and the evidence-backed local proposal gate in `task-forest-autoclose-and-roles`.
+The 2026-09-27 owner policy supersedes historical human-only prerequisites without
+allowing agent-driven evidence to be labelled real-human.

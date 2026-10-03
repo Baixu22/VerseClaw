@@ -1,9 +1,7 @@
 #!/usr/bin/env node
-// RC-00 proof script: builds a clean isolated fixture, runs a real gate under
-// the Executor, and has an independent Verifier reproduce the same manifest in
-// a second worktree. Writes green executor/verifier/final reports to an
-// explicit --output-dir. This is the RC-00 exit proof (no mock spawn).
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+// Regression probe: an abbreviated fixture manifest must never qualify as
+// RC-00 acceptance, even when its digests are recomputed. No gate is executed.
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -15,13 +13,12 @@ if (!outputDir) throw new Error('usage: node scripts/rc00-acceptance-bootstrap.m
 
 const lib = await import(pathToFileURL(join(repoRoot, 'scripts/lib/agent-engineering-acceptance.mjs')).href);
 const {
-  repositoryIdentity,
   createAcceptancePlan,
   digestPlan,
   digestManifest,
   runAcceptance,
   verifyAcceptance,
-  ACCEPTANCE_SCHEMA,
+  validateAcceptanceManifest,
 } = lib;
 
 // 1. Clean isolated fixture repository (real git repo, committed state).
@@ -30,29 +27,38 @@ mkdirSync(join(fixtureRoot, 'harness', 'specs', 'tasks'), { recursive: true });
 writeFileSync(join(fixtureRoot, 'package.json'), '{"name":"fixture","version":"1.0.0"}\n');
 writeFileSync(join(fixtureRoot, 'pnpm-lock.yaml'), 'lockfileVersion: 9\n');
 writeFileSync(join(fixtureRoot, '.npmrc'), 'strict-peer-dependencies=false\n');
-writeFileSync(join(fixtureRoot, '.gitignore'), 'artifacts/\n');
-writeFileSync(join(fixtureRoot, 'harness', 'specs', 'tasks', 'fixture.md'), '# fixture\n');
+writeFileSync(join(fixtureRoot, '.gitignore'), 'artifacts/\nopenclaw_runtime/apps/\n');
+writeFileSync(join(fixtureRoot, 'harness', 'specs', 'tasks', 'fixture.md'), '---\nid: rc00-fixture\ntitle: RC-00 fixture\nhumanEvidence: not-required\n---\n# fixture\n');
+mkdirSync(join(fixtureRoot, 'harness', 'src'), { recursive: true });
+writeFileSync(join(fixtureRoot, 'harness', 'src', 'profiles.mjs'), readFileSync(join(repoRoot, 'harness/src/profiles.mjs')));
+for (const path of [
+  'artifacts/uas-06-single-local-exec-canary/live-observations.json',
+  'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json',
+  'openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json',
+]) {
+  mkdirSync(join(fixtureRoot, path, '..'), { recursive: true });
+  writeFileSync(join(fixtureRoot, path), '{}\n');
+}
 const g = (args) => execFileSync('git', args, { cwd: fixtureRoot, stdio: 'pipe' });
 g(['init', '--quiet']);
 g(['config', 'user.email', 'rc00@example.invalid']);
 g(['config', 'user.name', 'RC-00 Fixture']);
 g(['add', '.']);
 g(['commit', '--quiet', '-m', 'fixture']);
+writeFileSync(join(fixtureRoot, 'candidate.txt'), 'candidate\n');
+g(['add', 'candidate.txt']);
+g(['commit', '--quiet', '-m', 'candidate']);
 
 // 2. Build a manifest with a real gate that emits a parseable test summary.
-const spec = {
-  path: 'harness/specs/tasks/fixture.md',
-  data: { id: 'rc00-fixture', title: 'RC-00 fixture', humanEvidence: 'not-required', requiredRules: [] },
-  body: '# fixture\n',
-};
 const manifest = createAcceptancePlan({
   root: fixtureRoot,
-  spec,
   specPath: 'harness/specs/tasks/fixture.md',
-  changedPaths: ['src/example.ts'],
+  since: 'HEAD^',
   runId: 'rc00-bootstrap-proof',
   createdAt: new Date().toISOString(),
 });
+const original = validateAcceptanceManifest(manifest, { root: fixtureRoot, requireClean: true, requireFull: true });
+if (!original.ok) throw new Error(`fixture plan is invalid: ${original.errors.join('; ')}`);
 manifest.gates = [{
   id: 'rc00-real-gate',
   name: 'RC-00 real gate',
@@ -74,7 +80,7 @@ const env = { PATH: process.env.PATH ?? '' };
 const executor = runAcceptance(manifest, { sourceRoot: fixtureRoot, outputDir, actor: 'rc00-executor', env });
 console.log(JSON.stringify({ step: 'executor', result: executor.result, failures: executor.failures }));
 
-// 4. Independent Verifier.
+// 4. The Verifier role must reject the same invalid fixture without running it.
 const verifier = verifyAcceptance(manifest, { sourceRoot: fixtureRoot, outputDir, actor: 'rc00-verifier', env, executorReport: executor });
 console.log(JSON.stringify({
   step: 'verifier',
@@ -85,11 +91,21 @@ console.log(JSON.stringify({
   failures: verifier.failures,
 }));
 
-rmSync(fixtureRoot, { recursive: true, force: true });
+try {
+  rmSync(fixtureRoot, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+} catch (error) {
+  const code = error?.code;
+  if (code !== 'EPERM' && code !== 'EBUSY' && code !== 'ENOTEMPTY') throw error;
+}
 
-if (executor.result !== 'pass' || verifier.result !== 'pass' || verifier.engineeringAcceptedByAgent !== true) {
-  console.error('RC-00 bootstrap proof FAILED');
+if (
+  executor.result !== 'NO-GO' || verifier.result !== 'NO-GO'
+  || verifier.engineeringAcceptedByAgent !== false
+  || !executor.failures.includes('manifest gates must match the candidate-derived gate contracts')
+  || executor.gates.length !== 0 || verifier.gates.length !== 0
+) {
+  console.error('RC-00 incomplete-gate regression FAILED');
   process.exitCode = 1;
 } else {
-  console.log('RC-00 bootstrap proof PASSED');
+  console.log('RC-00 incomplete-gate regression PASSED (engineering acceptance remains NO-GO)');
 }

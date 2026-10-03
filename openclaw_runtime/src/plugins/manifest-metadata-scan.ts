@@ -21,11 +21,18 @@ type CandidateDir = {
   origin?: string;
 };
 
-// Vitest SSR may expose import.meta.url as a Windows path rather than a file URL.
-const modulePath = import.meta.url.startsWith("file:")
-  ? fileURLToPath(import.meta.url)
-  : import.meta.url;
-const OPENCLAW_PACKAGE_ROOT = path.resolve(path.dirname(modulePath), "../..");
+// Resolve lazily, preserving the module location in Windows Vitest SSR as well
+// as ordinary file URLs. The caller working directory is not the package root.
+let openclawPackageRootCache: string | undefined;
+function openclawPackageRoot(): string {
+  if (openclawPackageRootCache === undefined) {
+    const modulePath = import.meta.url.startsWith("file:")
+      ? fileURLToPath(import.meta.url)
+      : import.meta.url;
+    openclawPackageRootCache = path.resolve(path.dirname(modulePath), "../..");
+  }
+  return openclawPackageRootCache;
+}
 const PLUGIN_MANIFEST_FILENAME = "openclaw.plugin.json";
 let manifestMetadataCache:
   | {
@@ -70,9 +77,10 @@ function resolveBundledPluginRoot(env: NodeJS.ProcessEnv): string | undefined {
     return resolveUserPath(override, env);
   }
 
-  const sourceRoot = path.join(OPENCLAW_PACKAGE_ROOT, "extensions");
-  const runtimeRoot = path.join(OPENCLAW_PACKAGE_ROOT, "dist-runtime", "extensions");
-  const distRoot = path.join(OPENCLAW_PACKAGE_ROOT, "dist", "extensions");
+  const packageRoot = openclawPackageRoot();
+  const sourceRoot = path.join(packageRoot, "extensions");
+  const runtimeRoot = path.join(packageRoot, "dist-runtime", "extensions");
+  const distRoot = path.join(packageRoot, "dist", "extensions");
   return [sourceRoot, runtimeRoot, distRoot].find(hasManifestDir);
 }
 

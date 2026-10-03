@@ -1,0 +1,3239 @@
+{
+  "schema": "runtime-authority-convergence-rc09-ownership/v2",
+  "baseSha": "1cddcb1ba5e23ebe445afca11174c2575c75f735",
+  "headSha": "521bdad0507c9955c7db405c5cc26162df7b2e3c",
+  "generatedAt": "2026-09-29T08:44:49.471Z",
+  "requiredOwners": [
+    "RC-00",
+    "RC-01R",
+    "RC-02",
+    "RC-03",
+    "RC-04R",
+    "RC-05R",
+    "RC-06A",
+    "RC-06B",
+    "RC-06C",
+    "RC-06D",
+    "RC-07",
+    "RC-08A",
+    "RC-08B"
+  ],
+  "requiredSpecs": [
+    "rc00-agent-engineering-acceptance-bootstrap.md",
+    "rc01-authority-inventory-baseline.md",
+    "rc02-full-payload-shadow-census.md",
+    "rc03-dcs-seal-dual-receipts.md",
+    "rc04-durable-approval-effect-reconciliation.md",
+    "rc05-minimal-operator-governance-slice.md",
+    "rc06a-taskflow-capability-proof.md",
+    "rc06b-clawgraph-lifecycle-migration.md",
+    "rc06c-mission-lifecycle-migration.md",
+    "rc06d-task-loop-lifecycle-migration.md",
+    "rc07-memory-context-slot-convergence.md",
+    "rc08a-mcp-host-native-tool-convergence.md",
+    "rc08b-otel-observability-convergence.md"
+  ],
+  "mergeCommitsInRange": 0,
+  "totalPaths": 436,
+  "rcOwnedPaths": 197,
+  "excludedPaths": 239,
+  "byRc": {
+    "RC-02": 25,
+    "RC-00": 98,
+    "RC-03": 20,
+    "RC-01R": 4,
+    "RC-08A": 4,
+    "RC-04R": 7,
+    "RC-05R": 5,
+    "RC-06A": 3,
+    "RC-06B": 7,
+    "RC-06C": 5,
+    "RC-06D": 5,
+    "RC-07": 8,
+    "RC-08B": 6
+  },
+  "byExclusionWorkstream": {
+    "feat(approvals)": 31,
+    "chore(task-forest)": 8,
+    "docs(rc09)": 2,
+    "chore(rc09)": 21,
+    "fix(rc09)": 23,
+    "docs(task-forest)": 2,
+    "chore(harness)": 2,
+    "docs(policy)": 1,
+    "docs(rc10)": 3,
+    "feat(rc10)": 34,
+    "chore(rc10)": 84,
+    "fix(rc10)": 5,
+    "fix(channels)": 4,
+    "fix(harness)": 7,
+    "feat(policy)": 1,
+    "fix(state)": 3,
+    "test(e2e)": 1,
+    "test(rc09)": 7
+  },
+  "entries": [
+    {
+      "path": ".agent-workbench/task-forest/config.json",
+      "rc": "RC-02",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": ".agent-workbench/task-forest/deviations/deviations.jsonl",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": ".agent-workbench/task-forest/exports/task-forest.graph.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/exports/task-forest.todos.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/graph/forest.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/graph/nodes.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-rc02r-real-entry-matrix-20260923.json",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-rc09-closure-advance-contract-20260929.json",
+      "rc": null,
+      "excluded": {
+        "commit": "0a1a2ffa1dae80486dfd21a60b9f1ea497004f43",
+        "subject": "chore(task-forest): record the RC-09 closure-advance contract deviation",
+        "workstream": "chore(task-forest)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-rc09-e2e-evidence-screenshot-20260929.json",
+      "rc": null,
+      "excluded": {
+        "commit": "521bdad0507c9955c7db405c5cc26162df7b2e3c",
+        "subject": "docs(rc09): record the round-2 NO-GO, its root cause, and the evidence-capture fix",
+        "workstream": "docs(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-rc10-development-loop-20260928.json",
+      "rc": null,
+      "excluded": {
+        "commit": "165b36dcbf6005588c3fb3c37c4836c936f70ab9",
+        "subject": "chore(task-forest): apply the RC-10 proposals and mirror the graph",
+        "workstream": "chore(task-forest)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-rc10-driver-completion-audit-20260929.json",
+      "rc": null,
+      "excluded": {
+        "commit": "165b36dcbf6005588c3fb3c37c4836c936f70ab9",
+        "subject": "chore(task-forest): apply the RC-10 proposals and mirror the graph",
+        "workstream": "chore(task-forest)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-rc10-operator-drivers-20260929.json",
+      "rc": null,
+      "excluded": {
+        "commit": "165b36dcbf6005588c3fb3c37c4836c936f70ab9",
+        "subject": "chore(task-forest): apply the RC-10 proposals and mirror the graph",
+        "workstream": "chore(task-forest)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-showcase-phase3-approval-bridge-20260922.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0030-rc02-acceptance-closeout-20260923.json",
+      "rc": "RC-00",
+      "commit": "32597a2d0ccc257b9a5afe0f2b19ac08ca4ec143"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0031-rc03-acceptance-closeout-20260924.json",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0031-rc03r-real-entry-defects-20260923.json",
+      "rc": "RC-03",
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0032-rc04-acceptance-closeout-20260924.json",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0033-rc05-acceptance-closeout-20260924.json",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0034-rc06a-acceptance-closeout-20260924.json",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0035-rc06b-acceptance-closeout-20260924.json",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0036-rc06c-acceptance-closeout-20260924.json",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0037-rc06d-acceptance-closeout-20260925.json",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0038-rc07-acceptance-closeout-20260925.json",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0039-rc08a-acceptance-closeout-20260925.json",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0040-rc08b-acceptance-closeout-20260925.json",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-e2e-refined-20260926.json",
+      "rc": null,
+      "excluded": {
+        "commit": "7554c16794cd9ac992c5afcc6762f40eed812776",
+        "subject": "chore(rc09): refine the remaining e2e blocker with the isolated-rerun evidence",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-engineering-accepted-20260927.json",
+      "rc": null,
+      "excluded": {
+        "commit": "100d7bc43a6cebe86c38424cf3727d917d3975ac",
+        "subject": "chore(rc09): RC-09 engineering acceptance PASS -> human_acceptance_pending",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-executor-nogo-20260926.json",
+      "rc": null,
+      "excluded": {
+        "commit": "034aec218a709c548278fad8d21c11fdbd08dac4",
+        "subject": "chore(rc09): record the executor NO-GO rerun and its three root causes",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-scope-unblock-20260925.json",
+      "rc": null,
+      "excluded": {
+        "commit": "e81d42bbe1ce977c3a84651e8fd8bc9115cb664c",
+        "subject": "fix(rc09): partition the cumulative diff and re-anchor the accepted base to unblock TF-0041",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-takeover-20260926.json",
+      "rc": null,
+      "excluded": {
+        "commit": "0287b807f05e6cefddd88101e2660876e84707f2",
+        "subject": "fix(rc09): clear Agent Dev evidence blockers before acceptance",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-three-rounds-20260927.json",
+      "rc": null,
+      "excluded": {
+        "commit": "555043d944ae79ee1207d1a006ec95db9b261e73",
+        "subject": "chore(rc09): record the three formal acceptance rounds and the narrowed blocker",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-two-of-three-fixed-20260926.json",
+      "rc": null,
+      "excluded": {
+        "commit": "5b2dfe40ecc7a92eb702258bb589ad765332030c",
+        "subject": "chore(rc09): record two of three NO-GO root causes as fixed, deviation for the third",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0041-rc09-unblock-landed-20260925.json",
+      "rc": null,
+      "excluded": {
+        "commit": "4680122b010713d5c923bad37a7f90280df0d480",
+        "subject": "docs(task-forest): record the landed RC-09 unblock evidence on TF-0041",
+        "workstream": "docs(task-forest)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/proposals/TFP-tf0240-harness-evidence-repair-20260922.json",
+      "rc": null,
+      "excluded": {
+        "commit": "a9c8d09edf0cde7584640242e41fec35addafff3",
+        "subject": "chore(harness): fix the two failing gates - spec diff base and stale Agent Dev evidence",
+        "workstream": "chore(harness)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0641.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0642.json",
+      "rc": null,
+      "excluded": {
+        "commit": "a9c8d09edf0cde7584640242e41fec35addafff3",
+        "subject": "chore(harness): fix the two failing gates - spec diff base and stale Agent Dev evidence",
+        "workstream": "chore(harness)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0643.json",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0644.json",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0645.json",
+      "rc": "RC-02",
+      "commit": "9b141e1907e391688b3fa80c6d5cdcb00b6d9ac8"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0646.json",
+      "rc": "RC-02",
+      "commit": "59c261fe230a78dc4538abd4a1a8dc7d00c7cbe4"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0647.json",
+      "rc": "RC-02",
+      "commit": "79b3eb1fd92f9a8bb1bf03cefb9bee1597770b97"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0648.json",
+      "rc": "RC-02",
+      "commit": "b6128bf234dde4ce661acb37f401d975a496b629"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0649.json",
+      "rc": "RC-02",
+      "commit": "78dc12d1c1e989f33cf7ca85955998ed40887352"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0650.json",
+      "rc": "RC-00",
+      "commit": "32597a2d0ccc257b9a5afe0f2b19ac08ca4ec143"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0651.json",
+      "rc": "RC-03",
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0652.json",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0653.json",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0654.json",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0655.json",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0656.json",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0657.json",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0658.json",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0659.json",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0660.json",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0661.json",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0662.json",
+      "rc": null,
+      "excluded": {
+        "commit": "e81d42bbe1ce977c3a84651e8fd8bc9115cb664c",
+        "subject": "fix(rc09): partition the cumulative diff and re-anchor the accepted base to unblock TF-0041",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0663.json",
+      "rc": null,
+      "excluded": {
+        "commit": "4680122b010713d5c923bad37a7f90280df0d480",
+        "subject": "docs(task-forest): record the landed RC-09 unblock evidence on TF-0041",
+        "workstream": "docs(task-forest)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0664.json",
+      "rc": null,
+      "excluded": {
+        "commit": "0287b807f05e6cefddd88101e2660876e84707f2",
+        "subject": "fix(rc09): clear Agent Dev evidence blockers before acceptance",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0665.json",
+      "rc": null,
+      "excluded": {
+        "commit": "034aec218a709c548278fad8d21c11fdbd08dac4",
+        "subject": "chore(rc09): record the executor NO-GO rerun and its three root causes",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0666.json",
+      "rc": null,
+      "excluded": {
+        "commit": "5b2dfe40ecc7a92eb702258bb589ad765332030c",
+        "subject": "chore(rc09): record two of three NO-GO root causes as fixed, deviation for the third",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0667.json",
+      "rc": null,
+      "excluded": {
+        "commit": "7554c16794cd9ac992c5afcc6762f40eed812776",
+        "subject": "chore(rc09): refine the remaining e2e blocker with the isolated-rerun evidence",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0668.json",
+      "rc": null,
+      "excluded": {
+        "commit": "555043d944ae79ee1207d1a006ec95db9b261e73",
+        "subject": "chore(rc09): record the three formal acceptance rounds and the narrowed blocker",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0669.json",
+      "rc": null,
+      "excluded": {
+        "commit": "100d7bc43a6cebe86c38424cf3727d917d3975ac",
+        "subject": "chore(rc09): RC-09 engineering acceptance PASS -> human_acceptance_pending",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0670.json",
+      "rc": null,
+      "excluded": {
+        "commit": "165b36dcbf6005588c3fb3c37c4836c936f70ab9",
+        "subject": "chore(task-forest): apply the RC-10 proposals and mirror the graph",
+        "workstream": "chore(task-forest)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0671.json",
+      "rc": null,
+      "excluded": {
+        "commit": "165b36dcbf6005588c3fb3c37c4836c936f70ab9",
+        "subject": "chore(task-forest): apply the RC-10 proposals and mirror the graph",
+        "workstream": "chore(task-forest)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0672.json",
+      "rc": null,
+      "excluded": {
+        "commit": "165b36dcbf6005588c3fb3c37c4836c936f70ab9",
+        "subject": "chore(task-forest): apply the RC-10 proposals and mirror the graph",
+        "workstream": "chore(task-forest)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0673.json",
+      "rc": null,
+      "excluded": {
+        "commit": "0a1a2ffa1dae80486dfd21a60b9f1ea497004f43",
+        "subject": "chore(task-forest): record the RC-09 closure-advance contract deviation",
+        "workstream": "chore(task-forest)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/snapshots/0674.json",
+      "rc": null,
+      "excluded": {
+        "commit": "521bdad0507c9955c7db405c5cc26162df7b2e3c",
+        "subject": "docs(rc09): record the round-2 NO-GO, its root cause, and the evidence-capture fix",
+        "workstream": "docs(rc09)"
+      }
+    },
+    {
+      "path": ".agent-workbench/task-forest/todos/todos.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": ".gitignore",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "AGENTS.md",
+      "rc": null,
+      "excluded": {
+        "commit": "147c65444035fe27de61c71dbc899b8f8261e020",
+        "subject": "docs(policy): owner declares no human actions or human data — automate and label as agent-driven",
+        "workstream": "docs(policy)"
+      }
+    },
+    {
+      "path": "README.ja-JP.md",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "README.md",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "README.zh-CN.md",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "artifacts/agent-dev-deep-test/history.json",
+      "rc": "RC-03",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "artifacts/agent-dev-deep-test/report.json",
+      "rc": "RC-03",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "artifacts/agent-dev-deep-test/report.md",
+      "rc": "RC-03",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "artifacts/agent-dev-quality/report.json",
+      "rc": "RC-03",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "artifacts/agent-dev-workbench/evidence.json",
+      "rc": "RC-03",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json",
+      "rc": null,
+      "excluded": {
+        "commit": "e81d42bbe1ce977c3a84651e8fd8bc9115cb664c",
+        "subject": "fix(rc09): partition the cumulative diff and re-anchor the accepted base to unblock TF-0041",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/final-report.json",
+      "rc": null,
+      "excluded": {
+        "commit": "0ec966b7cc7806e573fbf5ae57a2041c4d4f3e82",
+        "subject": "chore(rc09): archive the rejected 2026-08-09 acceptance evidence before the rerun",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json",
+      "rc": null,
+      "excluded": {
+        "commit": "0ec966b7cc7806e573fbf5ae57a2041c4d4f3e82",
+        "subject": "chore(rc09): archive the rejected 2026-08-09 acceptance evidence before the rerun",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-01/baseline.json",
+      "rc": "RC-01R",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "32597a2d0ccc257b9a5afe0f2b19ac08ca4ec143"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "32597a2d0ccc257b9a5afe0f2b19ac08ca4ec143"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "32597a2d0ccc257b9a5afe0f2b19ac08ca4ec143"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "32597a2d0ccc257b9a5afe0f2b19ac08ca4ec143"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "32597a2d0ccc257b9a5afe0f2b19ac08ca4ec143"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/census.json",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/suite-results.json",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-02/suite.log",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-03/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-03/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-03/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-03/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-03/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-03/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "9385d2341aa72ae8328c6be1420b0efbb81d43e9"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-04/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-04/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-04/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-04/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-04/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-04/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "10593aba27ef362904b970bbcbf7c25093997743"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-05/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-05/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-05/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-05/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-05/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-05/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "8a9ff7014ee2f16e56ec415b803fbf09899301fa"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06a/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06a/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06a/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06a/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06a/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06a/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "1bcd0fc696ebbdaa7ece69cc39cc1d1fcbf79ba5"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06b/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06b/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06b/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06b/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06b/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06b/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "e064194d51cb8fb63cbb8b34fae2bf3847ec8a29"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06c/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06c/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06c/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06c/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06c/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06c/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "11ee016dedb1162de5f28a803c3e8bad8ec267c1"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06d/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06d/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06d/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06d/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06d/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-06d/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "88c430e9e7159383b141aff6f69194dca88e6dce"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-07/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-07/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-07/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-07/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-07/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-07/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "8543434dff597286f0f298d0cf6ee69061f90755"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08a/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08a/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08a/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08a/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08a/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08a/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "2941f3afb95a6914ee1ad5a8050143e44d53b055"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08b/acceptance/SHA256SUMS",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08b/acceptance/executorReport.json",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08b/acceptance/finalReport.json",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08b/acceptance/manifest.json",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08b/acceptance/plan.json",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-08b/acceptance/verifierReport.json",
+      "rc": "RC-00",
+      "commit": "0ee0cf3605535c012e4559d58492f55d6e81d89c"
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-09/acceptance/SHA256SUMS",
+      "rc": null,
+      "excluded": {
+        "commit": "100d7bc43a6cebe86c38424cf3727d917d3975ac",
+        "subject": "chore(rc09): RC-09 engineering acceptance PASS -> human_acceptance_pending",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-09/acceptance/executorReport.json",
+      "rc": null,
+      "excluded": {
+        "commit": "100d7bc43a6cebe86c38424cf3727d917d3975ac",
+        "subject": "chore(rc09): RC-09 engineering acceptance PASS -> human_acceptance_pending",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-09/acceptance/finalReport.json",
+      "rc": null,
+      "excluded": {
+        "commit": "100d7bc43a6cebe86c38424cf3727d917d3975ac",
+        "subject": "chore(rc09): RC-09 engineering acceptance PASS -> human_acceptance_pending",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-09/acceptance/manifest.json",
+      "rc": null,
+      "excluded": {
+        "commit": "100d7bc43a6cebe86c38424cf3727d917d3975ac",
+        "subject": "chore(rc09): RC-09 engineering acceptance PASS -> human_acceptance_pending",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-09/acceptance/plan.json",
+      "rc": null,
+      "excluded": {
+        "commit": "100d7bc43a6cebe86c38424cf3727d917d3975ac",
+        "subject": "chore(rc09): RC-09 engineering acceptance PASS -> human_acceptance_pending",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-09/acceptance/verifierReport.json",
+      "rc": null,
+      "excluded": {
+        "commit": "100d7bc43a6cebe86c38424cf3727d917d3975ac",
+        "subject": "chore(rc09): RC-09 engineering acceptance PASS -> human_acceptance_pending",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-09/rejected-20260809/README.md",
+      "rc": null,
+      "excluded": {
+        "commit": "54d2e68eba275862670ff9c74032382e3438a18b",
+        "subject": "chore(rc09): track the archived rejected evidence under rc-09",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-09/rejected-20260809/final-report.json",
+      "rc": null,
+      "excluded": {
+        "commit": "54d2e68eba275862670ff9c74032382e3438a18b",
+        "subject": "chore(rc09): track the archived rejected evidence under rc-09",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-09/rejected-20260809/manifest.json",
+      "rc": null,
+      "excluded": {
+        "commit": "54d2e68eba275862670ff9c74032382e3438a18b",
+        "subject": "chore(rc09): track the archived rejected evidence under rc-09",
+        "workstream": "chore(rc09)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/README.md",
+      "rc": null,
+      "excluded": {
+        "commit": "6e26c5fca1b320071ab9afabd4329fe90732dc59",
+        "subject": "docs(rc10): record H-01 status, the recon for H-02..H-06, and the two findings",
+        "workstream": "docs(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/candidate.json",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/events.jsonl",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/final-history.json",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/hashes.json",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/journey.json",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/receipts.json",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/screenshots/01-launched.png",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/screenshots/02-provider.png",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/screenshots/03-workspace.png",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/screenshots/04-sent.png",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/screenshots/06-final.png",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/session.jsonl",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/acceptance/H-01/workspace-after.json",
+      "rc": null,
+      "excluded": {
+        "commit": "6a1534fea71a3c54d0a76e6bba8f31a69c3ea7fb",
+        "subject": "feat(rc10): H-01 agent-driven acceptance evidence (real provider, task complete)",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/SHA256SUMS",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/audit.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/backend-build.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/comms-compare.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/comms-replay.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/control-pack.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/desktop-build.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/dev-check.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/H-02-state.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/H-02.png",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/H-03-state.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/H-03.png",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/H-04-state.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/H-04.png",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/H-05-state.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/H-05.png",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/H-06-state.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/H-06.png",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/app.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/events.jsonl",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/hashes.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/irc.jsonl",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/manifest.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/report.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/e2e/scripted-provider.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/forest-apply.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/forest-export.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/forest-validate.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/handoff-lint.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/handoff-red.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/handoff-unit.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/harness-flow.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/harness.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/landing.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/operator-e2e-fixed.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/operator-e2e.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/completion-audit/ws-role-unit.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/dev-check/SHA256SUMS",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/dev-check/comms-compare.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/dev-check/comms-replay.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/dev-check/control-pack.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/dev-check/dev-check.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/dev-check/forest-export.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/dev-check/forest-landing.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/dev-check/forest-validate.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/dev-check/harness-dry-run.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/dev-check/harness-final.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/dev-check/harness-validate.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/dev-check/integration.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/dev-check/summary.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/driver.mjs",
+      "rc": null,
+      "excluded": {
+        "commit": "ca7f6522e67ca753f37d17b1d7dfca2ce681cc4f",
+        "subject": "feat(rc10): track the agent-driven live acceptance driver",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/irc-server.d.mts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/irc-server.mjs",
+      "rc": null,
+      "excluded": {
+        "commit": "1de18d5b397c421d08b2fdf93ba8760a50fd0edf",
+        "subject": "docs(rc10): correct the channel blocker, track the IRC peer, align the runbook",
+        "workstream": "docs(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/SHA256SUMS",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/comms-compare-final.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/comms-replay-final.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/control-pack-final.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/dev-final.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e-lint-final.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/H-02-state.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/H-02.png",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/H-03-state.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/H-03.png",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/H-04-state.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/H-04.png",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/H-05-state.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/H-05.png",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/H-06-state.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/H-06.png",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/app.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/events.jsonl",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/hashes.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/irc.jsonl",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/manifest.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/report.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/e2e/scripted-provider.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/electron-e2e-pass.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/forest-apply.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/forest-export.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/forest-landing-final.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/forest-validate-final.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/harness-dry-final.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/harness-final.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/receipt-store-final.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/runtime-lint-final.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/seal-unit.log",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-dev/summary.json",
+      "rc": null,
+      "excluded": {
+        "commit": "dac9485ff4fc9b088d883d6cf2928840875481dc",
+        "subject": "chore(rc10): archive the driver, dev-check, and completion-audit evidence",
+        "workstream": "chore(rc10)"
+      }
+    },
+    {
+      "path": "artifacts/runtime-authority-convergence/rc-10/operator-driver.mjs",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "docs/dev/handoffs/LATEST.md",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/ACCEPTANCE.md",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/HUMAN-ACCEPTANCE.md",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/RC-09-CLOSURE-ADVANCE-FIX-PLAN.md",
+      "rc": "RC-01R",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/RC-09-REMEDIATION-PLAN.md",
+      "rc": "RC-01R",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/README.md",
+      "rc": "RC-01R",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/STATUS.md",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "electron/gateway/config-sync.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "93b876df1129dd8414cdb9da086a229f7faa2f25",
+        "subject": "fix(rc10): start configured channels in the source runtime",
+        "workstream": "fix(rc10)"
+      }
+    },
+    {
+      "path": "electron/gateway/event-dispatch.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "electron/gateway/manager.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "electron/gateway/supervisor.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "bd42f81c3a5d2571d9a60de57a06d2f968accff0",
+        "subject": "fix(channels): stop writing channel accounts into plugins.entries, and keep doctor-repair env strings",
+        "workstream": "fix(channels)"
+      }
+    },
+    {
+      "path": "electron/gateway/ws-client.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "electron/gateway/ws-trace.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "electron/main/index.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "electron/main/ipc-handlers.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "electron/services/mcp-api.ts",
+      "rc": "RC-08A",
+      "commit": "34eb49ff28019631b47bb4d7e453f72f27381546"
+    },
+    {
+      "path": "electron/services/runtime-approvals-api.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "electron/services/workspace-permissions.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "electron/utils/channel-config.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "bd42f81c3a5d2571d9a60de57a06d2f968accff0",
+        "subject": "fix(channels): stop writing channel accounts into plugins.entries, and keep doctor-repair env strings",
+        "workstream": "fix(channels)"
+      }
+    },
+    {
+      "path": "harness/specs/guides/scoped-development-validation.md",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "harness/specs/layers/harness.md",
+      "rc": null,
+      "excluded": {
+        "commit": "b1f9247636e77edf84462db35167e325367499e7",
+        "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
+        "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/specs/rules/task-forest-autoclose-and-roles.md",
+      "rc": null,
+      "excluded": {
+        "commit": "c9793d9650b52f9a7ba9e2f618607516ffb1b19e",
+        "subject": "feat(policy): let the acceptance verdict be agent-driven, labelled honestly",
+        "workstream": "feat(policy)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/a1-layered-isolation-pilot.md",
+      "rc": null,
+      "excluded": {
+        "commit": "b1f9247636e77edf84462db35167e325367499e7",
+        "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
+        "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/a2-multi-agent-orchestration-pilot.md",
+      "rc": null,
+      "excluded": {
+        "commit": "b1f9247636e77edf84462db35167e325367499e7",
+        "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
+        "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/a4-decision-quality-pilot.md",
+      "rc": null,
+      "excluded": {
+        "commit": "b1f9247636e77edf84462db35167e325367499e7",
+        "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
+        "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/a6-long-running-persistence-pilot.md",
+      "rc": null,
+      "excluded": {
+        "commit": "b1f9247636e77edf84462db35167e325367499e7",
+        "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
+        "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/knowledge-steward-semantic-pilot.md",
+      "rc": null,
+      "excluded": {
+        "commit": "b1f9247636e77edf84462db35167e325367499e7",
+        "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
+        "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/rc02-full-payload-shadow-census.md",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "harness/specs/tasks/rc03-dcs-seal-dual-receipts.md",
+      "rc": "RC-03",
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
+    },
+    {
+      "path": "harness/specs/tasks/rc04-durable-approval-effect-reconciliation.md",
+      "rc": "RC-04R",
+      "commit": "33a93df153bb485f9d3db6ed18d5da13d9f7dc69"
+    },
+    {
+      "path": "harness/specs/tasks/rc05-minimal-operator-governance-slice.md",
+      "rc": "RC-05R",
+      "commit": "99ef1b73ef808e325136e406631895b0a8c9d5fa"
+    },
+    {
+      "path": "harness/specs/tasks/rc06a-taskflow-capability-proof.md",
+      "rc": "RC-06A",
+      "commit": "e148a521f3a5595f05b9440db26241f576b53d73"
+    },
+    {
+      "path": "harness/specs/tasks/rc06b-clawgraph-lifecycle-migration.md",
+      "rc": "RC-06B",
+      "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
+    },
+    {
+      "path": "harness/specs/tasks/rc06c-mission-lifecycle-migration.md",
+      "rc": "RC-06C",
+      "commit": "fa9efee1fa9ca5c06d17d5f8106d86c77a9a0790"
+    },
+    {
+      "path": "harness/specs/tasks/rc06d-task-loop-lifecycle-migration.md",
+      "rc": "RC-06D",
+      "commit": "6e23931beb457f80d05f5677725dcb1c17255620"
+    },
+    {
+      "path": "harness/specs/tasks/rc07-memory-context-slot-convergence.md",
+      "rc": "RC-07",
+      "commit": "53a2b1d3b1812e6d3287d1c0b5d99edf49628638"
+    },
+    {
+      "path": "harness/specs/tasks/rc08a-mcp-host-native-tool-convergence.md",
+      "rc": "RC-08A",
+      "commit": "34eb49ff28019631b47bb4d7e453f72f27381546"
+    },
+    {
+      "path": "harness/specs/tasks/rc08b-otel-observability-convergence.md",
+      "rc": "RC-08B",
+      "commit": "a9418c9f9d47a4ecd67a3f2826065a4c69a88c03"
+    },
+    {
+      "path": "harness/specs/tasks/rc10-development-loop.md",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/rc10-human-acceptance-runbook.md",
+      "rc": null,
+      "excluded": {
+        "commit": "1de18d5b397c421d08b2fdf93ba8760a50fd0edf",
+        "subject": "docs(rc10): correct the channel blocker, track the IRC peer, align the runbook",
+        "workstream": "docs(rc10)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/rc10-source-runtime-channel-startup.md",
+      "rc": null,
+      "excluded": {
+        "commit": "93b876df1129dd8414cdb9da086a229f7faa2f25",
+        "subject": "fix(rc10): start configured channels in the source runtime",
+        "workstream": "fix(rc10)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/runtime-approval-bridge.md",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "harness/specs/tasks/runtime-authority-convergence-final-acceptance.md",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "harness/specs/tasks/stress-test-windows-concurrency-v1.md",
+      "rc": null,
+      "excluded": {
+        "commit": "b1f9247636e77edf84462db35167e325367499e7",
+        "subject": "fix(harness): repair six structurally broken task specs and make the default diff base branch-aware",
+        "workstream": "fix(harness)"
+      }
+    },
+    {
+      "path": "harness/src/cli.mjs",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "harness/src/git.d.mts",
+      "rc": null,
+      "excluded": {
+        "commit": "0287b807f05e6cefddd88101e2660876e84707f2",
+        "subject": "fix(rc09): clear Agent Dev evidence blockers before acceptance",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "harness/src/git.mjs",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "openclaw_runtime/extensions/diagnostics-otel/src/service.ts",
+      "rc": "RC-08B",
+      "commit": "a9418c9f9d47a4ecd67a3f2826065a4c69a88c03"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/approval-ledger.ts",
+      "rc": "RC-04R",
+      "commit": "33a93df153bb485f9d3db6ed18d5da13d9f7dc69"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/clawgraph/clawgraph-lifecycle-cutover.test.ts",
+      "rc": "RC-06B",
+      "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/clawgraph/clawgraph-taskflow-projection.ts",
+      "rc": "RC-06B",
+      "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/clawgraph/runtime.ts",
+      "rc": "RC-06B",
+      "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/command-poll-backoff.test.ts",
+      "rc": "RC-07",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/command-poll-backoff.ts",
+      "rc": "RC-07",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+      "rc": "RC-03",
+      "commit": "84d13255267d4da7fcc2728bc74b655c8e2de56f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run.ts",
+      "rc": "RC-03",
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "rc": "RC-03",
+      "commit": "84d13255267d4da7fcc2728bc74b655c8e2de56f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts",
+      "rc": "RC-03",
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mission-control/controller.ts",
+      "rc": "RC-06C",
+      "commit": "fa9efee1fa9ca5c06d17d5f8106d86c77a9a0790"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mission-control/mission-lifecycle-cutover.test.ts",
+      "rc": "RC-06C",
+      "commit": "fa9efee1fa9ca5c06d17d5f8106d86c77a9a0790"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mission-control/mission-taskflow-projection.test.ts",
+      "rc": "RC-06C",
+      "commit": "fa9efee1fa9ca5c06d17d5f8106d86c77a9a0790"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mission-control/mission-taskflow-projection.ts",
+      "rc": "RC-06C",
+      "commit": "fa9efee1fa9ca5c06d17d5f8106d86c77a9a0790"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/operator-slice.ts",
+      "rc": "RC-04R",
+      "commit": "33a93df153bb485f9d3db6ed18d5da13d9f7dc69"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/rc02-cli-entry.acceptance.test.ts",
+      "rc": "RC-02",
+      "commit": "78dc12d1c1e989f33cf7ca85955998ed40887352"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/rc02-cron-entry.acceptance.test.ts",
+      "rc": "RC-02",
+      "commit": "78dc12d1c1e989f33cf7ca85955998ed40887352"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/rc02-entry-matrix.acceptance.test.ts",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/rc02-inbound-entry.acceptance.test.ts",
+      "rc": "RC-02",
+      "commit": "b6128bf234dde4ce661acb37f401d975a496b629"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/rc02-shadow-census.acceptance.test.ts",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts",
+      "rc": "RC-03",
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/rc04-exec-approval-wiring.test.ts",
+      "rc": "RC-04R",
+      "commit": "33a93df153bb485f9d3db6ed18d5da13d9f7dc69"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/receipt-store.test.ts",
+      "rc": "RC-02",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/receipt-store.ts",
+      "rc": "RC-02",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/role-spawn.ts",
+      "rc": "RC-03",
+      "commit": "84d13255267d4da7fcc2728bc74b655c8e2de56f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/shadow-census.ts",
+      "rc": "RC-03",
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/slot-convergence.test.ts",
+      "rc": "RC-07",
+      "commit": "53a2b1d3b1812e6d3287d1c0b5d99edf49628638"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/slot-convergence.ts",
+      "rc": "RC-07",
+      "commit": "53a2b1d3b1812e6d3287d1c0b5d99edf49628638"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+      "rc": "RC-06D",
+      "commit": "6e23931beb457f80d05f5677725dcb1c17255620"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-lifecycle-cutover.test.ts",
+      "rc": "RC-06D",
+      "commit": "6e23931beb457f80d05f5677725dcb1c17255620"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-taskflow-projection.test.ts",
+      "rc": "RC-06D",
+      "commit": "6e23931beb457f80d05f5677725dcb1c17255620"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-taskflow-projection.ts",
+      "rc": "RC-06D",
+      "commit": "6e23931beb457f80d05f5677725dcb1c17255620"
+    },
+    {
+      "path": "openclaw_runtime/src/auto-reply/reply/get-reply-run.ts",
+      "rc": "RC-03",
+      "commit": "84d13255267d4da7fcc2728bc74b655c8e2de56f"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+      "rc": "RC-03",
+      "commit": "84d13255267d4da7fcc2728bc74b655c8e2de56f"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/rc03-producers.ts",
+      "rc": "RC-03",
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/rc03-seal-hook.ts",
+      "rc": "RC-03",
+      "commit": "55743e1698c7667bd54a5a4af40166b5e036df3c"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/rc03-seal-wiring.test.ts",
+      "rc": "RC-03",
+      "commit": "84d13255267d4da7fcc2728bc74b655c8e2de56f"
+    },
+    {
+      "path": "openclaw_runtime/src/cron/delivery.ts",
+      "rc": "RC-05R",
+      "commit": "99ef1b73ef808e325136e406631895b0a8c9d5fa"
+    },
+    {
+      "path": "openclaw_runtime/src/cron/isolated-agent/delivery-dispatch.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "openclaw_runtime/src/cron/operator-delivery.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "openclaw_runtime/src/cron/operator-delivery.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/exec-approval-manager.ts",
+      "rc": "RC-04R",
+      "commit": "33a93df153bb485f9d3db6ed18d5da13d9f7dc69"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/node-invoke-plugin-policy.ts",
+      "rc": "RC-04R",
+      "commit": "33a93df153bb485f9d3db6ed18d5da13d9f7dc69"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-aux-handlers.ts",
+      "rc": "RC-04R",
+      "commit": "33a93df153bb485f9d3db6ed18d5da13d9f7dc69"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-cron-notifications.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/inbox.test.ts",
+      "rc": "RC-05R",
+      "commit": "99ef1b73ef808e325136e406631895b0a8c9d5fa"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/inbox.ts",
+      "rc": "RC-05R",
+      "commit": "99ef1b73ef808e325136e406631895b0a8c9d5fa"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-startup-post-attach.channel-start.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "93b876df1129dd8414cdb9da086a229f7faa2f25",
+        "subject": "fix(rc10): start configured channels in the source runtime",
+        "workstream": "fix(rc10)"
+      }
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-startup-post-attach.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "93b876df1129dd8414cdb9da086a229f7faa2f25",
+        "subject": "fix(rc10): start configured channels in the source runtime",
+        "workstream": "fix(rc10)"
+      }
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server.impl.ts",
+      "rc": "RC-06B",
+      "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
+    },
+    {
+      "path": "openclaw_runtime/src/observability/exporter-parity.ts",
+      "rc": "RC-08B",
+      "commit": "a9418c9f9d47a4ecd67a3f2826065a4c69a88c03"
+    },
+    {
+      "path": "openclaw_runtime/src/observability/rc08b-otel.test.ts",
+      "rc": "RC-08B",
+      "commit": "a9418c9f9d47a4ecd67a3f2826065a4c69a88c03"
+    },
+    {
+      "path": "openclaw_runtime/src/observability/trace-buffer.ts",
+      "rc": "RC-08B",
+      "commit": "a9418c9f9d47a4ecd67a3f2826065a4c69a88c03"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/activation-planner.ts",
+      "rc": "RC-07",
+      "commit": "53a2b1d3b1812e6d3287d1c0b5d99edf49628638"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/config-normalization-shared.ts",
+      "rc": "RC-07",
+      "commit": "53a2b1d3b1812e6d3287d1c0b5d99edf49628638"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-agent-db.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "01398fb6fa0386d05ec17bac78cae56d2c43252b",
+        "subject": "fix(state): set busy_timeout before the WAL switch so concurrent openers wait instead of failing",
+        "workstream": "fix(state)"
+      }
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-db.busy-open.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "01398fb6fa0386d05ec17bac78cae56d2c43252b",
+        "subject": "fix(state): set busy_timeout before the WAL switch so concurrent openers wait instead of failing",
+        "workstream": "fix(state)"
+      }
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-db.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "01398fb6fa0386d05ec17bac78cae56d2c43252b",
+        "subject": "fix(state): set busy_timeout before the WAL switch so concurrent openers wait instead of failing",
+        "workstream": "fix(state)"
+      }
+    },
+    {
+      "path": "openclaw_runtime/src/tasks/task-flow-cas.test.ts",
+      "rc": "RC-06A",
+      "commit": "e148a521f3a5595f05b9440db26241f576b53d73"
+    },
+    {
+      "path": "openclaw_runtime/src/tasks/task-flow-cas.ts",
+      "rc": "RC-06A",
+      "commit": "e148a521f3a5595f05b9440db26241f576b53d73"
+    },
+    {
+      "path": "openclaw_runtime/src/tasks/task-flow-registry.store.sqlite.ts",
+      "rc": "RC-06B",
+      "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
+    },
+    {
+      "path": "openclaw_runtime/src/tasks/workflow-lifecycle-owner.ts",
+      "rc": "RC-06B",
+      "commit": "b9f3a0ebc65aa106b2f59741c86b485d855045c8"
+    },
+    {
+      "path": "package.json",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "scripts/agent-dev-deep-test.mjs",
+      "rc": null,
+      "excluded": {
+        "commit": "0287b807f05e6cefddd88101e2660876e84707f2",
+        "subject": "fix(rc09): clear Agent Dev evidence blockers before acceptance",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "scripts/channel-conformance.mjs",
+      "rc": "RC-05R",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "scripts/generate-rc09-ownership-matrix.mjs",
+      "rc": null,
+      "excluded": {
+        "commit": "e81d42bbe1ce977c3a84651e8fd8bc9115cb664c",
+        "subject": "fix(rc09): partition the cumulative diff and re-anchor the accepted base to unblock TF-0041",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "scripts/lib/agent-engineering-acceptance.mjs",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "scripts/rc02-shadow-census-report.mjs",
+      "rc": "RC-02",
+      "commit": "1a017a47d5c6b9036ff08ba43fb49d4ac40be29f"
+    },
+    {
+      "path": "scripts/validate-runtime-authority-convergence.mjs",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "shared/host-events/contract.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "src/App.tsx",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "src/components/runtime-approvals/RuntimeApprovalPrompt.tsx",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "src/lib/host-events.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "tests/e2e/beam-composer-verify.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f839ddf6d78225d501c0f98ffd24fa6c5f9e5fe2",
+        "subject": "fix(rc09): keep E2E evidence writes out of the candidate and give the suite a real budget",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/browser-security-recovery.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f839ddf6d78225d501c0f98ffd24fa6c5f9e5fe2",
+        "subject": "fix(rc09): keep E2E evidence writes out of the candidate and give the suite a real budget",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/chat-layout-cdp.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "aabb0894fc5174a86aeb026ba72b69b2851880b7",
+        "subject": "fix(rc09): stop the E2E suite losing a passing test to teardown, and sample the dissolve mid-flight",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/chat-long-task-control.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "aaf41431453074720de6d6b2d458a0e744627d1b",
+        "subject": "test(e2e): let the long-task run settle before typing the intervention draft",
+        "workstream": "test(e2e)"
+      }
+    },
+    {
+      "path": "tests/e2e/chat-user-message-actions.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "4c3d0a511a5bf3b60c9fbc7b5843160dfe287269",
+        "subject": "test(rc09): fix four reproducible causes behind the flaky Electron E2E failures",
+        "workstream": "test(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/chat-welcome-hero-verse-shot.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f839ddf6d78225d501c0f98ffd24fa6c5f9e5fe2",
+        "subject": "fix(rc09): keep E2E evidence writes out of the candidate and give the suite a real budget",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/chat-workspace-header.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "4c3d0a511a5bf3b60c9fbc7b5843160dfe287269",
+        "subject": "test(rc09): fix four reproducible causes behind the flaky Electron E2E failures",
+        "workstream": "test(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/dialog-transitions.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "4c3d0a511a5bf3b60c9fbc7b5843160dfe287269",
+        "subject": "test(rc09): fix four reproducible causes behind the flaky Electron E2E failures",
+        "workstream": "test(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/fixtures/electron.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "aabb0894fc5174a86aeb026ba72b69b2851880b7",
+        "subject": "fix(rc09): stop the E2E suite losing a passing test to teardown, and sample the dissolve mid-flight",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/fixtures/evidence-root.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f839ddf6d78225d501c0f98ffd24fa6c5f9e5fe2",
+        "subject": "fix(rc09): keep E2E evidence writes out of the candidate and give the suite a real budget",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/morph-plus-verify.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f839ddf6d78225d501c0f98ffd24fa6c5f9e5fe2",
+        "subject": "fix(rc09): keep E2E evidence writes out of the candidate and give the suite a real budget",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/orb-visual-verify.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f839ddf6d78225d501c0f98ffd24fa6c5f9e5fe2",
+        "subject": "fix(rc09): keep E2E evidence writes out of the candidate and give the suite a real budget",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/rc10-operator-live.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "tests/e2e/runtime-approval-bridge.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "tests/e2e/scrollbar-visibility.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "48c8870ee9c206ce5f566dd9a6957be3819d7636",
+        "subject": "test(rc09): stabilise the remaining hover-reveal and pointer-state flakes",
+        "workstream": "test(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/sekb-golden-path.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "13db3fed33509cb3126278e547010d0116369a4b",
+        "subject": "fix(rc09): declare the E2E skip budget, keep colour vars out, finish the evidence redirect",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/sidebar-session-folders-archive.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "4c3d0a511a5bf3b60c9fbc7b5843160dfe287269",
+        "subject": "test(rc09): fix four reproducible causes behind the flaky Electron E2E failures",
+        "workstream": "test(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/sidebar-settings-fakecoding.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "4c3d0a511a5bf3b60c9fbc7b5843160dfe287269",
+        "subject": "test(rc09): fix four reproducible causes behind the flaky Electron E2E failures",
+        "workstream": "test(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/support-bundle-fp-p1-06.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "06bc0310fcf266bb55b73e60ea773ba9296a1836",
+        "subject": "test(rc09): anchor the support-bundle redaction assertion to the actual contract",
+        "workstream": "test(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/visual-tune.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f839ddf6d78225d501c0f98ffd24fa6c5f9e5fe2",
+        "subject": "fix(rc09): keep E2E evidence writes out of the candidate and give the suite a real budget",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/e2e/workspace-git-panel.spec.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "389b772a04e14604961ae1f09caa7dd71aefbf0a",
+        "subject": "fix(rc09): absorb the commit-card snapshot's AA jitter and give E2E real headroom",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/integration/channel-startup.integration.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "tests/unit/agent-dev-regularization.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "0287b807f05e6cefddd88101e2660876e84707f2",
+        "subject": "fix(rc09): clear Agent Dev evidence blockers before acceptance",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/unit/agent-engineering-acceptance.test.ts",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "tests/unit/channel-config.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "bd42f81c3a5d2571d9a60de57a06d2f968accff0",
+        "subject": "fix(channels): stop writing channel accounts into plugins.entries, and keep doctor-repair env strings",
+        "workstream": "fix(channels)"
+      }
+    },
+    {
+      "path": "tests/unit/chat-workspace-session-target.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "d362cd68e00673c764eb3d0881af1f81b7a01c51",
+        "subject": "fix(rc09): give the first chat-workspace-session-target test a budget for its cold import",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/unit/config-sync-source-runtime.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "93b876df1129dd8414cdb9da086a229f7faa2f25",
+        "subject": "fix(rc10): start configured channels in the source runtime",
+        "workstream": "fix(rc10)"
+      }
+    },
+    {
+      "path": "tests/unit/cron-operator-notifications.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "tests/unit/gateway-doctor-repair-env.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "bd42f81c3a5d2571d9a60de57a06d2f968accff0",
+        "subject": "fix(channels): stop writing channel accounts into plugins.entries, and keep doctor-repair env strings",
+        "workstream": "fix(channels)"
+      }
+    },
+    {
+      "path": "tests/unit/gateway-event-dispatch.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "tests/unit/gateway-ws-client.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "tests/unit/gateway-ws-trace.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "tests/unit/harness-git.test.ts",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "tests/unit/host-services.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "tests/unit/mcp-api.test.ts",
+      "rc": "RC-08A",
+      "commit": "34eb49ff28019631b47bb4d7e453f72f27381546"
+    },
+    {
+      "path": "tests/unit/rc07-memory-context-slot-convergence.test.ts",
+      "rc": "RC-07",
+      "commit": "53a2b1d3b1812e6d3287d1c0b5d99edf49628638"
+    },
+    {
+      "path": "tests/unit/rc08a-mcp-host-native-tool-convergence.test.ts",
+      "rc": "RC-08A",
+      "commit": "34eb49ff28019631b47bb4d7e453f72f27381546"
+    },
+    {
+      "path": "tests/unit/rc08b-otel-observability-convergence.test.ts",
+      "rc": "RC-08B",
+      "commit": "a9418c9f9d47a4ecd67a3f2826065a4c69a88c03"
+    },
+    {
+      "path": "tests/unit/rc09-ownership-matrix.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "e81d42bbe1ce977c3a84651e8fd8bc9115cb664c",
+        "subject": "fix(rc09): partition the cumulative diff and re-anchor the accepted base to unblock TF-0041",
+        "workstream": "fix(rc09)"
+      }
+    },
+    {
+      "path": "tests/unit/rc10-context-seal.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "tests/unit/rc10-driver-entrypoint.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "f9aab70df7bdd3ce2683cc5aeb8ac267d13284ae",
+        "subject": "feat(rc10): drive H-02 through H-06 on the real app and close the driver gaps",
+        "workstream": "feat(rc10)"
+      }
+    },
+    {
+      "path": "tests/unit/runtime-approval-bridge.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "tests/unit/runtime-approval-prompt.test.tsx",
+      "rc": null,
+      "excluded": {
+        "commit": "ba050adc9cad7d09ddb0c5efc5f9c27c626c979c",
+        "subject": "feat(approvals): add the in-app runtime exec-approval bridge (TF-0240)",
+        "workstream": "feat(approvals)"
+      }
+    },
+    {
+      "path": "tests/unit/runtime-authority-convergence-control-pack.test.ts",
+      "rc": "RC-00",
+      "commit": null,
+      "declaredBySpec": true
+    },
+    {
+      "path": "tests/unit/uas-05-verseshell-process-lifecycle.test.ts",
+      "rc": null,
+      "excluded": {
+        "commit": "8bb986586b87849de036dadae019d1fe0d69c89a",
+        "subject": "fix(rc09): clear the two pre-existing red unit tests blocking the acceptance run",
+        "workstream": "fix(rc09)"
+      }
+    }
+  ]
+}

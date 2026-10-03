@@ -47,7 +47,7 @@ requiredTests:
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/line-c-grounding-controlled-production-opt-in.md --no-diff
   - node node_modules/vitest/vitest.mjs run tests/unit/runtime-grounding-authority-effectiveness.test.ts tests/unit/runtime-grounding-shadow-consumers.test.ts tests/unit/context-provider-registry.test.ts tests/unit/runtime-trace-context-provider.test.ts tests/unit/runtime-symbol-context-provider.test.ts tests/unit/runtime-agent-map-context-provider.test.ts tests/unit/runtime-memory-context-provider.test.ts
   - node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - git diff --check -- harness/specs/tasks/line-c-grounding-default-on-proposal.md runtime-research/handoffs/line-c-grounding-default-on-proposal/README.md runtime-research/handoffs/line-c-grounding-default-on-proposal/implementation-synthesis.md runtime-research/agent-runtime-index.md
+  - git diff --check -- harness/specs/tasks/line-c-grounding-default-on-proposal.md docs/dev/runtime-research-boundaries.md
 acceptance:
   - Proposal-only evidence is complete and explicitly says default-on requires a later accepted implementation spec.
   - No runtime behavior, default, UI, transport, provider, prompt/model-message, persistence, memory, patch, workspace, or symbol mutation change is made.
@@ -55,9 +55,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-c-grounding-default-on-proposal/README.md
-    - runtime-research/handoffs/line-c-grounding-default-on-proposal/implementation-synthesis.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 nextPhaseEntry:
   Allowed next phase:
     - A later default-on implementation spec may be proposed only after this proposal is accepted and owner/security/support review approves the next boundary.

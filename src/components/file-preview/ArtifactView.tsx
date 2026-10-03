@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CheckCircle2, ExternalLink, Loader2, RefreshCw, XCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -15,7 +15,23 @@ interface ArtifactViewProps {
   onValidate: (id: string) => void;
   generating: boolean;
   compact?: boolean;
+  workspaceRoot?: string | null;
 }
+
+type ManagedArtifact = {
+  artifactId: string;
+  kind: 'research-table' | 'slide-outline' | string;
+  sourcePath: string;
+  currentRevisionId: string;
+  updatedAt: number;
+  disabledAt?: number;
+};
+
+type ManagedHistory = {
+  artifact: ManagedArtifact & { schemaIdentity?: { version?: string } };
+  revisions: Array<{ revisionId: string; sequence: number; sourceSha256: string; status: string; createdAt: number }>;
+  outputs: Array<{ outputId: string; revisionId: string; format: string; path: string; validationStatus: string; journalRef?: string | null }>;
+};
 
 function artifactToFileTarget(artifact: WorkArtifact): FilePreviewTarget {
   return {
@@ -56,9 +72,44 @@ function statusLabelKey(status: string): string {
   return 'artifactView.status.error';
 }
 
-export function ArtifactView({ artifacts, selectedArtifactId, onSelect, onValidate, generating, compact = false }: ArtifactViewProps) {
+export function ArtifactView({ artifacts, selectedArtifactId, onSelect, onValidate, generating, compact = false, workspaceRoot = null }: ArtifactViewProps) {
   const { t } = useTranslation('chat');
   const selected = artifacts.find((a) => a.id === selectedArtifactId);
+  const [managedArtifacts, setManagedArtifacts] = useState<ManagedArtifact[]>([]);
+  const [managedHistory, setManagedHistory] = useState<ManagedHistory | null>(null);
+  const [managedLoading, setManagedLoading] = useState(false);
+  const [managedError, setManagedError] = useState<string | null>(null);
+
+  const loadManagedArtifacts = useCallback(async () => {
+    if (!workspaceRoot) {
+      setManagedArtifacts([]);
+      setManagedHistory(null);
+      return;
+    }
+    setManagedLoading(true);
+    setManagedError(null);
+    try {
+      const result = await hostApi.gateway.rpc<{ artifacts?: ManagedArtifact[] }>('verseconf.artifacts.list', { workspaceDir: workspaceRoot });
+      setManagedArtifacts(Array.isArray(result?.artifacts) ? result.artifacts : []);
+    } catch (error) {
+      setManagedError(error instanceof Error ? error.message : String(error));
+    } finally {
+      setManagedLoading(false);
+    }
+  }, [workspaceRoot]);
+
+  useEffect(() => { void loadManagedArtifacts(); }, [loadManagedArtifacts]);
+
+  const selectManagedArtifact = useCallback(async (artifact: ManagedArtifact) => {
+    if (!workspaceRoot) return;
+    setManagedError(null);
+    try {
+      const result = await hostApi.gateway.rpc<ManagedHistory>('verseconf.artifacts.history', { workspaceDir: workspaceRoot, artifactId: artifact.artifactId });
+      setManagedHistory(result);
+    } catch (error) {
+      setManagedError(error instanceof Error ? error.message : String(error));
+    }
+  }, [workspaceRoot]);
 
   const handleAction = useCallback((artifact: WorkArtifact, action: ArtifactAction) => {
     switch (action.type) {
@@ -118,6 +169,33 @@ export function ArtifactView({ artifacts, selectedArtifactId, onSelect, onValida
         <h3 className="text-xs font-medium text-foreground">{t('artifactView.title', 'Artifacts')}</h3>
         {generating && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
       </div>
+      {workspaceRoot && (
+        <section className="shrink-0 border-b border-black/5 px-3 py-2 dark:border-white/10" data-testid="structured-artifacts-view">
+          <div className="flex items-center justify-between gap-2">
+            <h4 className="text-tiny font-medium uppercase tracking-wide text-muted-foreground">{t('artifactView.managedTitle', 'Managed structured artifacts')}</h4>
+            <button type="button" className="text-tiny text-muted-foreground hover:text-foreground" onClick={() => void loadManagedArtifacts()} disabled={managedLoading}>
+              {t('artifactView.refresh', 'Refresh')}
+            </button>
+          </div>
+          {managedError && <p className="mt-1 truncate text-tiny text-destructive" title={managedError}>{t('artifactView.managedError', 'Structured artifacts are unavailable')}</p>}
+          {!managedLoading && !managedError && managedArtifacts.length === 0 && (
+            <p className="mt-1 text-tiny text-muted-foreground">{t('artifactView.managedEmpty', 'No managed artifacts in this workspace')}</p>
+          )}
+          <div className="mt-1 flex flex-wrap gap-1">
+            {managedArtifacts.map((artifact) => (
+              <button key={artifact.artifactId} type="button" className={cn('rounded-md bg-surface-input px-2 py-1 text-tiny text-foreground/80 hover:bg-black/10 dark:hover:bg-white/10', managedHistory?.artifact.artifactId === artifact.artifactId && 'ring-1 ring-foreground/30')} onClick={() => void selectManagedArtifact(artifact)}>
+                {artifact.artifactId}
+              </button>
+            ))}
+          </div>
+          {managedHistory && (
+            <div className="mt-2 space-y-1 text-tiny text-muted-foreground">
+              <div>{t('artifactView.managedRevision', 'Revision')} {managedHistory.revisions.at(-1)?.sequence ?? 0} · {managedHistory.revisions.length} {t('artifactView.managedRevisions', 'revisions')}</div>
+              {managedHistory.outputs.slice(0, 3).map((output) => <div key={output.outputId} className="truncate">{output.format.toUpperCase()} · {output.validationStatus} · {output.path}</div>)}
+            </div>
+          )}
+        </section>
+      )}
       <div className="flex min-h-0 flex-1">
         <div className="flex w-48 shrink-0 flex-col overflow-y-auto border-r border-black/5 dark:border-white/10">
           {artifacts.length === 0 && !generating && (

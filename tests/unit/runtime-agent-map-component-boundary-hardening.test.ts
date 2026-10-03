@@ -18,26 +18,9 @@ import {
   AGENT_MAP_TASKLOOP_EXPLICIT_INVOCATION_ALLOWED_CONSUMERS,
 } from "./helpers/agent-map-readiness-scorecard";
 
-const HANDOFF_DIR =
-  "runtime-research/handoffs/line-b-agentmap-component-boundary-hardening";
+const BOUNDARY_DOC = "docs/dev/runtime-research-boundaries.md";
 const TASK_SPEC =
   "harness/specs/tasks/phase-line-b-agentmap-component-boundary-hardening.md";
-const REQUIRED_HANDOFF_FILES = [
-  "README.md",
-  "component-contract.md",
-  "boundary-stop-line.md",
-  "authority-denylist.md",
-  "allowed-surfaces.md",
-  "forbidden-surfaces.md",
-  "rollback-and-fail-closed-proof.md",
-  "leakage-proof.md",
-  "provider-ordering-proof.md",
-  "persistence-proof.md",
-  "telemetry-boundary.md",
-  "future-work-denylist.md",
-  "validation-results.md",
-  "synthesis.md",
-] as const;
 const AGENT_MAP_SOURCE_FILES = [
   "openclaw_runtime/src/runtime-core/agent-map.ts",
   "openclaw_runtime/src/runtime-core/agent-map-cache.ts",
@@ -118,7 +101,7 @@ function buildComponentBoundaryResult(): AgentMapResult {
 }
 
 describe("AgentMap component boundary hardening", () => {
-  it("publishes the boundary-hardening package and recommends a development pause", () => {
+  it("keeps the maintained component contract aligned with the task's authority limits", () => {
     const taskSpec = repoText(TASK_SPEC);
     expect(taskSpec).toContain(
       "AgentMap is hardened as a readonly context-candidate and diagnostic-evidence component only.",
@@ -133,21 +116,12 @@ describe("AgentMap component boundary hardening", () => {
       "The recommended next state is not runtime implementation execution.",
     );
 
-    for (const file of REQUIRED_HANDOFF_FILES) {
-      expect(repoText(`${HANDOFF_DIR}/${file}`).trim(), file).not.toHaveLength(0);
-    }
-
-    const synthesis = repoText(`${HANDOFF_DIR}/synthesis.md`);
-    expect(synthesis).toContain(
-      "Status: accepted_line_b_agentmap_component_boundary_hardened_development_pause_recommended_default_on_still_forbidden",
-    );
-    expect(synthesis).toContain("Default-on allowed: no.");
-    expect(synthesis).toContain("Default cutover allowed: no.");
-    expect(synthesis).toContain("Production-ready declaration allowed: no.");
-    expect(synthesis).toContain("Recommend pausing AgentMap capability expansion: yes.");
-    expect(synthesis).toContain(
-      "Recommend entering next-stage runtime implementation execution: no.",
-    );
+    const contract = repoText(BOUNDARY_DOC);
+    expect(contract).toContain("## AgentMap component boundary");
+    expect(contract).toContain("readonly context-candidate and diagnostic-evidence component");
+    expect(contract).toContain("explicit invocation, a valid caller-owned AgentMapResult");
+    expect(contract).toContain("Candidate, shadow, and replay output must not be persisted.");
+    expect(contract).toContain("Provider ordering remains unchanged.");
   });
 
   it("keeps default-shaped runtime config ignored unless every explicit pilot gate is enabled", () => {

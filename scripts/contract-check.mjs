@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
+
 const ROOT = process.cwd();
 const REQUIRED_AGENT_DEV_SCENARIOS = [
   'chat-empty',
@@ -211,13 +213,9 @@ async function main() {
   console.log('Contract check passed.');
 }
 
-if (process.argv[1]?.replaceAll('\\', '/').endsWith('/scripts/contract-check.mjs')) {
-  import('node:url').then(({ pathToFileURL }) => {
-    if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-      main().catch((error) => {
-        console.error(error);
-        process.exitCode = 1;
-      });
-    }
+if (isMainEntrypoint(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
   });
 }

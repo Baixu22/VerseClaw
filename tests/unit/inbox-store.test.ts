@@ -58,6 +58,9 @@ const approval: PermissionApprovalEvent = {
   risk: 'external-write',
   command: 'git push origin main',
   reason: 'Push the reviewed branch',
+  // Production builds this from the request itself (git-api.ts createRequestHash),
+  // so the fixture has to carry it or the redaction guard proves nothing.
+  requestHash: 'workspace-1:session-1:git:push:{"command":"git push origin main","paths":[]}',
 };
 
 const remoteTask: RemoteTaskRecord = {
@@ -116,6 +119,22 @@ describe('Inbox store', () => {
     expect(items.find((item) => item.source === 'remote-task')?.actions).toEqual(['approve', 'reject']);
     expect(items.find((item) => item.source === 'browser-task')?.actions).toEqual(['approve-and-run', 'reject']);
     expect(items.find((item) => item.source === 'browser-task')?.risk).toBe('external-write');
+  });
+
+  it('redacts external-write details from the Inbox projection', () => {
+    const projected = projectInboxItems({ approvals: [approval] })[0];
+    expect(projected).toMatchObject({
+      source: 'permission',
+      title: 'git',
+      summary: undefined,
+      evidence: [],
+    });
+    expect(JSON.stringify(projected)).not.toContain('git push origin main');
+    expect(JSON.stringify(projected)).not.toContain('Push the reviewed branch');
+    expect(JSON.stringify(projected)).not.toContain('command');
+    expect(JSON.stringify(projected)).not.toContain('requestHash');
+    expect((projected as { approval: PermissionApprovalEvent }).approval.command).toBeUndefined();
+    expect((projected as { approval: PermissionApprovalEvent }).approval.requestHash).toBeUndefined();
   });
 
   it('keeps successful sources when one Inbox source fails', async () => {

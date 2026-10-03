@@ -434,10 +434,10 @@ test.describe('FP-P1-05 restart / recovery / live kill / rollback', () => {
         'dcsStaleWriteGuardEnabled',
         'dcsSymbolLeaseEnabled',
         'dcsRoutingMemoShadowEnabled',
-        'dcsSekbExperienceShadowEnabled',
       ]) {
         expect(recoveredSettings[key]).toBe(false);
       }
+      expect(recoveredSettings.dcsSekbExperienceShadowEnabled).toBe(true);
       expect(recoveredSettings.language).toBe('en');
       const recoveredConfig = JSON.parse(
         await readFile(join(openclawDir, 'openclaw.json'), 'utf8'),

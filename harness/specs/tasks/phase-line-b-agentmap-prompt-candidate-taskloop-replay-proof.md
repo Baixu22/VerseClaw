@@ -87,17 +87,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-replay-proof/README.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-replay-proof/replay-corpus.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-replay-proof/replay-proof-matrix.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-replay-proof/deterministic-replay-proof.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-replay-proof/leakage-sentinel-proof.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-replay-proof/provider-ordering-proof.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-replay-proof/rollback-proof.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-replay-proof/quantitative-replay-scorecard.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-replay-proof/validation-plan.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-replay-proof/submission-template.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-replay-proof/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Line B AgentMap Prompt Candidate TaskLoop Phase A Replay Proof

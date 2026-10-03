@@ -45,7 +45,21 @@ Product capability statements must be checked against the canonical matrix in `s
 
 写入后的自动验证同样需要显式开启，默认关闭。开启后，Verse Claw 只探测一个有界项目测试命令，并通过现有 effective `exec` 的 policy、审批、沙箱和超时路径执行；通过、失败、跳过原因和有界输出尾部会留在会话中，验证失败不会回滚已成功的写入。
 
+前台命令进度保留最近输出，并在取消或退出后停止；工具成功或失败后到达的进度同样不会交付。参数或策略准备完成后，已取消的工具不会再启动，取消后到达的成功结果也不会交付；异步策略检查和结果观察阶段同样尊重取消。远程 `exec` 保留 stdout、stderr、错误文本和超时状态，直接执行与 prepare 两条路径均传递发起消息路由。已取消的 `process` 调用不会继续写入输入、关闭 stdin 或消费输出；poll 结果保留真实的 `exitCode` 和 `exitSignal`。严重工具循环终止也会停止模型回退；变化的图片、音频和资源结果会被识别为进展，process poll 的等待时长不算进展，有界历史窗口会按 run 覆盖已配置的终止阈值。较低的循环警告阈值也会正常触发警告，策略改写参数或会话别名合并不会丢失循环检测所需历史。策略、审批和适配器路径上的取消会继续作为取消抛出，而不会改写成工具拦截；本地等待 `node.invoke` 时取消不会再交付晚到的成功。`process remove` 不能终止前台会话，`send-keys` 写入后仍检查取消，首次 poll 能观察到已经退出的子进程。乒乓警告需要无进展证据，别名合并仅在同一活动周期保留告警退避，新进展的重置不会被覆盖，结果观察器异常不会把成功改成失败。
+
+未包装工具、客户端委托、审批登记和各策略阶段同样尊重取消。取消原因优先于晚到的工具成功或失败，已取消的委托会丢弃待交接记录。等待进程输入回调时也可取消，但不会撤回已经写入的字节或终止后台进程。子进程退出后，poll 会等 stdout、stderr 读完再结束会话，保留执行所有者记录的终态，已移除的进程也不会因晚到的退出回调重新出现。同一 run 内已记录的工具终态重复投递只计一次；乒乓警告至少需要四次已完成的交替调用（`ABAB`），且两侧各自都有重复的稳定结果。证据与待验证项见[第四批本地验收记录](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md)。
+
+工具准备或策略钩子尚未返回时，取消即可结束本地等待，但不会终止插件内部已经开始的工作。输入确认期间进程已退出时，应答保留执行所有者记录的终态与输出。会话别名合并后，同一工具调用只计一次；只改变 `process poll` 的等待时长也不会重置无进展检测。详见[第五批验收记录](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md)。
+
+第六批还补齐了 node 目标解析、远程 prepare、审批快照、自动审阅和审批登记等待的取消边界；晚到结果不会启动后续执行阶段。重复退出通知保留首次终态，finished 日志读取会清除旧的 poll 退避，非法 poll/timeout 输入会回退到安全默认值。详见[第六批验收记录](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md)。
+
 启用 DCS 的编码 turn 会通过既有共享注入账本分别记录 knowledge、recent actions 与 tool registry 的真实 provider 可见 prompt 增长。固定预算不会因此放大：启用的 DCS 投影保留既有有界容量，截断和丢弃仍作为显式账目证据。
+
+COMPASS SSP 与回复前检索也通过 ContextCandidate 仲裁共享该 turn 预算，覆盖排队续跑、CLI 与原生 harness 路径。增强 kill switch 会阻止其准备；被截断的检索组不会计为完整注入的事实。
+
+embedded runtime 与原生 harness SDK 的 ContextEngine 消息替换共享该预算。原样保留的历史不重复收费；新增或改写消息必须整组放入剩余预算，否则保留原历史，不截断工具调用结构。原生 system addition 使用同一剩余额度，相同启动重试不重复收费。
+
+源码 runtime 加载已构建的原生插件时也保持同一预算，两侧均交由当前 attempt 原有的预算所有者执行准入。
 
 本范围不包含 Runtime Memory 注入、SEKB 自动写回、Browser 无监督或私网访问、C6/C7 自动切换、Coding WAL、生产仓库自动合并及多 Forge/DAG 扩围。当前只有工程与真实进程测试证据，真人 canary 与发布审批仍未完成。组件唯一标注见 [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview)。
 
@@ -137,7 +151,9 @@ OfficeCLI 也可在 设置 -> 技能 -> 功能插件 中管理：Verse Claw 会�
 从输入框插入的技能会以 `/技能名` 卡片形式显示；点击卡片可在右侧预览栏打开并阅读该技能的 `SKILL.md`。
 在输入框输入 `/` 会打开 Context Palette，可发现 Wiki 搜索、只读知识范围切换、审查、修复 CI、补测试、解释 diff、Task Ledger、Mission Control、压缩和会话 fork；这些动作都会复用现有 Chat 和 Session 流程。会话生命周期命令（`/new`、`/resume <关键词>`、`/rename <名称>`、`/archive`、`/delete`、`/clear`、`/copy`）与侧边栏使用相同的 store/host 路径：`/new` 开启新对话，`/resume` 按关键词切换会话，`/rename` 重命名当前会话，`/archive` 与 `/delete` 归档或永久删除当前会话，`/clear` 重置本地消息视图，`/copy` 将会话记录复制为 markdown。
 当你使用 `@agent` 选择其他智能体时，Verse Claw 会直接切换到该智能体自己的对话上下文，而不是经过默认智能体转发。各 Agent 工作区默认彼此分离，但更强的运行时隔离仍取决于 OpenClaw 的 sandbox 配置。
-Verse Claw 默认使用轻量 `policy-light` 沙盒层，由主进程权限门禁、工作区根目录检查、Gateway RPC 审批和 OpenClaw exec approval 共同生效；Docker 与 SSH 保留为需要显式选择的 `strong` provider，不再是启动必需项。
+Verse Claw 默认使用轻量 `policy-light` 沙盒层，由主进程权限门禁、工作区根目录检查、Gateway RPC 审批和 OpenClaw exec approval 共同生效；Docker 与 SSH 保留为需要显式选择的 `strong` provider，不再是启动必需项。运行时 exec 审批边界也有应用内入口：OpenClaw 拦下某条命令时，应用级提示会显示命令与工作目录，并通过 `exec.approval.resolve` 回传运行时给出的决定之一；被拒绝的决定会保留提示并显示运行时给出的原因，且在任意工作区权限模式下都可以作答。
+命令风险分类基于子命令而非前缀匹配，因此前置的全局参数无法掩盖命令的真实行为。对 `git` 而言，能执行任意代码（`-c` 设置 `core.pager`/`core.editor`/`alias.*`、`--config-env`）、重定向其辅助程序路径（`--exec-path`）或把操作转移到其他仓库（`-C`、`--git-dir`、`--work-tree`、`--namespace`）的参数，无论后面跟哪个子命令都按高风险处理；全局参数也不再能把破坏性或联网子命令降级成普通写操作。
+即使在工作区内（普通编辑会自动放行），写入 Git 仓库元数据仍需审批——因为写进去的 hook 或 config 会在下一次 Git 调用时执行；该保护覆盖嵌套仓库、submodule 以及 linked worktree 使用的 `.git` 指针文件，而 `.gitignore`、`.gitattributes`、`.github/` 仍按普通文件处理。破坏性 Git 操作的审批提示会给出分级依据而不是笼统警告：push 的目标远端与分支、该分支是否为共享分支、未指定分支时适用的 refspec 范围，以及 reset 是丢弃工作区改动还是仅移动分支指针。
 当 Docker 沙盒运行在 Windows 主机、而 daemon 位于 WSL2（或通过 `DOCKER_HOST` 连接的其它 Linux daemon）时，bind source 会自动转换到 WSL2 挂载命名空间（`C:\...\workspace` → `/mnt/c/.../workspace`，`\wsl$\<distro>\...` → POSIX），卷挂载不再因 `invalid volume specification` 失败；本地 Windows named-pipe daemon 以及 macOS/Linux 主机不受影响。
 Settings、Doctor 和 diagnostics 现在展示同一份 effective sandbox policy，包括请求/生效 provider、runtime level、exec 与 network policy、Docker 可用性和降级原因。
 Settings → System & Runtime 还提供 Project Rules Center，可检查当前 workspace 的 `AGENTS.md`，列出 `.clawx/rules/*.md`，展示确定性校验 warning，并在缺失时创建保守的 `AGENTS.md` 模板，而不会引入新的规则真相源。
@@ -182,9 +198,11 @@ Task Ledger 页面为长期任务维护 workspace 级、Agent 中立的结构化
 Review Center 可以对未提交改动、相对基准分支的 diff 或指定 commit 运行只读 AI 审查。它会按 severity 结构化 findings，保留 file/line 锚点，写入脱敏 review trace，并可把单条 finding 或整次 review 转成 Task Ledger review node，不会暂存、提交或编辑文件。Git patch 会先经过共享结构化 patch contract 验证；malformed 或 producer-truncated diff 会在模型审查启动前停止。在 Chat 中，成功且有 write journal 支撑的 `edit` 与全文件 `write` 会显示富 diff，并可复制同一文本 patch；mutation lineage 缺失、过期或不完整时，不会用 Renderer 状态推断重建。Remote PR 标签页通过 Main-owned host API 有界读取 GitHub PR detail、commits、files、结构化 diff、checks、reviews、branch protection 和指定文件内容。完整性、能力与 readiness 会显式展示；缺失、截断、未授权或未知证据不会被解释为 ready。整体评审、行评论、线程回复和白名单 metadata 修改默认只生成草稿，只有精确匹配的一次性 action-bound approval 被消费后才会发布；head/version 漂移会 fail closed，partial 或 ambiguous 结果会显示 reconciliation，避免盲目重试。受控合并复用同一 Main-owned policy：动作前即时重读 head/readiness，消费绑定精确策略与 policy 证据的短时单次审批，并携带 expected head SHA。生产仓库不在 allowlist 中，Agent merge 默认关闭；合并后的 refresh 或 audit 失败会显示 reconciliation，而不会提示重试合并。
 
 ### 会话工作区
-Chat 会话工作区保持紧凑的连续工作面，固定显示 `Review`、`Terminal`、`Browser`、`Files`、`Artifacts`、`Audit` 六个标签；Changes 收入 Review，文件预览收入 Files。Browser 内部提供 Preview 和受监督的 Live，Terminal 可在底部面板与右侧标签间切换且不会创建第二个 shell 会话。窄窗口下 Files 在文件树与预览之间使用单视图切换。工作区继续使用 Main-owned Browser、终端、Git、Review、截图、snapshot 和审批 API；`/browser` 与 `/code-review` 仍作为兼容路由打开对应工作区上下文。Task Ledger 和 ClawGraph 继续通过工作区上下文入口打开全屏页面。
+Chat 会话工作区保持紧凑的连续工作面，按需打开 `Review`、`Terminal`、`Browser`、`Files`、`Artifacts`、`Audit` 及现有 Agents 工具标签；Changes 收入 Review，文件预览收入 Files。Browser 内部提供 Preview 和受监督的 Live，Terminal 可在底部面板与右侧标签间切换且不会创建第二个 shell 会话。窄窗口下 Files 在文件树与预览之间使用单视图切换。工作区继续使用 Main-owned Browser、终端、Git、Review、截图、snapshot 和审批 API；`/browser` 与 `/code-review` 仍作为兼容路由打开对应工作区上下文。Task Ledger 和 ClawGraph 继续通过工作区上下文入口打开全屏页面。恢复会话或打开只读 Review 不写项目文件；旧话题标记仅在显式新建会话、交接或创建新智能体会话时重置。
 
 ### Knowledge Hub
+知识库默认打开「资料库」，另一个主视图为「待复核队列」。队列按 Inbox、草稿和提案筛选，并打开原有复核操作。文档默认预览，点击「编辑」或「新建笔记」后才进入编辑；960px 窗口同时只显示一个编辑或预览面板。「更多 > 维护」和「来源工具」保留高级操作。「问知识库」进入 Chat 的知识问答模式，保留引用和本地对话检查点，返回时恢复未完成笔记及来源选择。保存回答只创建候选；没有提案的草稿须先准备变更提案，再由用户明确批准并应用。
+
 Knowledge 页面通过 OpenClaw `memory-wiki` 管理有来源支撑的 wiki 上下文。默认使用 Verse Claw 托管的隔离 native vault，可在不切换到 unsafe local-vault 模式的情况下导入受限的文本文件或文件夹，也可以验证并导入本地 OKF v0.1 Markdown bundle，作为覆盖在 `wiki.ingest` 之上的轻量兼容适配层。它提供状态、搜索、查看、compile、lint、Knowledge Inbox、draft/proposal 审查、provenance 和治理流程。Inbox 会把 Chat、任务账本、文件、OKF、ClawGraph 或 agent 提出的候选知识暂存在正式 wiki 之外，直到用户选择提升为草稿或忽略；provenance 只记录来源引用和读取/引用事件，不修改 wiki 页面。Chat 的知识范围（`None`、`Memory`、`Wiki` 或 `All`）只代表读取范围：agent 可以 search/get 上下文，但不能因为启用 scope 就写入、修改、归档、删除、合并或 apply 知识。在 Chat 中，`/wiki` 会搜索并以可见 chip 挂载明确的 wiki 引用后再发送，`/memory`、`/all`、`/none` 和 `/scope` 只调整读取范围，不会变成写权限。知识调用模式默认是 Suggest：相关知识只显示为可选 chip；Auto-read 需要用户显式开启，并且只会附加少量新鲜、高置信、只读引用。会话知识以及 agent/知识管理员建议都会先进入可编辑 draft/proposal，只有用户明确确认后，才通过单一 ReviewBundle 写入 wiki；Host 在 apply 前重新校验 digest、revision 和状态。治理元数据存放在共享 openclaw-state SQLite 中；会话硬删除会先完成派生数据清理再删除 transcript，失败时保持 incomplete/retryable，不再 best-effort 报成功。知识检索现在可以输出 DCS 派生的 SourceSet 报告：exact/lexical/semantic 混合检索、冲突显式披露、freshness 重排、citation 可解析的 claim，以及按证据规则计算的 grounded/partial/missing_sources 状态；Runtime Memory 在该报告中只做 shadow 比较。这仍是包级工程证据，不代表 enabled by default 或 generally available。Knowledge 审查工作区现在还可以通过单一 ReviewBundle 确认路径执行受治理的页面生命周期操作（更新、合并、归档、撤销、删除、恢复），包含 expectedRevision CAS、幂等、EffectReceipt 和可见的 receipt 历史；不支持的直接 wiki 修改保持不可用。六个表面的 canary 报告（显式引用、自动检索、Role Memory、SEKB 检索、Source Set 综合、任务后候选捕获）可复跑生成，并保持在 shadow/opt-in，E4/E5 明确记录为 not-evaluated/blocked。Obsidian 是可选增强，不是必需依赖。治理仪表盘按需运行健康检查，呈现矛盾条目、陈旧页面和无主引用；监控目录只会把项目文档放入 pending Inbox，不会自动 direct-ingest 到正式 wiki，也不会自动生成 synthesis。
 
 高级 SEKB 诊断可显式启用默认关闭的 `runtime.contextBlock.sekb.shadowEvaluation.enabled`。它依赖 `runtime.contextBlock.sekb.enabled`；`OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED` 只能覆盖影子开关。该功能只保存有界、确定性的采集与完成证据建议元数据，不会过滤轨迹、写入原则或改变任务完成结论。
@@ -210,7 +228,7 @@ Shadow V1 评分与阈值 50 冻结；标注工具包就绪不等于可晋级。
 
 ### Workspace Git 控制
 Workspace 侧栏现在会先打开精简入口面板；只有当前 workspace 是 Git 仓库时才显示“审查”入口，非 Git 项目不会暴露 Git 控件。
-Workspace 侧栏提供 Git 工作台，可查看仓库状态、side-by-side 文件 diff、暂存、复制 patch、带审批的文件还原、提交、分支、stash、worktree 和 GitHub Pull Request。顶部 readiness 条会量化本机 Git、内置 Agent Git 工具、worktree 数量和 `gh` 登录状态，让面板直接显示当前哪些能力可用。Worktree 添加支持新分支和已有分支两种流程，新 worktree 默认放在仓库同级目录。同一套 Main 进程 Git service 也驱动内置 `clawx-git` MCP server，让 Agent 通过 Verse Claw 权限体系调用受控 Git 与 PR 工具，而不是直接拼 shell 命令；revert、pull、push、worktree remove/prune、创建 PR 等会改写或发布状态的操作仍需要审批。
+Workspace 侧栏提供 Git 工作台，可查看仓库状态、side-by-side 文件 diff、暂存、复制 patch、带审批的文件还原、提交、分支、stash、worktree、合并、变基、重置和 GitHub Pull Request。紧凑的 Audit 标签会把权限决策与最近的 `git reflog --all` 条目合并显示（有界视图，超出上限的较早条目会显式标记），包括提交、切换、重置、变基及其他引用移动。顶部 readiness 条会量化本机 Git、内置 Agent Git 工具、worktree 数量和 `gh` 登录状态，让面板直接显示当前哪些能力可用。Worktree 添加支持新分支和已有分支两种流程，新 worktree 默认放在仓库同级目录。统一 diff 可以通过结构化补丁引擎应用、回滚，或只做预检而不落盘，并分别报告已应用、已跳过与冲突的路径；格式损坏或被截断的补丁会在触碰任何文件之前被拒绝，而不是部分应用。只读的基线对比会把 HEAD 与最近的远程祖先做 diff——显式 ref、分支 upstream，或 `origin/HEAD`——并报告实际用的是哪一个；当不存在远程祖先，或两侧没有共同提交时，会把对比标记为不可用，而不是猜一个基线。同一套 Main 进程 Git service 也驱动内置 `clawx-git` MCP server，让 Agent 通过 Verse Claw 权限体系调用受控 Git 与 PR 工具，而不是直接拼 shell 命令；revert、pull、push、merge、rebase、reset、补丁应用/回滚、worktree remove/prune、创建 PR 等会改写或发布状态的操作仍需要审批。
 
 ### 📡 多频道管理
 同时配置和监控多个 AI 频道。每个频道独立运行，允许你为不同任务运行专门的智能体。
@@ -226,7 +244,7 @@ Verse Claw 现在还内置了腾讯官方个人微信渠道插件，可直接在
 
 **已安排** 页面现在会把 Cron 任务和监督式 Browser 运行投影到同一份紧凑列表中，但不会合并两类后端模型。Cron 继续保留创建、编辑、启停、删除、立即运行、投递配置和运行历史；Browser 运行可执行批准、拒绝、重试和取消，并展示有序步骤、时间及类型化结果或错误证据。窗口宽度为 960px 时，详情会替换列表，不会强行挤出第三栏。Browser Profile 与现有凭据 Vault 统一在 **设置 > Browser** 管理；提交的密码始终由 Main 进程持有，不会回显到渲染进程。
 
-Agent Browser 工作台与旧 `/browser` 路由继续作为兼容入口保留在侧边栏底部的 `...` 菜单中，并通过 Main 进程运行时提供相互隔离的标签页和实时会话。把这些实时会话迁入聊天工作区属于后续迁移阶段。聊天会在发送前依据真实 transcript 用量执行 token/费用预算门，限制持久化与渲染的工具输出，并在取消或硬超时时中止底层运行。
+侧边栏底部 `...` 菜单中的 Agent Browser 及旧 `/browser` 路由会打开 Chat 工作区的 Browser Live。浏览器任务归入已安排，配置与 Vault 元数据归入设置 > 浏览器。聊天会在发送前依据真实 transcript 用量执行 token/费用预算门，限制持久化与渲染的工具输出，并在取消或硬超时时中止底层运行。
 
 监督式 Browser 任务会先持久化为“等待授权”，在产生任何浏览器副作用前展示目标、站点、获批域名、模式、权限范围和有序计划。用户显式批准后，Main 进程才会执行有界的导航、等待与点击步骤，并返回类型化的成功或失败判定。该流程不开放无监督浏览或私网访问，凭据仍只以 Main 进程持有的 Vault 引用存在。
 
@@ -247,11 +265,12 @@ Skills 页面可展示来自多个 OpenClaw 来源的技能（托管目录、wor
 在开发者模式下，独立的“图像生成”页面支持配置 OpenAI 兼容生图端点（Base URL、API Key 和模型名，例如 `gpt-image-2`），生图请求会走专用的 `/v1/images/generations` 服务，聊天仍继续使用正常的 OpenAI Provider。
 如果你通过 **自定义（Custom）Provider** 对接 OpenAI-compatible 网关，可以在 **设置 → AI Providers → 编辑 Provider** 中配置自定义 `User-Agent`，以提高兼容性。
 如果兼容网关的 `/models` 因非鉴权原因不可用，Verse Claw 会在校验 API Key 时自动降级为轻量的 `/chat/completions` 或 `/responses` 探测。
+在 `openclaw.json` 中使用环境变量 SecretRef 配置的 Provider，只要 Verse Claw 进程能够读取该变量且 secret provider 允许，就会被识别为可用；环境变量密钥不会被复制到配置文件。
 
 ### 🌙 自适应主题
 支持浅色模式、深色模式或跟随系统主题。Verse Claw 自动适应你的偏好设置。
 
-Windows、macOS 与 Linux 现在都默认启用 UI v2。界面采用与 FakeCoding 对齐的中性灰阶工作面、28-36 px 紧凑控件、黑白反转主操作、无衬线管理页标题和 120-180 ms 克制动效，同时保留各平台原生窗口控件。设置深链接继续保留背后的原页面并在关闭后恢复焦点；分阶段迁移期间可通过 `?uiVersion=legacy` 对比旧界面。
+Windows、macOS 与 Linux 现在都默认启用 UI v2。界面采用与 FakeCoding 对齐的中性灰阶工作面、28-36 px 紧凑控件、黑白反转主操作、无衬线管理页标题和 120-180 ms 克制动效，同时保留各平台原生窗口控件。设置采用独立页面，记住返回路径并恢复焦点。视觉迁移现已完成：旧 `uiVersion=legacy` 链接进入当前界面，Browser/Review 旧链接打开对应工作区面板。各设置分区、Setup 和 Observability 使用紧凑控件，诊断页需要纵向滚动时指标文字仍完整可见。
 
 ### 🚀 开机启动控制
 在 **设置 → 通用** 中，你可以开启 **开机自动启动**，让 Verse Claw 在系统登录后自动启动。
@@ -415,6 +434,8 @@ P2-01 只读 facade 现在只把稳定的 `read_file`、`search_content`、`resu
 
 P2-02 argv-only command profile 现在把 OpenClaw 审批前的 command analysis 收敛为不可变 host-owned execution plan。普通 test/build/lint/git 命令以 direct argv 执行；pipeline、chain、redirect、heredoc、inline evaluation 和显式解释器保持独立的 terminal-shell 边界。profile（含 `pnpm`/`npm`/`corepack` `exec`/`dlx` runner 透传）由 host 推导，模型不能选择 profile、interpreter、PATH/PATHEXT、policy 或 approval token。Windows `.exe`/`.com` 保持 direct argv，`.cmd`/`.bat` 在经审计的 `cmd.exe` interpreter 下保留 resolved script identity，审批后不再重解析 display command。cwd/env/argv/timeout/output 越界一律 fail-closed，且没有 native/MCP/legacy fallback。这只是 engineering evidence，不开启 diagnostics、写入、canary、enabled by default、generally available 或 product approval。详见 [P2-02 证据](docs/dev/verseshell-foundation/P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md)。
 
+P3 external-write 策略现在会在不可变 command plan 上，把 compiler、script、Git hook、terminal shell 以及其他可能产生副作用的进程命令标记为 external write。既有 OpenClaw exec approval 仍是唯一授权面；静态警告不复制命令文本或凭据。此类进程写入位于 ClawX write journal 之外，`rollbackClaim=false`，也不会被自动回滚。本工程切片不开启写入、canary 流量、default-on、GA 或产品审批。详见 [P3 证据](docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md)。
+
 推荐使用以下保守的 `openclaw.json` 配置：
 
 ```json
@@ -459,6 +480,12 @@ P2-02 argv-only command profile 现在把 OpenClaw 审批前的 command analysis
 ---
 
 ## 开发指南
+
+Task Forest 状态、会话交接和生成的评审输出属于本地开发历史，不再是源码检出的前置条件。稳定测试、固定夹具、门禁配置与精选最终证据仍受版本控制。恢复或退役产物前请阅读[源码保留与归档恢复说明](docs/dev/repository-artifact-retention.md)。
+
+### Runtime Lifecycle Governance（Phase 2，默认关闭）
+
+Runtime Lifecycle Governance 按阶段交付。Phase 0 落地共享基础（`SessionAdmissionRegistry`、`flow_runs` goal-wake SQL CAS、mission fencing、operation-journal primitive）。Phase 1 交付唯一 canonical cleanup finalizer 与 drain 管线。Phase 2 交付 delete operation journal（`cache_entries` 行删除与 `store_committed` 在同一个 per-agent SQLite immediate transaction）、由调用方持久化 `operationId` 驱动的 Electron mirror gate，以及终端 keep-on-leave 与全局 `terminal.list({})`。Phase 3 交付默认关闭的同 Gateway goal wake loop：单个 SQLite immediate arm 事务、run 完全 idle 后持久化 `turnBarrier` ack、仅 mission owner/lead 顶层 turn 可用的 `goal_wait`、`exec(background=true, wait="goal")`，以及进程退出 level-check 唤醒与重复 wake 去重。Phase 4 交付默认关闭的 durable helper 文件协议（`intent.json -> started.json -> exit.json`，位于 `<trusted-root>/background-processes/<runId>/`）、`ProcessRunReconciler` 启动/低频 sweep 恢复、session reset/delete 的 ownerEpoch 失效、runDir 配额/TTL/redaction，以及 Windows detached helper 路径；恢复绝不重放命令，`intent` 无 `started` 且无存活 helper 判为 `lost`。Phase 5 扩展 `SessionActivity` 只读模型，新增 goal、process、lineage 投影，数据只来自现有只读 probe（`mission_runs`、goal-wake `flow_runs`/`task_runs`、bash process registry、supervisor snapshot、subagent lineage）。Electron 服务仅转发并做类型化聚合，Chat 会话状态面板经 `react-i18next` 与现有 design token 渲染新状态，不新增任何生命周期按钮或删除/恢复入口；只读投影测试报告 `activitySnapshotWriteFindings=0`。审计保持 `armTxCount=1`、`processPollToolCalls=0`，Phase 4 增加 `secretPersistenceFindings=0`；普通 Chat 与默认 `background=true` 行为不变。Phase 6 完成 evidence-only 生产收尾：`audit-0.json` 至 `audit-6.json` 全部通过 `pnpm run runtime-lifecycle-audit --phase all`；已删除 superseded 阶段临时提示词，closeout 记录于 `docs/dev/handoffs/LATEST.md` 与 task-forest `TF-0077`，后续想法保留在 `future-work.json`。2026-08-19 的 GA hardening 补齐 packaged Electron durable-helper 验证与 10 周期真实进程 goal-wake canary；RLG-only 验收现为无条件 PASS，goal-wake/durable-helper 默认关闭与全部产品锁保持不变。详见 `docs/dev/runtime-lifecycle-governance/README.zh-CN.md`、`artifacts/runtime-lifecycle-governance/audit-6.json` 与 `artifacts/runtime-lifecycle-governance/ga-acceptance.json`。
 
 ### 前置要求
 
@@ -505,11 +532,15 @@ pnpm dev                  # 以热重载模式启动（若缺失会自动准备�
 
 # 代码质量
 pnpm lint                 # 运行 ESLint 检查
-pnpm typecheck            # TypeScript 类型检查
+pnpm run lint:check       # 不自动修复；要求零错误、最多 120 条警告
+pnpm typecheck            # 固定版本 tsgo：未缓存 node/web 检查及测试类型观测
 
 # 测试
 pnpm test                 # 运行单元测试
-pnpm run test:e2e         # 运行 Electron E2E 冒烟测试
+pnpm run test:channel-startup  # channel 配置、sidecar、IRC 快回归
+pnpm run check:rc10:dev       # RC-10 定向开发检查；冻结候选后才跑全量验收
+pnpm run test:e2e:run tests/e2e/rc10-operator-live.spec.ts --workers=1  # 五个真实 RC-10 场景；复用新构建
+pnpm run test:e2e         # 构建并运行全量 Electron E2E
 pnpm run test:e2e:headed  # 以可见窗口运行 Electron E2E 测试
 pnpm run comms:replay     # 计算通信回放指标
 pnpm run comms:baseline   # 刷新通信基线快照
@@ -518,6 +549,9 @@ pnpm run comms:compare    # 将回放指标与基线阈值对比
 # Agent harness
 pnpm harness context --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
 pnpm harness validate --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
+# 场景基线扫描跨任务变更；任务规格仍严格校验文件归属。
+# 任务校验即使不传 --since 也检查差异；--no-diff 仅用于示例结构检查。
+pnpm harness run --spec harness/specs/scenarios/gateway-backend-communication.md --dry-run
 
 # Agent dev/test control plane
 pnpm agent-dev:make <page|e2e|host-route|skill|channel|plugin|scenario> my-scenario
@@ -542,13 +576,15 @@ pnpm vtoken:test
 pnpm vtoken:worker
 
 # 构建与打包
-pnpm run build:vite       # 仅构建前端
+pnpm run build:vite       # 构建渲染层与 Electron bundles
 pnpm build                # 完整生产构建（含打包资源）
 pnpm package              # 为当前平台打包（包含预装技能资源）
 pnpm package:mac          # 为 macOS 打包
 pnpm package:win          # 为 Windows 打包
 pnpm package:linux        # 为 Linux 打包
 ```
+
+会话交接从当前 Gateway 读取历史（包括隔离 source runtime 会话），并把有长度限制的近期助手结果作为未核验上下文带入新会话。
 
 Verse Claw 现在会在 active project workspace 和 OpenClaw agent workspace 中播种 `.clawx/harness/` 项目 harness 文档骨架，用 Verse Claw 自有结构承载 rules、scenarios、task contracts、guides、layers、context-pack recipes 和 Task Ledger bridge docs，而不是引入并行的 `.trellis/` 或 Markdown 任务状态事实源。
 

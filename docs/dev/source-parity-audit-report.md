@@ -268,6 +268,8 @@ aider `base_coder.py` 反射循环(概念参照,机制不同):编辑后 lint/测
 3. **[能力 7] 非锚定 argPattern 子串放行 + Windows .exe 命名坑**:allowlist 作者写 `argPattern: "server"` 这类未锚定正则时,`node server.js` 及任意含 "server" 子串的参数均放行(Codex 前缀语义不会);Windows 上 `node` 条目静默失效必须写 `node.exe`。触发条件:配置层书写质量 + Windows 平台,属配置风险而非默认路径风险。
 
 ## 附:验证产物
+
+> 2026-10-03：下列 `.parity-audit/` 参照脚本已作为本地历史归档；保留的产品对抗测试不变。重放需恢复原脚本及其外部源码输入，不能将旧真值脚本当作新检出的默认门禁。参见[归档恢复说明](repository-artifact-retention.md)。
 - 对抗用例(本地执行):`openclaw_runtime/src/agents/parity-audit/parity-audit.test.ts`(17 用例,全绿,含能力 1/2/7)
 - Aider 参照真值运行器:`openclaw_runtime/../.parity-audit/aider_find_similar_lines_truth.py`(直接 exec 归档源函数)
 - git hook 防护实测脚本:`openclaw_runtime/../.parity-audit/git-hook-parity.sh`

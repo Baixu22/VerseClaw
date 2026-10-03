@@ -82,7 +82,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-3-provider-tool-registry-controlled-diagnostic-consumer-pilot-execution/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 3 Provider Tool Registry Controlled Diagnostic Consumer Pilot Execution

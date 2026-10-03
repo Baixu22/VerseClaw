@@ -509,6 +509,13 @@
         "status"
       ]
     },
+    "goal_wait": {
+      "emoji": "🎯",
+      "title": "Wait For Goal",
+      "detailKeys": [
+        "timeout_ms"
+      ]
+    },
     "update_plan": {
       "emoji": "🗺️",
       "title": "Update Plan",

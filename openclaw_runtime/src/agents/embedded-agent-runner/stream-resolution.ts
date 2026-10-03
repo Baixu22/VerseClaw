@@ -1,6 +1,8 @@
 /**
  * Resolves provider stream functions and API keys for embedded agents.
  */
+import { createHash } from "node:crypto";
+
 import { getApiProvider } from "../../llm/api-registry.js";
 import { streamSimple } from "../../llm/stream.js";
 import { createAnthropicVertexStreamFnForModel } from "../anthropic-vertex-stream.js";
@@ -8,9 +10,17 @@ import { createBoundaryAwareStreamFnForModel } from "../provider-transport-strea
 import {
   attachShadowReceiptOptions,
   beginShadowModelCall,
+  recordShadowCensusFailure,
   resolveRc03WireCorrelationDigest,
 } from "../shadow-census.js";
-import { getRc03SealPlan } from "../../context-engine/rc03-seal-hook.js";
+import {
+  getRc03SealPlan,
+  getRc03SealedSystemPromptDigest,
+  runRc03SealHook,
+} from "../../context-engine/rc03-seal-hook.js";
+import { RC03_PRE_SEAL_PRODUCERS } from "../../context-engine/rc03-producers.js";
+import type { CompilePlan } from "../../context-engine/compile-plan.js";
+import { SUMMARIZATION_SYSTEM_PROMPT } from "../../../packages/agent-core/src/harness/compaction/compaction.js";
 import type { StreamFn } from "../runtime/index.js";
 import { stripSystemPromptCacheBoundary } from "../system-prompt-cache-boundary.js";
 import type { EmbeddedRunAttemptParams } from "./run/types.js";
@@ -246,6 +256,45 @@ export const testing = {
   },
 };
 
+/**
+ * RC-03: a provider-bound call with no orchestrator-sealed plan. When the run
+ * has RC-03 engaged (it already sealed a plan), a registered boundary producer
+ * is sealed here before transport serialization; anything else is an unknown
+ * semantic mutation and lands in the census. Observational: never changes bytes.
+ */
+function sealBoundaryModelCall(
+  context: Parameters<StreamFn>[1],
+  identity: {
+    providerId: string;
+    sessionKey?: string;
+    runId?: string;
+    attemptIndex?: number;
+    modelCallIndex: number;
+  },
+): CompilePlan | undefined {
+  if (!getRc03SealPlan(identity.runId)) {
+    return undefined;
+  }
+  if (context.systemPrompt !== SUMMARIZATION_SYSTEM_PROMPT) {
+    recordShadowCensusFailure("context-write", "unsealed-model-call");
+    return undefined;
+  }
+  const chars = context.systemPrompt.length + JSON.stringify(context.messages ?? []).length;
+  return runRc03SealHook(
+    { systemPromptAddition: context.systemPrompt, messages: [], lineage: [] },
+    context.messages ?? [],
+    {
+      enabled: true,
+      runId: identity.runId,
+      sessionKey: identity.sessionKey,
+      providerId: identity.providerId,
+      attemptIndex: identity.attemptIndex,
+      modelCallIndex: identity.modelCallIndex,
+      boundaryProducer: { id: RC03_PRE_SEAL_PRODUCERS.compactionSummarizer, chars },
+    },
+  ).plan;
+}
+
 function wrapEmbeddedAgentStreamFn(
   inner: StreamFn,
   params: {
@@ -311,7 +360,18 @@ function wrapEmbeddedAgentStreamFn(
     // RC-03: carry the sealed CompilePlan of this run and model call to the
     // guarded wire boundary so WireReceipt/v1 can be persisted with the final
     // body digest of the same model call.
-    const plan = getRc03SealPlan(runId, modelCallIndex);
+    const plan =
+      getRc03SealPlan(runId, modelCallIndex) ??
+      sealBoundaryModelCall(context, { ...callContext, runId, modelCallIndex });
+    const sealedSystemPromptDigest = getRc03SealedSystemPromptDigest(runId, modelCallIndex);
+    if (
+      plan &&
+      sealedSystemPromptDigest !== undefined &&
+      createHash("sha256").update(context.systemPrompt ?? "").digest("hex") !==
+        sealedSystemPromptDigest
+    ) {
+      recordShadowCensusFailure("context-write", "post-seal-semantic-mutation");
+    }
     // R5-3: overwrite the wire-side correlation with the sealed
     // ContextReceipt's correlation digest (the bundle digest) so
     // WireReceipt/v1 and ContextReceipt/v1 join on the same value. A miss

@@ -822,6 +822,17 @@ function wrapContextEngineWithRuntimeQuarantine(params: {
           });
         }
 
+        // assemble plugins may mutate nested history before throwing. Legacy
+        // fallback must receive the pre-call transcript, not that failed edit.
+        const fallbackParams =
+          methodName === "assemble"
+            ? {
+                ...(methodParams as Parameters<ContextEngine["assemble"]>[0]),
+                messages: structuredClone(
+                  (methodParams as Parameters<ContextEngine["assemble"]>[0]).messages,
+                ),
+              }
+            : methodParams;
         try {
           return await (value as (methodParams: unknown) => unknown).call(target, methodParams);
         } catch (error) {
@@ -843,7 +854,7 @@ function wrapContextEngineWithRuntimeQuarantine(params: {
             return await invokeFallbackContextEngineMethod({
               getFallbackEngine,
               methodName,
-              methodParams,
+              methodParams: fallbackParams,
             });
           } catch {
             throw error;
@@ -878,9 +889,7 @@ function resolveConfiguredContextEngineId(config?: OpenClawConfig): string {
   const defaultEngineId = defaultSlotIdForKey("contextEngine");
   if (hasExplicitContextEngineSlot(config)) {
     const slotValue = config?.plugins?.slots?.contextEngine;
-    return typeof slotValue === "string" && slotValue.trim()
-      ? slotValue.trim()
-      : defaultEngineId;
+    return typeof slotValue === "string" && slotValue.trim() ? slotValue.trim() : defaultEngineId;
   }
   return config?.runtime?.contextRuntimeKit?.enabled === false
     ? defaultEngineId

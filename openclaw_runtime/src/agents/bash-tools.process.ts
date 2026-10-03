@@ -7,6 +7,7 @@ import { formatDurationCompact } from "../infra/format-time/format-duration.ts";
 import { getDiagnosticSessionState } from "../logging/diagnostic-session-state.js";
 import { killProcessTree } from "../process/kill-tree.js";
 import { getProcessSupervisor } from "../process/supervisor/index.js";
+import { awaitWithAbort } from "../utils/await-with-abort.js";
 import {
   type ProcessSession,
   deleteSession,
@@ -19,7 +20,11 @@ import {
   setJobTtlMs,
 } from "./bash-process-registry.js";
 import { describeProcessTool } from "./bash-tools.descriptions.js";
-import { handleProcessSendKeys, type WritableStdin } from "./bash-tools.process-send-keys.js";
+import {
+  buildProcessInputResult,
+  handleProcessSendKeys,
+  type WritableStdin,
+} from "./bash-tools.process-send-keys.js";
 import { processSchema } from "./bash-tools.schemas.js";
 import {
   clampWithDefault,
@@ -253,6 +258,7 @@ export function createProcessTool(
     description: describeProcessTool({ hasCronTool: defaults?.hasCronTool === true }),
     parameters: processSchema,
     execute: async (_toolCallId, args, signal, _onUpdate): Promise<AgentToolResult<unknown>> => {
+      signal?.throwIfAborted();
       const params = args as {
         action:
           | "list"
@@ -377,40 +383,36 @@ export function createProcessTool(
       };
 
       const writeToStdin = async (stdin: WritableStdin, data: string) => {
-        await new Promise<void>((resolve, reject) => {
-          stdin.write(data, (err) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          });
-        });
+        signal?.throwIfAborted();
+        await awaitWithAbort(
+          new Promise<void>((resolve, reject) => {
+            stdin.write(data, (err) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve();
+              }
+            });
+          }),
+          signal,
+        );
       };
 
       const endStdin = async (stdin: WritableStdin) => {
-        await new Promise<void>((resolve, reject) => {
-          stdin.end((err) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          });
-        });
+        signal?.throwIfAborted();
+        await awaitWithAbort(
+          new Promise<void>((resolve, reject) => {
+            stdin.end((err) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve();
+              }
+            });
+          }),
+          signal,
+        );
       };
-
-      const runningSessionResult = (
-        sessionLocal: ProcessSession,
-        text: string,
-      ): AgentToolResult<unknown> => ({
-        content: [{ type: "text", text }],
-        details: {
-          status: "running",
-          sessionId: params.sessionId,
-          name: deriveSessionName(sessionLocal.command),
-        },
-      });
 
       switch (params.action) {
         case "poll": {
@@ -429,14 +431,15 @@ export function createProcessTool(
                       `\n\nProcess exited with ${
                         scopedFinished.exitSignal
                           ? `signal ${scopedFinished.exitSignal}`
-                          : `code ${scopedFinished.exitCode ?? 0}`
+                          : `code ${scopedFinished.exitCode ?? "unknown"}`
                       }.`,
                   },
                 ],
                 details: {
                   status: scopedFinished.status === "completed" ? "completed" : "failed",
                   sessionId: params.sessionId,
-                  exitCode: scopedFinished.exitCode ?? undefined,
+                  exitCode: scopedFinished.exitCode ?? null,
+                  exitSignal: scopedFinished.exitSignal ?? undefined,
                   aggregated: scopedFinished.aggregated,
                   name: deriveSessionName(scopedFinished.command),
                 },
@@ -448,31 +451,52 @@ export function createProcessTool(
           if (!scopedSession.backgrounded) {
             return failText(`Session ${params.sessionId} is not backgrounded.`);
           }
+          const observeChildExit = () => {
+            if (scopedSession.exited) {
+              return;
+            }
+            const child = scopedSession.child;
+            if (!child || (child.exitCode == null && child.signalCode == null)) {
+              return;
+            }
+            // Node can publish exit before stdio ends; markExited destroys these streams.
+            if (
+              [child.stdout, child.stderr].some(
+                (stream) => stream?.readableEnded === false && !stream.destroyed,
+              )
+            ) {
+              return;
+            }
+            const exitCode = child.exitCode;
+            const exitSignal = child.signalCode;
+            const status = exitCode === 0 && exitSignal == null ? "completed" : "failed";
+            markExited(scopedSession, exitCode, exitSignal, status);
+          };
+          observeChildExit();
           const pollWaitMs = resolvePollWaitMs(params.timeout);
           if (pollWaitMs > 0 && !scopedSession.exited) {
             const deadline = Date.now() + pollWaitMs;
             while (!scopedSession.exited && Date.now() < deadline) {
+              observeChildExit();
+              if (scopedSession.exited) {
+                break;
+              }
               await sleepPollInterval(Math.max(0, Math.min(250, deadline - Date.now())), signal);
             }
+            observeChildExit();
           }
+          signal?.throwIfAborted();
           const { stdout, stderr } = drainSession(scopedSession);
           const exited = scopedSession.exited;
-          const exitCode = scopedSession.exitCode ?? 0;
+          const exitCode = scopedSession.exitCode ?? null;
           const exitSignal = scopedSession.exitSignal ?? undefined;
-          if (exited) {
-            const status = exitCode === 0 && exitSignal == null ? "completed" : "failed";
-            markExited(
-              scopedSession,
-              scopedSession.exitCode ?? null,
-              scopedSession.exitSignal ?? null,
-              status,
-            );
-          }
-          const status = exited
-            ? exitCode === 0 && exitSignal == null
-              ? "completed"
-              : "failed"
-            : "running";
+          // The owner can report timeout/cancellation even if the child exits with code zero.
+          // Re-marking exit here would overwrite that status, reason, and retention timestamp.
+          const terminal = exited ? getFinishedSession(scopedSession.id) : undefined;
+          const completed = terminal
+            ? terminal.status === "completed"
+            : exitCode === 0 && exitSignal == null;
+          const status = exited ? (completed ? "completed" : "failed") : "running";
           const output = [stdout.trimEnd(), stderr.trimEnd()].filter(Boolean).join("\n").trim();
           const hasNewOutput = output.length > 0;
           const retryInMs = exited
@@ -490,7 +514,7 @@ export function createProcessTool(
                   (output || "(no new output)") +
                   (exited
                     ? `\n\nProcess exited with ${
-                        exitSignal ? `signal ${exitSignal}` : `code ${exitCode}`
+                        exitSignal ? `signal ${exitSignal}` : `code ${exitCode ?? "unknown"}`
                       }.`
                     : buildInputWaitHint(runtime) || "\n\nProcess still running."),
               },
@@ -499,6 +523,7 @@ export function createProcessTool(
               status,
               sessionId: params.sessionId,
               exitCode: exited ? exitCode : undefined,
+              exitSignal: exited ? exitSignal : undefined,
               aggregated: scopedSession.aggregated,
               name: deriveSessionName(scopedSession.command),
               ...(runtime ? runningSessionInputDetails(runtime) : {}),
@@ -549,6 +574,7 @@ export function createProcessTool(
             };
           }
           if (scopedFinished) {
+            resetPollRetrySuggestion(params.sessionId);
             const window = resolveLogSliceWindow(params.offset, params.limit);
             const { slice, totalLines, totalChars } = sliceLogLines(
               scopedFinished.aggregated,
@@ -591,10 +617,10 @@ export function createProcessTool(
             return resolved.result;
           }
           await writeToStdin(resolved.stdin, params.data ?? "");
-          if (params.eof) {
+          if (params.eof && !resolved.session.exited) {
             await endStdin(resolved.stdin);
           }
-          return runningSessionResult(
+          return buildProcessInputResult(
             resolved.session,
             `Wrote ${(params.data ?? "").length} bytes to session ${params.sessionId}${
               params.eof ? " (stdin closed)" : ""
@@ -614,6 +640,7 @@ export function createProcessTool(
             keys: params.keys,
             hex: params.hex,
             literal: params.literal,
+            signal,
           });
         }
 
@@ -623,7 +650,7 @@ export function createProcessTool(
             return resolved.result;
           }
           await writeToStdin(resolved.stdin, "\r");
-          return runningSessionResult(
+          return buildProcessInputResult(
             resolved.session,
             `Submitted session ${params.sessionId} (sent CR).`,
           );
@@ -647,7 +674,7 @@ export function createProcessTool(
             };
           }
           await writeToStdin(resolved.stdin, payload);
-          return runningSessionResult(
+          return buildProcessInputResult(
             resolved.session,
             `Pasted ${params.text?.length ?? 0} chars to session ${params.sessionId}.`,
           );
@@ -709,6 +736,9 @@ export function createProcessTool(
 
         case "remove": {
           if (scopedSession) {
+            if (!scopedSession.backgrounded) {
+              return failText(`Session ${params.sessionId} is not backgrounded.`);
+            }
             const canceled = cancelManagedSession(scopedSession.id);
             if (canceled) {
               // Keep remove semantics deterministic: drop from process registry now.
@@ -721,6 +751,8 @@ export function createProcessTool(
                   `Unable to remove session ${params.sessionId}: no active supervisor run or process id.`,
                 );
               }
+              // The exit callback still owns this object after its registry entry is removed.
+              scopedSession.backgrounded = false;
               markExited(scopedSession, null, "SIGKILL", "failed");
               deleteSession(params.sessionId);
             }

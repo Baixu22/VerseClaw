@@ -2,6 +2,11 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/e2e',
+  // Serial by design: many specs boot a real Electron + Gateway child, and
+  // concurrent gateway boots contend for ports/runtime and flake
+  // ("gateway never became ready", target-closed). Keep workers:1 —
+  // do NOT pass --workers>1 for the full suite. Shard across processes if you
+  // need speed, so each shard still boots one gateway at a time.
   fullyParallel: false,
   workers: 1,
   forbidOnly: Boolean(process.env.CI),

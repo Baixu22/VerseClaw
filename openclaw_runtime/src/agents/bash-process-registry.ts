@@ -4,7 +4,9 @@
  * session retention, and process cleanup for reconnect/poll flows.
  */
 import type { ChildProcessWithoutNullStreams } from "node:child_process";
+import type { SessionAdmissionIdentity } from "../sessions/session-admission-registry.js";
 import type { EventSessionRoutingPolicy } from "../infra/event-session-routing.js";
+import { signalProcessTree } from "../process/kill-tree.js";
 import type { TerminationReason } from "../process/supervisor/types.js";
 import type { DeliveryContext } from "../utils/delivery-context.js";
 import { readEnvInt } from "./bash-tools.shared.js";
@@ -66,8 +68,18 @@ export interface ProcessSession {
   stdin?: SessionStdin;
   pid?: number;
   /** Non-native lifecycle owner; prevents PID fallback from bypassing its control plane. */
-  lifecycleOwner?: "verseshell";
+  lifecycleOwner?: "native" | "sandbox" | "node" | "verseshell" | "legacy-verseshell" | "durable-helper";
   lifecycleCancel?: (reason: TerminationReason) => void;
+  lifecycleAgentId?: string;
+  lifecycleCanonicalSessionKey?: string;
+  lifecycleExpectedSessionId?: string;
+  /** `session.store` template from the runtime config, snapshotted at exec
+   *  start so the exit-time generation guard can resolve the key's current
+   *  sessionId without an ambient config load. Follows the same start-time
+   *  snapshot convention as `mainKey`/`sessionScope`. */
+  lifecycleSessionStoreTemplate?: string;
+  /** Resolves when the owned process has actually exited (not merely closed stdio). */
+  lifecycleExitPromise?: Promise<unknown>;
   lastOutputAt?: number;
   startedAt: number;
   cwd?: string;
@@ -106,6 +118,9 @@ export interface FinishedSession {
   tail: string;
   truncated: boolean;
   totalOutputChars: number;
+  lifecycleAgentId?: string;
+  lifecycleCanonicalSessionKey?: string;
+  lifecycleExpectedSessionId?: string;
 }
 
 const runningSessions = new Map<string, ProcessSession>();
@@ -142,6 +157,7 @@ export function getFinishedSession(id: string) {
 export function deleteSession(id: string) {
   runningSessions.delete(id);
   finishedSessions.delete(id);
+  stopSweeperWhenEmpty();
 }
 
 /** Appends process output while enforcing aggregate and pending-output caps. */
@@ -195,6 +211,10 @@ export function markExited(
   status: ProcessStatus,
   exitReason?: TerminationReason,
 ) {
+  if (session.exited) {
+    // The first owner records terminal facts; late exit notifications must not overwrite them.
+    return;
+  }
   session.exited = true;
   session.exitCode = exitCode;
   session.exitSignal = exitSignal;
@@ -260,6 +280,9 @@ function moveToFinished(session: ProcessSession, status: ProcessStatus) {
     tail: session.tail,
     truncated: session.truncated,
     totalOutputChars: session.totalOutputChars,
+    lifecycleAgentId: session.lifecycleAgentId,
+    lifecycleCanonicalSessionKey: session.lifecycleCanonicalSessionKey,
+    lifecycleExpectedSessionId: session.lifecycleExpectedSessionId,
   });
 }
 
@@ -328,6 +351,230 @@ export function listFinishedSessions() {
   return Array.from(finishedSessions.values());
 }
 
+/** Detached drain handle for one bash process session. */
+export type BashProcessSessionDrainHandle = {
+  id: string;
+  pid?: number;
+  lifecycleOwner?: ProcessSession["lifecycleOwner"];
+  cancel: () => "cancelled" | "unknown";
+  wait: (timeoutMs: number) => Promise<"exited" | "timeout" | "unknown">;
+};
+
+/** Snapshot of the bash process registries used by lifecycle drain and audit. */
+export type BashProcessRegistryState = {
+  runningCount: number;
+  finishedCount: number;
+  sweeperActive: boolean;
+};
+
+function matchesLifecycleIdentity(
+  session: Pick<
+    ProcessSession,
+    "lifecycleAgentId" | "lifecycleCanonicalSessionKey" | "lifecycleExpectedSessionId"
+  >,
+  identity: SessionAdmissionIdentity,
+): boolean {
+  return (
+    session.lifecycleAgentId === identity.agentId &&
+    session.lifecycleCanonicalSessionKey === identity.canonicalSessionKey &&
+    session.lifecycleExpectedSessionId === identity.expectedSessionId
+  );
+}
+
+function waitForChildProcessExit(
+  child: ChildProcessWithoutNullStreams,
+  timeoutMs: number,
+): Promise<"exited" | "timeout"> {
+  return new Promise((resolve) => {
+    if (child.exitCode !== null || child.signalCode !== null) {
+      resolve("exited");
+      return;
+    }
+    let settled = false;
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      child.off("exit", onExit);
+      resolve("timeout");
+    }, Math.max(1, Math.floor(timeoutMs)));
+    const onExit = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve("exited");
+    };
+    child.once("exit", onExit);
+  });
+}
+
+function waitForSessionExit(
+  session: ProcessSession,
+  timeoutMs: number,
+): Promise<"exited" | "timeout" | "unknown"> {
+  if (session.exited || finishedSessions.has(session.id)) {
+    return Promise.resolve("exited");
+  }
+  const timeoutValue = Math.max(1, Math.floor(timeoutMs));
+  if (session.lifecycleExitPromise) {
+    return new Promise((resolve) => {
+      let settled = false;
+      const timer = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        resolve("timeout");
+      }, timeoutValue);
+      void session.lifecycleExitPromise?.then(
+        () => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          resolve("exited");
+        },
+        () => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          resolve("unknown");
+        },
+      );
+    });
+  }
+  if (session.child) {
+    return waitForChildProcessExit(session.child, timeoutValue);
+  }
+  // No owned process handle or lifecycle promise: the owner state is unknown.
+  return Promise.resolve("unknown");
+}
+
+function cancelProcessSession(session: ProcessSession): "cancelled" | "unknown" {
+  if (session.exited || finishedSessions.has(session.id)) {
+    return "cancelled";
+  }
+  if (session.lifecycleCancel) {
+    session.lifecycleCancel("manual-cancel");
+    return "cancelled";
+  }
+  const owner = session.lifecycleOwner;
+  // Governed VerseShell sessions are owned by another control plane. Falling
+  // back to a raw PID kill would bypass that control plane, so fail closed.
+  if (owner === undefined || owner === "verseshell" || owner === "legacy-verseshell") {
+    return "unknown";
+  }
+  if (session.pid && session.pid > 0) {
+    signalProcessTree(session.pid, "SIGTERM");
+    return "cancelled";
+  }
+  if (session.child) {
+    try {
+      session.child.kill("SIGTERM");
+      return "cancelled";
+    } catch {
+      return "unknown";
+    }
+  }
+  return "unknown";
+}
+
+/**
+ * Snapshots running and finished bash process sessions that carry this exact
+ * lifecycle identity. `scopeKey` is never used as identity; unmatched or
+ * unknown owner records are intentionally not included so drain cannot degrade
+ * into a broader kill.
+ */
+export function snapshotProcessSessionsForLifecycle(
+  identity: SessionAdmissionIdentity,
+): BashProcessSessionDrainHandle[] {
+  const handles: BashProcessSessionDrainHandle[] = [];
+  for (const session of runningSessions.values()) {
+    if (!matchesLifecycleIdentity(session, identity)) continue;
+    handles.push({
+      id: session.id,
+      pid: session.pid,
+      lifecycleOwner: session.lifecycleOwner,
+      cancel: () => cancelProcessSession(session),
+      wait: (timeoutMs) => waitForSessionExit(session, timeoutMs),
+    });
+  }
+  for (const session of finishedSessions.values()) {
+    if (!matchesLifecycleIdentity(session, identity)) continue;
+    handles.push({
+      id: session.id,
+      lifecycleOwner: undefined,
+      cancel: () => "cancelled",
+      wait: () => Promise.resolve("exited"),
+    });
+  }
+  return handles;
+}
+
+/** Registry stats for drain no-new-record checks and lifecycle leak tests. */
+export function getBashProcessRegistryState(): BashProcessRegistryState {
+  return {
+    runningCount: runningSessions.size,
+    finishedCount: finishedSessions.size,
+    sweeperActive: sweeper !== null,
+  };
+}
+
+/**
+ * TF-0081 idle classification for running bash sessions. Classification is
+ * observability only — nothing is killed automatically; a session with recent
+ * output is a live running process and is never a reclamation candidate.
+ */
+export type BashProcessIdleClassification = "running-process" | "idle" | "completed";
+
+const DEFAULT_RUNNING_IDLE_MS = 10 * 60 * 1000; // 10 minutes
+const MIN_RUNNING_IDLE_MS = 60 * 1000; // 1 minute
+const MAX_RUNNING_IDLE_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+const runningIdleMs = Math.min(
+  Math.max(
+    readEnvInt("OPENCLAW_BASH_RUNNING_IDLE_MS") ?? DEFAULT_RUNNING_IDLE_MS,
+    MIN_RUNNING_IDLE_MS,
+  ),
+  MAX_RUNNING_IDLE_MS,
+);
+
+/** Classifies one running session's idle state from its last activity time. */
+export function classifyBashProcessIdle(input: {
+  exited: boolean;
+  /** Last output time when present; falls back to the session start time. */
+  lastActivityAtMs: number;
+  nowMs: number;
+  idleMs?: number;
+}): BashProcessIdleClassification {
+  if (input.exited) {
+    return "completed";
+  }
+  const idleMs = input.idleMs ?? runningIdleMs;
+  return input.nowMs - input.lastActivityAtMs < idleMs ? "running-process" : "idle";
+}
+
+/** Classifies a registered session by id; null when the id is unknown. */
+export function classifyBashProcessSession(id: string): {
+  classification: BashProcessIdleClassification;
+  sinceActivityMs: number;
+} | null {
+  const nowMs = Date.now();
+  const running = runningSessions.get(id);
+  if (running) {
+    const lastActivityAtMs = running.lastOutputAt ?? running.startedAt;
+    return {
+      classification: classifyBashProcessIdle({
+        exited: false,
+        lastActivityAtMs,
+        nowMs,
+      }),
+      sinceActivityMs: nowMs - lastActivityAtMs,
+    };
+  }
+  const finished = finishedSessions.get(id);
+  if (finished) {
+    return { classification: "completed", sinceActivityMs: nowMs - finished.endedAt };
+  }
+  return null;
+}
+
 /** Clears retained finished sessions without touching running processes. */
 export function clearFinished() {
   finishedSessions.clear();
@@ -356,6 +603,12 @@ function pruneFinishedSessions() {
     if (session.endedAt < cutoff) {
       finishedSessions.delete(id);
     }
+  }
+}
+
+function stopSweeperWhenEmpty() {
+  if (runningSessions.size === 0 && finishedSessions.size === 0) {
+    stopSweeper();
   }
 }
 

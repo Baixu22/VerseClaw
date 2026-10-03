@@ -2,27 +2,36 @@
   "schemaVersion": 1,
   "taskId": "P6-005",
   "version": "0.4.9-alpha.0",
-  "ref": "refs/heads/codex/maturity-p4",
-  "commit": "df7c2f7a602c34d487caa10e1eead2529ce95be4",
-  "tree": "aaf4a2b9272f7664043426155266afa5fd2b22a5",
-  "manifestSha256": "453553124189783c7949c7c62f975cad62d520e8caced5aac52902bc1f861284",
-  "gatesConfigSha256": "1c6b440d42831d40d1fb0b4c3310df2dc544ec2b0b7ff138a5b2cdf7db19eaa4",
+  "ref": "refs/heads/feat/runtime-lifecycle-governance",
+  "commit": "819338bcfb9574fcd6cddf738065de8715893a24",
+  "tree": "60f80a0afdc41953f3a01222ab94edc76da379e5",
+  "manifestSha256": "bc093301ab2b2ee16864bcf1aacff1f8825ceef179f970d0d1c7470ddfbeab7b",
+  "gatesConfigSha256": "8f9231e617d12679ccdd92d7b03a84bfa66267fe68b4f9111a59be5843976b9a",
+  "preflight": {
+    "id": "runtime-build-preflight",
+    "command": "pnpm build:runtime",
+    "exitCode": 0,
+    "stdoutPath": "gates/runtime-build-preflight.stdout.txt",
+    "stdoutSha256": "68f00dc893bbbc8bacfe5e959f2e3cc8b0b6b409de6c60587144ed4cfec32700",
+    "stderrPath": "gates/runtime-build-preflight.stderr.txt",
+    "stderrSha256": "9802c0c197b2f7f9e80b6f6ccb07e44d4acabf4264afdd514d176704b96ff7ed"
+  },
   "gates": [
     {
       "id": "maturity:baseline",
       "command": "node scripts/audit-baseline-check.mjs",
       "exitCode": 0,
       "stdoutPath": "gates/maturity-baseline.stdout.txt",
-      "stdoutSha256": "142d8ca865e99f6b0f146a23d77a716d4c547e961d3fdcf9b302b032e4023ebd",
+      "stdoutSha256": "16165734e74e4ac10ec2e91cd43d675b89f467f80d6c990b927b0629fbd37d87",
       "stderrPath": "gates/maturity-baseline.stderr.txt",
-      "stderrSha256": "66208b56f81e1692ff30c67ab40f65c0fb36654b864724f48d18190e0aba8586"
+      "stderrSha256": "d1220002f4e94cc7088bd039ac37d90520c4f61c5daa927b66131d5059111404"
     },
     {
       "id": "maturity:plan",
       "command": "node scripts/validate-system-maturity-plan.mjs",
       "exitCode": 0,
       "stdoutPath": "gates/maturity-plan.stdout.txt",
-      "stdoutSha256": "e079f509b068351007a960d063c3a04295b8e1e8fb54c095188308370c5488e7",
+      "stdoutSha256": "197914e236cb5839188cc5660f9cb16f1b9d84ede34a3c9c150545f1f001b429",
       "stderrPath": "gates/maturity-plan.stderr.txt",
       "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -36,6 +45,24 @@
       "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
+      "id": "maturity:validate",
+      "command": "pnpm run maturity:validate",
+      "exitCode": 1,
+      "stdoutPath": "gates/maturity-validate.stdout.txt",
+      "stdoutSha256": "4bb58312a5ab3652c90f7f393644b5e8e7096e3ed2ab268fa54286d774410554",
+      "stderrPath": "gates/maturity-validate.stderr.txt",
+      "stderrSha256": "3cb8253e11f1f50641c33584424f861a10bae2c2af2539e0386611863b46639f"
+    },
+    {
+      "id": "maturity:security:full",
+      "command": "pnpm maturity:security:full",
+      "exitCode": 1,
+      "stdoutPath": "gates/maturity-security-full.stdout.txt",
+      "stdoutSha256": "3612d0fbf4f4e722504bad99699c84efccf92a622c8490f9cf2710f37b3780d9",
+      "stderrPath": "gates/maturity-security-full.stderr.txt",
+      "stderrSha256": "7fc3bdc1dd7a3c980bd3fa7eb20a690fa97a697c69b906dc99384327484c0ce0"
+    },
+    {
       "id": "contract:check",
       "command": "pnpm contract:check",
       "exitCode": 0,
@@ -47,72 +74,63 @@
     {
       "id": "test",
       "command": "pnpm test",
-      "exitCode": 0,
+      "exitCode": 1,
       "stdoutPath": "gates/test.stdout.txt",
-      "stdoutSha256": "4b56387c7da9750c9b83d6417aaf2d649cfc5f994341587915a3d253d29eff15",
+      "stdoutSha256": "d7fd6a4c2cc2c743b5335f639cd2a7d4f8717831616b97fd6a6845ea67c01573",
       "stderrPath": "gates/test.stderr.txt",
-      "stderrSha256": "f3010fc1230b50dc37be053a8a91eae03cd87215a9179a132ee28f646505a9fc"
+      "stderrSha256": "3cdcecea6647ddb3b3a5d6b8ea03dec2830701d1e4b7f40c6a2a241562fcf77d"
     },
     {
       "id": "lint:check",
       "command": "pnpm run lint:check",
-      "exitCode": 0,
+      "exitCode": 1,
       "stdoutPath": "gates/lint-check.stdout.txt",
-      "stdoutSha256": "20de2507035b0b47ca632a4c1f93fe22d2925f8938ef4380b5696552069fdf10",
+      "stdoutSha256": "cb72a5ef311bfed1ca1933249a0e765d547dec795d6dfdf43cbb2e017830b417",
       "stderrPath": "gates/lint-check.stderr.txt",
-      "stderrSha256": "d93d152e20a5003c1cac09588ed745d085e38e2f41ebd11257a6ac80f3907d4c"
+      "stderrSha256": "952056054eec4f560e3d14db10c90f924701e95e8a1ec78cbb75c69e6db4034f"
     },
     {
       "id": "typecheck",
       "command": "pnpm run typecheck",
-      "exitCode": 0,
+      "exitCode": 1,
       "stdoutPath": "gates/typecheck.stdout.txt",
-      "stdoutSha256": "82ce041683605bb9545a648d8dfc186d42052d78d00e90241e1d50c101c00e3e",
+      "stdoutSha256": "6fa5e7cb444aa27ce5e02cf989148c3714e147215cdd6b3c6cb09ec2367dc71d",
       "stderrPath": "gates/typecheck.stderr.txt",
-      "stderrSha256": "b9dc801248da3af9eef9021d08d90bc326bd4a354a8147813f5d5a2cbece6b58"
+      "stderrSha256": "9230210271427a6886154af5e51ad36b81cb2364c03c2c9ce3181a9f131eb21d"
     },
     {
       "id": "harness:ci",
       "command": "pnpm run harness:ci",
-      "exitCode": 0,
+      "exitCode": 1,
       "stdoutPath": "gates/harness-ci.stdout.txt",
-      "stdoutSha256": "ec63e92e78c3df44e766028632feab94b5cbdd832d3a698bc2e0b971a6ccf65f",
+      "stdoutSha256": "0e0e66582f32b566735c11d2db5f50a5db03cabce33310bffd7b2b83a5ece7f2",
       "stderrPath": "gates/harness-ci.stderr.txt",
-      "stderrSha256": "66836381b700446b14fe14633ce20eb1db5174909e7da87bacf94df62b16501f"
+      "stderrSha256": "f3efd1dcc372d796edc3d0c4f30b1102bb9bdec0052b694c080f5ddbe19e3c56"
     },
     {
       "id": "agent-dev:deep-test",
       "command": "pnpm agent-dev:deep-test",
-      "exitCode": 0,
+      "exitCode": 1,
       "stdoutPath": "gates/agent-dev-deep-test.stdout.txt",
-      "stdoutSha256": "26c03cde11f84a9b9d3c627925d9bc74f0581c09c74760825b4a63ab37d0d638",
+      "stdoutSha256": "f67b8442a500a1b5f0322645ff872527fb9f0551920c0d6204a77c5bca15e318",
       "stderrPath": "gates/agent-dev-deep-test.stderr.txt",
-      "stderrSha256": "f08bb279c9976a35a8a35182c36708e2775a9aec50efda8d9466abc49d354265"
+      "stderrSha256": "54b951539e8b864310f8ccefaa27c7397085aa15dc79e40039f84aa4b26e4ab9"
     },
     {
       "id": "test:e2e:agent-dev-quality",
       "command": "pnpm run test:e2e:agent-dev-quality",
-      "exitCode": 0,
+      "exitCode": 1,
       "stdoutPath": "gates/test-e2e-agent-dev-quality.stdout.txt",
-      "stdoutSha256": "f9b972299ec24da57059eaa9a31adadffa4130d1f1e223b8ab1d85c2360e3850",
+      "stdoutSha256": "7e405ca779ae1e8c4a157c3aedb93033ada0a721efbe2e18260a34ecd9e17af2",
       "stderrPath": "gates/test-e2e-agent-dev-quality.stderr.txt",
-      "stderrSha256": "05659bd086d398c7d36c6c8cbf29f140c20295c131bc0fcce28eb11fa872e480"
-    },
-    {
-      "id": "maturity:validate",
-      "command": "pnpm run maturity:validate",
-      "exitCode": 0,
-      "stdoutPath": "gates/maturity-validate.stdout.txt",
-      "stdoutSha256": "034690d21b71a173974b885d053f7adf37e0dc975825fe7d59d82dc61cb33011",
-      "stderrPath": "gates/maturity-validate.stderr.txt",
-      "stderrSha256": "c1c123cc0af66d9b59b7fce233b194b6f460c0fdea869a9846f3b605f0b7e7ba"
+      "stderrSha256": "815edfb12fab611bea32e5d12595bb08f533a035ecfc55a86853d606dabc62b4"
     },
     {
       "id": "release:validate",
       "command": "pnpm run release:validate",
       "exitCode": 0,
       "stdoutPath": "gates/release-validate.stdout.txt",
-      "stdoutSha256": "6be6c6d06ec94eb4bd8f5259c0432a4dbeb0fd6a868c13d1d58cf7c99eba9cb3",
+      "stdoutSha256": "0ada888a4b5588fc3cc98198e215c9c2afe4eb426f28d59005ac82059f6e4d88",
       "stderrPath": "gates/release-validate.stderr.txt",
       "stderrSha256": "43e6b2f2502cfdc1f7c971b1b6a37b77abbf600a5340255c8661b20cacee975b"
     }

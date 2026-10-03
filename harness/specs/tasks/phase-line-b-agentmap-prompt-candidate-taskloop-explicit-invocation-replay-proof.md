@@ -96,18 +96,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-replay-proof/README.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-replay-proof/replay-proof-plan.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-replay-proof/replay-corpus.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-replay-proof/replay-results.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-replay-proof/boundary-proof.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-replay-proof/leakage-proof.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-replay-proof/provider-ordering-proof.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-replay-proof/rollback-proof.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-replay-proof/quantitative-scorecard.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-replay-proof/validation-plan.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-replay-proof/submission-template.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-replay-proof/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Line B AgentMap Prompt Candidate TaskLoop Explicit Invocation Phase A Replay Proof

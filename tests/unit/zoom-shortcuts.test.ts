@@ -7,10 +7,13 @@ function input(overrides: Partial<Electron.Input>): Electron.Input {
     key: '',
     code: '',
     isAutoRepeat: false,
+    isComposing: false,
     shift: false,
     control: false,
     alt: false,
     meta: false,
+    location: 0,
+    modifiers: [],
     ...overrides,
   };
 }

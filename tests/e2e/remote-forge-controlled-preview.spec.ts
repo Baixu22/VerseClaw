@@ -256,7 +256,7 @@ test.describe('Remote Forge controlled preview', () => {
 
       await page.getByTestId('sidebar-footer-menu-trigger').click();
       await page.getByTestId('sidebar-more-code-review').click();
-      await page.getByTestId('code-review-view-remote').click();
+      await page.getByTestId('workspace-review-view-pull-requests').click();
       await expect(page.getByTestId('remote-forge-panel')).toBeVisible();
       await page.getByTestId('remote-forge-owner').fill('acme');
       await page.getByTestId('remote-forge-repository').fill('demo');
@@ -362,7 +362,7 @@ test.describe('Remote Forge controlled preview', () => {
 
       await page.getByTestId('sidebar-footer-menu-trigger').click();
       await page.getByTestId('sidebar-more-code-review').click();
-      await page.getByTestId('code-review-view-remote').click();
+      await page.getByTestId('workspace-review-view-pull-requests').click();
       await page.getByTestId('remote-forge-owner').fill('acme');
       await page.getByTestId('remote-forge-repository').fill('demo');
       await page.getByTestId('remote-forge-number').fill('7');
@@ -476,7 +476,7 @@ test.describe('Remote Forge controlled preview', () => {
 
       await page.getByTestId('sidebar-footer-menu-trigger').click();
       await page.getByTestId('sidebar-more-code-review').click();
-      await page.getByTestId('code-review-view-remote').click();
+      await page.getByTestId('workspace-review-view-pull-requests').click();
       await page.getByTestId('remote-forge-owner').fill('acme');
       await page.getByTestId('remote-forge-repository').fill('demo');
       await page.getByTestId('remote-forge-number').fill('7');

@@ -120,12 +120,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-pilot/README.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-pilot/implementation-plan.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-pilot/validation-matrix.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-pilot/rollback-proof.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-pilot/submission-template.md
-    - runtime-research/handoffs/line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-pilot/synthesis.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Line B AgentMap Prompt Candidate TaskLoop Explicit Invocation Pilot

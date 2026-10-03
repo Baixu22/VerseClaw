@@ -120,7 +120,7 @@ describe("Layer 1: write-path real filtering — syntactic noise rejected", () =
     const persistence = makePersistence(dbPath);
     const fact = makeRawContentFact({
       factId: "fact_secret",
-      objectSummary: "User API key is sk-test-not-a-real-key-0000000000000000",
+      objectSummary: "User API key is sk-TEST-PLACEHOLDER-DO-NOT-USE",
     });
     const result = persistence.appendFact(fact);
     expect(result).toMatchObject({ status: "rejected", persisted: false });
@@ -299,7 +299,7 @@ describe("Layer 1: write-path real filtering — invalidation marks not deletes"
     const persistence = makePersistence(dbPath);
     const fact = buildRuntimeMemoryTemporalFactFixture({
       factId: "fact_inval",
-      taskId: "task_inval",
+
       subject: "InvalTest",
       predicate: "value",
       objectSummary: "Will be invalidated",
@@ -311,7 +311,7 @@ describe("Layer 1: write-path real filtering — invalidation marks not deletes"
     const proposal = buildRuntimeMemoryInvalidationProposalFixture({
       invalidationId: "inval_1",
       factId: "fact_inval",
-      taskId: "task_inval",
+
       reason: "superseded",
       invalid_at: 200,
       reference_time: 200,
@@ -327,7 +327,7 @@ describe("Layer 1: write-path real filtering — invalidation marks not deletes"
     expect(loaded.stats.facts).toBe(1); // fact still physically present
     expect(loaded.stats.invalidations).toBe(1); // invalidation recorded
     // Fact accessible with includeInvalidated flag
-    const facts = loaded.store.queryFacts({ taskId: "task_inval", includeInvalidated: true });
+    const facts = loaded.store.queryFacts({  includeInvalidated: true });
     expect(facts.some((f) => f.factId === "fact_inval")).toBe(true);
     // By default (without includeInvalidated), fact is filtered out — this is expected
     const defaultFacts = loaded.store.queryFacts({ taskId: "task_inval" });
@@ -374,7 +374,7 @@ describe("Layer 1: write-path real filtering — FIFO eviction at boundary", () 
     for (let i = 0; i < 3; i += 1) {
       persistence.appendFact(buildRuntimeMemoryTemporalFactFixture({
         factId: `fact_valid_${i}`,
-        taskId: "task_fifo2",
+
         subject: "FifoTest2",
         predicate: "valid",
         objectSummary: `Valid ${i}`,
@@ -385,7 +385,7 @@ describe("Layer 1: write-path real filtering — FIFO eviction at boundary", () 
     for (let i = 0; i < 3; i += 1) {
       persistence.appendFact(buildRuntimeMemoryTemporalFactFixture({
         factId: `fact_inval_${i}`,
-        taskId: "task_fifo2",
+
         subject: "FifoTest2",
         predicate: "inval",
         objectSummary: `Invalid ${i}`,
@@ -395,7 +395,7 @@ describe("Layer 1: write-path real filtering — FIFO eviction at boundary", () 
       persistence.invalidateFact(buildRuntimeMemoryInvalidationProposalFixture({
         invalidationId: `inval_prop_${i}`,
         factId: `fact_inval_${i}`,
-        taskId: "task_fifo2",
+
         reason: "superseded",
         invalid_at: 100,
         reference_time: 100,

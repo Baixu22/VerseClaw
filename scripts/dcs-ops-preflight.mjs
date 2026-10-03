@@ -223,7 +223,7 @@ if (agentCharter.error) {
   } else {
     agentSurrogateReady = true;
     ok("agent-surrogate engineering campaign complete: 10/10/10; human runs remain 0/10");
-    ok("agent-surrogate status=degraded-engineering-complete; report cannot self-authorize done or TF-0011 release");
+    ok(`agent-surrogate status=${agentReport.data.result}; verified agent evidence permits node closure under the 2026-09-27 policy, without product or downstream release`);
   }
 }
 
@@ -261,7 +261,7 @@ const summary = {
   nextStep: hardStop
     ? findings.find((f) => f.level === "fail")?.nextStep || "Fix hard-stop findings before any opt-in"
     : agentSurrogateReady && !l3Readiness.ready
-      ? "Agent-surrogate engineering flow is complete. Keep TF-0009 review_needed; any engineering-chain release requires a separate confirmed governance proposal."
+      ? "Agent campaign is complete. Verify clean-candidate evidence and apply the Task Forest proposal under the 2026-09-27 policy; human counts stay zero. Separate L3 governance gaps do not require a human."
     : !l3Readiness.ready
       ? "L2 automation may continue, but do not start L3. Resolve every l3Blocker first."
     : runGates

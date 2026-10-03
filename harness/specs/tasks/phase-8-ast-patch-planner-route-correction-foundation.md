@@ -39,20 +39,17 @@ rollback:
   - Remove the route-correction docs/spec/test.
   - Existing readonly AST helper and tests remain valid because no runtime behavior is changed.
 requiredTests:
-  - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-ast-patch-planner-route-correction.test.ts tests/unit/runtime-ast-patch-planner-contracts.test.ts tests/unit/runtime-ast-patch-planner-readonly-scan.test.ts
+  - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-ast-edit-plan-foundation.test.ts tests/unit/runtime-ast-grep-edit-plan-adapter.test.ts tests/unit/runtime-ast-edit-plan-evidence-verifier-readiness.test.ts tests/unit/runtime-ast-patch-planner-contracts.test.ts tests/unit/runtime-ast-patch-planner-readonly-scan.test.ts
 acceptance:
   - The route-correction handoff states that AST is a structured code-edit planning layer, not a runtime intelligence or optimization layer.
   - The short-term implementation goal is documented as EditPlan IR plus a real ast-grep adapter, with the current TypeScript/TSX helper retained only as prototype/fallback safety skeleton.
   - The corrected pipeline is AgentMap/Symbol scope -> AST candidate plan -> Evidence Verifier -> explicit apply gate.
   - Agent runtime index points future AST work at route correction and blocks runtime authority expansion.
-  - A unit sentinel fails if the route docs drift back toward runtime optimization, completion evidence, default-on, or apply authority claims.
+  - Maintained EditPlan, adapter, verifier-readiness, and readonly planner behavior tests prevent completion evidence, default-on, or implicit apply authority.
 docs:
   required: true
   files:
-    - runtime-research/handoffs/phase-8-ast-patch-planner-route-correction/README.md
-    - runtime-research/handoffs/phase-8-ast-patch-planner-route-correction/short-term-foundation.md
-    - runtime-research/ast-grep/clawx-mapping.md
-    - runtime-research/agent-runtime-index.md
+    - docs/dev/runtime-research-boundaries.md
 ---
 
 # Phase 8 AST Patch Planner Route Correction Foundation

@@ -85,8 +85,7 @@ acceptance:
 docs:
   required: true
   files:
-    - runtime-research/handoffs/line-c-grounding-agentmap-diagnostics-consumer/design-research.md
-    - runtime-research/handoffs/line-c-grounding-agentmap-diagnostics-consumer/implementation-synthesis.md
+    - docs/dev/runtime-research-boundaries.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

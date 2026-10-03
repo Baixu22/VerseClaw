@@ -4,17 +4,20 @@
 // writer, every required module present, runtime-family frozen, receipt-owner
 // decision evidence, and product locks unchanged.
 import { existsSync, readFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { isDeepStrictEqual } from 'node:util';
+import { RECEIPT_HARD_CONSTRAINTS, RECEIPT_OWNER } from './lib/rc01-receipt-contract.mjs';
 
-const repoRoot = resolve(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1').split('/scripts/')[0]);
+const repoRoot = fileURLToPath(new URL('..', import.meta.url));
 const baselinePath = join(repoRoot, 'artifacts', 'runtime-authority-convergence', 'rc-01', 'baseline.json');
 
 const errors = [];
 const warnings = [];
 
 function git(args) {
-  return spawnSync('git', args, { cwd: repoRoot, encoding: 'utf8', shell: false });
+  return spawnSync('git', args, { cwd: repoRoot, encoding: 'utf8', shell: false, maxBuffer: 64 * 1024 * 1024 });
 }
 
 let baseline;
@@ -35,6 +38,27 @@ if (trackedBaseline.status !== 0 || trackedBaseline.stdout.trim() !== 'artifacts
 }
 const acceptedBaseAncestor = git(['merge-base', '--is-ancestor', String(baseline.acceptedBaseSha ?? ''), 'HEAD']);
 if (acceptedBaseAncestor.status !== 0) errors.push('acceptedBaseSha must be an ancestor of the candidate HEAD');
+if (acceptedBaseAncestor.status === 0) {
+  const timestamp = git(['show', '-s', '--format=%ct', baseline.acceptedBaseSha]);
+  const epoch = Number(timestamp.stdout?.trim());
+  if (timestamp.status !== 0 || !Number.isSafeInteger(epoch) || baseline.generatedAt !== new Date(epoch * 1000).toISOString()) {
+    errors.push('generatedAt must match the accepted base commit timestamp');
+  }
+}
+const sourcePackage = JSON.parse(readFileSync(join(repoRoot, 'openclaw_runtime/package.json'), 'utf8'));
+if (typeof sourcePackage.name !== 'string' || !sourcePackage.name.trim()
+  || typeof sourcePackage.version !== 'string' || !sourcePackage.version.trim()
+  || baseline.sourceRuntimeVersion?.name !== sourcePackage.name
+  || baseline.sourceRuntimeVersion?.version !== sourcePackage.version) {
+  errors.push('sourceRuntimeVersion must match openclaw_runtime/package.json');
+}
+const rootPackage = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8'));
+const npmSpec = rootPackage.dependencies?.openclaw ?? rootPackage.devDependencies?.openclaw ?? rootPackage.optionalDependencies?.openclaw;
+if (typeof npmSpec !== 'string' || !npmSpec.trim()
+  || baseline.npmRuntimeVersion?.name !== 'openclaw' || baseline.npmRuntimeVersion?.spec !== npmSpec
+  || baseline.npmRuntimeVersion?.runtimeMode !== 'npm') {
+  errors.push('npmRuntimeVersion must match the OpenClaw dependency in package.json');
+}
 if (baseline.sourceRuntimeVersion?.runtimeMode !== 'source') errors.push('source runtime must declare runtimeMode=source');
 if (baseline.npmRuntimeVersion?.satisfiesReceiptReadiness !== false) errors.push('npm fallback must not satisfy receipt readiness');
 if (!baseline.capabilitySplit?.sourceIsSoleImplementationPath) errors.push('source must be the sole implementation path');
@@ -43,6 +67,7 @@ if (baseline.capabilitySplit?.npmFallbackReportsDegraded !== true) errors.push('
 // 2. No unclassified writer.
 let classified = 0;
 let unclassified = 0;
+const classifications = new Set(['reuse', 'adapt', 'converge', 'freeze', 'remove']);
 const requiredModules = {
   taskFlow: /task-flow-registry/,
   taskRegistry: /task-registry/,
@@ -62,20 +87,28 @@ const requiredModules = {
   approval: /exec-approval-manager/,
 };
 const foundModules = new Set();
+const trackedResult = git(['ls-files', '-z']);
+if (trackedResult.status !== 0) errors.push('candidate tracked owner paths could not be read');
+const trackedFiles = String(trackedResult.stdout ?? '').split('\0').filter(Boolean);
+const trackedSet = new Set(trackedFiles);
 
 function checkWriter(writer) {
   if (!writer || typeof writer !== 'object') return;
-  if (!writer.classification) {
-    errors.push(`unclassified writer: ${writer.path ?? JSON.stringify(writer).slice(0, 80)}`);
+  if (!classifications.has(writer.classification)) {
+    errors.push(`invalid writer classification: ${writer.path ?? JSON.stringify(writer).slice(0, 80)}`);
     unclassified += 1;
     return;
   }
-  classified += 1;
-  if (typeof writer.path === 'string' && writer.path.length > 0) {
-    const wildcardIndex = writer.path.search(/[?*[\]]/);
-    const ownerRoot = (wildcardIndex >= 0 ? writer.path.slice(0, wildcardIndex) : writer.path).replace(/[\\/]+$/, '');
-    if (!ownerRoot || !existsSync(join(repoRoot, ownerRoot))) errors.push(`owner path missing in candidate: ${writer.path}`);
+  if (typeof writer.path !== 'string' || !writer.path.trim()) {
+    errors.push('classified writer must declare an owner path');
+    return;
   }
+  classified += 1;
+  const prefix = writer.path.endsWith('/**') ? writer.path.slice(0, -2) : writer.path.endsWith('/') ? writer.path : null;
+  const exists = prefix === null
+    ? trackedSet.has(writer.path) && existsSync(join(repoRoot, writer.path))
+    : trackedFiles.some((file) => file.startsWith(prefix) && existsSync(join(repoRoot, file)));
+  if (!exists) errors.push(`owner path missing or untracked in candidate: ${writer.path}`);
   for (const [name, pattern] of Object.entries(requiredModules)) {
     if (pattern.test(writer.path ?? '')) foundModules.add(name);
   }
@@ -100,33 +133,22 @@ if (baseline.authorities?.runtimeSpine?.frozen !== true) errors.push('runtime-sp
 
 // 5. Receipt-owner decision.
 const receipt = baseline.receiptOwnerDecision;
+const receiptAuthority = baseline.authorities?.receipt;
 if (!receipt) errors.push('receiptOwnerDecision missing');
 if (receipt?.status !== 'accepted') errors.push(`receiptOwnerDecision.status must be accepted, got ${receipt?.status ?? 'missing'}`);
 if (receipt?.blocker != null) errors.push('receiptOwnerDecision blocker must be null when accepted');
-if (receipt?.selectedOwner !== 'OpenClaw shared state SQLite / runtime_receipts via ReceiptStore') {
-  errors.push(`receiptOwnerDecision.selectedOwner mismatch: ${receipt?.selectedOwner ?? 'missing'}`);
+for (const [scope, declaration] of [['receiptOwnerDecision', receipt], ['authorities.receipt', receiptAuthority]]) {
+  for (const [field, expected] of Object.entries(RECEIPT_OWNER)) {
+    if (declaration?.[field] !== expected) errors.push(`${scope}.${field} must be ${expected}`);
+  }
 }
-if (receipt?.tableName !== 'runtime_receipts') errors.push(`receiptOwnerDecision.tableName must be runtime_receipts, got ${receipt?.tableName ?? 'missing'}`);
-if (receipt?.logicalOwner !== 'narrow ReceiptStore interface') errors.push('receiptOwnerDecision.logicalOwner must be the narrow ReceiptStore interface');
-if (receipt?.physicalOwner !== 'existing openclaw-state SQLite') errors.push('receiptOwnerDecision.physicalOwner must be the existing openclaw-state SQLite');
 
 // 5b. Receipt authority entry must carry the decision, table, and seven hard constraints.
-const receiptAuthority = baseline.authorities?.receipt;
 if (!receiptAuthority) errors.push('authorities.receipt missing');
 if (receiptAuthority?.decision !== 'accepted') errors.push('authorities.receipt.decision must be accepted');
 if (receiptAuthority?.tableIsNewTypedAppendOnly !== true) errors.push('runtime_receipts must be declared as a new typed append-only table');
-if (!Array.isArray(receiptAuthority?.hardConstraints) || receiptAuthority.hardConstraints.length < 7) {
-  errors.push(`receipt authority must declare all 7 hard constraints, got ${receiptAuthority?.hardConstraints?.length ?? 0}`);
-}
-// Hard constraint 5 must bind shadow-write failure to RC-02 acceptance without changing send behavior.
-const constraint5 = (receiptAuthority?.hardConstraints ?? []).find((c) => /shadow write failure/i.test(c));
-if (!constraint5 || !/fail RC-02/i.test(constraint5) || !/must not change send behavior/i.test(constraint5)) {
-  errors.push('hard constraint 5 (shadow-write failure fails RC-02, never changes send behavior) missing or malformed');
-}
-// Hard constraint 2 must demand content-sensitive idempotency (identical content idempotent, different content conflict).
-const constraint2 = (receiptAuthority?.hardConstraints ?? []).find((c) => /idempotency_key/i.test(c));
-if (!constraint2 || !/identical content/i.test(constraint2) || !/conflict/i.test(constraint2)) {
-  errors.push('hard constraint 2 (content-sensitive idempotency) missing or malformed');
+if (!isDeepStrictEqual(receiptAuthority?.hardConstraints, RECEIPT_HARD_CONSTRAINTS)) {
+  errors.push('receipt authority must preserve all 7 approved hard constraints exactly');
 }
 // Rejected owners must include the rejected candidates.
 for (const key of ['long_task_checkpoints', 'RuntimeTaskEventLog', 'flow_runs', 'mission_events', 'channels/message/receipt.ts']) {

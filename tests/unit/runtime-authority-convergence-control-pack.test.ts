@@ -354,7 +354,7 @@ describe('runtime authority convergence control pack', () => {
     expect(human).toContain('engineering_report_sha256');
     expect(human).toContain('green result, `engineeringAcceptedByAgent=true`');
     expect(human).toContain('node scripts/validate-runtime-authority-convergence.mjs --phase human');
-    expect(human).toContain('The validator may verify the user\'s record; it may not create or edit');
+    expect(human).toContain('The validator may verify the record; it may not create or edit it');
   });
 
   it('keeps the legacy runtime-family task as a non-authorizing tombstone', () => {
@@ -372,14 +372,16 @@ describe('runtime authority convergence control pack', () => {
     expect(legacy).not.toContain('## WP1');
   });
 
-  it('maps every convergence package to the proposed Task Forest without old numbering', () => {
-    const proposal = JSON.parse(
+  it('preserves historical convergence mappings without consulting the local Task Forest', () => {
+    const history = JSON.parse(
       readFileSync(
-        '.agent-workbench/task-forest/proposals/TFP-runtime-authority-convergence-20260802.json',
+        'tests/fixtures/task-forest-history/runtime-authority-convergence-20260802.json',
         'utf8',
       ),
     ) as {
-      status: string;
+      schema: string;
+      authority: string;
+      provenance: { sourcePath: string; sourceCommit: string; sourceGitBlob: string };
       changes: Array<{
         action: string;
         alias?: string;
@@ -391,23 +393,21 @@ describe('runtime authority convergence control pack', () => {
         node?: { title?: string };
       }>;
     };
+    expect(history.schema).toBe('task-forest-history/runtime-authority-convergence/v1');
+    expect(history.authority).toBe('non-authorizing-historical-fixture');
+    expect(history.provenance).toMatchObject({
+      sourcePath: '.agent-workbench/task-forest/proposals/TFP-runtime-authority-convergence-20260802.json',
+      sourceCommit: '3f9aeee4765d60fa5a21c83ed0e7617cdc60b400',
+      sourceGitBlob: '51031d9cf8e6826a1fa32546243784a98761e68f',
+    });
+    expect(history).not.toHaveProperty('status');
+    expect(history).not.toHaveProperty('base_graph_hash');
     const nodes = new Map(
-      proposal.changes
+      history.changes
         .filter((change) => change.action === 'add_node' && change.alias)
         .map((change) => [change.alias, change.node?.title]),
     );
 
-    const statusFrontmatter = read('STATUS.md').match(
-      /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/,
-    );
-    const programStatus = parseYaml(statusFrontmatter?.[1] ?? '') as {
-      program_status?: string;
-    };
-    if (programStatus.program_status === 'planned') {
-      expect(proposal.status).toBe('proposed');
-    } else {
-      expect(proposal.status).toBe('applied');
-    }
     expect([...nodes.keys()].sort()).toEqual([
       'rc-01',
       'rc-02',
@@ -446,7 +446,7 @@ describe('runtime authority convergence control pack', () => {
     expect([...nodes.values()]).not.toContain('RC-04 TaskFlow 统一 Workflow Authority');
     expect([...nodes.values()]).not.toContain('RC-08 跨入口 Operator 治理垂直切片');
 
-    const acceptanceReuse = proposal.changes.find(
+    const acceptanceReuse = history.changes.find(
       (change) => change.action === 'update_node' && change.id === 'TF-0020',
     );
     expect(acceptanceReuse?.fields?.next_action).toContain('直接承担 RC-00');
@@ -458,7 +458,7 @@ describe('runtime authority convergence control pack', () => {
     );
 
     const edges = new Set(
-      proposal.changes
+      history.changes
         .filter((change) => change.action === 'add_edge')
         .map((change) => `${change.from}->${change.to}:${change.type}`),
     );
@@ -484,7 +484,7 @@ describe('runtime authority convergence control pack', () => {
   it('rejects incomplete or fixture-only human acceptance', () => {
     const human = read('HUMAN-ACCEPTANCE.md');
 
-    expect(human).toContain('If a real channel is unavailable, RC-10 is `blocked`');
+    expect(human).toContain('If no real channel exists at all, RC-10 is `blocked`');
     expect(human).toContain(
       '`accepted_scenarios` is exactly `[H-01, H-02, H-03, H-04, H-05, H-06]`',
     );

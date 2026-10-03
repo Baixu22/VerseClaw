@@ -119,6 +119,22 @@ export function buildGatewayRuntimeEnv(
   // pre-existing value inherited from the user shell cannot re-enable it.
   runtimeEnv.OPENCLAW_DISABLE_BONJOUR = '1';
   runtimeEnv.CLAWX_AGENT_BROWSER_BRIDGE = '1';
+  // Model fallback skip cache: default ON for Verse Claw with a 60s TTL.
+  //
+  // The OpenClaw fallback chain retries every configured candidate on each
+  // turn by default, including candidates that just failed with a
+  // non-transient credential error (`auth` / `auth_permanent`).  That repeats
+  // a known-bad request every turn until the operator fixes the credential.
+  // `OPENCLAW_FALLBACK_SKIP_TTL_MS` opts into a session-scoped, in-memory skip
+  // cache for those candidates (openclaw_runtime
+  // `src/agents/fallback-skip-cache.ts`); the runtime clamps the TTL to
+  // 1s-10min and clears the cache on gateway process restart.  60000 matches
+  // the example in the OpenClaw model-failover docs.  Only set the default
+  // when no explicit value was inherited from the user shell, so an operator
+  // override — including `0` to disable — always wins.
+  if (!runtimeEnv.OPENCLAW_FALLBACK_SKIP_TTL_MS?.trim()) {
+    runtimeEnv.OPENCLAW_FALLBACK_SKIP_TTL_MS = '60000';
+  }
   // FP-P0-01: Verse Token assembly is an opt-in product default (OFF).  The
   // launcher must NOT synthesize a value here: the runtime resolver
   // (`vtoken-rpc-client.ts` `isVtokenAssemblyEnvEnabled` /

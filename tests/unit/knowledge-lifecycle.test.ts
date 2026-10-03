@@ -59,7 +59,7 @@ describe('KS-08 memory-wiki lifecycle Main RPC wiring', () => {
         title: `${operation} proposal`,
         body: operation === 'update' || operation === 'merge' ? `Updated body for ${operation}.` : `Reason for ${operation}.`,
         type: 'procedure',
-        sourceIds: operation === 'create' ? ['notes/target.md'] : [],
+        sourceIds: [],
         createdBy: 'user',
       });
       expect(draft.success).toBe(true);
