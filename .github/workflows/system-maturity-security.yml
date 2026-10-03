@@ -20,8 +20,6 @@ jobs:
   security-regression:
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    env:
-      SYSTEM_MATURITY_SECURITY_OUT: ${{ runner.temp }}/system-maturity-security
     steps:
       - name: Checkout code
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
@@ -46,6 +44,8 @@ jobs:
           pnpm exec electron --version
 
       - name: Run P0/P1 security regression
+        env:
+          SYSTEM_MATURITY_SECURITY_OUT: ${{ runner.temp }}/system-maturity-security
         run: pnpm maturity:security
 
       - name: Upload security evidence
