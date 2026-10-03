@@ -529,6 +529,7 @@ function SidebarSettingsNavItem({ collapsed }: { collapsed: boolean }) {
     <NavLink
       to="/settings/general"
       data-testid="sidebar-nav-settings"
+      aria-label={t('sidebar.settings')}
       onClick={(event) => {
         event.preventDefault();
         openSettings('/settings/general');
@@ -1165,7 +1166,7 @@ export function Sidebar() {
     markSessionRead, openSessionContextMenu, toggleSessionPinned,
   ]);
 
-  const sidebarSessionEntries = sessionView === 'time' || (workspaceProfiles.length === 0 && sidebarSessions.length > 0 && !workspacesLoading)
+  const sidebarSessionEntries = sessionView === 'time' || (workspaceProfiles.length === 0 && !workspacesLoading)
     ? sortedTimeSessions
     : null;
   /* The heading names what the section is a list OF. In project view that is

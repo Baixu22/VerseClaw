@@ -169,7 +169,10 @@ describe('FP-P0-04 collectRuntimeFlagAck', () => {
       if (calls < 3) throw new Error('not ready');
       return completeAck();
     });
-    const outcome = await collectRuntimeFlagAck(deps({ requestAck }));
+    const outcome = await collectRuntimeFlagAck(deps({
+      requestAck,
+      isRunning: () => calls >= 3,
+    }));
     expect(outcome.state).toBe('applied');
     expect(calls).toBeGreaterThanOrEqual(3);
   });

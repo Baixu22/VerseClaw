@@ -18,6 +18,7 @@ export const HOST_ACTION_LONG_TIMEOUT_MS = 15 * 60_000;
  * - agentDev.workbenchEvidence: runs validation gates
  * - diagnostics.exportSupportBundle: bundles logs and reports
  * - vtoken.assemble: long-running ingestion assembly
+ * - dcsProdFlags.setFlag/setPreview: bounded restart followed by runtime ack
  * (No host-api git.clone or E2E-run action exists in the current contract.)
  */
 const HOST_ACTION_LONG_SET = new Set<string>([
@@ -33,6 +34,8 @@ const HOST_ACTION_LONG_SET = new Set<string>([
   'agentDev.workbenchEvidence',
   'diagnostics.exportSupportBundle',
   'vtoken.assemble',
+  'dcsProdFlags.setFlag',
+  'dcsProdFlags.setPreview',
 ]);
 
 export function hostActionTimeoutMs(module: string, action: string): number {

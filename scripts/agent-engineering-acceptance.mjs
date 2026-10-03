@@ -15,6 +15,7 @@ import {
   verifyAcceptance,
   writePlan,
 } from './lib/agent-engineering-acceptance.mjs';
+import { validateRuntimeAuthorityConvergencePreflight } from './validate-runtime-authority-convergence.mjs';
 
 const repositoryRoot = defaults.repositoryRoot;
 
@@ -98,6 +99,12 @@ function readManifestFile(pathValue) {
   return loadManifest(pathValue);
 }
 
+function preflightConvergence(root, manifest) {
+  if (manifest.task?.id !== 'runtime-authority-convergence-final-acceptance') return;
+  const result = validateRuntimeAuthorityConvergencePreflight({ root, manifest });
+  if (!result.ok) throw new Error(`RC-09 preflight failed:\n${result.errors.map((error) => `  - ${error}`).join('\n')}`);
+}
+
 function runPlan(args) {
   if (!args.spec) throw new Error('plan requires --spec');
   const root = rootFrom(args);
@@ -130,6 +137,7 @@ function runExecutor(args) {
   const root = rootFrom(args);
   const manifestPath = manifestPathFrom(args, root);
   const manifest = readManifestFile(manifestPath);
+  preflightConvergence(root, manifest);
   const outputDir = outputDirFrom(args, root, manifest.runId);
   const report = runAcceptance(manifest, {
     sourceRoot: root,
@@ -146,6 +154,7 @@ function runVerifier(args) {
   const root = rootFrom(args);
   const manifestPath = manifestPathFrom(args, root);
   const manifest = readManifestFile(manifestPath);
+  preflightConvergence(root, manifest);
   const outputDir = outputDirFrom(args, root, manifest.runId);
   const report = verifyAcceptance(manifest, {
     sourceRoot: root,
@@ -167,6 +176,7 @@ function runFull(args) {
     changedPaths: splitChanged(args),
     mode: args.mode || 'full',
   });
+  preflightConvergence(root, manifest);
   const outputDir = outputDirFrom(args, root, manifest.runId);
   writePlan(outputDir, manifest);
   const executor = runAcceptance(manifest, {
