@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { copyFileSync, mkdirSync, mkdtempSync, existsSync, rmSync, symlinkSync } from 'node:fs';
+import { copyFileSync, mkdirSync, mkdtempSync, existsSync, readFileSync, writeFileSync, rmSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -71,6 +71,22 @@ it('starts the real IRC peer CLI through a directory junction', async () => {
   }
 });
 
+it('refuses to overwrite an existing evidence directory before writing run files', () => {
+  const dataRoot = scratch();
+  const evidence = join(dataRoot, 'evidence');
+  mkdirSync(evidence);
+  writeFileSync(join(evidence, 'events.jsonl'), 'preserved previous run\n');
+  const result = spawnSync(process.execPath, [resolve('scripts/rc10/driver.mjs'),
+    '--scenario', 'H-01', '--data-root', dataRoot, '--repo', resolve('.')], {
+    encoding: 'utf8', windowsHide: true, timeout: 5000,
+    env: { ...process.env, RC10_PROVIDER_KEY: 'fixture-key-not-real' },
+  });
+  expect(result.status).toBe(1);
+  expect(result.stderr).toContain('Evidence directory must be empty');
+  expect(readFileSync(join(evidence, 'events.jsonl'), 'utf8')).toBe('preserved previous run\n');
+  expect(existsSync(join(evidence, 'candidate.json'))).toBe(false);
+});
+
 it('imports the relocated operator and IRC modules without archived artifacts or Electron', () => {
   const root = scratch();
   // A minimal fresh layout prevents ignored legacy drivers from hiding a stale
@@ -82,6 +98,7 @@ it('imports the relocated operator and IRC modules without archived artifacts or
     'scripts/rc10/irc-server.mjs',
     'scripts/rc10/irc-server.d.mts',
     'scripts/lib/entrypoint.mjs',
+    'scripts/lib/rc10-evidence.mjs',
     'tests/e2e/fixtures/fp-p1-harness.ts',
   ]) {
     const target = join(root, relativePath);

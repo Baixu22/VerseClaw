@@ -34,6 +34,19 @@ For every scenario, record the run ID, receipt IDs, result, recovery observation
 
 ## Verdict
 
+Before consuming an RC-10 bundle, its file integrity can be checked without
+launching Electron:
+
+```sh
+node scripts/verify-rc10-evidence.mjs --evidence /path/to/evidence
+```
+
+New H-01 runs count only current-run source v1 receipts, preserve workload tests,
+and seal after final logs. CHANNEL-PROBE distinguishes credential validation from
+an online account and delivery. H-02..H-06 remain implemented by the operator
+driver. Integrity alone does not authorize the verdict below, and historical
+archives must not be rewritten to pass the check.
+
 Exactly one verdict is recorded at `artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/human-verdict.yaml`:
 
 ```yaml

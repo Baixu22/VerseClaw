@@ -18,6 +18,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 import net from 'node:net';
 import { parseArgs } from 'node:util';
+import { evaluateRc10ChannelProbe, evaluateRc10H01, sealRc10Evidence, summarizeRc10Receipts } from '../lib/rc10-evidence.mjs';
 
 const { values: args } = parseArgs({
   options: Object.fromEntries(
@@ -58,6 +59,11 @@ const homeDir = join(runRoot, 'home');
 const userDataDir = join(runRoot, 'user-data');
 const workspaceDir = join(runRoot, 'workspace');
 const evidenceDir = join(runRoot, 'evidence');
+const existingEvidence = await readdir(evidenceDir).catch((error) => {
+  if (error.code === 'ENOENT') return [];
+  throw error;
+});
+if (existingEvidence.length > 0) throw new Error('Evidence directory must be empty; use a new --data-root to preserve earlier runs.');
 for (const d of [
   join(homeDir, '.config'),
   join(homeDir, 'AppData', 'Local'),
@@ -286,6 +292,7 @@ if (scenario === 'CHANNEL-PROBE') {
   const validation = await host('channels', 'validateCredentials', { channelType });
   const accounts = await host('channels', 'accounts', { channelType });
   const targets = await host('channels', 'targets', { channelType });
+  const assessment = evaluateRc10ChannelProbe({ channelType, validation, accounts, targets });
   await shot('04-channel-probe');
   const probe = {
     schema: 'rc10-channel-probe/v1',
@@ -299,6 +306,7 @@ if (scenario === 'CHANNEL-PROBE') {
     validation,
     accounts,
     targets,
+    assessment,
     at: new Date().toISOString(),
   };
   await writeFile(join(evidenceDir, 'channel-probe.json'), JSON.stringify(probe, null, 2));
@@ -311,21 +319,11 @@ if (scenario === 'CHANNEL-PROBE') {
     accountKeys: accounts && typeof accounts === 'object' ? Object.keys(accounts).slice(0, 8) : typeof accounts,
     targetKeys: targets && typeof targets === 'object' ? Object.keys(targets).slice(0, 8) : typeof targets,
   });
-  const files = {};
-  for (const f of await readdir(evidenceDir, { recursive: true })) {
-    const p = join(evidenceDir, f);
-    const s = await stat(p).catch(() => null);
-    if (s?.isFile()) files[String(f).replaceAll('\\', '/')] = { bytes: s.size, sha256: sha256(await readFile(p)) };
-  }
-  const hits = [];
-  for (const f of Object.keys(files)) {
-    const text = await readFile(join(evidenceDir, f), 'utf8').catch(() => '');
-    if (text.includes(clientSecret) || text.includes(appId)) hits.push(f);
-  }
-  await writeFile(join(evidenceDir, 'hashes.json'), JSON.stringify({ algorithm: 'sha256', credentialScanHits: hits, files }, null, 2));
   await app.close().catch(() => {});
-  console.log(JSON.stringify({ scenario, channelType, valid: validation?.valid ?? null, credentialScanHits: hits.length, evidenceDir }));
-  process.exit(validation?.valid === true ? 0 : 1);
+  await writeFile(join(evidenceDir, 'app.log'), appLog.join(''));
+  const seal = await sealRc10Evidence(evidenceDir, [apiKey, clientSecret, appId]);
+  console.log(JSON.stringify({ scenario, channelType, result: assessment.result, credentialScanHits: seal.credentialScanHits.length, evidenceDir }));
+  process.exit(assessment.result === 'pass' && seal.credentialScanHits.length === 0 ? 0 : 1);
 }
 
 // --- H-01: send a normal desktop task ---
@@ -428,37 +426,15 @@ try {
       // lineage H-01 has to explain.
       tableRows = db
         .prepare(
-          'SELECT kind, correlation_digest, run_id, session_key, selected_json, omitted_json, created_at FROM runtime_receipts',
+          'SELECT receipt_id, kind, version, runtime_mode, correlation_digest, run_id, selected_json, omitted_json FROM runtime_receipts WHERE run_id = ?',
         )
-        .all();
+        .all(runId);
     } catch {
       db.close();
       continue;
     }
     db.close();
-    const parseJsonArray = (text) => {
-      try {
-        const value = JSON.parse(text ?? 'null');
-        return Array.isArray(value) ? value : null;
-      } catch {
-        return null;
-      }
-    };
-    const context = tableRows.filter((r) => String(r.kind).includes('context'));
-    const wire = tableRows.filter((r) => String(r.kind).includes('wire'));
-    receipts.available = true;
-    receipts.dbPath = dbPath;
-    receipts.total = tableRows.length;
-    receipts.kinds = [...new Set(tableRows.map((r) => r.kind))];
-    receipts.context = context.map((r) => ({
-      kind: r.kind,
-      correlation_digest: r.correlation_digest,
-      run_id: r.run_id,
-      selected: parseJsonArray(r.selected_json),
-      omitted: parseJsonArray(r.omitted_json),
-    }));
-    receipts.wire = wire.map((r) => ({ kind: r.kind, correlation_digest: r.correlation_digest, run_id: r.run_id }));
-    receipts.pairs = context.filter((c) => wire.some((w) => w.correlation_digest === c.correlation_digest)).length;
+    Object.assign(receipts, summarizeRc10Receipts(tableRows, runId), { dbPath });
     break;
   }
   if (!receipts.available) receipts.reason = 'no runtime_receipts table found under the isolated user-data dir';
@@ -473,7 +449,9 @@ await writeFile(join(evidenceDir, 'workspace-after.json'), JSON.stringify(after.
 await writeFile(join(evidenceDir, 'receipts.json'), JSON.stringify(receipts, null, 2));
 await writeFile(join(evidenceDir, 'app.log'), appLog.join(''));
 
+const assessment = evaluateRc10H01({ candidate, runId, finished, before, after, receipts });
 const journey = {
+  assessment,
   schema: 'rc10-journey/v1',
   scenario,
   driven_by: 'agent',
@@ -497,24 +475,10 @@ const journey = {
 };
 await writeFile(join(evidenceDir, 'journey.json'), JSON.stringify(journey, null, 2));
 
-// --- credential scan over the evidence directory ---
-const hits = [];
-for (const f of await readdir(evidenceDir, { recursive: true })) {
-  const p = join(evidenceDir, f);
-  const s = await stat(p).catch(() => null);
-  if (!s?.isFile()) continue;
-  const text = await readFile(p, 'utf8').catch(() => '');
-  if (text.includes(apiKey)) hits.push(String(f).replaceAll('\\', '/'));
-}
-const files = {};
-for (const f of await readdir(evidenceDir, { recursive: true })) {
-  const p = join(evidenceDir, f);
-  const s = await stat(p).catch(() => null);
-  if (s?.isFile()) files[String(f).replaceAll('\\', '/')] = { bytes: s.size, sha256: sha256(await readFile(p)) };
-}
-await writeFile(join(evidenceDir, 'hashes.json'), JSON.stringify({ algorithm: 'sha256', credentialScanHits: hits, files }, null, 2));
-log('evidence.written', { evidenceDir, files: Object.keys(files).length, credentialScanHits: hits.length });
-
+// Finish event and application-log writes before creating the immutable seal.
+log('evidence.ready', { evidenceDir, result: assessment.result, errors: assessment.errors });
 await app.close().catch(() => {});
-console.log(JSON.stringify({ scenario, runId, stopReason, finished, testsAfter: after.tests.exitCode, contextReceipts: receipts.context.length, credentialScanHits: hits.length, evidenceDir }));
-process.exit(finished ? 0 : 1);
+await writeFile(join(evidenceDir, 'app.log'), appLog.join(''));
+const seal = await sealRc10Evidence(evidenceDir, [apiKey]);
+console.log(JSON.stringify({ scenario, runId, stopReason, finished, result: assessment.result, testsAfter: after.tests.exitCode, contextReceipts: receipts.context.length, credentialScanHits: seal.credentialScanHits.length, evidenceDir }));
+process.exit(assessment.result === 'pass' && seal.credentialScanHits.length === 0 ? 0 : 1);

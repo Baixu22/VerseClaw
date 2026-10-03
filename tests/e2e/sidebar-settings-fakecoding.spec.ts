@@ -12,6 +12,7 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
       });
       await page.waitForTimeout(100);
       await expect(page.getByTestId('main-layout')).toBeVisible();
+      await expect(page.getByTestId('sidebar-nav-settings')).toHaveAccessibleName('Settings');
       await expect(page.getByTestId('sidebar-session-section-toggle')).toContainText(/^(Projects|Conversations)$/);
       // Section actions exist but stay hidden until the heading is hovered.
       await expect(page.getByTestId('sidebar-session-search')).toHaveCount(1);

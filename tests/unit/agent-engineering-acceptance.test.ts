@@ -33,7 +33,10 @@ import {
   verifyAcceptance as verifyActualAcceptance,
 } from '../../scripts/lib/agent-engineering-acceptance.mjs';
 import { main as acceptanceCliMain } from '../../scripts/agent-engineering-acceptance.mjs';
-import { validateRuntimeAuthorityConvergence } from '../../scripts/validate-runtime-authority-convergence.mjs';
+import {
+  validateRuntimeAuthorityConvergence,
+  validateRuntimeAuthorityConvergencePreflight,
+} from '../../scripts/validate-runtime-authority-convergence.mjs';
 
 const temporaryPaths: string[] = [];
 const fixturePolicy = vi.hoisted(() => ({ steps: null as AcceptanceGate[] | null }));
@@ -221,6 +224,45 @@ function createConvergenceFixture(options: { closureAllowedPaths?: string[] | nu
   git(root, ['add', '--force', baselineRelative, finalSpecRelative]);
   git(root, ['commit', '--quiet', '-m', 'add convergence baseline']);
   return { root, base, baselineRelative };
+}
+
+function createConvergencePreflightFixture() {
+  const { root, base, baselineRelative } = createConvergenceFixture();
+  const specPath = 'harness/specs/tasks/runtime-authority-convergence-final-acceptance.md';
+  const absoluteSpec = join(root, specPath);
+  writeFileSync(absoluteSpec, readFileSync(absoluteSpec, 'utf8').replace(
+    'title: RC-09 Final Engineering Acceptance',
+    'title: RC-09 Final Engineering Acceptance\nhumanEvidence: required\nrequiredProfiles: [fast]',
+  ));
+  git(root, ['add', specPath]);
+  git(root, ['commit', '--quiet', '-m', 'configure convergence acceptance']);
+  fixturePolicy.steps = [{
+    id: 'preflight-must-not-run',
+    name: 'Preflight must not run a gate',
+    profile: 'fast',
+    command: 'node',
+    args: ['-e', 'process.exit(99)'],
+    required: true,
+    allowSkip: false,
+    timeoutMs: 1_000,
+    safety: { network: 'none', productionEffects: false, humanEvidence: false },
+  }];
+  const changedPaths = resolveChangedPaths(root, { since: base });
+  const matrixPath = join(root, 'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json');
+  writeFileSync(matrixPath, JSON.stringify({
+    schema: 'runtime-authority-convergence-rc09-ownership/v2',
+    baseSha: base,
+    headSha: repositoryIdentity(root).commit,
+    requiredOwners: ['RC-00'],
+    totalPaths: changedPaths.length,
+    rcOwnedPaths: changedPaths.length,
+    excludedPaths: 0,
+    byRc: { 'RC-00': changedPaths.length },
+    byExclusionWorkstream: {},
+    entries: changedPaths.map((path) => ({ path, rc: 'RC-00', commit: null, declaredBySpec: true })),
+  }));
+  const manifest = createAcceptancePlan({ root, specPath, since: base });
+  return { root, base, baselineRelative, specPath, matrixPath, manifest };
 }
 
 function passingSpawn(_command: string, _args: string[], options: { cwd?: string } = {}) {
@@ -1402,6 +1444,110 @@ describe('Agent Engineering Acceptance', () => {
     expect(finalReport.failures).toContain('manifest gates must match the candidate-derived gate contracts');
     expect(finalReport.gates).toEqual([]);
     expect(finalReport.reportDigest).toMatch(/^[a-f0-9]{64}$/);
+  });
+
+  it('preflights RC-09 without a final report or running any gate', () => {
+    const { root, manifest } = createConvergencePreflightFixture();
+    expect(validateRuntimeAuthorityConvergencePreflight({ root, manifest })).toMatchObject({ ok: true, errors: [] });
+    expect(existsSync(join(root, 'artifacts/agent-engineering-acceptance/runs'))).toBe(false);
+    expect(gitText(root, ['worktree', 'list', '--porcelain']).match(/^worktree /gm)).toHaveLength(1);
+  });
+
+  it('rejects an already-stale matrix before starting RC-09 full acceptance', () => {
+    const { root, base, specPath, matrixPath } = createConvergencePreflightFixture();
+    const matrix = JSON.parse(readFileSync(matrixPath, 'utf8'));
+    matrix.entries = [];
+    matrix.totalPaths = 0;
+    matrix.rcOwnedPaths = 0;
+    matrix.byRc = {};
+    writeFileSync(matrixPath, JSON.stringify(matrix));
+    const manifest = createAcceptancePlan({ root, specPath, since: base });
+    expect(validateAcceptanceManifest(manifest, { root, requireClean: true, requireFull: true }).ok).toBe(true);
+    expect(validateRuntimeAuthorityConvergencePreflight({ root, manifest }).errors)
+      .toEqual(expect.arrayContaining([expect.stringContaining('changed path is missing from changed-path-ownership.json')]));
+    const outputDir = join(root, 'artifacts/agent-engineering-acceptance/preflight-stale');
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      expect(acceptanceCliMain(['full', '--root', root, '--spec', specPath, '--since', base, '--output-dir', outputDir])).toBe(1);
+      expect(error.mock.calls.flat().join('\n')).toContain('RC-09 preflight failed');
+      expect(existsSync(outputDir)).toBe(false);
+      expect(gitText(root, ['worktree', 'list', '--porcelain']).match(/^worktree /gm)).toHaveLength(1);
+    } finally {
+      error.mockRestore();
+    }
+  });
+
+  it.each(['run', 'verify'])('preflights RC-09 %s before creating role evidence', (command) => {
+    const { root, manifest, matrixPath } = createConvergencePreflightFixture();
+    const manifestPath = join(root, 'artifacts/preflight-manifest.json');
+    writeFileSync(manifestPath, JSON.stringify(manifest));
+    rmSync(matrixPath);
+    const outputDir = join(root, `artifacts/agent-engineering-acceptance/preflight-${command}`);
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      expect(acceptanceCliMain([command, '--root', root, '--manifest', manifestPath, '--output-dir', outputDir])).toBe(1);
+      expect(error.mock.calls.flat().join('\n')).toContain('RC-09 preflight failed');
+      expect(existsSync(outputDir)).toBe(false);
+    } finally {
+      error.mockRestore();
+    }
+  });
+
+  it('keeps CLI plan diagnostic when the RC-09 matrix is stale', () => {
+    const { root, base, specPath, matrixPath } = createConvergencePreflightFixture();
+    writeFileSync(matrixPath, '{}');
+    const outputDir = join(root, 'artifacts/agent-engineering-acceptance/preflight-plan');
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      expect(acceptanceCliMain(['plan', '--root', root, '--spec', specPath, '--since', base, '--output-dir', outputDir])).toBe(0);
+      expect(existsSync(join(outputDir, 'manifest.json'))).toBe(true);
+      expect(acceptanceCliMain(['run', '--root', root, '--output-dir', outputDir])).toBe(1);
+      expect(error.mock.calls.flat().join('\n')).toContain('RC-09 preflight failed');
+      expect(existsSync(join(outputDir, 'executor-report.json'))).toBe(false);
+    } finally {
+      log.mockRestore();
+      error.mockRestore();
+    }
+  });
+
+  it.each(['run', 'verify'])('does not impose RC-09 preflight on another task through %s', (command) => {
+    const root = createFixtureRepository();
+    const manifest = createManifest(root);
+    const manifestPath = join(root, 'artifacts/non-convergence-manifest.json');
+    writeFileSync(manifestPath, JSON.stringify(manifest));
+    const outputDir = join(root, `artifacts/agent-engineering-acceptance/non-convergence-${command}`);
+    vi.stubEnv('NODE_TLS_REJECT_UNAUTHORIZED', '0');
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      expect(acceptanceCliMain([command, '--root', root, '--manifest', manifestPath, '--output-dir', outputDir])).toBe(1);
+      const role = command === 'run' ? 'executor' : 'verifier';
+      const report = JSON.parse(readFileSync(join(outputDir, `${role}-report.json`), 'utf8'));
+      expect(report.result).toBe('NO-GO');
+      expect(report.gates).toEqual([]);
+      expect(report.failures.join('\n')).toContain(command === 'run' ? 'NODE_TLS_REJECT_UNAUTHORIZED' : 'executor report unavailable');
+      expect(error.mock.calls.flat().join('\n')).not.toContain('RC-09 preflight failed');
+    } finally {
+      log.mockRestore();
+      error.mockRestore();
+    }
+  });
+
+  it('preflight rejects dirty candidates, baseline lock drift, and resealed changed paths', () => {
+    const { root, manifest, baselineRelative } = createConvergencePreflightFixture();
+    const tampered = structuredClone(manifest);
+    tampered.changedPaths = [];
+    resealManifest(tampered);
+    expect(validateRuntimeAuthorityConvergencePreflight({ root, manifest: tampered }).errors)
+      .toEqual(expect.arrayContaining([expect.stringContaining('manifest changedPaths mismatch')]));
+    const baselinePath = join(root, baselineRelative);
+    const baseline = JSON.parse(readFileSync(baselinePath, 'utf8'));
+    baseline.productLocks.defaultOn = true;
+    writeFileSync(baselinePath, JSON.stringify(baseline));
+    const result = validateRuntimeAuthorityConvergencePreflight({ root, manifest });
+    expect(result.errors).toContain('baseline product locks changed');
+    expect(result.errors).toContain('source worktree is dirty');
   });
 
   it('validates engineering and human convergence evidence and rejects semantic tampering', () => {

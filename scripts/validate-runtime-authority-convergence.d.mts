@@ -7,6 +7,9 @@ export type RuntimeAuthorityConvergenceResult = {
   baseline?: unknown;
 };
 
+export function validateRuntimeAuthorityConvergencePreflight(
+  options?: Record<string, unknown>,
+): RuntimeAuthorityConvergenceResult;
 export function validateRuntimeAuthorityConvergence(
   options?: Record<string, unknown>,
 ): RuntimeAuthorityConvergenceResult;

@@ -129,6 +129,14 @@ The candidate SHA creation method follows the session's Git authorization. Witho
 
 ## Hard Vetoes
 
+RC-09 execution (`full`, `run`, `verify`) first validates the clean planned
+candidate, baseline, source inputs and complete ownership partition. A stale
+matrix fails before execution output or gates are started. `plan` remains a
+diagnostic operation. This preflight needs no final report and does not replace
+the independent Verifier or final evidence validation. Historical closure replay
+continues to use the final validator's candidate view, rather than authorizing a
+new execution against an advanced or dirty checkout.
+
 - any required command fails, times out, gains an undeclared skip, or uses stale evidence;
 - payload parity changes during a shadow package;
 - unregistered semantic mutation or duplicate side effect is observed;

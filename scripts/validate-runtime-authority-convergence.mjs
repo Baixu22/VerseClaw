@@ -689,6 +689,38 @@ function validateHumanVerdict(manifest, manifestPath, reportPath, verdictPath, e
   if (typeof verdict.notes !== 'string' || !isNonBlankString(verdict.decided_at)) errors.push('human verdict notes/decided_at are incomplete');
 }
 
+function validateCandidateInputs(root, manifest, baseline, errors) {
+  if (manifest.schema !== ACCEPTANCE_SCHEMA || manifest.manifestVersion !== 1) errors.push('manifest schema mismatch');
+  if (manifest.executionMode !== 'full') errors.push('manifest executionMode must be full');
+  if (manifest.candidate?.cleanAtPlan !== true) errors.push('candidate was dirty at plan');
+  validateManifestDigests(manifest, errors);
+  errors.push(...validateAcceptanceManifest(manifest, { root, requireClean: true, requireFull: true }).errors);
+  const base = validateBaseline(root, baseline, manifest, errors);
+  validateCandidateTree(root, manifest, errors);
+  validateChangedPaths(root, manifest, base, errors);
+  validateOwnershipMatrix(root, manifest, base, errors);
+  validateSourceIdentity(root, manifest, errors);
+}
+
+export function validateRuntimeAuthorityConvergencePreflight(options = {}) {
+  const root = resolve(options.root ?? SCRIPT_ROOT);
+  const manifest = options.manifest;
+  if (!manifest || typeof manifest !== 'object') return { ok: false, errors: ['manifest must be an object'] };
+  const errors = [];
+  let baseline;
+  try {
+    const baselinePath = resolveInputPath(root, options.baselinePath ?? 'artifacts/runtime-authority-convergence/rc-01/baseline.json', 'baseline');
+    // Execution must start from its clean planned candidate. Historical closure
+    // replay remains the final validator's separate candidate-view operation.
+    baseline = readJson(baselinePath, 'baseline');
+    validateCandidateInputs(root, manifest, baseline, errors);
+    return { ok: errors.length === 0, errors, manifest, baseline };
+  } catch (error) {
+    errors.push(error instanceof Error ? error.message : String(error));
+    return { ok: false, errors, manifest, baseline };
+  }
+}
+
 export function validateRuntimeAuthorityConvergence(options = {}) {
   const root = resolve(options.root ?? SCRIPT_ROOT);
   const errors = [];
@@ -737,17 +769,8 @@ export function validateRuntimeAuthorityConvergence(options = {}) {
       return { ok: false, errors };
     }
 
-    if (manifest.schema !== ACCEPTANCE_SCHEMA || manifest.manifestVersion !== 1) errors.push('manifest schema mismatch');
-    if (manifest.executionMode !== 'full') errors.push('manifest executionMode must be full');
-    if (manifest.candidate?.cleanAtPlan !== true) errors.push('candidate was dirty at plan');
-    validateManifestDigests(manifest, errors);
-    errors.push(...validateAcceptanceManifest(manifest, { root: candidateRoot, requireClean: true, requireFull: true }).errors);
-    const base = validateBaseline(candidateRoot, baseline, manifest, errors);
-    validateCandidateTree(candidateRoot, manifest, errors);
+    validateCandidateInputs(candidateRoot, manifest, baseline, errors);
     if (view.advanced) validateClosureAdvance(root, candidateRoot, manifest, baselineRelative, errors);
-    validateChangedPaths(candidateRoot, manifest, base, errors);
-    validateOwnershipMatrix(candidateRoot, manifest, base, errors);
-    validateSourceIdentity(candidateRoot, manifest, errors);
     validateReportContract(manifest, report, reportPath, errors);
     if (phase === 'human' && verdictPath) validateHumanVerdict(manifest, manifestPath, reportPath, verdictPath, errors);
 
