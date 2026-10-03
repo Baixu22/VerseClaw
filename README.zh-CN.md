@@ -1,689 +1,130 @@
-
 <p align="center">
-  <img src="src/assets/logo.svg" width="128" height="128" alt="Verse Claw Logo" />
+  <img src="src/assets/logo.svg" width="96" height="96" alt="Verse Claw 标志" />
 </p>
 
-<h1 align="center">Verse Claw</h1>
+# Verse Claw
 
-<p align="center">
-  <strong>OpenClaw AI 智能体的桌面客户端</strong>
-</p>
+**面向 OpenClaw Agent 的桌面工作台。**
 
-<p align="center">
-  <a href="#功能特性">功能特性</a> •
-  <a href="#为什么选择-clawx">为什么选择 Verse Claw</a> •
-  <a href="#快速上手">快速上手</a> •
-  <a href="#系统架构">系统架构</a> •
-  <a href="#开发指南">开发指南</a> •
-  <a href="#参与贡献">参与贡献</a>
-</p>
+[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [Русский](README.ru-RU.md)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/platform-MacOS%20%7C%20Windows%20%7C%20Linux-blue" alt="Platform" />
-  <img src="https://img.shields.io/badge/electron-40+-47848F?logo=electron" alt="Electron" />
-  <img src="https://img.shields.io/badge/react-19-61DAFB?logo=react" alt="React" />
-  <a href="https://discord.com/invite/84Kex3GGAh" target="_blank">
-  <img src="https://img.shields.io/discord/1399603591471435907?logo=discord&labelColor=%20%235462eb&logoColor=%20%23f5f5f5&color=%20%235462eb" alt="chat on Discord" />
-  </a>
-  <img src="https://img.shields.io/github/downloads/ValueCell-ai/Verse Claw/total?color=%23027DEB" alt="Downloads" />
-  <img src="https://img.shields.io/badge/license-MIT-green" alt="License" />
-</p>
+[功能](#features) · [快速开始](#getting-started) · [开发](#development) · [文档](#documentation)
 
-<p align="center">
-  <a href="README.md">English</a> | 简体中文 | <a href="README.ja-JP.md">日本語</a> | <a href="README.ru-RU.md">Русский</a>
-</p>
+Verse Claw 将对话、项目工作区、知识复核和 Agent 诊断放进同一个 Electron 应用。配置模型、打开项目后，可以跟踪工具结果、审批请求和任务状态。
 
----
+基于 Electron 40、React 19 和 TypeScript；可编辑的 OpenClaw 运行时源码包含在仓库中。
 
-## Capability Claim Boundary
+> **当前范围：** 本地验收重点是受控的 Windows x64 工作流。macOS、Linux 有构建目标，但不代表所有平台具有相同的验证覆盖。上下文和记忆增强保留各自的 opt-in、shadow 与审批边界。详见[产品语义](docs/clawx-product-semantics.md)和[能力矩阵](shared/capability-claims.ts)。
 
-Product capability statements must be checked against the canonical matrix in `shared/capability-claims.ts` and the generated status table in `artifacts/capability-claims/status-table.json` before being described as implemented, productized, stable, or end-to-end verified. The local gate `node scripts/check-capability-claims.mjs <files>` warns when high-confidence claims lack matrix, E2E, or real-runtime evidence.
+<a id="features"></a>
+## 可以做什么
 
-## Windows x64 Controlled Preview 范围
+| 功能 | 使用方式 |
+| --- | --- |
+| 对话与模型 | 配置供应商和模型、管理会话、附加上下文并查看工具输出。 |
+| 项目工作区 | 在对话旁查看 Git 改动、使用终端、浏览器预览和代码审查。 |
+| 任务与 Agent | 显式启动角色 Worker 或有边界的任务循环，查看进度、失败、检查点和审批。 |
+| 知识库 | 搜索有来源的资料库，复核收件项、草稿和提案；应用变更须经过明确确认与治理校验。 |
+| 频道与定时任务 | 配置支持的频道插件和定时任务；可用性取决于插件、凭据与运行时配置。 |
+| 诊断 | 查看会话活动、Trace、运行时状态和开发者工具；诊断数据本身不授予执行权限。 |
 
-当前首产品验证目标是 **Verse Claw Windows x64 - DCS Coding Controlled Preview**。该路径仅用于内部、单一 workspace，并要求显式 `opt-in`；范围包括 Provider/Model 验证、受控读写与测试、undo、runtime acknowledgement、重启恢复、kill/rollback 和脱敏 support bundle。
+界面提供中文、英文、日文和俄文，支持浅色与深色主题。[仓库内的界面截图](resources/screenshot/)用于参考，可能与当前版本不同。
 
-写入后的自动验证同样需要显式开启，默认关闭。开启后，Verse Claw 只探测一个有界项目测试命令，并通过现有 effective `exec` 的 policy、审批、沙箱和超时路径执行；通过、失败、跳过原因和有界输出尾部会留在会话中，验证失败不会回滚已成功的写入。
+### 权限边界
 
-前台命令进度保留最近输出，并在取消或退出后停止；工具成功或失败后到达的进度同样不会交付。参数或策略准备完成后，已取消的工具不会再启动，取消后到达的成功结果也不会交付；异步策略检查和结果观察阶段同样尊重取消。远程 `exec` 保留 stdout、stderr、错误文本和超时状态，直接执行与 prepare 两条路径均传递发起消息路由。已取消的 `process` 调用不会继续写入输入、关闭 stdin 或消费输出；poll 结果保留真实的 `exitCode` 和 `exitSignal`。严重工具循环终止也会停止模型回退；变化的图片、音频和资源结果会被识别为进展，process poll 的等待时长不算进展，有界历史窗口会按 run 覆盖已配置的终止阈值。较低的循环警告阈值也会正常触发警告，策略改写参数或会话别名合并不会丢失循环检测所需历史。策略、审批和适配器路径上的取消会继续作为取消抛出，而不会改写成工具拦截；本地等待 `node.invoke` 时取消不会再交付晚到的成功。`process remove` 不能终止前台会话，`send-keys` 写入后仍检查取消，首次 poll 能观察到已经退出的子进程。乒乓警告需要无进展证据，别名合并仅在同一活动周期保留告警退避，新进展的重置不会被覆盖，结果观察器异常不会把成功改成失败。
+- 知识读取范围不授予写入或应用权限，建议先保留为待复核草稿。
+- 上下文预算、Runtime Memory 注入、SEKB 自动写回，以及无人监督或私网浏览器访问各有独立门禁；安装应用不会自动启用所有能力。
+- 单项工程证据不等于产品发布、默认开启或全系统 GA。[验证记录](artifacts/capability-claims/status-table.json)只说明各自的范围和候选版本。
 
-未包装工具、客户端委托、审批登记和各策略阶段同样尊重取消。取消原因优先于晚到的工具成功或失败，已取消的委托会丢弃待交接记录。等待进程输入回调时也可取消，但不会撤回已经写入的字节或终止后台进程。子进程退出后，poll 会等 stdout、stderr 读完再结束会话，保留执行所有者记录的终态，已移除的进程也不会因晚到的退出回调重新出现。同一 run 内已记录的工具终态重复投递只计一次；乒乓警告至少需要四次已完成的交替调用（`ABAB`），且两侧各自都有重复的稳定结果。证据与待验证项见[第四批本地验收记录](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md)。
+<a id="getting-started"></a>
+## 快速开始
 
-工具准备或策略钩子尚未返回时，取消即可结束本地等待，但不会终止插件内部已经开始的工作。输入确认期间进程已退出时，应答保留执行所有者记录的终态与输出。会话别名合并后，同一工具调用只计一次；只改变 `process poll` 的等待时长也不会重置无进展检测。详见[第五批验收记录](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md)。
+### 从源码运行
 
-第六批还补齐了 node 目标解析、远程 prepare、审批快照、自动审阅和审批登记等待的取消边界；晚到结果不会启动后续执行阶段。重复退出通知保留首次终态，finished 日志读取会清除旧的 poll 退避，非法 poll/timeout 输入会回退到安全默认值。详见[第六批验收记录](docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md)。
+准备 **Node.js 24**、Git，以及 `package.json` 固定的 pnpm 版本（11.2.2）。运行时有独立的依赖工作区；克隆仓库需要相应访问权限。
 
-启用 DCS 的编码 turn 会通过既有共享注入账本分别记录 knowledge、recent actions 与 tool registry 的真实 provider 可见 prompt 增长。固定预算不会因此放大：启用的 DCS 投影保留既有有界容量，截断和丢弃仍作为显式账目证据。
-
-COMPASS SSP 与回复前检索也通过 ContextCandidate 仲裁共享该 turn 预算，覆盖排队续跑、CLI 与原生 harness 路径。增强 kill switch 会阻止其准备；被截断的检索组不会计为完整注入的事实。
-
-embedded runtime 与原生 harness SDK 的 ContextEngine 消息替换共享该预算。原样保留的历史不重复收费；新增或改写消息必须整组放入剩余预算，否则保留原历史，不截断工具调用结构。原生 system addition 使用同一剩余额度，相同启动重试不重复收费。
-
-源码 runtime 加载已构建的原生插件时也保持同一预算，两侧均交由当前 attempt 原有的预算所有者执行准入。
-
-本范围不包含 Runtime Memory 注入、SEKB 自动写回、Browser 无监督或私网访问、C6/C7 自动切换、Coding WAL、生产仓库自动合并及多 Forge/DAG 扩围。当前只有工程与真实进程测试证据，真人 canary 与发布审批仍未完成。组件唯一标注见 [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview)。
-
-## 概述
-
-**Verse Claw** 是连接强大 AI 智能体与普通用户之间的桥梁。基于 [OpenClaw](https://github.com/OpenClaw) 构建，它将命令行式的 AI 编排转变为易用、美观的桌面体验——无需使用终端。
-
-无论是自动化工作流、连接通讯软件，还是调度智能定时任务，Verse Claw 都能提供高效易用的图形界面，帮助你充分发挥 AI 智能体的能力。
-
-对于需要受控自治执行的复杂任务，Agents 编排面板现在提供有界的 **任务循环**：它会编排角色子 Agent、自检证据、执行限定返工、展示实时状态，并在信心或权限不足时稳定停在 `blocked`。
-
-同一个 Agents -> Roles & Orchestration 界面现在还提供 **Lightweight Subagent Runner**，用于无需编写 ClawGraph YAML 的常见工作流。用户可以选择 Explorer、Reviewer、Tester 或 Compare 3 approaches，输入目标后通过现有 Gateway 权限路径启动显式角色 worker，并在 Verse Claw 中查看实时 worker 状态、摘要、失败原因和 Observability trace 链接。
-角色优先编排运行也会显示只读综合结果，保留验证决策、证据数量、trace 数量和可见失败原因。
-
-对于需要跨长对话、检查点、证据复核和显式定时 tick 延续的目标，Agents 面板现在提供 **Mission Control**：它通过 `mission.run` 启动或恢复 Mission，持久化 Mission 状态，基于 ResumeCheckpoint、Task Ledger、记忆和 trace 证据重建有界上下文，每个 tick 运行一次内部 `task_loop`，再由 reviewer 决定继续、修复、休眠、询问、完成或阻塞。
-Mission 和 Task loop 现在会携带内部 Engineering Control Signals，例如 `evidence_gap`、`validation_missing`、`scope_drift`、`unverified_claim` 和 `replan_required`；这些信号会保存在 checkpoint、生命周期事件和 Task Ledger metadata 中，并阻止只凭 trace 或内部 loop 完成状态就把长期目标当作已完成事实。
-
-对于需要跨大量 worker 回合稳定拆解的长任务，**ClawGraph Runtime** 提供 workspace YAML 工作流、DAG 执行、无状态角色 worker handoff、审计检查和用户复核能力，避免把完整工作流塞进一个无限增长的 chat transcript。
-
-Verse Claw 预置了最佳实践的模型供应商配置，原生支持 Windows 平台以及多语言设置。当然，你也可以通过 **设置 → 开发者 → 开发者模式** 来进行精细的高级配置。
-
-<p align="center"><strong style="font-size:1.1em; text-decoration: underline;">如需完整的企业版、专属服务支持或面向您业务场景的定制化落地辅导，请联系 <a href="mailto:public@valuecell.ai">public@valuecell.ai</a>。</strong></p>
-
----
-
-## 截图预览
-
-<p align="center">
-  <img src="resources/screenshot/zh/chat.png" style="width: 100%; height: auto;">
-</p>
-
-<p align="center">
-  <img src="resources/screenshot/zh/cron.png" style="width: 100%; height: auto;">
-</p>
-
-<p align="center">
-  <img src="resources/screenshot/zh/skills.png" style="width: 100%; height: auto;">
-</p>
-
-<p align="center">
-  <img src="resources/screenshot/zh/channels.png" style="width: 100%; height: auto;">
-</p>
-
-<p align="center">
-  <img src="resources/screenshot/zh/models.png" style="width: 100%; height: auto;">
-</p>
-
-<p align="center">
-  <img src="resources/screenshot/zh/settings.png" style="width: 100%; height: auto;">
-</p>
-
----
-
-## 为什么选择 Verse Claw
-
-构建 AI 智能体不应该需要精通命令行。Verse Claw 的设计理念很简单：**强大的技术值得拥有一个尊重用户时间的界面。**
-
-| 痛点 | Verse Claw 解决方案 |
-|------|----------------|
-| 复杂的命令行配置 | 一键安装，配合引导式设置向导 |
-| 手动编辑配置文件 | 可视化设置界面，实时校验 |
-| 进程管理繁琐 | 自动管理网关生命周期 |
-| 应用更新 | 不内置更新检查，也不连接上游更新源 |
-| 多 AI 供应商切换 | 统一的供应商配置面板 |
-| 技能/插件安装复杂 | 内置技能市场与管理界面 |
-
-### 内置 OpenClaw 核心
-
-Verse Claw 直接基于官方 **OpenClaw** 核心构建。无需单独安装，我们将运行时嵌入应用内部，提供开箱即用的无缝体验。开发模式会默认优先使用可编辑的 `openclaw_runtime` 目录；如需强制回到已发布的 npm 包，可设置 `VERSE_CLAW_OPENCLAW_RUNTIME=npm`。
-
-我们致力于与上游 OpenClaw 项目保持严格同步，确保你始终可以使用官方发布的最新功能、稳定性改进和生态兼容性。
-
-打开开发者模式后，可从侧边栏底部的 `...` 菜单进入原生 Dreams 页面，在 Verse Claw 内查看 OpenClaw 记忆回顾、梦境日记并执行基础维护操作；需要更深诊断时仍可从该页面打开完整 OpenClaw Dreams UI。
-
----
-
-## 功能特性
-
-### 🎯 零配置门槛
-从安装到第一次 AI 对话，全程通过直观的图形界面完成。无需终端命令，无需 YAML 文件，无需到处寻找环境变量。
-
-### 💬 智能聊天界面
-通过现代化的聊天体验与 AI 智能体交互。支持多会话上下文、消息历史记录、Markdown 富文本渲染（包括 GitHub 风格表格以及由 KaTeX 渲染的 LaTeX 数学公式：`$行内$`、`$$块级$$`、`\(行内\)` 和 `\[块级\]`）、用于计划、选项列表、问题流和偏好设置的结构化 Tool UI 卡片，以及在多 Agent 场景下通过主输入框中的 `@agent` 直接路由到目标智能体。
-推理强度也会作为运行时策略生效。单一的强度控件（`auto`、`minimal`、`low`、`medium`、`high`、`xhigh`、`max`）会在 provider/模型降档之前捕获请求的推理档位，并派生出联动的运行时强度：minimal/low 降低 prompt、skill 与工具结果注入密度，让普通回合更省 token、更简洁；medium/auto 保持 baseline；high/xhigh 保持完整 prompt，并可建议显式 `/loop`、ClawGraph、角色/子 Agent 或多模型协作。provider 的实际档位映射会保留在 wire payload 上（例如 DeepSeek V4 会把 medium/xhigh 别名为 high）。强度不会改变权限或工具授权边界，CLI-backed harness 会如实报告 `prompt-only` 而不是声称全量生效。
-左侧栏提供 Workgroups 视图，可按 workspace 级任务组组织会话，显示运行、等待、需处理等聚合状态，保留未归组会话，并让新的 workspace 作用域会话继承当前工作组。
-固定导航只保留 **新任务**、**收件箱**、**已安排** 和 **知识**。收件箱会聚合通用权限申请、Remote Tasks 与等待批准的 Browser Tasks，并真实展示风险、证据、历史和可用决策。Browser、Review、Task Ledger 与 ClawGraph 继续从底部 `...` 菜单进入，不再与高频入口并列。
-聊天工作模式已作为用户可见控件退役。输入框会发送明确的每轮 knowledge scope、选中的知识引用、任务节点上下文，以及可选的每轮 reasoning/intensity 覆盖；Agent 级推理强度仍是持久化默认值。主进程拥有的 Work Provider 继续承接轻量 Office/Search 能力（报告、表格、演示、PDF、调研、网站、设计和日常事务），可由内置库、可选包、外部服务、Custom HTTP、外部二进制、runtime skill、MCP server 或 OpenClaw plugin 通过同一来源模型实现。Search 在用户显式配置 provider 前保持 `missingConfig`，重型格式转换、爬虫、OCR 和 dataframe runtime 只作为可选接口。这些控件不会自动改变 workspace permission，也不会覆盖 OpenClaw runtime 的工具策略。
-OfficeCLI 也可在 设置 -> 技能 -> 功能插件 中管理：Verse Claw 会检测二进制文件、流式显示安装日志、同步与 Codeg 兼容的 `/officecli-*` 技能，并用 `officecli watch` 实时预览 `.docx`、`.xlsx` 和 `.pptx` 文件。
-从输入框插入的技能会以 `/技能名` 卡片形式显示；点击卡片可在右侧预览栏打开并阅读该技能的 `SKILL.md`。
-在输入框输入 `/` 会打开 Context Palette，可发现 Wiki 搜索、只读知识范围切换、审查、修复 CI、补测试、解释 diff、Task Ledger、Mission Control、压缩和会话 fork；这些动作都会复用现有 Chat 和 Session 流程。会话生命周期命令（`/new`、`/resume <关键词>`、`/rename <名称>`、`/archive`、`/delete`、`/clear`、`/copy`）与侧边栏使用相同的 store/host 路径：`/new` 开启新对话，`/resume` 按关键词切换会话，`/rename` 重命名当前会话，`/archive` 与 `/delete` 归档或永久删除当前会话，`/clear` 重置本地消息视图，`/copy` 将会话记录复制为 markdown。
-当你使用 `@agent` 选择其他智能体时，Verse Claw 会直接切换到该智能体自己的对话上下文，而不是经过默认智能体转发。各 Agent 工作区默认彼此分离，但更强的运行时隔离仍取决于 OpenClaw 的 sandbox 配置。
-Verse Claw 默认使用轻量 `policy-light` 沙盒层，由主进程权限门禁、工作区根目录检查、Gateway RPC 审批和 OpenClaw exec approval 共同生效；Docker 与 SSH 保留为需要显式选择的 `strong` provider，不再是启动必需项。运行时 exec 审批边界也有应用内入口：OpenClaw 拦下某条命令时，应用级提示会显示命令与工作目录，并通过 `exec.approval.resolve` 回传运行时给出的决定之一；被拒绝的决定会保留提示并显示运行时给出的原因，且在任意工作区权限模式下都可以作答。
-命令风险分类基于子命令而非前缀匹配，因此前置的全局参数无法掩盖命令的真实行为。对 `git` 而言，能执行任意代码（`-c` 设置 `core.pager`/`core.editor`/`alias.*`、`--config-env`）、重定向其辅助程序路径（`--exec-path`）或把操作转移到其他仓库（`-C`、`--git-dir`、`--work-tree`、`--namespace`）的参数，无论后面跟哪个子命令都按高风险处理；全局参数也不再能把破坏性或联网子命令降级成普通写操作。
-即使在工作区内（普通编辑会自动放行），写入 Git 仓库元数据仍需审批——因为写进去的 hook 或 config 会在下一次 Git 调用时执行；该保护覆盖嵌套仓库、submodule 以及 linked worktree 使用的 `.git` 指针文件，而 `.gitignore`、`.gitattributes`、`.github/` 仍按普通文件处理。破坏性 Git 操作的审批提示会给出分级依据而不是笼统警告：push 的目标远端与分支、该分支是否为共享分支、未指定分支时适用的 refspec 范围，以及 reset 是丢弃工作区改动还是仅移动分支指针。
-当 Docker 沙盒运行在 Windows 主机、而 daemon 位于 WSL2（或通过 `DOCKER_HOST` 连接的其它 Linux daemon）时，bind source 会自动转换到 WSL2 挂载命名空间（`C:\...\workspace` → `/mnt/c/.../workspace`，`\wsl$\<distro>\...` → POSIX），卷挂载不再因 `invalid volume specification` 失败；本地 Windows named-pipe daemon 以及 macOS/Linux 主机不受影响。
-Settings、Doctor 和 diagnostics 现在展示同一份 effective sandbox policy，包括请求/生效 provider、runtime level、exec 与 network policy、Docker 可用性和降级原因。
-Settings → System & Runtime 还提供 Project Rules Center，可检查当前 workspace 的 `AGENTS.md`，列出 `.clawx/rules/*.md`，展示确定性校验 warning，并在缺失时创建保守的 `AGENTS.md` 模板，而不会引入新的规则真相源。
-每个 Agent 还可以单独覆盖自己的 `provider/model` 运行时设置；未覆盖的 Agent 会继续继承全局默认模型。
-每个持久 Agent 现在都会在 Agents、Chat、编排与 Observability 中使用同一份有效身份投影。`main` 默认使用 Verse 品牌头像；其他 Agent 使用确定性的本地 DiceBear 头像，头像编辑器只保存白名单 preset，并把生成的 SVG 写入 `.clawx/avatar/`，不会调用 DiceBear 公共 API。临时编排 Role 仍是叠加在所属 Agent 头像上的徽章，不会变成独立身份。
-输入框的上下文状态现在提供需要确认的“压缩当前会话”操作，可展示 token 压力、已隐藏消息数量、上次压缩时间和压缩质量；长期任务状态仍进入 Task Ledger / Context Pack，而不是依赖无限增长的 transcript。压缩还会保存高密度 recovery artifact，接力到新对话时会优先使用它，再回退到 transcript 证据。运行时会先在手动/显式 opt-in 压缩中使用分层渐进式压缩计划；自动压缩路径先记录遥测，等质量门禁证明稳定后再接管。
-输入框还会显示长对话的 checkpoint 恢复状态：排队后续、最近一次人工介入/checkpoint、恢复警告，以及在会话空闲时立即发送已持久化排队后续的操作；这些排队消息可在 Gateway 重启后继续恢复。
-当 Gateway 重启中断正在运行的主 Agent turn 时，重启恢复会继续执行未完成的 assistant/tool transcript 尾部，同时保护已完成、出错和等待审批的 turn，避免重复执行。
-运行期间，Queue、Guide 和 Interrupt 是三个独立操作；主控件会从发送切换为保存 checkpoint 的暂停，重新进入会话后仍显示可继续的状态。
-Chat 回滚方案现在提供复核优先的恢复面板，显示安全/复核/高风险计数，以及检查点、队列、上下文、终端、Git、Task Ledger、记忆信号；破坏性操作会进入带审批的工具链，记忆事实会变成 Knowledge 草稿或提案。
-
-Agents 编排面板现在也提供有界的 **任务循环** 操作，用于受控自治任务。它通过现有 Gateway RPC 路径启动 `task_loop.run`，编排角色子 Agent，执行自检与限定返工轮次，并在界面中显示实时阶段、轮次、reviewer 结论、终态和 trace 证据，不新增 renderer 直连 Gateway 通道。
-
-同一面板现在也提供 **Lightweight Subagent Runner**，用于无需 ClawGraph YAML 的预设并行流程。Explorer 会启动 planner 与 architect worker 查找方案，Reviewer 会审查当前 staged 与 unstaged Git diff，Tester 会让 tester 与 reviewer 查找测试缺口，Compare 3 approaches 会启动三个带标签的 architect worker。Runner 不会自动合并代码，并会把完成的运行链接到 Observability trace。
-直接角色编排结果现在也包含这个有边界的综合视图，验证失败和证据不会被摘要隐藏。
-Chat 会把编排进度显示为响应式 Wave 时间线。稳定的 task node 与 role instance 标识可让重复 Role 从计划、实时生命周期到最终结果 bundle 始终保持独立；窄屏会自动变为纵向时间线，不产生页面级横向滚动。
-
-同一面板现在也提供 **Mission Control**，用于更长目标。它通过 `mission.run` 启动或恢复 Mission，把 Mission 状态写入 OpenClaw state DB，从 ResumeCheckpoint、Task Ledger、记忆和 trace 证据重建有界上下文，每个 tick 运行一次内部 `task_loop`，再进行 Mission reviewer 反思、写入 checkpoint、提出记忆候选，并在界面显示 pause/resume/cancel、tick 阶段、decision、next wake、blocked reason 和 trace 证据。定时 tick 需要显式启用；完成判定始终来自证据而不是唤醒触发器。
-Engineering Control Signals 会把 evidence gap、scope drift、validation missing 和 unverified claim 明确写入现有 checkpoint、Mission/Task reviewer、HostEvent 与 Task Ledger metadata 路径；Verse Claw 不会创建第二套进度文件，也不会把 Observability trace 自动当作完成事实。
-
-Chat 输入区还提供预览优先的 **接力到新对话**：Verse Claw 会从 ResumeCheckpoint、runtime 恢复上下文、Task Ledger、Git 状态、近期 trace/error 状态和 transcript fallback 证据生成可编辑的确定性接力草稿，然后创建新的 workspace 作用域会话并把草稿预填到输入框，不会自动发送。
-
-会话菜单现在还提供 **检查点**：Verse Claw 列出长任务 `ResumeCheckpoint` 快照（每个 Mission tick 一个），并可将工作区恢复到所选检查点——回滚该检查点之后写入日志中的条目。这是运行时 replay-rollback authority 的手动半边（自动半边由 `runtime.mission.rollback.enabled` 门控，默认关闭）。
-**Fork 到新对话** 是分支式对应功能：当前会话空闲时，Verse Claw 会请求 runtime 创建一个已继承 active transcript branch 的子会话，立即切换过去，父会话保持不变，并且不会复制 Task Ledger 真相、生成 prompt 或自动发送。
-Composer 只显示本地 preflight 推荐的连续性动作，并用很短的 healthy/risky/blocked 提示说明状态；会话下拉菜单仍保留 Fork 和接力两项，并用轻量推荐标记与 Fork 来源元数据提示选择。失败提示只提供显式替代动作，例如“准备接力”，不会自动切换语义。
-
-### ClawGraph Runtime
-ClawGraph 页面会列出当前 workspace 中的 `.clawx/clawgraph/*.yaml` 工作流，将其编译为经过校验的 DAG，启动受控运行，并显示节点状态、只读 DAG、append-only 事件和待复核项。Worker 作为有界角色子 Agent 运行，只返回结构化 `clawgraph_handoff` JSON；审计失败或不确定的改图会冻结到用户复核，而不是直接当作真实结果接受。ClawGraph 记录执行状态，Task Ledger 仍负责长期目标与复核账本。
-
-### Agent Trace 工作台
-Observability 页面会维护 Verse Claw 自有的本地 JSON/JSONL trace 索引，默认保留最近 30 天或 1000 条脱敏 trace envelope，并把 Agent 运行展示成可交互的诊断链路图。查询驱动的 trace 列表会显示 issue chips、来源新鲜度（`live`、`stale`、`rehydrated`、`partial`）、错误、产物、重试、token/cost 和慢点热点；Root Cause、Critical Path、Artifacts、Cost 快捷视图用于更快定位问题。工作台现在会先展示摘要/根因条，支持图谱、运行树、泳道三种视图，可在聚焦/均衡/完整三档图谱密度之间切换，也支持 trace 对比、保存常用列表视图和本地复盘备注。图谱继续支持搜索、阶段/类型/状态过滤、平移缩放、小地图、关键路径高亮、时间线联动，以及包含 Issues、事件、脱敏 I/O 摘要、产物和白名单属性的节点诊断抽屉。实时 Chat 执行卡片在有 trace 数据时可直接跳转到对应 trace 或 issue 节点。`clearTraces()` 只清理 Verse Claw observability 索引和缓存，不删除 transcript/trajectory 原始会话文件；详情默认只展示摘要，不暴露完整 raw prompt、输出、tool args 或 tool output。
-
-Runtime 还包含默认关闭的安全与验证影子层，覆盖 Gateway 可见的 `tools.invoke` 调用和 runtime 验证输入。启用策略后，它会通过 `security.*` 和 `verification.*` RPC 记录脱敏的内存态安全决策、确定性的 tool-call/event-log/checkpoint 验证摘要、按 runId 关联的结果筛选和聚合健康计数，并写入增量 Observability span；它不会阻断工具、运行外部测试、调用 LLM judge，也不会持久化原始 tool args/result/events/checkpoints。
-
-### 任务账本
-Task Ledger 页面为长期任务维护 workspace 级、Agent 中立的结构化记录：长期目标、子任务、依赖、阻塞、待复核节点、决策、偏差和会话链接。它在本地 OpenClaw 配置目录中保存 append-only JSONL 事件，在 Chat 旁展示紧凑摘要，并可导出单文件离线 HTML，包含树视图、DAG、历史和复核视图。
-
-### 收件箱与远程任务
-收件箱为通用权限申请、结构化 Remote Task 信封和监督式 Browser Tasks 提供统一的本地决策队列。远程设置补丁会展示变更预览，并且只有用户明确批准后，主进程才会应用白名单内的配置更新；已处理的权限与 Remote Task 记录仍可在“历史”中查看。本地 Remote Task 测试信封创建器现位于 **设置 → 开发者**，旧 `/remote-tasks` 路由会打开收件箱并选中 Remote Tasks 筛选。
-
-### Code Review Center
-Review Center 可以对未提交改动、相对基准分支的 diff 或指定 commit 运行只读 AI 审查。它会按 severity 结构化 findings，保留 file/line 锚点，写入脱敏 review trace，并可把单条 finding 或整次 review 转成 Task Ledger review node，不会暂存、提交或编辑文件。Git patch 会先经过共享结构化 patch contract 验证；malformed 或 producer-truncated diff 会在模型审查启动前停止。在 Chat 中，成功且有 write journal 支撑的 `edit` 与全文件 `write` 会显示富 diff，并可复制同一文本 patch；mutation lineage 缺失、过期或不完整时，不会用 Renderer 状态推断重建。Remote PR 标签页通过 Main-owned host API 有界读取 GitHub PR detail、commits、files、结构化 diff、checks、reviews、branch protection 和指定文件内容。完整性、能力与 readiness 会显式展示；缺失、截断、未授权或未知证据不会被解释为 ready。整体评审、行评论、线程回复和白名单 metadata 修改默认只生成草稿，只有精确匹配的一次性 action-bound approval 被消费后才会发布；head/version 漂移会 fail closed，partial 或 ambiguous 结果会显示 reconciliation，避免盲目重试。受控合并复用同一 Main-owned policy：动作前即时重读 head/readiness，消费绑定精确策略与 policy 证据的短时单次审批，并携带 expected head SHA。生产仓库不在 allowlist 中，Agent merge 默认关闭；合并后的 refresh 或 audit 失败会显示 reconciliation，而不会提示重试合并。
-
-### 会话工作区
-Chat 会话工作区保持紧凑的连续工作面，按需打开 `Review`、`Terminal`、`Browser`、`Files`、`Artifacts`、`Audit` 及现有 Agents 工具标签；Changes 收入 Review，文件预览收入 Files。Browser 内部提供 Preview 和受监督的 Live，Terminal 可在底部面板与右侧标签间切换且不会创建第二个 shell 会话。窄窗口下 Files 在文件树与预览之间使用单视图切换。工作区继续使用 Main-owned Browser、终端、Git、Review、截图、snapshot 和审批 API；`/browser` 与 `/code-review` 仍作为兼容路由打开对应工作区上下文。Task Ledger 和 ClawGraph 继续通过工作区上下文入口打开全屏页面。恢复会话或打开只读 Review 不写项目文件；旧话题标记仅在显式新建会话、交接或创建新智能体会话时重置。
-
-### Knowledge Hub
-知识库默认打开「资料库」，另一个主视图为「待复核队列」。队列按 Inbox、草稿和提案筛选，并打开原有复核操作。文档默认预览，点击「编辑」或「新建笔记」后才进入编辑；960px 窗口同时只显示一个编辑或预览面板。「更多 > 维护」和「来源工具」保留高级操作。「问知识库」进入 Chat 的知识问答模式，保留引用和本地对话检查点，返回时恢复未完成笔记及来源选择。保存回答只创建候选；没有提案的草稿须先准备变更提案，再由用户明确批准并应用。
-
-Knowledge 页面通过 OpenClaw `memory-wiki` 管理有来源支撑的 wiki 上下文。默认使用 Verse Claw 托管的隔离 native vault，可在不切换到 unsafe local-vault 模式的情况下导入受限的文本文件或文件夹，也可以验证并导入本地 OKF v0.1 Markdown bundle，作为覆盖在 `wiki.ingest` 之上的轻量兼容适配层。它提供状态、搜索、查看、compile、lint、Knowledge Inbox、draft/proposal 审查、provenance 和治理流程。Inbox 会把 Chat、任务账本、文件、OKF、ClawGraph 或 agent 提出的候选知识暂存在正式 wiki 之外，直到用户选择提升为草稿或忽略；provenance 只记录来源引用和读取/引用事件，不修改 wiki 页面。Chat 的知识范围（`None`、`Memory`、`Wiki` 或 `All`）只代表读取范围：agent 可以 search/get 上下文，但不能因为启用 scope 就写入、修改、归档、删除、合并或 apply 知识。在 Chat 中，`/wiki` 会搜索并以可见 chip 挂载明确的 wiki 引用后再发送，`/memory`、`/all`、`/none` 和 `/scope` 只调整读取范围，不会变成写权限。知识调用模式默认是 Suggest：相关知识只显示为可选 chip；Auto-read 需要用户显式开启，并且只会附加少量新鲜、高置信、只读引用。会话知识以及 agent/知识管理员建议都会先进入可编辑 draft/proposal，只有用户明确确认后，才通过单一 ReviewBundle 写入 wiki；Host 在 apply 前重新校验 digest、revision 和状态。治理元数据存放在共享 openclaw-state SQLite 中；会话硬删除会先完成派生数据清理再删除 transcript，失败时保持 incomplete/retryable，不再 best-effort 报成功。知识检索现在可以输出 DCS 派生的 SourceSet 报告：exact/lexical/semantic 混合检索、冲突显式披露、freshness 重排、citation 可解析的 claim，以及按证据规则计算的 grounded/partial/missing_sources 状态；Runtime Memory 在该报告中只做 shadow 比较。这仍是包级工程证据，不代表 enabled by default 或 generally available。Knowledge 审查工作区现在还可以通过单一 ReviewBundle 确认路径执行受治理的页面生命周期操作（更新、合并、归档、撤销、删除、恢复），包含 expectedRevision CAS、幂等、EffectReceipt 和可见的 receipt 历史；不支持的直接 wiki 修改保持不可用。六个表面的 canary 报告（显式引用、自动检索、Role Memory、SEKB 检索、Source Set 综合、任务后候选捕获）可复跑生成，并保持在 shadow/opt-in，E4/E5 明确记录为 not-evaluated/blocked。Obsidian 是可选增强，不是必需依赖。治理仪表盘按需运行健康检查，呈现矛盾条目、陈旧页面和无主引用；监控目录只会把项目文档放入 pending Inbox，不会自动 direct-ingest 到正式 wiki，也不会自动生成 synthesis。
-
-高级 SEKB 诊断可显式启用默认关闭的 `runtime.contextBlock.sekb.shadowEvaluation.enabled`。它依赖 `runtime.contextBlock.sekb.enabled`；`OPENCLAW_SEKB_SHADOW_EVALUATION_ENABLED` 只能覆盖影子开关。该功能只保存有界、确定性的采集与完成证据建议元数据，不会过滤轨迹、写入原则或改变任务完成结论。
-
-可选的 `runtime.contextBlock.sekb.batchDistillationAssistant.enabled` 同样默认关闭，并依赖 SEKB 主开关；`OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED` 只覆盖该建议器开关。操作员必须显式手动调用；Host/CLI 在存在 DEEPSEEK_API_KEY 时可用其作为 provider，否则回退 deterministic。它仅发送有界、脱敏的轨迹投影和有界的既有原则摘要，最多进行一次可观测的 30 秒重试；provider 不可用、超时、JSON 或 schema 无效、或触发限额时，都会返回现有确定性蒸馏建议。它只记录安全的聚合 trace/cost 证据；在既有 `confirm_and_save` 确认路径之前，绝不写入 Principle、Memory、ContextBlock、索引或 trajectory 状态。
-
-Knowledge > 运行经验通过既有 typed 路径提供确定性建议、精确候选审查、显式确认或拒绝，以及已确认原则检索。生成建议和审查不产生写入；确认要求可见会话谱系并继续使用 `confirm_and_save`，检索仅显示有界辅助文本，绝不会自动附加到 Chat。Hermes shadow 导出/协议/报告与 batch 运维仍仅限 CLI/Host。全部功能开关继续默认关闭，不会自动写入 principle、memory、ContextBlock、索引或 trajectory 状态；`artifacts/sekb-hermes-phase-a5/` 下的离线产物仅作非权威评估证据。
-
-本地 CLI/Host 运维入口依赖 `openclaw_runtime/dist/knowledge/sekb/index.js`。请先执行 `pnpm build:runtime`，或定向构建 `pnpm exec node scripts/build-openclaw-runtime.mjs --sekb-only`。缺少 dist 时 Host 会诚实降级为 `runtimeUnavailable`，CLI 会提示构建；`pnpm sekb:hermes:gate` 不需要 dist。
-
-CLI：
-
-- `pnpm sekb:hermes:export` - 隐私有界 shadow 导出
-- `pnpm sekb:hermes:protocol` - 双审协议样本与 reviews 模板
-- `pnpm sekb:hermes:report -- --reviews <path>` - 离线报告（未过晋级门槛前为 `shadow_only`）
-- `pnpm sekb:hermes:suggest` / `--batch` - 确定性建议；batch 需开关；有 DEEPSEEK_API_KEY 时 Host/CLI 可用，否则 deterministic fallback
-- `pnpm sekb:hermes:confirm` / `pnpm sekb:hermes:reject` - 既有 DistillationTool 边界
-- `pnpm sekb:hermes:gate` - 聚焦测试 + contract + harness validate
-
-Host API（`knowledge.*`）：`runtimeLessonsReport`、`sekbShadowEvaluationExport`、`sekbShadowEvaluationProtocol`、`sekbShadowEvaluationReport`、`sekbSuggestPrinciples`、`sekbBatchDistillSuggest`、`sekbConfirmPrinciple`、`sekbRejectSuggestion`、`sekbRetrieveForTask`。
-
-Shadow V1 评分与阈值 50 冻结；标注工具包就绪不等于可晋级。Phase C/D 过滤与调度仍延期。
-
-### Workspace Git 控制
-Workspace 侧栏现在会先打开精简入口面板；只有当前 workspace 是 Git 仓库时才显示“审查”入口，非 Git 项目不会暴露 Git 控件。
-Workspace 侧栏提供 Git 工作台，可查看仓库状态、side-by-side 文件 diff、暂存、复制 patch、带审批的文件还原、提交、分支、stash、worktree、合并、变基、重置和 GitHub Pull Request。紧凑的 Audit 标签会把权限决策与最近的 `git reflog --all` 条目合并显示（有界视图，超出上限的较早条目会显式标记），包括提交、切换、重置、变基及其他引用移动。顶部 readiness 条会量化本机 Git、内置 Agent Git 工具、worktree 数量和 `gh` 登录状态，让面板直接显示当前哪些能力可用。Worktree 添加支持新分支和已有分支两种流程，新 worktree 默认放在仓库同级目录。统一 diff 可以通过结构化补丁引擎应用、回滚，或只做预检而不落盘，并分别报告已应用、已跳过与冲突的路径；格式损坏或被截断的补丁会在触碰任何文件之前被拒绝，而不是部分应用。只读的基线对比会把 HEAD 与最近的远程祖先做 diff——显式 ref、分支 upstream，或 `origin/HEAD`——并报告实际用的是哪一个；当不存在远程祖先，或两侧没有共同提交时，会把对比标记为不可用，而不是猜一个基线。同一套 Main 进程 Git service 也驱动内置 `clawx-git` MCP server，让 Agent 通过 Verse Claw 权限体系调用受控 Git 与 PR 工具，而不是直接拼 shell 命令；revert、pull、push、merge、rebase、reset、补丁应用/回滚、worktree remove/prune、创建 PR 等会改写或发布状态的操作仍需要审批。
-
-### 📡 多频道管理
-同时配置和监控多个 AI 频道。每个频道独立运行，允许你为不同任务运行专门的智能体。
-现在每个频道支持多个账号，并可在 Channels 页面直接完成账号绑定到 Agent 与默认账号切换。
-同一页面也会展示频道/账号的私聊、群组与原生审批策略摘要，仅显示模式与计数，不暴露白名单成员或密钥。
-对于自定义频道账号 ID，Verse Claw 现在会强制校验 OpenClaw 兼容的规范格式（`[a-z0-9_-]`、小写、最长 64 位、且必须以字母或数字开头），避免路由匹配异常。
-Verse Claw 现在还内置了腾讯官方个人微信渠道插件，可直接在 Channels 页面通过内置二维码流程完成微信连接。
-
-### ⏰ 定时任务自动化
-调度 AI 任务自动执行。定义触发器、设置时间间隔，让 AI 智能体 7×24 小时不间断工作。
-现在定时任务页面已经可以直接配置外部投递，统一拆成“发送账号”和“接收目标”两个下拉选择。对于已支持的通道，接收目标会从通道目录能力或已知会话历史中自动发现，不需要再手动修改 `jobs.json`。
-定时任务也可以运行 Agent Browser 自动化：配置 URL、浏览器 profile/auth state、安全策略、成功/失败判定、保守安全步骤重试和诊断项后，就能让网页签到、页面监控、草稿发布等任务通过内部 managed browser 复用持久化登录态，并在失败时展示简洁证据。
-
-**已安排** 页面现在会把 Cron 任务和监督式 Browser 运行投影到同一份紧凑列表中，但不会合并两类后端模型。Cron 继续保留创建、编辑、启停、删除、立即运行、投递配置和运行历史；Browser 运行可执行批准、拒绝、重试和取消，并展示有序步骤、时间及类型化结果或错误证据。窗口宽度为 960px 时，详情会替换列表，不会强行挤出第三栏。Browser Profile 与现有凭据 Vault 统一在 **设置 > Browser** 管理；提交的密码始终由 Main 进程持有，不会回显到渲染进程。
-
-侧边栏底部 `...` 菜单中的 Agent Browser 及旧 `/browser` 路由会打开 Chat 工作区的 Browser Live。浏览器任务归入已安排，配置与 Vault 元数据归入设置 > 浏览器。聊天会在发送前依据真实 transcript 用量执行 token/费用预算门，限制持久化与渲染的工具输出，并在取消或硬超时时中止底层运行。
-
-监督式 Browser 任务会先持久化为“等待授权”，在产生任何浏览器副作用前展示目标、站点、获批域名、模式、权限范围和有序计划。用户显式批准后，Main 进程才会执行有界的导航、等待与点击步骤，并返回类型化的成功或失败判定。该流程不开放无监督浏览或私网访问，凭据仍只以 Main 进程持有的 Vault 引用存在。
-
-Verse Claw 还内置默认启用的只读 Reach Readers 插件，覆盖 Web、RSS、V2EX、雪球、哔哩哔哩、YouTube、GitHub、Twitter 和小红书。平台 API/CLI 始终优先；现有 Agent Browser profile 只作为安全页面兜底或可见登录接力，并且不会向模型暴露 Cookie 或 token。
-
-
-### 🧩 可扩展技能系统
-通过预构建的技能扩展 AI 智能体的能力。集成的 Skills 页面采用“本地优先”方式：会扫描托管目录与 workspace 技能目录，并且无需依赖 Gateway 即可启用或停用技能；在企业扩展接管时，也可以显示扩展提供的 marketplace。
-Verse Claw 还会内置预装完整的文档处理技能（`pdf`、`xlsx`、`docx`、`pptx`），在启动时自动部署到托管技能目录（默认 `~/.openclaw/skills`），并在首次安装时默认启用。额外预装技能（`find-skills`、`self-improving-agent`、`tavily-search`）也会默认启用；若缺少必需的 API Key，OpenClaw 会在运行时给出配置错误提示。
-Skills 页面可展示来自多个 OpenClaw 来源的技能（托管目录、workspace、额外技能目录），并显示每个技能的实际路径，便于直接打开真实安装位置。对于 OpenClaw 自带的 bundled skills，社区版现在在打包产物里只保留并展示 `skill-creator`；开发模式和打包版启动时都会直接清理其它 bundled skill，同时把这些已删除 bundled skill 在 `openclaw.json` 中残留的旧配置一并移除。
-在聊天输入框中，本地优先的能力管理请求（例如启用已发现的技能，或注册粘贴的 MCP JSON）会在发送前被识别，并在确认对话框中展示本地审计结果；只有未被审计阻断的动作才会通过 host API 应用变更，执行结果会作为可信 Verse Claw 元数据注入本次消息。能力编排还会写入一条 `capability-management` Observability trace，记录审计、注册、reload、heartbeat 和工具列表步骤，让安装/注册流程可以和 Agent runtime trace 一起排查。v1 审计是可解释的本地门禁，会检查 Skill 元数据以及 MCP command/URL/env 风险；不会自动下载远程 marketplace 包，也不会执行远程 npm/npx 模板安装。
-
-重点搜索技能所需环境变量：
-- `TAVILY_API_KEY`：用于 `tavily-search`（上游运行时也可能支持 OAuth）
-
-### 🔐 安全的供应商集成
-连接多个 AI 供应商（OpenAI、Anthropic 等），凭证安全存储在系统原生密钥链中。OpenAI 同时支持 API Key 与浏览器 OAuth（Codex 订阅）登录。
-在开发者模式下，独立的“图像生成”页面支持配置 OpenAI 兼容生图端点（Base URL、API Key 和模型名，例如 `gpt-image-2`），生图请求会走专用的 `/v1/images/generations` 服务，聊天仍继续使用正常的 OpenAI Provider。
-如果你通过 **自定义（Custom）Provider** 对接 OpenAI-compatible 网关，可以在 **设置 → AI Providers → 编辑 Provider** 中配置自定义 `User-Agent`，以提高兼容性。
-如果兼容网关的 `/models` 因非鉴权原因不可用，Verse Claw 会在校验 API Key 时自动降级为轻量的 `/chat/completions` 或 `/responses` 探测。
-在 `openclaw.json` 中使用环境变量 SecretRef 配置的 Provider，只要 Verse Claw 进程能够读取该变量且 secret provider 允许，就会被识别为可用；环境变量密钥不会被复制到配置文件。
-
-### 🌙 自适应主题
-支持浅色模式、深色模式或跟随系统主题。Verse Claw 自动适应你的偏好设置。
-
-Windows、macOS 与 Linux 现在都默认启用 UI v2。界面采用与 FakeCoding 对齐的中性灰阶工作面、28-36 px 紧凑控件、黑白反转主操作、无衬线管理页标题和 120-180 ms 克制动效，同时保留各平台原生窗口控件。设置采用独立页面，记住返回路径并恢复焦点。视觉迁移现已完成：旧 `uiVersion=legacy` 链接进入当前界面，Browser/Review 旧链接打开对应工作区面板。各设置分区、Setup 和 Observability 使用紧凑控件，诊断页需要纵向滚动时指标文字仍完整可见。
-
-### 🚀 开机启动控制
-在 **设置 → 通用** 中，你可以开启 **开机自动启动**，让 Verse Claw 在系统登录后自动启动。
-
-### 🔔 更新提示
-Verse Claw 不内置更新检查，也不会连接上游更新源或弹出更新提示。二次分发时请使用你自己的打包发布渠道。
-
----
-
-## 快速上手
-
-### 系统要求
-
-- **操作系统**：macOS 11+、Windows 10+ 或 Linux（Ubuntu 20.04+）
-- **内存**：最低 4GB RAM（推荐 8GB）
-- **存储空间**：1GB 可用磁盘空间
-
-### 安装方式
-
-#### 预构建版本（推荐）
-
-从 [Releases](https://github.com/ValueCell-ai/Verse Claw/releases) 页面下载适用于你平台的最新版本。
-
-#### 从源码构建
-
-```bash
-# 克隆仓库
-git clone https://github.com/ValueCell-ai/Verse Claw.git
-cd Verse Claw
-
-# 初始化项目
+```sh
+git clone https://github.com/Baixu22/VerseClaw.git
+cd VerseClaw
+corepack enable
 pnpm run init
-
-# 以开发模式启动
+pnpm --dir openclaw_runtime install --frozen-lockfile --ignore-scripts
+node node_modules/electron/install.js
 pnpm dev
 ```
-### 首次启动
 
-首次启动 Verse Claw 时，**设置向导** 将引导你完成以下步骤：
+`init` 安装桌面端依赖，并下载 uv 和 agent-browser。依赖构建脚本受到限制，因此单独执行 Electron 安装脚本。`pnpm dev` 会先构建运行时、准备内置技能，再启动 Vite 与 Electron。
 
-1. **语言与区域** – 配置你的首选语言和地区
-2. **AI 供应商** – 通过 API 密钥或 OAuth（支持浏览器/设备登录的供应商）添加账号
-3. **技能包** – 选择适用于常见场景的预配置技能
-4. **验证** – 在进入主界面前测试你的配置
+原生 VerseShell 资源及打包还需要对应源码和工具链，参见[源码与构建契约](resources/verseshell/SOURCE.md)。本仓库以源码开发为入口；分发的安装包以[本仓库 Releases](https://github.com/Baixu22/VerseClaw/releases)为准。
 
-如果系统语言在支持列表中，向导会默认选中该语言；否则回退到英文。
+### 第一次使用
 
-> Moonshot（Kimi）说明：Verse Claw 默认保持开启 Kimi 的 web search。
-> 当配置 Moonshot 后，Verse Claw 也会将 OpenClaw 配置中的 Kimi web search 同步到中国区端点（`https://api.moonshot.cn/v1`）。
+1. 完成初始化，配置受支持的供应商和模型。实际模型调用需要有效认证。
+2. 将可信项目打开为工作区，并明确选择权限模式。
+3. 开始对话，查看工具结果，处理需要确认的操作。
+4. 在知识库的「资料库」与「待复核队列」中管理可复用内容；需要时再配置频道和定时任务。
 
-### 代理设置
+浏览界面和运行许多本地测试不需要付费模型调用。源码开发构建不检查安装包更新；打包版本的更新取决于配置的发布源。
 
-Verse Claw 内置了代理设置，适用于需要通过本地代理客户端访问外网的场景，包括 Electron 本身、OpenClaw Gateway，以及 Telegram 这类频道的联网请求。
+### 常见问题
 
-打开 **设置 → 开发者 → 代理**，配置以下内容：
+- **Gateway 未就绪：** 查看状态和日志，再使用开发者设置中的 OpenClaw Doctor。
+- **供应商或频道不可用：** 检查认证、已启用的插件和代理设置。凭据格式正确不等于已经连通或完成投递。
+- **E2E 提示运行时过期：** 修改运行时后先执行 `pnpm run build:runtime`，不要绕过 freshness 检查。
+- **无头 Linux：** Electron 测试需要显示服务，例如 `xvfb-run -a pnpm run test:e2e`。
 
-- **代理服务器**：所有请求默认使用的代理
-- **绕过规则**：需要直连的主机，使用分号、逗号或换行分隔
-- 在 **开发者模式** 下，还可以单独覆盖：
-  - **HTTP 代理**
-  - **HTTPS 代理**
-  - **ALL_PROXY / SOCKS**
+<a id="development"></a>
+## 开发
 
-本地代理的常见填写示例：
-
-```text
-代理服务器: http://127.0.0.1:7890
-```
-说明：
-
-- 只填写 `host:port` 时，会按 HTTP 代理处理。
-- 高级代理项留空时，会自动回退到“代理服务器”。
-- 保存代理设置后，Electron 网络层会立即重新应用代理，并自动重启 Gateway。
-- 如果启用了 Telegram，Verse Claw 还会把代理同步到 OpenClaw 的 Telegram 频道配置中。
-- 当 Verse Claw 代理处于关闭状态时，Gateway 的常规重启会保留已有的 Telegram 频道代理配置。
-- 如果你要明确清空 OpenClaw 中的 Telegram 代理，请在关闭代理后点一次“保存代理设置”。
-- 在 **设置 → 开发者** 中，可以直接运行 **OpenClaw Doctor**，针对与 Gateway 相同的当前运行时执行诊断，并在应用内查看输出。
-- 在 Windows 打包版本中，内置的 `openclaw` CLI/TUI 会通过随包分发的 `node.exe` 和打包的 `openclaw-runtime` 入口运行，以保证终端输入行为稳定。
-
----
-
-## 系统架构
-
-Verse Claw 采用 **双进程 + Host API 统一接入架构**。渲染进程只调用统一客户端抽象，协议选择与进程生命周期由 Electron 主进程统一管理：
-
-```
-┌───────────────────────────────────────────────────────────────────┐
-│                        Verse Claw 桌面应用                              │
-│                                                                   │
-│  ┌─────────────────────────────────────────────────────────────┐  │
-│  │              Electron 主进程                                 │  │
-│  │  • 窗口与应用生命周期管理                                       │  │
-│  │  • 网关进程监控                                               │  │
-│  │  • 系统集成（托盘、通知、密钥链）                                │  │
-│  │  • 仅保留发布打包                                               │  │
-│  └─────────────────────────────────────────────────────────────┘  │
-│                              │                                    │
-│                              │ IPC (权威控制面)                     │
-│                              ▼                                    │
-│  ┌─────────────────────────────────────────────────────────────┐  │
-│  │              React 渲染进程                                  │  │
-│  │  • 现代组件化 UI（React 19）                                  │  │
-│  │  • Zustand 状态管理                                          │  │
-│  │  • 统一 host-api/api-client 调用                             │  │
-│  │  • Markdown 富文本渲染                                       │  │
-│  └────────────────────────────────────────────────────────────┘  │
-└──────────────────────────────┬───────────────────────────────────┘
-                               │
-                               │ 类型化 IPC 请求
-                               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                  主进程 Host Services 与 Gateway Manager          │
-│                                                                 │
-│  • host:invoke 类型化服务分发                                      │
-│  • 设置、文件、会话、技能、供应商、诊断服务                           │
-│  • 主进程持有 Gateway WebSocket 并负责进程监控                       │
-└──────────────────────────────┬──────────────────────────────────┘
-                               │
-                               │ 主进程持有 WebSocket
-                               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     OpenClaw 网关                                │
-│                                                                 │
-│  • AI 智能体运行时与编排                                           │
-│  • 消息频道管理                                                   │
-│  • 技能/插件执行环境                                               │
-│  • 供应商抽象层                                                   │
-└─────────────────────────────────────────────────────────────────┘
-```
-### 设计原则
-
-- **进程隔离**：AI 运行时在独立进程中运行，确保即使在高负载计算期间 UI 也能保持响应
-- **前端调用单一入口**：渲染层统一走 host-api/api-client，不感知底层协议细节
-- **主进程掌控传输策略**：Gateway WebSocket 只由 Electron Main 持有，渲染进程通过类型化 IPC 调用 Main
-- **扩展 IPC 贡献点**：主进程扩展通过类型化 IPC 注册表贡献 host-api action，而不是挂载 HTTP route
-- **优雅恢复**：内置重连、超时、退避逻辑，自动处理瞬时故障
-- **安全存储**：API 密钥和敏感数据利用操作系统原生的安全存储机制
-- **CORS 安全**：渲染进程不直接请求本地 Gateway 或 Host API HTTP 端点
-
-### 进程模型与 Gateway 排障
-
-- Verse Claw 基于 Electron，**单个应用实例出现多个系统进程是正常现象**（main/renderer/zygote/utility）。
-- 单实例保护同时使用 Electron 自带锁与本地进程文件锁回退机制，可在桌面会话总线异常时避免重复启动。
-- 滚动升级期间若新旧版本混跑，单实例保护仍可能出现不对称行为。为保证稳定性，建议桌面客户端尽量统一升级到同一版本。
-- 但 OpenClaw Gateway 监听应始终保持**单实例**：`127.0.0.1:18789` 只能有一个监听者。
-- Gateway readiness 以 OpenClaw 的 `system-presence`、`health`、`status` 等核心信号为准；memory、Dreams 或频道失败会显示为能力降级，而不是全局 Gateway 故障。
-- 可用以下命令确认监听进程：
-  - macOS/Linux：`lsof -nP -iTCP:18789 -sTCP:LISTEN`
-  - Windows（PowerShell）：`Get-NetTCPConnection -LocalPort 18789 -State Listen`
-- 点击窗口关闭按钮（`X`）默认只是最小化到托盘，并不会完全退出应用。请在托盘菜单中选择 **Quit Verse Claw** 执行完整退出。
-
-### VerseShell 类型化 ACI 受控内测
-
-VerseShell 是仅用于 Windows x64 内部 canary 的可选执行后端，默认关闭，不代表正式发布，也不是原生 shell 的无条件替代。显式开启后，Agent 的 `exec` 调用仍须先通过 OpenClaw allowlist/approval；随后才由已验证的内置 `ae.exe` 在 workspace jail、仓库自有严格策略、唯一 `shell.exec` capability 和一次性动作绑定 approval token 下执行。runtime、protocol、catalog、workspace、capability 或 policy 任一漂移都会失败关闭；governed 路径绝不回退到原生 shell。
-
-内置 runtime 只有在 [`resources/verseshell/source-inputs.json`](resources/verseshell/source-inputs.json) 所记录的对应源码链通过后才会被接受：固定 commit、按序 tracked patches、allowlist 恢复输入、锁定 Rust 全量验证、当前解释器 Python 验证，以及两次 byte-identical Windows 构建。详见 [`SOURCE.md`](resources/verseshell/SOURCE.md)、[`BUILD.md`](resources/verseshell/BUILD.md) 和 [P0-02 证据](docs/dev/verseshell-foundation/P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md)。该 source/build gate 不会开启 canary，也不会改变 default-off rollout 锁。真实 governed approval denial、一次性 token 隔离重试、有界 artifact 恢复和无 native fallback 的 P0-03 工程 probe 记录在 [P0-03 证据](docs/dev/verseshell-foundation/P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md)；该结果不等于 provider-backed canary 或产品批准。
-P1 受监督 ACI 内核进一步记录明确的 `starting`/`handshaking`/`ready`/`backoff`/`stopped`/`failed` 生命周期、host 生成的 request/trace/deadline 关联、有界生命周期错误、显式只读重试和 fail-closed operator kill switch。详见 [P1-01 证据](docs/dev/verseshell-foundation/P1-SUPERVISED-ACI-EVIDENCE-2026-08-14.md)；这仍是工程证据，不会开启 rollout。
-外部 `resources/verseshell-mcp` 兼容包现在是受根 workspace 和 frozen SDK lockfile 管理的独立包；产品 profile 默认 deny，capability 与 pinned runtime vocabulary 对齐，启动强制 strict agent policy，package/runtime/protocol identity 必须匹配。`verseshell_eval` 和 shell 字符串兼容只在 development profile 注册，effectful 兼容工具继续 deferred，兼容 shell 路径只接受显式 argv，也不会成为 ClawX 内部执行通道。详见 [P1-03 证据](docs/dev/verseshell-foundation/P1-MCP-COMPATIBILITY-EVIDENCE-2026-08-14.md)。请继续保持 MCP 兼容、写入、native fallback、canary 和 rollout 默认关闭。
-
-P2-01 只读 facade 现在只把稳定的 `read_file`、`search_content`、`result_query` 接到 host-owned typed ACI 路径。它独立保持 default-off，只有五个 readiness flag 全部显式开启且 kill switch 未触发时才物化。workspace 越界、绝对路径、NUL、无界 query、malformed result handle、过期 artifact 和 owner 漂移都会 fail-closed；cache identity 绑定 workspace、revision、policy、operation 和 args。这只是 engineering evidence，不开启 command profile、写入、canary、enabled by default、generally available 或 product approval。详见 [P2-01 证据](docs/dev/verseshell-foundation/P2-READONLY-FACADE-EVIDENCE-2026-08-14.md)。
-
-P2-02 argv-only command profile 现在把 OpenClaw 审批前的 command analysis 收敛为不可变 host-owned execution plan。普通 test/build/lint/git 命令以 direct argv 执行；pipeline、chain、redirect、heredoc、inline evaluation 和显式解释器保持独立的 terminal-shell 边界。profile（含 `pnpm`/`npm`/`corepack` `exec`/`dlx` runner 透传）由 host 推导，模型不能选择 profile、interpreter、PATH/PATHEXT、policy 或 approval token。Windows `.exe`/`.com` 保持 direct argv，`.cmd`/`.bat` 在经审计的 `cmd.exe` interpreter 下保留 resolved script identity，审批后不再重解析 display command。cwd/env/argv/timeout/output 越界一律 fail-closed，且没有 native/MCP/legacy fallback。这只是 engineering evidence，不开启 diagnostics、写入、canary、enabled by default、generally available 或 product approval。详见 [P2-02 证据](docs/dev/verseshell-foundation/P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md)。
-
-P3 external-write 策略现在会在不可变 command plan 上，把 compiler、script、Git hook、terminal shell 以及其他可能产生副作用的进程命令标记为 external write。既有 OpenClaw exec approval 仍是唯一授权面；静态警告不复制命令文本或凭据。此类进程写入位于 ClawX write journal 之外，`rollbackClaim=false`，也不会被自动回滚。本工程切片不开启写入、canary 流量、default-on、GA 或产品审批。详见 [P3 证据](docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md)。
-
-推荐使用以下保守的 `openclaw.json` 配置：
-
-```json
-{
-  "tools": {
-    "exec": {
-      "host": "verseshell",
-      "security": "allowlist",
-      "ask": "on-miss"
-    }
-  },
-  "runtime": {
-    "verseShellFoundation": {
-      "verifiedRuntime": true,
-      "typedAci": true,
-      "facade": true,
-      "governedExec": true,
-      "artifactResults": true
-    }
-  }
-}
+```mermaid
+flowchart LR
+  UI[React UI] --> API[host-api / api-client]
+  API --> Main[Electron Main]
+  Main --> Gateway[OpenClaw Gateway]
+  Gateway --> Runtime[Agents and tools]
 ```
 
-`tools.exec.host=verseshell` 是由操作员在全局或单个 agent 范围选择的 cohort 配置。配置允许覆盖时，也可用会话指令 `/exec host=verseshell security=allowlist ask=on-miss` 选择同一后端；模型不能在单次调用中选择 VerseShell host。sandbox、node、remote/provider-native 和 elevated 执行继续由原 owner 负责。长输出会返回 `result://sha256/...` handle，Agent 可通过 `verseshell_result` 查询有界片段。handle 和 lineage 由 runtime 负责并绑定内容摘要；artifact 过期、丢失、摘要不匹配或 owner 不匹配时会 fail-closed，截断会返回 retained/omitted bytes 证据而不是静默丢失。请保持 `legacyEval`、`mcpCompatibility` 和 `compatibilityNativeFallback` 关闭。紧急回退时，将 `runtime.verseShellFoundation.killSwitch` 设为 `true`，或设置 `VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1`，然后重启 Gateway。本地工程覆盖不等于真实 cohort、provider usage、ROI、soak 或产品毕业证据。
+Renderer 通过 `host-api` / `api-client` 调用后端。Electron Main 管理后端传输和桌面进程，运行时负责 Agent 执行。具体约束见[通信边界](harness/specs/scenarios/gateway-backend-communication.md)。
 
----
+| 路径 | 内容 |
+| --- | --- |
+| `src/` | React 界面、状态和 Renderer API 入口 |
+| `electron/` | 桌面生命周期、Gateway 管理和 Host 服务 |
+| `shared/` | 类型契约、翻译和能力边界 |
+| `openclaw_runtime/` | 可编辑的运行时与插件源码 |
+| `harness/specs/` | 场景、规则和任务规格 |
+| `tests/` | 桌面端单元、集成和 Electron E2E 测试 |
+| `resources/` | 内置资源与原生组件来源记录 |
 
-## 使用场景
+| 命令 | 用途 |
+| --- | --- |
+| `pnpm dev` | 启动开发应用 |
+| `pnpm run typecheck` | 检查 node、web，并报告测试类型检查结果 |
+| `pnpm exec vitest run tests/unit/rc10-evidence.test.ts` | 运行一个桌面端专项测试文件 |
+| `pnpm test` | 运行配置的桌面端及运行时测试集 |
+| `pnpm run build:vite` | 构建 Renderer 与 Electron |
+| `pnpm run build:runtime` | 构建运行时 |
+| `pnpm run test:e2e` | 构建并运行 Electron E2E |
+| `pnpm contract:check` | 检查 Host API 契约一致性 |
+| `pnpm repo:artifacts:check` | 检查源码与归档边界 |
 
-### 🤖 个人 AI 助手
-配置一个通用 AI 智能体，可以回答问题、撰写邮件、总结文档并协助处理日常任务——全部通过简洁的桌面界面完成。
+修改任务规格涉及的代码前，先运行 `pnpm harness context --spec <task-spec>`。通信改动还需要 `pnpm run comms:replay` 和 `pnpm run comms:compare`。仓库规则与验证要求见 [AGENTS.md](AGENTS.md)。
 
-### 📊 自动化监控
-设置定时智能体来监控新闻动态、追踪价格变动或监听特定事件。结果将推送到你偏好的通知渠道。
+本地 Task Forest 历史、会话交接和生成证据不是新检出的构建前置条件。源码、夹具和精选证据继续跟踪；归档与恢复遵循[保留规则](docs/dev/repository-artifact-retention.md)。
 
-### 💻 开发者效率工具
-将 AI 融入你的开发工作流。使用智能体进行代码审查、生成文档或自动化重复性编码任务。
+<a id="documentation"></a>
+## 文档
 
-### 🔄 工作流自动化
-将多个技能串联起来，创建复杂的自动化流水线。处理数据、转换内容、触发操作——全部通过可视化方式编排。
+- [产品语义与受控预览边界](docs/clawx-product-semantics.md)
+- [持续开发手册](docs/dev/Sustained-Development-Playbook.md)
+- [运行时收敛与验收](docs/dev/unified-agent-system/runtime-convergence/README.md)
+- [知识系统设计](docs/enhancements/knowledge-persistence/README.md)
+- [Agent 编排](docs/multi-agent-orchestration/README.md)
+- [RC-09 预检与 RC-10 证据完整性](docs/dev/pending-worktree-consolidation.md)
+- [安全政策](SECURITY.md)
 
----
+## 贡献与许可证
 
-## 开发指南
+保持修改范围明确，补充相关回归覆盖，并同步面向用户的翻译。不要提交凭据、本地任务历史或生成日志。问题与变更建议请通过本仓库提交。
 
-Task Forest 状态、会话交接和生成的评审输出属于本地开发历史，不再是源码检出的前置条件。稳定测试、固定夹具、门禁配置与精选最终证据仍受版本控制。恢复或退役产物前请阅读[源码保留与归档恢复说明](docs/dev/repository-artifact-retention.md)。
-
-### Runtime Lifecycle Governance（Phase 2，默认关闭）
-
-Runtime Lifecycle Governance 按阶段交付。Phase 0 落地共享基础（`SessionAdmissionRegistry`、`flow_runs` goal-wake SQL CAS、mission fencing、operation-journal primitive）。Phase 1 交付唯一 canonical cleanup finalizer 与 drain 管线。Phase 2 交付 delete operation journal（`cache_entries` 行删除与 `store_committed` 在同一个 per-agent SQLite immediate transaction）、由调用方持久化 `operationId` 驱动的 Electron mirror gate，以及终端 keep-on-leave 与全局 `terminal.list({})`。Phase 3 交付默认关闭的同 Gateway goal wake loop：单个 SQLite immediate arm 事务、run 完全 idle 后持久化 `turnBarrier` ack、仅 mission owner/lead 顶层 turn 可用的 `goal_wait`、`exec(background=true, wait="goal")`，以及进程退出 level-check 唤醒与重复 wake 去重。Phase 4 交付默认关闭的 durable helper 文件协议（`intent.json -> started.json -> exit.json`，位于 `<trusted-root>/background-processes/<runId>/`）、`ProcessRunReconciler` 启动/低频 sweep 恢复、session reset/delete 的 ownerEpoch 失效、runDir 配额/TTL/redaction，以及 Windows detached helper 路径；恢复绝不重放命令，`intent` 无 `started` 且无存活 helper 判为 `lost`。Phase 5 扩展 `SessionActivity` 只读模型，新增 goal、process、lineage 投影，数据只来自现有只读 probe（`mission_runs`、goal-wake `flow_runs`/`task_runs`、bash process registry、supervisor snapshot、subagent lineage）。Electron 服务仅转发并做类型化聚合，Chat 会话状态面板经 `react-i18next` 与现有 design token 渲染新状态，不新增任何生命周期按钮或删除/恢复入口；只读投影测试报告 `activitySnapshotWriteFindings=0`。审计保持 `armTxCount=1`、`processPollToolCalls=0`，Phase 4 增加 `secretPersistenceFindings=0`；普通 Chat 与默认 `background=true` 行为不变。Phase 6 完成 evidence-only 生产收尾：`audit-0.json` 至 `audit-6.json` 全部通过 `pnpm run runtime-lifecycle-audit --phase all`；已删除 superseded 阶段临时提示词，closeout 记录于 `docs/dev/handoffs/LATEST.md` 与 task-forest `TF-0077`，后续想法保留在 `future-work.json`。2026-08-19 的 GA hardening 补齐 packaged Electron durable-helper 验证与 10 周期真实进程 goal-wake canary；RLG-only 验收现为无条件 PASS，goal-wake/durable-helper 默认关闭与全部产品锁保持不变。详见 `docs/dev/runtime-lifecycle-governance/README.zh-CN.md`、`artifacts/runtime-lifecycle-governance/audit-6.json` 与 `artifacts/runtime-lifecycle-governance/ga-acceptance.json`。
-
-### 前置要求
-
-- **Node.js**：22+（推荐 LTS 版本）
-- **包管理器**：pnpm 9+（推荐）或 npm
-- **Linux（Ubuntu/Debian）**：运行 Electron 前，请先安装所需系统库：
-  ```bash
-  sudo apt-get install -y libnss3 libgtk-3-0 libxss1 libxtst6 libatspi2.0-0 libnotify4 xdg-utils
-  ```
-  在 Ubuntu 24.04+ 上，部分软件包使用 `t64` 后缀，运行上述命令后 `apt` 会自动选择正确版本。
-
-### 项目结构
-
-```Verse Claw/
-├── electron/                 # Electron 主进程
-│   ├── services/            # 类型化 Host API、Provider、Secrets 与运行时服务
-│   │   ├── providers/       # Provider/account 模型同步逻辑
-│   │   └── secrets/         # 系统钥匙串与密钥存储
-│   ├── shared/              # 共享 Provider schema/常量
-│   │   └── providers/
-│   ├── main/                # 应用入口、窗口、IPC 注册
-│   ├── gateway/             # OpenClaw 网关进程管理
-│   ├── preload/             # 安全 IPC 桥接
-│   └── utils/               # 工具模块（存储、认证、路径）
-├── src/                      # React 渲染进程
-│   ├── lib/                 # 前端统一 API 与错误模型
-│   ├── stores/              # Zustand 状态仓库（settings/chat/gateway）
-│   ├── components/          # 可复用 UI 组件
-│   ├── pages/               # Setup/Dashboard/Chat/Billing/Channels/Skills/Cron/Settings
-│   ├── i18n/                # 国际化资源
-│   └── types/               # TypeScript 类型定义
-├── tests/
-│   ├── e2e/                 # Playwright Electron 端到端冒烟测试
-│   └── unit/                # Vitest 单元/集成型测试
-├── resources/                # 静态资源（图标、图片）
-└── scripts/                  # 构建与工具脚本
-```
-### 常用命令
-
-```bash
-# 开发
-pnpm run init             # 安装依赖并下载捆绑二进制（uv、agent-browser）
-pnpm dev                  # 以热重载模式启动（若缺失会自动准备预装技能包）
-
-# 代码质量
-pnpm lint                 # 运行 ESLint 检查
-pnpm run lint:check       # 不自动修复；要求零错误、最多 120 条警告
-pnpm typecheck            # 固定版本 tsgo：未缓存 node/web 检查及测试类型观测
-
-# 测试
-pnpm test                 # 运行单元测试
-pnpm run test:channel-startup  # channel 配置、sidecar、IRC 快回归
-pnpm run check:rc10:dev       # RC-10 定向开发检查；冻结候选后才跑全量验收
-pnpm run test:e2e:run tests/e2e/rc10-operator-live.spec.ts --workers=1  # 五个真实 RC-10 场景；复用新构建
-pnpm run test:e2e         # 构建并运行全量 Electron E2E
-pnpm run test:e2e:headed  # 以可见窗口运行 Electron E2E 测试
-pnpm run comms:replay     # 计算通信回放指标
-pnpm run comms:baseline   # 刷新通信基线快照
-pnpm run comms:compare    # 将回放指标与基线阈值对比
-
-# Agent harness
-pnpm harness context --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
-pnpm harness validate --spec harness/specs/tasks/connect-clawx-to-openclaw-runtime.md
-# 场景基线扫描跨任务变更；任务规格仍严格校验文件归属。
-# 任务校验即使不传 --since 也检查差异；--no-diff 仅用于示例结构检查。
-pnpm harness run --spec harness/specs/scenarios/gateway-backend-communication.md --dry-run
-
-# Agent dev/test control plane
-pnpm agent-dev:make <page|e2e|host-route|skill|channel|plugin|scenario> my-scenario
-# scenario scaffolds register shared/agent-dev/scenarios.ts and generate snapshot-backed E2E
-pnpm contract:check
-pnpm i18n:lint
-pnpm channel:conformance my-channel
-pnpm agent-dev:workbench
-pnpm agent-dev:promote-scenario artifacts/agent-dev-scenarios/example.scenario.json my-scenario
-pnpm agent-dev:deep-test
-pnpm agent-dev:deep-test:reuse     # 日常循环：复用构建、缓存 typecheck、只跑 Workbench E2E 烟测
-pnpm agent-dev:deep-test:reuse:full  # 复用构建和缓存 typecheck，但运行完整 Agent Dev E2E
-pnpm agent-dev:audit               # 根据现有 evidence 评估 Agent Dev 成熟度
-pnpm agent-dev:audit:report        # 生成同一份审计报告，但不让 shell 失败退出
-pnpm agent-dev:unit:fast           # 日常单测快路径；评审证据仍使用 agent-dev:unit
-pnpm run typecheck:agent-dev       # 并行运行 node+web typecheck 的日常循环
-pnpm run test:e2e:agent-dev-quality:smoke  # 仅 Workbench E2E 冒烟循环
-pnpm run typecheck:cached          # Fingerprint-cached repeat typecheck for local diagnosis
-pnpm run typecheck:force           # Force a fresh uncached typecheck cache refresh
-pnpm agent-dev:validate
-pnpm vtoken:test
-pnpm vtoken:worker
-
-# 构建与打包
-pnpm run build:vite       # 构建渲染层与 Electron bundles
-pnpm build                # 完整生产构建（含打包资源）
-pnpm package              # 为当前平台打包（包含预装技能资源）
-pnpm package:mac          # 为 macOS 打包
-pnpm package:win          # 为 Windows 打包
-pnpm package:linux        # 为 Linux 打包
-```
-
-会话交接从当前 Gateway 读取历史（包括隔离 source runtime 会话），并把有长度限制的近期助手结果作为未核验上下文带入新会话。
-
-Verse Claw 现在会在 active project workspace 和 OpenClaw agent workspace 中播种 `.clawx/harness/` 项目 harness 文档骨架，用 Verse Claw 自有结构承载 rules、scenarios、task contracts、guides、layers、context-pack recipes 和 Task Ledger bridge docs，而不是引入并行的 `.trellis/` 或 Markdown 任务状态事实源。
-
-Agent 编写的页面开发和功能测试可以使用 typed `hostApi.agentDev` 控制面来完成状态种子、`?devScenario=...`、host-api record/replay、诊断快照、transport trace、视觉 preset 和 selector contract。deep-test 报告现在也包含机器可读的 `decision` 和滚动耗时历史 evidence。详见 [`docs/agent-dev-control-plane.md`](docs/agent-dev-control-plane.md)。
-
-在无头 Linux 环境下，Electron 测试需要显示服务；可使用 `xvfb-run -a pnpm run test:e2e`。
-
-### 通信回归检查
-
-当 PR 涉及通信链路（Gateway 事件、Chat 收发流程、Channel 投递、传输回退）时，建议执行：
-
-```bash
-pnpm run comms:replay
-pnpm run comms:compare
-```
-
-CI 中的 `comms-regression` 会校验必选场景与阈值。
-### 技术栈
-
-| 层级 | 技术 |
-|------|------|
-| 运行时 | Electron 40+ |
-| UI 框架 | React 19 + TypeScript |
-| 样式 | Tailwind CSS + shadcn/ui |
-| 状态管理 | Zustand |
-| 构建工具 | Vite + electron-builder |
-| 测试 | Vitest + Playwright |
-| 动画 | Framer Motion |
-| 图标 | Lucide React |
-
----
-
-## 参与贡献
-
-我们欢迎社区的各种贡献！无论是修复 Bug、开发新功能、改进文档还是翻译——每一份贡献都让 Verse Claw 变得更好。
-
-### 如何贡献
-
-1. **Fork** 本仓库
-2. **创建** 功能分支（`git checkout -b feature/amazing-feature`）
-3. **提交** 清晰描述的变更
-4. **推送** 到你的分支
-5. **创建** Pull Request
-
-### 贡献规范
-
-- 遵循现有代码风格（ESLint + Prettier）
-- 为新功能编写测试
-- 按需更新文档
-- 保持提交原子化且描述清晰
-
----
-
-## 致谢
-
-Verse Claw 构建于以下优秀的开源项目之上：
-
-- [OpenClaw](https://github.com/OpenClaw) – AI 智能体运行时
-- [Electron](https://www.electronjs.org/) – 跨平台桌面框架
-- [React](https://react.dev/) – UI 组件库
-- [shadcn/ui](https://ui.shadcn.com/) – 精美设计的组件库
-- [Zustand](https://github.com/pmndrs/zustand) – 轻量级状态管理
-
----
-
-## 社区
-
-加入我们的社区，与其他用户交流、获取帮助、分享你的使用体验。
-
-| 企业微信 | 飞书群组 | Discord |
-| :---: | :---: | :---: |
-| <img src="src/assets/community/wecom-qr.png" width="150" alt="企业微信二维码" /> | <img src="src/assets/community/feishu-qr.png" width="150" alt="飞书二维码" /> | <img src="src/assets/community/20260212-185822.png" width="150" alt="Discord 二维码" /> |
-
-### Verse Claw 合作伙伴计划 🚀
-
-我们正在启动 Verse Claw 合作伙伴计划，寻找能够帮助我们将 Verse Claw 介绍给更多客户的合作伙伴，尤其是那些有定制化 AI 智能体或自动化需求的客户。
-
-合作伙伴负责帮助我们连接潜在用户和项目，Verse Claw 团队则提供完整的技术支持、定制开发与集成服务。
-
-如果你服务的客户对 AI 工具或自动化方案感兴趣，欢迎与我们合作。
-
-欢迎私信我们，或发送邮件至 [public@valuecell.ai](mailto:public@valuecell.ai) 了解更多。
-
----
-
-## Stars 历史
-
-<p align="center">
-  <img src="https://api.star-history.com/svg?repos=ValueCell-ai/Verse Claw&type=Date" alt="Stars 历史图表" />
-</p>
-
----
-
-## 许可证
-
-Verse Claw 基于 [MIT 许可证](LICENSE) 发布。你可以自由地使用、修改和分发本软件。
-
----
-
-<p align="center">
-  <sub>由 ValueCell 团队用 ❤️ 打造</sub>
-</p>
+Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw)，并继承 ValueCell 团队的 ClawX 工作。参见 [MIT 许可证](LICENSE)；内置组件保留各自的许可证和源码声明。
