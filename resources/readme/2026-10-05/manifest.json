@@ -1,0 +1,366 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-05",
+  "driven_by": "agent",
+  "actor": "codex-readme",
+  "baseCommit": "cafe03a5939beac5c3e4e47ef78e8d5f88f86386",
+  "candidate": "working tree with pre-existing changes; not a release candidate",
+  "scope": "README documentation and selected UI states; not full-product acceptance",
+  "imageGeneration": {
+    "skill": "helloianneo/ian-xiaohei-illustrations",
+    "skillRevision": "4102eb807f03bcb6e538a16e8b31b41db8b5b954",
+    "model": "gpt-image-2.5",
+    "reference": "src/assets/logo.png",
+    "credentialStored": false,
+    "finalSize": [
+      1600,
+      900
+    ]
+  },
+  "validation": {
+    "buildViteExitCode": 0,
+    "screenshotTests": [
+      {
+        "language": "en",
+        "exitCode": 0,
+        "stats": {
+          "startTime": "2026-10-05T02:58:35.983Z",
+          "duration": 32315.386,
+          "expected": 1,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      },
+      {
+        "language": "zh",
+        "exitCode": 0,
+        "stats": {
+          "startTime": "2026-10-05T02:47:33.471Z",
+          "duration": 30388.626,
+          "expected": 1,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      }
+    ],
+    "claimTests": {
+      "exitCode": 0,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    "eslintDriverExitCode": 0,
+    "artifactRetentionExitCode": 0,
+    "localLinksChecked": 306,
+    "missingLinks": 0,
+    "readmeAnchorParity": true,
+    "packageCommandsChecked": [
+      "agent-dev:audit",
+      "agent-dev:deep-test",
+      "agent-dev:deep-test:reuse",
+      "agent-dev:fast",
+      "agent-dev:make",
+      "agent-dev:workbench",
+      "build:runtime",
+      "build:vite",
+      "comms:compare",
+      "comms:replay",
+      "contract:check",
+      "dev",
+      "harness",
+      "harness:ci",
+      "i18n:lint",
+      "init",
+      "lint",
+      "lint:check",
+      "package:linux",
+      "package:mac",
+      "package:win",
+      "repo:artifacts:check",
+      "test",
+      "test:e2e",
+      "test:e2e:run",
+      "test:integration",
+      "typecheck"
+    ],
+    "nativeMermaidMatchesSource": true,
+    "svgXmlValid": 2,
+    "preview": {
+      "renderer": "local marked + headless Edge; not live GitHub",
+      "images": 8,
+      "brokenImages": 0,
+      "horizontalOverflow": false
+    },
+    "visualReview": {
+      "reviewer": "codex-readme",
+      "reviewed": true,
+      "screenshots": 8,
+      "illustrations": 2,
+      "mermaidDiagrams": 2
+    }
+  },
+  "knownLimitations": [
+    "No provider credentials or model calls in screenshot runs",
+    "Knowledge vault uninitialized; memory-wiki explicitly enabled",
+    "Empty conversation, task ledger and provider list",
+    "Real host disk warning retained",
+    "Earlier capture attempts failed or were visually rejected; final language cases rerun separately",
+    "GitHub live rendering and full release acceptance not run"
+  ],
+  "captures": [
+    {
+      "driven_by": "agent",
+      "actor": "codex-readme",
+      "version": "0.4.9-alpha.0",
+      "platform": "win32",
+      "capturedAt": "2026-10-05T02:59:07.775Z",
+      "viewport": {
+        "width": 1441,
+        "height": 961
+      },
+      "mocked": false,
+      "gateway": "real-local-process",
+      "memoryWiki": "explicitly enabled in isolated profile",
+      "paidModelCalls": false,
+      "captures": [
+        {
+          "file": "en/chat.png",
+          "route": "/",
+          "state": "Fresh conversation; no model account or messages"
+        },
+        {
+          "file": "en/knowledge.png",
+          "route": "/knowledge",
+          "state": "Empty knowledge library in an isolated profile"
+        },
+        {
+          "file": "en/tasks.png",
+          "route": "/task-ledger",
+          "state": "Task Ledger without user tasks"
+        },
+        {
+          "file": "en/settings.png",
+          "route": "/settings/models",
+          "state": "Model and provider settings without credentials"
+        }
+      ]
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-readme",
+      "version": "0.4.9-alpha.0",
+      "platform": "win32",
+      "capturedAt": "2026-10-05T02:48:03.370Z",
+      "viewport": {
+        "width": 1441,
+        "height": 961
+      },
+      "mocked": false,
+      "gateway": "real-local-process",
+      "memoryWiki": "explicitly enabled in isolated profile",
+      "paidModelCalls": false,
+      "captures": [
+        {
+          "file": "zh/chat.png",
+          "route": "/",
+          "state": "Fresh conversation; no model account or messages"
+        },
+        {
+          "file": "zh/knowledge.png",
+          "route": "/knowledge",
+          "state": "Empty knowledge library in an isolated profile"
+        },
+        {
+          "file": "zh/tasks.png",
+          "route": "/task-ledger",
+          "state": "Task Ledger without user tasks"
+        },
+        {
+          "file": "zh/settings.png",
+          "route": "/settings/models",
+          "state": "Model and provider settings without credentials"
+        }
+      ]
+    }
+  ],
+  "sourceSnapshot": [
+    {
+      "path": "package.json",
+      "sha256": "eb3526ab03a685d26b32c22e8bc1df23ee37aeaa802a2ebb019b0dfc9f7f7c23"
+    },
+    {
+      "path": "src/App.tsx",
+      "sha256": "971d303f8ed562f77c5bf99f2a15a8a5874db7e6ff3864ec9845f7627b584ff0"
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "sha256": "8d060eb3f3d0c3a8f3bc6257f4bc3cce6f71d95e08e511de598e0022413a1bfb"
+    },
+    {
+      "path": "src/lib/host-api-client.ts",
+      "sha256": "0a7f5762bafc7ea6b4c98208c4174bb512b6f797ee76483521e3c21fe33805ee"
+    },
+    {
+      "path": "src/lib/host-events.ts",
+      "sha256": "cb5228a41ad94785acf12a107440f5b6d9488c475145bdf1c8f91c454effb7ad"
+    },
+    {
+      "path": "electron/preload/index.ts",
+      "sha256": "5af39ac9e5672a14393f5bb7b552382ddd21b432a1aeb37d0a367d2cef3b5158"
+    },
+    {
+      "path": "electron/main/ipc/host-invoke.ts",
+      "sha256": "b88a1bc785334d28b3d46163cd01f6e2dd82857e3dcc64fb37bffe9eed15e583"
+    },
+    {
+      "path": "electron/services/chat-api.ts",
+      "sha256": "30c80d514676d8ed6a131e79b2963a4568ac77293320714630e4c071e90a1924"
+    },
+    {
+      "path": "electron/gateway/manager.ts",
+      "sha256": "3ab21482f9d68549f630e5245fcf965edabaeb30a855edad5659042ff6aae52d"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/openclaw.plugin.json",
+      "sha256": "015d5a65061d5ced17cd796e9808d24fc4fa4493b78c5b637ebe469c3a5807d0"
+    },
+    {
+      "path": "tests/e2e/readme-gallery.spec.ts",
+      "sha256": "5e2c2dd558b191b2507bf2245a982813127e15d75de1a9d5ac0fb8b6697acc52"
+    }
+  ],
+  "assets": [
+    {
+      "path": "resources/readme/2026-10-05/architecture.mmd",
+      "bytes": 551,
+      "sha256": "c30ee8806b5c6a3ee522fb8cd88ff01938a43d948c70798de7e233e13b353266"
+    },
+    {
+      "path": "resources/readme/2026-10-05/architecture.svg",
+      "bytes": 11383,
+      "sha256": "ce824e6bdc1539f57f6a649424fa424260722370ad44790bdb3714c3d1851139"
+    },
+    {
+      "path": "resources/readme/2026-10-05/chat-sequence.mmd",
+      "bytes": 698,
+      "sha256": "cc058a02bb795ab1e14bcd84fb2c394bcdae508e62734bdb2256c66d0708bb92"
+    },
+    {
+      "path": "resources/readme/2026-10-05/chat-sequence.svg",
+      "bytes": 9843,
+      "sha256": "c8d2de07e809c55b97e90171b2accd80dd6e7a0c93f86e676c23012108736966"
+    },
+    {
+      "path": "resources/readme/2026-10-05/en/chat.png",
+      "bytes": 448033,
+      "sha256": "941ecba1828841c72033599bd0acc5914c4d7505a417d7ed74112539dec20d6e",
+      "dimensions": {
+        "width": 1441,
+        "height": 961
+      }
+    },
+    {
+      "path": "resources/readme/2026-10-05/en/knowledge.png",
+      "bytes": 54484,
+      "sha256": "63810c510f9c4ed4c7ebd074d15b4909335ce03b30e8abbec2c830e259b45cd9",
+      "dimensions": {
+        "width": 1441,
+        "height": 961
+      }
+    },
+    {
+      "path": "resources/readme/2026-10-05/en/settings.png",
+      "bytes": 78937,
+      "sha256": "ee557f3f4423061fd9ff705c12bc382c4a90930d8c9eb9c589ee8226f5db645f",
+      "dimensions": {
+        "width": 1441,
+        "height": 961
+      }
+    },
+    {
+      "path": "resources/readme/2026-10-05/en/tasks.png",
+      "bytes": 54054,
+      "sha256": "8c703c81f7ef5ea25d75e13e4ec28fb6df7ccdc277527a472e0d8db00e99c0ed",
+      "dimensions": {
+        "width": 1441,
+        "height": 961
+      }
+    },
+    {
+      "path": "resources/readme/2026-10-05/ILLUSTRATION-SKILL-LICENSE.txt",
+      "bytes": 1060,
+      "sha256": "b995a6b845825b06461cbc5d7ace91d05fe0fe6d061e1c17bffc31964d2684aa"
+    },
+    {
+      "path": "resources/readme/2026-10-05/knowledge.webp",
+      "bytes": 84768,
+      "sha256": "107b2f4a3b1053228b55372aef89e088de82dd8c4c887ef5bc6be2d6e1d82ffe",
+      "dimensions": {
+        "width": 1600,
+        "height": 900
+      }
+    },
+    {
+      "path": "resources/readme/2026-10-05/prompts/knowledge.txt",
+      "bytes": 1780,
+      "sha256": "613d2e5856d799842ab8f59b24b906cac5ac27fd085e8a4e039873ed098770cd"
+    },
+    {
+      "path": "resources/readme/2026-10-05/prompts/workflow.txt",
+      "bytes": 1751,
+      "sha256": "f7b00db60c327ca1c02a9a104253c83a938a3ff423641bba0d0e0855dab37206"
+    },
+    {
+      "path": "resources/readme/2026-10-05/README.md",
+      "bytes": 5124,
+      "sha256": "5f2ffd6f8431d2eba4675afa092414f23a2d8725230709f16f0751668172cf46"
+    },
+    {
+      "path": "resources/readme/2026-10-05/workflow.webp",
+      "bytes": 72518,
+      "sha256": "5943b385cfc3e56840c1faf47ccbaa519be338789b8e746a8f341ef1ae001414",
+      "dimensions": {
+        "width": 1600,
+        "height": 900
+      }
+    },
+    {
+      "path": "resources/readme/2026-10-05/zh/chat.png",
+      "bytes": 444330,
+      "sha256": "69f9f97d2a2e049a6094edd87acac2887fda5fde60e9bce3338ccc826de9bb8e",
+      "dimensions": {
+        "width": 1441,
+        "height": 961
+      }
+    },
+    {
+      "path": "resources/readme/2026-10-05/zh/knowledge.png",
+      "bytes": 50226,
+      "sha256": "4ae2a430f0b9f3a56717b9dde5ec85a5f41b2c3986d8f38aefc984456b04c395",
+      "dimensions": {
+        "width": 1441,
+        "height": 961
+      }
+    },
+    {
+      "path": "resources/readme/2026-10-05/zh/settings.png",
+      "bytes": 73386,
+      "sha256": "06ef93f75a92ff974808b0e78a7bd62f48b421da4bb90f5b027070a34d9ddb2a",
+      "dimensions": {
+        "width": 1441,
+        "height": 961
+      }
+    },
+    {
+      "path": "resources/readme/2026-10-05/zh/tasks.png",
+      "bytes": 48831,
+      "sha256": "ffc8b5dd2519934b3ad036a66a2a73a9296bfd30816ee23736d1682f9cb2d190",
+      "dimensions": {
+        "width": 1441,
+        "height": 961
+      }
+    }
+  ]
+}

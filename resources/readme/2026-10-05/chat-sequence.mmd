@@ -1,0 +1,17 @@
+sequenceDiagram
+  participant UI as Chat / store
+  participant HOST as Electron Host
+  participant GW as Gateway
+  participant RUN as Agent runtime
+  participant MODEL as Model provider
+  UI->>HOST: hostApi.chat.sendWithMedia
+  HOST->>HOST: Validate payload / budget / attachments
+  HOST->>GW: chat.send via WebSocket RPC
+  GW->>RUN: Start the selected agent run
+  RUN->>MODEL: Request with configured context
+  MODEL-->>RUN: Response / tool requests
+  RUN->>RUN: Apply tool policy and execute allowed tools
+  RUN-->>GW: Run and tool events
+  GW-->>HOST: Chat / runtime events
+  HOST-->>UI: host-events updates the stores
+  Note over UI,RUN: Sending a request is not proof of successful completion

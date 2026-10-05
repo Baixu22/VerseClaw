@@ -121,6 +121,9 @@ export function findForbiddenClaims(text) {
     if (GA_HARDENING_TEST.test(line)) {
       line = line.replace(GA_HARDENING_PATTERN, '');
     }
+    line = line
+      .replace(/单项工程证据不等于[^。\r\n]*。/g, '')
+      .replace(/タスク単位の証拠は、[^。\r\n]*を許可しません。/g, '');
     for (const claim of FORBIDDEN_CLAIMS) {
       claim.pattern.lastIndex = 0;
       const count = [...line.matchAll(claim.pattern)].length;

@@ -43,6 +43,28 @@ describe('FP-P1-08 first-product claim boundary', () => {
     expect(findForbiddenClaims('Now GA for all users.')).toEqual([{ term: 'ga-abbreviation', line: 1, count: 1 }]);
   });
 
+  it('recognizes translated non-authorization sentences without hiding adjacent claims', () => {
+    const disclaimers = [
+      '单项工程证据不等于产品发布、默认开启或全系统 GA。',
+      'タスク単位の証拠は、製品リリース、既定での有効化、システム全体の GA を許可しません。',
+    ];
+    for (const disclaimer of disclaimers) {
+      expect(findForbiddenClaims(disclaimer)).toEqual([]);
+      expect(findForbiddenClaims(`${disclaimer} Now GA for all users.`)).toEqual([
+        { term: 'ga-abbreviation', line: 1, count: 1 },
+      ]);
+      expect(findForbiddenClaims(`${disclaimer}\nNow GA for all users.`)).toEqual([
+        { term: 'ga-abbreviation', line: 2, count: 1 },
+      ]);
+    }
+    expect(findForbiddenClaims('单项工程证据证明全系统 GA。')).toEqual([
+      { term: 'ga-abbreviation', line: 1, count: 1 },
+    ]);
+    expect(findForbiddenClaims('タスク単位の証拠は、GA を許可します。')).toEqual([
+      { term: 'ga-abbreviation', line: 1, count: 1 },
+    ]);
+  });
+
   it('assigns exactly one canonical label to every controlled-preview component', () => {
     const semantics = readFileSync(join(rootDir, 'docs/clawx-product-semantics.md'), 'utf8');
     const section = semantics.split('<!-- FP-P1-08-COMPONENT-STATUS-START -->')[1]
