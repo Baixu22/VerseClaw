@@ -1,6 +1,6 @@
 {
   "schema": "clawx.agent-dev.quality-report.v1",
-  "generatedAt": "2026-10-04T14:34:47.218Z",
+  "generatedAt": "2026-10-05T14:27:41.136Z",
   "success": true,
   "buildReuse": {
     "mode": "fresh",
@@ -41,7 +41,7 @@
   "e2eMode": "full",
   "build": {
     "ok": true,
-    "durationMs": 38562,
+    "durationMs": 39983,
     "commandLine": "pnpm run build:vite",
     "reused": false,
     "skipped": false,
@@ -49,7 +49,7 @@
   },
   "playwright": {
     "ok": true,
-    "durationMs": 21115,
+    "durationMs": 18891,
     "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
     "spec": "tests/e2e/agent-dev-quality.spec.ts",
     "mode": "full",
@@ -57,23 +57,23 @@
     "diagnostics": {
       "kind": "playwright",
       "passed": 4,
-      "reportedDurationMs": 19500,
+      "reportedDurationMs": 17400,
       "tests": [
         {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
-          "durationMs": 12300
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+          "durationMs": 10000
         },
         {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
-          "durationMs": 10800
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+          "durationMs": 10000
         },
         {
           "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-          "durationMs": 6500
+          "durationMs": 6700
         },
         {
           "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
-          "durationMs": 6000
+          "durationMs": 6200
         }
       ]
     },
