@@ -1,0 +1,11 @@
+flowchart TB
+  UI[React pages and stores] --> API[host-api.ts / host-api-client.ts]
+  API -->|preload hostInvoke / IPC| HOST[Electron Main host dispatcher]
+  HOST --> LOCAL[Workspace / files / terminal / browser]
+  HOST -->|GatewayManager / WebSocket RPC| GW[OpenClaw Gateway]
+  GW --> RUN[Agent runtime / tools / plugins]
+  RUN --> MODEL[Configured model providers]
+  RUN --> DATA[Local files / JSONL / SQLite]
+  GW --> CHANNEL[Channels / scheduled jobs]
+  GW -.->|events through Main and preload| EVENTS[host-events.ts / UI stores]
+  EVENTS -.-> UI
