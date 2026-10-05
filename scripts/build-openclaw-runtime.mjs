@@ -36,6 +36,8 @@ function runNodeScript(scriptPath, args, cwd) {
 }
 
 if (!isTargetedOnlyBuild) {
+  // cliStartup skips asset hooks; desktop packages still ship the plugin viewers.
+  runNodeScript(join(RUNTIME_ROOT, 'scripts', 'bundled-plugin-assets.mjs'), ['--phase', 'build'], RUNTIME_ROOT);
   // The runtime's build profile owns the complete dist graph. In particular,
   // dist-runtime extension wrappers import public artifacts from
   // dist/extensions, so a core-only clean build leaves a non-bootable tree.
@@ -47,6 +49,7 @@ if (!isTargetedOnlyBuild) {
   // postbuild phase. Re-run the idempotent postbuild so declared plugin assets
   // (WASM, workers, templates) are present in the final package tree.
   runNodeScript(join(RUNTIME_ROOT, 'scripts', 'runtime-postbuild.mjs'), [], RUNTIME_ROOT);
+  runNodeScript(join(RUNTIME_ROOT, 'scripts', 'bundled-plugin-assets.mjs'), ['--phase', 'copy'], RUNTIME_ROOT);
   runNodeScript(join(ROOT, 'scripts', 'smoke-openclaw-runtime.mjs'), [], ROOT);
   process.exit(0);
 }
