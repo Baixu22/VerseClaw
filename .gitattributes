@@ -37,3 +37,9 @@ openclaw_runtime/apps/macos/Sources/OpenClaw/HostEnvSecurityPolicy.generated.swi
 
 # Preserve the complete VerseConf delivery bytes used by its SHA-256 manifest.
 openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/** -text
+
+# These historical acceptance blobs are hash-locked CRLF. Preserve their bytes;
+# keep the normal whitespace checks while recognizing the CRLF line endings.
+artifacts/runtime-test-integrity/report.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+artifacts/runtime-test-integrity/credential-scan.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+artifacts/runtime-test-integrity/SHA256SUMS -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

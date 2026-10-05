@@ -110,6 +110,8 @@ describe("exec wait=goal durable helper path", () => {
     const onYield = vi.fn(async () => {});
     const tool = createExecTool({
       host: "gateway",
+      security: "full",
+      ask: "off",
       sessionKey: "agent:exec-durable:main",
       sessionId: "exec-durable-session-1",
       onYield,

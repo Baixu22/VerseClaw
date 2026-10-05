@@ -1,0 +1,920 @@
+{
+  "schema": "runtime-test-integrity/v2",
+  "task": "TF-0253",
+  "generatedAt": "2026-10-05T03:15:12.193392+00:00",
+  "driven_by": "agent",
+  "actor": "codex-tf0253-clean-verifier",
+  "verdict": "accepted",
+  "candidate": {
+    "commit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+    "tree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+    "dirty": false,
+    "baselineCommit": "c4a74ded13985d1ca40f09ad560cf4993e1c5a83",
+    "originHead": "cafe03a5939beac5c3e4e47ef78e8d5f88f86386",
+    "path": "D:\\ClawX-acceptance\\tf0253-20261005",
+    "sourceOwnership": "Inherited working sources are a separate local snapshot commit; TF-0253 is the diff against baselineCommit. No claim that inherited changes are merged to main."
+  },
+  "tests": {
+    "requestedFiles": [
+      "extensions/anthropic/stream-wrappers.test.ts",
+      "extensions/memory-core/src/memory/manager-reindex-state.test.ts",
+      "src/agents/agent-hooks/compaction-addressability.test.ts",
+      "src/agents/agent-hooks/compaction-budget-shadow.test.ts",
+      "src/agents/agent-hooks/compaction-promotion.test.ts",
+      "src/agents/agent-hooks/compaction-safeguard-p6.test.ts",
+      "src/agents/agent-tools.before-tool-call.cancellation.test.ts",
+      "src/agents/bash-tools.exec-host-node-phases.abort.test.ts",
+      "src/agents/bash-tools.exec-host-node.abort.test.ts",
+      "src/agents/goal-wake-runtime.test.ts",
+      "src/agents/harness/selection.compass.test.ts",
+      "src/agents/long-task-control/stage3-working-context.test.ts",
+      "src/agents/mission-control/fenced-tick-wiring.test.ts",
+      "src/agents/openai-transport-stream-responses-input.test.ts",
+      "src/agents/stage1-tool-guard.test.ts",
+      "src/agents/stage4-tool-guard.test.ts",
+      "src/context-engine/source-set.test.ts",
+      "src/gateway/server-methods/session-activity-projection.test.ts",
+      "src/gateway/server-methods/session-lifecycle-consistency.test.ts",
+      "src/gateway/server-methods/session-lifecycle-ledger.test.ts",
+      "src/gateway/server-startup-post-attach.channel-start.test.ts",
+      "src/gateway/session-drain-service.test.ts",
+      "src/gateway/session-ecosystem-reclamation-cycle.test.ts",
+      "src/gateway/session-reset-service.stop.test.ts",
+      "src/gateway/session-reset-service.subagent-stop.test.ts",
+      "src/gateway/trajectory-gateway.test.ts",
+      "src/knowledge/governance-lifecycle.test.ts",
+      "src/knowledge/ks09-surface-report.test.ts",
+      "src/plugin-sdk/provider-stream-shared.test.ts",
+      "test/extension-import-boundaries.test.ts",
+      "test/vitest-extensions-config.test.ts",
+      "test/vitest-unit-paths.test.ts",
+      "test/web-provider-boundary.test.ts",
+      "test/scripts/test-projects.test.ts",
+      "extensions/memory-wiki/src/apply-lifecycle.test.ts"
+    ],
+    "reportedFiles": {
+      "test/extension-import-boundaries.test.ts": 1,
+      "test/web-provider-boundary.test.ts": 1,
+      "src/gateway/server-methods/session-activity-projection.test.ts": 11,
+      "src/gateway/server-methods/session-lifecycle-consistency.test.ts": 5,
+      "src/gateway/server-methods/session-lifecycle-ledger.test.ts": 14,
+      "src/gateway/server-startup-post-attach.channel-start.test.ts": 3,
+      "src/agents/agent-tools.before-tool-call.cancellation.test.ts": 7,
+      "src/agents/bash-tools.exec-host-node-phases.abort.test.ts": 4,
+      "src/agents/bash-tools.exec-host-node.abort.test.ts": 7,
+      "src/agents/goal-wake-runtime.test.ts": 12,
+      "src/agents/openai-transport-stream-responses-input.test.ts": 3,
+      "src/agents/stage1-tool-guard.test.ts": 5,
+      "src/agents/stage4-tool-guard.test.ts": 5,
+      "extensions/anthropic/stream-wrappers.test.ts": 3,
+      "src/gateway/session-drain-service.test.ts": 12,
+      "src/gateway/session-ecosystem-reclamation-cycle.test.ts": 1,
+      "src/gateway/session-reset-service.stop.test.ts": 6,
+      "src/gateway/session-reset-service.subagent-stop.test.ts": 2,
+      "src/gateway/trajectory-gateway.test.ts": 5,
+      "src/agents/agent-hooks/compaction-safeguard-p6.test.ts": 3,
+      "src/agents/harness/selection.compass.test.ts": 10,
+      "src/agents/long-task-control/stage3-working-context.test.ts": 3,
+      "src/agents/mission-control/fenced-tick-wiring.test.ts": 4,
+      "test/vitest-extensions-config.test.ts": 1,
+      "test/vitest-unit-paths.test.ts": 1,
+      "test/scripts/test-projects.test.ts": 5,
+      "src/context-engine/source-set.test.ts": 17,
+      "src/knowledge/governance-lifecycle.test.ts": 14,
+      "src/knowledge/ks09-surface-report.test.ts": 4,
+      "src/plugin-sdk/provider-stream-shared.test.ts": 8,
+      "src/agents/agent-hooks/compaction-addressability.test.ts": 8,
+      "src/agents/agent-hooks/compaction-budget-shadow.test.ts": 6,
+      "src/agents/agent-hooks/compaction-promotion.test.ts": 11,
+      "extensions/memory-wiki/src/apply-lifecycle.test.ts": 6,
+      "extensions/memory-core/src/memory/manager-reindex-state.test.ts": 2
+    },
+    "passed": 210,
+    "failed": 0,
+    "skipped": 0,
+    "missing": []
+  },
+  "gates": {
+    "core-test": {
+      "command": [
+        "node",
+        "scripts/run-tsgo.mjs",
+        "--noEmit",
+        "-p",
+        "test/tsconfig/tsconfig.core.test.json",
+        "--incremental",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 18828,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "extensions-test": {
+      "command": [
+        "node",
+        "scripts/run-tsgo.mjs",
+        "--noEmit",
+        "-p",
+        "test/tsconfig/tsconfig.extensions.test.json",
+        "--incremental",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 14104,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "core-production": {
+      "command": [
+        "node",
+        "scripts/run-tsgo.mjs",
+        "--noEmit",
+        "-p",
+        "tsconfig.core.json",
+        "--incremental",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 16427,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "extensions-production": {
+      "command": [
+        "node",
+        "scripts/run-tsgo.mjs",
+        "--noEmit",
+        "-p",
+        "tsconfig.extensions.json",
+        "--incremental",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 36036,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "regressions": {
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "extensions/anthropic/stream-wrappers.test.ts",
+        "extensions/memory-core/src/memory/manager-reindex-state.test.ts",
+        "src/agents/agent-hooks/compaction-addressability.test.ts",
+        "src/agents/agent-hooks/compaction-budget-shadow.test.ts",
+        "src/agents/agent-hooks/compaction-promotion.test.ts",
+        "src/agents/agent-hooks/compaction-safeguard-p6.test.ts",
+        "src/agents/agent-tools.before-tool-call.cancellation.test.ts",
+        "src/agents/bash-tools.exec-host-node-phases.abort.test.ts",
+        "src/agents/bash-tools.exec-host-node.abort.test.ts",
+        "src/agents/goal-wake-runtime.test.ts",
+        "src/agents/harness/selection.compass.test.ts",
+        "src/agents/long-task-control/stage3-working-context.test.ts",
+        "src/agents/mission-control/fenced-tick-wiring.test.ts",
+        "src/agents/openai-transport-stream-responses-input.test.ts",
+        "src/agents/stage1-tool-guard.test.ts",
+        "src/agents/stage4-tool-guard.test.ts",
+        "src/context-engine/source-set.test.ts",
+        "src/gateway/server-methods/session-activity-projection.test.ts",
+        "src/gateway/server-methods/session-lifecycle-consistency.test.ts",
+        "src/gateway/server-methods/session-lifecycle-ledger.test.ts",
+        "src/gateway/server-startup-post-attach.channel-start.test.ts",
+        "src/gateway/session-drain-service.test.ts",
+        "src/gateway/session-ecosystem-reclamation-cycle.test.ts",
+        "src/gateway/session-reset-service.stop.test.ts",
+        "src/gateway/session-reset-service.subagent-stop.test.ts",
+        "src/gateway/trajectory-gateway.test.ts",
+        "src/knowledge/governance-lifecycle.test.ts",
+        "src/knowledge/ks09-surface-report.test.ts",
+        "src/plugin-sdk/provider-stream-shared.test.ts",
+        "test/extension-import-boundaries.test.ts",
+        "test/vitest-extensions-config.test.ts",
+        "test/vitest-unit-paths.test.ts",
+        "test/web-provider-boundary.test.ts",
+        "test/scripts/test-projects.test.ts",
+        "extensions/memory-wiki/src/apply-lifecycle.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX\\.local\\tf0253\\closeout\\clean-tests.json"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 215026,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "build": {
+      "command": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005",
+      "exitCode": 0,
+      "durationMs": 27309,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "harness-validate": {
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/runtime-test-integrity.md",
+        "--since",
+        "c4a74ded13985d1ca40f09ad560cf4993e1c5a83"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005",
+      "exitCode": 0,
+      "durationMs": 515,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "harness-run": {
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/runtime-test-integrity.md",
+        "--since",
+        "c4a74ded13985d1ca40f09ad560cf4993e1c5a83",
+        "--dry-run"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005",
+      "exitCode": 0,
+      "durationMs": 504,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "comms-replay": {
+      "command": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005",
+      "exitCode": 0,
+      "durationMs": 280,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "comms-compare": {
+      "command": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005",
+      "exitCode": 0,
+      "durationMs": 234,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "retention": {
+      "command": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005",
+      "exitCode": 0,
+      "durationMs": 491,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "explicit-config": {
+      "command": [
+        "node",
+        "scripts/test-projects.mjs",
+        "--config",
+        "test/vitest/vitest.extension-memory.config.ts",
+        "memory-core/src/memory/manager-reindex-state.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX\\.local\\tf0253\\closeout\\explicit-config.json"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 14658,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "directory-selection": {
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "list",
+        "extensions",
+        "--filesOnly",
+        "--json=D:\\ClawX\\.local\\tf0253\\closeout\\extension-files.json"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 13187,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "contract-selection": {
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "list",
+        "--filesOnly",
+        "--project=contracts-channel-surface",
+        "--project=contracts-channel-config",
+        "--project=contracts-channel-registry",
+        "--project=contracts-channel-session",
+        "--json=D:\\ClawX\\.local\\tf0253\\closeout\\contract-files.json"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 12167,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "location-filter": {
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "test/scripts/test-projects.test.ts",
+        "test/scripts/test-projects.test.ts:23",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX\\.local\\tf0253\\closeout\\location-filter.json"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 27581,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "mixed-rejected": {
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "extensions/memory-core/src/memory/manager-reindex-state.test.ts",
+        "extensions/codegraph/runtime.e2e.test.ts",
+        "--maxWorkers=1"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005\\openclaw_runtime",
+      "exitCode": 1,
+      "durationMs": 12632,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "missing-file": {
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "src/context-engine/source-set.test.ts",
+        "src/tf0253-missing.test.ts"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005\\openclaw_runtime",
+      "exitCode": 1,
+      "durationMs": 107,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "zero-selected": {
+      "command": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "extensions/memory-core/src/memory/manager-reindex-state.test.ts",
+        "--project=unit",
+        "--maxWorkers=1"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005\\openclaw_runtime",
+      "exitCode": 1,
+      "durationMs": 13232,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    }
+  },
+  "review": {
+    "command": "python openclaw_runtime/.agents/skills/autoreview/scripts/autoreview --mode branch --base c4a74ded13985d1ca40f09ad560cf4993e1c5a83",
+    "targetCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+    "exitCode": 0,
+    "acceptedFindingsFixed": 9,
+    "result": {
+      "findings": [],
+      "overall_confidence": 0.85,
+      "overall_correctness": "patch is correct",
+      "overall_explanation": "Reviewed the full supplied diff and inspected the runner, project configuration, and installed Vitest CLI contracts. No actionable correctness or security defects were identified. The fixture changes preserve existing assertions, and the isolated preflight checks explicit file selection without changing the test process environment. Tests were not run, as requested."
+    }
+  },
+  "environment": {
+    "pnpm_config_verify_deps_before_run": "false",
+    "reason": "Relocated mirrored dependency layout; prevent pnpm from reinstalling into the frozen candidate. No compiler or test checks disabled.",
+    "OPENCLAW_VITEST_MAX_WORKERS": "1",
+    "dependencyLinksChecked": 9569,
+    "sourceWorkspaceLinks": []
+  },
+  "sourceManifest": [
+    {
+      "file": "openclaw_runtime/extensions/anthropic/stream-wrappers.test.ts",
+      "sha256": "bb9a9726728e32e26e122e2abd6a1b2b771704b5d46e7936a04e1ee00686f568"
+    },
+    {
+      "file": "openclaw_runtime/extensions/memory-core/src/memory/manager-reindex-state.test.ts",
+      "sha256": "b52b66e417ace6bf2e3d3e572cb6fda0935cb0acba028d2ca5f6d05fda0cc9fe"
+    },
+    {
+      "file": "openclaw_runtime/extensions/memory-wiki/runtime-api.ts",
+      "sha256": "9940b9442e0e4ca0d346bec8e28179d9af9d77168a9ddb79655ef31ace0b7800"
+    },
+    {
+      "file": "openclaw_runtime/extensions/memory-wiki/src/apply-lifecycle.test.ts",
+      "sha256": "fdae551e94420390d69ed004ab7109c53220b86a6bddd55b2d0fe54bdd854de9"
+    },
+    {
+      "file": "openclaw_runtime/package.json",
+      "sha256": "ea38921a830a116809c98b43f27c7ca5d73d651d089059ecf905aeaead976cbc"
+    },
+    {
+      "file": "openclaw_runtime/scripts/explicit-test-targets.mjs",
+      "sha256": "5e6fa950e1dff07f3c5ad292ba659050394424348283ef9b3639f113bbd4588d"
+    },
+    {
+      "file": "openclaw_runtime/scripts/run-vitest.mjs",
+      "sha256": "5c35738d48d6e8235bbb5eadc341f155c6a2a126c166fe25a4a59e45aff4b2b4"
+    },
+    {
+      "file": "openclaw_runtime/scripts/test-projects.mjs",
+      "sha256": "3ab6f2e3b6239bc094bf0e057c961a74e88b3d64d0ebe94bb7a69f289c589485"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/agent-hooks/compaction-addressability.test.ts",
+      "sha256": "539eb366731dcdcd2641751a5b2dbfb85565c04c57430c872abcab423ea7e2f4"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/agent-hooks/compaction-budget-shadow.test.ts",
+      "sha256": "835b2b0ddcd050235f730f0cf895405770fa226c1dd4a4a690daa00cec3ccf71"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/agent-hooks/compaction-promotion.test.ts",
+      "sha256": "9439025c41946146290e373832e94cf80dfe4b04a719807a435f4bdf56515037"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/agent-hooks/compaction-safeguard-p6.test.ts",
+      "sha256": "ebb75adbe829d70f72fb6888f88652e31750a8f6846385012ea519355fc35f9b"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/agent-tools.before-tool-call.cancellation.test.ts",
+      "sha256": "ec8e676b2246cc8ea5865a5c3cf682063de0d7720653c02608a6719bef99faf5"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/bash-tools.exec-host-node-phases.abort.test.ts",
+      "sha256": "ee9518876b3df769f951e74b14c26757cd093aeb5d27a6bb20358eb2ea2f2112"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/bash-tools.exec-host-node.abort.test.ts",
+      "sha256": "feb3078fdf3259182cec976c346f6da1aebd008dc6f1fffbfa8d6a3009a93321"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/goal-wake-runtime.test.ts",
+      "sha256": "7190099e42de25df6b282579bbb28e607ba95f556e222cf6a5764f2b2e19e206"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/harness/selection.compass.test.ts",
+      "sha256": "759cd875e243c922b8ae15357f8c9a386a5386f9326f80f7b1fd9e669d2812d8"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/long-task-control/stage3-working-context.test.ts",
+      "sha256": "42d2ca300145c1d1afa07e6838d094717745c0ed2da2a558c6e4587be4cfdb58"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/mission-control/fenced-tick-wiring.test.ts",
+      "sha256": "993b279218fbd92a15eb8e415dc180022eb6e274b255d4335032349f9a3118d0"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/openai-transport-stream-responses-input.test.ts",
+      "sha256": "144b64586108d86fdf7157877a09a3c8a2fcb4ef3fdccd4039eb5537d2f25617"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/stage1-tool-guard.test.ts",
+      "sha256": "03a437e7fb1b4a2e5fce1e7da47066c31a4ce0c65e02ede160920c4a2e80260e"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/stage4-tool-guard.test.ts",
+      "sha256": "ebc747f8f98f2b54e34a67cd5aa8b2ad746ba8841afe856b1784020721719107"
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts",
+      "sha256": "d080a2c0936f740152b31b0e2a75a236fc25b3916fe83514b07293303e3dcb03"
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/source-set.test.ts",
+      "sha256": "ec8ead767bd4e1590e7f1b5606dc0992b871d5b80ccbd4772ec19fa9752f32dd"
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/server-methods/session-activity-projection.test.ts",
+      "sha256": "873ffd0661ebab358c0755ad2873843dab51968fa5c5a80f43d5475232b33a88"
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/server-methods/session-lifecycle-consistency.test.ts",
+      "sha256": "c07f4b85e44e86afd0389d6fc5a587ebd667059c630dff6b9a3f3ba9af53e2af"
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/server-methods/session-lifecycle-ledger.test.ts",
+      "sha256": "931d53f83581bec3125ce78ccf8b88f49f76401fde1b7240090dc90d099c73be"
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/server-startup-post-attach.channel-start.test.ts",
+      "sha256": "4ae097dc273ab0c13c159862d663b194f43ca0785dd07eb1069da853cc50a85a"
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/session-drain-service.test.ts",
+      "sha256": "4ae06ab53230b10b52e08af911afaaa799f60eca43d6031299f19bb46bfbe3fc"
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/session-ecosystem-reclamation-cycle.test.ts",
+      "sha256": "859e595c8256ce4cdd26dbe903a60ccc4408c7a88936665ed2ad87f78803a39f"
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/session-reset-service.stop.test.ts",
+      "sha256": "e559468fc909e53cee428c64802debfbf4c672add5d715a525fdfd70eb8b7913"
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/session-reset-service.subagent-stop.test.ts",
+      "sha256": "6e70ae3fc4497e062a1842ae53e817c9b499efef3fcb7520545071a8cbcfb96a"
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/trajectory-gateway.test.ts",
+      "sha256": "b1cf532852daca7b00ccc132c4dce13e85b1cb08d1cc9e0c1d23008d8ef9afa3"
+    },
+    {
+      "file": "openclaw_runtime/src/knowledge/governance-lifecycle.test.ts",
+      "sha256": "ccd148c4b68c4fc05336f1d5f3eb059e2323fcc4dcc2f800104dacba2e0470f1"
+    },
+    {
+      "file": "openclaw_runtime/src/knowledge/ks09-surface-report.test.ts",
+      "sha256": "2feaa8c5e5aa4caaf0f8e726b85a479653bd42e4d304d6d401316aa9eca48c90"
+    },
+    {
+      "file": "openclaw_runtime/src/plugin-sdk/provider-stream-shared.test.ts",
+      "sha256": "0e72094cbc9ebadb67667db0c56e811c373565796b14fd32a905e0012631a1d7"
+    },
+    {
+      "file": "openclaw_runtime/test/extension-import-boundaries.test.ts",
+      "sha256": "fd5cc434e42b86941e66c9ae61e3f03e49577c5fefcef0d203522ecd1a6175be"
+    },
+    {
+      "file": "openclaw_runtime/test/scripts/test-projects.test.ts",
+      "sha256": "658eebbd6f34dff5d5eec4533552175385736b8d2c46df08c97ba94643fe5584"
+    },
+    {
+      "file": "openclaw_runtime/test/tsconfig/tsconfig.extensions.test.json",
+      "sha256": "40f7a49796afe246d9a197c2f61f6395d7ce54d253476f414f0161a187d85212"
+    },
+    {
+      "file": "openclaw_runtime/test/vitest/vitest.pattern-file.ts",
+      "sha256": "ed4a802d01ab158eb19e7741171e3b84ea224019ba429427f98921a54d9224ef"
+    }
+  ],
+  "developmentEvidence": {
+    "before": {
+      "coreTestExitCode": 2,
+      "coreDiagnostics": 60,
+      "extensionsTestExitCode": 2,
+      "extensionsDiagnostics": 18,
+      "diagnosticsOverlap": true,
+      "defaultRunnerExitCode": 1,
+      "firstRoutingAttempt": {
+        "requestedFiles": 2,
+        "reportedFiles": 1,
+        "passedTests": 17,
+        "accepted": false
+      },
+      "jsonOnlyRegression": {
+        "command": [
+          "node",
+          "scripts/run-vitest.mjs",
+          "run",
+          "extensions/anthropic/stream-wrappers.test.ts",
+          "extensions/memory-core/src/memory/manager-reindex-state.test.ts",
+          "src/agents/agent-hooks/compaction-addressability.test.ts",
+          "src/agents/agent-hooks/compaction-budget-shadow.test.ts",
+          "src/agents/agent-hooks/compaction-promotion.test.ts",
+          "src/agents/agent-hooks/compaction-safeguard-p6.test.ts",
+          "src/agents/agent-tools.before-tool-call.cancellation.test.ts",
+          "src/agents/bash-tools.exec-host-node-phases.abort.test.ts",
+          "src/agents/bash-tools.exec-host-node.abort.test.ts",
+          "src/agents/goal-wake-runtime.test.ts",
+          "src/agents/harness/selection.compass.test.ts",
+          "src/agents/long-task-control/stage3-working-context.test.ts",
+          "src/agents/mission-control/fenced-tick-wiring.test.ts",
+          "src/agents/openai-transport-stream-responses-input.test.ts",
+          "src/agents/stage1-tool-guard.test.ts",
+          "src/agents/stage4-tool-guard.test.ts",
+          "src/context-engine/source-set.test.ts",
+          "src/gateway/server-methods/session-activity-projection.test.ts",
+          "src/gateway/server-methods/session-lifecycle-consistency.test.ts",
+          "src/gateway/server-methods/session-lifecycle-ledger.test.ts",
+          "src/gateway/server-startup-post-attach.channel-start.test.ts",
+          "src/gateway/session-drain-service.test.ts",
+          "src/gateway/session-ecosystem-reclamation-cycle.test.ts",
+          "src/gateway/session-reset-service.stop.test.ts",
+          "src/gateway/session-reset-service.subagent-stop.test.ts",
+          "src/gateway/trajectory-gateway.test.ts",
+          "src/knowledge/governance-lifecycle.test.ts",
+          "src/knowledge/ks09-surface-report.test.ts",
+          "src/plugin-sdk/provider-stream-shared.test.ts",
+          "test/extension-import-boundaries.test.ts",
+          "test/vitest-extensions-config.test.ts",
+          "test/vitest-unit-paths.test.ts",
+          "test/web-provider-boundary.test.ts",
+          "test/scripts/test-projects.test.ts",
+          "--maxWorkers=1",
+          "--reporter=json",
+          "--outputFile=${WORKSPACE}\\.local\\tf0253\\regressions.json"
+        ],
+        "exitCode": 1,
+        "durationMs": 134420,
+        "driven_by": "agent",
+        "actor": "codex-tf0253",
+        "log": "${WORKSPACE}\\.local\\tf0253\\regressions.log"
+      },
+      "boundaryRegression": {
+        "passed": 201,
+        "failed": 1,
+        "files": 34
+      }
+    },
+    "reportRecovery": ".local/tf0253/closeout/development-report.json"
+  },
+  "repositoryResidual": {
+    "harnessCi": {
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "harness:ci"
+      ],
+      "cwd": "D:\\ClawX-acceptance\\tf0253-20261005",
+      "exitCode": 1,
+      "durationMs": 14719,
+      "candidateCommit": "b1a67d01d8eb07764ee9fa4a1c3842395a4e3e22",
+      "candidateTree": "a49aa4cba5d768aa89826e73670df11f39eed6e7",
+      "dirtyBefore": false,
+      "dirtyAfter": false,
+      "driven_by": "agent",
+      "actor": "codex-tf0253-clean-verifier"
+    },
+    "unitFiles": 2,
+    "unitTestsPassed": 47,
+    "catalogs": "passed",
+    "remaining": "Agent Dev audit reports four inherited evidence files older than root package.json. No timestamp, ignore, or threshold changed."
+  },
+  "limitations": [
+    "Local clean acceptance branch only; main working changes preserved, no merge/push/publication.",
+    "No full desktop/Electron, installer or paid-model acceptance; no product lock or default change."
+  ],
+  "localRecovery": ".local/tf0253/closeout/ and D:/ClawX-acceptance/tf0253-20261005",
+  "localEvidenceManifest": [
+    {
+      "file": ".local/tf0253/closeout/autoreview6.json",
+      "sha256": "a190d928f6b073fe45ab12bf857170b9b93e48c5a79a40948589db31862f94d8"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-tests.json",
+      "sha256": "0c30f4346de93d08b9b952939a8c17ebce25863bd9cea476886cd126d893532d"
+    },
+    {
+      "file": ".local/tf0253/closeout/dependency-link-audit.json",
+      "sha256": "6bfbffa3cd4cda83119f35775d7e7d1a2c6c6cbdd26f1a116f5e2d384d138cab"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-core-test-result.json",
+      "sha256": "edc6cdde5557a0d57a5a1ba64362212877b3ee1bf3964af4ac67cbf57870d0ae"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-extensions-test-result.json",
+      "sha256": "54a69dd6c7cf9a72e0845f5c2f86ccd95c18c7b8c731c56fd910ced5565a6621"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-core-production-result.json",
+      "sha256": "4435092303899352285c6db23812b672493c261d81afa7efaa0ffbbe75710c1e"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-extensions-production-result.json",
+      "sha256": "cf055663402d7a22f180765671ec9e57a48fa6fb71585564cb9da88e6c3e6601"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-regressions-result.json",
+      "sha256": "ad76d4f8fa2806418f5ef843b2cb5b28e68fd6296b1d28cfa02bc7ade6212f8a"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-build-result.json",
+      "sha256": "2cc5e819ee01f64b6657a1ef119a7d1c95480f7d221dc210755bd60ef3008e48"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-harness-validate-result.json",
+      "sha256": "4b565b96672dbf09ac53a6d789b26ded28fd2ff3e7c93049097dddb99d3ece80"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-harness-run-result.json",
+      "sha256": "4445e8ddac525f3e666fc4eccc4b8dc6d3b3231685dea6f436af412107d2164f"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-comms-replay-result.json",
+      "sha256": "b455adde52d5ddcb86a317536d8a0d02050cc98a9c9e9db4d6235bea1f647090"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-comms-compare-result.json",
+      "sha256": "3e9fda8cc9c7e8d950e6bb0d4029fa038d8c4c1a092ccd652900da8ee0991fc0"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-retention-result.json",
+      "sha256": "4361b067423d8f492dd59a25b332ed3d6279b090a894bf702cf29f68f2537257"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-explicit-config-result.json",
+      "sha256": "184fd7955be854ad458d13e8bdf236323953ddd082ea8da4c1fe7dcfe5b65fb0"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-directory-selection-result.json",
+      "sha256": "d20034f9306598dbd9bd5e7a8ca75800d5edb94b4563becefc17a7fe3ff2183f"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-contract-selection-result.json",
+      "sha256": "7b52bfab162e6ff30cdb8dd370a6023fbb0157daba8b4bd9321e6eeb73d961e5"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-location-filter-result.json",
+      "sha256": "c54ac5aa9263bc9a485ed00917bdeaa345eae1235c32a0f9120354d60e2b9ce8"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-mixed-rejected-result.json",
+      "sha256": "52455921cfb3269d3dbcaceae4f011b8438d7593af3d41accbfe7bfe244b125e"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-missing-file-result.json",
+      "sha256": "432560851bf6609b19bcb0062866c368da851b692c694f4ced802c296cc61692"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-zero-selected-result.json",
+      "sha256": "980f405d8d502bf066dbb0e56b42b935a54bd1b78baaf91201b20f89a6a8be98"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-harness-ci-result.json",
+      "sha256": "149f955653ddcd6a07da473dcc9fe5a2f372db7bbcd271e62eff7522c95f22e4"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-core-test.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-extensions-test.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-core-production.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-extensions-production.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-regressions.log",
+      "sha256": "505ab79336d25da9a2d51ba9583408b1fe57d702bc6cd90c09ea11216ffdb027"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-build.log",
+      "sha256": "2b0ed3494896b859e34d242b6255db024c6b1b5c79d8f0f3489fc3c11dd470f9"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-harness-validate.log",
+      "sha256": "acb867b68ff5a788ae844b00fb7806d829ce0719c94a6b21afc1e0d88f5f3cbb"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-harness-run.log",
+      "sha256": "a1285ee246d0d4739a522ea9a0605bfa508e7ffce628365d330531032c1b9c1d"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-comms-replay.log",
+      "sha256": "cedd7316945551e281079cd41bf2ce596e4e3fad1ba6911a01f7c42adc75d5c4"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-comms-compare.log",
+      "sha256": "e3008ae0ea7f99811e998dffcb11640bad681061d7016b47e21271a85bf085fc"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-retention.log",
+      "sha256": "e4ec8a2095f971d70e67f1826ecff1a2147a8008be7f74c20e4e90bf2896604c"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-explicit-config.log",
+      "sha256": "0e409a20c6ad803000033aaabf64397b0cffd33834ef67b32d177a4f13d900b6"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-directory-selection.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-contract-selection.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-location-filter.log",
+      "sha256": "0dee5e75c54310e697c7e2545ac4ce253665a89eb50263bc198e8c00421bc693"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-mixed-rejected.log",
+      "sha256": "1ca5e5ca0e3b12cd659aa4c4956f889cd2451a3d332d63caf4172167b35cba3e"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-missing-file.log",
+      "sha256": "a4022b4dd75947bd245533c6346f853643121b3d597b506830983a11aebc294a"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-zero-selected.log",
+      "sha256": "999b9588cb32ffb6c0cf7d71bfb21b74b0490ad8ec72e711de75de7ad96d2816"
+    },
+    {
+      "file": ".local/tf0253/closeout/clean-harness-ci.log",
+      "sha256": "51b1d0709c0980fdc058e90ca481577507f811d457f1d49c1c3a47ccfd90d139"
+    }
+  ]
+}

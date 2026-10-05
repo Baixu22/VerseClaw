@@ -14,7 +14,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { closeOpenClawStateDatabase } from "../state/openclaw-state-db.js";
 import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
@@ -127,7 +127,7 @@ function openAiResponsesTextSse(text = "ok"): string {
 function installTransportSpy(): { captured: CapturedRequest[]; restore: () => void } {
   const captured: CapturedRequest[] = [];
   const original = globalThis.fetch;
-  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+  globalThis.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const request = input instanceof Request ? input : new Request(input, init);
     captured.push({ url: request.url, body: await request.clone().text() });
     return new Response(openAiResponsesTextSse(), {

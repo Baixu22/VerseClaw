@@ -60,6 +60,7 @@ afterEach(() => {
   delete process.env.OPENCLAW_CONFIG_PATH;
   delete process.env.RUNTIME_LIFECYCLE_MISSION_FENCING_ENABLED;
   delete process.env.RUNTIME_LIFECYCLE_GOAL_WAKE_ENABLED;
+  delete process.env.RUNTIME_LIFECYCLE_GOAL_WAKE_TICK_BACKOFF_MS;
   for (const root of tempRoots.splice(0)) {
     try {
       fs.rmSync(root, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 });
@@ -97,6 +98,8 @@ describe("exec wait=goal Phase 3 path", () => {
 
     const tool = createExecTool({
       host: "gateway",
+      security: "full",
+      ask: "off",
       sessionKey: "agent:exec-main:main",
       sessionId: "exec-session-1",
       onYield,
@@ -104,7 +107,7 @@ describe("exec wait=goal Phase 3 path", () => {
     const result = await tool.execute(
       "call-goal",
       {
-        command: `${process.execPath} -e "setTimeout(() => process.exit(0), 80)"`,
+        command: `${process.platform === "win32" ? "& " : ""}"${process.execPath}" -e "setTimeout(() => process.exit(0), 80)"`,
         background: true,
         wait: "goal",
       },
@@ -148,6 +151,8 @@ describe("exec wait=goal Phase 3 path", () => {
   it("wait=goal requires background=true and is default-off without the flag", async () => {
     const tool = createExecTool({
       host: "gateway",
+      security: "full",
+      ask: "off",
       sessionKey: "agent:exec-main:main",
       sessionId: "exec-session-1",
     });
@@ -165,7 +170,7 @@ describe("exec wait=goal Phase 3 path", () => {
       tool.execute(
         "call-flag-off",
         {
-          command: `${process.execPath} -e "setTimeout(() => process.exit(0), 50)"`,
+          command: `${process.platform === "win32" ? "& " : ""}"${process.execPath}" -e "setTimeout(() => process.exit(0), 50)"`,
           background: true,
           wait: "goal",
         },
@@ -178,13 +183,15 @@ describe("exec wait=goal Phase 3 path", () => {
   it("exec(background=true) with no wait keeps the Phase 2 running contract", async () => {
     const tool = createExecTool({
       host: "gateway",
+      security: "full",
+      ask: "off",
       sessionKey: "agent:exec-main:main",
       sessionId: "exec-session-1",
     });
     const result = await tool.execute(
       "call-default",
       {
-        command: `${process.execPath} -e "setTimeout(() => process.exit(0), 80)"`,
+        command: `${process.platform === "win32" ? "& " : ""}"${process.execPath}" -e "setTimeout(() => process.exit(0), 80)"`,
         background: true,
       },
       undefined,

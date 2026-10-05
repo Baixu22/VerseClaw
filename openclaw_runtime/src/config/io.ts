@@ -182,7 +182,7 @@ type ConfigHealthState = {
 
 export type ParseConfigJson5Result = { ok: true; parsed: unknown } | { ok: false; error: string };
 export type ConfigWriteResult = { persistedHash: string; persistedConfig: OpenClawConfig };
-const configWritePostCommitRollback = Symbol("configWritePostCommitRollback");
+const configWritePostCommitRollback: unique symbol = Symbol("configWritePostCommitRollback");
 type InternalConfigWriteResult = ConfigWriteResult & {
   [configWritePostCommitRollback]?: () => void;
 };
