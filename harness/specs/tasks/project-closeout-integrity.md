@@ -30,6 +30,8 @@ touchedAreas:
   - .gitattributes
   - .gitignore
   - scripts/typecheck-agent-dev.mjs
+  - scripts/build-openclaw-runtime.mjs
+  - tests/unit/sekb-runtime-build-contract.test.ts
   - scripts/repository-artifacts.json
   - tests/unit/typecheck-gate.test.ts
   - openclaw_runtime/src/agents/long-task-control/task-ledger.ts
@@ -81,6 +83,7 @@ touchedAreas:
 requiredTests:
   - pnpm exec vitest run tests/unit/typecheck-gate.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/repository-artifact-retention.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/sekb-runtime-build-contract.test.ts --maxWorkers=1
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/context-engine/rc03-seal-wiring.test.ts src/knowledge/sekb/experience-closed-loop.test.ts src/knowledge/sekb/terminal-trajectory-gating.test.ts --maxWorkers=1
   - pnpm run typecheck
   - pnpm --dir openclaw_runtime exec tsgo --noEmit -p tsconfig.core.json --incremental false
@@ -98,6 +101,7 @@ acceptance:
   - The fixed three-slide PPTX renderer rejects larger outlines explicitly instead of silently dropping records. Markdown remains the full-outline export; arbitrary-length visual pagination is not claimed.
   - Closeout reports distinguish reproduced failures, repaired failures, skips, scope exclusions, and gates not run. A passing build never substitutes for type or functional verification.
   - Declaration checking must retain the existing production and test coverage. Mock signatures and private config rollback types must be nameable without exporting internal rollback authority or changing emitted JavaScript.
+  - Full desktop runtime builds execute existing bundled-plugin asset build hooks before the startup build and copy hooks after the clean build, so the final plugin viewers do not depend on stale local generated files.
 notes:
   - This task follows the owner's explicit 2026-10-04 project closeout request. Existing uncommitted VerseConf and Agent Dev work is preserved; a diff-aware scope failure must be reported rather than hidden with no-diff or blanket residuals.
   - Validation and reproductions are agent-driven. No release, paid calls, default changes, or product graduation is authorized by this task.

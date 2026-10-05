@@ -43,13 +43,17 @@ describe('SEKB runtime build contract', () => {
   it('restores and smoke-checks the SEKB entry after the full runtime clean build', () => {
     const buildSource = readFileSync(buildScriptPath, 'utf8');
     const smokeSource = readFileSync(smokeScriptPath, 'utf8');
+    const assetBuildIndex = buildSource.indexOf("bundled-plugin-assets.mjs'), ['--phase', 'build']");
     const fullBuildIndex = buildSource.indexOf("build-all.mjs'), ['cliStartup']");
     const sekbBuildIndex = buildSource.indexOf("runNodeScript(SCRIPT_PATH, ['--sekb-only'], ROOT)");
+    const assetCopyIndex = buildSource.indexOf("bundled-plugin-assets.mjs'), ['--phase', 'copy']");
     const smokeIndex = buildSource.indexOf("smoke-openclaw-runtime.mjs'), [], ROOT");
 
-    expect(fullBuildIndex).toBeGreaterThanOrEqual(0);
+    expect(assetBuildIndex).toBeGreaterThanOrEqual(0);
+    expect(fullBuildIndex).toBeGreaterThan(assetBuildIndex);
     expect(sekbBuildIndex).toBeGreaterThan(fullBuildIndex);
-    expect(smokeIndex).toBeGreaterThan(sekbBuildIndex);
+    expect(assetCopyIndex).toBeGreaterThan(sekbBuildIndex);
+    expect(smokeIndex).toBeGreaterThan(assetCopyIndex);
     expect(smokeSource).toContain("'knowledge', 'sekb', 'index.js'");
     expect(smokeSource).toContain("'TrajectoryCapture'");
     expect(smokeSource).toContain("'RetrievalEngine'");
