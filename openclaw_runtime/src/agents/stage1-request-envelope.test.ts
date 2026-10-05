@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { normalizeRequestEnvelope } from "../../../shared/types/context-control-plane/artifacts.js";
 import { closeOpenClawStateDatabase } from "../state/openclaw-state-db.js";
@@ -203,7 +203,7 @@ describe("stage1 RequestEnvelope observation", () => {
   it("flag-off and flag-on guarded fetch send identical bytes; wire receipt carries the envelope ref", async () => {
     const bodies: string[] = [];
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    globalThis.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const request = input instanceof Request ? new Request(input, init) : new Request(input, init);
       bodies.push(await request.clone().text());
       return new Response("{}", { status: 200, headers: { "content-type": "application/json" } });
@@ -292,7 +292,7 @@ describe("stage1 RequestEnvelope observation", () => {
   it("diagnoses an unregistered transform at the guarded fetch boundary without changing sent bytes", async () => {
     const bodies: string[] = [];
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    globalThis.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const request = input instanceof Request ? new Request(input, init) : new Request(input, init);
       bodies.push(await request.clone().text());
       return new Response("{}", { status: 200, headers: { "content-type": "application/json" } });

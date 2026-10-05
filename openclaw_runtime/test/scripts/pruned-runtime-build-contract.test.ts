@@ -56,16 +56,22 @@ function loadTsdownEntryMaps(): Record<string, string>[] {
   return JSON.parse(result.stdout) as Record<string, string>[];
 }
 
-function loadUnifiedTsdownAliases(): Record<string, string> {
+function loadUnifiedDiffsEntrypoints(): Record<string, string> {
   const configUrl = pathToFileURL(path.join(runtimeRoot, "tsdown.config.ts")).href;
+  const importerUrl = pathToFileURL(path.join(runtimeRoot, "extensions/diffs/src/render.ts")).href;
   const source = [
     `const imported = await import(${JSON.stringify(configUrl)});`,
     "const configs = Array.isArray(imported.default) ? imported.default : [imported.default];",
-    "console.log(JSON.stringify(configs.at(-1)?.alias ?? {}));",
+    'const unified = configs.find((config) => config.entry?.["extensions/diffs/index"]);',
+    'if (!unified) throw new Error("Unified diffs entry is missing");',
+    'const { fileURLToPath } = await import("node:url");',
+    `const importer = ${JSON.stringify(importerUrl)};`,
+    'const specifiers = ["@pierre/diffs", "@pierre/diffs/ssr"];',
+    "console.log(JSON.stringify(Object.fromEntries(specifiers.map((specifier) => [specifier, unified.alias?.[specifier] ?? fileURLToPath(import.meta.resolve(specifier, importer))]))));",
   ].join("\n");
   const result = spawnSync(
     process.execPath,
-    ["--experimental-strip-types", "--input-type=module", "--eval", source],
+    ["--experimental-strip-types", "--experimental-import-meta-resolve", "--input-type=module", "--eval", source],
     { cwd: runtimeRoot, encoding: "utf8" },
   );
   expect(result.status, result.stderr).toBe(0);
@@ -137,16 +143,9 @@ describe("pruned runtime build contract", () => {
     expect(result.status, result.stderr).toBe(0);
   });
 
-  it("pins the unified plugin build to the retained Pierre Diffs version", () => {
-    const aliases = loadUnifiedTsdownAliases();
-    const packageRoot = path.resolve(
-      runtimeRoot,
-      "node_modules",
-      ".pnpm",
-      "node_modules",
-      "@pierre",
-      "diffs",
-    );
+  it("resolves the unified plugin build to the retained Pierre Diffs version", () => {
+    const aliases = loadUnifiedDiffsEntrypoints();
+    const packageRoot = path.resolve(path.dirname(aliases["@pierre/diffs"]!), "..");
 
     expect(aliases).toMatchObject({
       "@pierre/diffs/ssr": path.join(packageRoot, "dist", "ssr", "index.js"),

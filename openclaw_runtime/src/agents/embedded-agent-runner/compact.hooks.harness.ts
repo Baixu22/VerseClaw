@@ -104,7 +104,7 @@ function createMockCompactionSession() {
     sessionId: "session-1",
     messages: sessionMessages.map((message) => structuredClone(message)),
     agent: {
-      streamFn: vi.fn(),
+      streamFn: vi.fn<(model?: unknown, context?: unknown, options?: unknown) => unknown>(),
       transport: "sse",
       state: {
         get messages() {
@@ -120,12 +120,12 @@ function createMockCompactionSession() {
       session.messages.splice(1);
       return await sessionCompactImpl();
     }),
-    setActiveToolsByName: vi.fn(),
+    setActiveToolsByName: vi.fn<(names: string[]) => void>(),
     setBaseSystemPrompt: vi.fn((systemPrompt: string) => {
       session.agent.state.systemPrompt = systemPrompt;
     }),
     abortCompaction: sessionAbortCompactionMock,
-    dispose: vi.fn(),
+    dispose: vi.fn<() => void>(),
   };
   return session;
 }
@@ -147,9 +147,9 @@ function createMockToolDefinitions(tools: unknown[] = []) {
 }
 export const createOpenClawCodingToolsMock = vi.fn(() => []);
 export const guardSessionManagerMock = vi.fn(() => ({
-  flushPendingToolResults: vi.fn(),
+  flushPendingToolResults: vi.fn<() => void>(),
 }));
-export const applyAgentCompactionSettingsFromConfigMock = vi.fn();
+export const applyAgentCompactionSettingsFromConfigMock = vi.fn<(params?: unknown) => void>();
 export const createPreparedEmbeddedAgentSettingsManagerMock = vi.fn(() => ({
   getGlobalSettings: vi.fn(() => ({})),
 }));

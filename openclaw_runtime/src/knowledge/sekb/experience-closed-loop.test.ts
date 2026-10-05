@@ -36,7 +36,16 @@ function captureFailedPostgresTrajectories(store: KnowledgeStore): string[] {
       error: "Connection refused while connecting to PostgreSQL",
     },
   ]) {
-    const id = capture.start_trajectory(scenario.intent, "config/db", ["postgresql", "ks05"]);
+    const id = capture.start_trajectory(scenario.intent, "config/db", ["postgresql", "ks05"], {
+      driven_by: "agent",
+      actor: "ks05-test-fixture",
+      runtimeLineage: {
+        schema: "runtime-lineage.v1",
+        sessionId: "session:ks05:source",
+        loopRunId: `run:ks05:source:${ids.length}`,
+        traceId: `trace:ks05:source:${ids.length}`,
+      },
+    });
     capture.log_step(id, "tool.call", { tool: "psql" }, { error: "connection refused" });
     capture.log_step(id, "diagnose", { host: "127.0.0.1" }, { reachable: false });
     capture.finish_trajectory(id, "failure", scenario.error);
@@ -46,7 +55,7 @@ function captureFailedPostgresTrajectories(store: KnowledgeStore): string[] {
 }
 
 describe("KS-05 SEKB experience closed loop", () => {
-  it("runs failure task -> candidate -> human confirm -> fresh recall -> cited/outcome -> archive/delete on real SQLite", () => {
+  it("runs failure task -> candidate -> agent-driven confirmation -> fresh recall -> cited/outcome -> archive/delete on real SQLite", () => {
     const store = createStore();
     const trajectoryIds = captureFailedPostgresTrajectories(store);
 

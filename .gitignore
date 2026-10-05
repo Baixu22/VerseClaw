@@ -323,3 +323,15 @@ openclaw_runtime/_tmp_*
 !artifacts/project-closeout-20261004/
 artifacts/project-closeout-20261004/*
 !artifacts/project-closeout-20261004/report.json
+
+# Retain only the final reports referenced by the runtime integrity and closeout docs.
+!artifacts/runtime-test-integrity/
+artifacts/runtime-test-integrity/*
+!artifacts/runtime-test-integrity/report.json
+!artifacts/runtime-test-integrity/credential-scan.json
+!artifacts/runtime-test-integrity/SHA256SUMS
+!artifacts/project-closeout-20261005/
+artifacts/project-closeout-20261005/*
+!artifacts/project-closeout-20261005/report.json
+!artifacts/project-closeout-20261005/credential-scan.json
+!artifacts/project-closeout-20261005/SHA256SUMS

@@ -128,7 +128,7 @@ function installTransportSpy(replies: (index: number) => Reply): {
 } {
   const captured: CapturedRequest[] = [];
   const original = globalThis.fetch;
-  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+  globalThis.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const request = input instanceof Request ? input : new Request(input, init);
     const index = captured.length;
     captured.push({ url: request.url, body: await request.clone().text() });

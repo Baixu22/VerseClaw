@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ReceiptStore } from '../agents/receipt-store.js';
 import {
@@ -417,7 +417,7 @@ describe('RC-03 production wiring (seal hook at the pre-seal convergence point)'
     const { resolveEmbeddedAgentStreamFn } = await import('../agents/embedded-agent-runner/stream-resolution.js');
     const requestBodies: string[] = [];
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    globalThis.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const request = input instanceof Request ? new Request(input, init) : new Request(input, init);
       requestBodies.push(await request.clone().text());
       return new Response(
