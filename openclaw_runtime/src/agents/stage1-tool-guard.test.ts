@@ -89,7 +89,7 @@ describe("stage1 Tool Guard + EffectReceipt wiring", () => {
       undefined,
     );
     expect(result).toBeDefined();
-    const record = result as Record<string, unknown>;
+    const record = result;
     expect(record.details).toBeDefined();
     expect(fs.readFileSync(path.join(workspace, "sentinel.txt"), "utf8")).toBe("hello stage1");
 
@@ -115,7 +115,7 @@ describe("stage1 Tool Guard + EffectReceipt wiring", () => {
       undefined,
       undefined,
     );
-    const secondRecord = second as Record<string, unknown>;
+    const secondRecord = second;
     const details = secondRecord.details as Record<string, unknown> | undefined;
     expect(details?.status).toBe("blocked");
     expect(fs.readFileSync(path.join(workspace, "dup.txt"), "utf8")).toBe("first");
@@ -152,14 +152,14 @@ describe("stage1 Tool Guard + EffectReceipt wiring", () => {
 
     const active = writeTool();
     const blocked = await active.execute("tool-missing-path", {}, undefined, undefined);
-    const blockedRecord = blocked as Record<string, unknown>;
+    const blockedRecord = blocked;
     expect((blockedRecord.details as Record<string, unknown>)?.status).toBe("blocked");
     expect(new ApprovalLedger(options()).getByIdempotencyKey("stage1:write:tool-missing-path")).toBeUndefined();
   });
 
   it("builds a queryable blocked result", () => {
     const result = buildStage1ToolGuardBlockedResult("grant-missing", "detail");
-    const record = result as unknown as Record<string, unknown>;
+    const record = result;
     expect(record.content).toBeDefined();
     expect(record.details).toBeDefined();
   });

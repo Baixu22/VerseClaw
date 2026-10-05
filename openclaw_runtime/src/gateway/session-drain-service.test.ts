@@ -131,7 +131,7 @@ describe("drainScope Phase 1 contract", () => {
   it("refuses to drain when the admission fence is open", async () => {
     const result = await drainScope(identity(), 100);
     expect(result.ok).toBe(false);
-    expect((result as { ok: false }).reason).toBe("fence-open");
+    expect(result).toMatchObject({ ok: false, reason: "fence-open" });
   });
 
   it("times out fail-closed and leaves the owner record registered", async () => {

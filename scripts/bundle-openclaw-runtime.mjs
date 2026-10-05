@@ -13,7 +13,7 @@
  */
 
 import 'zx/globals';
-import { ELECTRON_MAIN_RUNTIME_PACKAGES } from './openclaw-bundle-config.mjs';
+import { ELECTRON_MAIN_RUNTIME_PACKAGES, isLocalRuntimeArtifact } from './openclaw-bundle-config.mjs';
 
 const ROOT = path.resolve(__dirname, '..');
 const RUNTIME_ROOT = path.join(ROOT, 'openclaw_runtime');
@@ -198,7 +198,8 @@ echo`   Copying runtime source files...`;
 for (const entry of fs.readdirSync(RUNTIME_ROOT, { withFileTypes: true })) {
   if (entry.name === 'node_modules' || entry.name === '.git' ||
       entry.name === 'pnpm-lock.yaml' ||
-      entry.name === '.pnpm-workspace-state-v1.json') continue;
+      entry.name === '.pnpm-workspace-state-v1.json' ||
+      isLocalRuntimeArtifact(entry.name)) continue;
   const src = path.join(RUNTIME_ROOT, entry.name);
   const dest = path.join(OUTPUT, entry.name);
   fs.cpSync(normWin(src), normWin(dest), { recursive: true, dereference: true });

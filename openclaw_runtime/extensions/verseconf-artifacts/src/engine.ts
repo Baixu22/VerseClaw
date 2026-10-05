@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type { SchemaIdentity } from "./types.js";
+import type { ComputeWorker, ComputeProfile, BusinessOutcomeLike } from "../vendor/verseconf/worker/index.mjs";
 
 const RESEARCH_SCHEMA_URLS = [
   new URL("../schemas/research-source.schema.json", import.meta.url),
@@ -26,35 +27,37 @@ export const RESEARCH_SCHEMA_IDENTITY: SchemaIdentity = {
 };
 export const RESEARCH_RECORD_SPEC = { recordsPath: ["records"], idField: "id" } as const;
 
-type ComputeWorkerLike = {
-  call<T>(op: string, request: unknown, options?: { signal?: AbortSignal }): Promise<{ outcome: T }>;
-  dispose(): Promise<unknown>;
-};
-
-type WorkerModule = { createComputeWorker: (options?: { profile?: "default" | "schema-validation"; workerPath?: string }) => ComputeWorkerLike };
-
 type BatchChangeInput = { recordId: string; fieldPath: string[]; op: string; expect?: unknown; value?: unknown };
 type InspectSelector = { recordId: string; fieldPath?: string[] };
-type BusinessOutcomeLike = { ok: boolean; code?: string; message?: string; stage?: string; result?: unknown };
-
-function resolveWorkerPath(): string {
+function resolveDeliveryRoot(): URL {
   const candidates = [
-    new URL("../vendor/verseconf/worker/compute-worker.mjs", import.meta.url),
-    new URL("./vendor/verseconf/worker/compute-worker.mjs", import.meta.url),
+    new URL("../", import.meta.url),
+    new URL("./", import.meta.url),
   ];
-  const workerUrl = candidates.find((candidate) => existsSync(fileURLToPath(candidate)));
-  if (!workerUrl) throw new Error("VerseConf compute-worker.mjs is unavailable");
-  return fileURLToPath(workerUrl);
+  const root = candidates.find((candidate) => existsSync(fileURLToPath(new URL("verseconf-delivery-lock.json", candidate))));
+  if (!root) throw new Error("VerseConf delivery lock is unavailable");
+  return root;
 }
 
-async function loadWorker(options: { profile?: "default" | "schema-validation" } = {}): Promise<ComputeWorkerLike> {
-  const module = await import("../vendor/verseconf/worker/index.mjs") as unknown as WorkerModule;
-  return module.createComputeWorker({ ...options, workerPath: resolveWorkerPath() });
+async function loadWorker(options: { profile?: ComputeProfile } = {}): Promise<ComputeWorker> {
+  const root = resolveDeliveryRoot();
+  const lock = JSON.parse(readFileSync(new URL("verseconf-delivery-lock.json", root), "utf8")) as {
+    packageVersion: string; wasmSha256: string; manifestSha256: string;
+  };
+  const manifestBytes = readFileSync(new URL("vendor/verseconf/delivery-manifest.json", root));
+  if (createHash("sha256").update(manifestBytes).digest("hex") !== lock.manifestSha256) {
+    throw new Error("VerseConf delivery manifest does not match the host lock");
+  }
+  // Runtime import preserves the module's own import.meta.url after the plugin is bundled.
+  // This keeps the upstream availability check and worker paths inside the installed module.
+  const moduleUrl = new URL("vendor/verseconf/worker/index.mjs", root);
+  const module: typeof import("../vendor/verseconf/worker/index.mjs") = await import(moduleUrl.href);
+  return module.createComputeWorker({ ...options, expectedVersion: lock.packageVersion, wasmExpectedSha256: lock.wasmSha256 });
 }
 
 export class VerseConfComputeEngine {
-  private readonly workerPromise: Promise<ComputeWorkerLike>;
-  private readonly schemaWorkerPromise: Promise<ComputeWorkerLike>;
+  private readonly workerPromise: Promise<ComputeWorker>;
+  private readonly schemaWorkerPromise: Promise<ComputeWorker>;
 
   constructor() {
     this.workerPromise = loadWorker();

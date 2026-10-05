@@ -71,7 +71,8 @@ async function xlsx(source: string): Promise<Buffer> {
 }
 
 async function pptx(source: string): Promise<Buffer> {
-  const rows = researchRows(source).slice(0, 3);
+  const rows = researchRows(source);
+  if (rows.length > 3) throw new Error("PPTX export supports at most 3 records; use Markdown for larger outlines");
   const slides = Array.from({ length: 3 }, (_, index) => {
     const row = rows[index];
     return {

@@ -53,6 +53,11 @@ function makeBlockStore(
     queryByEntity: overrides.queryByEntity ??
       vi.fn(async (): Promise<ContextBlock[]> => []),
     invalidate: vi.fn(async () => {}),
+    enumerateBySource: vi.fn(async () => []),
+    enumerateBySession: vi.fn(async () => []),
+    deleteBlock: vi.fn(async () => 0),
+    deleteBySession: vi.fn(async () => ({ deleted: 0, remaining: 0 })),
+    invalidateBySession: vi.fn(async () => 0),
     stats: vi.fn(async () => defaultStats),
   };
 }

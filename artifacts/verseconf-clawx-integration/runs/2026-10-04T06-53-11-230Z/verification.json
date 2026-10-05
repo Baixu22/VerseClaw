@@ -1,0 +1,1588 @@
+{
+  "schema": "verseconf-clawx-integration-verification/v1",
+  "generatedAt": "2026-10-04T06:54:52.663Z",
+  "actor": "agent/verseconf-clawx-verifier",
+  "drivenBy": "agent",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "paidModelCalls": 0,
+  "source": {
+    "pluginManifest": {
+      "id": "verseconf-artifacts",
+      "enabledByDefault": false,
+      "activation": {
+        "onStartup": true
+      },
+      "name": "VerseConf Structured Artifacts",
+      "description": "Bounded research-table and slide-outline artifacts with runtime-owned commits and history.",
+      "contracts": {
+        "tools": [
+          "structured_artifact_create",
+          "structured_artifact_inspect",
+          "structured_artifact_revise",
+          "structured_artifact_record_ops",
+          "structured_artifact_restore",
+          "structured_artifact_history",
+          "structured_artifact_export",
+          "structured_artifact_disable"
+        ]
+      },
+      "toolMetadata": {
+        "structured_artifact_create": {
+          "optional": true
+        },
+        "structured_artifact_inspect": {
+          "optional": true
+        },
+        "structured_artifact_revise": {
+          "optional": true
+        },
+        "structured_artifact_record_ops": {
+          "optional": true
+        },
+        "structured_artifact_restore": {
+          "optional": true
+        },
+        "structured_artifact_history": {
+          "optional": true
+        },
+        "structured_artifact_export": {
+          "optional": true
+        },
+        "structured_artifact_disable": {
+          "optional": true
+        }
+      },
+      "configSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+      }
+    },
+    "package": {
+      "name": "@openclaw/verseconf-artifacts",
+      "version": "2026.10.1",
+      "private": true,
+      "description": "Bounded VerseConf structured artifact consumer for ClawX/OpenClaw.",
+      "type": "module",
+      "dependencies": {
+        "jszip": "3.10.1",
+        "typebox": "1.1.39"
+      },
+      "devDependencies": {
+        "openclaw": "workspace:*",
+        "@openclaw/plugin-sdk": "workspace:*"
+      },
+      "peerDependencies": {
+        "openclaw": ">=2026.6.2"
+      },
+      "peerDependenciesMeta": {
+        "openclaw": {
+          "optional": true
+        }
+      },
+      "openclaw": {
+        "extensions": [
+          "./index.ts"
+        ],
+        "build": {
+          "bundledDist": true,
+          "staticAssets": [
+            {
+              "source": "schemas/research-source.schema.json",
+              "output": "schemas/research-source.schema.json"
+            },
+            {
+              "source": "templates/slide-outline-template.pptx",
+              "output": "templates/slide-outline-template.pptx"
+            },
+            {
+              "source": "vendor/verseconf/LICENSE-APACHE",
+              "output": "vendor/verseconf/LICENSE-APACHE"
+            },
+            {
+              "source": "vendor/verseconf/LICENSE-MIT",
+              "output": "vendor/verseconf/LICENSE-MIT"
+            },
+            {
+              "source": "vendor/verseconf/README.md",
+              "output": "vendor/verseconf/README.md"
+            },
+            {
+              "source": "vendor/verseconf/bin/verseconf-mcp-wasm.mjs",
+              "output": "vendor/verseconf/bin/verseconf-mcp-wasm.mjs"
+            },
+            {
+              "source": "vendor/verseconf/build-manifest.json",
+              "output": "vendor/verseconf/build-manifest.json"
+            },
+            {
+              "source": "vendor/verseconf/delivery-manifest.json",
+              "output": "vendor/verseconf/delivery-manifest.json"
+            },
+            {
+              "source": "vendor/verseconf/dist/index.cjs",
+              "output": "vendor/verseconf/dist/index.cjs"
+            },
+            {
+              "source": "vendor/verseconf/dist/index.d.ts",
+              "output": "vendor/verseconf/dist/index.d.ts"
+            },
+            {
+              "source": "vendor/verseconf/dist/index.mjs",
+              "output": "vendor/verseconf/dist/index.mjs"
+            },
+            {
+              "source": "vendor/verseconf/package.json",
+              "output": "vendor/verseconf/package.json"
+            },
+            {
+              "source": "vendor/verseconf/pkg-web/package.json",
+              "output": "vendor/verseconf/pkg-web/package.json"
+            },
+            {
+              "source": "vendor/verseconf/pkg-web/verseconf_wasm.d.ts",
+              "output": "vendor/verseconf/pkg-web/verseconf_wasm.d.ts"
+            },
+            {
+              "source": "vendor/verseconf/pkg-web/verseconf_wasm.js",
+              "output": "vendor/verseconf/pkg-web/verseconf_wasm.js"
+            },
+            {
+              "source": "vendor/verseconf/pkg-web/verseconf_wasm_bg.wasm",
+              "output": "vendor/verseconf/pkg-web/verseconf_wasm_bg.wasm"
+            },
+            {
+              "source": "vendor/verseconf/pkg-web/verseconf_wasm_bg.wasm.d.ts",
+              "output": "vendor/verseconf/pkg-web/verseconf_wasm_bg.wasm.d.ts"
+            },
+            {
+              "source": "vendor/verseconf/pkg/package.json",
+              "output": "vendor/verseconf/pkg/package.json"
+            },
+            {
+              "source": "vendor/verseconf/pkg/verseconf_wasm.d.ts",
+              "output": "vendor/verseconf/pkg/verseconf_wasm.d.ts"
+            },
+            {
+              "source": "vendor/verseconf/pkg/verseconf_wasm.js",
+              "output": "vendor/verseconf/pkg/verseconf_wasm.js"
+            },
+            {
+              "source": "vendor/verseconf/pkg/verseconf_wasm_bg.wasm",
+              "output": "vendor/verseconf/pkg/verseconf_wasm_bg.wasm"
+            },
+            {
+              "source": "vendor/verseconf/pkg/verseconf_wasm_bg.wasm.d.ts",
+              "output": "vendor/verseconf/pkg/verseconf_wasm_bg.wasm.d.ts"
+            },
+            {
+              "source": "vendor/verseconf/worker/availability.mjs",
+              "output": "vendor/verseconf/worker/availability.mjs"
+            },
+            {
+              "source": "vendor/verseconf/worker/compute-worker.mjs",
+              "output": "vendor/verseconf/worker/compute-worker.mjs"
+            },
+            {
+              "source": "vendor/verseconf/worker/index.d.mts",
+              "output": "vendor/verseconf/worker/index.d.mts"
+            },
+            {
+              "source": "vendor/verseconf/worker/index.d.ts",
+              "output": "vendor/verseconf/worker/index.d.ts"
+            },
+            {
+              "source": "vendor/verseconf/worker/index.mjs",
+              "output": "vendor/verseconf/worker/index.mjs"
+            },
+            {
+              "source": "vendor/verseconf/worker/limits.mjs",
+              "output": "vendor/verseconf/worker/limits.mjs"
+            },
+            {
+              "source": "verseconf-delivery-lock.json",
+              "output": "verseconf-delivery-lock.json"
+            }
+          ]
+        }
+      }
+    },
+    "vendorPackage": {
+      "name": "verseconf",
+      "private": true,
+      "version": "0.3.0-local.08ee33835a9d",
+      "description": "VerseConf 的 JavaScript/WebAssembly 分发：宿主无需 Rust 工具链即可获得配置校验、安全审计与确定性最小改动编辑（未发布到 npm）",
+      "license": "MIT OR Apache-2.0",
+      "author": "VerseConf Contributors",
+      "homepage": "https://github.com/Baixu22/Verse-conf",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/Baixu22/Verse-conf",
+        "directory": "integrations/verseconf-wasm/js-api"
+      },
+      "main": "dist/index.cjs",
+      "module": "dist/index.mjs",
+      "types": "dist/index.d.ts",
+      "exports": {
+        ".": {
+          "types": "./dist/index.d.ts",
+          "import": "./dist/index.mjs",
+          "require": "./dist/index.cjs"
+        },
+        "./worker": {
+          "types": "./worker/index.d.mts",
+          "import": "./worker/index.mjs"
+        },
+        "./web": "./pkg-web/verseconf_wasm.js",
+        "./wasm": "./pkg/verseconf_wasm_bg.wasm",
+        "./package.json": "./package.json"
+      },
+      "bin": {
+        "verseconf-mcp-wasm": "bin/verseconf-mcp-wasm.mjs"
+      },
+      "files": [
+        "LICENSE-MIT",
+        "LICENSE-APACHE",
+        "dist/index.mjs",
+        "dist/index.cjs",
+        "dist/index.d.ts",
+        "pkg/package.json",
+        "pkg/verseconf_wasm.js",
+        "pkg/verseconf_wasm_bg.wasm",
+        "pkg/verseconf_wasm.d.ts",
+        "pkg/verseconf_wasm_bg.wasm.d.ts",
+        "pkg-web/package.json",
+        "pkg-web/verseconf_wasm.js",
+        "pkg-web/verseconf_wasm_bg.wasm",
+        "pkg-web/verseconf_wasm.d.ts",
+        "pkg-web/verseconf_wasm_bg.wasm.d.ts",
+        "bin/verseconf-mcp-wasm.mjs",
+        "worker/index.mjs",
+        "worker/index.d.ts",
+        "worker/compute-worker.mjs",
+        "worker/availability.mjs",
+        "worker/limits.mjs",
+        "worker/index.d.mts",
+        "package.json",
+        "README.md",
+        "build-manifest.json",
+        "delivery-manifest.json"
+      ],
+      "engines": {
+        "node": ">=18"
+      },
+      "keywords": [
+        "config",
+        "configuration",
+        "parser",
+        "wasm",
+        "webassembly",
+        "mcp",
+        "agent",
+        "verseconf"
+      ],
+      "verseconf": {
+        "sourceVersion": "0.3.0",
+        "sourceSha256": "08ee33835a9d2c0a64a4adabc4094b29c3eab24cd89cb3fe91373c98f9be9c0f",
+        "deliveryTargets": [
+          "nodejs",
+          "web"
+        ],
+        "preservesMcp": true
+      }
+    },
+    "buildManifest": {
+      "manifest": "verseconf-node-wasm-build/v1",
+      "builtAt": "2026-10-03T07:19:44.298Z",
+      "deliveryTarget": "node",
+      "deliveredTargets": [
+        {
+          "target": "nodejs",
+          "outDir": "pkg",
+          "delivered": true
+        }
+      ],
+      "repositoryOnlyTargets": [
+        {
+          "target": "web",
+          "outDir": "pkg-web",
+          "delivered": false
+        }
+      ],
+      "package": {
+        "name": "verseconf",
+        "version": "0.3.0"
+      },
+      "toolchain": {
+        "wasmPack": "wasm-pack 0.14.0",
+        "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+        "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+        "wasmBindgenLocked": "0.2.118"
+      },
+      "locked": true,
+      "inputs": {
+        "cargoLockSha256": "eff982192233c4235e38f7ae2da306572abd8c9d068b1f0d28c0c0cfb0e7c646",
+        "cargoLockBytes": 69601,
+        "sourcesSha256": "b536beffe0d7045a9f49b6fba29a9dd5f1a05ebc4dfa2b6d281bcab04fe5168f",
+        "sourceFiles": 15,
+        "covers": [
+          "Cargo.lock",
+          "integrations/verseconf-wasm/Cargo.toml",
+          "integrations/verseconf-wasm/src/**/*.rs",
+          "integrations/verseconf-wasm/tests/**/*.rs",
+          "crates/verseconf-json/src/**/*.rs"
+        ]
+      },
+      "outputs": [
+        {
+          "path": "pkg/verseconf_wasm_bg.wasm",
+          "bytes": 4371659,
+          "sha256": "d4b27977f29e69b682b9323f45021111ab9bc71535417fa340ca61b4bf177dd9"
+        },
+        {
+          "path": "pkg/verseconf_wasm.js",
+          "bytes": 19137,
+          "sha256": "427fe8ebd87c3a7a086245784198ad4b35f93aefa8dd26640bf9cf440e8c1d3d"
+        },
+        {
+          "path": "pkg/verseconf_wasm.d.ts",
+          "bytes": 3833,
+          "sha256": "372b90bda493b9cab25b1008563cdb745a317da96f3b0788551f32eb09362572"
+        },
+        {
+          "path": "pkg-web/verseconf_wasm.js",
+          "bytes": 21663,
+          "sha256": "97289b63317835cbe8cdfa45f509c9f77136fc82289a8388aeb4bdc9ee4cfc15"
+        },
+        {
+          "path": "dist/index.mjs",
+          "bytes": 10450,
+          "sha256": "7a7c6ff23e208565aa511478791297805cc8c2a32790cd1d7b8c3e0272d2a590"
+        },
+        {
+          "path": "dist/index.cjs",
+          "bytes": 12021,
+          "sha256": "c6eebc68c27714a52ffca8fec9536bb89a1095056f88f886372fa9ea09149284"
+        },
+        {
+          "path": "dist/index.d.ts",
+          "bytes": 17380,
+          "sha256": "ac9f7593bfc43b933412e674895f1085215b863b8d9c8e490aa3cdbc61311730"
+        }
+      ],
+      "fingerprintNote": "inputs.sourcesSha256 与 outputs[].sha256 一起回答「这份 wasm 是从哪份源码、用哪个工具链构建的」。"
+    },
+    "deliveryLock": {
+      "deliveryId": "dc62618947b33de7e1774eb4d3afb2f1fea18b9216baf56e2b5bd1252f9f5da2",
+      "packageVersion": "0.3.0-local.08ee33835a9d",
+      "manifestSha256": "b28a5809bb3dcb3ee936a4031a803e32d33f80fe7b541cc0e3efeca74a50fb0f",
+      "wasmSha256": "d4b27977f29e69b682b9323f45021111ab9bc71535417fa340ca61b4bf177dd9"
+    },
+    "deliveryManifest": {
+      "manifest": "verseconf-js-delivery/v1",
+      "deliveryTargets": [
+        "nodejs",
+        "web"
+      ],
+      "preservesMcp": true,
+      "deliveryId": "dc62618947b33de7e1774eb4d3afb2f1fea18b9216baf56e2b5bd1252f9f5da2",
+      "package": {
+        "name": "verseconf",
+        "version": "0.3.0-local.08ee33835a9d",
+        "sourceVersion": "0.3.0"
+      },
+      "source": {
+        "head": "81e480ae1ea36f66c53c40d70feae3b1f77f4e09",
+        "dirty": true,
+        "sha256": "08ee33835a9d2c0a64a4adabc4094b29c3eab24cd89cb3fe91373c98f9be9c0f",
+        "files": [
+          {
+            "path": ".cargo/config.toml",
+            "sha256": "385c051cb31fbee9d75d05758935730e7326b2c6a877e2263464c11c3882dca1"
+          },
+          {
+            "path": "Cargo.lock",
+            "sha256": "eff982192233c4235e38f7ae2da306572abd8c9d068b1f0d28c0c0cfb0e7c646"
+          },
+          {
+            "path": "Cargo.toml",
+            "sha256": "2cfe00a316d25f77f9fd9287958fa3fd47e5236af416264aee06b6d48d437315"
+          },
+          {
+            "path": "crates/verseconf-bench/Cargo.toml",
+            "sha256": "c79fc1ab7b9ed5fdef1d522e37bba7a4a4dcea08a44c5b139927c527ffde1f28"
+          },
+          {
+            "path": "crates/verseconf-bench/src/judge.rs",
+            "sha256": "db4fdcbabc2fd6919325e981f02ca39163684f167ef8770d1ee5f9bdc859962c"
+          },
+          {
+            "path": "crates/verseconf-bench/src/lib.rs",
+            "sha256": "c43d258af04faef2f4df9125d6dddbd0a0c429fa4612dafc9ad744efb5b0f5e9"
+          },
+          {
+            "path": "crates/verseconf-bench/src/main.rs",
+            "sha256": "fd5abf6a344ae2eeba0b95b966516452072f234b64a86906d226cd9b76d60aa4"
+          },
+          {
+            "path": "crates/verseconf-bench/src/report.rs",
+            "sha256": "fc690a44f7d46a22cf38b4bb65b569e5dff8a828c32ebb749004a89b0eba950b"
+          },
+          {
+            "path": "crates/verseconf-bench/src/strategies.rs",
+            "sha256": "7206d08a28a1957d5540aa3d13978b30f40c7cb1a5c4833fb5e70dce3dda48c4"
+          },
+          {
+            "path": "crates/verseconf-cli/Cargo.toml",
+            "sha256": "df41b2419ad06d317c4472acf6ebdd7f1d8a302d419ca451a4f3371b1b7f7531"
+          },
+          {
+            "path": "crates/verseconf-cli/README.en.md",
+            "sha256": "f949d0d0133d9ffc650ab18935d24b9ebe0f73462f7e95d51572b747295307a4"
+          },
+          {
+            "path": "crates/verseconf-cli/README.md",
+            "sha256": "f4dad12e57c2eaa687af798752a84e430bb8158697180ada5704a08511a7679a"
+          },
+          {
+            "path": "crates/verseconf-cli/src/commands/audit.rs",
+            "sha256": "10ebfed27e433003efb94291a0c07ff1402fb604a83293cb4e00b2fff52514b6"
+          },
+          {
+            "path": "crates/verseconf-cli/src/commands/diff.rs",
+            "sha256": "dadf9438d425b1528fcc0f241f33ba3d415e02c5faff9cdaed9dc5247fc84397"
+          },
+          {
+            "path": "crates/verseconf-cli/src/commands/doc.rs",
+            "sha256": "e0819aeb19fdbbb1da002c4044f4adad017e48afc1271156e483db0692d7d76e"
+          },
+          {
+            "path": "crates/verseconf-cli/src/commands/edit.rs",
+            "sha256": "7defce305793156724f1b5732c8e59396b17df230adfa9139082f54023835e35"
+          },
+          {
+            "path": "crates/verseconf-cli/src/commands/env.rs",
+            "sha256": "6dbab52e22cfca570b1d1c7bfd551152c493f10ee78af0f5837aa43960a0bfba"
+          },
+          {
+            "path": "crates/verseconf-cli/src/commands/format.rs",
+            "sha256": "fce5d530508dffb2c1fe513e80733be4afdd98d7697f6a13e094fe471e5e1b6a"
+          },
+          {
+            "path": "crates/verseconf-cli/src/commands/mod.rs",
+            "sha256": "d59febeb0467cf9e40e3a5c70c9e8a33900dc5a76db75b5be43d9443a3659b26"
+          },
+          {
+            "path": "crates/verseconf-cli/src/commands/parse.rs",
+            "sha256": "633cd96ece1ba3262d3d8b3812cf5c112af21f44083c5723b8ee8ce5133e5f83"
+          },
+          {
+            "path": "crates/verseconf-cli/src/commands/schema.rs",
+            "sha256": "039b12cc125f5878de49d311bc6442984b4d24894a628afc1d15ce326a1f76f5"
+          },
+          {
+            "path": "crates/verseconf-cli/src/commands/template.rs",
+            "sha256": "7ad34da3b20f72fc74ed2cdcc8e9b4b9883d81141c72c89c587fbdc5274a3162"
+          },
+          {
+            "path": "crates/verseconf-cli/src/commands/validate.rs",
+            "sha256": "7db0159a94c2ae7ff839b60d70e2bea4b0d7d1e495cae7aef7245f868607fa58"
+          },
+          {
+            "path": "crates/verseconf-cli/src/commands/version.rs",
+            "sha256": "da117007a59be92decbf4d512d4e84f3f8166bcdb6e75cc1f98094b1d8a92a21"
+          },
+          {
+            "path": "crates/verseconf-cli/src/commands/watch.rs",
+            "sha256": "ad136dc7146be905b0898f1e6e29ba64bee360650f9b18937cf0a6fde0170f4c"
+          },
+          {
+            "path": "crates/verseconf-cli/src/main.rs",
+            "sha256": "7a220407f375191257ed2912b62f1733a685f91daad9fa456d0f4f4c423aee3b"
+          },
+          {
+            "path": "crates/verseconf-cli/src/output.rs",
+            "sha256": "aac0ae9045640e99237bf34e984f32100d8f1e01a88a499ce1d789cb599766f7"
+          },
+          {
+            "path": "crates/verseconf-core/Cargo.toml",
+            "sha256": "f50ffd0d1ec79b1d4332d60734aa71ac1b1df36ac10e9874fad22625fdc3ea9d"
+          },
+          {
+            "path": "crates/verseconf-core/README.en.md",
+            "sha256": "a10aa39f222e21dc4d06669ef2d76818bc4423fc179cecc7200687d4b272dbfc"
+          },
+          {
+            "path": "crates/verseconf-core/README.md",
+            "sha256": "675130f7c80bde5a927ad03caa303dd9215e69a5749068b15685ef332c40a856"
+          },
+          {
+            "path": "crates/verseconf-core/examples/deterministic_edit.rs",
+            "sha256": "5440e108e19aee2f9315870277f6626c91ef474246c0cd7fd1f4f39e63dfa88a"
+          },
+          {
+            "path": "crates/verseconf-core/schemas/edit-plan.schema.json",
+            "sha256": "fa5ccafb23cfa719e4bc1e54ea18b754cce1c5000ad88b6cba41a65c189a851e"
+          },
+          {
+            "path": "crates/verseconf-core/src/ast/metadata.rs",
+            "sha256": "73db3ffd28271369cf10421a09e900a1372195741f155aa605f26546cc055091"
+          },
+          {
+            "path": "crates/verseconf-core/src/ast/mod.rs",
+            "sha256": "395f4d87fc4a34821418a98d628f9d28ba9492ee8113c7440bc7d3c9417f1a89"
+          },
+          {
+            "path": "crates/verseconf-core/src/ast/node.rs",
+            "sha256": "b3bf0fc3d9e06bc84d8020035030e8c83e2b099947a6085f3abd45e0860a5840"
+          },
+          {
+            "path": "crates/verseconf-core/src/ast/span.rs",
+            "sha256": "1c6564e3fd1376a782db37fcc152312cbcfbd19f4d909886ec4a52f6f3dcf2eb"
+          },
+          {
+            "path": "crates/verseconf-core/src/ast/value.rs",
+            "sha256": "c00bd402d7d3c5d73ab05eedb0839c9552ce87bc723c2af031cc133c44d6dbe5"
+          },
+          {
+            "path": "crates/verseconf-core/src/edit/apply.rs",
+            "sha256": "ed1d0d72070dbf371fc614563ad18df7bdba2723152778bedb653b2bdbbe792c"
+          },
+          {
+            "path": "crates/verseconf-core/src/edit/guard.rs",
+            "sha256": "68dba645999accda282622b36eb3ef13219b6388f92d7e56693591654250b1d1"
+          },
+          {
+            "path": "crates/verseconf-core/src/edit/mod.rs",
+            "sha256": "7668008ba9894c073b3a17d172445f24eae84eed0628d1a8f4d41e0042a76320"
+          },
+          {
+            "path": "crates/verseconf-core/src/edit/multi_file.rs",
+            "sha256": "f89c69dffd039fdbe44a9afd9fe4c3a436af91b92ad4c6a4a8c706d44d2690db"
+          },
+          {
+            "path": "crates/verseconf-core/src/edit/value.rs",
+            "sha256": "81dc9ef92213655a55db43b5a645508b2a6e3faf2a068e503fd60f32859221b6"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/audit.rs",
+            "sha256": "5e1d91113f732f7f0a3b686a9e36e4b2029e62552f5cbf9fbc893e6df0f26dba"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/cache.rs",
+            "sha256": "ba9fe3e656b8d6ed3d40f1749723499052192534a4e88db6b8d989fda5e496e7"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/diff.rs",
+            "sha256": "359d55bf7edc2a5a9638c522c0eab0dff36fa20f79ca27332babcf9f4ab76268"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/diff_comparator.rs",
+            "sha256": "11354c828f766872905dbff8a2ac490dd917b7b51ed7a0b3af1997b8ef94230e"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/diff_formatter.rs",
+            "sha256": "09e7497f4aa7037641ed382d10403353d7f553ddb655c24b8d1370e5912046d3"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/hot_reload.rs",
+            "sha256": "dc2849f0ecadb4bb7475364e6024da657eeb68adb29d240b4142c29a6653b32a"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/merger.rs",
+            "sha256": "66564b8b4a143a6d2c8689b4fe0a2fb010791ec9760090f8a6a42c7a5ab7b078"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/mod.rs",
+            "sha256": "6586f2aafbb31b228b0be1ff33df7955ed89c2bd6a1e3ad22dbfee8ee4763f60"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/multi_env.rs",
+            "sha256": "0ce2ecec7b6a7f818e23ddf3f1a5725d9824205133ea85065711653a1c486f94"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/perf_cache.rs",
+            "sha256": "46befbb6ffcf365f0d857b651c19adab27a0220da6478f2c214da9cf7a6c074e"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/pretty_printer.rs",
+            "sha256": "fc06616e87aab1e0adc76ebfe45a75b52b93d257de394141b49941374e5483eb"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/reporter.rs",
+            "sha256": "e8efe3036861ade2e71cccb6b2817cc26bd97841fa722aa682c4b3e85e892da1"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/schema_infer.rs",
+            "sha256": "14da56b5de9ab1ecfd95b44bf1b49ac7da79fc9022fd008373123604af11109f"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/template.rs",
+            "sha256": "bbb0011607fdfa0045abe6294df4489ca76b6ba515d334326ecdc4836f799403"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/template_enhanced.rs",
+            "sha256": "3175e4b0e5a70c27a2d1d3b2b8817c0423aca1d6abb93d8508d95edfba0c9e8c"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/template_renderer.rs",
+            "sha256": "7c8fc5c8e432dada1cadf9c13e4d8ffef9dcadc4ce18fc66edeeb05503975755"
+          },
+          {
+            "path": "crates/verseconf-core/src/engine/version_manager.rs",
+            "sha256": "6030dfba9fdb4108a0f3c8f253f54c420ccfd506e79367a963c14ec29702672d"
+          },
+          {
+            "path": "crates/verseconf-core/src/error.rs",
+            "sha256": "0e947e83beea0340af49c7d886664fb7be803eccaeb1479a3c4c8f06616f1551"
+          },
+          {
+            "path": "crates/verseconf-core/src/lexer/context.rs",
+            "sha256": "24a4e82bce5e59370a97cc9f318f8a7221173cdf5d6a077737673d5b899894fa"
+          },
+          {
+            "path": "crates/verseconf-core/src/lexer/error.rs",
+            "sha256": "174f61682045f57f1abd4178df93c1174ea843ad20d15984e931522df3dd0311"
+          },
+          {
+            "path": "crates/verseconf-core/src/lexer/mod.rs",
+            "sha256": "f11f5bd318f78b2859d9c4242a9ff7a115f4c10e87a8fd743dbbe1950ec4e0b8"
+          },
+          {
+            "path": "crates/verseconf-core/src/lexer/token.rs",
+            "sha256": "b4a610aaef5537dcfd7cdc7c307023946ad77ea79ca426ddfe9553d22bb76e72"
+          },
+          {
+            "path": "crates/verseconf-core/src/lib.rs",
+            "sha256": "381c4b0d48bf7d2c8e41f797ddb436e45cbc66d66ea38377f6709ef557d68d20"
+          },
+          {
+            "path": "crates/verseconf-core/src/parser/builder.rs",
+            "sha256": "a64008154fde8edfef0e7a05eb27b35fbe9ffc2b296fbf3431ba4eb43252bf8b"
+          },
+          {
+            "path": "crates/verseconf-core/src/parser/config.rs",
+            "sha256": "720e0e4516be35a309bd38650e604b2b8cc39965f178c8f8a01f1fb163dab55d"
+          },
+          {
+            "path": "crates/verseconf-core/src/parser/error.rs",
+            "sha256": "bb6f9f4d571410dde9b1bc8968abc827cdeed03ba7ae48129badedd703ecb180"
+          },
+          {
+            "path": "crates/verseconf-core/src/parser/mod.rs",
+            "sha256": "734400f9ca1a9021af9cccbaa433048c79ab622b03c5d1f201ee6bd5655cdabc"
+          },
+          {
+            "path": "crates/verseconf-core/src/semantic/advanced_rules.rs",
+            "sha256": "0a1833485cc894f8bdae45eb81042f2dbd064507878a0d092374af97f4b97566"
+          },
+          {
+            "path": "crates/verseconf-core/src/semantic/env_interp.rs",
+            "sha256": "0996165400e2aab624a2922072c42b6d155b7db493c7bdc63e4ebd76c4b0b5b5"
+          },
+          {
+            "path": "crates/verseconf-core/src/semantic/mod.rs",
+            "sha256": "82a10d347c5bfcf4ae6dc9650efe7ed36ee7e0e3a8d7ad43d9d66dc02551ef30"
+          },
+          {
+            "path": "crates/verseconf-core/src/semantic/schema_validator.rs",
+            "sha256": "999d76bd5065ef7ce43d275b11cfe35a944ec2844ba769ce8762c3aef22a6bc5"
+          },
+          {
+            "path": "crates/verseconf-core/src/semantic/validator.rs",
+            "sha256": "00430ad85dae133ff83b8b98a5f2da031acbd5927f222944c145220c47a5692a"
+          },
+          {
+            "path": "crates/verseconf-core/src/source.rs",
+            "sha256": "f6cf14879e519d0e5cfd8a432fe857f5ec40c1e1b618e93f7073ccb781fec760"
+          },
+          {
+            "path": "crates/verseconf-json/Cargo.toml",
+            "sha256": "81f1530ef1c4c9831fecd270446ca435333050c33ea047f39b4f11ca945e2b7f"
+          },
+          {
+            "path": "crates/verseconf-json/README.md",
+            "sha256": "09edf0f0ec4cf432b13c26ee6277855ca61513ad11d2cf935e5e9eb8160dc542"
+          },
+          {
+            "path": "crates/verseconf-json/src/ast_bridge.rs",
+            "sha256": "380582e8d1c260ebb31599b3c90c173a7fc39ab5d648deafb60b7da21212764e"
+          },
+          {
+            "path": "crates/verseconf-json/src/batch_apply.rs",
+            "sha256": "27b99301e6eb8e67af972eab2e746f6f5945f689bc5b72b6bcb465208df4cf11"
+          },
+          {
+            "path": "crates/verseconf-json/src/guard.rs",
+            "sha256": "364b59a2908b7772e361c753b6b44c497d28a02db5a24580eed61fcd14ff739e"
+          },
+          {
+            "path": "crates/verseconf-json/src/json_edit.rs",
+            "sha256": "45f25f9092ac0c66c3ff1f3a2dea85562ae6723b2293e569390f03a73096faba"
+          },
+          {
+            "path": "crates/verseconf-json/src/json_schema.rs",
+            "sha256": "5742ddc6eb0cc3239241a6e5e5d8af41d75e3a991dfe71d1193c16cf27df46fb"
+          },
+          {
+            "path": "crates/verseconf-json/src/lib.rs",
+            "sha256": "ac349d19e03bb7fc464e26ffe1416fa7f764d5a9edc1126a8979f82250c3b4ae"
+          },
+          {
+            "path": "crates/verseconf-json/src/memory_api.rs",
+            "sha256": "359be6b7fe174cfc52958b0c3be892ec79c8678571f9f135a9d72dea350b1bf5"
+          },
+          {
+            "path": "crates/verseconf-json/src/record_locator.rs",
+            "sha256": "79aaef4bb9c04921eccd44c0523dd0555870e153e705bca301d50be4a221763a"
+          },
+          {
+            "path": "crates/verseconf-json/src/trusted_schema.rs",
+            "sha256": "c2ac2f15e332651fc018353032c847495e86d4e0f8052885a933312a354036ee"
+          },
+          {
+            "path": "crates/verseconf-json/tests/batch_apply_fixtures.rs",
+            "sha256": "96113a27cdad1ad095c4853aeec5c97858436bd97aa3e5357baca6efad4ab6f6"
+          },
+          {
+            "path": "crates/verseconf-json/tests/check_write.rs",
+            "sha256": "f05055c503f0ba3087c12818c6c576babb8dc8df0a1479d68a8f77919f0d5d13"
+          },
+          {
+            "path": "crates/verseconf-json/tests/fidelity.rs",
+            "sha256": "6f09cb48c7e0c093051f290335d2f07c7bd046482846107ab9be43838c5fec8b"
+          },
+          {
+            "path": "crates/verseconf-json/tests/json_schema.rs",
+            "sha256": "645955cda35ea05dfe756d2116330d0df16a3beec1255eab71a72491d2bb5b87"
+          },
+          {
+            "path": "crates/verseconf-json/tests/known_boundaries.rs",
+            "sha256": "d844cabd48f50b6f79d5ccf5833c81b2ea22f9bcaef9bdbc402696b114018b73"
+          },
+          {
+            "path": "crates/verseconf-json/tests/trusted_schema_fixtures.rs",
+            "sha256": "de6574dde7c37df3189ac470216c44fab302a56d37faddd38b2822177a63ce57"
+          },
+          {
+            "path": "crates/verseconf-lsp/Cargo.toml",
+            "sha256": "ac1575c25282436dec92bfaea4f70881f216f706658d352104bd9be788bffd4c"
+          },
+          {
+            "path": "crates/verseconf-lsp/README.en.md",
+            "sha256": "7e03b9d02199af96d82b805ce8c0a95ba03ba66a3630a143d1d363ba57a05540"
+          },
+          {
+            "path": "crates/verseconf-lsp/README.md",
+            "sha256": "766a65b0957bfd76e2d3ea9c542cf4bfa3ffefff89518516d6811b386992d251"
+          },
+          {
+            "path": "crates/verseconf-lsp/src/exit_watcher.rs",
+            "sha256": "8a7923d1c060fd49ab5f99d7c3537f5608f9c61253c2be8b6bd12e6006a07237"
+          },
+          {
+            "path": "crates/verseconf-lsp/src/lib.rs",
+            "sha256": "67f76d66b12b90f043836c0c8bab02c8987fd1731f89f4750b38b9fb10fbc88b"
+          },
+          {
+            "path": "crates/verseconf-lsp/src/main.rs",
+            "sha256": "96ba8c770e3f41ae16d33854119745c9d53b3c27cac4d7d0fb6c43441fc7de28"
+          },
+          {
+            "path": "crates/verseconf-lsp/src/server.rs",
+            "sha256": "d756bbf9dcd54867275d16388bacfb32002554fdeb3b788818a7fadf43cb1e4e"
+          },
+          {
+            "path": "crates/verseconf-mcp/Cargo.toml",
+            "sha256": "a704d9abc68f14c2824e832ab4da0d0eebaf61efa492b7ae6edbd111a3a493f3"
+          },
+          {
+            "path": "crates/verseconf-mcp/README.en.md",
+            "sha256": "3600763be0fbe3e6bb03e19820ea2f3337949f2d97c8d879c4584b16a987aa4f"
+          },
+          {
+            "path": "crates/verseconf-mcp/README.md",
+            "sha256": "f66e20338c6eeae325abb57e46bf2152967d73ddd09adde56946162692917e8b"
+          },
+          {
+            "path": "crates/verseconf-mcp/src/lib.rs",
+            "sha256": "ae6216e387e08780e8140eb4f395decd30496a713214ca1249afeeeb84464490"
+          },
+          {
+            "path": "crates/verseconf-mcp/src/main.rs",
+            "sha256": "c0e7d93f83a9d7e87495a1c4b81ccbf0640fffc90631244d1f40c0035141f8ff"
+          },
+          {
+            "path": "crates/verseconf-mcp/src/server.rs",
+            "sha256": "42b61013740d18ba04bacb64728105db6f455ce63ffadd33703b4cda21aa315c"
+          },
+          {
+            "path": "crates/verseconf-mcp/src/tools.rs",
+            "sha256": "b3c76a0314febbf77690c035873b1add071f944e85ccbb1700883099037dd652"
+          },
+          {
+            "path": "crates/verseconf-mcp/tests/stdio_session.rs",
+            "sha256": "ee4c8e5fad7f0b084e02a6684177071703be71e2199e308d828012f28e76a42b"
+          },
+          {
+            "path": "crates/verseconf-test/Cargo.toml",
+            "sha256": "fdd54d239c5afdd73d7359a0af79227de77511defb8271456ae75f4c06c33f8e"
+          },
+          {
+            "path": "crates/verseconf-test/benches/performance.rs",
+            "sha256": "dd182734a4aeb8cc42c0c96b8140ce23cfe00167d52d7e58eb5fef38b5a6e3da"
+          },
+          {
+            "path": "crates/verseconf-test/src/bin/compare_formats.rs",
+            "sha256": "2dccce920463defd85b3086b97bc4e327bfc50db146649c5f15bcc90c8c4a923"
+          },
+          {
+            "path": "crates/verseconf-test/src/lib.rs",
+            "sha256": "be3a1c0358f10d8b44842f3d62820745216f2996c9ed40d01eb887b3483d4106"
+          },
+          {
+            "path": "crates/verseconf-test/tests/advanced_validation_tests.rs",
+            "sha256": "c4e8eb0b7cf6b0f9256ea25cf88488713adc6880849b3f55a66050986b10bf0e"
+          },
+          {
+            "path": "crates/verseconf-test/tests/cli_validate.rs",
+            "sha256": "666d6dfec456b6f81e17ca7f13d4dd7c68e95820fe847b319704c794d12fb97f"
+          },
+          {
+            "path": "crates/verseconf-test/tests/diff_tests.rs",
+            "sha256": "158acc0bf8f283577d51073780afb7e9076133314c6c77559f6329f564496090"
+          },
+          {
+            "path": "crates/verseconf-test/tests/edit_plan_tests.rs",
+            "sha256": "a6409612608ff2e075b5bd9305caeaff249e61d32470bd78f555be3a43157076"
+          },
+          {
+            "path": "crates/verseconf-test/tests/parser_tests.rs",
+            "sha256": "6148665082772ca4b8d4eea7381032f72c643aafb39c1d81a844676c6706978d"
+          },
+          {
+            "path": "crates/verseconf-test/tests/performance_tests.rs",
+            "sha256": "8f91a3ffada86d01ec1bb2733c8f1f64ba2877bd3b8ffe96819af5f4d0246a87"
+          },
+          {
+            "path": "crates/verseconf-test/tests/spec_status.rs",
+            "sha256": "dba029c75e3d95e82f077ced987f496c1e7a585bbb871c26ca819e12679c2315"
+          },
+          {
+            "path": "crates/verseconf-test/tests/template_tests.rs",
+            "sha256": "5a915d97fb89824e38d8fc33ef3436e51babc94f1185c47c4de26e16ddbc8322"
+          },
+          {
+            "path": "crates/verseconf-toml/Cargo.toml",
+            "sha256": "014a148c3a6a23e0cdbf39357c7ac883127bd9e0ad5cf4a0e9e654a96f8ded60"
+          },
+          {
+            "path": "crates/verseconf-toml/README.md",
+            "sha256": "bb7075c6ccabefebf0ffcf08df4c425a044895775f7af7ad01cb533a93808bb4"
+          },
+          {
+            "path": "crates/verseconf-toml/examples/ablation.rs",
+            "sha256": "8159ab248893580e0f507a029402a5711a2078526644b2c50de25379fdf4c679"
+          },
+          {
+            "path": "crates/verseconf-toml/examples/apply_toml.rs",
+            "sha256": "dd264befd93c8f2d7f318bb17915523c73a9053d339fb447473f8fbc7f29a804"
+          },
+          {
+            "path": "crates/verseconf-toml/examples/generate_tasks.rs",
+            "sha256": "28a3e46eb501a5fca39c5e753a1ad2386e42de218f273540dc9cfffe7b2b92a7"
+          },
+          {
+            "path": "crates/verseconf-toml/examples/toml_set.rs",
+            "sha256": "88ceadadeebf7e3a5b9e4cb4142ad3c8a0381cb254ee836d416c10cb5ce49568"
+          },
+          {
+            "path": "crates/verseconf-toml/examples/toml_set_span.rs",
+            "sha256": "63e7c594fb6ef060feb22a5e2c5442bb7ed08c3ccd962e4e6ad8b90d057d624f"
+          },
+          {
+            "path": "crates/verseconf-toml/src/ablation.rs",
+            "sha256": "f7d4ee4a472f1be07833f105ddc0fe0069d64fbbc08f1e5a4443cb40a82dec92"
+          },
+          {
+            "path": "crates/verseconf-toml/src/ast_bridge.rs",
+            "sha256": "e313094d7dc8a82419777e0fd665d30af61a331a56723d28e45b5ed4739f74b3"
+          },
+          {
+            "path": "crates/verseconf-toml/src/guard.rs",
+            "sha256": "f94028240cc99f7779f4f931f7634aedae7457cc301be5a1e76555bcea2476c1"
+          },
+          {
+            "path": "crates/verseconf-toml/src/lib.rs",
+            "sha256": "4d133a3f1c5e88978233b5301733df4a706b0e4ca86c4bf262fe42f2fb0400a5"
+          },
+          {
+            "path": "crates/verseconf-toml/tests/ablation.rs",
+            "sha256": "53dcdcc55ef6f627373f04e6353f767e5eb7e6857c055fd37fcac727071c033e"
+          },
+          {
+            "path": "crates/verseconf-toml/tests/check_write.rs",
+            "sha256": "aeec51446b287e4a8c68cf5a3bc08379fda18cd3741c6f70f54da5ca301fe51b"
+          },
+          {
+            "path": "crates/verseconf-toml/tests/gate_increment.rs",
+            "sha256": "f5aa9081d6eb8e8d99194fae446780cec3135864cd3b23484319d037617e28cd"
+          },
+          {
+            "path": "crates/verseconf-toml/tests/holdout_corpus.rs",
+            "sha256": "8194fe6eb0fa007f61da6a7aa7a709a5c653246f16696bb321dcc4d35539cc1f"
+          },
+          {
+            "path": "crates/verseconf-toml/tests/operations.rs",
+            "sha256": "b4fa1668f30d28114a63ec2ce3b4c41cfeccbaab52ddf9607725cf7f6c9b6a5a"
+          },
+          {
+            "path": "crates/verseconf-toml/tests/preregistration.rs",
+            "sha256": "684ca820a51c818eb835f6166283f6211d92caacdf7142539fbb469c53e1c273"
+          },
+          {
+            "path": "crates/verseconf-toml/tests/validation_gate.rs",
+            "sha256": "746b64ba6f5a4570b35a9e398d72825872914d3bb236761ca801f79906808794"
+          },
+          {
+            "path": "integrations/verseconf-wasm/Cargo.toml",
+            "sha256": "5d407979e698e2d4ae71edfc8053329ebada50043ae1d924b0e1d0273a488f4a"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/README.md",
+            "sha256": "851742055c96790408c2ee6dc657389d5c21cf2b3acf1bd26f8f3311ba9ab5d4"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/bin/verseconf-mcp-wasm.mjs",
+            "sha256": "7b99be3302c9eda401711385704a02d0cd5b46d3707b855666b16db146fea19a"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/package-lock.json",
+            "sha256": "e76403ce98a6f8ff4488d194e2e6e9843b5308ef9fa030836167983513933c35"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/package.json",
+            "sha256": "488e01aaf2e0d2f5599b8e56d2da26a114001c764d59baff54ccedcc833ee861"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/scripts/build.mjs",
+            "sha256": "521e949687f59cc5c129da6fdae584ba00d5cd793c1495026be87e87ac493295"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/scripts/calibrate-schema-profile.mjs",
+            "sha256": "b5702e7f983a6ea8f4dbd23567c2da20baf494c95e23029140c145f9b732b070"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/scripts/calibrate-worker.mjs",
+            "sha256": "c9728e2273293c0a819425ffc4d7e81cf19396e3c8b5abb8af0e9840ecfe5fe6"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/scripts/deliver-module.mjs",
+            "sha256": "3a5739d61c4bdce5454d8a0d34aa22d3ccb2fc18b9c92379261546ed88a723be"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/src/index.ts",
+            "sha256": "4f3990a2b948c07d60f9619179066e0943ee536fa2771391cc96c126c8caa43a"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/tsconfig.base.json",
+            "sha256": "ac410022b98e3e0f4bc988c85d04308b25e24df37ad8391d15ae2253de689e07"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/tsconfig.cjs.json",
+            "sha256": "b2133a606b6b90d8d94d511c06a42831e0d00cda77738f39380d22fb86759d7c"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/tsconfig.json",
+            "sha256": "75c2a36133bf0f237d0884fc1f164d5104c51250d372a3ccf356d94c5626675e"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/worker/availability.mjs",
+            "sha256": "8d056cd490d9cc097a90d3b20eedbd0a83db8b64ba4c1609f8546870f9606d95"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/worker/compute-worker.mjs",
+            "sha256": "9582ed5ab980a120a9912466d9d9ff5a1d1db968df8c5c62168a5a05fc0b93e4"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/worker/index.d.ts",
+            "sha256": "be60a380c24d47ed28b1ea084d38cc74ffb64a95a3216b170ad0330a32664ef6"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/worker/index.mjs",
+            "sha256": "50c18f3b10caf2da8a273fb8b6984a40e61222a5d9c53118b49225658402d4b2"
+          },
+          {
+            "path": "integrations/verseconf-wasm/js-api/worker/limits.mjs",
+            "sha256": "7415a5dca8fc6a225c6acb75b87f537749804e34847188a41f4349a03dacb0d1"
+          },
+          {
+            "path": "integrations/verseconf-wasm/src/business.rs",
+            "sha256": "323caa9534c09c06bdd3f788cbc2b83d68b37b969d1a684c8fec09ce6581e7f0"
+          },
+          {
+            "path": "integrations/verseconf-wasm/src/lib.rs",
+            "sha256": "d8a4b430314f9bfe786f15230f8516035d7c0924c5c780b063858ddacb8a9efa"
+          },
+          {
+            "path": "integrations/verseconf-wasm/src/mcp.rs",
+            "sha256": "2f1406236f47303b71d0270af2d88e82a088ac9d0e680c37a5b2caef6b8532a4"
+          }
+        ]
+      },
+      "toolchain": {
+        "wasmPack": "wasm-pack 0.14.0",
+        "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+        "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+        "wasmBindgenLocked": "0.2.118"
+      },
+      "locked": true,
+      "files": [
+        {
+          "path": "bin/verseconf-mcp-wasm.mjs",
+          "bytes": 2690,
+          "sha256": "7b99be3302c9eda401711385704a02d0cd5b46d3707b855666b16db146fea19a"
+        },
+        {
+          "path": "build-manifest.json",
+          "bytes": 2377,
+          "sha256": "8ed6c829cd86bc00be968cb7a261511c10028b29c8d74744bfc5d08880031b0f"
+        },
+        {
+          "path": "dist/index.cjs",
+          "bytes": 12021,
+          "sha256": "c6eebc68c27714a52ffca8fec9536bb89a1095056f88f886372fa9ea09149284"
+        },
+        {
+          "path": "dist/index.d.ts",
+          "bytes": 17380,
+          "sha256": "ac9f7593bfc43b933412e674895f1085215b863b8d9c8e490aa3cdbc61311730"
+        },
+        {
+          "path": "dist/index.mjs",
+          "bytes": 10450,
+          "sha256": "7a7c6ff23e208565aa511478791297805cc8c2a32790cd1d7b8c3e0272d2a590"
+        },
+        {
+          "path": "LICENSE-APACHE",
+          "bytes": 10860,
+          "sha256": "8ada45cd9f843acf64e4722ae262c622a2b3b3007c7310ef36ac1061a30f6adb"
+        },
+        {
+          "path": "LICENSE-MIT",
+          "bytes": 1066,
+          "sha256": "499d10dd1ae0e43acf15db26a97fcaaf1d003103d04f847496ec6847ac5ea25a"
+        },
+        {
+          "path": "package.json",
+          "bytes": 2237,
+          "sha256": "62096e1e5330fd4b56fe7fa9f1ffd0e596ebc41e7251c28bf34982ce41858da1"
+        },
+        {
+          "path": "pkg-web/package.json",
+          "bytes": 508,
+          "sha256": "8c0863e338aa9d29a5f54e0862b3275b4a6cc7d4cd78c1b41b2424ff407e9d56"
+        },
+        {
+          "path": "pkg-web/verseconf_wasm_bg.wasm",
+          "bytes": 4371659,
+          "sha256": "d4b27977f29e69b682b9323f45021111ab9bc71535417fa340ca61b4bf177dd9"
+        },
+        {
+          "path": "pkg-web/verseconf_wasm_bg.wasm.d.ts",
+          "bytes": 2450,
+          "sha256": "e971ae7508dae4c544066b48c89d210ef4aa4944c728f0abc6bd2a8b2d0fa06f"
+        },
+        {
+          "path": "pkg-web/verseconf_wasm.d.ts",
+          "bytes": 7226,
+          "sha256": "1468391ee56069a4eceb3880cc51eb43d5318cac365adb0ee5e9fd52ddd6663b"
+        },
+        {
+          "path": "pkg-web/verseconf_wasm.js",
+          "bytes": 21663,
+          "sha256": "97289b63317835cbe8cdfa45f509c9f77136fc82289a8388aeb4bdc9ee4cfc15"
+        },
+        {
+          "path": "pkg/package.json",
+          "bytes": 445,
+          "sha256": "9f7da3b33654125158a82b91f01ebb0a32425a18421a3c96efc71376d176d048"
+        },
+        {
+          "path": "pkg/verseconf_wasm_bg.wasm",
+          "bytes": 4371659,
+          "sha256": "d4b27977f29e69b682b9323f45021111ab9bc71535417fa340ca61b4bf177dd9"
+        },
+        {
+          "path": "pkg/verseconf_wasm_bg.wasm.d.ts",
+          "bytes": 2450,
+          "sha256": "e971ae7508dae4c544066b48c89d210ef4aa4944c728f0abc6bd2a8b2d0fa06f"
+        },
+        {
+          "path": "pkg/verseconf_wasm.d.ts",
+          "bytes": 3833,
+          "sha256": "372b90bda493b9cab25b1008563cdb745a317da96f3b0788551f32eb09362572"
+        },
+        {
+          "path": "pkg/verseconf_wasm.js",
+          "bytes": 19137,
+          "sha256": "427fe8ebd87c3a7a086245784198ad4b35f93aefa8dd26640bf9cf440e8c1d3d"
+        },
+        {
+          "path": "README.md",
+          "bytes": 19171,
+          "sha256": "e85bc051ab14e2e6fda996fd12a4568616fb60c96aafca89e1589b8464bd7e69"
+        },
+        {
+          "path": "worker/availability.mjs",
+          "bytes": 5923,
+          "sha256": "8d056cd490d9cc097a90d3b20eedbd0a83db8b64ba4c1609f8546870f9606d95"
+        },
+        {
+          "path": "worker/compute-worker.mjs",
+          "bytes": 7509,
+          "sha256": "9582ed5ab980a120a9912466d9d9ff5a1d1db968df8c5c62168a5a05fc0b93e4"
+        },
+        {
+          "path": "worker/index.d.mts",
+          "bytes": 6762,
+          "sha256": "be60a380c24d47ed28b1ea084d38cc74ffb64a95a3216b170ad0330a32664ef6"
+        },
+        {
+          "path": "worker/index.d.ts",
+          "bytes": 6762,
+          "sha256": "be60a380c24d47ed28b1ea084d38cc74ffb64a95a3216b170ad0330a32664ef6"
+        },
+        {
+          "path": "worker/index.mjs",
+          "bytes": 18030,
+          "sha256": "50c18f3b10caf2da8a273fb8b6984a40e61222a5d9c53118b49225658402d4b2"
+        },
+        {
+          "path": "worker/limits.mjs",
+          "bytes": 9360,
+          "sha256": "7415a5dca8fc6a225c6acb75b87f537749804e34847188a41f4349a03dacb0d1"
+        }
+      ]
+    },
+    "wasmSha256": "d4b27977f29e69b682b9323f45021111ab9bc71535417fa340ca61b4bf177dd9",
+    "glueSha256": "427fe8ebd87c3a7a086245784198ad4b35f93aefa8dd26640bf9cf440e8c1d3d"
+  },
+  "packagedElectron": {
+    "status": "passed",
+    "root": "release/win-unpacked/resources/openclaw-runtime/dist/extensions/verseconf-artifacts",
+    "installer": {
+      "status": "passed",
+      "path": "release/Verse Claw-0.4.9-alpha.0-win-x64.exe",
+      "sha256": "44045f7fe2bd20ab64706d6dacb01cbe599284d4273af62a5e351f993ad772da",
+      "embeddedDelivery": {
+        "status": "passed",
+        "archiveSha256": "6da7dcb2990589556bc8034ae7f7779eddb6369d0a2446753c37c8a0a1fc4a9c",
+        "manifestSha256": "b28a5809bb3dcb3ee936a4031a803e32d33f80fe7b541cc0e3efeca74a50fb0f",
+        "layouts": [
+          "dist",
+          "dist-runtime"
+        ],
+        "filesPerLayout": 26,
+        "installedOnHost": false
+      }
+    }
+  },
+  "idempotency": {
+    "sourceGateway": [
+      {
+        "tool": "structured_artifact_revise",
+        "response": {
+          "apiVersion": 1,
+          "ok": false,
+          "artifactId": "gateway-artifact",
+          "operationId": "http-1791096804518",
+          "state": "rejected",
+          "diagnostics": [
+            {
+              "code": "idempotency_conflict",
+              "message": "idempotencyKey was already used with a different request"
+            }
+          ]
+        },
+        "beforeSha256": "ebb4ee8bd9a08fce266ae3149195e685c9a4eb8d15e3f2d769dfdf893ce6f299",
+        "afterSha256": "ebb4ee8bd9a08fce266ae3149195e685c9a4eb8d15e3f2d769dfdf893ce6f299",
+        "revisionCount": 2,
+        "historyUnchanged": true
+      },
+      {
+        "tool": "structured_artifact_record_ops",
+        "response": {
+          "apiVersion": 1,
+          "ok": false,
+          "artifactId": "gateway-records",
+          "operationId": "http-1791096804679",
+          "state": "rejected",
+          "diagnostics": [
+            {
+              "code": "idempotency_conflict",
+              "message": "idempotencyKey was already used with a different request"
+            }
+          ]
+        },
+        "beforeSha256": "8c6ea9887e756579056644c56b31f1f3990e33b11e4ef7cd7340689006cd7692",
+        "afterSha256": "8c6ea9887e756579056644c56b31f1f3990e33b11e4ef7cd7340689006cd7692",
+        "revisionCount": 2,
+        "historyUnchanged": true
+      }
+    ],
+    "sourceToolsSha256": "be4a5d67b571610a0a9291d1018fe860237b937c57db1adb1d28ffe0dc716b87",
+    "runtimePluginSha256": "b7e33b3b7c4d5182b1d18544290d7a59d65936b1003e4055bf7cda3261d647d8",
+    "packagedGateway": {
+      "status": "not-run",
+      "reason": "Nested idempotency conflict checks cover the rebuilt local runtime; the existing installer is prior delivery evidence."
+    }
+  },
+  "limits": {
+    "defaultWasmLinearMemoryMax": 20971520,
+    "schemaValidationWasmLinearMemoryMax": 103809024,
+    "provenance": {
+      "frozenBy": "research/clawx-a07-limits-2026-09-30/A07-plan.json",
+      "calibratedBy": "research/clawx-b06-compute-worker-2026-10-01/worker-calibration.json",
+      "calibratedAt": "2026-10-01",
+      "calibratedOn": "真实 Node wasm 绑定（js-api/pkg，wasm-bindgen 0.2.118 / wasm-pack 0.14.0 构建）",
+      "method": "同一批压缩 JSON 源按 64 KiB／256 KiB／1 MiB 分级，逐级跑 inspect_record 与 apply_batch（后者用满 128 操作上限）；wasm 线性内存由模块自己报数（wasm_memory_bytes），宿主堆取 memoryUsage().heapUsed 增量；每档 3 轮独立 worker + 1 轮同 worker 连续调用。",
+      "measuredPeaks": {
+        "wasmMemoryBytes": 9899008,
+        "hostJsHeapDeltaBytes": 1540096,
+        "durationMs": 16.1,
+        "resultBytes": 772768
+      },
+      "derivation": "wasm 9.44 MiB × 2 = 18.9 MiB → 冻结 20 MiB；堆 1.47 MiB × 2 = 2.9 MiB → 冻结 4 MiB。两个值都是**安全阀**：实测耗时峰值 16 ms，相对 5000 ms 上限有 ≈310× 余量，不构成性能承诺。",
+      "rejectedMethod": "process.memoryUsage().arrayBuffers 曾被当作 wasm 线性内存判据——它是进程级读数，同一批样本里一会儿报 4.21 MiB、一会儿报 0.00 MiB，与模块自报的 9.44 MiB 都对不上；已改为由模块报数，进程级读数只留作对照。",
+      "wasmLinearMemoryMargin": 2,
+      "hostJsHeapMargin": 2,
+      "schemaValidationProfile": "schema-validation 配置**只调大** wasm 线性内存这一项（99 MiB = 103809024 B）：可信 schema 编译路径实测峰值 49.19 MiB（合法 schema 上限附近 255 KiB 档，261132 B）→ ×2 后取整到 MiB。默认配置（inspect／apply）仍是 20 MiB，未改动。",
+      "schemaValidationCalibratedBy": "research/clawx-consumer-support-2026-10-01/schema-profile-calibration.json",
+      "schemaValidationPeaks": {
+        "firstConsumerSchemaBytes": 6506,
+        "firstConsumerWasmPeakBytes": 31588352,
+        "worstLegalSchemaBytes": 261132,
+        "worstLegalWasmPeakBytes": 51576832,
+        "worstLegalDurationMs": 107.8
+      },
+      "schemaValidationConsumerNote": "消费侧（ClawX）曾自行 fork worker/limits.mjs 并把该值定为固定 96 MiB（100663296 B）——与我们独立推导的 99 MiB 相差约 3%，略低于 ×2 余量口径；此处如实并列，不假装一致。",
+      "mustNot": "不得把 worker resourceLimits 当成 wasm 线性内存的硬上限；两者分别定义、分别测试（A07 明文要求）。"
+    }
+  },
+  "visualRender": {
+    "status": "rendered",
+    "visualAcceptance": "not-run",
+    "driven_by": "agent",
+    "renderer": "LibreOffice + PyMuPDF",
+    "pages": 3,
+    "rows": [
+      {
+        "page": 1,
+        "text": "1. 通用文件编辑\n字符串里的 \"evidenceRefs\": [] 不是字段；中文与 emoji 🧪。\n",
+        "png": "D:\\ClawX\\artifacts\\verseconf-clawx-integration\\runs\\2026-10-04T06-53-11-230Z\\visual\\slide-outline-page-1.png",
+        "width": 720,
+        "height": 540
+      },
+      {
+        "page": 2,
+        "text": "2. 宿主受管提交\n只验证契约中的引用关联，不推断实现已经通过。\nLimitations: 尚未运行真实 runtime 验收\n",
+        "png": "D:\\ClawX\\artifacts\\verseconf-clawx-integration\\runs\\2026-10-04T06-53-11-230Z\\visual\\slide-outline-page-2.png",
+        "width": 720,
+        "height": 540
+      },
+      {
+        "page": 3,
+        "text": "3. 结构化编辑计算\n=HYPERLINK(\"https://example.invalid\",\" 仅作文本\")\nLimitations: 没有调用外部模型或冻结构建\n",
+        "png": "D:\\ClawX\\artifacts\\verseconf-clawx-integration\\runs\\2026-10-04T06-53-11-230Z\\visual\\slide-outline-page-3.png",
+        "width": 720,
+        "height": 540
+      }
+    ]
+  },
+  "scenarioCounts": {
+    "total": 43,
+    "passed": 43,
+    "failed": 0
+  },
+  "cases": [
+    {
+      "name": "manifest.plugin-is-disabled-by-default",
+      "ok": true
+    },
+    {
+      "name": "manifest.node-delivery-is-locked",
+      "ok": true
+    },
+    {
+      "name": "manifest.source-and-runtime-present",
+      "ok": true
+    },
+    {
+      "name": "manifest.has-no-channel-surface",
+      "ok": true
+    },
+    {
+      "name": "manifest.package-version-is-pinned",
+      "ok": true
+    },
+    {
+      "name": "manifest.wasm-fingerprint-matches-build",
+      "ok": true
+    },
+    {
+      "name": "manifest.glue-fingerprint-matches-build",
+      "ok": true
+    },
+    {
+      "name": "electron-unpacked-plugin-present",
+      "ok": true
+    },
+    {
+      "name": "electron-unpacked-plugin-has-no-developer-absolute-path",
+      "ok": true
+    },
+    {
+      "name": "electron-installer-present",
+      "ok": true
+    },
+    {
+      "name": "delivery.source.complete-regular-files",
+      "ok": true
+    },
+    {
+      "name": "delivery.runtime-dist.complete-regular-files",
+      "ok": true
+    },
+    {
+      "name": "delivery.runtime-overlay.complete-regular-files",
+      "ok": true
+    },
+    {
+      "name": "delivery.electron-dist.complete-regular-files",
+      "ok": true
+    },
+    {
+      "name": "delivery.electron-overlay.complete-regular-files",
+      "ok": true
+    },
+    {
+      "name": "electron-installer.embedded-delivery-matches-current-source",
+      "ok": true
+    },
+    {
+      "name": "clean-consumption-environment.load",
+      "ok": true
+    },
+    {
+      "name": "full-module.node-esm-cjs-web-and-mcp",
+      "ok": true
+    },
+    {
+      "name": "worker.rejects-version-and-digest-mismatch-without-spawn",
+      "ok": true
+    },
+    {
+      "name": "wasm.capability",
+      "ok": true
+    },
+    {
+      "name": "wasm.capability-hot",
+      "ok": true
+    },
+    {
+      "name": "wasm.inspect.unicode-crlf",
+      "ok": true
+    },
+    {
+      "name": "wasm.apply.multi-field",
+      "ok": true
+    },
+    {
+      "name": "wasm.reject.invalid-json",
+      "ok": true
+    },
+    {
+      "name": "wasm.validate.trusted-schema-profile",
+      "ok": true
+    },
+    {
+      "name": "wasm.reject.bom",
+      "ok": true
+    },
+    {
+      "name": "wasm.cancelled-call",
+      "ok": true
+    },
+    {
+      "name": "gateway.revise.rejects-nested-idempotency-conflict",
+      "ok": true
+    },
+    {
+      "name": "gateway.record-ops.rejects-nested-idempotency-conflict",
+      "ok": true
+    },
+    {
+      "name": "gateway.real-runtime-managed-artifact-lifecycle",
+      "ok": true
+    },
+    {
+      "name": "electron-unpacked.real-runtime-managed-artifact",
+      "ok": true
+    },
+    {
+      "name": "tool.create",
+      "ok": true
+    },
+    {
+      "name": "tool.revise.managed-submit",
+      "ok": true
+    },
+    {
+      "name": "tool.revise.idempotent-replay",
+      "ok": true
+    },
+    {
+      "name": "tool.export.xlsx",
+      "ok": true
+    },
+    {
+      "name": "tool.record-ops",
+      "ok": true
+    },
+    {
+      "name": "tool.restore-new-revision",
+      "ok": true
+    },
+    {
+      "name": "tool.reject.external-drift",
+      "ok": true
+    },
+    {
+      "name": "tool.history-survives-reopen",
+      "ok": true
+    },
+    {
+      "name": "tool.disable-preserves-history",
+      "ok": true
+    },
+    {
+      "name": "store.backup-restore-preserves-history",
+      "ok": true
+    },
+    {
+      "name": "store.rejects-unknown-schema-version",
+      "ok": true
+    },
+    {
+      "name": "store.rejects-capacity-at-boundary",
+      "ok": true
+    }
+  ],
+  "boundaries": {
+    "defaultOn": false,
+    "productApproved": false,
+    "liveReady": false,
+    "publicPublish": false,
+    "sourceRuntimePathIsolation": true,
+    "noChannelInstallFallback": true
+  },
+  "evidenceIntegrity": {
+    "manifest": "artifacts/verseconf-clawx-integration/runs/2026-10-04T06-53-11-230Z/SHA256SUMS",
+    "credentialScan": "artifacts/verseconf-clawx-integration/runs/2026-10-04T06-53-11-230Z/credential-scan.json",
+    "credentialScanHits": 0,
+    "filesScanned": 7,
+    "manifestFiles": 8,
+    "status": "passed"
+  },
+  "performance": {
+    "drivenBy": "agent",
+    "failureDenominator": {
+      "totalCases": 43,
+      "failedCases": 0
+    },
+    "workerSamples": [
+      {
+        "label": "cold-capability",
+        "durationMs": 113.19,
+        "metrics": {
+          "durationMs": 0.3597,
+          "heapUsedBefore": 14585104,
+          "heapUsedAfter": 14607840,
+          "heapUsedDelta": 22736,
+          "wasmMemoryBefore": 1835008,
+          "wasmMemoryAfter": 1900544,
+          "wasmMemoryDelta": 65536,
+          "processArrayBuffers": 10968212,
+          "rssAfter": 125247488,
+          "resultBytes": 1263,
+          "glueLoads": 1,
+          "glueVersion": "0.3.0"
+        }
+      },
+      {
+        "label": "hot-capability",
+        "durationMs": 1.3,
+        "metrics": {
+          "durationMs": 0.0771,
+          "heapUsedBefore": 11166488,
+          "heapUsedAfter": 11169344,
+          "heapUsedDelta": 2856,
+          "wasmMemoryBefore": 1900544,
+          "wasmMemoryAfter": 1900544,
+          "wasmMemoryDelta": 0,
+          "processArrayBuffers": 6490238,
+          "rssAfter": 120684544,
+          "resultBytes": 1263,
+          "glueLoads": 1,
+          "glueVersion": "0.3.0"
+        }
+      }
+    ],
+    "packageBytes": {
+      "wasm": 4371659,
+      "installer": 468950102
+    },
+    "limits": {
+      "coldWorkerMs": 5000,
+      "hotWorkerMs": 2000,
+      "defaultWasmLinearMemoryMax": 20971520,
+      "schemaValidationWasmLinearMemoryMax": 103809024,
+      "provenance": {
+        "frozenBy": "research/clawx-a07-limits-2026-09-30/A07-plan.json",
+        "calibratedBy": "research/clawx-b06-compute-worker-2026-10-01/worker-calibration.json",
+        "calibratedAt": "2026-10-01",
+        "calibratedOn": "真实 Node wasm 绑定（js-api/pkg，wasm-bindgen 0.2.118 / wasm-pack 0.14.0 构建）",
+        "method": "同一批压缩 JSON 源按 64 KiB／256 KiB／1 MiB 分级，逐级跑 inspect_record 与 apply_batch（后者用满 128 操作上限）；wasm 线性内存由模块自己报数（wasm_memory_bytes），宿主堆取 memoryUsage().heapUsed 增量；每档 3 轮独立 worker + 1 轮同 worker 连续调用。",
+        "measuredPeaks": {
+          "wasmMemoryBytes": 9899008,
+          "hostJsHeapDeltaBytes": 1540096,
+          "durationMs": 16.1,
+          "resultBytes": 772768
+        },
+        "derivation": "wasm 9.44 MiB × 2 = 18.9 MiB → 冻结 20 MiB；堆 1.47 MiB × 2 = 2.9 MiB → 冻结 4 MiB。两个值都是**安全阀**：实测耗时峰值 16 ms，相对 5000 ms 上限有 ≈310× 余量，不构成性能承诺。",
+        "rejectedMethod": "process.memoryUsage().arrayBuffers 曾被当作 wasm 线性内存判据——它是进程级读数，同一批样本里一会儿报 4.21 MiB、一会儿报 0.00 MiB，与模块自报的 9.44 MiB 都对不上；已改为由模块报数，进程级读数只留作对照。",
+        "wasmLinearMemoryMargin": 2,
+        "hostJsHeapMargin": 2,
+        "schemaValidationProfile": "schema-validation 配置**只调大** wasm 线性内存这一项（99 MiB = 103809024 B）：可信 schema 编译路径实测峰值 49.19 MiB（合法 schema 上限附近 255 KiB 档，261132 B）→ ×2 后取整到 MiB。默认配置（inspect／apply）仍是 20 MiB，未改动。",
+        "schemaValidationCalibratedBy": "research/clawx-consumer-support-2026-10-01/schema-profile-calibration.json",
+        "schemaValidationPeaks": {
+          "firstConsumerSchemaBytes": 6506,
+          "firstConsumerWasmPeakBytes": 31588352,
+          "worstLegalSchemaBytes": 261132,
+          "worstLegalWasmPeakBytes": 51576832,
+          "worstLegalDurationMs": 107.8
+        },
+        "schemaValidationConsumerNote": "消费侧（ClawX）曾自行 fork worker/limits.mjs 并把该值定为固定 96 MiB（100663296 B）——与我们独立推导的 99 MiB 相差约 3%，略低于 ×2 余量口径；此处如实并列，不假装一致。",
+        "mustNot": "不得把 worker resourceLimits 当成 wasm 线性内存的硬上限；两者分别定义、分别测试（A07 明文要求）。"
+      }
+    },
+    "maintenanceCostProxy": {
+      "metric": "extension-source-files-bytes-lines",
+      "files": 40,
+      "bytes": 239857,
+      "lines": 5648
+    }
+  }
+}

@@ -279,7 +279,7 @@ function resolveBooleanModeFlag(argv, index, longName, shortName = null) {
   return null;
 }
 
-function resolveExplicitVitestMode(argv) {
+export function resolveExplicitVitestMode(argv) {
   let mode = null;
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -324,7 +324,7 @@ function resolveExplicitVitestMode(argv) {
       mode = "run";
       continue;
     }
-    return null;
+    continue;
   }
   return mode;
 }
@@ -455,7 +455,7 @@ export function resolveDirectNodeVitestArgs(pnpmArgs) {
   return pnpmArgs[0] === "exec" && pnpmArgs[1] === "node" ? pnpmArgs.slice(2) : null;
 }
 
-function hasExplicitVitestConfigArg(argv) {
+export function hasExplicitVitestConfigArg(argv) {
   return argv.some((arg) => arg === "--config" || arg === "-c" || arg.startsWith("--config="));
 }
 
@@ -507,7 +507,7 @@ function collectExplicitFileTargetArgs(argv, predicate = isExplicitFileTargetArg
   return files;
 }
 
-function collectExplicitTestFileArgs(argv) {
+export function collectExplicitTestFileArgs(argv) {
   return collectExplicitFileTargetArgs(argv, isExplicitTestFileArg);
 }
 
@@ -657,6 +657,18 @@ export function resolveMissingExplicitTestFiles(argv, cwd = process.cwd(), fsImp
       return !fsImpl.existsSync(filePath);
     })
     .map((arg) => toRepoRelativeArg(arg, cwd));
+}
+
+// Vitest filters against each project's test.dir. Absolute paths work across
+// scoped projects, including a checkout reached through a Windows junction.
+export function resolveAbsoluteTestFileArgs(argv, cwd = process.cwd()) {
+  const targets = new Set(collectExplicitFileTargetArgs(argv, (arg) =>
+    isExplicitFileTargetArg(arg) ||
+    (fs.existsSync(path.resolve(cwd, arg)) && fs.statSync(path.resolve(cwd, arg)).isDirectory()),
+  ));
+  return argv.map((arg) => targets.has(arg) && fs.existsSync(path.resolve(cwd, arg))
+    ? fs.realpathSync(path.resolve(cwd, arg)).replaceAll("\\", "/")
+    : arg);
 }
 
 function toRepoRelativeArg(arg, cwd) {
@@ -947,7 +959,7 @@ function spawnTestProjectsRunner(argv, env) {
   return { child, teardown };
 }
 
-function main(argv = process.argv.slice(2), env = process.env) {
+export async function main(argv = process.argv.slice(2), env = process.env) {
   if (argv.length === 0) {
     console.error("usage: node scripts/run-vitest.mjs <vitest args...>");
     process.exit(1);
@@ -984,7 +996,7 @@ function main(argv = process.argv.slice(2), env = process.env) {
   }
 
   const vitestArgs = resolveImplicitVitestArgs(argv);
-  const guardedVitestArgs = resolveExplicitTestFileNoPassArgs(vitestArgs);
+  const guardedVitestArgs = resolveExplicitTestFileNoPassArgs(resolveAbsoluteTestFileArgs(vitestArgs));
   const spawnEnv = resolveRunVitestSpawnEnv(env, guardedVitestArgs);
   let vitestCliEntry;
   try {
@@ -995,6 +1007,25 @@ function main(argv = process.argv.slice(2), env = process.env) {
       process.exit(1);
     }
     throw error;
+  }
+
+  if (resolveExplicitVitestMode(argv) !== "watch" && collectExplicitTestFileArgs(guardedVitestArgs).length > 0) {
+    // Vite config loading mutates process.env. Resolve/hydrate dependencies first,
+    // then isolate selection so the actual test process receives the original env.
+    const { child, teardown } = spawnWatchedVitestProcess({
+      pnpmArgs: ["exec", "node", ...resolveVitestNodeArgs(env), path.join(repoRoot, "scripts", "explicit-test-targets.mjs"), ...guardedVitestArgs],
+      spawnParams: resolveVitestSpawnParams(spawnEnv),
+      env: spawnEnv,
+      label: "explicit test selection",
+    });
+    await new Promise((resolve, reject) => {
+      child.once("error", (error) => { teardown(); reject(error); });
+      child.once("exit", (code, signal) => {
+        teardown();
+        if (code !== 0 || signal) reject(new Error(`Test selection failed (${signal ?? code})`));
+        else resolve();
+      });
+    });
   }
 
   const { child, teardown } = spawnWatchedVitestProcess({
@@ -1021,5 +1052,5 @@ function main(argv = process.argv.slice(2), env = process.env) {
 }
 
 if (import.meta.main) {
-  main();
+  await main();
 }

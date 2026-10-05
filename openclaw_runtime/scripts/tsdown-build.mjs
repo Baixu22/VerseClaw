@@ -8,6 +8,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { BUNDLED_PLUGIN_PATH_PREFIX } from "./lib/bundled-plugin-paths.mjs";
 import { TSDOWN_PACKAGE_OUTPUT_ROOTS } from "./lib/tsdown-output-roots.mjs";
+import { discoverStaticExtensionAssets } from "./lib/static-extension-assets.mjs";
 import { resolvePnpmRunner } from "./pnpm-runner.mjs";
 import {
   isSourceCheckoutRoot,
@@ -239,12 +240,17 @@ export function pruneUntrackedGeneratedSourceDeclarations(params = {}) {
     return 0;
   }
 
+  // Declared static resources are delivered inputs, even before their first git add.
+  const declaredAssets = new Set(
+    discoverStaticExtensionAssets({ rootDir: cwd, fs: fsImpl }).map((asset) => asset.src),
+  );
   let removed = 0;
   for (const rawPath of result.stdout.split(/\r?\n/u)) {
     const relativePath = rawPath.trim().replaceAll("\\", "/");
     if (!relativePath.startsWith("extensions/") || !relativePath.endsWith(".d.ts")) {
       continue;
     }
+    if (declaredAssets.has(relativePath)) continue;
     const declarationPath = path.join(cwd, relativePath);
     const sourceBase = declarationPath.slice(0, -".d.ts".length);
     const hasMatchingSource = SOURCE_DECLARATION_SOURCE_EXTENSIONS.some((extension) =>

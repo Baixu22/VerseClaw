@@ -7,6 +7,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { access, mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { assertNoSymlinkParentsSync } from "../infra/fs-safe-advanced.js";
 import {
   acquirePatchBatchLocks,
 } from "../agents/apply-patch-batch-lock.js";
@@ -72,6 +73,9 @@ function resolveWorkspacePath(workspaceRoot: string, relativePath: string): stri
   if (!rel || rel === ".." || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel)) {
     throw new Error("artifact sourcePath escapes the active workspace");
   }
+  // The trusted workspace may be a junction; descendants must not redirect
+  // artifact reads or journaled writes outside that workspace.
+  assertNoSymlinkParentsSync({ rootDir: root, targetPath: resolved, messagePrefix: "artifact sourcePath" });
   return resolved;
 }
 
@@ -164,6 +168,7 @@ export async function commitStructuredArtifactBytes(params: {
   try {
     release = await acquirePatchBatchLocks([absolute]);
     throwIfAborted(params.context.signal);
+    resolveWorkspacePath(params.context.workspaceRoot, params.sourcePath);
     if (await pathExists(absolute)) {
       const file = await stat(absolute);
       if (!file.isFile()) {
@@ -219,6 +224,7 @@ export async function commitStructuredArtifactBytes(params: {
 
     await mkdir(path.dirname(absolute), { recursive: true });
     throwIfAborted(params.context.signal);
+    resolveWorkspacePath(params.context.workspaceRoot, params.sourcePath);
     await writeFile(absolute, candidateBytes);
     setWriteJournalBatchState([journal], "committed");
     recordStructuredEffectReceipt({ operationId, journalRef: journalRefFor(journal), path: displayPath, outcome: "applied", recoverability: "journal-preimage", beforeSha256, afterSha256 });
@@ -246,6 +252,7 @@ export async function commitStructuredArtifactBytes(params: {
       };
     }
     try {
+      resolveWorkspacePath(params.context.workspaceRoot, params.sourcePath);
       if (beforeBytes === null) {
         await rm(absolute, { force: true });
       } else {

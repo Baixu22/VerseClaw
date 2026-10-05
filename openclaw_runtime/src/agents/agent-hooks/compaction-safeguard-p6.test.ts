@@ -99,6 +99,7 @@ describe("compaction safeguard P6 enforcement", () => {
 
     expect(providerSummarize).toHaveBeenCalledTimes(2);
     expect(result).not.toHaveProperty("cancel");
+    if (!result.compaction) throw new Error("expected compaction");
     expect(result.compaction.details.validatedPipeline.mode).toBe("would-retry");
   });
 
@@ -134,6 +135,7 @@ describe("compaction safeguard P6 enforcement", () => {
 
     expect(providerSummarize).toHaveBeenCalledTimes(1);
     expect(result.cancel).toBeUndefined();
+    if (!result.compaction) throw new Error("expected compaction");
     expect(result.compaction.details.validatedPipeline.mode).toBe("shadow");
   });
 });

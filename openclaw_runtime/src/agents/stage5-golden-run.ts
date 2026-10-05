@@ -126,7 +126,7 @@ function buildObservationUnits(input: {
 }
 
 function observationCandidate(stage2: Extract<Awaited<ReturnType<typeof runStage2GoldenCodingTurn>>, { ok: true }>): MemoryCandidate {
-  const evidence: MemoryCandidate["evidence"] = [
+  const evidence: Array<MemoryCandidate["evidence"][number]> = [
     { ref: `ref:prompt-plan:${stage2.prePlanDigest}`, digest: stage2.prePlanDigest },
   ];
   if (stage2.envelopeDigest) {

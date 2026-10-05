@@ -34,3 +34,6 @@ openclaw_runtime/npm-shrinkwrap.json -text
 openclaw_runtime/extensions/*/npm-shrinkwrap.json -text
 openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json -text
 openclaw_runtime/apps/macos/Sources/OpenClaw/HostEnvSecurityPolicy.generated.swift -text
+
+# Preserve the complete VerseConf delivery bytes used by its SHA-256 manifest.
+openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/** -text

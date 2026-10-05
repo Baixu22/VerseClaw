@@ -487,9 +487,11 @@ describe("citation resolution and DCS single path", () => {
       ledger: beginTurnInjectionBudget({ turnId }),
     });
     expect(projection.messages).toHaveLength(1);
-    expect(projection.messages[0]?.content).toContain("SourceSet/v1");
-    expect(projection.messages[0]?.content).toContain("evidenceStatus=partial");
-    expect(projection.messages[0]?.content).toContain("citation: owner=memory-wiki");
+    const projected = projection.messages[0];
+    if (!projected || !("content" in projected)) throw new Error("expected message content");
+    expect(projected.content).toContain("SourceSet/v1");
+    expect(projected.content).toContain("evidenceStatus=partial");
+    expect(projected.content).toContain("citation: owner=memory-wiki");
     expect(projection.lineage[0]?.sourceId).toBe("dcs-knowledge");
   });
 

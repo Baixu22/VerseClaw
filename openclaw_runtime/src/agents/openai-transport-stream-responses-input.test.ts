@@ -45,7 +45,7 @@ async function captureSentRequestBody(context: Context): Promise<Record<string, 
     const stream = await createOpenAIResponsesTransportStreamFn()(
       makeModel("gpt-r4") as Model,
       context,
-      { apiKey: "fixture-key", sessionId: "sess-r4", runId: "run-r4" },
+      { apiKey: "fixture-key", sessionId: "sess-r4" },
     );
     for await (const _event of stream) {
       // Consume the stream to completion.

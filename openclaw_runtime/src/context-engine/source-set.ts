@@ -984,7 +984,6 @@ export async function retrieveSourceSet(
         all.findIndex((entry) => rejectionKey(entry) === rejectionKey(rejection)) === index,
     ),
     unknowns,
-    suggestedNextActions: [],
     unresolvedPinnedRefs,
   };
 

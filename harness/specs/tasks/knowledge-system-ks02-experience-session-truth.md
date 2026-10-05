@@ -60,6 +60,8 @@ touchedAreas:
   - openclaw_runtime/src/context-engine/block.ts
   - openclaw_runtime/src/context-engine/block-store.ts
   - openclaw_runtime/src/context-engine/knowledge-system-ks02-block-store-owner.test.ts
+  - openclaw_runtime/src/agents/tools/context-agent-tools.test.ts
+  - openclaw_runtime/src/context-engine/tools/context-search-tool.test.ts
   - openclaw_runtime/src/knowledge/sekb/distillation-tool.ts
   - openclaw_runtime/src/knowledge/sekb/experience-block-bridge.ts
   - openclaw_runtime/src/knowledge/sekb/experience-block-bridge.test.ts
@@ -92,6 +94,8 @@ requiredTests:
   - pnpm harness validate --spec harness/specs/tasks/knowledge-system-ks02-experience-session-truth.md
   - pnpm exec vitest run tests/unit/knowledge-api.test.ts tests/unit/session-cascade-delete.test.ts tests/unit/session-delete-cascade-integration.test.ts
   - pnpm --dir openclaw_runtime exec vitest run src/knowledge/sekb/experience-block-bridge.test.ts src/knowledge/sekb/sekb.test.ts src/context-engine/block-store.test.ts
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-tools.config.ts src/agents/tools/context-agent-tools.test.ts --maxWorkers=1
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/context-engine/tools/context-search-tool.test.ts --maxWorkers=1
   - pnpm run typecheck
   - pnpm run lint:check
   - pnpm contract:check
@@ -107,6 +111,8 @@ acceptance:
   - finalizer-before-transcript: session delete runs derivative finalizer first and aborts with incomplete/retryable on failure
   - residual-zero: after successful delete, Principle/trajectory/MemoryCard/context_blocks/journal/archive residual is zero
   - fresh-session-isolation: same session key after delete does not recall old experience blocks
+notes:
+  - Context-tool test doubles must implement all required BlockStoreApi lifecycle methods introduced by KS-02. This compatibility repair changes only typed fixtures; it must preserve existing recall, tool visibility and mutation assertions.
 docs:
   required: true
   files:

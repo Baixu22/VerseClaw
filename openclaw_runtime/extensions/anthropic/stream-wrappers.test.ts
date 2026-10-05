@@ -2,6 +2,7 @@
  * Anthropic server-side compaction stream wrapper coverage.
  */
 import { describe, expect, it } from "vitest";
+import { createAssistantMessageEventStream } from "openclaw/plugin-sdk/llm";
 import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
 import {
   createAnthropicServerCompactionWrapper,
@@ -37,10 +38,12 @@ describe("Anthropic server compaction stream wrappers", () => {
   it("patches the payload and merges the compaction beta header", async () => {
     let capturedOptions: Parameters<StreamFn>[2] | undefined;
     const wrapper = createAnthropicServerCompactionWrapper(
-      ((_model, _context, options) => {
+      (_model, _context, options) => {
         capturedOptions = options;
-        return (async function* () {})();
-      }) as StreamFn,
+        const stream = createAssistantMessageEventStream();
+        stream.end();
+        return stream;
+      },
       150_000,
     );
 

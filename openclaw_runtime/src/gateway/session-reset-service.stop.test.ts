@@ -31,6 +31,7 @@ const target = {
 };
 
 const entry = {
+  updatedAt: 1,
   sessionId: identity.expectedSessionId,
   sessionFile: "/tmp/phase1-stop-session.jsonl",
 };

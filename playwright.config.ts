@@ -2,6 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/e2e',
+  tsconfig: './tsconfig.test.json',
   // Serial by design: many specs boot a real Electron + Gateway child, and
   // concurrent gateway boots contend for ports/runtime and flake
   // ("gateway never became ready", target-closed). Keep workers:1 —

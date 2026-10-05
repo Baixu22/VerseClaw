@@ -9,7 +9,7 @@ import { performance } from 'node:perf_hooks';
 const ROOT = process.cwd();
 const CACHE_DIR = resolve(ROOT, 'artifacts', 'typecheck-cache');
 const CACHE_REPORT = resolve(CACHE_DIR, 'report.json');
-const CACHE_SCHEMA = 'clawx.typecheck-cache.v1';
+const CACHE_SCHEMA = 'clawx.typecheck-cache.v2';
 
 const CACHE_INPUTS = [
   'package.json',
@@ -19,13 +19,18 @@ const CACHE_INPUTS = [
   'tsconfig.web.json',
   'tsconfig.test.json',
   'vite.config.ts',
-  'scripts/generate-ext-bridge.mjs',
-  'scripts/typecheck-agent-dev.mjs',
+  'scripts',
   'src',
   'electron',
   'shared',
-  'openclaw_runtime/packages/normalization-core/src',
-  'openclaw_runtime/packages/acp-core/src',
+  'tests',
+  'extensions',
+  'resources/openclaw-plugins',
+  'openclaw_runtime/package.json',
+  'openclaw_runtime/pnpm-lock.yaml',
+  'openclaw_runtime/src',
+  'openclaw_runtime/packages',
+  'openclaw_runtime/extensions',
 ];
 
 const SOURCE_EXTENSIONS = new Set([
@@ -72,9 +77,9 @@ if (bridge.exitCode !== 0) {
     const [nodeCheck, webCheck, testCheck] = await Promise.all([
       run('pnpm', ['run', 'typecheck:node']),
       run('pnpm', ['run', 'typecheck:web']),
-      runObservation('pnpm', ['run', 'typecheck:test']),
+      runTestCheck('pnpm', ['run', 'typecheck:test']),
     ]);
-    const results = [bridge, nodeCheck, webCheck];
+    const results = [bridge, nodeCheck, webCheck, testCheck];
     const success = results.every((result) => result.exitCode === 0);
     const report = {
       success,
@@ -88,7 +93,7 @@ if (bridge.exitCode !== 0) {
         report: CACHE_REPORT,
       },
       totalDurationMs: Math.round(performance.now() - startedAt),
-      coverageNote: 'Runs the node and web TypeScript projects as pnpm run typecheck after generating the extension bridge, and additionally typechecks tests/ (tsconfig.test.json) in observation mode: its legacy errors are reported under testTypes but do not fail the gate.',
+      coverageNote: 'Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.',
       results,
     };
     console.log(JSON.stringify(report, null, 2));
@@ -125,12 +130,9 @@ function run(command, args) {
 }
 
 /**
- * Run a typecheck command in observation mode: capture its output so the
- * legacy error count can be reported without failing the gate, and persist the
- * full output for a follow-up dispatch. Used for tests/ (tsconfig.test.json),
- * which has a large pre-existing type-error surface that must not block CI.
+ * Capture test diagnostics while preserving the compiler failure as a hard gate.
  */
-function runObservation(command, args) {
+function runTestCheck(command, args) {
   return new Promise((resolveRun) => {
     const commandStartedAt = performance.now();
     const commandLine = [command, ...args].join(' ');
@@ -154,14 +156,16 @@ function runObservation(command, args) {
         commandLine,
         exitCode: code ?? 1,
         durationMs: Math.round(performance.now() - commandStartedAt),
-        observationMode: true,
+        observationMode: false,
         errorCount,
         errorLog,
       };
-      // Observation-only: a failure to persist the log must not fail the gate.
       mkdir(CACHE_DIR, { recursive: true })
         .then(() => writeFile(errorLog, output, 'utf8'))
-        .catch(() => {})
+        .catch((error) => {
+          console.error(`Cannot persist test typecheck diagnostics: ${error.message}`);
+          result.exitCode = result.exitCode || 1;
+        })
         .finally(() => resolveRun(result));
     });
   });
@@ -291,7 +295,7 @@ function createCacheHitReport({ bridge, cached, fingerprint, startedAt }) {
       cachedAt: cached.generatedAt,
     },
     totalDurationMs: Math.round(performance.now() - startedAt),
-    coverageNote: 'Reused a previous successful node/web TypeScript check because the typecheck input fingerprint is unchanged; run pnpm run typecheck for an uncached full gate.',
+    coverageNote: 'Reused successful node/web/test checks with unchanged source inputs; run pnpm run typecheck for an uncached full gate.',
     results: [bridge, ...cachedPhases],
   };
 }

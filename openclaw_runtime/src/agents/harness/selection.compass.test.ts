@@ -1,3 +1,5 @@
+import { AuthStorage } from "../sessions/auth-storage.js";
+import { ModelRegistry } from "../sessions/model-registry.js";
 import { afterEach, expect, it, vi } from "vitest";
 import { registerAgentHarness, clearAgentHarnesses } from "./registry.js";
 import { runAgentHarnessAttempt } from "./selection.js";
@@ -11,6 +13,21 @@ import type { ContextEngine } from "../../context-engine/types.js";
 import type { AgentMessage } from "../runtime/index.js";
 import { assembleHarnessContextEngine } from "../../plugin-sdk/agent-harness-runtime.js";
 import { runWithHarnessContextBudget } from "./context-engine-lifecycle.js";
+
+function attemptDefaults() {
+  const authStorage = AuthStorage.inMemory();
+  return {
+    sessionFile: "fixture-session.jsonl", workspaceDir: ".", prompt: "fixture", timeoutMs: 1000,
+    provider: "fixture", modelId: "fixture", thinkLevel: "off" as const,
+    authStorage, authProfileStore: { version: 1, profiles: {} },
+    modelRegistry: ModelRegistry.inMemory(authStorage),
+    model: {
+      id: "fixture", name: "fixture", api: "openai-completions" as const, provider: "fixture",
+      baseUrl: "https://example.invalid", reasoning: false, input: ["text" as const],
+      cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 }, contextWindow: 8192, maxTokens: 1024,
+    },
+  };
+}
 
 vi.mock("./builtin-openclaw.js", () => ({
   createOpenClawAgentHarness: () => ({ id: "openclaw", label: "builtin", runAttempt: vi.fn() }),
@@ -31,6 +48,7 @@ it("keeps a separately loaded SDK on the original attempt's ledger", async () =>
   vi.stubEnv("OPENCLAW_COMPASS_SSP", "1");
   vi.stubEnv("VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH", "0");
   const params = {
+    ...attemptDefaults(),
     sessionId: "separate-sdk",
     runId: "separate-sdk",
     compassContext: {
@@ -39,15 +57,17 @@ it("keeps a separately loaded SDK on the original attempt's ledger", async () =>
       candidateFactIds: [],
       appliedFactIds: [],
     },
-  } as unknown as AgentHarnessAttemptParams;
-  const engine = {
+  } satisfies AgentHarnessAttemptParams;
+  const engine: ContextEngine = {
+    ingest: async () => ({ ingested: false }),
+    compact: async () => ({ ok: true, compacted: false }),
     info: { id: "separate-sdk", name: "separate SDK" },
     assemble: async () => ({
       messages: [],
       estimatedTokens: 1,
       systemPromptAddition: "E".repeat(2000),
     }),
-  } as unknown as ContextEngine;
+  };
   await runWithHarnessContextBudget(params, true, async () => {
     const input = {
       contextEngine: engine,
@@ -79,7 +99,7 @@ it.each([
   vi.stubEnv("OPENCLAW_COMPASS_DISABLE", "0");
   vi.stubEnv("OPENCLAW_COMPASS_SSP", "1");
   vi.stubEnv("VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH", "0");
-  const history: AgentMessage[] = [{ role: "user", content: "H".repeat(9000), timestamp: 1 }];
+  const history: Extract<AgentMessage, { role: "user" }>[] = [{ role: "user", content: "H".repeat(9000), timestamp: 1 }];
   const injected: AgentMessage = { role: "user", content: "N".repeat(added), timestamp: 2 };
   const assemble = vi.fn(async ({ messages }: Parameters<ContextEngine["assemble"]>[0]) => ({
     messages: added ? [...messages, injected] : messages,
@@ -87,10 +107,12 @@ it.each([
     systemPromptAddition: "ENGINE:" + "E".repeat(100),
     contextProjection: { mode: "thread_bootstrap" as const, epoch: "1", fingerprint: "full" },
   }));
-  const engine = {
+  const engine: ContextEngine = {
+    ingest: async () => ({ ingested: false }),
+    compact: async () => ({ ok: true, compacted: false }),
     info: { id: "native-engine", name: "native engine" },
     assemble,
-  } as ContextEngine;
+  };
   const turnId = "harness:agent:main:native:native-run:0";
   registerAgentHarness({
     id: "native-fixture",
@@ -129,6 +151,7 @@ it.each([
     },
   });
   await runAgentHarnessAttempt({
+    ...attemptDefaults(),
     agentHarnessId: "native-fixture",
     provider: "fixture",
     modelId: "fixture",
@@ -143,7 +166,7 @@ it.each([
       candidateFactIds: [],
       appliedFactIds: [],
     },
-  } as AgentHarnessAttemptParams);
+  } satisfies AgentHarnessAttemptParams);
   expect(assemble).toHaveBeenCalledTimes(killed ? 0 : 2);
   expect(history[0]!.content).toBe("H".repeat(9000));
   expect(getTurnInjectionBudget(turnId)).toBeUndefined();
@@ -156,10 +179,12 @@ it("keeps concurrent native attempts separate and rechecks changed retry output"
     estimatedTokens: 1,
     systemPromptAddition: prompt!.repeat(4000),
   }));
-  const engine = {
+  const engine: ContextEngine = {
+    ingest: async () => ({ ingested: false }),
+    compact: async () => ({ ok: true, compacted: false }),
     info: { id: "native-engine", name: "native engine" },
     assemble,
-  } as ContextEngine;
+  };
   registerAgentHarness({
     id: "native-fixture",
     label: "native fixture",
@@ -188,14 +213,15 @@ it("keeps concurrent native attempts separate and rechecks changed retry output"
   await Promise.all(
     ["A", "B"].map((prompt) =>
       runAgentHarnessAttempt({
-        agentHarnessId: "native-fixture",
+        ...attemptDefaults(),
+    agentHarnessId: "native-fixture",
         provider: "fixture",
         modelId: "fixture",
         runId: prompt,
         sessionId: "parallel-session",
         prompt,
         contextEngine: engine,
-      } as AgentHarnessAttemptParams),
+      } satisfies AgentHarnessAttemptParams),
     ),
   );
   for (const id of ["A", "B"])
@@ -203,14 +229,18 @@ it("keeps concurrent native attempts separate and rechecks changed retry output"
 });
 
 it("isolates failed native assembly mutation and releases the budget on harness failure", async () => {
-  const history: AgentMessage[] = [{ role: "user", content: "original", timestamp: 1 }];
-  const engine = {
+  const history: Extract<AgentMessage, { role: "user" }>[] = [{ role: "user", content: "original", timestamp: 1 }];
+  const engine: ContextEngine = {
+    ingest: async () => ({ ingested: false }),
+    compact: async () => ({ ok: true, compacted: false }),
     info: { id: "native-engine", name: "native engine" },
     assemble: async ({ messages }: Parameters<ContextEngine["assemble"]>[0]) => {
-      messages[0]!.content = "corrupt";
+      const first = messages[0];
+      if (!first || first.role !== "user") throw new Error("expected user history");
+      first.content = "corrupt";
       throw new Error("engine failed");
     },
-  } as ContextEngine;
+  };
   registerAgentHarness({
     id: "native-fixture",
     label: "native fixture",
@@ -230,13 +260,14 @@ it("isolates failed native assembly mutation and releases the budget on harness 
   });
   await expect(
     runAgentHarnessAttempt({
-      agentHarnessId: "native-fixture",
+      ...attemptDefaults(),
+    agentHarnessId: "native-fixture",
       provider: "fixture",
       modelId: "fixture",
       runId: "failure",
       sessionId: "native-session",
       contextEngine: engine,
-    } as AgentHarnessAttemptParams),
+    } satisfies AgentHarnessAttemptParams),
   ).rejects.toThrow("harness failed");
   expect(getTurnInjectionBudget("harness:native-session:failure:0")).toBeUndefined();
   expect(getContextOrchestratorCollection("harness:native-session:failure:0")).toBeUndefined();
@@ -254,6 +285,7 @@ it.each([false, true])("native harness receives budgeted COMPASS with kill=%s", 
     runAttempt,
   });
   await runAgentHarnessAttempt({
+    ...attemptDefaults(),
     agentHarnessId: "native-fixture",
     provider: "fixture",
     modelId: "fixture-model",
@@ -268,7 +300,7 @@ it.each([false, true])("native harness receives budgeted COMPASS with kill=%s", 
       candidateFactIds: [],
       appliedFactIds: [],
     },
-  } as AgentHarnessAttemptParams);
+  } satisfies AgentHarnessAttemptParams);
   expect(runAttempt).toHaveBeenCalledOnce();
   const delivered = runAttempt.mock.calls[0]![0];
   expect(delivered.compassContext).toBeUndefined();

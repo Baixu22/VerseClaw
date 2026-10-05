@@ -3,25 +3,60 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { execFileSync, spawn } from "node:child_process";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, lstatSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import net from "node:net";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { parseArgs } from "node:util";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const { values } = parseArgs({ options: { "output-dir": { type: "string" }, "seven-zip": { type: "string" } } });
 const extensionRoot = path.join(root, "openclaw_runtime", "extensions", "verseconf-artifacts");
-const packagedExtensionRoot = path.join(root, "release", "win-unpacked", "resources", "openclaw-runtime", "dist", "extensions", "verseconf-artifacts");
-const installerPath = path.join(root, "release", "Verse Claw-0.4.9-alpha.0-win-x64.exe");
-const evidenceRoot = path.join(root, "artifacts", "verseconf-clawx-integration");
-const reportPath = path.join(evidenceRoot, "verification-20261001.json");
+const packagedRuntimeRoot = path.join(root, "release", "win-unpacked", "resources", "openclaw-runtime");
+const packagedExtensionRoot = path.join(packagedRuntimeRoot, "dist", "extensions", "verseconf-artifacts");
+const appVersion = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8")).version;
+const installerPath = path.join(root, "release", `Verse Claw-${appVersion}-win-x64.exe`);
+const sevenZip = values["seven-zip"] ?? (process.platform === "win32" ? "C:\\Program Files\\7-Zip\\7z.exe" : "7z");
+const runId = new Date().toISOString().replace(/[:.]/g, "-");
+const evidenceRoot = path.resolve(values["output-dir"] ?? path.join(root, "artifacts", "verseconf-clawx-integration", "runs", runId));
+const reportPath = path.join(evidenceRoot, "verification.json");
+if (existsSync(reportPath)) throw new Error("Verification output already exists; use a fresh output directory");
 const manifestPath = path.join(evidenceRoot, "SHA256SUMS");
 const credentialScanPath = path.join(evidenceRoot, "credential-scan.json");
 const sha256 = (value) => createHash("sha256").update(value).digest("hex");
 const fileSha = (file) => sha256(readFileSync(file));
 const checks = [];
+function assertDelivery(pluginRoot) {
+  const vendorRoot = path.join(pluginRoot, "vendor", "verseconf");
+  assert.deepEqual(JSON.parse(readFileSync(path.join(pluginRoot, "verseconf-delivery-lock.json"), "utf8")), deliveryLock);
+  assert.equal(fileSha(path.join(vendorRoot, "delivery-manifest.json")), deliveryLock.manifestSha256);
+  const files = [{ path: "delivery-manifest.json" }, ...deliveryManifest.files];
+  for (const file of files) {
+    const target = path.join(vendorRoot, file.path);
+    const stat = lstatSync(target);
+    assert.equal(stat.isSymbolicLink(), false, `linked delivery file: ${target}`);
+    assert.equal(stat.isFile(), true, `non-file delivery entry: ${target}`);
+    if (file.sha256) {
+      assert.equal(stat.size, file.bytes, target);
+      assert.equal(fileSha(target), file.sha256, target);
+    }
+  }
+  const actual = [];
+  function visit(dir, prefix = "") {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      assert.equal(entry.isSymbolicLink(), false, `linked delivery entry: ${path.join(dir, entry.name)}`);
+      const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
+      if (entry.isDirectory()) visit(path.join(dir, entry.name), relative);
+      else actual.push(relative);
+    }
+  }
+  visit(vendorRoot);
+  assert.deepEqual(actual.sort(), files.map((file) => file.path).sort());
+}
 function check(name, fn) {
   try { fn(); checks.push({ name, ok: true }); }
   catch (error) { checks.push({ name, ok: false, message: error instanceof Error ? error.message : String(error) }); }
@@ -38,6 +73,9 @@ const pluginManifest = JSON.parse(readFileSync(path.join(extensionRoot, "opencla
 const packageManifest = JSON.parse(readFileSync(path.join(extensionRoot, "package.json"), "utf8"));
 const vendorPackageManifest = JSON.parse(readFileSync(path.join(extensionRoot, "vendor", "verseconf", "package.json"), "utf8"));
 const buildManifest = JSON.parse(readFileSync(path.join(extensionRoot, "vendor", "verseconf", "build-manifest.json"), "utf8"));
+const deliveryLock = JSON.parse(readFileSync(path.join(extensionRoot, "verseconf-delivery-lock.json"), "utf8"));
+const deliveryManifestPath = path.join(extensionRoot, "vendor", "verseconf", "delivery-manifest.json");
+const deliveryManifest = JSON.parse(readFileSync(deliveryManifestPath, "utf8"));
 const wasmPath = path.join(extensionRoot, "vendor", "verseconf", "pkg", "verseconf_wasm_bg.wasm");
 const gluePath = path.join(extensionRoot, "vendor", "verseconf", "pkg", "verseconf_wasm.js");
 const workerPath = path.join(extensionRoot, "vendor", "verseconf", "worker", "index.mjs");
@@ -48,7 +86,13 @@ check("manifest.plugin-is-disabled-by-default", () => assert.equal(pluginManifes
 check("manifest.node-delivery-is-locked", () => { assert.equal(buildManifest.deliveryTarget, "node"); assert.equal(buildManifest.locked, true); });
 check("manifest.source-and-runtime-present", () => { for (const file of [wasmPath, gluePath, workerPath, schemaPath, fixturePath, path.join(extensionRoot, "templates", "slide-outline-template.pptx"), path.join(extensionRoot, "vendor", "verseconf", "LICENSE-MIT"), path.join(extensionRoot, "vendor", "verseconf", "LICENSE-APACHE")] ) assert.equal(existsSync(file), true, file); });
 check("manifest.has-no-channel-surface", () => { assert.equal(pluginManifest.contracts?.channels ?? undefined, undefined); assert.equal(pluginManifest.enabledByDefault, false); });
-check("manifest.package-version-is-pinned", () => assert.equal(vendorPackageManifest.version, buildManifest.package.version));
+check("manifest.package-version-is-pinned", () => {
+  assert.equal(vendorPackageManifest.version, deliveryLock.packageVersion);
+  assert.equal(vendorPackageManifest.version, deliveryManifest.package.version);
+  assert.equal(vendorPackageManifest.verseconf.sourceVersion, buildManifest.package.version);
+  assert.equal(fileSha(deliveryManifestPath), deliveryLock.manifestSha256);
+  for (const file of deliveryManifest.files) assert.equal(fileSha(path.join(extensionRoot, "vendor", "verseconf", file.path)), file.sha256, file.path);
+});
 check("manifest.wasm-fingerprint-matches-build", () => { const expected = buildManifest.outputs.find((entry) => entry.path === "pkg/verseconf_wasm_bg.wasm"); assert.equal(fileSha(wasmPath), expected.sha256); });
 check("manifest.glue-fingerprint-matches-build", () => { const expected = buildManifest.outputs.find((entry) => entry.path === "pkg/verseconf_wasm.js"); assert.equal(fileSha(gluePath), expected.sha256); });
 check("electron-unpacked-plugin-present", () => {
@@ -71,7 +115,37 @@ check("electron-unpacked-plugin-has-no-developer-absolute-path", () => {
 });
 check("electron-installer-present", () => {
   assert.equal(existsSync(installerPath), true, installerPath);
-  assert.ok(readFileSync(installerPath).byteLength > 1_000_000);
+  assert.ok(lstatSync(installerPath).size > 1_000_000);
+});
+for (const [label, pluginRoot] of [
+  ["source", extensionRoot],
+  ["runtime-dist", path.join(root, "openclaw_runtime", "dist", "extensions", "verseconf-artifacts")],
+  ["runtime-overlay", path.join(root, "openclaw_runtime", "dist-runtime", "extensions", "verseconf-artifacts")],
+  ["electron-dist", packagedExtensionRoot],
+  ["electron-overlay", path.join(packagedRuntimeRoot, "dist-runtime", "extensions", "verseconf-artifacts")],
+]) check(`delivery.${label}.complete-regular-files`, () => assertDelivery(pluginRoot));
+const installerEvidence = { status: "not-run" };
+await asyncCheck("electron-installer.embedded-delivery-matches-current-source", async () => {
+  const tempRoot = await mkdtemp(path.join(os.tmpdir(), "verseconf-installer-"));
+  try {
+    execFileSync(sevenZip, ["x", "-y", installerPath, `-o${tempRoot}`, "$PLUGINSDIR\\app-64.7z"], { stdio: "pipe", timeout: 120_000 });
+    const embeddedArchive = path.join(tempRoot, "$PLUGINSDIR", "app-64.7z");
+    // electron-builder removes the intermediate archive after a successful build.
+    // Verify the installed payload itself against the locked source and unpacked build.
+    const extractedRoot = path.join(tempRoot, "app");
+    execFileSync(sevenZip, ["x", "-y", embeddedArchive, `-o${extractedRoot}`, "resources\\openclaw-runtime\\dist\\extensions\\verseconf-artifacts\\*", "resources\\openclaw-runtime\\dist-runtime\\extensions\\verseconf-artifacts\\*"], { stdio: "pipe", timeout: 120_000 });
+    for (const layout of ["dist", "dist-runtime"]) {
+      const extractedPlugin = path.join(extractedRoot, "resources", "openclaw-runtime", layout, "extensions", "verseconf-artifacts");
+      assertDelivery(extractedPlugin);
+      const packagedPlugin = path.join(packagedRuntimeRoot, layout, "extensions", "verseconf-artifacts");
+      for (const file of ["index.js", "package.json", "openclaw.plugin.json"]) {
+        assert.equal(fileSha(path.join(extractedPlugin, file)), fileSha(path.join(packagedPlugin, file)), `${layout}/${file}`);
+      }
+    }
+    Object.assign(installerEvidence, { status: "passed", archiveSha256: fileSha(embeddedArchive), manifestSha256: deliveryLock.manifestSha256, layouts: ["dist", "dist-runtime"], filesPerLayout: deliveryManifest.files.length + 1, installedOnHost: false });
+  } finally {
+    await rm(tempRoot, { recursive: true, force: true });
+  }
 });
 
 const workerModule = await import(pathToFileURL(workerPath).href);
@@ -82,7 +156,12 @@ const spec = { recordsPath: ["records"], idField: "id" };
 
 const worker = workerModule.createComputeWorker();
 const schemaWorker = workerModule.createComputeWorker({ profile: "schema-validation" });
-const performanceEvidence = { workerSamples: [], packageBytes: { wasm: readFileSync(wasmPath).byteLength, installer: existsSync(installerPath) ? readFileSync(installerPath).byteLength : null } };
+const performanceEvidence = { workerSamples: [], packageBytes: { wasm: lstatSync(wasmPath).size, installer: existsSync(installerPath) ? lstatSync(installerPath).size : null } };
+const workerLimits = {
+  defaultWasmLinearMemoryMax: worker.limits.wasmLinearMemoryMax,
+  schemaValidationWasmLinearMemoryMax: schemaWorker.limits.wasmLinearMemoryMax,
+  provenance: workerModule.LIMIT_PROVENANCE,
+};
 const runtimeCases = [];
 async function runtimeCase(name, fn) {
   try { await fn(); runtimeCases.push({ name, ok: true }); }
@@ -90,8 +169,7 @@ async function runtimeCase(name, fn) {
 }
 await runtimeCase("clean-consumption-environment.load", async () => {
   const cleanRoot = await mkdtemp(path.join(os.tmpdir(), "verseconf-clean-consumer-"));
-  await cp(path.join(extensionRoot, "vendor", "verseconf", "pkg"), path.join(cleanRoot, "pkg"), { recursive: true });
-  await cp(path.join(extensionRoot, "vendor", "verseconf", "worker"), path.join(cleanRoot, "worker"), { recursive: true });
+  await cp(path.join(extensionRoot, "vendor", "verseconf"), cleanRoot, { recursive: true });
   const probePath = path.join(cleanRoot, "probe.mjs");
   await writeFile(probePath, `import { createComputeWorker } from './worker/index.mjs';
 const worker = createComputeWorker();
@@ -99,9 +177,40 @@ const result = await worker.call('capability', {});
 console.log(JSON.stringify({ ok: result.outcome.ok, op: result.outcome.op }));
 await worker.dispose();
 `, "utf8");
-  const output = execFileSync(process.execPath, [probePath], { cwd: cleanRoot, encoding: "utf8" });
-  const line = output.trim().split(/\r?\n/u).at(-1);
-  assert.deepEqual(JSON.parse(line), { ok: true, op: "capability" });
+  try {
+    const output = execFileSync(process.execPath, [probePath], { cwd: cleanRoot, encoding: "utf8", timeout: 30_000, env: { ...process.env, NODE_PATH: "", NODE_OPTIONS: "" } });
+    const line = output.trim().split(/\r?\n/u).at(-1);
+    assert.deepEqual(JSON.parse(line), { ok: true, op: "capability" });
+  } finally {
+    await rm(cleanRoot, { recursive: true, force: true });
+  }
+});
+await runtimeCase("full-module.node-esm-cjs-web-and-mcp", async () => {
+  const vendorRoot = path.join(extensionRoot, "vendor", "verseconf");
+  const esm = await import(pathToFileURL(path.join(vendorRoot, "dist", "index.mjs")).href);
+  const cjs = createRequire(import.meta.url)(path.join(vendorRoot, "dist", "index.cjs"));
+  for (const api of [esm, cjs]) {
+    assert.equal(api.capability().ok, true);
+    assert.equal(api.validate("port = 8080\n").isError, false);
+    assert.equal(api.tools().length, 5);
+    assert.equal(api.inspectRecord({ source, format: "json", spec, selectors: [] }).ok, true);
+  }
+  const web = await import(pathToFileURL(path.join(vendorRoot, "pkg-web", "verseconf_wasm.js")).href);
+  web.initSync({ module: readFileSync(path.join(vendorRoot, "pkg-web", "verseconf_wasm_bg.wasm")) });
+  assert.equal(JSON.parse(web.business_capability_json()).ok, true);
+  const tools = JSON.parse(execFileSync(process.execPath, [path.join(vendorRoot, "bin", "verseconf-mcp-wasm.mjs"), "--list-tools"], { encoding: "utf8", timeout: 30_000 }));
+  assert.equal(tools.tools.length, 5);
+});
+await runtimeCase("worker.rejects-version-and-digest-mismatch-without-spawn", async () => {
+  for (const options of [{ expectedVersion: `${deliveryLock.packageVersion}-mismatch` }, { wasmExpectedSha256: "0".repeat(64) }]) {
+    const rejectedWorker = workerModule.createComputeWorker(options);
+    try {
+      await assert.rejects(rejectedWorker.call("capability", {}), (error) => error?.code === "worker_unavailable");
+      assert.equal(rejectedWorker.stats.spawns, 0);
+    } finally {
+      await rejectedWorker.dispose();
+    }
+  }
 });
 await runtimeCase("wasm.capability", async () => { const startedAt = performance.now(); const result = await worker.call("capability", {}); performanceEvidence.workerSamples.push({ label: "cold-capability", durationMs: Number((performance.now() - startedAt).toFixed(2)), metrics: result.metrics ?? null }); assert.equal(result.outcome.ok, true); });
 await runtimeCase("wasm.capability-hot", async () => { const startedAt = performance.now(); const result = await worker.call("capability", {}); performanceEvidence.workerSamples.push({ label: "hot-capability", durationMs: Number((performance.now() - startedAt).toFixed(2)), metrics: result.metrics ?? null }); assert.equal(result.outcome.ok, true); });
@@ -116,6 +225,7 @@ await worker.dispose();
 await schemaWorker.dispose();
 
 const realRuntimeCases = [];
+const idempotencyEvidence = [];
 async function realRuntimeCase(name, fn) {
   try { await fn(); realRuntimeCases.push({ name, ok: true }); }
   catch (error) { realRuntimeCases.push({ name, ok: false, message: error instanceof Error ? error.message : String(error) }); }
@@ -211,6 +321,52 @@ await realRuntimeCase("gateway.real-runtime-managed-artifact-lifecycle", async (
       { recordId: "rec-managed", fieldPath: ["evidenceRefs"], op: "setValue", expect: { kind: "value", value: [] }, value: ["src-synthetic-check"] },
     ] });
     assert.equal(replay.status, 200);
+    assert.deepEqual(gatewayResult(replay.body), gatewayResult(revised.body));
+    await realRuntimeCase("gateway.revise.rejects-nested-idempotency-conflict", async () => {
+      const beforeSha256 = fileSha(path.join(workspaceDir, "research.json"));
+      const beforeHistory = await invoke("structured_artifact_history", { artifactId: "gateway-artifact" });
+      const conflict = await invoke("structured_artifact_revise", { artifactId: "gateway-artifact", baseRevisionId, idempotencyKey: "gateway-revise-key", changes: [
+        { recordId: "rec-managed", fieldPath: ["evidenceState"], op: "setValue", expect: { kind: "value", value: "unlinked" }, value: "unlinked" },
+        { recordId: "rec-managed", fieldPath: ["evidenceRefs"], op: "setValue", expect: { kind: "value", value: [] }, value: ["src-synthetic-check"] },
+      ] });
+      const details = gatewayResult(conflict.body);
+      assert.equal(conflict.status, 200);
+      assert.equal(details.ok, false);
+      assert.equal(details.state, "rejected");
+      assert.equal(details.diagnostics[0].code, "idempotency_conflict");
+      assert.equal(details.operationId, gatewayResult(revised.body).operationId);
+      const afterSha256 = fileSha(path.join(workspaceDir, "research.json"));
+      assert.equal(afterSha256, beforeSha256);
+      const afterHistory = await invoke("structured_artifact_history", { artifactId: "gateway-artifact" });
+      assert.deepEqual(afterHistory, beforeHistory);
+      idempotencyEvidence.push({ tool: "structured_artifact_revise", response: details, beforeSha256, afterSha256, revisionCount: gatewayResult(afterHistory.body).revisions.length, historyUnchanged: true });
+    });
+    await realRuntimeCase("gateway.record-ops.rejects-nested-idempotency-conflict", async () => {
+      const recordPath = path.join(workspaceDir, "records.json");
+      await writeFile(recordPath, source, "utf8");
+      const created = await invoke("structured_artifact_create", { artifactId: "gateway-records", kind: "research-table", sourcePath: "records.json" });
+      assert.equal(created.status, 200);
+      const record = { id: "rec-extra", subject: "Extra", finding: "Original", evidenceState: "unlinked", evidenceRefs: [], limitations: null };
+      const request = { artifactId: "gateway-records", idempotencyKey: "gateway-record-key", operations: [{ op: "insertRecord", record, afterId: "rec-managed" }] };
+      const committed = await invoke("structured_artifact_record_ops", request);
+      assert.equal(committed.status, 200);
+      assert.equal(gatewayResult(committed.body).state, "committed");
+      assert.deepEqual(await invoke("structured_artifact_record_ops", request), committed);
+      const beforeSha256 = fileSha(recordPath);
+      const beforeHistory = await invoke("structured_artifact_history", { artifactId: request.artifactId });
+      const conflict = await invoke("structured_artifact_record_ops", { ...request, operations: [{ ...request.operations[0], record: { ...record, finding: "Changed" } }] });
+      const details = gatewayResult(conflict.body);
+      assert.equal(conflict.status, 200);
+      assert.equal(details.ok, false);
+      assert.equal(details.state, "rejected");
+      assert.equal(details.diagnostics[0].code, "idempotency_conflict");
+      assert.equal(details.operationId, gatewayResult(committed.body).operationId);
+      const afterSha256 = fileSha(recordPath);
+      assert.equal(afterSha256, beforeSha256);
+      const afterHistory = await invoke("structured_artifact_history", { artifactId: request.artifactId });
+      assert.deepEqual(afterHistory, beforeHistory);
+      idempotencyEvidence.push({ tool: "structured_artifact_record_ops", response: details, beforeSha256, afterSha256, revisionCount: gatewayResult(afterHistory.body).revisions.length, historyUnchanged: true });
+    });
     const exported = await invoke("structured_artifact_export", { artifactId: "gateway-artifact", format: "xlsx" });
     assert.equal(exported.status, 200);
     assert.equal(gatewayResult(exported.body).output.format, "xlsx");
@@ -421,8 +577,8 @@ await toolCase("store.rejects-unknown-schema-version", async () => { const versi
 await toolCase("store.rejects-capacity-at-boundary", async () => { const capacityPath = path.join(workspaceDir, ".state", "capacity-check.sqlite"); const capacityStore = new VerseConfArtifactStore({ path: capacityPath }); const insert = capacityStore.db.prepare("INSERT INTO verseconf_artifacts (artifact_id, kind, workspace_dir, source_path, current_revision_id, schema_text, schema_identity_json, created_at, updated_at) VALUES (?, 'research-table', ?, 'research.json', 'rev-capacity', '{}', '{}', 1, 1)"); for (let i = 0; i < 256; i += 1) insert.run(`capacity-${i}`, workspaceDir); assert.throws(() => capacityStore.assertArtifactCapacity(), /artifact capacity exceeded/); capacityStore.close(); });
 await engine.dispose();
 
-const visualDir = path.join(root, "artifacts", "verseconf-clawx-integration", "visual-20261001");
-let visualRender = { status: "not-run", reason: "LibreOffice or PyMuPDF is unavailable" };
+const visualDir = path.join(evidenceRoot, "visual");
+let visualRender = { status: "not-run", visualAcceptance: "not-run", reason: "LibreOffice or PyMuPDF is unavailable" };
 try {
   const { renderArtifact } = await import(pathToFileURL(path.join(extensionRoot, "src", "render.ts")).href);
   await mkdir(visualDir, { recursive: true });
@@ -462,19 +618,20 @@ try {
   if (!visualJsonLine) throw new Error(`visual probe emitted no JSON report: ${visual.trim()}`);
   const visualReport = JSON.parse(visualJsonLine);
   writeFileSync(path.join(visualDir, "visual-report.json"), `${JSON.stringify(visualReport, null, 2)}\n`, "utf8");
-  visualRender = { status: "passed", drivenBy: "agent", renderer: "LibreOffice + PyMuPDF", ...visualReport };
+  visualRender = { status: "rendered", visualAcceptance: "not-run", driven_by: "agent", renderer: "LibreOffice + PyMuPDF", ...visualReport };
 } catch (error) {
-  visualRender = { status: "not-run", reason: error instanceof Error ? error.message : String(error), drivenBy: "agent" };
+  visualRender = { status: "not-run", visualAcceptance: "not-run", reason: error instanceof Error ? error.message : String(error), driven_by: "agent" };
 }
 
 const allCases = [...checks, ...runtimeCases, ...realRuntimeCases, ...toolCases];
 const packagedElectron = {
-  status: existsSync(packagedExtensionRoot) ? "passed" : "not-run",
+  status: allCases.filter((entry) => entry.name.startsWith("electron-") || entry.name.startsWith("delivery.electron-")).every((entry) => entry.ok) ? "passed" : "failed",
   root: path.relative(root, packagedExtensionRoot).replaceAll("\\", "/"),
   installer: {
-    status: existsSync(installerPath) ? "passed" : "not-run",
+    status: installerEvidence.status === "passed" ? "passed" : "failed",
     path: path.relative(root, installerPath).replaceAll("\\", "/"),
     sha256: existsSync(installerPath) ? fileSha(installerPath) : null,
+    embeddedDelivery: installerEvidence,
   },
 };
 
@@ -484,11 +641,18 @@ const report = {
   generatedAt: new Date().toISOString(),
   actor: "agent/verseconf-clawx-verifier",
   drivenBy: "agent",
+  driven_by: "agent",
   realHumanEvidence: false,
   paidModelCalls: 0,
-  source: { pluginManifest, package: packageManifest, vendorPackage: vendorPackageManifest, buildManifest, wasmSha256: fileSha(wasmPath), glueSha256: fileSha(gluePath) },
+  source: { pluginManifest, package: packageManifest, vendorPackage: vendorPackageManifest, buildManifest, deliveryLock, deliveryManifest, wasmSha256: fileSha(wasmPath), glueSha256: fileSha(gluePath) },
   packagedElectron,
-  limits: { defaultWasmLinearMemoryMax: 20971520, schemaValidationWasmLinearMemoryMax: 100663296, reason: "trusted-schema compiler path measured 44236800 bytes in the current Node/WASM build; schema validation uses a separate bounded worker profile" },
+  idempotency: {
+    sourceGateway: idempotencyEvidence,
+    sourceToolsSha256: fileSha(path.join(extensionRoot, "src", "tools.ts")),
+    runtimePluginSha256: fileSha(path.join(root, "openclaw_runtime", "dist", "extensions", "verseconf-artifacts", "index.js")),
+    packagedGateway: { status: "not-run", reason: "Nested idempotency conflict checks cover the rebuilt local runtime; the existing installer is prior delivery evidence." },
+  },
+  limits: workerLimits,
   visualRender,
   scenarioCounts: { total: allCases.length, passed: allCases.filter((entry) => entry.ok).length, failed: allCases.filter((entry) => !entry.ok).length },
   cases: allCases,
@@ -499,7 +663,7 @@ const report = {
     failureDenominator: { totalCases: allCases.length, failedCases: allCases.filter((entry) => !entry.ok).length },
     workerSamples: performanceEvidence.workerSamples,
     packageBytes: performanceEvidence.packageBytes,
-    limits: { coldWorkerMs: 5000, hotWorkerMs: 2000, defaultWasmLinearMemoryMax: 20971520, schemaValidationWasmLinearMemoryMax: 100663296 },
+    limits: { coldWorkerMs: 5000, hotWorkerMs: 2000, ...workerLimits },
     maintenanceCostProxy: { metric: "extension-source-files-bytes-lines", ...maintenanceCostProxy },
   },
 };

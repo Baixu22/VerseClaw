@@ -663,7 +663,7 @@ async function applyDeleteWikiPageMutation(params: {
 
 async function applyLifecycleMutation(params: {
   config: ResolvedMemoryWikiConfig;
-  mutation: ApplyMemoryWikiMutation;
+  mutation: Exclude<ApplyMemoryWikiMutation, { op: "create_synthesis" | "update_metadata" }>;
 }): Promise<LifecycleMutationResult> {
   if (params.mutation.op === "update_page") {
     return applyUpdateWikiPageMutation({
@@ -713,7 +713,7 @@ export async function applyMemoryWikiMutation(params: {
   mutation: ApplyMemoryWikiMutation;
 }): Promise<ApplyMemoryWikiMutationResult> {
   await initializeMemoryWikiVault(params.config);
-  const result =
+  const result: LifecycleMutationResult =
     params.mutation.op === "create_synthesis"
       ? await applyCreateSynthesisMutation({
           config: params.config,

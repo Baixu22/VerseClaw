@@ -7,6 +7,8 @@ node_modules/
 dist/
 !openclaw_runtime/extensions/codegraph/dist/
 !openclaw_runtime/extensions/codegraph/dist/**
+!openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/dist/
+!openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/dist/**
 dist-electron/
 release/
 *.local
@@ -313,3 +315,11 @@ openclaw_runtime/_tmp_*
 # Override only these superseded copies, not the current system-maturity evidence.
 /artifacts/system-maturity/P6-005.prev-7e4782723/
 /artifacts/system-maturity/P6-005.stale-20260810/
+
+# Local closeout diagnostic; keep it outside GitHub commits.
+/artifacts/verseconf-clawx-integration/seven-file-closeout-20261004.json
+
+# Curated closeout summary; raw logs and fixtures remain local.
+!artifacts/project-closeout-20261004/
+artifacts/project-closeout-20261004/*
+!artifacts/project-closeout-20261004/report.json

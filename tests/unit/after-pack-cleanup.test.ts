@@ -8,8 +8,10 @@ import { afterEach, describe, expect, it } from 'vitest';
 const require = createRequire(import.meta.url);
 
 type AfterPackTestHooks = {
+  cleanupUnnecessaryFiles: (dir: string) => number;
   cleanupNativePlatformPackages: (nodeModulesDir: string, platform: string, arch: string) => number;
   cleanupNodeModulesRuntimeJunk: (nodeModulesDir: string, platform: string, arch: string) => number;
+  cleanupKnownRuntimeJunk: (rootDir: string, platform: string, arch: string) => number;
 };
 
 const afterPack = require('../../scripts/after-pack.cjs') as { __test?: AfterPackTestHooks };
@@ -35,6 +37,41 @@ describe('after-pack cleanup helpers', () => {
     mkdirSync(dir, { recursive: true });
     writeFileSync(join(dir, 'package.json'), '{"version":"1.0.0"}\n', 'utf8');
   }
+
+  it.each([['win32', 'x64'], ['darwin', 'universal']])('removes local state only from the runtime root (%s/%s)', (platform, arch) => {
+    const root = makeTempNodeModules();
+    for (const name of ['.ae', '.agents', '.artifacts', '.local', '.openclaw', '.tmp', 'artifacts', 'coverage']) {
+      mkdirSync(join(root, name));
+      writeFileSync(join(root, name, 'private.sqlite'), 'local-only state');
+    }
+    for (const name of ['.env', '.env.local', '_tmp_123_marker', 'build.log', 'tsconfig.tsbuildinfo']) {
+      writeFileSync(join(root, name), 'local-only file');
+    }
+    mkdirSync(join(root, 'src'));
+    writeFileSync(join(root, 'src', 'entry.ts'), 'export {};');
+    mkdirSync(join(root, 'extensions', 'artifacts'), { recursive: true });
+    writeFileSync(join(root, 'extensions', 'artifacts', 'index.js'), 'export {};');
+    afterPack.__test!.cleanupKnownRuntimeJunk(root, platform, arch);
+    for (const name of ['.ae', '.agents', '.artifacts', '.local', '.openclaw', '.tmp', 'artifacts', 'coverage', '.env', '.env.local', '_tmp_123_marker', 'build.log', 'tsconfig.tsbuildinfo']) {
+      expect(existsSync(join(root, name)), name).toBe(false);
+    }
+    expect(existsSync(join(root, 'src', 'entry.ts'))).toBe(true);
+    expect(existsSync(join(root, 'extensions', 'artifacts', 'index.js'))).toBe(true);
+  });
+
+  it('preserves complete module deliveries while removing ordinary development files', () => {
+    const root = makeTempNodeModules();
+    const moduleRoot = join(root, 'module');
+    mkdirSync(join(moduleRoot, 'worker'), { recursive: true });
+    writeFileSync(join(moduleRoot, 'delivery-manifest.json'), JSON.stringify({ manifest: 'verseconf-js-delivery/v1', files: [] }));
+    writeFileSync(join(moduleRoot, 'worker', 'index.d.mts'), 'export {};');
+    writeFileSync(join(moduleRoot, 'README.md'), 'Module contract');
+    writeFileSync(join(root, 'ordinary.d.ts'), 'development declaration');
+    afterPack.__test!.cleanupUnnecessaryFiles(root);
+    expect(existsSync(join(moduleRoot, 'worker', 'index.d.mts'))).toBe(true);
+    expect(existsSync(join(moduleRoot, 'README.md'))).toBe(true);
+    expect(existsSync(join(root, 'ordinary.d.ts'))).toBe(false);
+  });
 
   it('keeps both mac Codex native packages for universal builds', () => {
     const nodeModules = makeTempNodeModules();

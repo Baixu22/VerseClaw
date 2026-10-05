@@ -82,6 +82,7 @@ describe("stopSessionRuntime subagent child drain", () => {
       key: parentIdentity.canonicalSessionKey,
       target,
       entry: {
+        updatedAt: 1,
         sessionId: parentIdentity.expectedSessionId,
         sessionFile: "/tmp/phase1-subagent-stop-session.jsonl",
       },
@@ -117,6 +118,7 @@ describe("stopSessionRuntime subagent child drain", () => {
       key: parentIdentity.canonicalSessionKey,
       target,
       entry: {
+        updatedAt: 1,
         sessionId: parentIdentity.expectedSessionId,
         sessionFile: "/tmp/phase1-subagent-stop-session.jsonl",
       },

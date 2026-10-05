@@ -53,6 +53,6 @@ Lifecycle stages:
 - Validate: Verse Claw verifies package manifests, dependencies, capability config, ownership uniqueness, and startup requirements.
 - Activate: only resolved and validated capabilities enter final OpenClaw runtime config.
 - Recover: failed upgrades, stale registrations, conflicts, and removed channels converge to a single diagnosable state with rollback or cleanup paths.
-- Package: cleanup and pruning keep packaged artifacts small without deleting target runtime assets; macOS universal packages keep both x64 and arm64 native payloads.
+- Package: cleanup and pruning keep packaged artifacts small without deleting target runtime assets; macOS universal packages keep both x64 and arm64 native payloads. Local workspace state, environment files, logs, caches and agent-development records stay outside the packaged runtime, while hash-locked deliveries retain their complete declared bytes.
 
 First-stage priority is integration safety: single-owner capability resolution, active config guards, direct regression tests for migration cases, and explicit task specs for resolution, validation, and recovery work.

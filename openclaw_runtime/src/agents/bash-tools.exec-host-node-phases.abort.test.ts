@@ -40,6 +40,8 @@ const prepared = {
     argv: target.argv,
     commandText: "echo done",
     cwd: "/tmp",
+    agentId: null,
+    sessionKey: null,
   },
   argv: target.argv,
   rawCommand: "echo done",

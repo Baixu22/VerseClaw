@@ -27,6 +27,7 @@ const SCHEDULE: TierSchedule = {
 function shadow(overrides: Partial<CompactionBudgetShadow> = {}): CompactionBudgetShadow {
   return {
     taskClass: "refactor",
+    tokensBefore: 560,
     plannedTier: "tier1",
     actualTier: "tier1",
     ignored: false,

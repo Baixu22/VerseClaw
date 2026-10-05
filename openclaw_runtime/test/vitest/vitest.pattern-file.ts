@@ -1,6 +1,9 @@
 // Vitest pattern file helper reads include and exclude patterns from files.
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const repoRoot = fs.realpathSync(fileURLToPath(new URL("../../", import.meta.url)));
 
 const VITEST_OPTION_VALUE_FLAGS = new Set([
   "-c",
@@ -74,6 +77,9 @@ function looksLikeDirRelativePath(value: string): boolean {
 }
 
 function applyScopedDir(value: string, scopedDir: string): string {
+  if (path.isAbsolute(value)) {
+    return path.relative(repoRoot, value).replaceAll("\\", "/");
+  }
   const normalizedValue = value
     .trim()
     .replace(/^\.\/+/u, "")

@@ -4,6 +4,8 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
+    // Infer imported JS helpers, matching the core test project. No tests are excluded.
+    "allowJs": true,
     "tsBuildInfoFile": "../../.artifacts/tsgo-cache/extensions-test.tsbuildinfo"
   },
   "include": ["../../extensions/**/*.test.ts", "../../extensions/**/*.test.tsx", "../../test/**/*.ts"],

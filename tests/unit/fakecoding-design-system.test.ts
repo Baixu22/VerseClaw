@@ -30,12 +30,10 @@ describe('FakeCoding design-system contract', () => {
     expect(globals).not.toContain('radial-gradient(circle at 80% -10%');
   });
 
-  it('defaults the shared page shell to a 2xl semibold heading with zero letter spacing', () => {
+  it('defaults the shared page shell to a 28px normal heading with 34px line height and zero letter spacing', () => {
     const pageShell = source('src/components/ui/page-shell.tsx');
 
-    // f95cc15d9 restyled the shared heading to text-2xl font-semibold, matching
-    // the other page headings; this contract follows the shipped component.
-    expect(pageShell).toContain('text-2xl font-semibold tracking-normal');
+    expect(pageShell).toContain('text-[28px] font-normal leading-[34px] tracking-normal');
     expect(pageShell).not.toContain('tracking-[-0.02em]');
   });
 

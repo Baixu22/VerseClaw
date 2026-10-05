@@ -21,7 +21,7 @@
 
 const { cpSync, existsSync, readdirSync, rmSync, statSync, lstatSync, mkdirSync, realpathSync, readFileSync, writeFileSync } = require('fs');
 const { join, dirname, basename, relative } = require('path');
-const { ELECTRON_MAIN_RUNTIME_PACKAGES } = require('./openclaw-bundle-config.mjs');
+const { ELECTRON_MAIN_RUNTIME_PACKAGES, isLocalRuntimeArtifact } = require('./openclaw-bundle-config.mjs');
 const { patchNsisExtractTemplate } = require('./patch-nsis-extract.mjs');
 const { patchNsisInstallSectionTemplate } = require('./patch-nsis-install-section.mjs');
 const { patchNsisUninstallTemplate } = require('./patch-nsis-uninstall.mjs');
@@ -96,6 +96,13 @@ function cleanupUnnecessaryFiles(dir) {
   ]);
 
   function walk(currentDir) {
+    // A verified module delivery is an indivisible runtime payload. Its declarations,
+    // Web/MCP entries and metadata can be required by its public API or preflight.
+    const deliveryPath = join(currentDir, 'delivery-manifest.json');
+    if (existsSync(deliveryPath)) {
+      const delivery = readJsonSafe(deliveryPath);
+      if (delivery?.manifest === 'verseconf-js-delivery/v1' && Array.isArray(delivery.files)) return;
+    }
     let entries;
     try { entries = readdirSync(currentDir, { withFileTypes: true }); } catch { return; }
 
@@ -303,6 +310,12 @@ function cleanupNodeModulesRuntimeJunk(nodeModulesDir, platform, arch) {
 
 function cleanupKnownRuntimeJunk(rootDir, platform, arch) {
   let removed = 0;
+  // This is a bundle copy, never the user's live runtime state directory.
+  for (const entry of readdirSync(normWin(rootDir))) {
+    if (!isLocalRuntimeArtifact(entry)) continue;
+    rmSync(normWin(join(rootDir, entry)), { recursive: true, force: true });
+    removed++;
+  }
   const stack = [rootDir];
 
   while (stack.length > 0) {
@@ -324,8 +337,10 @@ function cleanupKnownRuntimeJunk(rootDir, platform, arch) {
 }
 
 exports.__test = {
+  cleanupUnnecessaryFiles,
   cleanupNativePlatformPackages,
   cleanupNodeModulesRuntimeJunk,
+  cleanupKnownRuntimeJunk,
 };
 
 // ── Broken module patcher ─────────────────────────────────────────────────────

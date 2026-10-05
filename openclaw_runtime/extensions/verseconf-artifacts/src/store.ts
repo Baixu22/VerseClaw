@@ -1,5 +1,5 @@
 import { DatabaseSync } from "node:sqlite";
-import { openOpenClawStateDatabase, closeOpenClawStateDatabase, runOpenClawStateWriteTransaction, type OpenClawStateDatabaseOptions } from "openclaw/plugin-sdk/core";
+import { closeVerseConfStateDatabase, openVerseConfStateDatabase, runVerseConfStateWriteTransaction, type VerseConfStateDatabaseOptions } from "./state-db.js";
 import type {
   ArtifactContext,
   ArtifactKind,
@@ -71,30 +71,25 @@ function operationFromRow(row: Row): ArtifactOperation {
 export class VerseConfArtifactStore {
   readonly db: DatabaseSync;
   readonly path: string;
-  private readonly ownsCustomStatePath: boolean;
-  private readonly dbOptions: OpenClawStateDatabaseOptions;
 
   constructor(options: { env?: NodeJS.ProcessEnv; path?: string } = {}) {
-    const dbOptions: OpenClawStateDatabaseOptions = {
+    const dbOptions: VerseConfStateDatabaseOptions = {
       ...(options.env ? { env: options.env } : {}),
       ...(options.path ? { path: options.path } : {}),
     };
-    this.dbOptions = dbOptions;
-    const database = openOpenClawStateDatabase(dbOptions);
+    const database = openVerseConfStateDatabase(dbOptions);
     this.path = database.path;
     this.db = database.db;
-    this.ownsCustomStatePath = Boolean(options.path) || process.env.VITEST === "true" || process.env.NODE_ENV === "test";
     this.db.exec("PRAGMA foreign_keys = ON;");
     this.ensureSchema();
   }
 
   close(): void {
-    // The shared default DB is process-owned; isolated tests may close their custom handle.
-    if (this.ownsCustomStatePath) closeOpenClawStateDatabase();
+    closeVerseConfStateDatabase(this.db);
   }
 
   private transaction<T>(fn: () => T): T {
-    return runOpenClawStateWriteTransaction(() => fn(), this.dbOptions);
+    return runVerseConfStateWriteTransaction(this.db, () => fn());
   }
 
   private ensureSchema(): void {

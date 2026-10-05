@@ -1,0 +1,877 @@
+{
+  "schema": "clawx.project-closeout-audit/v1",
+  "driven_by": "agent",
+  "actor": "codex-closeout-audit",
+  "generatedAt": "2026-10-04T14:51:01.762Z",
+  "verdict": "needs-follow-up",
+  "head": "cafe03a5939beac5c3e4e47ef78e8d5f88f86386",
+  "dirtyCandidate": true,
+  "scope": "Current Windows source checkout; local engineering audit, not product/release acceptance",
+  "rootTests": {
+    "command": "pnpm test",
+    "exitCode": 0,
+    "segments": [
+      {
+        "passed": 7565,
+        "skipped": 50
+      },
+      {
+        "passed": 25,
+        "skipped": 0
+      },
+      {
+        "passed": 331,
+        "skipped": 0
+      },
+      {
+        "passed": 10,
+        "skipped": 0
+      },
+      {
+        "passed": 97,
+        "skipped": 0
+      },
+      {
+        "passed": 7,
+        "skipped": 0
+      }
+    ],
+    "passed": 8035,
+    "skipped": 50,
+    "failed": 0,
+    "durationMs": 681561
+  },
+  "focusedTests": [
+    {
+      "name": "functional-red-actual",
+      "files": [
+        "D:/ClawX/openclaw_runtime/extensions/verseconf-artifacts/src/render.test.ts",
+        "D:/ClawX/openclaw_runtime/extensions/verseconf-artifacts/src/structured-artifacts.seam.test.ts"
+      ],
+      "passed": 4,
+      "failed": 2,
+      "skipped": 0
+    },
+    {
+      "name": "functional-green",
+      "files": [
+        "D:/ClawX/openclaw_runtime/extensions/verseconf-artifacts/src/consumer.test.ts",
+        "D:/ClawX/openclaw_runtime/extensions/verseconf-artifacts/src/domain.test.ts",
+        "D:/ClawX/openclaw_runtime/extensions/verseconf-artifacts/src/plugin-entry.test.ts",
+        "D:/ClawX/openclaw_runtime/extensions/verseconf-artifacts/src/render.test.ts",
+        "D:/ClawX/openclaw_runtime/extensions/verseconf-artifacts/src/structured-artifacts.seam.test.ts"
+      ],
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "path-guard-final",
+      "files": [
+        "D:/ClawX/openclaw_runtime/extensions/verseconf-artifacts/src/structured-artifacts.seam.test.ts"
+      ],
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "runtime-regression-explicit",
+      "files": [
+        "D:/ClawX/openclaw_runtime/src/context-engine/source-set.test.ts"
+      ],
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "agents-regression",
+      "files": [
+        "D:/ClawX/openclaw_runtime/src/agents/stage1-golden-run.test.ts",
+        "D:/ClawX/openclaw_runtime/src/agents/stage5-golden-run.test.ts",
+        "D:/ClawX/openclaw_runtime/src/agents/long-task-control/stage3-working-context.test.ts"
+      ],
+      "passed": 7,
+      "failed": 0,
+      "skipped": 2
+    }
+  ],
+  "artifactPanelE2E": {
+    "startTime": "2026-10-04T14:37:48.763Z",
+    "duration": 37798.005000000005,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "taskForest": {
+    "followUp": "TF-0253",
+    "status": "ready",
+    "proposal": "TFP-project-closeout-audit-20261004",
+    "landingExitCode": 1,
+    "historicalLandingProblems": 47
+  },
+  "agentDev": {
+    "deep": {
+      "status": "daily-loop-ok",
+      "reason": "All selected Agent Dev gates passed within hard limits.",
+      "dailyLoopReady": true,
+      "releaseReady": true,
+      "fullGateComplete": true,
+      "budgetStatus": "watch",
+      "fastPathModes": [],
+      "requiredFullGates": [],
+      "watchSteps": [
+        "e2e-build"
+      ],
+      "limitSteps": []
+    },
+    "auditScore": 96,
+    "unitPassed": 87,
+    "electronPassed": 4,
+    "scopeOnly": true
+  },
+  "reproducedFunctionalDefects": {
+    "driven_by": "agent",
+    "actor": "codex-closeout-audit",
+    "generatedAt": "2026-10-04T14:05:29.408Z",
+    "fixture": "D:\\ClawX\\.local\\closeout-audit-20261004\\functional-fixtures-Dns6qA",
+    "pathBoundary": {
+      "outsideReadSucceeded": true,
+      "boundaryError": null
+    },
+    "pptx": {
+      "inputRecords": 4,
+      "outputSlides": 3,
+      "fourthRecordPreserved": false,
+      "validationStatus": "not-run"
+    }
+  },
+  "fixed": [
+    "root typecheck ignored test errors and omitted test/runtime cache inputs",
+    "six runtime production type errors",
+    "structured-artifact junction traversal",
+    "silent truncation beyond the fixed three-slide PPTX template"
+  ],
+  "remaining": [
+    "runtime test types fail in core and extensions projects",
+    "default runtime test router references missing scripts/test-projects.mjs",
+    "CVK diagnostics are not a production tool denial",
+    "PPTX remains limited to three records and lacks long-text visual acceptance",
+    "full Electron and new installer acceptance not run",
+    "dirty candidate fails task-scoped Harness validation",
+    "ESLint is at its 120-warning ceiling"
+  ],
+  "diagnostics": [
+    {
+      "log": "runtime-test-types-fixed.log",
+      "count": 60,
+      "files": [
+        "src/agents/agent-hooks/compaction-addressability.test.ts",
+        "src/agents/agent-hooks/compaction-budget-shadow.test.ts",
+        "src/agents/agent-hooks/compaction-promotion.test.ts",
+        "src/agents/agent-hooks/compaction-safeguard-p6.test.ts",
+        "src/agents/agent-tools.before-tool-call.cancellation.test.ts",
+        "src/agents/bash-tools.exec-host-node-phases.abort.test.ts",
+        "src/agents/bash-tools.exec-host-node.abort.test.ts",
+        "src/agents/goal-wake-runtime.test.ts",
+        "src/agents/harness/selection.compass.test.ts",
+        "src/agents/long-task-control/stage3-working-context.test.ts",
+        "src/agents/mission-control/fenced-tick-wiring.test.ts",
+        "src/agents/openai-transport-stream-responses-input.test.ts",
+        "src/agents/stage1-tool-guard.test.ts",
+        "src/agents/stage4-tool-guard.test.ts",
+        "src/context-engine/source-set.test.ts",
+        "src/gateway/server-methods/session-activity-projection.test.ts",
+        "src/gateway/server-methods/session-lifecycle-consistency.test.ts",
+        "src/gateway/server-methods/session-lifecycle-ledger.test.ts",
+        "src/gateway/server-startup-post-attach.channel-start.test.ts",
+        "src/gateway/session-drain-service.test.ts",
+        "src/gateway/session-ecosystem-reclamation-cycle.test.ts",
+        "src/gateway/session-reset-service.stop.test.ts",
+        "src/gateway/session-reset-service.subagent-stop.test.ts",
+        "src/gateway/trajectory-gateway.test.ts",
+        "src/knowledge/governance-lifecycle.test.ts",
+        "src/knowledge/ks09-surface-report.test.ts",
+        "src/plugin-sdk/provider-stream-shared.test.ts",
+        "test/extension-import-boundaries.test.ts"
+      ],
+      "entries": [
+        "src/agents/agent-hooks/compaction-addressability.test.ts(23,10): error TS2352: Conversion of type '{ id: string; role: \"assistant\" | \"bashExecution\" | \"branchSummary\" | \"compactionSummary\" | \"custom\" | \"toolResult\" | \"user\"; content: string; }' to type 'AgentMessage' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+        "src/agents/agent-hooks/compaction-addressability.test.ts(58,5): error TS2322: Type 'string' is not assignable to type 'CvkChecksum'.",
+        "src/agents/agent-hooks/compaction-budget-shadow.test.ts(28,3): error TS2322: Type '{ budgetTokens?: number; tokensBefore?: number | undefined; taskClass: string; plannedTier: CompressionTier; actualTier: CompressionTier; ignored: boolean; budgetExceeded: boolean; generatedAt: string; }' is not assignable to type 'CompactionBudgetShadow'.",
+        "src/agents/agent-hooks/compaction-promotion.test.ts(42,5): error TS2739: Type '{ mode: \"shadow\"; verdict: \"clean\"; damages: never[]; }' is missing the following properties from type 'CompactionDamageAudit': schema, summaryLength, missingSectionCount",
+        "src/agents/agent-hooks/compaction-safeguard-p6.test.ts(102,12): error TS18048: 'result.compaction' is possibly 'undefined'.",
+        "src/agents/agent-hooks/compaction-safeguard-p6.test.ts(137,12): error TS18048: 'result.compaction' is possibly 'undefined'.",
+        "src/agents/agent-tools.before-tool-call.cancellation.test.ts(90,18): error TS2741: Property 'details' is missing in type '{ content: { type: \"text\"; text: string; }[]; }' but required in type 'AgentToolResult<unknown>'.",
+        "src/agents/agent-tools.before-tool-call.cancellation.test.ts(92,18): error TS2741: Property 'details' is missing in type '{ content: { type: \"text\"; text: string; }[]; }' but required in type 'AgentToolResult<unknown>'.",
+        "src/agents/bash-tools.exec-host-node-phases.abort.test.ts(109,7): error TS2322: Type '{ plan: { argv: string[]; commandText: string; cwd: string; }; argv: string[]; rawCommand: string; cwd: string; agentId: undefined; sessionKey: undefined; }' is not assignable to type 'PreparedNodeRun'.",
+        "src/agents/bash-tools.exec-host-node.abort.test.ts(240,7): error TS2322: Type '() => Promise<{ decision: \"deny\"; risk: \"low\"; rationale: string; }>' is not assignable to type 'ExecAutoReviewer'.",
+        "src/agents/goal-wake-runtime.test.ts(288,16): error TS2339: Property 'alreadyAcked' does not exist on type 'GoalWakeAckResult'.",
+        "src/agents/goal-wake-runtime.test.ts(294,18): error TS2339: Property 'alreadyAcked' does not exist on type 'GoalWakeAckResult'.",
+        "src/agents/harness/selection.compass.test.ts(90,18): error TS2352: Conversion of type '{ info: { id: string; name: string; }; assemble: Mock<({ messages }: Parameters<ContextEngine[\"assemble\"]>[0]) => Promise<{ messages: AgentMessage[]; estimatedTokens: number; systemPromptAddition: string; contextProjection: { mode: \"thread_bootstrap\"; epoch: string; fingerprint: string; }; }>>; }' to type 'ContextEngine' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+        "src/agents/harness/selection.compass.test.ts(131,32): error TS2352: Conversion of type '{ agentHarnessId: string; provider: string; modelId: string; runId: string; sessionId: string; sessionKey: string; contextEngine: ContextEngine; config: { runtime: { contextEnhancement: { killSwitch: boolean; }; }; }; compassContext: { ...; }; }' to type 'EmbeddedRunAttemptParams' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+        "src/agents/harness/selection.compass.test.ts(148,22): error TS2339: Property 'content' does not exist on type 'AgentMessage'.",
+        "src/agents/harness/selection.compass.test.ts(159,18): error TS2352: Conversion of type '{ info: { id: string; name: string; }; assemble: Mock<({ prompt }: Parameters<ContextEngine[\"assemble\"]>[0]) => Promise<{ messages: never[]; estimatedTokens: number; systemPromptAddition: string; }>>; }' to type 'ContextEngine' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+        "src/agents/harness/selection.compass.test.ts(207,18): error TS2352: Conversion of type '{ info: { id: string; name: string; }; assemble: ({ messages }: Parameters<ContextEngine[\"assemble\"]>[0]) => Promise<never>; }' to type 'ContextEngine' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+        "src/agents/harness/selection.compass.test.ts(210,20): error TS2339: Property 'content' does not exist on type 'AgentMessage'.",
+        "src/agents/harness/selection.compass.test.ts(227,26): error TS2339: Property 'content' does not exist on type 'AgentMessage'.",
+        "src/agents/harness/selection.compass.test.ts(256,32): error TS2352: Conversion of type '{ agentHarnessId: string; provider: string; modelId: string; runId: string; sessionId: string; sessionKey: string; config: { runtime: { contextEnhancement: { killSwitch: boolean; }; }; }; extraSystemPrompt: string; compassContext: { sessionKey: string; injection: { ...; }; candidateFactIds: never[]; appliedFactIds: ...' to type 'EmbeddedRunAttemptParams' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+        "src/agents/long-task-control/stage3-working-context.test.ts(40,10): error TS7053: Element implicitly has an 'any' type because expression of type '\"OPENCLAW_STAGE3_TASK_LEDGER_WC\"' can't be used to index type '{ OPENCLAW_STATE_DIR: string; }'.",
+        "src/agents/mission-control/fenced-tick-wiring.test.ts(255,20): error TS2352: Conversion of type '() => Promise<{ decision: \"complete\"; confidence: number; missingEvidence: never[]; verificationGaps: never[]; risks: never[]; controlSignals: never[]; validationState: { status: \"passed\"; checks: never[]; }; contextSummary: string; }>' to type '(input: TaskLoopSelfCheckInput, deps?: TaskLoopSelfCheckDeps) => Promise<TaskLoopSelfCheckResult>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+        "src/agents/openai-transport-stream-responses-input.test.ts(48,54): error TS2353: Object literal may only specify known properties, and 'runId' does not exist in type 'SimpleStreamOptions'.",
+        "src/agents/stage1-tool-guard.test.ts(92,20): error TS2352: Conversion of type 'AgentToolResult<unknown>' to type 'Record<string, unknown>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+        "src/agents/stage1-tool-guard.test.ts(118,26): error TS2352: Conversion of type 'AgentToolResult<unknown>' to type 'Record<string, unknown>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+        "src/agents/stage1-tool-guard.test.ts(155,27): error TS2352: Conversion of type 'AgentToolResult<unknown>' to type 'Record<string, unknown>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+        "src/agents/stage4-tool-guard.test.ts(116,26): error TS2352: Conversion of type 'AgentToolResult<unknown>' to type 'Record<string, unknown>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+        "src/agents/stage4-tool-guard.test.ts(129,27): error TS2352: Conversion of type 'AgentToolResult<unknown>' to type 'Record<string, unknown>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+        "src/context-engine/source-set.test.ts(490,36): error TS2339: Property 'content' does not exist on type 'AgentMessage'.",
+        "src/context-engine/source-set.test.ts(491,36): error TS2339: Property 'content' does not exist on type 'AgentMessage'.",
+        "src/context-engine/source-set.test.ts(492,36): error TS2339: Property 'content' does not exist on type 'AgentMessage'.",
+        "src/gateway/server-methods/session-activity-projection.test.ts(13,31): error TS2459: Module '\"../../agents/mission-control/store.js\"' declares 'MissionRunRecord' locally, but it is not exported.",
+        "src/gateway/server-methods/session-activity-projection.test.ts(375,7): error TS2322: Type '\"killed\"' is not assignable to type 'SubagentLifecycleEndedReason | undefined'.",
+        "src/gateway/server-methods/session-lifecycle-consistency.test.ts(26,31): error TS2459: Module '\"../../agents/mission-control/store.js\"' declares 'MissionRunRecord' locally, but it is not exported.",
+        "src/gateway/server-methods/session-lifecycle-ledger.test.ts(18,31): error TS2459: Module '\"../../agents/mission-control/store.js\"' declares 'MissionRunRecord' locally, but it is not exported.",
+        "src/gateway/server-startup-post-attach.channel-start.test.ts(31,19): error TS2339: Property 'startChannels' does not exist on type 'never'.",
+        "src/gateway/server-startup-post-attach.channel-start.test.ts(32,19): error TS2339: Property 'onChannelsStarted' does not exist on type 'never'.",
+        "src/gateway/server-startup-post-attach.channel-start.test.ts(39,19): error TS2339: Property 'startChannels' does not exist on type 'never'.",
+        "src/gateway/server-startup-post-attach.channel-start.test.ts(40,19): error TS2339: Property 'logChannels' does not exist on type 'never'.",
+        "src/gateway/server-startup-post-attach.channel-start.test.ts(49,19): error TS2339: Property 'startChannels' does not exist on type 'never'.",
+        "src/gateway/session-drain-service.test.ts(134,38): error TS2339: Property 'reason' does not exist on type '{ ok: false; }'.",
+        "src/gateway/session-ecosystem-reclamation-cycle.test.ts(157,45): error TS2345: Argument of type '\"session-drain\"' is not assignable to parameter of type 'TerminationReason | undefined'.",
+        "src/gateway/session-reset-service.stop.test.ts(83,7): error TS2741: Property 'updatedAt' is missing in type '{ sessionId: string; sessionFile: string; }' but required in type 'SessionEntry'.",
+        "src/gateway/session-reset-service.stop.test.ts(104,7): error TS2741: Property 'updatedAt' is missing in type '{ sessionId: string; sessionFile: string; }' but required in type 'SessionEntry'.",
+        "src/gateway/session-reset-service.stop.test.ts(123,7): error TS2741: Property 'updatedAt' is missing in type '{ sessionId: string; sessionFile: string; }' but required in type 'SessionEntry'.",
+        "src/gateway/session-reset-service.stop.test.ts(140,7): error TS2741: Property 'updatedAt' is missing in type '{ sessionId: string; sessionFile: string; }' but required in type 'SessionEntry'.",
+        "src/gateway/session-reset-service.stop.test.ts(166,9): error TS2741: Property 'updatedAt' is missing in type '{ sessionId: string; sessionFile: string; }' but required in type 'SessionEntry'.",
+        "src/gateway/session-reset-service.subagent-stop.test.ts(84,7): error TS2741: Property 'updatedAt' is missing in type '{ sessionId: string; sessionFile: string; }' but required in type 'SessionEntry'.",
+        "src/gateway/session-reset-service.subagent-stop.test.ts(119,7): error TS2741: Property 'updatedAt' is missing in type '{ sessionId: string; sessionFile: string; }' but required in type 'SessionEntry'.",
+        "src/gateway/trajectory-gateway.test.ts(78,29): error TS2558: Expected 0 type arguments, but got 1.",
+        "src/gateway/trajectory-gateway.test.ts(97,29): error TS2558: Expected 0 type arguments, but got 1.",
+        "src/gateway/trajectory-gateway.test.ts(100,29): error TS2558: Expected 0 type arguments, but got 1.",
+        "src/gateway/trajectory-gateway.test.ts(103,29): error TS2558: Expected 0 type arguments, but got 1.",
+        "src/knowledge/governance-lifecycle.test.ts(297,46): error TS2345: Argument of type '{ proposalId: \"proposal-sekb-stale\"; operation: \"archive\"; subjectId: string; contentDigest: \"digest-sekb\"; idempotencyKey: \"idem-stale\"; sourceRefs: readonly []; expectedRevision: string; }' is not assignable to parameter of type 'GovernedMutation'.",
+        "src/knowledge/ks09-surface-report.test.ts(17,3): error TS2322: Type '{ [k: string]: { commandId: string; label: string; kind: \"unit\"; exitCode: number; testFilesPassed: number; testsPassed: number; testsFailed: number; durationMs: number; outputSummary: string; }; }' is not assignable to type 'Record<string, KnowledgeCommandResult>'.",
+        "src/knowledge/ks09-surface-report.test.ts(91,46): error TS2322: Type 'true' is not assignable to type 'false'.",
+        "src/knowledge/ks09-surface-report.test.ts(97,46): error TS2322: Type 'true' is not assignable to type 'false'.",
+        "src/plugin-sdk/provider-stream-shared.test.ts(29,13): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Model<Api>'.",
+        "test/extension-import-boundaries.test.ts(14,21): error TS7006: Parameter 'resolvedPath' implicitly has an 'any' type.",
+        "test/extension-import-boundaries.test.ts(17,18): error TS7006: Parameter 'relativeFile' implicitly has an 'any' type."
+      ]
+    },
+    {
+      "log": "runtime-extension-test-types.log",
+      "count": 18,
+      "files": [
+        "extensions/anthropic/stream-wrappers.test.ts",
+        "extensions/memory-core/src/memory/manager-reindex-state.test.ts",
+        "test/extension-import-boundaries.test.ts",
+        "test/vitest-extensions-config.test.ts",
+        "test/vitest-unit-paths.test.ts",
+        "test/web-provider-boundary.test.ts"
+      ],
+      "entries": [
+        "extensions/anthropic/stream-wrappers.test.ts(40,7): error TS2352: Conversion of type '(_model: Model<Api>, _context: Context, options: SimpleStreamOptions | undefined) => AsyncGenerator<never, void, unknown>' to type 'StreamFn' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
+        "extensions/memory-core/src/memory/manager-reindex-state.test.ts(22,54): error TS2345: Argument of type '{ provider: { id: string; model: string; }; providerKey: string; providerKeyKnown: boolean; configuredSources: readonly [\"memory\"]; configuredScopeHash: string; chunkTokens: number; chunkOverlap: number; vectorReady: boolean; hasIndexedChunks: boolean; ftsTokenizer: string; meta: null; }' is not assignable to parameter of type '{ meta: MemoryIndexMeta | null; provider: { id: string; model: string; } | null; providerKey?: string | undefined; providerKeyKnown?: boolean | undefined; configuredSources: MemorySource[]; ... 5 more ...; ftsTokenizer: string; }'.",
+        "extensions/memory-core/src/memory/manager-reindex-state.test.ts(30,54): error TS2345: Argument of type '{ provider: { id: string; model: string; }; providerKey: string; providerKeyKnown: boolean; configuredSources: readonly [\"memory\"]; configuredScopeHash: string; chunkTokens: number; chunkOverlap: number; vectorReady: boolean; hasIndexedChunks: boolean; ftsTokenizer: string; meta: { ...; }; }' is not assignable to parameter of type '{ meta: MemoryIndexMeta | null; provider: { id: string; model: string; } | null; providerKey?: string | undefined; providerKeyKnown?: boolean | undefined; configuredSources: MemorySource[]; ... 5 more ...; ftsTokenizer: string; }'.",
+        "test/extension-import-boundaries.test.ts(3,54): error TS7016: Could not find a declaration file for module '../scripts/lib/extension-import-boundary-checker.mjs'. 'D:/ClawX/openclaw_runtime/scripts/lib/extension-import-boundary-checker.mjs' implicitly has an 'any' type.",
+        "test/extension-import-boundaries.test.ts(14,21): error TS7006: Parameter 'resolvedPath' implicitly has an 'any' type.",
+        "test/extension-import-boundaries.test.ts(17,18): error TS7006: Parameter 'relativeFile' implicitly has an 'any' type.",
+        "test/vitest-extensions-config.test.ts(6,41): error TS7016: Could not find a declaration file for module './vitest/vitest.extension-media-paths.mjs'. 'D:/ClawX/openclaw_runtime/test/vitest/vitest.extension-media-paths.mjs' implicitly has an 'any' type.",
+        "test/vitest-extensions-config.test.ts(7,42): error TS7016: Could not find a declaration file for module './vitest/vitest.extension-memory-paths.mjs'. 'D:/ClawX/openclaw_runtime/test/vitest/vitest.extension-memory-paths.mjs' implicitly has an 'any' type.",
+        "test/vitest-extensions-config.test.ts(8,45): error TS7016: Could not find a declaration file for module './vitest/vitest.extension-messaging-paths.mjs'. 'D:/ClawX/openclaw_runtime/test/vitest/vitest.extension-messaging-paths.mjs' implicitly has an 'any' type.",
+        "test/vitest-extensions-config.test.ts(9,40): error TS7016: Could not find a declaration file for module './vitest/vitest.extension-misc-paths.mjs'. 'D:/ClawX/openclaw_runtime/test/vitest/vitest.extension-misc-paths.mjs' implicitly has an 'any' type.",
+        "test/vitest-extensions-config.test.ts(10,44): error TS7016: Could not find a declaration file for module './vitest/vitest.extension-provider-paths.mjs'. 'D:/ClawX/openclaw_runtime/test/vitest/vitest.extension-provider-paths.mjs' implicitly has an 'any' type.",
+        "test/vitest-extensions-config.test.ts(11,38): error TS7016: Could not find a declaration file for module './vitest/vitest.extension-qa-paths.mjs'. 'D:/ClawX/openclaw_runtime/test/vitest/vitest.extension-qa-paths.mjs' implicitly has an 'any' type.",
+        "test/vitest-extensions-config.test.ts(12,40): error TS7016: Could not find a declaration file for module './vitest/vitest.extension-zalo-paths.mjs'. 'D:/ClawX/openclaw_runtime/test/vitest/vitest.extension-zalo-paths.mjs' implicitly has an 'any' type.",
+        "test/vitest-unit-paths.test.ts(8,66): error TS7016: Could not find a declaration file for module './vitest/vitest.commands-light-paths.mjs'. 'D:/ClawX/openclaw_runtime/test/vitest/vitest.commands-light-paths.mjs' implicitly has an 'any' type.",
+        "test/vitest-unit-paths.test.ts(9,68): error TS7016: Could not find a declaration file for module './vitest/vitest.plugin-sdk-paths.mjs'. 'D:/ClawX/openclaw_runtime/test/vitest/vitest.plugin-sdk-paths.mjs' implicitly has an 'any' type.",
+        "test/vitest-unit-paths.test.ts(10,41): error TS7016: Could not find a declaration file for module './vitest/vitest.unit-fast-paths.mjs'. 'D:/ClawX/openclaw_runtime/test/vitest/vitest.unit-fast-paths.mjs' implicitly has an 'any' type.",
+        "test/vitest-unit-paths.test.ts(14,8): error TS7016: Could not find a declaration file for module './vitest/vitest.unit-paths.mjs'. 'D:/ClawX/openclaw_runtime/test/vitest/vitest.unit-paths.mjs' implicitly has an 'any' type.",
+        "test/web-provider-boundary.test.ts(5,43): error TS7016: Could not find a declaration file for module '../scripts/lib/source-file-scan-cache.mjs'. 'D:/ClawX/openclaw_runtime/scripts/lib/source-file-scan-cache.mjs' implicitly has an 'any' type."
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "receipt": "agent-dev-audit-result.json",
+      "driven_by": "agent",
+      "actor": "codex-closeout-audit",
+      "gate": "agent-dev-audit",
+      "command": [
+        "pnpm",
+        "agent-dev:audit"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-04T14:34:55.1706057+00:00",
+      "durationMs": 1156,
+      "log": "agent-dev-audit.log"
+    },
+    {
+      "receipt": "agent-dev-deep-result.json",
+      "driven_by": "agent",
+      "actor": "codex-closeout-audit",
+      "gate": "agent-dev-deep",
+      "command": [
+        "pnpm",
+        "agent-dev:deep-test"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-04T14:33:21.1479956+00:00",
+      "durationMs": 86541,
+      "log": "agent-dev-deep.log"
+    },
+    {
+      "receipt": "agent-dev-fast-result.json",
+      "driven_by": "agent",
+      "actor": "codex-closeout-audit",
+      "gate": "agent-dev-fast",
+      "command": [
+        "pnpm",
+        "agent-dev:fast"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-04T14:34:47.6917677+00:00",
+      "durationMs": 7476,
+      "log": "agent-dev-fast.log"
+    },
+    {
+      "receipt": "agents-regression-result.json",
+      "gate": "agents-regression",
+      "exitCode": 0,
+      "log": "agents-regression.log"
+    },
+    {
+      "receipt": "artifact-e2e-result.json",
+      "gate": "artifact-e2e",
+      "exitCode": 0
+    },
+    {
+      "receipt": "build-vite-result.json",
+      "gate": "build-vite",
+      "exitCode": 0,
+      "log": "build-vite.log"
+    },
+    {
+      "receipt": "check-landing-result.json",
+      "gate": "check-landing",
+      "exitCode": 1
+    },
+    {
+      "receipt": "fetch-result.json",
+      "exitCode": 0,
+      "gate": "fetch"
+    },
+    {
+      "receipt": "functional-green-result.json",
+      "gate": "functional-green",
+      "exitCode": 0,
+      "log": "functional-green.log"
+    },
+    {
+      "receipt": "harness-agent-dev-result.json",
+      "driven_by": "agent",
+      "actor": "codex-closeout-audit",
+      "gate": "harness-agent-dev",
+      "command": [
+        "pnpm",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/agent-dev-ecosystem-regularization.md"
+      ],
+      "exitCode": 1,
+      "startedAt": "2026-10-04T14:34:58.4121114+00:00",
+      "durationMs": 1866,
+      "log": "harness-agent-dev.log"
+    },
+    {
+      "receipt": "harness-closeout-final-result.json",
+      "gate": "harness-closeout-final",
+      "exitCode": 1
+    },
+    {
+      "receipt": "harness-closeout-result.json",
+      "driven_by": "agent",
+      "actor": "codex-closeout-audit",
+      "gate": "harness-closeout",
+      "command": [
+        "pnpm",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/project-closeout-integrity.md"
+      ],
+      "exitCode": 1,
+      "startedAt": "2026-10-04T14:34:56.3297137+00:00",
+      "durationMs": 2080,
+      "log": "harness-closeout.log"
+    },
+    {
+      "receipt": "harness-flow-result.json",
+      "driven_by": "agent",
+      "actor": "codex-closeout-audit",
+      "gate": "harness-flow",
+      "command": [
+        "pnpm",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/project-closeout-integrity.md",
+        "--dry-run"
+      ],
+      "exitCode": 1,
+      "startedAt": "2026-10-04T14:35:00.2801586+00:00",
+      "durationMs": 1825,
+      "log": "harness-flow.log"
+    },
+    {
+      "receipt": "lint-result.json",
+      "gate": "lint",
+      "exitCode": 0,
+      "log": "lint.log"
+    },
+    {
+      "receipt": "path-guard-final-result.json",
+      "exitCode": 0,
+      "gate": "path-guard-final"
+    },
+    {
+      "receipt": "root-tests-result.json",
+      "driven_by": "agent",
+      "actor": "codex-closeout-audit",
+      "gate": "root-tests",
+      "command": [
+        "pnpm",
+        "test"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-04T14:21:30.4930715+00:00",
+      "durationMs": 681561,
+      "log": "root-tests.log"
+    },
+    {
+      "receipt": "runtime-build-result.json",
+      "driven_by": "agent",
+      "actor": "codex-closeout-audit",
+      "gate": "runtime-build",
+      "command": [
+        "pnpm",
+        "run",
+        "build:runtime"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-10-04T14:32:52.0747656+00:00",
+      "durationMs": 29071,
+      "log": "runtime-build.log"
+    },
+    {
+      "receipt": "runtime-core-final-result.json",
+      "exitCode": 0,
+      "gate": "runtime-core-final"
+    },
+    {
+      "receipt": "runtime-core-types-fixed-result.json",
+      "gate": "runtime-core-types-fixed",
+      "exitCode": 0,
+      "log": "runtime-core-types-fixed.log"
+    },
+    {
+      "receipt": "runtime-core-types-result.json",
+      "gate": "runtime-core-types",
+      "exitCode": 2,
+      "log": "runtime-core-types.log"
+    },
+    {
+      "receipt": "runtime-extension-test-types-result.json",
+      "diagnostics": 18,
+      "exitCode": 2,
+      "gate": "runtime-extension-test-types"
+    },
+    {
+      "receipt": "runtime-extensions-final-result.json",
+      "exitCode": 0,
+      "gate": "runtime-extensions-final"
+    },
+    {
+      "receipt": "runtime-extensions-types-result.json",
+      "gate": "runtime-extensions-types",
+      "exitCode": 0,
+      "diagnostics": 0,
+      "log": "runtime-extensions-types.log"
+    },
+    {
+      "receipt": "runtime-regression-explicit-result.json",
+      "gate": "runtime-regression-explicit",
+      "exitCode": 0,
+      "log": "runtime-regression-explicit.log"
+    },
+    {
+      "receipt": "runtime-regression-result.json",
+      "gate": "runtime-regression",
+      "exitCode": 1,
+      "log": "runtime-regression.log"
+    },
+    {
+      "receipt": "runtime-test-types-fixed-result.json",
+      "gate": "runtime-test-types-fixed",
+      "exitCode": 2,
+      "diagnostics": 60,
+      "log": "runtime-test-types-fixed.log"
+    },
+    {
+      "receipt": "runtime-test-types-result.json",
+      "gate": "runtime-test-types",
+      "exitCode": 2,
+      "log": "runtime-test-types.log"
+    },
+    {
+      "receipt": "typecheck-fixed-result.json",
+      "gate": "typecheck-fixed",
+      "exitCode": 0,
+      "log": "typecheck-fixed.log"
+    },
+    {
+      "receipt": "typecheck-result.json",
+      "gate": "typecheck",
+      "exitCode": 0,
+      "log": "typecheck.log"
+    }
+  ],
+  "sourceDigests": [
+    {
+      "path": "scripts/typecheck-agent-dev.mjs",
+      "sha256": "b897f829b8b9a313150ee8d9b11cf948c13ec754e2471fc9908f0d7d7810aa8e"
+    },
+    {
+      "path": "tests/unit/typecheck-gate.test.ts",
+      "sha256": "17cc0819f7a0b3f0fca51fbcdb63c76c4ed1240faf6f9f04742f95f9e6df0a54"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/long-task-control/task-ledger.ts",
+      "sha256": "fd3527a77b8b6db1956ee649fa9aa29aa9db3092679aa0a44889d1ce721abdc7"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/stage1-golden-run.ts",
+      "sha256": "0cc30b4789ba390ee99383c126d534ffa2a91b981b07709655722f36f5b29e5c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/stage5-golden-run.ts",
+      "sha256": "f9cb881e8eec3b977d8e03fd1c69a10e75310b0a55538b9b32851e6a4a95cc1c"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/source-set.ts",
+      "sha256": "885cf029c7d353350f5d5e2ff0b4703c4fca031eba0ea534136fc37f0d120f1e"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/structured-artifacts.ts",
+      "sha256": "6e285263041d8815f4ea0bff42dce34b1a5c187fbb7525eb1b888c2769e57049"
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/src/render.ts",
+      "sha256": "43b8b0655e9ecadf30100f06aeb1c08fdc8500e9ed4aa9834e537ba6c83075a3"
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/src/render.test.ts",
+      "sha256": "e7172a01bef8ea84d086a0cbaaa1b2813ead1e349aa245a8f8bd5cbfcb40066d"
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/src/structured-artifacts.seam.test.ts",
+      "sha256": "dd1af23f96be23e42c9b8b2801e2af0ebad819cb0e317fc495113209cc740b54"
+    }
+  ],
+  "localEvidence": "D:\\ClawX\\.local\\closeout-audit-20261004",
+  "evidenceDigests": [
+    {
+      "file": "agent-dev-audit-result.json",
+      "sha256": "dce55c6f4affe3fa3cba863b2ef515edd8221124c8c13daf8ca131a33896a9ff"
+    },
+    {
+      "file": "agent-dev-audit.log",
+      "sha256": "3eb84200a2cea445241c0edcc9d27788ab3cb8086c2c453839fc6c93192cba70"
+    },
+    {
+      "file": "agent-dev-deep-result.json",
+      "sha256": "6abf1c63f3e03ad6a7d8910fd8f648abac4229a718b7c6e89eddbd4841fe580e"
+    },
+    {
+      "file": "agent-dev-deep.log",
+      "sha256": "60a3743b9e8354c301d1e3d937fd055e3fee4959800ca74070d01e664e42f3a7"
+    },
+    {
+      "file": "agent-dev-fast-result.json",
+      "sha256": "0ff70a33ffc743bdde56a04fad8a31d8dd648923233c2710cafcb3f0648a6a84"
+    },
+    {
+      "file": "agent-dev-fast.log",
+      "sha256": "e97b526b339dc4df48a279cb7fd7ed9a67aadf43dc72fb633132bc3c281defa8"
+    },
+    {
+      "file": "agents-regression-result.json",
+      "sha256": "1850e59e5fe48533397e2f960cc90425e394b3668f00ae3ecdff5a23899a164f"
+    },
+    {
+      "file": "agents-regression.json",
+      "sha256": "f33f3295203a6ab0b6c0e845544588a15c67e9161cd2d822eb44ecfe048b4ee5"
+    },
+    {
+      "file": "agents-regression.log",
+      "sha256": "d72663996f79462c875d2b3261001de711a136cbd72e12123af15f4b06c3a7df"
+    },
+    {
+      "file": "artifact-e2e-result.json",
+      "sha256": "ec785e9ff719c7e4eece772155395f2c7f0d2b926f5d34b78d6f73d2ce226843"
+    },
+    {
+      "file": "artifact-e2e.json",
+      "sha256": "7a3d423af5416b06c6c01d406c5d66f5a4b2f449228e2b63f3f8a71924a12095"
+    },
+    {
+      "file": "artifact-e2e.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "build-vite-result.json",
+      "sha256": "3e79ba3958aa84f9610e7669fee23ad04591e88ea4c1ed02046a22a75f13396b"
+    },
+    {
+      "file": "build-vite.log",
+      "sha256": "d90bb59e54d71ad9106a115c1dc31e46c574b6d6acb798062041b5a2d9f05edc"
+    },
+    {
+      "file": "check-landing-result.json",
+      "sha256": "adc290d588b2485b45949b5348c547ab4f31335e20c4060a8b635cd6a8c7971f"
+    },
+    {
+      "file": "check-landing.json",
+      "sha256": "ed94c9569a9d8a829d3ec68f886c73f920aff63dd15dead93e69adf7ce74d132"
+    },
+    {
+      "file": "fetch-result.json",
+      "sha256": "fc6ded18d6d7ec4f23d8d4883d5cc8d01b271e5629fa651b5e77113b8e5cfa79"
+    },
+    {
+      "file": "fetch.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "functional-green-result.json",
+      "sha256": "ff2cf4883f03dad78ee5122b4ffcbd33d5f2c64410d0a71a46e6efb6d8489ff0"
+    },
+    {
+      "file": "functional-green.json",
+      "sha256": "196c27f23b8f9fbee564ba7085731b00264afe8defaa8a5122f4157c7197fab5"
+    },
+    {
+      "file": "functional-green.log",
+      "sha256": "71f533802c9da58d358466ed5db37c4816318f6b23a32a9b8a0f34f5d4fd4e93"
+    },
+    {
+      "file": "functional-probes.json",
+      "sha256": "faf99a862bac4ea3c935311916b6b837b3e0bd59414cce0eb75005b8cdc316aa"
+    },
+    {
+      "file": "functional-red-actual.json",
+      "sha256": "583bface3ac7975a9b52a20e39bac07d18f61ee3971dc82e475fc8ac119dd519"
+    },
+    {
+      "file": "functional-red-actual.log",
+      "sha256": "30386ee8a9e00a9b943d77b3fecae3cb93583cd758e38496a60740517d0eed36"
+    },
+    {
+      "file": "functional-red.json",
+      "sha256": "76c6fbbf79b2cd66ba1a5cf4b347b807280d8c0c4f9fbf3fe89733c25950b1d1"
+    },
+    {
+      "file": "functional-red.log",
+      "sha256": "47dce6483902d7d30ceb747fc43da3d26c123cd10c771e7c1c7e764edbc72b94"
+    },
+    {
+      "file": "harness-agent-dev-result.json",
+      "sha256": "e84864769483e72bb8a01a73378b1cb5d966325cbbd026234799881f19630301"
+    },
+    {
+      "file": "harness-agent-dev.log",
+      "sha256": "331c15b1df307d81b1aad7175ea9e145c9f3a4dfde25d5991583e9e16f6cce71"
+    },
+    {
+      "file": "harness-closeout-final-result.json",
+      "sha256": "c4533cbd0fb0ffc5f62f63ccf86863cb16f50236693341877d1e89492879cef2"
+    },
+    {
+      "file": "harness-closeout-final.log",
+      "sha256": "315139319098148002f1aaea14c0c12115ee97695f99108cfd82089304848164"
+    },
+    {
+      "file": "harness-closeout-result.json",
+      "sha256": "70d4c2d53033d1e0ce636855ccd10404165e06a042fbc2b90396cf94fbb318f8"
+    },
+    {
+      "file": "harness-closeout.log",
+      "sha256": "4f2e61aced6f105440e857364733792f3f50cb026cc2d310b884db479a03617f"
+    },
+    {
+      "file": "harness-flow-result.json",
+      "sha256": "d514199e7afe3fa45012fa040c77d474b6afa3697fc990c36cb16acd0b0617ac"
+    },
+    {
+      "file": "harness-flow.log",
+      "sha256": "b2f333cf62f5d30c81dd517d6a0d7c3962cf2f586d8921eb2d1036e9696abf6e"
+    },
+    {
+      "file": "lint-result.json",
+      "sha256": "6b4fc4b98ae588c856f8ecc31dd674bc6660712590f5931bdf13f13730d05e79"
+    },
+    {
+      "file": "lint.log",
+      "sha256": "007e9bb758252021d9c50ef4561e55302cc1bfcfd50afe4c98b9c3f439998c1c"
+    },
+    {
+      "file": "path-guard-final-result.json",
+      "sha256": "1a9412ef76497bec5fbfa8f257b2d66399c99f27e42112d1b08a13d783d0337b"
+    },
+    {
+      "file": "path-guard-final.json",
+      "sha256": "7071b51dc8aafbda17d58a23242c067b6cf6a7abe07aa0754d83ccb7a31c47a3"
+    },
+    {
+      "file": "path-guard-final.log",
+      "sha256": "8976fe0273849d48732c9b1ee5c517f29946fd0ae0c42d9e1a7a4e4a5fe12bd4"
+    },
+    {
+      "file": "root-tests-result.json",
+      "sha256": "5e892297f7d57627ac3163419b92ec20559d1b57f23ef173f319dde4a8a74a3e"
+    },
+    {
+      "file": "root-tests.log",
+      "sha256": "5ad64574c8275546201bf95cdd3e7e797fc6dc9f639ed0448729e800f7630a87"
+    },
+    {
+      "file": "runtime-build-result.json",
+      "sha256": "9b01c440cb5728fbf80a36910d0296456b2ae0f698cb8873f72e1bbc2ecbae02"
+    },
+    {
+      "file": "runtime-build.log",
+      "sha256": "53d95368b64afee426f501a55bf0119bd5d07ceeb0854aca3b1cd5da0524e351"
+    },
+    {
+      "file": "runtime-core-final-result.json",
+      "sha256": "ec4bebea3620516820f5b833f7551bba3abd1d2a201af4ce938a423c517a6b0a"
+    },
+    {
+      "file": "runtime-core-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "runtime-core-types-fixed-result.json",
+      "sha256": "ef0cfd09efb6b53c1990448a8d9612acfac8355be9f0c34185ad3cad5963e9ae"
+    },
+    {
+      "file": "runtime-core-types-fixed.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "runtime-core-types-result.json",
+      "sha256": "2674a497c16502f730d1c60ad20ce131fb0c8d8bf4e05e144a2a4afdbb23d8fa"
+    },
+    {
+      "file": "runtime-core-types.log",
+      "sha256": "0852acffa9a53197f98f5ec568f0b1b9a43ed93a676c5b7e4faf21a7702c7a2f"
+    },
+    {
+      "file": "runtime-extension-test-types-result.json",
+      "sha256": "3fdb5262ff37b0841f5a490ea1e7c7e54a2002f66378274ba584722075f1c262"
+    },
+    {
+      "file": "runtime-extension-test-types.log",
+      "sha256": "f678befe3dcef7fd81f24397f03d25f29ecaa9076a77c4f1498bd806e5e8124e"
+    },
+    {
+      "file": "runtime-extensions-final-result.json",
+      "sha256": "bdc363a0c4353ea246a574f9160271d0ab3e5992fa7c7b01a969509b3467ae0f"
+    },
+    {
+      "file": "runtime-extensions-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "runtime-extensions-types-result.json",
+      "sha256": "d7454bae3b209ea6fb7f71e0a3218cd74ef5650befbb3f04fc3b08879e05f6e6"
+    },
+    {
+      "file": "runtime-extensions-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "runtime-regression-explicit-result.json",
+      "sha256": "785f73e3bea6ebfa731b2372eb6436a07eded0b4f58384e5714dc33bd195eea0"
+    },
+    {
+      "file": "runtime-regression-explicit.json",
+      "sha256": "41b5f3f6cf7babc271b1de72e10983de1258ed8ae1010da704b1f9a1554e514b"
+    },
+    {
+      "file": "runtime-regression-explicit.log",
+      "sha256": "ea4f541756c8b465c59472601f2f9b1eca80197ffea125cc672820be02be6da8"
+    },
+    {
+      "file": "runtime-regression-result.json",
+      "sha256": "3e0f6cf503049fd82bb062e6ea279db07ea4174e519bcfe2b6ca0b3b2bc03e98"
+    },
+    {
+      "file": "runtime-regression.log",
+      "sha256": "6e190f5a6e80f931129e80c3043c7aa3c22caf86fa83f56c2cf1fa96b8e6426f"
+    },
+    {
+      "file": "runtime-test-types-fixed-result.json",
+      "sha256": "1681a3555ec2a359af576642d0829baae0d7e0517bab633ffd7938614c0b4e14"
+    },
+    {
+      "file": "runtime-test-types-fixed.log",
+      "sha256": "af13e7b5ddf8c17f2f0a515e31da900f0c37bfb91a5028879d95ccf6c866313d"
+    },
+    {
+      "file": "runtime-test-types-result.json",
+      "sha256": "738333b11f16a44fd519e7571a6cf6128182243295384795e6b913452cc4586a"
+    },
+    {
+      "file": "runtime-test-types.log",
+      "sha256": "e58e29e4c193413856d9a9df6a77cb4d999ca0167f589d3e99ab0f69d29807b6"
+    },
+    {
+      "file": "task-forest-after.json",
+      "sha256": "65809e5c6895327d194f503ecd3ddedb671f357efd58f2cf507546b7086a7dcd"
+    },
+    {
+      "file": "task-forest-before.json",
+      "sha256": "364904b7b2932d54ba957f25bd903ee05d3bca4b226b2118a9566a87bc4b2ac6"
+    },
+    {
+      "file": "task-forest-proposal.json",
+      "sha256": "ea0e82dde8504c95da4fa71935a14c52a0bb7801234b821c7a8ebe5e36fe9c6b"
+    },
+    {
+      "file": "typecheck-fixed-result.json",
+      "sha256": "cdca852ed9fe80f9bbf9e25c7482b19d50453b822cd3714e416352c86a2eafed"
+    },
+    {
+      "file": "typecheck-fixed.log",
+      "sha256": "dc852653a97821051dfcfe670eee742bf824545bc052a143c09119db3e2e9c2a"
+    },
+    {
+      "file": "typecheck-gate-green.log",
+      "sha256": "610be012bd59fe4b2f2e02da9f1f1a664ee42adf36df88eaea27b5b57cd643b0"
+    },
+    {
+      "file": "typecheck-gate-red.log",
+      "sha256": "628b91c690205264e03d53ffbe1d89157a273bb29577a35d6049be44e3ef9971"
+    },
+    {
+      "file": "typecheck-result.json",
+      "sha256": "76ffedc8086962bf7784c16450123ad79e8bf066a6a6207e9caf7f65ef761bf3"
+    },
+    {
+      "file": "typecheck.log",
+      "sha256": "3f41d54ae229a62f39ec2c7b9ae9b2fe65ca51f09f3cb9c4d7e6aa233efb5701"
+    }
+  ]
+}

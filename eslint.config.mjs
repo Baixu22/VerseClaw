@@ -30,6 +30,8 @@ export default [
       'openclaw_runtime/dist/**',
       'openclaw_runtime/dist-runtime/**',
       'openclaw_runtime/**/dist/**',
+      // Complete VerseConf deliveries are hash-locked; lint --fix must not rewrite them.
+      'openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/**',
       'openclaw_runtime/extensions/codegraph/dist/**',
       'openclaw_runtime/packages/agent-core/dist/**',
       // Fixture AST samples intentionally use synthetic use* identifiers.

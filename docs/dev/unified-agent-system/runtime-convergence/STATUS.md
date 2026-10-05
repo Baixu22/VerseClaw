@@ -51,8 +51,5 @@ evidence_manifest: artifacts/agent-engineering-acceptance/runtime-authority-conv
 blockers: []
 last_verified_at: 2026-09-29T19:10:00.000Z
 next_action: "程序完成：RC-00..RC-10 全部工程验收通过；RC-10 的 H-01..H-06 由 agent 驱动并如实标注 driven_by: agent，human 阶段 validator PASSED。本程序不改变任何产品锁 —— live_ready / product_approved / default_on 仍为 false，也不自动影响 TF-0006、发布或 GA，那些是独立的发布决策。RC-09 候选 a1bd8d8cc（runId f262eaa4，Executor 与独立 Verifier 双 pass、两轮 23 门一致）；RC-10 两轮正式 driver 通过（H-01 workload test 1->0、10 context + 10 wire 收据共 5 对；OPERATOR-ALL 五场景全 pass、failures 空）。明确不在本程序内的剩余项：D7 冻结集（TF-0010/TF-0028/TF-0129/TF-0130/TF-0141/TF-0144/TF-0151）、TF-0009/TF-0007 的 R7 冲突按 2026-09-27 政策修订（独立节点验收，不改变本 RC verdict）、TF-0047 Docker、TF-0013 residual；下一周期验收契约改进见 D:/ClawX-acceptance/rc09-20260929/NEXT-CYCLE-ACCEPTANCE-DESIGN.md。"
+merge_note: "2026-10-03 合并说明：以上 verdict 保留原候选的历史记录；human 阶段由 agent 驱动，不能解读为真人证据或本次合并的验收。知识系统 KS-00..KS-09 的工程记录继续保留于其规范、源码与证据，不因切换本页的 RC 历史指针而删除。当前合并验证见 docs/dev/merge-recovery-20261003.md；所有产品锁保持 false。"
 ---
-
-## 2026-10-03 合并说明
-
-以上 verdict 保留原候选的历史记录；human 阶段由 agent 驱动，不能解读为真人证据或本次合并的验收。知识系统 KS-00..KS-09 的工程记录继续保留于其规范、源码与证据，不因切换本页的 RC 历史指针而删除。当前合并验证见 docs/dev/merge-recovery-20261003.md；所有产品锁保持 false。

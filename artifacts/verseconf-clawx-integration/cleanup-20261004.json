@@ -1,0 +1,210 @@
+{
+  "schema": "release-cleanliness-closeout/v1",
+  "generatedAt": "2026-10-04T09:11:04.354Z",
+  "actor": "codex/release-cleanliness",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "status": "cleanliness-verified",
+  "formalReleaseAcceptance": false,
+  "publicPublish": false,
+  "source": {
+    "head": "cafe03a5939beac5c3e4e47ef78e8d5f88f86386",
+    "dirtyWorkingTreePreserved": true,
+    "files": [
+      {
+        "path": ".gitattributes",
+        "sha256": "bf2e3bcf1e6e629321a7271ab4aaed70419c835671537c637f1fdda464a612ab"
+      },
+      {
+        "path": "eslint.config.mjs",
+        "sha256": "e5be0d4fc9ba9528663ee7c6ceecc009668615d0ab106e3725629d6ebd56199e"
+      },
+      {
+        "path": "scripts/after-pack.cjs",
+        "sha256": "fd60cc1acae508b6c155c770e6c71231bad6893254954a18b679ae56927975b1"
+      },
+      {
+        "path": "scripts/bundle-openclaw-runtime.mjs",
+        "sha256": "a81ea7e8250b4eb4be3fcc265466f2a1b8fe97a3ecbfdb0faf66a842575d090b"
+      },
+      {
+        "path": "scripts/openclaw-bundle-config.mjs",
+        "sha256": "6cb5cfe2b7f5bf1cd06263b468304c95c8c5f48eae9d5e95da6637fdd8e5396f"
+      },
+      {
+        "path": "scripts/openclaw-bundle-config.d.mts",
+        "sha256": "ef9f23ae1a1281c8802c1db7ba84eb0e600fb22523101427af85e822f2574205"
+      },
+      {
+        "path": "tests/unit/after-pack-cleanup.test.ts",
+        "sha256": "e67bb2b511c96c4f849c05440701f2601aec6d90962c2d022cd5ce03b69c9cfb"
+      },
+      {
+        "path": "tests/unit/sync-verseconf.test.ts",
+        "sha256": "a5181099793043d64c124eb1ca718aea41943e423b55e562c72af39d933e9af2"
+      },
+      {
+        "path": "harness/specs/rules/packaged-runtime-pruning-guards.md",
+        "sha256": "2e89f1e3afb30c24bcdd12f32c0e0dc5f629bbdc0baaf0cb47f070f4c7163b74"
+      },
+      {
+        "path": "harness/specs/scenarios/plugin-lifecycle-management.md",
+        "sha256": "f1b54c021beb083272687494f20eee0dfc9c5b35acd6643071ca6a69741e9689"
+      },
+      {
+        "path": "harness/specs/tasks/verseconf-clawx-integrated-consumer.md",
+        "sha256": "9377399d77d3ddee6fc2dcca22fdd1d447797c01dd0e83628fc00bf2204ebf73"
+      }
+    ]
+  },
+  "changes": [
+    "Exclude local state, environment files, logs, caches and agent-development records at runtime bundle roots; retain nested assets and source state.",
+    "Restore the original hash-locked VerseConf delivery and protect it from lint auto-fixes and Git line-ending conversion.",
+    "Archive six ignored root logs with verified hashes; preserve prior installer, blockmap and update metadata."
+  ],
+  "unit": {
+    "files": 7,
+    "passed": 41,
+    "failed": 0,
+    "skipped": 0,
+    "artifact": "C:\\Users\\27933\\Desktop\\clawx\\release-cleanliness-20261004-164836\\unit-results.json",
+    "sha256": "03a62bf24fdb9ab38b43b5b47ac5e712b3d574f719418ca2b12b2e84beb41c27"
+  },
+  "e2e": {
+    "command": "pnpm exec playwright test tests/e2e/chat-artifact-panel.spec.ts --workers=1",
+    "exitCode": 0,
+    "passed": 5,
+    "failed": 0,
+    "scope": "Focused source Electron UI; frontend code unchanged by subsequent runtime packaging cleanup."
+  },
+  "integration": {
+    "counts": {
+      "total": 43,
+      "passed": 43,
+      "failed": 0
+    },
+    "artifact": "artifacts/verseconf-clawx-integration/runs/20261004-release-cleanliness-final/verification.json",
+    "sha256": "644ac568dde2aaee53228a6b23171c5aad8141b685a0906a95097efb880b407c"
+  },
+  "packageInspection": {
+    "artifact": "C:\\Users\\27933\\Desktop\\clawx\\release-cleanliness-20261004-164836\\package-cleanliness.json",
+    "sha256": "8ee038f55ae0856d7d8ae99cf06b56487d04747effb5aa7553e8cb45a77acb4e",
+    "roots": [
+      {
+        "path": "build/openclaw-runtime",
+        "unexpectedLocalArtifacts": []
+      },
+      {
+        "path": "release/win-unpacked/resources/openclaw-runtime",
+        "unexpectedLocalArtifacts": []
+      },
+      {
+        "path": "release/win-unpacked/resources/openclaw",
+        "unexpectedLocalArtifacts": []
+      }
+    ],
+    "deliveries": [
+      {
+        "layout": "dist",
+        "verifiedFiles": 26
+      },
+      {
+        "layout": "dist-runtime",
+        "verifiedFiles": 26
+      }
+    ],
+    "installer": {
+      "path": "release/Verse Claw-0.4.9-alpha.0-win-x64.exe",
+      "bytes": 460912218,
+      "sha256": "3a6066b10b861bc4e8c4dfbe7dc69635ab5b17d6f5301bd1fd14d154f77b9cd8",
+      "archiveSha256": "b0519429a36fc2668869c60e3f2ccc7db7cb26c4d2a2c8bded7156d76d164a90",
+      "inspectedEntries": 99549,
+      "unexpectedLocalArtifacts": [],
+      "installedOnHost": false
+    },
+    "asarSha256": "6a9a5cca0b8818dea4359907df1d84ddc4240d7302f4bd1b125bbe134f79062f"
+  },
+  "archivedLogs": {
+    "count": 6,
+    "bytes": 168178,
+    "deleted": 0,
+    "manifest": "C:\\Users\\27933\\Desktop\\clawx\\release-cleanliness-20261004-164836\\archive-manifest.json",
+    "sha256": "40114870addcf9f9ba13226c19a3a168f80016d7e44f9c77f3c85eac0a20a616"
+  },
+  "previousRelease": {
+    "manifest": "C:\\Users\\27933\\Desktop\\clawx\\release-cleanliness-20261004-164836\\previous-release\\manifest.json",
+    "sha256": "c57ebaaa16e4aa9f9cfcae75bee92f644bed66abc069f1f1df01faa49573b7f0"
+  },
+  "gates": [
+    {
+      "command": "pnpm exec zx scripts/bundle-openclaw-runtime.mjs",
+      "exitCode": 0,
+      "log": "C:\\Users\\27933\\Desktop\\clawx\\release-cleanliness-20261004-164836\\runtime-bundle.log",
+      "receiptSha256": "97e9356e3e476d2c0fb7a68360f29552c8216419e7f81fb007a7e93cb62a9d82"
+    },
+    {
+      "command": "node scripts/run-electron-builder.mjs --win --x64 --publish never",
+      "exitCode": 0,
+      "log": "C:\\Users\\27933\\Desktop\\clawx\\release-cleanliness-20261004-164836\\windows-package.log",
+      "receiptSha256": "f135b3a6dc563267f4076928e19ac9e827b821c2d3f98db82a687091a107a091"
+    },
+    {
+      "command": "pnpm run verseconf:verify --output-dir artifacts/verseconf-clawx-integration/runs/20261004-release-cleanliness-final",
+      "exitCode": 0,
+      "log": "C:\\Users\\27933\\Desktop\\clawx\\release-cleanliness-20261004-164836\\final-verifier.log",
+      "receiptSha256": "8372264d32ef4a887b6e9573842c506affbf7d0c41a6708b6e6e5d3ff9d5f0db"
+    }
+  ],
+  "otherValidation": {
+    "contract": {
+      "exitCode": 0
+    },
+    "commsReplay": {
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "exitCode": 0
+    },
+    "typecheckTest": {
+      "exitCode": 0
+    },
+    "focusedLint": {
+      "exitCode": 0
+    },
+    "diffCheck": {
+      "exitCode": 0
+    },
+    "repositoryArtifactRetention": {
+      "exitCode": 0,
+      "trackedPaths": 18829
+    },
+    "harnessCi": {
+      "exitCode": 0,
+      "testsPassed": 47
+    },
+    "taskHarness": {
+      "exitCode": 1,
+      "reason": "Seven existing changes outside the VerseConf task scope; scope was not widened to hide them.",
+      "uncovered": [
+        "artifacts/agent-dev-deep-test/history.json",
+        "artifacts/agent-dev-deep-test/report.json",
+        "artifacts/agent-dev-deep-test/report.md",
+        "artifacts/agent-dev-quality/report.json",
+        "artifacts/agent-dev-workbench/evidence.json",
+        "openclaw_runtime/src/agents/tools/context-agent-tools.test.ts",
+        "openclaw_runtime/src/context-engine/tools/context-search-tool.test.ts"
+      ]
+    }
+  },
+  "earlierFailuresPreserved": [
+    "Sync regression: 4 failed / 5 passed before original delivery restoration.",
+    "Cleanup regression: Windows x64 and macOS universal fixtures both failed before root cleanup.",
+    "artifacts/verseconf-clawx-integration/runs/2026-10-04T08-51-54-098Z/verification.json: 42/43 passed before refreshing the stale installer."
+  ],
+  "limitations": [
+    "Not a frozen clean-candidate full release acceptance run.",
+    "Full Electron suite, interactive installation and non-Windows execution were not performed in this cleanup task.",
+    "Existing junction, long-PPTX/record-fidelity, UI, skipped-E2E and Windows-worker residuals remain outside this task.",
+    "Existing source, Task Forest, history, product defaults and locks were preserved; no commit, push or publication was performed."
+  ]
+}

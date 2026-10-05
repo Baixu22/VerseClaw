@@ -23,7 +23,8 @@ import {
   resetProcessRegistryForTests,
   type ProcessSession,
 } from "../../agents/bash-process-registry.js";
-import { saveMissionRun, type MissionRunRecord } from "../../agents/mission-control/store.js";
+import { saveMissionRun } from "../../agents/mission-control/store.js";
+import type { MissionRunRecord } from "../../agents/mission-control/types.js";
 import {
   addSubagentRunForTests,
   listSubagentRunsForRequester,
@@ -68,7 +69,7 @@ function missionFixture(): MissionRunRecord {
     updatedAt: BASE_AT - 25_000,
     ticks: [],
     activeTickId: null,
-    lineage: { sessionId: GENERATION },
+    lineage: { schema: "runtime-lineage.v1", sessionId: GENERATION },
   } as MissionRunRecord;
 }
 

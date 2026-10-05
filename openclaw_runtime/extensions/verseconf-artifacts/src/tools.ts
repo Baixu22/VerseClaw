@@ -1,18 +1,17 @@
 import { randomUUID } from "node:crypto";
+import { isDeepStrictEqual } from "node:util";
 import { Type } from "typebox";
-import { jsonResult, readStringParam } from "openclaw/plugin-sdk/core";
-import type { AnyAgentTool, OpenClawPluginApi, OpenClawPluginToolContext } from "openclaw/plugin-sdk/plugin-entry";
-import { commitStructuredArtifactBytes, commitStructuredArtifactCandidate, readStructuredArtifactSource } from "openclaw/plugin-sdk/core";
 import { applyRecordOperations, sourceDigest, type RecordOperation } from "./domain.js";
 import { businessError, RESEARCH_SCHEMA_IDENTITY, RESEARCH_SCHEMA_TEXT, VerseConfComputeEngine } from "./engine.js";
 import { contentSha256, renderArtifact, RENDERER_VERSION } from "./render.js";
+import { localVerseConfRuntime, type VerseConfRuntime, type VerseConfTool, type VerseConfToolContext } from "./runtime.js";
 import { VerseConfArtifactStore } from "./store.js";
 import type { ArtifactContext, ArtifactKind, ArtifactMutationResult, ArtifactOperation, ArtifactRecord, ArtifactRevision, SchemaIdentity } from "./types.js";
 import { ARTIFACT_KINDS } from "./types.js";
 
 type Params = Record<string, unknown>;
 
-function contextOf(ctx: OpenClawPluginToolContext, requestId: string): ArtifactContext {
+function contextOf(ctx: VerseConfToolContext, requestId: string): ArtifactContext {
   const workspaceDir = typeof ctx.workspaceDir === "string" ? ctx.workspaceDir : "";
   const sessionKey = typeof ctx.sessionKey === "string" ? ctx.sessionKey : "";
   // Stateless gateway tool invocation can have a trusted session key without
@@ -26,14 +25,14 @@ function contextOf(ctx: OpenClawPluginToolContext, requestId: string): ArtifactC
   return { workspaceDir, sessionKey, sessionId, agentId, requestId };
 }
 
-function kindParam(params: Params): ArtifactKind {
-  const kind = readStringParam(params, "kind", { required: true });
+function kindParam(params: Params, runtime: VerseConfRuntime): ArtifactKind {
+  const kind = runtime.readStringParam(params, "kind", { required: true });
   if (!ARTIFACT_KINDS.includes(kind as ArtifactKind)) throw new Error(`unsupported artifact kind: ${kind}`);
   return kind as ArtifactKind;
 }
 
-function artifactIdParam(params: Params): string {
-  return readStringParam(params, "artifactId", { required: true });
+function artifactIdParam(params: Params, runtime: VerseConfRuntime): string {
+  return runtime.readStringParam(params, "artifactId", { required: true })!;
 }
 
 function schemaFor(kind: ArtifactKind): { text: string; identity: SchemaIdentity } {
@@ -95,14 +94,10 @@ function idempotencyKey(params: Params, fallback: string): string {
   return key;
 }
 
-function requestFingerprint(value: unknown): string {
-  return JSON.stringify(value, Object.keys((value && typeof value === "object") ? value as object : {}).sort());
-}
-
 function checkExistingIdempotency(store: VerseConfArtifactStore, artifact: ArtifactRecord, key: string, request: Params, current: { revision: ArtifactRevision; sha256: string }): ArtifactMutationResult | null {
   const existing = store.getOperationByIdempotency(artifact.artifactId, key);
   if (!existing) return null;
-  if (requestFingerprint(existing.request) !== requestFingerprint(request)) {
+  if (!isDeepStrictEqual(existing.request, request)) {
     return mutationResult({ artifactId: artifact.artifactId, operationId: existing.operationId, state: "rejected", diagnostics: [{ code: "idempotency_conflict", message: "idempotencyKey was already used with a different request" }] });
   }
   if (existing.state === "committed" || existing.state === "unchanged") {
@@ -112,10 +107,10 @@ function checkExistingIdempotency(store: VerseConfArtifactStore, artifact: Artif
   return mutationResult({ artifactId: artifact.artifactId, operationId: existing.operationId, state: existing.state, journalRef: existing.journalRef, recoveryRef: existing.recoveryRef, diagnostics: [{ code: "idempotency_replay_blocked", message: "previous operation is not safely replayable" }] });
 }
 
-async function sourceFor(store: VerseConfArtifactStore, artifact: ArtifactRecord): Promise<{ revision: ArtifactRevision; source: string; sha256: string }> {
+async function sourceFor(store: VerseConfArtifactStore, artifact: ArtifactRecord, runtime: VerseConfRuntime): Promise<{ revision: ArtifactRevision; source: string; sha256: string }> {
   const revision = store.getRevision(artifact.currentRevisionId);
   if (!revision) throw new Error(`current revision missing: ${artifact.currentRevisionId}`);
-  const source = await readStructuredArtifactSource(artifact.workspaceDir, artifact.sourcePath);
+  const source = await runtime.readStructuredArtifactSource(artifact.workspaceDir, artifact.sourcePath);
   if (source.sha256 !== revision.sourceSha256) {
     throw new Error(`artifact source drifted outside the managed revision: expected ${revision.sourceSha256}, found ${source.sha256}`);
   }
@@ -141,6 +136,7 @@ async function commitRevision(params: {
   kind: ArtifactOperation["kind"];
   request: Params;
   signal?: AbortSignal;
+  runtime: VerseConfRuntime;
 }): Promise<ArtifactMutationResult> {
   await validateCandidate(params.engine, params.current.source, params.candidate, params.artifact, params.signal);
   params.store.assertRevisionCapacity(params.artifact.artifactId);
@@ -155,7 +151,7 @@ async function commitRevision(params: {
     candidateSha256: sourceDigest(params.candidate),
   });
   params.store.insertOperation(preparedOperation, params.idempotencyKey);
-  const write = await commitStructuredArtifactCandidate({
+  const write = await params.runtime.commitStructuredArtifactCandidate({
     context: {
       workspaceRoot: params.context.workspaceDir,
       sessionId: params.context.sessionId,
@@ -205,12 +201,12 @@ async function commitRevision(params: {
   return mutationResult({ artifactId: params.artifact.artifactId, operationId: params.operationId, state: "committed", revision, journalRef: write.journalRef });
 }
 
-export function createVerseConfTools(params: { store: VerseConfArtifactStore; engine: VerseConfComputeEngine; api: OpenClawPluginApi; context: OpenClawPluginToolContext }): AnyAgentTool[] {
-  const { store, engine, context } = params;
+export function createVerseConfTools(params: { store: VerseConfArtifactStore; engine: VerseConfComputeEngine; context: VerseConfToolContext; runtime?: VerseConfRuntime; api?: unknown }): VerseConfTool[] {
+  const { store, engine, context, runtime = localVerseConfRuntime } = params;
   const readonlyRisk = { risk: "readonly" as const, writeRiskProfile: { kind: "no_writes" as const } };
   const writeRisk = { risk: "write" as const, writeRiskProfile: { kind: "dynamic_writes" as const, requiresApproval: true as const } };
 
-  const create: AnyAgentTool = {
+  const create: VerseConfTool = {
     name: "structured_artifact_create",
     label: "Structured Artifact Create",
     description: "Create a bounded research-table or slide-outline artifact bound to the active workspace and runtime context.",
@@ -219,14 +215,14 @@ export function createVerseConfTools(params: { store: VerseConfArtifactStore; en
     execute: async (toolCallId, raw, signal) => {
       const p = raw as Params;
       const ctx = contextOf(context, toolCallId);
-      const artifactId = artifactIdParam(p);
-      const kind = kindParam(p);
-      const sourcePath = readStringParam(p, "sourcePath", { required: true });
+      const artifactId = artifactIdParam(p, runtime);
+      const kind = kindParam(p, runtime);
+      const sourcePath = runtime.readStringParam(p, "sourcePath", { required: true })!;
       const schema = schemaFor(kind);
       let source = typeof p.source === "string" ? p.source : undefined;
       let existingSha: string | null = null;
       try {
-        const existing = await readStructuredArtifactSource(ctx.workspaceDir, sourcePath);
+        const existing = await runtime.readStructuredArtifactSource(ctx.workspaceDir, sourcePath);
         existingSha = existing.sha256;
         if (source === undefined) source = existing.bytes.toString("utf8");
         if (source !== existing.bytes.toString("utf8")) throw new Error("source does not match the existing file");
@@ -237,8 +233,8 @@ export function createVerseConfTools(params: { store: VerseConfArtifactStore; en
       const check = await engine.validateTrustedCandidate(source, source, schema.text, schema.identity, signal);
       const checkError = businessError(check);
       if (checkError) throw new Error(`${checkError.stage ?? "candidate"}/${checkError.code}: ${checkError.message}`);
-      const write = await commitStructuredArtifactCandidate({ context: { workspaceRoot: ctx.workspaceDir, sessionId: ctx.sessionId, requestId: toolCallId, signal, flags: { structuredArtifact: true } }, sourcePath, candidate: source, expectedBeforeSha256: existingSha, operationId: toolCallId });
-      if (!write.ok) return jsonResult(mutationResult({ artifactId, operationId: toolCallId, state: "rejected", journalRef: write.journalRef, recoveryRef: write.journalRef, diagnostics: [{ code: write.code, message: write.message }] }));
+      const write = await runtime.commitStructuredArtifactCandidate({ context: { workspaceRoot: ctx.workspaceDir, sessionId: ctx.sessionId, requestId: toolCallId, signal, flags: { structuredArtifact: true } }, sourcePath, candidate: source, expectedBeforeSha256: existingSha, operationId: toolCallId });
+      if (!write.ok) return runtime.jsonResult(mutationResult({ artifactId, operationId: toolCallId, state: "rejected", journalRef: write.journalRef, recoveryRef: write.journalRef, diagnostics: [{ code: write.code, message: write.message }] }));
       const revision: ArtifactRevision = { revisionId: `rev-${randomUUID()}`, artifactId, sequence: 1, parentRevisionId: null, sourceText: source, sourceSha256: write.afterSha256, schemaIdentity: schema.identity, operationId: toolCallId, journalRef: write.journalRef, status: write.changed ? "committed" : "unchanged", context: { sessionKey: ctx.sessionKey, sessionId: ctx.sessionId, agentId: ctx.agentId }, createdAt: Date.now() };
       const createOperation = operation({
         operationId: toolCallId,
@@ -253,26 +249,26 @@ export function createVerseConfTools(params: { store: VerseConfArtifactStore; en
         journalRef: write.journalRef,
       });
       store.createArtifact({ artifactId, kind, context: ctx, sourcePath, schemaText: schema.text, schemaIdentity: schema.identity, revision, operation: createOperation, idempotencyKey: idempotencyKey(p, toolCallId) });
-      return jsonResult(mutationResult({ artifactId, operationId: toolCallId, state: write.changed ? "committed" : "unchanged", revision, journalRef: write.journalRef }));
+      return runtime.jsonResult(mutationResult({ artifactId, operationId: toolCallId, state: write.changed ? "committed" : "unchanged", revision, journalRef: write.journalRef }));
     },
   };
 
-  const inspect: AnyAgentTool = {
+  const inspect: VerseConfTool = {
     name: "structured_artifact_inspect",
     label: "Structured Artifact Inspect",
     description: "Inspect the current artifact revision and stable record identities without exposing arbitrary files.",
     parameters: Type.Object({ artifactId: Type.String(), recordId: Type.Optional(Type.String()), fieldPath: Type.Optional(Type.Array(Type.String())) }, { additionalProperties: false }),
     ...readonlyRisk,
     execute: async (_toolCallId, raw, signal) => {
-      const artifact = pickArtifact(store, artifactIdParam(raw as Params), contextOf(context, _toolCallId));
-      const current = await sourceFor(store, artifact);
+      const artifact = pickArtifact(store, artifactIdParam(raw as Params, runtime), contextOf(context, _toolCallId));
+      const current = await sourceFor(store, artifact, runtime);
       const selectors = typeof (raw as Params).recordId === "string" ? [{ recordId: (raw as Params).recordId as string, fieldPath: Array.isArray((raw as Params).fieldPath) ? (raw as Params).fieldPath as string[] : [] }] : [];
       const outcome = await engine.inspectRecord(current.source, selectors, signal);
-      return jsonResult({ apiVersion: 1, artifact, revision: current.revision, sourceSha256: current.sha256, inspection: outcome });
+      return runtime.jsonResult({ apiVersion: 1, artifact, revision: current.revision, sourceSha256: current.sha256, inspection: outcome });
     },
   };
 
-  const revise: AnyAgentTool = {
+  const revise: VerseConfTool = {
     name: "structured_artifact_revise",
     label: "Structured Artifact Revise",
     description: "Compute a strict JSON candidate in the VerseConf worker and submit it through the active runtime write owner.",
@@ -281,21 +277,21 @@ export function createVerseConfTools(params: { store: VerseConfArtifactStore; en
     execute: async (toolCallId, raw, signal) => {
       const p = raw as Params;
       const ctx = contextOf(context, toolCallId);
-      const artifact = pickArtifact(store, artifactIdParam(p), ctx);
-      const current = await sourceFor(store, artifact);
+      const artifact = pickArtifact(store, artifactIdParam(p, runtime), ctx);
+      const current = await sourceFor(store, artifact, runtime);
       const key = idempotencyKey(p, toolCallId);
       const replay = checkExistingIdempotency(store, artifact, key, p, current);
-      if (replay) return jsonResult(replay);
-      if (typeof p.baseRevisionId === "string" && p.baseRevisionId !== current.revision.revisionId) return jsonResult(mutationResult({ artifactId: artifact.artifactId, operationId: toolCallId, state: "rejected", diagnostics: [{ code: "revision_conflict", message: "baseRevisionId is stale" }] }));
+      if (replay) return runtime.jsonResult(replay);
+      if (typeof p.baseRevisionId === "string" && p.baseRevisionId !== current.revision.revisionId) return runtime.jsonResult(mutationResult({ artifactId: artifact.artifactId, operationId: toolCallId, state: "rejected", diagnostics: [{ code: "revision_conflict", message: "baseRevisionId is stale" }] }));
       const outcome = await engine.applyBatch(current.source, p.changes as never[], signal);
       const error = businessError(outcome);
-      if (error) return jsonResult(mutationResult({ artifactId: artifact.artifactId, operationId: toolCallId, state: "rejected", diagnostics: [{ code: error.code, message: error.message }] }));
+      if (error) return runtime.jsonResult(mutationResult({ artifactId: artifact.artifactId, operationId: toolCallId, state: "rejected", diagnostics: [{ code: error.code, message: error.message }] }));
       const candidate = (outcome.result as { candidate: string }).candidate;
-      return jsonResult(await commitRevision({ store, engine, artifact, current, candidate, context: ctx, operationId: toolCallId, idempotencyKey: key, kind: "revise", request: p, signal }));
+      return runtime.jsonResult(await commitRevision({ store, engine, artifact, current, candidate, context: ctx, operationId: toolCallId, idempotencyKey: key, kind: "revise", request: p, signal, runtime }));
     },
   };
 
-  const recordOps: AnyAgentTool = {
+  const recordOps: VerseConfTool = {
     name: "structured_artifact_record_ops",
     label: "Structured Artifact Record Operations",
     description: "Insert, delete, or move stable records with explicit beforeId/afterId and the same final-candidate validation.",
@@ -304,18 +300,18 @@ export function createVerseConfTools(params: { store: VerseConfArtifactStore; en
     execute: async (toolCallId, raw, signal) => {
       const p = raw as Params;
       const ctx = contextOf(context, toolCallId);
-      const artifact = pickArtifact(store, artifactIdParam(p), ctx);
-      const current = await sourceFor(store, artifact);
+      const artifact = pickArtifact(store, artifactIdParam(p, runtime), ctx);
+      const current = await sourceFor(store, artifact, runtime);
       const key = idempotencyKey(p, toolCallId);
       const replay = checkExistingIdempotency(store, artifact, key, p, current);
-      if (replay) return jsonResult(replay);
-      if (typeof p.baseRevisionId === "string" && p.baseRevisionId !== current.revision.revisionId) return jsonResult(mutationResult({ artifactId: artifact.artifactId, operationId: toolCallId, state: "rejected", diagnostics: [{ code: "revision_conflict", message: "baseRevisionId is stale" }] }));
+      if (replay) return runtime.jsonResult(replay);
+      if (typeof p.baseRevisionId === "string" && p.baseRevisionId !== current.revision.revisionId) return runtime.jsonResult(mutationResult({ artifactId: artifact.artifactId, operationId: toolCallId, state: "rejected", diagnostics: [{ code: "revision_conflict", message: "baseRevisionId is stale" }] }));
       const applied = applyRecordOperations(current.source, p.operations as RecordOperation[], artifact.kind);
-      return jsonResult(await commitRevision({ store, engine, artifact, current, candidate: applied.candidate, context: ctx, operationId: toolCallId, idempotencyKey: key, kind: "record-op", request: p, signal }));
+      return runtime.jsonResult(await commitRevision({ store, engine, artifact, current, candidate: applied.candidate, context: ctx, operationId: toolCallId, idempotencyKey: key, kind: "record-op", request: p, signal, runtime }));
     },
   };
 
-  const restore: AnyAgentTool = {
+  const restore: VerseConfTool = {
     name: "structured_artifact_restore",
     label: "Structured Artifact Restore",
     description: "Restore a historical source as a new revision; never rewrites or replays an old revision in place.",
@@ -324,30 +320,30 @@ export function createVerseConfTools(params: { store: VerseConfArtifactStore; en
     execute: async (toolCallId, raw, signal) => {
       const p = raw as Params;
       const ctx = contextOf(context, toolCallId);
-      const artifact = pickArtifact(store, artifactIdParam(p), ctx);
-      const current = await sourceFor(store, artifact);
+      const artifact = pickArtifact(store, artifactIdParam(p, runtime), ctx);
+      const current = await sourceFor(store, artifact, runtime);
       const key = idempotencyKey(p, toolCallId);
       const replay = checkExistingIdempotency(store, artifact, key, p, current);
-      if (replay) return jsonResult(replay);
-      const historical = store.getRevision(readStringParam(p, "revisionId", { required: true }));
+      if (replay) return runtime.jsonResult(replay);
+      const historical = store.getRevision(runtime.readStringParam(p, "revisionId", { required: true })!);
       if (!historical || historical.artifactId !== artifact.artifactId) throw new Error("historical revision not found");
-      return jsonResult(await commitRevision({ store, engine, artifact, current, candidate: historical.sourceText, context: ctx, operationId: toolCallId, idempotencyKey: key, kind: "restore", request: p, signal }));
+      return runtime.jsonResult(await commitRevision({ store, engine, artifact, current, candidate: historical.sourceText, context: ctx, operationId: toolCallId, idempotencyKey: key, kind: "restore", request: p, signal, runtime }));
     },
   };
 
-  const history: AnyAgentTool = {
+  const history: VerseConfTool = {
     name: "structured_artifact_history",
     label: "Structured Artifact History",
     description: "List immutable revisions and derived outputs for an artifact.",
     parameters: Type.Object({ artifactId: Type.String() }, { additionalProperties: false }),
     ...readonlyRisk,
     execute: async (toolCallId, raw) => {
-      const artifact = pickArtifact(store, artifactIdParam(raw as Params), contextOf(context, toolCallId));
-      return jsonResult({ apiVersion: 1, artifact, revisions: store.listRevisions(artifact.artifactId), outputs: store.listOutputs(artifact.artifactId) });
+      const artifact = pickArtifact(store, artifactIdParam(raw as Params, runtime), contextOf(context, toolCallId));
+      return runtime.jsonResult({ apiVersion: 1, artifact, revisions: store.listRevisions(artifact.artifactId), outputs: store.listOutputs(artifact.artifactId) });
     },
   };
 
-  const exportTool: AnyAgentTool = {
+  const exportTool: VerseConfTool = {
     name: "structured_artifact_export",
     label: "Structured Artifact Export",
     description: "Export a fixed source revision to deterministic Markdown, CSV, XLSX, or PPTX output with lineage.",
@@ -356,29 +352,29 @@ export function createVerseConfTools(params: { store: VerseConfArtifactStore; en
     execute: async (toolCallId, raw, signal) => {
       const p = raw as Params;
       const ctx = contextOf(context, toolCallId);
-      const artifact = pickArtifact(store, artifactIdParam(p), ctx);
-      const current = await sourceFor(store, artifact);
+      const artifact = pickArtifact(store, artifactIdParam(p, runtime), ctx);
+      const current = await sourceFor(store, artifact, runtime);
       const revision = typeof p.revisionId === "string" ? store.getRevision(p.revisionId) : current.revision;
       if (!revision || revision.artifactId !== artifact.artifactId) throw new Error("revision not found");
-      const format = readStringParam(p, "format", { required: true }) as "markdown" | "csv" | "xlsx" | "pptx";
+      const format = runtime.readStringParam(p, "format", { required: true }) as "markdown" | "csv" | "xlsx" | "pptx";
       if (!["markdown", "csv", "xlsx", "pptx"].includes(format)) throw new Error(`unsupported export format: ${format}`);
       const rendered = await renderArtifact(revision.sourceText, artifact.kind, format);
       const outputPath = `.openclaw/structured-artifacts/${artifact.artifactId}/${revision.revisionId}-${format}.${rendered.extension}`;
       store.assertOutputCapacity(artifact.artifactId, revision.revisionId);
-      const outputWrite = await commitStructuredArtifactBytes({
+      const outputWrite = await runtime.commitStructuredArtifactBytes({
         context: { workspaceRoot: ctx.workspaceDir, sessionId: ctx.sessionId, requestId: toolCallId, signal, flags: { structuredArtifactOutput: true, rendererVersion: RENDERER_VERSION } },
         sourcePath: outputPath,
         candidate: rendered.content,
         operationId: toolCallId,
       });
-      if (!outputWrite.ok) return jsonResult({ apiVersion: 1, ok: false, outputPath, error: outputWrite });
+      if (!outputWrite.ok) return runtime.jsonResult({ apiVersion: 1, ok: false, outputPath, error: outputWrite });
       const output = { outputId: `out-${randomUUID()}`, artifactId: artifact.artifactId, revisionId: revision.revisionId, format, rendererVersion: RENDERER_VERSION, path: outputPath, contentSha256: contentSha256(rendered.content), bytes: rendered.content.byteLength, journalRef: outputWrite.journalRef, validationStatus: rendered.validationStatus, createdAt: Date.now() } as const;
       store.addOutput(output);
-      return jsonResult({ apiVersion: 1, output, sourceRevision: revision.revisionId, agentDriven: true });
+      return runtime.jsonResult({ apiVersion: 1, output, sourceRevision: revision.revisionId, agentDriven: true });
     },
   };
 
-  const disable: AnyAgentTool = {
+  const disable: VerseConfTool = {
     name: "structured_artifact_disable",
     label: "Structured Artifact Disable",
     description: "Disable an artifact without deleting its source or history.",
@@ -386,9 +382,9 @@ export function createVerseConfTools(params: { store: VerseConfArtifactStore; en
     ...writeRisk,
     execute: async (toolCallId, raw) => {
       const ctx = contextOf(context, toolCallId);
-      const artifact = pickArtifact(store, artifactIdParam(raw as Params), ctx);
+      const artifact = pickArtifact(store, artifactIdParam(raw as Params, runtime), ctx);
       store.disableArtifact(artifact.artifactId, ctx);
-      return jsonResult({ apiVersion: 1, artifactId: artifact.artifactId, disabled: true, historyPreserved: true });
+      return runtime.jsonResult({ apiVersion: 1, artifactId: artifact.artifactId, disabled: true, historyPreserved: true });
     },
   };
 

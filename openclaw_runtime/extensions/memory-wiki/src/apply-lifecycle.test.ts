@@ -6,8 +6,8 @@ import {
   applyMemoryWikiMutation,
   normalizeMemoryWikiMutationInput,
 } from "./apply.js";
-import { resolveMemoryWikiConfig, type ResolvedMemoryWikiConfig } from "./config.js";
-import { getMemoryWikiPage } from "./query.js";
+import type { ResolvedMemoryWikiConfig } from "./config.js";
+import { resolveMemoryWikiConfig, getMemoryWikiPage } from "../runtime-api.js";
 
 function makeConfig(): ResolvedMemoryWikiConfig {
   const root = mkdtempSync(path.join(tmpdir(), "memory-wiki-ks08-"));

@@ -75,7 +75,7 @@ describe("Gateway trajectory read/subscribe", () => {
     expect(page.gap).toEqual({ expectedSeq: 1, actualSeq: 2, fromSeq: 0 });
     await expect(
       readTrajectoryPage({ sessionKey: "agent:main", fromSeq: 4, toSeq: 2 }),
-    ).rejects.toMatchObject<Partial<TrajectoryGatewayRequestError>>({ code: "invalid-range" });
+    ).rejects.toMatchObject({ code: "invalid-range" } satisfies Partial<TrajectoryGatewayRequestError>);
   });
 
   it("reports malformed rows and duplicate sequences without replaying either", async () => {
@@ -94,13 +94,13 @@ describe("Gateway trajectory read/subscribe", () => {
   it("rejects malformed numeric bounds instead of applying defaults", async () => {
     await expect(
       readTrajectoryPage({ sessionKey: "agent:main", fromSeq: "1" as never }),
-    ).rejects.toMatchObject<Partial<TrajectoryGatewayRequestError>>({ code: "invalid-range" });
+    ).rejects.toMatchObject({ code: "invalid-range" } satisfies Partial<TrajectoryGatewayRequestError>);
     await expect(
       readTrajectoryPage({ sessionKey: "agent:main", toSeq: Number.NaN }),
-    ).rejects.toMatchObject<Partial<TrajectoryGatewayRequestError>>({ code: "invalid-range" });
+    ).rejects.toMatchObject({ code: "invalid-range" } satisfies Partial<TrajectoryGatewayRequestError>);
     await expect(
       readTrajectoryPage({ sessionKey: "agent:main", limit: 0 }),
-    ).rejects.toMatchObject<Partial<TrajectoryGatewayRequestError>>({ code: "invalid-range" });
+    ).rejects.toMatchObject({ code: "invalid-range" } satisfies Partial<TrajectoryGatewayRequestError>);
   });
 
   it("publishes ordered batches to the subscribed connection and supports replacement cleanup", async () => {
