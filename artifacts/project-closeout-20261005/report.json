@@ -1,0 +1,1695 @@
+{
+  "schema": "project-closeout-audit/v1",
+  "generatedAt": "2026-10-05T14:45:44.961Z",
+  "driven_by": "agent",
+  "actor": "codex-full-acceptance",
+  "verdict": "not-accepted",
+  "releaseReady": false,
+  "realHumanEvidence": false,
+  "paidModelAcceptance": false,
+  "initialCandidate": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+  "candidate": {
+    "commit": "07271b0632b7ee141a05d1034393a0add888695c",
+    "tree": "f0e94da13c05804612a7ab6f5c15c3ef073ff150",
+    "path": "C:/Users/27933/.codex/worktrees/full-acceptance-20261005/ClawX",
+    "branch": "codex/full-acceptance-closeout-20261005",
+    "note": "The isolated candidate is independent of concurrent untracked brand resources in the shared checkout."
+  },
+  "fixes": [
+    {
+      "id": "declaration-types",
+      "evidence": ".local/full-acceptance-20261005/type-only-emission.json",
+      "detail": "Five reproduced runtime declaration diagnostics fixed with explicit types; three modules emit identical JavaScript."
+    },
+    {
+      "id": "fixture-contracts",
+      "evidence": ".local/full-acceptance-20261005/runtime-aggregate.json",
+      "detail": "Transport spies, SEKB lineage, authorized goal-wait fixtures, Windows command quoting, and importer-based dependency checks now exercise their intended contracts; production guards and limits remain unchanged."
+    },
+    {
+      "id": "retained-evidence",
+      "evidence": ".local/full-acceptance-20261005/static-links-evidence.json",
+      "detail": "Three historical TF-0253 files retained byte-for-byte with exact CRLF/ignore rules and required-input enforcement; the historical candidate and verdict were not rewritten."
+    },
+    {
+      "id": "plugin-assets",
+      "evidence": ".local/full-acceptance-20261005/diffs-assets-after.json",
+      "detail": "Full runtime builds invoke existing plugin build and copy hooks. Diffs service changed from ENOENT to 5,333,988 bytes; Canvas delivery assets were also verified."
+    }
+  ],
+  "findings": [
+    {
+      "id": "package-portability",
+      "priority": "P1",
+      "status": "open",
+      "detail": "NSIS packaging failed: 16 warnings / 8 path patterns. Runtime retains external links and a mismatched dependency version; the packaged MCP importer can borrow a user-level SDK.",
+      "evidence": ".local/full-acceptance-20261005/candidate-proof/packaging-portability.json",
+      "externalRuntimeLinks": 37,
+      "requiredTypebox": "1.1.39",
+      "packagedTypebox": "1.1.38",
+      "sdkInsidePackage": false,
+      "next": "Materialize the correct dependency closure, preserve locked nested versions, verify actual delivery importers resolve inside the package, then rebuild NSIS."
+    },
+    {
+      "id": "startup-budget",
+      "priority": "P2",
+      "status": "open",
+      "detail": "Initial JavaScript 5.07 MB exceeds 2.50 MB; math-rendering JS/CSS is eagerly referenced.",
+      "evidence": ".local/full-acceptance-20261005/candidate-proof/candidate-startup-check.log",
+      "next": "Restore lazy loading and pass the existing budget without changing its thresholds."
+    },
+    {
+      "id": "electron-full",
+      "priority": "P1",
+      "status": "open",
+      "detail": "The complete Electron run and bounded reruns are reported separately. The initial goal-wake failure was caused by conflicting color environment variables introduced by the audit wrapper; its assertions were not weakened.",
+      "initialFailures": [
+        {
+          "file": "fakecoding-scheduled-browser-runs.spec.ts",
+          "line": 177,
+          "title": "projects Cron and Browser runs, preserves actions, and manages Browser settings",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 20820,
+              "errors": [
+                "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('cron-job-card-cron-e2e')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('cron-job-card-cron-e2e')\u001b[22m\n\n\n  182 |     await page.getByTestId('sidebar-nav-cron').click();\n  183 |\n> 184 |     await expect(page.getByTestId('cron-job-card-cron-e2e')).toBeVisible();\n      |                                                              ^\n  185 |     await expect(page.getByTestId('browser-task-card-browser-waiting')).toBeVisible();\n  186 |     await expect(page.getByTestId('scheduled-source-filter')).toContainText('Browser runs');\n  187 |     const lightDesktop = testInfo.outputPath('scheduled-1280-light.png');\n    at C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\fakecoding-scheduled-browser-runs.spec.ts:184:62"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "knowledge-hub.spec.ts",
+          "line": 173,
+          "title": "initializes, imports, searches, inspects, and applies an editable draft",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 36593,
+              "errors": [
+                "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('knowledge-more-actions')\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" id=\"radix-_r_27_\" data-state=\"closed\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"More actions\" data-testid=\"knowledge-more-actions\" class=\"inline-flex items-center justify-center whitespace-nowrap border border-transparent text-[13px] font-medium ring-offset-background transition-[background-color,border-color,color,box-shadow,opacity] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:pointer-even…>…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <li class=\"\" tabindex=\"0\" data-index=\"2\" data-styled=\"true\" data-front=\"false\" data-mounted=\"true\" data-swiped=\"false\" data-visible=\"true\" data-type=\"success\" data-sonner-toast=\"\" data-promise=\"false\" data-removed=\"false\" data-swiping=\"false\" data-y-position=\"top\" data-expanded=\"false\" data-swipe-out=\"false\" data-rich-colors=\"true\" data-x-position=\"right\" data-dismissible=\"true\">…</li> from <section tabindex=\"-1\" aria-live=\"polite\" aria-atomic=\"false\" aria-relevant=\"additions text\" aria-label=\"Notifications alt+T\">…</section> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <li class=\"\" tabindex=\"0\" data-index=\"1\" data-styled=\"true\" data-front=\"false\" data-mounted=\"true\" data-swiped=\"false\" data-visible=\"true\" data-type=\"success\" data-sonner-toast=\"\" data-promise=\"false\" data-removed=\"false\" data-swiping=\"false\" data-expanded=\"true\" data-y-position=\"top\" data-swipe-out=\"false\" data-rich-colors=\"true\" data-x-position=\"right\" data-dismissible=\"true\">…</li> from <section tabindex=\"-1\" aria-live=\"polite\" aria-atomic=\"false\" aria-relevant=\"additions text\" aria-label=\"Notifications alt+T\">…</section> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <li class=\"\" tabindex=\"0\" data-index=\"1\" data-styled=\"true\" data-front=\"false\" data-mounted=\"true\" data-swiped=\"false\" data-visible=\"true\" data-type=\"success\" data-sonner-toast=\"\" data-promise=\"false\" data-removed=\"false\" data-swiping=\"false\" data-expanded=\"true\" data-y-position=\"top\" data-swipe-out=\"false\" data-rich-colors=\"true\" data-x-position=\"right\" data-dismissible=\"true\">…</li> from <section tabindex=\"-1\" aria-live=\"polite\" aria-atomic=\"false\" aria-relevant=\"additions text\" aria-label=\"Notifications alt+T\">…</section> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <li class=\"\" tabindex=\"0\" data-index=\"0\" data-front=\"true\" data-styled=\"true\" data-mounted=\"true\" data-swiped=\"false\" data-visible=\"true\" data-type=\"success\" data-sonner-toast=\"\" data-promise=\"false\" data-removed=\"false\" data-swiping=\"false\" data-expanded=\"true\" data-y-position=\"top\" data-swipe-out=\"false\" data-rich-colors=\"true\" data-x-position=\"right\" data-dismissible=\"true\">…</li> from <section tabindex=\"-1\" aria-live=\"polite\" aria-atomic=\"false\" aria-relevant=\"additions text\" aria-label=\"Notifications alt+T\">…</section> subtree intercepts pointer events\u001b[22m\n\u001b[2m  56 × retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <li class=\"\" tabindex=\"0\" data-index=\"0\" data-front=\"true\" data-styled=\"true\" data-mounted=\"true\" data-swiped=\"false\" data-visible=\"true\" data-type=\"success\" data-sonner-toast=\"\" data-promise=\"false\" data-removed=\"false\" data-swiping=\"false\" data-expanded=\"true\" data-y-position=\"top\" data-swipe-out=\"false\" data-rich-colors=\"true\" data-x-position=\"right\" data-dismissible=\"true\">…</li> from <section tabindex=\"-1\" aria-live=\"polite\" aria-atomic=\"false\" aria-relevant=\"additions text\" aria-label=\"Notifications alt+T\">…</section> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n\n  619 |     await expect(page.getByText(/Knowledge vault initialized/)).toBeVisible();\n  620 |\n> 621 |     await page.getByTestId('knowledge-more-actions').click();\n      |                                                      ^\n  622 |     await page.getByRole('menuitem', { name: /Import Files/ }).click();\n  623 |     await expect(page.getByText(/Knowledge imported/)).toBeVisible();\n  624 |\n    at C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\knowledge-hub.spec.ts:621:54"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "rc10-operator-live.spec.ts",
+          "line": 6,
+          "title": "RC-10 real Cron, Inbox, IRC and recovery scenarios",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 58868,
+              "errors": [
+                "Error: {\"at\":\"2026-10-05T14:02:19.198Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"begin\",\"candidate\":{\"commit\":\"07271b0632b7ee141a05d1034393a0add888695c\",\"tree\":\"f0e94da13c05804612a7ab6f5c15c3ef073ff150\",\"dirty\":false},\"scenario\":\"OPERATOR-ALL\",\"root\":\"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\full-acceptance-20261005\\\\ClawX\\\\.local\\\\full-acceptance-20261005\\\\electron-results\\\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\\\rc10-operator\"}\n{\"at\":\"2026-10-05T14:02:45.275Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"ready\",\"gateway\":{\"state\":\"running\",\"port\":54431,\"reconnectAttempts\":0,\"gatewayReady\":true,\"pid\":19868,\"connectedAt\":1791208965254,\"uptime\":1},\"ircPort\":54429}\n{\"at\":\"2026-10-05T14:03:16.495Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"scenario.fail\",\"id\":\"H-02\",\"error\":\"approval for 78ac30e0-a47d-494c-bab8-5ffb46398851 timed out after 30000ms\"}\n{\"at\":\"2026-10-05T14:03:17.328Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"end\",\"evidence\":\"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\full-acceptance-20261005\\\\ClawX\\\\.local\\\\full-acceptance-20261005\\\\electron-results\\\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\\\rc10-operator\\\\evidence\",\"failures\":[\"H-02\"]}\n\n(node:30512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:30512) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/27933/.codex/worktrees/full-acceptance-20261005/ClawX/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\package.json.\n\nCommand failed: C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\scripts\\rc10\\driver.mjs --repo C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX --development --scenario OPERATOR-ALL --data-root C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\.local\\full-acceptance-20261005\\electron-results\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\rc10-operator --timeout-min 8\n(node:30512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:30512) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/27933/.codex/worktrees/full-acceptance-20261005/ClawX/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\package.json.\n\n\n  14 |     ], { windowsHide: true, maxBuffer: 4 * 1024 * 1024 }, (error, stdout, stderr) => {\n  15 |       clearTimeout(timer);\n> 16 |       if (error) fail(new Error(stdout + '\\n' + stderr + '\\n' + error.message));\n     |                       ^\n  17 |       else done();\n  18 |     });\n  19 |     const timer = setTimeout(() => {\n    at C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\rc10-operator-live.spec.ts:16:23"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "runtime-lifecycle-governance.spec.ts",
+          "line": 181,
+          "title": "goal wake path records zero process.poll tool calls and duplicate wake has one tick",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 13293,
+              "errors": [
+                "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeFalsy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31m\"(node:26448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[39m\n\u001b[31m(Use `node --trace-warnings ...` to show where the warning was created)\u001b[39m\n\u001b[31m(node:52396) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[39m\n\u001b[31m(Use `node --trace-warnings ...` to show where the warning was created)\u001b[39m\n\u001b[31m(node:24748) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[39m\n\u001b[31m(Use `node --trace-warnings ...` to show where the warning was created)\u001b[39m\n\u001b[31m\"\u001b[39m\n\n  212 |       });\n  213 |\n> 214 |       expect(trace.spawnError ?? trace.stderr).toBeFalsy();\n      |                                                ^\n  215 |       expect(trace.status).toBe(0);\n  216 |       const stdout = String(trace.stdout ?? \"\");\n  217 |       const readAudit = (name: string): number | null => {\n    at C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\runtime-lifecycle-governance.spec.ts:214:48"
+              ]
+            }
+          ]
+        }
+      ],
+      "unresolvedFailures": [
+        {
+          "file": "rc10-operator-live.spec.ts",
+          "line": 6,
+          "title": "RC-10 real Cron, Inbox, IRC and recovery scenarios",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 58868,
+              "errors": [
+                "Error: {\"at\":\"2026-10-05T14:02:19.198Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"begin\",\"candidate\":{\"commit\":\"07271b0632b7ee141a05d1034393a0add888695c\",\"tree\":\"f0e94da13c05804612a7ab6f5c15c3ef073ff150\",\"dirty\":false},\"scenario\":\"OPERATOR-ALL\",\"root\":\"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\full-acceptance-20261005\\\\ClawX\\\\.local\\\\full-acceptance-20261005\\\\electron-results\\\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\\\rc10-operator\"}\n{\"at\":\"2026-10-05T14:02:45.275Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"ready\",\"gateway\":{\"state\":\"running\",\"port\":54431,\"reconnectAttempts\":0,\"gatewayReady\":true,\"pid\":19868,\"connectedAt\":1791208965254,\"uptime\":1},\"ircPort\":54429}\n{\"at\":\"2026-10-05T14:03:16.495Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"scenario.fail\",\"id\":\"H-02\",\"error\":\"approval for 78ac30e0-a47d-494c-bab8-5ffb46398851 timed out after 30000ms\"}\n{\"at\":\"2026-10-05T14:03:17.328Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"end\",\"evidence\":\"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\full-acceptance-20261005\\\\ClawX\\\\.local\\\\full-acceptance-20261005\\\\electron-results\\\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\\\rc10-operator\\\\evidence\",\"failures\":[\"H-02\"]}\n\n(node:30512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:30512) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/27933/.codex/worktrees/full-acceptance-20261005/ClawX/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\package.json.\n\nCommand failed: C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\scripts\\rc10\\driver.mjs --repo C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX --development --scenario OPERATOR-ALL --data-root C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\.local\\full-acceptance-20261005\\electron-results\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\rc10-operator --timeout-min 8\n(node:30512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:30512) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/27933/.codex/worktrees/full-acceptance-20261005/ClawX/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\package.json.\n\n\n  14 |     ], { windowsHide: true, maxBuffer: 4 * 1024 * 1024 }, (error, stdout, stderr) => {\n  15 |       clearTimeout(timer);\n> 16 |       if (error) fail(new Error(stdout + '\\n' + stderr + '\\n' + error.message));\n     |                       ^\n  17 |       else done();\n  18 |     });\n  19 |     const timer = setTimeout(() => {\n    at C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\rc10-operator-live.spec.ts:16:23"
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": ".local/full-acceptance-20261005/candidate-proof/electron-full-tests.json"
+    },
+    {
+      "id": "permanent-ui-skips",
+      "priority": "P2",
+      "status": "open",
+      "detail": "Six permanent skips cover three orphan UI components, missing turn/session model scope controls, and a token-usage filtering coverage gap. They are not completed functionality.",
+      "files": [
+        "tests/e2e/chat-checkpoints.spec.ts",
+        "tests/e2e/chat-composer-git-strip.spec.ts",
+        "tests/e2e/compaction-artifact-viewer.spec.ts",
+        "tests/e2e/chat-model-picker-tiers.spec.ts",
+        "tests/e2e/token-usage.spec.ts"
+      ]
+    }
+  ],
+  "verification": {
+    "rootTests": {
+      "passed": 8035,
+      "failed": 0,
+      "skipped": 50,
+      "total": 8085,
+      "source": "persisted full pnpm test log; later changed contracts have focused reruns",
+      "segments": 6,
+      "candidate": "55a33921e"
+    },
+    "runtime": {
+      "fileSelections": 422,
+      "uniqueFiles": 419,
+      "passed": 3175,
+      "failed": 0,
+      "skipped": 5,
+      "exactFileMultiset": true,
+      "singleDefaultInvocationPassed": false,
+      "method": "Complete discovered project matrix in serial groups, with explicit replacement of three failed files by their actual green rerun receipts.",
+      "originalFailuresAndTimeoutsRetained": true
+    },
+    "electron": {
+      "stats": {
+        "startTime": "2026-10-05T13:30:13.443Z",
+        "duration": 3020234.024,
+        "expected": 324,
+        "skipped": 10,
+        "unexpected": 4,
+        "flaky": 0
+      },
+      "discoveredTests": 338,
+      "failed": [
+        {
+          "file": "fakecoding-scheduled-browser-runs.spec.ts",
+          "line": 177,
+          "title": "projects Cron and Browser runs, preserves actions, and manages Browser settings",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 20820,
+              "errors": [
+                "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('cron-job-card-cron-e2e')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('cron-job-card-cron-e2e')\u001b[22m\n\n\n  182 |     await page.getByTestId('sidebar-nav-cron').click();\n  183 |\n> 184 |     await expect(page.getByTestId('cron-job-card-cron-e2e')).toBeVisible();\n      |                                                              ^\n  185 |     await expect(page.getByTestId('browser-task-card-browser-waiting')).toBeVisible();\n  186 |     await expect(page.getByTestId('scheduled-source-filter')).toContainText('Browser runs');\n  187 |     const lightDesktop = testInfo.outputPath('scheduled-1280-light.png');\n    at C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\fakecoding-scheduled-browser-runs.spec.ts:184:62"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "knowledge-hub.spec.ts",
+          "line": 173,
+          "title": "initializes, imports, searches, inspects, and applies an editable draft",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 36593,
+              "errors": [
+                "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('knowledge-more-actions')\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" id=\"radix-_r_27_\" data-state=\"closed\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"More actions\" data-testid=\"knowledge-more-actions\" class=\"inline-flex items-center justify-center whitespace-nowrap border border-transparent text-[13px] font-medium ring-offset-background transition-[background-color,border-color,color,box-shadow,opacity] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:pointer-even…>…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <li class=\"\" tabindex=\"0\" data-index=\"2\" data-styled=\"true\" data-front=\"false\" data-mounted=\"true\" data-swiped=\"false\" data-visible=\"true\" data-type=\"success\" data-sonner-toast=\"\" data-promise=\"false\" data-removed=\"false\" data-swiping=\"false\" data-y-position=\"top\" data-expanded=\"false\" data-swipe-out=\"false\" data-rich-colors=\"true\" data-x-position=\"right\" data-dismissible=\"true\">…</li> from <section tabindex=\"-1\" aria-live=\"polite\" aria-atomic=\"false\" aria-relevant=\"additions text\" aria-label=\"Notifications alt+T\">…</section> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <li class=\"\" tabindex=\"0\" data-index=\"1\" data-styled=\"true\" data-front=\"false\" data-mounted=\"true\" data-swiped=\"false\" data-visible=\"true\" data-type=\"success\" data-sonner-toast=\"\" data-promise=\"false\" data-removed=\"false\" data-swiping=\"false\" data-expanded=\"true\" data-y-position=\"top\" data-swipe-out=\"false\" data-rich-colors=\"true\" data-x-position=\"right\" data-dismissible=\"true\">…</li> from <section tabindex=\"-1\" aria-live=\"polite\" aria-atomic=\"false\" aria-relevant=\"additions text\" aria-label=\"Notifications alt+T\">…</section> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <li class=\"\" tabindex=\"0\" data-index=\"1\" data-styled=\"true\" data-front=\"false\" data-mounted=\"true\" data-swiped=\"false\" data-visible=\"true\" data-type=\"success\" data-sonner-toast=\"\" data-promise=\"false\" data-removed=\"false\" data-swiping=\"false\" data-expanded=\"true\" data-y-position=\"top\" data-swipe-out=\"false\" data-rich-colors=\"true\" data-x-position=\"right\" data-dismissible=\"true\">…</li> from <section tabindex=\"-1\" aria-live=\"polite\" aria-atomic=\"false\" aria-relevant=\"additions text\" aria-label=\"Notifications alt+T\">…</section> subtree intercepts pointer events\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <li class=\"\" tabindex=\"0\" data-index=\"0\" data-front=\"true\" data-styled=\"true\" data-mounted=\"true\" data-swiped=\"false\" data-visible=\"true\" data-type=\"success\" data-sonner-toast=\"\" data-promise=\"false\" data-removed=\"false\" data-swiping=\"false\" data-expanded=\"true\" data-y-position=\"top\" data-swipe-out=\"false\" data-rich-colors=\"true\" data-x-position=\"right\" data-dismissible=\"true\">…</li> from <section tabindex=\"-1\" aria-live=\"polite\" aria-atomic=\"false\" aria-relevant=\"additions text\" aria-label=\"Notifications alt+T\">…</section> subtree intercepts pointer events\u001b[22m\n\u001b[2m  56 × retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <li class=\"\" tabindex=\"0\" data-index=\"0\" data-front=\"true\" data-styled=\"true\" data-mounted=\"true\" data-swiped=\"false\" data-visible=\"true\" data-type=\"success\" data-sonner-toast=\"\" data-promise=\"false\" data-removed=\"false\" data-swiping=\"false\" data-expanded=\"true\" data-y-position=\"top\" data-swipe-out=\"false\" data-rich-colors=\"true\" data-x-position=\"right\" data-dismissible=\"true\">…</li> from <section tabindex=\"-1\" aria-live=\"polite\" aria-atomic=\"false\" aria-relevant=\"additions text\" aria-label=\"Notifications alt+T\">…</section> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n\n  619 |     await expect(page.getByText(/Knowledge vault initialized/)).toBeVisible();\n  620 |\n> 621 |     await page.getByTestId('knowledge-more-actions').click();\n      |                                                      ^\n  622 |     await page.getByRole('menuitem', { name: /Import Files/ }).click();\n  623 |     await expect(page.getByText(/Knowledge imported/)).toBeVisible();\n  624 |\n    at C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\knowledge-hub.spec.ts:621:54"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "rc10-operator-live.spec.ts",
+          "line": 6,
+          "title": "RC-10 real Cron, Inbox, IRC and recovery scenarios",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 58868,
+              "errors": [
+                "Error: {\"at\":\"2026-10-05T14:02:19.198Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"begin\",\"candidate\":{\"commit\":\"07271b0632b7ee141a05d1034393a0add888695c\",\"tree\":\"f0e94da13c05804612a7ab6f5c15c3ef073ff150\",\"dirty\":false},\"scenario\":\"OPERATOR-ALL\",\"root\":\"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\full-acceptance-20261005\\\\ClawX\\\\.local\\\\full-acceptance-20261005\\\\electron-results\\\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\\\rc10-operator\"}\n{\"at\":\"2026-10-05T14:02:45.275Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"ready\",\"gateway\":{\"state\":\"running\",\"port\":54431,\"reconnectAttempts\":0,\"gatewayReady\":true,\"pid\":19868,\"connectedAt\":1791208965254,\"uptime\":1},\"ircPort\":54429}\n{\"at\":\"2026-10-05T14:03:16.495Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"scenario.fail\",\"id\":\"H-02\",\"error\":\"approval for 78ac30e0-a47d-494c-bab8-5ffb46398851 timed out after 30000ms\"}\n{\"at\":\"2026-10-05T14:03:17.328Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"end\",\"evidence\":\"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\full-acceptance-20261005\\\\ClawX\\\\.local\\\\full-acceptance-20261005\\\\electron-results\\\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\\\rc10-operator\\\\evidence\",\"failures\":[\"H-02\"]}\n\n(node:30512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:30512) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/27933/.codex/worktrees/full-acceptance-20261005/ClawX/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\package.json.\n\nCommand failed: C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\scripts\\rc10\\driver.mjs --repo C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX --development --scenario OPERATOR-ALL --data-root C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\.local\\full-acceptance-20261005\\electron-results\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\rc10-operator --timeout-min 8\n(node:30512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:30512) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/27933/.codex/worktrees/full-acceptance-20261005/ClawX/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\package.json.\n\n\n  14 |     ], { windowsHide: true, maxBuffer: 4 * 1024 * 1024 }, (error, stdout, stderr) => {\n  15 |       clearTimeout(timer);\n> 16 |       if (error) fail(new Error(stdout + '\\n' + stderr + '\\n' + error.message));\n     |                       ^\n  17 |       else done();\n  18 |     });\n  19 |     const timer = setTimeout(() => {\n    at C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\rc10-operator-live.spec.ts:16:23"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "runtime-lifecycle-governance.spec.ts",
+          "line": 181,
+          "title": "goal wake path records zero process.poll tool calls and duplicate wake has one tick",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 13293,
+              "errors": [
+                "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeFalsy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31m\"(node:26448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[39m\n\u001b[31m(Use `node --trace-warnings ...` to show where the warning was created)\u001b[39m\n\u001b[31m(node:52396) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[39m\n\u001b[31m(Use `node --trace-warnings ...` to show where the warning was created)\u001b[39m\n\u001b[31m(node:24748) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[39m\n\u001b[31m(Use `node --trace-warnings ...` to show where the warning was created)\u001b[39m\n\u001b[31m\"\u001b[39m\n\n  212 |       });\n  213 |\n> 214 |       expect(trace.spawnError ?? trace.stderr).toBeFalsy();\n      |                                                ^\n  215 |       expect(trace.status).toBe(0);\n  216 |       const stdout = String(trace.stdout ?? \"\");\n  217 |       const readAudit = (name: string): number | null => {\n    at C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\runtime-lifecycle-governance.spec.ts:214:48"
+              ]
+            }
+          ]
+        }
+      ],
+      "unresolved": [
+        {
+          "file": "rc10-operator-live.spec.ts",
+          "line": 6,
+          "title": "RC-10 real Cron, Inbox, IRC and recovery scenarios",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 58868,
+              "errors": [
+                "Error: {\"at\":\"2026-10-05T14:02:19.198Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"begin\",\"candidate\":{\"commit\":\"07271b0632b7ee141a05d1034393a0add888695c\",\"tree\":\"f0e94da13c05804612a7ab6f5c15c3ef073ff150\",\"dirty\":false},\"scenario\":\"OPERATOR-ALL\",\"root\":\"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\full-acceptance-20261005\\\\ClawX\\\\.local\\\\full-acceptance-20261005\\\\electron-results\\\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\\\rc10-operator\"}\n{\"at\":\"2026-10-05T14:02:45.275Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"ready\",\"gateway\":{\"state\":\"running\",\"port\":54431,\"reconnectAttempts\":0,\"gatewayReady\":true,\"pid\":19868,\"connectedAt\":1791208965254,\"uptime\":1},\"ircPort\":54429}\n{\"at\":\"2026-10-05T14:03:16.495Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"scenario.fail\",\"id\":\"H-02\",\"error\":\"approval for 78ac30e0-a47d-494c-bab8-5ffb46398851 timed out after 30000ms\"}\n{\"at\":\"2026-10-05T14:03:17.328Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"end\",\"evidence\":\"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\full-acceptance-20261005\\\\ClawX\\\\.local\\\\full-acceptance-20261005\\\\electron-results\\\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\\\rc10-operator\\\\evidence\",\"failures\":[\"H-02\"]}\n\n(node:30512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:30512) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/27933/.codex/worktrees/full-acceptance-20261005/ClawX/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\package.json.\n\nCommand failed: C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\scripts\\rc10\\driver.mjs --repo C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX --development --scenario OPERATOR-ALL --data-root C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\.local\\full-acceptance-20261005\\electron-results\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\rc10-operator --timeout-min 8\n(node:30512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:30512) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/27933/.codex/worktrees/full-acceptance-20261005/ClawX/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\package.json.\n\n\n  14 |     ], { windowsHide: true, maxBuffer: 4 * 1024 * 1024 }, (error, stdout, stderr) => {\n  15 |       clearTimeout(timer);\n> 16 |       if (error) fail(new Error(stdout + '\\n' + stderr + '\\n' + error.message));\n     |                       ^\n  17 |       else done();\n  18 |     });\n  19 |     const timer = setTimeout(() => {\n    at C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\rc10-operator-live.spec.ts:16:23"
+              ]
+            }
+          ]
+        }
+      ],
+      "skipped": [
+        {
+          "file": "chat-cache-deepseek-cache-first.spec.ts",
+          "line": 388,
+          "title": "keeps a stable provider prefix warm across real DeepSeek turns",
+          "expectedStatus": "skipped",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "duration": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "file": "chat-cache-live-model.spec.ts",
+          "line": 400,
+          "title": "performs real model calls and exports prompt-cache metrics",
+          "expectedStatus": "skipped",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "duration": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "file": "chat-checkpoints.spec.ts",
+          "line": 136,
+          "title": "checkpoints dialog lists and restores a session checkpoint",
+          "expectedStatus": "skipped",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "duration": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "file": "chat-composer-git-strip.spec.ts",
+          "line": 178,
+          "title": "shows repository context and routes branch/worktree actions through host APIs",
+          "expectedStatus": "skipped",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "duration": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "file": "chat-model-picker-tiers.spec.ts",
+          "line": 17,
+          "title": "turn scope: sets chip and forwards modelRef in send payload",
+          "expectedStatus": "skipped",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "duration": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "file": "chat-model-picker-tiers.spec.ts",
+          "line": 205,
+          "title": "session scope: calls sessions.patchRuntimeModel with modelRef",
+          "expectedStatus": "skipped",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "duration": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "file": "compaction-artifact-viewer.spec.ts",
+          "line": 20,
+          "title": "opens compression evidence and prepares recovery context without lossless wording",
+          "expectedStatus": "skipped",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "duration": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "file": "mac-titlebar-drag-region.spec.ts",
+          "line": 10,
+          "title": "keeps a draggable strip above non-chat pages and stacks chat above it",
+          "expectedStatus": "skipped",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "duration": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "file": "token-usage.spec.ts",
+          "line": 148,
+          "title": "hides gateway internal usage rows from the usage list overview",
+          "expectedStatus": "skipped",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "duration": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "file": "visual-tune.spec.ts",
+          "line": 23,
+          "title": "capture composer, permission menu, slash palette, effort flame",
+          "expectedStatus": "skipped",
+          "status": "skipped",
+          "results": [
+            {
+              "status": "skipped",
+              "duration": 0,
+              "errors": []
+            }
+          ]
+        }
+      ],
+      "rerunStats": {
+        "startTime": "2026-10-05T14:22:13.144Z",
+        "duration": 126837.1,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "rerunTests": [
+        {
+          "file": "fakecoding-scheduled-browser-runs.spec.ts",
+          "line": 177,
+          "title": "projects Cron and Browser runs, preserves actions, and manages Browser settings",
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 36370,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "file": "knowledge-hub.spec.ts",
+          "line": 173,
+          "title": "initializes, imports, searches, inspects, and applies an editable draft",
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 22277,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "file": "rc10-operator-live.spec.ts",
+          "line": 6,
+          "title": "RC-10 real Cron, Inbox, IRC and recovery scenarios",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "status": "failed",
+              "duration": 56451,
+              "errors": [
+                "Error: {\"at\":\"2026-10-05T14:23:13.409Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"begin\",\"candidate\":{\"commit\":\"07271b0632b7ee141a05d1034393a0add888695c\",\"tree\":\"f0e94da13c05804612a7ab6f5c15c3ef073ff150\",\"dirty\":false},\"scenario\":\"OPERATOR-ALL\",\"root\":\"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\full-acceptance-20261005\\\\ClawX\\\\.local\\\\full-acceptance-20261005\\\\electron-rerun-results\\\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\\\rc10-operator\"}\n{\"at\":\"2026-10-05T14:23:37.329Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"ready\",\"gateway\":{\"state\":\"running\",\"port\":56942,\"reconnectAttempts\":0,\"gatewayReady\":true,\"pid\":43644,\"connectedAt\":1791210217123,\"uptime\":1},\"ircPort\":56940}\n{\"at\":\"2026-10-05T14:24:08.656Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"scenario.fail\",\"id\":\"H-02\",\"error\":\"approval for 569643cb-f4f7-4d89-9c40-bcaad9fa0a29 timed out after 30000ms\"}\n{\"at\":\"2026-10-05T14:24:09.353Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"end\",\"evidence\":\"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\full-acceptance-20261005\\\\ClawX\\\\.local\\\\full-acceptance-20261005\\\\electron-rerun-results\\\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\\\rc10-operator\\\\evidence\",\"failures\":[\"H-02\"]}\n\n(node:34156) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/27933/.codex/worktrees/full-acceptance-20261005/ClawX/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\package.json.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\nCommand failed: C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\scripts\\rc10\\driver.mjs --repo C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX --development --scenario OPERATOR-ALL --data-root C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\.local\\full-acceptance-20261005\\electron-rerun-results\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\rc10-operator --timeout-min 8\n(node:34156) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/27933/.codex/worktrees/full-acceptance-20261005/ClawX/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\package.json.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\n\n  14 |     ], { windowsHide: true, maxBuffer: 4 * 1024 * 1024 }, (error, stdout, stderr) => {\n  15 |       clearTimeout(timer);\n> 16 |       if (error) fail(new Error(stdout + '\\n' + stderr + '\\n' + error.message));\n     |                       ^\n  17 |       else done();\n  18 |     });\n  19 |     const timer = setTimeout(() => {\n    at C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\rc10-operator-live.spec.ts:16:23"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "runtime-lifecycle-governance.spec.ts",
+          "line": 181,
+          "title": "goal wake path records zero process.poll tool calls and duplicate wake has one tick",
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 9997,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    },
+    "agentDev": {
+      "deepFreshInThisRun": true,
+      "deepGeneratedAt": "2026-10-05T14:27:41.565Z",
+      "deepSuccess": true,
+      "deepDecision": {
+        "status": "daily-loop-ok",
+        "reason": "All selected Agent Dev gates passed within hard limits.",
+        "dailyLoopReady": true,
+        "releaseReady": true,
+        "fullGateComplete": true,
+        "budgetStatus": "watch",
+        "fastPathModes": [],
+        "requiredFullGates": [],
+        "watchSteps": [
+          "e2e-build"
+        ],
+        "limitSteps": []
+      },
+      "auditFreshInThisRun": true,
+      "auditGeneratedAt": "2026-10-05T14:29:36.630Z",
+      "auditStatus": "pass",
+      "auditGrade": "A",
+      "auditSummary": {
+        "pass": 5,
+        "warn": 1,
+        "fail": 0,
+        "disqualifierCount": 0
+      },
+      "scope": "Agent Dev control plane only, not whole-product release readiness"
+    },
+    "verseconf": {
+      "counts": {
+        "total": 43,
+        "passed": 41,
+        "failed": 2
+      },
+      "failedCases": [
+        {
+          "name": "electron-installer-present",
+          "ok": false,
+          "message": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\release\\Verse Claw-0.4.9-alpha.0-win-x64.exe\n\nfalse !== true\n"
+        },
+        {
+          "name": "electron-installer.embedded-delivery-matches-current-source",
+          "ok": false,
+          "message": "Command failed: C:\\Program Files\\7-Zip\\7z.exe x -y C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\release\\Verse Claw-0.4.9-alpha.0-win-x64.exe -oC:\\Users\\27933\\AppData\\Local\\Temp\\verseconf-installer-j34D7o $PLUGINSDIR\\app-64.7z\n\r\nERROR: ϵͳ�Ҳ���ָ�����ļ���\r\nC:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\release\\Verse Claw-0.4.9-alpha.0-win-x64.exe\r\n\r\n\r\n\r\nSystem ERROR:\r\nϵͳ�Ҳ���ָ�����ļ���\r\n"
+        }
+      ],
+      "installer": {
+        "status": "failed",
+        "path": "release/Verse Claw-0.4.9-alpha.0-win-x64.exe",
+        "sha256": null,
+        "embeddedDelivery": {
+          "status": "not-run"
+        }
+      },
+      "visualRenderStatus": "rendered",
+      "visualAcceptance": "not-run",
+      "note": "A rendered short fixture is not arbitrary-length PPTX pagination acceptance."
+    },
+    "gateRunsNote": "Includes original failures, focused reruns and setup diagnostics; these are not distinct independent gates.",
+    "gates": [
+      {
+        "id": "root-typecheck",
+        "origin": "shared",
+        "command": "pnpm run typecheck",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T11:44:43.170Z",
+        "completedAt": "2026-10-05T11:45:03.468Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/root-typecheck.json",
+        "receiptSha256": "c4167dc8a310a399dcfe3795492d1ca6dc86eecaa6b56ed41430037b8dff6841"
+      },
+      {
+        "id": "root-tests",
+        "origin": "shared",
+        "command": "pnpm test",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T11:45:45.273Z",
+        "completedAt": "2026-10-05T11:57:36.476Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/root-tests.json",
+        "receiptSha256": "017bdfb141bbd1c0c48c19c5979b949e76cdb96a6603630c61aaf59720175274"
+      },
+      {
+        "id": "agent-dev-audit-initial",
+        "origin": "shared",
+        "command": "pnpm agent-dev:audit",
+        "cwd": "D:\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T11:47:37.477Z",
+        "completedAt": "2026-10-05T11:47:39.867Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/agent-dev-audit-initial.json",
+        "receiptSha256": "2683898d42eab120451d193beb4492d05bfcb1329ff8b6212641849fa2c39cf9"
+      },
+      {
+        "id": "repository-retention",
+        "origin": "shared",
+        "command": "node scripts/check-repository-artifacts.mjs",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T11:47:37.480Z",
+        "completedAt": "2026-10-05T11:47:38.295Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/repository-retention.json",
+        "receiptSha256": "84f81bb43f666f8394f7dd7a1cf3c5fd3e5be72b78310d262253b6e3efd13454"
+      },
+      {
+        "id": "lint-check",
+        "origin": "shared",
+        "command": "pnpm run lint:check",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T11:50:00.675Z",
+        "completedAt": "2026-10-05T11:54:13.374Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/lint-check.json",
+        "receiptSha256": "7bcceb0c2fb81ce7792b362271df8ea33d901dec2429a7b89236e502b21086ca"
+      },
+      {
+        "id": "runtime-core-types",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec tsgo --noEmit -p tsconfig.core.json --incremental false",
+        "cwd": "D:\\ClawX",
+        "exitCode": 2,
+        "startedAt": "2026-10-05T11:55:26.555Z",
+        "completedAt": "2026-10-05T11:55:39.012Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-core-types.json",
+        "receiptSha256": "cbb704f3c61f11c20dff4f2e2b43da0dc1400cb1c1e5e09075721d8d73c682ee"
+      },
+      {
+        "id": "runtime-extensions-types",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec tsgo --noEmit -p tsconfig.extensions.json --incremental false",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T11:55:39.157Z",
+        "completedAt": "2026-10-05T11:55:55.936Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-extensions-types.json",
+        "receiptSha256": "5dc16f6ff0aa435041e27dc55ec91a457b21c0e1155d132dffa3618ba59ea7d3"
+      },
+      {
+        "id": "runtime-core-test-types",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec tsgo --noEmit -p test/tsconfig/tsconfig.core.test.json --incremental false",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T11:55:56.153Z",
+        "completedAt": "2026-10-05T11:56:07.645Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-core-test-types.json",
+        "receiptSha256": "61f021c10c184e964ab134f2dbaa63270f1716a24a4276eb263132d5550a2a55"
+      },
+      {
+        "id": "runtime-extensions-test-types",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec tsgo --noEmit -p test/tsconfig/tsconfig.extensions.test.json --incremental false",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T11:56:07.786Z",
+        "completedAt": "2026-10-05T11:56:17.578Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-extensions-test-types.json",
+        "receiptSha256": "f5ea2e905b63dc1221011f319ba3d088599e0db1141e1b603189de95c8291d8b"
+      },
+      {
+        "id": "runtime-core-types-confirm",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec tsgo --noEmit -p tsconfig.core.json --incremental false",
+        "cwd": "D:\\ClawX",
+        "exitCode": 2,
+        "startedAt": "2026-10-05T11:59:03.977Z",
+        "completedAt": "2026-10-05T11:59:13.034Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-core-types-confirm.json",
+        "receiptSha256": "6a114c00329aed2b4934ca5d3eb5d1f8b1aaf0fd53bf7bad75115711b9e99ff4"
+      },
+      {
+        "id": "runtime-core-types-fixed",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec tsgo --noEmit -p tsconfig.core.json --incremental false",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:02:32.922Z",
+        "completedAt": "2026-10-05T12:02:42.703Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-core-types-fixed.json",
+        "receiptSha256": "86f2ea80e1b00a282f101053b4379296cf07fce90c98322333f33256d734a719"
+      },
+      {
+        "id": "autoreview-types",
+        "origin": "shared",
+        "command": "python openclaw_runtime/.agents/skills/autoreview/scripts/autoreview --mode local --no-web-search --prompt-file .local/full-acceptance-20261005/review-context.md --dataset .local/full-acceptance-20261005/type-only-emission.json --json-output .local/full-acceptance-20261005/autoreview-types-result.json --output .local/full-acceptance-20261005/autoreview-types-result.txt",
+        "cwd": "D:\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T12:03:58.291Z",
+        "completedAt": "2026-10-05T12:05:31.164Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/autoreview-types.json",
+        "receiptSha256": "5d5b504f61e8ca5405ba195d14054cfd337f45344e344f8599fae7d47ec5475d"
+      },
+      {
+        "id": "runtime-unit-ci",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime run test:unit",
+        "cwd": "D:\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T12:04:36.803Z",
+        "completedAt": "2026-10-05T12:05:37.499Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-unit-ci.json",
+        "receiptSha256": "ecba3e3decb33057c2706ea3ce41ac3577d1b4d9125b04859ca409b65400fce5"
+      },
+      {
+        "id": "runtime-test-manifest",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime run check:vitest-manifest-paths",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:17:40.402Z",
+        "completedAt": "2026-10-05T12:17:43.300Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-test-manifest.json",
+        "receiptSha256": "8062acdd206b8b83960c6fcc6a886c640395b7df2b633d30f9311485dfb6a508"
+      },
+      {
+        "id": "runtime-full-initial",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --maxWorkers=2 --reporter=default --reporter=json --outputFile=../.local/full-acceptance-20261005/runtime-full-initial-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T12:19:29.857Z",
+        "completedAt": "2026-10-05T12:23:19.389Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-full-initial.json",
+        "receiptSha256": "a1da7d8944796d709b69ca47b3d0678277c55996b2a796998e36f3233dc4e934"
+      },
+      {
+        "id": "runtime-fixtures-fixed",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/context-engine/rc03-seal-wiring.test.ts src/knowledge/sekb/experience-closed-loop.test.ts src/knowledge/sekb/terminal-trajectory-gating.test.ts --maxWorkers=1 --reporter=default --reporter=json --outputFile=../.local/full-acceptance-20261005/runtime-fixtures-fixed-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:24:40.370Z",
+        "completedAt": "2026-10-05T12:25:23.355Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-fixtures-fixed.json",
+        "receiptSha256": "b0e1937cf7d1b42987e4a9e9e8e7b0abc1c46fe757d3219cef7268b601d49188"
+      },
+      {
+        "id": "runtime-list",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs list --config vitest.config.ts --filesOnly --json=../.local/full-acceptance-20261005/runtime-selected-files.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:25:17.925Z",
+        "completedAt": "2026-10-05T12:25:37.129Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-list.json",
+        "receiptSha256": "b834b4401d9e1b4a71b54e51f0701d9a5bfcf1c59e0787780a64eac636a494ba"
+      },
+      {
+        "id": "runtime-matrix-1",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config vitest.config.ts --project=unit --maxWorkers=2 --reporter=default --reporter=json --outputFile=../.local/full-acceptance-20261005/runtime-matrix-1-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:27:48.725Z",
+        "completedAt": "2026-10-05T12:28:43.468Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-matrix-1.json",
+        "receiptSha256": "70a6fabb0be56de9bddca7205d078d14d37d2768ff309ee72b1d64e9968b4436"
+      },
+      {
+        "id": "runtime-matrix-2",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config vitest.config.ts --project=agents-core --maxWorkers=2 --reporter=default --reporter=json --outputFile=../.local/full-acceptance-20261005/runtime-matrix-2-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T12:28:43.620Z",
+        "completedAt": "2026-10-05T12:31:30.052Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-matrix-2.json",
+        "receiptSha256": "9df1b8dee6384629a75a8fd4ba8b7e8b6a9d87fe6f850c52fe48d499fcd88b41"
+      },
+      {
+        "id": "runtime-matrix-3",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config vitest.config.ts --project=unit-fast --project=runtime-config --maxWorkers=2 --reporter=default --reporter=json --outputFile=../.local/full-acceptance-20261005/runtime-matrix-3-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:31:30.179Z",
+        "completedAt": "2026-10-05T12:32:11.210Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-matrix-3.json",
+        "receiptSha256": "59d76ed41d0cac1001aaedcb15925dc784f9bac1b5aba0219f75a278244ddb22"
+      },
+      {
+        "id": "harness-validate",
+        "origin": "shared",
+        "command": "pnpm harness validate --spec harness/specs/tasks/project-closeout-integrity.md",
+        "cwd": "D:\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T12:32:08.958Z",
+        "completedAt": "2026-10-05T12:32:13.271Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/harness-validate.json",
+        "receiptSha256": "d3408c6e0dfb0772ba3fa70835b7bcd1620d8ed7db475c98dffd817af01c8b3c"
+      },
+      {
+        "id": "repository-retention-fixed",
+        "origin": "shared",
+        "command": "node scripts/check-repository-artifacts.mjs",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:32:08.958Z",
+        "completedAt": "2026-10-05T12:32:09.982Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/repository-retention-fixed.json",
+        "receiptSha256": "2867643c2a9231e70ce6e9cfa45a443830106213162d3d6fa18f7bd7af34c94a"
+      },
+      {
+        "id": "runtime-matrix-4",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config vitest.config.ts --project=agents-support --project=extensions --project=gateway-core --project=gateway-methods --maxWorkers=2 --reporter=default --reporter=json --outputFile=../.local/full-acceptance-20261005/runtime-matrix-4-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:32:11.350Z",
+        "completedAt": "2026-10-05T12:35:30.602Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-matrix-4.json",
+        "receiptSha256": "20ef194f4d783dd4f49c6a858cc1b24e20d76f87b3ef0159972dca8bb7b10c57"
+      },
+      {
+        "id": "harness-validate-scoped",
+        "origin": "shared",
+        "command": "pnpm harness validate --spec harness/specs/tasks/project-closeout-integrity.md",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:33:23.941Z",
+        "completedAt": "2026-10-05T12:33:26.216Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/harness-validate-scoped.json",
+        "receiptSha256": "5ded6d43774010ac8e6f91bac41058fdd2c475a66f53b1c750cfa93a0798e65d"
+      },
+      {
+        "id": "runtime-test-types-fixed",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec tsgo --noEmit -p test/tsconfig/tsconfig.core.test.json --incremental false",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:35:10.797Z",
+        "completedAt": "2026-10-05T12:35:24.458Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-test-types-fixed.json",
+        "receiptSha256": "3f11d1216369bb3fda2fabfad21d0522723a8e8c94630e97d81aa8b2d2fdb7ea"
+      },
+      {
+        "id": "runtime-matrix-5",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config vitest.config.ts --project=agents-tools --project=agents-embedded-agent --project=infra --project=cron --project=tooling --project=plugins --project=gateway-server --project=auto-reply --project=gateway-client --project=boundary --project=plugin-sdk --project=extension-memory --project=extension-providers --project=tasks --project=logging --project=process --project=extension-misc --project=extension-codex --maxWorkers=2 --reporter=default --reporter=json --outputFile=../.local/full-acceptance-20261005/runtime-matrix-5-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T12:35:30.820Z",
+        "completedAt": "2026-10-05T12:37:57.801Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-matrix-5.json",
+        "receiptSha256": "1061b05b365cb980ddbe29a3705239589f2fc57138f00c4b0e79e7463527968f"
+      },
+      {
+        "id": "agents-core-trace",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config vitest.config.ts --project=agents-core --maxWorkers=2 --reporter=default --reporter=../.local/full-acceptance-20261005/runtime-progress-reporter.mjs --reporter=json --outputFile=../.local/full-acceptance-20261005/agents-core-trace-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T12:38:13.484Z",
+        "completedAt": "2026-10-05T12:40:33.353Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/agents-core-trace.json",
+        "receiptSha256": "6da91c2d18e2ef275932f17aa95cabcfa736ce615b5987d0d6880dc42b4c38dd"
+      },
+      {
+        "id": "agents-core-fixed",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config vitest.config.ts --project=agents-core --maxWorkers=2 --reporter=default --reporter=../.local/full-acceptance-20261005/runtime-progress-reporter.mjs --reporter=json --outputFile=../.local/full-acceptance-20261005/agents-core-fixed-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T12:42:07.183Z",
+        "completedAt": "2026-10-05T12:46:05.206Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/agents-core-fixed.json",
+        "receiptSha256": "80c6812bf14e1cbc8e79889a1ed39abc856840e6d9073ce711513fe02b665b9c"
+      },
+      {
+        "id": "runtime-test-types-final",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec tsgo --noEmit -p test/tsconfig/tsconfig.core.test.json --incremental false",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:44:25.217Z",
+        "completedAt": "2026-10-05T12:44:38.032Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-test-types-final.json",
+        "receiptSha256": "c54311e3d932fe4825ab461be841e577b4f829ea103ddc8b1238edf2a399c749"
+      },
+      {
+        "id": "electron-discovery",
+        "origin": "shared",
+        "command": "pnpm exec playwright test --list --reporter=json > .local/full-acceptance-20261005/electron-discovery-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:45:24.172Z",
+        "completedAt": "2026-10-05T12:45:28.494Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/electron-discovery.json",
+        "receiptSha256": "9830859f051a290a4f816383fabfd793b1150133f30ab7f4b15cad3d1c270b87"
+      },
+      {
+        "id": "build-contract-fixed",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run test/scripts/pruned-runtime-build-contract.test.ts --maxWorkers=1 --reporter=default --reporter=json --outputFile=../.local/full-acceptance-20261005/build-contract-fixed-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:46:50.806Z",
+        "completedAt": "2026-10-05T12:47:24.896Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/build-contract-fixed.json",
+        "receiptSha256": "a8fbb7a43a618bae470929fe0f6e0bf8fc34255b1411f243ab084e9250502727"
+      },
+      {
+        "id": "goal-wait-fixtures-fixed",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/bash-tools.exec.goal-wait.test.ts src/agents/bash-tools.exec.durable-helper.test.ts --maxWorkers=1 --reporter=default --reporter=json --outputFile=../.local/full-acceptance-20261005/goal-wait-fixtures-fixed-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:51:16.137Z",
+        "completedAt": "2026-10-05T12:52:02.752Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/goal-wait-fixtures-fixed.json",
+        "receiptSha256": "cbf4b5f70d3225f449f6d4895fd3eb5e3975ac649d609a0c90ea3993d0c9f649"
+      },
+      {
+        "id": "build-contract-importer-fixed",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run test/scripts/pruned-runtime-build-contract.test.ts --maxWorkers=1 --reporter=default --reporter=json --outputFile=../.local/full-acceptance-20261005/build-contract-importer-fixed-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:53:36.708Z",
+        "completedAt": "2026-10-05T12:54:10.946Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/build-contract-importer-fixed.json",
+        "receiptSha256": "907a9d591d0ce3bc644056cc34117f6058160bebd70417162d11793aab29ec95"
+      },
+      {
+        "id": "runtime-core-final",
+        "origin": "shared",
+        "command": "pnpm --dir openclaw_runtime exec tsgo --noEmit -p tsconfig.core.json --incremental false",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:54:22.329Z",
+        "completedAt": "2026-10-05T12:54:35.240Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-core-final.json",
+        "receiptSha256": "733de48b1f25c81be10c243c477bd31df1c915060bb20288c04963a93c569d66"
+      },
+      {
+        "id": "root-integrity-regressions",
+        "origin": "shared",
+        "command": "pnpm exec vitest run tests/unit/typecheck-gate.test.ts tests/unit/repository-artifact-retention.test.ts --maxWorkers=1 --reporter=default --reporter=json --outputFile=.local/full-acceptance-20261005/root-integrity-regressions-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T12:55:40.055Z",
+        "completedAt": "2026-10-05T12:55:51.411Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/root-integrity-regressions.json",
+        "receiptSha256": "7ef50906eaeed826eb508f8a8155799708789c229dff26c9bcce95cdfeec0dc4"
+      },
+      {
+        "id": "harness-final-scope",
+        "origin": "shared",
+        "command": "pnpm harness validate --spec harness/specs/tasks/project-closeout-integrity.md",
+        "cwd": "D:\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T12:58:13.022Z",
+        "completedAt": "2026-10-05T12:58:15.932Z",
+        "candidate": {
+          "commit": "55a33921e92c10eff4b5cb1b10305e8bcfbdda4a",
+          "tree": "600e541a480d7d6492f69bcee8d9150c6033e745",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/harness-final-scope.json",
+        "receiptSha256": "531b17b83066506bec6e5012ebf31ed7f84f398719547f6f8cc34d4ea466fc5c"
+      },
+      {
+        "id": "windows-build",
+        "origin": "shared",
+        "command": "pnpm run build --publish never",
+        "cwd": "D:\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T12:58:18.017Z",
+        "completedAt": "2026-10-05T13:00:43.123Z",
+        "candidate": {
+          "commit": "028563810ccb515a8bf71bc7151a67ad8b52a516",
+          "tree": "21a5e7190303f9dcd661937535b38a36d9aea0e8",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/windows-build.json",
+        "receiptSha256": "b28a0458018bbdec985b7163af248f32c941fb4777d3fb26b07d4bd35a7ba3f3"
+      },
+      {
+        "id": "candidate-root-deps",
+        "origin": "isolated",
+        "command": "pnpm install --offline --frozen-lockfile --ignore-scripts",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T13:02:13.056Z",
+        "completedAt": "2026-10-05T13:03:20.600Z",
+        "candidate": {
+          "commit": "028563810ccb515a8bf71bc7151a67ad8b52a516",
+          "tree": "21a5e7190303f9dcd661937535b38a36d9aea0e8",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-root-deps.json",
+        "receiptSha256": "2ee318f9f9d26d194a8b4ae63438758ad25abd70cbb370ca4fb938d5070d2e6a"
+      },
+      {
+        "id": "candidate-runtime-deps",
+        "origin": "isolated",
+        "command": "pnpm --dir openclaw_runtime install --offline --frozen-lockfile --ignore-scripts",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T13:04:49.270Z",
+        "completedAt": "2026-10-05T13:05:37.923Z",
+        "candidate": {
+          "commit": "028563810ccb515a8bf71bc7151a67ad8b52a516",
+          "tree": "21a5e7190303f9dcd661937535b38a36d9aea0e8",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-runtime-deps.json",
+        "receiptSha256": "fcec675fe596bc62572e6a08356c89f79e072016b65f832937dd8d3f7db62e14"
+      },
+      {
+        "id": "plugin-assets-build",
+        "origin": "shared",
+        "command": "node openclaw_runtime/scripts/bundled-plugin-assets.mjs --phase build",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T13:08:06.772Z",
+        "completedAt": "2026-10-05T13:08:09.170Z",
+        "candidate": {
+          "commit": "028563810ccb515a8bf71bc7151a67ad8b52a516",
+          "tree": "21a5e7190303f9dcd661937535b38a36d9aea0e8",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/plugin-assets-build.json",
+        "receiptSha256": "43f255b10a46fdbb8446a4470b3b96adf7d48450d4ca334d058b02253ce7ae45"
+      },
+      {
+        "id": "runtime-build-regression",
+        "origin": "shared",
+        "command": "pnpm exec vitest run tests/unit/sekb-runtime-build-contract.test.ts --maxWorkers=1 --reporter=default --reporter=json --outputFile=.local/full-acceptance-20261005/runtime-build-regression-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T13:09:12.925Z",
+        "completedAt": "2026-10-05T13:09:17.767Z",
+        "candidate": {
+          "commit": "028563810ccb515a8bf71bc7151a67ad8b52a516",
+          "tree": "21a5e7190303f9dcd661937535b38a36d9aea0e8",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-build-regression.json",
+        "receiptSha256": "a35921f217fcd0b54e63d48f603f90ff15a0c9eb35a7a0b007670424764b9f87"
+      },
+      {
+        "id": "candidate-root-typecheck",
+        "origin": "isolated",
+        "command": "pnpm run typecheck",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T13:10:15.912Z",
+        "completedAt": "2026-10-05T13:10:43.703Z",
+        "candidate": {
+          "commit": "028563810ccb515a8bf71bc7151a67ad8b52a516",
+          "tree": "21a5e7190303f9dcd661937535b38a36d9aea0e8",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-root-typecheck.json",
+        "receiptSha256": "488dccdf12b8c55840d1c5712d0ffc7d6d96a42614248c4e6b02f04ee1bd81fe"
+      },
+      {
+        "id": "build-change-lint",
+        "origin": "shared",
+        "command": "pnpm exec eslint scripts/build-openclaw-runtime.mjs tests/unit/sekb-runtime-build-contract.test.ts --max-warnings 0",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T13:10:27.274Z",
+        "completedAt": "2026-10-05T13:10:41.680Z",
+        "candidate": {
+          "commit": "028563810ccb515a8bf71bc7151a67ad8b52a516",
+          "tree": "21a5e7190303f9dcd661937535b38a36d9aea0e8",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/build-change-lint.json",
+        "receiptSha256": "82ebea23c07016a896f5984f8d6bf7b7bb8e196199598332cf7e9656f2f49328"
+      },
+      {
+        "id": "plugin-assets-copy",
+        "origin": "shared",
+        "command": "node openclaw_runtime/scripts/bundled-plugin-assets.mjs --phase copy",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T13:12:38.811Z",
+        "completedAt": "2026-10-05T13:12:39.416Z",
+        "candidate": {
+          "commit": "028563810ccb515a8bf71bc7151a67ad8b52a516",
+          "tree": "21a5e7190303f9dcd661937535b38a36d9aea0e8",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/plugin-assets-copy.json",
+        "receiptSha256": "54b8145608a27a9908386e4fd1abe6b7fb8b3484c7fc6c5da43c18409e534649"
+      },
+      {
+        "id": "runtime-build-regression-final",
+        "origin": "shared",
+        "command": "pnpm exec vitest run tests/unit/sekb-runtime-build-contract.test.ts --maxWorkers=1 --reporter=default --reporter=json --outputFile=.local/full-acceptance-20261005/runtime-build-regression-final-tests.json",
+        "cwd": "D:\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T13:12:40.628Z",
+        "completedAt": "2026-10-05T13:12:44.063Z",
+        "candidate": {
+          "commit": "028563810ccb515a8bf71bc7151a67ad8b52a516",
+          "tree": "21a5e7190303f9dcd661937535b38a36d9aea0e8",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/runtime-build-regression-final.json",
+        "receiptSha256": "e96e80d6c945a1db12546c4490c7aa1525f3bb3ff3e35bb6a418f9d53f3f5d5a"
+      },
+      {
+        "id": "runtime-core-types",
+        "origin": "isolated",
+        "command": "pnpm --dir openclaw_runtime exec tsgo --noEmit -p tsconfig.core.json --incremental false",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T13:13:44.313Z",
+        "completedAt": "2026-10-05T13:13:54.675Z",
+        "candidate": {
+          "commit": "028563810ccb515a8bf71bc7151a67ad8b52a516",
+          "tree": "21a5e7190303f9dcd661937535b38a36d9aea0e8",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/runtime-core-types.json",
+        "receiptSha256": "61d697b08d852f357e3ccbf5784c8cf7facbe248997f28bc8c3a6162cc8de8db"
+      },
+      {
+        "id": "runtime-extensions-types",
+        "origin": "isolated",
+        "command": "pnpm --dir openclaw_runtime exec tsgo --noEmit -p tsconfig.extensions.json --incremental false",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T13:13:54.839Z",
+        "completedAt": "2026-10-05T13:14:10.934Z",
+        "candidate": {
+          "commit": "028563810ccb515a8bf71bc7151a67ad8b52a516",
+          "tree": "21a5e7190303f9dcd661937535b38a36d9aea0e8",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/runtime-extensions-types.json",
+        "receiptSha256": "29b4da695c0c31c4333ca457cc7ea0c1e7897cd4a48d90b3bdb93e9237a2e0de"
+      },
+      {
+        "id": "runtime-core-test-types",
+        "origin": "isolated",
+        "command": "pnpm --dir openclaw_runtime exec tsgo --noEmit -p test/tsconfig/tsconfig.core.test.json --incremental false",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T13:14:11.113Z",
+        "completedAt": "2026-10-05T13:14:20.075Z",
+        "candidate": {
+          "commit": "028563810ccb515a8bf71bc7151a67ad8b52a516",
+          "tree": "21a5e7190303f9dcd661937535b38a36d9aea0e8",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/runtime-core-test-types.json",
+        "receiptSha256": "8e9372634c9a1ec29424b9dd162e429844c54f0dda19468c90baffc867abfc4b"
+      },
+      {
+        "id": "runtime-extensions-test-types",
+        "origin": "isolated",
+        "command": "pnpm --dir openclaw_runtime exec tsgo --noEmit -p test/tsconfig/tsconfig.extensions.test.json --incremental false",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T13:14:20.198Z",
+        "completedAt": "2026-10-05T13:14:27.038Z",
+        "candidate": {
+          "commit": "028563810ccb515a8bf71bc7151a67ad8b52a516",
+          "tree": "21a5e7190303f9dcd661937535b38a36d9aea0e8",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/runtime-extensions-test-types.json",
+        "receiptSha256": "cee840d84ad6b343773f0a435f0b0f73611c1f3e76ba2d2db13db67daeaac2e1"
+      },
+      {
+        "id": "candidate-windows-build",
+        "origin": "isolated",
+        "command": "pnpm run build --publish never",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T13:16:31.965Z",
+        "completedAt": "2026-10-05T13:24:56.545Z",
+        "candidate": {
+          "commit": "07271b0632b7ee141a05d1034393a0add888695c",
+          "tree": "f0e94da13c05804612a7ab6f5c15c3ef073ff150",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-windows-build.json",
+        "receiptSha256": "0e5f1a09bc7793c2e14f54d61a6707e704d2d015a9045bd267cd4c0ffb20db6e"
+      },
+      {
+        "id": "candidate-harness-validate",
+        "origin": "isolated",
+        "command": "pnpm harness validate --spec harness/specs/tasks/project-closeout-integrity.md",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T13:22:54.889Z",
+        "completedAt": "2026-10-05T13:22:57.513Z",
+        "candidate": {
+          "commit": "07271b0632b7ee141a05d1034393a0add888695c",
+          "tree": "f0e94da13c05804612a7ab6f5c15c3ef073ff150",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-harness-validate.json",
+        "receiptSha256": "7fd7a6fda35b69262bf01eed40126108aed822aba73f3231e21bac49f8b4112e"
+      },
+      {
+        "id": "candidate-startup-check",
+        "origin": "isolated",
+        "command": "pnpm run build:startup-check",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T13:22:54.889Z",
+        "completedAt": "2026-10-05T13:22:57.043Z",
+        "candidate": {
+          "commit": "07271b0632b7ee141a05d1034393a0add888695c",
+          "tree": "f0e94da13c05804612a7ab6f5c15c3ef073ff150",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-startup-check.json",
+        "receiptSha256": "2c9b8fe3ebdc2ce7cc268dd860a44a9836fd51c55ebdea6ef8d22f573edc0049"
+      },
+      {
+        "id": "candidate-supply-chain",
+        "origin": "isolated",
+        "command": "pnpm run release:supply-chain-policy",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T13:22:54.901Z",
+        "completedAt": "2026-10-05T13:22:56.480Z",
+        "candidate": {
+          "commit": "07271b0632b7ee141a05d1034393a0add888695c",
+          "tree": "f0e94da13c05804612a7ab6f5c15c3ef073ff150",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-supply-chain.json",
+        "receiptSha256": "145037fbec8f94b93c24bc649cbdb0a8e6f978aa519fa736618b1de774bce3c5"
+      },
+      {
+        "id": "candidate-electron-full",
+        "origin": "isolated",
+        "command": "pnpm exec playwright test --reporter=list,json --output=.local/full-acceptance-20261005/electron-results",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T13:25:34.067Z",
+        "completedAt": "2026-10-05T13:25:36.234Z",
+        "candidate": {
+          "commit": "07271b0632b7ee141a05d1034393a0add888695c",
+          "tree": "f0e94da13c05804612a7ab6f5c15c3ef073ff150",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-electron-full.json",
+        "receiptSha256": "27c610794678026a7b70853cb92ee9d56d69ab023a6d53875f51bc6e186783a2"
+      },
+      {
+        "id": "candidate-electron-full-run",
+        "origin": "isolated",
+        "command": "pnpm exec playwright test --reporter=\"list,json\" --output=.local/full-acceptance-20261005/electron-results",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T13:30:11.734Z",
+        "completedAt": "2026-10-05T14:20:34.019Z",
+        "candidate": {
+          "commit": "07271b0632b7ee141a05d1034393a0add888695c",
+          "tree": "f0e94da13c05804612a7ab6f5c15c3ef073ff150",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-electron-full-run.json",
+        "receiptSha256": "84a20091a777989d9ebea02e0bffbacf7e10871cc71b9c8c6b4065016188f064"
+      },
+      {
+        "id": "candidate-electron-rerun-discovery",
+        "origin": "isolated",
+        "command": "pnpm exec playwright test --last-failed --list --reporter=json --output=.local/full-acceptance-20261005/electron-rerun-results",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T14:21:30.300Z",
+        "completedAt": "2026-10-05T14:21:32.755Z",
+        "candidate": {
+          "commit": "07271b0632b7ee141a05d1034393a0add888695c",
+          "tree": "f0e94da13c05804612a7ab6f5c15c3ef073ff150",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-electron-rerun-discovery.json",
+        "receiptSha256": "3b7f6b3ec00a7643bbf97a6e0595d1614f477f6db70587ce47623def062e941d"
+      },
+      {
+        "id": "candidate-electron-rerun",
+        "origin": "isolated",
+        "command": "pnpm exec playwright test --last-failed --reporter=\"list,json\" --output=.local/full-acceptance-20261005/electron-rerun-results",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T14:22:11.574Z",
+        "completedAt": "2026-10-05T14:24:20.069Z",
+        "candidate": {
+          "commit": "07271b0632b7ee141a05d1034393a0add888695c",
+          "tree": "f0e94da13c05804612a7ab6f5c15c3ef073ff150",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-electron-rerun.json",
+        "receiptSha256": "c34b96db0507585250ad5d9da8615ec83da2389d586709e86279c247ad5dd590"
+      },
+      {
+        "id": "candidate-agent-dev-deep",
+        "origin": "isolated",
+        "command": "pnpm agent-dev:deep-test",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T14:26:10.729Z",
+        "completedAt": "2026-10-05T14:27:41.778Z",
+        "candidate": {
+          "commit": "07271b0632b7ee141a05d1034393a0add888695c",
+          "tree": "f0e94da13c05804612a7ab6f5c15c3ef073ff150",
+          "dirty": false
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-agent-dev-deep.json",
+        "receiptSha256": "b21e2ed676b0f2c4c44d3d714b38cf4e6305ce60515bd1605a99358615224bde"
+      },
+      {
+        "id": "candidate-agent-dev-audit",
+        "origin": "isolated",
+        "command": "pnpm agent-dev:audit",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T14:29:21.549Z",
+        "completedAt": "2026-10-05T14:29:23.361Z",
+        "candidate": {
+          "commit": "07271b0632b7ee141a05d1034393a0add888695c",
+          "tree": "f0e94da13c05804612a7ab6f5c15c3ef073ff150",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-agent-dev-audit.json",
+        "receiptSha256": "9f8f6a4e7d553c8cf749fa2c9a04e846d8dc82955b60dfe4b6923ef27a366f4c"
+      },
+      {
+        "id": "candidate-harness-ci",
+        "origin": "isolated",
+        "command": "pnpm run harness:ci",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 0,
+        "startedAt": "2026-10-05T14:29:24.334Z",
+        "completedAt": "2026-10-05T14:29:36.703Z",
+        "candidate": {
+          "commit": "07271b0632b7ee141a05d1034393a0add888695c",
+          "tree": "f0e94da13c05804612a7ab6f5c15c3ef073ff150",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-harness-ci.json",
+        "receiptSha256": "4d881ce148e2a3c2bb458c49cf9ec37b0a1316e7e47f8b7e065ab309d7322ef2"
+      },
+      {
+        "id": "candidate-verseconf-verify",
+        "origin": "isolated",
+        "command": "pnpm run verseconf:verify --output-dir .local/full-acceptance-20261005/verseconf-verification",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T14:31:12.566Z",
+        "completedAt": "2026-10-05T14:32:50.057Z",
+        "candidate": {
+          "commit": "07271b0632b7ee141a05d1034393a0add888695c",
+          "tree": "f0e94da13c05804612a7ab6f5c15c3ef073ff150",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-verseconf-verify.json",
+        "receiptSha256": "efaf5586409eb89cb676934150d32cbeae7017dba97885d65590153a2eeb706d"
+      },
+      {
+        "id": "candidate-startup-recheck",
+        "origin": "isolated",
+        "command": "pnpm run build:startup-check",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "exitCode": 1,
+        "startedAt": "2026-10-05T14:31:22.746Z",
+        "completedAt": "2026-10-05T14:31:24.423Z",
+        "candidate": {
+          "commit": "07271b0632b7ee141a05d1034393a0add888695c",
+          "tree": "f0e94da13c05804612a7ab6f5c15c3ef073ff150",
+          "dirty": true
+        },
+        "receipt": ".local/full-acceptance-20261005/candidate-proof/candidate-startup-recheck.json",
+        "receiptSha256": "da16c05386116954625869040e319cb8c846ee1ef38d16c52b983b7f9a76587b"
+      }
+    ]
+  },
+  "scope": {
+    "platform": "Windows x64",
+    "productLocksChanged": false,
+    "published": false,
+    "installedOnHost": false,
+    "exclusions": [
+      "Real paid-model acceptance",
+      "macOS/Linux execution",
+      "Interactive install/uninstall and upgrade acceptance"
+    ],
+    "sourceIsNotPackageProof": true
+  },
+  "housekeeping": {
+    "concurrentWorkPreserved": "resources/brand-exploration/",
+    "historyDeviationSummary": {
+      "total": 125,
+      "unresolved": 81,
+      "missing_status": 33,
+      "by_status": {
+        "open": 48,
+        "accepted_by_user_direction": 1,
+        "(缺失)": 33,
+        "accepted": 7,
+        "resolved": 31,
+        "closed": 5
+      }
+    },
+    "landing": {
+      "defaultRef": "refs/remotes/origin/main",
+      "problemCount": 53,
+      "suspectCount": 25,
+      "orphanCount": 62,
+      "unattributedCount": 167,
+      "note": "Historical ancestry/accounting signals are not current defect counts."
+    }
+  },
+  "independentReview": {
+    "threadId": "01a10c04-dd5a-76e2-8cf3-b27325209df6",
+    "repairVerdict": "approve",
+    "packagingVerdict": "request_changes",
+    "cliAttempt": "Failed with HTTP 402; owner authorized independent review in a new chat."
+  },
+  "sourceManifest": [
+    {
+      "file": ".gitattributes",
+      "sha256": "29f355b16e0c00cfb0eac1f4ccba8ceb9477aefa54f8a92feb0922989baa14ad"
+    },
+    {
+      "file": ".gitignore",
+      "sha256": "b372b2b4451d5eb76e1e1775ed95a3a7a185ace7483f7af07c5d18bcb85acc11"
+    },
+    {
+      "file": "artifacts/runtime-test-integrity/SHA256SUMS",
+      "sha256": "68a41c925becc51278489df36effc0e268991869f201a808a6bfa2df51cc07bb"
+    },
+    {
+      "file": "artifacts/runtime-test-integrity/credential-scan.json",
+      "sha256": "36ebb8942e6ab22dcfe17dfde888173cd40dcfab9a970dd63e1535eb8ce2e8b2"
+    },
+    {
+      "file": "artifacts/runtime-test-integrity/report.json",
+      "sha256": "9114bd6ce0382c9afe25ef83b906fd9ed7409b77b7b5af1ce2ebd28fefb2b196"
+    },
+    {
+      "file": "docs/dev/runtime-test-integrity.md",
+      "sha256": "323d59e893546925140da9637bf3958548674ef3627ac44ddc5cdff1820fb2a3"
+    },
+    {
+      "file": "harness/specs/tasks/project-closeout-integrity.md",
+      "sha256": "2f914375967e653e544200e4b2f5c167d79e3a87f2bd758467974afd50bb889f"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/bash-tools.exec.durable-helper.test.ts",
+      "sha256": "a2126bbb7415bceef87071f974cf87281895a73e386becfe9f317b2160099fb9"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/bash-tools.exec.goal-wait.test.ts",
+      "sha256": "99ef6fc62adf085eefe06d9d522b491a281eda65ea8428fe72b544dad3419e92"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/embedded-agent-runner/compact.hooks.harness.ts",
+      "sha256": "f4cab1303e62d7b6f1f167dbe110ec383cd06c58d15333e36664508bb723a783"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/rc02-cli-entry.acceptance.test.ts",
+      "sha256": "5617e9bc41b638f51ab9a39d6ea38bd5930a290fb92701afaae2ae310a50c3b9"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/rc02-cron-entry.acceptance.test.ts",
+      "sha256": "c6f674bcb047ab799a7c09680c055792f80ec821429d92563c15ae234cbee281"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/rc02-entry-matrix.acceptance.test.ts",
+      "sha256": "77157bc021792ac32987a574ffb23a95f69eee042b98a0d79ca0b2e1202ae2fd"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/rc02-inbound-entry.acceptance.test.ts",
+      "sha256": "053300dd480b0ee8f9bd58713288d8558c2782bbcad7523b99187b77f839eec1"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/rc03-entry-transitions.acceptance.test.ts",
+      "sha256": "8be2f05f13e43ac3752cc478148b0453f272eb1b92e6947b33cca3bb65f4abf1"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/stage1-request-envelope.test.ts",
+      "sha256": "4579d9b2d02521bd5c06669f50a3605e53f4d314110c802f922358f893d80391"
+    },
+    {
+      "file": "openclaw_runtime/src/config/io.ts",
+      "sha256": "fc972879f7f8ac6cac8e35ad3b4f169179c379a7afdbd005f96d750dc18288ec"
+    },
+    {
+      "file": "openclaw_runtime/src/context-engine/rc03-seal-wiring.test.ts",
+      "sha256": "267ba11927e872f3e95bce458a8bda483aae9fc4d3cc6b4275c1a78d394334a1"
+    },
+    {
+      "file": "openclaw_runtime/src/knowledge/sekb/experience-closed-loop.test.ts",
+      "sha256": "c0db8109c6077a6ae8b3034942e8695a62b6e6e35e84b19649370efdb3e68f6f"
+    },
+    {
+      "file": "openclaw_runtime/src/secrets/config-io.ts",
+      "sha256": "98c318858156d0a5be1ba2dfac9a11cb6107b6e2d074dcfecc2552a906db9dbf"
+    },
+    {
+      "file": "openclaw_runtime/test/scripts/pruned-runtime-build-contract.test.ts",
+      "sha256": "dfdbf17d5b1032f7ab5ee63ce73b57d56207620834a5848c1a6931a43023cf12"
+    },
+    {
+      "file": "scripts/build-openclaw-runtime.mjs",
+      "sha256": "71779440d206fa034527019444b8aebe8a614ecc436fb3ba49c9125c04048a5b"
+    },
+    {
+      "file": "scripts/repository-artifacts.json",
+      "sha256": "968329770064c17c57af981c4524ea8b07cff09e996906ea1beeac1518517454"
+    },
+    {
+      "file": "tests/unit/sekb-runtime-build-contract.test.ts",
+      "sha256": "69d24828e9fb5ee757207ff03ea5d8bb803685d6a212c366a59341759bfb9738"
+    }
+  ],
+  "evidenceIntegrity": {
+    "manifest": "SHA256SUMS",
+    "credentialScan": "credential-scan.json",
+    "manifestSelfExcluded": true,
+    "rawRecovery": ".local/full-acceptance-20261005/",
+    "candidateRecovery": ".local/full-acceptance-20261005/candidate-proof/"
+  }
+}
