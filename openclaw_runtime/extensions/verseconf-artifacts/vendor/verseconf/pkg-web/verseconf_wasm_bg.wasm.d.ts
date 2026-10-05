@@ -1,0 +1,37 @@
+/* tslint:disable */
+/* eslint-disable */
+export const memory: WebAssembly.Memory;
+export const business_api_version: () => number;
+export const business_apply_batch_json: (a: number, b: number) => [number, number];
+export const business_call_json: (a: number, b: number, c: number, d: number) => [number, number];
+export const business_capability_json: () => [number, number];
+export const business_inspect_document_json: (a: number, b: number) => [number, number];
+export const business_inspect_record_json: (a: number, b: number) => [number, number];
+export const business_validate_trusted_candidate_json: (a: number, b: number) => [number, number];
+export const wasm_memory_bytes: () => number;
+export const __wbg_verseconf_free: (a: number, b: number) => void;
+export const parse_config: (a: number, b: number) => [number, number, number];
+export const start: () => void;
+export const verseconf_get_boolean: (a: number, b: number, c: number) => number;
+export const verseconf_get_number: (a: number, b: number, c: number) => [number, number];
+export const verseconf_get_string: (a: number, b: number, c: number) => [number, number];
+export const verseconf_has_key: (a: number, b: number, c: number) => number;
+export const verseconf_new: (a: number, b: number) => [number, number, number];
+export const verseconf_to_json: (a: number) => [number, number];
+export const verseconf_validate: (a: number) => number;
+export const version: () => [number, number];
+export const __wbg_wasmmcpserver_free: (a: number, b: number) => void;
+export const call_tool_json: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+export const server_info_json: () => [number, number];
+export const tools_json: () => [number, number];
+export const wasmmcpserver_handle_line: (a: number, b: number, c: number) => [number, number];
+export const wasmmcpserver_is_initialized: (a: number) => number;
+export const wasmmcpserver_new: () => number;
+export const __wbindgen_free: (a: number, b: number, c: number) => void;
+export const __wbindgen_exn_store: (a: number) => void;
+export const __externref_table_alloc: () => number;
+export const __wbindgen_externrefs: WebAssembly.Table;
+export const __wbindgen_malloc: (a: number, b: number) => number;
+export const __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
+export const __externref_table_dealloc: (a: number) => void;
+export const __wbindgen_start: () => void;

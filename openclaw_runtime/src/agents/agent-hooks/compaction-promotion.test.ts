@@ -6,6 +6,7 @@ import {
   resolveCompactionPromotionEnforcement,
   type CompactionPromotionEvidence,
 } from "./compaction-promotion.js";
+import { COMPACTION_DAMAGE_SCHEMA } from "./compaction-damage-rules.js";
 import type { CompactionValidatedDecision } from "./compaction-validated-pipeline.js";
 
 const CURRENT_P6_EVIDENCE: CompactionPromotionEvidence = {
@@ -39,7 +40,7 @@ function decision(overrides: Partial<CompactionValidatedDecision> = {}): Compact
     wouldPreserveTurns: false,
     reasons: [],
     quality: { ok: true, reasons: [] },
-    damage: { mode: "shadow", verdict: "clean", damages: [] },
+    damage: { schema: COMPACTION_DAMAGE_SCHEMA, mode: "shadow", verdict: "clean", damages: [], summaryLength: 0, missingSectionCount: 0 },
     criticalLedger: { compared: 0, missingAtomIds: [], missingExactIdentifiers: [] },
     repairAttempts: 0,
     ...overrides,

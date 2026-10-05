@@ -218,6 +218,8 @@ export function copyStaticExtensionAssetsToRuntimeOverlay(params = {}) {
     const destPath = path.join(rootDir, "dist-runtime", normalizedDest.slice("dist/".length));
     if (fsImpl.existsSync(copySourcePath)) {
       fsImpl.mkdirSync(path.dirname(destPath), { recursive: true });
+      // Staging can leave declaration symlinks; static assets must not write through them.
+      fsImpl.rmSync(destPath, { force: true });
       fsImpl.copyFileSync(copySourcePath, destPath);
     } else {
       warn(`[runtime-postbuild] static asset not found, skipping: ${src}`);

@@ -14,6 +14,14 @@ const source = JSON.stringify({
 }, null, 2) + "\n";
 
 describe("structured artifact renderers", () => {
+  it("rejects outlines beyond the PPTX template capacity without dropping records", async () => {
+    const document = JSON.parse(source);
+    document.records.push({ ...document.records[0], id: "rec-four", subject: "Fourth record" });
+    const extended = JSON.stringify(document);
+    await expect(renderArtifact(extended, "slide-outline", "pptx")).rejects.toThrow(/at most 3 records/);
+    expect((await renderArtifact(extended, "slide-outline", "markdown")).content.toString()).toContain("Fourth record");
+  });
+
   it("produces deterministic text and spreadsheet projections", async () => {
     const markdown = await renderArtifact(source, "research-table", "markdown");
     const csv = await renderArtifact(source, "research-table", "csv");

@@ -3,85 +3,14 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { resolveConfigDir } from "../../utils.js";
 import type {
-  TaskLedgerWorkingContextDecision,
-  TaskLedgerWorkingContextProposal,
+  TaskLedgerEventInput,
+  TaskLedgerEventType,
+  TaskLedgerEvidenceRef,
+  TaskLedgerNode,
+  TaskLedgerNodeKind,
+  TaskLedgerNodeStatus,
 } from "../../../../shared/types/task-ledger.js";
 import type { RuntimeResumeCheckpoint, LongTaskInterventionEventRecord } from "./store.js";
-
-type TaskLedgerNodeKind =
-  | "goal"
-  | "milestone"
-  | "task"
-  | "check"
-  | "decision"
-  | "risk"
-  | "deviation"
-  | "review";
-
-type TaskLedgerNodeStatus = "todo" | "doing" | "blocked" | "review" | "done" | "dropped";
-type TaskLedgerEventType =
-  | "node_created"
-  | "decision_recorded"
-  | "deviation_logged"
-  | "review_requested"
-  | "session_linked"
-  | "working_context_proposed"
-  | "working_context_proposal_accepted"
-  | "working_context_proposal_rejected";
-
-type TaskLedgerEvidenceRef = {
-  type: "session" | "trace" | "file" | "memory" | "manual" | "tool" | "other";
-  ref: string;
-  label?: string;
-};
-
-type TaskLedgerNode = {
-  id: string;
-  title: string;
-  kind: TaskLedgerNodeKind;
-  parentId?: string | null;
-  status: TaskLedgerNodeStatus;
-  owner?: "user" | "agent" | "system";
-  priority?: "low" | "normal" | "high";
-  tags?: string[];
-  description?: string;
-  evidenceRefs?: TaskLedgerEvidenceRef[];
-  metadata?: Record<string, unknown>;
-  createdAt: string;
-  updatedAt: string;
-  completedAt?: string | null;
-};
-
-type TaskLedgerEventInput = {
-  id?: string;
-  type: TaskLedgerEventType;
-  actor: "user" | "assistant" | "system";
-  taskId?: string | null;
-  sessionId?: string | null;
-  idempotencyKey?: string | null;
-  payload: {
-    node?: TaskLedgerNode;
-    nodeId?: string;
-    sessionLink?: {
-      id: string;
-      nodeId?: string | null;
-      sessionKey: string;
-      agentId?: string | null;
-      traceId?: string | null;
-      relation?: "related" | "forked_from" | "handoff_from";
-      sourceSessionKey?: string | null;
-      summary?: string;
-      createdAt: string;
-    };
-    reviewReason?: string;
-    decision?: string;
-    deviation?: string;
-    note?: string;
-    workingContextProposal?: TaskLedgerWorkingContextProposal;
-    workingContextDecision?: TaskLedgerWorkingContextDecision;
-  };
-  createdAt?: string;
-};
 
 type TaskLedgerEvent = TaskLedgerEventInput & {
   id: string;

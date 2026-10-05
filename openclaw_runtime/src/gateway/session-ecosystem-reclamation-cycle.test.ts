@@ -154,7 +154,7 @@ describe("session ecosystem reclamation cycle", () => {
           makeBashSession({
             id: bashId,
             cancel: () => {
-              supervisor.cancel(tree.runId, "session-drain");
+              supervisor.cancel(tree.runId, "manual-cancel");
             },
             exitPromise: tree.exitPromise,
             pid: tree.parentPid,

@@ -1,0 +1,207 @@
+{
+  "schema": "verseconf-idempotency-acceptance/v1",
+  "generatedAt": "2026-10-03T15:51:23.741Z",
+  "actor": "agent/codex-verseconf-continuation",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "head": "cafe03a5939beac5c3e4e47ef78e8d5f88f86386",
+  "dirtyWorktree": true,
+  "status": "source-runtime-idempotency-passed",
+  "rootCause": "The JSON.stringify replacer used only top-level keys and dropped nested request fields.",
+  "fix": "Compare complete persisted requests with node:util isDeepStrictEqual in the shared idempotency guard.",
+  "unit": {
+    "red": {
+      "exitCode": 1,
+      "total": 5,
+      "passed": 3,
+      "failed": 2
+    },
+    "green": {
+      "exitCode": 0,
+      "files": 5,
+      "total": 12,
+      "passed": 12,
+      "failed": 0
+    }
+  },
+  "gateway": {
+    "exitCode": 0,
+    "total": 43,
+    "passed": 43,
+    "failed": 0,
+    "conflicts": [
+      {
+        "tool": "structured_artifact_revise",
+        "response": {
+          "apiVersion": 1,
+          "ok": false,
+          "artifactId": "gateway-artifact",
+          "operationId": "http-1791042255434",
+          "state": "rejected",
+          "diagnostics": [
+            {
+              "code": "idempotency_conflict",
+              "message": "idempotencyKey was already used with a different request"
+            }
+          ]
+        },
+        "beforeSha256": "ebb4ee8bd9a08fce266ae3149195e685c9a4eb8d15e3f2d769dfdf893ce6f299",
+        "afterSha256": "ebb4ee8bd9a08fce266ae3149195e685c9a4eb8d15e3f2d769dfdf893ce6f299",
+        "revisionCount": 2,
+        "historyUnchanged": true
+      },
+      {
+        "tool": "structured_artifact_record_ops",
+        "response": {
+          "apiVersion": 1,
+          "ok": false,
+          "artifactId": "gateway-records",
+          "operationId": "http-1791042255544",
+          "state": "rejected",
+          "diagnostics": [
+            {
+              "code": "idempotency_conflict",
+              "message": "idempotencyKey was already used with a different request"
+            }
+          ]
+        },
+        "beforeSha256": "8c6ea9887e756579056644c56b31f1f3990e33b11e4ef7cd7340689006cd7692",
+        "afterSha256": "8c6ea9887e756579056644c56b31f1f3990e33b11e4ef7cd7340689006cd7692",
+        "revisionCount": 2,
+        "historyUnchanged": true
+      }
+    ]
+  },
+  "gates": {
+    "extensionTypecheck": {
+      "exitCode": 0
+    },
+    "runtimeBuildAndSmoke": {
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "exitCode": 0
+    },
+    "harnessDryRun": {
+      "exitCode": 0,
+      "fullProfilesExecuted": false
+    },
+    "commsReplay": {
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "exitCode": 0,
+      "result": "PASS",
+      "fixedDataset": true
+    },
+    "diffCheck": {
+      "exitCode": 0
+    }
+  },
+  "sourceInputs": [
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/src/tools.ts",
+      "sha256": "52dae3b561b85b797bd5e1d079fbb2d592b356f975be8516f0f3d87785ef5b90"
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/src/consumer.test.ts",
+      "sha256": "5c4a229d0d92733c7420291696a773d1736f9e6bb647e3bd183a7a02869ca910"
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/src/store.ts",
+      "sha256": "dfe6b1d8dfbb983677d7bea764165ad0e8a1a91fabfe1a08578721a10550dbd1"
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/src/engine.ts",
+      "sha256": "e9a020ba80fa7085cf51401324aabea01a5277c3481a7e9acdf7ca8775b43e12"
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/src/domain.ts",
+      "sha256": "3a49a9ec91318aa8636e21ec67539fa6db86d5b3f6c0262791a08cb901334e50"
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/verseconf-delivery-lock.json",
+      "sha256": "7c3e9a8fa889d026631e5ebfa071e9ccb9e3456e93096ccb72ff056973bbd3f0"
+    },
+    {
+      "path": "scripts/verify-verseconf-clawx-integration.mjs",
+      "sha256": "a385134988e25c67110798edd852b7b1bb6808baec772e3ed01bf59e4e4be5b9"
+    },
+    {
+      "path": "harness/specs/tasks/verseconf-clawx-integrated-consumer.md",
+      "sha256": "caa8611832f807a155110be38d9adbab9c8e5e7f27ed7d6349ae32ab3bafff16"
+    },
+    {
+      "path": "docs/dev/verseconf-clawx-implementation-20261001.md",
+      "sha256": "e02f6712a0f3cce2382aeb01fee3cdc98cae3c62889383dccf15f068cc7a63a7"
+    }
+  ],
+  "runtimeInputs": [
+    {
+      "path": "openclaw_runtime/dist/extensions/verseconf-artifacts/index.js",
+      "sha256": "8803deaa36e04e3d38b63d2b5a9fc89faa4d65c88792932c97a9854d0d163e79"
+    },
+    {
+      "path": "openclaw_runtime/dist-runtime/extensions/verseconf-artifacts/index.js",
+      "sha256": "864f10e279ea42ae8a344bac8b7efd6d951dfca28f66f46b37bcb12740e26d98"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "artifacts/verseconf-clawx-integration/runs/20261003-idempotency/verification.json",
+      "sha256": "307ed7eb263caf6979de6e6f44ca608aa7c73eada5639e60080640870e2e0685"
+    },
+    {
+      "path": "artifacts/verseconf-clawx-integration/runs/20261003-idempotency-gates/comms-compare.json",
+      "sha256": "398fcf2fda0608fb335b7414ac6279cad00c4da8403907b9c1fa97ca26a54bca"
+    },
+    {
+      "path": "artifacts/verseconf-clawx-integration/runs/20261003-idempotency-gates/comms-replay.json",
+      "sha256": "64d6387dc302a5eb796a40036ca56f4d18c66ec155f964ed83669a3c8893e7d1"
+    },
+    {
+      "path": "artifacts/verseconf-clawx-integration/runs/20261003-idempotency-gates/extension-typecheck.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/verseconf-clawx-integration/runs/20261003-idempotency-gates/harness-dry-run.json",
+      "sha256": "640a8e3c9ee7fb8feee1cf3a5a0b6f660223ebc511fab1f1aa39efddffdc5da0"
+    },
+    {
+      "path": "artifacts/verseconf-clawx-integration/runs/20261003-idempotency-gates/runtime-build.log",
+      "sha256": "f275443725f488c2db0ae0dffa083f6106668778b84aaa60a4511a0501facc82"
+    },
+    {
+      "path": "artifacts/verseconf-clawx-integration/runs/20261003-idempotency-gates/task-forest-validation.log",
+      "sha256": "a24b1783f523283c4e7e7744dd900aa6007dcde7ecd448dd88d7b66dd316b410"
+    },
+    {
+      "path": "artifacts/verseconf-clawx-integration/runs/20261003-idempotency-gates/unit-green.json",
+      "sha256": "aa8e7a94201844ec7c368c89e69becf4cb7a0b5e493f76e08da4fc7bea893f7a"
+    },
+    {
+      "path": "artifacts/verseconf-clawx-integration/runs/20261003-idempotency-gates/unit-red.json",
+      "sha256": "818516240f64e383eb2b29cab5d711d631d4266f9f21b5dce26c14f7d9b3182f"
+    }
+  ],
+  "taskForest": {
+    "exitCode": 1,
+    "status": "not-applied",
+    "reason": "Historical canonical JSON merge conflicts fail parsing at line 3; a valid proposal base_graph_hash cannot be established.",
+    "humanEvidenceRequired": false
+  },
+  "limits": {
+    "currentFixInInstaller": false,
+    "fullApplicationTestsRerun": false,
+    "fullElectronE2ERerun": false,
+    "priorAcceptanceIsHistorical": true
+  },
+  "boundaries": {
+    "defaultOn": false,
+    "productApproved": false,
+    "liveReady": false,
+    "publicPublish": false,
+    "sourceRuntimePathIsolation": true,
+    "noChannelInstallFallback": true
+  }
+}

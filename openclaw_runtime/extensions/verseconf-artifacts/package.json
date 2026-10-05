@@ -48,24 +48,60 @@
           "output": "vendor/verseconf/README.md"
         },
         {
+          "source": "vendor/verseconf/bin/verseconf-mcp-wasm.mjs",
+          "output": "vendor/verseconf/bin/verseconf-mcp-wasm.mjs"
+        },
+        {
           "source": "vendor/verseconf/build-manifest.json",
           "output": "vendor/verseconf/build-manifest.json"
+        },
+        {
+          "source": "vendor/verseconf/delivery-manifest.json",
+          "output": "vendor/verseconf/delivery-manifest.json"
+        },
+        {
+          "source": "vendor/verseconf/dist/index.cjs",
+          "output": "vendor/verseconf/dist/index.cjs"
+        },
+        {
+          "source": "vendor/verseconf/dist/index.d.ts",
+          "output": "vendor/verseconf/dist/index.d.ts"
+        },
+        {
+          "source": "vendor/verseconf/dist/index.mjs",
+          "output": "vendor/verseconf/dist/index.mjs"
         },
         {
           "source": "vendor/verseconf/package.json",
           "output": "vendor/verseconf/package.json"
         },
         {
-          "source": "vendor/verseconf/pkg/.npmignore",
-          "output": "vendor/verseconf/pkg/.npmignore"
+          "source": "vendor/verseconf/pkg-web/package.json",
+          "output": "vendor/verseconf/pkg-web/package.json"
         },
         {
-          "source": "vendor/verseconf/pkg/README.md",
-          "output": "vendor/verseconf/pkg/README.md"
+          "source": "vendor/verseconf/pkg-web/verseconf_wasm.d.ts",
+          "output": "vendor/verseconf/pkg-web/verseconf_wasm.d.ts"
+        },
+        {
+          "source": "vendor/verseconf/pkg-web/verseconf_wasm.js",
+          "output": "vendor/verseconf/pkg-web/verseconf_wasm.js"
+        },
+        {
+          "source": "vendor/verseconf/pkg-web/verseconf_wasm_bg.wasm",
+          "output": "vendor/verseconf/pkg-web/verseconf_wasm_bg.wasm"
+        },
+        {
+          "source": "vendor/verseconf/pkg-web/verseconf_wasm_bg.wasm.d.ts",
+          "output": "vendor/verseconf/pkg-web/verseconf_wasm_bg.wasm.d.ts"
         },
         {
           "source": "vendor/verseconf/pkg/package.json",
           "output": "vendor/verseconf/pkg/package.json"
+        },
+        {
+          "source": "vendor/verseconf/pkg/verseconf_wasm.d.ts",
+          "output": "vendor/verseconf/pkg/verseconf_wasm.d.ts"
         },
         {
           "source": "vendor/verseconf/pkg/verseconf_wasm.js",
@@ -80,6 +116,10 @@
           "output": "vendor/verseconf/pkg/verseconf_wasm_bg.wasm.d.ts"
         },
         {
+          "source": "vendor/verseconf/worker/availability.mjs",
+          "output": "vendor/verseconf/worker/availability.mjs"
+        },
+        {
           "source": "vendor/verseconf/worker/compute-worker.mjs",
           "output": "vendor/verseconf/worker/compute-worker.mjs"
         },
@@ -88,12 +128,20 @@
           "output": "vendor/verseconf/worker/index.d.mts"
         },
         {
+          "source": "vendor/verseconf/worker/index.d.ts",
+          "output": "vendor/verseconf/worker/index.d.ts"
+        },
+        {
           "source": "vendor/verseconf/worker/index.mjs",
           "output": "vendor/verseconf/worker/index.mjs"
         },
         {
           "source": "vendor/verseconf/worker/limits.mjs",
           "output": "vendor/verseconf/worker/limits.mjs"
+        },
+        {
+          "source": "verseconf-delivery-lock.json",
+          "output": "verseconf-delivery-lock.json"
         }
       ]
     }

@@ -259,7 +259,7 @@ describe("mission-control fenced tick wiring", () => {
           verificationGaps: [],
           risks: [],
           controlSignals: [],
-          validationState: { status: "passed" as const, checks: [] },
+          validationState: { status: "passed" as const, checks: [], evidenceRefs: [] },
           contextSummary: "runtime lineage complete",
         })) as NonNullable<TaskLoopControllerDeps["selfCheck"]>,
       };

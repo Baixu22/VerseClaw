@@ -1681,7 +1681,7 @@
     "test:changed:max": "node scripts/test-projects-max.mjs --changed origin/main",
     "test:channels": "node scripts/run-vitest.mjs run --config test/vitest/vitest.channels.config.ts",
     "test:contracts": "pnpm test:contracts:channels && pnpm test:contracts:plugins",
-    "test:contracts:channels": "node scripts/test-projects.mjs --maxWorkers=1 test/vitest/vitest.contracts-channel-surface.config.ts test/vitest/vitest.contracts-channel-config.config.ts test/vitest/vitest.contracts-channel-registry.config.ts test/vitest/vitest.contracts-channel-session.config.ts",
+    "test:contracts:channels": "node scripts/test-projects.mjs --maxWorkers=1 --project=contracts-channel-surface --project=contracts-channel-config --project=contracts-channel-registry --project=contracts-channel-session",
     "test:contracts:plugins": "node scripts/run-vitest.mjs run --config test/vitest/vitest.contracts-plugin.config.ts --maxWorkers=1",
     "test:coverage": "node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts --coverage",
     "test:coverage:changed": "node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts --coverage --changed origin/main",

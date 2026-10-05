@@ -4,11 +4,11 @@ import {
   shouldAttemptMissingMemoryIndexRecovery,
 } from "./manager-reindex-state.js";
 
-const baseParams = {
+const baseParams: Omit<Parameters<typeof resolveMemoryIndexIdentityState>[0], "meta"> = {
   provider: { id: "openai", model: "text-embedding-3-small" },
   providerKey: "provider-key",
   providerKeyKnown: true,
-  configuredSources: ["memory"] as const,
+  configuredSources: ["memory"],
   configuredScopeHash: "scope",
   chunkTokens: 400,
   chunkOverlap: 80,

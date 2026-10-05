@@ -1,4 +1,30 @@
+# Local module 0.3.0-local.08ee33835a9d
+
+Not published to npm. Built from local source version 0.3.0. All existing Node, Web, MCP and worker interfaces are preserved. Development source, build tools, tests and research files are excluded.
+
+Keep this directory intact; declarations are also used by the availability check. ClawX owns authorization and writes. Build commands in the source documentation below apply to the development repository, not this ready-to-use module.
+
+---
+
 # verseconf（JavaScript / WebAssembly 分发）
+
+## 本地完整模块交付（2026-10-03）
+
+`npm run deliver:module -- --out <交付目录>` 从**本地工作树**重新构建并输出完整模块目录和 `receipt.json`。
+交付保留现有 Node ESM/CJS、Web、MCP、业务 API、worker 与资源限制，不因模块化删除功能。
+只排除开发源码树、构建工具、开发依赖、测试、缓存和研究过程文件；无需把整个仓库放进宿主。
+
+内部包身份为 `0.3.0-local.<源码摘要前缀>`，核心版本仍为 `0.3.0`；公共 npm 的旧包不是本地交付输入。
+完整文件摘要、实际工作树摘要和工具链写在 `delivery-manifest.json`，消费者还必须锁定该清单的外部 SHA-256。
+此命令不发布、不提交、不推送；交付目录按内容标识保存，不覆盖已有版本。
+
+消费者只同步生成的模块目录，运行时从模块自身位置解析文件。必须保留完整清单，包括类型文件：
+现有 `checkDistribution` 会检查部分声明文件。ClawX 的同步工具负责更新静态资源清单和宿主锁定值；
+禁止手改 vendor 的实现或把开发机源码路径作为运行时 fallback。
+
+验收命令：`node test/delivery.test.mjs <模块目录> <清单SHA256>`。它复用既有 Node/Web/MCP 加载测试，
+检查导出和实现文件没有减少或重写，并在新目录验证 worker、版本/摘要拒绝和缺失 WASM 时不回退。
+类型编译、真实消费者和包内运行仍需在各自环境核验，不以本地模块测试替代完整产品验收。
 
 > **冻结说明（2026-09-28）**：已停止独立产品开发，不承诺后续发布或持续维护。以下仅为历史源码参考；安全边界与最终决定见 [CLOSEOUT.md](../../../docs/CLOSEOUT.md)。
 >
@@ -175,6 +201,75 @@ await worker.dispose();
 以及**不得用 `process.memoryUsage().arrayBuffers` 当 wasm 内存判据**（它是进程级读数：第一版校准正是
 这样测的，同一批样本里它报 4.21 MiB 和 0.00 MiB 两个都对不上真值 9.44 MiB）。wasm 线性内存由模块自己
 报数（`wasm_memory_bytes()`）。
+
+### 计算配置（`profile`）
+
+```js
+const compute = createComputeWorker();                                  // 默认：inspect／apply
+const schema  = createComputeWorker({ profile: 'schema-validation' });  // 可信 schema 校验
+```
+
+| 配置 | `wasmLinearMemoryMax` | 用途 |
+| --- | ---: | --- |
+| `default` | 20 MiB | `inspect_record`／`apply_batch`（B06 实测峰值 9.44 MiB ×2） |
+| `schema-validation` | **99 MiB** | `validate_trusted_candidate`：JSON schema 编译要一张更大的临时图 |
+
+**为什么需要两个配置**：schema 编译路径**连第一消费者那个 6.5 KB 的 schema 都要 30.13 MiB**——
+默认 20 MiB 会直接拒掉它；实测合法上限附近（255 KiB）的 schema 峰值 **49.19 MiB**，按 ×2 取整得到 99 MiB。
+两个值都来自实测，样本见 `research/clawx-consumer-support-2026-10-01/schema-profile-calibration.json`
+（`npm run calibrate:schema-profile`）。除 `wasmLinearMemoryMax` 外两个配置完全一致。
+
+`profile` 名字写错会**抛错**，不静默退回默认——否则调用方以为自己在用大预算，实际用着 20 MiB 然后被拒。
+`limits` 只能比所选配置更紧（`RangeError`）。
+
+### 类型前置（TypeScript 消费者）
+
+包内自带的类型是干净的，但有两条**消费环境**的前置，装之前最好知道（都是实测出来的）：
+
+| 前置 | 原因 | 不满足时 |
+| --- | --- | --- |
+| `@types/node` | `worker/index.d.ts` 引用 `node:worker_threads`；而且它**自己也声明了 `[Symbol.dispose]`**（glue 类型用到） | `error TS2307: Cannot find module 'node:worker_threads'` |
+| 若项目不引 `@types/node`（或 `types: []`）：`lib` 含 `esnext`，**或**开 `skipLibCheck` | wasm-bindgen 生成的 `pkg/verseconf_wasm.d.ts` 用了 `Symbol.dispose` | `error TS2550: Property 'dispose' does not exist on type 'SymbolConstructor'` |
+
+一条实测结论：**只装了 `@types/node` 的普通 Node 消费者（`moduleResolution: nodenext`、且关掉
+`skipLibCheck`）可以完全通过**——`@types/node` 自己就提供了 `[Symbol.dispose]`，所以并不强制要求 `lib: esnext`。
+`test/types.test.mjs` 用真实 `tsc` 钉住这个组合：裸消费者（不引 node 类型、不覆盖 `lib`、关掉
+`skipLibCheck`）**必须**失败，带 `@types/node` 的**必须**通过，且 README 必须写明这两条。
+
+### 分发可用性检查（干净安装的前置）
+
+A08 的 fallback 规则是：**wasm／glue 缺失（要报缺失的文件名）、版本与宿主声明不匹配、运行时不支持 ——
+三种都必须明确 unavailable，不得借用本机包、开发机链接或另一个 workspace 的副本。** 这条规则的可执行版本在
+`verseconf/worker` 里：
+
+```js
+import { checkDistribution, createComputeWorker } from 'verseconf/worker';
+
+const distribution = checkDistribution();            // 只查本包目录下声明过的文件
+if (!distribution.available) {
+  // 按 unavailable 处理；distribution.code / reasons / missing 告诉你是哪一种
+  throw new Error(`${distribution.code}: ${distribution.reasons.join('; ')}`);
+}
+
+// 按锁定版本 + 摘要引用（A08）：给了就必须对得上，对不上直接 unavailable 且**不 spawn worker**
+const worker = createComputeWorker({
+  expectedVersion: '0.3.0',
+  wasmExpectedSha256: distribution.wasm.sha256,
+});
+```
+
+| 结果 | `code` | 含义 |
+| --- | --- | --- |
+| 可用 | `available` | 声明文件齐备、版本与摘要都对得上 |
+| 缺文件 | `missing_files` | `missing[]` 逐条列出缺哪个（含 `pkg/verseconf_wasm_bg.wasm`） |
+| 版本不符 | `version_mismatch` | 包版本 ≠ 宿主声明的版本 |
+| 摘要不符 | `wasm_digest_mismatch` | wasm 实算 SHA-256 ≠ 宿主锁定的摘要 |
+| 运行时不支持 | `unsupported_runtime` | Node 主版本低于 `MINIMUM_NODE_MAJOR`（18） |
+
+三条性质：**只查声明过的路径**（`checkedPaths` 全部在包根之下，没有 `NODE_PATH`／全局搜索）、
+**不做回退**（不可用就是不可用，换副本不在本包的行为里）、**主入口不做惰性改造**
+（`dist/index.*` 在加载时同步 import glue，所以宿主应当先用上面的预检，再去用它或 worker；
+这条限制写在 `worker/availability.mjs` 的模块文档里）。
 
 **它不是对恶意插件的安全沙箱**：与宿主同进程、同权限模型，只做资源隔离与「迟到结果丢弃」，
 拦不住有意写盘的代码，也不能当作权限边界使用。

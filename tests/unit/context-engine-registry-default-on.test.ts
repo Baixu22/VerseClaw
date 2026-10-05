@@ -118,6 +118,30 @@ describe('Context engine registry default-on CRK resolution', () => {
     expect(assembled.systemPromptAddition).toContain('kinds: observation=1');
   });
 
+  it('restores the pre-call transcript when a failing engine mutates nested messages', async () => {
+    const messages = [{ role: 'user', content: [{ type: 'text', text: 'original' }] }] as AgentMessage[];
+    const original = structuredClone(messages);
+    registerContextEngineForOwner('context-runtime-kit', async () => ({
+      ...legacyTestEngine(),
+      info: { id: 'context-runtime-kit', name: 'Mutating CRK' },
+      async assemble(params) {
+        const message = params.messages[0];
+        if (message.role !== 'user') throw new Error('expected user fixture');
+        const content = message.content as Array<{ type: 'text'; text: string }>;
+        content[0].text = 'mutated before failure';
+        throw new Error('mutated CRK failed');
+      },
+    }), 'core', { allowSameOwnerRefresh: true });
+
+    const engine = await resolveContextEngine({});
+    const assembled = await engine.assemble({ sessionId: 'session-mutating-fallback', messages });
+
+    expect(assembled.messages).toStrictEqual(original);
+    expect(assembled.messages).not.toBe(messages);
+    expect(messages).not.toStrictEqual(original);
+    expect(engine.info.id).toBe('legacy');
+  });
+
   it('quarantines a default-on CRK assemble failure and falls back to legacy', async () => {
     const messages = [{ role: 'user', content: 'fallback please' }] as AgentMessage[];
     registerContextEngineForOwner('context-runtime-kit', async () => ({
@@ -139,7 +163,8 @@ describe('Context engine registry default-on CRK resolution', () => {
       messages,
     });
 
-    expect(assembled.messages).toBe(messages);
+    expect(assembled.messages).toStrictEqual(messages);
+    expect(assembled.messages).not.toBe(messages);
     expect(engine.info.id).toBe('legacy');
     expect(listContextEngineQuarantines()).toEqual([
       expect.objectContaining({

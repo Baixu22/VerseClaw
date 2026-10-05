@@ -2,11 +2,11 @@ import { createHash } from "node:crypto";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { getMemoryCard, isMemoryStoreConfigured, isRoleMemoryEnabled } from "../memory/memory-store.js";
 import { KnowledgeStore } from "../knowledge/sekb/knowledge-store.js";
-import { getMemoryWikiPage } from "../../extensions/memory-wiki/src/query.js";
 import {
+  getMemoryWikiPage,
   resolveMemoryWikiConfig,
   type MemoryWikiPluginConfig,
-} from "../../extensions/memory-wiki/src/config.js";
+} from "../../extensions/memory-wiki/runtime-api.js";
 import {
   createResolvedChatKnowledgeRef,
   type ChatKnowledgeReferenceIntent,

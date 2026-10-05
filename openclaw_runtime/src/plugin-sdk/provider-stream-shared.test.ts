@@ -2,9 +2,16 @@
 // provider's documented effort semantics instead of silently promoting
 // low to high and xhigh to max.
 import { describe, expect, it } from "vitest";
+import type { Model } from "../llm/types.js";
+import { createAssistantMessageEventStream } from "../llm/utils/event-stream.js";
 import { createDeepSeekV4OpenAICompatibleThinkingWrapper } from "./provider-stream-shared.js";
 
 function renderPatchedPayload(thinkingLevel: string): Record<string, unknown> {
+  const model: Model<"openai-completions"> = {
+    id: "deepseek-v4-pro", name: "fixture", api: "openai-completions", provider: "deepseek",
+    baseUrl: "https://example.invalid", reasoning: true, input: ["text"],
+    cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 }, contextWindow: 8192, maxTokens: 1024,
+  };
   let patched: Record<string, unknown> | undefined;
   const baseStreamFn = ((_model: unknown, _context: unknown, options: unknown) => {
     const opts = options as { onPayload?: (payload: Record<string, unknown>) => void };
@@ -16,7 +23,9 @@ function renderPatchedPayload(thinkingLevel: string): Record<string, unknown> {
     };
     opts.onPayload?.(payload);
     patched = payload;
-    return undefined;
+    const stream = createAssistantMessageEventStream();
+    stream.end();
+    return stream;
   }) as unknown as Parameters<typeof createDeepSeekV4OpenAICompatibleThinkingWrapper>[0]["baseStreamFn"];
 
   const wrapper = createDeepSeekV4OpenAICompatibleThinkingWrapper({
@@ -26,7 +35,7 @@ function renderPatchedPayload(thinkingLevel: string): Record<string, unknown> {
     >[0]["thinkingLevel"],
     shouldPatchModel: () => true,
   });
-  wrapper?.("deepseek-v4-pro", {}, {});
+  wrapper?.(model, { messages: [] }, {});
   if (!patched) {
     throw new Error("expected payload patch to run");
   }

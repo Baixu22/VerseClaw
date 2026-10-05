@@ -11,6 +11,7 @@ import {
   bindCompactionDetailsArchiveEvidence,
   buildPreviousCompactionLedgerMessage,
 } from "./compaction-addressability.js";
+import { normalizeChecksum } from "../../../../shared/types/context-runtime-kit.js";
 import type { ArchiveHandle } from "../../../../shared/types/context-family.js";
 import {
   compileCvkFixtureSources,
@@ -19,8 +20,8 @@ import {
 import { buildCvkRecoveryContext } from "../../context-engine/cvk/recovery.js";
 import type { AgentMessage } from "../runtime/index.js";
 
-function message(id: string, role: AgentMessage["role"], content: string): AgentMessage {
-  return { id, role, content } as AgentMessage;
+function message(id: string, role: "user", content: string): AgentMessage & { id: string } {
+  return { id, role, content, timestamp: 0 };
 }
 
 function atom(
@@ -55,7 +56,7 @@ function artifactWithAtoms(atoms: CompressionSemanticAtom[]): CompressionArtifac
 function archiveHandle(uri = "context-archive://session-1/pre-compaction.context-archive.json"): ArchiveHandle {
   return {
     uri,
-    checksum: `sha256:${"a".repeat(64)}`,
+    checksum: normalizeChecksum(`sha256:${"a".repeat(64)}`),
     byteLength: 128,
     createdAt: "2026-08-17T00:00:00.000Z",
   };

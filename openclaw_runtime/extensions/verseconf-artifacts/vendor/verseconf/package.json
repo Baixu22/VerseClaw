@@ -1,7 +1,7 @@
 {
   "name": "verseconf",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.3.0-local.08ee33835a9d",
   "description": "VerseConf 的 JavaScript/WebAssembly 分发：宿主无需 Rust 工具链即可获得配置校验、安全审计与确定性最小改动编辑（未发布到 npm）",
   "license": "MIT OR Apache-2.0",
   "author": "VerseConf Contributors",
@@ -21,7 +21,7 @@
       "require": "./dist/index.cjs"
     },
     "./worker": {
-      "types": "./worker/index.d.ts",
+      "types": "./worker/index.d.mts",
       "import": "./worker/index.mjs"
     },
     "./web": "./pkg-web/verseconf_wasm.js",
@@ -32,26 +32,35 @@
     "verseconf-mcp-wasm": "bin/verseconf-mcp-wasm.mjs"
   },
   "files": [
-    "dist",
-    "pkg",
-    "pkg-web",
-    "bin",
-    "worker",
-    "build-manifest.json",
-    "README.md",
     "LICENSE-MIT",
-    "LICENSE-APACHE"
+    "LICENSE-APACHE",
+    "dist/index.mjs",
+    "dist/index.cjs",
+    "dist/index.d.ts",
+    "pkg/package.json",
+    "pkg/verseconf_wasm.js",
+    "pkg/verseconf_wasm_bg.wasm",
+    "pkg/verseconf_wasm.d.ts",
+    "pkg/verseconf_wasm_bg.wasm.d.ts",
+    "pkg-web/package.json",
+    "pkg-web/verseconf_wasm.js",
+    "pkg-web/verseconf_wasm_bg.wasm",
+    "pkg-web/verseconf_wasm.d.ts",
+    "pkg-web/verseconf_wasm_bg.wasm.d.ts",
+    "bin/verseconf-mcp-wasm.mjs",
+    "worker/index.mjs",
+    "worker/index.d.ts",
+    "worker/compute-worker.mjs",
+    "worker/availability.mjs",
+    "worker/limits.mjs",
+    "worker/index.d.mts",
+    "package.json",
+    "README.md",
+    "build-manifest.json",
+    "delivery-manifest.json"
   ],
   "engines": {
     "node": ">=18"
-  },
-  "scripts": {
-    "build": "node scripts/build.mjs",
-    "calibrate": "node scripts/calibrate-worker.mjs",
-    "prepublishOnly": "npm run build",
-    "pretest": "npm run build",
-    "test": "node test/load.test.mjs && node test/package.test.mjs && node test/business.test.mjs && node test/worker.test.mjs",
-    "test:parity": "node test/parity.mjs"
   },
   "keywords": [
     "config",
@@ -63,8 +72,13 @@
     "agent",
     "verseconf"
   ],
-  "devDependencies": {
-    "@types/node": "^20.10.0",
-    "typescript": "^5.3.2"
+  "verseconf": {
+    "sourceVersion": "0.3.0",
+    "sourceSha256": "08ee33835a9d2c0a64a4adabc4094b29c3eab24cd89cb3fe91373c98f9be9c0f",
+    "deliveryTargets": [
+      "nodejs",
+      "web"
+    ],
+    "preservesMcp": true
   }
 }

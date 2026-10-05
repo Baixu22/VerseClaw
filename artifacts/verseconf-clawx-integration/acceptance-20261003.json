@@ -1,0 +1,848 @@
+{
+  "schema": "verseconf-module-update-acceptance/v1",
+  "generatedAt": "2026-10-03T13:53:10.269944+00:00",
+  "driven_by": "agent",
+  "actor": "codex/verseconf-continuation",
+  "status": "module-update-validated-with-documented-residuals",
+  "head": "cafe03a5939beac5c3e4e47ef78e8d5f88f86386",
+  "changesCommitted": false,
+  "sourceInputs": [
+    {
+      "path": ".gitignore",
+      "sha256": "dfbad20511661f7069f27790d28c23e8c86e8a4809803a081fad1b6810173c6b",
+      "bytes": 9751
+    },
+    {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/STATUS.md",
+      "sha256": "542791309ca076f64948e83ebb5858a5b2c137aabe78d02a9bb155278a9907a6",
+      "bytes": 2546
+    },
+    {
+      "path": "docs/dev/verseconf-clawx-implementation-20261001.md",
+      "sha256": "933e87996c33ff94e5ab02b62a6cb818d4d1e88290c08c0cb8cf29391064fa88",
+      "bytes": 11818
+    },
+    {
+      "path": "harness/specs/tasks/verseconf-clawx-integrated-consumer.md",
+      "sha256": "dd5ddb1b79c1e5ba5330c0ac81adaa393079927162b4b5a0ab7e984ba86b4424",
+      "bytes": 7840
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/apply.ts",
+      "sha256": "98bbfa213bfd9234ac7ece40c86a95892d94da6ca0dd288534387b3b471d634b",
+      "bytes": 24278
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/package.json",
+      "sha256": "2ef5728875cc234c1a8dd3d27e32d787699d72b767c58ba3432670baa7f3194d",
+      "bytes": 4763
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/src/engine.ts",
+      "sha256": "e9a020ba80fa7085cf51401324aabea01a5277c3481a7e9acdf7ca8775b43e12",
+      "bytes": 4865
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/LICENSE-APACHE",
+      "sha256": "8ada45cd9f843acf64e4722ae262c622a2b3b3007c7310ef36ac1061a30f6adb",
+      "bytes": 10860
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/LICENSE-MIT",
+      "sha256": "499d10dd1ae0e43acf15db26a97fcaaf1d003103d04f847496ec6847ac5ea25a",
+      "bytes": 1066
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/README.md",
+      "sha256": "e85bc051ab14e2e6fda996fd12a4568616fb60c96aafca89e1589b8464bd7e69",
+      "bytes": 19171
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/bin/verseconf-mcp-wasm.mjs",
+      "sha256": "7b99be3302c9eda401711385704a02d0cd5b46d3707b855666b16db146fea19a",
+      "bytes": 2690
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/build-manifest.json",
+      "sha256": "8ed6c829cd86bc00be968cb7a261511c10028b29c8d74744bfc5d08880031b0f",
+      "bytes": 2377
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/delivery-manifest.json",
+      "sha256": "b28a5809bb3dcb3ee936a4031a803e32d33f80fe7b541cc0e3efeca74a50fb0f",
+      "bytes": 30430
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/dist/index.cjs",
+      "sha256": "c6eebc68c27714a52ffca8fec9536bb89a1095056f88f886372fa9ea09149284",
+      "bytes": 12021
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/dist/index.d.ts",
+      "sha256": "ac9f7593bfc43b933412e674895f1085215b863b8d9c8e490aa3cdbc61311730",
+      "bytes": 17380
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/dist/index.mjs",
+      "sha256": "7a7c6ff23e208565aa511478791297805cc8c2a32790cd1d7b8c3e0272d2a590",
+      "bytes": 10450
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/package.json",
+      "sha256": "62096e1e5330fd4b56fe7fa9f1ffd0e596ebc41e7251c28bf34982ce41858da1",
+      "bytes": 2237
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg-web/package.json",
+      "sha256": "8c0863e338aa9d29a5f54e0862b3275b4a6cc7d4cd78c1b41b2424ff407e9d56",
+      "bytes": 508
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg-web/verseconf_wasm.d.ts",
+      "sha256": "1468391ee56069a4eceb3880cc51eb43d5318cac365adb0ee5e9fd52ddd6663b",
+      "bytes": 7226
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg-web/verseconf_wasm.js",
+      "sha256": "97289b63317835cbe8cdfa45f509c9f77136fc82289a8388aeb4bdc9ee4cfc15",
+      "bytes": 21663
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg-web/verseconf_wasm_bg.wasm",
+      "sha256": "d4b27977f29e69b682b9323f45021111ab9bc71535417fa340ca61b4bf177dd9",
+      "bytes": 4371659
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg-web/verseconf_wasm_bg.wasm.d.ts",
+      "sha256": "e971ae7508dae4c544066b48c89d210ef4aa4944c728f0abc6bd2a8b2d0fa06f",
+      "bytes": 2450
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg/.npmignore",
+      "deleted": true
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg/README.md",
+      "deleted": true
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg/package.json",
+      "sha256": "9f7da3b33654125158a82b91f01ebb0a32425a18421a3c96efc71376d176d048",
+      "bytes": 445
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg/verseconf_wasm.d.ts",
+      "sha256": "372b90bda493b9cab25b1008563cdb745a317da96f3b0788551f32eb09362572",
+      "bytes": 3833
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg/verseconf_wasm.js",
+      "sha256": "427fe8ebd87c3a7a086245784198ad4b35f93aefa8dd26640bf9cf440e8c1d3d",
+      "bytes": 19137
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg/verseconf_wasm_bg.wasm",
+      "sha256": "d4b27977f29e69b682b9323f45021111ab9bc71535417fa340ca61b4bf177dd9",
+      "bytes": 4371659
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg/verseconf_wasm_bg.wasm.d.ts",
+      "sha256": "e971ae7508dae4c544066b48c89d210ef4aa4944c728f0abc6bd2a8b2d0fa06f",
+      "bytes": 2450
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/worker/availability.mjs",
+      "sha256": "8d056cd490d9cc097a90d3b20eedbd0a83db8b64ba4c1609f8546870f9606d95",
+      "bytes": 5923
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/worker/compute-worker.mjs",
+      "sha256": "9582ed5ab980a120a9912466d9d9ff5a1d1db968df8c5c62168a5a05fc0b93e4",
+      "bytes": 7509
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/worker/index.d.mts",
+      "sha256": "be60a380c24d47ed28b1ea084d38cc74ffb64a95a3216b170ad0330a32664ef6",
+      "bytes": 6762
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/worker/index.d.ts",
+      "sha256": "be60a380c24d47ed28b1ea084d38cc74ffb64a95a3216b170ad0330a32664ef6",
+      "bytes": 6762
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/worker/index.mjs",
+      "sha256": "50c18f3b10caf2da8a273fb8b6984a40e61222a5d9c53118b49225658402d4b2",
+      "bytes": 18030
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/worker/limits.mjs",
+      "sha256": "7415a5dca8fc6a225c6acb75b87f537749804e34847188a41f4349a03dacb0d1",
+      "bytes": 9360
+    },
+    {
+      "path": "openclaw_runtime/extensions/verseconf-artifacts/verseconf-delivery-lock.json",
+      "sha256": "7c3e9a8fa889d026631e5ebfa071e9ccb9e3456e93096ccb72ff056973bbd3f0",
+      "bytes": 307
+    },
+    {
+      "path": "openclaw_runtime/scripts/lib/static-extension-assets.mjs",
+      "sha256": "756b2590343096155181851aea06edc4babba593a16a7f42102d0184d8f96720",
+      "bytes": 9232
+    },
+    {
+      "path": "openclaw_runtime/scripts/tsdown-build.mjs",
+      "sha256": "9cd9d1ef0a640a3847447b223ade9a9c14736eb9b8478271114f9f06f9363e6d",
+      "bytes": 22156
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "637e67a31eb1548796ad3b875cbba0f7c11086ac08c9b6868e1a1cef37c2e564",
+      "bytes": 852
+    },
+    {
+      "path": "scripts/after-pack.cjs",
+      "sha256": "fe300fdd787832f0a7438b971d14dbabb2316d1d20685266871f63d70487baeb",
+      "bytes": 45433
+    },
+    {
+      "path": "scripts/scan-first-product-claims.mjs",
+      "sha256": "29500c317a18cd40eab51a04d43dbbc63b0943a185439b6130eb74bc76c32fc4",
+      "bytes": 8539
+    },
+    {
+      "path": "scripts/sync-verseconf.mjs",
+      "sha256": "ac36dc3ca840f1aae17d2609d1ff40eaab89430f634720bada595a7f3300e0f4",
+      "bytes": 6560
+    },
+    {
+      "path": "scripts/verify-verseconf-clawx-integration.mjs",
+      "sha256": "8436dd31ab4d5470000741c1c8a1798b4efd034358a25cd26b9953fa6d01fd13",
+      "bytes": 43558
+    },
+    {
+      "path": "tests/e2e/coding-loop-fp-p1-04.spec.ts",
+      "sha256": "20077537603572b1fd654307e9b256e3d052162aaa4fe4b960bf7a0a19e4c6bd",
+      "bytes": 42681
+    },
+    {
+      "path": "tests/e2e/knowledge-review-queue.spec.ts",
+      "sha256": "2046da0d84ea4f8ac4ec40a1523975c4b773e25fd32ae2064a97f6ef74f60d9a",
+      "bytes": 17859
+    },
+    {
+      "path": "tests/unit/after-pack-cleanup.test.ts",
+      "sha256": "1aa20b91a9720315fc0a98da226c26aae18c8dc6951832993c44e4f4bec8851d",
+      "bytes": 3611
+    },
+    {
+      "path": "tests/unit/context-engine-registry-default-on.test.ts",
+      "sha256": "ffcf3b504bc4b5d83a788d85de1bd58d40a9860ed42237ae96caca5ce06c1e51",
+      "bytes": 6058
+    },
+    {
+      "path": "tests/unit/fakecoding-design-system.test.ts",
+      "sha256": "4363d44dcba252b4a50aa21969ecf9f26540578a540a55ee3c351f5cd5e21bde",
+      "bytes": 7264
+    },
+    {
+      "path": "tests/unit/first-product-claims.test.ts",
+      "sha256": "d7ca917692fd9afbf84bcaa4fd3f82f310ecc3ef952011643bc1327f21f7bc23",
+      "bytes": 5359
+    },
+    {
+      "path": "tests/unit/sync-verseconf.test.ts",
+      "sha256": "29dbab4e7a27c540928e016844a427121944c5f73b622401198b523c1b730768",
+      "bytes": 8129
+    }
+  ],
+  "previousSessionGatesVerifiedOnDisk": [
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "full-unit",
+      "command": [
+        "node",
+        "scripts/run-with-pinned-pnpm.mjs",
+        "test"
+      ],
+      "startedAt": "2026-10-03T11:35:08.431Z",
+      "completedAt": "2026-10-03T11:47:00.276Z",
+      "durationMs": 711843,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\full-unit.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/full-unit.json",
+        "sha256": "f45d123277588b4744521c1524328a0ef8c223b139f8cca0f05edec1f4613165"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/full-unit.log",
+        "sha256": "f02ea7391836816cac0f241cc4a2907b56e2b7c427b0bd72c4bcc11073f2495e"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "extension-unit",
+      "command": [
+        "node",
+        "scripts/run-with-pinned-pnpm.mjs",
+        "--dir",
+        "openclaw_runtime",
+        "exec",
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.extensions.config.ts",
+        "extensions/verseconf-artifacts/src/structured-artifacts.seam.test.ts",
+        "extensions/verseconf-artifacts/src/domain.test.ts",
+        "extensions/verseconf-artifacts/src/render.test.ts",
+        "extensions/verseconf-artifacts/src/consumer.test.ts",
+        "extensions/verseconf-artifacts/src/plugin-entry.test.ts",
+        "extensions/memory-wiki/src/apply-lifecycle.test.ts",
+        "--maxWorkers=1"
+      ],
+      "startedAt": "2026-10-03T11:48:20.617Z",
+      "completedAt": "2026-10-03T11:48:28.889Z",
+      "durationMs": 8271,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\extension-unit.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/extension-unit.json",
+        "sha256": "9b482d4d4d17a4a399440fd45e14cc62c363ff7b40b2cb4fb5bb89c941ca6cad"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/extension-unit.log",
+        "sha256": "bc13991abfde2488af10d0ee22ac117b34eecdc252f1c2d2272bc526cf52e099"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "wiki-unit",
+      "command": [
+        "node",
+        "scripts/run-with-pinned-pnpm.mjs",
+        "--dir",
+        "openclaw_runtime",
+        "exec",
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.extension-memory.config.ts",
+        "extensions/memory-wiki/src/apply-lifecycle.test.ts",
+        "--maxWorkers=1"
+      ],
+      "startedAt": "2026-10-03T11:54:23.877Z",
+      "completedAt": "2026-10-03T11:54:41.950Z",
+      "durationMs": 18072,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\wiki-unit.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/wiki-unit.json",
+        "sha256": "58bb5dc743e85054d24e37261208e00dbcfa937ec791fd5171f4169d515ee23d"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/wiki-unit.log",
+        "sha256": "e4ba264a21ff559966ffc9c7a169fd53b66a6d48b1f98bdd3f49ccd3a88f9011"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "typecheck",
+      "command": [
+        "node",
+        "scripts/run-with-pinned-pnpm.mjs",
+        "run",
+        "typecheck"
+      ],
+      "startedAt": "2026-10-03T11:45:17.466Z",
+      "completedAt": "2026-10-03T11:45:38.674Z",
+      "durationMs": 21207,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\typecheck.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/typecheck.json",
+        "sha256": "8ef09fbb6e1e10f623d9640654e1d9241402686579667da3474807be7998f8ec"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/typecheck.log",
+        "sha256": "f61c60db05d744201de0a2423fb30e0dc48fd9b347830afe42b87b901045eee5"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "test-types-final",
+      "command": [
+        "node",
+        "scripts/run-with-pinned-pnpm.mjs",
+        "run",
+        "typecheck:test"
+      ],
+      "startedAt": "2026-10-03T11:56:23.083Z",
+      "completedAt": "2026-10-03T11:56:38.579Z",
+      "durationMs": 15494,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\test-types-final.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/test-types-final.json",
+        "sha256": "2739f84bcaddcf201320bfb94779398aec050aab70e890e776b390577fff0c48"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/test-types-final.log",
+        "sha256": "76286c65156e0c5cc33d1d406387a9b2e5860a12f4fc2136a367150bfe4ca546"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "extension-types-final",
+      "command": [
+        "node",
+        "scripts/run-with-pinned-pnpm.mjs",
+        "--dir",
+        "openclaw_runtime",
+        "exec",
+        "tsgo",
+        "--noEmit",
+        "-p",
+        "tsconfig.extensions.json",
+        "--composite",
+        "false"
+      ],
+      "startedAt": "2026-10-03T11:55:57.575Z",
+      "completedAt": "2026-10-03T11:56:22.967Z",
+      "durationMs": 25392,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\extension-types-final.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/extension-types-final.json",
+        "sha256": "cb477f5af400bd521c5632957cae1ef6233df42300c2b59d7d91f9cf7e3507f0"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/extension-types-final.log",
+        "sha256": "579e422604c59c1d91b4a4c76208f33ae6a749772fc6195294436b6eafe15320"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "contract",
+      "command": [
+        "node",
+        "scripts/run-with-pinned-pnpm.mjs",
+        "run",
+        "contract:check"
+      ],
+      "startedAt": "2026-10-03T11:45:17.350Z",
+      "completedAt": "2026-10-03T11:45:19.024Z",
+      "durationMs": 1672,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\contract.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/contract.json",
+        "sha256": "99f0cf62d0ce9a2cb88cfb7bf74a476243bafc9f41b3e7c0ef04c7a88df15ab9"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/contract.log",
+        "sha256": "b14fa1a1c1fecf30fd16bb8fc2a46737ff52f982ce4b4cc18f6620f170b1ff11"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "comms-replay",
+      "command": [
+        "node",
+        "scripts/run-with-pinned-pnpm.mjs",
+        "run",
+        "comms:replay"
+      ],
+      "startedAt": "2026-10-03T11:45:22.949Z",
+      "completedAt": "2026-10-03T11:45:26.354Z",
+      "durationMs": 3404,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\comms-replay.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/comms-replay.json",
+        "sha256": "a438f684ec6ad14ba06a2694095ec9cc3cf2007d91090f1a392d65b0ad4cb5db"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/comms-replay.log",
+        "sha256": "678a115403d007fa71f3660399bc28ccc5f12e3a4fe1ee26b6685e578de47096"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "comms-compare",
+      "command": [
+        "node",
+        "scripts/run-with-pinned-pnpm.mjs",
+        "run",
+        "comms:compare"
+      ],
+      "startedAt": "2026-10-03T11:45:26.475Z",
+      "completedAt": "2026-10-03T11:45:29.229Z",
+      "durationMs": 2750,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\comms-compare.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/comms-compare.json",
+        "sha256": "f131fd64d0417d730b581430e352ad863e096db38a630cdb1c44c1c74ed5c8b0"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/comms-compare.log",
+        "sha256": "ca27efdae923dd82af63e53b527dcee9d8eb0d76c2a29680cb6cf1b88e7674ba"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "i18n",
+      "command": [
+        "node",
+        "scripts/run-with-pinned-pnpm.mjs",
+        "run",
+        "i18n:lint"
+      ],
+      "startedAt": "2026-10-03T11:56:38.655Z",
+      "completedAt": "2026-10-03T11:56:40.543Z",
+      "durationMs": 1886,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\i18n.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/i18n.json",
+        "sha256": "b9d4e172dba44e069736e86737bcee2a7dcc25b67b3db7a8c2821343d32dd7cc"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/i18n.log",
+        "sha256": "cf802f8ad4700d77e2375840d7b281a4af9b5ad2e8a42ca89bfd42062e295834"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "focused-lint",
+      "command": [
+        "node",
+        "scripts/run-with-pinned-pnpm.mjs",
+        "exec",
+        "eslint",
+        "scripts/sync-verseconf.mjs",
+        "scripts/verify-verseconf-clawx-integration.mjs",
+        "scripts/scan-first-product-claims.mjs",
+        "scripts/after-pack.cjs",
+        "tests/unit/sync-verseconf.test.ts",
+        "tests/unit/after-pack-cleanup.test.ts",
+        "tests/unit/context-engine-registry-default-on.test.ts",
+        "tests/unit/fakecoding-design-system.test.ts",
+        "tests/unit/first-product-claims.test.ts",
+        "playwright.config.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "startedAt": "2026-10-03T11:53:03.904Z",
+      "completedAt": "2026-10-03T11:53:09.777Z",
+      "durationMs": 5872,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\focused-lint.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/focused-lint.json",
+        "sha256": "dd4599943e39dbfe69b6e645adfae10ae0bf58713429a9525b2bf64f29669783"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/focused-lint.log",
+        "sha256": "ac04954cbbc791e5d49538d421dc49be09d5df70f57bc65c6bb1c76740af9e1d"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "package",
+      "command": [
+        "node",
+        "scripts/run-with-pinned-pnpm.mjs",
+        "run",
+        "package"
+      ],
+      "startedAt": "2026-10-03T11:49:08.929Z",
+      "completedAt": "2026-10-03T11:53:15.224Z",
+      "durationMs": 246292,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\package.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/package.json",
+        "sha256": "a54deaef95517978d6dec099970c58306b0b6e8b016acaf2330ce873bd4b8c06"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/package.log",
+        "sha256": "769cafe00563f9929ada4de8734d32c1636195366b5653bca63cc88827556472"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "installer",
+      "command": [
+        "node",
+        "scripts/run-electron-builder.mjs",
+        "--win",
+        "--publish",
+        "never"
+      ],
+      "startedAt": "2026-10-03T11:54:23.810Z",
+      "completedAt": "2026-10-03T12:03:55.511Z",
+      "durationMs": 571702,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\installer.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/installer.json",
+        "sha256": "def67ee010f2dfc523a9ec563e64cb7f7c6629f90cf3396911d27fbcfc3946ec"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/installer.log",
+        "sha256": "2642d1ecc8894642e7d71df0ebe3cc9ee8f69d1f7b51ae9388ecdbb4d61f3e44"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "artifact-retention",
+      "command": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "startedAt": "2026-10-03T11:57:33.412Z",
+      "completedAt": "2026-10-03T11:57:33.801Z",
+      "durationMs": 388,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\artifact-retention.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/artifact-retention.json",
+        "sha256": "92f53db5483dedd51e27364f388a5c2e630bcf02e668f590ac0f6a7033c4b09a"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/artifact-retention.log",
+        "sha256": "f38dc35b2e4e0947349c325b80e92fb6a438a88d73fa49c7b783b999a7238c11"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "zcode/verseconf-continuation",
+      "name": "bom",
+      "command": [
+        "node",
+        "scripts/check-no-bom.mjs"
+      ],
+      "startedAt": "2026-10-03T11:57:33.858Z",
+      "completedAt": "2026-10-03T11:57:37.415Z",
+      "durationMs": 3556,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "logPath": "D:\\ClawX\\.local\\verseconf-continuation-20261003\\bom.log",
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/bom.json",
+        "sha256": "9df8145121bcdf851d024f7668021e87db1e0f0ae94bb11e46d85689a62b0199"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/bom.log",
+        "sha256": "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa"
+      }
+    }
+  ],
+  "unit": {
+    "passed": 8031,
+    "skipped": 50,
+    "failed": 0,
+    "segments": 6
+  },
+  "electron": {
+    "initialFullRun": {
+      "passed": 323,
+      "failed": 3,
+      "skipped": 10,
+      "minutes": 53.6,
+      "receipt": {
+        "path": ".local/verseconf-continuation-20261003/electron-full.json",
+        "sha256": "588b23e817a99476cf862e280e8b96c175746b525d433355b2b713fc2a2519d7"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/electron-full.log",
+        "sha256": "42020e2635bd4e72541baa2c4042d49a406ccbf5a43b446bda6dfcbfb1ee61ee"
+      }
+    },
+    "failuresResolved": [
+      {
+        "file": "tests/e2e/coding-loop-fp-p1-04.spec.ts",
+        "cause": "Provider measurement omitted the 54-character Compass SSP system-prompt contribution from the shared knowledge channel.",
+        "resolution": "Include independently observed SSP bytes once per contribution; retain exact channel accounting assertions."
+      },
+      {
+        "file": "tests/e2e/dcs-preview-optin-fp-p1-03.spec.ts",
+        "cause": "Windows worker exited before test execution with code 3221226505.",
+        "resolution": "Unmodified test passed when rerun serially; the native crash root cause is not established."
+      },
+      {
+        "file": "tests/e2e/knowledge-review-queue.spec.ts",
+        "cause": "Old mock omitted ReviewBundle required by the shipped approval path.",
+        "resolution": "Return bundles and assert applying exactly the selected reviewBundleId."
+      }
+    ],
+    "focusedRerun": {
+      "stats": {
+        "startTime": "2026-10-03T13:15:59.551Z",
+        "duration": 154032.133,
+        "expected": 9,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "exitCode": 0,
+      "report": {
+        "path": ".local/verseconf-continuation-20261003/electron-focused-results.json",
+        "sha256": "dbeffb0e30a899e43bed137a498439abeb3d2a9ea6feebd306ac71ca51295a36"
+      },
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/electron-focused-v2.log",
+        "sha256": "6cd6b1af2bd1cae7c28cc80d4be5dc399ea57daa0aa79cc329e3044478a8ea2b"
+      }
+    },
+    "singleFullRunGreen": false,
+    "skipList": [
+      "tests\\e2e\\chat-cache-deepseek-cache-first.spec.ts:388:7 › DeepSeek prompt cache-first live E2E › keeps a stable provider prefix warm across real DeepSeek turns",
+      "tests\\e2e\\chat-cache-live-model.spec.ts:400:7 › Verse Claw prompt cache live model E2E › performs real model calls and exports prompt-cache metrics",
+      "tests\\e2e\\chat-checkpoints.spec.ts:136:6 › checkpoints dialog lists and restores a session checkpoint",
+      "tests\\e2e\\chat-composer-git-strip.spec.ts:178:8 › Chat composer Git strip › shows repository context and routes branch/worktree actions through host APIs",
+      "tests\\e2e\\chat-model-picker-tiers.spec.ts:17:8 › Verse Claw chat model picker tiers (Area 2) › turn scope: sets chip and forwards modelRef in send payload",
+      "tests\\e2e\\chat-model-picker-tiers.spec.ts:205:8 › Verse Claw chat model picker tiers (Area 2) › session scope: calls sessions.patchRuntimeModel with modelRef",
+      "tests\\e2e\\compaction-artifact-viewer.spec.ts:20:8 › Compaction artifact viewer › opens compression evidence and prepares recovery context without lossless wording",
+      "tests\\e2e\\mac-titlebar-drag-region.spec.ts:10:7 › macOS frameless chrome › keeps a draggable strip above non-chat pages and stacks chat above it",
+      "tests\\e2e\\token-usage.spec.ts:148:8 › Verse Claw token usage history › hides gateway internal usage rows from the usage list overview",
+      "tests\\e2e\\visual-tune.spec.ts:23:7 › visual tuning screenshots › capture composer, permission menu, slash palette, effort flame"
+    ]
+  },
+  "integration": {
+    "counts": {
+      "total": 41,
+      "passed": 41,
+      "failed": 0
+    },
+    "report": {
+      "path": "artifacts/verseconf-clawx-integration/runs/20261003-codex-final/verification.json",
+      "sha256": "c48dd9ff7cd42b36fe8597c93018b5ddfbb8ead1dda542d2982e4014355bbbbc"
+    },
+    "manifest": {
+      "path": "artifacts/verseconf-clawx-integration/runs/20261003-codex-final/SHA256SUMS",
+      "sha256": "867a7011996124145e57078915ddb193ef4de53b66440cff87ebe22a8cc1a2be"
+    },
+    "installer": {
+      "status": "passed",
+      "path": "release/Verse Claw-0.4.9-alpha.0-win-x64.exe",
+      "sha256": "44045f7fe2bd20ab64706d6dacb01cbe599284d4273af62a5e351f993ad772da",
+      "embeddedDelivery": {
+        "status": "passed",
+        "archiveSha256": "6da7dcb2990589556bc8034ae7f7779eddb6369d0a2446753c37c8a0a1fc4a9c",
+        "manifestSha256": "b28a5809bb3dcb3ee936a4031a803e32d33f80fe7b541cc0e3efeca74a50fb0f",
+        "layouts": [
+          "dist",
+          "dist-runtime"
+        ],
+        "filesPerLayout": 26,
+        "installedOnHost": false
+      }
+    }
+  },
+  "visualReview": {
+    "driven_by": "agent",
+    "actor": "codex/verseconf-continuation",
+    "status": "passed-bounded-fixture",
+    "pagesInspected": [
+      1,
+      2,
+      3
+    ],
+    "observed": "All three rendered pages have readable text, visible titles, preserved emoji/formula text, and no clipping in this fixture.",
+    "scope": "No arbitrary long-content or Office round-trip fidelity claim."
+  },
+  "finalChecks": {
+    "harnessValidate": {
+      "exitCode": 0,
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/harness-final-v3.log",
+        "sha256": "51fd9c1d334ec61399df47f67d6392c70eab22ae5771d0ec5eb69ae992d57fa9"
+      }
+    },
+    "harnessDryRun": {
+      "exitCode": 0,
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/harness-dry-run-final-v3.log",
+        "sha256": "41aa63ac1a211482164850ef756425483393609561a9429edceaefe2aaba8fe7"
+      }
+    },
+    "changedFilesLint": {
+      "exitCode": 0,
+      "files": [
+        "scripts/verify-verseconf-clawx-integration.mjs",
+        "tests/e2e/coding-loop-fp-p1-04.spec.ts",
+        "tests/e2e/knowledge-review-queue.spec.ts"
+      ]
+    },
+    "testTypecheck": {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    "historicalE2eEvidencePreserved": {
+      "path": ".local/verseconf-continuation-20261003/generated-e2e-evidence/receipt.json",
+      "sha256": "30afcd48d51257819ee8562a3bd834618843c411cdced1b1b15a09a3f8a9fc2c"
+    },
+    "taskForest": {
+      "exitCode": 1,
+      "status": "historical-merge-conflicts",
+      "nodeVerdictsChanged": false,
+      "log": {
+        "path": ".local/verseconf-continuation-20261003/task-forest-validate.log",
+        "sha256": "0878f766c258e48eb8481532a95d0738b99f2de0a40c0d7c13a9e7c4442962c3"
+      }
+    }
+  },
+  "residuals": [
+    "Ten pre-existing Electron skips remain unexecuted, and the one native worker crash has only a passing rerun, not a root-cause diagnosis.",
+    "The upstream handoff still lists same-idempotency-key/different-payload handling, junction path boundaries, long PPTX content/record fidelity and extended UI work. These are not fixed or comprehensively evaluated by this module-update pass.",
+    "The installer payload was extracted and checked; interactive installation, paid-model quality and non-Windows platforms were not tested.",
+    "Local Task Forest history remains conflicted; no node completion, product lock, default-on, public publication or GA claim is made."
+  ]
+}

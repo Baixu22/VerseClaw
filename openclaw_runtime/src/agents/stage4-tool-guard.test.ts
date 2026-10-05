@@ -113,7 +113,7 @@ describe("stage4 Tool Guard + EffectReceipt wiring", () => {
       undefined,
       undefined,
     );
-    const secondRecord = second as Record<string, unknown>;
+    const secondRecord = second;
     const details = secondRecord.details as Record<string, unknown> | undefined;
     expect(details?.status).toBe("blocked");
     expect(fs.readFileSync(path.join(workspace, "dup.txt"), "utf8")).toBe("first");
@@ -126,7 +126,7 @@ describe("stage4 Tool Guard + EffectReceipt wiring", () => {
   it("blocks a missing write path before any ledger write", async () => {
     const tool = writeTool();
     const blocked = await tool.execute("tool-missing-path", {}, undefined, undefined);
-    const blockedRecord = blocked as Record<string, unknown>;
+    const blockedRecord = blocked;
     expect((blockedRecord.details as Record<string, unknown>)?.status).toBe("blocked");
     expect(new ApprovalLedger(options()).getByIdempotencyKey("stage4:write:tool-missing-path")).toBeUndefined();
     expect(fs.existsSync(path.join(workspace, "missing.txt"))).toBe(false);
@@ -134,7 +134,7 @@ describe("stage4 Tool Guard + EffectReceipt wiring", () => {
 
   it("builds a queryable blocked result", () => {
     const result = buildStage4ToolGuardBlockedResult("grant-missing", "detail");
-    const record = result as unknown as Record<string, unknown>;
+    const record = result;
     expect(record.content).toBeDefined();
     expect(record.details).toBeDefined();
   });

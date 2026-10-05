@@ -285,12 +285,14 @@ describe("goal-wake barrier and task finalization", () => {
       sessionKey: "agent:runtime-main:main",
     });
     expect(ack.ok).toBe(true);
+    if (!ack.ok) throw new Error(ack.reason);
     expect(ack.alreadyAcked).toBe(false);
     const again = await ackGoalWaitYield({
       flowId: arm.flowId,
       sessionKey: "agent:runtime-main:main",
     });
     expect(again.ok).toBe(true);
+    if (!again.ok) throw new Error(again.reason);
     expect(again.alreadyAcked).toBe(true);
     expect(getGoalWakeFlowRow(arm.flowId)?.wait_json).toContain('"turnBarrier":"acked"');
   });

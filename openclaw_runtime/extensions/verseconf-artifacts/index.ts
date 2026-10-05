@@ -3,6 +3,8 @@ import { VerseConfArtifactStore } from "./src/store.js";
 import { VerseConfComputeEngine } from "./src/engine.js";
 import { createVerseConfTools } from "./src/tools.js";
 import { registerVerseConfGatewayMethods } from "./src/gateway.js";
+import { openClawVerseConfRuntime, verseConfContext } from "./src/openclaw-runtime.js";
+import type { OpenClawPluginToolContext } from "openclaw/plugin-sdk/plugin-entry";
 
 export default definePluginEntry({
   id: "verseconf-artifacts",
@@ -21,7 +23,7 @@ export default definePluginEntry({
         store.close();
       },
     });
-    api.registerTool((context) => createVerseConfTools({ api, context, store, engine }), {
+    api.registerTool(((context: OpenClawPluginToolContext) => createVerseConfTools({ context: verseConfContext(context), runtime: openClawVerseConfRuntime, store, engine })) as never, {
       names: [
         "structured_artifact_create",
         "structured_artifact_inspect",

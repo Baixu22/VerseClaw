@@ -285,14 +285,14 @@ describe("KS-06 real SEKB governed adapter", () => {
     const principleId = seedPrinciple(store);
     const adapter = createSekbKnowledgeStoreGovernedAdapter({ store });
     const coordinator = new GovernanceLifecycleCoordinator(() => adapter);
-    const base = {
+    const base: GovernedMutation = {
       proposalId: "proposal-sekb-stale",
       operation: "archive",
       subjectId: principleId,
       contentDigest: "digest-sekb",
       idempotencyKey: "idem-stale",
       sourceRefs: [],
-    } as const;
+    };
 
     await expect(coordinator.prepare("sekb", {
       ...base,

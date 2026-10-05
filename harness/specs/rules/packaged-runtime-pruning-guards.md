@@ -11,6 +11,12 @@ requiredProfiles:
 Packaged runtime cleanup must remove only files that are not needed by the
 target artifact.
 
+Local state, environment files, logs, caches and agent-development records under
+the runtime workspace root must not enter a release bundle. Apply this exclusion
+only at bundle roots; preserve nested runtime assets, hash-locked deliveries and
+the user's source workspace. Share the same classification between copying and
+final cleanup, and cover Windows x64 plus macOS universal behavior in regressions.
+
 For macOS universal builds, architecture pruning must preserve both x64 and
 arm64 native payloads for the same platform. This includes scoped optional
 packages such as `@openai/codex-darwin-x64` and

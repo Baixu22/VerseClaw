@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
@@ -14,6 +14,31 @@ async function tempWorkspace(): Promise<string> {
 }
 
 describe("structured artifact commit owner", () => {
+  it("rejects reads and writes through junctions below a junction workspace root", async () => {
+    const fixture = await tempWorkspace();
+    const realRoot = path.join(fixture, "workspace");
+    const outside = path.join(fixture, "outside");
+    const workspaceRoot = path.join(fixture, "workspace-alias");
+    await mkdir(realRoot);
+    await mkdir(outside);
+    const linkType = process.platform === "win32" ? "junction" : "dir";
+    await symlink(realRoot, workspaceRoot, linkType);
+    await symlink(outside, path.join(realRoot, "linked"), linkType);
+    await writeFile(path.join(outside, "source.json"), "outside sentinel");
+    await writeFile(path.join(realRoot, "safe.json"), "inside sentinel");
+    expect((await readStructuredArtifactSource(workspaceRoot, "safe.json")).bytes.toString()).toBe("inside sentinel");
+    await expect(readStructuredArtifactSource(workspaceRoot, "linked/source.json")).rejects.toThrow(/symlink/);
+    for (const sourcePath of ["linked/source.json", "linked/new-dir/new.json"]) {
+      const result = await commitStructuredArtifactCandidate({
+        context: { workspaceRoot, sessionId: "junction-seam", requestId: sourcePath },
+        sourcePath, candidate: "must not write", operationId: sourcePath,
+      });
+      expect(result).toMatchObject({ ok: false, code: "invalid_path" });
+    }
+    expect(await readFile(path.join(outside, "source.json"), "utf8")).toBe("outside sentinel");
+    await expect(readFile(path.join(outside, "new-dir/new.json"))).rejects.toMatchObject({ code: "ENOENT" });
+  });
+
   it("commits with the existing journal and refuses path escape", async () => {
     const workspaceRoot = await tempWorkspace();
     __resetBatchLocks();

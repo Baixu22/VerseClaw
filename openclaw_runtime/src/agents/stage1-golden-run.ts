@@ -260,7 +260,7 @@ export async function runStage1GoldenCodingTurn(
       { signal: options.signal },
     );
     const toolCall = completion.choices[0]?.message?.tool_calls?.[0];
-    if (!toolCall || toolCall.function?.name !== STAGE1_WRITE_TOOL_NAME) {
+    if (!toolCall || toolCall.type !== "function" || toolCall.function.name !== STAGE1_WRITE_TOOL_NAME) {
       return { ok: false, reason: "model-tool-call-missing" };
     }
     const toolCallId =
@@ -321,10 +321,7 @@ export async function runStage1GoldenCodingTurn(
       .list({ kind: "wire", runId: options.runId, correlationDigest })
       .find((row) => row.version === "1");
     const envelopeEvidence = envelopeEvidenceFromWireRow(wireRow);
-    const details =
-      result && typeof result === "object" && !Array.isArray(result)
-        ? (result as Record<string, unknown>).details
-        : undefined;
+    const details = result.details;
     const writeJournal =
       details && typeof details === "object" && !Array.isArray(details)
         ? (details as Record<string, unknown>).write_journal

@@ -19,7 +19,7 @@ function passingResult(commands: string[]): Record<string, KnowledgeCommandResul
     {
       commandId,
       label: commandId,
-      kind: "unit",
+      kind: "runtime-unit",
       exitCode: 0,
       testFilesPassed: 1,
       testsPassed: 4 + index,
@@ -86,15 +86,19 @@ describe("KS-09 per-surface canary/graduation report", () => {
       includeE2e: true,
       generatedAt: "2026-08-18T12:00:00.000Z",
     });
+    const invalidDefault = structuredClone(base);
+    Reflect.set(invalidDefault.claims, "defaultOn", true);
+    const invalidApproval = structuredClone(base);
+    Reflect.set(invalidApproval.claims, "productApproved", true);
     expect(() =>
       assertNoFalseGraduation(
-        { ...base, claims: { ...base.claims, defaultOn: true } },
+        invalidDefault,
         plan.productLocks,
       ),
     ).toThrow(/defaultOn/);
     expect(() =>
       assertNoFalseGraduation(
-        { ...base, claims: { ...base.claims, productApproved: true } },
+        invalidApproval,
         plan.productLocks,
       ),
     ).toThrow(/productApproved/);

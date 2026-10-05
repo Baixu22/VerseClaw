@@ -44,6 +44,7 @@ type LlmRequestLog = {
   toolResults: Record<string, string>;
   issued: string | null;
   projections: Record<DcsProjectionChannel, string[]>;
+  systemKnowledge: string[];
 };
 
 /**
@@ -298,6 +299,13 @@ function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmReq
           toolResults,
           issued: action.toolCall ? action.toolCall.id : `text:${action.text?.slice(0, 40)}`,
           projections,
+          // Compass SSP now shares the knowledge ledger with the DCS message.
+          // Measure its actual provider-visible system-prompt block as well.
+          systemKnowledge: messages.flatMap((message) =>
+            message.role === 'system' && typeof message.content === 'string'
+              ? message.content.split('\n\n').filter((block) => block.startsWith('[Session State]\n'))
+              : [],
+          ),
         });
 
         const usage = { prompt_tokens: 120, completion_tokens: 30, total_tokens: 150 };
@@ -515,8 +523,12 @@ function measuredProjectionChars(
   log: LlmRequestLog[],
   channel: DcsProjectionChannel,
 ): { requestCount: number; messageCount: number; chars: number } {
-  const requests = log.filter((entry) => entry.projections[channel].length > 0);
+  const requests = log.filter((entry) => entry.projections[channel].length > 0
+    || (channel === 'knowledge' && entry.systemKnowledge.length > 0));
   const messages = requests.flatMap((entry) => entry.projections[channel]);
+  // The same system prompt is resent with each tool-loop call, but the turn
+  // ledger charges each SSP contribution once. DCS message accounting stays exact.
+  if (channel === 'knowledge') messages.push(...new Set(requests.flatMap((entry) => entry.systemKnowledge)));
   return {
     requestCount: requests.length,
     messageCount: messages.length,

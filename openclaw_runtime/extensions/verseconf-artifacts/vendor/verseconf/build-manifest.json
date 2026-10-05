@@ -1,6 +1,6 @@
 {
   "manifest": "verseconf-node-wasm-build/v1",
-  "builtAt": "2026-10-01T08:45:38.649Z",
+  "builtAt": "2026-10-03T07:19:44.298Z",
   "deliveryTarget": "node",
   "deliveredTargets": [
     {

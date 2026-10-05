@@ -216,6 +216,16 @@ test('review selection prepares and approves only the corresponding proposal', a
         calls.push({ action: request.action, payload: request.payload });
         const success = (data: unknown) => ({ id: request.id, ok: true, data });
         if (request.action === 'listProposals') return success({ success: true, proposals });
+        if (request.action === 'listReviewBundles') return success({
+          success: true,
+          bundles: proposals.map((proposal) => ({
+            id: `bundle-${proposal.id}`,
+            draftId: proposal.draftId,
+            proposalId: proposal.id,
+            operation: proposal.operation,
+            status: proposal.status,
+          })),
+        });
         if (request.action === 'proposeChange') {
           const payload = request.payload as { draftId: string };
           const proposal = { ...initialProposal, id: 'proposal-second', draftId: payload.draftId };
@@ -241,7 +251,7 @@ test('review selection prepares and approves only the corresponding proposal', a
     const readCalls = () => app.evaluate(() => (globalThis as unknown as { knowledgeQueueCalls: Array<{ action: string; payload: unknown }> }).knowledgeQueueCalls);
     expect((await readCalls()).filter((call) => ['reviewDraft', 'applyReviewedChange'].includes(call.action))).toEqual([]);
     await page.getByTestId('knowledge-review-apply').click();
-    await expect.poll(async () => (await readCalls()).filter((call) => call.action === 'applyReviewedChange')).toEqual([{ action: 'applyReviewedChange', payload: { id: 'proposal-second' } }]);
+    await expect.poll(async () => (await readCalls()).filter((call) => call.action === 'applyReviewedChange')).toEqual([{ action: 'applyReviewedChange', payload: { reviewBundleId: 'bundle-proposal-second' } }]);
     expect((await readCalls()).find((call) => call.action === 'reviewDraft')?.payload).toMatchObject({ id: 'draft-second', action: 'approve' });
     await page.getByTestId('knowledge-review-back').click();
     await page.getByTestId('knowledge-review-filter-draft').click();

@@ -57,14 +57,27 @@ export const COMPUTE_LIMITS = Object.freeze({
 });
 
 /**
- * Schema compilation is a distinct, calibrated worker profile. The JSON schema
- * compiler allocates a larger temporary Rust/wasm graph than inspect/apply; it
- * still remains bounded and is isolated to the validation worker.
+ * 计算配置（profiles）。
+ *
+ * - `default`：就是 B06 冻结的那一套，按 `inspect_record`／`apply_batch` 实测校准。
+ * - `schema-validation`：给**可信 schema 校验**用。JSON schema 编译会分配一张明显更大的
+ *   临时 Rust/wasm 图——默认 20 MiB **连第一消费者那个 6.5 KB 的 schema 都跑不过**（实测峰值
+ *   30.13 MiB），实测 255 KiB 的合法 schema 峰值 49.19 MiB。
+ *
+ * 两个值都来自实测，来源见 `LIMIT_PROVENANCE`；原始样本在
+ * `research/clawx-consumer-support-2026-10-01/schema-profile-calibration.json`。
+ * 选 profile 只影响 wasm 线性内存这一项，其余上限（含 5000 ms 与 4 MiB 堆）完全一致。
  */
-export const SCHEMA_VALIDATION_LIMITS = Object.freeze({
-  ...COMPUTE_LIMITS,
-  wasmLinearMemoryMax: 100_663_296,
+export const LIMIT_PROFILES = Object.freeze({
+  default: COMPUTE_LIMITS,
+  'schema-validation': Object.freeze({ ...COMPUTE_LIMITS, wasmLinearMemoryMax: 103_809_024 }),
 });
+
+/** 可用配置名。 */
+export const PROFILE_NAMES = Object.freeze(Object.keys(LIMIT_PROFILES));
+
+/** 不指定时用哪个配置。 */
+export const DEFAULT_PROFILE = 'default';
 
 /** 每条上限由哪一层强制。 */
 export const LIMIT_ENFORCEMENT = Object.freeze({
@@ -108,7 +121,20 @@ export const LIMIT_PROVENANCE = Object.freeze({
   wasmLinearMemoryMargin: 2,
   hostJsHeapMargin: 2,
   schemaValidationProfile:
-    'schema-validation profile uses 96 MiB effective budget (100663296 B), calibrated against the current trusted-schema compilation path; default inspect/apply profile remains 20 MiB.',
+    'schema-validation 配置**只调大** wasm 线性内存这一项（99 MiB = 103809024 B）：可信 schema 编译路径实测峰值 ' +
+    '49.19 MiB（合法 schema 上限附近 255 KiB 档，261132 B）→ ×2 后取整到 MiB。默认配置（inspect／apply）仍是 20 MiB，未改动。',
+  schemaValidationCalibratedBy:
+    'research/clawx-consumer-support-2026-10-01/schema-profile-calibration.json',
+  schemaValidationPeaks: Object.freeze({
+    firstConsumerSchemaBytes: 6_506,
+    firstConsumerWasmPeakBytes: 31_588_352, // 30.125 MiB：默认 20 MiB 会拒掉它
+    worstLegalSchemaBytes: 261_132,
+    worstLegalWasmPeakBytes: 51_576_832, // 49.188 MiB
+    worstLegalDurationMs: 107.8,
+  }),
+  schemaValidationConsumerNote:
+    '消费侧（ClawX）曾自行 fork worker/limits.mjs 并把该值定为固定 96 MiB（100663296 B）——' +
+    '与我们独立推导的 99 MiB 相差约 3%，略低于 ×2 余量口径；此处如实并列，不假装一致。',
   mustNot:
     '不得把 worker resourceLimits 当成 wasm 线性内存的硬上限；两者分别定义、分别测试（A07 明文要求）。',
 });
@@ -116,12 +142,19 @@ export const LIMIT_PROVENANCE = Object.freeze({
 const NUMERIC_KEYS = Object.keys(COMPUTE_LIMITS);
 
 /**
- * 生成本次调用的预算：默认用冻结值，可被调用方收紧（**只能收紧，不能放宽**）。
+ * 生成本次调用的预算：默认用所选配置的值，可被调用方收紧（**只能收紧，不能放宽**）。
  *
  * 放宽是刻意不支持的：上限由 A07 冻结，调用方绕过它等于把「有上限」这句话作废。
+ * `profile` 决定**基准**是哪一套（默认 `default`）；未知配置名会抛错，**不静默退回默认**——
+ * 静默退回会让调用方以为自己在用更大预算，实际用着 20 MiB 然后被拒。
  */
-export function projectLimits(overrides = {}, profile = "default") {
-  const base = profile === "schema-validation" ? SCHEMA_VALIDATION_LIMITS : COMPUTE_LIMITS;
+export function projectLimits(overrides = {}, profile = DEFAULT_PROFILE) {
+  const base = LIMIT_PROFILES[profile];
+  if (!base) {
+    throw new TypeError(
+      `未知的计算配置 ${profile}（可用：${PROFILE_NAMES.join(', ')}）——不静默退回默认配置`
+    );
+  }
   const budget = { ...base };
   for (const [key, value] of Object.entries(overrides)) {
     if (!NUMERIC_KEYS.includes(key)) {
@@ -132,7 +165,7 @@ export function projectLimits(overrides = {}, profile = "default") {
     }
     if (value > base[key]) {
       throw new RangeError(
-        `上限 ${key} 只能收紧不能放宽：当前 profile 值 ${base[key]}，请求 ${value}`
+        `上限 ${key} 只能收紧不能放宽：配置 ${profile} 的值 ${base[key]}，请求 ${value}`
       );
     }
     budget[key] = value;

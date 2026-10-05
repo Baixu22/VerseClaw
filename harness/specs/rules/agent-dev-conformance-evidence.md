@@ -33,6 +33,7 @@ Agent Dev feature work must produce machine-readable evidence for scaffolds, sce
 - Gate responsibilities are layered: `pnpm agent-dev:fast` covers contract/i18n/focused unit/workbench without rebuilding Electron; full local gates add task-spec validation, built E2E, and relevant conformance; nightly/release gates add deep diagnostics, comms replay/compare, and broader E2E/report evidence.
 - Built E2E loops should expose a no-build command such as `pnpm run test:e2e:agent-dev-quality:run` so repeated local diagnostics can reuse a fresh Vite/Electron build instead of hiding the build cost inside every Playwright run.
 - Deep diagnostics should be repeatable via `pnpm agent-dev:deep-test`, with machine-readable timing, separate build/runtime bottlenecks, and a quality report under `artifacts/agent-dev-quality/` for Workbench indexing.
+- The root typecheck gate must fail when node, web, or test typechecking fails. Cached checks must include test sources and imported runtime/package sources in their fingerprint; observation-only test failures must never produce a successful full gate.
 
 ## Validation
 

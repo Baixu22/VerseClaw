@@ -221,7 +221,7 @@ describe("node-host exec cancellation", () => {
       autoReviewArgv: ["echo", "done"],
     });
     let resolveReview!: (value: {
-      decision: "deny";
+      decision: "ask";
       risk: "low";
       rationale: string;
     }) => void;
@@ -229,7 +229,7 @@ describe("node-host exec cancellation", () => {
     const reviewerStartedPromise = new Promise<void>((resolve) => {
       reviewerStarted = resolve;
     });
-    const review = new Promise<{ decision: "deny"; risk: "low"; rationale: string }>((resolve) => {
+    const review = new Promise<{ decision: "ask"; risk: "low"; rationale: string }>((resolve) => {
       resolveReview = resolve;
     });
     const pending = executeNodeHostCommand({
@@ -252,7 +252,7 @@ describe("node-host exec cancellation", () => {
       new Promise((resolve) => setTimeout(() => resolve("timeout"), 100)),
     ]);
     await expect(outcome).toBe(reason);
-    resolveReview({ decision: "deny", risk: "low", rationale: "late" });
+    resolveReview({ decision: "ask", risk: "low", rationale: "late" });
     expect(approvals.register).not.toHaveBeenCalled();
     expect(approvals.gateway).not.toHaveBeenCalled();
   });

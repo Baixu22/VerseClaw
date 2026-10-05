@@ -36,7 +36,7 @@ afterEach(() => {
 });
 
 function env(): NodeJS.ProcessEnv {
-  const base = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
+  const base: NodeJS.ProcessEnv = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
   delete base[STAGE3_TASK_LEDGER_WORKING_CONTEXT_ENV];
   return base;
 }

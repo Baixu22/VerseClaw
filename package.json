@@ -100,6 +100,8 @@
     "comms:replay": "node scripts/comms/replay.mjs",
     "comms:baseline": "node scripts/comms/baseline.mjs",
     "comms:compare": "node scripts/comms/compare.mjs",
+    "verseconf:verify": "node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs scripts/verify-verseconf-clawx-integration.mjs",
+    "verseconf:live": "node scripts/verseconf-live-chain.mjs",
     "uv:download": "zx scripts/download-bundled-uv.mjs",
     "vtoken:test": "node scripts/run-vtoken.mjs test",
     "vtoken:bench": "node scripts/run-vtoken.mjs bench",

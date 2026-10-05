@@ -15,7 +15,7 @@ function buildParams(overrides: Record<string, unknown> = {}) {
     logHooks: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
     logChannels: { info: vi.fn(), error: vi.fn() },
     ...overrides,
-  } as never;
+  };
 }
 
 describe("startGatewaySidecars channel startup", () => {

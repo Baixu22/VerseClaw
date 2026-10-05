@@ -11,10 +11,10 @@ const checker = createExtensionImportBoundaryChecker({
   cleanMessage: "No src import boundary violations found.",
   inventoryTitle: "Src extension import boundary inventory:",
   skipSourcesWithoutBundledPluginPrefix: true,
-  allowResolvedPath(resolvedPath) {
+  allowResolvedPath(resolvedPath: string) {
     return ALLOWED_EXTENSION_PUBLIC_SURFACE_RE.test(resolvedPath);
   },
-  shouldSkipFile(relativeFile) {
+  shouldSkipFile(relativeFile: string) {
     return (
       relativeFile.endsWith(".test.ts") ||
       relativeFile.endsWith(".test.tsx") ||

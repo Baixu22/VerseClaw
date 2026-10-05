@@ -24,9 +24,24 @@
 import { Worker } from 'node:worker_threads';
 import { fileURLToPath } from 'node:url';
 
-import { COMPUTE_LIMITS, LIMIT_ENFORCEMENT, LIMIT_PROVENANCE, projectLimits } from './limits.mjs';
+import { checkDistribution } from './availability.mjs';
+import {
+  COMPUTE_LIMITS,
+  DEFAULT_PROFILE,
+  LIMIT_ENFORCEMENT,
+  LIMIT_PROFILES,
+  LIMIT_PROVENANCE,
+  PROFILE_NAMES,
+  projectLimits,
+} from './limits.mjs';
 
 export { COMPUTE_LIMITS, LIMIT_ENFORCEMENT, LIMIT_PROVENANCE, projectLimits };
+export {
+  DEFAULT_PROFILE,
+  LIMIT_PROFILES,
+  PROFILE_NAMES,
+} from './limits.mjs';
+export { checkDistribution, MINIMUM_NODE_MAJOR, REQUIRED_DISTRIBUTION_FILES } from './availability.mjs';
 
 /** 工人 API 的版本；与业务 API 各自独立计版本。 */
 export const WORKER_API_VERSION = 1;
@@ -74,6 +89,7 @@ export class ComputeWorker {
   #active = null;
   #nextId = 0;
   #disposed = false;
+  #distribution = null;
   #stats = {
     calls: 0,
     ok: 0,
@@ -90,18 +106,44 @@ export class ComputeWorker {
     this.#options = {
       workerPath: options.workerPath ?? DEFAULT_WORKER_PATH,
       workerFactory: typeof options.workerFactory === 'function' ? options.workerFactory : null,
-      profile: options.profile ?? "default",
-      limits: projectLimits(options.limits ?? {}, options.profile ?? "default"),
+      // 未知 profile 会在 projectLimits 里抛错（构造期失败，不静默退回默认预算）
+      profile: options.profile ?? DEFAULT_PROFILE,
+      limits: projectLimits(options.limits ?? {}, options.profile ?? DEFAULT_PROFILE),
       defaultTimeoutMs:
         typeof options.defaultTimeoutMs === 'number' && options.defaultTimeoutMs > 0
           ? options.defaultTimeoutMs
           : COMPUTE_LIMITS.computeMillisMax,
+      // 宿主按锁定版本 + 摘要引用（A08）：给了就必须对得上，对不上按 unavailable 拒绝
+      expectedVersion: typeof options.expectedVersion === 'string' ? options.expectedVersion : null,
+      wasmExpectedSha256:
+        typeof options.wasmExpectedSha256 === 'string' ? options.wasmExpectedSha256 : null,
     };
+  }
+
+  /** 分发可用性预检（只查声明过的路径，不做任何回退）。结果会缓存。 */
+  checkAvailability(options = {}) {
+    return checkDistribution({
+      packageRoot: options.packageRoot,
+      nodeVersion: options.nodeVersion,
+      expectedVersion: options.expectedVersion ?? this.#options.expectedVersion,
+      wasmExpectedSha256: options.wasmExpectedSha256 ?? this.#options.wasmExpectedSha256,
+    });
+  }
+
+  #availability() {
+    if (this.#distribution) return this.#distribution;
+    this.#distribution = this.checkAvailability();
+    return this.#distribution;
   }
 
   /** 本次实例实际使用的上限（含调用方收紧后的值）。 */
   get limits() {
     return { ...this.#options.limits };
+  }
+
+  /** 本次实例使用的计算配置名（`default`／`schema-validation`）。 */
+  get profile() {
+    return this.#options.profile;
   }
 
   /** `cold`（没起线程）/`queued`/`busy`/`idle`/`disposed` */
@@ -117,6 +159,7 @@ export class ComputeWorker {
     return {
       ...this.#stats,
       state: this.state,
+      profile: this.#options.profile,
       generation: this.#generation,
       queued: this.#queue.length,
       inFlight: this.#active ? this.#active.id : null,
@@ -141,6 +184,17 @@ export class ComputeWorker {
     }
     if (typeof op !== 'string' || op.trim() === '') {
       return Promise.reject(new WorkerError('invalid_request', 'op 必须是非空字符串'));
+    }
+    // 分发预检：缺文件／版本不符／摘要不符时**不 spawn worker**，直接按 unavailable 拒绝
+    const distribution = this.#availability();
+    if (!distribution.available) {
+      return Promise.reject(
+        new WorkerError(
+          'worker_unavailable',
+          `分发不可用（${distribution.code}）：${distribution.reasons.join('；')}`,
+          { distribution }
+        )
+      );
     }
     const requestText = typeof request === 'string' ? request : JSON.stringify(request ?? {});
     const timeoutMs = options.timeoutMs ?? this.#options.defaultTimeoutMs;
@@ -195,6 +249,16 @@ export class ComputeWorker {
   probe() {
     if (this.#disposed) {
       return Promise.reject(new WorkerError('worker_disposed', '这个 worker 已经 dispose'));
+    }
+    const distribution = this.#availability();
+    if (!distribution.available) {
+      return Promise.reject(
+        new WorkerError(
+          'worker_unavailable',
+          `分发不可用（${distribution.code}）：${distribution.reasons.join('；')}`,
+          { distribution }
+        )
+      );
     }
     const job = {
       kind: 'probe',

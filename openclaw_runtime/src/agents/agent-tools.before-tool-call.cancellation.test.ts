@@ -87,9 +87,9 @@ describe("tool cancellation before side effects", () => {
       description: "read",
       parameters: Type.Object({}),
       execute: async (_id, _params, _signal, update) => {
-        update?.({ content: [{ type: "text", text: "before" }] });
+        update?.({ details: {}, content: [{ type: "text", text: "before" }] });
         abort.abort(reason);
-        update?.({ content: [{ type: "text", text: "after-cancel" }] });
+        update?.({ details: {}, content: [{ type: "text", text: "after-cancel" }] });
         return { content: [{ type: "text" as const, text: "done" }], details: {} };
       },
     });

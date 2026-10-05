@@ -34,16 +34,27 @@
 
 import { parentPort } from 'node:worker_threads';
 
+import { checkDistribution } from './availability.mjs';
 import { formatBytes } from './limits.mjs';
 
 /** 懒加载的 glue；只在这一个 worker 线程里存在。 */
 let glueModule = null;
 let glueFailure = null;
 let loadCount = 0;
+let distribution = null;
 
 async function loadGlue() {
   if (glueModule) return glueModule;
   if (glueFailure) throw glueFailure;
+  // 先用声明过的路径做一次分发检查：缺文件时**点名**缺的是哪个，
+  // 而不是把 Node 的 ENOENT 原样抛给宿主（A08 要求「报缺失文件名」）。
+  distribution ??= checkDistribution();
+  if (!distribution.available) {
+    glueFailure = new Error(
+      `分发不可用（${distribution.code}）：${distribution.reasons.join('；')}；已检查：${distribution.checkedPaths.join('、')}`
+    );
+    throw glueFailure;
+  }
   try {
     // 动态 import：模块被加载时不会碰 wasm，第一次真正要用才读。
     const module = await import('../pkg/verseconf_wasm.js');
@@ -53,6 +64,16 @@ async function loadGlue() {
   } catch (error) {
     glueFailure = error;
     throw error;
+  }
+}
+
+/** glue 自述的核心版本；拿不到就返回 null（不猜）。 */
+function glueVersion() {
+  if (!glueModule || typeof glueModule.version !== 'function') return null;
+  try {
+    return glueModule.version();
+  } catch {
+    return null;
   }
 }
 
@@ -156,14 +177,10 @@ async function handleCall(message) {
   const durationMs = Number(process.hrtime.bigint() - startedAt) / 1e6;
   const after = snapshot();
   const wasmAfter = wasmMemoryBytes();
+  const metrics = metricsOf(before, after, durationMs, Buffer.byteLength(text, 'utf8'), wasmBefore, wasmAfter);
+  metrics.glueVersion = glueVersion();
 
-  post({
-    type: 'result',
-    id,
-    generation,
-    text,
-    metrics: metricsOf(before, after, durationMs, Buffer.byteLength(text, 'utf8'), wasmBefore, wasmAfter),
-  });
+  post({ type: 'result', id, generation, text, metrics });
 }
 
 parentPort.on('message', (message) => {

@@ -38,3 +38,15 @@ export const ELECTRON_MAIN_RUNTIME_PACKAGES = [
   '@whiskeysockets/baileys',
   'qrcode-terminal',
 ];
+
+const LOCAL_RUNTIME_ARTIFACT_NAMES = new Set([
+  '.ae', '.agents', '.agent-workbench', '.artifacts', '.cache', '.local', '.openclaw', '.tmp',
+  'artifacts', 'coverage', 'playwright-report', 'test-results',
+]);
+
+/** Only apply to entries directly under a runtime bundle root. */
+export function isLocalRuntimeArtifact(name) {
+  return LOCAL_RUNTIME_ARTIFACT_NAMES.has(name)
+    || name === '.env' || name.startsWith('.env.')
+    || name.startsWith('_tmp_') || name.endsWith('.log') || name.endsWith('.tsbuildinfo');
+}

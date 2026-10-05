@@ -1,0 +1,26 @@
+{
+  "pages": 3,
+  "rows": [
+    {
+      "page": 1,
+      "text": "1. 通用文件编辑\n字符串里的 \"evidenceRefs\": [] 不是字段；中文与 emoji 🧪。\n",
+      "png": "D:\\ClawX\\artifacts\\verseconf-clawx-integration\\runs\\20261003-idempotency\\visual\\slide-outline-page-1.png",
+      "width": 720,
+      "height": 540
+    },
+    {
+      "page": 2,
+      "text": "2. 宿主受管提交\n只验证契约中的引用关联，不推断实现已经通过。\nLimitations: 尚未运行真实 runtime 验收\n",
+      "png": "D:\\ClawX\\artifacts\\verseconf-clawx-integration\\runs\\20261003-idempotency\\visual\\slide-outline-page-2.png",
+      "width": 720,
+      "height": 540
+    },
+    {
+      "page": 3,
+      "text": "3. 结构化编辑计算\n=HYPERLINK(\"https://example.invalid\",\" 仅作文本\")\nLimitations: 没有调用外部模型或冻结构建\n",
+      "png": "D:\\ClawX\\artifacts\\verseconf-clawx-integration\\runs\\20261003-idempotency\\visual\\slide-outline-page-3.png",
+      "width": 720,
+      "height": 540
+    }
+  ]
+}
