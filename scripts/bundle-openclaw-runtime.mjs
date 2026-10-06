@@ -14,6 +14,7 @@
 
 import 'zx/globals';
 import { ELECTRON_MAIN_RUNTIME_PACKAGES, isLocalRuntimeArtifact } from './openclaw-bundle-config.mjs';
+import { copyRuntimeTree } from './copy-runtime-package.mjs';
 
 const ROOT = path.resolve(__dirname, '..');
 const RUNTIME_ROOT = path.join(ROOT, 'openclaw_runtime');
@@ -202,7 +203,7 @@ for (const entry of fs.readdirSync(RUNTIME_ROOT, { withFileTypes: true })) {
       isLocalRuntimeArtifact(entry.name)) continue;
   const src = path.join(RUNTIME_ROOT, entry.name);
   const dest = path.join(OUTPUT, entry.name);
-  fs.cpSync(normWin(src), normWin(dest), { recursive: true, dereference: true });
+  copyRuntimeTree(normWin(src), normWin(dest));
 }
 echo`   Source files copied.`;
 
@@ -358,7 +359,7 @@ for (const [realPath, pkgName] of collectedEntries) {
 
   try {
     fs.mkdirSync(normWin(path.dirname(dest)), { recursive: true });
-    fs.cpSync(normWin(realPath), normWin(dest), { recursive: true, dereference: true });
+    copyRuntimeTree(normWin(realPath), normWin(dest));
     copiedCount++;
   } catch (err) {
     echo`   ⚠️  Skipped ${pkgName}: ${err.message}`;

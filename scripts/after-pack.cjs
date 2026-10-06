@@ -25,6 +25,7 @@ const { ELECTRON_MAIN_RUNTIME_PACKAGES, isLocalRuntimeArtifact } = require('./op
 const { patchNsisExtractTemplate } = require('./patch-nsis-extract.mjs');
 const { patchNsisInstallSectionTemplate } = require('./patch-nsis-install-section.mjs');
 const { patchNsisUninstallTemplate } = require('./patch-nsis-uninstall.mjs');
+const { copyRuntimeTree, copyRuntimeDependencies } = require('./copy-runtime-package.mjs');
 
 async function verifyVerseShellBundle(resourcesDir, platform, arch) {
   if (platform !== 'win32') return;
@@ -901,7 +902,9 @@ exports.default = async function afterPack(context) {
         .filter(d => d.isDirectory() && d.name !== '.bin')
         .length;
       console.log(`[after-pack] Copying ${runtimeDepCount} openclaw-runtime dependencies to ${runtimeDest} ...`);
-      cpSync(runtimeSrc, runtimeDest, { recursive: true });
+      // extraResources omits nested node_modules too. Copy the materialized
+      // tree so each workspace importer retains its installed dependency version.
+      copyRuntimeTree(dirname(runtimeSrc), runtimeDestRoot);
       console.log('[after-pack] ✅ openclaw-runtime node_modules copied.');
 
       // G1 FIX: Clean the runtime's node_modules (same treatment as openclaw)
@@ -925,6 +928,11 @@ exports.default = async function afterPack(context) {
       console.warn('[after-pack] ⚠️  build/openclaw-runtime/node_modules not found — skipping runtime deps copy');
     }
   }
+
+  const mcpSource = join(__dirname, '..', 'resources', 'verseshell-mcp');
+  const mcpDestination = join(resourcesDir, 'resources', 'verseshell-mcp');
+  const mcpDependencies = copyRuntimeDependencies(mcpSource, mcpDestination);
+  console.log(`[after-pack] VerseShell MCP: materialized ${mcpDependencies} locked dependencies.`);
 
   // 2. General cleanup on the full openclaw directory (not just node_modules)
   console.log('[after-pack] 🧹 Cleaning up unnecessary files ...');
