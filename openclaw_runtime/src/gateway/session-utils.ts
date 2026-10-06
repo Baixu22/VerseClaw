@@ -2191,6 +2191,9 @@ export function buildGatewaySessionRow(params: {
     responseUsage: entry?.responseUsage,
     modelProvider: rowModelProvider,
     model: rowModel,
+    modelRefOverride: selectedModel
+      ? `${selectedModel.provider}/${selectedModel.model}`
+      : undefined,
     agentRuntime,
     contextTokens,
     contextBudgetStatus: entry?.contextBudgetStatus,

@@ -1051,7 +1051,9 @@ export async function runPreparedReply(
         authProfileIdSource: preparedSessionState.sessionEntry?.authProfileOverrideSource,
       };
     }
-    const shouldUseEphemeralSession = params.autoFallbackPrimaryProbe !== undefined;
+    const shouldUseEphemeralSession =
+      params.autoFallbackPrimaryProbe !== undefined ||
+      Boolean(normalizeOptionalString(opts?.modelRefOverride));
     const authSessionKey = shouldUseEphemeralSession ? (sessionKey ?? sessionIdFinal) : sessionKey;
     const authSessionEntry =
       shouldUseEphemeralSession && preparedSessionState.sessionEntry
@@ -1337,6 +1339,7 @@ export async function runPreparedReply(
       provider,
       model,
       hasSessionModelOverride: runHasSessionModelOverride,
+      hasTurnModelOverride: Boolean(normalizeOptionalString(opts?.modelRefOverride)) || undefined,
       modelOverrideSource: runModelOverrideSource,
       hasAutoFallbackProvenance: runHasAutoFallbackProvenance || undefined,
       autoFallbackPrimaryProbe: params.autoFallbackPrimaryProbe,

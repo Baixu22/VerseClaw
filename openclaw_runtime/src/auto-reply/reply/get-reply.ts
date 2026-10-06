@@ -336,6 +336,7 @@ export async function getReplyFromConfig(
   // Area 2 §3.2: turn-scoped model override wins over everything (heartbeat,
   // session modelOverride, agent default). Resolved here, never persisted.
   const turnModelRaw = normalizeOptionalString(opts?.modelRefOverride);
+  let hasResolvedTurnModelOverride = false;
   if (turnModelRaw) {
     const turnRef = resolveModelRefFromString({
       raw: turnModelRaw,
@@ -345,9 +346,10 @@ export async function getReplyFromConfig(
     if (turnRef) {
       provider = turnRef.ref.provider;
       model = turnRef.ref.model;
+      hasResolvedTurnModelOverride = true;
     }
   }
-  if (opts?.isHeartbeat) {
+  if (opts?.isHeartbeat && !hasResolvedTurnModelOverride) {
     // Prefer the resolved per-agent heartbeat model passed from the heartbeat runner,
     // fall back to the global defaults heartbeat model for backward compatibility.
     const heartbeatRaw =
@@ -632,6 +634,7 @@ export async function getReplyFromConfig(
     storedModelOverride?.source === "session" && hasLegacyAutoFallbackWithoutOrigin(sessionEntry);
   if (
     storedModelOverride?.model &&
+    !hasResolvedTurnModelOverride &&
     !hasResolvedHeartbeatModelOverride &&
     !staleHeartbeatAutoFallbackOverride &&
     !staleLegacyAutoFallbackWithoutOrigin
@@ -640,7 +643,9 @@ export async function getReplyFromConfig(
     model = storedModelOverride.model;
   }
   const canApplyAutoFallbackPrimaryProbe =
-    !hasResolvedHeartbeatModelOverride && !staleHeartbeatAutoFallbackOverride;
+    !hasResolvedTurnModelOverride &&
+    !hasResolvedHeartbeatModelOverride &&
+    !staleHeartbeatAutoFallbackOverride;
   const autoFallbackPrimaryProbe = canApplyAutoFallbackPrimaryProbe
     ? resolveAutoFallbackPrimaryProbe({
         entry: sessionEntry,
@@ -654,6 +659,7 @@ export async function getReplyFromConfig(
     !staleHeartbeatAutoFallbackOverride &&
     !staleLegacyAutoFallbackWithoutOrigin;
   if (
+    !hasResolvedTurnModelOverride &&
     !hasResolvedHeartbeatModelOverride &&
     !hasEffectiveSessionModelOverride &&
     resolvedChannelModelOverride
@@ -770,6 +776,7 @@ export async function getReplyFromConfig(
       provider,
       model,
       hasResolvedHeartbeatModelOverride,
+      skipStoredModelOverride: hasResolvedTurnModelOverride,
       typing,
       opts: resolvedOpts,
       skillFilter: mergedSkillFilter,

@@ -1709,6 +1709,7 @@ export async function runAgentTurnWithFallback(params: {
       !params.sessionKey ||
       !params.activeSessionStore ||
       preserveUserFacingSessionState ||
+      params.followupRun.run.hasTurnModelOverride ||
       (provider === effectiveRun.provider && model === effectiveRun.model)
     ) {
       return undefined;

@@ -934,7 +934,8 @@ export function Chat() {
     () => buildConfiguredModelOptions(providerAccounts, providerStatuses, providerDefaultAccountId)[0]?.modelRef ?? null,
     [providerAccounts, providerDefaultAccountId, providerStatuses],
   );
-  const currentModelRef = currentAgent?.modelRef || defaultModelRef || fallbackModelRef || null;
+  const currentModelRef = sessions.find((session) => session.key === currentSessionKey)?.modelRefOverride
+    || currentAgent?.modelRef || defaultModelRef || fallbackModelRef || null;
   const panelOpen = useArtifactPanel((s) => s.open);
   const panelExpanded = useArtifactPanel((s) => s.expanded);
   const panelWidthPct = useArtifactPanel((s) => s.widthPct);

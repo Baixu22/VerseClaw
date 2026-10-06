@@ -1093,8 +1093,7 @@ export function ChatInput({
   );
   const [providerGateOpen, setProviderGateOpen] = useState(false);
   const navigate = useNavigate();
-  const sessionModelRef = currentSession?.model && (currentSession.modelProvider
-    ? `${currentSession.modelProvider}/${currentSession.model}` : currentSession.model);
+  const sessionModelRef = currentSession?.modelRefOverride;
   const effectiveModelRef = pendingTurnModelRef || optimisticModelRef || sessionModelRef || currentAgent?.modelRef || defaultModelRef || modelOptions[0]?.modelRef || null;
   const effectiveModelLabel = effectiveModelRef
     ? formatModelRefLabel(effectiveModelRef)
@@ -2005,7 +2004,7 @@ export function ChatInput({
       try {
         const result = await hostApi.sessions.patchRuntimeModel({ sessionKey: currentSessionKey, modelRef });
         if (!result.success) throw new Error(result.error || t('composer.modelSwitchFailed', { error: modelRef }));
-        useChatStore.setState((state) => ({ sessions: state.sessions.map((session) => session.key === currentSessionKey ? { ...session, model: modelRef, modelProvider: undefined } : session) }));
+        useChatStore.setState((state) => ({ sessions: state.sessions.map((session) => session.key === currentSessionKey ? { ...session, modelRefOverride: modelRef } : session) }));
         setOptimisticModelRef(null);
         setPendingTurnModelRef(null);
         setModelPickerOpen(false);
@@ -2029,7 +2028,7 @@ export function ChatInput({
       // Choosing Always also resets this session's explicit runtime override.
       const result = await hostApi.sessions.patchRuntimeModel({ sessionKey: currentSessionKey, modelRef: null });
       if (!result.success) throw new Error(result.error || t('composer.modelSwitchFailed', { error: modelRef }));
-      useChatStore.setState((state) => ({ sessions: state.sessions.map((session) => session.key === currentSessionKey ? { ...session, model: modelRef, modelProvider: undefined } : session) }));
+      useChatStore.setState((state) => ({ sessions: state.sessions.map((session) => session.key === currentSessionKey ? { ...session, modelRefOverride: undefined } : session) }));
       setOptimisticModelRef(null);
       setPendingTurnModelRef(null);
     } catch (error) {

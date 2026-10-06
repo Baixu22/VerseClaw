@@ -934,6 +934,10 @@ exports.default = async function afterPack(context) {
   const mcpDependencies = copyRuntimeDependencies(mcpSource, mcpDestination, join(__dirname, '..'));
   console.log(`[after-pack] VerseShell MCP: materialized ${mcpDependencies} locked dependencies.`);
 
+  const mainNative = join(__dirname, '..', 'build', 'main-runtime-delivery', 'main-runtime.asar.unpacked');
+  if (existsSync(mainNative)) copyRuntimeTree(mainNative, join(resourcesDir, 'main-runtime.asar.unpacked'));
+  if (!existsSync(join(resourcesDir, 'main-runtime.asar'))) throw new Error('Main dependency archive was not bundled');
+
   // 2. General cleanup on the full openclaw directory (not just node_modules)
   console.log('[after-pack] 🧹 Cleaning up unnecessary files ...');
   const removedRoot = cleanupUnnecessaryFiles(openclawRoot);

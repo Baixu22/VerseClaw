@@ -14,6 +14,12 @@ files:
   - package.json
 
 extraResources:
+  # Directory mapping keeps main-runtime.asar in electron-builder's embedded
+  # integrity inventory. Native companions are copied by afterPack.
+  - from: build/main-runtime-delivery/
+    to: ./
+    filter:
+      - "main-runtime.asar"
   - from: resources/
     to: resources/
     filter:

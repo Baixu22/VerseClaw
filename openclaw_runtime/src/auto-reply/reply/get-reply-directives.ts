@@ -119,7 +119,7 @@ export type ReplyDirectiveContinuation = {
   defaultActivation: ReturnType<typeof defaultGroupActivation>;
   resolvedThinkLevel: ThinkLevel | undefined;
   resolvedFastMode: boolean;
-  resolvedPromptMode: 'full' | 'minimal' | 'none' | undefined;
+  resolvedPromptMode: "full" | "minimal" | "none" | undefined;
   resolvedVerboseLevel: VerboseLevel | undefined;
   resolvedReasoningLevel: ReasoningLevel;
   resolvedElevatedLevel: ElevatedLevel;
@@ -449,8 +449,7 @@ export async function resolveReplyDirectives(params: {
       agentId,
       sessionEntry: directives.clearFastMode ? undefined : targetSessionEntry,
     }).enabled;
-  const resolvedPromptMode =
-    opts?.promptModeOverride ?? undefined;
+  const resolvedPromptMode = opts?.promptModeOverride ?? undefined;
 
   const resolvedVerboseLevel =
     directives.verboseLevel ??
@@ -544,6 +543,7 @@ export async function resolveReplyDirectives(params: {
         model,
         hasModelDirective: directives.hasModelDirective,
         skipStoredModelOverride,
+        preserveStoredModelOverride: Boolean(normalizeOptionalString(opts?.modelRefOverride)),
         hasResolvedHeartbeatModelOverride,
         isHeartbeat: opts?.isHeartbeat === true,
       });

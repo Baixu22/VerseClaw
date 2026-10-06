@@ -2,6 +2,30 @@ import { cpSync, existsSync, mkdirSync, readFileSync, realpathSync } from 'node:
 import { createRequire } from 'node:module';
 import { dirname, isAbsolute, join, relative, sep } from 'node:path';
 
+// Each emitted Main chunk resolves external packages from the complete copied
+// graph before electron-builder's partial ASAR dependency collection.
+export const packagedMainDependencyBanner = `'use strict';
+if (process.type === 'browser' && require('electron').app.isPackaged && !globalThis[Symbol.for('verse.main.dependencies')]) {
+  const path = require('node:path');
+  const url = require('node:url');
+  const loader = require('node:module');
+  const archive = path.join(process.resourcesPath, 'main-runtime.asar');
+  if (!require('node:fs').existsSync(path.join(archive, 'node_modules'))) throw new Error('Packaged main dependencies are missing');
+  const appPrefix = url.pathToFileURL(require('electron').app.getAppPath()).href + '/';
+  const parentURL = url.pathToFileURL(path.join(archive, 'entry.cjs')).href;
+  const requireDependencies = loader.createRequire(parentURL);
+  globalThis[Symbol.for('verse.main.dependencies')] = loader.registerHooks({
+    resolve(specifier, context, nextResolve) {
+      const bare = !specifier.startsWith('.') && !specifier.startsWith('#') && !path.isAbsolute(specifier) && !/^[a-zA-Z][a-zA-Z+.-]*:/.test(specifier);
+      if (bare && context.parentURL?.startsWith(appPrefix) && specifier !== 'electron' && !specifier.startsWith('electron/') && !loader.isBuiltin(specifier)) {
+        if (context.conditions.includes('require')) return { url: url.pathToFileURL(requireDependencies.resolve(specifier)).href, shortCircuit: true };
+        return nextResolve(specifier, { ...context, parentURL });
+      }
+      return nextResolve(specifier, context);
+    }
+  });
+}`;
+
 function isInside(root, file) {
   const rel = relative(root, file);
   return !isAbsolute(rel) && rel !== '..' && !rel.startsWith('..' + sep);
