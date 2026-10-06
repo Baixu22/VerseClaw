@@ -2873,7 +2873,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
             lastMessagePreview: s.lastMessagePreview ? String(s.lastMessagePreview) : undefined,
             thinkingLevel: s.thinkingLevel ? String(s.thinkingLevel) : undefined,
             model: s.model ? String(s.model) : undefined,
-            modelProvider: s.modelProvider ? String(s.modelProvider) : undefined,
+            modelRefOverride: s.modelRefOverride ? String(s.modelRefOverride) : undefined,
             updatedAt: parseSessionUpdatedAtMs(s.updatedAt),
             status: parseSessionStatus(s.status),
             hasActiveRun: typeof s.hasActiveRun === 'boolean' ? s.hasActiveRun : undefined,

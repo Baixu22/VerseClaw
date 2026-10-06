@@ -23,6 +23,19 @@ requiredProfiles:
   - fast
   - comms
 touchedAreas:
+  - scripts/bundle-main-runtime.mjs
+  - package.json
+  - openclaw_runtime/src/auto-reply/reply/get-reply.ts
+  - openclaw_runtime/src/auto-reply/reply/model-selection.ts
+  - openclaw_runtime/src/auto-reply/reply/model-selection.turn-override.test.ts
+  - openclaw_runtime/src/auto-reply/reply/get-reply-directives.ts
+  - openclaw_runtime/src/auto-reply/reply/get-reply-run.ts
+  - openclaw_runtime/src/auto-reply/reply/queue/types.ts
+  - openclaw_runtime/src/auto-reply/reply/queue/state.ts
+  - openclaw_runtime/src/auto-reply/reply/agent-runner-execution.ts
+  - openclaw_runtime/src/gateway/session-utils.ts
+  - openclaw_runtime/src/gateway/session-utils.types.ts
+  - tests/e2e/chat-model-scope-runtime.spec.ts
   - .gitignore
   - .gitattributes
   - artifacts/desktop-acceptance-followups/report.json
@@ -77,6 +90,7 @@ docs:
     - README.ja-JP.md
     - README.ru-RU.md
 requiredTests:
+  - pnpm exec playwright test tests/e2e/chat-model-scope-runtime.spec.ts
   - pnpm exec vitest run tests/unit/copy-runtime-package.test.ts tests/unit/after-pack-cleanup.test.ts tests/unit/composer-git-strip.test.tsx tests/unit/chat-input.test.tsx --maxWorkers=1
   - node --test resources/verseshell-mcp/test/start-smoke.test.mjs
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.infra.config.ts src/infra/node-sqlite.test.ts --maxWorkers=1
@@ -89,6 +103,7 @@ requiredTests:
 acceptance:
   - Windows runtime and MCP deliveries contain their installed dependency versions without external development links. Module resolution from a relocated delivery stays inside that delivery, and NSIS finishes with exit 0.
   - RC-10 H-02 through H-06 preserve permission and timeout boundaries and produce current events, decisions, continuations and receipts from an agent-driven clean candidate.
+  - A one-turn model choice wins over stored session and heartbeat choices, leaves the stored override unchanged, and cannot persist a fallback choice. The next ordinary turn uses the configured session or agent default. Session list exposes the explicit selection separately from usage metadata.
   - Startup chunk checks pass their existing budgets and math, chat and first-screen Electron flows remain functional.
   - Scheduled/Browser and Knowledge Hub pass the full suite without forced clicks. Required checkpoint, compaction, Git and model-scope entries have real wiring and Electron coverage; existing skips are accounted for individually.
   - Curated evidence includes clean candidate identity, reproducible command receipts, hashes, zero-hit credential scanning, and honest exclusions. No historical verdict is re-signed.

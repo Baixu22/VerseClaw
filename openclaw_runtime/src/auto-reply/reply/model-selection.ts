@@ -129,6 +129,8 @@ export async function createModelSelectionState(params: {
   model: string;
   hasModelDirective: boolean;
   skipStoredModelOverride?: boolean;
+  /** A one-turn choice must not rewrite the stored choice while it is evaluated. */
+  preserveStoredModelOverride?: boolean;
   /** True when heartbeat.model was explicitly resolved for this run.
    *  In that case, skip session-stored overrides so the heartbeat selection wins. */
   hasResolvedHeartbeatModelOverride?: boolean;
@@ -275,7 +277,13 @@ export async function createModelSelectionState(params: {
     logStage("configured-catalog-ready", `entries=${configuredModelCatalog.length}`);
   }
 
-  if (sessionEntry && sessionStore && sessionKey && directStoredOverride) {
+  if (
+    !params.preserveStoredModelOverride &&
+    sessionEntry &&
+    sessionStore &&
+    sessionKey &&
+    directStoredOverride
+  ) {
     const normalizedOverride = normalizeRuntimeModelRef(
       directStoredOverride.provider,
       directStoredOverride.model,
@@ -303,7 +311,7 @@ export async function createModelSelectionState(params: {
       }
     }
   }
-  if (staleDirectStoredOverride) {
+  if (staleDirectStoredOverride && !params.preserveStoredModelOverride) {
     const currentSelectionKey = modelKey(
       normalizedCurrentSelection.provider,
       normalizedCurrentSelection.model,

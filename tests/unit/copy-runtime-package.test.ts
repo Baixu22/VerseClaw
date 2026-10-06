@@ -1,10 +1,11 @@
 // @vitest-environment node
 import { createRequire } from 'node:module';
+import { execFileSync } from 'node:child_process';
 import { lstatSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, expect, it } from 'vitest';
-import { copyRuntimeDependencies, copyRuntimeTree } from '../../scripts/copy-runtime-package.mjs';
+import { copyRuntimeDependencies, copyRuntimeTree, packagedMainDependencyBanner } from '../../scripts/copy-runtime-package.mjs';
 
 const roots: string[] = [];
 afterEach(() => roots.splice(0).forEach((root) => rmSync(root, { recursive: true, force: true })));
@@ -60,4 +61,22 @@ it('rejects missing installed dependencies even when a user-level copy is availa
   const output = join(root, 'output');
   pkg(output, 'mcp', '1');
   expect(() => copyRuntimeDependencies(source, output)).toThrow('Missing installed dependency sdk');
+});
+
+it('loads Main dependencies and their children from the complete packaged graph', () => {
+  const root = fixture();
+  const main = join(root, 'app.asar', 'dist-electron', 'main', 'index.js');
+  const complete = join(root, 'main-runtime.asar', 'node_modules');
+  pkg(join(root, 'app.asar', 'node_modules', 'updater'), 'updater', 'broken');
+  pkg(join(complete, 'updater'), 'updater', '1', { ms: '2' });
+  writeFileSync(join(complete, 'updater', 'index.js'), "module.exports = require('ms');");
+  pkg(join(complete, 'updater', 'node_modules', 'ms'), 'ms', '2');
+  mkdirSync(join(root, 'app.asar', 'dist-electron', 'main'), { recursive: true });
+  writeFileSync(main, packagedMainDependencyBanner + "\nmodule.exports = async () => [require('updater'), (await import('updater')).default, require('node:module').createRequire(__filename)('updater')];");
+  const harness = `const Module = require('node:module'); const original = Module._load;
+    Module._load = function(name, ...args) { return name === 'electron' ? { app: { isPackaged: true, getAppPath: () => process.argv[1] } } : original.call(this, name, ...args); };
+    process.type = 'browser'; process.resourcesPath = process.argv[2];
+    require(process.argv[3])().then(result => console.log(JSON.stringify(result)));`;
+  const output = execFileSync(process.execPath, ['-e', harness, join(root, 'app.asar'), root, main], { encoding: 'utf8', windowsHide: true });
+  expect(JSON.parse(output)).toEqual(['2', '2', '2']);
 });

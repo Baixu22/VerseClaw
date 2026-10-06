@@ -122,6 +122,8 @@ export type FollowupRun = {
     provider: string;
     model: string;
     hasSessionModelOverride?: boolean;
+    /** Ephemeral selection survives queueing without becoming a stored fallback. */
+    hasTurnModelOverride?: boolean;
     modelOverrideSource?: "auto" | "user";
     hasAutoFallbackProvenance?: boolean;
     autoFallbackPrimaryProbe?: AutoFallbackPrimaryProbe;

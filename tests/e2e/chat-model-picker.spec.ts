@@ -52,7 +52,7 @@ test.describe('Verse Claw chat model picker', () => {
         ipcMain.handle('gateway:rpc', async (_event: unknown, method: string, params: unknown) => {
           hostRequests.push({ path: `gateway:${method}`, method: 'RPC', body: params ?? null });
           if (method === 'sessions.list') {
-            return { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] } };
+            return { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main', modelProvider: 'custom-beta5678', model: 'provider/model-beta' }] } };
           }
           if (method === 'chat.history') {
             return { success: true, result: { messages: [] } };
@@ -82,7 +82,7 @@ test.describe('Verse Claw chat model picker', () => {
             const params = body?.params ?? null;
             hostRequests.push({ path: `gateway:${method}`, method: 'RPC', body: params });
             if (method === 'sessions.list') {
-              return makeResponse(request.id, { sessions: [{ key: 'agent:main:main', displayName: 'main' }] });
+              return makeResponse(request.id, { sessions: [{ key: 'agent:main:main', displayName: 'main', modelProvider: 'custom-beta5678', model: 'provider/model-beta' }] });
             }
             if (method === 'chat.history') {
               return makeResponse(request.id, { messages: [] });

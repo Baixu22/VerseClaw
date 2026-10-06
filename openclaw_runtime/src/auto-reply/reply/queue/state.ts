@@ -149,7 +149,7 @@ export function refreshQueuedFollowupSession(params: {
         run.sessionFile = nextSessionFile;
       }
     }
-    if (shouldRewriteSelection) {
+    if (shouldRewriteSelection && !run.hasTurnModelOverride) {
       if (typeof params.nextProvider === "string") {
         run.provider = params.nextProvider;
       }

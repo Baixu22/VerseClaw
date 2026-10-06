@@ -97,7 +97,7 @@ export interface ChatSession {
   messageCount?: number;
   thinkingLevel?: string;
   model?: string;
-  modelProvider?: string;
+  modelRefOverride?: string;
   updatedAt?: number;
   status?: string;
   hasActiveRun?: boolean;
