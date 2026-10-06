@@ -176,6 +176,8 @@ async function hideToasts(page: Page) {
 test.describe('FakeCoding Scheduled and Browser settings', () => {
   test('projects Cron and Browser runs, preserves actions, and manages Browser settings', async ({ electronApp, page }, testInfo) => {
     await installScheduledMocks(electronApp);
+    // Reset transport/store requests started before the fixture was installed.
+    await page.reload();
     await completeSetup(page);
     await hideToasts(page);
     await page.setViewportSize({ width: 1280, height: 800 });

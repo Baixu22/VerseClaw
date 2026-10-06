@@ -97,16 +97,8 @@ function rendererManualChunks(id: string): string | undefined {
   ) {
     return 'markdown-rendering';
   }
-  if (
-    packageName.startsWith('@radix-ui/')
-    || packageName === 'lucide-react'
-    || packageName === 'class-variance-authority'
-    || packageName === 'clsx'
-    || packageName === 'tailwind-merge'
-    || packageName === 'sonner'
-  ) {
-    return 'ui-vendor';
-  }
+  // Let Rollup split UI primitives by their actual importers. A single forced
+  // UI chunk pulls dependencies shared with App into the bootstrap graph.
   return undefined;
 }
 
@@ -191,6 +183,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: rendererManualChunks,
+        // Shared bootstrap dependencies must not be absorbed into lazy page
+        // chunks, which would make the entry eagerly import Chat and math.
+        onlyExplicitManualChunks: true,
       },
     },
   },

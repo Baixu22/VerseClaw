@@ -51,3 +51,13 @@ it('ships transitive dependency conflicts and never relies on parent node_module
   expect(createRequire(join(output, 'index.js'))('schema')).toBe('2');
   expect(createRequire(join(output, 'node_modules', 'sdk', 'index.js'))('schema')).toBe('1');
 });
+
+it('rejects missing installed dependencies even when a user-level copy is available', () => {
+  const root = fixture();
+  const source = join(root, 'source');
+  pkg(source, 'mcp', '1', { sdk: '1' });
+  pkg(join(root, 'node_modules', 'sdk'), 'sdk', '1');
+  const output = join(root, 'output');
+  pkg(output, 'mcp', '1');
+  expect(() => copyRuntimeDependencies(source, output)).toThrow('Missing installed dependency sdk');
+});

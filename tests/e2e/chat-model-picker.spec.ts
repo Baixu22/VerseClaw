@@ -82,15 +82,19 @@ test.describe('Verse Claw chat model picker', () => {
             const params = body?.params ?? null;
             hostRequests.push({ path: `gateway:${method}`, method: 'RPC', body: params });
             if (method === 'sessions.list') {
-              return makeResponse(request.id, { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] } });
+              return makeResponse(request.id, { sessions: [{ key: 'agent:main:main', displayName: 'main' }] });
             }
             if (method === 'chat.history') {
-              return makeResponse(request.id, { success: true, result: { messages: [] } });
+              return makeResponse(request.id, { messages: [] });
             }
             return makeResponse(request.id, { success: true, result: {} });
           }
           if (request?.module === 'agents' && request.action === 'list') {
             return makeResponse(request.id, agentsSnapshot());
+          }
+          if (request?.module === 'sessions' && request.action === 'patchRuntimeModel') {
+            const fail = (globalThis as typeof globalThis & { __failModelReset?: boolean }).__failModelReset;
+            return makeResponse(request.id, fail ? { success: false, error: 'Gateway disconnected during reset' } : { success: true });
           }
           if (request?.module === 'agents' && request.action === 'updateModel') {
             currentModelRef = typeof body?.modelRef === 'string' ? body.modelRef : refs.alphaModelRef;
@@ -189,6 +193,18 @@ test.describe('Verse Claw chat model picker', () => {
         || request.path === 'gateway:start'
         || request.path === 'gateway:config.patch'
       )).toBe(false);
+
+      await page.getByTestId('chat-model-picker-button').click();
+      await page.getByTestId('chat-model-scope-turn').click();
+      await page.getByTestId('chat-model-options').getByRole('button', { name: 'provider/model-beta' }).click();
+      await expect(page.getByTestId('chat-turn-model-chip')).toBeVisible();
+      await app.evaluate(() => { (globalThis as typeof globalThis & { __failModelReset?: boolean }).__failModelReset = true; });
+      await page.getByTestId('chat-model-picker-button').click();
+      await page.getByTestId('chat-model-scope-persistent').click();
+      await page.getByTestId('chat-model-options').getByRole('button', { name: 'model-alpha', exact: true }).click();
+      await expect(page.getByText(/Default model saved, but this session could not be reset/)).toBeVisible();
+      await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-alpha');
+      await expect(page.getByTestId('chat-turn-model-chip')).toHaveCount(0);
     } finally {
       await closeElectronApp(app);
     }

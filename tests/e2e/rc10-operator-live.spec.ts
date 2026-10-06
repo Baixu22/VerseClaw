@@ -37,6 +37,12 @@ test('RC-10 real Cron, Inbox, IRC and recovery scenarios', async ({ browserName:
     expect(scenario.recoveryObservation.length).toBeGreaterThan(0);
   }
   expect(report.scenarios.find((s: { id: string }) => s.id === 'H-06').handoffTransfer.runId).toBeTruthy();
+  for (const id of ['H-04', 'H-05']) {
+    const scenario = report.scenarios.find((s: { id: string }) => s.id === id);
+    expect(scenario.processChange.oldPid).toBeGreaterThan(0);
+    expect(scenario.processChange.newPid).toBeGreaterThan(0);
+    expect(scenario.processChange.newPid).not.toBe(scenario.processChange.oldPid);
+  }
   expect(report.driven_by).toBe('agent');
   expect(report.formalAcceptance).toBe(false);
 });

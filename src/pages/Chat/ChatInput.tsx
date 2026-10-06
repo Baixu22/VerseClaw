@@ -987,6 +987,7 @@ export function ChatInput({
   const [targetAgentId, setTargetAgentId] = useState<string | null>(null);
   /** Area 2 §3.1: turn-scoped model override; cleared after each send. */
   const [pendingTurnModelRef, setPendingTurnModelRef] = useState<string | null>(null);
+  const [modelScope, setModelScope] = useState<'turn' | 'session' | 'persistent'>('persistent');
   const [actionMenuOpen, setActionMenuOpen] = useState(false);
   const [morphOpen, setMorphOpen] = useState(false);
   const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
@@ -1062,6 +1063,7 @@ export function ChatInput({
   const refreshProviderSnapshot = useProviderStore((s) => s.refreshProviderSnapshot);
   const currentAgentId = useChatStore((s) => s.currentAgentId);
   const currentSessionKey = useChatStore((s) => s.currentSessionKey);
+  const currentSession = useChatStore((s) => s.sessions.find((session) => session.key === s.currentSessionKey));
   const pendingMessages = useChatStore((s) => s.pendingMessages);
   const currentAgent = useMemo(
     () => (agents ?? []).find((agent) => agent.id === currentAgentId) ?? null,
@@ -1091,7 +1093,9 @@ export function ChatInput({
   );
   const [providerGateOpen, setProviderGateOpen] = useState(false);
   const navigate = useNavigate();
-  const effectiveModelRef = optimisticModelRef || currentAgent?.modelRef || defaultModelRef || modelOptions[0]?.modelRef || null;
+  const sessionModelRef = currentSession?.model && (currentSession.modelProvider
+    ? `${currentSession.modelProvider}/${currentSession.model}` : currentSession.model);
+  const effectiveModelRef = pendingTurnModelRef || optimisticModelRef || sessionModelRef || currentAgent?.modelRef || defaultModelRef || modelOptions[0]?.modelRef || null;
   const effectiveModelLabel = effectiveModelRef
     ? formatModelRefLabel(effectiveModelRef)
     : t('composer.modelSourceDefault');
@@ -1725,6 +1729,11 @@ export function ChatInput({
   useEffect(() => {
     setOptimisticModelRef(null);
   }, [currentAgent?.modelRef, currentAgentId]);
+  useEffect(() => {
+    setPendingTurnModelRef(null);
+    setOptimisticModelRef(null);
+    setModelScope('persistent');
+  }, [currentSessionKey]);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -1985,27 +1994,53 @@ export function ChatInput({
       }
     }
 
-    if (modelRef === effectiveModelRef) {
+    if (modelScope === 'turn') {
+      setPendingTurnModelRef(modelRef);
       setModelPickerOpen(false);
       textareaRef.current?.focus();
       return;
     }
-
-    const previousModelRef = effectiveModelRef;
+    if (modelScope === 'session') {
+      setSwitchingModelRef(modelRef);
+      try {
+        const result = await hostApi.sessions.patchRuntimeModel({ sessionKey: currentSessionKey, modelRef });
+        if (!result.success) throw new Error(result.error || t('composer.modelSwitchFailed', { error: modelRef }));
+        useChatStore.setState((state) => ({ sessions: state.sessions.map((session) => session.key === currentSessionKey ? { ...session, model: modelRef, modelProvider: undefined } : session) }));
+        setOptimisticModelRef(null);
+        setPendingTurnModelRef(null);
+        setModelPickerOpen(false);
+      } catch (error) {
+        toast.error(t('composer.modelSwitchFailed', { error: String(error) }));
+      } finally {
+        setSwitchingModelRef(null);
+        textareaRef.current?.focus();
+      }
+      return;
+    }
     const desiredOverride = modelRef === (defaultModelRef || '').trim() ? null : modelRef;
+    let persistentSaved = false;
     setSwitchingModelRef(modelRef);
     setOptimisticModelRef(modelRef);
     setModelPickerOpen(false);
     try {
       await updateAgentModel(currentAgent.id, desiredOverride);
+      persistentSaved = true;
+      if (useChatStore.getState().currentSessionKey === currentSessionKey) setPendingTurnModelRef(null);
+      // Choosing Always also resets this session's explicit runtime override.
+      const result = await hostApi.sessions.patchRuntimeModel({ sessionKey: currentSessionKey, modelRef: null });
+      if (!result.success) throw new Error(result.error || t('composer.modelSwitchFailed', { error: modelRef }));
+      useChatStore.setState((state) => ({ sessions: state.sessions.map((session) => session.key === currentSessionKey ? { ...session, model: modelRef, modelProvider: undefined } : session) }));
+      setOptimisticModelRef(null);
+      setPendingTurnModelRef(null);
     } catch (error) {
-      setOptimisticModelRef(previousModelRef);
-      toast.error(t('composer.modelSwitchFailed', { error: String(error) }));
+      if (useChatStore.getState().currentSessionKey === currentSessionKey) setOptimisticModelRef(null);
+      if (persistentSaved) await useChatStore.getState().loadSessions();
+      toast.error(t(persistentSaved ? 'composer.modelSwitchSessionResetFailed' : 'composer.modelSwitchFailed', { error: String(error) }));
     } finally {
       setSwitchingModelRef(null);
       textareaRef.current?.focus();
     }
-  }, [confirmPromptCacheRisk, currentAgent, defaultModelRef, effectiveModelRef, switchingModelRef, t, updateAgentModel]);
+  }, [confirmPromptCacheRisk, currentAgent, currentSessionKey, modelScope, defaultModelRef, effectiveModelRef, switchingModelRef, t, updateAgentModel]);
 
   const handleWorkspaceAction = useCallback((action: () => void | Promise<void>) => {
     setWorkspaceMenuOpen(false);
@@ -4050,6 +4085,15 @@ export function ChatInput({
                     className="codex-composer-menu codex-composer-menu--model codex-execution-settings"
                     data-testid="chat-model-picker-menu"
                   >
+                    <div className="flex gap-1 p-2" data-testid="chat-model-scope-selector">
+                      {(['turn', 'session', 'persistent'] as const).map((scope) => (
+                        <button key={scope} type="button" data-testid={`chat-model-scope-${scope}`} aria-pressed={modelScope === scope}
+                          className={cn('rounded-md px-2 py-1 text-xs hover:bg-black/5 dark:hover:bg-white/10', modelScope === scope && 'bg-black/5 dark:bg-white/10')}
+                          onClick={() => { setModelScope(scope); setExecutionSettingsSection('model'); }}>
+                          {t(`composer.modelScope.${scope}`)}
+                        </button>
+                      ))}
+                    </div>
                     <button
                       type="button"
                       className="codex-execution-settings__row"

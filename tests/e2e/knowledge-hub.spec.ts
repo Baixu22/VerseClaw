@@ -618,6 +618,9 @@ test.describe('Knowledge Hub MVP', () => {
     await page.getByRole('button', { name: /Initialize/ }).click();
     await expect(page.getByText(/Knowledge vault initialized/)).toBeVisible();
 
+    // Moving away releases Sonner's hover pause before opening the menu beneath it.
+    await page.mouse.move(0, 0);
+    await expect(page.locator('[data-sonner-toast]')).toHaveCount(0, { timeout: 10_000 });
     await page.getByTestId('knowledge-more-actions').click();
     await page.getByRole('menuitem', { name: /Import Files/ }).click();
     await expect(page.getByText(/Knowledge imported/)).toBeVisible();

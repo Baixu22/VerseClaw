@@ -19,7 +19,11 @@ import {
   type ChatModelAdapter,
   type SuggestionConfig,
 } from '@assistant-ui/react';
-import type { KnowledgeErrorGuardAdvisory, KnowledgeErrorGuardSignal, SessionHandoffResult, SessionCompactionStatus } from '@shared/host-api/contract';
+import type { KnowledgeErrorGuardAdvisory, KnowledgeErrorGuardSignal, SessionHandoffResult, SessionCompactionStatus, SessionCompressionArtifactResult } from '@shared/host-api/contract';
+import type { GitWorktree } from '@shared/types/git';
+import { ComposerGitStrip } from './ComposerGitStrip';
+const CheckpointsDialog = lazy(() => import('@/components/chat/CheckpointsDialog').then((m) => ({ default: m.CheckpointsDialog })));
+const CompactionArtifactViewer = lazy(() => import('./CompactionArtifactViewer').then((m) => ({ default: m.CompactionArtifactViewer })));
 import type { LongTaskControlStatus } from '@shared/types/long-task-control';
 import { classifySessionActivity, retainRecentSessionActivity } from '@shared/types/session-activity';
 import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
@@ -390,6 +394,7 @@ function ProjectSessionHeader({
   renameSession,
   onHandoffSession,
   onForkSession,
+  onCheckpoints,
   forkDisabled,
   forkBusy,
   handoffDisabled,
@@ -418,6 +423,7 @@ function ProjectSessionHeader({
   renameSession: (key: string, label: string) => Promise<void>;
   onHandoffSession: () => void | Promise<void>;
   onForkSession: () => void | Promise<void>;
+  onCheckpoints: () => void;
   forkDisabled?: boolean;
   forkBusy?: boolean;
   handoffDisabled?: boolean;
@@ -636,6 +642,16 @@ function ProjectSessionHeader({
             >
               <Pencil className="h-4 w-4" />
               {t('session.renameCurrent')}
+            </button>
+            <button
+              type="button"
+              className="codex-header-menu__item codex-header-menu__item--muted"
+              data-testid="chat-session-checkpoints"
+              disabled={sending || pendingFinal}
+              onClick={() => { setOpen(null); onCheckpoints(); }}
+            >
+              <ListChecks className="h-4 w-4" />
+              {t('checkpoints.title')}
             </button>
             <button
               type="button"
@@ -990,6 +1006,31 @@ export function Chat() {
     return () => observer?.disconnect();
   }, [currentSessionKey, panelOpen, setArtifactPanelExpanded, setTerminalPlacement]);
   const [compactionStatus, setCompactionStatus] = useState<SessionCompactionStatus | null>(null);
+  const uiDepthMode = useSettingsStore((s) => s.uiDepthMode);
+  const [checkpointsOpen, setCheckpointsOpen] = useState(false);
+  const [compressionEvidence, setCompressionEvidence] = useState<SessionCompressionArtifactResult | null>(null);
+  const [compressionLoading, setCompressionLoading] = useState(false);
+  const compressionRequestRef = useRef(0);
+  useEffect(() => {
+    compressionRequestRef.current++;
+    setCheckpointsOpen(false);
+    setCompressionEvidence(null);
+    setCompressionLoading(false);
+  }, [currentSessionKey]);
+  const handleViewCompression = async () => {
+    const request = ++compressionRequestRef.current;
+    setCompressionLoading(true);
+    try {
+      const result = await hostApi.sessions.compressionArtifact({ sessionKey: currentSessionKey, agentId: currentAgentId });
+      if (request !== compressionRequestRef.current) return;
+      if (!result.success) throw new Error(result.error || t('composer.compaction.artifactViewer.loadFailed'));
+      setCompressionEvidence(result);
+    } catch (error) {
+      if (request === compressionRequestRef.current) toastUserError(error, { fallback: t('composer.compaction.artifactViewer.loadFailed') });
+    } finally {
+      if (request === compressionRequestRef.current) setCompressionLoading(false);
+    }
+  };
   const [compactionBusy, setCompactionBusy] = useState(false);
   const [longTaskControlStatus, setLongTaskControlStatus] = useState<LongTaskControlStatus | null>(null);
   const [queueDrainBusy, setQueueDrainBusy] = useState(false);
@@ -1230,6 +1271,12 @@ export function Chat() {
       toast.error(t('workspace.switchFailed', { error: errorMessageFrom(error) }));
     }
   }, [createWorkspace, currentAgentId, currentSessionKey, handleSwitchWorkspace, persistCurrentWorkspaceSessionState, resetSessionView, t, workspaceProfiles]);
+  const handleSwitchWorktreeWorkspace = async (worktree: GitWorktree) => {
+    await persistCurrentWorkspaceSessionState({ activeSessionKey: currentSessionKey, sessionKey: currentSessionKey });
+    const existing = workspaceProfiles.find((profile) => normalizeComparablePath(profile.rootPath) === normalizeComparablePath(worktree.path));
+    const profile = existing ?? await createWorkspace({ rootPath: worktree.path, name: basenameFromPath(worktree.path), agentId: currentAgentId });
+    if (profile) await handleSwitchWorkspace(profile.id);
+  };
   useEffect(() => {
     const previousSessionKey = lastObservedSessionKeyRef.current;
     if (previousSessionKey !== currentSessionKey) {
@@ -3085,6 +3132,7 @@ export function Chat() {
                 switchSession={switchSession}
                 renameSession={renameSession}
                 onForkSession={handleForkSession}
+                onCheckpoints={() => setCheckpointsOpen(true)}
                 forkDisabled={forkDisabled}
                 forkBusy={forkBusy}
                 onHandoffSession={handlePrepareHandoff}
@@ -3534,6 +3582,18 @@ export function Chat() {
       )}
 
       {/* Input Area */}
+      {uiDepthMode === 'advanced' && compactionStatus?.lastCompaction && (
+        <div className="relative mx-auto flex w-full max-w-4xl justify-end px-4">
+          <Button variant="ghost" size="sm" data-testid="chat-compaction-view-artifact" disabled={compressionLoading} onClick={() => void handleViewCompression()}>
+            {t('composer.compaction.viewEvidence')}
+          </Button>
+        </div>
+      )}
+      {activeWorkspace && (
+        <div className="relative mx-auto w-full max-w-4xl px-4">
+          <ComposerGitStrip workspace={activeWorkspace} disabled={inputRunActive} onOpenGitPanel={handleOpenEnvironment} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} />
+        </div>
+      )}
       <ChatInput
         onSend={handleSendMessage}
         disabled={!isGatewayRunning}
@@ -3595,6 +3655,17 @@ export function Chat() {
           <div className="codex-welcome-tail-spacer" aria-hidden="true" />
         </>
       )}
+      <Suspense fallback={null}>
+        {checkpointsOpen && <CheckpointsDialog open onOpenChange={setCheckpointsOpen} sessionKey={currentSessionKey} agentId={currentAgentId} />}
+        {compressionEvidence && <CompactionArtifactViewer
+          open onOpenChange={(open) => { if (!open) setCompressionEvidence(null); }}
+          sessionKey={currentSessionKey} checkpointId={compressionEvidence.checkpointId}
+          artifact={compressionEvidence.artifact} warnings={compressionEvidence.warnings}
+          onPrepareRecovery={() => { setCompressionEvidence(null); void handlePrepareHandoff(); }}
+          onForkSession={() => { setCompressionEvidence(null); void handleForkSession(); }}
+          prepareRecoveryBusy={handoffBusy} forkBusy={forkBusy}
+        />}
+      </Suspense>
       <Dialog open={handoffDialogOpen} onOpenChange={setHandoffDialogOpen}>
         <DialogContent
           className="max-w-3xl rounded-lg border border-black/10 bg-surface-modal p-5 shadow-xl dark:border-white/10"

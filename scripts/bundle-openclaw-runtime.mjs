@@ -209,47 +209,20 @@ echo`   Source files copied.`;
 
 // === 4. BFS dependency collection from runtime's own pnpm virtual store ===
 const runtimeNM = path.join(RUNTIME_ROOT, 'node_modules');
-const runtimePnpmRoot = path.join(runtimeNM, '.pnpm');
-
-// G2 FIX: Try to find the workspace root's virtual-store entry.
-// In typical pnpm workspaces, the root package gets a .pnpm/<name>@<ver>/ entry.
-// If not found, fall back to seeding from the workspace's top-level node_modules.
-let workspaceVStoreEntry = null;
-const workspaceVStorePattern = `${RUNTIME_PKG_NAME}@`;
-
-if (fs.existsSync(runtimePnpmRoot)) {
-  const pnpmEntries = fs.readdirSync(runtimePnpmRoot);
-  workspaceVStoreEntry = pnpmEntries.find(e => {
-    // Match exactly: starts with "openclaw@" followed by a version
-    // e.g. "openclaw@2026.5.28" or "openclaw@2026.5.28_<hash>"
-    return e.startsWith(workspaceVStorePattern);
-  });
-}
-
+// Seed from this workspace's installed dependencies, not a similarly named
+// published openclaw package that happens to live in its virtual store.
 const collected = new Map(); // realPath -> packageName
-let queue = [];
-
-if (workspaceVStoreEntry) {
-  const workspaceNM = path.join(runtimePnpmRoot, workspaceVStoreEntry, 'node_modules');
-  echo`   Seeding BFS from virtual store: .pnpm/${workspaceVStoreEntry}/node_modules`;
-  queue.push({ nodeModulesDir: workspaceNM, skipPkg: RUNTIME_PKG_NAME });
-} else {
-  // G2 fallback: seed from workspace's top-level node_modules directory.
-  // List all symlinked packages visible from the workspace root and push
-  // each package's virtual-store node_modules into the queue.
-  echo`   ⚠️  Workspace root not in .pnpm/ (G2 fallback). Seeding from top-level node_modules...`;
-  const topLevelPackages = listPackages(runtimeNM);
-  for (const { name, fullPath } of topLevelPackages) {
-    let realPath;
-    try { realPath = fs.realpathSync(fullPath); } catch { continue; }
-    if (collected.has(realPath)) continue;
-    collected.set(realPath, name);
-
-    const depVirtualNM = getVirtualStoreNodeModules(realPath);
-    if (depVirtualNM) {
-      queue.push({ nodeModulesDir: depVirtualNM, skipPkg: name });
-    }
+const queue = [];
+for (const name of listPackageDeps(runtimePkg)) {
+  const fullPath = path.join(runtimeNM, name);
+  if (!fs.existsSync(fullPath)) {
+    if (name in (runtimePkg.optionalDependencies ?? {})) continue;
+    throw new Error('Missing runtime dependency: ' + name);
   }
+  const realPath = fs.realpathSync(fullPath);
+  collected.set(realPath, name);
+  const depVirtualNM = getVirtualStoreNodeModules(realPath);
+  if (depVirtualNM) queue.push({ nodeModulesDir: depVirtualNM, skipPkg: name });
 }
 
 let skippedDevCount = 0;

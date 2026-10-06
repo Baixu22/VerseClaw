@@ -112,10 +112,6 @@ export function Models({ embedded = false }: { embedded?: boolean } = {}) {
   }, []);
 
   useEffect(() => {
-    if (!isGatewayRunning) {
-      return;
-    }
-
     const requestRefresh = () => {
       if (usageFetchStatusRef.current === 'loading') return;
       if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return;
@@ -148,11 +144,8 @@ export function Models({ embedded = false }: { embedded?: boolean } = {}) {
       usageFetchTimerRef.current = null;
     }
 
-    if (!isGatewayRunning) {
-      dispatchFetch({ type: 'reset' });
-      return;
-    }
-
+    // Usage history is read from local transcripts by Main and remains
+    // available when the Gateway is stopped or no provider is configured.
     dispatchFetch({ type: 'start' });
     const generation = usageFetchGenerationRef.current + 1;
     usageFetchGenerationRef.current = generation;
@@ -254,14 +247,10 @@ export function Models({ embedded = false }: { embedded?: boolean } = {}) {
     };
   }, [isGatewayRunning, gatewayStatus.connectedAt, gatewayStatus.pid, usageFetchMaxAttempts, usageRefreshNonce]);
 
-  const usageHistory = isGatewayRunning
-    ? fetchState.data.filter((entry) => !shouldHideUsageEntry(entry))
-    : [];
-  const stableUsageHistory = isGatewayRunning
-    ? fetchState.stableData.filter((entry) => !shouldHideUsageEntry(entry))
-    : [];
+  const usageHistory = fetchState.data.filter((entry) => !shouldHideUsageEntry(entry));
+  const stableUsageHistory = fetchState.stableData.filter((entry) => !shouldHideUsageEntry(entry));
   const visibleUsageHistory = resolveVisibleUsageHistory(usageHistory, stableUsageHistory, {
-    preferStableOnEmpty: isGatewayRunning && fetchState.status === 'loading',
+    preferStableOnEmpty: fetchState.status === 'loading',
   });
   const filteredUsageHistory = filterUsageHistoryByWindow(visibleUsageHistory, usageWindow);
   const usageGroups = groupUsageHistory(filteredUsageHistory, usageGroupBy);
@@ -269,8 +258,8 @@ export function Models({ embedded = false }: { embedded?: boolean } = {}) {
   const usageTotalPages = Math.max(1, Math.ceil(filteredUsageHistory.length / usagePageSize));
   const safeUsagePage = Math.min(usagePage, usageTotalPages);
   const pagedUsageHistory = filteredUsageHistory.slice((safeUsagePage - 1) * usagePageSize, safeUsagePage * usagePageSize);
-  const usageLoading = isGatewayRunning && fetchState.status === 'loading' && visibleUsageHistory.length === 0;
-  const usageRefreshing = isGatewayRunning && fetchState.status === 'loading' && visibleUsageHistory.length > 0;
+  const usageLoading = fetchState.status === 'loading' && visibleUsageHistory.length === 0;
+  const usageRefreshing = fetchState.status === 'loading' && visibleUsageHistory.length > 0;
 
   return (
     <div

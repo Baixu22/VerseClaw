@@ -169,13 +169,7 @@ async function installComposerGitMocks(app: Parameters<typeof installIpcMocks>[0
 }
 
 test.describe('Chat composer Git strip', () => {
-  // SKIP (2026-09-20): ComposerGitStrip (src/pages/Chat/ComposerGitStrip.tsx) is an orphan
-  // component — never imported/rendered in ChatInput.tsx or Chat/index.tsx, so composer-git-strip
-  // never appears. Audit reports/frontend-render-audit-20260810.md:283 marks it "未接线". NOTE:
-  // harness/specs/tasks/git-github-worktree-agent-tools.md:31-32 requires it to render when the
-  // active workspace is a repo — so this is a wiring gap, not a dead feature. Un-skip after wiring
-  // <ComposerGitStrip> into the composer (gated on git.status().isRepository).
-  test.skip('shows repository context and routes branch/worktree actions through host APIs', async ({ launchElectronApp }) => {
+  test('shows repository context and routes branch/worktree actions through host APIs', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -199,6 +193,11 @@ test.describe('Chat composer Git strip', () => {
       await page.getByTestId('composer-git-trigger').click();
       const menu = page.getByTestId('composer-git-menu');
       await expect(menu).toBeVisible();
+      const menuBounds = await page.getByTestId('composer-git-menu').boundingBox();
+      expect(menuBounds).toBeTruthy();
+      expect(menuBounds!.y).toBeGreaterThanOrEqual(0);
+      expect(menuBounds!.y + menuBounds!.height).toBeLessThanOrEqual(820);
+      await page.screenshot({ path: testInfo.outputPath('git-menu.png') });
       await expect(menu).toContainText('Branches');
       await expect(menu).toContainText('Worktrees');
       await expect(menu).toContainText('demo-feature-existing · feature/existing · 456789a');

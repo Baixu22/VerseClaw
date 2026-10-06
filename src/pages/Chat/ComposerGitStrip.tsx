@@ -1,4 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useDismissOnOutside, usePopover } from '@/components/settings/primitives/usePopover';
+import { useOverlayPortalContainer } from '@/components/ui/overlay-portal';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
@@ -45,7 +48,10 @@ function sanitizeTestId(value: string): string {
 
 export function ComposerGitStrip({ workspace, disabled = false, onOpenGitPanel, onSwitchWorktreeWorkspace }: ComposerGitStripProps) {
   const { t } = useTranslation('chat');
-  const [open, setOpen] = useState(false);
+  const popover = usePopover<HTMLButtonElement>({ align: 'left', gap: 8 });
+  const { open, setOpen } = popover;
+  const overlayContainer = useOverlayPortalContainer();
+  useDismissOnOutside({ open, onDismiss: () => setOpen(false), refs: [popover.triggerRef, popover.layerRef] });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<GitRepositoryStatus | null>(null);
   const [branches, setBranches] = useState<GitBranchInfo[]>([]);
@@ -57,7 +63,6 @@ export function ComposerGitStrip({ workspace, disabled = false, onOpenGitPanel, 
   const [worktreeBranch, setWorktreeBranch] = useState('');
   const [worktreeStartPoint, setWorktreeStartPoint] = useState('');
   const [operationLoading, setOperationLoading] = useState<string | null>(null);
-  const rootRef = useRef<HTMLDivElement | null>(null);
 
   const refresh = useCallback(async () => {
     if (!workspace?.id) {
@@ -88,15 +93,6 @@ export function ComposerGitStrip({ workspace, disabled = false, onOpenGitPanel, 
   useEffect(() => {
     void refresh();
   }, [refresh]);
-
-  useEffect(() => {
-    if (!open) return;
-    const handlePointerDown = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
-    };
-    document.addEventListener('pointerdown', handlePointerDown);
-    return () => document.removeEventListener('pointerdown', handlePointerDown);
-  }, [open]);
 
   const currentWorktree = useMemo(
     () => worktrees.find((worktree) => pathEquals(worktree.path, status?.repoRoot) || pathEquals(worktree.path, status?.workspaceRoot)),
@@ -199,8 +195,9 @@ export function ComposerGitStrip({ workspace, disabled = false, onOpenGitPanel, 
   };
 
   return (
-    <div className="relative mt-1.5" ref={rootRef} data-testid="composer-git-strip">
+    <div className="relative mt-1.5" data-testid="composer-git-strip">
       <button
+        ref={popover.triggerRef}
         type="button"
         className={cn(
           'flex min-h-8 w-full min-w-0 items-center justify-between gap-2 rounded-lg border border-black/5 bg-surface-input px-2.5 py-1.5 text-left text-2xs transition-colors dark:border-white/10',
@@ -230,8 +227,8 @@ export function ComposerGitStrip({ workspace, disabled = false, onOpenGitPanel, 
         </span>
       </button>
 
-      {open && (
-        <div className="absolute left-0 bottom-full z-30 mb-2 grid max-h-[70vh] w-full min-w-0 gap-2 overflow-y-auto rounded-xl border border-black/10 bg-surface-modal p-2 shadow-xl dark:border-white/10 sm:min-w-[360px] sm:w-[520px]" data-testid="composer-git-menu">
+      {open && createPortal(
+        <div ref={popover.layerRef} style={popover.style} className="grid grid-cols-[minmax(0,1fr)] max-h-[calc(50vh-2rem)] w-[min(520px,calc(100vw-16px))] min-w-0 gap-2 overflow-y-auto rounded-xl border border-black/10 bg-surface-modal p-2 shadow-xl dark:border-white/10" data-testid="composer-git-menu">
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
               <p className="truncate text-xs font-medium text-foreground">{branchLabel}</p>
@@ -248,7 +245,7 @@ export function ComposerGitStrip({ workspace, disabled = false, onOpenGitPanel, 
             </div>
           </div>
 
-          <section className="rounded-lg border border-black/5 bg-background p-2 dark:border-white/10">
+          <section className="min-w-0 rounded-lg border border-black/5 bg-background p-2 dark:border-white/10">
             <div className="mb-2 flex items-center justify-between gap-2">
               <h3 className="text-2xs font-medium uppercase text-muted-foreground">{t('composer.git.branches')}</h3>
               <Badge variant="outline" className="px-1.5 py-0 text-2xs">{branches.length}</Badge>
@@ -278,7 +275,7 @@ export function ComposerGitStrip({ workspace, disabled = false, onOpenGitPanel, 
             </div>
           </section>
 
-          <section className="rounded-lg border border-black/5 bg-background p-2 dark:border-white/10">
+          <section className="min-w-0 rounded-lg border border-black/5 bg-background p-2 dark:border-white/10">
             <div className="mb-2 flex items-center justify-between gap-2">
               <h3 className="text-2xs font-medium uppercase text-muted-foreground">{t('composer.git.worktrees')}</h3>
               <Badge variant="outline" className="px-1.5 py-0 text-2xs">{worktrees.length}</Badge>
@@ -343,7 +340,7 @@ export function ComposerGitStrip({ workspace, disabled = false, onOpenGitPanel, 
               {t('composer.git.addWorktree')}
             </Button>
           </section>
-        </div>
+        </div>, overlayContainer ?? document.body
       )}
     </div>
   );

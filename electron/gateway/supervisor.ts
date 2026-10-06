@@ -25,28 +25,52 @@ export function warmupManagedPythonReadiness(): void {
 export async function terminateOwnedGatewayProcess(child: Electron.UtilityProcess): Promise<void> {
   const terminateWindowsProcessTree = async (pid: number): Promise<void> => {
     const cp = await import('child_process');
-    await new Promise<void>((resolve) => {
-      cp.exec(`taskkill /F /PID ${pid} /T`, { timeout: 5000, windowsHide: true }, () => resolve());
+    await new Promise<void>((resolve, reject) => {
+      cp.exec(`taskkill /F /PID ${pid} /T`, { timeout: 5000, windowsHide: true }, (error) => error ? reject(error) : resolve());
     });
   };
 
-  await new Promise<void>((resolve) => {
+  await new Promise<void>((resolve, reject) => {
     let exited = false;
+    let forced = false;
+    let timeout: ReturnType<typeof setTimeout>;
+    const forceTerminate = () => {
+      if (exited || forced) return;
+      forced = true;
+      clearTimeout(timeout);
+      // taskkill can stall when Windows process enumeration is unavailable.
+      // Electron owns a native process handle; keep ownership until it exits.
+      timeout = setTimeout(() => {
+        child.removeListener('exit', onExit);
+        reject(new Error(`Owned Gateway process did not exit (pid=${child.pid ?? 'unknown'})`));
+      }, 5000);
+      try {
+        if (process.platform !== 'win32' && child.pid) process.kill(child.pid, 'SIGKILL');
+        else child.kill();
+      } catch (error) {
+        clearTimeout(timeout);
+        child.removeListener('exit', onExit);
+        reject(error);
+      }
+    };
 
     // Register a single exit listener before any kill attempt to avoid
     // the race where exit fires between two separate `once('exit')` calls.
-    child.once('exit', () => {
+    const onExit = () => {
       exited = true;
       clearTimeout(timeout);
       resolve();
-    });
+    };
+    child.once('exit', onExit);
 
     const pid = child.pid;
     logger.info(`Sending kill to Gateway process (pid=${pid ?? 'unknown'})`);
+    timeout = setTimeout(forceTerminate, 5000);
 
     if (process.platform === 'win32' && pid) {
       void terminateWindowsProcessTree(pid).catch((err) => {
         logger.warn(`Windows process-tree kill failed for Gateway pid=${pid}:`, err);
+        forceTerminate();
       });
     } else {
       try {
@@ -56,25 +80,6 @@ export async function terminateOwnedGatewayProcess(child: Electron.UtilityProces
       }
     }
 
-    const timeout = setTimeout(() => {
-      if (!exited) {
-        logger.warn(`Gateway did not exit in time, force-killing (pid=${pid ?? 'unknown'})`);
-        if (pid) {
-          if (process.platform === 'win32') {
-            void terminateWindowsProcessTree(pid).catch((err) => {
-              logger.warn(`Forced Windows process-tree kill failed for Gateway pid=${pid}:`, err);
-            });
-          } else {
-            try {
-              process.kill(pid, 'SIGKILL');
-            } catch {
-              // ignore
-            }
-          }
-        }
-      }
-      resolve();
-    }, 5000);
   });
 }
 

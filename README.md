@@ -16,6 +16,8 @@ The desktop uses React, TypeScript and Vite. Editable OpenClaw runtime and plugi
 
 > **Current status:** this is an alpha project. Controlled Windows x64 workflows are the primary local acceptance target. macOS and Linux have build targets, with validation coverage specific to each platform and capability. Experimental features retain the activation conditions described below, in the [product semantics](docs/clawx-product-semantics.md) and in the [capability matrix](shared/capability-claims.ts).
 
+Chat provides checkpoint restore from the session menu, repository controls beside the composer, and per-message, per-session or persistent model selection. Advanced UI mode exposes compression evidence and recovery actions. Local token usage history remains available while the Gateway is stopped.
+
 <a id="screenshots"></a>
 
 ## Inside the app
