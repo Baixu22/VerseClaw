@@ -177,6 +177,10 @@ test.describe('Verse Claw chat skill trigger', () => {
       // The composer add-affordance now opens a compact morph (attach / knowledge
       // / model / more); the full grouped action menu is reached via "More".
       await page.getByTestId('chat-composer-actions').click();
+      await expect(page.getByTestId('chat-composer-morph')).toHaveAttribute('data-open', 'true');
+      await page.getByTestId('chat-composer-morph').evaluate(async (element) => {
+        await Promise.all(element.getAnimations({ subtree: true }).map((animation) => animation.finished.catch(() => {})));
+      });
       await page.getByTestId('chat-composer-action-more').click();
       await expect(page.getByTestId('chat-composer-actions-menu')).toBeVisible();
       await expect(page.getByTestId('chat-composer-action-group-context')).toBeVisible();
@@ -188,6 +192,10 @@ test.describe('Verse Claw chat skill trigger', () => {
       await page.getByTestId('chat-composer-input').fill('');
 
       await page.getByTestId('chat-composer-actions').click();
+      await expect(page.getByTestId('chat-composer-morph')).toHaveAttribute('data-open', 'true');
+      await page.getByTestId('chat-composer-morph').evaluate(async (element) => {
+        await Promise.all(element.getAnimations({ subtree: true }).map((animation) => animation.finished.catch(() => {})));
+      });
       await page.getByTestId('chat-composer-action-more').click();
       await page.getByTestId('chat-composer-action-office-word').click();
       await expect(page.getByTestId('chat-composer-input')).toHaveValue(/\/officecli-docx {2}.+/);
