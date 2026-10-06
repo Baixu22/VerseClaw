@@ -23,6 +23,11 @@ requiredProfiles:
   - fast
   - comms
 touchedAreas:
+  - artifacts/agent-dev-deep-test/history.json
+  - artifacts/agent-dev-deep-test/report.json
+  - artifacts/agent-dev-deep-test/report.md
+  - artifacts/agent-dev-quality/report.json
+  - artifacts/agent-dev-workbench/evidence.json
   - pnpm-lock.yaml
   - scripts/repository-artifacts.json
   - artifacts/uas-06-single-local-exec-canary/live-observations.json
@@ -83,6 +88,7 @@ touchedAreas:
   - tests/e2e/chat-model-picker.spec.ts
   - tests/e2e/chat-assistant-rendering-visual.spec.ts
   - tests/e2e/chat-skill-trigger-i18n.spec.ts
+  - tests/e2e/chat-manual-compaction.spec.ts
   - tests/e2e/token-usage.spec.ts
   - tests/e2e/fakecoding-scheduled-browser-runs.spec.ts
   - tests/e2e/knowledge-hub.spec.ts

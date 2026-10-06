@@ -154,13 +154,16 @@ test.describe('Verse Claw chat manual compaction', () => {
       }, MAIN_SESSION_KEY);
 
       const page = await getStableWindow(app);
-      await page.waitForLoadState('domcontentloaded');
+      // Discard status requests started before the Host API fixture was installed.
+      await page.reload();
 
       // The composer compact icon was removed; the slash palette is the entry
       // point now (see tests/unit/chat-input.test.tsx). Open the dialog via /compact.
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
       await page.getByTestId('chat-composer-input').fill('/compact');
-      await page.getByTestId('chat-slash-command-option-compact').click();
+      const compact = page.getByTestId('chat-slash-command-option-compact');
+      await expect(compact).toContainText('64k / 128k tokens');
+      await compact.click();
       await expect(page.getByTestId('chat-compaction-dialog')).toBeVisible();
       await page.getByTestId('chat-compaction-instructions').fill('Keep the deployment decision.');
       await expect(page.getByTestId('chat-compaction-confirm')).toBeEnabled();
