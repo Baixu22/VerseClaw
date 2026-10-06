@@ -23,6 +23,7 @@ extraResources:
       - "!bin/**"
       - "!verseshell/**"
       - "!screenshot/**"
+      - "!verseshell-mcp/node_modules/**"
   # VerseShell AGPL compliance/provenance payload. The binary itself is copied
   # by the target-specific win.extraResources mapping below.
   - from: resources/verseshell/
