@@ -23,6 +23,10 @@ requiredProfiles:
   - fast
   - comms
 touchedAreas:
+  - pnpm-lock.yaml
+  - scripts/repository-artifacts.json
+  - artifacts/uas-06-single-local-exec-canary/live-observations.json
+  - artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/human-verdict.yaml
   - scripts/bundle-main-runtime.mjs
   - package.json
   - openclaw_runtime/src/auto-reply/reply/get-reply.ts

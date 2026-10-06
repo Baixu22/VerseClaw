@@ -46,3 +46,6 @@ artifacts/runtime-test-integrity/SHA256SUMS -text whitespace=blank-at-eol,blank-
 
 # Current desktop acceptance evidence is byte-addressed on every checkout.
 artifacts/desktop-acceptance-followups/* -text
+# Historical curated inputs retain their original bytes; they are not new verdicts.
+artifacts/uas-06-single-local-exec-canary/live-observations.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/human-verdict.yaml -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
