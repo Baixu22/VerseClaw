@@ -81,6 +81,8 @@ touchedAreas:
   - tests/e2e/compaction-artifact-viewer.spec.ts
   - tests/e2e/chat-model-picker-tiers.spec.ts
   - tests/e2e/chat-model-picker.spec.ts
+  - tests/e2e/chat-assistant-rendering-visual.spec.ts
+  - tests/e2e/chat-skill-trigger-i18n.spec.ts
   - tests/e2e/token-usage.spec.ts
   - tests/e2e/fakecoding-scheduled-browser-runs.spec.ts
   - tests/e2e/knowledge-hub.spec.ts

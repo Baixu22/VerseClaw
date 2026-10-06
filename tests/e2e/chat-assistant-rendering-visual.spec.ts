@@ -248,6 +248,9 @@ test.describe('Verse Claw assistant-style rendering layer', () => {
       const pinCapture = async (width: number, height: number) => {
         await pinWindowContentSize(app, { width, height });
         await page.setViewportSize({ width, height });
+        // Native cursor position survives Electron windows; keep hover-only
+        // timestamps/actions out of the baseline before checking layout stability.
+        await page.mouse.move(0, 0);
         let previous = '';
         for (let attempt = 0; attempt < 50; attempt += 1) {
           const current = await page.evaluate(() => {
