@@ -6,6 +6,11 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 diffBase: 8143c48a316ff191805e027119e145f461c60314
 intent: Complete TF-0255 through TF-0258 using current agent-driven evidence, preserving product locks and existing budgets.
+expectedUserBehavior:
+  - The Windows delivery starts with its own locked runtime and MCP dependencies after relocation.
+  - Approvals, delivery and restart recovery preserve real run and receipt identities.
+  - Startup stays within the existing budget while chat, math and session controls remain usable.
+  - Checkpoints, Git controls, compression evidence and model scope selection have working desktop entries; token history remains visible offline.
 scenarios:
   - gateway-backend-communication
 requiredRules:
