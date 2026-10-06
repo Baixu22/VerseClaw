@@ -16,6 +16,8 @@ Verse Claw 是基于 OpenClaw 的 Electron 桌面应用：在对话中发起工�
 
 > **当前状态：** 项目处于 alpha 阶段，本地验收重点是受控的 Windows x64 工作流。macOS、Linux 有构建目标，验证覆盖按具体平台和能力区分。实验能力的启用条件见下文，以及[产品语义](docs/clawx-product-semantics.md)和[能力矩阵](shared/capability-claims.ts)。
 
+对话支持从会话菜单恢复检查点、在输入区查看和操作 Git，以及为单条消息、当前会话或长期配置选择模型。高级界面模式提供压缩证据和恢复入口。Gateway 停止时仍可查看本地 Token 用量历史。
+
 <a id="screenshots"></a>
 
 ## 真实界面

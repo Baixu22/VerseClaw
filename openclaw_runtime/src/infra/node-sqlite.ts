@@ -64,8 +64,9 @@ export function closeTrackedSqliteHandlesUnder(rootPath: string): number {
   return closed;
 }
 
-function installSqliteDiagnostics(sqlite: typeof import("node:sqlite")):
-  typeof import("node:sqlite") {
+function installSqliteDiagnostics(
+  sqlite: typeof import("node:sqlite"),
+): typeof import("node:sqlite") {
   const moduleRecord = sqlite as typeof sqlite & {
     [SQLITE_DIAGNOSTICS_KEY]?: boolean;
   };
@@ -77,9 +78,15 @@ function installSqliteDiagnostics(sqlite: typeof import("node:sqlite")):
   const OriginalDatabaseSync = sqlite.DatabaseSync;
   class TrackedDatabaseSync extends OriginalDatabaseSync {
     constructor(...args: ConstructorParameters<typeof OriginalDatabaseSync>) {
+      // SQLite's Windows VFS needs the extended prefix for deep profile paths.
+      // Keep SQLite's in-memory/temporary sentinels and diagnostic identity intact.
+      const filename = args[0];
+      if (typeof filename === "string" && filename !== ":memory:" && filename !== "") {
+        args[0] = path.toNamespacedPath(filename);
+      }
       super(...args);
       const record: SqliteDiagnosticRecord = {
-        path: String(args[0] ?? ""),
+        path: String(filename ?? ""),
         createdStack: diagnosticsEnabled ? new Error().stack : undefined,
       };
       if (diagnosticsEnabled) {

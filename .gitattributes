@@ -43,3 +43,6 @@ openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/** -text
 artifacts/runtime-test-integrity/report.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 artifacts/runtime-test-integrity/credential-scan.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 artifacts/runtime-test-integrity/SHA256SUMS -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Current desktop acceptance evidence is byte-addressed on every checkout.
+artifacts/desktop-acceptance-followups/* -text

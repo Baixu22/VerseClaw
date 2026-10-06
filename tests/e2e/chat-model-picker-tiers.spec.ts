@@ -9,12 +9,7 @@ const betaModelRef = 'custom-beta5678/provider/model-beta';
  * and `hostApi.sessions.patchRuntimeModel` are captured without requiring a real Gateway.
  */
 test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
-  // SKIP (2026-09-20): the turn/session/persistent model-scope selector this test drives
-  // was never built — no chat-model-scope-* controls in src/ (git log -S "chat-model-scope"
-  // is empty), pendingTurnModelRef is only ever cleared, the send payload carries
-  // modelRefOverride (not modelRef), and sessions.patchRuntimeModel is never called. Only
-  // persistent-tier switching ships. Un-skip when the tiered scope selector is implemented.
-  test.skip('turn scope: sets chip and forwards modelRef in send payload', async ({ launchElectronApp }) => {
+  test('turn scope: sets chip and forwards modelRef in send payload', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -91,10 +86,10 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
             const params = body?.params ?? null;
             hostRequests.push({ path: `gateway:${method}`, method: 'RPC', body: params });
             if (method === 'sessions.list') {
-              return makeResponse(request.id, { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] } });
+              return makeResponse(request.id, { sessions: [{ key: 'agent:main:main', displayName: 'main' }] });
             }
             if (method === 'chat.history') {
-              return makeResponse(request.id, { success: true, result: { messages: [] } });
+              return makeResponse(request.id, { messages: [] });
             }
             return makeResponse(request.id, { success: true, result: {} });
           }
@@ -200,9 +195,7 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
     }
   });
 
-  // SKIP (2026-09-20): same unbuilt tiered model-scope selector as the turn-scope test above.
-  // Un-skip when session-scope switching (sessions.patchRuntimeModel wiring) is implemented.
-  test.skip('session scope: calls sessions.patchRuntimeModel with modelRef', async ({ launchElectronApp }) => {
+  test('session scope: calls sessions.patchRuntimeModel with modelRef', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -249,7 +242,7 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
         ipcMain.handle('gateway:rpc', async (_event: unknown, method: string, params: unknown) => {
           hostRequests.push({ path: `gateway:${method}`, method: 'RPC', body: params ?? null });
           if (method === 'sessions.list') {
-            return { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] } };
+            return { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main', modelProvider: 'custom-beta5678', model: 'provider/model-beta' }] } };
           }
           if (method === 'chat.history') {
             return { success: true, result: { messages: [] } };
@@ -279,10 +272,10 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
             const params = body?.params ?? null;
             hostRequests.push({ path: `gateway:${method}`, method: 'RPC', body: params });
             if (method === 'sessions.list') {
-              return makeResponse(request.id, { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'main' }] } });
+              return makeResponse(request.id, { sessions: [{ key: 'agent:main:main', displayName: 'main', modelProvider: 'custom-beta5678', model: 'provider/model-beta' }] });
             }
             if (method === 'chat.history') {
-              return makeResponse(request.id, { success: true, result: { messages: [] } });
+              return makeResponse(request.id, { messages: [] });
             }
             return makeResponse(request.id, { success: true, result: {} });
           }
@@ -352,6 +345,13 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
         win?.webContents.send('gateway:status-changed', { state: 'running', port: 18789, pid: 12345, gatewayReady: true });
       });
 
+      await expect(page.getByTestId('chat-model-picker-button')).toContainText('provider/model-beta');
+      // Re-selecting the existing persistent default must settle optimistic state.
+      await page.getByTestId('chat-model-picker-button').click();
+      await page.getByTestId('chat-model-scope-persistent').click();
+      await page.getByTestId('chat-model-options').getByRole('button', { name: 'model-alpha', exact: true }).click();
+      await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-alpha');
+
       // Open the model picker
       await page.getByTestId('chat-model-picker-button').click();
       await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
@@ -362,6 +362,8 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
       // Select the beta model
       await page.getByTestId('chat-model-picker-menu').getByRole('button', { name: 'provider/model-beta' }).click();
 
+      await expect(page.getByTestId('chat-model-picker-button')).toContainText('provider/model-beta');
+
       // Verify sessions.patchRuntimeModel was called with the model override
       const patchParams = await app.evaluate(() =>
         (globalThis as typeof globalThis & { __area2SessionPatchParams?: unknown }).__area2SessionPatchParams
@@ -371,12 +373,23 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
         modelRef: betaModelRef,
       });
 
-      // Verify no persistent model update was written (session tier must not
+      // Verify no additional persistent model update was written (session tier must not
       // touch Agent.modelRef — Area 2 §3.3).
       const requests = await app.evaluate(() =>
         (globalThis as typeof globalThis & { __chatModelPickerTiersRequests?: Array<{ path: string; method: string; body: unknown }> }).__chatModelPickerTiersRequests ?? []
       );
-      expect(requests.some((r) => r.path === '/api/agents/main/model')).toBe(false);
+      expect(requests.filter((r) => r.path === '/api/agents/main/model')).toHaveLength(1);
+
+      // Promoting the same currently selected session model still changes scope.
+      await page.getByTestId('chat-model-picker-button').click();
+      await page.getByTestId('chat-model-scope-persistent').click();
+      await page.getByTestId('chat-model-options').getByRole('button', { name: 'provider/model-beta' }).click();
+      await expect.poll(() => app.evaluate(() => (
+        (globalThis as typeof globalThis & { __chatModelPickerTiersRequests?: Array<{ path: string }> }).__chatModelPickerTiersRequests ?? []
+      ).filter((request) => request.path === '/api/agents/main/model').length)).toBe(2);
+      await expect.poll(() => app.evaluate(() => (
+        (globalThis as typeof globalThis & { __area2SessionPatchParams?: unknown }).__area2SessionPatchParams
+      ))).toMatchObject({ sessionKey: 'agent:main:main', modelRef: null });
     } finally {
       await closeElectronApp(app);
     }

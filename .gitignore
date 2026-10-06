@@ -335,3 +335,8 @@ artifacts/project-closeout-20261005/*
 !artifacts/project-closeout-20261005/report.json
 !artifacts/project-closeout-20261005/credential-scan.json
 !artifacts/project-closeout-20261005/SHA256SUMS
+!artifacts/desktop-acceptance-followups/
+artifacts/desktop-acceptance-followups/*
+!artifacts/desktop-acceptance-followups/report.json
+!artifacts/desktop-acceptance-followups/credential-scan.json
+!artifacts/desktop-acceptance-followups/SHA256SUMS

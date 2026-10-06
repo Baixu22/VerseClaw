@@ -111,6 +111,24 @@ describe('gateway supervisor process cleanup', () => {
     expect(child.kill).toHaveBeenCalledTimes(1);
   });
 
+  it('uses the owned native handle when Windows taskkill fails and waits for exit', async () => {
+    setPlatform('win32');
+    const child = new MockUtilityChild(4321);
+    mockExec.mockImplementation((_cmd: string, _opts: object, cb: (error: Error) => void) => {
+      cb(new Error('process enumeration timed out'));
+      return {} as never;
+    });
+    const { terminateOwnedGatewayProcess } = await import('@electron/gateway/supervisor');
+    let resolved = false;
+    const stopped = terminateOwnedGatewayProcess(child as unknown as Electron.UtilityProcess).then(() => { resolved = true; });
+    await vi.waitFor(() => expect(child.kill).toHaveBeenCalledOnce());
+    expect(resolved).toBe(false);
+    child.emit('exit', 0);
+    await stopped;
+    expect(resolved).toBe(true);
+    expect(mockExec).toHaveBeenCalledOnce();
+  });
+
   it('waits for port release after orphan cleanup on Windows', async () => {
     setPlatform('win32');
     const { findExistingGatewayProcess } = await import('@electron/gateway/supervisor');

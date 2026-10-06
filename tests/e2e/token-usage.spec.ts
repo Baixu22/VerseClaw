@@ -141,11 +141,7 @@ test.describe('Verse Claw token usage history', () => {
     expect(nonzeroEntry?.provider).toBe('kimi');
   });
 
-  // TODO: This test needs a reliable way to inject mocked gateway status into
-  // the renderer's Zustand store in CI (where no real OpenClaw runtime exists).
-  // The IPC mock + page.reload approach fails because the reload
-  // re-triggers setup flow. Skipping until we add an E2E-aware store hook.
-  test.skip('hides gateway internal usage rows from the usage list overview', async ({ page, homeDir }) => {
+  test('hides gateway internal usage rows from the usage list overview', async ({ page, homeDir }) => {
     await seedTokenUsageTranscripts(homeDir);
     await completeSetup(page);
     await validateUsageHistory(page);

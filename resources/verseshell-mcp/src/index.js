@@ -821,7 +821,7 @@ async function main() {
   );
 
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools: TOOLS,
+      tools: TOOLS.map(({ parameters, ...tool }) => ({ ...tool, inputSchema: parameters })),
   }));
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {

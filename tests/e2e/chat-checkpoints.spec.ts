@@ -15,6 +15,7 @@ function stableStringify(value: unknown): string {
 function checkpointPayload() {
   return {
     sessionKey: SESSION_KEY,
+    agentId: 'main',
     limit: 20,
   };
 }
@@ -100,6 +101,7 @@ function baseHostApiMocks() {
     },
     [stableStringify(['sessions', 'restoreCheckpoint', {
       sessionKey: SESSION_KEY,
+      agentId: 'main',
       checkpointId: CHECKPOINT_ID,
     }])]: {
       success: true,
@@ -111,6 +113,7 @@ function baseHostApiMocks() {
     },
     [stableStringify(['sessions', 'checkpointDiff', {
       sessionKey: SESSION_KEY,
+      agentId: 'main',
       checkpointId: CHECKPOINT_ID,
     }])]: {
       success: true,
@@ -128,12 +131,7 @@ function baseHostApiMocks() {
   };
 }
 
-// SKIP (2026-09-20): CheckpointsDialog (src/components/chat/CheckpointsDialog.tsx) is fully
-// implemented but orphaned — imported/rendered nowhere, the chat-session-checkpoints trigger
-// is absent, and resumeCheckpoints/restoreCheckpoint/checkpointDiff are called only by the dead
-// dialog. It was unwired at commit a4fa9036a ("long-task intervention UI"); the replacement
-// chat-long-task-intervention is a status label only. Un-skip when the dialog is re-wired.
-test.skip('checkpoints dialog lists and restores a session checkpoint', async ({ launchElectronApp }) => {
+test('checkpoints dialog lists and restores a session checkpoint', async ({ launchElectronApp }) => {
   const app = await launchElectronApp({ skipSetup: true });
   await installIpcMocks(app, {
     gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
@@ -168,10 +166,7 @@ test.skip('checkpoints dialog lists and restores a session checkpoint', async ({
     await expect(page.getByText('Implement the checkpoint restore flow.')).toBeVisible({ timeout: 30_000 });
     await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
     await expect(page.getByTestId('chat-session-checkpoints')).toBeVisible({ timeout: 30_000 });
-    // The absolute-positioned menu overlaps the scroll container; dispatch a
-    // native click to bypass pointer-events interception (same as menu items
-    // in other chat specs, which assert visibility only).
-    await page.getByTestId('chat-session-checkpoints').dispatchEvent('click');
+    await page.getByTestId('chat-session-checkpoints').click();
 
     // Dialog lists the checkpoint with its summary.
     await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });

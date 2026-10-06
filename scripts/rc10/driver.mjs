@@ -13,7 +13,7 @@
 import { createRequire } from 'node:module';
 import { mkdir, writeFile, readFile, readdir, cp, stat, rm } from 'node:fs/promises';
 import { appendFileSync } from 'node:fs';
-import { join, resolve, dirname } from 'node:path';
+import { join, resolve, dirname, toNamespacedPath } from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 import net from 'node:net';
@@ -415,7 +415,7 @@ try {
   for (const dbPath of dbCandidates) {
     let db;
     try {
-      db = new DatabaseSync(dbPath, { readOnly: true });
+      db = new DatabaseSync(toNamespacedPath(dbPath), { readOnly: true });
     } catch {
       continue;
     }

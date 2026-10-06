@@ -4,6 +4,7 @@ import { createInterface } from "node:readline";
 import { spawn } from "node:child_process";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { ListToolsResultSchema } from "@modelcontextprotocol/sdk/types.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -54,6 +55,7 @@ test("product startup smoke is usable without runtime capabilities", async () =>
     send(server.child, { jsonrpc: "2.0", method: "notifications/initialized", params: {} });
     send(server.child, { jsonrpc: "2.0", id: 2, method: "tools/list", params: {} });
     const listed = await nextJson(server);
+    ListToolsResultSchema.parse(listed.result);
     assert.deepEqual(listed.result.tools.map((tool) => tool.name), ["verseshell_health"]);
     send(server.child, {
       jsonrpc: "2.0",

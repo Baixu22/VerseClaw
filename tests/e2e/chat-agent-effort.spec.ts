@@ -159,7 +159,7 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       // Open the shared menu directly to its reasoning section.
       await effortButton.click();
       await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
-      await expect(page.getByTestId('chat-model-scope-selector')).toHaveCount(0);
+      await expect(page.getByTestId('chat-model-scope-selector')).toBeVisible();
       await expect(page.getByTestId('chat-agent-effort-popover')).toBeVisible();
 
       // The slider should have 7 stops (0..6)

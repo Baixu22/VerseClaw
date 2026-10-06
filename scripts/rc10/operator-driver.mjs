@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { mkdir, mkdtemp, readFile, readdir, writeFile } from 'node:fs/promises';
 import { appendFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { join, resolve, toNamespacedPath } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createHash, randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -86,9 +86,18 @@ export async function runOperatorDriver({ repo, scenario, development = false, d
     if (value?.blocked || value?.approvalRequired || value?.success === false) throw new Error(method + ': ' + JSON.stringify(value));
     return value?.result ?? value;
   };
-  const gateway = async (previousPid) => wait('gateway ready', async () => {
+  const gatewayStatus = async () => {
     const s = await host('gateway', 'status');
-    return s.state === 'running' && s.gatewayReady !== false && (!previousPid || s.pid !== previousPid) ? s : false;
+    if (!s.pid) {
+      const metrics = await app.evaluate(({ app }) => app.getAppMetrics());
+      const runtime = metrics.filter((metric) => metric.serviceName === 'OpenClaw Gateway' || metric.name === 'OpenClaw Gateway');
+      if (runtime.length === 1) return { ...s, pid: runtime[0].pid, identitySource: 'electron-process-metrics' };
+    }
+    return s;
+  };
+  const gateway = async (previousPid) => wait('gateway ready', async () => {
+    const s = await gatewayStatus();
+    return s.state === 'running' && s.gatewayReady !== false && Number.isInteger(s.pid) && s.pid > 0 && (!previousPid || s.pid !== previousPid) ? s : false;
   }, 180000);
   const snapshot = async () => {
     const out = { approvals: [], effects: [], receipts: [] };
@@ -96,7 +105,7 @@ export async function runOperatorDriver({ repo, scenario, development = false, d
       if (!/\.(sqlite|db|sqlite3)$/.test(file)) continue;
       let db;
       try {
-        db = new DatabaseSync(join(userData, file), { readOnly: true });
+        db = new DatabaseSync(toNamespacedPath(join(userData, file)), { readOnly: true });
         for (const [key, table] of [['approvals', 'approval_ledger'], ['effects', 'effect_receipts'], ['receipts', 'runtime_receipts']]) {
           if (db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?").get(table)) {
             out[key].push(...db.prepare('SELECT * FROM ' + table).all());
@@ -158,7 +167,8 @@ export async function runOperatorDriver({ repo, scenario, development = false, d
     assert.equal((await snapshot()).effects.filter((e) => e.approval_id === run.approvalId).length, 0, 'unexpected EffectReceipt');
   };
   const restart = async () => {
-    const before = await host('gateway', 'status');
+    const before = await gatewayStatus();
+    assert(Number.isInteger(before.pid) && before.pid > 0, 'restart requires observed Gateway process identity');
     await host('gateway', 'restart');
     const after = await gateway(before.pid);
     event('gateway.restarted', { oldPid: before.pid, newPid: after.pid });
@@ -380,11 +390,15 @@ export async function runOperatorDriver({ repo, scenario, development = false, d
     report.error = String(error?.stack ?? error);
     event('setup.fail', { error: String(error?.message ?? error) });
   } finally {
+    // Preserve diagnostics even if process teardown fails on the host.
+    await writeFile(join(evidence, 'app.log'), appLog);
     if (app) {
       const pid = appProcess?.pid;
-      await app.close().catch(() => {});
-      if (pid && process.platform === 'win32') {
-        try { execFileSync('taskkill', ['/PID', String(pid), '/T', '/F'], { windowsHide: true, stdio: 'ignore' }); } catch { /* already closed */ }
+      await Promise.race([app.close().catch(() => {}), sleep(5000)]);
+      if (pid && appProcess.exitCode === null && appProcess.signalCode === null) {
+        if (process.platform === 'win32') {
+          try { execFileSync('taskkill', ['/PID', String(pid), '/T', '/F'], { windowsHide: true, stdio: 'ignore', timeout: 5000 }); } catch { appProcess.kill('SIGKILL'); }
+        } else appProcess.kill('SIGKILL');
       }
     }
     await peer?.close();

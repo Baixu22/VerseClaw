@@ -931,7 +931,7 @@ exports.default = async function afterPack(context) {
 
   const mcpSource = join(__dirname, '..', 'resources', 'verseshell-mcp');
   const mcpDestination = join(resourcesDir, 'resources', 'verseshell-mcp');
-  const mcpDependencies = copyRuntimeDependencies(mcpSource, mcpDestination);
+  const mcpDependencies = copyRuntimeDependencies(mcpSource, mcpDestination, join(__dirname, '..'));
   console.log(`[after-pack] VerseShell MCP: materialized ${mcpDependencies} locked dependencies.`);
 
   // 2. General cleanup on the full openclaw directory (not just node_modules)
