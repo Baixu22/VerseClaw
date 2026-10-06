@@ -56,6 +56,8 @@
     "artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json",
     "artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json",
     "artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/final-report.json",
+    "artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/human-verdict.yaml",
+    "artifacts/uas-06-single-local-exec-canary/live-observations.json",
     "artifacts/capability-claims/status-table.json",
     "artifacts/runtime-test-integrity/report.json",
     "artifacts/runtime-test-integrity/credential-scan.json",

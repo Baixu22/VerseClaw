@@ -105,6 +105,10 @@ artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/*
 # afterwards, so tracking them never dirties a running acceptance.
 !artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json
 !artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/final-report.json
+!artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/human-verdict.yaml
+!artifacts/uas-06-single-local-exec-canary/
+artifacts/uas-06-single-local-exec-canary/*
+!artifacts/uas-06-single-local-exec-canary/live-observations.json
 # RC-01 authority baseline is candidate material, not a run artifact: the
 # acceptance validator resolves it from the candidate tree, so it must be
 # tracked. Scoped to rc-01 only; other convergence run outputs stay ignored.
