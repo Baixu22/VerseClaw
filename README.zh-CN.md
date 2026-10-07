@@ -22,6 +22,8 @@ Verse Claw 是基于 OpenClaw 的 Electron 桌面应用：在对话中发起工�
 
 ## 真实界面
 
+页首已采用 2026-10-06 选定的 B2 形象；下方带日期的截图保留拍摄时的旧外观。
+
 以下截图来自 2026-10-05 的 Windows Electron 源码构建，由 agent 在隔离配置中操作并直接截取。Gateway 为真实本地进程；知识页显式启用了 `memory-wiki`。未配置模型账户、未发送模型请求，空会话、空账本和空资料库均为真实状态。点击图片可查看原图。
 
 | **对话与任务入口**<br>[![对话与任务入口](resources/readme/2026-10-05/zh/chat.png)](resources/readme/2026-10-05/zh/chat.png) | **知识库与待复核入口**<br>[![知识库与待复核入口](resources/readme/2026-10-05/zh/knowledge.png)](resources/readme/2026-10-05/zh/knowledge.png) |

@@ -1,22 +1,15 @@
 {
-  "source": "output/imagegen/clawx-clawling-app-icon-master-v1.png",
-  "generatedAt": "2026-06-30T15:52:13.254Z",
-  "rule": "Clawling mascot app icon system. Light and dark assets share the same colorful self-contained rounded-square icon for consistent recognition across themes.",
-  "variants": {
-    "clawling-app-icon-master-1024.png": "Clean generated app icon master with transparent rounded corners.",
-    "logo-app-1024.png": "General app icon master.",
-    "logo-dock-1024.png": "Dock/taskbar source used by scripts/generate-icons.mjs.",
-    "logo-sidebar-256.png": "In-app sidebar/setup source.",
-    "logo-menubar-128.png": "Tray/menu source.",
-    "logo-favicon-64.png": "64px favicon/web preview.",
-    "logo-favicon-32.png": "32px favicon.",
-    "logo-favicon-16.png": "16px favicon.",
-    "logo-app.ico": "Windows icon container generated from app master.",
-    "logo-app.icns": "macOS icon container generated from app master."
+  "selected": "B2",
+  "selectedOn": "2026-10-06",
+  "source": "resources/brand-exploration/2026-10-05/B2.png",
+  "sha256": "026be25299ef0d98aae2e462f1bbda767486c3eac99d7e6d9bd28a212f482021",
+  "driven_by": "agent",
+  "actor": "codex-logo",
+  "activeSources": {
+    "logo-dock-1024.png": "B2, resized, rounded application mask",
+    "logo-dock-1024-dark.png": "Same B2 app icon for dark theme",
+    "logo-menubar-128.png": "Black B2 silhouette",
+    "logo-menubar-128-dark.png": "White B2 silhouette"
   },
-  "theme": {
-    "light": "full-color Clawling icon on transparent rounded-square canvas",
-    "dark": "same full-color icon for recognition on dark UI"
-  },
-  "sourceBoard": "output/imagegen/clawx-logo-silhouette-system-v1.png"
+  "legacyAssets": "Other kit files are retained legacy derivatives and are not inputs to generate-icons.mjs."
 }

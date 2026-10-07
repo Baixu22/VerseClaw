@@ -314,8 +314,8 @@
     },
     {
       "path": "resources/readme/2026-10-05/README.md",
-      "bytes": 5124,
-      "sha256": "5f2ffd6f8431d2eba4675afa092414f23a2d8725230709f16f0751668172cf46"
+      "bytes": 5460,
+      "sha256": "3bc83a0654dbafa4202b6cd64f809120f75964fc29bc881c72abe6a83a000108"
     },
     {
       "path": "resources/readme/2026-10-05/workflow.webp",
@@ -362,5 +362,9 @@
         "height": 961
       }
     }
-  ]
+  ],
+  "laterAmendment": {
+    "date": "2026-10-06",
+    "note": "Owner selected B2; provenance README notes that current logo differs from capture-time reference. Screenshots and generated illustrations unchanged."
+  }
 }

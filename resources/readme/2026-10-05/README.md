@@ -44,3 +44,7 @@ Exact prompts: [workspace workflow](prompts/workflow.txt) and [knowledge workflo
 Edit the `.mmd` files first. This run used the already available `beautiful-mermaid` 1.1.3 renderer (`renderMermaidSVG`) with white background, `#24272e` text, `#e87935` accent and Segoe UI. The PNG previews used for visual inspection are local; the small SVGs remain crisp in GitHub and other Markdown viewers. No new project dependency was added.
 
 The [architecture guide](../../../docs/architecture-overview.md) also contains a native Mermaid sequence block and a static SVG fallback. Keep that block equal to `chat-sequence.mmd`. Source hashes in the manifest allow a later update to detect drift; they do not certify all implementation behavior.
+
+## Later brand update
+
+On 2026-10-06 the owner selected B2. The current `src/assets/logo.png` now uses B2; the original reference for these illustrations is that path at commit `55a33921e`. These dated captures and generated illustrations remain unchanged. Their manifest describes the capture-time assets, not the later brand update.

@@ -22,6 +22,8 @@ Verse Claw は OpenClaw を基盤とする Electron デスクトップアプリ�
 
 ## 実際の画面
 
+ヘッダーは 2026-10-06 に選定した B2 を使用しています。以下の日付付き画面は撮影時の旧デザインを保持しています。
+
 2026-10-05 の Windows Electron ソースビルドを、Agent が分離プロファイルと実際のローカル Gateway で操作して撮影しました。掲載画像の UI は英語です。知識画面では `memory-wiki` を明示的に有効化しています。モデルアカウントやモデル呼び出しは使用せず、対話・台帳・資料庫は実際の空の状態です。画像をクリックすると原寸で表示できます。
 
 | **対話とタスクの入口**<br>[![対話とタスクの入口](resources/readme/2026-10-05/en/chat.png)](resources/readme/2026-10-05/en/chat.png) | **資料庫とレビューの入口**<br>[![資料庫とレビューの入口](resources/readme/2026-10-05/en/knowledge.png)](resources/readme/2026-10-05/en/knowledge.png) |

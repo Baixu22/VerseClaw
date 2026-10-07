@@ -22,6 +22,8 @@ Chat provides checkpoint restore from the session menu, repository controls besi
 
 ## Inside the app
 
+The header uses the B2 identity selected on 2026-10-06; the dated screenshots below retain the previous appearance.
+
 Captured directly from the Windows Electron source build on 2026-10-05, operated by an agent with isolated profiles and a real local Gateway. The Knowledge capture explicitly enables `memory-wiki`. No model account or model request is used: the empty conversation, ledger and library are real states. Click an image for full size.
 
 | **Chat and task entry**<br>[![Chat and task entry](resources/readme/2026-10-05/en/chat.png)](resources/readme/2026-10-05/en/chat.png) | **Knowledge library and review entry**<br>[![Knowledge library and review entry](resources/readme/2026-10-05/en/knowledge.png)](resources/readme/2026-10-05/en/knowledge.png) |
