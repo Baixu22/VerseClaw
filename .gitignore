@@ -344,3 +344,8 @@ artifacts/desktop-acceptance-followups/*
 !artifacts/desktop-acceptance-followups/report.json
 !artifacts/desktop-acceptance-followups/credential-scan.json
 !artifacts/desktop-acceptance-followups/SHA256SUMS
+!artifacts/frozen-windows-acceptance-20261007/
+artifacts/frozen-windows-acceptance-20261007/*
+!artifacts/frozen-windows-acceptance-20261007/report.json
+!artifacts/frozen-windows-acceptance-20261007/credential-scan.json
+!artifacts/frozen-windows-acceptance-20261007/SHA256SUMS
