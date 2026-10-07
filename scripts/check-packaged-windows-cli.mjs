@@ -18,6 +18,8 @@ const receipt = verifyBundledNode(resources, 'x64');
 const expectedVersion = JSON.parse(readFileSync(join(resources, 'openclaw-runtime', 'package.json'))).version;
 const home = mkdtempSync(join(output, 'isolated-home-'));
 mkdirSync(join(home, '.openclaw'));
+// Windows shell startup creates these standard folders before invoking the CLI.
+for (const dir of ['AppData/Local', 'AppData/Roaming', '.config']) mkdirSync(join(home, dir), { recursive: true });
 // Information queries must work even when runtime configuration cannot be parsed.
 writeFileSync(join(home, '.openclaw', 'openclaw.json'), 'intentionally invalid runtime config\n');
 const env = { ...process.env, HOME: home, USERPROFILE: home, OPENCLAW_HOME: home,
