@@ -1,0 +1,556 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-windows-blockers",
+  "generatedAt": "2026-10-07T18:12:53.142Z",
+  "verdict": "scoped-blockers-fixed",
+  "releaseAccepted": false,
+  "published": false,
+  "applicationCandidate": "38bc41a6caa59799c196162cab38fbf42350fcfc",
+  "installerCandidate": "0da489a50d4f517950898a897eeebd91bdf213f0",
+  "verificationHead": "0da489a50d4f517950898a897eeebd91bdf213f0",
+  "build": {
+    "startedAt": "2026-10-07T17:51:02.7700060Z",
+    "tree": "a7e99dd430d673daec557ec091ff2a45e79b2806",
+    "candidate": "0da489a50d4f517950898a897eeebd91bdf213f0",
+    "buildReuse": "NSIS rebuilt with current installer; unchanged packaged application from38bc41a6c, seven primary file hashes retained",
+    "dirty": false,
+    "completedAt": "2026-10-07T17:53:57.5386541Z",
+    "exitCode": 0
+  },
+  "installer": {
+    "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\release-final\\Verse Claw-0.4.9-alpha.0-win-x64.exe",
+    "bytes": 562237997,
+    "sha256": "4678ed42294d570ac174137a8a8f77109e3a25c9f220c949338d703873e186bb"
+  },
+  "blockers": {
+    "TF-0260": {
+      "status": "fixed",
+      "probes": 12,
+      "node": {
+        "version": "24.16.0",
+        "required": ">=22.19.0",
+        "sha256": "b3094d0b49f9ad602262a9921551737bb97637c05dd357a06ae98188d7290aa3",
+        "target": "win32-x64"
+      },
+      "runtimeVersion": "2026.6.2",
+      "stateFingerprintUnchanged": true,
+      "unsupportedCommandsFail": true
+    },
+    "TF-0261": {
+      "status": "fixed",
+      "lifecycle": [
+        {
+          "driven_by": "agent",
+          "interventions": 0,
+          "startedAt": "2026-10-07T17:56:47.4099479Z",
+          "completedAt": "2026-10-07T17:59:12.8486439Z",
+          "profileJsonMatches": 11,
+          "launcherEndedAt": "2026-10-07T17:58:15.4898944Z",
+          "actor": "codex-windows-blockers",
+          "sha256": "4678ed42294d570ac174137a8a8f77109e3a25c9f220c949338d703873e186bb",
+          "stage": "install",
+          "launcherExitCode": 0,
+          "observedProcesses": 14,
+          "descendantExitAndFinalStateVerified": true
+        },
+        {
+          "driven_by": "agent",
+          "interventions": 0,
+          "startedAt": "2026-10-07T18:01:53.6001374Z",
+          "completedAt": "2026-10-07T18:04:41.3168077Z",
+          "profileJsonMatches": 11,
+          "launcherEndedAt": "2026-10-07T18:03:25.2448308Z",
+          "actor": "codex-windows-blockers",
+          "sha256": "4678ed42294d570ac174137a8a8f77109e3a25c9f220c949338d703873e186bb",
+          "stage": "replace",
+          "launcherExitCode": 0,
+          "observedProcesses": 13,
+          "descendantExitAndFinalStateVerified": true
+        },
+        {
+          "driven_by": "agent",
+          "interventions": 0,
+          "startedAt": "2026-10-07T18:06:33.3380954Z",
+          "completedAt": "2026-10-07T18:06:51.3241963Z",
+          "profileJsonMatches": 11,
+          "launcherEndedAt": "2026-10-07T18:06:33.6287069Z",
+          "actor": "codex-windows-blockers",
+          "sha256": "13bd16404857a97c4cd7743147c1b399cfe620f0295d69b09eb66951a5648f92",
+          "stage": "uninstall",
+          "launcherExitCode": 0,
+          "observedProcesses": 13,
+          "descendantExitAndFinalStateVerified": true
+        }
+      ],
+      "replacement": {
+        "oldMarkerRemoved": true,
+        "cliBytesRestored": true
+      },
+      "restoration": {
+        "driven_by": "agent",
+        "profileJsonPreserved": 11,
+        "registryRestored": true,
+        "cliRemoved": true,
+        "pathRestored": true,
+        "shortcutsRestored": true,
+        "timestamp": "2026-10-07T18:08:46.3870666Z"
+      },
+      "environment": {
+        "userPathByteEqual": true,
+        "shortcutMatches": [
+          true,
+          true
+        ],
+        "profileHashesMatch": 11,
+        "driven_by": "agent",
+        "filesRemaining": 0,
+        "actor": "codex-windows-blockers",
+        "installationDirectoriesRemaining": 0,
+        "registryEntriesRemaining": 0
+      },
+      "initialUninstallResidualFiles": 434,
+      "initialUninstallPathLengths": [
+        260,
+        337
+      ],
+      "timeoutProbe": {
+        "durationMs": 766.6474,
+        "result": "timeout",
+        "exitCode": 0
+      },
+      "rollbackProbe": {
+        "exitCode": 2,
+        "durationMs": 15094.9409,
+        "rollbackRestored": true
+      },
+      "longPathAndRecoveryProbe": {
+        "retry": {
+          "exitCode": 0,
+          "junctionTargetPreserved": true,
+          "targetRemoved": true
+        },
+        "first": {
+          "exitCode": 2,
+          "retryBinaryRestored": true,
+          "lockedFileRetained": true
+        },
+        "longestPath": 342
+      }
+    },
+    "TF-0262": {
+      "status": "fixed-with-scoped-regression",
+      "old": {
+        "node": "24.15.0",
+        "startTime": "2026-10-07T16:09:38.885Z",
+        "duration": 184385.25199999998,
+        "expected": 23,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0,
+        "exit": "0xC0000409",
+        "failedWorker": {
+          "driven_by": "agent",
+          "actor": "playwright-worker",
+          "phase": "begin",
+          "time": "2026-10-07T16:11:46.600Z",
+          "pid": 13908,
+          "ppid": 15028,
+          "execPath": "C:\\Program Files\\nodejs\\node.exe",
+          "node": "v24.15.0",
+          "workerIndex": 5,
+          "test": [
+            "skills-gateway-readiness.spec.ts",
+            "Skills page gateway readiness",
+            "clears stale startup banner once local skills load while runtime rpc is still starting"
+          ],
+          "status": "passed",
+          "memory": {
+            "rss": 175398912,
+            "heapTotal": 109379584,
+            "heapUsed": 50603056,
+            "external": 4063915,
+            "arrayBuffers": 122088
+          },
+          "resources": {
+            "userCPUTime": 1062000,
+            "systemCPUTime": 375000,
+            "maxRSS": 171288,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 0,
+            "majorPageFault": 62345,
+            "swappedOut": 0,
+            "fsRead": 1659,
+            "fsWrite": 152,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 0,
+            "involuntaryContextSwitches": 0
+          }
+        }
+      },
+      "fixed": {
+        "node": "24.16.0",
+        "startTime": "2026-10-07T16:20:42.007Z",
+        "duration": 390334.60000000003,
+        "expected": 48,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "upstream": [
+        "https://github.com/nodejs/node/issues/63620",
+        "https://github.com/nodejs/node/pull/62561"
+      ],
+      "historicalNativeDumpRecovered": false
+    }
+  },
+  "checks": {
+    "focusedUnit": {
+      "passed": 29,
+      "failed": 0
+    },
+    "cleanElectron": {
+      "startTime": "2026-10-07T17:08:55.381Z",
+      "duration": 51276.269,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "types": [
+      {
+        "exitCode": 0,
+        "project": "node",
+        "completedAt": "2026-10-07T17:13:09.2320720Z"
+      },
+      {
+        "exitCode": 0,
+        "project": "web",
+        "completedAt": "2026-10-07T17:13:11.9780141Z"
+      },
+      {
+        "exitCode": 0,
+        "project": "test",
+        "completedAt": "2026-10-07T17:13:20.9609315Z"
+      }
+    ],
+    "runtimeTypes": {
+      "exitCode": 0,
+      "completedAt": "2026-10-07T16:27:44.8469013Z"
+    },
+    "harnessCi": {
+      "exitCode": 0,
+      "candidate": "38bc41a6caa59799c196162cab38fbf42350fcfc",
+      "dirty": false,
+      "completedAt": "2026-10-07T17:13:08.8311119Z"
+    },
+    "comms": {
+      "replay": 0,
+      "compare": 0
+    },
+    "finalGates": {
+      "harnessExit": 0,
+      "dirty": false,
+      "unitExit": 0,
+      "completedAt": "2026-10-07T17:51:22.4221558Z",
+      "candidate": "0da489a50d4f517950898a897eeebd91bdf213f0"
+    }
+  },
+  "applicationPrimaryHashesUnchanged": [
+    {
+      "sha256": "c593c5711c0f16c4d2ee0cd2f953dc36f069e41e175aaf09d6b6e6b446e928d0",
+      "bytes": 214315008,
+      "path": "Verse Claw.exe"
+    },
+    {
+      "sha256": "68b96ef68bb5345cd50d7d4f4e715af69e4be715686cfe3839893a927d83dba4",
+      "bytes": 277780785,
+      "path": "resources/app.asar"
+    },
+    {
+      "sha256": "efaafd6e41804a46ce349e4a0aed67316fea6862af596fbea8f758af89ab1950",
+      "bytes": 632698399,
+      "path": "resources/main-runtime.asar"
+    },
+    {
+      "sha256": "b3094d0b49f9ad602262a9921551737bb97637c05dd357a06ae98188d7290aa3",
+      "bytes": 92279112,
+      "path": "resources/bin/node.exe"
+    },
+    {
+      "sha256": "985dc4bf25573755340efb68123424a90c08393dce99c26ee3d04aebed86a25c",
+      "bytes": 2782,
+      "path": "resources/openclaw-runtime/dist/entry.js"
+    },
+    {
+      "sha256": "07ccbb017142204e29eb4a9720727ae3938d0b345c57fc836c4304e5730e2c20",
+      "bytes": 1185,
+      "path": "resources/cli/openclaw.cmd"
+    },
+    {
+      "sha256": "4dd70a79414fbe45e3d361354757c02350e80a4833e3b658517be0804d252e95",
+      "bytes": 843,
+      "path": "resources/cli/openclaw"
+    }
+  ],
+  "landing": {
+    "checkLanding": 1,
+    "fetch": 0,
+    "problemCount": 53,
+    "scope": "Repository-wide landing audit; this branch is local and unmerged"
+  },
+  "limitations": [
+    "Full root unit and complete 345-case Electron suites were not rerun after these fixes; the old frozen acceptance remains rejected.",
+    "48 repeated Skills cases were development evidence; the recorded clean application candidate passed a separate 4-case run.",
+    "Final installer reuses the unchanged current-session packaged app; this is not a fresh dependency install.",
+    "Lifecycle covers non-elevated current-user installation, same-version replacement and removal, not cross-version user-data migration.",
+    "ARM64 downloads were integrity-verified but ARM64/macOS/Linux executions and paid-provider acceptance were not performed.",
+    "The earlier default OpenClaw four-task/four-delivery migration incident was not rolled back. New CLI probes used isolated state.",
+    "No historical native stack was recovered. The attribution uses a new matching worker failure, exact runtime/source versions and fixed-version regression.",
+    "Repository-wide check-landing remains nonzero with53 findings; no unrelated branch integration, push or publication was performed."
+  ],
+  "preservedFailures": [
+    "Initial test setup import failures",
+    "Stale runtime build rejection",
+    "PowerShell startup-cache false positives in CLI state probe",
+    "Failed and unavailable NSIS extraction APIs",
+    "First failed rollback and directory-existence probes",
+    "First full uninstall returning0 with434 remaining long-path files"
+  ],
+  "rawEvidence": [
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\windows-build-start.json",
+      "bytes": 378,
+      "sha256": "8a85587eed13c02f5f8a740d0e2110f6fa0b94db2901bf1b889e98fcc77e0877"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\windows-build.json",
+      "bytes": 255,
+      "sha256": "d3858ceed1ca2287a6614f16a22958a4d359f00f915b646163f757150f78fd3a"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\windows-build-final.json",
+      "bytes": 393,
+      "sha256": "675251fe30e45a319dc60b808f81514449fc1d8d54c74563e78c9c4b5439e21b"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\final-candidate-gates.json",
+      "bytes": 173,
+      "sha256": "6c52ab4f1bdda87f51a553cb1ec06b7db188126d1dfddb72ccdcd677d7ce0802"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\clean-unit-exit.json",
+      "bytes": 152,
+      "sha256": "23d796912cf5f0f2e29b1d1b9f7740dff805eb3f5fa935b50044d289a8480fb6"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\clean-electron-exit.json",
+      "bytes": 152,
+      "sha256": "da9abb96cc368c4cfaaea0565fdc81f8bf2846b7488788d0c96922dbbb4aff0d"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\clean-types.json",
+      "bytes": 322,
+      "sha256": "1ddef21d7564784e65961b056c7a9cc03f9810729f5e779e9a2eb25bec172e25"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\types-runtime.json",
+      "bytes": 73,
+      "sha256": "556ddc91302496ed64486753ca9907427b585c16b1c63f51782dde7283fb2040"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\harness-ci.json",
+      "bytes": 152,
+      "sha256": "2003f4bbf8af72d795ababdce3f623e6d5ad5ca038f0ff5b38dd2297bf541b38"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\comms-exits.json",
+      "bytes": 38,
+      "sha256": "6e673210aaaff454e026eb4b935a2b284b67a1b13e89dca344f9f8b88a9ff845"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\native-repeat-2.json",
+      "bytes": 30887,
+      "sha256": "1beebbada47639683ab117a22e68c4f1804b540185254c931691ecaac3fa7d88"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\native-repeat-2.log",
+      "bytes": 7255,
+      "sha256": "7bb9329191c1464b55f7818a3d90155d228c878288a4a21c45ee39a68921f94b"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\native-fixed-2.json",
+      "bytes": 59230,
+      "sha256": "b01d75ff36841e977002f0dbe4674ec761420ce8719b1d0f3bc86472b26e4931"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\native-fixed-2.log",
+      "bytes": 7832,
+      "sha256": "67f2840e7062430cd12cded4d6741831ecf4c9cb58972551dbb6146f754fa6cd"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\native-repeat-2-results\\electron-process-cleanup.json",
+      "bytes": 573,
+      "sha256": "63a5108057a6d65f6da1d513b114c0d6b0e4697fdce3229622cbdc1b2e8640a3"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\clean-electron-results\\electron-process-cleanup.json",
+      "bytes": 189,
+      "sha256": "cc658b9e6480a80ecbd5ef154d582779684690831b9e5d6e2efe146c5b758a9e"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-upstream-63620.json",
+      "bytes": 13489,
+      "sha256": "a42f29cf4911ee42241f414016390e49e032e0971a7b1f39f25343a7a48b1e74"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-upstream-62561-files.json",
+      "bytes": 20175,
+      "sha256": "2ed171f38f03b7b53829c3aa6e463195f0191a2e3cd21802bd5a44670797a56c"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\rollback-probe.json",
+      "bytes": 80,
+      "sha256": "143863357c2e7f314ae92655f7d38a6f912822e22e47c1b356adce3c02e024e3"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\rollback-probe-3.json",
+      "bytes": 82,
+      "sha256": "0fe31d1b3fe553be1e332480aa24b4427d63d88774e32e32760ab6373b7453f7"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\rollback-probe-4.json",
+      "bytes": 81,
+      "sha256": "05e01ef01dffe698d17bc1bb8dcadf955cef3873bdf6a1846e3d0cabae2a91e7"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\valid-extract-probe.json",
+      "bytes": 51,
+      "sha256": "4e03946bd0c98208c2b18de63dca3b4eb02fc771eabbd09c5181bb5422d06e70"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\directory-probe.txt",
+      "bytes": 63,
+      "sha256": "20e9e289e2e943d0b1b4f0161389c30a864cdfde9791f086a0019a170b7d1c15"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\timeout-probe.json",
+      "bytes": 74,
+      "sha256": "443bc6b6d1c1129b45ac2658aacedfb8a1f6ed80307459d7751f84b363385f87"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\uninstall-probe.json",
+      "bytes": 108,
+      "sha256": "c790d7fad7378e14d047430aaf00ef89683a6cadcc31e5797d74cb59f2e00dd1"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\uninstall-recovery-probe.json",
+      "bytes": 239,
+      "sha256": "d8aa7c301b5b2726c5f7003e12e1da1509f9eeab2b9abce236727189dafa998c"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\make-rollback-probe.mjs",
+      "bytes": 1644,
+      "sha256": "364f243040165cc197fb7ce51c398b5b3beb014f7cb3c6b03f9d087f2918fae9"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\make-uninstall-probe.mjs",
+      "bytes": 1965,
+      "sha256": "865cd03dc57382d093d32f0de9d3e8f89beba5bdc80afc6d19a6f327e3fcc179"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\uninstall-probe.nsi",
+      "bytes": 2061,
+      "sha256": "464926f824a561f0dd62cc6a44a6c7feebb2339c29985455f557fb93e1c9496e"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\installer-final-install.json",
+      "bytes": 3915,
+      "sha256": "a7b11508ca002bb136ec99880ae39d51724c043a00dd51aa2078de60ddfad19c"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\installer-final-replace.json",
+      "bytes": 3879,
+      "sha256": "ece1b2f1c6bc325a6bbba3a4d280f4251260929853ccd4adf6b64ae3e0a64898"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\installer-final-uninstall.json",
+      "bytes": 3926,
+      "sha256": "cc24f9a36ca4f0364879010fe719e915fd6b4a2831ab16670a66fc04ceff19c1"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\installer-uninstall-progress.json",
+      "bytes": 2854,
+      "sha256": "0c73007857d85df344f47446ed0c0a0d8d769c656956750f7bfe842481ee6e44"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\installer-state-after-uninstall.json",
+      "bytes": 159600,
+      "sha256": "d87ac3a9ae18481e3672d10959206bd3ba1c0614a316c2121bda079aba81640f"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\run-installer-final.ps1",
+      "bytes": 4359,
+      "sha256": "33162413f10f25885e09bd72726a3aad701f2804bb402e2ece9112214e6305dc"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\capture-install-state.ps1",
+      "bytes": 2795,
+      "sha256": "55674ba0b66fc61af508147596ba0765c1721fa1f8ed2b767cedad99ad091d5a"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\restore-final-install-environment.ps1",
+      "bytes": 2284,
+      "sha256": "a01e2ff5ef9cc7a89af36d843ab91dc1ae7c1ad5bd01f1b6d5109832f613d412"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\installer-environment-restored.json",
+      "bytes": 240,
+      "sha256": "34e5f247a27ec3989dece2554c7a55e73b694f4d80a11bb3f7d41f353e5f58a2"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\replacement-final-verified.json",
+      "bytes": 63,
+      "sha256": "4ca7d11e929780cf35f626dab7be6a845ee0581a3acc48e738d863258695996b"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\final-installed-cli\\report.json",
+      "bytes": 6356,
+      "sha256": "bfa77f1707573d52b3c48c1424e3cec23ce98b8572fc107272b1a4e292a0d378"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\final-environment-check.json",
+      "bytes": 278,
+      "sha256": "4846756384724b87d5f2d6d1c7f0116a26b5f72313513f9162a6070b86667d72"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\check-landing.json",
+      "bytes": 76548,
+      "sha256": "c7960096b0bb122bd6fd18fa719684d5ee537b9f531a0a71be32383e06096356"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\landing-exits.json",
+      "bytes": 42,
+      "sha256": "4d871512143285dd1fad27dbf2446de78c319fd3a77c94c2d414c35f1681e4ba"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\review-8.json",
+      "bytes": 447,
+      "sha256": "8d20e26ac8c94a357fa63f186c52b787083c1659e46ab7ccc8e7b1b343351e47"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\review-cli-driver.json",
+      "bytes": 434,
+      "sha256": "d684305dbe4ce4b6613f3a3b4ef5b7e398cd7b70822a416ba6610d2c7eccafb9"
+    },
+    {
+      "path": "D:\\ClawX-work\\windows-blocker-fixes-20261007\\review-long-uninstall-2.json",
+      "bytes": 427,
+      "sha256": "4bf9fb32eda4fb943cac62ddc7d08f7e5d3f1c683d6cd2713e4d7efb49761c0e"
+    }
+  ],
+  "rawStateSnapshotsRemainPrivate": true
+}

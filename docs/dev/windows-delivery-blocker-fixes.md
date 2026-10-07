@@ -5,6 +5,8 @@
 This follow-up repairs TF-0260/0261 and investigates TF-0262 from the rejected
 candidate recorded in `frozen-windows-acceptance-20261007.md`. The original
 report and installer remain rejected; no package has been published.
+The three scoped blockers now have fixes and passing Windows verification.
+This does not replace the complete frozen-candidate release qualification.
 
 ## CLI dispatch and binary compatibility
 
@@ -90,8 +92,39 @@ the relevant application evidence. No historical crash stack was recovered.
 
 ## Verification
 
-Final commands, candidate identity, package digests, results and limitations are
-recorded in `artifacts/windows-delivery-blocker-fixes/report.json` after checks
-complete. Raw runs stay private at
+Application changes are committed in `38bc41a6c`; the final long-path installer
+fix is `0da489a50`. CLI probe corrections are `ddcc0e110` and `7d4bfb7b7` and do
+not change the packaged app. The final NSIS rebuild used a clean `0da489a50` with
+the current-session app bundle; seven primary app-file hashes remained identical.
+
+| Check | Final observation |
+| --- | --- |
+| Focused unit regressions | 29 passed, zero failed/skipped |
+| Node/web/test type projects and runtime core types | Passed; uncached projects checked serially |
+| Clean-candidate Electron regressions | 4 passed, zero failed/skipped |
+| Native comparison | Node 24.15: 23/24, one `0xC0000409`; Node 24.16: 48/48 |
+| Installed CLI | 12/12, both wrappers and both execution paths; isolated state unchanged |
+| Non-elevated installation | Passed, 145.4 seconds including owned deferred cleanup |
+| Same-version replacement | Passed, 167.7 seconds; old marker removed and CLI bytes restored |
+| Uninstallation | Passed, 18.0 seconds; zero files, directories or registration remaining |
+| User state/environment | 11 profile JSON hashes match; PATH bytes and both shortcut states restored |
+| Harness CI / task validation / comms replay and comparison | Passed; Harness CI included 47 passing tests and existing Agent Dev 94/A |
+| Independent review | Final product, CLI-driver and long-path follow-ups returned no actionable findings |
+
+All three installer stages required zero agent interventions after launch.
+Completion was checked after descendant processes exited and by reading files,
+registration and profile hashes; a launcher's exit code alone was insufficient.
+
+The final test installer is 562,237,997 bytes with SHA-256
+`4678ed42294d570ac174137a8a8f77109e3a25c9f220c949338d703873e186bb`.
+It remains local. Full root unit and complete 345-case Electron suites were not
+rerun; no cross-version migration, ARM64/macOS/Linux execution or paid-provider
+acceptance is claimed. The repository-wide landing check remains nonzero with
+53 findings; unrelated history was not integrated and these commits were not
+pushed. The earlier default OpenClaw four-task/four-delivery migration was not
+rolled back.
+
+Commands, candidate identities, digests and limitations are recorded in
+`artifacts/windows-delivery-blocker-fixes/report.json`. Raw runs stay private at
 `D:/ClawX-work/windows-blocker-fixes-20261007/`, including setup failures and stale
 build rejections. They are not rewritten as successful tests.
