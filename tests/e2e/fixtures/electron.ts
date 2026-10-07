@@ -375,6 +375,7 @@ async function launchVerseClawElectron(
   const app = await electron.launch({
     executablePath: String(electronBinaryPath),
     args: [
+      `--user-data-dir=${userDataDir}`,
       '--lang=en-US',
       '--disable-gpu',
       '--disable-gpu-compositing',
@@ -432,7 +433,7 @@ async function launchVerseClawElectron(
 
 export const test = base.extend<ElectronFixtures>({
   homeDir: async ({ browserName: _browserName }, provideHomeDir) => {
-    const homeDir = await mkdtemp(join(tmpdir(), 'verse-claw-e2e-home-'));
+    const homeDir = await mkdtemp(join(process.env.CLAWX_E2E_RUN_ROOT ?? tmpdir(), 'verse-claw-e2e-home-'));
     await mkdir(join(homeDir, '.config'), { recursive: true });
     await mkdir(join(homeDir, 'AppData', 'Local'), { recursive: true });
     await mkdir(join(homeDir, 'AppData', 'Roaming'), { recursive: true });
@@ -444,7 +445,7 @@ export const test = base.extend<ElectronFixtures>({
   },
 
   userDataDir: async ({ browserName: _browserName }, provideUserDataDir) => {
-    const userDataDir = await mkdtemp(join(tmpdir(), 'verse-claw-e2e-user-data-'));
+    const userDataDir = await mkdtemp(join(process.env.CLAWX_E2E_RUN_ROOT ?? tmpdir(), 'verse-claw-e2e-user-data-'));
     try {
       await provideUserDataDir(userDataDir);
     } finally {
