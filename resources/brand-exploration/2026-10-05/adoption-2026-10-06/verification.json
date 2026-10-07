@@ -1,0 +1,98 @@
+{
+  "date": "2026-10-06",
+  "driven_by": "agent",
+  "actor": "codex-b2-handoff",
+  "scope": "B2 application identity adoption; local Windows source-build validation",
+  "baseCommit": "1aa238c92cf3dda37bec0f8564ab714e3f160d43",
+  "workingTreeDirty": true,
+  "releaseAcceptance": false,
+  "sourceHashes": {
+    "index.html": "88ead5c0bf36c620080126b788020de602474f4bc15cd3851b8435da76738e55",
+    "src/components/brand/BrandLogo.tsx": "87c96c11ca29c471f4458136bd3d4c00592bfe6c9b1370e82641fce9ed93947a",
+    "src/assets/logo.png": "ab98bc6f5cceccd27e6bf6ce78e13c129924e31cc9966c77987ae3b3041f8bc7",
+    "tests/e2e/brand-logo.spec.ts": "fac446557612e02738037be53fcc8de9dd809f0df245a77a5e69559d0e0491aa",
+    "tests/e2e/startup-loading-experience.spec.ts": "c31283f9e78916669ba150b1d732a23f23b21a676c4dfde239e2da3a80483b6a",
+    "tests/unit/startup-loading-experience.test.tsx": "3bfe9eaf12ddf4c3e4c1193a19f6a10e42bfb1a7cf6776236fc5a1f4fcc61d20",
+    "resources/icons/clawx-logo-kit/manifest.json": "40507c5695256cf8c30838818ba56f00659c80d79884c1afee02458c6e9703ea"
+  },
+  "validation": {
+    "buildViteExitCode": 0,
+    "unit": 0,
+    "lint": 0,
+    "typecheck": 0,
+    "brandElectron": {
+      "startTime": "2026-10-06T14:21:59.045Z",
+      "duration": 49788.401999999995,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "startupElectron": {
+      "passed": 6,
+      "failed": 0,
+      "receipt": ".local/logo-20261006-handoff/e2e.json"
+    },
+    "startupUnit": {
+      "numTotalTests": 6,
+      "numPassedTests": 6,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    },
+    "assetChecks": [
+      "All 6 original candidates and prompts match their saved hashes",
+      "Active source is the selected B2; light and dark renderer PNGs are identical",
+      "7 PNG sizes and both ICO/ICNS containers decode correctly",
+      "All 18 dated README assets match their manifest hashes",
+      "All 4 README headers use the current logo and local links resolve",
+      "Built favicon resolves to the exact current renderer logo bytes"
+    ],
+    "visualReview": "All four full-window captures inspected: B2 is clear and square on both themes and surfaces."
+  },
+  "attempts": [
+    {
+      "receipt": ".local/logo-20261006-handoff/e2e.json",
+      "exitCode": 1,
+      "passed": 6,
+      "failed": 4,
+      "reason": "Initial logo assertions compared relative HTML URLs with absolute React URLs."
+    },
+    {
+      "receipt": ".local/logo-20261006-handoff/e2e-final.json",
+      "exitCode": 1,
+      "passed": 2,
+      "failed": 2,
+      "reason": "Setup bounding box measured 64.000015px; use 0.01px precision instead of exact float equality."
+    },
+    {
+      "receipt": ".local/logo-20261006-handoff/e2e-verified.json",
+      "exitCode": 0,
+      "passed": 4,
+      "failed": 0
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "resources/brand-exploration/2026-10-05/adoption-2026-10-06/light-sidebar.png",
+      "sha256": "4a3cf5e53ff8523dc4ba4d2da2ef3c328a5bd16715165d7be3da2ab21612a6f4"
+    },
+    {
+      "path": "resources/brand-exploration/2026-10-05/adoption-2026-10-06/light-setup.png",
+      "sha256": "eb9a1ea5f2a5472ce1c778bb070bc54d53678eb91f11cdfc7deb0f6f1c0ff62a"
+    },
+    {
+      "path": "resources/brand-exploration/2026-10-05/adoption-2026-10-06/dark-sidebar.png",
+      "sha256": "732471cba266e1f06958c0121e58e9d152b598c2489c77859ba187f81b4bf332"
+    },
+    {
+      "path": "resources/brand-exploration/2026-10-05/adoption-2026-10-06/dark-setup.png",
+      "sha256": "3693c0dc359ff399025dbc41fa667b947235ea8fd8b412bf4a965297ee8c8a8f"
+    }
+  ],
+  "limitations": [
+    "Isolated agent-driven profiles; Gateway is not started for logo tests. Offline state and disk warning remain visible.",
+    "The dated 2026-10-05 README screenshots and illustrations retain their previous appearance and original hashes.",
+    "Desktop icon containers were decoded; installers were not rebuilt and macOS/Linux were not executed.",
+    "Existing unrelated working-tree changes remain outside this scope; this change is not committed or published."
+  ]
+}

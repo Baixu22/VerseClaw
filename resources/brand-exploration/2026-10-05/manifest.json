@@ -1,0 +1,140 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-logo",
+  "date": "2026-10-05",
+  "model": "gpt-image-2.5",
+  "mode": "edit; independent one-pass candidates",
+  "constraintDelivery": "main-prompt constraints",
+  "originalFilesUnmodified": true,
+  "source": "https://blog.200205.net/blog/ai/ai-logo-generation",
+  "skill": "s1dashu/ip-as-logo-skill",
+  "skillRevision": "acb834c717bcd0a487c49732d08397ba280d690b",
+  "candidates": [
+    {
+      "id": "A1",
+      "direction": "经典火焰精简",
+      "corner": "左下",
+      "file": "A1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 950778,
+      "sha256": "ca033b896cf4e1318a2f466f14dfe72135c3db7f9c1e9abe2b6cf8188fb56dc4",
+      "prompt": "prompts/A1.txt",
+      "promptSha256": "c7be0e616ea0c2f1300b165b8dafbf880aa1480b5dfa682c8289613c7fefb0fb",
+      "requestedPalette": [
+        "#D94D12",
+        "#FFE09A",
+        "#E9D8BB"
+      ],
+      "exitCode": 0
+    },
+    {
+      "id": "A2",
+      "direction": "经典火焰精简",
+      "corner": "右下",
+      "file": "A2.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 935191,
+      "sha256": "82ce6da3e8b0a233cca1352c6c0aadbbd337beb50bdb990b55a71bef5ebc2039",
+      "prompt": "prompts/A2.txt",
+      "promptSha256": "a37b3486f0cd2c29306271caa6e69d6f8e151f4597702d814b5765e70979a892",
+      "requestedPalette": [
+        "#D94D12",
+        "#FFE09A",
+        "#E9D8BB"
+      ],
+      "exitCode": 0
+    },
+    {
+      "id": "B1",
+      "direction": "圆润火焰伙伴",
+      "corner": "左下",
+      "file": "B1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 984321,
+      "sha256": "59c7353e254111e3c080d0b46076c313b49cedd2d740e52d123df86a68d38a9e",
+      "prompt": "prompts/B1.txt",
+      "promptSha256": "9815e60ced08a6e9f42c35ecc2a1244c4a528be0a37ec319f730392079c7f842",
+      "requestedPalette": [
+        "#BD4319",
+        "#FFE6A7",
+        "#B9C8AD"
+      ],
+      "exitCode": 0
+    },
+    {
+      "id": "B2",
+      "direction": "圆润火焰伙伴",
+      "corner": "右下",
+      "file": "B2.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 974913,
+      "sha256": "026be25299ef0d98aae2e462f1bbda767486c3eac99d7e6d9bd28a212f482021",
+      "prompt": "prompts/B2.txt",
+      "promptSha256": "168ae65b2e505218ffc58daae61c91f67db6f863483c6f19934716070e5650b5",
+      "requestedPalette": [
+        "#BD4319",
+        "#FFE6A7",
+        "#B9C8AD"
+      ],
+      "exitCode": 0
+    },
+    {
+      "id": "C1",
+      "direction": "深色工作台适配",
+      "corner": "左下",
+      "file": "C1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 957380,
+      "sha256": "78a057d692af82167f63bc8ec8ac30911b91eb45a795cf8071ff29a10711939e",
+      "prompt": "prompts/C1.txt",
+      "promptSha256": "947c644654c254a02e4ff0cb8cc16bf5bc4549c65c153273a4421971664942ea",
+      "requestedPalette": [
+        "#ED602E",
+        "#FFD16D",
+        "#253647"
+      ],
+      "exitCode": 0
+    },
+    {
+      "id": "C2",
+      "direction": "深色工作台适配",
+      "corner": "右下",
+      "file": "C2.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 955004,
+      "sha256": "b62dcb605805ab6e3ff2504b93bada9c7a99c66870e7fce19842e4a2dc96a25e",
+      "prompt": "prompts/C2.txt",
+      "promptSha256": "844e6a8bd2177b07d9eb8263a5fe454e0d6ced0cb770de8297c69a5b6c95096b",
+      "requestedPalette": [
+        "#ED602E",
+        "#FFD16D",
+        "#253647"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "selection": {
+    "candidate": "B2",
+    "selectedOn": "2026-10-06",
+    "selectedBy": "repository owner",
+    "originalPreserved": true
+  }
+}

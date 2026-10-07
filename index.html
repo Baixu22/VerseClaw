@@ -2,8 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/src/assets/brand/logo-light-2.png" media="(prefers-color-scheme: light)" />
-    <link rel="icon" type="image/png" href="/src/assets/brand/logo-dark-1.png" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/png" href="/src/assets/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-src 'self' http://127.0.0.1:* http://localhost:* https: blob: data:; img-src 'self' data: blob: https: http:; media-src 'self' data: blob: https: http:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' http://127.0.0.1:* http://localhost:* ws://127.0.0.1:* ws://localhost:* wss://127.0.0.1:* wss://localhost:* https: http:; worker-src 'self' blob:; form-action 'self';" />
 
@@ -98,19 +97,10 @@
       }
 
       .boot-logo {
-        width: 35px;
+        width: 28px;
         height: 28px;
         border-radius: 8px;
         object-fit: contain;
-      }
-
-      .boot-logo-dark,
-      :root.dark .boot-logo-light {
-        display: none;
-      }
-
-      :root.dark .boot-logo-dark {
-        display: block;
       }
 
       .boot-nav {
@@ -246,8 +236,7 @@
       <div class="boot-body">
         <aside class="boot-sidebar">
           <div class="boot-brand">
-            <img class="boot-logo boot-logo-light" src="/src/assets/brand/logo-light-2.png" alt="" />
-            <img class="boot-logo boot-logo-dark" src="/src/assets/brand/logo-dark-1.png" alt="" />
+            <img class="boot-logo" src="/src/assets/logo.png" alt="" />
             <span class="boot-shimmer" style="width: 54px"></span>
           </div>
           <div class="boot-nav">
