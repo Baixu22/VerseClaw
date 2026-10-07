@@ -51,9 +51,19 @@ and explicit wrapper-liveness assertions). These results do not claim that the
 original spontaneous `0xC0000409` has been eliminated, or that the full desktop
 suite or a new installer was validated in this follow-up.
 
+Source commit `3437077ee` was then tested clean: the launch-abort regression
+passed with an inherited outer `PLAYWRIGHT_JSON_OUTPUT_FILE`, while its nested
+failure report stayed isolated. Agent Dev's fresh full diagnostic passed all
+selected gates, with `fullGateComplete=true`, no required follow-up gates and
+no hard budget limits. Strict audit passed at 97/A with no disqualifiers.
+Task Harness validation and dry-run both exited 0. Agent Dev's readiness
+assessment is limited to its control plane, not a whole-product release claim.
+
 Raw reports, injected-fault logs and screenshots are retained at
 `D:/ClawX-work/electron-stability-20261007/`. Key records are
 `brand-provenance.json`, `brand-assets.json`, `repeat-before.json`,
 `orphan-launch-abort-4/verified-processes.json`, `regressions-final.json`,
 `regression-final-results/`, `static-final-exits.json`,
 `final-harness-exits.json` and `review-2.json`.
+Clean-candidate receipts are `clean-fault.json`, `clean-agent-dev.json`,
+`clean-audit.json`, `clean-harness.json` and `clean-harness-flow.json`.
