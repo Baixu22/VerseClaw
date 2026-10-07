@@ -221,14 +221,7 @@ test.describe('Workspace Web preview panel', () => {
       await expect(page).toHaveScreenshot('workspace-web-preview-browser-menu.png', {
         animations: 'disabled',
         caret: 'hide',
-        /*
-         * The brand logo is picked at random from three images on every app
-         * launch (src/components/brand/BrandLogo.tsx) — deliberate product
-         * delight, and fatal to a whole-page baseline: a third of runs draw a
-         * different mascot and the shot fails by ~500px on the logo alone.
-         * This is the only full-page screenshot in the suite, so masking it
-         * here is enough; everything else captures a scoped locator.
-         */
+        // Brand identity is covered separately; this baseline targets preview controls.
         mask: [page.getByAltText('Verse')],
       });
       await page.keyboard.press('Escape');

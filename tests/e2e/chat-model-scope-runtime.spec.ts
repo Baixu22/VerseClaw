@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { join, relative, resolve } from 'node:path';
+import { relative, resolve } from 'node:path';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import { hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
 
