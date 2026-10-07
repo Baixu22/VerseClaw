@@ -1,4 +1,4 @@
-import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { closeElectronApp, expect, getAgentDevHostCalls, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const MAIN_SESSION_KEY = 'agent:main:main';
 const HANDOFF_DRAFT = [
@@ -224,6 +224,70 @@ function baseHostApiMocks() {
 }
 
 test.describe('Verse Claw chat session handoff', () => {
+  test('keeps the current handoff draft when an old conversation responds late', async ({ launchElectronApp }, testInfo) => {
+    const app = await launchElectronApp({ skipSetup: true });
+    const otherKey = 'agent:main:session-isolation-b';
+    const isolationWorkspace = { ...activeWorkspace, sessionStates: { [MAIN_SESSION_KEY]: {}, [otherKey]: {} } };
+    const sessions = [{ key: MAIN_SESSION_KEY, displayName: 'Conversation A', workspaceId: 'workspace-a', updatedAt: Date.now(), messageCount: 2 }, { key: otherKey, displayName: 'Conversation B', workspaceId: 'workspace-a', updatedAt: Date.now(), messageCount: 2 }];
+    try {
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: { success: true, result: { sessions } },
+          [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: { success: true, result: { messages: handoffHistory } },
+          [stableStringify(['chat.history', { sessionKey: otherKey, limit: 200, maxChars: 500000 }])]: { success: true, result: { messages: handoffHistory } },
+        },
+        hostApi: {
+          ...baseHostApiMocks(),
+          [stableStringify(['sessions', 'history', null])]: { messages: handoffHistory, hasMore: false },
+          [stableStringify(['workspaces', 'list', null])]: { success: true, profiles: [isolationWorkspace], activeWorkspaceId: 'workspace-a', activeWorkspace: isolationWorkspace },
+          [stableStringify(['workspaces', 'getActive', null])]: { success: true, activeWorkspaceId: 'workspace-a', activeWorkspace: isolationWorkspace },
+          [stableStringify(['/api/workspaces', 'GET'])]: { ok: true, data: { status: 200, ok: true, json: { success: true, workspaces: [isolationWorkspace], activeWorkspaceId: 'workspace-a' } } },
+          [stableStringify(['/api/chat/sessions', 'GET'])]: { ok: true, data: { status: 200, ok: true, json: { success: true, result: { sessions } } } },
+        },
+      });
+      await app.evaluate(({ ipcMain }, sourceKey) => {
+        const original = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: unknown) => Promise<unknown>> })._invokeHandlers.get('host:invoke');
+        const state = { requested: false, release: () => {} };
+        (globalThis as typeof globalThis & { __handoffIsolation?: typeof state }).__handoffIsolation = state;
+        ipcMain.removeHandler('host:invoke');
+        ipcMain.handle('host:invoke', async (event, request: { id?: string; module?: string; action?: string; payload?: { sessionKey?: string } }) => {
+          if (request.module === 'sessions' && request.action === 'prepareHandoff') {
+            const old = request.payload?.sessionKey === sourceKey;
+            if (old) {
+              state.requested = true;
+              await new Promise<void>(resolve => { state.release = resolve; });
+            }
+            return { id: request.id, ok: true, data: { success: true, draft: old ? 'Late draft from A' : 'Current draft from B', sources: [], warnings: [] } };
+          }
+          return original?.(event, request);
+        });
+      }, MAIN_SESSION_KEY);
+      const page = await getStableWindow(app);
+      await page.reload();
+      await expect(page.getByTestId('chat-composer-input')).toBeVisible();
+      await page.screenshot({ path: testInfo.outputPath('handoff-isolation-ready.png') });
+      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-session-handoff').click();
+      await expect.poll(() => app.evaluate(() => (globalThis as typeof globalThis & { __handoffIsolation?: { requested: boolean } }).__handoffIsolation?.requested)).toBe(true);
+      await page.getByTestId(`sidebar-session-${otherKey}`).click();
+      await expect(page.getByTestId(`sidebar-session-${otherKey}`).locator('xpath=ancestor::div[contains(@class, "sidebar-row")][1]')).toHaveClass(/\bselected\b/);
+      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await expect(page.getByTestId('chat-session-handoff')).toBeEnabled();
+      await page.getByTestId('chat-session-handoff').click();
+      await expect(page.getByTestId('chat-handoff-draft')).toHaveValue('Current draft from B');
+      await app.evaluate(() => (globalThis as typeof globalThis & { __handoffIsolation?: { release: () => void } }).__handoffIsolation?.release());
+      await expect.poll(async () => (await getAgentDevHostCalls(page)).some(value => {
+        const call = value as { module?: string; action?: string; payload?: { sessionKey?: string }; endedAt?: number };
+        return call.module === 'sessions' && call.action === 'prepareHandoff' && call.payload?.sessionKey === MAIN_SESSION_KEY && typeof call.endedAt === 'number';
+      })).toBe(true);
+      await expect(page.getByTestId('chat-handoff-draft')).toHaveValue('Current draft from B');
+    } finally {
+      await app.evaluate(() => (globalThis as typeof globalThis & { __handoffIsolation?: { release: () => void } }).__handoffIsolation?.release()).catch(() => {});
+      await closeElectronApp(app);
+    }
+  });
+
   test('previews, edits, and creates a new session with the draft prefilled without auto-send', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

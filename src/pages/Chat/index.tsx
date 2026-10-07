@@ -1042,6 +1042,28 @@ export function Chat() {
   const [handoffDialogOpen, setHandoffDialogOpen] = useState(false);
   const [handoffResult, setHandoffResult] = useState<SessionHandoffResult | null>(null);
   const [handoffDraft, setHandoffDraft] = useState('');
+  // A new visit to the same key is a new scope too: A -> B -> A must not
+  // revive a response from the first visit to A.
+  const controlScope = useMemo(() => ({ sessionKey: currentSessionKey, agentId: currentAgentId, workspaceId: activeWorkspace?.id }), [currentSessionKey, currentAgentId, activeWorkspace?.id]);
+  const controlScopeRef = useRef<object | null>(controlScope);
+  controlScopeRef.current = controlScope;
+  const isCurrentControlScope = useCallback(() => controlScopeRef.current === controlScope, [controlScope]);
+  useEffect(() => {
+    controlScopeRef.current = controlScope;
+    setCompactionStatus(null);
+    setCompactionBusy(false);
+    setLongTaskControlStatus(null);
+    setQueueDrainBusy(false);
+    setTaskLoopUpgradeBusy(false);
+    setContextRange(null);
+    setLiveUsage(null);
+    setPromptCacheStatus(null);
+    setHandoffDialogOpen(false);
+    setHandoffResult(null);
+    setHandoffDraft('');
+    setHandoffBusy(false);
+    return () => { if (controlScopeRef.current === controlScope) controlScopeRef.current = null; };
+  }, [controlScope]);
   const [sessionLineage, setSessionLineage] = useState<Record<string, SessionLineageOverride>>({});
   const [streamStatusNow, setStreamStatusNow] = useState(() => Date.now());
   const [composerDraft, setComposerDraft] = useState('');
@@ -1878,7 +1900,7 @@ export function Chat() {
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [currentModelRef, currentSessionKey, messages.length]);
+  }, [controlScope, currentModelRef, currentSessionKey, messages.length]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1895,7 +1917,7 @@ export function Chat() {
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [currentSessionKey, activeRunId, sending, pendingFinal, streamingMessage]);
+  }, [controlScope, currentSessionKey, activeRunId, sending, pendingFinal, streamingMessage]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1918,6 +1940,7 @@ export function Chat() {
     };
   }, [
     contextRange?.usedTokens,
+    controlScope,
     currentModelRef,
     currentSessionKey,
     liveUsage?.cacheReadTokens,
@@ -1926,30 +1949,33 @@ export function Chat() {
   ]);
 
   const refreshCompactionStatus = useCallback(async () => {
+    if (!isCurrentControlScope()) return;
     try {
       const result = await hostApi.sessions.compactionStatus({
         sessionKey: currentSessionKey,
         agentId: currentAgentId,
       });
-      setCompactionStatus(result.success ? result : null);
+      if (isCurrentControlScope()) setCompactionStatus(result.success ? result : null);
     } catch {
-      setCompactionStatus(null);
+      if (isCurrentControlScope()) setCompactionStatus(null);
     }
-  }, [currentAgentId, currentSessionKey]);
+  }, [currentAgentId, currentSessionKey, isCurrentControlScope]);
 
   const refreshLongTaskControlStatus = useCallback(async () => {
+    if (!isCurrentControlScope()) return;
     try {
       const result = await hostApi.sessions.longTaskControlStatus({
         sessionKey: currentSessionKey,
         agentId: currentAgentId,
       });
-      setLongTaskControlStatus(result.success ? result : null);
+      if (isCurrentControlScope()) setLongTaskControlStatus(result.success ? result : null);
     } catch {
-      setLongTaskControlStatus(null);
+      if (isCurrentControlScope()) setLongTaskControlStatus(null);
     }
-  }, [currentAgentId, currentSessionKey]);
+  }, [currentAgentId, currentSessionKey, isCurrentControlScope]);
 
   const handleConfirmTaskLoopUpgrade = useCallback(async (suggestion: TaskLoopUpgradeSuggestion) => {
+    if (!isCurrentControlScope()) return;
     setTaskLoopUpgradeBusy(true);
     try {
       const result = await startTaskLoopUpgradeRun({
@@ -1960,6 +1986,7 @@ export function Chat() {
         agentId: currentAgentId,
         workspaceId: activeWorkspace?.id ?? null,
       });
+      if (!isCurrentControlScope()) return;
       toast.success(t('composer.taskLoopUpgrade.toastUpdated', {
         status: result.status || t('composer.taskLoopUpgrade.unknownStatus'),
       }));
@@ -1968,10 +1995,11 @@ export function Chat() {
         refreshTaskLedger(),
       ]);
     } catch (error) {
+      if (!isCurrentControlScope()) return;
       toast.error(error instanceof Error ? error.message : t('composer.taskLoopUpgrade.toastFailed'));
       throw error;
     } finally {
-      setTaskLoopUpgradeBusy(false);
+      if (isCurrentControlScope()) setTaskLoopUpgradeBusy(false);
     }
   }, [
     activeWorkspace?.id,
@@ -1980,6 +2008,7 @@ export function Chat() {
     currentSessionKey,
     refreshLongTaskControlStatus,
     refreshTaskLedger,
+    isCurrentControlScope,
     t,
   ]);
 
@@ -2001,7 +2030,7 @@ export function Chat() {
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [currentAgentId, currentSessionKey, messages.length]);
+  }, [controlScope, currentAgentId, currentSessionKey, messages.length]);
 
   useEffect(() => {
     let cancelled = false;
@@ -2021,7 +2050,7 @@ export function Chat() {
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [currentAgentId, currentSessionKey, messages.length]);
+  }, [controlScope, currentAgentId, currentSessionKey, messages.length]);
 
   useEffect(() => {
     const unsubscribe = hostEvents.onChatQueueStatus((payload) => {
@@ -2033,12 +2062,14 @@ export function Chat() {
   }, [currentSessionKey, refreshLongTaskControlStatus]);
 
   const handleDrainQueuedFollowup = useCallback(async () => {
+    if (!isCurrentControlScope()) return;
     setQueueDrainBusy(true);
     try {
       const result = await hostApi.sessions.queueDrain({
         sessionKey: currentSessionKey,
         agentId: currentAgentId,
       });
+      if (!isCurrentControlScope()) return;
       if (!result.success) {
         toast.error(result.error || t('composer.longTaskControl.drainFailed'));
         return;
@@ -2054,13 +2085,15 @@ export function Chat() {
       }
       await refreshLongTaskControlStatus();
     } catch (error) {
+      if (!isCurrentControlScope()) return;
       toast.error(error instanceof Error ? error.message : t('composer.longTaskControl.drainFailed'));
     } finally {
-      setQueueDrainBusy(false);
+      if (isCurrentControlScope()) setQueueDrainBusy(false);
     }
-  }, [currentAgentId, currentSessionKey, refreshLongTaskControlStatus, t]);
+  }, [currentAgentId, currentSessionKey, isCurrentControlScope, refreshLongTaskControlStatus, t]);
 
   const handleManualCompact = useCallback(async (customInstructions?: string) => {
+    if (!isCurrentControlScope()) return;
     setCompactionBusy(true);
     try {
       const result = await hostApi.sessions.compact({
@@ -2069,6 +2102,7 @@ export function Chat() {
         customInstructions,
         force: true,
       });
+      if (!isCurrentControlScope()) return;
       if (!result.success) {
         toast.error(result.error || t('composer.compaction.toastFailed'));
         return;
@@ -2095,6 +2129,7 @@ export function Chat() {
           loadHistory(true),
           loadSessions(),
         ]);
+        if (!isCurrentControlScope()) return;
         await Promise.all([
           refreshCompactionStatus(),
           refreshLongTaskControlStatus(),
@@ -2103,17 +2138,19 @@ export function Chat() {
             modelRef: currentModelRef,
             messageCount: messages.length,
             usedTokens: liveUsage?.totalTokens ?? null,
-          }).then((contextResult) => setContextRange(contextResult.range)).catch(() => setContextRange(null)),
+          }).then((contextResult) => { if (isCurrentControlScope()) setContextRange(contextResult.range); })
+            .catch(() => { if (isCurrentControlScope()) setContextRange(null); }),
         ]);
       })().catch((refreshError) => {
         console.warn('[chat:manual-compaction] refresh failed', refreshError);
       });
     } catch (error) {
+      if (!isCurrentControlScope()) return;
       toast.error(error instanceof Error ? error.message : t('composer.compaction.toastFailed'));
     } finally {
-      setCompactionBusy(false);
+      if (isCurrentControlScope()) setCompactionBusy(false);
     }
-  }, [currentAgentId, currentModelRef, currentSessionKey, liveUsage?.totalTokens, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
+  }, [currentAgentId, currentModelRef, currentSessionKey, isCurrentControlScope, liveUsage?.totalTokens, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
 
   const continuityRunActive = sending || pendingFinal || Boolean(streamingMessage) || Boolean(activeRunId);
   const gatewayAvailable = isGatewayRunning && gatewayStatus.gatewayReady !== false;
@@ -2225,7 +2262,7 @@ export function Chat() {
   ]);
 
   const handlePrepareHandoff = useCallback(async () => {
-    if (handoffDisabled || handoffBusy) return;
+    if (handoffDisabled || handoffBusy || !isCurrentControlScope()) return;
     setHandoffBusy(true);
     try {
       const result = await hostApi.sessions.prepareHandoff({
@@ -2233,6 +2270,7 @@ export function Chat() {
         agentId: currentAgentId,
         workspaceId: activeWorkspace?.id ?? null,
       });
+      if (!isCurrentControlScope()) return;
       if (!result.success || !result.draft) {
         const kind = classifySessionContinuityError(result);
         showContinuityFailureToast({
@@ -2252,6 +2290,7 @@ export function Chat() {
       setHandoffDraft(result.draft);
       setHandoffDialogOpen(true);
     } catch (error) {
+      if (!isCurrentControlScope()) return;
       const kind = classifySessionContinuityError(error);
       showContinuityFailureToast({
         action: 'handoff',
@@ -2265,7 +2304,7 @@ export function Chat() {
           : undefined,
       });
     } finally {
-      setHandoffBusy(false);
+      if (isCurrentControlScope()) setHandoffBusy(false);
     }
   }, [
     activeWorkspace?.id,
@@ -2274,6 +2313,7 @@ export function Chat() {
     gatewayAvailable,
     handoffBusy,
     handoffDisabled,
+    isCurrentControlScope,
     showContinuityFailureToast,
     t,
   ]);

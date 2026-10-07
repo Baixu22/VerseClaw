@@ -1015,6 +1015,8 @@ export function ChatInput({
   const [optimisticModelRef, setOptimisticModelRef] = useState<string | null>(null);
   const [compactionDialogOpen, setCompactionDialogOpen] = useState(false);
   const [compactionInstructions, setCompactionInstructions] = useState('');
+  const sessionGenerationRef = useRef(0);
+  const cancelCacheConfirmationsRef = useRef(new Set<() => void>());
   const [activeTaskNodeId, setActiveTaskNodeIdState] = useState<string | null>(null);
   const [pendingCapabilitySend, setPendingCapabilitySend] = useState<PendingCapabilitySend | null>(null);
   const [capabilityExecuting, setCapabilityExecuting] = useState(false);
@@ -1295,6 +1297,9 @@ export function ChatInput({
     action: PromptCacheRiskAction,
     targetModelRef?: string | null,
   ): Promise<boolean> => {
+    const generation = sessionGenerationRef.current;
+    const isCurrentSession = () => generation === sessionGenerationRef.current
+      && useChatStore.getState().currentSessionKey === currentSessionKey;
     let assessment: PromptCacheRiskAssessment | null = null;
     try {
       const result = await hostApi.usage.promptCacheStatus({
@@ -1309,6 +1314,7 @@ export function ChatInput({
       assessment = null;
     }
 
+    if (!isCurrentSession()) return false;
     if (!assessment?.shouldWarn) {
       return true;
     }
@@ -1320,9 +1326,13 @@ export function ChatInput({
         if (settled) return;
         settled = true;
         if (toastRef.id !== undefined) toast.dismiss(toastRef.id);
-        recordPromptCacheDecision(assessment, decision);
-        resolve(decision === 'continued');
+        cancelCacheConfirmationsRef.current.delete(cancel);
+        const current = isCurrentSession();
+        recordPromptCacheDecision(assessment, current ? decision : 'cancelled');
+        resolve(current && decision === 'continued');
       };
+      const cancel = () => settle('cancelled');
+      cancelCacheConfirmationsRef.current.add(cancel);
 
       const actionLabel = t(`composer.promptCacheGuard.action.${action}`, {
         defaultValue: action,
@@ -1456,8 +1466,10 @@ export function ChatInput({
 
   const handleConfirmTaskLoopUpgrade = useCallback(async () => {
     if (!taskLoopUpgradeSuggestion || !onConfirmTaskLoopUpgrade || taskLoopUpgradeBusy) return;
+    const generation = sessionGenerationRef.current;
     try {
       await onConfirmTaskLoopUpgrade(taskLoopUpgradeSuggestion);
+      if (generation !== sessionGenerationRef.current) return;
       updateInput('');
     } catch {
       // The parent surface owns the user-facing failure toast; keep the draft intact.
@@ -1674,9 +1686,11 @@ export function ChatInput({
 
   const handleConfirmCompaction = useCallback(async () => {
     if (!onManualCompact || compactDisabled) return;
+    const generation = sessionGenerationRef.current;
     const allowed = await confirmPromptCacheRisk('manual-compaction');
-    if (!allowed) return;
+    if (!allowed || generation !== sessionGenerationRef.current) return;
     await onManualCompact(compactionInstructions.trim() || undefined);
+    if (generation !== sessionGenerationRef.current) return;
     setCompactionInstructions('');
     setCompactionDialogOpen(false);
   }, [compactDisabled, compactionInstructions, confirmPromptCacheRisk, onManualCompact]);
@@ -1732,6 +1746,14 @@ export function ChatInput({
     setPendingTurnModelRef(null);
     setOptimisticModelRef(null);
     setModelScope('persistent');
+    setCompactionDialogOpen(false);
+    setCompactionInstructions('');
+    const cancellations = cancelCacheConfirmationsRef.current;
+    return () => {
+      sessionGenerationRef.current++;
+      for (const cancel of cancellations) cancel();
+      cancellations.clear();
+    };
   }, [currentSessionKey]);
 
   // Auto-resize textarea

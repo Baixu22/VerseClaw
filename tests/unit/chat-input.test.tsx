@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render as testingLibraryRender, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render as testingLibraryRender, screen, waitFor, within } from '@testing-library/react';
 import { HashRouter } from 'react-router-dom';
 import { ChatInput } from '@/pages/Chat/ChatInput';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -841,6 +841,24 @@ describe('ChatInput draft persistence', () => {
     expect(onSend).toHaveBeenCalledWith('send this draft', expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest' }));
     expect(onDraftChange).toHaveBeenCalledWith('');
     expect(screen.getByTestId('chat-composer-input')).toHaveValue('');
+  });
+
+  it('keeps the new conversation draft when an old task-loop upgrade finishes', async () => {
+    const originalSession = chatState.currentSessionKey;
+    let finish!: () => void;
+    const onConfirmTaskLoopUpgrade = vi.fn(() => new Promise<void>(resolve => { finish = resolve; }));
+    const onSend = vi.fn();
+    chatState.currentSessionKey = 'agent:main:session-a';
+    const view = renderChatInput(onSend, { onConfirmTaskLoopUpgrade });
+    try {
+      fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: '请按照顺序修复鉴权矩阵问题，补充单元测试和 e2e，跑 typecheck，失败要修复到通过再继续。' } });
+      fireEvent.click(await screen.findByTestId('chat-task-loop-upgrade-confirm'));
+      await waitFor(() => expect(onConfirmTaskLoopUpgrade).toHaveBeenCalledTimes(1));
+      chatState.currentSessionKey = 'agent:main:session-b';
+      view.rerender(<TooltipProvider><ChatInput onSend={onSend} onConfirmTaskLoopUpgrade={onConfirmTaskLoopUpgrade} draftValue="New draft in B" /></TooltipProvider>);
+      await act(async () => finish());
+      expect(screen.getByTestId('chat-composer-input')).toHaveValue('New draft in B');
+    } finally { chatState.currentSessionKey = originalSession; }
   });
 
   it('surfaces Task Loop upgrade for complex project work without auto-sending', async () => {
@@ -2052,6 +2070,104 @@ describe('ChatInput read-only context status', () => {
     await waitFor(() => {
       expect(onManualCompact).toHaveBeenCalledWith('Preserve the migration decision.');
     });
+  });
+
+  it('closes a compaction dialog when switching conversations', async () => {
+    const originalSession = chatState.currentSessionKey;
+    const props = {
+      compactionStatus: { available: true, canCompact: true, inProgress: false, pressure: 'high' as const, truncatedMessageCount: 0, warnings: [] },
+      onManualCompact: vi.fn(),
+    };
+    const onSend = vi.fn();
+    chatState.currentSessionKey = 'agent:main:session-a';
+    const view = renderChatInput(onSend, props);
+    try {
+      fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: '/compact' } });
+      fireEvent.click(screen.getByTestId('chat-slash-command-option-compact'));
+      expect(screen.getByTestId('chat-compaction-dialog')).toBeInTheDocument();
+      chatState.currentSessionKey = 'agent:main:session-b';
+      view.rerender(<TooltipProvider><ChatInput onSend={onSend} {...props} /></TooltipProvider>);
+      await waitFor(() => expect(screen.queryByTestId('chat-compaction-dialog')).not.toBeInTheDocument());
+      expect(props.onManualCompact).not.toHaveBeenCalled();
+    } finally { chatState.currentSessionKey = originalSession; }
+  });
+
+  it('cancels a delayed compaction confirmation after leaving and returning to a conversation', async () => {
+    const { hostApi } = await import('@/lib/host-api');
+    const originalSession = chatState.currentSessionKey;
+    const assessment = await hostApi.usage.promptCacheStatus({ sessionKey: 'agent:main:session-a' });
+    let finish!: (value: Awaited<ReturnType<typeof hostApi.usage.promptCacheStatus>>) => void;
+    const risk = vi.spyOn(hostApi.usage, 'promptCacheStatus').mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    const props = {
+      compactionStatus: { available: true, canCompact: true, inProgress: false, pressure: 'high' as const, truncatedMessageCount: 0, warnings: [] },
+      onManualCompact: vi.fn().mockResolvedValue(undefined),
+    };
+    const onSend = vi.fn();
+    chatState.currentSessionKey = 'agent:main:session-a';
+    const view = renderChatInput(onSend, props);
+    try {
+      fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: '/compact' } });
+      fireEvent.click(screen.getByTestId('chat-slash-command-option-compact'));
+      fireEvent.click(screen.getByTestId('chat-compaction-confirm'));
+      await waitFor(() => expect(risk).toHaveBeenCalledTimes(1));
+      chatState.currentSessionKey = 'agent:main:session-b';
+      view.rerender(<TooltipProvider><ChatInput onSend={onSend} {...props} /></TooltipProvider>);
+      chatState.currentSessionKey = 'agent:main:session-a';
+      view.rerender(<TooltipProvider><ChatInput onSend={onSend} {...props} /></TooltipProvider>);
+      await act(async () => { finish(assessment); });
+      expect(props.onManualCompact).not.toHaveBeenCalled();
+    } finally { risk.mockRestore(); chatState.currentSessionKey = originalSession; }
+  });
+
+  it('preserves the new conversation dialog when an old compaction completes', async () => {
+    const originalSession = chatState.currentSessionKey;
+    let finish!: () => void;
+    const onManualCompact = vi.fn(() => new Promise<void>(resolve => { finish = resolve; }));
+    const props = { compactionStatus: { available: true, canCompact: true, inProgress: false, pressure: 'high' as const, truncatedMessageCount: 0, warnings: [] }, onManualCompact };
+    const onSend = vi.fn();
+    chatState.currentSessionKey = 'agent:main:session-a';
+    const view = renderChatInput(onSend, props);
+    try {
+      fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: '/compact' } });
+      fireEvent.click(screen.getByTestId('chat-slash-command-option-compact'));
+      fireEvent.click(screen.getByTestId('chat-compaction-confirm'));
+      await waitFor(() => expect(onManualCompact).toHaveBeenCalledTimes(1));
+      chatState.currentSessionKey = 'agent:main:session-b';
+      view.rerender(<TooltipProvider><ChatInput onSend={onSend} {...props} /></TooltipProvider>);
+      fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: '/compact' } });
+      fireEvent.click(screen.getByTestId('chat-slash-command-option-compact'));
+      fireEvent.change(screen.getByTestId('chat-compaction-instructions'), { target: { value: 'Keep the B draft' } });
+      await act(async () => finish());
+      expect(screen.getByTestId('chat-compaction-instructions')).toHaveValue('Keep the B draft');
+    } finally { chatState.currentSessionKey = originalSession; }
+  });
+
+  it('dismisses a pending cache-risk confirmation when its conversation is left', async () => {
+    const { hostApi } = await import('@/lib/host-api');
+    const originalSession = chatState.currentSessionKey;
+    const risk = vi.spyOn(hostApi.usage, 'promptCacheStatus').mockResolvedValueOnce({
+      success: true,
+      assessment: { sessionKey: 'agent:main:session-a', shouldWarn: true, severity: 'medium', status: 'unknown', confidence: 'unknown', providerStrategy: 'unknown', hitRate: null, promptTokens: 100, cacheReadTokens: 0, cacheWriteTokens: 0, costEstimateReliable: false, warningCount: 0, cancelledBreakCount: 0, updatedAt: 0 },
+    });
+    vi.mocked(sonnerToast.warning).mockClear().mockReturnValueOnce('session-a-risk');
+    vi.mocked(sonnerToast.dismiss).mockClear();
+    const props = {
+      compactionStatus: { available: true, canCompact: true, inProgress: false, pressure: 'high' as const, truncatedMessageCount: 0, warnings: [] },
+      onManualCompact: vi.fn(),
+    };
+    const onSend = vi.fn();
+    chatState.currentSessionKey = 'agent:main:session-a';
+    const view = renderChatInput(onSend, props);
+    try {
+      fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: '/compact' } });
+      fireEvent.click(screen.getByTestId('chat-slash-command-option-compact'));
+      fireEvent.click(screen.getByTestId('chat-compaction-confirm'));
+      await waitFor(() => expect(sonnerToast.warning).toHaveBeenCalledTimes(1));
+      chatState.currentSessionKey = 'agent:main:session-b';
+      view.rerender(<TooltipProvider><ChatInput onSend={onSend} {...props} /></TooltipProvider>);
+      await waitFor(() => expect(sonnerToast.dismiss).toHaveBeenCalledWith('session-a-risk'));
+      expect(props.onManualCompact).not.toHaveBeenCalled();
+    } finally { risk.mockRestore(); chatState.currentSessionKey = originalSession; }
   });
 
   /* Compaction quality and the evidence viewer moved to the session status
