@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 const hostApiFetchMock = vi.fn();
 
@@ -171,8 +171,16 @@ vi.mock('@/pages/Chat/ChatToolbar', () => ({
 }));
 
 vi.mock('@/pages/Chat/ChatInput', () => ({
-  ChatInput: ({ sending }: { sending?: boolean }) => (
-    <div data-testid="mock-chat-input" data-sending={sending ? 'true' : 'false'} />
+  ChatInput: ({ sending, compactionStatus, onHandoffSession, onManualCompact }: {
+    sending?: boolean;
+    compactionStatus?: { usedTokens?: number } | null;
+    onHandoffSession?: () => Promise<void>;
+    onManualCompact?: () => Promise<void>;
+  }) => (
+    <div data-testid="mock-chat-input" data-sending={sending ? 'true' : 'false'} data-used-tokens={compactionStatus?.usedTokens ?? ''}>
+      <button data-testid="mock-prepare-handoff" onClick={onHandoffSession}>Handoff</button>
+      <button data-testid="mock-compact" onClick={onManualCompact}>Compact</button>
+    </div>
   ),
 }));
 
@@ -280,6 +288,40 @@ describe('Chat execution graph lifecycle', () => {
     expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
     expect(screen.getByText('Here is the summary.')).toBeInTheDocument();
     expect(screen.queryByText('Checked X. Here is the summary.')).not.toBeInTheDocument();
+  });
+
+  it('does not reopen an old handoff draft after changing away and back', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const { hostApi } = await import('@/lib/host-api');
+    const { Chat } = await import('@/pages/Chat/index');
+    let finish!: (result: unknown) => void;
+    Object.assign(hostApi.sessions, { prepareHandoff: vi.fn(() => new Promise(resolve => { finish = resolve; })) });
+    useChatStore.setState({ currentSessionKey: 'agent:main:a', currentAgentId: 'main', messages: [], sending: false, pendingFinal: false, streamingMessage: null, activeRunId: null });
+    render(<Chat />);
+    fireEvent.click(screen.getByTestId('mock-prepare-handoff'));
+    await waitFor(() => expect(hostApi.sessions.prepareHandoff).toHaveBeenCalledTimes(1));
+    act(() => useChatStore.setState({ currentSessionKey: 'agent:main:b' }));
+    act(() => useChatStore.setState({ currentSessionKey: 'agent:main:a' }));
+    await act(async () => { finish({ success: true, draft: 'Stale draft from the previous visit', sources: [], warnings: [] }); });
+    expect(screen.queryByTestId('chat-handoff-dialog')).not.toBeInTheDocument();
+  });
+
+  it('does not overwrite the new conversation status when old compression finishes', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const { hostApi } = await import('@/lib/host-api');
+    const { Chat } = await import('@/pages/Chat/index');
+    let finish!: (result: unknown) => void;
+    Object.assign(hostApi.sessions, { compact: vi.fn(() => new Promise(resolve => { finish = resolve; })) });
+    vi.mocked(hostApi.sessions.compactionStatus).mockImplementation(async ({ sessionKey }) => ({ success: true, available: true, canCompact: true, inProgress: false, usedTokens: sessionKey === 'agent:main:a' ? 111 : 222, pressure: 'low', truncatedMessageCount: 0, warnings: [] }));
+    useChatStore.setState({ currentSessionKey: 'agent:main:a', currentAgentId: 'main', messages: [], sending: false, pendingFinal: false, streamingMessage: null, activeRunId: null, loadHistory: vi.fn(async () => undefined), loadSessions: vi.fn(async () => undefined) });
+    render(<Chat />);
+    await waitFor(() => expect(screen.getByTestId('mock-chat-input')).toHaveAttribute('data-used-tokens', '111'));
+    fireEvent.click(screen.getByTestId('mock-compact'));
+    await waitFor(() => expect(hostApi.sessions.compact).toHaveBeenCalledTimes(1));
+    act(() => useChatStore.setState({ currentSessionKey: 'agent:main:b' }));
+    await waitFor(() => expect(screen.getByTestId('mock-chat-input')).toHaveAttribute('data-used-tokens', '222'));
+    await act(async () => { finish({ success: true, compacted: true, tokensBefore: 111, tokensAfter: 10 }); });
+    expect(screen.getByTestId('mock-chat-input')).toHaveAttribute('data-used-tokens', '222');
   });
 
   it('keeps completed long task work visible by default and remembers a manual collapse', async () => {
