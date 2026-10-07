@@ -105,7 +105,7 @@ ClawGraph はワークスペースの YAML ワークフローを読み込み、�
 
 必要なもの：
 
-- **Node.js 24** と Git。
+- **Node.js 24.16.0 以降の 24.x** と Git。Windows の古い Node 24 には TCP 接続でクラッシュする問題があります（[上流の修正](https://github.com/nodejs/node/issues/63620)）。
 - [package.json](package.json) で固定された **pnpm 11.2.2**。Corepack で有効化できます。
 - リポジトリへのアクセス権と、依存関係・Electron・uv・agent-browser をダウンロードするネットワーク接続。
 - オンラインモデルの認証、または起動済みの互換ローカルモデルサービス。

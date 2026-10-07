@@ -11,6 +11,18 @@
 
 Var /GLOBAL verseClawRollbackDir
 
+; Defender integration is optional. Check the effective token before invoking
+; Defender, and bound even an elevated/WMI stall. File arguments preserve paths
+; containing apostrophes without interpolating them into PowerShell source.
+!macro VerseClawDefender Action
+  InitPluginsDir
+  File "/oname=$PLUGINSDIR\update-defender-exclusion.ps1" "${PROJECT_DIR}\scripts\update-defender-exclusion.ps1"
+  nsExec::ExecToStack /TIMEOUT=10000 '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\update-defender-exclusion.ps1" -Action ${Action} -InstallDir "$INSTDIR"'
+  Pop $0
+  Pop $1
+  DetailPrint "Optional Defender ${Action}: exit=$0 $1"
+!macroend
+
 !macro customHeader
   ; Show install details by default so users can see what stage is running.
   ShowInstDetails show
@@ -28,17 +40,17 @@ Function VerseClawMoveLegacyInstallDir
     Goto _verse-claw_legacy_move_done
   ${endIf}
 
-  IfFileExists "$R6\" 0 _verse-claw_legacy_move_done
+  IfFileExists "$R6\*" 0 _verse-claw_legacy_move_done
     DetailPrint "Moving previous Verse Claw installation at $R6 out of the way..."
     SetOutPath $TEMP
-    nsExec::ExecToStack `"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Get-CimInstance -ClassName Win32_Process | Where-Object { $$_.ExecutablePath -and $$_.ExecutablePath.StartsWith('$R6', [System.StringComparison]::OrdinalIgnoreCase) } | ForEach-Object { Stop-Process -Id $$_.ProcessId -Force -ErrorAction SilentlyContinue }"`
+    nsExec::ExecToStack /TIMEOUT=30000 `"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Get-CimInstance -ClassName Win32_Process | Where-Object { $$_.ExecutablePath -and $$_.ExecutablePath.StartsWith('$R6', [System.StringComparison]::OrdinalIgnoreCase) } | ForEach-Object { Stop-Process -Id $$_.ProcessId -Force -ErrorAction SilentlyContinue }"`
     Pop $0
     Pop $1
     Sleep 1000
     StrCpy $R8 0
 
   _verse-claw_legacy_find_free_stale:
-    IfFileExists "$R6._stale_$R8\" 0 _verse-claw_legacy_found_free_stale
+    IfFileExists "$R6._stale_$R8\*" 0 _verse-claw_legacy_found_free_stale
     IntOp $R8 $R8 + 1
     Goto _verse-claw_legacy_find_free_stale
 
@@ -47,7 +59,7 @@ Function VerseClawMoveLegacyInstallDir
     Rename "$R6" "$R6._stale_$R8"
     IfErrors 0 _verse-claw_legacy_stale_moved
       DetailPrint "Waiting for file locks at $R6 to clear..."
-      nsExec::ExecToStack `"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Get-CimInstance -ClassName Win32_Process | Where-Object { $$_.ExecutablePath -and $$_.ExecutablePath.StartsWith('$R6', [System.StringComparison]::OrdinalIgnoreCase) } | ForEach-Object { Stop-Process -Id $$_.ProcessId -Force -ErrorAction SilentlyContinue }"`
+      nsExec::ExecToStack /TIMEOUT=30000 `"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Get-CimInstance -ClassName Win32_Process | Where-Object { $$_.ExecutablePath -and $$_.ExecutablePath.StartsWith('$R6', [System.StringComparison]::OrdinalIgnoreCase) } | ForEach-Object { Stop-Process -Id $$_.ProcessId -Force -ErrorAction SilentlyContinue }"`
       Pop $0
       Pop $1
       Sleep 2000
@@ -55,7 +67,7 @@ Function VerseClawMoveLegacyInstallDir
       Rename "$R6" "$R6._stale_$R8"
       IfErrors 0 _verse-claw_legacy_stale_moved
       DetailPrint "Removing previous Verse Claw installation at $R6..."
-      nsExec::ExecToStack 'cmd.exe /c rd /s /q "$R6"'
+      nsExec::ExecToStack /TIMEOUT=600000 'cmd.exe /c rd /s /q "$R6"'
       Pop $0
       Pop $1
       Goto _verse-claw_legacy_move_done
@@ -95,7 +107,7 @@ FunctionEnd
       ${if} $R0 != 0
         # App exited cleanly. Still kill long-lived child processes (gateway,
         # uv, python) which may not have followed the app's graceful exit.
-        nsExec::ExecToStack 'taskkill /F /IM openclaw-gateway.exe'
+        nsExec::ExecToStack /TIMEOUT=30000 'taskkill /F /IM openclaw-gateway.exe'
         Pop $0
         Pop $1
         Goto done_killing
@@ -114,20 +126,20 @@ FunctionEnd
     # Use PowerShell Get-CimInstance for path-based matching (most reliable),
     # with taskkill name-based fallback for restricted environments.
     # Note: Using backticks ` ` for the NSIS string allows us to use single quotes inside.
-    nsExec::ExecToStack `"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Get-CimInstance -ClassName Win32_Process | Where-Object { $$_.ExecutablePath -and $$_.ExecutablePath.StartsWith('$INSTDIR', [System.StringComparison]::OrdinalIgnoreCase) } | ForEach-Object { Stop-Process -Id $$_.ProcessId -Force -ErrorAction SilentlyContinue }"`
+    nsExec::ExecToStack /TIMEOUT=30000 `"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Get-CimInstance -ClassName Win32_Process | Where-Object { $$_.ExecutablePath -and $$_.ExecutablePath.StartsWith('$INSTDIR', [System.StringComparison]::OrdinalIgnoreCase) } | ForEach-Object { Stop-Process -Id $$_.ProcessId -Force -ErrorAction SilentlyContinue }"`
     Pop $0
     Pop $1
 
     ${if} $0 != 0
       # PowerShell failed (policy restriction, etc.) — fall back to name-based kill
-      nsExec::ExecToStack 'taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"'
+      nsExec::ExecToStack /TIMEOUT=30000 'taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"'
       Pop $0
       Pop $1
     ${endIf}
 
     # Also kill well-known child processes that may have detached from the
     # Electron process tree or run from outside $INSTDIR (e.g. system python).
-    nsExec::ExecToStack 'taskkill /F /IM openclaw-gateway.exe'
+    nsExec::ExecToStack /TIMEOUT=30000 'taskkill /F /IM openclaw-gateway.exe'
     Pop $0
     Pop $1
 
@@ -144,7 +156,7 @@ FunctionEnd
   ; (python.exe, openclaw-gateway.exe, uv.exe, etc.) from a previous crash
   ; or unclean shutdown may still hold file locks inside $INSTDIR.
   ; Unconditionally kill any process whose executable lives in the install dir.
-  nsExec::ExecToStack `"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Get-CimInstance -ClassName Win32_Process | Where-Object { $$_.ExecutablePath -and $$_.ExecutablePath.StartsWith('$INSTDIR', [System.StringComparison]::OrdinalIgnoreCase) } | ForEach-Object { Stop-Process -Id $$_.ProcessId -Force -ErrorAction SilentlyContinue }"`
+  nsExec::ExecToStack /TIMEOUT=30000 `"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Get-CimInstance -ClassName Win32_Process | Where-Object { $$_.ExecutablePath -and $$_.ExecutablePath.StartsWith('$INSTDIR', [System.StringComparison]::OrdinalIgnoreCase) } | ForEach-Object { Stop-Process -Id $$_.ProcessId -Force -ErrorAction SilentlyContinue }"`
   Pop $0
   Pop $1
 
@@ -152,10 +164,10 @@ FunctionEnd
   ; PowerShell path-based kill may miss processes if the old Verse Claw was installed
   ; in a different directory than $INSTDIR (e.g., per-machine -> per-user migration).
   ; taskkill is name-based and catches processes regardless of their install location.
-  nsExec::ExecToStack 'taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"'
+  nsExec::ExecToStack /TIMEOUT=30000 'taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"'
   Pop $0
   Pop $1
-  nsExec::ExecToStack 'taskkill /F /IM openclaw-gateway.exe'
+  nsExec::ExecToStack /TIMEOUT=30000 'taskkill /F /IM openclaw-gateway.exe'
   Pop $0
   Pop $1
   ; Note: we intentionally do NOT kill uv.exe globally — it is a popular
@@ -171,23 +183,23 @@ FunctionEnd
   ; commands instead of nsProcess here: field diagnostics showed Verse Claw.exe can
   ; remain alive while the old installer still reports success; this check must
   ; fail closed even when taskkill or the nsProcess plugin misses/elevates poorly.
+  InitPluginsDir
+  File "/oname=$PLUGINSDIR\check-app-running.ps1" "${PROJECT_DIR}\scripts\check-app-running.ps1"
   StrCpy $R7 0
   _verse-claw_verify_closed:
-    nsExec::ExecToStack `"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "if (Get-CimInstance -ClassName Win32_Process | Where-Object { $$_.Name -ieq '${APP_EXECUTABLE_FILENAME}' }) { exit 0 } else { exit 1 }"`
+    nsExec::ExecToStack /TIMEOUT=30000 '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\check-app-running.ps1" -Executable "${APP_EXECUTABLE_FILENAME}"'
     Pop $R0
     Pop $R1
+    ; Require the helper's successful marker as well as its exit code. Host or
+    ; script-loading failures must never imply that the app stopped.
     ${if} $R0 != 0
-      nsExec::ExecToStack 'cmd.exe /c tasklist /FI "IMAGENAME eq ${APP_EXECUTABLE_FILENAME}" | find /I "${APP_EXECUTABLE_FILENAME}" >nul'
-      Pop $R0
-      Pop $R1
-    ${endIf}
-    ${if} $R0 == 0
+    ${orIf} $R1 != "absent"
       IntOp $R7 $R7 + 1
       DetailPrint `Waiting for "${PRODUCT_NAME}" to close (attempt $R7)...`
-      nsExec::ExecToStack 'taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"'
+      nsExec::ExecToStack /TIMEOUT=30000 'taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"'
       Pop $0
       Pop $1
-      nsExec::ExecToStack `cmd.exe /c wmic process where "name='${APP_EXECUTABLE_FILENAME}'" call terminate`
+      nsExec::ExecToStack /TIMEOUT=30000 `cmd.exe /c wmic process where "name='${APP_EXECUTABLE_FILENAME}'" call terminate`
       Pop $0
       Pop $1
       Sleep 2000
@@ -225,17 +237,16 @@ FunctionEnd
   ; FILE_SHARE_DELETE sharing mode), whereas CopyFiles fails because it
   ; needs write/overwrite access which some AV products deny.
   ; Check if a previous installation exists ($INSTDIR is a directory).
-  ; Use trailing backslash — the correct NSIS idiom for directory existence.
-  ; (IfFileExists "$INSTDIR\*.*" only matches files containing a dot and
-  ;  would fail for extensionless files or pure-subdirectory layouts.)
-  IfFileExists "$INSTDIR\" 0 _instdir_clean
+  ; FindFirstFile rejects a trailing separator. The wildcard also detects
+  ; empty directories, extensionless files and subdirectory-only layouts.
+  IfFileExists "$INSTDIR\*" 0 _instdir_clean
     DetailPrint "Moving previous installation out of the way..."
     ; Find the first available stale directory name (e.g. $INSTDIR._stale_0)
     ; This ensures we NEVER have to synchronously delete old leftovers before
     ; renaming the current $INSTDIR. We just move it out of the way instantly.
     StrCpy $R8 0
   _find_free_stale:
-    IfFileExists "$INSTDIR._stale_$R8\" 0 _found_free_stale
+    IfFileExists "$INSTDIR._stale_$R8\*" 0 _found_free_stale
     IntOp $R8 $R8 + 1
     Goto _find_free_stale
 
@@ -246,19 +257,19 @@ FunctionEnd
       ; Rename still failed — retry process termination, then delete synchronously.
       ; Large openclaw bundles (#1026+) can make rd /s /q take several minutes.
       DetailPrint "Waiting for file locks to clear, then removing old files..."
-      nsExec::ExecToStack 'taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"'
+      nsExec::ExecToStack /TIMEOUT=30000 'taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"'
       Pop $0
       Pop $1
-      nsExec::ExecToStack 'taskkill /F /IM openclaw-gateway.exe'
+      nsExec::ExecToStack /TIMEOUT=30000 'taskkill /F /IM openclaw-gateway.exe'
       Pop $0
       Pop $1
       Sleep 3000
-      nsExec::ExecToStack 'cmd.exe /c rd /s /q "$INSTDIR"'
+      nsExec::ExecToStack /TIMEOUT=600000 'cmd.exe /c rd /s /q "$INSTDIR"'
       Pop $0
       Pop $1
       Sleep 2000
       RMDir "$INSTDIR"
-      IfFileExists "$INSTDIR\" 0 _recreate_clean_instdir
+      IfFileExists "$INSTDIR\*" 0 _recreate_clean_instdir
         DetailPrint "Failed to remove previous installation directory; aborting to avoid leaving the old version installed."
         MessageBox MB_OK|MB_ICONEXCLAMATION "Unable to replace the previous Verse Claw installation because files are still locked. Please close Verse Claw and retry installation." /SD IDOK
         SetErrorLevel 2
@@ -275,11 +286,11 @@ FunctionEnd
   ; installation directory was only partially removed after a locked-file
   ; fallback. Explicitly remove the bundled skills subtree so old skills
   ; (apple-notes, discord, etc.) do not remain under resources\openclaw\skills.
-  IfFileExists "$INSTDIR\resources\openclaw\skills\" 0 _openclaw_skills_clean
+  IfFileExists "$INSTDIR\resources\openclaw\skills\*" 0 _openclaw_skills_clean
     DetailPrint "Removing stale bundled OpenClaw skills from previous install..."
     RMDir /r "$INSTDIR\resources\openclaw\skills"
-    IfFileExists "$INSTDIR\resources\openclaw\skills\" 0 _openclaw_skills_clean
-      nsExec::ExecToStack 'cmd.exe /c rd /s /q "$INSTDIR\resources\openclaw\skills"'
+    IfFileExists "$INSTDIR\resources\openclaw\skills\*" 0 _openclaw_skills_clean
+      nsExec::ExecToStack /TIMEOUT=600000 'cmd.exe /c rd /s /q "$INSTDIR\resources\openclaw\skills"'
       Pop $0
       Pop $1
   _openclaw_skills_clean:
@@ -346,7 +357,7 @@ FunctionEnd
   ; Wait 60s before starting deletion to avoid I/O contention with Verse Claw's
   ; first launch (Windows Defender scan, ASAR mapping, etc.).
   ; ExecShell SW_HIDE is completely detached from NSIS and avoids pipe blocking.
-  IfFileExists "$INSTDIR._stale_0\" 0 _ci_stale_cleaned
+  IfFileExists "$INSTDIR._stale_0\*" 0 _ci_stale_cleaned
     ; Use PowerShell to extract the basename of $INSTDIR so the glob works
     ; even when the user picked a custom install folder name.
     ; E.g. $INSTDIR = D:\Apps\MyClaw → glob = MyClaw._stale_*
@@ -361,14 +372,7 @@ FunctionEnd
   DetailPrint "Enabling long-path support (if permissions allow)..."
   WriteRegDWORD HKLM "SYSTEM\CurrentControlSet\Control\FileSystem" "LongPathsEnabled" 1
 
-  ; Add $INSTDIR to Windows Defender exclusion list so that real-time scanning
-  ; doesn't block the first app launch (Defender scans every newly-created file,
-  ; causing 10-30s startup delay on a fresh install).  Requires elevation;
-  ; silently fails on non-admin per-user installs (no harm done).
-  DetailPrint "Configuring Windows Defender exclusion..."
-  nsExec::ExecToStack `"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Add-MpPreference -ExclusionPath '$INSTDIR' -ErrorAction SilentlyContinue"`
-  Pop $0
-  Pop $1
+  !insertmacro VerseClawDefender add
 
   ; Use PowerShell to update the current user's PATH.
   ; This avoids NSIS string-buffer limits and preserves long PATH values.
@@ -376,7 +380,7 @@ FunctionEnd
   InitPluginsDir
   ClearErrors
   File "/oname=$PLUGINSDIR\update-user-path.ps1" "${PROJECT_DIR}\resources\cli\win32\update-user-path.ps1"
-  nsExec::ExecToStack '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\update-user-path.ps1" -Action add -CliDir "$INSTDIR\resources\cli"'
+  nsExec::ExecToStack /TIMEOUT=15000 '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\update-user-path.ps1" -Action add -CliDir "$INSTDIR\resources\cli"'
   Pop $0
   Pop $1
   StrCmp $0 "error" 0 +2
@@ -392,16 +396,13 @@ FunctionEnd
 !macroend
 
 !macro customUnInstall
-  ; Remove Windows Defender exclusion added during install
-  nsExec::ExecToStack `"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Remove-MpPreference -ExclusionPath '$INSTDIR' -ErrorAction SilentlyContinue"`
-  Pop $0
-  Pop $1
+  !insertmacro VerseClawDefender remove
 
   ; Remove resources\cli from user PATH via PowerShell so long PATH values are handled safely
   InitPluginsDir
   ClearErrors
   File "/oname=$PLUGINSDIR\update-user-path.ps1" "${PROJECT_DIR}\resources\cli\win32\update-user-path.ps1"
-  nsExec::ExecToStack '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\update-user-path.ps1" -Action remove -CliDir "$INSTDIR\resources\cli"'
+  nsExec::ExecToStack /TIMEOUT=15000 '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\update-user-path.ps1" -Action remove -CliDir "$INSTDIR\resources\cli"'
   Pop $0
   Pop $1
   StrCmp $0 "error" 0 +2
@@ -424,7 +425,7 @@ FunctionEnd
     ; release file locks on electron-store JSON files, Gateway sockets, etc.
     ${nsProcess::FindProcess} "${APP_EXECUTABLE_FILENAME}" $R0
     ${if} $R0 == 0
-      nsExec::ExecToStack 'taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"'
+      nsExec::ExecToStack /TIMEOUT=30000 'taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"'
       Pop $0
       Pop $1
     ${endIf}
@@ -445,7 +446,7 @@ FunctionEnd
       Sleep 3000
       RMDir /r "$LOCALAPPDATA\verse-claw"
       IfFileExists "$LOCALAPPDATA\verse-claw\*.*" 0 _cu_localDone
-        nsExec::ExecToStack 'cmd.exe /c rd /s /q "$LOCALAPPDATA\verse-claw"'
+        nsExec::ExecToStack /TIMEOUT=600000 'cmd.exe /c rd /s /q "$LOCALAPPDATA\verse-claw"'
         Pop $0
         Pop $1
     _cu_localDone:
@@ -455,7 +456,7 @@ FunctionEnd
       Sleep 3000
       RMDir /r "$APPDATA\verse-claw"
       IfFileExists "$APPDATA\verse-claw\*.*" 0 _cu_roamingDone
-        nsExec::ExecToStack 'cmd.exe /c rd /s /q "$APPDATA\verse-claw"'
+        nsExec::ExecToStack /TIMEOUT=600000 'cmd.exe /c rd /s /q "$APPDATA\verse-claw"'
         Pop $0
         Pop $1
     _cu_roamingDone:

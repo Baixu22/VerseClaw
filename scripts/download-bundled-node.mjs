@@ -1,6 +1,7 @@
 #!/usr/bin/env zx
 
 import 'zx/globals';
+import { createHash } from 'node:crypto';
 import { downloadVerifiedAssetToFile } from './lib/verified-download.mjs';
 import { getReleaseAsset, getReleaseComponent } from './release-integrity-manifest.mjs';
 
@@ -75,6 +76,11 @@ async function setupTarget(id) {
     }
 
     echo(chalk.green`✅ Success: ${outputNode}`);
+    await fs.writeJson(path.join(targetDir, 'node-runtime.json'), {
+      version: NODE_VERSION,
+      target: id,
+      sha256: createHash('sha256').update(await fs.readFile(outputNode)).digest('hex'),
+    }, { spaces: 2 });
   } finally {
     await fs.remove(archivePath);
     await fs.remove(tempDir);

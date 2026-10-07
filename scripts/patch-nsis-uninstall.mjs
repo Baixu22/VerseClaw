@@ -6,18 +6,12 @@
  */
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, '..');
+import { NSIS_TEMPLATE_DIR } from './nsis-template-dir.mjs';
 
 export const INSTALL_UTIL_NSH = join(
-  ROOT,
-  'node_modules',
-  'app-builder-lib',
-  'templates',
-  'nsis',
+  NSIS_TEMPLATE_DIR,
   'include',
   'installUtil.nsh',
 );

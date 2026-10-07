@@ -2,6 +2,7 @@ import electronBinaryPath from 'electron';
 import { spawn } from 'node:child_process';
 import { _electron as electron, expect, test as base, type ElectronApplication, type Locator, type Page } from '@playwright/test';
 import { access, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { appendFileSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -25,6 +26,7 @@ type IpcMockConfig = {
 };
 
 type ElectronFixtures = {
+  workerDiagnostics: void;
   electronApp: ElectronApplication;
   page: Page;
   homeDir: string;
@@ -251,8 +253,8 @@ async function pinWindowContentSize(
  * surviving descendant stops the worker from ever exiting; Playwright then reports
  * "Worker teardown timeout of 90000ms exceeded ... 1 error was not a part of any
  * test" even though every test passed. Descendants also keep hundreds of MB
- * resident for the rest of the suite, which is when Electron's native fatal CHECK
- * (KERNELBASE 0x80000003 -> 0xC0000409) fires.
+ * resident for the rest of the suite. This is separate from an unattributed
+ * Node worker 0xC0000409; an Electron 0x80000003 dump does not explain that exit.
  *
  * Best-effort by design: teardown must never throw or hang.
  */
@@ -432,6 +434,24 @@ async function launchVerseClawElectron(
 }
 
 export const test = base.extend<ElectronFixtures>({
+  workerDiagnostics: [async ({ browserName: _browserName }, provideDiagnostics, testInfo) => {
+    const dir = process.env.CLAWX_E2E_RUN_ROOT;
+    if (!dir) { await provideDiagnostics(); return; }
+    // Write before the test and synchronously: a native abort bypasses teardown.
+    // Do not include inherited environment variables or a user's configuration.
+    process.report.directory = dir;
+    process.report.reportOnFatalError = true;
+    process.report.excludeEnv = true;
+    const record = (phase: string) => appendFileSync(join(dir, `worker-${process.pid}.jsonl`), JSON.stringify({
+      driven_by: 'agent', actor: 'playwright-worker', phase, time: new Date().toISOString(),
+      pid: process.pid, ppid: process.ppid, execPath: process.execPath, node: process.version,
+      workerIndex: testInfo.workerIndex, test: testInfo.titlePath, status: testInfo.status,
+      memory: process.memoryUsage(), resources: process.resourceUsage(),
+    }) + '\n');
+    record('begin');
+    const timer = setInterval(() => record('sample'), 5_000).unref();
+    try { await provideDiagnostics(); } finally { clearInterval(timer); record('end'); }
+  }, { auto: true }],
   homeDir: async ({ browserName: _browserName }, provideHomeDir) => {
     const homeDir = await mkdtemp(join(process.env.CLAWX_E2E_RUN_ROOT ?? tmpdir(), 'verse-claw-e2e-home-'));
     await mkdir(join(homeDir, '.config'), { recursive: true });

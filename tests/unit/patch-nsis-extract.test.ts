@@ -121,6 +121,19 @@ describe('patch-nsis-extract', () => {
     expect(patchNsisExtractTemplate(target)).toBe(true);
     expect(readFileSync(target, 'utf8').match(/!macro extractUsing7za FILE/g)).toHaveLength(1);
   });
+
+  it('repairs a cached patch with a rollback variable not declared by the installer', () => {
+    tempDir = mkdtempSync(join(tmpdir(), 'clawx-patch-nsis-'));
+    const target = join(tempDir, 'extractAppPackage.nsh');
+    writeFileSync(target, SAMPLE_FILE);
+    expect(patchNsisExtractTemplate(target)).toBe(true);
+    writeFileSync(target, readFileSync(target, 'utf8').replaceAll('$verseClawRollbackDir', '$verse-clawRollbackDir'));
+    expect(patchNsisExtractTemplate(target)).toBe(true);
+    const result = readFileSync(target, 'utf8');
+    expect(readFileSync(resolve('scripts/installer.nsh'), 'utf8')).toContain('Var /GLOBAL verseClawRollbackDir');
+    expect(result).toContain('Rename "$verseClawRollbackDir" "$INSTDIR"');
+    expect(result).not.toContain('$verse-clawRollbackDir');
+  });
 });
 
 describe('patch-nsis-uninstall', () => {

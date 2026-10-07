@@ -1,4 +1,7 @@
 import { defineConfig } from '@playwright/test';
+import { assertWindowsTestNode } from './scripts/windows-test-node.mjs';
+
+assertWindowsTestNode();
 
 export default defineConfig({
   globalSetup: './tests/e2e/fixtures/electron-process-cleanup.ts',

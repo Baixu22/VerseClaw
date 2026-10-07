@@ -48,7 +48,7 @@ export async function startGateway(opts = {}) {
     ...env,
     OPENCLAW_SKIP_CHANNELS: skipChannels ? "1" : "0",
   };
-  const proc = spawn("node", [entry, "--port", String(port), "--token", token], {
+  const proc = spawn("node", [entry, "gateway", "--port", String(port), "--token", token], {
     cwd: RUNTIME_ROOT,
     env: childEnv,
     stdio: ["ignore", logHandle, logHandle],

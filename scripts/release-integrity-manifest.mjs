@@ -67,17 +67,17 @@ export const RELEASE_INTEGRITY_MANIFEST = {
       },
     },
     node: {
-      version: '22.16.0',
+      version: '24.16.0',
       assets: {
-        'node-v22.16.0-win-x64.zip': asset(
-          'https://nodejs.org/dist/v22.16.0/node-v22.16.0-win-x64.zip',
-          35466975,
-          '21c2d9735c80b8f86dab19305aa6a9f6f59bbc808f68de3eef09d5832e3bfbbd',
+        'node-v24.16.0-win-x64.zip': asset(
+          'https://nodejs.org/dist/v24.16.0/node-v24.16.0-win-x64.zip',
+          36946639,
+          'edaca9bd58ec8e92037dac4e877d52f6b8f430b81c18b57e264b4e2fb111cd56',
         ),
-        'node-v22.16.0-win-arm64.zip': asset(
-          'https://nodejs.org/dist/v22.16.0/node-v22.16.0-win-arm64.zip',
-          31373500,
-          '31e885dcd06355f67b4be8cca86464270d83d0f5b8d4e3d4369c16ed22a5f4fa',
+        'node-v24.16.0-win-arm64.zip': asset(
+          'https://nodejs.org/dist/v24.16.0/node-v24.16.0-win-arm64.zip',
+          33185819,
+          '14834611d4c6b3c06054e7007732b90474c16e0b32f395e05b55a571ef71c6d2',
         ),
       },
     },

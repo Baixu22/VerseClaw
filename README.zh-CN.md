@@ -105,7 +105,7 @@ ClawGraph 从工作区 YAML 加载流程，展示编译诊断、节点状态、�
 
 准备：
 
-- **Node.js 24** 和 Git。
+- **Node.js 24.16.0 或更新的 24.x 版本** 和 Git。Windows 上更早的 Node 24 存在 TCP 连接原生崩溃问题（[上游修复](https://github.com/nodejs/node/issues/63620)）。
 - [package.json](package.json) 固定的 **pnpm 11.2.2**，可用 Corepack 激活。
 - 仓库访问权限，以及下载依赖、Electron、uv 和 agent-browser 所需的网络连接。
 - 使用在线模型时所需的提供商认证；本地模型则需要已运行的兼容服务。
