@@ -48,6 +48,16 @@ absence. All eight affected installer checks now use a wildcard. A separate NSIS
 probe verifies empty, extensionless-file and subdirectory-only layouts. Original
 failed rollback probes remain in the raw record.
 
+The first full lifecycle retry installed and replaced successfully, but uninstall
+left 434 files with paths of 260–337 characters despite returning 0. The final
+uninstaller overrides NSIS's MAX_PATH-limited removal with bounded native cmd
+removal, passing the path through one environment expansion with delayed expansion
+disabled. It requires a non-root path and matching install-registry identity.
+Before removal it saves the running uninstaller, restoring a byte-identical retry
+program on partial failure while leaving registration intact. A compiled probe
+covers a 342-character path, literal percent signs, a junction to a preserved
+external fixture, and locked-file failure followed by successful retry.
+
 ## Native worker investigation
 
 The failure is a **Node Playwright worker** exit, distinct from the separately

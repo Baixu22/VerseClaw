@@ -497,3 +497,40 @@ FunctionEnd
   _cu_enumDone:
   _cu_skipRemove:
 !macroend
+
+; NSIS RMDir leaves paths >= MAX_PATH behind. cmd's recursive removal handles
+; them; pass the directory through one environment expansion so literal percent
+; signs in a selected install path cannot be interpreted as another variable.
+!macro customRemoveFiles
+  SetOutPath $TEMP
+  StrCpy $R8 ""
+  StrCpy $0 1
+  System::Call 'shlwapi::PathIsRootW(w "$INSTDIR") i .r0'
+  StrCmp $0 0 0 _cu_files_failed
+  ; Registry identity survives a partial deletion; app files may not. Keep the
+  ; running uninstaller recoverable so a locked-file failure can really retry.
+  ReadRegStr $0 SHELL_CONTEXT "${INSTALL_REGISTRY_KEY}" InstallLocation
+  StrCmp $0 "$INSTDIR" 0 _cu_files_failed
+  InitPluginsDir
+  ClearErrors
+  CopyFiles /SILENT "$EXEPATH" "$PLUGINSDIR\retry-uninstall.exe"
+  IfErrors _cu_files_failed
+  StrCpy $R8 "$PLUGINSDIR\retry-uninstall.exe"
+  System::Call 'kernel32::SetEnvironmentVariableW(w "VERSE_CLAW_REMOVE_DIR", w "$INSTDIR") i .r0'
+  StrCmp $0 0 _cu_files_failed
+  nsExec::ExecToStack /TIMEOUT=600000 '"$SYSDIR\cmd.exe" /d /v:off /c rd /s /q "%VERSE_CLAW_REMOVE_DIR%"'
+  Pop $0
+  Pop $1
+  StrCmp $0 0 0 _cu_files_failed
+  IfFileExists "$INSTDIR\*" _cu_files_failed _cu_files_done
+  _cu_files_failed:
+    DetailPrint "Could not remove installed files: $0 $1"
+    ${if} $R8 != ""
+      CreateDirectory "$INSTDIR"
+      CopyFiles /SILENT "$R8" "$INSTDIR\${UNINSTALL_FILENAME}"
+    ${endIf}
+    MessageBox MB_OK|MB_ICONEXCLAMATION "Unable to remove all Verse Claw files. Close Verse Claw and retry uninstallation." /SD IDOK
+    SetErrorLevel 2
+    Quit
+  _cu_files_done:
+!macroend
