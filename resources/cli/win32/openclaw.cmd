@@ -21,7 +21,7 @@ set "OPENCLAW_ENTRY=%~dp0..\openclaw-runtime\dist\entry.js"
 
 set "_USE_BUNDLED_NODE=0"
 if exist "%NODE_EXE%" (
-    "%NODE_EXE%" -e "const [maj,min]=process.versions.node.split('.').map(Number);process.exit((maj>22||maj===22&&min>=16)?0:1)" >nul 2>&1
+    "%NODE_EXE%" -e "const [maj,min]=process.versions.node.split('.').map(Number);process.exit((maj>22||maj===22&&min>=19)?0:1)" >nul 2>&1
     if not errorlevel 1 set "_USE_BUNDLED_NODE=1"
 )
 
@@ -29,7 +29,7 @@ if "%_USE_BUNDLED_NODE%"=="1" (
     "%NODE_EXE%" "%OPENCLAW_ENTRY%" %*
 ) else (
     set ELECTRON_RUN_AS_NODE=1
-    "%~dp0..\..\ClawX.exe" "%OPENCLAW_ENTRY%" %*
+    "%~dp0..\..\Verse Claw.exe" "%OPENCLAW_ENTRY%" %*
 )
 set _EXIT=%ERRORLEVEL%
 

@@ -10,18 +10,12 @@
  */
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, '..');
+import { NSIS_TEMPLATE_DIR, NSIS_SEVENZIP_EXE } from './nsis-template-dir.mjs';
 
 export const EXTRACT_APP_PACKAGE_NSH = join(
-  ROOT,
-  'node_modules',
-  'app-builder-lib',
-  'templates',
-  'nsis',
+  NSIS_TEMPLATE_DIR,
   'include',
   'extractAppPackage.nsh',
 );
@@ -35,32 +29,38 @@ const ROLLBACK_EXTRACT_FAILURE_DETAIL = 'Restoring previous Verse Claw installat
 const PATCHED_EXTRACT_MACRO = [
   '!macro extractUsing7za FILE',
   `  ; ${PATCH_MARKER}.`,
+  '  InitPluginsDir',
+  `  File "/oname=$PLUGINSDIR\\verse-claw-7za.exe" "${NSIS_SEVENZIP_EXE.replaceAll('$', '$$')}"`,
   '  StrCpy $R9 0',
   '  verse-claw_extract_attempt:',
   '    IntOp $R9 $R9 + 1',
   '    DetailPrint "Extracting Verse Claw application files (attempt $R9, please wait)..."',
   '    SetOutPath $INSTDIR',
   '    ClearErrors',
-  '    Nsis7z::Extract "${FILE}"',
-  '    IfErrors 0 verse-claw_extract_done',
+  // The shipped Nsis7z::Extract discards its result and sets no error flag.
+  // Reuse the packager's 7za executable so corrupt/partial extraction is observable.
+  '    nsExec::ExecToStack /TIMEOUT=600000 \'"$PLUGINSDIR\\verse-claw-7za.exe" x -y -bd -bb0 -bso0 "-o$INSTDIR" "${FILE}"\'',
+  '    Pop $R0',
+  '    Pop $R1',
+  '    StrCmp $R0 "0" verse-claw_extract_done',
   '    ${if} $R9 < 5',
   '      DetailPrint "Releasing file locks before retry..."',
-  '      nsExec::ExecToStack \'taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"\'',
+  '      nsExec::ExecToStack /TIMEOUT=30000 \'taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"\'',
   '      Pop $0',
   '      Pop $1',
-  '      nsExec::ExecToStack \'taskkill /F /IM openclaw-gateway.exe\'',
+  '      nsExec::ExecToStack /TIMEOUT=30000 \'taskkill /F /IM openclaw-gateway.exe\'',
   '      Pop $0',
   '      Pop $1',
   '      Sleep 3000',
   '      Goto verse-claw_extract_attempt',
   '    ${endIf}',
   '    DetailPrint "Failed to extract Verse Claw files after multiple attempts."',
-  '    ${if} $verse-clawRollbackDir != ""',
-  '      IfFileExists "$verse-clawRollbackDir\\" 0 verse-claw_extract_show_error',
+  '    ${if} $verseClawRollbackDir != ""',
+  '      IfFileExists "$verseClawRollbackDir\\*.*" 0 verse-claw_extract_show_error',
   '      DetailPrint "Restoring previous Verse Claw installation after failed update..."',
   '      SetOutPath $TEMP',
   '      RMDir /r "$INSTDIR"',
-  '      Rename "$verse-clawRollbackDir" "$INSTDIR"',
+  '      Rename "$verseClawRollbackDir" "$INSTDIR"',
   '    ${endIf}',
   '  verse-claw_extract_show_error:',
   '    MessageBox MB_OK|MB_ICONEXCLAMATION "$(decompressionFailed)" /SD IDOK',
@@ -96,6 +96,12 @@ function isTemplateHealthy(content) {
     && countExtractMacros(content) === 1
     && content.includes(FATAL_EXTRACT_FAILURE_DETAIL)
     && content.includes(ROLLBACK_EXTRACT_FAILURE_DETAIL)
+    && content.includes('Rename "$verseClawRollbackDir" "$INSTDIR"')
+    && content.includes('IfFileExists "$verseClawRollbackDir\\*.*"')
+    && content.includes('"$PLUGINSDIR\\verse-claw-7za.exe" x -y')
+    && content.includes('StrCmp $R0 "0" verse-claw_extract_done')
+    && !content.includes('$verse-clawRollbackDir')
+    && !/nsExec::ExecToStack (?!\/TIMEOUT=)/.test(content)
     && content.includes('$(decompressionFailed)')
     && content.includes('SetErrorLevel 2')
     && content.includes('Quit')
@@ -171,7 +177,7 @@ export function patchNsisExtractTemplate(targetPath = EXTRACT_APP_PACKAGE_NSH) {
   }
 
   writeFileSync(targetPath, patched, 'utf8');
-  console.log('[patch-nsis-extract] Patched extractAppPackage.nsh (direct Nsis7z::Extract to $INSTDIR).');
+  console.log('[patch-nsis-extract] Patched extractAppPackage.nsh (direct 7za extraction with exit-code checks).');
   return true;
 }
 

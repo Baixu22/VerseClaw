@@ -105,7 +105,7 @@ Consult the [capability matrix](shared/capability-claims.ts), [default configura
 
 Prerequisites:
 
-- **Node.js 24** and Git.
+- **Node.js 24.16.0 or later in the 24.x line** and Git. Earlier Windows Node 24 releases can crash in TCP connections ([upstream fix](https://github.com/nodejs/node/issues/63620)).
 - **pnpm 11.2.2**, pinned in [package.json](package.json); Corepack can activate it.
 - Repository access and network access for dependencies, Electron, uv and agent-browser.
 - Authentication for online model providers, or a running compatible service for local models.

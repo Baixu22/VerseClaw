@@ -689,6 +689,12 @@ exports.default = async function afterPack(context) {
     resourcesDir = join(appOutDir, 'resources');
   }
 
+  if (platform === 'win32') {
+    const { verifyBundledNode } = await import('./verify-bundled-node.mjs');
+    const node = verifyBundledNode(resourcesDir, arch);
+    console.log(`[after-pack] Node ${node.version} satisfies runtime ${node.required}; binary digest verified.`);
+  }
+
   const openclawRoot = join(resourcesDir, 'openclaw');
   const dest = join(openclawRoot, 'node_modules');
   const nodeModulesRoot = join(__dirname, '..', 'node_modules');

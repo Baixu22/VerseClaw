@@ -1,33 +1,28 @@
 #!/usr/bin/env node
 import process from "node:process";
-import { startGatewayServer } from "./gateway/server.js";
+import { parseArgs } from "node:util";
+import { VERSION } from "./version.js";
 
-function readOption(args: string[], name: string): string | undefined {
-  const prefix = `${name}=`;
-  const inline = args.find((arg) => arg.startsWith(prefix));
-  if (inline) {
-    return inline.slice(prefix.length);
-  }
-  const index = args.indexOf(name);
-  return index >= 0 ? args[index + 1] : undefined;
-}
+const help = `Usage: openclaw <command> [options]
 
-function readPort(args: string[]): number {
-  const raw = readOption(args, "--port") ?? process.env.OPENCLAW_GATEWAY_PORT ?? "18789";
-  const parsed = Number.parseInt(raw, 10);
-  return Number.isFinite(parsed) ? parsed : 18789;
-}
+Verse Claw source runtime commands:
+  gateway [run]   Start Gateway (--port, --token, --bind,
+                 --allow-unconfigured, --defer-startup-sidecars)
+  doctor         Inspect provider auth migrations (--json, --fix)
+  --version, -V  Print the bundled runtime version
+  --help, -h     Show this help
 
-function readBooleanFlag(args: string[], name: string, envName: string): boolean {
-  const raw = readOption(args, name) ?? process.env[envName];
-  if (raw !== undefined) {
-    return /^(1|true|yes|on)$/i.test(raw.trim());
-  }
-  return args.includes(name);
-}
+Other upstream CLI commands are not included in this source runtime.
+`;
 
 const args = process.argv.slice(2);
-if (args[0] === "doctor") {
+// Dispatch queries before importing Gateway: importing its module can initialize
+// user state even when startGatewayServer is never called.
+if (args.length === 1 && ["--version", "-V"].includes(args[0])) {
+  console.log(VERSION);
+} else if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
+  console.log(help);
+} else if (args[0] === "doctor") {
   const { runSourceDoctor } = await import("./infra/source-doctor.js");
   process.exitCode = await runSourceDoctor(args.slice(1));
 } else if (args[0] === "goal-wake-helper-run") {
@@ -35,23 +30,49 @@ if (args[0] === "doctor") {
   // read from stdin and never persisted in the runDir file protocol.
   const { runGoalWakeHelperEntry } = await import("./agents/goal-wake-helper-entry.js");
   process.exitCode = await runGoalWakeHelperEntry();
-} else {
-  const port = readPort(args);
-  const token = readOption(args, "--token") ?? process.env.OPENCLAW_GATEWAY_TOKEN ?? "";
-  const bind = readOption(args, "--bind") ?? process.env.OPENCLAW_GATEWAY_BIND ?? "loopback";
-  const deferStartupSidecars = readBooleanFlag(
-    args,
-    "--defer-startup-sidecars",
-    "OPENCLAW_DEFER_STARTUP_SIDECARS",
-  );
-
-  if (token) {
-    process.env.OPENCLAW_GATEWAY_TOKEN = token;
+} else if (args[0] === "gateway") {
+  try {
+    const { values } = parseArgs({
+      args: args.slice(args[1] === "run" ? 2 : 1),
+      options: {
+        port: { type: "string" },
+        token: { type: "string" },
+        bind: { type: "string" },
+        tailscale: { type: "string" },
+        "allow-unconfigured": { type: "boolean" },
+        "defer-startup-sidecars": { type: "boolean" },
+      },
+    });
+    // Desktop build/smoke callers explicitly disable Tailscale. This pruned
+    // entry never implemented enabling it; do not silently accept that request.
+    if (values.tailscale && values.tailscale !== "off") {
+      throw new Error("Unsupported Tailscale mode in the source runtime");
+    }
+    const port = Number(values.port ?? process.env.OPENCLAW_GATEWAY_PORT ?? "18789");
+    if (!Number.isInteger(port) || port < 1 || port > 65535) {
+      throw new Error("Invalid Gateway port (expected 1-65535)");
+    }
+    const token = values.token ?? process.env.OPENCLAW_GATEWAY_TOKEN ?? "";
+    const bind = values.bind ?? process.env.OPENCLAW_GATEWAY_BIND ?? "loopback";
+    if (!["loopback", "lan", "tailnet", "auto", "custom"].includes(bind)) {
+      throw new Error("Invalid Gateway bind mode");
+    }
+    const deferStartupSidecars = values["defer-startup-sidecars"] ??
+      /^(1|true|yes|on)$/i.test(process.env.OPENCLAW_DEFER_STARTUP_SIDECARS ?? "");
+    if (token) {
+      process.env.OPENCLAW_GATEWAY_TOKEN = token;
+    }
+    const { startGatewayServer } = await import("./gateway/server.js");
+    await startGatewayServer(port, {
+      bind: bind as NonNullable<Parameters<typeof startGatewayServer>[1]>["bind"],
+      auth: token ? { token } : undefined,
+      deferStartupSidecars,
+    });
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
   }
-
-  await startGatewayServer(port, {
-    bind: bind as NonNullable<Parameters<typeof startGatewayServer>[1]>["bind"],
-    auth: token ? { token } : undefined,
-    deferStartupSidecars,
-  });
+} else {
+  console.error("Unsupported command in the Verse Claw source runtime. Run openclaw --help.");
+  process.exitCode = 1;
 }
