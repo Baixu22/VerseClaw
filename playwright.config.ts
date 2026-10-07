@@ -1,6 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
+  globalSetup: './tests/e2e/fixtures/electron-process-cleanup.ts',
   testDir: './tests/e2e',
   tsconfig: './tsconfig.test.json',
   // Serial by design: many specs boot a real Electron + Gateway child, and
