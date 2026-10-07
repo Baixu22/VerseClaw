@@ -38,13 +38,14 @@ function snapshot(dir = home, prefix = '') {
 const before = snapshot(), probes = [];
 async function run(executable, args, label) {
   const startedAt = new Date().toISOString();
-  const child = spawn(executable, args, { env, cwd: home, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
+  const child = spawn(executable, args, { env, cwd: home, windowsHide: true,
+    windowsVerbatimArguments: executable === 'cmd.exe', stdio: ['ignore', 'pipe', 'pipe'] });
   let stdout = '', stderr = '', timedOut = false;
   child.stdout.on('data', c => { stdout += c; });
   child.stderr.on('data', c => { stderr += c; });
   const timer = setTimeout(() => {
     timedOut = true;
-    // PowerShell stays alive while the wrapper is running, retaining tree ownership.
+    // The batch wrapper stays alive while its CLI child is running.
     spawn('taskkill.exe', ['/PID', String(child.pid), '/T', '/F'], { windowsHide: true, stdio: 'ignore' });
   }, 20_000);
   try {
@@ -61,9 +62,9 @@ try {
     if (fallback) renameSync(node, heldNode);
     for (const shell of ['cmd', 'bash']) {
       for (const arg of ['--version', '--help', 'not-a-command']) {
-        const executable = shell === 'cmd' ? 'powershell.exe' : join(process.env.ProgramFiles, 'Git/bin/bash.exe');
+        const executable = shell === 'cmd' ? 'cmd.exe' : join(process.env.ProgramFiles, 'Git/bin/bash.exe');
         const args = shell === 'cmd'
-          ? ['-NoProfile', '-NonInteractive', '-Command', `& $env:CLAWX_TEST_CLI ${arg}; exit $LASTEXITCODE`]
+          ? ['/d', '/s', '/c', `""${env.CLAWX_TEST_CLI}" ${arg}"`]
           : [join(resources, 'cli/openclaw'), arg];
         const row = await run(executable, args, `${fallback ? 'electron-fallback' : 'bundled-node'}/${shell}/${arg}`);
         assert.equal(row.exitCode, arg === 'not-a-command' ? 1 : 0, JSON.stringify(row));
