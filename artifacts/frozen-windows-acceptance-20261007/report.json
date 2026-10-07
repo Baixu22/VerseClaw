@@ -1,0 +1,1400 @@
+{
+  "schema": "frozen-windows-acceptance/v1",
+  "generatedAt": "2026-10-07T14:44:19.580Z",
+  "driven_by": "agent",
+  "actor": "codex-frozen-acceptance",
+  "verdict": "NOT_ACCEPTED",
+  "releaseReady": false,
+  "published": false,
+  "productCandidate": {
+    "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+    "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+    "cleanBeforeFullGates": true
+  },
+  "laterChanges": {
+    "testCorrectionCommit": "ae79a41af6dfddc9826abd88145ca31435d4ecc1",
+    "scopeCommit": "3436b9bb7b42781706a8aff9cf84394dfe91e597",
+    "productCodeChanged": false,
+    "details": "One intentional B2 screenshot baseline and obsolete comment updated; one unused test import removed. No tolerance or retry changes."
+  },
+  "verification": {
+    "rootUnit": {
+      "passed": 8047,
+      "failed": 0,
+      "skipped": 50,
+      "total": 8097,
+      "source": "parsed",
+      "segments": 6
+    },
+    "electron": {
+      "discovered": 345,
+      "stats": {
+        "startTime": "2026-10-07T11:35:02.379Z",
+        "duration": 3084476.762,
+        "expected": 339,
+        "skipped": 4,
+        "unexpected": 2,
+        "flaky": 0
+      },
+      "failed": [
+        {
+          "file": "skills-gateway-readiness.spec.ts",
+          "title": "clears stale startup banner once local skills load while runtime rpc is still starting",
+          "status": "unexpected",
+          "annotations": [],
+          "errors": [
+            "Error: worker process exited unexpectedly (code=3221226505, signal=null)"
+          ]
+        },
+        {
+          "file": "workspace-web-preview-panel.spec.ts",
+          "title": "selects a preview component and sends it to the composer",
+          "status": "unexpected",
+          "annotations": [],
+          "errors": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  397 pixels (ratio 0.01 of all image pixels) are different.\n\n  Snapshot: workspace-web-preview-browser-menu.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(workspace-web-preview-browser-menu.png)\" with timeout 15000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - 397 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - 397 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n\n\n  219 |       await expect(page.getByRole('menu')).toBeVisible();\n  220 |       await expect(page.getByRole('menuitem', { name: 'Open externally' })).toBeVisible();\n> 221 |       await expect(page).toHaveScreenshot('workspace-web-preview-browser-menu.png', {\n      |                          ^\n  222 |         animations: 'disabled',\n  223 |         caret: 'hide',\n  224 |         /*\n    at C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\workspace-web-preview-panel.spec.ts:221:26"
+          ]
+        }
+      ],
+      "skipped": [
+        {
+          "file": "chat-cache-deepseek-cache-first.spec.ts",
+          "title": "keeps a stable provider prefix warm across real DeepSeek turns",
+          "status": "skipped",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Set CLAWX_LIVE_MODEL_E2E=1 to run real DeepSeek cache calls",
+              "location": {
+                "file": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\chat-cache-deepseek-cache-first.spec.ts",
+                "line": 386,
+                "column": 8
+              }
+            }
+          ],
+          "errors": []
+        },
+        {
+          "file": "chat-cache-live-model.spec.ts",
+          "title": "performs real model calls and exports prompt-cache metrics",
+          "status": "skipped",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Set CLAWX_LIVE_MODEL_E2E=1, CLAWX_LIVE_MODEL_REF, and a provider API key to run real model calls",
+              "location": {
+                "file": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\chat-cache-live-model.spec.ts",
+                "line": 395,
+                "column": 8
+              }
+            }
+          ],
+          "errors": []
+        },
+        {
+          "file": "mac-titlebar-drag-region.spec.ts",
+          "title": "keeps a draggable strip above non-chat pages and stacks chat above it",
+          "status": "skipped",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "macOS drag-region chrome only",
+              "location": {
+                "file": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\mac-titlebar-drag-region.spec.ts",
+                "line": 8,
+                "column": 8
+              }
+            }
+          ],
+          "errors": []
+        },
+        {
+          "file": "visual-tune.spec.ts",
+          "title": "capture composer, permission menu, slash palette, effort flame",
+          "status": "skipped",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Set CLAWX_VISUAL_TUNE=1 to capture design-review screenshots",
+              "location": {
+                "file": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\visual-tune.spec.ts",
+                "line": 22,
+                "column": 8
+              }
+            }
+          ],
+          "errors": []
+        }
+      ],
+      "followupStats": {
+        "startTime": "2026-10-07T13:28:31.525Z",
+        "duration": 32785.102000000006,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "singleFullRunPassed": false,
+      "nativeCrashResolved": false,
+      "snapshotFailureResolved": true
+    },
+    "lint": {
+      "initialExit": 1,
+      "finalExit": 0,
+      "finalSummary": "\n✖ 116 problems (0 errors, 116 warnings)"
+    },
+    "installer": {
+      "driven_by": "agent",
+      "candidate": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+      "installer": "D:/ClawX-work/frozen-acceptance-20261007/release/Verse Claw-0.4.9-alpha.0-win-x64.exe",
+      "bytes": 554500662,
+      "sha256": "248a08faa684092f486d057a8709d3d0ba3584184bc7455b3d7742f2057ec543"
+    },
+    "delivery": {
+      "links": 0,
+      "resolutions": 4174,
+      "failures": 0,
+      "mcp": {
+        "initialized": true,
+        "tools": [
+          "verseshell_health"
+        ],
+        "health": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"ok\": true,\n  \"server\": \"verseshell\",\n  \"version\": \"0.3.1\",\n  \"protocol_version\": \"2024-11-05\",\n  \"runtime_version\": \"1.0.0\",\n  \"runtime_server_protocol\": \"verseshell.jsonl/v1\",\n  \"operation_catalog\": {\n    \"digest\": \"sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7\",\n    \"count\": 31\n  },\n  \"protocol\": \"compact\",\n  \"profile\": \"product\",\n  \"capabilities_granted\": [],\n  \"agent_mode\": true,\n  \"runtime_policy\": \"agent_strict\",\n  \"ae_ready\": false,\n  \"tools\": 1,\n  \"known_modules\": 24,\n  \"mcp_transport\": \"stdio\",\n  \"compatibility_only\": true\n}"
+            }
+          ]
+        }
+      },
+      "integrity": {
+        "driven_by": "agent",
+        "headerSha256": "0452e76b304350f7ffb72e8954c6af81638555f8ecb89d6e473426f332fd7b4e",
+        "embedded": true,
+        "native": [
+          {
+            "file": "node_modules\\@ast-grep\\napi\\node_modules\\@ast-grep\\napi-win32-arm64-msvc\\ast-grep-napi.win32-arm64-msvc.node",
+            "unpacked": true,
+            "matches": true
+          },
+          {
+            "file": "node_modules\\@ast-grep\\napi\\node_modules\\@ast-grep\\napi-win32-x64-msvc\\ast-grep-napi.win32-x64-msvc.node",
+            "unpacked": true,
+            "matches": true
+          },
+          {
+            "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-arm64\\prebuilds\\win32-arm64\\conpty\\conpty.dll",
+            "unpacked": true,
+            "matches": true
+          },
+          {
+            "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-arm64\\prebuilds\\win32-arm64\\conpty\\OpenConsole.exe",
+            "unpacked": true,
+            "matches": true
+          },
+          {
+            "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-arm64\\prebuilds\\win32-arm64\\conpty_console_list.node",
+            "unpacked": true,
+            "matches": true
+          },
+          {
+            "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-arm64\\prebuilds\\win32-arm64\\conpty.node",
+            "unpacked": true,
+            "matches": true
+          },
+          {
+            "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-x64\\prebuilds\\win32-x64\\conpty\\conpty.dll",
+            "unpacked": true,
+            "matches": true
+          },
+          {
+            "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-x64\\prebuilds\\win32-x64\\conpty\\OpenConsole.exe",
+            "unpacked": true,
+            "matches": true
+          },
+          {
+            "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-x64\\prebuilds\\win32-x64\\conpty_console_list.node",
+            "unpacked": true,
+            "matches": true
+          },
+          {
+            "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-x64\\prebuilds\\win32-x64\\conpty.node",
+            "unpacked": true,
+            "matches": true
+          },
+          {
+            "file": "node_modules\\pdfjs-dist\\node_modules\\@napi-rs\\canvas\\node_modules\\@napi-rs\\canvas-win32-arm64-msvc\\skia.win32-arm64-msvc.node",
+            "unpacked": true,
+            "matches": true
+          },
+          {
+            "file": "node_modules\\pdfjs-dist\\node_modules\\@napi-rs\\canvas\\node_modules\\@napi-rs\\canvas-win32-x64-msvc\\skia.win32-x64-msvc.node",
+            "unpacked": true,
+            "matches": true
+          }
+        ]
+      },
+      "ui": {
+        "driven_by": "agent",
+        "actor": "codex-desktop-followups",
+        "executable": "D:\\ClawX-work\\frozen-acceptance-20261007\\extracted\\Verse Claw.exe",
+        "pid": 12476,
+        "passed": true,
+        "connectionError": "fetch failed",
+        "rendererUrl": "file:///D:/ClawX-work/frozen-acceptance-20261007/extracted/resources/app.asar/dist/index.html?bootTheme=dark#/",
+        "mainLayoutVisible": true,
+        "returningProfile": false,
+        "forcedCleanup": false
+      },
+      "gateway": {
+        "driven_by": "agent",
+        "actor": "codex-desktop-followups",
+        "exitCode": 0,
+        "ready": true,
+        "trace": "D:\\ClawX-work\\frozen-acceptance-20261007\\release-delivery-module-trace.jsonl",
+        "guarded": true
+      }
+    },
+    "agentDev": {
+      "success": true,
+      "decision": {
+        "status": "daily-loop-ok",
+        "reason": "All selected Agent Dev gates passed within hard limits.",
+        "dailyLoopReady": true,
+        "releaseReady": true,
+        "fullGateComplete": true,
+        "budgetStatus": "watch",
+        "fastPathModes": [],
+        "requiredFullGates": [],
+        "watchSteps": [
+          "e2e-build",
+          "typecheck"
+        ],
+        "limitSteps": []
+      },
+      "auditStatus": "pass",
+      "score": 94,
+      "grade": "A",
+      "disqualifiers": [],
+      "scope": "Control plane only"
+    },
+    "gates": [
+      {
+        "name": "acceptance-agent-dev.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm agent-dev:deep-test",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T13:44:51.399Z",
+        "completedAt": "2026-10-07T13:46:33.781Z",
+        "candidate": {
+          "commit": "3436b9bb7b42781706a8aff9cf84394dfe91e597",
+          "tree": "4952dd5f6c1b31175738b594601fb9b95d58b573",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\acceptance-agent-dev.log",
+        "statusAfter": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json"
+      },
+      {
+        "name": "acceptance-audit.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm agent-dev:audit",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T13:48:24.356Z",
+        "completedAt": "2026-10-07T13:48:26.665Z",
+        "candidate": {
+          "commit": "3436b9bb7b42781706a8aff9cf84394dfe91e597",
+          "tree": "4952dd5f6c1b31175738b594601fb9b95d58b573",
+          "status": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json",
+          "dirty": true
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\acceptance-audit.log",
+        "statusAfter": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json"
+      },
+      {
+        "name": "acceptance-harness-ci.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm harness:ci",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T13:48:29.107Z",
+        "completedAt": "2026-10-07T13:48:42.013Z",
+        "candidate": {
+          "commit": "3436b9bb7b42781706a8aff9cf84394dfe91e597",
+          "tree": "4952dd5f6c1b31175738b594601fb9b95d58b573",
+          "status": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json",
+          "dirty": true
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\acceptance-harness-ci.log",
+        "statusAfter": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json"
+      },
+      {
+        "name": "acceptance-harness.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm harness validate --spec harness/specs/tasks/frozen-windows-acceptance.md",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T13:48:26.809Z",
+        "completedAt": "2026-10-07T13:48:28.961Z",
+        "candidate": {
+          "commit": "3436b9bb7b42781706a8aff9cf84394dfe91e597",
+          "tree": "4952dd5f6c1b31175738b594601fb9b95d58b573",
+          "status": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json",
+          "dirty": true
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\acceptance-harness.log",
+        "statusAfter": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json"
+      },
+      {
+        "name": "electron-followup.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm exec playwright test tests/e2e/skills-gateway-readiness.spec.ts tests/e2e/workspace-web-preview-panel.spec.ts --workers=1 \"--reporter=line,json\" --output=D:/ClawX-work/frozen-acceptance-20261007/electron-followup-results",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T13:28:29.835Z",
+        "completedAt": "2026-10-07T13:29:04.380Z",
+        "candidate": {
+          "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+          "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+          "status": "M tests/e2e/chat-model-scope-runtime.spec.ts\n M tests/e2e/workspace-web-preview-panel.spec.ts\n M tests/e2e/workspace-web-preview-panel.spec.ts-snapshots/workspace-web-preview-browser-menu-win32.png",
+          "dirty": true
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\electron-followup.log",
+        "statusAfter": "M tests/e2e/chat-model-scope-runtime.spec.ts\n M tests/e2e/workspace-web-preview-panel.spec.ts\n M tests/e2e/workspace-web-preview-panel.spec.ts-snapshots/workspace-web-preview-browser-menu-win32.png"
+      },
+      {
+        "name": "electron-full.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm exec playwright test --workers=1 \"--reporter=line,json\" --output=D:/ClawX-work/frozen-acceptance-20261007/electron-results",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T11:35:00.192Z",
+        "completedAt": "2026-10-07T12:26:27.465Z",
+        "candidate": {
+          "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+          "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 1,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\electron-full.log",
+        "statusAfter": "M artifacts/browser-security-recovery/evidence.json\n M artifacts/sekb-golden-path/evidence.json"
+      },
+      {
+        "name": "extracted-package-check.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "node D:/ClawX-work/frozen-acceptance-20261007/extract-and-check.mjs",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T13:09:40.652Z",
+        "completedAt": "2026-10-07T13:10:51.773Z",
+        "candidate": {
+          "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+          "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+          "status": "M artifacts/browser-security-recovery/evidence.json\n M artifacts/sekb-golden-path/evidence.json",
+          "dirty": true
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\extracted-package-check.log",
+        "statusAfter": "M artifacts/browser-security-recovery/evidence.json\n M artifacts/sekb-golden-path/evidence.json"
+      },
+      {
+        "name": "lint-fixed.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm exec eslint .",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T13:35:35.012Z",
+        "completedAt": "2026-10-07T13:38:46.631Z",
+        "candidate": {
+          "commit": "ae79a41af6dfddc9826abd88145ca31435d4ecc1",
+          "tree": "9aeef6d911a794b7cfe7b728747e95b08aee098f",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\lint-fixed.log",
+        "statusAfter": ""
+      },
+      {
+        "name": "lint.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm exec eslint .",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T13:15:26.213Z",
+        "completedAt": "2026-10-07T13:18:40.431Z",
+        "candidate": {
+          "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+          "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 1,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\lint.log",
+        "statusAfter": ""
+      },
+      {
+        "name": "packaged-runtime.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "node D:/ClawX-work/frozen-acceptance-20261007/runtime-probe.mjs D:/ClawX-work/frozen-acceptance-20261007/extracted",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T13:48:42.126Z",
+        "completedAt": "2026-10-07T13:48:58.486Z",
+        "candidate": {
+          "commit": "3436b9bb7b42781706a8aff9cf84394dfe91e597",
+          "tree": "4952dd5f6c1b31175738b594601fb9b95d58b573",
+          "status": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json",
+          "dirty": true
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\packaged-runtime.log",
+        "statusAfter": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json"
+      },
+      {
+        "name": "packaged-ui.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "node D:/ClawX-work/frozen-acceptance-20261007/ui-probe.mjs D:/ClawX-work/frozen-acceptance-20261007/extracted D:/ClawX-work/frozen-acceptance-20261007/packaged-ui",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T14:16:58.807Z",
+        "completedAt": "2026-10-07T14:17:11.705Z",
+        "candidate": {
+          "commit": "3436b9bb7b42781706a8aff9cf84394dfe91e597",
+          "tree": "4952dd5f6c1b31175738b594601fb9b95d58b573",
+          "status": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json",
+          "dirty": true
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\packaged-ui.log",
+        "statusAfter": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json"
+      },
+      {
+        "name": "root-unit.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm test",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T11:03:26.455Z",
+        "completedAt": "2026-10-07T11:17:42.917Z",
+        "candidate": {
+          "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+          "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\root-unit.log",
+        "statusAfter": ""
+      },
+      {
+        "name": "runtime-core-types.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "node openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js --noEmit --incremental false -p openclaw_runtime/tsconfig.core.json",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T11:18:07.170Z",
+        "completedAt": "2026-10-07T11:18:15.897Z",
+        "candidate": {
+          "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+          "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\runtime-core-types.log",
+        "statusAfter": ""
+      },
+      {
+        "name": "runtime-extension-test-types.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "node openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js --noEmit --incremental false -p openclaw_runtime/test/tsconfig/tsconfig.extensions.test.json",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T11:18:41.078Z",
+        "completedAt": "2026-10-07T11:18:47.948Z",
+        "candidate": {
+          "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+          "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\runtime-extension-test-types.log",
+        "statusAfter": ""
+      },
+      {
+        "name": "runtime-extension-types.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "node openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js --noEmit --incremental false -p openclaw_runtime/tsconfig.extensions.json",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T11:18:16.081Z",
+        "completedAt": "2026-10-07T11:18:32.314Z",
+        "candidate": {
+          "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+          "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\runtime-extension-types.log",
+        "statusAfter": ""
+      },
+      {
+        "name": "runtime-test-types.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "node openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js --noEmit --incremental false -p openclaw_runtime/test/tsconfig/tsconfig.core.test.json",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T11:18:32.543Z",
+        "completedAt": "2026-10-07T11:18:40.951Z",
+        "candidate": {
+          "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+          "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\runtime-test-types.log",
+        "statusAfter": ""
+      },
+      {
+        "name": "startup.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm run build:startup-check",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T11:34:59.008Z",
+        "completedAt": "2026-10-07T11:35:00.084Z",
+        "candidate": {
+          "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+          "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\startup.log",
+        "statusAfter": ""
+      },
+      {
+        "name": "task-validate.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm harness validate --spec harness/specs/tasks/chat-session-control-isolation.md",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T13:38:46.899Z",
+        "completedAt": "2026-10-07T13:38:49.915Z",
+        "candidate": {
+          "commit": "ae79a41af6dfddc9826abd88145ca31435d4ecc1",
+          "tree": "9aeef6d911a794b7cfe7b728747e95b08aee098f",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 1,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\task-validate.log",
+        "statusAfter": ""
+      },
+      {
+        "name": "types-node.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm run typecheck:node",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T11:17:43.118Z",
+        "completedAt": "2026-10-07T11:17:51.911Z",
+        "candidate": {
+          "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+          "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\types-node.log",
+        "statusAfter": ""
+      },
+      {
+        "name": "types-test.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm run typecheck:test",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T11:17:55.531Z",
+        "completedAt": "2026-10-07T11:18:06.945Z",
+        "candidate": {
+          "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+          "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\types-test.log",
+        "statusAfter": ""
+      },
+      {
+        "name": "types-web.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm run typecheck:web",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T11:17:52.050Z",
+        "completedAt": "2026-10-07T11:17:55.391Z",
+        "candidate": {
+          "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+          "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\types-web.log",
+        "statusAfter": ""
+      },
+      {
+        "name": "windows-build.json",
+        "driven_by": "agent",
+        "actor": "codex-frozen-acceptance",
+        "command": "pnpm run build --publish never \"--config.directories.output=D:/ClawX-work/frozen-acceptance-20261007/release\"",
+        "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+        "startedAt": "2026-10-07T11:18:48.108Z",
+        "completedAt": "2026-10-07T11:34:58.741Z",
+        "candidate": {
+          "commit": "cb33fad04fb3e98d0cd252f5f61afb542db7c349",
+          "tree": "459dd9b7b632aa150a1ba15c00d7f9028bfb8ee5",
+          "status": "",
+          "dirty": false
+        },
+        "exitCode": 0,
+        "signal": null,
+        "log": "D:\\ClawX-work\\frozen-acceptance-20261007\\windows-build.log",
+        "statusAfter": ""
+      }
+    ]
+  },
+  "blockers": [
+    {
+      "id": "cli",
+      "severity": "P1",
+      "details": {
+        "driven_by": "agent",
+        "bundledNode": "v22.16.0",
+        "declaredRuntimeEngine": ">=22.19.0",
+        "declaredMinimumSatisfied": false,
+        "cliEntry": "resources/openclaw-runtime/dist/entry.js",
+        "observedVersionQuery": "started Gateway instead of reporting a version",
+        "fallbackExecutable": "ClawX.exe",
+        "fallbackExists": false,
+        "actualExecutableExists": true,
+        "defaultStateIncident": {
+          "taskRegistryRowsMigrated": 4,
+          "taskDeliveryRowsMigrated": 4,
+          "source": "bundled-cli-before.log",
+          "rolledBack": false
+        }
+      },
+      "evidence": "bundled-cli-before.log",
+      "status": "open"
+    },
+    {
+      "id": "installer-privileged-step",
+      "severity": "P1",
+      "baselineInstallerSha256": "51dde554890d9ac1b50738be5f2d6ac7d6eb24da582d21e4101ad034a9611c0d",
+      "installerScriptUnchangedSinceBaseline": true,
+      "install": {
+        "driven_by": "agent",
+        "reason": "Non-elevated silent installer blocked for over 11 minutes on optional Defender exclusion",
+        "observedAt": "2026-10-07T14:06:09.3590497Z",
+        "process": {
+          "ProcessId": 19484,
+          "ParentProcessId": 54128,
+          "CreationDate": "2026-10-07T21:45:58.031514+08:00",
+          "CommandLine": "\"C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"Add-MpPreference -ExclusionPath 'D:\\ClawX-work\\frozen-acceptance-20261007\\installed-app' -ErrorAction SilentlyContinue\""
+        },
+        "action": "terminate only the installer-owned optional Defender command",
+        "acceptancePassed": false
+      },
+      "uninstall": {
+        "driven_by": "agent",
+        "reason": "Non-elevated silent uninstaller blocked for over 9 minutes on Defender exclusion removal",
+        "observedAt": "2026-10-07T14:29:24.2981927Z",
+        "process": {
+          "ProcessId": 54076,
+          "ParentProcessId": 14840,
+          "CreationDate": "2026-10-07T22:17:22.127498+08:00",
+          "CommandLine": "\"C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"Remove-MpPreference -ExclusionPath 'D:\\ClawX-work\\frozen-acceptance-20261007\\installed-app' -ErrorAction SilentlyContinue\""
+        },
+        "parent": {
+          "ProcessId": 14840,
+          "ExecutablePath": "D:\\ClawX-work\\frozen-acceptance-20261007\\tmp\\~nsu.tmp\\Un_A.exe",
+          "CommandLine": "\"D:\\ClawX-work\\frozen-acceptance-20261007\\tmp\\~nsu.tmp\\Un_A.exe\"  /S /currentuser _?=D:\\ClawX-work\\frozen-acceptance-20261007\\installed-app\\"
+        },
+        "action": "terminate only the uninstaller-owned optional Defender command",
+        "acceptancePassed": false
+      },
+      "status": "open"
+    },
+    {
+      "id": "worker-native-exit",
+      "severity": "P2",
+      "code": "0xC0000409",
+      "fullSuiteCase": "skills-gateway-readiness.spec.ts",
+      "durationBeforeFailureMs": 0,
+      "cleanup": {
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "runRoot": "D:\\ClawX-work\\frozen-acceptance-20261007\\tmp\\verse-claw-e2e-run-kzxJVq\\",
+        "owned": [
+          {
+            "ProcessId": 51456,
+            "ParentProcessId": 11776,
+            "Name": "electron.exe",
+            "ParentAlive": false
+          },
+          {
+            "ProcessId": 39408,
+            "ParentProcessId": 51456,
+            "Name": "electron.exe",
+            "ParentAlive": true
+          },
+          {
+            "ProcessId": 51116,
+            "ParentProcessId": 51456,
+            "Name": "electron.exe",
+            "ParentAlive": true
+          }
+        ],
+        "remaining": []
+      },
+      "note": "The same case passes in focused rerun. The native cause is not established; an Electron dump at a different timestamp is not asserted to explain this worker failure.",
+      "status": "open"
+    }
+  ],
+  "lifecycle": {
+    "mode": "Non-elevated current-user baseline installation and cleanup on Windows 11 Home",
+    "install": {
+      "driven_by": "agent",
+      "actor": "codex-frozen-acceptance",
+      "stage": "old",
+      "executable": "D:/ClawX-work/desktop-followups-20261006/release-final/Verse Claw-0.4.9-alpha.0-win-x64.exe",
+      "args": [
+        "/S",
+        "/currentuser",
+        "/D=D:\\ClawX-work\\frozen-acceptance-20261007\\installed-app"
+      ],
+      "sha256": "51dde554890d9ac1b50738be5f2d6ac7d6eb24da582d21e4101ad034a9611c0d",
+      "startedAt": "2026-10-07T13:38:38.498Z",
+      "completedAt": "2026-10-07T14:06:43.847Z",
+      "exitCode": 0
+    },
+    "uninstallLauncher": {
+      "driven_by": "agent",
+      "actor": "codex-frozen-acceptance",
+      "stage": "uninstall",
+      "executable": "D:\\ClawX-work\\frozen-acceptance-20261007\\installed-app\\Uninstall Verse Claw.exe",
+      "args": [
+        "/S",
+        "/currentuser"
+      ],
+      "sha256": "986fb4796dab9e741b9b26942988c4eb5156b32bf2a853d2d99cf0d4f22bc75a",
+      "startedAt": "2026-10-07T14:17:12.564Z",
+      "completedAt": "2026-10-07T14:17:13.524Z",
+      "exitCode": 0
+    },
+    "uninstallLauncherExitIsNotCompletion": true,
+    "unassistedPassed": false,
+    "newCandidateInstallRun": false,
+    "upgrade": {
+      "status": "not-run",
+      "reason": "Baseline installation and uninstallation required intervention at the Defender steps"
+    },
+    "environmentRestoration": {
+      "driven_by": "agent",
+      "profileJsonPreserved": 11,
+      "registryRestored": true,
+      "cliRemoved": true,
+      "pathRestored": true,
+      "shortcutsRestored": true,
+      "timestamp": "2026-10-07T14:36:11.0982267Z"
+    },
+    "protectedProfileChecks": [
+      {
+        "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\agency-role-promotions.json",
+        "matches": true
+      },
+      {
+        "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\agent-bootstrap.json",
+        "matches": true
+      },
+      {
+        "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\app-version-state.json",
+        "matches": true
+      },
+      {
+        "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\clawx-providers.json",
+        "matches": true
+      },
+      {
+        "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\mcp-servers.json",
+        "matches": true
+      },
+      {
+        "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\sandbox-profiles.json",
+        "matches": true
+      },
+      {
+        "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\settings.json",
+        "matches": true
+      },
+      {
+        "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\verse-claw-device-identity.json",
+        "matches": true
+      },
+      {
+        "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\verse-claw-skills.json",
+        "matches": true
+      },
+      {
+        "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\workspace-permissions.json",
+        "matches": true
+      },
+      {
+        "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\workspaces.json",
+        "matches": true
+      }
+    ],
+    "remainingInstalledFiles": [],
+    "scopeNote": "The restored state covers the installer test only. The separate CLI probe used default OpenClaw state and caused the recorded migrations; those database changes were not blindly rolled back."
+  },
+  "incident": {
+    "kind": "unexpected-cli-side-effect",
+    "argument": "--version",
+    "observed": "Gateway started using default OpenClaw state",
+    "observedMigrationRows": {
+      "taskRegistry": 4,
+      "taskDelivery": 4
+    },
+    "processStopped": true,
+    "rolledBack": false,
+    "logsPreserved": true
+  },
+  "limitations": [
+    "No publication or default-on graduation",
+    "No cross-version migration proof (both installer candidates have version 0.4.9-alpha.0)",
+    "New candidate installer lifecycle blocked before replacement; baseline completion after manual agent intervention is not a pass",
+    "Packaged UI probe uses isolated E2E settings and disables automatic Gateway startup; Gateway is separately probed in isolated state",
+    "No new paid-provider or macOS/Linux acceptance",
+    "Complete root unit and Electron suites were run; no claim of a new full upstream runtime-unit sweep"
+  ],
+  "evidenceIntegrity": {
+    "manifest": "SHA256SUMS",
+    "credentialScan": "credential-scan.json",
+    "rawRoot": "D:/ClawX-work/frozen-acceptance-20261007",
+    "recoveryIndex": [
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\acceptance-agent-dev.json",
+        "bytes": 811,
+        "sha256": "7ff9db44ec2c7328f6a4618ada8b9b8858eb91ee985fb237ad23dcbbae3165e1"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\acceptance-agent-dev.log",
+        "bytes": 81636,
+        "sha256": "e037454c1c09337bf650c1833cd363380fbdc0f5e266f3ee947d134b12307eb8"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\acceptance-audit.json",
+        "bytes": 1028,
+        "sha256": "3485e794eea24ab9b910fb8d8bbf2e2c7aaac7fbe27bd9757b070752530d6e04"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\acceptance-audit.log",
+        "bytes": 386,
+        "sha256": "4e66b2a02c22a879fb7e7d81332b5793b7f8408a3ee8b929487fc04a186c7c33"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\acceptance-harness-ci.json",
+        "bytes": 1028,
+        "sha256": "fcef0d004b6a2a0afa1b7aef12094d6e944ab3a92367ca019fe5c4f6703dca1c"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\acceptance-harness-ci.log",
+        "bytes": 11059,
+        "sha256": "a7e7af4c5f7cf6ad4bdacc2d5766c757501f45f48c42af6b5a801d775b44b975"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\acceptance-harness.json",
+        "bytes": 1087,
+        "sha256": "3781c322aa15ba186c68842ccb9dd29e445a6ad881804cfdd674ffd17fbf0b77"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\acceptance-harness.log",
+        "bytes": 275,
+        "sha256": "c7aee970d97c4a11edf30a7cb33fdfb3208daf819b4c6fa15528264fcee23cdd"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\after-electron.json",
+        "bytes": 552,
+        "sha256": "58f0eb5a9f0cd9a83538fbf53a19975320da575a5685655d4b63bd22460f5685"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\archive-integrity.json",
+        "bytes": 2512,
+        "sha256": "3568fc28955a2cd5f35f6e8536368b1064fc226e82ddcdfc1b4f859a38cc4684"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\bundled-cli-before.log",
+        "bytes": 2496,
+        "sha256": "9f2cfa4d396f1c4bdc12d4d8c33cdf756fa0cee71c13409c8aa65fb1ae19b0d8"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\capture-install-state.ps1",
+        "bytes": 2782,
+        "sha256": "ef149ab0b167f99cab36df0b6043e044e4625ddda80f9c2d565bccf07fa1fcb1"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\check-delivery.mjs",
+        "bytes": 4533,
+        "sha256": "226eaaac87d8a81f8adc6a4a0bf24de05bf2bb8107991894731528707fe18ecf"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\cli-findings.json",
+        "bytes": 531,
+        "sha256": "3b132a85bf539e74a356ab875bf520d3c1cf00b7c689adb84887559df9a719d4"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\delivery.json",
+        "bytes": 2202690,
+        "sha256": "200c2b8e9bd31dd5d50afa7a775786237ea5873327815f786a1fb050997a68bb"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\electron-followup-tests.json",
+        "bytes": 7261,
+        "sha256": "11779b0d8ab519237ce4fbdca9211259e11d93f481645e75330d0bb2576100c7"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\electron-followup.json",
+        "bytes": 1182,
+        "sha256": "10a02fb8862f22dec067b9e7e00cee9a8c50a4b7f242bfeb982fa70d5b76a756"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\electron-followup.log",
+        "bytes": 695,
+        "sha256": "501c55e670b35846207b1050667fce130dd898a6aa11e0271183e64a5620e9e9"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\electron-full.json",
+        "bytes": 779,
+        "sha256": "58f5adac90ec29729b888e927f7d04ad4cc0df2345393dce51a66dc9917a8a02"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\electron-full.log",
+        "bytes": 105076,
+        "sha256": "0e3bbeefe819bc373431e5d4d952f867042e008a97b42f3246f5c7fc324de9db"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\electron-tests.json",
+        "bytes": 2643239,
+        "sha256": "06e59d63e13781d825d40417e20a02b2b3ead1bca1a6abe8ec65902e957f2981"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\emit-report.mjs",
+        "bytes": 6777,
+        "sha256": "91a85e520744709e913be56904555aeead4a673a38ceb9dbec62907028659aa9"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\extract-and-check.mjs",
+        "bytes": 2696,
+        "sha256": "5d358f7e2edfd73443e1cb6ac3e608e6cc45bf2783a678d86698eba5f1d95849"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\extract.json",
+        "bytes": 215,
+        "sha256": "ad12a180e22f5ba84c228173d32340dbb0b509a8cb054218cb4d9eede149677a"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\extract.log",
+        "bytes": 760,
+        "sha256": "b1a0d60af22cae9f11f3c2b8d97415edfb5c4bf9a04fe63887becbcd47b56a9c"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\extracted-package-check.json",
+        "bytes": 822,
+        "sha256": "f8027422a049f080ac6ffdfaa49e747bd766af790f03dcd7df996d31a2203ec1"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\extracted-package-check.log",
+        "bytes": 959,
+        "sha256": "d95cff61246eba7675dbf0b282db32ba363df369ec8246cadc83c6b948c74743"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\finish-progress.json",
+        "bytes": 212,
+        "sha256": "519eecef7ae33a57787cf161d49c1298cfba9573cc354807bb0a46cca8457a74"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\finish-regression.mjs",
+        "bytes": 2110,
+        "sha256": "d1c42258a2d43de845dde932517d2de8abe96ab426658d5cbc7ce1e98c67a34e"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\forest-before.json",
+        "bytes": 1125421,
+        "sha256": "1cc16822423ea0a94e2e0e7135a3755bc6f9dc8d48ff6082de064e0279afb360"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\guard-release-delivery.mjs",
+        "bytes": 946,
+        "sha256": "7a956b471360e779b7d3e0add4564ad42ce4a8bca5b2503f325448f4d4a0dd12"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-discovery.json",
+        "bytes": 6569,
+        "sha256": "d4a936e3d804e1dd7f10c31ba71dcd4860aee21e7650b48d18a4281ebbd10972"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-environment-restored.json",
+        "bytes": 216,
+        "sha256": "ff05d7f0bb1a1bb90d9f7be72c63bf2c93b6ea35f3e50e036aa148c69f689a35"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-intervention.json",
+        "bytes": 701,
+        "sha256": "3a3dd92b9412ad924026ef53904581ff9e7d1cc8b5ca4b274c213b16b57210e6"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-old-started.json",
+        "bytes": 304,
+        "sha256": "86a01464b14489bb3ce0b57dda3a2632515b64fc570c8a53586257888928a577"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-old.json",
+        "bytes": 492,
+        "sha256": "a72521c54a682704d3162aa2ac8711cc94d180f68f695ad63d9de3a3543c8d20"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-old.log",
+        "bytes": 140,
+        "sha256": "1e619eb7492b8a421b1365230abdbe836b5665d8b1094938de643d40b93af66f"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-preflight.json",
+        "bytes": 6537,
+        "sha256": "b7bb698da0cc3584ac75b59c80a904af7e785ff044512fd804e7f3ff19154ddc"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-preflight.ps1",
+        "bytes": 3279,
+        "sha256": "e72272d6dd90c000ce3ce46602c2fe43816495ecfd486ac6481d30ef5c8f7588"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-stage.mjs",
+        "bytes": 3363,
+        "sha256": "f338329c048029d738fb766211094872bb6852d6fcec15641d60bdc982d2abbc"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-state-after-old.json",
+        "bytes": 8602,
+        "sha256": "4abfb35bdeb77b6477f0d70ae9dacb05fa353f57b914eafe8848f42ab4554f05"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-state-after-uninstall.json",
+        "bytes": 5320,
+        "sha256": "6fb11da84961e1e30896d3dca60c524531097e233f0874a6b834bd1f7ecfec2b"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-state-before-old.json",
+        "bytes": 7378,
+        "sha256": "b952fbd41ba7de5b67e819f30349637536c48dd878f8f41b6be37403578889a2"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-state-before-uninstall.json",
+        "bytes": 8609,
+        "sha256": "c37e08ff10fbab7b5b27e1094b187f673d2662571b1bf246b27eb73cd60482cd"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-state-inspect-old.json",
+        "bytes": 6147,
+        "sha256": "87c99971d9b71f69e6b6e381436c4b8611da674ae44d1652c1955dc77ad8a80f"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-uninstall-started.json",
+        "bytes": 234,
+        "sha256": "9ee592ce33b99c873dd3f8ae091b91d8790673a40cfeb4bb4068c1b9a8452827"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-uninstall.json",
+        "bytes": 422,
+        "sha256": "5478dcd5119f2d710f9a4365a5abc51a5df377e760b587133f8247776255babf"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer-uninstall.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\installer.json",
+        "bytes": 291,
+        "sha256": "29299b21b9339ca9550b3b8b47d8eff352ec6676462a6a052f37c4158a6d844e"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\lint-fixed.json",
+        "bytes": 569,
+        "sha256": "15cca52827ea0e33c8cb72bac03a2234ce086462132f1ae9da5ead6a29a9c821"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\lint-fixed.log",
+        "bytes": 21559,
+        "sha256": "208d30e4d2932c7b3d104888b5244b1a9763b4354798e184a58bf71f18613fbc"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\lint-followup.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\lint.json",
+        "bytes": 563,
+        "sha256": "d0f41743b9ba8b39b9a467de8ed5fe5b6adbcbf271bf31665668bcb5777a9d17"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\lint.log",
+        "bytes": 21786,
+        "sha256": "3623c112a6ddb1af1e2f3fa69fbe02e9b906cfedb8cff1c37039fff4dc6b4d95"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\packaged-runtime.json",
+        "bytes": 1122,
+        "sha256": "a12ea388d2e65da0b8edf47b49787beeaa6b91be2efa0bf4162e3e6abd2dac2d"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\packaged-runtime.log",
+        "bytes": 187,
+        "sha256": "77c488ee43062efbf725d397db89e627dc1ad22e5f9a3024271e5ebdf6468600"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\packaged-smoke.mjs",
+        "bytes": 4950,
+        "sha256": "00aa787af64942374c14406a2fc017d20de9aa1f96485e0f0ba5e3b7ac095112"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\packaged-ui.json",
+        "bytes": 1165,
+        "sha256": "3824e7183cc5bba514d6ecaebabec961b6a2ef247e9e5fb326274182629ef0ea"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\packaged-ui.log",
+        "bytes": 399,
+        "sha256": "a9d7834475566bde34a719664fbfb4740c85044d8cdbbb77cf76d8fbfd9df302"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\progress.json",
+        "bytes": 302,
+        "sha256": "479f794a66bfa0251b2ba008e234fbfab6d412f294311461ae9c376d16bc38cc"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\release-packaged-runtime-output.log",
+        "bytes": 50,
+        "sha256": "e166a3500f7591331d4819e49e9e3f2407facfbc08aac148d808318211bbcd28"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\release-packaged-runtime-result.json",
+        "bytes": 211,
+        "sha256": "a463bcc6bc9486d6f619a5918e004d56a0c0a123076c09c122bf393c0878aab6"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\remaining-gates.mjs",
+        "bytes": 1380,
+        "sha256": "7117e6f34e79fdfa3f1cb69100a1ba36205a142118fc44bf9a7eeab1612b6e1d"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\restore-install-environment.ps1",
+        "bytes": 2270,
+        "sha256": "1195b71a58376a432a2826c2b195d0966972c8b4a056cc86b2370927ebe89f9c"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\root-unit.json",
+        "bytes": 559,
+        "sha256": "6a0a6bab626cba1ab0aa729ed4cb1f367a284a3f18bad797e51ae24912539bac"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\root-unit.log",
+        "bytes": 20711,
+        "sha256": "c57d2e6e69c30e9b7a4f3f9766619a0732dbf3976b533719c579a96388434110"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\run-full-gates.mjs",
+        "bytes": 2039,
+        "sha256": "0f118a1e69beda885217940169989374197eb605be3b328b9be20698b48f0bf1"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\run-gate.mjs",
+        "bytes": 1995,
+        "sha256": "7271ff7b6e12c4eeb7a485370d9e3efad273c9e98760db557a76c459b52b7ba6"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\runtime-core-types.json",
+        "bytes": 700,
+        "sha256": "b9dca314099b623062912e5f0c48013e24924497532faba18757100c73bd0b89"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\runtime-core-types.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\runtime-extension-test-types.json",
+        "bytes": 735,
+        "sha256": "d8e32d1e315406d8521046971af9b5d8c6460e23cd52a01cc3d0da174d706996"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\runtime-extension-test-types.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\runtime-extension-types.json",
+        "bytes": 711,
+        "sha256": "d69484b8a6c60e3b846e8de2cd0e5453664e58adc2675625b0f600fbe632d735"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\runtime-extension-types.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\runtime-probe.mjs",
+        "bytes": 1734,
+        "sha256": "43d1fc7b405d54350bfb3adcae25994fcd13df4a233a3d58982617584688f1e0"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\runtime-test-types.json",
+        "bytes": 719,
+        "sha256": "4cd7c658425b0fddea4990100930fda25292c47d9043c5b7d8659fc8d333de7f"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\runtime-test-types.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\start-proposal.json",
+        "bytes": 1747,
+        "sha256": "8716134f37d2bf9fe545266b68efb799b58c6e33675d2d596d5a0c9d6b0afd8d"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\startup.json",
+        "bytes": 576,
+        "sha256": "1bacf44077715945586cf4939a61551fc81c19bdb77d2148756a3a96b0bfbf6b"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\startup.log",
+        "bytes": 199,
+        "sha256": "96859a3a47631eaab43488b76ce9629bcd531ab7b3c7262fc2e38354d0cc91f4"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\task-validate.json",
+        "bytes": 636,
+        "sha256": "6175e7980ab001fe7247ade37355eda3effad3a538c5bc29f18978b3ef7e4f80"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\task-validate.log",
+        "bytes": 919,
+        "sha256": "0666a8bb6b8b728f86cbf34ec515eccd5988dc69eb14488cac71111b36494f28"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\todo-current.json",
+        "bytes": 1887,
+        "sha256": "6624751ff9bedd36da87137d904b16d69580fdaa2093cddcac7466d9dfed29b8"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\types-node.json",
+        "bytes": 574,
+        "sha256": "6a52a4a139ab414a467df003bfd95ce18a20a750d06ec08612e17089c9698173"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\types-node.log",
+        "bytes": 56,
+        "sha256": "c453d9d3a4899b8beb8b59cc768faba1508c1f44b3ad6ddc2b170b5c6638223a"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\types-test.json",
+        "bytes": 574,
+        "sha256": "fed1d829df5e72634e07c13a3dc5156e41e77ba3a1566068ca9fabbd45cff326"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\types-test.log",
+        "bytes": 56,
+        "sha256": "2965c30ed6c0458fe82c037cbd4fcb6ec7b20eb952bfab14bcb028ad81bbeb57"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\types-web.json",
+        "bytes": 572,
+        "sha256": "eddca7037d67862a466cc217a58051c78ea5dc3fb8f8d49cd7629bd6455f7fa8"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\types-web.log",
+        "bytes": 55,
+        "sha256": "4c6a5db0241dc9cb197b5cfb6af63ed04a35ec305fe459bfa8e886e2bcd904a4"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\ui-probe.mjs",
+        "bytes": 4538,
+        "sha256": "8fcf85d8c7634215edfe9feca864ef1a80703dd8d19ecaef97a1198933adeee6"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\unexpected-cli-processes.json",
+        "bytes": 341,
+        "sha256": "f8751c9cf16c48fd427368bbf4e4e32e4367a570ea1cc01ebad038514e7944aa"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\uninstaller-intervention.json",
+        "bytes": 1020,
+        "sha256": "3b67e4f790a60e3a593086adb321e304fba8212637e022746ce9710ed4f57d68"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\uninstaller-launch-state.json",
+        "bytes": 15818887,
+        "sha256": "55acbdf57f4298a22754fd0f77ac8033131d4f567712ae12d2587ca579bba490"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\windows-build.json",
+        "bytes": 665,
+        "sha256": "894a82deb9f42c3e100cc8b49997dd34241e420f52f9322a0024b7dbc92a20d1"
+      },
+      {
+        "path": "D:\\ClawX-work\\frozen-acceptance-20261007\\windows-build.log",
+        "bytes": 87397,
+        "sha256": "0fcfc0c344229ca3ffb3b1f88b05441db41a51d8d85b0fa8cf6561da48c3efa2"
+      }
+    ],
+    "rawLogsAndRegistrySnapshotsRemainPrivate": true
+  }
+}
