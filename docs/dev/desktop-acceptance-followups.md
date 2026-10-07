@@ -9,6 +9,50 @@ results and their candidate identities belong in
 Private run logs, screenshots and receipts remain under
 `.local/desktop-followups-20261006/` with a recovery index.
 
+## Final verification
+
+The Windows package was built from `1aa238c92cf3dda37bec0f8564ab714e3f160d43`.
+Candidate `3ef9b34a1b3297470fd60e65eba4c8b9be2d97b3` only changes the manual
+compression test fixture and task-spec path ownership; product sources are
+unchanged. The fixture now reloads after installing Host API stubs and waits
+for the actual compression status before clicking.
+
+- Root `pnpm test`: 8,040 passed, 50 skipped, zero failed; exit 0.
+- Full Electron run: 333 passed, 4 skipped, 2 failed in 49.8 minutes. The two
+  failures were the early compression click and a Windows worker crash in the
+  memory-injection panel. Both files then passed all 4 tests on the clean
+  candidate. This is a recorded full run plus a targeted rerun, not a claim
+  that one full invocation was green. The crashed worker's owned Electron
+  process was identified and stopped after the suite to release its log pipe.
+- Scheduled/Browser, Knowledge Hub, checkpoints, Git controls, compression
+  evidence, model scopes, startup, math and offline token history ran in the
+  full suite. The four existing skips are two paid-provider cache probes,
+  macOS-only drag regions, and an opt-in screenshot collection utility.
+- Agent-driven RC-10 H-02 through H-06 passed. Both Gateway restart scenarios
+  changed PID; all 15 evidence-file hashes match. The model/account sequence
+  is A, C, B, C, A through real local Main/Gateway requests.
+- Startup remains 1.53 MB against the unchanged 2.50 MB limit; chat adds
+  3.17 MB against the unchanged 4 MB limit.
+- NSIS completed with exit 0. The installer is 552,500,868 bytes with SHA-256
+  `51dde554890d9ac1b50738be5f2d6ac7d6eb24da582d21e4101ad034a9611c0d`.
+  Extraction contains zero external links; 4,174 dependency checks pass.
+  Main ASAR integrity and all 12 native companions match. MCP, guarded
+  Gateway startup, and the actual delivered desktop renderer were exercised.
+
+The packaged desktop probe uses E2E mode to suppress startup side effects;
+its screenshot therefore shows Gateway stopped. The packaged Gateway is
+verified separately. Earlier probe connection/exit failures remain in the
+report. A successful rerun does not establish the absence of intermittent
+Windows process failures.
+
+Candidate run output was moved to
+`D:/ClawX-work/desktop-followups-20261006/evidence`; the previous C: output
+directory is a junction. The installer and extracted delivery are adjacent
+under `release-final/` and `delivery-final/`, and new temporary files use
+the D: task `tmp/` directory. Source checkouts and unrelated branding work
+were preserved. The machine-readable report contains the recovery index,
+all command receipts, final control-plane gate results and scope exclusions.
+
 ## Delivery
 
 Runtime copies materialize Windows junctions and start dependency traversal from
