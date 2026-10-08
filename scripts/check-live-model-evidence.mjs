@@ -26,7 +26,7 @@ let calls = 0;
 async function completion(body, label, onHeaders, onChunk) {
   assert(++calls <= report.maxProviderRequests, 'Provider request budget exceeded');
   const started = Date.now();
-  const row = { number: calls, label, model: body.model, stream: body.stream === true, requestBytes: Buffer.byteLength(JSON.stringify(body)), requestSha256: hash(JSON.stringify(body)) };
+  const row = { number: calls, label, model: body.model, stream: body.stream === true, parameters: Object.fromEntries(Object.entries(body).filter(([k]) => !['messages', 'tools'].includes(k))), toolCount: body.tools?.length ?? 0, requestBytes: Buffer.byteLength(JSON.stringify(body)), requestSha256: hash(JSON.stringify(body)) };
   report.requests.push(row); save();
   const response = await fetch(baseUrl + '/chat/completions', { method: 'POST', headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' }, body: JSON.stringify(body), redirect: 'error', signal: AbortSignal.timeout(120_000) });
   row.status = response.status;
@@ -38,6 +38,9 @@ async function completion(body, label, onHeaders, onChunk) {
   const frames = body.stream && response.ok
     ? raw.split(/\r?\n/).filter(l => l.startsWith('data: ') && l !== 'data: [DONE]').map(l => JSON.parse(l.slice(6)))
     : [JSON.parse(raw)];
+  row.content = body.stream ? frames.flatMap(f => f.choices ?? []).map(c => c.delta?.content ?? '').join('') : frames[0].choices?.[0]?.message?.content;
+  row.deltaKeys = [...new Set(frames.flatMap(f => f.choices ?? []).flatMap(c => Object.keys(c.delta ?? {})))];
+  row.toolCallChunks = frames.flatMap(f => f.choices ?? []).filter(c => c.delta?.tool_calls?.length).length;
   row.usage = frames.findLast(f => f.usage)?.usage ?? null;
   row.returnedModel = frames.find(f => f.model)?.model ?? null;
   row.finishReason = frames.flatMap(f => f.choices ?? []).findLast(c => c.finish_reason)?.finish_reason ?? null;
@@ -49,6 +52,7 @@ async function completion(body, label, onHeaders, onChunk) {
 }
 let gateway, client, relay, gatewayText = '';
 try {
+  if (process.env.LIVE_MODEL_GATEWAY_ONLY !== '1') {
   const streamed = await completion({ model, messages: [{ role: 'user', content: 'Reply exactly STREAM-LIVE-OK. No tools or formatting.' }], stream: true, stream_options: { include_usage: true }, max_tokens: 512 }, 'direct-stream');
   assert.equal(streamed.content.trim(), 'STREAM-LIVE-OK');
   assert(streamed.row.usage?.total_tokens > 0, 'Provider must report streaming usage');
@@ -65,6 +69,8 @@ try {
   const toolReply = await completion({ model, messages, max_tokens: 512 }, 'direct-tool-result');
   assert.equal(textOf(toolReply.message), value);
   report.checks.push({ name: 'function-call-roundtrip', passed: true, tool: tool.function.name, arguments: JSON.parse(tool.function.arguments), expected: value, actual: textOf(toolReply.message), execution: 'agent-driven synthetic lookup; not runtime filesystem tool evidence' });
+
+  } else { report.diagnosticSubset = 'gateway-only'; }
 
   // Real provider credentials stay in this relay, never in the runtime configuration.
   relay = createServer(async (req, res) => {
