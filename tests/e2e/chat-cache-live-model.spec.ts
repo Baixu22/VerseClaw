@@ -407,9 +407,10 @@ async function writeEvidence(evidence: LiveEvidence): Promise<string> {
   return latestPath;
 }
 
+// Provider setup sends a real secret through page.evaluate; never record it.
+test.use({ trace: 'off', video: 'off' });
+
 test.describe('Verse Claw prompt cache live model E2E', () => {
-  // Provider setup sends a real secret through page.evaluate; never record it.
-  test.use({ trace: 'off', video: 'off' });
   test.skip(
     !LIVE_ENABLED,
     'Set CLAWX_LIVE_MODEL_E2E=1, CLAWX_LIVE_MODEL_REF, and a provider API key to run real model calls',
