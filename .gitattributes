@@ -48,6 +48,7 @@ artifacts/runtime-test-integrity/SHA256SUMS -text whitespace=blank-at-eol,blank-
 artifacts/desktop-acceptance-followups/* -text
 artifacts/frozen-windows-acceptance-20261007/* -text
 artifacts/windows-delivery-blocker-fixes/* -text
+artifacts/windows-alpha-closeout-20261008/* -text
 # Historical curated inputs retain their original bytes; they are not new verdicts.
 artifacts/uas-06-single-local-exec-canary/live-observations.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/human-verdict.yaml -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

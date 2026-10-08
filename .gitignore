@@ -349,3 +349,8 @@ artifacts/frozen-windows-acceptance-20261007/*
 !artifacts/frozen-windows-acceptance-20261007/report.json
 !artifacts/frozen-windows-acceptance-20261007/credential-scan.json
 !artifacts/frozen-windows-acceptance-20261007/SHA256SUMS
+!artifacts/windows-alpha-closeout-20261008/
+artifacts/windows-alpha-closeout-20261008/*
+!artifacts/windows-alpha-closeout-20261008/report.json
+!artifacts/windows-alpha-closeout-20261008/credential-scan.json
+!artifacts/windows-alpha-closeout-20261008/SHA256SUMS
