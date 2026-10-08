@@ -897,11 +897,11 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
           const choices =
             (chunk.choices as Array<Record<string, unknown>> | undefined) ?? [];
 
-          // Handle usage chunk (sent when stream_options.include_usage is true)
+          // Some compatible providers include usage alongside text/tool deltas.
+          // Apply the counters without discarding choices from the same frame.
           const usage = chunk.usage as Record<string, unknown> | undefined;
           if (usage) {
             applyProviderUsage(output, model, usage);
-            continue;
           }
 
           for (const choice of choices) {

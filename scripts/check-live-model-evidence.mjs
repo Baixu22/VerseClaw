@@ -39,6 +39,7 @@ async function completion(body, label, onHeaders, onChunk) {
     ? raw.split(/\r?\n/).filter(l => l.startsWith('data: ') && l !== 'data: [DONE]').map(l => JSON.parse(l.slice(6)))
     : [JSON.parse(raw)];
   row.content = body.stream ? frames.flatMap(f => f.choices ?? []).map(c => c.delta?.content ?? '').join('') : frames[0].choices?.[0]?.message?.content;
+  row.usageWithChoiceFrames = frames.filter(f => f.usage && f.choices?.some(c => c.delta && Object.values(c.delta).some(Boolean))).length;
   row.deltaKeys = [...new Set(frames.flatMap(f => f.choices ?? []).flatMap(c => Object.keys(c.delta ?? {})))];
   row.toolCallChunks = frames.flatMap(f => f.choices ?? []).filter(c => c.delta?.tool_calls?.length).length;
   row.usage = frames.findLast(f => f.usage)?.usage ?? null;
@@ -79,7 +80,7 @@ try {
       assert.equal(req.method, 'POST');
       let raw = ''; for await (const chunk of req) { raw += chunk; assert(raw.length <= 1_000_000, 'Request too large'); }
       const body = JSON.parse(raw); assert.equal(body.model, model);
-      assert((body.max_tokens ?? body.max_completion_tokens ?? 0) <= 2048, 'Runtime output budget too large');
+      assert((body.max_tokens ?? body.max_completion_tokens ?? 0) > 0 && (body.max_tokens ?? body.max_completion_tokens) <= 2048, 'Runtime output budget missing or too large');
       await completion(body, 'gateway-runtime', upstream => { res.writeHead(upstream.status, { 'content-type': upstream.headers.get('content-type') ?? 'application/json' }); }, chunk => res.write(chunk));
       res.end();
     } catch (error) { report.relayError = String(error.message).replaceAll(key, '[REDACTED_CREDENTIAL]'); save(); if (!res.headersSent) res.writeHead(502, { 'content-type': 'application/json' }); res.end(JSON.stringify({ error: { message: 'Evidence relay failed; see sanitized report' } })); }
@@ -89,7 +90,7 @@ try {
   const state = path.join(output, 'state'), home = path.join(output, 'home'), workspace = path.join(output, 'workspace');
   for (const p of [state, home, workspace]) fs.mkdirSync(p);
   const configPath = path.join(output, 'openclaw.json');
-  const config = { gateway: { mode: 'local', controlUi: { enabled: false } }, models: { mode: 'merge', providers: { 'stepfun-evidence': { api: 'openai-completions', baseUrl: 'http://127.0.0.1:' + relayPort + '/v1', apiKey: 'synthetic-relay-auth', models: [{ id: model, name: model, api: 'openai-completions', reasoning: false, input: ['text'], contextWindow: 128000, maxTokens: 1024 }] } } }, agents: { defaults: { model: { primary: 'stepfun-evidence/' + model, fallbacks: [] }, workspace, skipBootstrap: true, thinkingDefault: 'off', timeoutSeconds: 120 }, list: [{ id: 'main', default: true }] }, tools: { allow: [] }, skills: { allowBundled: [] } };
+  const config = { gateway: { mode: 'local', controlUi: { enabled: false } }, models: { mode: 'merge', providers: { 'stepfun-evidence': { api: 'openai-completions', baseUrl: 'http://127.0.0.1:' + relayPort + '/v1', apiKey: 'synthetic-relay-auth', models: [{ id: model, name: model, api: 'openai-completions', reasoning: false, input: ['text'], contextWindow: 128000, maxTokens: 1024 }] } } }, agents: { defaults: { model: { primary: 'stepfun-evidence/' + model, fallbacks: [] }, models: { ['stepfun-evidence/' + model]: { params: { maxTokens: 1024 } } }, workspace, skipBootstrap: true, thinkingDefault: 'off', timeoutSeconds: 120 }, list: [{ id: 'main', default: true }] }, tools: { deny: ['*'] }, skills: { allowBundled: [] } };
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
   const token = randomUUID();
   const env = { ...process.env, HOME: home, USERPROFILE: home, APPDATA: path.join(home, 'AppData/Roaming'), LOCALAPPDATA: path.join(home, 'AppData/Local'), XDG_CONFIG_HOME: path.join(home, '.config'), OPENCLAW_CONFIG_PATH: configPath, OPENCLAW_STATE_DIR: state, OPENCLAW_DISABLE_BONJOUR: '1', OPENCLAW_SKIP_CHANNELS: '1' };

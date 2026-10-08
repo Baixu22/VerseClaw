@@ -24,3 +24,9 @@ Script attempt 2 passed streaming and synthetic function-call roundtrip. Gateway
 received HTTP 200 and 25,035 reported tokens, but persisted an empty assistant
 content array. This is retained as a runtime-response failure; diagnostic reads
 will inspect response shape without retaining credentials or internal prompts.
+
+The real-provider empty response exposed a production transport defect: a usage
+object caused an early continue, discarding text/tool deltas and finish reason
+in the same SSE frame. Two synthetic regression cases fail the original parser.
+The minimal fix processes both usage and choices; no provider default is changed.
+README English/Chinese/Japanese provider setup claims remain applicable.
