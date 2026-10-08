@@ -16,7 +16,7 @@ touchedAreas:
   - docs/dev/first-product-controlled-preview/STATUS.md
   - docs/dev/handoffs/LATEST.md
   - docs/dev/handoffs/OVERNIGHT-HARVEST-BRIEF.md
-  - docs/architecture-overview.md
+  - docs/dev/tf0009-engineering-evidence-audit.md
   - docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md
   - harness/specs/rules/tf0009-real-canary-authority.md
   - harness/specs/tasks/tf0009-engineering-evidence-audit.md
@@ -80,7 +80,7 @@ docs:
     - docs/dev/dcs-ops-canary-runbook.md
     - docs/dev/first-product-controlled-preview/STATUS.md
     - docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 # TF-0009 engineering evidence audit

@@ -5,7 +5,7 @@ taskType: runtime-authority-convergence
 intent: Promote Stage 2 into a formal harness spec. Golden coding turn adapters produce real digest-only ContextRef/v1 for user intent, Task Ledger, and tool result; a stateless DCS service compiles them into an immutable CompilationSnapshot/v1 and a sealed PromptPlan/v1; Provider Guard consumes only the sealed PromptPlan/snapshot carriers and never recompiles, filters, or changes policy. Everything stays observational: default flag off, flag-on send bytes unchanged, and the existing prompt production path is not migrated.
 touchedAreas:
   - harness/specs/tasks/context-control-plane-stage2.md
-  - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+  - docs/dev/context-control-plane/DEVLOG.zh-CN.md
   - openclaw_runtime/src/context-engine/stage2-context-refs.ts
   - openclaw_runtime/src/context-engine/stage2-transform-graph.ts
   - openclaw_runtime/src/context-engine/stage2-catalog-epoch.ts

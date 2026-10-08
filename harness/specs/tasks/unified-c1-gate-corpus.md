@@ -56,7 +56,7 @@ docs:
     - docs/dev/first-product-controlled-preview/STATUS.md
     - docs/dev/dcs-visible-production/tasks/TASK-P1-01.md
     - docs/dev/dcs-visible-production/P1-01-LIVE-AB-PROTOCOL.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 # Unified C1 gate corpus

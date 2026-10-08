@@ -74,7 +74,7 @@ touchedAreas:
   - harness/src/cli.mjs
   - harness/src/git.mjs
   - harness/src/git.test.mjs
-  - docs/architecture-overview.md
+  - team/dcs/README.md
   - team/dcs/dcs-v1.6.1-addendum.md
   - runtime-research/agent-runtime-index.md
   - docs/enhancements/05-adaptive-context-budget.md

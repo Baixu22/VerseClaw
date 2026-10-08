@@ -5,8 +5,8 @@ taskType: runtime-authority-convergence
 intent: Promote Stage 4 into a formal harness spec. CapabilityGrant/v1 becomes a unified pure-derived execution credential from the existing durable ApprovalLedger, policy digest, and session identity. It supports TTL, revocation epoch, explicit restart invalidation, and delegation whose child scope, TTL, and delegation depth are strictly bounded by the parent. A default-off Tool Guard executes at the tool dispatch point after MCP/tool policy filtering and verifies actor, scope, TTL, approval ref, governance, effect idempotency, revocation, and parent chain before any tool body runs. Every issue, denial, and revocation appends an in-memory audit record carrying policy digest and actor chain; durable effect truth remains the existing approval ledger plus effect receipts. No second permission database, approval ledger, or product-lock change is introduced.
 touchedAreas:
   - harness/specs/tasks/context-control-plane-stage4.md
-  - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
-  - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+  - docs/dev/context-control-plane/DEVLOG.zh-CN.md
+  - docs/dev/context-control-plane/STAGE-ROADMAP.zh-CN.md
   - openclaw_runtime/src/agents/stage4-capability-grant.ts
   - openclaw_runtime/src/agents/stage4-tool-guard.ts
   - openclaw_runtime/src/agents/agent-tools.ts

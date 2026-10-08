@@ -27,7 +27,7 @@ touchedAreas:
   - openclaw_runtime/src/knowledge/sekb/harness-integration.test.ts
   - eslint.config.mjs
   - package.json
-  - docs/architecture-overview.md
+  - team/dcs/README.md
 expectedUserBehavior:
   - A real TaskLoop phase transition persists one system-managed task_state Block whose current_phase equals the actual RuntimeTaskStatus transition target.
   - A role subagent receives no serialized state in its prompt. Before child startup, the parent writes a validated HandoffPack to the child session key; the child restores only its own state through BlockStore.

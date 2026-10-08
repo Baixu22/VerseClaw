@@ -78,7 +78,7 @@ docs:
   required: true
   files:
     - docs/dev/unified-agent-system/runtime-convergence/AGENT-START.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 # RC-01R Self-Contained Baseline And Gate Truth

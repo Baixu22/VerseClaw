@@ -8,7 +8,7 @@ touchedAreas:
   - harness/specs/tasks/verseshell-p0-runtime-startup.md
   - harness/specs/rules/verseshell-foundation-p0-boundary.md
   - resources/verseshell/patches/p0-runtime-startup.patch
-  - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
+  - docs/dev/verseshell-foundation/P0-EVIDENCE-BASELINE-2026-08-14.md
   - docs/dev/handoffs/LATEST.md
 expectedUserBehavior:
   - The VerseShell server can initialize and answer a minimal handshake on short-uptime and restarted hosts without an Instant underflow panic.
@@ -48,7 +48,7 @@ docs:
   required: true
   files:
     - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

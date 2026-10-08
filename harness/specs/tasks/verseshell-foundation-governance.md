@@ -7,8 +7,8 @@ intent: Freeze the current VerseShell P0 baseline, single-owner boundaries, and 
 touchedAreas:
   - harness/specs/tasks/verseshell-foundation-governance.md
   - harness/specs/rules/verseshell-foundation-p0-boundary.md
-  - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
-  - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
+  - docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md
+  - docs/dev/verseshell-foundation/P0-EVIDENCE-BASELINE-2026-08-14.md
   - docs/dev/handoffs/LATEST.md
   - .agent-workbench/task-forest/**
 expectedUserBehavior:
@@ -31,7 +31,7 @@ requiredTests:
   - pnpm harness validate --spec harness/specs/tasks/verseshell-foundation-governance.md --no-diff
   - python C:\\Users\\27933\\.codex\\skills\\task-forest\\scripts\\task_forest.py validate
   - python C:\\Users\\27933\\.codex\\skills\\task-forest\\scripts\\task_forest.py export
-  - git diff --check -- harness/specs/tasks/verseshell-foundation-governance.md harness/specs/rules/verseshell-foundation-p0-boundary.md docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md docs/dev/handoffs/LATEST.md
+  - git diff --check -- harness/specs/tasks/verseshell-foundation-governance.md harness/specs/rules/verseshell-foundation-p0-boundary.md docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md docs/dev/verseshell-foundation/P0-EVIDENCE-BASELINE-2026-08-14.md docs/dev/handoffs/LATEST.md
 acceptance:
   - The P0 baseline records the exact candidate SHA, current binary and source identity hashes, machine uptime context, commands, exit codes, and the difference between current and historical evidence.
   - The baseline distinguishes a passing packaged handshake and TypeScript real-binary suite from failing Rust test compilation and source/build/protocol drift; no green subset is promoted to release or canary evidence.
@@ -43,7 +43,7 @@ docs:
   files:
     - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
     - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 # VerseShell Foundation P0 Governance and Evidence Freeze

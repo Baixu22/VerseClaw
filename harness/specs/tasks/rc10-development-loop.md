@@ -111,7 +111,7 @@ docs:
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 This repairs the RC-09/RC-10 development loop. It does not execute or replace the

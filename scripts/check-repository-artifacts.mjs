@@ -88,6 +88,13 @@ export function checkRepositoryArtifacts(root = ROOT) {
     if (!frontmatter) continue;
     const { data: spec } = parseFrontmatter(text);
     for (const command of spec?.requiredTests ?? []) commands.push({ source: path, command });
+    if (spec?.docs?.required === true) {
+      for (const input of spec.docs.files ?? []) {
+        if (isLocalArtifact(input, policy) || !tracked.has(input) || !existsSync(join(root, input))) {
+          issues.push('Spec requires local or missing documentation: ' + path + ': ' + input);
+        }
+      }
+    }
   }
   for (const { source, command } of commands) {
     if (typeof command !== 'string') continue;

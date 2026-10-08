@@ -5,7 +5,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: Plan and implement a bounded MVP across Context Engineering, Dynamic Model Router, Skill/MCP Governance, Evidence Kernel v0, and Event-Driven Mission/Task Loop while preserving local ecosystem boundaries and avoiding speculative execution, eBPF defaulting, or MicroKernel drift.
 ownedPaths:
-  - docs/architecture-overview.md
+  - docs/local-runtime-mvp-roadmap.md
   - harness/specs/tasks/local-runtime-control-plane-mvp.md
   - harness/specs/tasks/local-runtime-control-plane-active-promotion-boundary.md
   - harness/specs/rules/runtime-local-ecosystem-boundary.md
@@ -31,7 +31,7 @@ ownedPaths:
   - tests/unit/**
   - tests/e2e/**
 touchedAreas:
-  - docs/architecture-overview.md
+  - docs/local-runtime-mvp-roadmap.md
   - harness/specs/tasks/local-runtime-control-plane-mvp.md
   - harness/specs/rules/runtime-local-ecosystem-boundary.md
   - openclaw_runtime/src/context-engine/**

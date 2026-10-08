@@ -51,7 +51,7 @@ touchedAreas:
   - tests/e2e/knowledge-lifecycle.spec.ts
   - openclaw_runtime/src/config/types.openclaw.ts
   - harness/specs/tasks/merge-recovery-20261003.md
-  - docs/dev/repository-artifact-retention.md
+  - docs/dev/merge-recovery-20261003.md
 ownedPaths:
   - README.ja-JP.md
   - README.md
@@ -98,7 +98,7 @@ ownedPaths:
   - tests/e2e/knowledge-lifecycle.spec.ts
   - openclaw_runtime/src/config/types.openclaw.ts
   - harness/specs/tasks/merge-recovery-20261003.md
-  - docs/dev/repository-artifact-retention.md
+  - docs/dev/merge-recovery-20261003.md
 expectedUserBehavior:
   - Knowledge review queue selection applies only its matching governed ReviewBundle.
   - Typed knowledge references and runtime context budget and loop guards remain effective.

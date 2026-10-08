@@ -13,8 +13,8 @@ intent: >-
   deterministic, and product locks/defaults remain unchanged.
 touchedAreas:
   - harness/specs/tasks/context-control-plane-stage6.md
-  - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
-  - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+  - docs/dev/context-control-plane/DEVLOG.zh-CN.md
+  - docs/dev/context-control-plane/STAGE-ROADMAP.zh-CN.md
   - shared/types/context-control-plane/stage6-control-plane-explain.ts
   - tests/unit/context-control-plane-stage6-contracts.test.ts
   - src/components/settings/ContextControlPlanePanel.tsx

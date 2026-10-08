@@ -40,7 +40,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 归属 RC-01R（TF-0029）下单一修复节点。源问题见 TF-0127 的目录别名复核记录：Node 将模块 URL 解析为真实路径，argv 中仍保留目录联接路径，字符串比较使检查跳过。复用 scripts/lib/entrypoint.mjs 的 realpath 判断；不以此修复宣称整个 RC-01R 或 M4 已验收。

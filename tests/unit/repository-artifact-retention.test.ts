@@ -111,6 +111,15 @@ describe('repository artifact retention', () => {
     ]));
   });
 
+  it('rejects a task spec that requires private handoff history', () => {
+    const directory = createFixture();
+    write(directory, 'harness/specs/tasks/private-docs.md', '---\nid: private-docs\ndocs:\n  required: true\n  files:\n    - runtime-research/LATEST.md\n---\n');
+    git(directory, 'add', '--', 'harness/specs/tasks/private-docs.md');
+    expect(checkRepositoryArtifacts(directory).issues).toContain(
+      'Spec requires local or missing documentation: harness/specs/tasks/private-docs.md: runtime-research/LATEST.md',
+    );
+  });
+
   it('runs the source boundary gate in PR CI before dependency installation', () => {
     const workflow = readFileSync(join(root, '.github/workflows/check.yml'), 'utf8');
     const gate = workflow.indexOf('run: node scripts/check-repository-artifacts.mjs');

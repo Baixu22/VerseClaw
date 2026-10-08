@@ -33,7 +33,7 @@ touchedAreas:
   - README.zh-CN.md
   - README.ja-JP.md
   - docs/clawx-design-overview.md
-  - docs/dev/repository-artifact-retention.md
+  - docs/dev/task-forest-engineering-20260913.md
 expectedUserBehavior:
   - The workspace exposes Review, Terminal, Browser, Files, Artifacts, and Audit through on-demand tabs, alongside the existing Agents tool tab.
   - Review contains Changes, AI Review, and Pull Requests without restoring a separate top-level review page.

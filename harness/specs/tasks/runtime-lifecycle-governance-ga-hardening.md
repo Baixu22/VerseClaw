@@ -79,7 +79,7 @@ docs:
   required: true
   files:
     - docs/dev/runtime-lifecycle-governance/README.zh-CN.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

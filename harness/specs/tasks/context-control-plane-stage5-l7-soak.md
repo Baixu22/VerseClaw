@@ -10,8 +10,8 @@ intent: >-
   token budget, and real-sample pairing requirements.
 touchedAreas:
   - harness/specs/tasks/context-control-plane-stage5-l7-soak.md
-  - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
-  - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+  - docs/dev/context-control-plane/DEVLOG.zh-CN.md
+  - docs/dev/context-control-plane/STAGE-ROADMAP.zh-CN.md
   - openclaw_runtime/src/agents/stage2-golden-run.ts
   - openclaw_runtime/src/agents/stage5-golden-run.ts
   - openclaw_runtime/src/agents/stage5-l7-soak.ts

@@ -18,8 +18,8 @@ touchedAreas:
   - pnpm-lock.yaml
   - package.json
   - docs/dev/verseshell-foundation/STATUS.md
-  - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
-  - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
+  - docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md
+  - docs/dev/verseshell-foundation/P1-MCP-COMPATIBILITY-EVIDENCE-2026-08-14.md
   - docs/dev/handoffs/LATEST.md
   - README.md
   - README.zh-CN.md
@@ -75,7 +75,7 @@ docs:
     - docs/dev/verseshell-foundation/STATUS.md
     - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
     - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

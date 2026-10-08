@@ -7,14 +7,14 @@ intent: 在干净候选上执行 L1/L2 全部门禁，实测白名单外失败�
 ownedPaths:
   - plans/system-maturity/phase6-supply-release/tasks/P6-005.delivery.md
   - artifacts/system-maturity/P6-005/full-electron-e2e-audit.json
-  - docs/dev/context-capability-blueprint.md
+  - docs/dev/context-moat/reviews/review-outcomes-20260910.md
   - docs/dev/handoffs/LATEST.md
   - harness/specs/tasks/m2m4-l2-greenline-closeout.md
   - .agent-workbench/task-forest/**
 touchedAreas:
   - plans/system-maturity/phase6-supply-release/tasks/P6-005.delivery.md
   - artifacts/system-maturity/P6-005/**
-  - docs/dev/context-capability-blueprint.md
+  - docs/dev/context-moat/reviews/review-outcomes-20260910.md
   - docs/dev/handoffs/LATEST.md
   - harness/specs/tasks/m2m4-l2-greenline-closeout.md
   - .agent-workbench/task-forest/**
@@ -42,7 +42,7 @@ docs:
   required: true
   files:
     - docs/dev/context-capability-blueprint.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 本任务为治理与门禁复核：不改运行时代码、配置默认值、产品锁、预算或历史 artifact 内容。

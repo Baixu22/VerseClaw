@@ -12,8 +12,8 @@ intent: >-
   authority or add a durable writer.
 touchedAreas:
   - harness/specs/tasks/context-control-plane-stage5.md
-  - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
-  - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+  - docs/dev/context-control-plane/DEVLOG.zh-CN.md
+  - docs/dev/context-control-plane/STAGE-ROADMAP.zh-CN.md
   - openclaw_runtime/src/context-engine/stage5-memory-facade.ts
   - openclaw_runtime/src/context-engine/stage5-unit-aware-packer.ts
   - openclaw_runtime/src/context-engine/stage5-memory-facade.test.ts

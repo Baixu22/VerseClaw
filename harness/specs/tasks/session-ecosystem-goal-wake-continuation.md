@@ -62,7 +62,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 # Session ecosystem goal-wake continuation (TF-0083 declaration)

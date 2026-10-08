@@ -7,7 +7,7 @@ diffBase: 8306466d175016a938703c41125dc3a3dca68390
 intent: Implement V3-04 as an explicit opt-in categories/discover/describe/load/execute/reflect resolver that delegates Tool L3 and execution to the existing Tool Search runtime through V3 leases.
 ownedPaths:
   - docs/dev/capability-registry-v3-*-acceptance.md
-  - docs/architecture-overview.md
+  - docs/dev/capability-registry-v3-development-plan.md
   - harness/specs/scenarios/capability-registry-v3.md
   - harness/specs/rules/capability-registry-v3-boundary.md
   - harness/specs/tasks/capability-registry-v3-*.md

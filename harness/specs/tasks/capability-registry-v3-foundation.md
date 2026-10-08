@@ -6,14 +6,14 @@ taskType: runtime-shadow
 diffBase: 8306466d175016a938703c41125dc3a3dca68390
 intent: Establish V3-00/V3-01 metadata contracts, static evaluation baseline, and an in-memory shadow catalog without changing any active runtime behavior.
 ownedPaths:
-  - docs/architecture-overview.md
+  - docs/dev/capability-registry-v3-development-plan.md
   - docs/dev/capability-registry-v3-foundation-acceptance.md
   - harness/specs/scenarios/capability-registry-v3.md
   - harness/specs/rules/capability-registry-v3-boundary.md
   - harness/specs/tasks/capability-registry-v3-foundation.md
   - openclaw_runtime/src/capabilities/v3/**
 touchedAreas:
-  - docs/architecture-overview.md
+  - docs/dev/capability-registry-v3-development-plan.md
   - docs/dev/capability-registry-v3-foundation-acceptance.md
   - harness/specs/scenarios/capability-registry-v3.md
   - harness/specs/rules/capability-registry-v3-boundary.md

@@ -13,9 +13,9 @@ touchedAreas:
   - openclaw_runtime/src/agents/agent-tools.ts
   - openclaw_runtime/src/agents/verseshell/policy-profile.ts
   - tests/unit/verseshell-readonly-facade.test.ts
-  - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
+  - docs/dev/verseshell-foundation/P2-READONLY-FACADE-EVIDENCE-2026-08-14.md
   - docs/dev/verseshell-foundation/STATUS.md
-  - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
+  - docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md
   - docs/dev/handoffs/LATEST.md
   - README.md
   - README.zh-CN.md
@@ -70,7 +70,7 @@ docs:
     - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
     - docs/dev/verseshell-foundation/STATUS.md
     - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

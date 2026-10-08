@@ -76,7 +76,7 @@ docs:
     - docs/dev/first-product-controlled-preview/tasks/FP-P4-07.md
     - docs/dev/first-product-controlled-preview/STATUS.md
     - docs/dev/first-product-controlled-preview/tasks/README.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 # FP-P4-05 through FP-P4-07 combined acceptance

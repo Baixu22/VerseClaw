@@ -7,7 +7,7 @@ touchedAreas:
   - AGENTS.md
   - harness/specs/rules/task-forest-autoclose-and-roles.md
   - harness/specs/tasks/task-forest-autoclose-policy.md
-  - docs/architecture-overview.md
+  - docs/dev/qa-synthesis-roadmap-20260922.md
   - docs/dev/showcase-overview-20260922.md
   - docs/dev/handoffs/LATEST.md
   - .agent-workbench/task-forest/**
@@ -15,7 +15,7 @@ ownedPaths:
   - AGENTS.md
   - harness/specs/rules/task-forest-autoclose-and-roles.md
   - harness/specs/tasks/task-forest-autoclose-policy.md
-  - docs/architecture-overview.md
+  - docs/dev/qa-synthesis-roadmap-20260922.md
   - docs/dev/showcase-overview-20260922.md
   - docs/dev/handoffs/LATEST.md
   - .agent-workbench/task-forest/**
@@ -37,7 +37,7 @@ requiredTests:
 acceptance:
   - harness/specs/rules/task-forest-autoclose-and-roles.md 存在，R1–R6 覆盖角色固定、验收可核对性、自动收口门、证据链定义、必须停下询问的清单、禁止自宣完成。
   - AGENTS.md 的 COMPASS 段落写明该覆盖在本仓库生效并指向规则 spec，不修改其他既有政策。
-  - docs/architecture-overview.md §7 不再要求用户确认 apply；更新记录登记本次改口与依据。
+  - docs/dev/qa-synthesis-roadmap-20260922.md §7 不再要求用户确认 apply；更新记录登记本次改口与依据。
   - Task Forest 新增 D8 决策节点并由收尾里程碑 derived_from 引用；TF-0236 验收不再依赖用户回答；validate 与 export 通过。
   - pnpm harness validate --spec harness/specs/tasks/task-forest-autoclose-policy.md 在不带 --no-diff 时 exit 0。
 docs:

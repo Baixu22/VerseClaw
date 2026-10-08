@@ -28,7 +28,7 @@ touchedAreas:
   - openclaw_runtime/src/config/runtime-context-block-role-memory.test.ts
   - openclaw_runtime/src/sessions/session-key-utils.ts
   - package.json
-  - docs/architecture-overview.md
+  - team/dcs/README.md
 expectedUserBehavior:
   - When compass flag is on and session is main, the assembler produces a knowledge Block from buildPreReplyInjection output and injects ## Knowledge into the context
   - When role_memory flag is on and session is subagent, the assembler produces a knowledge Block from buildContextPack output and injects ## Knowledge into the context

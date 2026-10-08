@@ -39,7 +39,7 @@ touchedAreas:
   - tests/e2e/sekb-golden-path.spec.ts
   - tests/e2e/knowledge-hub.spec.ts
   - docs/dev/sekb-golden-path.md
-  - docs/architecture-overview.md
+  - docs/dev/dcs-visible-production/TF-0074-REAL-USE-ACCEPTANCE-EVIDENCE-2026-08-21.md
   - docs/dev/dcs-visible-production/STATUS.md
   - docs/dev/handoffs/LATEST.md
   - README.md
@@ -110,7 +110,7 @@ docs:
   files:
     - docs/architecture-overview.md
     - docs/dev/dcs-visible-production/STATUS.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 # TF-0074 DCS、Goal/Loop、SEKB 真实投入使用工程验收

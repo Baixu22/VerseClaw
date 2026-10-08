@@ -5,7 +5,7 @@ taskType: runtime-authority-convergence
 intent: Promote the Stage 1 task draft into the formal harness spec for Provider Guard RequestEnvelope observation over the golden coding turn, one real tool call protected by a temporary minimal CapabilityGrant and Tool Guard, and a real EffectReceipt written from the existing approval/effect chain. All ten draft questions are resolved: the constraint-decidable ones are frozen and the owner decisions below are fixed.
 touchedAreas:
   - harness/specs/tasks/context-control-plane-stage1.md
-  - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+  - docs/dev/context-control-plane/DEVLOG.zh-CN.md
   - openclaw_runtime/src/agents/provider-transport-fetch.ts
   - openclaw_runtime/src/agents/shadow-census.ts
   - openclaw_runtime/src/agents/receipt-store.ts

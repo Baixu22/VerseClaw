@@ -66,7 +66,7 @@ docs:
   required: true
   files:
     - docs/dev/unified-agent-system/runtime-convergence/RC01-RECEIPT-OWNER-PROOF.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 This is a bounded repair within TF-0029's receipt-owner proof. A real SQLite probe

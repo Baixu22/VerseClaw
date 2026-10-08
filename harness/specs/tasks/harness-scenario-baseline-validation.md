@@ -31,7 +31,7 @@ touchedAreas:
   - artifacts/agent-dev-deep-test/**
   - artifacts/agent-dev-quality/**
   - artifacts/agent-dev-workbench/**
-  - docs/dev/repository-artifact-retention.md
+  - docs/dev/task-forest-engineering-20260913.md
 requiredProfiles:
   - fast
   - comms

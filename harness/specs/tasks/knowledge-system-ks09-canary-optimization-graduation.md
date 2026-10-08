@@ -47,7 +47,7 @@ touchedAreas:
   - docs/dev/handoffs/KS-04-06-DEVELOPMENT-PROMPT.md
   - docs/dev/handoffs/KS-07-09-DEVELOPMENT-PROMPT.md
   - docs/dev/handoffs/LATEST.md
-  - docs/architecture-overview.md
+  - docs/dev/knowledge-system-unification-development-plan.zh-CN.md
   - docs/dev/knowledge-system-unification/
   - docs/dev/knowledge-system-unification/evidence/KS-00-03-INDEPENDENT-ACCEPTANCE.md
   - docs/dev/knowledge-system-unification/evidence/KS-00-BASELINE-DIFF.md

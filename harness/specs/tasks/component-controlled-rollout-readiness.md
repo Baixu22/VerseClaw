@@ -99,7 +99,7 @@ docs:
     - docs/architecture-overview.md
     - docs/architecture-overview.md
     - docs/dev/component-operational-readiness-checklist.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 # Component Controlled Rollout Readiness
