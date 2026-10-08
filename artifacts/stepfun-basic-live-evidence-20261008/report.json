@@ -669,6 +669,59 @@
       "log": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\evidence-flow.log",
       "logSha256": "a8eed53a675e6970ac68441630907a41cc6f1b51f18b3225963aa37c1ff04ea1",
       "statusAfter": "M docs/dev/stepfun-basic-live-evidence-20261008.md\n?? artifacts/stepfun-basic-live-evidence-20261008/"
+    },
+    "integration-validate": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "name": "integration-validate",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/stepfun-basic-live-evidence.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T16:34:00.350Z",
+      "completedAt": "2026-10-08T16:34:01.694Z",
+      "candidate": {
+        "commit": "18ba806041b2c15a62bb3d6028853412059edf13",
+        "tree": "c6510d5bc3727a42dd2cae4360b089ed5de0ab20",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\integration-validate.log",
+      "logSha256": "3c6da6b8109a1e9f222df04fad1936cec47b3ccd041aef9cec80cae2b4e87ed3",
+      "statusAfter": ""
+    },
+    "integration-artifacts": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "name": "integration-artifacts",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "scripts/check-repository-artifacts.mjs",
+        "--json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T16:34:01.967Z",
+      "completedAt": "2026-10-08T16:34:02.277Z",
+      "candidate": {
+        "commit": "18ba806041b2c15a62bb3d6028853412059edf13",
+        "tree": "c6510d5bc3727a42dd2cae4360b089ed5de0ab20",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\integration-artifacts.log",
+      "logSha256": "6a1d38bb9cfb9c4cb2c288c7106afd8a6095b0beb151f3a4c46028969dedbfa9",
+      "statusAfter": ""
     }
   },
   "assets": [
@@ -725,5 +778,12 @@
     },
     "credentialPersistedByRuntime": false,
     "providedKeyAbsentFromScannedEvidence": true
+  },
+  "integration": {
+    "candidate": "18ba806041b2c15a62bb3d6028853412059edf13",
+    "remoteBase": "2a08f3a7280a991d795b0f436a121afe4b7aa33d",
+    "runtimeFixBytesUnchanged": true,
+    "artifactPolicy": "Added four exact evidence/doc paths to reviewed retention manifest; adopted current generated ignore policy",
+    "mainWorkspaceUntouched": true
   }
 }

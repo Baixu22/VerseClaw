@@ -43,3 +43,5 @@ StepFun 最终返回：`real_name_required`，说明当前账户/套餐不允许
 一条旧真实请求报告了 1,536 cached input tokens，但本轮没有测稳定缓存命中率，也没有采用 DeepSeek 的缓存阈值。此次修复未重跑 Windows 全套或新安装包，原 Windows alpha 报告仍只绑定它自己的候选。
 
 精选结果：[report.json](../../artifacts/stepfun-basic-live-evidence-20261008/report.json)。同目录保留凭据扫描和 SHA256SUMS。失败与原始收据：`D:/ClawX-work/stepfun-basic-evidence-20261008/`。工作区其他审计文件属于并行工作，未修改、未纳入本轮提交。
+
+落地集成：远端并行清理已到 `2a08f3a72`，本轮在隔离检出合并，生产修复字节未变。四个证据/说明路径已加入新的 reviewed retention 清单，生成忽略规则及隔离 Harness 校验通过。主工作区的其他审计文件保留。
