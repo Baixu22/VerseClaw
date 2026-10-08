@@ -19,6 +19,7 @@ expectedUserBehavior:
   - Current Windows CLI and installer fixes retain their existing behavior through the complete desktop suite.
   - Reported capability limits agree with executable behavior and do not imply cross-platform or unrestricted product acceptance.
 touchedAreas:
+  - .github/workflows/electron-e2e.yml
   - harness/specs/tasks/windows-alpha-closeout.md
   - docs/dev/windows-alpha-closeout-20261008.md
   - artifacts/windows-alpha-closeout-20261008/report.json
@@ -44,6 +45,7 @@ requiredTests:
 acceptance:
   - Record clean commit/tree identities and current full root-unit and Electron discovery, results, failures, skips, and process cleanup. Targeted repeats do not replace the full result.
   - Check all root and runtime production/test type projects, readonly lint, startup budgets, communication replay/comparison, and current Agent Dev evidence.
+  - The existing cross-platform CI jobs have enough total time to finish the unchanged full suite; retain per-test limits, assertions, retries, matrix platforms and failure artifacts.
   - Bind actual installer bytes and their source provenance to the qualification; retain earlier failed candidates and state-restoration records without rewriting them.
   - Verify existing CVK diagnostic and fixed-template PPTX boundaries and state exactly which migration/platform checks executed. Unexecuted platforms or scenarios are not passing evidence.
   - Land the verified source and curated evidence on the existing private main branch without deleting unrelated history, forcing refs, publishing, or changing product defaults.
