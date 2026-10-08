@@ -354,3 +354,10 @@ artifacts/windows-alpha-closeout-20261008/*
 !artifacts/windows-alpha-closeout-20261008/report.json
 !artifacts/windows-alpha-closeout-20261008/credential-scan.json
 !artifacts/windows-alpha-closeout-20261008/SHA256SUMS
+
+# Curated real-model basic qualification evidence
+!artifacts/stepfun-basic-live-evidence-20261008/
+artifacts/stepfun-basic-live-evidence-20261008/*
+!artifacts/stepfun-basic-live-evidence-20261008/report.json
+!artifacts/stepfun-basic-live-evidence-20261008/credential-scan.json
+!artifacts/stepfun-basic-live-evidence-20261008/SHA256SUMS
