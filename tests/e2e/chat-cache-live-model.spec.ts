@@ -19,6 +19,8 @@ type ChatHistoryMessage = {
   role?: string;
   content?: unknown;
   timestamp?: number;
+  model?: string;
+  provider?: string;
 };
 
 type ChatHistoryResult = {
@@ -39,7 +41,10 @@ type LiveModelConfig = {
 };
 
 type LiveEvidence = {
-  version: 1;
+  version: 2;
+  driven_by: 'agent';
+  actor: 'playwright-live-model';
+  perTurn: Array<{ turn: number; expected: string; actual: string; model?: string; provider?: string; totalTokens: number; tokenIncrease: number }>;
   generatedAt: string;
   sessionKey: string;
   provider: string;
@@ -78,7 +83,8 @@ type LiveEvidence = {
 
 const LIVE_ENABLED = process.env.CLAWX_LIVE_MODEL_E2E === '1';
 const SESSION_KEY = 'agent:main:main';
-const ARTIFACT_DIR = resolve(process.cwd(), 'artifacts', 'prompt-cache-live-e2e');
+const ARTIFACT_DIR = resolve(process.env.CLAWX_LIVE_EVIDENCE_DIR || join(process.cwd(), 'artifacts', 'prompt-cache-live-e2e'));
+const CONTEXT_MARKER = 'blue-orchid-47';
 const PROVIDER_KEY_ENVS: Record<string, string[]> = {
   anthropic: ['ANTHROPIC_API_KEY'],
   openai: ['OPENAI_API_KEY'],
@@ -290,12 +296,24 @@ async function ensureGatewayReady(page: Page): Promise<void> {
   })}`);
 }
 
+function expectedLiveReply(turn: number): string {
+  return turn === 1 ? 'cache-live-ok-1' : `${CONTEXT_MARKER}|cache-live-ok-${turn}`;
+}
+
 function buildLivePrompt(turn: number): string {
-  return [
-    `Cache live E2E probe turn ${turn}.`,
-    `Reply with exactly: cache-live-ok-${turn}`,
-    'Do not add any explanation or formatting.',
-  ].join('\n');
+  return turn === 1
+    ? `Remember the marker ${CONTEXT_MARKER} for this conversation. Reply with exactly: cache-live-ok-1. Do not use tools or add formatting.`
+    : `Recall the marker from my first message. Reply with exactly the marker, a pipe character, and cache-live-ok-${turn}. Do not use tools or add formatting.`;
+}
+
+function assistantText(message: ChatHistoryMessage): string {
+  if (typeof message.content === 'string') return message.content.trim();
+  if (!Array.isArray(message.content)) return '';
+  return message.content.flatMap((part: unknown) => {
+    if (!part || typeof part !== 'object') return [];
+    const block = part as { type?: string; text?: unknown };
+    return block.type === 'text' && typeof block.text === 'string' ? [block.text] : [];
+  }).join('').trim();
 }
 
 async function readHistory(page: Page): Promise<ChatHistoryResult> {
@@ -327,28 +345,26 @@ async function readLiveUsage(page: Page): Promise<WorkspaceLiveUsageResult['usag
   return result.usage;
 }
 
-async function sendPromptAndWait(page: Page, turn: number): Promise<void> {
+async function sendPromptAndWait(page: Page, turn: number): Promise<ChatHistoryMessage> {
   const previousAssistantCount = await assistantMessageCount(page);
+  expect(previousAssistantCount).toBeGreaterThanOrEqual(0);
   const input = page.getByTestId('chat-composer-input');
   const send = page.getByTestId('chat-composer-send');
-
   await expect(input).toBeEnabled({ timeout: 90_000 });
   await input.fill(buildLivePrompt(turn));
   await expect(send).toBeEnabled();
   await send.click();
 
-  await expect.poll(async () => assistantMessageCount(page), {
+  await expect.poll(async () => {
+    const assistants = ((await readHistory(page)).messages ?? []).filter(message => message.role === 'assistant');
+    if (assistants.length <= previousAssistantCount) return '';
+    return assistantText(assistants.at(-1)!);
+  }, {
     intervals: [2_000, 5_000, 10_000],
     timeout: 180_000,
-  }).toBeGreaterThan(previousAssistantCount);
-
-  await expect.poll(async () => {
-    const title = await send.getAttribute('title').catch(() => null);
-    return title;
-  }, {
-    intervals: [1_000, 2_000, 5_000],
-    timeout: 120_000,
-  }).toBe('Send');
+  }).toBe(expectedLiveReply(turn));
+  await expect(send).toHaveAttribute('data-send-state', 'ready', { timeout: 120_000 });
+  return ((await readHistory(page)).messages ?? []).filter(message => message.role === 'assistant').at(-1)!;
 }
 
 async function waitForUsageIncrease(
@@ -392,6 +408,8 @@ async function writeEvidence(evidence: LiveEvidence): Promise<string> {
 }
 
 test.describe('Verse Claw prompt cache live model E2E', () => {
+  // Provider setup sends a real secret through page.evaluate; never record it.
+  test.use({ trace: 'off', video: 'off' });
   test.skip(
     !LIVE_ENABLED,
     'Set CLAWX_LIVE_MODEL_E2E=1, CLAWX_LIVE_MODEL_REF, and a provider API key to run real model calls',
@@ -414,10 +432,15 @@ test.describe('Verse Claw prompt cache live model E2E', () => {
       let usage = await readLiveUsage(page);
       let previousTotalTokens = usage.totalTokens;
       let completedTurns = 0;
+      const perTurn: LiveEvidence['perTurn'] = [];
 
       for (let turn = 1; turn <= config.turns; turn += 1) {
-        await sendPromptAndWait(page, turn);
+        const response = await sendPromptAndWait(page, turn);
         usage = await waitForUsageIncrease(page, previousTotalTokens);
+        perTurn.push({ turn, expected: expectedLiveReply(turn), actual: assistantText(response),
+          ...(response.model ? { model: response.model } : {}),
+          ...(response.provider ? { provider: response.provider } : {}),
+          totalTokens: usage.totalTokens, tokenIncrease: usage.totalTokens - previousTotalTokens });
         previousTotalTokens = usage.totalTokens;
         completedTurns = turn;
       }
@@ -428,7 +451,10 @@ test.describe('Verse Claw prompt cache live model E2E', () => {
       expect(promptCache.hitRate === null || (promptCache.hitRate >= 0 && promptCache.hitRate <= 1)).toBe(true);
 
       const evidence: LiveEvidence = {
-        version: 1,
+        version: 2,
+        driven_by: 'agent',
+        actor: 'playwright-live-model',
+        perTurn,
         generatedAt: new Date().toISOString(),
         sessionKey: SESSION_KEY,
         provider: config.provider,
@@ -465,6 +491,7 @@ test.describe('Verse Claw prompt cache live model E2E', () => {
         },
       };
 
+      await page.screenshot({ path: testInfo.outputPath('live-dialogue.png') });
       const artifactPath = await writeEvidence(evidence);
       await testInfo.attach('prompt-cache-live-e2e', {
         path: artifactPath,
