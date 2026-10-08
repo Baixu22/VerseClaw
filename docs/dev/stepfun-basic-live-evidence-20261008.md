@@ -15,3 +15,7 @@ or model turn executed in that attempt. The receipt remains under attempt-1.
 The owner selected script-only validation. Desktop attempts remain failed evidence
 and the original desktop test is restored. New validation uses HTTPS and the real
 Gateway RPC, with synthetic data and bounded request counts. No UI pass is claimed.
+
+Script attempt 1 received HTTP 200 streaming output and usage, then hit a local
+report-formatting bug on an absent error object. The helper now handles undefined;
+the original request receipt is preserved and is not marked as a complete pass.

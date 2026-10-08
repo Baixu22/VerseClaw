@@ -17,7 +17,7 @@ const { key } = JSON.parse(stdin); stdin = '';
 assert(new URL(baseUrl).protocol === 'https:' && model && key, 'HTTPS endpoint, model and stdin key required');
 const report = { driven_by: 'agent', actor: 'script-live-model', startedAt: new Date().toISOString(), baseUrl, model, passed: false, maxProviderRequests: 8, requests: [], checks: [] };
 const hash = value => createHash('sha256').update(value).digest('hex');
-const safe = value => JSON.stringify(value, null, 2).replaceAll(key, '[REDACTED_CREDENTIAL]');
+const safe = value => (JSON.stringify(value, null, 2) ?? 'null').replaceAll(key, '[REDACTED_CREDENTIAL]');
 const save = () => fs.writeFileSync(path.join(output, 'report.json'), safe(report) + '\n');
 const textOf = message => typeof message?.content === 'string' ? message.content.trim() : (message?.content ?? []).filter(p => p.type === 'text').map(p => p.text).join('').trim();
 const listen = server => new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', () => resolve(server.address().port)); });
