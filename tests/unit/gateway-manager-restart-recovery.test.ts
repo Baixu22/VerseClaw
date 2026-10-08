@@ -19,6 +19,12 @@ vi.mock('@electron/utils/logger', () => ({
   },
 }));
 
+vi.mock('@electron/gateway/startup-orchestrator', () => ({ runGatewayStartupSequence: vi.fn() }));
+vi.mock('@electron/gateway/supervisor', async (importOriginal) => ({
+  ...await importOriginal<typeof import('@electron/gateway/supervisor')>(),
+  warmupManagedPythonReadiness: vi.fn(),
+}));
+
 describe('GatewayManager restart recovery', () => {
   beforeEach(() => {
     vi.resetModules();
@@ -119,4 +125,43 @@ describe('GatewayManager restart recovery', () => {
     // (it may be called from other paths, but not the restart-recovery catch)
     expect(scheduleReconnectSpy).not.toHaveBeenCalled();
   });
+  it('accepts a recovery start after stop cancels a pending startup', async () => {
+    const { GatewayManager } = await import('@electron/gateway/manager');
+    const { runGatewayStartupSequence } = await import('@electron/gateway/startup-orchestrator');
+    const manager = new GatewayManager();
+    const internals = manager as unknown as {
+      refreshConfiguredPort: () => Promise<void>;
+      refreshReloadPolicy: () => Promise<void>;
+      initDeviceIdentity: () => Promise<void>;
+      setStatus: (status: { state: string }) => void;
+    };
+    for (const method of ['refreshConfiguredPort', 'refreshReloadPolicy', 'initDeviceIdentity'] as const) {
+      vi.spyOn(internals, method).mockResolvedValue(undefined);
+    }
+    let entered!: () => void;
+    let release!: () => void;
+    const pending = new Promise<void>((resolve) => { release = resolve; });
+    const started = new Promise<void>((resolve) => { entered = resolve; });
+    vi.mocked(runGatewayStartupSequence)
+      .mockImplementationOnce(async (hooks) => {
+        entered();
+        await pending;
+        hooks.assertLifecycle('test/pending-start');
+      })
+      .mockImplementationOnce(async () => {
+        internals.setStatus({ state: 'running' });
+      });
+
+    const initialStart = manager.start();
+    await started;
+    // Match the operator's stop -> repair -> start order while the old start
+    // still owns its lock. The recovery request must not disappear.
+    const recovery = manager.stop().then(() => manager.start());
+    await Promise.resolve();
+    release();
+    await Promise.all([initialStart, recovery]);
+    expect(runGatewayStartupSequence).toHaveBeenCalledTimes(2);
+    expect(manager.getStatus().state).toBe('running');
+  });
+
 });

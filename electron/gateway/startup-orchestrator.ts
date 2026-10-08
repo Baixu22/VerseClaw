@@ -106,6 +106,7 @@ export async function runGatewayStartupSequence(hooks: StartupHooks): Promise<vo
         throw error;
       }
 
+      hooks.assertLifecycle('start/recovery');
       const recoveryAction = getGatewayStartupRecoveryAction({
         startupError: error,
         startupStderrLines: hooks.getStartupStderrLines(),
@@ -120,6 +121,7 @@ export async function runGatewayStartupSequence(hooks: StartupHooks): Promise<vo
           'Detected invalid OpenClaw config during Gateway startup; running doctor repair before retry',
         );
         const repaired = await hooks.runDoctorRepair();
+        hooks.assertLifecycle('start/doctor-repair');
         if (repaired) {
           logger.info('OpenClaw doctor repair completed; retrying Gateway startup');
           hooks.onDoctorRepairSuccess();

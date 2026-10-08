@@ -43,3 +43,26 @@ fixture now pins native content to 1280 x 800 before desktop tests; responsive
 specs can still resize it. CI also builds the runtime before real Gateway tests,
 matching local qualification prerequisites. All old failures are retained; these
 corrections require another CI run and do not yet establish a pass.
+
+The first native-size fixture attempt (`2af561402`) resized before BrowserWindow
+creation in a focused reproduction. That attempt is retained as failed, including
+its teardown timeout. The fixture now waits for the initial window and closes
+its owned application if initialization fails, before handing it to the test.
+
+The clean `302865444` full Electron run completed with 340 passed, four skipped
+and one failed recovery scenario (50 minutes). A focused run reproduced a real
+lifecycle race: after stopping an unfinished start, the repair/start request was
+ignored by its old lock, and the superseded start could still run Doctor. The
+manager now drains cancelled startup before stop resolves, checks cancellation
+during readiness polling, and rejects stale repair work. Two regression cases
+fail against the old implementation; all 15 tests in those files pass after the
+fix. Complete validation and rebuilt delivery are still required for this code.
+README English, Chinese and Japanese capability claims remain applicable: the
+fix restores the existing recovery contract without expanding product scope.
+
+The fixed production build passes the complete recovery spec plus the brand
+window spec: six passed, no failures/skips, 205.6 seconds. The runtime log shows
+the superseded readiness probe exiting before a new child starts. Root node,
+web and test type projects, scoped lint and diff-aware task validation pass.
+The final clean-candidate qualification and replacement installer evidence are
+written separately under the raw directory's `recovery-final/` subdirectory.
