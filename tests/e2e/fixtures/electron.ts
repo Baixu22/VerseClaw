@@ -416,6 +416,10 @@ async function launchVerseClawElectron(
     }),
     timeout: 90_000,
   });
+  // Hosted runners can open the 1280px window on a 1024px desktop, collapsing
+  // the sidebar before desktop-flow assertions run. Pin native content size;
+  // individual responsive/visual specs still set their own dimensions.
+  await pinWindowContentSize(app, { width: 1280, height: 800 });
   /*
    * The app's own output is otherwise swallowed, which makes a stalled turn
    * unattributable from the test side: the composer just goes idle and the

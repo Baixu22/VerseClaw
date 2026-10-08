@@ -139,6 +139,10 @@ jobs:
       - name: Generate extension bridge
         run: pnpm run ext:bridge
 
+      # Real Gateway specs need the same runtime graph as local qualification.
+      - name: Build OpenClaw runtime
+        run: pnpm run build:runtime
+
       - name: Run Electron E2E on Linux
         if: runner.os == 'Linux'
         run: xvfb-run -a pnpm run test:e2e
