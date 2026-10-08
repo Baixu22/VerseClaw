@@ -14,8 +14,10 @@ describe('installer.nsh running-app guard', () => {
 
     expect(guardStart).toBeGreaterThan(-1);
     expect(guardEnd).toBeGreaterThan(guardStart);
-    expect(guard).toContain('Get-CimInstance -ClassName Win32_Process');
-    expect(guard).toContain('tasklist /FI "IMAGENAME eq ${APP_EXECUTABLE_FILENAME}"');
+    expect(guard).toContain(String.raw`File "/oname=$PLUGINSDIR\check-app-running.ps1" "${'${PROJECT_DIR}'}\scripts\check-app-running.ps1"`);
+    expect(guard).toMatch(/nsExec::ExecToStack \/TIMEOUT=30000 [^\r\n]*-File "\$PLUGINSDIR\\check-app-running\.ps1" -Executable "\$\{APP_EXECUTABLE_FILENAME\}"/);
+    expect(guard).toMatch(/Pop \$R0\s+Pop \$R1/);
+    expect(guard).toMatch(/\$\{if\} \$R0 != 0\s+\$\{orIf\} \$R1 != "absent"/);
     expect(guard).toContain('taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"');
     expect(guard).toContain('wmic process where "name=\'${APP_EXECUTABLE_FILENAME}\'" call terminate');
     expect(guard).toContain('SetErrorLevel 2');
