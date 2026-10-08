@@ -20,6 +20,7 @@ expectedUserBehavior:
   - Reported capability limits agree with executable behavior and do not imply cross-platform or unrestricted product acceptance.
 touchedAreas:
   - .github/workflows/electron-e2e.yml
+  - tests/unit/installer-nsh.test.ts
   - harness/specs/tasks/windows-alpha-closeout.md
   - docs/dev/windows-alpha-closeout-20261008.md
   - artifacts/windows-alpha-closeout-20261008/report.json
@@ -37,6 +38,7 @@ docs:
   paths:
     - docs/dev/windows-alpha-closeout-20261008.md
 requiredTests:
+  - pnpm exec vitest run tests/unit/installer-nsh.test.ts tests/unit/windows-delivery-entry.test.ts --maxWorkers=1
   - pnpm test
   - pnpm run typecheck
   - pnpm exec playwright test

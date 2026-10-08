@@ -27,3 +27,11 @@ in the historical log. The full local suite already measured about 51 minutes.
 The job budget is therefore 90 minutes so the existing suite can complete; test
 timeouts, assertions, retries, platform matrix and failure uploads are unchanged.
 New CI results must be read before making a platform-specific acceptance claim.
+
+The first current root run stopped at one outdated installer assertion: 7,594
+passed, 50 skipped, one failed in its first batch; later root/DCS batches did not
+execute. The query had moved from inline CIM/tasklist commands to the existing
+PowerShell helper. The regression now checks helper packaging and bounded
+invocation, exit-code/marker consumption, and refusal unless absence is explicit.
+The running-process, absence and script-loading-failure helper tests are retained.
+The original failed run remains in `root-unit.log` and its candidate-bound receipt.
