@@ -17,6 +17,7 @@ requiredProfiles:
   - comms
 expectedUserBehavior:
   - Current Windows CLI and installer fixes retain their existing behavior through the complete desktop suite.
+  - Stopping an unfinished Gateway start and then repairing configuration allows a new start; superseded startup cannot perform stale repair work.
   - Reported capability limits agree with executable behavior and do not imply cross-platform or unrestricted product acceptance.
 touchedAreas:
   - .github/workflows/electron-e2e.yml
@@ -52,7 +53,7 @@ requiredTests:
 acceptance:
   - Record clean commit/tree identities and current full root-unit and Electron discovery, results, failures, skips, and process cleanup. Targeted repeats do not replace the full result.
   - Check all root and runtime production/test type projects, readonly lint, startup budgets, communication replay/comparison, and current Agent Dev evidence.
-  - The existing cross-platform CI jobs have enough total time to finish the unchanged full suite; retain per-test limits, assertions, retries, matrix platforms and failure artifacts.
+  - Configure the existing CI matrix with a whole-suite budget based on measured duration and required runtime/display prerequisites; retain per-test limits, assertions, retries and failure artifacts. Record service refusal or test failure explicitly; local Windows qualification does not establish a pass for other platforms.
   - Bind actual installer bytes and their source provenance to the qualification; retain earlier failed candidates and state-restoration records without rewriting them.
   - Verify existing CVK diagnostic and fixed-template PPTX boundaries and state exactly which migration/platform checks executed. Unexecuted platforms or scenarios are not passing evidence.
   - Land the verified source and curated evidence on the existing private main branch without deleting unrelated history, forcing refs, publishing, or changing product defaults.
@@ -62,7 +63,7 @@ acceptance:
 This follows the owner's 2026-10-08 request to handle the remaining validation,
 landing and capability-boundary points. The baseline is the clean Windows fix
 candidate plus its retained report. Dependencies may be reused but source and
-test identities must be recorded. New CVK enforcement, arbitrary PPTX pagination,
+test identities must be recorded. New CVK enforcement or arbitrary PPTX pagination
 belongs to a separately specified scope if the owner selects it. Running the
 existing CI platform matrix supplies test evidence without expanding platform
 release commitments or changing those contracts.
