@@ -11,3 +11,7 @@ in this document or committed evidence.
 The first desktop attempt stopped during Playwright configuration validation:
 trace/video options must be declared at file scope, not inside describe. No test
 or model turn executed in that attempt. The receipt remains under attempt-1.
+
+The owner selected script-only validation. Desktop attempts remain failed evidence
+and the original desktop test is restored. New validation uses HTTPS and the real
+Gateway RPC, with synthetic data and bounded request counts. No UI pass is claimed.
