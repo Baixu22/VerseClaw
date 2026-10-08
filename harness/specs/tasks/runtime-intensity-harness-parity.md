@@ -38,7 +38,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/unified-agent-system/PROMPT-QUALITY-ROUND1-BUGFIX-2026-08-16.md
+    - docs/architecture-overview.md
 ---
 
 Plugin harness prompt-only/full capability declaration is observational; no plugin is forced to advertise full enforcement.

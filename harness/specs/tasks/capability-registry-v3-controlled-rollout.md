@@ -7,7 +7,7 @@ diffBase: 8306466d175016a938703c41125dc3a3dca68390
 intent: Implement V3-08 as a default-disabled, caller-owned in-memory rollout and evaluation control plane with exact provider/model/workflow targeting, deterministic canary cohorts, bounded receipts, and no automatic graduation.
 ownedPaths:
   - docs/dev/capability-registry-v3-*-acceptance.md
-  - docs/dev/capability-registry-v3-development-plan.md
+  - docs/architecture-overview.md
   - harness/specs/scenarios/capability-registry-v3.md
   - harness/specs/rules/capability-registry-v3-boundary.md
   - harness/specs/tasks/capability-registry-v3-*.md
@@ -28,7 +28,7 @@ touchedAreas:
   - harness/src/rules.mjs
   - tests/unit/harness-specs.test.ts
   - docs/dev/capability-registry-v3-controlled-rollout-acceptance.md
-  - docs/dev/capability-registry-v3-development-plan.md
+  - docs/architecture-overview.md
   - harness/specs/scenarios/capability-registry-v3.md
   - harness/specs/rules/capability-registry-v3-boundary.md
   - harness/specs/tasks/capability-registry-v3-controlled-rollout.md
@@ -79,7 +79,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/capability-registry-v3-development-plan.md
+    - docs/architecture-overview.md
     - docs/dev/capability-registry-v3-controlled-rollout-acceptance.md
 ---
 

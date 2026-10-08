@@ -70,8 +70,8 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/verseshell-foundation/P0-EVIDENCE-BASELINE-2026-08-14.md
-    - docs/dev/verseshell-foundation/P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md
+    - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
+    - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
     - docs/dev/verseshell-foundation/STATUS.md
     - docs/dev/handoffs/LATEST.md
     - README.md

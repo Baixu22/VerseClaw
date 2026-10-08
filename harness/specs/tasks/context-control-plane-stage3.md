@@ -5,8 +5,8 @@ taskType: runtime-authority-convergence
 intent: Promote Stage 3 into a formal harness spec. Working Context becomes a versioned projection over the existing append-only Task Ledger JSONL. Field updates are proposal events only; accept and reject are independent events with actor, policy digest, and queryable rejection reason; a deterministic materialized projection replays the same event sequence to the same state; fork/handoff merge copies only an explicit task-scoped field list and preserves both sources and versions on conflict. Accepted items are only Mem promotion candidates. Stage 3 writes no Memory and changes no provider prompt path, table, store, daemon, product flag, or default.
 touchedAreas:
   - harness/specs/tasks/context-control-plane-stage3.md
-  - docs/dev/context-control-plane/DEVLOG.zh-CN.md
-  - docs/dev/context-control-plane/STAGE-ROADMAP.zh-CN.md
+  - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+  - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
   - shared/types/task-ledger.ts
   - shared/task-ledger-working-context.ts
   - electron/services/task-ledger-working-context.ts
@@ -92,9 +92,9 @@ docs:
   required: true
   files:
     - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
-    - docs/dev/context-control-plane/STAGE-ROADMAP.zh-CN.md
-    - docs/dev/context-control-plane/STAGE3-DEV-PROMPT.zh-CN.md
-    - docs/dev/context-control-plane/DEVLOG.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
     - docs/dev/context-control-plane/stage0/authority-matrix.md
     - docs/dev/context-control-plane/stage0/artifacts-schema.md
     - docs/dev/context-control-plane/stage0/authority-adapters.md

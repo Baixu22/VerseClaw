@@ -12,8 +12,8 @@ touchedAreas:
   - openclaw_runtime/src/agents/bash-tools.exec-runtime.ts
   - openclaw_runtime/test/vitest/vitest.verseshell.config.ts
   - docs/dev/verseshell-foundation/STATUS.md
-  - docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md
-  - docs/dev/verseshell-foundation/P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md
+  - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
+  - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
   - docs/dev/handoffs/LATEST.md
   - README.md
   - README.zh-CN.md
@@ -71,8 +71,8 @@ docs:
   required: true
   files:
     - docs/dev/verseshell-foundation/STATUS.md
-    - docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md
-    - docs/dev/verseshell-foundation/P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md
+    - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
+    - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
     - docs/dev/handoffs/LATEST.md
     - README.md
     - README.zh-CN.md

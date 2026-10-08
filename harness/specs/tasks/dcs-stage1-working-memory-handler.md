@@ -53,7 +53,7 @@ touchedAreas:
   - openclaw_runtime/src/gateway/health-runtime/status.summary.runtime.ts
   - package.json
   - .gitignore
-  - team/dcs/README.md
+  - docs/architecture-overview.md
 expectedUserBehavior:
   - With runtime.contextBlock.working-memory.enabled omitted or false, no working-memory extension handler, BlockStore construction, BlockStore query, BlockStore write, or prompt/message mutation occurs, and Assembler returns the exact existing output reference.
   - An explicit standardized tool-result working-memory envelope with significance high or medium updates one stable per-session working_memory Block and becomes visible on the next pre-LLM call under the exact heading "## Recent Actions".
@@ -101,11 +101,11 @@ acceptance:
   - Existing Stage 0 Assembler dependencies on buildPreReplyInjection and buildContextPack remain intact and flag-gated; no new working-memory path imports, invokes, mocks, or writes those builders, buildRoleSystemPrompt, COMPASS TemporalFact, task_state, knowledge, notes, handoff, Renderer/Main/Gateway transport, direct IPC, direct Gateway HTTP/WebSocket, raw SQLite DDL, or a new event bus.
   - Existing Runtime build entry failures are repaired against this repository's pruned openclaw_runtime baseline, using the smallest local source/configuration repair needed for declared retained entries; no unrelated upstream module set is restored, no business dependency is externalized, and no build gate is weakened.
   - package.json test:dcs and lint:dcs include every new Stage 1 source and test file.
-  - Ownership scans, all required commands, untracked-file inspection, and an independent review report no Critical or Important issue before team/dcs/README.md is marked Stage 1 complete.
+  - Ownership scans, all required commands, untracked-file inspection, and an independent review report no Critical or Important issue before docs/architecture-overview.md is marked Stage 1 complete.
 docs:
   required: true
   files:
-    - team/dcs/README.md
+    - docs/architecture-overview.md
 ---
 
 # DCS Stage 1 Working Memory Handler

@@ -267,13 +267,13 @@ Daily reports list outstanding full gates under `decision.requiredFullGates`. Ag
 
 | Topic | Entry points |
 | --- | --- |
-| Current architecture and documentation checks | [Architecture guide](docs/architecture-overview.md) · [README coverage audit](docs/dev/readme-audit-20261005.md) · [Visual provenance](resources/readme/2026-10-05/README.md) |
+| Current architecture and documentation checks | [Architecture guide](docs/architecture-overview.md) · [Visual provenance](resources/readme/2026-10-05/README.md) |
 | Product behavior, concepts and capability scope | [Product semantics](docs/clawx-product-semantics.md) · [Capability matrix](shared/capability-claims.ts) · [Default configuration](docs/dev/default-config-matrix.md) |
 | Knowledge, memory and context | [Knowledge system](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) |
 | Agents and workflows | [Orchestration](docs/multi-agent-orchestration/README.md) · [Role packs](docs/role-packs.md) |
 | Structured documents | [VerseConf integration](docs/dev/verseconf-clawx-implementation-20261001.md) |
 | Engineering rules and continuity | [AGENTS.md](AGENTS.md) · [Development playbook](docs/dev/Sustained-Development-Playbook.md) · [Agent Dev](docs/agent-dev-control-plane.md) |
-| Runtime and acceptance | [Runtime convergence](docs/dev/unified-agent-system/runtime-convergence/README.md) · [RC-09/RC-10 evidence boundaries](docs/dev/pending-worktree-consolidation.md) |
+| Runtime and acceptance | [Runtime convergence](docs/dev/unified-agent-system/runtime-convergence/README.md) · [RC-09/RC-10 evidence boundaries](docs/dev/windows-alpha-closeout-20261008.md) |
 | Resources, archival and source recovery | [Retention policy](docs/dev/repository-artifact-retention.md) · [VerseShell source contract](resources/verseshell/SOURCE.md) |
 
 Design plans and older acceptance snapshots have their own scope and dates. Current entry points are established by source and corresponding fresh evidence. Local Task Forest history, session handoffs and temporary logs are not prerequisites for a fresh checkout.

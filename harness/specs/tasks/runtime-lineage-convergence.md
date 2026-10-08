@@ -27,7 +27,7 @@ touchedAreas:
   - README.zh-CN.md
   - README.ja-JP.md
   - docs/dev/handoffs/LATEST.md
-  - docs/dev/dcs-visible-production/TF-0072-MISSION-TASK-LOOP-DCS-SEKB-LINEAGE-EVIDENCE-2026-08-20.md
+  - docs/architecture-overview.md
 requiredProfiles:
   - fast
   - comms
@@ -51,7 +51,7 @@ expectedUserBehavior:
 docs:
   required: true
   files:
-    - docs/dev/dcs-visible-production/TF-0072-MISSION-TASK-LOOP-DCS-SEKB-LINEAGE-EVIDENCE-2026-08-20.md
+    - docs/architecture-overview.md
 ---
 
 # TF-0072 execution contract

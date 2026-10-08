@@ -1,8 +1,0 @@
-
- RUN  v4.1.1 C:/tmp/ClawX-tf0013-acceptance-8xnvkilt
-
-
- Test Files  1 passed (1)
-      Tests  6 passed (6)
-   Start at  02:48:55
-   Duration  1.28s (transform 49ms, setup 227ms, import 9ms, tests 873ms, environment 0ms)

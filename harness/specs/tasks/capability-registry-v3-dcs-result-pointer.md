@@ -7,7 +7,7 @@ diffBase: 8306466d175016a938703c41125dc3a3dca68390
 intent: Implement V3-05 as an explicit opt-in metadata-only DCS projection with bounded namespace/capability reads and an ArchiveHandle-backed, budgeted Result Pointer facade.
 ownedPaths:
   - docs/dev/capability-registry-v3-*-acceptance.md
-  - docs/dev/capability-registry-v3-development-plan.md
+  - docs/architecture-overview.md
   - harness/specs/scenarios/capability-registry-v3.md
   - harness/specs/rules/capability-registry-v3-boundary.md
   - harness/specs/tasks/capability-registry-v3-*.md
@@ -16,7 +16,7 @@ ownedPaths:
   - openclaw_runtime/src/agents/tool-search-capability-v3.test.ts
 touchedAreas:
   - docs/dev/capability-registry-v3-dcs-result-pointer-acceptance.md
-  - docs/dev/capability-registry-v3-development-plan.md
+  - docs/architecture-overview.md
   - harness/specs/scenarios/capability-registry-v3.md
   - harness/specs/rules/capability-registry-v3-boundary.md
   - harness/specs/tasks/capability-registry-v3-dcs-result-pointer.md
@@ -63,7 +63,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/capability-registry-v3-development-plan.md
+    - docs/architecture-overview.md
     - docs/dev/capability-registry-v3-dcs-result-pointer-acceptance.md
 ---
 

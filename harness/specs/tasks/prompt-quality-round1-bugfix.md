@@ -61,7 +61,7 @@ docs:
   required: true
   files:
     - docs/clawx-design-overview.md
-    - docs/dev/unified-agent-system/PROMPT-QUALITY-ROUND1-BUGFIX-2026-08-16.md
+    - docs/architecture-overview.md
 ---
 
 This task is a user-authorized hotfix lane. It does not create Task Forest nodes, does not start TF-0066, and does not change Runtime Convergence or PCS status.

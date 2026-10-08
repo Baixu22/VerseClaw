@@ -32,7 +32,7 @@ touchedAreas:
   - docs/dev/context-moat/reviews/TF-0135-2026Q3-competitive-review.md
   - docs/dev/handoffs/LATEST.md
   - docs/dev/runtime-lifecycle-governance/README.zh-CN.md
-  - docs/dev/task-forest-engineering-20260913.md
+  - docs/dev/repository-artifact-retention.md
   - docs/generated/catalogs/prod-flags.md
   - docs/generated/catalogs/tools.md
   - harness/specs/layers/harness.md
@@ -258,7 +258,7 @@ docs:
   required: true
   files:
     - docs/dev/agent-engineering-acceptance.md
-    - docs/dev/task-forest-engineering-20260913.md
+    - docs/dev/repository-artifact-retention.md
     - docs/dev/handoffs/LATEST.md
 ---
 

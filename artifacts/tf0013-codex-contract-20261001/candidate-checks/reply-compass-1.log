@@ -1,9 +1,0 @@
-
- RUN  v4.1.7 C:/tmp/ClawX-tf0013-acceptance-8xnvkilt/openclaw_runtime
-
- ✓ |auto-reply-top-level| src/auto-reply/reply.compass.test.ts > reply preparation places COMPASS on the run payload instead of raw extraSystemPrompt 13047ms
-
- Test Files  1 passed (1)
-      Tests  1 passed (1)
-   Start at  02:46:58
-   Duration  17.02s (transform 10.96s, setup 258ms, import 3.39s, tests 13.07s, environment 0ms)

@@ -1,2 +1,0 @@
-traceability: findings=35 tasks=38 tests=35 fresh=35 stale=0
-validate-system-maturity-traceability: OK

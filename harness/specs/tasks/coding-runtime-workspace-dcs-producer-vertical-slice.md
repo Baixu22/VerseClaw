@@ -10,7 +10,7 @@ touchedAreas:
   - team/dcs/dcs-v1.6-spec.md
   - team/dcs/dcs-v1.6-review.md
   - team/dcs/dcs-v1.6.1-addendum.md
-  - team/dcs/README.md
+  - docs/architecture-overview.md
   - team/dcs/DCS-ROUND2-COMPLETE.md
   - src/stores/chat.ts
   - shared/host-api/contract.ts
@@ -91,7 +91,7 @@ acceptance:
 docs:
   required: true
   files:
-    - team/dcs/README.md
+    - docs/architecture-overview.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

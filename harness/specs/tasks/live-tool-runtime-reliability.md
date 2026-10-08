@@ -6,28 +6,28 @@ taskType: runtime-bridge
 diffBase: HEAD
 intent: 接力已完成的 TF-0209..TF-0213，以当前源码可执行反例完成 TF-0214..TF-0223 的节点等待取消、审批等待取消、退出登记幂等、poll backoff 边界及 timeout 默认回退修复。
 ownedPaths:
-  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md
+  - docs/dev/context-capability-blueprint.md
   - openclaw_runtime/src/agents/bash-process-registry.ts
   - openclaw_runtime/src/agents/command-poll-backoff.ts
   - openclaw_runtime/src/agents/bash-tools.exec-host-node-phases.abort.test.ts
   - openclaw_runtime/src/agents/command-poll-backoff.test.ts
-  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md
+  - docs/dev/context-capability-blueprint.md
   - openclaw_runtime/src/utils/await-with-abort.ts
-  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md
+  - docs/dev/context-capability-blueprint.md
   - harness/specs/scenarios/gateway-backend-communication.md
   - openclaw_runtime/src/agents/bash-tools.exec-host-node-phases.ts
-  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260913.md
+  - docs/dev/context-capability-blueprint.md
   - openclaw_runtime/src/agents/bash-tools.process-send-keys.ts
   - openclaw_runtime/src/agents/agent-tool-definition-adapter.ts
   - openclaw_runtime/src/agents/bash-tools.exec-host-node.output.test.ts
   - openclaw_runtime/src/agents/agent-tool-definition-adapter.ts
   - openclaw_runtime/src/agents/bash-tools.process-send-keys.ts
-  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260913.md
+  - docs/dev/context-capability-blueprint.md
   - openclaw_runtime/src/agents/bash-tools.process.ts
   - openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts
   - openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts
   - openclaw_runtime/src/logging/diagnostic-session-state.ts
-  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md
+  - docs/dev/context-capability-blueprint.md
   - openclaw_runtime/src/agents/bash-tools.exec.ts
   - openclaw_runtime/src/agents/native-hook-relay.loop-detection.test.ts
   - openclaw_runtime/src/agents/harness/native-hook-relay.ts
@@ -49,23 +49,23 @@ ownedPaths:
   - tests/e2e/chat-run-state-events.spec.ts
   - harness/specs/tasks/live-tool-runtime-reliability.md
   - harness/specs/rules/tool-runtime-lifecycle.md
-  - docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md
+  - docs/dev/context-capability-blueprint.md
   - docs/dev/handoffs/LATEST.md
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
   - .agent-workbench/task-forest/**
 touchedAreas:
-  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md
+  - docs/dev/context-capability-blueprint.md
   - openclaw_runtime/src/agents/bash-process-registry.ts
   - openclaw_runtime/src/agents/command-poll-backoff.ts
   - openclaw_runtime/src/agents/bash-tools.exec-host-node-phases.abort.test.ts
   - openclaw_runtime/src/agents/command-poll-backoff.test.ts
-  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md
+  - docs/dev/context-capability-blueprint.md
   - openclaw_runtime/src/utils/await-with-abort.ts
   - openclaw_runtime/src/agents/agent-tool-definition-adapter.ts
   - openclaw_runtime/src/agents/bash-tools.process-send-keys.ts
-  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md
+  - docs/dev/context-capability-blueprint.md
   - harness/specs/scenarios/gateway-backend-communication.md
   - openclaw_runtime/src/agents/bash-tools.exec-host-node-phases.ts
   - openclaw_runtime/src/agents/bash-tools.exec-host-node.output.test.ts
@@ -73,7 +73,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/bash-tools.process.lifecycle.test.ts
   - openclaw_runtime/src/agents/agent-tools.before-tool-call.reliability.test.ts
   - openclaw_runtime/src/logging/diagnostic-session-state.ts
-  - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md
+  - docs/dev/context-capability-blueprint.md
   - openclaw_runtime/src/agents/bash-tools.exec.ts
   - openclaw_runtime/src/agents/bash-tools.exec-host-node.ts
   - openclaw_runtime/src/agents/bash-tools.exec-host-node.types.ts
@@ -95,7 +95,7 @@ touchedAreas:
   - tests/e2e/chat-run-state-events.spec.ts
   - harness/specs/tasks/live-tool-runtime-reliability.md
   - harness/specs/rules/tool-runtime-lifecycle.md
-  - docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md
+  - docs/dev/context-capability-blueprint.md
   - docs/dev/handoffs/LATEST.md
   - README.md
   - README.zh-CN.md
@@ -153,12 +153,12 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md
-    - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md
-    - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md
-    - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260913.md
-    - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md
-    - docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md
+    - docs/dev/context-capability-blueprint.md
+    - docs/dev/context-capability-blueprint.md
+    - docs/dev/context-capability-blueprint.md
+    - docs/dev/context-capability-blueprint.md
+    - docs/dev/context-capability-blueprint.md
+    - docs/dev/context-capability-blueprint.md
     - docs/dev/handoffs/LATEST.md
     - README.md
     - README.zh-CN.md

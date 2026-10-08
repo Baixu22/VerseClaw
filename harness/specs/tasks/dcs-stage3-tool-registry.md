@@ -23,7 +23,7 @@ touchedAreas:
   - openclaw_runtime/src/config/runtime-context-block-tool-registry.test.ts
   - openclaw_runtime/src/config/runtime-context-block-working-memory.test.ts
   - package.json
-  - team/dcs/README.md
+  - docs/architecture-overview.md
 expectedUserBehavior:
   - A before_agent_start hook produces one system-managed tool_registry Block through ContextBlockSink when the feature flag is on. The Block carries always_on=true, token_budget=200, priority=7, on_demand.expand_tool=context_read, on_demand.auto_register=true.
   - The Assembler injects the tool_registry summary into the pre_llm_call output when the feature flag is on, following the same flag-guard + exactly-once pattern as working_memory.
@@ -67,7 +67,7 @@ acceptance:
 docs:
   required: true
   files:
-    - team/dcs/README.md
+    - docs/architecture-overview.md
 ---
 
 # DCS Stage 3 Implementation Gate

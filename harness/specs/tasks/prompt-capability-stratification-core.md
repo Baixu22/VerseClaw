@@ -38,7 +38,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/unified-agent-system/PROMPT-QUALITY-ROUND1-BUGFIX-2026-08-16.md
+    - docs/architecture-overview.md
 ---
 
 Catalog/Ledger/Matrix are evidence surfaces, not a new prompt authority. Context Engine remains an adapter.

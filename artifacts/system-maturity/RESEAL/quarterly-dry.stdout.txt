@@ -1,3 +1,0 @@
-quarterly audit: ok=true dryRun=true score=91 grade=A release=release-eligible
-report: artifacts/system-maturity/P7-004/quarterly-audit-dry-run.json
-validate-system-maturity-quarterly-audit: OK

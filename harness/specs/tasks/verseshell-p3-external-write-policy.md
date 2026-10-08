@@ -51,7 +51,7 @@ touchedAreas:
   - shared/i18n/locales/ru/inbox.json
   - shared/i18n/locales/zh/chat.json
   - shared/i18n/locales/zh/inbox.json
-  - docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md
+  - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
   - docs/dev/verseshell-foundation/STATUS.md
   - docs/dev/handoffs/LATEST.md
   - README.md
@@ -106,7 +106,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md
+    - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
     - docs/dev/verseshell-foundation/STATUS.md
     - docs/dev/handoffs/LATEST.md
 ---

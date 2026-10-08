@@ -131,13 +131,13 @@ acceptance:
   - P6 judge prompts must show the transcript excerpt as head plus authoritative tail (schema-free omission v4 or later) — head-only excerpts make the judge mistake legitimate tail-derived summary content for a different session; continuation prompts (v5 or later) must require at least one returned action so completed-task preserve-outcome decisions are never scored as empty-action misses.
   - P6 critical-only and limited enforce by cancelling real provider/LLM compactions only when validatedPipeline.wouldPreserveTurns is true; boundary remains non-enforcing.
   - P6 promotionStage is config/runtime additive plumbing with default shadow; no stage means no behavior change.
-  - TF-0076 uses the written cost budget in reports/context-compression/TF0076-COST-BUDGET-2026-09-15.md: paired actual total tokens <= 1.20x shadow, mean end-to-end latency <= 1.50x shadow, and at most one added provider retry per sample. Missing current-source paired evidence cannot pass; historical reports may support NO-GO but cannot be re-signed as a current success.
+  - TF-0076 uses the written cost budget in docs/architecture-overview.md: paired actual total tokens <= 1.20x shadow, mean end-to-end latency <= 1.50x shadow, and at most one added provider retry per sample. Missing current-source paired evidence cannot pass; historical reports may support NO-GO but cannot be re-signed as a current success.
   - TF-0076 may close with an explicit cost NO-GO only after all required engineering tests pass on one clean scoped candidate with HEAD/tree/manifest identity. Task completion does not authorize promotion, default-on, liveReady, or productApproved; extra retry triggers must fit the same total cost budget before adoption.
   - P6 Runtime checks select the existing unit, unit-fast, and agents configs explicitly and verify that every declared test file actually executes. A green subset or an empty project is not complete coverage of the required file list.
 docs:
   required: true
   files:
-    - reports/context-compression/TF0076-COST-BUDGET-2026-09-15.md
+    - docs/architecture-overview.md
     - docs/clawx-design-overview.md
     - README.md
     - README.zh-CN.md

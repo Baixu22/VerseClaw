@@ -5,7 +5,7 @@ import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { checkRepositoryArtifacts, isLocalArtifact } from '../../scripts/check-repository-artifacts.mjs';
+import { checkRepositoryArtifacts, isLocalArtifact, renderReviewedIgnore } from '../../scripts/check-repository-artifacts.mjs';
 import type { RepositoryArtifactPolicy } from '../../scripts/check-repository-artifacts.mjs';
 
 const root = resolve(__dirname, '../..');
@@ -62,6 +62,7 @@ describe('repository artifact retention', () => {
     git(directory, 'init', '--quiet');
     write(directory, '.gitignore', readFileSync(join(root, '.gitignore'), 'utf8'));
     const localPaths = [
+      ...(policy.reviewedDirectories ?? []).map((path) => `${path}/unreviewed/run.log`),
       ...policy.localOnlyFiles,
       ...policy.localOnlyDirectories.map((path) => `${path}/generated.json`),
     ];
@@ -74,6 +75,47 @@ describe('repository artifact retention', () => {
     }).split('\0').filter(Boolean));
     for (const path of localPaths) expect(ignored.has(path), path).toBe(true);
     for (const path of policy.requiredInputs) expect(ignored.has(path), path).toBe(false);
+  });
+
+  it('rejects unreviewed forced additions, including new files inside a retained pack', () => {
+    const directory = createFixture();
+    const reviewed = {
+      ...JSON.parse(readFileSync(join(directory, 'scripts/repository-artifacts.json'), 'utf8')),
+      reviewedDirectories: ['artifacts', 'docs'],
+      retainedFiles: ['artifacts/current/report.json'],
+    };
+    write(directory, 'artifacts/current/report.json', '{}');
+    write(directory, 'scripts/repository-artifacts.json', JSON.stringify(reviewed));
+    write(directory, '.gitignore', readFileSync(join(directory, '.gitignore'), 'utf8') + renderReviewedIgnore(reviewed) + '\n');
+    git(directory, 'add', '--all');
+    expect(checkRepositoryArtifacts(directory).passed).toBe(true);
+    for (const path of ['artifacts/current/debug.log', 'artifacts/another-round/report.json', 'docs/audit-draft.md']) {
+      write(directory, path);
+      expect(git(directory, 'check-ignore', '--', path).trim()).toBe(path);
+      git(directory, 'add', '--force', '--', path);
+      expect(checkRepositoryArtifacts(directory).issues).toContain('Local artifact is still tracked: ' + path);
+    }
+  });
+
+  it('rejects missing reviewed inputs and stale generated ignore rules', () => {
+    const directory = createFixture();
+    const reviewed = {
+      ...JSON.parse(readFileSync(join(directory, 'scripts/repository-artifacts.json'), 'utf8')),
+      reviewedDirectories: ['artifacts'], retainedFiles: ['artifacts/current/report.json'],
+    };
+    write(directory, 'scripts/repository-artifacts.json', JSON.stringify(reviewed));
+    expect(checkRepositoryArtifacts(directory).issues).toEqual(expect.arrayContaining([
+      'Reviewed input is not tracked: artifacts/current/report.json',
+      'Reviewed input is missing: artifacts/current/report.json',
+      'Reviewed ignore rules are stale: run pnpm repo:artifacts:check --write-ignore',
+    ]));
+  });
+
+  it('runs the source boundary gate in PR CI before dependency installation', () => {
+    const workflow = readFileSync(join(root, '.github/workflows/check.yml'), 'utf8');
+    const gate = workflow.indexOf('run: node scripts/check-repository-artifacts.mjs');
+    expect(gate).toBeGreaterThan(0);
+    expect(gate).toBeLessThan(workflow.indexOf('run: pnpm install --frozen-lockfile'));
   });
 
   it('passes a checkout with no local task graph or retired wording tests', () => {

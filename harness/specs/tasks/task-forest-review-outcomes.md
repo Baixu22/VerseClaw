@@ -24,7 +24,7 @@ ownedPaths:
   - openclaw_runtime/packages/agent-core/src/harness/compaction/summary-contract.ts
   - docs/dev/context-moat/DEV-PROTOCOL.md
   - docs/dev/context-moat/GATE-BASELINE.md
-  - docs/dev/context-moat/reviews/review-outcomes-20260910.md
+  - docs/dev/context-capability-blueprint.md
   - docs/dev/context-moat/reviews/m2m4-closeout-20260911.md
   - docs/dev/context-moat/reviews/revalidation-sec002-gov003-20260910.json
   - artifacts/unblock-pack/tf0127-tf0129-tcorpus.md
@@ -91,7 +91,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/context-moat/reviews/review-outcomes-20260910.md
+    - docs/dev/context-capability-blueprint.md
     - docs/dev/handoffs/LATEST.md
 ---
 

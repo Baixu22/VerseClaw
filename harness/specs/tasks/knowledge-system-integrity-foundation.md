@@ -5,7 +5,7 @@ taskType: architecture-freeze
 intent: Establish one executable authority baseline for the unified knowledge system, reconcile dirty worktree evidence with the written architecture, and freeze the contracts and serial execution boundary before implementation packages proceed.
 ownedPaths:
   - WORKTREE.md
-  - docs/dev/knowledge-system-unification-development-plan.zh-CN.md
+  - docs/architecture-overview.md
   - docs/dev/knowledge-system-unification/evidence/KS-00-BASELINE-DIFF.md
   - docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md
   - docs/dev/unified-agent-system/runtime-convergence/STATUS.md
@@ -49,7 +49,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/knowledge-system-unification-development-plan.zh-CN.md
+    - docs/architecture-overview.md
     - docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md
     - docs/dev/repository-artifact-retention.md
 ---

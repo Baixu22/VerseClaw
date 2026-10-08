@@ -31,7 +31,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/unified-agent-system/PROMPT-QUALITY-ROUND1-BUGFIX-2026-08-16.md
+    - docs/architecture-overview.md
 ---
 
 User-confirmed export/migration remains the only path for converting old BOOT.md content.

@@ -1,1 +1,0 @@
-Spec is valid: harness\specs\tasks\agent-dev-ecosystem-regularization.md

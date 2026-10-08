@@ -137,7 +137,7 @@ touchedAreas:
   - artifacts/runtime-utf8-recovery/semantic-evidence/source-span-verification.md
   - artifacts/runtime-utf8-recovery/upstream-evidence/report.json
   - artifacts/runtime-utf8-recovery/upstream-evidence/summary.md
-  - docs/superpowers/plans/2026-07-11-dcs-stage1-recovery-orchestration.md
+  - docs/dev/context-orchestrator.md
   - docs/superpowers/plans/2026-07-11-runtime-utf8-recovery-window-launch-pack.md
   - docs/superpowers/specs/2026-07-11-dcs-stage1-recovery-orchestration-design.md
   - harness/specs/tasks/runtime-utf8-baseline-remediation.md
@@ -678,7 +678,7 @@ docs:
   required: true
   files:
     - docs/superpowers/specs/2026-07-11-dcs-stage1-recovery-orchestration-design.md
-    - docs/superpowers/plans/2026-07-11-dcs-stage1-recovery-orchestration.md
+    - docs/dev/context-orchestrator.md
 ---
 
 # Pruned Runtime UTF-8 Baseline Remediation

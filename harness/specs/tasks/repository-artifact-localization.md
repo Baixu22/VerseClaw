@@ -1,14 +1,15 @@
 ---
 id: repository-artifact-localization
 title: Localize development history without removing source inputs
-diffBase: d5541fd179f5cc9bf48727dd7fa3226be722e491
-intent: Apply the 2026-10-02 repository artifact audit using verified external backups, exact index removals, migrated historical consumers, and retained product, security, compliance, and gate inputs.
+diffBase: a2a21463dccfdf98460086b1730401093a31bf10
+intent: Keep only source, maintained documentation, fixed inputs and curated final evidence in a fresh clone; localize process history with verified recovery and enforce the boundary in CI.
 touchedAreas:
   - .gitignore
   - .agent-workbench/task-forest/**
   - .codex-tools/task-forest/**
   - .parity-audit/**
-  - .design-staging/verse-hero/**
+  - .design-staging/**
+  - .github/workflows/check.yml
   - AGENTS.md
   - WORKTREE.md
   - README*.md
@@ -17,7 +18,7 @@ touchedAreas:
   - harness/specs/**
   - hello-world/**
   - prototypes/**
-  - reports/visual-tune/**
+  - reports/**
   - reports/ui-review/**
   - reports/assets/**
   - runtime-research/**
@@ -34,7 +35,8 @@ ownedPaths:
   - .agent-workbench/task-forest/**
   - .codex-tools/task-forest/**
   - .parity-audit/**
-  - .design-staging/verse-hero/**
+  - .design-staging/**
+  - .github/workflows/check.yml
   - AGENTS.md
   - WORKTREE.md
   - README*.md
@@ -43,7 +45,7 @@ ownedPaths:
   - harness/specs/**
   - hello-world/**
   - prototypes/**
-  - reports/visual-tune/**
+  - reports/**
   - reports/ui-review/**
   - reports/assets/**
   - runtime-research/**
@@ -86,14 +88,11 @@ docs:
     - docs/dev/Sustained-Development-Playbook.md
 ---
 
-The source workspace was already in a merge with 57 unmerged paths and thousands
-of staged changes when this task started. The task does not authorize resolving
-unrelated product conflicts, committing the merge, publishing, deleting branches,
-or rewriting history. Full-workspace Harness ownership validation may fail on
-those pre-existing paths; preserve that result and separately validate the actual
-cleanup diff in an isolated retained-source projection. Do not widen ownership to
-product directories or suppress diff checking to obtain a green result.
+The cleanup runs from the remote main baseline in an isolated worktree, preserving
+unrelated work. No test files are retired in this follow-up. Historical process
+paths remain recoverable from Git history and an external byte-verified archive;
+temporary audit scripts and manifests are not new source artifacts.
 
-The audit's 4,409 candidates are review inputs, not a deletion allowlist. Retain any
-mixed-use candidate whose active consumer has not been safely migrated. Detailed
-local archive manifests are recovery records, not a second progress/task system.
+Validation must use only retained files. Reusing installed dependencies is allowed
+but is not a fresh install or a new product acceptance. Do not rewrite old
+evidence identities or product locks to make this source cleanup pass.

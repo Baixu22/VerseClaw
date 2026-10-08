@@ -7,7 +7,7 @@ intent: Define the guardrails for promoting one Local Runtime Control Plane modu
 ownedPaths:
   - harness/specs/tasks/local-runtime-control-plane-active-promotion-boundary.md
   - harness/specs/tasks/local-runtime-control-plane-mvp.md
-  - docs/local-runtime-mvp-roadmap.md
+  - docs/architecture-overview.md
   - openclaw_runtime/src/local-control-plane/**
   - openclaw_runtime/src/context-engine/**
   - openclaw_runtime/src/agents/**
@@ -20,7 +20,7 @@ ownedPaths:
   - tests/e2e/**
 touchedAreas:
   - harness/specs/tasks/**
-  - docs/local-runtime-mvp-roadmap.md
+  - docs/architecture-overview.md
   - openclaw_runtime/src/**
   - shared/**
   - electron/**
@@ -81,7 +81,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/local-runtime-mvp-roadmap.md
+    - docs/architecture-overview.md
     - harness/specs/tasks/local-runtime-control-plane-mvp.md
 ---
 
