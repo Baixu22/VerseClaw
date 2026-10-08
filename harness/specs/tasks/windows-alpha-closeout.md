@@ -21,6 +21,7 @@ expectedUserBehavior:
 touchedAreas:
   - .github/workflows/electron-e2e.yml
   - tests/unit/installer-nsh.test.ts
+  - tests/e2e/fixtures/electron.ts
   - harness/specs/tasks/windows-alpha-closeout.md
   - docs/dev/windows-alpha-closeout-20261008.md
   - artifacts/windows-alpha-closeout-20261008/report.json
@@ -58,5 +59,6 @@ This follows the owner's 2026-10-08 request to handle the remaining validation,
 landing and capability-boundary points. The baseline is the clean Windows fix
 candidate plus its retained report. Dependencies may be reused but source and
 test identities must be recorded. New CVK enforcement, arbitrary PPTX pagination,
-or another platform's execution belongs to a separately specified scope if the
-owner selects it; this qualification does not silently change those contracts.
+belongs to a separately specified scope if the owner selects it. Running the
+existing CI platform matrix supplies test evidence without expanding platform
+release commitments or changing those contracts.

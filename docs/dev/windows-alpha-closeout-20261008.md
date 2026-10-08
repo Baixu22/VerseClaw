@@ -35,3 +35,11 @@ PowerShell helper. The regression now checks helper packaging and bounded
 invocation, exit-code/marker consumption, and refusal unless absence is explicit.
 The running-process, absence and script-loading-failure helper tests are retained.
 The original failed run remains in `root-unit.log` and its candidate-bound receipt.
+
+The 90-minute CI run `37724745719` also cancelled on all three platforms. Its
+Windows setup screenshot is 1024 x 720: the desktop sidebar auto-collapses below
+1120 pixels, explaining absent navigation/brand elements. The common Electron
+fixture now pins native content to 1280 x 800 before desktop tests; responsive
+specs can still resize it. CI also builds the runtime before real Gateway tests,
+matching local qualification prerequisites. All old failures are retained; these
+corrections require another CI run and do not yet establish a pass.
