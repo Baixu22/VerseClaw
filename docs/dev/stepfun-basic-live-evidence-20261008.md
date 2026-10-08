@@ -19,3 +19,8 @@ Gateway RPC, with synthetic data and bounded request counts. No UI pass is claim
 Script attempt 1 received HTTP 200 streaming output and usage, then hit a local
 report-formatting bug on an absent error object. The helper now handles undefined;
 the original request receipt is preserved and is not marked as a complete pass.
+
+Script attempt 2 passed streaming and synthetic function-call roundtrip. Gateway
+received HTTP 200 and 25,035 reported tokens, but persisted an empty assistant
+content array. This is retained as a runtime-response failure; diagnostic reads
+will inspect response shape without retaining credentials or internal prompts.
