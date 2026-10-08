@@ -16,6 +16,8 @@ requiredProfiles:
   - comms
 touchedAreas:
   - scripts/check-live-model-evidence.mjs
+  - openclaw_runtime/src/agents/openai-transport-stream.ts
+  - openclaw_runtime/src/agents/openai-transport-stream.test.ts
   - tests/e2e/chat-cache-live-model.spec.ts
   - harness/specs/tasks/stepfun-basic-live-evidence.md
   - docs/dev/stepfun-basic-live-evidence-20261008.md
@@ -32,6 +34,7 @@ docs:
   paths:
     - docs/dev/stepfun-basic-live-evidence-20261008.md
 requiredTests:
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/openai-transport-stream.test.ts
   - node --check scripts/check-live-model-evidence.mjs
   - node scripts/check-live-model-evidence.mjs
 acceptance:
