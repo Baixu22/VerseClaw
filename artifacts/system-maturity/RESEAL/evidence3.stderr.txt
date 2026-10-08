@@ -1,6 +1,0 @@
-FAIL  P4--EVIDENCE evidence-index taskId mismatch
-FAIL  P4--EVIDENCE evidence-index missing command
-FAIL  P4--EVIDENCE evidence-index missing commit/base
-FAIL  P4--EVIDENCE evidence-index missing artifacts
-
-validate-system-maturity-evidence: FAILED (4)

@@ -78,7 +78,7 @@ acceptance:
 docs:
   required: true
   files:
-    - team/dcs/README.md
+    - docs/architecture-overview.md
 ---
 
 # DCS Stage 4: knowledge Block unification

@@ -11,8 +11,10 @@ severity: error
 
 Track product code, regression tests, fixtures, build and compliance inputs, active
 Harness contracts, durable architecture decisions, and curated acceptance results.
-Do not ignore all of `artifacts/`, `docs/dev/`, `plans/`, `tests/`, or `scripts/` as a
-cleanup shortcut. In particular, `plans/system-maturity/` contains executable gate
+Output-bearing directories default to local-only, with exact retained inputs
+listed in `scripts/repository-artifacts.json` and generated ignore exceptions.
+Never blanket-untrack mixed directories or use broad directory exemptions that
+allow new run output to enter Git without review. Tests and scripts remain source. In particular, `plans/system-maturity/` contains executable gate
 configuration, not just planning notes.
 
 Task Forest state, proposals, snapshots, exports, and session handoffs are local
@@ -59,3 +61,14 @@ validation failures. A passing local run with ignored inputs present is insuffic
 Normal untracking does not erase Git history, other branches, tags, or remote
 objects. Branch deletion, history rewriting, force pushes, and public publication
 require their own authorization and are not part of routine artifact cleanup.
+
+## Enforced positive boundary
+
+The reviewed inventory covers docs, artifacts, reports, plans and team, not just
+previously identified cleanup batches. Unlisted tracked files in these roots fail,
+including forced additions inside existing acceptance directories. Retained files
+must exist, stay tracked and remain addable; generated ignore rules must match the
+inventory. PR CI runs this check before dependency installation. New audits,
+plans and throwaway scripts belong in ignored `.audit/` or `artifacts/runs/`, not
+in a new top-level process namespace. Preserve active Harness contracts, but
+replace their historical journal prerequisites with maintained documentation.

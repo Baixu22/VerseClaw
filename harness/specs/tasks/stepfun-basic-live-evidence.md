@@ -4,7 +4,7 @@ title: Expand Windows alpha evidence with a real StepFun model
 type: task
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: a2a21463dccfdf98460086b1730401093a31bf10
+diffBase: 2a08f3a7280a991d795b0f436a121afe4b7aa33d
 intent: Verify bounded real-model dialogue, context continuity and usage through direct HTTPS and the existing Gateway RPC path while excluding credentials from evidence.
 scenarios:
   - gateway-backend-communication
@@ -26,6 +26,7 @@ touchedAreas:
   - artifacts/stepfun-basic-live-evidence-20261008/SHA256SUMS
   - .gitignore
   - .gitattributes
+  - scripts/repository-artifacts.json
 expectedUserBehavior:
   - A configured custom OpenAI-compatible provider supports two real Gateway turns and reports session usage.
   - The second turn recalls synthetic information from the first; a placeholder assistant message or an error never counts as a successful response.

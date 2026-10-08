@@ -138,7 +138,7 @@ deferredDesign:
 docs:
   required: true
   files:
-    - docs/local-runtime-mvp-roadmap.md
+    - docs/architecture-overview.md
   note: Future implementation tasks must update docs/clawx-design-overview.md and README variants when behavior, flows, public interfaces, or user-visible surfaces change.
 ---
 

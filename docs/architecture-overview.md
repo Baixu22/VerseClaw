@@ -79,4 +79,4 @@ Desktop settings live under Electron `userData`; OpenClaw configuration normally
 - [`package.json`](../package.json) defines the desktop build/test commands; [`openclaw_runtime/package.json`](../openclaw_runtime/package.json) defines the independent runtime workspace.
 - `build:vite` builds the renderer and Electron bundles. `build:runtime` builds and smoke-checks the runtime. One is not a replacement for the other.
 - [Visual provenance](../resources/readme/2026-10-05/README.md) distinguishes generated illustrations from real Electron captures and records their scope.
-- [README coverage audit](dev/readme-audit-20261005.md) records what was checked and the known limits. Historical test counts and source availability alone are not a current release verdict.
+- [README coverage audit](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/docs/dev/readme-audit-20261005.md) records what was checked and the known limits. Historical test counts and source availability alone are not a current release verdict.

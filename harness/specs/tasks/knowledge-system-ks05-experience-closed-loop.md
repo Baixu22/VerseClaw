@@ -146,7 +146,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/knowledge-system-unification-development-plan.zh-CN.md
+    - docs/architecture-overview.md
 ---
 
 # KS-05 经验闭环

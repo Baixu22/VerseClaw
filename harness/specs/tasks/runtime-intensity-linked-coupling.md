@@ -53,7 +53,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/unified-agent-system/PROMPT-QUALITY-ROUND1-BUGFIX-2026-08-16.md
+    - docs/architecture-overview.md
     - docs/clawx-design-overview.md
 ---
 

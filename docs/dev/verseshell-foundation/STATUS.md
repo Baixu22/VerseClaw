@@ -10,7 +10,7 @@ ACI-Bench Python inputs, final source assertions, Cargo lockfile/toolchain, curr
 Python contract, handshake/catalog identity, and deterministic build controls. Two independent
 Windows x64 release builds are byte-identical (`ac6a7a15dac0a9dc7d15ec975fc65276f25c871bbc0174197731947df6460786`,
 14,879,232 bytes), and the full Rust/Python qualification proof is recorded in
-[`P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md`](./P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md).
+[`P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md`](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/docs/dev/verseshell-foundation/P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md).
 
 The bundle, focused regression, typecheck, communication replay/compare, manifest, and package
 validation gates are green. Harness diff-aware validation remains blocked by the shared worktree's
@@ -36,7 +36,7 @@ The focused OpenClaw suite is 11 files / 57 tests; `pnpm verseshell:test` is 13 
 runtime-bundle tests + 57 OpenClaw tests. Node/web typecheck, manifest package validation, comms
 replay/compare, and `git diff --check` pass. The test tsconfig retains 1028 pre-existing
 observation-only errors; they are reported but do not fail the node/web gate. Full details are in
-[`P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md`](./P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md).
+[`P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md`](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/docs/dev/verseshell-foundation/P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md).
 
 This is engineering evidence only. It does not provide provider receipts, human recovery,
 paired A/B, soak, canary eligibility, default-on, GA, or product approval. The P0-03 closeout
@@ -56,7 +56,7 @@ parent trace through start, poll, stdin, EOF, and kill while preserving owner an
 Focused process-manager coverage is 24/24 and governed lifecycle coverage is 6/6. The full
 `pnpm verseshell:test` route is green (13 bundle tests, 11 runtime-bundle tests, 57 focused OpenClaw
 tests); the complete VerseShell OpenClaw directory is 11 files / 61 tests. The evidence is recorded
-in [`P1-SUPERVISED-ACI-EVIDENCE-2026-08-14.md`](./P1-SUPERVISED-ACI-EVIDENCE-2026-08-14.md).
+in [`P1-SUPERVISED-ACI-EVIDENCE-2026-08-14.md`](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/docs/dev/verseshell-foundation/P1-SUPERVISED-ACI-EVIDENCE-2026-08-14.md).
 
 The current repository-wide node typecheck still reports two unrelated provider model typing errors
 (`electron/services/providers/provider-runtime-sync.ts` and `electron/utils/provider-registry.ts`);
@@ -83,7 +83,7 @@ not retry or switch execution owners. The existing real Windows artifact recover
 including the runtime's `encoding`, `raw_complete`, and `returned_bytes` fields.
 
 Focused evidence is recorded in
-[`P1-OBSERVATION-ARTIFACT-EVIDENCE-2026-08-14.md`](./P1-OBSERVATION-ARTIFACT-EVIDENCE-2026-08-14.md).
+[`P1-OBSERVATION-ARTIFACT-EVIDENCE-2026-08-14.md`](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/docs/dev/verseshell-foundation/P1-OBSERVATION-ARTIFACT-EVIDENCE-2026-08-14.md).
 The P1-02 closeout proposal has been applied. The implementation remains engineering evidence only:
 it does not authorize read/write adapters, provider traffic, canary, default-on, GA, or product approval. Keep
 `default-off`, `liveReady=false`, `productApproved=false`, and `defaultOn=false`.
@@ -105,7 +105,7 @@ coverage is 11/11; the full VerseShell route is bundle 13/13, runtime-bundle 11/
 and MCP 11/11. Capability names are aligned with the pinned runtime grant vocabulary, effectful
 compatibility tools remain deferred, and a real Windows x64 read smoke covers the startup path.
 Details are in
-[`P1-MCP-COMPATIBILITY-EVIDENCE-2026-08-14.md`](./P1-MCP-COMPATIBILITY-EVIDENCE-2026-08-14.md).
+[`P1-MCP-COMPATIBILITY-EVIDENCE-2026-08-14.md`](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/docs/dev/verseshell-foundation/P1-MCP-COMPATIBILITY-EVIDENCE-2026-08-14.md).
 
 This remains engineering evidence only. MCP is not an internal dependency and this package does not
 authorize read/write adapters, provider traffic, canary, default-on, GA, or product approval. Keep
@@ -127,7 +127,7 @@ native fallback, or perform writes. Focused coverage is VerseShell 13 files / 71
 facade contract 3/3; node typecheck, comms replay/compare, and diff check pass. Ordinary diff-aware
 Harness validation remains blocked by unrelated shared-worktree ownership paths; `--no-diff`
 validation passes and the residual is recorded in
-[`P2-READONLY-FACADE-EVIDENCE-2026-08-14.md`](./P2-READONLY-FACADE-EVIDENCE-2026-08-14.md).
+[`P2-READONLY-FACADE-EVIDENCE-2026-08-14.md`](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/docs/dev/verseshell-foundation/P2-READONLY-FACADE-EVIDENCE-2026-08-14.md).
 
 This is engineering evidence only. P2-02 command profiles, diagnostics, writes, provider-backed
 canary, default-on, GA, and product approval remain out of scope. Keep `default-off`,
@@ -157,7 +157,7 @@ node+web typecheck, comms replay/compare, scoped ESLint, and diff check PASS. Ha
 `--no-diff` validation passes;
 ordinary diff-aware validation remains blocked by the recorded shared-worktree residual. Details
 are in
-[`P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md`](./P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md).
+[`P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md`](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/docs/dev/verseshell-foundation/P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md).
 The `TF-0065` closeout proposal `TFP-verseshell-p2-02-closeout-20260814` has been saved and
 applied through the Task Forest CLI (`validate`/`export` PASS); `TF-0065` is `done` at 100%
 and the only next node `TF-0066` / VS-P2-03 diagnostics is now `ready`.
@@ -313,7 +313,7 @@ The declared slice boundary is unchanged and now carried by the pre-existing dev
 **decision rather than a gap**: the two planes stay disjoint, and the repository-wide metric
 "undeclared external write = 0" is **retired** in favour of a plane-scoped one. See the
 "Cross-plane metric retired" section of
-[`P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md`](./P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md)
+[`P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md`](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/docs/dev/verseshell-foundation/P3-EXTERNAL-WRITE-POLICY-EVIDENCE-2026-09-02.md)
 for the option (a)/(b) reasoning and what did and did not get verified. The runtime classification
 now reaches the renderer as a display-only `risk` badge, carrying no decision affordance. No rollout
 lock, authorization boundary, approval channel, journal, undo stack, feature flag, or config leaf

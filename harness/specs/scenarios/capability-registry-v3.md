@@ -3,7 +3,7 @@ id: capability-registry-v3
 title: Capability Registry V3
 type: capability-registry-boundary
 ownedPaths:
-  - docs/dev/capability-registry-v3-development-plan.md
+  - docs/architecture-overview.md
   - docs/dev/capability-registry-v3-foundation-acceptance.md
   - docs/dev/capability-registry-v3-skill-resolver-acceptance.md
   - docs/dev/capability-registry-v3-trusted-catalog-acceptance.md

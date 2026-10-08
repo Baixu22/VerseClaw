@@ -1,3 +1,0 @@
-residual audit: ok=true active=2 missing=0 expired=0
-report: artifacts/system-maturity/P8-001/residual-audit-report.json
-validate-system-maturity-residual: OK

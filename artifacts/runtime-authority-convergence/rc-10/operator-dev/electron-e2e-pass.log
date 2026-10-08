@@ -1,7 +1,0 @@
-$ playwright test "tests/e2e/rc10-operator-live.spec.ts" "--workers=1"
-
-Running 1 test using 1 worker
-
-  ok 1 tests\e2e\rc10-operator-live.spec.ts:6:5 › RC-10 real Cron, Inbox, IRC and recovery scenarios (1.8m)
-
-  1 passed (1.8m)

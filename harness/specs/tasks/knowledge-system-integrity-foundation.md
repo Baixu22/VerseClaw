@@ -49,7 +49,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/knowledge-system-unification-development-plan.zh-CN.md
+    - docs/architecture-overview.md
     - docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md
     - docs/dev/repository-artifact-retention.md
 ---

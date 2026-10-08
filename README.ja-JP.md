@@ -267,13 +267,13 @@ Renderer の入口は `src/lib/host-api.ts` と `src/lib/host-api-client.ts` で
 
 | 知りたいこと | 入口 |
 | --- | --- |
-| 現在の構成とドキュメントの検証 | [構成ガイド](docs/architecture-overview.md) · [README 網羅性監査](docs/dev/readme-audit-20261005.md) · [画像の出典](resources/readme/2026-10-05/README.md) |
+| 現在の構成とドキュメントの検証 | [構成ガイド](docs/architecture-overview.md) · [画像の出典](resources/readme/2026-10-05/README.md) |
 | 製品動作、概念、機能の範囲 | [製品セマンティクス](docs/clawx-product-semantics.md) · [機能マトリクス](shared/capability-claims.ts) · [既定設定](docs/dev/default-config-matrix.md) |
 | 知識、メモリ、コンテキスト | [知識システム](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) |
 | Agent とワークフロー | [オーケストレーション](docs/multi-agent-orchestration/README.md) · [役割パック](docs/role-packs.md) |
 | 構造化ドキュメント | [VerseConf 統合](docs/dev/verseconf-clawx-implementation-20261001.md) |
 | 開発規則と継続作業 | [AGENTS.md](AGENTS.md) · [継続開発ガイド](docs/dev/Sustained-Development-Playbook.md) · [Agent Dev](docs/agent-dev-control-plane.md) |
-| ランタイムと受け入れ | [ランタイム収束](docs/dev/unified-agent-system/runtime-convergence/README.md) · [RC-09/RC-10 の証拠境界](docs/dev/pending-worktree-consolidation.md) |
+| ランタイムと受け入れ | [ランタイム収束](docs/dev/unified-agent-system/runtime-convergence/README.md) · [RC-09/RC-10 の証拠境界](docs/dev/windows-alpha-closeout-20261008.md) |
 | リソース、保管、ソース復元 | [保管規則](docs/dev/repository-artifact-retention.md) · [VerseShell ソース契約](resources/verseshell/SOURCE.md) |
 
 設計計画や過去の受け入れ記録には固有の範囲と日付があります。現在の入口はソースと対応する新しい証拠で確認してください。ローカルの Task Forest 履歴、引き継ぎ、仮ログは新規チェックアウトのビルド前提ではありません。

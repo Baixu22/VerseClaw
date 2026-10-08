@@ -1,9 +1,0 @@
-
-[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX-maturity-p0[39m
-
-
-[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
-[2m      Tests [22m [1m[32m55 passed[39m[22m[90m (55)[39m
-[2m   Start at [22m 12:58:03
-[2m   Duration [22m 2.21s[2m (transform 683ms, setup 542ms, import 1.45s, tests 360ms, environment 3.08s)[22m
-

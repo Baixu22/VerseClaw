@@ -1,7 +1,0 @@
-autoreview findings: 1
-[P2] Avoid counting projected COMPASS text twice in seal receipts
-openclaw_runtime/src/context-engine/context-orchestrator.ts:355
-With RC-03 sealing enabled, the first model call reuses the COMPASS candidate projection finalized by `before_agent_start`. Registering that same text as an external contribution makes `runRc03SealHook` count it twice: it adds `attributedChars` to the candidate lineage totals. An 8,000-character SSP truncated to 6,000 therefore produces receipt totals of 14,000 requested and 12,000 applied, although only 6,000 characters were injected. Preserve attribution for reopened tool-loop collections, but exclude contributions already represented in the current projection from receipt totals. The new wire test checks producer references without checking these budget values.
-
-overall: patch is incorrect (0.98)
-The forwarding fix is present, but first-call seal receipts double-count projected COMPASS text, breaking agreement with the shared ledger and provider-visible injection. Review was read-only; tests were not run.

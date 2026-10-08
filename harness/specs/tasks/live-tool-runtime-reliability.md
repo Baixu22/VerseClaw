@@ -153,13 +153,13 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r6-20260915.md
-    - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r5-20260913.md
-    - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-r4-20260913.md
-    - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260913.md
-    - docs/dev/context-moat/reviews/tool-runtime-reliability-relay-20260912.md
-    - docs/dev/context-moat/reviews/tool-runtime-reliability-20260912.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/context-capability-blueprint.md
+    - docs/dev/context-capability-blueprint.md
+    - docs/dev/context-capability-blueprint.md
+    - docs/dev/context-capability-blueprint.md
+    - docs/dev/context-capability-blueprint.md
+    - docs/dev/context-capability-blueprint.md
+    - docs/dev/Sustained-Development-Playbook.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

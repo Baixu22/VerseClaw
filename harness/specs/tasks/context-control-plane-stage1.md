@@ -105,7 +105,7 @@ docs:
     - docs/dev/context-control-plane/stage0/authority-adapters.md
     - docs/dev/context-control-plane/stage0/golden-path-contract.md
     - docs/dev/context-control-plane/stage0/stage1-task-draft.md
-    - docs/dev/context-control-plane/DEVLOG.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
     - docs/dev/context-capability-blueprint.md
     - docs/dev/adr/2026-08-16-context-authority-boundaries.md
 ---

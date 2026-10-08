@@ -137,7 +137,7 @@ acceptance:
 docs:
   required: true
   files:
-    - reports/context-compression/TF0076-COST-BUDGET-2026-09-15.md
+    - docs/architecture-overview.md
     - docs/clawx-design-overview.md
     - README.md
     - README.zh-CN.md

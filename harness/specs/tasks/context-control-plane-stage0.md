@@ -53,7 +53,7 @@ docs:
     - docs/dev/context-control-plane/stage0/authority-adapters.md
     - docs/dev/context-control-plane/stage0/golden-path-contract.md
     - docs/dev/context-control-plane/stage0/stage1-task-draft.md
-    - docs/dev/context-control-plane/DEVLOG.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
 ---
 
 # Context Control Plane Stage 0

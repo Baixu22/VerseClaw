@@ -199,7 +199,7 @@ residual:
 docs:
   required: true
   files:
-    - docs/dev/knowledge-system-unification-development-plan.zh-CN.md
+    - docs/architecture-overview.md
 ---
 
 # KS-08 UI 与 Observability 收敛

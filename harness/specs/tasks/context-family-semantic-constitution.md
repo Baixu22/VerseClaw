@@ -71,7 +71,7 @@ docs:
     - docs/context-family/goal-progress.md
     - docs/context-family/goal-runbook.md
     - docs/context-family/task-slices.md
-    - docs/context-family/goal-prompts.md
+    - docs/architecture-overview.md
 ---
 
 # Context Family Semantic Constitution

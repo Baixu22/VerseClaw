@@ -77,9 +77,9 @@ docs:
   required: true
   files:
     - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
-    - docs/dev/context-control-plane/STAGE-ROADMAP.zh-CN.md
-    - docs/dev/context-control-plane/STAGE2-DEV-PROMPT.zh-CN.md
-    - docs/dev/context-control-plane/DEVLOG.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
     - docs/dev/context-control-plane/stage0/authority-matrix.md
     - docs/dev/context-control-plane/stage0/artifacts-schema.md
     - docs/dev/context-control-plane/stage0/authority-adapters.md
@@ -87,7 +87,7 @@ docs:
     - docs/dev/context-capability-blueprint.md
     - docs/dev/adr/2026-08-16-context-authority-boundaries.md
     - docs/dev/dcs-first-context-engineering.md
-    - docs/dev/capability-registry-v3-development-plan.md
+    - docs/architecture-overview.md
     - harness/specs/tasks/context-control-plane-stage1.md
 ---
 # Context Control Plane Stage 2

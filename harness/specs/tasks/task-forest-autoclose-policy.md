@@ -44,7 +44,7 @@ docs:
   required: true
   files:
     - harness/specs/rules/task-forest-autoclose-and-roles.md
-    - docs/dev/qa-synthesis-roadmap-20260922.md
+    - docs/architecture-overview.md
 ---
 
 用户 2026-09-22 裁定：接力角色固定为「agent 是主线开发者，用户是发布者」。用户不参与

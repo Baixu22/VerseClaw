@@ -1,9 +1,0 @@
-(node:24308) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
-(Use `node --trace-warnings ...` to show where the warning was created)
-$ pnpm contract:check && pnpm i18n:lint && pnpm agent-dev:workbench && pnpm agent-dev:unit:fast
-$ node scripts/contract-check.mjs
-$ node scripts/i18n-lint.mjs
-$ node scripts/agent-dev-workbench.mjs
-$ pnpm agent-dev:unit
-$ pnpm agent-dev:unit:node && pnpm exec vitest run --maxWorkers=1 tests/unit/host-api-facade.test.ts
-$ pnpm exec vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts

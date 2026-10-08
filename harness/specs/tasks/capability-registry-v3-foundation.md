@@ -52,7 +52,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/capability-registry-v3-development-plan.md
+    - docs/architecture-overview.md
     - docs/dev/capability-registry-v3-foundation-acceptance.md
 ---
 

@@ -267,13 +267,13 @@ Agent Dev Workbench в «Настройки → Разработчик» пре�
 
 | Тема | Ссылки |
 | --- | --- |
-| Текущая архитектура и проверка документации | [Обзор архитектуры](docs/architecture-overview.md) · [Аудит покрытия README](docs/dev/readme-audit-20261005.md) · [Источники изображений](resources/readme/2026-10-05/README.md) |
+| Текущая архитектура и проверка документации | [Обзор архитектуры](docs/architecture-overview.md) · [Источники изображений](resources/readme/2026-10-05/README.md) |
 | Поведение продукта, понятия и границы | [Семантика продукта](docs/clawx-product-semantics.md) · [Матрица возможностей](shared/capability-claims.ts) · [Настройки по умолчанию](docs/dev/default-config-matrix.md) |
 | Знания, память и контекст | [Система знаний](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) |
 | Агенты и процессы | [Оркестрация](docs/multi-agent-orchestration/README.md) · [Наборы ролей](docs/role-packs.md) |
 | Структурированные документы | [Интеграция VerseConf](docs/dev/verseconf-clawx-implementation-20261001.md) |
 | Правила разработки и преемственность | [AGENTS.md](AGENTS.md) · [Руководство разработки](docs/dev/Sustained-Development-Playbook.md) · [Agent Dev](docs/agent-dev-control-plane.md) |
-| Runtime и приёмка | [Согласование runtime](docs/dev/unified-agent-system/runtime-convergence/README.md) · [Границы подтверждений RC-09/RC-10](docs/dev/pending-worktree-consolidation.md) |
+| Runtime и приёмка | [Согласование runtime](docs/dev/unified-agent-system/runtime-convergence/README.md) · [Границы подтверждений RC-09/RC-10](docs/dev/windows-alpha-closeout-20261008.md) |
 | Ресурсы, архивы и восстановление исходников | [Правила хранения](docs/dev/repository-artifact-retention.md) · [Контракт исходников VerseShell](resources/verseshell/SOURCE.md) |
 
 Проектные планы и старые результаты приёмки имеют собственные даты и область действия. Текущие точки входа определяются исходниками и соответствующими актуальными подтверждениями. Локальная история Task Forest, передача сессий и временные журналы не требуются для сборки нового checkout.

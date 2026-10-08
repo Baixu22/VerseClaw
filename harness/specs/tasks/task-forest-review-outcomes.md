@@ -91,8 +91,8 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/context-moat/reviews/review-outcomes-20260910.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/context-capability-blueprint.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 用户本轮明确要求“通过就 done，不通过就处理问题”，覆盖旧协议把已结束的复核长期

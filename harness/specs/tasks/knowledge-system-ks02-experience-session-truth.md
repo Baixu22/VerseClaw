@@ -116,7 +116,7 @@ notes:
 docs:
   required: true
   files:
-    - docs/dev/knowledge-system-unification-development-plan.zh-CN.md
+    - docs/architecture-overview.md
 ---
 
 # KS-02 Experience Write Truth 与 Session Cascade

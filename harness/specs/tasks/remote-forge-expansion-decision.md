@@ -40,7 +40,7 @@ docs:
   files:
     - docs/dev/first-product-controlled-preview/tasks/FP-P4-08.md
     - docs/dev/first-product-controlled-preview/STATUS.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 # Remote Forge expansion decision

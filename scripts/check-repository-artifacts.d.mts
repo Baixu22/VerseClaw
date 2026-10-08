@@ -5,6 +5,8 @@ export interface RepositoryArtifactPolicy {
   retiredTests: string[];
   requiredInputs: string[];
   preservedMixedUseDirectories: string[];
+  reviewedDirectories?: string[];
+  retainedFiles?: string[];
 }
 
 export function isLocalArtifact(path: string, policy: RepositoryArtifactPolicy): boolean;
@@ -14,3 +16,5 @@ export function checkRepositoryArtifacts(root?: string): {
   issues: string[];
   passed: boolean;
 };
+
+export function renderReviewedIgnore(policy: RepositoryArtifactPolicy): string;

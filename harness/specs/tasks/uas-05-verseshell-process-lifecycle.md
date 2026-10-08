@@ -116,7 +116,7 @@ docs:
     - docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md
     - docs/dev/unified-agent-system/DEVELOPMENT-STRATEGY.zh-CN.md
     - docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

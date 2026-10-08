@@ -267,13 +267,13 @@ Renderer 请求入口是 `src/lib/host-api.ts` 与 `src/lib/host-api-client.ts`�
 
 | 想了解什么 | 入口 |
 | --- | --- |
-| 当前架构与文档核验 | [架构导读](docs/architecture-overview.md) · [README 覆盖审计](docs/dev/readme-audit-20261005.md) · [图片来源](resources/readme/2026-10-05/README.md) |
+| 当前架构与文档核验 | [架构导读](docs/architecture-overview.md) · [图片来源](resources/readme/2026-10-05/README.md) |
 | 产品行为、概念与能力范围 | [产品语义](docs/clawx-product-semantics.md) · [能力矩阵](shared/capability-claims.ts) · [默认配置](docs/dev/default-config-matrix.md) |
 | 知识、记忆与上下文设计 | [知识系统](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) |
 | Agent 与工作流 | [编排文档](docs/multi-agent-orchestration/README.md) · [角色包](docs/role-packs.md) |
 | 结构化文档 | [VerseConf 集成](docs/dev/verseconf-clawx-implementation-20261001.md) |
 | 工程规则与持续开发 | [AGENTS.md](AGENTS.md) · [持续开发手册](docs/dev/Sustained-Development-Playbook.md) · [Agent Dev](docs/agent-dev-control-plane.md) |
-| 运行时与验收 | [运行时收敛](docs/dev/unified-agent-system/runtime-convergence/README.md) · [RC-09/RC-10 证据边界](docs/dev/pending-worktree-consolidation.md) |
+| 运行时与验收 | [运行时收敛](docs/dev/unified-agent-system/runtime-convergence/README.md) · [RC-09/RC-10 证据边界](docs/dev/windows-alpha-closeout-20261008.md) |
 | 资源、归档与源码恢复 | [保留规则](docs/dev/repository-artifact-retention.md) · [VerseShell 源码契约](resources/verseshell/SOURCE.md) |
 
 设计文档中的阶段计划和旧验收快照带有各自范围与日期；当前可用入口以源码和对应新证据为准。本地 Task Forest 历史、会话交接与临时日志不是新检出的构建前置条件。

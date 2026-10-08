@@ -199,7 +199,7 @@ residual:
 docs:
   required: true
   files:
-    - docs/dev/knowledge-system-unification-development-plan.zh-CN.md
+    - docs/architecture-overview.md
 ---
 
 # KS-09 Canary、优化与毕业

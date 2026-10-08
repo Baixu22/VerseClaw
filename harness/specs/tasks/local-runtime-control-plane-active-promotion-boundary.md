@@ -81,7 +81,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/local-runtime-mvp-roadmap.md
+    - docs/architecture-overview.md
     - harness/specs/tasks/local-runtime-control-plane-mvp.md
 ---
 

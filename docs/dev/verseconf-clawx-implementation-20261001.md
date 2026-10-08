@@ -35,7 +35,7 @@ PPTX 仍使用既有三页模板。超过三条记录时明确拒绝导出，避
 - 修复验证器对构建后已删除的临时 `.nsis.7z` 的依赖，直接读取安装器内归档并与锁定源/解包目录比较；CommonJS 检查使用真实 `require`，避免 tsx 命名空间差异。
 
 最终结果：[acceptance-20261003.json](../../artifacts/verseconf-clawx-integration/acceptance-20261003.json)。
-完整集成报告和摘要：[verification.json](../../artifacts/verseconf-clawx-integration/runs/20261003-codex-final/verification.json)、[SHA256SUMS](../../artifacts/verseconf-clawx-integration/runs/20261003-codex-final/SHA256SUMS)。
+完整集成报告和摘要：[verification.json](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/artifacts/verseconf-clawx-integration/runs/20261003-codex-final/verification.json)、[SHA256SUMS](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/artifacts/verseconf-clawx-integration/runs/20261003-codex-final/SHA256SUMS)。
 
 边界：10 个既有 Electron 跳过项未计作通过；同幂等键异 payload、junction 路径边界、长内容 PPTX/记录保真及更完整 UI 等上游已列业务缺口不因这 41 项通过而视为修复。旧报告不覆盖、不重签。Task Forest 的本地图/配置仍含历史合并冲突，CLI validate exit 1，因此本次不据此修改节点 verdict。中英日 README 已复核，无新增公开安装契约。未提交、推送或发布。
 
@@ -148,7 +148,7 @@ README.md、README.zh-CN.md、README.ja-JP.md 已审阅；本轮没有新增安�
 - 中英日 README 的开发、打包和产物保留说明已复核；本次仅收紧开发产物的打包边界，不改变用户安装/配置契约，无需更新公开 README。
 - 全工作区 Harness validate 仍 exit 1：7 个既有 Agent Dev 证据/Context 测试改动不属于 VerseConf spec。没有为消除该失败而扩大 ownedPaths、回滚其他工作或改变产品锁。历史通过报告不覆盖本轮失败；正式发布仍需冻结干净候选及完整发布门禁。
 - 本轮完整 Windows NSIS 重建 exit 0，安装器 SHA-256 为 `3a6066b10b861bc4e8c4dfbe7dc69635ab5b17d6f5301bd1fd14d154f77b9cd8`。读取安装器内载荷清单，确认 runtime 根目录无本地状态；`dist` 与 `dist-runtime` 各 26/26 交付文件摘要一致。最终独立 verifier 为 **43/43 passed**，真实源码/包内 Gateway 闭环通过。没有执行交互安装或公开发布。
-- 扩展到现有相邻约束的专项结果为 **7 files / 41 tests passed**；Artifact Panel Electron 为 **5/5 passed**；Harness CI 基线通过（Harness 回归 47/47）、contract/comms、测试类型检查、定向 lint、产物保留检查和 `git diff --check` 均 exit 0。最终报告：[cleanup-20261004.json](../../artifacts/verseconf-clawx-integration/cleanup-20261004.json)；完整集成报告：[verification.json](../../artifacts/verseconf-clawx-integration/runs/20261004-release-cleanliness-final/verification.json)。这些是本轮局部清理与打包证据，不替代干净候选上的全量发布验收。
+- 扩展到现有相邻约束的专项结果为 **7 files / 41 tests passed**；Artifact Panel Electron 为 **5/5 passed**；Harness CI 基线通过（Harness 回归 47/47）、contract/comms、测试类型检查、定向 lint、产物保留检查和 `git diff --check` 均 exit 0。最终报告：[cleanup-20261004.json](../../artifacts/verseconf-clawx-integration/cleanup-20261004.json)；完整集成报告：[verification.json](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/artifacts/verseconf-clawx-integration/runs/20261004-release-cleanliness-final/verification.json)。这些是本轮局部清理与打包证据，不替代干净候选上的全量发布验收。
 
 ## 2026-10-04 七处范围阻塞复核
 

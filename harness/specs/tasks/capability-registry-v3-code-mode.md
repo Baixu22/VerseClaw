@@ -72,7 +72,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/capability-registry-v3-development-plan.md
+    - docs/architecture-overview.md
     - docs/dev/capability-registry-v3-code-mode-acceptance.md
 ---
 

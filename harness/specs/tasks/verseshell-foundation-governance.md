@@ -41,9 +41,9 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md
-    - docs/dev/verseshell-foundation/P0-EVIDENCE-BASELINE-2026-08-14.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
+    - docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 # VerseShell Foundation P0 Governance and Evidence Freeze

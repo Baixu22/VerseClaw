@@ -127,7 +127,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/merge-recovery-20261003.md
+    - docs/dev/repository-artifact-retention.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

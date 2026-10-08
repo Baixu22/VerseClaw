@@ -91,7 +91,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/capability-registry-v3-development-plan.md
+    - docs/architecture-overview.md
     - docs/dev/capability-registry-v3-provider-native-acceptance.md
 ---
 

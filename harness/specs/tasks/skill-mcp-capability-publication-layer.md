@@ -50,7 +50,7 @@ docs:
   required: true
   files:
     - docs/clawx-design-overview.md
-    - docs/local-runtime-mvp-roadmap.md
+    - docs/architecture-overview.md
 implementationTestCandidates:
   - pnpm run typecheck
   - pnpm exec vitest run tests/unit/chat-capability-actions.test.ts tests/unit/runtime-feature-config-schema.test.ts tests/unit/mcp-api.test.ts

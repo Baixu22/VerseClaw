@@ -258,8 +258,8 @@ docs:
   required: true
   files:
     - docs/dev/agent-engineering-acceptance.md
-    - docs/dev/task-forest-engineering-20260913.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/repository-artifact-retention.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 This is the engineering closeout for the user's active-node batch, owned by TF-0029. It is not a replacement task registry, a new product acceptance baseline, or a re-signature of the earlier RC-01R SHA. TF-0007, TF-0010, TF-0028, TF-0056 and TF-0102 keep their separate human/external completion conditions. TF-0140 is explicitly skipped.

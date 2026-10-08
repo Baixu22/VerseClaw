@@ -1,8 +1,0 @@
-
- RUN  v4.1.7 D:/ClawX/openclaw_runtime
-
-
- Test Files  1 passed (1)
-      Tests  1 passed (1)
-   Start at  20:01:20
-   Duration  25.65s (transform 14.87s, setup 430ms, import 4.37s, tests 20.49s, environment 0ms)

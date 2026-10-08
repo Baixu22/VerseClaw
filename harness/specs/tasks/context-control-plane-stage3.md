@@ -92,9 +92,9 @@ docs:
   required: true
   files:
     - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
-    - docs/dev/context-control-plane/STAGE-ROADMAP.zh-CN.md
-    - docs/dev/context-control-plane/STAGE3-DEV-PROMPT.zh-CN.md
-    - docs/dev/context-control-plane/DEVLOG.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
     - docs/dev/context-control-plane/stage0/authority-matrix.md
     - docs/dev/context-control-plane/stage0/artifacts-schema.md
     - docs/dev/context-control-plane/stage0/authority-adapters.md

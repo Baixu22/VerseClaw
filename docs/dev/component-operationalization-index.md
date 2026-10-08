@@ -7,8 +7,8 @@
 ## 阅读顺序
 
 1. [P0 收口结论](component-controlled-rollout-p0-closeout.md)
-2. [组件就绪度最终复核](component-readiness-audit-2026-07-20.md)
-3. [组件受控投用计划](component-controlled-rollout-plan.md)
+2. [组件就绪度最终复核](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/docs/dev/component-readiness-audit-2026-07-20.md)
+3. [组件受控投用计划](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/docs/dev/component-controlled-rollout-plan.md)
 4. [组件受控投用验收清单](component-operational-readiness-checklist.md)
 5. `harness/specs/tasks/component-controlled-rollout-readiness.md`
 6. `artifacts/component-controlled-rollout-p0/final-report.json`

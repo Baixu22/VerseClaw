@@ -70,7 +70,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

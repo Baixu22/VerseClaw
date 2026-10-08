@@ -78,10 +78,10 @@ docs:
   required: true
   files:
     - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
-    - docs/dev/context-control-plane/STAGE5-6-SERIAL-DEV-PROMPT.zh-CN.md
-    - docs/dev/context-control-plane/STAGE6-DEV-PROMPT.zh-CN.md
-    - docs/dev/context-control-plane/DEVLOG.zh-CN.md
-    - docs/dev/context-control-plane/STAGE-ROADMAP.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
+    - docs/dev/context-control-plane/DEVELOPMENT-CONSTRAINTS.zh-CN.md
     - docs/dev/context-control-plane/stage0/golden-path-contract.md
     - docs/dev/context-control-plane/stage0/artifacts-schema.md
     - docs/dev/context-control-plane/stage0/authority-adapters.md

@@ -108,9 +108,9 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/dcs-visible-production/TF-0074-REAL-USE-ACCEPTANCE-EVIDENCE-2026-08-21.md
+    - docs/architecture-overview.md
     - docs/dev/dcs-visible-production/STATUS.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
 ---
 
 # TF-0074 DCS、Goal/Loop、SEKB 真实投入使用工程验收

@@ -105,7 +105,7 @@ acceptance:
 docs:
   required: true
   files:
-    - docs/dev/knowledge-system-unification-development-plan.zh-CN.md
+    - docs/architecture-overview.md
 ---
 
 # KS-03 GovernanceStore 与 Owner Adapters

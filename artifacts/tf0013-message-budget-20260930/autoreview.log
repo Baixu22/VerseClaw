@@ -1,3 +1,0 @@
-autoreview clean: no accepted/actionable findings reported
-overall: patch is correct (0.87)
-No actionable defects found in the scoped change. Read-only tracing supports precheck-time admission, atomic shared-budget accounting, retained-history matching, one-time replacement materialization, isolated registry fallback, and per-call seal/receipt binding. Tests were not run; this review does not establish formal RC acceptance or native plugin-owned assembly coverage.

@@ -91,7 +91,7 @@ acceptance:
 docs:
   required: true
   files:
-    - team/dcs/README.md
+    - docs/architecture-overview.md
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md

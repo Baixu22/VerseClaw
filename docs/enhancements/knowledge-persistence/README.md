@@ -121,7 +121,7 @@ preflight loop into a durable learning workflow:
   Breaks the work into phases with acceptance criteria, tests, and explicit
   non-goals.
 
-- [05-ui-plan.md](05-ui-plan.md)
+- [05-ui-plan.md](https://github.com/Baixu22/VerseClaw/blob/a2a21463dccfdf98460086b1730401093a31bf10/docs/enhancements/knowledge-persistence/05-ui-plan.md)
   Describes the Knowledge page, Librarian modal, Chat composer, and Inbox UI
   changes needed for the persistence plan.
 

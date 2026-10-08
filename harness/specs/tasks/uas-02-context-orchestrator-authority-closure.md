@@ -158,7 +158,7 @@ docs:
   files:
     - docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md
     - docs/dev/first-product-controlled-preview/STATUS.md
-    - docs/dev/handoffs/LATEST.md
+    - docs/dev/Sustained-Development-Playbook.md
     - docs/dev/context-orchestrator.md
     - README.md
     - README.zh-CN.md
