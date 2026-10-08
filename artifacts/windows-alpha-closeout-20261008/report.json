@@ -1,0 +1,1186 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-windows-alpha-closeout",
+  "generatedAt": "2026-10-08T12:12:10.317Z",
+  "verdict": "windows-x64-alpha-qualified-with-explicit-boundaries",
+  "releaseAccepted": false,
+  "published": false,
+  "productDefaultsChanged": false,
+  "verificationCandidate": {
+    "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+    "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+    "status": "",
+    "dirty": false
+  },
+  "rawEvidence": "D:/ClawX-work/windows-alpha-closeout-20261008/recovery-final",
+  "retainedPriorEvidence": "D:/ClawX-work/windows-alpha-closeout-20261008",
+  "gates": {
+    "root-unit-final": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "root-unit-final",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "test"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T10:32:27.904Z",
+      "completedAt": "2026-10-08T10:42:20.273Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\root-unit-final.log",
+      "logSha256": "c5282dfb44d7a22daafae9cc257e2ccbffd1efa3247aed9c90802a8c4f2023a9",
+      "statusAfter": ""
+    },
+    "types-node": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "types-node",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "typecheck:node"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T10:42:20.503Z",
+      "completedAt": "2026-10-08T10:42:25.969Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\types-node.log",
+      "logSha256": "c453d9d3a4899b8beb8b59cc768faba1508c1f44b3ad6ddc2b170b5c6638223a",
+      "statusAfter": ""
+    },
+    "types-web": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "types-web",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "typecheck:web"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T10:42:26.199Z",
+      "completedAt": "2026-10-08T10:42:28.392Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\types-web.log",
+      "logSha256": "4c6a5db0241dc9cb197b5cfb6af63ed04a35ec305fe459bfa8e886e2bcd904a4",
+      "statusAfter": ""
+    },
+    "types-test": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "types-test",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "typecheck:test"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T10:42:28.625Z",
+      "completedAt": "2026-10-08T10:42:36.145Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\types-test.log",
+      "logSha256": "2965c30ed6c0458fe82c037cbd4fcb6ec7b20eb952bfab14bcb028ad81bbeb57",
+      "statusAfter": ""
+    },
+    "runtime-core-types": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "runtime-core-types",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "--incremental",
+        "false",
+        "-p",
+        "openclaw_runtime/tsconfig.core.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T10:42:36.380Z",
+      "completedAt": "2026-10-08T10:42:41.918Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\runtime-core-types.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "statusAfter": ""
+    },
+    "runtime-extension-types": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "runtime-extension-types",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "--incremental",
+        "false",
+        "-p",
+        "openclaw_runtime/tsconfig.extensions.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T10:42:42.194Z",
+      "completedAt": "2026-10-08T10:42:51.967Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\runtime-extension-types.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "statusAfter": ""
+    },
+    "runtime-test-types": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "runtime-test-types",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "--incremental",
+        "false",
+        "-p",
+        "openclaw_runtime/test/tsconfig/tsconfig.core.test.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T10:42:52.201Z",
+      "completedAt": "2026-10-08T10:42:57.586Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\runtime-test-types.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "statusAfter": ""
+    },
+    "runtime-extension-test-types": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "runtime-extension-test-types",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "--incremental",
+        "false",
+        "-p",
+        "openclaw_runtime/test/tsconfig/tsconfig.extensions.test.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T10:42:57.831Z",
+      "completedAt": "2026-10-08T10:43:02.302Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\runtime-extension-test-types.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "statusAfter": ""
+    },
+    "windows-build": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "windows-build",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "build",
+        "--publish",
+        "never",
+        "--config.directories.output=D:/ClawX-work/windows-alpha-closeout-20261008/recovery-final/release"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T10:43:02.535Z",
+      "completedAt": "2026-10-08T10:54:09.820Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\windows-build.log",
+      "logSha256": "e7cde7cb815a4a406aaf4926b8db02db153cb86cf73b73ab4d1b6fc4c37ae215",
+      "statusAfter": ""
+    },
+    "startup": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "startup",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "build:startup-check"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T10:54:10.137Z",
+      "completedAt": "2026-10-08T10:54:10.752Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\startup.log",
+      "logSha256": "96859a3a47631eaab43488b76ce9629bcd531ab7b3c7262fc2e38354d0cc91f4",
+      "statusAfter": ""
+    },
+    "electron-full-resumed": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "electron-full-resumed",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "exec",
+        "playwright",
+        "test",
+        "--workers=1",
+        "--reporter=line,json",
+        "--output=D:/ClawX-work/windows-alpha-closeout-20261008/recovery-final/electron-results-resumed"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T11:15:00.595Z",
+      "completedAt": "2026-10-08T12:02:46.573Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\electron-full-resumed.log",
+      "logSha256": "018be2d9af929949844c0b682b7bc481e32a054786a1462d7707ed84cafd1cd9",
+      "statusAfter": "M artifacts/browser-security-recovery/evidence.json\n M artifacts/sekb-golden-path/evidence.json"
+    },
+    "verseconf-boundaries": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "verseconf-boundaries",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--dir",
+        "openclaw_runtime",
+        "exec",
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.extensions.config.ts",
+        "extensions/verseconf-artifacts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/ClawX-work/windows-alpha-closeout-20261008/recovery-final/verseconf-boundary-tests.json"
+      ],
+      "cwd": "D:\\ClawX",
+      "startedAt": "2026-10-08T11:02:15.923Z",
+      "completedAt": "2026-10-08T11:02:31.281Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\verseconf-boundaries.log",
+      "logSha256": "f9165c4030c21c9a2847fe3170cc210688d9b391dfa63267229f9d218a594e60",
+      "statusAfter": ""
+    },
+    "legacy-auth-migrations": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "legacy-auth-migrations",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--dir",
+        "openclaw_runtime",
+        "exec",
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "src/infra/state-migrations.auth-profiles.test.ts",
+        "src/agents/model-auth.auth-json-migration.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/ClawX-work/windows-alpha-closeout-20261008/recovery-final/legacy-auth-migration-tests.json"
+      ],
+      "cwd": "D:\\ClawX",
+      "startedAt": "2026-10-08T11:02:31.586Z",
+      "completedAt": "2026-10-08T11:03:26.517Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\legacy-auth-migrations.log",
+      "logSha256": "d81180f39b1b4f65e1fd0ee5597aff899d7b70fcf0a41ba672b1c9a94077d3cc",
+      "statusAfter": ""
+    },
+    "readonly-lint": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "readonly-lint",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "lint:check"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T12:02:47.049Z",
+      "completedAt": "2026-10-08T12:06:07.854Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\readonly-lint.log",
+      "logSha256": "9f62b5cb251b0e4d0b97a8b8b32078bd4fafc76df94c46e8121720f6f965595d",
+      "statusAfter": ""
+    },
+    "comms-replay": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "comms-replay",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "comms:replay"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T12:06:08.088Z",
+      "completedAt": "2026-10-08T12:06:08.826Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\comms-replay.log",
+      "logSha256": "c037da6642ffca8e0aade629d4b1b1cfbdfa5ce140f3252f9b9fa1b9a4014b2b",
+      "statusAfter": ""
+    },
+    "comms-compare": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "comms-compare",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "comms:compare"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T12:06:09.058Z",
+      "completedAt": "2026-10-08T12:06:09.704Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\comms-compare.log",
+      "logSha256": "2f81f240ddd9485d157438711f25648969bedb56007b26d32ae0f41e15bd63a4",
+      "statusAfter": ""
+    },
+    "agent-dev-deep": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "agent-dev-deep",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "agent-dev:deep-test"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T12:06:09.942Z",
+      "completedAt": "2026-10-08T12:07:25.153Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\agent-dev-deep.log",
+      "logSha256": "e04efe4d0410c2b8a524321234130c6ee696880dc1e7af2cd31e737c58fd11da",
+      "statusAfter": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json"
+    },
+    "agent-dev-audit": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "agent-dev-audit",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "agent-dev:audit"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T12:07:25.377Z",
+      "completedAt": "2026-10-08T12:07:26.547Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json",
+        "dirty": true
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\agent-dev-audit.log",
+      "logSha256": "ba5715e0070179165671fa3e51369592739385b38dbc049a3594056dce5d1cc6",
+      "statusAfter": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json"
+    },
+    "harness-ci": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "harness-ci",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "harness:ci"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T12:07:26.771Z",
+      "completedAt": "2026-10-08T12:07:37.069Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json",
+        "dirty": true
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\harness-ci.log",
+      "logSha256": "82803a28ca1967aa9971fbc1c304e87426d1241176473660ae9ae333cb41f841",
+      "statusAfter": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json"
+    },
+    "task-validate": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "task-validate",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/windows-alpha-closeout.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T12:07:37.312Z",
+      "completedAt": "2026-10-08T12:07:38.507Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json",
+        "dirty": true
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\task-validate.log",
+      "logSha256": "7e6f0b3ccc0e6e832d9879668ad9fdd756386bd0a393c0fa31fa9508dc6181b6",
+      "statusAfter": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json"
+    },
+    "task-flow": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "name": "task-flow",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/windows-alpha-closeout.md",
+        "--dry-run"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T12:07:38.731Z",
+      "completedAt": "2026-10-08T12:07:39.925Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json",
+        "dirty": true
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\task-flow.log",
+      "logSha256": "901b127dc4aaca45d5ef153b6e753e422ce3a464a1719ae8f562d37ae2642443",
+      "statusAfter": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json"
+    }
+  },
+  "rootUnit": {
+    "driven_by": "agent",
+    "actor": "codex-windows-alpha-closeout",
+    "candidate": {
+      "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+      "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+      "status": "",
+      "dirty": false
+    },
+    "batches": [
+      "Tests  7597 passed | 50 skipped (7647)",
+      "Tests  25 passed (25)",
+      "Tests  331 passed (331)",
+      "Tests  10 passed (10)",
+      "Tests  97 passed (97)",
+      "Tests  7 passed (7)"
+    ],
+    "totals": {
+      "passed": 8067,
+      "failed": 0,
+      "skipped": 50
+    },
+    "exitCode": 0
+  },
+  "electron": {
+    "stats": {
+      "startTime": "2026-10-08T11:15:01.963Z",
+      "duration": 2864391.685,
+      "expected": 341,
+      "skipped": 4,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "errors": [],
+    "skipped": [
+      {
+        "file": "chat-cache-deepseek-cache-first.spec.ts",
+        "title": "keeps a stable provider prefix warm across real DeepSeek turns",
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Set CLAWX_LIVE_MODEL_E2E=1 to run real DeepSeek cache calls",
+            "location": {
+              "file": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\chat-cache-deepseek-cache-first.spec.ts",
+              "line": 386,
+              "column": 8
+            }
+          }
+        ]
+      },
+      {
+        "file": "chat-cache-live-model.spec.ts",
+        "title": "performs real model calls and exports prompt-cache metrics",
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Set CLAWX_LIVE_MODEL_E2E=1, CLAWX_LIVE_MODEL_REF, and a provider API key to run real model calls",
+            "location": {
+              "file": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\chat-cache-live-model.spec.ts",
+              "line": 395,
+              "column": 8
+            }
+          }
+        ]
+      },
+      {
+        "file": "mac-titlebar-drag-region.spec.ts",
+        "title": "keeps a draggable strip above non-chat pages and stacks chat above it",
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "macOS drag-region chrome only",
+            "location": {
+              "file": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\mac-titlebar-drag-region.spec.ts",
+              "line": 8,
+              "column": 8
+            }
+          }
+        ]
+      },
+      {
+        "file": "visual-tune.spec.ts",
+        "title": "capture composer, permission menu, slash palette, effort flame",
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Set CLAWX_VISUAL_TUNE=1 to capture design-review screenshots",
+            "location": {
+              "file": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX\\tests\\e2e\\visual-tune.spec.ts",
+              "line": 22,
+              "column": 8
+            }
+          }
+        ]
+      }
+    ],
+    "cleanup": {
+      "driven_by": "agent",
+      "actor": "playwright-runner",
+      "runRoot": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\tmp\\verse-claw-e2e-run-2DaLNY\\",
+      "owned": [],
+      "remaining": []
+    }
+  },
+  "verseconf": {
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "files": 5
+  },
+  "authMigration": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "files": 2
+  },
+  "delivery": {
+    "installer": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "installer": "D:/ClawX-work/windows-alpha-closeout-20261008/recovery-final/release/Verse Claw-0.4.9-alpha.0-win-x64.exe",
+      "sha256": "7bd7c209728e58278882876cf240f722d1b0759892e7a91f3b457d9806c4f07e",
+      "bytes": 556180981,
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "buildReceipt": "windows-build.json"
+    },
+    "buildInputs": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "observedAt": "2026-10-08T10:55:41.048Z",
+      "candidate": {
+        "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+        "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe",
+        "status": "",
+        "dirty": false
+      },
+      "buildReuse": "Full current-candidate Vite/runtime/plugin/Main archive build; installed dependencies reused.",
+      "files": [
+        {
+          "file": "dist/index.html",
+          "bytes": 9032,
+          "sha256": "2a0b9668d414fb3ccf57f1af34f96b3e7e6b0bcf235966a80ce5c2a77d5d82b1"
+        },
+        {
+          "file": "dist-electron/main/index.js",
+          "bytes": 1220,
+          "sha256": "cf0787d1e8fe2b25d0ca7fb67f4aa5432d0d9b6650252663a73d793829ccbae6"
+        },
+        {
+          "file": "dist-electron/preload/index.js",
+          "bytes": 3394,
+          "sha256": "a68b6b454855d8e1e8286ada428425c4d12ea1d1c5272d229db71d477922a8b7"
+        },
+        {
+          "file": "openclaw_runtime/dist/entry.js",
+          "bytes": 2782,
+          "sha256": "985dc4bf25573755340efb68123424a90c08393dce99c26ee3d04aebed86a25c"
+        },
+        {
+          "file": "build/openclaw-runtime/dist/entry.js",
+          "bytes": 2782,
+          "sha256": "985dc4bf25573755340efb68123424a90c08393dce99c26ee3d04aebed86a25c"
+        },
+        {
+          "file": "build/main-runtime-delivery/main-runtime.asar",
+          "bytes": 632698399,
+          "sha256": "efaafd6e41804a46ce349e4a0aed67316fea6862af596fbea8f758af89ab1950"
+        },
+        {
+          "file": "resources/bin/win32-x64/node.exe",
+          "bytes": 92279112,
+          "sha256": "b3094d0b49f9ad602262a9921551737bb97637c05dd357a06ae98188d7290aa3"
+        }
+      ]
+    },
+    "integrity": {
+      "driven_by": "agent",
+      "headerSha256": "0452e76b304350f7ffb72e8954c6af81638555f8ecb89d6e473426f332fd7b4e",
+      "embedded": true,
+      "native": [
+        {
+          "file": "node_modules\\@ast-grep\\napi\\node_modules\\@ast-grep\\napi-win32-arm64-msvc\\ast-grep-napi.win32-arm64-msvc.node",
+          "unpacked": true,
+          "matches": true
+        },
+        {
+          "file": "node_modules\\@ast-grep\\napi\\node_modules\\@ast-grep\\napi-win32-x64-msvc\\ast-grep-napi.win32-x64-msvc.node",
+          "unpacked": true,
+          "matches": true
+        },
+        {
+          "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-arm64\\prebuilds\\win32-arm64\\conpty\\conpty.dll",
+          "unpacked": true,
+          "matches": true
+        },
+        {
+          "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-arm64\\prebuilds\\win32-arm64\\conpty\\OpenConsole.exe",
+          "unpacked": true,
+          "matches": true
+        },
+        {
+          "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-arm64\\prebuilds\\win32-arm64\\conpty_console_list.node",
+          "unpacked": true,
+          "matches": true
+        },
+        {
+          "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-arm64\\prebuilds\\win32-arm64\\conpty.node",
+          "unpacked": true,
+          "matches": true
+        },
+        {
+          "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-x64\\prebuilds\\win32-x64\\conpty\\conpty.dll",
+          "unpacked": true,
+          "matches": true
+        },
+        {
+          "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-x64\\prebuilds\\win32-x64\\conpty\\OpenConsole.exe",
+          "unpacked": true,
+          "matches": true
+        },
+        {
+          "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-x64\\prebuilds\\win32-x64\\conpty_console_list.node",
+          "unpacked": true,
+          "matches": true
+        },
+        {
+          "file": "node_modules\\@lydell\\node-pty\\node_modules\\@lydell\\node-pty-win32-x64\\prebuilds\\win32-x64\\conpty.node",
+          "unpacked": true,
+          "matches": true
+        },
+        {
+          "file": "node_modules\\pdfjs-dist\\node_modules\\@napi-rs\\canvas\\node_modules\\@napi-rs\\canvas-win32-arm64-msvc\\skia.win32-arm64-msvc.node",
+          "unpacked": true,
+          "matches": true
+        },
+        {
+          "file": "node_modules\\pdfjs-dist\\node_modules\\@napi-rs\\canvas\\node_modules\\@napi-rs\\canvas-win32-x64-msvc\\skia.win32-x64-msvc.node",
+          "unpacked": true,
+          "matches": true
+        }
+      ]
+    },
+    "dependencyResolutions": 4174,
+    "externalLinks": 0,
+    "failures": [],
+    "mcp": {
+      "initialized": true,
+      "tools": [
+        "verseshell_health"
+      ],
+      "health": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"ok\": true,\n  \"server\": \"verseshell\",\n  \"version\": \"0.3.1\",\n  \"protocol_version\": \"2024-11-05\",\n  \"runtime_version\": \"1.0.0\",\n  \"runtime_server_protocol\": \"verseshell.jsonl/v1\",\n  \"operation_catalog\": {\n    \"digest\": \"sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7\",\n    \"count\": 31\n  },\n  \"protocol\": \"compact\",\n  \"profile\": \"product\",\n  \"capabilities_granted\": [],\n  \"agent_mode\": true,\n  \"runtime_policy\": \"agent_strict\",\n  \"ae_ready\": false,\n  \"tools\": 1,\n  \"known_modules\": 24,\n  \"mcp_transport\": \"stdio\",\n  \"compatibility_only\": true\n}"
+          }
+        ]
+      }
+    },
+    "runtime": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "exitCode": 0,
+      "ready": true,
+      "trace": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\release-delivery-module-trace-installed.jsonl",
+      "guarded": true
+    },
+    "cli": {
+      "status": "pass",
+      "probes": [
+        {
+          "label": "bundled-node/cmd/--version",
+          "exitCode": 0,
+          "timedOut": false
+        },
+        {
+          "label": "bundled-node/cmd/--help",
+          "exitCode": 0,
+          "timedOut": false
+        },
+        {
+          "label": "bundled-node/cmd/not-a-command",
+          "exitCode": 1,
+          "timedOut": false
+        },
+        {
+          "label": "bundled-node/bash/--version",
+          "exitCode": 0,
+          "timedOut": false
+        },
+        {
+          "label": "bundled-node/bash/--help",
+          "exitCode": 0,
+          "timedOut": false
+        },
+        {
+          "label": "bundled-node/bash/not-a-command",
+          "exitCode": 1,
+          "timedOut": false
+        },
+        {
+          "label": "electron-fallback/cmd/--version",
+          "exitCode": 0,
+          "timedOut": false
+        },
+        {
+          "label": "electron-fallback/cmd/--help",
+          "exitCode": 0,
+          "timedOut": false
+        },
+        {
+          "label": "electron-fallback/cmd/not-a-command",
+          "exitCode": 1,
+          "timedOut": false
+        },
+        {
+          "label": "electron-fallback/bash/--version",
+          "exitCode": 0,
+          "timedOut": false
+        },
+        {
+          "label": "electron-fallback/bash/--help",
+          "exitCode": 0,
+          "timedOut": false
+        },
+        {
+          "label": "electron-fallback/bash/not-a-command",
+          "exitCode": 1,
+          "timedOut": false
+        }
+      ],
+      "stateUnchanged": true
+    },
+    "lifecycle": [
+      {
+        "stage": "install",
+        "exitCode": 0,
+        "startedAt": "2026-10-08T11:00:10.5335632Z",
+        "completedAt": "2026-10-08T11:02:27.4039191Z",
+        "sha256": "7bd7c209728e58278882876cf240f722d1b0759892e7a91f3b457d9806c4f07e",
+        "interventions": 0,
+        "observedProcessCount": 15,
+        "profileJsonMatches": 11
+      },
+      {
+        "stage": "replace",
+        "exitCode": 0,
+        "startedAt": "2026-10-08T11:06:34.3213826Z",
+        "completedAt": "2026-10-08T11:09:11.8991890Z",
+        "sha256": "7bd7c209728e58278882876cf240f722d1b0759892e7a91f3b457d9806c4f07e",
+        "interventions": 0,
+        "observedProcessCount": 14,
+        "profileJsonMatches": 11
+      },
+      {
+        "stage": "uninstall",
+        "exitCode": 0,
+        "startedAt": "2026-10-08T11:13:54.1137577Z",
+        "completedAt": "2026-10-08T11:14:14.6070251Z",
+        "sha256": "14ac6b789452b230afd203efd1b3c9a7cd177ca7ceb58861e7ef17693961bcb5",
+        "interventions": 0,
+        "observedProcessCount": 11,
+        "profileJsonMatches": 11
+      }
+    ],
+    "replacement": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "oldMarkerRemoved": true,
+      "cliBytesRestored": true
+    },
+    "restored": {
+      "driven_by": "agent",
+      "profileJsonPreserved": 11,
+      "registryRestored": true,
+      "cliRemoved": true,
+      "pathRestored": true,
+      "shortcutsRestored": true,
+      "timestamp": "2026-10-08T11:14:14.6380661Z"
+    },
+    "verified": {
+      "driven_by": "agent",
+      "actor": "codex-windows-alpha-closeout",
+      "timestamp": "2026-10-08T11:14:14.6749736Z",
+      "pathBytesAndKindEqual": true,
+      "shortcutMatches": [
+        true,
+        true
+      ],
+      "profileMatches": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "installationDirectoriesRemaining": 0
+    },
+    "gui": [
+      {
+        "driven_by": "agent",
+        "actor": "codex-windows-alpha-closeout",
+        "executable": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\installed-app\\Verse Claw.exe",
+        "pid": 24564,
+        "passed": true,
+        "connectionError": "fetch failed",
+        "rendererUrl": "file:///D:/ClawX-work/windows-alpha-closeout-20261008/recovery-final/installed-app/resources/app.asar/dist/index.html?bootTheme=dark#/",
+        "mainLayoutVisible": true,
+        "returningProfile": false,
+        "forcedCleanup": false
+      },
+      {
+        "driven_by": "agent",
+        "actor": "codex-windows-alpha-closeout",
+        "executable": "D:\\ClawX-work\\windows-alpha-closeout-20261008\\recovery-final\\installed-app\\Verse Claw.exe",
+        "pid": 18968,
+        "passed": true,
+        "connectionError": "fetch failed",
+        "rendererUrl": "file:///D:/ClawX-work/windows-alpha-closeout-20261008/recovery-final/installed-app/resources/app.asar/dist/index.html?bootTheme=dark",
+        "mainLayoutVisible": true,
+        "returningProfile": true,
+        "forcedCleanup": false
+      }
+    ],
+    "guiObservation": "Japanese dark-mode shell inspected; disconnected message expected because this shell-only probe disables Gateway auto-start"
+  },
+  "agentDev": {
+    "scope": "Agent Dev subsystem only; not joint-system GA",
+    "success": true,
+    "buildReuse": {
+      "mode": "fresh",
+      "status": "fresh",
+      "reusable": false,
+      "reason": "fresh build mode always runs pnpm run build:vite",
+      "requiredArtifacts": [
+        "dist/index.html",
+        "dist-electron/main/index.js",
+        "dist-electron/preload/index.js"
+      ],
+      "sourcePaths": [
+        "src",
+        "electron",
+        "shared",
+        "index.html",
+        "vite.config.ts",
+        "package.json",
+        "pnpm-lock.yaml"
+      ]
+    },
+    "unitMode": "full",
+    "typecheckMode": "full",
+    "e2eMode": "full",
+    "decision": {
+      "status": "daily-loop-ok",
+      "reason": "All selected Agent Dev gates passed within hard limits.",
+      "dailyLoopReady": true,
+      "releaseReady": true,
+      "fullGateComplete": true,
+      "budgetStatus": "watch",
+      "fastPathModes": [],
+      "requiredFullGates": [],
+      "watchSteps": [
+        "e2e-build"
+      ],
+      "limitSteps": []
+    },
+    "audit": {
+      "status": "pass",
+      "grade": "A",
+      "totalScore": 97,
+      "summary": {
+        "pass": 5,
+        "warn": 1,
+        "fail": 0,
+        "disqualifierCount": 0
+      }
+    }
+  },
+  "comms": {
+    "candidate": {
+      "commit": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+      "tree": "a7cb805eba4440ef5ec50b970d681c7b38081efe"
+    },
+    "result": "PASS",
+    "failures": [],
+    "aggregate": {
+      "duplicate_event_rate": 0,
+      "event_fanout_ratio": 1,
+      "history_inflight_max": 1,
+      "history_load_qps": 0.41269841269841273,
+      "rpc_p50_ms": 209.16666666666666,
+      "rpc_p95_ms": 284.1666666666667,
+      "rpc_timeout_rate": 0,
+      "gateway_reconnect_count": 3,
+      "message_loss_count": 0,
+      "message_order_violation_count": 0
+    }
+  },
+  "ci": {
+    "driven_by": "agent",
+    "actor": "codex-windows-alpha-closeout",
+    "runId": 37763940523,
+    "candidate": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+    "status": "not-executed",
+    "allJobsHaveZeroSteps": true,
+    "annotation": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+    "source": "ci-annotations.txt",
+    "changedBilling": false,
+    "platformAcceptance": false
+  },
+  "boundaries": {
+    "scope": "Controlled Windows x64 alpha; agent-driven local scripted providers",
+    "cvk": "Selector gate computes denied, but production engine consumes diagnostics only; no execution-boundary enforcement claim",
+    "pptx": "Fixed three-record template; over-capacity rejection tested; arbitrary pagination and long-text visual acceptance not implemented",
+    "migration": "JSON-to-SQLite and synthetic downgrade-marker recovery tested; same-version installer replacement tested; two released-version upgrade not tested",
+    "platforms": "No current macOS/Linux pass; hosted matrix refused before any step by GitHub billing/spending-limit check",
+    "rootSkips": "50 aggregate runtime skips preserved; root console reporter does not enumerate every skipped case",
+    "mcp": "Initialization and health-only compatibility surface verified; not a claim of all VerseShell operations",
+    "gui": "Actual installed app.asar shell and returning profile verified with Gateway auto-start deliberately off; independent packaged runtime readiness verified separately"
+  },
+  "retainedFailures": [
+    {
+      "receipt": "D:/ClawX-work/windows-alpha-closeout-20261008/recovery-final/interrupted-electron.json",
+      "summary": "Codex restart interrupted the first 7ac9cebc9 full run at test 133/345; no final result; completed replacement run required"
+    },
+    {
+      "receipt": "D:/ClawX-work/windows-alpha-closeout-20261008/root-unit.json",
+      "summary": "Outdated installer assertion; first batch 7594 passed, 50 skipped, 1 failed; subsequent batches not run"
+    },
+    {
+      "receipt": "D:/ClawX-work/windows-alpha-closeout-20261008/windows-build.json",
+      "summary": "Missing bundled Node verification receipt; packaging refused delivery"
+    },
+    {
+      "receipt": "D:/ClawX-work/windows-alpha-closeout-20261008/interrupted-pack-observation.json",
+      "summary": "Packaging process disappeared without a completion receipt"
+    },
+    {
+      "receipt": "D:/ClawX-work/windows-alpha-closeout-20261008/electron-full.json",
+      "summary": "Complete 302865444 suite: 340 passed, 4 skipped, 1 recovery failure"
+    },
+    {
+      "receipt": "D:/ClawX-work/windows-alpha-closeout-20261008/recovery-diagnostic-2.json",
+      "summary": "Recovery race reproduced; four brand tests passed"
+    },
+    {
+      "receipt": "D:/ClawX-work/windows-alpha-closeout-20261008/gateway-recovery-red.json",
+      "summary": "Both new regressions fail original implementation"
+    },
+    {
+      "receipt": "D:/ClawX-work/windows-alpha-closeout-20261008/gateway-recovery-green.json",
+      "summary": "Test double bypassed state controller; corrected before final 15/15"
+    },
+    {
+      "receipt": "D:/ClawX-work/windows-alpha-closeout-20261008/recovery-diagnostic.json",
+      "summary": "Initial CI-size fixture resized before window creation; fixed and followed by 6/6 real E2E"
+    },
+    {
+      "receipt": "D:/ClawX-work/windows-alpha-closeout-20261008/readonly-lint.json",
+      "summary": "Main checkout historical ignored scratch scripts caused two parser errors; final lint uses isolated candidate"
+    }
+  ],
+  "landing": {
+    "target": "existing private origin/main",
+    "method": "fast-forward without deleting historical branches",
+    "requiredSourceAncestor": "7ac9cebc9ef7f37d141c4274a24e370d6615b0a1",
+    "verificationReceipt": "D:/ClawX-work/windows-alpha-closeout-20261008/recovery-final/main-landing.json"
+  }
+}

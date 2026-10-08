@@ -1,68 +1,102 @@
-# Current Windows alpha qualification — 2026-10-08
+# Windows x64 alpha qualification — 2026-10-08
 
 `driven_by: agent` · `actor: codex-windows-alpha-closeout`
 
-Status: validation in progress. No new full-suite pass, main-branch landing or
-release acceptance is claimed by this initial record.
+The current source is qualified for the existing controlled Windows x64 alpha
+scope. This is local automated acceptance; no release, public artifact, frozen
+default change, or macOS/Linux acceptance is declared.
 
-The starting source is clean `dd9ea94dc089ebfc4a457dd9e5eec8e1a0b9b12f`,
-containing the three Windows fixes and their earlier scoped evidence. This
-qualification records the complete current root tests, Windows Electron suite,
-type projects, startup budget, Agent Dev gates and delivered-binary provenance.
-Raw runs are kept separately under `D:/ClawX-work/windows-alpha-closeout-20261008/`.
-Final results replace this progress text only after their files are inspected.
+The source candidate is 7ac9cebc9ef7f37d141c4274a24e370d6615b0a1, tree
+a7cb805eba4440ef5ec50b970d681c7b38081efe. Root tests, all seven type projects, the complete
+build and complete Electron run started from this clean candidate. Dependency
+installations were reused; application/runtime/plugin/Main archives were rebuilt.
+The final evidence is [report.json](../../artifacts/windows-alpha-closeout-20261008/report.json),
+with a credential scan and SHA256SUMS beside it. Raw logs, prior failures and
+process/configuration receipts remain at D:/ClawX-work/windows-alpha-closeout-20261008/recovery-final.
 
-The target remains controlled Windows x64 alpha. CVK diagnostics do not establish
-tool execution-boundary enforcement; the current PPTX renderer accepts at most
-three records. Cross-version migration and other operating systems require their
-own executed observations. Existing failures, skips and product defaults remain
-visible while these boundaries are checked. No package is published by this task.
+| Gate | Executed result |
+| --- | --- |
+| Complete root unit command | 8067 passed / 50 skipped / 0 failed |
+| Root node/web/test and runtime core/extensions/core-test/extensions-test types | Seven exit 0 results |
+| Complete Windows Electron | 341 passed / 4 skipped / 0 failed; 47.7 minutes; no global errors |
+| Windows build and startup budgets | Passed |
+| Readonly lint, communication replay and comparison | Passed |
+| VerseConf plugin boundary tests | 14 passed in 5 files |
+| Legacy auth-format migration tests | 3 passed in 2 files |
+| Agent Dev fresh build / full unit / full types / full E2E | Passed; strict audit 97, grade A |
+| Harness CI and task validation | Passed |
 
-The task contract is `harness/specs/tasks/windows-alpha-closeout.md`.
+Root tests are not the entire OpenClaw test corpus. Their 50 existing skips are
+reported as the console runner's aggregate; this record does not invent a
+per-case skip inventory. The Electron JSON lists four explicit skips: two paid
+live-provider/cache tests, macOS-only titlebar behavior and an opt-in visual-tuning
+capture. No retry, assertion or skip budget was relaxed.
 
-The previous main-branch Electron CI run `37107739333` was cancelled at the
-20-minute job limit on all three operating systems. Its Windows log records only
-54 passing tests before cancellation, with three failures and six skips preserved
-in the historical log. The full local suite already measured about 51 minutes.
-The job budget is therefore 90 minutes so the existing suite can complete; test
-timeouts, assertions, retries, platform matrix and failure uploads are unchanged.
-New CI results must be read before making a platform-specific acceptance claim.
+## Changes established by this qualification
 
-The first current root run stopped at one outdated installer assertion: 7,594
-passed, 50 skipped, one failed in its first batch; later root/DCS batches did not
-execute. The query had moved from inline CIM/tasklist commands to the existing
-PowerShell helper. The regression now checks helper packaging and bounded
-invocation, exit-code/marker consumption, and refusal unless absence is explicit.
-The running-process, absence and script-loading-failure helper tests are retained.
-The original failed run remains in `root-unit.log` and its candidate-bound receipt.
+The installer regression now follows the extracted process-check helper and
+retains fail-closed behavior. Complete acceptance also exposed a Gateway recovery
+race: stopping an unfinished start left its lock active, so the repair/start
+request disappeared while old startup work could still invoke Doctor. Startup
+now shares its in-flight promise, stop drains the cancelled flow, readiness
+checks cancellation, and stale recovery work cannot change the next lifecycle.
+Both new regression cases fail the old implementation; the two files pass all
+15 cases after the fix. The full recovery spec plus brand spec also pass 6/6.
 
-The 90-minute CI run `37724745719` also cancelled on all three platforms. Its
-Windows setup screenshot is 1024 x 720: the desktop sidebar auto-collapses below
-1120 pixels, explaining absent navigation/brand elements. The common Electron
-fixture now pins native content to 1280 x 800 before desktop tests; responsive
-specs can still resize it. CI also builds the runtime before real Gateway tests,
-matching local qualification prerequisites. All old failures are retained; these
-corrections require another CI run and do not yet establish a pass.
+Hosted CI now builds the required runtime and the Electron fixture waits for
+its first window before fixing native desktop content size. A 1024 x 720 hosted
+screen had triggered the app's intended sidebar collapse, hiding desktop test
+controls. Responsive tests retain their own explicit sizes. The CI job budget
+is 90 minutes based on the measured serial suite; per-test deadlines, retries,
+worker count and three-platform matrix remain unchanged.
 
-The first native-size fixture attempt (`2af561402`) resized before BrowserWindow
-creation in a focused reproduction. That attempt is retained as failed, including
-its teardown timeout. The fixture now waits for the initial window and closes
-its owned application if initialization fails, before handing it to the test.
+## Actual Windows delivery
 
-The clean `302865444` full Electron run completed with 340 passed, four skipped
-and one failed recovery scenario (50 minutes). A focused run reproduced a real
-lifecycle race: after stopping an unfinished start, the repair/start request was
-ignored by its old lock, and the superseded start could still run Doctor. The
-manager now drains cancelled startup before stop resolves, checks cancellation
-during readiness polling, and rejects stale repair work. Two regression cases
-fail against the old implementation; all 15 tests in those files pass after the
-fix. Complete validation and rebuilt delivery are still required for this code.
-README English, Chinese and Japanese capability claims remain applicable: the
-fix restores the existing recovery contract without expanding product scope.
+Installer: D:/ClawX-work/windows-alpha-closeout-20261008/recovery-final/release/Verse Claw-0.4.9-alpha.0-win-x64.exe
 
-The fixed production build passes the complete recovery spec plus the brand
-window spec: six passed, no failures/skips, 205.6 seconds. The runtime log shows
-the superseded readiness probe exiting before a new child starts. Root node,
-web and test type projects, scoped lint and diff-aware task validation pass.
-The final clean-candidate qualification and replacement installer evidence are
-written separately under the raw directory's `recovery-final/` subdirectory.
+SHA-256: 7bd7c209728e58278882876cf240f722d1b0759892e7a91f3b457d9806c4f07e
+
+Size: 556180981 bytes. The actual installer was extracted and checked:
+4174 dependency resolutions stay in the package, no external
+links were found, and all 12 native companions match the
+Main ASAR integrity table. A guarded packaged Gateway reaches readiness using
+only packaged modules. All 12 CLI probes pass, including the Electron fallback,
+with unchanged isolated state. MCP initialization and the health-only
+compatibility surface pass; that is not acceptance of every VerseShell operation.
+
+Non-elevated install, same-version replacement and silent uninstall pass. A seeded
+obsolete file disappears after replacement and modified CLI bytes are restored.
+The actual installed app.asar opens with first and returning isolated profiles.
+Those shell probes deliberately disable Gateway auto-start; packaged runtime
+readiness is verified independently. The original 11 user JSON files, raw PATH
+value/type and two shortcuts match their baseline. No installation directory,
+file, registration or CLI PATH entry remains.
+
+## Remaining capability and platform boundaries
+
+- CVK's selector API can compute a denied result, but the production engine reads
+  its diagnostics. Execution-boundary enforcement is not implemented by this task.
+- PPTX remains a three-record template. Over-capacity export is rejected without
+  dropping content; Markdown retains the full outline. Arbitrary pagination and
+  long-text visual acceptance remain outside the existing renderer contract.
+- JSON-to-SQLite migration, non-overwrite protection and synthetic downgrade-marker
+  recovery were executed. Same-version installer replacement is not proof of an
+  upgrade between two released product versions.
+- Current macOS/Linux execution remains unverified. GitHub run 37763940523 refused
+  all three jobs before the first step because recent account payments failed or
+  the spending limit needs increasing. No billing setting was changed. Earlier
+  incomplete/failed matrix runs remain preserved; they are not converted to passes.
+
+## Preserved evidence history and landing
+
+Earlier installer-assertion failures, missing Node-receipt packaging failure,
+incomplete packaging and CI attempts, the complete 340-pass/4-skip/1-failure
+Electron run, and the first window-initialization attempt remain available in
+D:/ClawX-work/windows-alpha-closeout-20261008. The first final-candidate Electron attempt was
+interrupted by a Codex restart at test 133/345; its unfinished log is retained.
+The replacement complete run is the result counted above.
+
+Only the current candidate and curated evidence are intended for a fast-forward
+onto the existing private main. The fetch-verified ref and source ancestry are
+recorded in the local main-landing.json receipt; unrelated branches/worktrees and
+Task Forest history are preserved. Task Forest and session handoffs remain local.
