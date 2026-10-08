@@ -1,0 +1,729 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-stepfun-evidence",
+  "generatedAt": "2026-10-08T16:26:18.237Z",
+  "verdict": "basic-evidence-expanded-runtime-fixed-live-reverification-blocked",
+  "scope": "Script-only after owner steering; Windows runtime and real StepFun API; synthetic prompt data",
+  "scriptCandidate": "27b2f2961171c70c7eb02c48b190297474fe2eef",
+  "runtimeFixCandidate": "2749f07b2a5555f65ec45155a5936c038de5b53d",
+  "published": false,
+  "defaultsChanged": false,
+  "desktopAccepted": false,
+  "liveRuntimeAfterFixAccepted": false,
+  "directLive": {
+    "models": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "observedAt": "2026-10-08T14:49:35.634Z",
+      "endpoint": "https://api.stepfun.com/step_plan/v1/models",
+      "status": 200,
+      "requestedModel": "step-5-preview",
+      "modelAvailable": true,
+      "credentialRecorded": false
+    },
+    "completion": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "endpoint": "https://api.stepfun.com/step_plan/v1/chat/completions",
+      "requestedModel": "step-5-preview",
+      "returnedModel": "step-5-preview",
+      "status": 200,
+      "durationMs": 1050,
+      "id": "c24ce56b11252010f288d9dfd996548e.5c1a9fd3d5ed3db6925cb93434b76929",
+      "usage": {
+        "prompt_tokens": 25,
+        "completion_tokens": 43,
+        "total_tokens": 68,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "finishReason": "stop",
+      "response": "STEP-LIVE-OK"
+    },
+    "checks": [
+      {
+        "name": "streaming",
+        "passed": true,
+        "response": "STREAM-LIVE-OK"
+      },
+      {
+        "name": "function-call-roundtrip",
+        "passed": true,
+        "tool": "lookup_fixture",
+        "arguments": {
+          "id": "evidence-blue"
+        },
+        "expected": "VALUE-0d617359",
+        "actual": "VALUE-0d617359",
+        "execution": "agent-driven synthetic lookup; not runtime filesystem tool evidence"
+      }
+    ],
+    "requests": [
+      {
+        "attempt": "direct-completion",
+        "label": "direct-nonstream",
+        "status": 200,
+        "returnedModel": "step-5-preview",
+        "usage": {
+          "prompt_tokens": 25,
+          "completion_tokens": 43,
+          "total_tokens": 68,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "durationMs": 1050
+      },
+      {
+        "attempt": "script-attempt-1",
+        "number": 1,
+        "label": "direct-stream",
+        "model": "step-5-preview",
+        "stream": true,
+        "requestBytes": 192,
+        "requestSha256": "07411b49ddb69d5552b2a46b9fb0c654d32aaaec7e629bd1e1b5dafbc955a3c1",
+        "status": 200,
+        "durationMs": 1073,
+        "responseSha256": "538924b5616c873ae4c389572f9828c6640cd3bd906ff840deeb9a7f6d6d0e09",
+        "usage": {
+          "prompt_tokens": 25,
+          "completion_tokens": 35,
+          "total_tokens": 60,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "returnedModel": "step-5-preview",
+        "finishReason": "stop",
+        "streamChunks": 13
+      },
+      {
+        "attempt": "script-attempt-2",
+        "number": 1,
+        "label": "direct-stream",
+        "model": "step-5-preview",
+        "stream": true,
+        "requestBytes": 192,
+        "requestSha256": "07411b49ddb69d5552b2a46b9fb0c654d32aaaec7e629bd1e1b5dafbc955a3c1",
+        "status": 200,
+        "durationMs": 1177,
+        "responseSha256": "93fa4a5a71ce6b3478158eb9a3ee392f346646c38f25dce762a4727929571a3b",
+        "usage": {
+          "prompt_tokens": 25,
+          "completion_tokens": 47,
+          "total_tokens": 72,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "returnedModel": "step-5-preview",
+        "finishReason": "stop",
+        "streamChunks": 21
+      },
+      {
+        "attempt": "script-attempt-2",
+        "number": 2,
+        "label": "direct-tool-selection",
+        "model": "step-5-preview",
+        "stream": false,
+        "requestBytes": 490,
+        "requestSha256": "9a51a235381f9cf4e0361e26e7180e10492aec79683d5bce0861f2b1130cd3ab",
+        "status": 200,
+        "durationMs": 1342,
+        "responseSha256": "be4728872031b1a6131b1b5d681c0c0ee59bc7081ca73344e23da8e0704958e4",
+        "usage": {
+          "prompt_tokens": 249,
+          "completion_tokens": 55,
+          "total_tokens": 304,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "returnedModel": "step-5-preview",
+        "finishReason": "tool_calls"
+      },
+      {
+        "attempt": "script-attempt-2",
+        "number": 3,
+        "label": "direct-tool-result",
+        "model": "step-5-preview",
+        "stream": false,
+        "requestBytes": 837,
+        "requestSha256": "4481b01542cf16ff39044cdd99c7e81f002da3651a7fda7b2b937065a3692b32",
+        "status": 200,
+        "durationMs": 1207,
+        "responseSha256": "8cf93797b3ebbc6ed9584a186b47d9051c5c3738fd1c38cb2e1683eaebc691e3",
+        "usage": {
+          "prompt_tokens": 125,
+          "completion_tokens": 55,
+          "total_tokens": 180,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "returnedModel": "step-5-preview",
+        "finishReason": "stop"
+      },
+      {
+        "attempt": "script-final",
+        "number": 1,
+        "label": "direct-stream",
+        "model": "step-5-preview",
+        "stream": true,
+        "parameters": {
+          "model": "step-5-preview",
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          },
+          "max_tokens": 512
+        },
+        "toolCount": 0,
+        "requestBytes": 192,
+        "requestSha256": "07411b49ddb69d5552b2a46b9fb0c654d32aaaec7e629bd1e1b5dafbc955a3c1",
+        "status": 403,
+        "durationMs": 204,
+        "responseSha256": "b0d88451df6f38d0e8d280f3b6850170f554748cf510088e9696dbde36e9a3c4",
+        "content": "",
+        "usageWithChoiceFrames": 0,
+        "deltaKeys": [],
+        "toolCallChunks": 0,
+        "usage": null,
+        "returnedModel": null,
+        "finishReason": null,
+        "streamChunks": 1,
+        "error": {
+          "message": "real-name verification is required for your free step plan before calling this API. please complete face verification at https://account.stepfun.com/security?action=realname",
+          "type": "real_name_required"
+        }
+      }
+    ]
+  },
+  "runtimeDefect": {
+    "trigger": "OpenAI-compatible SSE frame contains both usage and choices",
+    "before": "StepFun HTTP 200 and expected text received; production transport early continue after usage discarded text/tool deltas and finish reason",
+    "proof": {
+      "providerReturnedText": "RUNTIME-LIVE-OK-1",
+      "expected": "RUNTIME-LIVE-OK-1",
+      "persistedAssistantText": "",
+      "reportedUsage": {
+        "cached_tokens": 1536,
+        "prompt_tokens": 24790,
+        "completion_tokens": 114,
+        "total_tokens": 24904,
+        "prompt_tokens_details": {
+          "cached_tokens": 1536
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      }
+    },
+    "fix": "Apply usage and also process choices from the same frame",
+    "regression": {
+      "original": {
+        "passed": 2,
+        "failed": 2
+      },
+      "fixed": {
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0,
+        "files": 2
+      }
+    }
+  },
+  "syntheticRuntimeReverification": {
+    "responseOrigin": "synthetic fixture; not a StepFun call",
+    "realProviderCalls": 0,
+    "passed": true,
+    "checks": [
+      {
+        "name": "streaming",
+        "passed": true,
+        "response": "STREAM-LIVE-OK"
+      },
+      {
+        "name": "function-call-roundtrip",
+        "passed": true,
+        "tool": "lookup_fixture",
+        "arguments": {
+          "id": "evidence-blue"
+        },
+        "expected": "VALUE-28a30898",
+        "actual": "VALUE-28a30898",
+        "execution": "agent-driven synthetic lookup; not runtime filesystem tool evidence"
+      },
+      {
+        "name": "runtime-turn-1",
+        "passed": true,
+        "runId": "abe7dc92-d19f-4496-ba0a-8ee95a5c0ac0",
+        "expected": "RUNTIME-LIVE-OK-1",
+        "actual": "RUNTIME-LIVE-OK-1",
+        "model": "step-5-preview",
+        "provider": "stepfun-evidence",
+        "usage": {
+          "input": 12,
+          "output": 2,
+          "totalTokens": 14,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        }
+      },
+      {
+        "name": "runtime-turn-2",
+        "passed": true,
+        "runId": "46d166a5-fc2a-4425-ba45-1b495571701e",
+        "expected": "marker-f47197bd",
+        "actual": "marker-f47197bd",
+        "model": "step-5-preview",
+        "provider": "stepfun-evidence",
+        "usage": {
+          "input": 14,
+          "output": 2,
+          "totalTokens": 16,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        }
+      }
+    ],
+    "usage": {
+      "input": 26,
+      "output": 4,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 30,
+      "totalCost": 0,
+      "inputCost": 0,
+      "outputCost": 0,
+      "cacheReadCost": 0,
+      "cacheWriteCost": 0,
+      "missingCostEntries": 2
+    },
+    "cache": {
+      "status": "fresh",
+      "cachedFiles": 1,
+      "pendingFiles": 0,
+      "staleFiles": 0,
+      "refreshedAt": 1791476530944
+    },
+    "cleanup": {
+      "gatewayExited": false,
+      "forcedCleanup": true
+    }
+  },
+  "liveReverification": {
+    "passed": false,
+    "status": 403,
+    "errorType": "real_name_required",
+    "message": "real-name verification is required for your free step plan before calling this API. please complete face verification at https://account.stepfun.com/security?action=realname",
+    "providerRequests": 1,
+    "noBypassAttempted": true
+  },
+  "usageAccounting": {
+    "knownScriptAndDirectRequests": {
+      "requests": 8,
+      "success": 7,
+      "refused": 1,
+      "tokens": 50623
+    },
+    "desktopFailedAttemptRequests": "unmeasured; excluded from known count",
+    "monetaryCost": null,
+    "costReason": "No billing statement or confirmed model tariff supplied",
+    "cacheClaim": "One pre-fix real request reported 1536 cached input tokens; no stable/warm cache benchmark or universal hit rate claimed"
+  },
+  "gates": {
+    "transport-final": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "name": "transport-final",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "--dir",
+        "openclaw_runtime",
+        "exec",
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "src/agents/openai-transport-stream.test.ts",
+        "src/agents/openai-transport-stream-responses-input.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/ClawX-work/stepfun-basic-evidence-20261008/transport-final-tests.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T16:08:20.410Z",
+      "completedAt": "2026-10-08T16:08:49.373Z",
+      "candidate": {
+        "commit": "2749f07b2a5555f65ec45155a5936c038de5b53d",
+        "tree": "fc372b71678b5fb9e5c7dfd24a4260bba26e5e59",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\transport-final.log",
+      "logSha256": "e540ace5e7de2d912ef7a775f111c83e977b28729b9b00561607ae0c3b45680d",
+      "statusAfter": ""
+    },
+    "runtime-core-types": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "name": "runtime-core-types",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "--incremental",
+        "false",
+        "-p",
+        "openclaw_runtime/tsconfig.core.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T16:08:49.617Z",
+      "completedAt": "2026-10-08T16:08:56.013Z",
+      "candidate": {
+        "commit": "2749f07b2a5555f65ec45155a5936c038de5b53d",
+        "tree": "fc372b71678b5fb9e5c7dfd24a4260bba26e5e59",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\runtime-core-types.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "statusAfter": ""
+    },
+    "runtime-test-types": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "name": "runtime-test-types",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "--incremental",
+        "false",
+        "-p",
+        "openclaw_runtime/test/tsconfig/tsconfig.core.test.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T16:08:56.256Z",
+      "completedAt": "2026-10-08T16:09:01.978Z",
+      "candidate": {
+        "commit": "2749f07b2a5555f65ec45155a5936c038de5b53d",
+        "tree": "fc372b71678b5fb9e5c7dfd24a4260bba26e5e59",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\runtime-test-types.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "statusAfter": ""
+    },
+    "runtime-build": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "name": "runtime-build",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "build:runtime"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T16:09:02.216Z",
+      "completedAt": "2026-10-08T16:09:30.444Z",
+      "candidate": {
+        "commit": "2749f07b2a5555f65ec45155a5936c038de5b53d",
+        "tree": "fc372b71678b5fb9e5c7dfd24a4260bba26e5e59",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\runtime-build.log",
+      "logSha256": "0ca86f134ee35ea377cd263dac6b4c7c7241afd809fcab799e98313b65ba6437",
+      "statusAfter": ""
+    },
+    "script-lint-final": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "name": "script-lint-final",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "exec",
+        "eslint",
+        "scripts/check-live-model-evidence.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T16:24:43.543Z",
+      "completedAt": "2026-10-08T16:24:46.265Z",
+      "candidate": {
+        "commit": "27b2f2961171c70c7eb02c48b190297474fe2eef",
+        "tree": "7ede29c804e72bb17cf73772748bee3dd0670ce4",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\script-lint-final.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "statusAfter": ""
+    },
+    "comms-replay-final": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "name": "comms-replay-final",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "comms:replay"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T16:09:33.570Z",
+      "completedAt": "2026-10-08T16:09:34.297Z",
+      "candidate": {
+        "commit": "2749f07b2a5555f65ec45155a5936c038de5b53d",
+        "tree": "fc372b71678b5fb9e5c7dfd24a4260bba26e5e59",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\comms-replay-final.log",
+      "logSha256": "c037da6642ffca8e0aade629d4b1b1cfbdfa5ce140f3252f9b9fa1b9a4014b2b",
+      "statusAfter": ""
+    },
+    "comms-compare-final": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "name": "comms-compare-final",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "run",
+        "comms:compare"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T16:09:34.530Z",
+      "completedAt": "2026-10-08T16:09:35.176Z",
+      "candidate": {
+        "commit": "2749f07b2a5555f65ec45155a5936c038de5b53d",
+        "tree": "fc372b71678b5fb9e5c7dfd24a4260bba26e5e59",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\comms-compare-final.log",
+      "logSha256": "f4d2b9ba5e064ec3c6e24e983769fca768e6ea198a58eb1333ed77cc2f0b72a2",
+      "statusAfter": ""
+    },
+    "task-validate-final": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "name": "task-validate-final",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/stepfun-basic-live-evidence.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T16:09:35.416Z",
+      "completedAt": "2026-10-08T16:09:36.660Z",
+      "candidate": {
+        "commit": "2749f07b2a5555f65ec45155a5936c038de5b53d",
+        "tree": "fc372b71678b5fb9e5c7dfd24a4260bba26e5e59",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\task-validate-final.log",
+      "logSha256": "3c6da6b8109a1e9f222df04fad1936cec47b3ccd041aef9cec80cae2b4e87ed3",
+      "statusAfter": ""
+    },
+    "task-flow-final": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "name": "task-flow-final",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/stepfun-basic-live-evidence.md",
+        "--dry-run"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T16:09:36.896Z",
+      "completedAt": "2026-10-08T16:09:38.097Z",
+      "candidate": {
+        "commit": "2749f07b2a5555f65ec45155a5936c038de5b53d",
+        "tree": "fc372b71678b5fb9e5c7dfd24a4260bba26e5e59",
+        "status": "",
+        "dirty": false
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\task-flow-final.log",
+      "logSha256": "a8eed53a675e6970ac68441630907a41cc6f1b51f18b3225963aa37c1ff04ea1",
+      "statusAfter": ""
+    },
+    "evidence-validate": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "name": "evidence-validate",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/stepfun-basic-live-evidence.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T16:28:53.958Z",
+      "completedAt": "2026-10-08T16:28:55.413Z",
+      "candidate": {
+        "commit": "27b2f2961171c70c7eb02c48b190297474fe2eef",
+        "tree": "7ede29c804e72bb17cf73772748bee3dd0670ce4",
+        "status": "M docs/dev/stepfun-basic-live-evidence-20261008.md\n?? artifacts/stepfun-basic-live-evidence-20261008/",
+        "dirty": true
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\evidence-validate.log",
+      "logSha256": "3c6da6b8109a1e9f222df04fad1936cec47b3ccd041aef9cec80cae2b4e87ed3",
+      "statusAfter": "M docs/dev/stepfun-basic-live-evidence-20261008.md\n?? artifacts/stepfun-basic-live-evidence-20261008/"
+    },
+    "evidence-flow": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "name": "evidence-flow",
+      "command": [
+        "D:\\ClawX-work\\windows-blocker-fixes-20261007\\node-v24.16.0-win-x64\\node.exe",
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/stepfun-basic-live-evidence.md",
+        "--dry-run"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\full-acceptance-20261005\\ClawX",
+      "startedAt": "2026-10-08T16:28:55.661Z",
+      "completedAt": "2026-10-08T16:28:56.864Z",
+      "candidate": {
+        "commit": "27b2f2961171c70c7eb02c48b190297474fe2eef",
+        "tree": "7ede29c804e72bb17cf73772748bee3dd0670ce4",
+        "status": "M docs/dev/stepfun-basic-live-evidence-20261008.md\n?? artifacts/stepfun-basic-live-evidence-20261008/",
+        "dirty": true
+      },
+      "node": "v24.16.0",
+      "exitCode": 0,
+      "signal": null,
+      "log": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\evidence-flow.log",
+      "logSha256": "a8eed53a675e6970ac68441630907a41cc6f1b51f18b3225963aa37c1ff04ea1",
+      "statusAfter": "M docs/dev/stepfun-basic-live-evidence-20261008.md\n?? artifacts/stepfun-basic-live-evidence-20261008/"
+    }
+  },
+  "assets": [
+    {
+      "file": "openclaw_runtime/dist/entry.js",
+      "bytes": 2782,
+      "sha256": "4639e1220adc24cfc5fd59ad3baa814f492bb809c54f95bb89b7d3fe8e673c46"
+    },
+    {
+      "file": "openclaw_runtime/dist/openai-transport-stream-BZBBYjkt.js",
+      "bytes": 88861,
+      "sha256": "d2a8f0121b3c9296f73fb6302eb1091ae44f002ebc0714543fb6da4fd251afde"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/openai-transport-stream.ts",
+      "bytes": 56445,
+      "sha256": "79156251ac02a5b8704c33d49fd4960469ecffe47ec6d7d519f2fca4f079a639"
+    },
+    {
+      "file": "scripts/check-live-model-evidence.mjs",
+      "bytes": 13222,
+      "sha256": "f90ab20e817263a2aac6ac0dd4b13568cb77dc55fc3ca74cc729ac343f30e331"
+    }
+  ],
+  "retainedEvidence": "D:/ClawX-work/stepfun-basic-evidence-20261008",
+  "retainedFailures": [
+    "attempt-1: Playwright recording settings declaration rejected; 0 tests",
+    "attempt-2: desktop first reply timed out; no UI pass",
+    "script-attempt-1: local evidence formatting bug after successful stream",
+    "script-attempt-2 and script-diagnostic-3: real runtime empty-content defect",
+    "script-final: provider HTTP 403 real_name_required",
+    "task-validate: main workspace unrelated audit files outside task scope; isolated diff-aware validation passed"
+  ],
+  "remaining": [
+    "Real StepFun two-turn Gateway verification after the parser fix needs an endpoint/account currently permitted to call the API.",
+    "This is not broad model quality, all-provider compatibility, Windows full-suite requalification, new installer qualification, or platform/release acceptance."
+  ],
+  "readmeReview": "English, Chinese and Japanese setup claims remain valid; no new product flow/default. Detailed verification recorded in current note.",
+  "safety": {
+    "rawScan": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "generatedAt": "2026-10-08T16:27:30.389Z",
+      "scannedFiles": 169,
+      "excludedCount": 1147,
+      "excluded": "Compiler/Playwright transform caches, nonregular files and files above 30MiB",
+      "exactProvidedKeyHits": []
+    },
+    "processCleanup": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "observedAt": "2026-10-08T16:28:00.4700796Z",
+      "remaining": []
+    },
+    "credentialPersistedByRuntime": false,
+    "providedKeyAbsentFromScannedEvidence": true
+  }
+}
