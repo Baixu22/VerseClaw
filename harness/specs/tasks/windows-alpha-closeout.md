@@ -22,6 +22,10 @@ touchedAreas:
   - .github/workflows/electron-e2e.yml
   - tests/unit/installer-nsh.test.ts
   - tests/e2e/fixtures/electron.ts
+  - electron/gateway/manager.ts
+  - electron/gateway/startup-orchestrator.ts
+  - tests/unit/gateway-manager-restart-recovery.test.ts
+  - tests/unit/gateway-startup-orchestrator.test.ts
   - harness/specs/tasks/windows-alpha-closeout.md
   - docs/dev/windows-alpha-closeout-20261008.md
   - artifacts/windows-alpha-closeout-20261008/report.json

@@ -253,6 +253,7 @@ export class GatewayManager extends EventEmitter {
   private reconnectConfig: ReconnectConfig;
   private shouldReconnect = true;
   private startLock = false;
+  private startInFlight: Promise<void> | null = null;
   private lastSpawnSummary: string | null = null;
   private recentStartupStderrLines: string[] = [];
   private pendingRequests: Map<string, PendingGatewayRequest> = new Map();
@@ -472,6 +473,17 @@ export class GatewayManager extends EventEmitter {
    * Start Gateway process
    */
   async start(): Promise<void> {
+    if (this.startInFlight) return this.startInFlight;
+    const start = this.startInternal();
+    this.startInFlight = start;
+    try {
+      await start;
+    } finally {
+      if (this.startInFlight === start) this.startInFlight = null;
+    }
+  }
+
+  private async startInternal(): Promise<void> {
     if (this.startLock) {
       logger.debug('Gateway start ignored because a start flow is already in progress');
       return;
@@ -484,43 +496,44 @@ export class GatewayManager extends EventEmitter {
 
     this.startLock = true;
     const startEpoch = this.lifecycleController.bump('start');
-    await this.refreshConfiguredPort();
-    logger.info(`Gateway start requested (port=${this.status.port})`);
-    this.lastSpawnSummary = null;
     this.shouldReconnect = true;
-    await this.refreshReloadPolicy(true);
-
-    // Lazily load device identity (async file I/O + key generation).
-    // Must happen before connect() which uses the identity for the handshake.
-    await this.initDeviceIdentity();
-
-    // Manual start should override and cancel any pending reconnect timer.
-    if (this.reconnectTimer) {
-      clearTimeout(this.reconnectTimer);
-      this.reconnectTimer = null;
-      logger.debug('Cleared pending reconnect timer because start was requested manually');
-    }
-
-    // Only reset reconnectAttempts on manual start, not on auto-reconnect.
-    // Auto-reconnect calls start() via scheduleReconnect(); those should
-    // accumulate attempts so the maxAttempts cap works correctly.
-    if (!this.isAutoReconnectStart) {
-      this.reconnectAttempts = 0;
-      this.clearReconnectSelfHealProbe();
-    }
-    this.isAutoReconnectStart = false; // consume the flag
-    this.setStatus({ state: 'starting', reconnectAttempts: this.reconnectAttempts, gatewayReady: false });
-    this.resetGatewayReadyFallback();
-
-    // Check if Python environment is ready (self-healing) asynchronously.
-    // Fire-and-forget: only needs to run once, not on every retry.
-    warmupManagedPythonReadiness();
-
-    const t0 = Date.now();
-    let tSpawned = 0;
-    let tReady = 0;
-
     try {
+      await this.refreshConfiguredPort();
+      logger.info(`Gateway start requested (port=${this.status.port})`);
+      this.lastSpawnSummary = null;
+      await this.refreshReloadPolicy(true);
+
+      // Lazily load device identity (async file I/O + key generation).
+      // Must happen before connect() which uses the identity for the handshake.
+      await this.initDeviceIdentity();
+      this.lifecycleController.assert(startEpoch, 'start/prepare');
+
+      // Manual start should override and cancel any pending reconnect timer.
+      if (this.reconnectTimer) {
+        clearTimeout(this.reconnectTimer);
+        this.reconnectTimer = null;
+        logger.debug('Cleared pending reconnect timer because start was requested manually');
+      }
+
+      // Only reset reconnectAttempts on manual start, not on auto-reconnect.
+      // Auto-reconnect calls start() via scheduleReconnect(); those should
+      // accumulate attempts so the maxAttempts cap works correctly.
+      if (!this.isAutoReconnectStart) {
+        this.reconnectAttempts = 0;
+        this.clearReconnectSelfHealProbe();
+      }
+      this.isAutoReconnectStart = false; // consume the flag
+      this.setStatus({ state: 'starting', reconnectAttempts: this.reconnectAttempts, gatewayReady: false });
+      this.resetGatewayReadyFallback();
+
+      // Check if Python environment is ready (self-healing) asynchronously.
+      // Fire-and-forget: only needs to run once, not on every retry.
+      warmupManagedPythonReadiness();
+
+      const t0 = Date.now();
+      let tSpawned = 0;
+      let tReady = 0;
+
       await runGatewayStartupSequence({
         port: this.status.port,
         shouldWaitForPortFree: process.platform === 'win32',
@@ -574,7 +587,10 @@ export class GatewayManager extends EventEmitter {
         waitForReady: async (port) => {
           await waitForGatewayReady({
             port,
-            getProcessExitCode: () => this.processExitCode,
+            getProcessExitCode: () => {
+              this.lifecycleController.assert(startEpoch, 'start/readiness-probe');
+              return this.processExitCode;
+            },
           });
           tReady = Date.now();
         },
@@ -640,6 +656,10 @@ export class GatewayManager extends EventEmitter {
 
     // Clear all timers
     this.clearAllTimers();
+    // Drain the cancelled start before accepting a subsequent explicit start.
+    // Otherwise its lock can silently discard the operator's recovery request.
+    await this.startInFlight?.catch(() => undefined);
+
 
     // If this manager is attached to an external gateway process, ask it to shut down
     // over protocol before closing the socket.

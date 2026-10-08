@@ -283,4 +283,21 @@ describe('runGatewayStartupSequence', () => {
     expect(hooks.startProcess).toHaveBeenCalledTimes(1);
     expect(hooks.onConnectedToManagedGateway).toHaveBeenCalledTimes(1);
   });
+  it('does not repair configuration after stop supersedes a failing readiness wait', async () => {
+    let stopped = false;
+    const hooks = createMockHooks({
+      waitForReady: vi.fn().mockImplementation(async () => {
+        stopped = true;
+        throw new Error('Gateway process exited before becoming ready (code=1)');
+      }),
+      getStartupStderrLines: vi.fn().mockReturnValue(['Config invalid', 'Run: openclaw doctor --fix']),
+      assertLifecycle: vi.fn().mockImplementation(() => {
+        if (stopped) throw new LifecycleSupersededError('Stopped by operator');
+      }),
+    });
+    await expect(runGatewayStartupSequence(hooks)).rejects.toThrow(LifecycleSupersededError);
+    expect(hooks.runDoctorRepair).not.toHaveBeenCalled();
+    expect(hooks.delay).not.toHaveBeenCalled();
+  });
+
 });
