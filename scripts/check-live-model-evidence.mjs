@@ -117,7 +117,13 @@ try {
     assert.equal(textOf(assistant), turn.expected);
     report.checks.push({ name: 'runtime-turn-' + (index + 1), passed: true, runId: sent.runId, expected: turn.expected, actual: textOf(assistant), model: assistant.model, provider: assistant.provider, usage: assistant.usage }); save();
   }
-  report.runtimeUsage = await rpc('sessions.usage', { key: sessionKey, range: 'all', limit: 10 });
+  const usageDeadline = Date.now() + 30_000;
+  do {
+    report.runtimeUsage = await rpc('sessions.usage', { key: sessionKey, range: 'all', limit: 10 });
+    if (report.runtimeUsage.totals?.totalTokens > 0) break;
+    await sleep(500);
+  } while (Date.now() < usageDeadline);
+  assert(report.runtimeUsage.totals?.totalTokens > 0, 'Runtime aggregate usage did not refresh');
   assert(report.requests.filter(r => r.label === 'gateway-runtime').every(r => r.usage?.total_tokens > 0), 'Runtime provider usage missing');
   report.passed = true;
 } catch (error) { report.error = String(error.stack ?? error).replaceAll(key, '[REDACTED_CREDENTIAL]'); process.exitCode = 1; }

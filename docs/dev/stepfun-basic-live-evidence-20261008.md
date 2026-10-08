@@ -30,3 +30,9 @@ object caused an early continue, discarding text/tool deltas and finish reason
 in the same SSE frame. Two synthetic regression cases fail the original parser.
 The minimal fix processes both usage and choices; no provider default is changed.
 README English/Chinese/Japanese provider setup claims remain applicable.
+
+Final real-provider retry was rejected with HTTP 403 / real_name_required before
+any Gateway turn. No attempt was made to bypass the provider account check. A
+separate, explicitly synthetic usage+choice SSE replay confirms the fixed real
+Gateway now persists both turns and recalls the first marker. Aggregate usage
+requires waiting for the existing asynchronous usage cache to refresh.
