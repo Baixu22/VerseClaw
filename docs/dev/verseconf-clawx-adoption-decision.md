@@ -1,5 +1,7 @@
 # VerseConf × ClawX 消费者边界决定（TF-0245）
 
+> 2026-10-09 保留边界：v1 契约输入、校验脚本和最终输入哈希报告继续跟踪；早期尝试、任务图快照及覆盖这些旧产物的原 `SHA256SUMS` 一并留在仓库外字节备份和原 Git 历史中。没有重算旧哈希或把本轮清理升级为当时的验收。恢复方式见 [源码保留与本地归档](repository-artifact-retention.md)。
+
 日期：2026-10-01
 
 `actor: codex/root` · `driven_by: agent`

@@ -1,5 +1,7 @@
 # TF-0013：embedded ContextEngine 消息替换预算
 
+> 2026-10-09 保留边界：本文所述验证目录、临时脚本及逐轮日志已转为本地历史，不随干净检出提供；下文命令记录的是原运行，不是当前必需门禁。恢复见 [源码保留与本地归档](repository-artifact-retention.md)，持续回归以 `harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md` 中的源码测试为准；未重签历史结论。
+
 本轮承接 `tf0013-compass-budget-20260930.md` 的下一最小项：核验 `assemble().messages` 的历史/新增边界，并修复新增消息绕过 turn 总预算的路径。所有测试与复核均由 agent 驱动，属于工作树开发证据。
 
 ## 行为与边界

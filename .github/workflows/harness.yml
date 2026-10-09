@@ -7,6 +7,11 @@ on:
       - main
     paths:
       - 'harness/**'
+      - '.gitignore'
+      - 'artifacts/**'
+      - 'scripts/check-repository-artifacts.*'
+      - 'scripts/repository-artifacts.json'
+      - 'tests/unit/repository-artifact-retention.test.ts'
       - 'tests/unit/harness-specs.test.ts'
       - 'package.json'
       - 'pnpm-lock.yaml'
@@ -37,6 +42,9 @@ jobs:
         run: |
           git config --global "url.https://github.com/.insteadOf" "git@github.com:"
           git config --global --add "url.https://github.com/.insteadOf" "ssh://git@github.com/"
+
+      - name: Check repository artifact retention
+        run: node scripts/check-repository-artifacts.mjs
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

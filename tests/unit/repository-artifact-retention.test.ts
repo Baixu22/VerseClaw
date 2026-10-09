@@ -32,6 +32,7 @@ function createFixture() {
     retiredTests: ['tests/unit/retired-wording.test.ts'],
     requiredInputs: ['scripts/rc10/driver.mjs', 'plans/system-maturity/gates.json'],
     preservedMixedUseDirectories: ['artifacts'],
+    artifactBatches: {},
   };
   write(directory, 'scripts/repository-artifacts.json', JSON.stringify(fixturePolicy));
   write(directory, '.gitignore', '/.agent-workbench/task-forest/\n/runtime-research/\n/scripts/local-probe.mjs\n');
@@ -64,6 +65,9 @@ describe('repository artifact retention', () => {
     const localPaths = [
       ...policy.localOnlyFiles,
       ...policy.localOnlyDirectories.map((path) => `${path}/generated.json`),
+      ...Object.entries(policy.artifactBatches)
+        .filter(([, status]) => status === 'local-only')
+        .map(([batch]) => `artifacts/${batch}/generated.json`),
     ];
     for (const path of [...localPaths, ...policy.requiredInputs]) write(directory, path);
     const ignored = new Set(execFileSync('git', ['check-ignore', '--no-index', '--stdin', '-z'], {
@@ -109,6 +113,80 @@ describe('repository artifact retention', () => {
     write(directory, '.gitignore', '/plans/\n');
     expect(checkRepositoryArtifacts(directory).issues).toContain(
       'Required source input is ignored: plans/system-maturity/gates.json',
+    );
+  });
+
+  it.each(['replay.log', 'replay with spaces 记录.log'])(
+    'rejects ignored tracked output outside the old inventory: %s',
+    (name) => {
+      const directory = createFixture();
+      write(directory, '.gitignore', '/scratch-output/\n');
+      const path = `scratch-output/${name}`;
+      write(directory, path);
+      git(directory, 'add', '--force', '--', path);
+      expect(checkRepositoryArtifacts(directory).issues).toContain(`Tracked path is ignored: ${path}`);
+    },
+  );
+
+  it('rejects a new artifact batch until its retention status is declared', () => {
+    const directory = createFixture();
+    write(directory, 'artifacts/unreviewed-batch/report.json', '{}');
+    git(directory, 'add', '--', 'artifacts/unreviewed-batch/report.json');
+    expect(checkRepositoryArtifacts(directory).issues).toContain(
+      'Artifact batch has no retention status: artifacts/unreviewed-batch',
+    );
+  });
+
+  it.each(['retained', 'mixed'] as const)('accepts a declared %s batch that is not ignored', (status) => {
+    const directory = createFixture();
+    const fixturePolicy = JSON.parse(readFileSync(join(directory, 'scripts/repository-artifacts.json'), 'utf8'));
+    fixturePolicy.artifactBatches = { fixture: status };
+    write(directory, 'scripts/repository-artifacts.json', JSON.stringify(fixturePolicy));
+    write(directory, 'artifacts/fixture/report.json', '{}');
+    git(directory, 'add', '--', 'artifacts/fixture/report.json');
+    expect(checkRepositoryArtifacts(directory).issues).toEqual([]);
+  });
+
+  it('rejects a tracked batch declared local-only even without a duplicate directory entry', () => {
+    const directory = createFixture();
+    const fixturePolicy = JSON.parse(readFileSync(join(directory, 'scripts/repository-artifacts.json'), 'utf8'));
+    fixturePolicy.artifactBatches = { archive: 'local-only' };
+    write(directory, 'scripts/repository-artifacts.json', JSON.stringify(fixturePolicy));
+    write(directory, 'artifacts/archive/report.json', '{}');
+    git(directory, 'add', '--', 'artifacts/archive/report.json');
+    expect(checkRepositoryArtifacts(directory).issues).toContain(
+      'Local-only artifact batch is still tracked: artifacts/archive/report.json',
+    );
+  });
+
+  it('does not exempt ignored files in an explicitly retained batch', () => {
+    const directory = createFixture();
+    const fixturePolicy = JSON.parse(readFileSync(join(directory, 'scripts/repository-artifacts.json'), 'utf8'));
+    fixturePolicy.artifactBatches = { fixture: 'retained' };
+    write(directory, 'scripts/repository-artifacts.json', JSON.stringify(fixturePolicy));
+    write(directory, '.gitignore', '/artifacts/fixture/\n');
+    write(directory, 'artifacts/fixture/report.json', '{}');
+    git(directory, 'add', '--force', '--', 'artifacts/fixture/report.json');
+    expect(checkRepositoryArtifacts(directory).issues).toContain(
+      'Tracked path is ignored: artifacts/fixture/report.json',
+    );
+  });
+
+  it.each(['check.yml', 'harness.yml'])('runs the retention gate before install and Harness in %s', (workflow) => {
+    const source = readFileSync(join(root, '.github/workflows', workflow), 'utf8');
+    const gate = source.indexOf('run: node scripts/check-repository-artifacts.mjs');
+    expect(gate).toBeGreaterThanOrEqual(0);
+    expect(gate).toBeLessThan(source.indexOf('run: pnpm install --frozen-lockfile'));
+    expect(gate).toBeLessThan(source.indexOf('run: pnpm run harness:ci'));
+  });
+
+  it('rejects invalid retention status rather than treating it as an exemption', () => {
+    const directory = createFixture();
+    const fixturePolicy = JSON.parse(readFileSync(join(directory, 'scripts/repository-artifacts.json'), 'utf8'));
+    fixturePolicy.artifactBatches = { fixture: 'approved-by-confidence' };
+    write(directory, 'scripts/repository-artifacts.json', JSON.stringify(fixturePolicy));
+    expect(checkRepositoryArtifacts(directory).issues).toContain(
+      'Invalid artifact batch retention status: fixture=approved-by-confidence',
     );
   });
 });

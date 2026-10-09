@@ -24,9 +24,35 @@ export function checkRepositoryArtifacts(root = ROOT) {
     windowsHide: true,
   }).split('\0').filter(Boolean));
   const issues = [];
+  for (const [batch, status] of Object.entries(policy.artifactBatches)) {
+    if (!['retained', 'mixed', 'local-only'].includes(status)) {
+      issues.push(`Invalid artifact batch retention status: ${batch}=${status}`);
+    }
+  }
+  const trackedBatches = new Set();
   for (const path of tracked) {
     if (isLocalArtifact(path, policy)) issues.push(`Local artifact is still tracked: ${path}`);
+    if (!path.startsWith('artifacts/')) continue;
+    const batch = path.split('/')[1];
+    trackedBatches.add(batch);
+    if (policy.artifactBatches[batch] === 'local-only') {
+      issues.push(`Local-only artifact batch is still tracked: ${path}`);
+    }
   }
+  for (const batch of trackedBatches) {
+    if (!Object.hasOwn(policy.artifactBatches, batch)) {
+      issues.push(`Artifact batch has no retention status: artifacts/${batch}`);
+    }
+  }
+  // --no-index below protects required inputs; this independent scan checks the
+  // entire index, including ignored files added with --force or before the rule.
+  const ignoredTracked = execFileSync('git', ['ls-files', '-i', '-c', '--exclude-standard', '-z'], {
+    cwd: root,
+    encoding: 'utf8',
+    maxBuffer: 32 * 1024 * 1024,
+    windowsHide: true,
+  }).split('\0').filter(Boolean);
+  for (const path of ignoredTracked) issues.push(`Tracked path is ignored: ${path}`);
   for (const path of policy.requiredInputs) {
     if (!tracked.has(path)) issues.push(`Required source input is not tracked: ${path}`);
     if (!existsSync(join(root, path))) issues.push(`Required source input is missing: ${path}`);

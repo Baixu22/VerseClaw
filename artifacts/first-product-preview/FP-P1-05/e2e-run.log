@@ -1,8 +1,0 @@
-$ pnpm exec playwright test tests/e2e/restart-recovery-fp-p1-05.spec.ts --workers=1
-
-Running 1 test using 1 worker
-
-[fp-p1-05-evidence] {"beforePid":28132,"afterGatewayRestartPid":32208,"sessionId":"dea60a9d-7e41-4a86-be60-f513e4427c12","journalGeneration":"1","killAppliedMs":6980,"downgrade":{"fromVersion":"999.0.0","toVersion":"40.8.4","forcedOffFlagIds":["context-view-tools","working-memory","tool-registry","stale-write-guard","symbol-lease","routing-memo-shadow","sekb-experience-shadow"],"occurredAt":"2026-07-27T16:07:10.178Z"},"restartFailure":{"success":true,"id":"context-view-tools","enabled":true,"status":"pending-restart","restartedGateway":false,"ackTrail":["saved","pending-restart"],"failureReason":"restart-failed","operatorHintKey":"developer.dcsProdFlags.ackHint.restartFailed","error":"Saved but gateway restart failed: Error: Gateway process exited before becoming ready (code=1)"},"recoveredPid":30388}
-  ok 1 tests/e2e/restart-recovery-fp-p1-05.spec.ts:180:7 - FP-P1-05 restart / recovery / live kill / rollback - all seven live recovery scenarios remain explainable and fail closed (1.9m)
-
-  1 passed (1.9m)

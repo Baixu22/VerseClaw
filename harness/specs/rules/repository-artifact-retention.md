@@ -28,6 +28,21 @@ assert that the developer's current local task graph still has an old status.
 Explicit historical replay tools must identify their external inputs and fail with
 a useful error when those inputs are absent, rather than silently skip validation.
 
+## Complete index coverage
+
+Every tracked top-level batch under `artifacts/` must have an explicit
+`artifactBatches` status in `scripts/repository-artifacts.json`: `retained` for
+curated inputs/results, `mixed` for reviewed inputs/results alongside local run
+output, or `local-only` for archived development output. An undeclared tracked
+batch or a tracked file in a local-only batch is an error. A status is not an
+ignore exemption: `git ls-files -i -c --exclude-standard` must return no files.
+
+Keep the separate `git check-ignore --no-index` check for required inputs; it
+answers a different question and must not be removed to make the index pass.
+Both check.yml and harness.yml run `node scripts/check-repository-artifacts.mjs` before dependency
+installation and broader checks. Keep batch declarations and .gitignore consistent; new
+local runs do not authorize expanding a retained source/evidence boundary.
+
 ## Safe retirement
 
 Before removing a path from the index, inspect its callers and preserve both its

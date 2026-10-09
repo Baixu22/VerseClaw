@@ -4,7 +4,7 @@
 
 Task Forest、会话交接、研究逐轮记录、生成截图和一次性探针是本地开发历史，不是应用源码。取消跟踪不会删除本机副本，也不会抹掉 Git 历史、其他分支或远端对象。
 
-精确边界见 `scripts/repository-artifacts.json`。用 `node scripts/check-repository-artifacts.mjs` 检查本地文件是否仍被跟踪、必要输入是否缺失或被忽略，以及退休测试是否仍被默认发现或显式门禁调用。不要对 `artifacts/`、`docs/dev/`、`plans/`、`tests/`、`scripts/` 整目录取消跟踪。
+精确边界见 `scripts/repository-artifacts.json`。用 `node scripts/check-repository-artifacts.mjs` 检查本地文件是否仍被跟踪、所有索引路径是否命中忽略规则、产物批次是否声明保留状态、必要输入是否缺失或被忽略，以及退休测试是否仍被默认发现或显式门禁调用。不要对 `artifacts/`、`docs/dev/`、`plans/`、`tests/`、`scripts/` 整目录取消跟踪。
 
 继续保留：
 
@@ -21,7 +21,7 @@ Task Forest、会话交接、研究逐轮记录、生成截图和一次性探针
 - `.agent-workbench/task-forest/` 全部管理状态、提案和历史。
 - `runtime-research/` 与 `docs/dev/handoffs/`。当前运行时边界提炼到 `runtime-research-boundaries.md`；产品 worker handoff 实现及测试不是开发交接，不在此范围。
 - `artifacts/runtime-utf8-recovery/`、两份 `P6-005.prev-*` / `P6-005.stale-*` 旧副本、Task Forest landing/remaining-node 审计输出、`e2e-monitor/` 续跑输出。
-- `reports/visual-tune/`、`reports/ui-review/`、`reports/assets/`、`.design-staging/verse-hero/`。保留生成这些输出的 E2E 源码，正式产品展示图仍在原资源目录。
+- `reports/visual-tune/`、`reports/ui-review/`、`reports/assets/`、`.design-staging/`。保留生成这些输出的 E2E 源码，正式产品展示图仍在原资源目录。
 - 独立 `prototypes/`、`hello-world/` 实验、`.parity-audit/`、本机 Task Forest 补丁副本与 `WORKTREE.md`。
 - 审计明确列出的 16 个一次性脚本/输入，逐项列于保留清单。不要为了验证归档而运行旧封存/压缩/重建脚本。
 
@@ -79,3 +79,17 @@ python ../repository-artifact-cleanup-20261003/recover.py \
 清理要在仅含保留源码和本次修改的隔离目录中验证，不复制本机忽略的任务图、研究目录或旧截图。允许复用已安装依赖，但必须说明这不是全新安装验证。
 
 原工作区尚有产品、翻译、基线和 README 合并冲突。任何由这些冲突造成的构建或测试失败必须保留并报告；不得删除测试、扩大忽略规则、用旧候选 verdict 或局部测试绿色替代整体验收。本次不提交合并、不推送、不删除远端分支、不改写历史，不改变任何产品默认值或发布范围。
+
+## 2026-10-09 影子跟踪与过程产物收敛
+
+本轮处理 #63、#68、#74；不处理产品 bug、不改本地 Task Forest、不删除分支、不重写历史。
+
+- 对原有 63 个已跟踪批次完整分类：43 个 `retained`（固定输入或最终结果）、13 个 `mixed`（保留已核实输入/结果，逐轮输出本地化）、7 个 `local-only`（五个 TF-0013 开发批次、可再生展示包和历史 unblock 提示包）。清单是源码边界，不是第二份任务图。
+- 精确取消跟踪 487 个文件，保留全部本机原字节：设计和规划草稿、预览原始日志/扫描、RC-10 旧开发运行、H-01 中间执行、TF-0013 多轮日志/快照/临时助手、展示副本以及旧契约的过程快照。
+- 原 22 个必需输入全部保留；另将 Agent Dev 的三份必需报告、两份原生构建输入以及封存 campaign 的 8 份哈希绑定日志和清单纳入保护，共 36 项。保留 RC-09 原候选谱系、RC-10 正式 acceptance、当前系统成熟度完整证据链与固定回放输入，不把“有历史时间戳”直接当作可删除依据。
+- v1 契约最终报告里的输入哈希及相应 12 个输入保持原样；包含已归档过程快照的旧总 `SHA256SUMS` 随原批次备份，不重写成“清理验收通过”。
+- `check.yml` 与 `harness.yml` 在安装依赖及运行其他门禁前直接执行 `node scripts/check-repository-artifacts.mjs`（只需 Node/Git，不触发 pnpm 的隐式安装）。任何已跟踪且命中 ignore 的路径、未声明的已跟踪批次、`local-only` 批次内的跟踪文件都失败；`retained` / `mixed` 不是强制提交忽略文件的豁免。
+
+本机仓库外归档位于同级 `repository-artifact-cleanup-20261009/`（已存在时使用独立后缀），包含 `backup-manifest.json`、`worktree-before/`、`index-blobs/`、原始 index/状态与本轮门禁日志。`untracking-manifest.json` 记录精确列表和备份哈希；保留的旧契约输入也一起备份，便于恢复原封存包。恢复时只复制所需字节到新目录，核对 manifest SHA-256；不要覆盖后续已有工作或直接替换当前索引。
+
+验证必须使用只含保留源码及本轮改动的隔离投影，不借用被忽略的本地证据。允许复用已安装依赖，但须标注这不是重新安装依赖的验证。本轮日志和恢复清单留在仓库外，不再增加一个受跟踪的过程报告批次。

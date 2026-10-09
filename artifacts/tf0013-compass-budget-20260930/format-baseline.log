@@ -1,9 +1,0 @@
-Checking formatting...
-
-C:/Users/27933/AppData/Local/Temp/tf0013-format-baseline-zfarjhzr/0-run.ts (35ms)
-C:/Users/27933/AppData/Local/Temp/tf0013-format-baseline-zfarjhzr/1-rc03-entry-transitions.acceptance.test.ts (4ms)
-C:/Users/27933/AppData/Local/Temp/tf0013-format-baseline-zfarjhzr/2-rc03-seal-hook.ts (2ms)
-
-Format issues found in above 3 files. Run without `--check` to fix.
-Finished in 201ms on 3 files using 1 threads.
-No config found, using defaults. Please add a config file or try `oxfmt --init` if needed.

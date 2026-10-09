@@ -5,6 +5,7 @@ export interface RepositoryArtifactPolicy {
   retiredTests: string[];
   requiredInputs: string[];
   preservedMixedUseDirectories: string[];
+  artifactBatches: Record<string, 'retained' | 'mixed' | 'local-only'>;
 }
 
 export function isLocalArtifact(path: string, policy: RepositoryArtifactPolicy): boolean;

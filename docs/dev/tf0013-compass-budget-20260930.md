@@ -1,5 +1,7 @@
 # TF-0013：COMPASS 共享预算开发增量
 
+> 2026-10-09 保留边界：本文所述验证目录、临时脚本及逐轮日志已转为本地历史，不随干净检出提供；下文命令记录的是原运行，不是当前必需门禁。恢复见 [源码保留与本地归档](repository-artifact-retention.md)，持续回归以 `harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md` 中的源码测试为准；未重签历史结论。
+
 2026-09-30；actor: codex/root；driven_by: agent。
 
 COMPASS SSP / pre-reply retrieval 现在作为 knowledge 候选进入既有 ContextCandidate 排序、去重和 turn ledger。回复准备不再直接把这两段拼入 extraSystemPrompt；即时回复、排队续跑、CLI 和原生 harness 均传递或投影同一份准备结果。没有新增预算、产品开关或修改 6000/0.1 默认值。
