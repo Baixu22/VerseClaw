@@ -1,0 +1,982 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-stepfun-real-acceptance",
+  "verifiedAt": "2026-10-09T03:21:50.951Z",
+  "sourceCandidate": "0d8fa48a5c5ae6ee064acc497839e99e80bc693f",
+  "sourceTree": "e4d70e3074e57a7421ee76ad2ce5b225a89f226a",
+  "sourceWorkspaceClean": true,
+  "runtimeAssets": [
+    {
+      "file": "openclaw_runtime/dist/entry.js",
+      "bytes": 2782,
+      "sha256": "4639e1220adc24cfc5fd59ad3baa814f492bb809c54f95bb89b7d3fe8e673c46"
+    },
+    {
+      "file": "openclaw_runtime/dist/openai-transport-stream-BZBBYjkt.js",
+      "bytes": 88861,
+      "sha256": "d2a8f0121b3c9296f73fb6302eb1091ae44f002ebc0714543fb6da4fd251afde"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/openai-transport-stream.ts",
+      "bytes": 56445,
+      "sha256": "79156251ac02a5b8704c33d49fd4960469ecffe47ec6d7d519f2fca4f079a639"
+    }
+  ],
+  "dependencies": {
+    "installedReuse": true,
+    "isolatedRuntimeDirectoryWasEmpty": true,
+    "repairedMissingDependencyJunctions": 770,
+    "receipt": "D:/ClawX-work/stepfun-real-acceptance-20261009/dependency-environment-repair.json",
+    "freshInstall": false
+  },
+  "responseOrigin": "real HTTPS StepFun; no synthetic provider override",
+  "endpoint": "https://api.stepfun.com/step_plan/v1",
+  "model": "step-5-preview",
+  "verdict": "accepted-bounded-real-model-script-scope-with-preserved-environment-failure",
+  "passed": true,
+  "combinedAcrossAttempts": true,
+  "attempts": [
+    {
+      "id": "attempt-1",
+      "runnerExitCode": 1,
+      "passed": false,
+      "requests": 3,
+      "statuses": [
+        200,
+        200,
+        200
+      ],
+      "completedChecks": [
+        {
+          "name": "streaming",
+          "passed": true,
+          "response": "STREAM-LIVE-OK"
+        },
+        {
+          "name": "function-call-roundtrip",
+          "passed": true,
+          "tool": "lookup_fixture",
+          "arguments": {
+            "id": "evidence-blue"
+          },
+          "expected": "VALUE-5257cec5",
+          "actual": "VALUE-5257cec5",
+          "execution": "agent-driven synthetic lookup; not runtime filesystem tool evidence"
+        }
+      ],
+      "failure": "AssertionError [ERR_ASSERTION]: Gateway exited\n    at file:///C:/Users/27933/.codex/worktrees/full-acceptance-20261005/ClawX/scripts/check-live-model-evidence.mjs:105:35",
+      "gatewayLog": "Cannot find package tslog; Gateway exited before any Gateway model request",
+      "preserved": true
+    },
+    {
+      "id": "attempt-2-gateway",
+      "runnerExitCode": 0,
+      "passed": true,
+      "requests": 4,
+      "statuses": [
+        200,
+        200,
+        200,
+        200
+      ],
+      "completedChecks": [
+        {
+          "name": "runtime-turn-1",
+          "passed": true,
+          "runId": "f9b772d7-c7d7-48d1-ba23-6dff80a6662e",
+          "expected": "RUNTIME-LIVE-OK-1",
+          "actual": "RUNTIME-LIVE-OK-1",
+          "model": "step-5-preview",
+          "provider": "stepfun-evidence",
+          "usage": {
+            "input": 6789,
+            "output": 39,
+            "totalTokens": 6828,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          }
+        },
+        {
+          "name": "runtime-turn-2",
+          "passed": true,
+          "runId": "86d41801-00b1-4347-9be8-c6f6a116e8e8",
+          "expected": "marker-7524fa0c",
+          "actual": "marker-7524fa0c",
+          "model": "step-5-preview",
+          "provider": "stepfun-evidence",
+          "usage": {
+            "input": 446,
+            "output": 45,
+            "totalTokens": 6891,
+            "cacheRead": 6400,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          }
+        },
+        {
+          "name": "runtime-read-tool",
+          "passed": true,
+          "execution": "real Runtime read; real provider selected and consumed result",
+          "toolCall": {
+            "type": "toolCall",
+            "id": "chatcmpl-tool-88105f3e4296c401",
+            "name": "read",
+            "arguments": {
+              "path": "live-read-fixture.txt"
+            }
+          },
+          "toolResult": {
+            "role": "toolResult",
+            "toolCallId": "chatcmpl-tool-88105f3e4296c401",
+            "toolName": "read",
+            "content": [
+              {
+                "type": "text",
+                "text": "RUNTIME-READ-466fa84b-1900-42fd-a79c-5461c9099a11\n"
+              }
+            ],
+            "isError": false,
+            "timestamp": 1791515607004,
+            "__openclaw": {
+              "id": "469373bd",
+              "recordTimestampMs": 1791515607004,
+              "seq": 7
+            }
+          },
+          "expected": "RUNTIME-READ-466fa84b-1900-42fd-a79c-5461c9099a11",
+          "actual": "RUNTIME-READ-466fa84b-1900-42fd-a79c-5461c9099a11"
+        },
+        {
+          "name": "runtime-turn-3",
+          "passed": true,
+          "runId": "71ef8d03-2c0a-48a8-b97d-bddc0b6f7116",
+          "expected": "RUNTIME-READ-466fa84b-1900-42fd-a79c-5461c9099a11",
+          "actual": "RUNTIME-READ-466fa84b-1900-42fd-a79c-5461c9099a11",
+          "model": "step-5-preview",
+          "provider": "stepfun-evidence",
+          "usage": {
+            "input": 341,
+            "output": 29,
+            "totalTokens": 7026,
+            "cacheRead": 6656,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          }
+        }
+      ],
+      "continuation": "Gateway-only after missing dependency repair; direct successes not repeated",
+      "exitObservation": "Native ChildProcess.exitCode/signalCode; child close callback did not arrive in REPL although process exited"
+    }
+  ],
+  "requestBudget": {
+    "maximum": 8,
+    "actual": 7,
+    "gatewayUserTurns": 3,
+    "automaticRetries": 0
+  },
+  "totals": {
+    "requests": 7,
+    "promptTokens": 27960,
+    "completionTokens": 281,
+    "totalTokens": 28241,
+    "cacheReadTokens": 19456
+  },
+  "runtimeUsage": {
+    "updatedAt": 1791515608980,
+    "startDate": "1970-01-01",
+    "endDate": "2026-10-09",
+    "sessions": [
+      {
+        "key": "agent:main:stepfun-evidence",
+        "sessionId": "b6803de0-cdcc-46c9-8bdb-b78dac18ab3f",
+        "scope": "instance",
+        "updatedAt": 1791515608503,
+        "agentId": "main",
+        "modelProvider": "stepfun-evidence",
+        "model": "step-5-preview",
+        "usage": {
+          "input": 8104,
+          "output": 146,
+          "cacheRead": 19456,
+          "cacheWrite": 0,
+          "totalTokens": 27706,
+          "totalCost": 0,
+          "inputCost": 0,
+          "outputCost": 0,
+          "cacheReadCost": 0,
+          "cacheWriteCost": 0,
+          "missingCostEntries": 4,
+          "sessionId": "b6803de0-cdcc-46c9-8bdb-b78dac18ab3f",
+          "sessionFile": "D:\\ClawX-work\\stepfun-real-acceptance-20261009\\attempt-2-gateway\\state\\agents\\main\\sessions\\b6803de0-cdcc-46c9-8bdb-b78dac18ab3f.jsonl",
+          "firstActivity": 1791515592464,
+          "lastActivity": 1791515607966,
+          "durationMs": 15502,
+          "activityDates": [
+            "2026-10-09"
+          ],
+          "dailyBreakdown": [
+            {
+              "date": "2026-10-09",
+              "tokens": 27706,
+              "cost": 0
+            }
+          ],
+          "dailyMessageCounts": [
+            {
+              "date": "2026-10-09",
+              "total": 7,
+              "user": 3,
+              "assistant": 4,
+              "toolCalls": 1,
+              "toolResults": 0,
+              "errors": 0
+            }
+          ],
+          "utcQuarterHourMessageCounts": [
+            {
+              "date": "2026-10-09",
+              "quarterIndex": 12,
+              "total": 7,
+              "user": 3,
+              "assistant": 4,
+              "toolCalls": 1,
+              "toolResults": 0,
+              "errors": 0
+            }
+          ],
+          "utcQuarterHourTokenUsage": [
+            {
+              "date": "2026-10-09",
+              "quarterIndex": 12,
+              "input": 8104,
+              "output": 146,
+              "cacheRead": 19456,
+              "cacheWrite": 0,
+              "totalTokens": 27706,
+              "totalCost": 0
+            }
+          ],
+          "dailyLatency": [
+            {
+              "date": "2026-10-09",
+              "count": 4,
+              "avgMs": 1496.5,
+              "p95Ms": 2227,
+              "minMs": 1071,
+              "maxMs": 2227
+            }
+          ],
+          "dailyModelUsage": [
+            {
+              "date": "2026-10-09",
+              "provider": "stepfun-evidence",
+              "model": "step-5-preview",
+              "tokens": 27706,
+              "cost": 0,
+              "count": 4
+            }
+          ],
+          "messageCounts": {
+            "total": 7,
+            "user": 3,
+            "assistant": 4,
+            "toolCalls": 1,
+            "toolResults": 0,
+            "errors": 0
+          },
+          "toolUsage": {
+            "totalCalls": 1,
+            "uniqueTools": 1,
+            "tools": [
+              {
+                "name": "read",
+                "count": 1
+              }
+            ]
+          },
+          "modelUsage": [
+            {
+              "provider": "stepfun-evidence",
+              "model": "step-5-preview",
+              "count": 4,
+              "totals": {
+                "input": 8104,
+                "output": 146,
+                "cacheRead": 19456,
+                "cacheWrite": 0,
+                "totalTokens": 27706,
+                "totalCost": 0,
+                "inputCost": 0,
+                "outputCost": 0,
+                "cacheReadCost": 0,
+                "cacheWriteCost": 0,
+                "missingCostEntries": 4
+              }
+            }
+          ],
+          "latency": {
+            "count": 4,
+            "avgMs": 1496.5,
+            "p95Ms": 2227,
+            "minMs": 1071,
+            "maxMs": 2227
+          }
+        }
+      }
+    ],
+    "totals": {
+      "input": 8104,
+      "output": 146,
+      "cacheRead": 19456,
+      "cacheWrite": 0,
+      "totalTokens": 27706,
+      "totalCost": 0,
+      "inputCost": 0,
+      "outputCost": 0,
+      "cacheReadCost": 0,
+      "cacheWriteCost": 0,
+      "missingCostEntries": 4
+    },
+    "aggregates": {
+      "messages": {
+        "total": 7,
+        "user": 3,
+        "assistant": 4,
+        "toolCalls": 1,
+        "toolResults": 0,
+        "errors": 0
+      },
+      "tools": {
+        "totalCalls": 1,
+        "uniqueTools": 1,
+        "tools": [
+          {
+            "name": "read",
+            "count": 1
+          }
+        ]
+      },
+      "byModel": [
+        {
+          "provider": "stepfun-evidence",
+          "model": "step-5-preview",
+          "count": 4,
+          "totals": {
+            "input": 8104,
+            "output": 146,
+            "cacheRead": 19456,
+            "cacheWrite": 0,
+            "totalTokens": 27706,
+            "totalCost": 0,
+            "inputCost": 0,
+            "outputCost": 0,
+            "cacheReadCost": 0,
+            "cacheWriteCost": 0,
+            "missingCostEntries": 4
+          }
+        }
+      ],
+      "byProvider": [
+        {
+          "provider": "stepfun-evidence",
+          "count": 4,
+          "totals": {
+            "input": 8104,
+            "output": 146,
+            "cacheRead": 19456,
+            "cacheWrite": 0,
+            "totalTokens": 27706,
+            "totalCost": 0,
+            "inputCost": 0,
+            "outputCost": 0,
+            "cacheReadCost": 0,
+            "cacheWriteCost": 0,
+            "missingCostEntries": 4
+          }
+        }
+      ],
+      "byAgent": [
+        {
+          "agentId": "main",
+          "totals": {
+            "input": 8104,
+            "output": 146,
+            "cacheRead": 19456,
+            "cacheWrite": 0,
+            "totalTokens": 27706,
+            "totalCost": 0,
+            "inputCost": 0,
+            "outputCost": 0,
+            "cacheReadCost": 0,
+            "cacheWriteCost": 0,
+            "missingCostEntries": 4
+          }
+        }
+      ],
+      "byChannel": [],
+      "latency": {
+        "count": 4,
+        "avgMs": 1496.5,
+        "minMs": 1071,
+        "maxMs": 2227,
+        "p95Ms": 2227
+      },
+      "dailyLatency": [
+        {
+          "date": "2026-10-09",
+          "count": 4,
+          "avgMs": 1496.5,
+          "minMs": 1071,
+          "maxMs": 2227,
+          "p95Ms": 2227
+        }
+      ],
+      "modelDaily": [
+        {
+          "date": "2026-10-09",
+          "provider": "stepfun-evidence",
+          "model": "step-5-preview",
+          "tokens": 27706,
+          "cost": 0,
+          "count": 4
+        }
+      ],
+      "daily": [
+        {
+          "date": "2026-10-09",
+          "tokens": 27706,
+          "cost": 0,
+          "messages": 7,
+          "toolCalls": 1,
+          "errors": 0
+        }
+      ]
+    },
+    "cacheStatus": {
+      "status": "fresh",
+      "cachedFiles": 1,
+      "pendingFiles": 0,
+      "staleFiles": 0,
+      "refreshedAt": 1791515608485
+    }
+  },
+  "requests": [
+    {
+      "number": 1,
+      "label": "direct-stream",
+      "toolNames": [],
+      "model": "step-5-preview",
+      "stream": true,
+      "parameters": {
+        "model": "step-5-preview",
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "max_tokens": 512
+      },
+      "toolCount": 0,
+      "requestBytes": 192,
+      "requestSha256": "07411b49ddb69d5552b2a46b9fb0c654d32aaaec7e629bd1e1b5dafbc955a3c1",
+      "status": 200,
+      "durationMs": 956,
+      "responseSha256": "52d5bc0792167a61f87133ee2fd33a8007df9ff05db34970df67acb970d97d29",
+      "content": "STREAM-LIVE-OK",
+      "usageWithChoiceFrames": 10,
+      "deltaKeys": [
+        "role",
+        "content",
+        "reasoning",
+        "reasoning_content"
+      ],
+      "toolCallChunks": 0,
+      "usage": {
+        "prompt_tokens": 25,
+        "completion_tokens": 21,
+        "total_tokens": 46,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "returnedModel": "step-5-preview",
+      "finishReason": "stop",
+      "streamChunks": 11,
+      "globalNumber": 1
+    },
+    {
+      "number": 2,
+      "label": "direct-tool-selection",
+      "toolNames": [
+        "lookup_fixture"
+      ],
+      "model": "step-5-preview",
+      "stream": false,
+      "parameters": {
+        "model": "step-5-preview",
+        "tool_choice": {
+          "type": "function",
+          "function": {
+            "name": "lookup_fixture"
+          }
+        },
+        "max_tokens": 512
+      },
+      "toolCount": 1,
+      "requestBytes": 490,
+      "requestSha256": "9a51a235381f9cf4e0361e26e7180e10492aec79683d5bce0861f2b1130cd3ab",
+      "status": 200,
+      "durationMs": 4372,
+      "responseSha256": "0a2ba3fa8ab0e1840ee4ad16b0b9eb299ab4c141b3c89bf9c9dd3d9fde12ed7f",
+      "content": "",
+      "usageWithChoiceFrames": 0,
+      "deltaKeys": [],
+      "toolCallChunks": 0,
+      "usage": {
+        "prompt_tokens": 249,
+        "completion_tokens": 55,
+        "total_tokens": 304,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "returnedModel": "step-5-preview",
+      "finishReason": "tool_calls",
+      "globalNumber": 2
+    },
+    {
+      "number": 3,
+      "label": "direct-tool-result",
+      "toolNames": [],
+      "model": "step-5-preview",
+      "stream": false,
+      "parameters": {
+        "model": "step-5-preview",
+        "max_tokens": 512
+      },
+      "toolCount": 0,
+      "requestBytes": 823,
+      "requestSha256": "41d6df8a8d75c5755b2cc46c0a22038f065dfab8a5904e2b930474c5006fa796",
+      "status": 200,
+      "durationMs": 1273,
+      "responseSha256": "4144f5b1ddaf51932b5a30eb98021eabd6bec77b12252e8ebec1c535c51d86fa",
+      "content": "VALUE-5257cec5",
+      "usageWithChoiceFrames": 0,
+      "deltaKeys": [],
+      "toolCallChunks": 0,
+      "usage": {
+        "prompt_tokens": 126,
+        "completion_tokens": 59,
+        "total_tokens": 185,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "returnedModel": "step-5-preview",
+      "finishReason": "stop",
+      "globalNumber": 3
+    },
+    {
+      "number": 1,
+      "label": "gateway-runtime",
+      "toolNames": [
+        "read"
+      ],
+      "model": "step-5-preview",
+      "stream": true,
+      "parameters": {
+        "model": "step-5-preview",
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "max_tokens": 1024,
+        "signal": {}
+      },
+      "toolCount": 1,
+      "requestBytes": 23915,
+      "requestSha256": "f3ed2336d689f8dfd5941f2e3fb6066dbb671d91a3ebd5860314e27ab150b534",
+      "status": 200,
+      "durationMs": 1480,
+      "responseSha256": "db32fac1423e4a1909cce7dcb617ce80c22a5a2041ce399e5fec0c4c76d09d09",
+      "content": "RUNTIME-LIVE-OK-1",
+      "usageWithChoiceFrames": 15,
+      "deltaKeys": [
+        "role",
+        "content",
+        "reasoning",
+        "reasoning_content"
+      ],
+      "toolCallChunks": 0,
+      "usage": {
+        "prompt_tokens": 6789,
+        "completion_tokens": 39,
+        "total_tokens": 6828,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "returnedModel": "step-5-preview",
+      "finishReason": "stop",
+      "streamChunks": 16,
+      "globalNumber": 4
+    },
+    {
+      "number": 2,
+      "label": "gateway-runtime",
+      "toolNames": [
+        "read"
+      ],
+      "model": "step-5-preview",
+      "stream": true,
+      "parameters": {
+        "model": "step-5-preview",
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "max_tokens": 1024,
+        "signal": {}
+      },
+      "toolCount": 1,
+      "requestBytes": 24113,
+      "requestSha256": "f33359f58285b7e0013ee9790bf429fa99bbf50b206e9c10cd33548f25e30e73",
+      "status": 200,
+      "durationMs": 1151,
+      "responseSha256": "41dccb5d765916a05c63ef10b6ae454912aec93045c5ccceab1443c800ade313",
+      "content": "marker-7524fa0c",
+      "usageWithChoiceFrames": 16,
+      "deltaKeys": [
+        "role",
+        "content",
+        "reasoning",
+        "reasoning_content"
+      ],
+      "toolCallChunks": 0,
+      "usage": {
+        "cached_tokens": 6400,
+        "prompt_tokens": 6846,
+        "completion_tokens": 45,
+        "total_tokens": 6891,
+        "prompt_tokens_details": {
+          "cached_tokens": 6400
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "returnedModel": "step-5-preview",
+      "finishReason": "stop",
+      "streamChunks": 17,
+      "globalNumber": 5
+    },
+    {
+      "number": 3,
+      "label": "gateway-runtime",
+      "toolNames": [
+        "read"
+      ],
+      "model": "step-5-preview",
+      "stream": true,
+      "parameters": {
+        "model": "step-5-preview",
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "max_tokens": 1024,
+        "signal": {}
+      },
+      "toolCount": 1,
+      "requestBytes": 24435,
+      "requestSha256": "c38f8f409b62a61ec8a670025d9d63cd9a30e1c2871e4c821ab35e88a8528834",
+      "status": 200,
+      "durationMs": 1060,
+      "responseSha256": "fafdef8907d31228341dfc7547c98c972f2eefb4fa5f30f22723536f49f0a5ce",
+      "content": "",
+      "usageWithChoiceFrames": 8,
+      "deltaKeys": [
+        "role",
+        "content",
+        "reasoning",
+        "reasoning_content",
+        "tool_calls"
+      ],
+      "toolCallChunks": 4,
+      "usage": {
+        "cached_tokens": 6400,
+        "prompt_tokens": 6928,
+        "completion_tokens": 33,
+        "total_tokens": 6961,
+        "prompt_tokens_details": {
+          "cached_tokens": 6400
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "returnedModel": "step-5-preview",
+      "finishReason": "tool_calls",
+      "streamChunks": 9,
+      "globalNumber": 6
+    },
+    {
+      "number": 4,
+      "label": "gateway-runtime",
+      "toolNames": [
+        "read"
+      ],
+      "model": "step-5-preview",
+      "stream": true,
+      "parameters": {
+        "model": "step-5-preview",
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        },
+        "max_tokens": 1024,
+        "signal": {}
+      },
+      "toolCount": 1,
+      "requestBytes": 24746,
+      "requestSha256": "941a3c78e5da55e1c2a42f468d3c6ec5329a88c2556f261e3c490a05242473e6",
+      "status": 200,
+      "durationMs": 950,
+      "responseSha256": "9cd4d5708983d3b03921cb1b4b8a03ee045c39f62095a438a85420d4c63e1f10",
+      "content": "RUNTIME-READ-466fa84b-1900-42fd-a79c-5461c9099a11",
+      "usageWithChoiceFrames": 9,
+      "deltaKeys": [
+        "role",
+        "content"
+      ],
+      "toolCallChunks": 0,
+      "usage": {
+        "cached_tokens": 6656,
+        "prompt_tokens": 6997,
+        "completion_tokens": 29,
+        "total_tokens": 7026,
+        "prompt_tokens_details": {
+          "cached_tokens": 6656
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "returnedModel": "step-5-preview",
+      "finishReason": "stop",
+      "streamChunks": 10,
+      "globalNumber": 7
+    }
+  ],
+  "checks": [
+    {
+      "name": "streaming",
+      "passed": true,
+      "response": "STREAM-LIVE-OK"
+    },
+    {
+      "name": "function-call-roundtrip",
+      "passed": true,
+      "tool": "lookup_fixture",
+      "arguments": {
+        "id": "evidence-blue"
+      },
+      "expected": "VALUE-5257cec5",
+      "actual": "VALUE-5257cec5",
+      "execution": "agent-driven synthetic lookup; not runtime filesystem tool evidence"
+    },
+    {
+      "name": "runtime-turn-1",
+      "passed": true,
+      "runId": "f9b772d7-c7d7-48d1-ba23-6dff80a6662e",
+      "expected": "RUNTIME-LIVE-OK-1",
+      "actual": "RUNTIME-LIVE-OK-1",
+      "model": "step-5-preview",
+      "provider": "stepfun-evidence",
+      "usage": {
+        "input": 6789,
+        "output": 39,
+        "totalTokens": 6828,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "cost": {
+          "total": 0
+        }
+      }
+    },
+    {
+      "name": "runtime-turn-2",
+      "passed": true,
+      "runId": "86d41801-00b1-4347-9be8-c6f6a116e8e8",
+      "expected": "marker-7524fa0c",
+      "actual": "marker-7524fa0c",
+      "model": "step-5-preview",
+      "provider": "stepfun-evidence",
+      "usage": {
+        "input": 446,
+        "output": 45,
+        "totalTokens": 6891,
+        "cacheRead": 6400,
+        "cacheWrite": 0,
+        "cost": {
+          "total": 0
+        }
+      }
+    },
+    {
+      "name": "runtime-read-tool",
+      "passed": true,
+      "execution": "real Runtime read; real provider selected and consumed result",
+      "toolCall": {
+        "type": "toolCall",
+        "id": "chatcmpl-tool-88105f3e4296c401",
+        "name": "read",
+        "arguments": {
+          "path": "live-read-fixture.txt"
+        }
+      },
+      "toolResult": {
+        "role": "toolResult",
+        "toolCallId": "chatcmpl-tool-88105f3e4296c401",
+        "toolName": "read",
+        "content": [
+          {
+            "type": "text",
+            "text": "RUNTIME-READ-466fa84b-1900-42fd-a79c-5461c9099a11\n"
+          }
+        ],
+        "isError": false,
+        "timestamp": 1791515607004,
+        "__openclaw": {
+          "id": "469373bd",
+          "recordTimestampMs": 1791515607004,
+          "seq": 7
+        }
+      },
+      "expected": "RUNTIME-READ-466fa84b-1900-42fd-a79c-5461c9099a11",
+      "actual": "RUNTIME-READ-466fa84b-1900-42fd-a79c-5461c9099a11"
+    },
+    {
+      "name": "runtime-turn-3",
+      "passed": true,
+      "runId": "71ef8d03-2c0a-48a8-b97d-bddc0b6f7116",
+      "expected": "RUNTIME-READ-466fa84b-1900-42fd-a79c-5461c9099a11",
+      "actual": "RUNTIME-READ-466fa84b-1900-42fd-a79c-5461c9099a11",
+      "model": "step-5-preview",
+      "provider": "stepfun-evidence",
+      "usage": {
+        "input": 341,
+        "output": 29,
+        "totalTokens": 7026,
+        "cacheRead": 6656,
+        "cacheWrite": 0,
+        "cost": {
+          "total": 0
+        }
+      }
+    }
+  ],
+  "transcript": {
+    "path": "D:/ClawX-work/stepfun-real-acceptance-20261009/transcript.jsonl",
+    "sha256": "2be63d5b2d16fc5b822f37149aeed32efd75ed711692c9986c83a72c1b28e6ee",
+    "roles": {
+      "user": 3,
+      "assistant": 4,
+      "toolResult": 1
+    },
+    "toolCalls": [
+      {
+        "name": "read",
+        "id": "chatcmpl-tool-88105f3e4296c401",
+        "arguments": {
+          "path": "live-read-fixture.txt"
+        }
+      }
+    ],
+    "toolResults": [
+      {
+        "toolName": "read",
+        "toolCallId": "chatcmpl-tool-88105f3e4296c401",
+        "isError": false,
+        "content": [
+          {
+            "type": "text",
+            "text": "RUNTIME-READ-466fa84b-1900-42fd-a79c-5461c9099a11\n"
+          }
+        ]
+      }
+    ],
+    "errors": 0,
+    "randomFileValueAbsentFromUserPrompts": true,
+    "fixtureHashUnchanged": true
+  },
+  "cleanup": {
+    "scriptGatewayExited": true,
+    "forcedCleanup": false,
+    "independent": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-real-acceptance",
+      "observedAt": "2026-10-09T03:14:55.0803896Z",
+      "ids": [
+        26032,
+        29548,
+        26980,
+        38540
+      ],
+      "remaining": []
+    }
+  },
+  "credentialScan": {
+    "exactProvidedKeyScan": true,
+    "files": 51,
+    "hits": []
+  },
+  "monetaryCost": {
+    "measured": false,
+    "note": "No confirmed fee or billing record; runtime zero defaults do not establish free calls."
+  },
+  "warnings": [
+    "First attempt Gateway startup missing tslog; preserved as failure",
+    "Module typeless package warning preserved",
+    "Bundled plugin dependency detection warning remains; plugins outside read scope untested",
+    "Local bundled-skill symlink escape warning and npm version check timeout preserved, not model refusals"
+  ],
+  "coverage": {
+    "real": [
+      "streamed model text and usage",
+      "function-call selection and agent fixture-result consumption",
+      "two real Gateway context turns",
+      "actual Runtime read tool and model consumption",
+      "runtime usage/cache refresh",
+      "owned-process cleanup"
+    ],
+    "notClaimed": [
+      "full model benchmark",
+      "all tool permissions",
+      "desktop UI",
+      "installer or full Electron rerun",
+      "cross-platform release",
+      "product lock graduation"
+    ]
+  },
+  "rawEvidenceRoot": "D:/ClawX-work/stepfun-real-acceptance-20261009"
+}
