@@ -1,12 +1,1148 @@
 {
   "schemaVersion": 1,
   "asOf": "2026-10-09",
-  "actor": "codex-o01-continuation",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-o01-mainline-developer",
   "driven_by": "agent",
-  "scope": "TF-0272/O01",
-  "decision": {
-    "status": "NOT-RUN",
-    "reason": "Pending clean-candidate full gates and independent raw-file verification."
+  "scope": {
+    "task": "TF-0272",
+    "packet": "O01",
+    "title": "审批分类率的受控诊断告警与清除",
+    "source": "synthetic-local-file-tool",
+    "liveProvider": false,
+    "realHuman": false
   },
-  "candidate": null
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Complete required fast/comms, 79 focused/runtime-required tests, independent disk replay and guarded source review passed; no product-lock graduation."
+  },
+  "candidate": {
+    "commit": "987945f322ede098eb4995decb6d202b1af5146d",
+    "tree": "8364baf69d2bad99fb439d4102dc057af5172cce",
+    "dirty": false,
+    "branch": "codex/harness-gap-o01-resume-20261009",
+    "base": "47031406a05eb946d2066363060e672f62b418e2",
+    "workspace": "C:/Users/27933/.codex/worktrees/harness-gap-o01-resume-20261009/ClawX",
+    "startedAt": "2026-10-09T07:21:40.707Z",
+    "finishedAt": "2026-10-09T07:40:07.635Z"
+  },
+  "behavior": {
+    "enabledOnlyWhen": "config.diagnostics.enabled === true AND existing process diagnostic switch",
+    "scope": "runtime-process",
+    "measurement": "destructive-tier-classification; not UI prompts/human approvals",
+    "preset": {
+      "maxSamples": 100,
+      "minimumSamples": 20,
+      "stride": 20,
+      "high": 0.5,
+      "low": 0.3,
+      "windows": 2,
+      "ttlMs": 300000
+    },
+    "consumer": "existing diagnosticLogger -> log.record/file",
+    "missing": "null rate, unavailable; no healthy zero from absent data",
+    "effectPolicyUnchanged": true,
+    "rollback": "Disable existing diagnostics / omit explicit selection; window cleared and old cumulative counts preserved"
+  },
+  "repairs": [
+    {
+      "issue": "Per-sample TTL eviction starved stride and alert/clear confirmation in prior implementation",
+      "proof": "prior session regression kept in tests; 10s/15s cadence and 5s clear pass"
+    },
+    {
+      "issue": "Late arrival masked a positive-duration coverage gap and reused stale high/low confirmation",
+      "before": {
+        "tests": 28,
+        "passed": 25,
+        "failed": 3,
+        "skipped": 0,
+        "receipt": "red-concealed-coverage-gap.receipt.json"
+      },
+      "after": {
+        "o01Tests": 28,
+        "passed": 28,
+        "failed": 0,
+        "skipped": 0
+      },
+      "fix": "Check expiry of the 20th newest existing sample before append; exact-boundary replacement remains valid; stride preserved."
+    },
+    {
+      "issue": "Interrupted predecessor worktree lost .git and source directories during read-only takeover",
+      "fix": "Restore byte-preserved diff/untracked backups into registered isolated worktree; do not reset primary checkout.",
+      "evidence": "recovery.json"
+    },
+    {
+      "issue": "Missing Russian README and exact retained-file registration",
+      "fix": "Complete fourth README and register O01 plus seven already-tracked B00 artifacts; historical B00 bytes/digests untouched."
+    }
+  ],
+  "gates": {
+    "full": {
+      "receipt": "frozen-harness-full.receipt.json",
+      "report": "frozen-harness-full.harness.json",
+      "exitCode": 0,
+      "durationMs": 1106928,
+      "steps": [
+        {
+          "profile": "rules",
+          "name": "Backend communication boundary scan",
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 0
+        },
+        {
+          "profile": "fast",
+          "name": "Generate extension bridge",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "run",
+            "ext:bridge"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 679
+        },
+        {
+          "profile": "fast",
+          "name": "Lint without autofix",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "run",
+            "lint:check"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 298083
+        },
+        {
+          "profile": "fast",
+          "name": "Typecheck",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "run",
+            "typecheck"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 21763
+        },
+        {
+          "profile": "fast",
+          "name": "Unit tests",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "test"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 784039
+        },
+        {
+          "profile": "comms",
+          "name": "Comms replay",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "run",
+            "comms:replay"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 791
+        },
+        {
+          "profile": "comms",
+          "name": "Comms compare",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "run",
+            "comms:compare"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 782
+        }
+      ],
+      "unitBatches": [
+        {
+          "total": 7716,
+          "passed": 7666,
+          "skipped": 50
+        },
+        {
+          "total": 25,
+          "passed": 25
+        },
+        {
+          "total": 331,
+          "passed": 331
+        },
+        {
+          "total": 10,
+          "passed": 10
+        },
+        {
+          "total": 97,
+          "passed": 97
+        },
+        {
+          "total": 7,
+          "passed": 7
+        }
+      ],
+      "unitCounts": {
+        "passed": 8136,
+        "skipped": 50,
+        "failed": 0,
+        "notDeduplicated": true
+      },
+      "lint": {
+        "errors": 0,
+        "warnings": 116,
+        "limit": 120
+      },
+      "typecheck": {
+        "cacheEnabled": false,
+        "projects": [
+          "node",
+          "web",
+          "test"
+        ],
+        "allPassed": true
+      }
+    },
+    "focused": {
+      "total": 79,
+      "passed": 79,
+      "failed": 0,
+      "skipped": 0,
+      "files": [
+        {
+          "file": "tests/unit/harness-gap-approval-rate-alerts.test.ts",
+          "passed": 28
+        },
+        {
+          "file": "tests/unit/harness-gap-baseline.test.ts",
+          "passed": 37
+        },
+        {
+          "file": "tests/unit/repository-artifact-retention.test.ts",
+          "passed": 10
+        },
+        {
+          "file": "openclaw_runtime/src/agents/tools/write-destructive-tier.test.ts",
+          "passed": 4
+        }
+      ]
+    },
+    "supplemental": [
+      {
+        "name": "frozen-focused",
+        "exitCode": 0,
+        "durationMs": 21369,
+        "command": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/harness-gap-approval-rate-alerts.test.ts",
+          "tests/unit/harness-gap-baseline.test.ts",
+          "tests/unit/repository-artifact-retention.test.ts",
+          "--reporter=json",
+          "--outputFile=D:/ClawX-work/harness-gap-o01-continuation-20261009/frozen-focused.vitest.json"
+        ]
+      },
+      {
+        "name": "frozen-runtime-required",
+        "exitCode": 0,
+        "durationMs": 30602,
+        "command": [
+          "node",
+          "scripts/run-vitest.mjs",
+          "src/agents/tools/write-destructive-tier.test.ts",
+          "--maxWorkers",
+          "1",
+          "--reporter",
+          "json",
+          "--outputFile",
+          "D:/ClawX-work/harness-gap-o01-continuation-20261009/frozen-runtime-required.vitest.json"
+        ]
+      },
+      {
+        "name": "frozen-runtime-format",
+        "exitCode": 0,
+        "durationMs": 452,
+        "command": [
+          "node",
+          "node_modules/oxfmt/bin/oxfmt",
+          "--check",
+          "--threads=1",
+          "src/context-engine/coding-observability.ts",
+          "src/agents/write-destructive-tier.ts",
+          "src/agents/agent-tools.ts"
+        ]
+      },
+      {
+        "name": "frozen-runtime-lint",
+        "exitCode": 0,
+        "durationMs": 3504,
+        "command": [
+          "node",
+          "node_modules/oxlint/bin/oxlint",
+          "--type-aware",
+          "--type-check",
+          "--tsconfig=tsconfig.json",
+          "--deny-warnings",
+          "src/context-engine/coding-observability.ts",
+          "src/agents/write-destructive-tier.ts",
+          "src/agents/agent-tools.ts"
+        ]
+      },
+      {
+        "name": "frozen-harness-ci",
+        "exitCode": 0,
+        "durationMs": 14642,
+        "command": [
+          "node",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "run",
+          "harness:ci"
+        ]
+      },
+      {
+        "name": "frozen-source-bundle",
+        "exitCode": 0,
+        "durationMs": 374,
+        "command": [
+          "node",
+          "scripts/verseshell-bundle.mjs",
+          "validate",
+          "--root",
+          "C:/Users/27933/.codex/worktrees/harness-gap-o01-resume-20261009/ClawX",
+          "--platform",
+          "win32",
+          "--arch",
+          "x64",
+          "--mode",
+          "package"
+        ]
+      },
+      {
+        "name": "frozen-retention",
+        "exitCode": 0,
+        "durationMs": 966,
+        "command": [
+          "node",
+          "scripts/check-repository-artifacts.mjs",
+          "--json"
+        ]
+      },
+      {
+        "name": "frozen-runtime-replay",
+        "exitCode": 0,
+        "durationMs": 361,
+        "command": [
+          "python",
+          "-X",
+          "utf8",
+          "D:/ClawX-work/harness-gap-o01-continuation-20261009/verify-o01-runtime.py",
+          "--run-dir",
+          "D:/ClawX-work/harness-gap-o01-continuation-20261009/frozen-runtime-evidence",
+          "--output",
+          "D:/ClawX-work/harness-gap-o01-continuation-20261009/frozen-independent-runtime.json"
+        ]
+      }
+    ],
+    "comms": {
+      "result": "PASS",
+      "failures": [],
+      "rows": 44,
+      "candidate": {
+        "commit": "987945f322ede098eb4995decb6d202b1af5146d",
+        "tree": "8364baf69d2bad99fb439d4102dc057af5172cce"
+      }
+    }
+  },
+  "runtimeEvidence": {
+    "decisions": 182,
+    "effectsVerified": 182,
+    "observations": 1,
+    "cumulative": {
+      "prompts": 81,
+      "skips": 101
+    },
+    "transitions": [
+      {
+        "at": 100001,
+        "sampleSequence": 1,
+        "status": "unavailable",
+        "reason": "insufficient_samples",
+        "sampleCount": 1,
+        "rate": null,
+        "effectVerified": true,
+        "continuation": "h-1"
+      },
+      {
+        "at": 100020,
+        "sampleSequence": 20,
+        "status": "observing",
+        "reason": "observing",
+        "sampleCount": 20,
+        "rate": 1,
+        "effectVerified": true,
+        "continuation": "h-20"
+      },
+      {
+        "at": 100040,
+        "sampleSequence": 40,
+        "status": "alert",
+        "reason": "high_rate_confirmed",
+        "sampleCount": 40,
+        "rate": 1,
+        "effectVerified": true,
+        "continuation": "l-0"
+      },
+      {
+        "at": 100140,
+        "sampleSequence": 140,
+        "status": "observing",
+        "reason": "low_rate_confirmed",
+        "sampleCount": 100,
+        "rate": 0,
+        "effectVerified": true,
+        "continuation": "after-idle"
+      },
+      {
+        "at": 400141,
+        "sampleSequence": 141,
+        "status": "unavailable",
+        "reason": "expired_window",
+        "sampleCount": 1,
+        "rate": null,
+        "effectVerified": true,
+        "continuation": "recovered-0"
+      },
+      {
+        "at": 400160,
+        "sampleSequence": 160,
+        "status": "observing",
+        "reason": "observing",
+        "sampleCount": 20,
+        "rate": 0.95,
+        "effectVerified": true,
+        "continuation": "recovered-19"
+      },
+      {
+        "at": 400180,
+        "sampleSequence": 180,
+        "status": "alert",
+        "reason": "high_rate_confirmed",
+        "sampleCount": 40,
+        "rate": 0.975,
+        "effectVerified": true,
+        "continuation": "recovered-39"
+      }
+    ],
+    "fileLogRecordsVerified": 7,
+    "rollback": "passed",
+    "tamperRejections": [
+      "effect",
+      "counts",
+      "rate",
+      "clock",
+      "provenance",
+      "disk-log"
+    ],
+    "implementationImportedByVerifier": false,
+    "raw": [
+      "frozen-runtime-evidence/runtime-events.json",
+      "frozen-runtime-evidence/diagnostic.log"
+    ]
+  },
+  "independentVerification": {
+    "actor": "codex-o01-independent-disk-gate",
+    "driven_by": "agent",
+    "verdict": "PASS",
+    "report": "frozen-independent-gates.json",
+    "source": "verify-o01-gates.py"
+  },
+  "review": {
+    "command": [
+      "python",
+      "-X",
+      "utf8",
+      "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+      "--mode",
+      "local",
+      "--no-web-search",
+      "--prompt-file",
+      "D:/ClawX-work/harness-gap-o01-continuation-20261009/review-notes.md",
+      "--output",
+      "D:/ClawX-work/harness-gap-o01-continuation-20261009/autoreview-coverage-fixed-supported.txt",
+      "--json-output",
+      "D:/ClawX-work/harness-gap-o01-continuation-20261009/autoreview-coverage-fixed-supported.json",
+      "--stream-engine-output"
+    ],
+    "exitCode": 0,
+    "actionableFindings": 0,
+    "report": "autoreview-coverage-fixed-supported.json",
+    "limitation": "No actionable defect was found in the supplied bundle. The repair preserves stride across TTL evictions, detects positive-duration coverage gaps before appending, and permits exact-boundary replacement. Explicit factory/process gating, bounded sampling, hysteresis, and synchronous logging-failure retry remain observational and do not change approval authority. The integration tests include actual file writes and diagnostic records. This assessment is limited to static review of the supplied bundle: repository inspection tools were unavailable, and no tests were run.",
+    "actingAgentSourceReview": "manual-runtime-boundary-review.json"
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "O01-AC1",
+      "criterion": "真实工具工厂只在config.diagnostics.enabled显式true时传递监测选择，进程诊断关闭仍否决；省略和false保持仅累计计数，不产生新告警。",
+      "status": "PASS",
+      "evidence": [
+        {
+          "test": "O01 real production composition and existing diagnostic log consumer does not opt in when config is undefined",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 real production composition and existing diagnostic log consumer does not opt in when config is false",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 real production composition and existing diagnostic log consumer honors the process-wide diagnostic kill switch even for explicit config",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        }
+      ],
+      "rawEvidence": []
+    },
+    {
+      "id": "O01-AC2",
+      "criterion": "监测窗口最多100个布尔分类/时间戳，每20个新有效分类评估，至少20样本；rate为requires-approval分类次数除以总分类次数，绝不声称UI提示或真人审批次数。",
+      "status": "PASS",
+      "evidence": [
+        {
+          "test": "O01 bounded classification windows, not approval authority keeps the old counter/rate shapes and defaults to no monitor",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority requires two distinct high windows, even with repeated reads/reports",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority bounds storage and does not replay disabled history on re-enable",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        }
+      ],
+      "rawEvidence": []
+    },
+    {
+      "id": "O01-AC3",
+      "criterion": "连续两次窗口rate大于等于0.5触发，已告警状态只有连续两次rate小于等于0.3才清除；重复读取不增加连续窗或重复日志。",
+      "status": "PASS",
+      "evidence": [
+        {
+          "test": "O01 bounded classification windows, not approval authority requires two distinct high windows, even with repeated reads/reports",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority uses inclusive high threshold and resets confirmation in the middle band",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority retains alert until two low windows, then clears using the last 100 decisions",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority keeps the low threshold inclusive at .3",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        }
+      ],
+      "rawEvidence": []
+    },
+    {
+      "id": "O01-AC4",
+      "criterion": "五分钟TTL、零或不足样本、无效或回退时钟返回unavailable且rate为null；历史窗口不能制造正常/清除。",
+      "status": "PASS",
+      "evidence": [
+        {
+          "test": "O01 bounded classification windows, not approval authority preserves cadence through TTL turnover at 10000ms per decision",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority preserves cadence through TTL turnover at 15000ms per decision",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority does not bridge a coverage gap concealed by an arrival at 300000ms",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority does not bridge a coverage gap concealed by an arrival at 300001ms",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority does not bridge a coverage gap concealed by an arrival at 350000ms",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority does not emit a low-rate clear by reusing confirmation from before a concealed coverage gap",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority can clear during continuous TTL turnover",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority does not confirm undersampled windows during TTL turnover",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority expires at TTL instead of clearing to healthy, then requires fresh confirmations",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority keeps invalid clock NaN unavailable without losing cumulative counts",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority keeps invalid clock Infinity unavailable without losing cumulative counts",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority keeps invalid clock -1 unavailable without losing cumulative counts",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority resets confirmation after a backwards clock",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        }
+      ],
+      "rawEvidence": []
+    },
+    {
+      "id": "O01-AC5",
+      "criterion": "工具分类到窗口到已有诊断日志的真实链路有高率、清除、缺测和恢复证据；日志包含样本、窗口、范围、原因和建议，不含工具参数或用户内容。",
+      "status": "PASS",
+      "evidence": [
+        {
+          "test": "O01 real production composition and existing diagnostic log consumer runs real writes through factory → classification → warning → clear and keeps the old effect/approval semantics",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        }
+      ],
+      "rawEvidence": [
+        "frozen-runtime-evidence/runtime-events.json",
+        "frozen-runtime-evidence/diagnostic.log",
+        "frozen-independent-runtime.json"
+      ]
+    },
+    {
+      "id": "O01-AC6",
+      "criterion": "日志消费者抛错不得影响工具结果或分类累计；下一次观察可重试，关闭后恢复旧行为且不重放旧窗口。",
+      "status": "PASS",
+      "evidence": [
+        {
+          "test": "O01 bounded classification windows, not approval authority bounds storage and does not replay disabled history on re-enable",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 bounded classification windows, not approval authority retries a throwing consumer without acknowledging the lost notification",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 real production composition and existing diagnostic log consumer retains the original rejected effect while still counting the attempted classification",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 real production composition and existing diagnostic log consumer does not turn logging failure into a blocked/repeated effect",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        }
+      ],
+      "rawEvidence": []
+    },
+    {
+      "id": "O01-AC7",
+      "criterion": "classifier函数、原snapshot/rates语义、配置schema/default、产品锁不变；无Main重复单例、后台定时器、持久store或新指标服务。",
+      "status": "PASS",
+      "evidence": [
+        {
+          "test": "O01 bounded classification windows, not approval authority keeps the old counter/rate shapes and defaults to no monitor",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        },
+        {
+          "test": "O01 real production composition and existing diagnostic log consumer runs real writes through factory → classification → warning → clear and keeps the old effect/approval semantics",
+          "file": "harness-gap-approval-rate-alerts.test.ts",
+          "status": "passed"
+        }
+      ],
+      "rawEvidence": [
+        "protected-source-check.json",
+        "manual-runtime-boundary-review.json"
+      ]
+    },
+    {
+      "id": "O01-AC8",
+      "criterion": "干净候选的必需门、真实文件日志回读、独立核验、摘要和凭据扫描通过才收口，不修改B00历史来源摘要或旧失败来制造通过。",
+      "status": "PASS",
+      "evidence": [
+        "frozen-independent-gates.json",
+        "credential-scan.json",
+        "O01-SHA256SUMS"
+      ],
+      "rawEvidence": []
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "productionPolicyChanged": false,
+    "classifierByteIdenticalToBase": true,
+    "protectedFiles": 14
+  },
+  "dependencies": {
+    "rootAndRuntime": "Independent frozen-lockfile pnpm installs using existing store; lifecycle scripts skipped, not a fresh online install test.",
+    "sharedNodeModules": false,
+    "lockfilesModified": false,
+    "qualifiedBinary": {
+      "kind": "reuse-of-existing-manifest-bound-qualified-artifact",
+      "sha256": "ac6a7a15dac0a9dc7d15ec975fc65276f25c871bbc0174197731947df6460786",
+      "newRustBuild": false,
+      "sourceBundleGateExitCode": 0
+    }
+  },
+  "credentialScan": {
+    "status": "PASS",
+    "hitCount": 0,
+    "fileCount": 91,
+    "patterns": [
+      "private-key",
+      "provider-key",
+      "bearer-literal"
+    ],
+    "report": "D:/ClawX-work/harness-gap-o01-continuation-20261009/credential-scan.json",
+    "scope": "O01 owned sources, retained evidence directory and explicitly indexed raw evidence; signature scan, not an exhaustive secret-store audit",
+    "note": "Final scan covers the completed report and digest manifest. Scan report is referenced outside the self-hashing raw-evidence list to avoid circular hashes."
+  },
+  "history": {
+    "preserveInitialFailures": true,
+    "nonAcceptanceAttempts": [
+      "development-autoreview: finding found, invalid absolute-path structured output; not clean",
+      "autoreview-coverage-fixed: unsupported no-tools option rejected before review",
+      "development-runtime-required: wrong explicit Vitest config rejected target before execution"
+    ],
+    "priorB00ManifestsUnchanged": true
+  },
+  "notMeasured": [
+    "50 pre-existing full-unit skipped tests",
+    "live provider or actual human/dialog approvals",
+    "UI/Electron E2E (no UI/API added)",
+    "packaging or interactive installation",
+    "non-Windows execution",
+    "production latency, p99 or benefit/ablation",
+    "remote CI",
+    "remaining 28 work packages and system GA"
+  ],
+  "rawEvidence": {
+    "root": "D:/ClawX-work/harness-gap-o01-continuation-20261009",
+    "files": [
+      {
+        "path": "accepted-ttl-gap-finding.json",
+        "bytes": 1840,
+        "sha256": "8ed3fc8dd41b34dec48d961bd2d8c61a8aea105d84a64b7175ae2b11d8a4d904"
+      },
+      {
+        "path": "autoreview-coverage-fixed-supported.json",
+        "bytes": 703,
+        "sha256": "f67cfb77f973e43fac7a9fbabcf5b6377b41c122d7ef5fda197517eca4f442f8"
+      },
+      {
+        "path": "autoreview-coverage-fixed-supported.receipt.json",
+        "bytes": 2750,
+        "sha256": "46a9d9bbd2b9a79368c628c580ed09dd71af889785d4f0b1081bcf6fe52a404c"
+      },
+      {
+        "path": "autoreview-coverage-fixed-supported.stderr.log",
+        "bytes": 3879,
+        "sha256": "d771b606cf0959616e61312681226761513480636933cd5818e13ca23e6799ee"
+      },
+      {
+        "path": "autoreview-coverage-fixed-supported.stdout.log",
+        "bytes": 2049,
+        "sha256": "ba348c1eaff177b9ab470d9075a15ba0c92f9984d3c6fcddc76ae433f4ac09f5"
+      },
+      {
+        "path": "autoreview-coverage-fixed-supported.txt",
+        "bytes": 668,
+        "sha256": "dc600f5dd1f4fa57257ef0d2085b42230b1e98b260d563d024b75e79265efde2"
+      },
+      {
+        "path": "candidate.json",
+        "bytes": 2833,
+        "sha256": "e8e0496217202cd86d9a2c0080082a41b388399503ea9fb6e502fe3a323e3816"
+      },
+      {
+        "path": "development-autoreview.receipt.json",
+        "bytes": 2660,
+        "sha256": "a91d4d942031f223bb39d9222691a82010504b6200a6c678c45680143e0d3af3"
+      },
+      {
+        "path": "development-autoreview.stderr.log",
+        "bytes": 3444,
+        "sha256": "fcbcdd97212e46c083dbcef063ef7a212121d3558a4b38a3d6029f4918eb8f5d"
+      },
+      {
+        "path": "development-autoreview.stdout.log",
+        "bytes": 2037,
+        "sha256": "a005b8bee8a158551c038615c52b8343e37c23e4059a0994309c8773a7d641b2"
+      },
+      {
+        "path": "development-runtime-required.receipt.json",
+        "bytes": 2552,
+        "sha256": "aa8382666e42ac04454424c13964c9c822f7ee42e5f3ac6d127230f70a110db9"
+      },
+      {
+        "path": "development-runtime-required.stderr.log",
+        "bytes": 1593,
+        "sha256": "26b23dc8c452b1e0183e6b239830b6bdb4a9044babc59c741edc4932fd63b019"
+      },
+      {
+        "path": "frozen-compare-report.json",
+        "bytes": 3812,
+        "sha256": "e66f789e3dfa963df1530918e256dfae11d1782b4427839832076645a65bceb6"
+      },
+      {
+        "path": "frozen-compare-report.md",
+        "bytes": 3329,
+        "sha256": "8500918e21b198f2cba169417b161a0fa976b0da015e456c1279b67ecd184e9b"
+      },
+      {
+        "path": "frozen-current-metrics.json",
+        "bytes": 3735,
+        "sha256": "d811924e8d07d7bedb5c9a20e09039e44635bb4a3f9bc1f0f3c57fb0282cf8b4"
+      },
+      {
+        "path": "frozen-focused.receipt.json",
+        "bytes": 1144,
+        "sha256": "510cb6544c2e2abd6f33a78cc0a082b83f794cf8f1b03751145d1d5d8f6540eb"
+      },
+      {
+        "path": "frozen-focused.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "frozen-focused.stdout.log",
+        "bytes": 102,
+        "sha256": "89d9a95c81de6e94d6bf0759b2b2f2b65c0843d3ea4ea72f35ab95f1a22d86ab"
+      },
+      {
+        "path": "frozen-focused.vitest.json",
+        "bytes": 26919,
+        "sha256": "e1ed588320d16f3e2db9e048e8d72140f18a89adada64946cda1cba4072695f2"
+      },
+      {
+        "path": "frozen-harness-ci.receipt.json",
+        "bytes": 922,
+        "sha256": "99d654be4d715dbc301770c4e3c634f6844d7374edc7a62ec7c7578136e48dff"
+      },
+      {
+        "path": "frozen-harness-ci.stderr.log",
+        "bytes": 1375,
+        "sha256": "b6b553c635521c61863f0656a54c75fd485c6c23d0899fb247dfb595f02567b8"
+      },
+      {
+        "path": "frozen-harness-ci.stdout.log",
+        "bytes": 9752,
+        "sha256": "780f804033dc183bfaa05c7d8dde030f27e078026c5def120376c913b4f9304b"
+      },
+      {
+        "path": "frozen-harness-full.harness.json",
+        "bytes": 3600,
+        "sha256": "47538f3fe92e850f45a110e19df5e0723400fc96394f83bd72a5f99b8a6e91df"
+      },
+      {
+        "path": "frozen-harness-full.harness.md",
+        "bytes": 681,
+        "sha256": "77ea5a450847336dd283a38bdedc23877296302df924f331393b8d24b42251c6"
+      },
+      {
+        "path": "frozen-harness-full.receipt.json",
+        "bytes": 1114,
+        "sha256": "ed2d3abd8fdc3b9c9bd04688928eb6a5188628d46e6affa7a90f0729e7a887b4"
+      },
+      {
+        "path": "frozen-harness-full.stderr.log",
+        "bytes": 22051,
+        "sha256": "26f24a0ec496f9edf66cd29107b5f339bfcdaea4c45ffb8a9de76b9e46e0a996"
+      },
+      {
+        "path": "frozen-harness-full.stdout.log",
+        "bytes": 29210,
+        "sha256": "645e1288bad16607669ece9b0973e919403c2f22e60cc377f804b74769bc3525"
+      },
+      {
+        "path": "frozen-independent-gates.json",
+        "bytes": 7084,
+        "sha256": "6fcdb48b00ad50a51bb6502df359a0e035301a2e27043b1b99056fc51d5ceb86"
+      },
+      {
+        "path": "frozen-independent-runtime.json",
+        "bytes": 3053,
+        "sha256": "eb006ffd872f1af29ecb2d590577cac67896cfa4448b9186f191670b0cbdd881"
+      },
+      {
+        "path": "frozen-retention.receipt.json",
+        "bytes": 875,
+        "sha256": "9b76c396f5b45df487f757b53ca2a13d16f8b2ab9e4d60a94a28f58e5cce488e"
+      },
+      {
+        "path": "frozen-retention.report.json",
+        "bytes": 84,
+        "sha256": "d2ce80bac8ae50c43eae240269f4d4e68df8e1774823aa9d28991ee8b0db500a"
+      },
+      {
+        "path": "frozen-retention.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "frozen-retention.stdout.log",
+        "bytes": 84,
+        "sha256": "d2ce80bac8ae50c43eae240269f4d4e68df8e1774823aa9d28991ee8b0db500a"
+      },
+      {
+        "path": "frozen-runtime-evidence/diagnostic.log",
+        "bytes": 10249,
+        "sha256": "4e154bb5beca7b2a5c468998c0303e3d1983e42d0b77b5bf3197ed22b094157b"
+      },
+      {
+        "path": "frozen-runtime-evidence/runtime-events.json",
+        "bytes": 219436,
+        "sha256": "357c175639e1065bc50387ad2402c0de4117573de03470a500ec73c54d554c5e"
+      },
+      {
+        "path": "frozen-runtime-format.receipt.json",
+        "bytes": 1045,
+        "sha256": "c33218acf89482ec5a172fe60b36797ed79ff412bb1b4ebd0c14c250aba687b8"
+      },
+      {
+        "path": "frozen-runtime-format.stderr.log",
+        "bytes": 91,
+        "sha256": "01f25de219844d53f81b996d6b73e782203533bfc6eba81e44b98acc0039ad42"
+      },
+      {
+        "path": "frozen-runtime-format.stdout.log",
+        "bytes": 111,
+        "sha256": "20d3e148f3f4b9b4feb96bc54469c7da979288618a3c6b0401890908f2fc1ada"
+      },
+      {
+        "path": "frozen-runtime-lint.receipt.json",
+        "bytes": 1103,
+        "sha256": "d6472806bee68b672d7514bf698ae5d770c5a07ebfb31e7be94cf9d12ab0f1be"
+      },
+      {
+        "path": "frozen-runtime-lint.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "frozen-runtime-lint.stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "frozen-runtime-replay.receipt.json",
+        "bytes": 1142,
+        "sha256": "6b9de766d0cf30fc13eb31cf20b0c15bdf17fa5ac241885f04570aaf71a9081f"
+      },
+      {
+        "path": "frozen-runtime-replay.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "frozen-runtime-replay.stdout.log",
+        "bytes": 79,
+        "sha256": "d44b9b39f49e730ba5dbc6cd5d8db9c9bbafa1d77e44783a10e90a19847b81bd"
+      },
+      {
+        "path": "frozen-runtime-required.receipt.json",
+        "bytes": 1115,
+        "sha256": "72df3b4f98bea966e66f2b04574c35e4d1130e781a98590eaa30c95b3a49ddb1"
+      },
+      {
+        "path": "frozen-runtime-required.stderr.log",
+        "bytes": 7,
+        "sha256": "538d6440534fa5f615e8a26932792a82a2e4a33a97886e2d815eab8fc216d415"
+      },
+      {
+        "path": "frozen-runtime-required.stdout.log",
+        "bytes": 111,
+        "sha256": "514cb720f8cea540a6cffec8e446ef03240df5cfe8112576326413ec072c7a3f"
+      },
+      {
+        "path": "frozen-runtime-required.vitest.json",
+        "bytes": 2007,
+        "sha256": "05fa30b6d8f5c3d16b147e504a83f675dcaf436dbe0f12f38160a544b5a8998d"
+      },
+      {
+        "path": "frozen-source-bundle.receipt.json",
+        "bytes": 1056,
+        "sha256": "721b8fd0712f615a79d6f08619aa046ed1ad0746fa432447ce9f09a25c13b7e0"
+      },
+      {
+        "path": "frozen-source-bundle.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "frozen-source-bundle.stdout.log",
+        "bytes": 266,
+        "sha256": "e3dd3b39bc163af698ad0681e62abe86b1ef5e1c59ca8e95aa4ec83fcd76c61a"
+      },
+      {
+        "path": "green-concealed-coverage-gap.receipt.json",
+        "bytes": 2569,
+        "sha256": "83d937b7478e92b6c1f1ccc2529a8bac2d118fc5dd58d59c48570fa87a8ad2ed"
+      },
+      {
+        "path": "green-concealed-coverage-gap.vitest.json",
+        "bytes": 26936,
+        "sha256": "42369fad81addb84bb7d1a3c17a5c6b174de32f57420149dbcea65df79243874"
+      },
+      {
+        "path": "manual-runtime-boundary-review.json",
+        "bytes": 1483,
+        "sha256": "7ea12b396c49c5fe3c3ae7e36c2b05f5edb122ebbb7753e362f611c4bea2d7da"
+      },
+      {
+        "path": "owned-paths.json",
+        "bytes": 867,
+        "sha256": "796b4d591c8c654cf62dd31e1497b21785671fe22f5d26775dcba7e14793612c"
+      },
+      {
+        "path": "protected-source-check.json",
+        "bytes": 3271,
+        "sha256": "6bedb405b88f82800169fe3f7f82c924da2c8cf9c8249ac6d130207cc6750cb5"
+      },
+      {
+        "path": "qualified-binary-provisioning.json",
+        "bytes": 451,
+        "sha256": "ef84f3c6329b8404c22542585604e63480df5848343b67d6f085c6899c837fb5"
+      },
+      {
+        "path": "recovery.json",
+        "bytes": 1897,
+        "sha256": "01b2546d886f7e8123f94922367020f800a8450e96f8d369d26b81cae6c7315b"
+      },
+      {
+        "path": "red-concealed-coverage-gap.receipt.json",
+        "bytes": 2458,
+        "sha256": "a19178f5746fef3f6de8c6ce4f27297813094a6fabe2e76090ed3c8fff7aff70"
+      },
+      {
+        "path": "red-concealed-coverage-gap.vitest.json",
+        "bytes": 17043,
+        "sha256": "8e9b98f0c27c2e7eb9b9ff321e1ddfd119e3e367097e86db637a662a5a19e2e9"
+      },
+      {
+        "path": "review-notes.md",
+        "bytes": 3678,
+        "sha256": "d5cee73ab39a3e24c5a5a53233263993a18e16bfc1d47d14b774c3142f6dde40"
+      },
+      {
+        "path": "run-gate.mjs",
+        "bytes": 1649,
+        "sha256": "505056182fe503ae33339be92bbcc91a6dd8fde094c751dc7ddbcf81a183bbbf"
+      },
+      {
+        "path": "setup-root-dependencies.receipt.json",
+        "bytes": 2165,
+        "sha256": "5f89d4d53443ef25b59cf6e52b35aa65ce892dc5e1a7cbc8c9c2d332c33287a3"
+      },
+      {
+        "path": "setup-runtime-dependencies.receipt.json",
+        "bytes": 2371,
+        "sha256": "274e4c9bcad64c5798a52b9120dfaede5354b47daacda85df9ca5b50880c1391"
+      },
+      {
+        "path": "verify-o01-gates.py",
+        "bytes": 8053,
+        "sha256": "9bcd743fa72890fd6b68835a083da972352f9d989e57ddf7da7a7cedede9e3ad"
+      },
+      {
+        "path": "verify-o01-runtime.py",
+        "bytes": 10216,
+        "sha256": "c1a37313d9450dee1d47abefd853e93c22ef6123cb1014a49ecc42fe0eb0f52c"
+      },
+      {
+        "path": "scan-o01.py",
+        "bytes": 1389,
+        "sha256": "3c296839a36f6199912ef21cb99d7e68bdbd06fd33200007b81be819f2cd7c8b"
+      },
+      {
+        "path": "scan-inputs.json",
+        "bytes": 8969,
+        "sha256": "dad9ae98a5427e364db48985085d540d6493506994805a872c5dafa4ed81a727"
+      }
+    ],
+    "replayCommands": [
+      [
+        "python",
+        "-X",
+        "utf8",
+        "D:/ClawX-work/harness-gap-o01-continuation-20261009/verify-o01-runtime.py",
+        "--run-dir",
+        "D:/ClawX-work/harness-gap-o01-continuation-20261009/frozen-runtime-evidence",
+        "--output",
+        "D:/ClawX-work/harness-gap-o01-continuation-20261009/replayed-independent-runtime.json"
+      ],
+      [
+        "python",
+        "-X",
+        "utf8",
+        "D:/ClawX-work/harness-gap-o01-continuation-20261009/verify-o01-gates.py",
+        "--archive",
+        "D:/ClawX-work/harness-gap-o01-continuation-20261009",
+        "--workspace",
+        "C:/Users/27933/.codex/worktrees/harness-gap-o01-resume-20261009/ClawX",
+        "--output",
+        "D:/ClawX-work/harness-gap-o01-continuation-20261009/replayed-independent-gates.json"
+      ]
+    ]
+  },
+  "landing": {
+    "status": "local-functional-candidate-accepted",
+    "publication": false,
+    "note": "Durable report is finalized in a subsequent evidence-only commit; the accepted code candidate remains immutable."
+  }
 }
