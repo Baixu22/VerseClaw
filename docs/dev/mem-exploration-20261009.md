@@ -88,6 +88,35 @@
 
 这个 0.752 落在 Memobase(0.7578) 与 Zep(0.7514) 之间，看上去非常漂亮。但它**不可用于排名**，理由如下。
 
+### 3.0 （最严重）升级阶梯会把整段对话塞进生成器，而报告里不披露比例
+
+`tests/unit/runtime-memory-locomo-full-500.test.ts` 的答案生成走三级升级阶梯：
+
+| Level | 喂给生成器的上下文 | 预算上限 |
+|---|---|---|
+| 0 | 仅检索到的 top-5 facts | — |
+| 1 | episodic 摘要 + 检索 facts | `EscalationBudget(500, 0.25)` → 125 题 |
+| **2** | **`fullConversation`——整段对话原文** | `EscalationBudget(500, 0.15)` → **75 题** |
+
+代码位置：`2135-2210`（cached 路径）与 `3163-3225`（fresh 路径），关键行：
+
+```ts
+if (strippedAnswer.insufficient && fullConversationBudget.tryUse()) {
+  const fullConversation = fullConversationTextByConversation.get(conversationId) ?? "";
+  rawAnswer = await generateDualTrackAnswer(qa.question, category, fullConversation, [], ...);
+  finalAssembledContext = fullConversation;      // ← 整段对话进上下文
+  escalationLevel = 2;
+}
+```
+
+触发条件是模型自己输出"证据不足"。也就是说：**记忆检索失败 → 静默退回全上下文 → 答对了仍然计入记忆系统的分数。**
+
+- `EscalationBudget.maxEscalations = Math.floor(totalQuestions * maxRate)`（`runtime-memory-escalation-ladder.ts:52`），500 × 0.15 = **75 题 / 15%**。
+- 真实运行会输出 `escalation` 统计块（`3579` 行：`escalation: escalationStats`，含 `full_conversation_rate`、`level2`）。
+- **但提交进仓库的 `locomo-full-500-report.json` 里没有这个字段**（只有 `dataset` / `version` / `totalQuestions` / `metrics` / `generatedAt`）。
+
+**结论**：0.752 是"记忆 + 最多 15% 全上下文兜底"的混合分，混合比例未披露。作为产品的优雅降级设计可以辩护；作为**记忆能力的测量值不成立**。这是本次探索发现的最严重问题，优先级高于 judge 宽松度。
+
 ### 3.1 judge 是显式"宽松"的
 
 `tests/unit/helpers/runtime-memory-judge-freeze.ts:1-19`，`promptVersion: "frozen-v2-generous-2026-07-04"`（注意 generous 是团队自己命名的，日期正是 0.752 那次运行的日期）：
@@ -110,6 +139,33 @@
 - `"D1:3"` 去掉非词字符后是 `"d13"`，长度 3，被 `> 3` 过滤掉 → `goldWords` 为空 → `continue` → 该题恒为 0。
 
 **所以 0.008 是"拿轮次 ID 当文本匹配"的产物，既不能证明泄漏，也不能证明检索有效。** 它现在被写进报告并被 `locomo-report-comparator.test.ts` 消费，会持续误导后续读报告的人。
+
+### 3.2b 检索没进步，分数涨了 30 点——而且 temporal 是**反向**的
+
+把 phase3 基线与 v10.0 逐类对齐（同一批 500 题）：
+
+| 类目 | j (P3) | j (v10) | Δj | recall@5 (P3) | recall@5 (v10) | Δrecall@5 |
+|---|---|---|---|---|---|---|
+| temporal | 0.3533 | 0.8067 | **+0.4533** | 0.6377 | 0.5181 | **−0.1195** |
+| multi_hop | 0.4271 | 0.6146 | +0.1875 | 0.1888 | 0.2407 | +0.0519 |
+| single_hop | 0.5276 | 0.7800 | +0.2524 | 0.3726 | 0.4939 | +0.1213 |
+| open_domain | 0.5118 | 0.8200 | +0.3082 | 0.5711 | 0.6260 | +0.0549 |
+| **OVERALL** | 0.4520 | 0.7520 | **+0.3000** | 0.4672 | 0.4979 | **+0.0306** |
+
+两处异常：
+
+1. **整体：recall@5 只涨 3.06 个点，j 涨 30 个点。** 检索侧几乎没动，分数暴涨 → 增益几乎全部来自答案生成 / judge 侧（§3.0 的全上下文兜底 + §3.1 的宽松 judge）。
+2. **temporal 类目是反向的：recall@5 从 0.6377 掉到 0.5181（−12 个点），j 却从 0.3533 涨到 0.8067（+45 个点）。** 检索明显变差而判分大幅变好，这只能用"judge 与时间容差规则放水"解释——而 `frozen-v2-generous` 里恰好有一条 `Time tolerance: if dates are within 14 days of each other, treat as CORRECT`。
+
+### 3.2c judge 健全性检查是个空转检查
+
+`buildJudgeSanityReport()`（`runtime-memory-judge-freeze.ts:100-118`）把所有样本初始化为 `manualVerdict: "unreviewed"`。而：
+
+- `reviewedCount = 非 unreviewed 的样本数` → 恒为 0
+- `falseNegativeRate = 0`（reviewed 为空时直接 return 0）
+- `requiresPromptReview = reviewedCount > 0 && falseNegativeRate > 0.15` → **恒为 false**
+
+全仓库只有 `judge-sanity-check.test.ts` 的测试夹具里手工填过 `truly_wrong` / `actually_correct`；**没有任何生产代码或自动化流程会去填它**。所以"judge 健全性检查"永远输出"健康"，它不是一个有效的质量闸门。
 
 ### 3.3 没有 artifact，CI 里跳过，且跨系统本来就不可比
 
