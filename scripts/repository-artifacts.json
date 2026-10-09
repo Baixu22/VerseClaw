@@ -72,7 +72,9 @@
     "tests/integration/channel-startup.integration.test.ts",
     "docs/dev/Sustained-Development-Playbook.md",
     "docs/dev/runtime-research-boundaries.md",
-    "harness/specs/rules/repository-artifact-retention.md"
+    "harness/specs/rules/repository-artifact-retention.md",
+    "SECURITY.md",
+    "docs/dev/hardware-acceleration-policy.md"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",
@@ -1381,6 +1383,7 @@
     "docs/dev/first-product-controlled-preview/tasks/README.md",
     "docs/dev/frozen-windows-acceptance-20261007.md",
     "docs/dev/goal-loop-durable-process-wake-design.md",
+    "docs/dev/hardware-acceleration-policy.md",
     "docs/dev/hd-double-compression-contract.md",
     "docs/dev/knowledge-system-unification/evidence/KS-00-03-INDEPENDENT-ACCEPTANCE.md",
     "docs/dev/knowledge-system-unification/evidence/KS-00-BASELINE-DIFF.md",

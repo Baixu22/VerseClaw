@@ -36,6 +36,9 @@ jobs:
           git config --global "url.https://github.com/.insteadOf" "git@github.com:"
           git config --global --add "url.https://github.com/.insteadOf" "ssh://git@github.com/"
 
+      - name: Validate product policy documentation
+        run: node scripts/validate-policy-docs.mjs
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
