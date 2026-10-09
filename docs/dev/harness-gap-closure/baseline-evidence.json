@@ -1,0 +1,391 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-09",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-b00-implementer",
+  "driven_by": "agent",
+  "scope": "TF-0271/B00 source baseline and verifier implementation; not runtime or downstream acceptance",
+  "decision": {
+    "status": "in_progress",
+    "autoClose": false,
+    "reason": "Implementation and focused gates pass; required fast profile did not complete successfully. Independent evidence gate rejects closure.",
+    "continuation": "Resolve/provision the manifest-bound VerseShell binary input without weakening integrity checks; investigate the slow first outbound provenance check in a scoped replay; then refreeze and rerun required gates. Do not start O01 yet."
+  },
+  "candidate": {
+    "actor": "codex-executor",
+    "driven_by": "agent",
+    "commit": "4af656401777663dfe4d2994f209f267e20774c0",
+    "tree": "6ce6148fa12923ce7d872a4a7708faddf9a2b122",
+    "dirty": false,
+    "sourceBaseline": {
+      "commit": "d5420d53ad038e713ce4a81fc048fb50ca28f5ff",
+      "tree": "b91f3d0f90ce470d47ab372374011c3f042c5bef",
+      "hashFormat": "sha256-utf8-lf",
+      "scope": "immutable source snapshot; final B00 candidate identity is in baseline-evidence.json",
+      "dependencyMode": "Development reused existing dependencies. Frozen gates use an isolated frozen-lockfile install with lifecycle scripts disabled; offline cache miss required registry download. Not app fresh-install qualification."
+    }
+  },
+  "implementation": {
+    "slots": 30,
+    "sourceIncomplete": [
+      "HG22",
+      "HG27"
+    ],
+    "downstreamPackets": 29,
+    "sourceReferences": 94,
+    "pilotContracts": 6,
+    "newVerifierTests": 37,
+    "changedProductionCode": false,
+    "changes": [
+      "Structured source inventory and exact follow-up boundaries",
+      "Fail-closed verifier, malformed-entry checks, reader-backed source/spec mutation tests",
+      "Type declarations for the test typecheck",
+      "Archived A5 evidence reduced to attributed excerpt; four existing spec hashes refreshed after reviewed doc-only drift"
+    ],
+    "productLocks": {
+      "live_ready": false,
+      "product_approved": false,
+      "default_on": false
+    }
+  },
+  "gates": {
+    "sourceInventory": {
+      "status": "pass",
+      "exitCode": 0
+    },
+    "harnessOwnership": {
+      "status": "pass",
+      "exitCode": 0,
+      "uncovered": []
+    },
+    "focused": {
+      "status": "pass",
+      "files": 8,
+      "tests": 116,
+      "passed": 116,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0,
+      "durationMs": 10555
+    },
+    "typecheck": {
+      "status": "pass",
+      "cacheEnabled": false,
+      "projects": [
+        "node",
+        "web",
+        "test"
+      ],
+      "exitCode": 0,
+      "report": {
+        "success": true,
+        "mode": "parallel",
+        "testTypes": {
+          "commandLine": "pnpm run typecheck:test",
+          "exitCode": 0,
+          "durationMs": 13935,
+          "observationMode": false,
+          "errorCount": 0,
+          "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\harness-gap-b00-closeout\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+        },
+        "cache": {
+          "enabled": false,
+          "status": "disabled",
+          "key": "dc281a58947ac2ed647d069af68db39105ff296f241e4f942e86849c2f02965e",
+          "inputCount": 11945,
+          "report": "C:\\Users\\27933\\.codex\\worktrees\\harness-gap-b00-closeout\\ClawX\\artifacts\\typecheck-cache\\report.json"
+        },
+        "totalDurationMs": 17735,
+        "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+        "results": [
+          {
+            "commandLine": "node scripts/generate-ext-bridge.mjs",
+            "exitCode": 0,
+            "durationMs": 50
+          },
+          {
+            "commandLine": "pnpm run typecheck:node",
+            "exitCode": 0,
+            "durationMs": 11461
+          },
+          {
+            "commandLine": "pnpm run typecheck:web",
+            "exitCode": 0,
+            "durationMs": 5943
+          },
+          {
+            "commandLine": "pnpm run typecheck:test",
+            "exitCode": 0,
+            "durationMs": 13935,
+            "observationMode": false,
+            "errorCount": 0,
+            "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\harness-gap-b00-closeout\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+          }
+        ]
+      }
+    },
+    "fast": {
+      "status": "failed-and-stopped-after-confirmed-failure",
+      "exitCode": 1,
+      "steps": [
+        {
+          "profile": "rules",
+          "name": "Backend communication boundary scan",
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 0
+        },
+        {
+          "profile": "fast",
+          "name": "Generate extension bridge",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "run",
+            "ext:bridge"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 697
+        },
+        {
+          "profile": "fast",
+          "name": "Lint without autofix",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "run",
+            "lint:check"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 255950
+        },
+        {
+          "profile": "fast",
+          "name": "Typecheck",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "run",
+            "typecheck"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 18729
+        },
+        {
+          "profile": "fast",
+          "name": "Unit tests",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "test"
+          ],
+          "status": "fail",
+          "exitCode": 1,
+          "durationMs": 595950
+        }
+      ],
+      "observedUnitFailures": 7,
+      "totalUnitCount": null,
+      "notRun": [
+        "remaining first unit batch after stop",
+        "serial permission/operator batch",
+        "test:dcs"
+      ],
+      "stopReceipt": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-fast-final-stop.json"
+    },
+    "runtimeObservation": {
+      "status": "failed",
+      "candidate": "166d734182d6f2b37fe5614462c23a0ad2895d6e",
+      "currentCandidateAcceptance": false,
+      "files": 26,
+      "tests": 177,
+      "passed": 175,
+      "failed": 1,
+      "skipped": 1,
+      "exitCode": 1,
+      "durationMs": 421738,
+      "failures": [
+        {
+          "file": "C:/Users/27933/.codex/worktrees/harness-gap-b00-closeout/ClawX/openclaw_runtime/src/agents/long-task-control/stage3-golden-run.test.ts",
+          "case": "stage3 golden runner real DeepSeek path real run: Stage 2 chain -> real ledger proposal/accept -> redacted evidence",
+          "status": "skipped",
+          "durationMs": null
+        },
+        {
+          "file": "C:/Users/27933/.codex/worktrees/harness-gap-b00-closeout/ClawX/openclaw_runtime/src/infra/outbound/outbound-policy.provenance.test.ts",
+          "case": "network-send provenance policy denies an implicit cross-target send for untrusted provenance",
+          "status": "failed",
+          "durationMs": 355400.6537
+        }
+      ],
+      "notes": [
+        "Optional DeepSeek live case skipped by existing condition; not a request for human data or permission.",
+        "No fresh provider call was made. Old-candidate results are not silently relabelled as the final candidate."
+      ]
+    }
+  },
+  "independentVerification": {
+    "status": "rejected",
+    "exitCode": 1,
+    "actor": "codex-independent-python-verifier",
+    "errors": [
+      "receipt candidate frozen-runtime-retry",
+      "runner failed frozen-runtime-retry",
+      "test aggregate frozen-runtime-retry",
+      "individual assertions frozen-runtime-retry",
+      "full required profile failed",
+      "profile skipped or failed"
+    ],
+    "sourceReferencesVerified": 94
+  },
+  "credentialScan": {
+    "status": "pass",
+    "hitCount": 0,
+    "report": "D:/ClawX-work/harness-gap-b00-closeout-20261009/credential-scan.json",
+    "scope": "Known credential signatures over authored files and this-run raw evidence; not a credential-store audit"
+  },
+  "preservedFailures": [
+    "Inherited inventory on current main: 4 changed doc/spec hashes plus 1 archived source",
+    "Malformed packet/slot negative regressions; test fixture mistakes retained separately",
+    "Shared ESLint dependency disappeared: first fast gate failed",
+    "Offline cache miss plus tool-call interruptions retained with unknown exit where no runner receipt exists",
+    "Missing mjs type declaration fixed; full uncached node/web/test typecheck then passed",
+    "Runtime observation: 1 failed case and 1 optional live skip",
+    "Full unit gate: 7 VerseShell manifest failures; absent untracked resources/bin/win32-x64/ae.exe; run explicitly stopped, not full totals"
+  ],
+  "acceptance": [
+    {
+      "criterion": "30 slots and 29 bounded packets",
+      "status": "verified"
+    },
+    {
+      "criterion": "Source holes, original pilots and locks accurately retained",
+      "status": "verified"
+    },
+    {
+      "criterion": "Clean candidate, required gates, independent evidence completeness",
+      "status": "incomplete"
+    },
+    {
+      "criterion": "Auto-close only after every applicable gate passes",
+      "status": "not-eligible; retain in_progress"
+    }
+  ],
+  "notMeasured": [
+    "live model effectiveness",
+    "component ablation benefit",
+    "pilot p99",
+    "full-system/release readiness",
+    "Electron E2E",
+    "remote CI"
+  ],
+  "rawEvidence": [
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/candidate.json",
+      "sha256": "6c6b6aeb6dfc7c09179f4098b56eebb2a380fb825b855189d1dff1d100310aad"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-focused-final.receipt.json",
+      "sha256": "ad84e23e0409562ea53565ab469696de8ef1b56b5b60141a61f1f0c6029398b7"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-focused-final.vitest.json",
+      "sha256": "655401693fd39b0c07d01582cba2c17113f3d9a1764f9cb62a78c0c30134936a"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-typecheck-final.receipt.json",
+      "sha256": "bc65ef079b9d92bf222d4502a88f592cd2989f7e264359bbfa0229ea0f621f2f"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/typecheck-final.report.json",
+      "sha256": "92c9aa155ac5644999334a91c5fbddf42ea4527db467e047081b2aa8bc9fa615"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-inventory-final.receipt.json",
+      "sha256": "aa4c9dd4173149cbd134250238050e0ed27f63b0b77592f87d1045b52b8f1a64"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-inventory-final.stdout.log",
+      "sha256": "83c2b8d14d6d5e5b00e5766dccecdca5e11c08b7fee6e6cd6a89d84ac99733cd"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-harness-validate-final.receipt.json",
+      "sha256": "ac1678e692d0b12f292f1cc590a139a23778a8fb3d73110711ee3504ae7165bb"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-fast-final.receipt.json",
+      "sha256": "5f90b5a5c86c8aa09ef6d0fb25ea6262ac2682395ac7643ad891c1324ae22f4a"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-fast-final.harness.json",
+      "sha256": "28559f872e9013ab9c80d1e2b38d1712aded171fd57d30220f5d1a58b36e5832"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-fast-final-stop.json",
+      "sha256": "72273f3f3b1d3f9a95c094a727bbe7c8fd5a12d7ca26b8cda8d8e1ae354937bb"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-runtime-retry.receipt.json",
+      "sha256": "8172a68fbf39a0c3fea7292ad1f9b2bf1751a9607a4fee87d37855b85251c95f"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-runtime-retry.vitest.json",
+      "sha256": "387a5bd056dd80f14fbeaba09b077ff4e28b1ac1236424a9de5a942288aebad4"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/verseshell-asset-diagnosis.json",
+      "sha256": "abce565e53d37ddd647f7b30249886da3bcc95a28357f08996103b985689c90b"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/independent-verification.json",
+      "sha256": "5ef5760b22f334792edcb93fd6bd031bdfe159df7d82a145021a3b6d52696310"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/process-cleanup.json",
+      "sha256": "73f4222fb38e86d6c61c76c2147c28099b6431a35587a52dcae3860fe7bdbf3e"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/source-original-at-head.json",
+      "sha256": "561ee5e7c2c8a39563cc9e9ad1a5294f4274198a95954f2fd0853fcd75ad9675"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/source-original-at-main.json",
+      "sha256": "053aa0294a111fdc6041571bf99d2b9f44d0ee6e66a7c71e786276a5434e0eac"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/source-original-all-history.json",
+      "sha256": "da95eb14cda38402745caaf12428c9958c2b593433c2bd94ae47d6b4a56e33a8"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/a5-archived-source.json",
+      "sha256": "767ecdecedf7099b7a915d2ae3a19fd9824911f2f968b24518be795e83f0217c"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-fast-final.stdout.log",
+      "sha256": "8f61b6ef993394fa129154bdcaac2bc78abbd27c341e79c0cc76078fa9234f64"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-fast-final.stderr.log",
+      "sha256": "ee854441380e2f416b20116afe4af407add5528427173d6e4d19ae1077a82c1a"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/frozen-runtime-retry.stderr.log",
+      "sha256": "a623fbeaf1d6584a6073121e47b7850aab185f56e5759b898b14ca1717913b9e"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/verify.py",
+      "sha256": "7e47c5ee491dc266d633e4d847fd529dda1d06ce1cf4a0b822297bb8f7d4f13d"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/scan.py",
+      "sha256": "13fd0e00a73612ff57644e9f1156facbd5049450fdd6c3b6ae4b6e1713fbb91e"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-closeout-20261009/run-gate.mjs",
+      "sha256": "c996d4e6e19768868811851d03484334922728f02cb1ebd5686255d3a7e65c84"
+    }
+  ]
+}
