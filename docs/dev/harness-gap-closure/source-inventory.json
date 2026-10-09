@@ -1,0 +1,2753 @@
+{
+  "schemaVersion": 1,
+  "scope": "B00-source-baseline-not-runtime-acceptance",
+  "asOf": "2026-10-09",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex",
+  "driven_by": "agent",
+  "sourceBaseline": {
+    "commit": "d5420d53ad038e713ce4a81fc048fb50ca28f5ff",
+    "tree": "b91f3d0f90ce470d47ab372374011c3f042c5bef",
+    "hashFormat": "sha256-utf8-lf",
+    "scope": "immutable source snapshot; final B00 candidate identity is in baseline-evidence.json",
+    "dependencyMode": "existing installed dependencies reused; not a fresh-install qualification"
+  },
+  "sourceRecovery": {
+    "originalPath": "docs/research/harness-gap-register-2026-10-08.md",
+    "result": "not-recovered",
+    "slots": [
+      "HG22",
+      "HG27"
+    ],
+    "scope": "当前HEAD、已知origin/main树以及可访问全引用历史；原/集成检出的目标文件均未找到。不宣称所有历史不存在该文件。",
+    "checks": [
+      {
+        "name": "source-original-at-head",
+        "command": [
+          "git",
+          "ls-tree",
+          "HEAD",
+          "--",
+          "docs/research/harness-gap-register-2026-10-08.md"
+        ],
+        "exitCode": 0,
+        "result": "no entry in searched scope"
+      },
+      {
+        "name": "source-original-at-main",
+        "command": [
+          "git",
+          "ls-tree",
+          "origin/main",
+          "--",
+          "docs/research/harness-gap-register-2026-10-08.md"
+        ],
+        "exitCode": 0,
+        "result": "no entry in searched scope"
+      },
+      {
+        "name": "source-original-all-history",
+        "command": [
+          "git",
+          "log",
+          "--all",
+          "--format=%h %s",
+          "--",
+          "docs/research/harness-gap-register-2026-10-08.md"
+        ],
+        "exitCode": 128,
+        "result": "fatal: unable to read tree (732ace05218d1857cbe5163c1bbe41eaafb9f961)"
+      }
+    ],
+    "decision": "HG22/HG27仅保留来源槽位；历史搜索不完整，不推导功能不存在，不新建虚构需求，不等待真人。"
+  },
+  "productLocks": {
+    "policy": "unchanged; not defects or graduation permission",
+    "sourceRefs": [
+      "runtimeLocks",
+      "defaultMatrix",
+      "researchLocks"
+    ],
+    "values": {
+      "live_ready": false,
+      "product_approved": false,
+      "default_on": false
+    },
+    "defaultBoundaries": [
+      "memory/working-memory/SEKB opt-in状态保持不变",
+      "Browser private network默认拒绝",
+      "verifier shadow不获得终结authority",
+      "不公开发布、部署或调用付费provider"
+    ]
+  },
+  "experimentParameters": {
+    "scope": "test-fixture-only; not production defaults",
+    "approval": {
+      "windowSize": 100,
+      "minSamples": 20,
+      "raiseRate": 0.5,
+      "clearRate": 0.3,
+      "consecutiveWindows": 2,
+      "semantics": "tier分类事件；实际UI提示/用户审批次数未测量"
+    },
+    "reliability": {
+      "k": 3,
+      "minCases": 20,
+      "securitySkipBudget": 0,
+      "securityFlakeBudget": 0,
+      "nonSecurityFlakeRateMax": 0.01
+    },
+    "ablation": {
+      "minCases": 20,
+      "repetitions": 3,
+      "conditions": 2,
+      "seed": "register before run",
+      "liveProviderCalls": "not part of B00"
+    },
+    "requestRate": {
+      "requestsPerSecond": 10,
+      "cooldownSeconds": 2,
+      "halfOpenProbes": 1
+    },
+    "handoff": {
+      "maxDepth": 3,
+      "maxTransfers": 2
+    },
+    "pilotPolicy": "原spec更严格时从严；门限数组逐字保存在各pilotContract，不以统一阈值替代。"
+  },
+  "references": {
+    "plan": {
+      "path": "docs/dev/harness-gap-closure/design.md",
+      "sha256": "12e5c2137e08014d77b47f7d29e2433b3ab8816c4d22bed5f9765a87492b5201",
+      "line": 7,
+      "anchor": "## 1. 来源校正与限制"
+    },
+    "counter": {
+      "path": "openclaw_runtime/src/context-engine/coding-observability.ts",
+      "sha256": "7e14c03b165b47ea8b5a92202a4667336d3d829c1c10220706e1628154fc8ccf",
+      "line": 201,
+      "anchor": "rates(): {"
+    },
+    "tier": {
+      "path": "openclaw_runtime/src/agents/write-destructive-tier.ts",
+      "sha256": "b956b23f43e1663e58d892c044167b7b1d1389ef303e8c061995ff20a572134b",
+      "line": 106,
+      "anchor": "export function wrapToolWithDestructiveTier("
+    },
+    "tools": {
+      "path": "openclaw_runtime/src/agents/agent-tools.ts",
+      "sha256": "89a496451e1ff2212807b30e448b4c196f0db95f6df85134f4d9cde54963c0b8",
+      "line": 84,
+      "anchor": "import { wrapToolWithSymbolLease } from \"./symbol-lease-guard.js\";"
+    },
+    "metricsCatalog": {
+      "path": "shared/dcs/prod-flags-catalog.ts",
+      "sha256": "57cddd72c80469b820a2747a324fd8a2f0e4485a8dca331bf2e9bd2ddbdd8d43",
+      "line": 315,
+      "anchor": "'coding.write.approvalPromptRate',"
+    },
+    "traceTypes": {
+      "path": "shared/agent-dev/trace-contract.ts",
+      "sha256": "fa0c98c522c6f51eea9a174b820f6633e7f77ea92f5fa22fa702f19772788a56",
+      "line": 23,
+      "anchor": "export type AgentDevCostUsage = {"
+    },
+    "traceRecorder": {
+      "path": "openclaw_runtime/src/observability/trace-recorder.ts",
+      "sha256": "78b6d08400ea55b9b605255be91bb5529335565e43e1d34eb3af631d9b3b0433",
+      "line": 91,
+      "anchor": "export class ObservabilityTraceRecorder {"
+    },
+    "traceMetrics": {
+      "path": "openclaw_runtime/src/observability/metrics.ts",
+      "sha256": "c95e6be0a460be071ac9513acd4ec60114b007771319bf7da97d3e568b92e2bf",
+      "line": 19,
+      "anchor": "export function addObservabilityTokenUsage("
+    },
+    "traceContext": {
+      "path": "openclaw_runtime/src/runtime-core/trace-context.ts",
+      "sha256": "bc2c1b653d35462d611155b5f90eac044a916f2023f72edd9faa23d2de46d34b",
+      "line": 19,
+      "anchor": "export const RUNTIME_TRACE_SPAN_KINDS = ["
+    },
+    "provenance": {
+      "path": "shared/security/content-provenance.ts",
+      "sha256": "3e85dda3e85b696eb5c034190a1a819c9111d7791368401274bdbcc9911d994b",
+      "line": 49,
+      "anchor": "export const SENSITIVE_SINK_CLASSIFICATION: Readonly<"
+    },
+    "envelope": {
+      "path": "openclaw_runtime/src/agents/stage1-request-envelope.ts",
+      "sha256": "53af464a95afb84e7258082f7f46facd15cddfd1c69c3c33d68feee9ed482282",
+      "line": 198,
+      "anchor": "export function buildStage1RequestEnvelope("
+    },
+    "providerFetch": {
+      "path": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+      "sha256": "d5e5923d2f18d50c9fe21b3d524e028ebf4f83f191f651d6a0e682ec2fefeb6e",
+      "line": 783,
+      "anchor": "export function buildGuardedModelFetch("
+    },
+    "outbound": {
+      "path": "openclaw_runtime/src/infra/outbound/outbound-policy.ts",
+      "sha256": "e8810cc101c42113dbece6d6069fe32c1319bac2fca00e858d5d85d6571f5e6e",
+      "line": 198,
+      "anchor": "export function enforceCrossContextPolicy(params: {"
+    },
+    "messageAction": {
+      "path": "openclaw_runtime/src/infra/outbound/message-action-runner.ts",
+      "sha256": "f49d8895c3d46985f256a92a3e7e95773ab5769caf342abdfa659186bd2f2a9f",
+      "line": 1563,
+      "anchor": "enforceCrossContextPolicy({"
+    },
+    "secretRead": {
+      "path": "openclaw_runtime/src/agents/tools/message-secret-read-policy.ts",
+      "sha256": "7c535c4e373a36e4a0029aae672e99d562a48346307178643a9a0b7375bbe4ff",
+      "line": 130,
+      "anchor": "export function assertMessageSecretReadAllowed(input: MessageSecretReadPolicyInput): void {"
+    },
+    "messageTool": {
+      "path": "openclaw_runtime/src/agents/tools/message-tool.ts",
+      "sha256": "a26503743f15b0c0be40aee0367e8ad08d1fb09f3d98a19d91471f0e919a65b4",
+      "line": 1338,
+      "anchor": "assertMessageSecretReadAllowed({"
+    },
+    "externalWrite": {
+      "path": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+      "sha256": "79124f66fb05890063f0ede7c10f7e1dbb7b67cabe840a1a433aabfb5de46212",
+      "line": 113,
+      "anchor": "export function wrapToolWithWorkspaceExternalWriteProvenance("
+    },
+    "verseWrite": {
+      "path": "openclaw_runtime/src/agents/verseshell/external-write-policy.ts",
+      "sha256": "559e127420c056ce3dc748c332c869c2436304376b5398357447a63a1bb5826a",
+      "line": 150,
+      "anchor": "export function resolveVerseShellExternalWritePolicy("
+    },
+    "browserPolicy": {
+      "path": "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.ts",
+      "sha256": "2c6971526cee20e12c3e9fda54197936a808babda21c2ea9a4298d7d907fb15e",
+      "line": 57,
+      "anchor": "export function resolveAgentBrowserSessionEffectPolicy("
+    },
+    "credentialPolicy": {
+      "path": "openclaw_runtime/src/agents/tools/provider-credential-use-policy.ts",
+      "sha256": "84369b8d09adad732da5e2c73ff5b3aba438762b0c2cea381aaba5ab620c26bf",
+      "line": 28,
+      "anchor": "export function resolveProviderCredentialUsePolicy("
+    },
+    "imageTool": {
+      "path": "openclaw_runtime/src/agents/tools/image-generate-tool.ts",
+      "sha256": "0b3267db7342363d762733095eb037ffb4daf0ada69a310fe08aadcff8bfdc9b",
+      "line": 103,
+      "anchor": "import { resolveProviderCredentialUsePolicy } from \"./provider-credential-use-policy.js\";"
+    },
+    "effect": {
+      "path": "openclaw_runtime/src/agents/effect-receipt.ts",
+      "sha256": "ec0de0e84d568c81ae94571467f2ccace99bac305162307b60b0f85f5ff64e5b",
+      "line": 316,
+      "anchor": "export class EffectReceiptStore {"
+    },
+    "memoryStore": {
+      "path": "openclaw_runtime/src/runtime-core/memory-store.ts",
+      "sha256": "adec5d2ad67c02a0cfdc59f3ccccd2f9b14edaecb4fb7ead90cd2598d9060b7f",
+      "line": 164,
+      "anchor": "export class RuntimeMemoryStore {"
+    },
+    "verifier": {
+      "path": "openclaw_runtime/src/runtime-core/evidence-verifier.ts",
+      "sha256": "967656ba33aa4ab7aecb6ce84d275eed7e00d0f0b8a0f5583826e5b2b89e12cf",
+      "line": 29,
+      "anchor": "export const EVIDENCE_VERIFIER_DECISIONS = ["
+    },
+    "verifierShadow": {
+      "path": "openclaw_runtime/src/runtime-core/evidence-verifier-code-task-gate-shadow.ts",
+      "sha256": "275d4a5784c79b2aa828cebbd00c8a2e36290d9d20be0e3b45376bc1101ebcae",
+      "line": 37,
+      "anchor": "\"would_block\","
+    },
+    "workingContext": {
+      "path": "electron/services/task-ledger-working-context.ts",
+      "sha256": "645090a9637612f23cdd46387b476fbbcc2474b1bb829e0f643598a938bec2d7",
+      "line": 32,
+      "anchor": "export async function readTaskLedgerWorkingContext("
+    },
+    "workingProjection": {
+      "path": "shared/task-ledger-working-context.ts",
+      "sha256": "43eb5c0c6269ff088b8079608e76bb19afc46a8c8510997ae1388ca9eb68563d",
+      "line": 537,
+      "anchor": "export function projectTaskLedgerWorkingContext("
+    },
+    "ledger": {
+      "path": "electron/services/task-ledger-service.ts",
+      "sha256": "1ad366353800290fa9bf78591a25424763b1e5c52c7c06d4e6299730fff9bf57",
+      "line": 320,
+      "anchor": "export async function appendTaskLedgerEvents("
+    },
+    "runtimeWorkingContext": {
+      "path": "openclaw_runtime/src/agents/long-task-control/stage3-working-context.ts",
+      "sha256": "1407e8831abfa1b163d8fbc70e9e309dd2d941af7e08d8f3f41fb579e4ad0482",
+      "line": 42,
+      "anchor": "export function appendStage3WorkingContextEvents("
+    },
+    "goldenContext": {
+      "path": "openclaw_runtime/src/agents/long-task-control/stage3-golden-run.ts",
+      "sha256": "48394f0e097da98e923ee8199391417c2db9bcd72bf577bd52f2f84444716d98",
+      "line": 152,
+      "anchor": "appendStage3WorkingContextEvents({"
+    },
+    "loop": {
+      "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+      "sha256": "f03e9e0c91652df0ca72d97bae4a4e7a6c8c1f153e7a7f556f1f8aed1bda7ed7",
+      "line": 150,
+      "anchor": "maxIterations?: number;"
+    },
+    "handoff": {
+      "path": "openclaw_runtime/src/agents/handoff-artifacts.ts",
+      "sha256": "55d747034b2a7e93bca903054a23f21761bc2a4d95f7779f3d9f515fc8519147",
+      "line": 14,
+      "anchor": "export const DEFAULT_HANDOFF_ARTIFACTS_PILOT_MODE: HandoffArtifactsPilotMode = \"off\";"
+    },
+    "steer": {
+      "path": "openclaw_runtime/src/agents/subagent-registry-steer-runtime.ts",
+      "sha256": "5c8bf197c7c5f1bb1dfc956e2e97e431a222228c9a4f0760ac7f5cb885c3341d",
+      "line": 43,
+      "anchor": "export function replaceSubagentRunAfterSteer(params: ReplaceSubagentRunAfterSteerParams) {"
+    },
+    "steerQueue": {
+      "path": "openclaw_runtime/src/agents/agent-steering-queue.ts",
+      "sha256": "f30ee737c80fca441dd39ef62939a0f3121422e10f66b56df4e6162579b86d99",
+      "line": 42,
+      "anchor": "const STALE_STEERING_LEASE_MS = 5 * 60 * 1000;"
+    },
+    "checkpoint": {
+      "path": "openclaw_runtime/src/runtime-core/checkpoint-serializer.ts",
+      "sha256": "4e5062c48f05be38d5104e9c5bbd76c6f9213a1925cf94ba9d7d03a807f1a1a1",
+      "line": 18,
+      "anchor": "export const RUNTIME_CHECKPOINT_SERIALIZER_SCHEMA_VERSION = 1 as const;"
+    },
+    "resumeShadow": {
+      "path": "openclaw_runtime/src/agents/long-task-control/persisted-resume-shadow.ts",
+      "sha256": "21819639a72cc9a580f559be74be77f8e9fe20b44fcfbcce6a8702aa784a3710",
+      "line": 102,
+      "anchor": "export function runPersistedRuntimeResumeShadow("
+    },
+    "tokenBudget": {
+      "path": "openclaw_runtime/src/agents/orchestration-token-budget.ts",
+      "sha256": "233d0b59f7779eab9aa51f03df384f048fe513c9886d9a16c2d7e0b8786ebbc1",
+      "line": 45,
+      "anchor": "export function chargeTokenBudget(goalId: string, tokens: number): TokenBudgetDecision {"
+    },
+    "lease": {
+      "path": "openclaw_runtime/src/agents/symbol-lease-guard.ts",
+      "sha256": "0d639b8333e9fb331523d909ee55c689b2044783bc714b99a2769f6be632cda2",
+      "line": 82,
+      "anchor": "export function wrapToolWithSymbolLease("
+    },
+    "symbolLease": {
+      "path": "openclaw_runtime/src/context-engine/factstore/symbol-lease.ts",
+      "sha256": "2bcbd04cb19747b187951267e129cac8858257c2bab221faffccc6761120af37",
+      "line": 189,
+      "anchor": "export function acquireSymbolLease(params: {"
+    },
+    "error": {
+      "path": "openclaw_runtime/src/agents/symbol-lease-guard.ts",
+      "sha256": "0d639b8333e9fb331523d909ee55c689b2044783bc714b99a2769f6be632cda2",
+      "line": 26,
+      "anchor": "export class SymbolLeaseHeldError extends Error {"
+    },
+    "benefitScan": {
+      "path": "scripts/agent-dev-benefit-eval.mjs",
+      "sha256": "6a8ef35b3627fd5ab01820292726aa2478a433efdabefbd4c62eb8a1157994fa",
+      "line": 44,
+      "anchor": "async function scanSelectorCoverage() {"
+    },
+    "scenarioRegistry": {
+      "path": "shared/agent-dev/scenarios.ts",
+      "sha256": "565f10868f384cac0c71c9024278e3f15bbd3f05399360cd0916602354170492",
+      "line": 10,
+      "anchor": "export const AGENT_DEV_SCENARIOS = ["
+    },
+    "promote": {
+      "path": "scripts/agent-dev-promote-scenario.mjs",
+      "sha256": "95bc768a6e88b6a6c8818b444e5311b40162e543831a22516586efebc0c56b68",
+      "line": 189,
+      "anchor": "export { assertLooksRedacted, promoteScenario };"
+    },
+    "harnessRules": {
+      "path": "harness/src/rules.mjs",
+      "sha256": "61a3bf0f890f2c59f7841e97bbb85b3f2cf2ee4a94f45f3efab993c7d3e0420d",
+      "line": 84,
+      "anchor": "export function validateChangedPathOwnership(taskSpec, scenarioSpec, changedFiles = []) {"
+    },
+    "agentEntry": {
+      "path": "AGENTS.md",
+      "sha256": "437c54fbae1d42d166521a9f146f780e8cb03b7fc41f2fd6333b431d468feb26",
+      "line": 3,
+      "anchor": "## Human-in-the-loop policy（仓库所有者长期声明，2026-09-27）"
+    },
+    "pilotCounters": {
+      "path": "openclaw_runtime/src/observability/deprecation-counters.ts",
+      "sha256": "3afd32a9af56f94c88b9ae4b2765a2ac0370601601e9d5c7c434442ab8c8cfdf",
+      "line": 18,
+      "anchor": "export type DeprecationArea = \"a1\" | \"a2\" | \"a3\" | \"a4\" | \"a5\" | \"a6\";"
+    },
+    "pilotHistory": {
+      "path": "docs/runtime-design/deep-test-results.md",
+      "sha256": "f7a72e243c1f16bcf391ea9fc97ae07fa7e7c4b30b31a8040bbadf47d2f93bea",
+      "line": 3,
+      "anchor": "**生成时间**: 2026-07-03"
+    },
+    "a5History": {
+      "path": "docs/dev/harness-gap-closure/baseline.md",
+      "sha256": "f685e6ca65efc2d676a156d0eeb589c6de73d2702aa8fe905fb95970b8cf2027",
+      "line": 24,
+      "anchor": "A5历史报告基线为734ec877e75682861103660fbdea2bd55253ece0，仅shadow/diagnostics-only，不是当前pilot验收。"
+    },
+    "defaultMatrix": {
+      "path": "docs/dev/default-config-matrix.md",
+      "sha256": "0f6c68e3e00181fabe5acd8b15471da57de50caa6f3521f3b072847748474356",
+      "line": 18,
+      "anchor": "| **Runtime Memory shadow/provider/persist** | runtime.memory.shadow / .provider / .persist | **false** | explicit opt-in only | flag off |"
+    },
+    "runtimeLocks": {
+      "path": "docs/dev/unified-agent-system/runtime-convergence/STATUS.md",
+      "sha256": "542791309ca076f64948e83ebb5858a5b2c137aabe78d02a9bb155278a9907a6",
+      "line": 47,
+      "anchor": "live_ready: false"
+    },
+    "researchLocks": {
+      "path": "docs/dev/runtime-research-boundaries.md",
+      "sha256": "7cf629cc2a75545217d5fe79fc6397dbf876fae3d1b8fa537dd59e2b514643c0",
+      "line": 53,
+      "anchor": "- Provider ordering remains unchanged. AgentMap cannot gain runtime, tool, approval, retry, completion, security, or transport authority."
+    },
+    "ablationEmbedding": {
+      "path": "tests/unit/runtime-memory-embedding-ablation.test.ts",
+      "sha256": "acfdbed47face9dd7eb55e531bddc3d311185d34b126fd143c7b572bc14e3eb4",
+      "line": 174,
+      "anchor": "describe(\"runtime memory embedding ablation (3-gram baseline vs mock embedding)\", () => {"
+    },
+    "ablationFusion": {
+      "path": "tests/unit/runtime-memory-mvp-module-b-ablation-test.test.ts",
+      "sha256": "2a56116de357e6807802789fd8bda84a0dfd5f5f993df5811af499001f1fea14",
+      "line": 399,
+      "anchor": "describe(\"Module B Ablation Test\", () => {"
+    },
+    "ablationPhase4": {
+      "path": "tests/unit/runtime-memory-phase4-ablation-benefit.test.ts",
+      "sha256": "e1bf480bd8595e24a689e62cdd62adcda2981db9a4d1a516adb99086eab912bf",
+      "line": 88,
+      "anchor": "describe(\"Phase 4 ablation: eviction quality (type-aware vs FIFO)\", () => {"
+    },
+    "devApi": {
+      "path": "electron/services/agent-dev-api.ts",
+      "sha256": "94b21e3a631644f131c0b44bf44459541b6969aa9ba64fd32224bfb812467730",
+      "line": 444,
+      "anchor": "export function createAgentDevApi(ctx: AgentDevApiContext): CompleteHostServiceRegistry['agentDev'] {"
+    },
+    "memoryEdit": {
+      "path": "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+      "sha256": "2e043dcbd6909b8384089321ea3b2da7901eea74060b9d1e8cbbdb821dbf3ecc",
+      "line": 735,
+      "anchor": "export function executeMemorySelfEditTool("
+    },
+    "browserTool": {
+      "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+      "sha256": "ea1b28b2d8bf93e1caa6a17f6713f3f2fe2c842bfdfbe41efd6ea8e7fa00203f",
+      "line": 242,
+      "anchor": "const policy = resolveAgentBrowserSessionEffectPolicy({"
+    },
+    "steerControl": {
+      "path": "openclaw_runtime/src/agents/subagent-control.ts",
+      "sha256": "6d6bd30469b504ef983f5c1d2ac2ccdd557fa0f549f4edcb85b5995eb5feee6f",
+      "line": 603,
+      "anchor": "const replaced = replaceSubagentRunAfterSteer({"
+    },
+    "toolError": {
+      "path": "shared/types/runtime-tool-shadow.ts",
+      "sha256": "d7c714ef1c86744b70d566c08eb6665660a00efb96f863b54f9ce9c0d5df7bbe",
+      "line": 72,
+      "anchor": "retryable: boolean;"
+    },
+    "repeatGuard": {
+      "path": "openclaw_runtime/src/agents/tool-loop-detection.ts",
+      "sha256": "7aa7f11450d293244e099c6851cbb3c7f4d0e44aee20e5b62bcaf7167b9cf486",
+      "line": 598,
+      "anchor": "export function detectToolCallLoop("
+    },
+    "a1Snapshot": {
+      "path": "openclaw_runtime/src/agents/sessions/extensions/policy-light-snapshotter.ts",
+      "sha256": "b3dc72a1c42f861508bf9861c79da68e85f284e4acd80a39d99290e75cea9a26",
+      "line": 418,
+      "anchor": "export async function beginSnapshot("
+    },
+    "a2Scheduler": {
+      "path": "openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts",
+      "sha256": "9a86631a35437500f253d9be1d374171e8742cc600868fbe1d46ca742edde8d4",
+      "line": 59,
+      "anchor": "export class ResourceAwareWaveScheduler {"
+    },
+    "a3Anomaly": {
+      "path": "openclaw_runtime/src/agents/anomaly-classifier.ts",
+      "sha256": "d6cebd47344ee7187395f4742ae4bf86ded8470fcf36c31f66fab12ab1bf572f",
+      "line": 224,
+      "anchor": "export function resolveAnomalyPatternForReviewer("
+    },
+    "a3Controller": {
+      "path": "openclaw_runtime/src/agents/mission-control/controller.ts",
+      "sha256": "59a02b958ff897c32516b145ff5b24cad35a41e908d73b5aa4b7dac78de14cfe",
+      "line": 48,
+      "anchor": "import { resolveAnomalyPatternForReviewer } from \"../anomaly-classifier.js\";"
+    },
+    "a4Auditor": {
+      "path": "openclaw_runtime/src/observability/decision-quality-auditor.ts",
+      "sha256": "78a08ed2fd7d0fd6cab9020dd3dd8d836d03b8839594483d1b4f077e4470c832",
+      "line": 111,
+      "anchor": "export class DecisionQualityAuditor {"
+    },
+    "a5Compact": {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/compact.ts",
+      "sha256": "e10196a06807f00df49bfab18a7e049e642df990429593508dcf34d068dbd529",
+      "line": 234,
+      "anchor": "export function recordEmbeddedCompactionBudgetCounters("
+    },
+    "a5Planner": {
+      "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.ts",
+      "sha256": "e50f7a3c95dbf866e4c5097bfb9c56019f4d78e62989efb63cffbf54ce31fb20",
+      "line": 556,
+      "anchor": "export function planCompression(input: CompressionPlannerInput): CompressionPlannerResult {"
+    },
+    "a6Fingerprint": {
+      "path": "openclaw_runtime/src/agents/long-task-control/file-fingerprint.ts",
+      "sha256": "79d6cf592675ce73f57460862c27388d55aca2d6367b1a7c871215385abb8cb4",
+      "line": 443,
+      "anchor": "export async function computeCheckpointFileHashes("
+    },
+    "spec:context-control-plane-stage1": {
+      "path": "harness/specs/tasks/context-control-plane-stage1.md",
+      "sha256": "693f536ef43baa217097976907f99880c96a63578108f959ac9f39ee2a497a3b",
+      "line": 2,
+      "anchor": "id: context-control-plane-stage1"
+    },
+    "spec:rc08b-otel-observability-convergence": {
+      "path": "harness/specs/tasks/rc08b-otel-observability-convergence.md",
+      "sha256": "4c5ba49e85d508f522694ef7b2a560fb53555e774a8da35e28983e7e45260d4d",
+      "line": 2,
+      "anchor": "id: rc08b-otel-observability-convergence"
+    },
+    "spec:live-tool-runtime-reliability": {
+      "path": "harness/specs/tasks/live-tool-runtime-reliability.md",
+      "sha256": "4130ccc34567611720279cc9a041fe03f1072b1055cba3dbb10fd4ef916b981a",
+      "line": 2,
+      "anchor": "id: live-tool-runtime-reliability"
+    },
+    "spec:phase-35-runtime-memory-read-hydration-benefit-evaluation-design": {
+      "path": "harness/specs/tasks/phase-35-runtime-memory-read-hydration-benefit-evaluation-design.md",
+      "sha256": "3fc77540ac8a662216c16f3e77b21539d1e5578a882765c156f46b57d7721487",
+      "line": 2,
+      "anchor": "id: phase-35-runtime-memory-read-hydration-benefit-evaluation-design"
+    },
+    "spec:network-send-provenance-boundary": {
+      "path": "harness/specs/tasks/network-send-provenance-boundary.md",
+      "sha256": "b6e3a3edc0fcc6131f5e906d7f37abada04e8bf3f069ebe0133394074735322c",
+      "line": 2,
+      "anchor": "id: network-send-provenance-boundary"
+    },
+    "spec:secret-read-provenance-boundary": {
+      "path": "harness/specs/tasks/secret-read-provenance-boundary.md",
+      "sha256": "2693d7eb5da8846455102a0f5848cbf70af8ea92eda7649856e046bda72f2ebf",
+      "line": 2,
+      "anchor": "id: secret-read-provenance-boundary"
+    },
+    "spec:command-exec-provenance-boundary": {
+      "path": "harness/specs/tasks/command-exec-provenance-boundary.md",
+      "sha256": "f4a309e531d80d152f7391f6cce4b132cfaeb210a2bfc27d484a2fbc23a23544",
+      "line": 2,
+      "anchor": "id: command-exec-provenance-boundary"
+    },
+    "spec:workspace-external-write-provenance-boundary": {
+      "path": "harness/specs/tasks/workspace-external-write-provenance-boundary.md",
+      "sha256": "6c6198ceb94d2b362e011924c79e71a61c1d0069d8ba2f621428754932ae16da",
+      "line": 2,
+      "anchor": "id: workspace-external-write-provenance-boundary"
+    },
+    "spec:browser-effect-provenance-boundary": {
+      "path": "harness/specs/tasks/browser-effect-provenance-boundary.md",
+      "sha256": "e18da042c6f946ac377dcf8238aa14c307c4af3116a8eb46aed163e3318a7e1a",
+      "line": 2,
+      "anchor": "id: browser-effect-provenance-boundary"
+    },
+    "spec:browser-effect-session-click-provenance-boundary": {
+      "path": "harness/specs/tasks/browser-effect-session-click-provenance-boundary.md",
+      "sha256": "9d28d61b5175fddfc3ebce1bd70cd705eb9385d6cc0c6214637718d4d0011871",
+      "line": 2,
+      "anchor": "id: browser-effect-session-click-provenance-boundary"
+    },
+    "spec:browser-effect-session-type-provenance-boundary": {
+      "path": "harness/specs/tasks/browser-effect-session-type-provenance-boundary.md",
+      "sha256": "3890a94149073fa0516171dbec690e673d3107165ab777f8856022bdf1ae28f3",
+      "line": 2,
+      "anchor": "id: browser-effect-session-type-provenance-boundary"
+    },
+    "spec:credential-use-provenance-boundary": {
+      "path": "harness/specs/tasks/credential-use-provenance-boundary.md",
+      "sha256": "045913612fa888bff090872b7bdff85946be4c0f11c1831fe1e43d70b67af523",
+      "line": 2,
+      "anchor": "id: credential-use-provenance-boundary"
+    },
+    "spec:phase-5-evidence-verifier": {
+      "path": "harness/specs/tasks/phase-5-evidence-verifier.md",
+      "sha256": "f1906f8224651b28fe0a63830834b8dee48d96855b5e29d04f062c32faf42506",
+      "line": 2,
+      "anchor": "id: phase-5-evidence-verifier"
+    },
+    "spec:phase-5-evidence-verifier-code-task-gate-controlled-default-off-runtime-shadow-wiring": {
+      "path": "harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-controlled-default-off-runtime-shadow-wiring.md",
+      "sha256": "5cd73321409922f0e56bb22aee48e2d23f56aa90fc9ef57e733ee2f57e669a38",
+      "line": 2,
+      "anchor": "id: phase-5-evidence-verifier-code-task-gate-controlled-default-off-runtime-shadow-wiring"
+    },
+    "spec:workspace-task-ledger": {
+      "path": "harness/specs/tasks/workspace-task-ledger.md",
+      "sha256": "772e83ba9eb0f8b2b1ea8ac49fd572d42b43c90be60b2415bfd44dc249042ffb",
+      "line": 2,
+      "anchor": "id: workspace-task-ledger"
+    },
+    "spec:context-control-plane-stage3": {
+      "path": "harness/specs/tasks/context-control-plane-stage3.md",
+      "sha256": "1accda8591e6f1baae23101a1ba523497421c914b258eb6928d360b466f5c2cd",
+      "line": 2,
+      "anchor": "id: context-control-plane-stage3"
+    },
+    "spec:dcs-stage2-task-state-handoff": {
+      "path": "harness/specs/tasks/dcs-stage2-task-state-handoff.md",
+      "sha256": "e3b242c26ef5bbb5f1baf713fb0760bb498032594aec5b0b96f40f508e2b55f7",
+      "line": 2,
+      "anchor": "id: dcs-stage2-task-state-handoff"
+    },
+    "spec:role-first-team-orchestrate-tool": {
+      "path": "harness/specs/tasks/role-first-team-orchestrate-tool.md",
+      "sha256": "ad9ba2544c1de66305d27d29de77b117944422e26c675ae794fc5c0a5469195b",
+      "line": 2,
+      "anchor": "id: role-first-team-orchestrate-tool"
+    },
+    "spec:phase-4-event-log-checkpoint-resume": {
+      "path": "harness/specs/tasks/phase-4-event-log-checkpoint-resume.md",
+      "sha256": "07abac8dd88a07ccc0c8659d1cebe170672a76dbbfde580fb632b917f141411e",
+      "line": 2,
+      "anchor": "id: phase-4-event-log-checkpoint-resume"
+    },
+    "spec:agent-dev-ecosystem-regularization": {
+      "path": "harness/specs/tasks/agent-dev-ecosystem-regularization.md",
+      "sha256": "b5a34e5ceaa1c9cb3a42592bdfa20bb530b44ab3006f518c358ee779874b1da9",
+      "line": 2,
+      "anchor": "id: agent-dev-ecosystem-regularization"
+    },
+    "spec:a1-layered-isolation-pilot": {
+      "path": "harness/specs/tasks/a1-layered-isolation-pilot.md",
+      "sha256": "c27e7a1246517c42531286ac713431914f12da49270403325913e63c6300ae21",
+      "line": 2,
+      "anchor": "id: a1-layered-isolation-pilot"
+    },
+    "spec:a2-multi-agent-orchestration-pilot": {
+      "path": "harness/specs/tasks/a2-multi-agent-orchestration-pilot.md",
+      "sha256": "d07989e840674b2e46eb4b7fe9401eac651759dfc5a429fb013294d4bd900ab8",
+      "line": 2,
+      "anchor": "id: a2-multi-agent-orchestration-pilot"
+    },
+    "spec:a3-runtime-resilience-pilot": {
+      "path": "harness/specs/tasks/a3-runtime-resilience-pilot.md",
+      "sha256": "5bb8322b6977a2e7d2fd7bec7ed2b6f6ba303fb778db454889f4555845ba0f52",
+      "line": 2,
+      "anchor": "id: a3-runtime-resilience-pilot"
+    },
+    "spec:a4-decision-quality-pilot": {
+      "path": "harness/specs/tasks/a4-decision-quality-pilot.md",
+      "sha256": "d09470b396b2d757885c81b9b36bcce235ee3c1af450192d57ed89bfb93af27e",
+      "line": 2,
+      "anchor": "id: a4-decision-quality-pilot"
+    },
+    "spec:a5-adaptive-context-budget-pilot": {
+      "path": "harness/specs/tasks/a5-adaptive-context-budget-pilot.md",
+      "sha256": "eb328424bbfe62bb23c11b9412532c98769c954d6eb7bfe5b7fe3bd5c2486919",
+      "line": 2,
+      "anchor": "id: a5-adaptive-context-budget-pilot"
+    },
+    "spec:a6-long-running-persistence-pilot": {
+      "path": "harness/specs/tasks/a6-long-running-persistence-pilot.md",
+      "sha256": "d24b4850371630ae81ecfeb2a310e1710bd642f1b93a2deee94b8836ac32b2d2",
+      "line": 2,
+      "anchor": "id: a6-long-running-persistence-pilot"
+    }
+  },
+  "slots": [
+    {
+      "id": "HG01",
+      "topic": "上下文压力下的焦虑式提前收尾",
+      "owner": "L02",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "loop",
+        "handoff"
+      ],
+      "observation": "已有任务循环remaining/checkpoint与交接产物；不能从名称推断上下文压力下的提前成功已被抑制。",
+      "decision": "保留控制器，L02补预算耗尽与未完成事项连续性反例。"
+    },
+    {
+      "id": "HG02",
+      "topic": "调用速率级断路器",
+      "owner": "L05",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "tokenBudget",
+        "providerFetch"
+      ],
+      "observation": "已有token预算和guarded fetch；token累计预算不是单位时间调用速率。",
+      "decision": "L05只为已验证的单run/provider请求边界加可注入速率状态机，不改默认。"
+    },
+    {
+      "id": "HG03",
+      "topic": "pass^k可靠性聚合",
+      "owner": "E01",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "unverified",
+      "sourceRefs": [
+        "benefitScan",
+        "ablationPhase4"
+      ],
+      "observation": "benefit-eval实际是源码/选择器覆盖启发式报告；未提供固定k次原始case聚合。",
+      "decision": "E01新增窄可靠性聚合并复用case资产，不能把现有脚本报告改名为pass^k。"
+    },
+    {
+      "id": "HG04",
+      "topic": "可归因的组件消融",
+      "owner": "E02",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "ablationEmbedding",
+        "ablationFusion",
+        "ablationPhase4",
+        "benefitScan"
+      ],
+      "observation": "已有embedding/fusion/记忆类型局部消融；不具备跨层配对candidate/model/seed与请求成本联合证据。",
+      "decision": "E02复用现有memory检索/淘汰入口，先验证开关实际生效；不另建平台。"
+    },
+    {
+      "id": "HG05",
+      "topic": "flake率阈值",
+      "owner": "E01",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "unverified",
+      "sourceRefs": [
+        "pilotHistory",
+        "benefitScan"
+      ],
+      "observation": "旧深测报告保留过首次失败；不能由重跑绿灯推导flake率或规定门限。",
+      "decision": "E01逐case保留首次失败、固定重跑与不完整样本。"
+    },
+    {
+      "id": "HG06",
+      "topic": "交接深度约束",
+      "owner": "L02",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "handoff",
+        "loop"
+      ],
+      "observation": "handoff有输出上限/超时且默认off；不能替代root/parent/depth转交上限证据。",
+      "decision": "L02只补交接链深度和循环反例，保持既有默认off。"
+    },
+    {
+      "id": "HG07",
+      "topic": "热点文件写入归属",
+      "owner": "L06",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "existing-narrow",
+      "sourceRefs": [
+        "lease",
+        "symbolLease",
+        "tools"
+      ],
+      "observation": "write/edit/apply_patch已有可选SymbolLease guard，冲突先抛错且finally释放，agent-tools已有调用。",
+      "decision": "L06先复验双owner/旧租约/路径身份，不新增锁服务；只补证实的旁路。"
+    },
+    {
+      "id": "HG08",
+      "topic": "规范僵化 ossification",
+      "owner": "G02",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "unverified",
+      "sourceRefs": [
+        "harnessRules",
+        "agentEntry"
+      ],
+      "observation": "Harness有规则与范围门；规范是否陈旧需逐引用/反例审计，不能由文档数量判断。",
+      "decision": "G02只改有断链或语义漂移证据的规范。"
+    },
+    {
+      "id": "HG09",
+      "topic": "doc-gardening",
+      "owner": "G02",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "harnessRules",
+        "promote"
+      ],
+      "observation": "已有显式校验/推广脚本；尚未证实文档维护反馈闭环。",
+      "decision": "G02沿用显式命令，不创建定时机器人或自动删除。"
+    },
+    {
+      "id": "HG10",
+      "topic": "错误即受控修复指引",
+      "owner": "G01",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "error",
+        "steer"
+      ],
+      "observation": "SymbolLeaseHeldError已有冲突原因与建议，steer hook缺失返回false；尚非跨错误码统一修复合同。",
+      "decision": "G01只覆盖新增错误的typed nextAction，原授权检查不可绕过。"
+    },
+    {
+      "id": "HG11",
+      "topic": "周窗口trace转eval",
+      "owner": "G03",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "promote",
+        "scenarioRegistry"
+      ],
+      "observation": "promoteScenario已有schema、重名与敏感数据拒绝；不是最近7天trace归因/去重入口。",
+      "decision": "G03在现有推广器前加显式批处理与oracle隔离，不复制场景注册表。"
+    },
+    {
+      "id": "HG12",
+      "topic": "运行中steering",
+      "owner": "L03",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "steer",
+        "steerQueue",
+        "loop"
+      ],
+      "observation": "已有子agent steer运行替换、completion租约和取消循环；不能等同于revision化operator steering。",
+      "decision": "L03复用现有控制消息和取消状态机，补乱序revision/权限竞争。"
+    },
+    {
+      "id": "HG13",
+      "topic": "持久化挂件/恢复检查点",
+      "owner": "L04",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "checkpoint",
+        "resumeShadow",
+        "ledger"
+      ],
+      "observation": "已有checkpoint serializer与持久resume shadow；挂件尚不能被解释为新插件/后台常驻。",
+      "decision": "L04仅将附件引用与既有checkpoint恢复链闭合。"
+    },
+    {
+      "id": "HG14",
+      "topic": "轨迹采样",
+      "owner": "O02",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "traceRecorder",
+        "traceMetrics"
+      ],
+      "observation": "已有trace/span与按优先级截断；截断不等于固定seed采样、必留错误和到期保留合同。",
+      "decision": "O02补确定性采样/丢弃计数，正文和凭据不进新证据。"
+    },
+    {
+      "id": "HG15",
+      "topic": "Provider内容Guard拒绝路径",
+      "owner": "S01",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "envelope",
+        "providerFetch"
+      ],
+      "observation": "buildStage1RequestEnvelope失败只记census诊断，guarded provider request继续；SSRF是独立网络边界。",
+      "decision": "S01锁定一个可注入opt-in适配器，验证内容拒绝时provider命中0；不全局激活。"
+    },
+    {
+      "id": "HG16",
+      "topic": "敏感sink覆盖闭环",
+      "owner": "S02",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "existing-narrow",
+      "sourceRefs": [
+        "provenance",
+        "outbound",
+        "messageAction",
+        "secretRead",
+        "messageTool",
+        "externalWrite",
+        "browserPolicy",
+        "credentialPolicy"
+      ],
+      "observation": "总表仍classification-only不代表全部出口无拦截：message、secret、外写、browser、image override已有窄策略。",
+      "decision": "S02汇总现有command/message/secret正反回归，S03/S04/S05只补可达旁路。"
+    },
+    {
+      "id": "HG17",
+      "topic": "approvalPromptRate消费者",
+      "owner": "O01",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "counter",
+        "tier",
+        "tools",
+        "metricsCatalog",
+        "devApi"
+      ],
+      "observation": "rate分母为tier分类计数；零样本返回0。计数发生在tool.execute前，并不证明审批UI确实出现。限定调用链未找到生产rates消费者。",
+      "decision": "O01先明确分类事件/缺测语义，再接窗口告警与清除；不自动放宽审批。"
+    },
+    {
+      "id": "HG18",
+      "topic": "memory写入Effect边界",
+      "owner": "S06",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "memoryEdit",
+        "memoryStore",
+        "effect"
+      ],
+      "observation": "memory自编辑有实际store/persistence写入；EffectReceipt本身是追加幂等关联，不是写入authority。两者接通不能由类型存在推定。",
+      "decision": "S06复验实际写入口与receipt一致性，只扩展已有domain journal。"
+    },
+    {
+      "id": "HG19",
+      "topic": "verifier完成裁决权限",
+      "owner": "S07",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "verifier",
+        "verifierShadow",
+        "loop"
+      ],
+      "observation": "EvidenceVerifier可产completed判断，但code-task gate为would_allow/would_block shadow；不能直接授予终结authority。",
+      "decision": "S07仅受控隔离入口与候选digest绑定；无产品授权不打开生产完成裁决。"
+    },
+    {
+      "id": "HG20",
+      "topic": "正向放行锚点",
+      "owner": "E01",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "ablationPhase4",
+        "outbound",
+        "externalWrite"
+      ],
+      "observation": "已有功能正例与窄策略放行分支；缺少统一固定良性语料和缺样本否决口径。",
+      "decision": "E01复用正例并注册独立良性锚点，拒绝缺跑/skip被算成功。"
+    },
+    {
+      "id": "HG21",
+      "topic": "requestId与cost关联",
+      "owner": "O02",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "traceTypes",
+        "traceRecorder",
+        "traceContext",
+        "traceMetrics"
+      ],
+      "observation": "requestId为optional，cost有类型与token归集；不能证明request/attempt/effect/价格版本端到端关联。",
+      "decision": "O02补相关性与未知价格null，不重复造usage服务。"
+    },
+    {
+      "id": "HG22",
+      "topic": "原第2类未展示的第8条",
+      "owner": "B00",
+      "sourceStatus": "not-recovered",
+      "originalText": null,
+      "assessment": "source-incomplete",
+      "sourceRefs": [
+        "plan"
+      ],
+      "observation": "原第2类第8条没有可恢复原文；历史全引用搜索遇缺失tree，范围不完整。",
+      "decision": "保留空槽与检索边界，不立虚构实现节点、不等待真人。"
+    },
+    {
+      "id": "HG23",
+      "topic": "工程与集成证据落差",
+      "owner": "V01",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "unverified",
+      "sourceRefs": [
+        "pilotHistory",
+        "goldenContext",
+        "benefitScan"
+      ],
+      "observation": "有局部runtime golden path与工程报告，但旧候选/启发式报告不是新candidate的跨层验收。",
+      "decision": "V01先绑定候选与真实caller/effect/continuation，再受控集成复验。"
+    },
+    {
+      "id": "HG24",
+      "topic": "Working Context任务账本集成",
+      "owner": "L01",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "existing-narrow",
+      "sourceRefs": [
+        "workingContext",
+        "workingProjection",
+        "ledger",
+        "runtimeWorkingContext",
+        "goldenContext"
+      ],
+      "observation": "Main adapter复用JSONL ledger；runtime已有stage3可选golden-run消费者，不是未实现空壳。限定检索未证实日常Main-host-runtime连续消费。",
+      "decision": "L01复用CAS/projection，验证日常启动读取与持久化回流，不建第二store。"
+    },
+    {
+      "id": "HG25",
+      "topic": "A1–A6有效pilot证据",
+      "owner": "A01",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "pilotCounters",
+        "pilotHistory",
+        "a5History"
+      ],
+      "observation": "六方向有原门限/计数器/回退测试；2026-07-03报告缺候选摘要且p99只是max-of-runs近似，A5旧报告基线为734ec877。",
+      "decision": "A01主汇总，A01-A06分别复验原门限，不把标题Active Pilot Gate当通过。"
+    },
+    {
+      "id": "HG26",
+      "topic": "产品锁维持false（约束，不是缺陷）",
+      "owner": "V03",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "constraint",
+      "sourceRefs": [
+        "runtimeLocks",
+        "defaultMatrix",
+        "researchLocks"
+      ],
+      "observation": "live_ready/product_approved/default_on保持false；此为产品约束，不是实现缺陷。",
+      "decision": "V03保留锁和受控交付裁决，不以改true作为完成条件。"
+    },
+    {
+      "id": "HG27",
+      "topic": "原第3类未明确展开的条目",
+      "owner": "B00",
+      "sourceStatus": "not-recovered",
+      "originalText": null,
+      "assessment": "source-incomplete",
+      "sourceRefs": [
+        "plan"
+      ],
+      "observation": "原第3类未展开条目没有可恢复原文；不能从现有模块倒推用户未给出的需求。",
+      "decision": "保留空槽与复核结论，不虚构功能验收。"
+    },
+    {
+      "id": "HG28",
+      "topic": "规范数量与有效性风险",
+      "owner": "G02",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "unverified",
+      "sourceRefs": [
+        "harnessRules",
+        "agentEntry"
+      ],
+      "observation": "规范规模是审计线索，不是已证实的性能/正确性缺陷。",
+      "decision": "G02按规则ID、生产消费者与失败反例评估有效性，不按字数删规范。"
+    },
+    {
+      "id": "HG29",
+      "topic": "AGENTS入口过重风险",
+      "owner": "G02",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "unverified",
+      "sourceRefs": [
+        "agentEntry",
+        "harnessRules"
+      ],
+      "observation": "AGENTS含长政策与入口，是否可精简须保持最高优先声明/路由等价。",
+      "decision": "G02只迁移重复正文，不删自动化责任、冻结值或安全约束。"
+    },
+    {
+      "id": "HG30",
+      "topic": "任务账本承担多种职责的集中风险",
+      "owner": "L01",
+      "sourceStatus": "summary-reconstructed",
+      "originalText": null,
+      "assessment": "partial",
+      "sourceRefs": [
+        "workingProjection",
+        "ledger",
+        "runtimeWorkingContext"
+      ],
+      "observation": "Task Ledger兼顾任务和working-context事件，已有projection隔离；职责集中风险不等于必须拆数据库。",
+      "decision": "L01用CAS/跨workspace/损坏尾行反例界定最小接口，不把开发TF当产品账本。"
+    }
+  ],
+  "packets": [
+    {
+      "code": "O01",
+      "taskId": "TF-0272",
+      "title": "让审批提示率产生可操作告警",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-approval-rate-alerts.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/context-control-plane-stage1.md"
+      ],
+      "entryRefs": [
+        "tools",
+        "tier",
+        "counter",
+        "devApi"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/context-engine/coding-observability.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/write-destructive-tier.ts",
+          "state": "existing"
+        },
+        {
+          "path": "electron/services/agent-dev-api.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不自动审批或降低安全策略",
+        "不统计为真人/UI提示次数",
+        "不新增指标服务"
+      ],
+      "boundary": "tier分类事件→rates和sample metadata→已有诊断消费者→告警/清除；先证明消费者入口。",
+      "testTargets": [
+        {
+          "target": "openclaw_runtime/src/agents/tools/write-destructive-tier.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/harness-gap-approval-rate-alerts.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG17"
+      ]
+    },
+    {
+      "code": "O02",
+      "taskId": "TF-0273",
+      "title": "关联请求成本并记录可重放的脱敏样本",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-trace-cost-sampling.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/rc08b-otel-observability-convergence.md"
+      ],
+      "entryRefs": [
+        "traceRecorder",
+        "traceContext",
+        "traceMetrics",
+        "traceTypes"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/observability/trace-recorder.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/trace-context.ts",
+          "state": "existing"
+        },
+        {
+          "path": "shared/agent-dev/trace-contract.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不另建usage服务",
+        "不落原始正文/认证头",
+        "不把未知成本填0"
+      ],
+      "boundary": "runtime trace生产者→request/attempt归集→脱敏确定性样本→消费者回读；采样不同于span截断。",
+      "testTargets": [
+        {
+          "target": "tests/unit/runtime-trace-context-contracts.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/trace-truncation.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/harness-gap-trace-cost-sampling.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG14",
+        "HG21"
+      ]
+    },
+    {
+      "code": "E01",
+      "taskId": "TF-0274",
+      "title": "建立可靠性聚合与正反样本评测门",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-reliability.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/live-tool-runtime-reliability.md"
+      ],
+      "entryRefs": [
+        "scenarioRegistry",
+        "ablationPhase4",
+        "benefitScan"
+      ],
+      "candidateFiles": [
+        {
+          "path": "scripts/harness-gap-reliability.mjs",
+          "state": "planned"
+        },
+        {
+          "path": "tests/unit/harness-gap-reliability.test.ts",
+          "state": "planned"
+        }
+      ],
+      "nonGoals": [
+        "不把benefit-eval源码扫描重命名成评测",
+        "不改场景注册表真源",
+        "不丢首次失败"
+      ],
+      "boundary": "已有case原始trial记录→窄pass^k/flake聚合→不完整样本否决；保留原脚本用途。",
+      "testTargets": [
+        {
+          "target": "tests/unit/runtime-memory-phase4-ablation-benefit.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/harness-gap-reliability.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG03",
+        "HG05",
+        "HG20"
+      ]
+    },
+    {
+      "code": "E02",
+      "taskId": "TF-0275",
+      "title": "运行首次真实生效的单组件配对消融",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-first-ablation.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/phase-35-runtime-memory-read-hydration-benefit-evaluation-design.md"
+      ],
+      "entryRefs": [
+        "ablationPhase4",
+        "ablationFusion",
+        "memoryStore"
+      ],
+      "candidateFiles": [
+        {
+          "path": "scripts/harness-gap-ablation.mjs",
+          "state": "planned"
+        },
+        {
+          "path": "tests/unit/harness-gap-ablation.test.ts",
+          "state": "planned"
+        }
+      ],
+      "nonGoals": [
+        "不关闭安全边界",
+        "不事后调赢家/阈值",
+        "无远端调用不得标live"
+      ],
+      "boundary": "固定memory检索/淘汰caller→可注入非安全组件开关→隔离配对原始trial→E01聚合。",
+      "testTargets": [
+        {
+          "target": "tests/unit/runtime-memory-embedding-ablation.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/runtime-memory-mvp-module-b-ablation-test.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/runtime-memory-phase4-ablation-benefit.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/harness-gap-ablation.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG04"
+      ]
+    },
+    {
+      "code": "S01",
+      "taskId": "TF-0276",
+      "title": "把 Provider 内容守卫接到可拒绝的窄执行边界",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-provider-content-refusal.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/context-control-plane-stage1.md"
+      ],
+      "entryRefs": [
+        "providerFetch",
+        "envelope"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/stage1-request-envelope.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不全局激活",
+        "不修改请求body来掩盖非法输入",
+        "不绕过SSRF"
+      ],
+      "boundary": "buildGuardedModelFetch发送前检查→拒绝时本地provider命中0→允许字节不变→receipt/continuation。",
+      "testTargets": [
+        {
+          "target": "tests/unit/context-control-plane-stage1-provider-guard.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "openclaw_runtime/src/agents/provider-transport-fetch.harness-gap.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG15"
+      ]
+    },
+    {
+      "code": "S02",
+      "taskId": "TF-0277",
+      "title": "核验消息出口与凭据读取的来源约束",
+      "spec": {
+        "path": "harness/specs/tasks/network-send-provenance-boundary.md",
+        "state": "existing"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/secret-read-provenance-boundary.md",
+        "harness/specs/tasks/command-exec-provenance-boundary.md"
+      ],
+      "entryRefs": [
+        "messageTool",
+        "secretRead",
+        "messageAction",
+        "outbound"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/agents/tools/message-secret-read-policy.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/infra/outbound/outbound-policy.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/infra/outbound/message-action-runner.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不造通用taint引擎",
+        "不将总表classification-only解释为全部无保护"
+      ],
+      "boundary": "message-tool→secret读取策略与目标归一化→outbound策略→实际resolver/delivery次数；只补实测旁路。",
+      "testTargets": [
+        {
+          "target": "openclaw_runtime/src/agents/tools/message-tool.provenance.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "openclaw_runtime/src/infra/outbound/outbound-policy.provenance.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "openclaw_runtime/src/agents/tools/message-secret-read-policy.test.ts",
+          "state": "existing"
+        }
+      ],
+      "primarySlots": [
+        "HG16"
+      ]
+    },
+    {
+      "code": "S03",
+      "taskId": "TF-0278",
+      "title": "补齐工作区外写入的来源与路径边界",
+      "spec": {
+        "path": "harness/specs/tasks/workspace-external-write-provenance-boundary.md",
+        "state": "existing"
+      },
+      "reuseSpecs": [],
+      "entryRefs": [
+        "tools",
+        "externalWrite",
+        "verseWrite"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/verseshell/external-write-policy.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不删除用户文件",
+        "不重写write/edit/apply_patch",
+        "不扩大工作区外写默认权限"
+      ],
+      "boundary": "真实工具wrapper→canonical路径/junction授权→写入或零effect→前后文件hash/receipt。",
+      "testTargets": [
+        {
+          "target": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts",
+          "state": "existing"
+        }
+      ],
+      "primarySlots": []
+    },
+    {
+      "code": "S04",
+      "taskId": "TF-0279",
+      "title": "核验浏览器来源、会话归属与副作用边界",
+      "spec": {
+        "path": "harness/specs/tasks/browser-effect-provenance-boundary.md",
+        "state": "existing"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/browser-effect-session-click-provenance-boundary.md",
+        "harness/specs/tasks/browser-effect-session-type-provenance-boundary.md"
+      ],
+      "entryRefs": [
+        "browserTool",
+        "browserPolicy"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不碰真实账户表单",
+        "私网默认关闭",
+        "不新建browser会话权威"
+      ],
+      "boundary": "agent-browser-tool→会话/来源策略→Main/browser effect；复验managed/external及click/type已有入口。",
+      "testTargets": [
+        {
+          "target": "openclaw_runtime/src/agents/tools/agent-browser-tool.provenance.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/e2e/harness-gap-browser-provenance.spec.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": []
+    },
+    {
+      "code": "S05",
+      "taskId": "TF-0280",
+      "title": "核验模型覆盖选择的凭据使用约束",
+      "spec": {
+        "path": "harness/specs/tasks/credential-use-provenance-boundary.md",
+        "state": "existing"
+      },
+      "reuseSpecs": [],
+      "entryRefs": [
+        "imageTool",
+        "credentialPolicy"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/agents/tools/provider-credential-use-policy.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/image-generate-tool.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不扩大凭据曝光",
+        "默认provider/fallback语义不变"
+      ],
+      "boundary": "image-generate-tool显式override→credential policy→解析对应密钥/请求；拒绝必须发生在解析前。",
+      "testTargets": [
+        {
+          "target": "openclaw_runtime/src/agents/tools/image-generate-tool.credential-use-provenance.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "openclaw_runtime/src/agents/image-generate-provenance-wiring.test.ts",
+          "state": "existing"
+        }
+      ],
+      "primarySlots": []
+    },
+    {
+      "code": "S06",
+      "taskId": "TF-0281",
+      "title": "让记忆写入与 EffectReceipt 形成恢复闭环",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-memory-effects.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/context-control-plane-stage1.md"
+      ],
+      "entryRefs": [
+        "memoryEdit",
+        "memoryStore",
+        "effect"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/effect-receipt.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不打开自动记忆写回",
+        "不让receipt成为第二effect authority"
+      ],
+      "boundary": "executeMemorySelfEditTool→既有domain persistence/journal→EffectReceipt关联→崩溃对账与至多一次effect。",
+      "testTargets": [
+        {
+          "target": "tests/unit/runtime-memory-self-edit-persistence.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/context-control-plane-stage1-effect-receipt.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/harness-gap-memory-effects.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG18"
+      ]
+    },
+    {
+      "code": "S07",
+      "taskId": "TF-0282",
+      "title": "给 verifier 一个受限且可撤销的完成裁决入口",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-verifier-terminal-gate.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/phase-5-evidence-verifier.md",
+        "harness/specs/tasks/phase-5-evidence-verifier-code-task-gate-controlled-default-off-runtime-shadow-wiring.md"
+      ],
+      "entryRefs": [
+        "loop",
+        "verifier",
+        "verifierShadow"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/evidence-verifier-code-task-gate-shadow.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不授予全局完成authority",
+        "默认shadow/off不变"
+      ],
+      "boundary": "唯一task-loop终结入口→候选/证据digest裁决→合法只完成一次；隔离注入演练与生产激活分开。",
+      "testTargets": [
+        {
+          "target": "tests/unit/runtime-evidence-verifier-code-task-gate-shadow.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/harness-gap-verifier-terminal-gate.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG19"
+      ]
+    },
+    {
+      "code": "L01",
+      "taskId": "TF-0283",
+      "title": "把现有 Working Context 账本接成唯一活任务读写源",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-working-context-consumer.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/workspace-task-ledger.md",
+        "harness/specs/tasks/context-control-plane-stage3.md"
+      ],
+      "entryRefs": [
+        "workingContext",
+        "workingProjection",
+        "ledger",
+        "goldenContext"
+      ],
+      "candidateFiles": [
+        {
+          "path": "electron/services/task-ledger-working-context.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/long-task-control/stage3-working-context.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/long-task-control/stage3-golden-run.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不新建数据库/daemon",
+        "开发Task Forest不作为产品账本"
+      ],
+      "boundary": "日常Main/runtime入口读取ledger→CAS proposal/decision→JSONL持久化→模型上下文回读；已有golden-run只算窄消费者。",
+      "testTargets": [
+        {
+          "target": "tests/unit/context-control-plane-stage3-contracts.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/task-ledger-service.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "openclaw_runtime/src/agents/long-task-control/stage3-working-context.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/harness-gap-working-context-consumer.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG24",
+        "HG30"
+      ]
+    },
+    {
+      "code": "L02",
+      "taskId": "TF-0284",
+      "title": "控制上下文压力并限制交接链深度",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-context-pressure-handoff.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/dcs-stage2-task-state-handoff.md"
+      ],
+      "entryRefs": [
+        "loop",
+        "handoff",
+        "workingProjection"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/handoff-artifacts.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不改压缩/交接冻结默认",
+        "不不受控派生多agent"
+      ],
+      "boundary": "task-loop预算压力→remaining及checkpoint→有root/parent/depth的handoff→同控制器收敛。",
+      "testTargets": [
+        {
+          "target": "tests/unit/handoff-artifacts.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/harness-gap-context-pressure-handoff.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG01",
+        "HG06"
+      ]
+    },
+    {
+      "code": "L03",
+      "taskId": "TF-0285",
+      "title": "在运行中安全接收修订与取消指令",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-revision-steering.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/role-first-team-orchestrate-tool.md"
+      ],
+      "entryRefs": [
+        "steerControl",
+        "steer",
+        "steerQueue",
+        "loop"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/agents/subagent-control.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/subagent-registry-steer-runtime.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不把普通检索文本当operator指令",
+        "不并行另建控制状态机"
+      ],
+      "boundary": "subagent-control实际steer→registry hook与revision去重→task-loop tool边界取消/修订→continuation。",
+      "testTargets": [
+        {
+          "target": "tests/unit/agent-steering-team-bundle.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/harness-gap-revision-steering.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG12"
+      ]
+    },
+    {
+      "code": "L04",
+      "taskId": "TF-0286",
+      "title": "把持久化挂件约束为可恢复的最小检查点",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-recovery-attachments.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/phase-4-event-log-checkpoint-resume.md"
+      ],
+      "entryRefs": [
+        "checkpoint",
+        "resumeShadow",
+        "ledger"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/runtime-core/checkpoint-serializer.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/long-task-control/persisted-resume-shadow.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不新增插件系统",
+        "不激活后台常驻"
+      ],
+      "boundary": "既有checkpoint序列化→附件引用与digest→重启resume校验→缺文件/旧schema明确拒绝。",
+      "testTargets": [
+        {
+          "target": "tests/unit/runtime-checkpoint-serializer.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/harness-gap-recovery-attachments.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG13"
+      ]
+    },
+    {
+      "code": "L05",
+      "taskId": "TF-0287",
+      "title": "为异常调用速率加入有限状态断路器",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-request-rate-breaker.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/live-tool-runtime-reliability.md"
+      ],
+      "entryRefs": [
+        "providerFetch",
+        "repeatGuard",
+        "tokenBudget"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/request-rate-breaker.ts",
+          "state": "planned"
+        }
+      ],
+      "nonGoals": [
+        "不移除loop guard/SSRF",
+        "不改变生产阈值",
+        "速率与token/并发预算分离"
+      ],
+      "boundary": "guarded provider请求边界→按run/provider隔离速率状态→cooldown/单half-open→允许才发请求。",
+      "testTargets": [
+        {
+          "target": "openclaw_runtime/src/agents/tool-loop-detection.progress.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/harness-gap-request-rate-breaker.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG02"
+      ]
+    },
+    {
+      "code": "L06",
+      "taskId": "TF-0288",
+      "title": "让热点文件只有一个可验证的写入归属",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-hot-file-ownership.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/workspace-external-write-provenance-boundary.md"
+      ],
+      "entryRefs": [
+        "tools",
+        "lease",
+        "symbolLease"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/agents/symbol-lease-guard.ts",
+          "state": "existing"
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/factstore/symbol-lease.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不新增锁/协作平台",
+        "不打开lease默认",
+        "不自动并行合并"
+      ],
+      "boundary": "现有acquireSymbolLease→工具write/edit/apply_patch→finally release；重点复验canonical路径/过期token。",
+      "testTargets": [
+        {
+          "target": "openclaw_runtime/src/agents/symbol-lease-guard.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/harness-gap-hot-file-ownership.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG07"
+      ]
+    },
+    {
+      "code": "G01",
+      "taskId": "TF-0289",
+      "title": "让错误返回可执行且受权限约束的修复动作",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-remediation-actions.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [],
+      "entryRefs": [
+        "error",
+        "toolError",
+        "loop"
+      ],
+      "candidateFiles": [
+        {
+          "path": "shared/types/runtime-tool-shadow.ts",
+          "state": "existing"
+        },
+        {
+          "path": "shared/harness-gap-remediation.ts",
+          "state": "planned"
+        }
+      ],
+      "nonGoals": [
+        "不全库重写错误",
+        "不执行不可信错误文本",
+        "不绕过原授权"
+      ],
+      "boundary": "新增guard/限流/冲突错误→已有typed错误结果附code/nextAction→原授权入口执行或拒绝。",
+      "testTargets": [
+        {
+          "target": "tests/unit/harness-gap-remediation-actions.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG10"
+      ]
+    },
+    {
+      "code": "G02",
+      "taskId": "TF-0290",
+      "title": "精简规范入口并防止文档僵化",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-spec-maintenance.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [],
+      "entryRefs": [
+        "agentEntry",
+        "harnessRules"
+      ],
+      "candidateFiles": [
+        {
+          "path": "AGENTS.md",
+          "state": "existing"
+        },
+        {
+          "path": "harness/src/rules.mjs",
+          "state": "existing"
+        },
+        {
+          "path": "harness/specs/rules/harness-gap-source-freshness.md",
+          "state": "planned"
+        }
+      ],
+      "nonGoals": [
+        "不按字节数盲删",
+        "不更改最高优先政策或产品锁",
+        "不创建后台任务"
+      ],
+      "boundary": "Harness context/validate→引用与规则反例→仅修确认断链/重复→README三语言复核。",
+      "testTargets": [
+        {
+          "target": "tests/unit/harness-specs.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/harness-git.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/harness-gap-spec-maintenance.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG08",
+        "HG09",
+        "HG28",
+        "HG29"
+      ]
+    },
+    {
+      "code": "G03",
+      "taskId": "TF-0291",
+      "title": "把脱敏失败轨迹转成可复跑评测样例",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-trace-to-eval.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [
+        "harness/specs/tasks/agent-dev-ecosystem-regularization.md"
+      ],
+      "entryRefs": [
+        "promote",
+        "scenarioRegistry"
+      ],
+      "candidateFiles": [
+        {
+          "path": "scripts/agent-dev-promote-scenario.mjs",
+          "state": "existing"
+        },
+        {
+          "path": "scripts/harness-gap-trace-to-eval.mjs",
+          "state": "planned"
+        }
+      ],
+      "nonGoals": [
+        "不新增场景id真源",
+        "不注册每周automation",
+        "不向被测prompt泄漏oracle"
+      ],
+      "boundary": "显式7天/runIds查询→脱敏/根因/去重→promoteScenario→唯一scenario registry。",
+      "testTargets": [
+        {
+          "target": "tests/unit/harness-gap-trace-to-eval.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG11"
+      ]
+    },
+    {
+      "code": "V01",
+      "taskId": "TF-0292",
+      "title": "运行跨层闭环与多组件受控消融",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-integrated-ablation.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [],
+      "entryRefs": [
+        "loop",
+        "providerFetch",
+        "effect",
+        "ledger",
+        "verifier"
+      ],
+      "candidateFiles": [
+        {
+          "path": "scripts/harness-gap-integrated-ablation.mjs",
+          "state": "planned"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/integrated-evidence.json",
+          "state": "planned"
+        }
+      ],
+      "nonGoals": [
+        "不以局部绿灯代全链",
+        "不混用synthetic与live",
+        "不关闭外部安全防线"
+      ],
+      "boundary": "固定candidate下原始任务→上下文/guard/effect/ledger→恢复/裁决→continuation；消费E01/E02结果格式。",
+      "testTargets": [
+        {
+          "target": "tests/unit/harness-gap-integrated-ablation.test.ts",
+          "state": "planned"
+        }
+      ],
+      "primarySlots": [
+        "HG23"
+      ]
+    },
+    {
+      "code": "A01",
+      "taskId": "TF-0293",
+      "title": "复验 A1 隔离执行 的受控 pilot 门",
+      "spec": {
+        "path": "harness/specs/tasks/a1-layered-isolation-pilot.md",
+        "state": "existing"
+      },
+      "reuseSpecs": [],
+      "entryRefs": [
+        "a1Snapshot",
+        "tools",
+        "pilotCounters"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/observability/deprecation-counters.ts",
+          "state": "existing"
+        },
+        {
+          "path": "scripts/harness-gap-a01-pilot.mjs",
+          "state": "planned"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a01-pilot-evidence.json",
+          "state": "planned"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sessions/extensions/policy-light-snapshotter.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不改原门限",
+        "不以Active Pilot Gate标题当PASS",
+        "不改产品默认/授权"
+      ],
+      "boundary": "逐项驱动A1 Layered Execution Isolation原spec的生产入口与故障回退；计数窗口与p99独立留原始数据。",
+      "pilotContract": {
+        "acceptance": [
+          "A1 deprecation counter `legacyFallbackCount` rate < 5% over 100-turn session",
+          "A1 p99 ≤ 200ms (criterion 4.5)",
+          "All 6 built-in tools (write/edit/bash/apply_patch/exec/process) declare `writeRiskProfile` + `risk`",
+          "Plugin registry enforces `assertWriteRiskProfileForTool` on `registerTool`",
+          "Trace namespace enforced: `claw.a4.tool.choice` on an a1 recorder is rejected",
+          "Shadow write event recorder detects undeclared writes for `declared_paths`/`no_writes` tools",
+          "Budget violation response `degrade_to_legacy` triggers when fallback rate > 5%"
+        ],
+        "requiredProfiles": [
+          "fast",
+          "comms"
+        ],
+        "requiredTests": [
+          "tests/unit/tool-registration.test.ts",
+          "tests/unit/policy-light-snapshotter.test.ts",
+          "tests/unit/shadow-write-event-recorder.test.ts",
+          "tests/unit/trace-namespace-enforcement.test.ts",
+          "tests/unit/performance-budgets.test.ts"
+        ],
+        "historicalEvidenceRefs": [
+          "pilotHistory"
+        ],
+        "acceptanceReused": false,
+        "missingLegacyPaths": [],
+        "legacyPathPatterns": []
+      },
+      "testTargets": [
+        {
+          "target": "tests/unit/tool-registration.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/policy-light-snapshotter.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/shadow-write-event-recorder.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/trace-namespace-enforcement.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/performance-budgets.test.ts",
+          "state": "existing"
+        }
+      ],
+      "primarySlots": [
+        "HG25"
+      ]
+    },
+    {
+      "code": "A02",
+      "taskId": "TF-0294",
+      "title": "复验 A2 多 agent 编排 的受控 pilot 门",
+      "spec": {
+        "path": "harness/specs/tasks/a2-multi-agent-orchestration-pilot.md",
+        "state": "existing"
+      },
+      "reuseSpecs": [],
+      "entryRefs": [
+        "a2Scheduler",
+        "pilotCounters"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/observability/deprecation-counters.ts",
+          "state": "existing"
+        },
+        {
+          "path": "scripts/harness-gap-a02-pilot.mjs",
+          "state": "planned"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a02-pilot-evidence.json",
+          "state": "planned"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不改原门限",
+        "不以Active Pilot Gate标题当PASS",
+        "不改产品默认/授权"
+      ],
+      "boundary": "逐项驱动A2 Multi-Agent Orchestration原spec的生产入口与故障回退；计数窗口与p99独立留原始数据。",
+      "pilotContract": {
+        "acceptance": [
+          "A2 deprecation counter `deferralDisagreementCount` rate < 10% over 10-wave orchestration",
+          "A2 p99 ≤ 80ms (criterion 4.6)",
+          "`ResourceAwareWaveScheduler` rejects re-plan of started waves (criterion 3.9)",
+          "Multi-worker resume creates new sessions (criterion 3.7)",
+          "Budget violation response `degrade_to_live_only` triggers when disagreement > 10%"
+        ],
+        "requiredProfiles": [
+          "fast",
+          "comms"
+        ],
+        "requiredTests": [
+          "tests/unit/resource-aware-wave-scheduler.test.ts",
+          "tests/unit/cross-area-composition.test.ts",
+          "tests/unit/performance-budgets.test.ts"
+        ],
+        "historicalEvidenceRefs": [
+          "pilotHistory"
+        ],
+        "acceptanceReused": false,
+        "missingLegacyPaths": [
+          "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts",
+          "tests/unit/cross-area-composition.test.ts"
+        ],
+        "legacyPathPatterns": []
+      },
+      "testTargets": [
+        {
+          "target": "tests/unit/resource-aware-wave-scheduler.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/cross-area-composition.test.ts",
+          "state": "missing-legacy"
+        },
+        {
+          "target": "tests/unit/performance-budgets.test.ts",
+          "state": "existing"
+        }
+      ],
+      "primarySlots": []
+    },
+    {
+      "code": "A03",
+      "taskId": "TF-0295",
+      "title": "复验 A3 运行时韧性 的受控 pilot 门",
+      "spec": {
+        "path": "harness/specs/tasks/a3-runtime-resilience-pilot.md",
+        "state": "existing"
+      },
+      "reuseSpecs": [],
+      "entryRefs": [
+        "a3Controller",
+        "a3Anomaly",
+        "pilotCounters"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/observability/deprecation-counters.ts",
+          "state": "existing"
+        },
+        {
+          "path": "scripts/harness-gap-a03-pilot.mjs",
+          "state": "planned"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a03-pilot-evidence.json",
+          "state": "planned"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/mission-control/controller.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不改原门限",
+        "不以Active Pilot Gate标题当PASS",
+        "不改产品默认/授权"
+      ],
+      "boundary": "逐项驱动A3 Runtime Resilience原spec的生产入口与故障回退；计数窗口与p99独立留原始数据。",
+      "pilotContract": {
+        "acceptance": [
+          "A3 deprecation counter `anomalyNonNullCount` rate ≤ 20% over 100 Mission ticks",
+          "A3 p99 ≤ 15ms (criterion 4.7)",
+          "`resolveAnomalyPatternForReviewer` returns `undefined` when flag off (flag-off parity)",
+          "`resolveAnomalyPatternForReviewer` returns `AnomalyPattern | null` when flag in 'shadow' mode",
+          "Budget violation response `degrade_to_default_decision` triggers when anomaly rate > 20%"
+        ],
+        "requiredProfiles": [
+          "fast",
+          "comms"
+        ],
+        "requiredTests": [
+          "tests/unit/performance-budgets.test.ts"
+        ],
+        "historicalEvidenceRefs": [
+          "pilotHistory"
+        ],
+        "acceptanceReused": false,
+        "missingLegacyPaths": [],
+        "legacyPathPatterns": []
+      },
+      "testTargets": [
+        {
+          "target": "tests/unit/performance-budgets.test.ts",
+          "state": "existing"
+        }
+      ],
+      "primarySlots": []
+    },
+    {
+      "code": "A04",
+      "taskId": "TF-0296",
+      "title": "复验 A4 决策质量 的受控 pilot 门",
+      "spec": {
+        "path": "harness/specs/tasks/a4-decision-quality-pilot.md",
+        "state": "existing"
+      },
+      "reuseSpecs": [],
+      "entryRefs": [
+        "a4Auditor",
+        "pilotCounters"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/observability/deprecation-counters.ts",
+          "state": "existing"
+        },
+        {
+          "path": "scripts/harness-gap-a04-pilot.mjs",
+          "state": "planned"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a04-pilot-evidence.json",
+          "state": "planned"
+        },
+        {
+          "path": "openclaw_runtime/src/observability/decision-quality-auditor.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不改原门限",
+        "不以Active Pilot Gate标题当PASS",
+        "不改产品默认/授权"
+      ],
+      "boundary": "逐项驱动A4 Decision Quality原spec的生产入口与故障回退；计数窗口与p99独立留原始数据。 A4审计器当前有audit/auditBatch和默认off；限定源码检索未找到生产caller，先证明或补该窄接线，不把counter测试当生产审计。",
+      "pilotContract": {
+        "acceptance": [
+          "A4 deprecation counter `lowQualityDecisions` rate ≤ 10% over audited decisions",
+          "A4 budget violation response `degrade_to_audit_only` triggers when low-quality rate > 10%",
+          "Per-turn cumulative latency budget respected (A4 is part of degradation order: A4→A3→A5→A1)"
+        ],
+        "requiredProfiles": [
+          "fast",
+          "comms"
+        ],
+        "requiredTests": [
+          "tests/unit/deprecation-counters.test.ts",
+          "tests/unit/performance-budgets.test.ts"
+        ],
+        "historicalEvidenceRefs": [
+          "pilotHistory"
+        ],
+        "acceptanceReused": false,
+        "missingLegacyPaths": [],
+        "legacyPathPatterns": []
+      },
+      "testTargets": [
+        {
+          "target": "tests/unit/deprecation-counters.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/performance-budgets.test.ts",
+          "state": "existing"
+        }
+      ],
+      "primarySlots": []
+    },
+    {
+      "code": "A05",
+      "taskId": "TF-0297",
+      "title": "复验 A5 自适应上下文预算 的受控 pilot 门",
+      "spec": {
+        "path": "harness/specs/tasks/a5-adaptive-context-budget-pilot.md",
+        "state": "existing"
+      },
+      "reuseSpecs": [],
+      "entryRefs": [
+        "a5Compact",
+        "a5Planner",
+        "pilotCounters"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/observability/deprecation-counters.ts",
+          "state": "existing"
+        },
+        {
+          "path": "scripts/harness-gap-a05-pilot.mjs",
+          "state": "planned"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a05-pilot-evidence.json",
+          "state": "planned"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/compact.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不改原门限",
+        "不以Active Pilot Gate标题当PASS",
+        "不改产品默认/授权"
+      ],
+      "boundary": "逐项驱动A5 Adaptive Context Budget原spec的生产入口与故障回退；计数窗口与p99独立留原始数据。",
+      "pilotContract": {
+        "acceptance": [
+          "A5 deprecation counter `planIgnoredCount` rate ≤ 20% over 100-turn session",
+          "A5 p99 ≤ 30ms (criterion 4.8)",
+          "`ContextBudgetPlanner.replanOnResume` re-executes on resume, not stale (criterion 3.6)",
+          "Wave immutability: started waves not re-planned (criterion 3.9)",
+          "Budget violation response `degrade_to_default_budget` triggers when ignored rate > 20%",
+          "P5 real compaction call sites increment planAdoptedCount/planIgnoredCount/budgetExceededCount deterministically",
+          "P5 planner threshold overrides are clamped earlier than the production ladder and default behavior is byte-identical without a schedule",
+          "P5 budgetShadow remains diagnostics-only and never enters CompressionArtifact",
+          "P5 nativeMemory/nativeContextGating negotiation is additive and keeps provenance receipts"
+        ],
+        "requiredProfiles": [
+          "fast",
+          "comms"
+        ],
+        "requiredTests": [
+          "tests/unit/cross-area-composition.test.ts",
+          "tests/unit/resource-aware-wave-scheduler.test.ts",
+          "tests/unit/performance-budgets.test.ts",
+          "pnpm --dir openclaw_runtime exec vitest run packages/agent-core/src/harness/compaction/compression-planner.test.ts src/context-engine/context-orchestrator.test.ts --reporter=dot",
+          "pnpm exec vitest run tests/unit/deprecation-counters.test.ts tests/unit/performance-budgets.test.ts --reporter=dot"
+        ],
+        "historicalEvidenceRefs": [
+          "pilotHistory",
+          "a5History"
+        ],
+        "acceptanceReused": false,
+        "missingLegacyPaths": [
+          "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts",
+          "tests/unit/cross-area-composition.test.ts"
+        ],
+        "legacyPathPatterns": [
+          "artifacts/context-compression-p5/**"
+        ]
+      },
+      "testTargets": [
+        {
+          "target": "tests/unit/cross-area-composition.test.ts",
+          "state": "missing-legacy"
+        },
+        {
+          "target": "tests/unit/resource-aware-wave-scheduler.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "tests/unit/performance-budgets.test.ts",
+          "state": "existing"
+        },
+        {
+          "target": "pnpm --dir openclaw_runtime exec vitest run packages/agent-core/src/harness/compaction/compression-planner.test.ts src/context-engine/context-orchestrator.test.ts --reporter=dot",
+          "state": "command"
+        },
+        {
+          "target": "pnpm exec vitest run tests/unit/deprecation-counters.test.ts tests/unit/performance-budgets.test.ts --reporter=dot",
+          "state": "command"
+        }
+      ],
+      "primarySlots": []
+    },
+    {
+      "code": "A06",
+      "taskId": "TF-0298",
+      "title": "复验 A6 长运行持久化 的受控 pilot 门",
+      "spec": {
+        "path": "harness/specs/tasks/a6-long-running-persistence-pilot.md",
+        "state": "existing"
+      },
+      "reuseSpecs": [],
+      "entryRefs": [
+        "resumeShadow",
+        "a6Fingerprint",
+        "pilotCounters"
+      ],
+      "candidateFiles": [
+        {
+          "path": "openclaw_runtime/src/observability/deprecation-counters.ts",
+          "state": "existing"
+        },
+        {
+          "path": "scripts/harness-gap-a06-pilot.mjs",
+          "state": "planned"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/a06-pilot-evidence.json",
+          "state": "planned"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/long-task-control/persisted-resume-shadow.ts",
+          "state": "existing"
+        }
+      ],
+      "nonGoals": [
+        "不改原门限",
+        "不以Active Pilot Gate标题当PASS",
+        "不改产品默认/授权"
+      ],
+      "boundary": "逐项驱动A6 Long-Running Persistence原spec的生产入口与故障回退；计数窗口与p99独立留原始数据。",
+      "pilotContract": {
+        "acceptance": [
+          "A6 deprecation counter `volatileMislabelCount` MUST be 0 (CRITICAL gate)",
+          "A6 deprecation counter `verifierFailCount` rate ≤ 5% over resume cycles",
+          "A6 p99 ≤ 300ms (criterion 4.9)",
+          "`ResumeContractVerifier` marks `requiresReverification=true` when rollback occurred (criterion 3.3)",
+          "`FingerprintLeaseCoordinator` commits lease before checkpoint (criterion 3.8, Blocker 4)",
+          "Budget violation response `degrade_to_full_reverification` triggers on any volatile mislabel OR fail rate > 5%"
+        ],
+        "requiredProfiles": [
+          "fast",
+          "comms"
+        ],
+        "requiredTests": [
+          "tests/unit/cross-area-composition.test.ts",
+          "tests/unit/performance-budgets.test.ts"
+        ],
+        "historicalEvidenceRefs": [
+          "pilotHistory"
+        ],
+        "acceptanceReused": false,
+        "missingLegacyPaths": [
+          "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts",
+          "tests/unit/cross-area-composition.test.ts"
+        ],
+        "legacyPathPatterns": []
+      },
+      "testTargets": [
+        {
+          "target": "tests/unit/cross-area-composition.test.ts",
+          "state": "missing-legacy"
+        },
+        {
+          "target": "tests/unit/performance-budgets.test.ts",
+          "state": "existing"
+        }
+      ],
+      "primarySlots": []
+    },
+    {
+      "code": "V02",
+      "taskId": "TF-0299",
+      "title": "冻结候选并完成独立全链回归验收",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-frozen-acceptance.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [],
+      "entryRefs": [
+        "plan",
+        "runtimeLocks"
+      ],
+      "candidateFiles": [
+        {
+          "path": "scripts/harness-gap-full-acceptance.mjs",
+          "state": "planned"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/final-evidence.json",
+          "state": "planned"
+        }
+      ],
+      "nonGoals": [
+        "不拿focused/cached/smoke代全门",
+        "不改skip/重试预算",
+        "不复用旧候选PASS"
+      ],
+      "boundary": "冻结clean candidate→原spec/full gates→独立磁盘Verifier与恢复/残留检查→原始证据。",
+      "testTargets": [
+        {
+          "target": "pnpm test",
+          "state": "command"
+        },
+        {
+          "target": "pnpm run typecheck",
+          "state": "command"
+        },
+        {
+          "target": "pnpm run comms:replay",
+          "state": "command"
+        },
+        {
+          "target": "pnpm run comms:compare",
+          "state": "command"
+        },
+        {
+          "target": "pnpm contract:check",
+          "state": "command"
+        },
+        {
+          "target": "pnpm i18n:lint",
+          "state": "command"
+        },
+        {
+          "target": "pnpm run build:vite",
+          "state": "command"
+        },
+        {
+          "target": "pnpm run test:e2e",
+          "state": "command"
+        },
+        {
+          "target": "pnpm run harness:ci",
+          "state": "command"
+        }
+      ],
+      "primarySlots": []
+    },
+    {
+      "code": "V03",
+      "taskId": "TF-0300",
+      "title": "生成内部交付裁决并证据化收口",
+      "spec": {
+        "path": "harness/specs/tasks/harness-gap-delivery-verdict.md",
+        "state": "planned"
+      },
+      "reuseSpecs": [],
+      "entryRefs": [
+        "runtimeLocks",
+        "defaultMatrix",
+        "researchLocks"
+      ],
+      "candidateFiles": [
+        {
+          "path": "docs/dev/harness-gap-closure/delivery-verdict.json",
+          "state": "planned"
+        },
+        {
+          "path": "docs/dev/harness-gap-closure/delivery.md",
+          "state": "planned"
+        }
+      ],
+      "nonGoals": [
+        "不公开发布或花钱",
+        "不改变产品锁",
+        "不篡改旧done"
+      ],
+      "boundary": "读取V02及六pilot候选一致的证据→受控交付裁决/残余→TF证据门收口。",
+      "testTargets": [
+        {
+          "target": "node scripts/check-harness-gap-baseline.mjs",
+          "state": "command"
+        }
+      ],
+      "primarySlots": [
+        "HG26"
+      ]
+    }
+  ],
+  "historicalEvidence": [
+    {
+      "ref": "pilotHistory",
+      "date": "2026-07-03",
+      "candidateCommit": null,
+      "candidateTree": null,
+      "reusableForCurrentAcceptance": false,
+      "reason": "报告未给可绑定的候选commit/tree；p99明示为max-of-runs测试耗时近似，非正式基准；保留首轮失败，不升级为当前六pilot通过。"
+    },
+    {
+      "ref": "a5History",
+      "date": "2026-08-17",
+      "candidateCommit": "734ec877e75682861103660fbdea2bd55253ece0",
+      "candidateTree": null,
+      "reusableForCurrentAcceptance": false,
+      "reason": "文档给的是旧基线，且属于shadow/diagnostics-only；不是本B00候选或当前A5完整pilot验收。",
+      "originalSource": {
+        "path": "reports/context-compression/P5-EVIDENCE-2026-08-17.md",
+        "sha256": "40d2fb158c56b0ff08ea1dc83f4418e98d364d067d01bd161a6d9dc91193eee7",
+        "line": 6,
+        "anchor": "> 基线：`734ec877e75682861103660fbdea2bd55253ece0`",
+        "revision": "9a48096f94a5df7cd0c9b127c929e57f597d6c50",
+        "availability": "archived-from-current-tree",
+        "verifiedFromGitObject": true
+      }
+    }
+  ]
+}

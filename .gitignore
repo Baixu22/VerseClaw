@@ -1763,3 +1763,11 @@ openclaw_runtime/_tmp_*
 !/team/dcs/dcs-v1.6.1-addendum.md
 !/team/role-architecture-design/area-4-role-memory-completion.md
 # END reviewed repository inputs
+
+# Durable Harness gap baseline; raw runs and Task Forest remain local.
+!/docs/dev/harness-gap-closure/
+!/docs/dev/harness-gap-closure/design.md
+!/docs/dev/harness-gap-closure/source-inventory.json
+!/docs/dev/harness-gap-closure/baseline.md
+!/docs/dev/harness-gap-closure/baseline-evidence.json
+!/docs/dev/harness-gap-closure/SHA256SUMS
