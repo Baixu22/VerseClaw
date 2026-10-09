@@ -2,6 +2,7 @@ export type ContextRecallInput = {
   category: string;
   assembledContext: string;
   goldEvidence: readonly string[];
+  evidenceTextById?: ReadonlyMap<string, string>;
 };
 
 export type ContextRecallAggregate = {
@@ -9,15 +10,38 @@ export type ContextRecallAggregate = {
   count: number;
 };
 
+/** Resolve LoCoMo turn IDs, including multi-ID fields and zero-padded turn numbers.
+ * Missing/malformed references stay empty misses in the denominator, never perfect recall.
+ */
+export function resolveGoldEvidence(
+  goldEvidence: readonly string[],
+  evidenceTextById?: ReadonlyMap<string, string>,
+): string[] {
+  if (!evidenceTextById) {
+    if (goldEvidence.some((gold) => /^D(?::?\d|$)/i.test(gold.trim()))) {
+      throw new Error("LoCoMo evidence IDs require a turn-text map");
+    }
+    return [...goldEvidence];
+  }
+  return goldEvidence.flatMap((gold) => {
+    const ids = [...gold.matchAll(/\bD:?(\d+):(\d+)\b/gi)];
+    return ids.length > 0
+      ? ids.map(([, session, turn]) => evidenceTextById.get(`D${Number(session)}:${Number(turn)}`) ?? "")
+      : [""];
+  });
+}
+
 export function computeContextRecall(
   assembledContext: string,
   goldEvidence: readonly string[],
+  evidenceTextById?: ReadonlyMap<string, string>,
 ): number {
-  if (goldEvidence.length === 0) return 1;
+  const goldTexts = resolveGoldEvidence(goldEvidence, evidenceTextById);
+  if (goldTexts.length === 0) return 0;
   const contextLower = assembledContext.toLowerCase();
   let score = 0;
 
-  for (const gold of goldEvidence) {
+  for (const gold of goldTexts) {
     const goldWords = gold
       .toLowerCase()
       .split(/\s+/)
@@ -31,7 +55,7 @@ export function computeContextRecall(
     else if (ratio >= 0.4) score += 0.5;
   }
 
-  return score / goldEvidence.length;
+  return score / goldTexts.length;
 }
 
 export function aggregateContextRecall(
@@ -44,7 +68,7 @@ export function aggregateContextRecall(
   let total = 0;
 
   for (const input of inputs) {
-    const value = computeContextRecall(input.assembledContext, input.goldEvidence);
+    const value = computeContextRecall(input.assembledContext, input.goldEvidence, input.evidenceTextById);
     total += value;
     const current = byCategorySums.get(input.category) ?? { sum: 0, count: 0 };
     current.sum += value;

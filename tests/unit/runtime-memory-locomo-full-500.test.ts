@@ -74,7 +74,7 @@ import {
   isDevSliceCacheValid,
   type DevSliceCache,
 } from "./helpers/runtime-memory-dev-slice";
-import { computeContextRecall } from "./helpers/runtime-memory-context-recall";
+import { computeContextRecall, resolveGoldEvidence } from "./helpers/runtime-memory-context-recall";
 import {
   aggregateErrorTaxonomy,
   classifyErrorTaxonomy,
@@ -87,9 +87,11 @@ import {
 } from "./helpers/runtime-memory-generation-scaffolds";
 import {
   FROZEN_JUDGE_CONFIG,
+  FROZEN_JUDGE_INTERPRETATION,
   buildFrozenJudgePrompt,
   parseFrozenJudgeVerdict,
 } from "./helpers/runtime-memory-judge-freeze";
+import { buildSotaComparison } from "./helpers/locomo-pipeline";
 import { JudgeResultCache } from "./helpers/judge-result-cache";
 import { SelfAskCache } from "./helpers/self-ask-cache";
 import {
@@ -1464,6 +1466,10 @@ describe.skipIf(
       "runs 500-question stratified LoCoMo benchmark",
       async () => {
         const rawData = loadRawData();
+        const evidenceTextByConversation = new Map(rawData.map((sample) => [
+          sample.sample_id,
+          new Map(extractTurns(sample.conversation).map((turn) => [turn.dia_id, turn.text])),
+        ]));
         console.log(`[LoCoMo-Full] Loaded ${rawData.length} conversations`);
 
 
@@ -2433,6 +2439,7 @@ describe.skipIf(
               const contextRecall = computeContextRecall(
                 finalAssembledContext,
                 qa.evidence ?? [],
+                evidenceTextByConversation.get(conversationId),
               );
               if (judgeScore === 0) {
                 const taxonomy = await classifyErrorTaxonomy(
@@ -3334,6 +3341,7 @@ describe.skipIf(
             const contextRecall = computeContextRecall(
               finalAssembledContext,
               qa.evidence ?? [],
+              evidenceTextByConversation.get(conversationId),
             );
 
             if (judgeScore === 0) {
@@ -3559,7 +3567,8 @@ describe.skipIf(
             "Stage 2 adaptive retrieval: dual-track episodic+semantic fragments, session-summary retrieval for top-2 whole-session escalation, full-conversation fallback, and sequential self-ask for multi-hop. Qwen3-Embedding-8B (SiliconFlow). Default dev-slice mode uses cached retrieval when artifacts/runtime-memory-eval/dev-slice-cache.json is valid; FULL_EVAL=1 or --full runs the full sample.",
           judgeModel: `${FROZEN_JUDGE_CONFIG.model} (${FROZEN_JUDGE_CONFIG.promptVersion})`,
           judgeConfig: FROZEN_JUDGE_CONFIG,
-          metric: "J Score (frozen LLM-as-Judge accuracy) with context-recall as primary steering metric",
+          judgeInterpretation: FROZEN_JUDGE_INTERPRETATION,
+          metric: "J Score under the disclosed lenient frozen judge; lexical gold-turn context coverage is diagnostic, not a primary retrieval metric. Empty/missing evidence scores zero. Different judge configurations are not directly comparable.",
           adversarialExcluded: true,
           sampleSizes: fullEval ? SAMPLE_SIZES : DEV_SLICE_SAMPLE_SIZES,
           sampleSeed: fullEval ? SAMPLE_SEED : DEV_SLICE_SAMPLE_SEED,
@@ -3612,26 +3621,13 @@ describe.skipIf(
             const completenessResults = results.map((r) => {
               const cr = computeContextCompletenessDeterministic(
                 r.assembledContext,
-                r.goldEvidence,
+                resolveGoldEvidence(r.goldEvidence, evidenceTextByConversation.get(r.conversationId)),
               );
               return { level: cr.level, category: r.category };
             });
             return aggregateCompleteness(completenessResults);
           })(),
-          comparison: {
-            // From Hindsight paper Table 4 (arXiv:2512.12818)
-            Backboard: { j_score: 0.9 },
-            Hindsight_Gemini3: { j_score: 0.8961 },
-            Hindsight_OSS120B: { j_score: 0.8567 },
-            Hindsight_OSS20B: { j_score: 0.8318 },
-            Memobase: { j_score: 0.7578 },
-            Zep: { j_score: 0.7514 },
-            Mem0_Graph: { j_score: 0.6844 },
-            Mem0: { j_score: 0.6688 },
-            LangMem: { j_score: 0.581 },
-            OpenAI_no_memory: { j_score: 0.529 },
-            ours: { j_score: overallJ },
-          },
+          comparison: buildSotaComparison(overallJ),
           sampleResults: [
             ...results.filter((result) => result.category === "single_hop").slice(0, 5),
             ...results.filter((result) => result.category === "temporal").slice(0, 5),
@@ -3757,12 +3753,11 @@ describe.skipIf(
             }
           }
         }
-        console.log("[LoCoMo-Full] Comparison (J Score):");
-        for (const [sys, score] of Object.entries(report.comparison)) {
-          const pct = (score.j_score * 100).toFixed(2);
-          const marker = sys === "ours" ? " <---" : "";
-          console.log(`  ${sys}: ${pct}%${marker}`);
+        console.log(`[LoCoMo-Full] Reference scores only: ${report.comparison.note}`);
+        for (const [sys, score] of Object.entries(report.comparison.references)) {
+          console.log(`  ${sys}: ${(score.j_score * 100).toFixed(2)}% (not comparable)`);
         }
+        console.log(`[LoCoMo-Full] This run under ${FROZEN_JUDGE_CONFIG.promptVersion}: ${(overallJ * 100).toFixed(2)}%; no cross-system rank.`);
         // Phase 2: Feedback Loop diagnostic summary
         {
           const fb = feedbackLoopStats;

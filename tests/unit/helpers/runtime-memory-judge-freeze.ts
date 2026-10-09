@@ -19,6 +19,19 @@ export const FROZEN_JUDGE_CONFIG = {
   ].join("\n"),
 } as const;
 
+export const FROZEN_JUDGE_INTERPRETATION = {
+  judgeComparableAcrossConfigurations: false,
+  rankingAllowed: false,
+  limitations: [
+    "Partial answers are accepted as correct.",
+    "Only 50% of a reference list is required.",
+    "Dates within 14 days are accepted as correct.",
+    "Case-insensitive substrings and superstrings are accepted.",
+    "Aliases referring to the same entity are accepted.",
+  ],
+  note: "This is lenient answer accuracy, not evidence of retrieval improvement or a cross-system ranking.",
+} as const;
+
 export type JudgeSanitySample = {
   questionId: string;
   category?: string;

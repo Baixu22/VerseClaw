@@ -1,3 +1,5 @@
+import { FROZEN_JUDGE_CONFIG, FROZEN_JUDGE_INTERPRETATION } from "./runtime-memory-judge-freeze";
+
 // WP-E2: Pipeline 阶段拆分 — 共享 helper 函数 + 类型定义.
 //
 // Source: 500q 评测代码优化 (WP-E2)
@@ -217,7 +219,8 @@ export function accumulateQuestionResult(
 // === SOTA comparison (constant) ===
 
 /**
- * SOTA 对比表 (Hindsight paper Table 4, arXiv:2512.12818).
+ * External reported reference scores only (Hindsight paper Table 4, arXiv:2512.12818).
+ * Different/unknown judge protocols: these values do not establish a ranking.
  *
  * 替代 500q 文件 line 3625-3638 的硬编码字面量.
  * `ours` 字段需运行时填入 overallJ.
@@ -241,10 +244,18 @@ export const SOTA_COMPARISON: Record<string, { j_score: number }> = {
  * @param overallJ 当前 run 的 overall J Score
  * @returns 完整对比表, 可直接嵌入 report.comparison
  */
-export function buildSotaComparison(overallJ: number): Record<string, { j_score: number }> {
+export function buildSotaComparison(overallJ: number) {
   return {
-    ...SOTA_COMPARISON,
-    ours: { j_score: overallJ },
+    judgeComparable: false,
+    rankingAllowed: false,
+    note: "External paper scores use different or unknown judges, datasets and pipelines; they are reference values only, not a ranking against this run.",
+    source: "Hindsight paper Table 4, arXiv:2512.12818 (externally reported; not reproduced here)",
+    references: SOTA_COMPARISON,
+    ours: {
+      j_score: overallJ,
+      judgeConfig: FROZEN_JUDGE_CONFIG,
+      interpretation: FROZEN_JUDGE_INTERPRETATION,
+    },
   };
 }
 

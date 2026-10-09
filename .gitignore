@@ -1777,6 +1777,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/harness-gap-closure/o01-approval-rate.md
 !/docs/dev/harness-gap-closure/o01-acceptance.json
 !/docs/dev/harness-gap-closure/O01-SHA256SUMS
+!/docs/dev/p0-memory-evaluation-integrity.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

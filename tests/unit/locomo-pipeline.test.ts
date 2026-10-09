@@ -311,12 +311,16 @@ describe("SOTA_COMPARISON", () => {
 describe("buildSotaComparison", () => {
   it("包含 SOTA_COMPARISON 全部条目 + ours", () => {
     const table = buildSotaComparison(0.718);
-    expect(Object.keys(table).length).toBe(11); // 10 SOTA + ours
+    expect(Object.keys(table.references).length).toBe(10);
+    expect(table.judgeComparable).toBe(false);
+    expect(table.rankingAllowed).toBe(false);
+    expect(table.ours.judgeConfig.promptVersion).toBe("frozen-v2-generous-2026-07-04");
+    expect(table.ours.interpretation.limitations).toHaveLength(5);
     expect(table).toHaveProperty("ours");
     expect(table.ours.j_score).toBeCloseTo(0.718, 6);
     // SOTA 条目仍存在
-    expect(table.Backboard.j_score).toBe(0.9);
-    expect(table.Hindsight_Gemini3.j_score).toBeCloseTo(0.8961, 6);
+    expect(table.references.Backboard.j_score).toBe(0.9);
+    expect(table.references.Hindsight_Gemini3.j_score).toBeCloseTo(0.8961, 6);
   });
 
   it("ours 字段为传入的 overallJ", () => {
@@ -589,7 +593,7 @@ describe("集成测试: 模拟 batch 循环", () => {
     // SOTA 对比表 + ours
     const sotaTable = buildSotaComparison(metrics.overallJ);
     expect(sotaTable.ours.j_score).toBeCloseTo(50 / 90, 10);
-    expect(sotaTable.Backboard.j_score).toBe(0.9);
+    expect(sotaTable.references.Backboard.j_score).toBe(0.9);
 
     // sampleResults 选取
     const sampleSel = selectSampleResults(results, 5);
