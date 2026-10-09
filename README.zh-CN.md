@@ -283,3 +283,7 @@ Renderer 请求入口是 `src/lib/host-api.ts` 与 `src/lib/host-api-client.ts`�
 保持修改范围明确，提供对应验证，涉及行为变化时同步四份 README。遵循 [AGENTS.md](AGENTS.md) 的 API、i18n、规格与证据要求；源码、可复用夹具和精选最终证据一起跟踪，私有任务历史与原始生成日志留在本地。
 
 Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw)，并继承 ValueCell 团队的 ClawX 工作。仓库采用 [MIT 许可证](LICENSE)；内置组件保留各自许可证和源码义务，包括 [VerseShell 的声明](resources/verseshell/SOURCE.md)。
+
+### Coding 诊断日志
+
+运行时 `diagnostics.enabled` 显式设为 `true` 时，已有诊断日志会报告持续偏高的“需审批分类率”及恢复。这是工具破坏层分类，不是实际弹窗或真人审批次数；不足或过期窗口记为缺测。省略或关闭该配置时不启用监测，告警不改变审批或工具执行策略。

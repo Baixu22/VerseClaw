@@ -2,6 +2,8 @@
  * C2-10: write/edit destructive tier classification (Claude Code reversibility weighting).
  * read exempt < edit/write (journal lowers annoyance) < apply_patch Delete/Move / large overwrite.
  */
+import { areDiagnosticsEnabledForProcess } from "../infra/diagnostic-events.js";
+import { diagnosticLogger } from "../logging/diagnostic-runtime.js";
 import { codingObservability } from "../context-engine/coding-observability.js";
 import { extractPatchTargetPaths } from "./tools/write-journal.js";
 import { getToolParamsRecord } from "./agent-tools.params.js";
@@ -105,7 +107,7 @@ export function classifyWriteDestructiveTier(params: {
  */
 export function wrapToolWithDestructiveTier(
   tool: AnyAgentTool,
-  options?: { journalEnabled?: boolean },
+  options?: { journalEnabled?: boolean; approvalRateDiagnosticsEnabled?: boolean },
 ): AnyAgentTool {
   return {
     ...tool,
@@ -115,10 +117,19 @@ export function wrapToolWithDestructiveTier(
         args,
         journalEnabled: options?.journalEnabled,
       });
+      const diagnosticsEnabled =
+        options?.approvalRateDiagnosticsEnabled === true && areDiagnosticsEnabledForProcess();
       if (classification.requiresApproval) {
-        codingObservability.recordApprovalPrompt();
+        codingObservability.recordApprovalPrompt(diagnosticsEnabled);
       } else {
-        codingObservability.recordApprovalSkip();
+        codingObservability.recordApprovalSkip(diagnosticsEnabled);
+      }
+      if (diagnosticsEnabled) {
+        codingObservability.reportApprovalRateDiagnostic((diagnostic) => {
+          const message = "coding approval classification rate: " + diagnostic.status;
+          if (diagnostic.status === "alert") diagnosticLogger.warn(message, { ...diagnostic });
+          else diagnosticLogger.info(message, { ...diagnostic });
+        });
       }
       const result = await tool.execute(toolCallId, args, signal, onUpdate);
       const prev =

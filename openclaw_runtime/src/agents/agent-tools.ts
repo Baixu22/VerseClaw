@@ -84,14 +84,8 @@ import {
 import { wrapToolWithSymbolLease } from "./symbol-lease-guard.js";
 import { wrapToolWithParseOnTouch } from "./parse-on-touch.js";
 import { wrapToolWithStaleWriteGuard } from "./stale-write-guard.js";
-import {
-  wrapToolWithStage1ToolGuard,
-  type Stage1ToolGuardOptions,
-} from "./stage1-tool-guard.js";
-import {
-  wrapToolWithStage4ToolGuard,
-  type Stage4ToolGuardOptions,
-} from "./stage4-tool-guard.js";
+import { wrapToolWithStage1ToolGuard, type Stage1ToolGuardOptions } from "./stage1-tool-guard.js";
+import { wrapToolWithStage4ToolGuard, type Stage4ToolGuardOptions } from "./stage4-tool-guard.js";
 import { type TestRunnerExecutor, wrapToolWithWriteSideEffects } from "./write-side-effects.js";
 import { wrapToolWithSoftWriteGates } from "./write-soft-gates.js";
 import { wrapToolWithDestructiveTier } from "./write-destructive-tier.js";
@@ -915,7 +909,11 @@ export function createOpenClawCodingTools(options?: {
       editReadinessEnabled: true,
     });
     // C2-10 destructive tier classification + approval metrics
-    next = wrapToolWithDestructiveTier(next, { journalEnabled: writeJournalEnabled });
+    next = wrapToolWithDestructiveTier(next, {
+      journalEnabled: writeJournalEnabled,
+      // Missing diagnostics config is generally enabled elsewhere; this new monitor is explicit opt-in.
+      approvalRateDiagnosticsEnabled: options?.config?.diagnostics?.enabled === true,
+    });
     next = wrapToolWithWorkspaceExternalWriteProvenance(next, {
       action: kind,
       provenanceContext: contentProvenanceContext,

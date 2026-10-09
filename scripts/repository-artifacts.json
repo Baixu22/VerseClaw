@@ -1648,6 +1648,16 @@
     "reports/role-first-runtime-implementation-analysis.md",
     "team/dcs/dcs-v1.6-spec.md",
     "team/dcs/dcs-v1.6.1-addendum.md",
-    "team/role-architecture-design/area-4-role-memory-completion.md"
+    "team/role-architecture-design/area-4-role-memory-completion.md",
+    "docs/dev/harness-gap-closure/ACCEPTANCE-SHA256SUMS",
+    "docs/dev/harness-gap-closure/SHA256SUMS",
+    "docs/dev/harness-gap-closure/baseline-acceptance.json",
+    "docs/dev/harness-gap-closure/baseline-evidence.json",
+    "docs/dev/harness-gap-closure/baseline.md",
+    "docs/dev/harness-gap-closure/design.md",
+    "docs/dev/harness-gap-closure/source-inventory.json",
+    "docs/dev/harness-gap-closure/o01-approval-rate.md",
+    "docs/dev/harness-gap-closure/o01-acceptance.json",
+    "docs/dev/harness-gap-closure/O01-SHA256SUMS"
   ]
 }

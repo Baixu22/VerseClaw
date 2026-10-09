@@ -283,3 +283,7 @@ Design plans and older acceptance snapshots have their own scope and dates. Curr
 Keep changes scoped, provide relevant validation and update all four READMEs when behavior changes. Follow [AGENTS.md](AGENTS.md) for API, i18n, specifications and evidence requirements. Track source, reusable fixtures and curated final evidence together; retain private task history and raw generated logs locally.
 
 Verse Claw builds on [OpenClaw](https://github.com/openclaw/openclaw) and the ClawX work by the ValueCell team. The repository uses the [MIT license](LICENSE). Bundled components retain their own licenses and source obligations, including the [VerseShell notices](resources/verseshell/SOURCE.md).
+
+### Coding diagnostic logs
+
+With runtime `diagnostics.enabled` explicitly set to `true`, the existing diagnostic logger reports sustained high approval-required **classification** rates and their recovery. These are tool-tier classifications, not counts of actual dialogs or human approvals; missing/expired windows are unavailable. The monitor is off when the setting is omitted or false and never changes approval or tool execution policy.

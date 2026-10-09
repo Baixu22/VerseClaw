@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-09",
+  "actor": "codex-o01-continuation",
+  "driven_by": "agent",
+  "scope": "TF-0272/O01",
+  "decision": {
+    "status": "NOT-RUN",
+    "reason": "Pending clean-candidate full gates and independent raw-file verification."
+  },
+  "candidate": null
+}

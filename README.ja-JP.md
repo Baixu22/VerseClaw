@@ -283,3 +283,7 @@ Renderer の入口は `src/lib/host-api.ts` と `src/lib/host-api-client.ts` で
 変更範囲を明確にし、対応する検証を行い、動作変更時は 4 言語の README を更新してください。API、i18n、仕様、証拠は [AGENTS.md](AGENTS.md) に従います。ソース、再利用可能な fixture、精選した最終証拠を追跡し、非公開タスク履歴と生成した生ログはローカルに保管します。
 
 Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell チームの ClawX を基盤としています。リポジトリは [MIT ライセンス](LICENSE) を採用しています。内蔵コンポーネントには固有のライセンスとソース提供義務があり、[VerseShell の声明](resources/verseshell/SOURCE.md)も参照してください。
+
+### Coding 診断ログ
+
+ランタイムの `diagnostics.enabled` を明示的に `true` にすると、既存の診断ログに承認必要と分類された割合の継続的な上昇と回復を記録します。これはツールの分類であり、実際のダイアログや人による承認回数ではありません。サンプル不足・期限切れは未測定です。設定を省略または無効にした場合は監視せず、承認やツール実行ポリシーを変更しません。
