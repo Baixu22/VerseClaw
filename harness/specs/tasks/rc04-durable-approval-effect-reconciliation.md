@@ -4,7 +4,7 @@ title: RC-04 Durable Approval And Effect Reconciliation
 taskType: engineering-acceptance
 # Pinned to the commit RC-04R started from; the shared branch diverged from
 # origin/main long ago.
-diffBase: 9385d2341
+diffBase: 56550d4af1f376f8fe9f3a9d856eb13ab8d181f7
 intent: Replace the in-memory Gateway process Map approval truth with one durable owner in the existing OpenClaw state boundary; persist the state sequence intent_reserved -> approval_pending -> approved|denied -> execution_started -> applied|not_applied|unknown -> reconciled; define stable approval/effect IDs, idempotency keys, domain-journal joins, and needs_reconciliation; do not create a generic workflow engine or claim global exactly-once.
 ownedPaths:
   - openclaw_runtime/src/state/openclaw-state-schema.sql

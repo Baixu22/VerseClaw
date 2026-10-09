@@ -4,7 +4,7 @@ title: Project closeout compilation and evidence integrity
 type: task
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 55a33921e92c10eff4b5cb1b10305e8bcfbdda4a
+diffBase: 7dad75c42f6e9102e672a13d7f02c9f3fca44334
 intent: Verify the current checkout and repair reproduced typecheck false positives and runtime compilation failures without changing product locks or treating historical evidence as current acceptance.
 scenarios:
   - gateway-backend-communication

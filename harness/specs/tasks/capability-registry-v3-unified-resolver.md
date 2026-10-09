@@ -3,7 +3,7 @@ id: capability-registry-v3-unified-resolver
 title: Capability Registry V3 unified resolver and Tool Search fallback
 scenario: capability-registry-v3
 taskType: runtime-opt-in
-diffBase: 8306466d175016a938703c41125dc3a3dca68390
+diffBase: fafa493fabd7e7c0c448f6b0a275c87eb13afb46
 intent: Implement V3-04 as an explicit opt-in categories/discover/describe/load/execute/reflect resolver that delegates Tool L3 and execution to the existing Tool Search runtime through V3 leases.
 ownedPaths:
   - docs/dev/capability-registry-v3-*-acceptance.md

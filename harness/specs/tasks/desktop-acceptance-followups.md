@@ -4,7 +4,7 @@ title: Repair the remaining Windows desktop acceptance failures
 type: task
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 8143c48a316ff191805e027119e145f461c60314
+diffBase: ea66db208ea9d0d07757d86bde802e9513a3672e
 intent: Complete TF-0255 through TF-0258 using current agent-driven evidence, preserving product locks and existing budgets.
 expectedUserBehavior:
   - The Windows delivery starts with its own locked runtime and MCP dependencies after relocation.

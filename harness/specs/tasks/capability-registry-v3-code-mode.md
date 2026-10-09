@@ -3,7 +3,7 @@ id: capability-registry-v3-code-mode
 title: Capability Registry V3 Code Mode bridge
 scenario: capability-registry-v3
 taskType: runtime-opt-in
-diffBase: 8306466d175016a938703c41125dc3a3dca68390
+diffBase: fafa493fabd7e7c0c448f6b0a275c87eb13afb46
 intent: Implement V3-06 as an explicit opt-in adapter over the existing Tool Search Code Mode sandbox, routing search/describe/call through V3 descriptors, trusted leases, and ArchiveHandle-backed Result Pointers.
 ownedPaths:
   - docs/dev/capability-registry-v3-*-acceptance.md

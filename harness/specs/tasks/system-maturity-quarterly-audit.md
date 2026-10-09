@@ -3,7 +3,7 @@ id: system-maturity-quarterly-audit
 title: Enforce quarterly maturity audit and phase review gates
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: bafd6f0249c9818681f7ae0c8f258d3a5e548b63
+diffBase: b85ce0f90df4b7af8c675e7f79e006e3cc7add96
 intent: Complete P7-004 by adding quarterly maturity scorecard, risk acceptance deadlines, incomplete P0/P1 release blocking, and reproducible post-commit gates.
 touchedAreas:
   - package.json

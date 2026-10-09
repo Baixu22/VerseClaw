@@ -4,7 +4,7 @@ title: RC-06B ClawGraph Lifecycle Migration
 taskType: engineering-acceptance
 # Pinned to the commit RC-06BR started from; the shared branch diverged from
 # origin/main long ago.
-diffBase: 1bcd0fc69
+diffBase: 0542bdf4eb0a62c8f8a305b3606aee405db6f8da
 intent: Migrate ClawGraph run lifecycle from the process Map to the TaskFlow-backed owner using the four-step migration pattern (observe, read-only projection, cut one writer with idempotency and rollback proof, remove or freeze the legacy writer after a compatibility window). Compiler and UI remain; run state moves from process Map only after RC-06A proof. Restart, cancel, child task, and projection tests pass.
 ownedPaths:
   - openclaw_runtime/src/agents/clawgraph/runtime.ts

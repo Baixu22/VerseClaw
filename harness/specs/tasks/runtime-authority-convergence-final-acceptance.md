@@ -4,7 +4,7 @@ title: RC-09 Final Engineering Acceptance
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: Run the repository acceptance protocol against a clean candidate whose diffBase equals the RC-01 acceptedBaseSha; validate every accepted RC task spec and a candidate-bound ownership matrix that partitions the exact cumulative diff into the RC-owned set (each path owned by exactly one required RC package) and the excluded set (each path attributed to the non-RC commit that introduced it); produce the final manifest and independent Executor/Verifier reports at the fixed acceptance paths; record the tested validate-runtime-authority-convergence.mjs validator; leave the program human_acceptance_pending (never done) until RC-10.
-diffBase: 1cddcb1ba5e23ebe445afca11174c2575c75f735
+diffBase: fc16faeee71c8b9fc803d7b7d7b6c2a00e0f6f4e
 ownedPaths:
   - harness/specs/tasks/runtime-authority-convergence-final-acceptance.md
   - scripts/validate-runtime-authority-convergence.mjs

@@ -3,7 +3,7 @@ id: rc10-development-loop
 title: RC-10 scoped development checks and honest driver evidence
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 1de18d5b397c421d08b2fdf93ba8760a50fd0edf
+diffBase: d6d896f62afdf4928a6a057532ef1854fc1e7554
 intent: Keep the channel regression loop small, reject unsupported driver scenarios, and distinguish development evidence from frozen-candidate release acceptance.
 ownedPaths:
   - electron/services/sessions-api.ts

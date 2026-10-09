@@ -4,7 +4,7 @@ title: Record real runtime evidence that the CVK prompt addition reaches and is 
 type: task
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: dd319c09a82ef51fddec8b55af487b66876ef3ab
+diffBase: 709d4350d7005c609e75a12e1aa8be5a18209a12
 intent: Sink real evidence (no new product code) that the Context Runtime Kit prompt addition is actually injected into a real isolated Gateway request and consumed by the supplied step-5-preview.
 scenarios:
   - gateway-backend-communication

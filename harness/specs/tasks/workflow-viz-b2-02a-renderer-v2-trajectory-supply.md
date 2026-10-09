@@ -3,7 +3,7 @@ id: workflow-viz-b2-02a-renderer-v2-trajectory-supply
 title: Workflow Viz B2-02A renderer v2 trajectory supply bridge
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 9be4f9f06307b46480eca70db68f36c1220e82c2
+diffBase: bbe926dd6152bf5460730aeed64dd03786a3b25c
 intent: Let the renderer receive raw validated TrajectoryEventV2 history and realtime updates through the existing Main-owned host-api/host-events boundary, with a deterministic asOfSeq/dedupe handoff, so B2-02 store convergence can consume B2-01 assembler output without reverse-engineering ObservabilityTrace projections.
 ownedPaths:
   - .agent-workbench/task-forest/**

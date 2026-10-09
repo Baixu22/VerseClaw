@@ -3,7 +3,7 @@ id: system-maturity-security-regression
 title: Run long-lived security red-team and fault-injection regression
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: e3fa1eea1c5f7eaf096177247b779e38ab837cc0
+diffBase: 19f9a5e2dbc458ed21501ea190bd3d5f713fc678
 intent: Complete P7-002 by composing the existing Renderer, Main, Gateway, approval, path, data, Cron, update, and multi-window regression tests into fail-closed PR and release suites with evidence.
 touchedAreas:
   - package.json

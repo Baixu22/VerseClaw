@@ -5,7 +5,7 @@ taskType: engineering-acceptance
 # Pinned to the commit this increment started from: the shared branch diverged
 # from origin/main long ago, so the default diff base would report the whole
 # branch (and every unrelated workstream) as changed.
-diffBase: b1f924763
+diffBase: 9545d6415d2ad3756c02956d705594af7bfe884d
 intent: Establish ShadowContextReceipt/v0 before provider projection and ShadowWireReceipt/v0 at the guarded request-body boundary after every provider-specific finalizer for every source-runtime model call in the automated entry matrix; write bounded evidence through the RC-01-approved ReceiptStore (typed append-only runtime_receipts in openclaw-state SQLite); record no raw payload by default; achieve owner-classification coverage 100% and zero-byte parity; the npm fallback reports explicit capability degradation and never counts as receipt coverage.
 ownedPaths:
   - openclaw_runtime/package.json

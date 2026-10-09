@@ -4,7 +4,7 @@ title: RC-06C Mission Lifecycle Migration
 taskType: engineering-acceptance
 # Pinned to the commit RC-06CR started from; the shared branch diverged from
 # origin/main long ago.
-diffBase: e064194d5
+diffBase: db00a655078735c73f4c43154b7e505a3cc133c3
 intent: Migrate Mission definitions and run lifecycle toward TaskFlow templates/controllers while keeping mission_runs/events as compatibility reads until migration proof permits retirement. Mission restart, wait, resume, and cancel semantics are preserved; migration and rollback pass.
 ownedPaths:
   - openclaw_runtime/src/agents/mission-control/store.ts

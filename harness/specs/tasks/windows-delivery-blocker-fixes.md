@@ -4,7 +4,7 @@ title: Repair Windows CLI dispatch, installer stalls and diagnose native worker 
 type: task
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 8defdf68c
+diffBase: e9c0fc12ccae04c5e69efd8c59ff4b8ecc696b7a
 intent: Fix the three observed frozen-candidate blockers at their shared entry points and retain reproducible agent-driven evidence.
 expectedUserBehavior:
   - CLI information queries terminate without loading Gateway or touching user state; unsupported commands fail explicitly.

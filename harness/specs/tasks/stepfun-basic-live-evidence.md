@@ -4,7 +4,7 @@ title: Expand Windows alpha evidence with a real StepFun model
 type: task
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 2a08f3a7280a991d795b0f436a121afe4b7aa33d
+diffBase: 9e463c269e113db09244647d072d55a7fbb55484
 intent: Verify bounded real-model dialogue, context continuity and usage through direct HTTPS and the existing Gateway RPC path while excluding credentials from evidence.
 scenarios:
   - gateway-backend-communication

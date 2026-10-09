@@ -3,7 +3,7 @@ id: capability-registry-v3-trusted-catalog
 title: Capability Registry V3 trusted catalog and lease
 scenario: capability-registry-v3
 taskType: runtime-shadow
-diffBase: 8306466d175016a938703c41125dc3a3dca68390
+diffBase: fafa493fabd7e7c0c448f6b0a275c87eb13afb46
 intent: Implement V3-03 as an unwired in-memory trusted Tool catalog with cold-start/reload executor registration and fail-closed session leases.
 ownedPaths:
   - docs/dev/capability-registry-v3-development-plan.md

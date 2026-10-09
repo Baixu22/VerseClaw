@@ -4,7 +4,7 @@ title: Qualify the frozen Windows candidate and installer lifecycle
 type: task
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: cb33fad04fb3e98d0cd252f5f61afb542db7c349
+diffBase: 5efbdbd159cdedaec2b830c5dd5e859abce87468
 intent: Record current complete regression and installer evidence, rejecting delivery when a required behavior fails.
 expectedUserBehavior:
   - The current installer contains the frozen product sources and starts from its own delivered resources.

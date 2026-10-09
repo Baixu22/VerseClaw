@@ -4,7 +4,7 @@ title: Verify bounded live StepFun runtime and read-tool behavior
 type: task
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: abdd8cea95b6ce3b327aae583f4e3c002bc897c6
+diffBase: 9385eb0c8e0dd87d91d007640cb12a9f1dc580ca
 intent: Execute the supplied real model through existing direct HTTPS and Gateway RPC paths, including one actual read-tool result, without credentials on disk or changing product defaults.
 scenarios:
   - gateway-backend-communication

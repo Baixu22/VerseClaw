@@ -4,7 +4,7 @@ title: Keep asynchronous chat controls attached to their source conversation
 type: task
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: a2b477534
+diffBase: f4c4c0f6651114162f9f0bc944bf8c2c1e30f8df
 intent: Reproduce and repair stale chat dialogs and control responses after switching conversations.
 expectedUserBehavior:
   - Switching conversations closes the previous conversation's compression and handoff dialogs.

@@ -3,7 +3,7 @@ id: dcs-stage5-sekb-closure
 title: "DCS Stage 5: SEKB Distillation Write-Back Closure"
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: f3b6a967baaa29f638d02e004b81a8717907bfce
+diffBase: 3f8cd6bcdc91cdaf1feab5c2bb5ce7a4ab78bec6
 intent: |
   Bridge `confirm_and_save` to write `experience` Blocks to BlockStore via
   ContextBlockSink. Implement `context_search` and `context_write` tools per

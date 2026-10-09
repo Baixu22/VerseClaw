@@ -3,7 +3,7 @@ id: workflow-viz-b2-01-trajectory-assembler
 title: Workflow Viz B2-01 deterministic trajectory assembler
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 429fd39f1de40bb72eb7fb4c83a6f86aff6fd333
+diffBase: 99e54d759f91f89517e5529ba0d2a178339a2a4f
 intent: Define the fixture-first renderer-side assembly engine that deterministically consumes B1 v2 trajectory events into incremental node snapshots, without migrating stores, changing Electron or Gateway supply, or implementing presentation.
 ownedPaths:
   - .agent-workbench/task-forest/**

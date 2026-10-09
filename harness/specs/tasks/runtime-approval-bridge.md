@@ -5,7 +5,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 # Pinned to the commit this increment started from: the shared branch diverged from
 # origin/main long ago, so the default diff base would report the whole branch.
-diffBase: 1cddcb1ba
+diffBase: fc16faeee71c8b9fc803d7b7d7b6c2a00e0f6f4e
 intent: Give ClawX an in-app entry point for the runtime exec-approval boundary so a gated command can be answered from the app instead of hanging until the session is abandoned.
 touchedAreas:
   - .agent-workbench/task-forest/**

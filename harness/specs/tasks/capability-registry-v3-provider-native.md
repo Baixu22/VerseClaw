@@ -3,7 +3,7 @@ id: capability-registry-v3-provider-native
 title: Capability Registry V3 provider-native deferred adapter
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 8306466d175016a938703c41125dc3a3dca68390
+diffBase: fafa493fabd7e7c0c448f6b0a275c87eb13afb46
 intent: Implement V3-07 as an explicit provider/model/workflow allowlisted deferred-loading adapter over caller-owned provider transport, with bounded retry, circuit breaking, idempotent fallback, and the existing V3 resolver/lease execution path.
 ownedPaths:
   - docs/dev/capability-registry-v3-*-acceptance.md

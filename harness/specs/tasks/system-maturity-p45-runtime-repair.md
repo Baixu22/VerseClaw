@@ -3,7 +3,7 @@ id: system-maturity-p45-runtime-repair
 title: Repair Phase 4 and Phase 5 runtime maturity claims
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a
+diffBase: 336443bbbf4761b41ac14116c5f22a204e23fa81
 intent: Replace unsupported Phase 4 and Phase 5 completion claims with production-wired channel admission, chat resource limits, cross-layer runtime validation, and reproducible evidence integrity checks.
 touchedAreas:
   - README.md

@@ -3,7 +3,7 @@ id: workflow-viz-b2-02-store-convergence
 title: Workflow Viz B2-02 store convergence onto assembler snapshots
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: b58350a2f80990be57a194da413703c61ce497cb
+diffBase: 3047483395c103472fe754d2c2d922287d7de039
 intent: Make src/stores/session-activity.ts and src/stores/observability.ts consume deterministic B2-01 assembler node snapshots for the v2-covered run/turn/step/tool lifecycle, removing the handwritten lifecycle reducers, wall-clock last-wins, and Date.now fallbacks on those paths, while every non-v2 domain keeps its existing explicit owner.
 ownedPaths:
   - .agent-workbench/task-forest/**

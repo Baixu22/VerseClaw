@@ -1,7 +1,7 @@
 ---
 id: merge-recovery-20261003
 title: Safely reconcile knowledge governance and runtime lifecycle integration
-diffBase: d5541fd179f5cc9bf48727dd7fa3226be722e491
+diffBase: 70daac29ca3c281ebe8e28cdab1c44e3982398e7
 intent: Resolve the existing 36 merge conflicts without losing either feature line or rewriting historical acceptance, and repair isolated-checkout test prerequisites.
 scenario: gateway-backend-communication
 taskType: runtime-bridge

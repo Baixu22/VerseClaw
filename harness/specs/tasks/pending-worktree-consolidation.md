@@ -3,7 +3,7 @@ id: pending-worktree-consolidation
 title: Consolidate still-valid repairs from preserved worktrees
 taskType: runtime-bridge
 scenario: gateway-backend-communication
-diffBase: 6577ddf25b1e5f7dce5a58de8e5f17eab6195fbf
+diffBase: 87d301cf12b681ce3533bc46d577e0ac95aef12e
 intent: Integrate pending acknowledgement, accessibility and acceptance-integrity repairs without restoring obsolete candidate restrictions or historical artifact state.
 ownedPaths:
   - harness/specs/tasks/pending-worktree-consolidation.md

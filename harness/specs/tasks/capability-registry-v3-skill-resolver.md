@@ -3,7 +3,7 @@ id: capability-registry-v3-skill-resolver
 title: Capability Registry V3 Skill hierarchical resolver
 scenario: capability-registry-v3
 taskType: runtime-shadow
-diffBase: 8306466d175016a938703c41125dc3a3dca68390
+diffBase: fafa493fabd7e7c0c448f6b0a275c87eb13afb46
 intent: Implement V3-02 as a default-disabled, caller-owned Skill discovery projection over the V3 shadow catalog without changing any active Skill or prompt behavior.
 ownedPaths:
   - docs/dev/capability-registry-v3-development-plan.md

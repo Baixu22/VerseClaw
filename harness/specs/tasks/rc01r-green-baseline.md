@@ -2,7 +2,7 @@
 id: rc01r-green-baseline
 title: RC-01R Green Baseline Remediation
 taskType: engineering-acceptance
-diffBase: 3b08a46667e9b961ff9eafda12da0a18848832c5
+diffBase: ec36d1b6dca9e403e4a58319e08617584d6c6637
 intent: Establish a clean, self-contained RC-01R prerequisite commit by removing the known ChatInput lint/typecheck errors, making the RC-01 authority baseline tracked and deterministic from an explicit accepted base, and making the nested OpenClaw production-core typecheck pass without changing runtime or product behavior.
 ownedPaths:
   - .gitattributes

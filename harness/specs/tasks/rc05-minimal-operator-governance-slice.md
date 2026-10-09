@@ -4,7 +4,7 @@ title: RC-05 Minimal Operator Governance Slice
 taskType: engineering-acceptance
 # Pinned to the commit RC-05R started from; the shared branch diverged from
 # origin/main long ago.
-diffBase: 10593aba2
+diffBase: f4437658e720026ab9edb5efc621cf1b604a0aaf
 intent: Build the automated primary path Cron ingress -> existing run identity -> DCS receipts -> desktop Inbox -> durable approval -> one bounded file or message effect -> EffectReceipt -> process restart -> recovery -> delivery projection, plus an automated secondary channel-conformance path that proves the same contract without a real external account. Duplicate effect count is zero, denial produces zero effect, restart preserves pending and completed truth from RC-04, and the UI shows context/effect/recovery lineage.
 ownedPaths:
   - openclaw_runtime/src/agents/operator-slice.ts

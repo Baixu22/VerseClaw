@@ -4,7 +4,7 @@ title: RC-07 Memory And Context Slot Convergence
 taskType: engineering-acceptance
 # Pinned to the commit RC-07R starts from; the shared branch diverged from
 # origin/main long ago.
-diffBase: 88c430e9e
+diffBase: 63bf593445532ff45b9d66c611567c8ea141ade5
 intent: Enforce one active configured memory slot owner and one DCS contextEngine slot as a startup/config invariant; define each existing mechanism as store owner, candidate producer, review proposal, benchmark arm, or projection. VToken/AgentMap are stateless packer/benchmark arms; Working Context is a query projection; SEKB is human-confirmed governance; Runtime Memory cannot bypass the selected memory slot or DCS. Parallel memory writes are zero; diagnostics-off performs zero query/write; delete/correction propagation tests pass; no default or auto-writeback change.
 ownedPaths:
   - openclaw_runtime/src/plugins/slots.ts

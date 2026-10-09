@@ -3,7 +3,7 @@ id: system-maturity-privacy-controls
 title: Enforce privacy data-flow inventory and sensitive capture controls
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 9092e57ab6a3dfe7138c5676bcf6d39de64928a0
+diffBase: 97885f9ac4a18f0ce3ae3a50f2948d2f94c5f7fe
 intent: Complete P7-003 by making third-party data flows visible and enforcing sensitive capture kill switch/grants plus UI error sanitization.
 touchedAreas:
   - package.json

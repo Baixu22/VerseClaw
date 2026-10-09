@@ -1,7 +1,7 @@
 ---
 id: task-forest-autoclose-policy
 title: Task Forest 自动收口门与角色固定（agent 主线开发 / 用户发布者）
-diffBase: b7920af0c
+diffBase: 600928a2c6f305e9db8518102d8b18423757c4a4
 intent: 把「证据链完整即自动收口、不再等待人工确认」与「agent 是主线开发者、用户是发布者」固化为可校验策略：新增 harness 规则与任务规格，改写 AGENTS.md、方向文档与接力文档，任务图新增 D8 决策并把依赖用户回答的验收口径改为可从仓库记录重建。
 touchedAreas:
   - AGENTS.md

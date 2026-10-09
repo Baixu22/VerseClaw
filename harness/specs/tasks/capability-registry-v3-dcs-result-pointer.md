@@ -3,7 +3,7 @@ id: capability-registry-v3-dcs-result-pointer
 title: Capability Registry V3 DCS projection and Result Pointer
 scenario: capability-registry-v3
 taskType: runtime-opt-in
-diffBase: 8306466d175016a938703c41125dc3a3dca68390
+diffBase: fafa493fabd7e7c0c448f6b0a275c87eb13afb46
 intent: Implement V3-05 as an explicit opt-in metadata-only DCS projection with bounded namespace/capability reads and an ArchiveHandle-backed, budgeted Result Pointer facade.
 ownedPaths:
   - docs/dev/capability-registry-v3-*-acceptance.md

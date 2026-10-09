@@ -4,7 +4,7 @@ title: Reclaim Electron processes after a Windows test worker crashes
 type: task
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 9a437ef602205737a1fd52e59d043f3152fc3d77
+diffBase: 80af349c4bb0624f4d81b5e971290deaf905d696
 intent: Repair the reproduced orphan-process cleanup gap without claiming that an unreproduced native worker crash is fixed.
 expectedUserBehavior:
   - Windows Electron tests leave no application from their own run after a worker aborts during launch.

@@ -4,7 +4,7 @@ title: Verify and land the current Windows alpha candidate
 type: task
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: dd9ea94dc089ebfc4a457dd9e5eec8e1a0b9b12f
+diffBase: 61999fea2d16dfa9c708d59e8ba2e909fa35ff7a
 intent: Complete the current candidate's full Windows regression and private-main landing, preserving explicit capability and platform boundaries.
 scenarios:
   - gateway-backend-communication

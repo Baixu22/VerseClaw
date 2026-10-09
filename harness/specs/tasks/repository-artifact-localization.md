@@ -1,7 +1,7 @@
 ---
 id: repository-artifact-localization
 title: Localize development history without removing source inputs
-diffBase: a2a21463dccfdf98460086b1730401093a31bf10
+diffBase: 2a82bb08d234d5ea9d8e8c165545ab980f6fefb9
 intent: Keep only source, maintained documentation, fixed inputs and curated final evidence in a fresh clone; localize process history with verified recovery and enforce the boundary in CI.
 touchedAreas:
   - .gitignore

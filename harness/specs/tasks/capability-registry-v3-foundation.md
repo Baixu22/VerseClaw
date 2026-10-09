@@ -3,7 +3,7 @@ id: capability-registry-v3-foundation
 title: Capability Registry V3 foundation
 scenario: capability-registry-v3
 taskType: runtime-shadow
-diffBase: 8306466d175016a938703c41125dc3a3dca68390
+diffBase: fafa493fabd7e7c0c448f6b0a275c87eb13afb46
 intent: Establish V3-00/V3-01 metadata contracts, static evaluation baseline, and an in-memory shadow catalog without changing any active runtime behavior.
 ownedPaths:
   - docs/dev/capability-registry-v3-development-plan.md

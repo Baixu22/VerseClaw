@@ -3,7 +3,7 @@ id: capability-registry-v3-controlled-rollout
 title: Capability Registry V3 evaluation and controlled rollout
 scenario: capability-registry-v3
 taskType: runtime-opt-in
-diffBase: 8306466d175016a938703c41125dc3a3dca68390
+diffBase: fafa493fabd7e7c0c448f6b0a275c87eb13afb46
 intent: Implement V3-08 as a default-disabled, caller-owned in-memory rollout and evaluation control plane with exact provider/model/workflow targeting, deterministic canary cohorts, bounded receipts, and no automatic graduation.
 ownedPaths:
   - docs/dev/capability-registry-v3-*-acceptance.md

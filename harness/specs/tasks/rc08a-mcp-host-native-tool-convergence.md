@@ -4,7 +4,7 @@ title: RC-08A MCP And Host-Native Tool Convergence
 taskType: engineering-acceptance
 # Pinned to the commit RC-08AR starts from; the shared branch diverged from
 # origin/main long ago.
-diffBase: 8543434df
+diffBase: 584b6c842b5a95b17b72fe12f489283b832905f3
 # The candidate touches electron/services/mcp-api.ts, which triggers the UI e2e
 # profile. The change is Main-process status labelling covered by
 # tests/unit/mcp-api.test.ts; the full UI regression suite is owned by TF-0041.

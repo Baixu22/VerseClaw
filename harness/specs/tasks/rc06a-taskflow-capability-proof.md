@@ -4,7 +4,7 @@ title: RC-06A TaskFlow Capability And Concurrency Proof
 taskType: engineering-acceptance
 # Pinned to the commit RC-06AR started from; the shared branch diverged from
 # origin/main long ago.
-diffBase: 8a9ff7014
+diffBase: 6334e23f4fa250fcb7fdd33a86079b31e071de3d
 intent: Prove or implement SQLite-level expected-revision CAS, an explicit legal transition graph, restart persistence, concurrent-writer rejection, and delivery-state consistency for TaskFlow. Until this passes, TaskFlow remains a candidate, not a proven universal owner.
 ownedPaths:
   - openclaw_runtime/src/tasks/task-flow-cas.ts
