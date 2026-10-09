@@ -81,12 +81,6 @@ artifacts/*
 !artifacts/dcs-deep-test-week1/
 artifacts/dcs-deep-test-week1/*
 !artifacts/dcs-deep-test-week1/day1-gates.json
-!artifacts/first-product-preview/
-artifacts/first-product-preview/*
-!artifacts/first-product-preview/FP-P4-05/
-!artifacts/first-product-preview/FP-P4-05/**
-!artifacts/first-product-preview/TF-0009/
-!artifacts/first-product-preview/TF-0009/**
 !artifacts/capability-claims/
 !artifacts/capability-claims/status-table.json
 # Canonical acceptance inputs are tracked for clean-checkout validation. New runs
@@ -423,13 +417,6 @@ artifacts/windows-delivery-blocker-fixes/*
 !artifacts/windows-delivery-blocker-fixes/credential-scan.json
 !artifacts/windows-delivery-blocker-fixes/report.json
 
-!artifacts/first-product-preview/FP-P*/
-artifacts/first-product-preview/FP-P*/*
-!artifacts/first-product-preview/FP-P*/*.md
-!artifacts/first-product-preview/FP-P*/*.json
-!artifacts/first-product-preview/FP-P*/*.png
-artifacts/first-product-preview/**/*.log
-artifacts/first-product-preview/FP-P1-08/forbidden-claims-scan.json
 
 !artifacts/runtime-authority-convergence/rc-09/accepted-20260927-ae489d4a5/
 !artifacts/runtime-authority-convergence/rc-09/accepted-20260927-ae489d4a5/**
@@ -454,12 +441,62 @@ artifacts/verseconf-contract-v1/verification/20261001/*
 # Superseded local planning and intermediate validation output.
 /team/claude/
 
-# Fixed inputs of the hash-verified historical campaign, not new run logs.
+# Mixed preview evidence is file-scoped: old drafts and future run output stay local.
+!artifacts/first-product-preview/
+artifacts/first-product-preview/**
+!artifacts/first-product-preview/**/
+!artifacts/first-product-preview/FP-P0-05/reduction-factor-reconciliation.md
+!artifacts/first-product-preview/FP-P0-06/evidence.md
+!artifacts/first-product-preview/FP-P0-06/schema-parity-evidence.md
+!artifacts/first-product-preview/FP-P0-07/evidence.md
+!artifacts/first-product-preview/FP-P1-01/evidence.md
+!artifacts/first-product-preview/FP-P1-02/evidence.md
+!artifacts/first-product-preview/FP-P1-03/evidence.md
+!artifacts/first-product-preview/FP-P1-04/evidence.md
+!artifacts/first-product-preview/FP-P1-05/evidence.md
+!artifacts/first-product-preview/FP-P1-06/evidence.md
+!artifacts/first-product-preview/FP-P1-07/evidence.md
+!artifacts/first-product-preview/FP-P1-08/evidence.md
+!artifacts/first-product-preview/FP-P1-09/evidence.md
+!artifacts/first-product-preview/FP-P1-10/evidence.md
+!artifacts/first-product-preview/FP-P1-11/evidence.md
+!artifacts/first-product-preview/FP-P1-12/evidence.md
+!artifacts/first-product-preview/FP-P2-07/evidence.md
+!artifacts/first-product-preview/FP-P2-07/slice-2-evidence.md
+!artifacts/first-product-preview/FP-P2-07/source-license-manifest.json
+!artifacts/first-product-preview/FP-P3-01/required-release-sources.json
+!artifacts/first-product-preview/FP-P4-01/evidence.json
+!artifacts/first-product-preview/FP-P4-02/browser-approval-narrow.png
+!artifacts/first-product-preview/FP-P4-02/browser-workbench-desktop.png
+!artifacts/first-product-preview/FP-P4-02/browser-workbench-narrow.png
+!artifacts/first-product-preview/FP-P4-02/synthetic-soak.json
+!artifacts/first-product-preview/FP-P4-05/decision.json
+!artifacts/first-product-preview/FP-P4-05/decision.md
+!artifacts/first-product-preview/FP-P4-08/decision.json
+!artifacts/first-product-preview/FP-P4-08/decision.md
+!artifacts/first-product-preview/TF-0009/agent-surrogate-charter.json
+!artifacts/first-product-preview/TF-0009/agent-surrogate-report.json
+!artifacts/first-product-preview/TF-0009/evidence-audit.json
+!artifacts/first-product-preview/TF-0009/historical-20260729/agent-surrogate-charter.json
+!artifacts/first-product-preview/TF-0009/historical-20260729/agent-surrogate-report.json
+!artifacts/first-product-preview/TF-0009/policy-acceptance/SHA256SUMS
+!artifacts/first-product-preview/TF-0009/policy-acceptance/autoreview-final.json
+!artifacts/first-product-preview/TF-0009/policy-acceptance/autoreview-final.md
+!artifacts/first-product-preview/TF-0009/policy-acceptance/campaign-charter.json
+!artifacts/first-product-preview/TF-0009/policy-acceptance/campaign-report.json
 !artifacts/first-product-preview/TF-0009/policy-acceptance/candidate-campaign.log
+!artifacts/first-product-preview/TF-0009/policy-acceptance/candidate-checks.json
 !artifacts/first-product-preview/TF-0009/policy-acceptance/candidate-diff-check.log
+!artifacts/first-product-preview/TF-0009/policy-acceptance/candidate-first-checks.json
+!artifacts/first-product-preview/TF-0009/policy-acceptance/candidate-first-unit.json
 !artifacts/first-product-preview/TF-0009/policy-acceptance/candidate-harness-dry-run.log
 !artifacts/first-product-preview/TF-0009/policy-acceptance/candidate-harness.log
 !artifacts/first-product-preview/TF-0009/policy-acceptance/candidate-preflight.log
+!artifacts/first-product-preview/TF-0009/policy-acceptance/candidate-unit.json
 !artifacts/first-product-preview/TF-0009/policy-acceptance/candidate-unit.log
+!artifacts/first-product-preview/TF-0009/policy-acceptance/legacy-test-inputs.json
+!artifacts/first-product-preview/TF-0009/policy-acceptance/legacy-uas00-audit-manifest.json
+!artifacts/first-product-preview/TF-0009/policy-acceptance/legacy-uas06-live-observations.json
 !artifacts/first-product-preview/TF-0009/policy-acceptance/lint-final.log
 !artifacts/first-product-preview/TF-0009/policy-acceptance/typecheck-final.log
+!artifacts/first-product-preview/TF-0009/policy-acceptance/verification.json

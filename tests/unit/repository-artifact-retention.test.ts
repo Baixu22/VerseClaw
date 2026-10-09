@@ -63,6 +63,9 @@ describe('repository artifact retention', () => {
     git(directory, 'init', '--quiet');
     write(directory, '.gitignore', readFileSync(join(root, '.gitignore'), 'utf8'));
     const localPaths = [
+      'artifacts/first-product-preview/FP-P2-01/evidence.md',
+      'artifacts/first-product-preview/FP-P2-07/new-debug-report.json',
+      'artifacts/first-product-preview/TF-0009/new-run.json',
       ...policy.localOnlyFiles,
       ...policy.localOnlyDirectories.map((path) => `${path}/generated.json`),
       ...Object.entries(policy.artifactBatches)
