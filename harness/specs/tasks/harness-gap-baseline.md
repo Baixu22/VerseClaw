@@ -1,6 +1,8 @@
 ---
 id: harness-gap-baseline
 title: Harness缺口基线与最小实施边界核验
+scenario: gateway-backend-communication
+taskType: runtime-bridge
 intent: 完成TF-0271/B00的只读源码基线、30来源槽位和29个后续包边界；不实现运行时功能，不把局部测试升级为后续包验收。
 touchedAreas:
   - .gitignore
@@ -10,27 +12,35 @@ touchedAreas:
   - scripts/check-harness-gap-baseline.mjs
   - scripts/check-harness-gap-baseline.d.mts
   - tests/unit/harness-gap-baseline.test.ts
+  - openclaw_runtime/src/infra/outbound/outbound-policy.provenance.test.ts
 ownedPaths:
   - .gitignore
   - docs/dev/harness-gap-closure/design.md
   - docs/dev/harness-gap-closure/source-inventory.json
   - docs/dev/harness-gap-closure/baseline.md
   - docs/dev/harness-gap-closure/baseline-evidence.json
+  - docs/dev/harness-gap-closure/baseline-acceptance.json
+  - docs/dev/harness-gap-closure/ACCEPTANCE-SHA256SUMS
   - docs/dev/harness-gap-closure/SHA256SUMS
   - harness/specs/tasks/harness-gap-baseline.md
   - harness/specs/tasks/harness-gap-closure-plan.md
   - scripts/check-harness-gap-baseline.mjs
   - scripts/check-harness-gap-baseline.d.mts
   - tests/unit/harness-gap-baseline.test.ts
+  - openclaw_runtime/src/infra/outbound/outbound-policy.provenance.test.ts
 requiredProfiles:
   - fast
+  - comms
 requiredRules:
+  - backend-communication-boundary
+  - comms-regression
   - task-forest-autoclose-and-roles
   - docs-sync
   - repository-artifact-retention
 humanEvidence: not-required
 requiredTests:
   - tests/unit/harness-gap-baseline.test.ts
+  - openclaw_runtime/src/infra/outbound/outbound-policy.provenance.test.ts
   - tests/unit/harness-specs.test.ts
   - tests/unit/harness-git.test.ts
   - tests/unit/runtime-memory-embedding-ablation.test.ts
@@ -66,3 +76,8 @@ docs:
 
 所列原有ablation回归只校准“已经存在局部实验”的事实，不替代E01/E02、六个pilot或V02全门。
 后续通信改动须使用各包独立spec并引用gateway-backend-communication，不能借本包范围写运行时。
+
+## B00 验证恢复范围
+
+复用现有v2 manifest绑定且通过bundle资格校验的ae.exe作为测试依赖，保留摘要与来源；不将未知legacy二进制或复制动作称为新重建。
+唯一新增runtime写范围是outbound-policy.provenance.test.ts的合成通道夹具。它只隔离单测与内置Telegram插件惰性编译，不改生产outbound策略、不改9项原拒绝/放行断言、不提高超时。通信规格引用gateway-backend-communication，额外运行comms回放与比较。

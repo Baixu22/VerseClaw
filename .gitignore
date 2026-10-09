@@ -1771,3 +1771,5 @@ openclaw_runtime/_tmp_*
 !/docs/dev/harness-gap-closure/baseline.md
 !/docs/dev/harness-gap-closure/baseline-evidence.json
 !/docs/dev/harness-gap-closure/SHA256SUMS
+!/docs/dev/harness-gap-closure/baseline-acceptance.json
+!/docs/dev/harness-gap-closure/ACCEPTANCE-SHA256SUMS

@@ -2,6 +2,8 @@
 
 2026-10-09，actor: codex-baseline-executor；driven_by: agent。
 
+旧的baseline-evidence.json与SHA256SUMS绑定01ed37934所记录的未完成尝试，不代表之后的当前状态。后续独立验收见baseline-acceptance.json（若存在），其摘要使用ACCEPTANCE-SHA256SUMS；原失败不覆盖。
+
 ## 交付与使用
 
 本包交付30个来源槽位、29个后续工作包的精确文件/入口/spec/测试边界及可失败校验器。动态状态仍只在本地Task Forest；本报告不是运行时功能或全系统验收。

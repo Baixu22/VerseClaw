@@ -400,8 +400,8 @@
     },
     "a5History": {
       "path": "docs/dev/harness-gap-closure/baseline.md",
-      "sha256": "ce2ee20601b69892eae9c9948c5c74c14ea5bcd02d28c135564cff53f61bfb22",
-      "line": 24,
+      "sha256": "5f33ee612e8270494d0cbdab608e7b74a81eb7cb84c5fdcc10ebd280d92c64dc",
+      "line": 26,
       "anchor": "A5历史报告基线为734ec877e75682861103660fbdea2bd55253ece0，仅shadow/diagnostics-only，不是当前pilot验收。"
     },
     "defaultMatrix": {

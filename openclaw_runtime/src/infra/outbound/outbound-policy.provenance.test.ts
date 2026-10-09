@@ -5,6 +5,10 @@ import {
 } from "../../../../shared/security/content-provenance.js";
 import { enforceCrossContextPolicy } from "./outbound-policy.js";
 
+// Policy-only fixture: a bundled id synchronously loads the real plugin on a cold
+// cache. Keep adapter loading out of these cross-context authorization assertions.
+const CHANNEL = "provenance-fixture";
+
 const RECEIVED_AT = "2026-08-21T00:00:00.000Z";
 const external = createExternalProvenance({
   sourceKind: "web",
@@ -21,12 +25,12 @@ function enforce(params: {
 }) {
   return () =>
     enforceCrossContextPolicy({
-      channel: "telegram",
+      channel: CHANNEL,
       action: "send",
       args: { to: params.target ?? "chat:other" },
       toolContext: {
         currentChannelId: "chat:current",
-        currentChannelProvider: "telegram",
+        currentChannelProvider: CHANNEL,
       },
       cfg: params.config ?? {},
       provenanceContext:
@@ -68,7 +72,7 @@ describe("network-send provenance policy", () => {
         args: { to: "channel:other" },
         toolContext: {
           currentChannelId: "chat:current",
-          currentChannelProvider: "telegram",
+          currentChannelProvider: CHANNEL,
         },
         cfg: {
           tools: { message: { crossContext: { allowAcrossProviders: true } } },
