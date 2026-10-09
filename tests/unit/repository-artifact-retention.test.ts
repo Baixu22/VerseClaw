@@ -155,6 +155,16 @@ describe('repository artifact retention', () => {
     ]));
   });
 
+  it('rejects a tracked path that is also matched by .gitignore (shadow tracking)', () => {
+    const directory = createFixture();
+    write(directory, '.gitignore', '/scratch-output/');
+    write(directory, 'scratch-output/replay.log', 'log');
+    git(directory, 'add', '--force', '--', 'scratch-output/replay.log');
+    expect(checkRepositoryArtifacts(directory).issues).toContain(
+      'Tracked path is ignored: scratch-output/replay.log',
+    );
+  });
+
   it('rejects a broad ignore that hides required gate inputs even if they remain tracked', () => {
     const directory = createFixture();
     write(directory, '.gitignore', '/plans/\n');

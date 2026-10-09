@@ -43,6 +43,16 @@ export function checkRepositoryArtifacts(root = ROOT) {
   for (const path of tracked) {
     if (isLocalArtifact(path, policy)) issues.push(`Local artifact is still tracked: ${path}`);
   }
+  // A tracked path that also matches .gitignore is invisible to ordinary status and
+  // would silently travel with every clone. --no-index is deliberately omitted so
+  // this covers the exact shadow-tracking class reported by issues #63/#68.
+  const shadowTracked = execFileSync('git', ['ls-files', '-i', '-c', '--exclude-standard', '-z'], {
+    cwd: root,
+    encoding: 'utf8',
+    maxBuffer: 32 * 1024 * 1024,
+    windowsHide: true,
+  }).split('\0').filter(Boolean);
+  for (const path of shadowTracked) issues.push(`Tracked path is ignored: ${path}`);
   const retained = policy.retainedFiles ?? [];
   for (const path of retained) {
     if (path.startsWith('/') || path.includes('..') || /[\\*?\[\]]/.test(path)
