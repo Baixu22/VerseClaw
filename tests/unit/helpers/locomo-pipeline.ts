@@ -352,3 +352,35 @@ export function selectJudgeSanityCandidates(
       judgeScore: r.judgeScore,
     }));
 }
+
+/** L0+L1 is a selected subset, not a causal estimate of memory benefit. */
+export function computeEscalationMetrics(
+  results: readonly Pick<LocomoQuestionResult, "category" | "judgeScore" | "recall5" | "escalationLevel">[],
+) {
+  if (results.some((row) => ![0, 1, 2].includes(row.escalationLevel))) {
+    throw new Error("Unknown LoCoMo escalation level");
+  }
+  const summarize = (rows: typeof results) => ({
+    count: rows.length,
+    rate: results.length > 0 ? rows.length / results.length : 0,
+    j_score: rows.length > 0 ? rows.reduce((sum, row) => sum + row.judgeScore, 0) / rows.length : null,
+    recall_at_5: rows.length > 0 ? rows.reduce((sum, row) => sum + row.recall5, 0) / rows.length : null,
+  });
+  const memoryOnly = results.filter((row) => row.escalationLevel < 2);
+  return {
+    byLevel: {
+      level0: summarize(results.filter((row) => row.escalationLevel === 0)),
+      level1: summarize(results.filter((row) => row.escalationLevel === 1)),
+      level2: summarize(results.filter((row) => row.escalationLevel === 2)),
+    },
+    memoryOnly: {
+      ...summarize(memoryOnly),
+      includedLevels: [0, 1],
+      excludedLevels: [2],
+      selectionBias: "Excludes questions escalated to full conversation after insufficient retrieved evidence; not an unbiased memory score or a memory-on/off comparison. L1 includes retrieved whole sessions.",
+      byCategory: Object.fromEntries([...new Set(results.map((row) => row.category))].map((category) => [
+        category, summarize(memoryOnly.filter((row) => row.category === category)),
+      ])),
+    },
+  };
+}

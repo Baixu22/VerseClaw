@@ -91,7 +91,7 @@ import {
   buildFrozenJudgePrompt,
   parseFrozenJudgeVerdict,
 } from "./helpers/runtime-memory-judge-freeze";
-import { buildSotaComparison } from "./helpers/locomo-pipeline";
+import { buildSotaComparison, computeEscalationMetrics } from "./helpers/locomo-pipeline";
 import { JudgeResultCache } from "./helpers/judge-result-cache";
 import { SelfAskCache } from "./helpers/self-ask-cache";
 import {
@@ -3554,6 +3554,8 @@ describe.skipIf(
         const projectedFullRunCostEstimateUsd =
           totalQuestions > 0 ? costEstimateUsd * (500 / totalQuestions) : costEstimateUsd;
 
+        const escalationMetrics = computeEscalationMetrics(results);
+
         // Build report
         const report = {
           dataset: "locomo",
@@ -3568,6 +3570,11 @@ describe.skipIf(
           judgeModel: `${FROZEN_JUDGE_CONFIG.model} (${FROZEN_JUDGE_CONFIG.promptVersion})`,
           judgeConfig: FROZEN_JUDGE_CONFIG,
           judgeInterpretation: FROZEN_JUDGE_INTERPRETATION,
+          scoreAttribution: "Overall J Score includes non-retrieval full-conversation contributions from L2; metrics.memory_only excludes L2 and is explicitly selection-biased.",
+          metricDefinitions: {
+            context_recall: "gold-turn-lexical-coverage-v2-empty-as-miss",
+            recall_at_5: "legacy-gold-answer-token-overlap-with-retrieved-facts; not evidence-ID recall or causal memory benefit",
+          },
           metric: "J Score under the disclosed lenient frozen judge; lexical gold-turn context coverage is diagnostic, not a primary retrieval metric. Empty/missing evidence scores zero. Different judge configurations are not directly comparable.",
           adversarialExcluded: true,
           sampleSizes: fullEval ? SAMPLE_SIZES : DEV_SLICE_SAMPLE_SIZES,
@@ -3583,9 +3590,17 @@ describe.skipIf(
               projected_full_run_cost_estimate_usd: projectedFullRunCostEstimateUsd,
             },
             byCategory: categoryMetrics,
+            memory_only: escalationMetrics.memoryOnly,
+            by_escalation_level: escalationMetrics.byLevel,
           },
           errorTaxonomy,
-          escalation: escalationStats,
+          escalation: {
+            ...escalationStats,
+            full_conversation_rate: escalationMetrics.byLevel.level2.rate,
+            level0_rate: escalationMetrics.byLevel.level0.rate,
+            level1_rate: escalationMetrics.byLevel.level1.rate,
+            level2_rate: escalationMetrics.byLevel.level2.rate,
+          },
           queryClassifier: queryClassifierStats,
           feedbackLoop: feedbackLoopStats,
           selfAskMerge: selfAskMergeStats,

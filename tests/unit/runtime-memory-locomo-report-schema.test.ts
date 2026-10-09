@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { buildSotaComparison } from "./helpers/locomo-pipeline";
 import { assertLocomoStageReportShape } from "./helpers/runtime-memory-locomo-report-schema";
 
 function makeReport(): Record<string, unknown> {
@@ -19,6 +20,10 @@ function makeReport(): Record<string, unknown> {
 
   return {
     dataset: "locomo",
+    evidenceClass: "synthetic",
+    accepted: false,
+    scoreAttribution: "Overall includes L2; the memory-only subset is selection-biased.",
+    metricDefinitions: { context_recall: "gold-turn-lexical-coverage-v2-empty-as-miss" },
     version: "10.0-stage2-adaptive-retrieval",
     totalQuestions: 500,
     retrievalMode: "Stage 2 adaptive retrieval",
@@ -38,11 +43,18 @@ function makeReport(): Record<string, unknown> {
     },
     sampleSeed: 42,
     metrics: {
+      memory_only: { count: 475, rate: 0.95, j_score: 295 / 475, recall_at_5: 0.5, includedLevels: [0, 1], excludedLevels: [2], selectionBias: "Selected subset, not an unbiased memory score." },
+      by_escalation_level: {
+        level0: { count: 375, rate: 0.75, j_score: 0.6, recall_at_5: 0.5 },
+        level1: { count: 100, rate: 0.2, j_score: 0.7, recall_at_5: 0.5 },
+        level2: { count: 25, rate: 0.05, j_score: 1, recall_at_5: 0.5 },
+      },
       overall: {
         j_score: 0.64,
         recall_at_5: 0.5,
         context_recall: 0.7,
         escalation_rate: 0.25,
+        full_conversation_rate: 0.05,
         cost_per_run_estimate_usd: 6.5,
       },
       byCategory: {
@@ -68,6 +80,10 @@ function makeReport(): Record<string, unknown> {
       level0: 375,
       level1: 100,
       level2: 25,
+      level0_rate: 0.75,
+      level1_rate: 0.2,
+      level2_rate: 0.05,
+      full_conversation_rate: 0.05,
       capped: 0,
       fullConversationCapped: 0,
       maxEscalations: 200,
@@ -103,9 +119,7 @@ function makeReport(): Record<string, unknown> {
         totalTokens: 2,
       },
     },
-    comparison: {
-      ours: { j_score: 0.64 },
-    },
+    comparison: buildSotaComparison(0.64),
     sampleResults,
     judgeSanityCandidates: [
       {
@@ -155,5 +169,29 @@ describe("runtime memory LoCoMo report schema", () => {
     delete report.extraction;
 
     expect(() => assertLocomoStageReportShape(report)).toThrow(/extraction/);
+  });
+});
+
+describe("LoCoMo attribution integrity (#135/#137)", () => {
+  it.each(["memory_only", "by_escalation_level"])("requires the %s disclosure", (field) => {
+    const report = makeReport();
+    delete (report.metrics as Record<string, unknown>)[field];
+    expect(() => assertLocomoStageReportShape(report)).toThrow(field);
+  });
+  it("rejects a full-conversation rate that hides L2 usage", () => {
+    const report = makeReport();
+    (report.escalation as Record<string, unknown>).full_conversation_rate = 0;
+    expect(() => assertLocomoStageReportShape(report)).toThrow("full_conversation_rate");
+  });
+  it("rejects laundering the all-question score into memory_only", () => {
+    const report = makeReport();
+    const metrics = report.metrics as Record<string, Record<string, unknown>>;
+    metrics.memory_only.j_score = metrics.overall.j_score;
+    expect(() => assertLocomoStageReportShape(report)).toThrow("memory_only.j_score");
+  });
+  it("rejects reopening cross-judge rankings", () => {
+    const report = makeReport();
+    (report.comparison as Record<string, unknown>).rankingAllowed = true;
+    expect(() => assertLocomoStageReportShape(report)).toThrow("rankings");
   });
 });

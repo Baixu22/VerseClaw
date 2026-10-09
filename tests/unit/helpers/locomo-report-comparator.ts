@@ -24,6 +24,8 @@ import { join } from "node:path";
 export type NormalizedReportMetrics = {
   /** report 来源标识 (文件名或 label) */
   source: string;
+  judgeSignature?: string;
+  contextRecallDefinition?: string;
   /** report version 字段 */
   version?: string;
   /** 总题数 */
@@ -68,6 +70,8 @@ export type RegressionDelta = {
   byCategoryRecall5: Record<string, number>;
   /** 是否存在回归 (任一 category J delta < -threshold) */
   hasRegression: boolean;
+  judgeComparable: boolean;
+  retrievalRegressedCategories: string[];
   /** 回归的 category 列表 (delta < -threshold) */
   regressedCategories: string[];
   /** 提升的 category 列表 (delta > threshold) */
@@ -124,6 +128,9 @@ export function normalizeReportMetrics(
 
   return {
     source,
+    judgeSignature: judgeSignature(r.judgeConfig),
+    contextRecallDefinition: typeof (r.metricDefinitions as Record<string, unknown> | undefined)?.context_recall === "string"
+      ? (r.metricDefinitions as Record<string, string>).context_recall : undefined,
     version: typeof r.version === "string" ? r.version : undefined,
     totalQuestions: asNumber(r.totalQuestions),
     overallJ,
@@ -160,6 +167,8 @@ export function compareReports(
       ? current.overallRecall5 - baseline.overallRecall5
       : undefined;
   const overallContextRecall =
+    baseline.contextRecallDefinition !== undefined &&
+    baseline.contextRecallDefinition === current.contextRecallDefinition &&
     baseline.overallContextRecall !== undefined &&
     current.overallContextRecall !== undefined
       ? current.overallContextRecall - baseline.overallContextRecall
@@ -168,11 +177,14 @@ export function compareReports(
   const byCategoryJ: Record<string, number> = {};
   const byCategoryRecall5: Record<string, number> = {};
   const regressedCategories: string[] = [];
+  const retrievalRegressedCategories: string[] = [];
   const improvedCategories: string[] = [];
 
   const allCats = new Set([
     ...Object.keys(baseline.byCategoryJ),
     ...Object.keys(current.byCategoryJ),
+    ...Object.keys(baseline.byCategoryRecall5),
+    ...Object.keys(current.byCategoryRecall5),
   ]);
 
   for (const cat of allCats) {
@@ -192,6 +204,7 @@ export function compareReports(
     const curR5 = current.byCategoryRecall5[cat];
     if (baseR5 !== undefined && curR5 !== undefined) {
       byCategoryRecall5[cat] = curR5 - baseR5;
+      if (byCategoryRecall5[cat] < -threshold) retrievalRegressedCategories.push(cat);
     }
   }
 
@@ -203,8 +216,11 @@ export function compareReports(
     ...(overallContextRecall !== undefined ? { overallContextRecall } : {}),
     byCategoryJ,
     byCategoryRecall5,
-    hasRegression: regressedCategories.length > 0 || overallJ < -threshold,
-    regressedCategories,
+    hasRegression: regressedCategories.length > 0 || retrievalRegressedCategories.length > 0
+      || overallJ < -threshold || (overallRecall5 !== undefined && overallRecall5 < -threshold),
+    judgeComparable: baseline.judgeSignature !== undefined && baseline.judgeSignature === current.judgeSignature,
+    retrievalRegressedCategories,
+    regressedCategories: [...new Set([...regressedCategories, ...retrievalRegressedCategories])],
     improvedCategories,
     threshold,
   };
@@ -266,6 +282,9 @@ export function loadBaselineReport(
 export function formatRegressionMarkdown(delta: RegressionDelta): string {
   const lines: string[] = [];
   lines.push(`## Regression Report: ${delta.currentSource} vs ${delta.baselineSource}`);
+  if (!delta.judgeComparable) {
+    lines.push("> Different or unknown judge configurations: these are arithmetic differences, not comparable measured gains or a ranking.");
+  }
   lines.push("");
 
   // Overall
@@ -300,6 +319,14 @@ export function formatRegressionMarkdown(delta: RegressionDelta): string {
 
   lines.push("");
 
+  lines.push("### By Category (retrieval proxy delta; independent of J Score)");
+  for (const [cat, value] of Object.entries(delta.byCategoryRecall5).sort()) {
+    lines.push(`- ${cat}: **${value >= 0 ? "+" : ""}${(value * 100).toFixed(2)}pp**${value < -delta.threshold ? " ⚠️" : ""}`);
+  }
+  if (delta.retrievalRegressedCategories.length > 0) {
+    lines.push(`- Retrieval regression: ${delta.retrievalRegressedCategories.join(", ")}`);
+  }
+
   // Summary
   if (delta.hasRegression) {
     lines.push(
@@ -324,4 +351,12 @@ function asNumber(v: unknown): number {
 
 function asOptionalNumber(v: unknown): number | undefined {
   return typeof v === "number" ? v : undefined;
+}
+
+function judgeSignature(value: unknown): string | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const config = value as Record<string, unknown>;
+  if (![config.model, config.promptVersion, config.promptTemplate].every((part) => typeof part === "string" && part.length > 0)
+    || typeof config.temperature !== "number") return undefined;
+  return JSON.stringify([config.model, config.temperature, config.promptVersion, config.promptTemplate]);
 }

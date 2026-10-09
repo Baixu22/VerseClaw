@@ -5,11 +5,9 @@
 //   - compareReports() delta 计算 + hasRegression 判定 + threshold
 //   - loadReportFromFile() / loadBaselineReport() 文件加载
 //   - formatRegressionMarkdown() markdown 输出格式
-//   - 集成测试: 真实 phase3/phase4/current baseline reports
+//   - 集成测试: 历史未验证 phase3/phase4/current baseline reports
 
-import { afterAll, beforeAll, describe, it, expect } from "vitest";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { describe, it, expect } from "vitest";
 import { join } from "node:path";
 import {
   normalizeReportMetrics,
@@ -19,7 +17,7 @@ import {
   formatRegressionMarkdown,
 } from "./helpers/locomo-report-comparator.js";
 
-// === Fixtures ===
+// === Explicit synthetic inputs for pure arithmetic/schema tests; never run evidence ===
 
 // 旧 schema (phase3/phase4 风格): overall 用 snake_case, byCategory 用 camelCase
 const legacyReport = {
@@ -73,40 +71,8 @@ const currentReport = {
   generatedAt: "2026-07-04T08:00:00.000Z",
 };
 
-const phase4Report = {
-  ...legacyReport,
-  version: "4.0-full-500-phase4-query-rewrite",
-  metrics: {
-    ...legacyReport.metrics,
-    overall: { j_score: 0.386, recall_at_5: 0.4 },
-    byCategory: {
-      ...legacyReport.metrics.byCategory,
-      temporal: { ...legacyReport.metrics.byCategory.temporal, jScore: 0.3 },
-      multi_hop: { ...legacyReport.metrics.byCategory.multi_hop, jScore: 0.3854166666666667 },
-    },
-  },
-};
-const currentFixture = {
-  ...currentReport,
-  metrics: {
-    ...currentReport.metrics,
-    overall: { ...currentReport.metrics.overall, j_score: 0.752 },
-    byCategory: {
-      ...currentReport.metrics.byCategory,
-      temporal: { ...currentReport.metrics.byCategory.temporal, j_score: 0.8066666666666666 },
-      multi_hop: { ...currentReport.metrics.byCategory.multi_hop, j_score: 0.6145833333333334 },
-    },
-  },
-};
-const ARTIFACT_DIR = mkdtempSync(join(tmpdir(), "locomo-report-fixtures-"));
-
-beforeAll(() => {
-  writeFileSync(join(ARTIFACT_DIR, "locomo-full-500-report-phase3-baseline.json"), JSON.stringify(legacyReport));
-  writeFileSync(join(ARTIFACT_DIR, "locomo-full-500-report-phase4.0-regression.json"), JSON.stringify(phase4Report));
-  writeFileSync(join(ARTIFACT_DIR, "locomo-full-500-report.json"), JSON.stringify(currentFixture));
-});
-
-afterAll(() => rmSync(ARTIFACT_DIR, { recursive: true, force: true }));
+// File I/O tests read the tracked historical artifacts; they do not manufacture a run.
+const ARTIFACT_DIR = join(process.cwd(), "tests/fixtures/runtime-memory-eval");
 
 // === normalizeReportMetrics ===
 
@@ -239,19 +205,20 @@ describe("compareReports", () => {
     }
   });
 
-  it("提升场景: current > baseline → improvedCategories, 无 regression", () => {
+  it("J 提升不能掩盖 temporal 检索退化", () => {
     const baseline = normalizeReportMetrics(legacyReport, "phase3");
     const current = normalizeReportMetrics(currentReport, "current");
     const delta = compareReports(baseline, current);
     // overall J: 0.718 - 0.452 = +0.266 (大幅提升)
     expect(delta.overallJ).toBeCloseTo(0.266, 4);
-    expect(delta.hasRegression).toBe(false);
+    expect(delta.hasRegression).toBe(true);
+    expect(delta.retrievalRegressedCategories).toEqual(["temporal"]);
     expect(delta.improvedCategories.length).toBeGreaterThan(0);
     expect(delta.improvedCategories).toContain("temporal");
     expect(delta.improvedCategories).toContain("multi_hop");
     expect(delta.improvedCategories).toContain("single_hop");
     expect(delta.improvedCategories).toContain("open_domain");
-    expect(delta.regressedCategories).toEqual([]);
+    expect(delta.regressedCategories).toEqual(["temporal"]);
   });
 
   it("回归场景: current < baseline → regressedCategories + hasRegression", () => {
@@ -392,14 +359,16 @@ describe("compareReports", () => {
     expect(delta.improvedCategories).toEqual(["temporal"]);
   });
 
-  it("context_recall 双侧存在时计算 delta", () => {
+  it("context_recall 只有定义相同才计算 delta", () => {
     const baseline = normalizeReportMetrics({
+      metricDefinitions: { context_recall: "gold-turn-lexical-v2" },
       metrics: {
         overall: { j_score: 0.5, context_recall: 0.1 },
         byCategory: { temporal: { j_score: 0.5, context_recall: 0.1, count: 10 } },
       },
     }, "b");
     const current = normalizeReportMetrics({
+      metricDefinitions: { context_recall: "gold-turn-lexical-v2" },
       metrics: {
         overall: { j_score: 0.5, context_recall: 0.3 },
         byCategory: { temporal: { j_score: 0.5, context_recall: 0.3, count: 10 } },
@@ -419,7 +388,7 @@ describe("loadReportFromFile", () => {
     );
   });
 
-  it("加载真实 phase3 baseline", () => {
+  it("加载历史未验证 phase3 baseline", () => {
     const path = join(ARTIFACT_DIR, "locomo-full-500-report-phase3-baseline.json");
     const m = loadReportFromFile(path, "phase3");
     expect(m.source).toBe("phase3");
@@ -433,7 +402,7 @@ describe("loadReportFromFile", () => {
     expect(m.byCategoryCount).toEqual({ temporal: 150, multi_hop: 96, single_hop: 127, open_domain: 127 });
   });
 
-  it("加载真实 phase4 regression baseline", () => {
+  it("加载历史未验证 phase4 regression baseline", () => {
     const path = join(ARTIFACT_DIR, "locomo-full-500-report-phase4.0-regression.json");
     const m = loadReportFromFile(path, "phase4");
     expect(m.source).toBe("phase4");
@@ -444,7 +413,7 @@ describe("loadReportFromFile", () => {
     expect(m.byCategoryJ.multi_hop).toBeCloseTo(0.3854166666666667, 14);
   });
 
-  it("加载真实 current report (新 schema)", () => {
+  it("加载历史未验证 current report (新 schema)", () => {
     const path = join(ARTIFACT_DIR, "locomo-full-500-report.json");
     const m = loadReportFromFile(path, "current");
     expect(m.source).toBe("current");
@@ -514,12 +483,13 @@ describe("formatRegressionMarkdown", () => {
     expect(md).toContain("temporal:");
   });
 
-  it("提升场景 → 'Improved:' 但无 regression", () => {
+  it("J 提升时仍显示独立检索 regression", () => {
     const baseline = normalizeReportMetrics(legacyReport, "phase3");
     const current = normalizeReportMetrics(currentReport, "current");
     const delta = compareReports(baseline, current);
     const md = formatRegressionMarkdown(delta);
-    expect(md).toContain("No regression detected");
+    expect(md).toContain("Retrieval regression: temporal");
+    expect(md).not.toContain("No regression detected");
     expect(md).toContain("Improved:");
     expect(md).toContain("temporal");
     expect(md).toContain("multi_hop");
@@ -558,9 +528,11 @@ describe("formatRegressionMarkdown", () => {
 
   it("context_recall delta 包含在 markdown 中 (新 schema)", () => {
     const baseline = normalizeReportMetrics({
+      metricDefinitions: { context_recall: "gold-turn-lexical-v2" },
       metrics: { overall: { j_score: 0.5, context_recall: 0.1 } },
     }, "b");
     const current = normalizeReportMetrics({
+      metricDefinitions: { context_recall: "gold-turn-lexical-v2" },
       metrics: { overall: { j_score: 0.5, context_recall: 0.3 } },
     }, "c");
     const delta = compareReports(baseline, current);
@@ -616,10 +588,10 @@ describe("formatRegressionMarkdown", () => {
   });
 });
 
-// === 集成测试: 真实 phase3 → current ===
+// === 集成测试: 历史未验证 phase3 → current ===
 
-describe("集成测试: 真实 baseline reports", () => {
-  it("phase3 → current: 大幅提升", () => {
+describe("集成测试: 历史未验证 reports（只测试读取与算术，不采纳为实测基线）", () => {
+  it("历史 J 上涨仍伴随 temporal 检索回归，不能作为能力提升", () => {
     const phase3 = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-report-phase3-baseline.json");
     const current = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-report.json");
     expect(phase3).not.toBeNull();
@@ -627,9 +599,11 @@ describe("集成测试: 真实 baseline reports", () => {
     const delta = compareReports(phase3!, current!);
     // overall J: 0.452 -> 0.752 = +0.300
     expect(delta.overallJ).toBeCloseTo(0.300, 4);
-    expect(delta.hasRegression).toBe(false);
+    expect(delta.hasRegression).toBe(true);
+    expect(delta.judgeComparable).toBe(false);
+    expect(delta.retrievalRegressedCategories).toEqual(["temporal"]);
     expect(delta.improvedCategories.length).toBe(4);
-    expect(delta.regressedCategories).toEqual([]);
+    expect(delta.regressedCategories).toEqual(["temporal"]);
     // markdown 输出
     const md = formatRegressionMarkdown(delta);
     expect(md).toContain("## Regression Report:");
@@ -677,5 +651,28 @@ describe("集成测试: 真实 baseline reports", () => {
     // 都包含 header
     expect(md1).toContain("## Regression Report:");
     expect(md2).toContain("## Regression Report:");
+  });
+});
+
+describe("independent retrieval and comparability gates (#136)", () => {
+  it("detects an overall recall regression even with a higher judge score", () => {
+    const baseline = normalizeReportMetrics({ metrics: { overall: { j_score: 0.4, recall_at_5: 0.6 } } }, "synthetic-before");
+    const current = normalizeReportMetrics({ metrics: { overall: { j_score: 0.8, recall_at_5: 0.4 } } }, "synthetic-after");
+    expect(compareReports(baseline, current).hasRegression).toBe(true);
+    expect(compareReports(baseline, current).judgeComparable).toBe(false);
+  });
+
+  it("does not compare the invalid historical context recall with resolved gold-turn coverage", () => {
+    const baseline = normalizeReportMetrics(currentReport, "historical-definition");
+    const current = normalizeReportMetrics({ ...currentReport, metricDefinitions: { context_recall: "gold-turn-lexical-v2" } }, "resolved-definition");
+    expect(compareReports(baseline, current).overallContextRecall).toBeUndefined();
+  });
+
+  it("requires the same model, temperature and full prompt for judge comparability", () => {
+    const judgeConfig = { model: "test-model", temperature: 0, promptVersion: "test-only", promptTemplate: "A synthetic judge." };
+    const baseline = normalizeReportMetrics({ ...currentReport, judgeConfig }, "synthetic-before");
+    expect(compareReports(baseline, baseline).judgeComparable).toBe(true);
+    const current = normalizeReportMetrics({ ...currentReport, judgeConfig: { ...judgeConfig, promptTemplate: "A different judge." } }, "synthetic-after");
+    expect(compareReports(baseline, current).judgeComparable).toBe(false);
   });
 });

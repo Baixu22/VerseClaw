@@ -14,6 +14,7 @@ import {
   computeLocomoMetrics,
   accumulateQuestionResult,
   SOTA_COMPARISON,
+  computeEscalationMetrics,
   buildSotaComparison,
   formatProgressLog,
   shouldLogProgress,
@@ -636,5 +637,29 @@ describe("集成测试: 模拟 batch 循环", () => {
     });
     expect(metrics.overallJ).toBeCloseTo(0.5, 6); // 1/2
     expect(metrics.categoryMetrics.temporal.j_score).toBeCloseTo(0.5, 6); // 1/2
+  });
+});
+
+describe("L2 score attribution (#135)", () => {
+  it("separates full-conversation successes from the L0+L1 subset", () => {
+    const summary = computeEscalationMetrics([
+      { category: "temporal", judgeScore: 1, recall5: 0.6, escalationLevel: 0 },
+      { category: "temporal", judgeScore: 0, recall5: 0.4, escalationLevel: 1 },
+      { category: "temporal", judgeScore: 1, recall5: 0, escalationLevel: 2 },
+    ]);
+    expect(summary.memoryOnly.count).toBe(2);
+    expect(summary.memoryOnly.j_score).toBe(0.5);
+    expect(summary.memoryOnly.recall_at_5).toBe(0.5);
+    expect(summary.memoryOnly.byCategory.temporal.count).toBe(2);
+    expect(summary.byLevel.level2.j_score).toBe(1);
+    expect(summary.byLevel.level2.rate).toBeCloseTo(1 / 3);
+    expect(summary.memoryOnly.selectionBias).toContain("not an unbiased memory score");
+  });
+
+  it("uses null, never a perfect score or NaN, for an empty subset", () => {
+    const summary = computeEscalationMetrics([{ category: "temporal", judgeScore: 1, recall5: 0, escalationLevel: 2 }]);
+    expect(summary.memoryOnly).toMatchObject({ count: 0, rate: 0, j_score: null, recall_at_5: null });
+    expect(computeEscalationMetrics([]).byLevel.level0).toMatchObject({ count: 0, rate: 0, j_score: null });
+    expect(() => computeEscalationMetrics([{ category: "temporal", judgeScore: 1, recall5: 0, escalationLevel: 3 }])).toThrow("escalation level");
   });
 });

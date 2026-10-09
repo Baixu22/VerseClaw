@@ -8,6 +8,8 @@ const REQUIRED_TOP_LEVEL_FIELDS = [
   "judgeModel",
   "judgeConfig",
   "metric",
+  "metricDefinitions",
+  "scoreAttribution",
   "sampleSizes",
   "sampleSeed",
   "metrics",
@@ -26,6 +28,7 @@ const REQUIRED_OVERALL_METRICS = [
   "recall_at_5",
   "context_recall",
   "escalation_rate",
+  "full_conversation_rate",
   "cost_per_run_estimate_usd",
 ] as const;
 
@@ -121,7 +124,12 @@ export function assertLocomoStageReportShape(report: unknown): void {
     }
   }
 
-  expectRecord(root.comparison, "report.comparison");
+  const comparison = expectRecord(root.comparison, "report.comparison");
+  if (comparison.judgeComparable !== false || comparison.rankingAllowed !== false) {
+    throw new Error("report.comparison must prohibit incomparable judge rankings");
+  }
+  expectRecord(comparison.references, "report.comparison.references");
+  assertScoreAttribution(root, metrics, overall);
   assertJudgeConfigShape(root.judgeConfig);
   assertErrorTaxonomyShape(root.errorTaxonomy);
   assertEscalationShape(root.escalation);
@@ -273,7 +281,7 @@ function expectRecord(value: unknown, label: string): UnknownRecord {
 }
 
 function expectNumber(value: unknown, label: string): void {
-  if (typeof value !== "number" || Number.isNaN(value)) {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
     throw new Error(`${label} must be a number`);
   }
 }
@@ -281,5 +289,71 @@ function expectNumber(value: unknown, label: string): void {
 function expectString(value: unknown, label: string): void {
   if (typeof value !== "string") {
     throw new Error(`${label} must be a string`);
+  }
+}
+
+function assertScoreAttribution(root: UnknownRecord, metrics: UnknownRecord, overall: UnknownRecord): void {
+  expectString(root.scoreAttribution, "report.scoreAttribution");
+  const definitions = expectRecord(root.metricDefinitions, "report.metricDefinitions");
+  if (definitions.context_recall !== "gold-turn-lexical-coverage-v2-empty-as-miss") {
+    throw new Error("report.metricDefinitions.context_recall must identify resolved gold-turn coverage");
+  }
+  const escalation = expectRecord(root.escalation, "report.escalation");
+  const byLevel = expectRecord(metrics.by_escalation_level, "report.metrics.by_escalation_level");
+  const memoryOnly = expectRecord(metrics.memory_only, "report.metrics.memory_only");
+  const total = root.totalQuestions as number;
+  let levelTotal = 0;
+  let memoryCorrect = 0;
+  let memoryRecall = 0;
+  let allCorrect = 0;
+  let allRecall = 0;
+  for (const level of [0, 1, 2]) {
+    const label = 'level' + level;
+    const slice = expectRecord(byLevel[label], 'report.metrics.by_escalation_level.' + label);
+    const count = escalation[label];
+    if (typeof count !== "number" || !Number.isInteger(count) || count < 0 || slice.count !== count) {
+      throw new Error('Inconsistent escalation count: ' + label);
+    }
+    levelTotal += count;
+    expectEqual(slice.rate, count / total, label + '.rate');
+    expectEqual(escalation[label + '_rate'], count / total, label + '_rate');
+    for (const field of ["j_score", "recall_at_5"]) {
+      const value = slice[field];
+      if (count === 0 ? value !== null : typeof value !== "number" || !Number.isFinite(value) || value < 0 || value > 1) {
+        throw new Error(label + '.' + field + ' must be a bounded score (null for empty slices)');
+      }
+    }
+    const correct = count * ((slice.j_score as number | null) ?? 0);
+    const recall = count * ((slice.recall_at_5 as number | null) ?? 0);
+    allCorrect += correct;
+    allRecall += recall;
+    if (level < 2) { memoryCorrect += correct; memoryRecall += recall; }
+  }
+  if (levelTotal !== total || escalation.totalQuestions !== total) throw new Error("Escalation counts must cover every question");
+  const memoryCount = (escalation.level0 as number) + (escalation.level1 as number);
+  expectEqual(memoryOnly.count, memoryCount, "memory_only.count");
+  expectEqual(memoryOnly.rate, memoryCount / total, "memory_only.rate");
+  if (memoryCount === 0) {
+    if (memoryOnly.j_score !== null || memoryOnly.recall_at_5 !== null) throw new Error("Empty memory_only scores must be null");
+  } else {
+    expectEqual(memoryOnly.j_score, memoryCorrect / memoryCount, "memory_only.j_score");
+    expectEqual(memoryOnly.recall_at_5, memoryRecall / memoryCount, "memory_only.recall_at_5");
+  }
+  if (JSON.stringify(memoryOnly.includedLevels) !== "[0,1]" || JSON.stringify(memoryOnly.excludedLevels) !== "[2]"
+    || typeof memoryOnly.selectionBias !== "string" || !memoryOnly.selectionBias.includes("not an unbiased")) {
+    throw new Error("memory_only must exclude L2 and disclose selection bias");
+  }
+  expectEqual(overall.j_score, allCorrect / total, "overall.j_score");
+  expectEqual(overall.recall_at_5, allRecall / total, "overall.recall_at_5");
+  expectEqual(overall.escalation_rate, ((escalation.level1 as number) + (escalation.level2 as number)) / total, "overall.escalation_rate");
+  const fullRate = (escalation.level2 as number) / total;
+  expectEqual(overall.full_conversation_rate, fullRate, "overall.full_conversation_rate");
+  expectEqual(escalation.full_conversation_rate, fullRate, "escalation.full_conversation_rate");
+  expectEqual(escalation.fullConversationRate, fullRate, "escalation.fullConversationRate");
+}
+
+function expectEqual(actual: unknown, expected: number, label: string): void {
+  if (typeof actual !== "number" || !Number.isFinite(actual) || Math.abs(actual - expected) > 1e-10) {
+    throw new Error(label + ' is inconsistent with the per-level scores/counts');
   }
 }
