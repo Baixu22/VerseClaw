@@ -1,15 +1,15 @@
 {
   "driven_by": "agent",
   "actor": "codex-stepfun-evidence",
-  "generatedAt": "2026-10-08T16:26:18.237Z",
-  "verdict": "basic-evidence-expanded-runtime-fixed-live-reverification-blocked",
+  "generatedAt": "2026-10-09T02:13:30.092Z",
+  "verdict": "basic-real-provider-and-gateway-script-evidence-passed",
   "scope": "Script-only after owner steering; Windows runtime and real StepFun API; synthetic prompt data",
   "scriptCandidate": "27b2f2961171c70c7eb02c48b190297474fe2eef",
   "runtimeFixCandidate": "2749f07b2a5555f65ec45155a5936c038de5b53d",
   "published": false,
   "defaultsChanged": false,
   "desktopAccepted": false,
-  "liveRuntimeAfterFixAccepted": false,
+  "liveRuntimeAfterFixAccepted": true,
   "directLive": {
     "models": {
       "driven_by": "agent",
@@ -338,24 +338,482 @@
     }
   },
   "liveReverification": {
-    "passed": false,
-    "status": 403,
-    "errorType": "real_name_required",
-    "message": "real-name verification is required for your free step plan before calling this API. please complete face verification at https://account.stepfun.com/security?action=realname",
-    "providerRequests": 1,
-    "noBypassAttempted": true
+    "driven_by": "agent",
+    "actor": "codex-stepfun-evidence",
+    "responseOrigin": "real StepFun HTTPS via unchanged loopback credential relay; no synthetic fetch override",
+    "passed": true,
+    "candidate": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "observedAt": "2026-10-09T02:08:46.263Z",
+      "commit": "a3e4cbb9ce370b0199399cce11765a6916b96181",
+      "tree": "311d4da39cb9f746d233f07c79e0ed5da315c6c3",
+      "status": "",
+      "runnerPid": 35192,
+      "node": "24.16.0",
+      "mode": "Existing Gateway-only script path; no fetch override or synthetic replay; no UI",
+      "buildReuse": "Verified identical script, transport source and compiled artifacts from prior accepted local regression",
+      "verified": [
+        {
+          "file": "openclaw_runtime/dist/entry.js",
+          "bytes": 2782,
+          "sha256": "4639e1220adc24cfc5fd59ad3baa814f492bb809c54f95bb89b7d3fe8e673c46"
+        },
+        {
+          "file": "openclaw_runtime/dist/openai-transport-stream-BZBBYjkt.js",
+          "bytes": 88861,
+          "sha256": "d2a8f0121b3c9296f73fb6302eb1091ae44f002ebc0714543fb6da4fd251afde"
+        },
+        {
+          "file": "openclaw_runtime/src/agents/openai-transport-stream.ts",
+          "bytes": 56445,
+          "sha256": "79156251ac02a5b8704c33d49fd4960469ecffe47ec6d7d519f2fca4f079a639"
+        },
+        {
+          "file": "scripts/check-live-model-evidence.mjs",
+          "bytes": 13222,
+          "sha256": "f90ab20e817263a2aac6ac0dd4b13568cb77dc55fc3ca74cc729ac343f30e331"
+        }
+      ]
+    },
+    "startedAt": "2026-10-09T02:08:46.406Z",
+    "completedAt": "2026-10-09T02:09:08.938Z",
+    "providerRequests": 2,
+    "requests": [
+      {
+        "number": 1,
+        "label": "gateway-runtime",
+        "model": "step-5-preview",
+        "stream": true,
+        "parameters": {
+          "model": "step-5-preview",
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          },
+          "max_tokens": 1024,
+          "signal": {}
+        },
+        "toolCount": 0,
+        "requestBytes": 23623,
+        "requestSha256": "08224cff32c677f5c4c4eb7374c434694f9d113b28c1a18d19eed0f87fea8ad2",
+        "status": 200,
+        "durationMs": 1388,
+        "responseSha256": "1006b88b315e67fae00c7d058486c32551f4e3b5853b621f9ba0d1b593fe7f13",
+        "content": "RUNTIME-LIVE-OK-1",
+        "usageWithChoiceFrames": 13,
+        "deltaKeys": [
+          "role",
+          "content",
+          "reasoning",
+          "reasoning_content"
+        ],
+        "toolCallChunks": 0,
+        "usage": {
+          "prompt_tokens": 6486,
+          "completion_tokens": 34,
+          "total_tokens": 6520,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "returnedModel": "step-5-preview",
+        "finishReason": "stop",
+        "streamChunks": 14
+      },
+      {
+        "number": 2,
+        "label": "gateway-runtime",
+        "model": "step-5-preview",
+        "stream": true,
+        "parameters": {
+          "model": "step-5-preview",
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          },
+          "max_tokens": 1024,
+          "signal": {}
+        },
+        "toolCount": 0,
+        "requestBytes": 23821,
+        "requestSha256": "792127bdc3054faed5721683433b7ce0695fb646f6bff751b5e998aea0924473",
+        "status": 200,
+        "durationMs": 731,
+        "responseSha256": "7bb8a5c09755b4cae8c03f9f383eae235cfc0aa52bb3546942ac3ec9a637863b",
+        "content": "marker-bae6ce9c",
+        "usageWithChoiceFrames": 4,
+        "deltaKeys": [
+          "role",
+          "content"
+        ],
+        "toolCallChunks": 0,
+        "usage": {
+          "cached_tokens": 6144,
+          "prompt_tokens": 6543,
+          "completion_tokens": 10,
+          "total_tokens": 6553,
+          "prompt_tokens_details": {
+            "cached_tokens": 6144
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "returnedModel": "step-5-preview",
+        "finishReason": "stop",
+        "streamChunks": 5
+      }
+    ],
+    "checks": [
+      {
+        "name": "runtime-turn-1",
+        "passed": true,
+        "runId": "8e735e9c-1604-4eea-8cab-231ef95b2fec",
+        "expected": "RUNTIME-LIVE-OK-1",
+        "actual": "RUNTIME-LIVE-OK-1",
+        "model": "step-5-preview",
+        "provider": "stepfun-evidence",
+        "usage": {
+          "input": 6486,
+          "output": 34,
+          "totalTokens": 6520,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        }
+      },
+      {
+        "name": "runtime-turn-2",
+        "passed": true,
+        "runId": "926080b2-c457-4bd9-8c65-f30225665f17",
+        "expected": "marker-bae6ce9c",
+        "actual": "marker-bae6ce9c",
+        "model": "step-5-preview",
+        "provider": "stepfun-evidence",
+        "usage": {
+          "input": 399,
+          "output": 10,
+          "totalTokens": 6553,
+          "cacheRead": 6144,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        }
+      }
+    ],
+    "runtimeUsage": {
+      "updatedAt": 1791511748660,
+      "startDate": "1970-01-01",
+      "endDate": "2026-10-09",
+      "sessions": [
+        {
+          "key": "agent:main:stepfun-evidence",
+          "sessionId": "3c4c83ec-2178-470e-b972-d386391684a5",
+          "scope": "instance",
+          "updatedAt": 1791511748168,
+          "agentId": "main",
+          "modelProvider": "stepfun-evidence",
+          "model": "step-5-preview",
+          "usage": {
+            "input": 6885,
+            "output": 44,
+            "cacheRead": 6144,
+            "cacheWrite": 0,
+            "totalTokens": 13073,
+            "totalCost": 0,
+            "inputCost": 0,
+            "outputCost": 0,
+            "cacheReadCost": 0,
+            "cacheWriteCost": 0,
+            "missingCostEntries": 2,
+            "sessionId": "3c4c83ec-2178-470e-b972-d386391684a5",
+            "sessionFile": "D:\\ClawX-work\\stepfun-basic-evidence-20261008\\resumed-20261009\\live-gateway\\state\\agents\\main\\sessions\\3c4c83ec-2178-470e-b972-d386391684a5.jsonl",
+            "firstActivity": 1791511742078,
+            "lastActivity": 1791511747883,
+            "durationMs": 5805,
+            "activityDates": [
+              "2026-10-09"
+            ],
+            "dailyBreakdown": [
+              {
+                "date": "2026-10-09",
+                "tokens": 13073,
+                "cost": 0
+              }
+            ],
+            "dailyMessageCounts": [
+              {
+                "date": "2026-10-09",
+                "total": 4,
+                "user": 2,
+                "assistant": 2,
+                "toolCalls": 0,
+                "toolResults": 0,
+                "errors": 0
+              }
+            ],
+            "utcQuarterHourMessageCounts": [
+              {
+                "date": "2026-10-09",
+                "quarterIndex": 8,
+                "total": 4,
+                "user": 2,
+                "assistant": 2,
+                "toolCalls": 0,
+                "toolResults": 0,
+                "errors": 0
+              }
+            ],
+            "utcQuarterHourTokenUsage": [
+              {
+                "date": "2026-10-09",
+                "quarterIndex": 8,
+                "input": 6885,
+                "output": 44,
+                "cacheRead": 6144,
+                "cacheWrite": 0,
+                "totalTokens": 13073,
+                "totalCost": 0
+              }
+            ],
+            "dailyLatency": [
+              {
+                "date": "2026-10-09",
+                "count": 2,
+                "avgMs": 1089.5,
+                "p95Ms": 1437,
+                "minMs": 742,
+                "maxMs": 1437
+              }
+            ],
+            "dailyModelUsage": [
+              {
+                "date": "2026-10-09",
+                "provider": "stepfun-evidence",
+                "model": "step-5-preview",
+                "tokens": 13073,
+                "cost": 0,
+                "count": 2
+              }
+            ],
+            "messageCounts": {
+              "total": 4,
+              "user": 2,
+              "assistant": 2,
+              "toolCalls": 0,
+              "toolResults": 0,
+              "errors": 0
+            },
+            "modelUsage": [
+              {
+                "provider": "stepfun-evidence",
+                "model": "step-5-preview",
+                "count": 2,
+                "totals": {
+                  "input": 6885,
+                  "output": 44,
+                  "cacheRead": 6144,
+                  "cacheWrite": 0,
+                  "totalTokens": 13073,
+                  "totalCost": 0,
+                  "inputCost": 0,
+                  "outputCost": 0,
+                  "cacheReadCost": 0,
+                  "cacheWriteCost": 0,
+                  "missingCostEntries": 2
+                }
+              }
+            ],
+            "latency": {
+              "count": 2,
+              "avgMs": 1089.5,
+              "p95Ms": 1437,
+              "minMs": 742,
+              "maxMs": 1437
+            }
+          }
+        }
+      ],
+      "totals": {
+        "input": 6885,
+        "output": 44,
+        "cacheRead": 6144,
+        "cacheWrite": 0,
+        "totalTokens": 13073,
+        "totalCost": 0,
+        "inputCost": 0,
+        "outputCost": 0,
+        "cacheReadCost": 0,
+        "cacheWriteCost": 0,
+        "missingCostEntries": 2
+      },
+      "aggregates": {
+        "messages": {
+          "total": 4,
+          "user": 2,
+          "assistant": 2,
+          "toolCalls": 0,
+          "toolResults": 0,
+          "errors": 0
+        },
+        "tools": {
+          "totalCalls": 0,
+          "uniqueTools": 0,
+          "tools": []
+        },
+        "byModel": [
+          {
+            "provider": "stepfun-evidence",
+            "model": "step-5-preview",
+            "count": 2,
+            "totals": {
+              "input": 6885,
+              "output": 44,
+              "cacheRead": 6144,
+              "cacheWrite": 0,
+              "totalTokens": 13073,
+              "totalCost": 0,
+              "inputCost": 0,
+              "outputCost": 0,
+              "cacheReadCost": 0,
+              "cacheWriteCost": 0,
+              "missingCostEntries": 2
+            }
+          }
+        ],
+        "byProvider": [
+          {
+            "provider": "stepfun-evidence",
+            "count": 2,
+            "totals": {
+              "input": 6885,
+              "output": 44,
+              "cacheRead": 6144,
+              "cacheWrite": 0,
+              "totalTokens": 13073,
+              "totalCost": 0,
+              "inputCost": 0,
+              "outputCost": 0,
+              "cacheReadCost": 0,
+              "cacheWriteCost": 0,
+              "missingCostEntries": 2
+            }
+          }
+        ],
+        "byAgent": [
+          {
+            "agentId": "main",
+            "totals": {
+              "input": 6885,
+              "output": 44,
+              "cacheRead": 6144,
+              "cacheWrite": 0,
+              "totalTokens": 13073,
+              "totalCost": 0,
+              "inputCost": 0,
+              "outputCost": 0,
+              "cacheReadCost": 0,
+              "cacheWriteCost": 0,
+              "missingCostEntries": 2
+            }
+          }
+        ],
+        "byChannel": [],
+        "latency": {
+          "count": 2,
+          "avgMs": 1089.5,
+          "minMs": 742,
+          "maxMs": 1437,
+          "p95Ms": 1437
+        },
+        "dailyLatency": [
+          {
+            "date": "2026-10-09",
+            "count": 2,
+            "avgMs": 1089.5,
+            "minMs": 742,
+            "maxMs": 1437,
+            "p95Ms": 1437
+          }
+        ],
+        "modelDaily": [
+          {
+            "date": "2026-10-09",
+            "provider": "stepfun-evidence",
+            "model": "step-5-preview",
+            "tokens": 13073,
+            "cost": 0,
+            "count": 2
+          }
+        ],
+        "daily": [
+          {
+            "date": "2026-10-09",
+            "tokens": 13073,
+            "cost": 0,
+            "messages": 4,
+            "toolCalls": 0,
+            "errors": 0
+          }
+        ]
+      },
+      "cacheStatus": {
+        "status": "fresh",
+        "cachedFiles": 1,
+        "pendingFiles": 0,
+        "staleFiles": 0,
+        "refreshedAt": 1791511748155
+      }
+    },
+    "cleanup": {
+      "rawGatewayExited": false,
+      "rawForcedCleanup": true,
+      "independentObservation": {
+        "driven_by": "agent",
+        "actor": "codex-stepfun-evidence",
+        "observedAt": "2026-10-09T02:12:14.9697459Z",
+        "runnerPid": 35192,
+        "gatewayPid": 29000,
+        "remaining": [],
+        "note": "Independent post-run process check; runner exitCode-only field can remain false for signal-based termination."
+      },
+      "interpretation": "No runner/Gateway process remains. Raw exitCode-only observer does not recognize signal-based termination; its original fields are preserved."
+    },
+    "receipt": "D:/ClawX-work/stepfun-basic-evidence-20261008/resumed-20261009/live-gateway/report.json",
+    "runnerReceipt": "D:/ClawX-work/stepfun-basic-evidence-20261008/resumed-20261009/runner.json"
   },
   "usageAccounting": {
     "knownScriptAndDirectRequests": {
+      "requests": 10,
+      "success": 9,
+      "refused": 1,
+      "tokens": 63696
+    },
+    "desktopFailedAttemptRequests": "unmeasured; excluded from known count",
+    "monetaryCost": null,
+    "costReason": "No billing statement or confirmed model tariff supplied",
+    "cacheClaim": "Latest second turn reported 6144 cached input tokens. This is one two-turn observation, not a stability or warm-cache benchmark.",
+    "previousKnownScriptAndDirectRequests": {
       "requests": 8,
       "success": 7,
       "refused": 1,
       "tokens": 50623
     },
-    "desktopFailedAttemptRequests": "unmeasured; excluded from known count",
-    "monetaryCost": null,
-    "costReason": "No billing statement or confirmed model tariff supplied",
-    "cacheClaim": "One pre-fix real request reported 1536 cached input tokens; no stable/warm cache benchmark or universal hit rate claimed"
+    "thisReverification": {
+      "requests": 2,
+      "success": 2,
+      "promptTokens": 13029,
+      "completionTokens": 44,
+      "totalTokens": 13073,
+      "cachedInputTokens": 6144
+    }
   },
   "gates": {
     "transport-final": {
@@ -756,8 +1214,8 @@
     "task-validate: main workspace unrelated audit files outside task scope; isolated diff-aware validation passed"
   ],
   "remaining": [
-    "Real StepFun two-turn Gateway verification after the parser fix needs an endpoint/account currently permitted to call the API.",
-    "This is not broad model quality, all-provider compatibility, Windows full-suite requalification, new installer qualification, or platform/release acceptance."
+    "No remaining acceptance item for this bounded real-provider/Gateway script run.",
+    "No desktop, all-provider, broad quality benchmark, full Windows suite, new installer, platform or release acceptance is inferred."
   ],
   "readmeReview": "English, Chinese and Japanese setup claims remain valid; no new product flow/default. Detailed verification recorded in current note.",
   "safety": {
@@ -777,7 +1235,23 @@
       "remaining": []
     },
     "credentialPersistedByRuntime": false,
-    "providedKeyAbsentFromScannedEvidence": true
+    "providedKeyAbsentFromScannedEvidence": true,
+    "resumedExactSecretScan": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "scannedFiles": 23,
+      "exactProvidedKeyChecked": true,
+      "hits": []
+    },
+    "resumedProcessCheck": {
+      "driven_by": "agent",
+      "actor": "codex-stepfun-evidence",
+      "observedAt": "2026-10-09T02:12:14.9697459Z",
+      "runnerPid": 35192,
+      "gatewayPid": 29000,
+      "remaining": [],
+      "note": "Independent post-run process check; runner exitCode-only field can remain false for signal-based termination."
+    }
   },
   "integration": {
     "candidate": "18ba806041b2c15a62bb3d6028853412059edf13",
@@ -785,5 +1259,14 @@
     "runtimeFixBytesUnchanged": true,
     "artifactPolicy": "Added four exact evidence/doc paths to reviewed retention manifest; adopted current generated ignore policy",
     "mainWorkspaceUntouched": true
+  },
+  "previousVerdict": "basic-evidence-expanded-runtime-fixed-live-reverification-blocked",
+  "previousLiveReverification": {
+    "passed": false,
+    "status": 403,
+    "errorType": "real_name_required",
+    "message": "real-name verification is required for your free step plan before calling this API. please complete face verification at https://account.stepfun.com/security?action=realname",
+    "providerRequests": 1,
+    "noBypassAttempted": true
   }
 }
