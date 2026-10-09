@@ -1783,3 +1783,6 @@ openclaw_runtime/_tmp_*
 !/docs/dev/harness-gap-closure/SHA256SUMS
 !/docs/dev/harness-gap-closure/baseline-acceptance.json
 !/docs/dev/harness-gap-closure/ACCEPTANCE-SHA256SUMS
+
+# mem exploration report (2026-10-09)
+!/docs/dev/mem-exploration-20261009.md
