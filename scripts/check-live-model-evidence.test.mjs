@@ -100,3 +100,19 @@ test('production cleanup terminates a real local child without forced PID cleanu
     if (gateway.exitCode === null && gateway.signalCode === null) gateway.kill();
   }
 });
+
+for (const runtimeRead of [false, true]) {
+  test('Runtime read mode is explicit opt-in: ' + runtimeRead, () => {
+    const declaration = source.match(/^  const config = .*;$/m)?.[0];
+    assert(declaration, 'Production config declaration must exist');
+    const config = vm.runInNewContext(declaration + '; config', {
+      runtimeRead, model: 'fixture-model', relayPort: 12345, workspace: 'fixture-workspace',
+    });
+    assert.deepEqual(JSON.parse(JSON.stringify(config.tools)), runtimeRead
+      ? { allow: ['read'], fs: { workspaceOnly: true } }
+      : { deny: ['*'] });
+    assert.equal(config.models.providers['stepfun-evidence'].apiKey, 'synthetic-relay-auth');
+    assert.equal(config.agents.defaults.workspace, 'fixture-workspace');
+    assert.deepEqual(Array.from(config.agents.defaults.model.fallbacks), []);
+  });
+}

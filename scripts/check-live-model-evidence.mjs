@@ -12,6 +12,7 @@ assert(!fs.existsSync(output), 'Preserve existing attempts; choose a new directo
 fs.mkdirSync(output, { recursive: true });
 const baseUrl = (process.env.LIVE_MODEL_BASE_URL ?? '').replace(/\/$/, '');
 const model = process.env.LIVE_MODEL_ID;
+const runtimeRead = process.env.LIVE_MODEL_RUNTIME_READ === '1';
 let stdin = ''; for await (const chunk of process.stdin) stdin += chunk;
 const { key } = JSON.parse(stdin); stdin = '';
 assert(new URL(baseUrl).protocol === 'https:' && model && key, 'HTTPS endpoint, model and stdin key required');
@@ -26,7 +27,7 @@ let calls = 0;
 async function completion(body, label, onHeaders, onChunk) {
   assert(++calls <= report.maxProviderRequests, 'Provider request budget exceeded');
   const started = Date.now();
-  const row = { number: calls, label, model: body.model, stream: body.stream === true, parameters: Object.fromEntries(Object.entries(body).filter(([k]) => !['messages', 'tools'].includes(k))), toolCount: body.tools?.length ?? 0, requestBytes: Buffer.byteLength(JSON.stringify(body)), requestSha256: hash(JSON.stringify(body)) };
+  const row = { number: calls, label, toolNames: (body.tools ?? []).map(tool => tool.function?.name), model: body.model, stream: body.stream === true, parameters: Object.fromEntries(Object.entries(body).filter(([k]) => !['messages', 'tools'].includes(k))), toolCount: body.tools?.length ?? 0, requestBytes: Buffer.byteLength(JSON.stringify(body)), requestSha256: hash(JSON.stringify(body)) };
   report.requests.push(row); save();
   const response = await fetch(baseUrl + '/chat/completions', { method: 'POST', headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' }, body: JSON.stringify(body), redirect: 'error', signal: AbortSignal.timeout(120_000) });
   row.status = response.status;
@@ -91,7 +92,7 @@ try {
   const state = path.join(output, 'state'), home = path.join(output, 'home'), workspace = path.join(output, 'workspace');
   for (const p of [state, home, workspace]) fs.mkdirSync(p);
   const configPath = path.join(output, 'openclaw.json');
-  const config = { gateway: { mode: 'local', controlUi: { enabled: false } }, models: { mode: 'merge', providers: { 'stepfun-evidence': { api: 'openai-completions', baseUrl: 'http://127.0.0.1:' + relayPort + '/v1', apiKey: 'synthetic-relay-auth', models: [{ id: model, name: model, api: 'openai-completions', reasoning: false, input: ['text'], contextWindow: 128000, maxTokens: 1024 }] } } }, agents: { defaults: { model: { primary: 'stepfun-evidence/' + model, fallbacks: [] }, models: { ['stepfun-evidence/' + model]: { params: { maxTokens: 1024 } } }, workspace, skipBootstrap: true, thinkingDefault: 'off', timeoutSeconds: 120 }, list: [{ id: 'main', default: true }] }, tools: { deny: ['*'] }, skills: { allowBundled: [] } };
+  const config = { gateway: { mode: 'local', controlUi: { enabled: false } }, models: { mode: 'merge', providers: { 'stepfun-evidence': { api: 'openai-completions', baseUrl: 'http://127.0.0.1:' + relayPort + '/v1', apiKey: 'synthetic-relay-auth', models: [{ id: model, name: model, api: 'openai-completions', reasoning: false, input: ['text'], contextWindow: 128000, maxTokens: 1024 }] } } }, agents: { defaults: { model: { primary: 'stepfun-evidence/' + model, fallbacks: [] }, models: { ['stepfun-evidence/' + model]: { params: { maxTokens: 1024 } } }, workspace, skipBootstrap: true, thinkingDefault: 'off', timeoutSeconds: 120 }, list: [{ id: 'main', default: true }] }, tools: runtimeRead ? { allow: ['read'], fs: { workspaceOnly: true } } : { deny: ['*'] }, skills: { allowBundled: [] } };
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
   const token = randomUUID();
   const env = { ...process.env, HOME: home, USERPROFILE: home, APPDATA: path.join(home, 'AppData/Roaming'), LOCALAPPDATA: path.join(home, 'AppData/Local'), XDG_CONFIG_HOME: path.join(home, '.config'), OPENCLAW_CONFIG_PATH: configPath, OPENCLAW_STATE_DIR: state, OPENCLAW_DISABLE_BONJOUR: '1', OPENCLAW_SKIP_CHANNELS: '1' };
@@ -109,13 +110,34 @@ try {
   const sessionKey = 'agent:main:stepfun-evidence';
   const marker = 'marker-' + randomUUID().slice(0, 8);
   const turns = [ { prompt: 'Remember ' + marker + ' for this conversation. Reply exactly RUNTIME-LIVE-OK-1. Do not call tools.', expected: 'RUNTIME-LIVE-OK-1' }, { prompt: 'Recall the marker from my previous message. Reply exactly that marker. Do not call tools.', expected: marker } ];
+  const fixturePath = path.join(workspace, 'live-read-fixture.txt');
+  const fixtureValue = 'RUNTIME-READ-' + randomUUID();
+  if (runtimeRead) {
+    fs.writeFileSync(fixturePath, fixtureValue + '\n');
+    report.runtimeReadFixture = { path: fixturePath, sha256: hash(fs.readFileSync(fixturePath)), driven_by: 'agent', valueProvidedInPrompt: false };
+    turns.push({ prompt: 'Use the read tool exactly once to read live-read-fixture.txt in your workspace. Reply exactly the complete value in that file, without formatting or commentary. Do not guess the value and do not call any other tool.', expected: fixtureValue });
+  }
   for (const [index, turn] of turns.entries()) {
     const sent = await rpc('agent', { sessionKey, message: turn.prompt, deliver: false, timeout: 120, idempotencyKey: randomUUID() });
     const ended = await rpc('agent.wait', { runId: sent.runId, timeoutMs: 150000 }, 160000);
     assert.equal(ended.status, 'ok', 'Runtime agent failed: ' + safe(ended));
     const history = await rpc('chat.history', { sessionKey, limit: 30, maxChars: 500000 });
     const assistant = history.messages.filter(m => m.role === 'assistant').at(-1);
+    fs.writeFileSync(path.join(output, 'history-turn-' + (index + 1) + '.json'), safe(history) + '\n');
     assert.equal(textOf(assistant), turn.expected);
+    if (runtimeRead && index === 2) {
+      const calls = history.messages.flatMap(m => (Array.isArray(m.content) ? m.content : []).filter(c => c.type === 'toolCall'));
+      const results = history.messages.filter(m => m.role === 'toolResult');
+      assert.equal(calls.length, 1, 'Runtime must invoke read exactly once');
+      assert.equal(calls[0].name, 'read');
+      const requestedPath = calls[0].arguments?.path ?? calls[0].arguments?.file_path;
+      assert.equal(path.resolve(workspace, requestedPath), fixturePath);
+      const result = results.find(m => m.toolCallId === calls[0].id);
+      assert(result && !result.isError, 'Missing successful Runtime tool result');
+      assert(textOf(result).includes(fixtureValue), 'Runtime tool result did not read the random file');
+      assert.equal(hash(fs.readFileSync(fixturePath)), report.runtimeReadFixture.sha256, 'Read must not modify fixture bytes');
+      report.checks.push({ name: 'runtime-read-tool', passed: true, execution: 'real Runtime read; real provider selected and consumed result', toolCall: calls[0], toolResult: result, expected: fixtureValue, actual: textOf(assistant) });
+    }
     report.checks.push({ name: 'runtime-turn-' + (index + 1), passed: true, runId: sent.runId, expected: turn.expected, actual: textOf(assistant), model: assistant.model, provider: assistant.provider, usage: assistant.usage }); save();
   }
   const usageDeadline = Date.now() + 30_000;
