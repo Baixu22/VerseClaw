@@ -92,3 +92,10 @@ export function aggregateContextRecall(
     byCategory,
   };
 }
+
+/** Historical answer-token overlap proxy, not canonical evidence Recall@5. */
+export function computeAnswerTokenRecall(groundTruth: string, retrievedSummaries: readonly string[]): number {
+  const answerWords = groundTruth.toLowerCase().split(/\s+/).filter((word) => word.length > 3);
+  const retrievedText = retrievedSummaries.map((text) => text.toLowerCase()).join(" ");
+  return answerWords.length > 0 ? answerWords.filter((word) => retrievedText.includes(word)).length / answerWords.length : 0;
+}

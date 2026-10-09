@@ -1,0 +1,349 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-p0-remediation",
+  "scope": "P0 development repairs; not full-system or 500-question acceptance",
+  "startedOn": "2026-10-09",
+  "updatedOn": "2026-10-10",
+  "status": "partial",
+  "taskForestNode": "TF-0305",
+  "branch": "codex/p0-memory-integrity-20261009",
+  "initialCheckpoints": [
+    "4e054c8f340782b63f5104f4355de1048af451c8",
+    "b734c6a53"
+  ],
+  "issues": [
+    {
+      "number": 134,
+      "codeStatus": "verified",
+      "note": "Fixture-shaped evidence IDs are resolved in both evaluator paths; missing gold never yields perfect recall."
+    },
+    {
+      "number": 137,
+      "codeStatus": "verified",
+      "note": "Judge caveats and non-comparable external references replace ranking output."
+    },
+    {
+      "number": 135,
+      "codeStatus": "verified",
+      "acceptanceStatus": "fresh-500-run-outstanding",
+      "note": "L0/L1/L2 partitions and selected-subset bias are enforced; no full model-run acceptance claimed."
+    },
+    {
+      "number": 136,
+      "codeStatus": "independent-regression-gate-verified",
+      "acceptanceStatus": "temporal-paired-measurement-outstanding",
+      "note": "Historical -0.1195185185 is not a verified measured regression; no retrieval recovery claimed."
+    },
+    {
+      "number": 138,
+      "codeStatus": "fail-closed-evidence-gate-verified",
+      "acceptanceStatus": "fresh-500-run-outstanding",
+      "note": "No measured report placeholder created; original hybrid retrieval requires a SiliconFlow embedding resource."
+    },
+    {
+      "number": 62,
+      "codeStatus": "unresolved",
+      "acceptanceStatus": "object-recovery-or-owner-authorized-retirement-required",
+      "missingObjects": 29,
+      "remoteRecoveryExitCode": 128,
+      "knownMirrorsChecked": 13,
+      "note": "No historical refs or objects removed; main and original dirty worktree preserved."
+    }
+  ],
+  "tests": {
+    "files": 8,
+    "passed": 186,
+    "failed": 0,
+    "skipped": 0,
+    "evidencePath": "D:/ClawX-work/p0-issues-20261009/final-tests-after-whitespace-fix.json",
+    "sha256": "27c76d1abe0dc9ede3ed70b3f86c14ce825415e17a6519feea7c2235daa0f1c2"
+  },
+  "modelSmoke": {
+    "model": "step-5-preview",
+    "scope": "real-provider-helper-smoke-not-locomo-500",
+    "helperCalls": 1,
+    "helperTokens": 63,
+    "directProbeCalls": 1,
+    "directProbeTokens": 67,
+    "credentialsPersisted": false,
+    "evidencePath": "D:/ClawX-work/p0-issues-20261009/stepfun-client-smoke.json",
+    "sha256": "0c51d055ef9aeb988b5a7abd29da22c15be55c650160d63804d91c2dad9696f5"
+  },
+  "sampling": {
+    "driven_by": "agent",
+    "actor": "codex-p0-remediation",
+    "referenceCommit": "b734c6a53",
+    "beforeCount": 500,
+    "afterCount": 500,
+    "beforeSha256": "27c6e24e0063f6eb08936e32a3204e7d0efdaf0b09e7b0468df15d3efa7f54d9",
+    "afterSha256": "27c6e24e0063f6eb08936e32a3204e7d0efdaf0b09e7b0468df15d3efa7f54d9",
+    "sameOrderedSample": true,
+    "generatedAt": "2026-10-09T16:58:50.236Z"
+  },
+  "sourceManifest": {
+    "openclaw_runtime/src/runtime-core/evidence.ts": "4ffd11c9d2898f050308e234057ac60ddd75ffc80ee478ae25b4e2f88a44b0db",
+    "openclaw_runtime/src/runtime-core/memory-chained-retrieval.ts": "36e99251e3bd2f34bf728eb7c5c2ccea161613fe500841df92fedab883123306",
+    "openclaw_runtime/src/runtime-core/memory-context.ts": "62d304e003057073fcbc30be6bacc35619bbfc490032c204d3a6837985a071be",
+    "openclaw_runtime/src/runtime-core/memory-embedding-provider.ts": "982c4e09b19118a8549cb8428b34df48531e02842b272c946f5ed3c8cbfdeeca",
+    "openclaw_runtime/src/runtime-core/memory-entity-extraction.ts": "f5e9f5ecf020880514a26cd9f19fc97d2197996e7c67f0b7e6fe6389899f046c",
+    "openclaw_runtime/src/runtime-core/memory-extraction-prompt.ts": "149db9cd364bde1c241f6513172370f425af51745c28039f0a7148cbc6305855",
+    "openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts": "ce52a98a4fdb74bc8f32d9a94b48decccb77a3e08ceb85e7329a7b0e6a79256c",
+    "openclaw_runtime/src/runtime-core/memory-runtime-config.ts": "bf0a9939800b91b6620e8863f0b7f2ed776d490c5ab60f2d68d78f6b73d8052c",
+    "openclaw_runtime/src/runtime-core/memory-temporal-detector.ts": "30c3df954e9dd463ee06bff6c7746f339a2d4da40c0dbf3622e75bd69a749255",
+    "openclaw_runtime/src/runtime-core/memory-temporal-policy.ts": "063ac60bf8f4b061116dd9cbb00b57c498d8a3a3ea204680276ad76471a6a5a0",
+    "openclaw_runtime/src/runtime-core/memory-trace.ts": "1d4b35eae64dafe8668230ade06b759ca32199a20ba70e217d9e30e560148f10",
+    "openclaw_runtime/src/runtime-core/types.ts": "8e9e2d5d510cb03274d342dc4bc079491ecaa1e7d7fd0110a1315e9f72e763f3",
+    "package.json": "9aed106acde3df28808687f60a864e65eeb222d98f3265c6971fa22ef73405d7",
+    "pnpm-lock.yaml": "5dc86e9f6adc9997dc28eee4667c32dac99e13378f0b2716f401c061375e6370",
+    "scripts/check-locomo-evidence.mjs": "1afdd38bef94b9411cb4237243d3017237e396204562d52d74626866ee441c57",
+    "scripts/run-locomo-full-evaluation.mjs": "9435e4e9accd93db4fd1cdca17ae85edcbc1179bdd1c1cbf180537f302d1c57a",
+    "tests/unit/helpers/buffered-extraction.ts": "2a1596d9e8d017a597bb1d8374fe2775a30c630907f35405b3be3fc82d7fee5a",
+    "tests/unit/helpers/cross-encoder-rerank.ts": "edee7bd1f5a2357502ed5a1fff172ee3d3ee7d67ddea34769bbfa08b0c534a3c",
+    "tests/unit/helpers/embedding-disk-cache.ts": "8270bcea204cb299abfedfd5a1787ecfb105838c81d0e9e22dcef5053dce456d",
+    "tests/unit/helpers/episodic-memory.ts": "e2aec2ae7631d253e12e6a74937704ad6a0f53bbba8db5a4333c70a469725e1a",
+    "tests/unit/helpers/judge-result-cache.ts": "8b938fd89a36e38e059e55af64cfb4e8601fd441057e1dcf523b5c1fa810858c",
+    "tests/unit/helpers/justifier-rerank.ts": "dbd82166edd1338634d1bef3e55df9e8ce73a6792b6bd30bc18aba7cf7241a00",
+    "tests/unit/helpers/locomo-date-parser.ts": "2ebbd9a7515aa596e8641bcd3698dd83525a070fe9d9de3fd1b981535d47205c",
+    "tests/unit/helpers/locomo-pipeline.ts": "aeac46c2d93957daeea3c84ba886216057e09f1d6a18b510f7c9f004cda7a8e5",
+    "tests/unit/helpers/memory-entity-store.ts": "3a5c7f8f808c83c705643e8a4b60ae10c8e28ec477f15446032fea4170554e4b",
+    "tests/unit/helpers/memory-observation-consolidation.ts": "81fd53213f5202073e02a6466a006faae01a098a78c32ff04dcc299a54719cd3",
+    "tests/unit/helpers/memory-weighted-graph-traversal.ts": "289773886dbc1c8dd3cb57488953d359d8b2eb2a0640cbc5cce4b3896dcf9992",
+    "tests/unit/helpers/query-classifier.ts": "9aa93d1a443f9e88608dda7f20b3aa2adc7f9e4f1283255b2ce56fa0e8b28e39",
+    "tests/unit/helpers/query-time-extractor.ts": "f08264b100af2e7e9bfaa7015239067469dfe5794440bbb7f1d8c53e06d14199",
+    "tests/unit/helpers/retrieval-feedback-loop.ts": "7970a0428bacd558110b690abd8eb9acb2f3229417313c277fa0bbe5fa444212",
+    "tests/unit/helpers/runtime-memory-agent-retrieval.ts": "f0f84d2aa6d607db7b62c209cafbe9561bcd5d7cef3fbd87d08a06be293758c6",
+    "tests/unit/helpers/runtime-memory-context-completeness.ts": "3ec26c0eaab459e6e7fd5212af0185d55010b5285ebcf2d082acede04db15f06",
+    "tests/unit/helpers/runtime-memory-context-recall.ts": "bb099f31e5a42a79c8bf0d643f97234bee8828b28da79bf3464b5b5daf101c38",
+    "tests/unit/helpers/runtime-memory-cross-encoder-reranker.ts": "32b8962a977ae928dce8622c538394cbd1c42f40987b9ed2d755a158adcf9bad",
+    "tests/unit/helpers/runtime-memory-dev-slice.ts": "add59f3b999ce509096e6eccc3f3f8e58d2f2f26ba1e73da3cca792055f07f68",
+    "tests/unit/helpers/runtime-memory-error-taxonomy.ts": "a772fa6bfa5c2084bac0032f9cf1e692f5f75ca9730650b17e64734bba43832b",
+    "tests/unit/helpers/runtime-memory-escalation-ladder.ts": "5560f19e2a2e5ed3a6ed8c7bcb4885f02e0b098ceac0b04ce99725c8ceb74cee",
+    "tests/unit/helpers/runtime-memory-generation-scaffolds.ts": "263a5d7f124010613be7bcfc1fa664fe06146bdba506bfe9fc56c046aaaa60bc",
+    "tests/unit/helpers/runtime-memory-judge-freeze.ts": "49529c6f91db2a040881ebe1256e19c8504a6e6e807bd581516dbbfbd9992c6a",
+    "tests/unit/helpers/runtime-memory-locomo-report-schema.ts": "68fda5f7f1a956539aedbe4acc1b720196f17e433e6fb15a52ec3343b33d90d4",
+    "tests/unit/helpers/runtime-memory-real-llm-client.ts": "162f5ea09c74ad8a9652070c471e783e633527c59bd5b64c42e14d7ed30bba6a",
+    "tests/unit/helpers/runtime-memory-reflect-agent.ts": "5ee49f44daf961dd848e0a2de0b56bdb4744ae7e4a4f7730655f45652f563612",
+    "tests/unit/helpers/runtime-memory-sequential-self-ask.ts": "3d6aebb6cc1e81c71c3c111ed38820c081e10591566d025a81dcf4076b149a1e",
+    "tests/unit/helpers/runtime-memory-session-summary-index.ts": "0eee99ce4946c8d4b922f13c65f84133e24cf0df06157f3843e9961fca31229a",
+    "tests/unit/helpers/self-ask-cache.ts": "b8f557cc5cdc0659979ccb8467c35c8ada771ab6bf9323f1c8623ce7fb766951",
+    "tests/unit/helpers/self-ask-merge.ts": "13da953f7a335af6623cc78d140f711ee109ddafc6e35eb943660320bdfedd70",
+    "tests/unit/helpers/siliconflow-embedding-provider.ts": "5a035d93485de74f6ffdf55660fc51281a179f468b3e59e6b8e255d6c7831e1d",
+    "tests/unit/helpers/unified-judge.ts": "068639201da088ce6de106d6e5dff54a3519cffa7622d8c869870dd33b872713",
+    "tests/unit/runtime-memory-locomo-full-500.test.ts": "55f8314dcbce0a4ae3599e8a6044923d1d919e514ef08d6afbcb205bd2986a33"
+  },
+  "sourceManifestSha256": "c02b7410aef4163164c8094ac606a1e039417ac76babceacac09441519294726",
+  "limitations": [
+    "No full 500-question run or historical 0.752 reproduction",
+    "No full repository unit suite, Electron E2E, build or release qualification",
+    "Dependencies reused via junctions, not a fresh install",
+    "Offline verifier checks consistency/provenance; it is not a provider signature attestation"
+  ],
+  "rawEvidenceDirectory": "D:/ClawX-work/p0-issues-20261009",
+  "gates": [
+    {
+      "name": "final-harness-validate",
+      "driven_by": "agent",
+      "actor": "codex-p0-remediation",
+      "cwd": "C:/Users/27933/.codex/worktrees/p0-memory-integrity-20261009/ClawX",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/p0-memory-evaluation-integrity.md"
+      ],
+      "startedAt": "2026-10-09T17:11:01.621Z",
+      "finishedAt": "2026-10-09T17:11:02.028Z",
+      "elapsedMs": 407,
+      "exitCode": 0
+    },
+    {
+      "name": "final-harness-dry-run",
+      "driven_by": "agent",
+      "actor": "codex-p0-remediation",
+      "cwd": "C:/Users/27933/.codex/worktrees/p0-memory-integrity-20261009/ClawX",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/p0-memory-evaluation-integrity.md",
+        "--dry-run"
+      ],
+      "startedAt": "2026-10-09T17:11:02.028Z",
+      "finishedAt": "2026-10-09T17:11:02.410Z",
+      "elapsedMs": 382,
+      "exitCode": 0
+    },
+    {
+      "name": "final-retention",
+      "driven_by": "agent",
+      "actor": "codex-p0-remediation",
+      "cwd": "C:/Users/27933/.codex/worktrees/p0-memory-integrity-20261009/ClawX",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "startedAt": "2026-10-09T17:11:02.410Z",
+      "finishedAt": "2026-10-09T17:11:03.693Z",
+      "elapsedMs": 1283,
+      "exitCode": 0
+    },
+    {
+      "name": "final-verifier-syntax",
+      "driven_by": "agent",
+      "actor": "codex-p0-remediation",
+      "cwd": "C:/Users/27933/.codex/worktrees/p0-memory-integrity-20261009/ClawX",
+      "argv": [
+        "node",
+        "--check",
+        "scripts/check-locomo-evidence.mjs"
+      ],
+      "startedAt": "2026-10-09T17:11:03.694Z",
+      "finishedAt": "2026-10-09T17:11:03.748Z",
+      "elapsedMs": 54,
+      "exitCode": 0
+    },
+    {
+      "name": "final-runner-syntax",
+      "driven_by": "agent",
+      "actor": "codex-p0-remediation",
+      "cwd": "C:/Users/27933/.codex/worktrees/p0-memory-integrity-20261009/ClawX",
+      "argv": [
+        "node",
+        "--check",
+        "scripts/run-locomo-full-evaluation.mjs"
+      ],
+      "startedAt": "2026-10-09T17:11:03.750Z",
+      "finishedAt": "2026-10-09T17:11:03.800Z",
+      "elapsedMs": 50,
+      "exitCode": 0
+    },
+    {
+      "name": "final-typecheck-after-format",
+      "driven_by": "agent",
+      "actor": "codex-p0-remediation",
+      "cwd": "C:/Users/27933/.codex/worktrees/p0-memory-integrity-20261009/ClawX",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "startedAt": "2026-10-09T17:18:07.391Z",
+      "finishedAt": "2026-10-09T17:18:16.547Z",
+      "elapsedMs": 9156,
+      "exitCode": 0
+    },
+    {
+      "name": "final-scoped-lint",
+      "driven_by": "agent",
+      "actor": "codex-p0-remediation",
+      "cwd": "C:/Users/27933/.codex/worktrees/p0-memory-integrity-20261009/ClawX",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "scripts/check-locomo-evidence.mjs",
+        "scripts/run-locomo-full-evaluation.mjs",
+        "tests/unit/locomo-evidence-integrity.test.ts",
+        "tests/unit/runtime-memory-real-llm-client.test.ts",
+        "tests/unit/context-recall.test.ts",
+        "tests/unit/helpers/locomo-eval-config.ts",
+        "tests/unit/helpers/locomo-report-comparator.ts",
+        "tests/unit/helpers/runtime-memory-context-recall.ts",
+        "tests/unit/helpers/runtime-memory-dev-slice.ts",
+        "tests/unit/helpers/runtime-memory-judge-freeze.ts",
+        "tests/unit/helpers/runtime-memory-locomo-report-schema.ts",
+        "tests/unit/helpers/runtime-memory-real-llm-client.ts",
+        "tests/unit/locomo-report-comparator.test.ts",
+        "tests/unit/runtime-memory-locomo-full-500.test.ts"
+      ],
+      "startedAt": "2026-10-09T17:11:14.158Z",
+      "finishedAt": "2026-10-09T17:11:17.482Z",
+      "elapsedMs": 3324,
+      "exitCode": 0
+    },
+    {
+      "name": "final-comms-replay",
+      "driven_by": "agent",
+      "actor": "codex-p0-remediation",
+      "cwd": "C:/Users/27933/.codex/worktrees/p0-memory-integrity-20261009/ClawX",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "startedAt": "2026-10-09T17:11:17.482Z",
+      "finishedAt": "2026-10-09T17:11:17.738Z",
+      "elapsedMs": 256,
+      "exitCode": 0
+    },
+    {
+      "name": "final-comms-compare",
+      "driven_by": "agent",
+      "actor": "codex-p0-remediation",
+      "cwd": "C:/Users/27933/.codex/worktrees/p0-memory-integrity-20261009/ClawX",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "startedAt": "2026-10-09T17:11:17.739Z",
+      "finishedAt": "2026-10-09T17:11:17.864Z",
+      "elapsedMs": 125,
+      "exitCode": 0
+    },
+    {
+      "name": "final-diff-check-fixed",
+      "driven_by": "agent",
+      "actor": "codex-p0-remediation",
+      "cwd": "C:/Users/27933/.codex/worktrees/p0-memory-integrity-20261009/ClawX",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "startedAt": "2026-10-09T17:12:59.728Z",
+      "finishedAt": "2026-10-09T17:12:59.783Z",
+      "elapsedMs": 55,
+      "exitCode": 0
+    }
+  ],
+  "harnessDryRun": {
+    "result": "pass",
+    "selectedProfiles": [
+      "fast",
+      "comms"
+    ],
+    "executedSteps": 1,
+    "skippedSteps": 6,
+    "note": "Only the boundary scan executes in dry-run; scoped tests/type/lint/comms were run separately."
+  },
+  "comms": {
+    "result": "PASS",
+    "failures": 0,
+    "artifact": "C:/Users/27933/.codex/worktrees/p0-memory-integrity-20261009/ClawX/artifacts/comms/compare-report.json",
+    "sha256": "caf5e7d8dd2bf2c0374cfdf2959b955c009706e487fdb9392a32c66c839002b3"
+  },
+  "credentialScan": {
+    "trackedCandidateFiles": 27,
+    "generatedEvidenceFiles": 101,
+    "matches": 0,
+    "scope": "Exact supplied model credential; source candidate and generated evidence outputs"
+  },
+  "correctedFailures": [
+    {
+      "check": "final-diff-check",
+      "exitCode": 2,
+      "reason": "Seven trailing spaces introduced by the artifact-directory replacement",
+      "correctedBy": "final-diff-check-fixed"
+    }
+  ],
+  "environment": {
+    "node": "v24.15.0",
+    "dependencyMode": "existing Windows dependencies reused by junction; no installation"
+  }
+}

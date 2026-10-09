@@ -1,5 +1,5 @@
 export const FROZEN_JUDGE_CONFIG = {
-  model: process.env.DEEPSEEK_MODEL ?? "deepseek-chat",
+  model: process.env.RUNTIME_MEMORY_LLM_MODEL || process.env.DEEPSEEK_MODEL || "deepseek-chat",
   temperature: 0,
   promptVersion: "frozen-v2-generous-2026-07-04",
   promptTemplate: [

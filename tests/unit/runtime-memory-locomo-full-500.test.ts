@@ -15,6 +15,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
+import { createLocomoProvenance, writeLocomoReport } from "../../scripts/check-locomo-evidence.mjs";
 import {
   isRuntimeMemoryAcceptedVerificationStatus,
   type RuntimeMemoryQueryableFact,
@@ -25,7 +26,7 @@ import {
   OPTIMAL_HYBRID_FUSION,
   type HybridSearchIndex,
 } from "../../openclaw_runtime/src/runtime-core/memory-hybrid-retrieval";
-import { callDeepSeek, hasDeepSeekKey } from "./helpers/runtime-memory-real-llm-client";
+import { callDeepSeek, hasDeepSeekKey, getRuntimeMemoryLlmConfig, getRuntimeMemoryLlmReceipts } from "./helpers/runtime-memory-real-llm-client";
 import {
   createSiliconFlowEmbeddingProvider,
   hasSiliconFlowKey,
@@ -67,6 +68,8 @@ import {
   rerankWithCrossEncoder,
 } from "./helpers/cross-encoder-rerank";
 import {
+  DEFAULT_SAMPLE_SEED as SAMPLE_SEED,
+  DEFAULT_SAMPLE_SIZES as SAMPLE_SIZES,
   DEV_SLICE_CACHE_VERSION,
   DEV_SLICE_SAMPLE_SEED,
   DEV_SLICE_SAMPLE_SIZES,
@@ -74,7 +77,7 @@ import {
   isDevSliceCacheValid,
   type DevSliceCache,
 } from "./helpers/runtime-memory-dev-slice";
-import { computeContextRecall, resolveGoldEvidence } from "./helpers/runtime-memory-context-recall";
+import { computeContextRecall, resolveGoldEvidence, computeAnswerTokenRecall } from "./helpers/runtime-memory-context-recall";
 import {
   aggregateErrorTaxonomy,
   classifyErrorTaxonomy,
@@ -168,6 +171,9 @@ import {
   type AgentRetrievalExpansionMaps,
 } from "./helpers/runtime-memory-agent-retrieval";
 
+const EVAL_ARTIFACT_DIR = process.env.RUNTIME_MEMORY_EVAL_ARTIFACT_DIR
+  ?? join(process.cwd(), "artifacts", "runtime-memory-eval");
+
 // === Types ===
 
 type LocomoTurn = {
@@ -212,18 +218,13 @@ const CATEGORY_MAP: Record<number, string> = {
 };
 
 // Stratified sample sizes (total = 500)
-const SAMPLE_SIZES: Record<string, number> = {
-  multi_hop: 96, // all
-  temporal: 150,
-  single_hop: 127,
-  open_domain: 127,
-};
+// SAMPLE_SIZES comes from the shared full-benchmark sampling contract.
 
 // P0-G: Fixed seed for reproducible stratified sampling.
 // Eliminates ±3-5% variance across runs caused by Math.random().
 // Mulberry32 PRNG (high quality, fast) + Fisher-Yates shuffle (unbiased)
 // replaces the biased sort(() => Math.random() - 0.5) pattern.
-const SAMPLE_SEED = 42;
+// SAMPLE_SEED is shared with the evidence verifier.
 
 function createSeededRandom(seed: number): () => number {
   let s = seed >>> 0;
@@ -327,30 +328,18 @@ function extractTurns(conversation: LocomoConversationRaw): LocomoTurn[] {
 // New prompt emits linkedFactIds + Exhaustive Extraction + Memory Linking
 // + Temporal Anchoring. Old v5 cache has no linkedFactIds and suffers from
 // first-topic-dominance bias, so it must not be reused.
-const FACTS_CACHE_PATH = join(
-  process.cwd(),
-  "artifacts",
-  "runtime-memory-eval",
+const FACTS_CACHE_PATH = join(EVAL_ARTIFACT_DIR,
   "extracted-facts-cache-v6-additive-p0.json",
 );
-const DEV_SLICE_CACHE_PATH = join(
-  process.cwd(),
-  "artifacts",
-  "runtime-memory-eval",
+const DEV_SLICE_CACHE_PATH = join(EVAL_ARTIFACT_DIR,
   "dev-slice-cache.json",
 );
-const SESSION_SUMMARY_CACHE_PATH = join(
-  process.cwd(),
-  "artifacts",
-  "runtime-memory-eval",
+const SESSION_SUMMARY_CACHE_PATH = join(EVAL_ARTIFACT_DIR,
   "session-summary-cache.json",
 );
 // Item 3: Observation consolidation cache (cross-session merged facts).
 // Stores observations per conversation so we don't re-run LLM on every run.
-const OBSERVATION_CACHE_PATH = join(
-  process.cwd(),
-  "artifacts",
-  "runtime-memory-eval",
+const OBSERVATION_CACHE_PATH = join(EVAL_ARTIFACT_DIR,
   "observations-cache.json",
 );
 
@@ -1210,17 +1199,7 @@ function computeLegacyRecall(
   groundTruth: string,
   retrievedFacts: readonly RuntimeMemoryQueryableFact[],
 ): number {
-  const answerWords = groundTruth
-    .toLowerCase()
-    .split(/\s+/)
-    .filter((word) => word.length > 3);
-  const retrievedText = retrievedFacts
-    .map((fact) => fact.objectSummary.toLowerCase())
-    .join(" ");
-  return answerWords.length > 0
-    ? answerWords.filter((word) => retrievedText.includes(word)).length /
-        answerWords.length
-    : 0;
+  return computeAnswerTokenRecall(groundTruth, retrievedFacts.map((fact) => fact.objectSummary));
 }
 
 function formatFullConversationText(turns: readonly LocomoTurn[]): string {
@@ -1339,10 +1318,7 @@ async function generateDualTrackAnswer(
 // return the cached verdict without an LLM call. Saves ~80% of judge time
 // when a 150-question run fails at Q120.
 let judgeCache: JudgeResultCache | null = null;
-const JUDGE_CACHE_PATH = join(
-  process.cwd(),
-  "artifacts",
-  "runtime-memory-eval",
+const JUDGE_CACHE_PATH = join(EVAL_ARTIFACT_DIR,
   "judge-result-cache.json",
 );
 
@@ -1360,10 +1336,7 @@ function getJudgeCache(): JudgeResultCache {
 // Stage 5.7: Self-ask cache — stabilizes multi_hop variance by caching
 // decomposition + hop answers. Same question always returns same hop answers.
 let selfAskCache: SelfAskCache | null = null;
-const SELFASK_CACHE_PATH = join(
-  process.cwd(),
-  "artifacts",
-  "runtime-memory-eval",
+const SELFASK_CACHE_PATH = join(EVAL_ARTIFACT_DIR,
   "self-ask-cache.json",
 );
 
@@ -1465,6 +1438,7 @@ describe.skipIf(
     it(
       "runs 500-question stratified LoCoMo benchmark",
       async () => {
+        const provenance = createLocomoProvenance(getRuntimeMemoryLlmConfig());
         const rawData = loadRawData();
         const evidenceTextByConversation = new Map(rawData.map((sample) => [
           sample.sample_id,
@@ -1627,10 +1601,7 @@ describe.skipIf(
           needsEmbeddingProvider && hasSiliconFlowKey()
             ? createSiliconFlowEmbeddingProvider()
             : null;
-        const embeddingCachePath = join(
-          process.cwd(),
-          "artifacts",
-          "runtime-memory-eval",
+        const embeddingCachePath = join(EVAL_ARTIFACT_DIR,
           "embedding-cache.json",
         );
         const embeddingProvider =
@@ -1991,6 +1962,7 @@ describe.skipIf(
           question: string;
           goldEvidence: string[];
           recall5: number;
+          retrievedFactSummaries: string[];
           contextRecall: number;
           judgeScore: number;
           escalationLevel: number;
@@ -2012,6 +1984,7 @@ describe.skipIf(
           question: string;
           goldEvidence: string[];
           recall5: number;
+          retrievedFactSummaries: string[];
           contextRecall: number;
           judgeScore: number;
           escalationLevel: number;
@@ -2512,6 +2485,7 @@ describe.skipIf(
                 question: qa.question,
                 goldEvidence: qa.evidence ?? [],
                 recall5,
+                retrievedFactSummaries: retrievedFacts.map((fact) => fact.objectSummary),
                 contextRecall,
                 judgeScore,
                 escalationLevel,
@@ -3452,6 +3426,7 @@ describe.skipIf(
               question: qa.question,
               goldEvidence: qa.evidence ?? [],
               recall5,
+              retrievedFactSummaries: retrievedFacts.map((fact) => fact.objectSummary),
               contextRecall,
               judgeScore,
               escalationLevel,
@@ -3468,6 +3443,7 @@ describe.skipIf(
               question: qa.question,
               goldEvidence: qa.evidence ?? [],
               recall5: 0,
+              retrievedFactSummaries: [],
               contextRecall: 0,
               judgeScore: 0,
               escalationLevel: 0,
@@ -3558,10 +3534,13 @@ describe.skipIf(
 
         // Build report
         const report = {
+          schemaVersion: 2,
+          evidenceClass: "real-model-evaluation",
+          provenance,
           dataset: "locomo",
           version: fullEval
-            ? "10.0-stage2-adaptive-retrieval"
-            : "10.0-stage2-adaptive-retrieval-dev-slice",
+            ? "11.0-measurement-integrity"
+            : "11.0-measurement-integrity-dev-slice",
           totalQuestions,
           retrievalModeStage2:
             "Stage 2 adaptive retrieval: dual-track episodic+semantic fragments, session-summary retrieval for top-2 whole-session escalation, full-conversation fallback, and sequential self-ask for multi-hop. Default dev-slice mode uses cached retrieval when artifacts/runtime-memory-eval/dev-slice-cache.json is valid; FULL_EVAL=1 or --full runs the full sample.",
@@ -3577,7 +3556,7 @@ describe.skipIf(
           },
           metric: "J Score under the disclosed lenient frozen judge; lexical gold-turn context coverage is diagnostic, not a primary retrieval metric. Empty/missing evidence scores zero. Different judge configurations are not directly comparable.",
           adversarialExcluded: true,
-          sampleSizes: fullEval ? SAMPLE_SIZES : DEV_SLICE_SAMPLE_SIZES,
+          sampleSizes: fullEval ? SAMPLE_SIZES : smoke ? SMOKE_SAMPLE_SIZES : DEV_SLICE_SAMPLE_SIZES,
           sampleSeed: fullEval ? SAMPLE_SEED : DEV_SLICE_SAMPLE_SEED,
           metrics: {
             overall: {
@@ -3629,6 +3608,7 @@ describe.skipIf(
           extraction: summarizeExtractionTelemetry(),
           cost: {
             deepSeekUsage,
+            pricingNote: "Reference DeepSeek rates only, not measured provider billing; modelReceipts contains actual returned token usage for all callers.",
             estimateUsd: costEstimateUsd,
             projectedFullRunEstimateUsd: projectedFullRunCostEstimateUsd,
           },
@@ -3643,6 +3623,9 @@ describe.skipIf(
             return aggregateCompleteness(completenessResults);
           })(),
           comparison: buildSotaComparison(overallJ),
+          questionResults: results,
+          modelReceipts: getRuntimeMemoryLlmReceipts(),
+          cacheUsage: { judgeCacheHits, judgeCacheMisses, cachedRetrieval: cachedCoversSample },
           sampleResults: [
             ...results.filter((result) => result.category === "single_hop").slice(0, 5),
             ...results.filter((result) => result.category === "temporal").slice(0, 5),
@@ -3663,24 +3646,11 @@ describe.skipIf(
             })),
           generatedAt: new Date().toISOString(),
         };
-        assertLocomoStageReportShape(report);
 
-        // Write report
-        const artifactDir = join(
-          process.cwd(),
-          "artifacts",
-          "runtime-memory-eval",
-        );
-        try {
-          mkdirSync(artifactDir, { recursive: true });
-          writeFileSync(
-            join(artifactDir, "locomo-full-500-report.json"),
-            JSON.stringify(report, null, 2) + "\n",
-            "utf-8",
-          );
-        } catch {
-          // ignore write errors
-        }
+        // Preserve even a failed candidate before validation; I/O failure is never ignored.
+        const reportPath = join(EVAL_ARTIFACT_DIR, "locomo-full-500-report.json");
+        writeLocomoReport(report, reportPath);
+        assertLocomoStageReportShape(report);
 
         // P0-OPT: flush judge cache and report hit rate.
         const cache = getJudgeCache();

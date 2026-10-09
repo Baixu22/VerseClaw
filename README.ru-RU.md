@@ -224,6 +224,8 @@ pnpm dev
 
 Корневой `pnpm test` не запускает все тесты OpenClaw. При изменениях runtime выбирайте соответствующие тесты и проверки типов из его [package.json](openclaw_runtime/package.json) и спецификации задачи. Windows Electron E2E необходимо запускать через Windows Node.
 
+**Оценка LoCoMo для разработки:** `pnpm eval:runtime-memory:locomo:full500` явно запускает 500 вопросов и завершается ошибкой при отсутствии ключей модели/эмбеддингов или проверенного отчёта. Это не часть обычного набора unit-тестов; исторические сводные фикстуры не считаются подтверждённой базовой оценкой памяти. См. [границы измерений и доказательств](docs/dev/p0-memory-evaluation-integrity.md).
+
 ### Проверки по типу изменений
 
 - **Спецификации:** сначала выполните `pnpm harness context --spec <task-spec>`, после реализации — `pnpm harness validate --spec <task-spec>`. Проверьте выбранный набор через `pnpm harness run --spec <task-spec> --dry-run`.

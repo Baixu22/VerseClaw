@@ -16,6 +16,9 @@ touchedAreas:
   - tests/unit/**
   - tests/fixtures/runtime-memory-eval/**
   - scripts/check-locomo-evidence.mjs
+  - scripts/check-locomo-evidence.d.mts
+  - scripts/run-locomo-full-evaluation.mjs
+  - artifacts/p0-memory-integrity-20261009/**
   - scripts/repository-artifacts.json
   - docs/dev/p0-memory-evaluation-integrity.md
   - harness/specs/tasks/p0-memory-evaluation-integrity.md
@@ -45,15 +48,16 @@ forbiddenPatterns:
   - relabelling synthetic or unverifiable historical numbers as a real run
   - changing Git refs or deleting historical objects to hide corruption
 requiredTests:
-  - pnpm exec vitest run tests/unit/context-recall.test.ts tests/unit/locomo-pipeline.test.ts tests/unit/locomo-report-comparator.test.ts tests/unit/runtime-memory-locomo-report-schema.test.ts
+  - pnpm exec vitest run tests/unit/context-recall.test.ts tests/unit/locomo-pipeline.test.ts tests/unit/locomo-report-comparator.test.ts tests/unit/runtime-memory-locomo-report-schema.test.ts tests/unit/locomo-evidence-integrity.test.ts tests/unit/runtime-memory-real-llm-client.test.ts tests/unit/locomo-eval-config.test.ts tests/unit/locomo-judge-registry.test.ts
   - pnpm run typecheck:test
+  - pnpm eval:runtime-memory:locomo:verify
 riskNotes:
   - Real model evaluation is opt-in, agent-driven and uses the owner-provided resource; it is separate from deterministic unit tests and CI never silently treats a skip as a measured run.
   - A new model or retrieval configuration establishes a new reference only; it cannot reproduce or validate the unproven historical 0.752 or 0.452 claims.
   - Git issue 62 is diagnosed separately using immutable logs and non-destructive object recovery; unavailable objects remain an explicit gap unless the owner authorizes retiring corrupt refs.
 docs:
-  required: false
-  reason: All four README locales were inspected and contain no LoCoMo score or ranking claims; evaluator-only changes are documented in docs/dev/p0-memory-evaluation-integrity.md.
+  required: true
+  reason: The full500 developer command now guarantees the full sample and fails on missing resources/evidence; all four README locales and the detailed repair record document this interface change.
 acceptance:
   - Fixture-shaped turn IDs exercise context recall and L2 partition regressions in deterministic tests.
   - A J-score increase with a temporal retrieval drop is reported as a retrieval regression.

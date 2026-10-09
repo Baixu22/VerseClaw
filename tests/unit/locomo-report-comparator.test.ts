@@ -442,11 +442,9 @@ describe("loadBaselineReport", () => {
     expect(m).toBeNull();
   });
 
-  it("文件存在 → 返回 metrics, source = baselineName", () => {
-    const m = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-report-phase3-baseline.json");
-    expect(m).not.toBeNull();
-    expect(m!.source).toBe("locomo-full-500-report-phase3-baseline.json");
-    expect(m!.overallJ).toBeCloseTo(0.452, 6);
+  it.each(["locomo-full-500-report-phase3-baseline.json", "locomo-full-500-report-phase4.0-regression.json", "locomo-full-500-report.json"])("历史聚合文件不能被采纳为实测 baseline: %s", (file) => {
+    expect(() => loadBaselineReport(ARTIFACT_DIR, file)).toThrow("Not a measured LoCoMo run");
+    expect(loadReportFromFile(join(ARTIFACT_DIR, file)).evidenceStatus).toBe("unverified");
   });
 });
 
@@ -592,8 +590,8 @@ describe("formatRegressionMarkdown", () => {
 
 describe("集成测试: 历史未验证 reports（只测试读取与算术，不采纳为实测基线）", () => {
   it("历史 J 上涨仍伴随 temporal 检索回归，不能作为能力提升", () => {
-    const phase3 = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-report-phase3-baseline.json");
-    const current = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-report.json");
+    const phase3 = loadReportFromFile(join(ARTIFACT_DIR, "locomo-full-500-report-phase3-baseline.json"));
+    const current = loadReportFromFile(join(ARTIFACT_DIR, "locomo-full-500-report.json"));
     expect(phase3).not.toBeNull();
     expect(current).not.toBeNull();
     const delta = compareReports(phase3!, current!);
@@ -611,8 +609,8 @@ describe("集成测试: 历史未验证 reports（只测试读取与算术，不
   });
 
   it("phase3 → phase4: 回归 (历史回归基线)", () => {
-    const phase3 = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-report-phase3-baseline.json");
-    const phase4 = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-report-phase4.0-regression.json");
+    const phase3 = loadReportFromFile(join(ARTIFACT_DIR, "locomo-full-500-report-phase3-baseline.json"));
+    const phase4 = loadReportFromFile(join(ARTIFACT_DIR, "locomo-full-500-report-phase4.0-regression.json"));
     expect(phase3).not.toBeNull();
     expect(phase4).not.toBeNull();
     const delta = compareReports(phase3!, phase4!);
@@ -627,8 +625,8 @@ describe("集成测试: 历史未验证 reports（只测试读取与算术，不
   });
 
   it("phase4 → current: 大幅提升 (从回归中恢复)", () => {
-    const phase4 = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-report-phase4.0-regression.json");
-    const current = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-report.json");
+    const phase4 = loadReportFromFile(join(ARTIFACT_DIR, "locomo-full-500-report-phase4.0-regression.json"));
+    const current = loadReportFromFile(join(ARTIFACT_DIR, "locomo-full-500-report.json"));
     expect(phase4).not.toBeNull();
     expect(current).not.toBeNull();
     const delta = compareReports(phase4!, current!);
@@ -639,9 +637,9 @@ describe("集成测试: 历史未验证 reports（只测试读取与算术，不
   });
 
   it("完整 pipeline: load → normalize → compare → markdown (无 throw)", () => {
-    const phase3 = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-report-phase3-baseline.json");
-    const phase4 = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-report-phase4.0-regression.json");
-    const current = loadBaselineReport(ARTIFACT_DIR, "locomo-full-500-report.json");
+    const phase3 = loadReportFromFile(join(ARTIFACT_DIR, "locomo-full-500-report-phase3-baseline.json"));
+    const phase4 = loadReportFromFile(join(ARTIFACT_DIR, "locomo-full-500-report-phase4.0-regression.json"));
+    const current = loadReportFromFile(join(ARTIFACT_DIR, "locomo-full-500-report.json"));
     const delta1 = compareReports(phase3!, current!);
     const delta2 = compareReports(phase3!, phase4!);
     const md1 = formatRegressionMarkdown(delta1);

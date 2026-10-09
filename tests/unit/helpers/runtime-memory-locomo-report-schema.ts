@@ -88,7 +88,7 @@ export function assertLocomoStageReportShape(report: unknown): void {
     );
   }
   for (const [index, sample] of root.sampleResults.entries()) {
-    assertSampleResultShape(sample, `report.sampleResults[${index}]`);
+    assertLocomoQuestionResultShape(sample, `report.sampleResults[${index}]`);
   }
 
   if (!Array.isArray(root.judgeSanityCandidates)) {
@@ -237,7 +237,7 @@ function assertExtractionConversationShape(value: unknown, label: string): void 
   }
 }
 
-function assertSampleResultShape(value: unknown, label: string): void {
+export function assertLocomoQuestionResultShape(value: unknown, label: string): void {
   const sample = expectRecord(value, label);
   for (const field of REQUIRED_SAMPLE_RESULT_FIELDS) {
     if (!(field in sample)) {

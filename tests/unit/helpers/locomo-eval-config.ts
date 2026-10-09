@@ -15,6 +15,8 @@
 //   - 配置对象 frozen, 运行期不可变
 
 import { join } from "node:path";
+import { DEFAULT_SAMPLE_SEED, DEFAULT_SAMPLE_SIZES } from "./runtime-memory-dev-slice";
+export { DEFAULT_SAMPLE_SEED, DEFAULT_SAMPLE_SIZES } from "./runtime-memory-dev-slice";
 import {
   DEFAULT_MEMORY_RUNTIME_CONFIG,
   createMemoryRuntimeConfig,
@@ -113,15 +115,10 @@ const ARTIFACT_DIR = join(process.cwd(), "artifacts", "runtime-memory-eval");
  * 默认 sample sizes (全量模式).
  * multi_hop=96 (全量), temporal=150, single_hop=127, open_domain=127 = 500.
  */
-export const DEFAULT_SAMPLE_SIZES: Record<string, number> = {
-  multi_hop: 96,
-  temporal: 150,
-  single_hop: 127,
-  open_domain: 127,
-};
+// Full-sample constants are shared with the evaluator and evidence verifier.
 
 /** 默认 sample seed (P0-G: 固定 seed 消除采样方差) */
-export const DEFAULT_SAMPLE_SEED = 42;
+
 
 /** 默认 DeepSeek 价格 (USD per million tokens, conservative) */
 export const DEFAULT_DEEPSEEK_INPUT_PER_MILLION = 0.27;

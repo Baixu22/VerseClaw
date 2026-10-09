@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   aggregateContextRecall,
   computeContextRecall,
+  computeAnswerTokenRecall,
   resolveGoldEvidence,
 } from "./helpers/runtime-memory-context-recall";
 
@@ -68,4 +69,10 @@ describe("LoCoMo evidence ID regression (#134)", () => {
     expect(resolveGoldEvidence(["D8:6; D9:17", "D30:05", "D:11:26"], map)).toEqual([...map.values()]);
     expect(computeContextRecall("Alice moved to Seattle", ["D8:6 D999:1"], map)).toBe(0.5);
   });
+});
+
+it("retains the exact legacy answer-token proxy for reproducible report checks", () => {
+  expect(computeAnswerTokenRecall("Alice moved to Seattle", ["Alice moved to Seattle"])).toBe(1);
+  expect(computeAnswerTokenRecall("Alice moved to Seattle", ["Caroline moved to Portland"])).toBeCloseTo(1 / 3);
+  expect(computeAnswerTokenRecall("May", ["May"])).toBe(0);
 });

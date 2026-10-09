@@ -3,10 +3,10 @@
 // CI-safe: callers run only when explicitly opted in with
 // RUNTIME_MEMORY_REAL_LLM=1 and DEEPSEEK_API_KEY.
 
+import { createHash } from "node:crypto";
 import { request } from "undici";
 
-const DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions";
-const DEFAULT_MODEL = process.env.DEEPSEEK_MODEL ?? "deepseek-chat";
+const DEFAULT_MODEL = process.env.RUNTIME_MEMORY_LLM_MODEL || process.env.DEEPSEEK_MODEL || "deepseek-chat";
 const DEFAULT_TIMEOUT_MS = 30_000;
 const MAX_RETRIES = 3;
 
@@ -24,7 +24,8 @@ function isReasoningModel(model: string): boolean {
     lower.includes("reasoner") ||
     lower.includes("r1") ||
     lower.includes("v4-flash") ||
-    lower.includes("v3-reasoner")
+    lower.includes("v3-reasoner") ||
+    lower.includes("step-5")
   );
 }
 
@@ -36,6 +37,8 @@ export type LlmResponse = {
     total_tokens: number;
   };
   attempts: number;
+  model?: string;
+  responseId?: string;
 };
 
 export type LlmCallOptions = {
@@ -46,21 +49,55 @@ export type LlmCallOptions = {
 };
 
 export function hasDeepSeekKey(): boolean {
-  return process.env.RUNTIME_MEMORY_REAL_LLM === "1" &&
-    typeof process.env.DEEPSEEK_API_KEY === "string" &&
-    process.env.DEEPSEEK_API_KEY.length > 0;
+  return process.env.RUNTIME_MEMORY_REAL_LLM === "1" && Boolean(
+    process.env.RUNTIME_MEMORY_LLM_API_KEY
+      ? process.env.RUNTIME_MEMORY_LLM_BASE_URL
+      : process.env.DEEPSEEK_API_KEY,
+  );
 }
+
+export function getRuntimeMemoryLlmConfig(): { endpoint: string; model: string } {
+  if (process.env.RUNTIME_MEMORY_LLM_API_KEY && !process.env.RUNTIME_MEMORY_LLM_BASE_URL) {
+    throw new Error("RUNTIME_MEMORY_LLM_API_KEY requires an explicit RUNTIME_MEMORY_LLM_BASE_URL");
+  }
+  const base = new URL(process.env.RUNTIME_MEMORY_LLM_BASE_URL || "https://api.deepseek.com/v1");
+  if (base.username || base.password || base.search || base.hash
+    || (base.protocol !== "https:" && !(base.protocol === "http:" && ["127.0.0.1", "localhost", "[::1]"].includes(base.hostname)))) {
+    throw new Error("Runtime memory LLM base URL must be HTTPS (or loopback HTTP), without credentials, query or fragment");
+  }
+  base.pathname = base.pathname.replace(/\/$/, "") + "/chat/completions";
+  return { endpoint: base.href, model: process.env.RUNTIME_MEMORY_LLM_MODEL || process.env.DEEPSEEK_MODEL || DEFAULT_MODEL };
+}
+
+export type RuntimeMemoryLlmReceipt = {
+  completedAt: string;
+  endpoint: string;
+  requestedModel: string;
+  returnedModel: string | null;
+  responseId: string | null;
+  requestSha256: string;
+  responseSha256: string;
+  status: 200;
+  attempts: number;
+  usage: LlmResponse["usage"];
+};
+const receipts: RuntimeMemoryLlmReceipt[] = [];
+export function getRuntimeMemoryLlmReceipts(): RuntimeMemoryLlmReceipt[] {
+  return receipts.map((receipt) => ({ ...receipt, usage: { ...receipt.usage } }));
+}
+
 
 export async function callDeepSeek(
   system: string,
   user: string,
   options: LlmCallOptions = {},
 ): Promise<LlmResponse> {
-  const apiKey = process.env.DEEPSEEK_API_KEY;
+  const apiKey = process.env.RUNTIME_MEMORY_LLM_API_KEY || process.env.DEEPSEEK_API_KEY;
   if (!apiKey) {
-    throw new Error("DEEPSEEK_API_KEY not set");
+    throw new Error("Runtime memory LLM API key not set");
   }
-  const model = options.model ?? DEFAULT_MODEL;
+  const config = getRuntimeMemoryLlmConfig();
+  const model = options.model ?? config.model;
   // Reasoning models can take 60-120s per call due to the chain-of-thought step.
   const timeoutMs = options.timeoutMs ??
     (isReasoningModel(model) ? 120_000 : DEFAULT_TIMEOUT_MS);
@@ -82,36 +119,35 @@ export async function callDeepSeek(
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      const res = await request(DEEPSEEK_URL, {
+      const requestBody = JSON.stringify({
+        model,
+        messages: [{ role: "system", content: system }, { role: "user", content: user }],
+        temperature, max_tokens: maxTokens, stream: false,
+      });
+      const res = await request(config.endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${apiKey}`,
         },
-        body: JSON.stringify({
-          model,
-          messages: [
-            { role: "system", content: system },
-            { role: "user", content: user },
-          ],
-          temperature,
-          max_tokens: maxTokens,
-          stream: false,
-        }),
+        body: requestBody,
         signal: controller.signal,
       });
-      clearTimeout(timer);
 
       if (res.statusCode >= 500 && attempt < MAX_RETRIES) {
-        lastError = new Error(`DeepSeek server error ${res.statusCode}`);
+        await res.body.dump();
+        clearTimeout(timer);
+        lastError = new Error(`Runtime memory LLM server error ${res.statusCode}`);
         await delay(500 * attempt);
         continue;
       }
       if (res.statusCode !== 200) {
-        const bodyText = await res.body.text();
-        throw new Error(`DeepSeek API ${res.statusCode}: ${bodyText}`);
+        await res.body.dump();
+        throw new Error(`Runtime memory LLM API ${res.statusCode}`);
       }
       const data = (await res.body.json()) as {
+        id?: string;
+        model?: string;
         choices: Array<{
           message: { content: string; reasoning_content?: string };
           finish_reason?: string;
@@ -121,18 +157,33 @@ export async function callDeepSeek(
       if (!data.choices || data.choices.length === 0) {
         throw new Error("DeepSeek returned no choices");
       }
+      clearTimeout(timer);
       const msg = data.choices[0].message;
-      // For reasoning models, prefer `content` (the final answer produced
-      // after reasoning completes). Fall back to `reasoning_content` only
-      // when `content` is empty (e.g. reasoning was truncated by max_tokens).
-      const content = msg.content || msg.reasoning_content || "";
+      const content = msg?.content;
+      if (typeof content !== "string" || content.trim().length === 0 || data.choices[0].finish_reason === "length") {
+        throw new Error("Runtime memory LLM returned no complete final answer (reasoning/truncation is not answer evidence)");
+      }
+      if (!data.usage || ![data.usage.prompt_tokens, data.usage.completion_tokens, data.usage.total_tokens]
+        .every((value) => typeof value === "number" && Number.isFinite(value) && value >= 0)) {
+        throw new Error("Runtime memory LLM returned no valid usage accounting");
+      }
+      receipts.push({
+        completedAt: new Date().toISOString(), endpoint: config.endpoint, requestedModel: model,
+        returnedModel: data.model ?? null, responseId: data.id ?? null,
+        requestSha256: createHash("sha256").update(requestBody).digest("hex"),
+        responseSha256: createHash("sha256").update(JSON.stringify(data)).digest("hex"),
+        status: 200, attempts: attempt, usage: { ...data.usage },
+      });
       return {
         content,
         usage: data.usage,
         attempts: attempt,
+        model: data.model,
+        responseId: data.id,
       };
     } catch (err) {
       clearTimeout(timer);
+      if (err instanceof Error && err.message.includes(apiKey)) err.message = err.message.split(apiKey).join("[REDACTED]");
       lastError = err;
       if (attempt < MAX_RETRIES && isRetryable(err)) {
         await delay(500 * attempt);

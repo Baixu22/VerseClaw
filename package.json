@@ -21,7 +21,7 @@
     "eval:runtime-memory:round2": "pnpm exec vitest run tests/unit/runtime-memory-write-path-semantic-real.test.ts tests/unit/runtime-memory-read-path-consumer-real.test.ts tests/unit/runtime-memory-llm-real-usage.test.ts tests/unit/runtime-memory-long-term-accumulation.test.ts tests/unit/runtime-memory-adversarial-holdout.test.ts tests/unit/runtime-memory-long-conversation-real.test.ts tests/unit/runtime-memory-interleaved-read-write.test.ts tests/unit/runtime-memory-useless-content-judge.test.ts tests/unit/runtime-memory-write-path-llm-judge.test.ts tests/unit/runtime-memory-consumer-llm-judge.test.ts tests/unit/runtime-memory-llm-multi-judge.test.ts tests/unit/runtime-memory-retention-llm-judge.test.ts tests/unit/runtime-memory-maturity-score-real.test.ts --reporter=verbose",
     "eval:runtime-memory:enhanced": "pnpm exec vitest run tests/unit/runtime-memory-eval-statistics.test.ts tests/unit/runtime-memory-eval-chain-eval.test.ts tests/unit/runtime-memory-eval-utility-scorer.test.ts tests/unit/runtime-memory-eval-temporal-evolution.test.ts tests/unit/runtime-memory-eval-topic-drift.test.ts tests/unit/runtime-memory-eval-budget-pressure.test.ts tests/unit/runtime-memory-eval-enhanced-report.test.ts tests/unit/runtime-memory-read-hydration-long-conversation-eval.test.ts tests/unit/runtime-memory-eval-conflict-resolution.test.ts tests/unit/runtime-memory-eval-hazard-sentinel.test.ts tests/unit/runtime-memory-eval-cross-axis-rejection.test.ts tests/unit/runtime-memory-eval-enhanced-integration.test.ts tests/unit/runtime-memory-eval-rejection-coverage-gate.test.ts tests/unit/runtime-memory-eval-latency-benchmark.test.ts tests/unit/runtime-memory-eval-latency-benchmark-real.test.ts tests/unit/runtime-memory-eval-aggregate-report.test.ts tests/unit/runtime-memory-eval-aggregate-report-real.test.ts --reporter=verbose",
     "eval:runtime-memory:locomo": "pnpm exec vitest run tests/unit/runtime-memory-locomo-benchmark.test.ts --reporter=verbose",
-    "eval:runtime-memory:locomo:full500": "pnpm exec vitest run tests/unit/runtime-memory-locomo-full-500.test.ts --reporter=verbose",
+    "eval:runtime-memory:locomo:full500": "node --experimental-strip-types scripts/run-locomo-full-evaluation.mjs",
     "eval:runtime-memory:full": "node openclaw_runtime/scripts/run-runtime-memory-eval.mjs",
     "eval:role-memory:eval": "pnpm exec vitest run tests/unit/role-memory-eval-pack.test.ts --reporter=verbose",
     "eval:context-compression": "node scripts/context-compression-eval-runner.mjs",
@@ -236,7 +236,8 @@
     "uas:06:evidence": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-canary-evidence.mts",
     "uas:06:evidence:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-canary-evidence.mts --check",
     "uas:06:real-canary": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts",
-    "uas:06:real-canary:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts --check"
+    "uas:06:real-canary:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts --check",
+    "eval:runtime-memory:locomo:verify": "node --experimental-strip-types scripts/check-locomo-evidence.mjs"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.22",

@@ -224,6 +224,8 @@ Run these from the repository root. [package.json](package.json) contains their 
 
 Root `pnpm test` does not run every OpenClaw test. For runtime changes, select the relevant tests and type gates from its [package.json](openclaw_runtime/package.json) and the task specification. Windows Electron E2E must run under Windows Node.
 
+**LoCoMo developer evaluation:** `pnpm eval:runtime-memory:locomo:full500` explicitly runs 500 questions and fails when model/embedding credentials or verified output are missing. It is separate from the default unit gate; historical aggregate fixtures are not accepted memory baselines. See the [measurement and evidence boundary](docs/dev/p0-memory-evaluation-integrity.md).
+
 ### Select validation for the change
 
 - **Task specifications:** run `pnpm harness context --spec <task-spec>` first, then `pnpm harness validate --spec <task-spec>` after implementation. Inspect the selected flow with `pnpm harness run --spec <task-spec> --dry-run`.

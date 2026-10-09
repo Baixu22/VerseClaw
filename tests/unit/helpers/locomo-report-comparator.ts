@@ -15,6 +15,7 @@
 
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
+import { verifyLocomoEvidenceFile } from "../../../scripts/check-locomo-evidence.mjs";
 
 // === Schema ===
 
@@ -24,6 +25,7 @@ import { join } from "node:path";
 export type NormalizedReportMetrics = {
   /** report 来源标识 (文件名或 label) */
   source: string;
+  evidenceStatus: "unverified" | "verified";
   judgeSignature?: string;
   contextRecallDefinition?: string;
   /** report version 字段 */
@@ -71,6 +73,7 @@ export type RegressionDelta = {
   /** 是否存在回归 (任一 category J delta < -threshold) */
   hasRegression: boolean;
   judgeComparable: boolean;
+  evidenceVerified: boolean;
   retrievalRegressedCategories: string[];
   /** 回归的 category 列表 (delta < -threshold) */
   regressedCategories: string[];
@@ -128,6 +131,7 @@ export function normalizeReportMetrics(
 
   return {
     source,
+    evidenceStatus: "unverified",
     judgeSignature: judgeSignature(r.judgeConfig),
     contextRecallDefinition: typeof (r.metricDefinitions as Record<string, unknown> | undefined)?.context_recall === "string"
       ? (r.metricDefinitions as Record<string, string>).context_recall : undefined,
@@ -219,6 +223,7 @@ export function compareReports(
     hasRegression: regressedCategories.length > 0 || retrievalRegressedCategories.length > 0
       || overallJ < -threshold || (overallRecall5 !== undefined && overallRecall5 < -threshold),
     judgeComparable: baseline.judgeSignature !== undefined && baseline.judgeSignature === current.judgeSignature,
+    evidenceVerified: baseline.evidenceStatus === "verified" && current.evidenceStatus === "verified",
     retrievalRegressedCategories,
     regressedCategories: [...new Set([...regressedCategories, ...retrievalRegressedCategories])],
     improvedCategories,
@@ -260,7 +265,8 @@ export function loadBaselineReport(
 ): NormalizedReportMetrics | null {
   const path = join(artifactDir, baselineName);
   if (!existsSync(path)) return null;
-  return loadReportFromFile(path, baselineName);
+  verifyLocomoEvidenceFile(path, { root: process.cwd() });
+  return { ...loadReportFromFile(path, baselineName), evidenceStatus: "verified" };
 }
 
 // === Markdown 摘要 ===
@@ -282,6 +288,7 @@ export function loadBaselineReport(
 export function formatRegressionMarkdown(delta: RegressionDelta): string {
   const lines: string[] = [];
   lines.push(`## Regression Report: ${delta.currentSource} vs ${delta.baselineSource}`);
+  if (!delta.evidenceVerified) lines.push("> Unverified input artifacts: arithmetic inspection only, not an accepted baseline comparison.");
   if (!delta.judgeComparable) {
     lines.push("> Different or unknown judge configurations: these are arithmetic differences, not comparable measured gains or a ranking.");
   }

@@ -158,3 +158,7 @@ export function isDevSliceCacheValid(
   }
   return Array.isArray(cache.questions);
 }
+
+// Shared full-benchmark sampling contract; values unchanged from the original evaluator.
+export const DEFAULT_SAMPLE_SIZES: Record<string, number> = { multi_hop: 96, temporal: 150, single_hop: 127, open_domain: 127 };
+export const DEFAULT_SAMPLE_SEED = 42;

@@ -224,6 +224,8 @@ Renderer 请求入口是 `src/lib/host-api.ts` 与 `src/lib/host-api-client.ts`�
 
 根目录 `pnpm test` 不包含 OpenClaw 的所有测试。修改运行时还应按其 [package.json](openclaw_runtime/package.json) 和任务规格选择对应测试与类型门禁。Windows Electron E2E 必须由 Windows Node 执行。
 
+**LoCoMo 开发评测：** `pnpm eval:runtime-memory:locomo:full500` 显式运行 500 题；缺少模型/嵌入凭据或已验证产物时明确失败。它不属于默认单测门，历史聚合夹具不能作为已验收的记忆基线。详见[测量与证据边界](docs/dev/p0-memory-evaluation-integrity.md)。
+
 ### 按改动选择验证
 
 - **任务规格：** 先执行 `pnpm harness context --spec <task-spec>`，实现后执行 `pnpm harness validate --spec <task-spec>`，再用 `pnpm harness run --spec <task-spec> --dry-run` 核对选中的验证流程。
