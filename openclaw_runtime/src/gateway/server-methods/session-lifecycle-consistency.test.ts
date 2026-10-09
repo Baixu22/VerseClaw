@@ -304,7 +304,7 @@ describe("projection, ledger and owner registry consistency", () => {
     const { projection, ledger } = readBoth([]);
 
     expect(ledger.entries.map((entry) => entry.owner)).toEqual(["sessionStore"]);
-    expect(projection).toEqual({ goals: [], processes: [], lineage: [] });
+    expect(projection).toEqual({ goals: [], processes: [], lineage: [], ownerRead: "known" });
   });
 
   it("never lists a reclaimed process in either read model", () => {

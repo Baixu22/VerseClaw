@@ -35,6 +35,10 @@
     "createMemoryDraft": "存为记忆草稿",
     "duration": "持续时间",
     "notAvailable": "暂无",
+    "background": {
+      "unknown": "后台活动状态未知——上次状态读取失败。",
+      "stale": "显示的是上次读取成功的结果，可能已过期。"
+    },
     "sections": {
       "session": "会话",
       "git": "工作区 Git",

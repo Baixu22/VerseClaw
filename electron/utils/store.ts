@@ -5,6 +5,7 @@
 
 import { randomBytes } from 'crypto';
 import { app } from 'electron';
+import { OPENCLAW_GATEWAY_PORT } from '@shared/gateway-endpoint';
 import { resolveSupportedLanguage } from '@shared/language';
 import type { PromptCacheRiskEvent } from '@shared/types/workspace';
 import type { WorkProviderConfig } from '@shared/types/work-provider';
@@ -185,7 +186,7 @@ function createDefaultSettings(): AppSettings {
 
     // Gateway
     gatewayAutoStart: true,
-    gatewayPort: 18789,
+    gatewayPort: OPENCLAW_GATEWAY_PORT,
     roleMemoryEnabled: true,
     memoryEmbeddingEnabled: false,
     gatewayToken: generateToken(),

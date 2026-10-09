@@ -5,6 +5,7 @@
 import { create } from 'zustand';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
+import { OPENCLAW_GATEWAY_PORT } from '@shared/gateway-endpoint';
 import type { GatewayNotification, GatewayHealth, GatewayStatus } from '../types/gateway';
 import type { ChatRuntimeEvent } from '../../shared/chat-runtime-events';
 
@@ -302,7 +303,7 @@ function mapChannelStatus(status: string): 'connected' | 'connecting' | 'disconn
 export const useGatewayStore = create<GatewayState>((set, get) => ({
   status: {
     state: 'stopped',
-    port: 18789,
+    port: OPENCLAW_GATEWAY_PORT,
   },
   health: null,
   isInitialized: false,

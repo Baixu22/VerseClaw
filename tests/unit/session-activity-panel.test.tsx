@@ -13,6 +13,8 @@ const translations: Record<string, string> = {
   'sessionActivity.processStatus.running': 'Running',
   'sessionActivity.processStatus.completed': 'Done',
   'sessionActivity.lineageStatus.started': 'Running',
+  'sessionActivity.background.unknown': 'Background activity is unknown — the last status read failed.',
+  'sessionActivity.background.stale': 'Showing the last successful read; these facts may be out of date.',
   'sessionRail.git.unavailable': 'Git status is temporarily unavailable.',
   'sessionRail.terminal.unavailable': 'Terminal status is temporarily unavailable.',
 };
@@ -154,6 +156,66 @@ describe('SessionActivityPanel', () => {
 
     render(<SessionActivityPanel snapshot={snapshot} onRetryStatus={onRetryStatus} />);
 
+    fireEvent.click(screen.getByTestId('session-activity-retry'));
+    expect(onRetryStatus).toHaveBeenCalledTimes(1);
+  });
+});
+
+/*
+ * "The background read failed" and "there is genuinely no background activity"
+ * are different states, and only the first one may warn (#121). The unknown
+ * warning reuses the card's existing retry affordance; the stale line marks
+ * rows that survived a failed re-read.
+ */
+describe('SessionActivityPanel background read state', () => {
+  const BACKGROUND_CASES = [
+    {
+      name: 'shows a warning with the last-read data marked stale after a failed re-read',
+      backgroundRead: { state: 'unknown' as const, readAt: 5_000, failedAt: 6_000 },
+      unknown: true,
+      stale: true,
+    },
+    {
+      name: 'keeps a first read that never happened silent instead of alarming',
+      backgroundRead: { state: 'unknown' as const, readAt: null, failedAt: null },
+      unknown: false,
+      stale: false,
+    },
+    {
+      name: 'shows the normal empty state for a successful empty read',
+      backgroundRead: { state: 'known' as const, readAt: 6_000, failedAt: null },
+      unknown: false,
+      stale: false,
+    },
+  ];
+
+  it.each(BACKGROUND_CASES)('$name', ({ backgroundRead, unknown, stale }) => {
+    const snapshot = createEmptySessionActivitySnapshot('agent:main:background');
+    snapshot.availability = { git: true, tasks: true, subagents: true, terminals: true, continuity: true };
+    snapshot.backgroundRead = backgroundRead;
+    const onRetryStatus = vi.fn();
+
+    const { container } = render(
+      <SessionActivityPanel snapshot={snapshot} onRetryStatus={onRetryStatus} />,
+    );
+
+    if (!unknown) {
+      expect(container).toBeEmptyDOMElement();
+      expect(screen.queryByTestId('session-activity-background-unknown')).toBeNull();
+      expect(screen.queryByTestId('session-activity-alert')).toBeNull();
+      return;
+    }
+
+    expect(screen.getByTestId('session-activity-background-unknown')).toHaveTextContent(
+      'Background activity is unknown — the last status read failed.',
+    );
+    if (stale) {
+      expect(screen.getByTestId('session-activity-background-stale')).toHaveTextContent(
+        'Showing the last successful read; these facts may be out of date.',
+      );
+    } else {
+      expect(screen.queryByTestId('session-activity-background-stale')).toBeNull();
+    }
     fireEvent.click(screen.getByTestId('session-activity-retry'));
     expect(onRetryStatus).toHaveBeenCalledTimes(1);
   });

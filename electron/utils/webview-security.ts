@@ -52,7 +52,8 @@ export function isAllowedGatewayControlHost(hostname: string, port?: string | nu
   }
   if (port == null || port === '') return true;
   const n = typeof port === 'number' ? port : Number(port);
-  // Gateway uses 18789 by default; allow any loopback port for local control UI.
+  // The Gateway loopback port comes from shared/gateway-endpoint; any loopback
+  // port is accepted here for the local control UI.
   return Number.isFinite(n) && n > 0 && n < 65536;
 }
 

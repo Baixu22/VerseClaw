@@ -47,6 +47,7 @@ import type { RunProcessSurface } from '@/components/tool-ui/run-surfaces';
 import type { RunPlanSurface } from '@/pages/Chat/run-surface-promotion';
 import { cn } from '@/lib/utils';
 import { subagentIdentity } from '@shared/subagent-identity';
+import { backgroundReadFailed } from '@shared/types/session-activity';
 import type {
   SessionActivitySnapshot,
   SessionActivitySubagent,
@@ -275,6 +276,19 @@ export function SessionActivityPanel({
     showGit && !snapshot.availability.git ? t('sessionRail.git.unavailable') : null,
     showCommands && !snapshot.availability.terminals ? t('sessionRail.terminal.unavailable') : null,
   ].filter(Boolean);
+  /**
+   * "The background read failed" is not "there is no background activity".
+   *
+   * Without an alert for it, a failed first read renders as an empty card —
+   * and because an empty card has no content the panel would not even mount,
+   * so the user never learns that the status is unknown rather than idle. The
+   * warning deliberately comes from `backgroundReadFailed`, not from
+   * `state === 'unknown'`: a snapshot that has not been read yet is unknown
+   * too, and warning about it would fire on every first paint.
+   */
+  const backgroundUnknown = backgroundReadFailed(snapshot.backgroundRead);
+  /* A failed read after a good one keeps its rows; say that they are old. */
+  const backgroundStale = backgroundUnknown && snapshot.backgroundRead.readAt != null;
   const alert = [snapshot.session.error, snapshot.continuity.blockedReason, ...availabilityErrors]
     .filter(Boolean)
     .join(' · ') || null;
@@ -292,7 +306,7 @@ export function SessionActivityPanel({
   const runningProcesses = visibleProcesses.filter((entry) => entry.status === 'running').length;
 
   if (!hasGit && !hasPlan && !hasSubagents && !hasProcesses
-    && snapshot.goals.length === 0 && snapshot.lineage.length === 0 && !alert) return null;
+    && snapshot.goals.length === 0 && snapshot.lineage.length === 0 && !alert && !backgroundUnknown) return null;
 
   return (
     <aside
@@ -526,7 +540,25 @@ export function SessionActivityPanel({
             {alert}
           </p>
         ) : null}
-        {availabilityErrors.length > 0 && onRetryStatus ? (
+        {backgroundUnknown ? (
+          <p
+            className="codex-session-activity__empty"
+            data-state="error"
+            data-testid="session-activity-background-unknown"
+          >
+            {t('sessionActivity.background.unknown')}
+          </p>
+        ) : null}
+        {backgroundStale ? (
+          <p
+            className="codex-session-activity__empty"
+            data-state="warn"
+            data-testid="session-activity-background-stale"
+          >
+            {t('sessionActivity.background.stale')}
+          </p>
+        ) : null}
+        {(availabilityErrors.length > 0 || backgroundUnknown) && onRetryStatus ? (
           <button
             type="button"
             className="codex-session-activity__retry"

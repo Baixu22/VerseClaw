@@ -115,6 +115,10 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
         goals: readProjection.goals,
         processes: readProjection.processes,
         lineage: readProjection.lineage,
+        // The goal-wake owner read can fail and degrade to empty arrays; the
+        // read state travels with the snapshot so Main cannot report a failed
+        // owner read as a session with no background activity (#121).
+        ownerRead: readProjection.ownerRead,
         continuity: {
           queueCount,
           checkpoint: Boolean(checkpoint),

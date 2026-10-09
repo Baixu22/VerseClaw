@@ -75,7 +75,8 @@
     "harness/specs/rules/repository-artifact-retention.md",
     "SECURITY.md",
     "docs/dev/hardware-acceleration-policy.md",
-    "docs/dev/p2-issue-fixes-batch1-20261010.md"
+    "docs/dev/p2-issue-fixes-batch1-20261010.md",
+    "docs/dev/p2-issue-fixes-batch2-20261010.md"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",
@@ -1663,6 +1664,7 @@
     "docs/dev/harness-gap-closure/o01-approval-rate.md",
     "docs/dev/harness-gap-closure/o01-acceptance.json",
     "docs/dev/harness-gap-closure/O01-SHA256SUMS",
-    "docs/dev/p2-issue-fixes-batch1-20261010.md"
+    "docs/dev/p2-issue-fixes-batch1-20261010.md",
+    "docs/dev/p2-issue-fixes-batch2-20261010.md"
   ]
 }

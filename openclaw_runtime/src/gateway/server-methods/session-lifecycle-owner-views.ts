@@ -8,7 +8,9 @@
 // rule out.
 //
 // There is no write path here. Every read degrades to an empty result instead of
-// throwing, and no identifier is ever derived from another one.
+// throwing, and a failed read is reported as `unknown` rather than being passed
+// off as an owner that simply had nothing to say (#121); no identifier is ever
+// derived from another one.
 import type { Selectable } from "kysely";
 
 import {
@@ -153,11 +155,24 @@ export type SessionLifecycleOwnerViews = {
   mission?: MissionRunRecord;
   flows: SessionLifecycleFlowRow[];
   tasks: SessionLifecycleTaskRunRow[];
+  /**
+   * Whether the goal-wake owner query completed.
+   *
+   * `unknown` means the owner could not be read at all, so `flows`/`tasks` are
+   * a missing answer rather than an answer of "nothing is waiting". This is the
+   * source-side form of the activity snapshot's `backgroundRead` state: the
+   * empty arrays alone cannot be told apart from a session that genuinely has
+   * nothing in flight, which is the defect this field removes (#121).
+   */
+  goalWakeRead: SessionLifecycleReadState;
   bashProcesses: Array<ProcessSession | FinishedSession>;
   supervisorRuns: SupervisorSessionRunSnapshot[];
   lineageRuns: SubagentRunRecord[];
   parentRun?: SubagentRunRecord;
 };
+
+/** See `SessionLifecycleOwnerViews.goalWakeRead`. */
+export type SessionLifecycleReadState = "known" | "unknown";
 
 export type SessionLifecycleOwnerViewOptions = {
   mission?: MissionRunRecord;
@@ -168,15 +183,23 @@ export type SessionLifecycleOwnerViewOptions = {
 
 /**
  * Read-only goal-wake ledger rows for one session. Failures degrade to empty
- * arrays; this function never writes and never throws.
+ * arrays and report `read: "unknown"`; this function never writes and never
+ * throws. The read state is part of the result because an empty array produced
+ * by a failed query and an empty array produced by a query that found nothing
+ * are different facts (#121).
  */
 export function readGoalWakeRowsForSession(
   sessionKey: string,
   limits: { goalLimit?: number; processLimit?: number } = {},
-): { flows: SessionLifecycleFlowRow[]; tasks: SessionLifecycleTaskRunRow[] } {
+): {
+  flows: SessionLifecycleFlowRow[];
+  tasks: SessionLifecycleTaskRunRow[];
+  read: SessionLifecycleReadState;
+} {
   const key = nonEmptyString(sessionKey);
   if (!key) {
-    return { flows: [], tasks: [] };
+    // No session means no owner rows to read: an empty answer is the answer.
+    return { flows: [], tasks: [], read: "known" };
   }
   const goalLimit = limits.goalLimit ?? GOAL_PROJECTION_LIMIT;
   const processLimit = limits.processLimit ?? PROCESS_PROJECTION_LIMIT;
@@ -205,9 +228,12 @@ export function readGoalWakeRowsForSession(
         .orderBy("task_id", "desc")
         .limit(processLimit),
     ).rows;
-    return { flows, tasks };
+    return { flows, tasks, read: "known" };
   } catch {
-    return { flows: [], tasks: [] };
+    // The query failed, so "no flows and no tasks" is not a fact we hold. Say so
+    // instead of handing the caller an empty result it will render as a session
+    // with nothing in flight.
+    return { flows: [], tasks: [], read: "unknown" };
   }
 }
 
@@ -256,7 +282,7 @@ export function collectSessionLifecycleOwnerViews(
   options: SessionLifecycleOwnerViewOptions = {},
 ): SessionLifecycleOwnerViews {
   const key = nonEmptyString(sessionKey) ?? "";
-  const { flows, tasks } = readGoalWakeRowsForSession(key, {
+  const goalWake = readGoalWakeRowsForSession(key, {
     goalLimit: options.goalLimit,
     processLimit: options.processLimit,
   });
@@ -281,8 +307,9 @@ export function collectSessionLifecycleOwnerViews(
   return {
     sessionKey: key,
     mission,
-    flows,
-    tasks,
+    flows: goalWake.flows,
+    tasks: goalWake.tasks,
+    goalWakeRead: goalWake.read,
     bashProcesses: readBashProcessesForSession(key),
     supervisorRuns,
     lineageRuns: lineage.lineageRuns,

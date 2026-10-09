@@ -954,7 +954,7 @@
       },
       "renderer.gatewayFetchBanMissing": {
         "title": "缺少直接 Gateway fetch 警告",
-        "description": "请补充禁止 renderer fetch/WebSocket 访问 127.0.0.1:18789 或 localhost:18789 的确定性规则。"
+        "description": "请补充禁止 renderer fetch/WebSocket 访问本机 Gateway 端点的确定性规则。"
       },
       "renderer.ipcConflict": {
         "title": "潜在直接 IPC 冲突",

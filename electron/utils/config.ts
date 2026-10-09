@@ -3,6 +3,8 @@
  * Centralized configuration constants and helpers
  */
 
+import { OPENCLAW_GATEWAY_PORT } from '@shared/gateway-endpoint';
+
 /**
  * Port configuration
  */
@@ -16,8 +18,8 @@ export const PORTS = {
   /** Local host API server port */
   VERSE_CLAW_HOST_API: 13210,
   
-  /** OpenClaw Gateway port */
-  OPENCLAW_GATEWAY: 18789,
+  /** OpenClaw Gateway port (single source: shared/gateway-endpoint.ts) */
+  OPENCLAW_GATEWAY: OPENCLAW_GATEWAY_PORT,
 } as const;
 
 /**

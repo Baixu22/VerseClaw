@@ -143,5 +143,77 @@
   "errorBoundary": {
     "description": "发生了意外错误。请重新加载以继续,或将下方的错误编号提供给支持人员。",
     "errorReference": "错误编号:"
+  },
+  "errors": {
+    "auth_invalid": {
+      "what": "身份验证失败:会话或 API Key 被拒绝。",
+      "responsibility": "这是你的账号或凭据问题,不是 Verse Claw 的缺陷。",
+      "nextStep": "请重新登录,或在设置中重新填写 API Key 后重试。"
+    },
+    "auth_permanent": {
+      "what": "服务商永久拒绝了该 API Key。",
+      "responsibility": "凭据已失效或被吊销,直接重试不会成功。",
+      "nextStep": "请在设置中为该服务商更换 API Key,然后重试。"
+    },
+    "timeout": {
+      "what": "服务商未在时限内应答,请求已超时。",
+      "responsibility": "网络或服务商响应过慢。",
+      "nextStep": "该操作可能已在上游完成,请先确认结果再重试。"
+    },
+    "rate_limit": {
+      "what": "服务商当前正在限流。",
+      "responsibility": "这是服务商的频率或配额限制,不是 Verse Claw 的缺陷。",
+      "nextStep": "请稍等片刻后重试。"
+    },
+    "permission": {
+      "what": "该操作未获得授权。",
+      "responsibility": "本地配置或账号角色不允许此操作。",
+      "nextStep": "请检查相关权限或设置后重试。"
+    },
+    "channel_unavailable": {
+      "what": "服务通道不可用。",
+      "responsibility": "应用本地组件没有响应。",
+      "nextStep": "请重启应用或网关后重试。"
+    },
+    "conversation_state": {
+      "what": "服务商拒绝了当前会话状态。",
+      "responsibility": "会话记录与服务商期望的格式不一致。",
+      "nextStep": "请新建一个会话;重试当前这一轮仍会失败。"
+    },
+    "network": {
+      "what": "网络请求失败。",
+      "responsibility": "应用与服务之间的连接已中断。",
+      "nextStep": "请检查网络连接后重试。"
+    },
+    "config": {
+      "what": "配置无效。",
+      "responsibility": "某个设置项缺失或格式错误。",
+      "nextStep": "请在设置中修正该项后重试。"
+    },
+    "gateway": {
+      "what": "网关不可用。",
+      "responsibility": "本地 OpenClaw 网关未运行或尚未就绪。",
+      "nextStep": "请启动或重启网关后重试。"
+    },
+    "billing": {
+      "what": "服务商账号余额或配额不足。",
+      "responsibility": "这是服务商账号的计费或配额问题。",
+      "nextStep": "请为该账号充值,或切换到其他服务商或模型;现在重试不会成功。"
+    },
+    "overloaded": {
+      "what": "模型服务商当前过载。",
+      "responsibility": "服务商侧暂时负载过高。",
+      "nextStep": "请稍等一会儿再重试,或切换到其他模型。"
+    },
+    "model_not_found": {
+      "what": "所选模型在该服务商下不可用。",
+      "responsibility": "模型 ID 或服务商路由有误,或该模型已下线。",
+      "nextStep": "请在模型选择器中换一个模型后重试。"
+    },
+    "unknown": {
+      "what": "发生了意外错误。",
+      "responsibility": "本地无法确定具体原因。",
+      "nextStep": "请先重试一次;若再次出现,请把错误编号提供给支持人员。"
+    }
   }
 }

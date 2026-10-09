@@ -6,6 +6,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import i18n from '@/i18n';
 import { hostApi } from '@/lib/host-api';
+import { OPENCLAW_GATEWAY_PORT } from '@shared/gateway-endpoint';
 import { resolveSupportedLanguage } from '@shared/language';
 import type { WorkProviderConfig, WorkProviderId } from '@shared/types/work-provider';
 import {
@@ -113,7 +114,7 @@ const defaultSettings = {
   launchAtStartup: false,
   telemetryEnabled: true,
   gatewayAutoStart: true,
-  gatewayPort: 18789,
+  gatewayPort: OPENCLAW_GATEWAY_PORT,
   roleMemoryEnabled: true,
   memoryEmbeddingEnabled: false,
   cdpRemoteControlEnabled: false,

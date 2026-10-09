@@ -25,7 +25,10 @@ import * as stateDb from "../../state/openclaw-state-db.js";
 import type { DB as OpenClawStateKyselyDatabase } from "../../state/openclaw-state-db.generated.js";
 import { createProcessSupervisor, type SupervisorSessionRunSnapshot } from "../../process/supervisor/index.js";
 import { TaskFlowCasStore } from "../../tasks/task-flow-cas.js";
-import { collectSessionActivityReadProjection } from "./session-activity-projection.js";
+import {
+  buildSessionActivityReadProjection,
+  collectSessionActivityReadProjection,
+} from "./session-activity-projection.js";
 
 type SeedDatabase = Pick<OpenClawStateKyselyDatabase, "task_runs">;
 
@@ -398,12 +401,29 @@ describe("session activity read projection", () => {
   });
 
   it("returns stable empty projections for blank, missing, and terminal-only sessions", () => {
-    expect(collectSessionActivityReadProjection("")).toEqual({ goals: [], processes: [], lineage: [] });
+    expect(collectSessionActivityReadProjection("")).toEqual({
+      goals: [],
+      processes: [],
+      lineage: [],
+      ownerRead: "known",
+    });
     expect(collectSessionActivityReadProjection("agent:phase5:missing")).toEqual({
       goals: [],
       processes: [],
       lineage: [],
+      ownerRead: "known",
     });
+  });
+
+  it("carries a failed goal-wake owner read as ownerRead: unknown", () => {
+    expect(
+      buildSessionActivityReadProjection({
+        sessionKey: "agent:phase5:owner-read-failed",
+        flows: [],
+        tasks: [],
+        goalWakeRead: "unknown",
+      }),
+    ).toEqual({ goals: [], processes: [], lineage: [], ownerRead: "unknown" });
   });
 
   it("joins mission, goal-wake flow, and goal-owned process through one lineage ref", () => {
