@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-cvk-real-evidence",
+  "simulated_actor": "scripted human operation, agent-driven; not real-human evidence",
+  "verifiedAt": "2026-10-09T04:13:54.532Z",
+  "endpoint": "https://api.stepfun.com/step_plan/v1",
+  "model": "step-5-preview",
+  "purpose": "Prove the Context Runtime Kit prompt addition is really injected into a real isolated Gateway turn and consumed by the real step-5-preview model.",
+  "passed": true,
+  "sourceCandidate": null,
+  "scriptPolicy": "runner and harness kept outside the repository under D:/ClawX-work/cvk-real-evidence-20261009/ and intentionally not committed",
+  "gateway": {
+    "pid": 24016,
+    "entry": "entry.js",
+    "entrySha256": "4639e1220adc24cfc5fd59ad3baa814f492bb809c54f95bb89b7d3fe8e673c46",
+    "ready": true,
+    "exited": true
+  },
+  "providerRequest": {
+    "requestBytes": 23509,
+    "requestSha256": "e3c100ddc94fe89274196e011f48ae994bebd4106c8a502c51be94b14b271807",
+    "messageCount": 2,
+    "systemPromptChars": 21670,
+    "toolNamesOffered": [
+      "read"
+    ],
+    "status": 200,
+    "returnedModel": "step-5-preview",
+    "usage": {
+      "cached_tokens": 512,
+      "prompt_tokens": 6645,
+      "completion_tokens": 4,
+      "total_tokens": 6649,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0
+      }
+    }
+  },
+  "cvk": {
+    "hasCvkBlock": true,
+    "hasContextStatus": true,
+    "artifactHash": "sha256:d17922edfe3193fc7f84992cee88f963acf816e4f3ac59db227af0e13960b606",
+    "metrics": "SC=1 RRR=1 AR=1",
+    "toolGateMode": "report_only",
+    "registryEntryCount": 1,
+    "compactSelectorRefs": 10,
+    "requiredToolSelectorLines": 0,
+    "diagnosticsLines": 0
+  },
+  "checks": [
+    {
+      "name": "cvk-injected-into-real-provider-request",
+      "passed": true,
+      "evidence": "loopback relay captured the exact upstream HTTPS body",
+      "artifact": "sha256:d17922edfe3193fc7f84992cee88f963acf816e4f3ac59db227af0e13960b606",
+      "metrics": "SC=1 RRR=1 AR=1",
+      "toolGateMode": "report_only",
+      "registryEntryCount": 1,
+      "compactSelectorRefs": 10,
+      "requiredToolSelectorLines": 0,
+      "diagnosticsLines": 0,
+      "toolNamesOffered": [
+        "read"
+      ]
+    },
+    {
+      "name": "real-model-consumed-cvk-block",
+      "passed": true,
+      "expected": "report_only",
+      "actual": "report_only",
+      "model": "step-5-preview",
+      "provider": "stepfun-evidence",
+      "usage": {
+        "input": 6133,
+        "output": 4,
+        "totalTokens": 6649,
+        "cacheRead": 512,
+        "cacheWrite": 0,
+        "cost": {
+          "total": 0
+        }
+      }
+    }
+  ],
+  "preservedAttempts": [
+    {
+      "id": "attempt-1",
+      "passed": false,
+      "failure": "AssertionError [ERR_ASSERTION]: CVK artifact hash line missing\n    at file:///D:/ClawX-work/cvk-real-evidence-20261009/run-cvk-evidence.mjs:147:3\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)",
+      "requests": 1,
+      "note": "assertion on artifact regex was too strict; the injected artifact line carried a sha256: prefix"
+    }
+  ],
+  "providerRequests": 1,
+  "credentialScan": null,
+  "monetaryCost": {
+    "measured": false,
+    "note": "no billing record; runtime zero-cost defaults are not treated as free"
+  }
+}

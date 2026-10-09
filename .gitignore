@@ -699,6 +699,9 @@ openclaw_runtime/_tmp_*
 !/artifacts/stepfun-real-acceptance-20261009/SHA256SUMS
 !/artifacts/stepfun-real-acceptance-20261009/credential-scan.json
 !/artifacts/stepfun-real-acceptance-20261009/report.json
+!/artifacts/cvk-real-runtime-evidence-20261009/SHA256SUMS
+!/artifacts/cvk-real-runtime-evidence-20261009/credential-scan.json
+!/artifacts/cvk-real-runtime-evidence-20261009/report.json
 !/artifacts/system-maturity/P0-001/audit-baseline-check.frozen.json
 !/artifacts/system-maturity/P0-001/audit-baseline-check.json
 !/artifacts/system-maturity/P0-001/audit-baseline-check.stdout.txt
@@ -1527,6 +1530,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/source-parity-verification-prompt.md
 !/docs/dev/stepfun-basic-live-evidence-20261008.md
 !/docs/dev/stepfun-real-acceptance-20261009.md
+!/docs/dev/cvk-real-runtime-evidence-20261009.md
 !/docs/dev/tf0001-controlled-operable-closeout.md
 !/docs/dev/tf0006-evidence-upgrade-unblock.md
 !/docs/dev/tf0009-policy-decision-20260930.md
