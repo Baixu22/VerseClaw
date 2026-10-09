@@ -439,6 +439,126 @@
     {
       "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/verify-b00.py",
       "sha256": "3bc71ff7a019eb92a5838a2e42b7d3999017465b98d679bedb4b23fe89c993a6"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-candidate.json",
+      "sha256": "a44a29e8465f4f4874d687e7481262bfca021aa0611e991e3e0015f1104ead74"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-focused.receipt.json",
+      "sha256": "770b556318ab3456daf7e3532355472524bf68fa874203619fd755aec8a89553"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-focused.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-focused.stdout.log",
+      "sha256": "caab104dc734525f92b2350bed37c10dbdfbcf47cc6c3ca127b97bddfb83ab80"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-focused.vitest.json",
+      "sha256": "a61d43d54cb2b64f14d8cc4cf8d638a11fda18c8b904608e09b5166052998c8b"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-harness.receipt.json",
+      "sha256": "5826855e17cf441cd7fef3e87987c5c534fae2e7a0a475c67fdc3ab9cb55cc81"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-harness.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-harness.stdout.log",
+      "sha256": "be3d6c6b7dde7dd0fbb68fda8c7527445f5507aadcf9a96389d17ed8406aae3c"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-inventory.receipt.json",
+      "sha256": "a99911fd1aede9ccf64f494300ea1bb8d65c2990e601868b508c131255b498a0"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-inventory.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-inventory.stdout.log",
+      "sha256": "83c2b8d14d6d5e5b00e5766dccecdca5e11c08b7fee6e6cd6a89d84ac99733cd"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-typecheck.receipt.json",
+      "sha256": "afdb92c5f5734119a75e2d0fc28d270552c710db06d0d82f6293ff276b2f53c0"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-typecheck.stderr.log",
+      "sha256": "1d89572ea3ee8e369dd8780e2d6128aa0652a1ebb8da32682509697ab0b8f8c1"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-typecheck.stdout.log",
+      "sha256": "a8b08e3a227b53f54eef270c33705910c000d36f7b909437c15c6dedf8944a67"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/integration-verification.json",
+      "sha256": "773d854a6c95d5d0fbb4c3beceb94bf137f62d94a61cb1d48e9e68a3f86c29e3"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/verify-integration.py",
+      "sha256": "bb773a8ee7e1971f4b9a03c097240b18bbc526f73d2714980f8ef417dc0e30bd"
     }
-  ]
+  ],
+  "integration": {
+    "actor": "codex-independent-integration-verifier",
+    "driven_by": "agent",
+    "ok": true,
+    "errors": [],
+    "candidate": {
+      "actor": "codex-integration-auditor",
+      "driven_by": "agent",
+      "commit": "14a2169e28597a1f000c72701d9a7b4ecfc043d0",
+      "tree": "fa75047521dd301e3f333598073ba1592534d5fb",
+      "testedCandidate": "1ad6d7394a030d4760d561dc3a056ffde2fc0bfc",
+      "mainBase": "a94528dfbec6000ee381df852ce7b5dcdfecac7d",
+      "dirty": false,
+      "unchangedProofScopes": [
+        "src",
+        "electron",
+        "shared",
+        "openclaw_runtime",
+        "tests",
+        "package.json",
+        "pnpm-lock.yaml",
+        "vitest.config.ts",
+        "harness/src",
+        "scripts/check-harness-gap-baseline.mjs",
+        "scripts/check-harness-gap-baseline.d.mts",
+        "harness/specs/tasks/harness-gap-baseline.md"
+      ],
+      "changedProofScopeFiles": [],
+      "changesFromPreIntegration": [
+        ".gitignore",
+        "artifacts/cvk-real-runtime-evidence-20261009/SHA256SUMS",
+        "artifacts/cvk-real-runtime-evidence-20261009/credential-scan.json",
+        "artifacts/cvk-real-runtime-evidence-20261009/report.json",
+        "artifacts/live-model-cleanup-20261009/SHA256SUMS",
+        "artifacts/live-model-cleanup-20261009/report.json",
+        "artifacts/stepfun-real-acceptance-20261009/SHA256SUMS",
+        "artifacts/stepfun-real-acceptance-20261009/credential-scan.json",
+        "artifacts/stepfun-real-acceptance-20261009/report.json",
+        "docs/dev/cvk-real-runtime-evidence-20261009.md",
+        "docs/dev/live-model-cleanup-20261009.md",
+        "docs/dev/stepfun-real-acceptance-20261009.md",
+        "harness/specs/tasks/cvk-real-runtime-evidence.md",
+        "harness/specs/tasks/stepfun-basic-live-evidence.md",
+        "harness/specs/tasks/stepfun-real-acceptance.md",
+        "scripts/check-live-model-evidence.mjs",
+        "scripts/check-live-model-evidence.test.mjs",
+        "scripts/repository-artifacts.json"
+      ],
+      "note": "Clean rebase over unrelated live-evidence work; full profile was executed on testedCandidate. Rebased sanity is separate and does not claim a second full run."
+    },
+    "focusedTests": 133,
+    "fullProfileReexecutedOnIntegration": false,
+    "scope": "B00 only: full original proof plus unchanged code inputs and clean-rebase sanity; no global GA claim",
+    "proofBranch": "codex/harness-gap-b00-closeout",
+    "integrationBranch": "codex/harness-gap-b00-integration-20261009"
+  }
 }
