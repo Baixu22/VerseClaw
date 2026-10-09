@@ -9,7 +9,7 @@
 - 清单：`source-inventory.json`。每项只有一个主owner；HG22/HG27来源未恢复，不编造需求。
 - 核验：`node scripts/check-harness-gap-baseline.mjs`；测试：`pnpm exec vitest run tests/unit/harness-gap-baseline.test.ts`。当前源核验与不可变结构测试分开，后续改动不应悄悄刷新本历史基线。
 - 当前候选、原始运行、退出码/计数/耗时、独立核验、扫描与未执行范围见 `baseline-evidence.json`。
-- sourceBaseline标识核查生产源的已提交基线；新清单/脚本的冻结候选另行记录。复用现有依赖，不声称全新安装通过。
+- sourceBaseline标识核查生产源的已提交基线；新清单/脚本的冻结候选另行记录。开发首轮复用现有依赖；完整门遇依赖缺失后改用隔离、锁定、缓存安装（跳过生命周期脚本），实际安装与验证结果见证据，不声称应用全新安装通过。
 
 ## 已证实的纠偏
 

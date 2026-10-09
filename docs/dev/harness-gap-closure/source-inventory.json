@@ -10,7 +10,7 @@
     "tree": "b91f3d0f90ce470d47ab372374011c3f042c5bef",
     "hashFormat": "sha256-utf8-lf",
     "scope": "immutable source snapshot; final B00 candidate identity is in baseline-evidence.json",
-    "dependencyMode": "existing installed dependencies reused; not a fresh-install qualification"
+    "dependencyMode": "Development reused existing dependencies; frozen gates use an isolated frozen-lockfile offline install with lifecycle scripts disabled after shared-dependency failure. Not app fresh-install qualification."
   },
   "sourceRecovery": {
     "originalPath": "docs/research/harness-gap-register-2026-10-08.md",
@@ -400,7 +400,7 @@
     },
     "a5History": {
       "path": "docs/dev/harness-gap-closure/baseline.md",
-      "sha256": "f685e6ca65efc2d676a156d0eeb589c6de73d2702aa8fe905fb95970b8cf2027",
+      "sha256": "ce2ee20601b69892eae9c9948c5c74c14ea5bcd02d28c135564cff53f61bfb22",
       "line": 24,
       "anchor": "A5历史报告基线为734ec877e75682861103660fbdea2bd55253ece0，仅shadow/diagnostics-only，不是当前pilot验收。"
     },
