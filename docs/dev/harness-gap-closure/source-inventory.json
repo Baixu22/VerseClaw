@@ -10,7 +10,7 @@
     "tree": "b91f3d0f90ce470d47ab372374011c3f042c5bef",
     "hashFormat": "sha256-utf8-lf",
     "scope": "immutable source snapshot; final B00 candidate identity is in baseline-evidence.json",
-    "dependencyMode": "Development reused existing dependencies; frozen gates use an isolated frozen-lockfile offline install with lifecycle scripts disabled after shared-dependency failure. Not app fresh-install qualification."
+    "dependencyMode": "Development reused existing dependencies. Frozen gates use an isolated frozen-lockfile install with lifecycle scripts disabled; offline cache miss required registry download. Not app fresh-install qualification."
   },
   "sourceRecovery": {
     "originalPath": "docs/research/harness-gap-register-2026-10-08.md",
