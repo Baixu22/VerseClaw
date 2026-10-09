@@ -1,5 +1,6 @@
 import type { SessionActivitySnapshotPayload } from '@shared/host-api/contract';
 import type {
+  SessionActivityBackgroundRead,
   SessionActivitySnapshot,
   SessionActivityTask,
   SessionActivityTerminalStatus,
@@ -13,7 +14,17 @@ import { createTaskLedgerApi } from './task-ledger-api';
 import type { TerminalSessionManager } from './terminal-session-manager';
 
 type RuntimeActivityResponse = {
-  snapshot?: Partial<SessionActivitySnapshot>;
+  snapshot?: Partial<SessionActivitySnapshot> & {
+    /**
+     * What the gateway could observe about the DB-backed goal-wake owner read.
+     *
+     * `unknown` means the query failed inside the gateway, so the projected
+     * arrays are empty by failure, not by fact. A response that omits the field
+     * cannot prove the read happened, so Main stays unknown instead of assuming
+     * an empty session (#121).
+     */
+    ownerRead?: 'known' | 'unknown';
+  };
 };
 
 function taskStatus(status: string): SessionActivityTask['status'] {
@@ -60,6 +71,20 @@ function unsupportedRpc(error: unknown): boolean {
   );
 }
 
+/**
+ * Did the runtime actually return the owner projection?
+ *
+ * The background facts are exactly these three arrays. A response that carries
+ * the envelope but not the projection is a missing read, not an empty session,
+ * so it must not be reported as a successful read of nothing.
+ */
+function hasOwnerProjection(snapshot: Partial<SessionActivitySnapshot> | undefined): boolean {
+  return Boolean(snapshot)
+    && Array.isArray(snapshot?.goals)
+    && Array.isArray(snapshot?.processes)
+    && Array.isArray(snapshot?.lineage);
+}
+
 function mergeRuntimeSnapshot(
   snapshot: SessionActivitySnapshot,
   runtime: Partial<SessionActivitySnapshot> | undefined,
@@ -96,6 +121,10 @@ export function createSessionActivityApi({
       if (!sessionKey) throw new Error('sessionKey is required');
       let snapshot = createEmptySessionActivitySnapshot(sessionKey);
       let runtimeAvailable = false;
+      /* The background read starts unknown and is only upgraded by a real
+       * answer; a failed or unsupported read keeps it unknown so the renderer
+       * cannot mistake "no rows" for "no activity". */
+      let backgroundRead: SessionActivityBackgroundRead = { state: 'unknown', readAt: null, failedAt: null };
 
       const [gitResult, ledgerResult, runtimeResult] = await Promise.allSettled([
         gitApi.status(),
@@ -111,10 +140,36 @@ export function createSessionActivityApi({
         snapshot.tasks = tasksForSession(ledgerResult.value.snapshot, sessionKey);
         snapshot.availability.tasks = true;
       }
-      if (runtimeResult.status === 'fulfilled') {
+      if (runtimeResult.status === 'fulfilled' && hasOwnerProjection(runtimeResult.value.snapshot)) {
+        const ownerRead = runtimeResult.value.snapshot?.ownerRead;
         snapshot = mergeRuntimeSnapshot(snapshot, runtimeResult.value.snapshot, sessionKey);
-        runtimeAvailable = true;
-      } else if (!unsupportedRpc(runtimeResult.reason)) {
+        if (ownerRead === 'known') {
+          runtimeAvailable = true;
+          backgroundRead = {
+            state: 'known',
+            readAt: runtimeResult.value.snapshot?.capturedAt ?? Date.now(),
+            failedAt: null,
+          };
+        } else if (ownerRead === 'unknown') {
+          /* The gateway answered, but its goal-wake owner query failed: the
+           * arrays are a missing answer, so they must not count as an available
+           * runtime read and the panel has to warn instead of showing an empty
+           * session. */
+          backgroundRead = { state: 'unknown', readAt: null, failedAt: Date.now() };
+          snapshot.availability.continuity = false;
+        } else {
+          /* No owner-read state on the envelope. The projection alone cannot
+           * prove the read happened, but this response did not report a failure
+           * either, so stay unknown without inventing a failure mark. */
+          backgroundRead = { state: 'unknown', readAt: null, failedAt: null };
+        }
+      } else if (!(runtimeResult.status === 'rejected' && unsupportedRpc(runtimeResult.reason))) {
+        /* Timeout, thrown handler, or an envelope without the owner projection.
+         * `unsupportedRpc` is excluded above: a gateway that does not implement
+         * the method has no background source at all, so the read stays unknown
+         * without a failure mark — silent, like the previous availability flag,
+         * instead of warning about a read this build cannot perform. */
+        backgroundRead = { state: 'unknown', readAt: null, failedAt: Date.now() };
         snapshot.availability.continuity = false;
       }
 
@@ -136,6 +191,7 @@ export function createSessionActivityApi({
           updatedAt: snapshot.capturedAt,
         }));
       snapshot.availability.terminals = true;
+      snapshot.backgroundRead = backgroundRead;
       snapshot.capturedAt = Date.now();
 
       return { success: true, snapshot, runtimeAvailable };

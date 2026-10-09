@@ -22,6 +22,7 @@ import {
   validateChangedPathOwnership,
   validateGatewayTaskSpec,
   validatePluginLifecycleTaskSpec,
+  validateSpecPortability,
 } from './rules.mjs';
 
 function parseArgs(argv) {
@@ -108,6 +109,10 @@ async function validate(specPath, options = {}) {
   } else if (!spec.data.id || !spec.data.title) {
     failures.push(`${spec.path}: spec must include id and title`);
   }
+
+  // A spec must be runnable from a clean checkout, so machine-local user paths
+  // fail closed for every spec family and even in --no-diff structural runs.
+  failures.push(...validateSpecPortability(spec));
 
   // Changed-path ownership is enforced for every task spec family. The two
   // scenario-bound validators above already run it internally, so only the

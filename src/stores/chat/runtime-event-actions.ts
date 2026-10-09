@@ -67,8 +67,9 @@ export function createRuntimeEventActions(set: ChatSet, get: ChatGet): Pick<Runt
         || resolvedState === 'error' || resolvedState === 'aborted';
       if (hasUsefulData) {
         clearHistoryPoll();
-        // Adopt run started from another client (e.g. console at 127.0.0.1:18789):
-        // show loading/streaming in the app when this session has an active run.
+        // Adopt a run started from another client (for example a console talking
+        // to the local Gateway endpoint): show loading/streaming in the app when
+        // this session has an active run.
         const { sending } = get();
         if (!sending && runId) {
           set({ sending: true, activeRunId: runId, error: null, runError: null });

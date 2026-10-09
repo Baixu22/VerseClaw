@@ -50,13 +50,13 @@ rollback:
   - Disable runtime.resume.replayShadow to stop persisted replay reports.
   - Existing long_task_checkpoints remain authoritative and unaffected.
 requiredTests:
-  - rtk node node_modules/vitest/vitest.mjs run tests/unit/runtime-event-log-store.test.ts tests/unit/runtime-event-log-persistence.test.ts tests/unit/runtime-state-reducer.test.ts tests/unit/runtime-checkpoint-serializer.test.ts tests/unit/runtime-resume-shadow.test.ts tests/unit/task-loop-event-log-shadow.test.ts tests/unit/task-loop-controller.test.ts
-  - rtk pnpm run typecheck
-  - rtk pnpm --dir openclaw_runtime db:kysely:check
-  - rtk pnpm --dir openclaw_runtime lint:kysely
-  - rtk rg -n 'runtime\.resume\.preferEventLog|preferEventLog' openclaw_runtime/src tests/unit
-  - rtk rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components
-  - rtk rg -n 'createServer|listen\(|new WebSocketServer|WebSocketServer|http\.createServer|net\.createServer|@temporalio|Temporal|database-service|listener|daemon|jsonl|sidecar' openclaw_runtime/src/runtime-core/event-log-persistence.ts openclaw_runtime/src/agents/long-task-control/persisted-resume-shadow.ts openclaw_runtime/src/agents/task-loop-controller.ts tests/unit/runtime-event-log-persistence.test.ts tests/unit/task-loop-event-log-shadow.test.ts
+  - node node_modules/vitest/vitest.mjs run tests/unit/runtime-event-log-store.test.ts tests/unit/runtime-event-log-persistence.test.ts tests/unit/runtime-state-reducer.test.ts tests/unit/runtime-checkpoint-serializer.test.ts tests/unit/runtime-resume-shadow.test.ts tests/unit/task-loop-event-log-shadow.test.ts tests/unit/task-loop-controller.test.ts
+  - pnpm run typecheck
+  - pnpm --dir openclaw_runtime db:kysely:check
+  - pnpm --dir openclaw_runtime lint:kysely
+  - node scripts/scan-pattern.mjs --pattern 'runtime\.resume\.preferEventLog|preferEventLog' openclaw_runtime/src tests/unit
+  - node scripts/scan-pattern.mjs --pattern 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components
+  - node scripts/scan-pattern.mjs --pattern 'createServer|listen\(|new WebSocketServer|WebSocketServer|http\.createServer|net\.createServer|@temporalio|Temporal|database-service|listener|daemon|jsonl|sidecar' openclaw_runtime/src/runtime-core/event-log-persistence.ts openclaw_runtime/src/agents/long-task-control/persisted-resume-shadow.ts openclaw_runtime/src/agents/task-loop-controller.ts tests/unit/runtime-event-log-persistence.test.ts tests/unit/task-loop-event-log-shadow.test.ts
 acceptance:
   - Append reconciliation returns duplicate_event_id or duplicate_idempotency_key after write-time unique conflicts when indexed reread finds an existing record.
   - Non-duplicate write failures remain store_write_failure, and failed post-write rereads add store_read_failure diagnostics.

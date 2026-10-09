@@ -1393,6 +1393,46 @@ function applySkillsPromptLimits(params: {
   return { skillsForPrompt, compact };
 }
 
+/**
+ * Renders the skills prompt catalog from already-authorized resolved skills
+ * under an optional set of transient limits.
+ *
+ * Single limit + render path shared by the workspace loader and by
+ * snapshot-backed projection: callers that must not rescan the filesystem
+ * (e.g. minimal/low intensity on a turn that reuses a cached snapshot) can
+ * re-project the snapshot's `resolvedSkills` instead of falling back to the
+ * untrimmed snapshot prompt. The input array and its skill objects are never
+ * mutated; `compactSkillPaths` and `toSorted` both return new values.
+ */
+export function projectSkillsPromptForResolvedSkills(params: {
+  resolvedSkills: Skill[];
+  config?: OpenClawConfig;
+  agentId?: string;
+  remoteNote?: string;
+  transientLimits?: SkillsPromptTransientLimits;
+}): string {
+  // Derive prompt-facing skills with compacted paths (e.g. ~/...) once.
+  // Budget checks and final render both use this same representation so the
+  // tier decision is based on the exact strings that end up in the prompt.
+  // resolvedSkills keeps canonical paths for snapshot / runtime consumers.
+  const promptSkills = compactSkillPaths(params.resolvedSkills).toSorted((a, b) =>
+    a.name.localeCompare(b.name, "en"),
+  );
+  const { skillsForPrompt, compact } = applySkillsPromptLimits({
+    skills: promptSkills,
+    config: params.config,
+    agentId: params.agentId,
+    remoteNote: params.remoteNote,
+    transientLimits: params.transientLimits,
+  });
+  return buildRenderedSkillsPrompt({
+    remoteNote: params.remoteNote,
+    skills: skillsForPrompt,
+    total: params.resolvedSkills.length,
+    compact,
+  });
+}
+
 export function buildWorkspaceSkillSnapshot(
   workspaceDir: string,
   opts?: WorkspaceSkillBuildOptions & { snapshotVersion?: number },
@@ -1474,25 +1514,12 @@ function resolveWorkspaceSkillPromptState(
   const promptEntries = filterPromptVisibleSkillEntries(eligible);
   const remoteNote = opts?.eligibility?.remote?.note?.trim();
   const resolvedSkills = promptEntries.map((entry) => entry.skill);
-  // Derive prompt-facing skills with compacted paths (e.g. ~/...) once.
-  // Budget checks and final render both use this same representation so the
-  // tier decision is based on the exact strings that end up in the prompt.
-  // resolvedSkills keeps canonical paths for snapshot / runtime consumers.
-  const promptSkills = compactSkillPaths(resolvedSkills).toSorted((a, b) =>
-    a.name.localeCompare(b.name, "en"),
-  );
-  const { skillsForPrompt, compact } = applySkillsPromptLimits({
-    skills: promptSkills,
+  const prompt = projectSkillsPromptForResolvedSkills({
+    resolvedSkills,
     config: opts?.config,
     agentId: opts?.agentId,
     remoteNote,
     transientLimits: opts?.transientLimits,
-  });
-  const prompt = buildRenderedSkillsPrompt({
-    remoteNote,
-    skills: skillsForPrompt,
-    total: resolvedSkills.length,
-    compact,
   });
   return { eligible, prompt, resolvedSkills };
 }
@@ -1516,6 +1543,24 @@ export function resolveSkillsPromptForRun(params: {
       config: params.config,
       agentId: params.agentId,
       eligibility: params.eligibility,
+      transientLimits: params.transientLimits,
+    });
+    return prompt.trim() ? prompt : "";
+  }
+  // Snapshot-backed runs intentionally skip the workspace entry rescan, so with
+  // no entries the transient minimal/low limits would be silently ignored and
+  // the untrimmed snapshot prompt reused. Re-project the snapshot's
+  // already-authorized resolved skills under the transient limits instead:
+  // prompt-only projection, no filesystem rescan, and the reusable snapshot
+  // (`prompt` / `resolvedSkills`) is left untouched, so the runtime skill
+  // registry is unaffected.
+  const snapshotResolvedSkills = params.skillsSnapshot?.resolvedSkills;
+  if (hasTransientLimits && snapshotResolvedSkills && snapshotResolvedSkills.length > 0) {
+    const prompt = projectSkillsPromptForResolvedSkills({
+      resolvedSkills: snapshotResolvedSkills,
+      config: params.config,
+      agentId: params.agentId,
+      remoteNote: params.eligibility?.remote?.note?.trim(),
       transientLimits: params.transientLimits,
     });
     return prompt.trim() ? prompt : "";

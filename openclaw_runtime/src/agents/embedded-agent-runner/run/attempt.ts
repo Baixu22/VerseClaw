@@ -2213,8 +2213,13 @@ export async function runEmbeddedAttempt(
     const runtimeIntensitySkillsIncluded = Array.from(
       skillsPrompt.matchAll(/<skill>[\s\S]*?<\/skill>/gi),
     ).length;
+    // Snapshot-backed runs skip entry loading on purpose, so the total must come
+    // from the snapshot's resolved skill metadata instead of collapsing to the
+    // included count (which would misreport e.g. 8/8 instead of 8/20).
     const runtimeIntensitySkillsTotal =
-      promptSkillEntries?.length ?? runtimeIntensitySkillsIncluded;
+      promptSkillEntries?.length ??
+      skillsSnapshotForRun?.resolvedSkills?.length ??
+      runtimeIntensitySkillsIncluded;
     const systemPromptReport = buildSystemPromptReport({
       source: "run",
       generatedAt: Date.now(),

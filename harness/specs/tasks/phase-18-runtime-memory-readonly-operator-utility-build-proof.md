@@ -66,28 +66,28 @@ rollback:
   - Keep Phase 17 `inspectRuntimeMemoryForOperator(options)` and Phase 16 `inspectRuntimeMemorySanitizedEpisodes(options)` as explicit readonly helper surfaces.
   - Disable or omit `runtime.memory.persist` for no-open/no-read/no-write behavior.
 requiredTests:
-  - rtk node harness/src/cli.mjs context --spec harness/specs/tasks/phase-18-runtime-memory-readonly-operator-utility-build-proof.md
-  - rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-18-runtime-memory-readonly-operator-utility-build-proof.md
+  - node harness/src/cli.mjs context --spec harness/specs/tasks/phase-18-runtime-memory-readonly-operator-utility-build-proof.md
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-18-runtime-memory-readonly-operator-utility-build-proof.md
   - If full diff-aware validate is blocked by unrelated dirty files, run Phase 18 validate with `--no-diff` and record the blocker.
-  - rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-17-runtime-memory-readonly-operator-inspection-surface.md --no-diff
-  - rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-16-runtime-memory-readonly-episode-inspection.md --no-diff
-  - rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-15-runtime-memory-sanitized-episode-inspection.md --no-diff
-  - rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-14-runtime-memory-taskloop-shadow-replay-proof.md --no-diff
-  - rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-13-runtime-memory-taskloop-shadow-persistence-pilot.md --no-diff
-  - rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-12-runtime-memory-cutover-readiness.md --no-diff
-  - rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-11-runtime-memory-default-off-wiring.md --no-diff
-  - rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-10-runtime-memory-persistence-integration.md --no-diff
-  - rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-9-runtime-memory-persistence-foundation.md --no-diff
-  - rtk node scripts/build-openclaw-runtime.mjs
-  - rtk node node_modules/vitest/vitest.mjs run tests/unit/runtime-memory-persistence.test.ts tests/unit/runtime-memory-runtime-integration.test.ts tests/unit/task-loop-controller.test.ts tests/unit/runtime-feature-config-schema.test.ts tests/unit/context-provider-registry.test.ts tests/unit/runtime-memory-operator-inspection.test.ts
-  - rtk node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - rtk rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components
-  - rtk rg -n 'inspectRuntimeMemoryForOperator|inspectRuntimeMemorySanitizedEpisodes|createRuntimeMemoryPersistenceStore|RuntimeMemoryProvider|createRuntimeMemoryContextProvider|runtime\.memory\.provider|proposeFacts' openclaw_runtime/src/gateway electron shared src/lib openclaw_runtime/src/context-engine/provider-registry.ts openclaw_runtime/src/agents/task-loop-controller.ts
-  - rtk rg -n 'appendFact|invalidateFact|loadStore|queryFacts|RuntimeMemoryProvider|createRuntimeMemoryContextProvider|runtime\.memory\.provider|proposeFacts|inspectRuntimeMemorySanitizedEpisodes|inspectRuntimeMemoryForOperator' openclaw_runtime/src/agents/task-loop-controller.ts
-  - rtk rg -n 'rawChat|raw chat|transcript|jsonl|rawTrace|trace dump|prompt dump|toolArgs|toolOutput|stdout|stderr|process\.env|secret|apiKey|api[-_]?key|authorization|password|traceparent|tracestate|baggage|record_json|raw DB|raw row' tests/unit/runtime-memory-operator-inspection.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/phase-18-runtime-memory-readonly-operator-utility-build-proof.md openclaw_runtime/scripts/inspect-runtime-memory-episodes.mjs
-  - rtk rg -n 'createServer\(|listen\(|WebSocketServer|new WebSocket\(|OTLP|Collector|opentelemetry.*export|@opentelemetry/exporter|@temporalio|express\(|database-service|listener|exporter|service|daemon' openclaw_runtime/src/runtime-core/memory-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-memory-episodes.mjs tests/unit/runtime-memory-operator-inspection.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/phase-18-runtime-memory-readonly-operator-utility-build-proof.md
-  - rtk rg -n 'migrate|appendEpisode|appendFact|invalidateFact|ensureRuntimeMemoryPersistenceSchema|withWriteTransaction|trimRows|insertInto|updateTable|deleteFrom' openclaw_runtime/src/runtime-core/memory-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-memory-episodes.mjs
-  - rtk node scripts/comms/replay.mjs and rtk node scripts/comms/compare.mjs if Main/Gateway/host-api/api-client/provider transport paths are modified by Phase 18 or dirty communication-adjacent files block comms judgment.
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-17-runtime-memory-readonly-operator-inspection-surface.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-16-runtime-memory-readonly-episode-inspection.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-15-runtime-memory-sanitized-episode-inspection.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-14-runtime-memory-taskloop-shadow-replay-proof.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-13-runtime-memory-taskloop-shadow-persistence-pilot.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-12-runtime-memory-cutover-readiness.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-11-runtime-memory-default-off-wiring.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-10-runtime-memory-persistence-integration.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-9-runtime-memory-persistence-foundation.md --no-diff
+  - node scripts/build-openclaw-runtime.mjs
+  - node node_modules/vitest/vitest.mjs run tests/unit/runtime-memory-persistence.test.ts tests/unit/runtime-memory-runtime-integration.test.ts tests/unit/task-loop-controller.test.ts tests/unit/runtime-feature-config-schema.test.ts tests/unit/context-provider-registry.test.ts tests/unit/runtime-memory-operator-inspection.test.ts
+  - node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
+  - node scripts/scan-pattern.mjs --pattern 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components
+  - node scripts/scan-pattern.mjs --pattern 'inspectRuntimeMemoryForOperator|inspectRuntimeMemorySanitizedEpisodes|createRuntimeMemoryPersistenceStore|RuntimeMemoryProvider|createRuntimeMemoryContextProvider|runtime\.memory\.provider|proposeFacts' openclaw_runtime/src/gateway electron shared src/lib openclaw_runtime/src/context-engine/provider-registry.ts openclaw_runtime/src/agents/task-loop-controller.ts
+  - node scripts/scan-pattern.mjs --pattern 'appendFact|invalidateFact|loadStore|queryFacts|RuntimeMemoryProvider|createRuntimeMemoryContextProvider|runtime\.memory\.provider|proposeFacts|inspectRuntimeMemorySanitizedEpisodes|inspectRuntimeMemoryForOperator' openclaw_runtime/src/agents/task-loop-controller.ts
+  - node scripts/scan-pattern.mjs --pattern 'rawChat|raw chat|transcript|jsonl|rawTrace|trace dump|prompt dump|toolArgs|toolOutput|stdout|stderr|process\.env|secret|apiKey|api[-_]?key|authorization|password|traceparent|tracestate|baggage|record_json|raw DB|raw row' tests/unit/runtime-memory-operator-inspection.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/phase-18-runtime-memory-readonly-operator-utility-build-proof.md openclaw_runtime/scripts/inspect-runtime-memory-episodes.mjs
+  - node scripts/scan-pattern.mjs --pattern 'createServer\(|listen\(|WebSocketServer|new WebSocket\(|OTLP|Collector|opentelemetry.*export|@opentelemetry/exporter|@temporalio|express\(|database-service|listener|exporter|service|daemon' openclaw_runtime/src/runtime-core/memory-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-memory-episodes.mjs tests/unit/runtime-memory-operator-inspection.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/phase-18-runtime-memory-readonly-operator-utility-build-proof.md
+  - node scripts/scan-pattern.mjs --pattern 'migrate|appendEpisode|appendFact|invalidateFact|ensureRuntimeMemoryPersistenceSchema|withWriteTransaction|trimRows|insertInto|updateTable|deleteFrom' openclaw_runtime/src/runtime-core/memory-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-memory-episodes.mjs
+  - node scripts/comms/replay.mjs and node scripts/comms/compare.mjs if Main/Gateway/host-api/api-client/provider transport paths are modified by Phase 18 or dirty communication-adjacent files block comms judgment.
 acceptance:
   - Phase 18 starts only after Phase 17 synthesis exists, has exactly one `Status:` marker, and ends with exactly `Status: accepted`.
   - Phase 18 creates a fresh task spec and handoff and does not extend Phase 17 into product runtime cutover.

@@ -143,5 +143,77 @@
   "errorBoundary": {
     "description": "An unexpected error occurred. Reload to continue, or share the error reference below with support.",
     "errorReference": "Error reference:"
+  },
+  "errors": {
+    "auth_invalid": {
+      "what": "Authentication failed: the session or API key was rejected.",
+      "responsibility": "Your account or credentials are the problem, not a Verse Claw defect.",
+      "nextStep": "Sign in again or re-enter the API key in Settings, then retry."
+    },
+    "auth_permanent": {
+      "what": "The provider permanently rejected this API key.",
+      "responsibility": "The credential is invalid or revoked, so retrying cannot help.",
+      "nextStep": "Replace the API key for this provider in Settings, then retry."
+    },
+    "timeout": {
+      "what": "The request timed out before the provider answered.",
+      "responsibility": "The network or the provider answered too slowly.",
+      "nextStep": "The action may already have completed upstream; check the result before retrying."
+    },
+    "rate_limit": {
+      "what": "The provider is rate limiting requests right now.",
+      "responsibility": "This is the provider's pacing or quota limit, not a Verse Claw defect.",
+      "nextStep": "Wait a moment, then retry."
+    },
+    "permission": {
+      "what": "Permission was denied for this action.",
+      "responsibility": "Your local configuration or account role does not allow it.",
+      "nextStep": "Review the related permission or setting, then retry."
+    },
+    "channel_unavailable": {
+      "what": "The service channel is unavailable.",
+      "responsibility": "A local part of the app did not answer.",
+      "nextStep": "Restart the app or gateway, then retry."
+    },
+    "conversation_state": {
+      "what": "The provider rejected the conversation state.",
+      "responsibility": "The session transcript no longer matches what the provider expects.",
+      "nextStep": "Start a new session; retrying the same turn will fail again."
+    },
+    "network": {
+      "what": "The network request failed.",
+      "responsibility": "The connection between the app and the service is broken.",
+      "nextStep": "Check your connectivity, then retry."
+    },
+    "config": {
+      "what": "The configuration is invalid.",
+      "responsibility": "A setting value is missing or malformed.",
+      "nextStep": "Fix the setting in Settings, then retry."
+    },
+    "gateway": {
+      "what": "The gateway is unavailable.",
+      "responsibility": "The local OpenClaw gateway is not running or not ready.",
+      "nextStep": "Start or restart the gateway, then retry."
+    },
+    "billing": {
+      "what": "The provider account has insufficient balance or quota.",
+      "responsibility": "This is a billing or quota problem on your provider account.",
+      "nextStep": "Top up the provider account or switch provider or model; retrying now will not help."
+    },
+    "overloaded": {
+      "what": "The model provider is overloaded.",
+      "responsibility": "The provider is temporarily under heavy load.",
+      "nextStep": "Wait a short while and retry, or switch to another model."
+    },
+    "model_not_found": {
+      "what": "The selected model is not available for this provider.",
+      "responsibility": "The model id or provider routing is wrong, or the model was retired.",
+      "nextStep": "Pick another model in the model picker, then retry."
+    },
+    "unknown": {
+      "what": "An unexpected error occurred.",
+      "responsibility": "The cause could not be identified locally.",
+      "nextStep": "Retry once; if it happens again, share the error reference with support."
+    }
   }
 }

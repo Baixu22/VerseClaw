@@ -56,21 +56,21 @@ rollback:
   - Use the helper kill switch or disable-only rollback inputs to force long_task_checkpoints.
   - No schema rollback, sidecar cleanup, Gateway/UI/API rollback, provider rollback, prompt rollback, policy rollback, or TaskLoop behavior rollback is required.
 requiredTests:
-  - rtk pnpm harness context --spec harness/specs/tasks/runtime-event-log-limited-authority-cutover-implementation.md
-  - rtk pnpm harness validate --spec harness/specs/tasks/runtime-event-log-limited-authority-cutover-implementation.md
-  - rtk pnpm harness validate --spec harness/specs/tasks/runtime-event-log-limited-authority-cutover-implementation.md --no-diff
-  - rtk pnpm harness validate --spec harness/specs/tasks/runtime-event-log-authority-cutover-readiness.md --no-diff
-  - rtk node node_modules/vitest/vitest.mjs run tests/unit/runtime-event-log-limited-authority-cutover-pilot.test.ts tests/unit/runtime-event-log-controlled-dual-read-resume-pilot.test.ts
-  - rtk pnpm run typecheck
-  - rtk pnpm --dir openclaw_runtime db:kysely:check
-  - rtk pnpm --dir openclaw_runtime lint:kysely
-  - rtk rg -n "runtime\\.resume\\.preferEventLog|preferEventLog|cutover_enabled|event_log_authoritative|prefer_event_log|eventLogAuthoritative:\\s*true|legacyAuthoritative:\\s*false" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
-  - rtk rg -n "resume authority|event-log-first|default_on|default-on|defaultOn|event_log_authoritative" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
-  - rtk rg -n "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components electron shared openclaw_runtime/src/gateway
-  - rtk rg -n "create table|create index|migration|migrate|insertInto|updateTable|deleteFrom|append\\(|appendMany\\(" openclaw_runtime/src/runtime-core tests/unit harness/specs/tasks/runtime-event-log-limited-authority-cutover-implementation.md
-  - rtk rg -n "createServer|listen\\(|WebSocketServer|http\\.createServer|net\\.createServer|database-service|listener|daemon|sidecar|exporter|collector|jsonl" openclaw_runtime/src/runtime-core harness/specs docs/dev/runtime-research-boundaries.md
-  - rtk rg -n "runtime\\.resume\\.preferEventLog|preferEventLog|cutover_enabled|event_log_authoritative|prefer_event_log|default_on|default-on|defaultOn|eventLogAuthoritative:\\s*true|legacyAuthoritative:\\s*false|window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(|create table|create index|migration|migrate|insertInto|updateTable|deleteFrom|append\\(|appendMany\\(|createServer|listen\\(|WebSocketServer|http\\.createServer|net\\.createServer|database-service|listener|daemon|sidecar|exporter|collector|jsonl" harness/specs/tasks/runtime-event-log-limited-authority-cutover-implementation.md docs/dev/runtime-research-boundaries.md
-  - rtk pnpm run comms:replay and rtk pnpm run comms:compare only if future implementation work touches Gateway, runtime send/receive, channel delivery, fallback, host-api, api-client, Electron IPC, renderer, or provider transport paths.
+  - pnpm harness context --spec harness/specs/tasks/runtime-event-log-limited-authority-cutover-implementation.md
+  - pnpm harness validate --spec harness/specs/tasks/runtime-event-log-limited-authority-cutover-implementation.md
+  - pnpm harness validate --spec harness/specs/tasks/runtime-event-log-limited-authority-cutover-implementation.md --no-diff
+  - pnpm harness validate --spec harness/specs/tasks/runtime-event-log-authority-cutover-readiness.md --no-diff
+  - node node_modules/vitest/vitest.mjs run tests/unit/runtime-event-log-limited-authority-cutover-pilot.test.ts tests/unit/runtime-event-log-controlled-dual-read-resume-pilot.test.ts
+  - pnpm run typecheck
+  - pnpm --dir openclaw_runtime db:kysely:check
+  - pnpm --dir openclaw_runtime lint:kysely
+  - node scripts/scan-pattern.mjs --pattern "runtime\\.resume\\.preferEventLog|preferEventLog|cutover_enabled|event_log_authoritative|prefer_event_log|eventLogAuthoritative:\\s*true|legacyAuthoritative:\\s*false" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
+  - node scripts/scan-pattern.mjs --pattern "resume authority|event-log-first|default_on|default-on|defaultOn|event_log_authoritative" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
+  - node scripts/scan-pattern.mjs --pattern "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components electron shared openclaw_runtime/src/gateway
+  - node scripts/scan-pattern.mjs --pattern "create table|create index|migration|migrate|insertInto|updateTable|deleteFrom|append\\(|appendMany\\(" openclaw_runtime/src/runtime-core tests/unit harness/specs/tasks/runtime-event-log-limited-authority-cutover-implementation.md
+  - node scripts/scan-pattern.mjs --pattern "createServer|listen\\(|WebSocketServer|http\\.createServer|net\\.createServer|database-service|listener|daemon|sidecar|exporter|collector|jsonl" openclaw_runtime/src/runtime-core harness/specs docs/dev/runtime-research-boundaries.md
+  - node scripts/scan-pattern.mjs --pattern "runtime\\.resume\\.preferEventLog|preferEventLog|cutover_enabled|event_log_authoritative|prefer_event_log|default_on|default-on|defaultOn|eventLogAuthoritative:\\s*true|legacyAuthoritative:\\s*false|window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(|create table|create index|migration|migrate|insertInto|updateTable|deleteFrom|append\\(|appendMany\\(|createServer|listen\\(|WebSocketServer|http\\.createServer|net\\.createServer|database-service|listener|daemon|sidecar|exporter|collector|jsonl" harness/specs/tasks/runtime-event-log-limited-authority-cutover-implementation.md docs/dev/runtime-research-boundaries.md
+  - pnpm run comms:replay and pnpm run comms:compare only if future implementation work touches Gateway, runtime send/receive, channel delivery, fallback, host-api, api-client, Electron IPC, renderer, or provider transport paths.
 acceptance:
   - This task implements only a pure runtime-core helper, export, focused unit test, handoff, spec update, and runtime index pointer update.
   - The helper consumes only a bounded controlled dual-read report plus explicit gate, boundary, and rollback inputs.

@@ -49,7 +49,12 @@ beforeEach(() => {
   listClawGraphRunSnapshots.mockReturnValue([]);
   countLongTaskQueuedMessages.mockReturnValue(0);
   getLatestLongTaskCheckpoint.mockReturnValue(undefined);
-  collectSessionActivityReadProjection.mockReturnValue({ goals: [], processes: [], lineage: [] });
+  collectSessionActivityReadProjection.mockReturnValue({
+    goals: [],
+    processes: [],
+    lineage: [],
+    ownerRead: "known",
+  });
 });
 
 describe("session activity handler", () => {
@@ -70,6 +75,7 @@ describe("session activity handler", () => {
       goals: [{ id: "mission-1", kind: "mission", label: "Mission mission-1", status: "running", updatedAt: now }],
       processes: [{ id: "task-1", kind: "goalOwned", label: "Process task-1", status: "running", updatedAt: now }],
       lineage: [{ id: "sub-1", kind: "child", sessionKey: "agent:main:child", role: "explorer", status: "started", updatedAt: now }],
+      ownerRead: "known",
     });
 
     const respond = callHandler({ sessionKey: "agent:main:main" });
@@ -79,9 +85,26 @@ describe("session activity handler", () => {
     expect(result.snapshot.goals).toHaveLength(1);
     expect(result.snapshot.processes).toHaveLength(1);
     expect(result.snapshot.lineage).toHaveLength(1);
+    expect(result.snapshot.ownerRead).toBe("known");
     expect(result.snapshot.tasks).toEqual([]);
     expect(result.snapshot.subagents).toEqual([]);
     expect(collectSessionActivityReadProjection).toHaveBeenCalledWith("agent:main:main", undefined);
+  });
+
+  it("forwards a failed goal-wake owner read as ownerRead: unknown", () => {
+    collectSessionActivityReadProjection.mockReturnValue({
+      goals: [],
+      processes: [],
+      lineage: [],
+      ownerRead: "unknown",
+    });
+
+    const respond = callHandler({ sessionKey: "agent:main:main" });
+    const [ok, result] = respond.mock.calls[0];
+
+    expect(ok).toBe(true);
+    // The empty arrays must not travel as a successful read of nothing.
+    expect(result.snapshot.ownerRead).toBe("unknown");
   });
 
   it("keeps the existing mission/task/subagent projection shape and idle session default", () => {

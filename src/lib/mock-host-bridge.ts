@@ -24,6 +24,7 @@
  */
 
 import type { HostRequest } from '@shared/host-api/types';
+import { OPENCLAW_GATEWAY_PORT } from '@shared/gateway-endpoint';
 import { emitMockAbort, runMockScript, type MockScenario } from './mock-run-script';
 
 /** Shape of the staged-file payload the composer sends. */
@@ -635,7 +636,7 @@ const FIXTURES: Record<string, (req: HostRequest) => unknown> = {
   'app.version': () => ({ version: '0.0.0-mock' }),
   'openclaw.status': () => ({ ok: true, running: true }),
 
-  'gateway.status': () => ({ state: 'running', gatewayReady: true, port: 18789 }),
+  'gateway.status': () => ({ state: 'running', gatewayReady: true, port: OPENCLAW_GATEWAY_PORT }),
 
   'settings.getAll': () => ({
     setupComplete: true,

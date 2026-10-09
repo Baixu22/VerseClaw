@@ -42,6 +42,7 @@ import {
   normalizeStructuredPromptSection,
 } from "./prompt-cache-stability.js";
 import {
+  buildOpenClawKnownEmptyToolListText,
   buildOpenClawToolFallbackText,
   shouldRenderOpenClawToolWorkflowHints,
 } from "./prompt-surface.js";
@@ -843,6 +844,14 @@ export function buildAgentSystemPrompt(params: {
 
   const normalizedTools = canonicalToolNames.map((tool) => tool.toLowerCase());
   const availableTools = new Set(normalizedTools);
+  // `toolNames` absent means tool metadata is unavailable (legacy fallback text);
+  // present-but-empty is a known-empty capability surface that must not advertise tools.
+  const hasToolNamesMetadata = params.toolNames !== undefined;
+  const hasExecTool = availableTools.has("exec");
+  const hasProcessTool = availableTools.has("process");
+  const hasSessionsListTool = availableTools.has("sessions_list");
+  const hasSubagentsTool = availableTools.has("subagents");
+  const hasSessionStatusTool = availableTools.has("session_status");
   const hasSessionsSpawn = availableTools.has("sessions_spawn");
   const acpHarnessSpawnAllowed = hasSessionsSpawn && acpSpawnRuntimeEnabled;
   const nativeCommandGuidanceLines = normalizeUniqueStringEntries(
@@ -999,6 +1008,7 @@ export function buildAgentSystemPrompt(params: {
     promptMode,
     promptSurface,
     toolLines,
+    hasToolNamesMetadata,
     renderOpenClawToolWorkflowHints,
     hasGateway,
     readToolName,
@@ -1043,18 +1053,24 @@ export function buildAgentSystemPrompt(params: {
       "Available tools are policy-filtered. Names are case-sensitive; call exactly as listed.",
       toolLines.length > 0
         ? toolLines.join("\n")
-        : buildOpenClawToolFallbackText({
-            surface: promptSurface,
-            execToolName,
-            processToolName,
-          }),
+        : hasToolNamesMetadata
+          ? buildOpenClawKnownEmptyToolListText({ surface: promptSurface })
+          : buildOpenClawToolFallbackText({
+              surface: promptSurface,
+              execToolName,
+              processToolName,
+            }),
       "TOOLS.md is usage guidance, not availability.",
       ...(renderOpenClawToolWorkflowHints
         ? [
-            `For long waits, avoid rapid poll loops: use ${execToolName} with enough yieldMs or ${processToolName}(action=poll, timeout=<ms>).`,
-            "Larger work: use `sessions_spawn`; completion is push-based.",
-            '`sessions_spawn`: omit `context` unless transcript needed; then set `context:"fork"`.',
-          ]
+            hasExecTool || hasProcessTool
+              ? `For long waits, avoid rapid poll loops: use ${execToolName} with enough yieldMs or ${processToolName}(action=poll, timeout=<ms>).`
+              : "",
+            hasSessionsSpawn ? "Larger work: use `sessions_spawn`; completion is push-based." : "",
+            hasSessionsSpawn
+              ? '`sessions_spawn`: omit `context` unless transcript needed; then set `context:"fork"`.'
+              : "",
+          ].filter(Boolean)
         : []),
       ...nativeCommandGuidanceLines,
       ...(acpHarnessSpawnAllowed
@@ -1074,7 +1090,7 @@ export function buildAgentSystemPrompt(params: {
               : []),
           ]
         : []),
-      ...(renderOpenClawToolWorkflowHints
+      ...(renderOpenClawToolWorkflowHints && (hasSubagentsTool || hasSessionsListTool)
         ? [
             availableTools.has("sessions_yield")
               ? "Do not poll `subagents list` / `sessions_list` in a loop; use `sessions_yield` when waiting for spawned sub-agent completion events, and check status only on-demand (for intervention, debugging, or when explicitly asked)."
@@ -1124,7 +1140,9 @@ export function buildAgentSystemPrompt(params: {
       ...safetySection,
       "## OpenClaw Control",
       "Do not invent commands.",
-      "Config/restart: prefer `gateway` tool (`config.schema.lookup|get|patch|apply`, `restart`).",
+      hasGateway
+        ? "Config/restart: prefer `gateway` tool (`config.schema.lookup|get|patch|apply`, `restart`)."
+        : "",
       "CLI lifecycle only on explicit user request: `openclaw gateway status|restart|start|stop`.",
       "`restart`, not stop+start.",
       "",
@@ -1152,7 +1170,7 @@ export function buildAgentSystemPrompt(params: {
         ? params.modelAliasLines.join("\n")
         : "",
       params.modelAliasLines && params.modelAliasLines.length > 0 && !isMinimal ? "" : "",
-      userTimezone
+      userTimezone && hasSessionStatusTool
         ? "If you need the current date, time, or day of week, run session_status (📊 session_status)."
         : "",
       "## Workspace",

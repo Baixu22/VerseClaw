@@ -35,6 +35,10 @@
     "createMemoryDraft": "Save session to Knowledge",
     "duration": "Duration",
     "notAvailable": "Not available",
+    "background": {
+      "unknown": "Background activity is unknown — the last status read failed.",
+      "stale": "Showing the last successful read; these facts may be out of date."
+    },
     "sections": {
       "session": "Session",
       "git": "Workspace Git",

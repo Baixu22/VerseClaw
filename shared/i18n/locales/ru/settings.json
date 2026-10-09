@@ -954,7 +954,7 @@
       },
       "renderer.gatewayFetchBanMissing": {
         "title": "Нет предупреждения о прямом Gateway fetch",
-        "description": "Добавьте детерминированное правило против renderer fetch/WebSocket к 127.0.0.1:18789 или localhost:18789."
+        "description": "Добавьте детерминированное правило против вызовов renderer fetch/WebSocket к локальному Gateway."
       },
       "renderer.ipcConflict": {
         "title": "Возможный конфликт прямого IPC",

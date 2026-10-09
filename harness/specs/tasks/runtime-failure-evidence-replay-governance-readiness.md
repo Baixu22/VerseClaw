@@ -63,7 +63,7 @@ rollback:
 requiredTests:
   - pnpm --config.verify-deps-before-run=false harness context --spec harness/specs/tasks/runtime-failure-evidence-replay-governance-readiness.md
   - pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/runtime-failure-evidence-replay-governance-readiness.md
-  - rg -n "runtime-failure-evidence-replay-governance-readiness|Failure Intelligence|Evidence Envelope|Replay Harness|Outcome Scorecard|Tool Invocation Governance" harness/specs/tasks docs/dev/runtime-research-boundaries.md
+  - node scripts/scan-pattern.mjs --pattern "runtime-failure-evidence-replay-governance-readiness|Failure Intelligence|Evidence Envelope|Replay Harness|Outcome Scorecard|Tool Invocation Governance" harness/specs/tasks docs/dev/runtime-research-boundaries.md
 acceptance:
   - The readiness package records the five-lane objective, staged dependency order, parallelizable work streams, non-goals, authority boundaries, and validation gates.
   - `constraint-brief.md` contains the durable constraint wording future agents must preserve when writing implementation specs.

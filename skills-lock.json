@@ -4,8 +4,8 @@
     "tool-ui": {
       "source": "assistant-ui/tool-ui",
       "sourceType": "github",
-      "skillPath": "packages/agent/plugin/skills/tool-ui/SKILL.md",
-      "computedHash": "39516e5417921ecba72cbf2a7c034361a245202a8d355e17a227d9e02bda2d0d"
+      "skillPath": ".agents/skills/tool-ui/SKILL.md",
+      "computedHash": "06536a54fae879bad28437b948d583593982302933aa0a3bacc79539b8030218"
     }
   }
 }

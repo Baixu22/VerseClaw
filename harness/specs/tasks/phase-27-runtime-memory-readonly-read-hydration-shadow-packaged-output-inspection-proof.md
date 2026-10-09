@@ -76,34 +76,34 @@ rollback:
   - Revert the Phase 27 addendum in `runtime-research/agent-runtime-index.md`.
   - Keep Phase 21/22/23/24/25/26 helper, build, command, package, packaged-artifact, and release-manifest behavior unchanged if the diagnostics command remains useful.
 requiredTests:
-  - rtk.exe node harness/src/cli.mjs context --spec harness/specs/tasks/phase-27-runtime-memory-readonly-read-hydration-shadow-packaged-output-inspection-proof.md
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-27-runtime-memory-readonly-read-hydration-shadow-packaged-output-inspection-proof.md
+  - node harness/src/cli.mjs context --spec harness/specs/tasks/phase-27-runtime-memory-readonly-read-hydration-shadow-packaged-output-inspection-proof.md
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-27-runtime-memory-readonly-read-hydration-shadow-packaged-output-inspection-proof.md
   - If full diff-aware validate is blocked by unrelated dirty files, run Phase 27 validate with `--no-diff` and record the blocker.
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-26-runtime-memory-readonly-read-hydration-shadow-release-artifact-manifest-boundary-proof.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-25-runtime-memory-readonly-read-hydration-shadow-packaged-artifact-boundary-proof.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-24-runtime-memory-readonly-read-hydration-shadow-command-packaging-proof.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-23-runtime-memory-readonly-read-hydration-shadow-command-proof.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-22-runtime-memory-readonly-read-hydration-shadow-build-proof.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-21-runtime-memory-readonly-read-hydration-shadow-pilot.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-20-runtime-memory-readonly-operator-utility-packaging-proof.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-19-runtime-memory-readonly-operator-utility-command-proof.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-18-runtime-memory-readonly-operator-utility-build-proof.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-17-runtime-memory-readonly-operator-inspection-surface.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-16-runtime-memory-readonly-episode-inspection.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-15-runtime-memory-sanitized-episode-inspection.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-14-runtime-memory-taskloop-shadow-replay-proof.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-13-runtime-memory-taskloop-shadow-persistence-pilot.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-12-runtime-memory-cutover-readiness.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-11-runtime-memory-default-off-wiring.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-10-runtime-memory-persistence-integration.md --no-diff
-  - rtk.exe node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-9-runtime-memory-persistence-foundation.md --no-diff
-  - rtk.exe node node_modules/vitest/vitest.mjs run tests/unit/runtime-memory-read-hydration-shadow-packaged-output-inspection.test.ts tests/unit/runtime-memory-read-hydration-shadow-release-artifact-manifest-boundary.test.ts tests/unit/runtime-memory-read-hydration-shadow-packaged-artifact-boundary.test.ts tests/unit/runtime-memory-read-hydration-shadow-command-packaging.test.ts tests/unit/runtime-memory-read-hydration-shadow-command.test.ts tests/unit/runtime-memory-read-hydration-shadow-build.test.ts tests/unit/runtime-memory-read-hydration-shadow.test.ts tests/unit/runtime-memory-operator-inspection.test.ts tests/unit/runtime-memory-persistence.test.ts tests/unit/runtime-memory-runtime-integration.test.ts
-  - rtk.exe node scripts/build-openclaw-runtime.mjs --memory-read-hydration-shadow-only
-  - rtk.exe node scripts/build-openclaw-runtime.mjs --memory-operator-inspection-only
-  - rtk.exe node scripts/build-openclaw-runtime.mjs
-  - rtk.exe node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - rtk.exe rg -n 'runtime:memory:hydrate-shadow|inspect-runtime-memory-hydration-shadow|memory-read-hydration-shadow|hydrateRuntimeMemoryShadowContext|readRuntimeMemoryHydrationShadow|--memory-read-hydration-shadow-only|--read-shadow|--database|--db|--persist' electron-builder.yml scripts/bundle-openclaw-runtime.mjs scripts/after-pack.cjs scripts/run-electron-builder.mjs electron/main/index.ts electron/preload/index.ts src/App.tsx openclaw_runtime/src/entry.ts
-  - rtk.exe rg -n '"(predev|dev|build|build:runtime|package|package:mac|package:mac:local|package:win|package:linux|release)"\s*:\s*"[^"]*(runtime:memory:hydrate-shadow|hydrateRuntimeMemoryShadowContext|readRuntimeMemoryHydrationShadow|memory-read-hydration-shadow|inspect-runtime-memory-hydration-shadow|--memory-read-hydration-shadow-only|--read-shadow|--database|--db|--persist|gateway|server|listener|daemon|createServer|listen\()' package.json
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-26-runtime-memory-readonly-read-hydration-shadow-release-artifact-manifest-boundary-proof.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-25-runtime-memory-readonly-read-hydration-shadow-packaged-artifact-boundary-proof.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-24-runtime-memory-readonly-read-hydration-shadow-command-packaging-proof.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-23-runtime-memory-readonly-read-hydration-shadow-command-proof.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-22-runtime-memory-readonly-read-hydration-shadow-build-proof.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-21-runtime-memory-readonly-read-hydration-shadow-pilot.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-20-runtime-memory-readonly-operator-utility-packaging-proof.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-19-runtime-memory-readonly-operator-utility-command-proof.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-18-runtime-memory-readonly-operator-utility-build-proof.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-17-runtime-memory-readonly-operator-inspection-surface.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-16-runtime-memory-readonly-episode-inspection.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-15-runtime-memory-sanitized-episode-inspection.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-14-runtime-memory-taskloop-shadow-replay-proof.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-13-runtime-memory-taskloop-shadow-persistence-pilot.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-12-runtime-memory-cutover-readiness.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-11-runtime-memory-default-off-wiring.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-10-runtime-memory-persistence-integration.md --no-diff
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-9-runtime-memory-persistence-foundation.md --no-diff
+  - node node_modules/vitest/vitest.mjs run tests/unit/runtime-memory-read-hydration-shadow-packaged-output-inspection.test.ts tests/unit/runtime-memory-read-hydration-shadow-release-artifact-manifest-boundary.test.ts tests/unit/runtime-memory-read-hydration-shadow-packaged-artifact-boundary.test.ts tests/unit/runtime-memory-read-hydration-shadow-command-packaging.test.ts tests/unit/runtime-memory-read-hydration-shadow-command.test.ts tests/unit/runtime-memory-read-hydration-shadow-build.test.ts tests/unit/runtime-memory-read-hydration-shadow.test.ts tests/unit/runtime-memory-operator-inspection.test.ts tests/unit/runtime-memory-persistence.test.ts tests/unit/runtime-memory-runtime-integration.test.ts
+  - node scripts/build-openclaw-runtime.mjs --memory-read-hydration-shadow-only
+  - node scripts/build-openclaw-runtime.mjs --memory-operator-inspection-only
+  - node scripts/build-openclaw-runtime.mjs
+  - node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
+  - node scripts/scan-pattern.mjs --pattern 'runtime:memory:hydrate-shadow|inspect-runtime-memory-hydration-shadow|memory-read-hydration-shadow|hydrateRuntimeMemoryShadowContext|readRuntimeMemoryHydrationShadow|--memory-read-hydration-shadow-only|--read-shadow|--database|--db|--persist' electron-builder.yml scripts/bundle-openclaw-runtime.mjs scripts/after-pack.cjs scripts/run-electron-builder.mjs electron/main/index.ts electron/preload/index.ts src/App.tsx openclaw_runtime/src/entry.ts
+  - node scripts/scan-pattern.mjs --pattern '"(predev|dev|build|build:runtime|package|package:mac|package:mac:local|package:win|package:linux|release)"\s*:\s*"[^"]*(runtime:memory:hydrate-shadow|hydrateRuntimeMemoryShadowContext|readRuntimeMemoryHydrationShadow|memory-read-hydration-shadow|inspect-runtime-memory-hydration-shadow|--memory-read-hydration-shadow-only|--read-shadow|--database|--db|--persist|gateway|server|listener|daemon|createServer|listen\()' package.json
 acceptance:
   - Phase 27 starts only after Phase 26 synthesis exists, has exactly one terminal `Status:` marker, and ends with accepted.
   - Phase 27 creates a fresh task spec and handoff and does not extend Phase 26 into product runtime cutover.

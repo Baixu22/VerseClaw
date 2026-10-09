@@ -40,12 +40,29 @@ export function buildOpenClawToolFallbackText(params: {
   return "No OpenClaw tool list is injected for this runtime prompt surface. Use only tools exposed directly by the active backend.";
 }
 
-/** Returns whether the main OpenClaw prompt should include workflow hints around the tool list. */
+/**
+ * Builds tool guidance for a known-empty capability surface (caller supplied an
+ * explicitly empty tool list), which must not advertise any tool catalog.
+ */
+export function buildOpenClawKnownEmptyToolListText(params: {
+  surface: AgentPromptSurfaceKind;
+}): string {
+  const statement = isOpenClawMainPromptSurface(params.surface)
+    ? "No tools are enabled for this run: the runtime reported an empty tool allowlist."
+    : "No OpenClaw tool list is injected for this runtime prompt surface: the runtime reported an empty tool allowlist.";
+  return `${statement} Do not attempt tool calls or describe unavailable tool capabilities.`;
+}
+
+/**
+ * Returns whether the main OpenClaw prompt should include workflow hints around
+ * the tool list. Hints require a rendered tool list; without one (known-empty or
+ * unavailable tool metadata) there is nothing to attach positive guidance to.
+ */
 export function shouldRenderOpenClawToolWorkflowHints(params: {
   surface: AgentPromptSurfaceKind;
   hasToolList: boolean;
 }): boolean {
-  return isOpenClawMainPromptSurface(params.surface);
+  return isOpenClawMainPromptSurface(params.surface) && params.hasToolList;
 }
 
 /** Maps a session key to the prompt surface used for tool guidance and runtime behavior. */

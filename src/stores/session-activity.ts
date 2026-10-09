@@ -9,6 +9,7 @@ import type {
 } from '@shared/host-events/contract';
 import type { MissionLifecycleEvent } from '@shared/types/mission-control';
 import type {
+  SessionActivityBackgroundRead,
   SessionActivityMockScenario,
   SessionActivitySnapshot,
   SessionActivitySubagent,
@@ -114,6 +115,28 @@ function upsert<T extends { id: string; updatedAt: number }>(items: T[], next: T
   const copy = items.slice();
   copy[index] = { ...items[index], ...defined };
   return copy;
+}
+
+/**
+ * Folds one background read result into the state already on screen.
+ *
+ * A successful read is authoritative and replaces the previous one. A failed
+ * read leaves the facts alone and keeps `readAt` at the last success, so the
+ * panel can mark retained rows as stale instead of presenting them as fresh —
+ * and so a first read that fails shows nothing rather than an empty session.
+ */
+function mergeBackgroundRead(
+  previous: SessionActivityBackgroundRead | undefined,
+  incoming: SessionActivityBackgroundRead | undefined,
+): SessionActivityBackgroundRead {
+  if (incoming?.state === 'known') return incoming;
+  return {
+    state: 'unknown',
+    readAt: previous?.readAt ?? null,
+    /* An unknown read that carries no failure mark is "this build has no
+     * background source" (an unsupported RPC), not a failure: keep it silent. */
+    failedAt: incoming ? incoming.failedAt : Date.now(),
+  };
 }
 
 export function reduceSessionActivity(snapshot: SessionActivitySnapshot, event: SessionActivityEvent): SessionActivitySnapshot {
@@ -372,11 +395,20 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
     load: async ({ workspaceId, sessionKey }) => {
       get().init();
       const isMockMode = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('mock') === '1';
+      /*
+       * Keep whatever this session already showed.
+       *
+       * `load` used to seed an empty snapshot before the read even started, so a
+       * failed re-read erased the facts AND left nothing to mark as stale: the
+       * panel then looked exactly like a session with no background activity.
+       */
+      const previous = get().snapshots[sessionKey];
       const initial = isMockMode
         ? mockSnapshot(sessionKey, mockScenario())
-        : createEmptySessionActivitySnapshot(sessionKey);
+        : previous ?? createEmptySessionActivitySnapshot(sessionKey);
       set((state) => ({ snapshots: { ...state.snapshots, [sessionKey]: initial } }));
-      if (initial.session.status !== 'idle' || initial.git || initial.tasks.length || initial.terminals.length) {
+      if (isMockMode
+        && (initial.session.status !== 'idle' || initial.git || initial.tasks.length || initial.terminals.length)) {
         scheduleMock(sessionKey, mockScenario(), applyEvent);
       }
 
@@ -394,8 +426,12 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
         hostApi.sessionActivity.snapshot({ workspaceId, sessionKey }),
       ]);
       let snapshot = get().snapshots[sessionKey] ?? initial;
-      if (activityResult.status === 'fulfilled' && activityResult.value.success && activityResult.value.snapshot) {
-        const hydrated = activityResult.value.snapshot;
+      const hydrated = activityResult.status === 'fulfilled'
+        && activityResult.value.success
+        && activityResult.value.snapshot
+        ? activityResult.value.snapshot
+        : null;
+      if (hydrated) {
         const mergeItems = <T extends { id: string; updatedAt: number }>(base: T[], incoming: T[]) => incoming.reduce(upsert, base);
         snapshot = {
           ...snapshot,
@@ -408,7 +444,16 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
           terminals: mergeItems(snapshot.terminals, hydrated.terminals),
           continuity: { ...snapshot.continuity, ...hydrated.continuity },
           availability: { ...snapshot.availability, ...hydrated.availability },
+          backgroundRead: mergeBackgroundRead(snapshot.backgroundRead, hydrated.backgroundRead),
           capturedAt: Math.max(snapshot.capturedAt, hydrated.capturedAt),
+        };
+      } else {
+        /* The host call itself failed, so nothing was read: keep the rows that
+         * are on screen and change only the read state, or a failure would look
+         * like a session that suddenly had no background activity. */
+        snapshot = {
+          ...snapshot,
+          backgroundRead: mergeBackgroundRead(snapshot.backgroundRead, undefined),
         };
       }
       sessionSnapshots.set(sessionKey, snapshot);

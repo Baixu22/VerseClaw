@@ -1,7 +1,11 @@
 import type { GatewayManager } from '../gateway/manager';
 import type { ClawHubService } from '../gateway/clawhub';
 import { findCatalogEntry, searchCatalog } from '../gateway/skill-catalog';
-import { installSkillFromCatalog } from '../gateway/skill-installer';
+import {
+  installSkillFromCatalog,
+  resolveInstalledSkillDir,
+  verifyInstalledSkillIntegrity,
+} from '../gateway/skill-installer';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { getAllSkillConfigs, getSkillConfig, updateSkillConfig, updateSkillConfigs } from '../utils/skill-config';
 import {
@@ -47,6 +51,17 @@ const WORK_MODE_INSTALLABLE_CATALOG_SLUGS = new Set([
   'frontend-design',
   'web-artifacts-builder',
 ]);
+
+/** Requested versions are forwarded to the installer, which decides whether they are a real git ref. */
+const MAX_REQUESTED_SKILL_VERSION_LENGTH = 120;
+
+function getRequestedVersion(payload: unknown): string | undefined {
+  const body = isRecord(payload) ? payload as { version?: unknown } : {};
+  if (typeof body.version !== 'string') return undefined;
+  const version = body.version.trim();
+  if (!version || version.length > MAX_REQUESTED_SKILL_VERSION_LENGTH) return undefined;
+  return version;
+}
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
@@ -207,7 +222,21 @@ export function createSkillsApi({
         if (!entry) {
           throw new Error(`Skill "${slug}" was not found in the built-in catalog.`);
         }
-        await installSkillFromCatalog(entry);
+        const requestedVersion = getRequestedVersion(payload);
+        const identity = await installSkillFromCatalog(entry, requestedVersion);
+        // Explicit trust gate (issue #131): Main never enables a skill whose
+        // recorded byte identity does not match what is actually on disk.
+        const integrity = verifyInstalledSkillIntegrity(resolveInstalledSkillDir(slug));
+        if (!integrity.verified) {
+          throw new Error(
+            `Skill "${slug}" failed integrity verification (${integrity.reason}); it was not enabled.`,
+          );
+        }
+        console.log(
+          `[skills] Install verified for ${slug}: ref=${identity.trackedRef} ` +
+            `digest=sha256:${identity.contentDigest.slice(0, 12)}… ` +
+            `declaredVersion=${identity.declaredCatalogVersion} requested=${identity.requestedVersionStatus}`,
+        );
         await updateSkillConfig(slug, { enabled: true });
         return { success: true, result: null };
       } catch (error) {

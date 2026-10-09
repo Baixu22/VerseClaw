@@ -954,7 +954,7 @@
       },
       "renderer.gatewayFetchBanMissing": {
         "title": "直接 Gateway fetch の警告がありません",
-        "description": "renderer から 127.0.0.1:18789 または localhost:18789 へ fetch/WebSocket しない決定的なルールを追加してください。"
+        "description": "renderer からローカル Gateway エンドポイントへ fetch/WebSocket しない決定的なルールを追加してください。"
       },
       "renderer.ipcConflict": {
         "title": "直接 IPC の潜在的な矛盾",

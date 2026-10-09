@@ -1,5 +1,6 @@
 /* Auto-generated test typing surface for rules.mjs */
 export const classifyChangedPathOwnership: any;
+export const findMachineLocalPaths: any;
 export const isValidResidualPath: any;
 export const scanBackendCommunicationBoundary: any;
 export const scanBackendCommunicationBoundaryText: any;
@@ -8,3 +9,4 @@ export const validateChangedPathOwnership: any;
 export const validateGatewayTaskSpec: any;
 export const validatePluginLifecycleTaskSpec: any;
 export const validateResidualPaths: any;
+export const validateSpecPortability: any;

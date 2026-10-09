@@ -57,13 +57,13 @@ rollback:
   - Keep existing long_task_checkpoints rows and legacy resume/checkpoint behavior authoritative.
   - Remove the default TaskLoop writer call site without deleting already persisted diagnostic rows.
 requiredTests:
-  - rtk pnpm --dir openclaw_runtime db:kysely:check
-  - rtk pnpm --dir openclaw_runtime lint:kysely
-  - rtk node node_modules/vitest/vitest.mjs run tests/unit/runtime-event-log-store.test.ts tests/unit/runtime-event-log-persistence.test.ts tests/unit/runtime-state-reducer.test.ts tests/unit/runtime-checkpoint-serializer.test.ts tests/unit/runtime-resume-shadow.test.ts tests/unit/task-loop-event-log-shadow.test.ts tests/unit/task-loop-controller.test.ts
-  - rtk node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - rtk rg -n 'runtime\.resume\.preferEventLog|preferEventLog' openclaw_runtime/src tests/unit
-  - rtk rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components
-  - rtk rg -n 'createServer|listen\(|new WebSocketServer|WebSocketServer|http\.createServer|net\.createServer|@temporalio|Temporal|database-service|listener|daemon|jsonl|sidecar' openclaw_runtime/src/runtime-core/event-log-persistence.ts openclaw_runtime/src/agents/long-task-control/persisted-resume-shadow.ts openclaw_runtime/src/agents/task-loop-controller.ts tests/unit/runtime-event-log-persistence.test.ts tests/unit/task-loop-event-log-shadow.test.ts
+  - pnpm --dir openclaw_runtime db:kysely:check
+  - pnpm --dir openclaw_runtime lint:kysely
+  - node node_modules/vitest/vitest.mjs run tests/unit/runtime-event-log-store.test.ts tests/unit/runtime-event-log-persistence.test.ts tests/unit/runtime-state-reducer.test.ts tests/unit/runtime-checkpoint-serializer.test.ts tests/unit/runtime-resume-shadow.test.ts tests/unit/task-loop-event-log-shadow.test.ts tests/unit/task-loop-controller.test.ts
+  - node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
+  - node scripts/scan-pattern.mjs --pattern 'runtime\.resume\.preferEventLog|preferEventLog' openclaw_runtime/src tests/unit
+  - node scripts/scan-pattern.mjs --pattern 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components
+  - node scripts/scan-pattern.mjs --pattern 'createServer|listen\(|new WebSocketServer|WebSocketServer|http\.createServer|net\.createServer|@temporalio|Temporal|database-service|listener|daemon|jsonl|sidecar' openclaw_runtime/src/runtime-core/event-log-persistence.ts openclaw_runtime/src/agents/long-task-control/persisted-resume-shadow.ts openclaw_runtime/src/agents/task-loop-controller.ts tests/unit/runtime-event-log-persistence.test.ts tests/unit/task-loop-event-log-shadow.test.ts
 acceptance:
   - The persisted event-log owner is the shared state SQLite DB, not a sidecar or per-agent store.
   - The SQLite adapter only implements RuntimeTaskEventLogStorage load/append; RuntimeTaskEventLogStore remains responsible for validation, duplicate detection, search, and export.

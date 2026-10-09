@@ -55,7 +55,7 @@ requiredTests:
   - pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/phase-8-ast-editplan-narrow-rule-replay-proof.md
   - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-ast-edit-plan-narrow-rule-replay-proof.test.ts
   - git diff --check
-  - rg -n "TaskLoop|task-loop|Gateway|host-api|api-client|window\\.electron|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(|runtime-ready|production-ready|TaskLoop-ready" tests/unit/runtime-ast-edit-plan-narrow-rule-replay-proof.test.ts openclaw_runtime/src/runtime-core/ast-edit-plan-controlled-apply-pilot.ts openclaw_runtime/src/runtime-core/ast-grep-edit-plan-adapter.ts
+  - node scripts/scan-pattern.mjs --pattern "TaskLoop|task-loop|Gateway|host-api|api-client|window\\.electron|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(|runtime-ready|production-ready|TaskLoop-ready" tests/unit/runtime-ast-edit-plan-narrow-rule-replay-proof.test.ts openclaw_runtime/src/runtime-core/ast-edit-plan-controlled-apply-pilot.ts openclaw_runtime/src/runtime-core/ast-grep-edit-plan-adapter.ts
 acceptance:
   - Harness context and validation pass, or validation without --no-diff is blocked only by unrelated dirty tree state and --no-diff structural validation passes.
   - The proof covers exactly ten fixed narrow-rule samples: React prop rename, API call migration, import rewrite, IPC route rename, and deprecated option removal, with two samples per category.

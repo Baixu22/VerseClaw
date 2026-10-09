@@ -72,7 +72,7 @@ Before editing code or docs, read:
 Then run:
 
 ```powershell
-& 'C:\Users\27933\AppData\Roaming\npm\pnpm.cmd' harness context --spec harness/specs/tasks/sekb-runtime-long-task-development.md
+pnpm harness context --spec harness/specs/tasks/sekb-runtime-long-task-development.md
 ```
 
 Read any additional context files returned by the harness command.

@@ -35,6 +35,10 @@
     "createMemoryDraft": "メモリ草案として保存",
     "duration": "経過時間",
     "notAvailable": "利用不可",
+    "background": {
+      "unknown": "バックグラウンドアクティビティの状態は不明です — 前回の状態読み取りに失敗しました。",
+      "stale": "最後に読み取れた状態を表示しています。最新ではない可能性があります。"
+    },
     "sections": {
       "session": "セッション",
       "git": "ワークスペース Git",

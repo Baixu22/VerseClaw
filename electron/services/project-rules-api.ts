@@ -11,12 +11,34 @@ import type {
 } from '@shared/host-api/contract';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
+import {
+  GATEWAY_HOST_PORT_PAIRS,
+  GATEWAY_HOST_PORT_REGEX_SOURCE,
+  formatGatewayHttpOrigins,
+} from '@shared/gateway-endpoint';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 
 const AGENTS_FILE_NAME = 'AGENTS.md';
 const RULES_DIR_SEGMENTS = ['.clawx', 'rules'] as const;
 const AGENTS_MAX_BYTES = 256 * 1024;
 const RULE_FILE_MAX_BYTES = 128 * 1024;
+
+// Rule detection must follow the configured Gateway endpoint instead of a
+// literal port. A stale literal would silently stop matching when the endpoint
+// changes, which is worse than failing loudly.
+const DIRECT_GATEWAY_ENDPOINT_SOURCE = `${GATEWAY_HOST_PORT_REGEX_SOURCE}|gateway fetch|gateway http|direct gateway`;
+const ALLOWED_DIRECT_GATEWAY_PATTERN = new RegExp(
+  String.raw`\b(allow|allowed|can|may|permit|permitted)\b.{0,80}\b(${DIRECT_GATEWAY_ENDPOINT_SOURCE})\b`,
+  'i',
+);
+const BANNED_DIRECT_GATEWAY_PATTERN = new RegExp(
+  String.raw`\b(do not|don't|must not|never|ban|banned|forbid|forbidden|prohibit|prohibited)\b.{0,100}\b(${DIRECT_GATEWAY_ENDPOINT_SOURCE})\b`,
+  'i',
+);
+const BANNED_DIRECT_GATEWAY_REVERSED_PATTERN = new RegExp(
+  String.raw`\b(${DIRECT_GATEWAY_ENDPOINT_SOURCE})\b.{0,100}\b(do not|don't|must not|never|ban|banned|forbid|forbidden|prohibit|prohibited)\b`,
+  'i',
+);
 
 type TextSource = {
   path: string;
@@ -101,8 +123,7 @@ function hasDirectIpcBan(content: string): boolean {
 
 function hasGatewayFetchBan(content: string): boolean {
   const lower = content.toLowerCase();
-  const mentionsGatewayEndpoint = lower.includes('127.0.0.1:18789')
-    || lower.includes('localhost:18789')
+  const mentionsGatewayEndpoint = GATEWAY_HOST_PORT_PAIRS.some((pair) => lower.includes(pair))
     || lower.includes('gateway http')
     || lower.includes('gateway endpoint');
   return mentionsGatewayEndpoint
@@ -126,12 +147,12 @@ function hasBannedDirectIpc(content: string): boolean {
 }
 
 function hasAllowedDirectGateway(content: string): boolean {
-  return /\b(allow|allowed|can|may|permit|permitted)\b.{0,80}\b(127\.0\.0\.1:18789|localhost:18789|gateway fetch|gateway http|direct gateway)\b/i.test(content);
+  return ALLOWED_DIRECT_GATEWAY_PATTERN.test(content);
 }
 
 function hasBannedDirectGateway(content: string): boolean {
-  return /\b(do not|don't|must not|never|ban|banned|forbid|forbidden|prohibit|prohibited)\b.{0,100}\b(127\.0\.0\.1:18789|localhost:18789|gateway fetch|gateway http|direct gateway)\b/i.test(content)
-    || /\b(127\.0\.0\.1:18789|localhost:18789|gateway fetch|gateway http|direct gateway)\b.{0,100}\b(do not|don't|must not|never|ban|banned|forbid|forbidden|prohibit|prohibited)\b/i.test(content);
+  return BANNED_DIRECT_GATEWAY_PATTERN.test(content)
+    || BANNED_DIRECT_GATEWAY_REVERSED_PATTERN.test(content);
 }
 
 async function readAgentsFile(rootPath: string): Promise<{
@@ -356,7 +377,7 @@ function buildTemplate(workspace: WorkspaceProfile): string {
     '',
     '- Renderer code must call backend functionality through `src/lib/host-api.ts` or `src/lib/api-client.ts`.',
     '- Do not call `window.electron.ipcRenderer.invoke(...)` directly from renderer pages or components.',
-    '- Do not fetch `http://127.0.0.1:18789` or `http://localhost:18789` from renderer code; use Main-owned proxy or host-api routes.',
+    `- Do not fetch ${formatGatewayHttpOrigins()} from renderer code; use Main-owned proxy or host-api routes.`,
     '',
   ].join('\n');
 }

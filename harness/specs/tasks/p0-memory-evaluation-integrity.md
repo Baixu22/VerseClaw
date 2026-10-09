@@ -3,6 +3,7 @@ id: p0-memory-evaluation-integrity
 title: Repair P0 LoCoMo measurement and evidence integrity
 scenario: gateway-backend-communication
 taskType: runtime-bridge
+diffBase: origin/main
 intent: Resolve GitHub issues 134 through 138 in the opt-in LoCoMo evaluator without changing product runtime defaults, rewriting historical evidence, or claiming model scores prove production readiness.
 ownedPaths:
   - tests/unit/helpers/runtime-memory-context-recall.ts

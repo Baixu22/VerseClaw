@@ -12,12 +12,14 @@ The controlled Agency draft review and config-role materialization project uses:
 
 - `docs/superpowers/specs/2026-07-12-agency-role-promotion-control-plane-design.md`
 - `docs/multi-agent-orchestration/phase-constraints/agency-role-promotion-control-plane.md`
-- `docs/superpowers/plans/2026-07-12-agency-role-promotion-control-plane.md`
-- `docs/multi-agent-orchestration/goal-mode-start-prompt-agency-role-promotion.md`
 - `harness/specs/tasks/agency-role-promotion-control-plane.md`
 - `harness/specs/rules/agency-role-promotion-boundary.md`
 
-Use the dedicated start prompt for this project. It runs R0-R5 in order and requires a ClawX/Agency Agents/Letta reference ledger in every round report.
+The reviewed design, task spec and rule above are the durable entries. The
+project start prompt and its long-form plan are process artifacts that the
+retention policy keeps local (`docs/dev/repository-artifact-retention.md`), so a
+clean checkout must not require them. The project still runs R0-R5 in order and
+requires a ClawX/Agency Agents/Letta reference ledger in every round report.
 
 The delivered control plane lets an operator select an Agency Agents checkout, review an immutable candidate, explicitly map or waive every tool hint, attach evidence, and approve a separate config-backed `RoleContract`. The source draft never becomes runnable. Retry reconciles exact contract identity, while retirement removes only that exact config role and preserves the review audit history.
 
@@ -43,22 +45,22 @@ It parses only complete active package snapshots with a Markdown AST and offers 
 开始 Multi-Agent 长开发前,按以下顺序读取:
 
 1. `docs/role-first-design.md`: 当前 Role-First runtime 事实基线。
-2. `docs/multi-agent-orchestration-development-plan.md`: 长期架构、硬约束与阶段历史。
-3. `docs/multi-agent-orchestration/2026-07-08-role-first-completion-audit.md`: P0-P4 完成证据。
+2. `docs/runtime-design/area-2-multi-agent-orchestration.md`: 多 agent 编排的当前实现事实、非目标与约束。
+3. `docs/multi-agent-orchestration/acceptance-and-test-matrix.md`: P0-P4 历史阶段、验收与回归映射。
 4. `docs/multi-agent-orchestration/runtime-v2-p3-p5-allocation.md`: P3-R/P4-R/P5 的当前工作分配、依赖和毕业条件。
 5. 当前 `MA-*` work item 对应的 task spec、required rules 和最小 harness context。
 
-旧的 `goal-mode-start-prompt-p1.md` 到 `goal-mode-start-prompt-p4.md`、phase constraints、specs 和 plans 继续保留,用于解释 P0-P4 baseline 及运行回归,不再作为“当前阶段”入口。
+早期的 goal-mode start prompt、plans 与长路线开发计划已按 retention 政策留在本地过程目录,不在干净检出中,也不再作为“当前阶段”入口;跟踪的 phase constraints、task specs 与 `docs/multi-agent-orchestration/acceptance-and-test-matrix.md` 继续承担历史与运行回归入口。
 
-本控制包不会覆盖 Sustained Development Playbook、`docs/dev/handoffs/LATEST.md` 或 canonical Task Forest 的 active node。把分配项写入 Task Forest 时仍须走 proposal -> 用户确认 -> apply。
+本控制包不会覆盖 Sustained Development Playbook、本地的 `docs/dev/handoffs/LATEST.md`(会话交接,按 retention 政策不进 Git)或 canonical Task Forest 的 active node。把分配项写入 Task Forest 仍须走 proposal -> apply;按 `AGENTS.md` 的 auto-close 覆盖,证据已齐备的节点不再等待额外确认。
 
 ## 2. 文档分工
 
 | 文件 | 责任 |
 | --- | --- |
-| `docs/multi-agent-orchestration-development-plan.md` | 长期路线、全局硬约束、P0-P4 历史阶段与 Runtime V2 总入口 |
+| `docs/runtime-design/area-2-multi-agent-orchestration.md` | 多 agent 编排的当前架构事实、非目标与全局硬边界 |
 | `docs/multi-agent-orchestration/runtime-v2-p3-p5-allocation.md` | P3-R/P4-R/P5 工作 ID、依赖、主责生态位、交付物、验收、禁区和 CRAFT 取舍 |
-| `docs/multi-agent-orchestration/2026-07-08-role-first-completion-audit.md` | P0-P4 baseline 的完成证据 |
+| `docs/multi-agent-orchestration/acceptance-and-test-matrix.md` | P0-P4 baseline 的验收/回归映射与完成证据索引 |
 | `docs/role-first-design.md` | 当前 runtime 的 RoleContract、权限、记忆、路由、团队模板和 UI 锚点 |
 | `docs/multi-agent-orchestration/goal-mode-development-protocol.md` | 长开发纪律: 一轮一个 ready item、TDD、证据、脏工作区和最终报告 |
 | `docs/multi-agent-orchestration/acceptance-and-test-matrix.md` | P0-P4 历史验收与回归映射 |

@@ -116,6 +116,16 @@ type SessionActivityReadProjection = {
   goals: SessionActivityGoalProjection[];
   processes: SessionActivityProcessProjection[];
   lineage: SessionActivityLineageProjection[];
+  /**
+   * Whether the DB-backed goal-wake owner read completed.
+   *
+   * `unknown` means the query failed, so the empty goal/process arrays are a
+   * missing answer rather than an answer of "nothing is waiting". Consumers must
+   * carry this to the session activity snapshot instead of rendering the empty
+   * arrays as fact (#121); the in-memory owner reads (bash/supervisor/lineage
+   * registries) cannot fail this way.
+   */
+  ownerRead: "known" | "unknown";
 };
 
 function clampProgress(value: unknown): number | undefined {
@@ -358,10 +368,16 @@ export function buildSessionActivityReadProjection(input: {
   supervisorRuns?: readonly SupervisorSessionRunSnapshot[];
   lineageRuns?: readonly SubagentRunRecord[];
   parentRun?: SubagentRunRecord;
+  /**
+   * Owner-read state for the goal-wake rows. Callers that pass explicit `flows`
+   * and `tasks` have already read them, so the default is `known`; the
+   * collecting callers below forward the state reported by the owner layer.
+   */
+  goalWakeRead?: "known" | "unknown";
 }): SessionActivityReadProjection {
   const key = nonEmptyString(input.sessionKey);
   if (!key) {
-    return { goals: [], processes: [], lineage: [] };
+    return { goals: [], processes: [], lineage: [], ownerRead: "known" };
   }
 
   const mission = input.mission?.sessionKey === key ? missionToGoal(input.mission) : undefined;
@@ -393,6 +409,7 @@ export function buildSessionActivityReadProjection(input: {
       PROCESS_PROJECTION_LIMIT,
     ),
     lineage: sortNewest(lineage).slice(0, LINEAGE_PROJECTION_LIMIT),
+    ownerRead: input.goalWakeRead ?? "known",
   };
 }
 
@@ -413,5 +430,7 @@ export function collectSessionActivityReadProjection(
     mission,
     supervisor: options?.supervisor,
   });
-  return buildSessionActivityReadProjection(views);
+  // Forward the owner-read state explicitly rather than relying on the shared
+  // field name surviving a rename: a goal-wake DB failure must stay visible.
+  return buildSessionActivityReadProjection({ ...views, goalWakeRead: views.goalWakeRead });
 }

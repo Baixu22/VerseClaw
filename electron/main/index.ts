@@ -73,6 +73,7 @@ import type {
   LongConversationValidationState,
 } from '../../shared/types/long-task-control';
 import type { MissionLifecycleEvent } from '../../shared/types/mission-control';
+import { GATEWAY_WEB_REQUEST_URL_FILTERS } from '../../shared/gateway-endpoint';
 
 const WINDOWS_APP_USER_MODEL_ID = 'app.verse-claw.desktop';
 const isE2EMode = process.env.VERSE_CLAW_E2E === '1';
@@ -1090,7 +1091,7 @@ async function initialize(): Promise<void> {
   // The URL filter ensures this callback only fires for gateway requests,
   // avoiding unnecessary overhead on every other HTTP response.
   session.defaultSession.webRequest.onHeadersReceived(
-    { urls: ['http://127.0.0.1:18789/*', 'http://localhost:18789/*'] },
+    { urls: [...GATEWAY_WEB_REQUEST_URL_FILTERS] },
     (details, callback) => {
       const headers = { ...details.responseHeaders };
       delete headers['X-Frame-Options'];

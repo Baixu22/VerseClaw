@@ -53,21 +53,21 @@ rollback:
   - Keep event-log persistence and replay defaults disabled unless explicitly enabled for diagnostics by earlier specs.
   - No schema, sidecar, Gateway, Electron, renderer, host-api, api-client, provider, TaskLoop, prompt, policy, or transport rollback is required because this task must not touch those surfaces.
 requiredTests:
-  - rtk pnpm harness context --spec harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
-  - rtk pnpm harness validate --spec harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md --no-diff
-  - rtk pnpm harness validate --spec harness/specs/tasks/runtime-event-log-robustness-retention-evidence-mvp.md --no-diff
-  - rtk pnpm harness validate --spec harness/specs/tasks/runtime-event-log-persisted-resume-mvp.md --no-diff
-  - rtk pnpm harness context --spec harness/specs/tasks/runtime-event-log-resume-cutover-readiness.md
-  - rtk pnpm harness validate --spec harness/specs/tasks/runtime-event-log-resume-cutover-readiness.md
-  - rtk node node_modules/vitest/vitest.mjs run tests/unit/runtime-resume-shadow.test.ts tests/unit/runtime-event-log-persistence.test.ts tests/unit/runtime-event-log-operator-inspection.test.ts tests/unit/runtime-event-log-resume-cutover-readiness.test.ts tests/unit/task-loop-event-log-shadow.test.ts tests/unit/task-loop-controller.test.ts
-  - rtk pnpm run typecheck
-  - rtk pnpm --dir openclaw_runtime db:kysely:check
-  - rtk pnpm --dir openclaw_runtime lint:kysely
-  - rtk rg -n "runtime\.resume\.preferEventLog|preferEventLog" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
-  - rtk rg -n "legacyAuthoritative:\s*false|eventLogAuthoritative:\s*true|cutover_enabled|resume authority|event-log-first" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
-  - rtk rg -n "window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(" src/pages src/components electron shared openclaw_runtime/src/gateway
-  - rtk rg -n "create table|create index|migration|migrate|insertInto|updateTable|deleteFrom|append\(|appendMany\(" openclaw_runtime/src/runtime-core tests/unit harness/specs/tasks/runtime-event-log-resume-cutover-readiness.md
-  - rtk rg -n "createServer|listen\(|WebSocketServer|http\.createServer|net\.createServer|database-service|listener|daemon|sidecar|exporter|collector|jsonl" openclaw_runtime/src/runtime-core harness/specs docs/dev/runtime-research-boundaries.md
+  - pnpm harness context --spec harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
+  - pnpm harness validate --spec harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md --no-diff
+  - pnpm harness validate --spec harness/specs/tasks/runtime-event-log-robustness-retention-evidence-mvp.md --no-diff
+  - pnpm harness validate --spec harness/specs/tasks/runtime-event-log-persisted-resume-mvp.md --no-diff
+  - pnpm harness context --spec harness/specs/tasks/runtime-event-log-resume-cutover-readiness.md
+  - pnpm harness validate --spec harness/specs/tasks/runtime-event-log-resume-cutover-readiness.md
+  - node node_modules/vitest/vitest.mjs run tests/unit/runtime-resume-shadow.test.ts tests/unit/runtime-event-log-persistence.test.ts tests/unit/runtime-event-log-operator-inspection.test.ts tests/unit/runtime-event-log-resume-cutover-readiness.test.ts tests/unit/task-loop-event-log-shadow.test.ts tests/unit/task-loop-controller.test.ts
+  - pnpm run typecheck
+  - pnpm --dir openclaw_runtime db:kysely:check
+  - pnpm --dir openclaw_runtime lint:kysely
+  - node scripts/scan-pattern.mjs --pattern "runtime\.resume\.preferEventLog|preferEventLog" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
+  - node scripts/scan-pattern.mjs --pattern "legacyAuthoritative:\s*false|eventLogAuthoritative:\s*true|cutover_enabled|resume authority|event-log-first" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
+  - node scripts/scan-pattern.mjs --pattern "window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(" src/pages src/components electron shared openclaw_runtime/src/gateway
+  - node scripts/scan-pattern.mjs --pattern "create table|create index|migration|migrate|insertInto|updateTable|deleteFrom|append\(|appendMany\(" openclaw_runtime/src/runtime-core tests/unit harness/specs/tasks/runtime-event-log-resume-cutover-readiness.md
+  - node scripts/scan-pattern.mjs --pattern "createServer|listen\(|WebSocketServer|http\.createServer|net\.createServer|database-service|listener|daemon|sidecar|exporter|collector|jsonl" openclaw_runtime/src/runtime-core harness/specs docs/dev/runtime-research-boundaries.md
 acceptance:
   - This spec explicitly scopes phase 3 to readiness research and proof planning only.
   - Readiness output is bounded and sanitized; it excludes raw record_json, raw rows, checkpoint payload bodies, tool args/output, transcripts, prompts, env, secrets, and auth material.

@@ -15,6 +15,43 @@ export type SessionActivityLineageKind = 'parent' | 'child';
 export type SessionActivityLineageStatus = 'started' | 'yielded' | 'completed' | 'aborted' | 'error';
 
 /**
+ * Whether the background owner read behind a snapshot actually completed.
+ *
+ * `unknown` is NOT "nothing is running": it means the goals / processes /
+ * lineage facts could not be read, so those empty lists are a missing answer
+ * rather than an answer of "none". Only `known` makes "there is no background
+ * activity" a fact instead of a guess.
+ */
+export type SessionActivityBackgroundReadState = 'known' | 'unknown';
+
+/**
+ * The source state of the background facts (goals / processes / lineage).
+ *
+ * This is deliberately separate from `session`, which is the main run's own
+ * state: a run can be finished while its background processes are still alive,
+ * and a background read can fail while the run state is perfectly well known.
+ */
+export type SessionActivityBackgroundRead = {
+  state: SessionActivityBackgroundReadState;
+  /** When the background facts were last read successfully; null if never. */
+  readAt: number | null;
+  /** When the last read attempt failed; null if none has. Kept beside `readAt`
+   * so retained facts can be shown as stale instead of as fresh. */
+  failedAt: number | null;
+};
+
+/**
+ * True only when a background read was attempted and failed.
+ *
+ * A snapshot that has not been read yet is also `unknown`, but nothing has gone
+ * wrong yet — treating that as a failure would turn every first paint into an
+ * alert, which is exactly the false warning this state exists to avoid.
+ */
+export function backgroundReadFailed(read: SessionActivityBackgroundRead): boolean {
+  return read.state === 'unknown' && read.failedAt != null;
+}
+
+/**
  * Correlation identity for one projected session effect (TF-0082).
  *
  * Every field is copied from the owner that already records it; nothing is
@@ -149,6 +186,8 @@ export type SessionActivitySnapshot = {
     terminals: boolean;
     continuity: boolean;
   };
+  /** Source state of the background owner read; see `SessionActivityBackgroundRead`. */
+  backgroundRead: SessionActivityBackgroundRead;
   capturedAt: number;
 };
 
@@ -173,6 +212,9 @@ export function createEmptySessionActivitySnapshot(sessionKey: string, capturedA
     lineage: [],
     continuity: { queueCount: 0, contextPressure: null, checkpoint: false, blockedReason: null },
     availability: { git: false, tasks: false, subagents: true, terminals: false, continuity: true },
+    /* Seeded `unknown` on purpose: an empty snapshot is an unread snapshot, and
+     * a successful read of nothing is a different fact that has to be earned. */
+    backgroundRead: { state: 'unknown', readAt: null, failedAt: null },
     capturedAt,
   };
 }
@@ -213,6 +255,10 @@ export function classifySessionActivity(
 
   const needsAttention = snapshot.session.status === 'failed'
     || snapshot.session.status === 'aborted'
+    /* A failed background read is the one thing an empty snapshot cannot show
+     * on its own: without this the card has no content, so the panel — and with
+     * it the warning and its retry — never renders at all. */
+    || backgroundReadFailed(snapshot.backgroundRead)
     || Boolean(showGit && snapshot.git?.hasConflicts)
     || snapshot.tasks.some((task) => task.status === 'blocked' || task.status === 'failed')
     || snapshot.subagents.some((agent) => agent.status === 'error')

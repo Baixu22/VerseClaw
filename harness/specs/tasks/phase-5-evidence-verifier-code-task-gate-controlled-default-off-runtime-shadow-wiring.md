@@ -56,8 +56,8 @@ requiredTests:
   - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-evidence-verifier-code-task-gate-shadow.test.ts tests/unit/runtime-evidence-verifier-code-task-gate-offline-corpus.test.ts tests/unit/runtime-evidence-verifier-contracts.test.ts
   - focused TaskLoop/agent wiring unit coverage if an `openclaw_runtime/src/agents/**` path is touched
   - git diff --check -- touched route files
-  - rg -n "Gateway|host-api|api-client|ipcRenderer|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" touched route files
-  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|spawn|exec\\(|vitest|eslint|tsc|pnpm" touched runtime helper/wiring files
+  - node scripts/scan-pattern.mjs --pattern "Gateway|host-api|api-client|ipcRenderer|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" touched route files
+  - node scripts/scan-pattern.mjs --pattern "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|spawn|exec\\(|vitest|eslint|tsc|pnpm" touched runtime helper/wiring files
 acceptance:
   - Disabled/default runtime wiring does not invoke collection/producer/caller/sampler and leaves completion decisions unchanged.
   - Explicit `shadow_only` runtime wiring invokes only the existing collection helper with bounded in-memory runtime-shaped samples.

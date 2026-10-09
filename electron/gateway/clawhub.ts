@@ -169,8 +169,18 @@ export class ClawHubService {
                     const originJsonPath = path.join(skillDir, '.clawhub', 'origin.json');
                     if (fs.existsSync(originJsonPath)) {
                         try {
-                            const originJson = JSON.parse(await fs.promises.readFile(originJsonPath, 'utf8')) as { installedVersion?: string };
+                            const originJson = JSON.parse(await fs.promises.readFile(originJsonPath, 'utf8')) as {
+                                installedVersion?: string;
+                                declaredCatalogVersion?: string;
+                            };
+                            // `installedVersion` is read back from the installed bytes at
+                            // install time (issue #131); `declaredCatalogVersion` is only
+                            // catalog metadata, so it is the last-resort label and never
+                            // overrides a version we can trace to disk.
                             version = originJson.installedVersion?.trim() || version;
+                            if (version === 'unknown') {
+                                version = originJson.declaredCatalogVersion?.trim() || version;
+                            }
                         } catch {
                             // Ignore malformed origin.json
                         }
