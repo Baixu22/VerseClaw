@@ -1,0 +1,444 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-09",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-b00-executor",
+  "driven_by": "agent",
+  "scope": "TF-0271/B00 only; source baseline and bounded follow-up contracts, not completion of 29 downstream packets",
+  "decision": {
+    "status": "accepted",
+    "independentVerdict": "pass",
+    "continuation": "Close B00 after evidence/landing checks, then choose O01 from the current Task Forest. Do not infer global GA or unlock any product default."
+  },
+  "candidate": {
+    "actor": "codex-b00-executor",
+    "driven_by": "agent",
+    "commit": "1ad6d7394a030d4760d561dc3a056ffde2fc0bfc",
+    "tree": "92f8cb801f7791058b22b7c6e79b569c21948a71",
+    "dirty": false,
+    "dependencies": "isolated locked root/runtime node_modules; manifest-bound qualified ae.exe reused, not rebuilt"
+  },
+  "inventory": {
+    "slots": 30,
+    "sourceIncomplete": [
+      "HG22",
+      "HG27"
+    ],
+    "packets": 29,
+    "references": 94,
+    "pilotContracts": 6
+  },
+  "repairs": [
+    {
+      "kind": "test-dependency provisioning",
+      "summary": "Reused the current v2-qualified ae.exe after validating source bundle, binary size/SHA256, source/patch identity and typed handshake. The destination bundle was independently validated; no manifest edits or new Rust rebuild claim.",
+      "evidence": "D:/ClawX-work/harness-gap-b00-resume-20261009/qualified-binary-provisioning.json"
+    },
+    {
+      "kind": "policy unit-test fixture isolation",
+      "summary": "Replaced a bundled Telegram id with an explicitly synthetic channel for the same 9 authorization assertions. No production policy or timeout was changed; closest message-tool/wiring/exec regressions pass.",
+      "redCaseMs": 218746.6739,
+      "greenCaseMs": 498.5936,
+      "measurementBoundary": "One local before/after test run, not production latency or a statistical performance benchmark."
+    }
+  ],
+  "gates": {
+    "fullHarness": {
+      "result": "pass",
+      "selectedProfiles": [
+        "fast",
+        "comms"
+      ],
+      "steps": [
+        {
+          "profile": "rules",
+          "name": "Backend communication boundary scan",
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 0
+        },
+        {
+          "profile": "fast",
+          "name": "Generate extension bridge",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "run",
+            "ext:bridge"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 867
+        },
+        {
+          "profile": "fast",
+          "name": "Lint without autofix",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "run",
+            "lint:check"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 219217
+        },
+        {
+          "profile": "fast",
+          "name": "Typecheck",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "run",
+            "typecheck"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 15927
+        },
+        {
+          "profile": "fast",
+          "name": "Unit tests",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "test"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 845273
+        },
+        {
+          "profile": "comms",
+          "name": "Comms replay",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "run",
+            "comms:replay"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 876
+        },
+        {
+          "profile": "comms",
+          "name": "Comms compare",
+          "command": "pnpm",
+          "args": [
+            "-w",
+            "run",
+            "comms:compare"
+          ],
+          "status": "pass",
+          "exitCode": 0,
+          "durationMs": 790
+        }
+      ],
+      "durationMs": 1083987,
+      "exitCode": 0
+    },
+    "unitBatches": [
+      {
+        "name": "root-main",
+        "filesPassed": 855,
+        "filesSkipped": 3,
+        "passed": 7638,
+        "skipped": 50
+      },
+      {
+        "name": "root-serial",
+        "filesPassed": 3,
+        "passed": 25,
+        "skipped": 0
+      },
+      {
+        "name": "dcs-1",
+        "filesPassed": 23,
+        "passed": 331,
+        "skipped": 0
+      },
+      {
+        "name": "dcs-2",
+        "filesPassed": 5,
+        "passed": 10,
+        "skipped": 0
+      },
+      {
+        "name": "dcs-3",
+        "filesPassed": 11,
+        "passed": 97,
+        "skipped": 0
+      },
+      {
+        "name": "findings-registry",
+        "filesPassed": 1,
+        "passed": 7,
+        "skipped": 0
+      }
+    ],
+    "totalTestExecutions": {
+      "passed": 8108,
+      "failed": 0,
+      "skipped": 50,
+      "deduplicated": false,
+      "note": "Standard existing root profile skips remain disclosed; none of the individually required B00 test groups were skipped."
+    },
+    "focused": [
+      {
+        "name": "frozen-focused",
+        "files": 9,
+        "tests": 123,
+        "exitCode": 0,
+        "durationMs": 9159
+      },
+      {
+        "name": "frozen-network",
+        "files": 4,
+        "tests": 20,
+        "exitCode": 0,
+        "durationMs": 42491
+      },
+      {
+        "name": "frozen-working-context",
+        "files": 1,
+        "tests": 3,
+        "exitCode": 0,
+        "durationMs": 32621
+      }
+    ],
+    "requiredTests": [
+      "tests/unit/harness-gap-baseline.test.ts",
+      "openclaw_runtime/src/infra/outbound/outbound-policy.provenance.test.ts",
+      "tests/unit/harness-specs.test.ts",
+      "tests/unit/harness-git.test.ts",
+      "tests/unit/runtime-memory-embedding-ablation.test.ts",
+      "tests/unit/runtime-memory-mvp-module-b-ablation-test.test.ts",
+      "tests/unit/runtime-memory-phase4-ablation-benefit.test.ts"
+    ],
+    "typecheck": {
+      "success": true,
+      "cacheEnabled": false,
+      "projects": [
+        {
+          "commandLine": "node scripts/generate-ext-bridge.mjs",
+          "exitCode": 0,
+          "durationMs": 46
+        },
+        {
+          "commandLine": "pnpm run typecheck:node",
+          "exitCode": 0,
+          "durationMs": 11133
+        },
+        {
+          "commandLine": "pnpm run typecheck:web",
+          "exitCode": 0,
+          "durationMs": 5929
+        },
+        {
+          "commandLine": "pnpm run typecheck:test",
+          "exitCode": 0,
+          "durationMs": 13022,
+          "observationMode": false,
+          "errorCount": 0,
+          "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\harness-gap-b00-closeout\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+        }
+      ]
+    },
+    "lint": {
+      "exitCode": 0,
+      "errors": 0,
+      "warnings": 116
+    },
+    "comms": {
+      "replayExitCode": 0,
+      "compareExitCode": 0,
+      "baselineRefreshed": false,
+      "report": "D:/ClawX-work/harness-gap-b00-resume-20261009/comms-compare-report.json"
+    },
+    "independentVerification": {
+      "actor": "codex-independent-b00-verifier",
+      "ok": true,
+      "errors": [],
+      "report": "D:/ClawX-work/harness-gap-b00-resume-20261009/verification.json"
+    }
+  },
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "productionPolicyChanged": false
+  },
+  "acceptanceCriteria": [
+    {
+      "criterion": "30 source slots and unique primary owners, with HG22/HG27 explicitly unrecovered",
+      "verified": true
+    },
+    {
+      "criterion": "29 bounded packets with existing/planned specs, entries, tests and non-goals",
+      "verified": true
+    },
+    {
+      "criterion": "Current source hashes and six unchanged original pilot contracts; historical evidence never reused as pilot acceptance",
+      "verified": true
+    },
+    {
+      "criterion": "Clean candidate, required fast/comms profiles, individual tests and independent disk checks",
+      "verified": true
+    }
+  ],
+  "credentialScan": {
+    "hitCount": 0,
+    "report": "D:/ClawX-work/harness-gap-b00-resume-20261009/credential-scan.json",
+    "scope": "Known credential signatures over this delivery and retained raw evidence; not a secret-store audit"
+  },
+  "history": {
+    "priorIncompleteAttempt": "docs/dev/harness-gap-closure/baseline-evidence.json",
+    "priorManifest": "docs/dev/harness-gap-closure/SHA256SUMS",
+    "oldCandidate": "01ed37934f3bfebde9d4fca98260033de3767e8f",
+    "infraZeroTestProbe": {
+      "tests": 0,
+      "accepted": false,
+      "reason": "Target belongs to unit-fast, so the infra-only selection collected nothing."
+    },
+    "liveProbeBoundary": "Earlier optional DeepSeek skip is not converted to a pass; no new live-provider acceptance was claimed."
+  },
+  "notMeasured": [
+    "all 29 downstream work packages",
+    "six new pilot runs",
+    "production p99/ablation benefit",
+    "release or public availability",
+    "Electron E2E",
+    "remote CI"
+  ],
+  "rawEvidence": [
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/comms-compare-report.json",
+      "sha256": "9b9adf3ead24d8b48fd99d00597a6978d34addb4ab1fdb131d53ad08aeeceb30"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/comms-current-metrics.json",
+      "sha256": "a49af4a546e5018fda111c92aeec31b6d13709d5312e8087efe405d1dcb5070b"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-bundle.receipt.json",
+      "sha256": "0d6fc0893ddeec6e229a4c84249ecff235cad5e08503fff4e8f32abf78a81bb7"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-bundle.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-bundle.stdout.log",
+      "sha256": "e3dd3b39bc163af698ad0681e62abe86b1ef5e1c59ca8e95aa4ec83fcd76c61a"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-focused.receipt.json",
+      "sha256": "5ffbc484f161f105b9c786a369c0b2dd440de0107789141ddd9d5694ef4a400b"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-focused.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-focused.stdout.log",
+      "sha256": "43d7eb7410e494c02c3aefc48dcda7bb9a7cfba2e8b749d165b8d4552ccdb37b"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-focused.vitest.json",
+      "sha256": "c90f4f387c48726f32e7c4522d730f2730fd88d22a4d35336e6598b3c6eab090"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-harness-full.harness.json",
+      "sha256": "427287da6c83d9c03318f4be0b7d5d2a07c7e9600a7f377bd8fdc1ee969fb271"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-harness-full.receipt.json",
+      "sha256": "212ac4be988e25594fe751d7a1abd8e8a7e49572123bf02784f5cfd2ab8d8d61"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-harness-full.stderr.log",
+      "sha256": "29964cf2d0c015b7609554ede12979f3006082aa9d0996f49ba488523762177d"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-harness-full.stdout.log",
+      "sha256": "a21f21da1c812f89c837440f1e0b41ff108adaf79f53fd21ac4097b852675a02"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-network.receipt.json",
+      "sha256": "0861090fad895feb39d2355bc56d1095e05f2169726316f188367ca9ad2a32e4"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-network.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-network.stdout.log",
+      "sha256": "adec82d78fc8a44664bc97b1579de8d07b51096114e57175dbd47ccca3df1c8d"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-network.vitest.json",
+      "sha256": "60654649be4c265049262f3c6990e0008a517aaa7ee4defa3dc595b3859bb761"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-working-context.receipt.json",
+      "sha256": "3e8409c697f5a24503626b65ce91e35a7f50f466b6a5b330d447388139e29078"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-working-context.stderr.log",
+      "sha256": "fbfa5ad7d9aa0afe439ec4ff3883acc4cb92b62cb67c40d674320c9aa1d4642d"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-working-context.stdout.log",
+      "sha256": "48b1ba51c99b7b901bdce02ab9bf054ec3f9525909e57cf24835d43005fe33b3"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/frozen-working-context.vitest.json",
+      "sha256": "f7766c258ccade46d6e3d85b64f6dab037317cbaa518ae90fbce657731854193"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/outbound-fixture-green.receipt.json",
+      "sha256": "065f514ba7545a5429d22a2e6ff8ebd4a659e57980c3debe96deb31544d2f949"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/outbound-fixture-green.vitest.json",
+      "sha256": "31802a93c6c34aa221e986e640e76f4d4f2f9b1b1ac1a4adb52e1c338daacb20"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/outbound-policy.provenance.before.ts",
+      "sha256": "3f065c36c04dd683fbd188b1be91022c1e3fb47fc8e2b8d39a1ddd79180dbd08"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/outbound-unit-fast.receipt.json",
+      "sha256": "4eb164bbe41c25e2f80be5163c81e7bfc8c22957cd0c80e3688c35170b33fe03"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/outbound-unit-fast.vitest.json",
+      "sha256": "9b466740c72d99f75199418abc4f9d55f079147742f260b0ca50386989aaedd9"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/qualified-binary-provisioning.json",
+      "sha256": "d9bf6635ea0511dc69a62160d9af8c68395084cfcc9b0e4d9a9008427c344008"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/qualified-source-bundle.receipt.json",
+      "sha256": "f633f67a4290e90463fd6eef61238b7fa2cfdbeb4a7007b28a5a9f74fa1baf2e"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/qualified-source-bundle.stdout.log",
+      "sha256": "724981eff6ca66d57dc1f54ff29311b9256264ac2d9b0100488b9a58eb1c150e"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/typecheck-full.json",
+      "sha256": "d2869f8927bd0fd4f67c4c4f37eaf064c3878b2c3b801bc369fa82a0a241c92d"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/verification.json",
+      "sha256": "f922e7bfe794662ce6af4e35dd85e8ff304b52a0259b626bd017835cd6564df1"
+    },
+    {
+      "path": "D:/ClawX-work/harness-gap-b00-resume-20261009/verify-b00.py",
+      "sha256": "3bc71ff7a019eb92a5838a2e42b7d3999017465b98d679bedb4b23fe89c993a6"
+    }
+  ]
+}
