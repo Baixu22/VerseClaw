@@ -8,6 +8,7 @@ touchedAreas:
   - harness/specs/tasks/harness-gap-baseline.md
   - harness/specs/tasks/harness-gap-closure-plan.md
   - scripts/check-harness-gap-baseline.mjs
+  - scripts/check-harness-gap-baseline.d.mts
   - tests/unit/harness-gap-baseline.test.ts
 ownedPaths:
   - .gitignore
@@ -19,6 +20,7 @@ ownedPaths:
   - harness/specs/tasks/harness-gap-baseline.md
   - harness/specs/tasks/harness-gap-closure-plan.md
   - scripts/check-harness-gap-baseline.mjs
+  - scripts/check-harness-gap-baseline.d.mts
   - tests/unit/harness-gap-baseline.test.ts
 requiredProfiles:
   - fast
