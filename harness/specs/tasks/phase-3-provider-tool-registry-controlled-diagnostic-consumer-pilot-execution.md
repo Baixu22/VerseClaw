@@ -64,11 +64,11 @@ requiredTests:
   - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-provider-tool-registry.test.ts tests/unit/context-provider-registry.test.ts tests/unit/tool-provider-registry.test.ts tests/unit/mcp-api.test.ts tests/unit/task-loop-controller.test.ts tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts
   - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-provider-tool-registry-controlled-diagnostic-consumer-pilot-execution.test.ts
   - pnpm --config.verify-deps-before-run=false run typecheck
-  - rg -n "astPatchPlanner|AST Patch Planner|scanAstPatchPlanner|applyPatch|workspaceEdit|rename|replaceBody|insertBefore|insertAfter|safeDelete" <touched files>
-  - rg -n "provider ordering|default provider|default-on|prompt cutover|model messages|Gateway request|provider transport|TaskLoop authority|tool authority" <touched files>
-  - rg -n "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components
-  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|localStorage|indexedDB|electron-store|sqlite|postgres|mysql|redis" <touched files>
-  - rg -n "createServer\\(|listen\\(|WebSocketServer|new WebSocket\\(|daemon|listener|external database|@temporalio|express\\(" <touched files>
+  - node scripts/scan-pattern.mjs --pattern "astPatchPlanner|AST Patch Planner|scanAstPatchPlanner|applyPatch|workspaceEdit|rename|replaceBody|insertBefore|insertAfter|safeDelete" <touched files>
+  - node scripts/scan-pattern.mjs --pattern "provider ordering|default provider|default-on|prompt cutover|model messages|Gateway request|provider transport|TaskLoop authority|tool authority" <touched files>
+  - node scripts/scan-pattern.mjs --pattern "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components
+  - node scripts/scan-pattern.mjs --pattern "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|localStorage|indexedDB|electron-store|sqlite|postgres|mysql|redis" <touched files>
+  - node scripts/scan-pattern.mjs --pattern "createServer\\(|listen\\(|WebSocketServer|new WebSocket\\(|daemon|listener|external database|@temporalio|express\\(" <touched files>
 acceptance:
   - A registry-only sample matrix contains at least 30 samples and covers normal/no diagnostics, provider exception, unsupported MCP content, policy denied, policy waiting, tool cancelled, tool error, runtime unavailable, unknown provider, disabled provider, duplicate provider, invalid manifest, invalid injected diagnostics, over-limit diagnostics, gated-off behavior, provider-ordering-sensitive behavior, TaskLoop shadow gate closed, TaskLoop all gates open with legacy authority unchanged, renderer bypass sentinel, persistence sentinel, and service/listener/database sentinel.
   - Each sample records input, expected output, failure mode, boundary assertion, evidence source, actionability classification, and expected metrics contribution.

@@ -60,10 +60,10 @@ requiredTests:
   - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-agent-map-contracts.test.ts tests/unit/runtime-agent-map-ranking.test.ts tests/unit/runtime-agent-map-renderer.test.ts tests/unit/runtime-agent-map-budget.test.ts tests/unit/runtime-agent-map-hardening.test.ts tests/unit/runtime-agent-map-cache.test.ts tests/unit/runtime-agent-map-quality.test.ts tests/unit/runtime-agent-map-context-provider.test.ts tests/unit/context-provider-registry.test.ts tests/unit/runtime-feature-config-schema.test.ts
   - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-agent-map-prompt-assembly-experiment.test.ts
   - pnpm --config.verify-deps-before-run=false run typecheck
-  - rg -n "agent-map-readonly-shadow|createAgentMapContextProvider|runtime\.agentMap" openclaw_runtime/src/agents openclaw_runtime/src/gateway electron src shared
-  - rg -n "window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(" src/pages src/components
-  - rg -n "createServer\(|listen\(|WebSocketServer|new WebSocket\(|daemon|listener|external database|sqlite|postgres|mysql|redis|@temporalio|express\(" <agentmap-prompt-experiment-touched-files>
-  - rg -n "rename|replaceBody|insertBefore|insertAfter|safeDelete|workspaceEdit|applyPatch|ast-grep.*apply|symbol.*apply" <agentmap-prompt-experiment-touched-files>
+  - node scripts/scan-pattern.mjs --pattern "agent-map-readonly-shadow|createAgentMapContextProvider|runtime\.agentMap" openclaw_runtime/src/agents openclaw_runtime/src/gateway electron src shared
+  - node scripts/scan-pattern.mjs --pattern "window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(" src/pages src/components
+  - node scripts/scan-pattern.mjs --pattern "createServer\(|listen\(|WebSocketServer|new WebSocket\(|daemon|listener|external database|sqlite|postgres|mysql|redis|@temporalio|express\(" <agentmap-prompt-experiment-touched-files>
+  - node scripts/scan-pattern.mjs --pattern "rename|replaceBody|insertBefore|insertAfter|safeDelete|workspaceEdit|applyPatch|ast-grep.*apply|symbol.*apply" <agentmap-prompt-experiment-touched-files>
   - pnpm --config.verify-deps-before-run=false run comms:replay and pnpm --config.verify-deps-before-run=false run comms:compare only if Main/Gateway/host-api/api-client/provider transport paths are touched
 acceptance:
   - The task spec validates.

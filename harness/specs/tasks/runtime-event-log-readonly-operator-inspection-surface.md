@@ -56,20 +56,20 @@ rollback:
   - Keep long_task_checkpoints authoritative and existing persisted event-log rows untouched.
   - TaskLoop, Gateway, Electron, renderer, shared contracts, provider transport, prompt assembly, tool policy, and runtime authority remain unchanged.
 requiredTests:
-  - rtk pnpm harness context --spec harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
-  - rtk pnpm harness validate --spec harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
-  - rtk pnpm harness validate --spec harness/specs/tasks/runtime-event-log-robustness-retention-evidence-mvp.md --no-diff
-  - rtk pnpm harness validate --spec harness/specs/tasks/runtime-event-log-persisted-resume-mvp.md --no-diff
-  - rtk node node_modules/vitest/vitest.mjs run tests/unit/runtime-event-log-store.test.ts tests/unit/runtime-event-log-persistence.test.ts tests/unit/runtime-event-log-operator-inspection.test.ts tests/unit/runtime-resume-shadow.test.ts tests/unit/task-loop-event-log-shadow.test.ts tests/unit/task-loop-controller.test.ts
-  - rtk pnpm run typecheck
-  - rtk pnpm --dir openclaw_runtime db:kysely:check
-  - rtk pnpm --dir openclaw_runtime lint:kysely
-  - rtk rg -n 'runtime\.resume\.preferEventLog|preferEventLog' openclaw_runtime/src tests/unit
-  - rtk rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components electron shared openclaw_runtime/src/gateway
-  - rtk rg -n 'createServer|listen\(|new WebSocketServer|WebSocketServer|http\.createServer|net\.createServer|@temporalio|Temporal|database-service|listener|daemon|jsonl|sidecar|exporter|collector' openclaw_runtime/src/runtime-core/event-log-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-event-log.mjs tests/unit/runtime-event-log-operator-inspection.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
-  - rtk rg -n 'migrate|ensure.*schema|create table|create index|insertInto|updateTable|deleteFrom|append\(|appendMany\(|pruneRuntimeTaskEventLogRecords\(' openclaw_runtime/src/runtime-core/event-log-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-event-log.mjs
-  - rtk rg -n 'record_json|raw row|raw DB|transcript|jsonl|prompt dump|checkpoint payload|toolArgs|toolOutput|stdout|stderr|process\.env|secret|apiKey|api[-_]?key|authorization|password|traceparent|tracestate|baggage|completion proof' openclaw_runtime/src/runtime-core/event-log-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-event-log.mjs tests/unit/runtime-event-log-operator-inspection.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
-  - rtk pnpm run comms:replay and rtk pnpm run comms:compare only if implementation touches Gateway, runtime send/receive, channel delivery, fallback, host-api, api-client, Electron IPC, or provider transport paths.
+  - pnpm harness context --spec harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
+  - pnpm harness validate --spec harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
+  - pnpm harness validate --spec harness/specs/tasks/runtime-event-log-robustness-retention-evidence-mvp.md --no-diff
+  - pnpm harness validate --spec harness/specs/tasks/runtime-event-log-persisted-resume-mvp.md --no-diff
+  - node node_modules/vitest/vitest.mjs run tests/unit/runtime-event-log-store.test.ts tests/unit/runtime-event-log-persistence.test.ts tests/unit/runtime-event-log-operator-inspection.test.ts tests/unit/runtime-resume-shadow.test.ts tests/unit/task-loop-event-log-shadow.test.ts tests/unit/task-loop-controller.test.ts
+  - pnpm run typecheck
+  - pnpm --dir openclaw_runtime db:kysely:check
+  - pnpm --dir openclaw_runtime lint:kysely
+  - node scripts/scan-pattern.mjs --pattern 'runtime\.resume\.preferEventLog|preferEventLog' openclaw_runtime/src tests/unit
+  - node scripts/scan-pattern.mjs --pattern 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components electron shared openclaw_runtime/src/gateway
+  - node scripts/scan-pattern.mjs --pattern 'createServer|listen\(|new WebSocketServer|WebSocketServer|http\.createServer|net\.createServer|@temporalio|Temporal|database-service|listener|daemon|jsonl|sidecar|exporter|collector' openclaw_runtime/src/runtime-core/event-log-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-event-log.mjs tests/unit/runtime-event-log-operator-inspection.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
+  - node scripts/scan-pattern.mjs --pattern 'migrate|ensure.*schema|create table|create index|insertInto|updateTable|deleteFrom|append\(|appendMany\(|pruneRuntimeTaskEventLogRecords\(' openclaw_runtime/src/runtime-core/event-log-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-event-log.mjs
+  - node scripts/scan-pattern.mjs --pattern 'record_json|raw row|raw DB|transcript|jsonl|prompt dump|checkpoint payload|toolArgs|toolOutput|stdout|stderr|process\.env|secret|apiKey|api[-_]?key|authorization|password|traceparent|tracestate|baggage|completion proof' openclaw_runtime/src/runtime-core/event-log-operator-inspection.ts openclaw_runtime/scripts/inspect-runtime-event-log.mjs tests/unit/runtime-event-log-operator-inspection.test.ts docs/dev/runtime-research-boundaries.md harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
+  - pnpm run comms:replay and pnpm run comms:compare only if implementation touches Gateway, runtime send/receive, channel delivery, fallback, host-api, api-client, Electron IPC, or provider transport paths.
 acceptance:
   - The surface is introduced only by this fresh task spec and does not extend the robustness/retention MVP into product/runtime cutover.
   - Persist false/omitted, missing database path, missing database file, and missing table cases return bounded diagnostics and perform no SQLite open/create/write/migration side effects.
@@ -122,7 +122,7 @@ P4 handoff:
 Use this prompt for the implementation window:
 
 ```text
-Continue in C:\Users\27933\Desktop\clawx\ClawX from local persisted docs only.
+Continue in the current repository checkout from local persisted docs only.
 
 Read first:
 1. harness/specs/tasks/runtime-event-log-readonly-operator-inspection-surface.md
@@ -155,6 +155,6 @@ Required verification:
 - pnpm --dir openclaw_runtime lint:kysely
 - boundary scans listed in the task spec
 
-If rtk is unavailable, run commands directly and say so.
+If is unavailable, run commands directly and say so.
 If unrelated failures appear, classify them and do not modify unrelated modules.
 ```

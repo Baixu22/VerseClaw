@@ -73,11 +73,11 @@ requiredTests:
   - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-provider-tool-registry-security-performance-boundary.test.ts
   - pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/runtime-provider-tool-registry.test.ts tests/unit/context-provider-registry.test.ts tests/unit/tool-provider-registry.test.ts tests/unit/mcp-api.test.ts tests/unit/task-loop-controller.test.ts tests/unit/runtime-controlled-runtime-use-readiness-boundary.test.ts
   - pnpm --config.verify-deps-before-run=false run typecheck
-  - rg -n "collectRuntimeRegistryDiagnostics\\(|collectRuntimeRegistryDiagnosticsForControlledConsumer\\(" openclaw_runtime/src electron src shared --glob "!**/*.test.ts" --glob "!**/*.test.tsx" --glob "!**/test-support*"
-  - rg -n "registryDiagnostics:\\s*\\{\\s*collector:\\s*true|registryPilot:\\s*\\{\\s*enabled:\\s*true|providerRegistry:\\s*\\{\\s*shadow:\\s*true|contextProviders:\\s*\\{[^}]*registryPilot:\\s*true|toolRegistry:\\s*\\{\\s*shadow:\\s*true" openclaw_runtime/src electron src shared --glob "!**/*.test.ts" --glob "!**/*.test.tsx" --glob "!**/test-support*"
-  - rg -n "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components
-  - rg -n "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|localStorage|indexedDB|electron-store|sqlite|postgres|mysql|redis" <touched files>
-  - rg -n "createServer\\(|listen\\(|WebSocketServer|new WebSocket\\(|daemon|listener|external database|@temporalio|express\\(" <touched files>
+  - node scripts/scan-pattern.mjs --pattern "collectRuntimeRegistryDiagnostics\\(|collectRuntimeRegistryDiagnosticsForControlledConsumer\\(" openclaw_runtime/src electron src shared --glob "!**/*.test.ts" --glob "!**/*.test.tsx" --glob "!**/test-support*"
+  - node scripts/scan-pattern.mjs --pattern "registryDiagnostics:\\s*\\{\\s*collector:\\s*true|registryPilot:\\s*\\{\\s*enabled:\\s*true|providerRegistry:\\s*\\{\\s*shadow:\\s*true|contextProviders:\\s*\\{[^}]*registryPilot:\\s*true|toolRegistry:\\s*\\{\\s*shadow:\\s*true" openclaw_runtime/src electron src shared --glob "!**/*.test.ts" --glob "!**/*.test.tsx" --glob "!**/test-support*"
+  - node scripts/scan-pattern.mjs --pattern "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components
+  - node scripts/scan-pattern.mjs --pattern "writeFile|appendFile|mkdir|rm\\(|unlink|createWriteStream|localStorage|indexedDB|electron-store|sqlite|postgres|mysql|redis" <touched files>
+  - node scripts/scan-pattern.mjs --pattern "createServer\\(|listen\\(|WebSocketServer|new WebSocket\\(|daemon|listener|external database|@temporalio|express\\(" <touched files>
 acceptance:
   - Producer-generated diagnostics include at least 30 diagnostics across context-provider registry, MCP/tool-provider registry shadow, and TaskLoop injected shadow paths.
   - The consumer remains in-memory/test-owned; production code does not call collectRuntimeRegistryDiagnostics as an active consumer.

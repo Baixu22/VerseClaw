@@ -57,11 +57,11 @@ rollback:
   - Keep existing TaskLoop in-memory state, long-task checkpoint store, task ledger, and legacy resume/checkpoint behavior authoritative.
   - Remove shadow writer/reader/reducer wiring without deleting Phase-2 runtime-core contracts or Phase-3 registry pilot contracts.
 requiredTests:
-  - rtk node node_modules/vitest/vitest.mjs run tests/unit/runtime-core-contracts.test.ts tests/unit/task-loop-controller.test.ts
-  - rtk node node_modules/vitest/vitest.mjs run tests/unit/runtime-event-log*.test.ts tests/unit/runtime-state-reducer*.test.ts tests/unit/task-loop-event-log*.test.ts
-  - rtk rg -n 'window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|gateway:httpProxy|hostapi:fetch' src electron shared tests --glob '!**/*.md'
-  - rtk rg -n 'createServer|listen\\(|new WebSocketServer|WebSocketServer|http\\.createServer|net\\.createServer|127\\.0\\.0\\.1:18789|localhost:18789' openclaw_runtime/src/runtime-core openclaw_runtime/src/agents/long-task-control openclaw_runtime/src/agents/task-loop-controller.ts tests/unit
-  - rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-4-event-log-checkpoint-resume.md --no-diff
+  - node node_modules/vitest/vitest.mjs run tests/unit/runtime-core-contracts.test.ts tests/unit/task-loop-controller.test.ts
+  - node node_modules/vitest/vitest.mjs run tests/unit/runtime-event-log*.test.ts tests/unit/runtime-state-reducer*.test.ts tests/unit/task-loop-event-log*.test.ts
+  - node scripts/scan-pattern.mjs --pattern 'window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|gateway:httpProxy|hostapi:fetch' src electron shared tests --glob '!**/*.md'
+  - node scripts/scan-pattern.mjs --pattern 'createServer|listen\\(|new WebSocketServer|WebSocketServer|http\\.createServer|net\\.createServer|127\\.0\\.0\\.1:18789|localhost:18789' openclaw_runtime/src/runtime-core openclaw_runtime/src/agents/long-task-control openclaw_runtime/src/agents/task-loop-controller.ts tests/unit
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-4-event-log-checkpoint-resume.md --no-diff
 acceptance:
   - Event-log contracts/envelopes are canonical and do not duplicate RuntimeTaskEvent or Checkpoint types.
   - Append-only writes are idempotent and queryable by task id, kind, timestamp range, and pagination without changing legacy runtime behavior.

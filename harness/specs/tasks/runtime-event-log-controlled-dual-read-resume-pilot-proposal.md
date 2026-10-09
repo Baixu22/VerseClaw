@@ -50,20 +50,20 @@ rollback:
   - A future controlled dual-read pilot must include a disable-only rollback drill that returns to long_task_checkpoints authoritative behavior without schema rollback, sidecar cleanup, Gateway/UI/API rollback, provider transport rollback, or TaskLoop behavior rollback.
   - Event-log rows created by earlier explicitly enabled diagnostics remain diagnostic data only and must not be required for rollback.
 requiredTests:
-  - rtk pnpm harness context --spec harness/specs/tasks/runtime-event-log-resume-cutover-readiness.md
-  - rtk pnpm harness validate --spec harness/specs/tasks/runtime-event-log-resume-cutover-readiness.md --no-diff
-  - rtk pnpm harness context --spec harness/specs/tasks/runtime-event-log-controlled-dual-read-resume-pilot-proposal.md
-  - rtk pnpm harness validate --spec harness/specs/tasks/runtime-event-log-controlled-dual-read-resume-pilot-proposal.md
-  - rtk node node_modules/vitest/vitest.mjs run tests/unit/runtime-resume-shadow.test.ts tests/unit/runtime-event-log-persistence.test.ts tests/unit/runtime-event-log-operator-inspection.test.ts tests/unit/runtime-event-log-resume-cutover-readiness.test.ts tests/unit/task-loop-event-log-shadow.test.ts tests/unit/task-loop-controller.test.ts
-  - rtk pnpm run typecheck
-  - rtk pnpm --dir openclaw_runtime db:kysely:check
-  - rtk pnpm --dir openclaw_runtime lint:kysely
-  - rtk rg -n "runtime\\.resume\\.preferEventLog|preferEventLog|cutover_enabled|event_log_authoritative|prefer_event_log" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
-  - rtk rg -n "legacyAuthoritative:\\s*false|eventLogAuthoritative:\\s*true|resume authority|event-log-first|default_on" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
-  - rtk rg -n "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components electron shared openclaw_runtime/src/gateway
-  - rtk rg -n "create table|create index|migration|migrate|insertInto|updateTable|deleteFrom|append\\(|appendMany\\(" openclaw_runtime/src/runtime-core tests/unit harness/specs/tasks/runtime-event-log-controlled-dual-read-resume-pilot-proposal.md
-  - rtk rg -n "createServer|listen\\(|WebSocketServer|http\\.createServer|net\\.createServer|database-service|listener|daemon|sidecar|exporter|collector|jsonl" openclaw_runtime/src/runtime-core harness/specs docs/dev/runtime-research-boundaries.md
-  - rtk pnpm run comms:replay and rtk pnpm run comms:compare only if implementation touches Gateway, runtime send/receive, channel delivery, fallback, host-api, api-client, Electron IPC, renderer, or provider transport paths.
+  - pnpm harness context --spec harness/specs/tasks/runtime-event-log-resume-cutover-readiness.md
+  - pnpm harness validate --spec harness/specs/tasks/runtime-event-log-resume-cutover-readiness.md --no-diff
+  - pnpm harness context --spec harness/specs/tasks/runtime-event-log-controlled-dual-read-resume-pilot-proposal.md
+  - pnpm harness validate --spec harness/specs/tasks/runtime-event-log-controlled-dual-read-resume-pilot-proposal.md
+  - node node_modules/vitest/vitest.mjs run tests/unit/runtime-resume-shadow.test.ts tests/unit/runtime-event-log-persistence.test.ts tests/unit/runtime-event-log-operator-inspection.test.ts tests/unit/runtime-event-log-resume-cutover-readiness.test.ts tests/unit/task-loop-event-log-shadow.test.ts tests/unit/task-loop-controller.test.ts
+  - pnpm run typecheck
+  - pnpm --dir openclaw_runtime db:kysely:check
+  - pnpm --dir openclaw_runtime lint:kysely
+  - node scripts/scan-pattern.mjs --pattern "runtime\\.resume\\.preferEventLog|preferEventLog|cutover_enabled|event_log_authoritative|prefer_event_log" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
+  - node scripts/scan-pattern.mjs --pattern "legacyAuthoritative:\\s*false|eventLogAuthoritative:\\s*true|resume authority|event-log-first|default_on" openclaw_runtime/src tests/unit harness/specs docs/dev/runtime-research-boundaries.md
+  - node scripts/scan-pattern.mjs --pattern "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components electron shared openclaw_runtime/src/gateway
+  - node scripts/scan-pattern.mjs --pattern "create table|create index|migration|migrate|insertInto|updateTable|deleteFrom|append\\(|appendMany\\(" openclaw_runtime/src/runtime-core tests/unit harness/specs/tasks/runtime-event-log-controlled-dual-read-resume-pilot-proposal.md
+  - node scripts/scan-pattern.mjs --pattern "createServer|listen\\(|WebSocketServer|http\\.createServer|net\\.createServer|database-service|listener|daemon|sidecar|exporter|collector|jsonl" openclaw_runtime/src/runtime-core harness/specs docs/dev/runtime-research-boundaries.md
+  - pnpm run comms:replay and pnpm run comms:compare only if implementation touches Gateway, runtime send/receive, channel delivery, fallback, host-api, api-client, Electron IPC, renderer, or provider transport paths.
 acceptance:
   - This spec explicitly scopes phase 4 to a proposal-only package for a future limited controlled dual-read pilot.
   - The proposal defines a live evidence source or controlled corpus source before any future pilot implementation spec may begin.

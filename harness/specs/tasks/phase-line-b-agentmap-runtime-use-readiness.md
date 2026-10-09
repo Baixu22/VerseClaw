@@ -61,9 +61,9 @@ requiredTests:
   - pnpm harness validate --spec harness/specs/tasks/phase-line-b-agentmap-runtime-use-readiness.md
   - pnpm exec vitest run tests/unit/runtime-agent-map-contracts.test.ts tests/unit/runtime-agent-map-ranking.test.ts tests/unit/runtime-agent-map-renderer.test.ts tests/unit/runtime-agent-map-budget.test.ts tests/unit/runtime-agent-map-context-provider.test.ts tests/unit/context-provider-registry.test.ts
   - pnpm run typecheck if runtime source, provider source, config, shared contracts, or exported runtime-core surfaces are changed
-  - rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components if renderer files are touched
-  - rg -n 'createServer\(|listen\(|WebSocketServer|new WebSocket\(|daemon|listener|external database|sqlite|postgres|mysql|redis|@temporalio|express\(' <agentmap-runtime-use-touched-files> if runtime, Electron, shared, tests, or fixtures are touched
-  - rg -n 'rename|replaceBody|insertBefore|insertAfter|safeDelete|workspaceEdit|applyPatch|ast-grep.*apply|symbol.*apply' <agentmap-runtime-use-touched-files> if AgentMap, Symbol Tool, AST, edit-adjacent, or provider files are touched
+  - node scripts/scan-pattern.mjs --pattern 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src/pages src/components if renderer files are touched
+  - node scripts/scan-pattern.mjs --pattern 'createServer\(|listen\(|WebSocketServer|new WebSocket\(|daemon|listener|external database|sqlite|postgres|mysql|redis|@temporalio|express\(' <agentmap-runtime-use-touched-files> if runtime, Electron, shared, tests, or fixtures are touched
+  - node scripts/scan-pattern.mjs --pattern 'rename|replaceBody|insertBefore|insertAfter|safeDelete|workspaceEdit|applyPatch|ast-grep.*apply|symbol.*apply' <agentmap-runtime-use-touched-files> if AgentMap, Symbol Tool, AST, edit-adjacent, or provider files are touched
   - pnpm run comms:replay and pnpm run comms:compare only if Main/Gateway/host-api/api-client/provider transport paths are touched
 acceptance:
   - The task spec validates and the next-phase handoff documents the allowed hardening and opt-in/shadow boundaries.

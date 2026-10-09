@@ -41,12 +41,12 @@ rollback:
   - Stop importing `openclaw_runtime/src/runtime-core/evidence-verifier.ts`.
   - Keep existing TaskLoop evidence gate, warning-only evidence verifier report, tool invocation paths, and event-log verification sampling authoritative/unchanged.
 requiredTests:
-  - rtk node harness/src/cli.mjs context --spec harness/specs/tasks/phase-5-evidence-verifier.md
-  - rtk node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-5-evidence-verifier.md
-  - rtk node node_modules/vitest/vitest.mjs run tests/unit/runtime-evidence-verifier-contracts.test.ts
-  - rtk node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
-  - rtk rg -n 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src electron shared tests --glob '!**/*.md'
-  - rtk rg -n 'createServer|listen\(|new WebSocketServer|WebSocketServer|http\.createServer|net\.createServer|127\.0\.0\.1:18789|localhost:18789' openclaw_runtime/src/runtime-core/evidence-verifier.ts tests/unit/runtime-evidence-verifier-contracts.test.ts
+  - node harness/src/cli.mjs context --spec harness/specs/tasks/phase-5-evidence-verifier.md
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/phase-5-evidence-verifier.md
+  - node node_modules/vitest/vitest.mjs run tests/unit/runtime-evidence-verifier-contracts.test.ts
+  - node node_modules/typescript/bin/tsc --noEmit -p tsconfig.node.json --composite false
+  - node scripts/scan-pattern.mjs --pattern 'window\.electron\.ipcRenderer\.invoke|ipcRenderer\.invoke\(|127\.0\.0\.1:18789|localhost:18789|new WebSocket\(' src electron shared tests --glob '!**/*.md'
+  - node scripts/scan-pattern.mjs --pattern 'createServer|listen\(|new WebSocketServer|WebSocketServer|http\.createServer|net\.createServer|127\.0\.0\.1:18789|localhost:18789' openclaw_runtime/src/runtime-core/evidence-verifier.ts tests/unit/runtime-evidence-verifier-contracts.test.ts
 acceptance:
   - Contract exposes verifier evidence kinds file/test/tool/trace/human.
   - Verifier input covers objective/task id, obligations, evidence refs, tool results, and event replay summary.

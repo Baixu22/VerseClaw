@@ -76,6 +76,56 @@ export function validateResidualPaths(residualPaths, specPath = 'spec') {
   return failures;
 }
 
+// Task specs are executed from clean checkouts and CI runners, not from the
+// machine that happened to write them. A `requiredTests` command that starts
+// with an operator's home directory (an `rtk.exe` wrapper, a desktop checkout)
+// is unrunnable everywhere else, so the declared gate silently becomes a no-op.
+// The patterns require a real user segment: illustrative shapes such as
+// `C:\Users\...\workspace` stay allowed.
+const MACHINE_LOCAL_PATH_PATTERNS = [
+  { label: 'Windows user profile path', pattern: /[A-Za-z]:\\{1,2}Users\\{1,2}[A-Za-z0-9][A-Za-z0-9._-]*/ },
+  { label: 'macOS user home path', pattern: /\/Users\/[A-Za-z0-9][A-Za-z0-9._-]*(?:\/|$)/ },
+  { label: 'Linux user home path', pattern: /\/home\/[A-Za-z0-9][A-Za-z0-9._-]*(?:\/|$)/ },
+];
+
+export function findMachineLocalPaths(text) {
+  const findings = [];
+  for (const { label, pattern } of MACHINE_LOCAL_PATH_PATTERNS) {
+    const probe = new RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : `${pattern.flags}g`);
+    for (const match of String(text ?? '').matchAll(probe)) {
+      findings.push({ label, value: match[0] });
+    }
+  }
+  return findings;
+}
+
+export function validateSpecPortability(spec) {
+  // Scan each declared string as written. Serializing the frontmatter first
+  // would double the backslashes and hide the very paths this check exists for.
+  const texts = [];
+  const collect = (value) => {
+    if (typeof value === 'string') texts.push(value);
+    else if (Array.isArray(value)) value.forEach(collect);
+    else if (value && typeof value === 'object') Object.values(value).forEach(collect);
+  };
+  collect(spec?.data);
+  if (spec?.body) texts.push(String(spec.body));
+
+  const failures = [];
+  const seen = new Set();
+  for (const text of texts) {
+    for (const { label, value } of findMachineLocalPaths(text)) {
+      const key = `${label}:${value}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      failures.push(
+        `${spec?.path ?? 'spec'}: ${label} ${JSON.stringify(value)} is machine-specific; declare a repository-relative or portable command instead`,
+      );
+    }
+  }
+  return failures;
+}
+
 // Changed-path ownership applies to every task spec, not just the two
 // scenario-bound families. Scenario-less specs (the RC-00..RC-09 convergence
 // packages) previously reached only the id/title check in cli.mjs, so their

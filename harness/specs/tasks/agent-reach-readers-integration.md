@@ -84,7 +84,9 @@ docs:
 
 ## Import Contract
 
-The source of record is `C:\Users\27933\Desktop\Agent-Reach-main\ts-shadow`.
+The source of record is an operator-provided Agent Reach checkout (`ts-shadow`).
+Point `AGENT_REACH_SOURCE` (or an equivalent local path) at it before importing; no
+machine-specific path is tracked here.
 The first import commit contains exactly the 22 non-generated files and excludes
 `node_modules`. `UPSTREAM.md` is the permanent path and hash ledger. Production
 adaptation happens only on those imported files plus narrowly required plugin,

@@ -29,8 +29,8 @@ requiredRules:
 requiredTests:
   - pnpm harness context --spec harness/specs/tasks/verseshell-foundation-governance.md
   - pnpm harness validate --spec harness/specs/tasks/verseshell-foundation-governance.md --no-diff
-  - python C:\\Users\\27933\\.codex\\skills\\task-forest\\scripts\\task_forest.py validate
-  - python C:\\Users\\27933\\.codex\\skills\\task-forest\\scripts\\task_forest.py export
+  - py -3 %USERPROFILE%/.codex/skills/task-forest/scripts/task_forest.py validate
+  - py -3 %USERPROFILE%/.codex/skills/task-forest/scripts/task_forest.py export
   - git diff --check -- harness/specs/tasks/verseshell-foundation-governance.md harness/specs/rules/verseshell-foundation-p0-boundary.md docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md docs/dev/verseshell-foundation/P0-EVIDENCE-BASELINE-2026-08-14.md docs/dev/handoffs/LATEST.md
 acceptance:
   - The P0 baseline records the exact candidate SHA, current binary and source identity hashes, machine uptime context, commands, exit codes, and the difference between current and historical evidence.

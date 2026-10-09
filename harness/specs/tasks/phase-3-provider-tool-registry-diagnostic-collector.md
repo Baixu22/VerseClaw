@@ -68,9 +68,9 @@ requiredTests:
   - pnpm --config.verify-deps-before-run=false run typecheck
   - pnpm run comms:replay
   - pnpm run comms:compare
-  - rg -n "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components
-  - rg -n "createServer\\(|listen\\(|WebSocketServer|new WebSocket\\(|daemon|listener|external database|sqlite|postgres|mysql|redis|@temporalio|express\\(" <registry-diagnostic-collector-touched-files>
-  - rg -n "provider ordering|default provider|default-on|prompt cutover|model messages|Gateway request|formatTaskLoopContextPackForReviewer|runAgentPrompt" <registry-diagnostic-collector-touched-files>
+  - node scripts/scan-pattern.mjs --pattern "window\\.electron\\.ipcRenderer\\.invoke|ipcRenderer\\.invoke\\(|127\\.0\\.0\\.1:18789|localhost:18789|new WebSocket\\(" src/pages src/components
+  - node scripts/scan-pattern.mjs --pattern "createServer\\(|listen\\(|WebSocketServer|new WebSocket\\(|daemon|listener|external database|sqlite|postgres|mysql|redis|@temporalio|express\\(" <registry-diagnostic-collector-touched-files>
+  - node scripts/scan-pattern.mjs --pattern "provider ordering|default provider|default-on|prompt cutover|model messages|Gateway request|formatTaskLoopContextPackForReviewer|runAgentPrompt" <registry-diagnostic-collector-touched-files>
 acceptance:
   - Phase 3 synthesis remains the prerequisite and no accepted Phase 3 boundary is widened.
   - A runtime-owned collector can merge context and tool registry diagnostics into bounded shadow output.
