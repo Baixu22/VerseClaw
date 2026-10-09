@@ -499,6 +499,8 @@ openclaw_runtime/_tmp_*
 !/artifacts/live-model-cdp/20260922-senseaudio-journey-J04/workload/calc.js
 !/artifacts/live-model-cdp/20260922-senseaudio-journey-J04/workload/calc.test.js
 !/artifacts/live-model-cdp/20260922-senseaudio-journey-J04/workload/package.json
+!/artifacts/live-model-cleanup-20261009/SHA256SUMS
+!/artifacts/live-model-cleanup-20261009/report.json
 !/artifacts/p0-production-pass/evidence.json
 !/artifacts/project-closeout-20261004/report.json
 !/artifacts/project-closeout-20261005/SHA256SUMS
@@ -1506,6 +1508,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/knowledge-system-unification/surface-reports/role-memory-retrieval.json
 !/docs/dev/knowledge-system-unification/surface-reports/sekb-experience-retrieval.json
 !/docs/dev/knowledge-system-unification/surface-reports/semantic-source-set-synthesis.json
+!/docs/dev/live-model-cleanup-20261009.md
 !/docs/dev/mock-render-scenarios.md
 !/docs/dev/model-error-reference.md
 !/docs/dev/pending-worktree-consolidation.md

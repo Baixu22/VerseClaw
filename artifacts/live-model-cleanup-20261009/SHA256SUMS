@@ -1,0 +1,5 @@
+e4bd93dba1ac72972f5d237d24c4ae70a6e75bfad0869d911347e37aa99f5c8b  artifacts/live-model-cleanup-20261009/report.json
+6131fb13b05ee300e91147d4d4af22375cd77340fc8efb18d38b0ba249cb7270  docs/dev/live-model-cleanup-20261009.md
+5a82851bd4b4314bf9631a3aa38b109f312a60f4cd6bdb2007d9bc66423cb864  scripts/check-live-model-evidence.mjs
+0d6eeeb1b1db42b498f082cc2db126fdaebc526aec4eefe9596f8aea519fdb38  scripts/check-live-model-evidence.test.mjs
+83cbd9595eea7d8a970a50ff367e944a7121352910d2f01b24030efbf10b1f74  harness/specs/tasks/stepfun-basic-live-evidence.md

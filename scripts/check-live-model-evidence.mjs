@@ -52,6 +52,7 @@ async function completion(body, label, onHeaders, onChunk) {
   return body.stream ? { content: frames.flatMap(f => f.choices ?? []).map(c => c.delta?.content ?? '').join(''), row } : { message: frames[0].choices?.[0]?.message, row };
 }
 let gateway, client, relay, gatewayText = '';
+const gatewayHasExited = () => !gateway || gateway.exitCode !== null || gateway.signalCode !== null;
 try {
   if (process.env.LIVE_MODEL_GATEWAY_ONLY !== '1') {
   const streamed = await completion({ model, messages: [{ role: 'user', content: 'Reply exactly STREAM-LIVE-OK. No tools or formatting.' }], stream: true, stream_options: { include_usage: true }, max_tokens: 512 }, 'direct-stream');
@@ -100,7 +101,7 @@ try {
   gateway.stdout.on('data', c => { gatewayText += c; }); gateway.stderr.on('data', c => { gatewayText += c; });
   report.gateway = { pid: gateway.pid, entry, entrySha256: hash(fs.readFileSync(entry)), ready: false };
   const deadline = Date.now() + 90_000;
-  while (Date.now() < deadline) { assert.equal(gateway.exitCode, null, 'Gateway exited'); try { const r = await fetch('http://127.0.0.1:' + gatewayPort + '/readyz', { signal: AbortSignal.timeout(2000) }); if (r.ok && (await r.json()).ready) { report.gateway.ready = true; break; } } catch {} await sleep(500); }
+  while (Date.now() < deadline) { assert(!gatewayHasExited(), 'Gateway exited'); try { const r = await fetch('http://127.0.0.1:' + gatewayPort + '/readyz', { signal: AbortSignal.timeout(2000) }); if (r.ok && (await r.json()).ready) { report.gateway.ready = true; break; } } catch {} await sleep(500); }
   assert(report.gateway.ready, 'Gateway readiness timed out');
   client = new RpcClient({ port: gatewayPort, token, scopes: ['operator.admin', 'operator.read', 'operator.write'] });
   await client.connect();
@@ -129,8 +130,8 @@ try {
 } catch (error) { report.error = String(error.stack ?? error).replaceAll(key, '[REDACTED_CREDENTIAL]'); process.exitCode = 1; }
 finally {
   client?.close();
-  if (gateway?.exitCode === null) { gateway.kill(); await Promise.race([new Promise(resolve => gateway.once('close', resolve)), sleep(5000)]); if (gateway.exitCode === null) { report.forcedCleanup = true; const killer = spawn('taskkill.exe', ['/PID', String(gateway.pid), '/T', '/F'], { windowsHide: true, stdio: 'ignore' }); await new Promise(resolve => killer.once('close', resolve)); } }
-  report.gatewayExited = !gateway || gateway.exitCode !== null;
+  if (!gatewayHasExited()) { gateway.kill(); await Promise.race([new Promise(resolve => gateway.once('close', resolve)), sleep(5000)]); if (!gatewayHasExited()) { report.forcedCleanup = true; const killer = spawn('taskkill.exe', ['/PID', String(gateway.pid), '/T', '/F'], { windowsHide: true, stdio: 'ignore' }); await new Promise(resolve => killer.once('close', resolve)); } }
+  report.gatewayExited = gatewayHasExited();
   if (relay) { relay.closeAllConnections(); await new Promise(resolve => relay.close(resolve)); }
   fs.writeFileSync(path.join(output, 'gateway.log'), gatewayText.replaceAll(key, '[REDACTED_CREDENTIAL]'));
   report.completedAt = new Date().toISOString(); report.providerRequests = calls; save();

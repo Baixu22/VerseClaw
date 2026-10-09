@@ -1,0 +1,194 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-live-model-cleanup",
+  "completedAt": "2026-10-09T02:49:26.763Z",
+  "providerCalls": 0,
+  "scope": "production cleanup predicate only; no provider/Gateway model call",
+  "source": "scripts/check-live-model-evidence.mjs",
+  "redRegression": {
+    "exitCode": 1,
+    "passed": 3,
+    "failed": 4,
+    "receipt": "D:/ClawX-work/live-model-cleanup-20261009/regression-red.json",
+    "logSha256": "b6aec1643d3e9f3c530204a16f8c0b03e4ada6bf7cfd9bf0c917a6c750799a38"
+  },
+  "greenRegression": {
+    "exitCode": 0,
+    "passed": 7,
+    "failed": 0,
+    "receipt": "D:/ClawX-work/live-model-cleanup-20261009/regression-green.json",
+    "logSha256": "b0b208f9c80a33ab5b5e68f2320ace0deab946f09b31f5ac9bc6175b797b4751"
+  },
+  "historicalManifest": {
+    "candidate": "d5420d53ad038e713ce4a81fc048fb50ca28f5ff",
+    "files": 10,
+    "matched": 10,
+    "receipt": "D:/ClawX-work/live-model-cleanup-20261009/historical-manifest-check.json"
+  },
+  "checks": {
+    "nodeCheck": 0,
+    "diffCheck": 0,
+    "commsReplay": 0,
+    "commsCompare": 0,
+    "eslint": 0,
+    "harnessValidate": 0,
+    "harnessDryRun": 0
+  },
+  "implementation": {
+    "predicate": "!gateway || gateway.exitCode !== null || gateway.signalCode !== null",
+    "uses": "readiness assertion, graceful kill guard, forced tree cleanup guard, final gatewayExited field"
+  },
+  "boundaries": [
+    "No fresh StepFun calls",
+    "No desktop/browser/Electron/install rerun",
+    "No product defaults/locks/release scope change",
+    "Agent-driven fixture evidence; not real-human evidence"
+  ],
+  "observedAt": "2026-10-09T02:53:15.016Z",
+  "processObservation": {
+    "driven_by": "agent",
+    "actor": "codex-live-model-cleanup",
+    "pid": 23944,
+    "exitCode": null,
+    "signalCode": "SIGTERM",
+    "independentProcessProbe": "ESRCH",
+    "realProviderCalls": 0
+  },
+  "sourceFiles": [
+    {
+      "file": "scripts/check-live-model-evidence.mjs",
+      "sha256": "5a82851bd4b4314bf9631a3aa38b109f312a60f4cd6bdb2007d9bc66423cb864"
+    },
+    {
+      "file": "scripts/check-live-model-evidence.test.mjs",
+      "sha256": "0d6eeeb1b1db42b498f082cc2db126fdaebc526aec4eefe9596f8aea519fdb38"
+    },
+    {
+      "file": "harness/specs/tasks/stepfun-basic-live-evidence.md",
+      "sha256": "83cbd9595eea7d8a970a50ff367e944a7121352910d2f01b24030efbf10b1f74"
+    }
+  ],
+  "dependencies": "Existing installed dependencies reused; not a fresh install qualification.",
+  "validationCoverage": {
+    "harness": "diff-aware validate + dry-run; selected full fast steps are skipped, not passed",
+    "executed": [
+      "seven local cleanup tests",
+      "node syntax checks",
+      "scoped eslint",
+      "comms replay",
+      "comms compare",
+      "retention policy check"
+    ],
+    "notExecuted": [
+      "full pnpm test",
+      "typecheck (no TS source changes)",
+      "full Electron suite",
+      "build/installer",
+      "live provider call"
+    ]
+  },
+  "credentialScan": {
+    "kind": "common credential-shape scan; no real credential supplied or loaded by this follow-up",
+    "files": 8,
+    "hits": []
+  },
+  "sourceProjection": {
+    "path": "D:/ClawX-work/live-model-cleanup-20261009/source-projection",
+    "files": [
+      {
+        "file": "scripts/check-live-model-evidence.mjs",
+        "sha256": "5a82851bd4b4314bf9631a3aa38b109f312a60f4cd6bdb2007d9bc66423cb864"
+      },
+      {
+        "file": "scripts/check-live-model-evidence.test.mjs",
+        "sha256": "0d6eeeb1b1db42b498f082cc2db126fdaebc526aec4eefe9596f8aea519fdb38"
+      }
+    ],
+    "exitCode": 0,
+    "passed": 7,
+    "failed": 0,
+    "realProviderCalls": 0,
+    "independentProcessObservation": {
+      "driven_by": "agent",
+      "actor": "codex-live-model-cleanup",
+      "pid": 30416,
+      "exitCode": null,
+      "signalCode": "SIGTERM",
+      "independentProcessProbe": "ESRCH",
+      "realProviderCalls": 0
+    },
+    "logSha256": "7ece47f28e046ff54c4e712563d6ff7df7ea2969da48e9663c7db4d7b297352f",
+    "dependencies": "Node stdlib only; no repo node_modules, Gateway bundle, private task state, provider or ignored inputs required."
+  },
+  "gates": [
+    {
+      "name": "syntax",
+      "exitCode": 0,
+      "log": "D:\\ClawX-work\\live-model-cleanup-20261009\\syntax.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "cleanup-regression",
+      "exitCode": 0,
+      "log": "D:\\ClawX-work\\live-model-cleanup-20261009\\cleanup-regression.log",
+      "logSha256": "4030525d3706f688b0dc93d7096a567d3b113715d370c79742af7c9df0a65596"
+    },
+    {
+      "name": "scoped-eslint",
+      "exitCode": 0,
+      "log": "D:\\ClawX-work\\live-model-cleanup-20261009\\scoped-eslint.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "harness-validate",
+      "exitCode": 0,
+      "log": "D:\\ClawX-work\\live-model-cleanup-20261009\\harness-validate.log",
+      "logSha256": "90ab0bd8b16adcf83599dec659d3c4805dd350d15aeab5cc3b41af5bf3bb0719"
+    },
+    {
+      "name": "harness-dry-run",
+      "exitCode": 0,
+      "log": "D:\\ClawX-work\\live-model-cleanup-20261009\\harness-dry-run.log",
+      "logSha256": "06f582d29778d6f51f58e962ccc65b5217e6468df0abdb8abceecb1835610d0d"
+    },
+    {
+      "name": "artifact-retention",
+      "exitCode": 0,
+      "log": "D:\\ClawX-work\\live-model-cleanup-20261009\\artifact-retention.log",
+      "logSha256": "bd3e4460c768f52c3c8f9086b115dcbf9b6c198b1f89b5f6c62bd29fc6248b1d"
+    },
+    {
+      "name": "comms-replay",
+      "exitCode": 0,
+      "log": "D:\\ClawX-work\\live-model-cleanup-20261009\\comms-replay.log",
+      "logSha256": "1817b11dac7b0cb9aaa88f8712e802bb54065d26b4d665d05c4b684a2b4ce682"
+    },
+    {
+      "name": "comms-compare",
+      "exitCode": 0,
+      "log": "D:\\ClawX-work\\live-model-cleanup-20261009\\comms-compare.log",
+      "logSha256": "9e6c5d90faf35a5699f02a20657a5efd7dbe9ef9b306e6d79380b1b4df62b670"
+    },
+    {
+      "name": "staged-diff-check",
+      "exitCode": 0,
+      "log": "D:\\ClawX-work\\live-model-cleanup-20261009\\staged-diff-check.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "verdict": "passed-scoped-runner-cleanup-regression",
+  "historicalEvidenceUnchanged": [
+    {
+      "file": "artifacts/stepfun-basic-live-evidence-20261008/report.json",
+      "sha256": "d2eb62ac8b906213eb8fc21336f76080a92fe35ec378848ef3443fc6c62b78f7"
+    },
+    {
+      "file": "artifacts/stepfun-basic-live-evidence-20261008/credential-scan.json",
+      "sha256": "9f30abc9321130e03669b2f2efbc50a4810175f99919ca8059875f7604b4c0f7"
+    },
+    {
+      "file": "artifacts/stepfun-basic-live-evidence-20261008/SHA256SUMS",
+      "sha256": "aeffea73cb21a94a20352e39e7079b44beb9693440dd78641032833a2ddf5754"
+    }
+  ]
+}

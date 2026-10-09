@@ -16,6 +16,9 @@ requiredProfiles:
   - comms
 touchedAreas:
   - scripts/check-live-model-evidence.mjs
+  - scripts/check-live-model-evidence.test.mjs
+  - docs/dev/live-model-cleanup-20261009.md
+  - artifacts/live-model-cleanup-20261009/**
   - openclaw_runtime/src/agents/openai-transport-stream.ts
   - openclaw_runtime/src/agents/openai-transport-stream.test.ts
   - tests/e2e/chat-cache-live-model.spec.ts
@@ -37,6 +40,7 @@ docs:
 requiredTests:
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/openai-transport-stream.test.ts
   - node --check scripts/check-live-model-evidence.mjs
+  - node --test scripts/check-live-model-evidence.test.mjs
   - node scripts/check-live-model-evidence.mjs
 acceptance:
   - Record the clean source commit/tree and reused application/runtime bundle identity.
@@ -50,3 +54,9 @@ This supplements the completed Windows x64 alpha qualification. It does not reru
 or replace that complete suite and does not expand platform, release or product
 lock claims. The original desktop live-model test is restored unchanged; its failed attempts remain local.
 All scenario actions and judgments are agent-driven; the remote model is real.
+
+The 2026-10-09 cleanup follow-up uses zero provider calls. Its local lifecycle
+regression executes the production cleanup block and a real owned child process.
+Numeric exit and signal termination both count as exited; neither may trigger
+forced cleanup of an already-exited PID. Historical live-model evidence stays
+bound to its original candidate and is not rewritten by this follow-up.
