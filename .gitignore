@@ -1806,6 +1806,9 @@ openclaw_runtime/_tmp_*
 !/docs/dev/p2-issue-fixes-batch7-20261010.md
 !/docs/dev/repository-layout.md
 !/docs/dev/send-button-states-design.md
+!/artifacts/p1-141-memory-benefit-real-20261010/report.json
+!/artifacts/p1-141-memory-benefit-real-20261010/SHA256SUMS
+!/docs/dev/p1-141-memory-benefit-real-20261010.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

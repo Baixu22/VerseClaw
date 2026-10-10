@@ -19,6 +19,14 @@
     {
       "path": "harness/specs/tasks/windows-alpha-closeout.md",
       "reason": "Task spec path/reference cleanup changed after the evidence run; historical snapshot is annotated."
+    },
+    {
+      "path": "electron/gateway/startup-orchestrator.ts",
+      "reason": "P1 #98 gate hardening changed this file after the evidence run; historical snapshot is annotated instead of rewritten."
+    },
+    {
+      "path": "tests/unit/gateway-startup-orchestrator.test.ts",
+      "reason": "P1 #98 regression coverage changed this file after the evidence run; historical snapshot is annotated instead of rewritten."
     }
   ]
 }

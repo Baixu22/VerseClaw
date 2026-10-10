@@ -12,7 +12,7 @@ import { RUNTIME_MEMORY_EVAL_CONFIG, createTempDbPath } from "./helpers/runtime-
 import { callDeepSeek, getRuntimeMemoryLlmConfig, getRuntimeMemoryLlmReceipts, hasDeepSeekKey } from "./helpers/runtime-memory-real-llm-client";
 
 const tempDirs: string[] = [];
-afterEach(() => { for (const dir of tempDirs.splice(0)) rmSync(dir, { recursive: true, force: true }); });
+afterEach(() => { for (const dir of tempDirs.splice(0)) { try { rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }); } catch { /* Windows may still hold a handle; the OS temp dir is disposable. */ } } });
 
 function writeMemory(dbPath: string): void {
   const persistence = createRuntimeMemoryPersistenceStore({ config: RUNTIME_MEMORY_EVAL_CONFIG, database: { path: dbPath }, evictionPolicy: "fifo", now: () => 10_000 });
@@ -44,6 +44,7 @@ describe("real-model memory benefit closure (#141)", () => {
     const dbPath = createTempDbPath("benefit-real-", tempDirs);
     writeMemory(dbPath);
     const questions = ["What is the deployment window? Answer with the exact window.", "Who owns rollback? Answer with the name only."];
+    const controlQuestion = "What is the staging database password? Answer with the value only.";
     const noMemory: string[] = [];
     const withMemory: string[] = [];
     for (const question of questions) {
@@ -52,13 +53,17 @@ describe("real-model memory benefit closure (#141)", () => {
       noMemory.push((await callDeepSeek(baselinePrompt.system, baselinePrompt.user, { temperature: 0, maxTokens: 128 })).content);
       withMemory.push((await callDeepSeek(treatmentPrompt.system, treatmentPrompt.user, { temperature: 0, maxTokens: 128 })).content);
     }
+    const controlPrompt = prompt(await memoryContext(dbPath), controlQuestion);
+    const controlAnswer = (await callDeepSeek(controlPrompt.system, controlPrompt.user, { temperature: 0, maxTokens: 128 })).content;
     const expected = ["thursday 09:00 utc", "morgan"];
     const baselineHits = noMemory.filter((answer, i) => answer.toLowerCase().includes(expected[i])).length;
     const treatmentHits = withMemory.filter((answer, i) => answer.toLowerCase().includes(expected[i])).length;
-    const evidence = { driven_by: "agent", actor: "codex", generatedAt: new Date().toISOString(), config: getRuntimeMemoryLlmConfig(), queryCount: questions.length, seededQueryFilter: false, baselineHits, treatmentHits, noMemory, withMemory, receipts: getRuntimeMemoryLlmReceipts() };
+    const controlGrounded = controlAnswer.toLowerCase().includes("unknown") || !/password/i.test(controlAnswer);
+    const evidence = { driven_by: "agent", actor: "codex", generatedAt: new Date().toISOString(), config: getRuntimeMemoryLlmConfig(), queryCount: questions.length, seededQueryFilter: false, baselineHits, treatmentHits, noMemory, withMemory, controlQuestion, controlAnswer, controlGrounded, receipts: getRuntimeMemoryLlmReceipts() };
     const evidenceDir = path.resolve("artifacts/runtime-memory-benefit-real");
     mkdirSync(evidenceDir, { recursive: true });
     writeFileSync(path.join(evidenceDir, "report.json"), JSON.stringify(evidence, null, 2));
     expect(treatmentHits).toBeGreaterThan(baselineHits);
+    expect(controlGrounded).toBe(true);
   }, 180_000);
 });

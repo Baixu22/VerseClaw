@@ -92,7 +92,9 @@
     "docs/dev/send-button-states-design.md",
     "openclaw_runtime/UPSTREAM.md",
     "scripts/duplicate-assets-allowlist.json",
-    "openclaw_runtime/scripts/ts-max-loc-baseline.json"
+    "openclaw_runtime/scripts/ts-max-loc-baseline.json",
+    "artifacts/p1-141-memory-benefit-real-20261010/report.json",
+    "artifacts/p1-141-memory-benefit-real-20261010/SHA256SUMS"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",
@@ -1704,6 +1706,9 @@
     "docs/dev/p1-issue-fixes-batch8-20261010.md",
     "docs/dev/p2-issue-fixes-batch7-20261010.md",
     "docs/dev/repository-layout.md",
-    "docs/dev/send-button-states-design.md"
+    "docs/dev/send-button-states-design.md",
+    "artifacts/p1-141-memory-benefit-real-20261010/report.json",
+    "artifacts/p1-141-memory-benefit-real-20261010/SHA256SUMS",
+    "docs/dev/p1-141-memory-benefit-real-20261010.md"
   ]
 }
