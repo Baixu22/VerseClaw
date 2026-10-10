@@ -335,6 +335,25 @@ describe("supervisor restart reconciliation", () => {
   );
 
   it(
+    "captures a same-tick child whose token equals the parent token",
+    async () => {
+      const tree = await spawnTree();
+      try {
+        const { captureProcessTrees } = await import("../os-containment.js");
+        const capture = await captureProcessTrees([tree.parentPid]);
+        expect(capture.status).toBe("ok");
+        expect(capture.capturedPids.has(tree.parentPid)).toBe(true);
+        expect(capture.capturedPids.has(tree.childPid)).toBe(true);
+      } finally {
+        tree.kill();
+        await waitForPidDeath(tree.parentPid);
+        if (!isPidDefinitelyDead(tree.childPid)) process.kill(tree.childPid, "SIGKILL");
+      }
+    },
+    30_000,
+  );
+
+  it(
     "fails closed on a corrupt manifest without touching the file",
     async () => {
       fs.mkdirSync(rootDir, { recursive: true });

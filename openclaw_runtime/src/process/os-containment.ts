@@ -189,15 +189,19 @@ async function readProcessMap(): Promise<
   };
 }
 
-function tokenIsAfter(token: string, parentToken: string): boolean {
+function tokenIsNotBefore(token: string, parentToken: string): boolean {
   const numericToken = Number(token);
   const numericParentToken = Number(parentToken);
   if (Number.isFinite(numericToken) && Number.isFinite(numericParentToken)) {
-    return numericToken > numericParentToken;
+    // A child cannot be older than its parent. Equal tokens are accepted
+    // because coarse start-time resolution (Linux jiffies, Windows FileTime
+    // rounding) legitimately produces the same value for a parent and a child
+    // forked in the same tick; dropping them would under-capture the tree.
+    return numericToken >= numericParentToken;
   }
   // Windows CIM datetime tokens (YYYYMMDDHHmmss.uuuuuu+mmm) compare
   // lexicographically for processes from the same machine/timezone.
-  return token > parentToken;
+  return token >= parentToken;
 }
 
 type TreeCollection = { captured: Map<number, string>; truncated: boolean };
@@ -222,7 +226,7 @@ function collectTreePids(
       // A child cannot be older than its parent. Windows ParentProcessId is
       // not cleared when the original parent dies, so a reused root PID can
       // otherwise capture a stale unrelated child (for example csrss.exe).
-      if (!tokenIsAfter(record.token, current.token)) continue;
+      if (!tokenIsNotBefore(record.token, current.token)) continue;
       if (captured.has(record.pid)) continue;
       captured.set(record.pid, record.token);
       queue.push({ pid: record.pid, token: record.token });
