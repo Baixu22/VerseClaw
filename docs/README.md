@@ -29,6 +29,7 @@ and the [default configuration matrix](dev/default-config-matrix.md).
 - [P2 issue fix: failed and retried usage attribution](dev/p2-issue-fixes-batch11-20261010.md)
 - [P2 issue fix: cross-run observability Problems](dev/p2-issue-fixes-batch12-20261010.md)
 - [P2 issue fix: automated runtime-memory cutover evidence gate](dev/p2-issue-fixes-batch13-20261010.md)
+- [P2 issue fix: deprecated zero-call exports](dev/p2-issue-fixes-batch14-20261010.md)
 
 ## Historical records
 

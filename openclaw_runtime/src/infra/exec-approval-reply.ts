@@ -243,20 +243,6 @@ export function buildApprovalInteractiveReply(params: {
   );
 }
 
-/**
- * @deprecated Use buildExecApprovalPresentation.
- */
-export function buildExecApprovalInteractiveReply(params: {
-  approvalCommandId: string;
-  ask?: string | null;
-  allowedDecisions?: readonly ExecApprovalReplyDecision[];
-}): InteractiveReply | undefined {
-  return buildApprovalInteractiveReply({
-    approvalId: params.approvalCommandId,
-    ask: params.ask,
-    allowedDecisions: params.allowedDecisions,
-  });
-}
 
 export function getExecApprovalApproverDmNoticeText(): string {
   return "Approval required. I sent approval DMs to the approvers for this account.";

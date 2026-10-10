@@ -36,7 +36,6 @@ import { openaiCodexOAuthProvider } from "./openai-chatgpt.js";
 import type {
   OAuthCredentials,
   OAuthProviderId,
-  OAuthProviderInfo,
   OAuthProviderInterface,
 } from "./types.js";
 
@@ -96,35 +95,11 @@ export function getOAuthProviders(): OAuthProviderInterface[] {
   return Array.from(oauthProviderRegistry.values());
 }
 
-/**
- * @deprecated Use getOAuthProviders() which returns OAuthProviderInterface[]
- */
-export function getOAuthProviderInfoList(): OAuthProviderInfo[] {
-  return getOAuthProviders().map((p) => ({
-    id: p.id,
-    name: p.name,
-    available: true,
-  }));
-}
 
 // ============================================================================
 // High-level API (uses provider registry)
 // ============================================================================
 
-/**
- * Refresh token for unknown OAuth provider.
- * @deprecated Use getOAuthProvider(id).refreshToken() instead
- */
-export async function refreshOAuthToken(
-  providerId: OAuthProviderId,
-  credentials: OAuthCredentials,
-): Promise<OAuthCredentials> {
-  const provider = getOAuthProvider(providerId);
-  if (!provider) {
-    throw new Error(`Unknown OAuth provider: ${providerId}`);
-  }
-  return provider.refreshToken(credentials);
-}
 
 /**
  * Get API key for a provider from OAuth credentials.

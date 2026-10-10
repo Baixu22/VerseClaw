@@ -93,7 +93,7 @@
     "repo:artifacts:check": "node scripts/check-repository-artifacts.mjs",
     "repo:duplicates:check": "node scripts/check-duplicate-assets.mjs",
     "harness:specs:lifecycle": "node scripts/check-spec-lifecycle.mjs",
-    "runtime:source:check": "node scripts/check-runtime-source-policy.mjs && pnpm --dir openclaw_runtime run check:import-cycles && pnpm --dir openclaw_runtime run check:deprecated-api-usage && pnpm --dir openclaw_runtime run deadcode:unused-files && pnpm --dir openclaw_runtime run check:loc:baseline",
+    "runtime:source:check": "node scripts/check-runtime-source-policy.mjs && pnpm --dir openclaw_runtime run check:import-cycles && pnpm --dir openclaw_runtime run check:deprecated-api-usage && pnpm --dir openclaw_runtime run check:deprecated-zero-call && pnpm --dir openclaw_runtime run deadcode:unused-files && pnpm --dir openclaw_runtime run check:loc:baseline",
     "contract:check": "node scripts/contract-check.mjs",
     "chain-audit": "node scripts/chain-audit/run-chain-audit.mjs",
     "chain-audit:chain": "node scripts/chain-audit/run-chain-audit.mjs --chain",
