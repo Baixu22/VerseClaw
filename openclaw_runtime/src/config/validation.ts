@@ -68,16 +68,45 @@ type AllowedValuesCollection = {
 };
 type JsonSchemaLike = Record<string, unknown>;
 
+/**
+ * Drops config keys that were removed from the product but must not invalidate a
+ * config file written before the removal.
+ *
+ * A strict schema plus a removed-but-previously-accepted key is the FP-P0-02
+ * failure mode: validation fails, the gateway child exits code=1, and the user
+ * cannot start the app until they hand-edit config. Removed keys therefore get a
+ * pre-validation strip here instead of relying on the operator to clean up first.
+ *
+ * - `commands.modelsWrite`: superseded command alias.
+ * - `runtime.coding.uftk`: the 19 declared-only switches removed by issue #95
+ *   (they had zero runtime readers). Configs written before the removal — the
+ *   installed workspace config among them — keep validating; the dead subtree is
+ *   dropped rather than reported.
+ */
 function stripDeprecatedValidationKeys(raw: unknown): unknown {
-  if (!isRecord(raw) || !isRecord(raw.commands) || !Object.hasOwn(raw.commands, "modelsWrite")) {
+  if (!isRecord(raw)) {
     return raw;
   }
-  const commands = { ...raw.commands };
-  delete commands.modelsWrite;
-  return {
-    ...raw,
-    commands,
-  };
+  let next: Record<string, unknown> = raw;
+
+  const commands = next.commands;
+  if (isRecord(commands) && Object.hasOwn(commands, "modelsWrite")) {
+    const trimmedCommands = { ...commands };
+    delete trimmedCommands.modelsWrite;
+    next = { ...next, commands: trimmedCommands };
+  }
+
+  const runtime = next.runtime;
+  if (isRecord(runtime)) {
+    const coding = runtime.coding;
+    if (isRecord(coding) && Object.hasOwn(coding, "uftk")) {
+      const trimmedCoding = { ...coding };
+      delete trimmedCoding.uftk;
+      next = { ...next, runtime: { ...runtime, coding: trimmedCoding } };
+    }
+  }
+
+  return next;
 }
 
 function materializeBundledModelProviderOverlays(config: OpenClawConfig): OpenClawConfig {

@@ -244,6 +244,11 @@ Untracked with the on-disk bytes preserved:
   the uftk wiring decision, and #100/#101, #116/#117/#118/#119/#122/#124,
   #135/#136/#138/#139/#140/#142/#143/#144, #154/#155/#156/#157) remain open and
   are explicitly out of scope for this batch.
+- **Follow-up (2026-10-11): #95 has since been resolved** by removing the whole
+  `runtime.coding.uftk` subtree and adding a pre-validation strip for legacy
+  configs — see `docs/dev/uftk-dead-config-surface-removal-20261011.md`. The
+  pinned uftk entries referenced above were retired from the guard baseline in
+  that change set.
 - The issues' own reference counts for context-engine subdirectories could not be
   reproduced (those names are not subdirectories of `context-engine/`), and rc05
   was not labelled legacy because no marker supports it; both are stated as

@@ -24,6 +24,13 @@
 
 **`coding.uftk` 整棵子树（12 个开关，共 19 个叶子）属于「已声明、未接线」——运行期零消费方。不是「已实现但换了入口」。** 唯一正确的修复方向是**从类型 / zod-schema / `RUNTIME_FEATURE_EXHAUSTIVE` / UI 标签中移除**（或由 #95 决定等价删除），而不是"把实现改为读 uftk 配置"。
 
+> **后续（2026-10-11）：本节的结论已被执行。** issue #95 按"移除"方向收口：19 个叶子从类型 /
+> 严格 schema / `RUNTIME_FEATURE_EXHAUSTIVE` 中删除，旧配置文件由
+> `openclaw_runtime/src/config/validation.ts` 的 `stripDeprecatedValidationKeys` 在校验前剥离该子树，
+> 因此安装态配置（其中仍带整块 uftk）不会打死 gateway。完整决策、证据与残留见
+> `docs/dev/uftk-dead-config-surface-removal-20261011.md`。本节的逐叶核对内容作为当时的
+> 事实记录保留；下表的行号是移除前的行号。
+
 ### 12 个开关的逐叶核对
 
 树内 `uftk` 字样只出现在四个位置，全部是**声明面**，没有任何运行期读取：

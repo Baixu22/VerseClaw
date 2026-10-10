@@ -204,39 +204,11 @@ export type RuntimeFeatureConfig = {
     sekb?: { enabled?: boolean; experienceShadow?: boolean; retrievalShadow?: boolean };
     routingMemo?: { shadow?: boolean; enabled?: boolean };
     verifier?: { noSelfRepair?: boolean };
-    uftk?: {
-      enabled?: boolean;
-      baseVersionGuard?: { enabled?: boolean };
-      auditLog?: { enabled?: boolean };
-      gitCheckpoint?: {
-        enabled?: boolean;
-        pathScoped?: { enabled?: boolean };
-        safetySnapshot?: { enabled?: boolean };
-        lifecycle?: { enabled?: boolean };
-      };
-      concurrencyV2?: { enabled?: boolean };
-      execUndo?: { enabled?: boolean };
-      autoCheckpoint?: {
-        enabled?: boolean;
-        allowWorkspaceRoots?: string[];
-        allowAgentIds?: string[];
-        minIntervalMs?: number;
-        retention?: {
-          maxCount?: number;
-          maxAgeMs?: number;
-        };
-      };
-      execSideEffects?: { enabled?: boolean };
-      commandApproval?: {
-        enabled?: boolean;
-        defaultDecision?: 'allow' | 'prompt' | 'forbidden';
-        rules?: Array<{
-          prefix?: string;
-          decision?: 'allow' | 'prompt' | 'forbidden';
-          reason?: string;
-        }>;
-      };
-    };
+    // `runtime.coding.uftk` was removed (issue #95): all 19 leaves under it were
+    // declared, schema-accepted and label-free but had zero runtime readers, so
+    // every switch was a no-op. Configs written before the removal are tolerated
+    // through `stripDeprecatedValidationKeys` in config/validation.ts, which drops
+    // the subtree before strict validation instead of letting it kill the gateway.
   };
   /** Context Runtime Kit backend rollout flags. Defaults on for context/prompt/recovery when no explicit context engine slot is configured. */
   contextRuntimeKit?: {

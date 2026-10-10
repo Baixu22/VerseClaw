@@ -1699,6 +1699,7 @@
     "docs/dev/send-button-states-design.md",
     "docs/dev/repository-reference-analysis-20261010.md",
     "docs/dev/runtime-feature-control-surface.md",
+    "docs/dev/uftk-dead-config-surface-removal-20261011.md",
     "docs/dev/vtoken-distribution-and-format-contract.md"
   ]
 }

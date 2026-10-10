@@ -34,13 +34,13 @@ describe('check-feature-leaf-consumers', () => {
     // Deterministic ordering and no duplicates.
     expect(leaves).toEqual([...leaves].sort());
     expect(new Set(leaves).size).toBe(leaves.length);
-    // Spot-check leaves that must be present, including every claimed uftk gate.
+    // Spot-check live leaves, and lock in the issue #95 removal: the dead
+    // `coding.uftk` subtree must not reappear in the tree without a consumer
+    // (re-adding it would fail this assertion and the guard's fatal condition).
     expect(leaves).toContain('coding.staleWriteGuard.enabled');
     expect(leaves).toContain('vtoken.assembly.enabled');
     expect(leaves).toContain('contextRuntimeKit.shadow');
-    for (const gate of ['enabled', 'baseVersionGuard', 'auditLog', 'gitCheckpoint', 'concurrencyV2', 'execUndo', 'autoCheckpoint', 'execSideEffects', 'commandApproval']) {
-      expect(leaves.some((leaf) => leaf.startsWith(`coding.uftk.${gate}`))).toBe(true);
-    }
+    expect(leaves.some((leaf) => leaf.startsWith('coding.uftk.'))).toBe(false);
   });
 
   it('treats arrays and empty objects as leaves, like listLeafPaths in the source module', () => {
@@ -52,8 +52,8 @@ describe('check-feature-leaf-consumers', () => {
     expect(realTreeReport.ok).toBe(true);
     expect(realTreeReport.unpinnedZeroConsumerLeaves).toEqual([]);
     // Deliberately NOT asserting the baseline equals the observed zero-consumer
-    // set: resolving #95 by re-wiring OR by deleting the dead uftk leaves must
-    // both stay green, so only the check's own verdict is asserted here.
+    // set: a future wiring OR removal of a pinned leaf must both stay green, so
+    // only the check's own verdict is asserted here.
     expect(realTreeReport.leafCount).toBeGreaterThan(100);
   });
 
@@ -68,7 +68,8 @@ describe('check-feature-leaf-consumers', () => {
   });
 
   it('treats a pinned leaf that no longer exists as informational and stays green', () => {
-    // Mirrors resolving #95 by deleting the dead leaves from the schema.
+    // This is how issue #95 resolved the uftk debt: the leaves were deleted, so
+    // the stale pins must not fail a check that never owned the removal.
     const report = checkFeatureLeafConsumers({
       leafPaths: ['alpha.enabled'],
       sources: syntheticSources,
@@ -105,7 +106,7 @@ describe('check-feature-leaf-consumers', () => {
   });
 
   it('does not treat a generic gate word alone as evidence of consumption', () => {
-    expect(hasConsumer('coding.uftk.execUndo.enabled', [
+    expect(hasConsumer('demoFeature.execUndo.enabled', [
       { path: 'c.ts', text: 'const enabled = true; const shadow = false;' },
     ])).toBe(false);
   });
@@ -122,7 +123,9 @@ describe('check-feature-leaf-consumers', () => {
 
   it('shares the frozen production baseline and self-test with the CLI', () => {
     expect(FEATURE_LEAF_CONSUMER_BASELINE.length).toBeGreaterThan(0);
-    expect(FEATURE_LEAF_CONSUMER_BASELINE.every((leaf) => leaf.includes('.coding.uftk.') || leaf.startsWith('coding.') || leaf.startsWith('contextFamily.'))).toBe(true);
+    // The uftk debt was resolved by removal (#95); no pin may name it again.
+    expect(FEATURE_LEAF_CONSUMER_BASELINE.some((leaf) => leaf.includes('.coding.uftk.'))).toBe(false);
+    expect(FEATURE_LEAF_CONSUMER_BASELINE.every((leaf) => leaf.startsWith('coding.') || leaf.startsWith('contextFamily.'))).toBe(true);
     // The negative control must be reproducible in-process, not only via CLI.
     expect(runSelfTest()).toBe(true);
   });

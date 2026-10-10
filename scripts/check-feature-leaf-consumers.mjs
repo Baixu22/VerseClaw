@@ -5,8 +5,10 @@
  * Class of defect this covers (issue #96, AC b): a config leaf that is
  * declared in the runtime config type / zod schema / labels but that no
  * runtime source ever reads — so flipping it in Settings or in the config
- * file silently does nothing. The `runtime.coding.uftk` subtree is the
- * canonical example: its 12 gates all ship in the schema yet none is read.
+ * file silently does nothing. The `runtime.coding.uftk` subtree was the
+ * canonical instance: its 12 gates (19 leaves) shipped in the type, the
+ * exhaustive fixture and the strict schema with zero readers, and issue #95
+ * removed them. It is kept here as the historical example of the class.
  *
  * WHAT THIS CHECK IS, AND IS NOT
  * ------------------------------
@@ -37,8 +39,8 @@
  * Today's zero-consumer leaves are pinned in FEATURE_LEAF_CONSUMER_BASELINE
  * with the owning issue recorded. Fatal is exactly one condition: a leaf that
  * is NOT pinned shows up with no consumer. Two softer outcomes stay green:
- *   - a pinned leaf gains a consumer (the #95 fix landing) => informational;
- *   - a pinned leaf no longer exists in the schema (the #95 fix removing it)
+ *   - a pinned leaf gains a consumer (e.g. a wiring fix landing) => informational;
+ *   - a pinned leaf no longer exists in the schema (a removal fix landing)
  *     => informational, so removing dead leaves is never punished.
  *
  * Usage:
@@ -77,34 +79,21 @@ export const GENERIC_SEGMENTS = new Set([
 
 /**
  * Pinned baseline: leaves with no specific consumer visible in this tree today.
- * Owner: issue #95 owns the actual wiring/deletion fix for `coding.uftk`
- * (issue #96 only characterizes it, and this guard is its AC-b tripwire).
  *
- * The list is the heuristic's observed zero-consumer set at the time of
- * writing, not a curated claim that each leaf is provably dead. 17 of the 19
- * are the `coding.uftk` subtree; `coding.verifier.noSelfRepair` and
- * `contextFamily.observationMasking.preserveNewestObservationCount` are pinned
- * because this textual scan cannot see their readers yet — pinning them keeps
- * today's tree green without asserting they are unwired.
+ * Issue #95 resolved the historical bulk of this list: the whole
+ * `coding.uftk` subtree (17 of the 19 entries that were once pinned here) was
+ * removed from the type, the strict schema and the exhaustive fixture because it
+ * had zero runtime readers. Nothing pins an `uftk` leaf any more, and a
+ * regression test asserts the subtree cannot come back silently.
+ *
+ * What remains are heuristics-blind spots, not proven-dead leaves:
+ * `coding.verifier.noSelfRepair` and
+ * `contextFamily.observationMasking.preserveNewestObservationCount` are read
+ * through paths this textual scan cannot see. Pinning them keeps today's tree
+ * green without asserting they are unwired — if their readers become visible,
+ * the check reports them as informational and stays green.
  */
 export const FEATURE_LEAF_CONSUMER_BASELINE = Object.freeze([
-  'coding.uftk.auditLog.enabled',
-  'coding.uftk.autoCheckpoint.allowAgentIds',
-  'coding.uftk.autoCheckpoint.allowWorkspaceRoots',
-  'coding.uftk.autoCheckpoint.enabled',
-  'coding.uftk.autoCheckpoint.minIntervalMs',
-  'coding.uftk.autoCheckpoint.retention.maxCount',
-  'coding.uftk.baseVersionGuard.enabled',
-  'coding.uftk.commandApproval.defaultDecision',
-  'coding.uftk.commandApproval.enabled',
-  'coding.uftk.commandApproval.rules',
-  'coding.uftk.concurrencyV2.enabled',
-  'coding.uftk.enabled',
-  'coding.uftk.execSideEffects.enabled',
-  'coding.uftk.execUndo.enabled',
-  'coding.uftk.gitCheckpoint.enabled',
-  'coding.uftk.gitCheckpoint.pathScoped.enabled',
-  'coding.uftk.gitCheckpoint.safetySnapshot.enabled',
   'coding.verifier.noSelfRepair',
   'contextFamily.observationMasking.preserveNewestObservationCount',
 ]);

@@ -11,6 +11,7 @@ pathPatterns:
   - openclaw_runtime/src/config/types.openclaw.ts
   - openclaw_runtime/src/config/runtime-feature-leaves.ts
   - openclaw_runtime/src/config/zod-schema.ts
+  - openclaw_runtime/src/config/validation.ts
   - openclaw_runtime/src/config/schema.labels.ts
   - openclaw_runtime/src/config/schema.help.ts
   - scripts/check-feature-leaf-consumers.mjs
@@ -36,14 +37,18 @@ schema-accepted, but it cannot tell whether any runtime code ever reads the
 value — so a leaf can ship in the type, the zod schema, the labels, and the
 Settings UI while flipping it does nothing.
 
-Issue #96 found the canonical instance: all 12 `runtime.coding.uftk` gates
-(`uftk.enabled`, `baseVersionGuard`, `auditLog`, `gitCheckpoint` (+`pathScoped`,
-`safetySnapshot`, `lifecycle`), `concurrencyV2`, `execUndo`, `autoCheckpoint`,
-`execSideEffects`, `commandApproval`) are declared, schema-accepted, and
-label-rendered, yet no runtime source reads any of them. The capability code
+Issue #96 found the canonical instance, and issue #95 then resolved it: all 12
+`runtime.coding.uftk` gates (`uftk.enabled`, `baseVersionGuard`, `auditLog`,
+`gitCheckpoint` (+`pathScoped`, `safetySnapshot`, `lifecycle`), `concurrencyV2`,
+`execUndo`, `autoCheckpoint`, `execSideEffects`, `commandApproval` — 19 leaf
+paths) were declared, schema-accepted and read by nothing. The capability code
 that was meant to honour them (`exec-approvals-allowlist.ts`,
 `checkpoint-rollback-executor.ts`, `agents/tools/write-journal.ts`) reads either
-an injected option or nothing at all — never `runtime.coding.uftk`.
+an injected option or nothing at all — never `runtime.coding.uftk`. The whole
+subtree was therefore removed from the type, the strict schema and the
+exhaustive fixture, with a pre-validation strip in `config/validation.ts` so a
+config file written before the removal keeps starting the gateway. It is kept
+here as the historical example of the class.
 
 `scripts/check-feature-leaf-consumers.mjs` is the standing tripwire for that
 class of problem.
