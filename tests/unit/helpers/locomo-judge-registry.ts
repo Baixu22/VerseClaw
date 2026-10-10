@@ -29,7 +29,7 @@ import {
 
 /**
  * Judge strategy 标识符.
- * - "frozen-v2-generous": 现有 active judge (9 rules, single call, temp=0, maxTokens=8)
+ * - "frozen-v2-generous": 现有 active judge (8 rules, single call, temp=0, maxTokens=8)
  * - "unified-v2-generous": 现有 diagnostic judge (7+ rules, voting 3 票, category-specific)
  * - "custom": 用户自定义 (通过 registerJudgeStrategy 注册)
  */
@@ -109,7 +109,7 @@ export type JudgeCallOptions = {
 /**
  * frozen-v2-generous strategy (默认, 与现有 500q active judge 完全一致).
  *
- * - 9 generous rules, single call, temp=0, maxTokens=8
+ * - 8 generous rules, single call, temp=0, maxTokens=8
  * - promptVersion: "frozen-v2-generous-2026-07-04"
  * - 不参考 category, 不参考 evidence
  */

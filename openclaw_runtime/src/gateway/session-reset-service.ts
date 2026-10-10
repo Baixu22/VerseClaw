@@ -59,6 +59,7 @@ import {
   parseAgentSessionKey,
 } from "../routing/session-key.js";
 import {
+  SessionAdmissionFenceWaitError,
   SessionAdmissionFencedError,
   sessionAdmissionRegistry,
   type SessionAdmissionIdentity,
@@ -616,7 +617,10 @@ export async function stopSessionRuntime(
   }
   let fence: Awaited<ReturnType<typeof sessionAdmissionRegistry.fence>>;
   try {
-    fence = await sessionAdmissionRegistry.fence(identity);
+    fence = await sessionAdmissionRegistry.fence(identity, {
+      timeoutMs: SESSION_DRAIN_TIMEOUT_MS,
+      operation: "session-stop",
+    });
   } catch (error) {
     if (error instanceof SessionAdmissionFencedError) {
       return {
@@ -624,6 +628,19 @@ export async function stopSessionRuntime(
         error: errorShape(
           ErrorCodes.UNAVAILABLE,
           `Session ${params.key} is fenced by another lifecycle operation.`,
+        ),
+      };
+    }
+    if (error instanceof SessionAdmissionFenceWaitError) {
+      // Fail closed: the fence stays closed, so nothing was mutated and the old
+      // generation cannot re-admit. Recovery uses the existing removeFence path.
+      return {
+        ok: false,
+        error: errorShape(
+          ErrorCodes.UNAVAILABLE,
+          `Session ${params.key} admission fence did not drain within ${SESSION_DRAIN_TIMEOUT_MS}ms ` +
+            `(${error.reason}); ${error.activeAtFailure} permit(s) still in flight. No stop was performed.`,
+          { retryable: true },
         ),
       };
     }
@@ -894,13 +911,30 @@ export async function cleanupSessionBeforeMutation(params: {
 
   if (identity) {
     try {
-      fence = await sessionAdmissionRegistry.fence(identity);
+      fence = await sessionAdmissionRegistry.fence(identity, {
+        timeoutMs: SESSION_DRAIN_TIMEOUT_MS,
+        operation: params.reason,
+      });
     } catch (error) {
       if (error instanceof SessionAdmissionFencedError) {
         return {
           error: errorShape(
             ErrorCodes.UNAVAILABLE,
             `Session ${params.key} is fenced by another lifecycle operation.`,
+          ),
+          settle,
+        };
+      }
+      if (error instanceof SessionAdmissionFenceWaitError) {
+        // Fail closed: the fence stays closed as a tombstone for this generation
+        // (nothing is mutated, and no release/retry can re-admit it). Recovery
+        // uses the existing removeFence path.
+        return {
+          error: errorShape(
+            ErrorCodes.UNAVAILABLE,
+            `Session ${params.key} admission fence did not drain within ${SESSION_DRAIN_TIMEOUT_MS}ms ` +
+              `(${error.reason}); ${error.activeAtFailure} permit(s) still in flight. No mutation was performed.`,
+            { retryable: true },
           ),
           settle,
         };

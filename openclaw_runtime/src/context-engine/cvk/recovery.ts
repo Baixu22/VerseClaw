@@ -35,14 +35,73 @@ export type CvkRecoveryProjection = {
   staleReferenceDiagnostics: CvkRecoveryReferenceDiagnostic[];
 };
 
+/**
+ * Reason code for a rollback declaration that is explicitly *not* available.
+ *
+ * - `no_executor_wired`: a CVK recovery projection was built, but no runtime
+ *   consumer in this repository executes a compacted-session transcript replay,
+ *   so nothing can roll the projection back.
+ * - `legacy_projection_retained`: this call degraded to the caller-supplied
+ *   legacy projection, so no CVK projection exists to roll back in the first
+ *   place.
+ */
+export type CvkRecoveryRollbackUnavailableReason =
+  | 'no_executor_wired'
+  | 'legacy_projection_retained';
+
+/** No rollback executor exists for the CVK recovery projection. */
+export type CvkRecoveryRollbackUnavailable = {
+  available: false;
+  strategy: 'unimplemented';
+  reason: CvkRecoveryRollbackUnavailableReason;
+};
+
+/**
+ * A rollback that is really available. Constructing this requires naming the
+ * consumer-reachable executor that performs it, so availability cannot be
+ * claimed by flipping a literal.
+ */
+export type CvkRecoveryRollbackAvailable = {
+  available: true;
+  strategy: 'legacy_transcript_replay';
+  /** Identifier of the wired executor that actually performs the replay. */
+  executorId: string;
+};
+
+/**
+ * Honest rollback declaration for a CVK recovery result.
+ *
+ * `buildCvkRecoveryContext` is a report-only projection builder: it resolves
+ * selector refs and emits diagnostics, and never executes a rollback. A
+ * repo-wide search for `legacy_transcript_replay`, `rollback.strategy`, and
+ * `rollback.available` finds no runtime consumer that executes the strategy, so
+ * the only state these modules produce is `available: false`. The
+ * `available: true` member is kept so a future implementation must name the
+ * executor it is wired to instead of hardcoding availability.
+ */
+export type CvkRecoveryRollback =
+  | CvkRecoveryRollbackUnavailable
+  | CvkRecoveryRollbackAvailable;
+
+/**
+ * Build the honest "no rollback executor" declaration. Typed so that
+ * availability cannot be flipped back to a hardcoded `true`.
+ */
+export function unavailableCvkRecoveryRollback(
+  reason: CvkRecoveryRollbackUnavailableReason,
+): CvkRecoveryRollbackUnavailable {
+  return {
+    available: false,
+    strategy: 'unimplemented',
+    reason,
+  };
+}
+
 export type CvkRecoveryContextResult = {
   ok: boolean;
   projection: CvkRecoveryProjection;
   diagnostics: CvkRecoveryReferenceDiagnostic[];
-  rollback: {
-    available: true;
-    strategy: 'legacy_transcript_replay';
-  };
+  rollback: CvkRecoveryRollback;
 };
 
 export type CvkRecoveryContextInput = {
@@ -118,6 +177,11 @@ function resolveRequiredSelectors(
   return { resolvedChunks, missingReferenceDiagnostics };
 }
 
+/**
+ * Build a report-only recovery projection from a `CompressionArtifact` plus CVK
+ * selector resolution. It never executes a rollback, so the returned
+ * `rollback` declaration is always `available: false`.
+ */
 export function buildCvkRecoveryContext(input: CvkRecoveryContextInput): CvkRecoveryContextResult {
   const resourceMap = generateCvkViews(input.cvkArtifact).registryView.entries;
   const staleReferenceDiagnostics = staleDiagnostics(input.compressionArtifact);
@@ -145,9 +209,6 @@ export function buildCvkRecoveryContext(input: CvkRecoveryContextInput): CvkReco
     ok: diagnostics.length === 0,
     projection,
     diagnostics,
-    rollback: {
-      available: true,
-      strategy: 'legacy_transcript_replay',
-    },
+    rollback: unavailableCvkRecoveryRollback('no_executor_wired'),
   };
 }

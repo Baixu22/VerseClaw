@@ -3,8 +3,10 @@ import type { CvkFixtureArtifact } from './compiler.js';
 import type { CvkEvalReport } from './eval-report.js';
 import {
   buildCvkRecoveryContext,
+  unavailableCvkRecoveryRollback,
   type CvkRecoveryProjection,
   type CvkRecoveryReferenceDiagnostic,
+  type CvkRecoveryRollback,
 } from './recovery.js';
 
 export type CvkDefaultRecoveryDiagnostic =
@@ -26,10 +28,7 @@ export type CvkDefaultRecoveryProjectionResult = {
   legacyProjection: string;
   projection?: CvkRecoveryProjection;
   diagnostics: CvkDefaultRecoveryDiagnostic[];
-  rollback: {
-    available: true;
-    strategy: 'legacy_transcript_replay';
-  };
+  rollback: CvkRecoveryRollback;
 };
 
 export type CvkDefaultRecoveryProjectionInput = {
@@ -39,6 +38,11 @@ export type CvkDefaultRecoveryProjectionInput = {
   legacyProjection: string;
 };
 
+/**
+ * Degrade to the caller-supplied legacy projection. No CVK projection was
+ * built, so the rollback declaration is explicitly unavailable — a fallback is
+ * not proof that a rollback executor exists.
+ */
 function fallback(params: {
   legacyProjection: string;
   diagnostics: CvkDefaultRecoveryDiagnostic[];
@@ -47,10 +51,7 @@ function fallback(params: {
     mode: 'legacy',
     legacyProjection: params.legacyProjection,
     diagnostics: params.diagnostics,
-    rollback: {
-      available: true,
-      strategy: 'legacy_transcript_replay',
-    },
+    rollback: unavailableCvkRecoveryRollback('legacy_projection_retained'),
   };
 }
 

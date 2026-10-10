@@ -11,7 +11,7 @@ import {
   type CvkCompilerFixtureInput,
   type CvkFixtureArtifact,
 } from '../../openclaw_runtime/src/context-engine/cvk/compiler';
-import { buildCvkRecoveryContext } from '../../openclaw_runtime/src/context-engine/cvk/recovery';
+import { buildCvkRecoveryContext, type CvkRecoveryRollback } from '../../openclaw_runtime/src/context-engine/cvk/recovery';
 
 function loadCvkArtifact(): CvkFixtureArtifact {
   const fixturePath = join(process.cwd(), 'tests/fixtures/context-runtime-kit/compiler.fixture.json');
@@ -31,7 +31,7 @@ function refFor(artifact: CvkFixtureArtifact, selector: string): CompressionCvkE
 }
 
 describe('Context Runtime Kit recovery context', () => {
-  it('recovers from compact projection plus selectors while preserving rollback', () => {
+  it('recovers from compact projection plus selectors and reports rollback as unimplemented', () => {
     const cvkArtifact = loadCvkArtifact();
     const requiredRef = refFor(cvkArtifact, 'schema:tool.run_shell.required');
     const compressionArtifact = buildDeterministicCompressionArtifact({
@@ -58,10 +58,14 @@ describe('Context Runtime Kit recovery context', () => {
     const result = buildCvkRecoveryContext({ compressionArtifact, cvkArtifact });
 
     expect(result.ok).toBe(true);
+    // No runtime consumer executes a session-transcript rollback, so the
+    // declaration must not claim availability or name an implemented strategy.
     expect(result.rollback).toEqual({
-      available: true,
-      strategy: 'legacy_transcript_replay',
+      available: false,
+      strategy: 'unimplemented',
+      reason: 'no_executor_wired',
     });
+    expect('executorId' in result.rollback).toBe(false);
     expect(result.projection.resourceMap.map((entry) => entry.resourceId)).toContain('toolset:local.shell@v1');
     expect(result.projection.requiredSelectors).toEqual([requiredRef]);
     expect(result.projection.unverifiedClaims).toContain('Tool schema is usable only after selector verification.');
@@ -88,6 +92,11 @@ describe('Context Runtime Kit recovery context', () => {
     const result = buildCvkRecoveryContext({ compressionArtifact, cvkArtifact });
 
     expect(result.ok).toBe(false);
+    expect(result.rollback).toEqual({
+      available: false,
+      strategy: 'unimplemented',
+      reason: 'no_executor_wired',
+    });
     expect(result.projection.missingReferenceDiagnostics).toEqual([
       expect.objectContaining({
         status: 'missing_selector',
@@ -95,6 +104,21 @@ describe('Context Runtime Kit recovery context', () => {
         selector: 'skill:missing',
       }),
     ]);
+  });
+
+  it('only allows an available rollback that names the executor wired to it', () => {
+    // Type-level contract: the `available: true` member is unreachable for the
+    // builders above, and any consumer that switches on `available` must supply
+    // an `executorId` proving a real executor exists.
+    const wired: CvkRecoveryRollback = {
+      available: true,
+      strategy: 'legacy_transcript_replay',
+      executorId: 'test-only.executor',
+    };
+    expect(wired.available).toBe(true);
+    if (wired.available) {
+      expect(wired.executorId).toBe('test-only.executor');
+    }
   });
 
   it('marks stale document or code refs and keeps uncertainty visible', () => {

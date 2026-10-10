@@ -97,7 +97,7 @@ acceptance:
   - P3 missing or stale CVK selectors fail explicitly with missing_selector/stale_selector diagnostics; recovery keeps ok=false instead of silently trusting the ref.
   - P3 subsequent compaction uses buildPreviousCompactionLedgerMessage from previousArtifact.semanticAtoms plus current messages, and only falls back to previousSummary when no artifact ledger exists.
   - P3 stale branch atoms never become active nextAction, superseded decision atoms stay in the ledger as superseded and are not active, and failed actions are projected for recovery without being repeated.
-  - P3 keeps legacy transcript replay as the rollback path and does not add model calls, judge calls, UI, or E2E changes.
+  - P3 records the CVK recovery rollback as unavailable (strategy: unimplemented, with a reason code) instead of claiming a legacy transcript replay path, and does not add model calls, judge calls, UI, or E2E changes.
   - P4 paired trajectory JSONL overlays compressed outputs with fullContextSuccess and compressedSuccess booleans; invalid or duplicate rows are recorded as diagnostics and never abort the run.
   - P4 classifies fullContextSuccess=true plus compressedSuccess=false as compression_induced_failure, and only those samples enter failure-driven critic and guideline building.
   - P4 DeepSeek critic is opt-in via --llm-critic; missing DEEPSEEK_API_KEY, invalid JSON, or no candidate failures produce explicit executed=false diagnostics, never fabricated critic output.

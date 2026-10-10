@@ -96,6 +96,12 @@ describe('Context Runtime Kit default recovery gate', () => {
     expect(result.projection?.requiredSelectors).toEqual([requiredRef]);
     expect(result.legacyProjection).toBe('legacy transcript replay');
     expect(result.diagnostics).toEqual([]);
+    // The selector-backed mode is a projection, not a rollback executor.
+    expect(result.rollback).toEqual({
+      available: false,
+      strategy: 'unimplemented',
+      reason: 'no_executor_wired',
+    });
   });
 
   it('falls back to legacy with visible diagnostics when refs are missing', () => {
@@ -127,6 +133,12 @@ describe('Context Runtime Kit default recovery gate', () => {
         status: 'missing_selector',
       }),
     ]);
+    // A degraded fallback must not claim rollback availability it does not have.
+    expect(result.rollback).toEqual({
+      available: false,
+      strategy: 'unimplemented',
+      reason: 'legacy_projection_retained',
+    });
   });
 
   it('falls back to legacy when Level 2 is blocked by evidence or secret-scan failures', () => {
@@ -168,5 +180,35 @@ describe('Context Runtime Kit default recovery gate', () => {
         reason: 'secret_scan_failed',
       }),
     ]);
+    expect(result.rollback).toEqual({
+      available: false,
+      strategy: 'unimplemented',
+      reason: 'legacy_projection_retained',
+    });
+  });
+
+  it('does not claim rollback availability when there are no CVK refs', () => {
+    const cvkArtifact = loadCvkArtifact();
+    const compressionArtifact = buildDeterministicCompressionArtifact({
+      messages: [{ role: 'user', content: 'No CVK refs at all.' }] as never,
+    });
+
+    const result = buildDefaultCvkRecoveryProjection({
+      compressionArtifact,
+      cvkArtifact,
+      evalReport: passingReport(),
+      legacyProjection: 'legacy transcript replay',
+    });
+
+    expect(result.mode).toBe('legacy');
+    expect(result.projection).toBeUndefined();
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({ code: 'no_cvk_refs' }),
+    ]);
+    expect(result.rollback).toEqual({
+      available: false,
+      strategy: 'unimplemented',
+      reason: 'legacy_projection_retained',
+    });
   });
 });
