@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: coding-runtime-workspace-dcs-producer-vertical-slice
 title: Coding Runtime P0 workspace authority and DCS producer vertical slice
 scenario: gateway-backend-communication

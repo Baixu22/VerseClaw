@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: component-controlled-rollout-readiness
 title: DCS and adjacent components controlled rollout readiness
 scenario: gateway-backend-communication

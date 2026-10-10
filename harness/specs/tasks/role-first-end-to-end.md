@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: role-first-end-to-end
 title: Role-first runtime MVP — real integration, observability, steering, and verification
 scenario: gateway-backend-communication

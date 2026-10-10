@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: session-ecosystem-goal-wake-continuation
 title: Session ecosystem goal-wake continuation, cancel cascade and cron continuation payload
 scenario: gateway-backend-communication

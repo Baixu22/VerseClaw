@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-diagnostics-consumers-cross-audit
 title: Line C grounding diagnostics consumers cross-consumer boundary audit
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-5-evidence-verifier-code-task-gate-limited-default-off-readiness-review
 title: Phase 5 Evidence Verifier Code Task Gate Limited Default-Off Readiness Review
 scenario: gateway-backend-communication

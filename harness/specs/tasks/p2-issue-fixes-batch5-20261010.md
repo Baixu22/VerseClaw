@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: p2-issue-fixes-batch5-20261010
 title: P2 issue batch 5 - role contract diagnostics, sensitive-sink taxonomy, memory baseline truthfulness
 taskType: runtime-bridge

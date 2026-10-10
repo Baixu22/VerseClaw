@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-9-runtime-memory-persistence-foundation
 title: Phase 9 runtime memory persistence foundation
 scenario: gateway-backend-communication

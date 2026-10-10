@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: tighten-host-api-contract-types
 title: Tighten host API contract types across renderer and Main
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: hard-delete-session-jsonl
 title: Hard-delete session JSONL on conversation delete
 scenario: gateway-backend-communication

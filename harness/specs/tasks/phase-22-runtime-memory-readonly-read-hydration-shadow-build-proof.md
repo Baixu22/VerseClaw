@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-22-runtime-memory-readonly-read-hydration-shadow-build-proof
 title: Phase 22 runtime memory readonly read hydration shadow build proof
 scenario: gateway-backend-communication

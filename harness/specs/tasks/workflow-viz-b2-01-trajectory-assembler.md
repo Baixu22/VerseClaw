@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: workflow-viz-b2-01-trajectory-assembler
 title: Workflow Viz B2-01 deterministic trajectory assembler
 scenario: gateway-backend-communication

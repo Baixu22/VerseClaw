@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: p2-issue-fixes-batch4-20261010
 title: P2 issue batch 4 - gateway argv secret, error-governance calibration, endpoint request budget
 taskType: runtime-bridge

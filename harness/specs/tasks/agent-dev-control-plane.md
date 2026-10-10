@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: agent-dev-control-plane
 title: Agent development control plane for fast page and functional testing
 scenario: gateway-backend-communication

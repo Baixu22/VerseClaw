@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: expose-current-session-manual-compaction-tool
 title: Expose safe current-session manual compaction to agents
 scenario: gateway-backend-communication

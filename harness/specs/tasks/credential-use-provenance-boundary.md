@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: credential-use-provenance-boundary
 title: Credential-use provenance boundary for image provider overrides
 scenario: gateway-backend-communication

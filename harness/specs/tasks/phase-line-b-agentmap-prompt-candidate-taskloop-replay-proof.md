@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-prompt-candidate-taskloop-replay-proof
 title: Line B AgentMap prompt candidate TaskLoop Phase A replay proof
 scenario: gateway-backend-communication

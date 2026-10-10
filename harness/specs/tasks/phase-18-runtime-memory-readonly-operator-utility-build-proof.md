@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-18-runtime-memory-readonly-operator-utility-build-proof
 title: Phase 18 runtime memory readonly operator utility build proof
 scenario: gateway-backend-communication

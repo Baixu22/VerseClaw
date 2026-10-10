@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: a1-layered-isolation-pilot
 title: A1 Layered Execution Isolation — Active Pilot Gate
 scenario: gateway-backend-communication

@@ -269,7 +269,7 @@ Renderer の入口は `src/lib/host-api.ts` と `src/lib/host-api-client.ts` で
 
 | 知りたいこと | 入口 |
 | --- | --- |
-| 現在の構成とドキュメントの検証 | [構成ガイド](docs/architecture-overview.md) · [画像の出典](resources/readme/2026-10-05/README.md) |
+| 現在の構成とドキュメントの検証 | [構成ガイド](docs/architecture-overview.md) · [画像の出典](resources/readme/2026-10-05/README.md) · [ドキュメント索引](docs/README.md) |
 | 製品動作、概念、機能の範囲 | [製品セマンティクス](docs/clawx-product-semantics.md) · [機能マトリクス](shared/capability-claims.ts) · [既定設定](docs/dev/default-config-matrix.md) |
 | 知識、メモリ、コンテキスト | [知識システム](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) |
 | Agent とワークフロー | [オーケストレーション](docs/multi-agent-orchestration/README.md) · [役割パック](docs/role-packs.md) |

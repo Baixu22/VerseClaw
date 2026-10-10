@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: uas-05-verseshell-process-lifecycle
 title: UAS-05 VerseShell process lifecycle parity
 scenario: gateway-backend-communication

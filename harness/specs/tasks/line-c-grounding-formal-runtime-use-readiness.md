@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-formal-runtime-use-readiness
 title: Line C grounding formal runtime-use readiness boundary
 scenario: gateway-backend-communication

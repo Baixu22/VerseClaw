@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: frozen-windows-acceptance
 title: Qualify the frozen Windows candidate and installer lifecycle
 type: task

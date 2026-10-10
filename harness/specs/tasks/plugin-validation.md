@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: plugin-validation
 title: Validate plugin packages and capabilities before activation
 scenario: plugin-lifecycle-management

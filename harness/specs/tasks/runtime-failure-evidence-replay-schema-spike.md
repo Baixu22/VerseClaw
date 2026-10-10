@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-evidence-replay-schema-spike
 title: Runtime Failure Evidence Replay Schema Spike
 scenario: gateway-backend-communication

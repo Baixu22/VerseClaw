@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: agent-reach-readers-integration
 title: Agent Reach readers verbatim migration and Agent Browser adaptation
 scenario: gateway-backend-communication

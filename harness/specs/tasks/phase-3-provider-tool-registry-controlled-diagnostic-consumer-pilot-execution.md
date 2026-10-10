@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-3-provider-tool-registry-controlled-diagnostic-consumer-pilot-execution
 title: Phase 3 Provider Tool Registry Controlled Diagnostic Consumer Pilot Execution
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc02-full-payload-shadow-census
 title: RC-02 Full-Payload Shadow Census
 taskType: engineering-acceptance

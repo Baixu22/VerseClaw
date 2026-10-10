@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-limited-production-opt-in-diagnostics-only
 title: Line C grounding limited production opt-in diagnostics-only
 scenario: gateway-backend-communication

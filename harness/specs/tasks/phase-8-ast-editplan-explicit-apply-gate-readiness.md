@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-8-ast-editplan-explicit-apply-gate-readiness
 title: Phase 8 AST EditPlan Explicit Apply Gate Readiness
 scenario: gateway-backend-communication

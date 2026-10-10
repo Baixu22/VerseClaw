@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: workflow-viz-b1-01-trajectory-event-schema
 title: Workflow Viz B1-01 trajectory event schema contract
 scenario: gateway-backend-communication

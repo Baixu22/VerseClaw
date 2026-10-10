@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: plugin-recovery-and-rollback
 title: Recover from plugin upgrade, migration, and activation failures
 scenario: plugin-lifecycle-management

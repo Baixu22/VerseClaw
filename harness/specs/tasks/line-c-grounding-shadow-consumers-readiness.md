@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-shadow-consumers-readiness
 title: Line C grounding shadow consumers readiness
 scenario: gateway-backend-communication

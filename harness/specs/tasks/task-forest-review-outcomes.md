@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: task-forest-review-outcomes
 title: Task Forest 复核结果收口与遗留类型错误修复
 scenario: gateway-backend-communication

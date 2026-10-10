@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: session-ecosystem-resource-reclamation
 title: Session ecosystem resource reclamation (terminal, process, subagent)
 scenario: gateway-backend-communication

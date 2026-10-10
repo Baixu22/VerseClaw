@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: system-maturity-p45-runtime-repair
 title: Repair Phase 4 and Phase 5 runtime maturity claims
 scenario: gateway-backend-communication

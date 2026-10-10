@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: role-first-memory-inject-pilot
 title: Role-first chat-turn memory injection pilot (Area 4 §3.4)
 scenario: gateway-backend-communication

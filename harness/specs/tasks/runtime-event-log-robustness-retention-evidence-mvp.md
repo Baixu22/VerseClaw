@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-event-log-robustness-retention-evidence-mvp
 title: Runtime event-log robustness and retention evidence MVP
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-p1-supervised-aci
 title: VerseShell P1 Supervised ACI Lifecycle
 scenario: gateway-backend-communication

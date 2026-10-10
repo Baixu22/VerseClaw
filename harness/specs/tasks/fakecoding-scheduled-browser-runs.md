@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fakecoding-scheduled-browser-runs
 title: FakeCoding Scheduled workbench and Browser settings convergence
 scenario: windows-ui-v2

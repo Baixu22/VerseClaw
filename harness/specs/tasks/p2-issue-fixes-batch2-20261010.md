@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: p2-issue-fixes-batch2-20261010
 title: P2 issue batch 2 - gateway endpoint single source, session-activity unknown state, error-message i18n
 taskType: runtime-bridge

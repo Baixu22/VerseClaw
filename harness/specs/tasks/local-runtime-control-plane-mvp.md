@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: local-runtime-control-plane-mvp
 title: Local runtime control plane MVP
 scenario: gateway-backend-communication

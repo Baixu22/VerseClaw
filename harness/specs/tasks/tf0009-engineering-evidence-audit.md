@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: tf0009-engineering-evidence-audit
 title: TF-0009 engineering evidence audit
 scenario: gateway-backend-communication

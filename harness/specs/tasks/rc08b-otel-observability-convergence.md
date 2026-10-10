@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc08b-otel-observability-convergence
 title: RC-08B OTel And Observability Convergence
 taskType: engineering-acceptance

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-production-readiness-mvp
 title: Line B AgentMap Production Readiness MVP
 scenario: gateway-backend-communication

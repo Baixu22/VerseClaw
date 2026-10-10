@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: browser-effect-session-click-provenance-boundary
 title: Browser-effect provenance boundary for clicks on existing external sessions
 scenario: gateway-backend-communication

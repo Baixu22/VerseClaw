@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-5-evidence-verifier-code-task-gate-default-off-shadow-sampler-readiness
 title: Phase 5 Evidence Verifier Code Task Gate Default-Off Shadow Sampler Readiness
 scenario: gateway-backend-communication

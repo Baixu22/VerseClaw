@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-lifecycle-event-audit
 title: Context lifecycle event audit
 scenario: context-family

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: session-ecosystem-lifecycle-ledger-acceptance
 title: Session ecosystem lifecycle ledger, activity projection and real closed-loop acceptance
 scenario: gateway-backend-communication

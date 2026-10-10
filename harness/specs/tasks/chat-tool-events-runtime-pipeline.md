@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: chat-tool-events-runtime-pipeline
 title: Make Chat runtime event-first with Main-owned Gateway communication
 scenario: gateway-backend-communication

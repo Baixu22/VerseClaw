@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-clawhub-cn-mirror-search
 title: Keep ClawHub marketplace search usable when cached mirror APIs fail
 scenario: plugin-lifecycle-management

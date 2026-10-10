@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc10-source-runtime-channel-startup
 title: RC-10 Source Runtime Channel Startup
 taskType: runtime-bridge

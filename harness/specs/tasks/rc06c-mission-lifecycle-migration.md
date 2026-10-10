@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc06c-mission-lifecycle-migration
 title: RC-06C Mission Lifecycle Migration
 taskType: engineering-acceptance

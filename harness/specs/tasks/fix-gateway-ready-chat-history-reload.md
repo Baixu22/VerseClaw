@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-gateway-ready-chat-history-reload
 title: Fix delayed sidebar chat history reload after gateway restart
 scenario: gateway-backend-communication

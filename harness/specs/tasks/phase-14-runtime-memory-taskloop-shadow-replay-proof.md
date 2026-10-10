@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-14-runtime-memory-taskloop-shadow-replay-proof
 title: Phase 14 runtime memory TaskLoop shadow replay proof
 scenario: gateway-backend-communication

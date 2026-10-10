@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: role-first-memory-settings-toggle
 title: Role-first memory runtime enablement toggle
 scenario: gateway-backend-communication

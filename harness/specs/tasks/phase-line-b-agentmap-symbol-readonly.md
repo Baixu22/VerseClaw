@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-symbol-readonly
 title: Line B AgentMap and Symbol Tool readonly/shadow boundary
 scenario: gateway-backend-communication

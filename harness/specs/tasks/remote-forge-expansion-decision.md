@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: remote-forge-expansion-decision
 title: Remote Forge expansion decision
 scenario: gateway-backend-communication

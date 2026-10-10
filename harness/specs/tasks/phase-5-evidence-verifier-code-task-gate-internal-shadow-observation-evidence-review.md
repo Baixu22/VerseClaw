@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-5-evidence-verifier-code-task-gate-internal-shadow-observation-evidence-review
 title: Phase 5 Evidence Verifier Code Task Gate Internal Shadow Observation Evidence Review
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: role-first-memory-governance-v6
 title: Role-first memory real utility governance v6
 scenario: gateway-backend-communication

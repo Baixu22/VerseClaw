@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-tool-invocation-governance-destructive-operation-guard-controlled-runtime-componentization
 title: Runtime Failure Tool Invocation Governance Destructive Operation Guard Controlled Runtime Componentization
 scenario: gateway-backend-communication

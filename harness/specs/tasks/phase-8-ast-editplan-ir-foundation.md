@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-8-ast-editplan-ir-foundation
 title: Phase 8 AST EditPlan IR Foundation
 scenario: gateway-backend-communication

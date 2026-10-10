@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc04-durable-approval-effect-reconciliation
 title: RC-04 Durable Approval And Effect Reconciliation
 taskType: engineering-acceptance

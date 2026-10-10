@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: role-first-memory-control-plane
 title: Role-first memory control plane
 scenario: gateway-backend-communication

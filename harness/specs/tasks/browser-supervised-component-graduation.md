@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: browser-supervised-component-graduation
 title: Browser supervised component graduation
 scenario: gateway-backend-communication

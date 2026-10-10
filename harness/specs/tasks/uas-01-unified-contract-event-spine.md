@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: uas-01-unified-contract-event-spine
 title: UAS-01 unified contract and persistent event spine
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: agent-task-loop-mvp
 title: Agent self-check task loop MVP
 scenario: gateway-backend-communication

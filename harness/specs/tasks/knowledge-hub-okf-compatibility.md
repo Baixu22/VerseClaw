@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-hub-okf-compatibility
 title: Knowledge Hub OKF compatibility
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: codex-capability-parity-basic-chat
 title: Codex capability parity for basic chat
 scenario: gateway-backend-communication

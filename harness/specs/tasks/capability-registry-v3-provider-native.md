@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: capability-registry-v3-provider-native
 title: Capability Registry V3 provider-native deferred adapter
 scenario: gateway-backend-communication

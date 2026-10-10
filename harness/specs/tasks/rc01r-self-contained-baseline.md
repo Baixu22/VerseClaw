@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc01r-self-contained-baseline
 title: RC-01R Self-Contained Baseline And Gate Truth
 taskType: engineering-acceptance

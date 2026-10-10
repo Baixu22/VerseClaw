@@ -88,5 +88,10 @@
     "保留所有 src/ packages/ extensions/ 原始结构",
     "只删除 .git docs qa apps skills(顶层) config security 等明显非运行时资产",
     "下一步: pnpm install + pnpm run build 生成 dist/,然后跑实跑测试"
-  ]
+  ],
+  "status": "superseded",
+  "supersededAt": "2026-10-10",
+  "supersededBy": "openclaw_runtime/UPSTREAM.md#sync-policy",
+  "currentVendoredVersion": "2026.6.2",
+  "currentContentsNote": "Historical prune snapshot. Current runtime contents are authoritative and guarded by import-cycle, deprecated-API, deadcode and LOC-baseline checks."
 }

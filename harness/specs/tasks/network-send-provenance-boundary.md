@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: network-send-provenance-boundary
 title: Network-send provenance boundary for message cross-context sends
 scenario: gateway-backend-communication

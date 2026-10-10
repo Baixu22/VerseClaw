@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-prompt-candidate-runtime-shadow-pilot
 title: Line B AgentMap prompt candidate runtime shadow pilot
 scenario: gateway-backend-communication

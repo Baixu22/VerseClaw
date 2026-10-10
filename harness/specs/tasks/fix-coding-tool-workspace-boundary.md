@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-coding-tool-workspace-boundary
 title: Align coding mutation tools on the configured workspace boundary
 scenario: gateway-backend-communication

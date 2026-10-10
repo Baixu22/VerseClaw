@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-prompt-assembly-experiment
 title: Line B AgentMap prompt assembly experiment without cutover
 scenario: gateway-backend-communication

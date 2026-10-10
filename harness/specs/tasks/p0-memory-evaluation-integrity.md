@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: p0-memory-evaluation-integrity
 title: Repair P0 LoCoMo measurement and evidence integrity
 scenario: gateway-backend-communication

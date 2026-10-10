@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: image-generation-settings
 title: Developer-only image generation settings and host API
 scenario: gateway-backend-communication

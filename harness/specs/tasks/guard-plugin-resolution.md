@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: guard-plugin-resolution
 title: Guard plugin package and capability owner resolution
 scenario: plugin-lifecycle-management

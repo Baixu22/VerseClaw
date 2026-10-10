@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: clawgraph-runtime-v1
 title: ClawGraph Runtime v1
 scenario: gateway-backend-communication

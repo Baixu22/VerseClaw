@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-tool-invocation-governance-destructive-operation-guard-readiness-review
 title: Runtime Failure Tool Invocation Governance Destructive Operation Guard Readiness Review
 scenario: gateway-backend-communication

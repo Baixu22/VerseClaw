@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-deep-validation
 title: Line B AgentMap prompt candidate TaskLoop explicit invocation deep validation
 scenario: gateway-backend-communication

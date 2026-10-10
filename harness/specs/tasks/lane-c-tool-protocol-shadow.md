@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: lane-c-tool-protocol-shadow
 title: Shadow-normalize MCP tool calls into ToolCallRequest and ToolCallResult
 scenario: gateway-backend-communication

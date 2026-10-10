@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-gateway-config-schema-lookup-discovery
 title: Make gateway config schema lookup discoverable for agents
 scenario: gateway-backend-communication

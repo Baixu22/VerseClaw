@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-diagnostics-authority-sentinel-hardening
 title: Line C grounding diagnostics authority sentinel hardening
 scenario: gateway-backend-communication

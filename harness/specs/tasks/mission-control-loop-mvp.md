@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: mission-control-loop-mvp
 title: Verse Claw Mission Control long-goal loop MVP
 scenario: gateway-backend-communication

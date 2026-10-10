@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-controlled-internal-opt-in-readiness
 title: Line C grounding controlled internal opt-in readiness
 scenario: gateway-backend-communication

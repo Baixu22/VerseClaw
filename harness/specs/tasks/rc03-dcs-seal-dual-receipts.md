@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc03-dcs-seal-dual-receipts
 title: RC-03 DCS Seal And Dual Receipts
 taskType: engineering-acceptance

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-system-ks04-chat-dcs-single-path
 title: Knowledge system KS-04 Chat/DCS single consumption path
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: role-first-p1-resource-aware-scheduler
 title: Role-First Multi-Agent P1 Resource-Aware Scheduling And Agency Draft Catalog
 scenario: gateway-backend-communication

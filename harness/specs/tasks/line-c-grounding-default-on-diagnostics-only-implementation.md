@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-default-on-diagnostics-only-implementation
 title: Line C grounding default-on diagnostics-only implementation
 scenario: gateway-backend-communication

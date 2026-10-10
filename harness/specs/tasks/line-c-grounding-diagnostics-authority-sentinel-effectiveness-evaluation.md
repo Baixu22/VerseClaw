@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-diagnostics-authority-sentinel-effectiveness-evaluation
 title: Line C grounding diagnostics authority sentinel effectiveness evaluation
 scenario: gateway-backend-communication

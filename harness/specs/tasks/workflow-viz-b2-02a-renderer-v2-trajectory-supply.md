@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: workflow-viz-b2-02a-renderer-v2-trajectory-supply
 title: Workflow Viz B2-02A renderer v2 trajectory supply bridge
 scenario: gateway-backend-communication

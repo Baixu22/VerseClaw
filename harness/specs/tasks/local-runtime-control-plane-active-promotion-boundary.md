@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: local-runtime-control-plane-active-promotion-boundary
 title: Local runtime control plane active promotion boundary
 scenario: gateway-backend-communication

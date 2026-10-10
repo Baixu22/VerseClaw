@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-p0-runtime-startup
 title: VerseShell P0 Runtime Startup and Rust Test Gate
 scenario: gateway-backend-communication

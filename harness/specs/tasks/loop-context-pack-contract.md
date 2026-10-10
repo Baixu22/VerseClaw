@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: loop-context-pack-contract
 title: LoopContextPack recovery context contract
 scenario: gateway-backend-communication

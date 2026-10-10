@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: session-activity-sidebar
 title: Session activity sidebar and recovery settings
 scenario: gateway-backend-communication

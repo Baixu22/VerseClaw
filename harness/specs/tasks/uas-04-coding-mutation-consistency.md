@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: uas-04-coding-mutation-consistency
 title: UAS-04 Coding write consistency and recovery
 scenario: gateway-backend-communication

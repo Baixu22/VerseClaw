@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: session-folders-and-archive
 title: Sidebar session folders and archive (recycle bin)
 scenario: gateway-backend-communication

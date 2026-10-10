@@ -187,7 +187,7 @@ type PendingCapabilitySend = {
 
 // ── Helpers ──────────────────────────────────────────────────────
 
-// 主按钮交互策略（详见 send-button-states-design.md）：
+// 主按钮交互策略（详见 docs/dev/send-button-states-design.md）：
 //   idle                无内容，禁用
 //   ready               有内容，点击发送
 //   starting            热启动缓冲；有内容时点击立即中止发送，无内容时降级为暂停当前运行

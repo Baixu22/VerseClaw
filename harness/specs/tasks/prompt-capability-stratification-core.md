@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: prompt-capability-stratification-core
 title: Prompt Capability Stratification Core
 scenario: gateway-backend-communication

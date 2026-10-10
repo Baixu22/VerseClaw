@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: session-ecosystem-safety-gate-consistency
 title: Session ecosystem safety gates and delete retry consistency
 scenario: gateway-backend-communication

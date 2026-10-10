@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc10-development-loop
 title: RC-10 scoped development checks and honest driver evidence
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-diagnostics-core-quantitative-tuning
 title: Line C grounding diagnostics core quantitative tuning
 scenario: gateway-backend-communication

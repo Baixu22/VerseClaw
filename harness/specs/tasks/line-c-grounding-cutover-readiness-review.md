@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-cutover-readiness-review
 title: Line C grounding cutover readiness review
 scenario: gateway-backend-communication

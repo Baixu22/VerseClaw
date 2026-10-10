@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-15-runtime-memory-sanitized-episode-inspection
 title: Phase 15 runtime memory sanitized episode inspection
 scenario: gateway-backend-communication

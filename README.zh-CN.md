@@ -269,7 +269,7 @@ Renderer 请求入口是 `src/lib/host-api.ts` 与 `src/lib/host-api-client.ts`�
 
 | 想了解什么 | 入口 |
 | --- | --- |
-| 当前架构与文档核验 | [架构导读](docs/architecture-overview.md) · [图片来源](resources/readme/2026-10-05/README.md) |
+| 当前架构与文档核验 | [架构导读](docs/architecture-overview.md) · [图片来源](resources/readme/2026-10-05/README.md) · [文档索引](docs/README.md) |
 | 产品行为、概念与能力范围 | [产品语义](docs/clawx-product-semantics.md) · [能力矩阵](shared/capability-claims.ts) · [默认配置](docs/dev/default-config-matrix.md) |
 | 知识、记忆与上下文设计 | [知识系统](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) |
 | Agent 与工作流 | [编排文档](docs/multi-agent-orchestration/README.md) · [角色包](docs/role-packs.md) |

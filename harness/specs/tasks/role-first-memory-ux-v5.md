@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: role-first-memory-ux-v5
 title: Role-first memory UX governance v5
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-observation-masking-projection
 title: Context observation masking projection
 scenario: context-family

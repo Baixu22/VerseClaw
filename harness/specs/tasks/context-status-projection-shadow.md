@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-status-projection-shadow
 title: Context Status projection shadow
 scenario: context-family

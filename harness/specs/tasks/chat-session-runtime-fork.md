@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: chat-session-runtime-fork
 title: Chat session runtime fork
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: capability-registry-v3-foundation
 title: Capability Registry V3 foundation
 scenario: capability-registry-v3

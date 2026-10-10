@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-intensity-harness-parity
 title: Runtime Intensity Harness Parity
 scenario: gateway-backend-communication

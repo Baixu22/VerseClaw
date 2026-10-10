@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-8-ast-patch-planner-route-correction-foundation
 title: Phase 8 AST Patch Planner Route Correction Foundation
 scenario: gateway-backend-communication

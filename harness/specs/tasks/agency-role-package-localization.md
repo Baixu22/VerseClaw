@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: agency-role-package-localization
 title: Agency Role Package Localization
 scenario: gateway-backend-communication

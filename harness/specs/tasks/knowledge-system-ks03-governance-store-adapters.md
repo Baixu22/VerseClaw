@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-system-ks03-governance-store-adapters
 title: Knowledge system KS-03 GovernanceStore and owner adapters
 scenario: gateway-backend-communication

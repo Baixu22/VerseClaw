@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: windows-high-concurrency-stability-v1
 title: Windows high-concurrency stability orchestration v1
 scenario: gateway-backend-communication

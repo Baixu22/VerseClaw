@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-utf8-baseline-remediation
 title: Pruned Runtime UTF-8 baseline remediation
 scenario: gateway-backend-communication

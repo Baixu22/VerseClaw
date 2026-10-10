@@ -60,6 +60,12 @@ jobs:
       - name: Run openclaw_runtime typecheck (tsgo)
         run: pnpm --dir openclaw_runtime run tsgo:prod
 
+      - name: Run openclaw_runtime architecture and source-policy gates
+        run: pnpm runtime:source:check
+
+      - name: Verify generated file-type icon assets
+        run: pnpm lobe-icons:sync && pnpm lobe-icons:check
+
       - name: Run openclaw_runtime vitest manifest path check
         run: pnpm --dir openclaw_runtime run check:vitest-manifest-paths
 

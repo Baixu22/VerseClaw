@@ -86,7 +86,13 @@
     "docs/dev/error-governance-decision-record.md",
     "docs/dev/p2-issue-fixes-batch4-20261010.md",
     "docs/dev/p2-issue-fixes-batch5-20261010.md",
-    "docs/dev/p2-issue-fixes-batch6-20261010.md"
+    "docs/dev/p2-issue-fixes-batch6-20261010.md",
+    "docs/dev/p2-issue-fixes-batch7-20261010.md",
+    "docs/dev/repository-layout.md",
+    "docs/dev/send-button-states-design.md",
+    "openclaw_runtime/UPSTREAM.md",
+    "scripts/duplicate-assets-allowlist.json",
+    "openclaw_runtime/scripts/ts-max-loc-baseline.json"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",
@@ -1695,6 +1701,9 @@
     "artifacts/stepfun-basic-live-evidence-20261008/INTEGRITY.json",
     "docs/dev/p1-issue-fixes-batch6-20261010.md",
     "docs/dev/p1-issue-fixes-batch7-20261010.md",
-    "docs/dev/p1-issue-fixes-batch8-20261010.md"
+    "docs/dev/p1-issue-fixes-batch8-20261010.md",
+    "docs/dev/p2-issue-fixes-batch7-20261010.md",
+    "docs/dev/repository-layout.md",
+    "docs/dev/send-button-states-design.md"
   ]
 }

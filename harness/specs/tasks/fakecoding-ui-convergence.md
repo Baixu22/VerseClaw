@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fakecoding-ui-convergence
 title: FakeCoding design-system and information-architecture convergence
 scenario: windows-ui-v2

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-4-event-log-checkpoint-resume
 title: Phase 4 event log, checkpoint, resume shadow pilot
 scenario: gateway-backend-communication

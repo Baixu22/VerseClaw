@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-family-policy-promotion
 title: Context Family policy promotion
 scenario: context-family

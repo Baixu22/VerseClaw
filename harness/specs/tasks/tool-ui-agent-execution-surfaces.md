@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: tool-ui-agent-execution-surfaces
 title: Render trusted Tool UI execution surfaces in Chat
 scenario: gateway-backend-communication

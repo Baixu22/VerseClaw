@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-control-plane-stage4
 title: Context Control Plane Stage 4 Unified CapabilityGrant Tool Guard and Subagent Attenuated Delegation
 taskType: runtime-authority-convergence

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: windows-delivery-blocker-fixes
 title: Repair Windows CLI dispatch, installer stalls and diagnose native worker exits
 type: task

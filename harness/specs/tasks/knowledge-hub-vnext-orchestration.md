@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-hub-vnext-orchestration
 title: Knowledge Hub vNext orchestration
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-8-ast-editplan-astgrep-readonly-candidate-generation
 title: Phase 8 AST EditPlan ast-grep Readonly Candidate Generation
 scenario: gateway-backend-communication

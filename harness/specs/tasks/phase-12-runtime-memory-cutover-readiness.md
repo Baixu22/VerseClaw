@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-12-runtime-memory-cutover-readiness
 title: Phase 12 runtime memory cutover readiness spec
 scenario: gateway-backend-communication

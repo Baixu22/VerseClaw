@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: system-maturity-traceability
 title: Enforce Finding-to-test-code-evidence traceability
 scenario: system-maturity-traceability

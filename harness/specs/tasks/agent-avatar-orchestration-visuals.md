@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: agent-avatar-orchestration-visuals
 title: Local agent avatars and orchestration wave visualization
 scenario: gateway-backend-communication

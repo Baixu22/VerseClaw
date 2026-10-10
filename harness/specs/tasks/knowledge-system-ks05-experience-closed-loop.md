@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-system-ks05-experience-closed-loop
 title: Knowledge system KS-05 experience closed loop
 scenario: gateway-backend-communication

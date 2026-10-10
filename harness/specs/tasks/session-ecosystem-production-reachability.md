@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: session-ecosystem-production-reachability
 title: Session ecosystem production reachability — sessions.stop registry gate
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-31-runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in
 title: Phase 31 runtime memory read hydration TaskLoop shadow-only explicit opt-in
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-subagent-announce-visible-reply-handoff
 title: Treat injected subagent completion internal events as delivered on tool-only announce turns
 scenario: gateway-backend-communication

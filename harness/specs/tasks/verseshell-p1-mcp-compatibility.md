@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-p1-mcp-compatibility
 title: VerseShell P1-03 MCP 默认拒绝与兼容层收紧
 scenario: gateway-backend-communication

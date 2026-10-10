@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-8-ast-patch-planner-runtime-use-readiness
 title: Phase 8 AST Patch Planner Runtime-Use Readiness
 scenario: gateway-backend-communication

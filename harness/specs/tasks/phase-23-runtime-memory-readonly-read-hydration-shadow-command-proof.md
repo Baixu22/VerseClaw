@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-23-runtime-memory-readonly-read-hydration-shadow-command-proof
 title: Phase 23 runtime memory readonly read hydration shadow command proof
 scenario: gateway-backend-communication

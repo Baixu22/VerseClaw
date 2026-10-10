@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-8-ast-patch-planner-readonly-scan
 title: Phase 8 AST Patch Planner Readonly Scan
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-intensity-policy
 title: Runtime Intensity Policy
 scenario: gateway-backend-communication

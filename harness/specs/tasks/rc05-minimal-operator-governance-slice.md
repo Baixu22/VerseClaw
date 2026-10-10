@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc05-minimal-operator-governance-slice
 title: RC-05 Minimal Operator Governance Slice
 taskType: engineering-acceptance

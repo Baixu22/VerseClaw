@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: browser-effect-provenance-boundary
 title: Browser-effect provenance boundary for external browser reuse
 scenario: gateway-backend-communication

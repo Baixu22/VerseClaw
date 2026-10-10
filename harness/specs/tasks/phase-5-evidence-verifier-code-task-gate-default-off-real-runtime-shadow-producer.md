@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-5-evidence-verifier-code-task-gate-default-off-real-runtime-shadow-producer
 title: Phase 5 Evidence Verifier Code Task Gate Default-Off Real Runtime Shadow Producer
 scenario: gateway-backend-communication

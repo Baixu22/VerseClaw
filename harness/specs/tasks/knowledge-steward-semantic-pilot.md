@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-steward-semantic-pilot
 title: Knowledge Steward semantic pass pilot (Area 5 §3.2)
 scenario: gateway-backend-communication

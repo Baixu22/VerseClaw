@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-system-ks07-semantic-retrieval-source-set
 title: Knowledge system KS-07 semantic retrieval and source set
 scenario: gateway-backend-communication

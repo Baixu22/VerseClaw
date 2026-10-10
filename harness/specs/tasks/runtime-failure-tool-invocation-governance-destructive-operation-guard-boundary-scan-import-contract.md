@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-tool-invocation-governance-destructive-operation-guard-boundary-scan-import-contract
 title: Runtime Failure Tool Invocation Governance Destructive Operation Guard Boundary Scan Import Contract
 scenario: gateway-backend-communication

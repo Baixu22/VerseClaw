@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: task-forest-active-node-engineering-closeout
 title: Integrated engineering closeout for the active Task Forest batch
 scenario: gateway-backend-communication

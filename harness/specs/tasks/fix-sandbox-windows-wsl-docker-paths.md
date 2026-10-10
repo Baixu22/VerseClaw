@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-sandbox-windows-wsl-docker-paths
 title: Translate sandbox bind sources for Windows clients talking to a Linux Docker daemon
 scenario: gateway-backend-communication

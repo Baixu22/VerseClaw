@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-typed-aci-adaptation
 title: VerseShell Typed ACI Adaptation
 scenario: gateway-backend-communication

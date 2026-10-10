@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: task-forest-autoclose-policy
 title: Task Forest 自动收口门与角色固定（agent 主线开发 / 用户发布者）
 diffBase: 600928a2c6f305e9db8518102d8b18423757c4a4

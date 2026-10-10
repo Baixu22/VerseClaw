@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-default-on-proposal
 title: Line C grounding default-on proposal
 scenario: gateway-backend-communication

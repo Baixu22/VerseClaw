@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc06d-task-loop-lifecycle-migration
 title: RC-06D Task Loop Lifecycle Migration
 taskType: engineering-acceptance

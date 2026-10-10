@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-event-log-verification-shadow
 title: Runtime event log and checkpoint verification shadow
 scenario: gateway-backend-communication

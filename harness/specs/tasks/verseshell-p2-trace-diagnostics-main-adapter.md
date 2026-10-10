@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-p2-trace-diagnostics-main-adapter
 title: VerseShell P2-03 Main Host Trace Diagnostics Adapter
 taskType: runtime-contract

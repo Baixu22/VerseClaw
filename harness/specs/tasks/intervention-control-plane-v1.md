@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: intervention-control-plane-v1
 title: Intervention control plane and rollback recovery
 scenario: gateway-backend-communication

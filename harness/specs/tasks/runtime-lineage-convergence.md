@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-lineage-convergence
 title: Mission、Task Loop、DCS、SEKB 统一 lineage
 scenario: gateway-backend-communication

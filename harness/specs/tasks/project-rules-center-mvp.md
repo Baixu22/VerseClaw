@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: project-rules-center-mvp
 title: Project Rules Center MVP
 scenario: gateway-backend-communication

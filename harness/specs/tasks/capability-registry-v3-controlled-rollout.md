@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: capability-registry-v3-controlled-rollout
 title: Capability Registry V3 evaluation and controlled rollout
 scenario: capability-registry-v3

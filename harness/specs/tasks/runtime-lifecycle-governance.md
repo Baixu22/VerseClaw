@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-lifecycle-governance
 title: Runtime lifecycle governance — one program for session cleanup, goal durable process wake, and quantitative acceptance gates
 scenario: gateway-backend-communication

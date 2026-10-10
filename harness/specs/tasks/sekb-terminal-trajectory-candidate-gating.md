@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: sekb-terminal-trajectory-candidate-gating
 title: SEKB terminal trajectory candidate gating and deduplication
 scenario: gateway-backend-communication

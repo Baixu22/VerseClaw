@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-production-entry-readiness-plan
 title: Line C grounding production-entry readiness plan
 scenario: gateway-backend-communication

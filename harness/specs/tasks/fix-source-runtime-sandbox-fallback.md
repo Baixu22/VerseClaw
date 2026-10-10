@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-source-runtime-sandbox-fallback
 title: Restore source runtime sandbox fallback so Gateway can start without Docker
 scenario: gateway-backend-communication

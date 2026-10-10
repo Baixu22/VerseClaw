@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-contract-layer-spike
 title: Runtime contract layer spike
 scenario: gateway-backend-communication

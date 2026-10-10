@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-p2-trace-diagnostics
 title: VerseShell P2-03 Trace Diagnostics Contract Foundation
 taskType: runtime-contract

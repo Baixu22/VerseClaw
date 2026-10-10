@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-tool-invocation-governance-destructive-operation-guard-holdout-regression-expansion
 title: Runtime Failure Tool Invocation Governance Destructive Operation Guard Holdout Regression Expansion
 scenario: gateway-backend-communication

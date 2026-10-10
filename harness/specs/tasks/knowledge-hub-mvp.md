@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-hub-mvp
 title: Knowledge Hub MVP over memory-wiki
 scenario: gateway-backend-communication

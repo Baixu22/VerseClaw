@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: agent-dev-ecosystem-p0
 title: Agent Dev ecosystem P0 regularization guardrails
 scenario: gateway-backend-communication

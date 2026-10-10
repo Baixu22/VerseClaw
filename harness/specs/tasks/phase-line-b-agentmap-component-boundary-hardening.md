@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-component-boundary-hardening
 title: Line B AgentMap Component Boundary Hardening
 scenario: gateway-backend-communication

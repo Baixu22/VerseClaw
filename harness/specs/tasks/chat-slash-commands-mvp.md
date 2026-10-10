@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: chat-slash-commands-mvp
 title: Chat slash commands / quick actions MVP
 scenario: gateway-backend-communication

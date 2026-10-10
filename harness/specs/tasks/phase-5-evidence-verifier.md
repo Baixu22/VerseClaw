@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-5-evidence-verifier
 title: Phase 5 evidence verifier contracts and shadow pilot
 scenario: gateway-backend-communication

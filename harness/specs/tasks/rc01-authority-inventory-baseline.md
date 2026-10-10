@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc01-authority-inventory-baseline
 title: RC-01 Rebaseline And Authority Inventory
 taskType: engineering-acceptance

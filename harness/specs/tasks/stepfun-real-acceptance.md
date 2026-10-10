@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: stepfun-real-acceptance
 title: Verify bounded live StepFun runtime and read-tool behavior
 type: task

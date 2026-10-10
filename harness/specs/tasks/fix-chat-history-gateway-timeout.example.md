@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-chat-history-gateway-timeout
 title: Fix chat history timeout through gateway backend communication
 scenario: gateway-backend-communication

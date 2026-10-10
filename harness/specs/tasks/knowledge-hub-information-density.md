@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-hub-information-density
 title: Knowledge Hub workspace-first information density
 scenario: gateway-backend-communication

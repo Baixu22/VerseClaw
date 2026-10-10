@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-plugin-tools-descriptor-cache-performance
 title: Reduce plugin tool descriptor construction latency
 scenario: plugin-lifecycle-management

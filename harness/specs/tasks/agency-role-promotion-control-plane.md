@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: agency-role-promotion-control-plane
 title: Agency Role Promotion Control Plane
 scenario: gateway-backend-communication

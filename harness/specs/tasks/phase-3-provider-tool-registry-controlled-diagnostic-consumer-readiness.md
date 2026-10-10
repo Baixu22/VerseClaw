@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-3-provider-tool-registry-controlled-diagnostic-consumer-readiness
 title: Phase 3 Provider Tool Registry Controlled Diagnostic Consumer Readiness
 scenario: gateway-backend-communication

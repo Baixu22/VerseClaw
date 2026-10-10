@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-runtime-kit-phase-0
 title: Context Runtime Kit Phase 0 Specification and Harness Entry Point
 scenario: context-runtime-kit

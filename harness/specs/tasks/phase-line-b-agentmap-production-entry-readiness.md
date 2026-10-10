@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-production-entry-readiness
 title: Line B AgentMap Production Entry Readiness
 scenario: gateway-backend-communication

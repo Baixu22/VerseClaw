@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: provider-switch-api-protocol-validation
 title: Reject invalid OpenClaw api protocol writes and self-heal stale entries
 scenario: gateway-backend-communication

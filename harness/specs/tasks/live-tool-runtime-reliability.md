@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: live-tool-runtime-reliability
 title: 真实语料后续工具执行、终止与恢复可靠性
 scenario: gateway-backend-communication

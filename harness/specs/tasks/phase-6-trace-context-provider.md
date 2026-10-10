@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-6-trace-context-provider
 title: Phase 6 trace context provider contracts and shadow pilot
 scenario: gateway-backend-communication

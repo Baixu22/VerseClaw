@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-item-registry-shadow
 title: ContextItemRegistry shadow
 scenario: context-family

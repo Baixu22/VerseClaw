@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-tool-invocation-governance-destructive-operation-guard-default-off-preflight-proposal
 title: Runtime Failure Tool Invocation Governance Destructive Operation Guard Default-Off Preflight Proposal
 scenario: gateway-backend-communication

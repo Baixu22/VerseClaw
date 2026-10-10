@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-3-provider-tool-registry-diagnostic-collector
 title: Phase 3 Provider Tool Registry Diagnostic Collector
 scenario: gateway-backend-communication

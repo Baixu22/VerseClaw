@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: session-ecosystem-cross-session-control
 title: Session ecosystem cross-session control and lineage unification
 scenario: gateway-backend-communication

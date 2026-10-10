@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-authority-convergence-final-acceptance
 title: RC-09 Final Engineering Acceptance
 scenario: gateway-backend-communication

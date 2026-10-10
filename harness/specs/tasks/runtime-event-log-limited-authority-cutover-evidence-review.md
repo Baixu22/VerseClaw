@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-event-log-limited-authority-cutover-evidence-review
 title: Runtime event-log limited authority cutover evidence review
 scenario: gateway-backend-communication

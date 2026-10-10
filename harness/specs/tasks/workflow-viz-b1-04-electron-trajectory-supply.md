@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: workflow-viz-b1-04-electron-trajectory-supply
 title: Workflow Viz B1-04 Electron trajectory supply projection
 scenario: gateway-backend-communication

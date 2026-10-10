@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc06b-clawgraph-lifecycle-migration
 title: RC-06B ClawGraph Lifecycle Migration
 taskType: engineering-acceptance

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-tool-invocation-governance-advisory-rules
 title: Runtime Failure Tool Invocation Governance Advisory Rules
 scenario: gateway-backend-communication

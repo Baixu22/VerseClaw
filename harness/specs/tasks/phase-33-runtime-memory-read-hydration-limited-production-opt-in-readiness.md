@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-33-runtime-memory-read-hydration-limited-production-opt-in-readiness
 title: Phase 33 runtime memory read hydration limited production opt-in readiness
 scenario: gateway-backend-communication

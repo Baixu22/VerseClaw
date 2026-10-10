@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-control-plane-stage5
 title: Context Control Plane Stage 5 Memory Facade and Unit Aware Packing
 taskType: runtime-authority-convergence

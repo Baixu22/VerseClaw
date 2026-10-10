@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-7-runtime-memory-provider
 title: Phase 7 runtime memory provider contracts and evidence-backed temporal facts
 scenario: gateway-backend-communication

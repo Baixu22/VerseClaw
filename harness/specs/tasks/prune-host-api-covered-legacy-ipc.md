@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: prune-host-api-covered-legacy-ipc
 title: Prune hostApi-covered legacy direct IPC handlers
 scenario: gateway-backend-communication

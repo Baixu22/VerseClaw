@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: a5-adaptive-context-budget-pilot
 title: A5 Adaptive Context Budget — Active Pilot Gate
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: agent-dev-ecosystem-regularization
 title: Agent Dev Ecosystem Regularization
 type: task

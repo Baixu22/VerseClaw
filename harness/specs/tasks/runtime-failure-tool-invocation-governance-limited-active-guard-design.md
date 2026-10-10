@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-tool-invocation-governance-limited-active-guard-design
 title: Runtime Failure Tool Invocation Governance Limited Active Guard Design
 scenario: gateway-backend-communication

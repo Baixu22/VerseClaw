@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-25-runtime-memory-readonly-read-hydration-shadow-packaged-artifact-boundary-proof
 title: Phase 25 runtime memory readonly read hydration shadow packaged artifact boundary proof
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: windows-release-signing-policy
 title: Enforce Windows signing before release publication
 scenario: windows-release-trust

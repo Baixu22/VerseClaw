@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-tools-exec-config-hot-reload
 title: Apply tools.exec configuration through Gateway hot reload
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: chat-work-mode-v2
 title: Chat work mode v2 office artifacts
 scenario: gateway-backend-communication

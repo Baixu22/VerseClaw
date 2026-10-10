@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: git-github-worktree-agent-tools
 title: Add structured Git, GitHub PR, and worktree controls
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: connect-clawx-to-openclaw-runtime
 title: Connect Verse Claw gateway startup to editable openclaw_runtime
 scenario: gateway-backend-communication

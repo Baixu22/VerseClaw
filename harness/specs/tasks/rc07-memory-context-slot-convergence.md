@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc07-memory-context-slot-convergence
 title: RC-07 Memory And Context Slot Convergence
 taskType: engineering-acceptance

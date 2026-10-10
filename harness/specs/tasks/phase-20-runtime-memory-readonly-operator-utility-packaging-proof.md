@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-20-runtime-memory-readonly-operator-utility-packaging-proof
 title: Phase 20 runtime memory readonly operator utility packaging proof
 scenario: gateway-backend-communication

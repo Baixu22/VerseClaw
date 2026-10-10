@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: chat-work-mode-mvp
 title: Chat work mode MVP
 scenario: gateway-backend-communication

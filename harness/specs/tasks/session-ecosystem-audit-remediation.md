@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: session-ecosystem-audit-remediation
 title: Session ecosystem audit remediation (TF-0086 milestone)
 scenario: gateway-backend-communication

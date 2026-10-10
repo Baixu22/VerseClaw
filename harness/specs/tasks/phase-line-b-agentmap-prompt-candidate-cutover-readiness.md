@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-prompt-candidate-cutover-readiness
 title: Line B AgentMap prompt candidate cutover readiness spec
 scenario: gateway-backend-communication

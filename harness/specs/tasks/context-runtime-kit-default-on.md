@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-runtime-kit-default-on
 title: Context Runtime Kit Default-On Promotion
 scenario: context-runtime-kit

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-p3-patch-preview-journal-bridge
 title: VerseShell P3-01 Patch Preview 与 ClawX Journal Bridge
 scenario: gateway-backend-communication

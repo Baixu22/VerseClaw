@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: vtoken-default-off-documentation
 title: VToken default-off documentation correction
 scenario: gateway-backend-communication

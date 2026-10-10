@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: dcs-stage1-working-memory-handler
 title: DCS Stage 1 working memory handler
 scenario: gateway-backend-communication

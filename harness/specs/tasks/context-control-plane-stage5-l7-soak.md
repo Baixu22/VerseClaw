@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-control-plane-stage5-l7-soak
 title: Context Control Plane Stage 5 L7 Post-Stage6 Soak Acceptance
 taskType: runtime-authority-convergence

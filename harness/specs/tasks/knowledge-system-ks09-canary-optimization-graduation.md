@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-system-ks09-canary-optimization-graduation
 title: Knowledge system KS-09 canary optimization and graduation
 scenario: system-maturity-traceability

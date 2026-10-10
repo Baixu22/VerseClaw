@@ -2,6 +2,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
+import path from "node:path";
 
 function writeStdoutLine(message: string): void {
   process.stdout.write(`${message}\n`);
@@ -9,10 +10,18 @@ function writeStdoutLine(message: string): void {
 
 type ParsedArgs = {
   maxLines: number;
+  baselinePath?: string;
+};
+
+type BaselineFile = {
+  version: number;
+  maxLines: number;
+  entries: Record<string, number>;
 };
 
 function parseArgs(argv: string[]): ParsedArgs {
   let maxLines = 500;
+  let baselinePath: string | undefined;
 
   for (let index = 0; index < argv.length; index++) {
     const arg = argv[index];
@@ -25,9 +34,18 @@ function parseArgs(argv: string[]): ParsedArgs {
       index++;
       continue;
     }
+    if (arg === "--baseline") {
+      const next = argv[index + 1];
+      if (!next) {
+        throw new Error("Missing --baseline value");
+      }
+      baselinePath = next;
+      index++;
+      continue;
+    }
   }
 
-  return { maxLines };
+  return { maxLines, baselinePath };
 }
 
 function gitLsFilesAll(): string[] {
@@ -66,6 +84,18 @@ async function countLinesBatched(
   return results;
 }
 
+async function loadBaseline(baselinePath: string, maxLines: number): Promise<BaselineFile> {
+  const resolvedPath = path.resolve(process.cwd(), baselinePath);
+  const baseline = JSON.parse(await readFile(resolvedPath, "utf8")) as BaselineFile;
+  if (baseline.maxLines !== maxLines) {
+    throw new Error(`Baseline maxLines ${baseline.maxLines} does not match --max ${maxLines}`);
+  }
+  if (!baseline.entries || typeof baseline.entries !== "object") {
+    throw new Error("Baseline entries must be an object keyed by file path");
+  }
+  return baseline;
+}
+
 async function main() {
   // Makes `... | head` safe.
   process.stdout.on("error", (error: NodeJS.ErrnoException) => {
@@ -75,7 +105,7 @@ async function main() {
     throw error;
   });
 
-  const { maxLines } = parseArgs(process.argv.slice(2));
+  const { maxLines, baselinePath } = parseArgs(process.argv.slice(2));
   const files = gitLsFilesAll()
     .filter((filePath) => existsSync(filePath))
     .filter((filePath) => filePath.endsWith(".ts") || filePath.endsWith(".tsx"));
@@ -86,16 +116,47 @@ async function main() {
     .filter((result) => result.lines > maxLines)
     .toSorted((a, b) => b.lines - a.lines);
 
-  if (!offenders.length) {
+  if (!baselinePath) {
+    if (!offenders.length) return;
+    for (const offender of offenders) {
+      writeStdoutLine(`${offender.lines}\t${offender.filePath}`);
+    }
+    process.exitCode = 1;
     return;
   }
 
-  // Minimal, grep-friendly output.
-  for (const offender of offenders) {
-    writeStdoutLine(`${offender.lines}\t${offender.filePath}`);
+  const baseline = await loadBaseline(baselinePath, maxLines);
+  const actualPaths = new Set(offenders.map((entry) => entry.filePath));
+  const newOffenders = offenders.filter((entry) => !(entry.filePath in baseline.entries));
+  const grown = offenders.filter(
+    (entry) => entry.filePath in baseline.entries && entry.lines > baseline.entries[entry.filePath],
+  );
+  const improved = offenders.filter(
+    (entry) => entry.filePath in baseline.entries && entry.lines < baseline.entries[entry.filePath],
+  );
+  const removed = Object.keys(baseline.entries).filter((filePath) => !actualPaths.has(filePath));
+
+  if (newOffenders.length > 0) {
+    writeStdoutLine(`New files over ${maxLines} lines (${newOffenders.length}):`);
+    for (const entry of newOffenders) writeStdoutLine(`NEW\t${entry.lines}\t${entry.filePath}`);
+  }
+  if (grown.length > 0) {
+    writeStdoutLine(`Existing baseline files that grew (${grown.length}):`);
+    for (const entry of grown) {
+      writeStdoutLine(
+        `GROWN\t${baseline.entries[entry.filePath]}->${entry.lines}\t${entry.filePath}`,
+      );
+    }
+  }
+  if (newOffenders.length > 0 || grown.length > 0) {
+    process.exitCode = 1;
+    return;
   }
 
-  process.exitCode = 1;
+  writeStdoutLine(
+    `LOC baseline passed: ${offenders.length} offenders tracked, ` +
+      `${improved.length} improved, ${removed.length} removed from the baseline.`,
+  );
 }
 
 await main();

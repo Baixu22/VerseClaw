@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: a6-long-running-persistence-pilot
 title: A6 Long-Running Persistence — Active Pilot Gate
 scenario: gateway-backend-communication

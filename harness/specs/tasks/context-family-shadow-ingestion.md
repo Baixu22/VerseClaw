@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-family-shadow-ingestion
 title: Context Family shadow ingestion
 scenario: context-family

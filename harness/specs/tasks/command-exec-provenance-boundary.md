@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: command-exec-provenance-boundary
 title: Command-exec provenance boundary check
 scenario: gateway-backend-communication

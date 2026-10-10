@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fakecoding-workspace-convergence
 title: FakeCoding conversation workspace convergence
 scenario: gateway-backend-communication

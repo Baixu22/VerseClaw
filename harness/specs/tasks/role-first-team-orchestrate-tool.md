@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: role-first-team-orchestrate-tool
 title: Role-first team_orchestrate tool for stable multi-agent collaboration
 scenario: gateway-backend-communication

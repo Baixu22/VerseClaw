@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: role-first-p4-synthesizer-dynamic-dag
 title: Role-First Multi-Agent P4 Synthesizer And Local Dynamic DAG
 scenario: gateway-backend-communication

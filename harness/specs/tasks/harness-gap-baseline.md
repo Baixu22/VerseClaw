@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: harness-gap-baseline
 title: Harness缺口基线与最小实施边界核验
 scenario: gateway-backend-communication

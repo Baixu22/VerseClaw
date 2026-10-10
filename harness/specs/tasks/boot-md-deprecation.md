@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: boot-md-deprecation
 title: BOOT.md Deprecation
 scenario: gateway-backend-communication
