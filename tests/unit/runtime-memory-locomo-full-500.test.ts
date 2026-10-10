@@ -28,9 +28,11 @@ import {
 } from "../../openclaw_runtime/src/runtime-core/memory-hybrid-retrieval";
 import { callDeepSeek, hasDeepSeekKey, getRuntimeMemoryLlmConfig, getRuntimeMemoryLlmReceipts } from "./helpers/runtime-memory-real-llm-client";
 import {
-  createSiliconFlowEmbeddingProvider,
-  hasSiliconFlowKey,
-} from "./helpers/siliconflow-embedding-provider";
+  createLocomoEmbeddingProvider,
+  hasLocomoEmbeddingConfig,
+  getLocomoEmbeddingConfig,
+  verifyLocomoEmbeddingResources,
+} from "./helpers/locomo-embedding-provider";
 import {
   wrapWithDiskCache,
   getEmbeddingCacheStats,
@@ -1110,7 +1112,7 @@ function loadSessionSummaryCache(): SessionSummaryCache {
     ) as SessionSummaryCache;
     if (
       parsed.version === "10.0-session-summary-index" &&
-      parsed.embeddingProvider === "siliconflow-qwen3-embed-8b" &&
+      parsed.embeddingProvider === getLocomoEmbeddingConfig().id &&
       parsed.conversations &&
       typeof parsed.conversations === "object"
     ) {
@@ -1121,7 +1123,7 @@ function loadSessionSummaryCache(): SessionSummaryCache {
   }
   return {
     version: "10.0-session-summary-index",
-    embeddingProvider: "siliconflow-qwen3-embed-8b",
+    embeddingProvider: getLocomoEmbeddingConfig().id,
     conversations: {},
   };
 }
@@ -1437,14 +1439,16 @@ function canRunWithoutSiliconFlow(): boolean {
 }
 
 describe.skipIf(
-  !hasDeepSeekKey() || (!hasSiliconFlowKey() && !canRunWithoutSiliconFlow()),
+  !hasDeepSeekKey() || (!hasLocomoEmbeddingConfig() && !canRunWithoutSiliconFlow()),
 )(
   "L11-FULL: LoCoMo 500-question benchmark with real embedding + LLM judge",
   () => {
     it(
       "runs 500-question stratified LoCoMo benchmark",
       async () => {
-        const provenance = createLocomoProvenance(getRuntimeMemoryLlmConfig());
+        const embedding = hasLocomoEmbeddingConfig() ? await verifyLocomoEmbeddingResources() : null;
+        if (embedding) await createLocomoEmbeddingProvider().embedQuery("LoCoMo embedding preflight");
+        const provenance = { ...createLocomoProvenance(getRuntimeMemoryLlmConfig()), embedding, crossEncoderAvailable: hasSiliconFlowRerankKey() };
         const rawData = loadRawData();
         const evidenceTextByConversation = new Map(rawData.map((sample) => [
           sample.sample_id,
@@ -1604,8 +1608,8 @@ describe.skipIf(
         // no re-retrieval). This allows testing reflect agent logic without
         // the embedding API.
         const rawEmbeddingProvider =
-          needsEmbeddingProvider && hasSiliconFlowKey()
-            ? createSiliconFlowEmbeddingProvider()
+          needsEmbeddingProvider && hasLocomoEmbeddingConfig()
+            ? createLocomoEmbeddingProvider()
             : null;
         const embeddingCachePath = join(EVAL_ARTIFACT_DIR,
           "embedding-cache.json",
@@ -1616,7 +1620,7 @@ describe.skipIf(
             : null;
         if (embeddingProvider) {
           console.log(
-            `[LoCoMo-Full] Embedding: Qwen3-Embedding-8B (SiliconFlow, disk-cached), dim=${embeddingProvider.dimension}`,
+            `[LoCoMo-Full] Embedding: ${embeddingProvider.id} (disk-cached), dim=${embeddingProvider.dimension}`,
           );
         } else {
           console.log(
@@ -2506,7 +2510,7 @@ describe.skipIf(
 
             if (!embeddingProvider) {
               throw new Error(
-                "SILICONFLOW_API_KEY is required when dev-slice retrieval cache is missing or FULL_EVAL=1",
+                "A verified local Qwen3 deployment or SILICONFLOW_API_KEY is required when retrieval is not cached",
               );
             }
 
@@ -3556,7 +3560,7 @@ describe.skipIf(
           retrievalModeStage2:
             "Stage 2 adaptive retrieval: dual-track episodic+semantic fragments, session-summary retrieval for top-2 whole-session escalation, full-conversation fallback, and sequential self-ask for multi-hop. Default dev-slice mode uses cached retrieval when artifacts/runtime-memory-eval/dev-slice-cache.json is valid; FULL_EVAL=1 or --full runs the full sample.",
           retrievalMode:
-            "Stage 2 adaptive retrieval: dual-track episodic+semantic fragments, session-summary retrieval for top-2 whole-session escalation, full-conversation fallback, and sequential self-ask for multi-hop. Qwen3-Embedding-8B (SiliconFlow). Default dev-slice mode uses cached retrieval when artifacts/runtime-memory-eval/dev-slice-cache.json is valid; FULL_EVAL=1 or --full runs the full sample.",
+            "Stage 2 adaptive retrieval: dual-track episodic+semantic fragments, session-summary retrieval for top-2 whole-session escalation, full-conversation fallback, and sequential self-ask for multi-hop. Qwen3-Embedding-8B deployment/quantization is recorded in provenance.embedding; local quantized runs are new references, not reproductions of historical scores. Default dev-slice mode uses cached retrieval when artifacts/runtime-memory-eval/dev-slice-cache.json is valid; FULL_EVAL=1 or --full runs the full sample.",
           judgeModel: `${FROZEN_JUDGE_CONFIG.model} (${FROZEN_JUDGE_CONFIG.promptVersion})`,
           judgeConfig: FROZEN_JUDGE_CONFIG,
           judgeInterpretation: FROZEN_JUDGE_INTERPRETATION,

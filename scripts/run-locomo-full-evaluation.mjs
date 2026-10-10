@@ -6,12 +6,14 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { getRuntimeMemoryLlmConfig } from '../tests/unit/helpers/runtime-memory-real-llm-client.ts';
 import { verifyLocomoEvidenceFile } from './check-locomo-evidence.mjs';
+import { verifyLocomoEmbeddingResources } from '../tests/unit/helpers/locomo-embedding-provider.ts';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 try {
   const { values } = parseArgs({ options: {
     'credentials-stdin': { type: 'boolean', default: false },
     'base-url': { type: 'string' }, model: { type: 'string' }, 'output-dir': { type: 'string' },
+    'local-embedding-url': { type: 'string' }, 'local-embedding-model': { type: 'string' },
   } });
   if (values['credentials-stdin']) {
     let credentials;
@@ -23,7 +25,9 @@ try {
   if (values['base-url']) process.env.RUNTIME_MEMORY_LLM_BASE_URL = values['base-url'];
   if (values.model) process.env.RUNTIME_MEMORY_LLM_MODEL = values.model;
   if (!(process.env.RUNTIME_MEMORY_LLM_API_KEY || process.env.DEEPSEEK_API_KEY)) throw new Error('Model credential required; this command never treats a skipped evaluation as success');
-  if (!process.env.SILICONFLOW_API_KEY) throw new Error('SILICONFLOW_API_KEY required for the unchanged Qwen3 embedding pipeline; no synthetic/BM25 substitution is performed');
+  if (values['local-embedding-url']) process.env.RUNTIME_MEMORY_LOCAL_EMBEDDING_URL = values['local-embedding-url'];
+  if (values['local-embedding-model']) process.env.RUNTIME_MEMORY_LOCAL_EMBEDDING_MODEL_FILE = values['local-embedding-model'];
+  await verifyLocomoEmbeddingResources();
   getRuntimeMemoryLlmConfig(); // Reject accidental credential routing before starting a child.
   const output = resolve(values['output-dir'] ?? join(root, 'artifacts/runtime-memory-eval/runs', randomUUID()));
   if (existsSync(output)) throw new Error('Use a new output directory; previous run evidence is never overwritten');

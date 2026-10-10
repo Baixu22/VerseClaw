@@ -6,6 +6,7 @@ import { basename, dirname, join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 import { assertLocomoReportConsistency, assertVerifiedLocomoReport, collectLocomoSources, createLocomoProvenance, expectedLocomoQuestions, sha256, verifyLocomoEvidenceFile, writeLocomoReport } from "../../scripts/check-locomo-evidence.mjs";
+import { LOCAL_QWEN_EMBEDDING, getLocomoEmbeddingConfig } from "./helpers/locomo-embedding-provider";
 import { buildSotaComparison, computeEscalationMetrics } from "./helpers/locomo-pipeline";
 import { FROZEN_JUDGE_CONFIG, FROZEN_JUDGE_INTERPRETATION, buildFrozenJudgePrompt } from "./helpers/runtime-memory-judge-freeze";
 import { DEFAULT_SAMPLE_SEED, DEFAULT_SAMPLE_SIZES } from "./helpers/runtime-memory-dev-slice";
@@ -67,6 +68,18 @@ describe("LoCoMo run evidence integrity (#138)", () => {
     const report = fixture();
     report.provenance.sources["tests/unit/helpers/runtime-memory-context-recall.ts"] = "0".repeat(64);
     expect(() => assertLocomoReportConsistency(report, { root, now })).toThrow("source freshness");
+  });
+  it("requires embedding deployment provenance and verified local weight identity", () => {
+    const report = fixture();
+    const local = getLocomoEmbeddingConfig({ RUNTIME_MEMORY_LOCAL_EMBEDDING_URL: "http://127.0.0.1:19087/v1" });
+    report.provenance.embedding = { ...local, serverBuild: "synthetic-test-build" };
+    expect(() => assertLocomoReportConsistency(report, { root, now })).toThrow("verified local embedding provenance");
+    report.provenance.embedding = { ...local, verifiedWeightsSha256: LOCAL_QWEN_EMBEDDING.weightsSha256, serverBuild: "synthetic-test-build" };
+    expect(assertLocomoReportConsistency(report, { root, now }).consistent).toBe(true);
+    report.provenance.embedding.endpoint = "http://external.invalid/v1/embeddings";
+    expect(() => assertLocomoReportConsistency(report, { root, now })).toThrow("loopback");
+    report.provenance.embedding = {};
+    expect(() => assertLocomoReportConsistency(report, { root, now })).toThrow("embedding provenance");
   });
   it("rejects stale timestamps and dataset substitutions", () => {
     expect(() => assertLocomoReportConsistency(fixture(), { root, now: now + 31 * 86400000 })).toThrow("Stale");
@@ -139,7 +152,7 @@ describe("LoCoMo run evidence integrity (#138)", () => {
   });
   it("makes the full-run command fail instead of silently skipping when embedding credentials are absent", () => {
     const result = spawnSync(process.execPath, ["--experimental-strip-types", "scripts/run-locomo-full-evaluation.mjs"], { cwd: root, windowsHide: true, encoding: "utf8", env: { ...process.env,
-      RUNTIME_MEMORY_LLM_API_KEY: "synthetic-not-a-credential", RUNTIME_MEMORY_LLM_BASE_URL: "https://synthetic-provider.invalid/v1", SILICONFLOW_API_KEY: "", DEEPSEEK_API_KEY: "" } });
+      RUNTIME_MEMORY_LLM_API_KEY: "synthetic-not-a-credential", RUNTIME_MEMORY_LLM_BASE_URL: "https://synthetic-provider.invalid/v1", SILICONFLOW_API_KEY: "", DEEPSEEK_API_KEY: "", RUNTIME_MEMORY_LOCAL_EMBEDDING_URL: "", RUNTIME_MEMORY_LOCAL_EMBEDDING_MODEL_FILE: "" } });
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("SILICONFLOW_API_KEY required");
   });

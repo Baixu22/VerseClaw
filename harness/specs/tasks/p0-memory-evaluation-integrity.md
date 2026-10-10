@@ -6,6 +6,7 @@ taskType: runtime-bridge
 diffBase: origin/main
 intent: Resolve GitHub issues 134 through 138 in the opt-in LoCoMo evaluator without changing product runtime defaults, rewriting historical evidence, or claiming model scores prove production readiness.
 ownedPaths:
+  - tests/unit/helpers/locomo-embedding-provider.ts
   - tests/unit/helpers/runtime-memory-context-recall.ts
   - tests/unit/helpers/locomo-pipeline.ts
   - tests/unit/helpers/locomo-report-comparator.ts
@@ -49,11 +50,12 @@ forbiddenPatterns:
   - relabelling synthetic or unverifiable historical numbers as a real run
   - changing Git refs or deleting historical objects to hide corruption
 requiredTests:
-  - pnpm exec vitest run tests/unit/context-recall.test.ts tests/unit/locomo-pipeline.test.ts tests/unit/locomo-report-comparator.test.ts tests/unit/runtime-memory-locomo-report-schema.test.ts tests/unit/locomo-evidence-integrity.test.ts tests/unit/runtime-memory-real-llm-client.test.ts tests/unit/locomo-eval-config.test.ts tests/unit/locomo-judge-registry.test.ts
+  - pnpm exec vitest run tests/unit/context-recall.test.ts tests/unit/locomo-pipeline.test.ts tests/unit/locomo-report-comparator.test.ts tests/unit/runtime-memory-locomo-report-schema.test.ts tests/unit/locomo-evidence-integrity.test.ts tests/unit/runtime-memory-real-llm-client.test.ts tests/unit/locomo-eval-config.test.ts tests/unit/locomo-judge-registry.test.ts tests/unit/locomo-embedding-provider.test.ts
   - pnpm run typecheck:test
   - pnpm eval:runtime-memory:locomo:verify
 riskNotes:
   - Real model evaluation is opt-in, agent-driven and uses the owner-provided resource; it is separate from deterministic unit tests and CI never silently treats a skip as a measured run.
+  - Explicit local Qwen3 GGUF embeddings require pinned weight verification, a loopback-only endpoint, exact response identity and independent cache identity. Quantization/deployment are recorded; this is not a historical hosted-score reproduction.
   - A new model or retrieval configuration establishes a new reference only; it cannot reproduce or validate the unproven historical 0.752 or 0.452 claims.
   - Git issue 62 is diagnosed separately using immutable logs and non-destructive object recovery; unavailable objects remain an explicit gap unless the owner authorizes retiring corrupt refs.
 docs:

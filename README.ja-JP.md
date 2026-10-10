@@ -224,7 +224,7 @@ Renderer の入口は `src/lib/host-api.ts` と `src/lib/host-api-client.ts` で
 
 ルートの `pnpm test` は OpenClaw の全テストを実行しません。ランタイム変更では、その [package.json](openclaw_runtime/package.json) とタスク仕様から該当テスト・型検証を選択してください。Windows Electron E2E は Windows Node から実行する必要があります。
 
-**LoCoMo 開発評価：** `pnpm eval:runtime-memory:locomo:full500` は明示的に 500 問を実行し、モデル・埋め込みの認証情報や検証済み成果物が不足すると失敗します。通常の単体テストとは別の評価であり、過去の集計フィクスチャは検証済みメモリ基準ではありません。[測定と証拠の境界](docs/dev/p0-memory-evaluation-integrity.md)を参照してください。
+**LoCoMo 開発評価：** `pnpm eval:runtime-memory:locomo:full500` は明示的に 500 問を実行し、モデル・埋め込みの認証情報や検証済み成果物が不足すると失敗します。通常の単体テストとは別の評価であり、過去の集計フィクスチャは検証済みメモリ基準ではありません。[測定と証拠の境界](docs/dev/p0-memory-evaluation-integrity.md)を参照してください。 `--local-embedding-url` と `--local-embedding-model` でハッシュ固定のローカル Qwen3 埋め込みを明示的に指定できます。量子化結果は新しい参照であり、ホスト型スコアの再現ではありません。
 
 ### 変更に応じた検証
 
