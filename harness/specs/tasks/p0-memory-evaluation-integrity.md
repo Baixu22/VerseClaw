@@ -66,6 +66,7 @@ acceptance:
   - A J-score increase with a temporal retrieval drop is reported as a retrieval regression.
   - Final model evidence passes schema, per-question recomputation, completeness, source-freshness and digest checks; failure, skip or missing evidence is not a pass.
   - Each question binds to a unique live judge receipt whose request fingerprint and verdict match the retained question and score; a fresh full run cannot substitute cached judges or silently alter the frozen prompt.
+  - The full-run command cannot silently truncate a run: its child budget is explicit, an invalid budget fails closed instead of falling back, and a resumed run records the source run directory, its source revision and the per-file digests of the intermediate caches it reused.
   - Read all final artifacts from disk, run scoped tests and type checks, and commit only this isolated repair set.
 ---
 
