@@ -126,6 +126,36 @@ describe('roles.* / teams.* handlers', () => {
     expect(names).toContain('architect'); // builtins still present
   });
 
+  it('roles.list surfaces registry diagnostics for a conflicting config role (#109)', async () => {
+    const cfg = configWithRoles([
+      {
+        name: 'audit-reviewer',
+        display_name: 'Audit Reviewer',
+        role_prompt: 'Review the supplied evidence without changing files.',
+        permissions: { filesystem: 'read', network: 'none' },
+        tools: ['write', 'edit'],
+        handoff: { to: ['no-such-audit-role'], from: [] },
+      },
+    ]);
+
+    const res = await callHandler('roles.list', {}, cfg);
+
+    expect(res?.ok).toBe(true);
+    const payload = res?.payload as {
+      roles: { name: string }[];
+      issues?: { path: string; name?: string; severity?: string }[];
+    };
+    // The conflicting role is still listed (reported, not silently dropped) ...
+    expect(payload.roles.map((role) => role.name)).toContain('audit-reviewer');
+    // ... and its configuration problems are part of the response.
+    expect(payload.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ path: 'tools', name: 'audit-reviewer', severity: 'warning' }),
+        expect.objectContaining({ path: 'handoff.to', name: 'audit-reviewer', severity: 'warning' }),
+      ]),
+    );
+  });
+
   it('roles.get returns a role contract + compiled SOUL', async () => {
     const res = await callHandler('roles.get', { name: 'architect' });
     expect(res?.ok).toBe(true);

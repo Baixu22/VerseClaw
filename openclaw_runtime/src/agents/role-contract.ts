@@ -1,5 +1,7 @@
 import { parse as parseYaml } from "yaml";
 
+import { buildRolePermissionDenyList } from "./role-permissions-policy.js";
+
 export type RolePermissionAccess = "none" | "read" | "write" | "admin";
 export type RoleNetworkAccess = "none" | "limited" | "full";
 export type RoleContractEffort = "auto" | "minimal" | "low" | "medium" | "high" | "xhigh" | "max";
@@ -66,9 +68,18 @@ export type RoleContract = {
   profile?: Record<string, unknown>;
 };
 
+export type RoleContractValidationSeverity = "error" | "warning";
+
 export type RoleContractValidationIssue = {
   path: string;
   message: string;
+  /**
+   * `error` (default) blocks the contract; `warning` is a surfaced diagnostic
+   * that does not change whether an existing configuration loads. Cross-field
+   * conflicts between `tools` and `permissions` are warnings so a previously
+   * accepted role is reported at registration instead of being silently dropped.
+   */
+  severity?: RoleContractValidationSeverity;
 };
 
 export type RoleContractValidationResult = {
@@ -205,6 +216,26 @@ export function validateRoleContract(role: RoleContract): RoleContractValidation
   if (role.permissions.filesystem === "none" && (role.permissions.readPaths?.length || role.permissions.writePaths?.length)) {
     issues.push({ path: "permissions", message: "Path permissions require filesystem access." });
   }
+  // Cross-field check against the real permission -> tool deny mapping (issue
+  // #109). A tool that the declared permissions already deny can still be listed
+  // in `tools`; that used to pass validation and only surfaced later when the
+  // derived deny list stripped it, leaving the declaration and the effective
+  // capability contradictory. Report it at validation time, naming the tools.
+  const permissionDeniedTools = new Set(buildRolePermissionDenyList(role));
+  const conflictingTools = role.tools.filter((tool) =>
+    permissionDeniedTools.has(tool.toLowerCase()),
+  );
+  if (conflictingTools.length > 0) {
+    issues.push({
+      path: "tools",
+      severity: "warning",
+      message:
+        `Tool(s) ${conflictingTools.join(", ")} conflict with permissions ` +
+        `(filesystem=${role.permissions.filesystem}, network=${role.permissions.network}, ` +
+        `commands=${role.permissions.commands.length}): the permission deny list removes them, ` +
+        "so the declared capability would not be effective.",
+    });
+  }
   if (!role.outputSchema.format) {
     issues.push({ path: "outputSchema.format", message: "outputSchema.format is required." });
   }
@@ -214,7 +245,10 @@ export function validateRoleContract(role: RoleContract): RoleContractValidation
   if (role.profile !== undefined && (typeof role.profile !== "object" || Array.isArray(role.profile))) {
     issues.push({ path: "profile", message: "profile must be an object when present." });
   }
-  return { ok: issues.length === 0, issues };
+  // Only errors block a contract: warnings are diagnostics that must not drop an
+  // already-accepted configuration entry.
+  const ok = !issues.some((issue) => (issue.severity ?? "error") === "error");
+  return { ok, issues };
 }
 
 export function parseRoleContractYaml(source: string): RoleContractValidationResult & { role?: RoleContract } {

@@ -44,17 +44,142 @@ export const SENSITIVE_SINK_KINDS = [
 
 export type SensitiveSinkKind = (typeof SENSITIVE_SINK_KINDS)[number];
 
-export type SensitiveSinkEnforcement = "classification-only" | "source-dependent";
+/**
+ * How far a sink's provenance gate is actually wired into a production tool
+ * path today. This describes the *existing* enforcement boundary, not whether
+ * the sink is "safe": every non-`classification-only` value below is a narrow,
+ * deliberately partial gate.
+ *
+ * - `narrow`: a policy module on the production path turns external/unknown
+ *   provenance into a rejection (it throws, or returns a denial that the call
+ *   site turns into a throw). `enforcedAt` names that module, the exported
+ *   symbol, the production call site and how the denial surfaces.
+ * - `source-dependent`: a provenance gate exists but only constrains an
+ *   already-existing decision (the command-exec security/ask floor) instead of
+ *   rejecting outright. `enforcedAt` names it.
+ * - `classification-only`: this table classifies the sink; no code path in this
+ *   repository consults provenance to restrict it yet.
+ */
+export type SensitiveSinkEnforcement = "narrow" | "source-dependent" | "classification-only";
 
+/** One real enforcement point behind a sensitive-sink classification. */
+export type SensitiveSinkEnforcementPoint = {
+  /** Repository-relative path of the module that owns the decision. */
+  policyFile: string;
+  /** Exported symbol at `policyFile` that the production call site invokes. */
+  exportedSymbol: string;
+  /** Repository-relative path of the production call site, for spot checks. */
+  callSite: string;
+  /**
+   * How a denial surfaces on the production path:
+   * - `policy-throw`: the exported symbol itself throws (assert/enforce style).
+   * - `call-site-throw`: the symbol returns `allowed: false` and the call site
+   *   throws; the policy module never rejects on its own.
+   * - `constrain`: the symbol narrows an existing decision (exec security/ask)
+   *   without rejecting.
+   */
+  rejectsWith: "policy-throw" | "call-site-throw" | "constrain";
+};
+
+/**
+ * Enforcement claims are structural, so drift is detectable rather than merely
+ * documented: `enforcedAt` is required for `narrow` / `source-dependent` and
+ * forbidden for `classification-only`. `tests/unit/sensitive-sink-enforcement-drift.test.ts`
+ * resolves every reference below against the working tree.
+ */
+export type SensitiveSinkClassification =
+  | {
+      enforcement: "narrow";
+      enforcedAt: readonly [SensitiveSinkEnforcementPoint, ...SensitiveSinkEnforcementPoint[]];
+    }
+  | {
+      enforcement: "source-dependent";
+      enforcedAt: readonly [SensitiveSinkEnforcementPoint, ...SensitiveSinkEnforcementPoint[]];
+    }
+  | { enforcement: "classification-only"; enforcedAt?: never };
+
+/**
+ * Centralized sink taxonomy. Read `enforcement` as "how far provenance
+ * enforcement is wired today", never as "the sink is unconstrained": five of
+ * the six sinks already carry a narrow gate and `command-exec` carries a
+ * source-dependent floor, while none of them claims complete coverage. Each
+ * per-sink task boundary lives in `harness/specs/tasks/*provenance-boundary.md`.
+ */
 export const SENSITIVE_SINK_CLASSIFICATION: Readonly<
-  Record<SensitiveSinkKind, { enforcement: SensitiveSinkEnforcement }>
+  Record<SensitiveSinkKind, SensitiveSinkClassification>
 > = {
-  "secret-read": { enforcement: "classification-only" },
-  "network-send": { enforcement: "classification-only" },
-  "external-write": { enforcement: "classification-only" },
-  "command-exec": { enforcement: "source-dependent" },
-  "browser-effect": { enforcement: "classification-only" },
-  "credential-use": { enforcement: "classification-only" },
+  "secret-read": {
+    enforcement: "narrow",
+    enforcedAt: [
+      {
+        policyFile: "openclaw_runtime/src/agents/tools/message-secret-read-policy.ts",
+        exportedSymbol: "assertMessageSecretReadAllowed",
+        callSite: "openclaw_runtime/src/agents/tools/message-tool.ts",
+        rejectsWith: "policy-throw",
+      },
+    ],
+  },
+  "network-send": {
+    enforcement: "narrow",
+    enforcedAt: [
+      {
+        policyFile: "openclaw_runtime/src/infra/outbound/outbound-policy.ts",
+        exportedSymbol: "enforceCrossContextPolicy",
+        callSite: "openclaw_runtime/src/infra/outbound/message-action-runner.ts",
+        rejectsWith: "policy-throw",
+      },
+    ],
+  },
+  "external-write": {
+    enforcement: "narrow",
+    enforcedAt: [
+      {
+        policyFile: "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts",
+        exportedSymbol: "wrapToolWithWorkspaceExternalWriteProvenance",
+        callSite: "openclaw_runtime/src/agents/agent-tools.ts",
+        rejectsWith: "policy-throw",
+      },
+    ],
+  },
+  "command-exec": {
+    enforcement: "source-dependent",
+    enforcedAt: [
+      {
+        policyFile: "openclaw_runtime/src/agents/exec-provenance-policy.ts",
+        exportedSymbol: "resolveCommandExecProvenancePolicy",
+        callSite: "openclaw_runtime/src/agents/bash-tools.exec.ts",
+        rejectsWith: "constrain",
+      },
+    ],
+  },
+  "browser-effect": {
+    enforcement: "narrow",
+    enforcedAt: [
+      {
+        policyFile: "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.ts",
+        exportedSymbol: "resolveAgentBrowserExternalAccessPolicy",
+        callSite: "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+        rejectsWith: "call-site-throw",
+      },
+      {
+        policyFile: "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.ts",
+        exportedSymbol: "resolveAgentBrowserSessionEffectPolicy",
+        callSite: "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+        rejectsWith: "call-site-throw",
+      },
+    ],
+  },
+  "credential-use": {
+    enforcement: "narrow",
+    enforcedAt: [
+      {
+        policyFile: "openclaw_runtime/src/agents/tools/provider-credential-use-policy.ts",
+        exportedSymbol: "resolveProviderCredentialUsePolicy",
+        callSite: "openclaw_runtime/src/agents/tools/image-generate-tool.ts",
+        rejectsWith: "call-site-throw",
+      },
+    ],
+  },
 };
 
 export type ContentProvenance = {

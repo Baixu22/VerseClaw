@@ -36,7 +36,7 @@ requiredTests:
   - openclaw_runtime/src/agents/exec-defaults.test.ts
 acceptance:
   - The existing ContentProvenance contract remains the only source/trust enum definition.
-  - The centralized browser-effect classification remains classification-only; this task enforces only simple agent_browser click calls on existing sessions.
+  - The centralized browser-effect classification records this task's session-effect policy as a `narrow` enforcement point; coverage is still not complete and this task enforces only simple agent_browser click calls on existing sessions.
   - For untrusted, derived-untrusted, missing, or invalid provenance, the tool performs one read-only Main-owned status lookup before click execution.
   - A matching existing session with connection.mode=managed remains clickable without a new approval.
   - A matching session with auto-connect, cdp, or external-profile mode is denied before the click bridge invocation.

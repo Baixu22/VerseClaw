@@ -31,7 +31,7 @@ requiredTests:
   - openclaw_runtime/src/agents/exec-defaults.test.ts
 acceptance:
   - The existing ContentProvenance contract remains the only source/trust enum definition.
-  - The centralized credential-use classification remains classification-only until broader credential-use coverage exists; this task enforces only the bounded image_generate provider-override path.
+  - The centralized credential-use classification records this task's policy as a `narrow` enforcement point; broader credential-use coverage is still not claimed and this task enforces only the bounded image_generate provider-override path.
   - Calls without an explicit model override keep the configured primary provider and automatic fallback behavior unchanged.
   - Same-provider model overrides remain usable for untrusted, derived-untrusted, missing, or invalid provenance.
   - Providers explicitly named by the operator in agents.defaults.imageGenerationModel primary or fallbacks remain usable.

@@ -51,7 +51,10 @@ export type RoleInstanceDescriptor = {
 };
 
 export type RoleRegistryIssue = RoleContractValidationIssue & {
-  /** Index of the offending entry in cfg.agents.roles. */
+  /**
+   * Index of the offending entry in cfg.agents.roles; `-1` for a built-in
+   * contract that is part of the merged registry.
+   */
   index: number;
   /** Best-effort role name parsed from the raw entry. */
   name?: string;
@@ -83,6 +86,7 @@ export function buildRoleRegistry(cfg?: RoleRegistryConfigCarrier): RoleRegistry
 
   const issues: RoleRegistryIssue[] = [];
   const configRoleNames: string[] = [];
+  const configIndexByName = new Map<string, number>();
   readConfigRoleEntries(cfg).forEach((raw, index) => {
     const role = normalizeRoleContract(raw);
     const validation = validateRoleContract(role);
@@ -92,6 +96,12 @@ export function buildRoleRegistry(cfg?: RoleRegistryConfigCarrier): RoleRegistry
       }
       return;
     }
+    // Validation warnings do not block an entry, but they are diagnostics the
+    // caller must see (issue #109) — an accepted role with a tool/permission
+    // conflict is reported instead of being silently dropped or silently kept.
+    for (const issue of validation.issues) {
+      issues.push({ ...issue, index, name: role.name });
+    }
     if (!byName.has(role.name)) {
       order.push(role.name);
     }
@@ -99,7 +109,43 @@ export function buildRoleRegistry(cfg?: RoleRegistryConfigCarrier): RoleRegistry
     if (!configRoleNames.includes(role.name)) {
       configRoleNames.push(role.name);
     }
+    configIndexByName.set(role.name, index);
   });
+
+  // Post-merge diagnostics (issue #109). Handoff targets can only be resolved
+  // once every role is known, so a forward reference inside the same config batch
+  // and a reference to a built-in role are both valid. Built-in contracts are
+  // diagnosed here as well, with index -1, because they are part of the merged
+  // registry the caller sees; a config override replaces the built-in and is
+  // diagnosed under its own config index instead.
+  for (const name of order) {
+    const role = byName.get(name);
+    if (!role) {
+      continue;
+    }
+    const index = configIndexByName.get(name) ?? -1;
+    if (!configRoleNames.includes(name)) {
+      for (const issue of validateRoleContract(role).issues) {
+        issues.push({ ...issue, index, name });
+      }
+    }
+    for (const field of ["handoff.to", "handoff.from"] as const) {
+      const targets = field === "handoff.to" ? role.handoff.to : role.handoff.from;
+      for (const target of targets) {
+        if (!byName.has(target)) {
+          issues.push({
+            index,
+            name,
+            path: field,
+            severity: "warning",
+            message:
+              `${field} target "${target}" is not a known role in this registry ` +
+              "(built-in or config-defined).",
+          });
+        }
+      }
+    }
+  }
 
   return {
     roles: order.map((name) => byName.get(name)!).filter(Boolean),

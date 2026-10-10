@@ -227,7 +227,11 @@ describe("external content provenance baseline", () => {
     ).toBeDefined();
   });
 
-  it("keeps the sink taxonomy centralized while command-exec gains narrow enforcement", () => {
+  // `classification-only` is the absence of enforcement, not the finished
+  // state. Five sinks already reject on a production tool path; the file-level
+  // existence check for each declared enforcement point lives in
+  // tests/unit/sensitive-sink-enforcement-drift.test.ts.
+  it("records narrow enforcement for every sink that already rejects on a production path", () => {
     expect(Object.keys(SENSITIVE_SINK_CLASSIFICATION)).toEqual([
       "secret-read",
       "network-send",
@@ -236,8 +240,24 @@ describe("external content provenance baseline", () => {
       "browser-effect",
       "credential-use",
     ]);
+
+    // command-exec only tightens the exec security/ask floor; it never rejects.
     expect(SENSITIVE_SINK_CLASSIFICATION["command-exec"].enforcement).toBe("source-dependent");
-    expect(SENSITIVE_SINK_CLASSIFICATION["secret-read"].enforcement).toBe("classification-only");
-    expect(SENSITIVE_SINK_CLASSIFICATION["network-send"].enforcement).toBe("classification-only");
+
+    for (const sink of [
+      "secret-read",
+      "network-send",
+      "external-write",
+      "browser-effect",
+      "credential-use",
+    ] as const) {
+      const classification = SENSITIVE_SINK_CLASSIFICATION[sink];
+      expect(classification.enforcement, `${sink} must not be classification-only`).toBe("narrow");
+      const enforcedAt = classification.enforcement === "narrow" ? classification.enforcedAt : [];
+      expect(enforcedAt.length, sink).toBeGreaterThan(0);
+      for (const point of enforcedAt) {
+        expect(point.rejectsWith, `${sink} must reject, not only tag`).not.toBe("constrain");
+      }
+    }
   });
 });

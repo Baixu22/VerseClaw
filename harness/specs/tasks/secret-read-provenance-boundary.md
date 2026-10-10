@@ -29,7 +29,7 @@ requiredTests:
   - openclaw_runtime/src/agents/exec-defaults.test.ts
 acceptance:
   - The existing ContentProvenance contract remains the only source/trust enum definition.
-  - The centralized secret-read classification remains classification-only until broader secret-read coverage exists; this task enforces only the bounded message-tool credential path.
+  - The centralized secret-read classification records this task's policy as a `narrow` enforcement point; broader secret-read coverage is still not claimed and this task enforces only the bounded message-tool credential path.
   - The policy executes only when the selected message channel/account has a configured SecretRef and before Gateway or local secret resolution.
   - Replies using the currently bound channel and account remain usable for untrusted, derived-untrusted, missing, or invalid provenance.
   - Untrusted, derived-untrusted, missing, or invalid provenance cannot read credentials for another provider or account through an implicit message-tool redirect.

@@ -33,7 +33,7 @@ requiredTests:
   - openclaw_runtime/src/agents/exec-defaults.test.ts
 acceptance:
   - The existing ContentProvenance contract remains the only source/trust enum definition.
-  - The centralized browser-effect classification remains classification-only until broader browser-effect coverage exists; this task enforces only agent_browser external browser reuse.
+  - The centralized browser-effect classification records this task's policy as a `narrow` enforcement point; broader browser-effect coverage is still not claimed and this task enforces only agent_browser external browser reuse.
   - Managed browser open, navigate, wait, status, screenshot, console diagnostics, and ordinary web search/read flows remain usable for all provenance states.
   - Untrusted, derived-untrusted, missing, or invalid provenance cannot select auto-connect, CDP, or external-profile connection modes, even when ordinary tool arguments set allowExternalBrowser=true.
   - Trusted system and direct operator provenance retain the existing external browser reuse behavior.

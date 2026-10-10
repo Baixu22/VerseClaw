@@ -37,7 +37,7 @@ acceptance:
   - Trusted or operator provenance keeps the existing cross-context configuration behavior.
   - Existing target resolution, account binding, media policy, idempotency, channel action allowlists, and delivery dispatch remain unchanged.
   - CLI, system delivery, broadcast, webhook, and other network-send surfaces are not claimed as covered by this task.
-  - The centralized network-send sink classification remains classification-only until broader network-send coverage exists.
+  - The centralized network-send sink classification records the cross-context outbound policy as a `narrow` enforcement point; broader network-send coverage is still not claimed.
   - No blanket approval, prompt rewrite, global taint engine, regex classifier, config field, or dependency is introduced.
 expectedUserBehavior:
   - Normal replies to the current channel or thread continue to work.

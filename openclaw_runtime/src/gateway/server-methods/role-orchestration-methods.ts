@@ -322,7 +322,10 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       ...role,
       origin: roleOrigin(role.name, registry),
     }));
-    respond(true, { roles, count: roles.length }, undefined);
+    // Issue #109: surface the registry diagnostics (tool/permission conflicts and
+    // unresolvable handoff targets) through the existing roles.list surface so a
+    // caller does not have to derive the role and wait for it to fail.
+    respond(true, { roles, count: roles.length, issues: registry.issues }, undefined);
   },
 
   "roles.get": async ({ params, respond, context }) => {

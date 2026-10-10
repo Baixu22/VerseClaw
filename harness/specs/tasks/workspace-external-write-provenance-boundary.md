@@ -33,7 +33,7 @@ requiredTests:
   - tests/unit/external-content-provenance.test.ts
 acceptance:
   - The existing ContentProvenance contract remains the only source/trust enum definition.
-  - The centralized external-write sink classification remains classification-only until broader external-write coverage exists; this task enforces only runtime coding targets outside the workspace.
+  - The centralized external-write sink classification records this task's policy as a `narrow` enforcement point; broader external-write coverage is still not claimed and this task enforces only runtime coding targets outside the workspace.
   - The source-dependent decision applies only to runtime coding write, edit, and apply_patch targets that resolve outside the active workspace.
   - In-workspace writes remain usable for trusted, operator, untrusted, derived-untrusted, missing, and invalid provenance, subject to existing workspace guards and journal behavior.
   - Untrusted or derived-untrusted provenance cannot write to an external target before the filesystem operation starts.
