@@ -1961,7 +1961,9 @@ describe.skipIf(
           unifiedResults: [],
           frozenResults: [],
         };
-        const results: Array<{
+        const results: QuestionPipelineResult[] = [];
+        // Shape of one processed question (shared by both retrieval paths).
+        type QuestionPipelineResult = {
           questionId: string;
           category: string;
           conversationId: string;
@@ -1976,30 +1978,393 @@ describe.skipIf(
           predictedAnswer: string;
           groundTruth: string;
           assembledContext: string;
-        }> = [];
+        };
+        // Issue #144: everything the post-retrieval tail needs from retrieval.
+        // The two retrieval paths (cached dev-slice cache / fresh index build)
+        // differ only in these values, their reflect re-retrieval strategy and
+        // whether they persist a new dev-slice cache entry.
+        type QuestionTailInjection = {
+          episodicContext: string;
+          assembledContext: string;
+          retrievedFacts: RuntimeMemoryQueryableFact[];
+          queryEmbedding: readonly number[];
+          selfAskHopAnswers: readonly string[];
+          level1ReasoningHints: readonly string[];
+          captureReRetrievedFacts?: boolean;
+          reflectRetrieveFactory?: (env: {
+            referenceTime: number | undefined;
+            temporalMode: ReturnType<typeof detectQueryTemporalMode>;
+          }) => ((query: string) => Promise<RuntimeMemoryQueryableFact[]>) | undefined;
+          captureRetrievalCache?: (retrievedFacts: RuntimeMemoryQueryableFact[]) => void;
+        };
+        // Issue #144: single implementation of the post-retrieval question tail.
+        //
+        // The escalation ladder (L0/L1/L2), the reflect-agent integration, the
+        // frozen + unified judge diagnostics, answer/context recall, the error
+        // taxonomy, the feedback-loop diagnostic and the result assembly used to
+        // exist as two verbatim copies (cached path vs fresh path). They are now
+        // one implementation: the retrieval result is injected, so the paths
+        // differ only in the injected values below.
+        //
+        // Per-path differences, all injected:
+        //   episodicContext / assembledContext  that path's retrieval output
+        //   retrievedFacts                      that path's retrieved facts
+        //   queryEmbedding                      query vector used by L1 search
+        //   selfAskHopAnswers                   multi_hop hop answers for L0
+        //   level1ReasoningHints                cached passes hop answers, fresh none
+        //   captureReRetrievedFacts             cached persists+merges re-retrieved
+        //                                       facts; fresh only feeds them to the
+        //                                       reflective regeneration prompt
+        //   reflectRetrieveFactory              path-specific re-retrieval strategy
+        //   captureRetrievalCache               fresh-only dev-slice cache write
+        const runSharedQuestionTail = async (
+          item: LocomoQaItem,
+          questionId: string,
+          queryPlan: Awaited<ReturnType<typeof classifyQuery>>,
+          injection: QuestionTailInjection,
+        ): Promise<QuestionPipelineResult> => {
+          const { qa, conversationId, category } = item;
+          const answerStr = String(qa.answer);
+          const {
+            episodicContext,
+            assembledContext,
+            queryEmbedding,
+            selfAskHopAnswers,
+            level1ReasoningHints,
+            captureReRetrievedFacts = false,
+            reflectRetrieveFactory,
+            captureRetrievalCache,
+          } = injection;
+          let retrievedFacts = injection.retrievedFacts;
+          // Assigned by the injected re-retrieval only when captureReRetrievedFacts
+          // is true; it stays empty on the fresh path (unchanged behaviour).
+          let reflectRetrievedFacts: RuntimeMemoryQueryableFact[] = [];
+
+          let rawAnswer = await withRetry(() =>
+            generateDualTrackAnswer(
+              qa.question,
+              category,
+              episodicContext,
+              retrievedFacts,
+              undefined,
+              {
+                allowInternalAbstention: true,
+                reasoningHints: selfAskHopAnswers,
+              },
+            ),
+          );
+          let strippedAnswer = stripEvidenceInsufficientSignal(rawAnswer);
+          let escalationLevel: EscalationLevel = 0;
+          let finalAssembledContext = assembledContext;
+          // S1-3: compute referenceTime/temporalMode for reflect re-retrieval.
+          const convReferenceTime =
+            referenceTimeByConversation.get(conversationId);
+          const queryTimeConstraint = extractQueryTimeConstraint(
+            qa.question,
+            convReferenceTime,
+          );
+          const referenceTime =
+            queryTimeConstraint.referenceTime ?? convReferenceTime;
+          const temporalMode = detectQueryTemporalMode(qa.question);
+          const escalationAttempts = [
+            { level: 0 as EscalationLevel, context: assembledContext, rawAnswer },
+          ];
+
+          if (strippedAnswer.insufficient && escalationBudget.tryUse()) {
+            const sessionIndex = sessionSummaryByConversation.get(conversationId);
+            const sessionHits = sessionIndex
+              ? await sessionIndex.search(
+                  qa.question,
+                  new Float32Array(queryEmbedding),
+                  2,
+                )
+              : [];
+            const sessionContext = sessionHits.map((hit) => hit.rawText).join("\n\n");
+            const level1Episodic = `${sessionContext}\n\n${episodicContext}`.trim();
+            rawAnswer = await withRetry(() =>
+              generateDualTrackAnswer(
+                qa.question,
+                category,
+                level1Episodic,
+                retrievedFacts,
+                undefined,
+                { allowInternalAbstention: true, reasoningHints: level1ReasoningHints },
+              ),
+            );
+            strippedAnswer = stripEvidenceInsufficientSignal(rawAnswer);
+            escalationLevel = 1;
+            finalAssembledContext = assembleGeneratorContext(
+              level1Episodic,
+              retrievedFacts,
+              undefined,
+            );
+            escalationAttempts.push({
+              level: 1,
+              context: finalAssembledContext,
+              rawAnswer,
+            });
+          }
+
+          if (strippedAnswer.insufficient && fullConversationBudget.tryUse()) {
+            const fullConversation =
+              fullConversationTextByConversation.get(conversationId) ?? "";
+            rawAnswer = await withRetry(() =>
+              generateDualTrackAnswer(
+                qa.question,
+                category,
+                fullConversation,
+                [],
+                undefined,
+                { allowInternalAbstention: false },
+              ),
+            );
+            strippedAnswer = stripEvidenceInsufficientSignal(rawAnswer);
+            escalationLevel = 2;
+            finalAssembledContext = fullConversation;
+            escalationAttempts.push({
+              level: 2,
+              context: fullConversation,
+              rawAnswer,
+            });
+          }
+
+          // Stage 4: Reflect Agent — critique + re-retrieve + regenerate.
+          // Runs after escalation ladder completes. The critique is cheap
+          // (1 LLM call) and always runs when reflectEnabled. Re-retrieval
+          // only triggers when critique says "missing" and index is available.
+          //
+          // S1-3 (2026-07-04): reflect re-retrieval now goes through the
+          // FULL pipeline (cross-encoder rerank + entity boost + final
+          // boost), not just searchWithEmbedding. Re-retrieved facts are
+          // captured and written back to retrievedFacts + finalAssembledContext
+          // so the judge can see them. Closes 断裂点 6 (mem-status §3).
+          let reflectFinalAnswer = strippedAnswer.answer;
+          if (reflectEnabled) {
+            const indexForReflect = indexByConversation.get(conversationId);
+            const embeddingProviderForReflect = embeddingProvider;
+            const reflectRetrieve = reflectRetrieveFactory?.({ referenceTime, temporalMode });
+            const reflectResult = await runReflectAgent({
+              question: qa.question,
+              category,
+              initialAnswer: strippedAnswer.answer,
+              context: finalAssembledContext,
+              callLLM: callTrackedDeepSeek,
+              retrieve: reflectRetrieve
+                ? async (query: string) => {
+                    const facts = await reflectRetrieve(query);
+                    if (captureReRetrievedFacts) reflectRetrievedFacts = facts;
+                    return facts;
+                  }
+                : undefined,
+              regenerateWithContext: async (expandedContext: string) => {
+                // S1-3: pass reflectRetrievedFacts as retrievedFacts so the
+                // generator sees both original + re-retrieved facts. The fresh
+                // path captures nothing (captureReRetrievedFacts=false), so
+                // reflectRetrievedFacts stays empty and mergedFacts === retrievedFacts,
+                // exactly as before.
+                const mergedFacts =
+                  reflectRetrievedFacts.length > 0
+                    ? dedupeFactsById([...retrievedFacts, ...reflectRetrievedFacts])
+                    : retrievedFacts;
+                const regen = await withRetry(() =>
+                  generateDualTrackAnswer(
+                    qa.question,
+                    category,
+                    expandedContext,
+                    mergedFacts,
+                    undefined,
+                    {},
+                  ),
+                );
+                return regen;
+              },
+              budget: reflectBudget,
+              extractFinalAnswer,
+            });
+            if (reflectResult.used) {
+              reflectUsedCount += 1;
+              if (reflectResult.reRetrieved) {
+                reflectReRetrieveCount += 1;
+                // S1-3: write back re-retrieved facts so the judge and
+                // context recall can see them.
+                if (reflectRetrievedFacts.length > 0) {
+                  const existingIds = new Set(
+                    retrievedFacts.map((f) => f.factId),
+                  );
+                  const newFacts = reflectRetrievedFacts.filter(
+                    (f) => !existingIds.has(f.factId),
+                  );
+                  if (newFacts.length > 0) {
+                    retrievedFacts = [...retrievedFacts, ...newFacts];
+                    // Re-assemble context with new facts.
+                    finalAssembledContext = assembleGeneratorContext(
+                      finalAssembledContext.includes("[EPISODIC MEMORY]")
+                        ? finalAssembledContext
+                        : "",
+                      retrievedFacts,
+                      undefined,
+                    );
+                  }
+                }
+              } else {
+                reflectRegenerateCount += 1;
+              }
+              reflectFinalAnswer = reflectResult.finalAnswer;
+            } else if (reflectResult.skipped) {
+              reflectSkippedCount += 1;
+            } else if (reflectResult.reverted) {
+              reflectRevertedCount += 1;
+            }
+            reflectResults.push(reflectResult);
+          }
+
+          const predictedAnswer = extractFinalAnswer(reflectFinalAnswer);
+          escalationResults.push({
+            answer: predictedAnswer,
+            rawAnswer,
+            escalationLevel,
+            attempts: escalationAttempts,
+          });
+          const judgeScore = await withRetry(() =>
+            judgeAnswer(questionId, qa.question, answerStr, predictedAnswer),
+          );
+          // Phase 4: Unified Judge diagnostic — run unified judge in
+          // parallel with frozen judge. Conservative diagnostic-only:
+          // does NOT replace judgeScore used in error taxonomy / report.
+          try {
+            const judgeCategory: JudgeCategory = (category as JudgeCategory) ?? "single_hop";
+            const unifiedResult = await judgeWithUnifiedPrompt(
+              qa.question,
+              answerStr,
+              predictedAnswer,
+              judgeCategory,
+            );
+            unifiedJudgeStats.total += 1;
+            if (!unifiedJudgeStats.byCategory[category]) {
+              unifiedJudgeStats.byCategory[category] = { correct: 0, wrong: 0 };
+            }
+            if (unifiedResult.verdict === "CORRECT") {
+              unifiedJudgeStats.byCategory[category].correct += 1;
+            } else {
+              unifiedJudgeStats.byCategory[category].wrong += 1;
+            }
+            unifiedJudgeStats.unifiedResults.push(unifiedResult);
+            unifiedJudgeStats.frozenResults.push({ score: judgeScore });
+            if (unifiedJudgeStats.samples.length < 20) {
+              unifiedJudgeStats.samples.push({
+                questionId,
+                category,
+                frozenVerdict: judgeScore,
+                unifiedVerdict: unifiedResult.verdict,
+                confidence: unifiedResult.confidence,
+                ...(unifiedResult.voteBreakdown ? { voteBreakdown: unifiedResult.voteBreakdown } : {}),
+              });
+            }
+          } catch {
+            // Phase 4 diagnostic failed — does not affect main pipeline
+          }
+          const recall5 = computeLegacyRecall(answerStr, retrievedFacts);
+          const contextRecall = computeContextRecall(
+            finalAssembledContext,
+            qa.evidence ?? [],
+            evidenceTextByConversation.get(conversationId),
+          );
+          if (judgeScore === 0) {
+            const taxonomy = await classifyErrorTaxonomy(
+              {
+                question: qa.question,
+                assembledContext: finalAssembledContext,
+                predictedAnswer,
+                groundTruth: answerStr,
+                judgeScore,
+              },
+              callTrackedDeepSeek,
+            );
+            if (taxonomy) {
+              taxonomyResults.push({
+                category,
+                ...taxonomy,
+                question: qa.question,
+                assembledContext: finalAssembledContext,
+                predictedAnswer,
+                groundTruth: answerStr,
+                judgeScore,
+              });
+            }
+          }
+          captureRetrievalCache?.(retrievedFacts);
+
+          // Phase 2: Feedback Loop diagnostic — compute initial completeness
+          // and (if INSUFFICIENT/PARTIAL) generate a rewritten query for
+          // stats. Does NOT replace the actual retrieval result.
+          {
+            const goldEv = qa.evidence ?? [];
+            const initial = computeContextCompletenessDeterministic(
+              finalAssembledContext,
+              goldEv,
+            );
+            feedbackLoopStats.initialByLevel[initial.level] += 1;
+            if (!feedbackLoopStats.byCategory[category]) {
+              feedbackLoopStats.byCategory[category] = {
+                COMPLETE: 0, PARTIAL: 0, INSUFFICIENT: 0,
+              };
+            }
+            feedbackLoopStats.byCategory[category][initial.level] += 1;
+            if (initial.level !== "COMPLETE") {
+              feedbackLoopStats.wouldTrigger += 1;
+              feedbackLoopStats.totalMissingEvidence += initial.missingEvidence.length;
+              try {
+                const rewritten = await rewriteQueryForRetrieval(
+                  qa.question,
+                  initial.missingEvidence,
+                  queryPlan,
+                );
+                feedbackLoopStats.rewritesGenerated += 1;
+                if (feedbackLoopStats.rewriteSamples.length < 20) {
+                  feedbackLoopStats.rewriteSamples.push({
+                    questionId,
+                    category,
+                    queryType: queryPlan.type,
+                    original: qa.question,
+                    rewritten,
+                    missingCount: initial.missingEvidence.length,
+                  });
+                }
+              } catch {
+                // rewrite failed — still count as would-trigger
+              }
+            }
+          }
+          return {
+            questionId,
+            category,
+            conversationId,
+            question: qa.question,
+            goldEvidence: qa.evidence ?? [],
+            recall5,
+            retrievedFactSummaries: retrievedFacts.map((fact) => fact.objectSummary),
+            contextRecall,
+            judgeScore,
+            judgeResponseId: judgeResponseIds.get(questionId) ?? null,
+            escalationLevel,
+            predictedAnswer,
+            groundTruth: answerStr,
+            assembledContext: finalAssembledContext,
+          };
+        };
+
 
         // Process questions in parallel batches for speed.
-        const BATCH_SIZE = 3;
+        // Issue #144: concurrent batches make the shared escalation/reflect
+        // budgets order-dependent, so A/B runs can differ without any code
+        // change. Default stays 3; set LOCOMO_BATCH_SIZE=1 for a deterministic
+        // serial comparison.
+        const BATCH_SIZE = Math.max(1, Number(process.env.LOCOMO_BATCH_SIZE) || 3);
 
         const processQuestion = async (
           item: LocomoQaItem,
           qIdx: number,
-        ): Promise<{
-          questionId: string;
-          category: string;
-          conversationId: string;
-          question: string;
-          goldEvidence: string[];
-          recall5: number;
-          retrievedFactSummaries: string[];
-          contextRecall: number;
-          judgeScore: number;
-          judgeResponseId: string | null;
-          escalationLevel: number;
-          predictedAnswer: string;
-          groundTruth: string;
-          assembledContext: string;
-        }> => {
+        ): Promise<QuestionPipelineResult> => {
           const { qa, conversationId, category } = item;
           const answerStr = String(qa.answer);
           const questionId = makeQuestionId(conversationId, item.qaIndex);
@@ -2105,404 +2470,107 @@ describe.skipIf(
                   // Self-ask failed — continue without hop answers
                 }
               }
-              let rawAnswer = await withRetry(() =>
-                generateDualTrackAnswer(
-                  qa.question,
-                  category,
-                  cachedQuestion.retrievalCache.episodicContext,
-                  retrievedFacts,
-                  undefined,
-                  {
-                    allowInternalAbstention: true,
-                    reasoningHints: cachedSelfAskHopAnswers,
-                  },
-                ),
-              );
-              let strippedAnswer = stripEvidenceInsufficientSignal(rawAnswer);
-              let escalationLevel: EscalationLevel = 0;
-              let finalAssembledContext = cachedAssembledContext;
-              // S1-3: compute referenceTime/temporalMode for reflect re-retrieval.
-              const convReferenceTime =
-                referenceTimeByConversation.get(conversationId);
-              const queryTimeConstraint = extractQueryTimeConstraint(
-                qa.question,
-                convReferenceTime,
-              );
-              const referenceTime =
-                queryTimeConstraint.referenceTime ?? convReferenceTime;
-              const temporalMode = detectQueryTemporalMode(qa.question);
-              const escalationAttempts = [
-                { level: 0 as EscalationLevel, context: cachedAssembledContext, rawAnswer },
-              ];
-
-              if (strippedAnswer.insufficient && escalationBudget.tryUse()) {
-                const sessionIndex = sessionSummaryByConversation.get(conversationId);
-                const sessionHits = sessionIndex
-                  ? await sessionIndex.search(
-                      qa.question,
-                      new Float32Array(cachedQuestion.retrievalCache.queryEmbedding),
-                      2,
-                    )
-                  : [];
-                const sessionContext = sessionHits.map((hit) => hit.rawText).join("\n\n");
-                const level1Episodic = `${sessionContext}\n\n${cachedQuestion.retrievalCache.episodicContext}`.trim();
-                rawAnswer = await withRetry(() =>
-                  generateDualTrackAnswer(
-                    qa.question,
-                    category,
-                    level1Episodic,
-                    retrievedFacts,
-                    undefined,
-                    {
-                      allowInternalAbstention: true,
-                      reasoningHints: cachedSelfAskHopAnswers,
-                    },
-                  ),
-                );
-                strippedAnswer = stripEvidenceInsufficientSignal(rawAnswer);
-                escalationLevel = 1;
-                finalAssembledContext = assembleGeneratorContext(
-                  level1Episodic,
-                  retrievedFacts,
-                  undefined,
-                );
-                escalationAttempts.push({
-                  level: 1,
-                  context: finalAssembledContext,
-                  rawAnswer,
-                });
-              }
-
-              if (strippedAnswer.insufficient && fullConversationBudget.tryUse()) {
-                const fullConversation =
-                  fullConversationTextByConversation.get(conversationId) ?? "";
-                rawAnswer = await withRetry(() =>
-                  generateDualTrackAnswer(
-                    qa.question,
-                    category,
-                    fullConversation,
-                    [],
-                    undefined,
-                    { allowInternalAbstention: false },
-                  ),
-                );
-                strippedAnswer = stripEvidenceInsufficientSignal(rawAnswer);
-                escalationLevel = 2;
-                finalAssembledContext = fullConversation;
-                escalationAttempts.push({
-                  level: 2,
-                  context: fullConversation,
-                  rawAnswer,
-                });
-              }
-
-              // Stage 4: Reflect Agent — critique + re-retrieve + regenerate.
-              // Runs after escalation ladder completes. The critique is cheap
-              // (1 LLM call) and always runs when reflectEnabled. Re-retrieval
-              // only triggers when critique says "missing" and index is available.
-              //
-              // S1-3 (2026-07-04): reflect re-retrieval now goes through the
-              // FULL pipeline (cross-encoder rerank + entity boost + final
-              // boost), not just searchWithEmbedding. Re-retrieved facts are
-              // captured and written back to retrievedFacts + finalAssembledContext
-              // so the judge can see them. Closes 断裂点 6 (mem-status §3).
-              let reflectFinalAnswer = strippedAnswer.answer;
-              let reflectRetrievedFacts: RuntimeMemoryQueryableFact[] = [];
-              if (reflectEnabled) {
-                const indexForReflect = indexByConversation.get(conversationId);
-                const embeddingProviderForReflect = embeddingProvider;
-                const entityStoreForReflect =
-                  process.env.DISABLE_ENTITY_STORE !== "1"
-                    ? entityStoreByConversation.get(conversationId)
-                    : undefined;
-                const reflectResult = await runReflectAgent({
-                  question: qa.question,
-                  category,
-                  initialAnswer: strippedAnswer.answer,
-                  context: finalAssembledContext,
-                  callLLM: callTrackedDeepSeek,
-                  retrieve: indexForReflect && embeddingProviderForReflect
-                    ? async (query: string) => {
-                        const emb = await withRetry(() =>
-                          embeddingProviderForReflect.embedQuery(query),
-                        );
-                        // S1-3: Full pipeline — RRF top-50 → cross-encoder →
-                        // entity boost → final boost → top-15.
-                        const rawHits = indexForReflect.searchWithEmbedding(
-                          query,
-                          new Float32Array(emb),
-                          50,
-                          OPTIMAL_HYBRID_FUSION,
-                        );
-                        // Temporal filter (same as main pipeline).
-                        const filtered = rawHits.filter((hit) => {
-                          if (
-                            referenceTime !== undefined &&
-                            hit.fact.valid_at > referenceTime
-                          ) {
-                            return false;
-                          }
-                          if (
-                            temporalMode === "strict" &&
-                            referenceTime !== undefined
-                          ) {
-                            if (
-                              hit.fact.invalid_at !== undefined &&
-                              hit.fact.invalid_at <= referenceTime
-                            ) {
-                              return false;
-                            }
-                          }
-                          // P0 #3 (Zep temporal 四元组): expired_at 硬过滤
-                          // 即使 non-strict mode 也过滤业务过期 fact。
-                          // Source: zep-main/legacy/src/lib/graphiti/service_ce.go ExpiredAt
-                          if (
-                            referenceTime !== undefined &&
-                            hit.fact.expired_at !== undefined &&
-                            hit.fact.expired_at <= referenceTime
-                          ) {
-                            return false;
-                          }
-                          return true;
-                        });
-                        // Cross-encoder rerank.
-                        let reranked = filtered;
-                        const useCE =
-                          hasSiliconFlowRerankKey() &&
-                          process.env.DISABLE_CROSS_ENCODER !== "1";
-                        if (useCE && reranked.length > 10) {
-                          try {
-                            reranked = await withRetry(() =>
-                              rerankHybridHits(query, reranked, 30),
-                            );
-                          } catch {
-                            // Graceful degradation.
-                          }
+              return await runSharedQuestionTail(item, questionId, queryPlan, {
+                episodicContext: cachedQuestion.retrievalCache.episodicContext,
+                assembledContext: cachedAssembledContext,
+                retrievedFacts,
+                queryEmbedding: cachedQuestion.retrievalCache.queryEmbedding,
+                selfAskHopAnswers: cachedSelfAskHopAnswers,
+                level1ReasoningHints: cachedSelfAskHopAnswers,
+                captureReRetrievedFacts: true,
+                // Cached-path re-retrieval: the S1-3 full pipeline
+                // (RRF top-50 -> cross-encoder -> entity boost -> final boost).
+                reflectRetrieveFactory: ({ referenceTime, temporalMode }) => {
+                  const indexForReflect = indexByConversation.get(conversationId);
+                  const embeddingProviderForReflect = embeddingProvider;
+                  if (!indexForReflect || !embeddingProviderForReflect) return undefined;
+                  const entityStoreForReflect =
+                    process.env.DISABLE_ENTITY_STORE !== "1"
+                      ? entityStoreByConversation.get(conversationId)
+                      : undefined;
+                  return async (query: string) => {
+                    const emb = await withRetry(() =>
+                      embeddingProviderForReflect.embedQuery(query),
+                    );
+                    const rawHits = indexForReflect.searchWithEmbedding(
+                      query,
+                      new Float32Array(emb),
+                      50,
+                      OPTIMAL_HYBRID_FUSION,
+                    );
+                    // Temporal filter (same as main pipeline).
+                    const filtered = rawHits.filter((hit) => {
+                      if (
+                        referenceTime !== undefined &&
+                        hit.fact.valid_at > referenceTime
+                      ) {
+                        return false;
+                      }
+                      if (
+                        temporalMode === "strict" &&
+                        referenceTime !== undefined
+                      ) {
+                        if (
+                          hit.fact.invalid_at !== undefined &&
+                          hit.fact.invalid_at <= referenceTime
+                        ) {
+                          return false;
                         }
-                        // Entity boost.
-                        if (entityStoreForReflect) {
-                          const qEnts =
-                            entityStoreForReflect.extractEntities(query);
-                          if (qEnts.size > 0) {
-                            reranked = entityStoreForReflect.applyEntityBoost(
-                              reranked,
-                              qEnts,
-                              0.2,
-                            );
-                            reranked.sort(
-                              (a, b) =>
-                                (b.ceScore ?? b.rrfScore) -
-                                (a.ceScore ?? a.rrfScore),
-                            );
-                          }
-                        }
-                        // Final boost (Hindsight ce_norm * recency * temporal * proof_count).
-                        const boosted = applyFinalBoost(
+                      }
+                      // P0 #3 (Zep temporal 四元组): expired_at 硬过滤
+                      // 即使 non-strict mode 也过滤业务过期 fact。
+                      if (
+                        referenceTime !== undefined &&
+                        hit.fact.expired_at !== undefined &&
+                        hit.fact.expired_at <= referenceTime
+                      ) {
+                        return false;
+                      }
+                      return true;
+                    });
+                    // Cross-encoder rerank.
+                    let reranked = filtered;
+                    const useCE =
+                      hasSiliconFlowRerankKey() &&
+                      process.env.DISABLE_CROSS_ENCODER !== "1";
+                    if (useCE && reranked.length > 10) {
+                      try {
+                        reranked = await withRetry(() =>
+                          rerankHybridHits(query, reranked, 30),
+                        );
+                      } catch {
+                        // Graceful degradation.
+                      }
+                    }
+                    // Entity boost.
+                    if (entityStoreForReflect) {
+                      const qEnts =
+                        entityStoreForReflect.extractEntities(query);
+                      if (qEnts.size > 0) {
+                        reranked = entityStoreForReflect.applyEntityBoost(
                           reranked,
-                          referenceTime,
+                          qEnts,
+                          0.2,
                         );
-                        const topReflectK = 15;
-                        const finalHits = boosted.slice(0, topReflectK);
-                        const facts = finalHits.map((h) => h.fact);
-                        // S1-3: capture for write-back.
-                        reflectRetrievedFacts = facts;
-                        return facts;
-                      }
-                    : undefined,
-                  regenerateWithContext: async (expandedContext: string) => {
-                    // S1-3: pass reflectRetrievedFacts as retrievedFacts so
-                    // the generator sees both original + re-retrieved facts.
-                    const mergedFacts =
-                      reflectRetrievedFacts.length > 0
-                        ? dedupeFactsById([
-                            ...retrievedFacts,
-                            ...reflectRetrievedFacts,
-                          ])
-                        : retrievedFacts;
-                    const regen = await withRetry(() =>
-                      generateDualTrackAnswer(
-                        qa.question,
-                        category,
-                        expandedContext,
-                        mergedFacts,
-                        undefined,
-                        {},
-                      ),
-                    );
-                    return regen;
-                  },
-                  budget: reflectBudget,
-                  extractFinalAnswer,
-                });
-                if (reflectResult.used) {
-                  reflectUsedCount += 1;
-                  if (reflectResult.reRetrieved) {
-                    reflectReRetrieveCount += 1;
-                    // S1-3: write back re-retrieved facts so the judge and
-                    // context recall can see them.
-                    if (reflectRetrievedFacts.length > 0) {
-                      const existingIds = new Set(
-                        retrievedFacts.map((f) => f.factId),
-                      );
-                      const newFacts = reflectRetrievedFacts.filter(
-                        (f) => !existingIds.has(f.factId),
-                      );
-                      if (newFacts.length > 0) {
-                        retrievedFacts = [...retrievedFacts, ...newFacts];
-                        // Re-assemble context with new facts.
-                        finalAssembledContext = assembleGeneratorContext(
-                          finalAssembledContext.includes("[EPISODIC MEMORY]")
-                            ? finalAssembledContext
-                            : "",
-                          retrievedFacts,
-                          undefined,
+                        reranked.sort(
+                          (a, b) =>
+                            (b.ceScore ?? b.rrfScore) -
+                            (a.ceScore ?? a.rrfScore),
                         );
                       }
                     }
-                  } else {
-                    reflectRegenerateCount += 1;
-                  }
-                  reflectFinalAnswer = reflectResult.finalAnswer;
-                } else if (reflectResult.skipped) {
-                  reflectSkippedCount += 1;
-                } else if (reflectResult.reverted) {
-                  reflectRevertedCount += 1;
-                }
-                reflectResults.push(reflectResult);
-              }
-
-              const predictedAnswer = extractFinalAnswer(reflectFinalAnswer);
-              escalationResults.push({
-                answer: predictedAnswer,
-                rawAnswer,
-                escalationLevel,
-                attempts: escalationAttempts,
-              });
-              const judgeScore = await withRetry(() =>
-                judgeAnswer(questionId, qa.question, answerStr, predictedAnswer),
-              );
-              // Phase 4: Unified Judge diagnostic — run unified judge in
-              // parallel with frozen judge. Conservative diagnostic-only:
-              // does NOT replace judgeScore used in error taxonomy / report.
-              try {
-                const judgeCategory: JudgeCategory = (category as JudgeCategory) ?? "single_hop";
-                const unifiedResult = await judgeWithUnifiedPrompt(
-                  qa.question,
-                  answerStr,
-                  predictedAnswer,
-                  judgeCategory,
-                );
-                unifiedJudgeStats.total += 1;
-                if (!unifiedJudgeStats.byCategory[category]) {
-                  unifiedJudgeStats.byCategory[category] = { correct: 0, wrong: 0 };
-                }
-                if (unifiedResult.verdict === "CORRECT") {
-                  unifiedJudgeStats.byCategory[category].correct += 1;
-                } else {
-                  unifiedJudgeStats.byCategory[category].wrong += 1;
-                }
-                unifiedJudgeStats.unifiedResults.push(unifiedResult);
-                unifiedJudgeStats.frozenResults.push({ score: judgeScore });
-                if (unifiedJudgeStats.samples.length < 20) {
-                  unifiedJudgeStats.samples.push({
-                    questionId,
-                    category,
-                    frozenVerdict: judgeScore,
-                    unifiedVerdict: unifiedResult.verdict,
-                    confidence: unifiedResult.confidence,
-                    ...(unifiedResult.voteBreakdown ? { voteBreakdown: unifiedResult.voteBreakdown } : {}),
-                  });
-                }
-              } catch {
-                // Phase 4 diagnostic failed — does not affect main pipeline
-              }
-              const recall5 = computeLegacyRecall(answerStr, retrievedFacts);
-              const contextRecall = computeContextRecall(
-                finalAssembledContext,
-                qa.evidence ?? [],
-                evidenceTextByConversation.get(conversationId),
-              );
-              if (judgeScore === 0) {
-                const taxonomy = await classifyErrorTaxonomy(
-                  {
-                    question: qa.question,
-                    assembledContext: finalAssembledContext,
-                    predictedAnswer,
-                    groundTruth: answerStr,
-                    judgeScore,
-                  },
-                  callTrackedDeepSeek,
-                );
-                if (taxonomy) {
-                  taxonomyResults.push({
-                    category,
-                    ...taxonomy,
-                    question: qa.question,
-                    assembledContext: finalAssembledContext,
-                    predictedAnswer,
-                    groundTruth: answerStr,
-                    judgeScore,
-                  });
-                }
-              }
-              // Phase 2: Feedback Loop diagnostic — compute initial completeness
-              // and (if INSUFFICIENT/PARTIAL) generate a rewritten query for
-              // stats. Does NOT replace the actual retrieval result.
-              {
-                const goldEv = qa.evidence ?? [];
-                const initial = computeContextCompletenessDeterministic(
-                  finalAssembledContext,
-                  goldEv,
-                );
-                feedbackLoopStats.initialByLevel[initial.level] += 1;
-                if (!feedbackLoopStats.byCategory[category]) {
-                  feedbackLoopStats.byCategory[category] = {
-                    COMPLETE: 0, PARTIAL: 0, INSUFFICIENT: 0,
+                    // Final boost (Hindsight ce_norm * recency * temporal * proof_count).
+                    const boosted = applyFinalBoost(
+                      reranked,
+                      referenceTime,
+                    );
+                    const topReflectK = 15;
+                    const finalHits = boosted.slice(0, topReflectK);
+                    return finalHits.map((h) => h.fact);
                   };
-                }
-                feedbackLoopStats.byCategory[category][initial.level] += 1;
-                if (initial.level !== "COMPLETE") {
-                  feedbackLoopStats.wouldTrigger += 1;
-                  feedbackLoopStats.totalMissingEvidence += initial.missingEvidence.length;
-                  try {
-                    const rewritten = await rewriteQueryForRetrieval(
-                      qa.question,
-                      initial.missingEvidence,
-                      queryPlan,
-                    );
-                    feedbackLoopStats.rewritesGenerated += 1;
-                    if (feedbackLoopStats.rewriteSamples.length < 20) {
-                      feedbackLoopStats.rewriteSamples.push({
-                        questionId,
-                        category,
-                        queryType: queryPlan.type,
-                        original: qa.question,
-                        rewritten,
-                        missingCount: initial.missingEvidence.length,
-                      });
-                    }
-                  } catch {
-                    // rewrite failed — still count as would-trigger
-                  }
-                }
+                },
+              });
               }
-              return {
-                questionId,
-                category,
-                conversationId,
-                question: qa.question,
-                goldEvidence: qa.evidence ?? [],
-                recall5,
-                retrievedFactSummaries: retrievedFacts.map((fact) => fact.objectSummary),
-                contextRecall,
-                judgeScore,
-                judgeResponseId: judgeResponseIds.get(questionId) ?? null,
-                escalationLevel,
-                predictedAnswer,
-                groundTruth: answerStr,
-                assembledContext: finalAssembledContext,
-              };
-            }
 
             if (!embeddingProvider) {
               throw new Error(
@@ -3136,314 +3204,70 @@ describe.skipIf(
               undefined,
             );
 
-            let rawAnswer = await withRetry(() =>
-              generateDualTrackAnswer(
-                qa.question,
-                category,
-                episodicContext,
-                retrievedFacts,
-                undefined,
-                {
-                  allowInternalAbstention: true,
-                  reasoningHints: selfAskHopAnswers,
-                },
-              ),
-            );
-            let strippedAnswer = stripEvidenceInsufficientSignal(rawAnswer);
-            let escalationLevel: EscalationLevel = 0;
-            let finalAssembledContext = assembledContext;
-            const escalationAttempts = [
-              { level: 0 as EscalationLevel, context: assembledContext, rawAnswer },
-            ];
-
-            if (strippedAnswer.insufficient && escalationBudget.tryUse()) {
-              const sessionIndex = sessionSummaryByConversation.get(conversationId);
-              const sessionHits = sessionIndex
-                ? await sessionIndex.search(
-                    qa.question,
-                    new Float32Array(queryEmbArr),
-                    2,
-                  )
-                : [];
-              const sessionContext = sessionHits.map((hit) => hit.rawText).join("\n\n");
-              const level1Episodic = `${sessionContext}\n\n${episodicContext}`.trim();
-              rawAnswer = await withRetry(() =>
-                generateDualTrackAnswer(
-                  qa.question,
-                  category,
-                  level1Episodic,
-                  retrievedFacts,
-                  undefined,
-                  { allowInternalAbstention: true },
-                ),
-              );
-              strippedAnswer = stripEvidenceInsufficientSignal(rawAnswer);
-              escalationLevel = 1;
-              finalAssembledContext = assembleGeneratorContext(
-                level1Episodic,
-                retrievedFacts,
-                undefined,
-              );
-              escalationAttempts.push({
-                level: 1,
-                context: finalAssembledContext,
-                rawAnswer,
-              });
-            }
-
-            if (strippedAnswer.insufficient && fullConversationBudget.tryUse()) {
-              const fullConversation =
-                fullConversationTextByConversation.get(conversationId) ?? "";
-              rawAnswer = await withRetry(() =>
-                generateDualTrackAnswer(
-                  qa.question,
-                  category,
-                  fullConversation,
-                  [],
-                  undefined,
-                  { allowInternalAbstention: false },
-                ),
-              );
-              strippedAnswer = stripEvidenceInsufficientSignal(rawAnswer);
-              escalationLevel = 2;
-              finalAssembledContext = fullConversation;
-              escalationAttempts.push({
-                level: 2,
-                context: fullConversation,
-                rawAnswer,
-              });
-            }
-
-            // Stage 4: Reflect Agent — critique + re-retrieve + regenerate.
-            // Same integration as dev-slice path; index is always available
-            // in full-500 mode (needsRetrieval=true builds all indexes).
-            let reflectFinalAnswer = strippedAnswer.answer;
-            if (reflectEnabled) {
-              const indexForReflect = indexByConversation.get(conversationId);
-              const embeddingProviderForReflect = embeddingProvider;
-              const reflectResult = await runReflectAgent({
-                question: qa.question,
-                category,
-                initialAnswer: strippedAnswer.answer,
-                context: finalAssembledContext,
-                callLLM: callTrackedDeepSeek,
-                retrieve: indexForReflect && embeddingProviderForReflect
-                  ? async (query: string) => {
-                      const emb = await withRetry(() =>
-                        embeddingProviderForReflect.embedQuery(query),
-                      );
-                      const hits = indexForReflect.searchWithEmbedding(
-                        query,
-                        new Float32Array(emb),
-                        10,
-                        OPTIMAL_HYBRID_FUSION,
-                      );
-                      return hits.map((h) => h.fact);
-                    }
-                  : undefined,
-                regenerateWithContext: async (expandedContext: string) => {
-                  const regen = await withRetry(() =>
-                    generateDualTrackAnswer(
-                      qa.question,
-                      category,
-                      expandedContext,
-                      retrievedFacts,
-                      undefined,
-                      {},
-                    ),
+            return await runSharedQuestionTail(item, questionId, queryPlan, {
+              episodicContext,
+              assembledContext,
+              retrievedFacts,
+              queryEmbedding: queryEmbArr,
+              selfAskHopAnswers,
+              level1ReasoningHints: [],
+              captureReRetrievedFacts: false,
+              // Fresh-path re-retrieval: plain semantic top-10.
+              reflectRetrieveFactory: () => {
+                const indexForReflect = indexByConversation.get(conversationId);
+                const embeddingProviderForReflect = embeddingProvider;
+                if (!indexForReflect || !embeddingProviderForReflect) return undefined;
+                return async (query: string) => {
+                  const emb = await withRetry(() =>
+                    embeddingProviderForReflect.embedQuery(query),
                   );
-                  return regen;
-                },
-                budget: reflectBudget,
-                extractFinalAnswer,
-              });
-              if (reflectResult.used) {
-                reflectUsedCount += 1;
-                if (reflectResult.reRetrieved) {
-                  reflectReRetrieveCount += 1;
-                } else {
-                  reflectRegenerateCount += 1;
-                }
-                reflectFinalAnswer = reflectResult.finalAnswer;
-              } else if (reflectResult.skipped) {
-                reflectSkippedCount += 1;
-              } else if (reflectResult.reverted) {
-                reflectRevertedCount += 1;
-              }
-              reflectResults.push(reflectResult);
-            }
-
-            const predictedAnswer = extractFinalAnswer(reflectFinalAnswer);
-            escalationResults.push({
-              answer: predictedAnswer,
-              rawAnswer,
-              escalationLevel,
-              attempts: escalationAttempts,
-            });
-
-            // 3. LLM-as-Judge
-            const judgeScore = await withRetry(() =>
-              judgeAnswer(questionId, qa.question, answerStr, predictedAnswer),
-            );
-
-            // Phase 4: Unified Judge diagnostic (fresh path)
-            try {
-              const judgeCategory: JudgeCategory = (category as JudgeCategory) ?? "single_hop";
-              const unifiedResult = await judgeWithUnifiedPrompt(
-                qa.question,
-                answerStr,
-                predictedAnswer,
-                judgeCategory,
-              );
-              unifiedJudgeStats.total += 1;
-              if (!unifiedJudgeStats.byCategory[category]) {
-                unifiedJudgeStats.byCategory[category] = { correct: 0, wrong: 0 };
-              }
-              if (unifiedResult.verdict === "CORRECT") {
-                unifiedJudgeStats.byCategory[category].correct += 1;
-              } else {
-                unifiedJudgeStats.byCategory[category].wrong += 1;
-              }
-              unifiedJudgeStats.unifiedResults.push(unifiedResult);
-              unifiedJudgeStats.frozenResults.push({ score: judgeScore });
-              if (unifiedJudgeStats.samples.length < 20) {
-                unifiedJudgeStats.samples.push({
-                  questionId,
-                  category,
-                  frozenVerdict: judgeScore,
-                  unifiedVerdict: unifiedResult.verdict,
-                  confidence: unifiedResult.confidence,
-                  ...(unifiedResult.voteBreakdown ? { voteBreakdown: unifiedResult.voteBreakdown } : {}),
-                });
-              }
-            } catch {
-              // Phase 4 diagnostic failed — does not affect main pipeline
-            }
-
-            const recall5 = computeLegacyRecall(answerStr, retrievedFacts);
-            const contextRecall = computeContextRecall(
-              finalAssembledContext,
-              qa.evidence ?? [],
-              evidenceTextByConversation.get(conversationId),
-            );
-
-            if (judgeScore === 0) {
-              const taxonomy = await classifyErrorTaxonomy(
-                {
-                  question: qa.question,
-                  assembledContext: finalAssembledContext,
-                  predictedAnswer,
-                  groundTruth: answerStr,
-                  judgeScore,
-                },
-                callTrackedDeepSeek,
-              );
-              if (taxonomy) {
-                taxonomyResults.push({
-                  category,
-                  ...taxonomy,
-                  question: qa.question,
-                  assembledContext: finalAssembledContext,
-                  predictedAnswer,
-                  groundTruth: answerStr,
-                  judgeScore,
-                });
-              }
-            }
-
-            if (!fullEval && !cachedQuestion) {
-              devSliceCacheWrites.push({
-                questionId,
-                category,
-                conversationId,
-                question: qa.question,
-                groundTruth: answerStr,
-                goldEvidence: qa.evidence ?? [],
-                retrievalCache: {
-                  queryEmbedding: Array.from(queryEmbArr),
-                  semanticFactIds: retrievedFacts.map((fact) => fact.factId),
-                  semanticFacts: retrievedFacts.map((fact) => ({
-                    factId: fact.factId,
-                    subject: fact.subject,
-                    predicate: fact.predicate,
-                    objectSummary: fact.objectSummary,
-                    validAt: fact.valid_at,
-                  })),
-                  hybridHits: finalHits.map((hit) => ({
-                    factId: hit.fact.factId,
-                    rrfScore: hit.rrfScore,
-                    bm25Rank: hit.bm25Rank,
-                    vectorRank: hit.vectorRank,
-                    entityRank: hit.entityRank,
-                    bm25Score: hit.bm25Score,
-                    vectorScore: hit.vectorScore,
-                    entityScore: hit.entityScore,
-                  })),
-                  episodicHits: cachedEpisodicHits,
-                  episodicContext,
-                  profileContext: [],
-                  assembledContext,
-                },
-              });
-            }
-
-            // Phase 2: Feedback Loop diagnostic — compute initial completeness
-            // and (if INSUFFICIENT/PARTIAL) generate a rewritten query for
-            // stats. Does NOT replace the actual retrieval result.
-            {
-              const goldEv = qa.evidence ?? [];
-              const initial = computeContextCompletenessDeterministic(
-                finalAssembledContext,
-                goldEv,
-              );
-              feedbackLoopStats.initialByLevel[initial.level] += 1;
-              if (!feedbackLoopStats.byCategory[category]) {
-                feedbackLoopStats.byCategory[category] = {
-                  COMPLETE: 0, PARTIAL: 0, INSUFFICIENT: 0,
+                  const hits = indexForReflect.searchWithEmbedding(
+                    query,
+                    new Float32Array(emb),
+                    10,
+                    OPTIMAL_HYBRID_FUSION,
+                  );
+                  return hits.map((h) => h.fact);
                 };
-              }
-              feedbackLoopStats.byCategory[category][initial.level] += 1;
-              if (initial.level !== "COMPLETE") {
-                feedbackLoopStats.wouldTrigger += 1;
-                feedbackLoopStats.totalMissingEvidence += initial.missingEvidence.length;
-                try {
-                  const rewritten = await rewriteQueryForRetrieval(
-                    qa.question,
-                    initial.missingEvidence,
-                    queryPlan,
-                  );
-                  feedbackLoopStats.rewritesGenerated += 1;
-                  if (feedbackLoopStats.rewriteSamples.length < 20) {
-                    feedbackLoopStats.rewriteSamples.push({
+              },
+              captureRetrievalCache: fullEval
+                ? undefined
+                : (retrievedFactsForCache) => {
+                    devSliceCacheWrites.push({
                       questionId,
                       category,
-                      queryType: queryPlan.type,
-                      original: qa.question,
-                      rewritten,
-                      missingCount: initial.missingEvidence.length,
+                      conversationId,
+                      question: qa.question,
+                      groundTruth: answerStr,
+                      goldEvidence: qa.evidence ?? [],
+                      retrievalCache: {
+                        queryEmbedding: Array.from(queryEmbArr),
+                        semanticFactIds: retrievedFactsForCache.map((fact) => fact.factId),
+                        semanticFacts: retrievedFactsForCache.map((fact) => ({
+                          factId: fact.factId,
+                          subject: fact.subject,
+                          predicate: fact.predicate,
+                          objectSummary: fact.objectSummary,
+                          validAt: fact.valid_at,
+                        })),
+                        hybridHits: finalHits.map((hit) => ({
+                          factId: hit.fact.factId,
+                          rrfScore: hit.rrfScore,
+                          bm25Rank: hit.bm25Rank,
+                          vectorRank: hit.vectorRank,
+                          entityRank: hit.entityRank,
+                          bm25Score: hit.bm25Score,
+                          vectorScore: hit.vectorScore,
+                          entityScore: hit.entityScore,
+                        })),
+                        episodicHits: cachedEpisodicHits,
+                        episodicContext,
+                        profileContext: [],
+                        assembledContext,
+                      },
                     });
-                  }
-                } catch {
-                  // rewrite failed — still count as would-trigger
-                }
-              }
-            }
-            return {
-              questionId,
-              category,
-              conversationId,
-              question: qa.question,
-              goldEvidence: qa.evidence ?? [],
-              recall5,
-              retrievedFactSummaries: retrievedFacts.map((fact) => fact.objectSummary),
-              contextRecall,
-              judgeScore,
-              judgeResponseId: judgeResponseIds.get(questionId) ?? null,
-              escalationLevel,
-              predictedAnswer,
-              groundTruth: answerStr,
-              assembledContext: finalAssembledContext,
-            };
+                  },
+            });
           } catch (err) {
             console.log(`[LoCoMo-Full] Q${qIdx} failed after retries: ${(err as Error).message}`);
             return {
