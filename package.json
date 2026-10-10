@@ -9,7 +9,7 @@
   "scripts": {
     "postinstall": "node scripts/assert-pnpm-toolchain.mjs && node scripts/patch-browser-hint.mjs && pnpm --dir openclaw_runtime install",
     "init": "pnpm install && pnpm run uv:download && pnpm run agent-browser:download",
-    "predev": "node scripts/generate-ext-bridge.mjs && node scripts/build-openclaw-runtime.mjs && zx scripts/prepare-preinstalled-skills-dev.mjs",
+    "predev": "node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs && node scripts/build-openclaw-runtime.mjs && zx scripts/prepare-preinstalled-skills-dev.mjs",
     "dev": "vite",
     "dev:mock": "vite --open \"/?mock=1#/\"",
     "build:runtime": "node scripts/build-openclaw-runtime.mjs",
@@ -34,7 +34,7 @@
     "runtime:long-stability": "node scripts/runtime-long-stability.mjs",
     "ext:bridge": "node scripts/generate-ext-bridge.mjs",
     "build": "node scripts/generate-ext-bridge.mjs && pnpm run build:vite && pnpm run build:runtime && zx scripts/bundle-openclaw.mjs && zx scripts/bundle-openclaw-plugins.mjs && zx scripts/bundle-openclaw-runtime.mjs && zx scripts/bundle-preinstalled-skills.mjs && node scripts/bundle-main-runtime.mjs && node scripts/run-electron-builder.mjs",
-    "prebuild:vite": "node scripts/generate-ext-bridge.mjs",
+    "prebuild:vite": "node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs",
     "build:vite": "node --max-old-space-size=6144 ./node_modules/vite/bin/vite.js build",
     "build:startup-check": "node scripts/check-renderer-startup-chunks.mjs",
     "bundle:openclaw-plugins": "zx scripts/bundle-openclaw-plugins.mjs",
@@ -240,7 +240,10 @@
     "uas:06:evidence:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-canary-evidence.mts --check",
     "uas:06:real-canary": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts",
     "uas:06:real-canary:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts --check",
-    "eval:runtime-memory:locomo:verify": "node --experimental-strip-types scripts/check-locomo-evidence.mjs"
+    "eval:runtime-memory:locomo:verify": "node --experimental-strip-types scripts/check-locomo-evidence.mjs",
+    "predev:mock": "node scripts/generate-ext-bridge.mjs && node scripts/sync-lobe-icons.mjs && node scripts/build-openclaw-runtime.mjs && zx scripts/prepare-preinstalled-skills-dev.mjs",
+    "lobe-icons:sync": "node scripts/sync-lobe-icons.mjs",
+    "lobe-icons:check": "node scripts/sync-lobe-icons.mjs --check"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.22",

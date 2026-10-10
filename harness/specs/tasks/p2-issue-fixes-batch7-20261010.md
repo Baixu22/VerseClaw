@@ -20,15 +20,16 @@ touchedAreas:
   - src/pages/Chat/ChatInput.tsx
 expectedUserBehavior:
   - A fresh checkout can identify current versus archived task specs and reach every current top-level developer document from docs/README.md.
-  - Unreferenced lobe-icons assets are no longer shipped, and reviewed duplicate assets have explicit retention reasons.
+  - File-type icons for non-image chat attachments keep resolving at /lobe-icons/<name>.svg, while the icon bytes are generated from the pinned MIT-licensed dependency instead of being vendored in Git; reviewed duplicate assets have explicit retention reasons.
   - The vendored runtime records its upstream identity, sync policy, tracked build-output reason, dead-code checks and a baseline for the upstream line-count rule.
 requiredProfiles:
   - fast
 requiredTests:
-  - node node_modules/vitest/vitest.mjs run tests/unit/harness-spec-lifecycle.test.ts tests/unit/docs-index.test.ts tests/unit/runtime-source-policy.test.ts
+  - node node_modules/vitest/vitest.mjs run tests/unit/harness-spec-lifecycle.test.ts tests/unit/docs-index.test.ts tests/unit/runtime-source-policy.test.ts tests/unit/lobe-icons-assets.test.ts
   - node scripts/check-spec-lifecycle.mjs
   - node scripts/check-duplicate-assets.mjs
   - node scripts/check-runtime-source-policy.mjs
+  - node scripts/sync-lobe-icons.mjs --check
   - pnpm --dir openclaw_runtime run check:import-cycles
   - pnpm --dir openclaw_runtime run check:deprecated-api-usage
   - pnpm --dir openclaw_runtime run deadcode:unused-files
@@ -40,7 +41,7 @@ acceptance:
   - Issue #67 - openclaw_runtime/UPSTREAM.md records upstream URL, vendored version, npm compatibility-bundle role, local-fork policy and tracked build-output rationale; PRUNE-MANIFEST is explicitly historical and version-aligned.
   - Issue #71 - docs/README.md links every top-level docs markdown file and all four README locales link the documentation index.
   - Issue #72 - a duplicate-asset check covers tracked files over 100 KiB and records an explicit reason for every reviewed duplicate group.
-  - Issue #82 - the unreferenced public/lobe-icons tree is removed from tracking and a hygiene test keeps it absent.
+  - Issue #82 - the renderer's `/lobe-icons/<name>.svg` assets are no longer vendored in Git; they are generated from the MIT-licensed `@lobehub/assets-fileicon` dependency by `scripts/sync-lobe-icons.mjs` (wired into `predev`/`prebuild:vite`), with provenance recorded and a test that keeps the tree untracked, byte-identical to the dependency, and aligned with the renderer's CDN contract.
   - Issue #91 - runtime dead-code unused-file detection runs in CI and the historical prune manifest is superseded rather than presented as current.
   - Issue #94 - import-cycle and deprecated-API checks run in CI, and check:loc:baseline fails on new or grown files above the upstream 500-line limit.
 docs:

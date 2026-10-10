@@ -92,6 +92,10 @@ package-lock.json
 electron/extensions/_ext-bridge.generated.ts
 src/extensions/_ext-bridge.generated.ts
 
+# Generated file-type icon assets (created by scripts/sync-lobe-icons.mjs from the
+# MIT-licensed @lobehub/assets-fileicon dependency; served at /lobe-icons/<name>.svg)
+public/lobe-icons/
+
 # Local playground artifacts
 playground/
 
@@ -1792,6 +1796,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/p2-issue-fixes-batch7-20261010.md
 !/docs/dev/repository-layout.md
 !/docs/dev/send-button-states-design.md
+!/docs/dev/p2-issue-fixes-batch8-20261010.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
