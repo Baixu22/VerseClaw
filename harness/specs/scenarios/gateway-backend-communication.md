@@ -34,6 +34,7 @@ requiredRules:
   - active-config-guards
   - comms-regression
   - docs-sync
+  - error-governance-boundary
 forbiddenPatterns:
   - window.electron.ipcRenderer.invoke in src/pages/**
   - window.electron.ipcRenderer.invoke in src/components/**
@@ -54,7 +55,7 @@ forbiddenPatterns:
 Gateway backend communication covers all Verse Claw paths that move data between the visual desktop UI and OpenClaw runtime/backend services.
 
 Allowed flow:
-Renderer page/component -> `src/lib/host-api.ts` or `src/lib/api-client.ts` -> Electron Main typed host service or IPC handler -> Main-owned OpenClaw Gateway WebSocket -> runtime result -> store/UI.
+Renderer page/component -> `src/lib/host-api.ts` (typed facade) or `src/lib/host-api-client.ts` (typed request client) -> Electron Main typed host service or IPC handler -> Main-owned OpenClaw Gateway WebSocket -> runtime result -> store/UI.
 
 Renderer code must not own transport selection, direct IPC channels, direct Gateway HTTP calls, retry policy, or protocol fallback.
 
@@ -73,3 +74,15 @@ Pending preparation and policy promises must release their local wait on cancell
 ## Explicit coding diagnostics
 
 An explicitly selected runtime diagnostic consumer may observe destructive-tier classification rates through the existing diagnostic logger. It must not create approvals or alter tool effects; missing/expired windows are unavailable, not healthy. See `coding-approval-rate-diagnostics` and task `harness-gap-approval-rate-alerts`. Main-process copies of process-local counters do not count as runtime observations.
+
+## Error governance across this boundary
+
+Every failure that crosses this boundary keeps the single existing `HostResponse` envelope and the existing error taxonomies: `HostErrorCode` in Main and `AppError` plus the closed `APP_ERROR_CODES` set in the renderer. A third envelope, a parallel error class or a second code union must not be introduced here.
+
+A failure that has no class in the renderer set is either mapped or declared as a gap with written evidence; it must never be silently collapsed into a success or into an unmapped string. The renderer keeps the local correlation id generated for the request, and that id must stay distinguishable from the redacted provider-side request id.
+
+Waiting and approval requests raised by this boundary stay fail-closed: an approval type or waiting status that the declared taxonomy does not recognize is held, never auto-approved, and executes no action. The declared taxonomy covers the real status and approval unions in `shared/host-api/contract.ts`, and any new union member fails the governance check until it has a declared decision.
+
+This boundary owns no manual prerequisite: any step that would otherwise need a person is performed by an automated, agent-driven equivalent whose evidence is labelled `driven_by: agent`. A manual verdict is never an acceptance condition for this scenario.
+
+Executable governance: `node scripts/check-error-governance.mjs` reconciles the surface declared by `harness/specs/rules/error-governance-boundary.md` with `shared/host-api/types.ts`, `electron/main/ipc/host-contract.ts`, `electron/main/ipc/host-invoke.ts`, `src/lib/host-api-client.ts`, `src/lib/error-model.ts` and this scenario. `tests/unit/error-governance-boundary.test.ts` pins the fail-closed waiting decisions and the rejection of each deliberately broken governance axis. The decisions themselves are recorded in `docs/dev/error-governance-decision-record.md`.

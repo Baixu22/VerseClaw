@@ -25,6 +25,8 @@ import type {
 import type { AuthRateLimiter } from "./auth-rate-limit.js";
 import type { ResolvedGatewayAuth } from "./auth.js";
 import { sendJson } from "./http-common.js";
+import { ENDPOINT_REQUEST_BUDGET_BUCKET_EMBEDDINGS } from "./http-endpoint-budget.js";
+import type { GatewayEndpointRequestBudget } from "./http-endpoint-budget.js";
 import { handleGatewayPostJsonEndpoint } from "./http-endpoint-helpers.js";
 import {
   OPENCLAW_MODEL_ID,
@@ -43,6 +45,12 @@ type OpenAiEmbeddingsHttpOptions = {
   trustedProxies?: string[];
   allowRealIpFallback?: boolean;
   rateLimiter?: AuthRateLimiter;
+  /**
+   * Authenticated inference admission budget shared by the OpenAI-compatible
+   * HTTP endpoints. Consumed by the shared admission helper before any provider
+   * work (the embeddings call is the paid provider call here).
+   */
+  endpointRequestBudget?: GatewayEndpointRequestBudget;
 };
 
 type EmbeddingsRequest = {
@@ -244,6 +252,8 @@ export async function handleOpenAiEmbeddingsHttpRequest(
     trustedProxies: opts.trustedProxies,
     allowRealIpFallback: opts.allowRealIpFallback,
     rateLimiter: opts.rateLimiter,
+    endpointRequestBudget: opts.endpointRequestBudget,
+    endpointRequestBudgetBucket: ENDPOINT_REQUEST_BUDGET_BUCKET_EMBEDDINGS,
     maxBodyBytes: opts.maxBodyBytes ?? DEFAULT_EMBEDDINGS_BODY_BYTES,
   });
   if (handled === false) {

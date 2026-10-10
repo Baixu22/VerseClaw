@@ -59,6 +59,7 @@ import {
 } from "../secrets/runtime-state.js";
 import { createAuthRateLimiter, type AuthRateLimiter } from "./auth-rate-limit.js";
 import { resolveGatewayAuth } from "./auth.js";
+import { createGatewayEndpointRequestBudget } from "./http-endpoint-budget.js";
 import { ADMIN_SCOPE } from "./method-scopes.js";
 import {
   STARTUP_UNAVAILABLE_GATEWAY_METHODS,
@@ -820,6 +821,14 @@ export async function startGatewayServer(
   const { rateLimiter: authRateLimiter, browserRateLimiter: browserAuthRateLimiter } =
     createGatewayAuthRateLimiters(rateLimitConfig);
 
+  // Authenticated inference admission budget for the OpenAI-compatible HTTP
+  // endpoints (`/v1/chat/completions`, `/v1/responses`, `/v1/embeddings`).
+  // Created here so it is held by the Gateway lifecycle for exactly as long as
+  // this Gateway process; every endpoint shares this one in-process budget.
+  // It is independent from `authRateLimiter` above: successful authentication
+  // never clears it. The budget owns no timers, so it needs no dispose hook.
+  const endpointRequestBudget = createGatewayEndpointRequestBudget();
+
   const controlUiRootState = await startupTrace.measure("control-ui.root", () =>
     resolveGatewayControlUiRootState({
       controlUiRootOverride,
@@ -914,6 +923,7 @@ export async function startGatewayServer(
       strictTransportSecurityHeader,
       resolvedAuth,
       rateLimiter: authRateLimiter,
+      endpointRequestBudget,
       gatewayTls,
       getResolvedAuth,
       hooksConfig: () => runtimeState?.hooksConfig ?? initialHooksConfig,

@@ -1,0 +1,7 @@
+{
+  "hostErrorCodeMappings": [
+    { "code": "VALIDATION", "rendererClass": "CONFIG" },
+    { "code": "UNSUPPORTED", "rendererClass": "CHANNEL_UNAVAILABLE" },
+    { "code": "TIMEOUT", "rendererClass": "TIMEOUT" }
+  ]
+}

@@ -11,6 +11,43 @@ import {
 } from '../utils/officecli-path';
 import { nextGatewayGeneration, stampGatewayGeneration } from './generation';
 
+/** Flags that would carry a Gateway shared secret into a child process argv. */
+const GATEWAY_SECRET_ARGUMENT_FLAGS = new Set(['--token', '--password', '--gateway-token']);
+
+/**
+ * Removes `--token` / `--password` / `--gateway-token` flag+value pairs whose
+ * value matches a known Gateway secret.
+ *
+ * A child process command line is readable by other same-user processes, so the
+ * shared token must reach the Gateway through the environment, never through
+ * argv (issue #130). Values that do not match a known secret are left untouched,
+ * so this guard cannot silently drop an unrelated argument.
+ */
+export function stripGatewaySecretArgs(
+  args: string[],
+  secrets: Array<string | undefined>,
+): { args: string[]; strippedFlags: string[] } {
+  const knownSecrets = new Set(
+    secrets.map((secret) => secret?.trim()).filter((secret): secret is string => Boolean(secret)),
+  );
+  if (knownSecrets.size === 0) {
+    return { args: [...args], strippedFlags: [] };
+  }
+  const next: string[] = [];
+  const strippedFlags: string[] = [];
+  for (let index = 0; index < args.length; index += 1) {
+    const flag = args[index];
+    const value = args[index + 1];
+    if (GATEWAY_SECRET_ARGUMENT_FLAGS.has(flag) && typeof value === 'string' && knownSecrets.has(value)) {
+      strippedFlags.push(flag);
+      index += 1;
+      continue;
+    }
+    next.push(flag);
+  }
+  return { args: next, strippedFlags };
+}
+
 const GATEWAY_FETCH_PRELOAD_SOURCE = `'use strict';
 (function () {
   var _f = globalThis.fetch;
@@ -174,6 +211,18 @@ export async function launchGatewayProcess(options: {
   } = options.launchContext;
   const finalArgs = [...entryScriptArgs, ...gatewayArgs];
   const sanitizedArgs = options.sanitizeSpawnArgs(finalArgs);
+  // Second line of defence for issue #130: even if a future edit puts a secret
+  // flag back into the launch args, the credential never reaches the real argv.
+  const { args: spawnArgs, strippedFlags } = stripGatewaySecretArgs(finalArgs, [
+    forkEnv.OPENCLAW_GATEWAY_TOKEN,
+    forkEnv.OPENCLAW_GATEWAY_PASSWORD,
+  ]);
+  if (strippedFlags.length > 0) {
+    logger.warn(
+      `Removed Gateway secret argument(s) from the spawned argv (${strippedFlags.join(', ')}); ` +
+        'the shared secret is provided through the environment instead.',
+    );
+  }
 
   logger.info(
     `Starting Gateway process (mode=${mode}, runtime=${runtimeMode}, port=${options.port}, entry="${entryScript}", args="${sanitizedArgs.join(' ')}", execArgv="${execArgv.join(' ')}", cwd="${openclawDir}", bundledBin=${binPathExists ? 'yes' : 'no'}, providerKeys=${loadedProviderKeyCount}, channels=${channelStartupSummary}, proxy=${proxySummary})`,
@@ -205,7 +254,7 @@ export async function launchGatewayProcess(options: {
   }
 
   return await new Promise<{ child: Electron.UtilityProcess; lastSpawnSummary: string }>((resolve, reject) => {
-    const child = utilityProcess.fork(entryScript, finalArgs, {
+    const child = utilityProcess.fork(entryScript, spawnArgs, {
       cwd: openclawDir,
       stdio: 'pipe',
       env: runtimeEnv as NodeJS.ProcessEnv,

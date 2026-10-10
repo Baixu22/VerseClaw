@@ -27,6 +27,7 @@ import {
 import type { ControlUiRootState } from "./control-ui.js";
 import type { AuthorizedGatewayHttpRequest } from "./http-auth-utils.js";
 import { sendGatewayAuthFailure, setDefaultSecurityHeaders } from "./http-common.js";
+import type { GatewayEndpointRequestBudget } from "./http-endpoint-budget.js";
 import { resolveRequestClientIp } from "./net.js";
 import {
   normalizePluginNodeCapabilityScopedUrl,
@@ -499,6 +500,12 @@ export function createGatewayHttpServer(opts: {
   getResolvedAuth?: () => ResolvedGatewayAuth;
   /** Optional rate limiter for auth brute-force protection. */
   rateLimiter?: AuthRateLimiter;
+  /**
+   * Optional authenticated inference admission budget, held by the Gateway
+   * lifecycle and shared by the OpenAI-compatible HTTP endpoints. Consumed by
+   * the shared admission helper before model/provider work and SSE headers.
+   */
+  endpointRequestBudget?: GatewayEndpointRequestBudget;
   getReadiness?: ReadinessChecker;
   getRuntimeConfig?: () => OpenClawConfig;
   tlsOptions?: TlsOptions;
@@ -519,6 +526,7 @@ export function createGatewayHttpServer(opts: {
     resolvePluginNodeCapabilityRoute,
     resolvedAuth,
     rateLimiter,
+    endpointRequestBudget,
     getReadiness,
   } = opts;
   const getResolvedAuth = opts.getResolvedAuth ?? (() => resolvedAuth);
@@ -625,6 +633,7 @@ export function createGatewayHttpServer(opts: {
               trustedProxies,
               allowRealIpFallback,
               rateLimiter,
+              endpointRequestBudget,
             }),
         });
       }
@@ -675,6 +684,7 @@ export function createGatewayHttpServer(opts: {
               trustedProxies,
               allowRealIpFallback,
               rateLimiter,
+              endpointRequestBudget,
             }),
         });
       }
@@ -688,6 +698,7 @@ export function createGatewayHttpServer(opts: {
               trustedProxies,
               allowRealIpFallback,
               rateLimiter,
+              endpointRequestBudget,
             }),
         });
       }

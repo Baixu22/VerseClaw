@@ -62,6 +62,31 @@ export function sendRateLimited(res: ServerResponse, retryAfterMs?: number) {
   });
 }
 
+/**
+ * 429 for the authenticated endpoint request budget.
+ *
+ * This is intentionally separate from {@link sendRateLimited}: that helper
+ * reports an authentication-failure lockout, while this one reports an admitted
+ * client that exhausted its inference admission budget. The message must not
+ * claim an authentication failure, and callers rely on the stable 429 +
+ * `Retry-After` shape.
+ */
+export function sendEndpointRequestBudgetExceeded(
+  res: ServerResponse,
+  retryAfterMs: number | undefined,
+) {
+  // Always emit the header so clients see a stable 429 contract; floor at 1s
+  // because a sub-second retry hint is not actionable for HTTP clients.
+  const retryAfterSeconds = Math.max(1, Math.ceil((retryAfterMs ?? 0) / 1000));
+  res.setHeader("Retry-After", String(retryAfterSeconds));
+  sendJson(res, 429, {
+    error: {
+      message: "Endpoint request budget exceeded for this client. Please retry later.",
+      type: "rate_limit_exceeded",
+    },
+  });
+}
+
 export function sendGatewayAuthFailure(res: ServerResponse, authResult: GatewayAuthResult) {
   if (authResult.rateLimited) {
     sendRateLimited(res, authResult.retryAfterMs);

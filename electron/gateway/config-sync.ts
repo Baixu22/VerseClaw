@@ -1021,6 +1021,22 @@ async function readEffectiveGatewayConfig(sourceRuntimeConfigPath?: string): Pro
   }
 }
 
+/**
+ * Gateway process arguments for both runtime modes (source and packaged).
+ *
+ * The shared Gateway token is deliberately NOT part of this argv: on every
+ * supported platform a same-user process can read another process's command
+ * line, so `--token` would expose the credential to process inspection
+ * (issue #130). The token travels through `OPENCLAW_GATEWAY_TOKEN` in the fork
+ * environment instead, which the runtime resolves as a first-class auth source
+ * (`resolveGatewayAuth` / `ensureGatewayStartupAuth`). Keep this builder
+ * token-free; `stripGatewaySecretArgs` in the launcher is the second line of
+ * defence if a future edit reintroduces a secret flag.
+ */
+export function buildGatewayProcessArgs(port: number): string[] {
+  return ['gateway', '--port', String(port), '--allow-unconfigured'];
+}
+
 export async function prepareGatewayLaunchContext(port: number): Promise<GatewayLaunchContext> {
   const timingsMs: Record<string, number> = {};
   const totalStartedAt = Date.now();
@@ -1071,7 +1087,7 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
     throw new Error(`OpenClaw entry script not found at: ${entryScript}`);
   }
 
-  const gatewayArgs = ['gateway', '--port', String(port), '--token', appSettings.gatewayToken, '--allow-unconfigured'];
+  const gatewayArgs = buildGatewayProcessArgs(port);
   const mode = app.isPackaged ? 'packaged' : 'dev';
 
   const platform = process.platform;

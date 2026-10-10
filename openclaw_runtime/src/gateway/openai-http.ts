@@ -43,6 +43,8 @@ import {
 import type { AuthRateLimiter } from "./auth-rate-limit.js";
 import type { ResolvedGatewayAuth } from "./auth.js";
 import { sendJson, setSseHeaders, watchClientDisconnect, writeDone } from "./http-common.js";
+import { ENDPOINT_REQUEST_BUDGET_BUCKET_CHAT_COMPLETIONS } from "./http-endpoint-budget.js";
+import type { GatewayEndpointRequestBudget } from "./http-endpoint-budget.js";
 import { handleGatewayPostJsonEndpoint } from "./http-endpoint-helpers.js";
 import {
   resolveGatewayRequestContext,
@@ -65,6 +67,12 @@ type OpenAiHttpOptions = {
   trustedProxies?: string[];
   allowRealIpFallback?: boolean;
   rateLimiter?: AuthRateLimiter;
+  /**
+   * Authenticated inference admission budget shared by the OpenAI-compatible
+   * HTTP endpoints. Consumed by the shared admission helper before any model
+   * work or SSE headers.
+   */
+  endpointRequestBudget?: GatewayEndpointRequestBudget;
 };
 
 type OpenAiChatMessage = {
@@ -878,6 +886,8 @@ export async function handleOpenAiHttpRequest(
     trustedProxies: opts.trustedProxies,
     allowRealIpFallback: opts.allowRealIpFallback,
     rateLimiter: opts.rateLimiter,
+    endpointRequestBudget: opts.endpointRequestBudget,
+    endpointRequestBudgetBucket: ENDPOINT_REQUEST_BUDGET_BUCKET_CHAT_COMPLETIONS,
     maxBodyBytes: opts.maxBodyBytes ?? limits.maxBodyBytes,
   });
   if (handled === false) {

@@ -37,6 +37,8 @@ import { resolveAssistantStreamDeltaText } from "./agent-event-assistant-text.js
 import type { AuthRateLimiter } from "./auth-rate-limit.js";
 import type { ResolvedGatewayAuth } from "./auth.js";
 import { sendJson, setSseHeaders, watchClientDisconnect, writeDone } from "./http-common.js";
+import { ENDPOINT_REQUEST_BUDGET_BUCKET_RESPONSES } from "./http-endpoint-budget.js";
+import type { GatewayEndpointRequestBudget } from "./http-endpoint-budget.js";
 import { handleGatewayPostJsonEndpoint } from "./http-endpoint-helpers.js";
 import {
   getBearerToken,
@@ -73,6 +75,12 @@ type OpenResponsesHttpOptions = {
   trustedProxies?: string[];
   allowRealIpFallback?: boolean;
   rateLimiter?: AuthRateLimiter;
+  /**
+   * Authenticated inference admission budget shared by the OpenAI-compatible
+   * HTTP endpoints. Consumed by the shared admission helper before any model
+   * work or SSE headers.
+   */
+  endpointRequestBudget?: GatewayEndpointRequestBudget;
 };
 
 const DEFAULT_BODY_BYTES = 20 * 1024 * 1024;
@@ -454,6 +462,8 @@ export async function handleOpenResponsesHttpRequest(
     trustedProxies: opts.trustedProxies,
     allowRealIpFallback: opts.allowRealIpFallback,
     rateLimiter: opts.rateLimiter,
+    endpointRequestBudget: opts.endpointRequestBudget,
+    endpointRequestBudgetBucket: ENDPOINT_REQUEST_BUDGET_BUCKET_RESPONSES,
     maxBodyBytes,
   });
   if (handled === false) {

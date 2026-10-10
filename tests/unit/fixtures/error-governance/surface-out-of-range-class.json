@@ -1,0 +1,8 @@
+{
+  "hostErrorCodeMappings": [
+    { "code": "VALIDATION", "rendererClass": "CONFIG" },
+    { "code": "UNSUPPORTED", "rendererClass": "CHANNEL_UNAVAILABLE" },
+    { "code": "INTERNAL", "rendererClass": "TELEPORT_FAILED" },
+    { "code": "TIMEOUT", "rendererClass": "TIMEOUT" }
+  ]
+}

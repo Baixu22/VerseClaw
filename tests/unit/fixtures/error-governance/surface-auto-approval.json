@@ -1,0 +1,7 @@
+{
+  "waitingTypes": {
+    "approvalType": {
+      "pending": { "autoApprove": true }
+    }
+  }
+}

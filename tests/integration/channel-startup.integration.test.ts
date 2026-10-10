@@ -88,6 +88,12 @@ it.each(['initial', 'sync'])('starts a configured channel through the %s desktop
   expect(launch.forkEnv.OPENCLAW_SKIP_CHANNELS).toBe('');
   expect(launch.forkEnv.CLAWDBOT_SKIP_CHANNELS).toBe('');
   expect(resolve(launch.forkEnv.OPENCLAW_CONFIG_PATH!)).toBe(resolve(join(state.userData, 'openclaw-source-state', 'openclaw.json')));
+  // Issue #130: the shared Gateway token travels through the fork environment,
+  // never through argv, for both source and packaged launch modes (they share
+  // `buildGatewayProcessArgs`).
+  expect(launch.gatewayArgs).not.toContain('--token');
+  expect(launch.gatewayArgs.join(' ')).not.toContain('local-test-token');
+  expect(launch.forkEnv.OPENCLAW_GATEWAY_TOKEN).toBe('local-test-token');
   expect(cfg.channels).toEqual(channels);
   expect(cfg.plugins.enabled).toBe(true);
   vi.stubEnv('OPENCLAW_SKIP_CHANNELS', launch.forkEnv.OPENCLAW_SKIP_CHANNELS);
