@@ -167,7 +167,12 @@
         "recent": {
             "title": "Последние записи биллинга",
             "description": "Строки usage из transcript, включая недоступные записи и ошибки разбора.",
-            "cacheHit": "Кэш {{value}}"
+            "cacheHit": "Кэш {{value}}",
+            "failed": "Ошибка",
+            "aborted": "Прервано",
+            "retry": "Повтор",
+            "fallback": "Резерв",
+            "unknownAttribution": "Привязка затрат неизвестна"
         },
         "transcriptSource": "История transcript",
         "refreshing": "Обновление",
