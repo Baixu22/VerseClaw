@@ -29,7 +29,7 @@ Verse Claw exposes a typed `hostApi.agentDev` surface for agent-authored page wo
 
 The Agent Dev Workbench has two aligned entries: a generated static artifact for offline audit (`pnpm agent-dev:workbench`) and a compact in-app Settings > Developer panel for daily diagnosis. Both must read real sources only: `shared/agent-dev/scenarios.ts`, `shared/host-api/contract.ts`, `src/lib/host-api.ts`, `electron/services/agent-dev-api.ts`, package scripts, trace/cost/sandbox contracts, host-api reports, and generated report directories.
 
-The renderer Workbench must keep using `src/lib/host-api.ts` / `src/lib/api-client.ts` as its only backend entry, and all visible text must use four-locale `react-i18next` coverage.
+The renderer Workbench must keep using `src/lib/host-api.ts` / `src/lib/host-api-client.ts` as its only backend entry, and all visible text must use four-locale `react-i18next` coverage.
 
 ## Scenario Recording Promotion
 

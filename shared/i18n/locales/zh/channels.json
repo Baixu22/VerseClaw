@@ -147,7 +147,7 @@
     "meta": {
         "telegram": {
             "description": "使用 @BotFather 提供的机器人令牌连接 Telegram",
-            "docsUrl": "https://icnnp7d0dymg.feishu.cn/wiki/TjiGwxsMWi7hpDkDAQBc0ydMnEf#PL8ndvsEwoYVWIx1T4mcB1EvnSb",
+            "docsUrl": "https://docs.openclaw.ai/",
             "fields": {
                 "botToken": {
                     "label": "机器人令牌",
@@ -169,7 +169,7 @@
         },
         "discord": {
             "description": "使用开发者门户提供的机器人令牌连接 Discord",
-            "docsUrl": "https://icnnp7d0dymg.feishu.cn/wiki/BkOywJYCAiYRN9k4KTTceKPMnxg#C9zjdBRT1oqZ4VxF8q7ceRxQnLk",
+            "docsUrl": "https://docs.openclaw.ai/",
             "fields": {
                 "token": {
                     "label": "机器人令牌",
@@ -197,7 +197,7 @@
         },
         "whatsapp": {
             "description": "通过扫描二维码连接 WhatsApp（无需手机号）",
-            "docsUrl": "https://icnnp7d0dymg.feishu.cn/wiki/ES7fwUfH8iGl8FkHYfFcyWB3n4d#doxcnsDDFbeEzqgjN6HSlyonLvc",
+            "docsUrl": "https://docs.openclaw.ai/",
             "instructions": [
                 "在手机上打开 WhatsApp",
                 "前往 设置 > 已关联设备 >包含连接设备",
@@ -207,7 +207,7 @@
         },
         "wechat": {
             "description": "通过腾讯官方 OpenClaw 插件扫码连接个人微信",
-            "docsUrl": "https://icnnp7d0dymg.feishu.cn/wiki/GHYZwuPCriF0gWkXwkFcJ9zon3b",
+            "docsUrl": "https://docs.openclaw.ai/",
             "instructions": [
                 "点击生成二维码，Verse Claw 会在 OpenClaw 中安装并启用官方微信插件",
                 "使用微信扫描下方二维码，并在手机上确认连接",
@@ -217,7 +217,7 @@
         },
         "dingtalk": {
             "description": "通过 OpenClaw 渠道插件连接钉钉（Stream 模式）",
-            "docsUrl": "https://icnnp7d0dymg.feishu.cn/wiki/Y5eNwiSiZidkLskrwtJc1rUln0b#doxcnr8KfaA2mNPeQUeHO83eDPh",
+            "docsUrl": "https://docs.openclaw.ai/",
             "fields": {
                 "clientId": {
                     "label": "Client ID (AppKey)",
@@ -251,7 +251,7 @@
         },
         "feishu": {
             "description": "通过飞书官方推出的 OpenClaw 插件连接飞书/Lark 机器人",
-            "docsUrl": "https://icnnp7d0dymg.feishu.cn/wiki/GKn8wOvHnibpPNkNkPzcAvGlnzK#Py88dTltfoJc1jxAhIBcW3Pkn7b",
+            "docsUrl": "https://docs.openclaw.ai/",
             "fields": {
                 "appId": {
                     "label": "应用 ID (App ID)",
@@ -272,7 +272,7 @@
         },
         "wecom": {
             "description": "通过插件连接企业微信机器人",
-            "docsUrl": "https://icnnp7d0dymg.feishu.cn/wiki/JTGnwoV0RixKPtkr4w7c7gpAnDc",
+            "docsUrl": "https://docs.openclaw.ai/",
             "fields": {
                 "botId": {
                     "label": "机器人 Bot ID",
@@ -403,7 +403,7 @@
         },
         "qqbot": {
             "description": "连接 QQ 机器人频道（OpenClaw 3.31 起内置）",
-            "docsUrl": "https://icnnp7d0dymg.feishu.cn/wiki/KPIJwlyiGiupMrkiS9ice39Zn2c",
+            "docsUrl": "https://docs.openclaw.ai/",
             "fields": {
                 "appId": {
                     "label": "App ID",

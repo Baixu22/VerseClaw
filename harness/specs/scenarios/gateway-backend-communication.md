@@ -3,7 +3,7 @@ id: gateway-backend-communication
 title: Gateway Backend Communication
 type: runtime-bridge
 ownedPaths:
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
   - src/lib/host-api.ts
   - src/stores/gateway.ts
   - src/stores/chat.ts

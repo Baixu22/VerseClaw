@@ -105,7 +105,7 @@ export default [
     },
   },
   {
-    files: ['src/lib/api-client.ts'],
+    files: ['src/lib/host-api-client.ts'],
     rules: {
       'no-restricted-syntax': 'off',
     },

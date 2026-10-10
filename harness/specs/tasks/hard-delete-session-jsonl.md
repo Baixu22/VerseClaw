@@ -28,7 +28,7 @@ requiredTests:
   - tests/unit/host-services.test.ts
   - tests/unit/chat-session-actions.test.ts
 acceptance:
-  - Renderer continues to use src/lib/host-api.ts and src/lib/api-client.ts; no new direct ipcRenderer or Gateway HTTP calls.
+  - Renderer continues to use src/lib/host-api.ts and src/lib/host-api-client.ts; no new direct ipcRenderer or Gateway HTTP calls.
   - Typed host session deletion and the legacy session:delete IPC handler unlink the same set of files for a given session id, sharing electron/utils/session-files.ts so the disk contract cannot drift.
   - The handler tolerates ENOENT (file already gone) and still updates sessions.json so the sidebar stops listing the entry.
   - Renderer delete-session paths clear any in-memory pending optimistic user messages for the deleted key before subsequent history loads run.

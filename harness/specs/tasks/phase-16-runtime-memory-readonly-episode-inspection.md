@@ -31,7 +31,7 @@ touchedAreas:
   - electron/**
   - shared/**
   - src/lib/host-api.ts
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
 expectedUserBehavior:
   - With runtime.memory.persist disabled or omitted, readonly episode inspection returns a skipped no-open/no-read/no-write result.
   - With runtime.memory.persist explicitly true and an explicit existing database path/test database option, readonly inspection may enumerate persisted sanitized episode summaries without running migration, schema creation, meta writes, idempotency writes, retention trimming, fact writes, invalidations, provider hydration, or TaskLoop.

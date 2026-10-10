@@ -24,7 +24,7 @@ touchedAreas:
   - electron/**
   - shared/**
   - src/lib/host-api.ts
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
 expectedUserBehavior:
   - Operator/developer inspection is available only by explicit utility/helper invocation, not through Gateway, Electron, renderer UI, providers, TaskLoop decisions, prompt assembly, or runtime authority.
   - With runtime.memory.persist disabled or omitted, the Phase 17 surface returns a skipped diagnostic and does not open, read, write, migrate, or create SQLite state.

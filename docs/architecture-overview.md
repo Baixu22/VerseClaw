@@ -21,7 +21,7 @@ This guide describes the current source paths inspected on **2026-10-05**. Verse
 
 The ordinary typed host request crosses **IPC first**. Gateway-bound host services then use the Main-owned WebSocket connection. Desktop services can finish locally without traversing Gateway. These are separate boundaries; describing them as a universal “WS → HTTP → IPC fallback” is inaccurate for the current facade. HTTP-facing services and runtime HTTP endpoints do not change that ordinary call path.
 
-Renderer code should use the typed facade and event facade, not open direct Gateway connections. Some older policy text still names `src/lib/api-client.ts`; that file is absent in this checkout. The current request implementation is `src/lib/host-api-client.ts`.
+Renderer code should use the typed facade and event facade, not open direct Gateway connections. Some older policy text still names `src/lib/host-api-client.ts`; that file is absent in this checkout. The current request implementation is `src/lib/host-api-client.ts`.
 
 ## One chat turn
 

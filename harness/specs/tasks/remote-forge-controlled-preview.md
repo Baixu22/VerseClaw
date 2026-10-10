@@ -30,7 +30,7 @@ touchedAreas:
   - electron/services/remote-forge-api.ts
   - electron/main/ipc-handlers.ts
   - src/lib/host-api.ts
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
   - src/lib/generated-files.ts
   - src/pages/CodeReview/**
   - src/pages/Chat/index.tsx
@@ -122,7 +122,7 @@ acceptance:
   - RemoteForgeError/v1 is the stable remote error envelope and carries code, retryable, requestId, optional HTTP status, and safe message without credential, response-body, repository-content, or private-host leakage.
   - Local repository status, diff, stage, commit, branch, stash, worktree, fetch, pull, and push remain owned by electron/services/git-api.ts. No second local Git service is introduced.
   - File mutation, snapshots, recovery, and undo remain owned by the Coding write journal. Structured diff projection never becomes a mutation authority.
-  - Renderer calls Remote Forge only through src/lib/host-api.ts or src/lib/api-client.ts. Renderer code does not call GitHub directly, execute git or gh, or choose WS, HTTP, or IPC fallback.
+  - Renderer calls Remote Forge only through src/lib/host-api.ts or src/lib/host-api-client.ts. Renderer code does not call GitHub directly, execute git or gh, or choose WS, HTTP, or IPC fallback.
   - The GitHub read adapter runs in Main and provides bounded, deduplicated, paginated PR detail, commits, files/diff, checks, reviews, file content, and readiness with explicit complete, incomplete, truncated, and unavailable states.
   - Unknown, incomplete, truncated, pagination failure, missing head SHA, or stale head/readiness/approval cannot be interpreted as empty, complete, ready, or approved.
   - Every remote side effect binds provider, repository, pull request, head SHA, action, and payload digest. Approval is consumed once and invalidated by head, readiness, action, or payload drift.

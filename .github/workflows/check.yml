@@ -3,6 +3,9 @@
 name: Check and Build
 
 on:
+  push:
+    branches:
+      - 'codex/**'
   pull_request:
     branches:
       - main

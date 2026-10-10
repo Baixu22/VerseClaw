@@ -375,7 +375,7 @@ function buildTemplate(workspace: WorkspaceProfile): string {
     '',
     '## Renderer / Main Boundary',
     '',
-    '- Renderer code must call backend functionality through `src/lib/host-api.ts` or `src/lib/api-client.ts`.',
+    '- Renderer code must call backend functionality through `src/lib/host-api.ts` or `src/lib/host-api-client.ts`.',
     '- Do not call `window.electron.ipcRenderer.invoke(...)` directly from renderer pages or components.',
     `- Do not fetch ${formatGatewayHttpOrigins()} from renderer code; use Main-owned proxy or host-api routes.`,
     '',

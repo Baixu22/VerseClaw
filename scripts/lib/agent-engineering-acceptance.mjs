@@ -193,7 +193,7 @@ const COVERAGE_PATTERNS = Object.freeze({
     'electron/gateway/**',
     'electron/services/**',
     'src/lib/host-api.ts',
-    'src/lib/api-client.ts',
+    'src/lib/host-api-client.ts',
     'src/lib/host-events.ts',
     'shared/host-api/**',
     'shared/agent-dev/**',

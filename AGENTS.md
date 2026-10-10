@@ -106,7 +106,7 @@ Current performance limits to watch:
 - **UI change validation**: Any user-visible UI change should include or update an Electron E2E spec in the same PR so the interaction is covered by Playwright.
 - **i18n & styling conventions**: New user-facing features must (1) route all text through `react-i18next` with full locale coverage (`en` / `zh` / `ja` / `ru` under `shared/i18n/locales/<lang>/<ns>.json`) — never hardcode display strings, and (2) use the design tokens and substitution rules documented in `src/styles/globals.css` (surfaces `bg-surface-modal` / `bg-surface-input`, selected state `bg-black/5 dark:bg-white/10`, status colours `text-X-700 dark:text-X-400`, page H1/H2 `font-serif font-normal tracking-tight`, etc.) — see the *Component conventions* block in `globals.css` for the full substitution table.
 - **Renderer/Main API boundary (important)**:
-  - Renderer must use `src/lib/host-api.ts` and `src/lib/api-client.ts` as the single entry for backend calls.
+  - Renderer must use `src/lib/host-api.ts` and `src/lib/host-api-client.ts` as the single entry for backend calls.
   - Do not add new direct `window.electron.ipcRenderer.invoke(...)` calls in pages/components; expose them through host-api/api-client instead.
   - Do not call Gateway HTTP endpoints directly from renderer (`fetch('http://127.0.0.1:18789/...')` etc.). Use Main-process proxy channels (`hostapi:fetch`, `gateway:httpProxy`) to avoid CORS/env drift.
   - Transport policy is Main-owned and fixed as `WS -> HTTP -> IPC fallback`; renderer should not implement protocol switching UI/business logic.

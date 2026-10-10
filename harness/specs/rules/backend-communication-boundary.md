@@ -8,7 +8,7 @@ requiredProfiles:
   - comms
 ---
 
-Renderer backend calls must go through `src/lib/host-api.ts` and `src/lib/api-client.ts`.
+Renderer backend calls must go through `src/lib/host-api.ts` and `src/lib/host-api-client.ts`.
 
 Pages and components must not add direct `window.electron.ipcRenderer.invoke(...)` calls.
 

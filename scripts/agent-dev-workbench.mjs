@@ -270,7 +270,7 @@ function renderHtml(scenarios, reportIndex) {
     <thead><tr><th>Status</th><th>Dimension</th><th>Score</th><th>Deducted</th></tr></thead>
     <tbody>${scoreRows}</tbody>
   </table>
-  <p>Workbench remains a generated static artifact in this phase. If it moves into the app, it must enter through <code>src/lib/host-api.ts</code>/<code>src/lib/api-client.ts</code> and four-locale i18n.</p>
+  <p>Workbench remains a generated static artifact in this phase. If it moves into the app, it must enter through <code>src/lib/host-api.ts</code>/<code>src/lib/host-api-client.ts</code> and four-locale i18n.</p>
   <h2>Scenario Registry</h2>
   <table>
     <thead><tr><th>Scenario</th><th>Route</th><th>Description</th><th>Link</th></tr></thead>

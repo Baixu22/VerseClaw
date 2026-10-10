@@ -64,7 +64,7 @@ be reintroduced into policy text.
 | Item | State | Current evidence |
 | --- | --- | --- |
 | Renderer talks to Main through typed IPC; Main owns the Gateway WebSocket | existing | `harness/specs/rules/api-client-transport-policy.md` ("Gateway RPC transport is IPC-only"), `harness/specs/rules/host-api-fallback-policy.md` (typed `hostApi` facade plus `host:invoke`; the local Host API HTTP server on 127.0.0.1:13210 and the browser fallback are removed), `electron/preload/index.ts` |
-| The scenario's allowed-flow line named a renderer client that does not exist | gap, corrected in this change set | the scenario claimed the flow passes through src/lib/api-client.ts (absent in this tree). The line now names `src/lib/host-api.ts` and `src/lib/host-api-client.ts`. Older policy text elsewhere still names the absent file; `docs/architecture-overview.md` already records that fact, and the remaining occurrences are out of this issue's scope |
+| The scenario's allowed-flow line named a renderer client that does not exist | gap, corrected in this change set | the scenario claimed the flow passes through src/lib/host-api-client.ts (absent in this tree). The line now names `src/lib/host-api.ts` and `src/lib/host-api-client.ts`. Older policy text elsewhere still names the absent file; `docs/architecture-overview.md` already records that fact, and the remaining occurrences are out of this issue's scope |
 
 ## 3. Error classes and the missing mapping
 

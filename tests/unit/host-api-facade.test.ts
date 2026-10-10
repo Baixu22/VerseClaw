@@ -1300,10 +1300,10 @@ describe('hostApi facade', () => {
 
   it('does not keep the legacy unified app:request client path', () => {
     const mainIpcHandlers = readFileSync(join(process.cwd(), 'electron/main/ipc-handlers.ts'), 'utf8');
-    const apiClientPath = join(process.cwd(), 'src/lib/api-client.ts');
+    const apiClientPath = join(process.cwd(), 'src/lib/host-api-client.ts');
 
     const violations = [
-      ...(existsSync(apiClientPath) ? ['src/lib/api-client.ts: remove legacy unified API client'] : []),
+      ...(existsSync(apiClientPath) ? ['src/lib/host-api-client.ts: remove legacy unified API client'] : []),
       ...(mainIpcHandlers.includes("case 'cron':")
         ? ['electron/main/ipc-handlers.ts: remove legacy app:request cron module']
         : []),

@@ -38,7 +38,7 @@ touchedAreas:
   - electron/**
   - shared/**
   - src/lib/host-api.ts
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
 expectedUserBehavior:
   - With runtime.memory.shadow or runtime.memory.persist disabled or omitted, existing TaskLoop behavior remains unchanged and Runtime Memory persistence is not opened, read, or written.
   - With both runtime.memory.shadow and runtime.memory.persist explicitly true, Phase 14 may only prove the already accepted Phase 13 terminal TaskLoop episode shadow write through the real adapter/persistence path.

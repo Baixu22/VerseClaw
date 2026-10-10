@@ -20,7 +20,7 @@ touchedAreas:
   - electron/**
   - shared/**
   - src/lib/host-api.ts
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
   - tests/unit/**
   - tests/fixtures/**
 expectedUserBehavior:

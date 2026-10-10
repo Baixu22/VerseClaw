@@ -25,7 +25,7 @@ touchedAreas:
   - electron/**
   - shared/**
   - src/lib/host-api.ts
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
 expectedUserBehavior:
   - Operator/developer inspection is discoverable through the explicit local package script `runtime:memory:inspect`.
   - The package script is only `node openclaw_runtime/scripts/inspect-runtime-memory-episodes.mjs`; it does not pass `--persist`, does not pass `--database`, and does not start Electron, Gateway, a server, listener, daemon, provider, TaskLoop, prompt assembly, or runtime authority path.
