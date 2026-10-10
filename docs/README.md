@@ -31,6 +31,7 @@ and the [default configuration matrix](dev/default-config-matrix.md).
 - [P2 issue fix: automated runtime-memory cutover evidence gate](dev/p2-issue-fixes-batch13-20261010.md)
 - [P2 issue fix: deprecated zero-call exports](dev/p2-issue-fixes-batch14-20261010.md)
 - [P2 issue fix: LoCoMo cached/fresh mirrored tails](dev/p2-issue-fixes-batch15-20261010.md)
+- [P2 issue fix: bounded runtime performance baseline](dev/p2-issue-fixes-batch16-20261010.md)
 
 ## Historical records
 

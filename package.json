@@ -79,6 +79,7 @@
     "agent-dev:audit:report": "node scripts/agent-dev-audit.mjs --no-fail",
     "observability:problems": "pnpm --dir openclaw_runtime exec tsx ../scripts/observability-problems.mjs",
     "memory:cutover-gate": "pnpm --dir openclaw_runtime exec tsx ../scripts/memory-cutover-gate.mjs",
+    "runtime:perf": "node scripts/run-runtime-perf.mjs",
     "catalogs:gen": "pnpm --dir openclaw_runtime exec tsx ../scripts/generate-catalogs.mjs",
     "catalogs:check": "pnpm --dir openclaw_runtime exec tsx ../scripts/generate-catalogs.mjs --check",
     "agent-dev:evaluate": "node scripts/agent-dev-benefit-eval.mjs",
