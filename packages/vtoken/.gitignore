@@ -15,7 +15,8 @@ __pycache__/
 build/
 dist/
 
-# T1 鍩哄噯锛歵iktoken 璇嶈〃绂荤嚎缂撳瓨锛堢害 1.7MB锛屼笉鍏ュ簱锛?.tiktoken_cache/
+# T1 鍩哄噯锛歵iktoken 璇嶈〃绂荤嚎缂撳瓨锛堢害 1.7MB锛屼笉鍏ュ簱锛?
+.tiktoken_cache/
 
 # 鍩哄噯浜х墿
 benchmarks/*.tmp/

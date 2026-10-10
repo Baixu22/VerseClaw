@@ -1790,12 +1790,16 @@ openclaw_runtime/_tmp_*
 !/artifacts/p0-memory-integrity-20261009/judge-binding-20261010.json
 !/artifacts/p0-memory-integrity-20261009/judge-binding-20261010.sha256
 !/docs/dev/error-governance-decision-record.md
+!/docs/dev/nop-issue-closures-20261010.md
 !/docs/dev/p2-issue-fixes-batch4-20261010.md
 !/docs/dev/p2-issue-fixes-batch5-20261010.md
 !/docs/dev/p2-issue-fixes-batch6-20261010.md
 !/docs/dev/p2-issue-fixes-batch7-20261010.md
 !/docs/dev/repository-layout.md
 !/docs/dev/send-button-states-design.md
+!/docs/dev/repository-reference-analysis-20261010.md
+!/docs/dev/runtime-feature-control-surface.md
+!/docs/dev/vtoken-distribution-and-format-contract.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

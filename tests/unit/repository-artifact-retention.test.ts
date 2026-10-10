@@ -60,7 +60,14 @@ describe('repository artifact retention', () => {
     const directory = mkdtempSync(join(tmpdir(), 'repository-ignore-'));
     tempRoots.push(directory);
     git(directory, 'init', '--quiet');
-    write(directory, '.gitignore', readFileSync(join(root, '.gitignore'), 'utf8'));
+    // Reproduce the repository's real ignore topology, not only the root file: a
+    // declared local-only path may be ignored by a nested .gitignore (for example
+    // packages/vtoken/.tiktoken_cache is matched by packages/vtoken/.gitignore).
+    // Copying the root file alone would misreport such a path as unignored and
+    // would weaken the "declared local-only means ignored in fact" invariant.
+    for (const ignoreFile of git(root, 'ls-files').split('\n').filter((file) => file.endsWith('.gitignore'))) {
+      write(directory, ignoreFile, readFileSync(join(root, ignoreFile), 'utf8'));
+    }
     const localPaths = [
       ...(policy.reviewedDirectories ?? []).map((path) => `${path}/unreviewed/run.log`),
       ...policy.localOnlyFiles,
@@ -171,5 +178,45 @@ describe('repository artifact retention', () => {
     expect(checkRepositoryArtifacts(directory).issues).toContain(
       'Required source input is ignored: plans/system-maturity/gates.json',
     );
+  });
+
+  // Issue #97: the vtoken tokenizer cache is a machine-local generated file that
+  // must never be committed. packages/vtoken/.gitignore is supposed to ignore
+  // `packages/vtoken/.tiktoken_cache/`, but the pattern had been appended to the
+  // tail of a comment line with no newline before it, so the whole line was a
+  // comment and nothing ever matched. The file is valid UTF-8 throughout.
+  // Two layers are needed: a valid ignore pattern, and no tracked path under it.
+  it('keeps the vtoken tokenizer cache ignored in fact, not only in a comment', () => {
+    const tokenizerCacheDirectory = 'packages/vtoken/.tiktoken_cache';
+    const hashNamedCacheFile = '9b5ad71b2ce5302211f9c61530b329a4922fc6a4';
+    const cacheRelativePath = `${tokenizerCacheDirectory}/${hashNamedCacheFile}`;
+
+    // Layer 1: no tracked path under the cache directory. This is what actually
+    // fails when the file is (re)committed, whatever the ignore file says.
+    const tracked = git(root, 'ls-files', '--', tokenizerCacheDirectory).split('\n').filter(Boolean);
+    expect(tracked).toEqual([]);
+
+    // Layer 2: the pattern must match on its own line inside a real checkout.
+    // A pattern that only appears behind a '#' comment yields no match, which is
+    // exactly the regression this guards.
+    const fixture = mkdtempSync(join(tmpdir(), 'vtoken-ignore-'));
+    tempRoots.push(fixture);
+    git(fixture, 'init', '--quiet');
+    mkdirSync(join(fixture, dirname(cacheRelativePath)), { recursive: true });
+    writeFileSync(join(fixture, cacheRelativePath), 'cache');
+    mkdirSync(join(fixture, 'packages/vtoken'), { recursive: true });
+    // Copy the real ignore file byte for byte so the assertion exercises the
+    // shipped pattern rather than a restatement of it.
+    writeFileSync(
+      join(fixture, 'packages/vtoken/.gitignore'),
+      readFileSync(join(root, 'packages/vtoken/.gitignore')),
+    );
+    const matched = execFileSync('git', ['check-ignore', '-v', '--no-index', '--', cacheRelativePath], {
+      cwd: fixture,
+      encoding: 'utf8',
+      windowsHide: true,
+    }).trim();
+    expect(matched).toContain('.tiktoken_cache/');
+    expect(matched).toContain(cacheRelativePath);
   });
 });
