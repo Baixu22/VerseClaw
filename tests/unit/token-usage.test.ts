@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  aggregateUsageEntries,
   parseOpenClawSessionKey,
   parseUsageEntriesFromJsonl,
   summarizeUsageEntries,
@@ -396,6 +397,163 @@ describe('parseUsageEntriesFromJsonl', () => {
         costUsd: undefined,
       },
     ]);
+  });
+
+  it('attributes failed and retried calls from persisted model-call metadata', () => {
+    const jsonl = [
+      JSON.stringify({
+        type: 'message',
+        timestamp: '2026-03-10T04:00:00.000Z',
+        modelCall: {
+          runId: 'run-retry-1',
+          attemptIndex: 1,
+          modelCallIndex: 2,
+          wireAttemptIndex: 0,
+          correlationDigest: 'b'.repeat(64),
+        },
+        message: {
+          role: 'assistant',
+          model: 'gpt-5',
+          provider: 'openai',
+          stopReason: 'error',
+          usage: { input: 10, output: 5, total: 15, cost: { total: 0.002 } },
+        },
+      }),
+      JSON.stringify({
+        type: 'message',
+        timestamp: '2026-03-10T04:01:00.000Z',
+        modelCall: {
+          runId: 'run-retry-1',
+          attemptIndex: 1,
+          modelCallIndex: 2,
+          wireAttemptIndex: 1,
+        },
+        message: {
+          role: 'assistant',
+          model: 'gpt-5',
+          provider: 'openai',
+          stopReason: 'stop',
+          usage: { input: 4, output: 2, total: 6 },
+        },
+      }),
+    ].join('\n');
+
+    expect(parseUsageEntriesFromJsonl(jsonl, { sessionId: 'abc', agentId: 'default' })).toEqual([
+      {
+        timestamp: '2026-03-10T04:01:00.000Z',
+        sessionId: 'abc',
+        agentId: 'default',
+        model: 'gpt-5',
+        provider: 'openai',
+        usageStatus: 'available',
+        inputTokens: 4,
+        outputTokens: 2,
+        cacheReadTokens: 0,
+        cacheWriteTokens: 0,
+        totalTokens: 6,
+        costUsd: undefined,
+        executionStatus: 'succeeded',
+        retryKind: 'retry',
+        attributionStatus: 'known',
+        runId: 'run-retry-1',
+        attemptIndex: 1,
+        modelCallIndex: 2,
+        wireAttemptIndex: 1,
+      },
+      {
+        timestamp: '2026-03-10T04:00:00.000Z',
+        sessionId: 'abc',
+        agentId: 'default',
+        model: 'gpt-5',
+        provider: 'openai',
+        usageStatus: 'available',
+        inputTokens: 10,
+        outputTokens: 5,
+        cacheReadTokens: 0,
+        cacheWriteTokens: 0,
+        totalTokens: 15,
+        costUsd: 0.002,
+        executionStatus: 'failed',
+        retryKind: 'fallback',
+        attributionStatus: 'known',
+        runId: 'run-retry-1',
+        attemptIndex: 1,
+        modelCallIndex: 2,
+        wireAttemptIndex: 0,
+        correlationDigest: 'b'.repeat(64),
+      },
+    ]);
+  });
+
+  it('counts failed, retried and unknown-attribution rows without changing billable totals', () => {
+    const now = Date.parse('2026-03-10T12:00:00.000Z');
+    const summary = aggregateUsageEntries([
+      {
+        timestamp: '2026-03-10T04:00:00.000Z',
+        sessionId: 'abc',
+        agentId: 'main',
+        model: 'gpt-5',
+        provider: 'openai',
+        usageStatus: 'available',
+        inputTokens: 10,
+        outputTokens: 5,
+        cacheReadTokens: 0,
+        cacheWriteTokens: 0,
+        totalTokens: 15,
+        costUsd: 0.002,
+        executionStatus: 'failed',
+        retryKind: 'retry',
+        attributionStatus: 'known',
+        runId: 'run-1',
+        attemptIndex: 0,
+        modelCallIndex: 0,
+        wireAttemptIndex: 1,
+      },
+      {
+        timestamp: '2026-03-10T04:01:00.000Z',
+        sessionId: 'abc',
+        agentId: 'main',
+        model: 'gpt-5',
+        provider: 'openai',
+        usageStatus: 'missing',
+        inputTokens: 0,
+        outputTokens: 0,
+        cacheReadTokens: 0,
+        cacheWriteTokens: 0,
+        totalTokens: 0,
+        attributionStatus: 'unknown',
+      },
+      {
+        timestamp: '2026-03-10T04:02:00.000Z',
+        sessionId: 'abc',
+        agentId: 'main',
+        model: 'gpt-5',
+        provider: 'openai',
+        usageStatus: 'available',
+        inputTokens: 4,
+        outputTokens: 2,
+        cacheReadTokens: 0,
+        cacheWriteTokens: 0,
+        totalTokens: 6,
+        executionStatus: 'succeeded',
+        retryKind: 'initial',
+        attributionStatus: 'known',
+      },
+    ], '30d', { now, scannedFiles: 1 });
+
+    expect(summary).toMatchObject({
+      scannedFiles: 1,
+      scannedEntries: 3,
+      entriesInWindow: 3,
+      billableEntries: 2,
+      missingEntries: 1,
+      errorEntries: 0,
+      failedEntries: 1,
+      retriedEntries: 1,
+      unknownAttributionEntries: 1,
+      totalTokens: 21,
+      costUsd: 0.002,
+    });
   });
 
   it('returns all matching entries when no limit is provided', () => {

@@ -966,6 +966,7 @@ export interface RuntimeReceipts {
   adapter_id: string | null;
   attempt_index: number;
   budget_json: string | null;
+  candidate_decisions_json: string | null;
   content_digest: string;
   correlation_digest: string;
   created_at: number;

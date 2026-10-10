@@ -98,6 +98,15 @@ import {
   createShadowContextItemRegistry,
   createShadowIngestion,
 } from "../../context-engine/registry/context-item-registry.js";
+import {
+  attachModelCallObservation,
+  clearModelCallObservations,
+  drainUnpersistedModelCalls,
+  markModelCallPersisted,
+  MODEL_CALL_CORRELATION_ENTRY_TYPE,
+  readModelCallObservation,
+  type ModelCallObservation,
+} from "../model-call-observations.js";
 
 function unwrapCoreResult<T>(result: { ok: true; value: T } | { ok: false; error: Error }): T {
   if (result.ok) {
@@ -347,6 +356,8 @@ export class AgentSession {
   // Event subscription state
   private unsubscribeAgent?: () => void;
   private eventListeners: AgentSessionEventListener[] = [];
+  /** Tool call id -> producing model call observation for receipt correlation. */
+  private toolCallObservations = new Map<string, ModelCallObservation>();
 
   /** Tracks pending steering messages for UI display. Removed when delivered. */
   private steeringMessages: string[] = [];
@@ -587,6 +598,14 @@ export class AgentSession {
   };
 
   private async handleAgentEventUnlocked(event: AgentEvent): Promise<void> {
+    let modelCallObservation: ModelCallObservation | undefined;
+    if (event.type === "message_end") {
+      modelCallObservation = readModelCallObservation(event.message);
+      if (event.message.role === "toolResult") {
+        modelCallObservation ??= this.toolCallObservations.get(event.message.toolCallId);
+      }
+    }
+
     // When a user message starts, check if it's from either queue and remove it BEFORE emitting
     // This ensures the UI sees the updated queue state
     if (event.type === "message_start" && event.message.role === "user") {
@@ -635,8 +654,26 @@ export class AgentSession {
         event.message.role === "assistant" ||
         event.message.role === "toolResult"
       ) {
-        // Regular LLM message - persist as SessionMessageEntry
-        this.sessionManager.appendMessage(event.message);
+        // Regular LLM message - persist as SessionMessageEntry. The model-call
+        // observation is projected onto the entry (or a null custom entry)
+        // without entering provider content.
+        if (modelCallObservation) {
+          attachModelCallObservation(event.message, modelCallObservation);
+        }
+        const entryId = this.sessionManager.appendMessage(event.message);
+        if (modelCallObservation) {
+          markModelCallPersisted(this.sessionId, modelCallObservation, entryId);
+          if (event.message.role === "assistant") {
+            for (const block of event.message.content) {
+              if (block.type === "toolCall") {
+                this.toolCallObservations.set(block.id, modelCallObservation);
+              }
+            }
+          }
+        }
+        if (event.message.role === "toolResult") {
+          this.toolCallObservations.delete(event.message.toolCallId);
+        }
         this.observeContextFamilyMessage(event.message);
       }
       // Other message types (bashExecution, compactionSummary, branchSummary) are persisted elsewhere
@@ -662,6 +699,20 @@ export class AgentSession {
         }
       }
     }
+    if (event.type === "agent_end") {
+      this.flushUnmappedModelCalls();
+    }
+  }
+
+  /** Persist model calls that produced no transcript entry as ignored custom rows. */
+  private flushUnmappedModelCalls(): void {
+    for (const observation of drainUnpersistedModelCalls(this.sessionId)) {
+      this.sessionManager.appendCustomEntry(MODEL_CALL_CORRELATION_ENTRY_TYPE, {
+        ...observation,
+        producedEntryId: null,
+      });
+    }
+    this.toolCallObservations.clear();
   }
 
   private willRetryAfterAgentEnd(event: Extract<AgentEvent, { type: "agent_end" }>): boolean {
@@ -844,6 +895,8 @@ export class AgentSession {
     );
     this.disconnectFromAgent();
     this.eventListeners = [];
+    this.toolCallObservations.clear();
+    clearModelCallObservations(this.sessionId);
     cleanupSessionResources(this.sessionId);
   }
 

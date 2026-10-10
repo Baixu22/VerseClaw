@@ -239,6 +239,24 @@ function getUsageStatusClass(entry: UsageHistoryEntry): string {
   return 'border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400';
 }
 
+function getExecutionStatusKey(entry: UsageHistoryEntry): 'failed' | 'aborted' | null {
+  if (entry.executionStatus === 'failed') return 'failed';
+  if (entry.executionStatus === 'aborted') return 'aborted';
+  return null;
+}
+
+function getExecutionStatusClass(entry: UsageHistoryEntry): string {
+  return getExecutionStatusKey(entry) === 'aborted'
+    ? 'border-yellow-500/20 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400'
+    : 'border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-400';
+}
+
+function getRetryStatusKey(entry: UsageHistoryEntry): 'retry' | 'fallback' | null {
+  if (entry.retryKind === 'retry') return 'retry';
+  if (entry.retryKind === 'fallback') return 'fallback';
+  return null;
+}
+
 type IconTone = 'default' | 'input' | 'output' | 'cache' | 'success' | 'warning' | 'danger';
 
 function getIconToneClass(tone: IconTone): string {
@@ -1531,6 +1549,33 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
                                 <Badge variant="outline" className={cn('rounded-full text-[10px]', getUsageStatusClass(entry))}>
                                   {t(`dashboard:billing.status.${statusKey}`)}
                                 </Badge>
+                                {getExecutionStatusKey(entry) && (
+                                  <Badge
+                                    data-testid="billing-execution-status"
+                                    variant="outline"
+                                    className={cn('rounded-full text-[10px]', getExecutionStatusClass(entry))}
+                                  >
+                                    {t(`dashboard:billing.recent.${getExecutionStatusKey(entry)}`)}
+                                  </Badge>
+                                )}
+                                {getRetryStatusKey(entry) && (
+                                  <Badge
+                                    data-testid="billing-retry-status"
+                                    variant="outline"
+                                    className="rounded-full border-sky-500/20 bg-sky-500/10 text-[10px] text-sky-700 dark:text-sky-400"
+                                  >
+                                    {t(`dashboard:billing.recent.${getRetryStatusKey(entry)}`)}
+                                  </Badge>
+                                )}
+                                {entry.attributionStatus !== 'known' && (
+                                  <Badge
+                                    data-testid="billing-attribution-status"
+                                    variant="outline"
+                                    className="rounded-full border-black/10 bg-black/5 text-[10px] text-muted-foreground dark:border-white/10 dark:bg-white/10"
+                                  >
+                                    {t('dashboard:billing.recent.unknownAttribution')}
+                                  </Badge>
+                                )}
                               </div>
                               <p className="mt-1 truncate text-xs text-muted-foreground">
                                 {[entry.provider, entry.agentId, entry.sessionId].filter(Boolean).join(' - ')}

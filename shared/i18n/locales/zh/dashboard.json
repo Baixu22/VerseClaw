@@ -167,7 +167,12 @@
         "recent": {
             "title": "最近计费记录",
             "description": "来自 transcript 的原始用量记录，包括不可用或解析失败的记录。",
-            "cacheHit": "缓存命中 {{value}}"
+            "cacheHit": "缓存命中 {{value}}",
+            "failed": "失败",
+            "aborted": "已中止",
+            "retry": "重试",
+            "fallback": "降级",
+            "unknownAttribution": "成本归因未知"
         },
         "transcriptSource": "Transcript 历史",
         "refreshing": "刷新中",

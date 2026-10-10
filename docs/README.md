@@ -24,6 +24,14 @@ and the [default configuration matrix](dev/default-config-matrix.md).
 - [DCS production P0 runbook (Chinese)](dcs-production-p0-runbook.zh-CN.md)
 - [Repository layout and artifact roots](dev/repository-layout.md)
 - [Source retention and recovery](dev/repository-artifact-retention.md)
+- [P2 issue fixes: receipt decisions and transcript call identity](dev/p2-issue-fixes-batch9-20261010.md)
+- [P2 issue fix: renderer CSP least privilege](dev/p2-issue-fixes-batch10-20261010.md)
+- [P2 issue fix: failed and retried usage attribution](dev/p2-issue-fixes-batch11-20261010.md)
+- [P2 issue fix: cross-run observability Problems](dev/p2-issue-fixes-batch12-20261010.md)
+- [P2 issue fix: automated runtime-memory cutover evidence gate](dev/p2-issue-fixes-batch13-20261010.md)
+- [P2 issue fix: deprecated zero-call exports](dev/p2-issue-fixes-batch14-20261010.md)
+- [P2 issue fix: LoCoMo cached/fresh mirrored tails](dev/p2-issue-fixes-batch15-20261010.md)
+- [P2 issue fix: bounded runtime performance baseline](dev/p2-issue-fixes-batch16-20261010.md)
 
 ## Historical records
 

@@ -5,6 +5,7 @@ import electron from 'vite-plugin-electron';
 import renderer from 'vite-plugin-electron-renderer';
 import { resolve } from 'path';
 import { existsSync, readFileSync } from 'fs';
+import { RENDERER_CSP, RENDERER_DEV_CSP } from './shared/security/url-policy';
 
 function getExtensionPackages(): Set<string> {
   try {
@@ -122,14 +123,28 @@ export function isMainProcessExternal(id: string): boolean {
   return true;
 }
 
+function rendererCspPlugin(command: 'build' | 'serve') {
+  return {
+    name: 'clawx-renderer-csp',
+    transformIndexHtml(html: string) {
+      const csp = command === 'serve' ? RENDERER_DEV_CSP : RENDERER_CSP;
+      return html.replace(
+        /<meta http-equiv="Content-Security-Policy"[^>]*\/>/,
+        `<meta http-equiv="Content-Security-Policy" content="${csp}" />`,
+      );
+    },
+  };
+}
+
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   // Required for Electron: all asset URLs must be relative because the renderer
   // loads via file:// in production. vite-plugin-electron-renderer sets this
   // automatically, but we declare it explicitly so the intent is clear and the
   // build remains correct even if plugin order ever changes.
   base: './',
   plugins: [
+    rendererCspPlugin(command),
     react(),
     electron([
       {
@@ -191,4 +206,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

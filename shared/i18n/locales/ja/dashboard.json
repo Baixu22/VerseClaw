@@ -167,7 +167,12 @@
         "recent": {
             "title": "最近の課金記録",
             "description": "Transcript 由来の使用量行です。利用不可や解析エラーの記録も含みます。",
-            "cacheHit": "キャッシュヒット {{value}}"
+            "cacheHit": "キャッシュヒット {{value}}",
+            "failed": "失敗",
+            "aborted": "中止",
+            "retry": "再試行",
+            "fallback": "フォールバック",
+            "unknownAttribution": "コスト帰属不明"
         },
         "transcriptSource": "Transcript 履歴",
         "refreshing": "更新中",

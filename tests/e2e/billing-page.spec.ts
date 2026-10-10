@@ -37,6 +37,7 @@ const usageHistory = [
     cacheReadTokens: 0,
     cacheWriteTokens: 0,
     totalTokens: 0,
+    attributionStatus: 'unknown',
   },
   {
     timestamp: usageTimestamp(1),
@@ -51,6 +52,14 @@ const usageHistory = [
     cacheWriteTokens: 100,
     totalTokens: 2900,
     costUsd: 0.0312,
+    executionStatus: 'failed',
+    retryKind: 'retry',
+    attributionStatus: 'known',
+    runId: 'run-billing-retry',
+    attemptIndex: 0,
+    modelCallIndex: 0,
+    wireAttemptIndex: 1,
+    correlationDigest: 'a'.repeat(64),
   },
   {
     timestamp: usageTimestamp(6),
@@ -299,6 +308,9 @@ test.describe('Billing page', () => {
       await expect(page.getByTestId('billing-model-chart')).not.toContainText('e2e-model-pending');
       await expect(page.getByTestId('billing-recent-list')).toContainText('billing-session-a');
       await expect(page.getByTestId('billing-recent-list')).toContainText('No usage');
+      await expect(page.getByTestId('billing-execution-status').first()).toContainText('Failed');
+      await expect(page.getByTestId('billing-retry-status').first()).toContainText('Retry');
+      await expect(page.getByTestId('billing-attribution-status').first()).toContainText('Cost attribution unknown');
 
       await expect(page.getByTestId('billing-kpi-hit-rate')).toBeVisible();
       await expect(page.getByTestId('billing-cost-chart')).toBeVisible();

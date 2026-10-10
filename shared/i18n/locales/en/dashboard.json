@@ -167,7 +167,12 @@
         "recent": {
             "title": "Recent billing records",
             "description": "Raw transcript usage rows, including unavailable or parse-error records.",
-            "cacheHit": "Cache hit {{value}}"
+            "cacheHit": "Cache hit {{value}}",
+            "failed": "Failed",
+            "aborted": "Aborted",
+            "retry": "Retry",
+            "fallback": "Fallback",
+            "unknownAttribution": "Cost attribution unknown"
         },
         "transcriptSource": "Transcript history",
         "refreshing": "Refreshing",

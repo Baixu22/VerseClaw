@@ -11,9 +11,10 @@ import { FROZEN_JUDGE_CONFIG, FROZEN_JUDGE_INTERPRETATION } from "./runtime-memo
 //   - 常量化 SOTA 对比表 (SOTA_COMPARISON)
 //
 // 范围说明:
-//   本文件只提取 **低风险纯函数**, 不修改 runtime-memory-locomo-full-500.test.ts 的
-//   cached/fresh 镜像结构. 镜像合并 (cached path line 2160-2626 vs fresh path
-//   line 2628-3475 ~1300 行) 需 A/B 验证, 留待后续 session.
+//   本文件只提取 **低风险纯函数**. runtime-memory-locomo-full-500.test.ts 的
+//   cached/fresh 镜像 tail 已在 issue #144 合并为单一 runSharedQuestionTail 实现:
+//   两条检索路径只通过注入参数区分, 重复的 escalation / reflect / judge /
+//   context recall 逻辑不再各存一份.
 //
 // 约束:
 //   - 所有函数必须为纯函数或仅依赖显式参数 (无闭包状态)

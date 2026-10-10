@@ -8,6 +8,7 @@ import { createHash } from "node:crypto";
 import type {
   ReceiptBudget,
   ReceiptCallIndex,
+  ReceiptCandidateDecisions,
   ReceiptContent,
   ReceiptIdentity,
   PutReceiptInput,
@@ -58,14 +59,25 @@ export function buildContextReceiptInput(input: {
   correlationDigest: string;
   selectedRefs?: string[];
   omittedRefs?: string[];
+  candidateDecisions?: ReceiptCandidateDecisions;
   budget?: string;
 }): PutReceiptInput {
-  const { plan, bundle, identity, correlationDigest, selectedRefs, omittedRefs, budget } = input;
+  const {
+    plan,
+    bundle,
+    identity,
+    correlationDigest,
+    selectedRefs,
+    omittedRefs,
+    candidateDecisions,
+    budget,
+  } = input;
   const content: ReceiptContent = {
     logicalDigest: bundle.bundleDigest,
     correlationDigest,
     selected: selectedRefs ?? bundle.selectedRefs,
     omitted: omittedRefs ?? bundle.omittedRefs,
+    ...(candidateDecisions ? { candidateDecisions } : {}),
     budget: parseBudgetSummary(budget) ?? parseBudgetSummary(bundle.budgetSummary),
     policyDigest: plan.policyDigest,
   };

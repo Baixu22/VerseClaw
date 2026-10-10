@@ -25,7 +25,7 @@ export function classifyWriteDestructiveTier(params: {
   journalEnabled?: boolean;
 }): DestructiveClassification {
   const name = params.toolName;
-  if (name === "read" || name === "grep" || name === "context_read" || name === "context_impact") {
+  if (name === "read" || name === "grep" || name === "context_read" || name === "context_archive_recall" || name === "context_impact") {
     return { tier: "exempt", reason: "readonly", requiresApproval: false };
   }
 

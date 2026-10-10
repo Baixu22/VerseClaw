@@ -32,6 +32,10 @@ import {
   uuidv7,
 } from "../runtime/index.js";
 import type { BashExecutionMessage, CustomMessage } from "./messages.js";
+import {
+  readModelCallObservation,
+  type ModelCallObservation,
+} from "../model-call-observations.js";
 
 export { CURRENT_SESSION_VERSION };
 
@@ -86,6 +90,8 @@ export interface SessionEntryBase {
 export interface SessionMessageEntry extends SessionEntryBase {
   type: "message";
   message: AgentMessage;
+  /** Receipt/seal observation only; never sent to the provider. */
+  modelCall?: ModelCallObservation;
 }
 
 export interface ThinkingLevelChangeEntry extends SessionEntryBase {
@@ -955,7 +961,11 @@ export class SessionManager {
    * so it is easier to find them.
    * These need to be appended via appendCompaction() and appendBranchSummary() methods.
    */
-  appendMessage(message: Message | CustomMessage | BashExecutionMessage): string {
+  appendMessage(
+    message: Message | CustomMessage | BashExecutionMessage,
+    modelCallOverride?: ModelCallObservation,
+  ): string {
+    const modelCall = modelCallOverride ?? readModelCallObservation(message);
     const boundedMessage = capPersistedToolResultMessage(message);
     const entry: SessionMessageEntry = {
       type: "message",
@@ -963,6 +973,7 @@ export class SessionManager {
       parentId: this.leafId,
       timestamp: new Date().toISOString(),
       message: boundedMessage as AgentMessage,
+      ...(modelCall ? { modelCall } : {}),
     };
     this.appendEntry(entry);
     return entry.id;

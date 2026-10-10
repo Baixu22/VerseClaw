@@ -4757,6 +4757,9 @@ export type OfficecliWatchStarted = {
   cap: string;
 };
 
+export type UsageExecutionStatus = 'succeeded' | 'failed' | 'aborted' | 'unknown';
+export type UsageRetryKind = 'initial' | 'retry' | 'fallback' | 'unknown';
+
 export type UsageHistoryEntry = {
   timestamp: string;
   sessionId: string;
@@ -4771,6 +4774,17 @@ export type UsageHistoryEntry = {
   cacheWriteTokens: number;
   totalTokens: number;
   costUsd?: number;
+  /** Observational execution outcome from the producing assistant message. */
+  executionStatus?: UsageExecutionStatus;
+  /** Retry/fallback relation derived from persisted attempt/model-call indexes. */
+  retryKind?: UsageRetryKind;
+  /** Present when the call can be joined to receipt/model-call identity. */
+  attributionStatus?: 'known' | 'unknown';
+  runId?: string;
+  attemptIndex?: number;
+  modelCallIndex?: number;
+  wireAttemptIndex?: number;
+  correlationDigest?: string;
 };
 export type UsageHistoryPayload = { limit?: number };
 
@@ -4799,6 +4813,10 @@ export type UsageAggregateSummary = {
   billableEntries: number;
   missingEntries: number;
   errorEntries: number;
+  failedEntries?: number;
+  abortedEntries?: number;
+  retriedEntries?: number;
+  unknownAttributionEntries?: number;
   inputTokens: number;
   outputTokens: number;
   cacheReadTokens: number;

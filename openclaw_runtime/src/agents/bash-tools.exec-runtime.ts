@@ -29,7 +29,9 @@ import { enqueueSystemEvent } from "../infra/system-events.js";
 import { resolveAgentIdFromSessionKey } from "../routing/session-key.js";
 import { isSubagentSessionKey } from "../sessions/session-key-utils.js";
 import { acquireSessionAdmissionPermit } from "../sessions/session-admission-registry.js";
+import type { ArchiveHandle } from "../../../shared/types/context-item.js";
 import type { ProcessSession } from "./bash-process-registry.js";
+import { createBashRawOutputCapture } from "./bash-raw-output-capture.js";
 import { isExecApprovalFollowupSessionRebound } from "./bash-tools.exec-approval-followup-state.js";
 import type { ExecToolDetails } from "./bash-tools.exec-types.js";
 import type { BashSandboxConfig } from "./bash-tools.shared.js";
@@ -191,6 +193,7 @@ export type ExecProcessOutcome =
       exitSignal: NodeJS.Signals | number | null;
       durationMs: number;
       aggregated: string;
+      archiveHandle?: ArchiveHandle;
       timedOut: false;
     }
   | {
@@ -199,6 +202,7 @@ export type ExecProcessOutcome =
       exitSignal: NodeJS.Signals | number | null;
       durationMs: number;
       aggregated: string;
+      archiveHandle?: ArchiveHandle;
       timedOut: boolean;
       failureKind: ExecProcessFailureKind;
       reason: string;
@@ -857,6 +861,13 @@ export async function runExecProcess(opts: {
     backgrounded: false,
     cursorKeyMode: opts.usePty ? "unknown" : "normal",
   };
+  const rawOutput = createBashRawOutputCapture({
+    sessionId: lifecycleExpectedSessionId,
+    itemKey: sessionId,
+  });
+  session.captureRawOutput = rawOutput.append;
+  session.finalizeRawOutput = rawOutput.finalize;
+  session.disposeRawOutput = rawOutput.dispose;
   addSession(session);
 
   // Tracks whether the exec run's promise has settled (process exited or
@@ -1684,7 +1695,10 @@ export async function runExecProcess(opts: {
     session,
     startedAt,
     pid: session.pid ?? undefined,
-    promise,
+    promise: promise.then((outcome) => ({
+      ...outcome,
+      ...(session.rawOutputCapture?.handle ? { archiveHandle: session.rawOutputCapture.handle } : {}),
+    })),
     kill: () => {
       managedRun?.cancel("manual-cancel");
     },

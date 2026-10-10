@@ -10,6 +10,8 @@
  * same shell factory as the original three BlockStore tools.
  */
 import { Type } from "typebox";
+import { normalizeArchiveHandle } from "../../../../shared/types/context-item.js";
+import { verifyContextArchiveHandle } from "../../context-engine/registry/context-item-registry.js";
 import type {
   BlockStoreApi,
   BlockType,
@@ -58,6 +60,7 @@ import {
 } from "./common.js";
 
 export const CONTEXT_READ_TOOL_NAME = "context_read";
+export const CONTEXT_ARCHIVE_RECALL_TOOL_NAME = "context_archive_recall";
 export const CONTEXT_SEARCH_TOOL_NAME = "context_search";
 export const CONTEXT_WRITE_TOOL_NAME = "context_write";
 export const CONTEXT_UNDERSTAND_TOOL_NAME = "context_understand";
@@ -67,6 +70,7 @@ export const CONTEXT_VERIFY_TOOL_NAME = "context_verify";
 
 export const DCS_CONTEXT_AGENT_TOOL_NAMES = [
   CONTEXT_READ_TOOL_NAME,
+  CONTEXT_ARCHIVE_RECALL_TOOL_NAME,
   CONTEXT_SEARCH_TOOL_NAME,
   CONTEXT_WRITE_TOOL_NAME,
 ] as const;
@@ -272,6 +276,92 @@ function flushService(service: WorkspaceFactService): void {
 
 function recordViewCall(toolName: string): void {
   codingObservability.recordFactToolCall(toolName);
+}
+
+const ContextArchiveRecallSchema = Type.Object({
+  archive_uri: Type.String({ description: "Archive handle URI from a masked observation placeholder." }),
+  checksum: Type.String({ description: "Archive handle checksum from the placeholder." }),
+  byte_length: Type.Optional(Type.Integer({ minimum: 0 })),
+  offset: Type.Optional(Type.Integer({ minimum: 0 })),
+  max_chars: Type.Optional(Type.Integer({ minimum: 1, maximum: 20_000 })),
+});
+
+const CONTEXT_ARCHIVE_RECALL_DEFAULT_MAX_CHARS = 12_000;
+
+function archivePayloadToText(payload: unknown): string {
+  return typeof payload === "string" ? payload : JSON.stringify(payload, null, 2);
+}
+
+export function createContextArchiveRecallTool(
+  options: DcsContextAgentToolOptions,
+): AnyAgentTool | null {
+  const sessionId = resolveContextSessionId(options);
+  if (!sessionId) {
+    return null;
+  }
+  return {
+    label: "Context Archive Recall",
+    name: CONTEXT_ARCHIVE_RECALL_TOOL_NAME,
+    displaySummary: "Read a bounded excerpt from a masked observation archive",
+    description:
+      "Read only an archive handle emitted by Context observation masking. The handle must belong to the current session; output is bounded and can be paged with offset.",
+    parameters: ContextArchiveRecallSchema,
+    risk: "readonly",
+    execute: async (_toolCallId, args) => {
+      const params = asToolParamsRecord(args);
+      const uri = readStringParam(params, "archive_uri", { required: true })!;
+      const checksum = readStringParam(params, "checksum", { required: true })!;
+      const byteLengthRaw = params.byte_length;
+      const byteLength =
+        typeof byteLengthRaw === "number" && Number.isSafeInteger(byteLengthRaw) && byteLengthRaw >= 0
+          ? byteLengthRaw
+          : 0;
+      let handle;
+      try {
+        handle = normalizeArchiveHandle({ uri, checksum, byteLength });
+      } catch (error) {
+        return jsonResult({
+          ok: false,
+          diagnostics: [{ code: "invalid_handle", message: error instanceof Error ? error.message : String(error) }],
+        });
+      }
+      const verified = await verifyContextArchiveHandle(handle);
+      if (!verified.ok) {
+        return jsonResult({
+          ok: false,
+          diagnostics: [{ code: verified.reason, message: `Archive recall failed: ${verified.reason}` }],
+        });
+      }
+      const ownerSessionId = verified.handle?.source?.sessionId;
+      if (!ownerSessionId || ownerSessionId !== sessionId) {
+        return jsonResult({
+          ok: false,
+          diagnostics: [{ code: "session_mismatch", message: "Archive handle belongs to another session." }],
+        });
+      }
+      const offsetRaw = params.offset;
+      const offset =
+        typeof offsetRaw === "number" && Number.isSafeInteger(offsetRaw) && offsetRaw >= 0 ? offsetRaw : 0;
+      const maxCharsRaw = params.max_chars;
+      const maxChars =
+        typeof maxCharsRaw === "number" && Number.isSafeInteger(maxCharsRaw) && maxCharsRaw > 0
+          ? Math.min(maxCharsRaw, 20_000)
+          : CONTEXT_ARCHIVE_RECALL_DEFAULT_MAX_CHARS;
+      const text = archivePayloadToText(verified.payload);
+      const content = text.slice(offset, offset + maxChars);
+      return jsonResult({
+        ok: true,
+        archive_uri: handle.uri,
+        checksum: handle.checksum,
+        content,
+        offset,
+        max_chars: maxChars,
+        char_count: text.length,
+        byte_count: Buffer.byteLength(text, "utf8"),
+        truncated: offset + content.length < text.length,
+      });
+    },
+  };
 }
 
 export function createContextReadTool(options: DcsContextAgentToolOptions): AnyAgentTool | null {
@@ -703,6 +793,7 @@ export function recordContextToolSchemaBudget(tools: AnyAgentTool[]): {
 export function createDcsContextAgentTools(options: DcsContextAgentToolOptions): AnyAgentTool[] {
   const tools = [
     createContextReadTool(options),
+    createContextArchiveRecallTool(options),
     createContextSearchTool(options),
     createContextWriteTool(options),
     createContextUnderstandTool(options),

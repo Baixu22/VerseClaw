@@ -3,6 +3,7 @@
  * Defines defaults, approval follow-up payloads, elevated policy defaults, and
  * tool result details consumed across exec hosts and process controls.
  */
+import type { ArchiveHandle } from "../../../shared/types/context-item.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { DiagnosticTraceContext } from "../infra/diagnostic-trace-context.js";
 import type { EventSessionRoutingPolicy } from "../infra/event-session-routing.js";
@@ -134,6 +135,7 @@ export type ExecToolDetails =
       exitCode: number | null;
       durationMs: number;
       aggregated: string;
+      archiveHandle?: ArchiveHandle;
       timedOut?: boolean;
       cwd?: string;
     }

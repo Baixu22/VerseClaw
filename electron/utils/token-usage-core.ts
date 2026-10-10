@@ -1,5 +1,12 @@
 import { computeCacheHitRate as hitRateForUsage, isHiddenUsageSource, promptTokensForUsage } from '@shared/types/usage';
-import type { UsageAggregateDayBucket, UsageAggregateDimension, UsageAggregateSummary, UsageAggregateWindow } from '@shared/host-api/contract';
+import type {
+  UsageAggregateDayBucket,
+  UsageAggregateDimension,
+  UsageAggregateSummary,
+  UsageAggregateWindow,
+  UsageExecutionStatus,
+  UsageRetryKind,
+} from '@shared/host-api/contract';
 
 export interface TokenUsageHistoryEntry {
   timestamp: string;
@@ -15,6 +22,14 @@ export interface TokenUsageHistoryEntry {
   cacheWriteTokens: number;
   totalTokens: number;
   costUsd?: number;
+  executionStatus?: UsageExecutionStatus;
+  retryKind?: UsageRetryKind;
+  attributionStatus?: 'known' | 'unknown';
+  runId?: string;
+  attemptIndex?: number;
+  modelCallIndex?: number;
+  wireAttemptIndex?: number;
+  correlationDigest?: string;
 }
 
 export interface ParsedSessionKey {
@@ -45,6 +60,10 @@ export interface TokenUsageSummary {
   entryCount: number;
   missingEntryCount: number;
   errorEntryCount: number;
+  failedEntryCount?: number;
+  abortedEntryCount?: number;
+  retriedEntryCount?: number;
+  unknownAttributionEntryCount?: number;
 }
 
 export function extractSessionIdFromTranscriptFileName(fileName: string): string | undefined {
@@ -272,15 +291,27 @@ function parseUsageFromShape(usage: unknown): ParsedUsageTokens | undefined {
   };
 }
 
+interface TranscriptModelCallShape {
+  runId?: unknown;
+  attemptIndex?: unknown;
+  modelCallIndex?: unknown;
+  wireAttemptIndex?: unknown;
+  correlationDigest?: unknown;
+}
+
 interface TranscriptLineShape {
   type?: string;
   timestamp?: string;
+  modelCall?: TranscriptModelCallShape;
   message?: {
     role?: string;
     model?: string;
     modelRef?: string;
     provider?: string;
     usage?: TranscriptUsageShape;
+    stopReason?: unknown;
+    errorMessage?: unknown;
+    modelCall?: TranscriptModelCallShape;
     details?: {
       provider?: string;
       model?: string;
@@ -334,6 +365,68 @@ function normalizeUsageContent(value: unknown): string | undefined {
   return undefined;
 }
 
+function readOptionalUsageString(value: unknown, maxLength = 256): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  return trimmed ? trimmed.slice(0, maxLength) : undefined;
+}
+
+function readOptionalUsageIndex(value: unknown): number | undefined {
+  return Number.isSafeInteger(value) && Number(value) >= 0 ? Number(value) : undefined;
+}
+
+function parseTranscriptModelCall(parsed: TranscriptLineShape): Pick<
+  TokenUsageHistoryEntry,
+  'runId' | 'attemptIndex' | 'modelCallIndex' | 'wireAttemptIndex' | 'correlationDigest' | 'attributionStatus' | 'retryKind'
+> | undefined {
+  const raw = parsed.modelCall ?? parsed.message?.modelCall;
+  if (!raw || typeof raw !== 'object') return undefined;
+  const runId = readOptionalUsageString(raw.runId);
+  const attemptIndex = readOptionalUsageIndex(raw.attemptIndex);
+  const modelCallIndex = readOptionalUsageIndex(raw.modelCallIndex);
+  const wireAttemptIndex = readOptionalUsageIndex(raw.wireAttemptIndex);
+  const correlationDigest = readOptionalUsageString(raw.correlationDigest, 64);
+  if (
+    runId === undefined &&
+    attemptIndex === undefined &&
+    modelCallIndex === undefined &&
+    wireAttemptIndex === undefined &&
+    correlationDigest === undefined
+  ) {
+    return undefined;
+  }
+  const retryKind: UsageRetryKind = (wireAttemptIndex ?? 0) > 0
+    ? 'retry'
+    : (attemptIndex ?? 0) > 0
+      ? 'fallback'
+      : 'initial';
+  return {
+    ...(runId ? { runId } : {}),
+    ...(attemptIndex !== undefined ? { attemptIndex } : {}),
+    ...(modelCallIndex !== undefined ? { modelCallIndex } : {}),
+    ...(wireAttemptIndex !== undefined ? { wireAttemptIndex } : {}),
+    ...(correlationDigest ? { correlationDigest } : {}),
+    attributionStatus: 'known',
+    retryKind,
+  };
+}
+
+function executionStatusFromStopReason(value: unknown): UsageExecutionStatus | undefined {
+  if (value === 'stop' || value === 'length' || value === 'toolUse') return 'succeeded';
+  if (value === 'error') return 'failed';
+  if (value === 'aborted') return 'aborted';
+  return undefined;
+}
+
+function usageObservationFields(parsed: TranscriptLineShape): Partial<TokenUsageHistoryEntry> {
+  const modelCall = parseTranscriptModelCall(parsed);
+  const executionStatus = executionStatusFromStopReason(parsed.message?.stopReason);
+  return {
+    ...(modelCall ?? {}),
+    ...(executionStatus ? { executionStatus } : {}),
+  };
+}
+
 export function parseUsageEntriesFromJsonl(
   content: string,
   context: { sessionId: string; agentId: string },
@@ -371,6 +464,7 @@ export function parseUsageEntriesFromJsonl(
         provider: message.provider,
         ...(contentText ? { content: contentText } : {}),
         ...usage,
+        ...usageObservationFields(parsed),
       });
       continue;
     }
@@ -400,6 +494,7 @@ export function parseUsageEntriesFromJsonl(
       provider,
       ...(contentText ? { content: contentText } : {}),
       ...usage,
+      ...usageObservationFields(parsed),
     });
   }
 
@@ -431,11 +526,23 @@ export function summarizeUsageEntries(
     entryCount: entries.length,
     missingEntryCount: 0,
     errorEntryCount: 0,
+    failedEntryCount: 0,
+    abortedEntryCount: 0,
+    retriedEntryCount: 0,
+    unknownAttributionEntryCount: 0,
   };
 
   for (const entry of entries) {
     if (!summary.latestTimestamp || Date.parse(entry.timestamp) > Date.parse(summary.latestTimestamp)) {
       summary.latestTimestamp = entry.timestamp;
+    }
+    if (entry.executionStatus === 'failed') summary.failedEntryCount = (summary.failedEntryCount ?? 0) + 1;
+    if (entry.executionStatus === 'aborted') summary.abortedEntryCount = (summary.abortedEntryCount ?? 0) + 1;
+    if (entry.retryKind === 'retry' || entry.retryKind === 'fallback') {
+      summary.retriedEntryCount = (summary.retriedEntryCount ?? 0) + 1;
+    }
+    if (entry.attributionStatus === 'unknown') {
+      summary.unknownAttributionEntryCount = (summary.unknownAttributionEntryCount ?? 0) + 1;
     }
     if (entry.usageStatus === 'missing') {
       summary.missingEntryCount += 1;
@@ -481,6 +588,15 @@ export function summarizeUsageEntries(
   summary.warmTurnHitRate = summary.warmTurnPromptTokens > 0
     ? summary.warmTurnCacheReadTokens / summary.warmTurnPromptTokens
     : null;
+
+  for (const key of [
+    'failedEntryCount',
+    'abortedEntryCount',
+    'retriedEntryCount',
+    'unknownAttributionEntryCount',
+  ] as const) {
+    if (summary[key] === 0) delete summary[key];
+  }
 
   return summary;
 }
@@ -585,19 +701,14 @@ export function aggregateUsageEntries(
   let billableEntries = 0;
   let missingEntries = 0;
   let errorEntries = 0;
+  let failedEntries = 0;
+  let abortedEntries = 0;
+  let retriedEntries = 0;
+  let unknownAttributionEntries = 0;
   let earliestTimestamp: string | null = null;
   let latestTimestamp: string | null = null;
 
   for (const entry of visibleEntries) {
-    if (entry.usageStatus === 'missing') {
-      missingEntries += 1;
-      continue;
-    }
-    if (entry.usageStatus === 'error') {
-      errorEntries += 1;
-      continue;
-    }
-
     const timestampMs = Date.parse(entry.timestamp);
     if (Number.isFinite(timestampMs)) {
       if (earliestTimestamp === null || timestampMs < Date.parse(earliestTimestamp)) {
@@ -606,6 +717,20 @@ export function aggregateUsageEntries(
       if (latestTimestamp === null || timestampMs > Date.parse(latestTimestamp)) {
         latestTimestamp = entry.timestamp;
       }
+    }
+
+    if (entry.executionStatus === 'failed') failedEntries += 1;
+    if (entry.executionStatus === 'aborted') abortedEntries += 1;
+    if (entry.retryKind === 'retry' || entry.retryKind === 'fallback') retriedEntries += 1;
+    if (entry.attributionStatus === 'unknown') unknownAttributionEntries += 1;
+
+    if (entry.usageStatus === 'missing') {
+      missingEntries += 1;
+      continue;
+    }
+    if (entry.usageStatus === 'error') {
+      errorEntries += 1;
+      continue;
     }
 
     if (!isBillableUsageEntry(entry)) continue;
@@ -658,6 +783,10 @@ export function aggregateUsageEntries(
     billableEntries,
     missingEntries,
     errorEntries,
+    ...(failedEntries > 0 ? { failedEntries } : {}),
+    ...(abortedEntries > 0 ? { abortedEntries } : {}),
+    ...(retriedEntries > 0 ? { retriedEntries } : {}),
+    ...(unknownAttributionEntries > 0 ? { unknownAttributionEntries } : {}),
     inputTokens: finalizedTotals.inputTokens,
     outputTokens: finalizedTotals.outputTokens,
     cacheReadTokens: finalizedTotals.cacheReadTokens,

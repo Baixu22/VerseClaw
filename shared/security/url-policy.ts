@@ -79,6 +79,17 @@ export const HTML_PREVIEW_CSP =
 /** Sandbox flags for HTML Preview iframes — no popup escape / downloads / same-origin. */
 export const HTML_PREVIEW_SANDBOX = 'allow-scripts allow-forms allow-presentation';
 
-/** Baseline CSP for the Verse Claw renderer shell (Electron + Vite). */
+/**
+ * Production renderer CSP. External HTTP(S) data loading remains limited to
+ * image/media/frame content; renderer code must use Main-owned host-api/proxy
+ * channels for outbound connections.
+ */
 export const RENDERER_CSP =
-  "default-src 'self'; base-uri 'self'; object-src 'none'; frame-src 'self' http://127.0.0.1:* http://localhost:* https: blob: data:; img-src 'self' data: blob: https: http:; media-src 'self' data: blob: https: http:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' http://127.0.0.1:* http://localhost:* ws://127.0.0.1:* ws://localhost:* wss://127.0.0.1:* wss://localhost:* https: http:; worker-src 'self' blob:; form-action 'self';";
+  "default-src 'self'; base-uri 'self'; object-src 'none'; frame-src 'self' http://127.0.0.1:* http://localhost:* https: blob: data:; img-src 'self' data: blob: https: http:; media-src 'self' data: blob: https: http:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' data: blob: http://127.0.0.1:* http://localhost:* ws://127.0.0.1:* ws://localhost:* wss://127.0.0.1:* wss://localhost:*; worker-src 'self' blob:; form-action 'self';";
+
+/**
+ * Development-only renderer CSP. Vite/React refresh injects a small inline
+ * module preamble in the dev server; production must use RENDERER_CSP.
+ */
+export const RENDERER_DEV_CSP =
+  "default-src 'self'; base-uri 'self'; object-src 'none'; frame-src 'self' http://127.0.0.1:* http://localhost:* https: blob: data:; img-src 'self' data: blob: https: http:; media-src 'self' data: blob: https: http:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' data: blob: http://127.0.0.1:* http://localhost:* ws://127.0.0.1:* ws://localhost:* wss://127.0.0.1:* wss://localhost:*; worker-src 'self' blob:; form-action 'self';";

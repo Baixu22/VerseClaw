@@ -14,10 +14,16 @@ import {
   resolveRc03WireCorrelationDigest,
 } from "../shadow-census.js";
 import {
+  getRc03SealCorrelationDigest,
   getRc03SealPlan,
   getRc03SealedSystemPromptDigest,
   runRc03SealHook,
 } from "../../context-engine/rc03-seal-hook.js";
+import {
+  recordModelCallCompleted,
+  recordModelCallStart,
+  type ModelCallObservation,
+} from "../model-call-observations.js";
 import { RC03_PRE_SEAL_PRODUCERS } from "../../context-engine/rc03-producers.js";
 import type { CompilePlan } from "../../context-engine/compile-plan.js";
 import { SUMMARIZATION_SYSTEM_PROMPT } from "../../../packages/agent-core/src/harness/compaction/compaction.js";
@@ -333,7 +339,10 @@ function wrapEmbeddedAgentStreamFn(
     model: Parameters<StreamFn>[0],
     context: Parameters<StreamFn>[1],
     options: Parameters<StreamFn>[2],
-  ): Parameters<StreamFn>[2] => {
+  ): {
+    options: Parameters<StreamFn>[2];
+    observation?: ModelCallObservation;
+  } => {
     const optionRecord = options as Record<string, unknown> | undefined;
     const modelCallIndex =
       typeof optionRecord?.modelCallIndex === "number"
@@ -353,16 +362,16 @@ function wrapEmbeddedAgentStreamFn(
       modelCallIndex,
       wireAttemptIndex: typeof optionRecord?.wireAttemptIndex === "number" ? optionRecord.wireAttemptIndex : undefined,
     };
+    const existingPlan = getRc03SealPlan(runId, modelCallIndex);
     const shadowCall = beginShadowModelCall(context, callContext, options);
-    if (!shadowCall.active) {
-      return options;
+    if (!shadowCall.active && !existingPlan) {
+      return { options };
     }
-    // RC-03: carry the sealed CompilePlan of this run and model call to the
-    // guarded wire boundary so WireReceipt/v1 can be persisted with the final
-    // body digest of the same model call.
     const plan =
-      getRc03SealPlan(runId, modelCallIndex) ??
-      sealBoundaryModelCall(context, { ...callContext, runId, modelCallIndex });
+      existingPlan ??
+      (shadowCall.active
+        ? sealBoundaryModelCall(context, { ...callContext, runId, modelCallIndex })
+        : undefined);
     const sealedSystemPromptDigest = getRc03SealedSystemPromptDigest(runId, modelCallIndex);
     if (
       plan &&
@@ -377,21 +386,60 @@ function wrapEmbeddedAgentStreamFn(
     // WireReceipt/v1 and ContextReceipt/v1 join on the same value. A miss
     // keeps any caller-provided correlation; the emit boundary falls back to
     // the identity-derived digest as before.
-    const shadowOptions = plan
+    const contextReceiptCorrelation =
+      getRc03SealCorrelationDigest(runId, modelCallIndex) ??
+      (plan && shadowCall.active
+        ? resolveRc03WireCorrelationDigest(shadowCall.options, plan)
+        : undefined);
+    const shadowOptions = plan && shadowCall.active
       ? {
           ...shadowCall.options,
           rc03Plan: plan,
           correlationDigest:
-            resolveRc03WireCorrelationDigest(shadowCall.options, plan) ??
-            shadowCall.options.correlationDigest,
+            contextReceiptCorrelation ?? shadowCall.options.correlationDigest,
         }
       : shadowCall.options;
-    return attachShadowReceiptOptions(options, shadowOptions);
+    const observation: ModelCallObservation = {
+      ...callContext,
+      attemptIndex: callContext.attemptIndex ?? params.attemptIndex ?? 0,
+      ...(contextReceiptCorrelation
+        ? { correlationDigest: contextReceiptCorrelation }
+        : shadowCall.options.correlationDigest
+          ? { correlationDigest: shadowCall.options.correlationDigest }
+          : {}),
+    };
+    if (params.sessionId) recordModelCallStart(params.sessionId, observation);
+    return {
+      options: shadowCall.active ? attachShadowReceiptOptions(options, shadowOptions) : options,
+      observation,
+    };
+  };
+  const observeModelCallResult = <T extends { result(): Promise<unknown> }>(
+    result: T | Promise<T>,
+    observation: ModelCallObservation | undefined,
+  ): T | Promise<T> => {
+    if (!observation || !params.sessionId) return result;
+    const wrap = (stream: T): T => {
+      if (typeof stream.result !== "function") return stream;
+      void stream.result().then((message) => {
+        if (message && typeof message === "object") {
+          recordModelCallCompleted(params.sessionId!, observation, message);
+        } else {
+          recordModelCallCompleted(params.sessionId!, observation);
+        }
+      });
+      return stream;
+    };
+    return result instanceof Promise ? result.then(wrap) : wrap(result);
   };
   if (!params.authStorage && !params.resolvedApiKey) {
     return (m, context, options) => {
       const merged = mergeRunSignal(options);
-      return inner(m, transformContext(context), withShadowContext(m, context, merged));
+      const observed = withShadowContext(m, context, merged);
+      return observeModelCallResult(
+        inner(m, transformContext(context), observed.options),
+        observed.observation,
+      );
     };
   }
   const { authStorage, providerId, resolvedApiKey } = params;
@@ -401,11 +449,14 @@ function wrapEmbeddedAgentStreamFn(
       resolvedApiKey,
       authStorage,
     });
-    const merged = withShadowContext(m, context, mergeRunSignal(options));
-    return inner(m, transformContext(context), {
-      ...merged,
-      apiKey: apiKey ?? options?.apiKey,
-    });
+    const observed = withShadowContext(m, context, mergeRunSignal(options));
+    return observeModelCallResult(
+      inner(m, transformContext(context), {
+        ...observed.options,
+        apiKey: apiKey ?? options?.apiKey,
+      }),
+      observed.observation,
+    );
   };
 }
 export { testing as __testing };

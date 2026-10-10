@@ -8,6 +8,7 @@ export const CODING_TOOL_ROUTING_PROMPT =
 /** Stable one-line summary entries for context_* tools (C1-1 on_demand). */
 export const CONTEXT_TOOL_SUMMARY_BY_NAME: Record<string, string> = {
   context_read: "Read full content of a context block on demand",
+  context_archive_recall: "Read a bounded excerpt from a masked observation archive",
   context_search: "Search context blocks by entity or free-text query",
   context_write: "Append/replace/clear agent notes context block",
   context_understand: "Build a ContextPack for a coding goal or question",
@@ -34,6 +35,7 @@ export function codingToolRoutingPromptChars(): number {
 
 export const CODING_FACT_TOOL_NAMES = [
   "context_read",
+  "context_archive_recall",
   "context_search",
   "context_write",
   "context_understand",

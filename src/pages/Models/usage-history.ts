@@ -12,6 +12,14 @@ export type UsageHistoryEntry = {
   cacheWriteTokens: number;
   totalTokens: number;
   costUsd?: number;
+  executionStatus?: 'succeeded' | 'failed' | 'aborted' | 'unknown';
+  retryKind?: 'initial' | 'retry' | 'fallback' | 'unknown';
+  attributionStatus?: 'known' | 'unknown';
+  runId?: string;
+  attemptIndex?: number;
+  modelCallIndex?: number;
+  wireAttemptIndex?: number;
+  correlationDigest?: string;
 };
 
 export type UsageWindow = '7d' | '30d' | 'all';

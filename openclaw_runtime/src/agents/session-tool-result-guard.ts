@@ -28,6 +28,7 @@ import {
   truncateToolResultMessage,
 } from "./embedded-agent-runner/tool-result-truncation.js";
 import type { AgentMessage } from "./runtime/index.js";
+import { readModelCallObservation } from "./model-call-observations.js";
 import {
   getRawSessionAppendMessage,
   setRawSessionAppendMessage,
@@ -628,9 +629,10 @@ export function installSessionToolResultGuard(
 
   const appendMessageAndCacheTranscriptSeq = (
     message: AgentMessage,
+    modelCall?: Parameters<SessionManager["appendMessage"]>[1],
   ): { entryId: string; messageSeq?: number; sessionFile?: string | null } => {
     const parentEntryId = sessionManager.getLeafId();
-    const entryId = originalAppend(message as never);
+    const entryId = originalAppend(message as never, modelCall as never);
     void opts?.onMessagePersisted?.(message);
     const sessionFile = getSessionFile();
     if (!sessionFile) {
@@ -708,6 +710,7 @@ export function installSessionToolResultGuard(
   };
 
   const guardedAppend = (message: AgentMessage) => {
+    const modelCall = readModelCallObservation(message);
     let nextMessage = message;
     const role = (message as { role?: unknown }).role;
     if (role === "assistant") {
@@ -750,6 +753,7 @@ export function installSessionToolResultGuard(
       }
       return appendMessageAndCacheTranscriptSeq(
         capToolResultForPersistence(persisted, maxToolResultChars, redactionConfig),
+        modelCall,
       ).entryId;
     }
 
@@ -820,7 +824,7 @@ export function installSessionToolResultGuard(
       entryId: result,
       messageSeq,
       sessionFile,
-    } = appendMessageAndCacheTranscriptSeq(finalMessage);
+    } = appendMessageAndCacheTranscriptSeq(finalMessage, modelCall);
     if (sessionFile) {
       emitSessionTranscriptUpdate({
         sessionFile,
