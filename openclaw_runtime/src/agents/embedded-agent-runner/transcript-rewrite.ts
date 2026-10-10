@@ -48,7 +48,10 @@ function appendBranchEntry(params: {
 }): string {
   const { sessionManager, entry, rewrittenEntryIds, appendMessage } = params;
   if (entry.type === "message") {
-    return appendMessage(entry.message as Parameters<typeof sessionManager.appendMessage>[0]);
+    return appendMessage(
+      entry.message as Parameters<typeof sessionManager.appendMessage>[0],
+      entry.modelCall,
+    );
   }
   if (entry.type === "compaction") {
     return sessionManager.appendCompaction(
@@ -103,7 +106,7 @@ function appendTranscriptStateBranchEntry(params: {
 }): SessionBranchEntry {
   const { state, entry, rewrittenEntryIds } = params;
   if (entry.type === "message") {
-    return state.appendMessage(entry.message);
+    return state.appendMessage(entry.message, entry.modelCall);
   }
   if (entry.type === "compaction") {
     return state.appendCompaction(

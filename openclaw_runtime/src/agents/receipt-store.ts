@@ -89,6 +89,46 @@ export type ReceiptBudget =
       charsApplied: number;
     };
 
+export type ReceiptCandidateDisposition =
+  | "applied"
+  | "truncate"
+  | "drop"
+  | "skip"
+  | "duplicate"
+  | "pending";
+
+export type ReceiptCandidateReason =
+  | "collected"
+  | "applied"
+  | "duplicate"
+  | "empty"
+  | "budget-truncate"
+  | "budget-drop"
+  | "flag-off"
+  | "kill-switch"
+  | "stale-history"
+  | "skip-channel";
+
+/** Bounded, payload-free projection of one candidate decision. */
+export type ReceiptCandidateDecision = {
+  /** Canonical receipt ref for the candidate. Never the raw candidate id. */
+  ref: string;
+  /** Public producer label, not authority content or payload. */
+  sourceId: string;
+  channel: string;
+  disposition: ReceiptCandidateDisposition;
+  reason: ReceiptCandidateReason;
+  charsRequested: number;
+  charsApplied: number;
+};
+
+/** Candidate decisions persisted with a receipt. `complete:false` means the
+ * bounded projection was truncated and the receipt must not claim full coverage. */
+export type ReceiptCandidateDecisions = {
+  complete: boolean;
+  decisions: ReceiptCandidateDecision[];
+};
+
 export type ReceiptContent = {
   /** Semantic logical digest (ContextReceipt) or final wire digest (WireReceipt). */
   logicalDigest?: string;
@@ -100,6 +140,8 @@ export type ReceiptContent = {
   selected?: string[];
   /** Omitted items/decisions projection (JSON array of refs). */
   omitted?: string[];
+  /** Bounded per-candidate disposition/reason projection. */
+  candidateDecisions?: ReceiptCandidateDecisions;
   /** Bounded token-budget summary. */
   budget?: ReceiptBudget;
   /** Policy digest (the selection/budget policy that produced this receipt). */
@@ -155,8 +197,39 @@ const RECEIPT_CONTENT_KEYS = new Set([
   "correlationDigest",
   "selected",
   "omitted",
+  "candidateDecisions",
   "budget",
   "policyDigest",
+]);
+const RECEIPT_CANDIDATE_DECISION_KEYS = new Set([
+  "ref",
+  "sourceId",
+  "channel",
+  "disposition",
+  "reason",
+  "charsRequested",
+  "charsApplied",
+]);
+const RECEIPT_CANDIDATE_DECISIONS_KEYS = new Set(["complete", "decisions"]);
+const RECEIPT_CANDIDATE_DISPOSITIONS = new Set<ReceiptCandidateDisposition>([
+  "applied",
+  "truncate",
+  "drop",
+  "skip",
+  "duplicate",
+  "pending",
+]);
+const RECEIPT_CANDIDATE_REASONS = new Set<ReceiptCandidateReason>([
+  "collected",
+  "applied",
+  "duplicate",
+  "empty",
+  "budget-truncate",
+  "budget-drop",
+  "flag-off",
+  "kill-switch",
+  "stale-history",
+  "skip-channel",
 ]);
 const RECEIPT_BUDGET_KEYS = new Set([
   "unit",
@@ -167,6 +240,7 @@ const RECEIPT_BUDGET_KEYS = new Set([
 ]);
 const SHA256_DIGEST_RE = /^[a-f0-9]{64}$/;
 const RECEIPT_ID_RE = /^[A-Za-z0-9][A-Za-z0-9._:@/-]*$/;
+const RECEIPT_CANDIDATE_CHANNEL_RE = /^[a-z][a-z0-9_-]{0,63}$/;
 // IRC channel routes contain # (agent:main:irc:group:#channel). Other receipt
 // identifiers remain on the stricter grammar; whitespace/control bytes stay invalid.
 const RECEIPT_SESSION_KEY_RE = /^[A-Za-z0-9][A-Za-z0-9._:@/#-]*$/;
@@ -178,6 +252,8 @@ const MAX_TRANSFORM_ID_LENGTH = 128;
 const MAX_TRANSFORM_IDS = 32;
 const MAX_RECEIPT_REFERENCES = 64;
 const MAX_RECEIPT_REFERENCE_LENGTH = 256;
+const MAX_RECEIPT_CANDIDATE_DECISIONS = 64;
+const MAX_RECEIPT_CANDIDATE_SOURCE_LENGTH = 128;
 const MAX_BUDGET_TOKENS = 1_000_000_000;
 const MAX_CALL_INDEX = 2_147_483_647;
 
@@ -326,6 +402,109 @@ function serializeBudget(value: ReceiptBudget | undefined): string | null {
   });
 }
 
+function assertCandidateDecisions(
+  value: unknown,
+  label: string,
+): asserts value is ReceiptCandidateDecisions | undefined {
+  if (value === undefined) return;
+  assertPlainRecord(value, label);
+  assertOnlyKeys(value, RECEIPT_CANDIDATE_DECISIONS_KEYS, label);
+  if (typeof value.complete !== "boolean") {
+    throw new TypeError(`${label} complete must be a boolean`);
+  }
+  const decisions = value.decisions;
+  if (!Array.isArray(decisions) || Object.getPrototypeOf(decisions) !== Array.prototype) {
+    throw new TypeError(`${label} decisions must be an array`);
+  }
+  if (decisions.length > MAX_RECEIPT_CANDIDATE_DECISIONS) {
+    throw new TypeError(`${label} decisions exceeds the maximum item count`);
+  }
+  const refs = new Set<string>();
+  for (let index = 0; index < decisions.length; index += 1) {
+    if (!Object.hasOwn(decisions, index)) {
+      throw new TypeError(`${label} decisions must be a dense array`);
+    }
+    const decision = decisions[index];
+    const decisionLabel = `${label} decision ${index}`;
+    assertPlainRecord(decision, decisionLabel);
+    assertOnlyKeys(decision, RECEIPT_CANDIDATE_DECISION_KEYS, decisionLabel);
+    if (
+      typeof decision.ref !== "string" ||
+      decision.ref.length === 0 ||
+      decision.ref.length > MAX_RECEIPT_REFERENCE_LENGTH ||
+      !RECEIPT_REFERENCE_RE.test(decision.ref)
+    ) {
+      throw new TypeError(`${decisionLabel} ref must be a bounded canonical reference`);
+    }
+    if (refs.has(decision.ref)) throw new TypeError(`${label} decisions must use unique refs`);
+    refs.add(decision.ref);
+    if (
+      typeof decision.sourceId !== "string" ||
+      decision.sourceId.length === 0 ||
+      decision.sourceId.length > MAX_RECEIPT_CANDIDATE_SOURCE_LENGTH ||
+      !RECEIPT_ID_RE.test(decision.sourceId)
+    ) {
+      throw new TypeError(`${decisionLabel} sourceId must be a bounded public identifier`);
+    }
+    if (
+      typeof decision.channel !== "string" ||
+      !RECEIPT_CANDIDATE_CHANNEL_RE.test(decision.channel)
+    ) {
+      throw new TypeError(`${decisionLabel} channel must be a bounded public identifier`);
+    }
+    if (!RECEIPT_CANDIDATE_DISPOSITIONS.has(decision.disposition as ReceiptCandidateDisposition)) {
+      throw new TypeError(`${decisionLabel} disposition is unsupported`);
+    }
+    if (!RECEIPT_CANDIDATE_REASONS.has(decision.reason as ReceiptCandidateReason)) {
+      throw new TypeError(`${decisionLabel} reason is unsupported`);
+    }
+    assertNonNegativeInteger(decision.charsRequested, `${decisionLabel} charsRequested`);
+    assertNonNegativeInteger(decision.charsApplied, `${decisionLabel} charsApplied`);
+  }
+  for (const key of Reflect.ownKeys(decisions)) {
+    if (key === "length") continue;
+    if (typeof key !== "string" || !/^(?:0|[1-9]\d*)$/.test(key) || Number(key) >= decisions.length) {
+      throw new TypeError(`${label} decisions contains unsupported array field: ${String(key)}`);
+    }
+    const descriptor = Object.getOwnPropertyDescriptor(decisions, key);
+    if (!descriptor?.enumerable || !("value" in descriptor)) {
+      throw new TypeError(`${label} decisions entries must be enumerable data properties`);
+    }
+  }
+}
+
+function candidateDecisionsForJson(value: ReceiptCandidateDecisions | undefined): {
+  complete: boolean;
+  decisions: Array<{
+    ref: string;
+    sourceId: string;
+    channel: string;
+    disposition: ReceiptCandidateDisposition;
+    reason: ReceiptCandidateReason;
+    charsRequested: number;
+    charsApplied: number;
+  }>;
+} | null {
+  if (!value) return null;
+  return {
+    complete: value.complete,
+    decisions: value.decisions.map((decision) => ({
+      ref: decision.ref,
+      sourceId: decision.sourceId,
+      channel: decision.channel,
+      disposition: decision.disposition,
+      reason: decision.reason,
+      charsRequested: decision.charsRequested,
+      charsApplied: decision.charsApplied,
+    })),
+  };
+}
+
+function serializeCandidateDecisions(value: ReceiptCandidateDecisions | undefined): string | null {
+  const normalized = candidateDecisionsForJson(value);
+  return normalized ? JSON.stringify(normalized) : null;
+}
+
 function validatePutReceiptInput(input: PutReceiptInput): void {
   assertPlainRecord(input, "ReceiptStore.put input");
   assertOnlyKeys(input, PUT_RECEIPT_KEYS, "ReceiptStore.put input");
@@ -401,6 +580,7 @@ function validatePutReceiptInput(input: PutReceiptInput): void {
     maxLength: MAX_RECEIPT_REFERENCE_LENGTH,
     pattern: RECEIPT_REFERENCE_RE,
   });
+  assertCandidateDecisions(input.content.candidateDecisions, "receipt content candidateDecisions");
   const selected = new Set(input.content.selected ?? []);
   if ((input.content.omitted ?? []).some((reference) => selected.has(reference))) {
     throw new TypeError("receipt content selected and omitted references must be disjoint");
@@ -449,6 +629,7 @@ export function receiptContentDigest(
         correlationDigest: content.correlationDigest,
         selected: content.selected?.length ? content.selected : null,
         omitted: content.omitted?.length ? content.omitted : null,
+        candidateDecisions: candidateDecisionsForJson(content.candidateDecisions),
         budget: content.budget
           ? content.budget.unit === "chars"
             ? {
@@ -547,6 +728,7 @@ export class ReceiptStore {
           ? JSON.stringify(input.content.selected)
           : null,
         omitted_json: input.content.omitted?.length ? JSON.stringify(input.content.omitted) : null,
+        candidate_decisions_json: serializeCandidateDecisions(input.content.candidateDecisions),
         budget_json: serializeBudget(input.content.budget),
         policy_digest: input.content.policyDigest ?? null,
         logical_digest: input.content.logicalDigest ?? null,

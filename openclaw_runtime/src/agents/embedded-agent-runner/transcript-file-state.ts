@@ -533,13 +533,17 @@ export class TranscriptFileState {
     this.leafId = null;
   }
 
-  appendMessage(message: SessionMessageEntry["message"]): SessionMessageEntry {
+  appendMessage(
+    message: SessionMessageEntry["message"],
+    modelCall?: SessionMessageEntry["modelCall"],
+  ): SessionMessageEntry {
     return this.appendEntry({
       type: "message",
       id: generateEntryId(this.byId),
       parentId: this.leafId,
       timestamp: new Date().toISOString(),
       message,
+      ...(modelCall ? { modelCall } : {}),
     });
   }
 

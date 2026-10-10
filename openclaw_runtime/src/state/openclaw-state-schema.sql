@@ -1649,6 +1649,10 @@ CREATE TABLE IF NOT EXISTS runtime_receipts (
     omitted_json IS NULL OR
     (length(omitted_json) <= 16384 AND json_valid(omitted_json) AND json_type(omitted_json) = 'array')
   ),
+  candidate_decisions_json TEXT CHECK (
+    candidate_decisions_json IS NULL OR
+    (length(candidate_decisions_json) <= 32768 AND json_valid(candidate_decisions_json) AND json_type(candidate_decisions_json) = 'object')
+  ),
   budget_json TEXT CHECK (
     budget_json IS NULL OR
     (length(budget_json) <= 256 AND json_valid(budget_json) AND json_type(budget_json) = 'object')

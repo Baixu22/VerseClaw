@@ -787,6 +787,7 @@ function ensureAdditiveStateColumns(db: DatabaseSync): void {
   ensureColumn(db, "mission_runs", "active_tick_id TEXT");
   ensureColumn(db, "mission_runs", "last_wake_id TEXT");
   ensureColumn(db, "flow_runs", "delivery_state TEXT");
+  ensureColumn(db, "runtime_receipts", "candidate_decisions_json TEXT");
   if (tableExists(db, "flow_runs")) {
     db.exec(`
       CREATE INDEX IF NOT EXISTS idx_flow_runs_blocked_task

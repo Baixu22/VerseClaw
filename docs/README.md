@@ -24,6 +24,7 @@ and the [default configuration matrix](dev/default-config-matrix.md).
 - [DCS production P0 runbook (Chinese)](dcs-production-p0-runbook.zh-CN.md)
 - [Repository layout and artifact roots](dev/repository-layout.md)
 - [Source retention and recovery](dev/repository-artifact-retention.md)
+- [P2 issue fixes: receipt decisions and transcript call identity](dev/p2-issue-fixes-batch9-20261010.md)
 
 ## Historical records
 

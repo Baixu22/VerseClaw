@@ -213,6 +213,46 @@ describe('RC-03 receipts through ReceiptStore', () => {
     expect(JSON.stringify(contextRows[0])).not.toContain('hi');
   });
 
+  it('persists bounded candidate decisions and includes them in content identity', () => {
+    const plan = makePlan();
+    const bundle = sealContextBundle(createContextBundle({
+      plan,
+      systemPrompt: 'system',
+      messages: [],
+      selectedRefs: ['ref:context:selected'],
+      omittedRefs: ['ref:context:dropped'],
+    }));
+    const identity = { runtimeMode: 'source' as const, providerId: 'anthropic', adapterId: 'anthropic-messages', sessionKey: 'sess-rc03', runId: 'run-rc03' };
+    const correlationDigest = '2'.repeat(64);
+    const candidateDecisions = {
+      complete: true,
+      decisions: [
+        { ref: 'ref:context:selected', sourceId: 'dcs-knowledge', channel: 'knowledge', disposition: 'applied' as const, reason: 'applied' as const, charsRequested: 8, charsApplied: 8 },
+        { ref: 'ref:context:dropped', sourceId: 'dcs-memory', channel: 'memory_pilot', disposition: 'drop' as const, reason: 'budget-drop' as const, charsRequested: 5, charsApplied: 0 },
+        { ref: 'ref:context:flag-off', sourceId: 'dcs-vtoken', channel: 'vtoken', disposition: 'skip' as const, reason: 'flag-off' as const, charsRequested: 0, charsApplied: 0 },
+        { ref: 'ref:context:duplicate', sourceId: 'dcs-working-memory', channel: 'working_memory', disposition: 'duplicate' as const, reason: 'duplicate' as const, charsRequested: 0, charsApplied: 0 },
+      ],
+    };
+    const store = newStore();
+    const firstInput = buildContextReceiptInput({ plan, bundle, identity, correlationDigest, candidateDecisions });
+    expect(store.put(firstInput)).toMatchObject({ ok: true, duplicate: false });
+    const row = store.getByIdempotencyKey(firstInput.idempotencyKey);
+    expect(row?.candidate_decisions_json).toBe(JSON.stringify(candidateDecisions));
+
+    const changed = buildContextReceiptInput({
+      plan,
+      bundle,
+      identity,
+      correlationDigest,
+      candidateDecisions: {
+        ...candidateDecisions,
+        decisions: candidateDecisions.decisions.map((decision) => ({ ...decision })),
+      },
+    });
+    changed.content.candidateDecisions!.decisions[0]!.reason = 'skip-channel';
+    expect(store.put(changed)).toMatchObject({ ok: false, reason: 'content-conflict' });
+  });
+
   it('remains idempotent for identical correlated receipts (content-sensitive)', () => {
     const plan = makePlan();
     const bundle = sealContextBundle(createContextBundle({ plan, systemPrompt: 's', messages: [] }));

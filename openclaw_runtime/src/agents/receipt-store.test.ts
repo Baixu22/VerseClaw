@@ -564,6 +564,7 @@ describe("ReceiptStore (runtime_receipts via openclaw-state SQLite)", () => {
       row.transform_ids_json,
       row.selected_json,
       row.omitted_json,
+      row.candidate_decisions_json,
       row.budget_json,
       row.policy_digest,
       row.logical_digest,

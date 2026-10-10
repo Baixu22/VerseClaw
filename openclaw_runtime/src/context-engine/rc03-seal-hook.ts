@@ -7,7 +7,12 @@
 // no-op and the legacy path is byte-identical.
 import { createHash } from 'node:crypto';
 
-import { ReceiptStore } from '../agents/receipt-store.js';
+import {
+  ReceiptStore,
+  type ReceiptCandidateDecisions,
+  type ReceiptCandidateDisposition,
+  type ReceiptCandidateReason,
+} from '../agents/receipt-store.js';
 import { createSubsystemLogger } from '../logging/subsystem.js';
 import {
   recordShadowCensusFailure,
@@ -42,6 +47,8 @@ export const RC03_SEAL_POLICY_DIGEST =
 const sealedPlansByRun = new Map<string, Map<number, CompilePlan>>();
 /** sha256 of the provider-bound system prompt each sealed model call bound. */
 const sealedSystemPromptDigestsByRun = new Map<string, Map<number, string>>();
+/** ContextReceipt correlation digest (bundle digest) per run and model call. */
+const sealedCorrelationDigestsByRun = new Map<string, Map<number, string>>();
 
 const sha256 = (value: string) => createHash('sha256').update(value).digest('hex');
 
@@ -49,6 +56,7 @@ export function recordRc03SealPlan(
   runId: string | undefined,
   plan: CompilePlan,
   systemPromptDigest?: string,
+  correlationDigest?: string,
 ): void {
   if (!runId) return;
   let byModelCall = sealedPlansByRun.get(runId);
@@ -65,6 +73,14 @@ export function recordRc03SealPlan(
     }
     digests.set(plan.callIndex.modelCallIndex, systemPromptDigest);
   }
+  if (correlationDigest) {
+    let digests = sealedCorrelationDigestsByRun.get(runId);
+    if (!digests) {
+      digests = new Map();
+      sealedCorrelationDigestsByRun.set(runId, digests);
+    }
+    digests.set(plan.callIndex.modelCallIndex, correlationDigest);
+  }
 }
 
 export function getRc03SealedSystemPromptDigest(
@@ -73,6 +89,14 @@ export function getRc03SealedSystemPromptDigest(
 ): string | undefined {
   if (!runId) return undefined;
   return sealedSystemPromptDigestsByRun.get(runId)?.get(modelCallIndex);
+}
+
+export function getRc03SealCorrelationDigest(
+  runId: string | undefined,
+  modelCallIndex: number,
+): string | undefined {
+  if (!runId) return undefined;
+  return sealedCorrelationDigestsByRun.get(runId)?.get(modelCallIndex);
 }
 
 export function getRc03SealPlan(
@@ -94,6 +118,7 @@ export function clearRc03SealPlan(runId: string | undefined): void {
   if (!runId) return;
   sealedPlansByRun.delete(runId);
   sealedSystemPromptDigestsByRun.delete(runId);
+  sealedCorrelationDigestsByRun.delete(runId);
   for (const key of messageReplacementAttempts) {
     if (key.startsWith(`${runId}|`)) messageReplacementAttempts.delete(key);
   }
@@ -342,6 +367,61 @@ function candidateReceiptRef(entry: ContextCandidateProjection['lineage'][number
   return `ref:context:${source}:${digest}`;
 }
 
+function candidateDisposition(
+  entry: ContextCandidateProjection['lineage'][number],
+): ReceiptCandidateDisposition {
+  const disposition = entry.disposition as ReceiptCandidateDisposition | undefined;
+  if (
+    disposition === 'applied' ||
+    disposition === 'truncate' ||
+    disposition === 'drop' ||
+    disposition === 'skip' ||
+    disposition === 'duplicate' ||
+    disposition === 'pending'
+  ) {
+    return disposition;
+  }
+  return entry.charsApplied > 0 ? 'applied' : 'skip';
+}
+
+function candidateReason(
+  entry: ContextCandidateProjection['lineage'][number],
+): ReceiptCandidateReason {
+  const reason = entry.reason as ReceiptCandidateReason | undefined;
+  if (
+    reason === 'collected' ||
+    reason === 'applied' ||
+    reason === 'duplicate' ||
+    reason === 'empty' ||
+    reason === 'budget-truncate' ||
+    reason === 'budget-drop' ||
+    reason === 'flag-off' ||
+    reason === 'kill-switch' ||
+    reason === 'stale-history' ||
+    reason === 'skip-channel'
+  ) {
+    return reason;
+  }
+  return entry.charsApplied > 0 ? 'applied' : 'empty';
+}
+
+function candidateDecisionProjection(
+  lineage: ContextCandidateProjection['lineage'],
+): ReceiptCandidateDecisions {
+  return {
+    complete: lineage.length <= 64,
+    decisions: lineage.slice(0, 64).map((entry) => ({
+      ref: candidateReceiptRef(entry),
+      sourceId: entry.sourceId,
+      channel: entry.channel,
+      disposition: candidateDisposition(entry),
+      reason: candidateReason(entry),
+      charsRequested: entry.charsRequested,
+      charsApplied: entry.charsApplied,
+    })),
+  };
+}
+
 function recordSealFailure(phase: ShadowCensusFailureDiagnostic['phase'], code: ShadowCensusFailureDiagnostic['code']) {
   recordShadowCensusFailure(phase, code);
 }
@@ -464,6 +544,7 @@ export function runRc03SealHook(
         correlationDigest: bundle.bundleDigest,
         selectedRefs,
         omittedRefs,
+        candidateDecisions: candidateDecisionProjection(projection.lineage),
         budget: bundle.budgetSummary,
       }),
     );
@@ -476,7 +557,12 @@ export function runRc03SealHook(
   if (!contextReceiptPersisted) {
     recordSealFailure('context-write', 'receipt-store-write-failed');
   }
-  recordRc03SealPlan(options.runId, plan, systemPrompt !== undefined ? sha256(systemPrompt) : undefined);
+  recordRc03SealPlan(
+    options.runId,
+    plan,
+    systemPrompt !== undefined ? sha256(systemPrompt) : undefined,
+    bundle.bundleDigest,
+  );
 
   return {
     engaged: true,
