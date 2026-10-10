@@ -477,4 +477,31 @@ describe("VerseShell governed process lifecycle", () => {
     await expect(defaulted.wait()).resolves.toMatchObject({ state: "exited" });
     expect(calls.filter((call) => call.op === "process.start").map((call) => call.args.timeout_ms)).toEqual([1, 10 * 60 * 1000]);
   });
+  it('fails closed when resource limits require enforcement but executor gives no receipt', async () => {
+    const fake = fakeManager([]);
+    await expect(startGovernedVerseShellProcess(baseOptions(fake.manager, {
+      resourceLimits: { maxMemoryBytes: 64 * 1024 * 1024, maxProcesses: 4, requireEnforcement: true },
+    }))).rejects.toMatchObject({ code: 'E_PROCESS_RESOURCE_LIMIT_UNSUPPORTED' });
+  });
+
+  it('records unsupported limits as not enforced instead of claiming success', async () => {
+    const calls: ExecuteCall[] = [];
+    const client = {
+      processKey: 'resource-receipt',
+      execute: vi.fn(async (op: string, args: JsonObject) => {
+        calls.push({ op, args });
+        if (op === 'process.start') return observation(op, snapshot());
+        if (op === 'process.poll') return observation(op, { ...snapshot(), state: 'exited', exit_code: 0 });
+        if (op === 'process.kill') return observation(op, {});
+        throw new Error('unexpected operation ' + op);
+      }),
+    };
+    const fake = fakeManager([client]);
+    const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager, {
+      resourceLimits: { maxMemoryBytes: 64 * 1024 * 1024 },
+    }));
+    expect(handle.resourceReceipt).toMatchObject({ enforced: false, enforcement: 'unsupported' });
+    await handle.wait();
+  });
+
 });

@@ -17,6 +17,8 @@ import {
 
 type ResolveSandboxPolicyInput = {
   permissionMode: WorkspacePermissionMode;
+  /** When true, an unavailable strong provider is an error, never a silent fallback. */
+  requireStrong?: boolean;
   requestedProviderId?: SandboxProviderId;
   profile?: Pick<SandboxProfile, 'providerId' | 'networkPolicy'> | null;
   providers: SandboxProviderStatus[];
@@ -46,9 +48,19 @@ function fallbackReason(providerId: SandboxProviderId): string {
   }
 }
 
+export class SandboxStrengthUnavailableError extends Error {
+  readonly requestedProviderId: SandboxProviderId;
+  constructor(requestedProviderId: SandboxProviderId, reason: string) {
+    super(reason);
+    this.name = 'SandboxStrengthUnavailableError';
+    this.requestedProviderId = requestedProviderId;
+  }
+}
+
 function resolveEffectiveProvider(input: {
   requestedProviderId: SandboxProviderId;
   providers: SandboxProviderStatus[];
+  requireStrong?: boolean;
 }): {
   effectiveProviderId: SandboxProviderId;
   degraded: boolean;
@@ -60,6 +72,9 @@ function resolveEffectiveProvider(input: {
   }
   if (providerAvailable(input.providers, requested)) {
     return { effectiveProviderId: requested, degraded: false };
+  }
+  if (input.requireStrong && (requested === 'docker-strong' || requested === 'ssh-strong')) {
+    throw new SandboxStrengthUnavailableError(requested, fallbackReason(requested));
   }
   return {
     effectiveProviderId: 'policy-light',
@@ -91,6 +106,7 @@ export function resolveSandboxEffectivePolicy(input: ResolveSandboxPolicyInput):
   const resolvedProvider = resolveEffectiveProvider({
     requestedProviderId,
     providers: input.providers,
+    requireStrong: input.requireStrong,
   });
   const openClawConfig: SandboxOpenClawConfig = mapWorkspacePermissionToSandboxConfig(
     input.permissionMode,

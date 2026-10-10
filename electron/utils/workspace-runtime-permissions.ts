@@ -7,6 +7,7 @@ import type {
   SandboxRuntimeLevel,
 } from '@shared/types/sandbox';
 import { detectDockerAvailability } from './sandbox-provider-detection';
+import { SandboxStrengthUnavailableError } from './sandbox-policy-resolver';
 
 type ExecApprovalConfig = Pick<SandboxExecPolicy, 'security' | 'ask'>;
 
@@ -122,7 +123,13 @@ export async function resolveSandboxProviderIdForRuntime(
   const requested = normalizeSandboxProviderId(requestedProviderId ?? await readActiveSandboxProviderIdFromStore());
   if (requested === 'policy-light') return 'policy-light';
   if (requested === 'windows-light') return process.platform === 'win32' ? 'windows-light' : 'policy-light';
-  if (requested === 'docker-strong') return await isDockerStrongAvailable() ? 'docker-strong' : 'policy-light';
+  if (requested === 'docker-strong') {
+    if (await isDockerStrongAvailable()) return 'docker-strong';
+    throw new SandboxStrengthUnavailableError('docker-strong', 'Docker strong sandbox is unavailable; refusing host fallback.');
+  }
+  if (requested === 'ssh-strong') {
+    throw new SandboxStrengthUnavailableError('ssh-strong', 'SSH strong sandbox is not configured; refusing host fallback.');
+  }
   return 'policy-light';
 }
 
