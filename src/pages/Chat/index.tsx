@@ -2356,13 +2356,17 @@ export function Chat() {
       lastObservedSessionKeyRef.current = nextSessionKey;
       workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
       resetSessionView(nextSessionKey);
-      setComposerDraft(draft);
+      setComposerDraft('');
       setRunActivityExpandedOverrides({});
       setRunActivityStepDetailsExpanded({});
       setContextRange(null);
       setLiveUsage(null);
       setKnowledgeScope('none');
       setHandoffDialogOpen(false);
+      // A handoff is only useful if the new session actually receives the
+      // working context. Send the reviewed draft as the first user turn so it
+      // enters the real transcript instead of waiting for a manual paste.
+      await sendMessage(draft);
       toast.success(t('composer.handoff.toastCreated'));
       if (activeWorkspace?.id) {
         void hostApi.taskLedger.linkSession({
@@ -2391,6 +2395,7 @@ export function Chat() {
     handoffDraft,
     persistCurrentContinuitySourceSession,
     resetSessionView,
+    sendMessage,
     t,
   ]);
 

@@ -418,10 +418,10 @@ test.describe('Verse Claw chat session handoff', () => {
       await page.getByTestId('chat-handoff-create').click();
 
       await expect(page.getByTestId('chat-handoff-dialog')).toBeHidden();
-      await expect(page.getByTestId('chat-composer-input')).toHaveValue(editedDraft);
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue('');
       await expect.poll(async () => app.evaluate(() => (
         (globalThis as typeof globalThis & { __handoffCalls?: { chatSend: number } }).__handoffCalls?.chatSend ?? 0
-      ))).toBe(0);
+      ))).toBeGreaterThan(0);
       const workspaceUpdates = await app.evaluate(() => (
         (globalThis as typeof globalThis & { __handoffCalls?: { workspaceUpdate: unknown[] } }).__handoffCalls?.workspaceUpdate ?? []
       ));
