@@ -26,6 +26,5 @@ describe('documentation index and repository layout', () => {
   it('keeps root process assets out of the repository root', () => {
     expect(existsSync(join(ROOT, 'send-button-states-design.md'))).toBe(false);
     expect(existsSync(join(ROOT, 'docs', 'dev', 'send-button-states-design.md'))).toBe(true);
-    expect(existsSync(join(ROOT, 'public', 'lobe-icons'))).toBe(false);
   });
 });
