@@ -21,6 +21,7 @@ const PRELOAD = `
       model: options.env.RUNTIME_MEMORY_LLM_MODEL,
       fullEval: options.env.FULL_EVAL,
       artifactDir: options.env.RUNTIME_MEMORY_EVAL_ARTIFACT_DIR,
+      suiteTimeoutMinutes: options.env.RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES ?? null,
     }));
     return { status: 0 };
   };
@@ -71,7 +72,7 @@ function runCli(args: string[], capture: string): { status: number | null; stdou
   return { status: result.status, stdout: result.stdout ?? "", stderr: result.stderr ?? "" };
 }
 
-function readCapture(capture: string): { timeout: number; model: string; fullEval: string; artifactDir: string } {
+function readCapture(capture: string): { timeout: number; model: string; fullEval: string; artifactDir: string; suiteTimeoutMinutes: string | null } {
   return JSON.parse(readFileSync(capture, "utf8"));
 }
 
@@ -117,6 +118,32 @@ it("passes an explicit longer timeout to the child", () => {
   const result = runCli(["--base-url", "https://synthetic.invalid/v1", "--model", "step-5-preview", "--output-dir", output, "--timeout-minutes", "2160"], capture);
   expect(result.status, result.stderr).toBe(0);
   expect(readCapture(capture).timeout).toBe(2160 * 60 * 1000);
+});
+
+it("lets the suite budget be raised, but never to at or above the wrapper budget", () => {
+  const capture = join(scratch("locomo-child-budget-"), "capture.json");
+  const output = join(scratch("locomo-child-budget-out-"), "output");
+  const accepted = runCli(
+    ["--base-url", "https://synthetic.invalid/v1", "--model", "step-5-preview", "--output-dir", output, "--timeout-minutes", "4800", "--test-timeout-minutes", "4680"],
+    capture,
+  );
+  expect(accepted.status, accepted.stderr).toBe(0);
+  expect(readCapture(capture).suiteTimeoutMinutes).toBe("4680");
+  expect(readCapture(capture).timeout).toBe(4800 * 60 * 1000);
+
+  // Equal or larger is rejected: the wrapper must never be the one that fires,
+  // because a SIGTERM leaves no test failure and no report attempt.
+  for (const value of ["4800", "5000"]) {
+    const badCapture = join(scratch("locomo-child-budget-bad-"), "capture.json");
+    const badOutput = join(scratch("locomo-child-budget-bad-out-"), "output");
+    const rejected = runCli(
+      ["--base-url", "https://synthetic.invalid/v1", "--model", "step-5-preview", "--output-dir", badOutput, "--timeout-minutes", "4800", "--test-timeout-minutes", value],
+      badCapture,
+    );
+    expect(rejected.status, value).toBe(1);
+    expect(rejected.stderr, value).toContain("test-timeout-minutes must be smaller than timeout-minutes");
+    expect(existsSync(badOutput), value).toBe(false);
+  }
 });
 
 it("rejects a non-positive or unparsable timeout instead of falling back", () => {

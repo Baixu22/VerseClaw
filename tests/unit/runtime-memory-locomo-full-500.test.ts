@@ -176,6 +176,23 @@ import {
 const EVAL_ARTIFACT_DIR = process.env.RUNTIME_MEMORY_EVAL_ARTIFACT_DIR
   ?? join(process.cwd(), "artifacts", "runtime-memory-eval");
 
+// The full 500-question run is designed to take many hours (extraction plus
+// generation and judging), so its budget must be raisable from outside: a hard
+// 36h literal silently discards an entire run when it fires. The default is
+// unchanged; RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES raises (or lowers) it, and
+// a non-positive or unparsable value fails closed instead of falling back.
+const FULL_RUN_TEST_TIMEOUT_MS = (() => {
+  const raw = process.env.RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES;
+  if (raw === undefined || raw === "") return 129_600_000;
+  const minutes = Number(raw);
+  if (!Number.isFinite(minutes) || minutes <= 0) {
+    throw new Error(
+      "RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES must be a positive number of minutes",
+    );
+  }
+  return minutes * 60_000;
+})();
+
 // === Types ===
 
 type LocomoTurn = {
@@ -3858,7 +3875,7 @@ describe.skipIf(
         expect(totalQuestions).toBeGreaterThan(0);
         expect(overallJ).toBeGreaterThan(0);
       },
-      129_600_000, // 36h timeout for v4-flash reasoning model (extraction ~10h + gen/judge ~25h)
+      FULL_RUN_TEST_TIMEOUT_MS, // default 36h; raise via RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES
     );
   },
 );

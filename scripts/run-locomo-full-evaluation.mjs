@@ -35,6 +35,25 @@ export function resolveTimeoutMinutes(raw, fromEnv = process.env.RUNTIME_MEMORY_
 }
 
 /**
+ * The suite's own evaluation budget must be strictly smaller than this wrapper's
+ * budget, so a run that runs out of time fails as a normal test failure with a
+ * report attempt instead of being killed mid-flight by the wrapper.
+ */
+export function resolveTestTimeoutMinutes(raw, outerMinutes) {
+  if (raw === undefined || raw === null || raw === '') return null;
+  const minutes = Number(raw);
+  if (!Number.isFinite(minutes) || minutes <= 0) {
+    throw new Error('test-timeout-minutes must be a positive number of minutes');
+  }
+  if (minutes >= outerMinutes) {
+    throw new Error(
+      'test-timeout-minutes must be smaller than timeout-minutes so the suite fails on its own budget instead of being killed by the wrapper',
+    );
+  }
+  return minutes;
+}
+
+/**
  * Copies resumable caches out of a previous run directory into a fresh one.
  *
  * `sourceRevision` is required: a cache may only be reused when the run that
@@ -68,7 +87,8 @@ async function main() {
     'credentials-stdin': { type: 'boolean', default: false },
     'base-url': { type: 'string' }, model: { type: 'string' }, 'output-dir': { type: 'string' },
     'local-embedding-url': { type: 'string' }, 'local-embedding-model': { type: 'string' },
-    'timeout-minutes': { type: 'string' }, 'resume-from': { type: 'string' },
+    'timeout-minutes': { type: 'string' }, 'test-timeout-minutes': { type: 'string' },
+    'resume-from': { type: 'string' },
     'resume-source-revision': { type: 'string' },
   } });
   if (values['credentials-stdin']) {
@@ -86,6 +106,7 @@ async function main() {
   await verifyLocomoEmbeddingResources();
   getRuntimeMemoryLlmConfig(); // Reject accidental credential routing before starting a child.
   const timeoutMinutes = resolveTimeoutMinutes(values['timeout-minutes']);
+  const testTimeoutMinutes = resolveTestTimeoutMinutes(values['test-timeout-minutes'], timeoutMinutes);
   const output = resolve(values['output-dir'] ?? join(root, 'artifacts/runtime-memory-eval/runs', randomUUID()));
   if (existsSync(output)) throw new Error('Use a new output directory; previous run evidence is never overwritten');
   mkdirSync(output, { recursive: true });
@@ -96,6 +117,9 @@ async function main() {
   }
   const env = { ...process.env, RUNTIME_MEMORY_REAL_LLM: '1', FULL_EVAL: '1', SMOKE: '0', RUNTIME_MEMORY_EVAL_ARTIFACT_DIR: output,
     DEEPSEEK_MODEL: process.env.RUNTIME_MEMORY_LLM_MODEL || process.env.DEEPSEEK_MODEL || 'deepseek-chat' };
+  // Only override the suite's own default when the operator asked for it, so the
+  // historical 36h behaviour is preserved for every existing invocation.
+  if (testTimeoutMinutes !== null) env.RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES = String(testTimeoutMinutes);
   const result = spawnSync(process.execPath, [join(root, 'node_modules/vitest/vitest.mjs'), 'run', 'tests/unit/runtime-memory-locomo-full-500.test.ts', '--reporter=verbose'], {
     cwd: root, env, stdio: 'inherit', windowsHide: true, timeout: timeoutMinutes * 60 * 1000,
   });
