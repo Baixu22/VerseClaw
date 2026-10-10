@@ -1,7 +1,8 @@
 // OpenAI-compatible error helpers.
 // Converts OpenClaw failover/sampling errors to OpenAI-style HTTP responses.
 import type { FailoverReason } from "../agents/embedded-agent-helpers/types.js";
-import { describeFailoverError, resolveFailoverStatus } from "../agents/failover-error.js";
+import { describeFailoverError } from "../agents/failover-error.js";
+import { redactProviderErrorBody } from "../agents/provider-http-errors.js";
 
 export type OpenAiCompatError = {
   status: number;
@@ -12,27 +13,53 @@ export type OpenAiCompatError = {
   };
 };
 
-const ERROR_TYPE_BY_REASON: Partial<Record<FailoverReason, string>> = {
-  auth: "authentication_error",
-  auth_permanent: "permission_error",
-  billing: "insufficient_quota",
-  format: "invalid_request_error",
-  model_not_found: "invalid_request_error",
-  overloaded: "api_error",
-  rate_limit: "rate_limit_error",
-  server_error: "api_error",
-  session_expired: "invalid_request_error",
-  timeout: "api_error",
+type OpenAiCompatReasonMapping = {
+  status: number;
+  type: string;
+  message?: string;
+};
+
+// Exhaustive by construction: adding a FailoverReason without a public
+// compatibility decision fails type checking instead of becoming HTTP 500.
+const ERROR_MAPPING_BY_REASON: Record<FailoverReason, OpenAiCompatReasonMapping> = {
+  auth: { status: 401, type: "authentication_error" },
+  auth_permanent: { status: 403, type: "permission_error" },
+  format: { status: 400, type: "invalid_request_error" },
+  rate_limit: { status: 429, type: "rate_limit_error" },
+  overloaded: { status: 503, type: "api_error", message: "upstream provider overloaded" },
+  billing: { status: 402, type: "insufficient_quota" },
+  server_error: { status: 502, type: "api_error", message: "upstream provider error" },
+  timeout: { status: 504, type: "api_error", message: "upstream provider timeout" },
+  model_not_found: { status: 404, type: "invalid_request_error" },
+  session_expired: { status: 410, type: "invalid_request_error" },
+  refusal: {
+    status: 422,
+    type: "refusal_error",
+    message: "The model refused to complete the request.",
+  },
+  empty_response: {
+    status: 502,
+    type: "empty_response_error",
+    message: "The provider returned an empty response.",
+  },
+  no_error_details: {
+    status: 500,
+    type: "api_error",
+    message: "The provider failed without error details.",
+  },
+  unclassified: { status: 500, type: "api_error", message: "The request failed." },
+  unknown: { status: 500, type: "api_error", message: "The request failed." },
 };
 
 function statusForReason(reason: FailoverReason, status: number | undefined): number {
+  const fallback = ERROR_MAPPING_BY_REASON[reason].status;
   if (reason === "server_error") {
-    return status && status >= 400 && status < 500 ? status : 502;
+    return status && status >= 400 && status < 500 ? status : fallback;
   }
   if (reason === "timeout") {
-    return status && status >= 400 && status < 500 ? status : 504;
+    return status && status >= 400 && status < 500 ? status : fallback;
   }
-  return status ?? resolveFailoverStatus(reason) ?? 500;
+  return status ?? fallback;
 }
 
 function messageForReason(params: {
@@ -40,16 +67,10 @@ function messageForReason(params: {
   message: string;
   rawError?: string;
 }): string {
-  if (params.reason === "server_error") {
-    return "upstream provider error";
-  }
-  if (params.reason === "timeout") {
-    return "upstream provider timeout";
-  }
-  if (params.reason === "overloaded") {
-    return "upstream provider overloaded";
-  }
-  return params.rawError?.trim() || params.message.trim() || "request failed";
+  return ERROR_MAPPING_BY_REASON[params.reason].message
+    || params.rawError?.trim()
+    || params.message.trim()
+    || "request failed";
 }
 
 /** Converts a provider failover error into an OpenAI-compatible error envelope. */
@@ -59,10 +80,7 @@ export function resolveOpenAiCompatError(err: unknown): OpenAiCompatError | unde
   if (!reason) {
     return undefined;
   }
-  const type = ERROR_TYPE_BY_REASON[reason];
-  if (!type) {
-    return undefined;
-  }
+  const mapping = ERROR_MAPPING_BY_REASON[reason];
   const status = statusForReason(reason, described.status);
   const message = messageForReason({
     reason,
@@ -72,9 +90,9 @@ export function resolveOpenAiCompatError(err: unknown): OpenAiCompatError | unde
   return {
     status,
     error: {
-      message,
-      type,
-      ...(described.code ? { code: described.code } : {}),
+      message: redactProviderErrorBody(message),
+      type: mapping.type,
+      ...(described.code ? { code: redactProviderErrorBody(described.code) } : {}),
     },
   };
 }

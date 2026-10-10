@@ -93,14 +93,6 @@ export const ERROR_TYPE_CODE_SETS = {
  * fails the check, exactly like an undeclared defect.
  */
 export const GAP_PROBES = {
-  'renderer-drops-host-error-code': {
-    evidence: 'src/lib/host-api-client.ts',
-    isOpen(root) {
-      const text = readTextIfFile(root, 'src/lib/host-api-client.ts');
-      if (text === null) return true;
-      return !/\berror\??\.code\b/.test(text);
-    },
-  },
   'duplicate-host-response-copies': {
     evidence: 'shared/host-api/types.ts',
     isOpen(root) {

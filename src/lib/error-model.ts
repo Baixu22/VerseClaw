@@ -39,12 +39,22 @@ export class AppError extends Error {
   code: AppErrorCode;
   cause?: unknown;
   details?: Record<string, unknown>;
+  /** Renderer-side correlation id echoed by the Main host dispatcher. */
+  requestId?: string;
 
-  constructor(code: AppErrorCode, message: string, cause?: unknown, details?: Record<string, unknown>) {
+  constructor(
+    code: AppErrorCode,
+    message: string,
+    cause?: unknown,
+    details?: Record<string, unknown>,
+    requestId?: string,
+  ) {
     super(message);
+    this.name = 'AppError';
     this.code = code;
     this.cause = cause;
     this.details = details;
+    this.requestId = requestId;
   }
 }
 
@@ -287,7 +297,15 @@ function readErrorMessage(err: unknown): string {
 
 export function normalizeAppError(err: unknown, details?: Record<string, unknown>): AppError {
   if (err instanceof AppError) {
-    return new AppError(err.code, err.message, err.cause ?? err, { ...(err.details ?? {}), ...(details ?? {}) });
+    const requestId = err.requestId
+      ?? readStringField(err.details ?? {}, 'requestId');
+    return new AppError(
+      err.code,
+      err.message,
+      err.cause ?? err,
+      { ...(err.details ?? {}), ...(details ?? {}) },
+      requestId,
+    );
   }
 
   const message = readErrorMessage(err);
@@ -296,5 +314,11 @@ export function normalizeAppError(err: unknown, details?: Record<string, unknown
   // message (or a structured `reason` string) decide the class.
   const code = classifySignals(signals)
     ?? classifyMessage([signals.reason ?? '', message].join(' ').trim());
-  return new AppError(code, message, err, details);
+  return new AppError(
+    code,
+    message,
+    err,
+    details,
+    readStringField(details ?? {}, 'requestId'),
+  );
 }

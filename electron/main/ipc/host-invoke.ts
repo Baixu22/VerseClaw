@@ -1,6 +1,7 @@
 import { ipcMain, type IpcMainInvokeEvent } from 'electron';
 import {
   type HostApiContribution,
+  type HostErrorCode,
   type HostResponse,
   type HostServiceRegistry,
   type RuntimeHostAction,
@@ -40,6 +41,56 @@ async function withHostActionTimeout<T>(
   } finally {
     if (timer) clearTimeout(timer);
   }
+}
+
+type StructuredHostErrorSignals = {
+  code?: string;
+  status?: number;
+};
+
+function readStructuredStatus(value: unknown): number | undefined {
+  if (typeof value === 'number' && Number.isInteger(value) && value >= 100 && value <= 599) {
+    return value;
+  }
+  if (typeof value === 'string' && /^\d{3}$/.test(value.trim())) {
+    return Number(value.trim());
+  }
+  return undefined;
+}
+
+function readStructuredString(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
+function collectStructuredHostErrorSignals(
+  error: unknown,
+  seen: Set<object> = new Set(),
+): StructuredHostErrorSignals {
+  if (!error || typeof error !== 'object' || seen.has(error)) return {};
+  seen.add(error);
+  const record = error as Record<string, unknown>;
+  const code = readStructuredString(record.code)
+    ?? readStructuredString(record.errorCode)
+    ?? readStructuredString(record.reasonCode)
+    ?? readStructuredString(record.reason)
+    ?? readStructuredString(record.type);
+  const status = readStructuredStatus(record.status)
+    ?? readStructuredStatus(record.statusCode)
+    ?? readStructuredStatus(record.httpStatus);
+  if (code || status) return { code, status };
+  for (const nested of [record.error, record.response, record.data, record.cause]) {
+    const signals = collectStructuredHostErrorSignals(nested, seen);
+    if (signals.code || signals.status) return signals;
+  }
+  return {};
+}
+
+function resolveHostErrorCode(signals: StructuredHostErrorSignals): HostErrorCode {
+  const code = signals.code?.trim().toUpperCase();
+  if (code === 'VALIDATION' || signals.status === 400 || signals.status === 422) return 'VALIDATION';
+  if (code === 'UNSUPPORTED') return 'UNSUPPORTED';
+  if (code === 'TIMEOUT' || signals.status === 408 || signals.status === 504) return 'TIMEOUT';
+  return 'INTERNAL';
 }
 
 type RegisteredHostAction = {
@@ -206,12 +257,17 @@ export function createHostInvokeDispatcher(
         };
       }
       const rawMessage = error instanceof Error ? error.message : String(error);
+      const signals = collectStructuredHostErrorSignals(error);
+      const details: Record<string, unknown> = {};
+      if (signals.code) details.backendCode = signals.code;
+      if (signals.status) details.status = signals.status;
       return {
         id: request.id,
         ok: false,
         error: {
-          code: 'INTERNAL',
+          code: resolveHostErrorCode(signals),
           message: sanitizeHostErrorMessage(rawMessage),
+          ...(Object.keys(details).length > 0 ? { details } : {}),
         },
       };
     }
