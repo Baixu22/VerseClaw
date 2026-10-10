@@ -4,7 +4,7 @@
 **定位**：ClawX 的核心设计方向补充  
 **核心命题**：DCS 不是一个 context provider，而是所有 agent turn 的上下文编译层；Mem 不是所有信息的必经通道，而是对需要语义判断的信息执行受控压缩、归纳、去重和工作记忆构建。
 
-本设计遵循 [STAR 原则：DCS-first 的设计哲学与后续开发理念](C:\Users\27933\Desktop\clawx\ClawX\docs\dev\star-principles-and-development-philosophy-2026-08-02.md)，并可使用 [DCS-first 架构竞争评审提示词](C:\Users\27933\Desktop\clawx\ClawX\docs\dev\dcs-first-architecture-review-prompt.md) 交给其他 agent 独立挑战。
+本设计遵循 [STAR 原则：DCS-first 的设计哲学与后续开发理念](%USERPROFILE%\Desktop\clawx\ClawX\docs\dev\star-principles-and-development-philosophy-2026-08-02.md)，并可使用 [DCS-first 架构竞争评审提示词](%USERPROFILE%\Desktop\clawx\ClawX\docs\dev\dcs-first-architecture-review-prompt.md) 交给其他 agent 独立挑战。
 
 ## 1. 对用户设计的准确表述
 

@@ -244,8 +244,8 @@ that only lists paths without explaining the learned contract is insufficient.
 
 | Address | Required learning |
 |---|---|
-| `C:/Users/27933/Desktop/clawx/ClawX-role-promotion/AGENTS.md` | Repository rules and required gates |
-| `C:/Users/27933/Desktop/clawx/ClawX-role-promotion/openclaw_runtime/AGENTS.md` | Runtime subtree constraints |
+| `%USERPROFILE%/Desktop/clawx/ClawX-role-promotion/AGENTS.md` | Repository rules and required gates |
+| `%USERPROFILE%/Desktop/clawx/ClawX-role-promotion/openclaw_runtime/AGENTS.md` | Runtime subtree constraints |
 | `openclaw_runtime/src/agents/role-contract.ts` | Authoritative runtime contract and validator |
 | `openclaw_runtime/src/agents/role-registry.ts` | Existing config role materialization path |
 | `openclaw_runtime/src/agents/role-spawn.ts` | Existing spawn authority and permission context |
@@ -263,12 +263,12 @@ that only lists paths without explaining the learned contract is insufficient.
 
 | Absolute address | Required learning |
 |---|---|
-| `C:/Users/27933/Desktop/verseshell/agency-agents-main/divisions.json` | Source divisions and catalog metadata |
-| `C:/Users/27933/Desktop/verseshell/agency-agents-main/tools.json` | Source tool-install catalog, not ClawX runtime tools |
-| `C:/Users/27933/Desktop/verseshell/agency-agents-main/strategy/runbooks.json` | Stable runbook slugs and roster evidence references |
-| `C:/Users/27933/Desktop/verseshell/agency-agents-main/engineering/engineering-code-reviewer.md` | Representative candidate structure |
-| `C:/Users/27933/Desktop/verseshell/agency-agents-main/testing/testing-reality-checker.md` | Representative verification candidate |
-| `C:/Users/27933/Desktop/verseshell/agency-agents-main/security/security-penetration-tester.md` | High-risk candidate requiring conservative permissions |
+| `%USERPROFILE%/Desktop/verseshell/agency-agents-main/divisions.json` | Source divisions and catalog metadata |
+| `%USERPROFILE%/Desktop/verseshell/agency-agents-main/tools.json` | Source tool-install catalog, not ClawX runtime tools |
+| `%USERPROFILE%/Desktop/verseshell/agency-agents-main/strategy/runbooks.json` | Stable runbook slugs and roster evidence references |
+| `%USERPROFILE%/Desktop/verseshell/agency-agents-main/engineering/engineering-code-reviewer.md` | Representative candidate structure |
+| `%USERPROFILE%/Desktop/verseshell/agency-agents-main/testing/testing-reality-checker.md` | Representative verification candidate |
+| `%USERPROFILE%/Desktop/verseshell/agency-agents-main/security/security-penetration-tester.md` | High-risk candidate requiring conservative permissions |
 
 Agency references provide source data and review context. They do not define
 ClawX runtime permissions, tool ids, or activation rules.
@@ -277,13 +277,13 @@ ClawX runtime permissions, tool ids, or activation rules.
 
 | Absolute address | Required learning |
 |---|---|
-| `C:/Users/27933/Desktop/verseshell/letta-main/letta/schemas/agent.py` | Persisted state and pending approval separation |
-| `C:/Users/27933/Desktop/verseshell/letta-main/letta/schemas/tool_rule.py` | Explicit approval as a distinct rule concept |
-| `C:/Users/27933/Desktop/verseshell/letta-main/letta/helpers/tool_rule_solver.py` | Tool sequencing belongs in the execution loop, outside this phase |
-| `C:/Users/27933/Desktop/verseshell/letta-main/letta/schemas/block.py` | Stable block identity for a separate memory project |
-| `C:/Users/27933/Desktop/verseshell/letta-main/letta/services/block_manager.py` | History and versioning patterns for a separate memory project |
-| `C:/Users/27933/Desktop/verseshell/letta-main/letta/groups/sleeptime_multi_agent_v4.py` | Foreground/background ownership separation |
-| `C:/Users/27933/Desktop/verseshell/letta-main/letta/services/tool_executor/tool_execution_manager.py` | Central execution ownership, not a reason to add a second ClawX executor |
+| `%USERPROFILE%/Desktop/verseshell/letta-main/letta/schemas/agent.py` | Persisted state and pending approval separation |
+| `%USERPROFILE%/Desktop/verseshell/letta-main/letta/schemas/tool_rule.py` | Explicit approval as a distinct rule concept |
+| `%USERPROFILE%/Desktop/verseshell/letta-main/letta/helpers/tool_rule_solver.py` | Tool sequencing belongs in the execution loop, outside this phase |
+| `%USERPROFILE%/Desktop/verseshell/letta-main/letta/schemas/block.py` | Stable block identity for a separate memory project |
+| `%USERPROFILE%/Desktop/verseshell/letta-main/letta/services/block_manager.py` | History and versioning patterns for a separate memory project |
+| `%USERPROFILE%/Desktop/verseshell/letta-main/letta/groups/sleeptime_multi_agent_v4.py` | Foreground/background ownership separation |
+| `%USERPROFILE%/Desktop/verseshell/letta-main/letta/services/tool_executor/tool_execution_manager.py` | Central execution ownership, not a reason to add a second ClawX executor |
 
 Letta is a design comparison. Its database, AgentState, block manager, tool
 loop, and background-agent implementation are not copied into ClawX.
@@ -292,7 +292,7 @@ loop, and background-agent implementation are not copied into ClawX.
 
 | Address | Role |
 |---|---|
-| `C:/Users/27933/.codex/attachments/c80f0e36-1692-45db-a755-ae7730931d95/pasted-text.txt` | Original proposal; informative, not authoritative |
+| `%USERPROFILE%/.codex/attachments/c80f0e36-1692-45db-a755-ae7730931d95/pasted-text.txt` | Original proposal; informative, not authoritative |
 | `docs/superpowers/specs/2026-07-12-agency-role-promotion-control-plane-design.md` | Authoritative design decisions |
 | `docs/multi-agent-orchestration/phase-constraints/agency-role-promotion-control-plane.md` | Authoritative round boundaries |
 | `docs/superpowers/plans/2026-07-12-agency-role-promotion-control-plane.md` | Task and TDD order |

@@ -1,7 +1,7 @@
 # P0/P1 Remaining Multi-Agent Design
 
 Date: 2026-07-06
-Worktree: `C:\Users\27933\Desktop\clawx\ClawX-knowledge-ux-polish`
+Worktree: `%USERPROFILE%\Desktop\clawx\ClawX-knowledge-ux-polish`
 Branch: `knowledge-ux-polish`
 
 ## Goal

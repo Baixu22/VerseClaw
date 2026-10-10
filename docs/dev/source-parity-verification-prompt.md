@@ -20,14 +20,14 @@
 
 ## 1. 背景(仅作索引,勿照抄结论)
 
-ClawX 是 Electron + React + TypeScript 项目(工作区 `C:\Users\27933\Desktop\clawx\ClawX`),内含 `openclaw_runtime/`(TS runtime)。此前基于 `C:\Users\27933\Desktop\coding\source_archive\` 下迁移出的四个开源项目源码(Aider/Cline/Open SWE/Codex)做了能力补全。**本会话的任务是独立验证这些补全的真实性,不预设任何结论。**
+ClawX 是 Electron + React + TypeScript 项目(工作区 `%USERPROFILE%\Desktop\clawx\ClawX`),内含 `openclaw_runtime/`(TS runtime)。此前基于 `%USERPROFILE%\Desktop\coding\source_archive\` 下迁移出的四个开源项目源码(Aider/Cline/Open SWE/Codex)做了能力补全。**本会话的任务是独立验证这些补全的真实性,不预设任何结论。**
 
 ---
 
 ## 2. 参照源码位置(只读基准)
 
 ```
-C:\Users\27933\Desktop\coding\source_archive\
+%USERPROFILE%\Desktop\coding\source_archive\
 ├── aider\
 │   ├── coders\editblock_coder.py     # did_you_mean:find_similar_lines ~L602-628;错误模板 ~L84-124
 │   ├── coders\base_coder.py          # 反射循环 max_reflections=3;auto_commit 链
@@ -58,7 +58,7 @@ C:\Users\27933\Desktop\coding\source_archive\
 
 ## 3. 本地实现位置(待验证对象)
 
-全部在 `C:\Users\27933\Desktop\clawx\ClawX\`:
+全部在 `%USERPROFILE%\Desktop\clawx\ClawX\`:
 
 | # | 能力 | 参照源码 | 本地实现(必读) | 已知薄弱点(自查坦白,需重点验证) |
 |---|---|---|---|---|

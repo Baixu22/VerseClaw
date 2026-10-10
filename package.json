@@ -89,6 +89,7 @@
     "repo:artifacts:check": "node scripts/check-repository-artifacts.mjs",
     "repo:evidence:check": "node scripts/check-evidence-refs.mjs",
     "repo:evidence:sha256": "node scripts/verify-evidence-sha256sums.mjs",
+    "repo:local-paths:check": "node scripts/check-local-paths.mjs",
     "test:skips:report": "node scripts/report-test-skips.mjs",
     "contract:check": "node scripts/contract-check.mjs",
     "chain-audit": "node scripts/chain-audit/run-chain-audit.mjs",

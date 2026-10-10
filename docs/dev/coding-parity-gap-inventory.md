@@ -1,6 +1,6 @@
 # ClawX coding 能力对齐缺口盘点(四开源项目)
 
-> 盘点范围:参照 `C:\Users\27933\Desktop\coding\source_archive\` 下 aider / codex / cline / open_swe 的 coding 能力面,
+> 盘点范围:参照 `%USERPROFILE%\Desktop\coding\source_archive\` 下 aider / codex / cline / open_swe 的 coding 能力面,
 > 对照本地 `openclaw_runtime/src/` + `electron/services/`。
 > 状态:✅ 已对齐 | 🟡 部分对应(语义对齐/机制不同,列缺什么) | ❌ 无对应(未引入)。
 > 已审计并修复的 8 项(edit-did_you_mean、checkpoint 回滚、mission-control、git 防护、autoVerify、SSRF、execpolicy 前缀、CI 门禁)不重复列入。

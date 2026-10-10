@@ -129,7 +129,7 @@ Install: %USERPROFILE%\.codex\skills\
 
 ```powershell
 $tf = "$env:USERPROFILE\.codex\skills\task-forest\scripts\task_forest.py"
-$ws = "C:\Users\27933\Desktop\clawx\ClawX-maturity-p0"
+$ws = "$env:USERPROFILE\Desktop\clawx\ClawX-maturity-p0"
 $env:PYTHONUTF8 = "1"
 python $tf todo --workspace $ws
 python $tf list --workspace $ws

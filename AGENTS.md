@@ -126,7 +126,7 @@ MCP server 脚本路径：
 
 如需在 Codex 重启后重新注册，运行：
 ```powershell
-& "$env:LOCALAPPDATA\OpenAI\Codex\bin\8e55c2dd143b6354\codex.exe" mcp add bash-shell -- node "C:\Users\27933\Desktop\Verse Claw\verse-claw\.codex-tools\bash-mcp-server\scripts\bash-mcp-server.mjs"
+& "$env:LOCALAPPDATA\OpenAI\Codex\bin\8e55c2dd143b6354\codex.exe" mcp add bash-shell -- node "%USERPROFILE%\Desktop\Verse Claw\verse-claw\.codex-tools\bash-mcp-server\scripts\bash-mcp-server.mjs"
 ```
 或运行安装脚本：
 ```powershell

@@ -9,7 +9,7 @@
 
 ## 【工作目录】
 
-`C:\Users\27933\Desktop\clawx\ClawX`
+`%USERPROFILE%\Desktop\clawx\ClawX`
 
 ## 【用户目标】
 
@@ -64,7 +64,7 @@
 ## 【关键文件 / 命令 / 产物】
 
 - `docs/dev/unified-agent-system/runtime-convergence/`
-- `C:\Users\27933\Desktop\result\final\dcs-first-architecture-synthesis-final-2026-08-02.md`
+- `%USERPROFILE%\Desktop\result\final\dcs-first-architecture-synthesis-final-2026-08-02.md`
 - `pnpm harness context --spec <active-spec>`
 - `pnpm harness validate --spec <active-spec>`
 - `node scripts/rc01-authority-inventory.mjs --accepted-base <RC-01 accepted base SHA>`（必填；显式选择候选 HEAD 的祖先 commit，不依赖 `origin/main`。重建现有基线时使用其 `acceptedBaseSha`，缺失/错误参数、非 commit 或非祖先均在写入前失败）

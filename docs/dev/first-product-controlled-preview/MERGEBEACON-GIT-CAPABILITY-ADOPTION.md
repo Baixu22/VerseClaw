@@ -2,7 +2,7 @@
 
 > 状态：Research complete / core implementation planned in FP-P2
 > 调研日期：2026-07-27
-> 来源快照：`C:\Users\27933\Desktop\verseshell\MergeBeacon-main`
+> 来源快照：`%USERPROFILE%\Desktop\verseshell\MergeBeacon-main`
 > 已解析上游提交：`14a17c7ecb821af4bdb645d5f492e7cf72bcd293`（tree `95fddba4593a879352a59de157db92c63afa819f`）
 > 任务入口：`FP-P2-07` → `FP-P2-10` → `FP-P2-01/02/03`；多平台扩围为 `FP-P4-08`
 

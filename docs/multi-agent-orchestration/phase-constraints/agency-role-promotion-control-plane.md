@@ -2,7 +2,7 @@
 
 > Active project: Agency Role Promotion Control Plane only.
 >
-> Worktree: `C:\Users\27933\Desktop\clawx\ClawX-role-promotion`
+> Worktree: `%USERPROFILE%\Desktop\clawx\ClawX-role-promotion`
 >
 > Branch: `codex/agency-role-promotion-control-plane`
 

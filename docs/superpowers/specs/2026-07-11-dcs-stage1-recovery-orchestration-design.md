@@ -8,7 +8,7 @@ The DCS specification, final review, and Harness task specifications remain
 authoritative.
 
 The recovery starts from commit `623677ec6cda799fec6f305809ed4db37a514d70`.
-The user's main workspace at `C:\Users\27933\Desktop\clawx\ClawX` is evidence
+The user's main workspace at `%USERPROFILE%\Desktop\clawx\ClawX` is evidence
 and must remain read-only throughout recovery.
 
 ## Goal
