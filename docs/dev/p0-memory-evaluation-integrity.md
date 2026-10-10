@@ -68,3 +68,9 @@
 - 本地请求不附带云端凭据，禁止 HTTP 重定向，响应必须带正确模型标识、连续唯一索引、4096维有限且非零的向量。缓存 ID 与 SiliconFlow 隔离。报告保留 deployment/quantization/weight digest，以及 reranker 资源可用性。
 - 量化本地配置只能建立新的实测参考；比较器对不同或未知嵌入配置给出明确警告，保留算术退化信号，不能以它声称重现或恢复旧 temporal 分数。冻结 judge、原始题目顺序与产品默认值不变。
 - 本轮聚焦验证和实际模型资源状态见相邻精选证据。确定性测试、向量烟测与完整500题验收分开记录；缺完整产物不关闭 #135/#136/#138。
+
+### full500 CLI 模型初始化补修
+
+启动完整实测前发现：入口静态导入校验器，使冻结 judge 在解析 `--model` 前就捕获默认模型；子进程用 StepFun，父进程却按 DeepSeek 校验，运行结束会误拒绝。已改为解析 CLI 配置后动态导入校验器。真实 Node CLI 的合成编排反例先复现 `Verifier captured stale model`，修复后通过；它不执行模型调用，也不是完整评测证据。
+
+补修验证：两文件 19 passed / 0 failed / 0 skipped；无缓存测试类型检查、定向 lint、差异感知 Harness 均 exit 0。原始报告 `D:/ClawX-work/p0-local-embedding-20261010/acceptance/cli-model-green.json`，SHA-256 `f98ab2efa36c4e8f9e853b4b43b7c1155dea7e7735e0cfd8f2046e034008f026`。早先 `local-embedding-20261010.json` 是提交 `50e3b6c82` 的独立开发快照，不覆盖或伪造为本次 CLI 补修后的全量证明。

@@ -5,7 +5,6 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { getRuntimeMemoryLlmConfig } from '../tests/unit/helpers/runtime-memory-real-llm-client.ts';
-import { verifyLocomoEvidenceFile } from './check-locomo-evidence.mjs';
 import { verifyLocomoEmbeddingResources } from '../tests/unit/helpers/locomo-embedding-provider.ts';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -38,6 +37,8 @@ try {
     cwd: root, env, stdio: 'inherit', windowsHide: true, timeout: 90 * 60 * 1000,
   });
   if (result.error || result.signal || result.status !== 0) throw new Error('LoCoMo runner failed: exit=' + result.status + ', signal=' + result.signal + (result.error ? ', ' + result.error.message : ''));
+  // The frozen judge reads its model at import time; CLI options must be applied first.
+  const { verifyLocomoEvidenceFile } = await import('./check-locomo-evidence.mjs');
   const verified = verifyLocomoEvidenceFile(join(output, 'locomo-full-500-report.json'));
   console.log(JSON.stringify(verified, null, 2));
 } catch (error) {
