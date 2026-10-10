@@ -485,14 +485,14 @@ describe("DCS FactStore view tools (C0-1')", () => {
       contextBlockSink: vi.fn(async () => [{ accepted: true }]),
       factService: resolveWorkspaceFactService(repoRoot),
     });
-    expect(tools.length).toBe(7);
+    expect(tools.length).toBe(8);
     const budget = recordContextToolSchemaBudget(tools);
-    expect(budget.toolCount).toBe(7);
+    expect(budget.toolCount).toBe(8);
     expect(budget.schemaChars).toBeGreaterThan(0);
     expect(serializeContextToolSchemas(tools, budget.schemaMode).length).toBe(budget.schemaChars);
     expect(budget.summarySchemaChars).toBeLessThanOrEqual(budget.fullSchemaChars);
     const snap = codingObservability.snapshot();
-    expect(snap.schemaToolCount).toBe(7);
+    expect(snap.schemaToolCount).toBe(8);
     expect(snap.schemaChars).toBe(budget.schemaChars);
   });
 });
@@ -551,7 +551,7 @@ describe("C1-1 on_demand schema + view-tool flag", () => {
     expect(tools.map((t) => t.name)).toEqual(
       expect.arrayContaining([...DCS_CONTEXT_AGENT_TOOL_NAMES, ...DCS_CONTEXT_VIEW_TOOL_NAMES]),
     );
-    expect(tools).toHaveLength(7);
+    expect(tools).toHaveLength(8);
   });
 
   it("on_demand summary mode: default registry list has no full schema property dump", async () => {
@@ -569,7 +569,7 @@ describe("C1-1 on_demand schema + view-tool flag", () => {
     });
     const entries = mapToolsToToolRegistryEntries(tools, { schemaMode: "summary" });
     const contextEntries = entries.filter((e) => e.resourceId.startsWith("context_"));
-    expect(contextEntries.length).toBe(7);
+    expect(contextEntries.length).toBe(8);
     for (const entry of contextEntries) {
       // RED was: purpose embeds "[block_type, category]" style full prop dump
       expect(entry.purpose).not.toMatch(/\[.*,.*\]/);

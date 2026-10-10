@@ -13,6 +13,7 @@ import {
   recordContextFamilyLifecycleEvents,
 } from "../../context-engine/registry/context-item-registry.js";
 import type { ArchiveHandle, LifecycleEvent } from "../../../../shared/types/context-family.js";
+import { normalizeArchiveHandle } from "../../../../shared/types/context-item.js";
 import { resolveAgentContextLimits } from "../agent-scope.js";
 import type { RuntimeIntensityPolicy } from "../intensity-policy.js";
 import type { AgentMessage } from "../runtime/index.js";
@@ -448,6 +449,15 @@ function archiveOriginalToolResultPayload(params: {
   const sessionId = params.sessionId?.trim();
   if (!sessionId) {
     return undefined;
+  }
+  const existing = (params.message as { details?: { archiveHandle?: unknown } }).details?.archiveHandle;
+  if (existing !== undefined) {
+    try {
+      const handle = normalizeArchiveHandle(existing);
+      if (handle.source?.sessionId === sessionId) return handle;
+    } catch {
+      // Fall through to archiving the available message content.
+    }
   }
   try {
     return createContextArchiveHandleForPayloadSync({

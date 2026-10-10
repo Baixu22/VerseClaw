@@ -5,6 +5,7 @@
  */
 import type { ChildProcessWithoutNullStreams } from "node:child_process";
 import type { SessionAdmissionIdentity } from "../sessions/session-admission-registry.js";
+import type { ArchiveHandle } from "../../../shared/types/context-item.js";
 import type { EventSessionRoutingPolicy } from "../infra/event-session-routing.js";
 import { signalProcessTree } from "../process/kill-tree.js";
 import type { TerminationReason } from "../process/supervisor/types.js";
@@ -28,6 +29,14 @@ let jobTtlMs = clampTtl(readEnvInt("OPENCLAW_BASH_JOB_TTL_MS", "PI_BASH_JOB_TTL_
 
 /** Lifecycle status recorded for background process sessions. */
 export type ProcessStatus = "running" | "completed" | "failed" | "killed";
+
+export type ProcessRawOutputCaptureResult = {
+  handle?: ArchiveHandle;
+  charCount: number;
+  byteCount: number;
+  truncated: boolean;
+  diagnostics: string[];
+};
 
 /** Writable stdin surface shared by child-process and PTY-backed sessions. */
 export type SessionStdin = {
@@ -100,6 +109,11 @@ export interface ProcessSession {
   backgrounded: boolean;
   /** PTY cursor key mode: unknown until a PTY reports smkx/rmkx. */
   cursorKeyMode: "unknown" | "normal" | "application";
+  /** Pre-truncation output capture callbacks supplied by the exec runtime. */
+  captureRawOutput?: (stream: "stdout" | "stderr", chunk: string) => void;
+  finalizeRawOutput?: () => ProcessRawOutputCaptureResult | undefined;
+  disposeRawOutput?: () => void;
+  rawOutputCapture?: ProcessRawOutputCaptureResult;
 }
 
 /** Retained summary for a completed background session. */
@@ -155,6 +169,7 @@ export function getFinishedSession(id: string) {
 
 /** Removes a session from both running and finished registries. */
 export function deleteSession(id: string) {
+  runningSessions.get(id)?.disposeRawOutput?.();
   runningSessions.delete(id);
   finishedSessions.delete(id);
   stopSweeperWhenEmpty();
@@ -162,6 +177,7 @@ export function deleteSession(id: string) {
 
 /** Appends process output while enforcing aggregate and pending-output caps. */
 export function appendOutput(session: ProcessSession, stream: "stdout" | "stderr", chunk: string) {
+  session.captureRawOutput?.(stream, chunk);
   session.pendingStdout ??= [];
   session.pendingStderr ??= [];
   session.pendingStdoutChars ??= sumPendingChars(session.pendingStdout);
@@ -220,6 +236,7 @@ export function markExited(
   session.exitSignal = exitSignal;
   session.exitReason = exitReason;
   session.tail = tail(session.aggregated, 2000);
+  session.rawOutputCapture ??= session.finalizeRawOutput?.();
   moveToFinished(session, status);
 }
 

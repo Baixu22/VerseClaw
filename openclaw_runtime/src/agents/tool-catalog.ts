@@ -255,6 +255,14 @@ const CORE_TOOL_DEFINITIONS: CoreToolDefinition[] = [
     includeInOpenClawGroup: true,
   },
   {
+    id: "context_archive_recall",
+    label: "context_archive_recall",
+    description: "Read a bounded excerpt from a masked observation archive",
+    sectionId: "memory",
+    profiles: ["coding"],
+    includeInOpenClawGroup: true,
+  },
+  {
     id: "context_search",
     label: "context_search",
     description: "Search context blocks by entity/query",

@@ -159,6 +159,7 @@ export type ContextArchiveVerifyResult =
   | {
       ok: true;
       payload: unknown;
+      handle: ArchiveHandle;
     }
   | {
       ok: false;
@@ -224,7 +225,7 @@ export async function verifyContextArchiveHandle(
   if (payloadChecksum !== handle.checksum || parsed.handle.checksum !== handle.checksum) {
     return { ok: false, reason: 'checksum_mismatch' };
   }
-  return { ok: true, payload: parsed.payload };
+  return { ok: true, payload: parsed.payload, handle: parsed.handle };
 }
 
 export async function cleanupContextArchiveArtifacts(params: {

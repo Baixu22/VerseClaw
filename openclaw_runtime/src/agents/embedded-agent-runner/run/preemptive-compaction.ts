@@ -263,8 +263,9 @@ function formatObservationMaskPlaceholder(params: {
     `itemId: ${params.itemId}`,
     `archive: ${params.archiveHandle.uri}`,
     `checksum: ${params.archiveHandle.checksum}`,
+    `byteLength: ${params.archiveHandle.byteLength}`,
     `originalChars: ${params.originalChars}`,
-    "Recall through the read-only Context Family recall surface before relying on omitted details.",
+    `Recall with context_archive_recall using archive_uri, checksum, byte_length and an optional offset/max_chars.`,
   ].join("\n");
 }
 
