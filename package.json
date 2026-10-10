@@ -77,6 +77,7 @@
     "agent-dev:deep-test:reuse:full": "node scripts/agent-dev-deep-test.mjs --reuse-build --cached-typecheck",
     "agent-dev:audit": "node scripts/agent-dev-audit.mjs",
     "agent-dev:audit:report": "node scripts/agent-dev-audit.mjs --no-fail",
+    "observability:problems": "pnpm --dir openclaw_runtime exec tsx ../scripts/observability-problems.mjs",
     "catalogs:gen": "pnpm --dir openclaw_runtime exec tsx ../scripts/generate-catalogs.mjs",
     "catalogs:check": "pnpm --dir openclaw_runtime exec tsx ../scripts/generate-catalogs.mjs --check",
     "agent-dev:evaluate": "node scripts/agent-dev-benefit-eval.mjs",
