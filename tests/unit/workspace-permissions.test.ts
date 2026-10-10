@@ -69,6 +69,31 @@ describe('workspace permission policy', () => {
     expect(classifyWorkspaceCommand('git -c x=y push')).toBe('destructive');
   });
 
+  it('classifies worktree lifecycle commands without letting shell risk lag behind git-api', () => {
+    expect(classifyWorkspaceCommand('git worktree list --porcelain')).toBe('read');
+    expect(classifyWorkspaceCommand('git worktree add ../ClawX-feature -b feature')).toBe('write');
+    expect(classifyWorkspaceCommand('git worktree add -b feature ../ClawX-feature')).toBe('write');
+    expect(classifyWorkspaceCommand('git worktree add /tmp/external -b feature')).toBe('external-write');
+    expect(classifyWorkspaceCommand('git worktree add ../../outside -b feature')).toBe('external-write');
+    expect(classifyWorkspaceCommand('git worktree remove --force ../ClawX-feature')).toBe('destructive');
+    expect(classifyWorkspaceCommand('git worktree prune')).toBe('destructive');
+
+    expect(decideWorkspaceCommand('git worktree add /tmp/external -b feature', 'acceptEdits')).toMatchObject({
+      allowed: false,
+      requiresApproval: true,
+      risk: 'external-write',
+    });
+    expect(decideWorkspaceCommand('git worktree remove --force ../ClawX-feature', 'acceptEdits')).toMatchObject({
+      allowed: false,
+      requiresApproval: true,
+      risk: 'destructive',
+    });
+    expect(decideWorkspaceCommand('git worktree list --porcelain', 'readOnly')).toMatchObject({
+      allowed: true,
+      risk: 'read',
+    });
+  });
+
   it('keeps benign git invocations readable when global flags are absent or harmless', () => {
     expect(classifyWorkspaceCommand('git status')).toBe('read');
     expect(classifyWorkspaceCommand('git --no-pager status')).toBe('read');

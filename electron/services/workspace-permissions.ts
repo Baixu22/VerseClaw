@@ -247,6 +247,47 @@ function normalizeGitCommand(normalized: string): { rewritten: string } | { unsa
   return null;
 }
 
+const GIT_WORKTREE_ADD_VALUE_FLAGS = new Set(['-b', '-B', '--reason', '--track']);
+
+function classifyGitWorktreeCommand(command: string): WorkspaceCommandRisk | null {
+  const tokens = command.split(' ').filter(Boolean);
+  if ((tokens[0] ?? '').toLowerCase() !== 'git' || (tokens[1] ?? '').toLowerCase() !== 'worktree') {
+    return null;
+  }
+  const action = (tokens[2] ?? '').toLowerCase();
+  if (action === 'list') return 'read';
+  if (action === 'prune' || action === 'remove') return 'destructive';
+  if (action !== 'add') return null;
+
+  let index = 3;
+  let rawPath: string | undefined;
+  while (index < tokens.length) {
+    const token = tokens[index]!;
+    if (token === '--') {
+      rawPath = tokens[index + 1];
+      break;
+    }
+    if (token.startsWith('-')) {
+      index += GIT_WORKTREE_ADD_VALUE_FLAGS.has(token) ? 2 : 1;
+      continue;
+    }
+    rawPath = token;
+    break;
+  }
+  if (!rawPath) return 'write';
+  const target = rawPath.replace(/^["']|["']$/g, '');
+  const traversalSegments = target.split(/[\\/]/).filter((segment) => segment === '..').length;
+  if (
+    target.startsWith('~')
+    || target.startsWith('/')
+    || /^[A-Za-z]:[\\/]/.test(target)
+    || traversalSegments > 1
+  ) {
+    return 'external-write';
+  }
+  return 'write';
+}
+
 export function classifyWorkspaceCommand(command: string): WorkspaceCommandRisk {
   const normalized = normalizeCommand(command);
   if (!normalized) return 'read';
@@ -259,6 +300,8 @@ export function classifyWorkspaceCommand(command: string): WorkspaceCommandRisk 
   const subject = git ? git.rewritten : normalized;
 
   if (DANGEROUS_PATTERNS.some((pattern) => pattern.test(subject))) return 'destructive';
+  const worktreeRisk = classifyGitWorktreeCommand(subject);
+  if (worktreeRisk) return worktreeRisk;
   if (NETWORK_PATTERNS.some((pattern) => pattern.test(subject))) return 'network';
   if (WRITE_PATTERNS.some((pattern) => pattern.test(subject))) return 'write';
 

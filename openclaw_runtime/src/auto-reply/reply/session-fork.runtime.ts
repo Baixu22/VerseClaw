@@ -245,7 +245,7 @@ async function writeForkHeaderOnly(params: {
 async function writeBranchedSession(params: {
   parentSessionFile: string;
   source: ForkSourceTranscript;
-}): Promise<{ sessionId: string; sessionFile: string }> {
+}): Promise<{ sessionId: string; sessionFile: string } | null> {
   const sessionId = crypto.randomUUID();
   const timestamp = new Date().toISOString();
   const fileTimestamp = timestamp.replace(/[:.]/g, "-");
@@ -269,18 +269,21 @@ async function writeBranchedSession(params: {
   const hasAssistant = entries.some(
     (entry) => entry.type === "message" && entry.message.role === "assistant",
   );
-  if (hasAssistant) {
-    await fs.mkdir(path.dirname(sessionFile), { recursive: true });
-    await fs.writeFile(
-      sessionFile,
-      `${entries.map((entry) => JSON.stringify(entry)).join("\n")}\n`,
-      {
-        encoding: "utf-8",
-        mode: 0o600,
-        flag: "wx",
-      },
-    );
+  if (!hasAssistant) {
+    // A branch with no assistant tail cannot carry a valid forked context.
+    // Fail closed instead of returning a path that was never written.
+    return null;
   }
+  await fs.mkdir(path.dirname(sessionFile), { recursive: true });
+  await fs.writeFile(
+    sessionFile,
+    `${entries.map((entry) => JSON.stringify(entry)).join("\n")}\n`,
+    {
+      encoding: "utf-8",
+      mode: 0o600,
+      flag: "wx",
+    },
+  );
   return { sessionId, sessionFile };
 }
 
