@@ -1,0 +1,390 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-p0-completion",
+  "generatedAt": "2026-10-10T02:22:33.359Z",
+  "evidenceClass": "development-regression-and-live-judge-smoke",
+  "full500Accepted": false,
+  "sourceBase": "b24c57eeb1253326124268e6e39df4d5505b9ca9",
+  "branch": "codex/p0-evidence-completion-20261010",
+  "issues": {
+    "62": {
+      "status": "open",
+      "missingObjects": 29,
+      "missing": [
+        {
+          "type": "tree",
+          "oid": "1127a87d00c238cadc09c1be01d5f52fe937d71d"
+        },
+        {
+          "type": "blob",
+          "oid": "623c30131a9a37c4a2885f61636fcf57c23c533f"
+        },
+        {
+          "type": "tree",
+          "oid": "184cc88824eab58b2c1cf4d302b739173e8ca2e3"
+        },
+        {
+          "type": "commit",
+          "oid": "895af4304d4369e551fd858153d01fa6c09808aa"
+        },
+        {
+          "type": "tree",
+          "oid": "69c41443dd5aab553d2adf9832d8c9b9a1ee7623"
+        },
+        {
+          "type": "tree",
+          "oid": "8bd638b5ca2eeb3b2cb71403d7ad3c1bb648d84e"
+        },
+        {
+          "type": "commit",
+          "oid": "8bfd98281f6a5b757b660c34ca5bbfb0b871cab1"
+        },
+        {
+          "type": "tree",
+          "oid": "4f5cf1cfc1c3cd2be854be1c18ebbf573e31027d"
+        },
+        {
+          "type": "tree",
+          "oid": "ca6dc9087190add61535cb837736a1f574a7f649"
+        },
+        {
+          "type": "tree",
+          "oid": "f76dfd17a1412cb3da857b4edc1b5bc2c87419d0"
+        },
+        {
+          "type": "blob",
+          "oid": "b89ae9f4fd7c2444a7396de342acc26fe0fedf9a"
+        },
+        {
+          "type": "tree",
+          "oid": "f4a1f5530947afc02360fb093e039abcf3d11d0e"
+        },
+        {
+          "type": "blob",
+          "oid": "c7cf05c4f6a5e7a5010e5d0bfb6471b19a656be9"
+        },
+        {
+          "type": "blob",
+          "oid": "1ddc699b495d3cd12481daf6a6ee151e1ef8689a"
+        },
+        {
+          "type": "tree",
+          "oid": "7e26428a437f35f6bc109cc83407cbe1016387a3"
+        },
+        {
+          "type": "tree",
+          "oid": "732ace05218d1857cbe5163c1bbe41eaafb9f961"
+        },
+        {
+          "type": "tree",
+          "oid": "0e2b5234c1731adbc6fa1c2380e8027561b1cfee"
+        },
+        {
+          "type": "blob",
+          "oid": "1530b640cbf7ae87fb8dc641bfeb746ba12f0548"
+        },
+        {
+          "type": "blob",
+          "oid": "9f41162fe7f43e74d6538b3043477f5bec247170"
+        },
+        {
+          "type": "blob",
+          "oid": "897fba7ebfcf0eba8d7519d32a60c8a21ed35a2c"
+        },
+        {
+          "type": "blob",
+          "oid": "8d87a2ce3e3e43df2e557159c98213a3b6a22508"
+        },
+        {
+          "type": "blob",
+          "oid": "0b9712ae4036bba773fa35ff7e489e51707378f7"
+        },
+        {
+          "type": "commit",
+          "oid": "69971a77275e3ca28345d2cd08fcbe7295c62e76"
+        },
+        {
+          "type": "blob",
+          "oid": "9ff2be866ff7d142b02acf4e83bc9622aca5b06b"
+        },
+        {
+          "type": "blob",
+          "oid": "2a6293b45fcd850d070e68b6d1ad9c61500f55d9"
+        },
+        {
+          "type": "blob",
+          "oid": "b86e9f429c68019e5bbadfec8e61eea2de3082a5"
+        },
+        {
+          "type": "blob",
+          "oid": "f772f7fae11c11d76ae409e0d1a9b3d6f178640f"
+        },
+        {
+          "type": "blob",
+          "oid": "f7e2b7c2f4888ec8fcfa658716e5fc710966c11d"
+        },
+        {
+          "type": "blob",
+          "oid": "20e8b398030bce26759682f04aa959a914dc5680"
+        }
+      ],
+      "fsckExit": 2,
+      "historyRecoveryAccepted": false,
+      "refDeletion": false,
+      "additionalRecovery": {
+        "driven_by": "agent",
+        "actor": "codex-p0-completion",
+        "missingBlobCount": 15,
+        "archives": [
+          {
+            "archive": "D:\\ClawX-work\\artifact-cleanup-20261009-195253\\index-blobs.zip",
+            "entries": 406,
+            "matchingMissingBlobs": []
+          },
+          {
+            "archive": "D:\\ClawX-work\\artifact-cleanup-20261009-195253\\working-files.zip",
+            "entries": 453,
+            "matchingMissingBlobs": []
+          }
+        ],
+        "mutatedGitObjects": false
+      }
+    },
+    "135": {
+      "status": "open",
+      "gap": "Original-pipeline full500 partition evidence not generated; embedding resource absent"
+    },
+    "136": {
+      "status": "open",
+      "gap": "Verified paired temporal retrieval measurements not obtained"
+    },
+    "138": {
+      "status": "open",
+      "newRepair": "Bind every full-run question to a unique live frozen-judge response ID, exact prompt request digest, and parsed verdict; forbid cached full-run judge substitutions",
+      "gap": "Current-schema full500 measured report not generated; prior synthetic aggregates remain unverified"
+    }
+  },
+  "red": {
+    "passed": 11,
+    "failed": 5,
+    "skipped": 0,
+    "expectedFailures": [
+      "LoCoMo run evidence integrity (#138) rejects unrelated judge requests even when receipt totals are correct",
+      "LoCoMo run evidence integrity (#138) rejects a score contradicted by its actual judge response",
+      "LoCoMo run evidence integrity (#138) rejects missing retained judge evidence instead of accepting unrelated API calls",
+      "LoCoMo run evidence integrity (#138) rejects unreceipted judge-cache substitutions in a full fresh run",
+      "LoCoMo run evidence integrity (#138) rejects changing the frozen judge prompt while keeping its version label"
+    ]
+  },
+  "green": {
+    "files": 8,
+    "passed": 193,
+    "failed": 0,
+    "skipped": 0
+  },
+  "gates": [
+    {
+      "durationMs": 8592,
+      "argv": [
+        "pnpm",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "typecheck:test"
+      ],
+      "name": "typecheck-final",
+      "exitCode": 0
+    },
+    {
+      "durationMs": 3460,
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/context-recall.test.ts",
+        "tests/unit/locomo-pipeline.test.ts",
+        "tests/unit/locomo-report-comparator.test.ts",
+        "tests/unit/runtime-memory-locomo-report-schema.test.ts",
+        "tests/unit/locomo-evidence-integrity.test.ts",
+        "tests/unit/runtime-memory-real-llm-client.test.ts",
+        "tests/unit/locomo-eval-config.test.ts",
+        "tests/unit/locomo-judge-registry.test.ts",
+        "--reporter=json",
+        "--outputFile=D:/ClawX-work/p0-evidence-completion-20261010/unit-final.json"
+      ],
+      "name": "unit-final",
+      "exitCode": 0
+    },
+    {
+      "durationMs": 1987,
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "scripts/check-locomo-evidence.mjs",
+        "tests/unit/helpers/runtime-memory-real-llm-client.ts",
+        "tests/unit/locomo-evidence-integrity.test.ts",
+        "tests/unit/runtime-memory-real-llm-client.test.ts",
+        "tests/unit/runtime-memory-locomo-full-500.test.ts"
+      ],
+      "name": "lint-final",
+      "exitCode": 0
+    },
+    {
+      "durationMs": 1339,
+      "argv": [
+        "pnpm",
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/p0-memory-evaluation-integrity.md"
+      ],
+      "name": "harness-final",
+      "exitCode": 0
+    },
+    {
+      "durationMs": 738,
+      "argv": [
+        "pnpm",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "comms:replay"
+      ],
+      "name": "comms-replay",
+      "exitCode": 0
+    },
+    {
+      "durationMs": 696,
+      "argv": [
+        "pnpm",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "comms:compare"
+      ],
+      "name": "comms-compare",
+      "exitCode": 0
+    },
+    {
+      "durationMs": 73,
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "name": "diff-check-final",
+      "exitCode": 0
+    }
+  ],
+  "judgeSmoke": {
+    "driven_by": "agent",
+    "actor": "codex-p0-completion",
+    "evidenceClass": "real-provider-judge-smoke-only",
+    "notFull500": true,
+    "startedAt": "2026-10-10T02:16:00.843Z",
+    "finishedAt": "2026-10-10T02:16:02.816Z",
+    "requestDigestMatches": true,
+    "verdict": 1,
+    "receipt": {
+      "completedAt": "2026-10-10T02:16:02.814Z",
+      "endpoint": "https://api.stepfun.com/step_plan/v1/chat/completions",
+      "requestedModel": "step-5-preview",
+      "returnedModel": "step-5-preview",
+      "responseId": "3686f4e820e6b85f8387b7ba47690c52.2d240768a3df5ac2288292190c370b3b",
+      "requestSha256": "e0f0e9b8ae30bc5e85c1c398432e23f08a8136b50a8239ddd42f8c6360e23f38",
+      "responseSha256": "af3984d5003759fc967119b2696714f5b1b6ac8d8bcf418cfa9c3be74b145b9c",
+      "status": 200,
+      "attempts": 1,
+      "usage": {
+        "prompt_tokens": 253,
+        "completion_tokens": 100,
+        "total_tokens": 353,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "judgeEvidence": {
+        "temperature": 0,
+        "maxTokens": 2048,
+        "content": "CORRECT"
+      }
+    }
+  },
+  "embeddingAvailability": {
+    "driven_by": "agent",
+    "actor": "codex-p0-completion",
+    "at": "2026-10-10T02:16:00.763Z",
+    "endpoint": "https://api.stepfun.com/step_plan/v1/embeddings",
+    "model": "Qwen/Qwen3-Embedding-8B",
+    "httpStatus": 404,
+    "bodyRetained": false,
+    "correctedApiVersion": true
+  },
+  "attempts": {
+    "directTsc": {
+      "exitCode": 134,
+      "reason": "Wrong runner for this repository, V8 heap exhaustion; official tsgo rerun passed after correcting option/return types"
+    },
+    "unversionedModelEndpoint": {
+      "exitCode": 1,
+      "httpStatus": 404,
+      "replacedByVersionedSuccessfulSmoke": true
+    },
+    "wrongHarnessEntry": {
+      "exitCode": 1,
+      "reason": "Initial direct packages/harness path absent; official pnpm harness validate and dry-run reran successfully"
+    }
+  },
+  "limitations": [
+    "Synthetic validator inputs do not establish measured benchmark baselines",
+    "No third-party attestation or provider signature is claimed",
+    "No complete unit suite, Electron E2E, build or formal runtime acceptance",
+    "Original owner workspace changes and frozen runtime defaults were not changed"
+  ],
+  "sourceSha256": {
+    ".gitignore": "38b6c536ce37f65f411d3b4f010e6334c3e4bf783bfb0304c5410f0ee8cadfeb",
+    "docs/dev/p0-memory-evaluation-integrity.md": "bcfd8f92c429d3ed4eeaf252965693656283f39ec8160e2f979c47ee10b06afc",
+    "harness/specs/rules/locomo-evaluation-integrity.md": "35d051e558381d65ca065a8ade16e4303ba90f0d1e56af4618765cc3681415a9",
+    "harness/specs/tasks/p0-memory-evaluation-integrity.md": "5f1ccb4042d786907615297456c41469e85537c773200c6547934b7dcf841a88",
+    "scripts/check-locomo-evidence.mjs": "b87d0dcf435129aa4083949bdb3e611c63951080229992fd6b64215a6759114c",
+    "scripts/repository-artifacts.json": "5de27aecd3b8f17b14130240d6701ad5ced7daf9a9a4f66967c1abda4a1dfa6b",
+    "tests/unit/helpers/runtime-memory-real-llm-client.ts": "956fa95918df0d9727215f4669705d90ddc61bc8c60a8691117d750c6c850f7f",
+    "tests/unit/locomo-evidence-integrity.test.ts": "2d503d33f76c7e722e136678f23eeb46991cfdde08f09de8b8bcd46c2dd0f71f",
+    "tests/unit/runtime-memory-locomo-full-500.test.ts": "ea2d6e2988557e5fad5c1c7465d7e9d3c9b48aa67b91bd6edff728888861faa9",
+    "tests/unit/runtime-memory-real-llm-client.test.ts": "c7b0c86c7632b996e30fa847b7c180e10d72784cfa4f27c977bdc79f27f3aef5"
+  },
+  "localEvidenceSha256": {
+    "judge-binding-red.json": "56e84c27c86ddacd29c48d46854750ac178236388bd3090e1ef99fd8e721f516",
+    "unit-final.json": "cfbb9026251219e2bdc9187faff80c344d76da9dccc657606630392e3bd13fb2",
+    "final-gates.json": "168b8c44430afedd16571812363a3adb814add85be34916706692fed4e9496e3",
+    "official-gates-exits.json": "6124d094b066fccec8066b1727b2205f4a1aa4cb17ba6cdde14ef24dda28ae44",
+    "live-judge-smoke-v1.json": "1c52ff6b8f374b95c306bdf5a9bee538eed24e2c52d2b18533d882d96ad15217",
+    "live-judge-smoke-v1-exit.json": "baf777b55ef3650f056c8f538b612c892b4c63d11dbaa44059adee2ea221ef85",
+    "embedding-v1-availability.json": "8c499a8441e2c0b4d4342d18492f277f352ec17bd7820fcb67ab2e44d60ffb41",
+    "archive-object-recovery-check.json": "0a377d0240f212fdcb956507fb793c99629ba956491647e61b301c84929d7492",
+    "git-fsck.log": "688c1d9b618f26f2a4eda9f819987fa4e60fa992567893b0cbff711dfcc011f4",
+    "typecheck-test.log": "d83ce3c873f11b30a44deedeba84ab3552238b65b84e3158bbcd9ddcdb3363d3",
+    "retention-final.log": "83253fed37713275a78dbe96ae04101282b1349b0075b56014ee98bb10f91a6f",
+    "harness-staged.log": "713eb6240a9d8b0ec5c42836f7bd9bb7c8bee1d66e3111b224672f3b348dacf5",
+    "credential-scan.json": "f891ceb66226158fdb359941860742d2ec2d86308935a374f4f6d557ec44b438"
+  },
+  "finalArtifactChecks": {
+    "retention": {
+      "exitCode": 0,
+      "trackedPaths": 18046
+    },
+    "stagedHarnessValidate": {
+      "exitCode": 0
+    },
+    "credentialScan": {
+      "driven_by": "agent",
+      "actor": "codex-p0-completion",
+      "scope": "changed source files + curated evidence + this run local evidence",
+      "files": 51,
+      "exactCredentialMatches": 0,
+      "passed": true
+    }
+  }
+}

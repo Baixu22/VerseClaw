@@ -80,7 +80,9 @@
     "docs/dev/p2-issue-fixes-batch3-20261010.md",
     "docs/dev/p0-memory-evaluation-integrity.md",
     "artifacts/p0-memory-integrity-20261009/report.json",
-    "artifacts/p0-memory-integrity-20261009/SHA256SUMS"
+    "artifacts/p0-memory-integrity-20261009/SHA256SUMS",
+    "artifacts/p0-memory-integrity-20261009/judge-binding-20261010.json",
+    "artifacts/p0-memory-integrity-20261009/judge-binding-20261010.sha256"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",
@@ -1673,6 +1675,8 @@
     "docs/dev/p2-issue-fixes-batch3-20261010.md",
     "docs/dev/p0-memory-evaluation-integrity.md",
     "artifacts/p0-memory-integrity-20261009/report.json",
-    "artifacts/p0-memory-integrity-20261009/SHA256SUMS"
+    "artifacts/p0-memory-integrity-20261009/SHA256SUMS",
+    "artifacts/p0-memory-integrity-20261009/judge-binding-20261010.json",
+    "artifacts/p0-memory-integrity-20261009/judge-binding-20261010.sha256"
   ]
 }

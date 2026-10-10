@@ -46,6 +46,7 @@ export type LlmCallOptions = {
   maxTokens?: number;
   timeoutMs?: number;
   model?: string;
+  evidenceRole?: "frozen-judge";
 };
 
 export function hasDeepSeekKey(): boolean {
@@ -80,10 +81,11 @@ export type RuntimeMemoryLlmReceipt = {
   status: 200;
   attempts: number;
   usage: LlmResponse["usage"];
+  judgeEvidence?: { temperature: number; maxTokens: number; content: string };
 };
 const receipts: RuntimeMemoryLlmReceipt[] = [];
 export function getRuntimeMemoryLlmReceipts(): RuntimeMemoryLlmReceipt[] {
-  return receipts.map((receipt) => ({ ...receipt, usage: { ...receipt.usage } }));
+  return structuredClone(receipts);
 }
 
 
@@ -173,6 +175,7 @@ export async function callDeepSeek(
         requestSha256: createHash("sha256").update(requestBody).digest("hex"),
         responseSha256: createHash("sha256").update(JSON.stringify(data)).digest("hex"),
         status: 200, attempts: attempt, usage: { ...data.usage },
+        ...(options.evidenceRole === "frozen-judge" ? { judgeEvidence: { temperature, maxTokens, content } } : {}),
       });
       return {
         content,

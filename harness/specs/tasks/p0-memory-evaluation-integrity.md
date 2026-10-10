@@ -63,6 +63,7 @@ acceptance:
   - Fixture-shaped turn IDs exercise context recall and L2 partition regressions in deterministic tests.
   - A J-score increase with a temporal retrieval drop is reported as a retrieval regression.
   - Final model evidence passes schema, per-question recomputation, completeness, source-freshness and digest checks; failure, skip or missing evidence is not a pass.
+  - Each question binds to a unique live judge receipt whose request fingerprint and verdict match the retained question and score; a fresh full run cannot substitute cached judges or silently alter the frozen prompt.
   - Read all final artifacts from disk, run scoped tests and type checks, and commit only this isolated repair set.
 ---
 

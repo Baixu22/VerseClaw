@@ -1783,6 +1783,8 @@ openclaw_runtime/_tmp_*
 !/docs/dev/p0-memory-evaluation-integrity.md
 !/artifacts/p0-memory-integrity-20261009/report.json
 !/artifacts/p0-memory-integrity-20261009/SHA256SUMS
+!/artifacts/p0-memory-integrity-20261009/judge-binding-20261010.json
+!/artifacts/p0-memory-integrity-20261009/judge-binding-20261010.sha256
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

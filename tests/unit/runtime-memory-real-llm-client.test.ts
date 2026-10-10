@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MockAgent, getGlobalDispatcher, setGlobalDispatcher } from "undici";
+import { createHash } from "node:crypto";
 
 const originalDispatcher = getGlobalDispatcher();
 let mock: MockAgent;
@@ -38,6 +39,19 @@ describe("real-model evaluation provider binding and receipts", () => {
     expect(client.getRuntimeMemoryLlmReceipts()[0].requestSha256).toMatch(/^[a-f0-9]{64}$/);
     expect(JSON.stringify(client.getRuntimeMemoryLlmReceipts())).not.toContain(key);
     mock.assertNoPendingInterceptors();
+  });
+  it("retains a frozen-judge request fingerprint and verdict without auth or mutable receipt aliases", async () => {
+    const verdict = { ...response, choices: [{ message: { content: "CORRECT" }, finish_reason: "stop" }] };
+    mock.get("https://step.example").intercept({ path: "/step_plan/v1/chat/completions", method: "POST" }).reply(200, verdict);
+    const client = await import("./helpers/runtime-memory-real-llm-client");
+    await client.callDeepSeek("frozen system", "fixture question and answer", { maxTokens: 8, evidenceRole: "frozen-judge" });
+    const [receipt] = client.getRuntimeMemoryLlmReceipts();
+    const request = JSON.stringify({ model: "step-5-preview", messages: [{ role: "system", content: "frozen system" }, { role: "user", content: "fixture question and answer" }], temperature: 0, max_tokens: 2048, stream: false });
+    expect(receipt.requestSha256).toBe(createHash("sha256").update(request).digest("hex"));
+    expect(receipt.judgeEvidence).toEqual({ temperature: 0, maxTokens: 2048, content: "CORRECT" });
+    receipt.judgeEvidence!.content = "WRONG";
+    expect(client.getRuntimeMemoryLlmReceipts()[0].judgeEvidence!.content).toBe("CORRECT");
+    expect(JSON.stringify(receipt)).not.toContain(key);
   });
   it("does not accidentally send a generic credential to the default provider", async () => {
     vi.stubEnv("RUNTIME_MEMORY_LLM_BASE_URL", "");

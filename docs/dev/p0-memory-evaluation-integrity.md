@@ -18,6 +18,20 @@
 - #138：完整逐题产物、来源指纹与失效门。现有历史 fixture 不得改标签冒充新运行。StepFun 生成/判分资源已通过真实探针，原混合检索管线另需 SiliconFlow 嵌入资源。
 - #62：fsck exit 2，all-history 遍历 exit 128，仍缺 29 个对象；精确哈希 fetch exit 128，13 个相关本地镜像均不含这些对象。保留三个 rescue 引用，未 prune / gc / 删除历史，未改 main 或主工作区内容。
 
+## 2026-10-10 逐题 judge 绑定补修
+
+复核发现收据总量检查不能证明逐题分数来源：任意 1000 份同模型 API 收据、错误 verdict、缓存替代，甚至保留版本标签但更换 judge prompt，都可能被旧校验器接受。新增 5 个反例均在修复前真实失败（11 passed / 5 failed / 0 skipped）。
+
+- cached/fresh 两条评测路径均记录每题的 `judgeResponseId`；完整 500 题禁止 judge-cache 命中，开发切片仍可用缓存，但不能据此冒充新鲜完整实测。
+- 客户端只为 frozen-judge 调用保留 verdict 和实际温度/token 上限，不保留认证头；导出的收据深拷贝，避免调用者误改内部证据。
+- verifier 消费唯一响应 ID，按该题 question / groundTruth / predictedAnswer、冻结 prompt 和真实 token 上限重建请求 SHA256，并从返回 verdict 重算 judgeScore。冻结 judge 版本、模板与温度必须保持一致；模型 ID 仍允许显式配置。
+- 这些是内部一致性与新鲜度约束，不是提供方签名或独立第三方运行证明。合成单测仍标记 synthetic，不能采纳为实测基线。
+- #62 另外检查了本地清理前两个 ZIP 备份的 859 个条目，未命中 15 个缺失 blob；未删除引用或修改对象库。现有 29 missing = 3 commit + 11 tree + 15 blob（以本轮重新 fsck 为准），不是旧 issue 中的 13 tree / 13 blob。
+- 正确的 `https://api.stepfun.com/step_plan/v1/embeddings` 路径对 Qwen3 嵌入探针返回 HTTP 404，没有把 key 发往 SiliconFlow。原嵌入资源仍未提供；完整 500 题与真实配对检索复验仍未执行。
+- 实际 StepFun frozen-judge 请求通过（HTTP 200，353 tokens，请求 SHA256 与 `CORRECT` verdict 核对一致）。首个未带 `/v1` 的尝试是路由 404，已保留失败记录，不计为成功或模型用量。
+- 最终 8 文件 193 passed / 0 failed / 0 skipped；官方 `typecheck:test`（tsgo）、scoped eslint、diff-aware Harness validate、comms replay/compare 均 exit 0。第一次误用直接 tsc 发生 OOM/134；改用仓库规定 tsgo 后发现并修复 helper 类型透传，再复验为 0。Harness dry-run 不是实跑完整配置。
+- 新增独立证据快照 `artifacts/p0-memory-integrity-20261009/judge-binding-20261010.json` 及相邻摘要，不覆盖上一轮 report/SHA256SUMS。历史聚合仍未变成真实基线；四个开放 P0 继续保留明确缺口。
+
 ## 开发验证与省略项
 
 第一批：context-recall + locomo-pipeline 共 41 passed / 0 failed / 0 skipped。测试直接使用 locomo10_raw.json 的真实 ID 形态，但这是确定性代码回归，不是真实模型评测。完整门禁收据保存在 D:/ClawX-work/p0-issues-20261009/，后续完成项在本文件追加实测结果。

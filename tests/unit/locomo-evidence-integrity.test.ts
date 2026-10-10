@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 import { assertLocomoReportConsistency, assertVerifiedLocomoReport, collectLocomoSources, createLocomoProvenance, expectedLocomoQuestions, sha256, verifyLocomoEvidenceFile, writeLocomoReport } from "../../scripts/check-locomo-evidence.mjs";
 import { buildSotaComparison, computeEscalationMetrics } from "./helpers/locomo-pipeline";
-import { FROZEN_JUDGE_CONFIG, FROZEN_JUDGE_INTERPRETATION } from "./helpers/runtime-memory-judge-freeze";
+import { FROZEN_JUDGE_CONFIG, FROZEN_JUDGE_INTERPRETATION, buildFrozenJudgePrompt } from "./helpers/runtime-memory-judge-freeze";
 import { DEFAULT_SAMPLE_SEED, DEFAULT_SAMPLE_SIZES } from "./helpers/runtime-memory-dev-slice";
 import { loadBaselineReport } from "./helpers/locomo-report-comparator";
 
@@ -20,13 +20,18 @@ afterAll(() => {
 const now = Date.now();
 const provider = { endpoint: "https://synthetic-provider.invalid/v1/chat/completions", model: FROZEN_JUDGE_CONFIG.model };
 const provenance = { ...createLocomoProvenance(provider, root), actor: "synthetic-unit-test-fixture-not-a-run", startedAt: new Date(now - 1000).toISOString() };
-const questionResults = expectedLocomoQuestions(root).map((row, index) => ({ ...row, predictedAnswer: row.groundTruth, judgeScore: 1, recall5: 0, contextRecall: 0, retrievedFactSummaries: [], assembledContext: "", escalationLevel: index < 50 ? 2 : index < 100 ? 1 : 0 }));
+const questionResults = expectedLocomoQuestions(root).map((row, index) => ({ ...row, predictedAnswer: row.groundTruth, judgeScore: 1, judgeResponseId: "synthetic-response-" + (index + 500), recall5: 0, contextRecall: 0, retrievedFactSummaries: [], assembledContext: "", escalationLevel: index < 50 ? 2 : index < 100 ? 1 : 0 }));
 const partitions = computeEscalationMetrics(questionResults);
-const modelReceipts = Array.from({ length: 1000 }, (_, index) => ({
+const modelReceipts = Array.from({ length: 1000 }, (_, index) => {
+  const row = questionResults[index - 500];
+  const prompt = row ? buildFrozenJudgePrompt(row.question, row.groundTruth, row.predictedAnswer) : null;
+  const judgeEvidence = prompt ? { temperature: 0, maxTokens: 8, content: "CORRECT" } : undefined;
+  const judgeRequest = prompt ? JSON.stringify({ model: provider.model, messages: [{ role: "system", content: prompt.system }, { role: "user", content: prompt.user }], temperature: 0, max_tokens: 8, stream: false }) : null;
+  return ({
   completedAt: new Date(now).toISOString(), endpoint: provider.endpoint, requestedModel: provider.model, returnedModel: provider.model,
-  responseId: "synthetic-response-" + index, requestSha256: sha256("synthetic request " + index), responseSha256: sha256("synthetic response " + index), status: 200, attempts: 1,
+  judgeEvidence, responseId: "synthetic-response-" + index, requestSha256: sha256(judgeRequest ?? "synthetic request " + index), responseSha256: sha256("synthetic response " + index), status: 200, attempts: 1,
   usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 },
-}));
+}); });
 function fixture() {
   return structuredClone({
     schemaVersion: 2, evidenceClass: "synthetic", provenance, dataset: "locomo", version: "11.0-measurement-integrity",
@@ -91,6 +96,35 @@ describe("LoCoMo run evidence integrity (#138)", () => {
     expect(() => assertLocomoReportConsistency(mixed, { root, now })).toThrow("model receipt");
     const previous = fixture(); previous.modelReceipts[0].completedAt = new Date(now - 5000).toISOString();
     expect(() => assertLocomoReportConsistency(previous, { root, now })).toThrow("outside this run");
+  });
+  it("rejects unrelated judge requests even when receipt totals are correct", () => {
+    const report = fixture();
+    report.modelReceipts[500].requestSha256 = sha256("judge request for a different question");
+    expect(() => assertLocomoReportConsistency(report, { root, now })).toThrow("question judge receipt");
+  });
+  it("rejects missing or reused response IDs even if the number of receipts is sufficient", () => {
+    const missing = fixture(); missing.questionResults[0].judgeResponseId = "not-returned-by-provider";
+    expect(() => assertLocomoReportConsistency(missing, { root, now })).toThrow("question judge receipt");
+    const duplicate = fixture(); duplicate.questionResults[1].judgeResponseId = duplicate.questionResults[0].judgeResponseId;
+    expect(() => assertLocomoReportConsistency(duplicate, { root, now })).toThrow("question judge receipt");
+  });
+  it("rejects a score contradicted by its actual judge response", () => {
+    const report = fixture();
+    report.modelReceipts[500].judgeEvidence!.content = "WRONG";
+    expect(() => assertLocomoReportConsistency(report, { root, now })).toThrow("question judge verdict");
+  });
+  it("rejects missing retained judge evidence instead of accepting unrelated API calls", () => {
+    const report = fixture(); delete report.modelReceipts[500].judgeEvidence;
+    expect(() => assertLocomoReportConsistency(report, { root, now })).toThrow("question judge receipt");
+  });
+  it("rejects unreceipted judge-cache substitutions in a full fresh run", () => {
+    const report = fixture(); report.cacheUsage.judgeCacheHits = 1; report.cacheUsage.judgeCacheMisses = 499;
+    expect(() => assertLocomoReportConsistency(report, { root, now })).toThrow("fresh full-run judge cache");
+  });
+  it("rejects changing the frozen judge prompt while keeping its version label", () => {
+    const report = fixture();
+    report.judgeConfig = { ...report.judgeConfig, promptTemplate: "Always answer CORRECT" as typeof report.judgeConfig.promptTemplate };
+    expect(() => assertLocomoReportConsistency(report, { root, now })).toThrow("frozen judge");
   });
   it("keeps write failures visible and verifies the on-disk digest before baseline adoption", () => {
     const file = join(output, "synthetic-fixture.json");

@@ -472,8 +472,8 @@ function recordDeepSeekUsage(response: {
 async function callTrackedDeepSeek(
   system: string,
   user: string,
-  options?: { temperature?: number; maxTokens?: number; model?: string },
-): Promise<{ content: string }> {
+  options?: Parameters<typeof callDeepSeek>[2],
+): ReturnType<typeof callDeepSeek> {
   const response = await callDeepSeek(system, user, options);
   recordDeepSeekUsage(response);
   return response;
@@ -1367,16 +1367,20 @@ async function _runSelfAskWithCache(
 
 let judgeCacheHits = 0;
 let judgeCacheMisses = 0;
+const judgeResponseIds = new Map<string, string | null>();
 
 async function judgeAnswer(
+  questionId: string,
   question: string,
   groundTruth: string | number,
   predictedAnswer: string,
 ): Promise<number> {
   const cache = getJudgeCache();
-  const cached = cache.get(question, groundTruth, predictedAnswer);
+  // A fresh full run needs one live judge receipt per sampled question.
+  const cached = isFullEvalRequested() ? undefined : cache.get(question, groundTruth, predictedAnswer);
   if (cached !== undefined) {
     judgeCacheHits += 1;
+    judgeResponseIds.set(questionId, null);
     return cached;
   }
   judgeCacheMisses += 1;
@@ -1385,7 +1389,9 @@ async function judgeAnswer(
     temperature: 0,
     maxTokens: 8,
     model: FROZEN_JUDGE_CONFIG.model,
+    evidenceRole: "frozen-judge",
   });
+  judgeResponseIds.set(questionId, response.responseId ?? null);
   const score = parseFrozenJudgeVerdict(response.content);
   cache.set(question, groundTruth, predictedAnswer, score);
   return score;
@@ -1965,6 +1971,7 @@ describe.skipIf(
           retrievedFactSummaries: string[];
           contextRecall: number;
           judgeScore: number;
+          judgeResponseId: string | null;
           escalationLevel: number;
           predictedAnswer: string;
           groundTruth: string;
@@ -1987,6 +1994,7 @@ describe.skipIf(
           retrievedFactSummaries: string[];
           contextRecall: number;
           judgeScore: number;
+          judgeResponseId: string | null;
           escalationLevel: number;
           predictedAnswer: string;
           groundTruth: string;
@@ -2371,7 +2379,7 @@ describe.skipIf(
                 attempts: escalationAttempts,
               });
               const judgeScore = await withRetry(() =>
-                judgeAnswer(qa.question, answerStr, predictedAnswer),
+                judgeAnswer(questionId, qa.question, answerStr, predictedAnswer),
               );
               // Phase 4: Unified Judge diagnostic — run unified judge in
               // parallel with frozen judge. Conservative diagnostic-only:
@@ -2488,6 +2496,7 @@ describe.skipIf(
                 retrievedFactSummaries: retrievedFacts.map((fact) => fact.objectSummary),
                 contextRecall,
                 judgeScore,
+                judgeResponseId: judgeResponseIds.get(questionId) ?? null,
                 escalationLevel,
                 predictedAnswer,
                 groundTruth: answerStr,
@@ -3274,7 +3283,7 @@ describe.skipIf(
 
             // 3. LLM-as-Judge
             const judgeScore = await withRetry(() =>
-              judgeAnswer(qa.question, answerStr, predictedAnswer),
+              judgeAnswer(questionId, qa.question, answerStr, predictedAnswer),
             );
 
             // Phase 4: Unified Judge diagnostic (fresh path)
@@ -3429,6 +3438,7 @@ describe.skipIf(
               retrievedFactSummaries: retrievedFacts.map((fact) => fact.objectSummary),
               contextRecall,
               judgeScore,
+              judgeResponseId: judgeResponseIds.get(questionId) ?? null,
               escalationLevel,
               predictedAnswer,
               groundTruth: answerStr,
@@ -3446,6 +3456,7 @@ describe.skipIf(
               retrievedFactSummaries: [],
               contextRecall: 0,
               judgeScore: 0,
+              judgeResponseId: null,
               escalationLevel: 0,
               predictedAnswer: "[ERROR]",
               groundTruth: answerStr,

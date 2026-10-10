@@ -7,6 +7,7 @@ import { isDeepStrictEqual, parseArgs } from 'node:util';
 import { assertLocomoStageReportShape, assertLocomoQuestionResultShape } from '../tests/unit/helpers/runtime-memory-locomo-report-schema.ts';
 import { buildStratifiedDevSlice, DEFAULT_SAMPLE_SEED, DEFAULT_SAMPLE_SIZES } from '../tests/unit/helpers/runtime-memory-dev-slice.ts';
 import { computeContextRecall, computeAnswerTokenRecall } from '../tests/unit/helpers/runtime-memory-context-recall.ts';
+import { FROZEN_JUDGE_CONFIG, buildFrozenJudgePrompt, parseFrozenJudgeVerdict } from '../tests/unit/helpers/runtime-memory-judge-freeze.ts';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DATASET = 'tests/fixtures/locomo/locomo10_raw.json';
@@ -101,6 +102,7 @@ export function assertLocomoReportConsistency(report, { root = ROOT, now = Date.
   same(report.escalation.maxEscalations, 125, 'full-run L1 budget');
   same(report.escalation.maxFullConversationEscalations, 75, 'full-run L2 budget');
   if (report.escalation.level1 + report.escalation.level2 > 125 || report.escalation.level2 > 75) throw new Error('Escalation exceeds frozen budgets');
+  same(report.judgeConfig, { ...FROZEN_JUDGE_CONFIG, model: proof.provider.model }, 'frozen judge');
   const rows = report.questionResults;
   if (!Array.isArray(rows) || rows.length !== 500) throw new Error('Every sampled question must have a retained result');
   const expected = new Map(expectedLocomoQuestions(root).map((row) => [row.questionId, row]));
@@ -138,18 +140,35 @@ export function assertLocomoReportConsistency(report, { root = ROOT, now = Date.
   const receipts = report.modelReceipts;
   if (!Array.isArray(receipts) || receipts.length < 500) throw new Error('Missing actual model request receipts');
   const responseIds = new Set();
+  const receiptsById = new Map();
   for (const receipt of receipts) {
     if (receipt.status !== 200 || receipt.endpoint !== proof.provider.endpoint || receipt.requestedModel !== receipt.returnedModel || receipt.returnedModel !== proof.provider.model || !receipt.returnedModel
       || !receipt.responseId || responseIds.has(receipt.responseId) || !HEX.test(receipt.requestSha256) || !HEX.test(receipt.responseSha256)) throw new Error('Invalid/duplicated model receipt');
     responseIds.add(receipt.responseId);
+    receiptsById.set(receipt.responseId, receipt);
     const when = Date.parse(receipt.completedAt);
     if (!Number.isFinite(when) || when < started || when > finished) throw new Error('Receipt outside this run');
     for (const field of ['prompt_tokens', 'completion_tokens', 'total_tokens']) if (!Number.isInteger(receipt.usage?.[field]) || receipt.usage[field] < 0) throw new Error('Invalid model usage');
     same(receipt.usage.total_tokens, receipt.usage.prompt_tokens + receipt.usage.completion_tokens, 'token accounting');
+    if (receipt.judgeEvidence) {
+      const { temperature, maxTokens, content } = receipt.judgeEvidence;
+      if (temperature !== report.judgeConfig.temperature || !Number.isInteger(maxTokens) || maxTokens < 8 || typeof content !== 'string' || !content.trim()) throw new Error('Invalid retained judge evidence');
+    }
   }
   same(report.cacheUsage?.cachedRetrieval, false, 'full run retrieval');
   if (!Number.isInteger(report.cacheUsage?.judgeCacheHits) || !Number.isInteger(report.cacheUsage?.judgeCacheMisses)) throw new Error('Missing judge cache disclosure');
-  same(report.cacheUsage.judgeCacheHits + report.cacheUsage.judgeCacheMisses, 500, 'judge coverage');
+  same(report.cacheUsage.judgeCacheHits, 0, 'fresh full-run judge cache');
+  same(report.cacheUsage.judgeCacheMisses, 500, 'judge coverage');
+  const usedJudgeIds = new Set();
+  for (const row of rows) {
+    const receipt = receiptsById.get(row.judgeResponseId);
+    if (!receipt?.judgeEvidence || usedJudgeIds.has(row.judgeResponseId)) throw new Error('Missing/duplicate question judge receipt: ' + row.questionId);
+    usedJudgeIds.add(row.judgeResponseId);
+    const prompt = buildFrozenJudgePrompt(row.question, row.groundTruth, row.predictedAnswer);
+    const request = JSON.stringify({ model: proof.provider.model, messages: [{ role: 'system', content: prompt.system }, { role: 'user', content: prompt.user }], temperature: report.judgeConfig.temperature, max_tokens: receipt.judgeEvidence.maxTokens, stream: false });
+    same(receipt.requestSha256, sha256(request), 'question judge receipt ' + row.questionId);
+    same(parseFrozenJudgeVerdict(receipt.judgeEvidence.content), row.judgeScore, 'question judge verdict ' + row.questionId);
+  }
   if (receipts.length < 500 + report.cacheUsage.judgeCacheMisses) throw new Error('Insufficient generation/judge request receipts');
   return { consistent: true, runId: proof.runId, totalQuestions: rows.length, model: proof.provider.model, sourceFileCount: Object.keys(proof.sources).length, modelCalls: receipts.length };
 }
