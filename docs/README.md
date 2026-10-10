@@ -25,6 +25,7 @@ and the [default configuration matrix](dev/default-config-matrix.md).
 - [Repository layout and artifact roots](dev/repository-layout.md)
 - [Source retention and recovery](dev/repository-artifact-retention.md)
 - [P2 issue fixes: receipt decisions and transcript call identity](dev/p2-issue-fixes-batch9-20261010.md)
+- [P2 issue fix: renderer CSP least privilege](dev/p2-issue-fixes-batch10-20261010.md)
 
 ## Historical records
 
