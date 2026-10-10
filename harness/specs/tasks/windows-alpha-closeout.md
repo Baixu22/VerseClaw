@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: windows-alpha-closeout
 title: Verify and land the current Windows alpha candidate
 type: task

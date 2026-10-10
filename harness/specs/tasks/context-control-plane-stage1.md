@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-control-plane-stage1
 title: Context Control Plane Stage 1 Provider Guard Minimal Grant Tool Guard EffectReceipt
 taskType: runtime-authority-convergence

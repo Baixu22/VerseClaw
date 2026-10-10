@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-diagnostics-consumers-drift-guard
 title: Line C grounding diagnostics consumers drift guard
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-35-runtime-memory-read-hydration-benefit-evaluation-design
 title: Phase 35 runtime memory read hydration benefit evaluation design
 scenario: gateway-backend-communication

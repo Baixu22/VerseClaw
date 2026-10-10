@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: project-rules-center-vnext
 title: Project Rules Center vNext
 scenario: gateway-backend-communication

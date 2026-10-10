@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: uas-06-single-local-exec-canary
 title: UAS-06 single local execution plane canary
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: dcs-stage3-tool-registry
 title: DCS Stage 3 tool_registry Block producer and Assembler injection
 scenario: gateway-backend-communication

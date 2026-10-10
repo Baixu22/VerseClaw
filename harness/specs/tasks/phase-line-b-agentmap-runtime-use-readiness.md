@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-runtime-use-readiness
 title: Line B AgentMap runtime-use readiness without cutover
 scenario: gateway-backend-communication

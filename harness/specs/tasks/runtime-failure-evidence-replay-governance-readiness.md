@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-evidence-replay-governance-readiness
 title: Runtime Failure/Evidence/Replay Governance Readiness
 scenario: gateway-backend-communication

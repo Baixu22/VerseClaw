@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-intensity-linked-coupling
 title: Runtime Intensity Linked Coupling
 scenario: gateway-backend-communication

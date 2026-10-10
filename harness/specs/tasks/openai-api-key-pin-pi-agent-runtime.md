@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: openai-api-key-pin-pi-agent-runtime
 title: Pin the embedded "pi" agent runtime on OpenAI provider entries to avoid the unbundled "codex" harness
 scenario: gateway-backend-communication

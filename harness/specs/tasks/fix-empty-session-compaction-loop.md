@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-empty-session-compaction-loop
 title: Avoid auto-compaction loops before the first conversation message
 scenario: gateway-backend-communication

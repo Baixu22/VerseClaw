@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: sekb-runtime-long-task-development
 title: SEKB Runtime Long Task Development
 scenario: gateway-backend-communication

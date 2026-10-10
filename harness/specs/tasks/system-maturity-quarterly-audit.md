@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: system-maturity-quarterly-audit
 title: Enforce quarterly maturity audit and phase review gates
 scenario: gateway-backend-communication

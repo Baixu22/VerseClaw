@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-prompt-candidate-runtime-shadow-replay-proof
 title: Line B AgentMap prompt candidate runtime shadow replay proof
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-agent-gateway-rpc-capability-gap
 title: Expose governed session and memory RPCs through the agent gateway tool
 scenario: gateway-backend-communication

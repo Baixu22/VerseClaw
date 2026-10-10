@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: windows-update-feed-integrity
 title: Bind AutoUpdater to an auditable feed and tamper checks
 scenario: gateway-backend-communication

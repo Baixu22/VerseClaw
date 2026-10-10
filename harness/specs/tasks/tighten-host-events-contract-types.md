@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: tighten-host-events-contract-types
 title: Tighten host event contract types
 scenario: gateway-backend-communication

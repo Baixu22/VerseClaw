@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: p2-productization-reliability
 title: P2 Productization Reliability Boundaries
 scenario: gateway-backend-communication

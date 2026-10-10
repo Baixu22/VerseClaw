@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: agency-role-memory-import
 title: Agency Role Memory Import
 scenario: gateway-backend-communication

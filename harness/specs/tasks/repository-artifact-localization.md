@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: repository-artifact-localization
 title: Localize development history without removing source inputs
 diffBase: 2a82bb08d234d5ea9d8e8c165545ab980f6fefb9

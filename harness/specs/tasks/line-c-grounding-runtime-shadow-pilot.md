@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-runtime-shadow-pilot
 title: Line C grounding runtime shadow pilot
 scenario: gateway-backend-communication

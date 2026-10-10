@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-3-provider-tool-registry-real-producer-diagnostic-consumer-validation
 title: Phase 3 Provider Tool Registry Real Producer Diagnostic Consumer Validation
 scenario: gateway-backend-communication

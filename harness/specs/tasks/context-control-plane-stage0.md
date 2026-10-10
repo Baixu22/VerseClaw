@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-control-plane-stage0
 title: Context Control Plane Stage 0 Authority And Artifact Freeze
 taskType: shared-contract

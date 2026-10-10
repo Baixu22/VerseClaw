@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: token-dense-recovery-compression-v1
 title: Token-dense recovery compression v1
 scenario: gateway-backend-communication

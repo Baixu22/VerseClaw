@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-runtime-shadow-replay-proof
 title: Line C grounding runtime shadow replay proof
 scenario: gateway-backend-communication

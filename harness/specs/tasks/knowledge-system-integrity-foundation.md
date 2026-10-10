@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-system-integrity-foundation
 title: Knowledge system KS-00 baseline and authority freeze
 taskType: architecture-freeze

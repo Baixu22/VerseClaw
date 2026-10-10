@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: p3-policy-doc-truthfulness
 title: P3 policy documentation truthfulness (issues 133 and 152)
 type: task

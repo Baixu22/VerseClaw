@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: system-maturity-security-regression
 title: Run long-lived security red-team and fault-injection regression
 scenario: gateway-backend-communication

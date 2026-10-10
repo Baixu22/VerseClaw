@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-p2-trace-diagnostics-observability-consumer
 title: VerseShell P2-03 Host Diagnostics Observability Consumer
 scenario: gateway-backend-communication

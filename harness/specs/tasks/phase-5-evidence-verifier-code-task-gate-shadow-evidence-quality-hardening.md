@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-5-evidence-verifier-code-task-gate-shadow-evidence-quality-hardening
 title: Phase 5 Evidence Verifier Code Task Gate Shadow Evidence Quality Hardening
 scenario: gateway-backend-communication

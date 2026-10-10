@@ -1,0 +1,156 @@
+{
+  "version": 1,
+  "minBytes": 102400,
+  "groups": [
+    {
+      "sha256": "019d6f39fd9675271c659b3972c5fb55a341451366b257896e89e3f0c840ff8c",
+      "paths": [
+        "resources/icons/icon-dark.icns",
+        "resources/icons/icon.icns"
+      ],
+      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
+    },
+    {
+      "sha256": "142c826c36d73e8a7c10af3b89a714e7bf55ca210678652fea3c5be9dbbcdd94",
+      "paths": [
+        "resources/icons/clawx-logo-kit/logo-dock-1024-dark.png",
+        "resources/icons/clawx-logo-kit/logo-dock-1024.png"
+      ],
+      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
+    },
+    {
+      "sha256": "159f4c633ae42ea6e17818fb62ca033d275fee43b1cd69b23be1169b73a860e4",
+      "paths": [
+        "artifacts/system-maturity/P4-001/final-validation.log",
+        "artifacts/system-maturity/P4-002/final-validation.log",
+        "artifacts/system-maturity/P4-003/final-validation.log",
+        "artifacts/system-maturity/P4-004/final-validation.log",
+        "artifacts/system-maturity/P5-001/final-validation.log",
+        "artifacts/system-maturity/P5-002/final-validation.log",
+        "artifacts/system-maturity/P5-003/final-validation.log",
+        "artifacts/system-maturity/P5-004/final-validation.log"
+      ],
+      "reason": "Historical evidence mirrors are retained because each task directory is an independent review record."
+    },
+    {
+      "sha256": "310cc44a2007308b139565628c793782487481daab704074c0f79558683c765d",
+      "paths": [
+        "resources/icons/clawx-logo-kit/clawling-app-icon-master-1024.png",
+        "resources/icons/clawx-logo-kit/logo-app-1024-dark.png",
+        "resources/icons/clawx-logo-kit/logo-app-1024.png",
+        "resources/icons/clawx-logo-kit/logo-transparent-master-trimmed-dark.png",
+        "resources/icons/clawx-logo-kit/logo-transparent-master-trimmed.png"
+      ],
+      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
+    },
+    {
+      "sha256": "3daa95aa0e666f9488519dc16960233128d7e7d37c6dca606e9584cc7c72bb6b",
+      "paths": [
+        "resources/icons/icon-dark.svg",
+        "resources/icons/icon-plain.svg",
+        "resources/icons/icon.svg"
+      ],
+      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
+    },
+    {
+      "sha256": "49cfa8ed5f51472fda3211c44ba12958825335c9adc1bcbff7a0e52cff3f7426",
+      "paths": [
+        "resources/icons/clawx-logo-kit/logo-app-dark.ico",
+        "resources/icons/clawx-logo-kit/logo-app.ico"
+      ],
+      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
+    },
+    {
+      "sha256": "49db312c781c1744b96162d1e6288b0553d34e495ff6e15843eeb3744481f789",
+      "paths": [
+        "src/assets/logo+character-dark.png",
+        "src/assets/logo+character.png"
+      ],
+      "reason": "Light/dark theme variants are resolved by path at runtime; variants are retained even when their exported bytes currently match."
+    },
+    {
+      "sha256": "5185da7f82cc2a60ac12d33f27353b60826d9d3701ff17b144fb826f980549b9",
+      "paths": [
+        "resources/icons/clawx-logo-kit/logo-app-dark.icns",
+        "resources/icons/clawx-logo-kit/logo-app.icns"
+      ],
+      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
+    },
+    {
+      "sha256": "5375417f0f5394b8dd1a7035b9679151f19a6b65df309dec10cfb4a420cb00e9",
+      "paths": [
+        "resources/skills/preinstalled/docx/scripts/office/schemas/ISO-IEC29500-4_2016/dml-main.xsd",
+        "resources/skills/preinstalled/pptx/scripts/office/schemas/ISO-IEC29500-4_2016/dml-main.xsd",
+        "resources/skills/preinstalled/xlsx/scripts/office/schemas/ISO-IEC29500-4_2016/dml-main.xsd"
+      ],
+      "reason": "Preinstalled skill bundles are distributed independently and must remain self-contained."
+    },
+    {
+      "sha256": "64924d72a45ad212a65c1b120a4ecbd7f27da17a1c23a46604daa584a18395c6",
+      "paths": [
+        "resources/icons/icon-dark.ico",
+        "resources/icons/icon.ico"
+      ],
+      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
+    },
+    {
+      "sha256": "74a2d798d6d6b6857017ea29a8676cac66afe07fcd68edf743e2e3cc4f9ed741",
+      "paths": [
+        "resources/icons/clawx-logo-kit/logo-dock-512-dark.png",
+        "resources/icons/clawx-logo-kit/logo-dock-512.png"
+      ],
+      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
+    },
+    {
+      "sha256": "9f3c4e0b57abf806f490abcd3352ce00a5edb422912551e70bae2af7820ac0da",
+      "paths": [
+        "resources/icons/clawx-logo-kit/logo-sidebar-256-dark.png",
+        "resources/icons/clawx-logo-kit/logo-sidebar-256.png"
+      ],
+      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
+    },
+    {
+      "sha256": "b96ac05ad95f4ada9565d02cd1c04068c1af4a21f6357cba9678e9ccfdee0bb1",
+      "paths": [
+        "artifacts/dcs-corpus/synthetic-agent/corpus.json",
+        "openclaw_runtime/src/context-engine/fixtures/dcs-corpus-synthetic-agent.json"
+      ],
+      "reason": "Corpus is intentionally mirrored between the runtime fixture and retained artifact evidence; both are referenced by tests or manifests."
+    },
+    {
+      "sha256": "beffeed56945c22a77440122c8bdc426f3fcbe7f3b12ea0976c770d1f8d54578",
+      "paths": [
+        "resources/skills/preinstalled/docx/scripts/office/schemas/ISO-IEC29500-4_2016/sml.xsd",
+        "resources/skills/preinstalled/pptx/scripts/office/schemas/ISO-IEC29500-4_2016/sml.xsd",
+        "resources/skills/preinstalled/xlsx/scripts/office/schemas/ISO-IEC29500-4_2016/sml.xsd"
+      ],
+      "reason": "Preinstalled skill bundles are distributed independently and must remain self-contained."
+    },
+    {
+      "sha256": "c2dd9f61f892deae6acd8d20771ea79b12018af25f3bf8d06639c8542d218cfd",
+      "paths": [
+        "resources/skills/preinstalled/docx/scripts/office/schemas/ISO-IEC29500-4_2016/wml.xsd",
+        "resources/skills/preinstalled/pptx/scripts/office/schemas/ISO-IEC29500-4_2016/wml.xsd",
+        "resources/skills/preinstalled/xlsx/scripts/office/schemas/ISO-IEC29500-4_2016/wml.xsd"
+      ],
+      "reason": "Preinstalled skill bundles are distributed independently and must remain self-contained."
+    },
+    {
+      "sha256": "d4b27977f29e69b682b9323f45021111ab9bc71535417fa340ca61b4bf177dd9",
+      "paths": [
+        "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg-web/verseconf_wasm_bg.wasm",
+        "openclaw_runtime/extensions/verseconf-artifacts/vendor/verseconf/pkg/verseconf_wasm_bg.wasm"
+      ],
+      "reason": "Vendored VerseConf WASM mirrors match the package layout needed by the runtime and verifier."
+    },
+    {
+      "sha256": "ed2270fced576ac55715727e50e36e1bec87e1f692b77ed691b651233b910a65",
+      "paths": [
+        "resources/icons/512x512.png",
+        "resources/icons/icon-dark.png",
+        "resources/icons/icon.png"
+      ],
+      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
+    }
+  ]
+}

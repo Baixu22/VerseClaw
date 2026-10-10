@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: harness-gap-closure-plan
 title: Harness缺口闭环规划与本地任务DAG
 intent: 校正缺口摘要中的实现判断，定义30个可执行工作包的开发、测试、验收和回滚，并通过Task Forest CLI保存应用；不在本任务实施运行时功能或改变产品锁。

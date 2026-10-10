@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-event-log-limited-authority-deep-evaluation
 title: Runtime event-log limited authority deep evaluation
 scenario: gateway-backend-communication

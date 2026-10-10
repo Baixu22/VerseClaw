@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-event-log-limited-authority-internal-optimization
 title: Runtime event-log limited authority internal optimization
 scenario: gateway-backend-communication

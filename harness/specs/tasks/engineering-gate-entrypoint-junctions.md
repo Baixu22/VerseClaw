@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: engineering-gate-entrypoint-junctions
 title: 工程门禁通过目录联接执行时保持真实退出码
 scenario: system-maturity-traceability

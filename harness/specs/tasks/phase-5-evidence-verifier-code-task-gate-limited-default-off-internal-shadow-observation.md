@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-5-evidence-verifier-code-task-gate-limited-default-off-internal-shadow-observation
 title: Phase 5 Evidence Verifier Code Task Gate Limited Default-Off Internal Shadow Observation
 scenario: gateway-backend-communication

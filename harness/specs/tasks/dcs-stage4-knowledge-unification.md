@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: dcs-stage4-knowledge-unification
 title: DCS Stage 4 knowledge Block unification (compass + role-memory)
 scenario: gateway-backend-communication

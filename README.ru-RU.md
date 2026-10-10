@@ -269,7 +269,7 @@ Agent Dev Workbench в «Настройки → Разработчик» пре�
 
 | Тема | Ссылки |
 | --- | --- |
-| Текущая архитектура и проверка документации | [Обзор архитектуры](docs/architecture-overview.md) · [Источники изображений](resources/readme/2026-10-05/README.md) |
+| Текущая архитектура и проверка документации | [Обзор архитектуры](docs/architecture-overview.md) · [Источники изображений](resources/readme/2026-10-05/README.md) · [Индекс документации](docs/README.md) |
 | Поведение продукта, понятия и границы | [Семантика продукта](docs/clawx-product-semantics.md) · [Матрица возможностей](shared/capability-claims.ts) · [Настройки по умолчанию](docs/dev/default-config-matrix.md) |
 | Знания, память и контекст | [Система знаний](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) |
 | Агенты и процессы | [Оркестрация](docs/multi-agent-orchestration/README.md) · [Наборы ролей](docs/role-packs.md) |

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-5-evidence-verifier-code-task-gate-runtime-shadow-evidence-replay-readiness
 title: Phase 5 Evidence Verifier Code Task Gate Runtime Shadow Evidence Replay Readiness
 scenario: gateway-backend-communication

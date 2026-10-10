@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: workspace-external-write-provenance-boundary
 title: Workspace external-write provenance boundary for coding tools
 scenario: gateway-backend-communication

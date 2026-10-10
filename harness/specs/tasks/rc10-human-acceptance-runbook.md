@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc10-human-acceptance-runbook
 title: RC-10 Final Agent-Driven Acceptance Runbook
 taskType: runtime-bridge

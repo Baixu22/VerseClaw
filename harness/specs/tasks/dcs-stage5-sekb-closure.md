@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: dcs-stage5-sekb-closure
 title: "DCS Stage 5: SEKB Distillation Write-Back Closure"
 scenario: gateway-backend-communication

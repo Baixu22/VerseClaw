@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: p2-issue-fixes-batch1-20261010
 title: P2 issue batch 1 - portable spec commands, snapshot, lock and doc-entry hygiene
 taskType: repo-hygiene

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-prompt-candidate-controlled-cutover-pilot
 title: Line B AgentMap prompt candidate controlled cutover pilot
 scenario: gateway-backend-communication

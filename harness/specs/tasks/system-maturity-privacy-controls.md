@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: system-maturity-privacy-controls
 title: Enforce privacy data-flow inventory and sensitive capture controls
 scenario: gateway-backend-communication

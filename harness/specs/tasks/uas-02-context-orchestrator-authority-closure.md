@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: uas-02-context-orchestrator-authority-closure
 title: UAS-02 Context Orchestrator authority closure
 scenario: gateway-backend-communication

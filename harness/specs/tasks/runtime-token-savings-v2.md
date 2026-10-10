@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-token-savings-v2
 title: Runtime Token Savings V2
 scenario: gateway-backend-communication

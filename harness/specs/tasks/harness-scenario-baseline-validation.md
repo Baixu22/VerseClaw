@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: harness-scenario-baseline-validation
 title: 场景基线与任务变更归属校验
 scenario: gateway-backend-communication

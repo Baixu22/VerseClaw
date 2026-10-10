@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-p1-observation-artifact
 title: VerseShell P1 Bounded Observation and Artifact Recovery
 scenario: gateway-backend-communication

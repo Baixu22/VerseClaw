@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: remote-forge-controlled-preview
 title: Remote Forge controlled preview
 scenario: gateway-backend-communication

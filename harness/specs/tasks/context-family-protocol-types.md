@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-family-protocol-types
 title: Context Family protocol types
 scenario: context-family

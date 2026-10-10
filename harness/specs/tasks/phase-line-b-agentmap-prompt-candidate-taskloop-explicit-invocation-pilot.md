@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-prompt-candidate-taskloop-explicit-invocation-pilot
 title: Line B AgentMap prompt candidate TaskLoop explicit invocation pilot
 scenario: gateway-backend-communication

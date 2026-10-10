@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-tool-invocation-governance-destructive-operation-guard-evidence-proof
 title: Runtime Failure Tool Invocation Governance Destructive Operation Guard Evidence Proof
 scenario: gateway-backend-communication

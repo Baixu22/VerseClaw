@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-36-runtime-memory-long-conversation-statistical-eval
 title: Phase 36 runtime memory long conversation statistical evaluation
 scenario: gateway-backend-communication

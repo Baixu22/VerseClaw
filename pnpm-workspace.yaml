@@ -1,3 +1,5 @@
+# packages/vtoken is intentionally a Python/uv sidecar, not a pnpm workspace package.
+# See packages/vtoken/README.md and docs/dev/repository-layout.md.
 packages:
   - '.'
   - 'harness'

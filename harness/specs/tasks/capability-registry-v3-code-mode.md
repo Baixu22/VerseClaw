@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: capability-registry-v3-code-mode
 title: Capability Registry V3 Code Mode bridge
 scenario: capability-registry-v3

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-8-ast-editplan-narrow-evaluation-decision-gate
 title: Phase 8 AST EditPlan Narrow-Evaluation Decision Gate
 scenario: gateway-backend-communication

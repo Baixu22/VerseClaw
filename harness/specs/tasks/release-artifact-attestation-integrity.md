@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: release-artifact-attestation-integrity
 title: Bind SBOM, provenance, ASAR integrity, and Electron fuses
 scenario: windows-release-trust

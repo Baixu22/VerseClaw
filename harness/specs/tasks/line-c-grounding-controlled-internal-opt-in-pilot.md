@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-controlled-internal-opt-in-pilot
 title: Line C grounding controlled internal opt-in pilot
 scenario: gateway-backend-communication

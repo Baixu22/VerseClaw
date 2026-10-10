@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: storage-memory-cleaner
 title: Storage & Memory Cleaner (settings tool)
 scenario: gateway-backend-communication

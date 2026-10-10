@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-lossless-archive-mvp
 title: Context lossless archive MVP
 scenario: context-family

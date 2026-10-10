@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-memory-search-missing-index-metadata
 title: Rebuild memory search indexes when metadata is missing
 scenario: gateway-backend-communication

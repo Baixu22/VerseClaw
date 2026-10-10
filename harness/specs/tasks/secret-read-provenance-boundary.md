@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: secret-read-provenance-boundary
 title: Secret-read provenance boundary for message credentials
 scenario: gateway-backend-communication

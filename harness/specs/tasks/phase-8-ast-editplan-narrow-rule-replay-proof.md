@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-8-ast-editplan-narrow-rule-replay-proof
 title: Phase 8 AST EditPlan Narrow-Rule Replay Proof
 scenario: gateway-backend-communication

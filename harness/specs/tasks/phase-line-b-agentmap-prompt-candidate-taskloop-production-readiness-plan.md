@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-prompt-candidate-taskloop-production-readiness-plan
 title: Line B AgentMap prompt candidate TaskLoop production readiness plan
 scenario: gateway-backend-communication

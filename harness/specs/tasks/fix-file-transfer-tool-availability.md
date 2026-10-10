@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-file-transfer-tool-availability
 title: Hide unconfigured paired-node file-transfer tools from single-machine agents
 scenario: gateway-backend-communication

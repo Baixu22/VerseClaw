@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: a4-decision-quality-pilot
 title: A4 Decision Quality — Active Pilot Gate
 scenario: gateway-backend-communication

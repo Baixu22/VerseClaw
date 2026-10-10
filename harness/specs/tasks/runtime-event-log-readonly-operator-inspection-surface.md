@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-event-log-readonly-operator-inspection-surface
 title: Runtime event-log readonly operator inspection surface
 scenario: gateway-backend-communication

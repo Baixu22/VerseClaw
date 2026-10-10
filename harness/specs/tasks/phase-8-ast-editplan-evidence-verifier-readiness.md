@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-8-ast-editplan-evidence-verifier-readiness
 title: Phase 8 AST EditPlan Evidence Verifier Readiness Bridge
 scenario: gateway-backend-communication

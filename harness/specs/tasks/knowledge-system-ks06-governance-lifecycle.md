@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-system-ks06-governance-lifecycle
 title: Knowledge system KS-06 complete governance lifecycle
 scenario: gateway-backend-communication

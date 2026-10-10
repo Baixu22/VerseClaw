@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fakecoding-inbox-navigation
 title: FakeCoding four-entry navigation and real Inbox aggregation
 scenario: windows-ui-v2

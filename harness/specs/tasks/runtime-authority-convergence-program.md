@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-authority-convergence-program
 title: Runtime Authority Convergence Program Control Pack
 scenario: gateway-backend-communication

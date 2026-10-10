@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-test-integrity
 title: Runtime test contracts and default runner integrity
 type: task

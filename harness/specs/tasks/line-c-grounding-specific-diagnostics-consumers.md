@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-specific-diagnostics-consumers
 title: Line C grounding specific diagnostics consumers expansion
 scenario: gateway-backend-communication

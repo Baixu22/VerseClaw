@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: agent-engineering-acceptance-orchestrator
 title: Agent Engineering Acceptance Orchestrator
 taskType: engineering-acceptance

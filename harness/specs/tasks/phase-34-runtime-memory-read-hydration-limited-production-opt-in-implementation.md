@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-34-runtime-memory-read-hydration-limited-production-opt-in-implementation
 title: Phase 34 runtime memory read hydration limited production opt-in implementation
 scenario: gateway-backend-communication

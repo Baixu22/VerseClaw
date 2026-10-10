@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-agent-routing-governance
 title: Knowledge Hub agent routing and governance
 scenario: gateway-backend-communication

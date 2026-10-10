@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-explicit-diagnostics-consumer-readiness
 title: Line C grounding explicit diagnostics consumer readiness
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-component-effectiveness
 title: Runtime component effectiveness evaluation
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-27-runtime-memory-readonly-read-hydration-shadow-packaged-output-inspection-proof
 title: Phase 27 runtime memory readonly read hydration shadow packaged output inspection proof
 scenario: gateway-backend-communication

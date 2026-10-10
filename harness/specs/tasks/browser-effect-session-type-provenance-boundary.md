@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: browser-effect-session-type-provenance-boundary
 title: Browser-effect provenance boundary for typing into existing external sessions
 scenario: gateway-backend-communication

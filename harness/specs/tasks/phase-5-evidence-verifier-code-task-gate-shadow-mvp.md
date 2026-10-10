@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-5-evidence-verifier-code-task-gate-shadow-mvp
 title: Phase 5 Evidence Verifier Code Task Gate Shadow MVP
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: stepfun-basic-live-evidence
 title: Expand Windows alpha evidence with a real StepFun model
 type: task

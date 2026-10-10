@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-foundation-governance
 title: VerseShell Foundation P0 Governance and Evidence Freeze
 scenario: gateway-backend-communication

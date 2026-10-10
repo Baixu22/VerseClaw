@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: role-first-memory-v2-governance
 title: Role-first memory v2 governance loop
 scenario: gateway-backend-communication

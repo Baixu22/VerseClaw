@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-29-runtime-memory-read-hydration-controlled-real-db-opt-in-evaluation
 title: Phase 29 runtime memory read hydration controlled real DB opt-in evaluation
 scenario: gateway-backend-communication

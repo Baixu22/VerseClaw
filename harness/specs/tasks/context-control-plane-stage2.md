@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-control-plane-stage2
 title: Context Control Plane Stage 2 ContextRef CompilationSnapshot DCS PromptPlan
 taskType: runtime-authority-convergence

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: electron-test-process-lifecycle
 title: Reclaim Electron processes after a Windows test worker crashes
 type: task

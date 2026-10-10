@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-provider-auth-json-sqlite-migration
 title: Migrate compatible provider auth JSON into the runtime SQLite store
 scenario: gateway-backend-communication

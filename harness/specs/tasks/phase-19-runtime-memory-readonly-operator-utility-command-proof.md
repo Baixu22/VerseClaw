@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-19-runtime-memory-readonly-operator-utility-command-proof
 title: Phase 19 runtime memory readonly operator utility command proof
 scenario: gateway-backend-communication

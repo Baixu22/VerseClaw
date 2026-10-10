@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-evidence-envelope-failure-summary
 title: Runtime Failure Evidence Envelope Failure Summary
 scenario: gateway-backend-communication

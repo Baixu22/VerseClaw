@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: supply-chain-integrity-pinning
 title: Pin bundled binaries, release installers, and GitHub Actions
 scenario: windows-release-trust

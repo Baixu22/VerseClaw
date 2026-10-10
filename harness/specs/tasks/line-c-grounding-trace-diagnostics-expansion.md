@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-trace-diagnostics-expansion
 title: Line C grounding trace diagnostics expansion
 scenario: gateway-backend-communication

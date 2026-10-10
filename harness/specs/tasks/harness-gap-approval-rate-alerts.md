@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: harness-gap-approval-rate-alerts
 title: 审批分类率的受控诊断告警与清除
 scenario: gateway-backend-communication

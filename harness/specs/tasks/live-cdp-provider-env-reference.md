@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: live-cdp-provider-env-reference
 title: 识别环境变量密钥并完成真实模型 CDP 采集
 scenario: gateway-backend-communication

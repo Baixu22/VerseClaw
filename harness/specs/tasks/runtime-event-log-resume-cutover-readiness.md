@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-event-log-resume-cutover-readiness
 title: Runtime event-log resume cutover readiness research
 scenario: gateway-backend-communication

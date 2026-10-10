@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-event-log-persisted-resume-mvp
 title: Runtime event-log persisted resume MVP
 scenario: gateway-backend-communication

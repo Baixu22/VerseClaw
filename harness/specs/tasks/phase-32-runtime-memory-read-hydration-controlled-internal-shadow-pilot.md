@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-32-runtime-memory-read-hydration-controlled-internal-shadow-pilot
 title: Phase 32 runtime memory read hydration controlled internal shadow pilot
 scenario: gateway-backend-communication

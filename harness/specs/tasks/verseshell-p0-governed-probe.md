@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-p0-governed-probe
 title: VerseShell P0 Governed Real Probe and Approval Boundary
 scenario: gateway-backend-communication

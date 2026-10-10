@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: vtoken-foundation-bridge
 title: Verse Token Working Context assembly (production)
 type: ai-coding-task

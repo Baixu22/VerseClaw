@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: chat-session-handoff-mvp
 title: Chat session handoff MVP
 scenario: gateway-backend-communication

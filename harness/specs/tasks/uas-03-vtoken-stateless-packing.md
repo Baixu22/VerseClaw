@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: uas-03-vtoken-stateless-packing
 title: UAS-03 VerseToken stateless packing
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseconf-clawx-integrated-consumer
 title: VerseConf structured artifact consumer through the ClawX runtime
 scenario: gateway-backend-communication

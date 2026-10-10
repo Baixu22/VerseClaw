@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: sekb-hermes-phase-c-would-trigger
 title: "SEKB Hermes Phase C (D1): mutation-free would_trigger evidence"
 scenario: gateway-backend-communication

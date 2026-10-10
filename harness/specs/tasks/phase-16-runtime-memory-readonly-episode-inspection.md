@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-16-runtime-memory-readonly-episode-inspection
 title: Phase 16 runtime memory readonly episode inspection
 scenario: gateway-backend-communication

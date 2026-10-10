@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-tool-invocation-governance-destructive-operation-guard-boundary-tightening-internal-optimization-runtime-coupling-readiness
 title: Runtime Failure Tool Invocation Governance Destructive Operation Guard Boundary Tightening Internal Optimization Runtime Coupling Readiness
 scenario: gateway-backend-communication

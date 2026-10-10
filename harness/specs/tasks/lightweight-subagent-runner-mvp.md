@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: lightweight-subagent-runner-mvp
 title: Lightweight Subagent Runner MVP
 scenario: gateway-backend-communication

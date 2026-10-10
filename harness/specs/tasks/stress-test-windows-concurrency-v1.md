@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: stress-test-windows-concurrency-v1
 title: Windows 高并发稳定性压测 v1
 intent: Verifies ResourceLeaseManager behavior under starvation-level concurrent load, and Chat UI jank at extreme message counts. Model API is mocked; the test isolates scheduling and rendering paths from API latency.
@@ -24,7 +25,7 @@ touchedAreas:
 - 快速切换 5 个不同 session key
 - 模拟 50 帧 streaming text 更新（每帧 50-200 chars）
 - 每条帧测量：useMemo 再计算次数（mock proxy）、React 渲染时间
-- 
+-
 
 ## 实施方式
 

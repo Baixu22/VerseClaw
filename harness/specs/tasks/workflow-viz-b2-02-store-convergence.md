@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: workflow-viz-b2-02-store-convergence
 title: Workflow Viz B2-02 store convergence onto assembler snapshots
 scenario: gateway-backend-communication

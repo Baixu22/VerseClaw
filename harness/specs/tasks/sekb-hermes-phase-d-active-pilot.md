@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: sekb-hermes-phase-d-active-pilot
 title: "SEKB Hermes Phase D (D2): minimal active pilot (default-off)"
 scenario: gateway-backend-communication

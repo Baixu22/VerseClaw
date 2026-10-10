@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: workflow-viz-b1-02-ordinary-session-producer
 title: Workflow Viz B1-02 ordinary session trajectory producer
 scenario: gateway-backend-communication

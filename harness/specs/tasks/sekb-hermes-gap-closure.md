@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: sekb-hermes-gap-closure
 title: "SEKB Hermes Memory 档 A: default-off production merge readiness"
 scenario: gateway-backend-communication

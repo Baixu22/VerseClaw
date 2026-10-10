@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-system-ks02-experience-session-truth
 title: Knowledge system KS-02 experience write truth and session cascade
 scenario: gateway-backend-communication

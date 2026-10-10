@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: remove-work-mode-use-thinking-intensity
 title: Remove Work Mode and use thinking intensity
 scenario: gateway-backend-communication

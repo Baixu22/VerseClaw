@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: diff-workbench-vnext
 title: Diff Workbench vNext
 scenario: gateway-backend-communication

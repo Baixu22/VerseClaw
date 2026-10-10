@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: windows-ui-v2-apple-motion
 title: Cross-platform FakeCoding UI v2 foundation
 scenario: windows-ui-v2

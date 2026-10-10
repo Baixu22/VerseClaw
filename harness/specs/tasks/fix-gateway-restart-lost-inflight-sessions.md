@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-gateway-restart-lost-inflight-sessions
 title: Resume in-flight main sessions after Gateway restart
 scenario: gateway-backend-communication

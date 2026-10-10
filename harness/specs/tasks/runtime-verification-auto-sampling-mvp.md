@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-verification-auto-sampling-mvp
 title: Runtime verification auto-sampling MVP
 scenario: gateway-backend-communication

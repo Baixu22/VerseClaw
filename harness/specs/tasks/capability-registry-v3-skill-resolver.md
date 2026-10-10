@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: capability-registry-v3-skill-resolver
 title: Capability Registry V3 Skill hierarchical resolver
 scenario: capability-registry-v3

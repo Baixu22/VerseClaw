@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: a3-runtime-resilience-pilot
 title: A3 Runtime Resilience — Active Pilot Gate
 scenario: gateway-backend-communication

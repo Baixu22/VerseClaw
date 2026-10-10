@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-default-on-deep-validation
 title: Line B AgentMap Default-On Deep Validation
 scenario: gateway-backend-communication

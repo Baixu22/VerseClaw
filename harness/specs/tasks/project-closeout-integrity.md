@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: project-closeout-integrity
 title: Project closeout compilation and evidence integrity
 type: task

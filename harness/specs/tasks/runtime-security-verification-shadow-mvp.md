@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-security-verification-shadow-mvp
 title: Runtime security and verification shadow MVP
 scenario: gateway-backend-communication

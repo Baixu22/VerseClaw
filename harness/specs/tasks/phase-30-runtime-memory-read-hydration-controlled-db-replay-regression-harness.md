@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-30-runtime-memory-read-hydration-controlled-db-replay-regression-harness
 title: Phase 30 runtime memory read hydration controlled DB replay regression harness
 scenario: gateway-backend-communication

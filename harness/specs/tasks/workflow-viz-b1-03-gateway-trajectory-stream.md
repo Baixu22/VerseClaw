@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: workflow-viz-b1-03-gateway-trajectory-stream
 title: Workflow Viz B1-03 Gateway trajectory read subscribe and gap repair
 scenario: gateway-backend-communication

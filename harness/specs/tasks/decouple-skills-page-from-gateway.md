@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: decouple-skills-page-from-gateway
 title: Decouple Skills page from gateway RPC and remove built-in public ClawHub marketplace
 scenario: gateway-backend-communication

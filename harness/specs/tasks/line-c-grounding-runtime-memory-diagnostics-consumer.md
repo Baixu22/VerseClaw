@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-runtime-memory-diagnostics-consumer
 title: Line C grounding Runtime Memory diagnostics consumer expansion
 scenario: gateway-backend-communication

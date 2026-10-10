@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: tf0074-real-use-acceptance
 title: TF-0074 DCS、Goal/Loop、SEKB 真实投入使用工程验收
 scenario: gateway-backend-communication

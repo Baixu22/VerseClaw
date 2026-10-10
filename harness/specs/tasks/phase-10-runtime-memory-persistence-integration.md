@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-10-runtime-memory-persistence-integration
 title: Phase 10 runtime memory persistence integration planning
 scenario: gateway-backend-communication

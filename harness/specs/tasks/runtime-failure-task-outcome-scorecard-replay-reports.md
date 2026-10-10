@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-task-outcome-scorecard-replay-reports
 title: Runtime Failure Task Outcome Scorecard Replay Reports
 scenario: gateway-backend-communication

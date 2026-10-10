@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc06a-taskflow-capability-proof
 title: RC-06A TaskFlow Capability And Concurrency Proof
 taskType: engineering-acceptance

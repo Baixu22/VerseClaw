@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: packaged-runtime-pruning-guards
 title: Guard packaged runtime pruning for universal builds
 scenario: plugin-lifecycle-management

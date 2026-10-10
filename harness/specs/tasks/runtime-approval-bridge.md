@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-approval-bridge
 title: In-app runtime exec-approval bridge
 scenario: gateway-backend-communication

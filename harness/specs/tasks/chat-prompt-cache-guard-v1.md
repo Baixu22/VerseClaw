@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: chat-prompt-cache-guard-v1
 title: Chat prompt cache guard v1
 scenario: gateway-backend-communication

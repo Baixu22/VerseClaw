@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-chat-context-application
 title: Knowledge context in Chat
 scenario: gateway-backend-communication

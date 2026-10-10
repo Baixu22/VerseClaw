@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-system-ks08-ui-observability
 title: Knowledge system KS-08 UI and observability convergence
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-event-log-authority-cutover-readiness
 title: Runtime event-log authority cutover readiness
 scenario: gateway-backend-communication

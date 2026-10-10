@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-agentmap-diagnostics-consumer
 title: Line C grounding AgentMap diagnostics consumer expansion
 scenario: gateway-backend-communication

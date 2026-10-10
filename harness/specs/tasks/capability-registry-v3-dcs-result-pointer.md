@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: capability-registry-v3-dcs-result-pointer
 title: Capability Registry V3 DCS projection and Result Pointer
 scenario: capability-registry-v3

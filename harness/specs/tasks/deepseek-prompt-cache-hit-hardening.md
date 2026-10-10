@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: deepseek-prompt-cache-hit-hardening
 title: DeepSeek prompt cache hit hardening
 scenario: gateway-backend-communication

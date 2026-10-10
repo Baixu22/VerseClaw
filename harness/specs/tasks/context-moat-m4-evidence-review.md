@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-moat-m4-evidence-review
 title: TF-0127 M4 交付证据与里程碑门复核
 scenario: system-maturity-traceability

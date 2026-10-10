@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: p2-issue-fixes-batch6-20261010
 title: P2 issue batch 6 - admission fence bounds and reclamation, CVK rollback honesty
 taskType: runtime-bridge

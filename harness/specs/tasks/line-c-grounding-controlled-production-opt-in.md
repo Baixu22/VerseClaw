@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-controlled-production-opt-in
 title: Line C grounding controlled production opt-in
 scenario: gateway-backend-communication

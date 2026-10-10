@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: remote-task-inbox-mvp
 title: Remote Task Inbox MVP
 scenario: gateway-backend-communication

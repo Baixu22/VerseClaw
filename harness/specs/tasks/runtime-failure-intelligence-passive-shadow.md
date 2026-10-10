@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-intelligence-passive-shadow
 title: Runtime Failure Intelligence Passive Shadow
 scenario: gateway-backend-communication

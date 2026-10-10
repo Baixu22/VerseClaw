@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: desktop-acceptance-followups
 title: Repair the remaining Windows desktop acceptance failures
 type: task

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: code-review-center-vnext
 title: Code Review Center MVP
 scenario: gateway-backend-communication

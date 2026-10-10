@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-diagnostics-presentation-operator-readiness
 title: Line C grounding diagnostics presentation operator readiness
 scenario: gateway-backend-communication

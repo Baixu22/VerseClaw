@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: capability-registry-v3-unified-resolver
 title: Capability Registry V3 unified resolver and Tool Search fallback
 scenario: capability-registry-v3

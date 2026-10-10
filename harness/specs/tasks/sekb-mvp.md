@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: sekb-mvp
 title: Self-evolving knowledge base MVP
 scenario: gateway-backend-communication

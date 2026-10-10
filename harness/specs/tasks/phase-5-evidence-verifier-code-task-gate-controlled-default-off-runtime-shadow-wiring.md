@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-5-evidence-verifier-code-task-gate-controlled-default-off-runtime-shadow-wiring
 title: Phase 5 Evidence Verifier Code Task Gate Controlled Default-Off Runtime Shadow Wiring
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: m2m4-l2-greenline-closeout
 title: M2/M4 全局 L2 绿线建立与回归修复
 scenario: system-maturity-traceability

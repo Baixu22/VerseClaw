@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: workspace-task-ledger
 title: Workspace task ledger for long-running agent work
 scenario: gateway-backend-communication

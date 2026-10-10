@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-family-semantic-constitution
 title: Context Family Semantic Constitution
 scenario: context-family

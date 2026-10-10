@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-p0-reproducible-bundle
 title: VerseShell P0 Reproducible Source Bundle and Supply-Chain Identity
 scenario: gateway-backend-communication

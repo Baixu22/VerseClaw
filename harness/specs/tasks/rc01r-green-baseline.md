@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc01r-green-baseline
 title: RC-01R Green Baseline Remediation
 taskType: engineering-acceptance

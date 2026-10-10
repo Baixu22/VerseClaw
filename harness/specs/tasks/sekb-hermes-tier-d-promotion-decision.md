@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: sekb-hermes-tier-d-promotion-decision
 title: "SEKB Hermes Tier D0: promotion decision package (no runtime mutation)"
 scenario: gateway-backend-communication

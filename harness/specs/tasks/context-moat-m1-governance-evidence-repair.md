@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-moat-m1-governance-evidence-repair
 title: 修复 TF-0108 的 P2-005 治理证据失配并裁定收口范围
 scenario: system-maturity-traceability

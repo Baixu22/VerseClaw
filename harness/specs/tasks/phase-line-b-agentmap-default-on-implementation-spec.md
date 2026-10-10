@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-line-b-agentmap-default-on-implementation-spec
 title: Line B AgentMap Default-On Implementation Spec
 scenario: gateway-backend-communication

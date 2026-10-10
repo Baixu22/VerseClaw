@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-tool-invocation-governance-destructive-operation-guard-internal-evaluation-scorecard
 title: Runtime Failure Tool Invocation Governance Destructive Operation Guard Internal Evaluation Scorecard
 scenario: gateway-backend-communication

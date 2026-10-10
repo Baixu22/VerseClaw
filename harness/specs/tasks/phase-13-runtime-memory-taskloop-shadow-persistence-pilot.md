@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-13-runtime-memory-taskloop-shadow-persistence-pilot
 title: Phase 13 runtime memory TaskLoop shadow persistence pilot
 scenario: gateway-backend-communication

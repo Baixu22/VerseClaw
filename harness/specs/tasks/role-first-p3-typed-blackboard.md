@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: role-first-p3-typed-blackboard
 title: Role-First Multi-Agent P3 Typed Blackboard And Bounded A2A
 scenario: gateway-backend-communication

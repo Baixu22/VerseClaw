@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-8-runtime-memory-cutover-readiness
 title: Phase 8 runtime memory cutover readiness and rollback proof
 scenario: gateway-backend-communication

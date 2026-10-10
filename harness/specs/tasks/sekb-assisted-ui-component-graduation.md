@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: sekb-assisted-ui-component-graduation
 title: SEKB assisted UI component graduation
 scenario: gateway-backend-communication

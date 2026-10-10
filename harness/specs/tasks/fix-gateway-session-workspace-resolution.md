@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-gateway-session-workspace-resolution
 title: Preserve trusted backend workspace context for gateway sessions
 scenario: gateway-backend-communication

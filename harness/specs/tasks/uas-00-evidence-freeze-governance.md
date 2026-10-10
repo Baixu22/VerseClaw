@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: uas-00-evidence-freeze-governance
 title: UAS-00 evidence freeze and governance registration
 scenario: gateway-backend-communication

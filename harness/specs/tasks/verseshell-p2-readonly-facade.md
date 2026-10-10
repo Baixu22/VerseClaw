@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-p2-readonly-facade
 title: VerseShell P2-01 只读 File/Search/Result Facade Adapter
 scenario: gateway-backend-communication

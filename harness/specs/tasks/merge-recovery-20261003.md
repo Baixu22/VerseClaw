@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: merge-recovery-20261003
 title: Safely reconcile knowledge governance and runtime lifecycle integration
 diffBase: 70daac29ca3c281ebe8e28cdab1c44e3982398e7

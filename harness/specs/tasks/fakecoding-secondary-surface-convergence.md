@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fakecoding-secondary-surface-convergence
 title: Secondary page convergence and visual rollback retirement
 scenario: gateway-backend-communication

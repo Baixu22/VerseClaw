@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-28-runtime-memory-read-hydration-guarded-opt-in-evaluation
 title: Phase 28 runtime memory read hydration guarded opt-in evaluation
 scenario: gateway-backend-communication

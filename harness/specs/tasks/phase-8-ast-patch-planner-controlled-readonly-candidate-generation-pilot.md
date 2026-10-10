@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-8-ast-patch-planner-controlled-readonly-candidate-generation-pilot
 title: Phase 8 AST Patch Planner Controlled Readonly Candidate Generation Pilot
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-control-plane-stage3
 title: Context Control Plane Stage 3 Task Ledger Working Context Proposal Accept Reject Projection
 taskType: runtime-authority-convergence

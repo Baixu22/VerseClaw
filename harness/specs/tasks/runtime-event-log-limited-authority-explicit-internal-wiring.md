@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-event-log-limited-authority-explicit-internal-wiring
 title: Runtime event-log limited authority explicit internal wiring
 scenario: gateway-backend-communication

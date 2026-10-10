@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-p3-external-write-policy
 title: VerseShell P3-02 External Write Policy
 scenario: gateway-backend-communication

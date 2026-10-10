@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: prompt-quality-round1-bugfix
 title: Prompt Quality Round 1 Bugfix
 scenario: gateway-backend-communication

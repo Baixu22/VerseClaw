@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-event-log-controlled-dual-read-resume-pilot-evidence-review
 title: Runtime event-log controlled dual-read resume pilot evidence review
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: external-content-source-provenance-baseline
 title: External Content Source-to-Sink Provenance Baseline
 scenario: gateway-backend-communication

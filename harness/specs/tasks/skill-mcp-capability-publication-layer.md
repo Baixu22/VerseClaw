@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: skill-mcp-capability-publication-layer
 title: Skill/MCP capability publication layer
 scenario: gateway-backend-communication

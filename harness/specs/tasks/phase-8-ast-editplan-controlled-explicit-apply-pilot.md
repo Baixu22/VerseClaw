@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-8-ast-editplan-controlled-explicit-apply-pilot
 title: Phase 8 AST EditPlan Controlled Explicit Apply Pilot
 scenario: gateway-backend-communication

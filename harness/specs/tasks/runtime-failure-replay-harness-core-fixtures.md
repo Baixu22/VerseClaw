@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-failure-replay-harness-core-fixtures
 title: Runtime Failure Replay Harness Core Fixtures
 scenario: gateway-backend-communication

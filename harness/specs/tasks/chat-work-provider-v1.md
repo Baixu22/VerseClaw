@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: chat-work-provider-v1
 title: Chat work provider orchestration v1
 scenario: gateway-backend-communication

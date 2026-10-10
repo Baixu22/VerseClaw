@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: cvk-real-runtime-evidence
 title: Record real runtime evidence that the CVK prompt addition reaches and is consumed by the live model
 type: task

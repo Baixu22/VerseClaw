@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: chat-session-control-isolation
 title: Keep asynchronous chat controls attached to their source conversation
 type: task

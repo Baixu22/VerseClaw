@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: unified-c1-gate-corpus
 title: Unified C1 gate corpus
 scenario: gateway-backend-communication

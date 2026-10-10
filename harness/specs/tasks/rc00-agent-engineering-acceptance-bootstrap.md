@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc00-agent-engineering-acceptance-bootstrap
 title: RC-00 Agent Engineering Acceptance Bootstrap
 taskType: engineering-acceptance

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-grounding-single-explicit-diagnostics-consumer-implementation
 title: Line C grounding single explicit diagnostics-only consumer implementation
 scenario: gateway-backend-communication

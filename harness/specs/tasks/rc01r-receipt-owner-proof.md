@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc01r-receipt-owner-proof
 title: RC-01R Receipt Owner Persistence Proof
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-17-runtime-memory-readonly-operator-inspection-surface
 title: Phase 17 runtime memory readonly operator inspection surface
 scenario: gateway-backend-communication

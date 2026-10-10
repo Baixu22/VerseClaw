@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: capability-registry-v3-trusted-catalog
 title: Capability Registry V3 trusted catalog and lease
 scenario: capability-registry-v3

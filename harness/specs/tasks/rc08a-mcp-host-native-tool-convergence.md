@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: rc08a-mcp-host-native-tool-convergence
 title: RC-08A MCP And Host-Native Tool Convergence
 taskType: engineering-acceptance

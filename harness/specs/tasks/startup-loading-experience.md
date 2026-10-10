@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: startup-loading-experience
 title: Branded startup and route loading experience
 scenario: gateway-backend-communication

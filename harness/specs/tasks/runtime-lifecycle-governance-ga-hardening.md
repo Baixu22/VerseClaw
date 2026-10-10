@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-lifecycle-governance-ga-hardening
 title: Runtime Lifecycle Governance GA hardening — packaged Electron proof, real-process canary, and RLG-only clean acceptance
 scenario: gateway-backend-communication

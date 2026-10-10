@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-control-plane-stage6
 title: Context Control Plane Stage 6 Context Diff Why Included Policy Simulation Replay Debugger
 taskType: runtime-authority-convergence

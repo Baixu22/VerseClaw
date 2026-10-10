@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: channel-stability-permissions-v1
 title: Harden channel stability and permission visibility
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: line-c-evidence-trace-grounding-spine
 title: Line C evidence trace grounding spine derived refs and bounded queries
 scenario: gateway-backend-communication

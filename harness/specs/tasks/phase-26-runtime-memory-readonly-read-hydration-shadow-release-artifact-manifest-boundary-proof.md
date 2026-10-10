@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-26-runtime-memory-readonly-read-hydration-shadow-release-artifact-manifest-boundary-proof
 title: Phase 26 runtime memory readonly read hydration shadow release artifact manifest boundary proof
 scenario: gateway-backend-communication

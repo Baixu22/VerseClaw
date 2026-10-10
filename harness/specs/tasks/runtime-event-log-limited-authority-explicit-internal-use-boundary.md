@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-event-log-limited-authority-explicit-internal-use-boundary
 title: Runtime event-log limited authority explicit internal use boundary
 scenario: gateway-backend-communication

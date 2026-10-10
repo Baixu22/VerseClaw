@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-chat-stuck-processing-tool-results
 title: Clear stale chat run state when Gateway reports the session is idle
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-hub-governance
 title: Knowledge Hub role-first governance
 scenario: gateway-backend-communication

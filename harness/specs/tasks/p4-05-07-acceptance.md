@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: p4-05-07-acceptance
 title: FP-P4-05 through FP-P4-07 combined acceptance
 scenario: gateway-backend-communication

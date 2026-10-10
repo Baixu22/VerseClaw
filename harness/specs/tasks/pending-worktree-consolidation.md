@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: pending-worktree-consolidation
 title: Consolidate still-valid repairs from preserved worktrees
 taskType: runtime-bridge

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: fix-gateway-agent-phase-end-state
 title: Keep chat run active across non-terminal gateway phase end events
 scenario: gateway-backend-communication

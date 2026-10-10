@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: role-first-p0-verification-loop
 title: Role-First Multi-Agent P0 Verification Loop Hardening
 scenario: gateway-backend-communication

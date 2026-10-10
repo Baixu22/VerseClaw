@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: knowledge-system-ks01-review-bundle-integrity
 title: Knowledge system KS-01 ReviewBundle and governance integrity
 scenario: gateway-backend-communication

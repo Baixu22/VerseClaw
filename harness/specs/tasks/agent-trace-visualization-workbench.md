@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: agent-trace-visualization-workbench
 title: Deepen Observability into an agent trace visualization workbench
 scenario: gateway-backend-communication

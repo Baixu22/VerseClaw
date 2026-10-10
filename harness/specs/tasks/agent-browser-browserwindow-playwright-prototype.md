@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: agent-browser-browserwindow-playwright-prototype
 title: Agent Browser OS workbench and secure automation runtime
 scenario: gateway-backend-communication

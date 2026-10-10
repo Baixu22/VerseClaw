@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: runtime-family-unification-v1
 title: Runtime Family Unification v1 (Tombstone)
 scenario: gateway-backend-communication

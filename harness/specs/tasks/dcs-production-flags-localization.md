@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: dcs-production-flags-localization
 title: DCS production flags Japanese and Russian localization
 scenario: gateway-backend-communication

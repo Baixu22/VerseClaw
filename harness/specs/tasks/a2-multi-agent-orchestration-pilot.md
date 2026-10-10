@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: a2-multi-agent-orchestration-pilot
 title: A2 Multi-Agent Orchestration — Active Pilot Gate
 scenario: gateway-backend-communication

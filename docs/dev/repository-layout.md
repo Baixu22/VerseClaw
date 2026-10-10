@@ -1,0 +1,51 @@
+# Repository layout and evidence roots
+
+This page defines the intended role of the repository's top-level areas so a
+clean checkout does not require guessing from directory names.
+
+| Path | Role | Source of truth |
+| --- | --- | --- |
+| `src/`, `electron/`, `shared/` | Desktop product source and renderer/Main boundary | Code and contract tests |
+| `openclaw_runtime/` | Vendored OpenClaw runtime source and its local fork policy | [UPSTREAM](../../openclaw_runtime/UPSTREAM.md) |
+| `packages/` | Language-neutral components and generated packages; not every child is a pnpm workspace package | `packages/README.md` and the child README |
+| `harness/` | Executable rules, scenarios, task specs and validation commands | Harness validation |
+| `docs/` | Current developer, architecture, product and operational documentation | This index and policy checks |
+| `plans/` | System-maturity plans and tracked decision records | Plan-specific owners |
+| `reports/` and `artifacts/` | Curated tracked evidence and historical run outputs | `docs/dev/repository-artifact-retention.md` |
+| `team/` | Historical design and role-architecture material | Git history |
+| `public/`, `resources/` | Shipped runtime assets and packaging inputs | Packaging and asset checks |
+| `scripts/` | Build, validation, evidence and release automation | Scripts and checks |
+
+## Evidence roots
+
+New durable evidence must use an existing reviewed root:
+
+- `artifacts/` for machine-readable curated evidence and retained acceptance output.
+- `reports/` for long-form human-readable reports derived from retained evidence.
+- `docs/` for current product, architecture or operational meaning.
+- `plans/` for system-maturity decisions and their approved lifecycle.
+
+Raw logs, temporary run directories, local handoffs and private working data
+must stay local or under the repository retention policy. Do not create a new
+top-level evidence directory without updating `scripts/repository-artifacts.json`
+and this page.
+
+## Root process files
+
+Design notes and process documents belong under `docs/`. The former root-level
+`send-button-states-design.md` is retained at
+[`docs/dev/send-button-states-design.md`](send-button-states-design.md).
+
+## Python sidecars
+
+`packages/vtoken` is a Python/uv sidecar, not a pnpm dependency. See
+[`packages/vtoken/README.md`](../../packages/vtoken/README.md). Its location is
+intentional: it is packaged with the component that launches it, while
+`pnpm-workspace.yaml` only enumerates JavaScript workspace packages.
+
+## Vendored runtime
+
+`openclaw_runtime/` is a real Git tree, not a submodule. Its upstream version,
+local fork policy, sync process and tracked build-output rationale are recorded
+in [`openclaw_runtime/UPSTREAM.md`](../../openclaw_runtime/UPSTREAM.md) and
+checked by `scripts/check-runtime-source-policy.mjs`.

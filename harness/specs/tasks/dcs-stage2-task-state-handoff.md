@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: dcs-stage2-task-state-handoff
 title: DCS Stage 2 task state adapter and child-session handoff
 scenario: gateway-backend-communication

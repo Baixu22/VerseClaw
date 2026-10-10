@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: verseshell-p2-command-profiles
 title: VerseShell P2-02 argv-only Command Profiles
 scenario: gateway-backend-communication

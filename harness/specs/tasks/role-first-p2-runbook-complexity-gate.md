@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: role-first-p2-runbook-complexity-gate
 title: Role-First Multi-Agent P2 RunbookTemplate And Complexity Gate
 scenario: gateway-backend-communication

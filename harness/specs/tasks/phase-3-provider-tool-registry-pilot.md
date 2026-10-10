@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-3-provider-tool-registry-pilot
 title: Phase 3 provider and tool registry pilot
 scenario: gateway-backend-communication

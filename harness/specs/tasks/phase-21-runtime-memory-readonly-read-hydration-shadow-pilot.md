@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-21-runtime-memory-readonly-read-hydration-shadow-pilot
 title: Phase 21 runtime memory readonly read hydration shadow pilot
 scenario: gateway-backend-communication

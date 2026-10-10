@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: remove-host-api-server-and-renderer-gateway-transports
 title: Remove local Host API server and renderer Gateway transports
 scenario: gateway-backend-communication

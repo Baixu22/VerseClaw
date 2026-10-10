@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: p2-issue-fixes-batch3-20261010
 title: P2 issue batch 3 - skill install byte identity, tool disclosure, snapshot skill limits
 taskType: runtime-bridge

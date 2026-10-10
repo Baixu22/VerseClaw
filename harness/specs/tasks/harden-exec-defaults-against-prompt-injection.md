@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: harden-exec-defaults-against-prompt-injection
 title: Harden missing-config exec defaults against prompt injection
 scenario: gateway-backend-communication

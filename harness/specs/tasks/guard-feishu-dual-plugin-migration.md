@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: guard-feishu-dual-plugin-migration
 title: Guard Feishu dual-plugin migration during gateway config sanitization
 scenario: gateway-backend-communication

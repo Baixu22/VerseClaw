@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: phase-11-runtime-memory-default-off-wiring
 title: Phase 11 runtime memory default-off wiring MVP
 scenario: gateway-backend-communication

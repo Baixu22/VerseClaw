@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: long-conversation-control-hardening-v1
 title: Long conversation control checkpointed recovery hardening
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: context-readonly-recall-surface
 title: Context read-only recall surface
 scenario: context-family

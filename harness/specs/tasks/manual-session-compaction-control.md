@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: manual-session-compaction-control
 title: Manual current-session compaction control
 scenario: gateway-backend-communication

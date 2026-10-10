@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: archived
 id: clean-release-baseline-reproducibility
 title: Enforce a clean and reproducible release baseline
 scenario: windows-release-trust
