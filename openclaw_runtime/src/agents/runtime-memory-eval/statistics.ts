@@ -129,46 +129,80 @@ function sampleStdDev(values: readonly number[], m: number): number {
 
 // Two-sided critical t-values for alpha=0.05, df=1..30.
 // For df > 30 we use the normal approximation (z = 1.959964).
-const T_CRITICAL_05: ReadonlyArray<number> = [
-  12.70620573644963, // df=1
-  4.302652729949265, // df=2
-  3.1824463052838063, // df=3
-  2.776445105197799, // df=4
-  2.57058183661474, // df=5
-  2.4469118487916806, // df=6
-  2.3646242515927853, // df=7
-  2.3060041352042697, // df=8
-  2.262157162798205, // df=9
-  2.2281388519649385, // df=10
-  2.2009851600819488, // df=11
-  2.178812829667226, // df=12
-  2.1603686564610127, // df=13
-  2.144786687917802, // df=14
-  2.1314495455597746, // df=15
-  2.119905299221253, // df=16
-  2.1098155778331806, // df=17
-  2.100922040240598, // df=18
-  2.0930240544083025, // df=19
-  2.0859634472658626, // df=20
-  2.079613844727619, // df=21
-  2.073873067901116, // df=22
-  2.0686576104190437, // df=23
-  2.0638985616280205, // df=24
-  2.0595385527532937, // df=25
-  2.0555294386428713, // df=26
-  2.0518305164807846, // df=27
-  2.048407141795946, // df=28
-  2.0452296424706833, // df=29
-  2.0422724563012373, // df=30
-];
+function logGamma(x: number): number {
+  const coefficients = [
+    0.99999999999980993,
+    676.5203681218851,
+    -1259.1392167224028,
+    771.32342877765313,
+    -176.61502916214059,
+    12.507343278686905,
+    -0.13857109526572012,
+    9.9843695780195716e-6,
+    1.5056327351493116e-7,
+  ];
+  if (x < 0.5) {
+    return Math.log(Math.PI / Math.sin(Math.PI * x)) - logGamma(1 - x);
+  }
+  const value = x - 1;
+  let sum = coefficients[0];
+  const t = value + 7.5;
+  for (let index = 1; index < coefficients.length; index += 1) {
+    sum += coefficients[index] / (value + index);
+  }
+  return 0.5 * Math.log(2 * Math.PI) + (value + 0.5) * Math.log(t) - t + Math.log(sum);
+}
 
-const Z_05_TWO_SIDED = 1.959963984540054;
+function betaContinuedFraction(a: number, b: number, x: number): number {
+  const maxIterations = 200;
+  const epsilon = 3e-14;
+  const tiny = 1e-300;
+  const qab = a + b;
+  const qap = a + 1;
+  const qam = a - 1;
+  let c = 1;
+  let d = 1 - (qab * x) / qap;
+  if (Math.abs(d) < tiny) d = tiny;
+  d = 1 / d;
+  let h = d;
+  for (let m = 1; m <= maxIterations; m += 1) {
+    const m2 = 2 * m;
+    let aa = (m * (b - m) * x) / ((qam + m2) * (a + m2));
+    d = 1 + aa * d;
+    if (Math.abs(d) < tiny) d = tiny;
+    c = 1 + aa / c;
+    if (Math.abs(c) < tiny) c = tiny;
+    d = 1 / d;
+    h *= d * c;
+    aa = -((a + m) * (qab + m) * x) / ((a + m2) * (qap + m2));
+    d = 1 + aa * d;
+    if (Math.abs(d) < tiny) d = tiny;
+    c = 1 + aa / c;
+    if (Math.abs(c) < tiny) c = tiny;
+    d = 1 / d;
+    const delta = d * c;
+    h *= delta;
+    if (Math.abs(delta - 1) < epsilon) break;
+  }
+  return h;
+}
 
-function tCriticalTwoSidedAlpha05(df: number): number {
-  if (df <= 0) return Number.POSITIVE_INFINITY;
-  if (df >= 1 && df <= 30) return T_CRITICAL_05[df - 1];
-  // df > 30: normal approximation
-  return Z_05_TWO_SIDED;
+function regularizedIncompleteBeta(a: number, b: number, x: number): number {
+  if (x <= 0) return 0;
+  if (x >= 1) return 1;
+  const factor = Math.exp(
+    logGamma(a + b) - logGamma(a) - logGamma(b) + a * Math.log(x) + b * Math.log1p(-x),
+  );
+  if (x < (a + 1) / (a + b + 2)) {
+    return (factor * betaContinuedFraction(a, b, x)) / a;
+  }
+  return 1 - (factor * betaContinuedFraction(b, a, 1 - x)) / b;
+}
+
+function studentTTwoSidedPValue(t: number, df: number): number {
+  if (!Number.isFinite(t)) return 0;
+  const x = df / (df + t * t);
+  return regularizedIncompleteBeta(df / 2, 0.5, x);
 }
 
 export function pairedTTest(
@@ -211,22 +245,7 @@ export function pairedTTest(
   }
 
   const t = meanDiff / (stdDevDiff / Math.sqrt(n));
-
-  // p-value via critical t comparison (two-sided, alpha=0.05 table only).
-  // For general alpha we use the normal approximation when df > 30.
-  let pValue: number;
-  if (alpha === DEFAULT_ALPHA) {
-    const critical = tCriticalTwoSidedAlpha05(df);
-    if (Math.abs(t) > critical) {
-      pValue = 0.049;
-    } else {
-      pValue = 0.051;
-    }
-  } else {
-    // Normal approximation fallback for non-default alpha.
-    const z = Math.abs(t);
-    pValue = 2 * (1 - normalCdf(z));
-  }
+  const pValue = studentTTwoSidedPValue(t, df);
 
   return {
     t,
@@ -237,22 +256,6 @@ export function pairedTTest(
     significant: pValue < alpha,
     alpha,
   };
-}
-
-// Standard normal CDF approximation (Abramowitz & Stegun 7.1.26).
-function normalCdf(x: number): number {
-  const b1 = 0.319381530;
-  const b2 = -0.356563782;
-  const b3 = 1.781477937;
-  const b4 = -1.821255978;
-  const b5 = 1.330274429;
-  const p = 0.2316419;
-  const c = 0.39894228;
-  const absX = Math.abs(x);
-  const t = 1 / (1 + p * absX);
-  const phi =
-    c * Math.exp(-absX * absX / 2) * (b1 * t + b2 * t * t + b3 * t * t * t + b4 * t * t * t * t + b5 * t * t * t * t * t);
-  return x > 0 ? 1 - phi : phi;
 }
 
 export function minimumSampleSize(

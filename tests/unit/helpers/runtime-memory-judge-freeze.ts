@@ -47,8 +47,10 @@ export type JudgeSanityReport = {
   sourceReport?: string;
   targetSampleSize: number;
   reviewedCount: number;
+  reviewCoverage: number;
   falseNegativeRate: number;
-  requiresPromptReview: boolean;
+  requiresPromptReview: boolean | null;
+  status: "not_enabled" | "healthy" | "review_required";
   judgeConfig: typeof FROZEN_JUDGE_CONFIG;
   samples: JudgeSanitySample[];
 };
@@ -123,6 +125,12 @@ export function buildJudgeSanityReport(
   const reviewedCount = samples.filter(
     (sample) => sample.manualVerdict !== "unreviewed",
   ).length;
+  const reviewCoverage = samples.length > 0 ? reviewedCount / samples.length : 0;
+  const status = reviewedCount === 0
+    ? "not_enabled" as const
+    : falseNegativeRate > 0.15
+      ? "review_required" as const
+      : "healthy" as const;
 
   return {
     version: "judge-sanity-v1",
@@ -130,8 +138,10 @@ export function buildJudgeSanityReport(
     sourceReport: options.sourceReport,
     targetSampleSize,
     reviewedCount,
+    reviewCoverage,
     falseNegativeRate,
-    requiresPromptReview: reviewedCount > 0 && falseNegativeRate > 0.15,
+    requiresPromptReview: reviewedCount === 0 ? null : status === "review_required",
+    status,
     judgeConfig: FROZEN_JUDGE_CONFIG,
     samples,
   };
