@@ -14,6 +14,12 @@ describe('P1 repository identity and workflow boundaries (#77 #84 #85 #88)', () 
     expect(preload).toContain(OPENROUTER_ATTRIBUTION.title);
     expect(registry).not.toContain('claw-x.com');
     expect(preload).not.toContain('claw-x.com');
+
+    // The launcher writes its own inline copy of the fetch preload at runtime;
+    // that copy (not the checked-in .cjs) is what the Gateway actually loads.
+    const launcher = read('electron/gateway/process-launcher.ts');
+    expect(launcher).not.toContain('claw-x.com');
+    expect(launcher).toContain('https://verseclaw.dev');
   });
 
   it('does not publish internal Feishu tenant wiki links as channel help', () => {
