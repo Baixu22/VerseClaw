@@ -7,6 +7,7 @@ import {
   applyMemoryUseGateOverlay,
   assertMemoryDefaultOffConsistent,
   DEFAULT_MEMORY_DUAL_GATE_CONFIG,
+  evaluateMemoryCutoverGate,
   evaluateMemoryUseGate,
   evaluateMemoryWriteGate,
   filterCardsForModelInjection,
@@ -214,5 +215,45 @@ describe('TF-0110 (T-P0-1): dual-gate production wiring', () => {
       expect(decision.action).toBe('reject');
       expect(decision.reason ?? '').toMatch(/write gate is closed/i);
     });
+  });
+});
+
+describe('Issue #143 automated memory cutover evidence gate', () => {
+  const evidence = {
+    sampleSize: 60,
+    successRate: 0.94,
+    baselineP95LatencyMs: 1000,
+    candidateP95LatencyMs: 1200,
+    tokenOverheadRatio: 0.12,
+    safetyRegressions: 0,
+    evidenceRefs: ['artifact:runtime-memory-pilot/summary.json'],
+    drivenBy: 'agent' as const,
+  };
+
+  it('promotes to product-cutover only when every threshold and agent evidence ref passes', () => {
+    expect(evaluateMemoryCutoverGate(evidence)).toMatchObject({
+      eligible: true,
+      stage: 'product-cutover',
+      reasons: [],
+      defaultGateUnchanged: true,
+    });
+  });
+
+  it('stays guarded-opt-in when latency/token thresholds fail but safety is clean', () => {
+    const decision = evaluateMemoryCutoverGate({
+      ...evidence,
+      candidateP95LatencyMs: 2000,
+    });
+    expect(decision.stage).toBe('guarded-opt-in');
+    expect(decision.eligible).toBe(false);
+    expect(decision.reasons).toContain('p95_latency_ratio_above_maximum');
+  });
+
+  it('stays shadow when evidence is too small, unsafe, or not agent-driven', () => {
+    expect(evaluateMemoryCutoverGate({ ...evidence, sampleSize: 4 }).stage).toBe('shadow');
+    expect(evaluateMemoryCutoverGate({ ...evidence, safetyRegressions: 1 }).stage).toBe('shadow');
+    expect(evaluateMemoryCutoverGate({ ...evidence, drivenBy: 'human' as never }).reasons).toContain(
+      'evidence_must_be_agent_driven',
+    );
   });
 });

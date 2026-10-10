@@ -58,6 +58,48 @@ export type MemoryDualGateConfig = {
 
 export type MemoryDualGateKind = "write" | "use";
 
+export type MemoryCutoverEvidence = {
+  sampleSize: number;
+  successRate: number;
+  baselineP95LatencyMs: number;
+  candidateP95LatencyMs: number;
+  tokenOverheadRatio: number;
+  safetyRegressions: number;
+  evidenceRefs: string[];
+  drivenBy: "agent";
+};
+
+export type MemoryCutoverThresholds = {
+  minSampleSize: number;
+  minSuccessRate: number;
+  maxP95LatencyRatio: number;
+  maxTokenOverheadRatio: number;
+  maxSafetyRegressions: number;
+};
+
+export type MemoryCutoverDecision = {
+  eligible: boolean;
+  stage: "shadow" | "guarded-opt-in" | "product-cutover";
+  reasons: string[];
+  metrics: {
+    sampleSize: number;
+    successRate: number;
+    p95LatencyRatio: number;
+    tokenOverheadRatio: number;
+    safetyRegressions: number;
+  };
+  /** The gate evaluator never mutates frozen product defaults. */
+  defaultGateUnchanged: true;
+};
+
+export const DEFAULT_MEMORY_CUTOVER_THRESHOLDS: MemoryCutoverThresholds = {
+  minSampleSize: 50,
+  minSuccessRate: 0.9,
+  maxP95LatencyRatio: 1.5,
+  maxTokenOverheadRatio: 0.2,
+  maxSafetyRegressions: 0,
+};
+
 export type MemoryDualGateDecision = {
   allowed: boolean;
   gate: MemoryDualGateKind;
@@ -285,6 +327,63 @@ export function revokePoisonedMemory(
     // Keep content for audit but mark supersession lineage for delete cascade later.
     supersedes: card.supersedes ?? null,
     supersededBy: card.supersededBy ?? null,
+  };
+}
+
+function boundedRatio(numerator: number, denominator: number): number {
+  if (!Number.isFinite(numerator) || !Number.isFinite(denominator) || denominator <= 0) {
+    return Number.POSITIVE_INFINITY;
+  }
+  return numerator / denominator;
+}
+
+/**
+ * Issue #143: turn the shadow -> product cutover decision into an automated
+ * evidence gate. The evaluator only reports eligibility and stage; it never
+ * edits frozen defaults. Callers may not promote solely on model judgment:
+ * every promotion input is a bounded metric or explicit evidence ref.
+ */
+export function evaluateMemoryCutoverGate(
+  evidence: MemoryCutoverEvidence,
+  thresholds: MemoryCutoverThresholds = DEFAULT_MEMORY_CUTOVER_THRESHOLDS,
+): MemoryCutoverDecision {
+  const reasons: string[] = [];
+  const sampleSize = Number.isFinite(evidence.sampleSize) ? Math.max(0, Math.floor(evidence.sampleSize)) : 0;
+  const successRate = Number.isFinite(evidence.successRate) ? evidence.successRate : 0;
+  const p95LatencyRatio = boundedRatio(evidence.candidateP95LatencyMs, evidence.baselineP95LatencyMs);
+  const tokenOverheadRatio = Number.isFinite(evidence.tokenOverheadRatio) ? evidence.tokenOverheadRatio : Number.POSITIVE_INFINITY;
+  const safetyRegressions = Number.isFinite(evidence.safetyRegressions)
+    ? Math.max(0, Math.floor(evidence.safetyRegressions))
+    : Number.POSITIVE_INFINITY;
+  const evidenceRefs = evidence.evidenceRefs.filter((ref) => typeof ref === "string" && ref.trim().length > 0);
+
+  if (evidence.drivenBy !== "agent") reasons.push("evidence_must_be_agent_driven");
+  if (sampleSize < thresholds.minSampleSize) reasons.push("sample_size_below_minimum");
+  if (successRate < thresholds.minSuccessRate) reasons.push("success_rate_below_minimum");
+  if (p95LatencyRatio > thresholds.maxP95LatencyRatio) reasons.push("p95_latency_ratio_above_maximum");
+  if (tokenOverheadRatio > thresholds.maxTokenOverheadRatio) reasons.push("token_overhead_ratio_above_maximum");
+  if (safetyRegressions > thresholds.maxSafetyRegressions) reasons.push("safety_regressions_present");
+  if (evidenceRefs.length === 0) reasons.push("evidence_refs_required");
+
+  const metrics = {
+    sampleSize,
+    successRate,
+    p95LatencyRatio,
+    tokenOverheadRatio,
+    safetyRegressions,
+  };
+  const stage: MemoryCutoverDecision["stage"] =
+    reasons.length === 0
+      ? "product-cutover"
+      : sampleSize >= thresholds.minSampleSize && safetyRegressions <= thresholds.maxSafetyRegressions
+        ? "guarded-opt-in"
+        : "shadow";
+  return {
+    eligible: stage === "product-cutover",
+    stage,
+    reasons,
+    metrics,
+    defaultGateUnchanged: true,
   };
 }
 
