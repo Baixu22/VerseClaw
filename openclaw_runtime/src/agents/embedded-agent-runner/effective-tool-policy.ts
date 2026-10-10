@@ -21,6 +21,10 @@ import {
   type ToolPolicyPipelineStep,
 } from "../tool-policy-pipeline.js";
 import { mergeAlsoAllowPolicy, resolveToolProfilePolicy } from "../tool-policy.js";
+import {
+  ROLE_MCP_NETWORK_CAPABILITY_DENY,
+  ROLE_MCP_WRITE_CAPABILITY_DENY,
+} from "../role-permissions-policy.js";
 import type { AnyAgentTool } from "../tools/common.js";
 
 /**
@@ -59,6 +63,28 @@ type FinalEffectiveToolPolicyParams = {
   warn: (message: string) => void;
   toolPolicyAuditLogLevel?: "info" | "debug";
 };
+
+/**
+ * Apply role-level filesystem/network sentinels to dynamic MCP tools at the
+ * final policy boundary. MCP annotations are not used as grants: a
+ * filesystem=read role keeps only tools whose server was explicitly configured
+ * readOnly, while network=none drops dynamic MCP tools entirely because their
+ * egress cannot be proven from the transport name alone.
+ */
+export function filterBundledToolsForRoleCapabilities(
+  tools: AnyAgentTool[],
+  deny: ReadonlySet<string>,
+): AnyAgentTool[] {
+  if (!deny.has(ROLE_MCP_WRITE_CAPABILITY_DENY) && !deny.has(ROLE_MCP_NETWORK_CAPABILITY_DENY)) {
+    return tools;
+  }
+  return tools.filter((tool) => {
+    const mcp = getPluginToolMeta(tool)?.mcp;
+    if (!mcp) return true;
+    if (deny.has(ROLE_MCP_NETWORK_CAPABILITY_DENY)) return false;
+    return !deny.has(ROLE_MCP_WRITE_CAPABILITY_DENY) || mcp.trustedReadOnly === true;
+  });
+}
 
 export function applyFinalEffectiveToolPolicy(
   params: FinalEffectiveToolPolicyParams,
@@ -142,6 +168,11 @@ export function applyFinalEffectiveToolPolicy(
       store: subagentStore,
     },
   );
+  const roleCapabilityDeny = new Set(inheritedToolPolicy?.deny ?? []);
+  const capabilityFilteredBundledTools = filterBundledToolsForRoleCapabilities(
+    params.bundledTools,
+    roleCapabilityDeny,
+  );
   // Suppress unavailable-core-tool warnings on every step of this pass.
   // `applyToolPolicyPipeline` infers `coreToolNames` from the `tools` array
   // it's filtering, and this pass only sees the bundled MCP/LSP subset.
@@ -173,7 +204,7 @@ export function applyFinalEffectiveToolPolicy(
     { policy: inheritedToolPolicy, label: "inherited tools" },
   ].map((step) => Object.assign({}, step, { suppressUnavailableCoreToolWarning: true }));
   return applyToolPolicyPipeline({
-    tools: params.bundledTools,
+    tools: capabilityFilteredBundledTools,
     toolMeta: (tool) => getPluginToolMeta(tool),
     warn: params.warn,
     steps: pipelineSteps,

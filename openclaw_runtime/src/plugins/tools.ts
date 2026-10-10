@@ -52,6 +52,8 @@ export type PluginToolMcpMeta = {
   safeServerName: string;
   toolName: string;
   operation: "tool" | "resources_list" | "resources_read" | "prompts_list" | "prompts_get";
+  /** App-owned read-only config, not an MCP annotation. */
+  trustedReadOnly?: boolean;
 };
 
 /** Runtime metadata used to trace an agent tool back to its owning plugin registration. */

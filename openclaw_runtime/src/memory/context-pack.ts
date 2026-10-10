@@ -8,6 +8,7 @@ import type {
   MemoryPhaseTag,
 } from "./types.js";
 import { isMemoryCardExpired } from "./memory-card.js";
+import { redactToolPayloadText } from "../logging/redact.js";
 import {
   classifyInjectionCandidate,
   MEMORY_CONTEXT_POLICY_VERSION,
@@ -125,9 +126,13 @@ function recencyWeight(card: MemoryCard, now: Date): { value: number; stale: boo
 
 function redactMemoryContent(card: MemoryCard): string {
   if (card.sensitivity !== "secret_adjacent") return card.content;
-  return card.content
+  // Make the common credential shapes fully non-recoverable before the shared
+  // redactor handles structured fields, URLs and other sensitive forms.
+  const explicit = card.content
+    .replace(/\bBearer\s+[A-Za-z0-9._~+/=-]+/gi, "Bearer [REDACTED]")
     .replace(/\b(sk-[a-z0-9_-]{8,})\b/gi, "[redacted-key]")
     .replace(/\b(token|password|api[_-]?key)\s*[:=]\s*\S+/gi, "$1=[redacted]");
+  return redactToolPayloadText(explicit);
 }
 
 export function selectMemoryForContextPack(input: ContextPackInput): {

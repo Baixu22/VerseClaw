@@ -23,6 +23,14 @@ const FS_ALL_TOOLS = [...FS_READ_TOOLS, ...FS_WRITE_TOOLS] as const;
 const SHELL_TOOLS = ["exec", "bash"] as const;
 
 /**
+ * Capability sentinels consumed by the final effective tool policy. They are
+ * deliberately not tool-name globs: the final layer inspects trusted MCP
+ * metadata before deciding whether a dynamic tool may remain.
+ */
+export const ROLE_MCP_WRITE_CAPABILITY_DENY = "__role_capability:mcp_write";
+export const ROLE_MCP_NETWORK_CAPABILITY_DENY = "__role_capability:mcp_network";
+
+/**
  * Tools that require network access.
  * Includes core retrieval tools (web_search/web_fetch) and plugin-registered
  * network-capable tools (x_search, code_execution, browser).
@@ -52,11 +60,13 @@ export function buildRolePermissionDenyList(
     // Deny ALL filesystem tools
     for (const tool of FS_ALL_TOOLS) deny.add(tool);
     for (const tool of SHELL_TOOLS) deny.add(tool);
+    deny.add(ROLE_MCP_WRITE_CAPABILITY_DENY);
   } else if (fs === "read") {
     // Deny write tools only
     for (const tool of FS_WRITE_TOOLS) deny.add(tool);
     // Also deny shell when filesystem is read-only (can't write output)
     for (const tool of SHELL_TOOLS) deny.add(tool);
+    deny.add(ROLE_MCP_WRITE_CAPABILITY_DENY);
   }
   // fs === "write" or "admin": no extra filesystem denial
 
@@ -65,6 +75,7 @@ export function buildRolePermissionDenyList(
   if (net === "none") {
     // Deny ALL network-capable tools
     for (const tool of NETWORK_TOOLS) deny.add(tool);
+    deny.add(ROLE_MCP_NETWORK_CAPABILITY_DENY);
   } else if (net === "limited") {
     // Deny high-risk network tools (unrestricted egress) but allow read-only retrieval
     for (const tool of NETWORK_HIGH_RISK_TOOLS) deny.add(tool);

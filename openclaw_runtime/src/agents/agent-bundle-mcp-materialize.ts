@@ -290,6 +290,7 @@ export function buildBundleMcpToolsFromCatalog(params: {
         safeServerName: tool.safeServerName,
         toolName: tool.toolName,
         operation: "tool",
+        ...(tool.trustedReadOnly === true ? { trustedReadOnly: true } : {}),
       },
     });
     tools.push(agentTool);

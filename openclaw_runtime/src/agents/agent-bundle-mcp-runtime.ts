@@ -805,6 +805,10 @@ export function createSessionMcpRuntime(params: {
                 title: tool.title,
                 description: sanitizeMcpMetadataText(tool.description),
                 inputSchema: tool.inputSchema,
+                trustedReadOnly:
+                  typeof rawServer === "object" &&
+                  rawServer !== null &&
+                  (rawServer as { permissionMode?: unknown }).permissionMode === "readOnly",
                 fallbackDescription: `Provided by bundle MCP server "${serverName}" (${resolved.description}).`,
               });
             }

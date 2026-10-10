@@ -2,12 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const {
   captureMock,
+  shutdownMock,
   getSettingMock,
   setSettingMock,
   loggerDebugMock,
   loggerErrorMock,
 } = vi.hoisted(() => ({
   captureMock: vi.fn(),
+  shutdownMock: vi.fn(),
   getSettingMock: vi.fn(),
   setSettingMock: vi.fn(),
   loggerDebugMock: vi.fn(),
@@ -18,6 +20,7 @@ vi.mock('posthog-node', () => ({
   PostHog: vi.fn(function PostHogMock() {
     return {
       capture: captureMock,
+      shutdown: shutdownMock,
     };
   }),
 }));
@@ -64,6 +67,32 @@ describe('main telemetry capture', () => {
     });
     setSettingMock.mockResolvedValue(undefined);
     captureMock.mockReturnValue(undefined);
+    shutdownMock.mockResolvedValue(undefined);
+    vi.stubEnv('VERSE_CLAW_POSTHOG_API_KEY', 'phc_synthetic_test');
+    vi.stubEnv('VERSE_CLAW_POSTHOG_HOST', 'https://telemetry.invalid');
+  });
+
+  it('stops accepting events and shuts down the client after opt-out', async () => {
+    const { applyTelemetrySettingChange, captureTelemetryEvent, initTelemetry } = await import('@electron/utils/telemetry');
+    await initTelemetry();
+    captureMock.mockClear();
+
+    await applyTelemetrySettingChange(false);
+    captureTelemetryEvent('after_opt_out');
+
+    expect(shutdownMock).toHaveBeenCalledTimes(1);
+    expect(captureMock).not.toHaveBeenCalled();
+  });
+
+  it('can re-enable without duplicating the client lifecycle', async () => {
+    const { applyTelemetrySettingChange, captureTelemetryEvent, initTelemetry } = await import('@electron/utils/telemetry');
+    await initTelemetry();
+    await applyTelemetrySettingChange(false);
+    await applyTelemetrySettingChange(true);
+    captureTelemetryEvent('after_re_enable');
+
+    expect(captureMock).toHaveBeenLastCalledWith(expect.objectContaining({ event: 'after_re_enable' }));
+    expect(shutdownMock).toHaveBeenCalledTimes(1);
   });
 
   it('initializes the client and enriches captured events with app metadata', async () => {

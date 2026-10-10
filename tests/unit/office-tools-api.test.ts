@@ -160,8 +160,11 @@ describe('office tools api', () => {
     expect(winScript).toContain('Tls12');
     expect(winScript).toContain('OutputEncoding');
     expect(winScript).toContain('-TimeoutSec 60');
+    expect(winScript).toContain('Get-FileHash');
+    expect(winScript).toContain('ef24f389b27bc5a85142b1d414f3d25047aa62c5188d9b9789940435b22b6c45');
+    expect(winScript).not.toContain('iex $s');
     expect(winScript.indexOf('https://d.officecli.ai/install.ps1')).toBeLessThan(
-      winScript.indexOf('https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/main/install.ps1'),
+      winScript.indexOf('https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/699cafbc8f0b8a7841c6cca53dafd0c24e982f56/install.ps1'),
     );
 
     expect(unix.command).toBe('bash');
@@ -169,8 +172,10 @@ describe('office tools api', () => {
     expect(unixScript).toContain('--connect-timeout 20');
     expect(unixScript).toContain('--max-time 60');
     expect(unixScript).toContain('bash "$f"');
+    expect(unixScript).toContain('sha256sum');
+    expect(unixScript).toContain('2a0fdae06f4a018ea8d8516c69bfa5eeeb53406aacb5fa16fd07a9e572991bb6');
     expect(unixScript.indexOf('https://d.officecli.ai/install.sh')).toBeLessThan(
-      unixScript.indexOf('https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/main/install.sh'),
+      unixScript.indexOf('https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/699cafbc8f0b8a7841c6cca53dafd0c24e982f56/install.sh'),
     );
   });
 
