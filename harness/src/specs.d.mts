@@ -4,6 +4,7 @@ export const SPEC_ROOT: any;
 export const globToRegExp: any;
 export const isGatewayBackendCommunicationTask: any;
 export const isPluginLifecycleTask: any;
+export const isTaskSpec: any;
 export const loadGuideSpecs: any;
 export const loadLayerSpecs: any;
 export const loadRuleSpecs: any;

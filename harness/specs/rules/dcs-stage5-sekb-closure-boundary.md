@@ -1,7 +1,6 @@
 ---
 id: dcs-stage5-sekb-closure-boundary
 title: "DCS Stage 5 SEKB Closure — Boundary Rule"
-scenario: gateway-backend-communication
 type: ai-coding-rule
 appliesTo:
   - gateway-backend-communication

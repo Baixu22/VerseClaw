@@ -6,7 +6,9 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
+  isGatewayBackendCommunicationTask,
   isPluginLifecycleTask,
+  isTaskSpec,
   loadGuideSpecs,
   loadLayerSpecs,
   parseFrontmatter,
@@ -124,6 +126,46 @@ Body`);
         scenario: 'gateway-backend-communication',
       },
     })).toBe(false);
+  });
+  // Issue #153. `scenario:`/`scenarios:` is scenario-applicability metadata that
+  // rule, guide and layer specs may carry. Task identity comes from the spec
+  // location, so a rule spec with a `scenario:` key must not be validated as a
+  // task. Before the fix the dcs-stage5-sekb-closure-boundary rule spec was
+  // misrouted into task validation and failed every `harness validate`.
+  it('treats only harness/specs/tasks/ specs as tasks', () => {
+    expect(isTaskSpec({ path: 'harness/specs/tasks/example.md', data: {} })).toBe(true);
+    expect(isTaskSpec({
+      path: 'harness/specs/rules/dcs-stage5-sekb-closure-boundary.md',
+      data: { type: 'ai-coding-rule', scenario: 'gateway-backend-communication' },
+    })).toBe(false);
+    expect(isTaskSpec({
+      path: 'harness\\specs\\tasks\\example.md',
+      data: { type: 'task' },
+    })).toBe(true);
+  });
+
+  it('does not classify a rule spec carrying a scenario key as a scenario-bound task', () => {
+    const ruleSpec = {
+      path: 'harness/specs/rules/dcs-stage5-sekb-closure-boundary.md',
+      data: {
+        id: 'dcs-stage5-sekb-closure-boundary',
+        type: 'ai-coding-rule',
+        scenario: 'gateway-backend-communication',
+        appliesTo: ['gateway-backend-communication'],
+      },
+    };
+
+    expect(isGatewayBackendCommunicationTask(ruleSpec)).toBe(false);
+    expect(isPluginLifecycleTask(ruleSpec)).toBe(false);
+  });
+
+  it('still classifies a real task spec with a scenario key as scenario-bound', () => {
+    const taskSpec = {
+      path: 'harness/specs/tasks/example.md',
+      data: { scenario: 'gateway-backend-communication' },
+    };
+
+    expect(isGatewayBackendCommunicationTask(taskSpec)).toBe(true);
   });
 
   it('requires plugin lifecycle tasks to declare strict task fields', () => {

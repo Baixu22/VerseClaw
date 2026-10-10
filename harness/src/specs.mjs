@@ -157,12 +157,31 @@ export function toArray(value) {
   return [value];
 }
 
+// Task identity comes from the spec's location, not from a `scenario:` key.
+// Rule, guide and layer specs may carry `scenario:`/`scenarios:` to declare
+// which registered scenario they apply to. That metadata is not a task
+// declaration, so only specs under `harness/specs/tasks/` are treated as
+// tasks. Pathless unit fixtures keep the legacy behaviour unless they
+// declare a non-task spec type. Classifying the
+// dcs-stage5-sekb-closure-boundary rule spec as a task made the CLI demand
+// task-only fields from it and fail every validate (issue #153).
+const TASK_SPEC_PREFIX = 'harness/specs/tasks/';
+const NON_TASK_SPEC_TYPES = new Set(['ai-coding-rule', 'rule', 'guide', 'layer-spec', 'scenario']);
+
+export function isTaskSpec(spec) {
+  const normalized = String(spec?.path ?? '').replaceAll('\\', '/');
+  if (normalized) return normalized.startsWith(TASK_SPEC_PREFIX);
+  return !NON_TASK_SPEC_TYPES.has(spec?.data?.type);
+}
+
 export function isGatewayBackendCommunicationTask(spec) {
+  if (!isTaskSpec(spec)) return false;
   return spec.data?.scenario === 'gateway-backend-communication'
     || toArray(spec.data?.scenarios).includes('gateway-backend-communication');
 }
 
 export function isPluginLifecycleTask(spec) {
+  if (!isTaskSpec(spec)) return false;
   return spec.data?.scenario === 'plugin-lifecycle-management'
     || toArray(spec.data?.scenarios).includes('plugin-lifecycle-management');
 }
