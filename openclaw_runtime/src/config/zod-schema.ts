@@ -387,60 +387,6 @@ const RuntimeFeatureSchema = z
           .strict()
           .optional(),
         verifier: z.object({ noSelfRepair: z.boolean().optional() }).strict().optional(),
-        uftk: z
-          .object({
-            enabled: z.boolean().optional(),
-            baseVersionGuard: z.object({ enabled: z.boolean().optional() }).strict().optional(),
-            auditLog: z.object({ enabled: z.boolean().optional() }).strict().optional(),
-            gitCheckpoint: z
-              .object({
-                enabled: z.boolean().optional(),
-                pathScoped: z.object({ enabled: z.boolean().optional() }).strict().optional(),
-                safetySnapshot: z.object({ enabled: z.boolean().optional() }).strict().optional(),
-                lifecycle: z.object({ enabled: z.boolean().optional() }).strict().optional(),
-              })
-              .strict()
-              .optional(),
-            concurrencyV2: z.object({ enabled: z.boolean().optional() }).strict().optional(),
-            execUndo: z.object({ enabled: z.boolean().optional() }).strict().optional(),
-            autoCheckpoint: z
-              .object({
-                enabled: z.boolean().optional(),
-                allowWorkspaceRoots: z.array(z.string()).optional(),
-                allowAgentIds: z.array(z.string()).optional(),
-                minIntervalMs: z.number().int().nonnegative().optional(),
-                retention: z
-                  .object({
-                    maxCount: z.number().int().nonnegative().optional(),
-                    maxAgeMs: z.number().int().nonnegative().optional(),
-                  })
-                  .strict()
-                  .optional(),
-              })
-              .strict()
-              .optional(),
-            execSideEffects: z.object({ enabled: z.boolean().optional() }).strict().optional(),
-            commandApproval: z
-              .object({
-                enabled: z.boolean().optional(),
-                defaultDecision: z.enum(['allow', 'prompt', 'forbidden']).optional(),
-                rules: z
-                  .array(
-                    z
-                      .object({
-                        prefix: z.string().optional(),
-                        decision: z.enum(['allow', 'prompt', 'forbidden']).optional(),
-                        reason: z.string().optional(),
-                      })
-                      .strict(),
-                  )
-                  .optional(),
-              })
-              .strict()
-              .optional(),
-          })
-          .strict()
-          .optional(),
       })
       .strict()
       .optional(),

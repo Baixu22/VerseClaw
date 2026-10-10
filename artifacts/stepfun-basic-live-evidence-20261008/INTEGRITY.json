@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "status": "legacy-drift-annotated",
+  "driven_by": "agent",
+  "note": "Historical snapshot entries are annotated rather than rewritten; the original SHA256SUMS remains the historical evidence.",
+  "excludedEntries": [
+    {
+      "path": ".gitignore",
+      "reason": "Repository configuration changed after the evidence run; snapshot retained for historical fidelity."
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "reason": "Artifact retention policy changed after the evidence run; historical snapshot is annotated."
+    },
+    {
+      "path": "harness/specs/tasks/stepfun-basic-live-evidence.md",
+      "reason": "Task spec path/reference cleanup changed after the evidence run; historical snapshot is annotated."
+    },
+    {
+      "path": "scripts/check-live-model-evidence.mjs",
+      "reason": "Evidence checker evolved after the run; historical snapshot is annotated."
+    }
+  ]
+}

@@ -78,32 +78,6 @@ export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
     sekb: { enabled: true, experienceShadow: true, retrievalShadow: true },
     routingMemo: { shadow: true, enabled: true },
     verifier: { noSelfRepair: true },
-    uftk: {
-      enabled: true,
-      baseVersionGuard: { enabled: true },
-      auditLog: { enabled: true },
-      gitCheckpoint: {
-        enabled: true,
-        pathScoped: { enabled: true },
-        safetySnapshot: { enabled: true },
-        lifecycle: { enabled: true },
-      },
-      concurrencyV2: { enabled: true },
-      execUndo: { enabled: true },
-      autoCheckpoint: {
-        enabled: true,
-        allowWorkspaceRoots: ["D:/ClawX"],
-        allowAgentIds: ["main"],
-        minIntervalMs: 1000,
-        retention: { maxCount: 10, maxAgeMs: 60000 },
-      },
-      execSideEffects: { enabled: true },
-      commandApproval: {
-        enabled: true,
-        defaultDecision: "prompt",
-        rules: [{ prefix: "pnpm test", decision: "allow", reason: "test" }],
-      },
-    },
   },
   contextRuntimeKit: { enabled: true, shadow: true },
   contextFamily: {

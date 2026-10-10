@@ -88,6 +88,8 @@
     "agent-dev:full-local": "pnpm agent-dev:fast && pnpm harness validate --spec harness/specs/tasks/agent-dev-ecosystem-regularization.md && pnpm test:e2e:agent-dev-quality",
     "repo:artifacts:check": "node scripts/check-repository-artifacts.mjs",
     "repo:evidence:check": "node scripts/check-evidence-refs.mjs",
+    "repo:evidence:sha256": "node scripts/verify-evidence-sha256sums.mjs",
+    "test:skips:report": "node scripts/report-test-skips.mjs",
     "contract:check": "node scripts/contract-check.mjs",
     "chain-audit": "node scripts/chain-audit/run-chain-audit.mjs",
     "chain-audit:chain": "node scripts/chain-audit/run-chain-audit.mjs --chain",

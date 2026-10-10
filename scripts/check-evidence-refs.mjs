@@ -48,6 +48,18 @@ export function collectEvidenceRefs(root = ROOT) {
     }
     refs.set(relative, [...found].sort());
   }
+  const packagePath = join(root, 'package.json');
+  if (existsSync(packagePath)) {
+    const scripts = JSON.parse(readFileSync(packagePath, 'utf8')).scripts ?? {};
+    const packageRefs = new Set();
+    for (const command of Object.values(scripts)) {
+      if (typeof command !== 'string') continue;
+      for (const match of command.matchAll(PATH_LIKE)) {
+        if (match[1].startsWith('openclaw_runtime/')) packageRefs.add(match[1]);
+      }
+    }
+    refs.set('package.json scripts', [...packageRefs].sort());
+  }
   return refs;
 }
 

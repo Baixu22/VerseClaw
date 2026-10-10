@@ -34,6 +34,9 @@ jobs:
       - name: Check source and local artifact boundary
         run: node scripts/check-repository-artifacts.mjs
 
+      - name: Verify committed SHA256SUMS evidence
+        run: pnpm run repo:evidence:sha256
+
       - name: Prefer HTTPS for public GitHub git dependencies
         run: |
           git config --global "url.https://github.com/.insteadOf" "git@github.com:"
@@ -71,6 +74,9 @@ jobs:
 
       - name: Run tests
         run: pnpm run test
+
+      - name: Report conditional test skips
+        run: pnpm run test:skips:report
 
       - name: Run harness checks
         run: pnpm run harness:ci

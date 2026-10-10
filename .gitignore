@@ -1794,6 +1794,9 @@ openclaw_runtime/_tmp_*
 !/docs/dev/p1-issue-fixes-batch3-20261010.md
 !/docs/dev/p1-issue-fixes-batch4-20261010.md
 !/docs/dev/p1-issue-fixes-batch5-20261010.md
+!/artifacts/windows-alpha-closeout-20261008/INTEGRITY.json
+!/artifacts/stepfun-basic-live-evidence-20261008/INTEGRITY.json
+!/docs/dev/p1-issue-fixes-batch6-20261010.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
