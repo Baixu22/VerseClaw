@@ -293,3 +293,4 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw)，并继承 V
 当运行时 `diagnostics.otel.enabled` 与 `trace.cost-sampling` 诊断旗标同时显式开启时，既有的唯一 OpenTelemetry 出口还会按版本化价格快照输出每次模型调用的美元估价，并做有界脱敏轨迹采样；未知价格保持 `null`，默认或关闭路径行为不变。
 
 会话接力在 Main 中核验并持久化 Task Ledger 血缘后才激活新会话；环路或无法读取的历史会被拒绝。可在 `openclaw.json` 设置 `runtime.handoff.enabled=true` 启用接力深度限制（`maxDepth` 为 1–64，省略时为 3）。限制默认关闭，分叉保留接力血缘。
+**遥测同意：** 在设置中关闭遥测立即生效：后续事件停止，SDK 队列在本地丢弃，重新开启不会复活旧事件；已发出的请求无法撤回。详见[同意生命周期](docs/dev/telemetry-consent-lifecycle.md)。

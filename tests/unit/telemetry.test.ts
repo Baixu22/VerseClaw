@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const {
   captureMock,
+  disableMock,
   shutdownMock,
   getSettingMock,
   setSettingMock,
@@ -9,6 +10,7 @@ const {
   loggerErrorMock,
 } = vi.hoisted(() => ({
   captureMock: vi.fn(),
+  disableMock: vi.fn(),
   shutdownMock: vi.fn(),
   getSettingMock: vi.fn(),
   setSettingMock: vi.fn(),
@@ -20,6 +22,7 @@ vi.mock('posthog-node', () => ({
   PostHog: vi.fn(function PostHogMock() {
     return {
       capture: captureMock,
+      disable: disableMock,
       shutdown: shutdownMock,
     };
   }),
@@ -67,6 +70,7 @@ describe('main telemetry capture', () => {
     });
     setSettingMock.mockResolvedValue(undefined);
     captureMock.mockReturnValue(undefined);
+    disableMock.mockResolvedValue(undefined);
     shutdownMock.mockResolvedValue(undefined);
     vi.stubEnv('VERSE_CLAW_POSTHOG_API_KEY', 'phc_synthetic_test');
     vi.stubEnv('VERSE_CLAW_POSTHOG_HOST', 'https://telemetry.invalid');
@@ -80,7 +84,7 @@ describe('main telemetry capture', () => {
     await applyTelemetrySettingChange(false);
     captureTelemetryEvent('after_opt_out');
 
-    expect(shutdownMock).toHaveBeenCalledTimes(1);
+    await vi.waitFor(() => expect(shutdownMock).toHaveBeenCalledTimes(1));
     expect(captureMock).not.toHaveBeenCalled();
   });
 
@@ -92,7 +96,7 @@ describe('main telemetry capture', () => {
     captureTelemetryEvent('after_re_enable');
 
     expect(captureMock).toHaveBeenLastCalledWith(expect.objectContaining({ event: 'after_re_enable' }));
-    expect(shutdownMock).toHaveBeenCalledTimes(1);
+    await vi.waitFor(() => expect(shutdownMock).toHaveBeenCalledTimes(1));
   });
 
   it('initializes the client and enriches captured events with app metadata', async () => {

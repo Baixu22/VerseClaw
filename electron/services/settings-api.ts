@@ -11,8 +11,8 @@ import {
   resetSettings,
   setSetting,
 } from '../utils/store';
+import { setTelemetryEnabled } from '../utils/telemetry';
 import { isRecord } from './payload-utils';
-import { applyTelemetrySettingChange } from '../utils/telemetry';
 
 type KeyPayload = {
   key?: unknown;
@@ -86,10 +86,6 @@ function patchTouchesRoleMemory(patch: Partial<AppSettings>): boolean {
   return Object.prototype.hasOwnProperty.call(patch, 'roleMemoryEnabled');
 }
 
-function patchTouchesTelemetry(patch: Partial<AppSettings>): boolean {
-  return Object.prototype.hasOwnProperty.call(patch, 'telemetryEnabled');
-}
-
 async function handleProxySettingsChange(gatewayManager: GatewayManager): Promise<void> {
   const settings = await getAllSettings();
   await syncProxyConfigToOpenClaw(settings, { preserveExistingWhenDisabled: false });
@@ -109,13 +105,14 @@ async function runSettingsSideEffects(
   gatewayManager: GatewayManager,
   patch: Partial<AppSettings>,
 ): Promise<void> {
+  // Revoke consent before unrelated side effects can wait on network/process work.
+  if (Object.prototype.hasOwnProperty.call(patch, 'telemetryEnabled')) {
+    await setTelemetryEnabled(patch.telemetryEnabled === true);
+  }
   if (patchTouchesProxy(patch)) {
     await handleProxySettingsChange(gatewayManager);
   } else if (patchTouchesRoleMemory(patch)) {
     await handleRoleMemorySettingsChange(gatewayManager);
-  }
-  if (patchTouchesTelemetry(patch)) {
-    await applyTelemetrySettingChange(patch.telemetryEnabled === true);
   }
   if (patchTouchesLaunchAtStartup(patch)) {
     await syncLaunchAtStartupSettingFromStore();
@@ -150,10 +147,10 @@ export function createSettingsApi(gatewayManager: GatewayManager): CompleteHostS
     },
     reset: async () => {
       await resetSettings();
+      const settings = await getAllSettings();
+      await setTelemetryEnabled(settings.telemetryEnabled === true);
       await handleProxySettingsChange(gatewayManager);
       await syncLaunchAtStartupSettingFromStore();
-      const settings = await getAllSettings();
-      await applyTelemetrySettingChange(settings.telemetryEnabled);
       await createMenu(settings.language);
       return { success: true, settings };
     },

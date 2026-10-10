@@ -86,6 +86,7 @@
     "docs/dev/p2-issue-fixes-batch8-20261010.md",
     "docs/dev/repository-layout.md",
     "docs/dev/runtime-research-boundaries.md",
+    "docs/dev/telemetry-consent-lifecycle.md",
     "docs/dev/send-button-states-design.md",
     "harness/specs/rules/repository-artifact-retention.md",
     "openclaw_runtime/UPSTREAM.md",
