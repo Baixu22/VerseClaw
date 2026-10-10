@@ -46,6 +46,8 @@ export type RunExit = {
   stderr: string;
   timedOut: boolean;
   noOutputTimedOut: boolean;
+  /** Whether the captured process tree was proven fully exited after the root. */
+  termination: "verified" | "residual" | "unknown";
 };
 
 export type ManagedRun = {

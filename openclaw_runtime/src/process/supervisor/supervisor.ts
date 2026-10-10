@@ -4,6 +4,7 @@ import { performance } from "node:perf_hooks";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import { getShellConfig } from "../../agents/shell-utils.js";
 import { signalProcessTree } from "../kill-tree.js";
+import { captureProcessTrees, verifyProcessTreesTerminated } from "../os-containment.js";
 import { createChildAdapter } from "./adapters/child.js";
 import { createPtyAdapter } from "./adapters/pty.js";
 import { createRunRegistry } from "./registry.js";
@@ -161,6 +162,19 @@ export function createProcessSupervisor(
       }
       cancel(runId, reason);
     }
+  };
+
+  const verifyOwnedTreeAfterRootExit = async (
+    pid: number | undefined,
+  ): Promise<"verified" | "residual" | "unknown"> => {
+    if (typeof pid !== "number" || pid <= 0) return "verified";
+    const captured = await captureProcessTrees([pid]).catch(() => null);
+    if (!captured || captured.status !== "ok") return "unknown";
+    if (!captured.capturedPids.has(pid)) return "verified";
+    const remaining = await verifyProcessTreesTerminated(captured);
+    if (remaining.status === "empty") return "verified";
+    if (remaining.status === "residual") return "residual";
+    return "unknown";
   };
 
   const spawn = async (input: SpawnInput): Promise<ManagedRun> => {
@@ -343,8 +357,10 @@ export function createProcessSupervisor(
             stderr,
             timedOut: isTimeoutReason(terminalReason ?? "exit"),
             noOutputTimedOut: terminalReason === "no-output-timeout",
+            termination: "unknown",
           };
         }
+        const termination = await verifyOwnedTreeAfterRootExit(adapter.pid).catch(() => "unknown" as const);
         settled = true;
         clearTimers();
         adapter.dispose();
@@ -361,13 +377,16 @@ export function createProcessSupervisor(
           stderr,
           timedOut: isTimeoutReason(terminalReason ?? reason),
           noOutputTimedOut: terminalReason === "no-output-timeout",
+          termination,
         };
         registry.finalize(runId, {
           reason: exit.reason,
           exitCode: exit.exitCode,
           exitSignal: exit.exitSignal,
         });
-        manifest?.remove(runId);
+        if (termination === "verified") {
+          manifest?.remove(runId);
+        }
         return exit;
       })().catch((err: unknown) => {
         if (!settled) {

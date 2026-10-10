@@ -43,18 +43,30 @@ export type SupervisorReconcileResult = {
 export type ReconcileDependencies = {
   capture?: (roots: number[]) => Promise<OsProcessTreeCapture>;
   killTree?: (pid: number) => void;
+  verifyTerminated?: (capture: OsProcessTreeCapture) => Promise<import("../os-containment.js").OsContainmentCheck>;
   settleMs?: number;
 };
 
-async function waitForPidDeath(pid: number, timeoutMs: number): Promise<boolean> {
+async function waitForCapturedTreeDeath(
+  capture: OsProcessTreeCapture,
+  timeoutMs: number,
+  verifyTerminated?: (capture: OsProcessTreeCapture) => Promise<import("../os-containment.js").OsContainmentCheck>,
+): Promise<boolean> {
+  const verify = verifyTerminated ?? (await import("../os-containment.js")).verifyProcessTreesTerminated;
   const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    if (isPidDefinitelyDead(pid)) {
+  while (true) {
+    const probe = await verify(capture);
+    if (probe.status === "empty") {
       return true;
+    }
+    if (probe.status === "unknown") {
+      return false;
+    }
+    if (Date.now() >= deadline) {
+      return false;
     }
     await new Promise((resolve) => setTimeout(resolve, RECONCILE_POLL_MS));
   }
-  return isPidDefinitelyDead(pid);
 }
 
 /** Reconciles manifest entries left by previous supervisor owner processes. */
@@ -117,7 +129,7 @@ export async function reconcileManifestOrphans(
       continue;
     }
     killTree(entry.pid);
-    const dead = await waitForPidDeath(entry.pid, settleMs);
+    const dead = await waitForCapturedTreeDeath(captured, settleMs, dependencies.verifyTerminated);
     if (!dead) {
       result.residual += 1;
       result.status = "partial";

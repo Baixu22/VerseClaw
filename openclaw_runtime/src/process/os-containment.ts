@@ -200,10 +200,12 @@ function tokenIsAfter(token: string, parentToken: string): boolean {
   return token > parentToken;
 }
 
+type TreeCollection = { captured: Map<number, string>; truncated: boolean };
+
 function collectTreePids(
   processes: Map<number, OsProcessRecord>,
   roots: number[],
-): Map<number, string> {
+): TreeCollection {
   const captured = new Map<number, string>();
   const queue: Array<{ pid: number; token: string }> = [];
   for (const root of roots) {
@@ -225,11 +227,11 @@ function collectTreePids(
       captured.set(record.pid, record.token);
       queue.push({ pid: record.pid, token: record.token });
       if (captured.size >= OS_PROCESS_TREE_LIMIT) {
-        return captured;
+        return { captured, truncated: true };
       }
     }
   }
-  return captured;
+  return { captured, truncated: false };
 }
 
 /** Captures the OS process trees rooted at the given PIDs with reuse tokens. */
@@ -241,10 +243,19 @@ export async function captureProcessTrees(roots: number[]): Promise<OsProcessTre
   if (!probe.ok) {
     return { status: "unknown", detail: probe.detail, rootPids: roots, capturedPids: new Map() };
   }
+  const collection = collectTreePids(probe.processes, roots);
+  if (collection.truncated) {
+    return {
+      status: "unknown",
+      detail: `process tree capture reached the ${OS_PROCESS_TREE_LIMIT}-PID safety limit`,
+      rootPids: roots,
+      capturedPids: collection.captured,
+    };
+  }
   return {
     status: "ok",
     rootPids: roots,
-    capturedPids: collectTreePids(probe.processes, roots),
+    capturedPids: collection.captured,
   };
 }
 

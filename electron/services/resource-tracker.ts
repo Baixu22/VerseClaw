@@ -10,6 +10,7 @@ import { connect as netConnect, type Socket } from 'node:net';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import {
+  type ResourceOwnership,
   type TrackedResource,
   type ResourceTrackerSnapshot,
   type ResourceTrackerRegisterPayload,
@@ -41,6 +42,7 @@ type RegisterNewPortsPayload = {
   agentId?: string | null;
   labelPrefix?: string;
   command?: string;
+  ownership?: ResourceOwnership;
 };
 
 type WatchNewPortsPayload = RegisterNewPortsPayload & {
@@ -98,6 +100,7 @@ export class ResourceTracker {
       existing.workspaceId = payload.workspaceId ?? existing.workspaceId ?? null;
       existing.agentId = payload.agentId ?? existing.agentId ?? null;
       existing.command = payload.command ?? existing.command;
+      existing.ownership = existing.ownership === 'managed' ? 'managed' : (payload.ownership ?? 'observed');
       existing.sessionLastActiveAt = new Date().toISOString();
       return existing.id;
     }
@@ -115,6 +118,7 @@ export class ResourceTracker {
       workspaceId: payload.workspaceId ?? null,
       agentId: payload.agentId ?? null,
       status: 'healthy',
+      ownership: payload.ownership ?? 'managed',
       startedAt: now,
       lastHeartbeatAt: now,
       sessionLastActiveAt: now,
@@ -156,6 +160,7 @@ export class ResourceTracker {
         sessionLabel: payload.sessionLabel,
         workspaceId: payload.workspaceId ?? null,
         agentId: payload.agentId ?? null,
+        ownership: payload.ownership ?? 'observed',
       }));
     }
 
@@ -271,7 +276,7 @@ export class ResourceTracker {
         }
       }
 
-      if (resource.status === 'idle') {
+      if (resource.status === 'idle' && resource.ownership === 'managed') {
         const lastActivityAt = new Date(resource.sessionLastActiveAt ?? resource.startedAt).getTime();
         if (now - lastActivityAt > AUTO_CLEANUP_IDLE_MS) {
           toRemove.add(id);
@@ -315,6 +320,9 @@ export class ResourceTracker {
     const record = this.resources.get(resourceId);
     if (!record) {
       return { success: false, error: 'Resource not found' };
+    }
+    if (record.ownership !== 'managed') {
+      return { success: false, error: 'Observed resource is not owned by this session', resourceId };
     }
 
     try {

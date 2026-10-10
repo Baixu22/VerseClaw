@@ -1,6 +1,7 @@
 import { logger } from '../utils/logger';
 import { LifecycleSupersededError } from './lifecycle-controller';
 import { connectGatewayWithStartupRetry, getGatewayStartupRecoveryAction } from './startup-recovery';
+import { GatewayPortConflictError } from './supervisor';
 
 export interface ExistingGatewayInfo {
   port: number;
@@ -103,6 +104,9 @@ export async function runGatewayStartupSequence(hooks: StartupHooks): Promise<vo
       return;
     } catch (error) {
       if (error instanceof LifecycleSupersededError) {
+        throw error;
+      }
+      if (error instanceof GatewayPortConflictError) {
         throw error;
       }
 

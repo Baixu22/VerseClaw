@@ -7,6 +7,7 @@
  */
 
 export type TrackedResourceStatus = 'healthy' | 'idle' | 'unreachable';
+export type ResourceOwnership = 'managed' | 'observed';
 
 export type TrackedResource = {
   /** Unique resource id */
@@ -29,6 +30,8 @@ export type TrackedResource = {
   agentId?: string | null;
   /** Current heartbeat status */
   status: TrackedResourceStatus;
+  /** Whether lifecycle actions may target this resource. Observed ports are display-only. */
+  ownership: ResourceOwnership;
   /** ISO timestamp when the resource was registered */
   startedAt: string;
   /** ISO timestamp of the last successful heartbeat */
@@ -73,6 +76,8 @@ export type ResourceTrackerRegisterPayload = {
   pid: number;
   label?: string;
   command?: string;
+  /** Lifecycle authority for the resource; observed resources are display-only. */
+  ownership?: ResourceOwnership;
   sessionKey: string;
   sessionLabel?: string;
   workspaceId?: string | null;

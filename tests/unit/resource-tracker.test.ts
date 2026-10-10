@@ -257,6 +257,38 @@ describe('ResourceTracker', () => {
 
   // ── Port scanning ────────────────────────────────────────────────────
 
+  describe('ownership safety', () => {
+    it('does not terminate observed resources', async () => {
+      vi.spyOn(tracker, 'scanListeningPorts').mockResolvedValue([
+        { port: 4400, pid: 4401, address: '127.0.0.1:4400' },
+      ]);
+      const ids = await tracker.registerNewListeningPortsSince({
+        before: [],
+        sessionKey: 'session-observed',
+      });
+      expect(ids).toHaveLength(1);
+      const resource = tracker.getSnapshot().resources[0];
+      expect(resource.ownership).toBe('observed');
+
+      const stop = await tracker.stopResource(ids[0]);
+      expect(stop.success).toBe(false);
+      expect(stop.error).toMatch(/not owned/i);
+      expect(tracker.getSnapshot().resources).toHaveLength(1);
+    });
+
+    it('does not auto-clean observed resources even when idle', async () => {
+      vi.spyOn(tracker, 'scanListeningPorts').mockResolvedValue([
+        { port: 4500, pid: 4501, address: '127.0.0.1:4500' },
+      ]);
+      const ids = await tracker.registerNewListeningPortsSince({ before: [], sessionKey: 's' });
+      const resource = tracker.getSnapshot().resources.find((entry) => entry.id === ids[0])!;
+      resource.status = 'idle';
+      resource.sessionLastActiveAt = new Date(Date.now() - 31 * 60 * 1000).toISOString();
+      await (internals(tracker) as { autoCleanup: () => Promise<unknown> }).autoCleanup();
+      expect(tracker.getSnapshot().resources).toHaveLength(1);
+    });
+  });
+
   describe('scanListeningPorts', () => {
     it('finds a known listening port', async () => {
       const { port, server } = await startServer('scan-me');

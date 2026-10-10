@@ -313,6 +313,34 @@ describe('skill install identity (#131)', () => {
     expect(mismatchCheck.actualDigest).toBe(installer.computeSkillContentDigest(mismatch));
   });
 
+  it('rejects an encoded traversal slug that would escape the skills root', async () => {
+    const installer = await loadInstaller();
+    expect(() => installer.resolveInstalledSkillDir('..%2Fescape')).toThrow(/Invalid skill slug/);
+  });
+
+  it('rejects path traversal, unsafe slugs and unsafe GitHub coordinates before any fetch', async () => {
+    const installer = await loadInstaller();
+    expect(() => installer.resolveInstalledSkillDir('../outside')).toThrow(/Invalid skill slug/);
+    expect(() => installer.resolveInstalledSkillDir('..')).toThrow(/outside skills directory/);
+    await expect(installer.installSkillFromCatalog({
+      ...CATALOG_ENTRY,
+      slug: '../escape',
+    })).rejects.toThrow(/Invalid skill slug/);
+    await expect(installer.installSkillFromCatalog({
+      ...CATALOG_ENTRY,
+      github: 'owner/repo/extra',
+    })).rejects.toThrow(/Invalid GitHub repo/);
+    expect(execFileSyncMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects redirect and archive URLs outside the GitHub host allowlist', async () => {
+    const installer = await loadInstaller();
+    expect(installer.isAllowedDownloadUrl('https://codeload.github.com/openclaw/skill-pdf/zip/refs/heads/main')).toBe(true);
+    expect(installer.isAllowedDownloadUrl('https://github.com/openclaw/skill-pdf')).toBe(true);
+    expect(installer.isAllowedDownloadUrl('https://evil.example/payload')).toBe(false);
+    expect(installer.isAllowedDownloadUrl('http://codeload.github.com/payload')).toBe(false);
+    expect(installer.isAllowedDownloadUrl('file:///etc/passwd')).toBe(false);
+  });
   it('removes the install and fails when the recorded digest cannot be re-verified', async () => {
     // Force a mismatch between the digest written at install time and the digest
     // recomputed during verification, without touching the real filesystem.
