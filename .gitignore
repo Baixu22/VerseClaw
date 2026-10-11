@@ -1575,6 +1575,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/runtime-lifecycle-governance/README.zh-CN.md
 !/docs/dev/runtime-research-boundaries.md
 !/docs/dev/runtime-test-integrity.md
+!/docs/dev/sandbox-strength-fail-closed-20261011.md
 !/docs/dev/sekb-golden-path.md
 !/docs/dev/send-button-states-design.md
 !/docs/dev/session-lifecycle-control-plane/DESIGN.zh-CN.md

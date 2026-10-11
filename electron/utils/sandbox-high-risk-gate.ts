@@ -13,6 +13,14 @@ export type SandboxHighRiskPolicySnapshot = {
   requestedProviderId?: string;
   effectiveProviderId?: string;
   runtimeLevel?: string;
+  /**
+   * True when the active profile explicitly requested a strong provider
+   * (docker-strong / ssh-strong). When set and the effective runtime level is
+   * not `strong`, high-risk actions must fail closed instead of silently
+   * executing on the host/policy-light path (issue #156). Unlike `degraded`,
+   * this is never satisfied by a per-action approval.
+   */
+  strengthRequired?: boolean;
 };
 
 export type SandboxHighRiskGateDecision = {
@@ -125,6 +133,30 @@ export function decideSandboxHighRiskAction(
   const allowApproval = options.allowApproval !== false;
   const risk = defaultRiskFor(actionClass);
 
+  // Explicit-strong fail-closed boundary (issue #156). A profile that asked for
+  // strong isolation but resolved to a weaker runtime must never execute a
+  // high-risk action on the host/policy-light path. This is stricter than the
+  // degraded gate: a per-action approval is not enough to authorize a fallback
+  // the operator did not request, so it denies outright.
+  if (policy?.strengthRequired && policy.runtimeLevel !== 'strong') {
+    const strengthReason = [
+      `Sandbox strength requirement unmet: high-risk ${actionClass} is denied because strong isolation was requested but is not active.`,
+      policy.degradeReason?.trim()
+        || 'Strong sandbox is unavailable; refusing to fall back to policy-light controls.',
+      policy.requestedProviderId
+        ? `requested=${policy.requestedProviderId}; effective=${policy.effectiveProviderId ?? 'policy-light'}; runtimeLevel=${policy.runtimeLevel ?? 'unknown'}`
+        : undefined,
+    ].filter(Boolean).join(' ');
+    return {
+      allowed: false,
+      requiresApproval: false,
+      actionClass,
+      risk,
+      reason: strengthReason,
+      forceVisible: true,
+    };
+  }
+
   if (!policy || !policy.degraded) {
     return {
       allowed: true,
@@ -211,14 +243,17 @@ export function buildForcedDegradedVisibility(
   }
   const reason = policy.degradeReason?.trim()
     || 'Strong sandbox backend unavailable; using policy-light controls.';
+  const strengthUnmet = policy.strengthRequired === true && policy.runtimeLevel !== 'strong';
   return {
     degraded: true,
     forceVisible: true,
-    label: 'degraded',
+    label: strengthUnmet ? 'unavailable' : 'degraded',
     reason,
     warnings: [
       reason,
-      'High-risk exec/browser/cron actions require per-action approval or are denied until a strong sandbox is available or policy-light is explicitly selected.',
+      strengthUnmet
+        ? 'Strong isolation was explicitly requested but is not active; high-risk exec/browser/cron actions are denied until a strong sandbox is available. Selecting policy-light explicitly acknowledges the weaker boundary.'
+        : 'High-risk exec/browser/cron actions require per-action approval or are denied until a strong sandbox is available or policy-light is explicitly selected.',
     ],
   };
 }
