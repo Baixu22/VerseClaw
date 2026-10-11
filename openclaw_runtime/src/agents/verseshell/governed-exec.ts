@@ -33,6 +33,18 @@ export type GovernedVerseShellExecResult = {
   artifactMetadata?: ArtifactDescriptor[];
   stdoutCapture?: StreamCapture;
   stderrCapture?: StreamCapture;
+  /**
+   * Resource-limit receipt for the one-shot exec (issue #155). Present only when limits were
+   * requested. `readback: "unavailable"` means the bundled executor configures the Job limits at
+   * start and fails closed otherwise, but exposes no QueryInformationJobObject readback.
+   */
+  resourceLimits?: {
+    requested: { maxMemoryBytes?: number; maxProcesses?: number };
+    applied: { maxMemoryMb?: number; maxProcesses?: number };
+    enforcement: "job-object";
+    readback: "unavailable";
+    detail: string;
+  };
 };
 
 export type GovernedVerseShellExecOptions = {
@@ -50,6 +62,12 @@ export type GovernedVerseShellExecOptions = {
   hostPolicyApproved: boolean;
   env?: NodeJS.ProcessEnv;
   manager?: VerseShellProcessManager;
+  /**
+   * Optional Windows Job Object limits for the one-shot exec (issue #155). The executor fails
+   * closed when the Job cannot be configured, so a completed run with a cap means the cap was
+   * applied to the process tree.
+   */
+  resourceLimits?: { maxMemoryBytes?: number; maxProcesses?: number };
 };
 
 export type GovernedVerseShellResultQueryOptions = {
@@ -334,16 +352,70 @@ export async function executeGovernedVerseShell(
     env: options.env,
     allowExplicitShell: options.shellMode !== "argv",
   });
+  const requestedLimits = options.resourceLimits ?? {};
+  if (
+    (requestedLimits.maxMemoryBytes !== undefined &&
+      (!Number.isSafeInteger(requestedLimits.maxMemoryBytes) || requestedLimits.maxMemoryBytes <= 0)) ||
+    (requestedLimits.maxProcesses !== undefined &&
+      (!Number.isSafeInteger(requestedLimits.maxProcesses) || requestedLimits.maxProcesses <= 0))
+  ) {
+    throw new GovernedVerseShellError(
+      "E_PROCESS_RESOURCE_LIMIT",
+      "resource limits must be positive integers",
+    );
+  }
+  const appliedLimits: { maxMemoryMb?: number; maxProcesses?: number } = {
+    ...(requestedLimits.maxProcesses === undefined
+      ? {}
+      : { maxProcesses: requestedLimits.maxProcesses }),
+    ...(requestedLimits.maxMemoryBytes === undefined
+      ? {}
+      : { maxMemoryMb: Math.max(1, Math.ceil(requestedLimits.maxMemoryBytes / (1024 * 1024))) }),
+  };
+  const hasRequestedLimits = Object.keys(appliedLimits).length > 0;
+  const withReceipt = (result: GovernedVerseShellExecResult): GovernedVerseShellExecResult =>
+    hasRequestedLimits
+      ? {
+          ...result,
+          resourceLimits: {
+            requested: { ...requestedLimits },
+            applied: appliedLimits,
+            enforcement: "job-object" as const,
+            readback: "unavailable" as const,
+            detail:
+              "Job Object limits were accepted for this exec; the executor fails closed when " +
+              "SetInformationJobObject or AssignProcessToJobObject fails. The bundled executor " +
+              "exposes no QueryInformationJobObject readback, so effective kernel limits are not " +
+              "queried: maxMemoryBytes maps to the Windows per-process commit limit " +
+              "(JOB_OBJECT_LIMIT_PROCESS_MEMORY), not RSS or a job-wide total.",
+          },
+        }
+      : result;
+  // The receipt is attached only when the command actually ran; a policy denial or an approval
+  // rejection must not claim that a Job limit was applied.
+  const execRan = (observation: Observation): boolean => {
+    const data = observation.data as Record<string, unknown> | undefined;
+    if (!data) return false;
+    return (
+      typeof data.exit_code === "number" || data.stdout !== undefined || data.stderr !== undefined
+    );
+  };
+  const withReceiptIfExecRan = (
+    observation: Observation,
+    result: GovernedVerseShellExecResult,
+  ): GovernedVerseShellExecResult => (execRan(observation) ? withReceipt(result) : result);
   const args: JsonObject = {
     argv: plan.argv,
     cwd: ".",
     profile: "auto",
     artifact: "auto",
+    ...(appliedLimits.maxProcesses === undefined ? {} : { max_processes: appliedLimits.maxProcesses }),
+    ...(appliedLimits.maxMemoryMb === undefined ? {} : { max_memory_mb: appliedLimits.maxMemoryMb }),
     ...(timeoutMs ? { timeout_ms: timeoutMs } : {}),
   };
   const first = await executeOnce(manager, config, args, timeoutMs);
   if (first.observation.error?.code !== "E_NEEDS_APPROVAL") {
-    return formatObservation(first.observation);
+    return withReceiptIfExecRan(first.observation, formatObservation(first.observation));
   }
   if (!options.hostPolicyApproved) {
     return formatObservation(first.observation);
@@ -363,7 +435,7 @@ export async function executeGovernedVerseShell(
       timeoutMs,
       effectful: true,
     });
-    return formatObservation(observation);
+    return withReceiptIfExecRan(observation, formatObservation(observation));
   } finally {
     // Never retain an approval-bearing process after the one bound action completes.
     await manager.shutdownProcess(approvedClient.processKey);

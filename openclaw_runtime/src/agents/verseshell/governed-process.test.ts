@@ -477,17 +477,10 @@ describe("VerseShell governed process lifecycle", () => {
     await expect(defaulted.wait()).resolves.toMatchObject({ state: "exited" });
     expect(calls.filter((call) => call.op === "process.start").map((call) => call.args.timeout_ms)).toEqual([1, 10 * 60 * 1000]);
   });
-  it('fails closed when resource limits require enforcement but executor gives no receipt', async () => {
-    const fake = fakeManager([]);
-    await expect(startGovernedVerseShellProcess(baseOptions(fake.manager, {
-      resourceLimits: { maxMemoryBytes: 64 * 1024 * 1024, maxProcesses: 4, requireEnforcement: true },
-    }))).rejects.toMatchObject({ code: 'E_PROCESS_RESOURCE_LIMIT_UNSUPPORTED' });
-  });
-
-  it('records unsupported limits as not enforced instead of claiming success', async () => {
+  it('sends the requested Job limits and records how enforcement was established', async () => {
     const calls: ExecuteCall[] = [];
     const client = {
-      processKey: 'resource-receipt',
+      processKey: 'resource-limits',
       execute: vi.fn(async (op: string, args: JsonObject) => {
         calls.push({ op, args });
         if (op === 'process.start') return observation(op, snapshot());
@@ -498,10 +491,63 @@ describe("VerseShell governed process lifecycle", () => {
     };
     const fake = fakeManager([client]);
     const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager, {
-      resourceLimits: { maxMemoryBytes: 64 * 1024 * 1024 },
+      resourceLimits: { maxMemoryBytes: 64 * 1024 * 1024, maxProcesses: 4, requireEnforcement: true },
     }));
-    expect(handle.resourceReceipt).toMatchObject({ enforced: false, enforcement: 'unsupported' });
+
+    const startArgs = calls.find((call) => call.op === 'process.start')?.args;
+    expect(startArgs).toMatchObject({ max_memory_mb: 64, max_processes: 4 });
+    expect(handle.resourceReceipt).toMatchObject({
+      requested: { maxMemoryBytes: 64 * 1024 * 1024, maxProcesses: 4, requireEnforcement: true },
+      applied: { maxMemoryMb: 64, maxProcesses: 4 },
+      enforced: true,
+      enforcement: 'job-object',
+      evidence: 'job-object-configured',
+      readback: 'unavailable',
+    });
+    expect(handle.resourceReceipt.detail ?? '').toContain('no');
+    expect(handle.resourceReceipt.detail ?? '').toContain('QueryInformationJobObject');
     await handle.wait();
   });
 
+  it('does not claim enforcement when no limits were requested', async () => {
+    const client = {
+      processKey: 'resource-receipt',
+      execute: vi.fn(async (op: string) => {
+        if (op === 'process.start') return observation(op, snapshot());
+        if (op === 'process.poll') return observation(op, { ...snapshot(), state: 'exited', exit_code: 0 });
+        if (op === 'process.kill') return observation(op, {});
+        throw new Error('unexpected operation ' + op);
+      }),
+    };
+    const fake = fakeManager([client]);
+    const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager));
+    expect(handle.resourceReceipt).toMatchObject({
+      requested: {},
+      applied: {},
+      enforced: false,
+      enforcement: 'unsupported',
+      evidence: 'none',
+      readback: 'unavailable',
+    });
+    await handle.wait();
+  });
+
+  it('fails closed when the executor refuses to start with the requested limits', async () => {
+    const calls: ExecuteCall[] = [];
+    const client = {
+      processKey: 'resource-refused',
+      execute: vi.fn(async (op: string, args: JsonObject) => {
+        calls.push({ op, args });
+        return observation(op, {}, {
+          ok: false,
+          error: { code: 'E_INVALID_ARGS', message: 'max_processes is not supported' },
+        });
+      }),
+    };
+    const fake = fakeManager([client]);
+    await expect(startGovernedVerseShellProcess(baseOptions(fake.manager, {
+      resourceLimits: { maxProcesses: 2, requireEnforcement: true },
+    }))).rejects.toMatchObject({ code: 'E_INVALID_ARGS' });
+    expect(calls.find((call) => call.op === 'process.start')?.args).toMatchObject({ max_processes: 2 });
+  });
 });

@@ -7,6 +7,11 @@ import {
 } from "./governed-exec.js";
 import type { VerseShellProcessManager } from "./process-manager.js";
 import {
+  admitManagedProcess,
+  resolveManagedProcessDefaultLimits,
+  type ManagedProcessLease,
+} from "./managed-process-capacity.js";
+import {
   resolveVerseShellCommandPlan,
   type VerseShellCommandPlan,
 } from "./command-profiles.js";
@@ -73,9 +78,21 @@ export type GovernedProcessResourceLimits = {
 
 export type GovernedProcessResourceReceipt = {
   requested: GovernedProcessResourceLimits;
+  /** Exactly what was sent to the executor, in the executor's own units. */
+  applied: { maxMemoryMb?: number; maxProcesses?: number };
   enforced: boolean;
   enforcement: "job-object" | "unsupported";
+  /**
+   * How `enforced` was established. `job-object-configured` means the executor accepted the
+   * limits when the process started and fails closed when SetInformationJobObject or
+   * AssignProcessToJobObject fails. The bundled executor exposes no QueryInformationJobObject
+   * readback, so `readback: "unavailable"` means kernel-level effective limits are not queried.
+   */
+  evidence: "job-object-configured" | "none";
+  readback: "unavailable";
   detail?: string;
+  /** Instance-wide managed-process occupancy at admission time. */
+  capacity?: { live: number; limit?: number };
 };
 
 export type GovernedVerseShellProcessOptions = {
@@ -277,15 +294,58 @@ export async function startGovernedVerseShellProcess(
     Math.max(1, options.maxOutputBytes),
     profile.maxOutputBytes,
   );
-  const requestedLimits = options.resourceLimits ?? {};
-  const hasRequestedLimits = requestedLimits.maxMemoryBytes !== undefined || requestedLimits.maxProcesses !== undefined;
-  if ((requestedLimits.maxMemoryBytes !== undefined && (!Number.isSafeInteger(requestedLimits.maxMemoryBytes) || requestedLimits.maxMemoryBytes <= 0)) || (requestedLimits.maxProcesses !== undefined && (!Number.isSafeInteger(requestedLimits.maxProcesses) || requestedLimits.maxProcesses <= 0))) {
-    throw new GovernedVerseShellError('E_PROCESS_RESOURCE_LIMIT', 'resource limits must be positive integers');
+  // Operator-declared defaults apply unless the caller states its own limits.
+  const requestedLimits: GovernedProcessResourceLimits = {
+    ...resolveManagedProcessDefaultLimits(),
+    ...(options.resourceLimits ?? {}),
+  };
+  const hasRequestedLimits =
+    requestedLimits.maxMemoryBytes !== undefined || requestedLimits.maxProcesses !== undefined;
+  if (
+    (requestedLimits.maxMemoryBytes !== undefined &&
+      (!Number.isSafeInteger(requestedLimits.maxMemoryBytes) || requestedLimits.maxMemoryBytes <= 0)) ||
+    (requestedLimits.maxProcesses !== undefined &&
+      (!Number.isSafeInteger(requestedLimits.maxProcesses) || requestedLimits.maxProcesses <= 0))
+  ) {
+    throw new GovernedVerseShellError(
+      "E_PROCESS_RESOURCE_LIMIT",
+      "resource limits must be positive integers",
+    );
   }
-  const resourceReceipt: GovernedProcessResourceReceipt = { requested: requestedLimits, enforced: false, enforcement: 'unsupported', detail: hasRequestedLimits ? 'The bundled VerseShell executor did not return an enforcement receipt; limits are not claimed as applied.' : 'No resource limits requested.' };
-  if (hasRequestedLimits && requestedLimits.requireEnforcement) {
-    throw new GovernedVerseShellError('E_PROCESS_RESOURCE_LIMIT_UNSUPPORTED', resourceReceipt.detail ?? 'resource limits unsupported');
+  // The executor takes MiB for the Windows per-process commit limit.
+  const appliedLimits: { maxMemoryMb?: number; maxProcesses?: number } = {
+    ...(requestedLimits.maxProcesses === undefined
+      ? {}
+      : { maxProcesses: requestedLimits.maxProcesses }),
+    ...(requestedLimits.maxMemoryBytes === undefined
+      ? {}
+      : { maxMemoryMb: Math.max(1, Math.ceil(requestedLimits.maxMemoryBytes / (1024 * 1024))) }),
+  };
+  const resourceReceipt: GovernedProcessResourceReceipt = {
+    requested: requestedLimits,
+    applied: appliedLimits,
+    enforced: false,
+    enforcement: "unsupported",
+    evidence: "none",
+    readback: "unavailable",
+    detail: hasRequestedLimits
+      ? "Resource limits were requested but the managed process has not started yet."
+      : "No resource limits requested.",
+  };
+  // Instance-wide occupancy is admitted before the process starts so several sessions cannot
+  // each assume they own the whole declared capacity. No declaration means no counter.
+  const capacityAdmission = admitManagedProcess();
+  if (!capacityAdmission.ok) {
+    throw new GovernedVerseShellError(
+      "E_PROCESS_CAPACITY_LIMIT",
+      `managed tool process capacity is exhausted: live=${capacityAdmission.live} limit=${capacityAdmission.limit}`,
+    );
   }
+  const capacityLease: ManagedProcessLease = capacityAdmission.lease;
+  resourceReceipt.capacity = {
+    live: capacityAdmission.live,
+    ...(capacityAdmission.limit === undefined ? {} : { limit: capacityAdmission.limit }),
+  };
   const startArgs: JsonObject = {
     argv: plan.argv,
     cwd: ".",
@@ -297,10 +357,13 @@ export async function startGovernedVerseShellProcess(
     max_output_bytes: boundedOutputBytes,
     wait_ms: 0,
     timeout_ms: boundedTimeoutMs,
+    ...(appliedLimits.maxMemoryMb === undefined ? {} : { max_memory_mb: appliedLimits.maxMemoryMb }),
+    ...(appliedLimits.maxProcesses === undefined ? {} : { max_processes: appliedLimits.maxProcesses }),
   };
 
   const firstClient = await manager.getClient(baseConfig);
   const traceId = options.traceId?.trim() || `verseshell-process:${options.sessionId}`;
+  const releaseCapacity = (): boolean => capacityLease.release();
   const first = await firstClient.execute("process.start", startArgs, {
     timeoutMs: POLL_REQUEST_TIMEOUT_MS,
     effectful: true,
@@ -309,9 +372,13 @@ export async function startGovernedVerseShellProcess(
   let client = firstClient;
   let startObservation = first;
   if (first.error?.code === "E_NEEDS_APPROVAL") {
-    if (!options.hostPolicyApproved) throw observationError(first);
+    if (!options.hostPolicyApproved) {
+      releaseCapacity();
+      throw observationError(first);
+    }
     const token = approvalToken(first);
     if (!token) {
+      releaseCapacity();
       throw new GovernedVerseShellError(
         "E_VERSESHELL_APPROVAL_CONTRACT",
         "VerseShell did not return a valid action-bound approval token",
@@ -326,7 +393,30 @@ export async function startGovernedVerseShellProcess(
   }
   if (!startObservation.ok) {
     if (client !== firstClient) await manager.shutdownProcess(client.processKey);
+    releaseCapacity();
     throw observationError(startObservation);
+  }
+  if (hasRequestedLimits) {
+    // The executor rejects unknown arguments and fails closed when the Job cannot be configured,
+    // so a started process means the limits were applied to its Job Object.
+    resourceReceipt.enforced = true;
+    resourceReceipt.enforcement = "job-object";
+    resourceReceipt.evidence = "job-object-configured";
+    resourceReceipt.detail =
+      "Job Object limits accepted at process start; the executor fails closed when " +
+      "SetInformationJobObject or AssignProcessToJobObject fails. The bundled executor exposes no " +
+      "QueryInformationJobObject readback, so effective kernel limits are not queried: " +
+      "maxMemoryBytes maps to the Windows per-process commit limit (JOB_OBJECT_LIMIT_PROCESS_MEMORY), " +
+      "which is neither RSS nor a job-wide total, and maxProcesses maps to " +
+      "JOB_OBJECT_LIMIT_ACTIVE_PROCESS for the whole tree.";
+  }
+  if (hasRequestedLimits && requestedLimits.requireEnforcement && !resourceReceipt.enforced) {
+    await manager.shutdownProcess(client.processKey);
+    releaseCapacity();
+    throw new GovernedVerseShellError(
+      "E_PROCESS_RESOURCE_LIMIT_UNSUPPORTED",
+      resourceReceipt.detail ?? "resource limits unsupported",
+    );
   }
 
   let snapshot = parseSnapshot(
@@ -441,6 +531,12 @@ export async function startGovernedVerseShellProcess(
       settled = true;
       stdin.destroy();
       await manager.shutdownProcess(client.processKey);
+      // Capacity is only returned once a terminal state was observed. If the wait ended in an
+      // unknown state the slot stays occupied (and is visible as a leak) rather than being
+      // released on an unverified exit.
+      if (snapshot.state !== "running") {
+        releaseCapacity();
+      }
     }
   })();
 
