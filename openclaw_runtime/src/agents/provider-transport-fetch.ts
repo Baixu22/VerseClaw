@@ -41,6 +41,11 @@ import {
   type ProviderLocalServiceLease,
 } from "./provider-local-service.js";
 import {
+  acquireProviderOutboundSlot,
+  ProviderOutboundOverloadedError,
+  resolveProviderOutboundQuotaGroup,
+} from "./provider-outbound-budget.js";
+import {
   buildProviderRequestDispatcherPolicy,
   getModelProviderRequestTransport,
   mergeModelProviderRequestOverrides,
@@ -789,6 +794,9 @@ export function buildGuardedModelFetch(
   const requestConfig = resolveModelRequestPolicy(model);
   const dispatcherPolicy = buildProviderRequestDispatcherPolicy(requestConfig);
   const requestTimeoutMs = resolveModelRequestTimeoutMs(model, timeoutMs);
+  // Quota identity is stable per model+credential; resolving it once per guarded fetch keeps the
+  // per-attempt cost to one gate lookup.
+  const outboundGroup = resolveProviderOutboundQuotaGroup({ model, requestConfig });
   let nextWireAttemptIndex = shadow?.wireAttemptIndex ?? 0;
   const summarizeError = (error: unknown): string => {
     if (!error || typeof error !== "object") {
@@ -951,12 +959,47 @@ export function buildGuardedModelFetch(
     let result: Awaited<ReturnType<typeof fetchWithSsrFGuard>>;
     const fetchStartedAt = Date.now();
     const useEnvProxy = !dispatcherPolicy && shouldUseEnvHttpProxyForUrl(url);
+    // Shared outbound concurrency budget (issue #154). Admission happens before the local
+    // provider sidecar starts and before any bytes go on the wire, so a refused request never
+    // enters the expensive path. The slot is released only where the guarded request is
+    // confirmed finished — stream end, stream cancel, error, or dispatcher release — never by an
+    // upper-layer timeout that leaves the physical request alive.
+    const admission = await acquireProviderOutboundSlot({
+      group: outboundGroup,
+      ...(baseSignal ? { signal: baseSignal } : {}),
+    });
+    if (!admission.ok) {
+      throw new ProviderOutboundOverloadedError({
+        model,
+        reason: admission.reason,
+        endpoint: outboundGroup.endpoint,
+        waitedMs: admission.waitedMs,
+        snapshot: admission.snapshot,
+      });
+    }
+    const outboundSlot = admission.slot;
+    let outboundSlotReleased = false;
+    const releaseOutboundSlot = (): boolean => {
+      if (outboundSlotReleased) {
+        return false;
+      }
+      outboundSlotReleased = true;
+      return outboundSlot.release();
+    };
+    const releaseGuardedRequest = async (): Promise<void> => {
+      try {
+        await result.release();
+      } finally {
+        releaseOutboundSlot();
+      }
+    };
     emitModelTransportDebug(
       log,
       `[model-fetch] start provider=${model.provider} api=${model.api} model=${model.id} ` +
         `method=${baseInit?.method ?? "GET"} url=${formatModelTransportDebugUrl(url)} timeoutMs=${requestTimeoutMs} ` +
         `proxy=${dispatcherPolicy ? "configured" : useEnvProxy ? "env" : "none"} ` +
-        `policy=${policy ? "custom" : "default"}`,
+        `policy=${policy ? "custom" : "default"} ` +
+        `outbound=${outboundSlot.limited ? "gated" : "ungated"} admissionWaitMs=${outboundSlot.waitedMs}`,
     );
     try {
       localServiceLease = await ensureModelProviderLocalService(
@@ -975,6 +1018,7 @@ export function buildGuardedModelFetch(
           `elapsedMs=${Date.now() - fetchStartedAt} ${summarizeError(error)}`,
       );
       localServiceLease?.release();
+      releaseOutboundSlot();
       throw error;
     }
     let response = result.response;
@@ -997,13 +1041,13 @@ export function buildGuardedModelFetch(
       response = await normalizeOpenAISdkStreamContentType({
         response,
         model,
-        release: result.release,
+        release: releaseGuardedRequest,
         localServiceLease,
       });
     }
     response = buildManagedResponse(
       response,
-      result.release,
+      releaseGuardedRequest,
       result.refreshTimeout,
       localServiceLease,
     );

@@ -1831,6 +1831,7 @@ openclaw_runtime/_tmp_*
 !/artifacts/p1-141-memory-benefit-real-20261010/report.json
 !/artifacts/p1-141-memory-benefit-real-20261010/SHA256SUMS
 !/docs/dev/p1-141-memory-benefit-real-20261010.md
+!/docs/dev/p1-154-outbound-concurrency-budget-20261011.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
