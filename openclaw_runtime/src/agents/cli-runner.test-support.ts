@@ -117,6 +117,7 @@ type MockRunExit = {
   stderr: string;
   timedOut: boolean;
   noOutputTimedOut: boolean;
+  termination: "verified" | "residual" | "unknown";
 };
 
 type ManagedRunMock = {
@@ -155,6 +156,7 @@ export function mockSuccessfulCliRun() {
       stderr: "",
       timedOut: false,
       noOutputTimedOut: false,
+      termination: "verified",
     }),
   );
 }

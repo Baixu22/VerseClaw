@@ -495,7 +495,7 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
       const result = await hostApi.remoteControl.inspect();
       setRemoteControlInspect(result);
       const preferredTarget = result.targets.find((target) => (
-        target.title === 'ClawX' || target.url?.includes('localhost:5173')
+        target.title === 'Verse Claw' || target.url?.includes('localhost:5173')
       )) ?? result.targets.find((target) => target.type === 'page') ?? result.targets[0];
       if (preferredTarget?.id) {
         setRemoteControlTargetId(preferredTarget.id);
@@ -2315,7 +2315,7 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
                     <SettingsInlineLink onClick={() => window.electron.openExternal('https://github.com/ValueCell-ai/Verse-Claw')}>
                       {t('about.github')}
                     </SettingsInlineLink>
-                    <SettingsInlineLink onClick={() => window.electron.openExternal('https://icnnp7d0dymg.feishu.cn/wiki/UyfOwQ2cAiJIP6kqUW8cte5Bnlc')}>
+                    <SettingsInlineLink onClick={() => window.electron.openExternal('https://docs.openclaw.ai/')}>
                       {t('about.faq')}
                     </SettingsInlineLink>
                   </div>

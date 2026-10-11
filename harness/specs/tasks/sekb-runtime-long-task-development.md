@@ -16,7 +16,7 @@ touchedAreas:
   - openclaw_runtime/src/state/**
   - openclaw_runtime/src/agents/**
   - src/lib/host-api.ts
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
   - electron/services/**
 expectedUserBehavior:
   - Future SEKB work starts from the committed v0.2 runtime advisory baseline instead of a fresh MVP prompt.

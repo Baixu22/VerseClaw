@@ -62,6 +62,11 @@ describe('user-error helper (R2)', () => {
     expect(first.errorId).not.toBe(second.errorId);
   });
 
+  it('uses the preserved host request id as the copyable error reference when present', () => {
+    const details = describeUserError(new AppError('TIMEOUT', 'timeout', undefined, {}, 'req-host-118'));
+    expect(details.errorId).toBe('req-host-118');
+  });
+
   it('exposes a one-liner safe message helper', () => {
     const message = errorMessageFrom(new Error('secret sk-12345678901234567890'));
     // sanitizeUiErrorText rewrites the key to sk-[REDACTED]; the secret value must never survive.

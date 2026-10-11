@@ -73,7 +73,7 @@ has no `CODE_SIGNALS` entry for `INTERNAL`, so it classifies as `UNKNOWN`; the
 waiting/approval unions are `AgentBrowserTaskStatus` (8 members) and
 `AgentBrowserTaskApproval.status` (4 members). The draft's cited documents and
 identifiers (`docs/governance/manus-alignment-*`, `DEC-2x`, "100 RPM") do not
-exist anywhere in this tree, and `src/lib/api-client.ts` does not exist either.
+exist anywhere in this tree, and `src/lib/host-api-client.ts` does not exist either.
 `failover-policy.ts` allows a billing *cooldown probe* while excluding billing
 from the transient slot, so "billing must not be retried" was not adopted as
 written.
@@ -97,7 +97,7 @@ written.
   deep-merges an override so one axis can be mutated per fixture.
 - `harness/specs/scenarios/gateway-backend-communication.md`: the rule is wired
   into `requiredRules`, a short "Error governance across this boundary" section
-  was added, and the stale `src/lib/api-client.ts` flow reference was corrected
+  was added, and the stale `src/lib/host-api-client.ts` flow reference was corrected
   to `src/lib/host-api-client.ts`.
 - `docs/dev/error-governance-decision-record.md` (new): each draft item marked
   existing / gap / proposal against re-verified paths and symbols; states that
@@ -127,7 +127,7 @@ CLI failure is recorded in the evidence package (exit 1 with
 **Residual:** the three code-level gaps (renderer drops the host error code →
 #118, duplicated `HostResponse`, duplicated `AppErrorCode` unions) are declared
 with executable probes rather than fixed, because `src/**`, `shared/host-api/**`
-and `electron/**` were outside this batch's write scope. `src/lib/api-client.ts`
+and `electron/**` were outside this batch's write scope. `src/lib/host-api-client.ts`
 is still named by other policy text (`AGENTS.md`, several rules/task specs,
 `.github/workflows/comms-regression.yml`); only the scenario's flow claim was
 corrected here, and `docs/architecture-overview.md:24` already records that class

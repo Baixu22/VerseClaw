@@ -266,7 +266,7 @@
     },
     "riskLabel": "风险",
     "externalWriteSummary": "外部进程写入（详情已隐藏）",
-    "externalWriteNoRollback": "不在 ClawX 写入日志覆盖范围内；无法自动回滚。",
+    "externalWriteNoRollback": "不在 Verse Claw 写入日志覆盖范围内；无法自动回滚。",
     "sourceLabel": "来源",
     "modeLabel": "模式",
     "status": {
@@ -347,8 +347,8 @@
         "deny": "拒绝",
         "retryRequired": "已记录决定，请让智能体重试该操作。",
         "externalWriteTitle": "外部写入需要批准",
-        "externalWriteWarning": "此外部进程可能在 ClawX 写入日志之外更改文件或其他状态。",
-        "externalWriteNoRollback": "不在 ClawX 写入日志覆盖范围内；无法自动回滚。",
+        "externalWriteWarning": "此外部进程可能在 Verse Claw 写入日志之外更改文件或其他状态。",
+        "externalWriteNoRollback": "不在 Verse Claw 写入日志覆盖范围内；无法自动回滚。",
         "externalWriteEffectLabel": "效果",
         "externalWriteEffect": "外部进程写入",
         "externalWriteRollbackLabel": "回滚",
@@ -563,7 +563,7 @@
       "audit": "审计"
     },
     "workspaceLaunchpad": {
-      "title": "ClawX 工作区",
+      "title": "Verse Claw 工作区",
       "subtitle": "固定入口",
       "moreHint": "用 + 打开审查、预览和审计工具。",
       "actions": {
@@ -1311,12 +1311,12 @@
       "messageRefTitle": "知识引用：{{title}}"
     },
     "slashCommands": {
-      "menuLabel": "ClawX 斜杠命令",
-      "title": "ClawX 命令",
+      "menuLabel": "Verse Claw 斜杠命令",
+      "title": "Verse Claw 命令",
       "subtitle": "为知识、代码工作、流程或当前会话选择有针对性的动作。",
       "contextButton": "打开命令",
       "contextButtonShort": "命令",
-      "contextButtonTooltip": "输入 / 搜索 ClawX 的针对性命令。",
+      "contextButtonTooltip": "输入 / 搜索 Verse Claw 的针对性命令。",
       "promptArgs": "范围：{{args}}",
       "unknownTitle": "未知命令",
       "unknownDescription": "{{command}} 不是 Verse Claw 快捷动作。按 Escape 可继续编辑。",

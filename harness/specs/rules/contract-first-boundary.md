@@ -19,7 +19,7 @@ Renderer/Main/Gateway/Runtime-facing features must declare or update their host-
 
 ## Requirements
 
-- Renderer code calls backend functionality through `src/lib/host-api.ts` or `src/lib/api-client.ts`.
+- Renderer code calls backend functionality through `src/lib/host-api.ts` or `src/lib/host-api-client.ts`.
 - Main service actions declared in `shared/host-api/contract.ts` have matching service implementations.
 - Mutating `agentDev` actions have runtime payload validation or an explicit exemption in the task spec.
 - Agent Dev scenarios come from `shared/agent-dev/scenarios.ts`.

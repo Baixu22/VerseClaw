@@ -85,6 +85,14 @@ function buildSseEventSourceFetch(
   };
 }
 
+function isLocalMcpEndpoint(url: string): boolean {
+  try {
+    return new Set(["localhost", "127.0.0.1", "::1", "[::1]"]).has(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+}
+
 /** Resolves a configured MCP server into a live SDK transport instance. */
 export function resolveMcpTransport(
   serverName: string,
@@ -93,6 +101,16 @@ export function resolveMcpTransport(
   const resolved = resolveMcpTransportConfig(serverName, rawServer);
   if (!resolved) {
     return null;
+  }
+  if (resolved.kind === "http") {
+    if (resolved.networkPolicy === "disabled") {
+      logDebug(`bundle-mcp: server "${serverName}" skipped because networkPolicy=disabled.`);
+      return null;
+    }
+    if (resolved.networkPolicy === "localOnly" && !isLocalMcpEndpoint(resolved.url)) {
+      logDebug(`bundle-mcp: server "${serverName}" skipped because networkPolicy=localOnly and the endpoint is not local.`);
+      return null;
+    }
   }
   if (resolved.kind === "stdio") {
     const transport = new OpenClawStdioClientTransport({

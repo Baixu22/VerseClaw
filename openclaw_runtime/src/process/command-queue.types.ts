@@ -8,6 +8,9 @@ export type CommandQueueEnqueueOptions = {
   taskTimeoutMs?: number;
   taskTimeoutProgressAtMs?: () => number | undefined;
   priority?: "foreground" | "normal" | "background";
+  maxQueueSize?: number;
+  queueDeadlineMs?: number;
+  signal?: AbortSignal;
 };
 
 /** Minimal queue function contract used by code that only needs to schedule work. */

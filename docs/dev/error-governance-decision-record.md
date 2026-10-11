@@ -45,8 +45,8 @@ another envelope and another error table.
 | --- | --- | --- |
 | The host-api request/response envelope exists with `id`, `ok`, `data`/`error` | existing | `shared/host-api/types.ts` declares `HostRequest`, `TypedHostRequest` and `HostResponse` |
 | Main answers with the same envelope and echoes the request id on every branch | existing | `electron/main/ipc/host-invoke.ts` (`dispatchHostRequest`) returns `{ id, ok: false, error: { code, message } }` for sender/auth, format, dangerous-key, payload, unsupported, timeout and internal failures, and `{ id, ok: true, data }` on success; `electron/preload/index.ts` exposes `hostInvoke` over `host:invoke` |
-| The envelope type is declared twice and can drift | gap (renderer-drops-host-error-code, duplicate-host-response-copies) | `shared/host-api/types.ts` makes `id`, `error`, `code` and `message` optional; `electron/main/ipc/host-contract.ts` makes `error.code` and `error.message` required. Both are named `HostResponse` |
-| The renderer surfaces the Main error code and details | gap (renderer-drops-host-error-code) | `src/lib/host-api-client.ts` (`invokeHost`) throws a bare `Error` built from `response.error?.message`, so `code` and `details` never reach `src/lib/error-model.ts` |
+| The envelope type is declared twice and can drift | gap (duplicate-host-response-copies) | `shared/host-api/types.ts` makes `id`, `error`, `code` and `message` optional; `electron/main/ipc/host-contract.ts` makes `error.code` and `error.message` required. Both are named `HostResponse` |
+| The renderer surfaces the Main error code and details | existing | `src/lib/host-api-client.ts` (`invokeHost`) maps `response.error.code` through `mapBackendErrorCode`, preserves `response.id` as `AppError.requestId`, and carries structured `details` into `src/lib/error-model.ts`; bridge rejection and renderer timeout are recorded on the same request id |
 | The error type is declared twice with different members | gap (duplicate-app-error-code-unions) | the closed renderer union `AppErrorCode` in `src/lib/error-model.ts` and the Main-process `AppErrorCode` in `electron/main/ipc/request-helpers.ts` |
 | One declared surface block, one envelope symbol, one allowed error-type list | proposal | `node scripts/check-error-governance.mjs` checks `error-envelope-reused`: a declared envelope that is not `HostResponse`, a symbol that no owner file declares, or an `allowedErrorTypes` list other than `AppError` plus `HostErrorCode` fails with `error-governance.parallel-envelope` / `error-governance.parallel-error-type` |
 
@@ -64,7 +64,7 @@ be reintroduced into policy text.
 | Item | State | Current evidence |
 | --- | --- | --- |
 | Renderer talks to Main through typed IPC; Main owns the Gateway WebSocket | existing | `harness/specs/rules/api-client-transport-policy.md` ("Gateway RPC transport is IPC-only"), `harness/specs/rules/host-api-fallback-policy.md` (typed `hostApi` facade plus `host:invoke`; the local Host API HTTP server on 127.0.0.1:13210 and the browser fallback are removed), `electron/preload/index.ts` |
-| The scenario's allowed-flow line named a renderer client that does not exist | gap, corrected in this change set | the scenario claimed the flow passes through src/lib/api-client.ts (absent in this tree). The line now names `src/lib/host-api.ts` and `src/lib/host-api-client.ts`. Older policy text elsewhere still names the absent file; `docs/architecture-overview.md` already records that fact, and the remaining occurrences are out of this issue's scope |
+| The scenario's allowed-flow line named a renderer client that does not exist | gap, corrected in this change set | the scenario claimed the flow passes through src/lib/host-api-client.ts (absent in this tree). The line now names `src/lib/host-api.ts` and `src/lib/host-api-client.ts`. Older policy text elsewhere still names the absent file; `docs/architecture-overview.md` already records that fact, and the remaining occurrences are out of this issue's scope |
 
 ## 3. Error classes and the missing mapping
 
@@ -211,9 +211,11 @@ negation is compliant; a line that makes it a requirement fails.
   particular, the draft's "100 RPM" suggestion is **not** adopted: the string does
   not occur anywhere in this tree, and adopting a limit is a product decision with
   its own record.
-- No renderer code is changed by this record. Both code-level gaps
-  (`renderer-drops-host-error-code`, `duplicate-app-error-code-unions`) are
-  declared, probed and left for a change set that owns `src/lib/**`.
+- The renderer correlation gap (`renderer-drops-host-error-code`) is closed by
+  the P1 host error-boundary change set: `invokeHost` preserves the Main error
+  code, structured details and request id, and the governance surface no longer
+  declares that defect. The remaining code-level gap is
+  `duplicate-app-error-code-unions`, which is declared and probed here.
 - No new error class, no second envelope and no second machine-readable surface
   list is created. The surface block in the rule is a declaration of what exists,
   and it is reconciled with the real sources by the check.

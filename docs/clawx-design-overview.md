@@ -142,7 +142,7 @@ Verse Claw is a **cross-platform Electron desktop app** (React 19 + Vite + TypeS
 
 ### 3.1 Hard rules (enforced by AGENTS.md)
 
-- Renderer must go through `src/lib/host-api.ts` or `src/lib/api-client.ts`. **No direct** `window.electron.ipcRenderer.invoke(...)` in pages or components.
+- Renderer must go through `src/lib/host-api.ts` or `src/lib/host-api-client.ts`. **No direct** `window.electron.ipcRenderer.invoke(...)` in pages or components.
 - Renderer must not call `http://127.0.0.1:18789/...` directly. Use the main-process proxy channels (`hostapi:fetch`, `gateway:httpProxy`).
 - Transport policy is main-owned and fixed at **WS 鈫?HTTP 鈫?IPC fallback**. Renderer must not implement protocol switching.
 - All user-facing strings go through `react-i18next` with full coverage in `en` / `zh` / `ja` / `ru`.
@@ -391,7 +391,7 @@ Renderer
   hostApi.gateway.rpc('sessions.list', { 鈥?}, 10_000)
         鈹?
         鈻?
-src/lib/host-api.ts 鈫?src/lib/api-client.ts
+src/lib/host-api.ts 鈫?src/lib/host-api-client.ts
         鈹? window.electronAPI.ipcRenderer.invoke('hostapi:invoke', { id, module: 'gateway', action: 'rpc', payload })
         鈻?
 electron/preload/index.ts (whitelisted channel)

@@ -477,6 +477,7 @@ function buildVerifierTask(params: { originalTask: string; workers: SubagentRunR
     `Verify completion of: ${params.originalTask}`,
     "",
     "Use only the worker evidence below. Do not expand scope or start new implementation work.",
+    "Return a final line exactly in this form: verificationVerdict=pass|fail|repair_required. Do not omit it.",
     "",
     "## Worker Result Bundle",
     ...sections,

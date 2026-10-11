@@ -3,7 +3,7 @@
 ## Baseline Audit
 
 - Branch: `codex/sekb-runtime-knowledge`.
-- Workspace: `C:\Users\27933\Desktop\clawx\ClawX`.
+- Workspace: `%USERPROFILE%\Desktop\clawx\ClawX`.
 - Active stage: Slice 0, Semantic Constitution.
 - Existing dirty state observed before this stage's new edits:
   - `tests/unit/runtime-memory-locomo-full-500.test.ts` modified.
@@ -28,7 +28,7 @@ harness-documentation phase only.
 ## Materials Read
 
 - `reports/agent-context-guidance-queue-current-state.md`.
-- `C:\Users\27933\.codex\attachments\4249224c-d4c3-4f92-aa38-bc0991f48c57\pasted-text.txt`.
+- `%USERPROFILE%\.codex\attachments\4249224c-d4c3-4f92-aa38-bc0991f48c57\pasted-text.txt`.
 - `harness/specs/tasks/context-runtime-kit.md`.
 - `harness/specs/tasks/context-runtime-kit-default-on.md`.
 - `harness/specs/rules/context-runtime-kit-boundary.md`.

@@ -3,6 +3,9 @@
 name: Check and Build
 
 on:
+  push:
+    branches:
+      - 'codex/**'
   pull_request:
     branches:
       - main
@@ -29,7 +32,10 @@ jobs:
           cache: 'pnpm'
 
       - name: Check source and local artifact boundary
-        run: node scripts/check-repository-artifacts.mjs
+        run: node scripts/check-repository-artifacts.mjs`n`n      - name: Check active documentation for local absolute paths`n        run: pnpm run repo:local-paths:check
+
+      - name: Verify committed SHA256SUMS evidence
+        run: pnpm run repo:evidence:sha256
 
       - name: Check vendored runtime deep references
         run: node scripts/check-runtime-deep-refs.mjs
@@ -77,6 +83,9 @@ jobs:
 
       - name: Run tests
         run: pnpm run test
+
+      - name: Report conditional test skips
+        run: pnpm run test:skips:report
 
       - name: Run harness checks
         run: pnpm run harness:ci

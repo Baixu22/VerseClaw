@@ -55,10 +55,13 @@ export function spawnOfficeCli(
   return spawn(binary, args, options) as OfficeWatchChild;
 }
 const OFFICECLI_INSTALL_TIMEOUT_MS = 600_000;
+const OFFICECLI_INSTALL_COMMIT = '699cafbc8f0b8a7841c6cca53dafd0c24e982f56';
+const OFFICECLI_INSTALL_PS1_SHA256 = 'ef24f389b27bc5a85142b1d414f3d25047aa62c5188d9b9789940435b22b6c45';
+const OFFICECLI_INSTALL_SH_SHA256 = '2a0fdae06f4a018ea8d8516c69bfa5eeeb53406aacb5fa16fd07a9e572991bb6';
 const OFFICECLI_INSTALL_PS1_MIRROR_URL = 'https://d.officecli.ai/install.ps1';
-const OFFICECLI_INSTALL_PS1_GITHUB_URL = 'https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/main/install.ps1';
+const OFFICECLI_INSTALL_PS1_GITHUB_URL = `https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/${OFFICECLI_INSTALL_COMMIT}/install.ps1`;
 const OFFICECLI_INSTALL_SH_MIRROR_URL = 'https://d.officecli.ai/install.sh';
-const OFFICECLI_INSTALL_SH_GITHUB_URL = 'https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/main/install.sh';
+const OFFICECLI_INSTALL_SH_GITHUB_URL = `https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/${OFFICECLI_INSTALL_COMMIT}/install.sh`;
 
 export type OfficecliInfo = {
   installed: boolean;
@@ -434,8 +437,13 @@ export function officeCliInstallCommand(
           'try { $sp=[Net.ServicePointManager]::SecurityProtocol; if([int]$sp -ne 0){ [Net.ServicePointManager]::SecurityProtocol=$sp -bor [Net.SecurityProtocolType]::Tls12 } } catch {}',
           "$ProgressPreference='SilentlyContinue'",
           'try { [Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false) } catch {}',
-          `try { $s = irm -TimeoutSec 60 ${OFFICECLI_INSTALL_PS1_MIRROR_URL} } catch { $s = irm -TimeoutSec 60 ${OFFICECLI_INSTALL_PS1_GITHUB_URL} }`,
-          'iex $s',
+          "$installer=Join-Path $env:TEMP ('officecli-install-'+[guid]::NewGuid().ToString('N')+'.ps1')",
+          `$urls=@('${OFFICECLI_INSTALL_PS1_MIRROR_URL}','${OFFICECLI_INSTALL_PS1_GITHUB_URL}')`,
+          `$expected='${OFFICECLI_INSTALL_PS1_SHA256}'`,
+          '$verified=$false',
+          'foreach($url in $urls){ try { irm -TimeoutSec 60 $url -OutFile $installer; if((Get-FileHash -Algorithm SHA256 -LiteralPath $installer).Hash.ToLowerInvariant() -eq $expected){ $verified=$true; break } } catch {} }',
+          'if(-not $verified){ Remove-Item -LiteralPath $installer -Force -ErrorAction SilentlyContinue; throw "OfficeCLI installer integrity check failed" }',
+          '$code=0; try { & $installer; $code=$LASTEXITCODE } finally { Remove-Item -LiteralPath $installer -Force -ErrorAction SilentlyContinue }; exit $code',
         ].join('; '),
       ],
     };
@@ -445,7 +453,7 @@ export function officeCliInstallCommand(
     command: 'bash',
     args: [
       '-lc',
-      `f=$(mktemp) || exit 1; (curl -fsSL --connect-timeout 20 --max-time 60 ${OFFICECLI_INSTALL_SH_MIRROR_URL} -o "$f" || curl -fsSL --connect-timeout 20 --max-time 60 ${OFFICECLI_INSTALL_SH_GITHUB_URL} -o "$f") && bash "$f"; s=$?; rm -f "$f"; exit $s`,
+      `f=$(mktemp) || exit 1; trap 'rm -f "$f"' EXIT; check(){ if command -v sha256sum >/dev/null 2>&1; then h=$(sha256sum "$f"); elif command -v shasum >/dev/null 2>&1; then h=$(shasum -a 256 "$f"); else return 1; fi; [ "\${h%% *}" = "${OFFICECLI_INSTALL_SH_SHA256}" ]; }; for u in ${OFFICECLI_INSTALL_SH_MIRROR_URL} ${OFFICECLI_INSTALL_SH_GITHUB_URL}; do if curl -fsSL --connect-timeout 20 --max-time 60 "$u" -o "$f" && check; then bash "$f"; exit $?; fi; done; exit 1`,
     ],
   };
 }

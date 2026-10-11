@@ -139,6 +139,9 @@ describe("runtime memory judge freeze and sanity check", () => {
 
     expect(report.samples).toHaveLength(1);
     expect(report.samples[0].manualVerdict).toBe("unreviewed");
+    expect(report.status).toBe("not_enabled");
+    expect(report.reviewCoverage).toBe(0);
+    expect(report.requiresPromptReview).toBeNull();
     expect(report.judgeConfig.promptVersion).toBe("frozen-v2-generous-2026-07-04");
   });
 

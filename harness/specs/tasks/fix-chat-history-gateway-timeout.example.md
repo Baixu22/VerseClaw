@@ -6,7 +6,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: Adjust backend communication behavior for chat history loading.
 touchedAreas:
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
   - src/stores/chat/history-actions.ts
 expectedUserBehavior:
   - Chat history loads through the existing host API boundary.

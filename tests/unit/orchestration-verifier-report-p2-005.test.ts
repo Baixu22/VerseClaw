@@ -29,13 +29,25 @@ function payload(overrides: Partial<PendingFinalDeliveryPayload> = {}): PendingF
 }
 
 describe('structured verifier report (P2-005 / F-AUTH-005)', () => {
-  it('authorizes pass from structured outcome.status=ok', () => {
+  it('does not elevate a completed verifier run to pass without a structured verdict', () => {
     const report = buildVerifierReport({
       payload: payload({ outcome: { status: 'ok' }, frozenResultText: 'all green' }),
       resultText: 'all green',
     });
-    expect(report.decision).toBe('pass');
-    expect(report.reasons).toEqual([]);
+    expect(report.decision).toBe('fail');
+    expect(report.reasons[0]?.code).toBe('missing_structured_verdict');
+  });
+
+  it('keeps ok plus a negative review out of pass/verified', () => {
+    const report = buildVerifierReport({
+      payload: payload({
+        outcome: { status: 'ok' },
+        frozenResultText: 'FAILED: tests failed. Reject this change; repair required.',
+      }),
+      resultText: 'FAILED: tests failed. Reject this change; repair required.',
+    });
+    expect(report.decision).not.toBe('pass');
+    expect(report.decision).toBe('repair_required');
   });
 
   it('fails on structured outcome error without relying on free text', () => {

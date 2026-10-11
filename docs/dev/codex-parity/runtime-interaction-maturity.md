@@ -1,6 +1,6 @@
 # 会话运行时交互方案成熟度对比：ClawX vs Codex CLI
 
-> 对比对象：ClawX（Electron 应用 + OpenClaw Gateway 运行时，本仓库） vs Codex CLI（`C:\Users\27933\Desktop\coding\codex-main\codex-rs`，Rust）
+> 对比对象：ClawX（Electron 应用 + OpenClaw Gateway 运行时，本仓库） vs Codex CLI（`%USERPROFILE%\Desktop\coding\codex-main\codex-rs`，Rust）
 > 范围：三种会话运行时交互方案——**打断（interrupt）**、**引导（guide/steer）**、**排队（queue）**
 > 日期：2026-07（调查基于当前工作区源码，行号以调查当日为准）
 

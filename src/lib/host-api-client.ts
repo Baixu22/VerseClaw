@@ -4,8 +4,9 @@ import type {
   HostApiPayloadArgs,
   HostApiResult,
 } from '@shared/host-api/contract';
-import type { TypedHostRequest } from '@shared/host-api/types';
+import type { HostResponse, TypedHostRequest } from '@shared/host-api/types';
 import { hostActionTimeoutMs } from '@shared/host-api/host-action-timeouts';
+import { AppError, mapBackendErrorCode, normalizeAppError } from './error-model';
 
 /** Renderer-side margin above the Main-process budget (Main wins the race). */
 const RENDERER_TIMEOUT_MARGIN_MS = 10_000;
@@ -44,6 +45,18 @@ const AGENT_DEV_REPLAY_STORAGE_KEY = 'clawx.agentDev.hostApiReplay';
 
 function createRequestId(): string {
   return crypto.randomUUID();
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === 'object' && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+}
+
+function readRequestId(value: unknown, fallback: string): string {
+  if (typeof value !== 'string') return fallback;
+  const trimmed = value.trim();
+  return /^[A-Za-z0-9._:-]{1,200}$/.test(trimmed) ? trimmed : fallback;
 }
 
 function stableStringify(value: unknown): string {
@@ -180,7 +193,13 @@ export async function invokeHost<
     call.ok = false;
     call.error = 'Host invoke bridge is unavailable';
     rememberHostApiCall(call);
-    throw new Error('Host invoke bridge is unavailable');
+    throw new AppError(
+      'CHANNEL_UNAVAILABLE',
+      'Host invoke bridge is unavailable',
+      undefined,
+      { module, action, requestId: request.id },
+      request.id,
+    );
   }
 
   // R0-4: last-line renderer fallback. The Main dispatcher enforces the
@@ -188,24 +207,68 @@ export async function invokeHost<
   // code; this race only fires when Main itself hangs and never responds.
   const timeoutMs = hostActionTimeoutMs(module, action) + RENDERER_TIMEOUT_MARGIN_MS;
   let timer: ReturnType<typeof setTimeout> | null = null;
-  const response = await Promise.race([
-    bridge<HostApiResult<M, A>>(request),
-    new Promise<HostApiResult<M, A>>((_, reject) => {
-      timer = setTimeout(() => {
-        reject(new Error(`Host request timed out: ${module}.${action}`));
-      }, timeoutMs);
-    }),
-  ]).finally(() => {
-    if (timer) clearTimeout(timer);
-  });
+  let response: HostResponse<HostApiResult<M, A>>;
+  try {
+    response = await Promise.race([
+      bridge<HostApiResult<M, A>>(request),
+      new Promise<HostApiResult<M, A>>((_, reject) => {
+        timer = setTimeout(() => {
+          reject(new AppError(
+            'TIMEOUT',
+            `Host request timed out: ${module}.${action}`,
+            undefined,
+            { module, action, requestId: request.id },
+            request.id,
+          ));
+        }, timeoutMs);
+      }),
+    ]).finally(() => {
+      if (timer) clearTimeout(timer);
+    });
+  } catch (error) {
+    call.endedAt = Date.now();
+    call.durationMs = call.endedAt - startedAt;
+    const normalized = error instanceof AppError ? error : normalizeAppError(error);
+    const appError = new AppError(
+      normalized.code,
+      normalized.message || `Host request failed: ${module}.${action}`,
+      error,
+      { ...(normalized.details ?? {}), module, action, requestId: request.id },
+      request.id,
+    );
+    call.ok = false;
+    call.error = appError.message;
+    rememberHostApiCall(call);
+    throw appError;
+  }
   call.endedAt = Date.now();
   call.durationMs = call.endedAt - startedAt;
 
   if (!response.ok) {
+    const responseDetails = asRecord(response.error?.details);
+    const backendCode = typeof responseDetails.backendCode === 'string'
+      ? responseDetails.backendCode
+      : response.error?.code;
+    const requestId = readRequestId(response.id, request.id);
+    const message = response.error?.message || `Host request failed: ${module}.${action}`;
+    const mappedCode = mapBackendErrorCode(backendCode);
+    const classifiedCode = mappedCode === 'UNKNOWN'
+      ? normalizeAppError({
+        code: backendCode,
+        status: typeof responseDetails.status === 'number' ? responseDetails.status : undefined,
+      }).code
+      : mappedCode;
+    const appError = new AppError(
+      classifiedCode,
+      message,
+      response.error,
+      { ...responseDetails, module, action, requestId },
+      requestId,
+    );
     call.ok = false;
-    call.error = response.error?.message || `Host request failed: ${module}.${action}`;
+    call.error = message;
     rememberHostApiCall(call);
-    throw new Error(response.error?.message || `Host request failed: ${module}.${action}`);
+    throw appError;
   }
 
   call.ok = true;

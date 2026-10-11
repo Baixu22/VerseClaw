@@ -51,7 +51,7 @@ export const RELIABILITY_BOUNDARIES: ReliabilityBoundary[] = [
       'No renderer-owned protocol switching policy.',
       'No claim that every host route is safe to replay.',
     ],
-    evidenceRefs: ['src/lib/host-api.ts', 'src/lib/api-client.ts', 'harness/specs/rules/renderer-main-boundary.md'],
+    evidenceRefs: ['src/lib/host-api.ts', 'src/lib/host-api-client.ts', 'harness/specs/rules/renderer-main-boundary.md'],
     relatedTaskIds: ['P2-06'],
   },
   {

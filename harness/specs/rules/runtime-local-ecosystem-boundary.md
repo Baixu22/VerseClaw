@@ -11,7 +11,7 @@ OpenClaw ownership boundaries.
 
 - Treat CodeGraph as navigation only. Verify behavior claims by reading source.
 - Keep Verse Claw Renderer calls behind `src/lib/host-api.ts` and
-  `src/lib/api-client.ts`.
+  `src/lib/host-api-client.ts`.
 - Keep Main/Gateway as the transport and policy boundary. Do not add direct
   renderer Gateway HTTP/WebSocket calls.
 - Keep runtime core, context, provider, evidence, task-loop, mission-loop, skill,

@@ -284,6 +284,76 @@ describe("supervisor restart reconciliation", () => {
   );
 
   it(
+    'keeps manifest and reports residual when only the root exits',
+    async () => {
+      const deadOwnerPid = await spawnDeadPid();
+      const tree = await spawnTree();
+      const store = createSupervisorRunManifestStore(rootDir);
+      expect(
+        store.add(makeEntry({ runId: 'residual-run', pid: tree.parentPid, ownerPid: deadOwnerPid })),
+      ).toBe(true);
+
+      const supervisor = createProcessSupervisor({ manifest: store });
+      const result = await supervisor.reconcileOrphans({
+        capture: async (roots) => {
+          const captured = new Map<number, string>();
+          captured.set(tree.parentPid, String(Date.now()));
+          captured.set(tree.childPid, String(Date.now() + 1));
+          return { status: 'ok', rootPids: roots, capturedPids: captured };
+        },
+        verifyTerminated: async () => ({ status: 'residual', detail: 'fixture residual child' }),
+        killTree: (pid) => {
+          if (pid === tree.parentPid) tree.kill();
+        },
+        settleMs: 200,
+      });
+
+      expect(result).toMatchObject({ status: 'partial', residual: 1, reconciled: 0 });
+      const after = store.load();
+      expect(after.status === 'ok' && after.entries.length).toBe(1);
+      if (!isPidDefinitelyDead(tree.childPid)) process.kill(tree.childPid, 'SIGKILL');
+    },
+    30_000,
+  );
+
+  it(
+    'captures same-tick children instead of dropping them by token ordering',
+    async () => {
+      const tree = await spawnTree();
+      try {
+        const { captureProcessTrees } = await import('../os-containment.js');
+        const capture = await captureProcessTrees([tree.parentPid]);
+        expect(capture.status).toBe('ok');
+        expect(capture.capturedPids.has(tree.childPid)).toBe(true);
+      } finally {
+        tree.kill();
+        await waitForPidDeath(tree.parentPid);
+        if (!isPidDefinitelyDead(tree.childPid)) process.kill(tree.childPid, 'SIGKILL');
+      }
+    },
+    30_000,
+  );
+
+  it(
+    "captures a same-tick child whose token equals the parent token",
+    async () => {
+      const tree = await spawnTree();
+      try {
+        const { captureProcessTrees } = await import("../os-containment.js");
+        const capture = await captureProcessTrees([tree.parentPid]);
+        expect(capture.status).toBe("ok");
+        expect(capture.capturedPids.has(tree.parentPid)).toBe(true);
+        expect(capture.capturedPids.has(tree.childPid)).toBe(true);
+      } finally {
+        tree.kill();
+        await waitForPidDeath(tree.parentPid);
+        if (!isPidDefinitelyDead(tree.childPid)) process.kill(tree.childPid, "SIGKILL");
+      }
+    },
+    30_000,
+  );
+
+  it(
     "fails closed on a corrupt manifest without touching the file",
     async () => {
       fs.mkdirSync(rootDir, { recursive: true });

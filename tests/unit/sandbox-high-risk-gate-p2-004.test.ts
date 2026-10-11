@@ -11,6 +11,34 @@ import {
   setSandboxHighRiskPolicyLoader,
 } from '@electron/utils/sandbox-high-risk-gate';
 
+import { SandboxStrengthUnavailableError, resolveSandboxEffectivePolicy } from '@electron/utils/sandbox-policy-resolver';
+import { normalizeSandboxProviderId } from '@electron/utils/workspace-runtime-permissions';
+
+describe('explicit strong sandbox requests fail closed (#156)', () => {
+  it('throws when docker-strong is explicitly required but unavailable', () => {
+    expect(() => resolveSandboxEffectivePolicy({
+      permissionMode: 'readOnly',
+      requestedProviderId: 'docker-strong',
+      requireStrong: true,
+      providers: [{ id: 'docker-strong', label: 'Docker', available: false, runtimeLevel: 'strong', capabilities: [] }],
+    })).toThrow(SandboxStrengthUnavailableError);
+  });
+
+  it('keeps automatic selection degradable when strong is not explicitly required', () => {
+    const policy = resolveSandboxEffectivePolicy({
+      permissionMode: 'readOnly',
+      requestedProviderId: 'docker-strong',
+      providers: [{ id: 'docker-strong', label: 'Docker', available: false, runtimeLevel: 'strong', capabilities: [] }],
+    });
+    expect(policy.effectiveProviderId).toBe('policy-light');
+    expect(policy.degraded).toBe(true);
+  });
+
+  it('does not treat policy-light as a strong request', () => {
+    expect(normalizeSandboxProviderId('policy-light')).toBe('policy-light');
+  });
+});
+
 describe('sandbox high-risk gate (P2-004 / F-ISO-001)', () => {
   const degradedPolicy = {
     degraded: true,

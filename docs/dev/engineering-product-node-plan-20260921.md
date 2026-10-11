@@ -217,9 +217,9 @@ CDP / Playwright 操作 ClawX Electron UI
 - 最新正式失败：`D:/ClawX-acceptance/tf0029-20260920/run5/executor-report.json` 与 `logs/harness-validate.stderr.log`。
 - 上轮正式失败：`D:/ClawX-acceptance/tf0029-20260920/run4/executor-report.json`。
 - E2E 新改动：工作区 HEAD `752b936a0` 的提交与差分；未把提交自述当正式通过报告。
-- moyu 原始说明：`C:/Users/27933/Desktop/bad-shit/moyu/soak-evidence/breakpoint-report.md`、`timeseries/aggregate.json`、`node-evidence/task-forest-mapping.json`。
+- moyu 原始说明：`%USERPROFILE%/Desktop/bad-shit/moyu/soak-evidence/breakpoint-report.md`、`timeseries/aggregate.json`、`node-evidence/task-forest-mapping.json`。
 - ClawX 直接运行证据：`artifacts/live-model-cdp/20260911-senseaudio-s2-flash/README.md`、`manifest.json`、`verification.json`、`receipt-state.json`；本轮只读重算 49 个清单文件的 SHA-256/长度，全部匹配。
-- 有界压缩 live 报告：`C:/Users/27933/AppData/Local/ClawX-scratch/tf0006-live-eval-20260919/live-run/2026-09-19T15-36-13-822Z/report.md`；不将其 4 样本 PASS 外推为独立、长期质量或当前发行版本验收。
+- 有界压缩 live 报告：`%USERPROFILE%/AppData/Local/ClawX-scratch/tf0006-live-eval-20260919/live-run/2026-09-19T15-36-13-822Z/report.md`；不将其 4 样本 PASS 外推为独立、长期质量或当前发行版本验收。
 - 运行时与治理来源：本报告提及的状态、规则、源码与测试。只检查了相关静态证据，没有重新执行功能验收或验证全部 192 个 done 的历史证据。
 
 本轮产出是规划评审。正式图更新时，应从最新 CLI 状态生成一份候选 proposal，沿用现有节点与历史；不要直接编辑 `.agent-workbench/task-forest/`，也不要将本文当成已应用的放行政策。

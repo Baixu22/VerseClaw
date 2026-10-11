@@ -19,8 +19,8 @@ export type MultiTurnQueryPlan = {
   subject: string;
   predicate: string;
   referenceTime: number;
-  tokenBudget: number;
-  limit: number;
+  tokenBudget?: number;
+  limit?: number;
   expectedFactIds: readonly string[];
 };
 
@@ -162,8 +162,8 @@ function runArm(
       subject: q.subject,
       predicate: q.predicate,
       referenceTime: q.referenceTime,
-      tokenBudget: q.tokenBudget,
-      limit: q.limit,
+      ...(q.tokenBudget !== undefined ? { tokenBudget: q.tokenBudget } : {}),
+      ...(q.limit !== undefined ? { limit: q.limit } : {}),
       expectedFactIds: q.expectedFactIds,
     }),
   );

@@ -129,7 +129,31 @@ describe('gateway supervisor process cleanup', () => {
     expect(mockExec).toHaveBeenCalledOnce();
   });
 
-  it('waits for port release after orphan cleanup on Windows', async () => {
+  // #98: a port listener is an observation, not ownership. The supervisor must fail closed and
+  // report the conflict instead of granting itself implicit kill rights over a foreign process.
+  it('fails closed on a foreign listener instead of killing it', async () => {
+    setPlatform('win32');
+    const { findExistingGatewayProcess, GatewayPortConflictError } = await import('@electron/gateway/supervisor');
+
+    mockExec.mockImplementation((cmd: string, _opts: object, cb: (err: Error | null, stdout: string) => void) => {
+      if (cmd.includes('netstat -ano')) {
+        cb(null, '  TCP    127.0.0.1:18789    0.0.0.0:0    LISTENING    4321\n');
+        return {} as never;
+      }
+      cb(null, '');
+      return {} as never;
+    });
+
+    await expect(findExistingGatewayProcess({ port: 18789 })).rejects.toBeInstanceOf(GatewayPortConflictError);
+    expect(mockExec).not.toHaveBeenCalledWith(
+      expect.stringContaining('taskkill'),
+      expect.anything(),
+      expect.anything(),
+    );
+    expect(mockCreateServer).not.toHaveBeenCalled();
+  });
+
+  it('treats the owned gateway pid as its own listener and probes the port', async () => {
     setPlatform('win32');
     const { findExistingGatewayProcess } = await import('@electron/gateway/supervisor');
 
@@ -142,14 +166,13 @@ describe('gateway supervisor process cleanup', () => {
       return {} as never;
     });
 
-    const result = await findExistingGatewayProcess({ port: 18789 });
-    expect(result).toBeNull();
-
-    expect(mockExec).toHaveBeenCalledWith(
-      expect.stringContaining('taskkill /F /PID 4321 /T'),
-      expect.objectContaining({ timeout: 5000, windowsHide: true }),
-      expect.any(Function),
+    // The listener is the gateway we own, so no conflict is raised: the call resolves through the
+    // readiness probe (which has no live server in this unit environment) instead of failing closed.
+    await expect(findExistingGatewayProcess({ port: 18789, ownedPid: 4321 })).resolves.toBeNull();
+    expect(mockExec).not.toHaveBeenCalledWith(
+      expect.stringContaining('taskkill'),
+      expect.anything(),
+      expect.anything(),
     );
-    expect(mockCreateServer).toHaveBeenCalled();
   });
 });

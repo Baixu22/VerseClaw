@@ -33,30 +33,11 @@
       "reason": "Historical evidence mirrors are retained because each task directory is an independent review record."
     },
     {
-      "sha256": "310cc44a2007308b139565628c793782487481daab704074c0f79558683c765d",
-      "paths": [
-        "resources/icons/clawx-logo-kit/clawling-app-icon-master-1024.png",
-        "resources/icons/clawx-logo-kit/logo-app-1024-dark.png",
-        "resources/icons/clawx-logo-kit/logo-app-1024.png",
-        "resources/icons/clawx-logo-kit/logo-transparent-master-trimmed-dark.png",
-        "resources/icons/clawx-logo-kit/logo-transparent-master-trimmed.png"
-      ],
-      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
-    },
-    {
       "sha256": "3daa95aa0e666f9488519dc16960233128d7e7d37c6dca606e9584cc7c72bb6b",
       "paths": [
         "resources/icons/icon-dark.svg",
         "resources/icons/icon-plain.svg",
         "resources/icons/icon.svg"
-      ],
-      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
-    },
-    {
-      "sha256": "49cfa8ed5f51472fda3211c44ba12958825335c9adc1bcbff7a0e52cff3f7426",
-      "paths": [
-        "resources/icons/clawx-logo-kit/logo-app-dark.ico",
-        "resources/icons/clawx-logo-kit/logo-app.ico"
       ],
       "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
     },
@@ -67,14 +48,6 @@
         "src/assets/logo+character.png"
       ],
       "reason": "Light/dark theme variants are resolved by path at runtime; variants are retained even when their exported bytes currently match."
-    },
-    {
-      "sha256": "5185da7f82cc2a60ac12d33f27353b60826d9d3701ff17b144fb826f980549b9",
-      "paths": [
-        "resources/icons/clawx-logo-kit/logo-app-dark.icns",
-        "resources/icons/clawx-logo-kit/logo-app.icns"
-      ],
-      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
     },
     {
       "sha256": "5375417f0f5394b8dd1a7035b9679151f19a6b65df309dec10cfb4a420cb00e9",
@@ -90,22 +63,6 @@
       "paths": [
         "resources/icons/icon-dark.ico",
         "resources/icons/icon.ico"
-      ],
-      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
-    },
-    {
-      "sha256": "74a2d798d6d6b6857017ea29a8676cac66afe07fcd68edf743e2e3cc4f9ed741",
-      "paths": [
-        "resources/icons/clawx-logo-kit/logo-dock-512-dark.png",
-        "resources/icons/clawx-logo-kit/logo-dock-512.png"
-      ],
-      "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
-    },
-    {
-      "sha256": "9f3c4e0b57abf806f490abcd3352ce00a5edb422912551e70bae2af7820ac0da",
-      "paths": [
-        "resources/icons/clawx-logo-kit/logo-sidebar-256-dark.png",
-        "resources/icons/clawx-logo-kit/logo-sidebar-256.png"
       ],
       "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
     },

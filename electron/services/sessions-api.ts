@@ -1453,7 +1453,7 @@ async function restoreSession(payload: SessionPayload): Promise<{ success: boole
  * "empty recycle bin" per-item action and shares the same disk contract as
  * the live hard-delete.
  */
-async function permanentDeleteSession(payload: SessionPayload): Promise<{ success: boolean; error?: string }> {
+async function permanentDeleteSession(payload: SessionPayload): Promise<{ success: boolean; error?: string; remainingPaths?: string[] }> {
   const sessionKey = getSessionKey(payload);
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) {
@@ -1484,16 +1484,27 @@ async function permanentDeleteSession(payload: SessionPayload): Promise<{ succes
     return { success: false, error: `Derivative cascade failed: ${String(error)}` };
   }
   const sweep = await sweepSessionArtefacts(sessionsDirAbs, baseId);
-  for (const removedPath of sweep.removed) {
+  const archiveCleanup = await cleanupContextArchiveArtifacts({ sessionIds: [baseId] });
+  for (const removedPath of [...sweep.removed, ...archiveCleanup.removed]) {
     logger.info(`[session:permanentDelete] Unlinked ${removedPath}`);
   }
-  for (const { path: failedPath, error } of sweep.errors) {
+  const cleanupErrors = [
+    ...sweep.errors,
+    ...archiveCleanup.errors.map(({ path: failedPath, error }) => ({ path: failedPath, error: new Error(error) })),
+  ];
+  for (const { path: failedPath, error } of cleanupErrors) {
     logger.warn(`[session:permanentDelete] Failed to unlink ${failedPath}: ${String(error)}`);
   }
-  if (sweep.errors.length > 0) {
-    return { success: false, error: `Some archived session files could not be removed: ${String(sweep.errors[0].error)}` };
+  if (cleanupErrors.length > 0) {
+    // Keep the archive index entry as the retry locator until every owned derivative is gone.
+    await upsertArchiveEntry(archiveIndexPath, removed);
+    return {
+      success: false,
+      error: `Some archived session files could not be removed: ${String(cleanupErrors[0].error)}`,
+      remainingPaths: cleanupErrors.map(({ path: failedPath }) => failedPath),
+    };
   }
-  logger.info(`[session:permanentDelete] Hard-deleted ${sweep.removed.length} file(s) for ${baseId}`);
+  logger.info(`[session:permanentDelete] Hard-deleted ${sweep.removed.length} file(s) and ${archiveCleanup.removed.length} context archive(s) for ${baseId}`);
   return { success: true };
 }
 
@@ -1546,11 +1557,13 @@ async function emptyArchive(payload: SessionPayload): Promise<{ success: boolean
         continue;
       }
       const sweep = await sweepSessionArtefacts(sessionsDirAbs, baseId);
-      for (const removedPath of sweep.removed) {
+      const archiveCleanup = await cleanupContextArchiveArtifacts({ sessionIds: [baseId] });
+      for (const removedPath of [...sweep.removed, ...archiveCleanup.removed]) {
         logger.info(`[session:emptyArchive] Unlinked ${removedPath}`);
       }
-      if (sweep.errors.length > 0) {
-        firstError ??= String(sweep.errors[0].error);
+      if (sweep.errors.length > 0 || archiveCleanup.errors.length > 0) {
+        const firstCleanupError = sweep.errors[0]?.error ?? archiveCleanup.errors[0]?.error;
+        firstError ??= String(firstCleanupError);
         retained.push(entry);
       }
     } catch (error) {

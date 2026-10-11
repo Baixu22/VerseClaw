@@ -62,6 +62,20 @@ export type GovernedVerseShellProcessHandle = {
   stdin: GovernedVerseShellProcessStdin;
   wait: () => Promise<GovernedVerseShellProcessExit>;
   kill: (reason?: TerminationReason) => Promise<void>;
+  resourceReceipt: GovernedProcessResourceReceipt;
+};
+
+export type GovernedProcessResourceLimits = {
+  maxMemoryBytes?: number;
+  maxProcesses?: number;
+  requireEnforcement?: boolean;
+};
+
+export type GovernedProcessResourceReceipt = {
+  requested: GovernedProcessResourceLimits;
+  enforced: boolean;
+  enforcement: "job-object" | "unsupported";
+  detail?: string;
 };
 
 export type GovernedVerseShellProcessOptions = {
@@ -82,6 +96,8 @@ export type GovernedVerseShellProcessOptions = {
   /** Host-owned parent trace for the complete lifecycle, never taken from operation args. */
   traceId?: string;
   hostPolicyApproved: boolean;
+  /** Optional resource limits; absent means no new limit. */
+  resourceLimits?: GovernedProcessResourceLimits;
   runtimeEnv?: NodeJS.ProcessEnv;
   manager?: VerseShellProcessManager;
   onStdout?: (chunk: string) => void;
@@ -261,6 +277,15 @@ export async function startGovernedVerseShellProcess(
     Math.max(1, options.maxOutputBytes),
     profile.maxOutputBytes,
   );
+  const requestedLimits = options.resourceLimits ?? {};
+  const hasRequestedLimits = requestedLimits.maxMemoryBytes !== undefined || requestedLimits.maxProcesses !== undefined;
+  if ((requestedLimits.maxMemoryBytes !== undefined && (!Number.isSafeInteger(requestedLimits.maxMemoryBytes) || requestedLimits.maxMemoryBytes <= 0)) || (requestedLimits.maxProcesses !== undefined && (!Number.isSafeInteger(requestedLimits.maxProcesses) || requestedLimits.maxProcesses <= 0))) {
+    throw new GovernedVerseShellError('E_PROCESS_RESOURCE_LIMIT', 'resource limits must be positive integers');
+  }
+  const resourceReceipt: GovernedProcessResourceReceipt = { requested: requestedLimits, enforced: false, enforcement: 'unsupported', detail: hasRequestedLimits ? 'The bundled VerseShell executor did not return an enforcement receipt; limits are not claimed as applied.' : 'No resource limits requested.' };
+  if (hasRequestedLimits && requestedLimits.requireEnforcement) {
+    throw new GovernedVerseShellError('E_PROCESS_RESOURCE_LIMIT_UNSUPPORTED', resourceReceipt.detail ?? 'resource limits unsupported');
+  }
   const startArgs: JsonObject = {
     argv: plan.argv,
     cwd: ".",
@@ -426,6 +451,7 @@ export async function startGovernedVerseShellProcess(
     mode: snapshot.mode,
     stdin,
     wait: async () => await waitPromise,
+    resourceReceipt,
     kill: async (reason = "manual-cancel") => {
       if (settled) return;
       const observation = await client.execute(

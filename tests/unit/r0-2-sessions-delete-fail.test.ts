@@ -81,6 +81,7 @@ async function makeConfigDir(): Promise<string> {
   const sessionsDir = join(root, 'agents', 'main', 'sessions');
   await mkdir(sessionsDir, { recursive: true });
   state.configDir = root;
+  process.env.OPENCLAW_CONTEXT_ARCHIVE_DIR = join(root, 'context-archive');
   return sessionsDir;
 }
 
@@ -92,6 +93,7 @@ beforeEach(() => {
 
 afterEach(async () => {
   state.configDir = null;
+  delete process.env.OPENCLAW_CONTEXT_ARCHIVE_DIR;
   await Promise.all(tempRoots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
 });
 
@@ -158,6 +160,62 @@ describe('R0-2 sessions.delete partial failures', () => {
 
     expect(result.success).toBe(true);
     await expect(access(deletedPath)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+});
+
+describe('R0-2 context archive cleanup (#101)', () => {
+  it('permanentDelete removes the context archive and retains the archive index on partial failure', async () => {
+    const sessionsDir = await makeConfigDir();
+    const archiveRoot = process.env.OPENCLAW_CONTEXT_ARCHIVE_DIR as string;
+    const archiveSessionDir = join(archiveRoot, 'arch1');
+    await mkdir(archiveSessionDir, { recursive: true });
+    await writeFile(join(sessionsDir, 'sessions.archives.json'), JSON.stringify({
+      version: 1,
+      entries: [{
+        sessionKey: 'agent:main:arch1',
+        agentId: 'main',
+        transcriptPath: join(sessionsDir, 'arch1.archived.jsonl'),
+      }],
+    }), 'utf8');
+    await writeFile(join(sessionsDir, 'arch1.archived.jsonl'), '{}', 'utf8');
+    const contextArchive = join(archiveSessionDir, 'snapshot.context-archive.json');
+    await writeFile(contextArchive, '{}', 'utf8');
+    state.failUnlinkSuffix = 'snapshot.context-archive.json';
+
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const result = await createSessionsApi().permanentDelete({ sessionKey: 'agent:main:arch1' } as never) as {
+      success: boolean;
+      remainingPaths?: string[];
+    };
+
+    expect(result.success).toBe(false);
+    expect(result.remainingPaths?.some((entry) => entry.endsWith('snapshot.context-archive.json'))).toBe(true);
+    const indexAfter = JSON.parse(await readFile(join(sessionsDir, 'sessions.archives.json'), 'utf8')) as { entries: Array<{ sessionKey: string }> };
+    expect(indexAfter.entries.map((entry) => entry.sessionKey)).toContain('agent:main:arch1');
+  });
+
+  it('emptyArchive removes the context archive when all derivatives are deletable', async () => {
+    const sessionsDir = await makeConfigDir();
+    const archiveRoot = process.env.OPENCLAW_CONTEXT_ARCHIVE_DIR as string;
+    const archiveSessionDir = join(archiveRoot, 'arch2');
+    await mkdir(archiveSessionDir, { recursive: true });
+    await writeFile(join(sessionsDir, 'sessions.archives.json'), JSON.stringify({
+      version: 1,
+      entries: [{
+        sessionKey: 'agent:main:arch2',
+        agentId: 'main',
+        transcriptPath: join(sessionsDir, 'arch2.archived.jsonl'),
+      }],
+    }), 'utf8');
+    await writeFile(join(sessionsDir, 'arch2.archived.jsonl'), '{}', 'utf8');
+    const contextArchive = join(archiveSessionDir, 'snapshot.context-archive.json');
+    await writeFile(contextArchive, '{}', 'utf8');
+
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const result = await createSessionsApi().emptyArchive({ agentId: 'main' } as never);
+
+    expect(result.success).toBe(true);
+    await expect(access(contextArchive)).rejects.toMatchObject({ code: 'ENOENT' });
   });
 });
 

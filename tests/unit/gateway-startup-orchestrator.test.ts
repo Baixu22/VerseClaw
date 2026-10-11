@@ -19,6 +19,7 @@ vi.mock('@electron/utils/logger', () => ({
 
 import { runGatewayStartupSequence } from '@electron/gateway/startup-orchestrator';
 import { LifecycleSupersededError } from '@electron/gateway/lifecycle-controller';
+import { GatewayPortConflictError } from '@electron/gateway/supervisor';
 
 function createMockHooks(overrides: Partial<Parameters<typeof runGatewayStartupSequence>[0]> = {}) {
   return {
@@ -219,6 +220,19 @@ describe('runGatewayStartupSequence', () => {
     expect(hooks.startProcess).toHaveBeenCalledTimes(1);
     expect(hooks.onConnectedToManagedGateway).toHaveBeenCalledTimes(1);
     expect(hooks.delay).toHaveBeenCalledWith(1000);
+  });
+
+  it('re-throws port conflict without spawning or waiting for the port', async () => {
+    const conflict = new GatewayPortConflictError({ port: 18789, pids: ['1234'] });
+    const hooks = createMockHooks({
+      findExistingGateway: vi.fn().mockRejectedValue(conflict),
+      hasOwnedProcess: vi.fn().mockReturnValue(false),
+    });
+
+    await expect(runGatewayStartupSequence(hooks)).rejects.toThrow(GatewayPortConflictError);
+    expect(hooks.waitForPortFree).not.toHaveBeenCalled();
+    expect(hooks.startProcess).not.toHaveBeenCalled();
+    expect(hooks.delay).not.toHaveBeenCalled();
   });
 
   it('re-throws LifecycleSupersededError without retry', async () => {

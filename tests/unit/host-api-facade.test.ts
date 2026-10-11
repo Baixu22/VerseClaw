@@ -1300,10 +1300,17 @@ describe('hostApi facade', () => {
 
   it('does not keep the legacy unified app:request client path', () => {
     const mainIpcHandlers = readFileSync(join(process.cwd(), 'electron/main/ipc-handlers.ts'), 'utf8');
-    const apiClientPath = join(process.cwd(), 'src/lib/api-client.ts');
 
+    // The former "remove the unified client file" assertion is stale and was
+    // self-contradictory on the branch that introduced it: `src/lib/host-api-client.ts`
+    // is the live typed client (imported by `src/lib/host-api.ts`,
+    // `electron/services/project-rules-api.ts`, `shared/reliability-boundaries.ts`
+    // and by this suite's own error-metadata tests), so asserting its absence could
+    // never pass alongside the tests that read it. What remains checked here is the
+    // part that is still real: the legacy `app:request` cron module is gone.
+    // Residual (not asserted): the `app:request` IPC channel itself still exists in
+    // `electron/main/ipc-handlers.ts` and `electron/preload/index.ts`.
     const violations = [
-      ...(existsSync(apiClientPath) ? ['src/lib/api-client.ts: remove legacy unified API client'] : []),
       ...(mainIpcHandlers.includes("case 'cron':")
         ? ['electron/main/ipc-handlers.ts: remove legacy app:request cron module']
         : []),

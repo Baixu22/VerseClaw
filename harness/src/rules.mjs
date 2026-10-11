@@ -10,7 +10,7 @@ const DIRECT_GATEWAY_WS_PATTERN = new RegExp(String.raw`new\s+WebSocket\s*\(\s*[
 const HOST_API_LOCAL_HTTP_PATTERN = /fetch\s*\(\s*['"`]http:\/\/(?:127\.0\.0\.1|localhost):13210|HOST_API_BASE\s*=\s*`?http:\/\/127\.0\.0\.1:\$\{HOST_API_PORT\}`?/;
 const GATEWAY_READY_MUTATION_PATTERN = /gatewayReady\s*[:=]\s*(?:true|false)|setStatus\s*\([^)]*gatewayReady|setState\s*\([^)]*gatewayReady/s;
 const COMMUNICATION_PATHS = [
-  'src/lib/api-client.ts',
+  'src/lib/host-api-client.ts',
   'src/lib/host-api.ts',
   'src/lib/host-api-client.ts',
   'src/stores/gateway.ts',

@@ -2,7 +2,7 @@
 
 > 审计日期：2026-07-27
 >
-> 审计对象：ClawX `C:\Users\27933\Desktop\clawx\ClawX-maturity-p0` 与 VerseShell `C:\Users\27933\Desktop\verseshell\verseshell`
+> 审计对象：ClawX `%USERPROFILE%\Desktop\clawx\ClawX-maturity-p0` 与 VerseShell `%USERPROFILE%\Desktop\verseshell\verseshell`
 >
 > 当前裁决：`accept-for-controlled-development`，不具备 default-on、原生 shell 全量替代或 GA 资格
 >

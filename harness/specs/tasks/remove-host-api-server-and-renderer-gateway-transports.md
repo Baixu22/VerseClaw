@@ -17,7 +17,7 @@ touchedAreas:
   - electron/extensions/**
   - src/lib/host-api.ts
   - src/lib/host-api-client.ts
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
   - src/lib/host-events.ts
   - src/stores/gateway.ts
   - src/stores/chat.ts
@@ -63,7 +63,7 @@ requiredTests:
   - pnpm run comms:compare
 acceptance:
   - No production source references the legacy Host API fetch/token IPC names, Gateway HTTP proxy channel, local Host API server startup, Host event bus, or renderer Gateway WS diagnostic toggles.
-  - src/lib/api-client.ts is IPC-only and does not construct WebSocket or HTTP Gateway transports.
+  - src/lib/host-api-client.ts is IPC-only and does not construct WebSocket or HTTP Gateway transports.
   - src/lib/host-api.ts exposes typed hostApi facade methods and does not export a path-based fetch helper.
   - src/lib/host-events.ts subscribes through typed IPC events and does not fall back to SSE/EventSource.
   - electron/api and local Host API route tests are removed.

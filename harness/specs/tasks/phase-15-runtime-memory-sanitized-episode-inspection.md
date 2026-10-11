@@ -27,7 +27,7 @@ touchedAreas:
   - electron/**
   - shared/**
   - src/lib/host-api.ts
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
 expectedUserBehavior:
   - With runtime.memory.persist disabled or omitted, inspection is a no-open/no-read/no-write skipped result with an empty RuntimeMemoryStore snapshot.
   - With runtime.memory.persist explicitly true and an explicit database path/test option, existing loadStore().listEpisodes() may be used by tests/operator proof to enumerate persisted sanitized episode summaries.

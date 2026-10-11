@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: openclaw_runtime/src/agents/tool-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-09-13T07:12:59.891Z
+Generated at: 2026-10-11T15:38:36.008Z
 -->
 
 Built-in core tool sections with their profiles. This file is generated —
@@ -45,6 +45,7 @@ edit the source of truth instead, then run pnpm catalogs:gen.
 - `memory_get` — Read memory files — profiles: `coding`
 - `memory_query` — Search the agent's long-term memory store for stored facts — profiles: `coding`
 - `context_read` — Read full context blocks on demand — profiles: `coding`
+- `context_archive_recall` — Read a bounded excerpt from a masked observation archive — profiles: `coding`
 - `context_search` — Search context blocks by entity/query — profiles: `coding`
 - `context_write` — Update agent notes context block — profiles: `coding`
 - `context_understand` — Build a ContextPack for a coding goal — profiles: `coding`

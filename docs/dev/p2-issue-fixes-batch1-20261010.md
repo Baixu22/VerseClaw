@@ -10,7 +10,7 @@ execution is made anywhere in it.
 
 ## #145 - machine-local absolute paths in task specs
 
-**Reported scope:** 11 task specs hardcoded `C:\Users\27933\.cherrystudio\bin\rtk.exe`.
+**Reported scope:** 11 task specs hardcoded `%USERPROFILE%\.cherrystudio\bin\rtk.exe`.
 
 **Verified scope:** the machine-local wrapper appeared in **106 spec files** in two
 forms - the full absolute path (67 files) and a bare `rtk` / `rtk.exe` prefix

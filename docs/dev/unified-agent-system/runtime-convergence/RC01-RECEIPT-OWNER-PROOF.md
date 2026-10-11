@@ -56,7 +56,7 @@ node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts rec
 复跑通过，没有跳过 embedded runner，也没有通过替换生产加载路径来放行。
 
 本轮原始日志、JSON 测试结果、基线源码副本和前后探针位于本机
-`C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-receipt-proof-review-20260910/`。
+`%USERPROFILE%/AppData/Local/ClawX-scratch/rc01r-receipt-proof-review-20260910/`。
 这些是本地工程证据，不是正式验收 manifest。
 
 ## 补充门禁与遗留项
@@ -83,7 +83,7 @@ node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts rec
 独立 review 通过仓库自带 helper 执行，命令为：
 
 ```text
-python -X utf8 openclaw_runtime/.agents/skills/autoreview/scripts/autoreview --mode local --prompt-file C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-receipt-proof-review-20260910/review-prompt.md --dataset C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-receipt-proof-review-20260910/focused-final.json --json-output C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-receipt-proof-review-20260910/autoreview.json --output C:/Users/27933/AppData/Local/ClawX-scratch/rc01r-receipt-proof-review-20260910/autoreview.md
+python -X utf8 openclaw_runtime/.agents/skills/autoreview/scripts/autoreview --mode local --prompt-file %USERPROFILE%/AppData/Local/ClawX-scratch/rc01r-receipt-proof-review-20260910/review-prompt.md --dataset %USERPROFILE%/AppData/Local/ClawX-scratch/rc01r-receipt-proof-review-20260910/focused-final.json --json-output %USERPROFILE%/AppData/Local/ClawX-scratch/rc01r-receipt-proof-review-20260910/autoreview.json --output %USERPROFILE%/AppData/Local/ClawX-scratch/rc01r-receipt-proof-review-20260910/autoreview.md
 ```
 
 两个探针数据库的同一行 `content_digest` 和 `created_at` 也已直接比对一致，

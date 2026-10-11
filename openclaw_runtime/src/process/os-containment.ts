@@ -189,21 +189,27 @@ async function readProcessMap(): Promise<
   };
 }
 
-function tokenIsAfter(token: string, parentToken: string): boolean {
+function tokenIsNotBefore(token: string, parentToken: string): boolean {
   const numericToken = Number(token);
   const numericParentToken = Number(parentToken);
   if (Number.isFinite(numericToken) && Number.isFinite(numericParentToken)) {
-    return numericToken > numericParentToken;
+    // A child cannot be older than its parent. Equal tokens are accepted
+    // because coarse start-time resolution (Linux jiffies, Windows FileTime
+    // rounding) legitimately produces the same value for a parent and a child
+    // forked in the same tick; dropping them would under-capture the tree.
+    return numericToken >= numericParentToken;
   }
   // Windows CIM datetime tokens (YYYYMMDDHHmmss.uuuuuu+mmm) compare
   // lexicographically for processes from the same machine/timezone.
-  return token > parentToken;
+  return token >= parentToken;
 }
+
+type TreeCollection = { captured: Map<number, string>; truncated: boolean };
 
 function collectTreePids(
   processes: Map<number, OsProcessRecord>,
   roots: number[],
-): Map<number, string> {
+): TreeCollection {
   const captured = new Map<number, string>();
   const queue: Array<{ pid: number; token: string }> = [];
   for (const root of roots) {
@@ -220,16 +226,16 @@ function collectTreePids(
       // A child cannot be older than its parent. Windows ParentProcessId is
       // not cleared when the original parent dies, so a reused root PID can
       // otherwise capture a stale unrelated child (for example csrss.exe).
-      if (!tokenIsAfter(record.token, current.token)) continue;
+      if (!tokenIsNotBefore(record.token, current.token)) continue;
       if (captured.has(record.pid)) continue;
       captured.set(record.pid, record.token);
       queue.push({ pid: record.pid, token: record.token });
       if (captured.size >= OS_PROCESS_TREE_LIMIT) {
-        return captured;
+        return { captured, truncated: true };
       }
     }
   }
-  return captured;
+  return { captured, truncated: false };
 }
 
 /** Captures the OS process trees rooted at the given PIDs with reuse tokens. */
@@ -241,10 +247,19 @@ export async function captureProcessTrees(roots: number[]): Promise<OsProcessTre
   if (!probe.ok) {
     return { status: "unknown", detail: probe.detail, rootPids: roots, capturedPids: new Map() };
   }
+  const collection = collectTreePids(probe.processes, roots);
+  if (collection.truncated) {
+    return {
+      status: "unknown",
+      detail: `process tree capture reached the ${OS_PROCESS_TREE_LIMIT}-PID safety limit`,
+      rootPids: roots,
+      capturedPids: collection.captured,
+    };
+  }
   return {
     status: "ok",
     rootPids: roots,
-    capturedPids: collectTreePids(probe.processes, roots),
+    capturedPids: collection.captured,
   };
 }
 

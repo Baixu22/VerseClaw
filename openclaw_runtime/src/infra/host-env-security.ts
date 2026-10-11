@@ -5,6 +5,8 @@ import { markOpenClawExecEnv } from "./openclaw-exec-env.js";
 
 const PORTABLE_ENV_VAR_KEY = /^[A-Za-z_][A-Za-z0-9_]*$/;
 const WINDOWS_COMPAT_OVERRIDE_ENV_VAR_KEY = /^[A-Za-z_][A-Za-z0-9_()]*$/;
+const HOST_SECRETISH_INHERITED_ENV_KEY =
+  /(?:^|_)(?:API[_-]?KEY|TOKEN|PASSWORD|PASSWD|PRIVATE[_-]?KEY|SECRET|CREDENTIALS?)$/i;
 
 const HOST_DANGEROUS_ENV_KEY_VALUES: readonly string[] = Object.freeze([
   ...HOST_ENV_SECURITY_POLICY.blockedKeys,
@@ -100,7 +102,7 @@ export function isDangerousHostEnvVarName(rawKey: string): boolean {
     return false;
   }
   const upper = key.toUpperCase();
-  if (HOST_DANGEROUS_ENV_KEYS.has(upper)) {
+  if (HOST_DANGEROUS_ENV_KEYS.has(upper) || HOST_SECRETISH_INHERITED_ENV_KEY.test(upper)) {
     return true;
   }
   return HOST_DANGEROUS_ENV_PREFIXES.some((prefix) => upper.startsWith(prefix));
@@ -112,7 +114,7 @@ export function isDangerousHostInheritedEnvVarName(rawKey: string): boolean {
     return false;
   }
   const upper = key.toUpperCase();
-  if (HOST_DANGEROUS_INHERITED_ENV_KEYS.has(upper)) {
+  if (HOST_DANGEROUS_INHERITED_ENV_KEYS.has(upper) || HOST_SECRETISH_INHERITED_ENV_KEY.test(upper)) {
     return true;
   }
   return HOST_DANGEROUS_INHERITED_ENV_PREFIXES.some((prefix) => upper.startsWith(prefix));

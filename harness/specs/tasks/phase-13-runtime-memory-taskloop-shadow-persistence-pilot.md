@@ -39,7 +39,7 @@ touchedAreas:
   - electron/**
   - shared/**
   - src/lib/host-api.ts
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
   - tests/unit/**
 expectedUserBehavior:
   - With runtime.memory.shadow or runtime.memory.persist disabled, existing TaskLoop, tools.invoke, approvals, retries, error mapping, return payloads, event-log/checkpoint/resume, Evidence Verifier, Trace Context Provider, RuntimeMemoryProvider, and provider ordering remain unchanged.

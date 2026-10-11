@@ -10,6 +10,7 @@ import { createHash, randomUUID } from "node:crypto";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { resolveIntegerOption } from "@openclaw/normalization-core/number-coercion";
 import { isClientToolNameConflictError } from "../agents/agent-tool-definition-adapter.js";
+import { redactProviderErrorBody } from "../agents/provider-http-errors.js";
 import type { ImageContent } from "../agents/command/types.js";
 import type { ClientToolDefinition } from "../agents/embedded-agent-runner/run/params.js";
 import { createDefaultDeps } from "./types/deps.js";
@@ -608,7 +609,7 @@ export async function handleOpenResponsesHttpRequest(
       }
     }
   } catch (err) {
-    logWarn(`openresponses: request parsing failed: ${String(err)}`);
+    logWarn(`openresponses: request parsing failed: ${redactProviderErrorBody(String(err))}`);
     sendJson(res, 400, {
       error: { message: "invalid request", type: "invalid_request_error" },
     });
@@ -628,7 +629,7 @@ export async function handleOpenResponsesHttpRequest(
     toolChoicePrompt = toolChoiceResult.extraSystemPrompt;
     toolChoiceConstraint = toolChoiceResult.constraint;
   } catch (err) {
-    logWarn(`openresponses: tool configuration failed: ${String(err)}`);
+    logWarn(`openresponses: tool configuration failed: ${redactProviderErrorBody(String(err))}`);
     sendJson(res, 400, {
       error: { message: "invalid tool configuration", type: "invalid_request_error" },
     });
@@ -828,7 +829,7 @@ export async function handleOpenResponsesHttpRequest(
       if (abortController.signal.aborted) {
         return true;
       }
-      logWarn(`openresponses: non-stream response failed: ${String(err)}`);
+      logWarn(`openresponses: non-stream response failed: ${redactProviderErrorBody(String(err))}`);
       if (isClientToolNameConflictError(err)) {
         const response = createResponseResource({
           id: responseId,
@@ -1235,7 +1236,7 @@ export async function handleOpenResponsesHttpRequest(
       if (closed || abortController.signal.aborted) {
         return;
       }
-      logWarn(`openresponses: streaming response failed: ${String(err)}`);
+      logWarn(`openresponses: streaming response failed: ${redactProviderErrorBody(String(err))}`);
 
       finalUsage = finalUsage ?? createEmptyUsage();
       if (isClientToolNameConflictError(err)) {

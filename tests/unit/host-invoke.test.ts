@@ -137,6 +137,31 @@ describe('host invoke dispatcher', () => {
     });
   });
 
+  it.each([
+    [{ code: 'RATE_LIMIT', status: 429 }, 'INTERNAL', { backendCode: 'RATE_LIMIT', status: 429 }],
+    [{ code: 'UNSUPPORTED' }, 'UNSUPPORTED', { backendCode: 'UNSUPPORTED' }],
+    [{ response: { status: 504 } }, 'TIMEOUT', { status: 504 }],
+    [{ status: 400 }, 'VALIDATION', { status: 400 }],
+  ] as const)('normalizes structured service errors into the existing envelope', async (structured, code, details) => {
+    const dispatch = createHostInvokeDispatcher({
+      settings: {
+        getAll: vi.fn(() => {
+          throw Object.assign(new Error('synthetic upstream failure'), structured);
+        }),
+      },
+    } as never);
+
+    await expect(dispatch({
+      id: 'req-structured',
+      module: 'settings',
+      action: 'getAll',
+    })).resolves.toEqual({
+      id: 'req-structured',
+      ok: false,
+      error: { code, message: 'synthetic upstream failure', details },
+    });
+  });
+
   it('prevents extension actions from overriding existing host actions', () => {
     const registry = new HostApiRegistry();
     registry.registerCoreServices({

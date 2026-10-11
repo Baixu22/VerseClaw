@@ -59,3 +59,21 @@ node harness/src/cli.mjs validate --spec harness/specs/tasks/p1-sandbox-strength
 3. 未执行真实 Docker/SSH 容器隔离验证、Electron E2E、打包、跨平台或全量 `harness:ci`。
 4. #154（出站模型并发额度）与 #155（Job Object 硬限额）是独立议题，本变更不声称覆盖。
 5. 本变更为 agent 驱动；无真人操作、无付费 provider 调用。
+
+## 6. 合并期决定（2026-10-11，把 `codex/p1-issues-20261010` 集成进 main 时）
+
+`electron/utils/workspace-runtime-permissions.ts` 的 `resolveSandboxProviderIdForRuntime()` 被 git
+**逐块自动合并**成了"main 的 #156 语义 + 分支更早的 fail-closed 变体"的混合体：分支那侧对
+`docker-strong` / `ssh-strong` 直接 `throw new SandboxStrengthUnavailableError('docker-strong', '…')`
+（**位置参数**），而 #156 之后的构造函数签名是单个对象
+`{requestedProviderId, effectiveProviderId, runtimeLevel, reason}`。于是合并树 `tsgo` 报
+`Expected 1 arguments, but got 2`，同时该混合体还会把**自动/启动解析**也变成失败关闭。
+
+**决定：保留 main 的 #156 语义。** 自动与启动解析继续可降级（`docker-strong` 不可用时回落
+`policy-light`），只有显式 strong 请求经 `resolveSandboxPolicy({ requireStrong: true })` 才失败关闭。
+依据：本文 §1 已写明"这个降级对自动选择是正确的"，#156 的验收测试
+（`tests/unit/sandbox-explicit-strong-156.test.ts`）与规则
+（`harness/specs/rules/sandbox-strength-fail-closed.md`）都以"仅显式请求失败关闭"为契约；
+把自动路径也改成失败关闭会让"未安装 Docker 的机器在启动解析阶段直接失败"，属于行为扩大而非修复。
+分支的那两个位置参数调用点随该混合体一并移除，本文件不再引用 `SandboxStrengthUnavailableError`
+（导入同步删除，避免未使用导入）。

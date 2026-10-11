@@ -138,9 +138,28 @@ describe('Area 4 §3.6 — Role Memory eval pack', () => {
       const entry = selected.find((item) => item.card.id === 'hc-secret-adjacent');
       expect(entry).toBeDefined();
       expect(entry?.bucket).toBe('hardConstraints');
-      // redactMemoryContent replaces token=... with token=[redacted]
-      expect(entry?.text).toContain('[redacted]');
+      // redactMemoryContent reuses the mandatory tools-mode redactor.
+      expect(entry?.text).toMatch(/(?:\[redacted\]|\*\*\*)/i);
       expect(entry?.text).not.toContain('sk-live-1234abcd');
+    });
+
+    it('redacts bearer credentials from secret-adjacent content before context assembly', () => {
+      const sentinel = 'SYNTHETIC_NOT_A_CREDENTIAL_108_ABCDEFGH';
+      const card = makeCard({
+        id: 'hc-secret-adjacent-bearer',
+        type: 'constraint',
+        content: `Authorization: Bearer ${sentinel} for the migration review.`,
+        sensitivity: 'secret_adjacent',
+      });
+      const { selected } = selectMemoryForContextPack({
+        memories: [card],
+        roleName: 'architect',
+        taskState: TASK_STATE,
+      });
+      const entry = selected.find((item) => item.card.id === card.id);
+      expect(entry).toBeDefined();
+      expect(entry?.text).not.toContain(sentinel);
+      expect(entry?.text).toMatch(/Bearer \[REDACTED\]/);
     });
 
     it('routes constraint card to hardConstraints even with normal sensitivity', () => {

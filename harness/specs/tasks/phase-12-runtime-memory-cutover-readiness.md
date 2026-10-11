@@ -38,7 +38,7 @@ touchedAreas:
   - electron/**
   - shared/**
   - src/lib/host-api.ts
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
   - tests/unit/**
 expectedUserBehavior:
   - Phase 12 is planning/spec/evidence only unless a later explicit change is isolated, default-off, and separately justified. It does not implement TaskLoop, Gateway, provider-ordering, runtime call-site, or default provider registration cutover.

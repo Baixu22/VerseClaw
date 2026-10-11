@@ -53,6 +53,12 @@ export type McpCatalogTool = {
   description?: string;
   inputSchema: TSchema;
   fallbackDescription: string;
+  /**
+   * Trusted app configuration says this server is read-only. Provider/MCP
+   * annotations are not used as a grant; this flag comes only from the stored
+   * server permissionMode.
+   */
+  trustedReadOnly?: boolean;
 };
 
 /** Complete tool catalog for a session-scoped MCP runtime. */

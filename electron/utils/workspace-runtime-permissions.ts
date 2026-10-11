@@ -122,6 +122,12 @@ export async function resolveSandboxProviderIdForRuntime(
   const requested = normalizeSandboxProviderId(requestedProviderId ?? await readActiveSandboxProviderIdFromStore());
   if (requested === 'policy-light') return 'policy-light';
   if (requested === 'windows-light') return process.platform === 'win32' ? 'windows-light' : 'policy-light';
+  // Automatic and startup resolution keep the degradable behavior (#156): only an
+  // explicit strong request routed through resolveSandboxPolicy({ requireStrong })
+  // fails closed. The merge with codex/p1-issues-20261010 had blended this
+  // function with that branch's older fail-closed variant, which both used the
+  // pre-#156 positional error constructor and would have changed automatic
+  // startup behavior; main's accepted version is kept here.
   if (requested === 'docker-strong') return await isDockerStrongAvailable() ? 'docker-strong' : 'policy-light';
   return 'policy-light';
 }

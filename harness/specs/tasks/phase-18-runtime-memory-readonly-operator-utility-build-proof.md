@@ -25,7 +25,7 @@ touchedAreas:
   - electron/**
   - shared/**
   - src/lib/host-api.ts
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
 expectedUserBehavior:
   - Operator/developer inspection remains explicit local utility/helper invocation only.
   - The local utility loads the built Runtime Memory operator inspection module from `openclaw_runtime/dist/runtime-core/memory-operator-inspection.js`; Phase 18 does not add a Gateway, Electron, renderer, shared contract, provider, TaskLoop, prompt, service, or runtime-authority entrypoint.

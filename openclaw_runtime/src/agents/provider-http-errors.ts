@@ -7,7 +7,7 @@
 export { asFiniteNumber } from "../../packages/normalization-core/src/number-coercion.js";
 import { readResponseWithLimit } from "@openclaw/media-core/read-response-with-limit";
 import { normalizeOptionalString as trimToUndefined } from "../../packages/normalization-core/src/string-coerce.js";
-import { redactSensitiveText } from "../logging/redact.js";
+import { redactSensitiveText, resolveRedactOptions } from "../logging/redact.js";
 export { asBoolean } from "../utils/boolean.js";
 export { normalizeOptionalString as trimToUndefined } from "../../packages/normalization-core/src/string-coerce.js";
 
@@ -28,7 +28,15 @@ export function truncateErrorDetail(detail: string, limit = 220): string {
 
 /** Redacts secrets before preserving a bounded provider error body preview. */
 export function redactProviderErrorBody(body: string): string {
-  return truncateErrorDetail(redactSensitiveText(body), ERROR_BODY_METADATA_LIMIT);
+  // Public error previews must retain built-in protections even when log redaction
+  // is disabled or replaced by custom patterns. Keep those extra patterns too.
+  const required = resolveRedactOptions({ mode: "tools" });
+  const configured = resolveRedactOptions();
+  const patterns = [...new Set([...required.patterns, ...configured.patterns])];
+  return truncateErrorDetail(
+    redactSensitiveText(body, { mode: "tools", patterns }),
+    ERROR_BODY_METADATA_LIMIT,
+  );
 }
 
 /** Reads at most `limitBytes` from a response body without buffering provider-sized failures. */

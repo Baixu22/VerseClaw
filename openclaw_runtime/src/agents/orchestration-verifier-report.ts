@@ -51,7 +51,7 @@ export function resolveStructuredVerificationVerdict(params: {
   resultText?: string;
 }): {
   verdict?: StructuredVerificationVerdict;
-  source: "orchestration" | "text_structured" | "outcome_error" | "outcome_ok" | "none";
+  source: "orchestration" | "text_structured" | "outcome_error" | "none";
 } {
   const orch = typeof params.orchestrationVerdict === "string"
     ? params.orchestrationVerdict.trim().toLowerCase()
@@ -68,9 +68,9 @@ export function resolveStructuredVerificationVerdict(params: {
   if (params.outcomeStatus === "error" || params.outcomeStatus === "timeout") {
     return { verdict: "fail", source: "outcome_error" };
   }
-  if (params.outcomeStatus === "ok") {
-    return { verdict: "pass", source: "outcome_ok" };
-  }
+  // A completed verifier run is not a business verdict. Without an explicit
+  // structured verdict, leave the decision unresolved and let the report
+  // fail closed below.
   return { source: "none" };
 }
 
@@ -106,7 +106,7 @@ export function buildVerifierReport(params: VerifierReportInput): VerificationRe
       resolved.source === "orchestration" ? "structured_verdict" :
       resolved.source === "text_structured" ? "structured_verdict_text" :
       resolved.source === "outcome_error" ? "verifier_outcome_error" :
-      "structured_outcome_ok";
+      "missing_structured_verdict";
     reasonMessage =
       decision === "pass"
         ? text || "Structured verifier verdict: pass"
@@ -127,14 +127,10 @@ export function buildVerifierReport(params: VerifierReportInput): VerificationRe
       decision = "fail";
       reasonCode = "missing_structured_verdict";
       reasonMessage = text
-        ? "Free-text verifier output cannot alone authorize pass; structured verificationVerdict or outcome.status required."
+        ? "Free-text verifier output cannot alone authorize pass; a structured verificationVerdict is required."
         : "Missing structured verifier provenance; defaulting to fail (no trust elevation).";
     }
   }
-
-  // When structured outcome is ok but free text only (no explicit structured verdict field),
-  // outcome_ok already yielded pass — that is intentional (runtime outcome is structured).
-  // Adversarial free text with "all good" and no outcome still fails above.
 
   return {
     decision,
@@ -144,7 +140,7 @@ export function buildVerifierReport(params: VerifierReportInput): VerificationRe
     reasons: decision === "pass"
       ? []
       : [{
-          code: reasonCode === "structured_outcome_ok" ? "verifier_failed" : reasonCode === "structured_verdict" || reasonCode === "structured_verdict_text"
+          code: reasonCode === "structured_verdict" || reasonCode === "structured_verdict_text"
             ? (decision === "repair_required" ? "verifier_repair_required" : "verifier_failed")
             : reasonCode,
           message: reasonMessage,

@@ -225,13 +225,6 @@ the prose without editing this block changes nothing that the check can see.
   ],
   "declaredGaps": [
     {
-      "id": "renderer-drops-host-error-code",
-      "state": "gap",
-      "probe": "renderer-drops-host-error-code",
-      "evidence": "src/lib/host-api-client.ts",
-      "summary": "invokeHost throws a bare Error built from error.message, so the Main-process error code and details never reach the renderer classifier."
-    },
-    {
       "id": "duplicate-host-response-copies",
       "state": "gap",
       "probe": "duplicate-host-response-copies",

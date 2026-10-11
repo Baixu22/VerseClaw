@@ -57,6 +57,15 @@ describe("runtime memory eval statistics", () => {
     expect(result.pValue).toBeLessThan(0.05);
   });
 
+  it("paired t-test reports a real continuous two-sided p-value", () => {
+    const baseline = [10, 11, 9, 10, 12, 11, 10, 9, 11, 10, 12, 10, 9, 11, 10];
+    const treatment = baseline.map((value, index) => value + (index % 3) + 1);
+    const result = pairedTTest(baseline, treatment);
+    expect(result.pValue).toBeGreaterThan(0);
+    expect(result.pValue).toBeLessThan(0.001);
+    expect(result.significant).toBe(true);
+  });
+
   it("paired t-test reports non-significant for identical samples", () => {
     const baseline = [1, 2, 3, 4, 5];
     const treatment = [1, 2, 3, 4, 5];

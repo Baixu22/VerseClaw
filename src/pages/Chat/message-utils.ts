@@ -233,7 +233,10 @@ export function isUnresolvableImageUrl(url: string): boolean {
   const trimmed = url.trim();
   if (!trimmed) return true;
   if (trimmed.startsWith('data:')) return false;
-  if (/^https?:\/\//i.test(trimmed)) return false;
+  // Remote images in untrusted transcript content are not auto-loaded. This
+  // also covers reference-style Markdown images, which do not flow through the
+  // inline-media stripper. A trusted component must explicitly opt in later.
+  if (/^https?:\/\//i.test(trimmed)) return true;
   if (trimmed.startsWith('/api/chat/media/')) return true;
   if (trimmed.startsWith('file://')) return true;
   if (trimmed.includes('.openclaw/media/')) return true;

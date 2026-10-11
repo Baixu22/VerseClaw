@@ -135,8 +135,10 @@ beforeAll(() => {
       subject: q.subject,
       predicate: q.predicate,
       referenceTime: q.referenceTime,
-      tokenBudget: q.tokenBudget ?? 512,
-      limit: q.limit ?? 8,
+      // Alternate explicit overrides with the production defaults so this
+      // aggregate path exercises DEFAULT_TOKEN_BUDGET / DEFAULT_LIMIT (#142).
+      ...(i % 2 === 0 && q.tokenBudget !== undefined ? { tokenBudget: q.tokenBudget } : {}),
+      ...(i % 2 === 0 && q.limit !== undefined ? { limit: q.limit } : {}),
       expectedFactIds: q.expectedFactIds,
     });
   }

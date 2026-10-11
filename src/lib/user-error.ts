@@ -47,7 +47,7 @@ export function describeUserError(error: unknown, options: { log?: boolean } = {
   const appError = normalizeAppError(error);
   const copy = getErrorCopy(appError.code);
   const message = sanitizeUiErrorText(toUserMessage(appError));
-  const errorId = makeErrorId();
+  const errorId = appError.requestId ?? makeErrorId();
   if (options.log !== false) {
     // Dev log keeps the full classified error; the UI only ever sees message + id.
     console.error(`[user-error ${errorId}]`, appError);

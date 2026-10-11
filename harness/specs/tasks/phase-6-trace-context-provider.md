@@ -19,7 +19,7 @@ touchedAreas:
   - electron/**
   - shared/**
   - src/lib/host-api.ts
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
   - tests/unit/**
 expectedUserBehavior:
   - With Phase-6 trace flags disabled, existing TaskLoop execution, tools.invoke behavior, approval waiting, retries, error mapping, return payloads, event-log/checkpoint/resume behavior, and Evidence Verifier behavior remain unchanged.

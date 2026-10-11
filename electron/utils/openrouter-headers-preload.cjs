@@ -3,7 +3,7 @@
  * the OpenClaw Gateway starts.
  *
  * Patches globalThis.fetch so that every request whose URL contains
- * "openrouter.ai" carries the ClawX app-attribution headers.
+ * "openrouter.ai" carries the Verse Claw app-attribution headers.
  *
  * The OpenAI SDK (used by OpenClaw) captures globalThis.fetch in its
  * constructor, so patching here guarantees all SDK requests go through
@@ -38,8 +38,10 @@
       delete flat['X-Title'];
       delete flat['x-openrouter-title'];
       delete flat['X-OpenRouter-Title'];
-      flat['HTTP-Referer'] = 'https://claw-x.com';
-      flat['X-OpenRouter-Title'] = 'ClawX';
+      flat['HTTP-Referer'] =
+        process.env.VERSE_CLAW_OPENROUTER_REFERER || 'https://verseclaw.dev';
+      flat['X-OpenRouter-Title'] =
+        process.env.VERSE_CLAW_OPENROUTER_TITLE || 'Verse Claw';
       init.headers = flat;
     }
     return _f.call(globalThis, input, init);

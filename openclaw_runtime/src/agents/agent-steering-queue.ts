@@ -253,10 +253,14 @@ function resolveTeamBundleStatus(items: readonly AgentSteeringQueueItem[]): stri
   const verifier = items.find((item) => item.payload.orchestration?.phase === "verifier");
   const workerFailures = workers.filter((item) => item.payload.outcome?.status !== "ok");
   const workerSuccesses = workers.filter((item) => item.payload.outcome?.status === "ok");
-  if (verifier?.payload.outcome?.status === "error") {
+  const verifierReport = verifierReportFor(verifier);
+  if (verifierReport?.decision === "fail") {
     return "refuted";
   }
-  if (verifier?.payload.outcome?.status === "ok") {
+  if (verifierReport?.decision === "repair_required") {
+    return "repair_required";
+  }
+  if (verifierReport?.decision === "pass") {
     return workerFailures.length > 0 ? "partial" : "verified";
   }
   if (workerSuccesses.length === 0) {

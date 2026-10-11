@@ -26,7 +26,7 @@ touchedAreas:
   - electron/**
   - shared/**
   - src/lib/host-api.ts
-  - src/lib/api-client.ts
+  - src/lib/host-api-client.ts
   - tests/unit/**
 expectedUserBehavior:
   - With all runtime.memory flags disabled, existing TaskLoop, tools.invoke, approval waiting, retries, error mapping, return payloads, event-log/checkpoint/resume, Evidence Verifier, Trace Context Provider, and provider ordering remain unchanged.

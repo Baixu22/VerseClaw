@@ -80,15 +80,15 @@ ClawX 的拟定核心是 DCS-first Context Engine：
 
 #### E. 成熟产品对照
 
-25. 本地 Codex：`C:\Users\27933\Desktop\coding\codex-main\docs\sandbox.md`
-26. 本地 Codex：`C:\Users\27933\Desktop\coding\codex-main\docs\execpolicy.md`
-27. 本地 Codex：`C:\Users\27933\Desktop\coding\codex-main\docs\agents_md.md`
-28. 本地 Codex：`C:\Users\27933\Desktop\coding\source_archive\codex`
-29. 本地 Aider：`C:\Users\27933\Desktop\coding\aider-main\aider\repomap.py`
-30. 本地 Aider：`C:\Users\27933\Desktop\coding\aider-main\aider\coders\base_coder.py`
-31. 本地 Aider：`C:\Users\27933\Desktop\coding\source_archive\NOTES\02_能力2_RepoMap上下文选择.md`
-32. 本地 Aider：`C:\Users\27933\Desktop\coding\source_archive\NOTES\03_能力3_LintTest反射循环.md`
-33. 本地 Aider：`C:\Users\27933\Desktop\coding\source_archive\NOTES\04_能力4_Architect双模型协作.md`
+25. 本地 Codex：`%USERPROFILE%\Desktop\coding\codex-main\docs\sandbox.md`
+26. 本地 Codex：`%USERPROFILE%\Desktop\coding\codex-main\docs\execpolicy.md`
+27. 本地 Codex：`%USERPROFILE%\Desktop\coding\codex-main\docs\agents_md.md`
+28. 本地 Codex：`%USERPROFILE%\Desktop\coding\source_archive\codex`
+29. 本地 Aider：`%USERPROFILE%\Desktop\coding\aider-main\aider\repomap.py`
+30. 本地 Aider：`%USERPROFILE%\Desktop\coding\aider-main\aider\coders\base_coder.py`
+31. 本地 Aider：`%USERPROFILE%\Desktop\coding\source_archive\NOTES\02_能力2_RepoMap上下文选择.md`
+32. 本地 Aider：`%USERPROFILE%\Desktop\coding\source_archive\NOTES\03_能力3_LintTest反射循环.md`
+33. 本地 Aider：`%USERPROFILE%\Desktop\coding\source_archive\NOTES\04_能力4_Architect双模型协作.md`
 
 如果某个文件不存在，记录 `missing`，不要自行假设其内容；继续读取其他材料。
 

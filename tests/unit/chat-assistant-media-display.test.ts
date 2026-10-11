@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { extractText } from '@/pages/Chat/message-utils';
+import { extractImages, extractText, isUnresolvableImageUrl } from '@/pages/Chat/message-utils';
 
 describe('assistant media path display cleanup', () => {
   it('strips bare OpenClaw media paths when the image is shown as an attachment card', () => {
@@ -30,6 +30,18 @@ MEDIA:C:\Users\Administrator\.openclaw\workspace\japan-kansai-4d3n-plan.svg`;
 C:\Users\alice\.openclaw\media\outbound\cat---abc.png`;
 
     expect(extractText({ role: 'assistant', content: text })).toBe('Done:');
+  });
+
+  it('does not auto-load remote markdown or structured image URLs', () => {
+    const referenceUrl = 'https://beacon.example/pixel.png?d=synthetic';
+    expect(isUnresolvableImageUrl(referenceUrl)).toBe(true);
+    expect(extractImages({
+      role: 'assistant',
+      content: [{
+        type: 'image',
+        source: { type: 'url', url: referenceUrl, media_type: 'image/png' },
+      }],
+    })).toEqual([]);
   });
 
   it('strips markdown image syntax that cannot be rendered directly', () => {

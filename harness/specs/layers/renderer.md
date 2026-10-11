@@ -10,7 +10,7 @@ pathPatterns:
   - shared/i18n/**
 ---
 
-Renderer code owns UI state, presentation, and user interaction. Backend calls must go through `src/lib/host-api.ts` or `src/lib/api-client.ts`.
+Renderer code owns UI state, presentation, and user interaction. Backend calls must go through `src/lib/host-api.ts` or `src/lib/host-api-client.ts`.
 
 User-facing text belongs in `react-i18next` locale files with full locale coverage. Styling should use the design tokens and component conventions documented in `src/styles/globals.css`.
 

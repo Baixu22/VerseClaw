@@ -18,11 +18,14 @@ import {
 // Resolves raw MCP server config into the transport shape used by bundle MCP
 // runtime startup. Stdio is preferred when launch config is valid; otherwise
 // HTTP/SSE transports are attempted with normalized timeout fields.
+export type McpNetworkPolicy = "disabled" | "localOnly" | "enabled";
+
 type ResolvedBaseMcpTransportConfig = {
   description: string;
   connectionTimeoutMs: number;
   requestTimeoutMs: number;
   supportsParallelToolCalls: boolean;
+  networkPolicy?: McpNetworkPolicy;
 };
 
 type ResolvedStdioMcpTransportConfig = ResolvedBaseMcpTransportConfig & {
@@ -87,6 +90,14 @@ function getRequestTimeoutMs(rawServer: unknown): number {
     return Math.floor(seconds * 1_000);
   }
   return DEFAULT_REQUEST_TIMEOUT_MS;
+}
+
+function getNetworkPolicy(rawServer: unknown): McpNetworkPolicy | undefined {
+  if (!rawServer || typeof rawServer !== "object") {
+    return undefined;
+  }
+  const value = (rawServer as { networkPolicy?: unknown }).networkPolicy;
+  return value === "disabled" || value === "localOnly" || value === "enabled" ? value : undefined;
 }
 
 function getBooleanField(rawServer: unknown, keys: readonly string[]): boolean | undefined {
@@ -185,6 +196,7 @@ function resolveHttpTransportConfig(
     ...(getStringField(rawServer, ["clientKey", "client_key"])
       ? { clientKey: getStringField(rawServer, ["clientKey", "client_key"]) }
       : {}),
+    networkPolicy: getNetworkPolicy(rawServer),
     description: describeHttpMcpServerLaunchConfig(launch.config),
     connectionTimeoutMs: getConnectionTimeoutMs(rawServer),
     requestTimeoutMs: getRequestTimeoutMs(rawServer),
@@ -220,6 +232,7 @@ export function resolveMcpTransportConfig(
       args: stdioLaunch.config.args,
       env: stdioLaunch.config.env,
       cwd: stdioLaunch.config.cwd,
+      networkPolicy: getNetworkPolicy(rawServer),
       description: describeStdioMcpServerLaunchConfig(stdioLaunch.config),
       connectionTimeoutMs: getConnectionTimeoutMs(rawServer),
       requestTimeoutMs: getRequestTimeoutMs(rawServer),

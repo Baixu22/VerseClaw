@@ -1,6 +1,9 @@
 name: Harness
 
 on:
+  push:
+    branches:
+      - 'codex/**'
   workflow_dispatch:
   pull_request:
     branches:

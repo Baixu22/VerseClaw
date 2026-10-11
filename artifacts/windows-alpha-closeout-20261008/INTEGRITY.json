@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "status": "legacy-drift-annotated",
+  "driven_by": "agent",
+  "note": "Historical snapshot entries are annotated rather than rewritten; the original SHA256SUMS remains the historical evidence.",
+  "excludedEntries": [
+    {
+      "path": ".gitattributes",
+      "reason": "Repository configuration changed after the evidence run; snapshot retained for historical fidelity."
+    },
+    {
+      "path": ".gitignore",
+      "reason": "Repository configuration changed after the evidence run; snapshot retained for historical fidelity."
+    },
+    {
+      "path": ".github/workflows/electron-e2e.yml",
+      "reason": "Workflow trigger coverage changed after the evidence run; historical snapshot is annotated instead of rewritten."
+    },
+    {
+      "path": "harness/specs/tasks/windows-alpha-closeout.md",
+      "reason": "Task spec path/reference cleanup changed after the evidence run; historical snapshot is annotated."
+    },
+    {
+      "path": "electron/gateway/startup-orchestrator.ts",
+      "reason": "P1 #98 gate hardening changed this file after the evidence run; historical snapshot is annotated instead of rewritten."
+    },
+    {
+      "path": "tests/unit/gateway-startup-orchestrator.test.ts",
+      "reason": "P1 #98 regression coverage changed this file after the evidence run; historical snapshot is annotated instead of rewritten."
+    }
+  ]
+}

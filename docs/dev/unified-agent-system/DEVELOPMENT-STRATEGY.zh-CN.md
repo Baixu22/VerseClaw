@@ -236,7 +236,7 @@ R1-R4 的架构产物已在融合审计中交付；Task Forest proposal 已应�
 
 ```text
 Workspace:
-C:\Users\27933\Desktop\clawx\ClawX
+%USERPROFILE%\Desktop\clawx\ClawX
 
 Goal:
 将 VerseShell、VerseToken、Coding、DCS/Working Memory/长期 Memory 收敛为统一 contract 和唯一主路径；不增加模型工具学习和 LLM 路由成本。

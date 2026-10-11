@@ -87,13 +87,30 @@ function removeInsideRoot(rootPath: string, candidatePath: string): void {
   }
 }
 
+export function isAllowedDownloadUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" && (parsed.hostname === "codeload.github.com" || parsed.hostname === "github.com");
+  } catch {
+    return false;
+  }
+}
+
 function httpGet(url: string): Promise<{ statusCode: number; data: Buffer }> {
+  if (!isAllowedDownloadUrl(url)) {
+    return Promise.reject(new Error("Refusing to download from untrusted redirect target"));
+  }
   return new Promise((resolve, reject) => {
     https
       .get(url, { headers: { "User-Agent": "Verse Claw-Skill-Installer/1.0" } }, (res) => {
         if (res.statusCode === 301 || res.statusCode === 302) {
           const redirect = res.headers.location;
           if (redirect) {
+            if (!isAllowedDownloadUrl(redirect)) {
+              res.resume();
+              reject(new Error("Refusing to follow redirect outside GitHub codeload"));
+              return;
+            }
             httpGet(redirect).then(resolve).catch(reject);
             return;
           }
