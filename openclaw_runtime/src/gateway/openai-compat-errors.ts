@@ -2,6 +2,7 @@
 // Converts OpenClaw failover/sampling errors to OpenAI-style HTTP responses.
 import type { FailoverReason } from "../agents/embedded-agent-helpers/types.js";
 import { describeFailoverError, resolveFailoverStatus } from "../agents/failover-error.js";
+import { redactProviderErrorBody } from "../agents/provider-http-errors.js";
 
 export type OpenAiCompatError = {
   status: number;
@@ -72,9 +73,10 @@ export function resolveOpenAiCompatError(err: unknown): OpenAiCompatError | unde
   return {
     status,
     error: {
-      message,
+      // SDK/plugin failures may bypass transport-level sanitization.
+      message: redactProviderErrorBody(message),
       type,
-      ...(described.code ? { code: described.code } : {}),
+      ...(described.code ? { code: redactProviderErrorBody(described.code) } : {}),
     },
   };
 }

@@ -260,6 +260,7 @@ Renderer の入口は `src/lib/host-api.ts` と `src/lib/host-api-client.ts` で
 | E2E で古いランタイムと判定される | `pnpm run build:runtime` を実行。アプリも変更した場合は `build:vite` も再実行。鮮度検証は維持 |
 | ヘッドレス Linux で Electron が起動しない | 表示サーバーを用意。例：`xvfb-run -a pnpm run test:e2e` |
 | VerseConf のツールや出力が使えない | プラグインの有効化と設定を確認。3 レコード超の構成は Markdown で出力 |
+| レート制限の待機時間が再試行予算を超える | `Retry-After` より前に再送せず、自動再試行を停止して元のエラー情報を保持します。互換 API のプロバイダーエラーと診断のプレビューは秘匿化し、500 文字以内に制限します。[境界の詳細](docs/dev/provider-error-retry-boundaries.md) |
 
 <a id="documentation"></a>
 

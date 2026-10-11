@@ -9,6 +9,7 @@ import {
   normalizeOptionalString,
 } from "@openclaw/normalization-core/string-coerce";
 import { isClientToolNameConflictError } from "../agents/agent-tool-definition-adapter.js";
+import { redactProviderErrorBody } from "../agents/provider-http-errors.js";
 import type { AgentStreamParams, ClientToolDefinition } from "../agents/command/shared-types.js";
 import type { ImageContent } from "../agents/command/types.js";
 import { STREAM_ERROR_FALLBACK_TEXT } from "../agents/stream-message-shared.js";
@@ -1008,7 +1009,7 @@ export async function handleOpenAiHttpRequest(
   try {
     images = await resolveImagesForRequest(activeTurnContext, limits);
   } catch (err) {
-    logWarn(`openai-compat: invalid image_url content: ${String(err)}`);
+    logWarn(`openai-compat: invalid image_url content: ${redactProviderErrorBody(String(err))}`);
     sendJson(res, 400, {
       error: {
         message: "Invalid image_url content in `messages`.",
@@ -1127,7 +1128,7 @@ export async function handleOpenAiHttpRequest(
       if (abortController.signal.aborted) {
         return true;
       }
-      logWarn(`openai-compat: chat completion failed: ${String(err)}`);
+      logWarn(`openai-compat: chat completion failed: ${redactProviderErrorBody(String(err))}`);
       if (isClientToolNameConflictError(err)) {
         sendJson(res, 400, {
           error: { message: "invalid tool configuration", type: "invalid_request_error" },
@@ -1329,7 +1330,9 @@ export async function handleOpenAiHttpRequest(
       if (closed || abortController.signal.aborted) {
         return;
       }
-      logWarn(`openai-compat: streaming chat completion failed: ${String(err)}`);
+      logWarn(
+        `openai-compat: streaming chat completion failed: ${redactProviderErrorBody(String(err))}`,
+      );
       if (isClientToolNameConflictError(err)) {
         closed = true;
         stopWatchingDisconnect();

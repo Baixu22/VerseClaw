@@ -40,6 +40,7 @@ import {
 import { getMacTrafficLightPosition, syncMacTrafficLightPosition } from './traffic-light-layout';
 import { getSetting } from '../utils/store';
 import { reconcileAppVersionRollback } from '../utils/app-version-rollback';
+import { startRuntimeEfficiency, stopRuntimeEfficiency } from '../services/efficiency-orchestrator';
 import { applyProxySettings } from './proxy';
 import { syncLaunchAtStartupSettingFromStore } from './launch-at-startup';
 import {
@@ -89,8 +90,10 @@ if (requestedUserDataDir) {
   app.setPath('userData', requestedUserDataDir);
 }
 
-// Disable GPU hardware acceleration globally for maximum stability across
-// all GPU configurations (no GPU, integrated, discrete).
+// GPU hardware acceleration is disabled unconditionally, on every platform and
+// on every launch. This is a recorded, product-locked default, not a gap: there
+// is no CLI flag, environment variable, config key or settings toggle that
+// re-enables GPU compositing, and this comment must not imply otherwise.
 //
 // Rationale (following VS Code's philosophy):
 // - Page/file loading is async data fetching — zero GPU dependency.
@@ -101,8 +104,10 @@ if (requestedUserDataDir) {
 //   behaviour varies between vendors (Intel, AMD, NVIDIA, Apple Silicon) and
 //   driver versions, making it the #1 source of rendering bugs in Electron.
 //
-// Users who want GPU acceleration can pass `--enable-gpu` on the CLI or
-// set `"disable-hardware-acceleration": false` in the app config (future).
+// Changing this default is a publisher decision that requires an opt-in surface,
+// schema, i18n, E2E coverage, a measured before/after artifact and a rollback
+// path. Decision record and machine check: docs/dev/hardware-acceleration-policy.md
+// and `pnpm docs:policy:validate`.
 app.disableHardwareAcceleration();
 
 // On Linux, set CHROME_DESKTOP so Chromium can find the correct .desktop file.
@@ -1376,6 +1381,8 @@ if (gotTheLock) {
     getTerminalSessionManager()?.shutdownAll();
     void getResourceTracker().shutdown();
     disposeCronMaintenance();
+    // Release the efficiency sampling timer so quit never waits on it.
+    stopRuntimeEfficiency();
     releaseProcessInstanceFileLock();
   });
 
@@ -1412,6 +1419,8 @@ if (gotTheLock) {
 
   // Application lifecycle
   app.whenReady().then(() => {
+    // Runtime efficiency sampling (P0 observability); cheap unref'd timer, local only.
+    startRuntimeEfficiency();
     void initialize().catch((error) => {
       logger.error('Application initialization failed:', error);
     });

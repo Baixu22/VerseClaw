@@ -36,6 +36,9 @@ jobs:
       - name: Check repository artifact retention
         run: node scripts/check-repository-artifacts.mjs
 
+      - name: Validate product policy documentation
+        run: node scripts/validate-policy-docs.mjs
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 

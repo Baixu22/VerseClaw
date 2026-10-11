@@ -260,6 +260,7 @@ Daily reports list outstanding full gates under `decision.requiredFullGates`. Ag
 | E2E reports a stale runtime | Run `pnpm run build:runtime`; rebuild `build:vite` if app sources changed too; retain freshness checks |
 | Electron fails on headless Linux | Provide a display server, for example `xvfb-run -a pnpm run test:e2e` |
 | VerseConf tools or export unavailable | Check plugin activation/configuration; use Markdown for outlines with more than three records |
+| Provider rate-limit wait exceeds the retry budget | Automatic retries stop instead of sending before `Retry-After`; the original failure retains retry metadata. Compatible provider error previews and diagnostics are redacted and capped at 500 characters. See [boundary details](docs/dev/provider-error-retry-boundaries.md) |
 
 <a id="documentation"></a>
 

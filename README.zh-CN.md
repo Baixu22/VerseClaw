@@ -260,6 +260,7 @@ Renderer 请求入口是 `src/lib/host-api.ts` 与 `src/lib/host-api-client.ts`�
 | E2E 报运行时过期 | 执行 `pnpm run build:runtime`；应用也有修改时重建 `build:vite`，保留 freshness 检查 |
 | 无头 Linux 无法运行 Electron | 提供显示服务，例如 `xvfb-run -a pnpm run test:e2e` |
 | VerseConf 工具或导出不可用 | 核对插件启用与配置；超过三条记录的大纲改用 Markdown 导出 |
+| 上游限流等待超过自动重试预算 | 停止自动重试，不会抢在 `Retry-After` 之前重发；原错误保留重试信息。兼容接口的供应商错误预览与诊断会脱敏并限制在 500 字符内，详见[边界说明](docs/dev/provider-error-retry-boundaries.md) |
 
 <a id="documentation"></a>
 
