@@ -963,6 +963,7 @@ async function loadOrExtractFacts(
       factsByConversation.set(convId, facts);
       totalFacts += facts.length;
       extractionTelemetry.cachedConversations += 1;
+      extractionStageCachedCount += 1;
       console.log(
         `[LoCoMo-Full] ${convId}: using cached ${facts.length} facts (skipped extraction)`,
       );
@@ -1027,6 +1028,7 @@ async function loadOrExtractFacts(
       facts = await extractFactsFromConversation(turns, convId, callLLM);
     }
     extractionTelemetry.freshConversations += 1;
+    extractionStageFreshCount += 1;
     factsByConversation.set(convId, facts);
     cacheData[convId] = facts.map((f) => ({
       subject: f.subject,
@@ -1045,6 +1047,15 @@ async function loadOrExtractFacts(
       );
     } catch (err) {
       console.log(`[LoCoMo-Full] Failed to save incremental cache: ${(err as Error).message}`);
+    }
+
+    // Staged extraction: stop after this batch so the caller can re-run with a
+    // fresh process. The cache written above is the only carry-over state.
+    if (EXTRACTION_ONLY && extractionTelemetry.freshConversations >= EXTRACTION_BATCH) {
+      console.log(
+        `[LoCoMo-Full] Extraction batch complete: ${Object.keys(cacheData).length}/${rawData.length} conversations cached (${extractionTelemetry.freshConversations} extracted this batch). Exiting extraction-only stage.`,
+      );
+      return factsByConversation;
     }
   }
 
@@ -1445,6 +1456,28 @@ const SMOKE_SAMPLE_SIZES: Record<string, number> = {
   open_domain: SMOKE_PER_CATEGORY,
 };
 
+// Extraction-only staging mode (added 2026-10-11).
+//
+// The single-shot full run holds a ~12.8 GB llama-server for the whole run even
+// though fact extraction never touches embeddings. On a 15.5 GB host that makes
+// any concurrent tooling fatal, and the host killed two runs mid-extraction.
+// In this mode the suite extracts a bounded number of conversations, flushes the
+// facts cache after each one, and exits without starting the embedding server or
+// the judge. A later normal full run resumes from the accumulated cache.
+const EXTRACTION_ONLY = process.env.RUNTIME_MEMORY_EXTRACTION_ONLY === "1";
+let extractionStageFreshCount = 0;
+let extractionStageCachedCount = 0;
+const EXTRACTION_BATCH = (() => {
+  if (!EXTRACTION_ONLY) return Infinity;
+  const raw = process.env.RUNTIME_MEMORY_EXTRACTION_BATCH;
+  if (raw === undefined || raw === "") return 1;
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value <= 0) {
+    throw new Error("RUNTIME_MEMORY_EXTRACTION_BATCH must be a positive integer");
+  }
+  return value;
+})();
+
 function canRunWithoutSiliconFlow(): boolean {
   if (isFullEvalRequested()) return false;
   const rawData = loadRawData();
@@ -1456,14 +1489,21 @@ function canRunWithoutSiliconFlow(): boolean {
 }
 
 describe.skipIf(
-  !hasDeepSeekKey() || (!hasLocomoEmbeddingConfig() && !canRunWithoutSiliconFlow()),
+  !hasDeepSeekKey() ||
+    (!EXTRACTION_ONLY && !hasLocomoEmbeddingConfig() && !canRunWithoutSiliconFlow()),
 )(
   "L11-FULL: LoCoMo 500-question benchmark with real embedding + LLM judge",
   () => {
     it(
       "runs 500-question stratified LoCoMo benchmark",
       async () => {
-        const embedding = hasLocomoEmbeddingConfig() ? await verifyLocomoEmbeddingResources() : null;
+        // Extraction-only staging never talks to the embedding server: the stage
+        // must be runnable on a host that cannot afford the 12.8 GB llama-server.
+        const embedding = EXTRACTION_ONLY
+          ? null
+          : hasLocomoEmbeddingConfig()
+            ? await verifyLocomoEmbeddingResources()
+            : null;
         if (embedding) await createLocomoEmbeddingProvider().embedQuery("LoCoMo embedding preflight");
         const provenance = { ...createLocomoProvenance(getRuntimeMemoryLlmConfig()), embedding, crossEncoderAvailable: hasSiliconFlowRerankKey() };
         const rawData = loadRawData();
@@ -1516,6 +1556,38 @@ describe.skipIf(
         const factsByConversation = needsFacts
           ? await loadOrExtractFacts(rawData, callTrackedDeepSeek)
           : new Map<string, RuntimeMemoryQueryableFact[]>();
+
+        // Staged extraction ends the run here: no embeddings, no retrieval, no
+        // judging. The facts cache is the deliverable and the next batch resumes
+        // from it. This is what lets a memory-constrained host make progress in
+        // bounded steps instead of holding a 12.8 GB embedding server for ~20h.
+        if (EXTRACTION_ONLY) {
+          const cachePath = FACTS_CACHE_PATH;
+          const cached = extractionStageCachedCount;
+          const fresh = extractionStageFreshCount;
+          const total = cached + fresh;
+          const exhausted = extractionStageFreshCount < EXTRACTION_BATCH;
+          writeFileSync(
+            join(EVAL_ARTIFACT_DIR, "extraction-stage.json"),
+            JSON.stringify({
+              driven_by: "agent",
+              actor: "extraction-stage",
+              finishedAt: new Date().toISOString(),
+              batchSize: EXTRACTION_BATCH,
+              cachedConversations: cached,
+              freshConversations: fresh,
+              conversationsComplete: total,
+              conversationsTotal: rawData.length,
+              exhaustedAllConversations: exhausted,
+              factsCachePath: cachePath,
+            }, null, 2) + "\n",
+            "utf-8",
+          );
+          console.log(
+            `[LoCoMo-Full] Extraction stage finished: cached=${cached} fresh=${fresh} complete=${total}/${rawData.length} exhausted=${exhausted}. No retrieval or judging performed.`,
+          );
+          return;
+        }
 
         let totalFactsCount = 0;
         if (needsRetrieval) {

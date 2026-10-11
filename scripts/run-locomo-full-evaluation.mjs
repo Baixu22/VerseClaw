@@ -90,6 +90,8 @@ async function main() {
     'timeout-minutes': { type: 'string' }, 'test-timeout-minutes': { type: 'string' },
     'resume-from': { type: 'string' },
     'resume-source-revision': { type: 'string' },
+    'extraction-only': { type: 'boolean', default: false },
+    'extraction-batch': { type: 'string' },
   } });
   if (values['credentials-stdin']) {
     let credentials;
@@ -103,13 +105,21 @@ async function main() {
   if (!(process.env.RUNTIME_MEMORY_LLM_API_KEY || process.env.DEEPSEEK_API_KEY)) throw new Error('Model credential required; this command never treats a skipped evaluation as success');
   if (values['local-embedding-url']) process.env.RUNTIME_MEMORY_LOCAL_EMBEDDING_URL = values['local-embedding-url'];
   if (values['local-embedding-model']) process.env.RUNTIME_MEMORY_LOCAL_EMBEDDING_MODEL_FILE = values['local-embedding-model'];
-  await verifyLocomoEmbeddingResources();
+  // Staged extraction is LLM-only; requiring the embedding server here would
+  // force the 12.8 GB model to be resident for work that never uses it.
+  const extractionOnly = values['extraction-only'] === true;
+  if (!extractionOnly) {
+    await verifyLocomoEmbeddingResources();
+  } else {
+    if (!values['output-dir']) throw new Error('--extraction-only requires --output-dir so the cache has a stable home');
+    console.log('[LoCoMo-Full] Extraction-only stage: embedding server is not required and will not be verified.');
+  }
   getRuntimeMemoryLlmConfig(); // Reject accidental credential routing before starting a child.
   const timeoutMinutes = resolveTimeoutMinutes(values['timeout-minutes']);
   const testTimeoutMinutes = resolveTestTimeoutMinutes(values['test-timeout-minutes'], timeoutMinutes);
   const output = resolve(values['output-dir'] ?? join(root, 'artifacts/runtime-memory-eval/runs', randomUUID()));
-  if (existsSync(output)) throw new Error('Use a new output directory; previous run evidence is never overwritten');
-  mkdirSync(output, { recursive: true });
+  if (existsSync(output) && !extractionOnly) throw new Error('Use a new output directory; previous run evidence is never overwritten');
+  if (!existsSync(output)) mkdirSync(output, { recursive: true });
   if (values['resume-from']) {
     const seed = seedResumeCaches(values['resume-from'], output, values['resume-source-revision']);
     writeFileSync(join(output, 'resume-seed.json'), JSON.stringify({ driven_by: 'agent', actor: 'dsh-lead', seededAt: new Date().toISOString(), ...seed }, null, 2) + '\n');
@@ -117,6 +127,10 @@ async function main() {
   }
   const env = { ...process.env, RUNTIME_MEMORY_REAL_LLM: '1', FULL_EVAL: '1', SMOKE: '0', RUNTIME_MEMORY_EVAL_ARTIFACT_DIR: output,
     DEEPSEEK_MODEL: process.env.RUNTIME_MEMORY_LLM_MODEL || process.env.DEEPSEEK_MODEL || 'deepseek-chat' };
+  if (extractionOnly) {
+    env.RUNTIME_MEMORY_EXTRACTION_ONLY = '1';
+    if (values['extraction-batch']) env.RUNTIME_MEMORY_EXTRACTION_BATCH = values['extraction-batch'];
+  }
   // Only override the suite's own default when the operator asked for it, so the
   // historical 36h behaviour is preserved for every existing invocation.
   if (testTimeoutMinutes !== null) env.RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES = String(testTimeoutMinutes);
@@ -124,6 +138,11 @@ async function main() {
     cwd: root, env, stdio: 'inherit', windowsHide: true, timeout: timeoutMinutes * 60 * 1000,
   });
   if (result.error || result.signal || result.status !== 0) throw new Error('LoCoMo runner failed: exit=' + result.status + ', signal=' + result.signal + (result.error ? ', ' + result.error.message : ''));
+  if (extractionOnly) {
+    // A staged run intentionally produces no report; the facts cache is the output.
+    console.log('[LoCoMo-Full] Extraction-only stage finished; no report is produced or verified.');
+    return;
+  }
   // The frozen judge reads its model at import time; CLI options must be applied first.
   const { verifyLocomoEvidenceFile } = await import('./check-locomo-evidence.mjs');
   const verified = verifyLocomoEvidenceFile(join(output, 'locomo-full-500-report.json'));
