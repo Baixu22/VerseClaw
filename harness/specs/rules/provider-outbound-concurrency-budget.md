@@ -33,6 +33,13 @@ timeout must not release a request that is still alive, and there is no
 time-based release of a held slot. Leases are released once; a double release is
 counted as a diagnostic instead of silently freeing a second slot.
 
+A slot covers one physical request and nothing else. It must not be held while a
+turn waits for tool work, a subagent, or a queued lane, so a parent turn waiting
+on children can never hold the leaf budget its children need. Keeping the hold
+that narrow is what prevents nested-wait starvation; widening it (for example, to
+"one slot per agent turn") requires re-arguing that invariant, not just a call
+site change.
+
 Do not add a default concurrency limit. With nothing configured the boundary must
 stay a single map lookup and let the request through. Do not claim a "global"
 budget: the covered surfaces (chat, subagent, cron, compaction/auxiliary model
