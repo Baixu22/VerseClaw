@@ -4,6 +4,7 @@ const state = vi.hoisted(() => ({
   requestedProviderId: 'policy-light' as string,
   dockerAvailable: false,
   permissionMode: 'readOnly' as string,
+  detectCalls: [] as Array<{ forceRefresh?: boolean }>,
 }));
 
 vi.mock('@electron/utils/workspace-runtime-permissions', () => ({
@@ -19,20 +20,23 @@ vi.mock('@electron/utils/workspace-runtime-permissions', () => ({
 }));
 
 vi.mock('@electron/utils/sandbox-provider-detection', () => ({
-  detectSandboxProviderSnapshot: vi.fn(async () => ({
-    docker: { cli: state.dockerAvailable, daemon: state.dockerAvailable, image: state.dockerAvailable },
-    providers: [
-      { id: 'policy-light', label: 'Policy-light', available: true, runtimeLevel: 'policy', capabilities: [] },
-      {
-        id: 'docker-strong',
-        label: 'Docker',
-        available: state.dockerAvailable,
-        runtimeLevel: state.dockerAvailable ? 'strong' : 'unavailable',
-        capabilities: [],
-      },
-    ],
-    detectedAt: Date.now(),
-  })),
+  detectSandboxProviderSnapshot: vi.fn(async (options?: { forceRefresh?: boolean }) => {
+    state.detectCalls.push({ forceRefresh: options?.forceRefresh === true });
+    return {
+      docker: { cli: state.dockerAvailable, daemon: state.dockerAvailable, image: state.dockerAvailable },
+      providers: [
+        { id: 'policy-light', label: 'Policy-light', available: true, runtimeLevel: 'policy', capabilities: [] },
+        {
+          id: 'docker-strong',
+          label: 'Docker',
+          available: state.dockerAvailable,
+          runtimeLevel: state.dockerAvailable ? 'strong' : 'unavailable',
+          capabilities: [],
+        },
+      ],
+      detectedAt: Date.now(),
+    };
+  }),
 }));
 
 describe('explicit strong sandbox requests fail closed (#156)', () => {
@@ -40,6 +44,7 @@ describe('explicit strong sandbox requests fail closed (#156)', () => {
     state.requestedProviderId = 'policy-light';
     state.dockerAvailable = false;
     state.permissionMode = 'readOnly';
+    state.detectCalls.length = 0;
   });
 
   it('resolver throws when requireStrong is set and the strong provider is unavailable', async () => {
@@ -156,6 +161,21 @@ describe('explicit strong sandbox requests fail closed (#156)', () => {
     expect(policy.degraded).toBe(false);
   });
 
+  it('re-detects capabilities at the execution boundary when strong isolation is requested', async () => {
+    state.requestedProviderId = 'docker-strong';
+    state.dockerAvailable = true;
+
+    const { getActiveSandboxHighRiskPolicy } = await import('@electron/utils/active-sandbox-high-risk-policy');
+    await getActiveSandboxHighRiskPolicy();
+    // A strong request must bypass the 15s detection cache so a provider that
+    // vanished after selection cannot be reported as still strong.
+    expect(state.detectCalls).toContainEqual({ forceRefresh: true });
+
+    state.detectCalls.length = 0;
+    state.requestedProviderId = 'policy-light';
+    await getActiveSandboxHighRiskPolicy();
+    expect(state.detectCalls).toContainEqual({ forceRefresh: false });
+  });
   it('active policy snapshot does not mark strengthRequired for policy-light', async () => {
     state.requestedProviderId = 'policy-light';
     state.dockerAvailable = false;
