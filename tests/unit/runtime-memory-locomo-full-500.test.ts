@@ -721,17 +721,15 @@ function loadObservationCache(
     const raw = readFileSync(OBSERVATION_CACHE_PATH, "utf-8");
     const parsed = JSON.parse(raw) as ObservationCache;
     if (parsed.version !== OBSERVATION_CACHE_VERSION) return null;
-    // Check coverage: all expected conversations must be present.
-    for (const convId of expectedConvIds) {
-      if (!parsed.conversations[convId]) return null;
-    }
+    // Partial caches are valid: consolidation writes after EACH conversation, so
+    // an interrupted run resumes only the conversations still missing. A cache
+    // with nothing usable is treated as absent.
     const result = new Map<string, ObservationFact[]>();
     for (const convId of expectedConvIds) {
       const obs = parsed.conversations[convId];
-      if (!Array.isArray(obs)) return null;
-      result.set(convId, obs);
+      if (Array.isArray(obs)) result.set(convId, obs);
     }
-    return result;
+    return result.size > 0 ? result : null;
   } catch {
     return null;
   }
@@ -1615,7 +1613,10 @@ describe.skipIf(
         ) {
           const expectedConvIds = rawData.map((s) => s.sample_id);
           let observationsByConversation = loadObservationCache(expectedConvIds);
-          if (observationsByConversation !== null) {
+          if (observationsByConversation === null) {
+            observationsByConversation = new Map<string, ObservationFact[]>();
+          }
+          if (observationsByConversation.size > 0) {
             console.log(
               `[LoCoMo-Full] Item 3: Loaded observation cache (${observationsByConversation.size} conversations)`,
             );
@@ -1637,19 +1638,31 @@ describe.skipIf(
                 })),
               );
             }
-            observationsByConversation = await consolidateObservations(
-              inputByConv,
-              callTrackedDeepSeek,
-              {
+            // Resume: keep whatever the partial cache already holds and only
+            // consolidate the conversations still missing. Writing after each
+            // conversation means an interruption costs at most one conversation
+            // instead of the whole cross-session consolidation.
+            const pending = new Map<string, ObservationInputFact[]>();
+            for (const [convId, facts] of inputByConv) {
+              if (!observationsByConversation.has(convId)) pending.set(convId, facts);
+            }
+            console.log(
+              `[LoCoMo-Full] Item 3: ${observationsByConversation.size} conversations already cached, ${pending.size} still to consolidate`,
+            );
+            if (pending.size > 0) {
+              await consolidateObservations(pending, callTrackedDeepSeek, {
                 onProgress: (event) => {
                   console.log(
                     `[LoCoMo-Full] Item 3: ${event.conversationId} subject "${event.subject}": ` +
                       `${event.factsBefore} facts → ${event.observationsAfter} observations`,
                   );
                 },
-              },
-            );
-            saveObservationCache(observationsByConversation);
+                onConversationComplete: (convId, observations) => {
+                  observationsByConversation.set(convId, observations);
+                  saveObservationCache(observationsByConversation);
+                },
+              });
+            }
           }
 
           // Apply observations: replace merged facts with observations.

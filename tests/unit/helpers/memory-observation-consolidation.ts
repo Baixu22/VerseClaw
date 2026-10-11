@@ -410,9 +410,14 @@ export async function consolidateObservations(
       factsBefore: number;
       observationsAfter: number;
     }) => void;
+    // Called once per conversation as soon as its observations are final, so a
+    // caller can persist incremental state. Without this, an interruption loses
+    // every conversation's work because the cache is only written at the end.
+    onConversationComplete?: (conversationId: string, observations: ObservationFact[]) => void;
   } = {},
 ): Promise<Map<string, ObservationFact[]>> {
   const onProgress = options.onProgress ?? (() => {});
+  const onConversationComplete = options.onConversationComplete ?? (() => {});
   const result = new Map<string, ObservationFact[]>();
   let totalBatchesSent = 0;
 
@@ -450,6 +455,7 @@ export async function consolidateObservations(
     }
 
     result.set(convId, observations);
+    onConversationComplete(convId, observations);
     console.log(
       `[ObservationConsolidation] ${convId}: ${subjectsProcessed} subjects processed, ` +
         `${observations.length} observations generated, ${totalBatchesSent} batches sent`,
