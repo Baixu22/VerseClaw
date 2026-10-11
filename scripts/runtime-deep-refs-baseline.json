@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Explicit exemptions for parent-code references into the vendored openclaw_runtime tree that cannot resolve in a source checkout, required by issue #93 (\"existence-checked or explicitly exempted\"). Every entry needs a non-empty reason; the guard fails closed on any dangling reference that is not listed here.",
+  "howToAdd": "Add { file, target, reason } where target may use '*' wildcards. Prefer fixing the reference. A stale entry (one that no longer matches any reference) is reported as INFO and never fails the check.",
+  "entries": [
+    {
+      "file": "scripts/agent-map-validation.mjs",
+      "target": "scripts/openclaw_runtime/src/runtime-core/agent-map.ts",
+      "reason": "Generated BENCHMARK_SCRIPT text, piped to `tsx -` with cwd = repo root, so its `./openclaw_runtime/...` specifier resolves against the repo root rather than against scripts/. Verified by reading the spawn call (cwd: ROOT, input: BENCHMARK_SCRIPT)."
+    },
+    {
+      "file": "scripts/check-live-model-evidence.mjs",
+      "target": "openclaw_runtime/dist/entry.js",
+      "reason": "Build output, produced by `pnpm run build:runtime`; a source checkout legitimately has no dist/ tree. The script hashes the file at run time and fails on its own when the build is missing."
+    },
+    {
+      "file": "scripts/rc01r-prerequisite-provenance.mjs",
+      "target": "openclaw_runtime/src/context-engine/cvk/codebase-index.ts",
+      "reason": "PREREQUISITE_PATHS is the expected file set of the historical diff PREREQUISITE_DIFF_BASE..PREREQUISITE_COMMIT (c860c12f4), compared against `git diff --name-only` for that range, not against the working tree. The path existed in that range and was later renamed; existence must be judged against the pinned commit. The list length is also pinned (38), so it must not be edited to silence this guard."
+    }
+  ]
+}

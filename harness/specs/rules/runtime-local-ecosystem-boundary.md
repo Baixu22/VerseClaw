@@ -17,6 +17,10 @@ OpenClaw ownership boundaries.
 - Keep runtime core, context, provider, evidence, task-loop, mission-loop, skill,
   MCP, and observability behavior inside `openclaw_runtime/**` or existing
   Main-owned bridge services.
+- Do not add new deep references from parent code into `openclaw_runtime/**`
+  internals: every such reference (code or string) must resolve or be exempted with
+  a reason, per `runtime-deep-reference-boundary` and
+  `pnpm run check:runtime-deep-refs`.
 - Keep Task Ledger as durable work state, ClawGraph as graph execution state,
   Observability as run evidence, and Context Pack as bounded injection.
 - Do not add another task database, rule system, mission store, or hidden
