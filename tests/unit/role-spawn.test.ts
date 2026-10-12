@@ -25,6 +25,7 @@ import {
   storeMemoryCard,
 } from '../../openclaw_runtime/src/memory/memory-store';
 import type { MemoryCard } from '../../openclaw_runtime/src/memory/types';
+import { dcsObservability } from '../../openclaw_runtime/src/context-engine/dcs-observability';
 
 /** Inline subset of SpawnSubagentParams — avoids chaining through subagent-spawn.ts deps. */
 type FakeSpawnParams = {
@@ -223,6 +224,51 @@ describe('role-driven spawn mapping', () => {
     const injections = explainMemoryInjection({ roleName: 'architect' });
     expect(injections).toHaveLength(1);
     expect(injections[0]?.cardIds).toContain('mem_arch_1');
+  });
+
+  it('#183 counts the role-spawn memory injection it cannot charge to a turn budget', () => {
+    const now = new Date('2026-06-12T00:00:00.000Z').toISOString();
+    storeMemoryCard({
+      id: 'mem_arch_counted',
+      type: 'constraint',
+      scope: 'role',
+      scopeKey: null,
+      roleTags: ['architect'],
+      phaseTags: ['plan'],
+      content: 'Counted role memory.',
+      evidence: ['AGENTS.md'],
+      evidenceRefs: [{ type: 'file', ref: 'AGENTS.md' }],
+      confidence: 0.95,
+      importance: 0.8,
+      lastAccessedAt: now,
+      createdAt: now,
+      updatedAt: now,
+      accessCount: 0,
+      version: 1,
+      status: 'active',
+      sensitivity: 'normal',
+      durability: 'long_term',
+      source: 'user',
+      supersedes: null,
+      supersededBy: null,
+      expiresAt: null,
+    });
+
+    const before = dcsObservability.snapshot();
+    const params = buildRoleSpawnParams(
+      architect,
+      { role: architect, task: 'design module' },
+      { agentSessionKey: 'agent:main:abc' },
+    );
+    const after = dcsObservability.snapshot();
+
+    // The bytes land in the child's system prompt, so they can never be charged
+    // to a turn ledger — the counter is what keeps the bypass visible.
+    expect(after.roleSpawnMemoryInjectionCalls - before.roleSpawnMemoryInjectionCalls).toBe(1);
+    expect(after.roleSpawnMemoryInjectionCards - before.roleSpawnMemoryInjectionCards).toBe(1);
+    const countedChars = after.roleSpawnMemoryInjectionChars - before.roleSpawnMemoryInjectionChars;
+    expect(countedChars).toBeGreaterThan(0);
+    expect(countedChars).toBeLessThanOrEqual((params.roleSystemPrompt ?? '').length);
   });
 
   it('does not inject or record role memory when Role Memory is disabled', () => {

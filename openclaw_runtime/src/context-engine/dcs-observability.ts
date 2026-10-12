@@ -39,6 +39,15 @@ export type DcsObservabilitySnapshot = {
   vtokenPromptOverlapSources: number;
   vtokenPromptOverlapChars: number;
   vtokenPromptOverlapToolSchemas: number;
+  /**
+   * #183: memory bytes `role-spawn` rendered into a spawned child's system
+   * prompt. That path never charges the turn ledger (the bytes land in a
+   * *different* session's prompt), so the only honest way to keep it visible is
+   * to count it here instead of pretending it is budgeted.
+   */
+  roleSpawnMemoryInjectionCalls: number;
+  roleSpawnMemoryInjectionChars: number;
+  roleSpawnMemoryInjectionCards: number;
   /** #182: the most recent VToken overlap breakdown (numerators + totals). */
   lastVtokenOverlap: {
     sourceCount: number;
@@ -112,6 +121,9 @@ const ZERO: DcsObservabilitySnapshot = {
   vtokenPromptOverlapSources: 0,
   vtokenPromptOverlapChars: 0,
   vtokenPromptOverlapToolSchemas: 0,
+  roleSpawnMemoryInjectionCalls: 0,
+  roleSpawnMemoryInjectionChars: 0,
+  roleSpawnMemoryInjectionCards: 0,
   lastVtokenOverlap: null,
   contextOrchestratorCalls: 0,
   contextOrchestratorKillSwitchHits: 0,
@@ -192,6 +204,17 @@ class DcsObservabilityRegistry {
       Math.floor(params.estimatedTokens ?? 0),
     );
     this.#counters.vtokenSourcesIngested += Math.max(0, Math.floor(params.sourcesIngested ?? 0));
+  }
+
+  /**
+   * #183: record one role-spawn memory injection into a child system prompt.
+   * Emitted from the renderer so the "role-spawn bypasses the turn budget" gap
+   * has a number instead of only a code-path argument.
+   */
+  recordRoleSpawnMemoryInjection(params: { chars: number; cardCount: number }): void {
+    this.#counters.roleSpawnMemoryInjectionCalls += 1;
+    this.#counters.roleSpawnMemoryInjectionChars += Math.max(0, Math.floor(params.chars));
+    this.#counters.roleSpawnMemoryInjectionCards += Math.max(0, Math.floor(params.cardCount));
   }
 
   /**

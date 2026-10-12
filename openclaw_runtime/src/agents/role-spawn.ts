@@ -30,6 +30,7 @@ import { getMemoryCards, ensureMemoryCardsLoaded, recordMemoryInjection, listMem
 import { isInjectableMemoryCard, isMemoryCardInContextScope, type MemoryCardScopeContext } from "../memory/memory-card.js";
 import { applyMemoryUseGateOverlay } from "../memory/memory-dual-gate.js";
 import { buildContextPack, renderContextPack } from "../memory/context-pack.js";
+import { dcsObservability } from "../context-engine/dcs-observability.js";
 import { RC03_PRE_SEAL_PRODUCERS } from "../context-engine/rc03-producers.js";
 import { recordRc03SystemPromptContribution } from "../context-engine/rc03-seal-hook.js";
 import type { MemoryCard } from "../memory/types.js";
@@ -193,6 +194,13 @@ export function buildRoleSystemPrompt(
       if (rendered) {
         parts.push(["", "## Memory Context", rendered, ""].join("\n"));
         recordRc03SystemPromptContribution(RC03_PRE_SEAL_PRODUCERS.roleSpawnMemoryPack, rendered);
+        // #183: these bytes land in the *child's* system prompt, so they can
+        // never be charged to a turn ledger. Count them instead of leaving the
+        // bypass invisible.
+        dcsObservability.recordRoleSpawnMemoryInjection({
+          chars: rendered.length,
+          cardCount: injectable.length,
+        });
       }
       try {
         recordMemoryInjection({
