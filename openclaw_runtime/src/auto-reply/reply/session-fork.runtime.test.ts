@@ -25,12 +25,18 @@ function makeRoot(): string {
   return root;
 }
 
-function transcriptEntry(id: string, parentId: string | null, role: string, content: string) {
+function transcriptEntry(
+  id: string,
+  parentId: string | null,
+  role: string,
+  content: string,
+  timestamp = "2026-01-01T00:00:00.000Z",
+) {
   return {
     type: "message",
     id,
     parentId,
-    timestamp: "2026-01-01T00:00:00.000Z",
+    timestamp,
     message: { role, content },
   };
 }
@@ -108,6 +114,42 @@ describe("#180 fork at an in-transcript point", () => {
     const written = readForked(forked!.sessionFile);
     expect(written).toContain("first answer");
     expect(written).not.toContain("second question");
+  });
+
+  it("reports the fork point id and its own message timestamp (#180 lineage)", async () => {
+    const root = makeRoot();
+    const file = path.join(root, "parent.jsonl");
+    const entries = [
+      {
+        type: "session",
+        version: CURRENT_SESSION_VERSION,
+        id: "parent",
+        timestamp: "2026-01-01T00:00:00.000Z",
+        cwd: root,
+      },
+      transcriptEntry("u1", null, "user", "first question", "2026-02-01T10:00:00.000Z"),
+      transcriptEntry("a1", "u1", "assistant", "first answer", "2026-02-01T10:05:00.000Z"),
+      transcriptEntry("u2", "a1", "user", "second question", "2026-02-01T11:00:00.000Z"),
+      transcriptEntry("a2", "u2", "assistant", "second answer", "2026-02-01T11:05:00.000Z"),
+    ];
+    writeFileSync(file, `${entries.map((entry) => JSON.stringify(entry)).join("\n")}\n`, "utf-8");
+
+    const atPoint = await forkSessionFromParentRuntime({
+      parentEntry: { sessionId: "parent", sessionFile: file },
+      agentId: "main",
+      sessionsDir: root,
+      fromEntryId: "a1",
+    });
+    expect(atPoint?.forkedFromLeafId).toBe("a1");
+    expect(atPoint?.forkedFromTimestamp).toBe(Date.parse("2026-02-01T10:05:00.000Z"));
+
+    const wholeSession = await forkSessionFromParentRuntime({
+      parentEntry: { sessionId: "parent", sessionFile: file },
+      agentId: "main",
+      sessionsDir: root,
+    });
+    expect(wholeSession?.forkedFromLeafId).toBe("a2");
+    expect(wholeSession?.forkedFromTimestamp).toBe(Date.parse("2026-02-01T11:05:00.000Z"));
   });
 
   it("fails closed on an unknown fork point instead of forking the tip", async () => {

@@ -98,7 +98,14 @@ export async function forkSessionFromParent(params: {
   agentId: string;
   sessionsDir: string;
   fromEntryId?: string;
-}): Promise<{ sessionId: string; sessionFile: string } | null> {
+}): Promise<{
+  sessionId: string;
+  sessionFile: string;
+  /** #180: the parent entry id the child was branched at. */
+  forkedFromLeafId?: string;
+  /** #180: epoch ms of the parent message at the fork point. */
+  forkedFromTimestamp?: number;
+} | null> {
   const runtime = await loadSessionForkRuntime();
   return runtime.forkSessionFromParentRuntime(params);
 }

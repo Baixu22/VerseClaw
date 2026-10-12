@@ -2146,6 +2146,8 @@ export function buildGatewaySessionRow(params: {
     spawnedWorkspaceDir: entry?.spawnedWorkspaceDir,
     spawnedCwd: entry?.spawnedCwd,
     forkedFromParent: entry?.forkedFromParent,
+    forkedFromLeafId: entry?.forkedFromLeafId,
+    forkedFromTimestamp: entry?.forkedFromTimestamp,
     spawnDepth: entry?.spawnDepth,
     spawnRootSessionKey: entry?.spawnRootSessionKey,
     subagentRole: entry?.subagentRole,

@@ -543,6 +543,12 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
         sessionFile: forked.sessionFile,
         parentSessionKey: source.canonicalKey,
         forkedFromParent: true,
+        // #180: persist the fork point so the header lineage can name the
+        // parent message it branched at, not just the parent session.
+        ...(forked.forkedFromLeafId ? { forkedFromLeafId: forked.forkedFromLeafId } : {}),
+        ...(typeof forked.forkedFromTimestamp === "number"
+          ? { forkedFromTimestamp: forked.forkedFromTimestamp }
+          : {}),
         updatedAt: Date.now(),
         systemSent: false,
         abortedLastRun: false,

@@ -1191,7 +1191,8 @@
     "renameCurrent": "Переименовать текущую сессию",
     "renameFailed": "Не удалось переименовать сессию: {{error}}",
     "lineage": {
-      "forkedFrom": "Fork от {{session}}"
+      "forkedFrom": "Fork от {{session}}",
+      "forkedFromAt": "Fork от {{session}} · {{time}}"
     }
   },
   "composer": {

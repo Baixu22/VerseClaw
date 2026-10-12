@@ -1191,7 +1191,8 @@
     "renameCurrent": "現在のセッション名を変更",
     "renameFailed": "セッション名の変更に失敗しました: {{error}}",
     "lineage": {
-      "forkedFrom": "{{session}} から Fork"
+      "forkedFrom": "{{session}} から Fork",
+      "forkedFromAt": "{{session}} から Fork · {{time}}"
     }
   },
   "composer": {

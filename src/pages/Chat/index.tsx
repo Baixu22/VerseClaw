@@ -304,6 +304,20 @@ export function resolveWorkspaceHeaderSessions({
     .reverse();
 }
 
+/** #180: the lineage line shows the fork point as a short date+time. */
+function formatLineageTimestamp(value: number): string {
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(value));
+  } catch {
+    return new Date(value).toLocaleString();
+  }
+}
+
 function formatNewSessionDisplayName(sessionKey: string): string {
   const rawId = sessionKey.split(':').pop() || sessionKey;
   if (rawId.startsWith('session-')) {
@@ -750,9 +764,14 @@ function ProjectSessionHeader({
                         className="block truncate text-2xs text-muted-foreground"
                         data-testid="chat-session-lineage"
                       >
-                        {t('session.lineage.forkedFrom', {
-                          session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
-                        })}
+                        {typeof session.forkedFromTimestamp === 'number'
+                          ? t('session.lineage.forkedFromAt', {
+                              session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
+                              time: formatLineageTimestamp(session.forkedFromTimestamp),
+                            })
+                          : t('session.lineage.forkedFrom', {
+                              session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
+                            })}
                       </span>
                     )}
                   </span>

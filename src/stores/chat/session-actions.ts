@@ -140,6 +140,10 @@ export function createSessionActions(
             hasActiveRun: typeof s.hasActiveRun === 'boolean' ? s.hasActiveRun : undefined,
             parentSessionKey: s.parentSessionKey ? String(s.parentSessionKey) : undefined,
             forkedFromParent: typeof s.forkedFromParent === 'boolean' ? s.forkedFromParent : undefined,
+            forkedFromLeafId: s.forkedFromLeafId ? String(s.forkedFromLeafId) : undefined,
+            forkedFromTimestamp: typeof s.forkedFromTimestamp === 'number' && Number.isFinite(s.forkedFromTimestamp)
+              ? s.forkedFromTimestamp
+              : undefined,
           })).filter((s: ChatSession) => s.key);
 
           const canonicalBySuffix = new Map<string, string>();

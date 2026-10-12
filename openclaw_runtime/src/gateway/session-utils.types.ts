@@ -43,6 +43,10 @@ export type GatewaySessionRow = {
   spawnedWorkspaceDir?: string;
   spawnedCwd?: string;
   forkedFromParent?: boolean;
+  /** #180: parent transcript entry id the child was branched at. */
+  forkedFromLeafId?: string;
+  /** #180: epoch ms of the parent message at the fork point. */
+  forkedFromTimestamp?: number;
   spawnDepth?: number;
   /** #179: spawn-chain origin, inherited at spawn time (see SessionEntry). */
   spawnRootSessionKey?: string;

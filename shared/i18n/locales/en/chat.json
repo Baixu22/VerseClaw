@@ -1191,7 +1191,8 @@
     "renameCurrent": "Rename current session",
     "renameFailed": "Failed to rename session: {{error}}",
     "lineage": {
-      "forkedFrom": "Forked from {{session}}"
+      "forkedFrom": "Forked from {{session}}",
+      "forkedFromAt": "Forked from {{session}} · {{time}}"
     }
   },
   "composer": {

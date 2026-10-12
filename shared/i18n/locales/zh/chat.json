@@ -1191,7 +1191,8 @@
     "renameCurrent": "重命名当前会话",
     "renameFailed": "重命名会话失败：{{error}}",
     "lineage": {
-      "forkedFrom": "Fork 自 {{session}}"
+      "forkedFrom": "Fork 自 {{session}}",
+      "forkedFromAt": "Fork 自 {{session}} · {{time}}"
     }
   },
   "composer": {

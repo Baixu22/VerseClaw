@@ -22,6 +22,8 @@ const SESSION_ENTRY_RESERVED_SLOT_KEY_LIST = [
   "spawnedWriteSet",
   "parentSessionKey",
   "forkedFromParent",
+  "forkedFromLeafId",
+  "forkedFromTimestamp",
   "spawnDepth",
   "spawnRootSessionKey",
   "subagentRole",

@@ -3,6 +3,8 @@ import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from
 const SOURCE_SESSION_KEY = 'agent:main:main';
 const FORK_SESSION_KEY = 'agent:main:fork-1711111111111';
 const SOURCE_DRAFT = 'unsent fork draft';
+/** #180: the fork row's parent-message timestamp drives the lineage line. */
+const FORK_FORKED_FROM_TIMESTAMP = 1711111111000;
 const HANDOFF_DRAFT = [
   '# Handoff: continue this Verse Claw conversation',
   '',
@@ -389,6 +391,7 @@ test.describe('Verse Claw chat session fork', () => {
                     displayName: 'Forked main',
                     parentSessionKey: params.sourceSessionKey,
                     forkedFromParent: true,
+                    forkedFromTimestamp: params.forkedFromTimestamp,
                   },
                 ],
               });
@@ -418,6 +421,7 @@ test.describe('Verse Claw chat session fork', () => {
         sourceHistory,
         forkHistory,
         forkWorkspace: buildForkWorkspace(),
+        forkedFromTimestamp: FORK_FORKED_FROM_TIMESTAMP,
       });
 
       const page = await getStableWindow(app);
@@ -458,6 +462,15 @@ test.describe('Verse Claw chat session fork', () => {
       await expect(lineageLine).toBeVisible();
       await expect(lineageLine).toContainText('main');
       await expect(lineageLine).not.toContainText(SOURCE_SESSION_KEY);
+      // #180: the fork row carries the parent-message timestamp, so the lineage
+      // line shows where in the parent's transcript the branch was cut.
+      const expectedForkTime = await page.evaluate((ms) => new Intl.DateTimeFormat(undefined, {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(new Date(ms)), FORK_FORKED_FROM_TIMESTAMP);
+      await expect(lineageLine).toContainText(expectedForkTime);
       await page.keyboard.press('Escape');
       await expect.poll(async () => app.evaluate(() => (
         (globalThis as typeof globalThis & { __forkCalls?: { chatSend: number } }).__forkCalls?.chatSend ?? 0
