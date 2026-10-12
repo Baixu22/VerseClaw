@@ -24,6 +24,8 @@ touchedAreas:
   - harness/specs/tasks/prompt-cache-compaction-ttl-20261012.md
   - harness/specs/rules/prompt-cache-observation-boundary.md
   - docs/dev/prompt-cache-compaction-ttl-20261012.md
+  - docs/dev/prompt-cache-compaction-ttl-20261012/acceptance.json
+  - docs/dev/prompt-cache-compaction-ttl-20261012/SHA256SUMS
 requiredRules:
   - prompt-cache-observation-boundary
   - backend-communication-boundary

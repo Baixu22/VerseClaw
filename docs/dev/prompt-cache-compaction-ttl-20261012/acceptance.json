@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "issue": 164,
+  "title": "Compaction is TTL-aware for the explicit opt-in path",
+  "status": "pass",
+  "drivenBy": "agent",
+  "actor": "codex",
+  "implementation": {
+    "commit": "0af8cddb5690affc98f4e66beca10720cdd30918",
+    "tree": "3ece74e5ee367088b3ad65c77ba6bd7be6f0d608",
+    "parent": "def506482448b918eda1ea6dd954171e957d83d1"
+  },
+  "acceptance": [
+    "Budget-triggered compaction inside the configured contextPruning TTL returns ok=true, compacted=false and the stable cache-TTL deferral reason before checkpoint capture or transcript rewrite.",
+    "Cold TTL, opt-in off and non-eligible providers preserve the existing compaction path.",
+    "Manual, overflow and timeout recovery are never deferred by the cache-TTL gate.",
+    "The new config defaults to false and no frozen default, product lock or provider cache-control policy changes.",
+    "The implementation reuses the existing openclaw.cache-ttl marker and contextPruning TTL settings; no keepalive or TTL refresh is introduced."
+  ],
+  "focusedTests": {
+    "command": "node v24.19.0 node_modules/vitest/vitest.mjs run tests/unit/compaction-cache-ttl.test.ts tests/unit/config-schema-parity.test.ts",
+    "files": 2,
+    "passed": 129,
+    "failed": 0,
+    "skipped": 0
+  },
+  "gates": {
+    "typecheckNode": "exit 0",
+    "typecheckTest": "exit 0",
+    "contractCheck": "exit 0",
+    "scopedEslint": "exit 0",
+    "commsReplay": "exit 0",
+    "commsCompare": "PASS",
+    "harnessValidate": "exit 0",
+    "fullHarnessRun": "exit 1: pre-existing lint errors in tests/unit/runtime-memory-locomo-full-500.test.ts; retained in external evidence log 08-harness-run.log"
+  },
+  "externalEvidence": {
+    "directory": "D:/ClawX-work/p2-164-prompt-cache-ttl-20261012",
+    "sha256sumsSha256": "08963b7f7f4b6cbcfc3076d4020ffad7d0b9f0e389237cf07eb54910c8233ea9c",
+    "credentialScan": {
+      "scannedFiles": 31,
+      "matches": 0
+    }
+  },
+  "remote": {
+    "main": "0af8cddb5690affc98f4e66beca10720cdd30918",
+    "branch": "0af8cddb5690affc98f4e66beca10720cdd30918",
+    "issueState": "CLOSED/COMPLETED"
+  },
+  "boundaries": [
+    "No hit-rate, cost or throughput improvement claim.",
+    "No keepalive, TTL refresh or provider cache-control rewrite.",
+    "No release, public repository or product-lock change."
+  ]
+}
