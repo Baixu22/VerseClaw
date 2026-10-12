@@ -12,7 +12,8 @@
 //
 // Requires: RUNTIME_MEMORY_REAL_LLM=1, DEEPSEEK_API_KEY, SILICONFLOW_API_KEY
 
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { appendFileSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { getHeapStatistics } from "node:v8";
 import { join, dirname } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { createLocomoProvenance, writeLocomoReport } from "../../scripts/check-locomo-evidence.mjs";
@@ -1438,7 +1439,55 @@ async function judgeAnswer(
   return score;
 }
 
-afterEach(() => {});
+// Judge-phase heartbeats. judge-07's vitest worker was killed with no OOM event and no
+// crash report, and the only timeline on disk recorded SYSTEM free memory. These records
+// are written from inside the evaluation worker, so a future kill leaves that worker's
+// own heap and RSS curve instead of a blank.
+const HEARTBEAT_PATH = join(EVAL_ARTIFACT_DIR, "progress-timeline.jsonl");
+let heartbeatTimer: ReturnType<typeof setInterval> | null = null;
+
+function memorySnapshot(): Record<string, number> {
+  const mem = process.memoryUsage();
+  const mib = (bytes: number) => Math.round(bytes / 1048576);
+  return {
+    rssMb: mib(mem.rss),
+    heapUsedMb: mib(mem.heapUsed),
+    heapTotalMb: mib(mem.heapTotal),
+    externalMb: mib(mem.external),
+    heapLimitMb: mib(getHeapStatistics().heap_size_limit),
+  };
+}
+
+function writeHeartbeat(phase: string, answered: number, pending: number): void {
+  try {
+    appendFileSync(
+      HEARTBEAT_PATH,
+      JSON.stringify({
+        driven_by: "agent",
+        at: new Date().toISOString(),
+        phase,
+        answered,
+        pending,
+        pid: process.pid,
+        ...memorySnapshot(),
+      }) + "\n",
+      "utf-8",
+    );
+  } catch {
+    // The heartbeat is diagnostic: losing a sample must never fail the evaluation.
+  }
+}
+
+function stopHeartbeat(): void {
+  if (heartbeatTimer) {
+    clearInterval(heartbeatTimer);
+    heartbeatTimer = null;
+  }
+}
+
+afterEach(() => {
+  stopHeartbeat();
+});
 
 function isFullEvalRequested(): boolean {
   return process.env.FULL_EVAL === "1" || process.argv.includes("--full");
@@ -1517,6 +1566,14 @@ describe.skipIf(
             : null;
         if (embedding) await createLocomoEmbeddingProvider().embedQuery("LoCoMo embedding preflight");
         const provenance = { ...createLocomoProvenance(getRuntimeMemoryLlmConfig()), embedding, crossEncoderAvailable: hasSiliconFlowRerankKey() };
+        // A fatal OOM should leave a Node report beside the run's other evidence instead
+        // of disappearing with the process.
+        try {
+          process.report.directory = EVAL_ARTIFACT_DIR;
+          process.report.filename = "node-fatal-report.json";
+        } catch {
+          // Best effort; the heartbeat below still records the memory curve.
+        }
         const rawData = loadRawData();
         const evidenceTextByConversation = new Map(rawData.map((sample) => [
           sample.sample_id,
@@ -3629,6 +3686,14 @@ describe.skipIf(
         }
 
         const answeredThisSegment: string[] = [];
+        writeHeartbeat("judging-start", replayed.length, sampled.length - replayed.length);
+        heartbeatTimer = setInterval(() => {
+          writeHeartbeat(
+            "judging",
+            replayed.length + answeredThisSegment.length,
+            pending.length - answeredThisSegment.length,
+          );
+        }, 60_000);
         for (let i = 0; i < pending.length; i += BATCH_SIZE) {
           const batch = pending.slice(i, i + BATCH_SIZE);
           const receiptsBeforeBatch = journalFile ? getRuntimeMemoryLlmReceipts().length : 0;
@@ -3719,9 +3784,17 @@ describe.skipIf(
             );
           }
 
+          writeHeartbeat(
+            "judging",
+            replayed.length + answeredThisSegment.length,
+            pending.length - answeredThisSegment.length,
+          );
+
           // Small delay between batches to avoid network pressure
           await new Promise((r) => setTimeout(r, 500));
         }
+        stopHeartbeat();
+        writeHeartbeat("judging-complete", results.length, sampled.length - results.length);
         assertNoQuestionOverlap(retainedIds, answeredThisSegment);
 
         // Compute final metrics

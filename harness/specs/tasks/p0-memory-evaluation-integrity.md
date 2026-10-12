@@ -71,6 +71,7 @@ acceptance:
   - The full-run command cannot silently truncate a run: its child budget is explicit, an invalid budget fails closed instead of falling back, and a resumed run records the source run directory, its source revision and the per-file digests of the intermediate caches it reused.
   - Each answered question is durable before the next batch starts: an interruption leaves a journal that the next segment resumes, and a question that failed or was never answered can never be written as a judged result.
   - A report assembled from a retained journal plus a fresh segment passes the same verifier as a single-shot run, including one live judge receipt per question, the widened logical-run receipt window, retained usage, and full judge coverage.
+  - The judge phase runs under an explicit V8 heap budget with a fatal-error report, the budget is recorded in run-budget.json, and in-worker heap/RSS heartbeats land in progress-timeline.jsonl so a future kill leaves a curve instead of a gap.
   - Read all final artifacts from disk, run scoped tests and type checks, and commit only this isolated repair set.
 ---
 
@@ -100,3 +101,25 @@ earliest retained answer, and the finished report still has to pass
 `run-progress.json` and fails closed instead of emitting a report the verifier would
 reject. `--resume-from` copies the journal along with the intermediate caches and
 records its source revision and per-file digests.
+
+## Judge-phase budget and heartbeats
+
+judge-07's vitest worker was killed with no OOM event and no crash report while
+llama-server kept running. Measured live objects totalled ~0.95 GB against Node's
+4.19 GB default old-space limit, so the kill is not explained by the heap we can
+account for -- but it also cannot be ruled out while Node keeps dying silently.
+
+The full-run command now:
+
+- sets `--max-old-space-size` (default 6144 MB, `--heap-mb` / `RUNTIME_MEMORY_FULL_HEAP_MB`
+  to override, below 512 MB rejected rather than clamped) and `--report-on-fatal-error`
+  on the child via `NODE_OPTIONS`;
+- writes the resolved timeout and heap budget to `run-budget.json` in the run directory;
+- points `process.report` at the run directory so a fatal OOM leaves
+  `node-fatal-report.json` beside the other evidence;
+- appends in-worker `progress-timeline.jsonl` heartbeats (rss, heapUsed, heapTotal,
+  external, heapLimit) at start, after every batch, and every 60 s.
+
+Raising the limit is a measurement change, not a fix: if the next run dies inside the
+new limit, the report and the heartbeat curve say so, and the "unexplained external
+kill" position can be narrowed or replaced with evidence.

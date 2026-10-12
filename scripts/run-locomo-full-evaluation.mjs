@@ -42,6 +42,26 @@ export function resolveTimeoutMinutes(raw, fromEnv = process.env.RUNTIME_MEMORY_
  * budget, so a run that runs out of time fails as a normal test failure with a
  * report attempt instead of being killed mid-flight by the wrapper.
  */
+const DEFAULT_HEAP_MB = 6144;
+
+/**
+ * The judge phase runs in the same process that holds the extraction and embedding
+ * caches. Node's default old-space limit on the run host was 4.19 GB while every live
+ * object we could account for totalled ~0.95 GB, so the recorded kills are not explained
+ * by the heap we can measure. Raising the limit turns "heap exhaustion" into an explicit
+ * outcome -- a Node fatal-error report -- instead of another silent kill, and leaves the
+ * budget visible in run-budget.json.
+ */
+export function resolveHeapMb(raw, fromEnv = process.env.RUNTIME_MEMORY_FULL_HEAP_MB) {
+  const value = raw ?? fromEnv;
+  if (value === undefined || value === null || value === '') return DEFAULT_HEAP_MB;
+  const mb = Number(value);
+  if (!Number.isFinite(mb) || mb < 512) {
+    throw new Error('heap-mb must be a number of megabytes >= 512');
+  }
+  return Math.round(mb);
+}
+
 export function resolveTestTimeoutMinutes(raw, outerMinutes) {
   if (raw === undefined || raw === null || raw === '') return null;
   const minutes = Number(raw);
@@ -94,6 +114,7 @@ async function main() {
     'resume-from': { type: 'string' },
     'resume-source-revision': { type: 'string' },
     'extraction-only': { type: 'boolean', default: false },
+    'heap-mb': { type: 'string' },
     'extraction-batch': { type: 'string' },
   } });
   if (values['credentials-stdin']) {
@@ -137,6 +158,16 @@ async function main() {
   // Only override the suite's own default when the operator asked for it, so the
   // historical 36h behaviour is preserved for every existing invocation.
   if (testTimeoutMinutes !== null) env.RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES = String(testTimeoutMinutes);
+  // Give the judge phase explicit V8 headroom and make a fatal OOM write a report.
+  const heapMb = resolveHeapMb(values['heap-mb']);
+  env.NODE_OPTIONS = [process.env.NODE_OPTIONS, '--max-old-space-size=' + heapMb, '--report-on-fatal-error']
+    .filter(Boolean).join(' ');
+  env.RUNTIME_MEMORY_FULL_HEAP_MB = String(heapMb);
+  writeFileSync(join(output, 'run-budget.json'), JSON.stringify({
+    driven_by: 'agent', actor: 'dsh-lead', recordedAt: new Date().toISOString(),
+    timeoutMinutes, testTimeoutMinutes, heapMb, nodeOptions: env.NODE_OPTIONS,
+    resumeFrom: values['resume-from'] ?? null, resumeSourceRevision: values['resume-source-revision'] ?? null,
+  }, null, 2) + '\n');
   const result = spawnSync(process.execPath, [join(root, 'node_modules/vitest/vitest.mjs'), 'run', 'tests/unit/runtime-memory-locomo-full-500.test.ts', '--reporter=verbose'], {
     cwd: root, env, stdio: 'inherit', windowsHide: true, timeout: timeoutMinutes * 60 * 1000,
   });
