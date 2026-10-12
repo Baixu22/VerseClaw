@@ -16,6 +16,10 @@ import {
   type CheckpointRollbackExecutorOptions,
 } from "./checkpoint-rollback-executor.js";
 import { executeReplayRollback } from "./replay-rollback-authority.js";
+import {
+  __resetBatchLocks,
+  acquirePatchBatchLocks,
+} from "./apply-patch-batch-lock.js";
 import { buildRuntimeResumeCheckpoint } from "./long-task-control/store.js";
 import type { LongTaskCheckpointRecord } from "./long-task-control/store.js";
 
@@ -59,11 +63,13 @@ describe("checkpoint-rollback-executor (A3)", () => {
 
   beforeEach(() => {
     __resetWriteJournals();
+    __resetBatchLocks();
     repoRoot = mkdtempSync(path.join(tmpdir(), "rollback-exec-"));
   });
 
   afterEach(() => {
     __resetWriteJournals();
+    __resetBatchLocks();
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
@@ -487,6 +493,56 @@ describe("checkpoint-rollback-executor (A3)", () => {
         sessionId: "sess-not-journalled",
       });
       await expect(deps.applyCheckpoint(record)).rejects.toThrow(/no_journal_for_session/);
+    });
+
+    it("#175 serializes the rollback against a writer holding the same file lease", async () => {
+      const file = path.join(repoRoot, "f.ts");
+      writeFileSync(file, "v0\n", "utf8");
+      snapshotBeforeWrite({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+        filePath: "f.ts",
+        toolName: "write",
+      });
+      writeFileSync(file, "v1\n", "utf8");
+      await sleepMs(5);
+      const record = makeCheckpointRecord({
+        id: "c1",
+        sessionKey,
+        createdAt: new Date().toISOString(),
+        filesTouched: ["f.ts"],
+      });
+      snapshotBeforeWrite({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+        filePath: "f.ts",
+        toolName: "write",
+      });
+      writeFileSync(file, "v2\n", "utf8");
+
+      const deps = createCheckpointRollbackDeps({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+      });
+
+      // Stand in for a concurrent writer: hold the lease that the write path
+      // holds for this file.
+      const releaseWriter = await acquirePatchBatchLocks([file]);
+      let settled = false;
+      const applied = deps.applyCheckpoint(record).then(() => {
+        settled = true;
+      });
+
+      await sleepMs(25);
+      expect(
+        settled,
+        "the rollback must wait for the writer's lease instead of racing it",
+      ).toBe(false);
+
+      releaseWriter();
+      await applied;
+      // Once the lease is free the rollback actually completes.
+      expect(readFileSync(file, "utf8")).toBe("v1\n");
     });
 
     it("event_log target fails explicitly when pilot is disabled (no fake success)", async () => {
