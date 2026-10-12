@@ -1432,8 +1432,16 @@ if (gotTheLock) {
 
   // Application lifecycle
   app.whenReady().then(() => {
-    // Runtime efficiency sampling (P0 observability); cheap unref'd timer, local only.
-    startRuntimeEfficiency();
+    // Runtime efficiency sampling (P2 #161); cheap unref'd timer, local only.
+    // Honour the persisted opt-out: start only when enabled (default true).
+    void getSetting('efficiencySamplingEnabled')
+      .then((efficiencySamplingEnabled) => {
+        if (efficiencySamplingEnabled !== false) startRuntimeEfficiency();
+      })
+      .catch((error) => {
+        logger.warn('Failed to read efficiency sampling setting; defaulting to enabled', error);
+        startRuntimeEfficiency();
+      });
     void initialize().catch((error) => {
       logger.error('Application initialization failed:', error);
     });

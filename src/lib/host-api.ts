@@ -384,6 +384,7 @@ import type {
   RemoteTaskRecordResult,
   RoleUpsertConfigRolePayload,
   RoleUpsertConfigRoleResult,
+  RuntimeEfficiencyState,
   SessionArchivePayload,
   SessionCompressionArtifactPayload,
   SessionCompressionArtifactResult,
@@ -795,6 +796,12 @@ export const hostApi = {
     getPreview: () => invokeHost('dcsProdFlags', 'getPreview'),
     setPreview: (payload: { enabled: boolean; restartGateway?: boolean }) => (
       invokeHost('dcsProdFlags', 'setPreview', payload)
+    ),
+  },
+  efficiency: {
+    getState: (): Promise<RuntimeEfficiencyState> => invokeHost('efficiency', 'getState'),
+    setEnabled: (enabled: boolean): Promise<RuntimeEfficiencyState> => (
+      invokeHost('efficiency', 'setEnabled', { enabled })
     ),
   },
   settings: {

@@ -114,6 +114,7 @@ const settingsRemoteTaskDeveloper = createPreloadableLazy<Record<string, never>>
 const settingsDcsProdFlags = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/DcsProdFlagsPanel').then((m) => ({ default: m.DcsProdFlagsPanel as ComponentType<Record<string, never>> })));
 const settingsVtokenBridge = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/VtokenBridgePanel').then((m) => ({ default: m.VtokenBridgePanel as ComponentType<Record<string, never>> })));
 const settingsContextLayers = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/ContextLayersExplainer').then((m) => ({ default: m.ContextLayersExplainer as ComponentType<Record<string, never>> })));
+const settingsEfficiencySampling = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/EfficiencySamplingPanel').then((m) => ({ default: m.EfficiencySamplingPanel as ComponentType<Record<string, never>> })));
 const settingsStorage = createPreloadableLazy<Record<string, never>>(() => import('./sections/StorageCleanerSection').then((m) => ({ default: m.StorageCleanerSection as ComponentType<Record<string, never>> })));
 const settingsRecovery = createPreloadableLazy<Record<string, never>>(() => import('./sections/RecoverySettingsSection').then((m) => ({ default: m.RecoverySettingsSection as ComponentType<Record<string, never>> })));
 
@@ -129,6 +130,7 @@ const RemoteTaskDeveloperPanelLazy = settingsRemoteTaskDeveloper.Component;
 const DcsProdFlagsPanelLazy = settingsDcsProdFlags.Component;
 const VtokenBridgePanelLazy = settingsVtokenBridge.Component;
 const ContextLayersExplainerLazy = settingsContextLayers.Component;
+const EfficiencySamplingPanelLazy = settingsEfficiencySampling.Component;
 const StorageCleanerSectionLazy = settingsStorage.Component;
 type ControlUiInfo = {
   port: number;
@@ -143,7 +145,7 @@ function preloadSettingsSection(section: SettingsSectionId) {
     case 'skills': settingsSkills.preload(); break;
     case 'billing': settingsBilling.preload(); break;
     case 'system': settingsProjectRules.preload(); break;
-    case 'developer': settingsAgentDev.preload(); settingsRemoteTaskDeveloper.preload(); settingsDcsProdFlags.preload(); settingsVtokenBridge.preload(); settingsContextControlPlane.preload(); break;
+    case 'developer': settingsAgentDev.preload(); settingsRemoteTaskDeveloper.preload(); settingsDcsProdFlags.preload(); settingsVtokenBridge.preload(); settingsContextControlPlane.preload(); settingsEfficiencySampling.preload(); break;
     case 'storage': settingsStorage.preload(); break;
     case 'recovery': settingsRecovery.preload(); break;
     default: break;
@@ -2065,6 +2067,7 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
                   <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
                     <div className="space-y-4 animate-in fade-in duration-150 motion-reduce:animate-none">
                       <ContextLayersExplainerLazy />
+                      <EfficiencySamplingPanelLazy />
                       <DcsProdFlagsPanelLazy />
                       <VtokenBridgePanelLazy />
                       <RemoteTaskDeveloperPanelLazy />

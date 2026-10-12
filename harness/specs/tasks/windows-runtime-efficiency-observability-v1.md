@@ -28,6 +28,24 @@ touchedAreas:
   - electron/main/index.ts
   - scripts/validate-runtime-efficiency.mjs
   - tests/unit/runtime-efficiency-sampler.test.ts
+  - electron/services/efficiency-api.ts
+  - src/components/settings/EfficiencySamplingPanel.tsx
+  - src/lib/host-api.ts
+  - src/pages/Settings/index.tsx
+  - shared/host-api/contract.ts
+  - shared/i18n/locales/en/settings.json
+  - shared/i18n/locales/zh/settings.json
+  - shared/i18n/locales/ja/settings.json
+  - shared/i18n/locales/ru/settings.json
+  - electron/utils/store.ts
+  - electron/main/ipc-handlers.ts
+  - tests/unit/runtime-efficiency-api.test.ts
+  - tests/unit/efficiency-sampling-panel.test.tsx
+  - tests/e2e/settings-efficiency-sampling.spec.ts
+  - docs/dev/p2-runtime-efficiency-settings-20261012.md
+  - docs/dev/p2-runtime-efficiency-settings-20261012/acceptance.json
+  - docs/dev/p2-runtime-efficiency-settings-20261012/SHA256SUMS
+  - harness/specs/tasks/p2-runtime-efficiency-settings-20261012.md
   - tests/unit/runtime-efficiency-power-policy.test.ts
   - tests/unit/agent-trace-graph-layout-bench.test.ts
   - artifacts/runtime-efficiency/**
@@ -83,12 +101,16 @@ evidence validator that fails closed, and the unit coverage plus one layout-cost
   the "measure before optimizing" companion for future rendering work (it asserts a
   characterization, not a performance gate).
 
-## Not landed (follow-up, deliberately out of this change set)
+## Follow-up landed (2026-10-12, issue #161)
 
-- The Settings toggle and the host-api/contract exposure of the latest sample and summary
-  (`shared/host-api/contract.ts`, `src/lib/host-api.ts`, renderer surface, four-locale i18n and
-  Electron E2E) are **not** implemented here; the sampler state is currently Main-process only.
-  That surface is user-visible and must bring its own i18n and E2E coverage.
+The Settings toggle and the host-api/contract exposure of the latest sample and summary are now
+implemented: `shared/host-api/contract.ts` has an `efficiency` module, `electron/services/efficiency-api.ts`
+serves it, `src/lib/host-api.ts` exposes it, and `src/components/settings/EfficiencySamplingPanel.tsx`
+renders the switch plus a fail-closed "not sampled" readout in Settings > Developer with four-locale
+i18n. Sampling is gated on the persisted `efficiencySamplingEnabled` setting (default true) and an
+Electron E2E spec (`tests/e2e/settings-efficiency-sampling.spec.ts`) is added in the same change set.
+See `docs/dev/p2-runtime-efficiency-settings-20261012.md`.
+
 - No before/after optimization artifact pair exists yet, so no measured improvement is claimed.
 
 ## Out of scope
