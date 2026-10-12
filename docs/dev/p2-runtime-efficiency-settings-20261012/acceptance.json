@@ -4,7 +4,7 @@
   "date": "2026-10-12",
   "driven_by": "agent",
   "actor": "codex",
-  "status": "landed-e2e-blocked",
+  "status": "landed-verified",
   "base": {
     "ref": "origin/main",
     "commit": "0f39d3ac91fc331020dd93f9c1f42d68cacf9049"
@@ -43,8 +43,8 @@
     },
     {
       "criterion": "All four locales carry the new strings and the i18n lint passes; an Electron E2E spec covers the switch and the readout.",
-      "status": "partial",
-      "evidence": "en/zh/ja/ru keys added (13 each) and `pnpm run i18n:lint` passed. tests/e2e/settings-efficiency-sampling.spec.ts is added in the same change set but its execution is blocked by the environment esbuild failure (see blocked gates); executed jsdom coverage of the same interaction is in tests/unit/efficiency-sampling-panel.test.tsx (3 tests)."
+      "status": "verified",
+      "evidence": "en/zh/ja/ru keys added (13 each) and `pnpm run i18n:lint` passed. tests/e2e/settings-efficiency-sampling.spec.ts executes in a real Electron boot and passes: toggle -> host-api getState reads back false/true, fail-closed not-sampled readout asserted before the first sample. jsdom coverage of the same interaction remains in tests/unit/efficiency-sampling-panel.test.tsx (3 tests)."
     },
     {
       "criterion": "Before any real sample the UI states 'not sampled' and never renders a healthy zero.",
@@ -125,18 +125,16 @@
       "exitCode": 0,
       "result": "0 errors, 1 pre-existing warning (electron/main/index.ts unrelated any)",
       "log": "11-eslint-touched.log"
-    }
-  ],
-  "blockedGates": [
+    },
     {
       "name": "e2e-playwright",
-      "command": "pnpm run test:e2e tests/e2e/settings-efficiency-sampling.spec.ts",
-      "exitCode": 1,
-      "status": "blocked-by-environment",
-      "log": "10-e2e-build-blocked-local.log",
-      "detail": "vite build fails before Playwright starts: [vite:esbuild-transpile] remove C:\\...\\Temp\\esbuild-<hash>: Access is denied. esbuild (Go) cannot delete its own transform temp file. Retried 4x; also reproduced with TMPDIR pointed inside the worktree, with --target esnext, and on a clean checkout of merged origin/main with no #161 code (control build, see 12-control-build-origin-main.log). GitHub Actions E2E cannot substitute: every job fails to start ('recent account payments have failed or your spending limit needs to be increased')."
+      "command": "node node_modules/@playwright/test/cli.js test tests/e2e/settings-efficiency-sampling.spec.ts",
+      "exitCode": 0,
+      "result": "1 passed (switch toggles, persists through host-api, fail-closed not-sampled readout); run 3x on 2026-10-12",
+      "log": "16-e2e-final-after-acl-fix.log"
     }
   ],
+  "blockedGates": [],
   "validatedSourceSha256": {
     "shared/host-api/contract.ts": "cf8592769cba55b99ad4058907e4b64a36610003eccbdfb2f46b7f09e9fa4a6c",
     "electron/utils/store.ts": "ccd304d83dcf1920ee2dafcab31751aae90d6e54ba782421592ac63f3ce7a44c",
@@ -151,8 +149,8 @@
     "tests/e2e/settings-efficiency-sampling.spec.ts": "40a5fd9b7c66fd88b266f54e533b0dd08b3d8ef643528ea5d71cb5aa3d48b37e"
   },
   "limitations": [
-    "The Electron Playwright spec is present but unexecuted: vite build fails with a reproducible esbuild temp-file 'Access is denied' error that also reproduces on clean origin/main (environment/toolchain defect), and GitHub Actions E2E is blocked by account billing.",
-    "Executed renderer coverage is jsdom (tests/unit/efficiency-sampling-panel.test.tsx), not a full Electron boot.",
+    "The Electron Playwright spec initially could not run: vite build failed with '[vite:esbuild-transpile] remove ...: Access is denied'. Root cause was isolated on this host (not a repo defect and not this change): the pnpm store's @esbuild/win32-x64 0.27.4 esbuild.exe carried a Windows Low mandatory integrity label (SACL), so the esbuild service process ran at Low IL and could not unlink the transform temp file created by Node at Medium IL. Replacing the labelled binary with a byte-identical clean copy from the npm registry made the unmodified tree build and run E2E (verified: esbuild lib/main.js SHA-256 578f8144...C05A equals the pristine 0.27.4 package; vite build exit 0; E2E 1 passed x3).",
+    "GitHub Actions E2E still cannot substitute for local evidence: jobs fail to start because of an account billing/spending limit.",
     "git diff --check flags CR-at-EOL on electron/main/index.ts / ipc-handlers.ts because those files are stored CRLF upstream; the same class of flag is present in the already-merged #160 commit. With core.whitespace=cr-at-eol the diff check is clean.",
     "No performance improvement is claimed; a stored before/after artifact pair is still required."
   ],
@@ -173,6 +171,6 @@
   },
   "rawEvidence": {
     "archive": "D:/ClawX-work/p2-161-efficiency-settings-20261012",
-    "note": "Raw gate logs and the blocked-E2E build log are retained in the private work dir; this record binds the validated source bytes individually."
+    "note": "Raw gate logs, the original blocked-E2E build log (10-...), the control build (12-...), the post-fix build (15-...) and E2E (16-...) logs are retained in the private work dir; this record binds the validated source bytes individually."
   }
 }
