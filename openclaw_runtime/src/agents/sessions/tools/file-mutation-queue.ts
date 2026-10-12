@@ -2,43 +2,21 @@
  * Per-file mutation queue.
  *
  * Serializes edits/writes targeting the same real file while allowing independent files to mutate in parallel.
+ *
+ * Delegates to the workspace `fileMutation` lease kind so per-file
+ * serialization shares one FIFO/capacity/timeout kernel with the workspace
+ * search and exec budgets (issue #167) instead of a second scheduler. A
+ * non-positive timeout keeps the original unbounded wait for a same-file
+ * holder rather than failing a legitimate long write.
  */
-import { realpathSync } from "node:fs";
-import { resolve } from "node:path";
-
-const fileMutationQueues = new Map<string, Promise<void>>();
-
-function getMutationQueueKey(filePath: string): string {
-  const resolvedPath = resolve(filePath);
-  try {
-    return realpathSync.native(resolvedPath);
-  } catch {
-    return resolvedPath;
-  }
-}
+import { normalizeWorkspaceLeaseKey, withWorkspaceResourceLease } from "../../resource-leases.js";
 
 /**
  * Serialize file mutation operations targeting the same file.
  * Operations for different files still run in parallel.
  */
 export async function withFileMutationQueue<T>(filePath: string, fn: () => Promise<T>): Promise<T> {
-  const key = getMutationQueueKey(filePath);
-  const currentQueue = fileMutationQueues.get(key) ?? Promise.resolve();
-
-  let releaseNext!: () => void;
-  const nextQueue = new Promise<void>((resolveQueue) => {
-    releaseNext = resolveQueue;
+  return withWorkspaceResourceLease("fileMutation", normalizeWorkspaceLeaseKey(filePath), fn, {
+    timeoutMs: 0,
   });
-  const chainedQueue = currentQueue.then(() => nextQueue);
-  fileMutationQueues.set(key, chainedQueue);
-
-  await currentQueue;
-  try {
-    return await fn();
-  } finally {
-    releaseNext();
-    if (fileMutationQueues.get(key) === chainedQueue) {
-      fileMutationQueues.delete(key);
-    }
-  }
 }

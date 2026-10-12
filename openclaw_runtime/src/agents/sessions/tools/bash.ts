@@ -14,6 +14,7 @@ import { theme } from "../../modes/interactive/theme/theme.js";
 import type { AgentTool } from "../../runtime/index.js";
 import { getBashShellConfig, getShellEnv, killProcessTree } from "../../shell-utils.js";
 import { waitForChildProcess } from "../../utils/child-process.js";
+import { normalizeWorkspaceLeaseKey, withWorkspaceResourceLease } from "../../resource-leases.js";
 import type { ToolDefinition, ToolRenderResultOptions } from "../extensions/types.js";
 import type { BashOperations } from "./bash-operations.js";
 import { OutputAccumulator } from "./output-accumulator.js";
@@ -50,7 +51,7 @@ export function resolveBashTimeoutMs(timeoutSeconds: unknown): number | undefine
  * standard local shell behavior while wrapping or rewriting commands.
  */
 export function createLocalBashOperations(options?: { shellPath?: string }): BashOperations {
-  return {
+  const localOperations: BashOperations = {
     exec: (command, cwd, { onData, signal, timeout, env }) => {
       return new Promise((resolve, reject) => {
         const { shell, args } = getBashShellConfig(options?.shellPath);
@@ -125,6 +126,17 @@ export function createLocalBashOperations(options?: { shellPath?: string }): Bas
           });
       });
     },
+  };
+  // Workspace-level admission: bound concurrent exec across subagents that
+  // share one workspace so their process tables and file handles stay
+  // predictable (issue #167). The lease covers the whole child lifetime and is
+  // released when the promise settles; a saturated workspace surfaces a typed
+  // ResourceLeaseTimeoutError instead of silently queueing forever.
+  return {
+    exec: (command, cwd, execOptions) =>
+      withWorkspaceResourceLease("workspaceExec", normalizeWorkspaceLeaseKey(cwd), () =>
+        localOperations.exec(command, cwd, execOptions),
+      ),
   };
 }
 
