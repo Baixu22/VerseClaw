@@ -2,6 +2,7 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_MAX_HANDOFF_DEPTH,
+  evaluateHandoffChain,
   evaluateHandoffDepth,
   nextHandoffDepth,
   resolveMaxHandoffDepth,
@@ -63,5 +64,55 @@ describe("handoff depth policy (FP-P1-179 / TF-0284)", () => {
     expect(nextHandoffDepth(2)).toBe(3);
     expect(nextHandoffDepth(undefined)).toBe(0);
     expect(nextHandoffDepth(-4)).toBe(0);
+  });
+
+  it("walks spawnedBy to find a cycle back into the ancestry", () => {
+    // A was spawned by nobody; B by A; C by B. Spawning A again is a cycle.
+    const spawnedBy: Record<string, string | undefined> = { A: undefined, B: "A", C: "B" };
+    const decision = evaluateHandoffChain({
+      parentDepth: 2,
+      parentSessionKey: "C",
+      targetSessionKey: "A",
+      resolveSpawnedBy: (key) => spawnedBy[key],
+    });
+
+    expect(decision.allow).toBe(false);
+    if (!decision.allow) {
+      expect(decision.reason).toBe("handoff_cycle_detected");
+      expect(decision.detail).toContain("A -> B -> C");
+    }
+  });
+
+  it("refuses the hop past the limit using the parent depth", () => {
+    const decision = evaluateHandoffChain({
+      parentDepth: DEFAULT_MAX_HANDOFF_DEPTH,
+      parentSessionKey: "B",
+      targetSessionKey: "C",
+      resolveSpawnedBy: () => undefined,
+    });
+
+    expect(decision.allow).toBe(false);
+    if (!decision.allow) expect(decision.reason).toBe("handoff_depth_exceeded");
+  });
+
+  it("allows an ordinary child and survives a malformed ancestry loop", () => {
+    expect(
+      evaluateHandoffChain({
+        parentDepth: 0,
+        parentSessionKey: "A",
+        targetSessionKey: "B",
+        resolveSpawnedBy: () => undefined,
+      }),
+    ).toEqual({ allow: true, depth: 1 });
+
+    // A -> B -> A in the links must terminate, not hang.
+    const looped: Record<string, string> = { A: "B", B: "A" };
+    const decision = evaluateHandoffChain({
+      parentDepth: 0,
+      parentSessionKey: "B",
+      targetSessionKey: "C",
+      resolveSpawnedBy: (key) => looped[key],
+    });
+    expect(decision.allow).toBe(true);
   });
 });

@@ -88,3 +88,42 @@ export function evaluateHandoffDepth(params: {
 
   return { allow: true, depth };
 }
+
+/**
+ * Walks the existing spawnedBy links to build the ancestry, then applies the rule.
+ *
+ * spawnedBy already records "parent session key that spawned this session", so the chain
+ * does not need a second stored list: the walk is bounded and cycle-safe (a malformed link
+ * loop stops instead of spinning).
+ */
+export function evaluateHandoffChain(params: {
+  /** Depth recorded on the parent entry; absent means the parent is a root. */
+  parentDepth: unknown;
+  /** Session key being spawned. */
+  targetSessionKey: string;
+  /** The spawning session key (becomes the last ancestor). */
+  parentSessionKey: string;
+  /** Resolves a session key to the key that spawned IT, if known. */
+  resolveSpawnedBy: (sessionKey: string) => string | undefined;
+  maxDepth?: number;
+  /** Guard on the walk itself; ancestors beyond this are not inspected. */
+  maxAncestorWalk?: number;
+}): HandoffDepthDecision {
+  const limit = params.maxAncestorWalk ?? 32;
+  const ancestors: string[] = [];
+  const seen = new Set<string>();
+  let cursor: string | undefined = params.parentSessionKey;
+  while (cursor && ancestors.length < limit && !seen.has(cursor)) {
+    seen.add(cursor);
+    ancestors.push(cursor);
+    cursor = params.resolveSpawnedBy(cursor);
+  }
+  ancestors.reverse();
+
+  return evaluateHandoffDepth({
+    depth: nextHandoffDepth(params.parentDepth),
+    targetSessionKey: params.targetSessionKey,
+    ancestorSessionKeys: ancestors,
+    maxDepth: params.maxDepth,
+  });
+}
