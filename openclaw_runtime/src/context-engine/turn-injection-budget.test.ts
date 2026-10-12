@@ -389,3 +389,48 @@ describe("B-1 channel policy", () => {
     expect(memoryEntry?.priority).toBe(TURN_INJECTION_CHANNEL_POLICY.memory_pilot.priority);
   });
 });
+
+
+describe("#184 cross-injection duplication metric", () => {
+  it("charges duplication when two channels apply the same bytes", () => {
+    const ledger = beginTurnInjectionBudget({ turnId: "turn-dup", total: 1000 });
+    chargeTurnInjection(ledger, "knowledge", "shared fact text");
+    chargeTurnInjection(ledger, "memory_pilot", "shared fact text");
+
+    const accounting = summarizeTurnInjection(ledger);
+    expect(accounting.charsApplied).toBe("shared fact text".length * 2);
+    expect(accounting.crossInjectionDuplicateChars).toBe("shared fact text".length);
+    expect(accounting.crossInjectionDuplicationRatio).toBeCloseTo(0.5);
+    expect(accounting.byChannel.memory_pilot?.applied).toBe("shared fact text".length);
+  });
+
+  it("does not count a channel repeating itself as cross-injection", () => {
+    const ledger = beginTurnInjectionBudget({ turnId: "turn-dup-same", total: 1000 });
+    chargeTurnInjection(ledger, "knowledge", "same channel twice");
+    chargeTurnInjection(ledger, "knowledge", "same channel twice");
+
+    const accounting = summarizeTurnInjection(ledger);
+    expect(accounting.crossInjectionDuplicateChars).toBe(0);
+    expect(accounting.crossInjectionDuplicationRatio).toBe(0);
+  });
+
+  it("uses a shared contentKey for the same fact serialized differently", () => {
+    const ledger = beginTurnInjectionBudget({ turnId: "turn-dup-key", total: 1000 });
+    chargeTurnInjection(ledger, "knowledge", "- fact one", true, "fact:one");
+    chargeTurnInjection(ledger, "memory_pilot", "### fact one", true, "fact:one");
+
+    const accounting = summarizeTurnInjection(ledger);
+    expect(accounting.crossInjectionDuplicateChars).toBe("### fact one".length);
+    expect(accounting.crossInjectionDuplicationRatio).toBeGreaterThan(0);
+  });
+
+  it("reports zero duplication when every channel brings new bytes", () => {
+    const ledger = beginTurnInjectionBudget({ turnId: "turn-dup-none", total: 1000 });
+    chargeTurnInjection(ledger, "knowledge", "alpha");
+    chargeTurnInjection(ledger, "working_memory", "beta");
+
+    const accounting = summarizeTurnInjection(ledger);
+    expect(accounting.crossInjectionDuplicateChars).toBe(0);
+    expect(accounting.crossInjectionDuplicationRatio).toBe(0);
+  });
+});

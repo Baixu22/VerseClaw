@@ -71,6 +71,10 @@ export type DcsObservabilitySnapshot = {
     charsTruncated: number;
     byChannel: Record<string, { requested: number; applied: number; disposition: string }>;
     degradationOrder: Array<{ channel: string; disposition: string }>;
+    /** #184: applied chars that repeated content an earlier channel injected. */
+    crossInjectionDuplicateChars: number;
+    /** #184: crossInjectionDuplicateChars / charsApplied for the last turn. */
+    crossInjectionDuplicationRatio: number;
   } | null;
 };
 
@@ -202,6 +206,8 @@ class DcsObservabilityRegistry {
     turnId?: string;
     byChannel?: Record<string, { requested: number; applied: number; disposition: string }>;
     degradationOrder?: Array<{ channel: string; disposition: string }>;
+    crossInjectionDuplicateChars?: number;
+    crossInjectionDuplicationRatio?: number;
   }): void {
     // FP-P1-11: keep this turn's per-channel breakdown so the runtime ack
     // can prove WHICH sources charged and in what order they degraded.
@@ -214,6 +220,14 @@ class DcsObservabilityRegistry {
       charsTruncated: params.charsTruncated,
       byChannel: { ...params.byChannel },
       degradationOrder: [...(params.degradationOrder ?? [])],
+      crossInjectionDuplicateChars: Math.max(
+        0,
+        Math.floor(params.crossInjectionDuplicateChars ?? 0),
+      ),
+      crossInjectionDuplicationRatio: Math.max(
+        0,
+        Number(params.crossInjectionDuplicationRatio ?? 0),
+      ),
     };
     this.#counters.turnInjectionTurns += 1;
     if (params.killed) {
