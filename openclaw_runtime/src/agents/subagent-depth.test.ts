@@ -8,6 +8,7 @@ import { describe, expect, it } from 'vitest';
 import {
   getSubagentDepthFromSessionStore,
   getSubagentRootFromSessionStore,
+  isSpawnedByParentKey,
 } from './subagent-depth.js';
 import { getSubagentDepth } from '../sessions/session-key-utils.js';
 
@@ -75,5 +76,33 @@ describe("#179 spawn chain root (depth + origin on the row)", () => {
     expect(root).toBeDefined();
     // Never reports the session as its own root.
     expect(root).not.toBe('agent:main:subagent:c');
+  });
+});
+describe("child lookup matches the parent session key, not its UUID", () => {
+  const parentKey = 'agent:main:main';
+
+  it("matches spawnedBy against the parent key", () => {
+    expect(isSpawnedByParentKey({ spawnedBy: parentKey }, parentKey)).toBe(true);
+  });
+
+  it("never matches a session UUID (the mismatch that emptied the briefing)", () => {
+    // `attempt.ts` used to compare `spawnedBy` to `sessionEntry.sessionId`, so a
+    // real child row could never be found.
+    expect(
+      isSpawnedByParentKey(
+        { spawnedBy: 'e7c1f0a2-1111-4222-8333-444455556666' },
+        parentKey,
+      ),
+    ).toBe(false);
+  });
+
+  it("accepts parentSessionKey for forked children", () => {
+    expect(isSpawnedByParentKey({ parentSessionKey: parentKey }, parentKey)).toBe(true);
+  });
+
+  it("rejects missing or blank inputs", () => {
+    expect(isSpawnedByParentKey(undefined, parentKey)).toBe(false);
+    expect(isSpawnedByParentKey({ spawnedBy: parentKey }, '')).toBe(false);
+    expect(isSpawnedByParentKey({}, parentKey)).toBe(false);
   });
 });

@@ -267,6 +267,7 @@ import {
 import { resolveMemoryInjectPilotConfig } from "../../../context-engine/chat-turn-memory-injection.js";
 import { dcsObservability } from "../../../context-engine/dcs-observability.js";
 import { computeVtokenPromptOverlap } from "../../../context-engine/vtoken-prompt-overlap.js";
+import { isSpawnedByParentKey } from "../../subagent-depth.js";
 import { createRuntimeMemoryContextProvider } from "../../../context-engine/memory-context-provider.js";
 import { createRuntimeMemoryRuntimeIntegration } from "../../../runtime-core/memory-runtime-integration.js";
 import type { RuntimeMemoryQueryableFact } from "../../../runtime-core/memory-context.js";
@@ -3377,7 +3378,10 @@ export async function runEmbeddedAttempt(
             const suspension = sessionEntry?.quotaSuspension;
             if (suspension?.state === "resuming") {
               const subagents = Object.values(store)
-                .filter((s) => s.spawnedBy === sessionEntry.sessionId)
+                // `spawnedBy` holds the parent session KEY, not its transcript
+                // UUID; comparing against `sessionEntry.sessionId` never matched
+                // and silently produced an empty subordinate list.
+                .filter((s) => isSpawnedByParentKey(s, params.sessionKey))
                 .map((s) => ({
                   sessionId: s.sessionId,
                   role: s.subagentRole,

@@ -151,6 +151,30 @@ export function getSubagentRootFromSessionStore(
   return root;
 }
 
+/**
+ * Whether a session-store row is a child of `parentKey`.
+ *
+ * A spawned session records its parent's **session key** in `spawnedBy` (see
+ * `SessionEntry.spawnedBy`), not the parent's transcript UUID — so comparing
+ * `spawnedBy` against a `sessionId` can never match. That mismatch silently
+ * produced fallback-model briefings which claimed there were no active
+ * subordinates. Forked sessions use `parentSessionKey` instead, so both links
+ * are accepted here, matching `isDirectChildSessionEntry` in the gateway.
+ */
+export function isSpawnedByParentKey(
+  entry: { spawnedBy?: unknown; parentSessionKey?: unknown } | undefined | null,
+  parentKey: string | undefined | null,
+): boolean {
+  const key = (parentKey ?? "").trim();
+  if (!key || !entry) {
+    return false;
+  }
+  const spawnedBy = typeof entry.spawnedBy === "string" ? entry.spawnedBy.trim() : "";
+  const parentSessionKey =
+    typeof entry.parentSessionKey === "string" ? entry.parentSessionKey.trim() : "";
+  return spawnedBy === key || parentSessionKey === key;
+}
+
 export function getSubagentDepthFromSessionStore(
   sessionKey: string | undefined | null,
   opts?: {
