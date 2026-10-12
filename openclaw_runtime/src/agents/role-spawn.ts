@@ -127,17 +127,47 @@ function resolveRole(
   return resolveRoleContract(role, cfg);
 }
 
+function recordOf(value: unknown): Record<string, unknown> | undefined {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : undefined;
+}
+
+/**
+ * #183: whether the DCS role-memory knowledge projection owns role-memory
+ * injection for subagent sessions (`runtime.contextBlock["role-memory"].enabled`).
+ *
+ * When it does, `role-spawn` must NOT also render the same cards into the child
+ * system prompt. Both paths read the same store (`getMemoryCards` +
+ * `buildContextPack`) and render the same cards, so keeping both costs tokens
+ * for zero extra information and leaves the model to decide which of the two
+ * blocks is authoritative. The projection is the one to keep because it charges
+ * the shared turn budget as `knowledge`; the role-spawn block never charged it.
+ */
+export function isRoleMemoryKnowledgeProjectionEnabled(cfg: unknown): boolean {
+  const runtime =
+    recordOf(cfg)?.runtime ?? recordOf(recordOf(cfg)?.config)?.runtime;
+  const contextBlock = recordOf(runtime)?.contextBlock;
+  const roleMemory = recordOf(contextBlock)?.["role-memory"];
+  return recordOf(roleMemory)?.enabled === true;
+}
+
 /** Compile the system prompt a role-spawned worker should receive.
  * Optionally injects role-tagged memory cards between the SOUL and any extras. */
 export function buildRoleSystemPrompt(
   role: RoleContract,
   extra?: string,
   memoryCards?: readonly MemoryCard[],
-  injection?: { task?: string; sessionKey?: string },
+  injection?: { task?: string; sessionKey?: string; suppressMemoryContext?: boolean },
 ): string {
   const soul = compileRoleContractToSoul(role);
   const parts: string[] = [soul];
-  if (isRoleMemoryEnabled() && memoryCards && memoryCards.length > 0) {
+  if (
+    injection?.suppressMemoryContext !== true &&
+    isRoleMemoryEnabled() &&
+    memoryCards &&
+    memoryCards.length > 0
+  ) {
     const legacyInjectable = memoryCards.filter((card) =>
       isInjectableMemoryCard(card) || (card.status === "cold" && !card.supersededBy),
     );
@@ -233,6 +263,9 @@ export function buildRoleSpawnParams(
     roleSystemPrompt: buildRoleSystemPrompt(role, request.extraSystemPrompt, memoryCards, {
       task: request.task,
       sessionKey: ctx?.agentSessionKey,
+      // #183: hand the ownership decision to the renderer so the same cards are
+      // never emitted by both the DCS knowledge projection and this block.
+      suppressMemoryContext: isRoleMemoryKnowledgeProjectionEnabled(request.cfg),
     }),
   };
 }

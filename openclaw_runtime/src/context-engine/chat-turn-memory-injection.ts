@@ -16,6 +16,7 @@
 // byte-identical prompts.
 
 import { isRecord } from "../runtime-core/index.js";
+import { isSubagentSessionKey } from "../sessions/session-key-utils.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
 import { applyInjectionBudget, createInjectionBudget } from "./injection-budget.js";
 import type {
@@ -126,10 +127,13 @@ export function shouldInjectChatTurnMemory(
   if (config.sessions === "main-only") {
     const sessionKey = query.sessionKey;
     if (!sessionKey) return false;
-    // Main sessions follow the `agent:<id>:main` convention; subagent sessions
-    // use `agent:<id>:<role>` or arbitrary suffixes. We only inject into the
-    // main session during the pilot to avoid double-injecting subagent turns
-    // (which already receive role-memory via `role-spawn.ts`).
+    // #183: the *exclusion* uses the runtime's canonical session taxonomy rather
+    // than a local string-shape guess — a subagent key that happens to end in
+    // `:main` (`agent:<id>:subagent:main`) is still a subagent and used to slip
+    // through. The inclusion test still requires the documented
+    // `agent:<id>:main` (or cron-main) shape, so which sessions qualify is
+    // unchanged for every non-subagent key.
+    if (isSubagentSessionKey(sessionKey)) return false;
     if (!/^(agent|cron):[^:]+:main$/.test(sessionKey)) return false;
   }
   return true;

@@ -9,6 +9,7 @@ import {
   assembleChatTurnMemoryInjection,
   computeMemoryExtraSystemPrompt,
   memoryPilotTokenBudgetToChars,
+  shouldInjectChatTurnMemory,
   type MemoryInjectPilotConfig,
 } from "./chat-turn-memory-injection.js";
 
@@ -137,3 +138,36 @@ describe("#181 memory pilot totalTokenBudget enforcement", () => {
 function charBudgetFor(tokens: number): number {
   return memoryPilotTokenBudgetToChars(tokens);
 }
+
+describe("#183 memory pilot session scope", () => {
+  const mainOnly: MemoryInjectPilotConfig = {
+    enabled: true,
+    providers: ["role-memory"],
+    totalTokenBudget: 768,
+    sessions: "main-only",
+  };
+
+  it("excludes subagent sessions even when the key ends in :main", () => {
+    // `agent:main:subagent:main` ends with ":main", so the old local regex
+    // treated it as a main session; the canonical predicate says subagent.
+    expect(
+      shouldInjectChatTurnMemory(mainOnly, { sessionKey: "agent:main:subagent:main" }),
+    ).toBe(false);
+    expect(
+      shouldInjectChatTurnMemory(mainOnly, { sessionKey: "agent:main:subagent:1234" }),
+    ).toBe(false);
+  });
+
+  it("still injects into an agent main session", () => {
+    expect(shouldInjectChatTurnMemory(mainOnly, { sessionKey: "agent:main:main" })).toBe(true);
+  });
+
+  it("keeps subagent sessions eligible when the operator opts into sessions: all", () => {
+    expect(
+      shouldInjectChatTurnMemory(
+        { ...mainOnly, sessions: "all" },
+        { sessionKey: "agent:main:subagent:1234" },
+      ),
+    ).toBe(true);
+  });
+});
