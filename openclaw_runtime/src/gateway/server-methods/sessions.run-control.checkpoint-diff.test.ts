@@ -53,7 +53,11 @@ describe("sessions.checkpointDiff gateway integration", () => {
   let stateDir: string;
   let workspaceRoot: string;
   const sessionKey = "agent:main:main";
-  const journalSessionId = "agent:main:main";
+  // #176: the write-journal is keyed by the session UUID, NOT the canonical
+  // session key. The previous fixture used the canonical key for both, which is
+  // exactly the mistake production made — so the integration test stayed green
+  // while real manual restores rolled back nothing.
+  const journalSessionId = "sess-uuid-9f3a1c";
 
   beforeEach(async () => {
     __resetWriteJournals();
@@ -94,7 +98,8 @@ describe("sessions.checkpointDiff gateway integration", () => {
         id: "mission:m1:tick:3",
         sessionKey,
         trigger: "guide",
-        metadata: { journalSeq: 1 },
+        // #176: the checkpoint carries the write-journal identity it describes.
+        metadata: { journalSeq: 1, journalSessionId },
         createdAt: Date.now(),
       }),
     });
@@ -105,7 +110,11 @@ describe("sessions.checkpointDiff gateway integration", () => {
     const { getLongTaskCheckpointById } = await import("../../agents/long-task-control/store.js");
     const stored = getLongTaskCheckpointById("mission:m1:tick:3");
     const { checkpointContentDiff } = await import("../../agents/checkpoint-diff.js");
-    const direct = checkpointContentDiff({ workspaceRoot, checkpoint: stored as never, sessionId: "agent:main:main" });
+    const direct = checkpointContentDiff({
+      workspaceRoot,
+      checkpoint: stored as never,
+      sessionId: journalSessionId,
+    });
     expect(direct.errors).toEqual([]);
 
     const { calls, respond } = makeRespond();
@@ -116,7 +125,9 @@ describe("sessions.checkpointDiff gateway integration", () => {
     } as never);
 
     expect(calls).toHaveLength(1);
-    expect(calls[0]!.ok).toBe(true);
+    if (!calls[0]!.ok) {
+      throw new Error(`checkpointDiff failed: ${JSON.stringify(calls[0]!.error)}`);
+    }
     const payload = calls[0]!.payload as { files: Array<{ filePath: string; status: string; unifiedDiff: string }> };
     expect(payload.files).toHaveLength(1);
     expect(payload.files[0]!.filePath).toBe("f.ts");
@@ -155,7 +166,8 @@ describe("sessions.checkpointDiff gateway integration", () => {
         id: "mission:m1:tick:2",
         sessionKey,
         trigger: "guide",
-        metadata: { journalSeq: 1 },
+        // #176: the checkpoint carries the write-journal identity it describes.
+        metadata: { journalSeq: 1, journalSessionId },
         createdAt: Date.now(),
       }),
     });
@@ -171,7 +183,9 @@ describe("sessions.checkpointDiff gateway integration", () => {
     } as never);
 
     expect(calls).toHaveLength(1);
-    expect(calls[0]!.ok).toBe(true);
+    if (!calls[0]!.ok) {
+      throw new Error(`restoreCheckpoint failed: ${JSON.stringify(calls[0]!.error)}`);
+    }
     // The rollback actually restored the file on disk.
     const { readFileSync } = await import("node:fs");
     expect(readFileSync(path.join(workspaceRoot, "f.ts"), "utf8")).toBe("v1\n");

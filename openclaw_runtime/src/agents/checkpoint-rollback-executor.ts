@@ -16,6 +16,7 @@
  * - `recordOutcome` writes to the mission trace/audit surface via the
  *   injected `recordOutcome` callback (defaults to console when absent).
  */
+import { existsSync } from "node:fs";
 import path from "node:path";
 import {
   getLongTaskCheckpointById,
@@ -23,6 +24,7 @@ import {
 } from "./long-task-control/store.js";
 import {
   getOrCreateWriteJournal,
+  journalDirFor,
   undoLastWrites,
 } from "./tools/write-journal.js";
 import {
@@ -88,19 +90,40 @@ export async function validateCheckpointRecord(
 export function applyCheckpointToJournal(params: {
   workspaceRoot: string;
   checkpoint: LongTaskCheckpointRecord;
-  /** Journal session id. Defaults to the checkpoint's sessionKey (canonical). */
+  /**
+   * Journal session id — the agent session UUID (`options.sessionId` at
+   * tool-creation time). Required: the canonical session key addresses a
+   * *different* journal directory, so there is no safe fallback (#176).
+   */
   sessionId?: string;
   now?: () => number;
 }): { restored: string[]; errors: string[]; journalDir: string } {
   const at = Date.parse(params.checkpoint.checkpoint.createdAt);
-  // The write-journal is keyed by the agent session id (options.sessionId at
-  // tool-creation time), NOT the canonical session key. Callers with a
-  // concrete session id MUST pass it; the checkpoint sessionKey is only a
-  // fallback for tests/back-compat.
-  const journal = getOrCreateWriteJournal(
-    params.workspaceRoot,
-    params.sessionId ?? params.checkpoint.sessionKey,
-  );
+  const journalSessionId = params.sessionId?.trim();
+  if (!journalSessionId) {
+    // #176: this used to fall back to `checkpoint.sessionKey` (e.g.
+    // "agent:main:main"), which silently pointed at an empty directory and
+    // reported a successful restore that changed nothing.
+    return {
+      restored: [],
+      errors: [
+        "journal_session_id_missing: pass the agent session id (UUID); the canonical session key addresses a different journal directory (#176)",
+      ],
+      journalDir: "",
+    };
+  }
+  const journalDir = journalDirFor(params.workspaceRoot, journalSessionId);
+  if (!existsSync(journalDir)) {
+    // #176: fail closed. "No journal for this session id" is a key mismatch or
+    // a session that never journaled a write; either way it is not a
+    // successful restore, and it must not report as one.
+    return {
+      restored: [],
+      errors: [`no_journal_for_session: ${journalDir}`],
+      journalDir,
+    };
+  }
+  const journal = getOrCreateWriteJournal(params.workspaceRoot, journalSessionId);
   // Seq boundary (monotonic, immune to same-millisecond ambiguity) takes
   // precedence when the checkpoint was stamped with `metadata.journalSeq`
   // (mission-control tick-end checkpoints). createdAt-based filtering remains
@@ -126,7 +149,7 @@ export function applyCheckpointToJournal(params: {
   // the tail restores exactly the post-checkpoint writes.
   const outcome = undoLastWrites({
     workspaceRoot: params.workspaceRoot,
-    sessionId: params.sessionId ?? params.checkpoint.sessionKey,
+    sessionId: journalSessionId,
     steps: toUndo.length,
   });
   return {

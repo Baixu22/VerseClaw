@@ -179,8 +179,19 @@ describe("checkpoint-rollback-executor (A3)", () => {
       expect(readFileSync(existing, "utf8")).toBe("keep\n");
     });
 
-    it("no-op when no journal entries exist after the checkpoint", () => {
+    it("no-op when no journal entries exist after the checkpoint", async () => {
       writeFileSync(path.join(repoRoot, "f.ts"), "v0\n", "utf8");
+      // #176: the journal session id is now required and explicit — the
+      // canonical session key is no longer accepted as a fallback. Record one
+      // entry that belongs to this session and sits *before* the checkpoint, so
+      // the journal genuinely exists while there is nothing to undo.
+      snapshotBeforeWrite({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+        filePath: "f.ts",
+        toolName: "write",
+      });
+      await sleepMs(5);
       const record = makeCheckpointRecord({
         id: "c1",
         sessionKey,
@@ -189,9 +200,55 @@ describe("checkpoint-rollback-executor (A3)", () => {
       const outcome = applyCheckpointToJournal({
         workspaceRoot: repoRoot,
         checkpoint: record,
+        sessionId: journalSessionId,
       });
       expect(outcome.errors).toEqual([]);
       expect(outcome.restored).toEqual([]);
+    });
+
+    it("#176 fails closed when the journal id is the canonical key, not the session UUID", () => {
+      const file = path.join(repoRoot, "f.ts");
+      writeFileSync(file, "v2\n", "utf8");
+      const record = makeCheckpointRecord({
+        id: "c1",
+        sessionKey,
+        createdAt: new Date().toISOString(),
+        filesTouched: ["f.ts"],
+      });
+
+      // `sessionKey` is the canonical key; the journal was actually written
+      // under `journalSessionId`. Before #176 this silently resolved to an
+      // empty directory and returned `errors: []` (a "successful" restore that
+      // restored nothing) — and then created that empty directory, which is
+      // itself the wrong journal.
+      const outcome = applyCheckpointToJournal({
+        workspaceRoot: repoRoot,
+        checkpoint: record,
+        sessionId: sessionKey,
+      });
+
+      expect(outcome.restored).toEqual([]);
+      expect(outcome.errors).toHaveLength(1);
+      expect(outcome.errors[0]).toContain("no_journal_for_session");
+      expect(readFileSync(file, "utf8")).toBe("v2\n");
+    });
+
+    it("#176 refuses to roll back when no journal session id is supplied", () => {
+      const record = makeCheckpointRecord({
+        id: "c1",
+        sessionKey,
+        createdAt: new Date().toISOString(),
+        filesTouched: ["f.ts"],
+      });
+
+      const outcome = applyCheckpointToJournal({
+        workspaceRoot: repoRoot,
+        checkpoint: record,
+      });
+
+      expect(outcome.restored).toEqual([]);
+      expect(outcome.errors).toHaveLength(1);
+      expect(outcome.errors[0]).toContain("journal_session_id_missing");
     });
 
     it("uses metadata.journalSeq as the boundary when stamped (partial rollback without same-ms ambiguity)", async () => {

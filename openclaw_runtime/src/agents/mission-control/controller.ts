@@ -102,6 +102,13 @@ export type MissionControllerDeps = {
    * falls back to createdAt-based filtering.
    */
   journalSeqBoundary?: () => number | undefined;
+  /**
+   * #176: the write-journal's session id (the agent session UUID). Stamped into
+   * the checkpoint as `metadata.journalSessionId` so a later restore/diff can
+   * resolve the journal the checkpoint actually describes instead of guessing
+   * from the canonical session key (which addresses a different directory).
+   */
+  journalSessionId?: string;
 };
 
 export type MissionRunResult = MissionRunRecord;
@@ -1407,6 +1414,7 @@ export async function tickMission(
       validationState: reviewer.validationState,
     });
     const journalSeq = deps.journalSeqBoundary?.();
+    const journalSessionId = deps.journalSessionId?.trim();
     const checkpoint = buildRuntimeResumeCheckpoint({
       id: `mission:${record.missionId}:tick:${record.tick}`,
       sessionKey: record.sessionKey,
@@ -1439,6 +1447,7 @@ export async function tickMission(
         tick: record.tick,
         reviewer,
         ...(journalSeq !== undefined ? { journalSeq } : {}),
+        ...(journalSessionId ? { journalSessionId } : {}),
       },
       createdAt: now(),
     });
