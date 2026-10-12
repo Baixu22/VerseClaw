@@ -17,6 +17,7 @@
 
 import { isRecord } from "../runtime-core/index.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
+import { applyInjectionBudget, createInjectionBudget } from "./injection-budget.js";
 import type {
   ContextItem,
   RuntimeContextProvider,
@@ -46,6 +47,20 @@ export const DEFAULT_MEMORY_INJECT_PILOT_CONFIG: MemoryInjectPilotConfig = {
   totalTokenBudget: 768,
   sessions: "main-only",
 };
+
+/**
+ * #181: the pilot budget is declared in tokens, but the rest of the injection
+ * stack measures in characters (see `turn-injection-budget.ts` decision 2). 1
+ * token ≈ 4 characters is the same estimate `memory-context-provider.ts` uses
+ * (`TOKEN_CHAR_WIDTH`), so a provider-level token budget and this aggregate
+ * budget stay comparable. Keep the two constants in step.
+ */
+export const MEMORY_PILOT_TOKEN_CHAR_WIDTH = 4;
+
+/** Convert the pilot's total token budget into the character ceiling to enforce. */
+export function memoryPilotTokenBudgetToChars(totalTokenBudget: number): number {
+  return Math.max(1, Math.floor(totalTokenBudget * MEMORY_PILOT_TOKEN_CHAR_WIDTH));
+}
 
 export type ChatTurnMemoryInjectionQuery = RuntimeContextProviderQuery & {
   sessionKey?: string;
@@ -192,11 +207,34 @@ export async function assembleChatTurnMemoryInjection(
 
   if (allItems.length === 0) return null;
 
-  const text = renderMemoryContextBlock(allItems);
-  if (!text) return null;
+  const rendered = renderMemoryContextBlock(allItems);
+  if (!rendered) return null;
+
+  // #181: `totalTokenBudget` is the aggregate ceiling across every provider in
+  // this block — it must actually shrink the bytes, not merely ride along in
+  // metadata. The turn ledger (`turn-injection-budget.ts`) is a separate,
+  // turn-wide pool shared with the other injection channels; it cannot stand in
+  // for this per-pilot limit because by the time memory_pilot charges (lowest
+  // precedence) the other channels have already consumed their share.
+  const charBudget = memoryPilotTokenBudgetToChars(config.totalTokenBudget);
+  const budgeted = applyInjectionBudget(
+    createInjectionBudget(charBudget),
+    rendered,
+    "memory_pilot",
+  );
+  const memoryBudget: RuntimeCoreJsonObject = {
+    tokenBudget: config.totalTokenBudget,
+    charBudget,
+    charsRequested: rendered.length,
+    charsApplied: budgeted.charsApplied,
+    charsDropped: Math.max(0, rendered.length - budgeted.charsApplied),
+    truncated: budgeted.truncated,
+    dropped: budgeted.dropped,
+    applied: budgeted.applied,
+  };
 
   return {
-    text,
+    text: budgeted.text ?? "",
     diagnostics,
     metadata: {
       pilot: "runtimeMemory.injectPilot",
@@ -206,6 +244,7 @@ export async function assembleChatTurnMemoryInjection(
       sessions: config.sessions,
       perProvider,
       totalItems: allItems.length,
+      memoryBudget,
     },
   };
 }
