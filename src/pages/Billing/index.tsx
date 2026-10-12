@@ -576,6 +576,8 @@ function ModelRankChart({
     inputTokens: group.inputTokens,
     outputTokens: group.outputTokens,
     cacheTokens: group.cacheTokens,
+    cacheReadTokens: group.cacheReadTokens,
+    cacheWriteTokens: group.cacheWriteTokens,
   }));
 
   return (
@@ -614,7 +616,14 @@ function ModelRankChart({
               fontSize: '0.75rem',
             }}
             labelStyle={{ fontWeight: 600, marginBottom: '0.25rem' }}
-            formatter={(value: unknown) => [formatTokenCount(Number(value))]}
+            formatter={(value: unknown, name: unknown, item: { payload?: { cacheReadTokens?: number; cacheWriteTokens?: number } }) => {
+              if (String(name) === 'cacheTokens' && item?.payload) {
+                const read = formatTokenCount(item.payload.cacheReadTokens ?? 0);
+                const write = formatTokenCount(item.payload.cacheWriteTokens ?? 0);
+                return [`${read} / ${write}`, String(name)];
+              }
+              return [formatTokenCount(Number(value)), String(name)];
+            }}
           />
           <Bar dataKey="cacheTokens" stackId="tokens" fill="hsl(var(--usage-cache))" isAnimationActive={false} />
           <Bar dataKey="outputTokens" stackId="tokens" fill="hsl(var(--usage-output))" isAnimationActive={false} />
@@ -1004,6 +1013,7 @@ function DimensionTable({
     input: string;
     output: string;
     cacheRead: string;
+    cacheWrite: string;
     hitRate: string;
     cost: string;
   };
@@ -1032,6 +1042,7 @@ function DimensionTable({
               <th className="px-3 py-2 text-right font-medium">{labels.input}</th>
               <th className="px-3 py-2 text-right font-medium">{labels.output}</th>
               <th className="px-3 py-2 text-right font-medium">{labels.cacheRead}</th>
+              <th className="px-3 py-2 text-right font-medium">{labels.cacheWrite}</th>
               <th className="px-3 py-2 text-right font-medium">{labels.hitRate}</th>
               <th className="px-4 py-2 text-right font-medium">{labels.cost}</th>
             </tr>
@@ -1047,6 +1058,7 @@ function DimensionTable({
                 <td className="whitespace-nowrap px-3 py-2.5 text-right text-muted-foreground">{formatTokenCount(row.inputTokens)}</td>
                 <td className="whitespace-nowrap px-3 py-2.5 text-right text-muted-foreground">{formatTokenCount(row.outputTokens)}</td>
                 <td className="whitespace-nowrap px-3 py-2.5 text-right text-muted-foreground">{formatTokenCount(row.cacheReadTokens)}</td>
+                <td className="whitespace-nowrap px-3 py-2.5 text-right text-muted-foreground">{formatTokenCount(row.cacheWriteTokens)}</td>
                 <td className="whitespace-nowrap px-3 py-2.5 text-right font-medium text-usage-cache">{formatHitRate(row.cacheHitRate)}</td>
                 <td className="whitespace-nowrap px-4 py-2.5 text-right font-medium text-foreground">
                   {row.costUsd > 0 ? formatCurrency(row.costUsd) : '—'}
@@ -1500,6 +1512,7 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
                       input: t('dashboard:billing.table.input'),
                       output: t('dashboard:billing.table.output'),
                       cacheRead: t('dashboard:billing.table.cacheRead'),
+                      cacheWrite: t('dashboard:billing.table.cacheWrite'),
                       hitRate: t('dashboard:billing.table.hitRate'),
                       cost: t('dashboard:billing.table.cost'),
                     }}
@@ -1516,6 +1529,7 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
                       input: t('dashboard:billing.table.input'),
                       output: t('dashboard:billing.table.output'),
                       cacheRead: t('dashboard:billing.table.cacheRead'),
+                      cacheWrite: t('dashboard:billing.table.cacheWrite'),
                       hitRate: t('dashboard:billing.table.hitRate'),
                       cost: t('dashboard:billing.table.cost'),
                     }}

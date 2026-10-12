@@ -14,6 +14,7 @@ import {
   applyAnthropicPayloadPolicyToParams,
   resolveAnthropicPayloadPolicy,
 } from "./anthropic-payload-policy.js";
+import { enforceNoOutboundCacheBoundary } from "./system-prompt-cache-boundary.js";
 import { buildCopilotDynamicHeaders, hasCopilotVisionInput } from "./copilot-dynamic-headers.js";
 import { parseJsonObjectPreservingUnsafeIntegers } from "./json-unsafe-integers.js";
 import { resolveProviderEndpoint } from "./provider-attribution.js";
@@ -968,6 +969,9 @@ function buildAnthropicParams(
       typeof options.toolChoice === "string" ? { type: options.toolChoice } : options.toolChoice;
   }
   applyAnthropicPayloadPolicyToParams(params, payloadPolicy);
+  // The policy above consumes the marker (stable prefix + cache_control). Verify the
+  // result instead of trusting it: no Anthropic payload may leave carrying the marker.
+  enforceNoOutboundCacheBoundary(params, "anthropic-messages-transport");
   return params;
 }
 

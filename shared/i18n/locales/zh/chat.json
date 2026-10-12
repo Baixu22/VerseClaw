@@ -498,6 +498,9 @@
       "input": "输入 Token",
       "output": "输出 Token",
       "cache": "缓存 Token",
+      "cacheRead": "缓存读取（命中）",
+      "cacheWrite": "缓存写入",
+      "cacheHitRate": "缓存命中率",
       "total": "总 Token",
       "cost": "预估费用"
     }

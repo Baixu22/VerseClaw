@@ -202,6 +202,7 @@
             "input": "Input",
             "output": "Output",
             "cacheRead": "Cache read",
+            "cacheWrite": "Cache write",
             "hitRate": "Hit rate",
             "cost": "Est. cost"
         },

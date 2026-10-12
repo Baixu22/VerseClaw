@@ -15,6 +15,12 @@ import { listOpenClawPluginManifestMetadata } from "../plugins/manifest-metadata
 import { asBoolean } from "../utils/boolean.js";
 import type { RuntimeVersionEnv } from "../version.js";
 import { resolveRuntimeServiceVersion } from "../version.js";
+import type { UpstreamPromptCacheFields } from "./upstream-protocol-capabilities.js";
+import {
+  isOpenAIResponsesApi,
+  OPENAI_RESPONSES_PROVIDER_IDS,
+  resolveUpstreamPromptCacheFields,
+} from "./upstream-protocol-capabilities.js";
 
 type ProviderAttributionVerification =
   | "vendor-documented"
@@ -125,6 +131,8 @@ export type ProviderRequestCapabilities = ProviderRequestPolicyResolution & {
   supportsResponsesStoreField: boolean;
   allowsResponsesStore: boolean;
   shouldStripResponsesPromptCache: boolean;
+  /** Cache-field allowances for this route, resolved by the capability descriptor. */
+  promptCacheFields: UpstreamPromptCacheFields;
   supportsNativeStreamingUsageCompat: boolean;
   supportsOpenAICompletionsStreamingUsageCompat: boolean;
   compatibilityFamily?: ProviderRequestCompatibilityFamily;
@@ -146,12 +154,6 @@ const OPENROUTER_ATTRIBUTION_CATEGORIES =
   "cli-agent,cloud-agent,programming-app,creative-writing,writing-assistant,general-chat,personal-agent";
 
 const LOCAL_ENDPOINT_HOSTS = new Set(["localhost", "127.0.0.1", "::1", "[::1]"]);
-const OPENAI_RESPONSES_APIS = new Set([
-  "openai-responses",
-  "azure-openai-responses",
-  "openai-chatgpt-responses",
-]);
-const OPENAI_RESPONSES_PROVIDERS = new Set(["openai", "azure-openai", "azure-openai-responses"]);
 const MANIFEST_PROVIDER_ENDPOINT_CLASSES = new Set<ProviderEndpointClass>([
   "anthropic-public",
   "cerebras-native",
@@ -455,11 +457,6 @@ function resolveKnownProviderFamily(provider: string | undefined): string {
   }
 }
 
-function isOpenAIResponsesApi(api: string | null | undefined): boolean {
-  const normalizedApi = normalizeOptionalLowercaseString(api);
-  return normalizedApi !== undefined && OPENAI_RESPONSES_APIS.has(normalizedApi);
-}
-
 function isCanonicalOrLegacyOpenAIProvider(provider: string | undefined): boolean {
   return provider === "openai";
 }
@@ -735,7 +732,6 @@ export function resolveProviderRequestCapabilities(
   const compatibilityFamily = manifestProviderRequest?.compatibilityFamily;
 
   const isResponsesApi = isOpenAIResponsesApi(api);
-  const promptCacheKeySupport = readCompatBoolean(input.compat, "supportsPromptCacheKey");
   // Default strip behavior (proxy-like endpoints with responses APIs) is
   // preserved as a safety net for providers that reject prompt_cache_key,
   // see #48155 (Volcano Engine DeepSeek). Operators running their payload
@@ -744,12 +740,17 @@ export function resolveProviderRequestCapabilities(
   // to recover prompt caching; providers known to reject the field can
   // force the strip with compat.supportsPromptCacheKey = false even on
   // native endpoints.
-  const shouldStripResponsesPromptCache =
-    promptCacheKeySupport === true
-      ? false
-      : promptCacheKeySupport === false
-        ? isResponsesApi
-        : isResponsesApi && policy.usesExplicitProxyLikeEndpoint;
+  //
+  // The precedence itself lives in one place (upstream-protocol-capabilities),
+  // because the emit point and the strip point must not disagree for the same
+  // route. This used to be a second copy of the same rule with its own api set.
+  const promptCacheFields = resolveUpstreamPromptCacheFields({
+    api,
+    compat: input.compat,
+    usesKnownNativeOpenAIEndpoint: policy.usesKnownNativeOpenAIEndpoint,
+    usesExplicitProxyLikeEndpoint: policy.usesExplicitProxyLikeEndpoint,
+  });
+  const shouldStripResponsesPromptCache = promptCacheFields.stripResponsesCacheFields;
 
   return {
     ...policy,
@@ -784,9 +785,12 @@ export function resolveProviderRequestCapabilities(
       readCompatBoolean(input.compat, "supportsStore") !== false &&
       provider !== undefined &&
       isResponsesApi &&
-      OPENAI_RESPONSES_PROVIDERS.has(provider) &&
+      OPENAI_RESPONSES_PROVIDER_IDS.has(provider) &&
       policy.usesKnownNativeOpenAIEndpoint,
     shouldStripResponsesPromptCache,
+    // Cache-field allowances resolved once for this route; consumed by the outbound
+    // write point instead of re-deriving endpoint classes there.
+    promptCacheFields,
     // Native endpoint class is the real signal here. Users can point a generic
     // provider key at Moonshot or DashScope and still need streaming usage.
     supportsNativeStreamingUsageCompat:

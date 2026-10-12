@@ -498,6 +498,9 @@
       "input": "入力トークン",
       "output": "出力トークン",
       "cache": "キャッシュトークン",
+      "cacheRead": "キャッシュ読取（ヒット）",
+      "cacheWrite": "キャッシュ書込",
+      "cacheHitRate": "キャッシュヒット率",
       "total": "合計トークン",
       "cost": "推定コスト"
     }
