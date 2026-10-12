@@ -14,14 +14,17 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 // silently truncating a run that is designed to take longer than 90 minutes.
 const DEFAULT_TIMEOUT_MINUTES = 90;
 
-// Caches the 500-question suite reads back to skip work a previous run finished.
-// They are intermediate state, never evidence: the report is still produced and
-// verified from scratch by this run.
+// State the 500-question suite reads back to skip work a previous run already paid for.
+// The caches are intermediate state; the question journal is stronger -- it carries the
+// judged rows and the real model receipts behind them, so a resumed segment continues
+// the same logical run instead of re-asking questions that were already answered. Every
+// segment still has to produce a report this run and pass scripts/check-locomo-evidence.mjs.
 const RESUMABLE_CACHE_FILES = [
   'extracted-facts-cache-v6-additive-p0.json',
   'observations-cache.json',
   'session-summary-cache.json',
   'dev-slice-cache.json',
+  'question-journal.jsonl',
 ];
 
 export function resolveTimeoutMinutes(raw, fromEnv = process.env.RUNTIME_MEMORY_FULL_TIMEOUT_MINUTES) {

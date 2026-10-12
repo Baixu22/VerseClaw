@@ -10,6 +10,7 @@ ownedPaths:
   - tests/unit/helpers/runtime-memory-context-recall.ts
   - tests/unit/helpers/locomo-pipeline.ts
   - tests/unit/helpers/locomo-report-comparator.ts
+  - tests/unit/helpers/locomo-question-journal.ts
   - tests/unit/helpers/runtime-memory-locomo-report-schema.ts
   - tests/unit/helpers/runtime-memory-real-llm-client.ts
   - tests/unit/helpers/runtime-memory-judge-freeze.ts
@@ -23,6 +24,7 @@ touchedAreas:
   - artifacts/p0-memory-integrity-20261009/**
   - scripts/repository-artifacts.json
   - docs/dev/p0-memory-evaluation-integrity.md
+  - docs/dev/p0-locomo-run-07-outcome-20261012.md
   - harness/specs/tasks/p0-memory-evaluation-integrity.md
   - harness/specs/rules/locomo-evaluation-integrity.md
   - README.md
@@ -50,7 +52,7 @@ forbiddenPatterns:
   - relabelling synthetic or unverifiable historical numbers as a real run
   - changing Git refs or deleting historical objects to hide corruption
 requiredTests:
-  - pnpm exec vitest run tests/unit/context-recall.test.ts tests/unit/locomo-pipeline.test.ts tests/unit/locomo-report-comparator.test.ts tests/unit/runtime-memory-locomo-report-schema.test.ts tests/unit/locomo-evidence-integrity.test.ts tests/unit/runtime-memory-real-llm-client.test.ts tests/unit/locomo-eval-config.test.ts tests/unit/locomo-judge-registry.test.ts tests/unit/locomo-embedding-provider.test.ts tests/unit/locomo-full-runner.test.ts
+  - pnpm exec vitest run tests/unit/context-recall.test.ts tests/unit/locomo-pipeline.test.ts tests/unit/locomo-report-comparator.test.ts tests/unit/runtime-memory-locomo-report-schema.test.ts tests/unit/locomo-evidence-integrity.test.ts tests/unit/runtime-memory-real-llm-client.test.ts tests/unit/locomo-eval-config.test.ts tests/unit/locomo-judge-registry.test.ts tests/unit/locomo-embedding-provider.test.ts tests/unit/locomo-full-runner.test.ts tests/unit/locomo-question-journal.test.ts
   - pnpm run typecheck:test
   - pnpm eval:runtime-memory:locomo:verify
 riskNotes:
@@ -67,6 +69,8 @@ acceptance:
   - Final model evidence passes schema, per-question recomputation, completeness, source-freshness and digest checks; failure, skip or missing evidence is not a pass.
   - Each question binds to a unique live judge receipt whose request fingerprint and verdict match the retained question and score; a fresh full run cannot substitute cached judges or silently alter the frozen prompt.
   - The full-run command cannot silently truncate a run: its child budget is explicit, an invalid budget fails closed instead of falling back, and a resumed run records the source run directory, its source revision and the per-file digests of the intermediate caches it reused.
+  - Each answered question is durable before the next batch starts: an interruption leaves a journal that the next segment resumes, and a question that failed or was never answered can never be written as a judged result.
+  - A report assembled from a retained journal plus a fresh segment passes the same verifier as a single-shot run, including one live judge receipt per question, the widened logical-run receipt window, retained usage, and full judge coverage.
   - Read all final artifacts from disk, run scoped tests and type checks, and commit only this isolated repair set.
 ---
 
@@ -75,3 +79,24 @@ acceptance:
 These are evaluator and evidence repairs, not a Runtime Memory feature graduation.
 The model resource is explicitly authorized by the owner. All automation is labelled
 `driven_by: agent`; no real-human participation or verdict is claimed.
+
+## Durability and resume
+
+The 500-question run used to hold every judged answer in memory and write the report
+only after the last question, so an interruption discarded all completed work (run-09
+died at 60/500 with an empty reports directory). Each finished batch now appends to
+`question-journal.jsonl` in the run directory:
+
+- `succeeded` records a judged question row whose answer came back with a real receipt.
+- `failed` records a question that produced no complete final answer; it stays pending
+  and is never counted as a judged result.
+- `receipts` records the run-level model receipts the batch produced, so a resumed
+  segment can rebuild the report without re-calling the model.
+
+The journal is progress state, not evidence. A resumed segment continues the same
+logical run: retained and live receipts are merged, the run window is widened to the
+earliest retained answer, and the finished report still has to pass
+`scripts/check-locomo-evidence.mjs` unchanged. A partial answer set writes
+`run-progress.json` and fails closed instead of emitting a report the verifier would
+reject. `--resume-from` copies the journal along with the intermediate caches and
+records its source revision and per-file digests.

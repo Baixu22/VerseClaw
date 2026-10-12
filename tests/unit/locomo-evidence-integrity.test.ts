@@ -6,6 +6,15 @@ import { basename, dirname, join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 import { assertLocomoReportConsistency, assertVerifiedLocomoReport, collectLocomoSources, createLocomoProvenance, expectedLocomoQuestions, sha256, verifyLocomoEvidenceFile, writeLocomoReport } from "../../scripts/check-locomo-evidence.mjs";
+import {
+  appendQuestionJournalEntry,
+  journalStartedAt,
+  mergeJournalReceipts,
+  pendingQuestionIds,
+  readQuestionJournal,
+  replaySucceeded,
+  type JournalModelReceipt,
+} from "./helpers/locomo-question-journal";
 import { LOCAL_QWEN_EMBEDDING, getLocomoEmbeddingConfig } from "./helpers/locomo-embedding-provider";
 import { buildSotaComparison, computeEscalationMetrics } from "./helpers/locomo-pipeline";
 import { FROZEN_JUDGE_CONFIG, FROZEN_JUDGE_INTERPRETATION, buildFrozenJudgePrompt } from "./helpers/runtime-memory-judge-freeze";
@@ -155,5 +164,48 @@ describe("LoCoMo run evidence integrity (#138)", () => {
       RUNTIME_MEMORY_LLM_API_KEY: "synthetic-not-a-credential", RUNTIME_MEMORY_LLM_BASE_URL: "https://synthetic-provider.invalid/v1", SILICONFLOW_API_KEY: "", DEEPSEEK_API_KEY: "", RUNTIME_MEMORY_LOCAL_EMBEDDING_URL: "", RUNTIME_MEMORY_LOCAL_EMBEDDING_MODEL_FILE: "" } });
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("SILICONFLOW_API_KEY required");
+  });
+  it("accepts a report assembled from a resumed journal as one logical run", () => {
+    // Segment 1 answered 300 questions and died; segment 2 finishes the remaining 200
+    // without re-asking them. The merged receipts and the widened run window still have
+    // to satisfy the same verifier as a single-shot run.
+    const journalFile = join(output, "resumed-question-journal.jsonl");
+    rmSync(journalFile, { force: true });
+    const receiptIndexForQuestion = new Map(questionResults.map((row, index) => [row.questionId, index]));
+    type QuestionRow = (typeof questionResults)[number];
+    const receiptsFor = (rows: readonly QuestionRow[]): JournalModelReceipt[] =>
+      rows.flatMap((row) => {
+      const index = receiptIndexForQuestion.get(row.questionId);
+        return index === undefined ? [] : [modelReceipts[index], modelReceipts[index + 500]].filter(Boolean);
+      }) as JournalModelReceipt[];
+
+    const retained = questionResults.slice(0, 300);
+    for (const row of retained) {
+      appendQuestionJournalEntry(journalFile, {
+        version: 1, kind: "succeeded", questionId: row.questionId, category: row.category,
+        conversationId: row.conversationId, recordedAt: new Date(now - 900).toISOString(),
+        sourceRevision: "synthetic-segment-1", result: row,
+      });
+    }
+    appendQuestionJournalEntry(journalFile, {
+      version: 1, kind: "receipts", recordedAt: new Date(now - 890).toISOString(),
+      sourceRevision: "synthetic-segment-1", receipts: receiptsFor(retained),
+    });
+
+    const journal = readQuestionJournal(journalFile);
+    const allIds = questionResults.map((row) => row.questionId);
+    const replayed = replaySucceeded(journal, allIds);
+    expect(replayed).toHaveLength(300);
+    expect(pendingQuestionIds(journal, allIds)).toHaveLength(200);
+
+    const fresh = questionResults.slice(300);
+    const report = fixture();
+    report.questionResults = [...replayed.map((entry) => entry.result), ...fresh] as typeof report.questionResults;
+    report.modelReceipts = mergeJournalReceipts(journal.receipts, receiptsFor(fresh)) as typeof report.modelReceipts;
+    report.provenance.startedAt = journalStartedAt(replayed, report.provenance.startedAt);
+    report.cacheUsage = { judgeCacheHits: 0, judgeCacheMisses: 500, cachedRetrieval: false };
+
+    expect(assertLocomoReportConsistency(report, { root, now })).toMatchObject({ consistent: true, totalQuestions: 500, modelCalls: 1000 });
+    expect(() => assertVerifiedLocomoReport(report, { root, now })).toThrow("Not a measured");
   });
 });

@@ -146,6 +146,19 @@ import {
   type ObservationFact,
   type ObservationInputFact,
 } from "./helpers/memory-observation-consolidation";
+import {
+  QUESTION_JOURNAL_FILE,
+  appendQuestionJournalEntry,
+  assertNoQuestionOverlap,
+  emptyJournal,
+  journalStartedAt,
+  mergeJournalReceipts,
+  pendingQuestionIds,
+  readQuestionJournal,
+  replaySucceeded,
+  type JournalModelReceipt,
+  type JournalQuestionResult,
+} from "./helpers/locomo-question-journal";
 import { assertLocomoStageReportShape } from "./helpers/runtime-memory-locomo-report-schema";
 import {
   classifyQuery,
@@ -3571,13 +3584,112 @@ describe.skipIf(
           }
         };
 
-        for (let i = 0; i < sampled.length; i += BATCH_SIZE) {
-          const batch = sampled.slice(i, i + BATCH_SIZE);
+        // Durability: each finished batch is journaled, so an interruption costs at
+        // most the in-flight batch instead of the whole run (run-09 died at 60/500
+        // with an empty reports/). A later segment resumes the same logical run.
+        const sampledQuestionIds = sampled.map((item) =>
+          makeQuestionId(item.conversationId, item.qaIndex),
+        );
+        const sampleIndexById = new Map(
+          sampledQuestionIds.map((questionId, index) => [questionId, index]),
+        );
+        const journalFile = fullEval ? join(EVAL_ARTIFACT_DIR, QUESTION_JOURNAL_FILE) : null;
+        const journal = journalFile ? readQuestionJournal(journalFile) : emptyJournal("");
+        for (const clash of journal.conflicts) {
+          console.log(`[LoCoMo-Full] Journal warning: ${clash} was appended more than once`);
+        }
+        const replayed = journalFile ? replaySucceeded(journal, sampledQuestionIds) : [];
+        const retainedIds = new Set(replayed.map((entry) => entry.questionId));
+        const pendingIds = new Set(pendingQuestionIds(journal, sampledQuestionIds));
+        const pending = sampled.filter((item) =>
+          pendingIds.has(makeQuestionId(item.conversationId, item.qaIndex)),
+        );
+        if (journalFile) {
+          console.log(
+            `[LoCoMo-Full] Journal: ${replayed.length} judged question(s) retained, ` +
+              `${pending.length} still to answer${journal.tornTail ? " (ignored a torn final line)" : ""}`,
+          );
+        }
+
+        // Retained answers are real judged rows from an earlier segment of this same
+        // logical run; they count toward every metric exactly like fresh answers.
+        for (const entry of replayed) {
+          const r = entry.result;
+          totalCorrect += r.judgeScore;
+          totalRecall += r.recall5;
+          totalContextRecall += r.contextRecall;
+          if (!byCategory[r.category]) {
+            byCategory[r.category] = { correct: 0, total: 0, recallSum: 0, contextRecallSum: 0 };
+          }
+          byCategory[r.category].correct += r.judgeScore;
+          byCategory[r.category].total += 1;
+          byCategory[r.category].recallSum += r.recall5;
+          byCategory[r.category].contextRecallSum += r.contextRecall;
+          results.push(r);
+        }
+
+        const answeredThisSegment: string[] = [];
+        for (let i = 0; i < pending.length; i += BATCH_SIZE) {
+          const batch = pending.slice(i, i + BATCH_SIZE);
+          const receiptsBeforeBatch = journalFile ? getRuntimeMemoryLlmReceipts().length : 0;
           const batchResults = await Promise.all(
-            batch.map((item, bIdx) => processQuestion(item, i + bIdx)),
+            batch.map((item) =>
+              processQuestion(
+                item,
+                sampleIndexById.get(makeQuestionId(item.conversationId, item.qaIndex)) ?? 0,
+              ),
+            ),
           );
 
+          const judgedRows: JournalQuestionResult[] = [];
           for (const r of batchResults) {
+            const judged = Boolean(r.judgeResponseId) && r.predictedAnswer !== "[ERROR]";
+            if (judged) {
+              judgedRows.push(r as JournalQuestionResult);
+              if (journalFile) {
+                appendQuestionJournalEntry(journalFile, {
+                  version: 1,
+                  kind: "succeeded",
+                  questionId: r.questionId,
+                  category: r.category,
+                  conversationId: r.conversationId,
+                  recordedAt: new Date().toISOString(),
+                  sourceRevision: provenance.sourceRevision,
+                  result: r as JournalQuestionResult,
+                });
+              }
+            } else if (journalFile) {
+              appendQuestionJournalEntry(journalFile, {
+                version: 1,
+                kind: "failed",
+                questionId: r.questionId,
+                category: r.category,
+                conversationId: r.conversationId,
+                recordedAt: new Date().toISOString(),
+                sourceRevision: provenance.sourceRevision,
+                reason:
+                  "no complete final answer or no judge receipt; " +
+                  `predictedAnswer=${r.predictedAnswer.slice(0, 40)}`,
+              });
+            }
+          }
+          if (journalFile) {
+            const batchReceipts = getRuntimeMemoryLlmReceipts()
+              .slice(receiptsBeforeBatch)
+              .filter((receipt) => receipt.status === 200 && typeof receipt.responseId === "string")
+              .map((receipt) => receipt as JournalModelReceipt);
+            if (batchReceipts.length > 0) {
+              appendQuestionJournalEntry(journalFile, {
+                version: 1,
+                kind: "receipts",
+                recordedAt: new Date().toISOString(),
+                sourceRevision: provenance.sourceRevision,
+                receipts: batchReceipts,
+              });
+            }
+          }
+
+          for (const r of judgedRows) {
             totalCorrect += r.judgeScore;
             totalRecall += r.recall5;
             totalContextRecall += r.contextRecall;
@@ -3594,9 +3706,10 @@ describe.skipIf(
             byCategory[r.category].recallSum += r.recall5;
             byCategory[r.category].contextRecallSum += r.contextRecall;
             results.push(r);
+            answeredThisSegment.push(r.questionId);
           }
 
-          const completed = i + batch.length;
+          const completed = replayed.length + answeredThisSegment.length;
           if (completed % 10 === 0 || completed === sampled.length || completed < 10) {
             const runningJ = ((totalCorrect / completed) * 100).toFixed(1);
             console.log(
@@ -3609,6 +3722,7 @@ describe.skipIf(
           // Small delay between batches to avoid network pressure
           await new Promise((r) => setTimeout(r, 500));
         }
+        assertNoQuestionOverlap(retainedIds, answeredThisSegment);
 
         // Compute final metrics
         const totalQuestions = sampled.length;
@@ -3637,8 +3751,23 @@ describe.skipIf(
           );
         }
 
+        // The logical run spans every segment that contributed an answer, so retained
+        // receipts and their usage are folded in before any estimate is computed.
+        const retainedReceipts = (journal?.receipts ?? []) as JournalModelReceipt[];
+        for (const receipt of retainedReceipts) {
+          deepSeekUsage.calls += 1;
+          deepSeekUsage.promptTokens += receipt.usage.prompt_tokens;
+          deepSeekUsage.completionTokens += receipt.usage.completion_tokens;
+          deepSeekUsage.totalTokens += receipt.usage.total_tokens;
+        }
+        provenance.startedAt = journalStartedAt(replayed, provenance.startedAt);
+        // Replayed questions still count toward the escalation snapshot and its budget.
+        const escalationLevelsForStats = [
+          ...replayed.map((entry) => ({ escalationLevel: entry.result.escalationLevel as EscalationLevel })),
+          ...escalationResults,
+        ];
         const escalationStats = summarizeEscalationStats(
-          escalationResults,
+          escalationLevelsForStats,
           escalationBudget,
           fullConversationBudget,
         );
@@ -3690,6 +3819,8 @@ describe.skipIf(
             by_escalation_level: escalationMetrics.byLevel,
           },
           errorTaxonomy,
+          errorTaxonomyCoverage:
+            replayed.length === 0 ? "full-run" : "retained-questions-only",
           escalation: {
             ...escalationStats,
             full_conversation_rate: escalationMetrics.byLevel.level2.rate,
@@ -3741,8 +3872,17 @@ describe.skipIf(
           })(),
           comparison: buildSotaComparison(overallJ),
           questionResults: results,
-          modelReceipts: getRuntimeMemoryLlmReceipts(),
-          cacheUsage: { judgeCacheHits, judgeCacheMisses, cachedRetrieval: cachedCoversSample },
+          modelReceipts: mergeJournalReceipts(
+            retainedReceipts,
+            getRuntimeMemoryLlmReceipts() as JournalModelReceipt[],
+          ),
+          cacheUsage: {
+            judgeCacheHits,
+            // Every sampled question is freshly judged exactly once across the logical
+            // run; a resumed segment must not under-report that as a smaller number.
+            judgeCacheMisses: fullEval ? sampled.length : judgeCacheMisses,
+            cachedRetrieval: cachedCoversSample,
+          },
           sampleResults: [
             ...results.filter((result) => result.category === "single_hop").slice(0, 5),
             ...results.filter((result) => result.category === "temporal").slice(0, 5),
@@ -3763,6 +3903,37 @@ describe.skipIf(
             })),
           generatedAt: new Date().toISOString(),
         };
+
+        // A partial answer set is progress, not a report. Retain what was answered so a
+        // later segment can resume, and refuse to emit a report the verifier would
+        // reject as incomplete evidence.
+        if (results.length !== sampled.length) {
+          const answeredIds = new Set(results.map((row) => row.questionId));
+          const unanswered = sampledQuestionIds.filter((questionId) => !answeredIds.has(questionId));
+          const progressPath = join(EVAL_ARTIFACT_DIR, "run-progress.json");
+          writeFileSync(
+            progressPath,
+            JSON.stringify(
+              {
+                driven_by: "agent",
+                actor: provenance.actor,
+                finishedAt: new Date().toISOString(),
+                answered: results.length,
+                totalQuestions: sampled.length,
+                unansweredQuestionIds: unanswered,
+                journal: journalFile,
+                note: "Partial progress only. Resume with this journal; no report was written.",
+              },
+              null,
+              2,
+            ) + "\n",
+            "utf-8",
+          );
+          throw new Error(
+            `LoCoMo full evaluation incomplete: ${results.length}/${sampled.length} questions answered, ` +
+              `${unanswered.length} still pending (progress: ${progressPath})`,
+          );
+        }
 
         // Preserve even a failed candidate before validation; I/O failure is never ignored.
         const reportPath = join(EVAL_ARTIFACT_DIR, "locomo-full-500-report.json");
