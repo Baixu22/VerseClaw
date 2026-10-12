@@ -162,6 +162,11 @@ import {
 } from "./helpers/locomo-question-journal";
 import { assertLocomoStageReportShape } from "./helpers/runtime-memory-locomo-report-schema";
 import {
+  assertRetrievalOnlyDisclosure,
+  attributeRetrieval,
+  summarizeRetrievalAttribution,
+} from "./helpers/locomo-retrieval-attribution";
+import {
   classifyQuery,
   type QueryType,
 } from "./helpers/query-classifier";
@@ -4012,6 +4017,55 @@ describe.skipIf(
         const reportPath = join(EVAL_ARTIFACT_DIR, "locomo-full-500-report.json");
         writeLocomoReport(report, reportPath);
         assertLocomoStageReportShape(report);
+
+        // #136 retrieval diagnosis: attribute every question to extraction loss or
+        // ranking loss. It is written beside the report, never inside it, so the
+        // verified report contract and the "no judge score" boundary both hold.
+        if (needsFacts) {
+          const memorySummariesByConversation = new Map<string, string[]>();
+          for (const [conversationId, facts] of factsByConversation) {
+            memorySummariesByConversation.set(conversationId, facts.map((fact) => fact.objectSummary));
+          }
+          const attributions = results.map((row) =>
+            attributeRetrieval({
+              questionId: row.questionId,
+              category: row.category,
+              conversationId: row.conversationId,
+              question: row.question,
+              goldEvidence: row.goldEvidence,
+              retrievedFactSummaries: row.retrievedFactSummaries,
+              memoryFactSummaries: memorySummariesByConversation.get(row.conversationId) ?? [],
+              evidenceTextById: evidenceTextByConversation.get(row.conversationId),
+            }),
+          );
+          const retrievalSummary = summarizeRetrievalAttribution(
+            attributions,
+            new Map(results.map((row) => [row.questionId, row.recall5])),
+          );
+          assertRetrievalOnlyDisclosure(retrievalSummary);
+          writeFileSync(
+            join(EVAL_ARTIFACT_DIR, "retrieval-diagnostic.json"),
+            JSON.stringify(
+              {
+                driven_by: "agent",
+                actor: provenance.actor,
+                sourceRevision: provenance.sourceRevision,
+                generatedAt: new Date().toISOString(),
+                summary: retrievalSummary,
+                rows: attributions,
+              },
+              null,
+              2,
+            ) + "\n",
+            "utf-8",
+          );
+          console.log(
+            `[LoCoMo-Full] Retrieval diagnostic: top5=${(retrievalSummary.overall.top5Coverage * 100).toFixed(1)}% ` +
+              `memory=${(retrievalSummary.overall.memoryCoverage * 100).toFixed(1)}% ` +
+              `absent=${retrievalSummary.overall.bucketCounts.absent_from_memory} ` +
+              `rankedOut=${retrievalSummary.overall.bucketCounts.in_memory_but_not_top5}`,
+          );
+        }
 
         // P0-OPT: flush judge cache and report hit rate.
         const cache = getJudgeCache();

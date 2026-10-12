@@ -11,6 +11,7 @@ ownedPaths:
   - tests/unit/helpers/locomo-pipeline.ts
   - tests/unit/helpers/locomo-report-comparator.ts
   - tests/unit/helpers/locomo-question-journal.ts
+  - tests/unit/helpers/locomo-retrieval-attribution.ts
   - tests/unit/helpers/runtime-memory-locomo-report-schema.ts
   - tests/unit/helpers/runtime-memory-real-llm-client.ts
   - tests/unit/helpers/runtime-memory-judge-freeze.ts
@@ -52,7 +53,7 @@ forbiddenPatterns:
   - relabelling synthetic or unverifiable historical numbers as a real run
   - changing Git refs or deleting historical objects to hide corruption
 requiredTests:
-  - pnpm exec vitest run tests/unit/context-recall.test.ts tests/unit/locomo-pipeline.test.ts tests/unit/locomo-report-comparator.test.ts tests/unit/runtime-memory-locomo-report-schema.test.ts tests/unit/locomo-evidence-integrity.test.ts tests/unit/runtime-memory-real-llm-client.test.ts tests/unit/locomo-eval-config.test.ts tests/unit/locomo-judge-registry.test.ts tests/unit/locomo-embedding-provider.test.ts tests/unit/locomo-full-runner.test.ts tests/unit/locomo-question-journal.test.ts
+  - pnpm exec vitest run tests/unit/context-recall.test.ts tests/unit/locomo-pipeline.test.ts tests/unit/locomo-report-comparator.test.ts tests/unit/runtime-memory-locomo-report-schema.test.ts tests/unit/locomo-evidence-integrity.test.ts tests/unit/runtime-memory-real-llm-client.test.ts tests/unit/locomo-eval-config.test.ts tests/unit/locomo-judge-registry.test.ts tests/unit/locomo-embedding-provider.test.ts tests/unit/locomo-full-runner.test.ts tests/unit/locomo-question-journal.test.ts tests/unit/locomo-retrieval-attribution.test.ts
   - pnpm run typecheck:test
   - pnpm eval:runtime-memory:locomo:verify
 riskNotes:
@@ -72,6 +73,7 @@ acceptance:
   - Each answered question is durable before the next batch starts: an interruption leaves a journal that the next segment resumes, and a question that failed or was never answered can never be written as a judged result.
   - A report assembled from a retained journal plus a fresh segment passes the same verifier as a single-shot run, including one live judge receipt per question, the widened logical-run receipt window, retained usage, and full judge coverage.
   - The judge phase runs under an explicit V8 heap budget with a fatal-error report, the budget is recorded in run-budget.json, and in-worker heap/RSS heartbeats land in progress-timeline.jsonl so a future kill leaves a curve instead of a gap.
+  - Retrieval failures are attributed without any model call to extraction loss versus ranking loss, the temporal-vs-others pairing is reported only when both sides exist, and the diagnostic carries no judge score or baseline claim (enforced by assertRetrievalOnlyDisclosure, not just documented).
   - Read all final artifacts from disk, run scoped tests and type checks, and commit only this isolated repair set.
 ---
 
@@ -123,3 +125,24 @@ The full-run command now:
 Raising the limit is a measurement change, not a fix: if the next run dies inside the
 new limit, the report and the heartbeat curve say so, and the "unexplained external
 kill" position can be narrowed or replaced with evidence.
+
+## Retrieval-only diagnosis (#136)
+
+The judge cannot answer #136's question: when temporal retrieval looks worse, was the
+gold evidence never extracted into memory, or was it extracted and then ranked out of
+the top-5? The existing error taxonomy needs a paid classifier call per failure and only
+buckets failures the judge already found.
+
+`locomo-retrieval-attribution.ts` is deterministic and model-free. For each question it
+compares the gold turns against the conversation's whole extracted fact set and against
+the retrieved top-5, then assigns exactly one bucket: `no_gold_evidence`,
+`absent_from_memory`, `in_memory_but_not_top5`, or `retrieved_in_top5`. The summary pairs
+temporal against the other categories in the same sample and reports the run's own
+recall@5 rather than inventing a metric; it refuses to compute a temporal delta when
+either side is empty.
+
+Boundary: this is a diagnosis and never a score. The full run writes
+`retrieval-diagnostic.json` beside the verified report (never inside it), and
+`assertRetrievalOnlyDisclosure` fails closed if a judge-score or baseline claim is ever
+attached to it. The mock-derived dev-slice caches on disk are not usable as evidence for
+this analysis; it needs a real retrieval run.
