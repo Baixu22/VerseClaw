@@ -27,6 +27,7 @@ import {
   type ContextItemQuery,
   type ContextItemStore,
 } from './context-item-store.js';
+import { dcsObservability } from '../dcs-observability.js';
 
 export type { ContextItemQuery, ContextItemStore } from './context-item-store.js';
 export { InMemoryContextItemStore } from './context-item-store.js';
@@ -100,6 +101,9 @@ export class ContextItemRegistry {
     try {
       return await this.#store.queryItems(query);
     } catch {
+      // Fail-open (callers keep receiving []), but a store failure must not be
+      // indistinguishable from "no context items exist".
+      dcsObservability.recordContextItemReadFailure({ operation: 'query' });
       return [];
     }
   }
@@ -121,6 +125,8 @@ export class ContextItemRegistry {
     try {
       return await this.#store.getItem(normalizeContextItemId(id));
     } catch {
+      // See query(): fail-open, but counted.
+      dcsObservability.recordContextItemReadFailure({ operation: 'get' });
       return undefined;
     }
   }

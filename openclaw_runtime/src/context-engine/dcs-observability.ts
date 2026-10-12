@@ -55,6 +55,12 @@ export type DcsObservabilitySnapshot = {
    * read" look identical to the caller and to the panel.
    */
   memoryReceiptReadFailures: number;
+  /**
+   * Read failures on the context-item registry surface. `query()` returns []
+   * and `get()` returns undefined on a store error by design, so without this
+   * counter a failed read is indistinguishable from "there are no items".
+   */
+  contextItemReadFailures: number;
   /** #182: the most recent VToken overlap breakdown (numerators + totals). */
   lastVtokenOverlap: {
     sourceCount: number;
@@ -132,6 +138,7 @@ const ZERO: DcsObservabilitySnapshot = {
   roleSpawnMemoryInjectionChars: 0,
   roleSpawnMemoryInjectionCards: 0,
   memoryReceiptReadFailures: 0,
+  contextItemReadFailures: 0,
   lastVtokenOverlap: null,
   contextOrchestratorCalls: 0,
   contextOrchestratorKillSwitchHits: 0,
@@ -212,6 +219,14 @@ class DcsObservabilityRegistry {
       Math.floor(params.estimatedTokens ?? 0),
     );
     this.#counters.vtokenSourcesIngested += Math.max(0, Math.floor(params.sourcesIngested ?? 0));
+  }
+
+  /**
+   * Record a failed read on the context-item registry surface (query/get).
+   */
+  recordContextItemReadFailure(params: { operation: "query" | "get" }): void {
+    this.#counters.contextItemReadFailures += 1;
+    void params.operation;
   }
 
   /**
