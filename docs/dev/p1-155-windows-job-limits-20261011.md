@@ -75,18 +75,26 @@ twice the small cap) rather than an unbounded exhaustion test.
   "unavailable"` is literal: the receipt says "configured at start, fail-closed otherwise", and the
   evidence for actual enforcement is behavioural (the table above), not a kernel query.
 
-## Blocking finding recorded (not fixed here)
+## Long-lived `process.start` finding (resolved in #160)
 
-The long-lived `process.start` boundary on this host fails for **every** command with
-`Access denied (os error 5)` - including requests that carry **no** resource limits, whose arguments
-are byte-identical to the pre-change code. The one-shot `exec.run` boundary works on the same binary.
-Reproduction (5 configurations: no limits, `maxProcesses: 1`, `maxMemoryBytes` 512 MiB / 64 MiB, both)
-is recorded in the #155 comment. Consequences:
+This host originally failed the long-lived `process.start` boundary for **every** command with
+`Access denied (os error 5)` - including requests carrying **no** limits. The cause was the
+executor's first write inside the op (`fs::create_dir_all(<workspace>/.ae/process-lifecycle)`)
+being denied under the host's restricted token, which surfaced as `E_PROCESS_INTERNAL`.
 
-- the long-lived path's real-limit verification is gated behind
-  `VERSESHELL_REAL_PROCESS_START_LIMITS=1` (`governed-process.real-limits.test.ts`) so the suite stays
-  green until the executor path works,
-- the protocol wiring and receipts for that path are still unit-tested against the stubbed ACI client,
+#160 pre-creates that directory from the host, so the op reaches its normal path. With the root
+present, the opt-in suite runs and both Job Object limits are behaviourally enforced (child spawn
+refused at `maxProcesses: 1`; a 256 MiB allocation fails under a 64 MiB per-process commit cap while
+the same script succeeds uncapped). See
+`docs/dev/p1-160-verseshell-process-start-20261012.md`.
+
+Consequences now:
+
+- the long-lived path's real-limit verification still runs behind
+  `VERSESHELL_REAL_PROCESS_START_LIMITS=1` (`governed-process.real-limits.test.ts`) because the
+  bundled binary may be absent, but it now passes when the binary is present and the host permits the
+  lifecycle directory,
+- the protocol wiring and receipts for that path remain unit-tested against the stubbed ACI client,
 - CPU rate limiting stays out of scope, as the issue directs (phase 2, only with real load evidence).
 
 ## Tests
@@ -101,7 +109,9 @@ is recorded in the #155 comment. Consequences:
 ## Residual, stated honestly
 
 1. No kernel-level effective-limit readback exists; enforcement evidence is behavioural.
-2. The `process.start` path could not be behaviourally verified on this host (blocking finding above).
+2. The `process.start` path is now behaviourally verified when the bundled binary is present and the
+   host permits the lifecycle directory; a host that denies that write remains environment-blocked
+   (see the #160 record).
 3. No CPU rate limit, no AppContainer/Windows Sandbox claim, no whole-machine cleaner.
 4. The agent-tool *exposure* of VerseShell process execution is unchanged by this change; limits are
    wired at the boundary and applied when an operator declares them.

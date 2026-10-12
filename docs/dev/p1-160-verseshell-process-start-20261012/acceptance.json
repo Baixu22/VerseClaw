@@ -1,0 +1,137 @@
+{
+  "schema": "p1-160-verseshell-process-start-acceptance/v1",
+  "issue": 160,
+  "driven_by": "agent",
+  "actor": "codex",
+  "base": {
+    "origin_main_at_start": "931688dfec55a6ad2e7e56250c3d360f9a85ce90",
+    "origin_main_after_rebase": "ece949a92b1b2eb1d285df152febdcfd49a02c9c"
+  },
+  "binary": {
+    "path": "resources/bin/win32-x64/ae.exe",
+    "bytes": 14879232,
+    "sha256": "ac6a7a15dac0a9dc7d15ec975fc65276f25c871bbc0174197731947df6460786",
+    "matches_manifest": true
+  },
+  "findings": [
+    "Original symptom (process.start -> E_PROCESS_INTERNAL 'Access denied (os error 5)') reproduces only while <workspace>/.ae/process-lifecycle is absent; the executor's first write inside the op is fs::create_dir_all of that path.",
+    "With the lifecycle root present, process.start runs normally (cmd.exe /D /C echo probe-ok -> exit 0, stdout probe-ok) on current origin/main without any code change.",
+    "The previously gated real-limit suite then fails for two reasons that are wrong assertions, not enforcement gaps: cmd.exe /C needs a helper process so a maxProcesses:1 Job refuses the root; and PowerShell continues past a non-terminating OutOfMemoryException so it still prints alloc-ok."
+  ],
+  "measured_behaviour": [
+    {
+      "scenario": "cmd.exe /D /C echo probe-ok, no limits, root pre-created",
+      "observation": "ok, exit 0, stdout probe-ok"
+    },
+    {
+      "scenario": "Node root spawns cmd.exe, no cap",
+      "observation": "root runs, child spawnSync status 0"
+    },
+    {
+      "scenario": "Node root spawns cmd.exe, maxProcesses=1",
+      "observation": "root runs, child status null (refused), receipt enforced=true"
+    },
+    {
+      "scenario": "Node root allocates 256 MiB, no cap",
+      "observation": "exit 0, alloc-ok"
+    },
+    {
+      "scenario": "Node root allocates 256 MiB, maxMemoryBytes=64MiB",
+      "observation": "allocation fails before marker, receipt enforced=true"
+    }
+  ],
+  "gates": [
+    {
+      "name": "verseshell suite with limits opt-in ON",
+      "command": "VERSESHELL_REAL_PROCESS_START_LIMITS=1 VERSESHELL_REAL_EXEC_LIMITS=1 vitest run --config test/vitest/vitest.verseshell.config.ts",
+      "exit_code": 0,
+      "summary": "25 files, 325 passed / 0 failed / 0 skipped"
+    },
+    {
+      "name": "verseshell suite default",
+      "command": "vitest run --config test/vitest/vitest.verseshell.config.ts",
+      "exit_code": 0,
+      "summary": "24 passed / 1 skipped; 323 passed / 2 skipped"
+    },
+    {
+      "name": "runtime core typecheck",
+      "command": "tsgo -p openclaw_runtime/tsconfig.core.json --noEmit",
+      "exit_code": 0
+    },
+    {
+      "name": "import cycles",
+      "command": "pnpm --dir openclaw_runtime run check:import-cycles",
+      "exit_code": 0,
+      "summary": "0 runtime value cycles"
+    },
+    {
+      "name": "scoped lint",
+      "command": "eslint governed-process.ts governed-process.real-limits.test.ts --max-warnings 0",
+      "exit_code": 0
+    },
+    {
+      "name": "comms replay + compare",
+      "command": "pnpm run comms:replay && pnpm run comms:compare",
+      "exit_code": 0,
+      "summary": "all PASS"
+    },
+    {
+      "name": "spec validate",
+      "command": "harness validate --spec harness/specs/tasks/p1-160-verseshell-process-start-20261012.md --since origin/main",
+      "exit_code": 0,
+      "summary": "Spec is valid"
+    }
+  ],
+  "not_run": [
+    {
+      "gate": "repo:artifacts check",
+      "reason": "Pre-existing red on origin/main: docs/dev/prompt-cache-compaction-ttl-20261012.{md,/SHA256SUMS,/acceptance.json} are tracked but matched by stale .gitignore rules from the #164/#165 landing; unrelated to this change and reproducible with this change stashed."
+    },
+    {
+      "gate": "Electron / Playwright E2E",
+      "reason": "No user-visible UI change; this is a runtime boundary fix plus an opt-in test correction."
+    },
+    {
+      "gate": "non-Windows hosts",
+      "reason": "The Job Object limits and the lifecycle-record path are Windows-specific; no cross-platform claim."
+    }
+  ],
+  "bindings": [
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+      "sha256": "1cef46f999e541d7cfc1493870d21d8fd6e5aa2912522863587ac78b9c8d3f24",
+      "bytes": 22075
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/governed-process.real-limits.test.ts",
+      "sha256": "59e774a26648e88f60962a0b4f4559860d26a1022163c8a6c5d01dde05a280d8",
+      "bytes": 7903
+    },
+    {
+      "path": "harness/specs/tasks/p1-160-verseshell-process-start-20261012.md",
+      "sha256": "025359b45c7c4e2cc8bbaf11730540be74f83e7017d428d168c92a100ca22154",
+      "bytes": 3531
+    },
+    {
+      "path": "docs/dev/p1-160-verseshell-process-start-20261012.md",
+      "sha256": "18ce2c73208a83d6ff2eed34b2c04d0cd0b5650fde4f10977a2706a9f16bde9c",
+      "bytes": 5403
+    },
+    {
+      "path": "docs/dev/p1-155-windows-job-limits-20261011.md",
+      "sha256": "05ddb15373bbb80ca2ac336dec2cd3faf34bb355ceeb91081c79ff073e7f3c1b",
+      "bytes": 7224
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "sha256": "3a860e5d0b19137ba48238581e3ec03a311a9676c7e954b5139847e81951bab4",
+      "bytes": 117674
+    }
+  ],
+  "boundaries": [
+    "The pre-create is a diagnosability fix, not a sandbox bypass: a host that denies the record write still fails, now with E_PROCESS_PERSIST instead of E_PROCESS_INTERNAL.",
+    "No kernel QueryInformationJobObject readback exists; enforcement evidence is behavioural.",
+    "The opt-in suite stays opt-in because the bundled binary may be absent.",
+    "No product lock/default/release change; agent-driven only."
+  ]
+}

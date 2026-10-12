@@ -1,3 +1,5 @@
+import { mkdirSync } from "node:fs";
+import { join } from "node:path";
 import type { JsonObject, Observation } from "../../../../shared/verseshell/types.js";
 import type { TerminationReason } from "../../process/supervisor/types.js";
 import {
@@ -20,6 +22,27 @@ const APPROVAL_TOKEN = /^apv_[a-f0-9]{16}$/u;
 const POLL_WAIT_MS = 1_000;
 const POLL_REQUEST_TIMEOUT_MS = 5_000;
 const MAX_RECONCILE_RETRIES = 40;
+
+/**
+ * `process.start` is the only operation that persists a lifecycle record, and the bundled
+ * executor creates `<workspace>/.ae/process-lifecycle` as its first write. When that write is
+ * denied by the host (observed under a restricted token as `Access denied. (os error 5)`, which
+ * the executor's bare-`io::Error` mapper surfaces as `E_PROCESS_INTERNAL`), the failure is opaque
+ * and looks like a broken executor. Creating the directory from the host first makes the executor
+ * take its normal path: the approval gate, then the record write. This does not remove a host
+ * write denial - it only makes it diagnosable instead of mysterious. See issue #160 and
+ * `docs/dev/p1-160-verseshell-process-start-20261012.md`.
+ *
+ * Deliberately best-effort: if the directory already exists, or the host cannot create it, the
+ * outcome is left to the executor so its own error still reaches the caller unchanged.
+ */
+function prepareVerseShellLifecycleRoot(workspace: string): void {
+  try {
+    mkdirSync(join(workspace, ".ae", "process-lifecycle"), { recursive: true });
+  } catch {
+    // Fall through: the executor reports the authoritative failure.
+  }
+}
 
 type ProcessState = "running" | "exited" | "killed" | "lost";
 
@@ -361,6 +384,7 @@ export async function startGovernedVerseShellProcess(
     ...(appliedLimits.maxProcesses === undefined ? {} : { max_processes: appliedLimits.maxProcesses }),
   };
 
+  prepareVerseShellLifecycleRoot(baseConfig.workspace);
   const firstClient = await manager.getClient(baseConfig);
   const traceId = options.traceId?.trim() || `verseshell-process:${options.sessionId}`;
   const releaseCapacity = (): boolean => capacityLease.release();

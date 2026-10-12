@@ -1,13 +1,19 @@
 /**
- * Real Windows Job Object limit verification for issue #155.
+ * Real Windows Job Object limit verification for the long-lived `process.start` boundary (#155).
  *
  * Drives the bundled `ae.exe` (skipped when it is absent) and checks that the limits the host
  * requests are actually enforced, not merely accepted:
- * - without a cap the root process can create a child process and the child's marker appears;
- * - with `maxProcesses: 1` the same command still runs the root but the child is refused;
- * - with a small `maxMemoryBytes` a large allocation fails while the same command succeeds
+ * - without a cap the root process can create a child process and the child reports success;
+ * - with `maxProcesses: 1` the root still runs but its child spawn is refused;
+ * - with a small `maxMemoryBytes` a large allocation fails while the same script succeeds
  *   without the cap;
  * - the receipt reports the applied limits and names the missing kernel readback.
+ *
+ * The root is a Node script file rather than an inline `-e` string or `cmd.exe`: an inline argv
+ * element is re-split by the executor's Windows command-line handling, and `cmd.exe /C` itself
+ * needs a helper process, so a `maxProcesses: 1` cap refuses the `cmd.exe` root before it can run
+ * anything. A Node root isolates "the root runs, the child is refused", which is the property the
+ * Job Object limit actually guarantees (see `docs/dev/p1-160-verseshell-process-start-20261012.md`).
  *
  * This is real-binary evidence on Windows, but it is still agent-driven: no human operator, no
  * elevated privileges and no unbounded resource-exhaustion experiment (the memory case allocates
@@ -15,7 +21,7 @@
  */
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -70,7 +76,8 @@ async function contractEnv(): Promise<Record<string, string>> {
 }
 
 async function runScenario(params: {
-  argv: string[];
+  /** Node script body written into the workspace and run as the root process. */
+  script: string;
   resourceLimits?: { maxMemoryBytes?: number; maxProcesses?: number; requireEnforcement?: boolean };
 }): Promise<{
   state: string;
@@ -80,14 +87,17 @@ async function runScenario(params: {
 }> {
   const workspace = await mkdtemp(path.join(tmpdir(), "clawx-verseshell-limits-"));
   workspaces.push(workspace);
+  const scriptPath = path.join(workspace, "probe.cjs");
+  await writeFile(scriptPath, params.script, "utf8");
+  const argv = [process.execPath, scriptPath];
   const manager = new VerseShellProcessManager({
     resolveBinary: () => ({ path: binaryPath, source: "verified-bundled", verified: true }),
   });
   managers.push(manager);
   let stdout = "";
   const handle = await startGovernedVerseShellProcess({
-    command: params.argv.join(" "),
-    argv: params.argv,
+    command: argv.join(" "),
+    argv,
     cwd: workspace,
     processEnv: childEnv(),
     timeoutMs: 30_000,
@@ -112,38 +122,36 @@ async function runScenario(params: {
   };
 }
 
-const CHILD_MARKER_COMMAND = [
-  "cmd.exe",
-  "/D",
-  "/C",
-  "echo outer-marker & cmd.exe /D /C echo inner-marker",
-];
+// The root runs as-is; only the child spawn can be refused by the Job Object.
+const CHILD_MARKER_SCRIPT =
+  "const r = require('node:child_process').spawnSync('cmd.exe', ['/D', '/C', 'echo inner-marker']);" +
+  "console.log('outer-marker');" +
+  "console.log('child-status', r.status);";
 
-const MEMORY_ALLOCATION_COMMAND = [
-  "powershell",
-  "-NoProfile",
-  "-NonInteractive",
-  "-Command",
-  "$a = New-Object byte[] (268435456); $a[0] = 1; $a[268435455] = 1; Write-Output alloc-ok",
-];
+// Allocates and touches 256 MiB (twice the 64 MiB cap used below).
+const MEMORY_ALLOCATION_SCRIPT =
+  "const b = Buffer.alloc(268435456); b[0] = 1; b[268435455] = 1; console.log('alloc-ok');";
 
 describe.runIf(runRealBinary)("VerseShell real Job Object limits", () => {
   it(
     "runs a child process without a cap and refuses it at maxProcesses 1",
     async () => {
-      const uncapped = await runScenario({ argv: CHILD_MARKER_COMMAND });
+      const uncapped = await runScenario({ script: CHILD_MARKER_SCRIPT });
       expect(uncapped.stdout).toContain("outer-marker");
-      expect(uncapped.stdout).toContain("inner-marker");
+      // The root spawned its child successfully: status 0, not null.
+      expect(uncapped.stdout).toContain("child-status 0");
+      expect(uncapped.exitCode).toBe(0);
       expect(uncapped.receipt).toMatchObject({ enforced: false, evidence: "none" });
 
       const capped = await runScenario({
-        argv: CHILD_MARKER_COMMAND,
+        script: CHILD_MARKER_SCRIPT,
         resourceLimits: { maxProcesses: 1, requireEnforcement: true },
       });
+      // The root still runs, but the Job already holds it, so the child spawn is refused
+      // (spawnSync reports a null status instead of 0).
       expect(capped.stdout).toContain("outer-marker");
-      // The Job already holds the root process, so the child cannot be created.
-      expect(capped.stdout).not.toContain("inner-marker");
-      expect(capped.exitCode).not.toBe(0);
+      expect(capped.stdout).not.toContain("child-status 0");
+      expect(capped.stdout).toContain("child-status null");
       expect(capped.receipt).toMatchObject({
         applied: { maxProcesses: 1 },
         enforced: true,
@@ -156,16 +164,17 @@ describe.runIf(runRealBinary)("VerseShell real Job Object limits", () => {
   );
 
   it(
-    "enforces a per-process commit cap that the same command survives without",
+    "enforces a per-process commit cap that the same script survives without",
     async () => {
-      const uncapped = await runScenario({ argv: MEMORY_ALLOCATION_COMMAND });
+      const uncapped = await runScenario({ script: MEMORY_ALLOCATION_SCRIPT });
       expect(uncapped.stdout).toContain("alloc-ok");
+      expect(uncapped.exitCode).toBe(0);
 
       const capped = await runScenario({
-        argv: MEMORY_ALLOCATION_COMMAND,
+        script: MEMORY_ALLOCATION_SCRIPT,
         resourceLimits: { maxMemoryBytes: 64 * 1024 * 1024, requireEnforcement: true },
       });
-      // The allocation is twice the cap, so the executor must refuse it rather than succeed.
+      // The allocation is twice the cap, so the process cannot reach the marker line.
       expect(capped.stdout).not.toContain("alloc-ok");
       expect(capped.exitCode).not.toBe(0);
       expect(capped.receipt).toMatchObject({
