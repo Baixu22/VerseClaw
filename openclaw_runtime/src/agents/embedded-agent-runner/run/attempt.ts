@@ -293,6 +293,7 @@ import {
   collectPromptCacheToolNames,
   beginPromptCacheObservation,
   completePromptCacheObservation,
+  isPromptCacheObservabilityEnabled,
   type PromptCacheBreak,
   type PromptCacheChange,
 } from "../prompt-cache-observability.js";
@@ -3066,7 +3067,12 @@ export async function runEmbeddedAttempt(
       prepStages.mark("stream-setup");
       emitPrepStageSummary("stream-ready");
 
-      const cacheObservabilityEnabled = Boolean(cacheTrace) || log.isEnabled("debug");
+      // Break attribution is pure in-memory bookkeeping (no I/O), so it runs
+      // by default and can be disabled with
+      // OPENCLAW_PROMPT_CACHE_OBSERVABILITY=0. Trace *file* output stays
+      // opt-in via cacheTrace/debug.
+      const cacheObservabilityEnabled =
+        isPromptCacheObservabilityEnabled() || Boolean(cacheTrace) || log.isEnabled("debug");
       const promptCacheToolNames = collectPromptCacheToolNames(
         allCustomTools as Array<{ name?: string }>,
       );

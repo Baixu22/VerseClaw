@@ -3,6 +3,7 @@
  */
 import crypto from "node:crypto";
 import type { NormalizedUsage } from "../usage.js";
+import { parseBooleanValue } from "../../utils/boolean.js";
 
 export type PromptCacheChangeCode =
   | "cacheRetention"
@@ -237,4 +238,21 @@ export function completePromptCacheObservation(params: {
 
 export function resetPromptCacheObservabilityForTest(): void {
   trackers.clear();
+}
+
+/**
+ * Environment kill switch for prompt-cache break attribution.
+ *
+ * Attribution is pure in-memory bookkeeping with no I/O, so it is on by
+ * default: without it the runtime cannot say *which* input broke a warm
+ * prefix, and cache hit-rate can never become a scheduling input. Operators
+ * can turn it off with `OPENCLAW_PROMPT_CACHE_OBSERVABILITY=0`.
+ */
+export const PROMPT_CACHE_OBSERVABILITY_ENV = "OPENCLAW_PROMPT_CACHE_OBSERVABILITY";
+
+/** Resolves whether prompt-cache break attribution runs. Defaults on. */
+export function isPromptCacheObservabilityEnabled(
+  env: NodeJS.ProcessEnv = process.env,
+): boolean {
+  return parseBooleanValue(env[PROMPT_CACHE_OBSERVABILITY_ENV]) ?? true;
 }
