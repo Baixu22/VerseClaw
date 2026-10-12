@@ -31,6 +31,22 @@ export type DcsObservabilitySnapshot = {
   vtokenAssemblyChars: number;
   vtokenAssemblyEstimatedTokens: number;
   vtokenSourcesIngested: number;
+  /**
+   * #182: of the sources VToken ingested, how many were already rendered into
+   * the system prompt, plus the characters that represents. Measurement only —
+   * nothing is deduplicated on the strength of this.
+   */
+  vtokenPromptOverlapSources: number;
+  vtokenPromptOverlapChars: number;
+  vtokenPromptOverlapToolSchemas: number;
+  /** #182: the most recent VToken overlap breakdown (numerators + totals). */
+  lastVtokenOverlap: {
+    sourceCount: number;
+    overlappingSourceCount: number;
+    overlappingSourceChars: number;
+    toolSchemaCount: number;
+    overlappingToolSchemaCount: number;
+  } | null;
   contextOrchestratorCalls: number;
   contextOrchestratorKillSwitchHits: number;
   contextOrchestratorErrors: number;
@@ -93,6 +109,10 @@ const ZERO: DcsObservabilitySnapshot = {
   vtokenAssemblyChars: 0,
   vtokenAssemblyEstimatedTokens: 0,
   vtokenSourcesIngested: 0,
+  vtokenPromptOverlapSources: 0,
+  vtokenPromptOverlapChars: 0,
+  vtokenPromptOverlapToolSchemas: 0,
+  lastVtokenOverlap: null,
   contextOrchestratorCalls: 0,
   contextOrchestratorKillSwitchHits: 0,
   contextOrchestratorErrors: 0,
@@ -172,6 +192,33 @@ class DcsObservabilityRegistry {
       Math.floor(params.estimatedTokens ?? 0),
     );
     this.#counters.vtokenSourcesIngested += Math.max(0, Math.floor(params.sourcesIngested ?? 0));
+  }
+
+  /**
+   * #182: record how much of one VToken call's input the system prompt already
+   * carried. Emitted from the call site that builds VToken's inputs, so the
+   * overlap is measured on the real wiring rather than inferred.
+   */
+  recordVtokenPromptOverlap(params: {
+    sourceCount: number;
+    overlappingSourceCount: number;
+    overlappingSourceChars: number;
+    toolSchemaCount: number;
+    overlappingToolSchemaCount: number;
+  }): void {
+    const overlappingSourceCount = Math.max(0, Math.floor(params.overlappingSourceCount));
+    const overlappingSourceChars = Math.max(0, Math.floor(params.overlappingSourceChars));
+    const overlappingToolSchemaCount = Math.max(0, Math.floor(params.overlappingToolSchemaCount));
+    this.#counters.vtokenPromptOverlapSources += overlappingSourceCount;
+    this.#counters.vtokenPromptOverlapChars += overlappingSourceChars;
+    this.#counters.vtokenPromptOverlapToolSchemas += overlappingToolSchemaCount;
+    this.#counters.lastVtokenOverlap = {
+      sourceCount: Math.max(0, Math.floor(params.sourceCount)),
+      overlappingSourceCount,
+      overlappingSourceChars,
+      toolSchemaCount: Math.max(0, Math.floor(params.toolSchemaCount)),
+      overlappingToolSchemaCount,
+    };
   }
 
   recordContextOrchestrator(params: {

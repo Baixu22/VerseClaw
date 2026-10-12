@@ -265,6 +265,8 @@ import {
   defaultMainSessionRoleResolver,
 } from "../../../context-engine/register-memory-providers.js";
 import { resolveMemoryInjectPilotConfig } from "../../../context-engine/chat-turn-memory-injection.js";
+import { dcsObservability } from "../../../context-engine/dcs-observability.js";
+import { computeVtokenPromptOverlap } from "../../../context-engine/vtoken-prompt-overlap.js";
 import { createRuntimeMemoryContextProvider } from "../../../context-engine/memory-context-provider.js";
 import { createRuntimeMemoryRuntimeIntegration } from "../../../runtime-core/memory-runtime-integration.js";
 import type { RuntimeMemoryQueryableFact } from "../../../runtime-core/memory-context.js";
@@ -2048,6 +2050,40 @@ export async function runEmbeddedAttempt(
     const toolRegistryProjectionEnabled =
       params.config?.runtime?.contextBlock?.["tool-registry"]?.enabled === true;
     const memoryPilotConfig = resolveMemoryInjectPilotConfig(params.config);
+    // #182: VToken is fed the same bootstrap files (`markdownSources`) and the
+    // same `effectiveTools` (`toolSchemas`) that the system prompt renders into
+    // `# Project Context` / `## Tooling`, so the two can overlap almost
+    // completely. Measure it here so the "should VToken keep re-packing prompt
+    // content?" decision has a number; nothing is deduplicated on this basis.
+    const vtokenMarkdownSources = hookAdjustedBootstrapFiles
+      .filter((file) => !file.missing && typeof file.content === "string")
+      .map((file) => ({
+        sourcePath: file.path || file.name,
+        text: file.content ?? "",
+      }));
+    const vtokenToolSchemas = toolRegistryProjectionEnabled
+      ? []
+      : toolEntries.map((entry) => ({
+          name: entry.resourceId,
+          description: entry.purpose,
+          ...(entry.inputSchema !== undefined ? { inputSchema: entry.inputSchema } : {}),
+        }));
+    try {
+      dcsObservability.recordVtokenPromptOverlap(
+        computeVtokenPromptOverlap({
+          markdownSources: vtokenMarkdownSources,
+          toolSchemaNames: vtokenToolSchemas.map((schema) => schema.name),
+          promptSourcePaths: contextFiles.map((file) =>
+            typeof file.path === "string" ? file.path : "",
+          ),
+          promptToolNames: effectiveTools.map((tool) =>
+            typeof tool.name === "string" ? tool.name : "",
+          ),
+        }),
+      );
+    } catch {
+      // Measurement must never break a turn.
+    }
     // TF-0002: single Context Orchestrator entry for memory inject + VToken.
     const contextOrchestration = await computeContextExtraSystemPrompt(
       params.extraSystemPrompt,
@@ -2061,19 +2097,8 @@ export async function runEmbeddedAttempt(
         taskId: params.lineage?.taskLedgerRootId,
         workspaceDir: effectiveWorkspace,
         taskHint: params.prompt,
-        markdownSources: hookAdjustedBootstrapFiles
-          .filter((file) => !file.missing && typeof file.content === "string")
-          .map((file) => ({
-            sourcePath: file.path || file.name,
-            text: file.content ?? "",
-          })),
-        toolSchemas: toolRegistryProjectionEnabled
-          ? []
-          : toolEntries.map((entry) => ({
-              name: entry.resourceId,
-              description: entry.purpose,
-              ...(entry.inputSchema !== undefined ? { inputSchema: entry.inputSchema } : {}),
-            })),
+        markdownSources: vtokenMarkdownSources,
+        toolSchemas: vtokenToolSchemas,
         ...(!contextBlockProjectionEnabled
           ? {
               memoryEntriesFactory: () =>
