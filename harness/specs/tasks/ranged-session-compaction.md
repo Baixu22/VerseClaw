@@ -64,18 +64,42 @@ this is a new surface rather than a missing option on an existing one.
 - **UI**: message-level "summarize from here" / "summarize up to here" entry points, i18n in
   all four locales, and an Electron E2E in the same change.
 
-## Open questions (owner input required before implementation)
+## Decisions (agent-driven, 2026-10-13)
 
-1. **Where does the boundary land relative to the selected message?** "Summarize up to here"
-   can include the selected turn or stop just before it. Fork hit the same question and
-   resolved it as "the branch keeps everything *before* the point" (#180); compaction should
-   either reuse that convention or state a deliberate difference.
-2. **What is the addressable unit** — the transcript entry id (as fork uses) or a
-   user-message id? Fork's `fromLeafId` is an entry id, so entry ids keep the two surfaces
-   consistent.
-3. **Interaction with the automatic safeguard**: after a range compaction the transcript is
-   shorter, so the next pressure check may summarize the newly short transcript again. The
-   policy for that (and its observability) must be decided, not inherited by accident.
+These replace the former "owner input required" questions. They are decided here so a
+follow-up implementation is not blocked (the agent is the mainline developer per
+`AGENTS.md`); nothing below needs a publisher answer.
+
+1. **Boundary is the selected entry, inclusive on the kept side.** The transcript model puts
+   the compaction summary at the *head* and replays the suffix from `firstKeptEntryId`
+   (`agent-core/src/harness/session/session.ts` `buildSessionContext`). So both params name
+   the point where the verbatim tail begins:
+   - `toLeafId` (summarize up to here) => summarize `[start .. toLeafId]`, keep
+     `(toLeafId .. tail]`; the selected entry is folded into the summary.
+   - `fromLeafId` (summarize from here) => keep `[fromLeafId .. tail]` verbatim, summarize
+     everything strictly before it; the selected entry is the first kept entry.
+   This is a deliberate difference from Claude Code's wording ("summarize the newer side"):
+   that direction is *not representable* in this model, because the summary is always emitted
+   before the retained tail, so a range only ever summarizes a prefix and keeps the newer
+   side byte-identical. Recording it is the "state a deliberate difference" option; no
+   context-builder change is implied.
+2. **Addressable unit is the transcript entry id**, identical to `sessions.fork`'s
+   `fromLeafId` (#180). Both surfaces resolve entry ids through the same branch walk, so a
+   user-message id is never accepted as a boundary.
+3. **Safeguard interaction stays on the existing policy, with one hard guard.** A range
+   compaction can only *lengthen* the verbatim tail relative to the pipeline's own
+   `firstKeptEntryId`; if the requested keep boundary is newer than the pipeline's computed
+   boundary the range is not fully summarized and entries would be lost, so the handler must
+   fail closed against the written checkpoint instead of shipping the partial result. No new
+   schema field and no frozen-default change; the existing pressure check keeps its behaviour.
+
+## Implementation status (2026-10-13)
+
+Deferred, not blocked on input. The gateway surface above is **not** implemented yet; a
+prefix-only implementation that reuses `hardenManualCompactionBoundary` (custom
+`firstKeptEntryId` plus the "keep boundary newer than the pipeline boundary" guard from
+decision 3) is the recommended next step. This spec and these decisions are the durable
+record so the work can resume without re-deriving the model.
 
 ## Non-goals
 
