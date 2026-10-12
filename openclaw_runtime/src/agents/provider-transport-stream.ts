@@ -16,6 +16,10 @@ import {
 import { getModelProviderLocalService } from "./provider-local-service.js";
 import { getModelProviderRequestTransport } from "./provider-request-config.js";
 import type { StreamFn } from "./runtime/index.js";
+import {
+  SYSTEM_PROMPT_CACHE_BOUNDARY,
+  joinSystemPromptWithoutCacheBoundary,
+} from "./system-prompt-cache-boundary.js";
 
 const SIMPLE_TRANSPORT_API_ALIAS: Record<string, Api> = {
   "openai-responses": "openclaw-openai-responses-transport",
@@ -45,12 +49,31 @@ export type SourceRuntimeTransportMetadata = Pick<
   "id" | "api" | "provider"
 >;
 
+/**
+ * Provider-owned (plugin) transports cover protocols whose payload bytes the runtime
+ * does not build, so the runtime cannot gate them after the fact. It can still avoid
+ * handing them an internal marker they have no way to spend: none of these protocols
+ * is Anthropic-format, so the boundary is projected away at the hand-over.
+ */
+function stripCacheBoundaryAtProviderHandover(streamFn: StreamFn): StreamFn {
+  return (model, context, options) => {
+    if (!context.systemPrompt?.includes(SYSTEM_PROMPT_CACHE_BOUNDARY)) {
+      return streamFn(model, context, options);
+    }
+    return streamFn(
+      model,
+      { ...context, systemPrompt: joinSystemPromptWithoutCacheBoundary(context.systemPrompt) },
+      options,
+    );
+  };
+}
+
 function createProviderOwnedTransportStreamFn(
   model: Model,
   ctx?: ProviderTransportStreamContext,
   fallbackProvider?: string,
 ): StreamFn | undefined {
-  return (
+  const resolved = (
     resolveProviderStreamFn({
       provider: model.provider,
       config: ctx?.cfg,
@@ -83,6 +106,7 @@ function createProviderOwnedTransportStreamFn(
       : undefined) ??
     undefined
   );
+  return resolved ? stripCacheBoundaryAtProviderHandover(resolved) : undefined;
 }
 
 const SOURCE_RUNTIME_TRANSPORTS: readonly SourceRuntimeTransportDescriptor[] = [
@@ -182,7 +206,8 @@ export function createOpenClawTransportStreamFnForModel(
   // Explicit fallback callers use this when they need OpenClaw's HTTP
   // transport semantics regardless of the default embedded-runner strategy.
   // Native OpenAI HTTP still depends on this path for strict tool shaping,
-  // attribution, cache-boundary stripping, and runtime credential injection.
+  // attribution, cache-boundary projection (the transports rewrite the system prompt
+  // and gate the built payload), and runtime credential injection.
   if (!isTransportAwareApiSupported(model.api)) {
     return undefined;
   }

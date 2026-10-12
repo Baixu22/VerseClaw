@@ -7,6 +7,11 @@ import { readStringValue } from "@openclaw/normalization-core/string-coerce";
 import { parseStrictPositiveInteger } from "../infra/parse-finite-number.js";
 import { asBoolean } from "../utils/boolean.js";
 import { supportsOpenAIReasoningEffort } from "./openai-reasoning-effort.js";
+import {
+  isOpenAIResponsesApi,
+  OPENAI_RESPONSES_PROVIDER_IDS,
+  resolveUpstreamPromptCacheFields,
+} from "./upstream-protocol-capabilities.js";
 
 type OpenAIResponsesPayloadModel = {
   api?: unknown;
@@ -66,13 +71,6 @@ type OpenAIResponsesPayloadCapabilities = {
   usesKnownNativeOpenAIRoute: boolean;
 };
 
-const OPENAI_RESPONSES_APIS = new Set([
-  "openai-responses",
-  "azure-openai-responses",
-  "openai-chatgpt-responses",
-  "openclaw-openai-responses-transport",
-]);
-const OPENAI_RESPONSES_PROVIDERS = new Set(["openai", "azure-openai", "azure-openai-responses"]);
 const LOCAL_ENDPOINT_HOSTS = new Set(["localhost", "127.0.0.1", "::1", "[::1]"]);
 const MODELSTUDIO_NATIVE_BASE_URLS = new Set([
   "https://coding-intl.dashscope.aliyuncs.com/v1",
@@ -209,10 +207,6 @@ function resolveBundledOpenAIResponsesEndpointClass(
   return "custom";
 }
 
-function isOpenAIResponsesApi(api: string | undefined): boolean {
-  return api !== undefined && OPENAI_RESPONSES_APIS.has(api);
-}
-
 function readCompatPayloadBoolean(
   compat: unknown,
   key: "supportsPromptCacheKey" | "supportsStore",
@@ -239,13 +233,14 @@ function resolveOpenAIResponsesPayloadCapabilities(
   const usesKnownNativeOpenAIRoute =
     endpointClass === "default" ? provider === "openai" : usesKnownNativeOpenAIEndpoint;
   const usesExplicitProxyLikeEndpoint = usesConfiguredBaseUrl && !usesKnownNativeOpenAIEndpoint;
-  const promptCacheKeySupport = readCompatPayloadBoolean(model.compat, "supportsPromptCacheKey");
-  const shouldStripResponsesPromptCache =
-    promptCacheKeySupport === true
-      ? false
-      : promptCacheKeySupport === false
-        ? isResponsesApi
-        : isResponsesApi && usesExplicitProxyLikeEndpoint;
+  // Same descriptor call the emit point makes (openai-prompt-cache-payload.ts), so a
+  // field this policy deletes can never be re-added by the later write point.
+  const shouldStripResponsesPromptCache = resolveUpstreamPromptCacheFields({
+    api,
+    compat: model.compat,
+    usesKnownNativeOpenAIEndpoint,
+    usesExplicitProxyLikeEndpoint,
+  }).stripResponsesCacheFields;
   const supportsResponsesStoreField =
     readCompatPayloadBoolean(model.compat, "supportsStore") !== false && isResponsesApi;
 
@@ -263,7 +258,7 @@ function resolveOpenAIResponsesPayloadCapabilities(
       supportsResponsesStoreField &&
       api !== "openai-chatgpt-responses" &&
       provider !== undefined &&
-      OPENAI_RESPONSES_PROVIDERS.has(provider) &&
+      OPENAI_RESPONSES_PROVIDER_IDS.has(provider) &&
       usesKnownNativeOpenAIEndpoint,
     shouldStripResponsesPromptCache,
     supportsResponsesStoreField,

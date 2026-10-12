@@ -498,6 +498,9 @@
       "input": "Input tokens",
       "output": "Output tokens",
       "cache": "Cache tokens",
+      "cacheRead": "Cache read (hit)",
+      "cacheWrite": "Cache write",
+      "cacheHitRate": "Cache hit rate",
       "total": "Total tokens",
       "cost": "Estimated cost"
     }

@@ -1,15 +1,16 @@
 /**
  * Small API-family predicates used when constructing provider payloads. The
  * sets here encode transport-level compatibility, not provider identity.
+ *
+ * Membership comes from the capability descriptor
+ * (`upstream-protocol-capabilities.ts`) rather than a local list: the managed transport
+ * rewrites a public api id to its in-tree spelling, and a local list keyed on the public
+ * ids silently stops matching on that path (see
+ * harness/specs/tasks/upstream-protocol-capability-descriptor.md).
  */
-const GPT_PARALLEL_TOOL_CALLS_APIS = new Set([
-  "openai-completions",
-  "openai-responses",
-  "openai-chatgpt-responses",
-  "azure-openai-responses",
-]);
+import { isOpenAIFamilyApi } from "./upstream-protocol-capabilities.js";
 
 /** True when a provider API accepts GPT parallel-tool-call payload settings. */
 export function supportsGptParallelToolCallsPayload(api: unknown): boolean {
-  return typeof api === "string" && GPT_PARALLEL_TOOL_CALLS_APIS.has(api);
+  return isOpenAIFamilyApi(api);
 }

@@ -1,4 +1,5 @@
 import type { RawMessage } from '@/stores/chat';
+import { computeCacheHitRate } from '../../../shared/types/usage';
 import { extractThinkingSegments } from '@/pages/Chat/message-utils';
 
 /*
@@ -91,6 +92,28 @@ export function extractAssistantReasoning(message: RawMessage): AssistantReasoni
 }
 
 /**
+ * Token usage as the assistant render layer needs it.
+ *
+ * `cacheTokens` is the combined figure kept for compatibility (existing badges,
+ * charts and tests read it). Cache reads and writes are also carried separately —
+ * and with them a hit rate — because a discounted cache read and a surcharged
+ * cache write are not the same currency, and collapsing them hides exactly the
+ * signal cache tuning needs.
+ */
+export type AssistantMessageUsage = {
+  inputTokens: number;
+  outputTokens: number;
+  /** Cache reads plus cache writes; the combined figure, unchanged for compatibility. */
+  cacheTokens: number;
+  cacheReadTokens: number;
+  cacheWriteTokens: number;
+  /** Cache reads over prompt tokens, or null when there is no denominator. */
+  cacheHitRate: number | null;
+  totalTokens: number;
+  estimatedCostUsd?: number;
+};
+
+/**
  * Extracts per-message token usage from a RawMessage's metadata/details.
  *
  * The Gateway attaches `usage` to the final event (not inside the message),
@@ -100,13 +123,7 @@ export function extractAssistantReasoning(message: RawMessage): AssistantReasoni
  * Returns `null` when no usage data is found — the caller should then fall
  * back to the session-level `liveUsage` for the streaming case.
  */
-export function extractMessageUsage(message: RawMessage): {
-  inputTokens: number;
-  outputTokens: number;
-  cacheTokens: number;
-  totalTokens: number;
-  estimatedCostUsd?: number;
-} | null {
+export function extractMessageUsage(message: RawMessage): AssistantMessageUsage | null {
   const record = message as unknown as RecordLike;
   const meta = getMeta(message);
   const details = isRecord(record.details) ? record.details : undefined;
@@ -130,15 +147,17 @@ export function extractMessageUsage(message: RawMessage): {
   return null;
 }
 
-function normalizeUsageRecord(source: unknown): {
-  inputTokens: number;
-  outputTokens: number;
-  cacheTokens: number;
-  totalTokens: number;
-  estimatedCostUsd?: number;
-} | null {
+function normalizeUsageRecord(source: unknown): AssistantMessageUsage | null {
   if (typeof source === 'number') {
-    return { inputTokens: 0, outputTokens: 0, cacheTokens: 0, totalTokens: source };
+    return {
+      inputTokens: 0,
+      outputTokens: 0,
+      cacheTokens: 0,
+      cacheReadTokens: 0,
+      cacheWriteTokens: 0,
+      cacheHitRate: null,
+      totalTokens: source,
+    };
   }
   if (!isRecord(source)) return null;
 
@@ -156,6 +175,13 @@ function normalizeUsageRecord(source: unknown): {
     inputTokens: input,
     outputTokens: output,
     cacheTokens: cache,
+    cacheReadTokens: cacheRead,
+    cacheWriteTokens: cacheWrite,
+    cacheHitRate: computeCacheHitRate({
+      inputTokens: input,
+      cacheReadTokens: cacheRead,
+      cacheWriteTokens: cacheWrite,
+    }),
     totalTokens: total,
     estimatedCostUsd: cost,
   };

@@ -2,9 +2,23 @@
  * Resolves provider/model prompt-cache retention behavior.
  */
 import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
+import { isOpenAIFamilyApi } from "../upstream-protocol-capabilities.js";
 import { resolveAnthropicCacheRetentionFamily } from "../../llm/providers/stream-wrappers/anthropic-family-cache-semantics.js";
 
 type CacheRetention = "none" | "short" | "long";
+
+/**
+ * Whether an explicit `cacheRetention` survives as intent for this api id instead of
+ * being dropped before the transport can see it.
+ *
+ * The transport layer owns the endpoint-class decision (native vs proxy-like vs explicit
+ * opt-in); this gate only decides whether the intent reaches it. Membership comes from the
+ * capability descriptor so a lane cannot be cache-eligible under one api spelling and
+ * silently inert under the alias the managed transport rewrites it to.
+ */
+export function isOpenAIPromptCacheEligible(params: { modelApi?: string }): boolean {
+  return isOpenAIFamilyApi(params.modelApi);
+}
 
 export function isGooglePromptCacheEligible(params: {
   modelApi?: string;
@@ -41,8 +55,12 @@ export function resolveCacheRetention(
   // openai-completions wire (amazon-bedrock + amazon.* nova models) leave
   // the flag unset, so the existing family gate still applies to them.
   const cacheKeyEligible = supportsPromptCacheKey === true;
+  // Explicit `cacheRetention` on an OpenAI-family lane must reach the transport,
+  // which owns the endpoint gate. Dropping it here made "long" silently inert on
+  // native OpenAI (same failure mode as issue #81281 for completions backends).
+  const openAiEligible = isOpenAIPromptCacheEligible({ modelApi });
 
-  if (!family && !googleEligible && !cacheKeyEligible) {
+  if (!family && !googleEligible && !cacheKeyEligible && !openAiEligible) {
     return undefined;
   }
 

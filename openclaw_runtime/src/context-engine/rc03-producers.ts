@@ -125,7 +125,8 @@ const postSealRegistrations: SealProducerRegistration[] = [
     id: RC03_POST_SEAL_TRANSFORMS.cacheBoundaryStrip,
     mutates: 'transport',
     kind: 'non-semantic',
-    purpose: 'stripSystemPromptCacheBoundary removes the prompt-cache boundary marker in the stream transformContext; no semantic text changes.',
+    purpose:
+      'The prompt-cache boundary marker is removed before the bytes leave: stripSystemPromptCacheBoundary in the stream transformContext, joinSystemPromptWithoutCacheBoundary in the OpenAI transports and the provider-owned hand-over, plus the enforceNoOutboundCacheBoundary gate. No semantic text changes.',
     version: '1',
   },
   {

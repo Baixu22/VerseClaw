@@ -23,6 +23,7 @@ describe('TokenUsageBadge', () => {
                 inputTokens: 1200,
                 outputTokens: 300,
                 cacheReadTokens: 500,
+                cacheWriteTokens: 250,
                 totalTokens: 2000,
                 estimatedCostUsd: 0.0123,
               },
@@ -42,6 +43,16 @@ describe('TokenUsageBadge', () => {
     expect(screen.getAllByText('300').length).toBeGreaterThan(0);
     expect(screen.getAllByText('500').length).toBeGreaterThan(0);
     expect(screen.getAllByText('$0.0123').length).toBeGreaterThan(0);
+
+    // P0-2 (harness/specs/tasks/cache-attribution-observability-loop.md):
+    // cache reads and writes stay separately visible while the combined row remains.
+    expect(screen.getAllByText('Cache read (hit)').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Cache write').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Cache tokens').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Cache hit rate').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('250').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('750').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('25.6%').length).toBeGreaterThan(0);
   });
 
   it('renders nothing when usage is unavailable', () => {

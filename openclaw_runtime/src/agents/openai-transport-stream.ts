@@ -16,6 +16,14 @@ import { calculateCost } from "../llm/model-utils.js";
 import type { Context, Message, Model, SimpleStreamOptions } from "../llm/types.js";
 import { parseStreamingJson } from "../llm/utils/json-parse.js";
 import { recordProviderPayloadTrace } from "./provider-payload-trace.js";
+import {
+  enforceNoOutboundCacheBoundary,
+  joinSystemPromptWithoutCacheBoundary,
+} from "./system-prompt-cache-boundary.js";
+import {
+  applyOpenAIPromptCachePayloadFields,
+  resolveOpenAIPromptCachePayloadFields,
+} from "./openai-prompt-cache-payload.js";
 import { buildGuardedModelFetch } from "./provider-transport-fetch.js";
 import { sanitizeResponsesImagePayload } from "./responses-image-payload-sanitizer.js";
 import { beginShadowModelCall } from "./shadow-census.js";
@@ -144,10 +152,26 @@ function applyProviderUsage(
   calculateCost(model, output.usage);
 }
 
-function finalizeOpenAIProviderParams(params: Record<string, unknown>): void {
+function finalizeOpenAIProviderParams(
+  params: Record<string, unknown>,
+  model: Model,
+  options?: SimpleStreamOptions,
+): void {
   if (params.tools !== undefined) {
     params.tools = canonicalizeProviderTools(params.tools);
   }
+  // Single write point for OpenAI-family prompt-cache routing/retention fields.
+  // The payload-policy wrapper can still delete them afterwards when the resolved
+  // policy says the endpoint rejects them, so that precedence is unchanged.
+  applyOpenAIPromptCachePayloadFields(
+    params,
+    resolveOpenAIPromptCachePayloadFields({ model, options }),
+  );
+  // Fail-closed outbound gate: all four builders funnel through here, so a marker
+  // surviving into the request bytes is a builder bug, not a warning. It also acts as
+  // the safety net for text the structural projection above does not own (tool
+  // descriptions, replayed content, hook-injected additions).
+  enforceNoOutboundCacheBoundary(params, "openai-family-transport");
 }
 
 function recordFinalOpenAIProviderPayload(
@@ -196,7 +220,12 @@ function toChatCompletionsMessages(context: Context): ChatCompletionMessage[] {
   const messages: ChatCompletionMessage[] = [];
 
   if (context.systemPrompt) {
-    messages.push({ role: "system", content: context.systemPrompt });
+    // The internal cache-boundary marker has no OpenAI breakpoint to spend itself on,
+    // so it is projected away here instead of shipping an internal string upstream.
+    messages.push({
+      role: "system",
+      content: joinSystemPromptWithoutCacheBoundary(context.systemPrompt),
+    });
   }
 
   for (const msg of context.messages) {
@@ -300,7 +329,9 @@ function toResponsesInput(context: Context): ResponseInputItem[] {
     items.push({
       type: "message",
       role: "system",
-      content: [{ type: "input_text", text: context.systemPrompt }],
+      content: [
+        { type: "input_text", text: joinSystemPromptWithoutCacheBoundary(context.systemPrompt) },
+      ],
     });
   }
 
@@ -482,7 +513,7 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
         // Fail-closed at the outbound boundary: invalid inline image payloads
         // become visible text placeholders instead of provider-side 400s.
         const sendParams = sanitizeResponsesImagePayload(params);
-        finalizeOpenAIProviderParams(sendParams);
+        finalizeOpenAIProviderParams(sendParams, model, options);
         recordFinalOpenAIProviderPayload(options, sendParams, "openai-responses-transport");
 
         const responseStream = await client.responses.create(
@@ -884,7 +915,7 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
         if (nextParams !== undefined) {
           Object.assign(params, nextParams);
         }
-        finalizeOpenAIProviderParams(params);
+        finalizeOpenAIProviderParams(params, model, options);
         recordFinalOpenAIProviderPayload(options, params, "openai-completions-transport");
 
         const chatStream = await client.chat.completions.create(params as any);
@@ -1276,7 +1307,7 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
         if (nextParams !== undefined) {
           Object.assign(params, nextParams);
         }
-        finalizeOpenAIProviderParams(params);
+        finalizeOpenAIProviderParams(params, model, options);
         recordFinalOpenAIProviderPayload(options, params, "azure-openai-responses-transport");
 
         const responseStream = await client.responses.create(
@@ -1602,7 +1633,7 @@ export function buildOpenAICompletionsParams(
 
   // Include usage in stream by default for token tracking
   params.stream_options = { include_usage: true };
-  finalizeOpenAIProviderParams(params);
+  finalizeOpenAIProviderParams(params, model, options);
 
   return params;
 }

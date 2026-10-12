@@ -30,7 +30,10 @@ export type UsageGroup = {
   totalTokens: number;
   inputTokens: number;
   outputTokens: number;
+  /** Cache reads plus cache writes; kept as the combined figure for compatibility. */
   cacheTokens: number;
+  cacheReadTokens: number;
+  cacheWriteTokens: number;
   sortKey: number | string;
 };
 
@@ -90,12 +93,16 @@ export function groupUsageHistory(
       inputTokens: 0,
       outputTokens: 0,
       cacheTokens: 0,
+      cacheReadTokens: 0,
+      cacheWriteTokens: 0,
       sortKey: groupBy === 'day' ? getUsageDaySortKey(entry.timestamp) : label.toLowerCase(),
     };
     current.totalTokens += entry.totalTokens;
     current.inputTokens += entry.inputTokens;
     current.outputTokens += entry.outputTokens;
     current.cacheTokens += entry.cacheReadTokens + entry.cacheWriteTokens;
+    current.cacheReadTokens += entry.cacheReadTokens;
+    current.cacheWriteTokens += entry.cacheWriteTokens;
     grouped.set(label, current);
   }
 

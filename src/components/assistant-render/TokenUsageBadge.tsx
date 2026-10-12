@@ -3,6 +3,7 @@ import { Coins } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { RawMessage } from '@/stores/chat';
 import { extractMessageUsage } from '@/components/assistant-render/model';
+import { computeCacheHitRate } from '../../../shared/types/usage';
 import { NumberRoll } from '@/components/assistant-ui/number-roll';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
@@ -31,7 +32,15 @@ export const TokenUsageBadge = memo(function TokenUsageBadge({
       return {
         inputTokens: liveUsage.inputTokens,
         outputTokens: liveUsage.outputTokens,
+        // Keep the combined figure for compatibility and carry the split beside it.
         cacheTokens: liveUsage.cacheReadTokens + liveUsage.cacheWriteTokens,
+        cacheReadTokens: liveUsage.cacheReadTokens,
+        cacheWriteTokens: liveUsage.cacheWriteTokens,
+        cacheHitRate: computeCacheHitRate({
+          inputTokens: liveUsage.inputTokens,
+          cacheReadTokens: liveUsage.cacheReadTokens,
+          cacheWriteTokens: liveUsage.cacheWriteTokens,
+        }),
         totalTokens: liveUsage.totalTokens,
         estimatedCostUsd: liveUsage.estimatedCostUsd,
       };
@@ -69,10 +78,28 @@ export const TokenUsageBadge = memo(function TokenUsageBadge({
           <dd>{usage.inputTokens.toLocaleString(i18n.language)}</dd>
           <dt>{t('toolUi.tokenUsage.output', 'Output tokens')}</dt>
           <dd>{usage.outputTokens.toLocaleString(i18n.language)}</dd>
+          {usage.cacheReadTokens > 0 && (
+            <>
+              <dt>{t('toolUi.tokenUsage.cacheRead', 'Cache read (hit)')}</dt>
+              <dd>{usage.cacheReadTokens.toLocaleString(i18n.language)}</dd>
+            </>
+          )}
+          {usage.cacheWriteTokens > 0 && (
+            <>
+              <dt>{t('toolUi.tokenUsage.cacheWrite', 'Cache write')}</dt>
+              <dd>{usage.cacheWriteTokens.toLocaleString(i18n.language)}</dd>
+            </>
+          )}
           {usage.cacheTokens > 0 && (
             <>
               <dt>{t('toolUi.tokenUsage.cache', 'Cache tokens')}</dt>
               <dd>{usage.cacheTokens.toLocaleString(i18n.language)}</dd>
+            </>
+          )}
+          {typeof usage.cacheHitRate === 'number' && (
+            <>
+              <dt>{t('toolUi.tokenUsage.cacheHitRate', 'Cache hit rate')}</dt>
+              <dd>{(usage.cacheHitRate * 100).toFixed(1)}%</dd>
             </>
           )}
           <dt className="font-medium text-foreground">{t('toolUi.tokenUsage.total', 'Total tokens')}</dt>

@@ -138,7 +138,7 @@
     "ui/src/i18n/locales/ar.ts": 1626,
     "src/channels/plugins/setup-wizard-helpers.ts": 1625,
     "src/infra/outbound/message-action-runner.ts": 1624,
-    "src/agents/openai-transport-stream.ts": 1617,
+    "src/agents/openai-transport-stream.ts": 1648,
     "src/infra/exec-approvals.ts": 1610,
     "ui/src/i18n/locales/th.ts": 1610,
     "ui/src/i18n/locales/zh-TW.ts": 1607,
@@ -157,7 +157,7 @@
     "extensions/telegram/src/bot-native-commands.ts": 1572,
     "src/agents/agent-tools.ts": 1563,
     "src/agents/sessions/session-manager.ts": 1560,
-    "src/agents/anthropic-transport-stream.ts": 1553,
+    "src/agents/anthropic-transport-stream.ts": 1557,
     "src/agents/model-auth.ts": 1546,
     "src/infra/clawhub.ts": 1546,
     "extensions/imessage/src/monitor/monitor-provider.ts": 1534,
@@ -458,7 +458,7 @@
     "extensions/qa-lab/src/cli.ts": 855,
     "src/gateway/server-plugins.ts": 855,
     "src/plugin-sdk/test-helpers/provider-runtime-contract.ts": 855,
-    "src/agents/provider-attribution.ts": 854,
+    "src/agents/provider-attribution.ts": 858,
     "scripts/anthropic-prompt-probe.ts": 853,
     "src/agents/tools/music-generate-tool.ts": 853,
     "packages/agent-core/src/agent-loop.ts": 852,
@@ -1072,6 +1072,7 @@
     "src/infra/update-managed-service-handoff.ts": 502,
     "scripts/perf/issue-78851-model-resolution.ts": 501,
     "src/acp/runtime/session-meta.ts": 501,
-    "src/agents/agent-bundle-mcp-materialize.ts": 501
+    "src/agents/agent-bundle-mcp-materialize.ts": 501,
+    "src/agents/upstream-protocol-cache-probe.test.ts": 514
   }
 }
