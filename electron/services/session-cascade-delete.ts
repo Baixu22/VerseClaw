@@ -112,7 +112,7 @@ export async function runHostSessionDerivativeCascade(
         executeSessionCascadeDelete?: (
           sessionId: string,
           stores: unknown,
-          options?: { canary?: string },
+          options?: { canary?: string; aliasSessionIds?: readonly string[] },
         ) => {
           success: boolean;
           removed: Array<{ kind: string; id: string }>;
@@ -129,11 +129,16 @@ export async function runHostSessionDerivativeCascade(
 
       if (typeof sekb.executeSessionCascadeDelete === 'function' && typeof sekb.createKnowledgeStoreCascadeAdapter === 'function') {
         const report = sekb.executeSessionCascadeDelete(
-          sessionKey,
+          // SEKB rows are stamped with the transcript session id (the file base
+          // id), not the canonical session key that the BlockStore/journal legs
+          // use. Pass both, or the SEKB half of the cascade matches nothing and
+          // session knowledge survives deletion.
+          baseId,
           sekb.createKnowledgeStoreCascadeAdapter(store, {
             listDcsExperienceJournalIds: () => removed.filter((r) => r.kind === 'dcs_experience_journal').map((r) => r.id),
             deleteDcsExperienceJournal: () => undefined,
           }),
+          { aliasSessionIds: [sessionKey] },
         );
         removed.push(...report.removed);
         errors.push(...report.errors);
