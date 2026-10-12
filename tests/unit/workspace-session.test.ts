@@ -258,4 +258,18 @@ describe('workspace session helpers', () => {
     expect(chatState.resetSessionView).toHaveBeenCalledWith('agent:reviewer:dashboard:fork');
     expect(hostApiMock.files.writeText).not.toHaveBeenCalled();
   });
+
+  it('forwards an explicit fromLeafId when forking from a message (#180)', async () => {
+    hostApiMock.sessions.fork.mockResolvedValue({
+      success: true,
+      sessionKey: 'agent:reviewer:dashboard:fork',
+    });
+    const { createWorkspaceScopedForkSession } = await import('@/lib/workspace-session');
+
+    await createWorkspaceScopedForkSession('agent:reviewer:old', { fromLeafId: 'entry-42' });
+
+    expect(hostApiMock.sessions.fork).toHaveBeenCalledWith(
+      expect.objectContaining({ fromLeafId: 'entry-42' }),
+    );
+  });
 });

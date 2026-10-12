@@ -135,7 +135,10 @@ function cloneForkableWorkspaceState(state: WorkspaceUiState | undefined): Works
   };
 }
 
-export async function createWorkspaceScopedForkSession(sourceSessionKey: string): Promise<string> {
+export async function createWorkspaceScopedForkSession(
+  sourceSessionKey: string,
+  options: { fromLeafId?: string } = {},
+): Promise<string> {
   const chatState = useChatStore.getState();
   const currentAgentId = chatState.currentAgentId || getAgentIdFromSessionKey(sourceSessionKey || chatState.currentSessionKey);
   const workspace = await ensureActiveWorkspaceForSession();
@@ -143,6 +146,9 @@ export async function createWorkspaceScopedForkSession(sourceSessionKey: string)
     sessionKey: sourceSessionKey,
     agentId: currentAgentId,
     workspaceId: workspace?.id ?? null,
+    // #180: fork from a specific transcript entry when the caller supplies one
+    // (per-message fork). Omitted ⇒ whole-session fork, byte-identical to before.
+    ...(options.fromLeafId ? { fromLeafId: options.fromLeafId } : {}),
   });
 
   if (!result.success || !result.sessionKey) {
