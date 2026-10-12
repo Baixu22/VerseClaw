@@ -4,11 +4,19 @@
 // RUNTIME_MEMORY_REAL_LLM=1 and DEEPSEEK_API_KEY.
 
 import { createHash } from "node:crypto";
-import { request } from "undici";
+import { Agent, request } from "undici";
 
 const DEFAULT_MODEL = process.env.RUNTIME_MEMORY_LLM_MODEL || process.env.DEEPSEEK_MODEL || "deepseek-chat";
 const DEFAULT_TIMEOUT_MS = 30_000;
 const MAX_RETRIES = 3;
+// Cap the TCP+TLS handshake independently of the response budget.
+const CONNECT_TIMEOUT_MS = 30_000;
+
+// A dedicated dispatcher bounds connection establishment. Without it a stalled
+// handshake can leave undici's promise unsettled forever: the AbortController
+// fires but nothing rejects, so the run hangs with no CPU, no traffic and no
+// timeout. Observed live on judge-06 (hung 40+ minutes at conv-47).
+const LLM_DISPATCHER = new Agent({ connect: { timeout: CONNECT_TIMEOUT_MS } });
 
 // Reasoning models (deepseek-v4-flash, deepseek-reasoner/R1) emit their chain
 // of thought in `reasoning_content` and the final answer in `content`. They
@@ -134,6 +142,14 @@ export async function callDeepSeek(
         },
         body: requestBody,
         signal: controller.signal,
+        // The AbortController alone is not enough: if the socket stalls during
+        // connect or the peer stops mid-body, undici can leave the promise
+        // unsettled and the whole run hangs with no CPU, no traffic and no
+        // timeout firing. These per-phase budgets make the client fail closed
+        // instead. Observed live: judge-06 hung 40+ minutes at conv-47.
+        headersTimeout: timeoutMs,
+        bodyTimeout: timeoutMs,
+        dispatcher: LLM_DISPATCHER,
       });
 
       if (res.statusCode >= 500 && attempt < MAX_RETRIES) {
