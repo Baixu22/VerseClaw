@@ -5,6 +5,8 @@ Rule: `harness/specs/rules/runtime-efficiency-observability-boundary.md`
 Evidence: `artifacts/runtime-efficiency/report.json`
 Validator: `node scripts/validate-runtime-efficiency.mjs`
 
+> Report errata: docs/dev/windows-runtime-efficiency-report-errata-20261012.md records the corrected paths and the post-#162 lease wiring status before this document is reused for concurrency claims.
+
 ## Why this exists
 
 `pnpm agent-dev:audit` scores 94/100 (`pass`), but its six dimensions —

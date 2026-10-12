@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "issue": 169,
+  "title": "Windows runtime-efficiency report errata",
+  "driven_by": "agent",
+  "actor": "codex",
+  "generatedAt": "2026-10-12T07:09:42.9370490Z",
+  "base": "85e56295d576dea394ba9d795a839719b8594fe2",
+  "branch": "codex/p3-issue-169-20261012",
+  "scope": "Documentation-only errata index for four deviations in the Windows runtime-efficiency report; no product source or frozen default changes.",
+  "checks": [
+    {
+      "name": "harness-task-spec",
+      "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/p3-issue-169-report-errata-20261012.md --no-diff",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    {
+      "name": "spec-lifecycle",
+      "command": "node scripts/check-spec-lifecycle.mjs",
+      "exitCode": 0,
+      "result": "lifecycle status present for 487 task specs"
+    },
+    {
+      "name": "evidence-refs",
+      "command": "node scripts/check-evidence-refs.mjs",
+      "exitCode": 0,
+      "result": "PASS 157 referenced path(s)"
+    },
+    {
+      "name": "local-paths",
+      "command": "node scripts/check-local-paths.mjs",
+      "exitCode": 0,
+      "result": "PASS active docs contain no developer-local absolute paths"
+    },
+    {
+      "name": "artifact-retention",
+      "command": "node scripts/check-repository-artifacts.mjs",
+      "exitCode": 0,
+      "result": "Repository artifact retention passed (17285 tracked paths)"
+    },
+    {
+      "name": "no-bom",
+      "command": "node scripts/check-no-bom.mjs",
+      "exitCode": 0,
+      "result": "check-no-bom: ok"
+    },
+    {
+      "name": "staged-diff-check",
+      "command": "git diff --cached --check",
+      "exitCode": 0,
+      "result": "No whitespace errors"
+    }
+  ],
+  "pathChecks": {
+    "positive": [
+      {
+        "path": "electron/services/resource-leases.ts",
+        "exitCode": 0
+      },
+      {
+        "path": "electron/utils/openclaw-doctor.ts",
+        "exitCode": 0
+      },
+      {
+        "path": "openclaw_runtime/src/browser-lifecycle-cleanup.ts",
+        "exitCode": 0
+      }
+    ],
+    "negative": [
+      {
+        "path": "openclaw_runtime/src/agents/resource-leases.ts",
+        "gitCatFileExitCode": 128
+      },
+      {
+        "path": "electron/services/openclaw-doctor.ts",
+        "gitCatFileExitCode": 128
+      },
+      {
+        "path": "electron/services/browser-lifecycle-cleanup.ts",
+        "gitCatFileExitCode": 128
+      }
+    ]
+  },
+  "wiringEvidence": {
+    "file": "electron/services/terminal-api.ts",
+    "lines": [
+      20,
+      358
+    ],
+    "result": "withWorkspaceExecLease is imported and called for Main terminal.run admission on origin/main.",
+    "commit": "f00661a26b81ec52300a825c7be4dc6de6b46ec8",
+    "commitIsAncestor": true
+  },
+  "boundary": [
+    "No product source, runtime behavior, host-api contract, permission default, product lock or frozen default changed.",
+    "#168 remains deferred and is not implemented by this evidence.",
+    "Verification is agent-driven; no human verdict or human data is claimed."
+  ]
+}
