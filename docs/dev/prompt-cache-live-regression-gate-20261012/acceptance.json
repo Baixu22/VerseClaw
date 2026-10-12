@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "issue": 165,
+  "title": "Live prompt-cache regression baseline is executable and fail-closed",
+  "status": "pass",
+  "drivenBy": "agent",
+  "actor": "codex",
+  "implementation": {
+    "commit": "ece949a92b1b2eb1d285df152febdcfd49a02c9c",
+    "tree": "7938829b40077cac6248e654c416977944a637f7",
+    "parent": "931688dfec55a6ad2e7e56250c3d360f9a85ce90"
+  },
+  "workflow": {
+    "id": 381858139,
+    "name": "Live Cache Regression",
+    "path": ".github/workflows/live-cache-regression.yml",
+    "state": "active",
+    "triggers": [
+      "workflow_dispatch",
+      "schedule: 0 7 * * 1"
+    ]
+  },
+  "acceptance": [
+    "The missing live-cache test support modules are restored from the upstream source whose runner blob matches this repository.",
+    "live-cache-regression-runner.ts is back in the openclaw_runtime core typecheck and the image probe uses a tracked runtime PNG.",
+    "The workflow runs the real test:live:cache command on manual dispatch or a weekly schedule and uploads artifacts/prompt-cache-live-cache.",
+    "No flags and no environment credentials both produce a measured=false report, result.passed=false and exit code 1.",
+    "The report contains threshold, perTurn, promptCache, result.passed and artifactSafety.apiKeyCaptured=false.",
+    "Anthropic floor misses are hard regressions; OpenAI warn-only lanes produce warnings only."
+  ],
+  "focusedTests": {
+    "command": "node v24.19.0 node_modules/vitest/vitest.mjs run tests/unit/live-cache-regression-gate.test.ts",
+    "files": 1,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+  },
+  "gates": {
+    "coreTsgo": "exit 0 (non-incremental local run)",
+    "rootTypecheck": "exit 0",
+    "scopedEslint": "exit 0",
+    "commsReplay": "exit 0",
+    "commsCompare": "PASS",
+    "harnessValidate": "exit 0",
+    "fullHarnessRun": "exit 1: pre-existing lint errors in tests/unit/runtime-memory-locomo-full-500.test.ts; retained in external evidence log 13-full-harness.log"
+  },
+  "unmeasuredRuns": {
+    "noFlags": {
+      "exitCode": 1,
+      "measured": false,
+      "passed": false
+    },
+    "noCredentials": {
+      "exitCode": 1,
+      "measured": false,
+      "passed": false,
+      "artifactSafetyApiKeyCaptured": false
+    }
+  },
+  "externalEvidence": {
+    "directory": "D:/ClawX-work/p2-165-live-cache-gate-20261012",
+    "sha256sumsSha256": "3eed4b796c89968a0bb3933afdd00f8c89b9b77833fc924a13a408e7f21991f3",
+    "credentialScan": {
+      "scannedFiles": 31,
+      "matches": 0
+    }
+  },
+  "limits": [
+    "No real provider-backed cache pass was claimed; this evidence only proves the execution path and fail-closed behavior.",
+    "No baseline observedHitRate refresh or manual metric edit was performed.",
+    "No PR hard gate, external telemetry, keepalive, TTL refresh, cost claim or hit-rate improvement claim was introduced."
+  ]
+}
