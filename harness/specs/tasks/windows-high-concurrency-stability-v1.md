@@ -20,6 +20,17 @@ touchedAreas:
   - shared/host-api/contract.ts
   - tests/unit/resource-leases.test.ts
   - tests/unit/terminal-api.test.ts
+  - openclaw_runtime/src/agents/resource-leases.ts
+  - openclaw_runtime/src/agents/resource-leases.test.ts
+  - openclaw_runtime/src/agents/sessions/tools/bash.ts
+  - openclaw_runtime/src/agents/sessions/tools/bash-workspace-lease.test.ts
+  - openclaw_runtime/src/agents/sessions/tools/grep.ts
+  - openclaw_runtime/src/agents/sessions/tools/find.ts
+  - openclaw_runtime/src/agents/sessions/tools/file-mutation-queue.ts
+  - harness/specs/tasks/p2-subagent-workspace-lease-20261012.md
+  - docs/dev/p2-subagent-workspace-lease-20261012.md
+  - docs/dev/p2-subagent-workspace-lease-20261012/acceptance.json
+  - docs/dev/p2-subagent-workspace-lease-20261012/SHA256SUMS
 expectedUserBehavior:
   - Main terminal.run admission is bounded per real workspace path; other resource kinds are not implemented by this lease manager.
   - Both normal and approved terminal.run paths wait before Gateway exec RPC attempts and return structured admission-timeout diagnostics.
@@ -61,7 +72,10 @@ uses `electron/services/resource-leases.ts`; it is not an OS-process limit and
 does not govern interactive `terminal.open`, agent exec tools or cross-process work.
 The deleted runtime `ResourceLeaseManager` is not a current source dependency.
 
-The original workspaceSearch/workspaceWriter/subtreeMutation/fileMutation leases,
-parent-realpath fallback for missing targets, and long-running-terminal deduplication
-are outside this repair. Search and mutation budgets remain unimplemented (#167);
-their old acceptance statements are design history, not verified capability claims.
+The original workspaceSearch/workspaceWriter/subtreeMutation/fileMutation leases are
+now implemented runtime-side by issue #167
+(`openclaw_runtime/src/agents/resource-leases.ts`), wired into the bash / grep / find
+agent tools and the per-file mutation queue. That is a per-runtime-process, per-workspace
+budget; it is not an OS-process limit and does not cover other runtime processes or the
+Electron Main process. Parent-realpath fallback for missing targets and
+long-running-terminal deduplication remain design history, not verified capability claims.

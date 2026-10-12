@@ -15,6 +15,7 @@ import { ensureTool } from "../../utils/tools-manager.js";
 import type { ToolDefinition, ToolRenderResultOptions } from "../extensions/types.js";
 import { appendBoundedTextTail, normalizePositiveLimit } from "./limits.js";
 import { resolveToCwd } from "./path-utils.js";
+import { normalizeWorkspaceLeaseKey, withWorkspaceResourceLease } from "../../resource-leases.js";
 import { getTextOutput, invalidArgText, shortenPath, str } from "./render-utils.js";
 import type { FindToolDetails } from "./tool-contracts.js";
 import { wrapToolDefinition } from "./tool-definition-wrapper.js";
@@ -151,7 +152,33 @@ function buildFindResult(params: {
   };
 }
 
+/**
+ * Workspace-level admission for searches (issue #167): the lease spans the
+ * whole fd run so several subagents in one workspace cannot all search at
+ * once. The builder below stays lease-free so it can be reused directly.
+ */
+function withWorkspaceSearchLease(
+  cwd: string,
+  definition: ToolDefinition<typeof findSchema, FindToolDetails | undefined>,
+): ToolDefinition<typeof findSchema, FindToolDetails | undefined> {
+  const execute = definition.execute.bind(definition);
+  return {
+    ...definition,
+    execute: (toolCallId, params, signal, onUpdate, ctx) =>
+      withWorkspaceResourceLease("workspaceSearch", normalizeWorkspaceLeaseKey(cwd), () =>
+        execute(toolCallId, params, signal, onUpdate, ctx),
+      ),
+  };
+}
+
 export function createFindToolDefinition(
+  cwd: string,
+  options?: FindToolOptions,
+): ToolDefinition<typeof findSchema, FindToolDetails | undefined> {
+  return withWorkspaceSearchLease(cwd, buildFindToolDefinition(cwd, options));
+}
+
+function buildFindToolDefinition(
   cwd: string,
   options?: FindToolOptions,
 ): ToolDefinition<typeof findSchema, FindToolDetails | undefined> {

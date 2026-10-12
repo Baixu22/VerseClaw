@@ -136,11 +136,14 @@ only.
   visualizations (`AgentTraceGraph.tsx`, ClawGraph) are **SVG**, not WebGL, so
   enabling GPU compositing would not address the actual bottleneck. Rendering
   strategy is a separate decision that should consume these measurements.
-- It does not add subagent fan-out quotas. `electron/services/resource-leases.ts`
-  implements a FIFO `workspaceExec` lease (capacity 2, 30s timeout); it is wired
-  into terminal execution by issue #162 (see
-  `docs/dev/p1-terminal-exec-lease-20261012.md`). Search / writer / subtree
-  leases do not exist and subagent spawn remains uncovered, owned by issue #167.
+- It does not change subagent fan-out quotas (`maxChildrenPerAgent` /
+  `subagents.maxConcurrent` stay frozen). Issue #162 wired the Main-process
+  `workspaceExec` lease into `terminal.run`
+  (`docs/dev/p1-terminal-exec-lease-20261012.md`); issue #167 added runtime-side
+  `workspaceExec` / `workspaceSearch` / `workspaceWriter` / `subtreeMutation` /
+  `fileMutation` leases for agent tools
+  (`docs/dev/p2-subagent-workspace-lease-20261012.md`). Both are per-process,
+  per-workspace admission budgets, not OS-process limits.
 - It claims no performance improvement. Per the boundary rule, that requires a
   stored before/after artifact pair from agent-driven runs.
 

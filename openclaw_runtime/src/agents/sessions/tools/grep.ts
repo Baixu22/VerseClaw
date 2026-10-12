@@ -15,6 +15,7 @@ import { ensureTool } from "../../utils/tools-manager.js";
 import type { ToolDefinition, ToolRenderResultOptions } from "../extensions/types.js";
 import { appendBoundedTextTail, normalizePositiveLimit } from "./limits.js";
 import { resolveToCwd } from "./path-utils.js";
+import { normalizeWorkspaceLeaseKey, withWorkspaceResourceLease } from "../../resource-leases.js";
 import { getTextOutput, invalidArgText, shortenPath, str } from "./render-utils.js";
 import type { GrepToolDetails } from "./tool-contracts.js";
 import { wrapToolDefinition } from "./tool-definition-wrapper.js";
@@ -140,7 +141,33 @@ function formatGrepResult(
   return text;
 }
 
+/**
+ * Workspace-level admission for searches (issue #167): the lease spans the
+ * whole ripgrep run so several subagents in one workspace cannot all search at
+ * once. The builder below stays lease-free so it can be reused directly.
+ */
+function withWorkspaceSearchLease(
+  cwd: string,
+  definition: ToolDefinition<typeof grepSchema, GrepToolDetails | undefined>,
+): ToolDefinition<typeof grepSchema, GrepToolDetails | undefined> {
+  const execute = definition.execute.bind(definition);
+  return {
+    ...definition,
+    execute: (toolCallId, params, signal, onUpdate, ctx) =>
+      withWorkspaceResourceLease("workspaceSearch", normalizeWorkspaceLeaseKey(cwd), () =>
+        execute(toolCallId, params, signal, onUpdate, ctx),
+      ),
+  };
+}
+
 export function createGrepToolDefinition(
+  cwd: string,
+  options?: GrepToolOptions,
+): ToolDefinition<typeof grepSchema, GrepToolDetails | undefined> {
+  return withWorkspaceSearchLease(cwd, buildGrepToolDefinition(cwd, options));
+}
+
+function buildGrepToolDefinition(
   cwd: string,
   options?: GrepToolOptions,
 ): ToolDefinition<typeof grepSchema, GrepToolDetails | undefined> {

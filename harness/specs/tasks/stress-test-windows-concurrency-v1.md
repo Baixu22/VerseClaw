@@ -8,6 +8,21 @@ touchedAreas:
   - src/pages/Chat/index.tsx
   - src/pages/Chat/ChatMessage.tsx
   - src/stores/chat.ts
+  - openclaw_runtime/src/agents/resource-leases.ts
+  - openclaw_runtime/src/agents/resource-leases.test.ts
+  - openclaw_runtime/src/agents/sessions/tools/bash.ts
+  - openclaw_runtime/src/agents/sessions/tools/bash-workspace-lease.test.ts
+  - openclaw_runtime/src/agents/sessions/tools/grep.ts
+  - openclaw_runtime/src/agents/sessions/tools/find.ts
+  - openclaw_runtime/src/agents/sessions/tools/file-mutation-queue.ts
+  - harness/specs/tasks/p2-subagent-workspace-lease-20261012.md
+  - harness/specs/tasks/windows-high-concurrency-stability-v1.md
+  - harness/specs/tasks/stress-test-windows-concurrency-v1.md
+  - docs/dev/p2-subagent-workspace-lease-20261012.md
+  - docs/dev/p2-subagent-workspace-lease-20261012/acceptance.json
+  - docs/dev/p2-subagent-workspace-lease-20261012/SHA256SUMS
+  - docs/dev/windows-runtime-efficiency-observability.md
+  - scripts/repository-artifacts.json
 ---
 
 ## 状态澄清（2026-10-12，#162）
@@ -17,7 +32,10 @@ touchedAreas:
 下面的代码仅为历史草案，不可作为可执行入口。
 当前实现仅为 `electron/services/resource-leases.ts` 的 Main `terminal.run` workspaceExec
 准入限制；可执行测试为 `tests/unit/resource-leases.test.ts` 和 `tests/unit/terminal-api.test.ts`。
-search/writer/subtree/file 租约归 #167，本文不声称它们已存在，也不声称 UI 压测已完成。
+search/writer/subtree/file 租约已由 #167 在 runtime 侧实现
+（`openclaw_runtime/src/agents/resource-leases.ts` + `resource-leases.test.ts`），
+并按 workspace key 接入 bash / grep / find 工具与 per-file mutation queue；本文的
+UI 压测仍未执行。
 
 ## 压测维度
 
