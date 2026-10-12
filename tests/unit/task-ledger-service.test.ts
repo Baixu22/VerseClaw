@@ -101,6 +101,7 @@ describe('task ledger service', () => {
             relation: 'forked_from',
             sourceSessionKey: 'agent:main:parent',
             summary: 'Implementation session',
+            handoffDepth: 2,
             createdAt: baseTime,
           },
         },
@@ -119,6 +120,8 @@ describe('task ledger service', () => {
     expect(snapshot.sessionLinks[0]).toMatchObject({
       relation: 'forked_from',
       sourceSessionKey: 'agent:main:parent',
+      // Relay depth recorded on the handoff event survives the projection (#179).
+      handoffDepth: 2,
     });
   });
 
