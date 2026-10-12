@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "issue": 168,
+  "title": "Deferred Windows runtime capability index",
+  "driven_by": "agent",
+  "actor": "codex",
+  "generatedAt": "2026-10-12T10:00:01.2753338Z",
+  "base": "9b94a2377982e5efb24afb23d865b81ccfc40884",
+  "branch": "codex/p3-issue-168-deferred-index-20261012",
+  "scope": "Documentation/index closeout for three deferred Windows runtime capabilities; no implementation or default changes.",
+  "deferredItems": [
+    {
+      "id": "A",
+      "name": "Job-object kernel readback",
+      "status": "deferred",
+      "trigger": "third-party proof requirement or suspected configured-but-ineffective limits",
+      "source": "openclaw_runtime/src/agents/verseshell/governed-exec.ts; governed-process.ts; docs/dev/p1-155-windows-job-limits-20261011.md"
+    },
+    {
+      "id": "B",
+      "name": "CPU rate limiting",
+      "status": "phase-2",
+      "trigger": "reproducible CPU contention with load evidence",
+      "source": "docs/dev/p1-155-windows-job-limits-20261011.md"
+    },
+    {
+      "id": "C",
+      "name": "FD/handle and long-window RSS measurement",
+      "status": "out-of-scope-for-per-change-gate",
+      "trigger": "production FD leak or monotonic RSS growth observation",
+      "source": "harness/specs/tasks/session-ecosystem-resource-reclamation.md; electron/services/efficiency-sampler.ts"
+    }
+  ],
+  "checks": [
+    {
+      "name": "harness-task-spec",
+      "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/p3-issue-168-deferred-index-20261012.md --no-diff",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    {
+      "name": "spec-lifecycle",
+      "command": "node scripts/check-spec-lifecycle.mjs",
+      "exitCode": 0,
+      "result": "lifecycle status present for 489 task specs"
+    },
+    {
+      "name": "evidence-refs",
+      "command": "node scripts/check-evidence-refs.mjs",
+      "exitCode": 0,
+      "result": "PASS 157 referenced path(s)"
+    },
+    {
+      "name": "local-paths",
+      "command": "node scripts/check-local-paths.mjs",
+      "exitCode": 0,
+      "result": "PASS active docs contain no developer-local absolute paths"
+    },
+    {
+      "name": "artifact-retention",
+      "command": "node scripts/check-repository-artifacts.mjs",
+      "exitCode": 0,
+      "result": "Repository artifact retention passed (17295 tracked paths)"
+    },
+    {
+      "name": "no-bom",
+      "command": "node scripts/check-no-bom.mjs",
+      "exitCode": 0,
+      "result": "check-no-bom: ok"
+    },
+    {
+      "name": "staged-diff-check",
+      "command": "git diff --cached --check",
+      "exitCode": 0,
+      "result": "No whitespace errors"
+    }
+  ],
+  "probes": [
+    {
+      "name": "kernel-readback-boundary",
+      "command": "rg -n readback: unavailable or QueryInformationJobObject in governed-exec/governed-process",
+      "exitCode": 0,
+      "result": "Matches are receipt/comments/docs; readback remains unavailable"
+    },
+    {
+      "name": "cpu-rate-limit-scope",
+      "command": "rg -n CPU rate limiting or No CPU rate limit in docs/dev/p1-155-windows-job-limits-20261011.md",
+      "exitCode": 0,
+      "result": "Document explicitly keeps CPU rate limiting out of scope/phase 2"
+    },
+    {
+      "name": "fd-rss-scope",
+      "command": "rg -n Measurement bounds or FD/RSS text in session-ecosystem-resource-reclamation.md",
+      "exitCode": 0,
+      "result": "FD/handle and long-horizon RSS remain TF-0092 out-of-scope decisions"
+    },
+    {
+      "name": "sampler-window",
+      "command": "rg -n DEFAULT_MAX_SAMPLES or 720 in electron/services/efficiency-sampler.ts",
+      "exitCode": 0,
+      "result": "Default retained window is 720 samples (1h at 5s cadence)"
+    },
+    {
+      "name": "cpu-rate-limit-implementation-negative",
+      "command": "rg -n JOB_OBJECT_CPU_RATE_CONTROL or CpuRate or RateControlTolerance in runtime/electron",
+      "exitCode": 1,
+      "result": "No CPU rate-control implementation found"
+    }
+  ],
+  "boundary": [
+    "No product source, runtime behavior, host-api contract, permission default, product lock or frozen default changed.",
+    "The issue remains a deferred index; this evidence does not authorize implementation.",
+    "Verification is agent-driven; no human verdict or human data is claimed."
+  ]
+}

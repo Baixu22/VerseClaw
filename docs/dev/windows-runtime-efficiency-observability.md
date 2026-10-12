@@ -6,6 +6,8 @@ Evidence: `artifacts/runtime-efficiency/report.json`
 Validator: `node scripts/validate-runtime-efficiency.mjs`
 
 > Report errata: docs/dev/windows-runtime-efficiency-report-errata-20261012.md records the corrected paths and the post-#162 lease wiring status before this document is reused for concurrency claims.
+>
+> Deferred capability index: docs/dev/p3-issue-168-deferred-capabilities-20261012.md tracks Job-object readback, CPU throttling and long-window FD/RSS measurement. It is an index, not an implementation authorization.
 
 ## Why this exists
 
