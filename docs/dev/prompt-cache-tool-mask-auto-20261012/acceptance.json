@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "issue": 166,
+  "title": "Large tool catalogs keep a stable on-demand prompt prefix",
+  "status": "pass",
+  "drivenBy": "agent",
+  "actor": "codex",
+  "implementation": {
+    "commit": "2b5526f271bd8f4d6268555e42efe76da0669642",
+    "tree": "b78b9c332079f328774383bf9460fdb5c4495bd6",
+    "parent": "d7ec712f8f3fb1bf1ebf631eb2e17fada997f924"
+  },
+  "config": {
+    "autoDefault": false,
+    "autoMinTools": 20,
+    "autoMinSchemaBytes": 16000,
+    "enabledFalseWins": true
+  },
+  "acceptance": [
+    "Large catalogs at or above either auto threshold expose only fixed Tool Search control tools.",
+    "Removing or adding a hidden tool leaves provider toolsHash and prefixShapeHash unchanged.",
+    "Below-threshold and explicit enabled=false paths preserve the original tool array and do not expose controls.",
+    "Removed tools stay out of the catalog and cannot be silently called through the Tool Search surface.",
+    "No provider cache-control, keepalive, TTL or permissions behavior was changed."
+  ],
+  "tests": {
+    "focusedFiles": 2,
+    "focusedPassed": 125,
+    "autoMaskFiles": 1,
+    "autoMaskPassed": 5,
+    "failed": 0,
+    "skipped": 0
+  },
+  "gates": {
+    "rootTypecheck": "exit 0",
+    "coreTsgo": "exit 0",
+    "scopedEslint": "exit 0",
+    "commsReplay": "exit 0",
+    "commsCompare": "PASS",
+    "harnessValidate": "exit 0",
+    "fullHarnessRun": "exit 1: pre-existing lint errors in tests/unit/runtime-memory-locomo-full-500.test.ts; retained in external evidence log 09-full-harness.log"
+  },
+  "externalEvidence": {
+    "directory": "D:/ClawX-work/p2-166-tool-mask-20261012",
+    "sha256sumsSha256": "32ceabe147156f689c75fcd3fa93dffaef6b5a5ca7e490eb15602f1d47661dcf",
+    "credentialScan": {
+      "scannedFiles": 25,
+      "matches": 0
+    }
+  },
+  "limits": [
+    "No live provider hit-rate or cost improvement was measured.",
+    "No claim that every possible provider sanitizes arbitrary descriptor extensions; this implementation keeps the provider schema unchanged and uses only the existing Tool Search control surface."
+  ]
+}

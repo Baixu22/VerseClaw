@@ -22,6 +22,8 @@ touchedAreas:
   - tests/unit/tool-mask-auto-catalog.test.ts
   - harness/specs/tasks/prompt-cache-tool-mask-auto-20261012.md
   - docs/dev/prompt-cache-tool-mask-auto-20261012.md
+  - docs/dev/prompt-cache-tool-mask-auto-20261012/acceptance.json
+  - docs/dev/prompt-cache-tool-mask-auto-20261012/SHA256SUMS
 requiredRules:
   - prompt-cache-observation-boundary
   - active-config-guards
