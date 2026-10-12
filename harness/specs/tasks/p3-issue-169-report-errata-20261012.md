@@ -1,7 +1,7 @@
 ---
 id: p3-issue-169-report-errata-20261012
 title: P3 issue 169 - correct Windows runtime-efficiency report errata
-lifecycleStatus: active
+lifecycleStatus: completed
 type: task
 intent: Close P3 issue #169 by retaining an agent-driven errata index for four factual deviations in the Windows runtime-efficiency report, while preserving #162's current wiring truth and leaving #168 deferred capabilities untouched.
 touchedAreas:
