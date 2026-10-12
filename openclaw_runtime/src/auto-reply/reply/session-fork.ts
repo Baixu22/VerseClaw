@@ -84,11 +84,20 @@ export async function resolveParentForkDecision(params: {
   };
 }
 
-/** Forks a new session transcript from a parent session. */
+/**
+ * Forks a new session transcript from a parent session.
+ *
+ * `fromEntryId` (#180) selects a fork point inside the parent transcript
+ * instead of its tip. Omitting it keeps the original "fork the whole session"
+ * behavior byte-for-byte. An id that is absent from the parent transcript, or
+ * that has no assistant turn at or before it, resolves to `null` — callers
+ * must fail closed and must not retry against the tip.
+ */
 export async function forkSessionFromParent(params: {
   parentEntry: SessionEntry;
   agentId: string;
   sessionsDir: string;
+  fromEntryId?: string;
 }): Promise<{ sessionId: string; sessionFile: string } | null> {
   const runtime = await loadSessionForkRuntime();
   return runtime.forkSessionFromParentRuntime(params);

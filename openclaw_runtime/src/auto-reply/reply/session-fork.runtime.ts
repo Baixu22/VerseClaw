@@ -169,8 +169,34 @@ function collectBranchLabels(params: {
   return labelsToWrite;
 }
 
+/**
+ * #180: resolve the branch leaf for an explicit fork point.
+ *
+ * The requested id must exist in the parent transcript. The returned leaf is
+ * the requested entry itself when it is an assistant turn, otherwise the
+ * nearest assistant ancestor — "fork from this message" keeps the context that
+ * preceded it and drops everything after, and `writeBranchedSession` refuses a
+ * branch with no assistant tail. `null` means "no usable assistant turn at or
+ * before the requested id"; the caller must fail closed rather than silently
+ * forking the transcript tip.
+ */
+function resolveForkLeafId(params: {
+  byId: Map<string, AgentSessionEntry>;
+  requestedId: string;
+}): string | null {
+  let current = params.byId.get(params.requestedId);
+  while (current) {
+    if (current.type === "message" && current.message.role === "assistant") {
+      return current.id;
+    }
+    current = current.parentId ? params.byId.get(current.parentId) : undefined;
+  }
+  return null;
+}
+
 async function readForkSourceTranscript(
   parentSessionFile: string,
+  fromEntryId?: string,
 ): Promise<ForkSourceTranscript | null> {
   const raw = (await readRegularFile({ filePath: parentSessionFile })).buffer.toString("utf-8");
   const fileEntries = parseSessionEntries(raw);
@@ -179,7 +205,19 @@ async function readForkSourceTranscript(
     fileEntries.find((entry): entry is SessionHeader => entry.type === "session") ?? null;
   const entries = fileEntries.filter(isSessionEntry);
   const byId = buildEntryIndex(entries);
-  const leafId = entries.at(-1)?.id ?? null;
+  const requestedId = fromEntryId?.trim();
+  let leafId: string | null;
+  if (requestedId) {
+    if (!byId.has(requestedId)) {
+      return null;
+    }
+    leafId = resolveForkLeafId({ byId, requestedId });
+    if (leafId === null) {
+      return null;
+    }
+  } else {
+    leafId = entries.at(-1)?.id ?? null;
+  }
   const branchEntries = readBranch({ byId, leafId });
   const pathEntryIds = new Set(
     branchEntries.filter((entry) => entry.type !== "label").map((entry) => entry.id),
@@ -292,6 +330,8 @@ export async function forkSessionFromParentRuntime(params: {
   parentEntry: StoreSessionEntry;
   agentId: string;
   sessionsDir: string;
+  /** #180: fork up to this entry id instead of the transcript tip. */
+  fromEntryId?: string;
 }): Promise<{ sessionId: string; sessionFile: string } | null> {
   const parentSessionFile = resolveSessionFilePath(
     params.parentEntry.sessionId,
@@ -302,7 +342,7 @@ export async function forkSessionFromParentRuntime(params: {
     return null;
   }
   try {
-    const source = await readForkSourceTranscript(parentSessionFile);
+    const source = await readForkSourceTranscript(parentSessionFile, params.fromEntryId);
     if (!source) {
       return null;
     }
