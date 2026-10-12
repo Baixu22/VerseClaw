@@ -251,6 +251,11 @@ test.describe('Verse Claw user message hover actions', () => {
       await expect(actions).toHaveCSS('opacity', '1');
       await expect(page.getByTestId('chat-user-message-copy')).toHaveAttribute('aria-label', '复制消息');
       await expect(page.getByTestId('chat-user-message-edit')).toHaveAttribute('aria-label', '编辑');
+      // #180: the hover bar also offers a per-message fork point.
+      await expect(page.getByTestId('chat-user-message-fork')).toHaveAttribute(
+        'aria-label',
+        '从此处分叉',
+      );
       const bubbleBox = await messageBubble.boundingBox();
       const actionsBox = await actions.boundingBox();
       expect(bubbleBox).not.toBeNull();

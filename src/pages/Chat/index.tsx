@@ -2204,13 +2204,13 @@ export function Chat() {
     toast.error(t(`composer.continuity.failure.${action}.${kind}.title`, { defaultValue: fallbackTitle }), toastOptions);
   }, [t]);
 
-  const handleForkSession = useCallback(async () => {
+  const handleForkSession = useCallback(async (options?: { fromLeafId?: string }) => {
     if (forkDisabled || forkBusy) return;
     const sourceSessionKey = currentSessionKey;
     setForkBusy(true);
     try {
       await persistCurrentContinuitySourceSession();
-      const nextSessionKey = await createWorkspaceScopedForkSession(sourceSessionKey);
+      const nextSessionKey = await createWorkspaceScopedForkSession(sourceSessionKey, options);
       workspaceSessionRestoreTargetRef.current = activeWorkspace?.id
         ? { workspaceId: activeWorkspace.id, sessionKey: nextSessionKey }
         : null;
@@ -3365,6 +3365,9 @@ export function Chat() {
                         onDraftInteractionResponse={handleAppendComposerDraft}
                         canResendUserMessage={isGatewayRunning && !inputRunActive}
                         onResendUserMessage={getResendUserMessageHandler(row.message.id, row.index)}
+                        onForkFromMessage={(messageId) =>
+                          void handleForkSession({ fromLeafId: messageId })
+                        }
                       />
                       {row.runCards.map((card) => {
                         const runKey = card.runKey;

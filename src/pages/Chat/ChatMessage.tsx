@@ -6,7 +6,7 @@
  * surfaced via ExecutionGraphCard, not inside message bubbles.
  */
 import { useState, useCallback, useEffect, memo, useMemo, useRef, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
-import { Copy, Check, Wrench, X, FolderOpen, ZoomIn, AlertCircle, Pencil, Send } from 'lucide-react';
+import { Copy, Check, Wrench, X, FolderOpen, ZoomIn, AlertCircle, Pencil, Send, GitFork } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ActionBarPrimitive, MessageProvider, TextMessagePartProvider, type ThreadMessage } from '@assistant-ui/react';
 import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
@@ -90,6 +90,11 @@ interface ChatMessageProps {
   canSubmitInteractionResponse?: boolean;
   onResendUserMessage?: (text: string) => void;
   canResendUserMessage?: boolean;
+  /**
+   * #180: fork a new session from this message's transcript entry. Only offered
+   * when the message carries an entry id (the `fromLeafId` the fork RPC needs).
+   */
+  onForkFromMessage?: (messageId: string) => void;
   streamStatus?: {
     active: boolean;
     startedAt?: number | null;
@@ -223,6 +228,7 @@ export const ChatMessage = memo(function ChatMessage({
   canSubmitInteractionResponse = true,
   onResendUserMessage,
   canResendUserMessage = true,
+  onForkFromMessage,
   streamStatus,
   liveUsage,
 }: ChatMessageProps) {
@@ -610,6 +616,10 @@ export const ChatMessage = memo(function ChatMessage({
             timestamp={message.timestamp}
             canEdit={Boolean(onResendUserMessage) && canResendUserMessage}
             onEdit={handleStartUserMessageEdit}
+            canFork={Boolean(message.id) && Boolean(onForkFromMessage)}
+            onFork={() => {
+              if (message.id) onForkFromMessage?.(message.id);
+            }}
           />
         )}
 
@@ -929,11 +939,15 @@ function UserMessageActions({
   timestamp,
   canEdit,
   onEdit,
+  canFork,
+  onFork,
 }: {
   text: string;
   timestamp?: number;
   canEdit: boolean;
   onEdit: () => void;
+  canFork: boolean;
+  onFork: () => void;
 }) {
   const { t } = useTranslation('chat');
   const [copied, setCopied] = useState(false);
@@ -994,6 +1008,26 @@ function UserMessageActions({
             </span>
           </TooltipTrigger>
           <TooltipContent side="top">{t('messageActions.edit')}</TooltipContent>
+        </Tooltip>
+      )}
+      {canFork && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="inline-flex">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-muted-foreground/75 transition-colors duration-150"
+                onClick={onFork}
+                aria-label={t('messageActions.forkFromHere')}
+                data-testid="chat-user-message-fork"
+              >
+                <GitFork className="h-3.5 w-3.5" />
+              </Button>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent side="top">{t('messageActions.forkFromHere')}</TooltipContent>
         </Tooltip>
       )}
     </AssistantUiGhostActionBar>

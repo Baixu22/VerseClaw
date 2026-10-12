@@ -230,6 +230,7 @@
     "copiedCode": "コピー済み"
   },
   "messageActions": {
+    "forkFromHere": "ここから分岐",
     "copy": "メッセージをコピー",
     "copied": "コピーしました",
     "edit": "編集",

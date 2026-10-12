@@ -230,6 +230,7 @@
     "copiedCode": "已复制"
   },
   "messageActions": {
+    "forkFromHere": "从此处分叉",
     "copy": "复制消息",
     "copied": "已复制",
     "edit": "编辑",

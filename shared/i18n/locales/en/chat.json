@@ -230,6 +230,7 @@
     "copiedCode": "Copied"
   },
   "messageActions": {
+    "forkFromHere": "Fork from here",
     "copy": "Copy message",
     "copied": "Copied",
     "edit": "Edit",
