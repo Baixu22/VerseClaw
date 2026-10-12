@@ -639,6 +639,12 @@ export type AgentCompactionConfig = {
    * Default: false (silent by default).
    */
   notifyUser?: boolean;
+  /**
+   * Defer non-urgent budget compaction while the provider prompt cache is still
+   * inside its configured TTL window. Requires contextPruning.mode = "cache-ttl".
+   * Default: false, preserving existing compaction timing.
+   */
+  deferWhileCacheHot?: boolean;
 };
 
 export type AgentCompactionMemoryFlushConfig = {

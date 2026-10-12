@@ -59,7 +59,8 @@ function isCompactionSkipReason(reason?: string): boolean {
   return (
     classification === "no_compactable_entries" ||
     classification === "below_threshold" ||
-    classification === "already_compacted_recently"
+    classification === "already_compacted_recently" ||
+    classification === "cache_ttl_deferred"
   );
 }
 

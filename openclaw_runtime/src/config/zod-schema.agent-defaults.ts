@@ -219,6 +219,7 @@ export const AgentDefaultsSchema = z
         truncateAfterCompaction: z.boolean().optional(),
         maxActiveTranscriptBytes: NonNegativeByteSizeSchema.optional(),
         notifyUser: z.boolean().optional(),
+        deferWhileCacheHot: z.boolean().optional(),
       })
       .strict()
       .optional(),

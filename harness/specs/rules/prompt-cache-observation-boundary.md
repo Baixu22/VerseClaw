@@ -24,6 +24,11 @@ Never manufacture a continued/cancelled decision, hit rate or cost from a drop.
 Missing usage is not a healthy sample. Replay must not duplicate ledger rows,
 and shared observed/confirmed writes must not overwrite one another.
 
+Observation may drive a separate, explicit opt-in scheduling policy (for example
+deferring non-urgent compaction while the TTL marker is hot) only when the policy
+is reversible, records a stable reason, and does not alter model/tool/prompt
+content. Observation must not silently enable such a policy.
+
 Keep the ledger capped at 200, scoped by session ownership and generation.
 Consume diagnostic agent streams in Main; existing UI confirmation semantics
 remain unchanged. Explicit opt-out wins over trace/debug. Verification with

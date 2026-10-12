@@ -1501,6 +1501,8 @@ export const FIELD_HELP: Record<string, string> = {
     'Triggers normal local compaction when the active session transcript reaches this size (bytes or strings like "20mb"). Requires truncateAfterCompaction so successful compaction can rotate to a smaller successor transcript; set to 0 or leave unset to disable. This never splits raw transcript bytes.',
   "agents.defaults.compaction.notifyUser":
     "When enabled, sends brief compaction notices to the user when compaction starts and when it completes (for example, '🧹 Compacting context...' and '🧹 Compaction complete'). Disabled by default to keep compaction silent and non-intrusive.",
+  "agents.defaults.compaction.deferWhileCacheHot":
+    "Defers non-urgent budget compaction while the active provider prompt cache is still inside its contextPruning TTL window. Manual compaction, overflow recovery and timeout recovery remain immediate. Requires contextPruning.mode=\"cache-ttl\" and defaults to false.",
   "agents.defaults.compaction.memoryFlush":
     "Pre-compaction memory flush settings that run an agentic memory write before heavy compaction. Keep enabled for long sessions so salient context is persisted before aggressive trimming.",
   "agents.defaults.compaction.memoryFlush.enabled":

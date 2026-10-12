@@ -8,6 +8,7 @@ const MAX_COMPACTION_REASON_DETAIL_CHARS = 100;
 
 export const DEFERRED_CONTEXT_ENGINE_COMPACTION_REASON =
   "deferred to background context-engine maintenance";
+export const CACHE_TTL_DEFERRED_COMPACTION_REASON = "deferred while prompt cache is hot";
 
 function isGenericCompactionCancelledReason(reason: string): boolean {
   const normalized = normalizeLowercaseStringOrEmpty(reason);
@@ -44,6 +45,9 @@ export function classifyCompactionReason(reason?: string): string {
   }
   if (text.includes("deferred to background")) {
     return "deferred_background";
+  }
+  if (text.includes(CACHE_TTL_DEFERRED_COMPACTION_REASON)) {
+    return "cache_ttl_deferred";
   }
   if (text.includes("still exceeds target")) {
     return "live_context_still_exceeds_target";

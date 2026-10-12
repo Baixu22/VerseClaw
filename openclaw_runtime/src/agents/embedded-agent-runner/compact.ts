@@ -156,6 +156,7 @@ import {
   runPostCompactionSideEffects,
 } from "./compaction-hooks.js";
 import { resolveEmbeddedCompactionTarget } from "./compaction-runtime-context.js";
+import { resolveCompactionCacheTtlDeferral } from "./compaction-cache-ttl.js";
 import {
   compactWithSafetyTimeout,
   resolveCompactionTimeoutMs,
@@ -1259,6 +1260,26 @@ async function compactEmbeddedAgentSessionDirectOnce(
             : undefined,
         allowedToolNames,
       });
+      const cacheTtlDeferral = resolveCompactionCacheTtlDeferral({
+        config: params.config,
+        sessionManager,
+        provider: params.provider?.trim() || provider,
+        modelId: params.model?.trim() || modelId,
+        modelApi: model.api,
+        trigger: params.trigger,
+      });
+      if (cacheTtlDeferral) {
+        log.info(
+          `[compaction] deferred while prompt cache is hot ` +
+            `sessionKey=${params.sessionKey ?? params.sessionId} trigger=${trigger} ` +
+            `deferred=true ageMs=${Math.floor(cacheTtlDeferral.ageMs)} ttlMs=${cacheTtlDeferral.ttlMs}`,
+        );
+        return {
+          ok: true,
+          compacted: false,
+          reason: cacheTtlDeferral.reason,
+        };
+      }
       checkpointSnapshot = await captureCompactionCheckpointSnapshotAsync({
         sessionManager,
         sessionFile: params.sessionFile,

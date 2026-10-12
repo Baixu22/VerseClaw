@@ -188,7 +188,8 @@ function isPreflightCompactionSkipReason(reason?: string): boolean {
   return (
     classification === "below_threshold" ||
     classification === "no_compactable_entries" ||
-    classification === "already_compacted_recently"
+    classification === "already_compacted_recently" ||
+    classification === "cache_ttl_deferred"
   );
 }
 
