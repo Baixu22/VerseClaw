@@ -40,6 +40,7 @@ import {
 import { getMacTrafficLightPosition, syncMacTrafficLightPosition } from './traffic-light-layout';
 import { getSetting } from '../utils/store';
 import { reconcileAppVersionRollback } from '../utils/app-version-rollback';
+import { startRuntimeEfficiency, stopRuntimeEfficiency } from '../services/efficiency-orchestrator';
 import { applyProxySettings } from './proxy';
 import { syncLaunchAtStartupSettingFromStore } from './launch-at-startup';
 import {
@@ -1381,6 +1382,8 @@ if (gotTheLock) {
     getTerminalSessionManager()?.shutdownAll();
     void getResourceTracker().shutdown();
     disposeCronMaintenance();
+    // Release the efficiency sampling timer so quit never waits on it.
+    stopRuntimeEfficiency();
     releaseProcessInstanceFileLock();
   });
 
@@ -1417,6 +1420,8 @@ if (gotTheLock) {
 
   // Application lifecycle
   app.whenReady().then(() => {
+    // Runtime efficiency sampling (P0 observability); cheap unref'd timer, local only.
+    startRuntimeEfficiency();
     void initialize().catch((error) => {
       logger.error('Application initialization failed:', error);
     });
