@@ -48,6 +48,13 @@ export type ResiliencePilotGate = {
  */
 export type ReplayRollbackTarget =
   | { kind: 'checkpoint'; checkpointId: string }
+  /**
+   * @unimplemented (#177) — no production producer satisfies this variant yet:
+   * `checkpoint-rollback-executor.ts` returns `event_log_replay_not_implemented`
+   * and `sessions.restoreCheckpoint` gates the replay pilot off. It exists so
+   * the authority type can be widened in one place when event-level replay is
+   * actually built; treat any `available`-style claim built on it as false.
+   */
   | { kind: 'event_log'; fromSequence: number; toSequence: number };
 
 /** Result of a rollback attempt. */

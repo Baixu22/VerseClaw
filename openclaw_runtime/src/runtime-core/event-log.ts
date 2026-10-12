@@ -15,6 +15,26 @@ import {
   type RuntimeVerificationShadowSamplingOptions,
 } from "./verification-shadow-sampling.js";
 
+/**
+ * STATUS (#177): built-but-unwired. Every flag below defaults to `false`, and
+ * the only production consumers are `agents/long-task-control/persisted-resume-shadow.ts`
+ * and `agents/task-loop-controller.ts` (shadow/observation only).
+ *
+ * Concretely, this means:
+ *   - `sessions.restoreCheckpoint` gates the pilot off and falls back to the
+ *     legacy compaction path (`sessions.run-control.ts`).
+ *   - `checkpoint-rollback-executor.ts` answers `replayEventLog` with
+ *     `ok:false, reason:"event_log_replay_not_implemented: …"`.
+ *   - `ReplayRollbackTarget` keeps an `event_log` variant that no producer
+ *     satisfies yet.
+ *
+ * So event-level precise replay is NOT available in production today — do not
+ * read this module (or the `*-pilot.ts` family beside it) as evidence that it
+ * is. Turning it on is option C in #177 and requires real crash/restore
+ * correctness evidence, not more shadow runs. The guard test
+ * `tests/unit/runtime-event-log-unwired-asset.test.ts` fails if a default is
+ * flipped without someone deliberately updating this note.
+ */
 export const RUNTIME_TASK_EVENT_LOG_SCHEMA_VERSION = 1 as const;
 export const RUNTIME_TASK_EVENT_LOG_SCHEMA_MARKER = "runtime.task-event-log.v1" as const;
 
