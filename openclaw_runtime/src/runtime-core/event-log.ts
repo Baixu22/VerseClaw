@@ -25,11 +25,13 @@ import {
  *   - `ReplayRollbackTarget` keeps an `event_log` variant that no producer
  *     satisfies yet.
  *
- * The event-log *types and writers* are referenced by several runtime-core
- * modules (`agent-run-event-spine`, `event-log-persistence`, `state-reducer`,
- * `resume-shadow`, `grounding`, `event-log-operator-inspection`) and by
- * `agents/task-loop-controller.ts`, so this module is not dead code — but none
- * of that is recoverable replay.
+ * The module is not dead code: `git grep -l "event-log.js"` finds direct
+ * importers `runtime-core/agent-run-event-spine`, `event-log-persistence`,
+ * `event-log-operator-inspection`, `grounding`, `resume-shadow`,
+ * `state-reducer`, the barrel `runtime-core/index.ts`, and
+ * `agents/long-task-control/persisted-resume-shadow.ts`;
+ * `agents/task-loop-controller.ts` consumes the family through
+ * `event-log-persistence.js`. None of that is recoverable replay.
  *
  * Do not read this module (or the `*-pilot.ts` family beside it) as evidence
  * that event-level precise replay is available: turning it on is option C in
