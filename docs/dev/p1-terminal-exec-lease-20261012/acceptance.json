@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "issue": 162,
+  "date": "2026-10-12",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "preliminary",
+  "candidate": {
+    "dirty": true,
+    "baseCommit": "9296bcf75ce68b02ca9ae06c163a93c0e9acba25"
+  },
+  "tests": {
+    "passed": 50,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "dirty-worktree development regression, not final clean-candidate acceptance"
+  },
+  "knownGateFailure": {
+    "gate": "harness-archived",
+    "reason": "changed-file scope declaration incomplete; repaired, clean-candidate rerun pending"
+  },
+  "limitations": [
+    "Not release acceptance.",
+    "No real provider, OS-process bound, or UI benchmark claim."
+  ],
+  "rawArchiveName": "p1-162-closeout-20261012"
+}

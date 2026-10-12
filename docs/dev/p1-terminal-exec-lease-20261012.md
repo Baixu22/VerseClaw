@@ -44,7 +44,7 @@ Net effect: a single workspace had no concurrency cap on terminal execution.
 - Added `resetTerminalResourceLeasesForTest()` (and a private `resetForTest()`)
   so suites do not leak capacity across cases.
 
-## Verification
+## Original candidate verification (9296bcf75; historical)
 
 | Gate | Command | Result |
 |---|---|---|
@@ -77,4 +77,34 @@ different workspace keys running concurrently; a typed lease timeout producing a
 
 1. #167: workspace-level budgets for search / writer / subtree mutation.
 2. #162 leaves `rpc-backpressure` (which only bounds `chat.history`) untouched;
-   terminal execution is now bounded by the lease instead.
+   Main terminal.run RPC admission is now bounded by the lease instead.
+## Closeout corrections (2026-10-12)
+
+Reverification found that the original candidate's timeout response omitted
+machine-readable lease metadata, classified approved-command admission timeouts
+as generic runtime failures, and left archived specs pointing at deleted runtime
+sources. These are corrected without introducing another queue or changing limits.
+
+- `WorkspaceTerminalRunResult` now carries `leaseKind`, canonical `leaseKey`,
+  `timeoutMs` and `timedOut` on admission timeout. `reason` reuses the lease's
+  existing diagnostic rather than introducing a new hardcoded UI translation.
+- Approved-command trace diagnostics classify admission failure as `timeout`.
+- Regression coverage includes a 200-request FIFO burst, measured queue waits,
+  Windows case/slash aliases across API instances, saturated-workspace independence,
+  RPC fallback under one lease, synchronous/asynchronous failure cleanup, stale
+  double release, expired-waiter removal, and the approved execution boundary.
+- Archived concurrency specs explicitly separate current executable terminal
+  checks from the deleted runtime scheduler and unimplemented search/mutation kinds.
+
+This bounds **Main terminal.run RPC admission in one Main process**, not the
+number or lifetime of OS processes: an RPC rejection/timeout releases its slot
+but does not itself prove that a remote process has stopped. `terminal.open`,
+agent exec tools and cross-process concurrency are outside this change.
+
+README.md, README.zh-CN.md and README.ja-JP.md were reviewed. They make no
+workspace-lease promise and require no textual update for these optional backend
+diagnostic fields. No renderer interaction, localization surface or product lock
+changes; no Electron UI/release/real-provider performance claim is made.
+
+Final gate counts and provenance belong in `p1-terminal-exec-lease-20261012/acceptance.json`;
+the earlier 18-test table above is retained as historical candidate evidence.

@@ -336,13 +336,12 @@ function resolveWorkspaceLeaseKey(workspacePath: string): string {
   } catch {
     // Target may not exist yet; the resolved path is still a stable key.
   }
-  const normalizedSeparators = resolved.replace(/\\/g, '/');
-  return process.platform === 'win32' ? normalizedSeparators.toLowerCase() : normalizedSeparators;
+  return process.platform === 'win32' ? resolved.replace(/\\/g, '/').toLowerCase() : resolved;
 }
 
 /**
  * Runs a Gateway exec RPC under the workspace exec lease so a single workspace
- * cannot exceed `WORKSPACE_EXEC_CAPACITY` concurrent terminal executions.
+ * cannot exceed `WORKSPACE_EXEC_CAPACITY` concurrent Gateway exec RPC sequences.
  *
  * A lease timeout is reported as a stable, non-retryable terminal result with
  * `blocked: true` rather than surfacing as a raw rejection.
@@ -367,8 +366,11 @@ async function runViaOpenClawExecWithLease(input: {
       result: {
         success: false,
         blocked: true,
-        reason:
-          `当前工作区终端执行已达并发上限（workspaceExec capacity 2），等待 ${error.timeoutMs}ms 仍未获得资源租约，请稍后重试。`,
+        timedOut: true,
+        reason: error.message,
+        leaseKind: error.leaseKind,
+        leaseKey: error.leaseKey,
+        timeoutMs: error.timeoutMs,
         cwd: input.cwd,
         command: input.command,
         exitCode: null,
@@ -377,7 +379,7 @@ async function runViaOpenClawExecWithLease(input: {
         durationMs: error.timeoutMs,
         risk: input.risk,
       },
-      traceEvidence: { code: 'RUNTIME_ERROR', durationMs: error.timeoutMs },
+      traceEvidence: { timedOut: true, durationMs: error.timeoutMs },
     };
   }
 }

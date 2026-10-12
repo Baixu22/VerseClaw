@@ -1,7 +1,7 @@
 ---
 id: p1-terminal-exec-lease-20261012
 title: Wire the workspace exec lease into terminal execution (issue #162)
-lifecycleStatus: completed
+lifecycleStatus: active
 taskType: runtime-bridge
 scenario: gateway-backend-communication
 intent: Make the already-implemented workspaceExec lease actually bound terminal execution, so one workspace cannot exceed its concurrency cap and a saturated workspace returns a stable diagnostic instead of an unbounded fan-out.
@@ -11,8 +11,13 @@ expectedUserBehavior:
   - When the lease cannot be acquired within the run timeout, the user gets a stable blocked result naming the lease, not a raw rejection.
   - Windows path spellings that differ only by case or slash direction resolve to the same lease key.
 touchedAreas:
+  - docs/dev/p1-terminal-exec-lease-20261012/acceptance.json
+  - docs/dev/p1-terminal-exec-lease-20261012/SHA256SUMS
   - electron/services/terminal-api.ts
   - electron/services/resource-leases.ts
+  - shared/host-api/contract.ts
+  - harness/specs/tasks/windows-high-concurrency-stability-v1.md
+  - harness/specs/tasks/stress-test-windows-concurrency-v1.md
   - tests/unit/terminal-api.test.ts
   - tests/unit/resource-leases.test.ts
   - harness/specs/tasks/p1-terminal-exec-lease-20261012.md
@@ -31,6 +36,10 @@ requiredTests:
   - pnpm exec vitest run tests/unit/terminal-api.test.ts tests/unit/resource-leases.test.ts
   - pnpm run typecheck:node
   - pnpm run typecheck:test
+  - pnpm run typecheck:web
+  - pnpm contract:check
+  - node scripts/check-error-governance.mjs
+  - node harness/src/cli.mjs validate --spec harness/specs/tasks/windows-high-concurrency-stability-v1.md
   - pnpm run comms:replay
   - pnpm run comms:compare
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/p1-terminal-exec-lease-20261012.md
@@ -38,7 +47,10 @@ acceptance:
   - `terminal-api.ts` acquires the workspace exec lease before any Gateway exec RPC attempt, keyed by a normalized real workspace path.
   - Concurrent runs in one workspace admit at most 2 into the Gateway RPC; the third waits and proceeds after a slot frees.
   - Different workspace keys run concurrently.
-  - A lease timeout returns a blocked result (`blocked: true`) whose reason names the workspaceExec lease, with `durationMs = timeoutMs`.
+  - A lease timeout returns blocked and timedOut with leaseKind, leaseKey, timeoutMs and durationMs; approved-command diagnostics classify it as timeout, not runtime failure.
+  - A timed-out waiter never starts later and cannot leak a slot; thrown or rejected work releases its lease.
+  - A 200-request single-workspace burst preserves FIFO, capacity 2, and nondecreasing queuedMs.
+  - Archived concurrency specs distinguish the current terminal lease from unimplemented search and mutation leases and contain no requiredTests targeting missing files.
   - Release happens in a `finally` path; a double release does not free a second slot.
   - No local shell fallback is introduced and no frozen default is changed.
 docs:

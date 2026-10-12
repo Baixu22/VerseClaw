@@ -2,13 +2,22 @@
 lifecycleStatus: archived
 id: stress-test-windows-concurrency-v1
 title: Windows 高并发稳定性压测 v1
-intent: Verifies ResourceLeaseManager behavior under starvation-level concurrent load, and Chat UI jank at extreme message counts. Model API is mocked; the test isolates scheduling and rendering paths from API latency.
+intent: Archived stress-test proposal, not an implemented or passed test; current workspaceExec coverage lives in resource-leases.test.ts.
 touchedAreas:
   - tests/unit/resource-leases.test.ts
   - src/pages/Chat/index.tsx
   - src/pages/Chat/ChatMessage.tsx
   - src/stores/chat.ts
 ---
+
+## 状态澄清（2026-10-12，#162）
+
+以下均为历史压测方案，不是已执行的测试或已实现的能力。
+`openclaw_runtime/src/agents/resource-leases.ts` 和文中的五种租约管理器已不在当前源码中，
+下面的代码仅为历史草案，不可作为可执行入口。
+当前实现仅为 `electron/services/resource-leases.ts` 的 Main `terminal.run` workspaceExec
+准入限制；可执行测试为 `tests/unit/resource-leases.test.ts` 和 `tests/unit/terminal-api.test.ts`。
+search/writer/subtree/file 租约归 #167，本文不声称它们已存在，也不声称 UI 压测已完成。
 
 ## 压测维度
 

@@ -153,7 +153,7 @@ describe('terminal api workspace exec lease', () => {
     let callCount = 0;
     profileMock.mockImplementation(async () => {
       callCount += 1;
-      return callCount === 1
+      return callCount <= 2
         ? workspace()
         : { ...workspace(), id: 'workspace-2', rootPath: otherRoot };
     });
@@ -163,11 +163,82 @@ describe('terminal api workspace exec lease', () => {
 
     const first = api.run({ command: 'pwd' });
     const second = api.run({ command: 'pwd' });
-    await vi.waitFor(() => expect(rpc).toHaveBeenCalledTimes(2));
-    resolvers[0]({ success: true, exitCode: 0, stdout: 'a' });
-    resolvers[1]({ success: true, exitCode: 0, stdout: 'b' });
+    const other = api.run({ command: 'pwd' });
+    await vi.waitFor(() => expect(rpc).toHaveBeenCalledTimes(3));
+    resolvers.forEach((resolve) => resolve({ success: true }));
     await expect(first).resolves.toMatchObject({ success: true });
     await expect(second).resolves.toMatchObject({ success: true });
+    await expect(other).resolves.toMatchObject({ success: true });
+  });
+
+  it.skipIf(process.platform !== 'win32')('shares capacity across Windows case and slash variants and API instances', async () => {
+    const { createTerminalApi } = await import('@electron/services/terminal-api');
+    const resolvers: Array<(value: unknown) => void> = [];
+    const rpc = vi.fn(() => new Promise((resolve) => { resolvers.push(resolve); }));
+    const api = createTerminalApi({ gatewayManager: gatewayManager(rpc) as never });
+    const otherApi = createTerminalApi({ gatewayManager: gatewayManager(rpc) as never });
+    const first = api.run({ command: 'pwd' });
+    await vi.waitFor(() => expect(rpc).toHaveBeenCalledTimes(1));
+    activeWorkspace.profile = { ...workspace(), rootPath: process.cwd().toUpperCase().replace(/\\/g, '/') };
+    const second = otherApi.run({ command: 'pwd' });
+    await vi.waitFor(() => expect(rpc).toHaveBeenCalledTimes(2));
+    const third = otherApi.run({ command: 'pwd' });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(rpc).toHaveBeenCalledTimes(2);
+    resolvers[0]({ success: true });
+    await first;
+    await vi.waitFor(() => expect(rpc).toHaveBeenCalledTimes(3));
+    resolvers[1]({ success: true });
+    resolvers[2]({ success: true });
+    await Promise.all([second, third]);
+  });
+
+  it('keeps RPC method fallback inside the lease and releases after a Gateway failure', async () => {
+    const { createTerminalApi } = await import('@electron/services/terminal-api');
+    const resolvers: Array<(value: unknown) => void> = [];
+    const rejecters: Array<(error: Error) => void> = [];
+    const rpc = vi.fn((method: string) => method === 'terminal.run'
+      ? Promise.reject(new Error('unknown method'))
+      : new Promise((resolve, reject) => { resolvers.push(resolve); rejecters.push(reject); }));
+    const api = createTerminalApi({ gatewayManager: gatewayManager(rpc) as never });
+    const runs = [api.run({ command: 'pwd' }), api.run({ command: 'pwd' }), api.run({ command: 'pwd' })];
+    await vi.waitFor(() => expect(resolvers).toHaveLength(2));
+    expect(rpc.mock.calls.map(([method]) => method)).toEqual(['terminal.run', 'terminal.run', 'shell.run', 'shell.run']);
+    rejecters[0](new Error('Gateway unavailable'));
+    await expect(runs[0]).resolves.toMatchObject({ success: false });
+    await vi.waitFor(() => expect(resolvers).toHaveLength(3));
+    resolvers[1]({ success: true });
+    resolvers[2]({ success: true });
+    await Promise.all(runs);
+    expect(childProcessMocks.spawn).not.toHaveBeenCalled();
+  });
+
+  it('queues approved work too and records admission timeout without executing it later', async () => {
+    const { createTerminalApi } = await import('@electron/services/terminal-api');
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const { createHostTraceDiagnosticsService } = await import('@electron/services/host-trace-diagnostics');
+    const traceDiagnostics = createHostTraceDiagnosticsService({ secret: new Uint8Array(32).fill(11) });
+    const resolvers: Array<(value: unknown) => void> = [];
+    const rpc = vi.fn(() => new Promise((resolve) => { resolvers.push(resolve); }));
+    const api = createTerminalApi({ gatewayManager: gatewayManager(rpc) as never, traceDiagnostics });
+    const requested = await api.run({ command: 'git clean -fd' });
+    const approvalId = requested.approval?.id;
+    if (!approvalId) throw new Error('Expected approval id');
+    await createPermissionsApi().decideApproval({ id: approvalId, decision: 'approved' });
+    const held = [api.run({ command: 'pwd' }), api.run({ command: 'pwd' })];
+    await vi.waitFor(() => expect(rpc).toHaveBeenCalledTimes(2));
+    await expect(api.run({ command: 'git clean -fd', approvalId, timeoutMs: 1_000 })).resolves.toMatchObject({
+      success: false, blocked: true, timedOut: true, leaseKind: 'workspaceExec', timeoutMs: 1_000,
+    });
+    expect(traceDiagnostics.records()[0]?.summary.failureKind).toBe('timeout');
+    resolvers.forEach((resolve) => resolve({ success: true }));
+    await Promise.all(held);
+    expect(rpc).toHaveBeenCalledTimes(2);
+    // Saturation must not create a local-shell fallback or a deferred destructive effect.
+    expect(childProcessMocks.spawn).not.toHaveBeenCalled();
+    rpc.mockResolvedValue({ success: true });
+    await expect(api.run({ command: 'pwd' })).resolves.toMatchObject({ success: true });
+    expect(rpc).toHaveBeenCalledTimes(3);
   });
 
   it('reports a stable blocked result when the lease cannot be acquired in time', async () => {
@@ -183,7 +254,15 @@ describe('terminal api workspace exec lease', () => {
       success: false,
       blocked: true,
       reason: expect.stringContaining('workspaceExec'),
+      timedOut: true,
+      leaseKind: 'workspaceExec',
+      leaseKey: process.platform === 'win32'
+        ? process.cwd().replace(/\\/g, '/').toLowerCase()
+        : process.cwd(),
+      timeoutMs: 1_000,
+      durationMs: 1_000,
     });
+    expect(rpc).toHaveBeenCalledTimes(2);
     resolvers.forEach((resolve) => resolve({ success: true, exitCode: 0, stdout: 'ok' }));
     await Promise.all(held);
   });
