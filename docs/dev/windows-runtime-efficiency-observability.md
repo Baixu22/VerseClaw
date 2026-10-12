@@ -133,9 +133,10 @@ only.
   enabling GPU compositing would not address the actual bottleneck. Rendering
   strategy is a separate decision that should consume these measurements.
 - It does not add subagent fan-out quotas. `electron/services/resource-leases.ts`
-  already implements a FIFO `workspaceExec` lease (capacity 2, 30s timeout) for
-  terminal work; subagent spawn remains uncovered and is owned by
-  `windows-high-concurrency-stability-v1`.
+  implements a FIFO `workspaceExec` lease (capacity 2, 30s timeout); it is wired
+  into terminal execution by issue #162 (see
+  `docs/dev/p1-terminal-exec-lease-20261012.md`). Search / writer / subtree
+  leases do not exist and subagent spawn remains uncovered, owned by issue #167.
 - It claims no performance improvement. Per the boundary rule, that requires a
   stored before/after artifact pair from agent-driven runs.
 

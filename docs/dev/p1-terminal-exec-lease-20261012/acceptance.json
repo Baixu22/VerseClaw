@@ -1,0 +1,393 @@
+{
+  "schemaVersion": 1,
+  "issue": 162,
+  "date": "2026-10-12",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "accepted-scoped-development",
+  "candidate": {
+    "commit": "5d26555df539f9538dd281b1cd825911bbb67241",
+    "tree": "120a60a201b2f670104f7f316afd00181e321a88",
+    "dirty": false,
+    "node": "v24.19.0",
+    "pnpm": "11.2.2",
+    "platform": "win32",
+    "startedAt": "2026-10-12T02:19:39.9989044Z"
+  },
+  "candidateAfter": {
+    "commit": "5d26555df539f9538dd281b1cd825911bbb67241",
+    "dirty": false,
+    "paths": [],
+    "finishedAt": "2026-10-12T02:21:01.7267235Z"
+  },
+  "scope": "Main terminal.run Gateway RPC admission, including approved commands; synthetic Gateway RPCs, not real OS-process limits.",
+  "tests": {
+    "files": 10,
+    "passed": 246,
+    "failed": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "file": "tests/unit/agent-steering-team-bundle.test.ts",
+        "passed": 4,
+        "failed": 0
+      },
+      {
+        "file": "tests/unit/error-governance-boundary.test.ts",
+        "passed": 39,
+        "failed": 0
+      },
+      {
+        "file": "tests/unit/harness-specs.test.ts",
+        "passed": 43,
+        "failed": 0
+      },
+      {
+        "file": "tests/unit/host-api-facade.test.ts",
+        "passed": 45,
+        "failed": 0
+      },
+      {
+        "file": "tests/unit/host-invoke.test.ts",
+        "passed": 16,
+        "failed": 0
+      },
+      {
+        "file": "tests/unit/host-trace-diagnostics.test.ts",
+        "passed": 6,
+        "failed": 0
+      },
+      {
+        "file": "tests/unit/resource-leases.test.ts",
+        "passed": 7,
+        "failed": 0
+      },
+      {
+        "file": "tests/unit/role-orchestration-methods.test.ts",
+        "passed": 49,
+        "failed": 0
+      },
+      {
+        "file": "tests/unit/terminal-api.test.ts",
+        "passed": 17,
+        "failed": 0
+      },
+      {
+        "file": "tests/unit/workspace-permissions.test.ts",
+        "passed": 20,
+        "failed": 0
+      }
+    ],
+    "leaseAndTerminalCases": [
+      {
+        "test": "workspace exec lease preserves FIFO, capacity and queuedMs for 200 queued requests",
+        "status": "passed",
+        "durationMs": 60.871
+      },
+      {
+        "test": "workspace exec lease removes timed-out work and admits the next waiter after release",
+        "status": "passed",
+        "durationMs": 5.518
+      },
+      {
+        "test": "workspace exec lease releases a slot after synchronous throws and asynchronous rejections",
+        "status": "passed",
+        "durationMs": 2.748
+      },
+      {
+        "test": "workspace exec lease does not let a stale double release over-admit while another lease is held",
+        "status": "passed",
+        "durationMs": 0.754
+      },
+      {
+        "test": "workspace exec lease grants up to capacity 2 immediately and queues the third",
+        "status": "passed",
+        "durationMs": 0.565
+      },
+      {
+        "test": "workspace exec lease does not block a different workspace key",
+        "status": "passed",
+        "durationMs": 0.387
+      },
+      {
+        "test": "workspace exec lease rejects with a typed timeout error when the slot never frees",
+        "status": "passed",
+        "durationMs": 32.952
+      },
+      {
+        "test": "terminal api workspace exec lease bounds concurrent terminal executions per workspace at capacity 2",
+        "status": "passed",
+        "durationMs": 359.831
+      },
+      {
+        "test": "terminal api workspace exec lease lets different workspaces run in parallel",
+        "status": "passed",
+        "durationMs": 60.562
+      },
+      {
+        "test": "terminal api workspace exec lease shares capacity across Windows case and slash variants and API instances",
+        "status": "passed",
+        "durationMs": 142.491
+      },
+      {
+        "test": "terminal api workspace exec lease keeps RPC method fallback inside the lease and releases after a Gateway failure",
+        "status": "passed",
+        "durationMs": 64.318
+      },
+      {
+        "test": "terminal api workspace exec lease queues approved work too and records admission timeout without executing it later",
+        "status": "passed",
+        "durationMs": 1072.679
+      },
+      {
+        "test": "terminal api workspace exec lease reports a stable blocked result when the lease cannot be acquired in time",
+        "status": "passed",
+        "durationMs": 1069.902
+      },
+      {
+        "test": "terminal api OpenClaw exec integration delegates allowed terminal commands to OpenClaw/Gateway instead of spawning a local shell",
+        "status": "passed",
+        "durationMs": 2.039
+      },
+      {
+        "test": "terminal api OpenClaw exec integration tries compatible OpenClaw exec RPC names and never falls back to PowerShell",
+        "status": "passed",
+        "durationMs": 1.509
+      },
+      {
+        "test": "terminal api OpenClaw exec integration returns an explicit unavailable result when OpenClaw exposes no direct terminal RPC",
+        "status": "passed",
+        "durationMs": 1.241
+      },
+      {
+        "test": "terminal api OpenClaw exec integration requires approval for dangerous commands before delegating to OpenClaw",
+        "status": "passed",
+        "durationMs": 1.68
+      },
+      {
+        "test": "terminal api OpenClaw exec integration records a bounded diagnostic for failed approved terminal commands",
+        "status": "passed",
+        "durationMs": 1.886
+      },
+      {
+        "test": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, code: 'ENOENT', exitCode: 1 }",
+        "status": "passed",
+        "durationMs": 1.485
+      },
+      {
+        "test": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, code: 'EACCES', exitCode: 1 }",
+        "status": "passed",
+        "durationMs": 1.311
+      },
+      {
+        "test": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, timedOut: true, exitCode: null }",
+        "status": "passed",
+        "durationMs": 0.975
+      },
+      {
+        "test": "terminal api OpenClaw exec integration maps safe Gateway failure metadata to { success: false, cancelled: true, exitCode: null }",
+        "status": "passed",
+        "durationMs": 0.779
+      },
+      {
+        "test": "terminal api OpenClaw exec integration does not record successful approved terminal commands",
+        "status": "passed",
+        "durationMs": 1.034
+      },
+      {
+        "test": "terminal api OpenClaw exec integration blocks mutating commands in read-only mode before reaching Gateway",
+        "status": "passed",
+        "durationMs": 0.975
+      }
+    ]
+  },
+  "gates": [
+    {
+      "name": "unit",
+      "command": "pnpm exec vitest run tests/unit/resource-leases.test.ts tests/unit/terminal-api.test.ts tests/unit/workspace-permissions.test.ts tests/unit/host-trace-diagnostics.test.ts tests/unit/role-orchestration-methods.test.ts tests/unit/agent-steering-team-bundle.test.ts tests/unit/host-api-facade.test.ts tests/unit/host-invoke.test.ts tests/unit/error-governance-boundary.test.ts tests/unit/harness-specs.test.ts --reporter=json --outputFile=\"$root/unit.json\"",
+      "exitCode": 0,
+      "durationMs": 21735,
+      "log": "unit.log"
+    },
+    {
+      "name": "typecheck-node",
+      "command": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 8112,
+      "log": "typecheck-node.log"
+    },
+    {
+      "name": "typecheck-test",
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 10677,
+      "log": "typecheck-test.log"
+    },
+    {
+      "name": "typecheck-web",
+      "command": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 3389,
+      "log": "typecheck-web.log"
+    },
+    {
+      "name": "typecheck-full",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 22056,
+      "log": "typecheck-full.log"
+    },
+    {
+      "name": "lint",
+      "command": "pnpm exec eslint electron/services/terminal-api.ts electron/services/resource-leases.ts shared/host-api/contract.ts tests/unit/terminal-api.test.ts tests/unit/resource-leases.test.ts",
+      "exitCode": 0,
+      "durationMs": 5829,
+      "log": "lint.log"
+    },
+    {
+      "name": "contract",
+      "command": "pnpm contract:check",
+      "exitCode": 0,
+      "durationMs": 856,
+      "log": "contract.log"
+    },
+    {
+      "name": "error-governance",
+      "command": "node scripts/check-error-governance.mjs",
+      "exitCode": 0,
+      "durationMs": 147,
+      "log": "error-governance.log"
+    },
+    {
+      "name": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "durationMs": 966,
+      "log": "comms-replay.log"
+    },
+    {
+      "name": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "durationMs": 869,
+      "log": "comms-compare.log"
+    },
+    {
+      "name": "harness-task",
+      "command": "pnpm harness validate --spec harness/specs/tasks/p1-terminal-exec-lease-20261012.md",
+      "exitCode": 0,
+      "durationMs": 1591,
+      "log": "harness-task.log"
+    },
+    {
+      "name": "harness-archived",
+      "command": "pnpm harness validate --spec harness/specs/tasks/windows-high-concurrency-stability-v1.md",
+      "exitCode": 0,
+      "durationMs": 1507,
+      "log": "harness-archived.log"
+    },
+    {
+      "name": "harness-dry-run",
+      "command": "pnpm harness run --spec harness/specs/tasks/p1-terminal-exec-lease-20261012.md --dry-run",
+      "exitCode": 0,
+      "durationMs": 1524,
+      "log": "harness-dry-run.log"
+    },
+    {
+      "name": "retention",
+      "command": "node scripts/check-repository-artifacts.mjs",
+      "exitCode": 0,
+      "durationMs": 1959,
+      "log": "retention.log"
+    },
+    {
+      "name": "local-paths",
+      "command": "node scripts/check-local-paths.mjs",
+      "exitCode": 0,
+      "durationMs": 200,
+      "log": "local-paths.log"
+    },
+    {
+      "name": "diff-check",
+      "command": "git diff --check origin/main",
+      "exitCode": 0,
+      "durationMs": 100,
+      "log": "diff-check.log"
+    }
+  ],
+  "validatedSourceSha256": {
+    "electron/services/terminal-api.ts": "72ad3026afebcd3173abc45e2321eb6dc7e4c9e9e4213943ee316cd08e2a3a87",
+    "electron/services/resource-leases.ts": "d81410d2db97485d9e869a969b6fd0f335045b0cd93728f4149fedc44f9b1dc6",
+    "shared/host-api/contract.ts": "4b41ebfef98dbacdf8e5879f1ae1e7b58298bde2a50f6d9d4017edd03e073f18",
+    "tests/unit/terminal-api.test.ts": "92d6a809fb91e9d52221c0639ded239f407a428c1a2fa0a7fc0412c6a5c550e0",
+    "tests/unit/resource-leases.test.ts": "6bf95fff0b167c9d80fdab6615549963c9b9e7e4fb89139a55b129f8a24a3720"
+  },
+  "redRegression": {
+    "failed": 1,
+    "filteredOut": 13,
+    "reason": "Original candidate omitted typed leaseKind/leaseKey/timeoutMs/timedOut fields.",
+    "sha256": "6c18681e8d658667dd969ab4c17cfa36db71a83a42dcd749eba3c0bd500d247e"
+  },
+  "rawEvidence": {
+    "archiveName": "p1-162-closeout-20261012",
+    "authoritativeRun": "final-supported",
+    "sha256": {
+      "candidate-after.json": "f20423158d2d917b4cee66ae6273cafe50aba36c7b595fe84d07dddfae7eb539",
+      "candidate.json": "ca149b6562215623bd2afdce1c93481ffdfa3418f9cdd740a6bf95a9bc52d5d5",
+      "comms-compare.log": "61fbe90e7cac994d39bcac1bf6875c8a4faffdfb91040236057ae6e1ce0406c5",
+      "comms-replay.log": "c6cbdc002ccf0f6a61dde862128363abdc53da2f2e04d549718a7d64a7be8be1",
+      "compare-report.md": "7363b018ae3b7c5d01cc7c41f5f3a9f078d2911dc443bb7c0dd0cc2fa2a15fe4",
+      "contract.log": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0",
+      "current-metrics.json": "7c03cc1dfc7c42454cf74ac02526ede960205aafbdbe7fe08cb73ee62251ffef",
+      "diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "error-governance.log": "6876a08697669001b209fde1e33f709b2f68cfef46055d24ce25abb027d54a47",
+      "gates.json": "20926c4f77748ee2639bdb9f6ee1b07df8cdfea3d79e82c9bd6ba1d3f18d0705",
+      "harness-archived.log": "71d50179abc315587aeb85a29f76949619e411dc1be387456ca90e51bb1ee9d0",
+      "harness-dry-run.log": "e8d4268bf04eba349f1683fa404390e75612bf084579fa18ce4008f2af4c3573",
+      "harness-task.log": "9e2bcd69a88e4383241a8f9873a6afd4fb96145c1f4132dad6eb4d26fe6bc6f9",
+      "lint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "local-paths.log": "583438ed37e722863f5d96d41c15bcb0e4bd967f6a49f7dd74424952cb7fe39a",
+      "retention.log": "49f1657c138db0a605faa2dfe4a06daf3694255026a663051f53cc1600dfe216",
+      "typecheck-full.log": "61baf60cc4fc0ee373796e4563cd6141f48f1956c272f12df30f96d363bf185f",
+      "typecheck-node.log": "55c4b41912bad5023ad1fd31bdd9ad68189a252118225941b02016f464734f06",
+      "typecheck-test.log": "d3d1fa1e880f14d028c73f22eb6b438fbcbcc3c775a9a0d33d08e69a5b7de5ae",
+      "typecheck-web.log": "792ce7e1b094715d619d0aee6c12ce0ff1e474e4744c07ff87e1f45ee26a2fa4",
+      "unit.json": "a6c97d194f47ec25f83e5437d55a4596295ebf6ff708fa0e8a18d29e7b8d905c",
+      "unit.log": "1aa8b0ef7b3971b5964027dbb96ed88170e7c098135881d3eb62357a920e7c06"
+    },
+    "recovery": "Keep the named private local archive; commands in gates reproduce the checks with $root set to an output directory."
+  },
+  "priorRuns": [
+    "Dirty-worktree red and green runs are development evidence only.",
+    "The final/ run used PATH Node v24.15.0; superseded by final-supported/ using existing Node v24.19.0 without changing system installation.",
+    "The first archived-spec validation failed on missing touchedAreas coverage; repaired before the clean candidate run.",
+    "Retention initially rejected not-yet-tracked evidence files; passed after staging and freezing the candidate."
+  ],
+  "limitations": [
+    "Not full harness:ci, root unit suite, Electron E2E, packaged release, non-Windows or live-provider acceptance.",
+    "The 200-request burst uses fake timers and a real in-process lease manager; it is not a real Gateway throughput or latency benchmark.",
+    "Bounds concurrent RPC sequences only in one Main process. Releasing after RPC failure does not prove remote OS processes have stopped.",
+    "No terminal.open, runtime agent-exec, cross-process or search/writer/subtree/file-mutation budget claim.",
+    "No new scheduler, local-shell fallback, product-lock or frozen-default changes."
+  ],
+  "readmeReview": {
+    "files": [
+      "README.md",
+      "README.zh-CN.md",
+      "README.ja-JP.md"
+    ],
+    "updateRequired": false,
+    "reason": "No workspace lease guarantee or renderer interaction is described by these readmes."
+  },
+  "credentialScan": {
+    "method": "bounded-pattern scan of changed source/docs/evidence and authoritative raw logs; not a general secret-discovery proof",
+    "filesScanned": 36,
+    "rules": [
+      "private-key",
+      "provider-token",
+      "github-token",
+      "literal-secret"
+    ],
+    "hits": 0
+  }
+}

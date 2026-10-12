@@ -471,6 +471,10 @@ export type WorkspaceTerminalRunPayload = {
   approvalId?: string;
 };
 export type WorkspaceTerminalRunResult = HostSuccess & {
+  /** Present only when workspace execution admission times out, before any RPC. */
+  leaseKind?: 'workspaceExec';
+  leaseKey?: string;
+  timeoutMs?: number;
   blocked?: boolean;
   approvalRequired?: boolean;
   approval?: PermissionApprovalEvent;

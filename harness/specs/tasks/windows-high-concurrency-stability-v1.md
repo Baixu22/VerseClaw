@@ -4,32 +4,25 @@ id: windows-high-concurrency-stability-v1
 title: Windows high-concurrency stability orchestration v1
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Add Windows-first resource leases for concurrent Chat/agent/subagent work so reads stay parallel while search, terminal execution, and filesystem mutations are bounded and observable.
+intent: Historical Windows concurrency design; executable checks cover only the current Main terminal.run workspaceExec admission lease, not a general runtime resource scheduler.
 touchedAreas:
+  - docs/dev/p1-terminal-exec-lease-20261012/acceptance.json
+  - docs/dev/p1-terminal-exec-lease-20261012/SHA256SUMS
+  - harness/specs/tasks/p1-terminal-exec-lease-20261012.md
+  - harness/specs/tasks/stress-test-windows-concurrency-v1.md
+  - docs/dev/p1-terminal-exec-lease-20261012.md
+  - docs/dev/windows-runtime-efficiency-observability.md
+  - scripts/repository-artifacts.json
+  - .gitignore
   - harness/specs/tasks/windows-high-concurrency-stability-v1.md
-  - docs/clawx-design-overview.md
   - electron/services/terminal-api.ts
   - electron/services/resource-leases.ts
-  - electron/services/terminal-session-manager.ts
   - shared/host-api/contract.ts
-  - openclaw_runtime/src/agents/bash-tools.exec.ts
-  - openclaw_runtime/src/agents/bash-tools.exec-types.ts
-  - openclaw_runtime/src/agents/resource-leases.ts
-  - openclaw_runtime/src/agents/sessions/tools/file-mutation-queue.ts
-  - openclaw_runtime/src/agents/sessions/tools/tool-contracts.ts
-  - openclaw_runtime/src/agents/sessions/tools/grep.ts
-  - openclaw_runtime/src/agents/sessions/tools/find.ts
-  - openclaw_runtime/src/agents/sessions/tools/write.ts
-  - openclaw_runtime/src/agents/sessions/tools/edit.ts
-  - openclaw_runtime/src/agents/sandbox/fs-bridge.ts
   - tests/unit/resource-leases.test.ts
   - tests/unit/terminal-api.test.ts
 expectedUserBehavior:
-  - Multiple conversations can run concurrently without unbounded terminal/search/file mutation contention.
-  - Ordinary agent terminal commands are bounded by a workspace exec lease and return stable timeout diagnostics when saturated.
-  - Long-running managed terminals are deduplicated by workspace plus name or command.
-  - grep/find searches are bounded per workspace while read/ls remain parallel and output-capped.
-  - File writes/edits retain same-file serialization, and subtree delete/rename/move paths are serialized against overlapping paths.
+  - Main terminal.run admission is bounded per real workspace path; other resource kinds are not implemented by this lease manager.
+  - Both normal and approved terminal.run paths wait before Gateway exec RPC attempts and return structured admission-timeout diagnostics.
 requiredProfiles:
   - fast
   - comms
@@ -48,11 +41,10 @@ requiredTests:
   - pnpm run comms:replay
   - pnpm run comms:compare
 acceptance:
-  - Resource leases are fair FIFO queues with bounded acquire timeout, reliable release in finally blocks, and deterministic wait metadata.
-  - Windows path lease keys are case-insensitive and normalize slash variants; missing targets use parent realpath plus basename.
-  - Same file mutations serialize; overlapping subtree mutations serialize; unrelated paths can proceed concurrently.
-  - terminal.run uses a workspace exec lease before Gateway exec RPC attempts, and managed terminal open calls dedupe long-running commands.
-  - grep/find acquire a workspace search lease and return queuedMs/lease metadata in tool details.
+  - The Main workspaceExec lease has capacity 2, per-key FIFO, bounded acquisition, finally release, and queuedMs metadata.
+  - Existing Windows workspace paths resolve through realpath and case/slash variants share one lease key.
+  - terminal.run acquires the lease before normal and approved Gateway exec RPC attempts.
+  - Lease timeout leaves no pending effect and reports leaseKind, leaseKey and timeoutMs.
 docs:
   required: true
   files:
@@ -60,3 +52,16 @@ docs:
 ---
 
 This task does not introduce Docker/SSH isolation or new UI surfaces. It keeps policy-light as the default control-plane sandbox and prioritizes stability over maximum throughput.
+
+## Current implementation boundary (2026-10-12, issue #162)
+
+This archived design is not proof of runtime-wide concurrency control. The active
+repair is `p1-terminal-exec-lease-20261012`. Only Main `terminal.run` RPC admission
+uses `electron/services/resource-leases.ts`; it is not an OS-process limit and
+does not govern interactive `terminal.open`, agent exec tools or cross-process work.
+The deleted runtime `ResourceLeaseManager` is not a current source dependency.
+
+The original workspaceSearch/workspaceWriter/subtreeMutation/fileMutation leases,
+parent-realpath fallback for missing targets, and long-running-terminal deduplication
+are outside this repair. Search and mutation budgets remain unimplemented (#167);
+their old acceptance statements are design history, not verified capability claims.
