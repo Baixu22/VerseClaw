@@ -1,13 +1,13 @@
 ---
 id: p1-terminal-exec-lease-20261012
 title: Wire the workspace exec lease into terminal execution (issue #162)
-lifecycleStatus: active
+lifecycleStatus: completed
 taskType: runtime-bridge
 scenario: gateway-backend-communication
-intent: Make the already-implemented workspaceExec lease actually bound terminal execution, so one workspace cannot exceed its concurrency cap and a saturated workspace returns a stable diagnostic instead of an unbounded fan-out.
+intent: Bound Main terminal.run Gateway RPC admission with the existing workspaceExec lease and stable saturation diagnostics; do not claim OS-process or runtime-wide concurrency limits.
 expectedUserBehavior:
-  - Terminal executions from one workspace run at most 2 at a time; further runs queue and proceed as slots free.
-  - Terminal executions in different workspaces do not block each other.
+  - Main terminal.run admits at most 2 Gateway RPC sequences per workspace; further runs queue until a slot frees.
+  - Saturated terminal.run admission in one workspace does not block other workspace keys.
   - When the lease cannot be acquired within the run timeout, the user gets a stable blocked result naming the lease, not a raw rejection.
   - Windows path spellings that differ only by case or slash direction resolve to the same lease key.
 touchedAreas:

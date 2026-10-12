@@ -108,3 +108,20 @@ changes; no Electron UI/release/real-provider performance claim is made.
 
 Final gate counts and provenance belong in `p1-terminal-exec-lease-20261012/acceptance.json`;
 the earlier 18-test table above is retained as historical candidate evidence.
+
+### Final clean-candidate verification
+
+Candidate `5d26555df539f9538dd281b1cd825911bbb67241` (tree
+`120a60a201b2f670104f7f316afd00181e321a88`) was clean before and after the run.
+Using the existing Node **24.19.0** and pinned pnpm **11.2.2**: **246 tests in
+10 files passed, 0 failed, 0 skipped**; **16 gates exited 0**, including full
+uncached typecheck, node/web/test typechecks, scoped lint, contract/error
+governance, comms replay/compare, both task-spec validations, dry-run selection,
+artifact retention, local-path policy and diff whitespace checks.
+
+The earlier Node 24.15.0 run is retained in the private archive but is not the
+authoritative final run because it is below the documented Windows minimum.
+The directory manifest covers the curated report; raw reports and logs are
+hash-indexed there and retained in the private `p1-162-closeout-20261012` archive.
+Only documentation/evidence changes follow this candidate; the report binds the
+validated production and test file bytes individually.
