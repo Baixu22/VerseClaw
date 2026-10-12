@@ -147,10 +147,44 @@ export function applyCheckpointToJournal(params: {
   // undoLastWrites pops from the tail. Because journal entries are seq-ordered
   // and the checkpoint is a suffix boundary, undoing `toUndo.length` steps from
   // the tail restores exactly the post-checkpoint writes.
-  const outcome = undoLastWrites({
+  return undoCheckpointWrites({
     workspaceRoot: params.workspaceRoot,
     sessionId: journalSessionId,
-    steps: toUndo.length,
+    entries: toUndo.map((entry) => ({ seq: entry.seq, relPath: entry.relPath })),
+  });
+}
+
+/**
+ * #175: apply a *pre-computed* rollback selection.
+ *
+ * `applyCheckpointToJournal` computes the selection and delegates here. Splitting
+ * it out is what makes the issue's interleaving testable without a test-only hook
+ * in the production path: a caller that computed its selection earlier can hand
+ * it over after a concurrent write landed, and the identity check inside
+ * `undoLastWrites` turns that into an explicit abort — `concurrent_write_detected`
+ * — instead of popping the concurrent entry as "the Nth from the tail".
+ *
+ * `entries` is the oldest-first selection; it is reversed here because the undo
+ * pops newest-first. An empty selection is a no-op, never "undo one".
+ */
+export function undoCheckpointWrites(params: {
+  workspaceRoot: string;
+  sessionId: string;
+  entries: readonly { seq: number; relPath: string }[];
+}): { restored: string[]; errors: string[]; journalDir: string } {
+  const newestFirst = [...params.entries].reverse();
+  if (newestFirst.length === 0) {
+    return {
+      restored: [],
+      errors: [],
+      journalDir: journalDirFor(params.workspaceRoot, params.sessionId),
+    };
+  }
+  const outcome = undoLastWrites({
+    workspaceRoot: params.workspaceRoot,
+    sessionId: params.sessionId,
+    steps: newestFirst.length,
+    expectedEntries: newestFirst,
   });
   return {
     restored: outcome.restored,

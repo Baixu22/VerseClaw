@@ -486,6 +486,13 @@ export function undoLastWrites(params: {
   sessionId?: string;
   steps?: number;
   workspaceOnly?: boolean;
+  /**
+   * #175: newest-first identity of the entries the caller selected. Each pop is
+   * verified against it, so a concurrent write that landed *after* the selection
+   * aborts the undo instead of being deleted as "the Nth entry from the tail"
+   * while the intended target is left untouched.
+   */
+  expectedEntries?: readonly { seq: number; relPath: string }[];
 }): { restored: string[]; errors: string[]; journalDir: string; remainingEntries: number } {
   const sessionId = params.sessionId?.trim() || "default";
   const journal = getOrCreateWriteJournal(params.workspaceRoot, sessionId);
@@ -495,6 +502,16 @@ export function undoLastWrites(params: {
   for (let i = 0; i < steps; i += 1) {
     const entry = journal.entries[journal.entries.length - 1];
     if (!entry) {
+      break;
+    }
+    const expected = params.expectedEntries?.[i];
+    if (expected && (entry.seq !== expected.seq || entry.relPath !== expected.relPath)) {
+      // Abort BEFORE mutating anything: whatever sits at the tail now is not
+      // what the caller selected, so it must survive. Reporting an error keeps
+      // the upper layer from claiming a successful rollback (#175).
+      errors.push(
+        `concurrent_write_detected: expected tail seq ${expected.seq} (${expected.relPath}), found seq ${entry.seq} (${entry.relPath})`,
+      );
       break;
     }
     try {

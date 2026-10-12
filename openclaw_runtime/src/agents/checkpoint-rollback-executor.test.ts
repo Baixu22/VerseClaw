@@ -1,15 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import {
   __resetWriteJournals,
+  getOrCreateWriteJournal,
   snapshotBeforeWrite,
 } from "./tools/write-journal.js";
 import {
   applyCheckpointToJournal,
   createCheckpointRollbackDeps,
   resolveCheckpointJournalRoot,
+  undoCheckpointWrites,
   validateCheckpointRecord,
   type CheckpointRollbackExecutorOptions,
 } from "./checkpoint-rollback-executor.js";
@@ -251,6 +253,63 @@ describe("checkpoint-rollback-executor (A3)", () => {
       expect(outcome.errors[0]).toContain("journal_session_id_missing");
     });
 
+    it("#175 aborts instead of deleting a concurrent write that landed after the selection", async () => {
+      const target = path.join(repoRoot, "target.ts");
+      const concurrent = path.join(repoRoot, "fresh-work.ts");
+
+      // seq1 (pre-checkpoint): target.ts v0 -> base
+      writeFileSync(target, "v0\n", "utf8");
+      snapshotBeforeWrite({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+        filePath: "target.ts",
+        toolName: "write",
+      });
+      writeFileSync(target, "base\n", "utf8");
+      await sleepMs(5);
+
+      // seq2 (the only entry a rollback to the checkpoint instant should undo)
+      snapshotBeforeWrite({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+        filePath: "target.ts",
+        toolName: "write",
+      });
+      writeFileSync(target, "changed-by-agent\n", "utf8");
+
+      // The selection a rollback computes at this instant.
+      const journal = getOrCreateWriteJournal(repoRoot, journalSessionId);
+      const selection = journal.entries
+        .filter((entry) => entry.seq > 1)
+        .map((entry) => ({ seq: entry.seq, relPath: entry.relPath }));
+      expect(selection).toHaveLength(1);
+
+      // Interleaving: a concurrent write lands AFTER the selection was computed.
+      snapshotBeforeWrite({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+        filePath: "fresh-work.ts",
+        toolName: "write",
+      });
+      writeFileSync(concurrent, "concurrent-work-that-must-survive\n", "utf8");
+
+      const outcome = undoCheckpointWrites({
+        workspaceRoot: repoRoot,
+        sessionId: journalSessionId,
+        entries: selection,
+      });
+
+      // Before this fix the undo popped "1 entry from the tail" — i.e. the
+      // concurrent one: fresh-work.ts was deleted, target.ts was left at
+      // "changed-by-agent", and errors stayed empty (silent mis-delete).
+      expect(outcome.restored).toEqual([]);
+      expect(outcome.errors).toHaveLength(1);
+      expect(outcome.errors[0]).toContain("concurrent_write_detected");
+      expect(existsSync(concurrent)).toBe(true);
+      expect(readFileSync(concurrent, "utf8")).toBe("concurrent-work-that-must-survive\n");
+      expect(readFileSync(target, "utf8")).toBe("changed-by-agent\n");
+    });
+
     it("uses metadata.journalSeq as the boundary when stamped (partial rollback without same-ms ambiguity)", async () => {
       const file = path.join(repoRoot, "f.ts");
       writeFileSync(file, "v0\n", "utf8");
@@ -411,6 +470,23 @@ describe("checkpoint-rollback-executor (A3)", () => {
       }
       expect(readFileSync(file, "utf8")).toBe("v1\n");
       expect(outcomes).toEqual(["legacy_checkpoint_fallback"]);
+    });
+
+    it("#175/#176 surface a failed rollback as a thrown failure, never a silent success", async () => {
+      const record = makeCheckpointRecord({
+        id: "c1",
+        sessionKey,
+        createdAt: new Date().toISOString(),
+        filesTouched: ["f.ts"],
+      });
+      // No journal exists for this session id, so the rollback must abort with
+      // an error — and the dep must turn that error into a rejection so
+      // `executeReplayRollback` reports ok:false instead of success.
+      const deps = createCheckpointRollbackDeps({
+        workspaceRoot: repoRoot,
+        sessionId: "sess-not-journalled",
+      });
+      await expect(deps.applyCheckpoint(record)).rejects.toThrow(/no_journal_for_session/);
     });
 
     it("event_log target fails explicitly when pilot is disabled (no fake success)", async () => {
