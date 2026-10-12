@@ -27,6 +27,7 @@ const PRELOAD = `
       artifactDir: options.env.RUNTIME_MEMORY_EVAL_ARTIFACT_DIR,
       suiteTimeoutMinutes: options.env.RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES ?? null,
       nodeOptions: options.env.NODE_OPTIONS ?? null,
+      args: Array.isArray(_args) ? _args.join(' ') : '',
       heapMb: options.env.RUNTIME_MEMORY_FULL_HEAP_MB ?? null,
       retrievalOnly: options.env.RUNTIME_MEMORY_RETRIEVAL_ONLY ?? null,
       realLlm: options.env.RUNTIME_MEMORY_REAL_LLM ?? null,
@@ -82,7 +83,7 @@ function runCli(args: string[], capture: string): { status: number | null; stdou
   return { status: result.status, stdout: result.stdout ?? "", stderr: result.stderr ?? "" };
 }
 
-function readCapture(capture: string): { timeout: number; model: string; fullEval: string; artifactDir: string; suiteTimeoutMinutes: string | null; nodeOptions: string | null; heapMb: string | null; retrievalOnly: string | null; realLlm: string | null; modelKey: string | null; deepseekKey: string | null } {
+function readCapture(capture: string): { timeout: number; model: string; fullEval: string; artifactDir: string; suiteTimeoutMinutes: string | null; nodeOptions: string | null; args: string; heapMb: string | null; retrievalOnly: string | null; realLlm: string | null; modelKey: string | null; deepseekKey: string | null } {
   return JSON.parse(readFileSync(capture, "utf8"));
 }
 
@@ -147,9 +148,11 @@ it("gives the judge phase an explicit heap budget and lets a fatal OOM leave a r
   expect(result.status, result.stderr).toBe(0);
   const captured = readCapture(capture);
   expect(captured.heapMb).toBe("7168");
-  expect(captured.nodeOptions).toContain("--max-old-space-size=7168");
+  // Node rejects the report flag inside NODE_OPTIONS, and this build spells it without
+  // the second hyphen, so both flags must be argv and the name must be the real one.
+  expect(captured.args).toContain("--max-old-space-size=7168");
   // Without this a fatal OOM kills the worker with no report, which is how judge-07 vanished.
-  expect(captured.nodeOptions).toContain("--report-on-fatal-error");
+  expect(captured.args).toContain("--report-on-fatalerror");
   const budget = JSON.parse(readFileSync(join(output, "run-budget.json"), "utf8"));
   expect(budget).toMatchObject({ heapMb: 7168, timeoutMinutes: 90 });
 

@@ -183,16 +183,18 @@ async function main() {
   // historical 36h behaviour is preserved for every existing invocation.
   if (testTimeoutMinutes !== null) env.RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES = String(testTimeoutMinutes);
   // Give the judge phase explicit V8 headroom and make a fatal OOM write a report.
+  // Both are Node CLI flags, not NODE_OPTIONS: NODE_OPTIONS rejects the report flag, and
+  // the CLI name on this Node (v24.15.0) is --report-on-fatalerror, not
+  // --report-on-fatal-error (observed: exit 9 bad option for the hyphenated form).
   const heapMb = resolveHeapMb(values['heap-mb']);
-  env.NODE_OPTIONS = [process.env.NODE_OPTIONS, '--max-old-space-size=' + heapMb, '--report-on-fatal-error']
-    .filter(Boolean).join(' ');
   env.RUNTIME_MEMORY_FULL_HEAP_MB = String(heapMb);
+  const nodeFlags = ['--max-old-space-size=' + heapMb, '--report-on-fatalerror'];
   writeFileSync(join(output, 'run-budget.json'), JSON.stringify({
     driven_by: 'agent', actor: 'dsh-lead', recordedAt: new Date().toISOString(),
-    timeoutMinutes, testTimeoutMinutes, heapMb, nodeOptions: env.NODE_OPTIONS,
+    timeoutMinutes, testTimeoutMinutes, heapMb, nodeFlags, nodeOptions: env.NODE_OPTIONS ?? null,
     resumeFrom: values['resume-from'] ?? null, resumeSourceRevision: values['resume-source-revision'] ?? null,
   }, null, 2) + '\n');
-  const result = spawnSync(process.execPath, [join(root, 'node_modules/vitest/vitest.mjs'), 'run', 'tests/unit/runtime-memory-locomo-full-500.test.ts', '--reporter=verbose'], {
+  const result = spawnSync(process.execPath, [...nodeFlags, join(root, 'node_modules/vitest/vitest.mjs'), 'run', 'tests/unit/runtime-memory-locomo-full-500.test.ts', '--reporter=verbose'], {
     cwd: root, env, stdio: 'inherit', windowsHide: true, timeout: timeoutMinutes * 60 * 1000,
   });
   if (result.error || result.signal || result.status !== 0) throw new Error('LoCoMo runner failed: exit=' + result.status + ', signal=' + result.signal + (result.error ? ', ' + result.error.message : ''));

@@ -160,3 +160,16 @@ versus 0.4079 in the retrieved top-5; `absent_from_memory` 0/150, `in_memory_but
 other categories. Retained under
 `artifacts/p0-memory-integrity-20261009/retrieval-only-run-01/` with per-file sha256. That
 is the dev slice at L0, not the 500-question sample and not the final assembled context.
+
+Confirmed on the full 500-question sample through the CLI (121 s, retrievalOnlyVerified,
+no report written), retained under
+`artifacts/p0-memory-integrity-20261009/retrieval-only-run-04-full500/`: memory coverage
+0.9007 versus 0.4078 in the top-5; absent_from_memory 0/500, in_memory_but_not_top5
+446/500, retrieved_in_top5 50/500; temporal top-5 coverage 0.4344 against 0.3622
+(single_hop), 0.4011 (multi_hop) and 0.4272 (open_domain), i.e. +0.0380 against the pooled
+non-temporal questions. Extraction is not the bottleneck and temporal is not the worst
+category on either sample.
+
+Node CLI detail recorded while landing this: the report flag must be passed as a Node flag,
+not through NODE_OPTIONS, and on Node v24.15.0 the spelling is --report-on-fatalerror
+(the hyphenated form exits 9 with bad option).
