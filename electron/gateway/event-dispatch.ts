@@ -13,6 +13,59 @@ type GatewayEventEmitter = {
   emit: (event: string, payload: unknown) => boolean;
 };
 
+/**
+ * Bounded prompt-cache break frame projected from the runtime `agent` stream.
+ * Only finite counters and closed change codes cross this boundary; the raw
+ * diagnostic frame never becomes a chat or generic notification event.
+ */
+export type PromptCacheBreakEvent = {
+  runId: string;
+  sessionKey?: string;
+  eventId: string;
+  previousCacheRead: number;
+  cacheRead: number;
+  changes: string[];
+};
+
+const PROMPT_CACHE_CHANGE_CODES = new Set<string>([
+  'cacheRetention',
+  'model',
+  'streamStrategy',
+  'systemPrompt',
+  'tools',
+  'transport',
+]);
+
+function readFiniteNumber(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+}
+
+/** Projects a raw `stream: "prompt_cache"` agent frame, or null if malformed. */
+export function normalizePromptCacheBreak(payload: unknown): PromptCacheBreakEvent | null {
+  const frame = asRecord(payload);
+  const data = asRecord(frame.data);
+  if (data.phase !== 'break') return null;
+  const runId = readString(frame.runId);
+  const eventId = readString(data.eventId);
+  const previousCacheRead = readFiniteNumber(data.previousCacheRead);
+  const cacheRead = readFiniteNumber(data.cacheRead);
+  if (!runId || !eventId || previousCacheRead === undefined || cacheRead === undefined) {
+    return null;
+  }
+  const rawChanges = Array.isArray(data.changes) ? data.changes : [];
+  const changes = rawChanges.filter(
+    (code): code is string => typeof code === 'string' && PROMPT_CACHE_CHANGE_CODES.has(code),
+  );
+  return {
+    runId,
+    sessionKey: readOptionalString(frame.sessionKey) ?? undefined,
+    eventId,
+    previousCacheRead,
+    cacheRead,
+    changes,
+  };
+}
+
 function readString(value: unknown): string {
   return typeof value === 'string' ? value : '';
 }
@@ -83,6 +136,17 @@ export function dispatchProtocolEvent(
       emitter.emit('chat:message', { message: payload });
       break;
     case 'agent': {
+      // Prompt-cache diagnostics are consumed in Main as a dedicated, typed
+      // observation. They must not fall through to chat text or the generic
+      // renderer notification channel.
+      const frame = asRecord(payload);
+      if (frame.stream === 'prompt_cache') {
+        const observation = normalizePromptCacheBreak(payload);
+        if (observation) {
+          emitter.emit('prompt-cache:break', observation);
+        }
+        break;
+      }
       const normalized = normalizeGatewayChatRuntimeEvent(payload);
       if (normalized) {
         emitter.emit('chat:runtime-event', normalized);
@@ -140,6 +204,13 @@ export function dispatchJsonRpcNotification(
   emitter: GatewayEventEmitter,
   notification: JsonRpcNotification,
 ): void {
+  if (notification.method === 'agent' && asRecord(notification.params).stream === 'prompt_cache') {
+    const observation = normalizePromptCacheBreak(notification.params);
+    if (observation) {
+      emitter.emit('prompt-cache:break', observation);
+    }
+    return;
+  }
   emitter.emit('notification', notification);
   if (notification.method === 'agent') {
     const normalized = normalizeGatewayChatRuntimeEvent(notification.params);

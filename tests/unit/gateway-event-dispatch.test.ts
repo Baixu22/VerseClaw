@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { dispatchProtocolEvent } from '@electron/gateway/event-dispatch';
+import { dispatchProtocolEvent, dispatchJsonRpcNotification, normalizePromptCacheBreak } from '@electron/gateway/event-dispatch';
 
 function createMockEmitter() {
   const emitted: Array<{ event: string; payload: unknown }> = [];
@@ -191,6 +191,92 @@ describe('dispatchProtocolEvent', () => {
       resolvedBy: 'operator',
       ts: 3,
     });
+  });
+
+  it('routes prompt-cache break frames to a typed observation, not chat or notifications', () => {
+    const emitter = createMockEmitter();
+    dispatchProtocolEvent(emitter, 'agent', {
+      runId: 'run-1',
+      sessionKey: 'agent:main:main',
+      stream: 'prompt_cache',
+      seq: 7,
+      ts: 20,
+      data: {
+        phase: 'break',
+        eventId: 'run-1:0',
+        previousCacheRead: 12_000,
+        cacheRead: 3_000,
+        changes: ['tools', 'systemPrompt'],
+      },
+    });
+
+    expect(emitter.emit).toHaveBeenCalledWith('prompt-cache:break', {
+      runId: 'run-1',
+      sessionKey: 'agent:main:main',
+      eventId: 'run-1:0',
+      previousCacheRead: 12_000,
+      cacheRead: 3_000,
+      changes: ['tools', 'systemPrompt'],
+    });
+    expect(emitter.emit).not.toHaveBeenCalledWith('chat:runtime-event', expect.anything());
+    expect(emitter.emit).not.toHaveBeenCalledWith('notification', expect.anything());
+  });
+
+  it('drops prompt-cache frames with missing or malformed fields', () => {
+    const emitter = createMockEmitter();
+    dispatchProtocolEvent(emitter, 'agent', {
+      runId: 'run-1',
+      stream: 'prompt_cache',
+      data: { phase: 'break', eventId: 'run-1:0', cacheRead: 1 },
+    });
+    dispatchProtocolEvent(emitter, 'agent', {
+      runId: 'run-1',
+      stream: 'prompt_cache',
+      data: { phase: 'start', eventId: 'run-1:0', previousCacheRead: 1, cacheRead: 1 },
+    });
+    expect(emitter.emit).not.toHaveBeenCalledWith('prompt-cache:break', expect.anything());
+    expect(emitter.emit).not.toHaveBeenCalledWith('notification', expect.anything());
+  });
+
+  it('drops unknown change codes while keeping known ones', () => {
+    const observation = normalizePromptCacheBreak({
+      runId: 'run-1',
+      stream: 'prompt_cache',
+      data: {
+        phase: 'break',
+        eventId: 'run-1:0',
+        previousCacheRead: 5_000,
+        cacheRead: 1_000,
+        changes: ['tools', 'bogus', 'systemPrompt'],
+      },
+    });
+    expect(observation?.changes).toEqual(['tools', 'systemPrompt']);
+  });
+
+  it('routes JSON-RPC prompt-cache notifications without a generic notification', () => {
+    const emitter = createMockEmitter();
+    dispatchJsonRpcNotification(emitter, {
+      jsonrpc: '2.0',
+      method: 'agent',
+      params: {
+        runId: 'run-2',
+        sessionKey: 'agent:main:main',
+        stream: 'prompt_cache',
+        data: {
+          phase: 'break',
+          eventId: 'run-2:0',
+          previousCacheRead: 8_000,
+          cacheRead: 2_000,
+          changes: ['model'],
+        },
+      },
+    } as never);
+
+    expect(emitter.emit).toHaveBeenCalledWith('prompt-cache:break', expect.objectContaining({
+      eventId: 'run-2:0',
+      changes: ['model'],
+    }));
+    expect(emitter.emit).not.toHaveBeenCalledWith('notification', expect.anything());
   });
 
   it('drops approval frames without an approval id instead of opening an unanswerable dialog', () => {

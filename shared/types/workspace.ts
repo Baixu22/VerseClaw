@@ -310,9 +310,39 @@ export type PromptCacheProviderStrategy =
   | 'generic'
   | 'unknown';
 export type PromptCacheRiskDecision = 'continued' | 'cancelled';
+/** Closed set of tracked inputs that can break a warm prompt-cache prefix. */
+export type PromptCacheChangeCode =
+  | 'cacheRetention'
+  | 'model'
+  | 'streamStrategy'
+  | 'systemPrompt'
+  | 'tools'
+  | 'transport';
 
-export interface PromptCacheRiskEvent {
+/**
+ * A bounded, agent-driven observation of a real cache-read break. It is
+ * evidence that a warm prefix dropped, not a user action or a decision; it
+ * carries only finite counters and closed change codes.
+ */
+export interface PromptCacheRiskObservation {
   sessionKey: string;
+  source: 'observed';
+  /** Deterministic identity (run + sequence) used to deduplicate replays. */
+  eventId: string;
+  previousCacheRead: number;
+  cacheRead: number;
+  changes: PromptCacheChangeCode[];
+  updatedAt: number;
+}
+
+/**
+ * A recorded prompt-cache risk decision. Confirmed events are the existing
+ * UI-driven action decisions; `source` labels them so observed break evidence
+ * and explicit decisions stay distinguishable in the shared ledger.
+ */
+export interface PromptCacheRiskDecisionEvent {
+  sessionKey: string;
+  source: 'confirmed';
   action: PromptCacheRiskAction;
   severity: PromptCacheRiskSeverity;
   status: PromptCacheStatus;
@@ -323,6 +353,12 @@ export interface PromptCacheRiskEvent {
   reason?: string;
   updatedAt: number;
 }
+
+/**
+ * A ledger row. Legacy persisted rows predate the `source` field and are read
+ * as confirmed decision events.
+ */
+export type PromptCacheRiskEvent = PromptCacheRiskDecisionEvent | PromptCacheRiskObservation;
 
 export interface PromptCacheRiskAssessment {
   sessionKey: string;
@@ -346,7 +382,9 @@ export interface PromptCacheRiskAssessment {
   reason?: string;
   warningCount: number;
   cancelledBreakCount: number;
-  lastRiskEvent?: PromptCacheRiskEvent;
+  lastRiskEvent?: PromptCacheRiskDecisionEvent;
+  /** Latest agent-observed cache-read break for this exact session, if any. */
+  lastObservedBreak?: PromptCacheRiskObservation;
   updatedAt: number;
 }
 

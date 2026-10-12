@@ -1835,6 +1835,8 @@ openclaw_runtime/_tmp_*
 !/docs/dev/p1-155-windows-job-limits-20261011.md
 !/docs/dev/error-governance-audit-2026-10-09.md
 !/docs/dev/prompt-cache-observability-20261012.md
+!/docs/dev/prompt-cache-observation-ledger-20261012/acceptance.json
+!/docs/dev/prompt-cache-observation-ledger-20261012/SHA256SUMS
 !/docs/dev/p1-terminal-exec-lease-20261012.md
 !/docs/dev/p1-terminal-exec-lease-20261012/acceptance.json
 !/docs/dev/p1-terminal-exec-lease-20261012/SHA256SUMS

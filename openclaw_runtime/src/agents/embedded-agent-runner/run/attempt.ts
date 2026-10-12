@@ -210,6 +210,7 @@ import {
   prependAgentSteeringPrompt,
   releasePendingAgentSteeringItems,
 } from "../../subagent-registry.js";
+import { emitAgentEvent } from "../../../infra/agent-events.js";
 import { ensureSystemPromptCacheBoundary } from "../../system-prompt-cache-boundary.js";
 import { buildSystemPromptParams } from "../../system-prompt-params.js";
 import { buildSystemPromptReport } from "../../system-prompt-report.js";
@@ -5290,6 +5291,25 @@ ${preparedProjection.systemPromptAddition}`
                 usage: attemptUsage,
               })
             : null;
+          if (cacheBreak) {
+            // Publish the break on the sequenced agent bus so Main can persist it
+            // in the existing prompt-cache ledger. Only bounded identifiers,
+            // finite token counters and closed change codes cross this boundary;
+            // the diagnostic frame is consumed in Main and never forwarded to the
+            // renderer as a chat or notification event.
+            emitAgentEvent({
+              runId: params.runId,
+              ...(params.sessionKey ? { sessionKey: params.sessionKey } : {}),
+              stream: "prompt_cache",
+              data: {
+                phase: "break",
+                eventId: `${params.runId}:${params.attemptIndex ?? 0}`,
+                previousCacheRead: cacheBreak.previousCacheRead,
+                cacheRead: cacheBreak.cacheRead,
+                changes: cacheBreak.changes?.map((change) => change.code) ?? [],
+              },
+            });
+          }
           lastCallUsage = normalizeUsage(currentAttemptAssistant?.usage);
           const promptCacheObservation =
             cacheObservabilityEnabled &&

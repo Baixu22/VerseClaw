@@ -109,6 +109,7 @@ describe('prompt cache status assessment', () => {
       ledger: [
         {
           sessionKey: 'agent:primary:main',
+          source: 'confirmed',
           action: 'model-switch',
           severity: 'high',
           status: 'at-risk',
@@ -119,6 +120,7 @@ describe('prompt cache status assessment', () => {
         },
         {
           sessionKey: 'agent:secondary:main',
+          source: 'confirmed',
           action: 'manual-compaction',
           severity: 'medium',
           status: 'at-risk',
@@ -133,5 +135,70 @@ describe('prompt cache status assessment', () => {
     expect(assessment.warningCount).toBe(1);
     expect(assessment.cancelledBreakCount).toBe(1);
     expect(assessment.lastRiskEvent?.sessionKey).toBe('agent:primary:main');
+  });
+
+  it('keeps observed breaks out of confirmed decision counts and surfaces the latest one', () => {
+    const assessment = assessPromptCacheStatus({
+      summary: summary({ sessionId: 'main', agentId: 'primary' }),
+      modelRef: 'anthropic/claude-sonnet-4',
+      ledger: [
+        {
+          sessionKey: 'agent:primary:main',
+          source: 'observed',
+          eventId: 'run-2:0',
+          previousCacheRead: 12_000,
+          cacheRead: 3_000,
+          changes: ['tools'],
+          updatedAt: 40,
+        },
+        {
+          sessionKey: 'agent:primary:main',
+          source: 'observed',
+          eventId: 'run-1:0',
+          previousCacheRead: 9_000,
+          cacheRead: 2_000,
+          changes: ['systemPrompt'],
+          updatedAt: 20,
+        },
+        {
+          sessionKey: 'agent:primary:main',
+          source: 'confirmed',
+          action: 'model-switch',
+          severity: 'high',
+          status: 'at-risk',
+          decision: 'cancelled',
+          hitRate: 0.5,
+          promptTokens: 10_000,
+          updatedAt: 30,
+        },
+      ],
+    });
+
+    // Only the confirmed decision counts; observed breaks never inflate warnings.
+    expect(assessment.warningCount).toBe(1);
+    expect(assessment.cancelledBreakCount).toBe(1);
+    expect(assessment.lastRiskEvent?.sessionKey).toBe('agent:primary:main');
+    expect(assessment.lastObservedBreak?.eventId).toBe('run-2:0');
+    expect(assessment.lastObservedBreak?.changes).toEqual(['tools']);
+  });
+
+  it('does not surface observed breaks from unrelated sessions', () => {
+    const assessment = assessPromptCacheStatus({
+      summary: summary({ sessionId: 'main', agentId: 'primary' }),
+      ledger: [
+        {
+          sessionKey: 'agent:secondary:main',
+          source: 'observed',
+          eventId: 'run-x:0',
+          previousCacheRead: 8_000,
+          cacheRead: 1_000,
+          changes: ['tools'],
+          updatedAt: 50,
+        },
+      ],
+    });
+
+    expect(assessment.lastObservedBreak).toBeUndefined();
+    expect(assessment.warningCount).toBe(0);
   });
 });

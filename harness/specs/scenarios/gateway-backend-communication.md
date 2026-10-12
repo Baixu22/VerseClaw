@@ -23,6 +23,7 @@ conditionalProfiles:
       - user-visible chat send/receive behavior changes
       - channels/agents/settings UI depends on new backend response shape
 requiredRules:
+  - prompt-cache-observation-boundary
   - renderer-main-boundary
   - backend-communication-boundary
   - api-client-transport-policy

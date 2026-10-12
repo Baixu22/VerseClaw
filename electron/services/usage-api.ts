@@ -6,9 +6,12 @@ import type { UsageAggregateWindow } from '@shared/host-api/contract';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { isRecord } from './payload-utils';
 import type {
+  PromptCacheChangeCode,
   PromptCacheRiskAction,
   PromptCacheRiskDecision,
+  PromptCacheRiskDecisionEvent,
   PromptCacheRiskEvent,
+  PromptCacheRiskObservation,
   PromptCacheRiskSeverity,
   PromptCacheStatus,
 } from '@shared/types/workspace';
@@ -40,6 +43,14 @@ function readAggregateWindow(payload: unknown): UsageAggregateWindow {
 }
 
 const PROMPT_CACHE_RISK_LEDGER_LIMIT = 200;
+const PROMPT_CACHE_CHANGE_CODES = new Set<PromptCacheChangeCode>([
+  'cacheRetention',
+  'model',
+  'streamStrategy',
+  'systemPrompt',
+  'tools',
+  'transport',
+]);
 const PROMPT_CACHE_RISK_ACTIONS = new Set<PromptCacheRiskAction>([
   'model-switch',
   'manual-compaction',
@@ -69,22 +80,135 @@ const PROMPT_CACHE_RISK_DECISIONS = new Set<PromptCacheRiskDecision>([
   'cancelled',
 ]);
 
+/**
+ * Reads the persisted ledger, labelling legacy rows (which predate the
+ * `source` field) as confirmed decisions so observed and confirmed records stay
+ * distinguishable after a schema upgrade.
+ */
 async function readPromptCacheRiskLedger(): Promise<PromptCacheRiskEvent[]> {
+  let ledger: unknown;
   try {
-    const ledger = await getSetting('promptCacheRiskLedger');
-    return Array.isArray(ledger) ? ledger : [];
+    ledger = await getSetting('promptCacheRiskLedger');
   } catch {
     return [];
   }
+  if (!Array.isArray(ledger)) return [];
+  const entries: PromptCacheRiskEvent[] = [];
+  for (const row of ledger) {
+    const normalized = normalizePromptCacheRiskEvent(row);
+    if (normalized) entries.push(normalized);
+  }
+  return entries;
 }
 
-async function appendPromptCacheRiskEvent(event: PromptCacheRiskEvent): Promise<PromptCacheRiskEvent> {
-  const ledger = await readPromptCacheRiskLedger();
-  const next = [event, ...ledger]
-    .filter((entry) => entry && typeof entry.sessionKey === 'string')
-    .slice(0, PROMPT_CACHE_RISK_LEDGER_LIMIT);
-  await setSetting('promptCacheRiskLedger', next);
-  return event;
+function normalizePromptCacheRiskEvent(row: unknown): PromptCacheRiskEvent | null {
+  if (!isRecord(row) || typeof row.sessionKey !== 'string' || !row.sessionKey) {
+    return null;
+  }
+  if (row.source === 'observed') {
+    return isRecord(row) && typeof row.eventId === 'string'
+      ? (row as unknown as PromptCacheRiskObservation)
+      : null;
+  }
+  // Legacy rows and confirmed decisions share the decision shape.
+  return { ...(row as unknown as PromptCacheRiskDecisionEvent), source: 'confirmed' };
+}
+
+/**
+ * Serializes every ledger mutation. Reads and writes are read-modify-write over
+ * a single electron-store key, so without a queue concurrent observed/confirmed
+ * appends would drop each other.
+ */
+let promptCacheLedgerQueue: Promise<unknown> = Promise.resolve();
+
+function withPromptCacheLedgerLock<T>(operation: () => Promise<T>): Promise<T> {
+  const run = promptCacheLedgerQueue.then(operation, operation);
+  // Keep the chain alive regardless of individual failures.
+  promptCacheLedgerQueue = run.then(
+    () => undefined,
+    () => undefined,
+  );
+  return run;
+}
+
+// Only observed frames can be dropped as replays, so the confirmed overload
+// returns a non-null decision event.
+async function appendPromptCacheRiskEvent(
+  event: PromptCacheRiskObservation,
+): Promise<PromptCacheRiskObservation | null>;
+async function appendPromptCacheRiskEvent(
+  event: PromptCacheRiskDecisionEvent,
+): Promise<PromptCacheRiskDecisionEvent>;
+async function appendPromptCacheRiskEvent(
+  event: PromptCacheRiskEvent,
+): Promise<PromptCacheRiskEvent | null> {
+  return withPromptCacheLedgerLock(async () => {
+    const ledger = await readPromptCacheRiskLedger();
+    // Replayed observed frames carry a stable eventId; drop exact duplicates so
+    // a Gateway reconnect does not inflate the ledger.
+    if (event.source === 'observed') {
+      const duplicate = ledger.some(
+        (entry) => entry.source === 'observed' && entry.eventId === event.eventId,
+      );
+      if (duplicate) return null;
+    }
+    const next = [event, ...ledger]
+      .filter((entry) => entry && typeof entry.sessionKey === 'string')
+      .slice(0, PROMPT_CACHE_RISK_LEDGER_LIMIT);
+    await setSetting('promptCacheRiskLedger', next);
+    return event;
+  });
+}
+
+/** Records an agent-observed cache-read break; bounded, deduplicated metadata. */
+async function recordObservedPromptCacheBreak(input: {
+  sessionKey: string;
+  eventId: string;
+  previousCacheRead: number;
+  cacheRead: number;
+  changes: PromptCacheChangeCode[];
+}): Promise<PromptCacheRiskObservation | null> {
+  const observation: PromptCacheRiskObservation = {
+    sessionKey: input.sessionKey,
+    source: 'observed',
+    eventId: input.eventId,
+    previousCacheRead: Math.max(0, Math.floor(input.previousCacheRead)),
+    cacheRead: Math.max(0, Math.floor(input.cacheRead)),
+    changes: input.changes,
+    updatedAt: Date.now(),
+  };
+  const stored = await appendPromptCacheRiskEvent(observation);
+  return stored && stored.source === 'observed' ? stored : null;
+}
+
+/**
+ * Public entry used by the runtime-observation bridge in Main. Unlike the
+ * renderer-facing `recordPromptCacheRiskEvent` (which always labels a confirmed
+ * decision), this path only ever writes observed break evidence.
+ */
+export async function recordPromptCacheObservation(payload: unknown): Promise<PromptCacheRiskObservation | null> {
+  const sessionKey = readString(payload, 'sessionKey');
+  const eventId = readString(payload, 'eventId');
+  const previousCacheRead = readNumber(payload, 'previousCacheRead');
+  const cacheRead = readNumber(payload, 'cacheRead');
+  if (!sessionKey || !eventId || previousCacheRead == null || cacheRead == null) {
+    return null;
+  }
+  const rawChanges = isRecord(payload) && Array.isArray(payload.changes) ? payload.changes : [];
+  const changes: PromptCacheChangeCode[] = [];
+  for (const code of rawChanges) {
+    if (typeof code === 'string' && PROMPT_CACHE_CHANGE_CODES.has(code as PromptCacheChangeCode)) {
+      const typed = code as PromptCacheChangeCode;
+      if (!changes.includes(typed)) changes.push(typed);
+    }
+  }
+  return recordObservedPromptCacheBreak({
+    sessionKey,
+    eventId,
+    previousCacheRead,
+    cacheRead,
+    changes,
+  });
 }
 
 function readString(payload: unknown, key: string): string | null {
@@ -220,6 +344,7 @@ export function createUsageApi(): CompleteHostServiceRegistry['usage'] {
 
       const event = await appendPromptCacheRiskEvent({
         sessionKey,
+        source: 'confirmed',
         action,
         severity,
         status,

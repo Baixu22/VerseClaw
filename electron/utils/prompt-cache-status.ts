@@ -3,7 +3,9 @@ import type {
   PromptCacheProviderStrategy,
   PromptCacheRiskAction,
   PromptCacheRiskAssessment,
+  PromptCacheRiskDecisionEvent,
   PromptCacheRiskEvent,
+  PromptCacheRiskObservation,
   PromptCacheRiskSeverity,
   PromptCacheStatus,
 } from '@shared/types/workspace';
@@ -213,9 +215,18 @@ export function assessPromptCacheStatus(input: PromptCacheStatusInput): PromptCa
   });
   const warn = shouldWarn(severity, promptTokens);
   const sessionKey = input.summary.agentId ? `agent:${input.summary.agentId}:${input.summary.sessionId}` : input.summary.sessionId;
-  const sessionEvents = (input.ledger ?? [])
+  const sessionEntries = (input.ledger ?? [])
     .filter((event) => event.sessionKey === sessionKey || event.sessionKey === input.summary.sessionId);
-  const lastRiskEvent = sessionEvents.toSorted((left, right) => right.updatedAt - left.updatedAt)[0];
+  // Warning counts and the last-risk event describe explicit, confirmed
+  // decisions only. Observed breaks are agent evidence, not user actions, and
+  // must never inflate the UI warning surface.
+  const sessionDecisions = sessionEntries.filter(
+    (event): event is PromptCacheRiskDecisionEvent => event.source !== 'observed',
+  );
+  const lastRiskEvent = sessionDecisions.toSorted((left, right) => right.updatedAt - left.updatedAt)[0];
+  const lastObservedBreak = sessionEntries
+    .filter((event): event is PromptCacheRiskObservation => event.source === 'observed')
+    .toSorted((left, right) => right.updatedAt - left.updatedAt)[0];
 
   return {
     sessionKey,
@@ -242,9 +253,10 @@ export function assessPromptCacheStatus(input: PromptCacheStatusInput): PromptCa
       cacheReadTokens,
       cacheWriteTokens,
     }),
-    warningCount: sessionEvents.length,
-    cancelledBreakCount: sessionEvents.filter((event) => event.decision === 'cancelled').length,
+    warningCount: sessionDecisions.length,
+    cancelledBreakCount: sessionDecisions.filter((event) => event.decision === 'cancelled').length,
     ...(lastRiskEvent ? { lastRiskEvent } : {}),
+    ...(lastObservedBreak ? { lastObservedBreak } : {}),
     updatedAt: input.now ?? Date.now(),
   };
 }

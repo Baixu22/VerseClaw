@@ -63,6 +63,7 @@ import { browserOAuthManager } from '../utils/browser-oauth';
 import { whatsAppLoginManager } from '../utils/whatsapp-login';
 import { syncAllProviderAuthToRuntime } from '../services/providers/provider-runtime-sync';
 import { applyChatRuntimeEvent, enrichTraceTokenUsage } from '../services/observability-adapter';
+import { recordPromptCacheObservation } from '../services/usage-api';
 import { stopAllOfficeWatches } from '../services/office-tools-api';
 import { disposeVtokenBridge } from '../services/vtoken-api';
 import { resolveRemoteDebuggingLaunchPort } from '../utils/remote-control';
@@ -1216,6 +1217,17 @@ async function initialize(): Promise<void> {
 
   gatewayManager.on('chat:message', (data) => {
     sendMainWindowEvent('gateway:chat-message', data);
+  });
+
+  // Prompt-cache break attribution → existing Main-owned ledger. The runtime
+  // frame is projected by the gateway dispatcher into bounded metadata; Main is
+  // the only writer, and the renderer reads it back through the typed usage API.
+  gatewayManager.on('prompt-cache:break', (data) => {
+    recordPromptCacheObservation(data).catch((error) => {
+      logger.warn('prompt-cache: failed to record observed cache break', {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    });
   });
 
   gatewayManager.on('chat:runtime-event', (data) => {

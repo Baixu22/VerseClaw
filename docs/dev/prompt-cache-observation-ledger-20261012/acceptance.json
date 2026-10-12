@@ -1,0 +1,207 @@
+{
+  "schema": "prompt-cache-observation-ledger-acceptance/v1",
+  "issue": 163,
+  "driven_by": "agent",
+  "actor": "codex",
+  "base": {
+    "origin_main": "f00661a26b81ec52300a825c7be4dc6de6b46ec8",
+    "branch_head_at_write": "57aecfa4bbaa976d75911102634dbe11ef0d7dc0"
+  },
+  "scope": "Second half of #163: agent-observed prompt-cache breaks are delivered through the existing sequenced agent event bus into the existing Main-owned promptCacheRiskLedger, with source=observed distinct from confirmed decisions.",
+  "gates": [
+    {
+      "name": "ledger+dispatch unit suites",
+      "command": "pnpm exec vitest run tests/unit/prompt-cache-observability.test.ts tests/unit/prompt-cache-observation-ledger.test.ts tests/unit/prompt-cache-status.test.ts tests/unit/gateway-event-dispatch.test.ts tests/unit/deepseek-prompt-cache-runtime.test.ts",
+      "exit_code": 0,
+      "summary": "5 files, 45 passed / 0 failed / 0 skipped"
+    },
+    {
+      "name": "typecheck node",
+      "command": "pnpm run typecheck:node",
+      "exit_code": 0
+    },
+    {
+      "name": "typecheck web",
+      "command": "pnpm run typecheck:web",
+      "exit_code": 0
+    },
+    {
+      "name": "typecheck test",
+      "command": "pnpm run typecheck:test",
+      "exit_code": 0
+    },
+    {
+      "name": "runtime core typecheck",
+      "command": "node node_modules/@typescript/native-preview/bin/tsgo.js -p tsconfig.core.json --noEmit",
+      "exit_code": 0
+    },
+    {
+      "name": "contract drift",
+      "command": "pnpm contract:check",
+      "exit_code": 0,
+      "summary": "Contract check passed"
+    },
+    {
+      "name": "comms replay",
+      "command": "pnpm run comms:replay",
+      "exit_code": 0
+    },
+    {
+      "name": "comms compare",
+      "command": "pnpm run comms:compare",
+      "exit_code": 0,
+      "summary": "all PASS"
+    },
+    {
+      "name": "import cycles",
+      "command": "pnpm --dir openclaw_runtime run check:import-cycles",
+      "exit_code": 0,
+      "summary": "0 runtime value cycle(s)"
+    },
+    {
+      "name": "error governance",
+      "command": "node scripts/check-error-governance.mjs",
+      "exit_code": 0,
+      "summary": "16 checks PASS"
+    },
+    {
+      "name": "local paths",
+      "command": "node scripts/check-local-paths.mjs",
+      "exit_code": 0,
+      "summary": "PASS"
+    },
+    {
+      "name": "scoped eslint",
+      "command": "pnpm exec eslint <7 changed source/test files> --max-warnings 0",
+      "exit_code": 0
+    },
+    {
+      "name": "spec validate",
+      "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/prompt-cache-observation-ledger-20261012.md --since origin/main",
+      "exit_code": 0,
+      "summary": "Spec is valid"
+    },
+    {
+      "name": "spec dry-run",
+      "command": "node harness/src/cli.mjs run --spec harness/specs/tasks/prompt-cache-observation-ledger-20261012.md --since origin/main --dry-run",
+      "exit_code": 0,
+      "summary": "Harness result: pass"
+    },
+    {
+      "name": "artifact retention",
+      "command": "node scripts/check-repository-artifacts.mjs",
+      "exit_code": 0,
+      "summary": "17258 tracked paths"
+    }
+  ],
+  "not_run": [
+    {
+      "gate": "openclaw_runtime gateway-core vitest shard",
+      "reason": "The shard stalls with no output at 30/60/90/120s and is terminated by the runner; the identical stall reproduces on a pristine detached HEAD worktree (57aecfa4b), so it is an environment limitation, not a change-specific failure."
+    },
+    {
+      "gate": "openclaw_runtime check:loc:baseline",
+      "reason": "Pre-existing red: 25 unrelated files already exceed their baseline at pristine HEAD. The one file this change grows (run/attempt.ts) was bumped 6068->6094 so it no longer appears in the grown list."
+    },
+    {
+      "gate": "pnpm tsgo:core",
+      "reason": "Fails writing .artifacts/tsgo-cache/core.tsbuildinfo (Access is denied) on this host, including at pristine HEAD; the equivalent direct --noEmit core typecheck passes."
+    },
+    {
+      "gate": "Electron / Playwright E2E",
+      "reason": "No user-visible UI change; observations are read through the existing usage.promptCacheStatus host API."
+    },
+    {
+      "gate": "live provider cache run",
+      "reason": "No provider credentials exercised; this change is observability plumbing only and claims no hit-rate improvement."
+    }
+  ],
+  "bindings": [
+    {
+      "path": "shared/types/workspace.ts",
+      "sha256": "67c8b8b399d0e560def06a55b8a18f4c20fd0f171982ce9863964dece548b41f",
+      "bytes": 13231
+    },
+    {
+      "path": "electron/services/usage-api.ts",
+      "sha256": "96971438d38b5f2203f801db2bbee272cb521e5b0a4d49b8e4700864252c20a6",
+      "bytes": 13100
+    },
+    {
+      "path": "electron/utils/prompt-cache-status.ts",
+      "sha256": "32111cb4c604765e78f835e43e5598138b66a3d5436e6c1c48f7b01fbb217668",
+      "bytes": 9195
+    },
+    {
+      "path": "electron/gateway/event-dispatch.ts",
+      "sha256": "cc5e6605043aae0ea76d42fcd01a632662df35f223379a0a40d6eb80a290f398",
+      "bytes": 8458
+    },
+    {
+      "path": "electron/main/index.ts",
+      "sha256": "cbd3377896a71fbeb45e35de76fd40b592e4388f67b9ea01105f27a7146f28b2",
+      "bytes": 56036
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "sha256": "bd9de35ba9cd9cb47f9d0f2088a7bf594e33cca7bf9867982de54bf3a2b44f37",
+      "bytes": 256733
+    },
+    {
+      "path": "openclaw_runtime/scripts/ts-max-loc-baseline.json",
+      "sha256": "353968c8b915bd9148b8cc857e28e07501b3c57d8ed98def9330b6a73a01e550",
+      "bytes": 55742
+    },
+    {
+      "path": "tests/unit/prompt-cache-observation-ledger.test.ts",
+      "sha256": "edc783f29e2fd078ddef9399117d793ff299500944bfd806351a9d05e4cdf346",
+      "bytes": 6230
+    },
+    {
+      "path": "tests/unit/prompt-cache-status.test.ts",
+      "sha256": "97672c396761e8c483a6af4ca7f8435897914344406e6b43e7453b6c12968044",
+      "bytes": 6281
+    },
+    {
+      "path": "tests/unit/gateway-event-dispatch.test.ts",
+      "sha256": "7a8a46fa504474e968e3a9cbeaf70cd47a9348ec6ba17e41ac1cd843494a8976",
+      "bytes": 10028
+    },
+    {
+      "path": "harness/specs/tasks/prompt-cache-observation-ledger-20261012.md",
+      "sha256": "ac7b850b3898edea959dfd1db7a39ff13582ebcf1b5d81494929823be7c23816",
+      "bytes": 4376
+    },
+    {
+      "path": "harness/specs/rules/prompt-cache-observation-boundary.md",
+      "sha256": "4f8bd07251ce57cc258726803767d119f4712d909c207fbec14e83511ced38ad",
+      "bytes": 1480
+    },
+    {
+      "path": "harness/specs/scenarios/gateway-backend-communication.md",
+      "sha256": "83803e0a8063243d318c4b6d15ec5ff2f2b054634bc5766aca14f4324078d04d",
+      "bytes": 6408
+    },
+    {
+      "path": "docs/dev/prompt-cache-observability-20261012.md",
+      "sha256": "230f685b39ba87f40b06fb16bc8e99843f1d318b91ab1665175372e0d608f1a7",
+      "bytes": 6235
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "sha256": "9843d94eeaee9f39fb0315a0a60edf072b8e1292a74230fc4d3a6c76af0f336d",
+      "bytes": 115723
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "ba55ef43f4effb4b1d974d7237cf80bef563472b14c2e2d4351b0803380b9933",
+      "bytes": 108684
+    }
+  ],
+  "boundaries": [
+    "Only bounded identifiers, finite token counters and the closed change-code set cross the runtime->Main boundary; no prompt text, tool contents, raw detail strings or credentials are retained.",
+    "Observed breaks never inflate warningCount/cancelledBreakCount/lastRiskEvent; those remain confirmed-decision only.",
+    "An observed break is evidence of a cache-read drop, not a user decision and not proof of causal attribution.",
+    "No new store, host-api method, UI surface, keepalive, TTL refresh or automatic model/tool/prompt policy change."
+  ]
+}

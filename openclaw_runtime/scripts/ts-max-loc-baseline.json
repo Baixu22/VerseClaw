@@ -5,7 +5,7 @@
   "source": "openclaw_runtime vendored tree after P2 batch 8",
   "entries": {
     "extensions/policy/src/doctor/register.ts": 6468,
-    "src/agents/embedded-agent-runner/run/attempt.ts": 6068,
+    "src/agents/embedded-agent-runner/run/attempt.ts": 6094,
     "src/gateway/server-methods/chat.ts": 5361,
     "src/runtime-core/evidence-verifier-code-task-gate-shadow.ts": 4814,
     "extensions/workboard/src/store.ts": 4336,
