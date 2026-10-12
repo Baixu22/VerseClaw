@@ -13,7 +13,7 @@
  * Spec: harness/specs/tasks/upstream-protocol-capability-descriptor.md
  */
 import { readFileSync, readdirSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import type { Model } from "../llm/types.js";
@@ -86,7 +86,7 @@ describe("protocol kind is spelled once", () => {
   });
 
   it("keeps the api ids that need classification in the descriptor, not in a second set", () => {
-    const agentsDir = dirname(fileURLToPath(import.meta.url));
+    const agentsDir = fileURLToPath(new URL(".", import.meta.url));
     const OPENAI_IDS = [
       "openai-responses",
       "openai-completions",
