@@ -1,4 +1,5 @@
 import { openExternalSafe } from '../utils/safe-open-external';
+import { capToolResultText } from '@shared/agent-resource-limits';
 import { execFile } from 'node:child_process';
 import type { ExecFileException, ExecFileOptionsWithStringEncoding } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
@@ -84,13 +85,13 @@ type DiffStat = {
   binary: boolean;
 };
 
+
 const MAX_OUTPUT_CHARS = 250_000;
 const MAX_PATCH_CHARS = 180_000;
 const DEFAULT_GH_LIMIT = 30;
 
 function trimOutput(value: string, limit = MAX_OUTPUT_CHARS): string {
-  if (value.length <= limit) return value;
-  return `${value.slice(0, limit)}\n[output truncated]`;
+  return capToolResultText(value, limit).text;
 }
 
 function parseNum(value: string): number | null {

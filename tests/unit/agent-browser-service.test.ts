@@ -1,5 +1,6 @@
 import { EventEmitter } from 'node:events';
 import { describe, expect, it, vi } from 'vitest';
+import { setSandboxHighRiskPolicyLoader } from '@electron/utils/sandbox-high-risk-gate';
 import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -751,4 +752,36 @@ describe('agent browser service', () => {
     expect(service.validate).toHaveBeenCalledWith({ url: 'https://example.com' });
     expect(service.close).toHaveBeenCalledWith('s1');
   });
+
+  it('raises a typed sandbox denial before opening a browser under a degraded gate', async () => {
+    const service = {
+      open: vi.fn(async () => ({ session: { id: 's1' }, textSample: 'ok' })),
+      list: vi.fn(() => []),
+      isEnabled: vi.fn(() => true),
+      setEnabled: vi.fn((enabled: boolean) => ({ enabled })),
+    };
+    setSandboxHighRiskPolicyLoader(async () => ({
+      degraded: true,
+      requestedProviderId: 'docker-strong',
+      effectiveProviderId: 'policy-light',
+      runtimeLevel: 'policy',
+    }));
+
+    try {
+      const api = createAgentBrowserApi(service as never);
+      await expect(api.open({ url: 'https://example.com' })).rejects.toMatchObject({
+        name: 'SandboxDenialError',
+        code: 'SANDBOX_DENIED',
+        mechanism: 'sandbox-gate',
+        operation: 'browser',
+        requestedProviderId: 'docker-strong',
+        effectiveProviderId: 'policy-light',
+        runtimeLevel: 'policy',
+      });
+      expect(service.open).not.toHaveBeenCalled();
+    } finally {
+      setSandboxHighRiskPolicyLoader(null);
+    }
+  });
+
 });

@@ -88,7 +88,7 @@ function buildProviders(input: {
         ? 'Uses ClawX/Main policy gates plus Windows-oriented lightweight process controls where available. Not equivalent to Docker or a VM.'
         : 'Only available on Windows.',
       capabilities: windowsLightAvailable
-        ? ['workspace-readonly', 'workspace-readwrite', 'process-limits', 'restricted-token']
+        ? ['workspace-readonly', 'workspace-readwrite', 'process-limits']
         : [],
     },
     {

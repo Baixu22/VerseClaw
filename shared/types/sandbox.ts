@@ -16,7 +16,6 @@ export type SandboxCapability =
   | 'network-none'
   | 'network-local'
   | 'process-limits'
-  | 'restricted-token'
   | 'container-runtime'
   | 'openclaw-sandbox';
 

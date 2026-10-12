@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createHostInvokeDispatcher, HostApiRegistry } from '../../electron/main/ipc/host-invoke';
+import { SandboxDenialError } from '@shared/sandbox/errors';
 
 describe('host invoke dispatcher', () => {
   it('dispatches a typed request to the matching service action', async () => {
@@ -310,4 +311,45 @@ describe('host invoke security (P1-002)', () => {
       ok: true,
     });
   });
+
+  it('preserves sandbox denial diagnostics in host error details', async () => {
+    const dispatch = createHostInvokeDispatcher({
+      sandbox: {
+        status: vi.fn(() => {
+          throw new SandboxDenialError({
+            mechanism: 'sandbox-gate',
+            operation: 'browser',
+            path: 'C:/project/.git/config',
+            requestedProviderId: 'docker-strong',
+            effectiveProviderId: 'policy-light',
+            runtimeLevel: 'policy',
+          });
+        }),
+      },
+    });
+
+    const result = await dispatch({
+      id: 'sandbox-denied',
+      module: 'sandbox',
+      action: 'status',
+    });
+
+    expect(result).toMatchObject({
+      id: 'sandbox-denied',
+      ok: false,
+      error: {
+        code: 'INTERNAL',
+        details: {
+          backendCode: 'SANDBOX_DENIED',
+          mechanism: 'sandbox-gate',
+          operation: 'browser',
+          path: 'C:/project/.git/config',
+          requestedProviderId: 'docker-strong',
+          effectiveProviderId: 'policy-light',
+          runtimeLevel: 'policy',
+        },
+      },
+    });
+  });
+
 });

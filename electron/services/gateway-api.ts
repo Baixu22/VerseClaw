@@ -39,6 +39,7 @@ import {
 } from './orchestration-presets-api';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
+import { createSandboxDenialDetails, type SandboxDenialDetails } from '@shared/sandbox/errors';
 import { decideGatewayRpc, isApprovalRisk } from './workspace-permissions';
 import {
   classifyGatewayMethodForSandboxGate,
@@ -411,10 +412,20 @@ export function createGatewayApi(
 
       if (workspace) {
         let decision = decideGatewayRpc(method, workspace.permissionMode, body.params);
+        let sandboxDenial: SandboxDenialDetails | undefined;
         const sandboxClass = classifyGatewayMethodForSandboxGate(method);
         if (sandboxClass) {
           const sandboxPolicy = await loadSandboxHighRiskPolicy();
           const sandboxDecision = decideSandboxHighRiskAction(sandboxPolicy, sandboxClass, { allowApproval: true });
+          if (!sandboxDecision.allowed && !sandboxDecision.requiresApproval) {
+            sandboxDenial = createSandboxDenialDetails({
+              mechanism: 'sandbox-gate',
+              operation: sandboxClass,
+              requestedProviderId: sandboxPolicy.requestedProviderId,
+              effectiveProviderId: sandboxPolicy.effectiveProviderId,
+              runtimeLevel: sandboxPolicy.runtimeLevel,
+            });
+          }
           decision = composeWithSandboxHighRiskGate(decision, sandboxDecision);
           if (sandboxDecision.forceVisible || !sandboxDecision.allowed) {
             void recordPermissionDecisionEvent(createWorkspacePermissionDecisionEvent({
@@ -499,12 +510,14 @@ export function createGatewayApi(
               blocked: true,
               approvalRequired: true,
               approval,
+              ...(sandboxDenial ? { sandboxDenial } : {}),
               error: decision.reason ?? 'Gateway 请求需要审批',
             };
           }
           return {
             success: false,
             blocked: true,
+            ...(sandboxDenial ? { sandboxDenial } : {}),
             error: decision.reason ?? 'Gateway 请求已被当前权限模式阻止',
           };
         }

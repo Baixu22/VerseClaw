@@ -459,11 +459,13 @@ describe('terminal api OpenClaw exec integration', () => {
     const { listPermissionDecisionEvents } = await import('@electron/services/permissions-api');
     const api = createTerminalApi({ gatewayManager: gatewayManager(rpc) as never });
 
-    await expect(api.run({ command: 'pnpm install' })).resolves.toMatchObject({
+    const blocked = await api.run({ command: 'pnpm install' });
+    expect(blocked).toMatchObject({
       success: false,
       blocked: true,
       reason: 'Read-only mode only allows inspection commands',
     });
+    expect(blocked.sandboxDenial).toBeUndefined();
 
     expect(rpc).not.toHaveBeenCalled();
     expect(childProcessMocks.spawn).not.toHaveBeenCalled();
@@ -477,4 +479,52 @@ describe('terminal api OpenClaw exec integration', () => {
       }),
     ]));
   });
+
+  it('returns structured sandbox denial details when the sandbox gate fails closed', async () => {
+    activeWorkspace.profile = workspace('fullAccess');
+    const rpc = vi.fn();
+    setSandboxHighRiskPolicyLoader(async () => ({
+      degraded: true,
+      strengthRequired: true,
+      requestedProviderId: 'docker-strong',
+      effectiveProviderId: 'policy-light',
+      runtimeLevel: 'policy',
+      degradeReason: 'Docker strong sandbox is unavailable.',
+    }));
+    const { createTerminalApi } = await import('@electron/services/terminal-api');
+    const api = createTerminalApi({ gatewayManager: gatewayManager(rpc) as never });
+
+    await expect(api.run({ command: 'git clean -fd' })).resolves.toMatchObject({
+      success: false,
+      blocked: true,
+      sandboxDenial: {
+        code: 'SANDBOX_DENIED',
+        category: 'sandbox-denial',
+        mechanism: 'sandbox-gate',
+        operation: 'exec',
+        requestedProviderId: 'docker-strong',
+        effectiveProviderId: 'policy-light',
+        runtimeLevel: 'policy',
+      },
+    });
+    expect(rpc).not.toHaveBeenCalled();
+  });
+
+
+  it('keeps the tail of oversized terminal output', async () => {
+    const rpc = vi.fn().mockResolvedValue({
+      success: true,
+      exitCode: 0,
+      stdout: 'HEAD:' + 'X'.repeat(80_010) + ':TAIL-ERROR',
+      stderr: '',
+    });
+    const { createTerminalApi } = await import('@electron/services/terminal-api');
+    const api = createTerminalApi({ gatewayManager: gatewayManager(rpc) as never });
+
+    const result = await api.run({ command: 'pwd' });
+    expect(result.stdout?.length).toBeLessThanOrEqual(80_000);
+    expect(result.stdout?.startsWith('HEAD:')).toBe(true);
+    expect(result.stdout?.endsWith(':TAIL-ERROR')).toBe(true);
+  });
+
 });

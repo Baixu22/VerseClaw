@@ -55,6 +55,16 @@ two `AppErrorCode` declarations is allowed, but it must be done **in place** —
 renderer keeps consuming the same envelope, and `AppError` stays the renderer
 taxonomy. Adding a third name is the failure this record exists to prevent.
 
+A domain-specific internal carrier is different from a third renderer taxonomy.
+`shared/sandbox/errors.ts` adds `SandboxDenialError` so a real sandbox/gate
+refusal can carry `mechanism`, `path` and `operation`. Its stable code is
+`SANDBOX_DENIED`; `src/lib/error-model.ts` maps that code to `PERMISSION`, and
+`electron/main/ipc/host-invoke.ts` preserves the whitelisted diagnostic fields in
+the existing `HostResponse` details. Browser/cron gate refusals throw the typed
+error; terminal/gateway keep their result-shaped contracts and expose the same
+fields as `sandboxDenial` on a blocked result. This is an internal carrier, not a
+new host envelope or renderer error class.
+
 ## 2. Transport: typed IPC to Main, no transport revival
 
 **Decision.** The actual transport stays what it is today. The draft's claim that
@@ -170,8 +180,8 @@ abort the fallback chain instead of consuming candidate slots.
 | Local coordination failure | existing | `isNonProviderRuntimeCoordinationError` marks session-write-lock contention and embedded-attempt takeover as non-provider failures; the fallback chain must abort rather than retry another model |
 | Operator-facing remediation | existing | `buildFailoverRemediationHint` only produces a re-authentication command for `auth` / `auth_permanent` |
 
-No new error class is introduced by this record: a refusal stays a normal return
-value, and `FailoverError` stays the only thrown failover carrier.
+No new failover error class is introduced by this record: a refusal stays a
+normal return value, and `FailoverError` stays the only thrown failover carrier.
 
 ## 8. Versioning and deprecation windows
 
@@ -216,9 +226,10 @@ negation is compliant; a line that makes it a requirement fails.
   code, structured details and request id, and the governance surface no longer
   declares that defect. The remaining code-level gap is
   `duplicate-app-error-code-unions`, which is declared and probed here.
-- No new error class, no second envelope and no second machine-readable surface
-  list is created. The surface block in the rule is a declaration of what exists,
-  and it is reconciled with the real sources by the check.
+- No third host envelope and no second machine-readable surface list is created.
+  A domain-specific internal carrier such as `SandboxDenialError` must map into
+  the existing `AppError` taxonomy; the surface block in the rule remains a
+  declaration of what exists and is reconciled with the real sources by the check.
 - The draft document itself is not in this tree: docs/governance/manus-alignment-error-problem-openness.zh-CN.md
   is absent, so nothing in it is treated as an effective specification.
 

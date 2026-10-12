@@ -18,6 +18,9 @@ touchedAreas:
   - scripts/check-error-governance.d.mts
   - tests/unit/error-governance-boundary.test.ts
   - tests/unit/fixtures/error-governance/**
+  - shared/sandbox/errors.ts
+  - electron/main/ipc/host-invoke.ts
+  - src/lib/error-model.ts
 requiredTests:
   - node scripts/check-error-governance.mjs
   - node node_modules/vitest/vitest.mjs run tests/unit/error-governance-boundary.test.ts --maxWorkers=1
@@ -50,6 +53,13 @@ fails the check instead of silently detaching the rule.
 and `HostErrorCode` are the only error taxonomies an error surface may render.
 Creating a third envelope, a parallel `AppError` class, or a second code union is
 a failure, not a refactor.
+
+An internal domain error is not an error surface. It may carry precise operational
+context, but its stable code must map into the existing `AppError` taxonomy and it
+must not be exported as a third renderer class. `shared/sandbox/errors.ts`
+defines the first such carrier, `SandboxDenialError`; its `SANDBOX_DENIED` code
+maps to `PERMISSION`, and `mechanism`/`path`/`operation` are preserved as
+host-error details rather than rendered as a new envelope.
 
 Executable check: the `error-envelope-reused` check of
 `node scripts/check-error-governance.mjs` reads the declared envelope symbol,

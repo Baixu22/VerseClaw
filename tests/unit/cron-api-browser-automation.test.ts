@@ -1,6 +1,7 @@
 // @vitest-environment node
 
 import { describe, expect, it, vi } from 'vitest';
+import { setSandboxHighRiskPolicyLoader } from '@electron/utils/sandbox-high-risk-gate';
 import { createCronApi } from '@electron/services/cron-api';
 import { buildCronBrowserAutomationPrompt } from '@shared/cron-browser-automation';
 
@@ -158,4 +159,31 @@ describe('createCronApi browser automation tasks', () => {
     expect(update.patch?.payload?.message).toContain('Failure condition: Editor is unavailable.');
     expect(update.patch?.browserAutomation).toBeUndefined();
   });
+
+  it('raises a typed sandbox denial before mutating cron state when the gate is degraded', async () => {
+    const rpc = vi.fn();
+    setSandboxHighRiskPolicyLoader(async () => ({
+      degraded: true,
+      requestedProviderId: 'docker-strong',
+      effectiveProviderId: 'policy-light',
+      runtimeLevel: 'policy',
+    }));
+
+    try {
+      const api = createCronApi({ gatewayManager: { rpc } as never });
+      await expect(api.delete({ id: 'cron-browser-1' })).rejects.toMatchObject({
+        name: 'SandboxDenialError',
+        code: 'SANDBOX_DENIED',
+        mechanism: 'sandbox-gate',
+        operation: 'cron',
+        requestedProviderId: 'docker-strong',
+        effectiveProviderId: 'policy-light',
+        runtimeLevel: 'policy',
+      });
+      expect(rpc).not.toHaveBeenCalled();
+    } finally {
+      setSandboxHighRiskPolicyLoader(null);
+    }
+  });
+
 });

@@ -34,6 +34,7 @@ import {
 import { createPermissionDecisionEvent } from '@shared/product-semantics';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { DEFAULT_WORKSPACE_PERMISSION_MODE } from '@shared/types/workspace';
+import { SandboxDenialError } from '@shared/sandbox/errors';
 
 async function assertCronAllowedUnderSandbox(action: string): Promise<void> {
   const actionClass = classifyCronHostAction(action);
@@ -50,7 +51,14 @@ async function assertCronAllowedUnderSandbox(action: string): Promise<void> {
     decision: 'deny',
     reason: decision.reason,
   }));
-  throw new Error(decision.reason ?? 'Cron action denied under degraded sandbox');
+  throw new SandboxDenialError({
+    mechanism: 'sandbox-gate',
+    operation: 'cron',
+    message: decision.reason ?? 'Cron action denied under degraded sandbox',
+    requestedProviderId: policy.requestedProviderId,
+    effectiveProviderId: policy.effectiveProviderId,
+    runtimeLevel: policy.runtimeLevel,
+  });
 }
 
 

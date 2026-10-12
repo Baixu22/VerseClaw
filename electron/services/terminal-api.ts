@@ -7,6 +7,8 @@ import type {
   WorkspaceTerminalStatusPayload,
 } from '@shared/host-api/contract';
 import type { WorkspaceProfile } from '@shared/types/workspace';
+import { createSandboxDenialDetails, type SandboxDenialDetails } from '@shared/sandbox/errors';
+import { capToolResultText } from '@shared/agent-resource-limits';
 import type { GatewayManager } from '../gateway/manager';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { isRecord } from './payload-utils';
@@ -87,8 +89,7 @@ function normalizeApprovalId(value: unknown): string | undefined {
 }
 
 function trimOutput(value: string): string {
-  if (value.length <= MAX_OUTPUT_CHARS) return value;
-  return `${value.slice(0, MAX_OUTPUT_CHARS)}\n[output truncated]`;
+  return capToolResultText(value, MAX_OUTPUT_CHARS).text;
 }
 
 function isUnsupportedOpenClawExecRpc(error: unknown): boolean {
@@ -401,10 +402,20 @@ export function createTerminalApi({
       const approvalId = normalizeApprovalId(body.approvalId);
       const workspace = requireWorkspace(await getActiveWorkspaceProfile());
       let decision = decideWorkspaceCommand(command, workspace.permissionMode);
+      let sandboxDenial: SandboxDenialDetails | undefined;
       const sandboxClass = classifyTerminalRiskForSandboxGate(decision.risk);
       if (sandboxClass) {
         const sandboxPolicy = await loadSandboxHighRiskPolicy();
         const sandboxDecision = decideSandboxHighRiskAction(sandboxPolicy, sandboxClass, { allowApproval: true });
+        if (!sandboxDecision.allowed && !sandboxDecision.requiresApproval) {
+          sandboxDenial = createSandboxDenialDetails({
+            mechanism: 'sandbox-gate',
+            operation: sandboxClass,
+            requestedProviderId: sandboxPolicy.requestedProviderId,
+            effectiveProviderId: sandboxPolicy.effectiveProviderId,
+            runtimeLevel: sandboxPolicy.runtimeLevel,
+          });
+        }
         decision = composeWithSandboxHighRiskGate(decision, sandboxDecision);
         if (sandboxDecision.forceVisible || !sandboxDecision.allowed) {
           void recordPermissionDecisionEvent(createWorkspacePermissionDecisionEvent({
@@ -465,6 +476,7 @@ export function createTerminalApi({
             blocked: true,
             approvalRequired: true,
             approval,
+            ...(sandboxDenial ? { sandboxDenial } : {}),
             reason: decision.reason ?? '命令需要审批',
             cwd: workspace.rootPath,
             command,
@@ -478,6 +490,7 @@ export function createTerminalApi({
         return {
           success: false,
           blocked: true,
+          ...(sandboxDenial ? { sandboxDenial } : {}),
           reason: decision.reason ?? '命令已被当前权限模式阻止',
           cwd: workspace.rootPath,
           command,

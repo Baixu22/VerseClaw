@@ -3,6 +3,7 @@ import { assertSensitiveCaptureAllowed } from './sensitive-capture-gate';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { createPermissionDecisionEvent } from '@shared/product-semantics';
 import { DEFAULT_WORKSPACE_PERMISSION_MODE } from '@shared/types/workspace';
+import { SandboxDenialError } from '@shared/sandbox/errors';
 import {
   classifyAgentBrowserAction,
   decideSandboxHighRiskAction,
@@ -32,7 +33,14 @@ async function assertBrowserAllowedUnderSandbox(action: string): Promise<void> {
     decision: 'deny',
     reason: decision.reason,
   }));
-  throw new Error(decision.reason ?? 'Browser action denied under degraded sandbox');
+  throw new SandboxDenialError({
+    mechanism: 'sandbox-gate',
+    operation: 'browser',
+    message: decision.reason ?? 'Browser action denied under degraded sandbox',
+    requestedProviderId: policy.requestedProviderId,
+    effectiveProviderId: policy.effectiveProviderId,
+    runtimeLevel: policy.runtimeLevel,
+  });
 }
 
 function withBrowserSandboxGate<Args extends unknown[], R>(

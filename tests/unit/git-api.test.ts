@@ -1405,4 +1405,23 @@ describe('git api', () => {
     expect(calls.filter((args) => mutating.has(args[0] ?? ''))).toEqual([]);
   });
 
+
+  it('keeps the tail of oversized diff output', async () => {
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: process.cwd() + '\n' };
+      if (args[0] === 'status') return { stdout: '# branch.head main\0' };
+      if (args[0] === 'diff') {
+        return { stdout: 'HEAD:' + 'X'.repeat(180_010) + ':TAIL-CONFLICT' };
+      }
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().diff();
+
+    const patch = result.patch ?? '';
+    expect(patch.length).toBeLessThanOrEqual(180_000);
+    expect(patch.startsWith('HEAD:')).toBe(true);
+    expect(patch.endsWith(':TAIL-CONFLICT')).toBe(true);
+  });
+
 });
