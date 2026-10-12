@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 1,
+  "issue": 167,
+  "date": "2026-10-12",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "accepted-scoped-development",
+  "base": {
+    "ref": "origin/main",
+    "commit": "91c0fda7d91b9395950d99b1bcf63ae4ff31a1d7"
+  },
+  "candidate": {
+    "commit": "eca2d5f5de4110587070ae3313395049e750c627",
+    "tree": "0872031cc8bdad35609bbc2c6613242b984d8370",
+    "dirty": false,
+    "node": "v24.19.0",
+    "pnpm": "11.2.2",
+    "platform": "win32"
+  },
+  "scope": "Runtime-process, per-workspace admission leases for agent exec / search / file-mutation tools. Not an OS-process limit; not a lane or agent fan-out limit.",
+  "tests": {
+    "files": 22,
+    "passed": 221,
+    "failed": 0,
+    "skipped": 0,
+    "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts src/agents/resource-leases.test.ts src/agents/sessions/tools src/agents/tools src/agents/agent-tools"
+  },
+  "acceptanceResults": [
+    {
+      "criterion": "Three concurrent workspaceSearch acquisitions for one key run at most 2 at a time and the third records queuedMs > 0.",
+      "status": "verified",
+      "evidence": "openclaw_runtime/src/agents/resource-leases.test.ts: 'caps workspaceSearch at 2 and queues the third with queuedMs > 0'"
+    },
+    {
+      "criterion": "Overlapping fileMutation keys serialize; disjoint file-mutation keys run in parallel.",
+      "status": "verified",
+      "evidence": "resource-leases.test.ts: 'serializes overlapping fileMutation paths and runs disjoint paths in parallel'; production write/edit path delegates via withFileMutationQueue"
+    },
+    {
+      "criterion": "Overlapping subtreeMutation keys serialize; disjoint subtrees run in parallel.",
+      "status": "verified",
+      "evidence": "resource-leases.test.ts: 'serializes overlapping subtreeMutation paths and runs disjoint subtrees in parallel' (kernel-level; no delete/rename agent tool wires this kind yet)"
+    },
+    {
+      "criterion": "Different workspace keys are independent.",
+      "status": "verified",
+      "evidence": "resource-leases.test.ts: 'keeps different workspace keys independent'"
+    },
+    {
+      "criterion": "Eight concurrent workspaceExec acquisitions for one key peak at the workspace budget (2), not the lane budget.",
+      "status": "verified",
+      "evidence": "resource-leases.test.ts: 'caps 8 concurrent workspaceExec acquisitions at the workspace budget'; bash-workspace-lease.test.ts proves createLocalBashOperations().exec waits on the workspaceExec lease"
+    },
+    {
+      "criterion": "Release is idempotent and a timed-out waiter leaks no slot.",
+      "status": "verified",
+      "evidence": "resource-leases.test.ts: 'releases idempotently without over-admitting the next batch' and 'rejects with a typed timeout error and reclaims the slot after release'"
+    },
+    {
+      "criterion": "Single-unit + typecheck green; comms green when the communication path is touched.",
+      "status": "verified",
+      "evidence": "gates: runtime-agents-vitest (22 files, 221 tests, exit 0), runtime-core-typecheck (exit 0), comms-replay/compare (exit 0)"
+    }
+  ],
+  "gates": [
+    {
+      "name": "runtime-core-typecheck",
+      "command": "node openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js -p openclaw_runtime/tsconfig.core.json",
+      "exitCode": 0,
+      "log": "01-tsgo-core.log"
+    },
+    {
+      "name": "runtime-agents-vitest",
+      "command": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts src/agents/resource-leases.test.ts src/agents/sessions/tools src/agents/tools src/agents/agent-tools",
+      "exitCode": 0,
+      "log": "02-runtime-agents-vitest.log"
+    },
+    {
+      "name": "oxlint-touched",
+      "command": "node openclaw_runtime/node_modules/oxlint/bin/oxlint <7 touched files>",
+      "exitCode": 0,
+      "log": "03-oxlint.log"
+    },
+    {
+      "name": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "log": "04-comms-replay.log"
+    },
+    {
+      "name": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "log": "05-comms-compare.log"
+    },
+    {
+      "name": "validate-p2",
+      "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/p2-subagent-workspace-lease-20261012.md",
+      "exitCode": 0,
+      "log": "06-validate-p2-subagent-workspace-lease-20261012.log"
+    },
+    {
+      "name": "validate-windows-high",
+      "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/windows-high-concurrency-stability-v1.md",
+      "exitCode": 0,
+      "log": "06-validate-windows-high-concurrency-stability-v1.log"
+    },
+    {
+      "name": "validate-stress-test",
+      "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/stress-test-windows-concurrency-v1.md",
+      "exitCode": 0,
+      "log": "06-validate-stress-test-windows-concurrency-v1.log"
+    },
+    {
+      "name": "harness-dry-run",
+      "command": "node harness/src/cli.mjs run --spec harness/specs/tasks/p2-subagent-workspace-lease-20261012.md --dry-run",
+      "exitCode": 0,
+      "log": "07-harness-dry-run.log"
+    }
+  ],
+  "expectedFailures": [
+    {
+      "name": "harness-run-full",
+      "command": "node harness/src/cli.mjs run --spec harness/specs/tasks/p2-subagent-workspace-lease-20261012.md",
+      "exitCode": 1,
+      "status": "expected-failure (baseline)",
+      "log": "08-harness-full-report.md",
+      "reason": "Repo-wide 'Lint without autofix' fails on 3 pre-existing errors in tests/unit/runtime-memory-locomo-full-500.test.ts (indexForReflect / embeddingProviderForReflect unused, retrievedFacts prefer-const), reproduced on origin/main and unrelated to this change. The rules step ('Backend communication boundary scan') passed before the lint step."
+    }
+  ],
+  "validatedSourceSha256": {
+    "openclaw_runtime/src/agents/resource-leases.ts": "60385e9c29e513d55098495863610231ba98cd61e5773e17f0636e2ef857982b",
+    "openclaw_runtime/src/agents/resource-leases.test.ts": "1a9e391cc242cad317b0292ec07f33bba7c8b304f1e85d02781dac225dc36ab7",
+    "openclaw_runtime/src/agents/sessions/tools/bash.ts": "3617bf2651c7fb4b60234a30a56feabf922607d9e841ea8653392af055fec282",
+    "openclaw_runtime/src/agents/sessions/tools/bash-workspace-lease.test.ts": "ebf970a965c7800ac136c61800fcf9eecaf08d766bce2c71319bdd43c7b7e0f0",
+    "openclaw_runtime/src/agents/sessions/tools/grep.ts": "3bf882f76f61b478276a48120a191c533370b0c95498c1f9338f4c2394cd4c8b",
+    "openclaw_runtime/src/agents/sessions/tools/find.ts": "19fb4d9f6acf62d9dbec78d0d8ccfb5f7fe67569f2e409889a248041cc1ff53f",
+    "openclaw_runtime/src/agents/sessions/tools/file-mutation-queue.ts": "cfb27ee9514d52303484353d0e6a4646008c161ede23c2634c4c7b7cb6b6bbfc"
+  },
+  "limitations": [
+    "Per runtime process only: it does not bound OS processes, other runtime processes, remote work, or the Electron Main process (which keeps its own workspaceExec lease from #162).",
+    "workspaceWriter and subtreeMutation are implemented in the kernel and unit-tested but have no production call site yet: there is no whole-workspace agent operation and no delete / rename / move agent tool.",
+    "No performance or hit-rate claim; that would require a stored before/after artifact pair from an agent-driven run.",
+    "fileMutation keeps the original unbounded same-file wait; only the new search/exec gates use the 30s default acquire timeout."
+  ],
+  "readmeReview": {
+    "files": [
+      "README.md",
+      "README.zh-CN.md",
+      "README.ja-JP.md"
+    ],
+    "changed": false,
+    "note": "Runtime-internal admission budget; no user-facing flow, interface, default or documented promise changes."
+  },
+  "credentialScan": {
+    "scanned": "git diff origin/main...HEAD",
+    "matches": 0,
+    "apiKeyCaptured": false,
+    "file": "credential-scan.json"
+  },
+  "rawEvidence": {
+    "archive": "D:/ClawX-work/p2-167-subagent-workspace-lease-20261012",
+    "note": "Raw gate logs and the harness report are retained in the private work dir; this record binds the validated source bytes individually."
+  }
+}

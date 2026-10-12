@@ -27,6 +27,7 @@ touchedAreas:
   - docs/dev/windows-runtime-efficiency-observability.md
   - scripts/repository-artifacts.json
   - harness/specs/tasks/p2-subagent-workspace-lease-20261012.md
+  - .gitignore
 requiredRules:
   - backend-communication-boundary
 requiredProfiles:

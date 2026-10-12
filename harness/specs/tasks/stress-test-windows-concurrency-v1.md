@@ -23,6 +23,7 @@ touchedAreas:
   - docs/dev/p2-subagent-workspace-lease-20261012/SHA256SUMS
   - docs/dev/windows-runtime-efficiency-observability.md
   - scripts/repository-artifacts.json
+  - .gitignore
 ---
 
 ## 状态澄清（2026-10-12，#162）
