@@ -72,6 +72,10 @@ export type VtokenTurnAssembleInput = {
   markdownSources?: VtokenMarkdownSource[];
   toolSchemas?: Array<Record<string, unknown>>;
   memoryEntries?: Array<Record<string, unknown>>;
+  /** FP-P1-182: paths the system prompt already renders in full; do not re-pack. */
+  alreadyRenderedSourcePaths?: readonly string[];
+  /** FP-P1-182: tool names the system prompt already renders in `## Tooling`. */
+  alreadyRenderedToolNames?: readonly string[];
 };
 
 export type VtokenTurnPackResult = {
@@ -296,15 +300,36 @@ export function createVtokenPackCandidates(input: {
   markdownSources: VtokenMarkdownSource[];
   toolSchemas?: Array<Record<string, unknown>>;
   memoryEntries?: Array<Record<string, unknown>>;
+  /**
+   * FP-P1-182: source paths the system prompt already renders in `# Project Context`.
+   *
+   * The same bootstrap files are handed to both the prompt builder and VToken, so
+   * VToken re-packed their content into `## Working Context` as a compressed view of
+   * text the model already had in full: zero incremental information, and the model
+   * has to arbitrate between the two. Skipping them keeps VToken's real value -- the
+   * sources the prompt does NOT carry.
+   */
+  alreadyRenderedSourcePaths?: readonly string[];
+  /** Tool names the system prompt already renders in `## Tooling`. */
+  alreadyRenderedToolNames?: readonly string[];
 }): VtokenPackCandidate[] {
+  const renderedPaths = new Set(input.alreadyRenderedSourcePaths ?? []);
+  const renderedTools = new Set(input.alreadyRenderedToolNames ?? []);
   const candidates: VtokenPackCandidate[] = [
-    ...input.markdownSources.map((source) => ({
+    ...input.markdownSources
+      .filter((source) => !renderedPaths.has(source.sourcePath))
+      .map((source) => ({
       candidateId: packCandidateId("markdown", source),
       kind: "markdown" as const,
       sourcePath: source.sourcePath,
       text: source.text,
     })),
-    ...(input.toolSchemas ?? []).map((toolSchema) => ({
+    ...(input.toolSchemas ?? [])
+      .filter((toolSchema) => {
+        const name = typeof toolSchema.name === "string" ? toolSchema.name : "";
+        return name === "" || !renderedTools.has(name);
+      })
+      .map((toolSchema) => ({
       candidateId: packCandidateId("tool_schema", { serverName: "host", toolSchema }),
       kind: "tool_schema" as const,
       serverName: "host",
@@ -366,6 +391,12 @@ export async function packVtokenWorkingContext(
     markdownSources,
     toolSchemas: input.toolSchemas,
     memoryEntries: input.memoryEntries,
+    ...(input.alreadyRenderedSourcePaths
+      ? { alreadyRenderedSourcePaths: input.alreadyRenderedSourcePaths }
+      : {}),
+    ...(input.alreadyRenderedToolNames
+      ? { alreadyRenderedToolNames: input.alreadyRenderedToolNames }
+      : {}),
   });
   const started = Date.now();
   const pack = await client.pack({
