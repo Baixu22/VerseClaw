@@ -1184,6 +1184,9 @@
     "previewUnavailable": "画像プレビューを一時的に表示できません"
   },
   "session": {
+    "derived": {
+      "title": "派生セッション（{{count}}）"
+    },
     "renameHint": "ダブルクリックでセッション名を変更",
     "renameCurrent": "現在のセッション名を変更",
     "renameFailed": "セッション名の変更に失敗しました: {{error}}",

@@ -444,6 +444,16 @@ function ProjectSessionHeader({
   const [branch, setBranch] = useState<string | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const sessionName = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
+  /**
+   * #180: sessions derived from the one on screen. The forked/spawned children are
+   * already in `sessions` (that is why their lineage line renders below), so this
+   * is a pure filter — no new query and no new host-api channel.
+   */
+  const derivedSessions = sessions.filter((session) =>
+    session.key !== currentSessionKey
+    && (session.parentSessionKey === currentSessionKey
+      || sessionLineage?.[session.key]?.sourceSessionKey === currentSessionKey),
+  );
 
   /* The empty state names the checkout under the composer (project · branch).
    * Once a conversation starts that row is gone, and the header was carrying
@@ -749,6 +759,38 @@ function ProjectSessionHeader({
                 </button>
               );
             })}
+            {derivedSessions.length > 0 && (
+              <>
+                <hr className="codex-header-menu__sep" />
+                <div
+                  className="px-2 py-1 text-2xs font-medium text-muted-foreground"
+                  data-testid="chat-derived-sessions-title"
+                >
+                  {t('session.derived.title', { count: derivedSessions.length })}
+                </div>
+                {derivedSessions.map((session) => (
+                  <button
+                    key={`derived-${session.key}`}
+                    type="button"
+                    className="codex-header-menu__item"
+                    data-testid={`chat-session-derived-${session.key}`}
+                    onClick={() => {
+                      setOpen(null);
+                      switchSession(session.key);
+                    }}
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-xs font-medium text-foreground">
+                        {getSessionDisplayName(session.key, sessions, sessionLabels)}
+                      </span>
+                      <span className="block truncate font-mono text-2xs text-muted-foreground">
+                        {session.key}
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </>
+            )}
           </div>
         )}
       </div>

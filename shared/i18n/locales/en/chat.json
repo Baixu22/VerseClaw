@@ -1184,6 +1184,9 @@
     "previewUnavailable": "Image preview is temporarily unavailable"
   },
   "session": {
+    "derived": {
+      "title": "Derived sessions ({{count}})"
+    },
     "renameHint": "Double-click to rename session",
     "renameCurrent": "Rename current session",
     "renameFailed": "Failed to rename session: {{error}}",

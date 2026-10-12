@@ -1184,6 +1184,9 @@
     "previewUnavailable": "图片预览暂时不可用"
   },
   "session": {
+    "derived": {
+      "title": "派生会话（{{count}}）"
+    },
     "renameHint": "双击重命名会话",
     "renameCurrent": "重命名当前会话",
     "renameFailed": "重命名会话失败：{{error}}",
