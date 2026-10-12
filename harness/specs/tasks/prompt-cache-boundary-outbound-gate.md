@@ -17,6 +17,7 @@ expectedUserBehavior:
   - System-prompt additions from hooks still land in the uncached suffix, so an injected reminder does not invalidate the cached prefix.
 requiredProfiles:
   - fast
+  - comms
 requiredRules:
   - provider-outbound-concurrency-budget
 requiredTests:

@@ -19,6 +19,7 @@ expectedUserBehavior:
   - A provider that rejects the cache fields never receives one, even when another compat flag asks for a longer lifetime.
 requiredProfiles:
   - fast
+  - comms
 requiredRules:
   - outbound-protocol-payload-consistency
 requiredTests:

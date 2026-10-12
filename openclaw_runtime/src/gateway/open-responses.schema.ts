@@ -281,7 +281,16 @@ export type OutputItem = z.infer<typeof OutputItemSchema>;
 
 export const UsageSchema = z.object({
   input_tokens: z.number().int().nonnegative(),
+  // OpenAI Responses reports cached prompt reuse and reasoning output as
+  // breakdowns of the top-level counters. Optional so existing clients and
+  // fixtures that only send the three top-level fields remain valid.
+  input_tokens_details: z
+    .object({ cached_tokens: z.number().int().nonnegative() })
+    .optional(),
   output_tokens: z.number().int().nonnegative(),
+  output_tokens_details: z
+    .object({ reasoning_tokens: z.number().int().nonnegative() })
+    .optional(),
   total_tokens: z.number().int().nonnegative(),
 });
 

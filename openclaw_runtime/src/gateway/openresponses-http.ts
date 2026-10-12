@@ -237,6 +237,7 @@ export const testing = {
     return [...responseSessionMap.keys()];
   },
   resolveResponsesLimits,
+  toUsage,
 };
 
 function writeSseEvent(res: ServerResponse, event: StreamingEvent) {
@@ -346,6 +347,7 @@ function toUsage(
         output?: number;
         cacheRead?: number;
         cacheWrite?: number;
+        reasoningTokens?: number;
         total?: number;
       }
     | undefined,
@@ -357,10 +359,21 @@ function toUsage(
   const output = value.output ?? 0;
   const cacheRead = value.cacheRead ?? 0;
   const cacheWrite = value.cacheWrite ?? 0;
-  const total = value.total ?? input + output + cacheRead + cacheWrite;
+  const reasoningTokens = value.reasoningTokens ?? 0;
+  // input is the uncached prompt bucket; OpenAI Responses reports the full
+  // prompt (cached + uncached) as input_tokens, matching the chat-completions
+  // lane documented rule prompt_tokens = input + cacheRead.
+  const inputTokens = input + cacheRead;
+  const total = value.total ?? inputTokens + output + cacheWrite;
+  // Mirror OpenAI Responses usage breakdowns so prompt-cache reuse and
+  // reasoning output stay observable through this compatibility endpoint.
   return {
-    input_tokens: Math.max(0, input),
+    input_tokens: Math.max(0, inputTokens),
+    ...(cacheRead > 0 ? { input_tokens_details: { cached_tokens: cacheRead } } : {}),
     output_tokens: Math.max(0, output),
+    ...(reasoningTokens > 0
+      ? { output_tokens_details: { reasoning_tokens: reasoningTokens } }
+      : {}),
     total_tokens: Math.max(0, total),
   };
 }
@@ -370,7 +383,14 @@ function extractUsageFromResult(result: unknown): Usage {
   const usage = meta && typeof meta === "object" ? meta.agentMeta?.usage : undefined;
   return toUsage(
     usage as
-      | { input?: number; output?: number; cacheRead?: number; cacheWrite?: number; total?: number }
+      | {
+          input?: number;
+          output?: number;
+          cacheRead?: number;
+          cacheWrite?: number;
+          reasoningTokens?: number;
+          total?: number;
+        }
       | undefined,
   );
 }

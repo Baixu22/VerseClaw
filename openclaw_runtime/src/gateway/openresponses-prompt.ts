@@ -54,6 +54,17 @@ export function buildAgentPrompt(input: string | ItemParam[]): {
         role: normalizedRole,
         entry: { sender, body: content },
       });
+    } else if (item.type === "function_call") {
+      // Keep the assistant tool call visible in the replayed history so a
+      // following function_call_output keeps its id/name/arguments pairing.
+      const callId = item.call_id ?? item.id ?? "";
+      conversationEntries.push({
+        role: "assistant",
+        entry: {
+          sender: "Assistant",
+          body: `tool_call id=${callId} name=${item.name} arguments=${item.arguments}`,
+        },
+      });
     } else if (item.type === "function_call_output") {
       conversationEntries.push({
         role: "tool",

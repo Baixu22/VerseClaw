@@ -18,6 +18,7 @@ expectedUserBehavior:
   - Endpoints known to reject these fields keep receiving payloads without them; the strip path and its opt-out flag keep working.
 requiredProfiles:
   - fast
+  - comms
 requiredRules:
   - provider-outbound-concurrency-budget
   - runtime-efficiency-observability-boundary
