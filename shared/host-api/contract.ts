@@ -3043,6 +3043,13 @@ export type SessionForkPayload = {
   agentId?: string;
   workspaceId?: string | null;
   label?: string;
+  /**
+   * #180: fork up to this entry in the parent transcript instead of its tip.
+   * Omit for the original whole-session fork. An id the parent transcript does
+   * not contain — or that has no assistant turn at or before it — is rejected
+   * (fail closed); it is never silently retried against the tip.
+   */
+  fromLeafId?: string;
 };
 export type SessionForkResult = HostSuccess & {
   sourceSessionKey?: string;

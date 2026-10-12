@@ -1274,6 +1274,32 @@ describe('host services', () => {
     }), 30_000);
   });
 
+  it('forwards an explicit fromLeafId fork point and omits it otherwise (#180)', async () => {
+    const rpc = vi.fn().mockResolvedValue({
+      key: 'agent:main:dashboard:fork',
+      sourceKey: 'agent:main:main',
+      forkedFromParent: true,
+    });
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const sessionsApi = createSessionsApi({ gatewayManager: { rpc } as never });
+
+    await sessionsApi.fork({
+      sessionKey: 'agent:main:main',
+      workspaceId: 'workspace-a',
+      fromLeafId: 'entry-a1',
+    });
+    expect(rpc).toHaveBeenLastCalledWith(
+      'sessions.fork',
+      expect.objectContaining({ key: 'agent:main:main', fromLeafId: 'entry-a1' }),
+      30_000,
+    );
+
+    // Without the field the payload must stay exactly as it was before #180.
+    await sessionsApi.fork({ sessionKey: 'agent:main:main', workspaceId: 'workspace-a' });
+    const lastPayload = rpc.mock.calls.at(-1)?.[1] as Record<string, unknown>;
+    expect(lastPayload).not.toHaveProperty('fromLeafId');
+  });
+
   it('does not fork locally when Gateway is unavailable', async () => {
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const sessionsApi = createSessionsApi();

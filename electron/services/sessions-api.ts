@@ -91,6 +91,8 @@ type SessionPayload = {
   originalWorkspaceId?: unknown;
   originalFolderId?: unknown;
   messageId?: unknown;
+  /** #180: optional in-transcript fork point forwarded to sessions.fork. */
+  fromLeafId?: unknown;
 };
 
 const MANUAL_COMPACTION_DEFAULT_INSTRUCTIONS = [
@@ -2519,6 +2521,10 @@ export function createSessionsApi(ctx: {
       const label = isRecord(payload) && typeof (payload as SessionPayload).label === 'string'
         ? String((payload as SessionPayload).label).trim()
         : '';
+      const fromLeafId =
+        isRecord(payload) && typeof (payload as SessionPayload).fromLeafId === 'string'
+          ? String((payload as SessionPayload).fromLeafId).trim()
+          : '';
       if (!ctx.gatewayManager) {
         return {
           success: false,
@@ -2534,6 +2540,9 @@ export function createSessionsApi(ctx: {
         key: sessionKey,
         ...(agentId ? { agentId } : {}),
         ...(label ? { label } : {}),
+        // #180: the gateway rejects an unresolvable fromLeafId; do not strip it
+        // here, or the desktop app would silently fork the tip instead.
+        ...(fromLeafId ? { fromLeafId } : {}),
       }, 30_000);
       const nextSessionKey = typeof result.key === 'string' ? result.key : undefined;
       const sourceSessionKey = typeof result.sourceKey === 'string' ? result.sourceKey : sessionKey;
