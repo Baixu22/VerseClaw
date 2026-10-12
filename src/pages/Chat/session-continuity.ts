@@ -42,6 +42,8 @@ export type SessionContinuityErrorKind =
   | 'gateway_unavailable'
   | 'parent_too_large'
   | 'transcript_unavailable'
+  | 'handoff_depth_exceeded'
+  | 'handoff_cycle_detected'
   | 'unknown';
 
 const HIGH_CONTEXT_PRESSURE_RATIO = 0.85;
@@ -169,6 +171,12 @@ export function classifySessionContinuityError(error: unknown): SessionContinuit
   }
   if (/transcript.*(unavailable|missing|not found|unparseable|invalid)|failed to fork source transcript|unknown source session|no_transcript/.test(text)) {
     return 'transcript_unavailable';
+  }
+  if (/handoff[_ -]?cycle[_ -]?detected|handoff cycle detected|appears in its own handoff ancestry/.test(text)) {
+    return 'handoff_cycle_detected';
+  }
+  if (/handoff[_ -]?depth[_ -]?exceeded|handoff depth \d+ exceeds/.test(text)) {
+    return 'handoff_depth_exceeded';
   }
 
   return 'unknown';

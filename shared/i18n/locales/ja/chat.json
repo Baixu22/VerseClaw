@@ -1773,7 +1773,15 @@
             "title": "Transcript を利用できません",
             "description": "Handoff 下書きに必要な会話コンテキストを十分に読めませんでした。"
           },
-          "unknown": {
+                    "handoff_depth_exceeded": {
+            "title": "Handoff の深さ上限に達しました",
+            "description": "無制限の Handoff 連鎖を避けるため、このセッションから新しいセッションを派生しません。このセッションで収束するか、フォークを使用してください。"
+          },
+          "handoff_cycle_detected": {
+            "title": "Handoff の循環を検出しました",
+            "description": "このセッションは自身の Handoff 祖先にすでに含まれているため、Handoff を拒否しました。"
+          },
+"unknown": {
             "title": "Handoff の準備に失敗しました",
             "description": "継続用の下書きを準備できませんでした。"
           }

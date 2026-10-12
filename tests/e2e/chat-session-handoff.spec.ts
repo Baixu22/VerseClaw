@@ -512,4 +512,49 @@ test.describe('Verse Claw chat session handoff', () => {
       await closeElectronApp(app);
     }
   });
+
+  test('refuses a relay once the handoff depth limit is reached (#179)', async ({ launchElectronApp }) => {
+    const app = await launchElectronApp({ skipSetup: true });
+
+    try {
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
+            success: true,
+            result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+          },
+          [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: handoffHistory },
+          },
+        },
+        hostApi: {
+          ...baseHostApiMocks(),
+          [stableStringify(['sessions', 'prepareHandoff', {
+            sessionKey: MAIN_SESSION_KEY,
+            agentId: 'main',
+            workspaceId: 'workspace-a',
+          }])]: {
+            success: false,
+            error: 'Handoff depth 4 exceeds the configured maximum of 3. Converge in the current session instead of relaying again.',
+            handoffDepth: 4,
+            handoffMaxDepth: 3,
+          },
+        },
+      });
+
+      const page = await getStableWindow(app);
+      await page.waitForLoadState('domcontentloaded');
+
+      await expect(page.getByTestId('chat-session-handoff')).toBeVisible({ timeout: 30_000 });
+      await page.getByTestId('chat-session-handoff').click();
+
+      // The refusal is surfaced with an actionable, localized message, and no draft dialog opens.
+      await expect(page.getByText('Handoff depth limit reached')).toBeVisible();
+      await expect(page.getByTestId('chat-handoff-dialog')).toHaveCount(0);
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
 });

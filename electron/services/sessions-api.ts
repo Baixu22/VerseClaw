@@ -1,4 +1,4 @@
-import { openSync, closeSync, fstatSync, readSync } from 'node:fs';
+import { existsSync, openSync, closeSync, fstatSync, readFileSync, readSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { RawMessage } from '@shared/chat/types';
@@ -35,6 +35,7 @@ import type {
   SessionRecallOriginalResult,
 } from '../../shared/host-api/contract';
 import { loadTaskLedgerSnapshot } from './task-ledger-service';
+import { evaluateHandoffDerivation, type HandoffLink } from '../../shared/handoff-depth';
 import { readCurrentGitStatus } from './git-api';
 import { getResourceTracker } from './resource-tracker';
 import { getObservabilityTraceBuffer } from './observability-service';
@@ -53,6 +54,28 @@ import {
   writeArchiveIndex,} from '../utils/session-files';
 import { isRecord } from './payload-utils';
 import type { SessionArchiveEntry } from '@shared/types/workspace';
+
+/**
+ * Opt-in limit for how many times a conversation may be relayed (#179 / TF-0284).
+ *
+ * Read from the OpenClaw config (`runtime.handoff.maxDepth`). Unreadable or
+ * absent configuration returns `undefined` so the caller falls back to
+ * `DEFAULT_MAX_HANDOFF_DEPTH` — an unreadable config must not remove the bound.
+ */
+function resolveConfiguredMaxHandoffDepth(): number | undefined {
+  try {
+    const configPath = join(getOpenClawConfigDir(), 'openclaw.json');
+    if (!existsSync(configPath)) return undefined;
+    const parsed = JSON.parse(readFileSync(configPath, 'utf8')) as unknown;
+    if (!isRecord(parsed)) return undefined;
+    const runtime = isRecord(parsed.runtime) ? parsed.runtime : undefined;
+    const handoff = runtime && isRecord(runtime.handoff) ? runtime.handoff : undefined;
+    const value = handoff?.maxDepth;
+    return typeof value === 'number' ? value : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 const SAFE_SESSION_SEGMENT = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
 const RECENT_TRANSCRIPT_INITIAL_READ_BYTES = 256 * 1024;
@@ -2276,6 +2299,7 @@ export function createSessionsApi(ctx: {
       let recallArchiveRef: string | undefined;
       let recoveryCheckpointId: string | undefined;
       let recoveryArtifact: CompressionArtifact | undefined;
+      let ledgerSessionLinks: HandoffLink[] = [];
 
       if (ctx.gatewayManager) {
         try {
@@ -2426,6 +2450,7 @@ export function createSessionsApi(ctx: {
       let ledgerReview: string[] = [];
       try {
         const snapshot = await loadTaskLedgerSnapshot(workspaceId);
+        ledgerSessionLinks = Array.isArray(snapshot.sessionLinks) ? snapshot.sessionLinks : [];
         const ledger = summarizeTaskLedger(snapshot);
         ledgerActive = ledger.activeTasks;
         ledgerBlockers = ledger.blockers;
@@ -2494,6 +2519,21 @@ export function createSessionsApi(ctx: {
         ...(recallArchiveRef ? [{ type: 'other' as const, ref: recallArchiveRef, label: 'Read-only context recall archive' }] : []),
         ...traceEvidence,
       ];
+      const handoffDecision = evaluateHandoffDerivation({
+        links: ledgerSessionLinks,
+        sessionKey,
+        maxDepth: resolveConfiguredMaxHandoffDepth(),
+      });
+      if (!handoffDecision.allow) {
+        return {
+          success: false,
+          error: handoffDecision.error,
+          warnings: [...warnings, handoffDecision.reason],
+          handoffDepth: handoffDecision.depth,
+          handoffMaxDepth: handoffDecision.maxDepth,
+        };
+      }
+
       const checkpoint = buildResumeCheckpoint({
         trigger: runtimeCheckpoint?.trigger ?? 'session_rotation',
         id: runtimeCheckpoint?.id,
@@ -2543,6 +2583,9 @@ export function createSessionsApi(ctx: {
         draft: renderHandoffDraft(checkpoint, sources, recoveryContext, recallContext),
         sources,
         warnings,
+        handoffDepth: handoffDecision.depth,
+        handoffParentSessionKey: handoffDecision.parentSessionKey,
+        handoffRootSessionKey: handoffDecision.rootSessionKey,
       };
     },
     fork: async (payload) => {

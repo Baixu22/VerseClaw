@@ -3038,6 +3038,14 @@ export type SessionHandoffResult = HostSuccess & {
   draft?: string;
   sources?: SessionHandoffSource[];
   warnings?: string[];
+  /** Depth the derived session WOULD have (1 for the first relay of a root). */
+  handoffDepth?: number;
+  /** Session the draft would be handed off from. */
+  handoffParentSessionKey?: string;
+  /** Root session of the handoff ancestry. */
+  handoffRootSessionKey?: string;
+  /** Configured maximum depth that produced a denial, when applicable. */
+  handoffMaxDepth?: number;
 };
 export type SessionStopPayload = {
   sessionKey: string;
@@ -4600,6 +4608,8 @@ export type TaskLedgerLinkSessionPayload = TaskLedgerWorkspacePayload & {
   relation?: TaskLedgerSessionLink['relation'];
   sourceSessionKey?: string | null;
   summary?: string;
+  /** Relay depth of the linked session, so the depth is readable without re-walking the chain. */
+  handoffDepth?: number;
   idempotencyKey?: string | null;
 };
 export type TaskLedgerReviewPayload = TaskLedgerWorkspacePayload & {

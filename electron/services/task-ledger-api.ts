@@ -176,6 +176,7 @@ export function createTaskLedgerApi(): CompleteHostServiceRegistry['taskLedger']
             relation: payload.relation,
             sourceSessionKey: payload.sourceSessionKey ?? null,
             summary: payload.summary,
+            ...(typeof payload.handoffDepth === 'number' ? { handoffDepth: payload.handoffDepth } : {}),
             createdAt: nowIso(),
           },
         },

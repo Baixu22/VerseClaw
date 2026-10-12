@@ -2472,6 +2472,9 @@ export function Chat() {
           relation: 'handoff_from',
           sourceSessionKey,
           summary: t('composer.handoff.ledgerSummary', { source: sourceSessionKey }),
+          ...(typeof handoffResult?.handoffDepth === 'number'
+            ? { handoffDepth: handoffResult.handoffDepth }
+            : {}),
           idempotencyKey: `handoff:${sourceSessionKey}:${nextSessionKey}`,
         }).catch((error) => {
           console.warn('[chat:handoff] failed to link task ledger session', error);
@@ -2489,6 +2492,7 @@ export function Chat() {
     currentSessionKey,
     handoffCreating,
     handoffDraft,
+    handoffResult?.handoffDepth,
     persistCurrentContinuitySourceSession,
     resetSessionView,
     sendMessage,

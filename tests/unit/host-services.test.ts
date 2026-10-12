@@ -1,7 +1,7 @@
 // @vitest-environment node
 
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -1439,6 +1439,72 @@ describe('host services', () => {
     expect(result.draft).toContain('## In progress');
     expect(result.draft).toContain('## Blockers and risks');
     expect(result.draft).toContain('## Evidence sources');
+  });
+
+  it('refuses to prepare a handoff past the maximum relay depth (#179)', async () => {
+    const { getTaskLedgerEventsPath } = await import('@electron/services/task-ledger-service');
+    const eventsPath = getTaskLedgerEventsPath('workspace-a');
+    mkdirSync(dirname(eventsPath), { recursive: true });
+    const linkEvent = (child: string, parent: string, n: number) => {
+      const createdAt = new Date(1_700_000_000_000 + n).toISOString();
+      return JSON.stringify({
+        id: `evt-link-${n}`,
+        workspaceId: 'workspace-a',
+        type: 'session_linked',
+        actor: 'system',
+        createdAt,
+        payload: {
+          sessionLink: {
+            id: `link-${n}`,
+            sessionKey: child,
+            relation: 'handoff_from',
+            sourceSessionKey: parent,
+            createdAt,
+          },
+        },
+      });
+    };
+    writeFileSync(eventsPath, [
+      linkEvent('agent:main:h1', 'agent:main:h0', 1),
+      linkEvent('agent:main:h2', 'agent:main:h1', 2),
+      linkEvent('agent:main:h3', 'agent:main:h2', 3),
+    ].join('\n') + '\n');
+
+    const sessionsDir = join(testOpenClawConfigDir, 'agents', 'main', 'sessions');
+    mkdirSync(sessionsDir, { recursive: true });
+    writeFileSync(join(sessionsDir, 'sessions.json'), JSON.stringify({
+      sessions: [
+        { key: 'agent:main:h2', file: 'h2.jsonl' },
+        { key: 'agent:main:h3', file: 'h3.jsonl' },
+      ],
+    }));
+    for (const key of ['h2', 'h3']) {
+      writeFileSync(join(sessionsDir, `${key}.jsonl`), JSON.stringify({
+        type: 'message',
+        message: { role: 'user', content: `keep relaying from ${key}`, timestamp: 1000 },
+      }));
+    }
+
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const sessionsApi = createSessionsApi();
+
+    // Depth 2 -> the derived session would be depth 3, which is exactly the limit.
+    const atLimit = await sessionsApi.prepareHandoff({
+      sessionKey: 'agent:main:h2',
+      workspaceId: 'workspace-a',
+    });
+    expect(atLimit).toMatchObject({ success: true, handoffDepth: 3, handoffRootSessionKey: 'agent:main:h0' });
+
+    // Depth 3 -> the derived session would be depth 4, which exceeds the default limit.
+    const denied = await sessionsApi.prepareHandoff({
+      sessionKey: 'agent:main:h3',
+      workspaceId: 'workspace-a',
+    });
+    expect(denied.success).toBe(false);
+    expect(denied.draft).toBeUndefined();
+    expect(denied.error).toMatch(/handoff depth 4 exceeds/i);
+    expect(denied.handoffDepth).toBe(4);
+    expect(denied.handoffMaxDepth).toBe(3);
   });
 
   it('merges runtime checkpoint handoff with ledger, git, observability, and transcript sources', async () => {

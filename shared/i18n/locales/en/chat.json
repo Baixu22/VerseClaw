@@ -1785,7 +1785,15 @@
             "title": "Transcript is not available",
             "description": "The handoff draft could not read enough conversation context."
           },
-          "unknown": {
+                    "handoff_depth_exceeded": {
+            "title": "Handoff depth limit reached",
+            "description": "To prevent an unbounded relay chain, no new session is derived from this one. Converge in this session, or fork instead."
+          },
+          "handoff_cycle_detected": {
+            "title": "Handoff loop detected",
+            "description": "This session already appears in its own handoff ancestry, so the handoff was refused."
+          },
+"unknown": {
             "title": "Handoff preparation failed",
             "description": "The continuation draft could not be prepared."
           }
