@@ -112,6 +112,13 @@ export interface AppSettings {
   runActivityKeepExpandedOnComplete: boolean;
 
   /**
+   * P2 #161: whether the Main-process runtime efficiency sampler runs.
+   * Default true to preserve the pre-existing always-on behaviour; turning it
+   * off stops the timer entirely (zero interval work, no pending handle).
+   */
+  efficiencySamplingEnabled: boolean;
+
+  /**
    * FP-P1-01: sanitized Setup provider verification state (no key material).
    * Consumed by the Setup completion gate, the chat first-send gate, and the
    * FP-P1-06 support bundle (provider type + verification status, never keys).
@@ -203,6 +210,7 @@ function createDefaultSettings(): AppSettings {
     sidebarCollapsed: false,
     devModeUnlocked: false,
     runActivityKeepExpandedOnComplete: true,
+    efficiencySamplingEnabled: true,
     setupProviderVerification: { status: 'unverified' },
 
     // DCS production opt-in (default off / fail-closed)

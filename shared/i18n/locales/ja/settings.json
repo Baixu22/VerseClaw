@@ -565,6 +565,21 @@
     "installTitle": "OpenClaw コマンドをインストール",
     "installMessage": "\"openclaw\" コマンドをインストールしますか？",
     "installDetail": "~/.local/bin/openclaw が作成されます。グローバルに実行するには ~/.local/bin が PATH に含まれていることを確認してください。",
+    "efficiencySampling": {
+      "title": "ランタイム効率サンプリング",
+      "description": "プロセスの CPU とメモリの実測サンプルをローカルに記録し、高負荷な UI 状態の診断に使います。アップロードは行いません。無効にするとタイマーは完全に停止します。",
+      "toggleAria": "ランタイム効率サンプリングを切り替え",
+      "notSampled": "まだサンプリングされていません。計測済みの効率データはありません。",
+      "disabledHint": "サンプリングは無効です。有効にするとローカル計測を開始します。",
+      "sampleCount": "{{count}} サンプル",
+      "cpu": "CPU {{value}}%",
+      "rss": "RSS {{value}}",
+      "shedding": "バックグラウンド負荷を抑制中",
+      "enabledToast": "ランタイム効率サンプリングを有効にしました",
+      "disabledToast": "ランタイム効率サンプリングを無効にしました",
+      "loadFailed": "ランタイム効率の状態を読み取れませんでした",
+      "saveFailed": "ランタイム効率サンプリングを更新できませんでした"
+    },
     "dcsProdFlags": {
       "title": "DCS Controlled Preview フラグ",
       "description": "working memory、context tools、関連フラグ向けの高度な opt-in DCS (BlockStore) control plane です。default は off/shared/shadow のままで、このパネル自体は release approval を意味しません。書き込み可能な switch は app settings と config flags の openclaw.json を保存し、実行中の Gateway を再起動します。",

@@ -146,12 +146,17 @@ only.
   per-workspace admission budgets, not OS-process limits.
 - It claims no performance improvement. Per the boundary rule, that requires a
   stored before/after artifact pair from agent-driven runs.
+- The Settings > Developer switch (issue #161) only starts or stops the sampler. It adds no
+  optimization, and its readout fails closed to "not sampled" rather than rendering a
+  healthy-looking zero before the first real sample.
 
 ## Next
 
 1. Install dependencies so the sampler and policy suites and `typecheck` can run.
 2. Raise the probe coverage window so the default run self-validates, or keep
    fail-closed and require an explicit longer window.
-3. Expose the summary over `host-api` so the renderer can display it.
+3. ~~Expose the summary over `host-api` so the renderer can display it.~~ Landed by issue #161: see
+   `docs/dev/p2-runtime-efficiency-settings-20261012.md` (Settings > Developer switch plus
+   fail-closed "not sampled" readout).
 4. Use the measurements to decide the rendering work, then record a before/after
    pair.

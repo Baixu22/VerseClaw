@@ -397,6 +397,56 @@ export type SettingsSetPayload = { key: SettingsKey; value: SettingsValue };
 export type SettingsSetManyPayload = { patch: Partial<SettingsSnapshot> };
 export type SettingsResetResult = HostSuccess & { settings: SettingsSnapshot };
 
+/**
+ * P2 #161: user-visible runtime efficiency sampling surface.
+ *
+ * The sampler runs in the Main process; these shapes are the only contract the
+ * renderer sees. Every value is measured (never estimated): when nothing has
+ * been sampled yet the state reports `measured: false` and a null summary so
+ * the UI can fail closed to "not sampled" instead of showing a healthy zero.
+ */
+export type RuntimeEfficiencySampleSource = 'os-cpu' | 'process-memory';
+export type RuntimeEfficiencySample = {
+  at: number;
+  cpuPercent: number;
+  rssBytes: number;
+  heapUsedBytes: number;
+  systemFreeBytes: number;
+  systemTotalBytes: number;
+  cpuCount: number;
+  shed: boolean;
+  source: RuntimeEfficiencySampleSource;
+};
+export type RuntimeEfficiencySummary = {
+  sampleCount: number;
+  coverageMs: number;
+  latest: RuntimeEfficiencySample | null;
+  avgCpuPercent: number;
+  peakCpuPercent: number;
+  peakRssBytes: number;
+  shedSampleCount: number;
+};
+export type RuntimeEfficiencyShedState = {
+  shedding: boolean;
+  reason: string | null;
+  activeReasons: string[];
+  transitionCount: number;
+  lastTransitionAt: number | null;
+};
+export type RuntimeEfficiencyState = {
+  /** Persisted user preference. */
+  enabled: boolean;
+  /** True when the Main sampler timer is actually running. */
+  running: boolean;
+  /** True once at least one real sample exists in the retained window. */
+  measured: boolean;
+  /** Bounded rolling summary including the latest sample, or null when unmeasured. */
+  summary: RuntimeEfficiencySummary | null;
+  /** Load-shed policy state, or null before the policy has been created. */
+  shed: RuntimeEfficiencyShedState | null;
+};
+export type RuntimeEfficiencySetEnabledPayload = { enabled: boolean };
+
 export type WorkspaceSnapshotResult = HostSuccess & WorkspaceSnapshot;
 
 /** FP-P1-02: workspace preflight (run before accepting a directory as workspace). */
@@ -5137,6 +5187,11 @@ export type HostApiContract = {
     set: (payload: SettingsSetPayload) => HostSuccess;
     setMany: (payload: SettingsSetManyPayload) => HostSuccess;
     reset: () => SettingsResetResult;
+  };
+  /** P2 #161: read and toggle the local runtime efficiency sampler. */
+  efficiency: {
+    getState: () => RuntimeEfficiencyState;
+    setEnabled: (payload: RuntimeEfficiencySetEnabledPayload) => RuntimeEfficiencyState;
   };
   workspaces: {
     list: () => WorkspaceSnapshotResult;

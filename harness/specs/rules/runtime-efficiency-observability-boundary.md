@@ -10,14 +10,19 @@ pathPatterns:
   - electron/services/efficiency-sampler.ts
   - electron/services/efficiency-power-policy.ts
   - electron/services/efficiency-orchestrator.ts
+  - electron/services/efficiency-api.ts
+  - src/components/settings/EfficiencySamplingPanel.tsx
   - electron/main/index.ts
   - scripts/validate-runtime-efficiency.mjs
   - artifacts/runtime-efficiency/**
   - tests/unit/runtime-efficiency-sampler.test.ts
   - tests/unit/runtime-efficiency-power-policy.test.ts
+  - tests/unit/runtime-efficiency-api.test.ts
+  - tests/unit/efficiency-sampling-panel.test.tsx
   - tests/unit/agent-trace-graph-layout-bench.test.ts
 requiredTests:
   - pnpm exec vitest run tests/unit/runtime-efficiency-sampler.test.ts tests/unit/runtime-efficiency-power-policy.test.ts
+  - pnpm exec vitest run tests/unit/runtime-efficiency-api.test.ts tests/unit/efficiency-sampling-panel.test.tsx
   - node scripts/validate-runtime-efficiency.mjs --validate-only --out artifacts/runtime-efficiency/report.json
 ---
 

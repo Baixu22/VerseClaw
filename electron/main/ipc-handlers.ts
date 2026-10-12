@@ -59,6 +59,7 @@ import { createCapabilitiesApi } from '../services/capabilities-api';
 import { createAgentDevApi } from '../services/agent-dev-api';
 import { createLogsApi } from '../services/logs-api';
 import { createSettingsApi } from '../services/settings-api';
+import { createEfficiencyApi } from '../services/efficiency-api';
 import { createChannelsApi } from '../services/channels-api';
 import { createAgentsApi } from '../services/agents-api';
 import { createRolesApi } from '../services/roles-api';
@@ -219,6 +220,7 @@ function registerTypedHostHandlers(
     orchestrationPresets: createOrchestrationPresetsApi(),
     webPreview: createWebPreviewApi({ webPreviewManager }),
     settings: createSettingsApi(gatewayManager),
+    efficiency: createEfficiencyApi(),
     gateway: createGatewayApi(gatewayManager, gatewayRpcBackpressure, {
       createKnowledgeInboxItem: knowledgeApi.createInboxItem,
     }),
