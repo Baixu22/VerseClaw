@@ -16,6 +16,10 @@ const PRELOAD = `
   import fs from 'node:fs';
   import { registerHooks, syncBuiltinESMExports } from 'node:module';
   childProcess.spawnSync = (_command, _args, options) => {
+    if (options.env.RUNTIME_MEMORY_RETRIEVAL_ONLY === '1') {
+      fs.mkdirSync(options.env.RUNTIME_MEMORY_EVAL_ARTIFACT_DIR, { recursive: true });
+      fs.writeFileSync(options.env.RUNTIME_MEMORY_EVAL_ARTIFACT_DIR + '/retrieval-diagnostic.json', '{}');
+    }
     fs.writeFileSync(process.env.PROBE_CAPTURE, JSON.stringify({
       timeout: options.timeout,
       model: options.env.RUNTIME_MEMORY_LLM_MODEL,
@@ -24,6 +28,10 @@ const PRELOAD = `
       suiteTimeoutMinutes: options.env.RUNTIME_MEMORY_FULL_TEST_TIMEOUT_MINUTES ?? null,
       nodeOptions: options.env.NODE_OPTIONS ?? null,
       heapMb: options.env.RUNTIME_MEMORY_FULL_HEAP_MB ?? null,
+      retrievalOnly: options.env.RUNTIME_MEMORY_RETRIEVAL_ONLY ?? null,
+      realLlm: options.env.RUNTIME_MEMORY_REAL_LLM ?? null,
+      modelKey: options.env.RUNTIME_MEMORY_LLM_API_KEY ?? null,
+      deepseekKey: options.env.DEEPSEEK_API_KEY ?? null,
     }));
     return { status: 0 };
   };
@@ -74,7 +82,7 @@ function runCli(args: string[], capture: string): { status: number | null; stdou
   return { status: result.status, stdout: result.stdout ?? "", stderr: result.stderr ?? "" };
 }
 
-function readCapture(capture: string): { timeout: number; model: string; fullEval: string; artifactDir: string; suiteTimeoutMinutes: string | null; nodeOptions: string | null; heapMb: string | null } {
+function readCapture(capture: string): { timeout: number; model: string; fullEval: string; artifactDir: string; suiteTimeoutMinutes: string | null; nodeOptions: string | null; heapMb: string | null; retrievalOnly: string | null; realLlm: string | null; modelKey: string | null; deepseekKey: string | null } {
   return JSON.parse(readFileSync(capture, "utf8"));
 }
 
@@ -111,6 +119,22 @@ it("caps the child at 90 minutes by default so the budget never silently reverts
   const result = runCli(["--base-url", "https://synthetic.invalid/v1", "--model", "step-5-preview", "--output-dir", output], capture);
   expect(result.status, result.stderr).toBe(0);
   expect(readCapture(capture).timeout).toBe(90 * 60 * 1000);
+});
+
+it("runs retrieval-only with no model credential and never writes the measured report", () => {
+  const capture = join(scratch("locomo-ro-"), "capture.json");
+  const output = join(scratch("locomo-ro-out-"), "output");
+  // runCli puts a synthetic model key in the parent env on purpose: the mode has to
+  // strip it rather than merely avoid using it.
+  const result = runCli(["--retrieval-only", "--output-dir", output], capture);
+  expect(result.status, result.stderr).toBe(0);
+  const captured = readCapture(capture);
+  expect(captured.retrievalOnly).toBe("1");
+  expect(captured.realLlm).toBe("0");
+  expect(captured.modelKey).toBeNull();
+  expect(captured.deepseekKey).toBeNull();
+  expect(existsSync(join(output, "locomo-full-500-report.json"))).toBe(false);
+  expect(result.stdout).toContain("retrievalOnlyVerified");
 });
 
 it("gives the judge phase an explicit heap budget and lets a fatal OOM leave a report", () => {

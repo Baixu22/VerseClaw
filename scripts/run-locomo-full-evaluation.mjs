@@ -25,6 +25,10 @@ const RESUMABLE_CACHE_FILES = [
   'session-summary-cache.json',
   'dev-slice-cache.json',
   'question-journal.jsonl',
+  // The embedding cache is the single most expensive thing a run can rebuild (6663
+  // entries here). It was previously left out, so every resume recomputed it; it is
+  // copied like the others and its digest is recorded in resume-seed.json.
+  'embedding-cache.json',
 ];
 
 export function resolveTimeoutMinutes(raw, fromEnv = process.env.RUNTIME_MEMORY_FULL_TIMEOUT_MINUTES) {
@@ -116,6 +120,7 @@ async function main() {
     'extraction-only': { type: 'boolean', default: false },
     'heap-mb': { type: 'string' },
     'extraction-batch': { type: 'string' },
+    'retrieval-only': { type: 'boolean', default: false },
   } });
   if (values['credentials-stdin']) {
     let credentials;
@@ -126,7 +131,10 @@ async function main() {
   }
   if (values['base-url']) process.env.RUNTIME_MEMORY_LLM_BASE_URL = values['base-url'];
   if (values.model) process.env.RUNTIME_MEMORY_LLM_MODEL = values.model;
-  if (!(process.env.RUNTIME_MEMORY_LLM_API_KEY || process.env.DEEPSEEK_API_KEY)) throw new Error('Model credential required; this command never treats a skipped evaluation as success');
+  // Retrieval-only mode never calls a model, so it must not require a credential;
+  // every other mode still fails closed without one.
+  const retrievalOnly = values['retrieval-only'] === true;
+  if (!retrievalOnly && !(process.env.RUNTIME_MEMORY_LLM_API_KEY || process.env.DEEPSEEK_API_KEY)) throw new Error('Model credential required; this command never treats a skipped evaluation as success');
   if (values['local-embedding-url']) process.env.RUNTIME_MEMORY_LOCAL_EMBEDDING_URL = values['local-embedding-url'];
   if (values['local-embedding-model']) process.env.RUNTIME_MEMORY_LOCAL_EMBEDDING_MODEL_FILE = values['local-embedding-model'];
   // Staged extraction is LLM-only; requiring the embedding server here would
@@ -138,7 +146,9 @@ async function main() {
     if (!values['output-dir']) throw new Error('--extraction-only requires --output-dir so the cache has a stable home');
     console.log('[LoCoMo-Full] Extraction-only stage: embedding server is not required and will not be verified.');
   }
-  getRuntimeMemoryLlmConfig(); // Reject accidental credential routing before starting a child.
+  // Credential routing check. Retrieval-only never sends a model request and strips the
+  // credentials from the child, so it must not depend on a routable key pair.
+  if (!retrievalOnly) getRuntimeMemoryLlmConfig(); // Reject accidental credential routing before starting a child.
   const timeoutMinutes = resolveTimeoutMinutes(values['timeout-minutes']);
   const testTimeoutMinutes = resolveTestTimeoutMinutes(values['test-timeout-minutes'], timeoutMinutes);
   const output = resolve(values['output-dir'] ?? join(root, 'artifacts/runtime-memory-eval/runs', randomUUID()));
@@ -154,6 +164,20 @@ async function main() {
   if (extractionOnly) {
     env.RUNTIME_MEMORY_EXTRACTION_ONLY = '1';
     if (values['extraction-batch']) env.RUNTIME_MEMORY_EXTRACTION_BATCH = values['extraction-batch'];
+  }
+  if (retrievalOnly) {
+    // Belt and braces: the mode is defined by making a model call impossible, not by
+    // hoping no code path reaches for one. Strip every credential and base URL from the
+    // child even when the operator's shell has them set.
+    env.RUNTIME_MEMORY_RETRIEVAL_ONLY = '1';
+    env.RUNTIME_MEMORY_REAL_LLM = '0';
+    env.RUNTIME_MEMORY_LLM_MODEL = 'retrieval-only-no-model';
+    delete env.RUNTIME_MEMORY_LLM_API_KEY;
+    delete env.RUNTIME_MEMORY_LLM_BASE_URL;
+    delete env.DEEPSEEK_API_KEY;
+    delete env.DEEPSEEK_MODEL;
+    delete env.SILICONFLOW_API_KEY;
+    console.log('[LoCoMo-Full] Retrieval-only mode: no model credential is passed to the child; the measured report is not produced.');
   }
   // Only override the suite's own default when the operator asked for it, so the
   // historical 36h behaviour is preserved for every existing invocation.
@@ -172,6 +196,17 @@ async function main() {
     cwd: root, env, stdio: 'inherit', windowsHide: true, timeout: timeoutMinutes * 60 * 1000,
   });
   if (result.error || result.signal || result.status !== 0) throw new Error('LoCoMo runner failed: exit=' + result.status + ', signal=' + result.signal + (result.error ? ', ' + result.error.message : ''));
+  if (retrievalOnly) {
+    const diagnostic = join(output, 'retrieval-diagnostic.json');
+    if (!existsSync(diagnostic)) {
+      throw new Error('Retrieval-only run produced no diagnostics: ' + diagnostic);
+    }
+    if (existsSync(join(output, 'locomo-full-500-report.json'))) {
+      throw new Error('Retrieval-only mode must never write the measured report');
+    }
+    console.log(JSON.stringify({ retrievalOnlyVerified: true, diagnostic, reportWritten: false }, null, 2));
+    return;
+  }
   if (extractionOnly) {
     // A staged run intentionally produces no report; the facts cache is the output.
     console.log('[LoCoMo-Full] Extraction-only stage finished; no report is produced or verified.');

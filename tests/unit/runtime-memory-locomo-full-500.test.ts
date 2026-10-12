@@ -1530,6 +1530,12 @@ const SMOKE_SAMPLE_SIZES: Record<string, number> = {
 // facts cache after each one, and exits without starting the embedding server or
 // the judge. A later normal full run resumes from the accumulated cache.
 const EXTRACTION_ONLY = process.env.RUNTIME_MEMORY_EXTRACTION_ONLY === "1";
+// Retrieval-only mode (#136): produce the retrieval diagnosis with no model call at
+// all. It measures L0 only -- heuristic query classification, no self-ask, no L1/L2
+// escalation, no generation, no judge -- because those stages depend on the answer and
+// would change the context the diagnosis reports. See
+// docs/dev/p0-locomo-retrieval-only-mode-20261013.md for the rejected shortcuts.
+const RETRIEVAL_ONLY = process.env.RUNTIME_MEMORY_RETRIEVAL_ONLY === "1";
 let extractionStageFreshCount = 0;
 let extractionStageCachedCount = 0;
 const EXTRACTION_BATCH = (() => {
@@ -1554,7 +1560,7 @@ function canRunWithoutSiliconFlow(): boolean {
 }
 
 describe.skipIf(
-  !hasDeepSeekKey() ||
+  (!RETRIEVAL_ONLY && !hasDeepSeekKey()) ||
     (!EXTRACTION_ONLY && !hasLocomoEmbeddingConfig() && !canRunWithoutSiliconFlow()),
 )(
   "L11-FULL: LoCoMo 500-question benchmark with real embedding + LLM judge",
@@ -2229,6 +2235,29 @@ describe.skipIf(
                 retrievedFacts,
                 undefined,
               );
+              if (RETRIEVAL_ONLY) {
+                const summaries = retrievedFacts.map((fact) => fact.objectSummary);
+                return {
+                  questionId,
+                  category,
+                  conversationId,
+                  question: qa.question,
+                  goldEvidence: qa.evidence ?? [],
+                  recall5: computeAnswerTokenRecall(answerStr, summaries),
+                  retrievedFactSummaries: summaries,
+                  contextRecall: computeContextRecall(
+                    cachedAssembledContext,
+                    qa.evidence ?? [],
+                    evidenceTextByConversation.get(conversationId),
+                  ),
+                  judgeScore: 0,
+                  judgeResponseId: null,
+                  escalationLevel: 0,
+                  predictedAnswer: "[RETRIEVAL-ONLY]",
+                  groundTruth: answerStr,
+                  assembledContext: cachedAssembledContext,
+                };
+              }
               // Stage 5.2d (2026-07-04): Self-ask decomposition for multi_hop
               // in cached path. Decomposes the question into sub-questions,
               // answers each using cached facts, and passes hop answers as
@@ -2920,6 +2949,35 @@ describe.skipIf(
             // not_retrieved errors. Other categories keep top-10.
             const topK = category === "multi_hop" ? 15 : 10;
             const hybridHits = finalBoostedHits.slice(0, topK);
+            if (RETRIEVAL_ONLY) {
+              const retrievalOnlyFacts = hybridHits.map((hit) => hit.fact);
+              const retrievalOnlyContext = assembleGeneratorContext(
+                "",
+                retrievalOnlyFacts,
+                undefined,
+              );
+              const summaries = retrievalOnlyFacts.map((fact) => fact.objectSummary);
+              return {
+                questionId,
+                category,
+                conversationId,
+                question: qa.question,
+                goldEvidence: qa.evidence ?? [],
+                recall5: computeAnswerTokenRecall(answerStr, summaries),
+                retrievedFactSummaries: summaries,
+                contextRecall: computeContextRecall(
+                  retrievalOnlyContext,
+                  qa.evidence ?? [],
+                  evidenceTextByConversation.get(conversationId),
+                ),
+                judgeScore: 0,
+                judgeResponseId: null,
+                escalationLevel: 0,
+                predictedAnswer: "[RETRIEVAL-ONLY]",
+                groundTruth: answerStr,
+                assembledContext: retrievalOnlyContext,
+              };
+            }
 
             let finalHits = hybridHits;
             // Stage 3.3 (2026-07-04): Capture hop answers from self-ask to
@@ -3655,7 +3713,9 @@ describe.skipIf(
         const sampleIndexById = new Map(
           sampledQuestionIds.map((questionId, index) => [questionId, index]),
         );
-        const journalFile = fullEval ? join(EVAL_ARTIFACT_DIR, QUESTION_JOURNAL_FILE) : null;
+        // A retrieval-only run is not a judgeable run: it never journals a question as
+        // answered and can never satisfy the measured-report verifier.
+        const journalFile = fullEval && !RETRIEVAL_ONLY ? join(EVAL_ARTIFACT_DIR, QUESTION_JOURNAL_FILE) : null;
         const journal = journalFile ? readQuestionJournal(journalFile) : emptyJournal("");
         for (const clash of journal.conflicts) {
           console.log(`[LoCoMo-Full] Journal warning: ${clash} was appended more than once`);
@@ -3713,7 +3773,9 @@ describe.skipIf(
 
           const judgedRows: JournalQuestionResult[] = [];
           for (const r of batchResults) {
-            const judged = Boolean(r.judgeResponseId) && r.predictedAnswer !== "[ERROR]";
+            const judged = RETRIEVAL_ONLY
+              ? true
+              : Boolean(r.judgeResponseId) && r.predictedAnswer !== "[ERROR]";
             if (judged) {
               judgedRows.push(r as JournalQuestionResult);
               if (journalFile) {
@@ -3801,6 +3863,79 @@ describe.skipIf(
         stopHeartbeat();
         writeHeartbeat("judging-complete", results.length, sampled.length - results.length);
         assertNoQuestionOverlap(retainedIds, answeredThisSegment);
+
+        // Retrieval-only runs stop here: the diagnosis is written and the run exits
+        // without a measured report, so scripts/check-locomo-evidence.mjs keeps failing
+        // closed while no real 500-question run exists.
+        if (RETRIEVAL_ONLY) {
+          const memorySummariesByConversation = new Map<string, string[]>();
+          for (const [convId, facts] of factsByConversation) {
+            memorySummariesByConversation.set(convId, facts.map((fact) => fact.objectSummary));
+          }
+          const attributions = results.map((row) =>
+            attributeRetrieval({
+              questionId: row.questionId,
+              category: row.category,
+              conversationId: row.conversationId,
+              question: row.question,
+              goldEvidence: row.goldEvidence,
+              retrievedFactSummaries: row.retrievedFactSummaries,
+              memoryFactSummaries: memorySummariesByConversation.get(row.conversationId) ?? [],
+              evidenceTextById: evidenceTextByConversation.get(row.conversationId),
+            }),
+          );
+          const retrievalSummary = summarizeRetrievalAttribution(
+            attributions,
+            new Map(results.map((row) => [row.questionId, row.recall5])),
+          );
+          assertRetrievalOnlyDisclosure(retrievalSummary);
+          writeFileSync(
+            join(EVAL_ARTIFACT_DIR, "retrieval-diagnostic.json"),
+            JSON.stringify(
+              {
+                driven_by: "agent",
+                actor: provenance.actor,
+                sourceRevision: provenance.sourceRevision,
+                generatedAt: new Date().toISOString(),
+                sampleSize: sampled.length,
+                mode: "retrieval-only-l0",
+                summary: retrievalSummary,
+                rows: attributions,
+              },
+              null,
+              2,
+            ) + "\n",
+            "utf-8",
+          );
+          writeFileSync(
+            join(EVAL_ARTIFACT_DIR, "retrieval-only.json"),
+            JSON.stringify(
+              {
+                driven_by: "agent",
+                actor: provenance.actor,
+                sourceRevision: provenance.sourceRevision,
+                finishedAt: new Date().toISOString(),
+                mode: "retrieval-only-l0",
+                questions: results.length,
+                noReportWritten: true,
+                note:
+                  "L0 retrieval diagnosis only: no answer generated, no judge called, " +
+                  "and locomo-full-500-report.json deliberately does not exist.",
+              },
+              null,
+              2,
+            ) + "\n",
+            "utf-8",
+          );
+          console.log(
+            `[LoCoMo-Full] Retrieval-only (L0): ${results.length}/${sampled.length} questions | ` +
+              `top5=${(retrievalSummary.overall.top5Coverage * 100).toFixed(1)}% | ` +
+              `absent=${retrievalSummary.overall.bucketCounts.absent_from_memory} | ` +
+              `rankedOut=${retrievalSummary.overall.bucketCounts.in_memory_but_not_top5}. ` +
+              "No report written.",
+          );
+          return;
+        }
 
         // Compute final metrics
         const totalQuestions = sampled.length;
