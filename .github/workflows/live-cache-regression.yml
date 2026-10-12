@@ -1,0 +1,54 @@
+name: Live Cache Regression
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly opt-in live-provider cache regression; never a PR hard gate.
+    - cron: '0 7 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  live-cache:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      OPENCLAW_LIVE_ANTHROPIC_KEY: ${{ secrets.OPENCLAW_LIVE_ANTHROPIC_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENCLAW_LIVE_ANTHROPIC_CACHE_MODEL: ${{ vars.OPENCLAW_LIVE_ANTHROPIC_CACHE_MODEL }}
+      OPENCLAW_LIVE_OPENAI_CACHE_MODEL: ${{ vars.OPENCLAW_LIVE_OPENAI_CACHE_MODEL }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Prefer HTTPS for public GitHub git dependencies
+        run: |
+          git config --global "url.https://github.com/.insteadOf" "git@github.com:"
+          git config --global --add "url.https://github.com/.insteadOf" "ssh://git@github.com/"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run live cache regression
+        run: pnpm --dir openclaw_runtime run test:live:cache
+
+      - name: Upload live cache report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: live-cache-regression
+          path: artifacts/prompt-cache-live-cache
+          if-no-files-found: error
+          retention-days: 30

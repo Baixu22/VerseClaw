@@ -18,7 +18,6 @@
     "**/*.e2e-harness.ts",
     "**/*.cases.ts",
     "**/test-helpers/**",
-    "src/agents/live-cache-regression-runner.ts",
     "src/gateway/server.e2e-ws-harness.ts",
     "src/plugin-sdk/agent-runtime-test-contracts.ts",
     "src/gateway/server.auth.shared.ts",
