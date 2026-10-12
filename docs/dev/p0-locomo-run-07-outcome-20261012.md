@@ -20,6 +20,12 @@ Four supervised attempts, each killed before it could emit a report:
 The extraction stage itself **succeeded completely**: all ten conversations, 3,618
 facts, via seven bounded batches (`full500-run-04/extracted-facts-cache-v6-additive-p0.json`).
 
+**Correction (added after review):** an earlier version of this document named the
+episodic index as the largest remaining memory peak and proposed persisting it per
+conversation. Measurement disproved that: the episodic index is only ~0.28 GB, and all
+accounted-for live objects together are ~0.95 GB against a 4.19 GB default heap limit.
+The judge-07 kill remains unexplained. See "Remaining work" for the corrected position.
+
 ## Defects found and fixed (all committed with tests)
 
 ### 1. Observation consolidation persisted only at the very end
@@ -85,12 +91,37 @@ Two measurements were taken during this work and are retained as evidence:
 
 ## Remaining work if the report is ever needed
 
-1. Give the episodic index the same treatment as observation consolidation: persist
-   per conversation and release the in-memory index after use. `episodicByConversation`
-   currently holds every conversation's index for the whole run (≈10,000 sentences),
-   which is the largest remaining peak.
-2. Run in an environment without the silent process sweeps that killed run-04 and judge-07.
-3. Re-run `pnpm eval:runtime-memory:locomo:full500` and let the existing verifier
+1. **The judge-07 kill cause is still unknown, and one earlier hypothesis is now
+   disproven.** This document first claimed the episodic index was the largest memory
+   peak. That was wrong. Measured afterwards:
+
+   | Object | Measured size |
+   | --- | --- |
+   | EpisodicMemory (16,928 sentences × 4096 dims, `Float32Array`) | **0.28 GB** |
+   | HybridSearchIndex (3,618 facts × 4096 dims, `Float32Array`) | **0.06 GB** |
+   | Embedding cache Map (6,663 × 4096 as `number[]`) | 0.22–0.44 GB |
+   | Conversation text + observations + knn | **< 0.02 GB** |
+   | **Total simultaneously in the V8 heap** | **≈ 0.95 GB** |
+
+   For comparison: Node's default `heap_size_limit` on this host is **4.19 GB**, and the
+   runner spawns vitest without a raised limit. So the known live objects are roughly a
+   quarter of the heap ceiling, and the kill is **not explained** by the objects we can
+   account for. Both index types use `Float32Array`, so there is no hidden boxing problem.
+
+   What the evidence does say: the worker died with **no OOM event in the Windows log and
+   no crash report**, while llama-server kept running. Previous runs died the same way
+   (run-04). The honest position is "an external kill whose agent is unidentified", not a
+   diagnosed memory ceiling.
+
+2. To make progress on the unknown, the next step is measurement rather than another
+   refactor: run the judge phase with `--max-old-space-size` raised and `--report-on-fatal-error`
+   plus a heartbeat sampler writing RSS/heap into `progress-timeline.jsonl`, so a future
+   kill leaves a memory curve instead of a gap. Do not "optimise" the episodic index on
+   the strength of a disproven guess.
+
+3. Run in an environment without the silent process sweeps that killed run-04 and judge-07.
+
+4. Re-run `pnpm eval:runtime-memory:locomo:full500` and let the existing verifier
    (`scripts/check-locomo-evidence.mjs`) accept or reject the report.
 
 ## Artifact index
