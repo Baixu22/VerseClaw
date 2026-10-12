@@ -84,7 +84,8 @@
     "artifacts/p0-memory-integrity-20261009/judge-binding-20261010.json",
     "artifacts/p0-memory-integrity-20261009/judge-binding-20261010.sha256",
     "docs/dev/error-governance-decision-record.md",
-    "docs/dev/p2-issue-fixes-batch4-20261010.md"
+    "docs/dev/p2-issue-fixes-batch4-20261010.md",
+    "docs/dev/p0-locomo-run-07-outcome-20261012.md"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",
@@ -1683,6 +1684,7 @@
     "docs/dev/error-governance-decision-record.md",
     "docs/dev/p2-issue-fixes-batch4-20261010.md",
     "artifacts/p0-memory-integrity-20261009/local-embedding-20261010.json",
-    "artifacts/p0-memory-integrity-20261009/local-embedding-20261010.sha256"
+    "artifacts/p0-memory-integrity-20261009/local-embedding-20261010.sha256",
+    "docs/dev/p0-locomo-run-07-outcome-20261012.md"
   ]
 }

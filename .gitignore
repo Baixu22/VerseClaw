@@ -1789,6 +1789,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/p2-issue-fixes-batch4-20261010.md
 !/artifacts/p0-memory-integrity-20261009/local-embedding-20261010.json
 !/artifacts/p0-memory-integrity-20261009/local-embedding-20261010.sha256
+!/docs/dev/p0-locomo-run-07-outcome-20261012.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
