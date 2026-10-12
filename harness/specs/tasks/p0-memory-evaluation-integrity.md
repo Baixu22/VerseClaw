@@ -26,6 +26,7 @@ touchedAreas:
   - scripts/repository-artifacts.json
   - docs/dev/p0-memory-evaluation-integrity.md
   - docs/dev/p0-locomo-run-07-outcome-20261012.md
+  - docs/dev/p0-locomo-retrieval-only-mode-20261013.md
   - harness/specs/tasks/p0-memory-evaluation-integrity.md
   - harness/specs/rules/locomo-evaluation-integrity.md
   - README.md
