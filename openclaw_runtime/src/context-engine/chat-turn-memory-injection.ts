@@ -65,6 +65,12 @@ export function memoryPilotTokenBudgetToChars(totalTokenBudget: number): number 
 
 export type ChatTurnMemoryInjectionQuery = RuntimeContextProviderQuery & {
   sessionKey?: string;
+  /**
+   * #182: fact ids another channel already put into this turn's prompt (today:
+   * COMPASS `injectedFactIds`). Facts with these ids are dropped before render
+   * so the same fact is not injected twice in two different serializations.
+   */
+  dedupeFactIds?: readonly string[];
 };
 
 export type ChatTurnMemoryInjectionResult = {
@@ -211,7 +217,25 @@ export async function assembleChatTurnMemoryInjection(
 
   if (allItems.length === 0) return null;
 
-  const rendered = renderMemoryContextBlock(allItems);
+  // #182: 去重是义务. Drop (a) facts another channel already injected this turn
+  // and (b) the same fact id twice inside this block. Only the ids the caller
+  // declares are treated as duplicates — this never guesses from prose.
+  const excludedFactIds = new Set(query.dedupeFactIds ?? []);
+  const seenFactIds = new Set<string>();
+  const keptItems: ContextItem[] = [];
+  let droppedDuplicateItems = 0;
+  for (const item of allItems) {
+    const key = memoryItemIdentity(item);
+    if (excludedFactIds.has(key) || seenFactIds.has(key)) {
+      droppedDuplicateItems += 1;
+      continue;
+    }
+    seenFactIds.add(key);
+    keptItems.push(item);
+  }
+  if (keptItems.length === 0) return null;
+
+  const rendered = renderMemoryContextBlock(keptItems);
   if (!rendered) return null;
 
   // #181: `totalTokenBudget` is the aggregate ceiling across every provider in
@@ -248,9 +272,22 @@ export async function assembleChatTurnMemoryInjection(
       sessions: config.sessions,
       perProvider,
       totalItems: allItems.length,
+      itemsInjected: keptItems.length,
+      droppedDuplicateItems,
+      dedupeFactIds: [...excludedFactIds],
       memoryBudget,
     },
   };
+}
+
+/**
+ * #182: identity of one injected memory item. Providers that carry a fact id
+ * (runtime-memory) are comparable with the ids COMPASS retrieval reports; the
+ * rest fall back to the ContextItem id.
+ */
+function memoryItemIdentity(item: ContextItem): string {
+  const factId = item.metadata?.factId;
+  return typeof factId === "string" && factId.length > 0 ? factId : item.id;
 }
 
 /**
@@ -272,7 +309,12 @@ export async function computeMemoryExtraSystemPrompt(
   sessionKey: string | undefined,
   providerFactory: () => readonly RuntimeContextProvider[],
   log?: (message: string, context?: Record<string, unknown>) => void,
-  scope?: { workspace?: string; taskId?: string },
+  scope?: {
+    workspace?: string;
+    taskId?: string;
+    /** #182: fact ids another channel already injected this turn. */
+    dedupeFactIds?: readonly string[];
+  },
 ): Promise<string | undefined> {
   let result = extraSystemPrompt;
   try {
@@ -284,6 +326,9 @@ export async function computeMemoryExtraSystemPrompt(
           sessionKey,
           workspace: scope?.workspace,
           taskId: scope?.taskId,
+          ...(scope?.dedupeFactIds && scope.dedupeFactIds.length > 0
+            ? { dedupeFactIds: scope.dedupeFactIds }
+            : {}),
           metadata: { roleName: "main", sessionKey },
         },
         providers,

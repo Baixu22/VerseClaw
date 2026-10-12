@@ -27,7 +27,9 @@ function memoryItems(count: number, width = 60): ContextItem[] {
     text: `fact-${index} ${"x".repeat(width)}`,
     source: `runtime-memory:fact-${index}`,
     evidenceRefs: [],
-    metadata: { providerId: "runtime-memory" },
+    // Mirror the production `toContextItem` shape: the fact id is what makes an
+    // item comparable with COMPASS `injectedFactIds` (#182).
+    metadata: { providerId: "runtime-memory", factId: `fact-${index}` },
   }));
 }
 
@@ -169,5 +171,51 @@ describe("#183 memory pilot session scope", () => {
         { sessionKey: "agent:main:subagent:1234" },
       ),
     ).toBe(true);
+  });
+});
+
+describe("#182 cross-channel fact dedupe", () => {
+  it("drops facts another channel already injected this turn", async () => {
+    const provider = fakeProvider("runtime-memory", memoryItems(3));
+    const result = await assembleChatTurnMemoryInjection(
+      { ...ALL_SESSIONS_QUERY, dedupeFactIds: ["fact-1"] },
+      [provider],
+      pilotConfig(800),
+    );
+
+    expect(result).not.toBeNull();
+    expect(result!.text).not.toContain("runtime-memory:fact-1");
+    expect(result!.text).toContain("runtime-memory:fact-0");
+    expect(result!.text).toContain("runtime-memory:fact-2");
+    expect(result!.metadata.droppedDuplicateItems).toBe(1);
+    expect(result!.metadata.itemsInjected).toBe(2);
+    expect(result!.metadata.totalItems).toBe(3);
+  });
+
+  it("collapses the same fact id injected twice inside one block", async () => {
+    const provider = fakeProvider("runtime-memory", [...memoryItems(1), ...memoryItems(1)]);
+    const result = await assembleChatTurnMemoryInjection(
+      ALL_SESSIONS_QUERY,
+      [provider],
+      pilotConfig(800),
+    );
+
+    expect(result).not.toBeNull();
+    expect(result!.metadata.totalItems).toBe(2);
+    expect(result!.metadata.itemsInjected).toBe(1);
+    expect(result!.metadata.droppedDuplicateItems).toBe(1);
+    expect(result!.text.match(/runtime-memory:fact-0/g)).toHaveLength(1);
+  });
+
+  it("injects everything when the caller declares no duplicates", async () => {
+    const provider = fakeProvider("runtime-memory", memoryItems(2));
+    const result = await assembleChatTurnMemoryInjection(
+      ALL_SESSIONS_QUERY,
+      [provider],
+      pilotConfig(800),
+    );
+
+    expect(result!.metadata.droppedDuplicateItems).toBe(0);
+    expect(result!.metadata.itemsInjected).toBe(2);
   });
 });
