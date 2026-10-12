@@ -1,0 +1,1458 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-locomo-evaluator",
+  "sourceRevision": "d394368cf3824b418203742acf0d4c8f213f5a34",
+  "generatedAt": "2026-10-12T16:29:45.704Z",
+  "sampleSize": 150,
+  "mode": "retrieval-only-l0",
+  "summary": {
+    "scope": "retrieval-only-diagnostic",
+    "claims": {
+      "judgeScoreClaimed": false,
+      "baselineClaimed": false,
+      "note": "Retrieval diagnosis only: no judge call, no judge score, and no product baseline. It says where gold evidence was lost, not whether answers were right."
+    },
+    "overall": {
+      "questions": 150,
+      "memoryCoverage": 0.8947387955182072,
+      "top5Coverage": 0.4079151882975413,
+      "recall5Mean": 0.3292391921517308,
+      "bucketCounts": {
+        "no_gold_evidence": 2,
+        "absent_from_memory": 0,
+        "in_memory_but_not_top5": 136,
+        "retrieved_in_top5": 12
+      }
+    },
+    "byCategory": {
+      "temporal": {
+        "questions": 31,
+        "memoryCoverage": 0.8817204301075269,
+        "top5Coverage": 0.478494623655914,
+        "recall5Mean": 0.4112903225806452,
+        "bucketCounts": {
+          "no_gold_evidence": 0,
+          "absent_from_memory": 0,
+          "in_memory_but_not_top5": 26,
+          "retrieved_in_top5": 5
+        }
+      },
+      "multi_hop": {
+        "questions": 28,
+        "memoryCoverage": 0.8639705882352943,
+        "top5Coverage": 0.4146533613445378,
+        "recall5Mean": 0.2666953842940685,
+        "bucketCounts": {
+          "no_gold_evidence": 2,
+          "absent_from_memory": 0,
+          "in_memory_but_not_top5": 22,
+          "retrieved_in_top5": 4
+        }
+      },
+      "single_hop": {
+        "questions": 82,
+        "memoryCoverage": 0.916906213704994,
+        "top5Coverage": 0.38102013162988774,
+        "recall5Mean": 0.30548000540826936,
+        "bucketCounts": {
+          "no_gold_evidence": 0,
+          "absent_from_memory": 0,
+          "in_memory_but_not_top5": 81,
+          "retrieved_in_top5": 1
+        }
+      },
+      "open_domain": {
+        "questions": 9,
+        "memoryCoverage": 0.8333333333333334,
+        "top5Coverage": 0.3888888888888889,
+        "recall5Mean": 0.45767195767195773,
+        "bucketCounts": {
+          "no_gold_evidence": 0,
+          "absent_from_memory": 0,
+          "in_memory_but_not_top5": 7,
+          "retrieved_in_top5": 2
+        }
+      }
+    },
+    "paired": {
+      "temporal": {
+        "questions": 31,
+        "memoryCoverage": 0.8817204301075269,
+        "top5Coverage": 0.478494623655914,
+        "recall5Mean": 0.4112903225806452,
+        "bucketCounts": {
+          "no_gold_evidence": 0,
+          "absent_from_memory": 0,
+          "in_memory_but_not_top5": 26,
+          "retrieved_in_top5": 5
+        }
+      },
+      "nonTemporal": {
+        "questions": 119,
+        "memoryCoverage": 0.898130134406704,
+        "top5Coverage": 0.38952894883443573,
+        "recall5Mean": 0.30786452792234975,
+        "bucketCounts": {
+          "no_gold_evidence": 2,
+          "absent_from_memory": 0,
+          "in_memory_but_not_top5": 110,
+          "retrieved_in_top5": 7
+        }
+      },
+      "temporalMinusNonTemporalTop5Coverage": 0.08896567482147827,
+      "comparable": true
+    }
+  },
+  "rows": [
+    {
+      "questionId": "conv-43_q12",
+      "category": "temporal",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-26_q80",
+      "category": "temporal",
+      "conversationId": "conv-26",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.5,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-43_q55",
+      "category": "temporal",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.75,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-47_q48",
+      "category": "temporal",
+      "conversationId": "conv-47",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.5,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-43_q56",
+      "category": "temporal",
+      "conversationId": "conv-43",
+      "bucket": "retrieved_in_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 1,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-44_q30",
+      "category": "temporal",
+      "conversationId": "conv-44",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.5,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-49_q61",
+      "category": "temporal",
+      "conversationId": "conv-49",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-26_q73",
+      "category": "temporal",
+      "conversationId": "conv-26",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.5,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-42_q45",
+      "category": "temporal",
+      "conversationId": "conv-42",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-43_q58",
+      "category": "temporal",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-50_q36",
+      "category": "temporal",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.5,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-30_q35",
+      "category": "temporal",
+      "conversationId": "conv-30",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.5,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-30_q13",
+      "category": "temporal",
+      "conversationId": "conv-30",
+      "bucket": "retrieved_in_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 1,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-44_q0",
+      "category": "temporal",
+      "conversationId": "conv-44",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-30_q37",
+      "category": "temporal",
+      "conversationId": "conv-30",
+      "bucket": "retrieved_in_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 1,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-43_q39",
+      "category": "temporal",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-50_q68",
+      "category": "temporal",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-43_q63",
+      "category": "temporal",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-49_q63",
+      "category": "temporal",
+      "conversationId": "conv-49",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.5,
+      "top5Coverage": 0,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-48_q31",
+      "category": "temporal",
+      "conversationId": "conv-48",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-42_q2",
+      "category": "temporal",
+      "conversationId": "conv-42",
+      "bucket": "retrieved_in_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 1,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-47_q28",
+      "category": "temporal",
+      "conversationId": "conv-47",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-41_q22",
+      "category": "temporal",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-50_q9",
+      "category": "temporal",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-49_q24",
+      "category": "temporal",
+      "conversationId": "conv-49",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-50_q61",
+      "category": "temporal",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.8333333333333334,
+      "top5Coverage": 0.3333333333333333,
+      "goldTurnCount": 3
+    },
+    {
+      "questionId": "conv-43_q68",
+      "category": "temporal",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-41_q46",
+      "category": "temporal",
+      "conversationId": "conv-41",
+      "bucket": "retrieved_in_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 1,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-48_q50",
+      "category": "temporal",
+      "conversationId": "conv-48",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-50_q8",
+      "category": "temporal",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-49_q60",
+      "category": "temporal",
+      "conversationId": "conv-49",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-42_q4",
+      "category": "multi_hop",
+      "conversationId": "conv-42",
+      "bucket": "retrieved_in_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 1,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-48_q23",
+      "category": "multi_hop",
+      "conversationId": "conv-48",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-43_q70",
+      "category": "multi_hop",
+      "conversationId": "conv-43",
+      "bucket": "retrieved_in_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.8333333333333334,
+      "goldTurnCount": 3
+    },
+    {
+      "questionId": "conv-50_q21",
+      "category": "multi_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.75,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-50_q13",
+      "category": "multi_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-50_q42",
+      "category": "multi_hop",
+      "conversationId": "conv-50",
+      "bucket": "no_gold_evidence",
+      "memoryCoverage": 0,
+      "top5Coverage": 0,
+      "goldTurnCount": 0
+    },
+    {
+      "questionId": "conv-48_q40",
+      "category": "multi_hop",
+      "conversationId": "conv-48",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-41_q64",
+      "category": "multi_hop",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-47_q16",
+      "category": "multi_hop",
+      "conversationId": "conv-47",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-48_q36",
+      "category": "multi_hop",
+      "conversationId": "conv-48",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0,
+      "goldTurnCount": 10
+    },
+    {
+      "questionId": "conv-43_q32",
+      "category": "multi_hop",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-50_q37",
+      "category": "multi_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.3333333333333333,
+      "goldTurnCount": 3
+    },
+    {
+      "questionId": "conv-44_q19",
+      "category": "multi_hop",
+      "conversationId": "conv-44",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-49_q57",
+      "category": "multi_hop",
+      "conversationId": "conv-49",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-43_q8",
+      "category": "multi_hop",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.75,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-47_q33",
+      "category": "multi_hop",
+      "conversationId": "conv-47",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-43_q34",
+      "category": "multi_hop",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.8333333333333334,
+      "top5Coverage": 0.6666666666666666,
+      "goldTurnCount": 3
+    },
+    {
+      "questionId": "conv-49_q51",
+      "category": "multi_hop",
+      "conversationId": "conv-49",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.5,
+      "top5Coverage": 0.125,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-49_q10",
+      "category": "multi_hop",
+      "conversationId": "conv-49",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.125,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-50_q39",
+      "category": "multi_hop",
+      "conversationId": "conv-50",
+      "bucket": "no_gold_evidence",
+      "memoryCoverage": 0,
+      "top5Coverage": 0,
+      "goldTurnCount": 0
+    },
+    {
+      "questionId": "conv-26_q69",
+      "category": "multi_hop",
+      "conversationId": "conv-26",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.6666666666666666,
+      "top5Coverage": 0.6666666666666666,
+      "goldTurnCount": 3
+    },
+    {
+      "questionId": "conv-41_q41",
+      "category": "multi_hop",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-49_q20",
+      "category": "multi_hop",
+      "conversationId": "conv-49",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.9411764705882353,
+      "top5Coverage": 0.23529411764705882,
+      "goldTurnCount": 17
+    },
+    {
+      "questionId": "conv-42_q73",
+      "category": "multi_hop",
+      "conversationId": "conv-42",
+      "bucket": "retrieved_in_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 1,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-42_q84",
+      "category": "multi_hop",
+      "conversationId": "conv-42",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-41_q50",
+      "category": "multi_hop",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.125,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-26_q2",
+      "category": "multi_hop",
+      "conversationId": "conv-26",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.75,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-42_q85",
+      "category": "multi_hop",
+      "conversationId": "conv-42",
+      "bucket": "retrieved_in_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 1,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-30_q5",
+      "category": "single_hop",
+      "conversationId": "conv-30",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.8333333333333334,
+      "top5Coverage": 0.3333333333333333,
+      "goldTurnCount": 3
+    },
+    {
+      "questionId": "conv-26_q76",
+      "category": "single_hop",
+      "conversationId": "conv-26",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-50_q15",
+      "category": "single_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-49_q6",
+      "category": "single_hop",
+      "conversationId": "conv-49",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-26_q52",
+      "category": "single_hop",
+      "conversationId": "conv-26",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-41_q60",
+      "category": "single_hop",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0.75,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-50_q59",
+      "category": "single_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-41_q2",
+      "category": "single_hop",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-44_q40",
+      "category": "single_hop",
+      "conversationId": "conv-44",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.8333333333333334,
+      "top5Coverage": 0.6666666666666666,
+      "goldTurnCount": 3
+    },
+    {
+      "questionId": "conv-41_q15",
+      "category": "single_hop",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.75,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-50_q1",
+      "category": "single_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-42_q78",
+      "category": "single_hop",
+      "conversationId": "conv-42",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5555555555555556,
+      "goldTurnCount": 9
+    },
+    {
+      "questionId": "conv-44_q31",
+      "category": "single_hop",
+      "conversationId": "conv-44",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-42_q75",
+      "category": "single_hop",
+      "conversationId": "conv-42",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-44_q50",
+      "category": "single_hop",
+      "conversationId": "conv-44",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-42_q27",
+      "category": "single_hop",
+      "conversationId": "conv-42",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.75,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-41_q9",
+      "category": "single_hop",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-50_q29",
+      "category": "single_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.875,
+      "top5Coverage": 0,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-49_q54",
+      "category": "single_hop",
+      "conversationId": "conv-49",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 3
+    },
+    {
+      "questionId": "conv-30_q3",
+      "category": "single_hop",
+      "conversationId": "conv-30",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.875,
+      "top5Coverage": 0.375,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-50_q46",
+      "category": "single_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 3
+    },
+    {
+      "questionId": "conv-26_q13",
+      "category": "single_hop",
+      "conversationId": "conv-26",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.75,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-48_q79",
+      "category": "single_hop",
+      "conversationId": "conv-48",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.5,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-26_q75",
+      "category": "single_hop",
+      "conversationId": "conv-26",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.5,
+      "top5Coverage": 0,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-50_q64",
+      "category": "single_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.125,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-42_q1",
+      "category": "single_hop",
+      "conversationId": "conv-42",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.14285714285714285,
+      "goldTurnCount": 7
+    },
+    {
+      "questionId": "conv-42_q10",
+      "category": "single_hop",
+      "conversationId": "conv-42",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-47_q5",
+      "category": "single_hop",
+      "conversationId": "conv-47",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-44_q3",
+      "category": "single_hop",
+      "conversationId": "conv-44",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.9375,
+      "top5Coverage": 0.375,
+      "goldTurnCount": 8
+    },
+    {
+      "questionId": "conv-44_q27",
+      "category": "single_hop",
+      "conversationId": "conv-44",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.875,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-30_q9",
+      "category": "single_hop",
+      "conversationId": "conv-30",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-43_q57",
+      "category": "single_hop",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.75,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-44_q17",
+      "category": "single_hop",
+      "conversationId": "conv-44",
+      "bucket": "retrieved_in_top5",
+      "memoryCoverage": 0.8333333333333334,
+      "top5Coverage": 0.8333333333333334,
+      "goldTurnCount": 3
+    },
+    {
+      "questionId": "conv-43_q61",
+      "category": "single_hop",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.6666666666666666,
+      "goldTurnCount": 6
+    },
+    {
+      "questionId": "conv-49_q62",
+      "category": "single_hop",
+      "conversationId": "conv-49",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0.125,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-43_q1",
+      "category": "single_hop",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-49_q37",
+      "category": "single_hop",
+      "conversationId": "conv-49",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.8571428571428571,
+      "top5Coverage": 0.2857142857142857,
+      "goldTurnCount": 7
+    },
+    {
+      "questionId": "conv-44_q24",
+      "category": "single_hop",
+      "conversationId": "conv-44",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-41_q7",
+      "category": "single_hop",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-50_q56",
+      "category": "single_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-49_q64",
+      "category": "single_hop",
+      "conversationId": "conv-49",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.625,
+      "top5Coverage": 0,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-50_q33",
+      "category": "single_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-41_q19",
+      "category": "single_hop",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-43_q30",
+      "category": "single_hop",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.625,
+      "top5Coverage": 0.375,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-44_q49",
+      "category": "single_hop",
+      "conversationId": "conv-44",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-50_q41",
+      "category": "single_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-42_q80",
+      "category": "single_hop",
+      "conversationId": "conv-42",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.6428571428571429,
+      "goldTurnCount": 7
+    },
+    {
+      "questionId": "conv-41_q32",
+      "category": "single_hop",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-41_q47",
+      "category": "single_hop",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.625,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-42_q46",
+      "category": "single_hop",
+      "conversationId": "conv-42",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.75,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-44_q41",
+      "category": "single_hop",
+      "conversationId": "conv-44",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.75,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-44_q54",
+      "category": "single_hop",
+      "conversationId": "conv-44",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.4,
+      "goldTurnCount": 5
+    },
+    {
+      "questionId": "conv-26_q51",
+      "category": "single_hop",
+      "conversationId": "conv-26",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.6666666666666666,
+      "top5Coverage": 0.3333333333333333,
+      "goldTurnCount": 3
+    },
+    {
+      "questionId": "conv-49_q33",
+      "category": "single_hop",
+      "conversationId": "conv-49",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-43_q65",
+      "category": "single_hop",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.7,
+      "goldTurnCount": 5
+    },
+    {
+      "questionId": "conv-50_q23",
+      "category": "single_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.125,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-41_q21",
+      "category": "single_hop",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-50_q6",
+      "category": "single_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-42_q56",
+      "category": "single_hop",
+      "conversationId": "conv-42",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-43_q52",
+      "category": "single_hop",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-26_q78",
+      "category": "single_hop",
+      "conversationId": "conv-26",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0.75,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-43_q17",
+      "category": "single_hop",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.9,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 5
+    },
+    {
+      "questionId": "conv-50_q47",
+      "category": "single_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-26_q39",
+      "category": "single_hop",
+      "conversationId": "conv-26",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.625,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-48_q20",
+      "category": "single_hop",
+      "conversationId": "conv-48",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.7,
+      "top5Coverage": 0.1,
+      "goldTurnCount": 5
+    },
+    {
+      "questionId": "conv-47_q22",
+      "category": "single_hop",
+      "conversationId": "conv-47",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.16666666666666666,
+      "goldTurnCount": 3
+    },
+    {
+      "questionId": "conv-42_q53",
+      "category": "single_hop",
+      "conversationId": "conv-42",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-30_q29",
+      "category": "single_hop",
+      "conversationId": "conv-30",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-47_q3",
+      "category": "single_hop",
+      "conversationId": "conv-47",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-48_q14",
+      "category": "single_hop",
+      "conversationId": "conv-48",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.375,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-47_q26",
+      "category": "single_hop",
+      "conversationId": "conv-47",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.875,
+      "top5Coverage": 0.375,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-43_q9",
+      "category": "single_hop",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.625,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-50_q54",
+      "category": "single_hop",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-43_q35",
+      "category": "single_hop",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-43_q11",
+      "category": "single_hop",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-26_q47",
+      "category": "single_hop",
+      "conversationId": "conv-26",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-44_q51",
+      "category": "single_hop",
+      "conversationId": "conv-44",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.375,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-42_q61",
+      "category": "single_hop",
+      "conversationId": "conv-42",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.16666666666666666,
+      "goldTurnCount": 3
+    },
+    {
+      "questionId": "conv-41_q57",
+      "category": "single_hop",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.875,
+      "top5Coverage": 0.25,
+      "goldTurnCount": 4
+    },
+    {
+      "questionId": "conv-26_q70",
+      "category": "single_hop",
+      "conversationId": "conv-26",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.75,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-48_q19",
+      "category": "single_hop",
+      "conversationId": "conv-48",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-41_q62",
+      "category": "single_hop",
+      "conversationId": "conv-41",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.75,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-43_q96",
+      "category": "open_domain",
+      "conversationId": "conv-43",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-48_q138",
+      "category": "open_domain",
+      "conversationId": "conv-48",
+      "bucket": "retrieved_in_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 1,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-48_q115",
+      "category": "open_domain",
+      "conversationId": "conv-48",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-47_q73",
+      "category": "open_domain",
+      "conversationId": "conv-47",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-43_q97",
+      "category": "open_domain",
+      "conversationId": "conv-43",
+      "bucket": "retrieved_in_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 1,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-30_q76",
+      "category": "open_domain",
+      "conversationId": "conv-30",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.5,
+      "top5Coverage": 0.5,
+      "goldTurnCount": 2
+    },
+    {
+      "questionId": "conv-47_q97",
+      "category": "open_domain",
+      "conversationId": "conv-47",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.5,
+      "top5Coverage": 0,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-26_q124",
+      "category": "open_domain",
+      "conversationId": "conv-26",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 0.5,
+      "top5Coverage": 0,
+      "goldTurnCount": 1
+    },
+    {
+      "questionId": "conv-50_q152",
+      "category": "open_domain",
+      "conversationId": "conv-50",
+      "bucket": "in_memory_but_not_top5",
+      "memoryCoverage": 1,
+      "top5Coverage": 0,
+      "goldTurnCount": 1
+    }
+  ]
+}

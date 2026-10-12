@@ -147,3 +147,16 @@ Boundary: this is a diagnosis and never a score. The full run writes
 `assertRetrievalOnlyDisclosure` fails closed if a judge-score or baseline claim is ever
 attached to it. The mock-derived dev-slice caches on disk are not usable as evidence for
 this analysis; it needs a real retrieval run.
+
+`RUNTIME_MEMORY_RETRIEVAL_ONLY=1` (commit `d394368cf`) runs that diagnosis with no model
+credential at all: heuristic-only classification, no self-ask, no L1/L2 escalation, no
+generation, no judge; it writes `retrieval-diagnostic.json` plus `retrieval-only.json` and
+never the measured report. The CLI strips every credential from the child so a model call
+is impossible, and it fails if the report path exists.
+
+First real run (dev slice, 150 questions, agent-driven): gold coverage in memory 0.8947
+versus 0.4079 in the retrieved top-5; `absent_from_memory` 0/150, `in_memory_but_not_top5`
+136/150, `retrieved_in_top5` 12/150; temporal top-5 coverage 0.4785 against 0.4152 for the
+other categories. Retained under
+`artifacts/p0-memory-integrity-20261009/retrieval-only-run-01/` with per-file sha256. That
+is the dev slice at L0, not the 500-question sample and not the final assembled context.

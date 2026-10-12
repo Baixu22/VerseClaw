@@ -3,9 +3,10 @@
 - Date: 2026-10-13
 - Issue in scope: #136 (temporal retrieval under comparable conditions)
 - `driven_by: agent`; actor: `codex`
-- Status: **not implemented.** This record captures what the implementation must satisfy
-  and the two shortcuts that were investigated and rejected, so the work is not redone
-  and the number the mode reports is not fabricated.
+- Status: **implemented** (commit `d394368cf`) and exercised once for real
+  (`artifacts/p0-memory-integrity-20261009/retrieval-only-run-01/`). The design section below
+  is kept verbatim because it is the contract the implementation follows; the two rejected
+  shortcuts are still rejected.
 
 ## Why the mode is needed
 
@@ -83,3 +84,26 @@ run's retrieval. The label has to match the stage.
 - `locomo-full-500-report.json` does not exist after the run, and
   `eval:runtime-memory:locomo:verify` still exits non-zero.
 - A unit test fails if the mode ever writes the verified report path.
+
+## Implementation and first real run (2026-10-13)
+
+`RUNTIME_MEMORY_RETRIEVAL_ONLY=1` / `--retrieval-only` landed in `d394368cf`. The CLI
+strips every credential, base URL and model name from the child, so a model call is
+impossible rather than merely unused, and it refuses to finish if
+`locomo-full-500-report.json` exists.
+
+First real run: dev slice, 150 questions, no model credential, 32 s of work, heap limit
+4288 MB (the Node default) with peak RSS ~1198 MB.
+
+| Metric | Value |
+| --- | --- |
+| gold coverage in extracted memory | 0.8947 |
+| gold coverage in retrieved top-5 | 0.4079 |
+| `absent_from_memory` | 0 of 150 |
+| `in_memory_but_not_top5` | 136 of 150 |
+| `retrieved_in_top5` | 12 |
+| temporal top-5 coverage vs others | 0.4785 vs 0.4152 (+0.0890) |
+
+Read with the boundaries above: on this slice the loss is ranking, not extraction, and
+temporal is not the worst category. It is the dev slice at L0, so it does not describe
+the 500-question sample or the final assembled context.
