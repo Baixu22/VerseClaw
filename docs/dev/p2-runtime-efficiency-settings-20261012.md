@@ -57,19 +57,36 @@ healthy zero — this is the same boundary the
 | `pnpm run i18n:lint` | passed |
 | `pnpm run comms:replay` + `comms:compare` | exit 0 (all PASS) |
 | `harness validate` (this spec + the archived concurrency specs) | valid |
+| `node node_modules/@playwright/test/cli.js test tests/e2e/settings-efficiency-sampling.spec.ts` | 1 passed (x3) |
 
 ### Electron E2E
 
 `tests/e2e/settings-efficiency-sampling.spec.ts` covers the switch and the
-readout. **It could not be executed in this environment**: `vite build` fails
-with a reproducible esbuild temp-file error
-(`[vite:esbuild-transpile] remove ...: Access is denied`). The identical failure
-reproduces on a clean checkout of merged `origin/main` with no #161 code, so it
-is an environment/toolchain defect, not this change. GitHub Actions cannot run
-it either — every job fails to start because of an account billing/spending
-limit.
+readout in a real Electron boot: the Developer switch is unlocked, the toggle is
+flipped off and on, each state is read back through
+`hostApi.efficiency.getState`, and the fail-closed `not sampled` readout is
+asserted before the first 5s sample.
 
-Executed renderer coverage of the same interaction is provided instead by
+**Result: 1 passed** (run three times on 2026-10-12, exit 0 each time). Log:
+`D:/ClawX-work/p2-161-efficiency-settings-20261012/16-e2e-final-after-acl-fix.log`.
+
+The spec initially could not run because `vite build` failed with
+`[vite:esbuild-transpile] remove ...: Access is denied`. The root cause was
+isolated on the authoring host and is **not** a repository or change defect: the
+pnpm store copy of `@esbuild/win32-x64@0.27.4`'s `esbuild.exe` carried a Windows
+**Low mandatory integrity label** (SACL). The esbuild service process therefore
+inherited Low IL and could not unlink the transform temp file that Node created
+at Medium IL. Replacing the labelled binary with a byte-identical clean copy
+(`esbuild.exe` SHA-256 `39EE9D16...E337A7`, matching the registry artefact) made
+the unmodified tree build and pass E2E. `node_modules/.../esbuild/lib/main.js`
+is byte-identical to the pristine 0.27.4 package (SHA-256
+`578F8144805EC3681CB318F0AAD0C8F6EDE19A78BC8CE75F85B1B31D2B35C05A`), so no
+esbuild source was patched to obtain this result.
+
+GitHub Actions E2E still cannot substitute for local evidence: every job fails to
+start because of an account billing/spending limit.
+
+Executed renderer coverage of the same interaction also exists in
 `tests/unit/efficiency-sampling-panel.test.tsx` (jsdom): fail-closed readout,
 measured readout, and the toggle persisting through `host-api`.
 
