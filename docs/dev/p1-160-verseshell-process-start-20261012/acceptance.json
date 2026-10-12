@@ -99,13 +99,13 @@
   "bindings": [
     {
       "path": "openclaw_runtime/src/agents/verseshell/governed-process.ts",
-      "sha256": "1cef46f999e541d7cfc1493870d21d8fd6e5aa2912522863587ac78b9c8d3f24",
-      "bytes": 22075
+      "sha256": "8229ce17d18fcf1b9c5e2d67d2bf3db199873248a059751851c286fbe8eb9a67",
+      "bytes": 21490
     },
     {
       "path": "openclaw_runtime/src/agents/verseshell/governed-process.real-limits.test.ts",
-      "sha256": "59e774a26648e88f60962a0b4f4559860d26a1022163c8a6c5d01dde05a280d8",
-      "bytes": 7903
+      "sha256": "340ff9d77054229ef04c0eef459d8c0fc8e21fd802efce8ec09a26e49609889a",
+      "bytes": 7715
     },
     {
       "path": "harness/specs/tasks/p1-160-verseshell-process-start-20261012.md",
@@ -119,13 +119,13 @@
     },
     {
       "path": "docs/dev/p1-155-windows-job-limits-20261011.md",
-      "sha256": "05ddb15373bbb80ca2ac336dec2cd3faf34bb355ceeb91081c79ff073e7f3c1b",
-      "bytes": 7224
+      "sha256": "94b315c251cb35f301ebc14c57551cf12d94ab6dd18e26bfe22e8cf64f8fefe3",
+      "bytes": 7105
     },
     {
       "path": "scripts/repository-artifacts.json",
-      "sha256": "3a860e5d0b19137ba48238581e3ec03a311a9676c7e954b5139847e81951bab4",
-      "bytes": 117674
+      "sha256": "71b7481bc49fad0bf3f2d7c4e2e49be43996daee801a02b0e32e0cf2ed91e91f",
+      "bytes": 115924
     }
   ],
   "boundaries": [
