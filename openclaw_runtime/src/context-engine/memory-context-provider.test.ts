@@ -101,4 +101,39 @@ describe("runtime memory context provider", () => {
       },
     });
   });
+
+  it("#185 reports every omitted fact, not only the token-budget drops", async () => {
+    const result = await createRuntimeMemoryProviderResult(
+      {
+        facts: [fact("a", "alpha"), fact("b", "beta"), fact("c", "gamma")],
+      },
+      { metadata: { memoryQuery: { limit: 1 }, tokenBudget: 4096 } },
+    );
+
+    expect(result.summary.items).toHaveLength(1);
+    expect(result.summary.totalFactCount).toBe(3);
+    expect(result.summary.matchedFactCount).toBe(3);
+    // The two facts cut by `limit` never reached buildSummary, so the old
+    // implementation reported 0 here; the honest total is 2.
+    expect(result.summary.omittedFactCount).toBe(2);
+    expect(result.summary.slotOmittedFactCount).toBe(2);
+    expect(result.summary.tokenBudgetOmittedFactCount).toBe(0);
+    expect(result.summary.omittedFactCount).toBe(
+      (result.summary.totalFactCount ?? 0) - result.summary.items.length,
+    );
+  });
+
+  it("#185 keeps the omitted count honest when the token budget is the limit", async () => {
+    const result = await createRuntimeMemoryProviderResult(
+      {
+        facts: [fact("a", "alpha"), fact("b", "beta"), fact("c", "gamma")],
+      },
+      { metadata: { memoryQuery: { limit: 24 }, tokenBudget: 1 } },
+    );
+
+    expect(result.summary.omittedFactCount).toBe(
+      (result.summary.totalFactCount ?? 0) - result.summary.items.length,
+    );
+    expect(result.summary.tokenBudgetOmittedFactCount).toBeGreaterThan(0);
+  });
 });
