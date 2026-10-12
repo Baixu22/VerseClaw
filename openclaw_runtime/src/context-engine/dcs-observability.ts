@@ -40,6 +40,14 @@ export type DcsObservabilitySnapshot = {
   injectionBudgetDrops: number;
   injectionBudgetRequestedChars: number;
   injectionBudgetAppliedChars: number;
+  /**
+   * #184: assembles that fell back to the smaller per-assemble budget because
+   * the caller did not supply a `turnId`, plus the ceiling that actually
+   * applied. A silent 3x budget reduction is exactly the kind of invisible
+   * degradation this project treats as a defect, so it is counted.
+   */
+  injectionBudgetFallbacks: number;
+  injectionBudgetFallbackChars: number;
   /** FP-P0-05: turn-scoped shared budget across ALL injection sources. */
   turnInjectionTurns: number;
   turnInjectionKilledTurns: number;
@@ -90,6 +98,8 @@ const ZERO: DcsObservabilitySnapshot = {
   injectionBudgetDrops: 0,
   injectionBudgetRequestedChars: 0,
   injectionBudgetAppliedChars: 0,
+  injectionBudgetFallbacks: 0,
+  injectionBudgetFallbackChars: 0,
   turnInjectionTurns: 0,
   turnInjectionKilledTurns: 0,
   turnInjectionAppliedChars: 0,
@@ -216,6 +226,24 @@ class DcsObservabilityRegistry {
     if (params.alert) {
       this.#counters.turnInjectionDropAlerts += 1;
     }
+  }
+
+  /**
+   * #184: record one injection that degraded to the per-assemble fallback
+   * budget because no `turnId` was available. `effectiveLimit` is the ceiling
+   * that actually applied; `turnLimit` is what a turnId-carrying call would
+   * have received, so the delta is auditable.
+   */
+  recordInjectionBudgetFallback(params: {
+    effectiveLimit: number;
+    turnLimit: number;
+    scope: string;
+  }): void {
+    this.#counters.injectionBudgetFallbacks += 1;
+    this.#counters.injectionBudgetFallbackChars += Math.max(
+      0,
+      Math.floor(params.effectiveLimit),
+    );
   }
 
   recordInjectionBudgetOverflow(params: {

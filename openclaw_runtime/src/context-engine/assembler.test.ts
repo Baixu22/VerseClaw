@@ -129,8 +129,35 @@ describe("DCS Assembler", () => {
       { "runtime.contextBlock.compass.enabled": true },
     );
 
-    expect(result).toEqual({ output: "same", selected_handlers: [] });
+    expect(result.output).toBe("same");
+    expect(result.selected_handlers).toEqual([]);
+    // #184: an assemble without a turnId now reports the smaller per-assemble
+    // fallback budget on the result instead of degrading silently.
+    expect(result.injection_budget).toMatchObject({
+      mode: "per-assemble-fallback",
+      totalChars: KNOWLEDGE_INJECTION_CHAR_BUDGET,
+      fallbackReason: "missing-turn-id",
+    });
     expect(buildCompass).not.toHaveBeenCalled();
+  });
+
+  it("#184 reports the turn ledger budget when a turnId is present", async () => {
+    const buildCompass = vi.fn(async () => ({ iFrameRefreshed: false }));
+    const assembler = new Assembler({ buildCompass });
+    const turnId = "assembler-injection-budget-turn";
+
+    try {
+      const result = await assembler.assemble(
+        { session_id: "main", turnId },
+        { existing_output: "same" },
+        { "runtime.contextBlock.compass.enabled": false },
+      );
+
+      expect(result.injection_budget).toMatchObject({ mode: "turn-ledger" });
+      expect(result.injection_budget?.fallbackReason).toBeUndefined();
+    } finally {
+      endTurnInjectionBudget(turnId);
+    }
   });
 
   it("working_memory flag 开启后只读 BlockStore 并注入 Recent Actions", async () => {
