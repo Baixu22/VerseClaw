@@ -154,6 +154,10 @@ export type ContextOrchestratorInput = {
   markdownSources?: VtokenMarkdownSource[];
   toolSchemas?: Array<Record<string, unknown>>;
   memoryEntries?: Array<Record<string, unknown>>;
+  /** FP-P1-182: paths the system prompt already renders in full. */
+  alreadyRenderedSourcePaths?: readonly string[];
+  /** FP-P1-182: tool names the system prompt already renders in `## Tooling`. */
+  alreadyRenderedToolNames?: readonly string[];
   /** Lazy VToken memory projection; invoked only after flag and kill-switch gates pass. */
   memoryEntriesFactory?: () => Promise<Array<Record<string, unknown>>>;
   /**
@@ -825,6 +829,8 @@ export async function computeContextExtraSystemPrompt(
             markdownSources: input.markdownSources,
             toolSchemas: input.toolSchemas,
             memoryEntries,
+            alreadyRenderedSourcePaths: input.alreadyRenderedSourcePaths,
+            alreadyRenderedToolNames: input.alreadyRenderedToolNames,
           },
           log,
           input.vtokenClient,

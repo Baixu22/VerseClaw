@@ -2100,6 +2100,13 @@ export async function runEmbeddedAttempt(
         taskHint: params.prompt,
         markdownSources: vtokenMarkdownSources,
         toolSchemas: vtokenToolSchemas,
+        // FP-P1-182: the bootstrap files above are rendered in full by the system
+        // prompt builder and the tools above are rendered under `## Tooling`.
+        // Packing them into `## Working Context` again adds no information, so
+        // tell VToken what the prompt already carries (reusing the same arrays
+        // the #182 overlap measurement reads, so the two cannot drift).
+        alreadyRenderedSourcePaths: vtokenMarkdownSources.map((source) => source.sourcePath),
+        alreadyRenderedToolNames: vtokenToolSchemas.map((schema) => schema.name),
         ...(!contextBlockProjectionEnabled
           ? {
               memoryEntriesFactory: () =>
