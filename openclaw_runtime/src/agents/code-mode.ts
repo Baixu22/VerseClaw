@@ -247,6 +247,7 @@ export function resolveCodeModeConfig(config?: OpenClawConfig, agentId?: string)
 function toToolSearchConfig(config: CodeModeConfig): ToolSearchConfig {
   return {
     enabled: true,
+    auto: false,
     mode: "tools",
     codeTimeoutMs: config.timeoutMs,
     searchDefaultLimit: config.searchDefaultLimit,

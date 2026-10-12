@@ -444,6 +444,12 @@ export const FIELD_HELP: Record<string, string> = {
     "Compact large OpenClaw, MCP, and client tool catalogs behind one search/call surface. Set to true for the default code bridge or use the object form to choose the structured fallback.",
   "tools.toolSearch.enabled":
     "Enables Tool Search. When on, OpenClaw hides large tool catalogs behind `tool_search_code` or structured search/describe/call tools during embedded runtime runs.",
+  "tools.toolSearch.auto":
+    "Automatically enable Tool Search when the effective tool count or schema size exceeds the configured auto thresholds. Default: false.",
+  "tools.toolSearch.autoMinTools":
+    "Minimum effective tool count for automatic Tool Search activation (default: 20).",
+  "tools.toolSearch.autoMinSchemaBytes":
+    "Minimum serialized tool schema bytes for automatic Tool Search activation (default: 16000).",
   "tools.toolSearch.mode":
     'Choose the model-facing surface: "code" exposes `tool_search_code`; "tools" exposes structured search/describe/call fallback tools.',
   "tools.toolSearch.codeTimeoutMs":

@@ -39,6 +39,8 @@ const TOOL_SEARCH_CONTROL_TOOL_NAMES = new Set([
 const DEFAULT_CODE_TIMEOUT_MS = 10_000;
 const DEFAULT_SEARCH_LIMIT = 8;
 const DEFAULT_MAX_SEARCH_LIMIT = 20;
+const DEFAULT_AUTO_MIN_TOOLS = 20;
+const DEFAULT_AUTO_MIN_SCHEMA_BYTES = 16_000;
 const MAX_REUSABLE_CATALOG_SNAPSHOTS = 256;
 
 type ToolSearchMode = "code" | "tools";
@@ -77,10 +79,18 @@ export type ToolSearchTargetTranscriptProjection = {
 /** Resolved Tool Search config after defaults, limits, and runtime support checks. */
 export type ToolSearchConfig = {
   enabled: boolean;
+  /** Auto mode is requested, even when the current tool set is below its threshold. */
+  auto: boolean;
   mode: ToolSearchMode;
   codeTimeoutMs: number;
   searchDefaultLimit: number;
   maxSearchLimit: number;
+};
+
+/** Runtime tool-set measure used by opt-in automatic Tool Search activation. */
+export type ToolSearchScale = {
+  toolCount?: number;
+  schemaBytes?: number;
 };
 
 /** Per-run/session context used by Tool Search control tools. */
@@ -446,10 +456,6 @@ function readToolSearchConfig(config?: OpenClawConfig): Record<string, unknown> 
   return isRecord(toolSearch) ? toolSearch : {};
 }
 
-function readBoolean(value: unknown, fallback: boolean): boolean {
-  return typeof value === "boolean" ? value : fallback;
-}
-
 function readInteger(value: unknown, fallback: number): number {
   return typeof value === "number" && Number.isInteger(value) && value > 0 ? value : fallback;
 }
@@ -468,20 +474,66 @@ function resolveMinCodeTimeoutMs(): number {
   return toolSearchMinCodeTimeoutMsForTest ?? 1000;
 }
 
-export function resolveToolSearchConfig(config?: OpenClawConfig): ToolSearchConfig {
+function estimateToolSearchScale(
+  tools: ReadonlyArray<{ name?: unknown; description?: unknown; parameters?: unknown }>,
+): ToolSearchScale {
+  let toolCount = 0;
+  let schemaBytes = 0;
+  for (const tool of tools) {
+    if (typeof tool.name === "string" && TOOL_SEARCH_CONTROL_TOOL_NAMES.has(tool.name)) {
+      continue;
+    }
+    toolCount += 1;
+    try {
+      schemaBytes += JSON.stringify({
+        name: tool.name,
+        description: tool.description,
+        parameters: tool.parameters,
+      }).length;
+    } catch {
+      schemaBytes += 512;
+    }
+  }
+  return { toolCount, schemaBytes };
+}
+
+export function resolveToolSearchConfig(
+  config?: OpenClawConfig,
+  scale?: ToolSearchScale,
+): ToolSearchConfig {
   const raw = readToolSearchConfig(config);
   const rawMode = typeof raw.mode === "string" ? raw.mode : "code";
   const requestedMode: ToolSearchMode =
     rawMode === "tools" || rawMode === "code" ? rawMode : "code";
   const mode: ToolSearchMode =
     requestedMode === "code" && !isToolSearchCodeModeSupported() ? "tools" : requestedMode;
-  const configured = Object.keys(raw).some((key) => key !== "enabled");
+  const auto = raw.auto === true;
+  const configured = Object.keys(raw).some(
+    (key) =>
+      key !== "enabled" &&
+      key !== "auto" &&
+      key !== "autoMinTools" &&
+      key !== "autoMinSchemaBytes",
+  );
+  const autoMinTools = readInteger(raw.autoMinTools, DEFAULT_AUTO_MIN_TOOLS);
+  const autoMinSchemaBytes = readInteger(raw.autoMinSchemaBytes, DEFAULT_AUTO_MIN_SCHEMA_BYTES);
+  const autoEligible =
+    auto &&
+    ((scale?.toolCount ?? 0) >= autoMinTools || (scale?.schemaBytes ?? 0) >= autoMinSchemaBytes);
   const maxSearchLimit = Math.max(
     1,
     Math.min(50, readInteger(raw.maxSearchLimit, DEFAULT_MAX_SEARCH_LIMIT)),
   );
   return {
-    enabled: readBoolean(raw.enabled, configured),
+    enabled:
+      raw.enabled === true
+        ? true
+        : raw.enabled === false
+          ? false
+          : auto
+            ? autoEligible
+            : configured,
+    auto,
     mode,
     codeTimeoutMs: Math.max(
       resolveMinCodeTimeoutMs(),
@@ -899,7 +951,7 @@ export function applyToolSearchCatalog(params: {
   catalogRegistered: boolean;
   catalogReused: boolean;
 } {
-  const config = resolveToolSearchConfig(params.config);
+  const config = resolveToolSearchConfig(params.config, estimateToolSearchScale(params.tools));
   return applyToolCatalogCompaction({
     ...params,
     enabled: config.enabled,
@@ -921,7 +973,7 @@ export function addClientToolsToToolSearchCatalog(params: {
 }): { tools: ToolDefinition[]; compacted: boolean; catalogToolCount: number } {
   return addClientToolsToToolCatalog({
     ...params,
-    enabled: resolveToolSearchConfig(params.config).enabled,
+    enabled: resolveToolSearchConfig(params.config, estimateToolSearchScale(params.tools)).enabled,
   });
 }
 
@@ -1301,7 +1353,7 @@ export function applyToolCatalogCompaction(params: {
 } {
   if (!params.enabled) {
     return {
-      tools: params.tools,
+      tools: params.tools.filter((tool) => !TOOL_SEARCH_CONTROL_TOOL_NAMES.has(tool.name)),
       compacted: false,
       catalogToolCount: 0,
       catalogRegistered: false,

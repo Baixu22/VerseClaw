@@ -676,6 +676,9 @@ const ToolSearchSchema = z
     z
       .object({
         enabled: z.boolean().optional(),
+        auto: z.boolean().optional(),
+        autoMinTools: z.number().int().positive().optional(),
+        autoMinSchemaBytes: z.number().int().positive().optional(),
         mode: z.enum(["code", "tools"]).optional(),
         codeTimeoutMs: z.number().int().positive().optional(),
         searchDefaultLimit: z.number().int().positive().optional(),

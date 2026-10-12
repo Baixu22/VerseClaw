@@ -694,7 +694,8 @@ export function createOpenClawCodingTools(options?: {
   const forceHeartbeatTool = options?.forceHeartbeatTool === true || enableHeartbeatTool;
   const toolSearchConfig = resolveToolSearchConfig(options?.config);
   const toolSearchControlsEnabled =
-    options?.includeToolSearchControls === true && toolSearchConfig.enabled;
+    options?.includeToolSearchControls === true &&
+    (toolSearchConfig.enabled || toolSearchConfig.auto);
   const toolSearchControlAllowlist = toolSearchControlsEnabled
     ? [
         TOOL_SEARCH_CODE_MODE_TOOL_NAME,

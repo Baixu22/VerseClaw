@@ -1264,7 +1264,10 @@ export async function runEmbeddedAttempt(
       !isRawModelRun &&
       params.toolsAllow?.length !== 0 &&
       !codeModeControlsEnabledForRun &&
-      resolveToolSearchConfig(toolSearchRuntimeConfig).enabled;
+      (() => {
+        const config = resolveToolSearchConfig(toolSearchRuntimeConfig);
+        return config.enabled || config.auto;
+      })();
     const effectiveToolsAllow =
       toolSearchControlsEnabledForRun && toolsAllowWithForcedRuntimeTools
         ? [
