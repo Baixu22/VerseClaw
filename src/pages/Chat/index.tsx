@@ -736,8 +736,13 @@ function ProjectSessionHeader({
                     </span>
                     <span className="block truncate font-mono text-2xs text-muted-foreground">{session.key}</span>
                     {forkSourceSessionKey && (
-                      <span className="block truncate text-2xs text-muted-foreground">
-                        {t('session.lineage.forkedFrom', { session: forkSourceSessionKey })}
+                      <span
+                        className="block truncate text-2xs text-muted-foreground"
+                        data-testid="chat-session-lineage"
+                      >
+                        {t('session.lineage.forkedFrom', {
+                          session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
+                        })}
                       </span>
                     )}
                   </span>

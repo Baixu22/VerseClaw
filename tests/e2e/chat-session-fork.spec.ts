@@ -452,7 +452,12 @@ test.describe('Verse Claw chat session fork', () => {
       await expect(page.getByText('Fork should preserve the active transcript branch.')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('chat-composer-input')).toHaveValue(SOURCE_DRAFT);
       await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
-      await expect(page.getByText(`Forked from ${SOURCE_SESSION_KEY}`)).toBeVisible();
+      // #180: the lineage line names the parent by its display name, not the raw
+      // session key (the key is already shown on the line above it).
+      const lineageLine = page.getByTestId('chat-session-lineage');
+      await expect(lineageLine).toBeVisible();
+      await expect(lineageLine).toContainText('main');
+      await expect(lineageLine).not.toContainText(SOURCE_SESSION_KEY);
       await page.keyboard.press('Escape');
       await expect.poll(async () => app.evaluate(() => (
         (globalThis as typeof globalThis & { __forkCalls?: { chatSend: number } }).__forkCalls?.chatSend ?? 0
