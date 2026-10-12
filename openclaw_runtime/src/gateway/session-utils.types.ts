@@ -44,6 +44,8 @@ export type GatewaySessionRow = {
   spawnedCwd?: string;
   forkedFromParent?: boolean;
   spawnDepth?: number;
+  /** #179: spawn-chain origin, inherited at spawn time (see SessionEntry). */
+  spawnRootSessionKey?: string;
   subagentRole?: SessionEntry["subagentRole"];
   subagentControlScope?: SessionEntry["subagentControlScope"];
   kind: "direct" | "group" | "global" | "unknown";

@@ -109,6 +109,48 @@ function resolveEntryForSessionKey(params: {
   return undefined;
 }
 
+/**
+ * #179: the top-most ancestor session key reachable from `sessionKey` through
+ * `spawnedBy` links, or `undefined` when the session has no recorded parent.
+ *
+ * Reads the same persisted store as the depth lookup (restart-safe) and is
+ * cycle-safe: a corrupt `spawnedBy` loop terminates instead of recursing. The
+ * result is the chain's origin, which is what a session-event consumer needs to
+ * group spawned sessions without walking the chain itself.
+ */
+export function getSubagentRootFromSessionStore(
+  sessionKey: string | undefined | null,
+  opts?: {
+    cfg?: OpenClawConfig;
+    store?: Record<string, SessionDepthEntry>;
+  },
+): string | undefined {
+  const raw = (sessionKey ?? "").trim();
+  if (!raw) {
+    return undefined;
+  }
+  const cache = new Map<string, Record<string, SessionDepthEntry>>();
+  const visited = new Set<string>();
+  let current = normalizeSubagentSessionKey(raw);
+  let root: string | undefined;
+  while (current && !visited.has(current)) {
+    visited.add(current);
+    const entry = resolveEntryForSessionKey({
+      sessionKey: current,
+      cfg: opts?.cfg,
+      store: opts?.store,
+      cache,
+    });
+    const parent = normalizeSubagentSessionKey(entry?.spawnedBy);
+    if (!parent || visited.has(parent)) {
+      break;
+    }
+    root = parent;
+    current = parent;
+  }
+  return root;
+}
+
 export function getSubagentDepthFromSessionStore(
   sessionKey: string | undefined | null,
   opts?: {

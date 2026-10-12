@@ -5,7 +5,10 @@
  * coverage, so a regression there would only surface as a runaway spawn chain.
  */
 import { describe, expect, it } from 'vitest';
-import { getSubagentDepthFromSessionStore } from './subagent-depth.js';
+import {
+  getSubagentDepthFromSessionStore,
+  getSubagentRootFromSessionStore,
+} from './subagent-depth.js';
 import { getSubagentDepth } from '../sessions/session-key-utils.js';
 
 describe('#179 subagent spawn depth', () => {
@@ -45,5 +48,32 @@ describe('#179 subagent spawn depth', () => {
     expect(getSubagentDepth('agent:main:main')).toBe(0);
     expect(getSubagentDepth('agent:main:subagent:a')).toBe(1);
     expect(getSubagentDepth('agent:main:subagent:a:subagent:b')).toBe(2);
+  });
+});
+describe("#179 spawn chain root (depth + origin on the row)", () => {
+  it("returns the top-most ancestor reachable through spawnedBy", () => {
+    const store = {
+      'agent:main:subagent:a': { sessionId: 'a', spawnedBy: 'agent:main:main' },
+      'agent:main:subagent:b': { sessionId: 'b', spawnedBy: 'agent:main:subagent:a' },
+    };
+    expect(getSubagentRootFromSessionStore('agent:main:subagent:b', { store })).toBe(
+      'agent:main:main',
+    );
+  });
+
+  it("returns undefined when the session has no recorded parent", () => {
+    expect(getSubagentRootFromSessionStore('agent:main:main', { store: {} })).toBeUndefined();
+    expect(getSubagentRootFromSessionStore(undefined, { store: {} })).toBeUndefined();
+  });
+
+  it("terminates on a spawnedBy cycle instead of looping forever", () => {
+    const store = {
+      'agent:main:subagent:c': { sessionId: 'c', spawnedBy: 'agent:main:subagent:d' },
+      'agent:main:subagent:d': { sessionId: 'd', spawnedBy: 'agent:main:subagent:c' },
+    };
+    const root = getSubagentRootFromSessionStore('agent:main:subagent:c', { store });
+    expect(root).toBeDefined();
+    // Never reports the session as its own root.
+    expect(root).not.toBe('agent:main:subagent:c');
   });
 });

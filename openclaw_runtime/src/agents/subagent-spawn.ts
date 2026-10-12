@@ -64,7 +64,10 @@ import {
 import { resolveSubagentCapabilities } from "./subagent-capabilities.js";
 import { acquireSessionAdmissionPermit } from "../sessions/session-admission-registry.js";
 import { buildSessionDeleteOperationId } from "../sessions/session-delete-operation-id.js";
-import { getSubagentDepthFromSessionStore } from "./subagent-depth.js";
+import {
+  getSubagentDepthFromSessionStore,
+  getSubagentRootFromSessionStore,
+} from "./subagent-depth.js";
 import { buildSubagentInitialUserMessage } from "./subagent-initial-user-message.js";
 import { countActiveRunsForSession, registerSubagentRun } from "./subagent-registry.js";
 import type { TeamOrchestrationMetadata } from "./subagent-registry.types.js";
@@ -338,6 +341,11 @@ function buildDirectChildSessionPatch(patch: Record<string, unknown>): Partial<S
   }
   if (typeof patch.spawnedBy === "string" && patch.spawnedBy.trim()) {
     entry.spawnedBy = patch.spawnedBy.trim();
+  }
+  // #179: persist the chain root alongside the direct parent so a reader can
+  // group spawned sessions by origin without walking `spawnedBy`.
+  if (typeof patch.spawnRootSessionKey === "string" && patch.spawnRootSessionKey.trim()) {
+    entry.spawnRootSessionKey = patch.spawnRootSessionKey.trim();
   }
   if (typeof patch.spawnedWorkspaceDir === "string" && patch.spawnedWorkspaceDir.trim()) {
     entry.spawnedWorkspaceDir = patch.spawnedWorkspaceDir.trim();
@@ -1356,6 +1364,10 @@ export async function spawnSubagentDirect(
 
   const initialChildSessionPatch: Record<string, unknown> = {
     spawnDepth: childDepth,
+    // #179: inherit the chain root (or start one at the requester when it has no
+    // parent), so depth *and* origin are both readable from the child's row.
+    spawnRootSessionKey:
+      getSubagentRootFromSessionStore(requesterInternalKey, { cfg }) ?? requesterInternalKey,
     subagentRole: childCapabilities.role === "main" ? null : childCapabilities.role,
     subagentControlScope: childCapabilities.controlScope,
     ...inheritedToolAllowPatch(ctx.inheritedToolAllowlist),

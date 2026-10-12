@@ -244,6 +244,13 @@ export type SessionEntry = {
   sessionFile?: string;
   /** Parent session key that spawned this session (used for sandbox session-tool scoping). */
   spawnedBy?: string;
+  /**
+   * #179: the root session key of this session's spawn chain, inherited at spawn
+   * time. Reading it is O(1) and cannot recurse, so a session-event consumer can
+   * group a chain by its origin without walking `spawnedBy` links (which may span
+   * processes or contain a corrupt cycle).
+   */
+  spawnRootSessionKey?: string;
   /** Workspace inherited by spawned sessions and reused on later turns for the same child session. */
   spawnedWorkspaceDir?: string;
   /** Trusted Backend-selected workspace for a normal session. */
