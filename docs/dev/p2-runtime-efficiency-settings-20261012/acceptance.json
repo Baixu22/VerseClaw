@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "issue": 161,
+  "date": "2026-10-12",
+  "driven_by": "agent",
+  "actor": "codex",
+  "status": "landed-e2e-blocked",
+  "base": {
+    "ref": "origin/main",
+    "commit": "0f39d3ac91fc331020dd93f9c1f42d68cacf9049"
+  },
+  "candidate": {
+    "commit": "669e73513a5ec442f2191e458016dadbc6cc1fcf",
+    "tree": "0e80bebad532fabeae587031052cd7a6f100f9b3",
+    "dirty": false,
+    "node": "v24.19.0",
+    "pnpm": "11.2.2",
+    "platform": "win32"
+  },
+  "scope": "Main-process runtime efficiency sampling now has a host-api surface and a persisted Settings > Developer opt-out with a fail-closed readout. No performance claim.",
+  "tests": {
+    "files": 2,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "command": "pnpm exec vitest run tests/unit/runtime-efficiency-api.test.ts tests/unit/efficiency-sampling-panel.test.tsx"
+  },
+  "acceptanceResults": [
+    {
+      "criterion": "Settings switch can be turned on and off; disabling stops the interval work with no residual timer, and the persisted setting is read back through host-api.",
+      "status": "verified",
+      "evidence": "electron/services/efficiency-api.ts setEnabled -> stopRuntimeEfficiency/startRuntimeEfficiency + setSetting('efficiencySamplingEnabled'); tests/unit/runtime-efficiency-api.test.ts asserts persistence and running state; src/components/settings/EfficiencySamplingPanel.tsx toggles it."
+    },
+    {
+      "criterion": "host-api exposes the latest sample plus the bounded rolling summary and shed state; a read failure surfaces an error rather than a silently empty value.",
+      "status": "verified",
+      "evidence": "HostApiContract.efficiency.getState -> RuntimeEfficiencyState { enabled, running, measured, summary, shed }; RuntimeEfficiencySummary carries latest + rolling aggregates; the panel toasts toUserMessage(error) on failure instead of rendering empty data."
+    },
+    {
+      "criterion": "The renderer reads the sampler only through host-api/api-client; no new ipcRenderer.invoke or direct gateway HTTP.",
+      "status": "verified",
+      "evidence": "src/lib/host-api.ts adds hostApi.efficiency via invokeHost; the panel imports hostApi only. No ipcRenderer/Gateway HTTP added."
+    },
+    {
+      "criterion": "All four locales carry the new strings and the i18n lint passes; an Electron E2E spec covers the switch and the readout.",
+      "status": "partial",
+      "evidence": "en/zh/ja/ru keys added (13 each) and `pnpm run i18n:lint` passed. tests/e2e/settings-efficiency-sampling.spec.ts is added in the same change set but its execution is blocked by the environment esbuild failure (see blocked gates); executed jsdom coverage of the same interaction is in tests/unit/efficiency-sampling-panel.test.tsx (3 tests)."
+    },
+    {
+      "criterion": "Before any real sample the UI states 'not sampled' and never renders a healthy zero.",
+      "status": "verified",
+      "evidence": "efficiency-api collapses the sampler's zeroed pre-sample summary to null with measured:false; tests cover it at the API and panel level; the panel renders settings-efficiency-not-sampled and hides the sample/cpu readouts."
+    },
+    {
+      "criterion": "No performance improvement is claimed; no frozen product default is changed.",
+      "status": "verified",
+      "evidence": "Docs/spec claim no improvement; efficiencySamplingEnabled defaults to true, preserving the pre-existing always-on behaviour."
+    }
+  ],
+  "gates": [
+    {
+      "name": "unit-efficiency-api+panel",
+      "command": "pnpm exec vitest run tests/unit/runtime-efficiency-api.test.ts tests/unit/efficiency-sampling-panel.test.tsx",
+      "exitCode": 0,
+      "result": "6 tests passed (2 files)",
+      "log": "01-unit-efficiency.log"
+    },
+    {
+      "name": "typecheck-node",
+      "command": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "log": "02-typecheck-node.log"
+    },
+    {
+      "name": "typecheck-web",
+      "command": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "log": "03-typecheck-web.log"
+    },
+    {
+      "name": "typecheck-test",
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "log": "04-typecheck-test.log"
+    },
+    {
+      "name": "contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "log": "05-contract-check.log"
+    },
+    {
+      "name": "i18n-lint",
+      "command": "pnpm run i18n:lint",
+      "exitCode": 0,
+      "log": "06-i18n-lint.log"
+    },
+    {
+      "name": "comms-replay",
+      "command": "pnpm run comms:replay",
+      "exitCode": 0,
+      "log": "07-comms-replay.log"
+    },
+    {
+      "name": "comms-compare",
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "log": "08-comms-compare.log"
+    },
+    {
+      "name": "validate-p2-spec",
+      "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/p2-runtime-efficiency-settings-20261012.md",
+      "exitCode": 0,
+      "log": "09-validate-p2-runtime-efficiency-settings-20261012.log"
+    },
+    {
+      "name": "validate-existing-spec",
+      "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/windows-runtime-efficiency-observability-v1.md",
+      "exitCode": 0,
+      "log": "09-validate-windows-runtime-efficiency-observability-v1.log"
+    },
+    {
+      "name": "eslint-touched",
+      "command": "pnpm exec eslint <11 touched source/test files>",
+      "exitCode": 0,
+      "result": "0 errors, 1 pre-existing warning (electron/main/index.ts unrelated any)",
+      "log": "11-eslint-touched.log"
+    }
+  ],
+  "blockedGates": [
+    {
+      "name": "e2e-playwright",
+      "command": "pnpm run test:e2e tests/e2e/settings-efficiency-sampling.spec.ts",
+      "exitCode": 1,
+      "status": "blocked-by-environment",
+      "log": "10-e2e-build-blocked-local.log",
+      "detail": "vite build fails before Playwright starts: [vite:esbuild-transpile] remove C:\\...\\Temp\\esbuild-<hash>: Access is denied. esbuild (Go) cannot delete its own transform temp file. Retried 4x; also reproduced with TMPDIR pointed inside the worktree, with --target esnext, and on a clean checkout of merged origin/main with no #161 code (control build, see 12-control-build-origin-main.log). GitHub Actions E2E cannot substitute: every job fails to start ('recent account payments have failed or your spending limit needs to be increased')."
+    }
+  ],
+  "validatedSourceSha256": {
+    "shared/host-api/contract.ts": "cf8592769cba55b99ad4058907e4b64a36610003eccbdfb2f46b7f09e9fa4a6c",
+    "electron/utils/store.ts": "ccd304d83dcf1920ee2dafcab31751aae90d6e54ba782421592ac63f3ce7a44c",
+    "electron/services/efficiency-api.ts": "04ab5bbeff5a5d6ae03ea15705cd4a219a4ab63b3ea12f9151d1467ae7dd3198",
+    "electron/main/ipc-handlers.ts": "1790558f8678a03ebb134097dcad611895cc005bc3a0c59db981a70105e23a76",
+    "electron/main/index.ts": "130d7c83f81d267683a9efeee204becef7380aa1ab3ba87e353163e00e1200de",
+    "src/lib/host-api.ts": "aaba62349ac05e987cee51ca02c55ddf41aabf20be16c653ce3f34df1d3c14f1",
+    "src/components/settings/EfficiencySamplingPanel.tsx": "ca3ba6614f7bc29de4143416312289c87ee720625af6298081f8bf77e045112e",
+    "src/pages/Settings/index.tsx": "ed88d0ce68fc2d3b3a6e4d50d0c4bbfaa721588176e38dacb7aac0f895b522f7",
+    "tests/unit/runtime-efficiency-api.test.ts": "50d13f3445db0c4019e880f0976db40ab7b8d4e56ba4106b651b664278dbc95e",
+    "tests/unit/efficiency-sampling-panel.test.tsx": "79aaa657152fce984259f37a928da35931717d066e8eea5619412dd5be26b87f",
+    "tests/e2e/settings-efficiency-sampling.spec.ts": "40a5fd9b7c66fd88b266f54e533b0dd08b3d8ef643528ea5d71cb5aa3d48b37e"
+  },
+  "limitations": [
+    "The Electron Playwright spec is present but unexecuted: vite build fails with a reproducible esbuild temp-file 'Access is denied' error that also reproduces on clean origin/main (environment/toolchain defect), and GitHub Actions E2E is blocked by account billing.",
+    "Executed renderer coverage is jsdom (tests/unit/efficiency-sampling-panel.test.tsx), not a full Electron boot.",
+    "git diff --check flags CR-at-EOL on electron/main/index.ts / ipc-handlers.ts because those files are stored CRLF upstream; the same class of flag is present in the already-merged #160 commit. With core.whitespace=cr-at-eol the diff check is clean.",
+    "No performance improvement is claimed; a stored before/after artifact pair is still required."
+  ],
+  "readmeReview": {
+    "files": [
+      "README.md",
+      "README.zh-CN.md",
+      "README.ja-JP.md"
+    ],
+    "changed": false,
+    "note": "Adds a Settings > Developer toggle + readout for an existing local diagnostic. READMEs do not enumerate Settings toggles and make no efficiency-performance promise, so no textual update is required."
+  },
+  "credentialScan": {
+    "scanned": "git diff origin/main...HEAD",
+    "matches": 0,
+    "apiKeyCaptured": false,
+    "file": "credential-scan.json"
+  },
+  "rawEvidence": {
+    "archive": "D:/ClawX-work/p2-161-efficiency-settings-20261012",
+    "note": "Raw gate logs and the blocked-E2E build log are retained in the private work dir; this record binds the validated source bytes individually."
+  }
+}
