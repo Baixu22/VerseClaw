@@ -1,4 +1,5 @@
-import { existsSync } from 'node:fs';
+import { existsSync, realpathSync } from 'node:fs';
+import { resolve } from 'node:path';
 import type {
   WorkspaceTerminalOpenPayload,
   WorkspaceTerminalListPayload,
@@ -16,6 +17,7 @@ import {
   recordPermissionAudit,
 } from './permissions-api';
 import { TerminalSessionManager } from './terminal-session-manager';
+import { isTerminalResourceLeaseTimeoutError, withWorkspaceExecLease } from './resource-leases';
 import { findSessionDeleteGateBySession, tryWithSessionDeleteGateLock } from './session-delete-gate';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
@@ -320,6 +322,66 @@ async function runViaOpenClawExec(input: {
   };
 }
 
+/**
+ * Normalizes a workspace path into a stable lease key.
+ *
+ * Windows path comparison is case-insensitive and treats `/` and `\` as the
+ * same separator, so two spellings of the same workspace must map to one key.
+ * Falls back to the resolved path when the target does not exist yet.
+ */
+function resolveWorkspaceLeaseKey(workspacePath: string): string {
+  let resolved = resolve(workspacePath);
+  try {
+    resolved = realpathSync.native(resolved);
+  } catch {
+    // Target may not exist yet; the resolved path is still a stable key.
+  }
+  const normalizedSeparators = resolved.replace(/\\/g, '/');
+  return process.platform === 'win32' ? normalizedSeparators.toLowerCase() : normalizedSeparators;
+}
+
+/**
+ * Runs a Gateway exec RPC under the workspace exec lease so a single workspace
+ * cannot exceed `WORKSPACE_EXEC_CAPACITY` concurrent terminal executions.
+ *
+ * A lease timeout is reported as a stable, non-retryable terminal result with
+ * `blocked: true` rather than surfacing as a raw rejection.
+ */
+async function runViaOpenClawExecWithLease(input: {
+  gatewayManager: GatewayManager;
+  command: string;
+  timeoutMs: number;
+  cwd: string;
+  risk: WorkspaceCommandRisk;
+}): Promise<TerminalExecutionOutcome> {
+  const leaseKey = resolveWorkspaceLeaseKey(input.cwd);
+  try {
+    return await withWorkspaceExecLease(leaseKey, input.timeoutMs, () =>
+      runViaOpenClawExec(input),
+    );
+  } catch (error) {
+    if (!isTerminalResourceLeaseTimeoutError(error)) {
+      throw error;
+    }
+    return {
+      result: {
+        success: false,
+        blocked: true,
+        reason:
+          `当前工作区终端执行已达并发上限（workspaceExec capacity 2），等待 ${error.timeoutMs}ms 仍未获得资源租约，请稍后重试。`,
+        cwd: input.cwd,
+        command: input.command,
+        exitCode: null,
+        stdout: '',
+        stderr: '',
+        durationMs: error.timeoutMs,
+        risk: input.risk,
+      },
+      traceEvidence: { code: 'RUNTIME_ERROR', durationMs: error.timeoutMs },
+    };
+  }
+}
+
 export function createTerminalApi({
   gatewayManager,
   terminalManager = new TerminalSessionManager(),
@@ -371,7 +433,7 @@ export function createTerminalApi({
               requestHash: buildTerminalRequestHash(command, workspace.rootPath),
             });
             if (approved) {
-              const outcome = await runViaOpenClawExec({
+              const outcome = await runViaOpenClawExecWithLease({
                 gatewayManager,
                 command,
                 timeoutMs,
@@ -440,7 +502,7 @@ export function createTerminalApi({
         });
       }
 
-      const outcome = await runViaOpenClawExec({
+      const outcome = await runViaOpenClawExecWithLease({
         gatewayManager,
         command,
         timeoutMs,

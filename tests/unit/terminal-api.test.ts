@@ -1,4 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { resolve } from 'node:path';
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { setSandboxHighRiskPolicyLoader } from '@electron/utils/sandbox-high-risk-gate';
 
@@ -92,8 +94,14 @@ function gatewayManager(rpc = vi.fn()) {
   };
 }
 
-describe('terminal api OpenClaw exec integration', () => {
-  beforeEach(() => {
+/** Restores the default active-workspace mock after a test overrides it. */
+async function restoreActiveWorkspaceMock(): Promise<void> {
+  const { getActiveWorkspaceProfile } = await import('@electron/services/workspaces-api');
+  vi.mocked(getActiveWorkspaceProfile).mockImplementation(async () => activeWorkspace.profile);
+}
+
+describe('terminal api workspace exec lease', () => {
+  beforeEach(async () => {
     setSandboxHighRiskPolicyLoader(async () => ({
       degraded: false,
       requestedProviderId: 'policy-light',
@@ -106,6 +114,96 @@ describe('terminal api OpenClaw exec integration', () => {
     fsMocks.existsSync.mockReturnValue(true);
     fsMocks.existsSync.mockClear();
     childProcessMocks.spawn.mockClear();
+    await restoreActiveWorkspaceMock();
+  });
+
+  afterEach(async () => {
+    const { resetTerminalResourceLeasesForTest } = await import('@electron/services/resource-leases');
+    resetTerminalResourceLeasesForTest();
+  });
+
+  it('bounds concurrent terminal executions per workspace at capacity 2', async () => {
+    const resolvers: Array<(value: unknown) => void> = [];
+    const rpc = vi.fn(() => new Promise((resolve) => { resolvers.push(resolve); }));
+    const { createTerminalApi } = await import('@electron/services/terminal-api');
+    const api = createTerminalApi({ gatewayManager: gatewayManager(rpc) as never });
+
+    const first = api.run({ command: 'pwd' });
+    const second = api.run({ command: 'pwd' });
+    const third = api.run({ command: 'pwd' });
+    await vi.waitFor(() => expect(rpc).toHaveBeenCalledTimes(2));
+
+    // The third run is queued behind the lease and has not reached Gateway.
+    expect(rpc).toHaveBeenCalledTimes(2);
+    resolvers[0]({ success: true, exitCode: 0, stdout: 'a' });
+    await first;
+    await vi.waitFor(() => expect(rpc).toHaveBeenCalledTimes(3));
+    resolvers[1]({ success: true, exitCode: 0, stdout: 'b' });
+    resolvers[2]({ success: true, exitCode: 0, stdout: 'c' });
+    await expect(second).resolves.toMatchObject({ success: true, stdout: 'b' });
+    await expect(third).resolves.toMatchObject({ success: true, stdout: 'c' });
+  });
+
+  it('lets different workspaces run in parallel', async () => {
+    const { createTerminalApi } = await import('@electron/services/terminal-api');
+    const { getActiveWorkspaceProfile } = await import('@electron/services/workspaces-api');
+    const otherRoot = resolve(process.cwd(), 'openclaw_runtime');
+    fsMocks.existsSync.mockReturnValue(true);
+    const profileMock = vi.mocked(getActiveWorkspaceProfile);
+    let callCount = 0;
+    profileMock.mockImplementation(async () => {
+      callCount += 1;
+      return callCount === 1
+        ? workspace()
+        : { ...workspace(), id: 'workspace-2', rootPath: otherRoot };
+    });
+    const resolvers: Array<(value: unknown) => void> = [];
+    const rpc = vi.fn(() => new Promise((resolve) => { resolvers.push(resolve); }));
+    const api = createTerminalApi({ gatewayManager: gatewayManager(rpc) as never });
+
+    const first = api.run({ command: 'pwd' });
+    const second = api.run({ command: 'pwd' });
+    await vi.waitFor(() => expect(rpc).toHaveBeenCalledTimes(2));
+    resolvers[0]({ success: true, exitCode: 0, stdout: 'a' });
+    resolvers[1]({ success: true, exitCode: 0, stdout: 'b' });
+    await expect(first).resolves.toMatchObject({ success: true });
+    await expect(second).resolves.toMatchObject({ success: true });
+  });
+
+  it('reports a stable blocked result when the lease cannot be acquired in time', async () => {
+    const resolvers: Array<(value: unknown) => void> = [];
+    const rpc = vi.fn(() => new Promise((resolve) => { resolvers.push(resolve); }));
+    const { createTerminalApi } = await import('@electron/services/terminal-api');
+    const api = createTerminalApi({ gatewayManager: gatewayManager(rpc) as never });
+
+    // Hold both lease slots, then request a third with a short timeout.
+    const held = [api.run({ command: 'pwd' }), api.run({ command: 'pwd' })];
+    await vi.waitFor(() => expect(rpc).toHaveBeenCalledTimes(2));
+    await expect(api.run({ command: 'pwd', timeoutMs: 1_000 })).resolves.toMatchObject({
+      success: false,
+      blocked: true,
+      reason: expect.stringContaining('workspaceExec'),
+    });
+    resolvers.forEach((resolve) => resolve({ success: true, exitCode: 0, stdout: 'ok' }));
+    await Promise.all(held);
+  });
+});
+
+describe('terminal api OpenClaw exec integration', () => {
+  beforeEach(async () => {
+    setSandboxHighRiskPolicyLoader(async () => ({
+      degraded: false,
+      requestedProviderId: 'policy-light',
+      effectiveProviderId: 'policy-light',
+      runtimeLevel: 'policy',
+    }));
+    storeState.approvals = [];
+    storeState.decisionEvents = [];
+    activeWorkspace.profile = workspace();
+    fsMocks.existsSync.mockReturnValue(true);
+    fsMocks.existsSync.mockClear();
+    childProcessMocks.spawn.mockClear();
+    await restoreActiveWorkspaceMock();
   });
 
   it('delegates allowed terminal commands to OpenClaw/Gateway instead of spawning a local shell', async () => {

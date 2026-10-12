@@ -153,6 +153,18 @@ class TerminalResourceLeaseManager {
     this.drain();
   }
 
+  /** Test-only: drop all active and pending leases. */
+  resetForTest(): void {
+    for (const request of this.pending) {
+      if (request.timer) {
+        clearTimeout(request.timer);
+        request.timer = null;
+      }
+    }
+    this.pending.length = 0;
+    this.activeByKey.clear();
+  }
+
   private removePending(request: PendingExecLease): boolean {
     const index = this.pending.indexOf(request);
     if (index < 0) {
@@ -173,6 +185,11 @@ export function isTerminalResourceLeaseTimeoutError(
   error: unknown,
 ): error is TerminalResourceLeaseTimeoutError {
   return error instanceof TerminalResourceLeaseTimeoutError;
+}
+
+/** Test-only: clears lease state so suites do not leak capacity across cases. */
+export function resetTerminalResourceLeasesForTest(): void {
+  terminalResourceLeases.resetForTest();
 }
 
 export async function withWorkspaceExecLease<T>(
