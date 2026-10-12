@@ -158,10 +158,37 @@ export type DriftScoreFetcher = (sessionKey: string) => Promise<number>;
  *   1. <subject>: <objectSummary> (conf: 0.9)
  *   2. ...
  */
+/**
+ * FP-P1-182: the per-fact lines behind serializeTop5Facts, so a caller can key each fact
+ * individually (COMPASS and the runtime-memory memory pilot read the same store).
+ *
+ * The rendered text is produced from this same split, which is what makes it provable
+ * that exposing the lines changed no injected byte.
+ */
+export const TOP5_FACTS_HEADER = "[Relevant Memory]";
+
+export function splitTop5FactLines(
+  hits: readonly HybridSearchHit[],
+): Array<{ factId: string; text: string }> {
+  const entries: Array<{ factId: string; text: string }> = [];
+  for (let i = 0; i < Math.min(hits.length, 5); i += 1) {
+    const hit = hits[i];
+    const fact = hit.fact;
+    const confidence = typeof fact.confidence === "number" ? fact.confidence.toFixed(2) : "0.00";
+    const subject = fact.subject ?? "";
+    const objectSummary = fact.objectSummary ?? "";
+    // 截断 objectSummary 到 100 chars 避免 prompt 膨胀
+    const truncatedSummary =
+      objectSummary.length > 100 ? objectSummary.slice(0, 97) + "..." : objectSummary;
+    entries.push({ factId: fact.factId, text: `${i + 1}. ${subject}: ${truncatedSummary} (conf: ${confidence})` });
+  }
+  return entries;
+}
+
 export function serializeTop5Facts(hits: readonly HybridSearchHit[]): string {
   if (hits.length === 0) return "";
 
-  const lines: string[] = ["[Relevant Memory]"];
+  const lines: string[] = [TOP5_FACTS_HEADER];
   for (let i = 0; i < Math.min(hits.length, 5); i++) {
     const hit = hits[i];
     const fact = hit.fact;
@@ -293,12 +320,17 @@ export async function buildTop5FactsInjection(params: {
   embeddingProvider?: EmbeddingProviderOrNone;
   referenceTime?: number;
   topK?: number;
-}): Promise<{ text: string; factIds: string[] }> {
+}): Promise<{
+  text: string;
+  factIds: string[];
+  /** FP-P1-182: the same lines as `text`, per fact, with their fact ids. */
+  entries: Array<{ factId: string; text: string }>;
+}> {
   const { facts, userInputText } = params;
-  if (facts.length === 0 || !userInputText.trim()) return { text: "", factIds: [] };
+  if (facts.length === 0 || !userInputText.trim()) return { text: "", factIds: [], entries: [] };
 
   const topK = params.topK ?? 5;
-  if (topK <= 0) return { text: "", factIds: [] };
+  if (topK <= 0) return { text: "", factIds: [], entries: [] };
 
   try {
     const hits = await hybridSearchFactsWithEmbedding(
@@ -313,10 +345,12 @@ export async function buildTop5FactsInjection(params: {
     return {
       text: serializeTop5Facts(hits),
       factIds: hits.map((h) => h.fact.factId),
+      // FP-P1-182: per-fact lines for callers that need a fact-level identity.
+      entries: splitTop5FactLines(hits),
     };
   } catch {
     // 降级: 检索失败时不注入
-    return { text: "", factIds: [] };
+    return { text: "", factIds: [], entries: [] };
   }
 }
 
