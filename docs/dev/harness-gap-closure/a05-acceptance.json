@@ -1,0 +1,219 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-a05-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0297",
+    "packet": "A05",
+    "title": "Re-verify A5 adaptive-context-budget controlled pilot gate",
+    "source": "current-candidate unit tests (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "NO-GO",
+    "evidenceTier": "clean-candidate-local-automated-reverification",
+    "reason": "Six A5 graduation/acceptance axes and the P5 shadow/negotiation claims map to current tests and pass at the original thresholds, but criterion 3.6 remains NO-GO: ContextBudgetPlanner.replanOnResume does not exist in the current source or tests, so resume re-planning cannot be claimed."
+  },
+  "candidate": {
+    "commit": "47388bf320000a203b096992c9ddb8a3b2bca487",
+    "tree": "00bb8b7243c3a49a32a4f43bde859803868c2475",
+    "dirty": false,
+    "branch": "codex/harness-gap-a05-adaptive-context-budget-reverify-20261013",
+    "base": "fd04f0b4d1b4174bb303d91c43df04289e286b6f",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T15:27:00.000Z",
+    "finishedAt": "2026-10-13T15:33:00.000Z"
+  },
+  "criteria": {
+    "criterion1_planAdoption": {
+      "threshold": "planAdopted/(adopted+ignored) >= 0.80; ignored > 0.20 -> violate",
+      "evidence": "tests/unit/deprecation-counters.test.ts; openclaw_runtime/src/agents/agent-hooks/compaction-budget-shadow.test.ts",
+      "verdict": "PASS"
+    },
+    "criterion2_p99": {
+      "threshold": "planner p99 <= 30ms over 100 calls",
+      "evidence": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.test.ts; tests/unit/performance-budgets.test.ts",
+      "verdict": "PASS"
+    },
+    "criterion3_resumeReplan": {
+      "threshold": "ContextBudgetPlanner.replanOnResume re-executes on resume, not stale",
+      "evidence": "no ContextBudgetPlanner or replanOnResume symbol in current source/tests",
+      "verdict": "NO-GO"
+    },
+    "criterion4_waveImmutability": {
+      "threshold": "started waves are not re-planned",
+      "evidence": "tests/unit/resource-aware-wave-scheduler.test.ts",
+      "verdict": "PASS"
+    },
+    "criterion5_budgetAction": {
+      "threshold": "ignored > 20% -> degrade_to_default_budget",
+      "evidence": "tests/unit/deprecation-counters.test.ts; openclaw_runtime/src/observability/deprecation-counters.test.ts; compaction-budget-shadow.test.ts",
+      "verdict": "PASS"
+    },
+    "criterion6_cumulativeBudget": {
+      "threshold": "A1+A5+A3 cumulative per-turn smoke p99 <= 300ms",
+      "evidence": "tests/unit/performance-budgets.test.ts",
+      "verdict": "PASS"
+    },
+    "p5ThresholdClamp": {
+      "threshold": "earlier-only threshold overrides; default ladder byte-identical without a schedule",
+      "evidence": "compression-planner.test.ts",
+      "verdict": "PASS"
+    },
+    "p5BudgetShadowDiagnosticsOnly": {
+      "threshold": "budgetShadow stays diagnostics-only and never enters CompressionArtifact",
+      "evidence": "compaction-budget-shadow.test.ts",
+      "verdict": "PASS"
+    },
+    "p5NativeNegotiation": {
+      "threshold": "nativeMemory/nativeContextGating negotiation is additive and keeps provenance receipts",
+      "evidence": "context-orchestrator.test.ts",
+      "verdict": "PASS"
+    },
+    "p5RealCallSites": {
+      "threshold": "real compaction call sites deterministically increment A5 counters",
+      "evidence": "compaction-budget-shadow.test.ts imports recordEmbeddedCompactionBudgetCounters/recordSafeguardBudgetShadow",
+      "verdict": "PASS"
+    }
+  },
+  "specDriftFixed": {
+    "removed": [
+      "tests/unit/cross-area-composition.test.ts (absent in tree)",
+      "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts (absent in tree)"
+    ],
+    "added": [
+      "tests/unit/deprecation-counters.test.ts",
+      "openclaw_runtime/src/observability/deprecation-counters.test.ts",
+      "openclaw_runtime/src/agents/agent-hooks/compaction-budget-shadow.test.ts",
+      "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-planner.test.ts",
+      "openclaw_runtime/src/context-engine/context-orchestrator.test.ts",
+      "openclaw_runtime/src/agents/agent-hooks/compaction-promotion.test.ts",
+      "tests/unit/a05-a5-gate-coverage.test.ts"
+    ],
+    "guard": "tests/unit/a05-a5-gate-coverage.test.ts pins requiredTests, counter/action, wave immutability, cumulative smoke, and the explicit resume NO-GO"
+  },
+  "gates": {
+    "rootEvidence": {
+      "command": "pnpm exec vitest run tests/unit/resource-aware-wave-scheduler.test.ts tests/unit/performance-budgets.test.ts tests/unit/deprecation-counters.test.ts tests/unit/a05-a5-gate-coverage.test.ts",
+      "exitCode": 0,
+      "files": 4,
+      "tests": 36,
+      "failed": 0
+    },
+    "runtimeEvidence": {
+      "command": "pnpm --dir openclaw_runtime exec vitest run src/observability/deprecation-counters.test.ts src/agents/agent-hooks/compaction-budget-shadow.test.ts packages/agent-core/src/harness/compaction/compression-planner.test.ts src/context-engine/context-orchestrator.test.ts src/agents/agent-hooks/compaction-promotion.test.ts --reporter=dot",
+      "exitCode": 0,
+      "files": 5,
+      "tests": 44,
+      "failed": 0
+    },
+    "typecheckTest": {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "pnpm exec eslint tests/unit/a05-a5-gate-coverage.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-a05-adaptive-context-budget-pilot-reverify.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-a05-adaptive-context-budget-pilot-reverify.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "residual": {
+    "resumeReplan": "Criterion 3.6 remains NO-GO: ContextBudgetPlanner/replanOnResume is absent from current source and tests; no synthetic implementation or test was fabricated.",
+    "pilotOnly": "A5 remains a controlled pilot; no default-on/GA, no product lock change.",
+    "scope": "Deterministic unit evidence; no live provider/real-human."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "criterion-to-assertion mapping + coverage guard",
+    "detail": "Each verifiable criterion was mapped to current assertions and re-run; the guard pins requiredTests and the resume criterion as an explicit NO-GO. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "criterion1",
+      "status": "pass",
+      "note": "plan adoption/ignored rate asserted at original 20% budget."
+    },
+    {
+      "id": "criterion2",
+      "status": "pass",
+      "note": "planner p99<=30ms asserted."
+    },
+    {
+      "id": "criterion3",
+      "status": "no-go",
+      "note": "ContextBudgetPlanner.replanOnResume absent from source; residual not papered over."
+    },
+    {
+      "id": "criterion4",
+      "status": "pass",
+      "note": "started wave cannot be re-planned."
+    },
+    {
+      "id": "criterion5",
+      "status": "pass",
+      "note": "degrade_to_default_budget asserted at >20%."
+    },
+    {
+      "id": "criterion6",
+      "status": "pass",
+      "note": "A1+A5+A3 cumulative smoke p99<=300ms asserted."
+    },
+    {
+      "id": "p5-acceptance",
+      "status": "pass",
+      "note": "threshold clamp, diagnostics-only shadow, negotiation/provenance, and real counter call sites covered."
+    },
+    {
+      "id": "spec-drift-fixed",
+      "status": "pass",
+      "note": "stale legacy paths removed; requiredTests/guard updated; thresholds unchanged."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "9 files / 80 tests pass; typecheck:test, scoped lint, harness validate/dry-run and comms replay/compare pass; credential scan 0 hits; SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 4,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Criterion 3.6 resume re-execution (ContextBudgetPlanner.replanOnResume absent).",
+    "Live provider calls.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}

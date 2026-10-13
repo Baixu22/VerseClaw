@@ -1,0 +1,5 @@
+a89ed56fbfcbf15527a8a9561d75339967a01a6d2251a9679c93ad5e2480abe3  docs/dev/harness-gap-closure/a05-acceptance.json
+e243c77d90ee337af8c053509f82836b7fdbe722b7cb926761bdd95b7d980b82  docs/dev/harness-gap-closure/a05-adaptive-context-budget-gate.md
+540fbbf5a491020ee2feef2cd5bf2896c271e2fffd8a3c235e87b761c23b1065  harness/specs/tasks/a5-adaptive-context-budget-pilot.md
+3804ed7c4d349d85dd8a1d41508e221bf97e1141b2bdc9a9edf4396b78f91b30  harness/specs/tasks/harness-gap-a05-adaptive-context-budget-pilot-reverify.md
+d085356d04b26479ee911a6b3537bbc640d24c9a95b48ea4845b3e7461958c94  tests/unit/a05-a5-gate-coverage.test.ts
