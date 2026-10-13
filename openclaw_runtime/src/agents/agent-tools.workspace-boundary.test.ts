@@ -361,3 +361,57 @@ describe("coding mutation workspace boundary", () => {
     expect(await readFile(outsideFile, "utf8")).toBe("written\n");
   });
 });
+
+// S03: explicit path-escape matrix for the workspace external-write boundary.
+// Every form must be denied for external provenance with the outside file left
+// byte-for-byte unchanged. (UNC / device-namespace forms are recorded as a
+// residual in docs/dev/harness-gap-closure/s03-external-write-boundary.md rather
+// than asserted here, because they cannot be exercised deterministically.)
+describe("S03 workspace external-write path-escape matrix", () => {
+  const escapeForms: Array<[string, (input: { workspaceDir: string; outsideFile: string }) => string]> = [
+    ["relative-parent-escape", ({ workspaceDir }) => path.join(workspaceDir, "..", "outside.txt")],
+    ["absolute-outside", ({ outsideFile }) => outsideFile],
+  ];
+  if (process.platform === "win32") {
+    escapeForms.push(["win32-case-variant", ({ outsideFile }) => outsideFile.toUpperCase()]);
+  }
+
+  it.each(escapeForms)(
+    "denies %s for external provenance without modifying the target",
+    async (_label, resolvePath) => {
+      const { workspaceDir, outsideFile } = await makeWorkspace();
+      const tools = createTools({
+        workspaceDir,
+        contentProvenance: createExternalProvenance({
+          sourceKind: "web",
+          sourceId: "web:s03-escape-matrix",
+          receivedAt: "2026-08-21T00:00:00.000Z",
+        }),
+      });
+      await expect(
+        requireTool(tools, "write").execute("write-escape", {
+          path: resolvePath({ workspaceDir, outsideFile }),
+          content: "blocked\n",
+        }),
+      ).rejects.toThrow(/external or unknown provenance/);
+      expect(await readFile(outsideFile, "utf8")).toBe("original\n");
+    },
+  );
+
+  it("keeps a trusted operator external write authoritative (content preserved exactly)", async () => {
+    const { workspaceDir, outsideFile } = await makeWorkspace();
+    const tools = createTools({
+      workspaceDir,
+      contentProvenance: createTrustedProvenance({
+        sourceKind: "user-direct",
+        sourceId: "operator:s03-legal-external",
+        receivedAt: "2026-08-21T00:00:00.000Z",
+      }),
+    });
+    await requireTool(tools, "write").execute("write-legal", {
+      path: outsideFile,
+      content: "operator-written\n",
+    });
+    expect(await readFile(outsideFile, "utf8")).toBe("operator-written\n");
+  });
+});
