@@ -1,0 +1,4 @@
+0e0a4139520eec9ce4940ee7ea1e61e7eb86fd14c2e92cf0a37ccc97d368e141  docs/dev/harness-gap-closure/l01-acceptance.json
+e4414f4758a3a38703e720bb72e38d107a3d9937e0dac92891c7dd9a1423adca  docs/dev/harness-gap-closure/l01-working-context-single-source.md
+a69c499b7864a03fc22e4e8dcfca58921d2b9de581d523cf2913f9763a786e25  harness/specs/tasks/harness-gap-working-context-single-source.md
+035ace35109f4f02fb7baade3ddba5f80edc7551d5b1ffc85535653c20a95616  tests/unit/task-ledger-working-context-single-source.test.ts

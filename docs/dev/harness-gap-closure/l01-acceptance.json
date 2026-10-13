@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-l01-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0283",
+    "packet": "L01",
+    "title": "Working Context ledger as the single live-task read/write source",
+    "source": "real filesystem JSONL append/read against a temp config dir (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Verified on a real temp filesystem that Working Context writes go through the existing workspace Task Ledger JSONL and read back as a consistent projection; a replayed batch is idempotent, a blocked ledger path surfaces a write error, and workspaces are isolated. No second store introduced."
+  },
+  "candidate": {
+    "commit": "f42bb417b862784ad37e3f488f844cc697dbea51",
+    "tree": "3b8b66cb601a175786bafd3aeb866af26e414b1f",
+    "dirty": false,
+    "branch": "codex/harness-gap-l01-working-context-20261013",
+    "base": "f8e8c4f011127d331393844d741a7d022bcbf8e3",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T13:30:00.000Z",
+    "finishedAt": "2026-10-13T13:38:00.000Z"
+  },
+  "singleSource": {
+    "write": "appendTaskLedgerWorkingContextEvents -> appendTaskLedgerEvents (JSONL events.jsonl)",
+    "read": "readTaskLedgerWorkingContext -> readTaskLedgerEvents -> projectTaskLedgerWorkingContext",
+    "noSecondStore": "adapter adds no table, snapshot file, daemon, or second store",
+    "idempotency": "batchIdempotencyKey + event id dedupe",
+    "readErrorSemantics": "missing ledger -> empty view; corrupt lines -> parser warnings"
+  },
+  "gates": {
+    "l01Tests": {
+      "command": "vitest run tests/unit/task-ledger-working-context-single-source.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 4,
+      "failed": 0
+    },
+    "stage3Regression": {
+      "command": "vitest run tests/unit/context-control-plane-stage3-contracts.test.ts tests/unit/task-ledger-working-context-single-source.test.ts",
+      "exitCode": 0,
+      "files": 2,
+      "tests": 14,
+      "failed": 0
+    },
+    "typecheckTest": {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "eslint tests/unit/task-ledger-working-context-single-source.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-working-context-single-source.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-working-context-single-source.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "residual": {
+    "unknownVsEmpty": "A missing ledger returns an empty view; the packet does not add an explicit unknown-vs-empty distinction (corrupt lines are parser warnings).",
+    "scope": "JSONL single-source path only; no Stage 3 contract change and no new UI/model wiring; no second DB/daemon/migration."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "real-filesystem append/read + failure injection",
+    "detail": "Tests write through the real appender, read back the real projection, replay a batch, block the ledger directory to force a write error, and check workspace isolation. Stage 3 projection/merge semantics remain covered by the existing contract test. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "single-source",
+      "status": "pass",
+      "note": "Working Context reuses the existing workspace Task Ledger JSONL append/read/projection; no new table/snapshot/daemon/second store."
+    },
+    {
+      "id": "consistent-view",
+      "status": "pass",
+      "note": "Appended proposal events read back into a consistent projection (pending contains the written proposal)."
+    },
+    {
+      "id": "idempotent",
+      "status": "pass",
+      "note": "Replaying the same batchIdempotencyKey appends no duplicate event and yields an identical projection."
+    },
+    {
+      "id": "observable-write-failure",
+      "status": "pass",
+      "note": "When the ledger directory path is occupied by a file, append rejects (does not report success)."
+    },
+    {
+      "id": "isolation",
+      "status": "pass",
+      "note": "A different workspaceId reads an empty view and has no ledger file."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "4 new + 10 regression tests pass, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 2,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live provider calls.",
+    "Corrupt-ledger behavior under a torn write (parser warnings only).",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
