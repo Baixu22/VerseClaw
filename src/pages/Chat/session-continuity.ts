@@ -44,6 +44,7 @@ export type SessionContinuityErrorKind =
   | 'transcript_unavailable'
   | 'handoff_depth_exceeded'
   | 'handoff_cycle_detected'
+  | 'handoff_ancestry_unavailable'
   | 'unknown';
 
 const HIGH_CONTEXT_PRESSURE_RATIO = 0.85;
@@ -158,6 +159,7 @@ export function resolveSessionContinuityRecommendation(input: Parameters<typeof 
 
 export function classifySessionContinuityError(error: unknown): SessionContinuityErrorKind {
   const text = extractErrorText(error).toLowerCase();
+  if (/handoff ancestry unavailable|handoff_ancestry_unavailable/.test(text)) return 'handoff_ancestry_unavailable';
   if (!text) return 'unknown';
 
   if (/(active|current).{0,24}run|run.{0,24}(active|running)|sending|streaming|pending final|cannot fork while/.test(text)) {

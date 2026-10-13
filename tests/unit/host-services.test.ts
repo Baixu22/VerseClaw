@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const {
+  handoffWorkspaceUpdateMock,
   applyProxySettingsMock,
   assignChannelAccountToAgentMock,
   assignChannelToAgentMock,
@@ -53,6 +54,7 @@ const {
   writeAgentRoleProfileMock,
   writeAgentSoulMock,
 } = vi.hoisted(() => ({
+  handoffWorkspaceUpdateMock: vi.fn(),
   applyProxySettingsMock: vi.fn(),
   assignChannelAccountToAgentMock: vi.fn(),
   assignChannelToAgentMock: vi.fn(),
@@ -217,6 +219,7 @@ vi.mock('@electron/utils/agent-config', () => ({
 }));
 
 vi.mock('@electron/services/workspaces-api', () => ({
+  createWorkspacesApi: () => ({ update: handoffWorkspaceUpdateMock }),
   getActiveWorkspaceProfile: vi.fn().mockResolvedValue(null),
 }));
 
@@ -1442,6 +1445,7 @@ describe('host services', () => {
   });
 
   it('refuses to prepare a handoff past the maximum relay depth (#179)', async () => {
+    writeFileSync(join(testOpenClawConfigDir, 'openclaw.json'), JSON.stringify({ runtime: { handoff: { enabled: true } } }));
     const { getTaskLedgerEventsPath } = await import('@electron/services/task-ledger-service');
     const eventsPath = getTaskLedgerEventsPath('workspace-a');
     mkdirSync(dirname(eventsPath), { recursive: true });
@@ -1636,5 +1640,79 @@ describe('host services', () => {
       key: 'agent:main:checkpoint',
       limit: 1,
     }), 10_000);
+  });
+  it('persists depth and parent/root ids before activating a handoff session and rejects the next hop', async () => {
+    writeFileSync(join(testOpenClawConfigDir, 'openclaw.json'), JSON.stringify({ runtime: { handoff: { enabled: true, maxDepth: 2 } } }));
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const { loadTaskLedgerSnapshot } = await import('@electron/services/task-ledger-service');
+    const api = createSessionsApi();
+    const first = await api.createHandoff({ sessionKey: 'agent:main:root', workspaceId: 'a', draftInput: 'goal and evidence' });
+    expect(first).toMatchObject({ success: true, handoffDepth: 1, handoffRootSessionKey: 'agent:main:root', rootHandoffId: expect.any(String) });
+    expect(handoffWorkspaceUpdateMock).toHaveBeenCalledWith(expect.objectContaining({ activeSessionKey: first.sessionKey, state: { activeTopicId: null, draftInput: 'goal and evidence' } }));
+    const second = await createSessionsApi().createHandoff({ sessionKey: first.sessionKey!, workspaceId: 'a', draftInput: 'continue' });
+    expect(second).toMatchObject({ success: true, handoffDepth: 2, parentHandoffId: first.rootHandoffId, rootHandoffId: first.rootHandoffId });
+    expect((await loadTaskLedgerSnapshot('a')).sessionLinks).toHaveLength(2);
+    const denied = await api.createHandoff({ sessionKey: second.sessionKey!, workspaceId: 'a', draftInput: 'continue' });
+    expect(denied).toMatchObject({ success: false, error: expect.stringContaining('Handoff depth 3 exceeds') });
+    expect(handoffWorkspaceUpdateMock).toHaveBeenCalledTimes(2);
+    expect((await loadTaskLedgerSnapshot('a')).sessionLinks).toHaveLength(2);
+  });
+
+  it('records workspace-less handoffs and keeps the depth bound opt-in', async () => {
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const { loadTaskLedgerSnapshot } = await import('@electron/services/task-ledger-service');
+    let key = 'agent:main:root';
+    for (let depth = 1; depth <= 4; depth++) {
+      const next = await createSessionsApi().createHandoff({ sessionKey: key, draftInput: 'continue' });
+      expect(next).toMatchObject({ success: true, handoffDepth: depth });
+      key = next.sessionKey!;
+    }
+    expect((await loadTaskLedgerSnapshot()).sessionLinks).toHaveLength(4);
+    expect(handoffWorkspaceUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects corrupt lineage before activation and re-reads it at creation time', async () => {
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const { getTaskLedgerEventsPath } = await import('@electron/services/task-ledger-service');
+    const api = createSessionsApi();
+    const preview = await api.prepareHandoff({ sessionKey: 'agent:main:root', workspaceId: 'a' });
+    expect(preview.success).toBe(true);
+    writeFileSync(getTaskLedgerEventsPath('a'), 'invalid json\n');
+    await expect(api.createHandoff({ sessionKey: 'agent:main:root', workspaceId: 'a', draftInput: 'continue' })).rejects.toThrow('Handoff ancestry unavailable');
+    expect(handoffWorkspaceUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it('does not activate a session if lineage cannot be written', async () => {
+    const ledger = await import('@electron/services/task-ledger-service');
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const spy = vi.spyOn(ledger, 'appendTaskLedgerEvents').mockRejectedValueOnce(new Error('ledger write failed'));
+    try {
+      await expect(createSessionsApi().createHandoff({ sessionKey: 'agent:main:root', workspaceId: 'a', draftInput: 'continue' })).rejects.toThrow('ledger write failed');
+      expect(handoffWorkspaceUpdateMock).not.toHaveBeenCalled();
+    } finally { spy.mockRestore(); }
+  });
+
+
+
+  it('leaves sessions.fork on its existing Gateway contract, without handoff lineage', async () => {
+    const rpc = vi.fn().mockResolvedValue({
+      key: 'agent:main:fork',
+      // The Gateway answers with the canonical source key, which may differ in
+      // spelling from the requested alias; fork must not reject that.
+      sourceKey: 'agent:main:canonical-primary',
+      forkedFromParent: true,
+    });
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const { loadTaskLedgerSnapshot } = await import('@electron/services/task-ledger-service');
+    await expect(createSessionsApi({ gatewayManager: { rpc } as never }).fork({
+      sessionKey: 'agent:main:main',
+      workspaceId: 'a',
+    })).resolves.toMatchObject({
+      success: true,
+      sourceSessionKey: 'agent:main:canonical-primary',
+      sessionKey: 'agent:main:fork',
+    });
+    expect(rpc).toHaveBeenCalledWith('sessions.fork', expect.objectContaining({ key: 'agent:main:main' }), 30_000);
+    expect((await loadTaskLedgerSnapshot('a')).sessionLinks).toEqual([]);
   });
 });

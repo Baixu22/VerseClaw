@@ -42,6 +42,7 @@ const hostApiMock = vi.hoisted(() => ({
     moveSessionToFolder: vi.fn(),
   },
   sessions: {
+    createHandoff: vi.fn(),
     fork: vi.fn(),
   },
   taskLedger: {
@@ -103,6 +104,7 @@ describe('workspace session helpers', () => {
     hostApiMock.files.writeText.mockResolvedValue({ success: true });
     hostApiMock.workspaces.update.mockResolvedValue({ success: true });
     hostApiMock.workspaces.moveSessionToFolder.mockResolvedValue({ success: true });
+    hostApiMock.sessions.createHandoff.mockResolvedValue({ success: true, sessionKey: 'agent:reviewer:session-1711111111111-4fzyo8' });
     hostApiMock.sessions.fork.mockResolvedValue({
       success: true,
       sessionKey: 'agent:reviewer:dashboard:fork',
@@ -163,12 +165,10 @@ describe('workspace session helpers', () => {
       .resolves.toBe('agent:reviewer:session-1711111111111-4fzyo8');
     expect(hostApiMock.files.writeText).toHaveBeenCalledExactlyOnceWith('C:/a/.clawx-active-topic', '');
 
-    expect(hostApiMock.workspaces.update).toHaveBeenCalledWith('workspace-a', {
-      agentId: 'reviewer',
-      activeSessionKey: 'agent:reviewer:session-1711111111111-4fzyo8',
-      sessionKey: 'agent:reviewer:session-1711111111111-4fzyo8',
-      state: { activeTopicId: null, draftInput: 'Continue from checkpoint A.' },
+    expect(hostApiMock.sessions.createHandoff).toHaveBeenCalledWith({
+      sessionKey: 'agent:reviewer:old', agentId: 'reviewer', workspaceId: 'workspace-a', draftInput: 'Continue from checkpoint A.',
     });
+    expect(hostApiMock.workspaces.update).not.toHaveBeenCalled();
     expect(workspaceState.fetchWorkspaces).toHaveBeenCalledTimes(1);
     expect(chatState.resetSessionView).toHaveBeenCalledWith('agent:reviewer:session-1711111111111-4fzyo8');
     expect(chatState.newSession).not.toHaveBeenCalled();
@@ -250,9 +250,7 @@ describe('workspace session helpers', () => {
       },
     });
     expect(hostApiMock.taskLedger.linkSession).toHaveBeenCalledWith(expect.objectContaining({
-      workspaceId: 'workspace-a',
       sessionKey: 'agent:reviewer:dashboard:fork',
-      sourceSessionKey: 'agent:reviewer:old',
       relation: 'forked_from',
     }));
     expect(chatState.resetSessionView).toHaveBeenCalledWith('agent:reviewer:dashboard:fork');
@@ -272,4 +270,13 @@ describe('workspace session helpers', () => {
       expect.objectContaining({ fromLeafId: 'entry-42' }),
     );
   });
+  it('keeps the current view when Main refuses handoff creation', async () => {
+    hostApiMock.sessions.createHandoff.mockResolvedValueOnce({ success: false, error: 'Handoff depth 4 exceeds the configured maximum of 3.' });
+    const { createWorkspaceScopedHandoffSession } = await import('@/lib/workspace-session');
+    await expect(createWorkspaceScopedHandoffSession('continue')).rejects.toThrow('Handoff depth 4');
+    expect(chatState.resetSessionView).not.toHaveBeenCalled();
+    expect(hostApiMock.workspaces.update).not.toHaveBeenCalled();
+  });
+
+
 });

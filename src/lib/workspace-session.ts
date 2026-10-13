@@ -105,18 +105,15 @@ export async function createWorkspaceScopedHandoffSession(draftInput: string): P
   const sourceSessionKey = chatState.currentSessionKey;
   const workspace = await ensureActiveWorkspaceForSession();
 
-  if (!workspace?.id) {
-    chatState.newSession({ deferSessionEntry: true });
-    return useChatStore.getState().currentSessionKey;
-  }
-
-  const sessionKey = createFreshWorkspaceSessionKey(currentAgentId);
-  await hostApi.workspaces.update(workspace.id, {
-    agentId: currentAgentId,
-    activeSessionKey: sessionKey,
-    sessionKey,
-    state: { activeTopicId: null, draftInput },
+  const result = await hostApi.sessions.createHandoff({
+    sessionKey: sourceSessionKey, agentId: currentAgentId, workspaceId: workspace?.id ?? null, draftInput,
   });
+  if (!result.success || !result.sessionKey) throw new Error(result.error || 'Failed to create handoff session');
+  const sessionKey = result.sessionKey;
+  if (!workspace?.id) {
+    chatState.resetSessionView(sessionKey);
+    return sessionKey;
+  }
   await inheritSessionWorkgroup(workspace, sourceSessionKey, sessionKey);
   await useWorkspacesStore.getState().fetchWorkspaces();
   await clearWorkspaceActiveTopicMarker(workspace.rootPath);

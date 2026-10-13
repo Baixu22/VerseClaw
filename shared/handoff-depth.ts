@@ -1,165 +1,80 @@
-/**
- * Handoff derivation depth + cycle guard.
- *
- * WHY THIS EXISTS (TF-0284 / issue #179). "Conversation relay" lets a session
- * spawn a fresh session that carries the current objective, blockers and
- * evidence forward. Nothing bounded how many times that could repeat: session A
- * relays to B, B relays to C, and every hop loses context and can hand a wrong
- * conclusion to the next one. The runtime already bounds SUB-AGENT spawn depth
- * (`getSubagentDepthFromSessionStore` in the spawn path), but the product-level
- * session handoff had no depth field and no ancestry check at all. A 1K-token
- * chain twenty hops deep is perfectly legal by tokens and still unbounded in
- * depth, which is a different axis from the parent-fork token admission.
- *
- * This module is the pure decision core: it reads the Task Ledger's
- * `handoff_from` links, walks the ancestry, and decides whether one more
- * derivation is allowed. The caller owns the side effects (refusing the hop and
- * telling the operator why), so the rule can be asserted without a UI.
- *
- * NOT A FROZEN DEFAULT. The limit is opt-in configuration with a documented
- * default; it is deliberately not a product lock.
- */
-
+/** Persisted session lineage owns relay depth; callers must reject failed ledger reads. */
 export const DEFAULT_MAX_HANDOFF_DEPTH = 3;
+const MAX_ANCESTOR_WALK = 64;
 
-/** A `handoff_from` link as projected into the Task Ledger snapshot. */
 export type HandoffLink = {
+  id?: string;
   sessionKey: string;
   relation?: string | null;
   sourceSessionKey?: string | null;
 };
-
 export type HandoffChain = {
-  /** Ancestor session keys, root first. Excludes the session itself. */
   ancestors: string[];
-  /** Depth of the session itself: 0 for a root session. */
   depth: number;
-  /** True when the walk hit a repeated key instead of a root. */
   cycle: boolean;
+  incomplete: boolean;
+  parentHandoffId?: string;
+  rootHandoffId?: string;
 };
+export type HandoffDerivationDecision = HandoffChain & (
+  | { allow: true; parentSessionKey: string; rootSessionKey: string }
+  | { allow: false; reason: 'handoff_depth_exceeded' | 'handoff_cycle_detected' | 'handoff_ancestry_unavailable'; maxDepth: number; error: string }
+);
 
-export type HandoffDerivationDecision =
-  | {
-    allow: true;
-    /** Depth the derived session WOULD have. */
-    depth: number;
-    parentSessionKey: string;
-    rootSessionKey: string;
-    ancestors: string[];
-  }
-  | {
-    allow: false;
-    reason: 'handoff_depth_exceeded' | 'handoff_cycle_detected';
-    /** Depth the derived session WOULD have. */
-    depth: number;
-    maxDepth: number;
-    error: string;
-    ancestors: string[];
-  };
-
-/**
- * Resolves the configured limit. Anything that is not a positive integer falls
- * back to the default rather than disabling the bound: unreadable configuration
- * must not silently remove the only limit that exists.
- */
 export function resolveMaxHandoffDepth(value: unknown): number {
-  if (typeof value !== 'number' || !Number.isFinite(value) || value < 1) {
-    return DEFAULT_MAX_HANDOFF_DEPTH;
-  }
-  return Math.floor(value);
+  return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= MAX_ANCESTOR_WALK
+    ? value : DEFAULT_MAX_HANDOFF_DEPTH;
 }
 
-/**
- * Walks `handoff_from` links upward from `sessionKey` to the root.
- *
- * Only `handoff_from` links are followed: a fork is a different session, not a
- * relay, and following it would inflate the chain. The walk is bounded and
- * cycle-safe — a malformed link loop stops and reports `cycle` instead of
- * spinning.
- */
+/** Forks preserve ancestry without increasing relay depth. Self-links are cycles. */
 export function resolveHandoffChain(
-  links: readonly HandoffLink[],
-  sessionKey: string,
-  options: { maxWalk?: number } = {},
+  links: readonly HandoffLink[], sessionKey: string, options: { maxWalk?: number } = {},
 ): HandoffChain {
-  const maxWalk = typeof options.maxWalk === 'number' && Number.isInteger(options.maxWalk) && options.maxWalk > 0
-    ? options.maxWalk
-    : 64;
-  const parentOf = new Map<string, string>();
+  const limit = Math.min(resolveMaxHandoffDepth(options.maxWalk ?? MAX_ANCESTOR_WALK), MAX_ANCESTOR_WALK);
+  const parents = new Map<string, HandoffLink>();
+  const conflicts = new Set<string>();
   for (const link of links) {
-    if (link.relation !== 'handoff_from') continue;
-    const child = typeof link.sessionKey === 'string' ? link.sessionKey.trim() : '';
-    const parent = typeof link.sourceSessionKey === 'string' ? link.sourceSessionKey.trim() : '';
-    if (!child || !parent || child === parent) continue;
-    if (!parentOf.has(child)) parentOf.set(child, parent);
+    if (link.relation !== 'handoff_from' && link.relation !== 'forked_from') continue;
+    const key = link.sessionKey.trim();
+    const prior = parents.get(key);
+    if (prior && (prior.sourceSessionKey !== link.sourceSessionKey || prior.relation !== link.relation)) conflicts.add(key);
+    if (!prior) parents.set(key, link);
   }
-
-  const ancestors: string[] = [];
-  const seen = new Set<string>([sessionKey]);
-  let cursor = parentOf.get(sessionKey);
-  let cycle = false;
-  while (cursor && ancestors.length < maxWalk) {
-    if (seen.has(cursor)) {
-      cycle = true;
-      break;
-    }
+  const chain: HandoffChain = { ancestors: [], depth: 0, cycle: false, incomplete: false };
+  const seen = new Set<string>();
+  let cursor = sessionKey.trim();
+  while (true) {
+    if (seen.has(cursor)) { chain.cycle = true; break; }
+    if (conflicts.has(cursor)) { chain.incomplete = true; break; }
+    const link = parents.get(cursor);
+    if (!link) break;
+    if (chain.ancestors.length >= limit || !link.sourceSessionKey?.trim()) { chain.incomplete = true; break; }
     seen.add(cursor);
-    ancestors.push(cursor);
-    cursor = parentOf.get(cursor);
+    if (link.relation === 'handoff_from') {
+      chain.depth += 1;
+      chain.parentHandoffId ??= link.id;
+      chain.rootHandoffId = link.id;
+    }
+    cursor = link.sourceSessionKey.trim();
+    chain.ancestors.push(cursor);
   }
-  ancestors.reverse();
-  return { ancestors, depth: ancestors.length, cycle };
+  chain.ancestors.reverse();
+  return chain;
 }
 
-/**
- * Decides whether one more handoff derivation is allowed from `sessionKey`.
- *
- * Denies with an actionable message rather than a bare boolean so the caller
- * can surface something an operator can act on.
- */
 export function evaluateHandoffDerivation(params: {
-  links: readonly HandoffLink[];
-  sessionKey: string;
-  maxDepth?: unknown;
-  maxWalk?: number;
+  links: readonly HandoffLink[]; sessionKey: string; maxDepth?: unknown; maxWalk?: number; enforceDepth?: boolean;
 }): HandoffDerivationDecision {
-  const maxDepth = resolveMaxHandoffDepth(params.maxDepth);
   const chain = resolveHandoffChain(params.links, params.sessionKey, { maxWalk: params.maxWalk });
-  const desiredDepth = chain.depth + 1;
-
-  if (chain.cycle) {
-    return {
-      allow: false,
-      reason: 'handoff_cycle_detected',
-      depth: desiredDepth,
-      maxDepth,
-      error:
-        'Handoff cycle detected: this session already appears in its own handoff ancestry '
-        + `(${[...chain.ancestors, params.sessionKey].join(' -> ')}). `
-        + 'Refusing to relay; continue in the current session.',
-      ancestors: chain.ancestors,
-    };
+  const depth = chain.depth + 1;
+  const maxDepth = resolveMaxHandoffDepth(params.maxDepth);
+  const reason = chain.cycle ? 'handoff_cycle_detected' : chain.incomplete ? 'handoff_ancestry_unavailable'
+    : params.enforceDepth !== false && depth > maxDepth ? 'handoff_depth_exceeded' : undefined;
+  if (reason) {
+    const error = reason === 'handoff_cycle_detected' ? 'Handoff cycle detected.'
+      : reason === 'handoff_ancestry_unavailable' ? 'Handoff ancestry unavailable or inconsistent.'
+        : `Handoff depth ${depth} exceeds the configured maximum of ${maxDepth}.`;
+    return { ...chain, allow: false, reason, depth, maxDepth, error: `${error} Continue in the current session with the objective, unfinished work, dependencies and recent evidence.` };
   }
-
-  if (desiredDepth > maxDepth) {
-    return {
-      allow: false,
-      reason: 'handoff_depth_exceeded',
-      depth: desiredDepth,
-      maxDepth,
-      error:
-        `Handoff depth ${desiredDepth} exceeds the configured maximum of ${maxDepth}. `
-        + 'Converge in the current session instead of relaying again: keep the objective, unfinished work, '
-        + 'dependencies and most recent evidence here.',
-      ancestors: chain.ancestors,
-    };
-  }
-
-  return {
-    allow: true,
-    depth: desiredDepth,
-    parentSessionKey: params.sessionKey,
-    rootSessionKey: chain.ancestors[0] ?? params.sessionKey,
-    ancestors: chain.ancestors,
-  };
+  return { ...chain, allow: true, depth, parentSessionKey: params.sessionKey, rootSessionKey: chain.ancestors[0] ?? params.sessionKey };
 }

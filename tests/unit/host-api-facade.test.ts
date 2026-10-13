@@ -15,6 +15,14 @@ beforeEach(() => {
 });
 
 describe('hostApi facade', () => {
+  it('routes handoff creation through Main with the source session and edited draft', async () => {
+    hostInvoke.mockResolvedValueOnce({ ok: true, data: { success: true, sessionKey: 'agent:main:derived', handoffDepth: 1 } });
+    const { hostApi } = await import('@/lib/host-api');
+    const input = { sessionKey: 'agent:main:source', workspaceId: 'workspace-a', draftInput: 'goal and evidence' };
+    expect(await hostApi.sessions.createHandoff(input)).toMatchObject({ success: true, handoffDepth: 1 });
+    expect(hostInvoke).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ module: 'sessions', action: 'createHandoff', payload: input }));
+  });
+
   it('routes the typed session stop surface through the sessions module', async () => {
     hostInvoke.mockResolvedValueOnce({
       id: 'req-stop',

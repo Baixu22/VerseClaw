@@ -209,6 +209,9 @@ export type TaskLedgerSessionLink = {
   summary?: string;
   /** Relay depth of the linked session (1 is the first relay of a root). */
   handoffDepth?: number;
+  parentHandoffId?: string;
+  rootHandoffId?: string;
+  handoffRootSessionKey?: string;
   createdAt: string;
 };
 

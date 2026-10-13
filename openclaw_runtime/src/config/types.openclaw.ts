@@ -88,6 +88,8 @@ export type SurfaceConfigEntry = {
 };
 
 export type RuntimeFeatureConfig = {
+  /** Desktop session relay depth policy. Disabled unless explicitly enabled. */
+  handoff?: { enabled?: boolean; maxDepth?: number };
   /** VerseShell typed ACI rollout. Every leaf is default-off and independently gated. */
   verseShellFoundation?: {
     /** Emergency fail-closed cut for every VerseShell foundation capability. */

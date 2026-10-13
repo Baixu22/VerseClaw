@@ -1773,9 +1773,13 @@
             "title": "Transcript 不可用",
             "description": "接力草稿无法读取足够的对话上下文。"
           },
-                    "handoff_depth_exceeded": {
+                    "handoff_ancestry_unavailable": {
+            "title": "接力历史无法核验",
+            "description": "持久化的接力历史无法核验。请继续当前会话，修复历史后再接力。"
+          },
+          "handoff_depth_exceeded": {
             "title": "接力深度已达上限",
-            "description": "为避免形成无界接力链，本会话不再派生新会话。请在此会话内收敛，或改用分叉。"
+            "description": "为避免形成无界接力链，本会话不再派生新会话。请在此会话内收敛并保留目标与最近证据。"
           },
           "handoff_cycle_detected": {
             "title": "检测到接力环路",

@@ -3033,6 +3033,15 @@ export type SessionHandoffSource = {
   summary?: string;
   warning?: string;
 };
+export type SessionCreateHandoffPayload = SessionHandoffPayload & { draftInput: string };
+export type SessionCreateHandoffResult = HostSuccess & {
+  sessionKey?: string;
+  handoffDepth?: number;
+  handoffParentSessionKey?: string;
+  handoffRootSessionKey?: string;
+  parentHandoffId?: string;
+  rootHandoffId?: string;
+};
 export type SessionHandoffResult = HostSuccess & {
   checkpoint?: ResumeCheckpoint;
   draft?: string;
@@ -5578,6 +5587,7 @@ export type HostApiContract = {
     compact: (payload: SessionManualCompactPayload) => SessionCompactionResult;
     compactRange: (payload: SessionCompactRangePayload) => SessionCompactionResult;
     prepareHandoff: (payload: SessionHandoffPayload) => SessionHandoffResult;
+    createHandoff: (payload: SessionCreateHandoffPayload) => SessionCreateHandoffResult;
     fork: (payload: SessionForkPayload) => SessionForkResult;
     truncate: (payload: SessionTruncatePayload) => SessionTruncateResult;
     archive: (payload: SessionArchivePayload) => HostSuccess;

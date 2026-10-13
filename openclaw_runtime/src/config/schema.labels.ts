@@ -2,6 +2,9 @@
 import { MEDIA_AUDIO_FIELD_LABELS } from "./media-audio-field-metadata.js";
 
 export const FIELD_LABELS: Record<string, string> = {
+  "runtime.handoff.enabled": "Desktop handoff depth limit",
+  "runtime.handoff.maxDepth": "Maximum session relay depth",
+
   meta: "Metadata",
   "meta.lastTouchedVersion": "Config Last Touched Version",
   "meta.lastTouchedAt": "Config Last Touched At",
@@ -603,7 +606,8 @@ export const FIELD_LABELS: Record<string, string> = {
   "models.providers.*.request.auth.headerName": "Model Provider Request Auth Header Name",
   "models.providers.*.request.auth.value": "Model Provider Request Auth Header Value",
   "models.providers.*.request.auth.prefix": "Model Provider Request Auth Header Prefix",
-  "models.providers.*.request.auth.parameterName": "Model Provider Request Auth Query Parameter Name",
+  "models.providers.*.request.auth.parameterName":
+    "Model Provider Request Auth Query Parameter Name",
   "models.providers.*.request.proxy": "Model Provider Request Proxy",
   "models.providers.*.request.proxy.mode": "Model Provider Request Proxy Mode",
   "models.providers.*.request.proxy.url": "Model Provider Request Proxy URL",
@@ -715,7 +719,7 @@ export const FIELD_LABELS: Record<string, string> = {
   "agents.defaults.runRetries.perProfile": "Run Retries Per Profile",
   "agents.defaults.runRetries.min": "Run Retries Minimum",
   "agents.defaults.runRetries.max": "Run Retries Maximum",
-  "runtime": "Runtime",
+  runtime: "Runtime",
   "runtime.registryPilot": "Runtime Registry Pilot",
   "runtime.registryPilot.enabled": "Runtime Registry Pilot Enabled",
   "runtime.providerRegistry": "Runtime Provider Registry",
@@ -738,7 +742,8 @@ export const FIELD_LABELS: Record<string, string> = {
   "runtime.contextBlock.sekb.shadowEvaluation": "SEKB Shadow Evaluation",
   "runtime.contextBlock.sekb.shadowEvaluation.enabled": "SEKB Shadow Evaluation Enabled",
   "runtime.contextBlock.sekb.batchDistillationAssistant": "SEKB Batch Distillation Assistant",
-  "runtime.contextBlock.sekb.batchDistillationAssistant.enabled": "SEKB Batch Distillation Assistant Enabled",
+  "runtime.contextBlock.sekb.batchDistillationAssistant.enabled":
+    "SEKB Batch Distillation Assistant Enabled",
   "runtime.contextBlock.sekb.phaseCWouldTrigger": "SEKB Phase C Would Trigger",
   "runtime.contextBlock.sekb.phaseCWouldTrigger.enabled": "SEKB Phase C Would Trigger Enabled",
   "runtime.contextBlock.sekb.phaseCWouldTrigger.owner": "SEKB Phase C Would Trigger Owner",
@@ -807,8 +812,10 @@ export const FIELD_LABELS: Record<string, string> = {
   "runtime.agentMap": "Runtime AgentMap",
   "runtime.agentMap.provider": "Runtime AgentMap Provider",
   "runtime.agentMap.promptAssemblyExperiment": "Runtime AgentMap Prompt Assembly Experiment",
-  "runtime.agentMap.promptCandidateRuntimeShadow": "Runtime AgentMap Prompt Candidate Runtime Shadow",
-  "runtime.agentMap.promptCandidateControlledCutoverPilot": "Runtime AgentMap Prompt Candidate Controlled Cutover Pilot",
+  "runtime.agentMap.promptCandidateRuntimeShadow":
+    "Runtime AgentMap Prompt Candidate Runtime Shadow",
+  "runtime.agentMap.promptCandidateControlledCutoverPilot":
+    "Runtime AgentMap Prompt Candidate Controlled Cutover Pilot",
   "runtime.agentMap.promptCandidateTaskLoopExplicitInvocationPilot":
     "Runtime AgentMap Prompt Candidate TaskLoop Explicit Invocation Pilot",
   "runtime.localControlPlane": "Local Runtime Control Plane",

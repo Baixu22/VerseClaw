@@ -1773,9 +1773,13 @@
             "title": "Transcript を利用できません",
             "description": "Handoff 下書きに必要な会話コンテキストを十分に読めませんでした。"
           },
-                    "handoff_depth_exceeded": {
+                    "handoff_ancestry_unavailable": {
+            "title": "Handoff 履歴を確認できません",
+            "description": "保存された Handoff 履歴を確認できません。履歴を修復するまで現在のセッションで続行してください。"
+          },
+          "handoff_depth_exceeded": {
             "title": "Handoff の深さ上限に達しました",
-            "description": "無制限の Handoff 連鎖を避けるため、このセッションから新しいセッションを派生しません。このセッションで収束するか、フォークを使用してください。"
+            "description": "無制限の Handoff 連鎖を避けるため、このセッションから新しいセッションを派生しません。目標と最近の証拠を保持し、このセッションで収束してください。"
           },
           "handoff_cycle_detected": {
             "title": "Handoff の循環を検出しました",

@@ -2373,7 +2373,7 @@ export function Chat() {
           action: 'handoff',
           kind,
           message: result.error || t('composer.handoff.toastPrepareFailed'),
-          fallback: gatewayAvailable && kind !== 'active_run'
+          fallback: gatewayAvailable && kind !== 'active_run' && !kind.startsWith('handoff_')
             ? {
               kind: 'tryFork',
               onClick: () => handleForkSessionRef.current?.(),
@@ -2392,7 +2392,7 @@ export function Chat() {
         action: 'handoff',
         kind,
         message: getContinuityErrorMessage(error, t('composer.handoff.toastPrepareFailed')),
-        fallback: gatewayAvailable && kind !== 'active_run'
+        fallback: gatewayAvailable && kind !== 'active_run' && !kind.startsWith('handoff_')
           ? {
             kind: 'tryFork',
             onClick: () => handleForkSessionRef.current?.(),
@@ -2441,7 +2441,6 @@ export function Chat() {
     const draft = handoffDraft.trim();
     if (!draft || handoffCreating) return;
     setHandoffCreating(true);
-    const sourceSessionKey = currentSessionKey;
     try {
       await persistCurrentContinuitySourceSession();
       const nextSessionKey = await createWorkspaceScopedHandoffSession(draft);
@@ -2464,35 +2463,17 @@ export function Chat() {
       // enters the real transcript instead of waiting for a manual paste.
       await sendMessage(draft);
       toast.success(t('composer.handoff.toastCreated'));
-      if (activeWorkspace?.id) {
-        void hostApi.taskLedger.linkSession({
-          workspaceId: activeWorkspace.id,
-          sessionKey: nextSessionKey,
-          agentId: currentAgentId,
-          relation: 'handoff_from',
-          sourceSessionKey,
-          summary: t('composer.handoff.ledgerSummary', { source: sourceSessionKey }),
-          ...(typeof handoffResult?.handoffDepth === 'number'
-            ? { handoffDepth: handoffResult.handoffDepth }
-            : {}),
-          idempotencyKey: `handoff:${sourceSessionKey}:${nextSessionKey}`,
-        }).catch((error) => {
-          console.warn('[chat:handoff] failed to link task ledger session', error);
-        });
-      }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('composer.handoff.toastCreateFailed'));
+      const kind = classifySessionContinuityError(error);
+      showContinuityFailureToast({ action: 'handoff', kind, message: getContinuityErrorMessage(error, t('composer.handoff.toastCreateFailed')) });
     } finally {
       setHandoffCreating(false);
     }
   }, [
     activeWorkspace?.id,
-    activeWorkspace?.permissionMode,
-    currentAgentId,
-    currentSessionKey,
     handoffCreating,
     handoffDraft,
-    handoffResult?.handoffDepth,
+    showContinuityFailureToast,
     persistCurrentContinuitySourceSession,
     resetSessionView,
     sendMessage,

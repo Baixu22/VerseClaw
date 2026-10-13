@@ -1,5 +1,6 @@
 import { existsSync, openSync, closeSync, fstatSync, readFileSync, readSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
+import { randomUUID } from 'node:crypto';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { RawMessage } from '@shared/chat/types';
 import type { AgentReasoningEffort } from '@shared/types/agent';
@@ -34,8 +35,9 @@ import type {
   SessionRecallDiagnostic,
   SessionRecallOriginalResult,
 } from '../../shared/host-api/contract';
-import { loadTaskLedgerSnapshot } from './task-ledger-service';
-import { evaluateHandoffDerivation, type HandoffLink } from '../../shared/handoff-depth';
+import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-service';
+import { createWorkspacesApi } from './workspaces-api';
+import { evaluateHandoffDerivation } from '../../shared/handoff-depth';
 import { readCurrentGitStatus } from './git-api';
 import { getResourceTracker } from './resource-tracker';
 import { getObservabilityTraceBuffer } from './observability-service';
@@ -55,26 +57,26 @@ import {
 import { isRecord } from './payload-utils';
 import type { SessionArchiveEntry } from '@shared/types/workspace';
 
-/**
- * Opt-in limit for how many times a conversation may be relayed (#179 / TF-0284).
- *
- * Read from the OpenClaw config (`runtime.handoff.maxDepth`). Unreadable or
- * absent configuration returns `undefined` so the caller falls back to
- * `DEFAULT_MAX_HANDOFF_DEPTH` — an unreadable config must not remove the bound.
- */
-function resolveConfiguredMaxHandoffDepth(): number | undefined {
-  try {
-    const configPath = join(getOpenClawConfigDir(), 'openclaw.json');
-    if (!existsSync(configPath)) return undefined;
-    const parsed = JSON.parse(readFileSync(configPath, 'utf8')) as unknown;
-    if (!isRecord(parsed)) return undefined;
-    const runtime = isRecord(parsed.runtime) ? parsed.runtime : undefined;
-    const handoff = runtime && isRecord(runtime.handoff) ? runtime.handoff : undefined;
-    const value = handoff?.maxDepth;
-    return typeof value === 'number' ? value : undefined;
-  } catch {
-    return undefined;
+// ponytail: serialize desktop handoff writes; use per-workspace queues if throughput requires it.
+let handoffCreationTail: Promise<unknown> = Promise.resolve();
+
+function resolveConfiguredHandoffPolicy(): { enforceDepth: boolean; maxDepth?: unknown } {
+  const configPath = join(getOpenClawConfigDir(), 'openclaw.json');
+  if (!existsSync(configPath)) return { enforceDepth: false };
+  const parsed: unknown = JSON.parse(readFileSync(configPath, 'utf8'));
+  if (!isRecord(parsed)) throw new Error('Handoff ancestry unavailable: invalid runtime configuration');
+  const runtime = isRecord(parsed.runtime) ? parsed.runtime : undefined;
+  const handoff = runtime && isRecord(runtime.handoff) ? runtime.handoff : undefined;
+  if (runtime?.handoff !== undefined && (!handoff || (handoff.enabled !== undefined && typeof handoff.enabled !== 'boolean'))) {
+    throw new Error('Handoff ancestry unavailable: invalid handoff configuration');
   }
+  return { enforceDepth: handoff?.enabled === true, maxDepth: handoff?.maxDepth };
+}
+
+async function readHandoffDecision(sessionKey: string, workspaceId: string | null) {
+  const snapshot = await loadTaskLedgerSnapshot(workspaceId);
+  if (snapshot.warnings.length) throw new Error('Handoff ancestry unavailable: Task Ledger contains unreadable events');
+  return evaluateHandoffDerivation({ links: snapshot.sessionLinks, sessionKey, ...resolveConfiguredHandoffPolicy() });
 }
 
 const SAFE_SESSION_SEGMENT = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
@@ -2299,7 +2301,6 @@ export function createSessionsApi(ctx: {
       let recallArchiveRef: string | undefined;
       let recoveryCheckpointId: string | undefined;
       let recoveryArtifact: CompressionArtifact | undefined;
-      let ledgerSessionLinks: HandoffLink[] = [];
 
       if (ctx.gatewayManager) {
         try {
@@ -2450,7 +2451,6 @@ export function createSessionsApi(ctx: {
       let ledgerReview: string[] = [];
       try {
         const snapshot = await loadTaskLedgerSnapshot(workspaceId);
-        ledgerSessionLinks = Array.isArray(snapshot.sessionLinks) ? snapshot.sessionLinks : [];
         const ledger = summarizeTaskLedger(snapshot);
         ledgerActive = ledger.activeTasks;
         ledgerBlockers = ledger.blockers;
@@ -2519,11 +2519,7 @@ export function createSessionsApi(ctx: {
         ...(recallArchiveRef ? [{ type: 'other' as const, ref: recallArchiveRef, label: 'Read-only context recall archive' }] : []),
         ...traceEvidence,
       ];
-      const handoffDecision = evaluateHandoffDerivation({
-        links: ledgerSessionLinks,
-        sessionKey,
-        maxDepth: resolveConfiguredMaxHandoffDepth(),
-      });
+      const handoffDecision = await readHandoffDecision(sessionKey, workspaceId);
       if (!handoffDecision.allow) {
         return {
           success: false,
@@ -2587,6 +2583,45 @@ export function createSessionsApi(ctx: {
         handoffParentSessionKey: handoffDecision.parentSessionKey,
         handoffRootSessionKey: handoffDecision.rootSessionKey,
       };
+    },
+    createHandoff: (payload) => {
+      const creation = handoffCreationTail.then(async () => {
+        const sourceSessionKey = getSessionKey(payload);
+        const workspaceId = getOptionalWorkspaceId(payload);
+        const agentId = getOptionalAgentId(payload) ?? parseSessionKey(sourceSessionKey)?.agentId ?? 'main';
+        if (typeof payload.draftInput !== 'string' || !payload.draftInput.trim()) throw new Error('Handoff draft cannot be empty');
+        const decision = await readHandoffDecision(sourceSessionKey, workspaceId);
+        if (!decision.allow) return { success: false, error: decision.error };
+        // The sidebar detects fresh sessions with /:session-\d/, so keep the
+        // timestamp prefix and use a short UUID only as the collision-resistant suffix.
+        const sessionKey = `agent:${agentId}:session-${Date.now()}-${randomUUID().slice(0, 8)}`;
+        const id = randomUUID();
+        const lineage = {
+          handoffDepth: decision.depth,
+          handoffParentSessionKey: sourceSessionKey,
+          handoffRootSessionKey: decision.rootSessionKey,
+          parentHandoffId: decision.parentHandoffId,
+          rootHandoffId: decision.rootHandoffId ?? id,
+        };
+        // Persist lineage before activating the session. A failed workspace update can leave
+        // an unused lineage record, but cannot activate an untracked session or reset depth.
+        await appendTaskLedgerEvents(workspaceId, [{
+          type: 'session_linked', actor: 'system', sessionId: sessionKey,
+          payload: { sessionLink: {
+            id, sessionKey, agentId, relation: 'handoff_from', sourceSessionKey,
+            ...lineage, createdAt: new Date().toISOString(),
+          } },
+        }], `handoff:${sourceSessionKey}:${sessionKey}`);
+        if (workspaceId) {
+          await createWorkspacesApi(ctx).update({
+            id: workspaceId, agentId, activeSessionKey: sessionKey, sessionKey,
+            state: { activeTopicId: null, draftInput: payload.draftInput },
+          });
+        }
+        return { success: true, sessionKey, ...lineage };
+      });
+      handoffCreationTail = creation.catch(() => undefined);
+      return creation;
     },
     fork: async (payload) => {
       const sessionKey = getSessionKey(payload);

@@ -1785,9 +1785,13 @@
             "title": "Transcript is not available",
             "description": "The handoff draft could not read enough conversation context."
           },
-                    "handoff_depth_exceeded": {
+                    "handoff_ancestry_unavailable": {
+            "title": "Handoff history is unavailable",
+            "description": "The persisted handoff history could not be verified. Continue in the current session until the history is repaired."
+          },
+          "handoff_depth_exceeded": {
             "title": "Handoff depth limit reached",
-            "description": "To prevent an unbounded relay chain, no new session is derived from this one. Converge in this session, or fork instead."
+            "description": "To prevent an unbounded relay chain, no new session is derived from this one. Continue in this session with the objective and recent evidence."
           },
           "handoff_cycle_detected": {
             "title": "Handoff loop detected",

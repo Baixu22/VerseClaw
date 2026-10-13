@@ -3,6 +3,11 @@ import { MEDIA_AUDIO_FIELD_HELP } from "./media-audio-field-metadata.js";
 import { describeTalkSilenceTimeoutDefaults } from "./talk-defaults.js";
 
 export const FIELD_HELP: Record<string, string> = {
+  "runtime.handoff.enabled":
+    "Opt in to the desktop session relay depth limit. Defaults off; cycles and unreadable ancestry are always rejected.",
+  "runtime.handoff.maxDepth":
+    "Maximum relay depth when enabled (integer 1-64; default 3). Forks retain relay ancestry.",
+
   meta: "Metadata fields automatically maintained by OpenClaw to record write/version history for this config file. Keep these values system-managed and avoid manual edits unless debugging migration history.",
   "meta.lastTouchedVersion": "Auto-set when OpenClaw writes the config.",
   "meta.lastTouchedAt": "ISO timestamp of the last config write (auto-set).",
