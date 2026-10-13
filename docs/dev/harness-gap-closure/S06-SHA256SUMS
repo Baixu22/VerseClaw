@@ -1,0 +1,6 @@
+a07f47b7576a95958f361fe54a6add343a4c54938ab8ce5db216cade59b98b2e  docs/dev/harness-gap-closure/s06-acceptance.json
+987f7728e7777b5340a901b4c59937e5095b0df4984d61978d46ec3688e3c0cc  docs/dev/harness-gap-closure/s06-memory-effect-receipt.md
+7ea82537b90698f7e242185b3db0bba1f6e831ad269e784fb9094a8e4e89f4fb  harness/specs/tasks/harness-gap-memory-effect-receipt.md
+867915b873d2f01f523260bac03ead008d617383d7311df70940a0b9888a4cb3  openclaw_runtime/src/runtime-core/memory-effect-receipt.ts
+bcc5f9a595b2c008597d0c29127837227cd4af3291fb68f17617d6af366619df  openclaw_runtime/src/runtime-core/memory-effect-receipt.test.ts
+da3aed1f972b6522b843d8e95f20ce1bc713a5cab7ff92b9027d36e56e360555  openclaw_runtime/src/runtime-core/memory-self-edit-tools.ts

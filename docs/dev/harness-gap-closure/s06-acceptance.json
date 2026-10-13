@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-s06-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0281",
+    "packet": "S06",
+    "title": "Memory writes correlate with the RC-04 EffectReceipt recovery loop",
+    "source": "real EffectReceiptStore + real RuntimeMemoryStore (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Memory self-edit writes now record digest-only effect receipts through the real RC-04 store: one row per write, deterministic per-intent idempotency (replay -> duplicate, 0 duplicate effects), outcome applied/not_applied/unknown preserved, fail-open. Regression 86 tests pass."
+  },
+  "candidate": {
+    "commit": "3a1e2d384710927bc13aa1e92962824a8b88b7de",
+    "tree": "a8a370415a67aae26f33f2a57d3a8d804f59a0a2",
+    "dirty": false,
+    "branch": "codex/harness-gap-s06-memory-effect-receipt-20261013",
+    "base": "8c34f6ca3a4151bf60626447a250044bba8ac423",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T13:06:00.000Z",
+    "finishedAt": "2026-10-13T13:18:00.000Z"
+  },
+  "effectLoop": {
+    "module": "openclaw_runtime/src/runtime-core/memory-effect-receipt.ts",
+    "sink": "RC-04 EffectReceiptStore (structural MemoryEffectReceiptSink; runtime-core does not import agents/ at runtime)",
+    "wiredActions": [
+      "memory_update",
+      "memory_forget",
+      "memory_strengthen"
+    ],
+    "idempotencyKey": "memory-effect:v1:<sha256(action|factId|sessionKey|runId|toolCallId)> - outcome-independent, so a replayed intent is a duplicate",
+    "proposalFields": [
+      "domain",
+      "action",
+      "factId",
+      "newFactId?"
+    ],
+    "outcomeMapping": {
+      "success": "applied",
+      "pre-effect-failure": "not_applied",
+      "partial-effect-failure": "unknown"
+    },
+    "failOpen": true,
+    "credentialOrContentInProposal": false
+  },
+  "gates": {
+    "s06Tests": {
+      "command": "openclaw_runtime: run-vitest src/runtime-core/memory-effect-receipt.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 5,
+      "failed": 0
+    },
+    "effectReceiptRegression": {
+      "command": "openclaw_runtime: run-vitest apply-patch-effect-receipt.test.ts stage1-effect-receipt.test.ts memory-effect-receipt.test.ts",
+      "exitCode": 0,
+      "files": 3,
+      "tests": 24,
+      "failed": 0
+    },
+    "memorySuite": {
+      "command": "openclaw_runtime: run-vitest src/memory",
+      "exitCode": 0,
+      "files": 2,
+      "tests": 62,
+      "failed": 0
+    },
+    "typecheckCore": {
+      "command": "openclaw_runtime: pnpm run tsgo:core",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "openclaw_runtime: run-oxlint memory-effect-receipt.ts memory-self-edit-tools.ts memory-effect-receipt.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-memory-effect-receipt.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-memory-effect-receipt.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "residual": {
+    "productionAssembly": "The sink must be injected; the production wiring that attaches the RC-04 store to the memory tool context is left to the integration layer (this packet does not register the tools).",
+    "readTools": "memory_recall / memory_find_related are read-only and produce no effect receipt.",
+    "scope": "Runtime memory self-edit only; no change to default auto-writeback, product defaults, locks, or approval semantics."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "unit + real-store integration",
+    "detail": "The real EffectReceiptStore writes a row for a real memory_update and treats a replay as identical-content duplicate; the builder unit test asserts digest-only proposals, outcome-independent keys, fail-open, and unknown preservation. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "reuse-store",
+      "status": "pass",
+      "note": "Reuses RC-04 EffectReceiptStore (append-only, idempotency unique, identical-content vs conflict); no second effect store."
+    },
+    {
+      "id": "digest-only",
+      "status": "pass",
+      "note": "proposal carries identifiers only; no memory content, credentials, or raw payload."
+    },
+    {
+      "id": "traceable",
+      "status": "pass",
+      "note": "stage1Context carries actor (sessionKey/runId/attempt/modelCall) and effect (toolCallId/toolName/resource/action); the store returns an effectReceiptId."
+    },
+    {
+      "id": "idempotent",
+      "status": "pass",
+      "note": "Replaying the same intent hits the same idempotency key and returns duplicate:true with the same effectReceiptId; 0 duplicate effects."
+    },
+    {
+      "id": "outcome-honest",
+      "status": "pass",
+      "note": "applied / not_applied / unknown mapped explicitly; a partial failure is recorded unknown, never disguised as applied."
+    },
+    {
+      "id": "fail-open",
+      "status": "pass",
+      "note": "A missing or throwing sink never blocks or fails the memory write."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "5 new + 86 regression tests pass, tsgo:core 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 4,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live provider calls.",
+    "Production assembly of the RC-04 sink into the agent tool context.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
