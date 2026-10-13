@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-l03-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0285",
+    "packet": "L03",
+    "title": "Safely accept in-run revision/cancel (steering)",
+    "source": "in-memory subagent-run fixtures (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Verified the steering lease/ack/release boundary: only a matching lease acks, repeat ack is a no-op, a failed turn releases to pending without loss or double injection, terminal (cancelled/delivered/failed/discarded) items are never re-leased, and a stale lease is re-taken after restart."
+  },
+  "candidate": {
+    "commit": "24c9bd91e3a1345c742f2fe88f39838184a3e575",
+    "tree": "c525383e39bc18d553958b2936410d959f2d934a",
+    "dirty": false,
+    "branch": "codex/harness-gap-l03-in-run-steering-20261013",
+    "base": "78f13c8f42e64c7f24561a06b795cd1a10253ccf",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T13:48:00.000Z",
+    "finishedAt": "2026-10-13T13:56:00.000Z"
+  },
+  "steering": {
+    "module": "openclaw_runtime/src/agents/agent-steering-queue.ts",
+    "lease": "pending/suspended (or stale in_progress) -> in_progress + steeringLeaseId + bounded prompt",
+    "ack": "only matching leaseId -> delivered (payload cleared); wrong/stale lease -> no-op; repeat ack -> 0",
+    "release": "failed turn -> back to pending; old lease can no longer ack",
+    "terminal": [
+      "delivered",
+      "discarded",
+      "failed"
+    ],
+    "restartSafe": "stale in_progress lease (>5min) is re-leasable",
+    "isolation": "requesterSessionKey must match"
+  },
+  "gates": {
+    "l03Tests": {
+      "command": "openclaw_runtime: run-vitest src/agents/agent-steering-queue.l03.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 6,
+      "failed": 0
+    },
+    "lintTouched": {
+      "command": "openclaw_runtime: run-oxlint agent-steering-queue.l03.test.ts",
+      "exitCode": 0
+    },
+    "typecheckTest": {
+      "command": "openclaw_runtime: pnpm run tsgo:core:test",
+      "exitCode": 2,
+      "note": "pre-existing baseline red (unrelated files); no error in the L03 file"
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-in-run-steering.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-in-run-steering.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "residual": {
+    "inProcess": "Leases are process-local coordination hints; staleness is a time threshold (5min), not a durable lock.",
+    "ui": "The renderer revision/cancel entry points and Electron E2E are integration-layer work.",
+    "scope": "Steering queue semantics only; no default/lock/approval change."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "state-machine assertions over real queue functions",
+    "detail": "Tests drive the real lease/ack/release/list functions and assert the delivery state machine (in_progress/delivered/pending/terminal) plus idempotency and stale-lease recovery. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "lease",
+      "status": "pass",
+      "note": "Pending completions are leased to in_progress with a leaseId and a bounded merged prompt containing the result."
+    },
+    {
+      "id": "ack-monotonic-idempotent",
+      "status": "pass",
+      "note": "Only a matching lease acks; wrong lease is a no-op; repeat ack returns 0 (no double injection)."
+    },
+    {
+      "id": "release",
+      "status": "pass",
+      "note": "A failed turn returns items to pending; the old lease cannot ack; the next lease takes exactly one batch."
+    },
+    {
+      "id": "cancel-stops-effect",
+      "status": "pass",
+      "note": "delivered/discarded/failed items are never listed or re-leased."
+    },
+    {
+      "id": "restart-safe",
+      "status": "pass",
+      "note": "A stale in_progress lease is re-leasable so a completion is not stranded."
+    },
+    {
+      "id": "isolation",
+      "status": "pass",
+      "note": "A different requesterSessionKey is ignored."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "6 tests pass, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable; only the pre-existing tsgo:core:test baseline is red."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 2,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live provider calls.",
+    "Renderer revision/cancel UI + Electron E2E.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}

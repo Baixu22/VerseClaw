@@ -1,0 +1,4 @@
+8afb7462ed0290f2d0899a02ab619680d276b9038cfbec276d498c3d5e9104b8  docs/dev/harness-gap-closure/l03-acceptance.json
+d9f9a657016f2ea141b331585a47dcb55ca2cbf9243eb1c5bef9749167dccc9f  docs/dev/harness-gap-closure/l03-in-run-steering.md
+43d5c05c8d4b3f32cc2e33fd30b9a14c78521405d616426b02c51ec791cf2f11  harness/specs/tasks/harness-gap-in-run-steering.md
+1239cff17997b83b553e90395114743a839ed071c5014fd657c58e06c7b8bea8  openclaw_runtime/src/agents/agent-steering-queue.l03.test.ts
