@@ -186,6 +186,26 @@ describe("locomo question journal", () => {
     expect(journalStartedAt([], "2026-10-12T09:00:00.000Z")).toBe("2026-10-12T09:00:00.000Z");
   });
 
+    it("widens the logical run to retained receipts that precede the first answer", () => {
+    // Regression: a resumed segment carries every retained receipt, and the extraction
+    // calls behind the reused fact cache happen before the first judged question. A window
+    // widened by answers alone left those receipts outside the run, and the verifier
+    // rejected the assembled report with "Receipt outside this run".
+    const answerAt = "2026-10-12T00:02:04.000Z";
+    const extractionAt = "2026-10-12T00:00:00.000Z";
+    const replayed = [succeeded("q1", { recordedAt: answerAt })];
+    const retained = [receipt("resp-extract", extractionAt), receipt("resp-judge", answerAt)];
+    // Compare parsed instants so the assertion does not depend on string formatting.
+    expect(Date.parse(journalStartedAt(replayed, answerAt, retained))).toBe(
+      Date.parse(extractionAt),
+    );
+    expect(Date.parse(journalStartedAt(replayed, answerAt, retained))).toBeLessThan(
+      Date.parse(answerAt),
+    );
+    // Without retained receipts the previous behaviour is unchanged.
+    expect(Date.parse(journalStartedAt(replayed, answerAt))).toBe(Date.parse(answerAt));
+  });
+
   it("refuses a logical run that answered the same question twice", () => {
     expect(() => assertNoQuestionOverlap(new Set(["q1"]), ["q2", "q1"])).toThrow(/answered twice/);
     expect(() => assertNoQuestionOverlap(new Set(["q1"]), ["q2"])).not.toThrow();

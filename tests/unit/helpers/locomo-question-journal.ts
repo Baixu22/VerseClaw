@@ -244,20 +244,28 @@ export function isRetainableReceipt(receipt: JournalModelReceipt): boolean {
 }
 
 /**
- * The logical run starts when its earliest retained question did, so receipts from
+ * The logical run starts when its earliest retained evidence did, so receipts from
  * every segment fall inside [startedAt, generatedAt] and the verifier can accept a
  * report assembled across bounded segments.
+ *
+ * Retained receipts are included, not just retained questions: a resumed segment
+ * carries every receipt the journal kept, and the extraction calls that produced the
+ * reused fact cache precede the first judged question (observed: 124 s earlier). A
+ * window widened by questions alone rejects those receipts with "Receipt outside this
+ * run" even though they belong to the same logical run.
  */
 export function journalStartedAt(
   replayed: readonly JournalSucceededEntry[],
   fallback: string,
+  retainedReceipts: readonly JournalModelReceipt[] = [],
 ): string {
   let earliest = Date.parse(fallback);
   if (!Number.isFinite(earliest)) return fallback;
-  for (const entry of replayed) {
-    const when = Date.parse(entry.recordedAt);
+  const consider = (when: number) => {
     if (Number.isFinite(when) && when < earliest) earliest = when;
-  }
+  };
+  for (const entry of replayed) consider(Date.parse(entry.recordedAt));
+  for (const receipt of retainedReceipts) consider(Date.parse(receipt.completedAt));
   return new Date(earliest).toISOString();
 }
 

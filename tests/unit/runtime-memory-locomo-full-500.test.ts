@@ -3797,7 +3797,7 @@ describe.skipIf(
           deepSeekUsage.completionTokens += receipt.usage.completion_tokens;
           deepSeekUsage.totalTokens += receipt.usage.total_tokens;
         }
-        provenance.startedAt = journalStartedAt(replayed, provenance.startedAt);
+        provenance.startedAt = journalStartedAt(replayed, provenance.startedAt, retainedReceipts);
         // Replayed questions still count toward the escalation snapshot and its budget.
         const escalationLevelsForStats = [
           ...replayed.map((entry) => ({ escalationLevel: entry.result.escalationLevel as EscalationLevel })),
