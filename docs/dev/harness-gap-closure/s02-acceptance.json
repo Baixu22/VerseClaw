@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-s02-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0277",
+    "packet": "S02",
+    "title": "Sensitive-sink coverage ledger with residual egress guard",
+    "source": "working-tree verification of existing provenance policies/tests (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Ledger + residual guard verified on the clean candidate: existing enforcement-drift guard (17 tests incl. drift) and runtime provenance tests (26) pass; the new residual ledger test pins the six uncovered egress entry points so wiring one forces a ledger update. Not a full-enforcement claim."
+  },
+  "candidate": {
+    "commit": "c1cb17973fd8f4a06b9de88f7aa6bf8b6fbe5909",
+    "tree": "fbea8e33fcb3de7b265dd775ce5f2b741d509bc4",
+    "dirty": false,
+    "branch": "codex/harness-gap-s02-sink-ledger-20261013",
+    "base": "741f7cb46edf5ce82f8bbbfb7c4ba3700432bf60",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T12:38:00.000Z",
+    "finishedAt": "2026-10-13T12:45:00.000Z"
+  },
+  "sinkLedger": {
+    "secret-read": {
+      "enforcement": "narrow",
+      "policy": "openclaw_runtime/src/agents/tools/message-secret-read-policy.ts#assertMessageSecretReadAllowed",
+      "callSite": "openclaw_runtime/src/agents/tools/message-tool.ts",
+      "rejectsWith": "policy-throw"
+    },
+    "network-send": {
+      "enforcement": "narrow",
+      "policy": "openclaw_runtime/src/infra/outbound/outbound-policy.ts#enforceCrossContextPolicy",
+      "callSite": "openclaw_runtime/src/infra/outbound/message-action-runner.ts",
+      "rejectsWith": "policy-throw"
+    },
+    "external-write": {
+      "enforcement": "narrow",
+      "policy": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts#wrapToolWithWorkspaceExternalWriteProvenance",
+      "callSite": "openclaw_runtime/src/agents/agent-tools.ts",
+      "rejectsWith": "policy-throw"
+    },
+    "command-exec": {
+      "enforcement": "source-dependent",
+      "policy": "openclaw_runtime/src/agents/exec-provenance-policy.ts#resolveCommandExecProvenancePolicy",
+      "callSite": "openclaw_runtime/src/agents/bash-tools.exec.ts",
+      "rejectsWith": "constrain"
+    },
+    "browser-effect": {
+      "enforcement": "narrow",
+      "policy": "openclaw_runtime/src/agents/tools/agent-browser-external-access-policy.ts#resolveAgentBrowserExternalAccessPolicy|resolveAgentBrowserSessionEffectPolicy",
+      "callSite": "openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+      "rejectsWith": "call-site-throw"
+    },
+    "credential-use": {
+      "enforcement": "narrow",
+      "policy": "openclaw_runtime/src/agents/tools/provider-credential-use-policy.ts#resolveProviderCredentialUsePolicy",
+      "callSite": "openclaw_runtime/src/agents/tools/image-generate-tool.ts",
+      "rejectsWith": "call-site-throw"
+    }
+  },
+  "residual": {
+    "note": "network-send cross-context gate is wired ONLY at message-action-runner.ts; these egress entry points do not reference isExternalOrUnknownProvenance/enforceCrossContextPolicy (0 matches) and are pinned by the new test.",
+    "entryPoints": [
+      "openclaw_runtime/src/infra/outbound/outbound-send-service.ts",
+      "openclaw_runtime/src/channels/plugins/message-action-dispatch.ts",
+      "openclaw_runtime/src/gateway/cli-runtime/outbound-send-deps.ts",
+      "openclaw_runtime/src/sessions/send-policy.ts",
+      "openclaw_runtime/src/auto-reply/send-policy.ts",
+      "openclaw_runtime/src/gateway/server-broadcast.ts"
+    ]
+  },
+  "gates": {
+    "rootProvenance": {
+      "command": "vitest run tests/unit/sensitive-sink-enforcement-drift.test.ts tests/unit/sensitive-sink-residual-ledger.test.ts tests/unit/external-content-provenance.test.ts",
+      "exitCode": 0,
+      "files": 3,
+      "tests": 17,
+      "failed": 0
+    },
+    "runtimeProvenance": {
+      "command": "openclaw_runtime: run-vitest src/infra/outbound/outbound-policy.provenance.test.ts src/agents/tools/message-secret-read-policy.test.ts src/agents/tools/message-tool.secret-read-provenance.test.ts src/agents/network-send-provenance-wiring.test.ts",
+      "exitCode": 0,
+      "files": 4,
+      "tests": 26,
+      "failed": 0
+    },
+    "typecheckTest": {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "eslint tests/unit/sensitive-sink-residual-ledger.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-sink-ledger.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-sink-ledger.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "two-sided drift guards",
+    "detail": "The pre-existing sensitive-sink-enforcement-drift guard resolves every declared enforcement point against the tree (and sweeps new gates); the new residual guard pins the uncovered egress entries. Together they bound both over- and under-claiming. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "per-sink-ledger",
+      "status": "pass",
+      "note": "All six sink kinds recorded with enforcement level, policy file, exported symbol, production call site and denial style, sourced from code."
+    },
+    {
+      "id": "residual-listed",
+      "status": "pass",
+      "note": "Six network-send egress entry points listed as residual (not wired to the shared gate), verified by 0 matches and pinned by an executable test."
+    },
+    {
+      "id": "no-overclaim",
+      "status": "pass",
+      "note": "Ledger states explicitly it is not full enforcement; narrow means one production path rejects; command-exec is source-dependent."
+    },
+    {
+      "id": "drift-guard",
+      "status": "pass",
+      "note": "Existing drift guard passes (declared points exist and are invoked; new gates must be registered)."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "43 provenance tests pass, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+    },
+    {
+      "id": "boundaries",
+      "status": "pass",
+      "note": "No new provenance engine; no product default/lock/approval change; README reviewed (no user-visible change); not real-human evidence."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 3,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live provider calls.",
+    "Whether every residual egress path is reachable in production (only that it does not consult the shared gate).",
+    "Non-Windows / remote CI.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
