@@ -22,7 +22,12 @@ export type VtokenPromptOverlap = {
  * workspace-remapped paths and `markdownSources` keep the bootstrap file's own
  * spelling, so a byte comparison would under-report the overlap on Windows.
  */
-function normalizeKey(value: string): string {
+/**
+ * Case- and separator-insensitive key, exported because the VToken call site
+ * reuses it to drop exactly the sources the prompt already renders. Sharing the
+ * normalizer is what keeps the measurement and the cut from drifting apart.
+ */
+export function normalizeVtokenOverlapKey(value: string): string {
   return value.trim().replace(/\\/g, "/").toLowerCase();
 }
 
@@ -34,19 +39,19 @@ export function computeVtokenPromptOverlap(params: {
 }): VtokenPromptOverlap {
   const promptPaths = new Set(
     params.promptSourcePaths
-      .map(normalizeKey)
+      .map(normalizeVtokenOverlapKey)
       .filter((entry) => entry.length > 0),
   );
   const promptTools = new Set(
     params.promptToolNames
-      .map(normalizeKey)
+      .map(normalizeVtokenOverlapKey)
       .filter((entry) => entry.length > 0),
   );
 
   let overlappingSourceCount = 0;
   let overlappingSourceChars = 0;
   for (const source of params.markdownSources) {
-    if (!promptPaths.has(normalizeKey(source.sourcePath))) {
+    if (!promptPaths.has(normalizeVtokenOverlapKey(source.sourcePath))) {
       continue;
     }
     overlappingSourceCount += 1;
@@ -55,7 +60,7 @@ export function computeVtokenPromptOverlap(params: {
 
   let overlappingToolSchemaCount = 0;
   for (const name of params.toolSchemaNames) {
-    if (promptTools.has(normalizeKey(name))) {
+    if (promptTools.has(normalizeVtokenOverlapKey(name))) {
       overlappingToolSchemaCount += 1;
     }
   }

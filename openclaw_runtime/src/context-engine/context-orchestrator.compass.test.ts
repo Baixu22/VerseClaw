@@ -237,7 +237,7 @@ it("#182 keeps a COMPASS-injected fact out of the memory pilot block", async () 
       ],
     },
   ]) as unknown as NonNullable<
-    Parameters<typeof computeContextExtraSystemPrompt>[2]["memoryProviderFactory"]
+    NonNullable<Parameters<typeof computeContextExtraSystemPrompt>[2]>["memoryProviderFactory"]
   >;
   const cfg = {
     runtime: {

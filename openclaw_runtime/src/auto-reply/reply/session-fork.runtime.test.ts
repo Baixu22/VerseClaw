@@ -71,7 +71,7 @@ describe("#180 fork at an in-transcript point", () => {
     const root = makeRoot();
     const parentSessionFile = writeParentTranscript({ root, tail: true });
     const forked = await forkSessionFromParentRuntime({
-      parentEntry: { sessionId: "parent", sessionFile: parentSessionFile },
+      parentEntry: { sessionId: "parent", sessionFile: parentSessionFile, updatedAt: 1 },
       agentId: "main",
       sessionsDir: root,
     });
@@ -86,7 +86,7 @@ describe("#180 fork at an in-transcript point", () => {
     const root = makeRoot();
     const parentSessionFile = writeParentTranscript({ root, tail: true });
     const forked = await forkSessionFromParentRuntime({
-      parentEntry: { sessionId: "parent", sessionFile: parentSessionFile },
+      parentEntry: { sessionId: "parent", sessionFile: parentSessionFile, updatedAt: 1 },
       agentId: "main",
       sessionsDir: root,
       fromEntryId: "a1",
@@ -104,7 +104,7 @@ describe("#180 fork at an in-transcript point", () => {
     const root = makeRoot();
     const parentSessionFile = writeParentTranscript({ root, tail: true });
     const forked = await forkSessionFromParentRuntime({
-      parentEntry: { sessionId: "parent", sessionFile: parentSessionFile },
+      parentEntry: { sessionId: "parent", sessionFile: parentSessionFile, updatedAt: 1 },
       agentId: "main",
       sessionsDir: root,
       fromEntryId: "u2",
@@ -135,7 +135,7 @@ describe("#180 fork at an in-transcript point", () => {
     writeFileSync(file, `${entries.map((entry) => JSON.stringify(entry)).join("\n")}\n`, "utf-8");
 
     const atPoint = await forkSessionFromParentRuntime({
-      parentEntry: { sessionId: "parent", sessionFile: file },
+      parentEntry: { sessionId: "parent", sessionFile: file, updatedAt: 1 },
       agentId: "main",
       sessionsDir: root,
       fromEntryId: "a1",
@@ -144,7 +144,7 @@ describe("#180 fork at an in-transcript point", () => {
     expect(atPoint?.forkedFromTimestamp).toBe(Date.parse("2026-02-01T10:05:00.000Z"));
 
     const wholeSession = await forkSessionFromParentRuntime({
-      parentEntry: { sessionId: "parent", sessionFile: file },
+      parentEntry: { sessionId: "parent", sessionFile: file, updatedAt: 1 },
       agentId: "main",
       sessionsDir: root,
     });
@@ -156,7 +156,7 @@ describe("#180 fork at an in-transcript point", () => {
     const root = makeRoot();
     const parentSessionFile = writeParentTranscript({ root, tail: true });
     const forked = await forkSessionFromParentRuntime({
-      parentEntry: { sessionId: "parent", sessionFile: parentSessionFile },
+      parentEntry: { sessionId: "parent", sessionFile: parentSessionFile, updatedAt: 1 },
       agentId: "main",
       sessionsDir: root,
       fromEntryId: "no-such-entry",
@@ -169,7 +169,7 @@ describe("#180 fork at an in-transcript point", () => {
     const root = makeRoot();
     const parentSessionFile = writeParentTranscript({ root, tail: false });
     const forked = await forkSessionFromParentRuntime({
-      parentEntry: { sessionId: "parent", sessionFile: parentSessionFile },
+      parentEntry: { sessionId: "parent", sessionFile: parentSessionFile, updatedAt: 1 },
       agentId: "main",
       sessionsDir: root,
       fromEntryId: "u1",

@@ -6,7 +6,7 @@
  * spelling.
  */
 import { describe, expect, it } from "vitest";
-import { computeVtokenPromptOverlap } from "./vtoken-prompt-overlap.js";
+import { computeVtokenPromptOverlap, normalizeVtokenOverlapKey } from "./vtoken-prompt-overlap.js";
 
 describe("#182 VToken prompt-overlap measurement", () => {
   it("counts sources whose path the prompt already rendered", () => {
@@ -76,5 +76,36 @@ describe("#182 VToken prompt-overlap measurement", () => {
 
     expect(overlap.overlappingSourceCount).toBe(0);
     expect(overlap.overlappingToolSchemaCount).toBe(0);
+  });
+
+  it("after the cut, re-running the overlap on the filtered inputs reports ~0", () => {
+    // The measured reading on the real workspace was 7/7 sources and 5/5 tool
+    // schemas overlapping; Option B drops exactly those keys from VToken's input,
+    // so the same measurement on the filtered input must report zero overlap.
+    const markdownSources = [
+      { sourcePath: "AGENTS.md", text: "prompt-carried" },
+      { sourcePath: "docs/notes.md", text: "prompt-external" },
+    ];
+    const toolSchemaNames = ["read_file", "memory_search"];
+    const promptSourcePaths = ["agents.md"];
+    const promptToolNames = ["read_file"];
+
+    const before = computeVtokenPromptOverlap({ markdownSources, toolSchemaNames, promptSourcePaths, promptToolNames });
+    expect(before.overlappingSourceCount).toBe(1);
+    expect(before.overlappingToolSchemaCount).toBe(1);
+
+    const sourceKeys = new Set(promptSourcePaths.map(normalizeVtokenOverlapKey));
+    const toolKeys = new Set(promptToolNames.map(normalizeVtokenOverlapKey));
+    const after = computeVtokenPromptOverlap({
+      markdownSources: markdownSources.filter((s) => !sourceKeys.has(normalizeVtokenOverlapKey(s.sourcePath))),
+      toolSchemaNames: toolSchemaNames.filter((n) => !toolKeys.has(normalizeVtokenOverlapKey(n))),
+      promptSourcePaths,
+      promptToolNames,
+    });
+    expect(after.overlappingSourceCount).toBe(0);
+    expect(after.overlappingToolSchemaCount).toBe(0);
+    // The prompt-external material survives, which is the point of the cut.
+    expect(after.sourceCount).toBe(1);
+    expect(after.toolSchemaCount).toBe(1);
   });
 });

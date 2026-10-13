@@ -2069,19 +2069,25 @@ export async function runEmbeddedAttempt(
           description: entry.purpose,
           ...(entry.inputSchema !== undefined ? { inputSchema: entry.inputSchema } : {}),
         }));
+    // #182: the measured reading on the real workspace was 7/7 sources (107,557
+    // chars) and 5/5 tool schemas overlapping - everything VToken was handed, the
+    // system prompt already renders verbatim. The cut itself lives at the packer
+    // (`alreadyRenderedSourcePaths` / `alreadyRenderedToolNames` below), so the
+    // measurement and the exclusion stay in one place.
+    const vtokenPromptOverlap = computeVtokenPromptOverlap({
+      markdownSources: vtokenMarkdownSources,
+      toolSchemaNames: vtokenToolSchemas.map((schema) => schema.name),
+      promptSourcePaths: contextFiles.map((file) =>
+        typeof file.path === "string" ? file.path : "",
+      ),
+      promptToolNames: effectiveTools.map((tool) =>
+        typeof tool.name === "string" ? tool.name : "",
+      ),
+    });
     try {
-      dcsObservability.recordVtokenPromptOverlap(
-        computeVtokenPromptOverlap({
-          markdownSources: vtokenMarkdownSources,
-          toolSchemaNames: vtokenToolSchemas.map((schema) => schema.name),
-          promptSourcePaths: contextFiles.map((file) =>
-            typeof file.path === "string" ? file.path : "",
-          ),
-          promptToolNames: effectiveTools.map((tool) =>
-            typeof tool.name === "string" ? tool.name : "",
-          ),
-        }),
-      );
+      // Recorded before filtering, so the "what did VToken hand us?" reading stays
+      // auditable after the cut and the drop stays measurable.
+      dcsObservability.recordVtokenPromptOverlap(vtokenPromptOverlap);
     } catch {
       // Measurement must never break a turn.
     }

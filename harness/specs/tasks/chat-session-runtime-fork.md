@@ -6,6 +6,7 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: Add a runtime-backed Fork action that creates a new Chat conversation branch inheriting the source transcript without sending a message.
 touchedAreas:
+  - openclaw_runtime/src/auto-reply/reply/session-fork.runtime.test.ts
   - harness/specs/tasks/chat-session-runtime-fork.md
   - openclaw_runtime/packages/gateway-protocol/**
   - openclaw_runtime/src/gateway/**
@@ -65,6 +66,12 @@ docs:
     - README.md
     - README.zh-CN.md
     - README.ja-JP.md
----
+residualPaths:
+  - harness/specs/tasks/vtoken-prompt-overlap-cut.md
+  - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts
+  - openclaw_runtime/src/context-engine/context-orchestrator.compass.test.ts
+  - openclaw_runtime/src/context-engine/vtoken-prompt-overlap.test.ts
+  - openclaw_runtime/src/context-engine/vtoken-prompt-overlap.ts
 
+---
 Runtime Fork is distinct from Handoff: Fork clones the current runtime transcript branch into a new session, while Handoff creates an editable continuation draft for a fresh session from runtime recovery context, ResumeCheckpoint, Task Ledger, Git, trace, and transcript fallback evidence. The continuity UI recommends between them through local preflight, but both explicit choices remain available from the session dropdown. Neither feature creates a parallel task truth system: Task Ledger remains durable work state, ResumeCheckpoint remains the continuation contract, and Memory/Knowledge are not written automatically by this flow.
