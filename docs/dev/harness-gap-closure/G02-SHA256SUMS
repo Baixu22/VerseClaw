@@ -1,0 +1,5 @@
+1bb54cbc25f437496ffdecb71f808562d633b123bd115901e91ef0c3d94aaea0  docs/dev/harness-gap-closure/g02-acceptance.json
+57627648c0476add860e6dbca77f4507e01a9790e4a61ef1a6b8d985c072d52d  docs/dev/harness-gap-closure/g02-spec-doc-gardening.md
+ec5004bce21e5ab4a017830c20fe0116fe77e0ea6cdc58711a89ec51ab218535  harness/specs/tasks/harness-gap-spec-doc-gardening.md
+2a9a08b8c6d148535cf16d9837b1f44b8cce4708e316424f53bf777f07e56bb3  harness/specs/rules/spec-doc-gardening-boundary.md
+968bf0a818599d9b0dd5d912d676aa287ea895cbabc23288ab613f1e393f0837  tests/unit/spec-doc-gardening.test.ts
