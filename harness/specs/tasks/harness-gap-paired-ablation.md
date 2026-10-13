@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-paired-ablation
 title: 首次真实生效的单组件配对消融（type-aware eviction vs FIFO）
 scenario: agent-dev-composable-scenarios

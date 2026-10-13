@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-g02-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0290",
+    "packet": "G02",
+    "title": "Slim the spec entry and prevent doc ossification",
+    "source": "repo-tree governance checks (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Every task spec now carries a lifecycleStatus (check-spec-lifecycle PASS 518/518); a single doc-gardening rule names its executable check; policy-docs (10) and error-governance (16) checks PASS; AGENTS.md stays a <=400-line routing entry. Retirement is by archived status, never mechanical deletion."
+  },
+  "candidate": {
+    "commit": "ef12077c63b264f2aa05f0eaa1e0e760ae57ca23",
+    "tree": "1df6485c89dbda850dd078eca6aa9a4325d74688",
+    "dirty": false,
+    "branch": "codex/harness-gap-g02-doc-gardening-20261013",
+    "base": "c708133cc789e38c19c3412c68751b5cf42a0bce",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T14:28:00.000Z",
+    "finishedAt": "2026-10-13T14:38:00.000Z"
+  },
+  "gardening": {
+    "lifecycle": "harness/specs/tasks/**/*.md must carry lifecycleStatus: active|completed|archived (check-spec-lifecycle.mjs)",
+    "fixedSpecs": [
+      "harness/specs/tasks/harness-gap-browser-effect-boundary.md",
+      "harness/specs/tasks/harness-gap-checkpoint-attachment-binding.md",
+      "harness/specs/tasks/harness-gap-context-pressure-recovery.md",
+      "harness/specs/tasks/harness-gap-credential-use-boundary.md",
+      "harness/specs/tasks/harness-gap-envelope-reject.md",
+      "harness/specs/tasks/harness-gap-error-recovery-next-action.md",
+      "harness/specs/tasks/harness-gap-external-write-boundary.md",
+      "harness/specs/tasks/harness-gap-hot-file-write-owner.md",
+      "harness/specs/tasks/harness-gap-in-run-steering.md",
+      "harness/specs/tasks/harness-gap-memory-effect-receipt.md",
+      "harness/specs/tasks/harness-gap-paired-ablation.md",
+      "harness/specs/tasks/harness-gap-rate-circuit-breaker.md",
+      "harness/specs/tasks/harness-gap-reliability-aggregation.md",
+      "harness/specs/tasks/harness-gap-sink-ledger.md",
+      "harness/specs/tasks/harness-gap-trace-cost-sampling.md",
+      "harness/specs/tasks/harness-gap-verifier-completion-verdict.md",
+      "harness/specs/tasks/harness-gap-working-context-single-source.md"
+    ],
+    "rule": "harness/specs/rules/spec-doc-gardening-boundary.md (single doc-gardening rule naming its executable check)",
+    "noMechanicalDelete": true,
+    "agentsEntry": "AGENTS.md stays a <=400-line routing entry pointing at harness/specs/**",
+    "docReferencesResolve": "validate-policy-docs.mjs PASS 10; check-error-governance.mjs PASS 16"
+  },
+  "gates": {
+    "g02Tests": {
+      "command": "vitest run tests/unit/spec-doc-gardening.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 3,
+      "failed": 0
+    },
+    "specLifecycle": {
+      "command": "node scripts/check-spec-lifecycle.mjs",
+      "exitCode": 0,
+      "result": "lifecycle status present for 518 task specs"
+    },
+    "policyDocs": {
+      "command": "node scripts/validate-policy-docs.mjs",
+      "exitCode": 0,
+      "result": "PASS: 10 checks"
+    },
+    "errorGovernance": {
+      "command": "node scripts/check-error-governance.mjs",
+      "exitCode": 0,
+      "result": "PASS: 16 checks"
+    },
+    "lintTouched": {
+      "command": "eslint tests/unit/spec-doc-gardening.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-spec-doc-gardening.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-spec-doc-gardening.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    }
+  },
+  "residual": {
+    "noDeletion": "No spec or doc is auto-deleted; retirement is explicit archived status reviewed by diff.",
+    "agentsGrowth": "If AGENTS.md ever exceeds 400 lines, rules must be demoted into harness/specs/** (the rule records this).",
+    "scope": "No product default/lock/approval change."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "tree-scan + governance checks",
+    "detail": "The G02 test scans every task spec for a valid lifecycleStatus, checks the AGENTS.md size/routing, and asserts a single doc-gardening rule naming its executable check; the existing lifecycle/policy/error-governance checks re-run against the tree. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "lifecycle-total",
+      "status": "pass",
+      "note": "All 518 task specs carry a valid lifecycleStatus; the 17 previously-missing (including this program's packets) were fixed."
+    },
+    {
+      "id": "archive-not-delete",
+      "status": "pass",
+      "note": "Retirement is by archived status; no spec or doc is mechanically deleted and product/rule/source retention is unchanged."
+    },
+    {
+      "id": "references-resolve",
+      "status": "pass",
+      "note": "validate-policy-docs (10) and check-error-governance (16) both PASS."
+    },
+    {
+      "id": "lightweight-entry",
+      "status": "pass",
+      "note": "AGENTS.md is <=400 lines and routes to harness/specs/** as the durable policy home."
+    },
+    {
+      "id": "single-rule",
+      "status": "pass",
+      "note": "Exactly one doc-gardening rule exists and it names its executable check (check-spec-lifecycle.mjs); no parallel source of truth."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "3 tests pass, lifecycle/policy/error-governance checks pass, scoped lint 0, harness validate/dry-run pass, credential scan 0 hits, SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 20,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live provider calls.",
+    "Long-term doc staleness trend over real calendar time.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}

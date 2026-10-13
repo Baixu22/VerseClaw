@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-credential-use-boundary
 title: 模型/provider 覆盖选择的凭据使用约束台账（S05）
 scenario: gateway-backend-communication

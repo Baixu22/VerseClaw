@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-hot-file-write-owner
 title: 热点文件只有一个可验证的写入归属（L06）
 scenario: gateway-backend-communication

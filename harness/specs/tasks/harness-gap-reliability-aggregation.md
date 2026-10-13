@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-reliability-aggregation
 title: 可靠性聚合与正反样本评测门（pass^k / flake / anchors）
 scenario: agent-dev-composable-scenarios

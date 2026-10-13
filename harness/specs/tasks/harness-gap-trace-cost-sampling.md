@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-trace-cost-sampling
 title: 关联每次模型调用成本与有界脱敏轨迹采样
 scenario: gateway-backend-communication

@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-checkpoint-attachment-binding
 title: 持久化挂件约束为可恢复的最小检查点（L04）
 scenario: gateway-backend-communication

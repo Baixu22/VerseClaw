@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-error-recovery-next-action
 title: 错误返回可执行且受权限约束的修复动作（G01）
 scenario: gateway-backend-communication

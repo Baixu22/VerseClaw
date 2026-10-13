@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: completed
 id: harness-gap-in-run-steering
 title: 运行中安全接收修订与取消指令（L03）
 scenario: gateway-backend-communication
