@@ -1,0 +1,5 @@
+985fd1b987c5b48dc7e69c512784465008cff242a06626c9ea27f24efb784e93  docs/dev/harness-gap-closure/l05-acceptance.json
+060f9502e17e3b7869ad81220c608aa7f01a6940cd72d7a233eb5e46e5aa8eee  docs/dev/harness-gap-closure/l05-rate-circuit-breaker.md
+8b01d13c5ab364d620d092154dea1f5a913e3380effea3b61bbec794691e5bd8  harness/specs/tasks/harness-gap-rate-circuit-breaker.md
+c9fe9f1fdecb31bc9f2dee148fde45ff5f2f51e9132f1f4f16c13d157f517d29  openclaw_runtime/src/agents/rate-circuit-breaker.ts
+d6e73fa68719e77bca0546044ee91cfe5eeeaf1c43ef4d453f80072d32653394  openclaw_runtime/src/agents/rate-circuit-breaker.test.ts

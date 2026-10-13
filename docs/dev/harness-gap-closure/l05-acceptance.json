@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-l05-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0287",
+    "packet": "L05",
+    "title": "Finite-state circuit breaker for abnormal call rates",
+    "source": "virtual-clock fixtures (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Added a deterministic finite-state rate breaker (closed/open/half-open) with cooldown and a single half-open probe. A legal rate never trips; an open breaker refuses during cooldown; the probe either closes or re-opens with a fresh cooldown; window pruning prevents false trips."
+  },
+  "candidate": {
+    "commit": "617aee4e85636ad4217eeec6cec6e66aaa4e0058",
+    "tree": "415e15ea8e0ebe57acff403a0bfc0eca685047d7",
+    "dirty": false,
+    "branch": "codex/harness-gap-l05-rate-breaker-20261013",
+    "base": "679b7124972f25a68d8ab15032afe4aee44ef19b",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T14:04:00.000Z",
+    "finishedAt": "2026-10-13T14:12:00.000Z"
+  },
+  "breaker": {
+    "module": "openclaw_runtime/src/agents/rate-circuit-breaker.ts",
+    "states": [
+      "closed",
+      "open",
+      "half-open"
+    ],
+    "closed": "requests allowed; failures counted in a sliding window; crossing maxFailuresPerWindow -> open",
+    "open": "allowsRequest() false during cooldown (no further effect); after cooldown -> half-open",
+    "half-open": "exactly one probe admitted; clean probe -> closed; failed probe -> open with a fresh cooldown",
+    "legalRate": "no failures -> never trips; sliding window prunes stale failures",
+    "deterministic": "injected clock; digest() reproducible",
+    "coexistsWith": "guardian-circuit-breaker (blocking-signal counting) - this adds the time dimension; does not relax SSRF/loop guard/approval"
+  },
+  "gates": {
+    "l05Tests": {
+      "command": "openclaw_runtime: run-vitest src/agents/rate-circuit-breaker.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 6,
+      "failed": 0
+    },
+    "loopGuardRegression": {
+      "command": "openclaw_runtime: run-vitest tool-loop-detection.progress.test.ts rate-circuit-breaker.test.ts",
+      "exitCode": 0,
+      "files": 2,
+      "tests": 37,
+      "failed": 0
+    },
+    "typecheckCore": {
+      "command": "openclaw_runtime: pnpm run tsgo:core",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "openclaw_runtime: run-oxlint rate-circuit-breaker.ts rate-circuit-breaker.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-rate-circuit-breaker.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-rate-circuit-breaker.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "residual": {
+    "assembly": "The breaker core is provided; wiring it to a concrete provider/run call site is integration-layer work.",
+    "scope": "A boundary/limit, not a production default; does not relax SSRF/loop guard/approval and does not duplicate the existing outbound budget."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "virtual-clock state-machine assertions + loop-guard regression",
+    "detail": "Tests drive the real breaker with an injected clock across legal-rate, trip, cooldown, half-open single-probe, recovery and window-pruning cases, and run alongside the tool-loop-detection regression to show the existing guard is unaffected. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "finite-state",
+      "status": "pass",
+      "note": "Closed/open/half-open state machine, deterministic under an injected clock."
+    },
+    {
+      "id": "open-refuses",
+      "status": "pass",
+      "note": "Requests are refused during the cooldown (no further effect) and only then move to half-open."
+    },
+    {
+      "id": "single-probe",
+      "status": "pass",
+      "note": "Exactly one half-open probe is admitted; a second is refused while it is in flight."
+    },
+    {
+      "id": "recovery",
+      "status": "pass",
+      "note": "A clean probe closes the breaker; a failed probe re-opens it with a fresh cooldown."
+    },
+    {
+      "id": "no-false-trip",
+      "status": "pass",
+      "note": "A purely legal rate never trips; sliding-window pruning prevents false trips in later legal windows."
+    },
+    {
+      "id": "no-weakening",
+      "status": "pass",
+      "note": "No SSRF/loop-guard/approval change; complements the existing blocking-signal guardian breaker and the outbound budget."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "6 new + 31 loop-guard regression tests pass, tsgo:core 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 3,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live provider calls.",
+    "Wiring into a concrete provider/run call site.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
