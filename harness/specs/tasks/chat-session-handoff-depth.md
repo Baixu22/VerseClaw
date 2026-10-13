@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: active
 id: chat-session-handoff-depth
 title: Persist and validate session handoff lineage
 scenario: gateway-backend-communication
