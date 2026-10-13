@@ -16,6 +16,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/embedded-agent-runner/compact.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/compact.types.ts
   - openclaw_runtime/src/agents/sessions/agent-session.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/ranged-compaction-transcript.test.ts
   - openclaw_runtime/src/gateway/methods/core-descriptors.ts
   - openclaw_runtime/src/gateway/server-methods.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.ts
@@ -139,11 +140,12 @@ Verified locally: `prepare-compaction.test.ts` (cut-point pin + fail-closed),
 proxy), and `tests/e2e/chat-session-compact-range.spec.ts` (hover action -> host call).
 `tsgo` node/web/test + core, `i18n:lint`, and eslint are clean.
 
-Residual gap (still open): the acceptance item "the untouched side is proven byte-identical
-by a test" is **not** covered. This change never edits a retained entry (only the compaction
-entry is appended and the file is re-serialized by the existing pipeline writer), but no
-test asserts byte-equality of the untouched entries, and driving the real pipeline needs a
-stubbed model beyond this change's scope.
+Byte-identity: `ranged-compaction-transcript.test.ts` drives the real transcript state and
+writer with the cut point `prepareCompaction` selects for an explicit `keepFromEntryId`, and
+asserts that every original entry (header + all messages) is byte-identical after the write -
+only the new compaction entry is appended. This covers the "untouched side is proven
+byte-identical by a test" acceptance item at the transcript-surgery layer; the LLM summary
+step itself is the existing pipeline and is not re-tested here.
 
 ## Non-goals
 
