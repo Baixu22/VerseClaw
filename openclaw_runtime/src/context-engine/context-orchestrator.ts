@@ -145,6 +145,12 @@ export type ContextOrchestratorInput = {
   workspaceDir?: string;
   /** Task / user prompt hint for VToken assemble. */
   taskHint?: string;
+  /**
+   * #183: the caller's persona-derived role name for role-memory lookup. Omit
+   * when the agent has no persona role; the provider resolver then applies its
+   * documented "main" fallback (the orchestrator never invents one).
+   */
+  roleName?: string;
   markdownSources?: VtokenMarkdownSource[];
   toolSchemas?: Array<Record<string, unknown>>;
   memoryEntries?: Array<Record<string, unknown>>;
@@ -724,6 +730,7 @@ export async function computeContextExtraSystemPrompt(
           {
             workspace: input.workspaceDir,
             taskId: input.taskId,
+            ...(input.roleName ? { roleName: input.roleName } : {}),
             // #182: COMPASS retrieval already selected these fact ids for this
             // turn and renders them on the `knowledge` channel, which charges
             // the budget first. Re-injecting the same facts as `memory_pilot`

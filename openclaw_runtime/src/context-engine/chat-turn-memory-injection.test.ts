@@ -174,6 +174,57 @@ describe("#183 memory pilot session scope", () => {
   });
 });
 
+describe("#183 persona role name", () => {
+  type ProviderQuery = Parameters<RuntimeContextProvider["getContext"]>[0];
+
+  function recordingProvider(): { provider: RuntimeContextProvider; queries: ProviderQuery[] } {
+    const queries: ProviderQuery[] = [];
+    const provider: RuntimeContextProvider = {
+      manifest: { id: "role-memory", kind: "context" } as unknown as RuntimeContextProvider["manifest"],
+      getContext: (query) => {
+        queries.push(query);
+        return [];
+      },
+    };
+    return { provider, queries };
+  }
+
+  const rolePilotCfg = {
+    runtime: {
+      memory: {
+        injectPilot: { enabled: true, sessions: "all", providers: ["role-memory"] },
+      },
+    },
+  };
+
+  it("forwards the caller-supplied persona role name to the provider query", async () => {
+    const { provider, queries } = recordingProvider();
+    await computeMemoryExtraSystemPrompt(
+      "prompt",
+      rolePilotCfg,
+      "agent:main:main",
+      () => [provider],
+      undefined,
+      { roleName: "implementer" },
+    );
+    expect(queries).toHaveLength(1);
+    expect(queries[0]!.metadata).toMatchObject({
+      roleName: "implementer",
+      sessionKey: "agent:main:main",
+    });
+  });
+
+  it("omits roleName when no persona role is resolved so the resolver fallback applies", async () => {
+    const { provider, queries } = recordingProvider();
+    await computeMemoryExtraSystemPrompt("prompt", rolePilotCfg, "agent:main:main", () => [provider]);
+    expect(queries).toHaveLength(1);
+    const metadata = (queries[0]!.metadata ?? {}) as Record<string, unknown>;
+    // No hardcoded "main": the provider resolver owns the documented fallback.
+    expect("roleName" in metadata).toBe(false);
+    expect(metadata.sessionKey).toBe("agent:main:main");
+  });
+});
+
 describe("#182 cross-channel fact dedupe", () => {
   it("drops facts another channel already injected this turn", async () => {
     const provider = fakeProvider("runtime-memory", memoryItems(3));

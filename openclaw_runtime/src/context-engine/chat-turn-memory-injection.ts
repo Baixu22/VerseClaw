@@ -312,6 +312,14 @@ export async function computeMemoryExtraSystemPrompt(
   scope?: {
     workspace?: string;
     taskId?: string;
+    /**
+     * #183: the caller's persona-derived role name for role-memory lookup. When
+     * no persona role is resolved, the caller omits it and the provider resolver
+     * (`defaultMainSessionRoleResolver`) applies its documented `"main"`
+     * fallback - the caller must not hardcode `"main"` here, which silently
+     * disabled the resolver's metadata read.
+     */
+    roleName?: string;
     /** #182: fact ids another channel already injected this turn. */
     dedupeFactIds?: readonly string[];
   },
@@ -329,7 +337,10 @@ export async function computeMemoryExtraSystemPrompt(
           ...(scope?.dedupeFactIds && scope.dedupeFactIds.length > 0
             ? { dedupeFactIds: scope.dedupeFactIds }
             : {}),
-          metadata: { roleName: "main", sessionKey },
+          metadata: {
+            ...(scope?.roleName ? { roleName: scope.roleName } : {}),
+            sessionKey,
+          },
         },
         providers,
         pilotConfig,
