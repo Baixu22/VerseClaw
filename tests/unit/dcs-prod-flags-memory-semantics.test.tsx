@@ -52,6 +52,7 @@ vi.mock('react-i18next', () => {
     return label.replace(/\{\{[^}]+\}\}/g, (token) => String(values[token.slice(2, -2).trim()] ?? token));
   };
   return {
+    initReactI18next: { type: '3rdParty', init: () => {} },
     useTranslation: () => ({ t }),
   };
 });
