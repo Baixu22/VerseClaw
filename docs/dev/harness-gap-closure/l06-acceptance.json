@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-l06-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0288",
+    "packet": "L06",
+    "title": "One verified write owner for a hot file",
+    "source": "in-memory claim + real per-file mutation queue fixtures (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Added a CAS-style verified write owner over the existing per-file mutation queue: a second different owner is an explicit conflict, same-owner re-claim is idempotent, release requires a matching token, concurrent same-file writes serialize, and a thrown write rolls the claim back."
+  },
+  "candidate": {
+    "commit": "c50686ef7099e4e6eafbdbc9652c92d92992087e",
+    "tree": "960c121c7d334c3fdc004ea08debc60d9bdef81d",
+    "dirty": false,
+    "branch": "codex/harness-gap-l06-hot-file-owner-20261013",
+    "base": "4afa1e94a73f200a29713566b5759b92a115f70a",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T14:12:00.000Z",
+    "finishedAt": "2026-10-13T14:20:00.000Z"
+  },
+  "writeOwner": {
+    "module": "openclaw_runtime/src/agents/hot-file-write-owner.ts",
+    "serialization": "reuses withFileMutationQueue -> workspace fileMutation lease kernel (issue #167); no second scheduler",
+    "claim": "first owner ok; different owner -> explicit 'owned-by-another-owner' with holder + conflict count; same owner -> idempotent reentrant",
+    "release": "token-matched only; release clears the owner so a conflict is recoverable/rolled back",
+    "wrapper": "withVerifiedWriteOwner serializes, claims, and releases in finally (no leak on throw)"
+  },
+  "gates": {
+    "l06Tests": {
+      "command": "openclaw_runtime: run-vitest src/agents/hot-file-write-owner.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 5,
+      "failed": 0
+    },
+    "typecheckCore": {
+      "command": "openclaw_runtime: pnpm run tsgo:core",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "openclaw_runtime: run-oxlint hot-file-write-owner.ts hot-file-write-owner.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-hot-file-write-owner.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-hot-file-write-owner.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "residual": {
+    "inProcess": "The claim is an in-process coordination hint (same kernel as #167 leases); cross-process/cross-runtime writes are out of scope.",
+    "assembly": "The owner kernel is provided; wiring it to concrete hot-file write points is integration-layer work.",
+    "scope": "No second scheduler/platform; no default/lock/approval change."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "state assertions + real queue concurrency",
+    "detail": "Tests drive the real claim/release API and the real withFileMutationQueue serialization (interleaving check) and assert rollback on throw. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "single-owner",
+      "status": "pass",
+      "note": "One verified owner at a time; a second different owner gets an explicit conflict with the holder, not a silent concurrent write."
+    },
+    {
+      "id": "idempotent-reentrant",
+      "status": "pass",
+      "note": "A same-owner re-claim is idempotent (reentrant) and is not counted as a conflict."
+    },
+    {
+      "id": "token-release-recovery",
+      "status": "pass",
+      "note": "Only a matching token releases; after release another owner can claim (conflict recovered)."
+    },
+    {
+      "id": "serialize",
+      "status": "pass",
+      "note": "Concurrent same-file writes serialize via the existing mutation queue (start/end never interleave); no active owner remains after completion."
+    },
+    {
+      "id": "rollback",
+      "status": "pass",
+      "note": "A thrown write rolls back the owner claim (no leak)."
+    },
+    {
+      "id": "no-second-scheduler",
+      "status": "pass",
+      "note": "Reuses the existing fileMutation lease kernel; no new scheduler/platform."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "5 tests pass, tsgo:core 0, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 3,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live provider calls.",
+    "Cross-process/cross-runtime write ownership.",
+    "Wiring into concrete hot-file write points.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}

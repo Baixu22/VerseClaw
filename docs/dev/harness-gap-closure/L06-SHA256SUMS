@@ -1,0 +1,5 @@
+17682ec3f46b3f3d0ac6d8469bcd9fc3a97f95c5e0eea7dbcf99ac4a16400272  docs/dev/harness-gap-closure/l06-acceptance.json
+30a8a119b6d54909b3fcc5ee4040412f4017c4d86d94e6d43926d1595d0a03b9  docs/dev/harness-gap-closure/l06-hot-file-write-owner.md
+fe9b09f977a84ecd0756fad740c569a495b60ab9b16281843c878b0416647b79  harness/specs/tasks/harness-gap-hot-file-write-owner.md
+5009bace6b1ab7c3bafd7341f7cb8f71a61ded147fed165aaf3cbf3cd533f430  openclaw_runtime/src/agents/hot-file-write-owner.ts
+bf3c201357685b4b5ec464bbbb7bd3ff48ebcc3eab63de8c2a655780c2f91451  openclaw_runtime/src/agents/hot-file-write-owner.test.ts
