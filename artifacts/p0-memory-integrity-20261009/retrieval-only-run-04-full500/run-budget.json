@@ -1,0 +1,15 @@
+{
+  "driven_by": "agent",
+  "actor": "dsh-lead",
+  "recordedAt": "2026-10-12T16:36:42.716Z",
+  "timeoutMinutes": 180,
+  "testTimeoutMinutes": null,
+  "heapMb": 6144,
+  "nodeFlags": [
+    "--max-old-space-size=6144",
+    "--report-on-fatalerror"
+  ],
+  "nodeOptions": null,
+  "resumeFrom": "D:\\ClawX-work\\p0-local-embedding-20261010\\judge10-seed",
+  "resumeSourceRevision": "a85dabaa119f1ff1ab521a261d8765bf781e11e8"
+}

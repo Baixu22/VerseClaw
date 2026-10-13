@@ -9,7 +9,6 @@ import { request } from "undici";
 const DEFAULT_MODEL = process.env.RUNTIME_MEMORY_LLM_MODEL || process.env.DEEPSEEK_MODEL || "deepseek-chat";
 const DEFAULT_TIMEOUT_MS = 30_000;
 const MAX_RETRIES = 3;
-
 // Reasoning models (deepseek-v4-flash, deepseek-reasoner/R1) emit their chain
 // of thought in `reasoning_content` and the final answer in `content`. They
 // also require a much larger max_tokens budget because the reasoning process
@@ -134,8 +133,27 @@ export async function callDeepSeek(
         },
         body: requestBody,
         signal: controller.signal,
+        // Bound each phase so a stalled socket cannot leave the promise
+        // unsettled forever. If the peer stops mid-body, undici can otherwise
+        // hang with no CPU, no traffic and no timeout firing. These are
+        // per-request options and still route through the global dispatcher, so
+        // MockAgent-based tests keep working. Observed live: judge-06 hung 40+
+        // minutes at conv-47 with only the AbortController set.
+        headersTimeout: timeoutMs,
+        bodyTimeout: timeoutMs,
       });
 
+      // 429 is a rate limit, not a bad request: wait for the server Retry-After
+      // when it supplies one (bounded), otherwise back off exponentially. Without
+      // this a single rate-limited question was written off as a failed result
+      // instead of being retried.
+      if (res.statusCode === 429 && attempt < MAX_RETRIES) {
+        await res.body.dump();
+        clearTimeout(timer);
+        lastError = new Error("Runtime memory LLM API 429");
+        await delay(rateLimitDelayMs(parseRetryAfter(res.headers?.["retry-after"]), attempt));
+        continue;
+      }
       if (res.statusCode >= 500 && attempt < MAX_RETRIES) {
         await res.body.dump();
         clearTimeout(timer);
@@ -201,11 +219,32 @@ export async function callDeepSeek(
 function isRetryable(err: unknown): boolean {
   if (err instanceof Error) {
     if (err.name === "AbortError") return true;
+    // A 429 that is not retried inline still has to be retried, never scored as an
+    // answered question.
+    if (/API 429/.test(err.message)) return true;
     if (/ECONNRESET|ETIMEDOUT|ECONNREFUSED|socket hang up|UND_ERR/i.test(err.message)) {
       return true;
     }
   }
   return false;
+}
+
+/** Upper bound on a single rate-limit wait, so a hostile Retry-After cannot stall a run. */
+export const MAX_RATE_LIMIT_BACKOFF_MS = 30_000;
+
+/** Seconds or an HTTP-date, per RFC 9110. Returns null when the header is absent or unusable. */
+export function parseRetryAfter(raw: unknown, now = Date.now()): number | null {
+  if (typeof raw !== "string" || raw.trim() === "") return null;
+  const seconds = Number(raw);
+  if (Number.isFinite(seconds) && seconds >= 0) return seconds * 1000;
+  const when = Date.parse(raw);
+  return Number.isFinite(when) ? Math.max(0, when - now) : null;
+}
+
+/** Retry-After wins when present; otherwise exponential backoff. Always bounded. */
+export function rateLimitDelayMs(retryAfterMs: number | null, attempt: number): number {
+  const backoff = retryAfterMs ?? 1000 * 2 ** (attempt - 1);
+  return Math.min(Math.max(backoff, 0), MAX_RATE_LIMIT_BACKOFF_MS);
 }
 
 function delay(ms: number): Promise<void> {

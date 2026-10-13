@@ -27,6 +27,7 @@ export type NormalizedReportMetrics = {
   source: string;
   evidenceStatus: "unverified" | "verified";
   judgeSignature?: string;
+  embeddingSignature?: string;
   contextRecallDefinition?: string;
   /** report version 字段 */
   version?: string;
@@ -73,6 +74,7 @@ export type RegressionDelta = {
   /** 是否存在回归 (任一 category J delta < -threshold) */
   hasRegression: boolean;
   judgeComparable: boolean;
+  embeddingComparable: boolean;
   evidenceVerified: boolean;
   retrievalRegressedCategories: string[];
   /** 回归的 category 列表 (delta < -threshold) */
@@ -133,6 +135,7 @@ export function normalizeReportMetrics(
     source,
     evidenceStatus: "unverified",
     judgeSignature: judgeSignature(r.judgeConfig),
+    embeddingSignature: embeddingSignature(r.provenance),
     contextRecallDefinition: typeof (r.metricDefinitions as Record<string, unknown> | undefined)?.context_recall === "string"
       ? (r.metricDefinitions as Record<string, string>).context_recall : undefined,
     version: typeof r.version === "string" ? r.version : undefined,
@@ -223,6 +226,7 @@ export function compareReports(
     hasRegression: regressedCategories.length > 0 || retrievalRegressedCategories.length > 0
       || overallJ < -threshold || (overallRecall5 !== undefined && overallRecall5 < -threshold),
     judgeComparable: baseline.judgeSignature !== undefined && baseline.judgeSignature === current.judgeSignature,
+    embeddingComparable: baseline.embeddingSignature !== undefined && baseline.embeddingSignature === current.embeddingSignature,
     evidenceVerified: baseline.evidenceStatus === "verified" && current.evidenceStatus === "verified",
     retrievalRegressedCategories,
     regressedCategories: [...new Set([...regressedCategories, ...retrievalRegressedCategories])],
@@ -292,6 +296,7 @@ export function formatRegressionMarkdown(delta: RegressionDelta): string {
   if (!delta.judgeComparable) {
     lines.push("> Different or unknown judge configurations: these are arithmetic differences, not comparable measured gains or a ranking.");
   }
+  if (!delta.embeddingComparable) lines.push("> Different or unknown embedding deployments: arithmetic differences do not establish a same-configuration retrieval improvement or historical reproduction.");
   lines.push("");
 
   // Overall
@@ -366,4 +371,11 @@ function judgeSignature(value: unknown): string | undefined {
   if (![config.model, config.promptVersion, config.promptTemplate].every((part) => typeof part === "string" && part.length > 0)
     || typeof config.temperature !== "number") return undefined;
   return JSON.stringify([config.model, config.temperature, config.promptVersion, config.promptTemplate]);
+}
+
+function embeddingSignature(value: unknown): string | undefined {
+  const embedding = (value as { embedding?: Record<string, unknown> } | undefined)?.embedding;
+  if (!embedding || ![embedding.id, embedding.model, embedding.deployment, embedding.quantization].every(part => typeof part === "string" && part.length > 0)
+    || typeof embedding.dimension !== "number") return undefined;
+  return JSON.stringify([embedding.id, embedding.model, embedding.deployment, embedding.quantization, embedding.dimension, embedding.weightsSha256 ?? null]);
 }

@@ -1871,6 +1871,29 @@ openclaw_runtime/_tmp_*
 !/docs/dev/repository-cleanup-triage-2026-10-08.md
 !/docs/dev/security-reality-audit-20261009.md
 !/docs/dev/windows-runtime-efficiency-observability.md
+!/docs/dev/harness-gap-closure/ACCEPTANCE-SHA256SUMS
+!/docs/dev/harness-gap-closure/SHA256SUMS
+!/docs/dev/harness-gap-closure/baseline-acceptance.json
+!/docs/dev/harness-gap-closure/baseline-evidence.json
+!/docs/dev/harness-gap-closure/baseline.md
+!/docs/dev/harness-gap-closure/design.md
+!/docs/dev/harness-gap-closure/source-inventory.json
+!/docs/dev/harness-gap-closure/o01-approval-rate.md
+!/docs/dev/harness-gap-closure/o01-acceptance.json
+!/docs/dev/harness-gap-closure/O01-SHA256SUMS
+!/docs/dev/p2-issue-fixes-batch1-20261010.md
+!/docs/dev/p2-issue-fixes-batch2-20261010.md
+!/docs/dev/p2-issue-fixes-batch3-20261010.md
+!/docs/dev/p0-memory-evaluation-integrity.md
+!/artifacts/p0-memory-integrity-20261009/report.json
+!/artifacts/p0-memory-integrity-20261009/SHA256SUMS
+!/artifacts/p0-memory-integrity-20261009/judge-binding-20261010.json
+!/artifacts/p0-memory-integrity-20261009/judge-binding-20261010.sha256
+!/docs/dev/error-governance-decision-record.md
+!/docs/dev/p2-issue-fixes-batch4-20261010.md
+!/artifacts/p0-memory-integrity-20261009/local-embedding-20261010.json
+!/artifacts/p0-memory-integrity-20261009/local-embedding-20261010.sha256
+!/docs/dev/p0-locomo-run-07-outcome-20261012.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

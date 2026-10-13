@@ -674,3 +674,21 @@ describe("independent retrieval and comparability gates (#136)", () => {
     expect(compareReports(baseline, current).judgeComparable).toBe(false);
   });
 });
+
+describe("embedding deployment comparison boundary", () => {
+  const embedding = { id: "siliconflow-qwen3-embed-8b", model: "Qwen/Qwen3-Embedding-8B", deployment: "siliconflow", quantization: "provider-managed", dimension: 4096 };
+  it("does not call a quantized local run a reproduction of the hosted reference", () => {
+    const baseline = normalizeReportMetrics({ ...legacyReport, provenance: { embedding } }, "hosted-synthetic");
+    const current = normalizeReportMetrics({ ...currentReport, provenance: { embedding: { ...embedding, id: "local", deployment: "local-llama.cpp", quantization: "Q4_K_M" } } }, "local-synthetic");
+    const delta = compareReports(baseline, current);
+    expect(delta.embeddingComparable).toBe(false);
+    expect(delta.retrievalRegressedCategories).toContain("temporal");
+    expect(formatRegressionMarkdown(delta)).toContain("Different or unknown embedding deployments");
+  });
+  it("compares identical embedding configurations independent of a loopback port", () => {
+    const first = normalizeReportMetrics({ ...currentReport, provenance: { embedding: { ...embedding, endpoint: "http://127.0.0.1:1/v1/embeddings" } } }, "first-synthetic");
+    const second = normalizeReportMetrics({ ...currentReport, provenance: { embedding: { ...embedding, endpoint: "http://127.0.0.1:2/v1/embeddings" } } }, "second-synthetic");
+    expect(compareReports(first, second).embeddingComparable).toBe(true);
+    expect(compareReports(first, normalizeReportMetrics(currentReport, "unknown" )).embeddingComparable).toBe(false);
+  });
+});

@@ -96,7 +96,8 @@
     "openclaw_runtime/scripts/ts-max-loc-baseline.json",
     "docs/dev/p2-issue-fixes-batch8-20261010.md",
     "artifacts/p1-141-memory-benefit-real-20261010/report.json",
-    "artifacts/p1-141-memory-benefit-real-20261010/SHA256SUMS"
+    "artifacts/p1-141-memory-benefit-real-20261010/SHA256SUMS",
+    "docs/dev/p0-locomo-run-07-outcome-20261012.md"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",
@@ -1768,7 +1769,10 @@
     "docs/dev/provider-error-retry-boundaries.md",
     "docs/dev/repository-cleanup-triage-2026-10-08.md",
     "docs/dev/security-reality-audit-20261009.md",
-    "docs/dev/windows-runtime-efficiency-observability.md"
+    "docs/dev/windows-runtime-efficiency-observability.md",
+    "artifacts/p0-memory-integrity-20261009/local-embedding-20261010.json",
+    "artifacts/p0-memory-integrity-20261009/local-embedding-20261010.sha256",
+    "docs/dev/p0-locomo-run-07-outcome-20261012.md"
   ],
   "artifactBatches": {}
 }
