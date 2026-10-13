@@ -46,7 +46,7 @@ async function drive(options: unknown): Promise<{ rejected: boolean; fetchCalls:
       headers: { 'content-type': 'text/event-stream' },
     });
   }) as typeof fetch;
-  let rejected = false;
+  let rejected: boolean;
   try {
     const stream = await createAnthropicMessagesTransportStreamFn()(makeModel(), CONTEXT, options as never);
     for await (const _event of stream) {

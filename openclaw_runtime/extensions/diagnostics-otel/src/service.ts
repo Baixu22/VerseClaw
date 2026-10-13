@@ -1164,6 +1164,8 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
         return;
       }
       let costSampling: CostSamplingSpanProcessor | undefined;
+      // Assigned once below but captured by an earlier closure; const would TDZ.
+      // eslint-disable-next-line prefer-const
       let expireModelSpan: ((spanId: string) => void) | undefined;
       let recordCostSamplingMetrics:
         | ((report: ReturnType<CostSamplingSpanProcessor["snapshot"]>) => void)

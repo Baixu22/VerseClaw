@@ -2327,8 +2327,8 @@ describe.skipIf(
           // so the judge can see them. Closes 断裂点 6 (mem-status §3).
           let reflectFinalAnswer = strippedAnswer.answer;
           if (reflectEnabled) {
-            const indexForReflect = indexByConversation.get(conversationId);
-            const embeddingProviderForReflect = embeddingProvider;
+            const _indexForReflect = indexByConversation.get(conversationId);
+            const _embeddingProviderForReflect = embeddingProvider;
             const reflectRetrieve = reflectRetrieveFactory?.({ referenceTime, temporalMode });
             const reflectResult = await runReflectAgent({
               question: qa.question,
@@ -2587,7 +2587,7 @@ describe.skipIf(
           try {
             if (cachedQuestion) {
               const factsById = factsByIdByConversation.get(conversationId);
-              let retrievedFacts =
+              const retrievedFacts =
                 cachedQuestion.retrievalCache.semanticFacts?.length > 0
                   ? cachedQuestion.retrievalCache.semanticFacts.map((fact) =>
                       makeFactFromCachedSemantic(fact, conversationId),

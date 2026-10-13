@@ -36,7 +36,8 @@ describe('P0 production acceptance gate (TF-0001..0005)', () => {
     const packageJson = JSON.parse(
       readFileSync(resolve(ROOT, 'package.json'), 'utf8'),
     ) as { scripts?: Record<string, string> };
-    expect(packageJson.scripts?.['prebuild:vite']).toBe('node scripts/generate-ext-bridge.mjs');
+    expect(packageJson.scripts?.['prebuild:vite']).toContain('node scripts/generate-ext-bridge.mjs');
+    expect(packageJson.scripts?.['prebuild:vite']).toContain('node scripts/sync-lobe-icons.mjs');
   });
 
   it('evidence pack exists for every P0 node', () => {
