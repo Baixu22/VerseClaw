@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-e01-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0274",
+    "packet": "E01",
+    "title": "Reliability aggregation and positive/negative eval gate",
+    "source": "deterministic pre-registered fixture (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Aggregation + runner wiring verified on a clean candidate: focused unit 6/6, typecheck:test exit 0, scoped eslint exit 0, harness validate valid + dry-run pass, runner executes and emits the reliability block. Deterministic oracle; explicitly insufficient-sample; no product-lock or default change."
+  },
+  "candidate": {
+    "commit": "42aaf5522499fbb940aa2dd1007967eb55adb0f3",
+    "tree": "0751fd29d53ef491972dc48d73029dc8a35fc366",
+    "dirty": false,
+    "branch": "codex/harness-gap-e01-reliability-20261013",
+    "base": "874befaaa018bdb1160f8f064b17f053fcfe8512",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T11:28:00.000Z",
+    "finishedAt": "2026-10-13T11:40:00.000Z"
+  },
+  "gates": {
+    "focusedTests": {
+      "command": "vitest run tests/unit/agent-dev-reliability-aggregation.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 6,
+      "failed": 0,
+      "skipped": 0
+    },
+    "typecheckTest": {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "eslint scripts/agent-dev-benefit-eval.mjs scripts/lib/reliability-aggregation.mjs scripts/lib/reliability-aggregation.d.mts tests/unit/agent-dev-reliability-aggregation.test.ts",
+      "exitCode": 0,
+      "warnings": 1,
+      "note": "warning is eslint 'file ignored' for the .d.mts (no matching config), not a code warning"
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-reliability-aggregation.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-reliability-aggregation.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "runner": {
+      "command": "node scripts/agent-dev-benefit-eval.mjs",
+      "exitCode": 0,
+      "note": "report.json now carries report.reliability"
+    }
+  },
+  "runtimeEvidence": {
+    "fixture": "shared/agent-dev/reliability-fixture.json (k=3, minCases=20, flakeThreshold=0.01, 5 pre-registered cases)",
+    "observed": {
+      "completeCaseCount": 4,
+      "incompleteCaseCount": 1,
+      "perTrialSuccessRate": 0.5,
+      "passK": 0.25,
+      "passAtK": 0.75,
+      "flakeRate": 0.25,
+      "gate": "insufficient-sample"
+    },
+    "fixtureDeterministic": true
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "deterministic unit assertions",
+    "detail": "The unit test independently asserts pass^k vs pass@k divergence, incomplete preservation, flake semantics, safety and anchor gating. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "reuse-report",
+      "status": "pass",
+      "note": "Reuses the existing agent-dev benefit report and scenario registry; no new metrics platform or store; thresholds pre-registered in the fixture."
+    },
+    {
+      "id": "passk-vs-passatk",
+      "status": "pass",
+      "note": "pass^k and pass@k reported separately (fixture: 0.25 vs 0.75); never mixed."
+    },
+    {
+      "id": "incomplete-preserved",
+      "status": "pass",
+      "note": "missing/timeout/crash/skip cases are incomplete, excluded from denominators, and preserved in the incomplete list."
+    },
+    {
+      "id": "flake-semantics",
+      "status": "pass",
+      "note": "flake = first trial failed and a later fixed re-run passed; first failure preserved; safety-required cases must be 0 skip / 0 flake."
+    },
+    {
+      "id": "anchors",
+      "status": "pass",
+      "note": "positive must all-pass, negative must all-reject; violating either sets gate=fail."
+    },
+    {
+      "id": "insufficient-sample",
+      "status": "pass",
+      "note": "Complete cases < minCases (20) yields gate=insufficient-sample, not PASS."
+    },
+    {
+      "id": "report-fields",
+      "status": "pass",
+      "note": "Report carries raw denominator, pass^k, pass@k, flake, missing, gate and reasons; fixture labelled deterministic."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "Focused tests + typecheck:test + scoped lint + harness validate/dry-run passed; credential scan 0 hits; SHA256SUMS verifiable."
+    },
+    {
+      "id": "boundaries",
+      "status": "pass",
+      "note": "No product default/lock/approval change; no scheduled automation; no live-provider or human claim."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 7,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Real-model reliability (deterministic fixture only).",
+    "Remote CI.",
+    "A separate second-agent independent verifier role.",
+    "Comms gates (this packet does not touch comms paths)."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
