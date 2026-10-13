@@ -1,0 +1,5 @@
+09390cf33cf15bb05097f38d8cb9cf845962bf17958d90befdde235218176407  docs/dev/harness-gap-closure/g01-acceptance.json
+8749031e476c7fb82a407c60e1bcbcb0e47d0dd590f8a4a7b89ec51c9f7ae2fd  docs/dev/harness-gap-closure/g01-error-recovery-next-action.md
+7b2dea9437ebbb889edbc0876bd339a3c751932e809e693ca44781230f81c0dd  harness/specs/tasks/harness-gap-error-recovery-next-action.md
+b87bea48853935b4e72d3d17d088d1ad5742c0e5e1462d42a44deb9b9e6666e6  src/lib/error-model.ts
+0a2c79941e0037c48327ae04c0ca632209a7dd2f13b9394c1a1ae0fea5091ec7  tests/unit/error-recovery-next-action.test.ts
