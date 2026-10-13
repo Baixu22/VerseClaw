@@ -1,0 +1,4 @@
+a8422e790efb7ccd9c3f3b9dbbf7c2115d56a37f2081b774d0232eceb9acc4be  docs/dev/harness-gap-closure/s05-acceptance.json
+d065593495a9deaa5fb0eb09a129ca6d294b3363ac286c07616c2e301928ba80  docs/dev/harness-gap-closure/s05-credential-use-boundary.md
+99fee907d650eda41d149e6f67348502eb3fdae0f8e748f1b4f66fe444dfa63a  harness/specs/tasks/harness-gap-credential-use-boundary.md
+3f76e97baa0c611a7c1fd4f6b1ae4e1875044bdf02460b188efcfb44ed8d9cf5  tests/unit/provider-credential-use-boundary-ledger.test.ts
