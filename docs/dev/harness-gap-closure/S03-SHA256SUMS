@@ -1,0 +1,4 @@
+6c67f99c023728eaed7c506ba24b95104de188d0ecd3eac31b27df40548d0b02  docs/dev/harness-gap-closure/s03-acceptance.json
+0e701f02336772a9bd1bfca34aee316986ef1a3f818b5264c70f4543974af947  docs/dev/harness-gap-closure/s03-external-write-boundary.md
+92c7300ab38326a4b20b094a0a4440e3d8d77fd718901276aa9e2ac2d9736033  harness/specs/tasks/harness-gap-external-write-boundary.md
+d406769bef60ff050c13dbfeff0048fbf06e8051e334fc2b1a2d6b79ec8bf8f9  openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts

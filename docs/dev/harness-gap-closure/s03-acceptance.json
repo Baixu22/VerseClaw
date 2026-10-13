@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-s03-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0278",
+    "packet": "S03",
+    "title": "Workspace external-write source + path boundary verification",
+    "source": "real filesystem tests over the existing policy (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Ran the six required external-write boundary tests plus a new path-escape matrix on the real filesystem: illegal provenance is refused before any filesystem mutation with the target unchanged; trusted operator external writes stay authoritative. Recorded UNC/device-namespace as a residual, not claimed covered."
+  },
+  "candidate": {
+    "commit": "3f7060cb2bade7b693c407b70cfa71c698988444",
+    "tree": "7e9717c991dc22885aa5cf58ed26e6edc6ef756b",
+    "dirty": false,
+    "branch": "codex/harness-gap-s03-external-write-20261013",
+    "base": "8bb11a7d83603611d3fcd99160334f85f2e6e3be",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T12:46:00.000Z",
+    "finishedAt": "2026-10-13T12:52:00.000Z"
+  },
+  "chain": {
+    "callSite": "openclaw_runtime/src/agents/agent-tools.ts",
+    "policy": "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts#wrapToolWithWorkspaceExternalWriteProvenance|resolveWorkspaceExternalWritePolicy",
+    "aliasResolution": "openclaw_runtime/src/infra/fs-safe.ts (canonicalPathFromExistingAncestor) + agents/sandbox-paths.ts",
+    "sinks": [
+      "write",
+      "edit",
+      "apply_patch"
+    ]
+  },
+  "gates": {
+    "policyUnit": {
+      "command": "openclaw_runtime: run-vitest src/agents/workspace-external-write-provenance-policy.test.ts src/agents/apply-patch-consistency.test.ts src/agents/sessions/tools/write.test.ts src/agents/sessions/tools/edit.test.ts",
+      "exitCode": 0,
+      "files": 4,
+      "tests": 39,
+      "failed": 0
+    },
+    "workspaceBoundary": {
+      "command": "openclaw_runtime: run-vitest src/agents/agent-tools.workspace-boundary.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 17,
+      "failed": 0,
+      "note": "includes the new S03 path-escape matrix"
+    },
+    "rootProvenance": {
+      "command": "vitest run tests/unit/external-content-provenance.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 8,
+      "failed": 0
+    },
+    "typecheck": {
+      "command": "openclaw_runtime: pnpm run tsgo:core:test",
+      "exitCode": 2,
+      "note": "pre-existing baseline red: 12 errors in 7 unrelated files; none in agent-tools.workspace-boundary.test.ts"
+    },
+    "lintTouched": {
+      "command": "openclaw_runtime: run-oxlint src/agents/agent-tools.workspace-boundary.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-external-write-boundary.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-external-write-boundary.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, 0.00% delta"
+    }
+  },
+  "pathEscapeMatrix": {
+    "deniedForms": [
+      "absolute-outside",
+      "relative-parent-escape",
+      "win32-case-variant",
+      "existing-symlink-or-junction-alias",
+      "in-workspace-hardlink-alias"
+    ],
+    "deniedEvidence": "rejects with /external or unknown provenance/ and the outside file stays byte-for-byte 'original\\n'",
+    "allowedForms": [
+      "trusted system / direct operator outside target",
+      "in-workspace write for external/missing provenance"
+    ],
+    "allowedEvidence": "write/edit/apply_patch land with exact content ('patched\\n'); in-workspace writes keep working"
+  },
+  "residual": {
+    "uncAndDeviceNamespace": "UNC / device-namespace paths (\\\\server\\share, \\\\?\\...) cannot be exercised deterministically on this host; the policy treats any non-workspace target as outside, but this is NOT measured. Recorded as residual.",
+    "effectReceipt": "No new EffectReceipt assertion for external writes; existing journal/recovery semantics are unchanged by this packet.",
+    "scope": "Runtime coding write/edit/apply_patch only; not a full-enforcement claim for every write path."
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "real-filesystem + policy unit separation",
+    "detail": "Path/source decisions are unit-tested on the pure policy and integration-tested on the real tools with a real temp filesystem; the escape matrix re-asserts the file is unchanged after each denial. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "illegal-no-side-effect",
+      "status": "pass",
+      "note": "external/derived/invalid/missing provenance is refused before the filesystem mutation; target file remains 'original\\n' for write/edit/apply_patch."
+    },
+    {
+      "id": "legal-external-write",
+      "status": "pass",
+      "note": "trusted system / direct operator external write still succeeds with exact content."
+    },
+    {
+      "id": "path-escape-matrix",
+      "status": "pass",
+      "note": "parent '..', absolute outside, win32 case-variant, symlink/junction alias, hardlink alias all denied with the target unchanged."
+    },
+    {
+      "id": "single-boundary",
+      "status": "pass",
+      "note": "Reuses the existing single policy + fs-safe alias resolution; no second strategy; in-workspace write semantics unchanged."
+    },
+    {
+      "id": "residual-recorded",
+      "status": "pass",
+      "note": "UNC/device-namespace and the absent EffectReceipt assertion are recorded as residual rather than claimed covered."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "64 required tests pass, scoped lint 0, harness validate/dry-run pass, comms 0, credential scan 0 hits, SHA256SUMS verifiable; the only red is the pre-existing tsgo:core:test baseline."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 2,
+    "hits": 0
+  },
+  "notMeasured": [
+    "UNC / device-namespace path escapes.",
+    "Live provider calls.",
+    "Non-Windows case-insensitive edge cases beyond win32 case-variant.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
