@@ -54,7 +54,9 @@ import {
 import {
   emitRc03WireReceipt,
   emitShadowWireReceipt,
+  ProviderEnvelopeRejectedError,
   recordShadowCensusFailure,
+  resolveEnvelopeRejectEnabled,
   type ShadowReceiptOptions,
 } from "./shadow-census.js";
 import { buildStage1RequestEnvelope } from "./stage1-request-envelope.js";
@@ -915,6 +917,13 @@ export function buildGuardedModelFetch(
           },
           wireShadow,
         );
+        // Opt-in (default off): refuse an invalid/unknown request envelope before any
+        // provider bytes go on the wire. The digest-only wire receipt above is already
+        // persisted, so the refusal is observable without raw content. The default and
+        // flag-off paths stay observational and byte-identical.
+        if (!envelope.ok && resolveEnvelopeRejectEnabled(wireShadow)) {
+          throw new ProviderEnvelopeRejectedError(envelope.reason);
+        }
         if (wireShadow.rc03Plan) {
           // RC-03: WireReceipt/v1 at the guarded request boundary, bound to the
           // sealed CompilePlan and the final serialized body digest. Observational:

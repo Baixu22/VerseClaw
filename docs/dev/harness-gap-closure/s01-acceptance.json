@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-s01-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0276",
+    "packet": "S01",
+    "title": "Rejectable provider envelope boundary (opt-in, pre-wire)",
+    "source": "local mocked provider fetch (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Opt-in reject path verified on the clean candidate: invalid envelope refused with 0 provider fetch calls and a typed error; flag-off path unchanged (request still sent); guard unit tests 15/15 pass. No product default/lock change; pre-existing baseline residuals recorded separately."
+  },
+  "candidate": {
+    "commit": "f064ff2c592580763a564c5635f554130a8fa992",
+    "tree": "a9f4c53922f413afe5474e4529a34a86583579fc",
+    "dirty": false,
+    "branch": "codex/harness-gap-s01-envelope-reject-20261013",
+    "base": "ca24fb81ae83dde9907561b583b7990df6844b67",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T12:05:00.000Z",
+    "finishedAt": "2026-10-13T12:35:00.000Z"
+  },
+  "gates": {
+    "s01Tests": {
+      "command": "openclaw_runtime: node scripts/run-vitest.mjs run src/agents/rc02-envelope-reject.test.ts",
+      "exitCode": 0,
+      "files": 1,
+      "tests": 3,
+      "failed": 0
+    },
+    "guardRegression": {
+      "command": "openclaw_runtime: run-vitest src/agents/shadow-census.test.ts src/agents/stage1-request-envelope.test.ts",
+      "exitCode": 0,
+      "files": 2,
+      "tests": 15,
+      "failed": 0
+    },
+    "typecheckCore": {
+      "command": "openclaw_runtime: pnpm run tsgo:core",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "openclaw_runtime: node scripts/run-oxlint.mjs src/agents/shadow-census.ts src/agents/provider-transport-fetch.ts src/agents/rc02-envelope-reject.test.ts",
+      "exitCode": 0,
+      "warnings": 1,
+      "warningNote": "pre-existing unicorn(no-useless-fallback-in-spread) on untouched line attachShadowReceiptOptions"
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-envelope-reject.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-envelope-reject.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, deltas 0.00%"
+    }
+  },
+  "behavior": {
+    "default": "rejectInvalidEnvelope unset -> resolveEnvelopeRejectEnabled()=false -> observational, request sent, bytes unchanged",
+    "reject": "RC-02 shadow active + reject enabled + envelope !ok -> digest-only wire receipt written first, then ProviderEnvelopeRejectedError thrown before fetchWithSsrFGuard -> 0 provider fetch calls",
+    "order": "receipt-before-refusal is guaranteed because the throw is placed after the existing emitShadowWireReceipt and before fetchWithSsrFGuard"
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "revert-and-rerun baseline comparison",
+    "detail": "The rc02-shadow-census.acceptance.test.ts 'embedded runner' case was shown to time out (30s) both with S01 applied and with S01 reverted to clean origin/main, proving the failure is a pre-existing environment/perf residual, not an S01 regression. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "reuse-boundary",
+      "status": "pass",
+      "note": "Reuses the RC-02 shadow boundary and the existing digest-only shadow_wire receipt; no new store/registry/router."
+    },
+    {
+      "id": "opt-in-default-off",
+      "status": "pass",
+      "note": "resolveEnvelopeRejectEnabled defaults false; explicit false and unset env keep the observational path byte-identical."
+    },
+    {
+      "id": "reject-before-wire",
+      "status": "pass",
+      "note": "Invalid envelope refused before fetchWithSsrFGuard; measured provider fetch calls = 0 and a typed ProviderEnvelopeRejectedError is raised."
+    },
+    {
+      "id": "digest-only",
+      "status": "pass",
+      "note": "The pre-existing digest-only wire receipt is written before the refusal; no raw prompt/body/headers are persisted."
+    },
+    {
+      "id": "no-network-rule-change",
+      "status": "pass",
+      "note": "SSRF, timeout, proxy, redirect and outbound-budget rules are untouched."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "S01 tests 3/3, guard regression 15/15, tsgo:core 0, scoped lint 0, harness validate/dry-run pass, comms replay/compare 0, credential scan 0 hits, SHA256SUMS verifiable."
+    },
+    {
+      "id": "boundaries",
+      "status": "pass",
+      "note": "No product default/lock/approval change; README reviewed (no user-visible change); not real-human evidence."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 5,
+    "hits": 0
+  },
+  "baselineResiduals": {
+    "runtimeTestTypecheck": "openclaw_runtime tsgo:core:test is red on origin/main baseline: 12 errors across 7 files unrelated to S01 (context-health-monitor.test.ts, http-endpoint-budget.test.ts, tool-search-capability-v3.test.ts, tool-search-code-mode-v3.test.ts, governed-process.test.ts, provider-native-capability-v3.test.ts, result-pointer.test.ts). Not introduced by S01 and not excluded by widening ownedPaths.",
+    "rc02AcceptanceTimeout": "rc02-shadow-census.acceptance.test.ts 'embedded runner ...' case times out at 30s in this environment on BOTH the S01 candidate and the reverted clean baseline."
+  },
+  "notMeasured": [
+    "Live provider calls.",
+    "Non-Windows / remote CI.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}

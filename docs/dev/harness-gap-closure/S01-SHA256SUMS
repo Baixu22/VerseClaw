@@ -1,0 +1,7 @@
+91eccf66cb8f2b34a5289cd264ff90bf1319c0181c4bc0a4ef8ccd43bea5d276  docs/dev/harness-gap-closure/s01-acceptance.json
+ec843f768d3451cf0237fde5b0f1fa25d792b8a0630f67e4db63ff1a41d2acda  docs/dev/harness-gap-closure/s01-envelope-reject.md
+a7297dd2c0974c7d7f0cd2e78d32ad58333466287e50acb29f31ee4b8354fbb5  harness/specs/tasks/harness-gap-envelope-reject.md
+08553c2db105c57f0a00abada2f886fef88ba6edd281e65c390198f7d0e62f43  harness/specs/rules/provider-envelope-reject-boundary.md
+d123e538a65f167dbedd8677e4f91e03b29ad612ba65cbf9d1a4b80d9ddc276c  openclaw_runtime/src/agents/shadow-census.ts
+2bdb34437bc6a5c3e031a9d79d4eaaa73f44070f662d2c3af9d0b7b536665fae  openclaw_runtime/src/agents/provider-transport-fetch.ts
+1a22f70342bd367fe46c2f5b21dda9e2870a9fbf0e296c6a12c8fc14d9a21b7b  openclaw_runtime/src/agents/rc02-envelope-reject.test.ts

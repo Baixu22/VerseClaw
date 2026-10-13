@@ -83,6 +83,10 @@ export type ShadowReceiptOptions = {
   /** Stage 1 RequestEnvelope ref. Digest/ref only; raw prompt content never
    *  travels on shadow options or enters provider bytes. */
   requestEnvelopeRef?: string;
+  /** Opt-in (default off): reject an invalid/unknown request envelope BEFORE the
+   *  guarded wire send, instead of only observing it. Never changes bytes on the
+   *  allow path. */
+  rejectInvalidEnvelope?: boolean;
 
   /** Stage 2 sealed PromptPlan carrier produced by DCS. Provider Guard reads
    *  these fields only; it never recompiles. */
@@ -299,6 +303,27 @@ export function resolveRc03WireCorrelationDigest(
     return v1?.correlation_digest ?? undefined;
   } catch {
     return undefined;
+  }
+}
+
+/** Opt-in envelope rejection. Off unless explicitly enabled on the options or
+ *  via OPENCLAW_RC02_REJECT_INVALID_ENVELOPE; the default path stays shadow-only. */
+export function resolveEnvelopeRejectEnabled(options: ShadowReceiptOptions = {}): boolean {
+  if (options.rejectInvalidEnvelope !== undefined) return options.rejectInvalidEnvelope === true;
+  const value = process.env.OPENCLAW_RC02_REJECT_INVALID_ENVELOPE?.trim().toLowerCase();
+  return value === '1' || value === 'true' || value === 'yes' || value === 'on';
+}
+
+/** Thrown at the guarded wire boundary when an invalid/unknown request envelope is
+ *  refused before any provider bytes are sent. Digest/ref only; no raw content. */
+export class ProviderEnvelopeRejectedError extends Error {
+  readonly reason: string;
+  readonly envelopeDigest: string | null;
+  constructor(reason: string, envelopeDigest: string | null = null) {
+    super(`provider request envelope rejected before wire: ${reason}`);
+    this.name = 'ProviderEnvelopeRejectedError';
+    this.reason = reason;
+    this.envelopeDigest = envelopeDigest;
   }
 }
 
