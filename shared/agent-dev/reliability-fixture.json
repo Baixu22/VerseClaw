@@ -1,0 +1,52 @@
+{
+  "version": "openclaw.agent-dev.reliability.v1",
+  "source": "deterministic-fixture",
+  "note": "Pre-registered deterministic oracle. Small fixture; the design gate needs >=20 complete cases, so the runner reports insufficient-sample and never claims real-model generalization.",
+  "k": 3,
+  "minCases": 20,
+  "flakeThreshold": 0.01,
+  "cases": [
+    {
+      "id": "fixture-ppp",
+      "anchor": "positive",
+      "trials": [
+        "pass",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "id": "fixture-ppf",
+      "trials": [
+        "pass",
+        "pass",
+        "fail"
+      ]
+    },
+    {
+      "id": "fixture-flake",
+      "trials": [
+        "fail",
+        "fail",
+        "pass"
+      ]
+    },
+    {
+      "id": "fixture-anchor-negative",
+      "anchor": "negative",
+      "trials": [
+        "fail",
+        "fail",
+        "fail"
+      ]
+    },
+    {
+      "id": "fixture-incomplete-timeout",
+      "trials": [
+        "pass",
+        "timeout",
+        "pass"
+      ]
+    }
+  ]
+}

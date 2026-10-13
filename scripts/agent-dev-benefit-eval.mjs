@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { performance } from 'node:perf_hooks';
+import { aggregateReliability } from './lib/reliability-aggregation.mjs';
 
 const ROOT = process.cwd();
 const OUT_DIR = resolve(ROOT, 'artifacts/agent-dev-benefit-eval');
@@ -92,6 +93,22 @@ Generated: ${report.generatedAt}
 | --- | --- | --- |
 ${tools}
 
+## Reliability (E01)
+
+| Metric | Value |
+| --- | ---: |
+| Fixture | ${report.reliability.version} (${report.reliability.source}) |
+| k | ${report.reliability.k} |
+| Complete cases | ${report.reliability.completeCaseCount} / ${report.reliability.caseCount} |
+| pass^k | ${report.reliability.passK} |
+| pass@k (not mixed with pass^k) | ${report.reliability.passAtK} |
+| Per-trial success | ${report.reliability.perTrialSuccessRate} |
+| Flake rate | ${report.reliability.flakeRate} |
+| Incomplete trials preserved | ${report.reliability.incomplete.length} |
+| Gate | ${report.reliability.gate} |
+
+The reliability block is a deterministic oracle over a pre-registered fixture, not a real-model generalization claim. Missing/timeout/crash/skip trials are preserved and excluded from the pass^k denominator; the small fixture reports insufficient-sample until the design gate (k=3, >=20 complete cases) is met.
+
 ## Interpretation
 
 - The current in-repo implementation already gives agents ${report.agentDev.scenarioCount} deterministic page entry points and ${report.agentDev.e2eHelperCount} E2E helpers without depending on new packages.
@@ -108,12 +125,14 @@ const [
   e2eFixture,
   schemaText,
   a11yText,
+  reliabilityFixtureText,
 ] = await Promise.all([
   read('shared/agent-dev/scenarios.ts'),
   read('src/lib/host-api.ts'),
   read('tests/e2e/fixtures/electron.ts'),
   read('shared/host-api/agent-dev-schemas.ts'),
   read('tests/e2e/fixtures/a11y.ts'),
+  read('shared/agent-dev/reliability-fixture.json'),
 ]);
 
 const scenarioIds = extractScenarioIds(scenarioRegistry);
@@ -143,6 +162,16 @@ const report = {
     { package: 'knip', installed: packageInstalled('knip'), role: 'unused files/deps/exports' },
     { package: 'ajv', installed: packageInstalled('ajv'), role: 'JSON schema validation engine' },
   ],
+};
+const reliabilityFixture = JSON.parse(reliabilityFixtureText);
+report.reliability = {
+  version: reliabilityFixture.version,
+  source: reliabilityFixture.source,
+  ...aggregateReliability(reliabilityFixture.cases, {
+    k: reliabilityFixture.k,
+    minCases: reliabilityFixture.minCases,
+    flakeThreshold: reliabilityFixture.flakeThreshold,
+  }),
 };
 report.durationMs = Number((performance.now() - start).toFixed(1));
 
