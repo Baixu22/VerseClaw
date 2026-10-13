@@ -1,0 +1,5 @@
+abbffc83da0dd2b4f162207f2247c32d40dd70efeae12f5d9ed824b958fb80a8  docs/dev/harness-gap-closure/a02-acceptance.json
+638c3dd0cfd5a72b744f2dba5defef74b8c4363d430025db1610569d7383f670  docs/dev/harness-gap-closure/a02-a2-orchestration-gate.md
+5e77f31913eaccffdf18b866a601c73d32183383ab3c7818444aae0df32aefa5  harness/specs/tasks/harness-gap-a02-orchestration-pilot-reverify.md
+8180ad8739fe1b4d69aa45bc8b540e2f3bf4e77767ee1f11430aeb5274d8b6ee  harness/specs/tasks/a2-multi-agent-orchestration-pilot.md
+3d10c6ad0d9d03c5a6b6fd304c58f12ec6ca746ff07d658ae3eb006d0dbc5d93  tests/unit/a02-a2-gate-coverage.test.ts
