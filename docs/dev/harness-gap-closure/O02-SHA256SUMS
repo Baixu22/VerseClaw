@@ -1,0 +1,8 @@
+7fe10b0488d8c518f632df05389de71f5cce4b52979f468f80439614d2213e53  docs/dev/harness-gap-closure/o02-acceptance.json
+66f6f7e9ab9f5ca5e18407872872871ba8daa1832c77ee4531486a6b058eae90  docs/dev/harness-gap-closure/o02-trace-cost-sampling.md
+6580985c6f3efae00f1076629e5c30209af63b06ad5d97c60df605a153ae1b78  harness/specs/tasks/harness-gap-trace-cost-sampling.md
+f2e5b6a6fe2ed9a94275cf05f3943f83e67b6ae00267e78dae00cc558a158823  harness/specs/rules/trace-cost-sampling-boundary.md
+747678ee2eb2435d19f82920ec7085b04a94a73d7e0fec18413c49816737d8f8  openclaw_runtime/extensions/diagnostics-otel/src/cost-sampling.ts
+7bddc85cbf367d1c5e84ee8842783123c627678ea505e480b9e72225361add42  openclaw_runtime/extensions/diagnostics-otel/src/cost-sampling.test.ts
+6cb948e96e67cb57815092f5413a9d007c5e1a7ee602a6cc78a8d7cd96c9cd8d  openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.model-call-usage.ts
+97acd0c69e2c5ccb081bf45e4e98988420e94c02c4219ed635992725b9e07bc3  tests/unit/harness-gap-trace-cost-sampling.test.ts

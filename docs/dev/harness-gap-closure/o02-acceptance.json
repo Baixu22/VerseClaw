@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-o02-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0273",
+    "packet": "O02",
+    "title": "Model-call cost correlation and bounded redacted trace sampling",
+    "source": "deterministic local fixture + in-process local HTTP OTLP collector (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Ported onto current origin/main; all O02 required tests, runtime types, oxlint, harness validate/dry-run and comms replay/compare passed on a clean candidate commit. No product lock or default changed; no live-provider or human claim."
+  },
+  "candidate": {
+    "commit": "411a8bfb5af5fbaef376dbb2514448c0f6d86a70",
+    "tree": "c7eb1e76ef3f7edf65afd2e83629fef1b97924f5",
+    "dirty": false,
+    "branch": "codex/harness-gap-o02-cost-sampling-20261013",
+    "base": "a13e3694127670faf5ab7d2b87f3c23211478b93",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T10:40:00.000Z",
+    "finishedAt": "2026-10-13T11:20:00.000Z"
+  },
+  "gates": {
+    "focusedTests": {
+      "command": "vitest run tests/unit/harness-gap-trace-cost-sampling.test.ts tests/unit/runtime-trace-context-contracts.test.ts tests/unit/trace-truncation.test.ts tests/unit/rc08b-otel-observability-convergence.test.ts",
+      "exitCode": 0,
+      "files": 4,
+      "tests": 31,
+      "failed": 0,
+      "skipped": 0
+    },
+    "pluginTests": {
+      "command": "openclaw_runtime: node scripts/run-vitest.mjs run extensions/diagnostics-otel/src/cost-sampling.test.ts src/observability/rc08b-otel.test.ts",
+      "exitCode": 0,
+      "files": 2,
+      "tests": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    "typecheckRuntime": {
+      "command": "openclaw_runtime: pnpm run tsgo:core",
+      "exitCode": 0
+    },
+    "typecheckExtensions": {
+      "command": "openclaw_runtime: pnpm run tsgo:extensions",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "openclaw_runtime: node scripts/run-oxlint.mjs <8 touched files>",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-trace-cost-sampling.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-trace-cost-sampling.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    "commsReplay": {
+      "command": "pnpm run comms:replay",
+      "exitCode": 0
+    },
+    "commsCompare": {
+      "command": "pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "all PASS, deltas 0.00%"
+    }
+  },
+  "runtimeEvidence": {
+    "path": "tests/unit/harness-gap-trace-cost-sampling.test.ts",
+    "collector": "in-process Node http server on 127.0.0.1 acting as a neutral OTLP collector (createserver/listen, raw protobuf captured and written to otlp-<n>.bin)",
+    "recompute": "same redacted OTLP event set re-derives identical measured cost",
+    "sampling": "per retained sample records reason/probability/policy version; pre-sampling denominator and unsampled/unknown/duplicate/dropped counted separately"
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "deterministic-replay-within-packet-tests",
+    "detail": "The plugin test re-derives cost from the captured OTLP payload and asserts it equals the emitted cost; the unit test captures the real OTLP HTTP bodies. No separate second-agent verifier role was run this session.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "flag-gated",
+      "status": "pass",
+      "note": "Enabled only when config.diagnostics.otel.enabled === true AND the trace.cost-sampling diagnostic flag is set; default/off path keeps original events and export behavior."
+    },
+    {
+      "id": "identity-and-redaction",
+      "status": "pass",
+      "note": "run/session/request/attempt hashed with a domain-separated SHA256; toolCallId digest links the tool span; no prompt/tool body/auth headers/raw ids in new trace; effect keeps existing OTel parent chain."
+    },
+    {
+      "id": "terminal-usage",
+      "status": "pass",
+      "note": "Consumes only final done/error structured usage; cache and non-cache tokens separate; duplicate terminals not accumulated; out-of-order partial does not override terminal; missing/invalid explicit as not-measured; stream value/count/error/cancel unchanged."
+    },
+    {
+      "id": "price-snapshot",
+      "status": "pass",
+      "note": "USD-per-million-token rate snapshot with a content-digest version; missing/invalid/all-zero unknown price -> costUsd = null; original usage.cost untouched."
+    },
+    {
+      "id": "bounded-sampling",
+      "status": "pass",
+      "note": "Sampling at the single OTel exit with a fixed seed + traceId; errors/refusals/recovery never dropped by probability; retained sample carries reason/probability/policy version; denominator and unknown/duplicate/dropped counted separately."
+    },
+    {
+      "id": "queue-budget-dedupe",
+      "status": "pass",
+      "note": "Queue cap 1024, batch cap 512, retention 300000ms, evict ordinary success first, explicit over-budget/expiry/export-failure counters; dedupe history 4096/300000ms with a retirement watermark."
+    },
+    {
+      "id": "fixture-cost",
+      "status": "pass",
+      "note": "Local deterministic fixture: association 100% with no budget overflow and zero duplicate billing; identical redacted OTLP set re-derives the same measured cost."
+    },
+    {
+      "id": "local-otlp-roundtrip",
+      "status": "pass",
+      "note": "Real producer + plugin service exercised through a local neutral HTTP OTLP collector; success/error/refusal/recovery/cancel/duplicate/out-of-order/expiry/budget/export-failure/close-rollback covered."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "Clean candidate commit; focused tests + types + lint + harness + comms passed; credential scan 0 hits."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "command": "regex scan over the 16 changed files (phc_/sk-/AKIA/PRIVATE KEY/ghp_/xox.)",
+    "files": 16,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Live third-party provider calls (fixture + local OTLP only).",
+    "Price accuracy against a provider invoice.",
+    "Non-Windows platforms.",
+    "Remote CI.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
