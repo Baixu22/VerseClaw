@@ -1,0 +1,5 @@
+94560219120997217ba78b0d8d3378d1a96649850e702b12cd418ad9fbbc6fec  docs/dev/harness-gap-closure/a03-acceptance.json
+b383d97ae6bb90893a253bc413376c3429bb5afceb59bd3b68e76b3ad84e016c  docs/dev/harness-gap-closure/a03-a3-resilience-gate.md
+33149f70f39b92742daf2564b879eedaadbebb342087ad96fe27a99bd9581189  harness/specs/tasks/harness-gap-a03-resilience-pilot-reverify.md
+9abf4e9f6a91e6eeec1e51978f9d4d105dfc9c091c62530357eb65529d175bd3  harness/specs/tasks/a3-runtime-resilience-pilot.md
+257e11055d6c09c89781f8c37e23f5bd230246efe65cc8e963034dbe2e1eca58  tests/unit/a03-a3-gate-coverage.test.ts
