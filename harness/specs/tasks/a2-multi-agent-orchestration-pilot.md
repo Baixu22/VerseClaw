@@ -7,7 +7,6 @@ taskType: runtime-bridge
 intent: Promote the A2 wave scheduler from shadow to active pilot, gated by deferral consistency and budget compliance.
 touchedAreas:
   - openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts
-  - openclaw_runtime/src/agents/cross-area/cross-area-facades.ts
   - openclaw_runtime/src/observability/deprecation-counters.ts
 requiredProfiles:
   - fast
@@ -23,7 +22,8 @@ expectedUserBehavior:
   - With the pilot flag off, wave scheduling and orchestration outcomes are unchanged.
 requiredTests:
   - tests/unit/resource-aware-wave-scheduler.test.ts
-  - tests/unit/cross-area-composition.test.ts
+  - tests/unit/deprecation-counters.test.ts
+  - openclaw_runtime/src/observability/deprecation-counters.test.ts
   - tests/unit/performance-budgets.test.ts
 acceptance:
   - A2 deprecation counter `deferralDisagreementCount` rate < 10% over 10-wave orchestration
@@ -43,6 +43,11 @@ A2 graduates from shadow to active pilot when ALL of the following hold:
 2. **Wave immutability**: started waves are never re-planned (criterion 3.9, unit-tested).
 3. **Performance**: p99 ≤ 80ms for 10-wave orchestration (criterion 4.6).
 4. **Multi-worker resume**: creates new child sessions, no reconnect (criterion 3.7).
+
+## Re-verification note (A02, 2026-10-13)
+
+- Criteria 1 (deferral agreement >= 90% + `degrade_to_live_only` on >10%), 2 (started waves are never re-planed) and 3 (p99 <= 80ms) are covered by the required tests below.
+- **Criterion 4 (multi-worker resume creates new child sessions, no reconnect) has no dedicated test in this tree** and is recorded as a residual: the A2 full graduation gate is therefore NOT fully verified (NO-GO on criterion 4 until a resume test lands). The referenced `cross-area-composition.test.ts` and `cross-area/cross-area-facades.ts` did not exist in the tree and were removed from this spec.
 
 ## Out of scope
 
