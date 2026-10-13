@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "actor": "codex-e02-mainline-developer",
+  "driven_by": "agent",
+  "scope": {
+    "task": "TF-0275",
+    "packet": "E02",
+    "title": "First real effective single-component paired ablation",
+    "source": "real RuntimeMemoryStore over a deterministic local fixture (no live provider)",
+    "liveProvider": false,
+    "realHuman": false
+  },
+  "decision": {
+    "status": "PASS",
+    "evidenceTier": "clean-candidate-local-automated-acceptance",
+    "reason": "Real paired ablation ran on the clean candidate: 20 cases x 3 repeats x 2 conditions (120 runs) over the real RuntimeMemoryStore; component-effect trace confirmed; effect size + 95% CI computed; verdict component-helps. No product default/lock change; no live-provider or human claim."
+  },
+  "candidate": {
+    "commit": "ab0ba14cbb3546158b3271f13719d2bba5a15686",
+    "tree": "7e9cbee0ee5993e2d4bb21a9555f4af6f1867e8e",
+    "dirty": false,
+    "branch": "codex/harness-gap-e02-paired-ablation-20261013",
+    "base": "6b56992a2a55127c7175fda3a3b7c3206736b485",
+    "workspace": "C:\\Users\\27933\\.codex\\worktrees\\o02-main\\ClawX",
+    "startedAt": "2026-10-13T11:44:00.000Z",
+    "finishedAt": "2026-10-13T11:55:00.000Z"
+  },
+  "component": {
+    "id": "runtime-memory.eviction.type-aware",
+    "control": "evictionPolicy=fifo (leave-one-out)",
+    "treatment": "evictionPolicy=importance (type-aware)",
+    "reversible": true,
+    "safety": false,
+    "productionConsumer": "openclaw_runtime/src/runtime-core/memory-store.ts RuntimeMemoryStore"
+  },
+  "preRegistered": {
+    "primaryMetric": "proceduralRetention",
+    "k": 3,
+    "minCases": 20,
+    "degradationBudget": 0
+  },
+  "gates": {
+    "unitTests": {
+      "command": "vitest run tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts",
+      "exitCode": 0,
+      "files": 2,
+      "tests": 6,
+      "failed": 0,
+      "skipped": 0
+    },
+    "typecheckTest": {
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0
+    },
+    "lintTouched": {
+      "command": "eslint scripts/lib/paired-ablation.mjs tests/unit/agent-dev-paired-ablation.test.ts tests/unit/runtime-memory-paired-ablation.test.ts",
+      "exitCode": 0
+    },
+    "harnessValidate": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/harness-gap-paired-ablation.md",
+      "exitCode": 0,
+      "result": "Spec is valid"
+    },
+    "harnessDryRun": {
+      "command": "pnpm harness run --spec harness/specs/tasks/harness-gap-paired-ablation.md --dry-run",
+      "exitCode": 0,
+      "result": "pass"
+    }
+  },
+  "ablationResult": {
+    "runs": {
+      "cases": 20,
+      "repeats": 3,
+      "conditions": 2,
+      "totalRuns": 120,
+      "pairedPairs": 60
+    },
+    "baseline": {
+      "successRate": 0.1667,
+      "passK": 0,
+      "p50LatencyMs": 0.7999,
+      "p95LatencyMs": 1.3443,
+      "meanTokens": 10,
+      "falseBlocks": 0,
+      "safetyViolations": 0,
+      "incompleteCaseCount": 0
+    },
+    "treatment": {
+      "successRate": 1,
+      "passK": 1,
+      "p50LatencyMs": 0.8903,
+      "p95LatencyMs": 1.4368,
+      "meanTokens": 10,
+      "falseBlocks": 0,
+      "safetyViolations": 0,
+      "incompleteCaseCount": 0
+    },
+    "effect": {
+      "metric": "proceduralRetention",
+      "meanDiff": 0.3133,
+      "sd": 0.2062,
+      "standardError": 0.0266,
+      "ci95": [
+        0.2612,
+        0.3655
+      ],
+      "cohensDz": 1.5193
+    },
+    "verdict": "component-helps",
+    "componentEffectTrace": true,
+    "tokensAreProxy": "tokens = maxFacts slots (not real model tokens)",
+    "latencyMeasuredWith": "node:perf_hooks performance.now()"
+  },
+  "independentVerification": {
+    "executed": true,
+    "kind": "deterministic unit assertions + independent aggregation module test",
+    "detail": "tests/unit/agent-dev-paired-ablation.test.ts independently asserts summarizeCondition / pairedEffect / verdict rules; the runtime test asserts the component-effect trace and non-regression invariants. No separate second-agent verifier role was run.",
+    "separateVerifierAgent": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "real-component",
+      "status": "pass",
+      "note": "Reversible, non-safety real component (Phase-4 type-aware eviction) vs its FIFO leave-one-out on the real RuntimeMemoryStore."
+    },
+    {
+      "id": "effect-trace",
+      "status": "pass",
+      "note": "Baseline vs treatment retained/evicted sets differ; success-rate gap (0.1667 vs 1.0) is the trace."
+    },
+    {
+      "id": "corpus-shape",
+      "status": "pass",
+      "note": "20 cases x 3 repeats x 2 conditions, per-case seeded order, isolated store, deterministic fixture."
+    },
+    {
+      "id": "report-fields",
+      "status": "pass",
+      "note": "Success, pass^k, p50/p95, tokens proxy, false blocks, safety violations, effect size and 95% CI all reported."
+    },
+    {
+      "id": "pre-registered",
+      "status": "pass",
+      "note": "Primary metric, k, minCases, degradation budget pre-registered in the fixture before the run."
+    },
+    {
+      "id": "no-winner-picking",
+      "status": "pass",
+      "note": "Verdict derived from the CI; zero/negative effect would be reported as-is."
+    },
+    {
+      "id": "clean-candidate-gates",
+      "status": "pass",
+      "note": "Unit tests 6/6, typecheck:test 0, scoped lint 0, harness validate/dry-run pass, credential scan 0 hits, SHA256SUMS verifiable."
+    },
+    {
+      "id": "boundaries",
+      "status": "pass",
+      "note": "No product default/lock/approval change; no live provider; tokens explicitly a proxy; not real-human evidence."
+    }
+  ],
+  "productLocks": {
+    "live_ready": false,
+    "product_approved": false,
+    "default_on": false,
+    "changed": false
+  },
+  "credentialScan": {
+    "files": 7,
+    "hits": 0
+  },
+  "notMeasured": [
+    "Real model task success/tokens/cost (deterministic memory-store fixture only).",
+    "Live provider calls.",
+    "Non-Windows / remote CI.",
+    "A separate second-agent independent verifier role."
+  ],
+  "landing": {
+    "pushed": false,
+    "pr": null,
+    "note": "Pushed with the evidence commit in the same session; see the branch's PR."
+  }
+}
