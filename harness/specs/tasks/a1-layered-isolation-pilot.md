@@ -32,6 +32,8 @@ requiredTests:
   - tests/unit/shadow-write-event-recorder.test.ts
   - tests/unit/trace-namespace-enforcement.test.ts
   - tests/unit/performance-budgets.test.ts
+  - tests/unit/deprecation-counters.test.ts
+  - openclaw_runtime/src/observability/deprecation-counters.test.ts
 acceptance:
   - A1 deprecation counter `legacyFallbackCount` rate < 5% over 100-turn session
   - A1 p99 ≤ 200ms (criterion 4.5)
